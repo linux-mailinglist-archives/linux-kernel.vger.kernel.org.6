@@ -1,104 +1,147 @@
-Return-Path: <linux-kernel+bounces-379810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58CD19AE415
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:45:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5538F9AE417
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:45:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF02CB22C93
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:44:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A3C91F24055
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:45:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58DE21D0B91;
-	Thu, 24 Oct 2024 11:44:51 +0000 (UTC)
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A91B31C4A35;
+	Thu, 24 Oct 2024 11:45:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="fuGNBr8N"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 907FD1B6D0A;
-	Thu, 24 Oct 2024 11:44:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F05081B21AB
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 11:45:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729770291; cv=none; b=lZngSJ2YN8vBgk7H2uQJz+YNDMI8Sgnd0zs4u0ZPIjDZjTec3TxVi+sM+n34eGhOIpHWADPjDMMCBlYluiwgVmrDVHfjcFDKPYnfSBqwH1G1Sz+zAmxF7EAxv8bFCLtZYwEwNuvwnpJCKP13DOm565g7GKiO2EMqeJPtAlDNYNo=
+	t=1729770323; cv=none; b=lzyqcMEjvhqBL5OizW3c4/ydVWACvQtTvyVIHmwYJdXcFQpCg+UmlJ1BXnja8pUVLvn5SipaDW0CazftW7ASf2j7/AvP3VY14PBJn6pPHhY5plUBgM6mFIffRXCKbMxhhSctZzlvPtECnT7KhJF3nzV9Dpe0mK4yWKpTIZCLATw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729770291; c=relaxed/simple;
-	bh=6xZD9aR5K8pv33h6dVFH+/VkNLlK2SLZ7yjvgz/auFI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TR264iEZHkrd5ePB50VU/NteQzx8HPWLvgqyB1A2zFzX+Bf2jF5oHYdi9POH3HW6PwpQMPhzmqkhFb1zMv1o5tQXB7vHvDlUW8oRqwq5JqYObTvoszglhKlHTKrlZjiocR65RXrcZYZLoHdxc96Ph89DCV8mWnN7Fu1EjZiSPbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.29])
-	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4XZ3LX3yw8z9v7JM;
-	Thu, 24 Oct 2024 19:18:12 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id 96F7F14039E;
-	Thu, 24 Oct 2024 19:44:33 +0800 (CST)
-Received: from [10.45.154.7] (unknown [10.45.154.7])
-	by APP1 (Coremail) with SMTP id LxC2BwBXyTkaMxpnxsJYAA--.61984S2;
-	Thu, 24 Oct 2024 12:44:33 +0100 (CET)
-Message-ID: <35bed95a-3203-43a7-972d-f3fd3c7da6f9@huaweicloud.com>
-Date: Thu, 24 Oct 2024 13:44:24 +0200
+	s=arc-20240116; t=1729770323; c=relaxed/simple;
+	bh=q3Im/x9816GQZIgTnDjRdF+oBg90Pj/N/S23Rklropk=;
+	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BIm0MecDEg8/G2qvYsUvE7ssy2kwuxhBEJReux4iQL/j45knDf4Cxhgk0/K3T3nf/2+WdEUKWJ6dgGWPUdiEfixobEAwkU//4wRVwhjgFh9Wm5gwa6qzuKW7VVI1sYu1vxqc0zjKNE1yZPjZbnVFlZxHZL+AXuSaGBxgZIMlTdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=fuGNBr8N; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-539f76a6f0dso770155e87.1
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 04:45:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1729770319; x=1730375119; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:references:mime-version:in-reply-to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=eqMwQS9Wvwm9V5Q3IwKqnZIPpc6vrtzT0nsbOwiorlg=;
+        b=fuGNBr8N/wBRvRQOkNjJRE9fv68R0b49HJHTZSMfLn8jtLWymW5uiKHafupIMc9tkz
+         GUxPJEYrthmsJA8j/0x77wevkzvWidRDSMJJ8t89DQULcroKybE6aMKCBFiNYhb7LjUb
+         MJY1QfTB+iqtBsvcERjfvt9LahIO98SXagQATItUp73OUVJJL7OfJ4iGvuYfbSNWLLnR
+         aQ0oBGg3pOG4+TII+hJcGX/6BWXZeLQCAk6Hjhk8rX7HFQjylXTrcMtJKQesLxnH0d41
+         QvsnA3WHvrE/2fwdTbW/K6Pnm6X9qXG645/AClfjx0tPsuIlb8vgPIWrRb7I4In24mX4
+         ZE9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729770319; x=1730375119;
+        h=cc:to:subject:message-id:date:references:mime-version:in-reply-to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=eqMwQS9Wvwm9V5Q3IwKqnZIPpc6vrtzT0nsbOwiorlg=;
+        b=NSm8p0ATL017yfAVXLD52dS2hnpK43oV9s/hTdgkrTL5XTVUCAzY1v4fyTMwGlG3U4
+         RLSO6d5QwuzJWiqOAoyhoWMI/ABIUkqHel8jNwCNXZqRh45aZIWbg372eiU972kI7LDN
+         kpGdPkxcS4UOm3KB9hzejYrXwKGfsdVW/8w2KX0VFvtOgM2xo70HzPQYefFjyNEwAPkg
+         7w1XBHULMb3zjcIiY8/cQAQQO7xp5DLhBy4VdsgC/WRUyMoP6rjfEdsMHJDLw12z7Z+d
+         eOar2awm6FF7wru0AoKS8tIz270EfDyz3U0kOu4SFR1CYFoXlh6HgJrFSS2SA4BgELsx
+         12/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWWHCGMrhSAGm885aTwaU6iks8sNm6rtYTltDLdGJCKgOzPHrs+ZkR6wZytct6ogR9E38+rAMqLz2JW5Q0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOaJr2CTNKvsWzLIB+JzTj0TbOSDNbZ7nA0WCBs+z84ZX40K/b
+	w3JC71u0fx83igZErSHLo6YADgg++vMhQKY2vxkPUkdURgAJq8v7gOP/KtUrr/T3+MCpVCR4Yc9
+	IvlcWl5Qh4sbugrKho5Hm0OnbgTSmjgPbhm8sbA==
+X-Google-Smtp-Source: AGHT+IFJmvrvkGYF0E5vgP08XJoYOlSg7NtoiwbFsYyNOk80nltuHDkj2KW3wXbU+k71zAFNjZc2Bmo9SZI+XtVWC94=
+X-Received: by 2002:a05:6512:1293:b0:536:55a9:4b6c with SMTP id
+ 2adb3069b0e04-53b1a307d85mr3808241e87.13.1729770318940; Thu, 24 Oct 2024
+ 04:45:18 -0700 (PDT)
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Thu, 24 Oct 2024 04:45:18 -0700
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+In-Reply-To: <bf16af3b-d00e-4084-aa29-6e4c1955ed88@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Some observations (results) on BPF acquire and release
-To: Andrea Parri <parri.andrea@gmail.com>, puranjay@kernel.org,
- paulmck@kernel.org
-Cc: bpf@vger.kernel.org, lkmm@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <Zxk2wNs4sxEIg-4d@andrea>
-From: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
-In-Reply-To: <Zxk2wNs4sxEIg-4d@andrea>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:LxC2BwBXyTkaMxpnxsJYAA--.61984S2
-X-Coremail-Antispam: 1UD129KBjvdXoWrKr1fXryrJr1xtw43GF4rZrb_yoWkGrb_GF
-	ZxCryj9as0qFn7XrsrKF1Y93ZakrWUJry7X3yFq34Yv34ktFZ5Xryvkry5ZF18Cwn0yryY
-	ga4DA3yjka42gjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbwkYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
-	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
-	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0cI8IcVCY1x02
-	67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z280aVCY1x0267
-	AKxVW8JVW8Jr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2
-	j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7x
-	kEbVWUJVW8JwACjcxG0xvEwIxGrwCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0EwIxG
-	rwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4
-	vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IY
-	x2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26c
-	xKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAF
-	wI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU1veHDUUUUU==
-X-CM-SenderInfo: 5mrqt2oorev25kdx2v3u6k3tpzhluzxrxghudrp/
+References: <20241018-gpio-notify-in-kernel-events-v5-0-c79135e58a1c@linaro.org>
+ <20241018-gpio-notify-in-kernel-events-v5-8-c79135e58a1c@linaro.org>
+ <d6601a31-7685-4b21-9271-1b76116cc483@sirena.org.uk> <CAMRc=MfW9n+y8Dehe_g9b8_=he1YuFr3CEGG3iQEfjYwFiWA_g@mail.gmail.com>
+ <CAMRc=MdER_JNcvPMRuzbDFpAUqarC9K8KRP+i5SFTW3H7Mkg=w@mail.gmail.com> <bf16af3b-d00e-4084-aa29-6e4c1955ed88@gmail.com>
+Date: Thu, 24 Oct 2024 04:45:18 -0700
+Message-ID: <CAMRc=McUpRJ=EN3DB7gsgsNKZHhJym6vfURmX9+mXnYuXjNwMA@mail.gmail.com>
+Subject: Re: [PATCH v5 8/8] gpiolib: notify user-space about in-kernel line
+ state changes
+To: Klara Modin <klarasmodin@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Kent Gibson <warthog618@gmail.com>, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Mark Brown <broonie@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
+On Thu, 24 Oct 2024 13:34:11 +0200, Klara Modin <klarasmodin@gmail.com> said:
+>
+> I think I hit the same, or a similar bug, on my Edgerouter 6P (Cavium
+> Octeon III):
+>
+> CPU 3 Unable to handle kernel paging request at virtual address
+> 0000000000000000, epc == ffffffff817a40c8, ra == ffffffff817a40a4
+> Oops[#1]:
+> CPU: 3 UID: 0 PID: 1 Comm: swapper/0 Not tainted
+> 6.12.0-rc4-next-20241023-00032-g01c8e35f8d89 #84
+> ...
+> Call Trace:
+> gpiod_direction_output (drivers/gpio/gpiolib.c:4164
+> drivers/gpio/gpiolib.c:2700 drivers/gpio/gpiolib.c:2694)
+> i2c_register_adapter (drivers/i2c/i2c-core-base.c:396
+> drivers/i2c/i2c-core-base.c:422 drivers/i2c/i2c-core-base.c:434
+> drivers/i2c/i2c-core-base.c:1574)
+> octeon_i2c_probe (drivers/i2c/busses/i2c-octeon-platdrv.c:247)
+>
+> (the complete log is attached)
+>
+> Unfortunately the oops remains after applying the diff and the call
+> trace looks to be the same.
+>
+> Please let me know if there's anything else you need.
+>
 
+Hmm so it's desc->gdev that is NULL... Could you try the following:
 
-Am 10/23/2024 um 7:47 PM schrieb Andrea Parri:
-> Hi Puranjay and Paul,
-> 
-> These remarks show that the proposed BPF formalization of acquire and
-> release somehow, but substantially, diverged from the corresponding
-> LKMM formalization.  My guess is that the divergences mentioned above
-> were not (fully) intentional, or I'm wondering -- why not follow the
-> latter (the LKMM's) more closely? -  This is probably the first question
-> I would need to clarify before trying/suggesting modifications to the
-> present formalizations.  ;-)  Thoughts?
-> 
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index ae758ba6dc3d..c95c79ea2b49 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -1026,6 +1026,9 @@ int gpiochip_add_data_with_key(struct gpio_chip
+*gc, void *data,
+ 		}
+ 	}
 
-I'm also curious why the formalization (not just in the semantics but 
-also how it is structured) is so completely different from LKMM's.
++	for (desc_index = 0; desc_index < gc->ngpio; desc_index++)
++		gdev->descs[desc_index].gdev = gdev;
++
+ 	ATOMIC_INIT_NOTIFIER_HEAD(&gdev->line_state_notifier);
+ 	BLOCKING_INIT_NOTIFIER_HEAD(&gdev->device_notifier);
 
-At first glance there are also many semantic differences, e.g., it seems 
-coe is much weaker in eBPF and the last axiom also seems a bit like a 
-tack-on that doesn't "play well" with the previous axioms.
+@@ -1055,8 +1058,6 @@ int gpiochip_add_data_with_key(struct gpio_chip
+*gc, void *data,
+ 	for (desc_index = 0; desc_index < gc->ngpio; desc_index++) {
+ 		struct gpio_desc *desc = &gdev->descs[desc_index];
 
-It would make sense to me to start with the framework of LKMM and maybe 
-weaken it from there if it is really necessary. But maybe I don't know 
-enough about how eBPF atomics are intended to work...
+-		desc->gdev = gdev;
+-
+ 		if (gc->get_direction && gpiochip_line_is_valid(gc, desc_index)) {
+ 			assign_bit(FLAG_IS_OUT,
+ 				   &desc->flags, !gc->get_direction(gc, desc_index));
 
-Best wishes,
-   jonas
+I'm wondering if this is not an earlier commit.
 
+Bart
 
