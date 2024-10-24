@@ -1,349 +1,271 @@
-Return-Path: <linux-kernel+bounces-379977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40A319AE6A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:34:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 880219AE6A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:35:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA9021F269B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:34:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CFE71F25A35
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:35:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CFD21E32AF;
-	Thu, 24 Oct 2024 13:29:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21DF91EF096;
+	Thu, 24 Oct 2024 13:29:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="EVJMBPte"
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hYJ2wGrN";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="piNrZ/LE";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hYJ2wGrN";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="piNrZ/LE"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 433FC1E32CF
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 13:29:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 987751EF085
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 13:29:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729776554; cv=none; b=rHJoP5/4YWlGecEbo8uGH/eQ9z6L3xvgNEZTu5WjIsyOWbjdow2vJKvtQteiirlrC1DUVjTO21NMCq8O9NsVb53Z5IFhOqH4zcu+3q7zroDS0wigaD0DrdWtN/vRPquCkjehA92qXVPeU1ifhtNiyuQJPxNzL8p24Rn765crr3w=
+	t=1729776580; cv=none; b=Uau1kTSXCRaJG8Vf4NoaRTJseXcd7WHh5XoPDMbwbM7542/pjuZ5sJSAJmXZwfxb6o0eJ1Gxh8jdHGHtddCmnDnXLcsfKhU8/Uri0VgqidMMTSY3dWnKQXUnMLzAu4Yugoo2WA25YZBPwVAnDU39oVLc0vWMxkCt/3Mf+e661ws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729776554; c=relaxed/simple;
-	bh=TNFGg/CYQGxNs+Ld3XxJZ5IfmtwWB2COK0LRP9AdQLs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Q+PHnRMNJ5dR7CuWGeo9p3VGVLyglLmdNGCbLRhGRMImjQ96y1blzrqcMJ8Vx6I/V882WQkFazN/bweGNcaoFBKYugVuHblcFUwl23E9I3SgRPIos89XCQEYAB7s/AsuFz5CWAwrD2xsWe3cs25DSPDnO7GL+gVwBHUIeDOAJp0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=EVJMBPte; arc=none smtp.client-ip=209.85.222.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7b161fa1c7bso57046585a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 06:29:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1729776550; x=1730381350; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2mADvfbNearZia5yRK0i07ANDp2oc6aBLBYcSmlyDG4=;
-        b=EVJMBPteZafBmJap6zDFwn8Z+zsrfzDjto8H3WRlNBNkpzz2XqMSTS2ws2kdzGlgc+
-         e4ScBYtOzT1IhMS2UMzXS8mUH8kJQh17+MX9y3MRSMhkj5bBR+tweuQrV5MeAWEVrWx2
-         TI9dPpRCLjMJKDtT8H3qZ364tD9RLfze+473g=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729776550; x=1730381350;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2mADvfbNearZia5yRK0i07ANDp2oc6aBLBYcSmlyDG4=;
-        b=WmeKcNdeHDwQaq+WGbOMa5Uzt+4quDcX7F2DIaNl16zFNWDRrZOz7ydBBbE81F1wVx
-         YDL7KCNvUU0Wx1a68/dtzH4Qzon1+WkuHIsTSDuBc6oUklYyo+aJfo0BerJ2Z6nrEL8W
-         ZLYP/fyZ232szb+L2vq3uUVTEL/hz+QGWuf9QrBL0RkFwZLvubpBuBiz7OA3KBcX7gSk
-         6yqK7CmiK9DH1/BPlmiR0Ow6NEBoRThcPNh22DlSNj/CYDuZw6aAtKZDPBVBmSD5ZDhW
-         rgQqPNnf6T6kWl88zsFtGdTrd5uPdYsvhSe9GX2XajFIivW18jwbhNJfwxJSRiKyYCEZ
-         LgYw==
-X-Forwarded-Encrypted: i=1; AJvYcCVOqLpsBW53kjN/gKvBY6lhuRvnoMwK4bb4PQuqM9uG24ZhVrszSWWltAKECqk7QahUd/gvcJuh13tzSMM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUYJveFqKzbj92oWagjps3/PTHauyRecnSYOaz6uL9LW0Ai67S
-	WctaqmhT4Eag3bC6AigV+N8WT/IZHZlikFvtDpqyskNw2gQQhUhaflwTV4v1J+HZDfbPL0vjBYt
-	aBA==
-X-Google-Smtp-Source: AGHT+IGLbXLa5kyweKu7WefNH+VU10qvs7wfcV2860hFBGJU+bW6CxA3VhN5gpV4uuydTUUtEpHUDQ==
-X-Received: by 2002:a05:620a:4720:b0:7a1:62ad:9d89 with SMTP id af79cd13be357-7b186d12a38mr205596785a.64.1729776549881;
-        Thu, 24 Oct 2024 06:29:09 -0700 (PDT)
-Received: from denia.c.googlers.com (189.216.85.34.bc.googleusercontent.com. [34.85.216.189])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b165a5d663sm484204885a.94.2024.10.24.06.29.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Oct 2024 06:29:09 -0700 (PDT)
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Thu, 24 Oct 2024 13:29:07 +0000
-Subject: [PATCH 3/3] iio: hid-sensor-prox: Add support for more channels
+	s=arc-20240116; t=1729776580; c=relaxed/simple;
+	bh=n41ey9KluEnpW0Bv+vYh+mf9iynj/6m4igRfoKcafk8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ur/fxTm8mZQo+hS9GpbsyI/YD4EZvYLoc71Ig8zEIYzZF3uBD0GEo/92jGjHjrP3eaS2YuWixCP5PGvimh/U0iZRou5pjks65fN02LAVJJehlsWqug8+p0aVQo22x+N/qYPJkg4J0XqegK1rYWPfNrhfyH+FaxcrOqp/GeBEq+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hYJ2wGrN; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=piNrZ/LE; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hYJ2wGrN; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=piNrZ/LE; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id E13FB21B0C;
+	Thu, 24 Oct 2024 13:29:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1729776575; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=DNZY010Klt7+SZxZEDHH79zA/OC0BeAqYRKohPe/UMw=;
+	b=hYJ2wGrNca3iV/epxx0FD5VzFHfqPBPqJHfu6+InPuE+9+ay7EgUCIoiLFEiqMaTkbIPCT
+	KXB//T7g/X1hY0liuMJ4pXWzpRhMJKHzVTKEfLJPVn2z5N8s7R1uaGsez17lFJmNnSC7vl
+	G5IV7l5/G41WHPgfIEjWeanbq5mV6XU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1729776575;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=DNZY010Klt7+SZxZEDHH79zA/OC0BeAqYRKohPe/UMw=;
+	b=piNrZ/LEiqDqFtKjY6vGWqfdFqDWwntKWlKidaS8zodwXLCZyHSFdMEV16jEAJQqgLnjdD
+	1la8AY5uwz3EUpCg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1729776575; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=DNZY010Klt7+SZxZEDHH79zA/OC0BeAqYRKohPe/UMw=;
+	b=hYJ2wGrNca3iV/epxx0FD5VzFHfqPBPqJHfu6+InPuE+9+ay7EgUCIoiLFEiqMaTkbIPCT
+	KXB//T7g/X1hY0liuMJ4pXWzpRhMJKHzVTKEfLJPVn2z5N8s7R1uaGsez17lFJmNnSC7vl
+	G5IV7l5/G41WHPgfIEjWeanbq5mV6XU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1729776575;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=DNZY010Klt7+SZxZEDHH79zA/OC0BeAqYRKohPe/UMw=;
+	b=piNrZ/LEiqDqFtKjY6vGWqfdFqDWwntKWlKidaS8zodwXLCZyHSFdMEV16jEAJQqgLnjdD
+	1la8AY5uwz3EUpCg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C8D3F1368E;
+	Thu, 24 Oct 2024 13:29:35 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id iRqeML9LGmeBGwAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Thu, 24 Oct 2024 13:29:35 +0000
+Message-ID: <9d7c73f6-1e1a-458b-93c6-3b44959022e0@suse.cz>
+Date: Thu, 24 Oct 2024 15:29:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: darktable performance regression on AMD systems caused by "mm:
+ align larger anonymous mappings on THP boundaries"
+Content-Language: en-US
+To: Petr Tesarik <ptesarik@suse.com>
+Cc: Thorsten Leemhuis <regressions@leemhuis.info>,
+ Rik van Riel <riel@surriel.com>, Matthias <matthias@bodenbinder.de>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Linux kernel regressions list <regressions@lists.linux.dev>,
+ LKML <linux-kernel@vger.kernel.org>, Linux-MM <linux-mm@kvack.org>,
+ Yang Shi <yang@os.amperecomputing.com>, Matthew Wilcox <willy@infradead.org>
+References: <2050f0d4-57b0-481d-bab8-05e8d48fed0c@leemhuis.info>
+ <f81ef5bd-e930-4982-a5a8-cd4aca272912@suse.cz>
+ <ce35b58e-f18c-4701-8494-fa8d1f6e5148@suse.cz>
+ <20241024124953.5d77c0b3@mordecai.tesarici.cz>
+ <a7585f3e-d6c7-4982-8214-63a7ec6258ad@suse.cz>
+ <20241024131331.6ee16603@mordecai.tesarici.cz>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ EP+ylKVEKb0Q2A==
+In-Reply-To: <20241024131331.6ee16603@mordecai.tesarici.cz>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241024-hpd-v1-3-2a125882f1f8@chromium.org>
-References: <20241024-hpd-v1-0-2a125882f1f8@chromium.org>
-In-Reply-To: <20241024-hpd-v1-0-2a125882f1f8@chromium.org>
-To: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>, 
- Jonathan Cameron <jic23@kernel.org>, 
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, 
- Lars-Peter Clausen <lars@metafoo.de>
-Cc: Harvey Yang <chenghaoyang@google.com>, linux-input@vger.kernel.org, 
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Ricardo Ribalda <ribalda@chromium.org>
-X-Mailer: b4 0.13.0
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_TLS_ALL(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_DN_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:url,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Score: -4.30
+X-Spam-Flag: NO
 
-Egis620 supports 3 channels: presense, proximity and attention.
+On 10/24/24 13:13, Petr Tesarik wrote:
+> On Thu, 24 Oct 2024 12:56:27 +0200
+> Vlastimil Babka <vbabka@suse.cz> wrote:
+> 
+>> On 10/24/24 12:49, Petr Tesarik wrote:
+>> > On Thu, 24 Oct 2024 12:23:48 +0200
+>> > Vlastimil Babka <vbabka@suse.cz> wrote:
+>> >   
+>> >> On 10/24/24 11:58, Vlastimil Babka wrote:  
+>> >> > On 10/24/24 09:45, Thorsten Leemhuis wrote:    
+>> >> >> Hi, Thorsten here, the Linux kernel's regression tracker.
+>> >> >> 
+>> >> >> Rik, I noticed a report about a regression in bugzilla.kernel.org that
+>> >> >> appears to be caused by the following change of yours:
+>> >> >> 
+>> >> >> efa7df3e3bb5da ("mm: align larger anonymous mappings on THP boundaries")
+>> >> >> [v6.7]
+>> >> >> 
+>> >> >> It might be one of those "some things got faster, a few things became
+>> >> >> slower" situations. Not sure. Felt odd that the reporter was able to
+>> >> >> reproduce it on two AMD systems, but not on a Intel system. Maybe there
+>> >> >> is a bug somewhere else that was exposed by this.    
+>> >> > 
+>> >> > It seems very similar to what we've seen with spec benchmarks such as cactus
+>> >> > and bisected to the same commit:
+>> >> > 
+>> >> > https://bugzilla.suse.com/show_bug.cgi?id=1229012
+>> >> > 
+>> >> > The exact regression varies per system. Intel regresses too but relatively
+>> >> > less. The theory is that there are many large-ish allocations that don't
+>> >> > have individual sizes aligned to 2MB and would have been merged, commit
+>> >> > efa7df3e3bb5da causes them to become separate areas where each aligns its
+>> >> > start at 2MB boundary and there are gaps between. This (gaps and vma
+>> >> > fragmentation) itself is not great, but most of the problem seemed to be
+>> >> > from the start alignment, which togethter with the access pattern causes
+>> >> > more TLB or cache missess due to limited associtativity.
+>> >> > 
+>> >> > So maybe darktable has a similar problem. A simple candidate fix could
+>> >> > change commit efa7df3e3bb5da so that the mapping size has to be a multiple
+>> >> > of THP size (2MB) in order to become aligned, right now it's enough if it's
+>> >> > THP sized or larger.    
+>> >> 
+>> >> Maybe this could be enough to fix the issue? (on 6.12-rc4)  
+>> > 
+>> > 
+>> > Yes, this should work. I was unsure if thp_get_unmapped_area_vmflags()
+>> > differs in other ways from mm_get_unmapped_area_vmflags(), which might
+>> > still be relevant. I mean, does mm_get_unmapped_area_vmflags() also
+>> > prefer to allocate THPs if the virtual memory block is large enough?  
+>> 
+>> Well any sufficiently large area spanning a PMD aligned/sized block (either
+>> a result of a single allocation or merging of several allocations) can
+>> become populated by THPs (at least in those aligned blocks), and the
+>> preference depends on system-wide THP settings and madvise(MADV_HUGEPAGE) or
+>> prctl.
+>> 
+>> But mm_get_unmapped_area_vmflags() will AFAIK not try to align the area to
+>> PMD size like the thp_ version would, even if the request is large enough.
+> 
+> Then it sounds like exactly what we want. But I prefer to move the
+> check down to __thp_get_unmapped_area() like this:
 
-Modify the driver so it can read those channels as well.
+I wanted to limit the fix to the place commit efa7df3e3bb5da changes, i.e.
+anonymous mappings, because there are other callers of
+__thp_get_unmapped_area(), namely the filesystems via
+thp_get_unmapped_area() and I wasn't sure if that wouldn't regress them. But
+since you suggested I had a brief look now...
 
-Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
----
- drivers/iio/light/hid-sensor-prox.c | 161 ++++++++++++++++++++----------------
- 1 file changed, 89 insertions(+), 72 deletions(-)
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index 2fb328880b50..8d80f3af5525 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -1082,6 +1082,9 @@ static unsigned long __thp_get_unmapped_area(struct file *filp,
+>  	if (!IS_ENABLED(CONFIG_64BIT) || in_compat_syscall())
+>  		return 0;
+>  
+> +	if (!IS_ALIGNED(len, size))
+> +		return 0;
 
-diff --git a/drivers/iio/light/hid-sensor-prox.c b/drivers/iio/light/hid-sensor-prox.c
-index d38564fe22df..97550d0d21a9 100644
---- a/drivers/iio/light/hid-sensor-prox.c
-+++ b/drivers/iio/light/hid-sensor-prox.c
-@@ -13,16 +13,26 @@
- #include <linux/iio/buffer.h>
- #include "../common/hid-sensors/hid-sensor-trigger.h"
- 
--#define CHANNEL_SCAN_INDEX_PRESENCE 0
-+static const u32 prox_usage_ids[] = {
-+	HID_USAGE_SENSOR_HUMAN_PRESENCE,
-+	HID_USAGE_SENSOR_HUMAN_PROXIMITY,
-+	HID_USAGE_SENSOR_HUMAN_ATTENTION,
-+};
-+
-+#define MAX_USAGE ARRAY_SIZE(prox_usage_ids)
- 
- struct prox_state {
- 	struct hid_sensor_hub_callbacks callbacks;
- 	struct hid_sensor_common common_attributes;
--	struct hid_sensor_hub_attribute_info prox_attr;
--	u32 human_presence;
-+	struct hid_sensor_hub_attribute_info prox_attr[MAX_USAGE];
-+	struct iio_chan_spec channels[MAX_USAGE];
-+	u32 channel2usage[MAX_USAGE];
-+	u32 human_presence[MAX_USAGE];
- 	int scale_pre_decml;
- 	int scale_post_decml;
- 	int scale_precision;
-+	unsigned long scan_mask[2];
-+	int num_channels;
- };
- 
- static const u32 prox_sensitivity_addresses[] = {
-@@ -30,17 +40,23 @@ static const u32 prox_sensitivity_addresses[] = {
- 	HID_USAGE_SENSOR_DATA_PRESENCE,
- };
- 
--/* Channel definitions */
--static const struct iio_chan_spec prox_channels[] = {
--	{
--		.type = IIO_PROXIMITY,
--		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
--		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_OFFSET) |
--		BIT(IIO_CHAN_INFO_SCALE) |
--		BIT(IIO_CHAN_INFO_SAMP_FREQ) |
--		BIT(IIO_CHAN_INFO_HYSTERESIS),
--		.scan_index = CHANNEL_SCAN_INDEX_PRESENCE,
-+#define PROX_CHANNEL(_indexed, _channel) \
-+	{\
-+		.type = IIO_PROXIMITY,\
-+		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),\
-+		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_OFFSET) |\
-+		BIT(IIO_CHAN_INFO_SCALE) |\
-+		BIT(IIO_CHAN_INFO_SAMP_FREQ) |\
-+		BIT(IIO_CHAN_INFO_HYSTERESIS),\
-+		.indexed = _indexed,\
-+		.channel = _channel,\
- 	}
-+
-+/* Channel definitions (same order as prox_usage_ids) */
-+static const struct iio_chan_spec prox_channels[] = {
-+	PROX_CHANNEL(false, 0), // PRESENCE
-+	PROX_CHANNEL(true, 1), // PROXIMITY
-+	PROX_CHANNEL(true, 2), // ATTENTION
- };
- 
- /* Adjust channel real bits based on report descriptor */
-@@ -62,7 +78,7 @@ static int prox_read_raw(struct iio_dev *indio_dev,
- {
- 	struct prox_state *prox_state = iio_priv(indio_dev);
- 	struct hid_sensor_hub_device *hsdev;
--	int report_id = -1;
-+	int report_id;
- 	u32 address;
- 	int ret_type;
- 	s32 min;
-@@ -71,29 +87,22 @@ static int prox_read_raw(struct iio_dev *indio_dev,
- 	*val2 = 0;
- 	switch (mask) {
- 	case IIO_CHAN_INFO_RAW:
--		switch (chan->scan_index) {
--		case  CHANNEL_SCAN_INDEX_PRESENCE:
--			report_id = prox_state->prox_attr.report_id;
--			min = prox_state->prox_attr.logical_minimum;
--			address = HID_USAGE_SENSOR_HUMAN_PRESENCE;
--			hsdev = prox_state->common_attributes.hsdev;
--			break;
--		default:
--			report_id = -1;
--			break;
--		}
--		if (report_id >= 0) {
--			hid_sensor_power_state(&prox_state->common_attributes,
--						true);
--			*val = sensor_hub_input_attr_get_raw_value(
--				hsdev, hsdev->usage, address, report_id,
--				SENSOR_HUB_SYNC, min < 0);
--			hid_sensor_power_state(&prox_state->common_attributes,
--						false);
--		} else {
-+		if (chan->scan_index >= prox_state->num_channels) {
- 			*val = 0;
- 			return -EINVAL;
- 		}
-+		address = prox_state->channel2usage[chan->scan_index];
-+		report_id = prox_state->prox_attr[chan->scan_index].report_id;
-+		hsdev = prox_state->common_attributes.hsdev;
-+		min = prox_state->prox_attr[chan->scan_index].logical_minimum;
-+		hid_sensor_power_state(&prox_state->common_attributes, true);
-+		*val = sensor_hub_input_attr_get_raw_value(hsdev,
-+							   hsdev->usage,
-+							   address,
-+							   report_id,
-+							   SENSOR_HUB_SYNC,
-+							   min < 0);
-+		hid_sensor_power_state(&prox_state->common_attributes, false);
- 		ret_type = IIO_VAL_INT;
- 		break;
- 	case IIO_CHAN_INFO_SCALE:
-@@ -103,7 +112,7 @@ static int prox_read_raw(struct iio_dev *indio_dev,
- 		break;
- 	case IIO_CHAN_INFO_OFFSET:
- 		*val = hid_sensor_convert_exponent(
--				prox_state->prox_attr.unit_expo);
-+			prox_state->prox_attr[chan->scan_index].unit_expo);
- 		ret_type = IIO_VAL_INT;
- 		break;
- 	case IIO_CHAN_INFO_SAMP_FREQ:
-@@ -178,48 +187,63 @@ static int prox_capture_sample(struct hid_sensor_hub_device *hsdev,
- {
- 	struct iio_dev *indio_dev = platform_get_drvdata(priv);
- 	struct prox_state *prox_state = iio_priv(indio_dev);
--	int ret = -EINVAL;
--
--	switch (usage_id) {
--	case HID_USAGE_SENSOR_HUMAN_PRESENCE:
--		switch (raw_len) {
--		case 1:
--			prox_state->human_presence = *(u8 *)raw_data;
--			return 0;
--		case 4:
--			prox_state->human_presence = *(u32 *)raw_data;
--			return 0;
--		default:
-+	int chan;
-+
-+	for (chan = 0; chan < prox_state->num_channels; chan++)
-+		if (prox_state->channel2usage[chan] == usage_id)
- 			break;
--		}
-+	if (chan == prox_state->num_channels)
-+		return -EINVAL;
-+
-+	switch (raw_len) {
-+	case 1:
-+		prox_state->human_presence[chan] = *(u8 *)raw_data;
-+		break;
-+	case 4:
-+		prox_state->human_presence[chan] = *(u32 *)raw_data;
- 		break;
- 	}
- 
--	return ret;
-+	return 0;
- }
- 
- /* Parse report which is specific to an usage id*/
- static int prox_parse_report(struct platform_device *pdev,
- 				struct hid_sensor_hub_device *hsdev,
--				struct iio_chan_spec *channels,
--				unsigned usage_id,
- 				struct prox_state *st)
- {
-+	struct iio_chan_spec *channels = st->channels;
-+	int index = 0;
- 	int ret;
-+	int i;
-+
-+	for (i = 0; i < MAX_USAGE; i++) {
-+		u32 usage_id = prox_usage_ids[i];
-+
-+		ret = sensor_hub_input_get_attribute_info(hsdev,
-+							  HID_INPUT_REPORT,
-+							  hsdev->usage,
-+							  usage_id,
-+							  &st->prox_attr[index]);
-+		if (ret < 0)
-+			continue;
-+		st->channel2usage[index] = usage_id;
-+		st->scan_mask[0] |= BIT(index);
-+		channels[index] = prox_channels[i];
-+		channels[index].scan_index = index;
-+		prox_adjust_channel_bit_mask(channels, index,
-+					     st->prox_attr[index].size);
-+		dev_dbg(&pdev->dev, "prox %x:%x\n", st->prox_attr[index].index,
-+			st->prox_attr[index].report_id);
-+		index++;
-+	}
- 
--	ret = sensor_hub_input_get_attribute_info(hsdev, HID_INPUT_REPORT,
--			usage_id,
--			HID_USAGE_SENSOR_HUMAN_PRESENCE,
--			&st->prox_attr);
--	if (ret < 0)
-+	if (!index)
- 		return ret;
--	prox_adjust_channel_bit_mask(channels, CHANNEL_SCAN_INDEX_PRESENCE,
--					st->prox_attr.size);
- 
--	dev_dbg(&pdev->dev, "prox %x:%x\n", st->prox_attr.index,
--			st->prox_attr.report_id);
-+	st->num_channels = index;
- 
--	return ret;
-+	return 0;
- }
- 
- /* Function to initialize the processing for usage id */
-@@ -250,22 +274,15 @@ static int hid_prox_probe(struct platform_device *pdev)
- 		return ret;
- 	}
- 
--	indio_dev->channels = devm_kmemdup(&pdev->dev, prox_channels,
--					   sizeof(prox_channels), GFP_KERNEL);
--	if (!indio_dev->channels) {
--		dev_err(&pdev->dev, "failed to duplicate channels\n");
--		return -ENOMEM;
--	}
--
--	ret = prox_parse_report(pdev, hsdev,
--				(struct iio_chan_spec *)indio_dev->channels,
--				hsdev->usage, prox_state);
-+	ret = prox_parse_report(pdev, hsdev, prox_state);
- 	if (ret) {
- 		dev_err(&pdev->dev, "failed to setup attributes\n");
- 		return ret;
- 	}
- 
--	indio_dev->num_channels = ARRAY_SIZE(prox_channels);
-+	indio_dev->num_channels = prox_state->num_channels;
-+	indio_dev->channels = prox_state->channels;
-+	indio_dev->available_scan_masks = prox_state->scan_mask;
- 	indio_dev->info = &prox_info;
- 	indio_dev->name = name;
- 	indio_dev->modes = INDIO_DIRECT_MODE;
+I think the filesystem might be asked to create a mapping for e.g. a
+[1MB, 4MB] range from a file, thus the offset would be 1MB (with anonymous
+pages an off=0 is passed) and the current implementation would try to do the
+right thing for that (align the [2MB, 4MB] range to THP) but after your
+patch it would see len is 3MB and give up, no?
 
--- 
-2.47.0.163.g1226f6d8fa-goog
+> +
+>  	if (off_end <= off_align || (off_end - off_align) < size)
+>  		return 0;
+>  
 
 
