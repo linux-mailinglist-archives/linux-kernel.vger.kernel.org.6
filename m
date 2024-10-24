@@ -1,137 +1,100 @@
-Return-Path: <linux-kernel+bounces-380317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C96C39AEC42
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 18:34:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D78849AEC46
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 18:35:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70C631F22816
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:34:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 825E41F2178C
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:35:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96A721FC7F6;
-	Thu, 24 Oct 2024 16:33:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD45D1F8EE3;
+	Thu, 24 Oct 2024 16:34:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K8SZNPBR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Le1LiewZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E34921FC7C6;
-	Thu, 24 Oct 2024 16:33:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29C091F81B2;
+	Thu, 24 Oct 2024 16:34:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729787597; cv=none; b=i2VtRA1UM+2VPDOw++sqnBcelkwMEWME14ao+dDAibebW5K1Oijlzemwx9gpDn62FZMvip+lM3qVtK5Tv9sUjYtUZGCiP8abi9BY6L75xqZWw0s1vqFFADsVeHGXa7WDFG9ViX8qDAtOC+r4oPWmZ3GaDz1+BoOAgV2ET7kBPQQ=
+	t=1729787672; cv=none; b=YY/K9FW6zFOuluTWPg/Z6t3jwd8W3qZhw+Ve0bXSWGzNuT+9pMAd+q7fP0BnFjhVecaiVf7tZ7y7Cldb3yYNGkgBOAA+JCrHRx5Wq6WxM6CgBXHh+Z7DTqOlkJ4+s8YmLZwQ2h264DREmcB7buTYCmo4mKpxiNqYk0L7ll2fYxk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729787597; c=relaxed/simple;
-	bh=wcSvy++2WK9K7K4DB2BwQXIdYratvHoDhVpZn+pTHkE=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=oUVM56Q8YbUKGlBGBbbJy8PmoEPJD7ZlkL0jlwvm0flwFvOgbm0h8mEfZys+sNtXtIzRZzZodxMYcI+qObekAS96GaFWBfpM+b149rDVZDgE883d2nE7d+jchWCid7XWR7ucSVA/B8dsFcWrdbPnRVKsoo8WPI5Yh+nK7JenE5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K8SZNPBR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3C83C4CEC7;
-	Thu, 24 Oct 2024 16:33:16 +0000 (UTC)
+	s=arc-20240116; t=1729787672; c=relaxed/simple;
+	bh=mXsRP0QURTXN2spewue/9HY90nPBosT7LhadWuOXHCk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GgZcyN6ptTXVtBGLT844AQrbSbGAJv2LXiwqPcQj0itPKYyMnTjg8vFDybfA0YVT4h5XBhS1Ts4U74t8uLAS33EGd0gwhqCEFCvf5brRGVw4g657OFt1lAOVFEzWA+I3R6Isu4n0z8rgbfdvgGnTFpG6Iuz52qgMU1vFgZA/98I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Le1LiewZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A954AC4CEC7;
+	Thu, 24 Oct 2024 16:34:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729787596;
-	bh=wcSvy++2WK9K7K4DB2BwQXIdYratvHoDhVpZn+pTHkE=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=K8SZNPBRMnGyYzoTxbLEDtIHajP6leNlRwDJRr7KVuXBS948RtOWKQXUbsdcHwuI3
-	 Pyk87iQWjay5aijI06KAE6bn302HswGqSkyTsFEn03azdQVQRIN0kfVJfeUyIrpunZ
-	 aR1XztGV2ldUuqslrYTLN2lmOcKMFq5SXG5hFx1703Pe60kbnWEZdHdpnrGsFaOnPy
-	 PUeM7XoHibxYxzYewW2IIY25q4N3KTyaLth1xGduH+Qf7lW0f3agTCzAJwtkR86wPF
-	 u758EkhJDrEjLH197/jpXci2SDFeC+V+7HjqD3ZV1KbOD3f9yACNDTuaFKlCfifgKW
-	 aH7gfUWtvyL/w==
-Date: Thu, 24 Oct 2024 11:33:16 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=k20201202; t=1729787671;
+	bh=mXsRP0QURTXN2spewue/9HY90nPBosT7LhadWuOXHCk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Le1LiewZ3qiFd9CaqiMoRqCJGHOZK7EgFzWCJcO3VR7bGJkuHxoD6gCnciWAh+iil
+	 UMzPTD1LbKy6ZFGGyFsfYGh6bAYFYpu/HPR8kdHXoEY75/Ql74p4iJKFG4tg9kdv2g
+	 n+/tBC0RIkWbEPCwrim0NF7kSdSLPOFz+YFIv7hoFvkIzl3h/S93G0PE77eaLxWveQ
+	 DMtVGJAndGoEYaAT1isRDjOP889pOBCuB4D1aqkhICKy4OatlNhHP19UKEXI4OyKPO
+	 xLsAG7ti6QI5KnU7D5AysdQ8OA4EtnktHwkX7dHfNu+/UtiBnbq+LegR5irfmTuUrf
+	 O4zw3pwKDDnAQ==
+Date: Thu, 24 Oct 2024 17:34:27 +0100
+From: Simon Horman <horms@kernel.org>
+To: =?utf-8?Q?Beno=C3=AEt?= Monin <benoit.monin@gmx.fr>
+Cc: =?utf-8?B?QmrDuHJu?= Mork <bjorn@mork.no>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: usb: qmi_wwan: add Quectel RG650V
+Message-ID: <20241024163427.GD1202098@kernel.org>
+References: <20241024151113.53203-1-benoit.monin@gmx.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Bhavin Sharma <bhavin.sharma@siliconsignals.io>
-Cc: Hiago De Franco <hiago.franco@toradex.com>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Michael Walle <mwalle@kernel.org>, Tim Harvey <tharvey@gateworks.com>, 
- Parthiban Nallathambi <parthiban@linumiz.com>, 
- Max Merchel <Max.Merchel@ew.tq-group.com>, 
- Conor Dooley <conor+dt@kernel.org>, shawnguo@kernel.org, 
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
- Hugo Villeneuve <hvilleneuve@dimonoff.com>, 
- Joao Paulo Goncalves <joao.goncalves@toradex.com>, 
- Sascha Hauer <s.hauer@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
- Gregor Herburger <gregor.herburger@ew.tq-group.com>, imx@lists.linux.dev, 
- Peng Fan <peng.fan@nxp.com>, Mathieu Othacehe <m.othacehe@gmail.com>, 
- linux-kernel@vger.kernel.org, 
- Alexander Stein <alexander.stein@ew.tq-group.com>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>
-In-Reply-To: <20241023091231.10050-1-bhavin.sharma@siliconsignals.io>
-References: <20241023091231.10050-1-bhavin.sharma@siliconsignals.io>
-Message-Id: <172978739819.623555.106741073057492931.robh@kernel.org>
-Subject: Re: [PATCH v3 0/2] Add support Boundary Device Nitrogen8MP
- Universal SMARC Carrier Board
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241024151113.53203-1-benoit.monin@gmx.fr>
 
-
-On Wed, 23 Oct 2024 14:41:13 +0530, Bhavin Sharma wrote:
-> Add initial support for Nitrogen8MP Universal SMARC Carrier Board with
-> Nitrogen8MP SMARC System on Module.
+On Thu, Oct 24, 2024 at 05:11:13PM +0200, Benoît Monin wrote:
+> Add support for Quectel RG650V which is based on Qualcomm SDX65 chip.
+> The composition is DIAG / NMEA / AT / AT / QMI.
 > 
-> Change in V2:
-> 
-> in patch 1/2:
->         - Drop Unneeded line
->         - Correct the indentation
-> 
-> in patch 2/2:
->         - Add Acked-by tag
-> 
-> CHange in V3:
-> 
-> in patch 1/2:
-> 	- In version 2, I forgot to add the Makefile. Adding it now.
-> 
-> Bhavin Sharma (2):
->   arm64: dts: imx8mp: Add Boundary Device Nitrogen8MP Universal SMARC
->     Carrier Board
->   dt-bindings: arm: fsl: Add Boundary Device Nitrogen8MP Universal SMARC
->     Carrier Board
-> 
->  .../devicetree/bindings/arm/fsl.yaml          |   6 +
->  arch/arm64/boot/dts/freescale/Makefile        |   1 +
->  .../freescale/imx8mp-nitrogen-smarc-som.dtsi  | 348 ++++++++++++++++++
->  .../imx8mp-nitrogen-smarc-universal-board.dts |  17 +
->  4 files changed, 372 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-nitrogen-smarc-som.dtsi
->  create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-nitrogen-smarc-universal-board.dts
-> 
-> --
-> 2.43.0
-> 
-> 
-> 
+> T:  Bus=02 Lev=01 Prnt=01 Port=03 Cnt=01 Dev#=  4 Spd=5000 MxCh= 0
+> D:  Ver= 3.20 Cls=00(>ifc ) Sub=00 Prot=00 MxPS= 9 #Cfgs=  1
+> P:  Vendor=2c7c ProdID=0122 Rev=05.15
+> S:  Manufacturer=Quectel
+> S:  Product=RG650V-EU
+> S:  SerialNumber=xxxxxxx
+> C:  #Ifs= 5 Cfg#= 1 Atr=a0 MxPwr=896mA
+> I:  If#= 0 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=30 Driver=option
+> E:  Ad=01(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
+> E:  Ad=81(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
+> I:  If#= 1 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+> E:  Ad=02(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
+> E:  Ad=82(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
+> I:  If#= 2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+> E:  Ad=03(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
+> E:  Ad=83(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
+> E:  Ad=84(I) Atr=03(Int.) MxPS=  10 Ivl=9ms
+> I:  If#= 3 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+> E:  Ad=04(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
+> E:  Ad=85(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
+> E:  Ad=86(I) Atr=03(Int.) MxPS=  10 Ivl=9ms
+> I:  If#= 4 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=ff Driver=qmi_wwan
+> E:  Ad=05(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
+> E:  Ad=87(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
+> E:  Ad=88(I) Atr=03(Int.) MxPS=   8 Ivl=9ms
+> Signed-off-by: Benoît Monin <benoit.monin@gmx.fr>
 
-
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
-
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
-
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
-
-  pip3 install dtschema --upgrade
-
-
-New warnings running 'make CHECK_DTBS=y freescale/imx8mp-nitrogen-smarc-universal-board.dtb' for 20241023091231.10050-1-bhavin.sharma@siliconsignals.io:
-
-arch/arm64/boot/dts/freescale/imx8mp-nitrogen-smarc-universal-board.dtb: /soc@0/bus@30800000/i2c@30ae0000/gpio@20: failed to match any schema with compatible: ['microchip,mcp23018']
-
-
-
-
+Reviewed-by: Simon Horman <horms@kernel.org>
 
 
