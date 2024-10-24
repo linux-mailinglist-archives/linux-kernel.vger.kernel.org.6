@@ -1,321 +1,234 @@
-Return-Path: <linux-kernel+bounces-380608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE39A9AF36A
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 22:14:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95F799AF369
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 22:14:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD9B21C22E85
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 20:14:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55A2C283214
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 20:14:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 246082170C0;
-	Thu, 24 Oct 2024 20:14:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA91F216A35;
+	Thu, 24 Oct 2024 20:14:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JRLOQfGX"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aNUHelSo"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C92021FF7D9;
-	Thu, 24 Oct 2024 20:14:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729800871; cv=none; b=fDck5sH0vNNCnklIZV7JP5dDHTwm5FNiHHtw4SIyXPPzWkoGuYx/ProM6h4cvMbygqsr0fUX2K58GkaJ571geC04ghZ7gntUQG8T4XYatTQkcdZ6z6OL2+h1pfpYNxzGkhh1dYUICiPiXlBjJ9OwOz/TM+ZNwVv/97tjjX7cER4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729800871; c=relaxed/simple;
-	bh=VklAR/wGX+k0pmjfj3M+iIy1qkP/ubwQqB0DWvZy6Hw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g0wcd6wa2Cf/FN3SYHirsYSDKArY0ues7H36ZrYaSke9m8Tggx06sN5NY5Th535UxF54y4usYmaORgJTeEluu7B/v2RrGrvPxyUguFWIAIOnjSquCVVqCt+okKbfvm73FPXuR5CUxcmDcTQFHu5dsSSQQmtyJMC5vyUsCVDLrko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JRLOQfGX; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C92BD2003C3;
+	Thu, 24 Oct 2024 20:14:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.10
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729800870; cv=fail; b=Jqg36rZL2eW0a5W+R1CmQPnuclKilySeSO+Ozy8TFVM4EuapMjSZuwT6uo8x3QKaUNfNR4IVm2ytnWiYyq91nxH/+MuCsQnUP4PyxTTlomXsAKi4Uz097UtFcdDP8GcgT65rWS1eNajhPD2H++Nq/WHnq36ouN++0hRcvn3XpN8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729800870; c=relaxed/simple;
+	bh=hbmwwF9KYMaJLCSoJ2NSQ30xXnnafhVgqfgEZoFTknM=;
+	h=Message-ID:Date:Subject:From:To:CC:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Yhm/2v8snBaRWEX0wHKNYVn3URO4emIIYJ9lDGw+0clLq2wk95eKsrKi+iY2hsU6IysCvymD36MVaPt8CwfizFSEzeAFP2psB4muNWGeJEGBBL7ajEoEBR++sqRLo2VxNvK+R0PO2zi3/FFqBcft8y32ZGSBYYsXajaTdaGoVWA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aNUHelSo; arc=fail smtp.client-ip=198.175.65.10
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
   t=1729800869; x=1761336869;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=VklAR/wGX+k0pmjfj3M+iIy1qkP/ubwQqB0DWvZy6Hw=;
-  b=JRLOQfGXSafQj3Ckh0xfZhUEP2oNIcLFd3832M4zaaSvSlZuSkTqaRyy
-   j5pN0yIgG7J6wf8xxpzdgi+1ks6IiXL+aAAhh0qUgHBPEcyiBtkgyLCX5
-   T7xz7QJ3PIVa7jJjOtRNjsiQE77s/rRuX8d8zUBu5aDcs/n9UWz6H3N0q
-   RaHAhwFePwRD9eTKDj4Q3r9EBKjBpOl5CmGk3JvahPchXwiiVdLInrZ+t
-   UwGbz4h8N/3UtVTRmNMVhHPemyhDkW2PEJ5GzOVjafQEVUKKXn6lAIpJO
-   FQh0xNg9qZA7af//IoZ2f6mEk64+KwzxIW5VxqIz7mcuBuo1+I6F88QuA
+  h=message-id:date:subject:from:to:cc:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=hbmwwF9KYMaJLCSoJ2NSQ30xXnnafhVgqfgEZoFTknM=;
+  b=aNUHelSoADKYifu/WBZwOej2usrL7nm85IDDzWhDH2fpTtDeIBMhy3DJ
+   7t6D0tlPlcDkdyOz7HyZZW/gea0ore+iXRoNVhL8yVe/Yb7ucq6Mwmaax
+   WgSTl8DBVhrRr5B+eOBN/FnfR46m0z3ICmDwGpVYiJxOtGr0izTY3fI1/
+   jRsuQKno668irqqZ4cDCPtHwrT5qHUEslSuu6n7kuIldBoCb7i+hrP0wH
+   bl+uL9vnDCBv9hyX1WWLzV95vjNzFKyIEIkDqLJj5XA44TGzucGN20we8
+   V4Er3pOYTkvwD7hrMLGt80mmLDuuVJ29CNHFTJVuaKtQVGZqIRHz/EgGS
    Q==;
-X-CSE-ConnectionGUID: knLYwlvoRXycshsNcw3ieQ==
-X-CSE-MsgGUID: mp6Jpse4R06hx9aH+Ar6MQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="29392985"
+X-CSE-ConnectionGUID: rz5goQvvS9+uSZvLdSIJ4Q==
+X-CSE-MsgGUID: NpPnYlgGRd+PkM/QCBhBPQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="46919283"
 X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="29392985"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2024 13:14:27 -0700
-X-CSE-ConnectionGUID: EFJSh1mVTsqSo1fDKM2lUA==
-X-CSE-MsgGUID: WoK4p1bHT4+stUiif3S8mA==
+   d="scan'208";a="46919283"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2024 13:14:26 -0700
+X-CSE-ConnectionGUID: xeFhavaQQpC4U3HJJV+DZw==
+X-CSE-MsgGUID: qetd+CkGRY2xvkXcxKSPHg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.11,230,1725346800"; 
-   d="scan'208";a="85495934"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa005.jf.intel.com with ESMTP; 24 Oct 2024 13:14:21 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t44Do-000X2y-38;
-	Thu, 24 Oct 2024 20:14:16 +0000
-Date: Fri, 25 Oct 2024 04:13:49 +0800
-From: kernel test robot <lkp@intel.com>
-To: Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	=?iso-8859-1?Q?Ma=EDra?= Canal <mcanal@igalia.com>,
-	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Javier Martinez Canillas <javierm@redhat.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>
-Subject: Re: [PATCH 02/37] drm/vc4: Use of_device_get_match_data to set
- generation
-Message-ID: <202410250459.OQAldqVP-lkp@intel.com>
-References: <20241023-drm-vc4-2712-support-v1-2-1cc2d5594907@raspberrypi.com>
+   d="scan'208";a="80810391"
+Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
+  by fmviesa008.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 24 Oct 2024 13:14:25 -0700
+Received: from fmsmsx603.amr.corp.intel.com (10.18.126.83) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Thu, 24 Oct 2024 13:14:24 -0700
+Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Thu, 24 Oct 2024 13:14:24 -0700
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (104.47.66.46) by
+ edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 24 Oct 2024 13:14:24 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=jphe2kv/2BeSW6YYXPtbefOD75oayWQisVZkHHU79AI3ijSg6iw3Wjn94IPoArV2aBNN9qtk6WlWtnHZLAwPFeCsCdR8T2nah49Ftgw5sVLVLtTWu3h2ERpqQrOLG1l681r6Dlrtn6wy2/OTX7bB6NCCZ8A0nbMP50SyKdJpd+hi4CGbsYzaczlCv7htgXPieySrRPS3M90kX4zo9S/PODiAYCnDCar6QnhhC1VnGg0rDIY97BBs48PlsPB4wtErVhBV/QuVVxSTMdmh/eSw7viEZnZTqMmqt17pjOOco52oePdRmbmrSqKMfzjdAXy5HN0UJiyCwPvQWNQo0xzWAQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=0DQSBbJX9X95bk59ILjzCTBknRM832EixhNfP2R2s7g=;
+ b=AmQNaR3NM0cUn9mcxxKrSX+cbY56qx4+7n9lMugEpLVgOb7bzenuMRmK9Qtab0uPW8A01bFxzbVgLViuWh0QhUtqv0VDdcvZ39doWwM80E8OMIyp1cMcUVxH4DiqxyfN+wc4Vuzk+dBzA+AUCoCLleSKPaPJgW86owg6M5ENUe58PmEKMQdEOFZPSs+qjJTrJ5yVz7K3XUr25aSq9QVYidFVUsK3jHIqHkkB1JyxrsKpZmP0n8E21HXKgcNQbsywPhe5fGdTi5dfLyZmAZ+UMFNRvc4Mx46BYoHgymhkPV1kkzL5obMAM4z/JuuPoJHGd8EKj8baXGOCW+l3cPEgsA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from CO1PR11MB5089.namprd11.prod.outlook.com (2603:10b6:303:9b::16)
+ by SN7PR11MB6774.namprd11.prod.outlook.com (2603:10b6:806:265::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.18; Thu, 24 Oct
+ 2024 20:14:22 +0000
+Received: from CO1PR11MB5089.namprd11.prod.outlook.com
+ ([fe80::7de8:e1b1:a3b:b8a8]) by CO1PR11MB5089.namprd11.prod.outlook.com
+ ([fe80::7de8:e1b1:a3b:b8a8%4]) with mapi id 15.20.8093.018; Thu, 24 Oct 2024
+ 20:14:22 +0000
+Message-ID: <80c591f0-ce17-4a58-9749-ed66f14ecc6c@intel.com>
+Date: Thu, 24 Oct 2024 13:14:21 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next 3/8] lib: packing: add pack_fields() and
+ unpack_fields()
+From: Jacob Keller <jacob.e.keller@intel.com>
+To: Vladimir Oltean <vladimir.oltean@nxp.com>
+CC: Vladimir Oltean <olteanv@gmail.com>, "Kitszel, Przemyslaw"
+	<przemyslaw.kitszel@intel.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>,
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, "Paolo
+ Abeni" <pabeni@redhat.com>, "Nguyen, Anthony L" <anthony.l.nguyen@intel.com>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>
+References: <20241011-packing-pack-fields-and-ice-implementation-v1-0-d9b1f7500740@intel.com>
+ <20241011-packing-pack-fields-and-ice-implementation-v1-3-d9b1f7500740@intel.com>
+ <601668d5-2ed2-4471-9c4f-c16912dd59a5@intel.com>
+ <20241016134030.mzglrc245gh257mg@skbuf>
+ <CO1PR11MB5089220BBAF882B14F4B70DBD6462@CO1PR11MB5089.namprd11.prod.outlook.com>
+ <e961b5f2-74fe-497b-9472-f1cdda232f3b@intel.com>
+ <20241019122018.rvlqgf2ri6q4znlr@skbuf>
+ <7492148c-6edd-4400-8fa8-e30209cca168@intel.com>
+ <20241024134902.xe7kd4t7yoy2i4xj@skbuf>
+ <38f27382-3c6d-4677-9d59-4d08104f1131@intel.com>
+Content-Language: en-US
+In-Reply-To: <38f27382-3c6d-4677-9d59-4d08104f1131@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MW4PR03CA0021.namprd03.prod.outlook.com
+ (2603:10b6:303:8f::26) To CO1PR11MB5089.namprd11.prod.outlook.com
+ (2603:10b6:303:9b::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241023-drm-vc4-2712-support-v1-2-1cc2d5594907@raspberrypi.com>
-
-Hi Dave,
-
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on 91e21479c81dd4e9e22a78d7446f92f6b96a7284]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Dave-Stevenson/drm-vc4-Limit-max_bpc-to-8-on-Pi0-3/20241024-005239
-base:   91e21479c81dd4e9e22a78d7446f92f6b96a7284
-patch link:    https://lore.kernel.org/r/20241023-drm-vc4-2712-support-v1-2-1cc2d5594907%40raspberrypi.com
-patch subject: [PATCH 02/37] drm/vc4: Use of_device_get_match_data to set generation
-config: um-allmodconfig (https://download.01.org/0day-ci/archive/20241025/202410250459.OQAldqVP-lkp@intel.com/config)
-compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 5886454669c3c9026f7f27eab13509dd0241f2d6)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241025/202410250459.OQAldqVP-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410250459.OQAldqVP-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   In file included from drivers/gpu/drm/vc4/vc4_drv.c:27:
-   In file included from include/linux/dma-mapping.h:11:
-   In file included from include/linux/scatterlist.h:8:
-   In file included from include/linux/mm.h:2213:
-   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
-   In file included from drivers/gpu/drm/vc4/vc4_drv.c:27:
-   In file included from include/linux/dma-mapping.h:11:
-   In file included from include/linux/scatterlist.h:9:
-   In file included from arch/um/include/asm/io.h:24:
-   include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     548 |         val = __raw_readb(PCI_IOBASE + addr);
-         |                           ~~~~~~~~~~ ^
-   include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     561 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
-      37 | #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
-         |                                                   ^
-   In file included from drivers/gpu/drm/vc4/vc4_drv.c:27:
-   In file included from include/linux/dma-mapping.h:11:
-   In file included from include/linux/scatterlist.h:9:
-   In file included from arch/um/include/asm/io.h:24:
-   include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     574 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
-      35 | #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
-         |                                                   ^
-   In file included from drivers/gpu/drm/vc4/vc4_drv.c:27:
-   In file included from include/linux/dma-mapping.h:11:
-   In file included from include/linux/scatterlist.h:9:
-   In file included from arch/um/include/asm/io.h:24:
-   include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     585 |         __raw_writeb(value, PCI_IOBASE + addr);
-         |                             ~~~~~~~~~~ ^
-   include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     595 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
-   include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     605 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
-   include/asm-generic/io.h:693:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     693 |         readsb(PCI_IOBASE + addr, buffer, count);
-         |                ~~~~~~~~~~ ^
-   include/asm-generic/io.h:701:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     701 |         readsw(PCI_IOBASE + addr, buffer, count);
-         |                ~~~~~~~~~~ ^
-   include/asm-generic/io.h:709:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     709 |         readsl(PCI_IOBASE + addr, buffer, count);
-         |                ~~~~~~~~~~ ^
-   include/asm-generic/io.h:718:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     718 |         writesb(PCI_IOBASE + addr, buffer, count);
-         |                 ~~~~~~~~~~ ^
-   include/asm-generic/io.h:727:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     727 |         writesw(PCI_IOBASE + addr, buffer, count);
-         |                 ~~~~~~~~~~ ^
-   include/asm-generic/io.h:736:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     736 |         writesl(PCI_IOBASE + addr, buffer, count);
-         |                 ~~~~~~~~~~ ^
->> drivers/gpu/drm/vc4/vc4_drv.c:303:8: warning: cast to smaller integer type 'enum vc4_gen' from 'const void *' [-Wvoid-pointer-to-enum-cast]
-     303 |         gen = (enum vc4_gen)of_device_get_match_data(dev);
-         |               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   14 warnings generated.
-
-Kconfig warnings: (for reference only)
-   WARNING: unmet direct dependencies detected for GET_FREE_REGION
-   Depends on [n]: SPARSEMEM [=n]
-   Selected by [m]:
-   - RESOURCE_KUNIT_TEST [=m] && RUNTIME_TESTING_MENU [=y] && KUNIT [=m]
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PR11MB5089:EE_|SN7PR11MB6774:EE_
+X-MS-Office365-Filtering-Correlation-Id: ec859ad9-028c-46d2-046b-08dcf46872f2
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?TUc4cjB2bFVVUXoxMGllZXlMR2N6OE5jOVJ3QkZ2RlhQS1RpQU9BZ21DVG1l?=
+ =?utf-8?B?TnRRZjVOemlOdWFlVUlRVFhUWTRsNHF5WWlSSzlLVE9EWUtZdTAwNFpKQTBm?=
+ =?utf-8?B?WGhHWXZWcTVTT29vREduaFNJQWFDMVlad0F6bmY1aTFvaFY5RWJNd2Y0YVI2?=
+ =?utf-8?B?cDBHMS9DcnAwVGFpS0xkYTJvWTdObWNZYVVpemdPT0hhYjhoemRVUFU1cHlM?=
+ =?utf-8?B?b3U0eFpLKzVielh1OEZOdGVVWUNDUkZ1YkZYWGVPWEpPQzQ0eHNGdXBzZjZU?=
+ =?utf-8?B?ZTNTZWVtMDlDbFNybFkzRzNFOTZqNDZNbllHNkt0MTFON1RvQWVXb0RZOFF1?=
+ =?utf-8?B?WVFWWnVUelJZdnFpbExra0ViQ2FlVTJCamgyKzdIRUtrRnVMSzkwRHFRZjJP?=
+ =?utf-8?B?WUdRK3Z2TTJ5TFgrcDI0b1FDc1JWVVdOUERSbkVXWmNMSktjUEliZlhUTjY3?=
+ =?utf-8?B?MTFFQ3djdHdWK2FTcDFkTTlFYlhhWkt1QnJ1R2Q2dnR4UXVPVVQ3Y2VTYmNF?=
+ =?utf-8?B?U0dkUjU4MUpGYmN1M3FTd0VRcGpHcllEZXVTeE05UkZxbnFpWlBpbzVJY1Z0?=
+ =?utf-8?B?YnFwWlIzblovK1l0Vk5nSVZiQlpFL2dtZDlJK0krQ1IvbGZkcHphR2tBOEM2?=
+ =?utf-8?B?YnoxbExxMENkdDhqZzB2L2Vzc0JHYUJ1ditHTjhwK0pMdEl1TytGN1kxQUU4?=
+ =?utf-8?B?TERUVEV0T25WdVYxR1lhT2hHV0E4SzR4NEhKdFRuNWNtbStBaW9LSXVmVUxs?=
+ =?utf-8?B?UTV0aHljS1Zxa0JKSlhjcnpBVWRBT29xbmZoWi9NY25YUW1Pejh6MnIxOVJw?=
+ =?utf-8?B?UTd1ZENaYkNrZ1BzQWwvSDVEYmJDMUhWdFlMVmdyMnZIenV4Uy9GNHdqYWRp?=
+ =?utf-8?B?Z3hQZVlWbGUzOXFPTFdDa2UzSjRnRnNxWXp5aE9oa2MxSkdjNGl3eHRLSDk5?=
+ =?utf-8?B?cUw2Sm9LZTJBaTZ6QjJ5U3J2V1pJWk5ZRlhkR0dNT0NzS0w1by9sMjdzVUVU?=
+ =?utf-8?B?ZUsraVFYQ05jcnhWVmEzUmxYZ2NqYm1SMk9KWVVXTlJuTDFFTXBMTUEwejhP?=
+ =?utf-8?B?T0ZCeGdhVVBlT05FNUpDZit3ZTczQkFGMHV6V25qZ0FkRTh1S1JURkhBZzBP?=
+ =?utf-8?B?WnZ2K2pqZ01oRFZpMEhkem8vbjEwN3Y4Yk1meGdrZ3ZaQnBnVXBjZHRNemU5?=
+ =?utf-8?B?SGJRUzN2cG5JOWF3WUhrQW8vZGJ4VEFWejZOdk45Ym9Gb2lpcVVYekYxdm1W?=
+ =?utf-8?B?ZitYTlhXMXZCZTlMU09DRDFMRWZiOTZjZXRsa2hWV1JnbHRrNkx2KzBSRUU4?=
+ =?utf-8?B?RXgwU1JOMWxpejByZ3ZrWGpWZU4zcFdMSzNVRUwyaHRWb0lZY21Qak93Vk90?=
+ =?utf-8?B?RGhkSUhhL1l5SThDMTFtK0tpSVZTNkNvRU1lR0xUd3A0UmxYaDJ3Nk10dTJi?=
+ =?utf-8?B?ZzNFTS8zWHh6cVJvamlaQjRjcHVPMXNmRjZnYUx0YlozV2hZeWRFbHdCUEdt?=
+ =?utf-8?B?aWN4d1Y0bWgwRllXT3ZyWFZ4TnR0bmRpVkRVNXNyRCtRcW5qMmtTTUdqNXVJ?=
+ =?utf-8?B?bzJhU0cvNUw1T200ZzZKL1I5eFlITndzckdOb1N3RDBZMVlSTHpZS1FobVpM?=
+ =?utf-8?B?MC83ZUR6T0RLUFh6NTl1VFlHYXFWT1JPS3FTSkp1cjgvdFpKRFozTkxUTXhp?=
+ =?utf-8?B?VTQ0M0h5QkJQazlLcVlmZkQra3lsMUs3SVJZZGkzWU5mMUdmRmk1azZIRDNB?=
+ =?utf-8?Q?RgrWy1gRIautPQ49qPAY5ING4dbcg/N1/yhw6re?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO1PR11MB5089.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?cmxqeDV1QnVjbmh6ZTdibG1vTktwYjVNb0M3dUM5cFVSaHRKTGNBdXBOY0FT?=
+ =?utf-8?B?T0JES0xLVUpMSXVEU2tWZWFJUlZpUzFsZC8yd2dtNU0vWjRsK2VNTFlwQllw?=
+ =?utf-8?B?VG1YWmtMVWV0eDNQOVd1U0g3azBpWU10WThwMzk3UnNKaVNsOWlHME9RVWZB?=
+ =?utf-8?B?cE0yUUtnUjhkNkVQZXREZlFtL3YveXhIZURyWGdrV3VGQkMrcWlxeFdLbmh6?=
+ =?utf-8?B?OTYwdXhGZkswWmFhb2ZjTFpWaC9Tb0U2alMrcGV0K0R1cSsyWHhOZlF0RGNs?=
+ =?utf-8?B?MnZUMEczWjdrWmZBb2NRaFhHNldvQU8vVStKeGlSb0ZuczB5NWRjRHJWVzdt?=
+ =?utf-8?B?WnVWMWw2R1kzSUlXQ0doSG9UNnN5NnhkRjVtUXRuRGR1bjNoK2xNZ2FMcHJ0?=
+ =?utf-8?B?dXYxQmo1V1Voa1NDWkJlQ0QzbEFDUGRPRXcrc2RhRkxwQU5XS2F3UHpUdm5D?=
+ =?utf-8?B?MWlxNUErSVZ5aDhiaWVGUWdzWlpYYk5LZFBKMHkrRkltUm5RbUtYUXcrZHhz?=
+ =?utf-8?B?and5cXNYSXlENHJ0NkJJK3JReXRZNFVWNXorTUR0S0MxcjVRVE5LdVBNRldC?=
+ =?utf-8?B?dFJuSkx0SmY0MUh6MDlhS1hYWFludGN2cE44SDQ2dFRuVDQ3UFQwQVVMVEFW?=
+ =?utf-8?B?aVdwWm14L1pnSnlEei91YXQxR0IwamhMR0NhdldFV2ZkSG95Z3gvMWlqcXVx?=
+ =?utf-8?B?WjR0TzRUNmFCYksyTit5aHNwMlViZTJxeXhzaTltN2VKV3F4ZHluUEtkY2p0?=
+ =?utf-8?B?aXpDTElCbXQ4TGcvT0VEZVM2UzN2ZE55OWNRaGRXRG5kbmFLbFYwRTFwNDBD?=
+ =?utf-8?B?bDY2dGVVanU2Mzh2K0VCcmw1OE1SQllEdEtjd0g4cS85UWN1bGlPU1Y2Ukhr?=
+ =?utf-8?B?aXJtZjhHbnYxbllMMUdCektlUjl6VXBkL2dUWVZHVmxnU3U5eHpIOHJKZDNi?=
+ =?utf-8?B?b1M3Mmkrb2NIWGthaVZscEQrKzY3aGlZb1YwT2NRSXRTeEkzOW9xQnNsclhk?=
+ =?utf-8?B?TEpJUk5VdThtTDlub0lweDBGRVVEdkZRaGVETWFVcjk2MkliTnBDenFMRFdL?=
+ =?utf-8?B?Nm9mUjNIL25qN2VsbmFqcFZsTFg2SkE5V3NFMTFaYWl3bFFlemZodXdHTFdF?=
+ =?utf-8?B?QkNMZ1JWK3FGNlBEZDc2a2ZCMmZHOVFrZ21QNjRGYW9uMzJhK3Z5aUN6NEtT?=
+ =?utf-8?B?SU1IbVdFVFhXWEI3c0FmUG5rdVJ0ZGgyd2VXWThCNWM5ZzFpZTdUcnBjSXda?=
+ =?utf-8?B?eS9mcUhGTUIvWGsvSy9lZVhUcnp0VUlOMTRha0luSUxXcnFva3ZWOVJnRXNn?=
+ =?utf-8?B?czE1UTA3dFV6d0drM3JZSUJLR2E0aFl4RzlRVjR4bjI3cE5sZVZxUEQzTmJq?=
+ =?utf-8?B?aXNQN2lMT0JJWVFMczlGTkJubnlGQ0tqdllJVG8vMm5zREhPMjJhSU9SUi9Y?=
+ =?utf-8?B?YnFVNjIwTGluajVsOVF5cXVUL2tIWGgyVmRoZDYyTVBMVm9vQVVWdjlMeFNF?=
+ =?utf-8?B?QnpSRXhxUEk4MWhiS3N6c1ozZXhTTXNNZkJtVTljOVNranZCd0kySHRrZDI1?=
+ =?utf-8?B?MW5zRWlGUE43VmtJOVlIMDkwK2pta29qQ21jbnQ1eVptSmk2REl6NDhaUW0r?=
+ =?utf-8?B?bmNsVE0wckdPeWtxR0NpR1o3OHpRblZqY0cvYVZUVXBLYnA3Und2Ym1XemtJ?=
+ =?utf-8?B?T1pkdjl2ZVhwNERzdHBOYjhSaHVlSEh3Nk11WE1FSWsxeVphRHRBNll6UjBv?=
+ =?utf-8?B?aXd6RnNwcXhwUWZBVE5YZUdsWnJ0aEtsV1pwOXJ6SkpmcGpNVEtyOHRBMGxG?=
+ =?utf-8?B?UEJEVHJxT2RodkNvUy85bGJkZEpMUHMzN0M5cFdqclgrNlVQZ2VtSUpSTHI4?=
+ =?utf-8?B?RjVlWkVXUWpWYlQrYjZTWkJ1N3prdXdzWkgvQ0JOR2k5L1Y0eS9SNUVySDlk?=
+ =?utf-8?B?dG95aEZidHY4ejNPOVJuamYycHgxQ2ZrbDc3OGdEK1ZlRlh6VmVta0F5TnRa?=
+ =?utf-8?B?V0pkUDNrQnJDZ01nS0h0WXpIc2VqVkhma2tHZHNBTkd2S2dQeGUxamJtSG1C?=
+ =?utf-8?B?WDY3RXEwT0pkbzZncy84V3N2eDlhUktFM29uVXVZWGJIS1hhRFlZQVdJK0d0?=
+ =?utf-8?B?TEE3MFNMQitEQmtYaXNGdzJMRzUrOWdaclNlY21OclpLd2ZZM3FXR0pzZ01a?=
+ =?utf-8?B?emc9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: ec859ad9-028c-46d2-046b-08dcf46872f2
+X-MS-Exchange-CrossTenant-AuthSource: CO1PR11MB5089.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Oct 2024 20:14:22.3626
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: LYCjqDgk8p4p6PW6H73zG2ERWHTMETqdGX8yJHrt/bfuHqCtdsv5HXUQ71NH9Bro7IzY1GjwxHECqEuIPFp34CPFhpfWEt5gJwXc4BdOXCM=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR11MB6774
+X-OriginatorOrg: intel.com
 
 
-vim +303 drivers/gpu/drm/vc4/vc4_drv.c
 
-   288	
-   289	static int vc4_drm_bind(struct device *dev)
-   290	{
-   291		struct platform_device *pdev = to_platform_device(dev);
-   292		const struct drm_driver *driver;
-   293		struct rpi_firmware *firmware = NULL;
-   294		struct drm_device *drm;
-   295		struct vc4_dev *vc4;
-   296		struct device_node *node;
-   297		struct drm_crtc *crtc;
-   298		enum vc4_gen gen;
-   299		int ret = 0;
-   300	
-   301		dev->coherent_dma_mask = DMA_BIT_MASK(32);
-   302	
- > 303		gen = (enum vc4_gen)of_device_get_match_data(dev);
-   304	
-   305		if (gen > VC4_GEN_4)
-   306			driver = &vc5_drm_driver;
-   307		else
-   308			driver = &vc4_drm_driver;
-   309	
-   310		node = of_find_matching_node_and_match(NULL, vc4_dma_range_matches,
-   311						       NULL);
-   312		if (node) {
-   313			ret = of_dma_configure(dev, node, true);
-   314			of_node_put(node);
-   315	
-   316			if (ret)
-   317				return ret;
-   318		}
-   319	
-   320		vc4 = devm_drm_dev_alloc(dev, driver, struct vc4_dev, base);
-   321		if (IS_ERR(vc4))
-   322			return PTR_ERR(vc4);
-   323		vc4->gen = gen;
-   324		vc4->dev = dev;
-   325	
-   326		drm = &vc4->base;
-   327		platform_set_drvdata(pdev, drm);
-   328	
-   329		if (gen == VC4_GEN_4) {
-   330			ret = drmm_mutex_init(drm, &vc4->bin_bo_lock);
-   331			if (ret)
-   332				goto err;
-   333	
-   334			ret = vc4_bo_cache_init(drm);
-   335			if (ret)
-   336				goto err;
-   337		}
-   338	
-   339		ret = drmm_mode_config_init(drm);
-   340		if (ret)
-   341			goto err;
-   342	
-   343		if (gen == VC4_GEN_4) {
-   344			ret = vc4_gem_init(drm);
-   345			if (ret)
-   346				goto err;
-   347		}
-   348	
-   349		node = of_find_compatible_node(NULL, NULL, "raspberrypi,bcm2835-firmware");
-   350		if (node) {
-   351			firmware = rpi_firmware_get(node);
-   352			of_node_put(node);
-   353	
-   354			if (!firmware) {
-   355				ret = -EPROBE_DEFER;
-   356				goto err;
-   357			}
-   358		}
-   359	
-   360		ret = aperture_remove_all_conflicting_devices(driver->name);
-   361		if (ret)
-   362			goto err;
-   363	
-   364		if (firmware) {
-   365			ret = rpi_firmware_property(firmware,
-   366						    RPI_FIRMWARE_NOTIFY_DISPLAY_DONE,
-   367						    NULL, 0);
-   368			if (ret)
-   369				drm_warn(drm, "Couldn't stop firmware display driver: %d\n", ret);
-   370	
-   371			rpi_firmware_put(firmware);
-   372		}
-   373	
-   374		ret = component_bind_all(dev, drm);
-   375		if (ret)
-   376			goto err;
-   377	
-   378		ret = devm_add_action_or_reset(dev, vc4_component_unbind_all, vc4);
-   379		if (ret)
-   380			goto err;
-   381	
-   382		ret = vc4_plane_create_additional_planes(drm);
-   383		if (ret)
-   384			goto err;
-   385	
-   386		ret = vc4_kms_load(drm);
-   387		if (ret < 0)
-   388			goto err;
-   389	
-   390		drm_for_each_crtc(crtc, drm)
-   391			vc4_crtc_disable_at_boot(crtc);
-   392	
-   393		ret = drm_dev_register(drm, 0);
-   394		if (ret < 0)
-   395			goto err;
-   396	
-   397		drm_client_setup_with_fourcc(drm, DRM_FORMAT_RGB565);
-   398	
-   399		return 0;
-   400	
-   401	err:
-   402		platform_set_drvdata(pdev, NULL);
-   403		return ret;
-   404	}
-   405	
+On 10/24/2024 9:38 AM, Jacob Keller wrote:
+> I also have some thought about trying to catch this in a coccinelle
+> script. That has the trade-off that its only caught by running the
+> spatch/coccinelle scripts, but it would completely eliminate the need to
+> modify Kbuild at all.
+> 
+> I'm going to try and experiment with that direction and see if its feasible.
+> 
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Coccinelle can't handle all of the relevant checks, since it does not
+parse the macros, and can only look at the uncompiled code.
+
+I'll have a v2 out soon with Vladimir's suggested approach.
+
+Thanks,
+Jake
 
