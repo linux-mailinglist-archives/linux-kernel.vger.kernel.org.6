@@ -1,121 +1,122 @@
-Return-Path: <linux-kernel+bounces-380441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9BE59AEEA3
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 19:51:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 554349AEEA5
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 19:51:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 663F51F219F7
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:51:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87A7F1C21C94
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:51:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F356C1FAC42;
-	Thu, 24 Oct 2024 17:50:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3A551FF608;
+	Thu, 24 Oct 2024 17:51:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jFqqJqdI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hdi2L2Ny"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BB8C200109;
-	Thu, 24 Oct 2024 17:50:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40EE91FF042
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 17:50:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729792233; cv=none; b=R0s9LqCgwR3DDr3C8h1PmnioaModIjxPwuR6uxiq3Bxzx55BcKduUNKejPpCtopv7cKYwnmuCfq0pKWUiBCkhM+cILtiTfEqKOVaZPvOSx2T6G2cgjGIRJsjX/ceB0zrn9PA2W/uxoTx5k9GhMdNL9zuwCCs8AFtn2MDIUdAnnw=
+	t=1729792260; cv=none; b=DwT+c1e1OJST2EfzMlM03SkrhJGh8Q6MbLKfY3KRrRfwtbPwzIufgTKOomm7EVfUcuP31v8nvlMbzYKu7tVuQO1+GH8+B4C5OotT60FRi3hWtLXHHjL7KLg4TMycRMRI1sUGFjaYJ+WAWhhQ/SI3t7igcuADGbPCKpQDJPvw60M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729792233; c=relaxed/simple;
-	bh=bGnHyVsk1+n+xRwZo4AwVhT1cavRFamOy1xjbAurCyg=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=jwTYTAckG3LbBtSjTEQ4r0Gu9ioDtMp/jNxlqvNxvwSsg9/6qpDTQug7HgBnP+1cstX26EsQ3/woYS7CKWQGgdisHrtHBCaa98BH2Ht9rg58s9KSOmZntoACY98Z9XTi4/8jdAUFtqm4yVZguA9qArcz6iTqzi/n9+C+vTDrOh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jFqqJqdI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17B83C4CEE4;
-	Thu, 24 Oct 2024 17:50:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729792233;
-	bh=bGnHyVsk1+n+xRwZo4AwVhT1cavRFamOy1xjbAurCyg=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=jFqqJqdI2EoUpRNGF4/UnbxGPxPIGZGl2IUDtZTQV0rId7fpZBmOt9+Hx4ThB/o+o
-	 zjTks197XXuPfCWg4ygJcXbMjuR8AbK9vzxgZi0o7pW2Urwj0Td1q/gBKJu2GWJMwb
-	 mVW44st6/rUID0wZKp4FGGCQ5Zx9R0Tk7WZ7x8tYbcl1ka/XAn29AD8ixs2mwk4eb8
-	 dP3fYleir0Z/XJiPZnTxCuQyghmiD4A41eQ7RRQaT500MFoiLIIQykRKve06pFugw6
-	 aVADzWPj2wrF+8jYFEUQbfPtr0//N4yZqsXl2mw6zu7uEgZ0/0QA+yWe1Rb98c8gWD
-	 VzmVaNo/XhrPg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAF38380DBDC;
-	Thu, 24 Oct 2024 17:50:40 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1729792260; c=relaxed/simple;
+	bh=/tM5oJkYSDIxAbnk01u6JH0cD+6nKWl90fud8hBuiyE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gsXz9xlt3g+0co9sYK/KjP4xMqCRRAa02A4/K/4Ye/oB4GAJO08njBZckJUajrF1S0YIOCV46Uz/uE5odDmcawvrzHoTdwj+B7a/kB2reBowTTgGDTegwTT0QDAd8Gp7gpiJf+oN9l1pepULogoU2FpHcLAHcE7OBa5I67c4K/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hdi2L2Ny; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-20ca4877690so13125ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 10:50:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1729792257; x=1730397057; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=RkjXg6PY0r08PgmUd9ZxlQNovB2X2eRq3KqUjeeCP+w=;
+        b=hdi2L2NyGn5VEdMPdEz29hRAGJp43vPB1UljorWEblmDAs1e5BMxvhUwLce9akr/1e
+         m77pIxlyIurMYXQLzvno7F6SVzoFonwumJGtvGs0C/EFDE7spy66Q5KDkHIEQcjhZkxX
+         KaMQ8Oo4n/GQkfHoK370rKFBmf9p2TqsyRen/VJ/y0K+htpK2XI7i8iyqCHYKo5BveqW
+         bpKpTJFuMczsf+MV9VyYb/mkLWhUjRM9FVGirWaFQYjmpd1GKDiN5+uvSLr2Clg+IIYa
+         TGLOzirzpsUbhytMWqBGxG82VAblWQvjnzO31u60mXPPLsBYidVY/vVM2BMy7IcaVEdg
+         bwaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729792257; x=1730397057;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RkjXg6PY0r08PgmUd9ZxlQNovB2X2eRq3KqUjeeCP+w=;
+        b=XAvGeVkQCbyj+mAmArqSxEaKtFX+r2EpLBSGbRDLM+maekCpnBpQdGaDtQLrki5kup
+         5co3dMXe3K0wkwiQWRpVbe2qoXDNCA50+BdhCJvm7cGtsNhPtu2cqMg5cT7wlnNzG5Uu
+         MphuF/m+jwpt+sVpfeUdVCGL780+slmm6eVAYpvrIP15FIv4e/wOwdQ2mNH/oWNEx/Cy
+         HuNCvSxepPfPZP0sXT5nUOfvWFZ4IDvwRsStKC1LHwcvnhCT5f5493RpYq9pnL3J9lzX
+         yYrN3hqBYVuo5abIyXBWRl/SCZZvNHK/wHmIKmddzBPDwRsQGsQfkMCfg/TeKvaM3jBf
+         SAIw==
+X-Forwarded-Encrypted: i=1; AJvYcCU1rbzqZ2x822T0LB3l1sJSSd8+e6PL2RSFPUYIk+qJi465N58kDBRPZIIRmGbu6tA1UY9lv/pHZi5UOE4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5BKR3xBRjI2EI0O0IybrKnnRDfn64osyd4TnSjrzrUXv4e3Sa
+	bSa4kVnFTRZlvPdtCuXlaskioJW+FRom3+6tKbhIpQDCFkcvjbBD1f5+tdTphJh82YrYTxofaeM
+	992oz7g/WzJCOQIg5mf/zc5Sw3MYf4+VI1/rn
+X-Google-Smtp-Source: AGHT+IGmMF6Oi1vLba4m0kqHuNX8J81qghfcDxfqm6mH4PqLXBdjonza61cFVolDXqPL3rLs7uZVHPnQpEkVmW5BoD4=
+X-Received: by 2002:a17:902:d488:b0:1ff:3b0f:d61d with SMTP id
+ d9443c01a7336-20fc2219cd7mr74225ad.24.1729792257213; Thu, 24 Oct 2024
+ 10:50:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v5 00/10] riscv: Userspace pointer masking and tagged address
- ABI
-From: patchwork-bot+linux-riscv@kernel.org
-Message-Id: 
- <172979223949.2327357.12698642185375267636.git-patchwork-notify@kernel.org>
-Date: Thu, 24 Oct 2024 17:50:39 +0000
-References: <20241016202814.4061541-1-samuel.holland@sifive.com>
-In-Reply-To: <20241016202814.4061541-1-samuel.holland@sifive.com>
-To: Samuel Holland <samuel.holland@sifive.com>
-Cc: linux-riscv@lists.infradead.org, palmer@dabbelt.com,
- catalin.marinas@arm.com, atishp@atishpatra.org,
- linux-kselftest@vger.kernel.org, robh+dt@kernel.org,
- kirill.shutemov@linux.intel.com, shuah@kernel.org,
- devicetree@vger.kernel.org, anup@brainfault.org,
- linux-kernel@vger.kernel.org, corbet@lwn.net, kvm-riscv@lists.infradead.org,
- conor@kernel.org, kasan-dev@googlegroups.com, linux-doc@vger.kernel.org,
- eugenis@google.com, charlie@rivosinc.com, krzysztof.kozlowski+dt@linaro.org
+References: <CADKFtnTdWX9prHYMe62oNraaNm=Q3WC9wTfdDD35a=CYxaX2Gw@mail.gmail.com>
+ <20241023145640.1499722-1-jrife@google.com> <CAADnVQJupBceq2DAeChBvdjSG4zOpYsMP7_o7gREVmVCA0PUYQ@mail.gmail.com>
+ <7bcea009-b58c-4a00-b7cd-f2fc06b90a02@efficios.com> <20241023220552.74ca0c3e@rorschach.local.home>
+ <CAEf4Bzb4ywpMxchWcMfW9Lzh=re4x1zbMfz2aPRiUa29nUMB=g@mail.gmail.com>
+In-Reply-To: <CAEf4Bzb4ywpMxchWcMfW9Lzh=re4x1zbMfz2aPRiUa29nUMB=g@mail.gmail.com>
+From: Jordan Rife <jrife@google.com>
+Date: Thu, 24 Oct 2024 10:50:45 -0700
+Message-ID: <CADKFtnSBkSHuR8XLhwsB1NZ5pPeUXNAPCzoCiEqJ5X5=NqqWEg@mail.gmail.com>
+Subject: Re: [RFC PATCH] tracing: Fix syscall tracepoint use-after-free
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Alexei Starovoitov <alexei.starovoitov@gmail.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Alexei Starovoitov <ast@kernel.org>, 
+	bpf <bpf@vger.kernel.org>, Joel Fernandes <joel@joelfernandes.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Ingo Molnar <mingo@redhat.com>, 
+	Michael Jeanson <mjeanson@efficios.com>, Namhyung Kim <namhyung@kernel.org>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	syzbot+b390c8062d8387b6272a@syzkaller.appspotmail.com, 
+	Yonghong Song <yhs@fb.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hello:
+> You guys said you have a reproducer, right? Can you please share
+> details (I know it's somewhere on another thread, but let's put all
+> this in this thread).
 
-This series was applied to riscv/linux.git (for-next)
-by Palmer Dabbelt <palmer@rivosinc.com>:
+For reference, the original syzbot report is here along with links to artifacts.
+Link: https://lore.kernel.org/bpf/67121037.050a0220.10f4f4.000f.GAE@google.com/
 
-On Wed, 16 Oct 2024 13:27:41 -0700 you wrote:
-> RISC-V defines three extensions for pointer masking[1]:
->  - Smmpm: configured in M-mode, affects M-mode
->  - Smnpm: configured in M-mode, affects the next lower mode (S or U-mode)
->  - Ssnpm: configured in S-mode, affects the next lower mode (VS, VU, or U-mode)
-> 
-> This series adds support for configuring Smnpm or Ssnpm (depending on
-> which privilege mode the kernel is running in) to allow pointer masking
-> in userspace (VU or U-mode), extending the PR_SET_TAGGED_ADDR_CTRL API
-> from arm64. Unlike arm64 TBI, userspace pointer masking is not enabled
-> by default on RISC-V. Additionally, the tag width (referred to as PMLEN)
-> is variable, so userspace needs to ask the kernel for a specific tag
-> width, which is interpreted as a lower bound on the number of tag bits.
-> 
-> [...]
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=153ef887980000
+disk image: https://storage.googleapis.com/syzbot-assets/cf2ad43c81cc/disk-15e7d45e.raw.xz
 
-Here is the summary with links:
-  - [v5,01/10] dt-bindings: riscv: Add pointer masking ISA extensions
-    https://git.kernel.org/riscv/c/8946ad26c0e2
-  - [v5,02/10] riscv: Add ISA extension parsing for pointer masking
-    https://git.kernel.org/riscv/c/12749546293e
-  - [v5,03/10] riscv: Add CSR definitions for pointer masking
-    https://git.kernel.org/riscv/c/1edd6226877b
-  - [v5,04/10] riscv: Add support for userspace pointer masking
-    https://git.kernel.org/riscv/c/871aba681a0d
-  - [v5,05/10] riscv: Add support for the tagged address ABI
-    https://git.kernel.org/riscv/c/c4d16116bd11
-  - [v5,06/10] riscv: Allow ptrace control of the tagged address ABI
-    https://git.kernel.org/riscv/c/cebce87fb04e
-  - [v5,07/10] riscv: selftests: Add a pointer masking test
-    https://git.kernel.org/riscv/c/5e9f1ee1c523
-  - [v5,08/10] riscv: hwprobe: Export the Supm ISA extension
-    https://git.kernel.org/riscv/c/d250050aae4f
-  - [v5,09/10] RISC-V: KVM: Allow Smnpm and Ssnpm extensions for guests
-    https://git.kernel.org/riscv/c/e27f468bcf14
-  - [v5,10/10] KVM: riscv: selftests: Add Smnpm and Ssnpm to get-reg-list test
-    https://git.kernel.org/riscv/c/814779461d84
+The steps I performed to reproduce locally are roughly as follows:
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+1. Copy the syz repro script to a file, repro.syz.txt
+2. Download the disk image, disk.img
+3. Build syzkaller (https://github.com/google/syzkaller)
+4. Start up QEMU using disk.img: qemu-system-x86_64 -m 2G -smp
+2,sockets=2,cores=1 -drive file=./disk.raw,format=raw -net
+nic,model=e1000 -net user,host=10.0.2.10,hostfwd:tcp::10022-:22
+-enable-kvm -nographic
+5. SCP syzkaller/bin/linux_amd64/syz-execprog and
+syzkaller/bin/linux_amd64/syz-executor to root@127.0.0.1:/root/
+6. SCP repro.syz.txt to root@127.0.0.1:/root/
+7. Run './syz-execprog -repeat=0 -procs=5 ./repro.syz.txt' over SSH on
+root@127.0.0.1
 
+This typically crashes things within 20 seconds or so on my machine.
 
+-Jordan
 
