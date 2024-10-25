@@ -1,136 +1,117 @@
-Return-Path: <linux-kernel+bounces-382496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69E309B0EF5
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 21:28:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCE369B0F48
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 21:41:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E7741C23D32
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 19:28:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 73CE7B26D3C
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 19:41:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E51B120D508;
-	Fri, 25 Oct 2024 19:28:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4ECE20EA5A;
+	Fri, 25 Oct 2024 19:41:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FhunUdbf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b="F5HZK9Zy"
+Received: from gentwo.org (gentwo.org [62.72.0.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5217C10A0E
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 19:28:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D3CE20EA3A;
+	Fri, 25 Oct 2024 19:41:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.72.0.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729884489; cv=none; b=YSWuPoohXJjOf6XnEDH0xXbPpKEYYdVhi6lhgVzKEimo9/ECtuQNR0CmryejD/KXSzZG3kOdKg1hDtKxWfJgyF9uhxsdgqpv/sf2juRn4zrycLCUDoDJu03L6qDplcB0z643e40lnGMCmzzvPknHjeV/uKxF6Zf2N3DcLAa597k=
+	t=1729885278; cv=none; b=TcwKvM7vhf+zubtElbfN7oD+t/0uc/UQpSIB0RUlisUGC3yuni4tptHtgF38a9YnLmOMiXkHg8yDVoh9gHJXcVWmSL8zhrzaU1S4JqTqZxDVdKVtbFOBbjTfBa2DgV4mcIQcCWRqICsR5I9lN8+45HmjCUdx+iUGqIi11vJq870=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729884489; c=relaxed/simple;
-	bh=iI0rca7l7j1Uckw+q9845Ct8al7dFAbdQk1MZrJYbs8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W1S8NEU+7lrv/8BIJ1icPaSCvcYCxcEhpybPZvPKZ6rET1eIiKdrOIjpPVceRCGFU18N3MQ0nPrC1jTny8G9jYiUwPJoF/7kkdP+bI2w+usNTC6IIN1fJ6hQpfDJvs/rrRinN2AEKR/J8xI3641SXtqUxa4//yVhG1INmjY2/Ug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FhunUdbf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5928C4CEC3;
-	Fri, 25 Oct 2024 19:28:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729884489;
-	bh=iI0rca7l7j1Uckw+q9845Ct8al7dFAbdQk1MZrJYbs8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FhunUdbf70euKkg2cnyLgKfRXXZfZ3wBnFpnUXMp225n4lqY0AZtzLzVpOEzCr7Bc
-	 8dalsNufCHXbixzKhNn6yiYn6npvffvjmJfWcmwq5O9F0roa5H7Hya6GmguNauDAgs
-	 i/ondIqKi3zS5CVis//1e6CfNTAUXKS06NDILkh9GPWJXl96kpnYWhUp0gN4QAql6h
-	 s2w8lBeKiSFjGkVs45OBW25okE2uC1jCiqgsAFrlAGIB3d1fzwulzviAZmFRGJ6Zes
-	 KaD9SrJ2By1545H3Z9kCvpWvT4rt/wTC/i8y7yS2vK3h7Aq0375hz/G6lVHF1+ptyQ
-	 RhZY1jhFWNMDg==
-Date: Fri, 25 Oct 2024 09:28:07 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Aboorva Devarajan <aboorvad@linux.ibm.com>
-Cc: peterz@infradead.org, void@manifault.com, vincent.guittot@linaro.org,
-	juri.lelli@redhat.com, mingo@redhat.com, bsegall@google.com,
-	rostedt@goodmis.org, dietmar.eggemann@arm.com, vschneid@redhat.com,
-	mgorman@suse.de, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] sched: Pass correct scheduling policy to
- __setscheduler_class
-Message-ID: <ZxvxR32TQ1UIVLtS@slm.duckdns.org>
-References: <20241025185020.277143-1-aboorvad@linux.ibm.com>
+	s=arc-20240116; t=1729885278; c=relaxed/simple;
+	bh=HmSSwqaEV93zmIkQQrgyN/H+4SpePg2bLhbZrxFkUvE=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=iHsCh2Gn+jaWJ41zqgN/C2eI9m23alYSjLz+QPMp9lVnIYMHtCwe/bLN0H+zDTq4zKr+5XNPoyX4awypS/6iO5OgLvDavS2Q38wl0Ir6Kh2ugycAZJuP5XrkUUHZz3G0Vndqk9shis3EX0+pncYc13EUzLeeH83UXsLATTOlP+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org; spf=pass smtp.mailfrom=gentwo.org; dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b=F5HZK9Zy; arc=none smtp.client-ip=62.72.0.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentwo.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gentwo.org;
+	s=default; t=1729884534;
+	bh=HmSSwqaEV93zmIkQQrgyN/H+4SpePg2bLhbZrxFkUvE=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=F5HZK9Zyud8fxXPO9yzo8uVn8HvBmJzw3ALph0CQUV/52RTu0J43yWQYy66x7qIac
+	 fdFV/idJwlHWRF1mMoJce2/a4Uyql2W004hVL02EJAjMDq+rzmCkTrhZ4Ezu6I6eSy
+	 Ln882vz9nxSGn40SIoBYxbCde0eHZpoXclU/rbrs=
+Received: by gentwo.org (Postfix, from userid 1003)
+	id A19F6409C3; Fri, 25 Oct 2024 12:28:54 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+	by gentwo.org (Postfix) with ESMTP id 9F74640681;
+	Fri, 25 Oct 2024 12:28:54 -0700 (PDT)
+Date: Fri, 25 Oct 2024 12:28:54 -0700 (PDT)
+From: "Christoph Lameter (Ampere)" <cl@gentwo.org>
+To: Peter Zijlstra <peterz@infradead.org>
+cc: tglx@linutronix.de, linux-kernel@vger.kernel.org, mingo@redhat.com, 
+    dvhart@infradead.org, dave@stgolabs.net, andrealmeid@igalia.com, 
+    Andrew Morton <akpm@linux-foundation.org>, urezki@gmail.com, 
+    hch@infradead.org, lstoakes@gmail.com, Arnd Bergmann <arnd@arndb.de>, 
+    linux-api@vger.kernel.org, linux-mm@kvack.org, linux-arch@vger.kernel.org, 
+    malteskarupke@web.de, llong@redhat.com
+Subject: Re: [PATCH 2/6] futex: Implement FUTEX2_NUMA
+In-Reply-To: <20241025093944.485691531@infradead.org>
+Message-ID: <dce4d83c-fb3f-3581-71e4-33dad3f91e07@gentwo.org>
+References: <20241025090347.244183920@infradead.org> <20241025093944.485691531@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241025185020.277143-1-aboorvad@linux.ibm.com>
+Content-Type: text/plain; charset=US-ASCII
 
-On Sat, Oct 26, 2024 at 12:20:20AM +0530, Aboorva Devarajan wrote:
-> The function __setscheduler_class determines the appropriate
-> sched_class based on the scheduling policy and priority. Previously,
-> the function used the task's pointer to retrieve the scheduling policy,
-> which could lead to incorrect decisions if the task's struct had an
-> outdated policy. This behaviour where the task pointer may reference an
-> outdated policy when __setscheduler_class is called, was introduced in
-> commit 98442f0ccd82 ("sched: Fix delayed_dequeue vs switched_from_fair()")
-> 
-> To resolve this, corresponding scheduling policy is passed directly
-> to __setscheduler_class instead of relying on the task pointer's cached
-> policy. This ensures that the correct policy is always used when
-> determining the scheduling class.
-> 
-> -------------------------------------------------------
-> Before Patch:
-> -------------------------------------------------------
-> 
-> ```
-> sched_ext # ./runner -t init_enable_count
-> ===== START =====
-> TEST: init_enable_count
-> DESCRIPTION: Verify we do the correct amount of counting of init,
->              enable, etc callbacks.
-> OUTPUT:
-> ERR: init_enable_count.c:132
-> Expected skel->bss->enable_cnt == num_children (3 == 5)
-> not ok 1 init_enable_count #
-> =====  END  =====
-> 
-> =============================
-> 
-> RESULTS:
-> 
-> PASSED:  0
-> SKIPPED: 0
-> FAILED:  1
-> ```
-> -------------------------------------------------------
-> After Patch:
-> -------------------------------------------------------
-> 
-> ```
-> sched-ext # ./runner -t init_enable_count
-> ===== START =====
-> TEST: init_enable_count
-> DESCRIPTION: Verify we do the correct amount of counting of init,
->              enable, etc callbacks.
-> OUTPUT:
-> ok 1 init_enable_count #
-> =====  END  =====
-> 
-> =============================
-> 
-> RESULTS:
-> 
-> PASSED:  1
-> SKIPPED: 0
-> FAILED:  0
-> ```
-> 
-> Fixes: 98442f0ccd82 ("sched: Fix delayed_dequeue vs switched_from_fair()")
-> Signed-off-by: Aboorva Devarajan <aboorvad@linux.ibm.com>
+On Fri, 25 Oct 2024, Peter Zijlstra wrote:
 
-Acked-by: Tejun Heo <tj@kernel.org>
+> Extend the futex2 interface to be numa aware.
+>
+> When FUTEX2_NUMA is specified for a futex, the user value is extended
+> to two words (of the same size). The first is the user value we all
+> know, the second one will be the node to place this futex on.
+>
+>   struct futex_numa_32 {
+> 	u32 val;
+> 	u32 node;
+>   };
+>
+> When node is set to ~0, WAIT will set it to the current node_id such
+> that WAKE knows where to find it. If userspace corrupts the node value
+> between WAIT and WAKE, the futex will not be found and no wakeup will
+> happen.
+>
+> When FUTEX2_NUMA is not set, the node is simply an extention of the
+> hash, such that traditional futexes are still interleaved over the
+> nodes.
 
-Peter, do you want me to route this patch or would tip be better?
 
-Thanks.
+Would it be possible to follow the NUMA memory policy set up for a task
+when making these decisions? We may not need a separate FUTEX2_NUMA
+option. There are supportive functions in mm/mempolicy.c that will yield
+a node for the futex logic to use.
 
--- 
-tejun
+See f.e. linux/include/uapi/mempolicy.h for the types of memory policy
+that can be set for a task in current->mempolicy.
+
+
+MPOL_DEFAULT	get local memory / use system default policy
+MPOL_INTERLEAVE interleaved over nodes
+MPOL_BIND	use the node specified in the task policy.
+MPOL_LOCAL	get_local_memory
+
+etc.
+
+You will get a page or objects with the correct node by calling
+alloc_pages() or kmalloc without GFP_THISNODE.
+
+If you just need the node to use then use
+
+mempolicy_slab_node()
+
+and assign that to the node of the futex.
+
+The function will determine which node to use depending on the active
+memory policy.
+
 
