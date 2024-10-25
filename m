@@ -1,61 +1,59 @@
-Return-Path: <linux-kernel+bounces-381288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 314DB9AFD2A
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 10:50:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 522A49AFD2D
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 10:51:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E407A2834E5
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 08:50:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F281F1F2221E
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 08:51:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66FA41B6D00;
-	Fri, 25 Oct 2024 08:50:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98FE01D27A4;
+	Fri, 25 Oct 2024 08:51:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bj82IVY0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hg8pQSEJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0A171D26EA;
-	Fri, 25 Oct 2024 08:50:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F16C5156F30;
+	Fri, 25 Oct 2024 08:51:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729846232; cv=none; b=f1HtVf/+QPnIV9XprVHtJz/IqX0me9N5JX7E/MpgeC2yKaT6MiZvV/HYsxHu8CP+lOnMo6ccuqrZ731iNc5qy0ZHsqtwyIFdTxQcKSSm8WyrKt7J22e/NP99ZZ/g/4iY3oAziUZswjpmvbscbbtD26gA6Send+sRpGcbYZYFFM8=
+	t=1729846311; cv=none; b=KO1FfxCqlDNVa/A7FV6RQDsMlkwnt88CZiFuFrUa5pnWfan3r7SsR3UA/g6+xJr63VTRsrWviLpjNaLxpCP4gG/qMrnzubFRo+hFMArDqyzBFq/pxZqdAujDvxppim3cb+MH0NAmh140jzMA0e8xS9iM5YWsInqbkHIM8bhkTQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729846232; c=relaxed/simple;
-	bh=EiFzBiJNO+gug/df+x/geO73pUGdEZjeyi1bo22cFB4=;
+	s=arc-20240116; t=1729846311; c=relaxed/simple;
+	bh=+I1Z0ZbwCy3mJpUOf2ihWxBa6X9VoHu5PfyQ96IQ/xM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IxvJaNTdkhq+DhJuTVnVSTUAdi+Fmk0pry1VglLhutc1IWFLgwv1/PlKd+49uUMz7hC9B24gyoNbf35Dle8jL8FdOC2/e63wxloYKsxZMepem48IbXdE/wen0skr9EokkJo8A9zHhosbtqxB/iJyvNHNjMXcvdJC0EES8DxXWAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bj82IVY0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28AC6C4CEC3;
-	Fri, 25 Oct 2024 08:50:28 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=BUz15J0c57Og2RqCQwCmvlo/cKmBoknNQTclmrTB6FfJ6nWchapxvYsAyH34dv1vtQFkKGZ4LjqA9M17Cl5EpwL1759VVpqI/22AFHGQsqEI3edIOdb4gzl3h86NgzNihyduvNAcZGQTU5soYXySe11aMoGdK2mO8bQXirOxIgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hg8pQSEJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 314EBC4CEC3;
+	Fri, 25 Oct 2024 08:51:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729846231;
-	bh=EiFzBiJNO+gug/df+x/geO73pUGdEZjeyi1bo22cFB4=;
+	s=k20201202; t=1729846310;
+	bh=+I1Z0ZbwCy3mJpUOf2ihWxBa6X9VoHu5PfyQ96IQ/xM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bj82IVY0Tz95HIoaqBj6H8GLrOxsXCZ6QVy7P0SaXmqNI6gaezGwT1rUHJVlB+3ld
-	 Ofn4MvR+5cS5RcCCh4cYfqscDU68aJw4BYPH03tI136fDg7zOjfz42gTaKqfatd2CO
-	 rSR8mDyiE8Od1n2kznhb8janeQ2S9H7jcqWEIYBpn2qWhkqeh7ryRM+I54cXsDtw7a
-	 3K6ZjncHZu7Srw+nIh4dvbC7YdC3/uxJNHqkIrJA3h5HzsJ7u/Kf69xTm1OD4YElTw
-	 EVHik21SZvbCjGhg6KRLkYi093xVRYzQJS3A9HOS3LC+MDo7IYLc8g6+JkA8s0L4OG
-	 6+K1SKFfg6f2g==
-Date: Fri, 25 Oct 2024 09:50:26 +0100
+	b=Hg8pQSEJcfmkz2TtOJ06SNurTweJmKo8iLpvF2Qw+HNlswG1m708Wdej5uNOUxI9G
+	 SfEXlh/Lq4EXoXKAY0cqmmqdvgFI+QrjHxz0qkHZrSTpUGK3TtQ2eoVA9kSmxfcyWr
+	 LUUlPpAtUasaLOxrlVzjfQHU5xeVyARJzZyWnqtbswW0CI159tYEGe3RL72NoMfnIM
+	 IZZDbJxugmgA/4z4ZC+L2QGb+PdgpUOgiUosWUcomPWCmTgZ3OOQUjwl0PRzCFf40G
+	 F5/5TI1aiXxMNUHdtBVfSDvX7N/CFRv6ezIoF9Nll3Y1XfZTccxkk1v7nFSt74UeWp
+	 0k+saF48uFudw==
+Date: Fri, 25 Oct 2024 09:51:46 +0100
 From: Lee Jones <lee@kernel.org>
-To: Andreas Kemnade <andreas@kemnade.info>
-Cc: Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org,
-	Aaro Koskinen <aaro.koskinen@iki.fi>,
-	Kevin Hilman <khilman@baylibre.com>, linux-kernel@vger.kernel.org,
-	Roger Quadros <rogerq@kernel.org>, linux-clk@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Subject: Re: (subset) [PATCH v5 1/3] mfd: twl-core: Add a clock subdevice for
- the TWL6030
-Message-ID: <20241025085026.GA10824@google.com>
-References: <20241014161109.2222-1-andreas@kemnade.info>
- <20241014161109.2222-2-andreas@kemnade.info>
- <172898119013.384451.4986094816910935104.b4-ty@kernel.org>
- <20241023120432.59cedd0b@akair>
+To: Mark Brown <broonie@kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: duplicate patches in the regulator tree
+Message-ID: <20241025085146.GB10824@google.com>
+References: <20241016135943.24e1fab0@canb.auug.org.au>
+ <20241016075510.GL8348@google.com>
+ <4bb56093-5358-4d3b-aba8-f8815d2347a6@sirena.org.uk>
+ <20241016130924.GB1152434@google.com>
+ <ef8697e9-9eb1-459f-8c5d-197019029fbc@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,28 +63,19 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241023120432.59cedd0b@akair>
+In-Reply-To: <ef8697e9-9eb1-459f-8c5d-197019029fbc@sirena.org.uk>
 
-On Wed, 23 Oct 2024, Andreas Kemnade wrote:
+On Tue, 22 Oct 2024, Mark Brown wrote:
 
-> Am Tue, 15 Oct 2024 09:33:10 +0100
-> schrieb Lee Jones <lee@kernel.org>:
+> On Wed, Oct 16, 2024 at 02:09:24PM +0100, Lee Jones wrote:
 > 
-> > On Mon, 14 Oct 2024 18:11:07 +0200, Andreas Kemnade wrote:
-> > > Also the TWL6030 has some clocks, so add a subdevice for that.
-> > > 
-> > >   
-> > 
-> > Applied, thanks!
-> > 
-> > [1/3] mfd: twl-core: Add a clock subdevice for the TWL6030
-> >       commit: 5ebc60259a0fdd13aef077726b1773f1ae091efc
-> > 
-> hmm, this does not appear in linux-next. Did anything went wrong?
+> > I said to apply the regulator patch because it looked like it didn't
+> > have any dependencies.  The latter part was my mistake as now I see that
+> > it did have deps.
+> 
+> I've now dropped those patches.
 
-Looks like a clerical error on my part.
-
-Thanks for noticing.  Re-applied and pushed.
+Thanks Mark, I appreciate that.
 
 -- 
 Lee Jones [李琼斯]
