@@ -1,495 +1,185 @@
-Return-Path: <linux-kernel+bounces-381482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A8E59AFFBE
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 12:12:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D92529B002D
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 12:31:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F7551F25153
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 10:12:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9ED3F281822
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 10:31:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C089206060;
-	Fri, 25 Oct 2024 10:09:06 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19D501E501B;
+	Fri, 25 Oct 2024 10:31:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VEm4Ei+M"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D60B61DD0CB
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 10:09:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A29318F2F7;
+	Fri, 25 Oct 2024 10:31:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729850945; cv=none; b=ps3GbdF45ND8q6/P5Mova64ZWEX6pxlnPcP27JOclejzFPhiFmp2sipErsjR6QZPL/xtv5YM7sQEw1iWzftBMXGLiEytmladLplc6lkJC6YKd2pEqi8p4G/slZWJwMA1Cs5S+p+W+0//2zHQQByRP1wyoq7wLFClxGW3FZ9kqPM=
+	t=1729852294; cv=none; b=GCovd1HUMVqUZK4bWgbQ52cSCCTJyd/56GQxM2gXM6AzJ+0EmtOn3zUkYJVD3zW5GcOqpsK9s59zoxKNdozDqc5DQNDefx+oqYafZqpp3v/1KdR+K4/NJWEmQYGKF0IyFjd/WQMKI/d195bE9iAuQ1n6xNooC/wY5Wo2uRTQRP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729850945; c=relaxed/simple;
-	bh=n0JOFGOTPnC4O0tJjAXj36qW/w2SrVqcqljKADOnDNk=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IJpA+76kMDMlfLeTtultlBbyUTzRZ17ivNHy9CubqKJAZCNWNrAiACxF5yr8/8Oi8hs5KwjxC0DvgoUrqJXIIi8hUJcFC4iu++dPaOYuVDflCSHzQ++lnOXMxTPOPwQ6z38gSC0cg253V20E398I2dgG1eugFa6Wm4Guravc+Fg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4XZdjq0g7Xz1T91t;
-	Fri, 25 Oct 2024 18:06:55 +0800 (CST)
-Received: from kwepemg200008.china.huawei.com (unknown [7.202.181.35])
-	by mail.maildlp.com (Postfix) with ESMTPS id 495EF1400E3;
-	Fri, 25 Oct 2024 18:08:59 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by kwepemg200008.china.huawei.com
- (7.202.181.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 25 Oct
- 2024 18:08:57 +0800
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-To: <oleg@redhat.com>, <linux@armlinux.org.uk>, <will@kernel.org>,
-	<mark.rutland@arm.com>, <catalin.marinas@arm.com>, <sstabellini@kernel.org>,
-	<maz@kernel.org>, <tglx@linutronix.de>, <peterz@infradead.org>,
-	<luto@kernel.org>, <kees@kernel.org>, <wad@chromium.org>,
-	<akpm@linux-foundation.org>, <samitolvanen@google.com>, <arnd@arndb.de>,
-	<ojeda@kernel.org>, <rppt@kernel.org>, <hca@linux.ibm.com>,
-	<aliceryhl@google.com>, <samuel.holland@sifive.com>, <paulmck@kernel.org>,
-	<aquini@redhat.com>, <petr.pavlu@suse.com>, <ruanjinjie@huawei.com>,
-	<viro@zeniv.linux.org.uk>, <rmk+kernel@armlinux.org.uk>, <ardb@kernel.org>,
-	<wangkefeng.wang@huawei.com>, <surenb@google.com>,
-	<linus.walleij@linaro.org>, <yangyj.ee@gmail.com>, <broonie@kernel.org>,
-	<mbenes@suse.cz>, <puranjay@kernel.org>, <pcc@google.com>,
-	<guohanjun@huawei.com>, <sudeep.holla@arm.com>,
-	<Jonathan.Cameron@huawei.com>, <prarit@redhat.com>, <liuwei09@cestc.cn>,
-	<dwmw@amazon.co.uk>, <oliver.upton@linux.dev>, <kristina.martsenko@arm.com>,
-	<ptosi@google.com>, <frederic@kernel.org>, <vschneid@redhat.com>,
-	<thiago.bauermann@linaro.org>, <joey.gouly@arm.com>,
-	<liuyuntao12@huawei.com>, <leobras@redhat.com>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<xen-devel@lists.xenproject.org>
-Subject: [PATCH -next v4 19/19] arm64: entry: Convert to generic entry
-Date: Fri, 25 Oct 2024 18:07:00 +0800
-Message-ID: <20241025100700.3714552-20-ruanjinjie@huawei.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241025100700.3714552-1-ruanjinjie@huawei.com>
-References: <20241025100700.3714552-1-ruanjinjie@huawei.com>
+	s=arc-20240116; t=1729852294; c=relaxed/simple;
+	bh=4zV7WJT4ELiuI5eDILdMat1X24qaMlG8dWwZ+Sv55JQ=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=l71uMXChvNqOuUs8NjpOLsoL+t3pwvoJixS8lQtSv+OtpPw+2xNrIPKlrAS5EzyInLYNBcSCwouc5IAowaqT6fY3b+i7AKBDnhQtBpTLFA97Ze8Yc5ug9Tjh1SsFMnuoDc0qhP5RWt6AexjhFp8rZdqb2OlioH3p4wIdet57QNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VEm4Ei+M; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2e2c6bc4840so1405996a91.2;
+        Fri, 25 Oct 2024 03:31:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729852291; x=1730457091; darn=vger.kernel.org;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=M5FWy0HuR7v5dZxwHvlOpN27R8/7jfpqMcRsd5csqOk=;
+        b=VEm4Ei+MVc90GVcIcnfLGty3AMDfjPdJEOyLtZOTpVsGt2T+LkHhowor1FmuTClIZl
+         msZLs0YfWqB/asEnIBikITRKNl8m6u/FjPMlXFwvqy3oumZJiMB+tU8SQxVldCr8ySP5
+         cDHyMmna7nk3stM24sa3bIiD8CFiwMVrixB5TNO5GxDnr/e42PMalKzT4I8JNU90XVXB
+         dDr2MOyCCwubWqnEcpmDcAZKn74krCKcmvTGJGS/ANgU7r8+8UYH2PDAqwNE04bzl2fP
+         DEZAz8Gxl+ZU0iDIZcoZHmSmpMV4S7yyaDZgehvZCJdw/xZmreFkwYn5Dehq7FjhFW3m
+         HGxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729852291; x=1730457091;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=M5FWy0HuR7v5dZxwHvlOpN27R8/7jfpqMcRsd5csqOk=;
+        b=lvqNyN1syqu+PF0hzFoNjPYixko4BzBzyZlCp7GK47D2Q+XlHf0xbJ9SPcqgepdgbA
+         59V2u7pSBDtuIZsvtTPfAm6RqtMnbyht9le5KGLgLTueb4x4f3EmcPhPSmt9w8ZzODvi
+         iJwFeZTg/ZRvYdcWR440CzPrykWMgbwAyf8LfiKPT+GXhiwC/Yu8NtdSffLv/e0pMIyL
+         P06iJ5lxpTf6cOMnhTANfs0dZjMweJEGlAkMxQjGvYXDWn6yH4nQe7Azhnle/dHTFW5h
+         igiorn8TXZ6lmU4EErh1K+ZIwnX4wY2i8Vvj/bla5kPzKQQc8Z7O3VTnmmAU//k1nScH
+         db6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUT9XVUCvexpxIxIXtw0TJbIFiItQDCVE+RWHUFruQKYzHQCQrPK1GQZdszJeAbOrBb1zwmH0FvkV3u6XvVFw==@vger.kernel.org, AJvYcCVM0XVUnbxKJdtK7GMbBa2sBx7fCJlm2wVFdwx6bbADz/oRiJ7jukmTTcVeL2IL/iNv+87KzSSfGUgfQGuN@vger.kernel.org, AJvYcCWO2LI8k8Pp3Q5FkkQwqiJe735H2MqsDkWkcrr3YPRZWSfIfq0ytWEYEZpzHHgb6FxLMyX1WSeA5GAL@vger.kernel.org, AJvYcCWvGA63Q27heehhWkqU8FDo8J37BCNvPwAKnSujAeiESMqRx0IHkcfmwmBLFLCVPQ4oF+8tjvHMBijB@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGZqhVZNNYypuKdTxabXvO6dwnHD9zxdvroxqw52diMhThJr//
+	FFKHPFPd4OI9B1aoJzyuK1TUXcqoem6muPYw9NviFmhR5gOqE0+6p08Ybg==
+X-Google-Smtp-Source: AGHT+IHe2Og/h4J/9K7wPAUbvNeMIUE/QeOXAGkhYIaERrZuTxDyFslREse4P/jzV6Q1na4nSSvx/Q==
+X-Received: by 2002:a17:90a:9e2:b0:2c9:b72:7a1f with SMTP id 98e67ed59e1d1-2e76b6e21a9mr9885734a91.28.1729852290824;
+        Fri, 25 Oct 2024 03:31:30 -0700 (PDT)
+Received: from dw-tp ([171.76.85.20])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e8e3572d4esm1075097a91.15.2024.10.25.03.31.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Oct 2024 03:31:30 -0700 (PDT)
+From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+To: John Garry <john.g.garry@oracle.com>, linux-ext4@vger.kernel.org
+Cc: Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.cz>, "Darrick J . Wong" <djwong@kernel.org>, Christoph Hellwig <hch@infradead.org>, Ojaswin Mujoo <ojaswin@linux.ibm.com>, Dave Chinner <david@fromorbit.com>, linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 1/6] ext4: Add statx support for atomic writes
+In-Reply-To: <314835ec-98bf-472c-8be7-0b26e50cfc9b@oracle.com>
+Date: Fri, 25 Oct 2024 15:38:03 +0530
+Message-ID: <87y12cmr5o.fsf@gmail.com>
+References: <cover.1729825985.git.ritesh.list@gmail.com> <e6af669b237690491ecff0717039e28e949208c8.1729825985.git.ritesh.list@gmail.com> <314835ec-98bf-472c-8be7-0b26e50cfc9b@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemg200008.china.huawei.com (7.202.181.35)
 
-Currently, x86, Riscv, Loongarch use the generic entry. Convert arm64
-to use the generic entry infrastructure from kernel/entry/*.
-The generic entry makes maintainers' work easier and codes more elegant.
+John Garry <john.g.garry@oracle.com> writes:
 
-The changes are below:
- - Remove TIF_SYSCALL_* flag, _TIF_WORK_MASK, _TIF_SYSCALL_WORK
- - Remove syscall_trace_enter/exit() and use generic identical functions.
+> On 25/10/2024 04:45, Ritesh Harjani (IBM) wrote:
+>> This patch adds base support for atomic writes via statx getattr.
+>> On bs < ps systems, we can create FS with say bs of 16k. That means
+>> both atomic write min and max unit can be set to 16k for supporting
+>> atomic writes.
+>> 
+>> Later patches adds support for bigalloc as well so that ext4 can also
+>> support doing atomic writes for bs = ps systems.
+>> 
+>> Co-developed-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+>> Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+>> Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+>> ---
+>>   fs/ext4/ext4.h  |  7 ++++++-
+>>   fs/ext4/inode.c | 14 ++++++++++++++
+>>   fs/ext4/super.c | 32 ++++++++++++++++++++++++++++++++
+>>   3 files changed, 52 insertions(+), 1 deletion(-)
+>> 
+>> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+>> index 44b0d418143c..a41e56c2c628 100644
+>> --- a/fs/ext4/ext4.h
+>> +++ b/fs/ext4/ext4.h
+>> @@ -1729,6 +1729,10 @@ struct ext4_sb_info {
+>>   	 */
+>>   	struct work_struct s_sb_upd_work;
+>>   
+>> +	/* Atomic write unit values */
+>> +	unsigned int fs_awu_min;
+>> +	unsigned int fs_awu_max;
+>> +
+>>   	/* Ext4 fast commit sub transaction ID */
+>>   	atomic_t s_fc_subtid;
+>>   
+>> @@ -1820,7 +1824,8 @@ static inline int ext4_valid_inum(struct super_block *sb, unsigned long ino)
+>>    */
+>>   enum {
+>>   	EXT4_MF_MNTDIR_SAMPLED,
+>> -	EXT4_MF_FC_INELIGIBLE	/* Fast commit ineligible */
+>> +	EXT4_MF_FC_INELIGIBLE,	/* Fast commit ineligible */
+>> +	EXT4_MF_ATOMIC_WRITE	/* Supports atomic write */
+>
+> Does this flag really buy us much?
+>
 
-Tested ok with following test cases on Qemu cortex-a53 and HiSilicon
-Kunpeng-920:
- - Perf tests.
- - Different `dynamic preempt` mode switch.
- - Pseudo NMI tests.
- - Stress-ng CPU stress test.
- - MTE test case in Documentation/arch/arm64/memory-tagging-extension.rst
-   and all test cases in tools/testing/selftests/arm64/mte/* (Only Qemu).
+I felt it is cleaner this way than comparing non-zero values of
+fs_awu_min and fs_awu_max.
 
-Suggested-by: Mark Rutland <mark.rutland@arm.com>
-Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
----
- arch/arm64/Kconfig                    |   2 +-
- arch/arm64/include/asm/entry-common.h |  85 ++++++++++++++++++++++
- arch/arm64/include/asm/syscall.h      |   6 +-
- arch/arm64/include/asm/thread_info.h  |  23 +-----
- arch/arm64/kernel/ptrace.c            | 101 --------------------------
- arch/arm64/kernel/signal.c            |   2 +-
- arch/arm64/kernel/syscall.c           |  18 +++--
- 7 files changed, 103 insertions(+), 134 deletions(-)
 
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 4545017cfd01..89d46d0fb18b 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -146,7 +146,7 @@ config ARM64
- 	select GENERIC_CPU_DEVICES
- 	select GENERIC_CPU_VULNERABILITIES
- 	select GENERIC_EARLY_IOREMAP
--	select GENERIC_IRQ_ENTRY
-+	select GENERIC_ENTRY
- 	select GENERIC_IDLE_POLL_SETUP
- 	select GENERIC_IOREMAP
- 	select GENERIC_IRQ_IPI
-diff --git a/arch/arm64/include/asm/entry-common.h b/arch/arm64/include/asm/entry-common.h
-index 1cc9d966a6c3..04a31b4fc4fd 100644
---- a/arch/arm64/include/asm/entry-common.h
-+++ b/arch/arm64/include/asm/entry-common.h
-@@ -10,6 +10,11 @@
- #include <asm/mte.h>
- #include <asm/stacktrace.h>
- 
-+enum ptrace_syscall_dir {
-+	PTRACE_SYSCALL_ENTER = 0,
-+	PTRACE_SYSCALL_EXIT,
-+};
-+
- #define ARCH_EXIT_TO_USER_MODE_WORK (_TIF_MTE_ASYNC_FAULT | _TIF_FOREIGN_FPSTATE)
- 
- static __always_inline void arch_exit_to_user_mode_work(struct pt_regs *regs,
-@@ -61,4 +66,84 @@ static inline bool arch_irqentry_exit_need_resched(void)
- 
- #define arch_irqentry_exit_need_resched arch_irqentry_exit_need_resched
- 
-+static inline unsigned long arch_pre_report_syscall_entry(struct pt_regs *regs)
-+{
-+	unsigned long saved_reg;
-+	int regno;
-+
-+	/*
-+	 * We have some ABI weirdness here in the way that we handle syscall
-+	 * exit stops because we indicate whether or not the stop has been
-+	 * signalled from syscall entry or syscall exit by clobbering a general
-+	 * purpose register (ip/r12 for AArch32, x7 for AArch64) in the tracee
-+	 * and restoring its old value after the stop. This means that:
-+	 *
-+	 * - Any writes by the tracer to this register during the stop are
-+	 *   ignored/discarded.
-+	 *
-+	 * - The actual value of the register is not available during the stop,
-+	 *   so the tracer cannot save it and restore it later.
-+	 *
-+	 * - Syscall stops behave differently to seccomp and pseudo-step traps
-+	 *   (the latter do not nobble any registers).
-+	 */
-+	regno = (is_compat_task() ? 12 : 7);
-+	saved_reg = regs->regs[regno];
-+	regs->regs[regno] = PTRACE_SYSCALL_ENTER;
-+
-+	return saved_reg;
-+}
-+
-+#define arch_pre_report_syscall_entry arch_pre_report_syscall_entry
-+
-+static inline void arch_post_report_syscall_entry(struct pt_regs *regs,
-+						  unsigned long saved_reg, long ret)
-+{
-+	int regno = (is_compat_task() ? 12 : 7);
-+
-+	if (ret)
-+		forget_syscall(regs);
-+
-+	regs->regs[regno] = saved_reg;
-+}
-+
-+#define arch_post_report_syscall_entry arch_post_report_syscall_entry
-+
-+static inline unsigned long arch_pre_report_syscall_exit(struct pt_regs *regs,
-+							 unsigned long work)
-+{
-+	unsigned long saved_reg;
-+	int regno;
-+
-+	/* See comment for arch_pre_report_syscall_entry() */
-+	regno = (is_compat_task() ? 12 : 7);
-+	saved_reg = regs->regs[regno];
-+	regs->regs[regno] = PTRACE_SYSCALL_EXIT;
-+
-+	if (report_single_step(work)) {
-+		/*
-+		 * Signal a pseudo-step exception since we are stepping but
-+		 * tracer modifications to the registers may have rewound the
-+		 * state machine.
-+		 */
-+		regs->regs[regno] = saved_reg;
-+	}
-+
-+	return saved_reg;
-+}
-+
-+#define arch_pre_report_syscall_exit arch_pre_report_syscall_exit
-+
-+static inline void arch_post_report_syscall_exit(struct pt_regs *regs,
-+						 unsigned long saved_reg,
-+						 unsigned long work)
-+{
-+	int regno = (is_compat_task() ? 12 : 7);
-+
-+	if (!report_single_step(work))
-+		regs->regs[regno] = saved_reg;
-+}
-+
-+#define arch_post_report_syscall_exit arch_post_report_syscall_exit
-+
- #endif /* _ASM_ARM64_ENTRY_COMMON_H */
-diff --git a/arch/arm64/include/asm/syscall.h b/arch/arm64/include/asm/syscall.h
-index ab8e14b96f68..9891b15da4c3 100644
---- a/arch/arm64/include/asm/syscall.h
-+++ b/arch/arm64/include/asm/syscall.h
-@@ -85,7 +85,9 @@ static inline int syscall_get_arch(struct task_struct *task)
- 	return AUDIT_ARCH_AARCH64;
- }
- 
--int syscall_trace_enter(struct pt_regs *regs);
--void syscall_trace_exit(struct pt_regs *regs);
-+static inline bool arch_syscall_is_vdso_sigreturn(struct pt_regs *regs)
-+{
-+	return false;
-+}
- 
- #endif	/* __ASM_SYSCALL_H */
-diff --git a/arch/arm64/include/asm/thread_info.h b/arch/arm64/include/asm/thread_info.h
-index 1114c1c3300a..543fdb00d713 100644
---- a/arch/arm64/include/asm/thread_info.h
-+++ b/arch/arm64/include/asm/thread_info.h
-@@ -43,6 +43,7 @@ struct thread_info {
- 	void			*scs_sp;
- #endif
- 	u32			cpu;
-+	unsigned long		syscall_work;   /* SYSCALL_WORK_ flags */
- };
- 
- #define thread_saved_pc(tsk)	\
-@@ -64,11 +65,6 @@ void arch_setup_new_exec(void);
- #define TIF_UPROBE		4	/* uprobe breakpoint or singlestep */
- #define TIF_MTE_ASYNC_FAULT	5	/* MTE Asynchronous Tag Check Fault */
- #define TIF_NOTIFY_SIGNAL	6	/* signal notifications exist */
--#define TIF_SYSCALL_TRACE	8	/* syscall trace active */
--#define TIF_SYSCALL_AUDIT	9	/* syscall auditing */
--#define TIF_SYSCALL_TRACEPOINT	10	/* syscall tracepoint for ftrace */
--#define TIF_SECCOMP		11	/* syscall secure computing */
--#define TIF_SYSCALL_EMU		12	/* syscall emulation active */
- #define TIF_MEMDIE		18	/* is terminating due to OOM killer */
- #define TIF_FREEZE		19
- #define TIF_RESTORE_SIGMASK	20
-@@ -87,28 +83,13 @@ void arch_setup_new_exec(void);
- #define _TIF_NEED_RESCHED	(1 << TIF_NEED_RESCHED)
- #define _TIF_NOTIFY_RESUME	(1 << TIF_NOTIFY_RESUME)
- #define _TIF_FOREIGN_FPSTATE	(1 << TIF_FOREIGN_FPSTATE)
--#define _TIF_SYSCALL_TRACE	(1 << TIF_SYSCALL_TRACE)
--#define _TIF_SYSCALL_AUDIT	(1 << TIF_SYSCALL_AUDIT)
--#define _TIF_SYSCALL_TRACEPOINT	(1 << TIF_SYSCALL_TRACEPOINT)
--#define _TIF_SECCOMP		(1 << TIF_SECCOMP)
--#define _TIF_SYSCALL_EMU	(1 << TIF_SYSCALL_EMU)
--#define _TIF_UPROBE		(1 << TIF_UPROBE)
--#define _TIF_SINGLESTEP		(1 << TIF_SINGLESTEP)
-+#define _TIF_UPROBE            (1 << TIF_UPROBE)
- #define _TIF_32BIT		(1 << TIF_32BIT)
- #define _TIF_SVE		(1 << TIF_SVE)
- #define _TIF_MTE_ASYNC_FAULT	(1 << TIF_MTE_ASYNC_FAULT)
- #define _TIF_NOTIFY_SIGNAL	(1 << TIF_NOTIFY_SIGNAL)
- #define _TIF_TSC_SIGSEGV	(1 << TIF_TSC_SIGSEGV)
- 
--#define _TIF_WORK_MASK		(_TIF_NEED_RESCHED | _TIF_SIGPENDING | \
--				 _TIF_NOTIFY_RESUME | _TIF_FOREIGN_FPSTATE | \
--				 _TIF_UPROBE | _TIF_MTE_ASYNC_FAULT | \
--				 _TIF_NOTIFY_SIGNAL)
--
--#define _TIF_SYSCALL_WORK	(_TIF_SYSCALL_TRACE | _TIF_SYSCALL_AUDIT | \
--				 _TIF_SYSCALL_TRACEPOINT | _TIF_SECCOMP | \
--				 _TIF_SYSCALL_EMU)
--
- #ifdef CONFIG_SHADOW_CALL_STACK
- #define INIT_SCS							\
- 	.scs_base	= init_shadow_call_stack,			\
-diff --git a/arch/arm64/kernel/ptrace.c b/arch/arm64/kernel/ptrace.c
-index 6ea303ab9e22..0f642ed4dbe4 100644
---- a/arch/arm64/kernel/ptrace.c
-+++ b/arch/arm64/kernel/ptrace.c
-@@ -42,9 +42,6 @@
- #include <asm/traps.h>
- #include <asm/system_misc.h>
- 
--#define CREATE_TRACE_POINTS
--#include <trace/events/syscalls.h>
--
- struct pt_regs_offset {
- 	const char *name;
- 	int offset;
-@@ -2285,104 +2282,6 @@ long arch_ptrace(struct task_struct *child, long request,
- 	return ptrace_request(child, request, addr, data);
- }
- 
--enum ptrace_syscall_dir {
--	PTRACE_SYSCALL_ENTER = 0,
--	PTRACE_SYSCALL_EXIT,
--};
--
--static void report_syscall_enter(struct pt_regs *regs)
--{
--	int regno;
--	unsigned long saved_reg;
--
--	/*
--	 * We have some ABI weirdness here in the way that we handle syscall
--	 * exit stops because we indicate whether or not the stop has been
--	 * signalled from syscall entry or syscall exit by clobbering a general
--	 * purpose register (ip/r12 for AArch32, x7 for AArch64) in the tracee
--	 * and restoring its old value after the stop. This means that:
--	 *
--	 * - Any writes by the tracer to this register during the stop are
--	 *   ignored/discarded.
--	 *
--	 * - The actual value of the register is not available during the stop,
--	 *   so the tracer cannot save it and restore it later.
--	 *
--	 * - Syscall stops behave differently to seccomp and pseudo-step traps
--	 *   (the latter do not nobble any registers).
--	 */
--	regno = (is_compat_task() ? 12 : 7);
--	saved_reg = regs->regs[regno];
--	regs->regs[regno] = PTRACE_SYSCALL_ENTER;
--
--	if (ptrace_report_syscall_entry(regs))
--		forget_syscall(regs);
--	regs->regs[regno] = saved_reg;
--}
--
--static void report_syscall_exit(struct pt_regs *regs)
--{
--	int regno;
--	unsigned long saved_reg;
--
--	/* See comment for report_syscall_enter() */
--	regno = (is_compat_task() ? 12 : 7);
--	saved_reg = regs->regs[regno];
--	regs->regs[regno] = PTRACE_SYSCALL_EXIT;
--
--	if (!test_thread_flag(TIF_SINGLESTEP)) {
--		ptrace_report_syscall_exit(regs, 0);
--		regs->regs[regno] = saved_reg;
--	} else {
--		regs->regs[regno] = saved_reg;
--
--		/*
--		 * Signal a pseudo-step exception since we are stepping but
--		 * tracer modifications to the registers may have rewound the
--		 * state machine.
--		 */
--		ptrace_report_syscall_exit(regs, 1);
--	}
--}
--
--int syscall_trace_enter(struct pt_regs *regs)
--{
--	unsigned long flags = read_thread_flags();
--
--	if (flags & (_TIF_SYSCALL_EMU | _TIF_SYSCALL_TRACE)) {
--		report_syscall_enter(regs);
--		if (flags & _TIF_SYSCALL_EMU)
--			return NO_SYSCALL;
--	}
--
--	/* Do the secure computing after ptrace; failures should be fast. */
--	if (secure_computing() == -1)
--		return NO_SYSCALL;
--
--	if (test_thread_flag(TIF_SYSCALL_TRACEPOINT))
--		trace_sys_enter(regs, regs->syscallno);
--
--	audit_syscall_entry(regs->syscallno, regs->orig_x0, regs->regs[1],
--			    regs->regs[2], regs->regs[3]);
--
--	return regs->syscallno;
--}
--
--void syscall_trace_exit(struct pt_regs *regs)
--{
--	unsigned long flags = read_thread_flags();
--
--	audit_syscall_exit(regs);
--
--	if (flags & _TIF_SYSCALL_TRACEPOINT)
--		trace_sys_exit(regs, syscall_get_return_value(current, regs));
--
--	if (flags & (_TIF_SYSCALL_TRACE | _TIF_SINGLESTEP))
--		report_syscall_exit(regs);
--
--	rseq_syscall(regs);
--}
--
- /*
-  * SPSR_ELx bits which are always architecturally RES0 per ARM DDI 0487D.a.
-  * We permit userspace to set SSBS (AArch64 bit 12, AArch32 bit 23) which is
-diff --git a/arch/arm64/kernel/signal.c b/arch/arm64/kernel/signal.c
-index 04b20c2f6cda..4965cb80e67e 100644
---- a/arch/arm64/kernel/signal.c
-+++ b/arch/arm64/kernel/signal.c
-@@ -8,8 +8,8 @@
- 
- #include <linux/cache.h>
- #include <linux/compat.h>
-+#include <linux/entry-common.h>
- #include <linux/errno.h>
--#include <linux/irq-entry-common.h>
- #include <linux/kernel.h>
- #include <linux/signal.h>
- #include <linux/freezer.h>
-diff --git a/arch/arm64/kernel/syscall.c b/arch/arm64/kernel/syscall.c
-index c442fcec6b9e..ea818e3d597b 100644
---- a/arch/arm64/kernel/syscall.c
-+++ b/arch/arm64/kernel/syscall.c
-@@ -2,6 +2,7 @@
- 
- #include <linux/compiler.h>
- #include <linux/context_tracking.h>
-+#include <linux/entry-common.h>
- #include <linux/errno.h>
- #include <linux/nospec.h>
- #include <linux/ptrace.h>
-@@ -65,14 +66,15 @@ static void invoke_syscall(struct pt_regs *regs, unsigned int scno,
- 	choose_random_kstack_offset(get_random_u16());
- }
- 
--static inline bool has_syscall_work(unsigned long flags)
-+static inline bool has_syscall_work(unsigned long work)
- {
--	return unlikely(flags & _TIF_SYSCALL_WORK);
-+	return unlikely(work & SYSCALL_WORK_ENTER);
- }
- 
- static void el0_svc_common(struct pt_regs *regs, int scno, int sc_nr,
- 			   const syscall_fn_t syscall_table[])
- {
-+	unsigned long work = READ_ONCE(current_thread_info()->syscall_work);
- 	unsigned long flags = read_thread_flags();
- 
- 	regs->orig_x0 = regs->regs[0];
-@@ -106,7 +108,7 @@ static void el0_svc_common(struct pt_regs *regs, int scno, int sc_nr,
- 		return;
- 	}
- 
--	if (has_syscall_work(flags)) {
-+	if (has_syscall_work(work)) {
- 		/*
- 		 * The de-facto standard way to skip a system call using ptrace
- 		 * is to set the system call to -1 (NO_SYSCALL) and set x0 to a
-@@ -124,7 +126,7 @@ static void el0_svc_common(struct pt_regs *regs, int scno, int sc_nr,
- 		 */
- 		if (scno == NO_SYSCALL)
- 			syscall_set_return_value(current, regs, -ENOSYS, 0);
--		scno = syscall_trace_enter(regs);
-+		scno = syscall_trace_enter(regs, regs->syscallno, work);
- 		if (scno == NO_SYSCALL)
- 			goto trace_exit;
- 	}
-@@ -136,14 +138,14 @@ static void el0_svc_common(struct pt_regs *regs, int scno, int sc_nr,
- 	 * check again. However, if we were tracing entry, then we always trace
- 	 * exit regardless, as the old entry assembly did.
- 	 */
--	if (!has_syscall_work(flags) && !IS_ENABLED(CONFIG_DEBUG_RSEQ)) {
--		flags = read_thread_flags();
--		if (!has_syscall_work(flags) && !(flags & _TIF_SINGLESTEP))
-+	if (!has_syscall_work(work) && !IS_ENABLED(CONFIG_DEBUG_RSEQ)) {
-+		work = READ_ONCE(current_thread_info()->syscall_work);
-+		if (!has_syscall_work(work) && !report_single_step(work))
- 			return;
- 	}
- 
- trace_exit:
--	syscall_trace_exit(regs);
-+	syscall_exit_work(regs, work);
- }
- 
- void do_el0_svc(struct pt_regs *regs)
--- 
-2.34.1
+Now that you pointed at it - Maybe a question for others who might have
+the history of which one to use when - or do we think there is a scope
+of merging the two into just one as a later cleanup?
 
+I know that s_mount_flags was added for fastcommit and it needed the
+state manipulations to be done in atomic way. Similarly s_ext4_flags
+also was renamed from s_resize_flags for more general purpose use. Both
+of these looks like could be merged isn't it?
+
+
+
+>>   };
+>>   
+>>   static inline void ext4_set_mount_flag(struct super_block *sb, int bit)
+>> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+>> index 54bdd4884fe6..897c028d5bc9 100644
+>> --- a/fs/ext4/inode.c
+>> +++ b/fs/ext4/inode.c
+>> @@ -5578,6 +5578,20 @@ int ext4_getattr(struct mnt_idmap *idmap, const struct path *path,
+>>   		}
+>>   	}
+>>   
+>> +	if (S_ISREG(inode->i_mode) && (request_mask & STATX_WRITE_ATOMIC)) {
+>> +		struct ext4_sb_info *sbi = EXT4_SB(inode->i_sb);
+>> +		unsigned int awu_min, awu_max;
+>> +
+>> +		if (ext4_test_mount_flag(inode->i_sb, EXT4_MF_ATOMIC_WRITE)) {
+>
+> I'd use ext4_inode_can_atomicwrite() here, similar to what is done for xfs
+>
+
+Sure since it is inode operation, we can check against ext4_inode_can_atomicwrite().
+
+
+>> +			awu_min = sbi->fs_awu_min;
+>> +			awu_max = sbi->fs_awu_max;
+>> +		} else {
+>> +			awu_min = awu_max = 0;
+>> +		}
+>> +
+>> +		generic_fill_statx_atomic_writes(stat, awu_min, awu_max);
+>> +	}
+>> +
+>>   	flags = ei->i_flags & EXT4_FL_USER_VISIBLE;
+>>   	if (flags & EXT4_APPEND_FL)
+>>   		stat->attributes |= STATX_ATTR_APPEND;
+>> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+>> index 16a4ce704460..f5c075aff060 100644
+>> --- a/fs/ext4/super.c
+>> +++ b/fs/ext4/super.c
+>> @@ -4425,6 +4425,37 @@ static int ext4_handle_clustersize(struct super_block *sb)
+>>   	return 0;
+>>   }
+>>   
+>> +/*
 
