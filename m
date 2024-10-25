@@ -1,117 +1,156 @@
-Return-Path: <linux-kernel+bounces-380848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B15219AF6E3
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 03:36:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 323F39AF6EE
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 03:39:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E23151C217C3
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 01:36:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBBEC1F2295A
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 01:39:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A18C13B791;
-	Fri, 25 Oct 2024 01:36:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 652B945009;
+	Fri, 25 Oct 2024 01:39:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Oi+AsDSX"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mhOYe+ky"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 317914C83;
-	Fri, 25 Oct 2024 01:36:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF3711173F;
+	Fri, 25 Oct 2024 01:39:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729820200; cv=none; b=f9foWzWwc/o3eDIicBC4HT4yriescZlc45zXz9jWRUg+kodPYMhMfyfZqN0tlm8VgUB7qea9k+k6fREBIpRmFpYPBC+l6wHL6mRzRrieOO0FTG6Ii7lEYJrb/DxwG16f3a5YgyLeUVRm61UeTIjg8aM147WxBPKm5In5fOxbsKA=
+	t=1729820357; cv=none; b=aLnCKcOEi9vhecVZejGi0Y3P7pvIXR4ivHR9si1HjXh0hD7KZ1jEMQ/5uiBmTSp7fW+GbUbv2lJJDED+ttYImA3JU72+3ieREfWyW0ZZcUspRzi5SxMojZT7Pf88ks9uNSK1pi73JR7q/67vwuYkQ83sU5yzxO2hGOQrt3Re9WY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729820200; c=relaxed/simple;
-	bh=AT8mhgj8dK/Dt/LNnUA0ZWBwiNximHfFxs/xVLFV8Og=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EedfTa5WiT+oLngIrVmZJpU22QPOWXMrmu6dp3A57SsjntUuAjR0BGTvlwq5ZyIz02IvPluI4s2Ep+RD75/9jgQ+92/lj00QO48uefc9X3U/NVn2cKyAon7E3kEcYRu5L+hgaZ7VI3fQWaHArFqx0W5FYrJ0edPlauUjcjTlwXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Oi+AsDSX; arc=none smtp.client-ip=209.85.221.51
+	s=arc-20240116; t=1729820357; c=relaxed/simple;
+	bh=MWD6xrVE76U25/D9XmLYC3i3s+hR6lHJmgwBuSibn1o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YxGIOKcXEJ0qLecq+p4YQ/5ospHp0sFane89rkZQZo3jqXRTvEczZJlDx4SgNxqKIBfFIgtDm0deFJ2+bgWROXwGk4o7t2mXBw2gWbs4Eou4PAp9QysGvs7QKhwBt+BFVMUc3bkd5Hz8/XrUktCz/9TXrG/02tkMS3jHiiCug04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mhOYe+ky; arc=none smtp.client-ip=209.85.210.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-37d55f0cf85so1207351f8f.3;
-        Thu, 24 Oct 2024 18:36:37 -0700 (PDT)
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-71e93d551a3so1103304b3a.1;
+        Thu, 24 Oct 2024 18:39:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729820196; x=1730424996; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AT8mhgj8dK/Dt/LNnUA0ZWBwiNximHfFxs/xVLFV8Og=;
-        b=Oi+AsDSX0ma4/SiYFZstO4PSt9RIyTu9JHx+30JMYsZ906r4TLDsuclSlR8o2i8wES
-         r0y5yl8oxgw/KG2XKbGc2Ua9o+QwWLK9XoNjmbyySL2iMJv2qjMlx57zu8ZP08MI3oex
-         EUSYDOFqaQJnOewL6kAMS5kZU9efr4g/S590tiB+7HN8aS2rSOotS5r9VbEQ22v2UPaE
-         8r1OVbOgve/0KIEEjCZws5iH+E8OXyPEv78t4DwbYKbiBuJ8UoTA2hYhKH9ozFFRJaZ2
-         VdHX4vDU5nqZ/z3ruwxWsYlj/CXya0lWuuJrEY28Ve1BnLTS1cEPzZv+JmJg9G1c7wO0
-         ekyw==
+        d=gmail.com; s=20230601; t=1729820355; x=1730425155; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=mYnD3ml2ldfmwD1lxKH73BM8pCdVtdACHlhM+jRAINw=;
+        b=mhOYe+kyc1crTWovPcx6bogPSiC/Oxzrg+5tER206z50QRQEO5rtYoHB6ytQ/ihqtF
+         d1dC2/gRsdpYXMh/3D2oYBRtQciNfTjR0p9mDT+FYJTnsfVBRwk/qDlZG89/vm3jHt2b
+         7/jZNs+ZqQvJVKNIjye5r3X4lkMUn+1lVk/JIRZuOQkdSJp6AkTrs4agEd9Kqj0LBIz4
+         Wrq4Wsk7LclomPRZcREuF1C4xFsVbSNoyYUXehuNEbQyw3y1o1JBwhLurvYi6BGDaoGm
+         Zz18hWD5nfEZcGFOcum+jr7xxAy4T9u+365+VtO7d+tXXk+Ed2+Zda0+4+X2F5RbVzRH
+         rWLQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729820196; x=1730424996;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AT8mhgj8dK/Dt/LNnUA0ZWBwiNximHfFxs/xVLFV8Og=;
-        b=vGgBEPXOJ7TFmvwhdV/EoPETGkjx4yrW3CVhP6kQ5mwYOgAbFFYIHlLBxGpxv/Liwf
-         xdkoI0JLcpIOGiak1ar5rQ+nTOF3uf+JjhzAh0VQk2C5Gwtgvnei9Vkhqvb1xvmw/RFF
-         5l7Nh6rLIWnxHwxfKRVj4r7w6r0+tQ3+99JQsgcng0MeLMG/n6ULzZkSdwuMkOCdRm2y
-         q0FUVr9Ypk3jIoyJ6II47Mh+GyOxot+u8+RHhtoi9STD2GvaAu6SuIJNNvDc5LzUotVH
-         7Ylg7wRN8bzi7b2JvT3tHAcTsI//7DJXgsYKGY3yPAq3xmhv2eBGpPfFsF/hA+SlY+fh
-         t1Fg==
-X-Forwarded-Encrypted: i=1; AJvYcCUwk+mMHlhl4T34/EKDXXmPt82Rr1cbQ2+XiLPpxVikeKNfnmFDFrXzi8OVBI0xx/GsMHRsLWa7wEQpMJya@vger.kernel.org, AJvYcCXM0dj/xMsN6YpbwmvmlH1sQqZEMPEnGyRipknOb5F46GiCMcXX6J/Ub4Zz6UiaAZozO53Dzg4EGZ8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYwh0/L2lHuDUbyRV+kpBgGuuYje8lVNRlr7VPlmOhus61ym1I
-	+3op9pYOCxHfWVt1QobPpUeUgxteKh76IyBlI6xjby0krbNSD1zOBDQkaZskQL84lbgg5TIJZKB
-	QrLNPsVKH96RnsKuSqmvY1lSpQg==
-X-Google-Smtp-Source: AGHT+IGrg5Qsx7UtEtWPquGFb4c1OOVDWrYwbdFq5xvgXAuMTsixP4ouyOpiTyOMy6JfgLM6ucsGueCV3JQPW30Sc6k=
-X-Received: by 2002:adf:e0c2:0:b0:37d:4744:9d1d with SMTP id
- ffacd0b85a97d-37efcf34f36mr4957208f8f.35.1729820196315; Thu, 24 Oct 2024
- 18:36:36 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729820355; x=1730425155;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mYnD3ml2ldfmwD1lxKH73BM8pCdVtdACHlhM+jRAINw=;
+        b=SPtRPiJ31PW7LZYoXDquVIqEmugnXcCXJpxyR8OL0IaUYgExJqpoOJpLicDNPafqXo
+         fDOJbrvzWWlbMDWmxxwFXo4mSKH+fGYoeqi3IyhLEYPxmgsyTu4OAb2cBia9YN4/wXJd
+         WsLANtQ0ZBWYREuLGX37T+OBi8VBBS9KM3NX2xvbLObkCjd6jvrUTNRTbgV7bkDsNQqC
+         4s9dMPYCrB4aByazomZine2qS9+hNQ7zBpzKKhkLtTDE2N6iLf45Ekt0YaoPBvuYoB1R
+         uipfrcNJ9Ew5QolTtN9r3YcMiusTKe9IxFoEteWBDt6cDI/KJU6AMxnjI6LGOKLra8is
+         2CoA==
+X-Forwarded-Encrypted: i=1; AJvYcCUER753WSgybAb/Gqs9jPaIU8/YbIC7to2S53rqvWJ+n3tpliF5+zf6KzgVpc38h4V4XhNemDMEUhUP6/W72aDNG8XuJA==@vger.kernel.org, AJvYcCWrJK0FVgYa3ZYvMd+PZgIsCgqSKSFx0tbxsJpztalw2qYNb7s6q6+sxzOKcWcNqKTRBY3zfruDefVlQKg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YydhLnWqzc3pNZ05P8nW+I6WanqknI1KRk5twMpTLew4se8ZSpx
+	XDTQ7Z+kQJk2Gmld7O5DrLoxskrHS6Xr8wLu1yz0Xdtm5v1cXT4Y
+X-Google-Smtp-Source: AGHT+IFoy9+pJJlj+/1zvTFpYCfrmkT6FHiktlZNcmBFlbaqh9eVWnMIA7KxjAsSDHsZg+kH8yyzIQ==
+X-Received: by 2002:a05:6a00:4f90:b0:71d:f64d:ec60 with SMTP id d2e1a72fcca58-72030babcb0mr11467886b3a.7.1729820355119;
+        Thu, 24 Oct 2024 18:39:15 -0700 (PDT)
+Received: from localhost.localdomain (host95.181-12-202.telecom.net.ar. [181.12.202.95])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72057a1fe82sm72245b3a.164.2024.10.24.18.39.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Oct 2024 18:39:14 -0700 (PDT)
+From: Kurt Borja <kuurtb@gmail.com>
+To: kuurtb@gmail.com
+Cc: W_Armin@gmx.de,
+	hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com,
+	linux-kernel@vger.kernel.org,
+	platform-driver-x86@vger.kernel.org
+Subject: [PATCH v8 0/4] Dell AWCC platform_profile support
+Date: Thu, 24 Oct 2024 22:38:57 -0300
+Message-ID: <20241025013856.4729-2-kuurtb@gmail.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241021062732.5592-1-kfting@nuvoton.com> <20241021062732.5592-3-kfting@nuvoton.com>
- <67d34216-e98b-43d9-afd1-2e73ffb71968@molgen.mpg.de> <CACD3sJb_xF_wYuLEMV3yF0HdtrOX3vnPUdZ6_x5yof7yj4yUNg@mail.gmail.com>
- <n4buyofrjkgvbgimcziqpm7hfba6du64lbe4aa42d4dhyx6zdn@m4ofnrx66ww6>
-In-Reply-To: <n4buyofrjkgvbgimcziqpm7hfba6du64lbe4aa42d4dhyx6zdn@m4ofnrx66ww6>
-From: Tyrone Ting <warp5tw@gmail.com>
-Date: Fri, 25 Oct 2024 09:36:24 +0800
-Message-ID: <CACD3sJauX4dg927nAvfTKOG_phW2d40CRLV09L2OigLn06kbUQ@mail.gmail.com>
-Subject: Re: [PATCH v7 2/4] i2c: npcm: Modify the client address assignment
-To: Andi Shyti <andi.shyti@kernel.org>
-Cc: Paul Menzel <pmenzel@molgen.mpg.de>, avifishman70@gmail.com, tmaimon77@gmail.com, 
-	tali.perry1@gmail.com, venture@google.com, yuenn@google.com, 
-	benjaminfair@google.com, andriy.shevchenko@linux.intel.com, wsa@kernel.org, 
-	rand.sec96@gmail.com, wsa+renesas@sang-engineering.com, 
-	tali.perry@nuvoton.com, Avi.Fishman@nuvoton.com, tomer.maimon@nuvoton.com, 
-	KWLIU@nuvoton.com, JJLIU0@nuvoton.com, kfting@nuvoton.com, 
-	openbmc@lists.ozlabs.org, linux-i2c@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-HI Andi:
+This patch adds platform_profile support for Dell devices which implement
+WMAX thermal interface, that are meant to be controlled by Alienware Command
+Center (AWCC). These devices may include newer Alienware M-Series, Alienware
+X-Series and Dell's G-Series.
 
-Thank you for your help on this.
+Tested on an Alienware x15 R1.
+---
+v8:
+ - Aesthetic and readibility fixes on patch 3/4
+ - Better commit message for patch 3/4
+v7:
+ - Platform profile implementation refactored in order to efficently
+   autodetect available thermal profiles
+ - Added GameShiftStatus method to documentation
+ - Implemented GameShiftStatus switch for devices that support it 
+v6:
+ - Removed quirk thermal_ustt.
+ - Now quirk thermal can take canonical thermal profile _tables_ defined
+   in enum WMAX_THERMAL_TABLES
+ - Added autodetect_thermal_profile
+ - Proper removal of thermal profile
+v5:
+ - Better commit messages
+ - insize renamed to in_size in alienware_wmax_command() to match other
+   arguments.
+ - Kudos in documentation now at the end of the file
+v4:
+ - Fixed indentation on previous code
+ - Removed unnecessary (acpi_size) and (u32 *) casts
+ - Return -EIO on ACPI_FAILURE
+ - Appropiate prefixes given to macros
+ - 0xFFFFFFFF named WMAX_FAILURE_CODE
+ - Added support for a new set of thermal codes. Old ones now have USTT
+   in their names
+ - A new quirk has been added to differantiate between the two sets.
+   thermal and thermal_ustt are mutually exclusive
+ - Added documentation for WMAX interface
+v3:
+ - Removed extra empty line
+ - 0x0B named WMAX_ARG_GET_CURRENT_PROF
+ - Removed casts to the same type on functions added in this patch
+ - Thermal profile to WMAX argument is now an static function and makes
+   use of in-built kernel macros
+ - Platform profile is now removed only if it was created first
+ - create_platform_profile is now create_thermal_profile to avoid
+   confusion
+ - profile_get and profile_set functions renamed too to match the above
+v2:
+ - Moved functionality to alienware-wmi driver
+ - Added thermal and gmode quirks to add support based on dmi match
+ - Performance profile is now GMODE for devices that support it
+ - alienware_wmax_command now is insize agnostic to support new thermal
+   methods
 
-Andi Shyti <andi.shyti@kernel.org> =E6=96=BC 2024=E5=B9=B410=E6=9C=8824=E6=
-=97=A5 =E9=80=B1=E5=9B=9B =E4=B8=8B=E5=8D=885:28=E5=AF=AB=E9=81=93=EF=BC=9A
->
-> Hi Tyrone,
->
-> On Tue, Oct 22, 2024 at 04:08:46PM +0800, Tyrone Ting wrote:
-> > Hi Paul:
-> >
-> > Thank you for your comment.
-> >
-> > It'll be addressed in the next patch set.
->
-> No need to resend, I can take care of it.
->
-> Andi
+Kurt Borja (4):
+  alienware-wmi: fixed indentation and clean up
+  alienware-wmi: alienware_wmax_command() is now input size agnostic
+  alienware-wmi: added platform profile support
+  alienware-wmi: WMAX interface documentation
 
-Have a nice day.
+ Documentation/wmi/devices/alienware-wmi.rst | 388 ++++++++++++++++++
+ MAINTAINERS                                 |   1 +
+ drivers/platform/x86/dell/Kconfig           |   1 +
+ drivers/platform/x86/dell/alienware-wmi.c   | 433 ++++++++++++++++----
+ 4 files changed, 747 insertions(+), 76 deletions(-)
+ create mode 100644 Documentation/wmi/devices/alienware-wmi.rst
 
-Regards,
-Tyrone
+-- 
+2.47.0
+
 
