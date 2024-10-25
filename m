@@ -1,111 +1,113 @@
-Return-Path: <linux-kernel+bounces-380815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F9F39AF683
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 03:12:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 312B99AF684
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 03:12:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0A8D1C2165F
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 01:12:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 633E21C212E9
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 01:12:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4ACA3715E;
-	Fri, 25 Oct 2024 01:10:54 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D065C43AA1;
+	Fri, 25 Oct 2024 01:11:54 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 024AD1DFF7;
-	Fri, 25 Oct 2024 01:10:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5854312B64;
+	Fri, 25 Oct 2024 01:11:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729818654; cv=none; b=XjwVwb+0HslpvlcZb5G/iabz6PeD3UFtvyAinUgvDrdLm5zqr/AhfJiwz89GWQ+dWlQUwJqADi4Nq5/oal0DOxTJ/+HLsX0elTJjJJH514Iblfw0I5q6FXVXhoSH32yPrMbYbyGbT5z1Bmeo5PEG9STZF7IlLe1SN1ccz3eO+aI=
+	t=1729818714; cv=none; b=kua0Yap8Ft3ShRnueyuFFqcQmmk1De88+oPhd7YJ4UObxg9ZjPU1fpG6NqEXH1bsIGqFgE+sxtBoeBV3rYxv0F3bOiKMElbdY8xTYNOqMr2kH3NrW8YDpzjdtlMq2ZcHiE7q5rbHFXYXJ+o6g2mr/5TQxyYsPxCthmsFBNz8QZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729818654; c=relaxed/simple;
-	bh=9i2UpWailRVQSnQwpSxLeAa0iO8U2wBNPJ2Gp0fUjlY=;
-	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=cTc2Oz5U0C0P4/40vQ7rW2/YcQPp/ZXmg2iAoH9Yn1rY5qiAY8Oy/uMQyvgy3TnZQdPI52tRziNMdTIRoemsMNTN9Qqyzw2BBLCsGx8nS61/YzUWvh4IJ0/2o7ntYBcTklm3qxiXUsL32NYuMWTPwdweL4ptWtQZyaqEiOGocHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4XZPp35ds2zQsBm;
-	Fri, 25 Oct 2024 09:09:47 +0800 (CST)
-Received: from kwepemm000007.china.huawei.com (unknown [7.193.23.189])
-	by mail.maildlp.com (Postfix) with ESMTPS id 7527D1800DB;
-	Fri, 25 Oct 2024 09:10:41 +0800 (CST)
-Received: from [10.67.120.192] (10.67.120.192) by
- kwepemm000007.china.huawei.com (7.193.23.189) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 25 Oct 2024 09:10:40 +0800
-Message-ID: <977d1e83-b24b-4f4c-ad5b-8fb95f45d189@huawei.com>
-Date: Fri, 25 Oct 2024 09:10:39 +0800
+	s=arc-20240116; t=1729818714; c=relaxed/simple;
+	bh=PdaiVY4mXaaatJcybm9KDwSVafXLmEfyqovSHj3l2GY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TbpBJMT9/G837K/Lb59yCZOR9j8TWEdY6GX/mznRtLx69XxnjNEs8knGNRcUh8EnvQuPtcq2WWB0mLdgga2dEkNemtevVc8ujqBUUdeGtvnRP+iLDwN9lT5isXXI3i4tjkv6gtf5tQYllf+qkWBss50fCFKTLVpJaNVxvwl910E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D501C4CEC7;
+	Fri, 25 Oct 2024 01:11:52 +0000 (UTC)
+Date: Thu, 24 Oct 2024 21:11:49 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Michael Ellerman <mpe@ellerman.id.au>, Geert Uytterhoeven
+ <geert@linux-m68k.org>, Christoph Hellwig <hch@infradead.org>, Kees Cook
+ <kees@kernel.org>, Sasha Levin <sashal@kernel.org>,
+ torvalds@linux-foundation.org, ksummit@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+Subject: Re: linus-next: improving functional testing for to-be-merged pull
+ requests
+Message-ID: <20241024211149.4f0b6138@rorschach.local.home>
+In-Reply-To: <82eecf18-0a71-4c16-8511-bc52fb61f421@roeck-us.net>
+References: <ZxZ8MStt4e8JXeJb@sashalap>
+	<792F4759-EA33-48B8-9AD0-FA14FA69E86E@kernel.org>
+	<ZxdKwtTd7LvpieLK@infradead.org>
+	<20241022041243.7f2e53ad@rorschach.local.home>
+	<ZxiN3aINYI4u8pRx@infradead.org>
+	<20241023042004.405056f5@rorschach.local.home>
+	<CAMuHMdUxrULbo=A77DFDE4ySbii3jSMuh8xVvUXaqyCnwEAU-w@mail.gmail.com>
+	<20241023051914.7f8cf758@rorschach.local.home>
+	<8734km2lt7.fsf@mail.lhotse>
+	<20241024010103.238ef40b@rorschach.local.home>
+	<07422710-19b2-412b-b8d5-7ec51b708693@roeck-us.net>
+	<20241024024928.6fb9d892@rorschach.local.home>
+	<82eecf18-0a71-4c16-8511-bc52fb61f421@roeck-us.net>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-CC: <shaojijie@huawei.com>, Paolo Abeni <pabeni@redhat.com>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<shenjian15@huawei.com>, <salil.mehta@huawei.com>, <liuyonglong@huawei.com>,
-	<wangpeiyang1@huawei.com>, <lanhao@huawei.com>, <chenhao418@huawei.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH V2 net 1/9] net: hns3: default enable tx bounce buffer
- when smmu enabled
-To: Simon Horman <horms@kernel.org>
-References: <20241018101059.1718375-1-shaojijie@huawei.com>
- <20241018101059.1718375-2-shaojijie@huawei.com>
- <50874428-b4ef-4e65-b60b-1bd917f1933c@redhat.com>
- <d68ad0c3-3d53-406b-ad98-5686512fa48e@huawei.com>
- <20241024160404.GC1202098@kernel.org>
-From: Jijie Shao <shaojijie@huawei.com>
-In-Reply-To: <20241024160404.GC1202098@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemm000007.china.huawei.com (7.193.23.189)
 
+On Thu, 24 Oct 2024 07:39:00 -0700
+Guenter Roeck <linux@roeck-us.net> wrote:
 
-on 2024/10/25 0:04, Simon Horman wrote:
-> On Thu, Oct 24, 2024 at 04:31:46PM +0800, Jijie Shao wrote:
->> on 2024/10/24 16:26, Paolo Abeni wrote:
->>> On 10/18/24 12:10, Jijie Shao wrote:
->>>> From: Peiyang Wang <wangpeiyang1@huawei.com>
->>>>
->>>> The SMMU engine on HIP09 chip has a hardware issue.
->>>> SMMU pagetable prefetch features may prefetch and use a invalid PTE
->>>> even the PTE is valid at that time. This will cause the device trigger
->>>> fake pagefaults. The solution is to avoid prefetching by adding a
->>>> SYNC command when smmu mapping a iova. But the performance of nic has a
->>>> sharp drop. Then we do this workaround, always enable tx bounce buffer,
->>>> avoid mapping/unmapping on TX path.
->>>>
->>>> This issue only affects HNS3, so we always enable
->>>> tx bounce buffer when smmu enabled to improve performance.
->>>>
->>>> Signed-off-by: Peiyang Wang <wangpeiyang1@huawei.com>
->>>> Signed-off-by: Jian Shen <shenjian15@huawei.com>
->>>> Signed-off-by: Jijie Shao <shaojijie@huawei.com>
->>> I'm sorry to nick pick on somewhat small details, but we really need a
->>> fixes tag here to make 110% clear is a bugfix. I guess it could be the
->>> commit introducing the support for the buggy H/W.
->>>
->>> Thanks,
->>>
->>> Paolo
->> I have a little doubt that this patch is about H/W problem,
->> so how can we write the the fixes tag?
-> Hi Jijie,
->
-> That is a good point. But the much point of the Fixes tag is to indicate how
-> far back the fix should be backported. So I would say the ID of the patch
-> where the user would have first seen this problem - possibly the patch that
-> added the driver.
+> > 
+> > Now I have to ask. What's the benefit of pushing to linux-next over
+> > waiting for the zero-day bot?
+> >   
+> 
+> I push my changes into the same branches that are checked by 0-day
+> and pulled into linux-next. linux-next shows interference with other
+> branches. Once in a while I do get a notification telling me that
+> one or more of the patches interfere with other patches, so I know that
+> something happened, and I can prepare for that for the next commit window.
 
-That's a good idea. Thank you.
+Remember, this is about pushing to linux-next before sending fixes
+after -rc1. Not for things that are going to land in the next merge
+window. My fixes seldom ever interfere with others work as it's usually
+much more focused on code that is already in Linus's tree. Like adding
+a missing mutex_unlock() from an error path. How is it helpful to push
+something like that to linux-next?
 
+> 
+> Testing-wise, I do run build and boot tests on linux-next (the same tests
+> as those running on release candidates), so I do know what is wrong there
+> and (which did happen a couple of times) if a patch in one of my trees
+> is responsible.
+> 
+> Yes, that means that in many cases I do know ahead of time which problems
+> are going to pop up in the mainline kernel. But I don't have the time
+> tracking those down when seen in linux-next - there are just too many
+> and, as already mentioned, that would be a full-time job on its own.
+> Also, it happens a lot that they have been reported but the report was
+> ignored or missed. On top of that I found that _if_ I am reporting them,
+> the receiving side is at least sometimes either not responsive to almost
+> abusive, so for the most part I gave up on it (and frankly I found that
+> people tend to be _much_ more responsive if one Linus Torvalds is listed
+> in Cc:).
+> 
+> Note that I do collect known fixes in my 'fixes' and 'testing' branches,
+> primarily to have something clean available to keep testing. Linus even
+> pulled my fixes branch once directly because the responsible maintainers
+> didn't send pull requests to him for weeks.
 
+Or are you saying that it's helpful to "fix" linux-next before fixing
+Linus's tree? That way others will have the fixes too?
 
+-- Steve
 
