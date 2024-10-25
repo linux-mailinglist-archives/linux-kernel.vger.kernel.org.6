@@ -1,198 +1,254 @@
-Return-Path: <linux-kernel+bounces-381239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79D939AFC5E
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 10:21:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C2269AFC5C
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 10:21:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D9401C22728
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 08:21:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2367B1C2246E
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 08:21:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 426E51D1E75;
-	Fri, 25 Oct 2024 08:21:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="NC3vnxa+"
-Received: from smtp.forwardemail.net (smtp.forwardemail.net [207.246.76.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 286791C07F9
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 08:21:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.246.76.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A53151CFEB1;
+	Fri, 25 Oct 2024 08:21:10 +0000 (UTC)
+Received: from cmccmta2.chinamobile.com (cmccmta2.chinamobile.com [111.22.67.135])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ACDC189914;
+	Fri, 25 Oct 2024 08:21:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729844472; cv=none; b=lD2k3DlFXRJewl3WGQPmP7aCnzbfsBRdMIcOI9jK/aFCP+pTVe41uooD825jOa7N8gpOvk6PQVKkyPOxFG5K+cbVyw0+E8EMs73Si8/9t79y0hVZywij6E4xv9hg0Bdk15jzuFubPbgoxSBFjCeC5DgAHQFcCbGgP3yMTMOQ3co=
+	t=1729844470; cv=none; b=mybpzkKFh9dEKC5pIwp9/1hUrbewBkFEraHdqHFYfKRLS3E6cY6FgYjATPFXCyxSSAZFiO+sxIrYsujjKd5dYsm+Z6Buvx7CM7gFxPH3nSaMqd/ZWQMdd+U+rAaUtuTHXjtFqbIpADrsM3RiMbmeW+2mrh/Yx9k1WMwwtjf6Nas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729844472; c=relaxed/simple;
-	bh=G/6ckttVcaH30xmrrUOhZM99NObo8lQEa+x32+FeI14=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PTVw1toy3bxMB5gMiXlJh0Xo5ccjON8FgYIusKo6P0IuxpxUECgmUZ7GFXgRenDB3uSXOkxzMPwxWMpJT70I3GtTZg/NVpyVgyP+5dIwwphQv6AFDdWxHrhWndemq6JzeOVkk0sQjsw1/p5xBeOh6hdJTW9jAuLS/4eI9dMhO7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=NC3vnxa+; arc=none smtp.client-ip=207.246.76.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
- h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
- Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
- s=fe-e1b5cab7be; t=1729844449;
- bh=LkZZAR59UvfigAsheIWK4sIE2MkApoDkQ9BtG/CzxhA=;
- b=NC3vnxa+lDaylXiMJFMcPI5QLU6Lqo63iMH+9de0Mr3oCL6PsrJhHk36Dv7+JZyjtHKJy5crt
- 1NiLQAgRkCSRmMyzeCzYBJthJRLGSZhromlxRlIbinFA/w9z+eF+AsQc4rLRf0lxls5jCo1YKgM
- dAWkVQNdY/unyUQr92Eb5yJ63ZTb3qkkjlH5EYXLwqEx5sk8oT9r54+3MQ4KBBJGAawq/+MUXQh
- 9td3NIo3nMnx/3sUqvgZ3WqfskSwb2DdIr3LIgKEeEbbbEiYtogsjwCZNjohYahlkDVh/mOXWAc
- TYz+YlXB0W+toDWMxoWMo9Mo5YsnywCbyM05JDi4V83g==
-Message-ID: <71159f58-be8b-41a4-9fed-522e09a7a564@kwiboo.se>
-Date: Fri, 25 Oct 2024 10:20:42 +0200
+	s=arc-20240116; t=1729844470; c=relaxed/simple;
+	bh=F+8EYrYfCSov3vYJvjIGwMMAlrlWyYadM7OBoaLYkxg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IhM5Oi5xwAVU9OBRZu0iuu0JpfJLwY4OgIhSlXA1nczBzZB8/pCq/54fL8zuoaaicYDXVnPYfH4t2tHnakQllAldngzi1qpIaAx47V4n5eCOLNOkG13kwlcBuHUteaBXP6rq2zeT/lSvsFyyRxrXIuFi9VO75gImZRxMD43DfX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app07-12007 (RichMail) with SMTP id 2ee7671b54ea15c-7b171;
+	Fri, 25 Oct 2024 16:20:58 +0800 (CST)
+X-RM-TRANSID:2ee7671b54ea15c-7b171
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from leadsec.example.com.localdomain (unknown[10.55.1.71])
+	by rmsmtp-syy-appsvr10-12010 (RichMail) with SMTP id 2eea671b54e6a90-2f5f8;
+	Fri, 25 Oct 2024 16:20:58 +0800 (CST)
+X-RM-TRANSID:2eea671b54e6a90-2f5f8
+From: Tang Bin <tangbin@cmss.chinamobile.com>
+To: shenghao-ding@ti.com,
+	kevin-lu@ti.com,
+	baojun.xu@ti.com,
+	broonie@kernel.org,
+	perex@perex.cz,
+	tiwai@suse.com,
+	lgirdwood@gmail.com
+Cc: alsa-devel@alsa-project.org,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Tang Bin <tangbin@cmss.chinamobile.com>
+Subject: [PATCH] ASoC: tas2781: Fix redundant logical jump
+Date: Fri, 25 Oct 2024 16:20:42 +0800
+Message-Id: <20241025082042.2872-1-tangbin@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 00/11] media: rkvdec: Add H.264 High 10 and 4:2:2
- profile support
-To: Sebastian Fricke <sebastian.fricke@collabora.com>
-Cc: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Alex Bee <knaerzche@gmail.com>,
- Nicolas Dufresne <nicolas.dufresne@collabora.com>,
- Benjamin Gaignard <benjamin.gaignard@collabora.com>,
- Detlev Casanova <detlev.casanova@collabora.com>,
- Dan Carpenter <dan.carpenter@linaro.org>, linux-media@vger.kernel.org,
- linux-rockchip@lists.infradead.org, linux-staging@lists.linux.dev,
- linux-kernel@vger.kernel.org
-References: <20240909192522.1076704-1-jonas@kwiboo.se>
-Content-Language: en-US
-From: Jonas Karlman <jonas@kwiboo.se>
-In-Reply-To: <20240909192522.1076704-1-jonas@kwiboo.se>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Report-Abuse-To: abuse@forwardemail.net
-X-Report-Abuse: abuse@forwardemail.net
-X-Complaints-To: abuse@forwardemail.net
-X-ForwardEmail-Version: 0.4.40
-X-ForwardEmail-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
- 207.246.76.47
-X-ForwardEmail-ID: 671b54df038a5e08a321fe5c
+Content-Transfer-Encoding: 8bit
 
-Hi Sebastian,
+In these functions, some logical jump of "goto" and variable
+are redundant, thus remove them.
 
-Will you have time to look at this series any time soon?
+Signed-off-by: Tang Bin <tangbin@cmss.chinamobile.com>
+---
+ sound/soc/codecs/tas2781-i2c.c | 68 +++++++++++++---------------------
+ 1 file changed, 25 insertions(+), 43 deletions(-)
 
-Would like to send a v2 of the now one year old rkvdec hevc series but
-this series is sort of holding that back ;-)
+diff --git a/sound/soc/codecs/tas2781-i2c.c b/sound/soc/codecs/tas2781-i2c.c
+index 68887799e..27f2f84a4 100644
+--- a/sound/soc/codecs/tas2781-i2c.c
++++ b/sound/soc/codecs/tas2781-i2c.c
+@@ -489,14 +489,11 @@ static int tas2563_calib_start_put(struct snd_kcontrol *kcontrol,
+ 	struct snd_soc_component *comp = snd_soc_kcontrol_component(kcontrol);
+ 	struct tasdevice_priv *tas_priv = snd_soc_component_get_drvdata(comp);
+ 	const int sum = ARRAY_SIZE(tas2563_cali_start_reg);
+-	int rc = 1;
+ 	int i, j;
+ 
+ 	guard(mutex)(&tas_priv->codec_lock);
+-	if (tas_priv->chip_id != TAS2563) {
+-		rc = -1;
+-		goto out;
+-	}
++	if (tas_priv->chip_id != TAS2563)
++		return -1;
+ 
+ 	for (i = 0; i < tas_priv->ndev; i++) {
+ 		struct tasdevice *tasdev = tas_priv->tasdevice;
+@@ -523,8 +520,8 @@ static int tas2563_calib_start_put(struct snd_kcontrol *kcontrol,
+ 					q[j].val, 4);
+ 		}
+ 	}
+-out:
+-	return rc;
++
++	return 1;
+ }
+ 
+ static void tas2563_calib_stop_put(struct tasdevice_priv *tas_priv)
+@@ -576,7 +573,7 @@ static int tasdev_cali_data_put(struct snd_kcontrol *kcontrol,
+ 	struct cali_reg *p = &cali_data->cali_reg_array;
+ 	unsigned char *src = ucontrol->value.bytes.data;
+ 	unsigned char *dst = cali_data->data;
+-	int rc = 1, i = 0;
++	int i = 0;
+ 	int j;
+ 
+ 	guard(mutex)(&priv->codec_lock);
+@@ -605,7 +602,7 @@ static int tasdev_cali_data_put(struct snd_kcontrol *kcontrol,
+ 	i += 3;
+ 
+ 	memcpy(dst, &src[i], cali_data->total_sz);
+-	return rc;
++	return 1;
+ }
+ 
+ static int tas2781_latch_reg_get(struct snd_kcontrol *kcontrol,
+@@ -1115,25 +1112,21 @@ static int tasdevice_dsp_create_ctrls(struct tasdevice_priv *tas_priv)
+ 	char *conf_name, *prog_name;
+ 	int nr_controls = 4;
+ 	int mix_index = 0;
+-	int ret;
+ 
+ 	/* Alloc kcontrol via devm_kzalloc, which don't manually
+ 	 * free the kcontrol
+ 	 */
+ 	dsp_ctrls = devm_kcalloc(tas_priv->dev, nr_controls,
+ 		sizeof(dsp_ctrls[0]), GFP_KERNEL);
+-	if (!dsp_ctrls) {
+-		ret = -ENOMEM;
+-		goto out;
+-	}
++	if (!dsp_ctrls)
++		return -ENOMEM;
+ 
+ 	/* Create mixer items for selecting the active Program and Config */
+ 	prog_name = devm_kstrdup(tas_priv->dev, "Speaker Program Id",
+ 		GFP_KERNEL);
+-	if (!prog_name) {
+-		ret = -ENOMEM;
+-		goto out;
+-	}
++	if (!prog_name)
++		return -ENOMEM;
++
+ 	dsp_ctrls[mix_index].name = prog_name;
+ 	dsp_ctrls[mix_index].iface = SNDRV_CTL_ELEM_IFACE_MIXER;
+ 	dsp_ctrls[mix_index].info = tasdevice_info_programs;
+@@ -1143,10 +1136,9 @@ static int tasdevice_dsp_create_ctrls(struct tasdevice_priv *tas_priv)
+ 
+ 	conf_name = devm_kstrdup(tas_priv->dev, "Speaker Config Id",
+ 		GFP_KERNEL);
+-	if (!conf_name) {
+-		ret = -ENOMEM;
+-		goto out;
+-	}
++	if (!conf_name)
++		return -ENOMEM;
++
+ 	dsp_ctrls[mix_index].name = conf_name;
+ 	dsp_ctrls[mix_index].iface = SNDRV_CTL_ELEM_IFACE_MIXER;
+ 	dsp_ctrls[mix_index].info = tasdevice_info_configurations;
+@@ -1156,10 +1148,9 @@ static int tasdevice_dsp_create_ctrls(struct tasdevice_priv *tas_priv)
+ 
+ 	active_dev_num = devm_kstrdup(tas_priv->dev, "Activate Tasdevice Num",
+ 		GFP_KERNEL);
+-	if (!active_dev_num) {
+-		ret = -ENOMEM;
+-		goto out;
+-	}
++	if (!active_dev_num)
++		return -ENOMEM;
++
+ 	dsp_ctrls[mix_index].name = active_dev_num;
+ 	dsp_ctrls[mix_index].iface = SNDRV_CTL_ELEM_IFACE_MIXER;
+ 	dsp_ctrls[mix_index].info = tasdevice_info_active_num;
+@@ -1168,21 +1159,17 @@ static int tasdevice_dsp_create_ctrls(struct tasdevice_priv *tas_priv)
+ 	mix_index++;
+ 
+ 	chip_id = devm_kstrdup(tas_priv->dev, "Tasdevice Chip Id", GFP_KERNEL);
+-	if (!chip_id) {
+-		ret = -ENOMEM;
+-		goto out;
+-	}
++	if (!chip_id)
++		return -ENOMEM;
++
+ 	dsp_ctrls[mix_index].name = chip_id;
+ 	dsp_ctrls[mix_index].iface = SNDRV_CTL_ELEM_IFACE_MIXER;
+ 	dsp_ctrls[mix_index].info = tasdevice_info_chip_id;
+ 	dsp_ctrls[mix_index].get = tasdevice_get_chip_id;
+ 	mix_index++;
+ 
+-	ret = snd_soc_add_component_controls(tas_priv->codec, dsp_ctrls,
++	return snd_soc_add_component_controls(tas_priv->codec, dsp_ctrls,
+ 		nr_controls < mix_index ? nr_controls : mix_index);
+-
+-out:
+-	return ret;
+ }
+ 
+ static int tasdevice_create_cali_ctrls(struct tasdevice_priv *priv)
+@@ -1469,7 +1456,6 @@ static int tasdevice_hw_params(struct snd_pcm_substream *substream,
+ 	unsigned int slot_width;
+ 	unsigned int fsrate;
+ 	int bclk_rate;
+-	int rc = 0;
+ 
+ 	fsrate = params_rate(params);
+ 	switch (fsrate) {
+@@ -1479,8 +1465,7 @@ static int tasdevice_hw_params(struct snd_pcm_substream *substream,
+ 	default:
+ 		dev_err(tas_priv->dev, "%s: incorrect sample rate = %u\n",
+ 			__func__, fsrate);
+-		rc = -EINVAL;
+-		goto out;
++		return -EINVAL;
+ 	}
+ 
+ 	slot_width = params_width(params);
+@@ -1493,20 +1478,17 @@ static int tasdevice_hw_params(struct snd_pcm_substream *substream,
+ 	default:
+ 		dev_err(tas_priv->dev, "%s: incorrect slot width = %u\n",
+ 			__func__, slot_width);
+-		rc = -EINVAL;
+-		goto out;
++		return -EINVAL;
+ 	}
+ 
+ 	bclk_rate = snd_soc_params_to_bclk(params);
+ 	if (bclk_rate < 0) {
+ 		dev_err(tas_priv->dev, "%s: incorrect bclk rate = %d\n",
+ 			__func__, bclk_rate);
+-		rc = bclk_rate;
+-		goto out;
++		return bclk_rate;
+ 	}
+ 
+-out:
+-	return rc;
++	return 0;
+ }
+ 
+ static int tasdevice_set_dai_sysclk(struct snd_soc_dai *codec_dai,
+-- 
+2.33.0
 
-Regards,
-Jonas
 
-On 2024-09-09 21:24, Jonas Karlman wrote:
-> This series add H.264 High 10 and 4:2:2 profile support to the Rockchip
-> Video Decoder driver.
-> 
-> Patch 1 add helpers for calculating plane bytesperline and sizeimage.
-> Patch 2 add two new pixelformats for semi-planer 10-bit 4:2:0/4:2:2 YUV.
-> 
-> Patch 3 change to use bytesperline and buffer height to configure strides.
-> Patch 4 change to use values from SPS/PPS control to configure the HW.
-> 
-> Patch 5-9 refactor code to support filtering of CAPUTRE formats based
-> on the image format returned from a get_image_fmt ops.
-> 
-> Patch 10 add final bits to support H.264 High 10 and 4:2:2 profiles.
-> 
-> Patch 11 add a fix for enumerated frame sizes returned to userspace.
-> 
-> Tested on a ROCK Pi 4 (RK3399) and Rock64 (RK3328):
-> 
->   v4l2-compliance 1.28.1, 64 bits, 64-bit time_t
->   ...
->   Total for rkvdec device /dev/video1: 48, Succeeded: 48, Failed: 0, Warnings: 0
-> 
->   Running test suite JVT-FR-EXT with decoder FFmpeg-H.264-v4l2request
->   ...
->   Ran 65/69 tests successfully
-> 
->   Running test suite JVT-AVC_V1 with decoder FFmpeg-H.264-v4l2request
->   ...
->   Ran 129/135 tests successfully
-> 
-> Before this series:
-> 
->   Running test suite JVT-FR-EXT with decoder FFmpeg-H.264-v4l2request
->   ...
->   Ran 44/69 tests successfully
-> 
-> Changes in v6:
-> - Change to use fmt_idx instead of j++ tucked inside a condition (Dan)
-> - Add patch to fix enumerated frame sizes returned to userspace (Alex)
-> - Fluster test score is same as v4 and v5, see [4] and [5]
-> Link to v5: https://lore.kernel.org/linux-media/20240618194647.742037-1-jonas@kwiboo.se/
-> 
-> Changes in v5:
-> - Drop Remove SPS validation at streaming start patch
-> - Move buffer align from rkvdec_fill_decoded_pixfmt to min/step_width
-> - Use correct profiles for V4L2_CID_MPEG_VIDEO_H264_PROFILE
-> - Collect r-b and t-b tags
-> - Fluster test score is same as v4, see [4] and [5]
-> Link to v4: https://lore.kernel.org/linux-media/20231105165521.3592037-1-jonas@kwiboo.se/
-> 
-> Changes in v4:
-> - Fix failed v4l2-compliance tests related to CAPTURE queue
-> - Rework CAPTURE format filter anv validate to use an image format
-> - Run fluster test suite JVT-FR-EXT [4] and JVT-AVC_V1 [5]
-> Link to v3: https://lore.kernel.org/linux-media/20231029183427.1781554-1-jonas@kwiboo.se/
-> 
-> Changes in v3:
-> - Drop merged patches
-> - Use bpp and bpp_div instead of prior misuse of block_w/block_h
-> - New patch to use values from SPS/PPS control to configure the HW
-> - New patch to remove an unnecessary call to validate sps at streaming start
-> - Reworked pixel format validation
-> Link to v2: https://lore.kernel.org/linux-media/20200706215430.22859-1-jonas@kwiboo.se/
-> 
-> Changes in v2:
-> - Collect r-b tags
-> - SPS pic width and height in mbs validation moved to rkvdec_try_ctrl
-> - New patch to not override output buffer sizeimage
-> - Reworked pixel format validation
-> - Only align decoded buffer instead of changing frmsize step_width
-> Link to v1: https://lore.kernel.org/linux-media/20200701215616.30874-1-jonas@kwiboo.se/
-> 
-> To fully runtime test this series you may need FFmpeg patches from [1]
-> and fluster patches from [2], this series is also available at [3].
-> 
-> [1] https://github.com/Kwiboo/FFmpeg/commits/v4l2request-2024-v2-rkvdec/
-> [2] https://github.com/Kwiboo/fluster/commits/ffmpeg-v4l2request-rkvdec/
-> [3] https://github.com/Kwiboo/linux-rockchip/commits/linuxtv-rkvdec-high-10-v6/
-> [4] https://gist.github.com/Kwiboo/f4ac15576b2c72887ae2bc5d58b5c865
-> [5] https://gist.github.com/Kwiboo/459a1c8f1dcb56e45dc7a7a29cc28adf
-> 
-> Regards,
-> Jonas
-> 
-> Alex Bee (1):
->   media: rkvdec: h264: Don't hardcode SPS/PPS parameters
-> 
-> Jonas Karlman (10):
->   media: v4l2-common: Add helpers to calculate bytesperline and
->     sizeimage
->   media: v4l2: Add NV15 and NV20 pixel formats
->   media: rkvdec: h264: Use bytesperline and buffer height as virstride
->   media: rkvdec: Extract rkvdec_fill_decoded_pixfmt into helper
->   media: rkvdec: Move rkvdec_reset_decoded_fmt helper
->   media: rkvdec: Extract decoded format enumeration into helper
->   media: rkvdec: Add image format concept
->   media: rkvdec: Add get_image_fmt ops
->   media: rkvdec: h264: Support High 10 and 4:2:2 profiles
->   media: rkvdec: Fix enumerate frame sizes
-> 
->  .../media/v4l/pixfmt-yuv-planar.rst           | 128 ++++++++++
->  drivers/media/v4l2-core/v4l2-common.c         |  80 +++---
->  drivers/media/v4l2-core/v4l2-ioctl.c          |   2 +
->  drivers/staging/media/rkvdec/rkvdec-h264.c    |  64 +++--
->  drivers/staging/media/rkvdec/rkvdec.c         | 239 +++++++++++++-----
->  drivers/staging/media/rkvdec/rkvdec.h         |  18 +-
->  include/uapi/linux/videodev2.h                |   2 +
->  7 files changed, 410 insertions(+), 123 deletions(-)
-> 
 
 
