@@ -1,261 +1,160 @@
-Return-Path: <linux-kernel+bounces-382189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3F9B9B0A8A
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 19:07:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF6679B0A8F
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 19:11:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5818BB21086
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:07:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D50F1C22120
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:11:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD46D1FB89D;
-	Fri, 25 Oct 2024 17:07:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BF6B1FB8AB;
+	Fri, 25 Oct 2024 17:11:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mNQjSnzn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ikZDEar7"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C78F1862AE;
-	Fri, 25 Oct 2024 17:07:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 260B618CC19;
+	Fri, 25 Oct 2024 17:11:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729876024; cv=none; b=QHmbVr/ZbuQtmUmd1KPYZLuNP2IqkTCkiG0qrnxWXKj5V3Jh207BUoguhC+2OTaXaIz3QsKLnsOUFf4lXNq7WqqgCXbZpxoz6yCfXlfGwVTOABfArkU0NaF/9SlSLfmUfCfuR82QBcXY0z/IBtQvb4VqsuGO5/QfPvIzfRsElkk=
+	t=1729876286; cv=none; b=d4v4ViFeGD2LmAFXcH4qa4wkSUdn7vkOTHInSFKBooA28xssRx6ZE4yt/0Gs3VuvI9nf5y01EFSXyWUYjhYrLKw9FPHu3hHyQFRz1xvN6523rWJ6aLkXNL4XXnrzhNaViQ1Ot2IHVUOaziCorcRdYtFr0MBzHNGNM9iZV0oV/DM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729876024; c=relaxed/simple;
-	bh=JD3au4w/jb4VjNY1ylI9zqqEX9kXTpATWVFuGCg6nwE=;
+	s=arc-20240116; t=1729876286; c=relaxed/simple;
+	bh=MYQYsh2ZM0F5hLiv9jWAnO8EjpYfnIqM2b9zMJRm42c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BuLHwHXWlsdPjwJbjH3LrPfXgXFALtSktzhBtT08O1Q93tdMNkuF+Sj39yeRYI/4+c5cHyLIbKmvyyDa3HBfQiRQ0N6/Yb18DW5skAkQZKkqymS9BBWTYq0xjaq57dn8z2NzOaMM1vyABjvlQCKbngAUSx8tMp9OcIeCLlvGXyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mNQjSnzn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 679DFC4CEE4;
-	Fri, 25 Oct 2024 17:07:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729876023;
-	bh=JD3au4w/jb4VjNY1ylI9zqqEX9kXTpATWVFuGCg6nwE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mNQjSnznBSjiWLwwV7faCJ3W/3rgsSVLF+BsQqx3E7uoH6bw++JTrJKY5M7aHsRmd
-	 2oZuYf3Rm8/l2fKQ/B8dDcO+76HLBynkmONZw0kqER7JIuw2mdD31DvVlcfy0WsqzV
-	 VkOqHaHSgXGnciSW1UUeCVS6xSlKkIYIb9qZLl6OPXiEVJtnJmpSkVAW2xDAsrgQEK
-	 +4DqWMn/d0zXaHLrKssqdeyits5M1hVw0m9CEKYhxz5+CdAV/v4ZpunqJLt7a0ydX2
-	 Vg1ndjCU/z+tAydhwnT4kDm5mBxBXIhyaZkztSgBqYl6omM9+AgZZkwQBd0cZrMp5f
-	 3cexuT8X/GuCg==
-Date: Fri, 25 Oct 2024 13:07:01 -0400
-From: Sasha Levin <sashal@kernel.org>
-To: Michael Ellerman <mpe@ellerman.id.au>
-Cc: torvalds@linux-foundation.org, kuba@kernel.org, davem@davemloft.net,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	pabeni@redhat.com, kees@kernel.org, broonie@kernel.org
-Subject: Re: [GIT PULL] Networking for v6.12-rc5
-Message-ID: <ZxvQNdnKWMQLN6l2@sashalap>
-References: <20241024140101.24610-1-pabeni@redhat.com>
- <ZxpZcz3jZv2wokh8@sashalap>
- <87cyjpj6qx.fsf@mail.lhotse>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fsBet9e/DRwbLP6uGdLvr68pRsyhRviIRxHh7k4P2gzmED2WaltvIDtJdzkrrsQZiH/yZeZ6RwK9nkA4fiTgwxEsDWsDhBDDdWEYa7kj1h22pW+NjnD1Ku+rO0UQqW0iAb80wakwNPpW6RxcG2yki994ViT9ifKbYLS8jH0VZxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ikZDEar7; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729876285; x=1761412285;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=MYQYsh2ZM0F5hLiv9jWAnO8EjpYfnIqM2b9zMJRm42c=;
+  b=ikZDEar7QA1SpCS2AIP+nuBrjwkz9yralhRHQzqyv+LsGdq7kUy2ksHW
+   arO3xxopYCxe6dVqE8QRtMPu/XO1m9TVgzf0IRD/kK6otkJDTkuOrJuiu
+   Rb2meY6Oa3iX6ebG5omcJf9JXSw83zTzage+ua1y0v+JCj5ixXbM6a5xN
+   nT+BPNL00ZVYxl0U2rwmsJc+dUjK81/pvmXMTqHr4mGP+dznDYDGCnDFb
+   ZJfSB3f1VGfMUU9p5zMlt8aJgAhhHXjAHLyEUAL2p2o27TBCt/NFwETD2
+   4cWthQk5YfPaxuFY6iExhFFS6jojBpF2KWggCHz8HxU4KXWqrQvjpgpxa
+   g==;
+X-CSE-ConnectionGUID: jmUrpIBvQu2biQQoDHw49A==
+X-CSE-MsgGUID: m8Wm0tluRDqljN4qtgouXQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="29497045"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="29497045"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2024 10:11:24 -0700
+X-CSE-ConnectionGUID: W8ffi6AWRIKUCKXfgRWWzw==
+X-CSE-MsgGUID: jBgwIuxpQcCrOIKJrpn2Yg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,232,1725346800"; 
+   d="scan'208";a="81267315"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa010.fm.intel.com with ESMTP; 25 Oct 2024 10:11:20 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t4NqH-000Yeq-1K;
+	Fri, 25 Oct 2024 17:11:17 +0000
+Date: Sat, 26 Oct 2024 01:10:17 +0800
+From: kernel test robot <lkp@intel.com>
+To: Furong Xu <0x1207@gmail.com>, netdev@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, Vladimir Oltean <olteanv@gmail.com>,
+	Andrew Lunn <andrew@lunn.ch>, Simon Horman <horms@kernel.org>,
+	andrew+netdev@lunn.ch,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, xfr@outlook.com,
+	Furong Xu <0x1207@gmail.com>
+Subject: Re: [PATCH net-next v4 3/6] net: stmmac: Refactor FPE functions to
+ generic version
+Message-ID: <202410260025.sME33DwY-lkp@intel.com>
+References: <cfc647f0d031517f9ec9095235a574aad9dc2c95.1729757625.git.0x1207@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <87cyjpj6qx.fsf@mail.lhotse>
+In-Reply-To: <cfc647f0d031517f9ec9095235a574aad9dc2c95.1729757625.git.0x1207@gmail.com>
 
-[snip]
+Hi Furong,
 
-I ran the current state of the scripts on the delta between Linus's
-master and linus-next. It is pasted below.
+kernel test robot noticed the following build errors:
 
-The number of patches that haven't been in -next in this random sample
-is indeed worrysome (and provides a good justification to the
-(unrelated) linus-next effort).
+[auto build test ERROR on net-next/main]
 
-As a reminder, the scripts are available at
-https://git.kernel.org/pub/scm/linux/kernel/git/sashal/next-analysis.git/
-, and I'm happy to help with issues around them.
+url:    https://github.com/intel-lab-lkp/linux/commits/Furong-Xu/net-stmmac-Introduce-separate-files-for-FPE-implementation/20241024-163526
+base:   net-next/main
+patch link:    https://lore.kernel.org/r/cfc647f0d031517f9ec9095235a574aad9dc2c95.1729757625.git.0x1207%40gmail.com
+patch subject: [PATCH net-next v4 3/6] net: stmmac: Refactor FPE functions to generic version
+config: arm-spear13xx_defconfig (https://download.01.org/0day-ci/archive/20241026/202410260025.sME33DwY-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 13.3.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241026/202410260025.sME33DwY-lkp@intel.com/reproduce)
 
-To avoid getting on everyone's nerves, I don't plan on bringing these up
-again in the context of random PRs unless asked to do so by the relevant
-maintainers/Linus.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410260025.sME33DwY-lkp@intel.com/
 
+All errors (new ones prefixed by >>):
 
-
-Days in linux-next:
-----------------------------------------
-  0 | ██████████████████████████████████████████████████ (32)
-<1 | ████ (3)
-  1 | ████ (3)
-  2 | ████████████ (8)
-  3 | ███████████████ (10)
-  4 | ███████████████ (10)
-  5 | 
-  6 | 
-  7 | 
-  8 | ███ (2)
-  9 | ██████ (4)
-10 | █ (1)
-11 | ███████ (5)
-12 | 
-13 | 
-14+| █████████████████ (11)
-
-Commits with 0 days in linux-next (35 of 89: 39.3%):
---------------------------------
-d34a5575e6d23 fuse: remove stray debug line
-  fs/fuse/passthrough.c | 1 -
-  1 file changed, 1 deletion(-)
-
-cdc21021f0351 drm/xe: Don't restart parallel queues multiple times on GT reset
-  drivers/gpu/drm/xe/xe_guc_submit.c | 14 ++++++++++++--
-  1 file changed, 12 insertions(+), 2 deletions(-)
-
-9c1813b325348 drm/xe/ufence: Prefetch ufence addr to catch bogus address
-  drivers/gpu/drm/xe/xe_sync.c | 3 ++-
-  1 file changed, 2 insertions(+), 1 deletion(-)
-
-69418db678567 drm/xe: Handle unreliable MMIO reads during forcewake
-  drivers/gpu/drm/xe/xe_force_wake.c | 12 +++++++++---
-  1 file changed, 9 insertions(+), 3 deletions(-)
-
-22ef43c78647d drm/xe/guc/ct: Flush g2h worker in case of g2h response timeout
-  drivers/gpu/drm/xe/xe_guc_ct.c | 18 ++++++++++++++++++
-  1 file changed, 18 insertions(+)
-
-c8fb95e7a5431 drm/xe: Enlarge the invalidation timeout from 150 to 500
-  drivers/gpu/drm/xe/xe_device.c | 2 +-
-  1 file changed, 1 insertion(+), 1 deletion(-)
-
-d93df29bdab13 cpufreq: CPPC: fix perf_to_khz/khz_to_perf conversion exception
-  drivers/acpi/cppc_acpi.c | 22 +++++++++++++++++-----
-  1 file changed, 17 insertions(+), 5 deletions(-)
-
-3d1c651272cf1 ACPI: PRM: Clean up guid type in struct prm_handler_info
-  drivers/acpi/prmt.c | 2 +-
-  1 file changed, 1 insertion(+), 1 deletion(-)
-
-8e59a2a5459fd ata: libata: Set DID_TIME_OUT for commands that actually timed out
-  drivers/ata/libata-eh.c | 1 +
-  1 file changed, 1 insertion(+)
-
-7c210ca5a2d72 drm/amdgpu: handle default profile on on devices without fullscreen 3D
-  drivers/gpu/drm/amd/pm/swsmu/amdgpu_smu.c | 11 ++++++++++-
-  1 file changed, 10 insertions(+), 1 deletion(-)
-
-ba1959f71117b drm/amd/display: Disable PSR-SU on Parade 08-01 TCON too
-  drivers/gpu/drm/amd/display/modules/power/power_helpers.c | 2 ++
-  1 file changed, 2 insertions(+)
-
-108bc59fe8176 drm/amdgpu: fix random data corruption for sdma 7
-  drivers/gpu/drm/amd/amdgpu/sdma_v7_0.c | 9 ++++++++-
-  1 file changed, 8 insertions(+), 1 deletion(-)
-
-63feb35cd2655 drm/amd/display: temp w/a for DP Link Layer compliance
-  drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_helpers.c | 13 +++++++++++++
-  1 file changed, 13 insertions(+)
-
-23d16ede33a4d drm/amd/display: temp w/a for dGPU to enter idle optimizations
-  drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 3 ++-
-  1 file changed, 2 insertions(+), 1 deletion(-)
-
-f67644b219d45 drm/amd/pm: update deep sleep status on smu v14.0.2/3
-  drivers/gpu/drm/amd/pm/swsmu/smu14/smu_v14_0_2_ppt.c | 7 ++++++-
-  1 file changed, 6 insertions(+), 1 deletion(-)
-
-f888e3d34b864 drm/amd/pm: update overdrive function on smu v14.0.2/3
-  drivers/gpu/drm/amd/pm/swsmu/smu14/smu_v14_0_2_ppt.c | 2 +-
-  1 file changed, 1 insertion(+), 1 deletion(-)
-
-9515e74d756b6 drm/amd/pm: update the driver-fw interface file for smu v14.0.2/3
-  drivers/gpu/drm/amd/pm/swsmu/inc/pmfw_if/smu14_driver_if_v14_0.h | 132 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-----------------------------------
-  drivers/gpu/drm/amd/pm/swsmu/inc/smu_v14_0.h                     |   2 +-
-  drivers/gpu/drm/amd/pm/swsmu/smu14/smu_v14_0_2_ppt.c             |  57 +++++++++++++-----------------------------
-  3 files changed, 102 insertions(+), 89 deletions(-)
-
-bf58f03931fdc drm/amd: Guard against bad data for ATIF ACPI method
-  drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c | 15 ++++++++++++---
-  1 file changed, 12 insertions(+), 3 deletions(-)
-
-d719fecdc2d6d media: i2c: tc358743: export InfoFrames to debugfs
-  drivers/media/i2c/tc358743.c | 36 +++++++++++++++++++++++++++++++++++-
-  1 file changed, 35 insertions(+), 1 deletion(-)
-
-be3aeece83e23 media: i2c: adv7842: export InfoFrames to debugfs
-  drivers/media/i2c/adv7842.c | 120 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++--------------------------------
-  1 file changed, 88 insertions(+), 32 deletions(-)
-
-6703538b8b6f8 media: i2c: adv7604: export InfoFrames to debugfs
-  drivers/media/i2c/adv7604.c | 90 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++--------------------
-  1 file changed, 70 insertions(+), 20 deletions(-)
-
-b0644b12f2579 media: i2c: adv7511-v4l2: export InfoFrames to debugfs
-  drivers/media/i2c/adv7511-v4l2.c | 91 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-----------------
-  1 file changed, 74 insertions(+), 17 deletions(-)
-
-155043e173660 media: v4l2-core: add v4l2_debugfs_if_alloc/free()
-  drivers/media/v4l2-core/v4l2-dv-timings.c | 67 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  include/media/v4l2-dv-timings.h           | 48 ++++++++++++++++++++++++++++++++++++++++++++++++
-  2 files changed, 115 insertions(+)
-
-e24486d0c6992 media: v4l2-core: add v4l2_debugfs_root()
-  drivers/media/v4l2-core/v4l2-dev.c | 14 ++++++++++++++
-  include/media/v4l2-dev.h           | 15 +++++++++++++++
-  2 files changed, 29 insertions(+)
-
-3d882f3a391db media: vb2: use lock if wait_prepare/finish are NULL
-  drivers/media/common/videobuf2/videobuf2-core.c | 13 ++++++++++---
-  1 file changed, 10 insertions(+), 3 deletions(-)
-
-aea26177c7175 media: vb2: vb2_core_queue_init(): sanity check lock and wait_prepare/finish
-  drivers/media/common/videobuf2/videobuf2-core.c | 8 ++++++++
-  1 file changed, 8 insertions(+)
-
-22122f2094934 media: video-i2c: set lock before calling vb2_queue_init()
-  drivers/media/i2c/video-i2c.c | 2 +-
-  1 file changed, 1 insertion(+), 1 deletion(-)
-
-b251fe7db1cde media: rcar_drif.c: set lock before calling vb2_queue_init()
-  drivers/media/platform/renesas/rcar_drif.c | 2 +-
-  1 file changed, 1 insertion(+), 1 deletion(-)
-
-89795432ae06a media: airspy: set lock before calling vb2_queue_init()
-  drivers/media/usb/airspy/airspy.c | 2 +-
-  1 file changed, 1 insertion(+), 1 deletion(-)
-
-734f583127067 media: hackrf: set lock before calling vb2_queue_init()
-  drivers/media/usb/hackrf/hackrf.c | 4 ++--
-  1 file changed, 2 insertions(+), 2 deletions(-)
-
-cc123e96b0c44 media: msi2500: set lock before calling vb2_queue_init()
-  drivers/media/usb/msi2500/msi2500.c | 2 +-
-  1 file changed, 1 insertion(+), 1 deletion(-)
-
-8d7d72a400c43 media: pwc: set lock before calling vb2_queue_init()
-  drivers/media/usb/pwc/pwc-if.c | 2 +-
-  1 file changed, 1 insertion(+), 1 deletion(-)
-
-38b1ea00360b9 media: venus: add missing wait_prepare/finish ops
-  drivers/media/platform/qcom/venus/vdec.c | 2 ++
-  drivers/media/platform/qcom/venus/venc.c | 2 ++
-  2 files changed, 4 insertions(+)
-
-fc3c6515678bf media: pisp_be: add missing wait_prepare/finish ops
-  drivers/media/platform/raspberrypi/pisp_be/pisp_be.c | 2 ++
-  1 file changed, 2 insertions(+)
-
-8ebcb4796639e media: omap3isp: add missing wait_prepare/finish ops
-  drivers/media/platform/ti/omap3isp/ispvideo.c | 18 ++++++++++++++++++
-  1 file changed, 18 insertions(+)
+   arm-linux-gnueabi-ld: drivers/net/ethernet/stmicro/stmmac/stmmac_fpe.o: in function `stmmac_fpe_configure':
+>> drivers/net/ethernet/stmicro/stmmac/stmmac_fpe.c:205:(.text+0x154): undefined reference to `__ffsdi2'
 
 
-Commits not found on lore.kernel.org/all (4 of 89: 4%):
-----------------------------------------
-d34a5575e6d23 fuse: remove stray debug line
-e3ea2757c312e ALSA: hda/realtek: Update default depop procedure
-f888e3d34b864 drm/amd/pm: update overdrive function on smu v14.0.2/3
-155043e173660 media: v4l2-core: add v4l2_debugfs_if_alloc/free()
+vim +205 drivers/net/ethernet/stmicro/stmmac/stmmac_fpe.c
+
+   191	
+   192	void stmmac_fpe_configure(struct stmmac_priv *priv, u32 num_txq, u32 num_rxq,
+   193				  bool tx_enable, bool pmac_enable)
+   194	{
+   195		struct stmmac_fpe_cfg *cfg = &priv->fpe_cfg;
+   196		const struct stmmac_fpe_reg *reg = cfg->reg;
+   197		void __iomem *ioaddr = priv->ioaddr;
+   198		u32 value;
+   199	
+   200		if (tx_enable) {
+   201			cfg->fpe_csr = STMMAC_MAC_FPE_CTRL_STS_EFPE;
+   202			value = readl(ioaddr + reg->rxq_ctrl1_reg);
+   203			value &= ~reg->fprq_mask;
+   204			/* Keep this SHIFT, FIELD_PREP() expects a constant mask :-/ */
+ > 205			value |= (num_rxq - 1) << __bf_shf(reg->fprq_mask);
+   206			writel(value, ioaddr + reg->rxq_ctrl1_reg);
+   207		} else {
+   208			cfg->fpe_csr = 0;
+   209		}
+   210		writel(cfg->fpe_csr, ioaddr + reg->mac_fpe_reg);
+   211	
+   212		value = readl(ioaddr + reg->int_en_reg);
+   213	
+   214		if (pmac_enable) {
+   215			if (!(value & reg->int_en_bit)) {
+   216				/* Dummy read to clear any pending masked interrupts */
+   217				readl(ioaddr + reg->mac_fpe_reg);
+   218	
+   219				value |= reg->int_en_bit;
+   220			}
+   221		} else {
+   222			value &= ~reg->int_en_bit;
+   223		}
+   224	
+   225		writel(value, ioaddr + reg->int_en_reg);
+   226	}
+   227	
 
 -- 
-Thanks,
-Sasha
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
