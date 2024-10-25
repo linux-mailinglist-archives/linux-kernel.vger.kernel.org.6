@@ -1,178 +1,140 @@
-Return-Path: <linux-kernel+bounces-380809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 363029AF668
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 03:09:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4001A9AF674
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 03:10:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD5A81F221C5
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 01:09:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F29F21F223DE
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 01:10:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCDEE12E75;
-	Fri, 25 Oct 2024 01:09:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 307161CAA6;
+	Fri, 25 Oct 2024 01:10:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="W4vvwOLP"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aK2MMt60"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DFF73A8D2;
-	Fri, 25 Oct 2024 01:09:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF3AC10A19;
+	Fri, 25 Oct 2024 01:10:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729818552; cv=none; b=uf27W0jiGISSnPjGMStEFjknrXujnawAbjBotxtbZkbc3vdFbA/QhNbeNlo/pmYI/ptpxTi+XbKCblZIs2rvRBHwpvUpWnKp4VLSK6rARsc0kvWqKVqZFwKYvVaGySaMJbYlAIvio4kJkH2z+vUBp8qZ3CG5UumV3fx5tuF0biI=
+	t=1729818627; cv=none; b=s8iloeC0NeQmgGr7FHvY2lgR9KPnAH0kvsluOWgSCcUj9NrDOVGQCy5/JaiatTX5BOp0B9fbnjOIqutOyyXpEmGeU+YXpYSSmyidFhciEjBsczJXtH4YhMk41zaKpiL16PreIWTcOP2U1qyw9eeYhm7TQQxT+JvPwO3VREyypzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729818552; c=relaxed/simple;
-	bh=wENN2XdTbRUcwTXnMipTh4bnfIGHZx4WtojFXUHh5+w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=YFDi8cWlYTF0x17B9KKPX2d1t99Q0dGalMIt7l5ba52ber8/KSblJ7cyQ/AD0eD5OkhYnjtveWiTZsHZbP/dkxbfNIbU78UgkkDTvJr+XTjIe+zz2wC9C1TsEUA/ZEKQaNaZMeobhD7YcUoVeW9Yu5dNkSmq6C/Mo+9j5CQJXqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=W4vvwOLP; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49OM4uA4016005;
-	Fri, 25 Oct 2024 01:08:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	0+1oLZauET+j+jh09kk+YkWrDtNFJkeHnfbIQSJpwvo=; b=W4vvwOLPzOGaas9B
-	jLSprNxIjvObGraTCmiF/1exlX2OadCSEfpI+huU9MpUlcDGnsG+k+sBCoIy9Y/0
-	BekzNapLtjx2wj9geo0YUmMxEyiXQ+JwQBWu6pv8GVqt6GO5j1GGCRsocVyGTGj3
-	6SkTFSMyvNnfens8uKFS5ZKXaCU8q7iLGXIUier6OV3HjpYFkJcokirgmRPHusoT
-	8Q04Sh+QOVdUNKZkZyrWDS+UzsH5DWpVBRv0mYa4iuAeAaTRJlBZuzBYLndYqobV
-	zBEVp45X82ccGByKYuPk1Ge43Ne0ORh9PevtaOeU4cZsSgdTe209UHBucV4H5XnG
-	q5FajA==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42em3xqb1e-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 25 Oct 2024 01:08:47 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49P18kTV030019
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 25 Oct 2024 01:08:46 GMT
-Received: from [10.216.22.131] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 24 Oct
- 2024 18:08:40 -0700
-Message-ID: <77d3a1a9-c22d-0fd3-5942-91b9a3d74a43@quicinc.com>
-Date: Fri, 25 Oct 2024 06:38:37 +0530
+	s=arc-20240116; t=1729818627; c=relaxed/simple;
+	bh=lWwyYbzBQmFD3lKbaX8VpjDA3jlUz6kqDdllqTJhGHk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qQOK1NbY62tPTEzRgVvsYfJPWQXaZ/yxftgS5jrRbwE1C+/yDGEJ8RNtPVKvLpSFS77PjWcvNYVyJa4D47qd8U8dtWtaRUM2ZVP5TKI4Rcqg0QIQkuF5C3X+8t85nnd5Ob+MxNZQHj9c6QzpmtAH3VCcgPOoZPfDzxBIP6jMMqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aK2MMt60; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-7204dff188eso621944b3a.1;
+        Thu, 24 Oct 2024 18:10:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729818625; x=1730423425; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=sYpfrlq0V0bV9nsDJv9ukMK1/gCt1wSxEcrYWbmTl9Q=;
+        b=aK2MMt60PuIeBAQm/GVI1KYBEbEhpozYfBCJ4lsrDdG4Fc/8xsSYxD9ZFGZEyVJ3wl
+         ovVMjOFMp50vQ6ObBRsqsPFm9cZMWPucNstrAxsL0pWqnjcFq0Uf5GZegS6idpM2pajj
+         Ddv4Kj0oj3bT+lvrOL3uLQH5JEbGOY8K9KywUcaz8YXV7At/+98AILeNCLmvLIiIo3/A
+         o5EyP4X0r1MY/dK96kxfMRn9Sr+a7QKnrtZ5/aeID8JucktCWp6GT8jt3VSAnTremxOs
+         XwJZj7ksZI1gaU/T+Bgror4LJLuyjNizud4Us9SJBW6gUmZv8QyHupmypv5QjPqx49KL
+         ZNEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729818625; x=1730423425;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sYpfrlq0V0bV9nsDJv9ukMK1/gCt1wSxEcrYWbmTl9Q=;
+        b=kJT749Fo7V8OAnWTblEJTMyhT29gz53TVn6FxR4WcsxHEFPEtisM4HO7vrV5jpBb7h
+         EEEk68/R9cZHtMzR0T3whDHjEK6VNCw2Z/mmzPqZZynMv7YsJnqQVeJUMsx1K/h3DhnY
+         axgf7YkwN7VZ3scBcjV+l3qT0KhbbSdJL5Ax9SMDmECC1cz6dD237RXSC6kVp9JF6IKn
+         KL/6ZvMISxua56PckfI/tqxUHF2ntBJKjz3/OdyMdWgL5UEbl5BTywhf41hEmvBiHhlO
+         60f247rHju1n7WEUiWeJEOOBeJ4au60lEXkDEjel0YQnSEXaWG7hD856H3ldeixeTXp+
+         O2eQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVOM8DWcNGTO/gZuPOyHuyMc61zIBHVoaQEu9JjYdXOeOHUHQXQraFwy/8caJKPoChu6axyCrw2xsbyiOcw@vger.kernel.org, AJvYcCVlpAxuTHYA1o0v8N12PGFTl2/4l/p+7x40CPCgJzbus6rCMedheR1evgI25LvoFQOycFOjq5L8kfeG@vger.kernel.org, AJvYcCWc5OgclMLUAF/04ClXcnfXhteJkSN/tkpvFz6McbZa9uzjRWmI4IsqdT8RxVIzaNmxkEKT4hn6@vger.kernel.org
+X-Gm-Message-State: AOJu0YxowLjyRPaVWCYPrqJ1DcXQUhoSPLyNgnCgyUymOfIbD8GML9je
+	gTXd481kONh6xnbEkllDpc8B6+6cskMiHkBcB2x300pRyR2L85Np
+X-Google-Smtp-Source: AGHT+IFpOd28fEHMTcKxVcGsg5KEPz6mrlaxZYvtZFvJjTxq2WDoP6vXaOQgIFHT9LXF1AJwY1a6nA==
+X-Received: by 2002:a05:6a00:190e:b0:71e:4c86:6594 with SMTP id d2e1a72fcca58-72030a51d13mr11382153b3a.10.1729818624886;
+        Thu, 24 Oct 2024 18:10:24 -0700 (PDT)
+Received: from localhost ([2001:da8:7001:11::cb])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72057a0b9b1sm53397b3a.133.2024.10.24.18.10.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Oct 2024 18:10:24 -0700 (PDT)
+From: Inochi Amaoto <inochiama@gmail.com>
+To: Chen Wang <unicorn_wang@outlook.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Inochi Amaoto <inochiama@outlook.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>
+Cc: Yixun Lan <dlan@gentoo.org>,
+	Longbin Li <looong.bin@gmail.com>,
+	Inochi Amaoto <inochiama@gmail.com>,
+	netdev@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-riscv@lists.infradead.org
+Subject: [PATCH v2 0/4] riscv: sophgo: Add ethernet support for SG2044
+Date: Fri, 25 Oct 2024 09:09:56 +0800
+Message-ID: <20241025011000.244350-1-inochiama@gmail.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH 1/1] RFC: dt bindings: Add property "brcm,gen3-eq-presets"
-Content-Language: en-US
-To: Rob Herring <robh@kernel.org>, Jim Quinlan <james.quinlan@broadcom.com>
-CC: <linux-pci@vger.kernel.org>, Nicolas Saenz Julienne <nsaenz@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Lorenzo Pieralisi
-	<lorenzo.pieralisi@arm.com>,
-        <bcm-kernel-feedback-list@broadcom.com>, <jim2101024@gmail.com>,
-        Florian Fainelli <florian.fainelli@broadcom.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        =?UTF-8?Q?Krzysztof_Wilczy=c5=84ski?= <kw@linux.com>,
-        Manivannan Sadhasivam
-	<manivannan.sadhasivam@linaro.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        "moderated list:BROADCOM BCM7XXX ARM
- ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
-        "moderated
- list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
-	<linux-rpi-kernel@lists.infradead.org>,
-        "open list:OPEN FIRMWARE AND
- FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-        open list
-	<linux-kernel@vger.kernel.org>
-References: <20241018182247.41130-1-james.quinlan@broadcom.com>
- <20241018182247.41130-2-james.quinlan@broadcom.com>
- <20241021190334.GA953710-robh@kernel.org>
-From: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>
-In-Reply-To: <20241021190334.GA953710-robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: bByYqpBSH2WD1znRWTx9ptXkLbDecWdR
-X-Proofpoint-ORIG-GUID: bByYqpBSH2WD1znRWTx9ptXkLbDecWdR
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 phishscore=0
- impostorscore=0 mlxscore=0 bulkscore=0 spamscore=0 lowpriorityscore=0
- mlxlogscore=999 malwarescore=0 priorityscore=1501 adultscore=0
- clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410250008
+Content-Transfer-Encoding: 8bit
 
+The ethernet controller of SG2044 is Synopsys DesignWare IP with
+custom clock. Add glue layer for it.
 
+Since v2, these patch depends on that following patch that provides
+helper function to compute rgmii clock:
+https://lore.kernel.org/netdev/20241013-upstream_s32cc_gmac-v3-4-d84b5a67b930@oss.nxp.com/
 
-On 10/22/2024 12:33 AM, Rob Herring wrote:
-> On Fri, Oct 18, 2024 at 02:22:45PM -0400, Jim Quinlan wrote:
->> Support configuration of the GEN3 preset equalization settings, aka the
->> Lane Equalization Control Register(s) of the Secondary PCI Express
->> Extended Capability.  These registers are of type HwInit/RsvdP and
->> typically set by FW.  In our case they are set by our RC host bridge
->> driver using internal registers.
->>
->> Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
->> ---
->>   .../devicetree/bindings/pci/brcm,stb-pcie.yaml       | 12 ++++++++++++
->>   1 file changed, 12 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml b/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
->> index 0925c520195a..f965ad57f32f 100644
->> --- a/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
->> +++ b/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
->> @@ -104,6 +104,18 @@ properties:
->>       minItems: 1
->>       maxItems: 3
->>   
->> +  brcm,gen3-eq-presets:
->> +    description: |
->> +      A u16 array giving the GEN3 equilization presets, one for each lane.
->> +      These values are destined for the 16bit registers known as the
->> +      Lane Equalization Control Register(s) of the Secondary PCI Express
->> +      Extended Capability.  In the array, lane 0 is first term, lane 1 next,
->> +      etc. The contents of the entries reflect what is necessary for
->> +      the current board and SoC, and the details of each preset are
->> +      described in Section 7.27.4 of the PCI base spec, Revision 3.0.
-> 
-> If these are defined by the PCIe spec, then why is it Broadcom specific
-> property?
-> 
-Hi Rob,
+Changed from v1:
+1. patch 2: remove sophgo,syscon as this mac delay is resolved.
+2. patch 2: apply all the properties unconditionally.
+3. patch 4: remove sophgo,syscon code as this mac delay is resolved.
+4. patch 4: use the helper function to compute rgmii clock.
+5. patch 4: use remove instead of remove_new for the platform driver.
 
-qcom pcie driver also needs to program these presets as you suggested
-this can go to common pci bridge binding.
+Inochi Amaoto (4):
+  dt-bindings: net: snps,dwmac: Add dwmac-5.30a version
+  dt-bindings: net: Add support for Sophgo SG2044 dwmac
+  net: stmmac: platform: Add snps,dwmac-5.30a IP compatible string
+  net: stmmac: Add glue layer for Sophgo SG2044 SoC
 
-from PCIe spec 6.0.1 revision section 8.3.3.3 & 4.2.4.2 for data rates
-of  8.0 GT/s, 16.0 GT/s, and 32.0 GT/s uses one class of preset (P0
-through P10) and where as data rates of 64.0 GT/s use different class of
-presets (Q0 through Q10) (Table 4-23). And data rates of 8.0 GT/s also
-have optional preset hints (Table 4-24).
+ .../devicetree/bindings/net/snps,dwmac.yaml   |   4 +
+ .../bindings/net/sophgo,sg2044-dwmac.yaml     | 124 ++++++++++++++++++
+ drivers/net/ethernet/stmicro/stmmac/Kconfig   |  11 ++
+ drivers/net/ethernet/stmicro/stmmac/Makefile  |   1 +
+ .../ethernet/stmicro/stmmac/dwmac-sophgo.c    | 109 +++++++++++++++
+ .../ethernet/stmicro/stmmac/stmmac_platform.c |   3 +-
+ 6 files changed, 251 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/net/sophgo,sg2044-dwmac.yaml
+ create mode 100644 drivers/net/ethernet/stmicro/stmmac/dwmac-sophgo.c
 
-And there is possibility that for each data rate we may require
-different preset configuration.
+--
+2.47.0
 
-Can we have a dt binding for each data rate of 16 byte array.
-like gen3-eq-preset array, gen4-eq-preset array etc.
-
-- Krishna Chaitanya
->> +
->> +    $ref: /schemas/types.yaml#/definitions/uint16-array
-> 
-> minItems: 1
-> maxItems: 16
-> 
-> Last I saw, you can only have up to 16 lanes.
-> 
-> Rob
-> 
 
