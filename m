@@ -1,81 +1,89 @@
-Return-Path: <linux-kernel+bounces-382108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E84659B0975
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 18:14:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DB4CC9B0978
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 18:15:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D8211C22E5C
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:14:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 190841C21A4D
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:15:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A01F189F3E;
-	Fri, 25 Oct 2024 16:14:36 +0000 (UTC)
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19F6A17DFFC;
+	Fri, 25 Oct 2024 16:14:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="O3AiF17q"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEDE17082B;
-	Fri, 25 Oct 2024 16:14:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F65015B97D
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 16:14:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729872876; cv=none; b=q/tdXG6BFai0myho7Pbu3TCcJ7/pqc6uMjxXA6nImxsP5bIw/rSEeVeV9vbEdJszke6Mipr4khSxIELR107UsVEN6Af2p5eKtNcgRcQRot8S8MsVhprvhiUN62wy70ZLIEuw4x+e9QzgusptlVtk+UGrevme/fWuOT8xQW1z5CE=
+	t=1729872896; cv=none; b=e3cWzAcQrpdGm3eZaZbtpUE67TrJ1JmfHW3y63Bfbs7jjuTELt2K8ApOgXd2eoES+9SZ0hc2Dh3M8rXU79ybrvRk+4eFITXWsQ4L9bbpucweQVw6S41X4G7h+8njSX9EVvHUpDcqmPZTECyGKwa5UXwN8DgRy+ne637kcCIG1qs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729872876; c=relaxed/simple;
-	bh=iRMbskNOi1COk9/chyRw3Ro2vtmKl+VeKlcxOeCGirw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=eWkILdKerdtdHN27+E1UsRoX5Qyla5UQpGn5mU7v4+Um4vg5ojqubqxJZK+3OKJfAkuD98XKDVbRgyBIQ+G7qpNRVbSPRxPhevalplhgIdehTSJm7S25rCV6wLo3iRdLdD//fN96xtvlRKfm6geHzt35t7HiRlzCMvEufA7Q/kg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a9a156513a1so324918566b.0;
-        Fri, 25 Oct 2024 09:14:33 -0700 (PDT)
+	s=arc-20240116; t=1729872896; c=relaxed/simple;
+	bh=zXNxA16DutWXewQPnZ8VHN2QySLaJsJ0j0Tu8vE6LFo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=F9kaAGToeQJmuTmLvoJNHqiyO6pTNkG87n19NJc5+D3ZUPvOdXyEfjHesmyWOYAoLEyo2nR8GFaoB4jQC5JeiQylQzMDGFOELGK1K8SZGVde9QKWwFFBuHU6E3Wjmnl0qXEI5XoHVdRCddHKF84zyAIyP6dXoiUhdsJ7Lz73SkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=O3AiF17q; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-539fbbadf83so3072002e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 09:14:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google; t=1729872892; x=1730477692; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=GN13PFFztO+RVXylp070AHdpchWjZze0aJo+onIOSo0=;
+        b=O3AiF17qhZhZ9SCtywQYffyoeuqo+k/9HBiSuJOw+6O1kMPGWrfP6qEUqbyS/K4p+9
+         ftX1pyti9Cb+MKRuuU5vWtZW8RsXx4k9WSKXQp5SA4xJA1IwZFXG8FeFnzQymULexcwt
+         DzTd0JypqmlpRUBvrFDd9GER1w8twAiUVenng=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729872872; x=1730477672;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Mck4w3ufI078SKMeX83WF7cSZnSJ+nv2Om7NNhnVrpk=;
-        b=XJgUPcH4TB8sPgyRYfLXKYOPwjoSNfpkmF8VH0Ot6M2hUkfPVELcpgmgqprkyfHvjP
-         DaFzA8FY4NieSMIRdAxkUTYCzuR6r4i9l6rxTWBkOhnNUi5OZ5xJLm19yXDolhie6y9O
-         mtkRK3bkEnv+dT6fj6fu599S3Q2ZtZHSMtzH+v1JE+CTiUBXUqoztuU3pdivgDG6uls9
-         MsE22eUmqmdIkKKqlbeR2ctLSYoe3MsU7L+EccmtuTv5wsMu/QCicvBEto2WIeJG8Spd
-         vtCHWPkpv0aDTICVOg2307+BGeEvwHltcVDF3URzL/HgrHp/tCYgRlWlfyeNFu28P9Dr
-         59gQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUe2mtskcZrAUpcmIo4xyUCFZv0bVuAI1w/+6Es/Q+9mtgCOu5vrZH6IRtcJJnmpt+MRhSYhmXxyNcdp7peOAna@vger.kernel.org, AJvYcCV/px/iBpdrF+gBIPhAj4L8aX7UksLzAqjDALCawE2Cc946FeSS2f2m9fb/PJ8/vyDC9HygDEK8@vger.kernel.org, AJvYcCXvFpAdp5wwWJnF6RlO/X6z3xyuJv5I7H3ewnPrPK+Omdrx1FlieywldbioJ98wvSOwrXelpMD0cjsDL7Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIsKrNS5mbDVpJV0ot3OTkGpHZ/dRHSpl7zJTBNlxWv+wnsWwj
-	0sXjdaFOoTJgKVuumo3njwcl78yaBY/L2Mo7mRYhRSiVi0qLanEU
-X-Google-Smtp-Source: AGHT+IE9wvNdJoZ1wRErVgzp/oeZPvFb/8mAxNhzhoaQkWN3SgsihpQE4oSqzeuHnBY2hgMpTI0hUg==
-X-Received: by 2002:a17:907:9452:b0:a99:60c8:f2c4 with SMTP id a640c23a62f3a-a9ad2730bc2mr522796066b.15.1729872872050;
-        Fri, 25 Oct 2024 09:14:32 -0700 (PDT)
-Received: from localhost (fwdproxy-lla-112.fbsv.net. [2a03:2880:30ff:70::face:b00c])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b1dec773fsm87395566b.18.2024.10.25.09.14.31
+        d=1e100.net; s=20230601; t=1729872892; x=1730477692;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GN13PFFztO+RVXylp070AHdpchWjZze0aJo+onIOSo0=;
+        b=ebPSy3QSckFM1hr7YXk0zuGVnfB61b+6i1lwdpTThy6NZJ4QO6LEOwq675qxVXI6HJ
+         W2cxNT7CPkdhCEKIZ4qBTLFYLd0UsiLav3T3h2PeBhrUMyaOpARgNwJ+b7LOPSQlPIjV
+         InrUILOc7X1go4yWxPLlnXTl7GlRdTY6AVCULjpv220JFlOxAUHgON1PDNP57nv6WLkf
+         35gMipCk5V/YQiQ154r57EWPHNwHEvY2uZIablTkhHFDAjdvhb+rQWlIc0oKWgfQT1Es
+         YGz17uupihYhBn7b64tzo26vrRFd8n25ChBnP37gStBURlIV1VDQEiX570KNsKhBGcjS
+         dzww==
+X-Gm-Message-State: AOJu0Yw23TMUQTfvA8Fg2ZhAmwKdussLpheuu3KBuVkqVeQErAawPA1W
+	rylp446VsjWicFqaYu3y7/Ftz7Ztnk5okNTxGDaQ08tJ/Kd6q1lLS0z4OP8PmPt/jaWZhO284P4
+	z+ds=
+X-Google-Smtp-Source: AGHT+IG7Ko0ZaVVixb42kGSXnwInD9+MTWs4okp1RbVG6KUd/qf/uSPa2qcn+su4qqA0sbbCFTHNBw==
+X-Received: by 2002:a05:6512:3054:b0:535:6992:f2cb with SMTP id 2adb3069b0e04-53b1a36c6f3mr6404231e87.42.1729872892194;
+        Fri, 25 Oct 2024 09:14:52 -0700 (PDT)
+Received: from dario-ThinkPad-T14s-Gen-2i.. ([2.196.43.251])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4318b579613sm51759005e9.38.2024.10.25.09.14.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2024 09:14:31 -0700 (PDT)
-From: Breno Leitao <leitao@debian.org>
-To: kuba@kernel.org,
-	horms@kernel.org,
-	davem@davemloft.net,
-	edumazet@google.com,
-	pabeni@redhat.com,
-	matttbe@kernel.org,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Shuah Khan <shuah@kernel.org>
-Cc: thepacketgeek@gmail.com,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	davej@codemonkey.org.uk,
-	vlad.wing@gmail.com,
-	max@kutsevol.com,
-	kernel-team@meta.com,
-	aehkn@xenhub.one,
-	linux-kselftest@vger.kernel.org (open list:KERNEL SELFTEST FRAMEWORK)
-Subject: [PATCH net-next 2/2] net: netconsole: selftests: Add userdata validation
-Date: Fri, 25 Oct 2024 09:14:14 -0700
-Message-ID: <20241025161415.238215-2-leitao@debian.org>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20241025161415.238215-1-leitao@debian.org>
-References: <20241025161415.238215-1-leitao@debian.org>
+        Fri, 25 Oct 2024 09:14:51 -0700 (PDT)
+From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-amarula@amarulasolutions.com,
+	Dario Binacchi <dario.binacchi@amarulasolutions.com>,
+	Michael Trimarchi <michael@amarulasolutions.com>,
+	David Airlie <airlied@gmail.com>,
+	Fabio Estevam <festevam@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Marek Vasut <marex@denx.de>,
+	Maxime Ripard <mripard@kernel.org>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Simona Vetter <simona@ffwll.ch>,
+	Stefan Agner <stefan@agner.ch>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	dri-devel@lists.freedesktop.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2] drm/mxsfb: Remove generic DRM drivers in probe function
+Date: Fri, 25 Oct 2024 18:14:25 +0200
+Message-ID: <20241025161435.4114877-1-dario.binacchi@amarulasolutions.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,98 +92,51 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Extend netcons_basic selftest to verify the userdata functionality by:
- 1. Creating a test key in the userdata configfs directory
- 2. Writing a known value to the key
- 3. Validating the key-value pair appears in the captured network output
+Use aperture helpers to remove all generic graphics drivers before
+loading mxsfb. Makes mxsfb compatible with simpledrm.
 
-This ensures the userdata feature is properly tested during selftests.
+Co-developed-by: Michael Trimarchi <michael@amarulasolutions.com>
+Signed-off-by: Michael Trimarchi <michael@amarulasolutions.com>
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 
-Signed-off-by: Breno Leitao <leitao@debian.org>
 ---
- .../selftests/drivers/net/netcons_basic.sh    | 29 +++++++++++++++++++
- 1 file changed, 29 insertions(+)
 
-diff --git a/tools/testing/selftests/drivers/net/netcons_basic.sh b/tools/testing/selftests/drivers/net/netcons_basic.sh
-index 4ad1e216c6b0..d182dcc2a10b 100755
---- a/tools/testing/selftests/drivers/net/netcons_basic.sh
-+++ b/tools/testing/selftests/drivers/net/netcons_basic.sh
-@@ -26,10 +26,13 @@ DSTIP=192.168.2.2
+Changes in v2:
+- Use aperture_remove_all_conflicting_devices() instead of
+  drm_aperture_remove_framebuffers().
+
+ drivers/gpu/drm/mxsfb/mxsfb_drv.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/drivers/gpu/drm/mxsfb/mxsfb_drv.c b/drivers/gpu/drm/mxsfb/mxsfb_drv.c
+index cb5ce4e81fc7..d140984923fd 100644
+--- a/drivers/gpu/drm/mxsfb/mxsfb_drv.c
++++ b/drivers/gpu/drm/mxsfb/mxsfb_drv.c
+@@ -8,6 +8,7 @@
+  * Copyright (C) 2008 Embedded Alley Solutions, Inc All Rights Reserved.
+  */
  
- PORT="6666"
- MSG="netconsole selftest"
-+USERDATA_KEY="key"
-+USERDATA_VALUE="value"
- TARGET=$(mktemp -u netcons_XXXXX)
- DEFAULT_PRINTK_VALUES=$(cat /proc/sys/kernel/printk)
- NETCONS_CONFIGFS="/sys/kernel/config/netconsole"
- NETCONS_PATH="${NETCONS_CONFIGFS}"/"${TARGET}"
-+KEY_PATH="${NETCONS_PATH}/userdata/${USERDATA_KEY}"
- # NAMESPACE will be populated by setup_ns with a random value
- NAMESPACE=""
++#include <linux/aperture.h>
+ #include <linux/clk.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/io.h>
+@@ -360,6 +361,15 @@ static int mxsfb_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		goto err_free;
  
-@@ -122,6 +125,8 @@ function cleanup() {
- 
- 	# delete netconsole dynamic reconfiguration
- 	echo 0 > "${NETCONS_PATH}"/enabled
-+	# Remove key
-+	rmdir "${KEY_PATH}"
- 	# Remove the configfs entry
- 	rmdir "${NETCONS_PATH}"
- 
-@@ -136,6 +141,18 @@ function cleanup() {
- 	echo "${DEFAULT_PRINTK_VALUES}" > /proc/sys/kernel/printk
- }
- 
-+function set_user_data() {
-+	if [[ ! -d "${NETCONS_PATH}""/userdata" ]]
-+	then
-+		echo "Userdata path not available in ${NETCONS_PATH}/userdata"
-+		exit "${ksft_skip}"
-+	fi
++	/*
++	 * Remove early framebuffers (ie. simplefb). The framebuffer can be
++	 * located anywhere in RAM
++	 */
++	ret = aperture_remove_all_conflicting_devices(mxsfb_driver.name);
++	if (ret)
++		return dev_err_probe(&pdev->dev, ret,
++				     "can't kick out existing framebuffers\n");
 +
-+	mkdir -p "${KEY_PATH}"
-+	VALUE_PATH="${KEY_PATH}""/value"
-+	echo "${USERDATA_VALUE}" > "${VALUE_PATH}"
-+}
-+
- function listen_port_and_save_to() {
- 	local OUTPUT=${1}
- 	# Just wait for 2 seconds
-@@ -146,6 +163,10 @@ function listen_port_and_save_to() {
- function validate_result() {
- 	local TMPFILENAME="$1"
- 
-+	# TMPFILENAME will contain something like:
-+	# 6.11.1-0_fbk0_rc13_509_g30d75cea12f7,13,1822,115075213798,-;netconsole selftest: netcons_gtJHM
-+	#  key=value
-+
- 	# Check if the file exists
- 	if [ ! -f "$TMPFILENAME" ]; then
- 		echo "FAIL: File was not generated." >&2
-@@ -158,6 +179,12 @@ function validate_result() {
- 		exit "${ksft_fail}"
- 	fi
- 
-+	if ! grep -q "${USERDATA_KEY}=${USERDATA_VALUE}" "${TMPFILENAME}"; then
-+		echo "FAIL: ${USERDATA_KEY}=${USERDATA_VALUE} not found in ${TMPFILENAME}" >&2
-+		cat "${TMPFILENAME}" >&2
-+		exit "${ksft_fail}"
-+	fi
-+
- 	# Delete the file once it is validated, otherwise keep it
- 	# for debugging purposes
- 	rm "${TMPFILENAME}"
-@@ -220,6 +247,8 @@ trap cleanup EXIT
- set_network
- # Create a dynamic target for netconsole
- create_dynamic_target
-+# Set userdata "key" with the "value" value
-+set_user_data
- # Listed for netconsole port inside the namespace and destination interface
- listen_port_and_save_to "${OUTPUT_FILE}" &
- # Wait for socat to start and listen to the port.
+ 	ret = drm_dev_register(drm, 0);
+ 	if (ret)
+ 		goto err_unload;
 -- 
-2.43.5
+2.43.0
 
 
