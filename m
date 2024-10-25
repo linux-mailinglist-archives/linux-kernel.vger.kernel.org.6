@@ -1,166 +1,111 @@
-Return-Path: <linux-kernel+bounces-382110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0556B9B0979
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 18:15:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D7159B099A
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 18:16:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5AE31F234A0
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:15:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6D1ECB247C7
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:16:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77119189F3F;
-	Fri, 25 Oct 2024 16:15:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E39D18595F;
+	Fri, 25 Oct 2024 16:16:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ere1JOuJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hXFAoCdo"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D043D188CA1
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 16:15:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8799D7080E;
+	Fri, 25 Oct 2024 16:16:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729872901; cv=none; b=PvISMV+lxd6EPtumw/2CSqoMYFUJvrloTUxPNlVaD58GYMesRzgI5Xg95jf8ZHvbXt+kSbSVnF31XXAZu6QG/KrpG1sayGf+Oaa6jkRT95wcbsmdjTc2zJ7YekHhcUTiiCUyaCGQ6Mv7dukMiyA89CGzcJwmr2OLjaKVY+1l5XU=
+	t=1729872993; cv=none; b=qFKcX3wk+rZFiZAzkTuj+pVvOymjTrvqiJCGxXKRqQqkw9CYJ/EdPkYaVUqlt8KM47UJIbqbHNZnqo+KeFByR6zlcfUdJd8PRyPg4iIBwoSXGw4BK4jI6+hUu/gSEG1P0rpdILuYwTlJgZO4GQSfwg0rcVdJqay1509fIBJz/W8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729872901; c=relaxed/simple;
-	bh=xauMgPi9VccclOak+q41k9wam+BeYz0R/HH/+WYNJ20=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bQuqhc4i4NVLR0Xe/tC4KXi7yaS6D0H9+ItGpADeU+RP0M5lCaedqggEWlMFVAkQyz7V8RW32kRAQx9f2D057JlqHTYUTqo4gEcHUo9IzcVOrTxArCMp1T4tdjWHST2ZpbSPtLeRUWK3t863Bc/NiJp0JEXelgpmhXvhEkrLuIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ere1JOuJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E1C5C4CEC3;
-	Fri, 25 Oct 2024 16:15:01 +0000 (UTC)
+	s=arc-20240116; t=1729872993; c=relaxed/simple;
+	bh=nn618csCV0nfmdVUFNZxtbc9Np+SY9OMrfOoQa9JKs8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EgYYzJa/R4OkVoQwiY9EqIhE8tiQR7CHpXdbSBJBXNU39xRQ4NJzhfeEJsNlPawDdg1GBi+4tIDVgSuMCxCmI6/0UtAUiuQpYB1i/FHaD7nSrrcwvHNvALWjYkz9+IeI9aW3a6sg7yXK/vlEA8fn9lUzvhaxVkDBh0Afr59vaC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hXFAoCdo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC848C4CEC3;
+	Fri, 25 Oct 2024 16:16:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729872901;
-	bh=xauMgPi9VccclOak+q41k9wam+BeYz0R/HH/+WYNJ20=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ere1JOuJ0Cp0k43C9N+4F8AYElMcYXchbYav/fwlMx9L7Y+J1U0x7ypS3IRS9iOhw
-	 /B5XgAhfBHrbG+JY5zrrgWasaga0EU+isSHt0Lk0cPbGeN/bnGGmEDbTPNdB4SFfXw
-	 e05ZLxWX2I5HTH9yBLkF94dnnuOaHAlJdqrTt/hlR60AgxwGID6/1AWm1amwT0ubT/
-	 4x70261adP4tZntRLMYiGe6qScpk+qUl2+M+RUgFzxbw9jI/7zaStmTu+Qx3WfqCvg
-	 sq9FwIXdsksXZpQ0dgvSNlcHUtkMzWiR9ICqP687M1/VwwTMPAecqFVyDMTP7aDk8p
-	 vbpAPCxkOvF4w==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1t4Mxm-006qyI-Uv;
-	Fri, 25 Oct 2024 17:14:59 +0100
-Date: Fri, 25 Oct 2024 17:14:57 +0100
-Message-ID: <86h6902m7y.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Yu Zhao <yuzhao@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Muchun Song <muchun.song@linux.dev>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Will Deacon <will@kernel.org>,
-	Douglas Anderson <dianders@chromium.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Nanyong Sun <sunnanyong@huawei.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [PATCH v1 3/6] irqchip/gic-v3: support SGI broadcast
-In-Reply-To: <CAOUHufanq2_nbNiU_=mCgWufoSGDOS3EpAz+4xB5kB=PV2ECVA@mail.gmail.com>
-References: <20241021042218.746659-1-yuzhao@google.com>
-	<20241021042218.746659-4-yuzhao@google.com>
-	<86a5ew41tp.wl-maz@kernel.org>
-	<CAOUHufanq2_nbNiU_=mCgWufoSGDOS3EpAz+4xB5kB=PV2ECVA@mail.gmail.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=k20201202; t=1729872993;
+	bh=nn618csCV0nfmdVUFNZxtbc9Np+SY9OMrfOoQa9JKs8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hXFAoCdoFqZMXlOYigk6dnBpVkwU/b6eZlHDuo5rMt/0DTFnrcuuon7H+kF8A46Nk
+	 f6wBM0zhF/h/OTz6oBAZVGzbmjmIKVKRN/f4HAdyPvSWfyDLgSvdhE2Qf0GDMLv3FT
+	 ATF9Gyb8cM1ZANfYUxBndapkor4pEvK876BQUqmWh0hJ2dDzhIIH5AV+61+6kd0yo8
+	 ikozvmiCr2QWzHaxNXe/shjzgt62S1qcVwJuERUaPx1uPrsRIs62k1Ge5W6R83RG8U
+	 t2XGq7zmzYKBsacmP7UePlrb+qW74okNou3dIs41+tHIdaS9mk4vqc4Z8dWF6FAz5w
+	 RpIsuPWk55Zow==
+Date: Fri, 25 Oct 2024 09:16:32 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
+Cc: linux-ext4@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
+	Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@infradead.org>,
+	John Garry <john.g.garry@oracle.com>,
+	Ojaswin Mujoo <ojaswin@linux.ibm.com>,
+	Dave Chinner <david@fromorbit.com>, linux-kernel@vger.kernel.org,
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 4/6] ext4: Warn if we ever fallback to buffered-io for
+ DIO atomic writes
+Message-ID: <20241025161632.GL2386201@frogsfrogsfrogs>
+References: <cover.1729825985.git.ritesh.list@gmail.com>
+ <7c4779f1f0c8ead30f660a2cfbdf4d7cc08e405a.1729825985.git.ritesh.list@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: yuzhao@google.com, akpm@linux-foundation.org, catalin.marinas@arm.com, muchun.song@linux.dev, tglx@linutronix.de, will@kernel.org, dianders@chromium.org, mark.rutland@arm.com, sunnanyong@huawei.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7c4779f1f0c8ead30f660a2cfbdf4d7cc08e405a.1729825985.git.ritesh.list@gmail.com>
 
-On Fri, 25 Oct 2024 06:07:45 +0100,
-Yu Zhao <yuzhao@google.com> wrote:
->=20
-> Hi Marc,
->=20
-> On Tue, Oct 22, 2024 at 9:03=E2=80=AFAM Marc Zyngier <maz@kernel.org> wro=
-te:
-> >
-> > On Mon, 21 Oct 2024 05:22:15 +0100,
-> > Yu Zhao <yuzhao@google.com> wrote:
-> > >
-> > > @@ -1407,6 +1418,13 @@ static void gic_ipi_send_mask(struct irq_data =
-*d, const struct cpumask *mask)
-> > >        */
-> > >       dsb(ishst);
-> > >
-> > > +     cpumask_copy(&broadcast, cpu_present_mask);
-> >
-> > Why cpu_present_mask? I'd expect that cpu_online_mask should be the
-> > correct mask to use -- we don't IPI offline CPUs, in general.
->=20
-> This is exactly because "we don't IPI offline CPUs, in general",
-> assuming "we" means the kernel, not GIC.
->=20
-> My interpretation of what the GIC spec says ("0b1: Interrupts routed
-> to all PEs in the system, excluding self") is that it broadcasts IPIs to
-> "cpu_present_mask" (minus the local one). So if the kernel uses
-> "cpu_online_mask" here, GIC would send IPIs to offline CPUs
-> (cpu_present_mask ^ cpu_online_mask), which I don't know whether it's
-> a defined behavior.
+On Fri, Oct 25, 2024 at 09:15:53AM +0530, Ritesh Harjani (IBM) wrote:
+> iomap will not return -ENOTBLK in case of dio atomic writes. But let's
+> also add a WARN_ON_ONCE and return -EIO as a safety net.
+> 
+> Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+> ---
+>  fs/ext4/file.c | 10 +++++++++-
+>  1 file changed, 9 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/ext4/file.c b/fs/ext4/file.c
+> index f9516121a036..af6ebd0ac0d6 100644
+> --- a/fs/ext4/file.c
+> +++ b/fs/ext4/file.c
+> @@ -576,8 +576,16 @@ static ssize_t ext4_dio_write_iter(struct kiocb *iocb, struct iov_iter *from)
+>  		iomap_ops = &ext4_iomap_overwrite_ops;
+>  	ret = iomap_dio_rw(iocb, from, iomap_ops, &ext4_dio_write_ops,
+>  			   dio_flags, NULL, 0);
+> -	if (ret == -ENOTBLK)
+> +	if (ret == -ENOTBLK) {
+>  		ret = 0;
+> +		/*
+> +		 * iomap will never return -ENOTBLK if write fails for atomic
+> +		 * write. But let's just add a safety net.
 
-Offline CPUs are not known to the kernel. Most likely, they are either
-powered off, or spending quality time in Secure or Realm mode. Either
-way, this is none of our business.
+I think it can if the pagecache invalidation fails, so you really do
+need the safety net.  I suspect that the xfs version of this series
+needs it too, though it may have fallen out?
 
-Your approach would make also the kernel perform pretty inconsistently
-depending on whether CPUs are offline and not.
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 
->=20
-> But if you actually meant GIC doesn't IPI offline CPUs, then yes, here
-> the kernel should use "cpu_online_mask".
->=20
-> > > +     cpumask_clear_cpu(smp_processor_id(), &broadcast);
-> > > +     if (cpumask_equal(&broadcast, mask)) {
-> > > +             gic_broadcast_sgi(d->hwirq);
-> > > +             goto done;
-> > > +     }
-> >
-> > So the (valid) case where you would IPI *everyone* is not handled as a
-> > fast path? That seems a missed opportunity.
->=20
-> You are right: it should handle that case.
->=20
-> > This also seem an like expensive way to do it. How about something
-> > like:
-> >
-> >         int mcnt =3D cpumask_weight(mask);
-> >         int ocnt =3D cpumask_weight(cpu_online_mask);
-> >         if (mcnt =3D=3D ocnt)  {
-> >                 /* Broadcast to all CPUs including self */
->=20
-> Does the comment mean the following two steps?
-> 1. Broadcasting to everyone else.
-> 2. Sending to self.
+--D
 
-Correct.
-
-> My understanding of the "Interrupt Routing Mode" is that it can't
-> broadcast to all CPUs including self, and therefore we need the above
-> two steps, which still can be a lot faster. Is my understanding
-> correct?
-
-Yes.
-
-Thanks,
-
-	M.
-
---=20
-Without deviation from the norm, progress is not possible.
+> +		 */
+> +		if (WARN_ON_ONCE(iocb->ki_flags & IOCB_ATOMIC))
+> +			ret = -EIO;
+> +	}
+> +
+>  	if (extend) {
+>  		/*
+>  		 * We always perform extending DIO write synchronously so by
+> -- 
+> 2.46.0
+> 
+> 
 
