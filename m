@@ -1,226 +1,241 @@
-Return-Path: <linux-kernel+bounces-381710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24C679B0333
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 14:54:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A4479B0336
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 14:56:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 78D51B228CF
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 12:54:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E49D4282097
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 12:55:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA435206501;
-	Fri, 25 Oct 2024 12:54:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7858F206500;
+	Fri, 25 Oct 2024 12:55:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="VPOHRD2m"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MVYBa9Ez"
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97D422064F5;
-	Fri, 25 Oct 2024 12:54:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA2852064F5;
+	Fri, 25 Oct 2024 12:55:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729860874; cv=none; b=psM9/ukchALhP60rgQrlgVokQJCIVmuTl7yw4Jx+eTcnHnSRLjxQu5PQ1tti15m4OVsCuFwZaMxU4M/efWSnhFu+cOD1+kUTPC3UNoKYnNFJTkf536h6dy0Q8ZthzdIUaQWcjiFRCvJCZs8DiYx60i4HV5fiBKdJR9TbnGoEOA8=
+	t=1729860950; cv=none; b=atEIRmizldK/6kHsrh13cLJvsXK5ewDMb41Q0hYZ1Ps4P5c4nbVg1fuIs6fxXhDmxwjJeSyB9Zhz4OPJNIhHnql+YmPBygAVUpdKGjCWyTDUFk670YZRAsrvEZYNsbkqPALc9EiBWOTT7GZhTweAKD0S1wKXSXnPYjKL1g+lSzE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729860874; c=relaxed/simple;
-	bh=EEcYaPR+5C1NoPJzsXujmGPW/taihOuJoLVb3+Y3QiM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=QbUG0yBHyVgVaLeBpuOSwYynoJV7L/bhps93R+HH4vhbCGGr+HeUCg5/BWbnaglWW3xpEAkK0TqDT8xyzZnAZOCOoiT6Mct9Lc6UlMcZzIgRCZ/tSUSRMjdmb3qXlW1tsew2PHLdLFjPfAsZenuC+xjkzFZGSewT45Pxo0zwqKM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=VPOHRD2m; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1729860869;
-	bh=EEcYaPR+5C1NoPJzsXujmGPW/taihOuJoLVb3+Y3QiM=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=VPOHRD2mv0FsNL8iYWvUhB237Yk1OIQ8uzq+d/pFaZ34mWlxdF7ogt1iTcl7AssLQ
-	 ay0Lb+XI6ZkJQdwTp9jG7IdfpQqQJQ+SGzFv4ajQLmVy4TiBrP9jofAoOq1Z4XATvx
-	 YOpA/e8hjtkyTrCF3WkKaMcJaKR1F0twUeJirxwO6PHYT2h/iYdgfxcqWtXmV7otyK
-	 32pJm7v8903n7bQlH1rUQViXtflBrzUZrv6XIKnacTlVICZaCcpfdN72XXwy7CzrCX
-	 aqp2IvRKrgkd35I2f4gXCWH0xvwm2EkdNSPKWpIUkABnl+EKzQWFUEpdXmF99EeU4P
-	 GwVOb/oEM7xRA==
-Received: from nicolas-tpx395.lan (unknown [IPv6:2606:6d00:15:862e::7a9])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: nicolas)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 6FBEE17E3600;
-	Fri, 25 Oct 2024 14:54:28 +0200 (CEST)
-Message-ID: <07674bcb4b7650c21bbb3dbe9855b2240444d4f3.camel@collabora.com>
-Subject: Re: [PATCH v6 00/11] media: rkvdec: Add H.264 High 10 and 4:2:2
- profile support
-From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-To: Sebastian Fricke <sebastian.fricke@collabora.com>, Jonas Karlman
-	 <jonas@kwiboo.se>
-Cc: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>, Mauro Carvalho Chehab
- <mchehab@kernel.org>, Alex Bee <knaerzche@gmail.com>, Benjamin Gaignard
- <benjamin.gaignard@collabora.com>, Detlev Casanova
- <detlev.casanova@collabora.com>, Dan Carpenter <dan.carpenter@linaro.org>, 
- linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org, 
- linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Date: Fri, 25 Oct 2024 08:54:27 -0400
-In-Reply-To: <20241025103022.yuaepqxllwi7gghb@basti-XPS-13-9310>
-References: <20240909192522.1076704-1-jonas@kwiboo.se>
-	 <71159f58-be8b-41a4-9fed-522e09a7a564@kwiboo.se>
-	 <20241025103022.yuaepqxllwi7gghb@basti-XPS-13-9310>
-Organization: Collabora
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+	s=arc-20240116; t=1729860950; c=relaxed/simple;
+	bh=VuURla6Mec8xyC4nB0W2kKTylYH+N2vYdKLc8DUUPWQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZNilQ9CSJjb5fEMBQWIi8Lz3j90yjHojIfK+tY1AonTM08ysIPfYnG4SDQDdz2odPRxOh3Tkvs16O6lyVsP4a826JH0JSP0YE5LS3fMFiu/xDbs7PNZxgD/8lFmOvKiQLJliGsfROIwAXIGT4NodhgFNUbAoPdbchg0BU+o+H/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MVYBa9Ez; arc=none smtp.client-ip=209.85.215.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-7ea6f99e6eeso114146a12.1;
+        Fri, 25 Oct 2024 05:55:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729860948; x=1730465748; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2mpopKe0kCq4c6SWTmzVvbk0KW/W7H/olvg6DZS09/0=;
+        b=MVYBa9EzJln2pyzE86t3FnzV6Y95DZVhf8eNVWoetMJuBKgWQ9QAzWZPt5H+CsdYWh
+         Sn+G+HycJP286csIFTV6tYqYe276zn1TECCls7+JedRvU5nGKMwplNBCvqU496xBdt2K
+         PyTvgEzOxlOFLxIoHGyNKW7SQ280syP5DPlJirGUgtl+NXIj2X6N+0TYquZZ6GxTpUfr
+         UXcEj39vnhaYfKFHKa3QiewGe1klGvfeTsmnZRq1Ms7s/pilpU3n1s8OtmwEpNMl2072
+         Z6tGe9PAFJWAAsthOBzN8mzmX/FJOrTfp/xdIWx6XmwAaPaX+cELQSbvdNkb4if9mURV
+         cL8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729860948; x=1730465748;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2mpopKe0kCq4c6SWTmzVvbk0KW/W7H/olvg6DZS09/0=;
+        b=mlI3tLCyn9esyk+K0S6OBVX58AnZpp6ZH1BKzZjNUvVnNphbgCEWANcAtp4UEVnBHN
+         v5UKHpSOIfltD/HuW8wQc4ruz1nGSey7OXPglg7Yi0wJ+IqizLNrPQ3e7IjKh/cfTwXw
+         6E76whVLOQQzaENCw6/oKRP60je1B8kxxFm/K99qH9BVXAtyiAVT2ZVbLEsR8ChryMpt
+         0S7X/JNNImL9uWXqa04k+6STNrgyh6VEypfjyrJOBGZCT2/7JTLOMzX1f+vhg/7ehQQH
+         C9LyVfWgP+qVuZR6ECsPt3vAZw1WJXovpcy2JbDojJQqDzYEqwylvjcRK6Rm8hyI/yH4
+         P1lw==
+X-Forwarded-Encrypted: i=1; AJvYcCWJTyeTyshcEHaoGnsTAs5REv43VBlQ5WvwKHoamQEVJNJmFWlOVs7yFQDYVviE9Abar87sFdMiH2fr5kA=@vger.kernel.org, AJvYcCWM+OKY6iyAf2kdbyUcDMHni7WU6zFG4e6bocGKIVAvNsLpmVxbo2nYQS5zmJmy1QFmyY/Pdnjn0aan@vger.kernel.org
+X-Gm-Message-State: AOJu0YwpX0gpkmkPmTZZND+kx53om93eQxBNWMmfM5pEAyF8mn8OAM+D
+	kJ3oMsHAPJJvwOOGhq++UMMzVnXDGTtDfR4dTo2bBaEsZwuJpMi29yGhM+bxHuHqOgONpFkhEk9
+	JerevUancJqnc3Jnc4T6JJZQcipE=
+X-Google-Smtp-Source: AGHT+IFAPOJ193XCnyihRQUSik9FlYyJIZv/7VMnRuPjMeme+UnT3saFzOAbbpalhJ2K+qWHAxiutraJ9lBbhuwKmPw=
+X-Received: by 2002:a05:6a20:6a1d:b0:1d9:6ec9:30f2 with SMTP id
+ adf61e73a8af0-1d99e1a0235mr995000637.6.1729860947867; Fri, 25 Oct 2024
+ 05:55:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241014152502.1477809-1-superm1@kernel.org> <20b48c6f-7ea9-4571-a39c-f20a9cf62319@app.fastmail.com>
+ <f56c555f-7313-43ff-abe4-28fb246e31cc@nvidia.com> <CADnq5_OjfJzcOqa=NbWVw5ENvi+nmvNAZX0u_0hOvk3EVoh0bw@mail.gmail.com>
+ <fd7cae9a-5ee1-4e18-915d-4115f0a6a156@nvidia.com> <CADnq5_NTBXPbW+u_AxTewH-aouLNn4gxebpzUSzsyev-VxOtcg@mail.gmail.com>
+ <46b487ec-e8a6-43fb-85d5-f264618f2e5d@nvidia.com>
+In-Reply-To: <46b487ec-e8a6-43fb-85d5-f264618f2e5d@nvidia.com>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Fri, 25 Oct 2024 08:55:36 -0400
+Message-ID: <CADnq5_Mh7B8Kk144terpvV9kf2Z4xcQ0nhVakHOcDdwgd3Y1Fg@mail.gmail.com>
+Subject: Re: [PATCH] PCI/VGA: Don't assume only VGA device found is the boot
+ VGA device
+To: Kai-Heng Feng <kaihengf@nvidia.com>
+Cc: Luke Jones <luke@ljones.dev>, Mario Limonciello <superm1@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, "open list:PCI SUBSYSTEM" <linux-pci@vger.kernel.org>, 
+	open list <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org, 
+	Mario Limonciello <mario.limonciello@amd.com>, Alex Deucher <alexander.deucher@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Le vendredi 25 octobre 2024 à 12:30 +0200, Sebastian Fricke a écrit :
-> Hey Jonas,
-> 
-> On 25.10.2024 10:20, Jonas Karlman wrote:
-> > Hi Sebastian,
-> > 
-> > Will you have time to look at this series any time soon?
-> > 
-> > Would like to send a v2 of the now one year old rkvdec hevc series but
-> > this series is sort of holding that back ;-)
-> 
-> Sorry for the delay we (maintainer & reviewer from Collabora) are
-> currently a bit busy, this is on top of our review list however, so
-> please another 1 or 2 weeks of patience :).
+On Fri, Oct 25, 2024 at 3:51=E2=80=AFAM Kai-Heng Feng <kaihengf@nvidia.com>=
+ wrote:
+>
+>
+>
+> On 2024/10/23 11:27 PM, Alex Deucher wrote:
+> > External email: Use caution opening links or attachments
+> >
+> >
+> > On Tue, Oct 22, 2024 at 9:27=E2=80=AFPM Kai-Heng Feng <kaihengf@nvidia.=
+com> wrote:
+> >>
+> >>
+> >>
+> >> On 2024/10/22 9:04 PM, Alex Deucher wrote:
+> >>> External email: Use caution opening links or attachments
+> >>>
+> >>>
+> >>> On Tue, Oct 22, 2024 at 2:31=E2=80=AFAM Kai-Heng Feng <kaihengf@nvidi=
+a.com> wrote:
+> >>>>
+> >>>> Hi Luke,
+> >>>>
+> >>>> On 2024/10/15 4:04 PM, Luke Jones wrote:
+> >>>>> On Mon, 14 Oct 2024, at 5:25 PM, Mario Limonciello wrote:
+> >>>>>> From: Mario Limonciello <mario.limonciello@amd.com>
+> >>>>>>
+> >>>>>> The ASUS GA605W has a NVIDIA PCI VGA device and an AMD PCI display=
+ device.
+> >>>>>>
+> >>>>>> ```
+> >>>>>> 65:00.0 VGA compatible controller: NVIDIA Corporation AD106M [GeFo=
+rce
+> >>>>>> RTX 4070 Max-Q / Mobile] (rev a1)
+> >>>>>> 66:00.0 Display controller: Advanced Micro Devices, Inc. [AMD/ATI]
+> >>>>>> Strix [Radeon 880M / 890M] (rev c1)
+> >>>>>> ```
+> >>>>>>
+> >>>>>> The fallback logic in vga_is_boot_device() flags the NVIDIA dGPU a=
+s the
+> >>>>>> boot VGA device, but really the eDP is connected to the AMD PCI di=
+splay
+> >>>>>> device.
+> >>>>>>
+> >>>>>> Drop this case to avoid marking the NVIDIA dGPU as the boot VGA de=
+vice.
+> >>>>>>
+> >>>>>> Suggested-by: Alex Deucher <alexander.deucher@amd.com>
+> >>>>>> Reported-by: Luke D. Jones <luke@ljones.dev>
+> >>>>>> Closes: https://gitlab.freedesktop.org/drm/amd/-/issues/3673
+> >>>>>> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+> >>>>>> ---
+> >>>>>>     drivers/pci/vgaarb.c | 7 -------
+> >>>>>>     1 file changed, 7 deletions(-)
+> >>>>>>
+> >>>>>> diff --git a/drivers/pci/vgaarb.c b/drivers/pci/vgaarb.c
+> >>>>>> index 78748e8d2dba..05ac2b672d4b 100644
+> >>>>>> --- a/drivers/pci/vgaarb.c
+> >>>>>> +++ b/drivers/pci/vgaarb.c
+> >>>>>> @@ -675,13 +675,6 @@ static bool vga_is_boot_device(struct vga_dev=
+ice *vgadev)
+> >>>>>>                return true;
+> >>>>>>        }
+> >>>>>>
+> >>>>>> -    /*
+> >>>>>> -     * Vgadev has neither IO nor MEM enabled.  If we haven't foun=
+d any
+> >>>>>> -     * other VGA devices, it is the best candidate so far.
+> >>>>>> -     */
+> >>>>>> -    if (!boot_vga)
+> >>>>>> -            return true;
+> >>>>>> -
+> >>>>>>        return false;
+> >>>>>>     }
+> >>>>>>
+> >>>>>> --
+> >>>>>> 2.43.0
+> >>>>>
+> >>>>> Hi Mario,
+> >>>>>
+> >>>>> I can verify that this does leave the `boot_vga` attribute set as 0=
+ for the NVIDIA device.
+> >>>>
+> >>>> Does the following diff work for you?
+> >>>> This variant should be less risky for most systems.
+> >>>>
+> >>>> diff --git a/drivers/pci/vgaarb.c b/drivers/pci/vgaarb.c
+> >>>> index 78748e8d2dba..3fb734cb9c1b 100644
+> >>>> --- a/drivers/pci/vgaarb.c
+> >>>> +++ b/drivers/pci/vgaarb.c
+> >>>> @@ -675,6 +675,9 @@ static bool vga_is_boot_device(struct vga_device=
+ *vgadev)
+> >>>>                    return true;
+> >>>>            }
+> >>>>
+> >>>> +       if (vga_arb_integrated_gpu(&pdev->dev))
+> >>>> +               return true;
+> >>>> +
+> >>>
+> >>> The problem is that the integrated graphics does not support VGA.
+> >>
+> >> Right, so the check has to be used much earlier.
+> >>
+> >> I wonder does the integrated GFX have _DOD/_DOS while the discrete one=
+ doesn't?
+> >> If that's the case, vga_arb_integrated_gpu() can be used to differenti=
+ate which
+> >> one is the boot GFX.
+> >
+> > I think the problem is that the boot GPU is being conflated with vga
+> > arb.  In this case the iGPU has no VGA so has no reason to be involved
+> > in vga arb.  Trying to mess with any vga related resources on it could
+> > be problematic.  Do higher levels of the stack look at vga arb to
+> > determine the "primary" GPU?
+>
+> Hmm, I wonder if all those heuristic are needed for EFI based system?
+>
+> Can we assume that what being used by UEFI GOP is the primary GFX device?
 
-Actually, I'll go over it today.
+Yes, I believe so.  The SBIOS should use the GOP device as determined
+by the user preference.  I.e.., in the bios configuration you can
+generally select iGPU or PEG for the primary display.
 
-regards,
-Nicolas
+Alex
 
-> 
-> > 
-> > Regards,
-> > Jonas
-> 
-> Thanks for your work and regards!
-> Sebastian
-> 
-> > 
-> > On 2024-09-09 21:24, Jonas Karlman wrote:
-> > > This series add H.264 High 10 and 4:2:2 profile support to the Rockchip
-> > > Video Decoder driver.
-> > > 
-> > > Patch 1 add helpers for calculating plane bytesperline and sizeimage.
-> > > Patch 2 add two new pixelformats for semi-planer 10-bit 4:2:0/4:2:2 YUV.
-> > > 
-> > > Patch 3 change to use bytesperline and buffer height to configure strides.
-> > > Patch 4 change to use values from SPS/PPS control to configure the HW.
-> > > 
-> > > Patch 5-9 refactor code to support filtering of CAPUTRE formats based
-> > > on the image format returned from a get_image_fmt ops.
-> > > 
-> > > Patch 10 add final bits to support H.264 High 10 and 4:2:2 profiles.
-> > > 
-> > > Patch 11 add a fix for enumerated frame sizes returned to userspace.
-> > > 
-> > > Tested on a ROCK Pi 4 (RK3399) and Rock64 (RK3328):
-> > > 
-> > >   v4l2-compliance 1.28.1, 64 bits, 64-bit time_t
-> > >   ...
-> > >   Total for rkvdec device /dev/video1: 48, Succeeded: 48, Failed: 0, Warnings: 0
-> > > 
-> > >   Running test suite JVT-FR-EXT with decoder FFmpeg-H.264-v4l2request
-> > >   ...
-> > >   Ran 65/69 tests successfully
-> > > 
-> > >   Running test suite JVT-AVC_V1 with decoder FFmpeg-H.264-v4l2request
-> > >   ...
-> > >   Ran 129/135 tests successfully
-> > > 
-> > > Before this series:
-> > > 
-> > >   Running test suite JVT-FR-EXT with decoder FFmpeg-H.264-v4l2request
-> > >   ...
-> > >   Ran 44/69 tests successfully
-> > > 
-> > > Changes in v6:
-> > > - Change to use fmt_idx instead of j++ tucked inside a condition (Dan)
-> > > - Add patch to fix enumerated frame sizes returned to userspace (Alex)
-> > > - Fluster test score is same as v4 and v5, see [4] and [5]
-> > > Link to v5: https://lore.kernel.org/linux-media/20240618194647.742037-1-jonas@kwiboo.se/
-> > > 
-> > > Changes in v5:
-> > > - Drop Remove SPS validation at streaming start patch
-> > > - Move buffer align from rkvdec_fill_decoded_pixfmt to min/step_width
-> > > - Use correct profiles for V4L2_CID_MPEG_VIDEO_H264_PROFILE
-> > > - Collect r-b and t-b tags
-> > > - Fluster test score is same as v4, see [4] and [5]
-> > > Link to v4: https://lore.kernel.org/linux-media/20231105165521.3592037-1-jonas@kwiboo.se/
-> > > 
-> > > Changes in v4:
-> > > - Fix failed v4l2-compliance tests related to CAPTURE queue
-> > > - Rework CAPTURE format filter anv validate to use an image format
-> > > - Run fluster test suite JVT-FR-EXT [4] and JVT-AVC_V1 [5]
-> > > Link to v3: https://lore.kernel.org/linux-media/20231029183427.1781554-1-jonas@kwiboo.se/
-> > > 
-> > > Changes in v3:
-> > > - Drop merged patches
-> > > - Use bpp and bpp_div instead of prior misuse of block_w/block_h
-> > > - New patch to use values from SPS/PPS control to configure the HW
-> > > - New patch to remove an unnecessary call to validate sps at streaming start
-> > > - Reworked pixel format validation
-> > > Link to v2: https://lore.kernel.org/linux-media/20200706215430.22859-1-jonas@kwiboo.se/
-> > > 
-> > > Changes in v2:
-> > > - Collect r-b tags
-> > > - SPS pic width and height in mbs validation moved to rkvdec_try_ctrl
-> > > - New patch to not override output buffer sizeimage
-> > > - Reworked pixel format validation
-> > > - Only align decoded buffer instead of changing frmsize step_width
-> > > Link to v1: https://lore.kernel.org/linux-media/20200701215616.30874-1-jonas@kwiboo.se/
-> > > 
-> > > To fully runtime test this series you may need FFmpeg patches from [1]
-> > > and fluster patches from [2], this series is also available at [3].
-> > > 
-> > > [1] https://github.com/Kwiboo/FFmpeg/commits/v4l2request-2024-v2-rkvdec/
-> > > [2] https://github.com/Kwiboo/fluster/commits/ffmpeg-v4l2request-rkvdec/
-> > > [3] https://github.com/Kwiboo/linux-rockchip/commits/linuxtv-rkvdec-high-10-v6/
-> > > [4] https://gist.github.com/Kwiboo/f4ac15576b2c72887ae2bc5d58b5c865
-> > > [5] https://gist.github.com/Kwiboo/459a1c8f1dcb56e45dc7a7a29cc28adf
-> > > 
-> > > Regards,
-> > > Jonas
-> > > 
-> > > Alex Bee (1):
-> > >   media: rkvdec: h264: Don't hardcode SPS/PPS parameters
-> > > 
-> > > Jonas Karlman (10):
-> > >   media: v4l2-common: Add helpers to calculate bytesperline and
-> > >     sizeimage
-> > >   media: v4l2: Add NV15 and NV20 pixel formats
-> > >   media: rkvdec: h264: Use bytesperline and buffer height as virstride
-> > >   media: rkvdec: Extract rkvdec_fill_decoded_pixfmt into helper
-> > >   media: rkvdec: Move rkvdec_reset_decoded_fmt helper
-> > >   media: rkvdec: Extract decoded format enumeration into helper
-> > >   media: rkvdec: Add image format concept
-> > >   media: rkvdec: Add get_image_fmt ops
-> > >   media: rkvdec: h264: Support High 10 and 4:2:2 profiles
-> > >   media: rkvdec: Fix enumerate frame sizes
-> > > 
-> > >  .../media/v4l/pixfmt-yuv-planar.rst           | 128 ++++++++++
-> > >  drivers/media/v4l2-core/v4l2-common.c         |  80 +++---
-> > >  drivers/media/v4l2-core/v4l2-ioctl.c          |   2 +
-> > >  drivers/staging/media/rkvdec/rkvdec-h264.c    |  64 +++--
-> > >  drivers/staging/media/rkvdec/rkvdec.c         | 239 +++++++++++++-----
-> > >  drivers/staging/media/rkvdec/rkvdec.h         |  18 +-
-> > >  include/uapi/linux/videodev2.h                |   2 +
-> > >  7 files changed, 410 insertions(+), 123 deletions(-)
-> > > 
-> > 
-> > 
-> Sebastian Fricke
-> Consultant Software Engineer
-> 
-> Collabora Ltd
-> Platinum Building, St John's Innovation Park, Cambridge CB4 0DS, UK
-> Registered in England & Wales no 5513718.
-
+>
+> Kai-Heng
+>
+> >
+> > Alex
+> >
+> >>
+> >> Kai-Heng
+> >>
+> >>>
+> >>> Alex
+> >>>
+> >>>>            /*
+> >>>>             * Vgadev has neither IO nor MEM enabled.  If we haven't =
+found any
+> >>>>             * other VGA devices, it is the best candidate so far.
+> >>>>
+> >>>>
+> >>>> Kai-Heng
+> >>>>
+> >>>>>
+> >>>>> Tested-by: Luke D. Jones <luke@ljones.dev>
+> >>>>
+> >>
+>
 
