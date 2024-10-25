@@ -1,200 +1,116 @@
-Return-Path: <linux-kernel+bounces-382113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74F219B099C
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 18:17:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89ECC9B099F
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 18:17:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E945C1F2155D
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:17:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0799B252A8
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:17:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FD3A175D46;
-	Fri, 25 Oct 2024 16:17:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="nMc6sihV"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6F4617622F;
+	Fri, 25 Oct 2024 16:17:41 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 377437082B;
-	Fri, 25 Oct 2024 16:17:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6036E7082B
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 16:17:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729873029; cv=none; b=VHJtXMqmejBlUFg+FPJ90PMau4ThK+VXhbcOlGEkxgaIT6SfhOIXro5/gCMwF0k/BkrAexSojO1OQp87BxUMIrZD0LlW2qedInH4WunBZtEPeEea2iaPmlpAQhDOSi1YF1T1UmOCnzdgv3WaZ5xF8gerXnFFiKyL7MMfUf14+dI=
+	t=1729873061; cv=none; b=Rd7PQDvrzxA1dK+U7QPk0XHk2bm81deq3SzxTB5lazZY0H3ZYlXP7mbp8pJI1KZStkapYHgZi/ltqrHuhKelo7OxuKtufRZZP4iC2gN7A00aeq05B3FR4r5BCoSsS//5Q3Vf390WoeAf+EOTuxEDVGyGJj7XL2sirwwIgmlOGB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729873029; c=relaxed/simple;
-	bh=0L5xVhmjg5M5a4pa+/ZvHmwbAhngpCCSQCFhEC9nV7Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q4AsHvWQcQ1yZ4TzAWq58QUresSYfiz7zA31RAbCOq1NLrmZ5rSqNwjy88EwmGUI0VrutI2WEtCHT2fOmjyRJPzRAYNIvpRmy0SV4+WWTR1MyXL7ogmkA17Y2S77X5R0EghiivrMmzDKOPE9vZPDk0v8kZkL7NfmTQQ8qWLkq08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=nMc6sihV; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 7235D74C;
-	Fri, 25 Oct 2024 18:15:16 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1729872916;
-	bh=0L5xVhmjg5M5a4pa+/ZvHmwbAhngpCCSQCFhEC9nV7Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nMc6sihVKFveNBFTRA5eK1wFB1JwZO7N2zid3aUccMpVY8n3g4NhkStPx18psvpz6
-	 1PWi6lahcOkwGbabubuxwP2lZ9BuC7kvyO62Eu6hzzXgdTYh+PyCjhq82SlkcszjTo
-	 ar0gQtaxOYqX1ON/sv4+GghYlFybAyn7HzAbDP2U=
-Date: Fri, 25 Oct 2024 19:16:59 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Tarang Raval <tarang.raval@siliconsignals.io>
-Cc: sakari.ailus@linux.intel.com, mchehab@kernel.org,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] media: mt9p031: Refactor format handling for different
- sensor models
-Message-ID: <20241025161659.GD6519@pendragon.ideasonboard.com>
-References: <20241025130442.17417-1-tarang.raval@siliconsignals.io>
+	s=arc-20240116; t=1729873061; c=relaxed/simple;
+	bh=GV1aYIXwS/aqFerkB9pkXH8XtWSjfwQLzZWXYXdaRsA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=LXzXUcz7TvwIAN6pSeIIqSy4VWNa1M7ChQf1ENoCvxG3jooHRZVwYsRb/oa8nca91I1h2EqcGtvsccmkIN/RNd97uMcID0TrrzOZGedzOD3QvZkX+lB/7LKY6u+loKYdtibYFugtpC/vCB7Hteet5lQ+3FXns0Al1R+QSu9LA7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1t4N0G-0000Zy-HO; Fri, 25 Oct 2024 18:17:32 +0200
+Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1t4N0E-000OeZ-1x;
+	Fri, 25 Oct 2024 18:17:30 +0200
+Received: from pza by lupine with local (Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1t4N0E-000E9f-1k;
+	Fri, 25 Oct 2024 18:17:30 +0200
+Message-ID: <bf1a5649cd680213d66b249684b18afbc6083b6e.camel@pengutronix.de>
+Subject: Re: [PATCH] misc: Silence warnings when building the LAN966x device
+ tree overlay
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Rob Herring <robh@kernel.org>, Herve Codina <herve.codina@bootlin.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-kernel@vger.kernel.org, 
+ linux-next@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Fri, 25 Oct 2024 18:17:30 +0200
+In-Reply-To: <CAL_JsqKebRL454poAYZ9i=sCsHqGzmocLy0psQcng-79UWJB-A@mail.gmail.com>
+References: <20241025145353.1620806-1-p.zabel@pengutronix.de>
+	 <CAL_JsqKebRL454poAYZ9i=sCsHqGzmocLy0psQcng-79UWJB-A@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241025130442.17417-1-tarang.raval@siliconsignals.io>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Hi Tarang,
+On Fr, 2024-10-25 at 10:40 -0500, Rob Herring wrote:
+> On Fri, Oct 25, 2024 at 9:54=E2=80=AFAM Philipp Zabel <p.zabel@pengutroni=
+x.de> wrote:
+> >=20
+> > Silence the following warnings when building the LAN966x device tree
+> > overlay:
+> >=20
+> > drivers/misc/lan966x_pci.dtso:34.23-40.7: Warning (interrupts_property)=
+: /fragment@0/__overlay__/pci-ep-bus@0/oic@e00c0120: Missing interrupt-pare=
+nt
+>=20
+> > drivers/misc/lan966x_pci.dtso:42.22-46.7: Warning (simple_bus_reg): /fr=
+agment@0/__overlay__/pci-ep-bus@0/cpu_clk: missing or empty reg/ranges prop=
+erty
+> > drivers/misc/lan966x_pci.dtso:48.22-52.7: Warning (simple_bus_reg): /fr=
+agment@0/__overlay__/pci-ep-bus@0/ddr_clk: missing or empty reg/ranges prop=
+erty
+> > drivers/misc/lan966x_pci.dtso:54.22-58.7: Warning (simple_bus_reg): /fr=
+agment@0/__overlay__/pci-ep-bus@0/sys_clk: missing or empty reg/ranges prop=
+erty
+>=20
+> These nodes should be moved out of the simple-bus.
 
-Thank you for the patch.
+Ah, thank you. Herv=C3=A9, can you send a follow-up to fix these?
 
-On Fri, Oct 25, 2024 at 06:32:17PM +0530, Tarang Raval wrote:
-> Add new structure 'mt9p031_model_info' to encapsulate format codes for
-> the mt9p031 camera sensor family. This approach enhances code clarity
-> and maintainability.
-> 
-> Signed-off-by: Tarang Raval <tarang.raval@siliconsignals.io>
-> ---
->  drivers/media/i2c/mt9p031.c | 28 +++++++++++++++++++---------
->  1 file changed, 19 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/media/i2c/mt9p031.c b/drivers/media/i2c/mt9p031.c
-> index d8735c246e52..d4fcc692311c 100644
-> --- a/drivers/media/i2c/mt9p031.c
-> +++ b/drivers/media/i2c/mt9p031.c
-> @@ -113,6 +113,16 @@
->  #define MT9P031_TEST_PATTERN_RED			0xa2
->  #define MT9P031_TEST_PATTERN_BLUE			0xa3
->  
-> +struct mt9p031_model_info {
-> +       u32 code;
-> +};
-> +
-> +static const struct mt9p031_model_info mt9p031_models[] = {
-> +	{.code = MEDIA_BUS_FMT_SGRBG12_1X12}, /* mt9p006  */
+> > drivers/misc/lan966x_pci.dtso:18.15-165.5: Warning (avoid_unnecessary_a=
+ddr_size): /fragment@0/__overlay__: unnecessary #address-cells/#size-cells =
+without "ranges", "dma-ranges" or child "reg" property
+>=20
+> For this one,  dtc should be fixed to also look for child "ranges" proper=
+ty.
 
-There should be spaces after { and before }
+Gave it a shot:
 
-> +	{.code = MEDIA_BUS_FMT_SGRBG12_1X12}, /* mt9p031  */
+https://lore.kernel.org/devicetree-compiler/20241025161307.3629901-1-p.zabe=
+l@pengutronix.de/T/#u
 
-You can use the same entry for both the MT9P006 and MT9P031 as they
-don't need to be deferentiated.
 
-> +	{.code = MEDIA_BUS_FMT_Y12_1X12},     /* mt9p031m */
-> +};
-> +
->  struct mt9p031 {
->  	struct v4l2_subdev subdev;
->  	struct media_pad pad;
-> @@ -125,7 +135,7 @@ struct mt9p031 {
->  	struct clk *clk;
->  	struct regulator_bulk_data regulators[3];
->  
-> -	u32 code;
-> +	const struct mt9p031_model_info *model;
->  	struct aptina_pll pll;
->  	unsigned int clk_div;
->  	bool use_pll;
-> @@ -708,7 +718,7 @@ static int mt9p031_init_state(struct v4l2_subdev *subdev,
->  	crop->height = MT9P031_WINDOW_HEIGHT_DEF;
->  
->  	format = __mt9p031_get_pad_format(mt9p031, sd_state, 0, which);
-> -	format->code = mt9p031->code;
-> +	format->code = mt9p031->model->code;
->  	format->width = MT9P031_WINDOW_WIDTH_DEF;
->  	format->height = MT9P031_WINDOW_HEIGHT_DEF;
->  	format->field = V4L2_FIELD_NONE;
-> @@ -1117,7 +1127,7 @@ static int mt9p031_probe(struct i2c_client *client)
->  	mt9p031->pdata = pdata;
->  	mt9p031->output_control	= MT9P031_OUTPUT_CONTROL_DEF;
->  	mt9p031->mode2 = MT9P031_READ_MODE_2_ROW_BLC;
-> -	mt9p031->code = (uintptr_t)i2c_get_match_data(client);
-> +	mt9p031->model = &mt9p031_models[(uintptr_t)i2c_get_match_data(client)];
->  
->  	mt9p031->regulators[0].supply = "vdd";
->  	mt9p031->regulators[1].supply = "vdd_io";
-> @@ -1214,17 +1224,17 @@ static void mt9p031_remove(struct i2c_client *client)
->  }
->  
->  static const struct i2c_device_id mt9p031_id[] = {
-> -	{ "mt9p006", MEDIA_BUS_FMT_SGRBG12_1X12 },
-> -	{ "mt9p031", MEDIA_BUS_FMT_SGRBG12_1X12 },
-> -	{ "mt9p031m", MEDIA_BUS_FMT_Y12_1X12 },
-> +	{ "mt9p006", 0 },
-> +	{ "mt9p031", 1 },
-> +	{ "mt9p031m", 2 },
->  	{ /* sentinel */ }
->  };
->  MODULE_DEVICE_TABLE(i2c, mt9p031_id);
+> Aren't these other ones all W=3D1 warnings?
 
-I think we can drop mt9p031_id. I'll send a patch series to do so.
+My bad, you are right. I'll drop them from this patch.
 
->  
->  static const struct of_device_id mt9p031_of_match[] = {
-> -	{ .compatible = "aptina,mt9p006", .data = (void *)MEDIA_BUS_FMT_SGRBG12_1X12 },
-> -	{ .compatible = "aptina,mt9p031", .data = (void *)MEDIA_BUS_FMT_SGRBG12_1X12 },
-> -	{ .compatible = "aptina,mt9p031m", .data = (void *)MEDIA_BUS_FMT_Y12_1X12 },
-> +	{ .compatible = "aptina,mt9p006", .data = (void *)0 },
-> +	{ .compatible = "aptina,mt9p031", .data = (void *)1 },
-> +	{ .compatible = "aptina,mt9p031m", .data = (void *)2 },
-
-Let's avoid magic values. You can write
-
-	{ .compatible = "aptina,mt9p006", .data = &mt9p031_models[0] },
-	{ .compatible = "aptina,mt9p031", .data = &mt9p031_models[0] },
-	{ .compatible = "aptina,mt9p031m", .data = &mt9p031_models[1] },
-
-but it may be even more readable to introduce a
-
-enum mt9p031_model {
-	MT9P031_MODEL_BAYER,
-	MT9P031_MODEL_MONO,
-};
-
-static const struct mt9p031_model_info mt9p031_models[] = {
-	[MT9P031_MODEL_BAYER] = {
-		.code = MEDIA_BUS_FMT_SGRBG12_1X12,
-	},
-	[MT9P031_MODEL_MONO] = {
-		.code = MEDIA_BUS_FMT_Y12_1X12,
-	},
-};
-
-static const struct of_device_id mt9p031_of_match[] = {
-	{
-		.compatible = "aptina,mt9p006",
-		.data = &mt9p031_models[MT9P031_MODEL_BAYER],
-	}, {
-		.compatible = "aptina,mt9p031",
-		.data = &mt9p031_models[MT9P031_MODEL_BAYER],
-	}, {
-		.compatible = "aptina,mt9p031m",
-		.data = &mt9p031_models[MEDIA_BUS_FMT_Y12_1X12],
-	},
-	{ /* sentinel */ }
-};
-
->  	{ /* sentinel */ }
->  };
->  MODULE_DEVICE_TABLE(of, mt9p031_of_match);
-
--- 
-Regards,
-
-Laurent Pinchart
+regards
+Philipp
 
