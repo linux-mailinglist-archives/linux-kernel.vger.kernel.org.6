@@ -1,62 +1,92 @@
-Return-Path: <linux-kernel+bounces-382767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B0339B132A
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 01:27:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CECD9B132F
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 01:28:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B1E61C20D8D
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 23:26:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A00861F2262C
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 23:28:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A85F9213143;
-	Fri, 25 Oct 2024 23:26:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5487A21314C;
+	Fri, 25 Oct 2024 23:28:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JqXBL4z2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZGkxptTR"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 081B31CEE98;
-	Fri, 25 Oct 2024 23:26:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAEEC217F5A;
+	Fri, 25 Oct 2024 23:28:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729898811; cv=none; b=GR1lxRLMAIOu/mHX1gtgSmhTvyRIwspS+MuAvUj9I7lGkdfwSBCeLq3AtGYqJFgZe179k2bMhZDYKeR8Qv/0A/XnLoxmUHTqCgUlo6L/l8f/07xlfCo7zLnCOvpK7+nvE9VVvRtS3wbx/0VWQJBl15gIEA6WVlfCSoEPCp4ZNhk=
+	t=1729898898; cv=none; b=rIzCRAiCyyAYik4GnZiaCOKKv/3Pk5E+idbgS8/WjcqCG7pFhDEVoGPLkv+lbxKlF4Bdh054bwjs9dVNhOLzEHy32YoSGCXxjSqfacxzzwLkKKf5nDH/AIHvXI6O/5DwofmYc2+80IwaKdWmEVgDP1K+hbi0myVCZI/CkwwkjPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729898811; c=relaxed/simple;
-	bh=ZmrVA8wb7NNzPZG85RE1GMlbP3IKNvdOBUIXaz8g1HI=;
+	s=arc-20240116; t=1729898898; c=relaxed/simple;
+	bh=jQ4mjlOg4DeTsZFdz74RrRfb3zbdpYLDxB741vOeOig=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bbLvhL+KtkbUKrremdcmwiAJlRrCULQ35jrolax3YH9g8baOnS3qg0BcQi1YKVXyor9gV4p6FaUR31IGNZS7O7WntCgKB1o89t1rvnvmBVaDU2uz+RJnOkaXcLdy3pN455BvAihpnz894X7IvQd4evV9hBJ5t+uMu48i0bHbjKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JqXBL4z2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F2BFC4CEC3;
-	Fri, 25 Oct 2024 23:26:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729898810;
-	bh=ZmrVA8wb7NNzPZG85RE1GMlbP3IKNvdOBUIXaz8g1HI=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=JqXBL4z21li0sULGs3yYDYnWwEZ98djkKCnN6pdC9o+4A3DZyXPEr3crCWCNjWjyv
-	 50y0/lADjWEIXXOU6KTp9BKOIvIkQVti2huhiC0kkpwtIK6puJox8bAxJtsHUFfiHo
-	 dzXkk/RdqciQaU8HjtpkXFvKKifY8cJ+9hfbpPJ3gARIXAsk1ujAYph04IMcGsfVGL
-	 LENHC0LOF8iQithnXjwK8QZPXHZOWDd2QqxaOvGBOQ2R2jsPFvJ8/eUb8m97ZFUWRf
-	 87WlTEPBaRmvDFNVxweREI9u5HlY/v22IG9JVdy89b8cYquUk+Ercz4sEvfYjXwmMx
-	 Z28ee17neMk5A==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 2C00FCE0D99; Fri, 25 Oct 2024 16:26:49 -0700 (PDT)
-Date: Fri, 25 Oct 2024 16:26:49 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Hernan Ponce de Leon <hernan.poncedeleon@huaweicloud.com>
-Cc: Andrea Parri <parri.andrea@gmail.com>, puranjay@kernel.org,
-	bpf@vger.kernel.org, lkmm@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: Some observations (results) on BPF acquire and release
-Message-ID: <43ecbb1e-7710-45ab-891e-575b6f562794@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <Zxk2wNs4sxEIg-4d@andrea>
- <daa60273-d01a-8fc5-5e26-e8fc9364c1d8@huaweicloud.com>
- <ZxuZ-wGccb3yhBAD@andrea>
- <d8aa61a8-e2fc-7668-9845-81664c9d181f@huaweicloud.com>
- <ZxugzP0yB3zeqKSn@andrea>
- <8360f999-0d64-3b4f-e4b8-8c84f7311af2@huaweicloud.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Qn47ddUJv5XroLU69paCbtAkuQPkMF+x61LdLciSbGyZ1H8/ix0pHVoOspmfhM2m8WkyXsazuyFqm/IRUoL4fzhUK3+7BUE1RdhPF5+PoGRe2NBp8fjUTGe/geaSnB4ZiWsrbIWtIeq4CaR/p573Xyp9Ad2+9HtXsG7kxqXP9gg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZGkxptTR; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-20caea61132so20051625ad.2;
+        Fri, 25 Oct 2024 16:28:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729898896; x=1730503696; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=d+LonYrIZEHor693r4mdE7TdXh7oFFBiZD+b7YxVtbo=;
+        b=ZGkxptTRJbPeh1TQxxRpHscY3LaW+op4p7MRB6wE4oT5TJzcMG4PMXV28SPxWnzXRT
+         nOi2oYuY7EzgcBmuh64bjFOAZ/j+ljVzFGt3EWCFXyiGitNulrHrNAEDS0yZrz4IFW19
+         mFzqghAK5airxRgmOqlJOuVojKPZJF0GGUtKy7DFt3nZZgtwqGnoUYcVroMHRx+vQuZ8
+         Yrp/QqOpjAPhz490YnkkT5PvmEemKlvSs/bnf04R3CABslj164KJrnas/G3/LHNNbFyW
+         vImvdmDvRo1hJSLQ+YFF9Vq98ZNNrZYdkr8yJU+2XAm891fABDJOTpIjf2zUeF2n6wWz
+         1SyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729898896; x=1730503696;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=d+LonYrIZEHor693r4mdE7TdXh7oFFBiZD+b7YxVtbo=;
+        b=d9QMoNZVD7EHoVGfSfeLPczz+xKhufiGxS5S8gIpsRWuRlVIE2ZqQr7aSkEzO27YoA
+         WBcn2ECkaMFYBEfrYJgwnZMZQtOosKvSisqqG46SY9LeXGewV3o6ZLWJapqTF/d7iyR0
+         bDs/0VsCPVjW48/t2eGR6pI4EHitdGHwj3Mh+itm6qW7zrYytvnQmL/4viIJmB1TmOR/
+         xzJPoawioID+Ddaj5Tqp/4u1v50Is0mKESwMrkFWluK2J4GeONH1V96cVi9JT62kbBEk
+         bg8LunGDMPirCL1F6tHMSsG/ApSwokONtjLVyutlQizd5/7ym9jobuNcFsNSRnOEe0Ja
+         6rBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVEpGLSgjcRWLUkdqJePaAcJ4JS8AmFYY1+d8tE8qE7cGRUFQmNAl2u8bZFbhrjs3nJp82BNnPp@vger.kernel.org, AJvYcCWUBRAKXFDoZLR7CEaMYOoLNvBcbRVknWVBumrWRx6TmgVjyh15YGfcqAtytOzbxVZpIx9ZYPHJkt8g@vger.kernel.org, AJvYcCWf0auEH5YDmYKvNfr/7eLPytKVTTjtZJ0hEAdrDcUNHK2okrtRsz1KdysvXx5c8Sn3zm/xES+vxkoWpYuH@vger.kernel.org
+X-Gm-Message-State: AOJu0YxY7+G4QEbsKp6924kFrqVt6h2K0A4AjWb3Vl2XypjQtFOP9Nsw
+	AqC3WVPzitIEKlTXMxtj8x8G/4lfFEbvu6H54fYC/Z7rVBwTnXyl
+X-Google-Smtp-Source: AGHT+IHamz0WczDVCsPc6CPqKdEhjI+8PIhVIRTWBbvo/nv2cWi0cJElpgaxLC3cRQCvUjNkV4uDYQ==
+X-Received: by 2002:a17:903:2450:b0:20c:a692:cf1e with SMTP id d9443c01a7336-210c6c6ce1bmr13188725ad.43.1729898895779;
+        Fri, 25 Oct 2024 16:28:15 -0700 (PDT)
+Received: from localhost ([2001:da8:7001:11::cb])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bbf6d6e7sm14383325ad.71.2024.10.25.16.28.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Oct 2024 16:28:15 -0700 (PDT)
+Date: Sat, 26 Oct 2024 07:27:54 +0800
+From: Inochi Amaoto <inochiama@gmail.com>
+To: Alexander Lobakin <aleksander.lobakin@intel.com>, 
+	Inochi Amaoto <inochiama@gmail.com>
+Cc: Chen Wang <unicorn_wang@outlook.com>, 
+	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Inochi Amaoto <inochiama@outlook.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Jose Abreu <joabreu@synopsys.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+	Richard Cochran <richardcochran@gmail.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>, Yixun Lan <dlan@gentoo.org>, Longbin Li <looong.bin@gmail.com>, 
+	netdev@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, 
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v2 4/4] net: stmmac: Add glue layer for Sophgo SG2044 SoC
+Message-ID: <22g3v2h52xjhhwxdgnte6mhhadjfds2vlxlwz7b7t2fa7jlty2@lwyumoromg3c>
+References: <20241025011000.244350-1-inochiama@gmail.com>
+ <20241025011000.244350-5-inochiama@gmail.com>
+ <e00a0277-c298-47ba-9fdd-8f740f7490cc@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,76 +95,132 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8360f999-0d64-3b4f-e4b8-8c84f7311af2@huaweicloud.com>
+In-Reply-To: <e00a0277-c298-47ba-9fdd-8f740f7490cc@intel.com>
 
-On Fri, Oct 25, 2024 at 03:57:29PM +0200, Hernan Ponce de Leon wrote:
-> On 10/25/2024 3:44 PM, Andrea Parri wrote:
-> > On Fri, Oct 25, 2024 at 03:28:17PM +0200, Hernan Ponce de Leon wrote:
-> > > On 10/25/2024 3:15 PM, Andrea Parri wrote:
-> > > > > > BPF R+release+fence
-> > > > > > {
-> > > > > >     0:r2=x; 0:r4=y;
-> > > > > >     1:r2=y; 1:r4=x; 1:r6=l;
-> > > > > > }
-> > > > > >     P0                                 | P1                                         ;
-> > > > > >     r1 = 1                             | r1 = 2                                     ;
-> > > > > >     *(u32 *)(r2 + 0) = r1              | *(u32 *)(r2 + 0) = r1                      ;
-> > > > > >     r3 = 1                             | r5 = atomic_fetch_add((u32 *)(r6 + 0), r5) ;
-> > > > > >     store_release((u32 *)(r4 + 0), r3) | r3 = *(u32 *)(r4 + 0)                      ;
-> > > > > > exists ([y]=2 /\ 1:r3=0)
-> > > > > > 
-> > > > > > This "exists" condition is not satisfiable according to the BPF model;
-> > > > > > however, if we adopt the "natural"/intended(?) PowerPC implementations
-> > > > > > of the synchronization primitives above (aka, with store_release() -->
-> > > > > > LWSYNC and atomic_fetch_add() --> SYNC ; [...] ), then we see that the
-> > > > > > condition in question becomes (architecturally) satisfiable on PowerPC
-> > > > > > (although I'm not aware of actual observations on PowerPC hardware).
-> > > > > 
-> > > > > Are the resulting PPC tests available somewhere?
-> > > > 
-> > > > My data go back to the LKMM paper, cf. e.g. the R+pooncerelease+fencembonceonce
-> > > > entry at https://diy.inria.fr/linux/hard.html#unseen .
-> > > > 
-> > > >     Andrea
-> > > 
-> > > I guess I understood you wrong. I thought you had manually "compiled" those
-> > > to PPC litmus format (i.e., doing exactly what the JIT compiler would do). I
-> > > can obviously write them manually myself, but I find this painful and error
-> > > prone (I am particularly bad at this task), so I wanted to avoid this if
-> > > someone else had already done it.
-> > 
-> > FWIW, a comprehensive collection of PPC litmus tests could be found at
-> > 
-> >    https://www.cl.cam.ac.uk/~pes20/ppc-supplemental/ppc002.html
-> > 
-> > (just follow the link on the test pattern/variants to see the sources);
-> > be aware the results of those tables date back to the PPC paper though.
-> > 
-> > Alternatively, remind that PPC is well supported by the herdtools7 diy7
-> > generator; I see no reason for having to (re)write such tests manually.
-> > 
-> >    Andrea
+On Fri, Oct 25, 2024 at 04:53:07PM +0200, Alexander Lobakin wrote:
+> From: Inochi Amaoto <inochiama@gmail.com>
+> Date: Fri, 25 Oct 2024 09:10:00 +0800
 > 
-> I am particularly interested in tests using lwarx and stwcx instructions
-> (this is what I understood would be used if one follows [1] to compile the
-> tests in this thread).
+> > Adds Sophgo dwmac driver support on the Sophgo SG2044 SoC.
+> > 
+> > Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
+> > ---
+> >  drivers/net/ethernet/stmicro/stmmac/Kconfig   |  11 ++
+> >  drivers/net/ethernet/stmicro/stmmac/Makefile  |   1 +
+> >  .../ethernet/stmicro/stmmac/dwmac-sophgo.c    | 109 ++++++++++++++++++
+> >  3 files changed, 121 insertions(+)
+> >  create mode 100644 drivers/net/ethernet/stmicro/stmmac/dwmac-sophgo.c
 > 
-> I have not yet check the cambridge website, but due to the timeline, I don't
-> expect to find tests with those instructions. The same is true with [2].
+> [...]
 > 
-> I have limited experience with diy7, but I remember that it had some
-> limitations to generate RMW instructions, at least for C [3].
+> > diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-sophgo.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-sophgo.c
+> > new file mode 100644
+> > index 000000000000..8f37bcf86a73
+> > --- /dev/null
+> > +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-sophgo.c
+> > @@ -0,0 +1,109 @@
+> > +// SPDX-License-Identifier: GPL-2.0+
+> > +/*
+> > + * Sophgo DWMAC platform driver
+> > + *
+> > + * Copyright (C) 2024 Inochi Amaoto <inochiama@gmail.com>
+> > + *
 > 
-> Hernan
+> This empty line is redundant I guess?
 > 
-> [1] https://github.com/torvalds/linux/blob/master/arch/powerpc/net/bpf_jit_comp32.c
-> [2] https://github.com/herd/herdtools7/tree/master/catalogue/herding-cats/ppc/tests/campaign
-> [3] https://github.com/herd/herdtools7/issues/905
+> > + */
+> > +
+> > +#include <linux/bits.h>
+> > +#include <linux/mod_devicetable.h>
+> > +#include <linux/platform_device.h>
+> > +#include <linux/property.h>
+> > +#include <linux/mfd/syscon.h>
+> > +#include <linux/phy.h>
+> > +#include <linux/regmap.h>
+> 
+> Here should be alphabetical order.
+> 
 
-Please see attached for a tarball of random PPC litmus tests.
+Thanks, I forgot to reorder it when adding new include.
 
-You asked for this!  ;-)
+> > +
+> > +#include "stmmac_platform.h"
+> > +
+> > +struct sophgo_dwmac {
+> > +	struct device *dev;
+> > +	struct clk *clk_tx;
+> > +};
+> > +
+> > +static void sophgo_dwmac_fix_mac_speed(void *priv, unsigned int speed, unsigned int mode)
+> > +{
+> > +	struct sophgo_dwmac *dwmac = priv;
+> > +	long rate;
+> > +	int ret;
+> > +
+> > +	rate = rgmii_clock(speed);
+> > +	if (ret < 0) {
+> 
+> Did you mean `if (rate < 0)`?
+> 
 
-							Thanx, Paul
+Yeah, it seems I forgot to modify it.
 
+> > +		dev_err(dwmac->dev, "invalid speed %u\n", speed);
+> > +		return;
+> > +	}
+> > +
+> > +	ret = clk_set_rate(dwmac->clk_tx, rate);
+> > +	if (ret)
+> > +		dev_err(dwmac->dev, "failed to set tx rate %lu\n", rate);
+> 
+> Don't you want to print the error code here?
+> 
+> 		"failed to set tx rate %lu: %pe\n", rate, ERR_PTR(ret));
+> 
+
+Thanks, it is more clear now.
+
+> > +}
+> > +
+> > +static int sophgo_sg2044_dwmac_init(struct platform_device *pdev,
+> > +				    struct plat_stmmacenet_data *plat_dat,
+> > +				    struct stmmac_resources *stmmac_res)
+> > +{
+> > +	struct sophgo_dwmac *dwmac;
+> > +	int ret;
+> 
+> Unused var.
+> 
+> > +
+> > +	dwmac = devm_kzalloc(&pdev->dev, sizeof(*dwmac), GFP_KERNEL);
+> > +	if (!dwmac)
+> > +		return -ENOMEM;
+> > +
+> > +	dwmac->clk_tx = devm_clk_get_enabled(&pdev->dev, "tx");
+> > +	if (IS_ERR(dwmac->clk_tx))
+> > +		return dev_err_probe(&pdev->dev, PTR_ERR(dwmac->clk_tx),
+> > +				     "failed to get tx clock\n");
+> > +
+> > +	dwmac->dev = &pdev->dev;
+> > +	plat_dat->bsp_priv = dwmac;
+> > +	plat_dat->flags |= STMMAC_FLAG_SPH_DISABLE;
+> > +	plat_dat->fix_mac_speed = sophgo_dwmac_fix_mac_speed;
+> > +	plat_dat->multicast_filter_bins = 0;
+> > +	plat_dat->unicast_filter_entries = 1;
+> > +
+> > +	return 0;
+> > +}
+> 
+> [...]
+> 
+> + see the build bot report.
+> 
+> Thanks,
+> Olek
+
+
+Thanks, I will fix it.
+
+Regards,
+Inochi
 
