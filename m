@@ -1,206 +1,177 @@
-Return-Path: <linux-kernel+bounces-381788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B1829B0475
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:47:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A462C9B0478
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:48:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EED3428427C
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 13:47:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 13F8DB21535
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 13:48:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01F2E1E491B;
-	Fri, 25 Oct 2024 13:47:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 273991D364C;
+	Fri, 25 Oct 2024 13:48:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="sberVN8g"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2075.outbound.protection.outlook.com [40.107.94.75])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="CJW9J89y"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AED01632DF
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 13:47:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.75
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729864034; cv=fail; b=oGDcaWXdX8iCMlYZkzafuz/7s9HvDAjsou8+8eJJ2Xd+gMy35jd4mZgeVvdCeGJQuYQwewrH157xVo2GcG+TSGHeTGujyObRUht8N7K0c91K067n2LciE1y/hQvBc1GcLf7p9sAwvLrImC0tYHzwLDziLpf+nN3P4Hfb/tycWrE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729864034; c=relaxed/simple;
-	bh=rOrU1pLZil/65rbYxHOdWsworbmiW6lOk0o7Fc2YEVI=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=JJzRVTl9DAj4dXePOyIfeMDTg7JNoevhFq6+mfk0sryRo7g53ClKGzVb+962PGXmnC+ObyiFjcXsdryvQzXnHv2PQw5IuitXtd2u1qCxhQky3yr9rxWZFeVg4AT8FjtEDCSHyKYHEuZieSfVUYIv1Ii8aOLWoHbyVVnzHH2g77M=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=sberVN8g; arc=fail smtp.client-ip=40.107.94.75
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=W4AuyTCd1NScAJgcKLPY1NpylnU7oSX7IVKsQfp78U88FqPBB8+i+Y1/S77gi3CJ3N3gNnIGdeJtyX5LTJF5tyEIv2v387NH4KgTMJStK81zg86gpGoaZFxrWJR9/ZuC7DeDKh37Dc/Gk2OJ7WPC+10d0G3QoM3WLxxLzr2imQfV5cTslJHmUjksSddNgaF3M63io76xw2e+Ir/fg68lfN3s2uEF7GYm1fGOsfBC0rFSC4hHIDTPzevVEa5/1qrVAjYHdQsQ1yx1sDzkADvjYhhsdmC3Tm7h430v+g+6XWlvcdXn2oUVWhxOIPkJYwxWX6poDdbxtbU3CfHbeymWvQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=s9p+IULW2yFfcp14Hazj67ufGsykM9k6r2EHJhKYmXk=;
- b=AfQoZhau11BRYCz/tAC9yWhml4Y8jtS9Ix0xrCVrLate6ze7jXgzVw4Ik8wYNcBfHjUNlpJG4DHvK75FDHqx6SQ3PtIPYXjFZh8lx5DtXAQAY19eeDHVL5RkwpnyLzbXFOn1GhFycSg+2VyPhCB1WLpbZwSDXoPp8l9mdHEatn1j1FP6q2L51b4CiXVxgUCkMw8Lryi+wmZ/5JxVC1v9R4imZIWgVockvddiJKbIu0cRxg2a1FkkHmjLSFI16/oQ8l1kSQYBOXB0UsRUNUs2tGk9xUijphH5C5Xi1mhZ3NaPUET1/IYEEdpb+fHFMXtPytB+jeBHZcqbMQeDzGfHfQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=s9p+IULW2yFfcp14Hazj67ufGsykM9k6r2EHJhKYmXk=;
- b=sberVN8gzyDOk8finxnk+ArGuFwM9Ii8lx7smOUtWYc7rk7E1vqTIn8oYHilEZkBWQ1uaOw8PLAPSRojatpH2qsu+drcR8j5foA99RurjGULG7jJsvv3IMcP+Eke2EtSU9msCiGe5qj2y8YXhoiFSynfN6aqS0r/flLqxSNO7SY=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM4PR12MB5070.namprd12.prod.outlook.com (2603:10b6:5:389::22)
- by BL1PR12MB5995.namprd12.prod.outlook.com (2603:10b6:208:39b::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.23; Fri, 25 Oct
- 2024 13:47:09 +0000
-Received: from DM4PR12MB5070.namprd12.prod.outlook.com
- ([fe80::20a9:919e:fd6b:5a6e]) by DM4PR12MB5070.namprd12.prod.outlook.com
- ([fe80::20a9:919e:fd6b:5a6e%5]) with mapi id 15.20.8093.018; Fri, 25 Oct 2024
- 13:47:09 +0000
-Message-ID: <2dcb1db1-fc1b-0fd0-f878-470cfd22e8e8@amd.com>
-Date: Fri, 25 Oct 2024 08:47:06 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v4 1/8] x86/sev: Prepare for using the RMPREAD instruction
- to access the RMP
-Content-Language: en-US
-To: Borislav Petkov <bp@alien8.de>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- Michael Roth <michael.roth@amd.com>, Ashish Kalra <ashish.kalra@amd.com>,
- Nikunj A Dadhania <nikunj@amd.com>, Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-References: <cover.1729708922.git.thomas.lendacky@amd.com>
- <5e8bbb786f0579b615a5b32bddbf552e0b2c29c8.1729708922.git.thomas.lendacky@amd.com>
- <20241025120920.GNZxuKcBsMvYTd0ki-@fat_crate.local>
-From: Tom Lendacky <thomas.lendacky@amd.com>
-In-Reply-To: <20241025120920.GNZxuKcBsMvYTd0ki-@fat_crate.local>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SN4PR0501CA0035.namprd05.prod.outlook.com
- (2603:10b6:803:40::48) To DM4PR12MB5070.namprd12.prod.outlook.com
- (2603:10b6:5:389::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 111B01E52D;
+	Fri, 25 Oct 2024 13:47:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729864082; cv=none; b=iy3OuVEd7XUdzzNYUk/UmiTdBTQRA+Z9mX/iINdOmlO36D0l7lVBl26G9EtR5HilYAjQ2Pl3iLJMlk12MXyYksVgfndp19yX2EpUOGkrxVvhAI87RLgKVOtKmMaZMyTi40l2XoG9GA24NfF4zI2nJ+/K+1l/HLY7dcfyrAGlg3o=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729864082; c=relaxed/simple;
+	bh=OnFq4WteU5KRucioQ1H10LmdIxIH0KT/oS2vvPVepv0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T/L2naQchu3QkTga8FxQsOn/b8CAzpHmhi/1UDFgvl36yDB/hJprs9pzDOk+o4Sr0lEk4avKEnRKqqgd3NlnQswGO0s/WnvKLVFDuqwtVkRS1YAZ0eK+g4+EXuT02n7EAmkpjNr9NCMgXxVra7To0jPFjZ/3DqbQ6hhVTgOVYs8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=CJW9J89y; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id D9A7C40E0284;
+	Fri, 25 Oct 2024 13:47:53 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 3w6nO41vcqtz; Fri, 25 Oct 2024 13:47:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1729864069; bh=T6XAVjF3P3ZWxOpvmiPo1HttyQrVPVhctAS392r3j/c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CJW9J89y6ecaVCStPYD7HSZzNw6DVYUorhjcN3hqj6CVHHdHqUzeyexEUlg6gcuTp
+	 bHZX8X+seYHJgfGkiyrR9FRefsBwyryGLG8/Skeq4jHA9FNH/Zp054WssoxvzFtSfN
+	 zLimaohmMVmA4A6Bi20PdKIzHtweTmqRCAYhCg6LF8b6lzd6zyeL8uQhkpIvsIlKtS
+	 HbO9P2t/s+4me6fTPsyKM4KcrxbZne08BUQEb9jMSs5X56eSqwMKOhWx9HZ6WM4z+l
+	 U/Gy4GMs3LlfUNfKNdXPD2i/NNQqQH+lzbTWNaNk/ZWdBfJOlcj2pHD3xxKDuGuq9I
+	 VClQh9HhiWEGi2qC3/mqN/7KbLOJAK0ZreMx2gKe5aKVCMF9PWY0vURPMXKnEBIt4N
+	 dZLsEuSegCa+K/2m9cl/ye21VxsSsewmHmBVm7QMu/WvO1F0nrLEP4pp0GidlfFf61
+	 G+fxYVO1ZrNe9QD8tYOamxgViMpFZBte8H0H1RpHt3QdajIkStghiI9pk6BwtgHYd1
+	 2HNuub94NNfuELIgLrxxNtvbibaNZy0rghRreIh8AkZ9UFD3GJrjU820rRRh05ntQ+
+	 ugJnX+W26rwGFV4VAZItja9ocozDsZDk/Gq3HbO1VNG5/wW3giCxAQ3OF75L2RKpnB
+	 GJzDtk+PT7+ate0lxRI4kkE8=
+Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id CED8140E028A;
+	Fri, 25 Oct 2024 13:47:33 +0000 (UTC)
+Date: Fri, 25 Oct 2024 15:47:27 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Mario Limonciello <mario.limonciello@amd.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	"maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	"Gautham R . Shenoy" <gautham.shenoy@amd.com>,
+	Perry Yuan <perry.yuan@amd.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Li RongQing <lirongqing@baidu.com>,
+	"open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>,
+	"open list:ACPI" <linux-acpi@vger.kernel.org>,
+	"open list:AMD PSTATE DRIVER" <linux-pm@vger.kernel.org>
+Subject: Re: [PATCH v3 4/5] x86/cpu: Add CPU type to struct cpuinfo_topology
+Message-ID: <20241025134727.GOZxuhb0MSVESR5juz@fat_crate.local>
+References: <20241023174357.34338-1-mario.limonciello@amd.com>
+ <20241023174357.34338-5-mario.limonciello@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB5070:EE_|BL1PR12MB5995:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8b48e6ae-e4b0-43d3-887b-08dcf4fb8553
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Y2x3UiszdjVnbzhIRElISXkrWlIyajRyWHIxd2tETFpGV0VzaU5weHBnZWlk?=
- =?utf-8?B?MHJJQ3NJMnNLVnZVTExTVFlDUm1xbGE3SUNZRnRtNHZQV2dUQlJFU3FUT3Ay?=
- =?utf-8?B?eGtmNHNNeDdZVE5yS2RWUHl1anJFcFNMVlQrcmRZbDk4SEJOWU0xYURvczdy?=
- =?utf-8?B?aUdoVGRucTM3aEJMK3F0elV4alY3NHNsZmYzTDV5WGVVSzdEQnU1SEZlN1gz?=
- =?utf-8?B?a051c0hkSUV0V2RNdHFQcUFmbGtjdmVGWVc2akZrYmlxU0xRTmJaS0ZFQ1Zl?=
- =?utf-8?B?aldLM2ltRmkvRDRGNE5NaVNwaVFpWXJiYmdpQmdGUDlnenR0cHJJV1JTWTk0?=
- =?utf-8?B?dzJ6dk9QN212bm13VS8rTmdJQmFnZDFIZzQ0RE5CME03R3pFMDFqYjFQeUR2?=
- =?utf-8?B?RWpacHkxcDJXVGtEcU5XdURkYzRBYzNTZldlamUvaU5BVDNTT004VzRza2ZO?=
- =?utf-8?B?Z25xdmtDRTNhMUttUVA2eG80bFZEY3FhVFUxckl5TTZ5TWJ3WHJ2Zkx1Nys4?=
- =?utf-8?B?L2ViVTUya1g0MnlxenZwc2dOSW0zbTZlT1EreTFJZlpTbGZ3RjlGc1ZwTC9n?=
- =?utf-8?B?WFhXR25lSXRHSjQyeW5YNkdCZ1p3QWFIYk1kbVRYUDhiWkNCNEc1Q1NLV3Bx?=
- =?utf-8?B?eHpLSEhKK2o3OUJiekh3cFkzdVUraE5PeFNiQlJsRnk4c3RCNkUvdXAxRmV3?=
- =?utf-8?B?RFpRNXM5QjR2M0pLKzFYdERUMHVEUFMyS2h2eTNFNHBIR0lCSWZ4bHc2b2Fl?=
- =?utf-8?B?b2F2NWRzemVyRmIxMWwrOXVTSmN2SnFJK0xMT1A2dFEyRGNJRHlIaG10eUtr?=
- =?utf-8?B?WkExQk8vcDBNRGtacHNCaFFCajA5Ty95aCtWMlliOFZiRVYzMUVJMnY3WUFp?=
- =?utf-8?B?YkJ1d2ZleXhmK3ArVGVsSitlWmh5eG9YbzJPOEhrYjdWWFVDVzFyMERXNHU5?=
- =?utf-8?B?K3NFQXlWR3d1SFFpbHRnR3I0QkEycW9wU0wzTWlhc1dDQkhoQVptRkxUS2Nl?=
- =?utf-8?B?V2V1K1laeVFqU3phb1pVT0I4a2NxNCtKMnJSZFFqT1lxMWlweFcxS3ZXTnVx?=
- =?utf-8?B?dGUvUFpvL3Y2SHgwQ3lpTWRCY3BId2FLY3c4SGhaVnREaDVuMzBKZzVIL283?=
- =?utf-8?B?QWR3V3BVQ0kxTzVhSkJsejFVVUtjdEFwMTFqZFlOZ3BtK01qbVdFSTBQeFFx?=
- =?utf-8?B?T21OMVAvZHN4U016YjRydmxPZitrNW5kRURvTXlPcjRNZjBIdSt5am9UQ3Fj?=
- =?utf-8?B?VitCTVE2VDJrb2xsRGJURDU1cUhydVpJUlR1VEk1WC9leHA1OHZOelVSb0hz?=
- =?utf-8?B?b1FlSmpodTV1ZEtHTWttN0JFMlkrdXdjSDQ5V1hLcGNEUGFlTkhsendzTFl5?=
- =?utf-8?B?b24xc3luajVQZmdhckREN0ZRdjFIUVVLTE1uTU5IZHpNcmZCWUU0SlpUam42?=
- =?utf-8?B?NkNPRytvNU9yUVFkMlhUV2pnSVdVdjlHdFpDMnRSbDB6RlFjS0crTXQvbGo5?=
- =?utf-8?B?TzByK21YZ011cC8zMGdGU2ZDZkpqNXl1SEhWa0hEVEh5aXo0V3hibWFwdm1Q?=
- =?utf-8?B?NFRHU0hIQVNmZklBbUcyd1F1RTRwN1F6QkQrWnNobDFOUXRZOUhWZlRsOFZF?=
- =?utf-8?B?Q0dkVmVLWmRvSHdVTkgvR1ZYdFpUdlJnTnJ1QlRvT1ZnTzRvUS84TkJhVXpB?=
- =?utf-8?B?bUFyM2RoQzI3M0x3WjZZZHp6RzgxaUpnd2lKeStSNGgwaVEvVU43Z3BRQWp0?=
- =?utf-8?Q?SfV53RYuAMLEfLTLHEy+wT2DPX9o3jBwpjpSkEC?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5070.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?YlU2RWRZdGNhdkhHSWVMb0hVWTFObmVVZlV3YmluT0tpZXhuV0dzc2ZtbkVU?=
- =?utf-8?B?bkg3ZVpjYkV5TzRhTVBwb2ZkWG5mc2tzTFRiSng4RXd2TjkwRFN3a2xRZEZp?=
- =?utf-8?B?SEs0RzZ2ZVFYVlRYM3JBY3ErUm4rKzVVcGFoNlVrd3lURXUxQ2thMmN5OXlK?=
- =?utf-8?B?bzZuZU5OWjYwNnpONXV5THd4UnVDQldFQkVSVnM1cVl1dGxRdHdrazR2VlNX?=
- =?utf-8?B?Qzc4c0FOMDdsTDBuV3RFbSsxNktYSVMxbkNBMlYyb2owOVhUN1hjZEU2UlRj?=
- =?utf-8?B?T2ZESUc1cjhmTVM5NmhXdE9HRjUramRzREhHWmhXQWdLdVpNYjhjTmUrREEx?=
- =?utf-8?B?Tm1Eb1lUT3U3ZVJYWWVSeFE1Qkk4c25XK2xlUGtJand3UlhZdUJDL0hDdDBZ?=
- =?utf-8?B?YkxrRzZKTkpGOFpmOFpnWk0xdDQyZGcyWVhNVXpJbDRhUVFjbDJRNVFBY2dN?=
- =?utf-8?B?Q2hFb1FZWFB5WE5BNEtVKzgwSVIvcUJ3b3grRE55cWNyZGQrK2xLdFhoS0RE?=
- =?utf-8?B?RXNVODhCRVpKcUN4ZFVJaU9POXkxRTAvaXh2RjhVdXVkeW1sRzV3ekNmbUs0?=
- =?utf-8?B?SFpUMUVUVGxwdmE1UUJoRm01L0EyNllNTEFKZjA2V1V4V3hqQjJnK0t2TVAx?=
- =?utf-8?B?UDJsWDQ2eXNUZDlBWitHZHI5QlRERmg5UlRPSlhpWFBYbk41UjFITEkrcDNW?=
- =?utf-8?B?ZnVFZ01NOGhHUlhVeTA0cC9MSldKWWtzRitDRFQrTWhoWEtadVBNSUdHSTYz?=
- =?utf-8?B?TUl6cGdzdEtVV2N2TWhGNkJZWFJwTlBYeWVmN3hqNUFXcjVDTHZtakI0dmNQ?=
- =?utf-8?B?NmdveStIQTIxZ1BmQm5yemphUnNwWXhTMlZwOW83UUxId3lhQ1VRT3BKbzMr?=
- =?utf-8?B?QWZEelVxS2M5WWsyZjUweTdrd3VURS9pTDB2N09ERkovWDBoY2hsQkRmY1NI?=
- =?utf-8?B?UWN6M0puaU1BcERDSnRIblRnZS9XbU1kcE1VNnNjZWJLbmM0VkhsRzNtQWox?=
- =?utf-8?B?WHBWOWVXT0I2WFk3VGJOdEZlYjBZcDVTcUpOalhTN1V0SFhCbXNHeXROVG9V?=
- =?utf-8?B?OFhXajhEcW9OSm1NaUtSdm44aWJVbnVydXBUZVg3SXUvNmorVTZmNHhBemc2?=
- =?utf-8?B?N21XSS9lbG56QWdNUE1tN3ovaVVXUGV3aEozSEQ0SmxrWTRlNVh2RTBOQnBS?=
- =?utf-8?B?Rkw4dHNDTEtOVzcvZ3N2N2RjRU9hRTJPMnhCYVV4R3A5cTJ4ZGFKWW5aNlAr?=
- =?utf-8?B?aFZMajZFYkxnQTFxL1oyUnR3UTRRK1lRZjdRQ2tMR1dLVEZmb1RQbTJQSi90?=
- =?utf-8?B?THhSOUhSSVhFcFo4MVBiOUQwdEhtRFRmeE4wT2RDZC9aVHcrM2N1bVltY2p6?=
- =?utf-8?B?L1ZRUTRvOWhsTk4zaFVnZ29Qeko0S1pxL3M0NlF0ay9WcE9SMUhuYVFVM0Ro?=
- =?utf-8?B?clBmVHg4ZnppeWgyZmZJSmdPNDZxbzJkbGtrY3dUTnExc21MTjl2UGdVNXRw?=
- =?utf-8?B?STA3dUpjT2g5NXk2bEoyQlpHZ25VOFpiN3dqeENwMUwrZ2xndVJZYTlzbmZU?=
- =?utf-8?B?ZkVkQnBpUG9sM3RXV0J5dE5ZUW1yT05jQUh3VzVPSVFXUlIyWHRlQllSYjZP?=
- =?utf-8?B?aXJOTVREZlZ6djlRNzFHNWEyajlNMFc2bW1vYm9XWitBdVpMc2s0Sk1pSEJC?=
- =?utf-8?B?UHM5cjQzNkxTclpIeDFYb1JFbjNqRjhIY285ZGo2Z1IzVkduSkYydlVVNHNq?=
- =?utf-8?B?Q3RsNmVNWHo2RXc4Q0pEeDhLZFhjQVY5eS80dFp6UmZENXhUSERORHd1eGoy?=
- =?utf-8?B?QkxxREk5WUJ4eStQTGFwbE5UZldRVXorY0xnQnQ0c2xHVnloMCtvMEZxNnVF?=
- =?utf-8?B?dXljY3FrcHhjM2Jkd05aU1dMUDFteUp0UmttRURySVpzdzQ1S1RGVXloN1cw?=
- =?utf-8?B?OU94YkRoYk9FOWsrMmtIU2JIUVo1NGFBdmRxdU5lK3paWE9BSWxLKzZYWmF0?=
- =?utf-8?B?a3pzNW9Fd2ttVytnaU9tM1Fab0Q2YWEvWDJORStHR1g5OFNJbkIyUVFxVnJG?=
- =?utf-8?B?V2Nvd1pNR0pSSEtJU3BxYTYzdXgwT2R1enRrcFE1UXpVUFJ6SzcxZXQxNUM2?=
- =?utf-8?Q?ezbkspl3i71d2xvIjT3aStwZt?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8b48e6ae-e4b0-43d3-887b-08dcf4fb8553
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5070.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Oct 2024 13:47:09.2106
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Mm5n6Sj/Xd+JlvUxevpxGnAA6H3h3BkjyF1LtELfr+8W5coIT6ITI17Ib6X5n++a9aAk7AjaDUERDVDZUdajUA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5995
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241023174357.34338-5-mario.limonciello@amd.com>
 
-On 10/25/24 07:09, Borislav Petkov wrote:
-> On Wed, Oct 23, 2024 at 01:41:55PM -0500, Tom Lendacky wrote:
->> +/*
->> + * The RMP entry format as returned by the RMPREAD instruction.
->> + */
->> +struct rmpread {
+On Wed, Oct 23, 2024 at 12:43:56PM -0500, Mario Limonciello wrote:
+> From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
 > 
-> Hmm, I'm not sure this is better. "rmread" is an instruction but then you have
-> a struct called this way too. Strange. :-\
+> Sometimes it is required to take actions based on if a CPU is a performance
+> or efficiency core. As an example, intel_pstate driver uses the Intel
+> core-type to determine CPU scaling. Also, some CPU vulnerabilities only
+> affect a specific CPU type, like RFDS only affects Intel Atom. Hybrid
+> systems that have variants P+E, P-only(Core) and E-only(Atom), it is not
+> straightforward to identify which variant is affected by a type specific
+> vulnerability.
 > 
-> I think you almost had it already with a little more explanations:
+> Such processors do have CPUID field that can uniquely identify them. Like,
+> P+E, P-only and E-only enumerates CPUID.1A.CORE_TYPE identification, while
+> P+E additionally enumerates CPUID.7.HYBRID. Based on this information, it
+> is possible for boot CPU to identify if a system has mixed CPU types.
 > 
-> https://lore.kernel.org/r/20241018111043.GAZxJCM8DK-wEjDJZR@fat_crate.local
+> Add a new field hw_cpu_type to struct cpuinfo_topology that stores the
+> hardware specific CPU type. This saves the overhead of IPIs to get the CPU
+> type of a different CPU. CPU type is populated early in the boot process,
+> before vulnerabilities are enumerated.
 > 
-> The convention being that the _raw entry is what's in the actual table and
-> rmpentry is what RMPREAD returns. I think this is waaay more natural.
-> 
-> Hmmm.
+> Signed-off-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+> Co-developed-by: Mario Limonciello <mario.limonciello@amd.com>
+> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+> ---
+> v2->v3:
+>  * Remove a bunch of boilerplate code
+>  * Convert to showing string in debugfs
+>  * Rename to get_topology_generic_cpu_type/get_topology_cpu_type_name
+>  * Add Intel definitions to intel-family.h
+> ---
+>  arch/x86/include/asm/intel-family.h   |  6 +++++
+>  arch/x86/include/asm/processor.h      | 18 ++++++++++++++
+>  arch/x86/include/asm/topology.h       |  9 +++++++
+>  arch/x86/kernel/cpu/debugfs.c         |  1 +
+>  arch/x86/kernel/cpu/topology_amd.c    |  3 +++
+>  arch/x86/kernel/cpu/topology_common.c | 34 +++++++++++++++++++++++++++
+>  6 files changed, 71 insertions(+)
 
-Just wanted to show you what it looks like. There still is a lot of change
-because of the new argument and using a structure now instead of the
-direct entry.
+Except the minor touchup below, I don't have any complaints about this
+anymore.
 
-I can change back and maybe add some more detail above the struct names if
-that suffices.
+Intel folks?
 
-Thanks,
-Tom
+diff --git a/arch/x86/include/asm/topology.h b/arch/x86/include/asm/topology.h
+index 795619ea1334..9f9376db64e3 100644
+--- a/arch/x86/include/asm/topology.h
++++ b/arch/x86/include/asm/topology.h
+@@ -156,7 +156,7 @@ extern unsigned int __num_threads_per_package;
+ extern unsigned int __num_cores_per_package;
+ 
+ const char *get_topology_cpu_type_name(struct cpuinfo_x86 *c);
+-enum x86_topology_cpu_type get_topology_generic_cpu_type(struct cpuinfo_x86 *c);
++enum x86_topology_cpu_type get_topology_cpu_type(struct cpuinfo_x86 *c);
+ 
+ static inline unsigned int topology_max_packages(void)
+ {
+diff --git a/arch/x86/kernel/cpu/topology_common.c b/arch/x86/kernel/cpu/topology_common.c
+index 60d5d74189a3..8277c64f88db 100644
+--- a/arch/x86/kernel/cpu/topology_common.c
++++ b/arch/x86/kernel/cpu/topology_common.c
+@@ -28,7 +28,7 @@ void topology_set_dom(struct topo_scan *tscan, enum x86_topology_domains dom,
+ 	}
+ }
+ 
+-enum x86_topology_cpu_type get_topology_generic_cpu_type(struct cpuinfo_x86 *c)
++enum x86_topology_cpu_type get_topology_cpu_type(struct cpuinfo_x86 *c)
+ {
+ 	if (c->x86_vendor == X86_VENDOR_INTEL) {
+ 		switch (c->topo.intel_type) {
+@@ -48,7 +48,7 @@ enum x86_topology_cpu_type get_topology_generic_cpu_type(struct cpuinfo_x86 *c)
+ 
+ const char *get_topology_cpu_type_name(struct cpuinfo_x86 *c)
+ {
+-	switch (get_topology_generic_cpu_type(c)) {
++	switch (get_topology_cpu_type(c)) {
+ 	case TOPO_CPU_TYPE_PERFORMANCE:
+ 		return "performance";
+ 	case TOPO_CPU_TYPE_EFFICIENCY:
 
-> 
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
