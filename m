@@ -1,187 +1,102 @@
-Return-Path: <linux-kernel+bounces-381234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 547409AFC51
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 10:14:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EA159AFC56
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 10:15:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9AF361F24892
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 08:14:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6F6C286F6B
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 08:15:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CF361CFEB5;
-	Fri, 25 Oct 2024 08:14:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A27D61A3A95;
+	Fri, 25 Oct 2024 08:15:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nh/nAKIS"
-Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="AMhUVuG9"
+Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69E6A1C2DAE;
-	Fri, 25 Oct 2024 08:14:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61B3B189914
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 08:15:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.97
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729844057; cv=none; b=cJWi6C186B2SSuLx5oKw+fPDGs122p4XYpDhxn7Upa+8vuOlHV5/9mUqTm2nLjb52ro9K9Toc/T/+FpUZsEtX7sfN7EDCJHG2vmRdlsxwm7nYz4kPcCtGYSW9JVlfMAAnGy2uWm+GnZ0PbEuDiIqPB73A7sqqz3OXXq+9ahf4Fw=
+	t=1729844116; cv=none; b=XjKM/edE5egKbc/bD9rja11x4V+ZaNJQ5ArjHYeTg+KiMvSoLPv6V6oiLT/1guldIWsa4CVnnyJXrzxFjnstsoDyFbt5zVK2eBiMhTXkp49l+7dFKs2i2+nTKnFiTaXsnCFdmP2Mr+gHUl19qaUjhbNhCZh83RwfSsxXrafIAUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729844057; c=relaxed/simple;
-	bh=TAPPHqL2n0Xwr0NoSH36sJST1F+aVdGWi2GdH3wNlac=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=n8wrkyWyYpfIl+qqM9OdfTq+oTARwv956g7Nlk3NemHIDlTQitDzDtyM7Ri7sWMoyqM/IRT036u6+GFULufFEaUrlSuVlJ0jeYFwcy85RvGCmkUbYSKt55A/5oO+1/A4FboHKJvTw0HcnvKuZxQqLiH/c3lpOnxFH/+1RbUFHe4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nh/nAKIS; arc=none smtp.client-ip=209.85.219.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-e29267b4dc4so2024195276.0;
-        Fri, 25 Oct 2024 01:14:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729844054; x=1730448854; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jo/S0Z9d3Mx8O5eOyETMe7V1wC7hFxb1IEsYWjqKqQk=;
-        b=nh/nAKIS3FbBfoLoBgjLdhr0aWMyaV3WkBjsucXN2YtFubXXHdw6Tng/jki6jAXQUO
-         kvdAbadwuBCBLylNT49FmCj7iloOP3BqqNbrzxucsD0EVWgzALKX2hONsl6ezCrjYfnC
-         F7hgoXQu4Ouf/oH+R932aLC2GvuhtbOQlt25eGny2t3faex/gVOeXikWNYxqLXxzxZoO
-         APOWsanguH1/YIMTgbBREPEkuh7U8QLJqEf58HD+GVWYsrSKAWaEQ3o+JYgYOmwWG64Z
-         HBkhBPqAVb727kLGRWgNlqjqQNtKTnIEDUM76XyFH8HchQqc8mQxVB+7yiM2B+wq3VeW
-         +ipw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729844054; x=1730448854;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jo/S0Z9d3Mx8O5eOyETMe7V1wC7hFxb1IEsYWjqKqQk=;
-        b=T9xiiFY2X9S4/GaIYAA7oU/c4CL3KzSid2z3jUqt+K3kvofh5UJknDOmxaRzKlRqbx
-         o8LQ5S8lOq6KwJ5wntPBKnMUasIRTHL2ux1LNUlrNjI3p4kAki6gJMWanjCaPxfezKKB
-         rMy1Zhn2TyrTVN2bibaLaTlVO0rhtIXlKPiVpAoHeffF8IJIQpEM9uIDy5DAKXU4hF7W
-         9Tq6vyS0L0IFw1zmTcJtvSVNz6XXbJ0ej55jtY/TbGNDiNAOXwGnNSDQQVIOxXx9VTT9
-         sdF6k8dcKneurJs39lkYcxAYiMIaS+2K4NsEn9BDVve0KQn8kqq2QY5BCQro1StdAuhA
-         C6YA==
-X-Forwarded-Encrypted: i=1; AJvYcCU4+Ah7nVoXIwuRZEuHNbR0VrTi1gEMdDB9u3N1Eg/ACubD5Yjvn09xY9GGS169r5cnKpuW4hRowvYznNA=@vger.kernel.org, AJvYcCUEFVjr3OasxQgPx+7TdZPMTN7t4pW2qFAGhH4PUGagJyTW9LxM6O93kEzMUTOM7H1OlNcSzRpS1anLo3Cb@vger.kernel.org, AJvYcCUsPGaZ5R7Logx+EMmqpAODi7CV5WeuaXrnudpjpqnGNQ7cg5h0soKtOEwVogWoAVS4uoHbS2Slvb9/@vger.kernel.org, AJvYcCVLR9tlLTgc1IMBE36H1jLYIQtju2aqHMRfNB6lAU//gkCA83G4JTbpi4mtN1Hx0REIU6pfcfZBCdnn@vger.kernel.org, AJvYcCVsDrYI+0yd0haWsfC6LMpkncC2QShj2M+rhuc3bQLcLtn+VwYelyXC5uQ1QBoQITXii2DYfmBeuWlS1ypU+pA=@vger.kernel.org, AJvYcCWHGf5uCa4JvmSu2ZI8QaUKVaMT9jcC40LSrceZ5Tw89G80QA15Lcg2rZ7/iBTl+2DzhSAvy0h5ZFGbqg==@vger.kernel.org, AJvYcCWlXV7WsC0aDArgeW+I2yhEDxVRgWCJa39DBHs92fsb4G9w8fNz5JNoQozkLcYhQ6Hn767CrxJj@vger.kernel.org, AJvYcCX/D+Sa+2BkLpCx7v+rFyOPgr+jZ0IsbHbnskFBSxpT0oaKzmi6YMOtA/QdW1K1DiBe0Te3dVlouN0=@vger.kernel.org, AJvYcCXeE7q/RPCbbjGzeugeXEasAQvn/TKqGE5qaZGQ9Q8SodC9O9pZR6Fhq1bzJY4k86UrTHvzjZLRy8pW@vger.kernel.org, AJvYcCXlBgE5ECpxaPHY2AMY5YrwNa/K2UcB
- /SWJKgqs0CGyUlw1xG5WeNnihUL8dFks/D41YdJlg70btILr@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzay+VbYb3fIT66zgx/MVI78L7CFGJCy4k/Pp1rp7WaaUKfoS8k
-	6wPZq/n+C4OsGewHeH4Gfp2JniCUGI/guzN2kt69d5t+vfM6DWGyjG8ab+NLihyqz6mDcfcjl+K
-	xONQgRDRyMhZaN+0qYtU0s2sfVg8=
-X-Google-Smtp-Source: AGHT+IHWwn6ldcKO9RUgddlzHZLLBUXYX1h/LeWpLmoNkOiG3umKeZfWhL71WqRFX9+nAMhhyEMT1U/hQLjIcU3hOyM=
-X-Received: by 2002:a05:6902:2782:b0:e28:ece9:fb01 with SMTP id
- 3f1490d57ef6-e2e3a614e5bmr8423686276.7.1729844054340; Fri, 25 Oct 2024
- 01:14:14 -0700 (PDT)
+	s=arc-20240116; t=1729844116; c=relaxed/simple;
+	bh=rCdIZUFBUepsxtg47L7aI0jPEy2MEsIoHAIcBwoOBII=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hjTRZi1ygPygQu/8k6ySoCJ4lktXW3eJ3ZKEwqoPe8WvwIeLIqEy5O84Zb7WC5WzEDccdRQ6Dzp4pKJewH/Ph8TO6iObAHSaHgPkcWXxJLMQhowrJ3VbBJWjlZnyXtaSFDfcnAlcW7ut8MCRZ6ojFMTUqojWUHrrD76LExRZ134=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=AMhUVuG9; arc=none smtp.client-ip=115.124.30.97
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1729844104; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=NnOa9BZeM/wEnWd4elRrQTQ+mMCnyLHDYwSylZaOzE4=;
+	b=AMhUVuG90oXGuYcPT0hu3D1W1RKapogbQzWciN55IbbTHhjzfohLpr8OGOk9xE+ZMis85djAH6WNltv7S/z2gzsCLiWahxBV4wR2tK3IFyJFJniFPQ+3Oe31u8TZfv1iMArRMNGifCNibm8nl/AtyE0vTe62G1A/SMrXWj8PLT0=
+Received: from localhost(mailfrom:jiapeng.chong@linux.alibaba.com fp:SMTPD_---0WHrqv88_1729844097 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Fri, 25 Oct 2024 16:15:03 +0800
+From: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+To: peterz@infradead.org
+Cc: mingo@redhat.com,
+	will@kernel.org,
+	longman@redhat.com,
+	boqun.feng@gmail.com,
+	linux-kernel@vger.kernel.org,
+	Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
+	Abaci Robot <abaci@linux.alibaba.com>
+Subject: [PATCH -next] locking/ww_mutex: use swap() in get_random_order()
+Date: Fri, 25 Oct 2024 16:14:55 +0800
+Message-Id: <20241025081455.55089-1-jiapeng.chong@linux.alibaba.com>
+X-Mailer: git-send-email 2.32.0.3.g01195cf9f
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241024085922.133071-1-tmyu0@nuvoton.com> <20241024085922.133071-2-tmyu0@nuvoton.com>
- <20241024-adventurous-imaginary-hornet-4d5c46-mkl@pengutronix.de> <20241024-pumpkin-parrot-of-excellence-299c57-mkl@pengutronix.de>
-In-Reply-To: <20241024-pumpkin-parrot-of-excellence-299c57-mkl@pengutronix.de>
-From: Ming Yu <a0282524688@gmail.com>
-Date: Fri, 25 Oct 2024 16:14:03 +0800
-Message-ID: <CAOoeyxXX2fpHVJ8urLmy+pBjH1aRdYu6qrtwOmwUxTUyQq30DA@mail.gmail.com>
-Subject: Re: [PATCH v1 1/9] mfd: Add core driver for Nuvoton NCT6694
-To: Marc Kleine-Budde <mkl@pengutronix.de>
-Cc: tmyu0@nuvoton.com, lee@kernel.org, linus.walleij@linaro.org, brgl@bgdev.pl, 
-	andi.shyti@kernel.org, mailhol.vincent@wanadoo.fr, andrew+netdev@lunn.ch, 
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
-	wim@linux-watchdog.org, linux@roeck-us.net, jdelvare@suse.com, 
-	jic23@kernel.org, lars@metafoo.de, ukleinek@kernel.org, 
-	alexandre.belloni@bootlin.com, linux-kernel@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, 
-	linux-can@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-watchdog@vger.kernel.org, linux-hwmon@vger.kernel.org, 
-	linux-iio@vger.kernel.org, linux-pwm@vger.kernel.org, 
-	linux-rtc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Dear Marc,
+Use existing swap() function rather than duplicating its implementation.
 
-Excuse me, I'm a bit confused. Is there anything I need to
-improve on?
+./kernel/locking/test-ww_mutex.c:420:22-23: WARNING opportunity for swap().
 
-Thanks,
-Ming
+Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=11531
+Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+---
+ kernel/locking/test-ww_mutex.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-Marc Kleine-Budde <mkl@pengutronix.de> =E6=96=BC 2024=E5=B9=B410=E6=9C=8824=
-=E6=97=A5 =E9=80=B1=E5=9B=9B =E4=B8=8B=E5=8D=8811:34=E5=AF=AB=E9=81=93=EF=
-=BC=9A
->
-> On 24.10.2024 17:20:57, Marc Kleine-Budde wrote:
->
-> [...]
->
-> > > +   nct6694->cmd_buffer =3D devm_kcalloc(dev, CMD_PACKET_SZ,
-> > > +                                      sizeof(unsigned char), GFP_KER=
-NEL);
-> > > +   if (!nct6694->cmd_buffer)
-> > > +           return -ENOMEM;
-> > > +   nct6694->rx_buffer =3D devm_kcalloc(dev, MAX_PACKET_SZ,
-> > > +                                     sizeof(unsigned char), GFP_KERN=
-EL);
-> > > +   if (!nct6694->rx_buffer)
-> > > +           return -ENOMEM;
-> > > +   nct6694->tx_buffer =3D devm_kcalloc(dev, MAX_PACKET_SZ,
-> > > +                                     sizeof(unsigned char), GFP_KERN=
-EL);
-> > > +   if (!nct6694->tx_buffer)
-> > > +           return -ENOMEM;
-> > > +   nct6694->int_buffer =3D devm_kcalloc(dev, MAX_PACKET_SZ,
-> > > +                                      sizeof(unsigned char), GFP_KER=
-NEL);
-> > > +   if (!nct6694->int_buffer)
-> > > +           return -ENOMEM;
-> > > +
-> > > +   nct6694->int_in_urb =3D usb_alloc_urb(0, GFP_KERNEL);
-> > > +   if (!nct6694->int_in_urb) {
-> > > +           dev_err(&udev->dev, "Failed to allocate INT-in urb!\n");
-> > > +           return -ENOMEM;
-> > > +   }
-> > > +
-> > > +   /* Bulk pipe maximum packet for each transaction */
-> > > +   bulk_pipe =3D usb_sndbulkpipe(udev, BULK_OUT_ENDPOINT);
-> > > +   nct6694->maxp =3D usb_maxpacket(udev, bulk_pipe);
-> > > +
-> > > +   mutex_init(&nct6694->access_lock);
-> > > +   nct6694->udev =3D udev;
-> > > +   nct6694->timeout =3D URB_TIMEOUT; /* Wait until urb complete */
-> > > +
-> > > +   INIT_LIST_HEAD(&nct6694->handler_list);
-> > > +   spin_lock_init(&nct6694->lock);
-> > > +
-> > > +   usb_fill_int_urb(nct6694->int_in_urb, udev, pipe,
-> > > +                    nct6694->int_buffer, maxp, usb_int_callback,
-> > > +                    nct6694, int_endpoint->bInterval);
-> > > +   ret =3D usb_submit_urb(nct6694->int_in_urb, GFP_KERNEL);
-> > > +   if (ret)
-> > > +           goto err_urb;
-> > > +
-> > > +   dev_set_drvdata(&udev->dev, nct6694);
-> > > +   usb_set_intfdata(iface, nct6694);
-> > > +
-> > > +   ret =3D mfd_add_hotplug_devices(&udev->dev, nct6694_dev,
-> > > +                                 ARRAY_SIZE(nct6694_dev));
-> > > +   if (ret) {
-> > > +           dev_err(&udev->dev, "Failed to add mfd's child device\n")=
-;
-> > > +           goto err_mfd;
-> > > +   }
-> > > +
-> > > +   nct6694->async_workqueue =3D alloc_ordered_workqueue("asyn_workqu=
-eue", 0);
-> >
-> > Where is the async_workqueue used?
->
-> Sorry - it's used in the driver, which live in separate directories -
-> you can ignore this comment.
->
-> But then the question comes up, it looks racy to _first_ add the devices
-> and _then_ the workqueue.
->
-> regards,
-> Marc
->
-> --
-> Pengutronix e.K.                 | Marc Kleine-Budde          |
-> Embedded Linux                   | https://www.pengutronix.de |
-> Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-> Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+diff --git a/kernel/locking/test-ww_mutex.c b/kernel/locking/test-ww_mutex.c
+index 5d58b2c0ef98..bcb1b9fea588 100644
+--- a/kernel/locking/test-ww_mutex.c
++++ b/kernel/locking/test-ww_mutex.c
+@@ -404,7 +404,7 @@ static inline u32 prandom_u32_below(u32 ceil)
+ static int *get_random_order(int count)
+ {
+ 	int *order;
+-	int n, r, tmp;
++	int n, r;
+ 
+ 	order = kmalloc_array(count, sizeof(*order), GFP_KERNEL);
+ 	if (!order)
+@@ -415,11 +415,8 @@ static int *get_random_order(int count)
+ 
+ 	for (n = count - 1; n > 1; n--) {
+ 		r = prandom_u32_below(n + 1);
+-		if (r != n) {
+-			tmp = order[n];
+-			order[n] = order[r];
+-			order[r] = tmp;
+-		}
++		if (r != n)
++			swap(order[n], order[r]);
+ 	}
+ 
+ 	return order;
+-- 
+2.32.0.3.g01195cf9f
+
 
