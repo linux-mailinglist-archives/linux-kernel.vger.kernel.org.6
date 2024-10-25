@@ -1,174 +1,214 @@
-Return-Path: <linux-kernel+bounces-381655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0F7E9B0211
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 14:20:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 077AF9B0210
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 14:20:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7240F1F23469
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 12:20:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B0431C2113E
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 12:20:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEAEC205E0E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 826D12038B3;
 	Fri, 25 Oct 2024 12:19:37 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s0k65mNY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3139220263D
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 12:19:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0F642036EA;
+	Fri, 25 Oct 2024 12:19:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729858777; cv=none; b=KGlXKVu1zIrnnPuI1Gq96z1ZeG0HOEAZT1l398ZFgvtFUDspcjOt96d5NhrsF1cvI9h2hTvtZaQ96FagQr1412WtZIF8Al1yk9mjkBdZrc9oLWKO6sWNrP+8gQFcbR2wbcofWD8XiLXEcF9bjP+OlY8+KXVpwR6HpMEdSo1PaZM=
+	t=1729858776; cv=none; b=OGdPZGgQdvBnI6GOYmwH42o3tOgEybQFTWMlfTfIAvloFZ6M5TzCvXSQ6Y/qY5TULfczAkwoJzHREomO09+bSjyJTmtJ3XIM/91F0ldpTuCq8VHqoCCUs9f5j/ZcpHFgB7W5/wdm3e3Adt4rz9TU/ToQAnarNbwfeSlau/vxL38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729858777; c=relaxed/simple;
-	bh=pMFVEzKWD6P3P5myDTcKhhd54zg+H7Lva5B8ujucrPY=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=OjJ530JejqHhOnTdoYB1pIDSFh/xbBe9rGBXXBvakayRQ2WngUYe/mqugz7tF5mbGduWcHSMdjZ6HWYhA8KOsPXfk8GJX1XtsWST6ReC3QWJF0x9gFgRoFOiStIIDA2iC48C0NR/7Mt1iOzPec5WPcZQVv5QCeR7SQFFPvDc8Lc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a3a6afd01eso17442325ab.3
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 05:19:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729858774; x=1730463574;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=sIsU4C8/mQHTI4yb5M/cpmsOZdKq3dkg5gMtXJeEvFM=;
-        b=dLdLrm5gwBxL1uFQO3d8YBQkue7Pvt7kESW8mAAypcvh4an2+xCWQiYj5Mk+JvLMQ1
-         b97C5OZGJBBBIV9h0CU6RYWMBxKQIFYyc2TrdOjfMPN5rK7QIWV8kZudjoYeiVAjl5ek
-         ldZdRvcyLTP8fwAjp/oJ4t+R8EJX//QedBzNymY5vRkM6WCymHmOTXKBPK3QoA/1fXh+
-         b5JSzrv5FL6Ua4Z/xYGGR/3nJFjvOyOctEdbun6haIkw1qvfqvFn2VR90CUQgwtC5A7w
-         4FjlusIWo8l4/TzJWyr1fsnW72zbS/RwlKfweOWz7X0pmpe7+Pqa1xHCWg0X2W6PhkkC
-         FzWA==
-X-Forwarded-Encrypted: i=1; AJvYcCVHkki/k+LejP1AhCteAg0pXdoq/WIDBghZscZyOAvTBa4QxTj2kRY6pEpsI9jWhWqJ3VcUVY4s2qumuGI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBwciT2PnePLW7S7BpjzDxTuKKfO7ZeCXgElcNcigj9GxmGepF
-	Z+8LiZO4b2OX1uBea3gDTmsgSbIlrH4gezY99GJ5/Om0cB+cFPZajyOUrUqKPrc6fCKrt4XP2FO
-	5q3p3sXDxaliLC80e9HdjE6NgZBHLBVFEIKviuJfI3Al+VhMLsS1Th5g=
-X-Google-Smtp-Source: AGHT+IFFpzoFs6kbLBeH+fP1KLHkweu+LGMp/pYSdIfpLn1uFU70M5V70rJG5MfqsD1SczulVSfgkzluDO8xlNMjZTcIhTgKZtZg
+	s=arc-20240116; t=1729858776; c=relaxed/simple;
+	bh=4OfbtInGdWFG2PxojSwt9ZulIvrT4ba5PqsybEwaudk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WNewCzd0kBdhpSmBzBiKfJuF917ZhJL7KCeL/yog63Bp11avhJJPShzoTcLwnO8Hv6SKRAvdH2Q+5jokRI1RFPSmwYmM/SYbcRATow2LFsej30CruI/VhiPm/O2PuPWGiYxGi4CGZEk17OONeBYJaStMS5LztK7Cp94IBTOvLlM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s0k65mNY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D040C4CEC3;
+	Fri, 25 Oct 2024 12:19:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729858776;
+	bh=4OfbtInGdWFG2PxojSwt9ZulIvrT4ba5PqsybEwaudk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=s0k65mNYEOXJgA0k5/VubpltyxxSImUuB4PUA2MGC3GIQe9buv+zD3TuzEhLz2KHE
+	 101oBJIT82F7mD3ng6FnNSWQEOzM+7h7M677qsjYvic9VMS3GfJdf/2ggrWWwiLQ+V
+	 wW48tRxykoO7NrXrF3hC/AbNyBgPQhwHekVFtxu9K0rXmezkrQZQuNQasEsB4dawSt
+	 WYSoBM/C7JJO1yCOQE+U91NLBydJ5hq6svDxMFh82JyaCwMc632GuRYBCJ4cLwkeqv
+	 uBO04XglpFnPTFOIV8gosSs8Xs0fjSOCLAeS0yt3GQIp/+WmkBMAwrbA1m43T1R7kS
+	 ooOaH2B3lITsw==
+Date: Fri, 25 Oct 2024 08:19:34 -0400
+From: Sasha Levin <sashal@kernel.org>
+To: Michael Ellerman <mpe@ellerman.id.au>
+Cc: torvalds@linux-foundation.org, kuba@kernel.org, davem@davemloft.net,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	pabeni@redhat.com, kees@kernel.org, broonie@kernel.org
+Subject: Re: [GIT PULL] Networking for v6.12-rc5
+Message-ID: <ZxuM1hGE7UBRV48M@sashalap>
+References: <20241024140101.24610-1-pabeni@redhat.com>
+ <ZxpZcz3jZv2wokh8@sashalap>
+ <87cyjpj6qx.fsf@mail.lhotse>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:152c:b0:3a0:985b:ddb4 with SMTP id
- e9e14a558f8ab-3a4de7825fbmr57932285ab.2.1729858774295; Fri, 25 Oct 2024
- 05:19:34 -0700 (PDT)
-Date: Fri, 25 Oct 2024 05:19:34 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <671b8cd6.050a0220.2e773.0001.GAE@google.com>
-Subject: [syzbot] [bcachefs?] WARNING: locking bug in rcu_pending_pcpu_dequeue
-From: syzbot <syzbot+e103923b16da1cda0ae0@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <87cyjpj6qx.fsf@mail.lhotse>
 
-Hello,
+On Fri, Oct 25, 2024 at 12:44:54PM +1100, Michael Ellerman wrote:
+>Sasha Levin <sashal@kernel.org> writes:
+>> Sorry for the spam below, this is another attempt to solicit feedback to
+>> the -next analysis tools that a few of us were working on.
+>>
+>> Bigger changes since the last attempt:
+>>
+>>    - Count calendar days rather than number of tags for the histogram.
+>
+>I think this is a good change, but the presentation of the information
+>probably needs a bit of work.
+>
+>Some of the commits below are in next-20241024, which was tagged less
+>than one day ago, but some are not. But they're all shown as "0 days",
+>which I think will confuse people.
+>
+>I think you need to differentiate between 0 days in linux-next vs
+>*never* in linux-next. Otherwise folks are going to yell at you and say
+>"that commit was in linux-next!".
+>
+>>    - Make histogram more concise when possible (the below is *not* a good
+>>      example of the new functionality).
+>>    - Add more statistics to the report.
+>>
+>> On Thu, Oct 24, 2024 at 04:01:01PM +0200, Paolo Abeni wrote:
+>>>Hi Linus!
+>>>
+>>>Oddily this includes a fix for posix clock regression; in our previous PR
+>>>we included a change there as a pre-requisite for networking one.
+>>>Such fix proved to be buggy and requires the follow-up included here.
+>>>Thomas suggested we should send it, given we sent the buggy patch.
+>>>
+>>>The following changes since commit 07d6bf634bc8f93caf8920c9d61df761645336e2:
+>>>
+>>>  Merge tag 'net-6.12-rc4' of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net (2024-10-17 09:31:18 -0700)
+>>>
+>>>are available in the Git repository at:
+>>>
+>>>  git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git net-6.12-rc5
+>>
+>> Days in linux-next:
+>> ----------------------------------------
+>>   0 | █████████████████████████████████████████████████ (14)
+>>   1 | ███████ (2)
+>
+>So I think here you need something like (numbers made up):
+>
+>Days in linux-next:
+>----------------------------------------
+>   0 | ███████████████ (4)
+> < 1 | █████████████████████████████████████████████████ (10)
+>   1 | ███████ (2)
+>
+>To make it clear that some commits were not in linux-next at all,
+>whereas some were but for such a short time that they can hardly have
+>seen any testing. (Which still has some value, because at least we know
+>they didn't cause a merge conflict and passed at least some build
+>testing that sfr does during the linux-next merge).
 
-syzbot found the following issue on:
+Makes sense, added in https://git.kernel.org/pub/scm/linux/kernel/git/sashal/next-analysis.git/commit/?id=116b9550ccd6fb5e7f2ba9375af59392e03abb57
 
-HEAD commit:    15e7d45e786a Add linux-next specific files for 20241016
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=13b56a40580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c36416f1c54640c0
-dashboard link: https://syzkaller.appspot.com/bug?extid=e103923b16da1cda0ae0
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+>>   2 | █████████████████████ (6)
+>>   3 | ██████████████████████████████████████████ (12)
+>>   4 |
+>>   5 |
+>>   6 | ███ (1)
+>>   7 |
+>>   8 | ███ (1)
+>>   9 |
+>> 10 |
+>> 11 |
+>> 12 |
+>> 13 |
+>> 14+| ██████████████ (4)
+>>
+>> Commits with 0 days in linux-next (14 of 40: 35.0%):
+>> --------------------------------
+>> 3e65ede526cf4 net: dsa: mv88e6xxx: support 4000ps cycle counter period
+>> 7e3c18097a709 net: dsa: mv88e6xxx: read cycle counter period from hardware
+>> 67af86afff74c net: dsa: mv88e6xxx: group cycle counter coefficients
+>> 64761c980cbf7 net: usb: qmi_wwan: add Fibocom FG132 0x0112 composition
+>> 4c262801ea60c hv_netvsc: Fix VF namespace also in synthetic NIC NETDEV_REGISTER event
+>> ee76eb24343bd net: dsa: microchip: disable EEE for KSZ879x/KSZ877x/KSZ876x
+>> 246b435ad6685 Bluetooth: ISO: Fix UAF on iso_sock_timeout
+>> 1bf4470a3939c Bluetooth: SCO: Fix UAF on sco_sock_timeout
+>> 989fa5171f005 Bluetooth: hci_core: Disable works on hci_unregister_dev
+>
+>The commits below here are in today's linux-next (next-20241024):
+>
+>> 6e62807c7fbb3 posix-clock: posix-clock: Fix unbalanced locking in pc_clock_settime()
+>> 10ce0db787004 r8169: avoid unsolicited interrupts
+>> b22db8b8befe9 net: sched: use RCU read-side critical section in taprio_dump()
+>> f504465970aeb net: sched: fix use-after-free in taprio_change()
+>> 34d35b4edbbe8 net/sched: act_api: deny mismatched skip_sw/skip_hw flags for actions created by classifiers
+>
+>The first question that comes to mind here is what's the diffstat for
+>these like.
+>
+>There's a big difference if these are all tight few-line fixes to
+>individual drivers or sprawling hundred line changes that touch arch
+>code etc.
+>
+>Listing the diffstat for all of them individually would be way too
+>spammy. Passing all the sha's to git show and using diffstat seems to
+>give a reasonable overview, eg:
+>
+>$ git show -p 3e65ede526cf4 7e3c18097a709 67af86afff74c 64761c980cbf7 4c262801ea60c ee76eb24343bd 246b435ad6685 1bf4470a3939c 989fa5171f005 | diffstat -p1
+>
+> drivers/net/dsa/microchip/ksz_common.c |   21 +++++++++++----------
+> drivers/net/dsa/mv88e6xxx/chip.h       |    8 +++-----
+> drivers/net/dsa/mv88e6xxx/ptp.c        |  142 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++--------------------------------------------------
+> drivers/net/hyperv/netvsc_drv.c        |   30 ++++++++++++++++++++++++++++++
+> drivers/net/usb/qmi_wwan.c             |    1 +
+> include/net/bluetooth/bluetooth.h      |    1 +
+> net/bluetooth/af_bluetooth.c           |   22 ++++++++++++++++++++++
+> net/bluetooth/hci_core.c               |   24 +++++++++++++++---------
+> net/bluetooth/hci_sync.c               |   12 +++++++++---
+> net/bluetooth/iso.c                    |   18 ++++++++++++------
+> net/bluetooth/sco.c                    |   18 ++++++++++++------
+> 11 files changed, 208 insertions(+), 89 deletions(-)
+>
+>I know the pull request has a diffstat, but they are significantly different.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+I agree with needing diffstat, but I don't think we should just add them
+all together. Instead, I've added diffstat on a per-commit basis to the
+commits with 0 days. Something like:
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/cf2ad43c81cc/disk-15e7d45e.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/c85347a66a1c/vmlinux-15e7d45e.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/648cf8e59c13/bzImage-15e7d45e.xz
+Commits with 0 days in linux-next (5 of 26: 19.2%):
+--------------------------------
+a1b2c3d blah blah blah
+  drivers/net/wireless/broadcom/brcm80211/brcmfmac/core.c | 25 ++++++++++++++-----------
+  1 file changed, 14 insertions(+), 11 deletions(-)
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+e103923b16da1cda0ae0@syzkaller.appspotmail.com
+e4f5g6h more blah
+  security/keys/trusted.c          | 15 +++++++++------
+  security/keys/trusted-keys.c     | 12 ++++++++----
+  2 files changed, 17 insertions(+), 10 deletions(-)
 
-while marking u64s 11 type btree_ptr_v2 SPOS_MAX len 0 ver 0: seq 1db8f60c84bb244c written 8 min_key POS_MIN durability: 1 ptr: 0:42:0 gen 0, fixing
-bucket 0:0 gen 0 has wrong data_type: got free, should be sb, fixing
-bucket 0:0 gen 0 data type sb has wrong dirty_sectors: got 0, should be 256, fixing
-------------[ cut here ]------------
-Looking for class "->lock" with key rcu_pending_init.__key, but found a different class "&p->lock" with the same key
-WARNING: CPU: 1 PID: 5348 at kernel/locking/lockdep.c:939 look_up_lock_class+0xdc/0x170 kernel/locking/lockdep.c:936
-Modules linked in:
-CPU: 1 UID: 0 PID: 5348 Comm: syz.2.3 Not tainted 6.12.0-rc3-next-20241016-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-RIP: 0010:look_up_lock_class+0xdc/0x170 kernel/locking/lockdep.c:936
-Code: 01 0f 85 8a 00 00 00 c6 05 85 31 3b 04 01 90 49 8b 16 49 8b 76 18 48 8b 8b b8 00 00 00 48 c7 c7 60 f0 0a 8c e8 c5 9c 89 f5 90 <0f> 0b 90 90 eb 61 90 e8 c8 d2 ed f8 e8 53 d7 a8 f5 48 c7 c7 a0 ef
-RSP: 0018:ffffc900042dd810 EFLAGS: 00010046
-RAX: a3cf1fd56a819d00 RBX: ffffffff93cc6b10 RCX: 0000000000040000
-RDX: ffffc90009742000 RSI: 000000000003ffff RDI: 0000000000040000
-RBP: ffffc900042dd920 R08: ffffffff8155d7b2 R09: 1ffff110170e519a
-R10: dffffc0000000000 R11: ffffed10170e519b R12: ffffe8ffffd748a0
-R13: ffffe8ffffd748a0 R14: ffffe8ffffd748a0 R15: ffffffff9a5954a0
-FS:  00007f2715b246c0(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000555c28f0cb00 CR3: 0000000077a9a000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- register_lock_class+0x102/0x980 kernel/locking/lockdep.c:1290
- __lock_acquire+0xf0/0x2050 kernel/locking/lockdep.c:5077
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5825
- __raw_spin_lock_irq include/linux/spinlock_api_smp.h:119 [inline]
- _raw_spin_lock_irq+0xd3/0x120 kernel/locking/spinlock.c:170
- spin_lock_irq include/linux/spinlock.h:376 [inline]
- rcu_pending_pcpu_dequeue+0x29/0x2b0 fs/bcachefs/rcu_pending.c:524
- bkey_cached_alloc fs/bcachefs/btree_key_cache.c:143 [inline]
- btree_key_cache_create fs/bcachefs/btree_key_cache.c:220 [inline]
- btree_key_cache_fill+0x43a/0x2920 fs/bcachefs/btree_key_cache.c:309
- bch2_btree_path_traverse_cached+0x84e/0xbe0 fs/bcachefs/btree_key_cache.c:361
- bch2_btree_path_traverse_one+0x45d/0x2900 fs/bcachefs/btree_iter.c:1144
- bch2_btree_path_traverse fs/bcachefs/btree_iter.h:249 [inline]
- bch2_trans_update_get_key_cache+0x6c0/0x1230 fs/bcachefs/btree_update.c:494
- bch2_trans_update+0x9b1/0x2550 fs/bcachefs/btree_update.c:539
- bch2_alloc_write_key fs/bcachefs/btree_gc.c:886 [inline]
- bch2_gc_alloc_done fs/bcachefs/btree_gc.c:896 [inline]
- bch2_check_allocations+0x4574/0x7350 fs/bcachefs/btree_gc.c:1138
- bch2_run_recovery_pass+0xf0/0x1e0 fs/bcachefs/recovery_passes.c:216
- bch2_run_recovery_passes+0x27e/0x9a0 fs/bcachefs/recovery_passes.c:280
- bch2_fs_recovery+0x25cc/0x39a0 fs/bcachefs/recovery.c:892
- bch2_fs_start+0x356/0x5b0 fs/bcachefs/super.c:1037
- bch2_fs_get_tree+0xd68/0x1710 fs/bcachefs/fs.c:2174
- vfs_get_tree+0x90/0x2b0 fs/super.c:1814
- do_new_mount+0x2be/0xb40 fs/namespace.c:3507
- do_mount fs/namespace.c:3847 [inline]
- __do_sys_mount fs/namespace.c:4055 [inline]
- __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4032
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f2714d7f79a
-Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 de 1a 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f2715b23e68 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007f2715b23ef0 RCX: 00007f2714d7f79a
-RDX: 0000000020000040 RSI: 0000000020000080 RDI: 00007f2715b23eb0
-RBP: 0000000020000040 R08: 00007f2715b23ef0 R09: 0000000002200006
-R10: 0000000002200006 R11: 0000000000000246 R12: 0000000020000080
-R13: 00007f2715b23eb0 R14: 00000000000059d2 R15: 0000000020000740
- </TASK>
+This way it's easy to ignore one-liners, and look at bigger commits that
+skipped -next.
 
+>Apologies for bike-shedding this so hard, it's just because I think it
+>would be a good addition to the development culture.
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+No worries, these are great improvements. Thanks!
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+-- 
+Thanks,
+Sasha
 
