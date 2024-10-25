@@ -1,94 +1,187 @@
-Return-Path: <linux-kernel+bounces-380993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 575D69AF8C1
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 06:06:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B33709AF8BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 06:03:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB837282FCB
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 04:06:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70277282647
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 04:03:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E89218C01F;
-	Fri, 25 Oct 2024 04:06:37 +0000 (UTC)
-Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75BD514F9FD;
+	Fri, 25 Oct 2024 04:03:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="VYgQchXj"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E489C18B49F
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 04:06:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEEA34C83
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 04:03:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729829197; cv=none; b=JfkjvMahjrkrpxRX5qSPiWlwwq0Z4k9SNb11eM2JLl08yQ6rWTAFAIv98ctnXTzg5hKBQJEgr3qbtULO9W4rCTi99bFa4rkH7YiCEAiiFn/GILqErRPfzGOv5HLiWhgvI6k74UUWS0DV+dbDmxzgNm6f2D/7rw48xRX/8IrIPnM=
+	t=1729829031; cv=none; b=SLB39pGPQjIYwuDYrwmkHmPBWFq75dskBykte6kBU74iC/BEUNCA+aGCZ9D5f1L7+4CQwyitar84C+CS8sWQCBgY+55JYfIaRUtiGeDyZIUJJxCn9S7reUMgtFzGqOp0L504L7ZeW3gh+7FxdCRU2dzLl1Xci9IiMOp+Qml61ic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729829197; c=relaxed/simple;
-	bh=Dy3a75mbMFh1VPSqT6Qk52Xix/OR67VZZOyApTITY6k=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dVxbCLdycalYxOAbelDTNVWKEHCeQuBD8GQP+sP4cC1bLcxI99n1zMsVWdafLDDVvWJqosu4gyrkIgegf5Mntd0aLKwym9UebYNkzTUpzcpwI1364Lmp97OujyedxPSrjzDNHCI7C3Cn3W2shJTZKWJFhxGGtFphXQWhtzEXCFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4XZTFX6HDzz1SDDD;
-	Fri, 25 Oct 2024 11:45:20 +0800 (CST)
-Received: from kwepemf100008.china.huawei.com (unknown [7.202.181.222])
-	by mail.maildlp.com (Postfix) with ESMTPS id C9FB9140158;
-	Fri, 25 Oct 2024 11:46:46 +0800 (CST)
-Received: from huawei.com (10.175.103.91) by kwepemf100008.china.huawei.com
- (7.202.181.222) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 25 Oct
- 2024 11:46:45 +0800
-From: Zeng Heng <zengheng4@huawei.com>
-To: <vschneid@redhat.com>, <bsegall@google.com>, <juri.lelli@redhat.com>,
-	<peterz@infradead.org>, <changhuaixin@linux.alibaba.com>, <mgorman@suse.de>,
-	<rostedt@goodmis.org>, <mingo@redhat.com>, <vincent.guittot@linaro.org>,
-	<dietmar.eggemann@arm.com>
-CC: <bobo.shaobowang@huawei.com>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH] sched/rt: Fix not used variable 'max_rt_runtime'
-Date: Fri, 25 Oct 2024 12:00:26 +0800
-Message-ID: <20241025040026.1683576-1-zengheng4@huawei.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1729829031; c=relaxed/simple;
+	bh=2/2YtK5bXsqDkfG21pHguLvvvycXBhUB2B4XJm0GfCE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=B2u+ju4SmkuxgU13m74U0spgfeZJzVtAu67UFeUL82UB9yzPLax68PIImq/iZiHZdgMKynZaTqEcVwwf5yGtE3AZBA3M15JR+cPfCF5D+6MVFzA/IsiSaxZkZNkQPlJHO/w7R9yQpHCji3CXCnyeS2UijenhAtPFoLKDM1Dha9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=VYgQchXj; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-539e690479cso1653167e87.3
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 21:03:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1729829028; x=1730433828; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=2/2YtK5bXsqDkfG21pHguLvvvycXBhUB2B4XJm0GfCE=;
+        b=VYgQchXja+l6ZEpJ2MclZEOXC0LLDgYnGVxw3vJgAqqLYYv6PDqlYnkq+GEELRZXTt
+         OyNXjyd1aZfig9tYxDxWMzcEz9rROD0J3bqkqiczzXRrIXtwc7cKQNCaO23Kb8sTaMBU
+         xOU01jxOTGSA+npxEEmMR7CJ74xeSsonU+pV0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729829028; x=1730433828;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2/2YtK5bXsqDkfG21pHguLvvvycXBhUB2B4XJm0GfCE=;
+        b=sn8nRFJ23RZgzqrTOJILyD5JPVXw7cz2X6NyFN6p9/ElGmJqHGXrfuO9jLKZ5D2dGu
+         nDKnQwB3gm625r/huhR609CxnnsppJuIUjDgiQzZj0v9ORs7X0YTiOL7N7VQII6df3xh
+         bhHIPjN20tzFeYkNCy0c5DG1tBhFQpGlr/scrmnzLMq2Wqv86Y1yRu4N4Z/vvrSAXJ7A
+         KYKBYkEGRlFC9gzfX3vZFEiu3Gdwl+iD2wI/8yQDIWUafJi3VYXCJP3p0UoeBljmO47A
+         edAvzht0hGjl39jjEFYrQQD+YxSCrGR3evki34fYifEiSl2+KRXSCjlcJlT2qFMeYweD
+         FJTA==
+X-Forwarded-Encrypted: i=1; AJvYcCVEPc0pnFUXMlMXV6sjaZowY7MacEl20T4ounP2cla5FHMFuETFrlRPRN3YV0DHGea3BL9YksKx/Y4HTmM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YydWlwXsrS/rmyTi0EVqQp0VSoGIbuIzK5SKtk590QaUcFBOngI
+	5T2LLGFhrs0tdqmDcUoDr7kYCPoNVw4Q9IaVk/D4SY6KyT5efwq94jHZUr4MHOI42RRIgFY4a1m
+	IFeuW4Y8iEYUXC804IZjwdftUp4OXyPpt3k1j
+X-Google-Smtp-Source: AGHT+IEVYWeM4jxS2v0jAsOYeL77hWveoGm58FAhocT4euIlXb+1+TUvFiTAqzFAxSIKwfrev1VpbZq0zG9bgQVRTZM=
+X-Received: by 2002:a05:6512:3da6:b0:539:d0ef:b3f9 with SMTP id
+ 2adb3069b0e04-53b1a36b7eemr4830438e87.40.1729829027856; Thu, 24 Oct 2024
+ 21:03:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <IA0PR12MB8713EC167DC79275451864BADC6C2@IA0PR12MB8713.namprd12.prod.outlook.com>
+ <20240920181129.37156-1-sebott@redhat.com>
+In-Reply-To: <20240920181129.37156-1-sebott@redhat.com>
+From: Kalesh Anakkur Purayil <kalesh-anakkur.purayil@broadcom.com>
+Date: Fri, 25 Oct 2024 09:33:35 +0530
+Message-ID: <CAH-L+nPJzAzKDoBioOE8pSOYA0PQUAtAUVnUDw3Zo3vzwonmSw@mail.gmail.com>
+Subject: Re: [PATCH v2] net/mlx5: unique names for per device caches
+To: Sebastian Ott <sebott@redhat.com>
+Cc: netdev@vger.kernel.org, linux-rdma@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Saeed Mahameed <saeedm@nvidia.com>, 
+	Leon Romanovsky <leon@kernel.org>, Tariq Toukan <tariqt@nvidia.com>, 
+	"David S . Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Parav Pandit <parav@nvidia.com>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="000000000000c011f80625453454"
+
+--000000000000c011f80625453454
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemf100008.china.huawei.com (7.202.181.222)
+Content-Transfer-Encoding: quoted-printable
 
-Fix the following compilation warning:
+On Fri, Sep 20, 2024 at 11:41=E2=80=AFPM Sebastian Ott <sebott@redhat.com> =
+wrote:
+>
+> Add the device name to the per device kmem_cache names to
+> ensure their uniqueness. This fixes warnings like this:
+> "kmem_cache of name 'mlx5_fs_fgs' already exists".
+>
+> Signed-off-by: Sebastian Ott <sebott@redhat.com>
+LGTM,
+Reviewed-by: Kalesh AP <kalesh-anakkur.purayil@broadcom.com>
 
-kernel/sched/rt.c:9:18: warning: ‘max_rt_runtime’ defined but not used
-[-Wunused-const-variable=]
-    9 | static const u64 max_rt_runtime = MAX_BW;
 
-Only define the const variables when the CONFIG_SYSCTL or
-CONFIG_RT_GROUP_SCHED is enabled.
+--=20
+Regards,
+Kalesh A P
 
-Fixes: d505b8af5891 ("sched: Defend cfs and rt bandwidth quota against overflow")
-Signed-off-by: Zeng Heng <zengheng4@huawei.com>
----
- kernel/sched/rt.c | 2 ++
- 1 file changed, 2 insertions(+)
+--000000000000c011f80625453454
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
 
-diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
-index 172c588de542..0957f44b2eda 100644
---- a/kernel/sched/rt.c
-+++ b/kernel/sched/rt.c
-@@ -5,8 +5,10 @@
-  */
- 
- int sched_rr_timeslice = RR_TIMESLICE;
-+#if defined(CONFIG_SYSCTL) || defined(CONFIG_RT_GROUP_SCHED)
- /* More than 4 hours if BW_SHIFT equals 20. */
- static const u64 max_rt_runtime = MAX_BW;
-+#endif
- 
- /*
-  * period over which we measure -rt task CPU usage in us.
--- 
-2.25.1
-
+MIIQiwYJKoZIhvcNAQcCoIIQfDCCEHgCAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
+gg3iMIIFDTCCA/WgAwIBAgIQeEqpED+lv77edQixNJMdADANBgkqhkiG9w0BAQsFADBMMSAwHgYD
+VQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBSMzETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEGA1UE
+AxMKR2xvYmFsU2lnbjAeFw0yMDA5MTYwMDAwMDBaFw0yODA5MTYwMDAwMDBaMFsxCzAJBgNVBAYT
+AkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYDVQQDEyhHbG9iYWxTaWduIEdDQyBS
+MyBQZXJzb25hbFNpZ24gMiBDQSAyMDIwMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA
+vbCmXCcsbZ/a0fRIQMBxp4gJnnyeneFYpEtNydrZZ+GeKSMdHiDgXD1UnRSIudKo+moQ6YlCOu4t
+rVWO/EiXfYnK7zeop26ry1RpKtogB7/O115zultAz64ydQYLe+a1e/czkALg3sgTcOOcFZTXk38e
+aqsXsipoX1vsNurqPtnC27TWsA7pk4uKXscFjkeUE8JZu9BDKaswZygxBOPBQBwrA5+20Wxlk6k1
+e6EKaaNaNZUy30q3ArEf30ZDpXyfCtiXnupjSK8WU2cK4qsEtj09JS4+mhi0CTCrCnXAzum3tgcH
+cHRg0prcSzzEUDQWoFxyuqwiwhHu3sPQNmFOMwIDAQABo4IB2jCCAdYwDgYDVR0PAQH/BAQDAgGG
+MGAGA1UdJQRZMFcGCCsGAQUFBwMCBggrBgEFBQcDBAYKKwYBBAGCNxQCAgYKKwYBBAGCNwoDBAYJ
+KwYBBAGCNxUGBgorBgEEAYI3CgMMBggrBgEFBQcDBwYIKwYBBQUHAxEwEgYDVR0TAQH/BAgwBgEB
+/wIBADAdBgNVHQ4EFgQUljPR5lgXWzR1ioFWZNW+SN6hj88wHwYDVR0jBBgwFoAUj/BLf6guRSSu
+TVD6Y5qL3uLdG7wwegYIKwYBBQUHAQEEbjBsMC0GCCsGAQUFBzABhiFodHRwOi8vb2NzcC5nbG9i
+YWxzaWduLmNvbS9yb290cjMwOwYIKwYBBQUHMAKGL2h0dHA6Ly9zZWN1cmUuZ2xvYmFsc2lnbi5j
+b20vY2FjZXJ0L3Jvb3QtcjMuY3J0MDYGA1UdHwQvMC0wK6ApoCeGJWh0dHA6Ly9jcmwuZ2xvYmFs
+c2lnbi5jb20vcm9vdC1yMy5jcmwwWgYDVR0gBFMwUTALBgkrBgEEAaAyASgwQgYKKwYBBAGgMgEo
+CjA0MDIGCCsGAQUFBwIBFiZodHRwczovL3d3dy5nbG9iYWxzaWduLmNvbS9yZXBvc2l0b3J5LzAN
+BgkqhkiG9w0BAQsFAAOCAQEAdAXk/XCnDeAOd9nNEUvWPxblOQ/5o/q6OIeTYvoEvUUi2qHUOtbf
+jBGdTptFsXXe4RgjVF9b6DuizgYfy+cILmvi5hfk3Iq8MAZsgtW+A/otQsJvK2wRatLE61RbzkX8
+9/OXEZ1zT7t/q2RiJqzpvV8NChxIj+P7WTtepPm9AIj0Keue+gS2qvzAZAY34ZZeRHgA7g5O4TPJ
+/oTd+4rgiU++wLDlcZYd/slFkaT3xg4qWDepEMjT4T1qFOQIL+ijUArYS4owpPg9NISTKa1qqKWJ
+jFoyms0d0GwOniIIbBvhI2MJ7BSY9MYtWVT5jJO3tsVHwj4cp92CSFuGwunFMzCCA18wggJHoAMC
+AQICCwQAAAAAASFYUwiiMA0GCSqGSIb3DQEBCwUAMEwxIDAeBgNVBAsTF0dsb2JhbFNpZ24gUm9v
+dCBDQSAtIFIzMRMwEQYDVQQKEwpHbG9iYWxTaWduMRMwEQYDVQQDEwpHbG9iYWxTaWduMB4XDTA5
+MDMxODEwMDAwMFoXDTI5MDMxODEwMDAwMFowTDEgMB4GA1UECxMXR2xvYmFsU2lnbiBSb290IENB
+IC0gUjMxEzARBgNVBAoTCkdsb2JhbFNpZ24xEzARBgNVBAMTCkdsb2JhbFNpZ24wggEiMA0GCSqG
+SIb3DQEBAQUAA4IBDwAwggEKAoIBAQDMJXaQeQZ4Ihb1wIO2hMoonv0FdhHFrYhy/EYCQ8eyip0E
+XyTLLkvhYIJG4VKrDIFHcGzdZNHr9SyjD4I9DCuul9e2FIYQebs7E4B3jAjhSdJqYi8fXvqWaN+J
+J5U4nwbXPsnLJlkNc96wyOkmDoMVxu9bi9IEYMpJpij2aTv2y8gokeWdimFXN6x0FNx04Druci8u
+nPvQu7/1PQDhBjPogiuuU6Y6FnOM3UEOIDrAtKeh6bJPkC4yYOlXy7kEkmho5TgmYHWyn3f/kRTv
+riBJ/K1AFUjRAjFhGV64l++td7dkmnq/X8ET75ti+w1s4FRpFqkD2m7pg5NxdsZphYIXAgMBAAGj
+QjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBSP8Et/qC5FJK5N
+UPpjmove4t0bvDANBgkqhkiG9w0BAQsFAAOCAQEAS0DbwFCq/sgM7/eWVEVJu5YACUGssxOGhigH
+M8pr5nS5ugAtrqQK0/Xx8Q+Kv3NnSoPHRHt44K9ubG8DKY4zOUXDjuS5V2yq/BKW7FPGLeQkbLmU
+Y/vcU2hnVj6DuM81IcPJaP7O2sJTqsyQiunwXUaMld16WCgaLx3ezQA3QY/tRG3XUyiXfvNnBB4V
+14qWtNPeTCekTBtzc3b0F5nCH3oO4y0IrQocLP88q1UOD5F+NuvDV0m+4S4tfGCLw0FREyOdzvcy
+a5QBqJnnLDMfOjsl0oZAzjsshnjJYS8Uuu7bVW/fhO4FCU29KNhyztNiUGUe65KXgzHZs7XKR1g/
+XzCCBWowggRSoAMCAQICDDfBRQmwNSI92mit0zANBgkqhkiG9w0BAQsFADBbMQswCQYDVQQGEwJC
+RTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UEAxMoR2xvYmFsU2lnbiBHQ0MgUjMg
+UGVyc29uYWxTaWduIDIgQ0EgMjAyMDAeFw0yMjA5MTAwODI5NTZaFw0yNTA5MTAwODI5NTZaMIGi
+MQswCQYDVQQGEwJJTjESMBAGA1UECBMJS2FybmF0YWthMRIwEAYDVQQHEwlCYW5nYWxvcmUxFjAU
+BgNVBAoTDUJyb2FkY29tIEluYy4xHzAdBgNVBAMTFkthbGVzaCBBbmFra3VyIFB1cmF5aWwxMjAw
+BgkqhkiG9w0BCQEWI2thbGVzaC1hbmFra3VyLnB1cmF5aWxAYnJvYWRjb20uY29tMIIBIjANBgkq
+hkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxnv1Reaeezfr6NEmg3xZlh4cz9m7QCN13+j4z1scrX+b
+JfnV8xITT5yvwdQv3R3p7nzD/t29lTRWK3wjodUd2nImo6vBaH3JbDwleIjIWhDXLNZ4u7WIXYwx
+aQ8lYCdKXRsHXgGPY0+zSx9ddpqHZJlHwcvas3oKnQN9WgzZtsM7A8SJefWkNvkcOtef6bL8Ew+3
+FBfXmtsPL9I2vita8gkYzunj9Nu2IM+MnsP7V/+Coy/yZDtFJHp30hDnYGzuOhJchDF9/eASvE8T
+T1xqJODKM9xn5xXB1qezadfdgUs8k8QAYyP/oVBafF9uqDudL6otcBnziyDBQdFCuAQN7wIDAQAB
+o4IB5DCCAeAwDgYDVR0PAQH/BAQDAgWgMIGjBggrBgEFBQcBAQSBljCBkzBOBggrBgEFBQcwAoZC
+aHR0cDovL3NlY3VyZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NnY2NyM3BlcnNvbmFsc2lnbjJj
+YTIwMjAuY3J0MEEGCCsGAQUFBzABhjVodHRwOi8vb2NzcC5nbG9iYWxzaWduLmNvbS9nc2djY3Iz
+cGVyc29uYWxzaWduMmNhMjAyMDBNBgNVHSAERjBEMEIGCisGAQQBoDIBKAowNDAyBggrBgEFBQcC
+ARYmaHR0cHM6Ly93d3cuZ2xvYmFsc2lnbi5jb20vcmVwb3NpdG9yeS8wCQYDVR0TBAIwADBJBgNV
+HR8EQjBAMD6gPKA6hjhodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjNwZXJzb25hbHNp
+Z24yY2EyMDIwLmNybDAuBgNVHREEJzAlgSNrYWxlc2gtYW5ha2t1ci5wdXJheWlsQGJyb2FkY29t
+LmNvbTATBgNVHSUEDDAKBggrBgEFBQcDBDAfBgNVHSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGP
+zzAdBgNVHQ4EFgQUI3+tdStI+ABRGSqksMsiCmO9uDAwDQYJKoZIhvcNAQELBQADggEBAGfe1o9b
+4wUud0FMjb/FNdc433meL15npjdYWUeioHdlCGB5UvEaMGu71QysfoDOfUNeyO9YKp0h0fm7clvo
+cBqeWe4CPv9TQbmLEtXKdEpj5kFZBGmav69mGTlu1A9KDQW3y0CDzCPG2Fdm4s73PnkwvemRk9E2
+u9/kcZ8KWVeS+xq+XZ78kGTKQ6Wii3dMK/EHQhnDfidadoN/n+x2ySC8yyDNvy81BocnblQzvbuB
+a30CvRuhokNO6Jzh7ZFtjKVMzYas3oo6HXgA+slRszMu4pc+fRPO41FHjeDM76e6P5OnthhnD+NY
+x6xokUN65DN1bn2MkeNs0nQpizDqd0QxggJtMIICaQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYD
+VQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYDVQQDEyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25h
+bFNpZ24gMiBDQSAyMDIwAgw3wUUJsDUiPdpordMwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcN
+AQkEMSIEIIRYphod+MmcVcnGO2RqxQzmvODDXz4qYYKqgwro9kluMBgGCSqGSIb3DQEJAzELBgkq
+hkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI0MTAyNTA0MDM0OFowaQYJKoZIhvcNAQkPMVwwWjAL
+BglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG
+9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQAM+wTrNXA2
+qqnogfREj6K0i8oe6mm5dvW/0thxmcdVqcnd3Ny6M7RZ6nu2IIt465vCw1N2Hc0btBjxkT/tTV02
+cEqfiDQr5QOhpMTRlVFST/S1HybJ9fpzBhrbelFbeG1GFce+MNDMVj/xqRgh0cPaV5MiUXihnzLH
+63kviH5blHosTb+FOr1wLMENR0Go9Wxjrbc/M+CFpE1a95NVE2+18qgdC7fPrOv14udlbTRFZffs
+9nQhMYsOQW2X0RhlsLWUF2WcAzMk4/F6rR5jNEYD2wIh/lY2mravJJg39tGxr/RKh+EjQ0g36Y3f
+DahlWeqBrOiCwgm1gY04DXL9Kjto
+--000000000000c011f80625453454--
 
