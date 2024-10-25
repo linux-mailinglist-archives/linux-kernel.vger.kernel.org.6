@@ -1,178 +1,106 @@
-Return-Path: <linux-kernel+bounces-381219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69FB99AFC15
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 10:07:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D1329AFC17
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 10:08:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15CF81F23D21
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 08:07:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E82811F2339C
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 08:08:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 932871B0F15;
-	Fri, 25 Oct 2024 08:07:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD2C01B6D00;
+	Fri, 25 Oct 2024 08:07:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ceuzB4Lm"
-Received: from mail-oo1-f43.google.com (mail-oo1-f43.google.com [209.85.161.43])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="EmI2siGf"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 183301C4A03;
-	Fri, 25 Oct 2024 08:07:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D50F1C4A29
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 08:07:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729843649; cv=none; b=QRWb/dB7mGwv1kCY2cTYr+IOwpIXpnGGrNqlkQGWHj+2wQNng23cSmGTeYALkpUzZ30uMm+F2EjWCaa1vLxx2OBD9LHqFQ68I24S6yKnXUsmgN+YtPmOxSRYXlZWzm0PxkGMatCPrhicjXG0fOJaMVlhtH9HBBFks9QbX5/gYaA=
+	t=1729843661; cv=none; b=oLWECYPgg+55XKX3pBnph3CL6EfjFS6ZV99pi7FnvTsN1tLtTPZMtcpbWkcKN9RWJRnFmCXO5D0w/z3A0AeyqscvvVJGmFtYdaL5q5+qa+8IUtkmhzuPkEWAbiAFIG4fyL2gK9AFRaIQ+GVw9o7ju8+V+UmMZd+Vi2H/Qm/UbVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729843649; c=relaxed/simple;
-	bh=3p4yGURKRybyWYfqJv7wifGGEWBo97x5AmEQOI4GZSY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=XUbZtYXQ9MsrUPOpFAIbyfVp0yQAA/mame1J000D834kciHnm9wJBwk+E7GJIiY+HsMk1X0Wqh9/u5KkOp4EaKaYrOfp1OHrvukfMCRYvMYJgxNi1wQ/XTa7WMKJKMRao/l0wZBjO03+FWc8g79kr/XVZNd0RCk1SjYztZr2N6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ceuzB4Lm; arc=none smtp.client-ip=209.85.161.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f43.google.com with SMTP id 006d021491bc7-5ebc03951abso912422eaf.2;
-        Fri, 25 Oct 2024 01:07:26 -0700 (PDT)
+	s=arc-20240116; t=1729843661; c=relaxed/simple;
+	bh=CMzPrmjSeQgyPIDRqjhVnnO2Md44vEBUyZpNM1GWQMc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oqQBJ6S6e8zzqftlMcteqqsmpze2GCXD2sMFwDuvCvsFL/tzPQdiyDT1i5/Yu2KSS/7+OsgoQfJYvFOrhYG4VjVpCVQ1iDmlZ/4ECpCCOgDFQBLcKYWHe+MOPWoOfCV82vip9lh+IPl8kXTNOAjikdxGTd8jESGxtpqJ5x6w3j4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=EmI2siGf; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-7ae3d7222d4so1204268a12.3
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 01:07:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729843646; x=1730448446; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1729843659; x=1730448459; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=kROaOIt5szJgAa68Sy5g7p0dogkgu9Z3CSKDjRWOQKY=;
-        b=ceuzB4LmeeZoIY9RTtYShamnaO1BC1E0NE/y/DlcH0jFcXfsydpUPJHLQqP85SjY74
-         V0NVquz6INjS+MRh8QQVtKIffrRxvDRMmziUCtrR8xp4LVMxGL9f4CRzz/jcdTkJ3p2H
-         wmZwLVGiTq9XlXvBUwtK+UnKRoML/kN9pnvr+yVF9EwLb/RnlGPTiaI92f6SQr0jYr2x
-         zw0+TRj+quBd1bGuciCiRldT3SKeKFQ3ygLcCIi/M+vk/nUYU2qKvNiDnESsbEMfs97c
-         boFQbJ5naaNiXSaRETA4HYn4a/FbDL/PNUDIuHUACoLJH+h6DIlNI0ygFf+yhnWFXlmm
-         /frQ==
+        bh=CMzPrmjSeQgyPIDRqjhVnnO2Md44vEBUyZpNM1GWQMc=;
+        b=EmI2siGfVjtQNg/ofTz/itnuj1Z4ORiOncCTvKodrzKH3I6LAUnBzWo+4E7MSB+Aq0
+         QJErzIrgKsEPdIy2E6Cyl6cU9+uL2QfiGYQVb1kQDSejV+F2m/hjxp1RpWH5zzhxA09r
+         ++zTAWkjqidv0NorNN9gDhB2LhGf/w3OCnTsZ5AQMKIaq0YcBB4VHQFgm0zZSm2HuriB
+         jsyJGRl78DIzA8u7+USX1XdaSRXUIEm7Lbx8mHiLSVnldzDEfwZEjEbLgZMRr9KGIQB6
+         tT1C+LpdrjO3lSTMBip60uNOtffhZOuuSBzgIIlkx9miu9nTBBSBnyevYur5rzyI9q+n
+         T5fw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729843646; x=1730448446;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1729843659; x=1730448459;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=kROaOIt5szJgAa68Sy5g7p0dogkgu9Z3CSKDjRWOQKY=;
-        b=BToUDJq5PMD9GgRVP14XSwhxH8cjLtqmPrLf4wixkEzfS4r/l6lpmjkW/JuIYf4OI5
-         CN8ZFJemCstD0gLcP6o97OlxHQQKIdGYc2522rus0bOveiRX7JXiZ7/2GDRaAhzamxFD
-         uWZLFFAFZqtx4K0w7+s/jpVIoPlYZm5pGqtNP1Qz6ZWmvmo3xD1osdALmE0nP7kNo8vJ
-         DmGCiPGDgYvlMndXHrNq20xl26JiqYtuj6pN0XKhtIY3JdZDJj4qRmfM7GSoWei+9MNR
-         kZYiZD4JLy8wPSW33t3z+1Q34yBQGU1Scy6zMX0bHiRB7EdQ4ehpTyNKsBc93Fjlxsrf
-         q+3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVAIxpFPynKAHtAPFw0MEN+oR91D4n6qxlrf2iN4l3C/FosGy2LQ+4+9rNfROQXzLRugiI4t2mAWi73@vger.kernel.org, AJvYcCWfTY9rn16Ymt5q3xi1nS9psGebLwoZhhCLmvTt1nY59UuC56LK4aiARE+CZCWdTZJO4UC/QS1fneoc@vger.kernel.org, AJvYcCXqNRIRgVwSmeKEtf1bvYqGnoZCvFvcjoGIerMTAI4QQejjy6ryoQrj9q5mlSBAWJtFHqyJmkRiFKDRA9I8@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZ62c2Lj5JMDEW9HwE2m/RR75MtxJd7r2xB+QPACx1rxJ6t/wZ
-	ALtReharcmdbyooW66uWmwbXKJq9bllr47IhKoUEdrD0iIBh/uZ1
-X-Google-Smtp-Source: AGHT+IG3yZ7QFdXMQgZy4VqVWPZpaI1h3p/gTRs7/ehSdIlWEGnDqq5cSNi9pfS2CM4e0Baco2WIzg==
-X-Received: by 2002:a05:6820:80f:b0:5eb:db1c:a85d with SMTP id 006d021491bc7-5ebee8e6619mr5987300eaf.4.1729843645926;
-        Fri, 25 Oct 2024 01:07:25 -0700 (PDT)
-Received: from localhost.localdomain ([122.8.183.87])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5ec1843c72csm157328eaf.1.2024.10.25.01.07.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2024 01:07:24 -0700 (PDT)
-From: Chen Wang <unicornxw@gmail.com>
-To: ukleinek@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	unicorn_wang@outlook.com,
-	inochiama@outlook.com,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pwm@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	chao.wei@sophgo.com,
-	haijiao.liu@sophgo.com,
-	xiaoguang.xing@sophgo.com,
-	chunzhi.lin@sophgo.com
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v5 1/3] dt-bindings: pwm: sophgo: add PWM controller for SG2042
-Date: Fri, 25 Oct 2024 16:07:16 +0800
-Message-Id: <9f9a31a2a19c2743aea36c479b0dc32da0fec629.1729843087.git.unicorn_wang@outlook.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1729843087.git.unicorn_wang@outlook.com>
-References: <cover.1729843087.git.unicorn_wang@outlook.com>
+        bh=CMzPrmjSeQgyPIDRqjhVnnO2Md44vEBUyZpNM1GWQMc=;
+        b=TXgX/wjMxhBXQq0jFE2s7bgNjy4+Y8mA72vPWp/q+RAw/eK+qhtzC+elmnIMJfJ4if
+         BrtLp2QIrKXHxHhIQzDuf5m4KZyzlWe8xFt7Icf3qzsq5vZVK9ip5nQ1coUIsIHIrR4A
+         mBno2Di44mE0gCKqL/0liIgYTgqcE37csDcjYTlYzziTQdrX70sAB1kfkYEoeQeV7ABD
+         CzZgiRNz8WHT0CwL0jbQTPThGqmu/LxE9ufTJP3dUdHgp4i8tTRr8GQraBrhRmmHM9Qi
+         HWYTI14EOoSPctkCQqMmxzdqmQ1ynUI4AJj3NO6PPfW8nrVE0TMnP/lrU3S2Uy6sFdH9
+         0IJw==
+X-Forwarded-Encrypted: i=1; AJvYcCXu+2z8ofbD3BbHfKgDPfFm+w1ikXDCAQhvGT/B1c668OBpiGliW3aHbhFtrREjQAsxlngb4u6OF9Gc4Dc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwThlzmMK/c96NoUddSJIqR/eDZQKVbQH0Az7I/K7F5ofusSf7o
+	1IMmO9mPYNrnQsZtQWVSeQiv5zBJdOexAJ5N00NA8kPSXCXXdCwCeFmlJUDUyrPaewAoWUfLIUL
+	JN2QG41heU0Y3eu5qbDiU4R0Z1n6nmf2LogQJ6A==
+X-Google-Smtp-Source: AGHT+IGW1lxVwYjgZLZEEGxXj/E49c9ozc4sLvlK3AOIA3FBQVBY6vPoD9RntfkOGL5I9pzZ2gxz9e7HE1ZOJMkaPZM=
+X-Received: by 2002:a05:6a20:4fa3:b0:1d9:857a:585c with SMTP id
+ adf61e73a8af0-1d9857a651emr5605791637.19.1729843658910; Fri, 25 Oct 2024
+ 01:07:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241025-pci-pwrctl-rework-v2-0-568756156cbe@linaro.org> <20241025-pci-pwrctl-rework-v2-4-568756156cbe@linaro.org>
+In-Reply-To: <20241025-pci-pwrctl-rework-v2-4-568756156cbe@linaro.org>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Fri, 25 Oct 2024 10:07:18 +0200
+Message-ID: <CAMRc=Mf1ytmuXWW+1YvqMPBb_DzX2_n0kL-W6SgyPGsMrnq6fQ@mail.gmail.com>
+Subject: Re: [PATCH v2 4/5] PCI/pwrctl: Move pwrctl device creation to its own
+ helper function
+To: manivannan.sadhasivam@linaro.org
+Cc: Bjorn Helgaas <bhelgaas@google.com>, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, linux-pci@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	Johan Hovold <johan+linaro@kernel.org>, Abel Vesa <abel.vesa@linaro.org>, 
+	Stephan Gerhold <stephan.gerhold@linaro.org>, 
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>, 
+	Krishna chaitanya chundru <quic_krichai@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Chen Wang <unicorn_wang@outlook.com>
+On Fri, Oct 25, 2024 at 9:55=E2=80=AFAM Manivannan Sadhasivam via B4 Relay
+<devnull+manivannan.sadhasivam.linaro.org@kernel.org> wrote:
+>
+> From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+>
+> This makes the pci_bus_add_device() API easier to maintain. Also add more
+> comments to the helper to describe how the devices are created.
+>
+> Tested-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+> Tested-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> ---
 
-Sophgo SG2042 contains a PWM controller, which has 4 channels and
-can generate PWM waveforms output.
-
-Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- .../bindings/pwm/sophgo,sg2042-pwm.yaml       | 58 +++++++++++++++++++
- 1 file changed, 58 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pwm/sophgo,sg2042-pwm.yaml
-
-diff --git a/Documentation/devicetree/bindings/pwm/sophgo,sg2042-pwm.yaml b/Documentation/devicetree/bindings/pwm/sophgo,sg2042-pwm.yaml
-new file mode 100644
-index 000000000000..5dea41fa4c44
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pwm/sophgo,sg2042-pwm.yaml
-@@ -0,0 +1,58 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/pwm/sophgo,sg2042-pwm.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Sophgo SG2042 PWM controller
-+
-+maintainers:
-+  - Chen Wang <unicorn_wang@outlook.com>
-+
-+description:
-+  This controller contains 4 channels which can generate PWM waveforms.
-+
-+allOf:
-+  - $ref: pwm.yaml#
-+
-+properties:
-+  compatible:
-+    const: sophgo,sg2042-pwm
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    maxItems: 1
-+
-+  clock-names:
-+    items:
-+      - const: apb
-+
-+  resets:
-+    maxItems: 1
-+
-+  "#pwm-cells":
-+    const: 2
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - clock-names
-+  - resets
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/reset/sophgo,sg2042-reset.h>
-+
-+    pwm@7f006000 {
-+        compatible = "sophgo,sg2042-pwm";
-+        reg = <0x7f006000 0x1000>;
-+        #pwm-cells = <2>;
-+        clocks = <&clock 67>;
-+        clock-names = "apb";
-+        resets = <&rstgen RST_PWM>;
-+    };
--- 
-2.34.1
-
+Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
