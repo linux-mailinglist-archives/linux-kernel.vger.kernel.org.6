@@ -1,230 +1,142 @@
-Return-Path: <linux-kernel+bounces-382629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCF039B1148
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 23:03:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CA279B1121
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 23:01:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80C29288855
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 21:03:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42BBC1C216E1
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 21:01:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D78220C32A;
-	Fri, 25 Oct 2024 21:03:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 136CA217F4B;
+	Fri, 25 Oct 2024 21:01:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="gf0Wf6E/"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uJIK0yAO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56CBC502BE;
-	Fri, 25 Oct 2024 21:03:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BE8B217F20;
+	Fri, 25 Oct 2024 21:01:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729890207; cv=none; b=AdhmYK72zvZ0hGSK6fqyrafosoNWxA7xyHfDsgwf1Zeg1fhKpnlaOl9ogm+a0THsz8/8O3qs7yfcXjWe8vSzpsawyQndZNfhJ/0CMnb5Ttod9WzCbhDygoNW1LMnJvAZPUMezZDBONgDS9fZFrhRwCdgjyJI51dGMUdbJMrBwek=
+	t=1729890081; cv=none; b=LT1woBVR6RiCz3bNPvIrZaKgdbvRrD4tyETKHUKErCzmnEfE1Iy/l4S+jnXbItqC7truCZRFKWMRTIuF+9z0A8sFi4/15I3xHNW15LMlvZK0D0lnZ04KhFvkogARBrhK0xVfz8RCEsGt2+GHuEctoF1r71E8LJdrKYOnUr5vvbo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729890207; c=relaxed/simple;
-	bh=8+eOfgdOL3D5NLY4FwvfLFF9lqlqe+qmNuypUUwY+Aw=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qgXY/X77/xOmNuV2SjL9QVpaPzw0J9/xcoD2UeAzNHLLaGidScXCD8jRfxblSQnUZZS6O3k7c01QiydKgp3mFxWxBKWb8KUjy99k/CTv7eLPGa9mh74JlGD9eB/R0NBBQ70XetnUy/RT6dgeodayJ5v+Nzh8r1aFeq1lRpsDPtc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=gf0Wf6E/; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49PKNFM8032472;
-	Fri, 25 Oct 2024 23:03:05 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	3mIGA/VKnuka7n9OIMQrgaNhc9IQtQWXIf1b7a7uZQ8=; b=gf0Wf6E/02+Wk+Jl
-	St6hB4jcAr38XkUtUINZp1s83h07/DgeUueGQpNfNg9hOCP/FhsRpcE+Olli4ZWp
-	S5BxcuTxeGKOJ1kvmDcDSdVeNimi5+E/77saoGeocnOGEECWpYKWzfU23abK/7D2
-	i5eSXtYQ6Xus9WGRo9YlAAUO9gHyKArafOQ2092oqwewCX9GQzquPKY87l7dQ+qV
-	Dj9Y2DjTpUfRUTN0sgSbetQJmeTq2YUFE3upXQistW/KZ99Wvg7Fy6Il5NR7hS4E
-	qGGOd5QPqk/cMaQOA0vPHYefpyjrkxmNfhvO8hSDcvLVoYr8IZJPnz80HpR9nJvu
-	F7kFqg==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 42gaur9vft-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 25 Oct 2024 23:03:05 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 80CC14002D;
-	Fri, 25 Oct 2024 23:01:38 +0200 (CEST)
-Received: from Webmail-eu.st.com (eqndag1node5.st.com [10.75.129.134])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id DFE5D231949;
-	Fri, 25 Oct 2024 22:59:41 +0200 (CEST)
-Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE5.st.com
- (10.75.129.134) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Fri, 25 Oct
- 2024 22:59:41 +0200
-Received: from localhost (10.252.3.121) by SAFDAG1NODE1.st.com (10.75.90.17)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Fri, 25 Oct
- 2024 22:59:41 +0200
-From: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier
-	<mathieu.poirier@linaro.org>,
-        Jens Wiklander <jens.wiklander@linaro.org>,
-        "Rob Herring" <robh+dt@kernel.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <op-tee@lists.trustedfirmware.org>, <devicetree@vger.kernel.org>,
-        Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-Subject: [PATCH v12 7/7] remoteproc: stm32: Add support of an OP-TEE TA to load the firmware
-Date: Fri, 25 Oct 2024 22:59:24 +0200
-Message-ID: <20241025205924.2087768-8-arnaud.pouliquen@foss.st.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20241025205924.2087768-1-arnaud.pouliquen@foss.st.com>
-References: <20241025205924.2087768-1-arnaud.pouliquen@foss.st.com>
+	s=arc-20240116; t=1729890081; c=relaxed/simple;
+	bh=4kC9OOPueuhcoavQfiVJBXmBpJ9Vh97ZcsIKWrDFl3Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X4EjNdKTanN+sT0akZ7VH7cu6b4JAEgmZC6TcFL1hjmayJnhDCd2qnQfaCgqttpN7LTlNDVg+vBLCJsQZkdRhCwkjOaFC5nV8miwqRBha5zR++GhAzos7L7CgpiXpoxkJrGEmttwICN5o6BNNb2t4w8XozeaueTzXQMdwDXjeqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uJIK0yAO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 616E2C4CEC3;
+	Fri, 25 Oct 2024 21:01:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729890080;
+	bh=4kC9OOPueuhcoavQfiVJBXmBpJ9Vh97ZcsIKWrDFl3Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uJIK0yAOyVUpB7AdPIbn7Nm8S0OE5ARwPNw36kNZHaXNbzXHUc9I0hHHR6pxyozKb
+	 +PtMbNNqekurKCho7liH/xReD5+THr7tGLkoEVKlP1ghT2/jRXP5sT/SZstExp5njH
+	 M7rt/SG953pfjb9zREth8QQTxHs9zeqiJH0hYuR0gVvCZtcccLV/TVUpvFdcJdned1
+	 QpT7U73qAWwPix9JB1gKRifG9OHmjW6KXTruSF2zZtun56ufAhIeS5k1ll6J0BgpYG
+	 1UMMG1o2X/CGeuj4zc00S4sDC2Q/YmkVE279SLQ++pxEawIKKnLvPfyXZaJm0pfOZU
+	 lZwPRRnXpuliw==
+Date: Fri, 25 Oct 2024 18:01:17 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Namhyung Kim <namhyung@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Ravi Bangoria <ravi.bangoria@amd.com>,
+	Weilin Wang <weilin.wang@intel.com>,
+	Yoshihiro Furudera <fj5100bi@fujitsu.com>,
+	James Clark <james.clark@linaro.org>,
+	Athira Jajeev <atrajeev@linux.vnet.ibm.com>,
+	Howard Chu <howardchu95@gmail.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Changbin Du <changbin.du@huawei.com>, Ze Gao <zegao2021@gmail.com>,
+	Junhao He <hejunhao3@huawei.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v6 0/5] Hwmon PMUs
+Message-ID: <ZxwHHWbjIbGh1RU8@x1>
+References: <20241022180623.463131-1-irogers@google.com>
+ <Zxm5w6wXLxpbERZx@google.com>
+ <CAP-5=fXfyd9b7Ns-SL5F+iffc7oy4NFHBsT3oj3CRMbBa1QCfg@mail.gmail.com>
+ <Zxp4mbzsFyO5nUh7@google.com>
+ <CAP-5=fWP-T57-Bb60eixhgO3m7f_v3y-tWmV=ypuR52iNSAQvQ@mail.gmail.com>
+ <ZxvVuFqef2CLwtCs@google.com>
+ <CAP-5=fVTU8nUfadXgpUd4my9emsY4c_7znMa9_RWD6VZbGYhZA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SAFCAS1NODE2.st.com (10.75.90.13) To SAFDAG1NODE1.st.com
- (10.75.90.17)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+In-Reply-To: <CAP-5=fVTU8nUfadXgpUd4my9emsY4c_7znMa9_RWD6VZbGYhZA@mail.gmail.com>
 
-The new TEE remoteproc driver is used to manage remote firmware in a
-secure, trusted context. The 'st,stm32mp1-m4-tee' compatibility is
-introduced to delegate the loading of the firmware to the trusted
-execution context. In such cases, the firmware should be signed and
-adhere to the image format defined by the TEE.
+On Fri, Oct 25, 2024 at 11:26:26AM -0700, Ian Rogers wrote:
+> On Fri, Oct 25, 2024 at 10:30 AM Namhyung Kim <namhyung@kernel.org> wrote:
+> > On Thu, Oct 24, 2024 at 06:33:27PM -0700, Ian Rogers wrote:
+> > > So I think moving the enum declarations into one patch is okay. But as
+> > > the enum values have no bearing on hardware constants, or something
+> > > outside of the code that uses them it smells strange to me. Ultimately
+> > > this is going to do little to the lines of code count but damage
+> > > readability. I'm not sure why we're doing this given the kernel model
+> > > for adding a driver is to add it as a large chunk. For example, here
+> > > is adding the intel PT driver:
+> > > https://lore.kernel.org/all/1422614392-114498-1-git-send-email-alexander.shishkin@linux.intel.com/T/#u
 
-Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
----
-updates vs previous version
-- rename structures, variables and function from tee_rproc_xxx to
-  rproc_tee_xxx,
-- rework code to take into account rproc_tee_register and
-  rproc_tee_unregister APIs update,
-- optimize code around dev_err_probe() when rproc_tee_register() fails.
----
- drivers/remoteproc/stm32_rproc.c | 57 ++++++++++++++++++++++++++++++--
- 1 file changed, 54 insertions(+), 3 deletions(-)
+> > Maybe others can understand a big patch easily, but I'm not.
+ 
+> My understanding is that we make small patches so that the codebase is
+> more bisectable. When there is something new, like a driver or here a
 
-diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
-index 288bd70c7861..7875b26a38a5 100644
---- a/drivers/remoteproc/stm32_rproc.c
-+++ b/drivers/remoteproc/stm32_rproc.c
-@@ -18,6 +18,7 @@
- #include <linux/pm_wakeirq.h>
- #include <linux/regmap.h>
- #include <linux/remoteproc.h>
-+#include <linux/remoteproc_tee.h>
- #include <linux/reset.h>
- #include <linux/slab.h>
- #include <linux/workqueue.h>
-@@ -255,6 +256,19 @@ static int stm32_rproc_release(struct rproc *rproc)
- 	return 0;
- }
- 
-+static int stm32_rproc_tee_stop(struct rproc *rproc)
-+{
-+	int err;
-+
-+	stm32_rproc_request_shutdown(rproc);
-+
-+	err = rproc_tee_stop(rproc);
-+	if (err)
-+		return err;
-+
-+	return stm32_rproc_release(rproc);
-+}
-+
- static int stm32_rproc_prepare(struct rproc *rproc)
- {
- 	struct device *dev = rproc->dev.parent;
-@@ -691,8 +705,20 @@ static const struct rproc_ops st_rproc_ops = {
- 	.get_boot_addr	= rproc_elf_get_boot_addr,
- };
- 
-+static const struct rproc_ops st_rproc_tee_ops = {
-+	.prepare	= stm32_rproc_prepare,
-+	.start		= rproc_tee_start,
-+	.stop		= stm32_rproc_tee_stop,
-+	.kick		= stm32_rproc_kick,
-+	.load		= rproc_tee_load_fw,
-+	.parse_fw	= rproc_tee_parse_fw,
-+	.find_loaded_rsc_table = rproc_tee_find_loaded_rsc_table,
-+	.release_fw	= rproc_tee_release_fw,
-+};
-+
- static const struct of_device_id stm32_rproc_match[] = {
- 	{ .compatible = "st,stm32mp1-m4" },
-+	{ .compatible = "st,stm32mp1-m4-tee" },
- 	{},
- };
- MODULE_DEVICE_TABLE(of, stm32_rproc_match);
-@@ -853,15 +879,36 @@ static int stm32_rproc_probe(struct platform_device *pdev)
- 	struct device_node *np = dev->of_node;
- 	struct rproc *rproc;
- 	unsigned int state;
-+	u32 proc_id;
- 	int ret;
- 
- 	ret = dma_coerce_mask_and_coherent(dev, DMA_BIT_MASK(32));
- 	if (ret)
- 		return ret;
- 
--	rproc = devm_rproc_alloc(dev, np->name, &st_rproc_ops, NULL, sizeof(*ddata));
--	if (!rproc)
--		return -ENOMEM;
-+	if (of_device_is_compatible(np, "st,stm32mp1-m4-tee")) {
-+		/*
-+		 * Delegate the firmware management to the secure context.
-+		 * The firmware loaded has to be signed.
-+		 */
-+		ret = of_property_read_u32(np, "st,proc-id", &proc_id);
-+		if (ret) {
-+			dev_err(dev, "failed to read st,rproc-id property\n");
-+			return ret;
-+		}
-+
-+		rproc = devm_rproc_alloc(dev, np->name, &st_rproc_tee_ops, NULL, sizeof(*ddata));
-+		if (!rproc)
-+			return -ENOMEM;
-+
-+		ret = rproc_tee_register(dev, rproc, proc_id);
-+		if (ret)
-+			return dev_err_probe(dev, ret,  "signed firmware not supported by TEE\n");
-+	} else {
-+		rproc = devm_rproc_alloc(dev, np->name, &st_rproc_ops, NULL, sizeof(*ddata));
-+		if (!rproc)
-+			return -ENOMEM;
-+	}
- 
- 	ddata = rproc->priv;
- 
-@@ -913,6 +960,8 @@ static int stm32_rproc_probe(struct platform_device *pdev)
- 		dev_pm_clear_wake_irq(dev);
- 		device_init_wakeup(dev, false);
- 	}
-+	rproc_tee_unregister(rproc);
-+
- 	return ret;
- }
- 
-@@ -933,6 +982,8 @@ static void stm32_rproc_remove(struct platform_device *pdev)
- 		dev_pm_clear_wake_irq(dev);
- 		device_init_wakeup(dev, false);
- 	}
-+
-+	rproc_tee_unregister(rproc);
- }
- 
- static int stm32_rproc_suspend(struct device *dev)
--- 
-2.25.1
+That is super important, having patches being super small and doing just
+one thing helps in bisecting problems.
 
+If two things are done in one patch, and one of them causes a problem,
+then bisection is a very effective way of finding out what exactly
+caused a problem.
+
+But bisection is not the only benefit from breaking down larger patches
+into smaller ones.
+
+We want to have more people joining our ranks, doing low level tooling
+and kernel work.
+
+Writing new functionality in a series of patches, growing in complexity
+is a way to reduce the cognitive load on understantind how something
+works.
+
+As much as trying to emulate how the kernel community works is a good
+model as that community has been producing a lot of good code in a
+frantic, athletic pace, and as much as I can agree with you that adding
+a new piece of code will not affect bisectability as its new code, I
+think having it broken down in multiple patches benefits revieweing.
+
+Reviewing is something we should do more, but its very taxing.
+
+One would rather try to write as much code as possible, leaving to
+others the reviewing part.
+
+But its a balancing act.
+
+Whatever we can do to help reviewers, like taking into account what they
+say they would prefer as a way to submit our work, even if it isn't
+exactly of our liking, is one such thing.
+
+So if Namhyung says that it would be best for you to try to break down
+your patches into smaller ones, like I did say to you in the past, even
+taking the trouble to do it myself, in the process introducing problems,
+later fixed, I think you should try to do what he says.
+
+He is the maintainer, try to address his comments.
+
+- Arnaldo
 
