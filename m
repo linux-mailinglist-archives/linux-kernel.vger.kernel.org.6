@@ -1,88 +1,163 @@
-Return-Path: <linux-kernel+bounces-380905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D46129AF79A
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 04:44:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3F5B9AF7F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 05:09:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BCEE1F22B1B
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 02:44:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89EA11F22EAC
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 03:09:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDD3B18BBBE;
-	Fri, 25 Oct 2024 02:44:07 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C628C18BBB4;
+	Fri, 25 Oct 2024 03:09:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hCrdAXrt"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C84B418BB9A
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 02:44:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11401C8DF;
+	Fri, 25 Oct 2024 03:09:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729824247; cv=none; b=sOR3vA//ZxDHw9nEjGVrJQLU+AZqADHMJXSGs9oeFiMxJABGhyDKnKTtB2sWFgIpYnl8el5O2KytglpqNWywyALr6s3RbpFh4rt41mV2ySwxdrilnsHwlTPesA6k0PdXyoi3LeqiU+jaDNh8TnAHo3ygrgFGBkA9qjSAY8vPejI=
+	t=1729825769; cv=none; b=MrTDOcZ/O2yl6xSLRjLrjeuwP7OzM1xRFU6GBDv34oOin/p5y4ofpAnD6+QGe/7coxx9aQUNebDyXuC5YPID9j765jTA81iQI8qj5Jxie7yXqAHvnL8JTCJxi0xeooAc29bxGvIzibKVsdFdqAmyJl8j+VOIMyY3o3BMrkASyMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729824247; c=relaxed/simple;
-	bh=809b/Pdx9nZs4k99B4LNprT67d7N88aPd1zEAnaWSeM=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=i3ZkhlDRnuuGoAsf+PwI3osBnOo/z95a1zJyq5y01ai7rNi93keCbM7FijTSiTZ6lHLmjkDVdaaf5JQgUydGe0Cc6GbTz6QvjEfqwq+rg6iWO/QoFE1JdQ5LQX2YzdE5gOw6jdO2gve18LfBqfj9oEzj3tD3B/FVSEf0+YNH71Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a3c9886eccso13830575ab.2
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 19:44:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729824244; x=1730429044;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rf1NB7CaiBqSkY3iCUMsw6mB4tHAKpKKf4qb08+kcVg=;
-        b=eQa0YhOyADvaQrnSGiOGYopai/gNvkK+QyPdMiO1nMKVGnbkk0wBv2HLKZkyq3NZtm
-         5rB3eh1eHjxZEoEvuZ2/bxdvcGji6purShJq4vc7mz//Xra0zUmIe18zh6oMYmrWdoiQ
-         7AmmSHOzRzXb0gTWvrZdA7fyqvYJTw82pcIf2VwddWhGXKL+Kh3CWIdrDAdlNXAIgV5M
-         HJ0TFgOficyb3zE9YHsn730NFGdcbjug2EdXybomU/o8hSe/uADjqKjEaWakHx979+TS
-         4Gv8KuboeIqmcyChZJY8/QAusr+s+TfIbXWSdh6iMXTWiOquZ3i26NaNMELBDiJIctAO
-         96IA==
-X-Forwarded-Encrypted: i=1; AJvYcCUjWy/5RIgboRV34lMon3C11Ks/5gF6bpzmVF7ZmwcxYAhKpf9Wp8HBXuOQz1XOhlFg/J1MVLeCZ4qeD2Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHK5JAAncStbegY0nhS+1bCruulVULb73GAghlRx2EFSU2cX0g
-	mJCQGn15+uXO5FxThzWz2r96yLc8TuhDgAI3Zm/ZjxUCeliMUBJ35qHlLbInz56yA1aLVQMLk2E
-	yzSWRVjg6+2ILp5pcBeHw+iXAidDU973glXKFkaarI6FQsS9fqr9Iq9U=
-X-Google-Smtp-Source: AGHT+IF9vK7j9JaMv5meiucavo9afosGlNIjCvwwNTF/nwEV2vRqnoIc01V0snq23E6oX1pVIh37G7/2zYKHOOfDteVjrArRaevR
+	s=arc-20240116; t=1729825769; c=relaxed/simple;
+	bh=6VJus/l5StwHkk8r49U4gwlOc1jAPg6JciXrbFlFxNY=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=EhT31RcMoBQ+Lus+ccmW9mztSgs81F8yCAePdl5ug/eTr57kFbmQvGGtytv4faG5KJJLsuC+VLmFnCe93MVmSZce80UrhKOyAhVzL8HRUZsB9U56+eHFXVrozgZAv7hQZ5sAlJA13BlK/HYXgNdPJtYl4lCij44+ngufgo0QIuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hCrdAXrt; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729825767; x=1761361767;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references;
+  bh=6VJus/l5StwHkk8r49U4gwlOc1jAPg6JciXrbFlFxNY=;
+  b=hCrdAXrtxhGetD70Q+ZWwLSNNao+RHamqCRUCq/3FUb8h8yH+Jbz6A9r
+   JEFrlI/qaOThEMdcJ36UqqSyOkzwpNh5Wi45n+IPe02YNniThItHxv+zB
+   WkY6Mj5vwOLj/alUr3FN+MGOju/EkIhU/9PcV5K877IBp3yj8TwbbZ2Di
+   wk4tgbv8Zr5zlYy3ri6G+n6JEcgZ89ste/ZB9Wko+gwEqrQMmoxHPRqzs
+   qTN5qFlqPqDU/0sxMX4d/WysxcKg6UnJR7qGGeNWUToRC8w7bRjJl5DrW
+   B9OP0iDnvLe+WVqVCIevvxrGKdR64gRVPZX2TmQ3dljEZ6lAaee4EnNmh
+   g==;
+X-CSE-ConnectionGUID: 44EbWmLSSOufocjbSBXOig==
+X-CSE-MsgGUID: qsu2oyzxScCTdiJYrpWjdg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11235"; a="29385487"
+X-IronPort-AV: E=Sophos;i="6.11,231,1725346800"; 
+   d="scan'208";a="29385487"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2024 20:09:25 -0700
+X-CSE-ConnectionGUID: au4VqgsXQX+4Nx/RT6QQhw==
+X-CSE-MsgGUID: zy106mxaTZmo4gzV1v3QrQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,231,1725346800"; 
+   d="scan'208";a="80449088"
+Received: from qiuxu-clx.sh.intel.com ([10.239.53.109])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2024 20:09:24 -0700
+From: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+To: bp@alien8.de,
+	tony.luck@intel.com
+Cc: tglx@linutronix.de,
+	dave.hansen@linux.intel.com,
+	mingo@redhat.com,
+	hpa@zytor.com,
+	x86@kernel.org,
+	linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	qiuxu.zhuo@intel.com
+Subject: [PATCH v3 00/10] x86/mce: Clean up some x86/mce code
+Date: Fri, 25 Oct 2024 10:45:52 +0800
+Message-Id: <20241025024602.24318-1-qiuxu.zhuo@intel.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20241016123036.21366-1-qiuxu.zhuo@intel.com>
+References: <20241016123036.21366-1-qiuxu.zhuo@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1569:b0:3a0:a070:b81 with SMTP id
- e9e14a558f8ab-3a4d59df6c9mr99235555ab.23.1729824243965; Thu, 24 Oct 2024
- 19:44:03 -0700 (PDT)
-Date: Thu, 24 Oct 2024 19:44:03 -0700
-In-Reply-To: <20241025022348.1255662-1-lizhi.xu@windriver.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <671b05f3.050a0220.381c35.0008.GAE@google.com>
-Subject: Re: [syzbot] [btrfs?] general protection fault in btrfs_search_slot
-From: syzbot <syzbot+3030e17bd57a73d39bd7@syzkaller.appspotmail.com>
-To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	lizhi.xu@windriver.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+Clean up some x86/mce code as below. No functional changes intended.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+  - Simplify some code.
 
-Reported-by: syzbot+3030e17bd57a73d39bd7@syzkaller.appspotmail.com
-Tested-by: syzbot+3030e17bd57a73d39bd7@syzkaller.appspotmail.com
+  - Remove some unnecessary code.
 
-Tested on:
+  - Improve readability for some code.
 
-commit:         ae90f6a6 Merge tag 'bpf-fixes' of git://git.kernel.org..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=11823287980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=fc6f8ce8c5369043
-dashboard link: https://syzkaller.appspot.com/bug?extid=3030e17bd57a73d39bd7
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=169c3287980000
+  - Convert some family/model mixed checks to VFM-based checks.
 
-Note: testing is done by a robot and is best-effort only.
+  - Fix some typos.
+
+Pass the following basic tests:
+
+  - Tested on an Intel Sapphire Rapids server.
+
+  - Compile test.
+
+  - System boot test.
+
+  - Correctable/uncorrectable memory errors can be notified via CMCI/MCE interrupts.
+
+  - Correctable/uncorrectable memory errors can be dispatched to the mcelog daemon and the EDAC driver.
+
+Changes in v3:
+
+  - Collect "Reviewed-by:" from Nikolay & Sohil.
+
+  - Drop the "x86/mce: Remove the redundant zeroing assignments" patch.
+
+  - 0003: Rename mce_notify_irq() to mce_notify_user().
+
+  - 0005: Move the 'int ret' variable along with the other int variables.
+
+  - 0006: New patch. Break up __mcheck_cpu_apply_quirks().
+
+  - 0007: New patch. Convert family/model mixed checks to VFM-based checks.
+
+  - 0009: Remove the variable names from the commit message.
+
+  - 0010: Remove the detail typos from the commit message.
+
+Changes in v2:
+
+  - Collect "Reviewed-by:" from Tony.
+
+  - 0009: Add the missing variable names to the commit message.
+
+This series is based on v6.12-rc4.
+
+Thanks Tony, Dave, Sohil and Nikolay for your review and discussion on this series.
+
+Qiuxu Zhuo (9):
+  x86/mce/dev-mcelog: Use xchg() to get and clear the flags
+  x86/mce/intel: Use MCG_BANKCNT_MASK instead of 0xff
+  x86/mce: Make several functions return bool and rename a function
+  x86/mce/threshold: Remove the redundant this_cpu_dec_return()
+  x86/mce/genpool: Make mce_gen_pool_create() return explicit error codes
+  x86/mce: Convert family/model mixed checks to VFM-based checks
+  x86/mce: Remove the unnecessary {}
+  x86/mce/amd: Remove unnecessary NULL pointer initializations
+  x86/mce: Fix typos
+
+Tony Luck (1):
+  x86/mce: Break up __mcheck_cpu_apply_quirks()
+
+ arch/x86/include/asm/mce.h           |   4 +-
+ arch/x86/kernel/cpu/mce/amd.c        |  18 +--
+ arch/x86/kernel/cpu/mce/core.c       | 230 +++++++++++++++------------
+ arch/x86/kernel/cpu/mce/dev-mcelog.c |  11 +-
+ arch/x86/kernel/cpu/mce/genpool.c    |   9 +-
+ arch/x86/kernel/cpu/mce/inject.c     |   2 +-
+ arch/x86/kernel/cpu/mce/intel.c      |  11 +-
+ arch/x86/kernel/cpu/mce/threshold.c  |   2 +-
+ 8 files changed, 149 insertions(+), 138 deletions(-)
+
+
+base-commit: 42f7652d3eb527d03665b09edac47f85fb600924
+-- 
+2.17.1
+
 
