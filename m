@@ -1,114 +1,134 @@
-Return-Path: <linux-kernel+bounces-381669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13DBF9B0262
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 14:32:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 36F5F9B0265
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 14:33:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF8EF1F2348C
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 12:32:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE4C41F22943
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 12:33:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61F62227373;
-	Fri, 25 Oct 2024 12:32:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8E97231C9A;
+	Fri, 25 Oct 2024 12:32:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="IgaGPFfk"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="L6uL1n23"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7607F226264
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 12:31:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6655120101A;
+	Fri, 25 Oct 2024 12:32:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729859519; cv=none; b=oChpSR5noNWIrFfss66kMttKDeFVo9Z8+CUNqnolWMklKaNVJQ4KCPAHBi1E7XikJ8lwPwGP3OIzKdvpDWEVVMTIuLX2IkbFXSUUhNjy3aP16sAoOO8IV6ChFlsfLCFKyCXIvQWhVU8N6UM7754gSH9DzNpv3p/faPcEa6IKdwk=
+	t=1729859576; cv=none; b=g3ucxdJigh+hy2cO2rXgU4MXhvwxolO8VxjH/ZbTkNFuJvlDoO0JwR4BsUQml7DQMj2bYhbx9h5+YXOUEY+X0hEmnktzv3pRgSlcFaojZDAtk+lcdHEqJIKHabkPme48/1WizQCZsFnQC7HA7jfhhkwlKTekm94WNtKfjVGxV0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729859519; c=relaxed/simple;
-	bh=msp8mzHoL4DQwXpjyctpfR/k+WEDyE0Pk/NxEqt2mvo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mpUDEMXtRXBwgumSGzuaTch1SPNzI7lqw40Fdpne25LurkkFIg/RIoH7fjW7tLRA7mgFoBVEiBb6MOme0X2tcQ8oVBNVjd5dIECMX4ouh0mQS92TBe4o5XMwZUZNqEb6KC3UvL8NuT1YJmWHwvyongZ3jhh838CTjuzlAnyvrks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=IgaGPFfk; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1729859510;
-	bh=msp8mzHoL4DQwXpjyctpfR/k+WEDyE0Pk/NxEqt2mvo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=IgaGPFfk08mIqEf3c1meSNOb5iYdESPRUoL9HNrIJJqkVOlao0ubkeiz93BbatDZ8
-	 60FtHY26G1A6UnzU1cu30gcw/Wy/sHq5T/wO0qbcVdYJPw5YihsWyvspQUYeQnwfiP
-	 blzCv/k1QPCknH4D4C0Qeuvg5h7aZsNT4nQHQP5jF/udYUsJA0kqx0ZQDVRjjbfoeD
-	 6EWJ2wBWHJmXEGTXzLhmk6BxY/tCt8EUS99FdsLUROXejC16cQridQpr5+j5EkGY54
-	 2PUGZjI+tauLBgerQXFwV+AqZOB+hE+z4+Iex4P74Uifi4RwxWb/bib6XaeMkYn3A+
-	 q2rbV4ZCgjdDg==
-Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 853A117E35F4;
-	Fri, 25 Oct 2024 14:31:49 +0200 (CEST)
-Date: Fri, 25 Oct 2024 14:31:44 +0200
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: Liviu Dudau <liviu.dudau@arm.com>
-Cc: Akash Goel <akash.goel@arm.com>, Robin Murphy <robin.murphy@arm.com>,
- steven.price@arm.com, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, mihail.atanassov@arm.com,
- ketil.johnsen@arm.com, florent.tomasin@arm.com,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
- airlied@gmail.com, daniel@ffwll.ch, nd@arm.com
-Subject: Re: [PATCH 1/3] drm/panthor: Update memattr programing to align
- with GPU spec
-Message-ID: <20241025143144.625df2b7@collabora.com>
-In-Reply-To: <Zxtj0B3BrMYDt9ID@e110455-lin.cambridge.arm.com>
-References: <20241024145432.934086-1-akash.goel@arm.com>
-	<20241024145432.934086-2-akash.goel@arm.com>
-	<20241024174944.4e811816@collabora.com>
-	<Zxtj0B3BrMYDt9ID@e110455-lin.cambridge.arm.com>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1729859576; c=relaxed/simple;
+	bh=c865IYE4UP0bnS8gtKCy6I772KiWUMKdivPy59qfz94=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MI9DJy+2L4txldjc8X54l14kXnoKzD36Cbiev8JjBl96cNQBY0WsRABz5/5m5RnFbETYBHJl6uXbsBW/kUWfQHKWxdV37aROxxf53cVekU5Or6RcY5W8D60gzNUpDgPQXq6xwZ/4zOuHcryYKfnaho1oN9fIZYD9dKjiQ4VpC/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=L6uL1n23; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49P9wKEB007584;
+	Fri, 25 Oct 2024 12:32:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=CuwqJW1zt1l8TaY9kSvCSs
+	a7RElXblA/5vkl/3AYFEA=; b=L6uL1n238EpF4v0D/uZOm7h+kkYTo2xSEJbJbS
+	P6KnPWeX87W8i7f9ZKA4YLtrBp6kMX72KZHk9N3blgiaEubsBYB/YRURK4l13cQn
+	neUHJ99gihNIKEoxbWTdVW2HZVAI9vsy1r+yJaVjwbGklDgY1WLMYwVIEBjl6oBz
+	hUxv14Sg2+Zo8ZSSVfJmOr1DcSb5h4qNbVvbz58kW/CsoJ9tHbPYNg7/WIq425bf
+	rkkKMq6ZpRtZBFZoKWR60X2y5KWWP4H3yM+A7UpkqByqlOYRhOrvB06dTiUVb5f4
+	DaKIRJRXt9uHHWhJX1vVylf6cktvFZCKQZpqnT4+pwlNF4/g==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42fk52kv39-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Oct 2024 12:32:48 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49PCWlZB028164
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Oct 2024 12:32:47 GMT
+Received: from hu-sibis-blr.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Fri, 25 Oct 2024 05:32:42 -0700
+From: Sibi Sankar <quic_sibis@quicinc.com>
+To: <andersson@kernel.org>, <konradybcio@kernel.org>, <krzk+dt@kernel.org>,
+        <robh+dt@kernel.org>, <dmitry.baryshkov@linaro.org>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <quic_sibis@quicinc.com>,
+        <conor+dt@kernel.org>, <abel.vesa@linaro.org>,
+        <srinivas.kandagatla@linaro.org>, <quic_jjohnson@quicinc.com>,
+        <maz@kernel.org>, <jens.glathe@oldschoolsolutions.biz>
+Subject: [PATCH V3 0/3] X1E001DE Snapdragon Devkit for Windows
+Date: Fri, 25 Oct 2024 18:02:24 +0530
+Message-ID: <20241025123227.3527720-1-quic_sibis@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: EvsmMhDjbP785aJPr9K3jHEgcJD-2d40
+X-Proofpoint-ORIG-GUID: EvsmMhDjbP785aJPr9K3jHEgcJD-2d40
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 mlxscore=0
+ lowpriorityscore=0 malwarescore=0 impostorscore=0 phishscore=0
+ adultscore=0 mlxlogscore=999 priorityscore=1501 spamscore=0 bulkscore=0
+ clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410250096
 
-On Fri, 25 Oct 2024 10:24:32 +0100
-Liviu Dudau <liviu.dudau@arm.com> wrote:
+Add initial support for X1E001DE Snapdragon Devkit for Windows. X1E001DE
+is the speed binned variant of X1E80100 that supports turbo boost up to
+4.3 Ghz. The initial support includes the following:
 
-> On Thu, Oct 24, 2024 at 05:49:44PM +0200, Boris Brezillon wrote:
-> > +Robin for the MMU details
-> > 
-> > On Thu, 24 Oct 2024 15:54:30 +0100
-> > Akash Goel <akash.goel@arm.com> wrote:
-> >   
-> > > Mali GPU Arch spec forbids the GPU PTEs to indicate Inner or Outer
-> > > shareability when no_coherency protocol is selected. Doing so results in
-> > > unexpected or undesired snooping of the CPU caches on some platforms,
-> > > such as Juno FPGA, causing functional issues. For example the boot of
-> > > MCU firmware fails as GPU ends up reading stale data for the FW memory
-> > > pages from the CPU's cache. The FW memory pages are initialized with
-> > > uncached mapping when the device is not reported to be dma-coherent.
-> > > The shareability bits are set to inner-shareable when IOMMU_CACHE flag
-> > > is passed to map_pages() callback and IOMMU_CACHE flag is passed by
-> > > Panthor driver when memory needs to be mapped as cached on the GPU side.
-> > > 
-> > > IOMMU_CACHE seems to imply cache coherent and is probably not fit for
-> > > purpose for the memory that is mapped as cached on GPU side but doesn't
-> > > need to remain coherent with the CPU.  
-> > 
-> > Yeah, IIRC I've been abusing the _CACHE flag to mean GPU-cached, not
-> > cache-coherent. I think it be good to sit down with Rob and add the
-> > necessary IOMMU_ flags so we can express all the shareability and
-> > cacheability variants we have with the "Mali" MMU. For instance, I
-> > think the shareability between MCU/GPU can be expressed properly at the
-> > moment, and we unconditionally map things uncached because of that.  
-> 
-> Boris, did you mean to say "shareability between MCU/GPU *can't* be expressed
-> properly" ? Currently the sentence reads a bit strange, as if there was a
-> negation somewhere.
+-DSPs
+-Ethernet (RTL8125BG) over the pcie 5 instance.
+-NVme
+-Wifi
+-USB-C ports
 
-Yes, sorry, I meant "can't".
+V3:
+* Asked around and looked at the firmware, couldn't find a codename so
+  will keep it as DEVKIT. Will update it if someone from the community
+  finds something else.
+* Update type c roles as reported by ucsi. [Dmitry]
+* Update THUNDERCOMM to Thundercomm. [Dmitry]
+* Update regulator names and sort Order. [Dmitry]
+* Add x1e001DE devkit to the safe list.
+* Mark regulator-nmve as boot enabled.
+
+
+V2:
+* Fix Ghz -> GHz  [Jeff]
+* Pick up Ab tag from Rob.
+* Use Vendor in ADSP/CDSP firmware path [Dmitry]
+* Fix reserved gpios [Dmitry]
+* Only port0 supports DRD update the dt accordingly [Dmitry]
+
+Sibi Sankar (3):
+  dt-bindings: arm: qcom: Add Snapdragon Devkit for Windows
+  firmware: qcom: uefisecapp: Allow X1E Devkit devices
+  arm64: dts: qcom: Add X1E001DE Snapdragon Devkit for Windows
+
+ .../devicetree/bindings/arm/qcom.yaml         |   6 +
+ arch/arm64/boot/dts/qcom/Makefile             |   1 +
+ arch/arm64/boot/dts/qcom/x1e001de-devkit.dts  | 814 ++++++++++++++++++
+ drivers/firmware/qcom/qcom_scm.c              |   1 +
+ 4 files changed, 822 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/qcom/x1e001de-devkit.dts
+
+-- 
+2.34.1
+
 
