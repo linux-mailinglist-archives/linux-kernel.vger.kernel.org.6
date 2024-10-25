@@ -1,168 +1,102 @@
-Return-Path: <linux-kernel+bounces-380947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 372639AF82A
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 05:29:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E703E9AF82E
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 05:30:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF683283099
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 03:29:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB0FB283116
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 03:30:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FB7D18B49F;
-	Fri, 25 Oct 2024 03:29:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qf/AP2XF"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E56F318BC39;
+	Fri, 25 Oct 2024 03:30:33 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D29218B484;
-	Fri, 25 Oct 2024 03:29:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86F351BC5C;
+	Fri, 25 Oct 2024 03:30:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729826946; cv=none; b=nE6zWnPwiuLdG+t1i+6S12b5kNUJKsqrspMyMUOz3CI7AZzYj02oYSzEvvoBrCj0FE2HRwKt/tVLOf2JFSIm0crj+cAJbiPOxY9Xh+sEa9Ve4lR5Iz25/vEKw8WyJg8htuHkYTwJVuTOKTykfZS17j4/vGwvTmlmyWDYHJ0Lr5c=
+	t=1729827033; cv=none; b=adsi8azc3V1q7a9rZpPFG3pl/vgEBgqkxCpz7EbmEWBNXfpCRFcBYzfRvdWhC0bQ0yNf6GOFR33v2ONqu8S/kPMkDBcwEMdg+5/9oCUjn3YnD2lxXtPuzBDcbbUCfuhk4QdfyY9jRwt6CdsFdA7JefbM6v3L4xN9dXUDoq42rCY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729826946; c=relaxed/simple;
-	bh=bobtTiUOgm0R+YdKnDpz3RtCLS65JG7Ia6zVQHBpZy4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ckrotT6gn5XaU3I5yZYv4vylguxQwcFKHobSKjR3PqZvib16HBlu8Uo5O8d+HcJbSqyU606pDBQuQHJVaCVwGZX/u9VFPM3II/CdLsJE2QqHS5nyR1WynQ6Wx+fieQFJji9kxXlKjviucC9PAMyW0bxwHh0aY5ngQ24VKbuFcz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qf/AP2XF; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2e30db524c2so1218721a91.1;
-        Thu, 24 Oct 2024 20:29:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729826944; x=1730431744; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Sl03rwfXTghu5TO4DIsVs3ACSusq5Si6Ig0V2GjyFFw=;
-        b=Qf/AP2XFk7STV1HH6FE8jWtd/tetzXZqZYJenKxSL/OtjozVmJsD1+0c55WBwUaXDR
-         Bb/DRTjdE6Otz3gyjyOWpHNzhL1B1m2ZhNuAXCFVyzMWA+JcXvF0As0qiCBQnjsBZvWt
-         xqYlmcF+pKXQ+LX3HbKX23tTCt9sX0Ad+682HXwMUoOHay1CL/3i+HxsT80kF5bqNW0b
-         FaIxgCtMXWVY77l+WY5j0moHJFGDb6pOCb65R53ttvR2tozvcAWNoAIu/pWhVFpjQgax
-         6Lwy//UoP9ATaR6ucJvHRHy46uokOI6L+awDiDHAsY9x+kvoqsQWYui/eVhmAFdQTjK9
-         Tcuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729826944; x=1730431744;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Sl03rwfXTghu5TO4DIsVs3ACSusq5Si6Ig0V2GjyFFw=;
-        b=TDX958WPdR344X/UGNWCb6SP0nexFnnGxi4XxLIQGQY9zASwLT+MRYjxDzIh/k8g41
-         3CwwjZRn5bN3ItPHt4UQfLRQ+H8DccHzYIQQBSrbLeEakWXuhEhVYoPhnNtm8Fmz91cz
-         03ua7NREoN+YBNTleUsCjHfFmTUv3eRrkO9L+DCZnLkRlB5hdJtyO8LClhKHufAz0nyu
-         kMAzwvFPXicshP297EkxNh3h82tWSRn1EGwmP1LdFGOAv/W9IWW/V3OT5AZGQnzcsLhM
-         OodfR8xnJCn00YtIRxMgYN51vJ7lPGzrcGCja9IsaLq7FWHMliR3PsL1OYLzoccZf/0S
-         rWhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUIFgUVfTsr26Xk3Mk/v0E+Sz9DkGuZCXtoYDuxxQxGxT8onaIC26Z6HwTWNMSgOoOJ6Rad4O/LX+Ep@vger.kernel.org, AJvYcCWY6SVFMU5xyTHf1w0QdnEjJ6vsmyer+RuRSue0GUPSdKmMu19QXl0HumkHScLzp4sIGdVf860TR80EqCXN@vger.kernel.org, AJvYcCWrYBiFuX5XztcUKyCvxuvRhpFiZ5gPdIHPmT9DLchhLNCnxkdherdVgRj8jnkxiahPOIPWyL3Q8xJ4@vger.kernel.org
-X-Gm-Message-State: AOJu0Yybfdw0po1SGehGE0vKlk34fJEIJtUNonYsnpakx+vEF+Vv+u+d
-	WsoDGQ/m3S+SFNChvmJNsrbbSXjIqwezItjSHbGc8y/FNmeR9hN4
-X-Google-Smtp-Source: AGHT+IGisdWRfEyvyGXXRh7g5blq5MkQ0Xl2pOeYb3wvbIHUDx4j/4H0wcRJTEQHYF63X2oR5HNGMQ==
-X-Received: by 2002:a17:90b:1047:b0:2e2:af52:a7b7 with SMTP id 98e67ed59e1d1-2e76b7116d7mr8890347a91.34.1729826943738;
-        Thu, 24 Oct 2024 20:29:03 -0700 (PDT)
-Received: from localhost ([2001:da8:7001:11::cb])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e77e51539dsm2308811a91.29.2024.10.24.20.29.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Oct 2024 20:29:03 -0700 (PDT)
-Date: Fri, 25 Oct 2024 11:28:41 +0800
-From: Inochi Amaoto <inochiama@gmail.com>
-To: Chen Wang <unicornxw@gmail.com>, ukleinek@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, unicorn_wang@outlook.com, 
-	inochiama@outlook.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pwm@vger.kernel.org, linux-riscv@lists.infradead.org, chao.wei@sophgo.com, 
-	haijiao.liu@sophgo.com, xiaoguang.xing@sophgo.com, chunzhi.lin@sophgo.com
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v4 1/3] dt-bindings: pwm: sophgo: add PWM controller for
- SG2042
-Message-ID: <2mwkqy7xqj6bydwutwjmyeq4swnqfmljr45rl474uqciglmpt4@2kgwci2oxyp2>
-References: <cover.1729037302.git.unicorn_wang@outlook.com>
- <fec7163144d7f7b615695b5fd22a182ed7f1e7e9.1729037302.git.unicorn_wang@outlook.com>
+	s=arc-20240116; t=1729827033; c=relaxed/simple;
+	bh=vur3pwlndW+oEzqW/c2CZy5UT3diALSOxTxh+OTd7DY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=PKu1qTIIjOkN2U0ZpaFQYDb13swyhpOdAN9LWimSuo8jIJnoM4UnjYMY/nefNBw/yhg70xn1mSR2VlvmJC6ItYkfpnPP6LzWuwMbwpQToCwgJQ7E+HP1AuGmHXllIyNhDjbPRaoYRCnvLaYomqaMUXMJXA6GS3PXQD28LdjzRGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4XZStk3cX3z1jvrM;
+	Fri, 25 Oct 2024 11:29:02 +0800 (CST)
+Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
+	by mail.maildlp.com (Postfix) with ESMTPS id A70941400DC;
+	Fri, 25 Oct 2024 11:30:27 +0800 (CST)
+Received: from [10.174.179.113] (10.174.179.113) by
+ dggpemf500002.china.huawei.com (7.185.36.57) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 25 Oct 2024 11:30:26 +0800
+Message-ID: <b4332982-2b57-9e54-8225-cd6bee7d2cf8@huawei.com>
+Date: Fri, 25 Oct 2024 11:30:26 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fec7163144d7f7b615695b5fd22a182ed7f1e7e9.1729037302.git.unicorn_wang@outlook.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.13.1
+Subject: Re: [PATCH v3 net 0/4] Fix passing 0 to ERR_PTR in intel ether
+ drivers
+Content-Language: en-US
+To: Jacob Keller <jacob.e.keller@intel.com>, Simon Horman <horms@kernel.org>
+CC: <anthony.l.nguyen@intel.com>, <przemyslaw.kitszel@intel.com>,
+	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <ast@kernel.org>, <daniel@iogearbox.net>,
+	<hawk@kernel.org>, <john.fastabend@gmail.com>,
+	<maciej.fijalkowski@intel.com>, <vedang.patel@intel.com>,
+	<jithu.joseph@intel.com>, <andre.guedes@intel.com>,
+	<sven.auhagen@voleatech.de>, <alexander.h.duyck@intel.com>,
+	<intel-wired-lan@lists.osuosl.org>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <bpf@vger.kernel.org>
+References: <20241022065623.1282224-1-yuehaibing@huawei.com>
+ <20241022073225.GO402847@kernel.org>
+ <584b87a4-4a69-4119-bcd8-d4561f41ed53@intel.com>
+From: Yue Haibing <yuehaibing@huawei.com>
+In-Reply-To: <584b87a4-4a69-4119-bcd8-d4561f41ed53@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ dggpemf500002.china.huawei.com (7.185.36.57)
 
-On Wed, Oct 16, 2024 at 08:19:22AM +0800, Chen Wang wrote:
-> From: Chen Wang <unicorn_wang@outlook.com>
+On 2024/10/23 3:17, Jacob Keller wrote:
 > 
-> Sophgo SG2042 contains a PWM controller, which has 4 channels and
-> can generate PWM waveforms output.
 > 
-> Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->  .../bindings/pwm/sophgo,sg2042-pwm.yaml       | 51 +++++++++++++++++++
->  1 file changed, 51 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pwm/sophgo,sg2042-pwm.yaml
+> On 10/22/2024 12:32 AM, Simon Horman wrote:
+>> On Tue, Oct 22, 2024 at 02:56:19PM +0800, Yue Haibing wrote:
+>>> Fixing sparse error in xdp run code by introducing new variable xdp_res
+>>> instead of overloading this into the skb pointer as i40e drivers done
+>>> in commit 12738ac4754e ("i40e: Fix sparse errors in i40e_txrx.c") and
+>>> commit ae4393dfd472 ("i40e: fix broken XDP support").
+>>>
+>>> v3: Fix uninitialized 'xdp_res' in patch 3 and 4 which Reported-by
+>>>     kernel test robot
+>>> v2: Fix this as i40e drivers done instead of return NULL in xdp run code
+>>
+>> Hi Yue Haibing, all,
+>>
+>> I like these changes a lot. But I do wonder if it would
+>> be more appropriate to target them at net-next (or iwl-next)
+>> rather than net, without Fixes tags. This is because they
+>> don't seem to be fixing (user-visible) bugs. Am I missing something?
+>>
+>> ...
 > 
-> diff --git a/Documentation/devicetree/bindings/pwm/sophgo,sg2042-pwm.yaml b/Documentation/devicetree/bindings/pwm/sophgo,sg2042-pwm.yaml
-> new file mode 100644
-> index 000000000000..fe89719ed9dd
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pwm/sophgo,sg2042-pwm.yaml
-> @@ -0,0 +1,51 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/pwm/sophgo,sg2042-pwm.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Sophgo SG2042 PWM controller
-> +
-> +maintainers:
-> +  - Chen Wang <unicorn_wang@outlook.com>
-> +
-> +description:
-> +  This controller contains 4 channels which can generate PWM waveforms.
-> +
-> +allOf:
-> +  - $ref: pwm.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    const: sophgo,sg2042-pwm
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    maxItems: 1
-> +
-> +  clock-names:
-> +    items:
-> +      - const: apb
-> +
-> +  "#pwm-cells":
-> +    const: 2
-> +
+> Yea, these do seem like next candidates.
 
-Does this ip need a reset? I see a RST_PWM in the reset bindings.
-If so, please add reset support for the whole patch.
-
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - clock-names
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    pwm@7f006000 {
-> +        compatible = "sophgo,sg2042-pwm";
-> +        reg = <0x7f006000 0x1000>;
-> +        #pwm-cells = <2>;
-> +        clocks = <&clock 67>;
-> +        clock-names = "apb";
-> +    };
-> -- 
-> 2.34.1
+Should I resend this serial target to iwl-next?
 > 
+> .
 
