@@ -1,202 +1,174 @@
-Return-Path: <linux-kernel+bounces-381865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBF8C9B05A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:22:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F2C19B05A6
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:22:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98C731F24B14
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 14:22:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B86341F24892
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 14:22:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48D321FB89A;
-	Fri, 25 Oct 2024 14:22:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DB611FB8B3;
+	Fri, 25 Oct 2024 14:22:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ugz6iAdv"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VvpyJaVJ"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD51A1B394C;
-	Fri, 25 Oct 2024 14:22:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 803F31FB8B9;
+	Fri, 25 Oct 2024 14:22:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729866130; cv=none; b=ievY4+jBrAnTLRhA6VyMKSvljur64fD5CWxCSa9nk/XVeYhdDqhz6neZ9+bewkKm8KDLIPiVT/vpwG00YJRrHAkUUIVw+ipGXPna7MsKrtOQhm761ArsP5qBXOrylgywu98Ob6hdiV9dWy4//3tAuAXBJRK1aIJhwLH73VexkV4=
+	t=1729866134; cv=none; b=Gfy9//U9B+cePzBVRUFCEtQYjgUy/NglIIZKNJCgWsINKGqj/hNH6chec6IApz8N2C8ChWAoGtuCHOy9IPJwMr1FJfoip6Jy1Y/2F5ruTEPxzAJxQS7iL8oyw+Af4dOKztZqkNTGK6GcSaBAyLDeg9th2+xIGgeXJeFUT7KfuCo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729866130; c=relaxed/simple;
-	bh=TN4OxRFHbJ1BMTjYvFnIlBeAF/2g+OdJo63VyblCr8k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tOnZvwuHrXnH1s8+1e3qi5tPsTUg9CJ/XYTKnuDRVwgOeCAJuLAUcouaeR9VnU4/lNlo2/7USkWDkR71ZDGeolsewhEveSB9t32LwG9svchCMhGWDh8uSeonScoD5SPLCRy3MuwcxwUNBvPUpy+eQlMzG6zfBDaO7EAN/Misk5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ugz6iAdv; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729866129; x=1761402129;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=TN4OxRFHbJ1BMTjYvFnIlBeAF/2g+OdJo63VyblCr8k=;
-  b=Ugz6iAdvDdpH7n/D05hEpPc2FOwaE2d6o58JHq507eLoAP/yrh8lf7fp
-   8DgtsDGyWmJANQLxFKJKY1TA1Kqkud8tI4A1ewL4H2zl0dsywoyh+CWXj
-   nuSamU7y9qn7DKRLOXBM50NlOL7lkpP68mzk81LFy/N8q4Jm6xemj1BRM
-   B7N7z1kxnj2Lnk/YDkmTr2JMoqFKqGyQQbffIFiph1fFZ8NLvlKOpSp5I
-   2p6JssK/+BtRzgJhCKpvpkkwq8cVzshOoZuWLfcwuF6bUw4nmu2DdSw24
-   GNacxnBCanNwX+dPpN0xhlEXw4kEzCvqjsRQTFXtMM0T2SMelcYq8vtn0
-   w==;
-X-CSE-ConnectionGUID: h76bQ+1QTDGKOp/7ay1xog==
-X-CSE-MsgGUID: mFQQpUV4TaWQJ+EZSSbZtw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="40088835"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="40088835"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2024 07:22:08 -0700
-X-CSE-ConnectionGUID: acPrhvPuSuWyAPKLyt2B7g==
-X-CSE-MsgGUID: IkEUIwJARqeWoHaAOOINBQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,232,1725346800"; 
-   d="scan'208";a="80522955"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2024 07:22:04 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1t4LCS-00000006wFw-24xi;
-	Fri, 25 Oct 2024 17:22:00 +0300
-Date: Fri, 25 Oct 2024 17:22:00 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: John Ogness <john.ogness@linutronix.de>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>, Petr Mladek <pmladek@suse.com>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Esben Haabendal <esben@geanix.com>, linux-serial@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
-	Tony Lindgren <tony@atomide.com>,
-	Rengarajan S <rengarajan.s@microchip.com>,
-	Peter Collingbourne <pcc@google.com>,
-	Serge Semin <fancer.lancer@gmail.com>,
-	Lino Sanfilippo <l.sanfilippo@kunbus.com>
-Subject: Re: [PATCH tty-next v3 5/6] serial: 8250: Switch to nbcon console
-Message-ID: <ZxupiKSSpZlyKhz-@smile.fi.intel.com>
-References: <20241025105728.602310-1-john.ogness@linutronix.de>
- <20241025105728.602310-6-john.ogness@linutronix.de>
+	s=arc-20240116; t=1729866134; c=relaxed/simple;
+	bh=G4atOyxM9jgJYS0gyVFPokvnqnRIuTR8/gUzRdXWmR8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
+	 In-Reply-To:Content-Type; b=THOZaCs8H2krfnCGJFfU5CpAh6jM1CvejsBLXXKBi2m6T91zd8Bp28QgJi0npA5kZhUofXHQxE8uwDQ3bejyh6n0ZTSVSBIX3wwW2CqCa1gNL5aJUEOvwlia0mjKLgghRzzKq9PBVYyVu5hP/AnTQ1k0cAeVef38FSgKmIUQV0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VvpyJaVJ; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-20cdb889222so19014305ad.3;
+        Fri, 25 Oct 2024 07:22:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729866132; x=1730470932; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:cc:autocrypt:from
+         :content-language:references:to:subject:user-agent:mime-version:date
+         :message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=J+SkgqVJgNuicstP3JsGRFLErFj8SbUewOJTdMcB2kY=;
+        b=VvpyJaVJ1jFuifwPcA8rMEGM9rbL2Qu6+Gt8QqLiNsd3Yqv4OgjYe1AmuvZdRr//q+
+         Vv4axi23PDH1vHCIwkMm8cHslq4mCuPy+z4+HnGsreajbnrNxysXVwHoZP2sD9QKrIkH
+         MI+h/rxR+ITtetAMLTp36CNw2/RG180kTB4v6+8MVX2O71fJRBR28reoqkE9P00WfEBN
+         YuTBqru2I5AXB69+4bJqFCC4+wLwDrmVRt7Z/Aip26XZAsjl4ArDRT9EaUH7hPAHKnZW
+         sUjxxBTy6EdMGzendLn1bPlD5mKy/HY1/5ecApnb3nHN0LtLR81UrP2+e5ndFIQKpxiU
+         iyTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729866132; x=1730470932;
+        h=content-transfer-encoding:in-reply-to:cc:autocrypt:from
+         :content-language:references:to:subject:user-agent:mime-version:date
+         :message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=J+SkgqVJgNuicstP3JsGRFLErFj8SbUewOJTdMcB2kY=;
+        b=Ex8CpNJWqlgRVBdAj/qRjL5f7jzK/wt2evs1fXpfmT36Vjl++56hlWXkClC4P0BYdX
+         feuWZ0hQA5vpjdeK420irKu1mbP5MEyO8Hymo7E4Q0HMVkfE/ztUhDtpVTQV+WaTeJgn
+         iLjEby5bzrlnH1rPtmAM/qNIDLKSOAQh4w72APtYq99iRkWLI6UFDufM9mibApzKEk6l
+         APFZXGKzyCFqbuunCJfIyrxpPQCX54FKz2LvjTQ+UxDRU+kdKbJUUP1+s8yrFG8aqn+k
+         ynW9V4eBmcVdEs1Z+ar25BxnzlCxCWRwlxMT/gH4uH+AMa7JyZGLqh0iGJdbT3ir+XYM
+         gNeQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU+mTDUdiXoKMfOkv7UD7xsHuBetQUQM1FIpgEaZaYHDyAdlWUYWd67wFyzFwXHJzp42WDV467y@vger.kernel.org, AJvYcCUl4kJaPs5Jf0xYQsIyKfsZ2dDCXIrUaVwCpLtd3OBSdy8tetn53fGakF4a7r25PTyLHIA/U35gxQJF@vger.kernel.org, AJvYcCVYDoTzX3H+VFwKJOWu9G20buASZ0FQ7ulZDHMptgYSNgoB/Ta7++PZ4QsEeKl9SlLHZDTLhV+OcP+x6Z+F@vger.kernel.org, AJvYcCW/Q23dfmuiippNcN8xuwPAA5aK7x4FAliae5sh/it2amk+GlUovh8IOq4tAXhHcpzhrmPr8FdKlinTClc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyotf6DZaqY8JGVJ4wr7Le8EG65KvHKJvpYU8cJvcdeQ9jkYwGC
+	8MZob9+XoOHgGRY9LLzsl84/+CGMaAuc4oUxoMUOW30RCU/wtcB3
+X-Google-Smtp-Source: AGHT+IE0HJgh3tgcsL6OQ6cerJSSzvl2kzimxZhUmfqvyOZzTwOE9jF1+jxbo9KS4avg/g5ONz8VRg==
+X-Received: by 2002:a17:903:2a8e:b0:20c:d428:adf4 with SMTP id d9443c01a7336-20fa9eb92b9mr144717375ad.38.1729866131679;
+        Fri, 25 Oct 2024 07:22:11 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bbf44743sm9914485ad.21.2024.10.25.07.22.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 25 Oct 2024 07:22:10 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <6955c8b6-58df-4b1a-bdd6-759de3d3c46b@roeck-us.net>
+Date: Fri, 25 Oct 2024 07:22:08 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241025105728.602310-6-john.ogness@linutronix.de>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] hwmon: ltc4296-1: add driver support
+To: Antoniu Miclaus <antoniu.miclaus@analog.com>,
+ Jean Delvare <jdelvare@suse.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-hwmon@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241025115624.21835-1-antoniu.miclaus@analog.com>
+ <20241025115624.21835-3-antoniu.miclaus@analog.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+ Kory Maincent <kory.maincent@bootlin.com>,
+ Network Development <netdev@vger.kernel.org>
+In-Reply-To: <20241025115624.21835-3-antoniu.miclaus@analog.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Oct 25, 2024 at 01:03:27PM +0206, John Ogness wrote:
-> Implement the necessary callbacks to switch the 8250 console driver
-> to perform as an nbcon console.
+Hi,
+
+On 10/25/24 04:56, Antoniu Miclaus wrote:
+> Add support for LTC4296-1 is an IEEE 802.3cg-compliant,
+> five port, single-pair power over Ethernet (SPoE), power
+> sourcing equipment (PSE) controller.
 > 
-> Add implementations for the nbcon console callbacks (write_atomic,
-> write_thread, device_lock, device_unlock) and add CON_NBCON to the
-> initial flags.
-
-Again, use consistent style for the references to the callbacks.
-it may be .func, or ->func(), or something else, but make it consistent.
-
-> All register access in the callbacks are within unsafe sections.
-> The write callbacks allow safe handover/takeover per byte and add
-> a preceding newline if they take over mid-line.
-> 
-> For the write_atomic() case, a new irq_work is used to defer modem
-> control since it may be a context that does not allow waking up
-> tasks.
+> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+> ---
 
 ...
 
-> +/*
-> + * Only to be used directly by the console write callbacks, which may not
-> + * require the port lock. Use serial8250_clear_IER() instead for all other
-> + * cases.
-> + */
-> +static void __serial8250_clear_IER(struct uart_8250_port *up)
->  {
->  	if (up->capabilities & UART_CAP_UUE)
->  		serial_out(up, UART_IER, UART_IER_UUE);
+> +	hwmon_dev = devm_hwmon_device_register_with_groups(&spi->dev,
+> +							   spi->modalias,
+> +							   st, ltc4296_1_groups);
 
->  		serial_out(up, UART_IER, 0);
->  }
->  
-> +static inline void serial8250_clear_IER(struct uart_8250_port *up)
-> +{
-> +	__serial8250_clear_IER(up);
+New drivers must use the the with_info() hardware monitoring API.
 
-Shouldn't this have a lockdep annotation to differentiate with the above?
+The API use is inappropriate: _enable attributes are supposed to enable
+monitoring, not a power source. The hardware monitoring subsystem is
+responsible for hardware _monitoring_, not control. It can be tied to
+the regulator subsystem, but even that seems to be be inappropriate here.
+I think the driver should probably reside in drivers/net/pse-pd/.
+That doesn't mean it can not support hardware monitoring, but that
+isn't really the chip's primary functionality.
 
-> +}
+Yes, I see that we already have ti,tps23861 in the hardware monitoring
+subsystem, but that may be just as wrong.
 
-...
+I am copying the PSE subsystem maintainers and mailing list for advice.
 
-> +static void serial8250_console_byte_write(struct uart_8250_port *up,
-> +					  struct nbcon_write_context *wctxt)
-> +{
-> +	const char *s = READ_ONCE(wctxt->outbuf);
-> +	const char *end = s + READ_ONCE(wctxt->len);
-
-Is there any possibility that outbuf value be changed before we get the len and
-at the end we get the wrong pointer?
-
-> +	struct uart_port *port = &up->port;
-> +
-> +	/*
-> +	 * Write out the message. Toggle unsafe for each byte in order to give
-> +	 * another (higher priority) context the opportunity for a friendly
-> +	 * takeover. If such a takeover occurs, this must abort writing since
-> +	 * wctxt->outbuf and wctxt->len are no longer valid.
-> +	 */
-> +	while (s != end) {
-> +		if (!nbcon_enter_unsafe(wctxt))
-> +			return;
-> +
-> +		uart_console_write(port, s++, 1, serial8250_console_wait_putchar);
-> +
-> +		if (!nbcon_exit_unsafe(wctxt))
-> +			return;
->  	}
->  }
-
-...
-
-> +/*
-> + * irq_work handler to perform modem control. Only triggered via
-> + * write_atomic() callback because it may be in a scheduler or NMI
-
-Also make same style for the callback reference in the comments.
-
-> + * context, unable to wake tasks.
-> + */
-
-...
-
->  struct uart_8250_port {
-
->  	u16			lsr_save_mask;
->  #define MSR_SAVE_FLAGS UART_MSR_ANY_DELTA
->  	unsigned char		msr_saved_flags;
-> +	struct irq_work		modem_status_work;
-> +
-> +	bool			console_line_ended;	/* line fully output */
->  
->  	struct uart_8250_dma	*dma;
->  	const struct uart_8250_ops *ops;
-
-Btw, have you run `pahole` on this? Perhaps there are better places for new
-members?
-
--- 
-With Best Regards,
-Andy Shevchenko
-
+Thanks,
+Guenter
 
 
