@@ -1,391 +1,169 @@
-Return-Path: <linux-kernel+bounces-381443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CFC39AFF50
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 12:01:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4018F9AFF54
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 12:01:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BA0628439D
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 10:01:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F31312824D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 10:01:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B92E1D47C6;
-	Fri, 25 Oct 2024 10:00:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB5CB1FDF84;
+	Fri, 25 Oct 2024 10:00:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="MrjrMUym"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="G3TRUDix"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08A831F5839
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 09:59:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A578D1F81BD;
+	Fri, 25 Oct 2024 10:00:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729850403; cv=none; b=dsos4Zi7beVNMdgFEkSEDMssqAUnVHMaG1gQ0VrqeLIo/zLfJAwnd7lFa/1cv+ULeEDrdF3FNZdqau4s3xOpjTLRqUXuT/SakE5HHbAe4cmcmSidOjdcpbiL5J3YtTg/isbBFbXhvO9zXjuZFfO2rbbuRAbxBf3tT8n5bhTTX1Y=
+	t=1729850409; cv=none; b=qk9+ZqLQ/3exMfJqS/S2+ffTKQFqODw2rkdDeftHHoG+hM3UwPNLa5Tj68itJs6pP2E+hdntJn48YcVp1tME8XHBJLSt6XkQmLBuDDa62PhveHGDDdZHB/4u9boC9fuaVlv6c+36j03WMYu1I2dCG23uewIbqheIQUaTT7sXr+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729850403; c=relaxed/simple;
-	bh=ZPKDDOSxbYilgrG4tLmWXDC2qLPxGrrf6mFdnqanB6s=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qmd0BaXL3jyU1wS5pv1Qb3lKmt2qvgrwZe9cecJvrlrLJ0u29tV4YoXFLXK+ycHjCaelptuJfYCweE42q7YRV1oQb1sxdT2R/QLzpQ4iZG2QalH/ndtnGbBjghqCCq71zCa1z+NzuoWiyYzeEyy/NCN1QAuPx8yE6ys6tQarVhw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=MrjrMUym; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a9a1b71d7ffso272987166b.1
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 02:59:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729850398; x=1730455198; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2Z2Cp/0RuXPja2VnWMLGnI6YXRWhekI54aEssV25Ags=;
-        b=MrjrMUym/JRNWlmUg1TqXkZ8dy9tnyaP1Z/XjtzVsI9lY77I7LdIezlDzfUsmLcijC
-         5Ro4lB3JFgjGD/CidyqGe/rGkjDPH9HzHn/SSMwl4/aRDZqgd1KRZ1JPimYe8z6jWQzN
-         84+R99KeNogKm3/dL61kbmzzir6z/B2us/hZoJSpJNSt2hskLC3OG2Qh3qehnjyijQxM
-         d4+PiPi925Mu62z5l8Rojux+7W1iQc8t/nclYYP/1R1wq7NYl4OKnh7kUkSAb761KnRA
-         eoPVUZC2dd5sJ+7V8i7Q+VwRNObjr8DpCuvuVPH6+Tgk9Y2pW5Q32Xf4WJ9KEGND4TYL
-         I89w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729850398; x=1730455198;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2Z2Cp/0RuXPja2VnWMLGnI6YXRWhekI54aEssV25Ags=;
-        b=S2S9Na8NXJG+p3IwwBQ85Qjr5MiK2aLplunIf/KiDeSFCi2/kgue94Sjff1byoaRE8
-         q3gVOfG5e3OGJ8DGhQraF4PBoytHN1RCMNz6k9TsjuOVH1unBdvOgNYKqMCiJ3/Vx3hm
-         5WYY+qBWUe5ByPleD7qwn93exYWs9l4g5RjP+eiaGmxcxwzY5gN6IyI0WmptuER0yGxi
-         RKv1fVTt/QCqs65hVHhqBbVmqSZfYUydzt8/V7NACGFHtbUJDQEDsu9tkvHKwUYSOtrH
-         xE+iwR3f7Av5R4NPy+xq99fofkCwdyidLeMKXEzrRXvPvzUe1bsn/Bh2iJT9o1R1+r4N
-         zB2A==
-X-Forwarded-Encrypted: i=1; AJvYcCXpTG6sWOKDfHCshNsKORiqU4wafGcqxaAfp1b/7luJPTerISvR3PKU7YcKNH1cu9NuYuOWkwx91PiQQFE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKEUmCMDCLGXUQyeNy6UPEXnFzUbcBHVk3daRkDpueaWUZgj3V
-	0yX4HraPMTg1vzxmuKXJGPGNvUeJdjVTGKCWq/g4LYH/0IeOkyixIGRrAmz+iIY=
-X-Google-Smtp-Source: AGHT+IHo763g2tkSjDl77LlrxX9SC1j1w+RUJ1QYoF0MngkHKTcL+wMwFjjlOSz5xZhNREiseAJRkA==
-X-Received: by 2002:a17:906:c148:b0:a9a:3718:6d6 with SMTP id a640c23a62f3a-a9abf964714mr955294666b.58.1729850398115;
-        Fri, 25 Oct 2024 02:59:58 -0700 (PDT)
-Received: from localhost.localdomain ([188.27.128.50])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b1f02951esm51737266b.71.2024.10.25.02.59.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2024 02:59:57 -0700 (PDT)
-From: Alexandru Ardelean <aardelean@baylibre.com>
-To: linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Cc: jic23@kernel.org,
-	krzk+dt@kernel.org,
-	robh@kernel.org,
-	lars@metafoo.de,
-	michael.hennerich@analog.com,
-	gstols@baylibre.com,
-	dlechner@baylibre.com,
-	conor.dooley@microchip.com,
-	Alexandru Ardelean <aardelean@baylibre.com>
-Subject: [PATCH v2 5/5] iio: adc: ad7606: add support for AD760{7,8,9} parts
-Date: Fri, 25 Oct 2024 12:59:39 +0300
-Message-ID: <20241025095939.271811-6-aardelean@baylibre.com>
-X-Mailer: git-send-email 2.46.1
-In-Reply-To: <20241025095939.271811-1-aardelean@baylibre.com>
-References: <20241025095939.271811-1-aardelean@baylibre.com>
+	s=arc-20240116; t=1729850409; c=relaxed/simple;
+	bh=XFCPTdOf7277mkxyNqBln5PHSUltz8Pj1c1bIAULRes=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=a1ZecXkoDCSmzQ5vCxmZIAFYP4WP05jxpPT/q8x0iY332iCUEpDJy+IPv0jK8KnV+AWh7BO2A1kU6DphwvUfs6273QLwyN25e7YZyVZC7EFF4RnqddxRjsy1tgxLEwQ3CPgNrVOgoM3mEB1nv4smXf6IiEIKa89ihkXCM9PuiPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=G3TRUDix; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49P1BrSe004522;
+	Fri, 25 Oct 2024 09:59:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	PwYWGdB45qg/3CamTEfHajoG/yYk5oPu6x2vS9FthPY=; b=G3TRUDixCpwVp/37
+	eY2953pgVDCWctZFVnwujl30TbLM7k3Hpsf5X5T4RnafIpoMNhu8okxsTXNwk/y1
+	WFn3/aBkknSS119Y6ZoozDkRlKhQuCoAVRiKmdzjmepTwiuQ1eZ01SQlln8iMuwZ
+	opeAR+8ovLlW90i/jyerf9H7yz3zct9ylkgXNnQyY1m0aGNvIrTZzQIj/0To82K1
+	xfJ1IgfY9n1Gu15hNJYtx5Tf04Fz2TV8hFpz+/dHp1081Ss8AFMkym6hG2nF6+vE
+	eAQG6JQ547jiV/YHfQcmVMeu70uFlldtEHCUYeLJOgLM8a3jStv6MQo9uz0lW+Gu
+	VoIvFA==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42em688g37-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Oct 2024 09:59:57 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49P9xua0011713
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Oct 2024 09:59:56 GMT
+Received: from [10.151.41.25] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 25 Oct
+ 2024 02:59:52 -0700
+Message-ID: <b2a18ac5-727d-4f5b-9465-c360e6432dc5@quicinc.com>
+Date: Fri, 25 Oct 2024 15:29:49 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 1/6] dt-bindings: net: wireless: update required
+ properties for ath12k PCI module
+To: Krzysztof Kozlowski <krzk@kernel.org>, <ath12k@lists.infradead.org>
+CC: <linux-wireless@vger.kernel.org>, Kalle Valo <kvalo@kernel.org>,
+        Rob
+ Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor
+ Dooley <conor+dt@kernel.org>,
+        Jeff Johnson <jjohnson@kernel.org>,
+        Bjorn
+ Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>
+References: <20241023060352.605019-1-quic_rajkbhag@quicinc.com>
+ <20241023060352.605019-2-quic_rajkbhag@quicinc.com>
+ <87db3d68-ab1a-4cc4-9857-416de39cea0f@kernel.org>
+ <e2c1ce1a-89af-4feb-a21a-9ca2578430e7@quicinc.com>
+ <b97b8350-3925-40b0-8f87-f89df429a52a@kernel.org>
+ <e7b27f57-efb2-45ea-bbe0-e5aeb90cbff9@quicinc.com>
+ <606083d8-4332-45e4-be41-08ca5425cc03@kernel.org>
+ <94defe49-c87a-44f6-8768-03f3d6687ac3@quicinc.com>
+ <50c0f184-030b-4a19-bf8a-077505170f03@kernel.org>
+Content-Language: en-US
+From: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
+In-Reply-To: <50c0f184-030b-4a19-bf8a-077505170f03@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: DTVJxZ-XF8nN1HLYhmgfBnExrhPnEtDh
+X-Proofpoint-GUID: DTVJxZ-XF8nN1HLYhmgfBnExrhPnEtDh
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 malwarescore=0
+ priorityscore=1501 adultscore=0 bulkscore=0 phishscore=0 mlxscore=0
+ lowpriorityscore=0 mlxlogscore=533 impostorscore=0 suspectscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410250076
 
-The AD7607, AD7608 and AD7609 are some older parts of the AD7606 family.
-They are hardware-only, meaning that they don't have any registers
-accessible via SPI or Parallel interface.
-They are more similar to the AD7605-4 part, which is supported by the
-'ad7606' driver, and are configurable via GPIOs.
+On 10/23/2024 5:38 PM, Krzysztof Kozlowski wrote:
+> On 23/10/2024 12:28, Raj Kumar Bhagat wrote:
+>> On 10/23/2024 12:29 PM, Krzysztof Kozlowski wrote:
+>>> On 23/10/2024 08:53, Raj Kumar Bhagat wrote:
+>>>> On 10/23/2024 12:17 PM, Krzysztof Kozlowski wrote:
+>>>>> On 23/10/2024 08:45, Raj Kumar Bhagat wrote:
+>>>>>> On 10/23/2024 12:05 PM, Krzysztof Kozlowski wrote:
+>>>>>>> On 23/10/2024 08:03, Raj Kumar Bhagat wrote:
+>>>>>>>> The current device-tree bindings for the Ath12K module list many
+>>>>>>>> WCN7850-specific properties as required. However, these properties are
+>>>>>>>> not applicable to other Ath12K devices.
+>>>>>>>>
+>>>>>>>> Hence, remove WCN7850-specific properties from the required section,
+>>>>>>>> retaining only generic properties valid across all Ath12K devices.
+>>>>>>>> WCN7850-specific properties will remain required based on the device's
+>>>>>>>> compatible enum.
+>>>>>>> Just not true. These apply to all devices described in this binding.
+>>>>>>>
+>>>>>>> NAK.
+>>>>>>>
+>>>>>>> Don't send patches for your downstream stuff.
+>>>>>> This is not for downstream. This series is the per-requisite for ath12k
+>>>>>> MLO support in upstream.
+>>>>>>
+>>>>>> In the subsequent patch [2/6] we are adding new device (QCN9274) in this
+>>>>>> binding that do not require the WCN7850 specific properties.
+>>>>>>
+>>>>>> This is a refactoring patch for the next patch [2/6].
+>>>>> It's just wrong. Not true. At this point of patch there are no other
+>>>>> devices. Don't refactor uselessly introducing incorrect hardware
+>>>> Ok then, If we squash this patch with the next patch [2/6], that actually adding
+>>>> the new device, then this patch changes are valid right?
+>>> Yes, except I asked to have separate binding for devices with different
+>>> interface (WSI). You add unrelated devices to same binding, growing it
+>>> into something tricky to manage. Your second patch misses if:then
+>>> disallwing all this WSI stuff for existing device... and then you should
+>>> notice there is absolutely *nothing* in common.
+>>>
+>> I understand your point about having separate bindings if there are no common
+>> properties. However, the title and description of this binding indicate that it
+>> is intended for Qualcomm ath12k wireless devices with a PCI bus. Given this, the
+>> QCN9274 seems to fit within the same binding.
+> Feel free to fix it. Or add common schema used by multiple bindings.
+> 
+>> Additionally, there will likely be more properties added in the future that could
+>> be common. For example, the “qcom,ath12k-calibration-variant” property (which the
+> You are supposed to add them now, not later. See writing bindings. They
+> are supposed to be complete.
+> 
 
-Like the AD7605-4 part, all 3 parts have 2 CONVST (Conversion Start) pins
-(CONVST A and CONVST B). But in practice, these should be tied together to
-make reading of samples easier via a serial line.
+Sure will add "qcom,ath12k-calibration-variant" in next version.
 
-The AD7607 has an 14-bit resolution and AD7608 & AD7609 have an 18-bit
-resolution. The main difference between the AD7608 & AD7609 is that the
-AD7609 has a larger range (±10V & ±20V) vs the ±5V & ±10V ranges for AD7608.
+>> ath12k host currently doesn’t support reading and using, hence we are not adding it
+>> now) could be a common property.
+> What is "host"? Either the device has this property or not. Whether host
+> supports something does not really matter, right? You have hardware
+> property or you have it *not*.
 
-However, unlike AD7605-4 part, these 3 parts have oversampling which is
-configurable (like for the AD7606 in HW-mode) via GPIOs.
-
-Datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/ad7607.pdf
-Datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/ad7608.pdf
-Datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/ad7609.pdf
-
-Signed-off-by: Alexandru Ardelean <aardelean@baylibre.com>
----
- drivers/iio/adc/ad7606.c     | 104 +++++++++++++++++++++++++++++++++++
- drivers/iio/adc/ad7606.h     |   3 +
- drivers/iio/adc/ad7606_par.c |   6 ++
- drivers/iio/adc/ad7606_spi.c |  42 ++++++++++++++
- 4 files changed, 155 insertions(+)
-
-diff --git a/drivers/iio/adc/ad7606.c b/drivers/iio/adc/ad7606.c
-index 94756bb87b95..8b2046baaa3e 100644
---- a/drivers/iio/adc/ad7606.c
-+++ b/drivers/iio/adc/ad7606.c
-@@ -73,6 +73,14 @@ static const unsigned int ad7606_16bit_sw_scale_avail[3][2] = {
- 	{ 0, 76293 }, { 0, 152588 }, { 0, 305176 }
- };
- 
-+static const unsigned int ad7607_hw_scale_avail[2][2] = {
-+	{ 0, 610352 }, { 1, 220703 }
-+};
-+
-+static const unsigned int ad7609_hw_scale_avail[2][2] = {
-+	{ 0, 152588 }, { 0, 305176 }
-+};
-+
- static const unsigned int ad7606_oversampling_avail[7] = {
- 	1, 2, 4, 8, 16, 32, 64,
- };
-@@ -113,6 +121,30 @@ static const struct iio_chan_spec ad7606_channels_18bit[] = {
- 	AD7606_CHANNEL(7, 18),
- };
- 
-+static const struct iio_chan_spec ad7607_channels[] = {
-+	IIO_CHAN_SOFT_TIMESTAMP(8),
-+	AD7606_CHANNEL(0, 14),
-+	AD7606_CHANNEL(1, 14),
-+	AD7606_CHANNEL(2, 14),
-+	AD7606_CHANNEL(3, 14),
-+	AD7606_CHANNEL(4, 14),
-+	AD7606_CHANNEL(5, 14),
-+	AD7606_CHANNEL(6, 14),
-+	AD7606_CHANNEL(7, 14),
-+};
-+
-+static const struct iio_chan_spec ad7608_channels[] = {
-+	IIO_CHAN_SOFT_TIMESTAMP(8),
-+	AD7606_CHANNEL(0, 18),
-+	AD7606_CHANNEL(1, 18),
-+	AD7606_CHANNEL(2, 18),
-+	AD7606_CHANNEL(3, 18),
-+	AD7606_CHANNEL(4, 18),
-+	AD7606_CHANNEL(5, 18),
-+	AD7606_CHANNEL(6, 18),
-+	AD7606_CHANNEL(7, 18),
-+};
-+
- /*
-  * The current assumption that this driver makes for AD7616, is that it's
-  * working in Hardware Mode with Serial, Burst and Sequencer modes activated.
-@@ -149,6 +181,12 @@ static int ad7606c_16bit_chan_scale_setup(struct ad7606_state *st,
- 					  struct iio_chan_spec *chan, int ch);
- static int ad7606_16bit_chan_scale_setup(struct ad7606_state *st,
- 					 struct iio_chan_spec *chan, int ch);
-+static int ad7607_chan_scale_setup(struct ad7606_state *st,
-+				   struct iio_chan_spec *chan, int ch);
-+static int ad7608_chan_scale_setup(struct ad7606_state *st,
-+				   struct iio_chan_spec *chan, int ch);
-+static int ad7609_chan_scale_setup(struct ad7606_state *st,
-+				   struct iio_chan_spec *chan, int ch);
- 
- const struct ad7606_chip_info ad7605_4_info = {
- 	.channels = ad7605_channels,
-@@ -215,6 +253,39 @@ const struct ad7606_chip_info ad7606c_16_info = {
- };
- EXPORT_SYMBOL_NS_GPL(ad7606c_16_info, IIO_AD7606);
- 
-+const struct ad7606_chip_info ad7607_info = {
-+	.channels = ad7607_channels,
-+	.name = "ad7607",
-+	.num_adc_channels = 8,
-+	.num_channels = 9,
-+	.oversampling_avail = ad7606_oversampling_avail,
-+	.oversampling_num = ARRAY_SIZE(ad7606_oversampling_avail),
-+	.scale_setup_cb = ad7607_chan_scale_setup,
-+};
-+EXPORT_SYMBOL_NS_GPL(ad7607_info, IIO_AD7606);
-+
-+const struct ad7606_chip_info ad7608_info = {
-+	.channels = ad7608_channels,
-+	.name = "ad7608",
-+	.num_adc_channels = 8,
-+	.num_channels = 9,
-+	.oversampling_avail = ad7606_oversampling_avail,
-+	.oversampling_num = ARRAY_SIZE(ad7606_oversampling_avail),
-+	.scale_setup_cb = ad7608_chan_scale_setup,
-+};
-+EXPORT_SYMBOL_NS_GPL(ad7608_info, IIO_AD7606);
-+
-+const struct ad7606_chip_info ad7609_info = {
-+	.channels = ad7608_channels,
-+	.name = "ad7609",
-+	.num_adc_channels = 8,
-+	.num_channels = 9,
-+	.oversampling_avail = ad7606_oversampling_avail,
-+	.oversampling_num = ARRAY_SIZE(ad7606_oversampling_avail),
-+	.scale_setup_cb = ad7609_chan_scale_setup,
-+};
-+EXPORT_SYMBOL_NS_GPL(ad7609_info, IIO_AD7606);
-+
- const struct ad7606_chip_info ad7606c_18_info = {
- 	.channels = ad7606_channels_18bit,
- 	.name = "ad7606c18",
-@@ -441,6 +512,39 @@ static int ad7606c_16bit_chan_scale_setup(struct ad7606_state *st,
- 	return 0;
- }
- 
-+static int ad7607_chan_scale_setup(struct ad7606_state *st,
-+				   struct iio_chan_spec *chan, int ch)
-+{
-+	struct ad7606_chan_scale *cs = &st->chan_scales[ch];
-+
-+	cs->range = 0;
-+	cs->scale_avail = ad7607_hw_scale_avail;
-+	cs->num_scales = ARRAY_SIZE(ad7607_hw_scale_avail);
-+	return 0;
-+}
-+
-+static int ad7608_chan_scale_setup(struct ad7606_state *st,
-+				   struct iio_chan_spec *chan, int ch)
-+{
-+	struct ad7606_chan_scale *cs = &st->chan_scales[ch];
-+
-+	cs->range = 0;
-+	cs->scale_avail = ad7606_18bit_hw_scale_avail;
-+	cs->num_scales = ARRAY_SIZE(ad7606_18bit_hw_scale_avail);
-+	return 0;
-+}
-+
-+static int ad7609_chan_scale_setup(struct ad7606_state *st,
-+				   struct iio_chan_spec *chan, int ch)
-+{
-+	struct ad7606_chan_scale *cs = &st->chan_scales[ch];
-+
-+	cs->range = 0;
-+	cs->scale_avail = ad7609_hw_scale_avail;
-+	cs->num_scales = ARRAY_SIZE(ad7609_hw_scale_avail);
-+	return 0;
-+}
-+
- static int ad7606_reg_access(struct iio_dev *indio_dev,
- 			     unsigned int reg,
- 			     unsigned int writeval,
-diff --git a/drivers/iio/adc/ad7606.h b/drivers/iio/adc/ad7606.h
-index 32c6f776c5df..998814a92b82 100644
---- a/drivers/iio/adc/ad7606.h
-+++ b/drivers/iio/adc/ad7606.h
-@@ -237,6 +237,9 @@ extern const struct ad7606_chip_info ad7606_4_info;
- extern const struct ad7606_chip_info ad7606b_info;
- extern const struct ad7606_chip_info ad7606c_16_info;
- extern const struct ad7606_chip_info ad7606c_18_info;
-+extern const struct ad7606_chip_info ad7607_info;
-+extern const struct ad7606_chip_info ad7608_info;
-+extern const struct ad7606_chip_info ad7609_info;
- extern const struct ad7606_chip_info ad7616_info;
- 
- #ifdef CONFIG_PM_SLEEP
-diff --git a/drivers/iio/adc/ad7606_par.c b/drivers/iio/adc/ad7606_par.c
-index 4e729777d373..a25182a3daa7 100644
---- a/drivers/iio/adc/ad7606_par.c
-+++ b/drivers/iio/adc/ad7606_par.c
-@@ -211,6 +211,9 @@ static const struct platform_device_id ad7606_driver_ids[] = {
- 	{ .name	= "ad7606-6", .driver_data = (kernel_ulong_t)&ad7606_6_info, },
- 	{ .name	= "ad7606-8", .driver_data = (kernel_ulong_t)&ad7606_8_info, },
- 	{ .name	= "ad7606b", .driver_data = (kernel_ulong_t)&ad7606b_info, },
-+	{ .name	= "ad7607", .driver_data = (kernel_ulong_t)&ad7607_info, },
-+	{ .name	= "ad7608", .driver_data = (kernel_ulong_t)&ad7608_info, },
-+	{ .name	= "ad7609", .driver_data = (kernel_ulong_t)&ad7609_info, },
- 	{ }
- };
- MODULE_DEVICE_TABLE(platform, ad7606_driver_ids);
-@@ -221,6 +224,9 @@ static const struct of_device_id ad7606_of_match[] = {
- 	{ .compatible = "adi,ad7606-6", .data = &ad7606_6_info },
- 	{ .compatible = "adi,ad7606-8", .data = &ad7606_8_info },
- 	{ .compatible = "adi,ad7606b", .data = &ad7606b_info },
-+	{ .compatible = "adi,ad7607", .data = &ad7607_info },
-+	{ .compatible = "adi,ad7608", .data = &ad7608_info },
-+	{ .compatible = "adi,ad7609", .data = &ad7609_info },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, ad7606_of_match);
-diff --git a/drivers/iio/adc/ad7606_spi.c b/drivers/iio/adc/ad7606_spi.c
-index 44c6031e9e9a..0662300cde8d 100644
---- a/drivers/iio/adc/ad7606_spi.c
-+++ b/drivers/iio/adc/ad7606_spi.c
-@@ -132,6 +132,19 @@ static int ad7606_spi_read_block(struct device *dev,
- 	return 0;
- }
- 
-+static int ad7606_spi_read_block14to16(struct device *dev,
-+				       int count, void *buf)
-+{
-+	struct spi_device *spi = to_spi_device(dev);
-+	struct spi_transfer xfer = {
-+		.bits_per_word = 14,
-+		.len = count * sizeof(u16),
-+		.rx_buf = buf,
-+	};
-+
-+	return spi_sync_transfer(spi, &xfer, 1);
-+}
-+
- static int ad7606_spi_read_block18to32(struct device *dev,
- 				       int count, void *buf)
- {
-@@ -325,6 +338,14 @@ static const struct ad7606_bus_ops ad7606_spi_bops = {
- 	.read_block = ad7606_spi_read_block,
- };
- 
-+static const struct ad7606_bus_ops ad7607_spi_bops = {
-+	.read_block = ad7606_spi_read_block14to16,
-+};
-+
-+static const struct ad7606_bus_ops ad7608_spi_bops = {
-+	.read_block = ad7606_spi_read_block18to32,
-+};
-+
- static const struct ad7606_bus_ops ad7616_spi_bops = {
- 	.read_block = ad7606_spi_read_block,
- 	.reg_read = ad7606_spi_reg_read,
-@@ -387,6 +408,21 @@ static const struct ad7606_bus_info ad7606c_18_bus_info = {
- 	.bops = &ad7606c_18_spi_bops,
- };
- 
-+static const struct ad7606_bus_info ad7607_bus_info = {
-+	.chip_info = &ad7607_info,
-+	.bops = &ad7607_spi_bops,
-+};
-+
-+static const struct ad7606_bus_info ad7608_bus_info = {
-+	.chip_info = &ad7608_info,
-+	.bops = &ad7608_spi_bops,
-+};
-+
-+static const struct ad7606_bus_info ad7609_bus_info = {
-+	.chip_info = &ad7609_info,
-+	.bops = &ad7608_spi_bops,
-+};
-+
- static const struct ad7606_bus_info ad7616_bus_info = {
- 	.chip_info = &ad7616_info,
- 	.bops = &ad7616_spi_bops,
-@@ -408,6 +444,9 @@ static const struct spi_device_id ad7606_id_table[] = {
- 	{ "ad7606b",  (kernel_ulong_t)&ad7606b_bus_info },
- 	{ "ad7606c-16", (kernel_ulong_t)&ad7606c_16_bus_info },
- 	{ "ad7606c-18", (kernel_ulong_t)&ad7606c_18_bus_info },
-+	{ "ad7607",   (kernel_ulong_t)&ad7607_bus_info },
-+	{ "ad7608",   (kernel_ulong_t)&ad7608_bus_info },
-+	{ "ad7609",   (kernel_ulong_t)&ad7609_bus_info },
- 	{ "ad7616",   (kernel_ulong_t)&ad7616_bus_info },
- 	{ }
- };
-@@ -421,6 +460,9 @@ static const struct of_device_id ad7606_of_match[] = {
- 	{ .compatible = "adi,ad7606b", .data = &ad7606b_bus_info },
- 	{ .compatible = "adi,ad7606c-16", .data = &ad7606c_16_bus_info },
- 	{ .compatible = "adi,ad7606c-18", .data = &ad7606c_18_bus_info },
-+	{ .compatible = "adi,ad7607", .data = &ad7607_bus_info },
-+	{ .compatible = "adi,ad7608", .data = &ad7608_bus_info },
-+	{ .compatible = "adi,ad7609", .data = &ad7609_bus_info },
- 	{ .compatible = "adi,ad7616", .data = &ad7616_bus_info },
- 	{ }
- };
--- 
-2.46.1
-
+Ah, my bad. I meant to say “ath12k driver”.
 
