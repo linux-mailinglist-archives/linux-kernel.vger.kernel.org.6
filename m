@@ -1,260 +1,155 @@
-Return-Path: <linux-kernel+bounces-382136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE3BA9B09ED
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 18:28:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E6F19B09F2
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 18:29:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F41528311C
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:28:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77C3A1F2229D
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:29:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 246B6187FFE;
-	Fri, 25 Oct 2024 16:28:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6065818991C;
+	Fri, 25 Oct 2024 16:28:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="GpaOZlYk"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2073.outbound.protection.outlook.com [40.107.237.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="dTZvx1h5"
+Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com [209.85.160.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2364C70815;
-	Fri, 25 Oct 2024 16:28:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.73
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729873714; cv=fail; b=U0ZpNAr8Vp/m9ozS9lAs36aY2CWoP8FLMhmBftOb1qH7M4jyG2cL+fFx/q3OyWCAt15wRm0glM8DX8czcWPfXifZhAWo7qazIVprAIvldq02gSnVzlxREC5242Il8mIMWxMWb86tPHpkutaGjrgBg2CO893SGKd/c/Jvq1anYWw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729873714; c=relaxed/simple;
-	bh=I3TBuQEsOH3BdOdQpy00XfdptmY79c9RB/xKoxUbM18=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=injCXPJc5C7RUw6SOVmaf03ZnZ/kUaLXLmMesCrRo8/7MxObLk/HcLBQ6PrRJ/9/2UP3N89Hxdc+tPwxui/zgQS+dIhstM/zIjT9UJYe82g/EUJIeLRz52o9RNQE2DX0CZn1eWiFSUpJEBq8WJ54ucprYSwOWtTYwMORwVE+jT8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=GpaOZlYk; arc=fail smtp.client-ip=40.107.237.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=gD9MND3H59OLyX7sAx77VVP0y/xnk3XguVffF3QqUuAEcSiSxLk61lLkFYvY6F/haUWz6vxuJRbvM3Vgc9Sb9WO48rKsoRfQY/77q0gmw5ZBa2RP8qlRqnjnJtdajUNoWphyJmf0fN1hy1rDVjVBhEzfzGfvMSU6yn8ChSqUaSrqaysONcPi+R0UevlSGD/Y0pHJKhVFrfSlGBKBv7RmBYF8Rcm3c4mcQzxKNwXhesEtxlpPPr3EfttiKFsz+YRnVuxm2sbT2x/xkfSF73qavv9+foG36Do3aQTqQL/eNvrO+we0fZcXmf16JG6QU3dS01Pu4QwFVrL8ArgvDpOZNw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=U+vuOyjAyfh+gyZ5c2kkaOJzZWcoiWY3PF+sBxz/IwA=;
- b=yP2HwsQO+CxABbcnokBL2D+Bg5dwNzGP15X+M/XUeifgD5tHtbX3qI6asAUi68fcBf1farhJYeDY6BOa1zQo/I7MnWC5iWPzlq4Nx74ZYo30MmewvnEQ1e5HGVOKWQLRlMCFzOdL6nru6x3EIkQaPK35lfy9r4FUbwsHrnPI6BQusZXI0E1FhCI2ofoNgPKM8yu88hdemkuTNsu7MN4I2bIxLKskdXogv3fEBUsDOykHNm88BN68ast2r7Ozkp62Je6PBDkqGvEbX9LT2infhu61oT1TMVmKe2a3E5KngJ0/UfSTmroYTg1oShKkvt8eg1dPnPPoSSByqpGvTeNsDQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.233) smtp.rcpttodomain=intel.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=U+vuOyjAyfh+gyZ5c2kkaOJzZWcoiWY3PF+sBxz/IwA=;
- b=GpaOZlYkfQGyQxJ9d7mYT9QCMvtuh7aO5S4aMWo1zxuTQYxSN0iOPhfQv8zrx/cIP0kOeN0EgLgL7NW4pZFcyyyJCOab4R9AyvdhrccjtDpSyFdob7+spHNHImnu27ge16aYIa/BlIcrKUSSLeNhzQlxFDSThgke6NCHjeGRy4oNYDS7zrPv+Hj5Z4UoFY+RTCUdQf6elzmFc7eYPXxodR+ICRYYChvoWlzzIdHxn0gV04s9+ThRLm45M+RwHU0/rRhF0DWt3pSjZO24tsxy73JixdLXEnxYN4YPt7ctquTD8VWv4B4GdLdUfJlQa3lmgjstAQ3M36VQ2NDptniGqw==
-Received: from SJ0PR13CA0178.namprd13.prod.outlook.com (2603:10b6:a03:2c7::33)
- by LV2PR12MB5991.namprd12.prod.outlook.com (2603:10b6:408:14f::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.20; Fri, 25 Oct
- 2024 16:28:22 +0000
-Received: from SJ1PEPF000023D9.namprd21.prod.outlook.com
- (2603:10b6:a03:2c7:cafe::97) by SJ0PR13CA0178.outlook.office365.com
- (2603:10b6:a03:2c7::33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.8 via Frontend
- Transport; Fri, 25 Oct 2024 16:28:21 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.233) by
- SJ1PEPF000023D9.mail.protection.outlook.com (10.167.244.74) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8114.2 via Frontend Transport; Fri, 25 Oct 2024 16:28:21 +0000
-Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
- (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 25 Oct
- 2024 09:28:12 -0700
-Received: from drhqmail202.nvidia.com (10.126.190.181) by
- drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Fri, 25 Oct 2024 09:28:11 -0700
-Received: from Asurada-Nvidia (10.127.8.9) by mail.nvidia.com (10.126.190.181)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
- Transport; Fri, 25 Oct 2024 09:28:10 -0700
-Date: Fri, 25 Oct 2024 09:28:09 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: "Tian, Kevin" <kevin.tian@intel.com>
-CC: "jgg@nvidia.com" <jgg@nvidia.com>, "will@kernel.org" <will@kernel.org>,
-	"joro@8bytes.org" <joro@8bytes.org>, "suravee.suthikulpanit@amd.com"
-	<suravee.suthikulpanit@amd.com>, "robin.murphy@arm.com"
-	<robin.murphy@arm.com>, "dwmw2@infradead.org" <dwmw2@infradead.org>,
-	"baolu.lu@linux.intel.com" <baolu.lu@linux.intel.com>, "shuah@kernel.org"
-	<shuah@kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "iommu@lists.linux.dev"
-	<iommu@lists.linux.dev>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-kselftest@vger.kernel.org"
-	<linux-kselftest@vger.kernel.org>, "eric.auger@redhat.com"
-	<eric.auger@redhat.com>, "jean-philippe@linaro.org"
-	<jean-philippe@linaro.org>, "mdf@kernel.org" <mdf@kernel.org>,
-	"mshavit@google.com" <mshavit@google.com>,
-	"shameerali.kolothum.thodi@huawei.com"
-	<shameerali.kolothum.thodi@huawei.com>, "smostafa@google.com"
-	<smostafa@google.com>, "Liu, Yi L" <yi.l.liu@intel.com>, "aik@amd.com"
-	<aik@amd.com>, "zhangfei.gao@linaro.org" <zhangfei.gao@linaro.org>,
-	"patches@lists.linux.dev" <patches@lists.linux.dev>
-Subject: Re: [PATCH v4 00/11] iommufd: Add vIOMMU infrastructure (Part-1)
-Message-ID: <ZxvHGQJW65H+/zpy@Asurada-Nvidia>
-References: <cover.1729553811.git.nicolinc@nvidia.com>
- <BN9PR11MB52769BCEED1DC36DBCA75AF98C4F2@BN9PR11MB5276.namprd11.prod.outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AA15186298
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 16:28:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.43
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729873734; cv=none; b=R5JOmQlODIk6rya8B9mnIbZyhDDDKWADS6UkgkfnezfTXw3Fhe2Er+YLL34aAhapImbuDVHINgqv3tVOy1YFkbP4BEqvJGi19rPPIp8IdgeuB8v2MEjA1u+HCmDMY+Zr+L7+GLflSRY1pWtQSdwm+9GIi3MkFzDmu7pqH4e+t5Y=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729873734; c=relaxed/simple;
+	bh=93KS7wKqZUu5xjDIvlWsHE3MqWdpZ1V0Yzrky7wwyv0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OT1POHeV7HGhlMlR9MIDQ9c/N7ahOVWshXyMypypbnwwnJi0fb8B2DrJTUstp9HxWuODmtLPXM7wfZKQR8dngm7G1mI2yOYmN7EnMvKF836FR5h+7+G1KDnoUqDu6RiQNOrVkKeHCozAw3sDE9ou3GcsFtdyawq1nwr9ZZn34sA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=dTZvx1h5; arc=none smtp.client-ip=209.85.160.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-28845df360fso1058340fac.1
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 09:28:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729873730; x=1730478530; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=4l3lkC9wZikEKYFjFKb6O10Jg4C+hdvveYAhrx24UCo=;
+        b=dTZvx1h5U1EGypbktC7D+A6M9dt80zMD8XeeHzOonJn+h1e50cW9TLM2E2lFnObyM4
+         re3c5O4emCxHSpksuVs+SlVFlL9Gfo0qjlT98yBcskHw2QqEwT5bIIs6lGZax8NlGVKx
+         5tnO6llhDiNXOMhT2YEs/9CVN4WHWAsaCAVeQoI6/z7xUaOnt1tIKdJukk6fQul22Vs+
+         9/CD83J7fqq4j9b/lyVaEvrrl17a7KUaYaeXu8Si6ZEEc2UbYzr6Rynb04dGkAQ3rczZ
+         D/Kn/53Xg86rEIDbtvQfKsAaiMEP6QROHMsBM7ovD1csThZdVQDjEDWGCIA9Ik9IuA18
+         EVAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729873730; x=1730478530;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4l3lkC9wZikEKYFjFKb6O10Jg4C+hdvveYAhrx24UCo=;
+        b=KxQMwL1x9gRvYPxxZd3UthtIEfUaDuwA8jUfX97yAkUzwGZT/NB8FhjS6A8LUPS8sQ
+         VsPVmhkxq0B/mLKGZ10p1+OLyeZCNFbNJfyEXWuHQTl7obrMorMR8stK1Grvldt6XoGl
+         kg19RG0BxnbFoHaw0H8c7TVot8LCOG7oH5N9QlBbxHqvzq797+UGBLfKR1AcCNc+MO+w
+         n1tEBylCMr6LihfMweDRiTN7gzJ1bfYKebU3BLlFWCTM2AUN8RdXDdzxEgR7jDHIwlkh
+         /S4R1ePMZ+qtze5LoNoWjCiQ8Ifii17BrHpEO6LqQriK44LqZGD32xFHG9/v9YL9b28/
+         aMQA==
+X-Forwarded-Encrypted: i=1; AJvYcCXv9flMZNj7UM9m+OlyOmcUBaAlncWmsLXeDA6vUN8ijcz6hZk/lL9G1rT+FstVMwRzmy+jPCykaIchnmU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwiqkpUhiIJ5q1Yfvb47LwCe3V+BAx/KBdNjR5bF2bIfWW83zMl
+	Vrrmw/7NsUrP0ErylFJm6ncIVMokYFQFNGzH6+DGM0hptcMdxyr4YLoL0qvD02s=
+X-Google-Smtp-Source: AGHT+IE1MPpVyfXpk/xMULvv56PfNu4FZfW1NuVB74DGltzpa6dH+QJb4+dxhvMUF5lk9e9p9xuTJw==
+X-Received: by 2002:a05:6871:296:b0:288:8b2b:8706 with SMTP id 586e51a60fabf-29051256df0mr74856fac.16.1729873730273;
+        Fri, 25 Oct 2024 09:28:50 -0700 (PDT)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2903824c7d8sm339108fac.49.2024.10.25.09.28.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 25 Oct 2024 09:28:49 -0700 (PDT)
+Message-ID: <85184d56-b0c5-449a-9b69-cd141b186d6f@baylibre.com>
+Date: Fri, 25 Oct 2024 11:28:49 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v4 06/15] spi: offload-trigger: add PWM trigger driver
+To: =?UTF-8?Q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>,
+ Mark Brown <broonie@kernel.org>, Jonathan Cameron <jic23@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <nuno.sa@analog.com>, =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+Cc: Michael Hennerich <Michael.Hennerich@analog.com>,
+ Lars-Peter Clausen <lars@metafoo.de>, David Jander <david@protonic.nl>,
+ Martin Sperl <kernel@martin.sperl.org>, linux-spi@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-iio@vger.kernel.org, linux-pwm@vger.kernel.org
+References: <20241023-dlech-mainline-spi-engine-offload-2-v4-0-f8125b99f5a1@baylibre.com>
+ <20241023-dlech-mainline-spi-engine-offload-2-v4-6-f8125b99f5a1@baylibre.com>
+ <b47e7168a58e840f65c1ef150c914c077905fabf.camel@gmail.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <b47e7168a58e840f65c1ef150c914c077905fabf.camel@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <BN9PR11MB52769BCEED1DC36DBCA75AF98C4F2@BN9PR11MB5276.namprd11.prod.outlook.com>
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF000023D9:EE_|LV2PR12MB5991:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6118042f-0535-4ed5-6018-08dcf5120a9c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|36860700013|7416014|1800799024|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?bUxoS21BeGwzQkZTdkZWOGIySGZYeFBFbmV4UDdhUFNqTkFSMEdJd243Zksr?=
- =?utf-8?B?NTZzM0hKOEtVUEFENjRYdHVxb1A5dEk3TjllQndab2VxWWFuYmpJbkxFUkhG?=
- =?utf-8?B?K1JPcW5vNFNpdGtSQTJEOTJFc2JhdHk5RHNZS1VFSmhlSkFOb0YxbCszV2Qw?=
- =?utf-8?B?OHlnaDNsWDI1UEpEeTlnb1ZCRXk2OGFTcmhkNncyTmFHUlhodlpOSWF5alNP?=
- =?utf-8?B?emhZOEFnSW54em5aNy9LK3pLTGhKTWdiQ1M1T2QrbzNMNHpwV1haRHplZlFJ?=
- =?utf-8?B?b3hXQ0xiVDYyRjQrcDJLRWllbSsvK2JuaWVZUXVFY3pncE9pVTlMaTZSVWRT?=
- =?utf-8?B?T2V5MWNiZS9QakNCS0tiQ0Nwa3FQeXpjSnJGejhhWWYyV0E1L2pieVpCVGJG?=
- =?utf-8?B?ekZScUtTc3c5TGNwSzZJdjhhcHdaTkx5ZkkwMWlVeXFsSHIyQUdNdU1LRjYw?=
- =?utf-8?B?em14cTliNFZkZWEwbkJhVkkyU2hidG8rU0JUelhaRXV2c3ppTElFaGRNTEFM?=
- =?utf-8?B?S2oycTVNN3owZDhjbzVBbERYdWxIK0FteEtzQ2NXOVY5dWxPV0VPVVU2OXpL?=
- =?utf-8?B?ZFE1alRYdkhlUlNZRldVUGJvWWpBZkdwdW1MOU80cGtMWGpHZjhFT2FqOVQv?=
- =?utf-8?B?a1F5ZlE3ZjRxNmN1cGtNdVVWVThaZzRQcjR4YVZvdzFrWnVvNExTcXNJRE43?=
- =?utf-8?B?YmRTUnRqRy9Pcm1tR3FiUFNUd2Q4ZkNsM2dGSEJRMUpXSlhaQk15YmR0a0hV?=
- =?utf-8?B?WlZyTGtzclpnYjNFOERDYkdWS1BJMkJoSFl6V3FZeFphZkg0VGxCcGhzRmp5?=
- =?utf-8?B?ZmpieXRPOHQ3MU4rTkthYXBqZVJPYnhTVmpDY0pScnVod01MWWtSWThpUEVx?=
- =?utf-8?B?MkVJZGZtZGQ0MVpBM2UxVVZuMEdJVnFBRDZ5NWg0MTNhb29NeXYzN3VoMkhP?=
- =?utf-8?B?d3BMbzY3bHB3WEZaenJFclM2dmJ4WGtNeDhuRDI4RDMzWDcxdStIVjNqMCto?=
- =?utf-8?B?OUJpaUl0TDV2K1R3aXdQZkk5emhQZFVpVGxJQmJWV3l0UlJzZEZoRitNRVpu?=
- =?utf-8?B?SERXL3JlMEFFQUhhMkpCNmRGSEp0cnRPVU5IOW9maXRNZVFCSnMrV0tGWVFX?=
- =?utf-8?B?YjFmSkVMblFDVnJTL2xTOW1DZ0Z6L0hHaWJ4RGRGUDRWdE5wdGFrYnFaSGdD?=
- =?utf-8?B?MmorN3d1Q3Bza1VpM1RaeG84a290TXFRejdnOGVxNTJXbjJCVUczRmpOb3FN?=
- =?utf-8?B?QkpPRjlHMmpXb01WUXpidXRQNkRkSmNaRjRLdFRVV05PMFJZYUthQmNEWWtS?=
- =?utf-8?B?SGVoWmltUzRIcjNERkpXZjZjRFd5em9IcnV3U2JGR2kzZ1pOMTBPWUZFcHBY?=
- =?utf-8?B?M2xxMkN5ckVEMFRwRCszYWx2Z0xVZmtHUm9xY042Zm1iM0thQVJHMVJ3czd6?=
- =?utf-8?B?SDFSOHhuRHpDdjBvWng4dXBsRkJrUDlKakZtaVE4M1ZITU5JMGNSbjdXWVdQ?=
- =?utf-8?B?TExhS1VVMzNaeEJKeXE5UmtyQnlWUDRaYWRVK0ZYTk11QjExcnVrUG0vUExz?=
- =?utf-8?B?MTl6V1krMUc1N3lCUDlEaWVFSlg3REUxOE1BNTVWNlFHTWJ4OE92YW5lc0xt?=
- =?utf-8?B?UFdrR05ZRURtRjFYTytoMlJsbFFKV1NZbGpjNHRuODRRZnJBOWVJVU5Wdlgv?=
- =?utf-8?B?WDhnOWJOVUtrbzhGemVDQUFxRVVleHBPWi9XazI4VkViREpXSWEyQlFJMFQ3?=
- =?utf-8?B?MUxMNy9YUng3Z2NpaGN1TURQWTNKem1uakc1blFsT3V6S25sZ1Z1U2RYMGlJ?=
- =?utf-8?B?ZUsrU0svTFBJbTdpMmYxN1dKODVWOXJvbjB1RjlFSStZWHhYWi81TWZ3QU5o?=
- =?utf-8?B?T2hBakx5WTY5N3ZWVWtSSlErRGFTZ0ZTbDFmb2VpdTBZelE9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(36860700013)(7416014)(1800799024)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Oct 2024 16:28:21.5692
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6118042f-0535-4ed5-6018-08dcf5120a9c
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF000023D9.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV2PR12MB5991
 
-On Fri, Oct 25, 2024 at 08:34:05AM +0000, Tian, Kevin wrote:
-> > From: Nicolin Chen <nicolinc@nvidia.com>
-> > Sent: Tuesday, October 22, 2024 8:19 AM
-> >
-> > This series introduces a new vIOMMU infrastructure and related ioctls.
-> >
-> > IOMMUFD has been using the HWPT infrastructure for all cases, including a
-> > nested IO page table support. Yet, there're limitations for an HWPT-based
-> > structure to support some advanced HW-accelerated features, such as
-> > CMDQV
-> > on NVIDIA Grace, and HW-accelerated vIOMMU on AMD. Even for a multi-
-> > IOMMU
-> > environment, it is not straightforward for nested HWPTs to share the same
-> > parent HWPT (stage-2 IO pagetable), with the HWPT infrastructure alone: a
-> > parent HWPT typically hold one stage-2 IO pagetable and tag it with only
-> > one ID in the cache entries. When sharing one large stage-2 IO pagetable
-> > across physical IOMMU instances, that one ID may not always be available
-> > across all the IOMMU instances. In other word, it's ideal for SW to have
-> > a different container for the stage-2 IO pagetable so it can hold another
-> > ID that's available.
+On 10/25/24 7:07 AM, Nuno Sá wrote:
+> Hi David,
 > 
-> Just holding multiple IDs doesn't require a different container. This is
-> just a side effect when vIOMMU will be required for other said reasons.
+> Looks mostly good... Just one minor comments from me.
 > 
-> If we have to put more words here I'd prefer to adding a bit more for
-> CMDQV which is more compelling. not a big deal though. 😊
+> On Wed, 2024-10-23 at 15:59 -0500, David Lechner wrote:
+>> Add a new driver for a generic PWM trigger for SPI offloads.
+>>
+>> Signed-off-by: David Lechner <dlechner@baylibre.com>
+>> ---
+>>
 
-Ack.
+...
 
-> > For this "different container", add vIOMMU, an additional layer to hold
-> > extra virtualization information:
-> >
-> > ________________________________________________________________
-> > _______
-> >  |                      iommufd (with vIOMMU)                            |
-> >  |                                                                       |
-> >  |                             [5]                                       |
-> >  |                        _____________                                  |
-> >  |                       |             |                                 |
-> >  |      |----------------|    vIOMMU   |                                 |
-> >  |      |                |             |                                 |
-> >  |      |                |             |                                 |
-> >  |      |      [1]       |             |          [4]             [2]    |
-> >  |      |     ______     |             |     _____________     ________  |
-> >  |      |    |      |    |     [3]     |    |             |   |        | |
-> >  |      |    | IOAS |<---|(HWPT_PAGING)|<---| HWPT_NESTED |<--| DEVICE | |
-> >  |      |    |______|    |_____________|    |_____________|   |________| |
-> >  |      |        |              |                  |               |     |
-> >
-> > |______|________|______________|__________________|_____________
-> > __|_____|
-> >         |        |              |                  |               |
-> >   ______v_____   |        ______v_____       ______v_____       ___v__
-> >  |   struct   |  |  PFN  |  (paging)  |     |  (nested)  |     |struct|
-> >  |iommu_device|  |------>|iommu_domain|<----|iommu_domain|<----
-> > |device|
-> >  |____________|   storage|____________|     |____________|     |______|
-> >
+>> +static bool spi_offload_trigger_pwm_match(void *priv,
+>> +					  enum spi_offload_trigger_type type,
+>> +					  u64 *args, u32 nargs)
+>> +{
+>> +	if (nargs)
+>> +		return false;
+>> +
+>> +	return type == SPI_OFFLOAD_TRIGGER_PERIODIC;
 > 
-> nit - [1] ... [5] can be removed.
+> Hmm will we ever be in a place where a trigger provide might have multiple types? If
+> so, then I'm mostly fine with this match() callback. But we could still avoid it if
+> we use a bitmask for trigger types and having any trigger provider to give the
+> supported types. Then the core could pretty much do the match between the requested
+> trigger type and what the provider supports.
 
-They are copied from the Documentation where numbers are needed.
-I will take all the numbers out in the cover-letters.
+We will still need some callback though to handle drivers that use
+phandle args.
 
-> > The vIOMMU object should be seen as a slice of a physical IOMMU instance
-> > that is passed to or shared with a VM. That can be some HW/SW resources:
-> >  - Security namespace for guest owned ID, e.g. guest-controlled cache tags
-> >  - Access to a sharable nesting parent pagetable across physical IOMMUs
-> >  - Virtualization of various platforms IDs, e.g. RIDs and others
-> >  - Delivery of paravirtualized invalidation
-> >  - Direct assigned invalidation queues
-> >  - Direct assigned interrupts
-> >  - Non-affiliated event reporting
 > 
-> sorry no idea about 'non-affiliated event'. Can you elaborate?
-
-I'll put an "e.g.".
-
-> > On a multi-IOMMU system, the vIOMMU object must be instanced to the
-> > number
-> > of the physical IOMMUs that are passed to (via devices) a guest VM, while
+>> +}
+>> +
+>> +static int spi_offload_trigger_pwm_validate(void *priv,
+>> +					    struct spi_offload_trigger_config
+>> *config)
+>> +{
+>> +	struct spi_offload_trigger_pwm_state *st = priv;
+>> +	struct spi_offload_trigger_periodic *periodic = &config->periodic;
+>> +	struct pwm_waveform wf = { };
+>> +	int ret;
+>> +
+>> +	if (config->type != SPI_OFFLOAD_TRIGGER_PERIODIC)
+>> +		return -EINVAL;
 > 
-> 'to the number of the physical IOMMUs that have a slice passed to ..."
+> Checking the above every time seems redundant to me. We should match it once during
+> the trigger request and then just use that trigger type. Otherwise I'm not seeing the
+> point of the match() callback.
+> 
 
-Ack.
+Here it is validating struct spi_offload_trigger_config has the right
+type, which is needed before we can safely trust that the correct
+union member was used in that struct. So it has a different purpose from
+the match check.
 
-Thanks
-Nicolin
 
