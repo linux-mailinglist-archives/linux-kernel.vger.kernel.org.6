@@ -1,80 +1,105 @@
-Return-Path: <linux-kernel+bounces-381813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25FC29B04C6
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:57:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 11FB89B04CA
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:57:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 864E8B24ACA
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 13:57:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F3D4B23D9D
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 13:57:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A84E20651B;
-	Fri, 25 Oct 2024 13:56:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F2161FB886;
+	Fri, 25 Oct 2024 13:56:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aZUSQdJf"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="HwoQyiz2";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="JMuyYIFa"
+Received: from fout-a7-smtp.messagingengine.com (fout-a7-smtp.messagingengine.com [103.168.172.150])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 938BA1DFF5;
-	Fri, 25 Oct 2024 13:56:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0139E1F76A9
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 13:56:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729864585; cv=none; b=raoxfBdbiDeieiNnk9IZ9SuQ626XPaEzex0AlLk5Gn1dCwJCT+gnxPL2zoxt7MK7yCCJoQpnu7bi59vLi3mYBG7xxFDguTIt+ttyViFZySmt2R5KluGiBud0SGtEG9e06zx7rAoX9sz7vb3292rGSWSM5eJ7d1T2bzVrMqRrOPc=
+	t=1729864612; cv=none; b=MHb5fxzX2XXjVCRpQ4G8o5EZ+1fhi+mU1ghlIzI9LYTNgmD6OMCl33P1UZk9Q6/Rjss3RwVEShZ9sk7Dg4IW7iCCCf+f2WAc6m8pCT6OKFPCjjjtFM+EU+7DAof9bIIsdyOK9klIb/BxoKhpfO56HEMvzmWI3wGEVGFhQKd7oW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729864585; c=relaxed/simple;
-	bh=zKEwOFq+EedN6EAwXtsg7YlRMhj47oRVAezZTHhLCuk=;
+	s=arc-20240116; t=1729864612; c=relaxed/simple;
+	bh=OiT8JxOAoTd4Z4TYTOXoIXQTR2pbbQsAKCp0QTemFOg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OoP9Me+kts13pSqz88mEXsvEjd0p3t72RPFE+A1qFnFGsiZASgQFMyHiM3XDA4LoieYGu6Q4ldEukqGziwOTJzpQtGU8fceSUqFBc/xCsQbFeu5DTq3YdVLfpWp4nEQIO9k/eIkxZn+WAs1Th5QE+4MO2guczbadqD49EwQkvgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aZUSQdJf; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a99f629a7aaso342476966b.1;
-        Fri, 25 Oct 2024 06:56:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729864582; x=1730469382; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ld/lzUpMzz/O/gUyxVTjcgsBVURqpGeoKpNyId9bOgY=;
-        b=aZUSQdJfvecwlvNnZKn+8d058XGqHjjjr/qtM0umdCo1SXIEnq/fIGmborA5ggjHLa
-         5XGUknVP6jCh5AwfsCbo9uuZyRSlD7q9VF2fs+f4S56XqYF1jrxWqSVvCsHnW9usTlD4
-         +fFDmeHZQpFy2A2KR7rCw324qywRvThk0Xb4Rsk+j/64PsiRPGr/IKln64OsytfQl1P3
-         eP87k7I3MwMT20SPwK24oRlWx8OTygFxioyctc3Kxa6Akc4mmOM7gnVrFqXomoiXunZK
-         xETKsfzgOBAgIiP5cWW2wvdCMby+ezwZxWWoAB+a4rdPt/EaPNcy+hpqv9hjrWg0Gplw
-         By4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729864582; x=1730469382;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ld/lzUpMzz/O/gUyxVTjcgsBVURqpGeoKpNyId9bOgY=;
-        b=nI2g0k+ddC+qTnxjIu+UBcDETLz+uqIwlIz66CHgDaq4otUmvVr+vUfAC97YscGYDi
-         xS8in2WtJnCz87ddAoI7qZ4FR09++oQGENpH/kFoDVVGiaTiag3TNcbP6M8yJBZ5rC/m
-         hyt1lm5DXb5Qe+loMzyAszZ0zIntJMe/dD1Xb9KIKNSRviApNKr8fMegujTBd3di/t1v
-         Hir0rgScywhvJQVVpeBWTLaYwxJpWeTZ0hZ3cHbjixF2x4FXN9TVDWZpbL+6x8XDSt+Z
-         fzYrdL090hCsuyRMKq+lpK8tsP9pvvvMox9RE5Q41q+HltUmko1X8z47xwfKvDGD9hUr
-         LCPg==
-X-Forwarded-Encrypted: i=1; AJvYcCUvhsiBYA6M2flYtgQtr9sP1cm1ENV0/U58MZYEtQhp8sF61sp1KJPZ7x2fcH679MIQgeoZGCxZpfIKRjaD@vger.kernel.org, AJvYcCXGKysrg1SjJD7y8UULS2ybBU4mfxdnzTcHGuDlCjeeT7LR1WHnzQ7DqcdnenpMOWS9WWw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTSEvSZ1Xfc+OJ3UtKgZtGTxKBLxUOP9r7rehNWGU97iyOvU75
-	0W0ZuN48KbvWjoxTj0w/ARv41eVO17IvpWydDYAClWfssBicoLrfoq7f8KaWzqw=
-X-Google-Smtp-Source: AGHT+IHHBPelfDRmV3ElN7dO5ltfgT7F82NL64uGZgXfpVrJ4bY6gR1Y7aYl4TnBcYL8RwxpvjixVA==
-X-Received: by 2002:a17:907:7ba8:b0:a99:f5d8:726 with SMTP id a640c23a62f3a-a9ad1a02091mr584361666b.23.1729864581671;
-        Fri, 25 Oct 2024 06:56:21 -0700 (PDT)
-Received: from andrea ([2a01:5a8:300:22d3:a281:3d89:19cb:ed96])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b1f029559sm73501266b.58.2024.10.25.06.56.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2024 06:56:21 -0700 (PDT)
-Date: Fri, 25 Oct 2024 16:56:17 +0300
-From: Andrea Parri <parri.andrea@gmail.com>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: puranjay@kernel.org, bpf@vger.kernel.org, lkmm@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: Some observations (results) on BPF acquire and release
-Message-ID: <ZxujgUwRWLCp6kxF@andrea>
-References: <Zxk2wNs4sxEIg-4d@andrea>
- <13f60db0-b334-4638-a768-d828ecf7c8d0@paulmck-laptop>
- <Zxor8xosL-XSxnwr@andrea>
+	 Content-Type:Content-Disposition:In-Reply-To; b=CyBaZ/E0SyJjVH8v7bUY2Xeu0JEk97Wpbb2zjUiXJmjDCC3eTzQG3H7/FM+JHdwxZqdt8woMfQ/80Kn9oj80Ydb/Rj35rcaBZr85P7tZ0UTFkmdBYrD3pfBY9UMLY0QG3nHJorOep3ZuxlvF8v8tW8/XKo753wAeBDXkG4z3Ttw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=HwoQyiz2; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=JMuyYIFa; arc=none smtp.client-ip=103.168.172.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
+Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
+	by mailfout.phl.internal (Postfix) with ESMTP id ED908138013A;
+	Fri, 25 Oct 2024 09:56:48 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-12.internal (MEProxy); Fri, 25 Oct 2024 09:56:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm1; t=1729864608; x=
+	1729951008; bh=Mb7CPbDsMkHl3VCngl15IkB9nuLUepRzV8CtrrDN0C8=; b=H
+	woQyiz2iNFAHeR0dS6ZYSOpHMPgtWoy9McKD4O8aqbP0QpuUK9w3Zf/TdL20Cy/a
+	CDMrY1BvSwTUoodjGJedvXihF2ZfZq0JlXcderHEZZzbBIT4xsK1bEOTusr3wCU5
+	kzqLtiaboKv+sdPM9d9jknkg2crINH6Kgv/gKlBrx/TYo8C9znKFrfH2OEkQ9TPP
+	ntOdx84XZVnDYORp+TybjM3sXbMAo34rXL2X7Djs239w13MaQEtbS3VGv0z0m8gg
+	o8YcoAdWYntDeJk99T5TMvo4N25wS4GeE8a4zkHI9dNYQPRK7DRKhNMXjRCPOufM
+	soyG+YzuVNVd7vT9a8yAg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm3; t=1729864608; x=1729951008; bh=Mb7CPbDsMkHl3VCngl15IkB9nuLU
+	epRzV8CtrrDN0C8=; b=JMuyYIFaDVcWVEQUrjnP08uMto9mpVdu37QKcIZzhX5Y
+	/1ThO6+thlfO5x/9H5p+ASWP/pGAwocyRsj1LGbdTmkixhPJW72v7cOXa9+erLGd
+	1vyqi1wTf6mLzTDRbIXBEZiMbPIbf4S49AxV50UCoi9CjbWU+ohRNSOhToPEhAM/
+	UL4k+ICO9zCZL+hYRtb2DHofFosJu6uIxP9wGorKUxWRAQM219b6v4FTxNhyIsd+
+	GglVSgSTgWn8CzGVtO4ekiMyVSo/WVt0FTQ7ZlixLzu+NbfisgVGViaj93CWusA4
+	MV3TtBjbzKWNzffwY+f6qljU16YpHX/V25ahKHEskA==
+X-ME-Sender: <xms:oKMbZx4d2WHRHwJHgW2TA896BymT8wN01WRxp9o3PaZOWhhPkG8jLQ>
+    <xme:oKMbZ-51ON1PdeIeNVdVnQjS3J-DQrSTVBq0hjjRt1Tb38NRHbNp3gHOJxB1y0NvZ
+    ApJiJOI_pCeCR-L8P8>
+X-ME-Received: <xmr:oKMbZ4dixv32WIGNe8ECo7jN2tMme3kRsaWdg32wN8HRM9LlmcU4p5aSmH5YQdaNw94NTQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdejvddgjedtucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvden
+    ucfhrhhomhepfdfmihhrihhllhcutedrucfuhhhuthgvmhhovhdfuceokhhirhhilhhlse
+    hshhhuthgvmhhovhdrnhgrmhgvqeenucggtffrrghtthgvrhhnpeffvdevueetudfhhfff
+    veelhfetfeevveekleevjeduudevvdduvdelteduvefhkeenucevlhhushhtvghrufhiii
+    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehkihhrihhllhesshhhuhhtvghmohhv
+    rdhnrghmvgdpnhgspghrtghpthhtohepkedpmhhouggvpehsmhhtphhouhhtpdhrtghpth
+    htohepvggsihgvuggvrhhmseigmhhishhsihhonhdrtghomhdprhgtphhtthhopeihrghn
+    rdihrdiihhgrohesihhnthgvlhdrtghomhdprhgtphhtthhopehkvgigvggtsehlihhsth
+    hsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghl
+    sehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqtghotghose
+    hlihhsthhsrdhlihhnuhigrdguvghvpdhrtghpthhtohepgiekieeskhgvrhhnvghlrdho
+    rhhgpdhrtghpthhtoheprhhitghkrdhprdgvughgvggtohhmsggvsehinhhtvghlrdgtoh
+    hmpdhrtghpthhtohepkhhirhhilhhlrdhshhhuthgvmhhovheslhhinhhugidrihhnthgv
+    lhdrtghomh
+X-ME-Proxy: <xmx:oKMbZ6KpVHWW-L9Sdqww0-9T1IY4QZmOTj3blLEnxvIXQ6Khw2sjQw>
+    <xmx:oKMbZ1KKDx88TIR_ypqZNeF1R8OgkHv6hp1F6u3eIxAJFLSnbw37fA>
+    <xmx:oKMbZzwtYlDtTJQHBevKysof0eXIsPSg5H0DwScUnP6qkqb5JKb3oQ>
+    <xmx:oKMbZxK8Xpzg_RGRuBBUH6jLnc6snORzs3MRYYoWD9DxTu0o1NWKMQ>
+    <xmx:oKMbZ8_6_niIEGeFyIZ5jH9P-rFaknS4k4TlVxnuqK18b5nEhL88HZro>
+Feedback-ID: ie3994620:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 25 Oct 2024 09:56:45 -0400 (EDT)
+Date: Fri, 25 Oct 2024 16:56:41 +0300
+From: "Kirill A. Shutemov" <kirill@shutemov.name>
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Yan Zhao <yan.y.zhao@intel.com>, kexec@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-coco@lists.linux.dev, x86@kernel.org, 
+	rick.p.edgecombe@intel.com, kirill.shutemov@linux.intel.com
+Subject: Re: [PATCH] kexec_core: Accept unaccepted kexec destination addresses
+Message-ID: <ihzvi5pwn5hrn4ky2ehjqztjxoixaiaby4igmeihqfehy2vrii@tsg6j5qvmyrm>
+References: <20241021034553.18824-1-yan.y.zhao@intel.com>
+ <87frop8r0y.fsf@email.froward.int.ebiederm.org>
+ <tpbcun3d4wrnbtsvx3b3hjpdl47f2zuxvx6zqsjoelazdt3eyv@kgqnedtcejta>
+ <87cyjq7rjo.fsf@email.froward.int.ebiederm.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,102 +108,50 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Zxor8xosL-XSxnwr@andrea>
+In-Reply-To: <87cyjq7rjo.fsf@email.froward.int.ebiederm.org>
 
-> But the subset of the LKMM which deals with "strong fences" and Acq &
-> Rel (limited to so called marked accesses) seems relatively contained
-> /simple:  its analysis could be useful, if not determining, in trying
-> to resolve the above issues.
+On Wed, Oct 23, 2024 at 10:44:11AM -0500, Eric W. Biederman wrote:
+> "Kirill A. Shutemov" <kirill@shutemov.name> writes:
+> 
+> > Waiting minutes to get VM booted to shell is not feasible for most
+> > deployments. Lazy is sane default to me.
+> 
+> Huh?
+> 
+> Unless my guesses about what is happening are wrong lazy is hiding
+> a serious implementation deficiency.  From all hardware I have seen
+> taking minutes is absolutely ridiculous.
+> 
+> Does writing to all of memory at full speed take minutes?  How can such
+> a system be functional?
 
-Elaborating on the previous suggestion/comparison with the LKMM, the
-"subset" in question can take the following form (modulo my typos):
+It is not only memory write (to encrypt the memory), but also TDCALL which
+is TD-exit on every page. That is costly in TDX case.
 
-"LKMM with acquire/release, strong fences, and marked accesses only"
+On single vCPU it takes about a minute to accept 90GiB of memory.
 
-[...]
+It improves a bit with number of vCPUs. It is 40 seconds with 4 vCPU, but
+it doesn't scale past that in my setup.
 
-let acq-po = [Acq] ; po ; [M]
-let po-rel = [M] ; po ; [Rel]
-let strong-fence = [M] ; fencerel(Mb) ; [M]
-let ppo = acq-po | po-rel | strong-fence
+But it is all rather pathological: VMM doesn't support huge pages yet and
+all memory is accepted in 4K chunks. Bringing 2M support would cut number
+of TDCALLs by 512.
 
-let A-cumul(r) = rfe? ; r
-let cumul-fence = A-cumul(strong-fence | po-rel)
-let overwrite = co | fr
-let prop = (overwrite & ext)? ; cumul-fence* ; rfe?
+Once memory accepted, memory access cost is comparable to bare metal minus
+usual virtualisation tax on page walk.
 
-let hb = ppo | rfe | ((prop \ id) & int)
-acyclic hb as Hb
+I don't know what the picture looks like in AMD case.
+j
+> If you don't actually have to write to the pages and it is just some
+> accounting function it is even more ridiculous.
+> 
+> 
+> I had previously thought that accept_memory was the firmware call.
+> Now that I see that it is just a wrapper for some hardware specific
+> calls I am even more perplexed.
 
-let pb = prop ; strong-fence ; hb*
-acyclic pb as Pb
+It is hypercall basically. The feature is only used in guests so far.
 
-
-For BPF, we'd want to replace acq-po, po-rel and strong-fence with
-load_acquire, store_release and po_amo_fetch respectively:  Unless
-I'm missing something, this should restore the intended behaviors
-for the R and Z6.3 tests discussed earlier.
-
-A couple of other remarks:
-
-- Notice how the above formalization is completely symmetrical wrt.
-  co <-> fr, IOW, co links are considered "on par with" fr links.
-  In particular, the following test is satisfiable in the above
-  formalization, as is the corresponding C test in the LKMM:
-
-BPF 2+2W+release+fence
-{
- 0:r2=x; 0:r4=y;
- 1:r2=y; 1:r4=x; 1:r6=l;
-}
- P0                                 | P1                                         ;
- r1 = 1                             | r1 = 1                                     ;
- *(u32 *)(r2 + 0) = r1              | *(u32 *)(r2 + 0) = r1                      ;
- r3 = 2                             | r5 = atomic_fetch_add((u32 *)(r6 + 0), r5) ;
- store_release((u32 *)(r4 + 0), r3) | r3 = 2                                     ;
-                                    | store_release((u32 *)(r4 + 0), r3)         ;
-exists ([x]=1 /\ [y]=1)
-
-  (On an historical note, this wasn't always the case in the LKMM,
-  cf. e.g. [1], but be alerted that the formalization in [1] is
-  decisively more involved and less intuitive than today's / what
-  the LKMM community has converged to.  ;-) )
-
-- The above formalization merges the so called "Observation" axiom
-  in the "Happens-before" axiom.  In the LKMM, this followed the
-  removal of B-cumulativity for smp_wmb() and smp_store_release()
-  and a consequent "great simplification" of the hb relation: link
-  [2] can provide more details and some examples related to those
-  changes.  For completeness, here is the BPF analogue of test
-  "C-release-acquire-is-B-cumulative.litmus" from that article:
-
-BPF ISA2+release+acquire+acquire
-{
- 0:r2=x; 0:r4=y;
- 1:r2=y; 1:r4=z;
- 2:r2=z; 2:r4=x;
-}
- P0                                 | P1                                 | P2                                 ;
- r1 = 1                             | r1 = load_acquire((u32 *)(r2 + 0)) | r1 = load_acquire((u32 *)(r2 + 0)) ;
- *(u32 *)(r2 + 0) = r1              | r3 = 1                             | r3 = *(u32 *)(r4 + 0)              ;
- r3 = 1                             | *(u32 *)(r4 + 0) = r3              |                                    ;
- store_release((u32 *)(r4 + 0), r3) |                                    |                                    ;
-exists (1:r1=1 /\ 2:r1=1 /\ 2:r3=0)
-
-  The formalization sketched above allows this behavior.  Notice,
-  however, that the behavior is forbidden after "completion" of
-  the release/acquire chain, i.e. by making the store from P1 a
-  store-release (a property also known as A-cumulativy of the
-  release operation).
-
-
-I guess the next question (once clarified the intentions for the R
-and Z6.3 tests seen earlier) is "Does BPF really care about 2+2W
-and B-cumulativity for store-release?"; I mentioned some tradeoff,
-but in the end this is a call for the BPF community.
-
-  Andrea
-
-[1] https://mirrors.edge.kernel.org/pub/linux/kernel/people/paulmck/LWNLinuxMM/StrongModel.html
-[2] https://mirrors.edge.kernel.org/pub/linux/kernel/people/paulmck/LWNLinuxMM/WeakModel.html#Cumulativity
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
