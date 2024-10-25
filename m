@@ -1,140 +1,104 @@
-Return-Path: <linux-kernel+bounces-381836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 528FE9B051E
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:08:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CA6B9B0523
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:08:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F34321F21021
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 14:08:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FE911F24524
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 14:08:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA4081FB8B6;
-	Fri, 25 Oct 2024 14:08:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A88D1173F;
+	Fri, 25 Oct 2024 14:08:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="sz2pSwUh"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YKqFICCZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80D5914884C
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 14:08:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FEE270815;
+	Fri, 25 Oct 2024 14:08:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729865296; cv=none; b=tpZ88NIrucJTsrnOHXPeY1r/4E7Xhh8mIKx8yMdU5oyb7mRyjLxGUdNzTa4kNo4zWiWhf9qzHRpHoVNoFCZ8mFNVrwO5pDz6FJdZayYpfKPF+gwZbqt4ss2t/LCuf6Km1duMQKcPCqzQ2KtPnU4jNIjRsyMG5Ms2gEsLG7w95eg=
+	t=1729865323; cv=none; b=Qf+B5saP1dmcLCq4U0CxoxXAPGvUwGhm2HiLNY4xfME+isl/X5kPE3J/Y+a/i8/WeGhDWw7i338V4NoBl5QjAmYCUZmnLbw6HlHAB1wybII9x5mrPKClqDymza8sBC6+Lb6hsRZczM8PuRIxZll8surw0BgPprL1MMDxBUmSEZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729865296; c=relaxed/simple;
-	bh=DoSspA7//UMeR1vr8KWf06H1LbH/GE6Hngs6Zz2+erU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RQYiMhA/0A6X2C2ABTyb3QGs9wZ2h91jQHOpyRTWhViFuGM/72E8M70/dNTJqE/yiSvyYDFSsPpB0sn6fR1WeO4FinQCacnu+4RlXNpWEhnB0FFjijaR9IskGe6wu5F/LNcc/wQov3iGwSf1NKZvDU0oMjDhf//ZOhpUhBi3dPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=sz2pSwUh; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2fc968b3545so21591931fa.2
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 07:08:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1729865291; x=1730470091; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ST+UyHh/HP6X2Z5LZgfmL+1Z9UxnSzRRcskNFqLwhiQ=;
-        b=sz2pSwUhjxhlgNZqdyrrOEINDVURr8tGlPxBqDuDSd+lz99bC4rHLgJn2rBYdOLKi2
-         wBRs7LSkPOEa2b/PnHgsaGl30eMaQynxCiJXsbdtfnUpXQKzsK09sxOxSxXiU0q5tN+H
-         iJEkf1274wBkOPCiIR7LKhwcuSShRB8Vmt073vZbeUadFewvMyymrqmmVEe143PtFGCM
-         rGBTAn6W2mq1AepCywIAysd8LZ3ktsBz5PKcoGYDcdxkLN5/iqgnESOLeXEZsRUIn3su
-         2qW0OmX/vkKalvBA5zTGWrmZ+A1o5IRhfVMedEJIV0ApTyRnnX0togMcDNRZy4fBEN18
-         0sdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729865291; x=1730470091;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ST+UyHh/HP6X2Z5LZgfmL+1Z9UxnSzRRcskNFqLwhiQ=;
-        b=I7UYHF6dg76WzJwsldWlHb7CQFQDxuVMcJ/v/Yjvz9BKYQFOx6mNNMZ3q1EP8BsIpZ
-         Xjblsxp8EhdxVq9SAX3JthSp6Wx3cIozFpx6DjDqXJEoY7b4H0mYF5l3O0RznTDX7t73
-         0EXF5tyoGudVui9VxEphoXel4oqx5SiRVN9GzSm4x+YTfqUKEmC1+iw8QppKos2+2+/A
-         0MqMWO/Gpb9GnZQYhrIWrkr+JzQsmPNK1fombOQxkEr+bTjCiDUoXsBe5GPREDZLzEnD
-         Q3S6IbchdHIfG63feOGuclTkYnvd6NyDbNiIVBZHbICOU5TEUjhvn4N50u3gauzgwqIg
-         w64Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWQgqiJreCdG5vGdm5es5j/xcq/GjsW0iiOxZAHedAq+U6D/8d0LGWEyeruS0OP+QmEE/+ILd3p9Q90rBk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YztJ9T4Esn/GtD2BfBm/ya2oOLzKJAy1E83hBlgbh5daI3pAVFC
-	NBwsuzM1NRPLJe7QP1XNhucgER1t0gwwigxgUodYI9MfmuvNbpFp6rZIqofqV7f5Afob+I/6e/j
-	1zKJ4qKiPs05G8TexD5eUEnm6ZweV1sS7qaAb1g==
-X-Google-Smtp-Source: AGHT+IEE/lcC9tVckz9C15HEhaGv155dfI/otmWtIvUhrm9XJj8ptFLkwdKlPuAl7OiPPl/SHQXmVbDusfvmhjlZ32Y=
-X-Received: by 2002:a2e:a586:0:b0:2f6:6074:db71 with SMTP id
- 38308e7fff4ca-2fc9d315a12mr55696751fa.17.1729865291412; Fri, 25 Oct 2024
- 07:08:11 -0700 (PDT)
+	s=arc-20240116; t=1729865323; c=relaxed/simple;
+	bh=UAhvGKQMZlcxZYweANcgZFVrALev3+1WlKHnBYS7k3I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fKK9Ot8shgA7qQIwnBQj8VAGW81kCREOGT/HwjFbdBW80Cuhy6VD7nSfjwh51TLFBPYCLUVLWq4VPIelAQ+uIzKxwUJcw8NHhBuV32k0engfiCXGg5LHw29xTTO3eFqrBynqX8IwG7+kXE6/oj8M8yN62pmQkJ6mJZbkTHLi3v0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YKqFICCZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7019C4CEC3;
+	Fri, 25 Oct 2024 14:08:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729865323;
+	bh=UAhvGKQMZlcxZYweANcgZFVrALev3+1WlKHnBYS7k3I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YKqFICCZWx0mw2CpNzBm/oM2WUJc8PCl2UjDMwHyPEqMpWTZUJ2Z00LirgG8CG+FI
+	 cPI11i31kiYQDevCurmv7OZNVbbl+dg+PJoGBUpGYpKR3bQRcCXrcKYUpZgbb+RrJt
+	 9EzI3vZkNgT2MtcvdDAaG9+uInxui892/SgYoWjyYyWFKvHevuv3CLdpkvzchrIN0L
+	 hpH+l6zP+i06phfviIXiCp2RS4hoxFzmZ95oxFZXLMWoob3rSvQkdivXR6gLCuwcmS
+	 QN6JPVYSDrIy5leqdIN4KZMVojLOfYKw5ClTCC3lZrNeitoAuRrvG+zr2EElhMq6gf
+	 XARMdTJLZ4W0A==
+Date: Fri, 25 Oct 2024 09:08:42 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Wei Fang <wei.fang@nxp.com>
+Cc: linux-kernel@vger.kernel.org, edumazet@google.com,
+	xiaoning.wang@nxp.com, imx@lists.linux.dev,
+	christophe.leroy@csgroup.eu, linux-pci@vger.kernel.org,
+	bhelgaas@google.com, alexander.stein@ew.tq-group.com,
+	kuba@kernel.org, pabeni@redhat.com, krzk+dt@kernel.org,
+	devicetree@vger.kernel.org, davem@davemloft.net,
+	vladimir.oltean@nxp.com, horms@kernel.org, netdev@vger.kernel.org,
+	linux@armlinux.org.uk, Frank.Li@nxp.com, claudiu.manoil@nxp.com,
+	conor+dt@kernel.org
+Subject: Re: [PATCH v5 net-next 03/13] dt-bindings: net: add bindings for
+ NETC blocks control
+Message-ID: <172986532146.2064042.10356681291273456543.robh@kernel.org>
+References: <20241024065328.521518-1-wei.fang@nxp.com>
+ <20241024065328.521518-4-wei.fang@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241025-gpio-notify-sysfs-v2-0-5bd1b1b0b3e6@linaro.org>
- <20241025-gpio-notify-sysfs-v2-1-5bd1b1b0b3e6@linaro.org> <20241025132420.GA155087@rigel>
-In-Reply-To: <20241025132420.GA155087@rigel>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Fri, 25 Oct 2024 16:08:00 +0200
-Message-ID: <CAMRc=Mcd8vVCwDvRysMxB00xUD77zmJK1EApFuAEfWpwOhkviw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/5] gpio: sysfs: use cleanup guards for gpiod_data::mutex
-To: Kent Gibson <warthog618@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241024065328.521518-4-wei.fang@nxp.com>
 
-On Fri, Oct 25, 2024 at 3:24=E2=80=AFPM Kent Gibson <warthog618@gmail.com> =
-wrote:
->
-> On Fri, Oct 25, 2024 at 02:18:51PM +0200, Bartosz Golaszewski wrote:
-> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> >
-> > Shrink the code and drop some goto labels by using lock guards around
-> > gpiod_data::mutex.
-> >
-> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> > ---
-> >  drivers/gpio/gpiolib-sysfs.c | 81 ++++++++++++++++--------------------=
---------
-> >  1 file changed, 29 insertions(+), 52 deletions(-)
-> >
-> > @@ -139,19 +132,17 @@ static ssize_t value_store(struct device *dev,
-> >       long value;
-> >
-> >       status =3D kstrtol(buf, 0, &value);
-> > +     if (status)
-> > +             return status;
-> >
-> > -     mutex_lock(&data->mutex);
-> > +     guard(mutex)(&data->mutex);
-> >
-> > -     if (!test_bit(FLAG_IS_OUT, &desc->flags)) {
-> > -             status =3D -EPERM;
-> > -     } else if (status =3D=3D 0) {
-> > -             gpiod_set_value_cansleep(desc, value);
-> > -             status =3D size;
-> > -     }
-> > +     if (!test_bit(FLAG_IS_OUT, &desc->flags))
-> > +             return -EPERM;
-> >
-> > -     mutex_unlock(&data->mutex);
-> > +     gpiod_set_value_cansleep(desc, value);
-> >
-> > -     return status;
-> > +     return size;
-> >  }
->
-> This is a behavioural change as you've moved the decode check before the
-> permission check.  Not sure if that is significant or not, so in my
-> suggestion I retained the old order.
->
-> Cheers,
-> Kent.
 
-Yeah, I don't know why it was done. Typically you want to sanitize the
-input before anything else and this is what's done almost everywhere
-else. I'd keep it like that.
+On Thu, 24 Oct 2024 14:53:18 +0800, Wei Fang wrote:
+> Add bindings for NXP NETC blocks control. Usually, NETC has 2 blocks of
+> 64KB registers, integrated endpoint register block (IERB) and privileged
+> register block (PRB). IERB is used for pre-boot initialization for all
+> NETC devices, such as ENETC, Timer, EMDIO and so on. And PRB controls
+> global reset and global error handling for NETC. Moreover, for the i.MX
+> platform, there is also a NETCMIX block for link configuration, such as
+> MII protocol, PCS protocol, etc.
+> 
+> Signed-off-by: Wei Fang <wei.fang@nxp.com>
+> ---
+> v2 changes:
+> 1. Rephrase the commit message.
+> 2. Change unevaluatedProperties to additionalProperties.
+> 3. Remove the useless lables from examples.
+> v3 changes:
+> 1. Remove the items from clocks and clock-names, add maxItems to clocks
+> and rename the clock.
+> v4 changes:
+> 1. Reorder the required properties.
+> 2. Add assigned-clocks, assigned-clock-parents and assigned-clock-rates.
+> v5 changes:
+> 1. Remove assigned-clocks, assigned-clock-parents and assigned-clock-rates
+> 2. Remove minItems from reg and reg-names
+> 3. Rename the node in the examples to be more general
+> ---
+>  .../bindings/net/nxp,netc-blk-ctrl.yaml       | 104 ++++++++++++++++++
+>  1 file changed, 104 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/net/nxp,netc-blk-ctrl.yaml
+> 
 
-Bart
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+
 
