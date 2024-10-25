@@ -1,116 +1,173 @@
-Return-Path: <linux-kernel+bounces-382606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CC149B10FA
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 22:57:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A12F9B10FE
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 22:57:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E85421F21AB6
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 20:57:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B9F8282ABE
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 20:57:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C19A217F57;
-	Fri, 25 Oct 2024 20:47:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C99421216D;
+	Fri, 25 Oct 2024 20:47:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="l34c1oVs"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nBi3KV04"
+Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 163AA18C021;
-	Fri, 25 Oct 2024 20:46:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9A8F20C333;
+	Fri, 25 Oct 2024 20:47:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729889220; cv=none; b=keBlbek1FmRcM1m1FzIGH71upnKJX4a39X41UPHs7Mbe6vUUPAk7Tkz95PsqbCaJAJJ7oAKOo+Ni2hcz4maLYuuzLPPxGYrEqHjYVk71nIwQD0IHZjKoGwhTEbFPs4ZfJWmV1rT7Nm08NGQXJbnpiFiRnlEmxv7c8Zy/gWPuasM=
+	t=1729889240; cv=none; b=qfztRHrPyzicTtfyQRv4t0TnWiwUeI7gtTjxHPN7nrRmFA/5CCFCL9Ap5mC1mVfPnczofWjUHhfZuTRUFoDwUaAATj2jjW56BEmMidKllWqh8YB0Mrk0zHVGzHB8KZYXCdRClveTcKxPLxpgUyEoTSX3vcekZYR5sCyHWAjA0NY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729889220; c=relaxed/simple;
-	bh=sbx7GKDOCDQxcPyycAmGy9ZEjXCDuDtk+cGxjR6R0HU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Z87eFmqelASQAmC/6MVOHOqq2yb2iHLvsgBHwpk/OC3brkdlo3tYlpMl3tALIl42kfCSdo6shKMH/yE99fB2E4UptUyJhYGte1LyAiJESxHeqU5QsPdLEWW2+BLYKWpXIc6X5lKKEAphxQmVVjKpZg26ZZp7ueOL4YEe0jOLVAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=l34c1oVs; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=eT6kiO3JGaQV7wsi4OCzn24QrjXvaYPh6+rZs8ak/nw=; b=l34c1oVsumRi8+/I
-	/NTvvwOvfP5xRoeu4ERWyk9/Oh3MMOasmkCnlGiP8FYDFAs+orZInV/jGwuSt0yQFRqQvHXy88fbb
-	TLwY4JA9vpmZVdWe7NzjFK+fVKhjjOgNj1gGgvqek/yN9YkVeCzViRR2XBj5HO+ysGlvVxIWSqB1V
-	7f9c5TzUvoL5CC8jSXPgrjws0/WRXB+d+aoENH4id/BX7ey5fEad04X/LijKv3pMfJiUgIt9i39tD
-	tIA0nUCNshcAxIib9zZTDPJwyAD77PH0YOWISRyGhaYRJCqEXzdfmQpevkyBikiRTFFlYkfvfwSjw
-	PuyVl+m2WKpx+UDWLA==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1t4RCu-00Dc75-0j;
-	Fri, 25 Oct 2024 20:46:52 +0000
-From: linux@treblig.org
-To: arend.vanspriel@broadcom.com,
-	kvalo@kernel.org,
-	kees@kernel.org,
-	erick.archer@outlook.com
-Cc: linux-wireless@vger.kernel.org,
-	brcm80211@lists.linux.dev,
-	brcm80211-dev-list.pdl@broadcom.com,
-	linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH] wifi: brcm80211: Remove unused dma_txflush
-Date: Fri, 25 Oct 2024 21:46:51 +0100
-Message-ID: <20241025204651.244627-1-linux@treblig.org>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1729889240; c=relaxed/simple;
+	bh=oAnrTg6+ZTNIYv2RxYzpft0paLcpuLFASlreiuS/n6M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=izBgJsoogw76Lf9R9IQyrmSVslEjfNMWuG4IVO1CsN+JIPxgQbAR7bX9jpPoIzLkNDEHpQISA/m4pEu3fGEd8TMDAYCR/ouL+FQtmBMUwcT0ShLGTaysuOadY4KAtsVjwRSWG66Ghp6BYlRfDbv2MzoYuROGGg3x/gY/dr668Z8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nBi3KV04; arc=none smtp.client-ip=209.85.222.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-7b18da94ba9so81136585a.0;
+        Fri, 25 Oct 2024 13:47:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729889237; x=1730494037; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :feedback-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=gIZHEwfOmBS9mPV2oH+jrJ1aoa5lOVY1207ho5mBV/4=;
+        b=nBi3KV04MZovTkNkj3s0J0gOxq/OyLICLP/+4uxAv8ezUyH316Wv8JNWVRfxZYm5/D
+         v3gvHB11SVRUnmAx6j62AXLGxZrgao/faV6IWGXinwEbTMrOy9MVkdcOFpHB74drZbn8
+         FQst2gLcQpPYQFIRgvhd2bnBEjVDo6XHnv0L2eKT9pmgLf5emNxVGYN9Cen+SrVqZLZG
+         urddUMIFF75xkeQd3WYd6MO2MBYIfFve4HJcx0g6CPIEizSSPl0QiipcxtgOpKOY9+7i
+         fcUp+vGAO19k4OZAWh+H9Wp2eyvV62Qb4TWhENPaze9H7hQQi65Wee/njeRAV76rZDHM
+         kQIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729889237; x=1730494037;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :feedback-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gIZHEwfOmBS9mPV2oH+jrJ1aoa5lOVY1207ho5mBV/4=;
+        b=txkejXdT8FL4DVGChv+wopmYM99fBkOkUHG2GjajMJNdfEnQHerQj+lkM9Kv3cXdxz
+         gesofrPN6F7OHAh1+JBBpPxraGwazenj+ylgqb+F9ZZlB1CA4vJsPCgDSheI/Cn0gJn5
+         kzAxE1CVJbXSbRStmMnNBS99NJ+TMNM9PJyxEyczd456BezMxFPVROoZhN0lKUGK4grB
+         ZFYG37J3oghMqJOYv14VPc+Y/5rDyzLe+ItMA2XtDBhaRei4jpUbqpLmHwIhr62/NS8p
+         krRdeo/xqkDPN2ThDJCFRcH+5ad8SU4bJk3tvRIkr6BovrAMlzxhMlAY6QUES43tpYsC
+         ydGg==
+X-Forwarded-Encrypted: i=1; AJvYcCVkjvUi/xkRZ/vKZGImb5J0Xz92mhGT+N1dzrJASL0Na34no3u1lCqOtB54m852CP67pJ8d3WK+MFrNPMQ=@vger.kernel.org, AJvYcCVnHD3gWHA3JGDuKbvpHBe0VwVasgVTcr/VsVoG6do0kQr3o4v2foq3Y2dvKXB2+1zxQiZbQ0ZQ@vger.kernel.org, AJvYcCXNA/sdIWiNRLvaA22goeCdLy+j4fwv3Z6lYlDEIhC9GrJlH4CCGAdjFX8rEqbyf2RO288gAxemJAoiaqBgoXk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5t3V4celdPzk5lrl8MwzwxyUh/RA2Jdye7PQBki6vFzNC31wu
+	GcDUuwTB25Czmlcqqd3t9dBT4rgqU7ZscFs9FGXxE1tXtDU+5wve
+X-Google-Smtp-Source: AGHT+IH2FI4G4iwczx681DALwQQysvh3yFn4NumpmmuRMTRiuhG0SfWEU5XfTdFxZTORE6bjseWPOQ==
+X-Received: by 2002:a05:620a:4543:b0:7a1:e37c:bde0 with SMTP id af79cd13be357-7b186648ce9mr1207119285a.24.1729889236669;
+        Fri, 25 Oct 2024 13:47:16 -0700 (PDT)
+Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b18d359a47sm87530885a.125.2024.10.25.13.47.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Oct 2024 13:47:16 -0700 (PDT)
+Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 62C971200043;
+	Fri, 25 Oct 2024 16:47:15 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-03.internal (MEProxy); Fri, 25 Oct 2024 16:47:15 -0400
+X-ME-Sender: <xms:0wMcZ4hqovkZOvEhqb4qGxi6HONlVNR1HuKl-99aCQeKECDjrNJO6w>
+    <xme:0wMcZxCoM6M-EnctoKkoam0eKpiP7PUyYcaYuUHlS-ODtW89-_jgzJeNf22FAWVYs
+    Pnh8e54ilQWgmesZg>
+X-ME-Received: <xmr:0wMcZwFHHazRslYFNrU19f4eNVSASw0CWetmtsHC-49Ly5xSjayeCmgHUvs>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdejvddgudehfecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtugfgjgesthekredttddt
+    jeenucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrih
+    hlrdgtohhmqeenucggtffrrghtthgvrhhnpeevgffhueevkedutefgveduuedujeefledt
+    hffgheegkeekiefgudekhffggeelfeenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
+    grmhepmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgr
+    lhhithihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppe
+    hgmhgrihhlrdgtohhmsehfihigmhgvrdhnrghmvgdpnhgspghrtghpthhtohepvddvpdhm
+    ohguvgepshhmthhpohhuthdprhgtphhtthhopehmihhguhgvlhdrohhjvggurgdrshgrnh
+    guohhnihhssehgmhgrihhlrdgtohhmpdhrtghpthhtohepfhhujhhithgrrdhtohhmohhn
+    ohhrihesghhmrghilhdrtghomhdprhgtphhtthhopehnvghtuggvvhesvhhgvghrrdhkvg
+    hrnhgvlhdrohhrghdprhgtphhtthhopehruhhsthdqfhhorhdqlhhinhhugiesvhhgvghr
+    rdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprh
+    gtphhtthhopehhkhgrlhhlfigvihhtudesghhmrghilhdrtghomhdprhgtphhtthhopeht
+    mhhgrhhoshhssehumhhitghhrdgvughupdhrtghpthhtohepohhjvggurgeskhgvrhhnvg
+    hlrdhorhhgpdhrtghpthhtoheprghlvgigrdhgrgihnhhorhesghhmrghilhdrtghomh
+X-ME-Proxy: <xmx:0wMcZ5SNES7DWLHZot_3OvBz7f84w1Cx27vegPIashITca-o4BReJg>
+    <xmx:0wMcZ1wEYHshKzftML6YAAkREYupRUKkjia05ruzf2Nc_QNh3OQQ2A>
+    <xmx:0wMcZ34fgxl9vw42G_M52n6cqdxvnyp9jdCvLegIqk5SfBSjO5lXbw>
+    <xmx:0wMcZywu5WmZmjjtCD3rVQa2UXSC5S4_pzCG7k_N51-6RJf9BZTREg>
+    <xmx:0wMcZ5j9UL-4vBjc-Gwg42a1NoSaAY_TMiKPEmaA4hG6z35jYv44HK8Z>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 25 Oct 2024 16:47:14 -0400 (EDT)
+Date: Fri, 25 Oct 2024 13:47:13 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: FUJITA Tomonori <fujita.tomonori@gmail.com>, netdev@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, andrew@lunn.ch,
+	hkallweit1@gmail.com, tmgross@umich.edu, ojeda@kernel.org,
+	alex.gaynor@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
+	benno.lossin@proton.me, a.hindborg@samsung.com,
+	aliceryhl@google.com, anna-maria@linutronix.de, frederic@kernel.org,
+	tglx@linutronix.de, arnd@arndb.de, jstultz@google.com,
+	sboyd@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v3 4/8] rust: time: Implement addition of Ktime
+ and Delta
+Message-ID: <ZxwD0fG3hTT1Nkf3@Boquns-Mac-mini.local>
+References: <20241016035214.2229-1-fujita.tomonori@gmail.com>
+ <20241016035214.2229-5-fujita.tomonori@gmail.com>
+ <ZxAZ36EUKapnp-Fk@Boquns-Mac-mini.local>
+ <20241017.183141.1257175603297746364.fujita.tomonori@gmail.com>
+ <CANiq72mbWVVCA_EjV_7DtMYHH_RF9P9Br=sRdyLtPFkythST1w@mail.gmail.com>
+ <ZxFDWRIrgkuneX7_@boqun-archlinux>
+ <CANiq72kWH8dGfnzB-wKk93NJY+k3vFSz-Z+bkPCdoehqEzFojA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANiq72kWH8dGfnzB-wKk93NJY+k3vFSz-Z+bkPCdoehqEzFojA@mail.gmail.com>
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+On Thu, Oct 17, 2024 at 08:58:48PM +0200, Miguel Ojeda wrote:
+> On Thu, Oct 17, 2024 at 7:03 PM Boqun Feng <boqun.feng@gmail.com> wrote:
+> >
+> > but one thing I'm not sure is since it looks like saturating to
+> > KTIME_SEC_MAX is the current C choice, if we want to do the same, should
+> > we use the name `add_safe()` instead of `saturating_add()`? FWIW, it
+> > seems harmless to saturate at KTIME_MAX to me. So personally, I like
+> 
+> Wait -- `ktime_add_safe()` calls `ktime_set(KTIME_SEC_MAX, 0)` which
+> goes into the conditional that returns `KTIME_MAX`, not `KTIME_SEC_MAX
+> * NSEC_PER_SEC` (which is what I guess you were saying).
+> 
 
-dma_fxflush() has been unused since 2013's
-commit 7b2385b95363 ("brcmsmac: rework of mac80211 .flush() callback
-operation")
+Yeah.. this is very interesting ;-) I missed that.
 
-Remove it.
+> So I am confused -- it doesn't saturate to `KTIME_SEC_MAX` (scaled)
+> anyway. Which is confusing in itself.
+> 
 
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
- drivers/net/wireless/broadcom/brcm80211/brcmsmac/dma.c | 9 ---------
- drivers/net/wireless/broadcom/brcm80211/brcmsmac/dma.h | 1 -
- 2 files changed, 10 deletions(-)
+Then I think it suffices to say ktime_add_safe() is just a
+saturating_add() for i64? ;-)
 
-diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmsmac/dma.c b/drivers/net/wireless/broadcom/brcm80211/brcmsmac/dma.c
-index bd480239368a..80c35027787a 100644
---- a/drivers/net/wireless/broadcom/brcm80211/brcmsmac/dma.c
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmsmac/dma.c
-@@ -1426,15 +1426,6 @@ int dma_txfast(struct brcms_c_info *wlc, struct dma_pub *pub,
- 	return -ENOSPC;
- }
- 
--void dma_txflush(struct dma_pub *pub)
--{
--	struct dma_info *di = container_of(pub, struct dma_info, dma);
--	struct brcms_ampdu_session *session = &di->ampdu_session;
--
--	if (!skb_queue_empty(&session->skb_list))
--		ampdu_finalize(di);
--}
--
- int dma_txpending(struct dma_pub *pub)
- {
- 	struct dma_info *di = container_of(pub, struct dma_info, dma);
-diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmsmac/dma.h b/drivers/net/wireless/broadcom/brcm80211/brcmsmac/dma.h
-index ff5b80b09046..7905fd081721 100644
---- a/drivers/net/wireless/broadcom/brcm80211/brcmsmac/dma.h
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmsmac/dma.h
-@@ -88,7 +88,6 @@ bool dma_txreset(struct dma_pub *pub);
- void dma_txinit(struct dma_pub *pub);
- int dma_txfast(struct brcms_c_info *wlc, struct dma_pub *pub,
- 	       struct sk_buff *p0);
--void dma_txflush(struct dma_pub *pub);
- int dma_txpending(struct dma_pub *pub);
- void dma_kick_tx(struct dma_pub *pub);
- void dma_txsuspend(struct dma_pub *pub);
--- 
-2.47.0
+> In fact, it means that `ktime_add_safe()` allows you to get any value
+> whatsoever as long as you don't overflow, but `ktime_set` does not
+> allow you to -- unless you use enough nanoseconds to get you there
+> (i.e. over a second in nanoseconds).
+> 
 
+That seems to the be case.
+
+Regards,
+Boqun
+
+> Cheers,
+> Miguel
+> 
 
