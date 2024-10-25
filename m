@@ -1,154 +1,147 @@
-Return-Path: <linux-kernel+bounces-382538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41BDE9B0F88
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 22:07:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E53259B0F8A
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 22:08:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 097CE284346
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 20:07:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21C821C219B6
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 20:08:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CE7220F3F0;
-	Fri, 25 Oct 2024 20:07:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F06320EA5C;
+	Fri, 25 Oct 2024 20:07:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LkzqdeS3"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jAToUZuu"
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1EAC20D4FC;
-	Fri, 25 Oct 2024 20:06:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0A9720C320;
+	Fri, 25 Oct 2024 20:07:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729886819; cv=none; b=l4DN1K9l5w0zq54tweqOiGCTxFpuz2HCeeXu+wAoxaikE19xEwAkbP2R8mCifysht0IeV7VYUVlPD7NzZf6Dg84TFqlgkgf8Pnwp/F5ahs189xdGOtcBd1xvkYa2tBQ7MjHolRNv0R/lZsJOV1q9SD4QM0fkdKO7pArNrRBCYv8=
+	t=1729886875; cv=none; b=ngVvWuO/9pk6pBh413quBwv8Hctajj/zNluSAitlakp3ngMztKIovR1/u5bUJioUoDDe9NfQOkn5i386CM159AC3m5/s8j9M7Cv8W0ydbKZw3fZA8EKsdZdFu90M6wceJWde5fxCv2/77s4pb2vPEkf5kkII7UZEo5eCE25IqmE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729886819; c=relaxed/simple;
-	bh=020P98dsc4N0tP7zu2S4G3mBijoNQpr/6n/G2OA2H3w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=d0Xm3rq5YZLdZHHeg8GqQuI7HIflesrzCxZbv1WGQHCoKHO5X/0TLFMQklOSxXGsrhsOmoivm3j6cI3yZtAGc1eg5TKejW0ALtFieFGUNZ8HmKJbEVW8/N78zSf48k4ZseCXzvKu77mgMmVFxPuvKNDgzfP//xzvXgtLk/D89S0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LkzqdeS3; arc=none smtp.client-ip=209.85.128.54
+	s=arc-20240116; t=1729886875; c=relaxed/simple;
+	bh=t/T+RWNAPe6H8pnuUQTA0Zy8kIKLXOB0BCKHvNE6EBs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b6jGLQ0KSn/9j2PZ3wAF23laf0dPHWMye8XH8PZjaZjQr5EcwOUkOjSSIqV/d5opTdqGuDanZzcJT9YdtYL237QQvhZn54b74RtQ85dz/iSBmyVGYrPRhwhj9v6uebA7Aw7QfZGOnKFMmduSGAohMFIsfP+dpdaEcFolTIdWPOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jAToUZuu; arc=none smtp.client-ip=209.85.215.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42f6bec84b5so24284395e9.1;
-        Fri, 25 Oct 2024 13:06:57 -0700 (PDT)
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7e9e38dd5f1so1825180a12.0;
+        Fri, 25 Oct 2024 13:07:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729886816; x=1730491616; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8tYpjMCXr6pntg9hBGj3x7qZDtIrYXjEyugrTIEiVRk=;
-        b=LkzqdeS3VLhJKD0NxYAIJjygyydFKAg9R0nT+sjj2KbKNWqeSZqaQcekEtiBuBhiIr
-         89lW89LjG2/ClpqUoCI77Ud1oGvRsvKtp/xgzyNK5ri19jlNPlWJHKTvO6o4KXX4D6gI
-         anQhHo/OSv+8vBjjM/8awfcmvTMoovrpq6qwGUYlMKxcf82akJdLYFsfBouAK9CYlefv
-         rAcWld2aXQRENELyeuSmVsQLyXip1LvtE5nN6mENRdpmpEZMuu0SrJUAfmqRIODZGFxa
-         5sTp6u2rdECswbEj3y9RS7S2jbMebhkZJGtC8ol/lCTJnM9ZY7l3v42WBUSmLyx1gs/V
-         A0uA==
+        d=gmail.com; s=20230601; t=1729886873; x=1730491673; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=5dbV1tRHLTLsqjiToTOQKfhYKZO1wGgI+G1vKgEe3SY=;
+        b=jAToUZuuleCXP86WlGd9jvFbEamv8wCLAClxcnzuCiMpAkSPkmfHnLNwmHGJTaDwpf
+         SbUW+TesDoP6B5OaKgdn19yscRI4oTU5hoPtsXGq7+bHZFAnGiN5ShEU2WItgGSzkhPC
+         E0+McGmn3jMV+lpWV0WhC5ZRo4HBHjYmsoB9OKRv5XgL0f/u1K6F0WTZsGNOTbcJkVic
+         k5oREv4Urbepod4xS7fSUmx6luMpMSfPl+CXFQW7jHPSn4XUqpimYusfi1ihCnTJu+lh
+         Fy4MnGTjPnCzQbvu+RTs3S0OFMr+n10uOuCEbM6tvz24JNgS3rUdqD3E7Pr0w1e5fW7+
+         bEJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729886816; x=1730491616;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1729886873; x=1730491673;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8tYpjMCXr6pntg9hBGj3x7qZDtIrYXjEyugrTIEiVRk=;
-        b=j2H1d+fYrrKA0J2CxREsGxGOfPc0W6Pew0EUyg9TGENisrwnlf824oto5xlqNYg8Sq
-         4Cknx9By8rP/eqyy1yhay0/HSyfmnFci/fFDtkRIW/gvEFQ32B2q//hgaxKM+ZLONgF/
-         8r/96b4UQ8kpzXNI3zritEIl/LUbPiWoZgdU8ADeWOps0FH2VCE1WSeUEzMknfF4OJ8E
-         N9U027xigNbI7f/3+DCPEeSOXzO3e+lfjWtdR0gR+Z1W3IW8pAKUvW7xhQ7QyE+9vxXF
-         muurg8VH7FDlxO4RpAvhyBtD+Ig7PYzYG1hVY/n4q0o5o6oA7XkF5yhF69bXRhqdeLHh
-         cTig==
-X-Forwarded-Encrypted: i=1; AJvYcCVUyq8IAPH7fwfDoG5h6gJTGTXGyIFSHcwn2KZRGJ5+8+34aYgF50eGFSF1cPhQQ8Ci9g0xSb8DquXiC9z+@vger.kernel.org, AJvYcCWILg8m8bOuZ2mO9SieF2jgbFIQMuKfzrGgvYKU9xvj50FX5uUI9RtXT3DIMeic/8l3Ja34ThtMDNBC@vger.kernel.org, AJvYcCWsuv3VPpU5MFvmpM3ompdGkN3QLkjadifWgdmkdTxoAupqP6qbODRDeh63kSTcQUdix2lN45aB2tF7dDId@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3UFxmcQWl5jEYFgfMSgS00SJEewHrBm1yAZ/Yktw43T060esr
-	YrRqn1LVQ1/9xb1wBmxoUePiCMfiO5W8jSZUMQMbJ3XN7m00/+cs
-X-Google-Smtp-Source: AGHT+IFiGzqBxksD/82z+OJPVV83zg02xnOjqqtBwYsGstCXjU2vNZ+Nxk+/KmqLrn5tNdVHl0926w==
-X-Received: by 2002:a05:600c:5112:b0:431:5a0e:fa2e with SMTP id 5b1f17b1804b1-4319acc2befmr3153275e9.21.1729886815881;
-        Fri, 25 Oct 2024 13:06:55 -0700 (PDT)
-Received: from [192.168.20.170] (5D59A51C.catv.pool.telekom.hu. [93.89.165.28])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4317d03b8b4sm105081105e9.0.2024.10.25.13.06.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 25 Oct 2024 13:06:55 -0700 (PDT)
-Message-ID: <23d59aa6-ef46-46bd-94c9-a298b4870e09@gmail.com>
-Date: Fri, 25 Oct 2024 22:06:55 +0200
+        bh=5dbV1tRHLTLsqjiToTOQKfhYKZO1wGgI+G1vKgEe3SY=;
+        b=J4X2YabkIsVNVm1PiecxGgF/1yRUY3ahWYu5nvY/l3QACO81dFGTvD7t2Iq4pjdWIF
+         0rzh2fh8BHrzvzXEr6346fybDmW7HcCK3s2TSqdiA0BrCDn+dw4ZqY1BZbxK9DuenYJm
+         U1VEH35JgX04lGpU+G89eGSWO4wOEIruEzvVWcfu1zg/4qni/969ht60sNGdnpOlcUhd
+         c1Ag7hYvzS5FOt15zih1T0LrP2hkztFe3W725ZlPlBVB30q4r9+UpWLKLu27Sfvon9eF
+         Gu7pCwwhF4qtBlWXJrvD50jibI2w2s/0kfoAfPSGuVmJrgTKUQFiu81Z3VToOEHxzZjA
+         UZqg==
+X-Forwarded-Encrypted: i=1; AJvYcCUIE8kM37OdRjhHd9/wQbGS689POun9d7OKLTUnaM1JzROy9eUUd+tMKRaSBb/EhlllQh2wsDTUjsd3@vger.kernel.org, AJvYcCVOJvkU48T9q8kBKG1nVhohHezTJmGcfX+dJNTiw2phaByKlCyA4B8TAXgYOIsPgEAW0JNYDmMv9GDr3R8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5h6G+UZ+ULopAiiXw5QOxEM2o0GpPbqQwO+Cam+sVoqC/7p6f
+	p5POe9cJ0L9vVDo82uTpk7gCDAuGte5kqNVDt6lhJ2OPfy1OXNF8
+X-Google-Smtp-Source: AGHT+IFdKGls00wotX40vYtE1Br/ohES1FSPg7WRtCJRlvgyoFoUwwV+ohK0Qwdha1zaOh3BfBVm9Q==
+X-Received: by 2002:a05:6a20:2d23:b0:1d7:f7d:5ced with SMTP id adf61e73a8af0-1d9a84d1699mr505105637.37.1729886873069;
+        Fri, 25 Oct 2024 13:07:53 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:1691:2dbd:7c00:4e03])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7edc89f442bsm1472123a12.74.2024.10.25.13.07.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Oct 2024 13:07:52 -0700 (PDT)
+Date: Fri, 25 Oct 2024 13:07:50 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Mateusz =?utf-8?Q?Jo=C5=84czyk?= <mat.jonczyk@o2.pl>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Joy Chakraborty <joychakr@google.com>, linux-rtc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] rtc: cmos: avoid taking rtc_lock for extended period of
+ time
+Message-ID: <Zxv6ltPBWfWs957R@google.com>
+References: <Zxqv9KYnBdtnuqox@google.com>
+ <B8A0CC86-7C24-4154-B8F3-69CD6B6C94BD@o2.pl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/5] clk: qcom: gcc-ipq6018: remove alpha values from NSS
- Crypto PLL's config
-Content-Language: hu
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241021-alpha-mode-cleanup-v1-0-55df8ed73645@gmail.com>
- <20241021-alpha-mode-cleanup-v1-3-55df8ed73645@gmail.com>
- <f4ip6jde5ffs6nvpllqhjleeb4s3j6hok5decxrof3inexh7ut@esgcsblz7wcj>
-From: Gabor Juhos <j4g8y7@gmail.com>
-In-Reply-To: <f4ip6jde5ffs6nvpllqhjleeb4s3j6hok5decxrof3inexh7ut@esgcsblz7wcj>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <B8A0CC86-7C24-4154-B8F3-69CD6B6C94BD@o2.pl>
 
-2024. 10. 25. 8:18 keltezéssel, Dmitry Baryshkov írta:
-> On Mon, Oct 21, 2024 at 10:21:59PM +0200, Gabor Juhos wrote:
->> Since both the 'alpha' and 'alpha_hi' members of the configuration is
->> initialized with zero values, the output rate of the PLL will be the
->> same whether alpha mode is enabled or not.
->>
->> Remove the initialization of the alpha* members to make it clear that
->> alpha mode is not required to get the desired output rate.
->>
->> While at it, also add a comment to indicate the frequency the PLL runs
->> at with the current configuration.
->>
->> No functional changes, the PLL runs at 1.2 GHz both before and after
->> the change.
->>
->> Tested on Xiaomi Mi Router AX1800 (IPQ6018, out-of-tree board).
->>
->> Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
->> ---
->>  drivers/clk/qcom/gcc-ipq6018.c | 4 +---
->>  1 file changed, 1 insertion(+), 3 deletions(-)
->>
->> diff --git a/drivers/clk/qcom/gcc-ipq6018.c b/drivers/clk/qcom/gcc-ipq6018.c
->> index ab0f7fc665a9790dd8edba0cf4b86c5c672a337d..d861191b0c85ccc105ac0e62d7a68210c621fc13 100644
->> --- a/drivers/clk/qcom/gcc-ipq6018.c
->> +++ b/drivers/clk/qcom/gcc-ipq6018.c
->> @@ -4194,10 +4194,9 @@ static const struct alpha_pll_config ubi32_pll_config = {
->>  	.test_ctl_hi_val = 0x4000,
->>  };
->>  
->> +/* 1200 MHz configuration */
->>  static const struct alpha_pll_config nss_crypto_pll_config = {
->>  	.l = 0x32,
->> -	.alpha = 0x0,
->> -	.alpha_hi = 0x0,
+On Fri, Oct 25, 2024 at 08:01:37AM +0200, Mateusz Jończyk wrote:
+> Dnia 24 października 2024 22:37:08 CEST, Dmitry Torokhov <dmitry.torokhov@gmail.com> napisał/a:
+> >On my device reading entirety of /sys/devices/pnp0/00:03/cmos_nvram0/nvmem
+> >takes about 9 msec during which time interrupts are off on the CPU that
+> >does the read and the thread that performs the read can not be migrated
+> >or preempted by another higher priority thread (RT or not).
+> >
+> >Allow readers and writers be preempted by taking and releasing rtc_lock
+> >spinlock for each individual byte read or written rather than once per
+> >read/write request.
 > 
-> I'd say this serves documentation purposes: zero alpha value
-
-For me, setting 'alpha_en_mask' means that the alpha values will be used. If it
-is not set, then it means that the alpha values are getting ignored. If those
-will be ignored eventually, specifying even zero alpha values explicitly is
-pointless in my opinion.
-
-If we really need that for documentation purposes, the comment before the
-configuration can be changed to indicate that alpha values are not needed.
-
+> Hello, 
+> A nice idea! 
+> (sorry for any formatting problems, I'm on a train right now) 
 > 
->>  	.config_ctl_val = 0x4001055b,
->>  	.main_output_mask = BIT(0),
->>  	.pre_div_val = 0x0,
->> @@ -4206,7 +4205,6 @@ static const struct alpha_pll_config nss_crypto_pll_config = {
->>  	.post_div_mask = GENMASK(11, 8),
->>  	.vco_mask = GENMASK(21, 20),
->>  	.vco_val = 0x0,
->> -	.alpha_en_mask = BIT(24),
+> >
+> >Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> >---
+> > drivers/rtc/rtc-cmos.c | 31 +++++++++++++++----------------
+> > 1 file changed, 15 insertions(+), 16 deletions(-)
+> >
+> >diff --git a/drivers/rtc/rtc-cmos.c b/drivers/rtc/rtc-cmos.c
+> >index 35dca2accbb8..e8f2fe0d8560 100644
+> >--- a/drivers/rtc/rtc-cmos.c
+> >+++ b/drivers/rtc/rtc-cmos.c
+> >@@ -645,18 +645,17 @@ static int cmos_nvram_read(void *priv, unsigned int off, void *val,
+> > 	unsigned char *buf = val;
+> > 
+> > 	off += NVRAM_OFFSET;
+> >-	spin_lock_irq(&rtc_lock);
+> >-	for (; count; count--, off++) {
+> >+	for (; count; count--, off++, buf++) {
+> >+		guard(spinlock_irq)(&rtc_lock);
+> > 		if (off < 128)
+> >-			*buf++ = CMOS_READ(off);
+> >+			*buf = CMOS_READ(off);
+> > 		else if (can_bank2)
+> >-			*buf++ = cmos_read_bank2(off);
+> >+			*buf = cmos_read_bank2(off);
+> > 		else
+> >-			break;
+> >+			return -EIO;
+> > 	}
+> >-	spin_unlock_irq(&rtc_lock);
+> > 
+> >-	return count ? -EIO : 0;
+> >+	return count;
 > 
-> This is okay
+> return 0;
 
-Regards,
-Gabor
+Oh, yes, of course, thank you.
+
+-- 
+Dmitry
 
