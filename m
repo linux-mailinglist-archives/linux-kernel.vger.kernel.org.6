@@ -1,313 +1,260 @@
-Return-Path: <linux-kernel+bounces-381078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E3219AF9F4
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 08:29:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A15A9AF9D9
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 08:20:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8211D1C2231B
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 06:29:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D18E1C20BDB
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 06:20:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08F931AD3F5;
-	Fri, 25 Oct 2024 06:29:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88FFA1B393A;
+	Fri, 25 Oct 2024 06:20:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bz1HAba6"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="OGvhlWlB"
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2070.outbound.protection.outlook.com [40.107.22.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A51F54436A;
-	Fri, 25 Oct 2024 06:29:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729837771; cv=none; b=QyMY5YbR24KG8TISMQ4QOnFWphGOkQm92r7sRCiaaKcsatWuQfX0muVq6OvuoRmp9A9G60wLsB8rFv/ZQpz4o1Tsw9gxDlLrEQkfjIjzsRSeKCJKLaIdOYeObi4hg6xrnHvOMR43vBppYShbBc0pSAQRjfxNgqp1teaDtSWRYck=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729837771; c=relaxed/simple;
-	bh=+XahwEo3QmX+6o02dYWVxQaY93fMwzTYeg7GdldkdOw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=aC/DAvJDVsLNxWJg7AJcgNQm2jzWDN7nwwnGCgJ8P1JZNypCkOHvVGPEhg3vtMCmuUWV+vhXjKekztsZSLnWWpsQNKAs00ew9I9L/zRKBRnRrW7RRu26lNfQ+mwkrUMVbDdFlg+HjK+jC3p3nQz14LzbDYvZAeC6OleWQBznIJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bz1HAba6; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5cb6b2b7127so2035009a12.1;
-        Thu, 24 Oct 2024 23:29:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729837765; x=1730442565; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=B1LmMY9VF83ON1MEVw29i3xkyJ5S9+Q5AomoQOw126k=;
-        b=bz1HAba6gkOjQ4fGHW9b75bTee8tCvbUsuQAfZsiWs6pJMO1ZIgA/F56h2UNqksqsV
-         BMudfdnYIti41CmHDCTcJskGWDxTzMx0LfX+3fYIEwYC9AT40VfpKycWGIkVCRzqI3IA
-         TDa478eWZmc4ZhQwTyeBkc7V62C5CwgguRAfKPU0wcJX/tKYornuRPkwLS2386Uy4Q/C
-         0JCigyEqD7LrDxOG4dlcht+A42G/txJqcC5G+ooRGcCeKgkZtyTyblmL8K7/LP11d8lJ
-         Bx19WHn7a+6HLZfUCMAkTwshJW/Kej5V02uaJy6i5sGQ7BoMM985897GNYUp9EycuIA4
-         wJJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729837765; x=1730442565;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=B1LmMY9VF83ON1MEVw29i3xkyJ5S9+Q5AomoQOw126k=;
-        b=anOhYVx27VAmvKQ/XeUGndBSkF5EGiNfgJAeNwPFreKz79qCgjgUoZMvyqpqPfkJ7h
-         +ArCVOjRef7LetLZjeTRdlPGst0vARf9w74Oxa9TB590jeQ/Ujskq4gwYk21odsSG/eJ
-         n445pqrXTakhS4BOqc/80cm7ZwGA0DLHMOJ1sEcUwu4OusW6u4Z3hpWHJSxQoG/pSKUP
-         TncFRutSAMLKTIAaHboRaB9Bci7O9Jk3noedxjlVKi05G3E5gxGmvxwp+R5vsmW4gD+Q
-         L5ZL1IRfV74noXKVuj4ty+x7kF+tnlwrHU4IdtnU3mgmuT1LEFBlNLxIT87stw5Qp1l/
-         a8dA==
-X-Forwarded-Encrypted: i=1; AJvYcCUdKm/+0+nbqRUSKK8+3iSw+yEegyv9H2gHmRNGtJhDeE0VtNdeAhv7UHprtrUU3/UvuZx8UPW0arxL@vger.kernel.org, AJvYcCUzXCQGKlKSGutLnCfuM8ZZP8lbo0n6gkRvbE0yrphTcolxmLPloz+EF1tI76Q2e/c1Pz5kmaqSdfP7@vger.kernel.org, AJvYcCVADQ1AqQHC+7xA5fLQ30ZhMoBxP+cWPKawxwVpHB8WbNP5CcUr5hch+lBdvksGBvIgxrA8U2nNSePJ@vger.kernel.org, AJvYcCXMNvhFUVorxYD3gqPTSo3L34gDw0XOfV03Ojs7y2KyzVyMamG+f2HRYhV1yhOUeXxvjgLaXNwvlxfgS53U@vger.kernel.org, AJvYcCXkdZoaDOwmLdiPne7GcFZr9vLfcCxAZZi4QFjyGcvD0yqnAOCQQS7ktQcEZ7RW49EiINqzGCU/LIq+@vger.kernel.org
-X-Gm-Message-State: AOJu0YxITWk91T5iOf4c0TY4XqFy6pDK/1jXLvun5ZeOkU7ufTSj/Jgv
-	RecgpSOLVEZR5WMH3xGytONqRJhvx80M6MZd2IDKbkPCqTjzBexL
-X-Google-Smtp-Source: AGHT+IHdBjFJy8whlH5uXwInL5O8VcnvN0wo2fl1irS12tPY4Ac3qsdQ41G7Boc0gW6PVx5vwe8dNw==
-X-Received: by 2002:a17:907:2cc7:b0:a99:da6c:f607 with SMTP id a640c23a62f3a-a9abf92f857mr760072766b.44.1729837764442;
-        Thu, 24 Oct 2024 23:29:24 -0700 (PDT)
-Received: from nsa.fritz.box ([2001:a61:34c9:ea01:14b4:7ed9:5135:9381])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b1f298df1sm31562866b.135.2024.10.24.23.29.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Oct 2024 23:29:24 -0700 (PDT)
-Message-ID: <1715db810c98d5e8acc01d8348603c2426a4df4e.camel@gmail.com>
-Subject: Re: [PATCH RFC v4 03/15] spi: offload: add support for hardware
- triggers
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: David Lechner <dlechner@baylibre.com>, Mark Brown <broonie@kernel.org>, 
- Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Nuno =?ISO-8859-1?Q?S=E1?= <nuno.sa@analog.com>, Uwe
- =?ISO-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>
-Cc: Michael Hennerich <Michael.Hennerich@analog.com>, Lars-Peter Clausen
-	 <lars@metafoo.de>, David Jander <david@protonic.nl>, Martin Sperl
-	 <kernel@martin.sperl.org>, linux-spi@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-iio@vger.kernel.org, linux-pwm@vger.kernel.org
-Date: Fri, 25 Oct 2024 08:29:23 +0200
-In-Reply-To: <9d801823-aa90-4b15-9dbb-9da6ad2cb3e4@baylibre.com>
-References: 
-	<20241023-dlech-mainline-spi-engine-offload-2-v4-0-f8125b99f5a1@baylibre.com>
-	 <20241023-dlech-mainline-spi-engine-offload-2-v4-3-f8125b99f5a1@baylibre.com>
-	 <9762d3f3d3a2e5fbe5e5041cbdc928a9ab24e40b.camel@gmail.com>
-	 <9d801823-aa90-4b15-9dbb-9da6ad2cb3e4@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90DAC18E372;
+	Fri, 25 Oct 2024 06:19:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.70
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729837207; cv=fail; b=h+Aqzasmk7mKxYOJWD2vAJdQV3vWsQntJ6CV3Zj1A0eb8XiuvRs2ZEli07G//gsAsQnX+79vtK7PmQzWqie5uR6JcwZteDvv8etXWK/1L1xPmTmAtDqw+4csHUIsNeOHf+JcYqm5uWibGY/Z2UrkcsYW2oigJcie5BdDcAwQt/I=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729837207; c=relaxed/simple;
+	bh=AlEOKP7ZeJtiUcnuNUPWJWxFM+sLLLuDtFQ46TcCVt0=;
+	h=From:To:Subject:Date:Message-Id:Content-Type:MIME-Version; b=j8kNJGvEOxIwfxS1brI2vllivzm7b6IvwhgnjNmsiKs3ya0FMxYwMnHfJkp8jrkHoDTznfkN3zXzsM5OTdHQghyMNG7ANxM7w73xqPBlNt/wdzCi/yI7tQAHosHJMEd2oFxf8DsyIYmJanZ8jB//nE1JkRCMSQuFBCNyG9Edo8U=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=OGvhlWlB; arc=fail smtp.client-ip=40.107.22.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=t1/QYGj6xwuTJl5pJIb5PQE7NSd2zHCdXIKA9x8xm/FxQCMu/MjEsSPWvsY3OTTXOMXztJwbm3KM2H7SmrpxRCefL6X+d/CDVLgc/x7uAG3mDk9XmiELDA5JDuMMOxHq4gTJlp7F3qkVUJYmqYKPpxSQ/wNJOuLQoYOzs3RwF7VU50wbfdeStgzdPciV9WecvTlwPD+QJ08vCarg6AeweIdM/eSIB/rG8+zcubILa20QScYb7DpZTCsF4LTiPxfr2TUbw+3tavOeI1wI/MGiurxcTovgloU3rzR8kMec1dIFuMLjGhRG9IQNihp995LBXDfGI3bz9iMpbxt59F7ynA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=H2otLbeoziJDP/HS++F16VE9xpn7xEvviA1iNduml80=;
+ b=i0KfW5b/fIn0qWfXKhQKs1gmWY8g2uKjfjmPJ7HI1eIsNoCyY+tZG1cqFNmyNrPr7YvSFpC7dRQCDFj/kiTthmxfaQIqMMm55bc+jPRMEGFF48EK0HyOG/lma6+kjXpascD1vkCgVVbHLC5PRxTeUjLQHkbOKaMKTlO3HHCm+2JSS6PmdyWY28Z5EA+xwHrCLBNfenVKCoYJ0QuSGhALdxnLVE2R24sk0vr2vanmDPvcHK+SgJoxSf9UutacxLxIVwOpDdgeMjv/yQChMLBj7h6cm/EqTmrBnQ9A9Jy6/W12gpsB7RjSAYpT2hugWeUTP408SiSebgROF7WIqWsOOg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=H2otLbeoziJDP/HS++F16VE9xpn7xEvviA1iNduml80=;
+ b=OGvhlWlBFI8e5KZO0fAvab7X00K1m4Z7VctQkE7R/4DfwrI2YzQQTMy776dpu3SCAbRcUYgdiHzGkxjtmxYKfb8rFPRC7DMS1vM1Ob8mSGiJOUUmaK0migNX4OpYRarSWoeus+KfhoXGEEzPMetnlUJN8L78+7R6U+0qry/NAOo72pmRBhI9CkcOBcZTy/dADmpx6we6MttoHVq//QbGMskNGZiWpIJMuM3TCCX/Ciory+mrvyp4PbPccjknEBb6piLVUtwAvliWrB1aXq55b25ZKb6BUFA+RpSqzrDk8Pff+sJLr32Ph7drdtwlaTfHJkGTO7RQuwqHaLgw7jFeNw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM0PR04MB7044.eurprd04.prod.outlook.com (2603:10a6:208:191::20)
+ by DB9PR04MB9938.eurprd04.prod.outlook.com (2603:10a6:10:4ee::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.18; Fri, 25 Oct
+ 2024 06:19:54 +0000
+Received: from AM0PR04MB7044.eurprd04.prod.outlook.com
+ ([fe80::7be0:296:768c:e891]) by AM0PR04MB7044.eurprd04.prod.outlook.com
+ ([fe80::7be0:296:768c:e891%6]) with mapi id 15.20.8093.018; Fri, 25 Oct 2024
+ 06:19:54 +0000
+From: Shengjiu Wang <shengjiu.wang@nxp.com>
+To: shengjiu.wang@gmail.com,
+	Xiubo.Lee@gmail.com,
+	festevam@gmail.com,
+	nicoleotsuka@gmail.com,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	perex@perex.cz,
+	tiwai@suse.com,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] ASoC: fsl_mqs: Support accessing registers by scmi interface
+Date: Fri, 25 Oct 2024 14:29:35 +0800
+Message-Id: <20241025062935.1071408-1-shengjiu.wang@nxp.com>
+X-Mailer: git-send-email 2.37.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SI2PR04CA0002.apcprd04.prod.outlook.com
+ (2603:1096:4:197::17) To AM0PR04MB7044.eurprd04.prod.outlook.com
+ (2603:10a6:208:191::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM0PR04MB7044:EE_|DB9PR04MB9938:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7c6d9528-01fe-47e7-0b03-08dcf4bd0a7b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|366016|52116014|7416014|1800799024|38350700014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?dQVndHVR4x++pHa6Xa8dii15gdhY/JVJhf9scrc/5z4M8526VEOJumk6qeBD?=
+ =?us-ascii?Q?C6abz+uPD6GgP1CxORqMRVCWdrXkf4gQWN6qRMS3ULeIAks4bGN/l0FAeW+f?=
+ =?us-ascii?Q?EB4LSkDyFUy1KZfcMpqduIbrFceeY50mtQWKa62dKXMUTy76XAD/ceO3nC9U?=
+ =?us-ascii?Q?ax+iKNcsaSu8HRgadLgdtKVcDx6ROODDuNZbe4FByCt7SiCeJwJX9iNnT+Bq?=
+ =?us-ascii?Q?ag/ir8q7ue2NqxP4fZVuOcndubfGDPCaZDgjtY/83XZC+Ys5opkbZdt8xLf/?=
+ =?us-ascii?Q?J93oJQEJcZzv9CZDckzbK+8xmL0qn/RfMBMLBBTfU38Y84uN/e5NDyQ+zHhi?=
+ =?us-ascii?Q?t0JORNA0O6l5o975ZYunicKQmaO68DPXoiLv3SrA55SdtsPke1kWZq2lxzv6?=
+ =?us-ascii?Q?6TRumZ6VqNOD7GvH1KY6udlBt7g56W21mP/YIXEcDGErooGm8DfcW6Vum81i?=
+ =?us-ascii?Q?sQ3PYU9FoIOmkrLS5ODbNLekbWYHQRA0BFMT/1DEqGjpN0IEghvuhs5SrwNM?=
+ =?us-ascii?Q?G3m6omGCVtkkn0/MGX8aCi1a2yc+7glQiYofLsg2Db+vUtqzSALkeRvAYy2g?=
+ =?us-ascii?Q?6tyboaZC2TJj2dr7yVmRDURPPQjC6gVirnqRmt/DJmtxyM4vo9J1nQANhY00?=
+ =?us-ascii?Q?qxHDZsjFUbGpIn8p2q79djUp30O+wL7e0ka/F7J4PVNQuxgRjcNuQ/ROiNFG?=
+ =?us-ascii?Q?PV3EAYtLPb8lKBArVH455ucdi7bUjw8Etz4n2zInqo1LuW0apICevxrYjjGX?=
+ =?us-ascii?Q?HfNCqOvoPbzMHLYNkG/gz9KkgAJdiHI7pn90FJOmCWFI0at1UlF/t4SItigh?=
+ =?us-ascii?Q?GH1md7eQTdcrYK31deG92hFgiH62LcLWy6MpMYULzMJvKUtHTEo2m3Iizjfp?=
+ =?us-ascii?Q?o5qePYPrP+KpN8QR11yMxbCJV+nYkAbH2I9H41SbGiEfqGp/H6aktF4dLI8p?=
+ =?us-ascii?Q?k15exlVIba2Mss4go0tzoIZe05prIiFqv4xJEbw9RzJLCO/2Ft4R/+SyYY+D?=
+ =?us-ascii?Q?n0P8QCE/ZU8AfrXolN+4kgjyTnhp7M/Lvej2Nonx2uCJrXYvlkIV7g9Mljnz?=
+ =?us-ascii?Q?H+FOnYu/Bs59dI6JqSmwMSrJa1noGLOYINw5DM6hIpbyzec7dUpIm/UlpUVA?=
+ =?us-ascii?Q?+YVXXe2MUjVjSKQp4Bkx3VqdBsppnGQASpnrsvQpAwqotdpfpMbFTcOjIY9B?=
+ =?us-ascii?Q?bEzImTD4IzAdadN8FROekxeTGA35GeZnJ9Lv4Xe4edtKvUhugJug6qJWZJqT?=
+ =?us-ascii?Q?deXKxqOHZqXPMqT4n0oc0Hm/ZfXAlvsmUB5YGozrhsL8v2QGAe/Q1w7bSf1M?=
+ =?us-ascii?Q?lYYRFY3CpqfSK3nACjyeXR9zBoqG9uN9AbC5LPVgO0h00Z3Hxlhej+xZuupw?=
+ =?us-ascii?Q?3qVkb+opSAnZLRBNNh4TAFjpTTqU?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0PR04MB7044.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(52116014)(7416014)(1800799024)(38350700014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?yVhEER0w53RNsJblZS5LBYDDlmpcbEWCNhuNwgAjyx5WA0UMHKFoiq55KzPl?=
+ =?us-ascii?Q?EgUInLtwqoFjprCZp42S6hOi8NdD5kwFVgumDtbrpH2mUpJI1/WqqEu4rt2v?=
+ =?us-ascii?Q?XZT3qBQoq96zWtaTMbql/NwrAFizvawhEc3uzV5f4L3RaadTa67EzXu0KjYV?=
+ =?us-ascii?Q?A8Km9jt0BBqNO4Z3cqd812p+s2/VkA9sTODqWjH18C8pMDYKhXrgqvsjaB6H?=
+ =?us-ascii?Q?8yavACO+cOVdkD6DYsdvcyviL0SucKgPos3xByPXBKLjeqWDqQK0yNs791hq?=
+ =?us-ascii?Q?bG1N68U0O6xUxDth06nh56FTK/eRxv0tDVw9JVgBS5hg9GPGhQ3TpndwSqlr?=
+ =?us-ascii?Q?rOYb1Q3wG5H0vhc6rZpg8m5m5yInoJGJFz/mwuuUIvFxKQof1JE/x17Gtxxz?=
+ =?us-ascii?Q?Tabk9qeoBUlfWQluoMTFuTdIaVNznA/mIIftD1MN1wjvL7hQDOWgVjYE6PPG?=
+ =?us-ascii?Q?XXZfyfNO/Jde6OaE0ny97Qf78TkbBF4GDkOGMb318GaJrKOjHsc0PLq933xa?=
+ =?us-ascii?Q?GoEP3zcwHT1XgLcP4pcSYUAjOdgDoNDclqZY4j2gldV2w3sYfJytLLWAg57C?=
+ =?us-ascii?Q?uaJUY4lbjWcSwXXRI8lPC+6pAPM99o20TluycdqYP4Jntok4DLkrYED440cy?=
+ =?us-ascii?Q?lWKFsfvwpO6/9HEbBrlAzp44yQWRJw/VVt20RqXPB0qoBhgmOo7hfMqvjMGY?=
+ =?us-ascii?Q?fvoN2uPyI0rCcwoaEr4K5Ivr1x+fR/l0jJI7wa9OUZQ7Y7rQdBhpL7M3fPIt?=
+ =?us-ascii?Q?RSr2EnbS7HuNyp3B9TISJj/ePxp3f6Xl4HvHLovqXSTylxuXeiwOahw5KGav?=
+ =?us-ascii?Q?+BqtOIuKrILRH+Yjtg2z/iNUqgAvoy3Nc5bfpT3CKl6Nuf8R7HsGfCX7FZ+i?=
+ =?us-ascii?Q?EP68sZf6OlM/NPln8xWS8LodxOJ69MfLj4GOE5uojoH5p4QwPnAWD8omGhiP?=
+ =?us-ascii?Q?DqokQlV2jbhcddBnCuElm7GLqZFaCPSBO6xK2CBEQZqIE7MGbMyTzP1WKdD2?=
+ =?us-ascii?Q?J/TteH7TmRQfkn/rpMUFP7zwmWU5pwFjcDDjVUw7e3iDnL1RkPm2AqN+mwSr?=
+ =?us-ascii?Q?Xu/rUbczy8uoVSC25sOyJkONflwz+WtxqLsb2/e1ySBKVAwdVpRkxbiPvgbB?=
+ =?us-ascii?Q?bmubTZt/FJUdacSJneMum/zoHVBNkviQo8rCuK9NItt+PeisGzUVU5GkMtv6?=
+ =?us-ascii?Q?kIFFPI/+AFxH+QAxMAnesH9dfStGUz9NU7U6ckeOY8bvFmYDKdtpmo9GhwFk?=
+ =?us-ascii?Q?c9qHL3AI5h4ABIk2b97WvZphh29mC0Oy8NK+JKVChisUKxpTqdlsya6c6b52?=
+ =?us-ascii?Q?0x75j61qYlxHijZ+lnrtY2uyMKdS6Uv+q0f3DowBkM21R7v2QZCOgQP7pVzP?=
+ =?us-ascii?Q?S03umBdyNDAZLIDF+YUnY8IEFTgNot5HCsNQ0SOtykfqyteASZhHOYMjdqXs?=
+ =?us-ascii?Q?jXtun6jHBjHvvfNOVU+E5QSI4U8kusDZVA2M/IkqyVGZW0KjKskmD/9Iz8aw?=
+ =?us-ascii?Q?Bhsv1ZiDRRH8ReeiQWtGa0OfGNE8tM6dzmQSWdZkIbYJeheHbtCnHn1SE5n9?=
+ =?us-ascii?Q?cH4niW0pf4nx4Gn4YWPDrRDuDWV9L0Qtf3t3hwX7?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7c6d9528-01fe-47e7-0b03-08dcf4bd0a7b
+X-MS-Exchange-CrossTenant-AuthSource: AM0PR04MB7044.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Oct 2024 06:19:54.5276
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: lRGNrkRenKUKVE6I1Q5LS4HTdDriSuG/L0DZTa+rN3tOPe9VY7fAAbp30sPWCnny7BvNMobh2AVCDlOYgPTtHA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB9938
 
-On Thu, 2024-10-24 at 10:02 -0500, David Lechner wrote:
-> On 10/24/24 9:04 AM, Nuno S=C3=A1 wrote:
-> > On Wed, 2024-10-23 at 15:59 -0500, David Lechner wrote:
-> > > Extend SPI offloading to support hardware triggers.
-> > >=20
-> > > This allows an arbitrary hardware trigger to be used to start a SPI
-> > > transfer that was previously set up with spi_optimize_message().
-> > >=20
-> > > A new struct spi_offload_trigger is introduced that can be used to
-> > > configure any type of trigger. It has a type discriminator and a unio=
-n
-> > > to allow it to be extended in the future. Two trigger types are defin=
-ed
-> > > to start with. One is a trigger that indicates that the SPI periphera=
-l
-> > > is ready to read or write data. The other is a periodic trigger to
-> > > repeat a SPI message at a fixed rate.
-> > >=20
-> > > There is also a spi_offload_hw_trigger_validate() function that works
-> > > similar to clk_round_rate(). It basically asks the question of if we
-> > > enabled the hardware trigger what would the actual parameters be. Thi=
-s
-> > > can be used to test if the requested trigger type is actually support=
-ed
-> > > by the hardware and for periodic triggers, it can be used to find the
-> > > actual rate that the hardware is capable of.
-> > >=20
-> > > Signed-off-by: David Lechner <dlechner@baylibre.com>
-> > > ---
-> > >=20
-> > > In previous versions, we locked the SPI bus when the hardware trigger
-> > > was enabled, but we found this to be too restrictive. In one use case=
-,
-> > > to avoid a race condition, we need to enable the SPI offload via a
-> > > hardware trigger, then write a SPI message to the peripheral to place
-> > > it into a mode that will generate the trigger. If we did it the other
-> > > way around, we could miss the first trigger.
-> > >=20
-> > > Another likely use case will be enabling two offloads/triggers at one
-> > > time on the same device, e.g. a read trigger and a write trigger. So
-> > > the exclusive bus lock for a single trigger would be too restrictive =
-in
-> > > this case too.
-> > >=20
-> > > So for now, I'm going with Nuno's suggestion to leave any locking up =
-to
-> > > the individual controller driver. If we do find we need something mor=
-e
-> > > generic in the future, we could add a new spi_bus_lock_exclusive() AP=
-I
-> > > that causes spi_bus_lock() to fail instead of waiting and add "locked=
-"
-> > > versions of trigger enable functions. This would allow a peripheral t=
-o
-> > > claim exclusive use of the bus indefinitely while still being able to
-> > > do any SPI messaging that it needs.
-> > >=20
-> > > v4 changes:
-> > > * Added new struct spi_offload_trigger that is a generic struct for a=
-ny
-> > > =C2=A0 hardware trigger rather than returning a struct clk.
-> > > * Added new spi_offload_hw_trigger_validate() function.
-> > > * Dropped extra locking since it was too restrictive.
-> > >=20
-> > > v3 changes:
-> > > * renamed enable/disable functions to spi_offload_hw_trigger_*mode*_.=
-..
-> > > * added spi_offload_hw_trigger_get_clk() function
-> > > * fixed missing EXPORT_SYMBOL_GPL
-> > >=20
-> > > v2 changes:
-> > > * This is split out from "spi: add core support for controllers with
-> > > =C2=A0 offload capabilities".
-> > > * Added locking for offload trigger to claim exclusive use of the SPI
-> > > =C2=A0 bus.
-> > > ---
-> > > =C2=A0drivers/spi/spi-offload.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=
- 266 ++++++++++++++++++++++++++++++++++++++++
-> > > =C2=A0include/linux/spi/spi-offload.h |=C2=A0 78 ++++++++++++
-> > > =C2=A02 files changed, 344 insertions(+)
-> > >=20
-> > > diff --git a/drivers/spi/spi-offload.c b/drivers/spi/spi-offload.c
-> > > index c344cbf50bdb..2a1f9587f27a 100644
-> > > --- a/drivers/spi/spi-offload.c
-> > > +++ b/drivers/spi/spi-offload.c
-> > > @@ -9,12 +9,26 @@
-> > > =C2=A0#include <linux/cleanup.h>
-> > > =C2=A0#include <linux/device.h>
-> > > =C2=A0#include <linux/export.h>
-> > > +#include <linux/list.h>
-> > > =C2=A0#include <linux/mutex.h>
-> > > +#include <linux/of.h>
-> > > =C2=A0#include <linux/property.h>
-> > > =C2=A0#include <linux/spi/spi-offload.h>
-> > > =C2=A0#include <linux/spi/spi.h>
-> > > =C2=A0#include <linux/types.h>
-> > > =C2=A0
-> > > +struct spi_offload_trigger {
-> > > +	struct list_head list;
-> > > +	struct device dev;
-> > > +	/* synchronizes calling ops and driver registration */
-> > > +	struct mutex lock;
-> > > +	const struct spi_offload_trigger_ops *ops;
-> > > +	void *priv;
-> > > +};
-> > > +
-> > > +static LIST_HEAD(spi_offload_triggers);
-> > > +static DEFINE_MUTEX(spi_offload_triggers_lock);
-> > > +
-> > > =C2=A0/**
-> > > =C2=A0 * devm_spi_offload_alloc() - Allocate offload instances
-> > > =C2=A0 * @dev: Device for devm purposes
-> > > @@ -102,3 +116,255 @@ struct spi_offload *devm_spi_offload_get(struct=
- device
-> > > *dev,
-> > > =C2=A0	return offload;
-> > > =C2=A0}
-> > > =C2=A0EXPORT_SYMBOL_GPL(devm_spi_offload_get);
-> > > +
-> > > +static void spi_offload_trigger_release(void *data)
-> > > +{
-> > > +	struct spi_offload_trigger *trigger =3D data;
-> > > +
-> > > +	guard(mutex)(&trigger->lock);
-> > > +	if (trigger->priv && trigger->ops->release)
-> > > +		trigger->ops->release(trigger->priv);
-> > > +
-> > > +	put_device(&trigger->dev);
-> > > +}
-> > > +
-> > > +struct spi_offload_trigger
-> > > +*devm_spi_offload_trigger_get(struct device *dev,
-> > > +			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct spi_offload *offload,
-> > > +			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 enum spi_offload_trigger_type type=
-)
-> > > +{
-> > > +	struct spi_offload_trigger *trigger;
-> > > +	struct fwnode_reference_args args;
-> > > +	bool match =3D false;
-> > > +	int ret;
-> > > +
-> > > +	ret =3D fwnode_property_get_reference_args(dev_fwnode(offload-
-> > > > provider_dev),
-> > > +						 "trigger-sources",
-> > > +						 "#trigger-source-cells", 0,
-> > > 0,
-> > > +						 &args);
-> > > +	if (ret)
-> > > +		return ERR_PTR(ret);
-> > > +
-> > > +	struct fwnode_handle *trigger_fwnode __free(fwnode_handle) =3D
-> > > args.fwnode;
-> > > +
-> > > +	guard(mutex)(&spi_offload_triggers_lock);
-> > > +
-> > > +	list_for_each_entry(trigger, &spi_offload_triggers, list) {
-> > > +		if (trigger->dev.fwnode !=3D args.fwnode)
-> > > +			continue;
-> > > +
-> > > +		match =3D trigger->ops->match(trigger->priv, type, args.args,
-> > > args.nargs);
-> > > +		if (match)
-> > > +			break;
-> > > +	}
-> > > +
-> > > +	if (!match)
-> > > +		return ERR_PTR(-EPROBE_DEFER);
-> > > +
-> > > +	guard(mutex)(&trigger->lock);
-> > > +
-> > > +	if (!trigger->priv)
-> > > +		return ERR_PTR(-ENODEV);
-> >=20
-> > This is a bit odd tbh. Not a real deal breaker for me but the typical p=
-attern I
-> > would
-> > expect is for methods of the trigger to get a struct spi_offload_trigge=
-r opaque
-> > pointer. Then we provide a get_private kind of API for the private data=
-. I guess
-> > you
-> > want to avoid that but IMO it makes for neater API instead of getting v=
-oid
-> > pointers.
->=20
-> I was just trying to save a step of an extra call to get *priv
-> in each callback implementation, but yeah, no problem to change
-> it to something more "normal" looking.
+On i.MX95, the MQS module in Always-on (AON) domain only can
+be accessed by System Controller Management Interface (SCMI)
+MISC Protocol. So define a specific regmap_config for the case.
 
-Yeah, I figured that but I guess any of these paths are fastpaths anyways..=
-.=20
->=20
-> >=20
-> > Another thing is, can the above actually happen? We have the
-> > spi_offload_triggers_lock grabbed and we got a match so the trigger sho=
-uld not be
-> > able to go away (should block on the same lock).
->=20
-> The problem is that it could have gone away before we took the lock.
->=20
-> It could happen like this:
->=20
-> * Trigger driver registers trigger - sets *priv.
-> * SPI peripheral driver gets reference to trigger.
-> * Trigger driver unregisters trigger - removes *priv.
-> * SPI peripheral tries to call trigger function.
->=20
+Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+---
+changes in v2:
+- fix compile issue when IMX_SCMI_MISC_DRV=m but SND_SOC_FSL_MQS=y
 
-Ah I see... we're using scoped_guard() in the unregister path.
+ sound/soc/fsl/Kconfig   |  1 +
+ sound/soc/fsl/fsl_mqs.c | 41 +++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 42 insertions(+)
 
-- Nuno S=C3=A1
->=20
+diff --git a/sound/soc/fsl/Kconfig b/sound/soc/fsl/Kconfig
+index bff9c6bda344..698afae46918 100644
+--- a/sound/soc/fsl/Kconfig
++++ b/sound/soc/fsl/Kconfig
+@@ -31,6 +31,7 @@ config SND_SOC_FSL_MQS
+ 	tristate "Medium Quality Sound (MQS) module support"
+ 	depends on SND_SOC_FSL_SAI
+ 	select REGMAP_MMIO
++	select IMX_SCMI_MISC_DRV if IMX_SCMI_MISC_EXT !=n
+ 	help
+ 	  Say Y if you want to add Medium Quality Sound (MQS)
+ 	  support for the Freescale CPUs.
+diff --git a/sound/soc/fsl/fsl_mqs.c b/sound/soc/fsl/fsl_mqs.c
+index 145f9ca15e43..0513e9e8402e 100644
+--- a/sound/soc/fsl/fsl_mqs.c
++++ b/sound/soc/fsl/fsl_mqs.c
+@@ -6,6 +6,7 @@
+ // Copyright 2019 NXP
+ 
+ #include <linux/clk.h>
++#include <linux/firmware/imx/sm.h>
+ #include <linux/module.h>
+ #include <linux/moduleparam.h>
+ #include <linux/mfd/syscon.h>
+@@ -74,6 +75,29 @@ struct fsl_mqs {
+ #define FSL_MQS_RATES	(SNDRV_PCM_RATE_44100 | SNDRV_PCM_RATE_48000)
+ #define FSL_MQS_FORMATS	SNDRV_PCM_FMTBIT_S16_LE
+ 
++static int fsl_mqs_sm_read(void *context, unsigned int reg, unsigned int *val)
++{
++	struct fsl_mqs *mqs_priv = context;
++	int num = 1;
++
++	if (IS_ENABLED(CONFIG_IMX_SCMI_MISC_DRV) &&
++	    mqs_priv->soc->ctrl_off == reg)
++		return scmi_imx_misc_ctrl_get(SCMI_IMX_CTRL_MQS1_SETTINGS, &num, val);
++
++	return -EINVAL;
++};
++
++static int fsl_mqs_sm_write(void *context, unsigned int reg, unsigned int val)
++{
++	struct fsl_mqs *mqs_priv = context;
++
++	if (IS_ENABLED(CONFIG_IMX_SCMI_MISC_DRV) &&
++	    mqs_priv->soc->ctrl_off == reg)
++		return scmi_imx_misc_ctrl_set(SCMI_IMX_CTRL_MQS1_SETTINGS, val);
++
++	return -EINVAL;
++};
++
+ static int fsl_mqs_hw_params(struct snd_pcm_substream *substream,
+ 			     struct snd_pcm_hw_params *params,
+ 			     struct snd_soc_dai *dai)
+@@ -188,6 +212,13 @@ static const struct regmap_config fsl_mqs_regmap_config = {
+ 	.cache_type = REGCACHE_NONE,
+ };
+ 
++static const struct regmap_config fsl_mqs_sm_regmap = {
++	.reg_bits = 32,
++	.val_bits = 32,
++	.reg_read = fsl_mqs_sm_read,
++	.reg_write = fsl_mqs_sm_write,
++};
++
+ static int fsl_mqs_probe(struct platform_device *pdev)
+ {
+ 	struct device_node *np = pdev->dev.of_node;
+@@ -219,6 +250,16 @@ static int fsl_mqs_probe(struct platform_device *pdev)
+ 			dev_err(&pdev->dev, "failed to get gpr regmap\n");
+ 			return PTR_ERR(mqs_priv->regmap);
+ 		}
++	} else if (mqs_priv->soc->type == TYPE_REG_SM) {
++		mqs_priv->regmap = devm_regmap_init(&pdev->dev,
++						    NULL,
++						    mqs_priv,
++						    &fsl_mqs_sm_regmap);
++		if (IS_ERR(mqs_priv->regmap)) {
++			dev_err(&pdev->dev, "failed to init regmap: %ld\n",
++				PTR_ERR(mqs_priv->regmap));
++			return PTR_ERR(mqs_priv->regmap);
++		}
+ 	} else {
+ 		regs = devm_platform_ioremap_resource(pdev, 0);
+ 		if (IS_ERR(regs))
+-- 
+2.34.1
 
 
