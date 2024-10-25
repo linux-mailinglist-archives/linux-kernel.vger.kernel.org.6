@@ -1,284 +1,146 @@
-Return-Path: <linux-kernel+bounces-381019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 850FA9AF92F
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 07:37:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 740EC9AF931
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 07:40:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 455502832C5
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 05:37:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 365C22834F3
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 05:40:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C75018E37D;
-	Fri, 25 Oct 2024 05:36:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YxNxtX3s"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88E6618E054;
+	Fri, 25 Oct 2024 05:40:28 +0000 (UTC)
+Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55375176AAD;
-	Fri, 25 Oct 2024 05:36:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 144AA176AAD
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 05:40:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729834616; cv=none; b=r701zmOBiVmtTFUNgecTIl2rByvXbBjg6hCh4aK0Lrztuf4wo+gL2lKBGtU8l5rvcrfsoUvV9cQ99CVfMvLYH7RYSM44WsWDdneZBtIS/2+yF6UTs2NBB2m9nz/KNXJcQLUhK2A0Juu69joR7fltqtnPou0j5qQ2u3phH4KMj8Q=
+	t=1729834828; cv=none; b=GNviFA5NtQXIkqq1w0OU/X5Q5iUu1WMtX6cMEOIAUxLWZM3gaY4rK4coiTsN2o+DQ1s+yp+yfXGjc964kq5TB1Xl2dxxvfBxnIVlvwgF4vjOMce+uNv2tAk3/N0nxlqQX2Rv4TVffpsi1zhVvbFTb8o2Llnl/jP0gcoZbtlmhrk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729834616; c=relaxed/simple;
-	bh=i3/s0UBOE+JpqQinyKWy7NDxsOZT5rbIizN4f+s4GoM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ItEwBZ8JJCGXvHKPaY0Amf0+24R7Pl5EkZEEuKu0BIFy+p2QQWr501l+sYgnzdiqyOQQGbyeY6+8xj48TVB6MUGVbW5pI8/ctJCiY/X0/fBYXjLTLSxw76PK8e1oUKsunjQ/kA9PfMm8MljdXuUE86fMLbFTWJOx2PGZVS/Pon4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YxNxtX3s; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1729834828; c=relaxed/simple;
+	bh=ChJakSHDpVS6fy2IZZqY44CO6t/FAzraBj6pS8iCWKg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jdc8x7TWfmyPvu1w4B61VA2R2PQHwrDLLkhpsug7AV1f/g1ykrKqTEK3veJccQCYPJl59V238NUVUT2T0mivf4I0LUEenVMMV4tyWVd59LdLxOmCiEp5hUc0pPeRnzGfJCIAGlO6/1yH5m5eHi0hlV3+qPDNKrRFrhqcCgKOPTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=manifault.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.166.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=manifault.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-71e8235f0b6so1211090b3a.3;
-        Thu, 24 Oct 2024 22:36:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729834613; x=1730439413; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=HvCggmtLdEUI172Y83XNX/Onv4GEKVaPGfEZwS/XjT8=;
-        b=YxNxtX3s5xS6Lp1TMJw/nQNd+Ffcq5Cq7zp3EUVCSXZbEjWcNXBXzgCyrs3IhSQWC3
-         x9/HwwVRNP/zb4G7rbCjLV4KPBAp7sgCGz5y0n79ldSLTG7H2RaqxXbOntbkZCTG5jdy
-         nILcW5vHEAu202PHVvSfkySzdU0mPVN9mzrIsIbXs3B2FWDCj3JKaRMNSWUhLMyduvrW
-         2HIylshShKiMSDchI9nWv5PETzAEgtlFmGVlmshdh84dU7ABhCNm4xxAcojnHTBNjeU/
-         N3GqTdfb9pmvrVyZWn8nb5V6o4ceA4+71DC2vogxc8toJ6LsBV0rFKpIzDDnzvmPlhXu
-         uH6A==
+Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-3a3bd42955bso6756435ab.1
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 22:40:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729834613; x=1730439413;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HvCggmtLdEUI172Y83XNX/Onv4GEKVaPGfEZwS/XjT8=;
-        b=A5gYzqq9r9wcPzYetjqlEN5XQLNo+Rcw/GiFToSTYcx/FE8sfS2P3HjSUp5FP0saEQ
-         ix0+Yg0JrOANjfazHeERYLRIejX9VQTZPAS2InkPZN1RsKr4cvLEML8K/CvlJGGU+UAK
-         82AIZU9w8w2pXDM+PXwzqSweUUZFZJFGGlWxEKG4V2ArVNqkaKKqD7Z8X/BXCIPFhcwF
-         ASx9BMqPExDn2dilkiL4ozPgsCGNsu72eMzPHWWP5UOgwaaMuUrgGTdbrQiovokFaryO
-         Hcg5rDsL6YhMjSQjT4+pRbN6/dSO+1oDXp691xHDlV1ybzrLZmlMD+1a+4Mfwmlnhpmz
-         UaiA==
-X-Forwarded-Encrypted: i=1; AJvYcCWe3jKM7RlDadiDtJE595Ttq/TSZdELAT2lT6lraKeH+bxzQs5+24kHgc+fW6l3AN+5tHUZ5e8xXytqi1o=@vger.kernel.org, AJvYcCXdP3UszEySahSfjWWW0Sk2XnRGuvfQEKMtSX11KAjiGRaarqIhxl++SmVIYS70pzkbwe7fuUVyEXrT@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyk/uvW3g1M4TluyyLOOWjfgTl7Ok3QtgH9TjuhCRNhf3ssQXwq
-	KAd/n6O3VZIEEKUe+I+QWluESqvQ2PpeHqoN3alaiDsp56+pBFXPiu4GwMur
-X-Google-Smtp-Source: AGHT+IGzbzwpbOrc+GHYvSHu/3iAhi85esxI7itU+Q8udNFbHIvIFqzfKJoIJUw9BF55+RUzypHRzw==
-X-Received: by 2002:a05:6a00:3c94:b0:71e:7a56:3eaf with SMTP id d2e1a72fcca58-72030bba11fmr11795617b3a.24.1729834613433;
-        Thu, 24 Oct 2024 22:36:53 -0700 (PDT)
-Received: from [172.19.1.43] (60-250-192-107.hinet-ip.hinet.net. [60.250.192.107])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7edc8660dd1sm333486a12.14.2024.10.24.22.36.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Oct 2024 22:36:53 -0700 (PDT)
-Message-ID: <871e9a4c-7a3c-4a24-8829-a079983033da@gmail.com>
-Date: Fri, 25 Oct 2024 13:36:48 +0800
+        d=1e100.net; s=20230601; t=1729834825; x=1730439625;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tDncTFkr5L0djCj0Eja5jQSh6ZITvK7aIFJkjuCNtls=;
+        b=HSzwYZ5Zl/s7ZT2Gv7sRdQ2zhVYaw7cale5XQ0ovTF51vnsa5p9F5TiGakKjWYiQ7s
+         y6H/IKvMzRx0ii7RQzhcDM+JecAYWDNsf+AU23UQZ4CkDjPUxqBu8rg8KiI0lqndtKTg
+         A9dDRCGIBLcaYrfy/eMlkUZf39e8IUca+dxafpf5ZQoeZKfMFLR5SJ/5h8gTo95hpL5Y
+         TwNp0GJeGgDjNa+oY9zsp8ib0rstdWcEL05bMaZJhpkBzt9mLS4R/DGyaml+pvPJVj7N
+         udNVELKSe1putgzBUpZaIGFVkrHgqH8ePxuf27Caq7F6JGKR0Wt2Cy7c0ir0IB+/38N3
+         oE1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCW6rtc4I00+buHdXgTfArtNoS2JeruSwODuwsvcOj24H/NsVZvmnqbaywmAFsNJrSPFMVcnMoAEf9Dst2g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxfrBRlBkTLjHZFBdCbe/QthdezSNXsml7xdwPkrl5dARHS65KO
+	rUjjZj96+CPLbA/fIWvnComyjJxg13KD+mNX5R1pPbPcvFcndYL6
+X-Google-Smtp-Source: AGHT+IEqxPzK2sjzBI/pa1VGEeKPM7iu9rMqpSIiQdkwsAKjXJblzO0sJmuJjKyf9gIFdIjUVc39ew==
+X-Received: by 2002:a05:6e02:19cc:b0:3a0:8c68:7705 with SMTP id e9e14a558f8ab-3a4d59fccf1mr88183685ab.21.1729834825150;
+        Thu, 24 Oct 2024 22:40:25 -0700 (PDT)
+Received: from localhost (c-76-141-129-107.hsd1.il.comcast.net. [76.141.129.107])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a4e6de0923sm1178085ab.27.2024.10.24.22.40.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Oct 2024 22:40:24 -0700 (PDT)
+From: David Vernet <void@manifault.com>
+To: tj@kernel.org
+Cc: sched-ext@meta.com,
+	kernel-team@meta.com,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] scx: Fix exit selftest to use custom DSQ
+Date: Fri, 25 Oct 2024 00:40:13 -0500
+Message-ID: <20241025054014.66631-1-void@manifault.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: input: Add Nuvoton MA35D1 keypad
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-input@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- mjchen@nuvoton.com, peng.fan@nxp.com, sudeep.holla@arm.com, arnd@arndb.de,
- conor+dt@kernel.org, krzk+dt@kernel.org, robh@kernel.org,
- dmitry.torokhov@gmail.com
-References: <20241022063158.5910-1-mjchen0829@gmail.com>
- <20241022063158.5910-2-mjchen0829@gmail.com>
- <csbechg6iarxx52z2gqidszhvgjdvaraoumpfcsozelhuuhmtb@ec7es3txuzxc>
-Content-Language: en-US
-From: Ming-Jen Chen <mjchen0829@gmail.com>
-In-Reply-To: <csbechg6iarxx52z2gqidszhvgjdvaraoumpfcsozelhuuhmtb@ec7es3txuzxc>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
+In commit 63fb3ec80516 ("sched_ext: Allow only user DSQs for
+scx_bpf_consume(), scx_bpf_dsq_nr_queued() and bpf_iter_scx_dsq_new()"), we
+updated the consume path to only accept user DSQs, thus making it invalid
+to consume SCX_DSQ_GLOBAL. This selftest was doing that, so let's create a
+custom DSQ and use that instead.  The test now passes:
 
-On 2024/10/23 下午 04:40, Krzysztof Kozlowski wrote:
-> On Tue, Oct 22, 2024 at 06:31:57AM +0000, mjchen wrote:
->> From: mjchen <mjchen@nuvoton.com>
->>
->> Add YAML bindings for MA35D1 SoC keypad.
->>
->> Signed-off-by: mjchen <mjchen@nuvoton.com>
->> ---
->>   .../bindings/input/nvt,ma35d1-keypad.yaml     | 88 +++++++++++++++++++
->>   1 file changed, 88 insertions(+)
->>   create mode 100755 Documentation/devicetree/bindings/input/nvt,ma35d1-keypad.yaml
->>
-> Please run scripts/checkpatch.pl and fix reported warnings. Then please
-> run 'scripts/checkpatch.pl --strict' and (probably) fix more warnings.
-> Some warnings can be ignored, especially from --strict run, but the code
-> here looks like it needs a fix. Feel free to get in touch if the warning
-> is not clear.
-Sorry, I will remember to run checkpatch.pl before uploading the
-subsequent patches and fix all errors and warnings
->> diff --git a/Documentation/devicetree/bindings/input/nvt,ma35d1-keypad.yaml b/Documentation/devicetree/bindings/input/nvt,ma35d1-keypad.yaml
->> new file mode 100755
->> index 000000000000..3d9fc26cc132
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/input/nvt,ma35d1-keypad.yaml
-> Filename based on compatible. There is no nvt prefix. Entire filename is
-> somehowdifferent than compatible.
-I will modify it to: nuvoton,ma35d1-keypad.yaml
->> @@ -0,0 +1,88 @@
->> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/input/nvt,ma35d1-keypad.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: NVT MA35D1 Keypad
-> NVT? Nuvoton?
-I will change NVT to Nuvoton
->
->> +
->> +maintainers:
->> +  - Ming-jen Chen <mjchen0829@gmail.com>
->> +
->> +allOf:
->> +  - $ref: /schemas/input/matrix-keymap.yaml#
->> +
->> +properties:
->> +  compatible:
->> +    const: nuvoton,ma35d1-kpi
->> +
->> +  debounce-period:
->> +    $ref: /schemas/types.yaml#/definitions/uint32
-> Missing vendor prefix... or why are you not using existing properties?
->
->> +    description: |
->> +      key debounce period select
-> select? or clock cycles? I don't understand this. Say something useful
-> here.
->
->
->> +      0  = 0 clock
->> +      1  = 0 clock
->> +      2  = 0 clock
-> Heh? So this is just 0
->
->> +      3  = 8 clocks
-> This is 8
->
->> +      4  = 16 clocks
-> 16, not 4
->
->> +      5  = 32 clocks
->> +      6  = 64 clocks
->> +      7  = 128 clocks
->> +      8  = 256 clocks
->> +      9  = 512 clocks
->> +      10 = 1024 clocks
->> +      11 = 2048 clocks
->> +      12 = 4096 clocks
->> +      13 = 8192 clocks
-> Use proper enum
-I will update the definition to specify the debounce period in terms of 
-keypad IP clock cycles, as follow:
+[root@virtme-ng sched_ext]# ./runner -t exit
+===== START =====
+TEST: exit
+DESCRIPTION: Verify we can cleanly exit a scheduler in multiple places
+OUTPUT:
+[   12.387229] sched_ext: BPF scheduler "exit" enabled
+[   12.406064] sched_ext: BPF scheduler "exit" disabled (unregistered from BPF)
+[   12.453325] sched_ext: BPF scheduler "exit" enabled
+[   12.474064] sched_ext: BPF scheduler "exit" disabled (unregistered from BPF)
+[   12.515241] sched_ext: BPF scheduler "exit" enabled
+[   12.532064] sched_ext: BPF scheduler "exit" disabled (unregistered from BPF)
+[   12.592063] sched_ext: BPF scheduler "exit" disabled (unregistered from BPF)
+[   12.654063] sched_ext: BPF scheduler "exit" disabled (unregistered from BPF)
+[   12.715062] sched_ext: BPF scheduler "exit" disabled (unregistered from BPF)
+ok 1 exit #
+=====  END  =====
 
-nuvoton,debounce-period:
-     type: integer
-     enum: [0, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
-     description: |
-         Key debounce period select, specified in terms of keypad IP 
-clock cycles.
-         This value corresponds to the register setting for the keypad 
-interface.
-         The following values indicate the debounce time:
-         - 0 = 0 clock cycles (no debounce)
-         - 3 = 8 clock cycles
-         - 4 = 16 clock cycles
-         - 5 = 32 clock cycles
-         - 6 = 64 clock cycles
-         - 7 = 128 clock cycles
-         - 8 = 256 clock cycles
-         - 9 = 512 clock cycles
-         - 10 = 1024 clock cycles
-         - 11 = 2048 clock cycles
-         - 12 = 4096 clock cycles
-         - 13 = 8192 clock cycles
->
->
->> +
->> +  per-scale:
->> +    $ref: /schemas/types.yaml#/definitions/uint32
->> +    description: Row Scan Cycle Pre-scale Value (1 to 256).
-> Missing constraints
->
->> +
->> +  per-scalediv:
->> +    $ref: /schemas/types.yaml#/definitions/uint32
->> +    description: Per-scale divider (1 to 256).
-> Missing constraints
->
-> Both properties are unexpected... aren't you duplicating existing
-> properties?
-pre-scale:
-This value configures the IC register for the row scan cycle 
-pre-scaling, with valid values ranging from 1 to 256
-per-scalediv:(I will change pre-scalediv to pre-scale-div)
-This will describe its role in setting the divisor for the row scan 
-cycle pre-scaling, allowing for finer control over the keypad scanning 
-frequency
+Signed-off-by: David Vernet <void@manifault.com>
+---
 
-I will change it to the following content:
-nuvoton,pre-scale:
-     type: uint32
-     description: |
-         Row Scan Cycle Pre-scale Value, used to pre-scale the row scan 
-cycle. The valid range is from 1 to 256.
-     minimum: 1
-     maximum: 256
+Applied on top of 4f7f417042b242c1e5a9ed03741acb5d900e0871 on the
+for-6.12-fixes branch
 
-nuvoton,pre-scale-div:
-     type: uint32
-     description: |
-         Divider for the pre-scale value, further adjusting the scan 
-frequency for the keypad.
-     minimum: 1
-     maximum: 256
->
->> +
->> +  reg:
->> +    maxItems: 1
->> +
->> +  interrupts:
->> +    maxItems: 1
->> +
->> +  clocks:
->> +    maxItems: 1
->> +
->> +required:
->> +  - compatible
->> +  - reg
->> +  - interrupts
->> +  - clocks
->> +  - linux,keymap
->> +  - debounce-period
->> +  - per-scale
->> +  - per-scalediv
->> +
->> +unevaluatedProperties: false
->> +
->> +examples:
->> +  - |
->> +    #include <dt-bindings/input/input.h>
->> +    keypad: keypad@404A0000 {
-> Lowercase hex and drop the unused label
-I will modify it to: keypad@404a0000 {
->
->> +      compatible = "nuvoton,ma35d1-kpi";
->> +      reg = <0x404A0000 0x10000>;
-> Lowercase hex
-I will modify it to: reg = <0x404a0000 0x10000>
->
-> Best regards,
-> Krzysztof
-Thank you for your guidance!
-I look forward to your further comments.
+ tools/testing/selftests/sched_ext/exit.bpf.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-Best regards,
-
-Ming-Jen Chen
-
+diff --git a/tools/testing/selftests/sched_ext/exit.bpf.c b/tools/testing/selftests/sched_ext/exit.bpf.c
+index bf79ccd55f8f..d75d4faf07f6 100644
+--- a/tools/testing/selftests/sched_ext/exit.bpf.c
++++ b/tools/testing/selftests/sched_ext/exit.bpf.c
+@@ -15,6 +15,8 @@ UEI_DEFINE(uei);
+ 
+ #define EXIT_CLEANLY() scx_bpf_exit(exit_point, "%d", exit_point)
+ 
++#define DSQ_ID 0
++
+ s32 BPF_STRUCT_OPS(exit_select_cpu, struct task_struct *p,
+ 		   s32 prev_cpu, u64 wake_flags)
+ {
+@@ -31,7 +33,7 @@ void BPF_STRUCT_OPS(exit_enqueue, struct task_struct *p, u64 enq_flags)
+ 	if (exit_point == EXIT_ENQUEUE)
+ 		EXIT_CLEANLY();
+ 
+-	scx_bpf_dispatch(p, SCX_DSQ_GLOBAL, SCX_SLICE_DFL, enq_flags);
++	scx_bpf_dispatch(p, DSQ_ID, SCX_SLICE_DFL, enq_flags);
+ }
+ 
+ void BPF_STRUCT_OPS(exit_dispatch, s32 cpu, struct task_struct *p)
+@@ -39,7 +41,7 @@ void BPF_STRUCT_OPS(exit_dispatch, s32 cpu, struct task_struct *p)
+ 	if (exit_point == EXIT_DISPATCH)
+ 		EXIT_CLEANLY();
+ 
+-	scx_bpf_consume(SCX_DSQ_GLOBAL);
++	scx_bpf_consume(DSQ_ID);
+ }
+ 
+ void BPF_STRUCT_OPS(exit_enable, struct task_struct *p)
+@@ -67,7 +69,7 @@ s32 BPF_STRUCT_OPS_SLEEPABLE(exit_init)
+ 	if (exit_point == EXIT_INIT)
+ 		EXIT_CLEANLY();
+ 
+-	return 0;
++	return scx_bpf_create_dsq(DSQ_ID, -1);
+ }
+ 
+ SEC(".struct_ops.link")
+-- 
+2.46.1
 
 
