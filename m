@@ -1,134 +1,178 @@
-Return-Path: <linux-kernel+bounces-382160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BFC69B0A34
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 18:45:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74E399B0A37
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 18:46:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97F0D1F212DD
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:45:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98ED31C217CB
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:46:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B0E11FB8AB;
-	Fri, 25 Oct 2024 16:45:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FCCB189916;
+	Fri, 25 Oct 2024 16:46:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="JQUrxVW0"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GFMAP8sm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1079418787C
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 16:45:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAB84320B;
+	Fri, 25 Oct 2024 16:46:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729874708; cv=none; b=Pe/V3A7keVbK4awBXVRYVzcUjviSsNf6WpPZaE9BH0ztDRb4clls7eFlNUGd/DH67Zt3OekvNW2vI0waJCmRL+coEy9csmDWQGDIjM5LRUmt9Zo4ymb1MnAkyCGcVGXJ6hh1CXmBdtvmkIztEcSzMg/DKNBBpx14Zh1vCaVuf/k=
+	t=1729874784; cv=none; b=XdcEO29pusqxw4IoHwqUAM42hBNSe12mK4Gjq6BDGzJ9ssStIus2yAwMN1Eb2B1cgsNQXfIn1+HQwZB0s4xghErCBYTIbavr7edi3HcPOS0Rn6fMrPB+szJJ5qeJfH6byBZKLgv9WTmbHFfm/uzMJ4MmPaGQjzHVKcsoJ6d6/4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729874708; c=relaxed/simple;
-	bh=y3jGx75Ma9tFzNhHFJU7+LtkeYM9g8+ty0cMjukmOs4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uf/nFHLt4GeC5juYHN2R4NN0IVIK45oWBC7zm9RzTImUeSgw48XtouRL0wTJg3C8UKyt1H6aoMwoCZsDEo9ajU0aVn+G4nCcb4Udo0w93RuW62DeULB86ZYGFaLGJO8vGdjIElv5mBY0/GLMdoAHVJiSn60HjXbgXCyyFSoWTrg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=JQUrxVW0; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49PC1kxd009125
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 16:45:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	jAZOsXr5fsDPQXW9p3QRY4SAZjYiB+yQ1LfwNbC6aOA=; b=JQUrxVW0z4d/cgp+
-	fOxhZqUD+VuPzFdrgo6rmi2XA2oZnsnoHkXEguuovDI8Sf5ojJb9j+dKhWj1Ae2U
-	tZHzXgOg9fJZ1qkTPf/6XABnQ3jTkEQNst5AqnQXUYobagsYrK/FZXFP7sll6fpo
-	+VeailN5PvK5fZHrQz2RUTUn0QOH0vwKsPLVpr8JQVNlkClNplok5Qy1tqTeE/d+
-	IX+I2SzkOcI1NcK31B4C7BX9NcXrl1itdJBMtODZ/vOd2gakMdZGIfIZe6DXVPZW
-	6d1DlsEGEzT+q9jpsW5oNk3PZC+yhuI0vDLhOyUFi4CzThAOM8q4NmRUM3ngmmrf
-	pVOdcg==
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42em43humv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 16:45:05 +0000 (GMT)
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6cda6fd171bso4956016d6.3
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 09:45:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729874705; x=1730479505;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jAZOsXr5fsDPQXW9p3QRY4SAZjYiB+yQ1LfwNbC6aOA=;
-        b=MIEzQf0MB1QJ64LgGv/18DIYQF7O3O2yHm2YKc6jp6qmx5+yh+sE/V+J3y+bwprpTJ
-         nXhSX0jUSkI1UYJehhJqeiJNy4qVKsROSBgNAwRgVd8VwF/LcXrRSSSroj4OVEIdJ6r7
-         Dwm14CW9AqyvHzABYuaPq+64CNC3TCdWbCJqyYhkChoEQdAOdIiQb/NS5l8xqGdcOB0N
-         OhMTHLsPxo+OSxCZfMBKHkU7a6bJNdePyzTMLy+M+IUndAV2RrVHRjNTk/Fo1zczPFg+
-         DMtc71K+p7/oNIMMiLlgqUzxpOONuLHkQpJJtWeO9b1l/sjpo383JgCoCy3Fy6DN5Cuo
-         RI/w==
-X-Forwarded-Encrypted: i=1; AJvYcCXyIvHIWdXdKT9S1/4OUDSRL+wJcWquJgGtzjgQrc6dGduEqNlyqWTK/edcfNhqekFUneVYEXQFjWlZYsY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/89yUHlr9k+Q1Cxi3OR6hBZ81GBMLA8pOSVsNAA8fP9bjD0mu
-	6jtufre3t8pAPML9EEsj5kv/elgLj+uhNDLD74+4IahLqJwrnoYnm8ISdhwPUdupGEQXvBNbc6I
-	x2AAoayUd3fUEeIHVWtse4wSDr62hMmWECevB4rjXWDn9scRnfjIT8RM5PmoSk4Q=
-X-Received: by 2002:a05:6214:202b:b0:6cb:e6b4:2d36 with SMTP id 6a1803df08f44-6d18584a5e9mr260066d6.7.1729874705017;
-        Fri, 25 Oct 2024 09:45:05 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG1sduBzfyy1TRRjvLCCS7rO3oxcnITvZektef5yIhCEjrG5D3MB0/QFdQf572p6gAAmalixA==
-X-Received: by 2002:a05:6214:202b:b0:6cb:e6b4:2d36 with SMTP id 6a1803df08f44-6d18584a5e9mr259776d6.7.1729874704539;
-        Fri, 25 Oct 2024 09:45:04 -0700 (PDT)
-Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b1e75ff3bsm87945466b.1.2024.10.25.09.45.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 25 Oct 2024 09:45:04 -0700 (PDT)
-Message-ID: <8c9804f2-ef4d-412b-97ea-f521dfd35ec2@oss.qualcomm.com>
-Date: Fri, 25 Oct 2024 18:45:01 +0200
+	s=arc-20240116; t=1729874784; c=relaxed/simple;
+	bh=8dhg0mD8QTOXORuIIu5J9uE0TBP2PYczuhJ6uG5Fc9s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t/yoO/p9QKzyPvt5bNs3V54SYHod3pJSVjTWuhqn4WFrJxca9S/lySL8C4wxtQBEdD33uLHlPLUX/7g8LQyBbTHP/I0hN8pp7trBzqOhWisNGNuFqBJRWWaxFBDT/kgEyoxSmHBHgZg5cI5KlPpbexikaX8jSkKJnAkIRrtZP0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GFMAP8sm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CBF5C4CEC3;
+	Fri, 25 Oct 2024 16:46:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729874784;
+	bh=8dhg0mD8QTOXORuIIu5J9uE0TBP2PYczuhJ6uG5Fc9s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GFMAP8sm4YNFc3gqfzKZaf+xtba6VdI+VqMoKKnMUEQrHXQZSUjf/lgeoMENXw4rv
+	 4OJXa/3TagS8FWcjvPGHg1zwMAS2rrpAkKsGXcmBiJAtYH2StYN70nuD7NYC7g07uw
+	 PwkSV6nA0XGlUBDXcMuSQeOrk5i0MvikAFw4Z5bZNE1ShoD+4ACTTroE1go6dZy5vs
+	 mSeFFcse7+WWUNQpmL3Ew7oFFeqDS7Iw72hNbbYBmRS0KKNURAtx55QvizL57Ljjob
+	 jjLF0o0bD9oB4d4dXsBXPyzi/TzQj/7wv1HlLLLAfUUdKmkqzSaBAYbaoQzIAxgWh5
+	 Yt6QeU84iZpxg==
+Date: Fri, 25 Oct 2024 09:46:19 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	James Clark <james.clark@linaro.org>,
+	Howard Chu <howardchu95@gmail.com>,
+	Athira Jajeev <atrajeev@linux.vnet.ibm.com>,
+	Michael Petlan <mpetlan@redhat.com>,
+	Veronika Molnarova <vmolnaro@redhat.com>,
+	Dapeng Mi <dapeng1.mi@linux.intel.com>,
+	Thomas Richter <tmricht@linux.ibm.com>,
+	Ilya Leoshkevich <iii@linux.ibm.com>,
+	Colin Ian King <colin.i.king@gmail.com>,
+	Weilin Wang <weilin.wang@intel.com>,
+	Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v4 00/10] Run tests in parallel showing number of tests
+ running
+Message-ID: <ZxvLW-DMFcM9_K71@google.com>
+References: <20241024073324.1513433-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/4] arm64: dts: qcom: qcs615: add the APPS SMMU node
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Qingqing Zhou <quic_qqzhou@quicinc.com>, andersson@kernel.org,
-        konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-        conor+dt@kernel.org, robimarko@gmail.com, will@kernel.org,
-        robin.murphy@arm.com, joro@8bytes.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        iommu@lists.linux.dev
-References: <20241025030732.29743-1-quic_qqzhou@quicinc.com>
- <20241025030732.29743-5-quic_qqzhou@quicinc.com>
- <8a60b729-b312-4afc-835b-a18060ad3f03@oss.qualcomm.com>
- <zsphor7rpbwx4km6uxpepky2h7atbgjn2435puygmpssfc36mc@wkquqxud2yij>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <zsphor7rpbwx4km6uxpepky2h7atbgjn2435puygmpssfc36mc@wkquqxud2yij>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: O8d7hDxLB4RWnHuB2DQtKVhP5wXRipJ4
-X-Proofpoint-ORIG-GUID: O8d7hDxLB4RWnHuB2DQtKVhP5wXRipJ4
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
- adultscore=0 mlxlogscore=748 spamscore=0 malwarescore=0 impostorscore=0
- phishscore=0 bulkscore=0 clxscore=1015 priorityscore=1501 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2410250129
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241024073324.1513433-1-irogers@google.com>
 
-On 25.10.2024 1:06 PM, Dmitry Baryshkov wrote:
-> On Fri, Oct 25, 2024 at 10:54:24AM +0200, Konrad Dybcio wrote:
->> On 25.10.2024 5:07 AM, Qingqing Zhou wrote:
->>> Add the APPS SMMU node for QCS615 platform. Add the dma-ranges
->>> to limit DMA address range to 36bit width to align with system
->>> architecture.
->>>
->>> Signed-off-by: Qingqing Zhou <quic_qqzhou@quicinc.com>
->>> ---
->>
->> You probably also want to mark it `dma-coherent` (see e.g.
->> x1e80100.dtsi)
+Hi Ian,
+
+On Thu, Oct 24, 2024 at 12:33:14AM -0700, Ian Rogers wrote:
+> Avoid waitpid so that stdout/stderr aren't destroyed prior to wanting
+> to read them for display. When running on a color terminal, display
+> the number of running tests (1 if sequential). To avoid previous
+> flicker, only delete and refresh the display line when it changes. An
+> earlier version of this code is here:
+> https://lore.kernel.org/lkml/20240701044236.475098-1-irogers@google.com/
 > 
-> Is it? I don't think SM6150 had dma-coherent SMMU, at least it wasn't
-> marked as such.
+> Add a signal handler for perf tests so that unexpected signals are
+> displayed and test clean up is possible.
+> 
+> In perf test add an "exclusive" flag that causes a test to be run with
+> no other test. Set this flag manually for C tests and via a
+> "(exclusive)" in the test description for shell tests. Add the flag to
+> shell tests that may fail when run with other tests.
+> 
+> Change the perf test loop to run in two passes. For parallel
+> execution, the first pass runs all tests that can be run in parallel
+> then the 2nd runs remaining tests sequentially. This causes the
+> "exclusive" tests to be run last and with test numbers moderately out
+> of alignment.
+> 
+> Change the default to be to run tests in parallel. Running tests in
+> parallel brings the execution time down to less than half.
 
-I don't think I have any documentation on this, so.. one way to find out!
+Thanks for the update, but I got a build error for this version.
 
-Konrad
+  tests/builtin-test.c: In function '__cmd_test':                                 
+  tests/builtin-test.c:479:6: error: variable 'width' might be clobbered by 'longjmp' or 'vfork' [-Werror=clobbered]
+    int width = 0;                                                                
+        ^~~~~
+
+Thanks,
+Namhyung
+
+> 
+> v4: Add patch to sort exclusive tests last, this allows for increasing
+>     test numbers as requested by Namhyung.
+> 
+> v3: Mark additional shell tests as "(exclusive)" to avoid issues with
+>     shared resources suggested by Namhyung. Add dependent signal
+>     handler change so that kill/ctrl-C don't leave lots of processes,
+>     previously sent here:
+>     https://lore.kernel.org/lkml/20241017052137.225514-1-irogers@google.com/
+> 
+> v2: Fix inaccurate remaining counts when running specific
+>     tests. Rename "remaining" to "active" to better reflect the
+>     testing behavior. Move the exclusive flag to test cases and not
+>     entire suites. Add more "(exclusive)" flags to test as
+>     suggested-by James Clark. Remove "(exclusive)" flag from test
+>     descriptions to keep the command line output more concise. Add
+>     James Clark's tested-by.
+> 
+> Ian Rogers (10):
+>   tools subcmd: Add non-waitpid check_if_command_finished()
+>   perf test: Display number of active running tests
+>   perf test: Reduce scope of parallel variable
+>   perf test: Avoid list test blocking on writing to stdout
+>   perf test: Tag parallel failing shell tests with "(exclusive)"
+>   perf test: Add a signal handler around running a test
+>   perf test: Run parallel tests in two passes
+>   perf test: Make parallel testing the default
+>   perf test: Add a signal handler to kill forked child processes
+>   perf test: Sort tests placing exclusive tests last
+> 
+>  tools/lib/subcmd/run-command.c                |  33 ++
+>  tools/perf/tests/builtin-test.c               | 405 ++++++++++++------
+>  .../tests/shell/coresight/asm_pure_loop.sh    |   2 +-
+>  .../shell/coresight/memcpy_thread_16k_10.sh   |   2 +-
+>  .../coresight/thread_loop_check_tid_10.sh     |   2 +-
+>  .../coresight/thread_loop_check_tid_2.sh      |   2 +-
+>  .../shell/coresight/unroll_loop_thread_10.sh  |   2 +-
+>  tools/perf/tests/shell/list.sh                |   5 +-
+>  .../tests/shell/perftool-testsuite_report.sh  |   2 +-
+>  tools/perf/tests/shell/probe_vfs_getname.sh   |   2 +-
+>  .../shell/record+script_probe_vfs_getname.sh  |   2 +-
+>  tools/perf/tests/shell/record.sh              |   2 +-
+>  tools/perf/tests/shell/record_lbr.sh          |   2 +-
+>  tools/perf/tests/shell/record_offcpu.sh       |   2 +-
+>  tools/perf/tests/shell/stat_all_pmu.sh        |   2 +-
+>  tools/perf/tests/shell/stat_bpf_counters.sh   |   2 +-
+>  tools/perf/tests/shell/test_arm_coresight.sh  |   2 +-
+>  .../tests/shell/test_arm_coresight_disasm.sh  |   2 +-
+>  tools/perf/tests/shell/test_arm_spe.sh        |   2 +-
+>  tools/perf/tests/shell/test_data_symbol.sh    |   2 +-
+>  tools/perf/tests/shell/test_intel_pt.sh       |   2 +-
+>  .../perf/tests/shell/test_stat_intel_tpebs.sh |   2 +-
+>  .../tests/shell/trace+probe_vfs_getname.sh    |   2 +-
+>  tools/perf/tests/task-exit.c                  |   9 +-
+>  tools/perf/tests/tests-scripts.c              |   7 +-
+>  tools/perf/tests/tests.h                      |   9 +
+>  tools/perf/util/color.h                       |   1 +
+>  27 files changed, 365 insertions(+), 144 deletions(-)
+> 
+> -- 
+> 2.47.0.163.g1226f6d8fa-goog
+> 
 
