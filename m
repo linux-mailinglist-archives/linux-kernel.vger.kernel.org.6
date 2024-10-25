@@ -1,79 +1,125 @@
-Return-Path: <linux-kernel+bounces-381908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D52CE9B0628
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:48:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C19B09B062C
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:51:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A9B12839AF
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 14:48:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F1A7B22D7B
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 14:51:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E3AB148828;
-	Fri, 25 Oct 2024 14:48:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08F9313C807;
+	Fri, 25 Oct 2024 14:50:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gH44ALbA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ILh45Nv8"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 860E8212195;
-	Fri, 25 Oct 2024 14:48:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60341212198;
+	Fri, 25 Oct 2024 14:50:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729867710; cv=none; b=lIN5OiAnqFGWMztSpe5U3wp3mWnktBhtcHz+gXuErPVd9I3PT2E+CSe+kBxyIdAKT2x/L2oXTqeAhXmAxIKzhkfKlBsAX5Ne2VkqQAVXwrTiob0UUS6S8eJCwnI/pKzGbXfmifttbUEJEujvIDsrefyJNQF6B3as6hoRiKz7/rw=
+	t=1729867852; cv=none; b=jSpIigcWyIGg0HVlxi4p9fNKSl8wTLnAY20ZuTRIhBezstk+Fudyfbmgrlni1lFqAtA3s1ScEnqfKW1u1IoW+2g7oFENT0xgo0Am8kVLTveUMx+NpBozsuHvTfhie4/vBlaSyKqAOw2pynMgerOKAyg/j7i3w03xyZL7wrt+lyM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729867710; c=relaxed/simple;
-	bh=aUonxWk/Wb6mMpEzIzSZDDZlf2vaFKkhtJQaWHKDrmY=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
-	 References:In-Reply-To; b=ndCRtd2WGOs7zDOWqUiaTYcKsYeCMAmaDuXwU6eC9N0D3NfE0tEkxshihT0zdGwBh5Z1mH+eJTxiC3wM5bP3E7l+cZBuu53KxCKsEgUEjo1aaFnfNcom3U8KVzaEj43U2pz9etD5wkRxmGS1AZhyUOqIWmlFmuuC8+BRDK5u65g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gH44ALbA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 223EBC4CEC3;
-	Fri, 25 Oct 2024 14:48:25 +0000 (UTC)
+	s=arc-20240116; t=1729867852; c=relaxed/simple;
+	bh=lbkzqx6Hz1byC5i/7Qlzh5KnqixguSz6h55MbNBoJtQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XehYisO8AZ3Ei/j/EMMs/OANX1wRvAWvrHIfFYo9P0pyuULxUUS8tSD+xQu4c4wMX4PL6IRGlTmynwVRbtjELYDjd1uqqjt1YVkAhNv1sFBN6mUKKzBaKncP77aZ1FOocqYoOmqblRxfs5YfNIV6RDTPDH52YHUeUUow9Dn2o1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ILh45Nv8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB58BC4CEE6;
+	Fri, 25 Oct 2024 14:50:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729867710;
-	bh=aUonxWk/Wb6mMpEzIzSZDDZlf2vaFKkhtJQaWHKDrmY=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=gH44ALbAO6nxYlI8caLeWzMji+gRCI/y69bK/6XDkizz3CPG4iVzgNhYFYcuMgX4F
-	 cpDxIMa+ZdFqcg9iKjzy//sriqjfSyaoUeSnJzqmmkFKYQP7J9bhvvC4f12v3i1Ye3
-	 nEGbOtF3186STLuevltzo1RLyEeLGGLtCDys2Osg6ELAMFrnverD/evZOcYifGBoT8
-	 2CYpZxX7QzOj8yeOoVHYOrovot9UdgFCIyk3Qtwr5qYPO5h/+b7w3BdMZINK4ObofL
-	 FMMYriiTFWIJHNCaekHPKaPdPjteeli6qpKpeifODuYoYiIvowbFmYnTJT8rTKqfzG
-	 K/Z9+DPrcKqbg==
+	s=k20201202; t=1729867851;
+	bh=lbkzqx6Hz1byC5i/7Qlzh5KnqixguSz6h55MbNBoJtQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=ILh45Nv8Y9w6fPBQrRnXcEX4EWix3adXWDmoH+hIUGXln3yp3y+culde0nk5Iwf7D
+	 r1SjJrfJdONTiQE8qYNNEOZpou8xJq7YmIzq1G2aIWjfAxsDM9AEd0vwX4Wgwa9/S3
+	 eiIs7msQ11AG9GXotvWZiQXmUd3utAYnfZyGgAWaTtSyBJb+YchNMwSm1pV5dC53AG
+	 U/cDSnWvIFIeMT1ZIjjzf2GIQYY2nMjNwpbZmPx0wp9XqVZdOtcC2LBinCUUNRmzFN
+	 VthZ2Jn/7OPgH8RCVdJKDphaLM7Bjlgt7qZhkQBdepKMN/4RzuddoUN2dUgV8K2jlr
+	 bxu19Ohfly73A==
+Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-288dfdaf833so1172156fac.3;
+        Fri, 25 Oct 2024 07:50:51 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU/QRygb+qyvTXBMajj6K4BpWXN/u/037IUxmzX/dvjm3bpcblEsoV3dTDNT8aZVEe/Jj0XXTHobyqDayo=@vger.kernel.org, AJvYcCWxA/QLjmj1MIcp6X5kcWvFt0BPOWyWMEigiGfT5QAt3Za/wtmjmfSl/IexoLirvtj7ZBb/7vn9JYo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8RVASUoYv+d91US6vEZ25EUuZXcHtsPi9AOE8pRIFKkvpl2jf
+	aiqKNTMfgd7NoAwlW/MbjxPcnWQQuXCu9JMByiIitZwdcVBETgbFwGf0+afRynOTRu2B+bdcvPP
+	PVC5qjTk8/mdmDXxfmNSCEWvzhX8=
+X-Google-Smtp-Source: AGHT+IEJFoCrlWySn0tRGfKeE0Y98aM5eiWa2bqEtA+5+MnrUJZ24l9Mr1eTCNHBlm2O6sx8eBQE/i28P+DSa3riORw=
+X-Received: by 2002:a05:6871:691:b0:25e:13b7:e361 with SMTP id
+ 586e51a60fabf-28ced2fb28bmr5826234fac.25.1729867851176; Fri, 25 Oct 2024
+ 07:50:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+References: <20241002194446.269775-1-msp@baylibre.com> <2024100333-maternity-equity-c7fa@gregkh>
+ <tqsrnsvciupbovlalqsnrp5whst2mrpqntjblvymcunpesvake@o3gxa7vik7he>
+ <2024100336-left-shadily-3321@gregkh> <20241025131542.5bfvqtepcefup3hv@mushy>
+In-Reply-To: <20241025131542.5bfvqtepcefup3hv@mushy>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 25 Oct 2024 16:50:39 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0g1Ri_wKYppomE6RXqcZXRnX7bLOPMtsQaao0uchSfE9A@mail.gmail.com>
+Message-ID: <CAJZ5v0g1Ri_wKYppomE6RXqcZXRnX7bLOPMtsQaao0uchSfE9A@mail.gmail.com>
+Subject: Re: [PATCH v2] PM: QoS: Export dev_pm_qos_read_value
+To: Nishanth Menon <nm@ti.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Markus Schneider-Pargmann <msp@baylibre.com>, "Rafael J . Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@ucw.cz>, 
+	Len Brown <len.brown@intel.com>, Vishal Mahaveer <vishalm@ti.com>, 
+	Kevin Hilman <khilman@baylibre.com>, Dhruva Gole <d-gole@ti.com>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 25 Oct 2024 17:48:18 +0300
-Message-Id: <D54YX5TQD6PC.KPDZRST813O5@kernel.org>
-Subject: Re: [PATCH v6] tpm: Add new device/vendor ID 0x50666666
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Tzung-Bi Shih" <tzungbi@kernel.org>
-Cc: "Jett Rink" <jettrink@chromium.org>, "LKML"
- <linux-kernel@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
- "Jason Gunthorpe" <jgg@ziepe.ca>, "Peter Huewe" <peterhuewe@gmx.de>,
- <linux-integrity@vger.kernel.org>
-X-Mailer: aerc 0.18.2
-References: <20240910191117.1001581-1-jettrink@chromium.org>
- <D43HINLZGMXS.FYJOK0SVQFQW@kernel.org> <ZxckGbxzpWDuXG_q@google.com>
-In-Reply-To: <ZxckGbxzpWDuXG_q@google.com>
 
-On Tue Oct 22, 2024 at 7:03 AM EEST, Tzung-Bi Shih wrote:
-> Hi Jarkko,
+On Fri, Oct 25, 2024 at 3:15=E2=80=AFPM Nishanth Menon <nm@ti.com> wrote:
 >
-> On Wed, Sep 11, 2024 at 04:21:24PM +0300, Jarkko Sakkinen wrote:
-> > I applied this (will push later to my remote tree).
+> On 08:49-20241003, Greg Kroah-Hartman wrote:
+> > On Thu, Oct 03, 2024 at 08:28:12AM +0200, Markus Schneider-Pargmann wro=
+te:
+> > > On Thu, Oct 03, 2024 at 08:02:04AM GMT, Greg Kroah-Hartman wrote:
+> > > > On Wed, Oct 02, 2024 at 09:44:46PM +0200, Markus Schneider-Pargmann=
+ wrote:
+> > > > > Export the function dev_pm_qos_read_value(). Most other functions
+> > > > > mentioned in Documentation/power/pm_qos_interface.rst are already
+> > > > > exported, so export this one as well.
+> > > > >
+> > > > > This function will be used to read the resume latency in a driver=
+ that
+> > > > > can also be compiled as a module.
+> > > >
+> > > > We don't add exports for no in-kernel users, sorry.  Send this as p=
+art
+> > > > of a series that requires it.
+> > >
+> > > Sorry if this was unclear, it is for an in-kernel driver (ti_sci.c) t=
+hat
+> > > can be built as a module. When built as a module it can't use this
+> > > function if it is not exported.
+> >
+> > So the current kernel build is broken?  If so, please add a "Fixes:" ta=
+g
+> > and say this in the changelog.
+> >
+> > If not, again, just make it part of the series where it is needed.
+> >
 >
-> I failed to find the patch in [1].  Is it somehow overlooked?
+> Greg, Rafael, How do you wish to route this patch in?
 >
-> [1]: https://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.g=
-it/log/?h=3Dnext
+> This patch is a dependency of [1] which goes through my tree.
+> If  you can provide an ack, I can pick up the patch through my tree,
+> else we will end up with dependency issue here.
+>
+> [1] https://lore.kernel.org/all/20241007-tisci-syssuspendresume-v13-0-ed5=
+4cd659a49@baylibre.com/
 
-I'll check this next week. Not on purpose if it is missing.
+Sure, please feel free to add
 
-BR, Jarkko
+Acked-by: Rafael J. Wysocki <rafael@kernel.org>
+
+to it.
+
+Thanks!
 
