@@ -1,101 +1,87 @@
-Return-Path: <linux-kernel+bounces-382721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A67C79B12AF
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 00:33:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 877E49B12B2
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 00:34:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AFEA31C21B6F
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 22:33:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C3FEDB20E1B
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 22:34:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E24F214421;
-	Fri, 25 Oct 2024 22:32:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 774E120EA57;
+	Fri, 25 Oct 2024 22:33:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s1hh76En"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="rTOEl0bu"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7771D213152;
-	Fri, 25 Oct 2024 22:32:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C46AB217F22;
+	Fri, 25 Oct 2024 22:33:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729895568; cv=none; b=K+omCXV7NSPFHDSLYn/KezTcxSc9eZB0DZvWb1XuBEwH/wr3FhCzszVLg+25g7ZAt0R4n/iwKmHiePSNNPVH5bLu9gufICW/czfMzvzvFldl9tHWdGbYruzOOQEuaseFkzWm8KnCUw+EgK+AGCilVX/xMyjVyypEvk/zF1xibtk=
+	t=1729895635; cv=none; b=lr4ol2yz/8CsaPfWYDGW20kBisT7+XbuxezlEsT0WsX1Xzwxv5TXkM6yq8cNRrxnc1+Sv5shMCV2OdF/QRLP7Ecm5MiPZbTq5hLEIfTnlgS9LHcgRIKoWVnehkpvGL7YEmbAQjVaI1lkGliZ7l7U/yvpUsOrgReHj6JayxEEMvU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729895568; c=relaxed/simple;
-	bh=CCfFTgHSCy6CiuV3dKRDOU8QgqiDy43dW7Yikcn3X7s=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=g19OX16JMt8ztCltXS9HcKda9wQgwQeAtCgtQOcdg4t/Ml68DSJc2t/ipbhOuEtXnzAUQIq7eVx62CuLB/NcLFRocHLB/vt7t4V1kWBIlCjb4rkCrmkeYpuJ+L6Y8A9tY/ZXh11qzDnedhUknw+I6hCfLvsXLIx6deEsD7+Lr0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s1hh76En; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C853FC4CECD;
-	Fri, 25 Oct 2024 22:32:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729895567;
-	bh=CCfFTgHSCy6CiuV3dKRDOU8QgqiDy43dW7Yikcn3X7s=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=s1hh76EnL3o3T65U3z1v95AHjTQfswQNfZI8qjFbVUf9u8zBRUg9oZAtmug10gVZA
-	 cQjK6XEI0whz+5zPXijXMoJjmu5B4W5IL+Df3JHZZutyw/NR5pkNaBsTRhXeWl3HpN
-	 DjrPr8VHPCEFwmBMwde+Ua2bK843/5MBD7WEGjgu2q48LiK+Ci6DrvSqTlRXtMz6ne
-	 I2vqM+ZzVpgjUjNd3vGK5lG9AxAnoJ22aidXX9yHKrF7iItp1M/RtS9dXSMrwnMlTc
-	 nPx7N7PNY2KajPJCma0eBy5OxAkxMs5oGVwJ57cbsrRpp27mhnTZgQVM0KmnD5NiWG
-	 faUCWDryFVRXw==
-Message-ID: <66922c42-c3a2-4634-a8f0-4c8c2b4c051a@kernel.org>
-Date: Fri, 25 Oct 2024 15:32:46 -0700
+	s=arc-20240116; t=1729895635; c=relaxed/simple;
+	bh=f7uIURpi6fr6JJqRhNgdzSvSSXJTksS4llqut5V1Bh0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KLbN0rLw4pCirMA+SrC6Va8Oda4Cc/zi/1sLBG9y4wRft591LPX8p/E/VpgP/bDp4eG3E84hjH+HdhKwdD73j1U0cGj1NGgbar+wiieOrC4MAdrC8OgSlba6GPFqbHaELgDpH6qdjhsHyIu5ozbzy7yyd/fz+r4qwh5qLRxpitI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=rTOEl0bu; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=es4FZVxk6DWpqeaDD9J/7bGw6XHqkx/jUx+KUjiBHrQ=; b=rTOEl0buhHQebUB87coWe+km8O
+	c5YyfeZBwt7mLLX+jphdeHhlFpZkhbZR6f2mWu2x5OXN8VmMIT3dGmtlmlJVIFhqP6iXZHRNKwTJM
+	GZVCvKVVZ4oKbXn236ihrIewF5X4Yv5YWddLLdrzS2rY7RSaqL5hN4dXA559CrFb9eTY=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1t4SsI-00BIBe-H0; Sat, 26 Oct 2024 00:33:42 +0200
+Date: Sat, 26 Oct 2024 00:33:42 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: FUJITA Tomonori <fujita.tomonori@gmail.com>
+Cc: anna-maria@linutronix.de, frederic@kernel.org, tglx@linutronix.de,
+	jstultz@google.com, sboyd@kernel.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	hkallweit1@gmail.com, tmgross@umich.edu, ojeda@kernel.org,
+	alex.gaynor@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
+	benno.lossin@proton.me, a.hindborg@samsung.com,
+	aliceryhl@google.com, arnd@arndb.de
+Subject: Re: [PATCH v4 2/7] rust: time: Introduce Delta type
+Message-ID: <0b6b8e54-8364-4d97-be1d-c53416564f8e@lunn.ch>
+References: <20241025033118.44452-1-fujita.tomonori@gmail.com>
+ <20241025033118.44452-3-fujita.tomonori@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] ipe: add 'anonymous_memory' property for policy
- decisions
-From: Fan Wu <wufan@kernel.org>
-To: corbet@lwn.net, jmorris@namei.org, paul@paul-moore.com, serge@hallyn.com
-Cc: linux-doc@vger.kernel.org, linux-security-module@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <1728582157-13884-1-git-send-email-wufan@linux.microsoft.com>
- <8ee41bc4-ca8e-416f-8219-12d4a83e5f8b@kernel.org>
-Content-Language: en-US
-In-Reply-To: <8ee41bc4-ca8e-416f-8219-12d4a83e5f8b@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241025033118.44452-3-fujita.tomonori@gmail.com>
 
-After further testing I found the current approach, i.e. checking the existence of a struct file, does not work with memfd, which does use anonymous memory but also has a file struct in the kernel. There might be other cases that I also need to cover.
-I will redesign the implementation and send another version in the future.
+> +    /// Return the number of nanoseconds in the `Delta`.
+> +    #[inline]
+> +    pub fn as_nanos(self) -> i64 {
+> +        self.nanos
+> +    }
+> +
+> +    /// Return the smallest number of microseconds greater than or equal
+> +    /// to the value in the `Delta`.
+> +    #[inline]
+> +    pub fn as_micros_ceil(self) -> i64 {
+> +        self.as_nanos().saturating_add(NSEC_PER_USEC - 1) / NSEC_PER_USEC
+> +    }
 
+Thanks for dropping all the unsued as_foo helpers, and adding just the
+one needed.
 
--Fan
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-On 2024/10/24 15:13, Fan Wu wrote:
-> Since this patch is quite straightforward, I have merged it into the ipe#next branch for testing and will send it to Linus during the next merge window.
->
->
-> -Fan
->
-> On 2024/10/10 10:42, Fan Wu wrote:
->> Currently, all existing IPE properties evaluate to FALSE for
->> operations triggered by anonymous memory regions. As a result,
->> IPE falls back to the policy's default action for such operations.
->>
->> In policies where the default action is DENY, this behavior blocks
->> all anonymous memory operations, rendering binaries that rely on
->> anonymous memory unusable.
->>
->> This commit introduces a new IPE property, 'anonymous_memory',
->> which evaluates to TRUE when an operation is triggered by an
->> anonymous memory region. This allows administrators to explicitly
->> allow or deny operations involving anonymous memory.
->>
->> Signed-off-by: Fan Wu <wufan@linux.microsoft.com>
->> ---
->>  Documentation/admin-guide/LSM/ipe.rst | 11 +++++++++++
->>  Documentation/security/ipe.rst        |  9 +++++----
->>  security/ipe/Kconfig                  | 10 ++++++++++
->>  security/ipe/audit.c                  |  2 ++
->>  security/ipe/eval.c                   | 26 ++++++++++++++++++++++++++
->>  security/ipe/policy.h                 |  2 ++
->>  security/ipe/policy_parser.c          |  4 ++++
->>  7 files changed, 60 insertions(+), 4 deletions(-)
+    Andrew
 
