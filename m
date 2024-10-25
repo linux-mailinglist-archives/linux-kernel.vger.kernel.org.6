@@ -1,474 +1,232 @@
-Return-Path: <linux-kernel+bounces-381134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 642459AFAD7
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 09:17:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 075D29AFADA
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 09:18:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C8611C21B50
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 07:17:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB34B282B5B
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 07:18:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2267A1B6CF5;
-	Fri, 25 Oct 2024 07:17:18 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 224D81B395F;
+	Fri, 25 Oct 2024 07:17:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="EhZOQ85w"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 886C7192588;
-	Fri, 25 Oct 2024 07:17:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCCD51A4AAA;
+	Fri, 25 Oct 2024 07:17:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729840637; cv=none; b=r7a7IT7JpBw/FAQ44Ayf7i5OkZp7OSbppnxMidMJ3etexXK7rVp2njxu2JRngMzvWniXjIbKeojPPTwiAL7kGTj6F6cOWjNgbLQgPKM05mU7x4b+hlvq1wS8oYg5cfNkfpBV0lbNtXQBCc+/CWxP6USE0MyYmpUvlMt4KhXDa9k=
+	t=1729840672; cv=none; b=XR5GCqLQiZaI1vi8vbr8dqS8/wQsuvBCj/CZf0k/PPJNOWN8KS/jsOzPODNnPq9DI9j1A+oW7uuSbIAnoKchtgUboKw2gv8a2twia92cLaE/TDIjYv68MqQpilD/ha8roYpdhj8TXjNPE1wLQN/hhyTolBvZ98hWo/awezGrd6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729840637; c=relaxed/simple;
-	bh=aiMTuMqkq0mfjcbZbeIDkHUml90UYI7qLgQXdUlayfE=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=PLXIfAxvfKRUqMtnPoTpmm4dTEc4TtrdNTEi9kpMrQobqpsbLrd8NmC6eYdmDhPKEfjzwUvwtIY0IYM1l+ZRpsuUsfzPbeeaIwCnJUGC/Jk1zIczFcCGavqOQJjRkA7gbbMQY7kqD8ST6ZS8oJGK0dxIQZRkPpVCAiA0FtcTRvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XZYxZ2Ks3z4f3lfZ;
-	Fri, 25 Oct 2024 15:16:50 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 9DE671A07B6;
-	Fri, 25 Oct 2024 15:17:08 +0800 (CST)
-Received: from [10.174.176.73] (unknown [10.174.176.73])
-	by APP4 (Coremail) with SMTP id gCh0CgAHPMjyRRtnGwxCFA--.8566S3;
-	Fri, 25 Oct 2024 15:17:08 +0800 (CST)
-Subject: Re: [PATCH RFC 4/4] md/md-bitmap: support to build md-bitmap as
- kernel module
-To: Mariusz Tkaczyk <mariusz.tkaczyk@linux.intel.com>,
- Yu Kuai <yukuai1@huaweicloud.com>
-Cc: song@kernel.org, linux-raid@vger.kernel.org,
- linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20241024131325.2250880-1-yukuai1@huaweicloud.com>
- <20241024131325.2250880-5-yukuai1@huaweicloud.com>
- <20241025090249.000070b3@linux.intel.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <7fa875ee-ceed-e2dd-20fc-976e043e08ab@huaweicloud.com>
-Date: Fri, 25 Oct 2024 15:17:06 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1729840672; c=relaxed/simple;
+	bh=dqqqvJ8g3AVzb03zYJsih0JTQPOidvJI2QvhRqV7u9g=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VsKvhkwKgYbu0AFXjVORYYEbIhss8LIYmLVsLo5+Cn6iUwYP7NxDtbqEAHyQhrhg52MaC4xzALy5zz2+jcbL2vZ2ceDPb4szFW5BgVIHoFdn/PGBkuP4zgzQCw4jCtNNWyRwG+WPchyuq2fJJebeVFvvPQWkdJkqb3+PVOtq/kM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=EhZOQ85w; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1729840670; x=1761376670;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=dqqqvJ8g3AVzb03zYJsih0JTQPOidvJI2QvhRqV7u9g=;
+  b=EhZOQ85wbLoZtFFwqDB6sefaJpc9Qt4Pbx938s+5/nFJViQNwZibbQOU
+   lumbd2tiJQGhMpunJxLwfFREGobKhGE83vKUpQ2qYR71re2wMnU4gU/XL
+   ZVNINGOLopgT4eR0N6qG19/QsaO/yogHsTSuEUKXs+UMhdOvpXhEo4zGF
+   aDDtZK+svgtFNltGrj0uyzsHIhxBaBR7U/a3cYGSCKfb5ZJB0uNFXGHT6
+   4Egv+DeoESiwgTxxLYQ4xwp3kWbTOe6bBch/S+rTV31l1YvN02B5XM8h/
+   U5TaVVXJGEsfr3KbcdIEds1aZW1MKFfJ7b5JH2P80CHdKNcj6atYKPf6r
+   Q==;
+X-CSE-ConnectionGUID: Hp/0/euNT4aWmfDdVqjxpQ==
+X-CSE-MsgGUID: TdR5MXcUTliy1kkXe/9EYA==
+X-IronPort-AV: E=Sophos;i="6.11,231,1725346800"; 
+   d="scan'208";a="34008259"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 25 Oct 2024 00:17:42 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Fri, 25 Oct 2024 00:17:22 -0700
+Received: from DEN-DL-M70577 (10.10.85.11) by chn-vm-ex04.mchp-main.com
+ (10.10.85.152) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
+ Transport; Fri, 25 Oct 2024 00:17:18 -0700
+Date: Fri, 25 Oct 2024 07:17:17 +0000
+From: Daniel Machon <daniel.machon@microchip.com>
+To: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+CC: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>, Andrew Lunn <andrew+netdev@lunn.ch>, Lars Povlsen
+	<lars.povlsen@microchip.com>, Steen Hegelund <Steen.Hegelund@microchip.com>,
+	<horatiu.vultur@microchip.com>, <jensemil.schulzostergaard@microchip.com>,
+	<Parthiban.Veerasooran@microchip.com>, <Raju.Lakkaraju@microchip.com>,
+	<UNGLinuxDriver@microchip.com>, Richard Cochran <richardcochran@gmail.com>,
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, <jacob.e.keller@intel.com>,
+	<ast@fiberby.net>, <maxime.chevallier@bootlin.com>, <horms@kernel.org>,
+	<netdev@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: Re: [PATCH net-next v2 10/15] net: lan969x: add PTP handler function
+Message-ID: <20241025071717.rz3zqppplu52cdpc@DEN-DL-M70577>
+References: <20241024-sparx5-lan969x-switch-driver-2-v2-0-a0b5fae88a0f@microchip.com>
+ <20241024-sparx5-lan969x-switch-driver-2-v2-10-a0b5fae88a0f@microchip.com>
+ <24147551-b639-4f9f-be5e-def2570a863d@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20241025090249.000070b3@linux.intel.com>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgAHPMjyRRtnGwxCFA--.8566S3
-X-Coremail-Antispam: 1UD129KBjvJXoW3KrW7ZF1UurW7JF1fJFWUurg_yoWktr1kpF
-	WkJ3W5Cr45JFZIg3WjqFWDuFySgr1kKr9FkryfGw15CF9Fvr93GF48WFWjk34kCrW7WFsI
-	vw1rGr9xur1YgFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvK14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7I2V7IY0VAS07AlzVAY
-	IcxG8wCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbV
-	WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
-	67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42
-	IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF
-	0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxh
-	VjvjDU0xZFpf9x0JUBVbkUUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <24147551-b639-4f9f-be5e-def2570a863d@linux.dev>
 
-Hi,
+Hi Vadim,
 
-ÔÚ 2024/10/25 15:02, Mariusz Tkaczyk Ð´µÀ:
-> On Thu, 24 Oct 2024 21:13:25 +0800
-> Yu Kuai <yukuai1@huaweicloud.com> wrote:
-> 
->> From: Yu Kuai <yukuai3@huawei.com>
->>
->> Now that all implementations are internal, it's sensible to build it as
->> kernel module now.
->>
->> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
->> ---
->>   drivers/md/Kconfig     | 15 +++++++
->>   drivers/md/Makefile    |  4 +-
->>   drivers/md/md-bitmap.c | 28 +++++++++++-
->>   drivers/md/md-bitmap.h |  8 +++-
->>   drivers/md/md.c        | 97 +++++++++++++++++++++++++++++++++++++-----
->>   drivers/md/md.h        |  1 -
->>   6 files changed, 135 insertions(+), 18 deletions(-)
->>
->> diff --git a/drivers/md/Kconfig b/drivers/md/Kconfig
->> index 1e9db8e4acdf..452d7292b617 100644
->> --- a/drivers/md/Kconfig
->> +++ b/drivers/md/Kconfig
->> @@ -37,6 +37,21 @@ config BLK_DEV_MD
->>   
->>   	  If unsure, say N.
->>   
->> +config MD_BITMAP
->> +	tristate "RAID bitmap support"
-> 
-> Maybe "MD RAID bitmap support"? From kernel config GUI description is
-> presented, it seems better to highlight that it is MD internal.
-> 
->> +	default y
->> +	depends on BLK_DEV_MD
->> +	help
->> +	  If you say Y here, support for the write intent bitmap will be
->> +	  enabled. The bitmap will be used to record the data regions that
-> 
-> "If you say Y here" is confusing because it could be "Y" or "M".
-> Maybe:
+Thanks for reviewing.
 
-Yeah, I just copy this from other configs.
+> On 23/10/2024 23:01, Daniel Machon wrote:
+> > Add PTP IRQ handler for lan969x. This is required, as the PTP registers
+> > are placed in two different targets on Sparx5 and lan969x. The
+> > implementation is otherwise the same as on Sparx5.
+> > 
+> > Also, expose sparx5_get_hwtimestamp() for use by lan969x.
+> > 
+> > Reviewed-by: Steen Hegelund <Steen.Hegelund@microchip.com>
+> > Signed-off-by: Daniel Machon <daniel.machon@microchip.com>
+> > ---
+> >   drivers/net/ethernet/microchip/lan969x/lan969x.c   | 90 ++++++++++++++++++++++
+> >   .../net/ethernet/microchip/sparx5/sparx5_main.h    |  5 ++
+> >   drivers/net/ethernet/microchip/sparx5/sparx5_ptp.c |  9 +--
+> >   3 files changed, 99 insertions(+), 5 deletions(-)
+> > 
+> > diff --git a/drivers/net/ethernet/microchip/lan969x/lan969x.c b/drivers/net/ethernet/microchip/lan969x/lan969x.c
+> > index 2c2b86f9144e..a3b40e09b947 100644
+> > --- a/drivers/net/ethernet/microchip/lan969x/lan969x.c
+> > +++ b/drivers/net/ethernet/microchip/lan969x/lan969x.c
+> > @@ -201,6 +201,95 @@ static int lan969x_port_mux_set(struct sparx5 *sparx5, struct sparx5_port *port,
+> >       return 0;
+> >   }
+> > 
+> > +static irqreturn_t lan969x_ptp_irq_handler(int irq, void *args)
+> > +{
+> > +     int budget = SPARX5_MAX_PTP_ID;
+> > +     struct sparx5 *sparx5 = args;
+> > +
+> > +     while (budget--) {
+> > +             struct sk_buff *skb, *skb_tmp, *skb_match = NULL;
+> > +             struct skb_shared_hwtstamps shhwtstamps;
+> > +             struct sparx5_port *port;
+> > +             struct timespec64 ts;
+> > +             unsigned long flags;
+> > +             u32 val, id, txport;
+> > +             u32 delay;
+> > +
+> > +             val = spx5_rd(sparx5, PTP_TWOSTEP_CTRL);
+> > +
+> > +             /* Check if a timestamp can be retrieved */
+> > +             if (!(val & PTP_TWOSTEP_CTRL_PTP_VLD))
+> > +                     break;
+> > +
+> > +             WARN_ON(val & PTP_TWOSTEP_CTRL_PTP_OVFL);
+> > +
+> > +             if (!(val & PTP_TWOSTEP_CTRL_STAMP_TX))
+> > +                     continue;
+> > +
+> > +             /* Retrieve the ts Tx port */
+> > +             txport = PTP_TWOSTEP_CTRL_STAMP_PORT_GET(val);
+> > +
+> > +             /* Retrieve its associated skb */
+> > +             port = sparx5->ports[txport];
+> > +
+> > +             /* Retrieve the delay */
+> > +             delay = spx5_rd(sparx5, PTP_TWOSTEP_STAMP_NSEC);
+> > +             delay = PTP_TWOSTEP_STAMP_NSEC_NS_GET(delay);
+> > +
+> > +             /* Get next timestamp from fifo, which needs to be the
+> > +              * rx timestamp which represents the id of the frame
+> > +              */
+> > +             spx5_rmw(PTP_TWOSTEP_CTRL_PTP_NXT_SET(1),
+> > +                      PTP_TWOSTEP_CTRL_PTP_NXT,
+> > +                      sparx5, PTP_TWOSTEP_CTRL);
+> > +
+> > +             val = spx5_rd(sparx5, PTP_TWOSTEP_CTRL);
+> > +
+> > +             /* Check if a timestamp can be retrieved */
+> > +             if (!(val & PTP_TWOSTEP_CTRL_PTP_VLD))
+> > +                     break;
+> > +
+> > +             /* Read RX timestamping to get the ID */
+> > +             id = spx5_rd(sparx5, PTP_TWOSTEP_STAMP_NSEC);
+> > +             id <<= 8;
+> > +             id |= spx5_rd(sparx5, PTP_TWOSTEP_STAMP_SUBNS);
+> > +
+> > +             spin_lock_irqsave(&port->tx_skbs.lock, flags);
+> > +             skb_queue_walk_safe(&port->tx_skbs, skb, skb_tmp) {
+> > +                     if (SPARX5_SKB_CB(skb)->ts_id != id)
+> > +                             continue;
+> > +
+> > +                     __skb_unlink(skb, &port->tx_skbs);
+> > +                     skb_match = skb;
+> > +                     break;
+> > +             }
+> > +             spin_unlock_irqrestore(&port->tx_skbs.lock, flags);
+> > +
+> > +             /* Next ts */
+> > +             spx5_rmw(PTP_TWOSTEP_CTRL_PTP_NXT_SET(1),
+> > +                      PTP_TWOSTEP_CTRL_PTP_NXT,
+> > +                      sparx5, PTP_TWOSTEP_CTRL);
+> > +
+> > +             if (WARN_ON(!skb_match))
+> > +                     continue;
+> > +
+> > +             spin_lock(&sparx5->ptp_ts_id_lock);
+> > +             sparx5->ptp_skbs--;
+> > +             spin_unlock(&sparx5->ptp_ts_id_lock);
+> > +
+> > +             /* Get the h/w timestamp */
+> > +             sparx5_get_hwtimestamp(sparx5, &ts, delay);
+> > +
+> > +             /* Set the timestamp in the skb */
+> > +             shhwtstamps.hwtstamp = ktime_set(ts.tv_sec, ts.tv_nsec);
+> > +             skb_tstamp_tx(skb_match, &shhwtstamps);
+> > +
+> > +             dev_kfree_skb_any(skb_match);
+> > +     }
+> > +
+> > +     return IRQ_HANDLED;
+> > +}
+> > +
 > 
-> "MD write intent bitmap support. The bitmap can be used to
-> optimize resync speed after power failure, limiting it to recorded dirty
-> sectors in bitmap. This feature can be added to existing MD array or MD array
-> can be created with bitmap via mdadm(8).
-> If unsure, say M."
-> 
-> "M" because MD is in real life is often compiled as module- shouldn't it be
-> always same?
-> We should not allow "Y" if MD is "M", perhaps we need to do more in Kconfig to
-> prevent this?
+> This handler looks like an absolute copy of sparx5_ptp_irq_handler()
+> with the difference in registers only. Did you consider keep one
+> function but substitute ptp register sets?
+>
 
-Kconfig already do this, if the depends config is 'M', this config can't
-be set to 'Y'.
+Yes, I did consider that. But since this is the only case where a group
+of registers are moved to a different register target in hw, I chose to
+instead copy the function.
 
-> 
-> It is always good to refer how it can be configured and who uses it in
-> userspace. You can eventually add that it is MD internal module if you don't
-> see it enough clear.
-> 
-> On other think- what about recovery? Isn't it used to improve recovery speed? We
-> have checkpointing for recovery. If I remember correctly it is always 7
-> checkpoints for the array (at least for IMSM). Isn't bitmap used to improve
-> this? If yes, please add it here.
+The indirection layer introduced in the previous series does not handle
+differences in register targets - maybe something to be added later if we
+have more cases (hopefully not).
 
-For recovery means add a new disk to the array? If so, bitmap is useless
-in this case, if you means readd a hot removed disk, then yes, however,
-I think this is actually 'resync'.
+/Daniel
 
-Anyway, I'll add both power failure and readd a disk in the next
-version.
-> 
-> The part below should go to the Documentation because these are implementation
-> details that are not needed to take a decision about enabling/disabling the
-> module.
-> Please consider adding Documentation entry.
-
-I probably will delay te Documentation untill the new bitmap, I'll just
-remove the below.
-
-Thanks,
-Kuai
-
-> 
-> For the code- lgtm.
-> 
-> Great job Kuai! I love your contribution.
-> Thanks,
-> Mariusz
-> 
->> need
->> +	  to be resynced after a power failure, preventing a full disk
->> resync.
->> +	  The bitmap size ranges from 4K to 132K, depending on the array
->> size.
->> +	  Each bit corresponds to 2 bytes of data and is managed in
->> +	  self-maintained memory. All bits are protected by a disk-level
->> +	  spinlock.
->> +
->> +	  If unsure, say Y.
->> +
->>   config MD_AUTODETECT
->>   	bool "Autodetect RAID arrays during kernel boot"
->>   	depends on BLK_DEV_MD=y
->> diff --git a/drivers/md/Makefile b/drivers/md/Makefile
->> index 476a214e4bdc..387670f766b7 100644
->> --- a/drivers/md/Makefile
->> +++ b/drivers/md/Makefile
->> @@ -27,14 +27,14 @@ dm-clone-y	+= dm-clone-target.o dm-clone-metadata.o
->>   dm-verity-y	+= dm-verity-target.o
->>   dm-zoned-y	+= dm-zoned-target.o dm-zoned-metadata.o dm-zoned-reclaim.o
->>   
->> -md-mod-y	+= md.o md-bitmap.o
->> +md-mod-y	+= md.o
->>   raid456-y	+= raid5.o raid5-cache.o raid5-ppl.o
->>   
->>   # Note: link order is important.  All raid personalities
->>   # and must come before md.o, as they each initialise
->>   # themselves, and md.o may use the personalities when it
->>   # auto-initialised.
->> -
->> +obj-$(CONFIG_MD_BITMAP)		+= md-bitmap.o
->>   obj-$(CONFIG_MD_RAID0)		+= raid0.o
->>   obj-$(CONFIG_MD_RAID1)		+= raid1.o
->>   obj-$(CONFIG_MD_RAID10)		+= raid10.o
->> diff --git a/drivers/md/md-bitmap.c b/drivers/md/md-bitmap.c
->> index f68eb79e739d..148a479d32c0 100644
->> --- a/drivers/md/md-bitmap.c
->> +++ b/drivers/md/md-bitmap.c
->> @@ -212,6 +212,8 @@ struct bitmap {
->>   	int cluster_slot;
->>   };
->>   
->> +static struct workqueue_struct *md_bitmap_wq;
->> +
->>   static int __bitmap_resize(struct bitmap *bitmap, sector_t blocks,
->>   			   int chunksize, bool init);
->>   
->> @@ -2970,6 +2972,9 @@ static struct attribute_group md_bitmap_group = {
->>   };
->>   
->>   static struct bitmap_operations bitmap_ops = {
->> +	.version		= 1,
->> +	.owner			= THIS_MODULE,
->> +
->>   	.enabled		= bitmap_enabled,
->>   	.create			= bitmap_create,
->>   	.resize			= bitmap_resize,
->> @@ -3001,7 +3006,26 @@ static struct bitmap_operations bitmap_ops = {
->>   	.group			= &md_bitmap_group,
->>   };
->>   
->> -void mddev_set_bitmap_ops(struct mddev *mddev)
->> +static int __init bitmap_init(void)
->> +{
->> +	md_bitmap_wq = alloc_workqueue("md_bitmap", WQ_MEM_RECLAIM |
->> WQ_UNBOUND,
->> +				       0);
->> +	if (!md_bitmap_wq)
->> +		return -ENOMEM;
->> +
->> +	INIT_LIST_HEAD(&bitmap_ops.list);
->> +	register_md_bitmap(&bitmap_ops);
->> +	return 0;
->> +}
->> +
->> +static void __exit bitmap_exit(void)
->>   {
->> -	mddev->bitmap_ops = &bitmap_ops;
->> +	destroy_workqueue(md_bitmap_wq);
->> +	unregister_md_bitmap(&bitmap_ops);
->>   }
->> +
->> +module_init(bitmap_init);
->> +module_exit(bitmap_exit);
->> +
->> +MODULE_LICENSE("GPL");
->> +MODULE_DESCRIPTION("Bitmap for MD");
->> diff --git a/drivers/md/md-bitmap.h b/drivers/md/md-bitmap.h
->> index 0c19983453c7..9d1bf3c43125 100644
->> --- a/drivers/md/md-bitmap.h
->> +++ b/drivers/md/md-bitmap.h
->> @@ -71,6 +71,10 @@ struct md_bitmap_stats {
->>   };
->>   
->>   struct bitmap_operations {
->> +	int version;
->> +	struct module *owner;
->> +	struct list_head list;
->> +
->>   	bool (*enabled)(struct mddev *mddev);
->>   	int (*create)(struct mddev *mddev, int slot);
->>   	int (*resize)(struct mddev *mddev, sector_t blocks, int chunksize);
->> @@ -110,7 +114,7 @@ struct bitmap_operations {
->>   	struct attribute_group *group;
->>   };
->>   
->> -/* the bitmap API */
->> -void mddev_set_bitmap_ops(struct mddev *mddev);
->> +void register_md_bitmap(struct bitmap_operations *op);
->> +void unregister_md_bitmap(struct bitmap_operations *op);
->>   
->>   #endif
->> diff --git a/drivers/md/md.c b/drivers/md/md.c
->> index d16a3d0f2b90..09fac65b83b8 100644
->> --- a/drivers/md/md.c
->> +++ b/drivers/md/md.c
->> @@ -83,6 +83,9 @@ static const char *action_name[NR_SYNC_ACTIONS] = {
->>   static LIST_HEAD(pers_list);
->>   static DEFINE_SPINLOCK(pers_lock);
->>   
->> +static LIST_HEAD(bitmap_list);
->> +static DEFINE_SPINLOCK(bitmap_lock);
->> +
->>   static const struct kobj_type md_ktype;
->>   
->>   const struct md_cluster_operations *md_cluster_ops;
->> @@ -100,7 +103,6 @@ static struct workqueue_struct *md_wq;
->>    * workqueue whith reconfig_mutex grabbed.
->>    */
->>   static struct workqueue_struct *md_misc_wq;
->> -struct workqueue_struct *md_bitmap_wq;
->>   
->>   static int remove_and_add_spares(struct mddev *mddev,
->>   				 struct md_rdev *this);
->> @@ -630,15 +632,96 @@ static void active_io_release(struct percpu_ref *ref)
->>   
->>   static void no_op(struct percpu_ref *r) {}
->>   
->> +void register_md_bitmap(struct bitmap_operations *op)
->> +{
->> +	pr_info("md: bitmap version %d registered\n", op->version);
->> +
->> +	spin_lock(&bitmap_lock);
->> +	list_add_tail(&op->list, &bitmap_list);
->> +	spin_unlock(&bitmap_lock);
->> +}
->> +EXPORT_SYMBOL_GPL(register_md_bitmap);
->> +
->> +void unregister_md_bitmap(struct bitmap_operations *op)
->> +{
->> +	pr_info("md: bitmap version %d unregistered\n", op->version);
->> +
->> +	spin_lock(&bitmap_lock);
->> +	list_del_init(&op->list);
->> +	spin_unlock(&bitmap_lock);
->> +}
->> +EXPORT_SYMBOL_GPL(unregister_md_bitmap);
->> +
->> +static struct bitmap_operations *__find_bitmap(int version)
->> +{
->> +	struct bitmap_operations *op;
->> +
->> +	list_for_each_entry(op, &bitmap_list, list)
->> +		if (op->version == version) {
->> +			if (try_module_get(op->owner))
->> +				return op;
->> +			else
->> +				return NULL;
->> +		}
->> +
->> +	return NULL;
->> +}
->> +
->> +static struct bitmap_operations *find_bitmap(int version)
->> +{
->> +	struct bitmap_operations *op = NULL;
->> +
->> +	spin_lock(&bitmap_lock);
->> +	op = __find_bitmap(version);
->> +	spin_unlock(&bitmap_lock);
->> +
->> +	if (op)
->> +		return op;
->> +
->> +	if (request_module("md-bitmap") != 0)
->> +		return NULL;
->> +
->> +	spin_lock(&bitmap_lock);
->> +	op = __find_bitmap(version);
->> +	spin_unlock(&bitmap_lock);
->> +
->> +	return op;
->> +}
->> +
->> +/* TODO: support more versions */
->> +static int mddev_set_bitmap_ops(struct mddev *mddev)
->> +{
->> +	struct bitmap_operations *op = find_bitmap(1);
->> +
->> +	if (!op)
->> +		return -ENODEV;
->> +
->> +	mddev->bitmap_ops = op;
->> +	return 0;
->> +}
->> +
->> +static void mddev_clear_bitmap_ops(struct mddev *mddev)
->> +{
->> +	module_put(mddev->bitmap_ops->owner);
->> +	mddev->bitmap_ops = NULL;
->> +}
->> +
->>   int mddev_init(struct mddev *mddev)
->>   {
->> +	int ret = mddev_set_bitmap_ops(mddev);
->> +
->> +	if (ret)
->> +		return ret;
->>   
->>   	if (percpu_ref_init(&mddev->active_io, active_io_release,
->> -			    PERCPU_REF_ALLOW_REINIT, GFP_KERNEL))
->> +			    PERCPU_REF_ALLOW_REINIT, GFP_KERNEL)) {
->> +		mddev_clear_bitmap_ops(mddev);
->>   		return -ENOMEM;
->> +	}
->>   
->>   	if (percpu_ref_init(&mddev->writes_pending, no_op,
->>   			    PERCPU_REF_ALLOW_REINIT, GFP_KERNEL)) {
->> +		mddev_clear_bitmap_ops(mddev);
->>   		percpu_ref_exit(&mddev->active_io);
->>   		return -ENOMEM;
->>   	}
->> @@ -666,7 +749,6 @@ int mddev_init(struct mddev *mddev)
->>   	mddev->resync_min = 0;
->>   	mddev->resync_max = MaxSector;
->>   	mddev->level = LEVEL_NONE;
->> -	mddev_set_bitmap_ops(mddev);
->>   
->>   	INIT_WORK(&mddev->sync_work, md_start_sync);
->>   	INIT_WORK(&mddev->del_work, mddev_delayed_delete);
->> @@ -677,6 +759,7 @@ EXPORT_SYMBOL_GPL(mddev_init);
->>   
->>   void mddev_destroy(struct mddev *mddev)
->>   {
->> +	mddev_clear_bitmap_ops(mddev);
->>   	percpu_ref_exit(&mddev->active_io);
->>   	percpu_ref_exit(&mddev->writes_pending);
->>   }
->> @@ -9898,11 +9981,6 @@ static int __init md_init(void)
->>   	if (!md_misc_wq)
->>   		goto err_misc_wq;
->>   
->> -	md_bitmap_wq = alloc_workqueue("md_bitmap", WQ_MEM_RECLAIM |
->> WQ_UNBOUND,
->> -				       0);
->> -	if (!md_bitmap_wq)
->> -		goto err_bitmap_wq;
->> -
->>   	ret = __register_blkdev(MD_MAJOR, "md", md_probe);
->>   	if (ret < 0)
->>   		goto err_md;
->> @@ -9921,8 +9999,6 @@ static int __init md_init(void)
->>   err_mdp:
->>   	unregister_blkdev(MD_MAJOR, "md");
->>   err_md:
->> -	destroy_workqueue(md_bitmap_wq);
->> -err_bitmap_wq:
->>   	destroy_workqueue(md_misc_wq);
->>   err_misc_wq:
->>   	destroy_workqueue(md_wq);
->> @@ -10229,7 +10305,6 @@ static __exit void md_exit(void)
->>   	spin_unlock(&all_mddevs_lock);
->>   
->>   	destroy_workqueue(md_misc_wq);
->> -	destroy_workqueue(md_bitmap_wq);
->>   	destroy_workqueue(md_wq);
->>   }
->>   
->> diff --git a/drivers/md/md.h b/drivers/md/md.h
->> index 5eaac1d84523..28347fb3af18 100644
->> --- a/drivers/md/md.h
->> +++ b/drivers/md/md.h
->> @@ -972,7 +972,6 @@ struct mdu_array_info_s;
->>   struct mdu_disk_info_s;
->>   
->>   extern int mdp_major;
->> -extern struct workqueue_struct *md_bitmap_wq;
->>   void md_autostart_arrays(int part);
->>   int md_set_array_info(struct mddev *mddev, struct mdu_array_info_s *info);
->>   int md_add_new_disk(struct mddev *mddev, struct mdu_disk_info_s *info);
-> 
-> 
-> .
-> 
-
+> >   static const struct sparx5_regs lan969x_regs = {
+> >       .tsize = lan969x_tsize,
+> >       .gaddr = lan969x_gaddr,
+> > @@ -242,6 +331,7 @@ static const struct sparx5_ops lan969x_ops = {
+> >       .get_hsch_max_group_rate = &lan969x_get_hsch_max_group_rate,
+> >       .get_sdlb_group          = &lan969x_get_sdlb_group,
+> >       .set_port_mux            = &lan969x_port_mux_set,
+> > +     .ptp_irq_handler         = &lan969x_ptp_irq_handler,
+> >   };
+> > 
 
