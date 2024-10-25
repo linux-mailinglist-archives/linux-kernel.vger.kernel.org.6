@@ -1,136 +1,122 @@
-Return-Path: <linux-kernel+bounces-382662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF1149B1196
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 23:23:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84A8D9B1197
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 23:26:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 778982829EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 21:23:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AAE751C21DBD
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 21:26:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E46D91D26E0;
-	Fri, 25 Oct 2024 21:23:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="VGYK35Xj"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA3CC1D26E0;
+	Fri, 25 Oct 2024 21:26:31 +0000 (UTC)
+Received: from mail.stoffel.org (mail.stoffel.org [172.104.24.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99105217F5C;
-	Fri, 25 Oct 2024 21:23:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17870217F4A;
+	Fri, 25 Oct 2024 21:26:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=172.104.24.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729891431; cv=none; b=QALDrniB4xoZrXFp1xPcpko/xwoNW32i9cvZaW1WQFkilQJvCMXvpT5uxI11X25l5RKPRug2TQxfGLluSHbkDz3DtdMXNgXaL4XWpcKKtDYB005rQQkUqRAyFYqmnaOAwzC1XUOVaTEsFRSkoPCFIkUVPGEV7NAkn+9JuRzqa4Y=
+	t=1729891591; cv=none; b=Wo0/zqNp9ivOf/VInSl5MPW2xOyyzN3eynF1P4F+WLSTGNUNX1A7UDUkc+0MRY7E+RBXs8yh8kJVgVSVgkC5kXFNyBe3pRSOpdQcf3azLDs/U50hVGA2uex9ZOwrJLbBxyg31yoU8a/aRgUua0qChpgasV19t4Kx3UUdZDeJ598=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729891431; c=relaxed/simple;
-	bh=MJteKabF14rmjmcWcfRJoa4ndNm58vj4dt+lQ1sgOZ0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iD8nHIOXiOk9SBhnOBfCb9cDgdVtGAUWyOhttkhCFpsuCBjzwlhJAYdm0bmMIaeJ3YB7Sb6ZjW2SuHDNREOMWG8ixu7ijtuT0hRyB0cvlguSx8V2B7lYOHhwoacAwfdVHNpOwW6O3DKzT5JXWJHys0UAo9Sm8+kShUz3u/I6O+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=VGYK35Xj; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=g/wygeGFZTjCvHlojXiuv3YCs88h6s6phKX2tMfNnIU=; b=VGYK35XjgnDbwp9myvCNunLYiZ
-	ONqbtVc+b9MSgQ8Cs0BFBv4LXdEFY6rWnjnzCUnI1IJHTrFV4DBa9NCNIC+/W2Uc2U4dtrKtboDjU
-	GiCdwuKUu7ezWdbzani+5BULnp7q7SV7xivaGmDlz9f/5JTG2MIVoIVvFre7D1+hcMII/vZc88NDB
-	KWYXrDGUIRAAWDGuhYRaRsuBNtqJaUrtGpoPikDsdAHsBJ3d4rVAngQO5VTrj62QQzF9Sv5L1o0Hp
-	dU//5DCEHJv6c+6smSKVkS1ldBuwH79lmGVqxwckHJakExJAuVMztrljCj3/lTaFSrj6xHmdXw7f8
-	3FCnnnJQ==;
-Received: from [189.78.222.89] (helo=[192.168.15.100])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1t4RmV-00FAr4-MJ; Fri, 25 Oct 2024 23:23:39 +0200
-Message-ID: <4b9a5824-7cb7-4dc6-91dd-536f4dad9771@igalia.com>
-Date: Fri, 25 Oct 2024 18:23:33 -0300
+	s=arc-20240116; t=1729891591; c=relaxed/simple;
+	bh=KcIaVgPkw+hE3Yu4bPeVYuAuBk96QgsL9DKxY5WuKSU=;
+	h=MIME-Version:Content-Type:Message-ID:Date:From:To:Cc:Subject:
+	 In-Reply-To:References; b=jT1JxGK50WHiK0VJ+1dtDqLtcqBZ7laGMuBEqx71kh+1YHaq4LmtIzPH6lRFVurD3I14vZiIKBPy0e7RCYQEoFFqipeFtpvT3tICgyikvdJOd1p1WTD08bVeEvE2XTTCSiN3PPNWRc+Y25kRhdgM2w8QUKSR+EK2MrQ/PZ5WNnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=stoffel.org; spf=pass smtp.mailfrom=stoffel.org; arc=none smtp.client-ip=172.104.24.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=stoffel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=stoffel.org
+Received: from quad.stoffel.org (syn-097-095-183-072.res.spectrum.com [97.95.183.72])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.stoffel.org (Postfix) with ESMTPSA id 7E1F81E11C;
+	Fri, 25 Oct 2024 17:26:21 -0400 (EDT)
+Received: by quad.stoffel.org (Postfix, from userid 1000)
+	id D8984A0A9A; Fri, 25 Oct 2024 17:26:19 -0400 (EDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/6] futex: Implement FUTEX2_NUMA
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, mingo@redhat.com, dvhart@infradead.org,
- dave@stgolabs.net, Andrew Morton <akpm@linux-foundation.org>,
- urezki@gmail.com, hch@infradead.org, lstoakes@gmail.com,
- Arnd Bergmann <arnd@arndb.de>, linux-api@vger.kernel.org,
- linux-mm@kvack.org, linux-arch@vger.kernel.org, malteskarupke@web.de,
- cl@linux.com, llong@redhat.com, tglx@linutronix.de
-References: <20241025090347.244183920@infradead.org>
- <20241025093944.485691531@infradead.org>
-Content-Language: en-US
-From: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-In-Reply-To: <20241025093944.485691531@infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
+Message-ID: <26396.3323.858567.266417@quad.stoffel.home>
+Date: Fri, 25 Oct 2024 17:26:19 -0400
+From: "John Stoffel" <john@stoffel.org>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: John Stoffel <john@stoffel.org>,
+    manas18244@iiitd.ac.in,
+    linux-bcachefs@vger.kernel.org,
+    linux-kernel@vger.kernel.org,
+    Anup Sharma <anupnewsmail@gmail.com>,
+    Shuah Khan <skhan@linuxfoundation.org>,
+    syzbot+e8eff054face85d7ea41@syzkaller.appspotmail.com
+X-Clacks-Overhead: GNU Terry Pratchett
+Subject: Re: [PATCH] Revert "bcachefs: Add asserts to
+ bch2_dev_btree_bitmap_marked_sectors()"
+In-Reply-To: <bv4dfgmq4wmfcon2thkvhthqjlrpr5h4nmhfuusj4lh2wrj5ao@ckmvt63s67r6>
+References: <20241021-revert-assert-bch2-v1-1-e869c7c55bb6@iiitd.ac.in>
+	<rd4maufxfunrcpzkoo2jszorzl256fiktw3p5yfpnjpu2ajh4l@5wvkfxwzajax>
+	<26394.37450.21740.720541@quad.stoffel.home>
+	<bv4dfgmq4wmfcon2thkvhthqjlrpr5h4nmhfuusj4lh2wrj5ao@ckmvt63s67r6>
+X-Mailer: VM 8.3.x under 28.2 (x86_64-pc-linux-gnu)
 
-Hey Peter,
+>>>>> "Kent" == Kent Overstreet <kent.overstreet@linux.dev> writes:
 
-Em 25/10/2024 06:03, Peter Zijlstra escreveu:
-> Extend the futex2 interface to be numa aware.
-> 
-> When FUTEX2_NUMA is specified for a futex, the user value is extended
-> to two words (of the same size). The first is the user value we all
-> know, the second one will be the node to place this futex on.
-> 
->    struct futex_numa_32 {
-> 	u32 val;
-> 	u32 node;
->    };
-> 
+> On Thu, Oct 24, 2024 at 02:30:34PM -0400, John Stoffel wrote:
+>> >>>>> "Kent" == Kent Overstreet <kent.overstreet@linux.dev> writes:
+>> 
+>> > On Mon, Oct 21, 2024 at 10:18:57PM +0530, Manas via B4 Relay wrote:
+>> >> From: Manas <manas18244@iiitd.ac.in>
+>> >> 
+>> >> This reverts commit 60f2b1bcf519416dbffee219132aa949d0c39d0e.
+>> >> 
+>> >> This syzbot bug[1] is triggered due to the BUG_ON assertions added in
+>> >> __bch2_dev_btree_bitmap_mark. During runtime, m->btree_bitmap_shift is
+>> >> 63 '?'. This triggers both the assertions.
+>> 
+>> > The BUG_ON() doesn't need to be deleted; we just need to fix the
+>> > validation so it doesn't fire (it doesn't particularly matter if it's
+>> > removed or not, ubsan would catch it without the BUG_ON()).
+>> 
+>> Shouldn't the BUG_ON() be replaced with making the filesystem readonly
+>> instead if you're going to keep it?  I'd rather have the filesystem
+>> still be mounted and able to be read, but not writeable, instead of
+>> having my system crash before I can do anything.  
 
-Maybe this should live at include/uapi/linux/futex.h.
+> Not in this case. In general, if there's a chance of the BUG_ON()
+> hitting in the wild after the code has passed testing then it
+> shouldn't be a BUG_ON(), but this is low level validation that we're
+> relying on.
 
-> When node is set to ~0, WAIT will set it to the current node_id such
-> that WAKE knows where to find it. If userspace corrupts the node value
-> between WAIT and WAKE, the futex will not be found and no wakeup will
-> happen.
-> 
-> When FUTEX2_NUMA is not set, the node is simply an extention of the
-> hash, such that traditional futexes are still interleaved over the
-> nodes.
-> 
-> This is done to avoid having to have a separate !numa hash-table.
-> 
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+So I'm having a hard time parsing this reply.  And I don't think you
+make a good case for leaving or even having a BUG_ON() here at all.
+If there's a chance of it hitting in the wild, it should be removed.
+But you don't want to remove it because it will never hit?  That's
+just lazy... :-)   I just don't see why a filesystem should have the
+opportunity to kill an entire system because that one filesystem has
+problems.  
 
-Do you think some of those changes should be guarded with #ifdef 
-CONFIG_NUMA? Or is fine as it is? I see that most of NUMA_ values 
-defines to 1 anyway on !numa, but maybe the futex_init() and 
-futex_hash() would be a bit more simplified.
+> In general higher level code absolutely requires that the low level
+> validation is correct, because if it's not that will trigger all sorts
+> of undefined behaviour in the upper layers.
 
-[...]
+> By "low level validation" I mean _only_ the validate functions that
+> check simple invariants within a single data type that is read or
+> written atomically to disk - "is data type garbage or not".
 
->   
-> +static int futex_get_value(u32 *val, u32 __user *from, unsigned int flags)
-> +{
-> +	switch (futex_size(flags)) {
-> +	case 1: return __get_user(*val, (u8 __user *)from);
-> +	case 2: return __get_user(*val, (u16 __user *)from);
-> +	case 4: return __get_user(*val, (u32 __user *)from);
-> +	default: BUG();
-> +	}
-> +}
-> +
-> +static int futex_put_value(u32 val, u32 __user *to, unsigned int flags)
-> +{
-> +	switch (futex_size(flags)) {
-> +	case 1: return __put_user(val, (u8 __user *)to);
-> +	case 2: return __put_user(val, (u16 __user *)to);
-> +	case 4: return __put_user(val, (u32 __user *)to);
-> +	default: BUG();
-> +	}
-> +}
-> +
+Sure.
 
-I found a bit confusing that this is here, shouldn't be at [PATCH 4/6] 
-futex: Enable FUTEX2_{8,16}?
+> If it's an invariant that involves multiple objects - "does this
+> extent refer to a valid device/snapshot ID" - that's not something
+> we can check in validate, because then an extent or what have you
+> would become invalid depending on what happens in the rest of the
+> filesystem. Those sorts of checks do in fact need proper error
+> paths.
 
+Right. 
 
