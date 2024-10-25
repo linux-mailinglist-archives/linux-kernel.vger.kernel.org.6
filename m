@@ -1,208 +1,204 @@
-Return-Path: <linux-kernel+bounces-382426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3464C9B0D77
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 20:36:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C3BFE9B0D7A
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 20:38:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A6392868D1
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 18:36:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4480C284E0B
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 18:38:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30BDE2022EC;
-	Fri, 25 Oct 2024 18:36:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2653E20BB32;
+	Fri, 25 Oct 2024 18:38:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ocn9TZX9"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="imJDqAtD";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="kx1bCc7k"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34F1E185E50
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 18:36:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729881391; cv=none; b=KmDrp5NlwnYLPiJJp+yMDJnp9QA6RQ3CuVllh/rt/54vmR21ao/pluyzLyRCXb+EGfGurbp/2blU7ciSgvX6J8B5p7DAk7pHU/WGe1XI+rdiIdWdRr7FBaaIMAJowgoCg+VWibNeg9z1sSKKGgqxAFto0Ljkvz7tvyMV2SwH0IM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729881391; c=relaxed/simple;
-	bh=MFNDyFcHqT4Df6FZHW6zcDQQZqb99bE7QMExN7fPw0s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HWGexx+pVFI0tJvwKOmCo1embNUoYRoNQT5af8etVza2tcIe/AtAKIIEnfBHPW11Uz6tM0yWz4KDp5SW9adM15GcrM845gb8XWhPLXBVbPVBeEC4gD9UhgDN30vlqFLLwfxpSijCWsS2myJ0JF1LUamgnkQ74wRX8+IR+9B+S28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ocn9TZX9; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5c903f5bd0eso4501701a12.3
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 11:36:28 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D36520C313;
+	Fri, 25 Oct 2024 18:38:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729881514; cv=fail; b=YQTNqWcjOS5d+uWP491POg0dPzIY8lZqS0wX5Ko3RC/viBYbei4ANOpoIQRAXPOXEcMXLirJEpr1E8gpsvpOPEN/8NbACg/5L8ZWFNquiHMzRlsN5SYm3fSQSV6V3/Okq2/aUS4kVSdhbnGShJY41Gax1G/5JJFjaZcK3LhC43U=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729881514; c=relaxed/simple;
+	bh=U6MorkPeU7/8K5R3wyOH1rQcC6/SlRbkSn2ii9R4tnk=;
+	h=To:Cc:Subject:From:In-Reply-To:Message-ID:References:Date:
+	 Content-Type:MIME-Version; b=lcZbLdQaFtjEMfSEA4LtW3TQCwLjVPABiB3WFDQ6TaELGbI/rb0fCIAkhDIOMiqEC68zZGU52/pWcBH5j9bbBsgOv/DRuxWG1W3kOVA2/8ff4KcrsFcmrsA7hm+0ji4QtTqwhg0VmOmsNpubVrGmCVfVEdz6BypcXWAVoG0RC9E=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=imJDqAtD; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=kx1bCc7k; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49PG0YOG017102;
+	Fri, 25 Oct 2024 18:38:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2023-11-20; bh=4pnIiXGa572V68B95q
+	B+CZw5Rjcs925smlBRK6zrWTQ=; b=imJDqAtD6Oh/B6te/mUcxxOIutujzBUe8z
+	LgfKC3XJKMqMgL5NwcKnJZW8DduhSmfzHxiYVVvuf9QDnnXeUzi4oMeHJTmag6Kc
+	2KzElWYDdMBqa/5uCZK3S/lzWO6fPIPP29w+q2MfoIrPbK5kb+/EBYUIKJVpdIDI
+	K3aNsubvTzaSlB4rNSaW1Vw4DM49T0BkEAzDxpGT0/5d96KcP1b0K6WgB7Z5qtw6
+	/iY4zoEc6mYvlmFP/ygCS5yrlfGGUi4m2jVir6lgW7YYcFoT+Kp5esjkQ2iYSuIy
+	TXcd+WPPpqp8Hh4tVgPBl74PLs1wMWHBsC0FiO9ylD7Zn/vDnOgw==
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 42c55engaq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 25 Oct 2024 18:38:10 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 49PHUkEn039313;
+	Fri, 25 Oct 2024 18:38:08 GMT
+Received: from nam11-co1-obe.outbound.protection.outlook.com (mail-co1nam11lp2175.outbound.protection.outlook.com [104.47.56.175])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 42emh63kfr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 25 Oct 2024 18:38:07 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=rPPwN6FIFiVPjx1VhH/m6dk4mDqI4ZEFlbaUbGMKt9d5C/VsIiEEjYbCfVyopA9JCxnKZU/0Fjsp3kwDQcwNdfP/8ohhiLRjcmcgMZpK4A/zus6bpEv5GMo0qP4iubUyWnGj1X3Vln691qUEENKKz3s1x4R4P0HEFbPCj66g/qB9KWCTxwY9PozL4XARa5Bpj9cm7Jd192hQRWYcxPjdMe/AfAQQjwD+U3qkS3uxCy0gs7o1ASSI9f0vHbxAtzn7ezcJedLl+V6EDWzF37Jorbo7Q8jyIvAs6d7PqYx0cIRlPoLmWilh+Cy8H/CtQnfCBWiST072qeJW31DIDSDOFA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=4pnIiXGa572V68B95qB+CZw5Rjcs925smlBRK6zrWTQ=;
+ b=hGt1LDfFnd0+JF4AmIEBWMN1bPTn+f7HXKghOuw/tMzWnm3DoJ0KjC/Phxfs0LLRH50pjrvFFfdcR9dWN+GGZAzlvDnqxtYIuuQ+m2VfArpUAdPuEeA/nPJHxuQca1a0ZOYn0IJ1oL0WFHeYPXPpw19LHvcPL6UjUB1RSu56X+YJCb5jsMYUwNGwIBMb42RJ5DEeW2m/y2Rq6QPUg+kKT/Q81X7y5ZgsxB9k5tCPYqIoa1t6md8KuwNRdAvuG6OO6S+fpU0f6pTLA7CTnYAzdwDGOOEQnlgHIRHrv+DWLdGQKK9gH2M+UzkuyjUAirM5LHmvy4MAJyfR5p1gQxWJgQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729881387; x=1730486187; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FVqk1yJPQA/+HKOpSAlTiulTaUi2W5hnnPyvpTl0kVs=;
-        b=Ocn9TZX98Ur4aoJvInJ4yHqClh5yoexX41usUd5FtpIllImqIP/eMzyQwRQiJ6CKas
-         Mf++gz+N28Zu+ikT8aV17NRJfwskaSe/tazLv3A2GqhU2R41rQ4yIeoIUvtocAPF9Jbe
-         62Cibs0Ntp51HhZfBS3utmMU8u6PY+H4qwb+2aA6AbSDT6tryoorwoDN/XAuMDTHBO/5
-         9biYWMoC4AmZg6+U5OQJZezG3HrEENbFxjenodrUl/qw1vq4BB4kMx00aM9ZFrG4pfZX
-         4HSiGkePSDeuv8Ibp/67uN1TOJD5pTkikES/5+ax709NPmbvh4toxtIOo9B46sGlYHeP
-         rRlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729881387; x=1730486187;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FVqk1yJPQA/+HKOpSAlTiulTaUi2W5hnnPyvpTl0kVs=;
-        b=YI+GgSNmPyM5iZHq1MJzV2wAwjDaUfNoypXKvKU/XUCeQ0LByMCAKZzGIjONtI2ikI
-         kXtOWLB67i50EHqu7BqVPpmfE0G/lb7Rrio4eANDLO4p8gRBHq2F32hSpS3N7p1y6Z85
-         jjLFzk4mLGh0rZTb4ECnvkSRX75YQcZ+R+kysQi+0EZIaaiCf8JJYjMRD+QCa9latfnb
-         yzEllSmeHfIIRUkPobcL9I+9orUD+dqgqR23SsIy9WoDO/6G6ePwek7FdH+BTtei2N4l
-         9GKQ5SBH7MjPEoW5of8TH0ZwST9uxbbR30/Q9T5Cc8oLwZSK/2BYaT4rgeLpFlG+CyBx
-         nOJg==
-X-Forwarded-Encrypted: i=1; AJvYcCX/oACJfjAASPboGCJQtyxw+zC1VlR50uB4bfSdeTb0uAesOqDS0JsRZ4nc6eM8QyBp/DqlyUAlcDMuyV0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLe9aEFpkygq5CiV35lYK7gnqyUQokSmyc9I2Be+I+953eCndS
-	QD4zLAKQrzHFOY5GxiCpnkdnqTG6CIrnJtbxx7g0VFxB89ZeUZWpGAetyufr5axkgPrxzL8q1Ue
-	DM14KWvNQajjuWvXgoHmFQ1GSvfk=
-X-Google-Smtp-Source: AGHT+IFDhMroGBcIugrFh5ZmmzBe/63nbTL/N+2PUYOiLt/O7wlBsRhdH24OaHMpbCqKImjBZmctfDVP7eBmfnaMZrQ=
-X-Received: by 2002:a05:6402:529b:b0:5c9:5a96:2869 with SMTP id
- 4fb4d7f45d1cf-5cbbf8b1ceamr191791a12.10.1729881387104; Fri, 25 Oct 2024
- 11:36:27 -0700 (PDT)
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4pnIiXGa572V68B95qB+CZw5Rjcs925smlBRK6zrWTQ=;
+ b=kx1bCc7kdYfREK/azRSfG/SHGf5yu5U5mJrjAPufErqkxtO1YwtkHF2My8XRpDjzjTTYf8EbX6R+p6FDtXhBQW609HfWY+6YeB3W9zg3iwNE+PGY4Y25j5i3rGtL48hJjKXH2N8MEhrMMzBgbtp74S6gNLccnD+fnQkwMK5TrTU=
+Received: from SN6PR10MB2957.namprd10.prod.outlook.com (2603:10b6:805:cb::19)
+ by DM4PR10MB6184.namprd10.prod.outlook.com (2603:10b6:8:8c::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.20; Fri, 25 Oct
+ 2024 18:37:56 +0000
+Received: from SN6PR10MB2957.namprd10.prod.outlook.com
+ ([fe80::72ff:b8f4:e34b:18c]) by SN6PR10MB2957.namprd10.prod.outlook.com
+ ([fe80::72ff:b8f4:e34b:18c%5]) with mapi id 15.20.8069.018; Fri, 25 Oct 2024
+ 18:37:54 +0000
+To: SEO HOYOUNG <hy50.seo@samsung.com>
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        alim.akhtar@samsung.com, avri.altman@wdc.com, jejb@linux.ibm.com,
+        martin.petersen@oracle.com, beanhuo@micron.com, bvanassche@acm.org,
+        kwangwon.min@samsung.com, kwmad.kim@samsung.com, sh425.lee@samsung.com,
+        quic_nguyenb@quicinc.com, cpgs@samsung.com, h10.kim@samsung.com,
+        grant.jung@samsung.com, junwoo80.lee@samsung.com, wkon.kim@samsung.com
+Subject: Re: [PATCH v3 1/2] scsi: ufs: core: check asymmetric connected lanes
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+In-Reply-To: <e82b4b65b5f6501a687c624dd06e5c362e160f32.1728544727.git.hy50.seo@samsung.com>
+	(SEO HOYOUNG's message of "Thu, 10 Oct 2024 16:52:28 +0900")
+Organization: Oracle Corporation
+Message-ID: <yq1r084f2q1.fsf@ca-mkp.ca.oracle.com>
+References: <cover.1728544727.git.hy50.seo@samsung.com>
+	<CGME20241010074229epcas2p31ecc33731a96be7958cdd93908a1ce86@epcas2p3.samsung.com>
+	<e82b4b65b5f6501a687c624dd06e5c362e160f32.1728544727.git.hy50.seo@samsung.com>
+Date: Fri, 25 Oct 2024 14:37:53 -0400
+Content-Type: text/plain
+X-ClientProxiedBy: BN9P222CA0006.NAMP222.PROD.OUTLOOK.COM
+ (2603:10b6:408:10c::11) To SN6PR10MB2957.namprd10.prod.outlook.com
+ (2603:10b6:805:cb::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <760237a3-69d6-9197-432d-0306d52c048a@google.com>
- <3A1E5353-D8C5-4D38-A3FF-BFC671FC25CE@nvidia.com> <966a4aff-f587-c4bb-1e10-2673734c2aa0@google.com>
- <E5A75697-55C7-4335-8D86-EE5CB6A99C4F@nvidia.com>
-In-Reply-To: <E5A75697-55C7-4335-8D86-EE5CB6A99C4F@nvidia.com>
-From: Yang Shi <shy828301@gmail.com>
-Date: Fri, 25 Oct 2024 11:36:15 -0700
-Message-ID: <CAHbLzkqEhbw89HMh7h-r6M1xM5vw7bUZDNO7KEgPyaguO32d-Q@mail.gmail.com>
-Subject: Re: [PATCH hotfix 1/2] mm/thp: fix deferred split queue not partially_mapped
-To: Zi Yan <ziy@nvidia.com>
-Cc: Hugh Dickins <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Usama Arif <usamaarif642@gmail.com>, Wei Yang <richard.weiyang@gmail.com>, 
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Matthew Wilcox <willy@infradead.org>, 
-	David Hildenbrand <david@redhat.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Barry Song <baohua@kernel.org>, 
-	Kefeng Wang <wangkefeng.wang@huawei.com>, Ryan Roberts <ryan.roberts@arm.com>, 
-	Nhat Pham <nphamcs@gmail.com>, Chris Li <chrisl@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN6PR10MB2957:EE_|DM4PR10MB6184:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0fb70127-0fa4-4c3f-5085-08dcf52423bb
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?NzsmeW7m9lTv+T5cD1NX2aGtMsFb5HG9i0lcz2itMRTyICV1/leSgCmHQPXz?=
+ =?us-ascii?Q?mSr4oYUrwmcUslcDqR0U6NoObwkAHmD80jA3HpmwP7Iz8aeCUKx3XZpImQy/?=
+ =?us-ascii?Q?ZXSbsiJ1xTIMC9eVQJeaouppFc6A8FhfetRvyWmfsVCFwOXSZJK3qmcu1c6t?=
+ =?us-ascii?Q?uqq64Wc8CVeFEQN3k0clfL5BGj7qzoSZaAcx8XJnaZseBmtiCyGeZ3yuzbx3?=
+ =?us-ascii?Q?DNYTl/ckMJyzveGkk0wIgGhkFKzqQjXuR5A4NhrQRA2pcvOWzwh9jG08xKj/?=
+ =?us-ascii?Q?/XtD7e2JttzOMo2zHXWNR+fYds0DFu/5XkzeUXdx0H7utaNIsALslTtK4JK6?=
+ =?us-ascii?Q?cVC38u35XnVeExVh0Bel5JOqijQF+z/LJDOgA187ZB8rR6UuO2pXryDLyG8i?=
+ =?us-ascii?Q?2Ke1WmtkhJRQZoug5NILWUIPX/DSGYetJefNfknxbchNpyMdyIF3ABfVTU0b?=
+ =?us-ascii?Q?BjX4vlzbzIse+HmS3PBcL5hATidC2ctTfoWqQGg4ljL3gAV7Mhs+jRjr7wpv?=
+ =?us-ascii?Q?UfdLHOQc2kyFjFiIvAH5zJmzvsWaxNOQmnfq0+8DjSR6X+6EpWlFNrjkMuUK?=
+ =?us-ascii?Q?eokqI9LqXDmSxHXTRjWuFUQHs+cDh9m+fdt82SE43XP1de1CuTtQSeao2vl7?=
+ =?us-ascii?Q?45a3G77usiJGI2MAaEHFixiLL+xjzJ/2oUwo9RLwGdgVprgNYD056GvZN8Ww?=
+ =?us-ascii?Q?VKCF1KYdtdFO4jjWfsmMUP4I0ksX3KUMM3L0vBHX6x5vgpp0Dkm1stDR5Fap?=
+ =?us-ascii?Q?jgDpiyBpzDeSWLumgLSMkYsAZxhbkdje34WD7rgORprd+WAE9mCy8IT3aV0f?=
+ =?us-ascii?Q?awP0vDXioFfb7Hephs79sQWpL8sWB94z9O0dyxqQSea2crQFutg3MJ0UAdEp?=
+ =?us-ascii?Q?BTif3hkRk7i/MlMBHNs02vcUNYS1fqUpkUkKYDvr4vTyMNtKYlrtlioTVRMY?=
+ =?us-ascii?Q?2WiBbPEeCFAeQGs8BnyaB2QiCL+Rs4EIyWUP0W36jZgwAb7+uhNN6gUnoVw7?=
+ =?us-ascii?Q?9EnJ97P/ogvgo3QVAkYVF7PsBxYATvqCfzFjHrpPiLlC1OaHVX5u7CVy4OqZ?=
+ =?us-ascii?Q?m9AgFy4iGqZe1wV04wJ52gjMNnVcRYE7Q2ocPVZAuMcYXzRB+OdOuN1XREIr?=
+ =?us-ascii?Q?sbZHR8ZjB39W5QdcVh+EbzakjDmprblg7+V/gnaAoPuuHwJ0th5j3lKB7viB?=
+ =?us-ascii?Q?LIlcfNgAxcBlWdSgq8BoGqJbBuMtkuafhAHrWf9X/vSnoB14Cx21Dt0oAcMZ?=
+ =?us-ascii?Q?TzjRoeNDBK2EJxZjbwe676BH/iEISxbXrAxAq0BMtt8Vzci4AUsIMyytcaYr?=
+ =?us-ascii?Q?VwM=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN6PR10MB2957.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?2NBEZyv2wAUqQSpIQhHi3EG7uFhWde1FjnRxUzAB+6//3SIzh/4d1nugUIQH?=
+ =?us-ascii?Q?thKaT3id8r2twNDNnnbM8inJgbfqnoRYsy9DNHh4Jc40UkDmX9unXnpzrTJF?=
+ =?us-ascii?Q?A6O4+UNH8PC+alCReB2AQgWo55KJxMt6ubyfnujGZ/EZmx2lv7CKlxuybLPg?=
+ =?us-ascii?Q?+QVpygmqn1WH264jEyBynDnZ4EOUf6g5pY1bRpWQUQMgWuB/Ns/KP3gXMreo?=
+ =?us-ascii?Q?J1Tb1iaNA20hZ2pkVgfW+XhXVaZq8jrqeHMEy1fiA+C51oy6QkeqojhdokVB?=
+ =?us-ascii?Q?HqFbd/01xlBE2h95BZreq04tBwpLqNcPSX4DV6qaCjtF+RQZtIblLVbAFPzo?=
+ =?us-ascii?Q?bPNfV9+GeTgp6Ldupu0IavPsvgG59L9lXqxhDvhYB4tf9fMf+FBvv+0t39Vg?=
+ =?us-ascii?Q?Q8fcpO6mWGiSMmhkXnm5TPkMITrvtEid9J9j2EQpHki6arotq/hGgbP8t/Gs?=
+ =?us-ascii?Q?AfDsDUCcEBgywBc5LlX7yhmNRFTIo4cQJWwY2bElcXP2H9dsJoRhKzVfUQKe?=
+ =?us-ascii?Q?gdO9KdqztDZ0ouA4pMZxRucXjsEjNLQFyKYX3DValv8X3kpdVkKnqTXtffAp?=
+ =?us-ascii?Q?JAtQAb4ab0pFR7p2siW7VJTEe256ekOUi7U5w5+PMustyC3VLE1BbQNuKVmX?=
+ =?us-ascii?Q?OwgnLds0aCbB1ZlDP1mUs7iQ+joukC0qSefXjooIi8ut/n/QTdfC7SCXggwo?=
+ =?us-ascii?Q?1yKvBJenN3F7V0ehwKxZXH6QgggfXPc66mbCAtpU9kt3XuLSdnGotd6iw3KU?=
+ =?us-ascii?Q?5Kfx741A3BhFjqSafMY8YBX48xC1aBeyFTp/A14DiPhE9T1V7dIbJ46k82ce?=
+ =?us-ascii?Q?zizv57kSXmB8mmBh+naS1E9riX0SrZsP+pFAIuOmOnGBDetx4nagwqLOUNw2?=
+ =?us-ascii?Q?wqzC/ES8nTF+zHWU2MkWd0aLnYoMggof/gkws5ekDQ1iuqyQ0ZnmYd6i/cIw?=
+ =?us-ascii?Q?adJtk1MjziuTVe42pbKO4+1RA6WhZm7heBGIXFmE0b6pbEaR6NNXfiyjial/?=
+ =?us-ascii?Q?pR277ytSwphbcWQhbBfTNwgSISWw7k2wYrzKciH2kV5G4lDZydwX50z/BA1+?=
+ =?us-ascii?Q?zlkVJfKBC2+5CKVMHOuoeXyizt6rslST37vl849gDjABocIqzWcoEb9QhZSa?=
+ =?us-ascii?Q?zgkUBJbYqWxfQOAiJz5DW0uCvpYkp6v+cZAG1W001TrxF3WaNNsinhEGOYHX?=
+ =?us-ascii?Q?hxMIaruIZUeg7tHm2g1ERYsVIpyeSyauz0gDUObAbfPPl73Z0dcFsWqPgGbx?=
+ =?us-ascii?Q?Y9vg+n1Ah37CkQjmiLxfFcswglEQ0m+YNOujxuwIHSeoMIm6pZxGzkfpwcQT?=
+ =?us-ascii?Q?GXp/WMb4dyFDROhnRpN4V+4URwm+osJgojvSJjK9uq03rKAGBuyK6pVtgD3g?=
+ =?us-ascii?Q?BGMDiGnLAH3q3KqvqVWb8R2K4clZGREyHFeyYdPpDk6gUSCSPSUtLPn4SzID?=
+ =?us-ascii?Q?g5z45H0O/qeDLVLTID0+pXvOcMk0Kdl2OPjp/HiSUiVGLkSob1g3RGct8old?=
+ =?us-ascii?Q?K75GDFv5FkeMOnul65/h1LdjxPsoE9KcNETsUDPxzajfSjQJWnNuTL19XVmx?=
+ =?us-ascii?Q?O6O0ruOFAkruaxPFg3qzt2sIvAHd4eSHdXiBZ0WiZ+Plt2Q0amjrJXO4bD29?=
+ =?us-ascii?Q?qw=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	sCRBauSIpCnWSG01a7AJiuqf85p41t7SgXfHcsVH4ZybZhVjAvCDhVkb/ffoINuNv1LrXYVt+vs4MMYG9fbhWhZM75vrsmGDQVBHx/X+DgsD/CtMyI1huQfSizD8NJDTNuI4/0VMf+fkcqAtXKqxAtbQD7x2Aq0qXMPOYIkisDJ3Wl3G+jMSY844AIgvC/nzU00uTovRP3H6I6usKXSJLM0fU9ZUmJhXxRRDB+fp8UdlSvVr5MxTH9fSJ4HUkdVFo/iMqITuWNbHkPJ3SBjElogord2ZRYtHFDMcd5sW1JRAWsamUGn5n8ZhmFGiEmT+XwAei4t/9TJ06k0333HKQvESv1k6kOoC6NmGMebIcgYnZs+CO4mjlc0olvFanv2BasCmsU6dfePZg7BChent21vs3W0XRIC7s/KDIVtnz2niV9A3WnCBwg7hDkMV9I7+PEIj4LR6eB4MFY43EkQjxgnbIkpmJN21byTV01BSwnRokx4WKsofeddYd51gaIxncEe1cjEs8tT7ob9f4sSG/Rsgf3X1HQhJtVdmOQ60rci3sxPW2o/DWnE+r93h3aGhfxoF83R7o3yDNY35PX40irZNhjTsQ6ryXCIav1v6m7w=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0fb70127-0fa4-4c3f-5085-08dcf52423bb
+X-MS-Exchange-CrossTenant-AuthSource: SN6PR10MB2957.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Oct 2024 18:37:54.8176
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: RuIvV5EHteLBWbYjiQfDLaA674qzmBclqaV5BEKlvFhUIiEjaD0BTAQtppP4GxcPrYp4wSctPW26KDNLxb9m6NybIpf2QsV9yoWe0uSfGgc=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR10MB6184
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-25_14,2024-10-25_02,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 phishscore=0
+ malwarescore=0 adultscore=0 mlxscore=0 mlxlogscore=999 spamscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2409260000 definitions=main-2410250142
+X-Proofpoint-ORIG-GUID: 8EbPtNZVmiLiJsVlYcV3f9301A7dmJti
+X-Proofpoint-GUID: 8EbPtNZVmiLiJsVlYcV3f9301A7dmJti
 
-On Fri, Oct 25, 2024 at 8:32=E2=80=AFAM Zi Yan <ziy@nvidia.com> wrote:
->
-> On 25 Oct 2024, at 1:41, Hugh Dickins wrote:
->
-> > On Thu, 24 Oct 2024, Zi Yan wrote:
-> >> On 24 Oct 2024, at 0:10, Hugh Dickins wrote:
-> >>
-> >>> The new unlocked list_del_init() in deferred_split_scan() is buggy.
-> >>> I gave bad advice, it looks plausible since that's a local on-stack
-> >>> list, but the fact is that it can race with a third party freeing or
-> >>> migrating the preceding folio (properly unqueueing it with refcount 0
-> >>> while holding split_queue_lock), thereby corrupting the list linkage.
-> >>>
-> >>> The obvious answer would be to take split_queue_lock there: but it ha=
-s
-> >>> a long history of contention, so I'm reluctant to add to that. Instea=
-d,
-> >>> make sure that there is always one safe (raised refcount) folio befor=
-e,
-> >>> by delaying its folio_put().  (And of course I was wrong to suggest
-> >>> updating split_queue_len without the lock: leave that until the splic=
-e.)
-> >>
-> >> I feel like this is not the right approach, since it breaks the existi=
-ng
-> >> condition of changing folio->_deferred_list, namely taking
-> >> ds_queue->split_queue_lock for serialization. The contention might not=
- be
-> >> as high as you think, since if a folio were split, the split_queue_loc=
-k
-> >> needed to be taken during split anyway. So the worse case is the same
-> >> as all folios are split. Do you see significant perf degradation due t=
-o
-> >> taking the lock when doing list_del_init()?
-> >>
-> >> I am afraid if we take this route, we might hit hard-to-debug bugs
-> >> in the future when someone touches the code.
-> >
-> > You have a good point: I am adding another element of trickiness
-> > to that already-tricky local-but-not-quite list - which has tripped
-> > us up a few times in the past.
-> >
-> > I do still feel that this solution is right in the spirit of that list;
-> > but I've certainly not done any performance measurement to justify it,
-> > nor would I ever trust my skill to do so.  I just tried to solve the
-> > corruptions in what I thought was the best way.
-> >
-> > (To be honest, I found this solution to the corruptions first, and thou=
-ght
-> > the bug went back to the original implemention: that its put_page() at =
-the
-> > end of the loop was premature all along.  It was only when writing the
-> > commit message two days ago, that I came to realize that even put_page(=
-)
-> > or folio_put() would be safely using the lock to unqueue: that it is on=
-ly
-> > this new list_del_init() which is the exception which introduces the bu=
-g.)
-> >
-> > Looking at vmstats, I'm coming to believe that the performance advantag=
-e
-> > of this way is likely to be in the noise: that mTHPs alone, and the
-> > !partially_mapped case on top, are greatly increasing the split_deferre=
-d
-> > stats: and may give rise to renewed complaints of lock contention, with
-> > or without this optimization.
-> >
-> > While I still prefer to stick with what's posted and most tested, I am
-> > giving the locked version a run overnight.  Thanks a lot for the review=
-s
-> > and acks everyone: at present Zi Yan is in the minority preferring a
-> > locked version, but please feel free to change your vote if you wish.
->
-> Thank you a lot for taking the time to check the locked version. Looking
-> forward to the result. BTW, I am not going to block this patch since it
-> fixes the bug.
->
-> The tricky part in deferred_list_scan() is always the use of
-> folio->_deferred_list without taking split_queue_lock. I am thinking abou=
-t
-> use folio_batch to store the out-of-split_queue folios, so that _deferred=
-_list
-> will not be touched when these folios are tried to be split. Basically,
->
-> 1. loop through split_queue and move folios to a folio_batch until the
->    folio_batch is full;
-> 2. loop through the folio_batch to try to split each folio;
-> 3. move the remaining folios back to split_queue.
->
-> With this approach, split_queue_lock might be taken more if there are
-> more than 31 (folio_batch max size) folios on split_queue and split_queue=
-_lock
-> will be held longer in step 3, since the remaining folios need to be
-> added back to split_queue one by one instead of a single list splice.
 
-IMHO, the folio_batch approach is worth trying. The deferred list lock
-is just held when deleting folio from deferred list and updating the
-list len. Re-acquiring the lock every 31 folios seems not very bad. Of
-course, some benchmark is needed.
+> Performance problems may occur if there is a problem with the
+> asymmetric connected lane such as h/w failure. Currently, only check
+> connected lane for rx/tx is checked if it is not 0. But it should also
+> be checked if it is asymmetrically connected.
 
-The other subtle thing is folio->_deferred_list is reused when the
-folio is moved to the local on-stack list. And some
-list_empty(deferred_list) checks return true even though the folio is
-actually on the local on-stack list. Some code may depend on or
-inadvertently depend on this behavior. Using folio_batch may break
-some assumptions, but depending on this subtle behavior is definitely
-not reliable IMHO.
+Applied to 6.13/scsi-staging, thanks!
 
->
-> Let me know your thoughts. I can look into this if this approach sounds
-> promising. Thanks.
->
->
-> Best Regards,
-> Yan, Zi
+-- 
+Martin K. Petersen	Oracle Linux Engineering
 
