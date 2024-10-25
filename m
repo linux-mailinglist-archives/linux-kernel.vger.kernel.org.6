@@ -1,78 +1,114 @@
-Return-Path: <linux-kernel+bounces-382758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA9D59B1303
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 00:59:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E77219B1304
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 01:02:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B44EA282C4E
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 22:59:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D34BF1C2298C
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 23:02:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A71D20651D;
-	Fri, 25 Oct 2024 22:59:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22BB21D3656;
+	Fri, 25 Oct 2024 23:02:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aCfEWYZQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Gif7aYCh"
+Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EBCC1CEE98;
-	Fri, 25 Oct 2024 22:59:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A574842AA4
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 23:02:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729897175; cv=none; b=c/nGYoe2XJKAc8s0HeAotR9Rf39+uiD+BwUpztVEQBWW8KURoK87rXwekiGDZ1wqE5lmHbdYCAVeqMr9cSmlmVkKxaSd4NWY9DM6P0O53G6op4CajSqdq3ra5d4TzZTAL/sV4/MrUDSZmW+noFw0ufIitGETilFztZSvQ+Wioes=
+	t=1729897354; cv=none; b=nfQxFB8HIk9gk4qKvMDWTDyx1bR9/PhpEtSi2qlZxqI1Y7LjaXqpXm3SIdaAIjnXJyCmyCqE+Xop1tElFFoqqXPm8qoOEDPFL/FdPFs4GNM/KQr5f05M69PQ3ec0HbUJaeGnVicaxCirROI+CFUECP4IBs4PGe1bR5xvqgouqMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729897175; c=relaxed/simple;
-	bh=NTGgpjY12du3cbB1uiIDOxDLVnU8Dp47TfJiDstOOd8=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=JjlD7o1hIKfZXopOQf5gDlgBBkSHgC030aUJ7Aizhn1lkRTmueG2MIb6GTEcr9bOuABnrVQbMDkLjkgcuAL6UzFzC7FpaNvwbW3u8vrCZylNgAYY0zXX+6/xa0TYARhXtmcAyYtK/Ld4L3DzDwL37zc5yE0qCSXKgdhP13Xpwuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aCfEWYZQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DFC5C4CEC3;
-	Fri, 25 Oct 2024 22:59:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729897175;
-	bh=NTGgpjY12du3cbB1uiIDOxDLVnU8Dp47TfJiDstOOd8=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=aCfEWYZQ3Hy+5b9oryznBXuJxhOp8NCrVO079e7+sA1hKbaLZuGKZFrA4hIME3B6v
-	 i8HkfKPpkdDf5PPDA1GPNjRFavR5lw37ZQlR/CJ4LBDfmeQmSS0USHRL1pZ/170SFo
-	 O1/gZePt+LFZSv5LRgVyDIDri+EUAdxnMycRrVZuV9Hl5O+qTSJ/b498Hqlnbe6qNi
-	 YMhv/ajUyF4y3xQd47lcdbxJoyqv0mvp6oZF84fY1F5G26JPyk3oC6Uu2lfYInHRiF
-	 XEaSbGLzIIymfLSXWreuwZaiOb25DPaT32dQQ1+do8nV3/eT8Q/8rbZrU47NT+aI54
-	 VoFBEoA2VLDRA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70F773809A8A;
-	Fri, 25 Oct 2024 22:59:43 +0000 (UTC)
-Subject: Re: [GIT PULL] more 9p reverts for 6.12-rc5
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <ZxwPQTUCnbGEt1KQ@codewreck.org>
-References: <ZxwPQTUCnbGEt1KQ@codewreck.org>
-X-PR-Tracked-List-Id: <v9fs.lists.linux.dev>
-X-PR-Tracked-Message-Id: <ZxwPQTUCnbGEt1KQ@codewreck.org>
-X-PR-Tracked-Remote: https://github.com/martinetd/linux tags/9p-for-6.12-rc5
-X-PR-Tracked-Commit-Id: be2ca3825372085d669d322dccd0542a90e5b434
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 850925a8133c73c4a2453c360b2c3beb3bab67c9
-Message-Id: <172989718186.3095439.2377412556751777379.pr-tracker-bot@kernel.org>
-Date: Fri, 25 Oct 2024 22:59:41 +0000
-To: Dominique Martinet <asmadeus@codewreck.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Will Deacon <will@kernel.org>, Christian Schoenebeck <linux_oss@crudebyte.com>, Eric Van Hensbergen <ericvh@kernel.org>, v9fs@lists.linux.dev, linux-kernel@vger.kernel.org, Thorsten Leemhuis <regressions@leemhuis.info>
+	s=arc-20240116; t=1729897354; c=relaxed/simple;
+	bh=J90Pj19ccmEPx/0yEfSYXuEQcFsXj7M+RYrcVA5Ty+M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Bb7CHLgimr+uP3akIGY57zJNL/9gBFZGsNyANCbUJPW8nOfP9hwLXdUcfe1A9plmVs2tSZfPVMbuCmZ0Uea0BhrI7txjkG09X4QyT9i7bRFLcQI+Qxq6WbZA/1QP6brrPOkb86aMf8LnFuMD3V7vp9ByaM0bHyA94l4X6uXijkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Gif7aYCh; arc=none smtp.client-ip=91.218.175.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Fri, 25 Oct 2024 19:02:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1729897349;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VPzsJzIsAez3i0wMGgH+AnxCK9b1hApXiViSv0TBZ1s=;
+	b=Gif7aYChJYVH9yw9BpNkBpaw8VEZ9m0IlDUbwdt3Bq/CWwHg+M7ckEvqnqkCmZ4JYkg1VS
+	EavXD18x/bjOtIegQezb8eaQmpLOwk3GS5DhhHsJYwNYpXbe869tjF8di41o4tRtRAur5J
+	6L5AteU+4TgLthW8tdifU7kYMHAdSFQ=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: John Stoffel <john@stoffel.org>
+Cc: manas18244@iiitd.ac.in, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Anup Sharma <anupnewsmail@gmail.com>, 
+	Shuah Khan <skhan@linuxfoundation.org>, syzbot+e8eff054face85d7ea41@syzkaller.appspotmail.com
+Subject: Re: [PATCH] Revert "bcachefs: Add asserts to
+ bch2_dev_btree_bitmap_marked_sectors()"
+Message-ID: <ecj7k7b7buss7f7vhfzzsvnq6hdka3wziytih42g76yt2zgh3j@lo5f2n2lujk3>
+References: <20241021-revert-assert-bch2-v1-1-e869c7c55bb6@iiitd.ac.in>
+ <rd4maufxfunrcpzkoo2jszorzl256fiktw3p5yfpnjpu2ajh4l@5wvkfxwzajax>
+ <26394.37450.21740.720541@quad.stoffel.home>
+ <bv4dfgmq4wmfcon2thkvhthqjlrpr5h4nmhfuusj4lh2wrj5ao@ckmvt63s67r6>
+ <26396.3323.858567.266417@quad.stoffel.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <26396.3323.858567.266417@quad.stoffel.home>
+X-Migadu-Flow: FLOW_OUT
 
-The pull request you sent on Sat, 26 Oct 2024 06:36:01 +0900:
+On Fri, Oct 25, 2024 at 05:26:19PM -0400, John Stoffel wrote:
+> >>>>> "Kent" == Kent Overstreet <kent.overstreet@linux.dev> writes:
+> 
+> > On Thu, Oct 24, 2024 at 02:30:34PM -0400, John Stoffel wrote:
+> >> >>>>> "Kent" == Kent Overstreet <kent.overstreet@linux.dev> writes:
+> >> 
+> >> > On Mon, Oct 21, 2024 at 10:18:57PM +0530, Manas via B4 Relay wrote:
+> >> >> From: Manas <manas18244@iiitd.ac.in>
+> >> >> 
+> >> >> This reverts commit 60f2b1bcf519416dbffee219132aa949d0c39d0e.
+> >> >> 
+> >> >> This syzbot bug[1] is triggered due to the BUG_ON assertions added in
+> >> >> __bch2_dev_btree_bitmap_mark. During runtime, m->btree_bitmap_shift is
+> >> >> 63 '?'. This triggers both the assertions.
+> >> 
+> >> > The BUG_ON() doesn't need to be deleted; we just need to fix the
+> >> > validation so it doesn't fire (it doesn't particularly matter if it's
+> >> > removed or not, ubsan would catch it without the BUG_ON()).
+> >> 
+> >> Shouldn't the BUG_ON() be replaced with making the filesystem readonly
+> >> instead if you're going to keep it?  I'd rather have the filesystem
+> >> still be mounted and able to be read, but not writeable, instead of
+> >> having my system crash before I can do anything.  
+> 
+> > Not in this case. In general, if there's a chance of the BUG_ON()
+> > hitting in the wild after the code has passed testing then it
+> > shouldn't be a BUG_ON(), but this is low level validation that we're
+> > relying on.
+> 
+> So I'm having a hard time parsing this reply.  And I don't think you
+> make a good case for leaving or even having a BUG_ON() here at all.
+> If there's a chance of it hitting in the wild, it should be removed.
+> But you don't want to remove it because it will never hit?  That's
+> just lazy... :-)   I just don't see why a filesystem should have the
+> opportunity to kill an entire system because that one filesystem has
+> problems.  
 
-> https://github.com/martinetd/linux tags/9p-for-6.12-rc5
+No, it's not lazy.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/850925a8133c73c4a2453c360b2c3beb3bab67c9
+Code with assertions is much more robust and reliable, because bugs
+shake out faster. An assertion pop is _much, much_ easier to debug than
+wandering off into undefined behaviour land.
 
-Thank you!
+Assertions are also documentation that can't go out of date.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+They make later refactoring much safer and easier, as well.
 
