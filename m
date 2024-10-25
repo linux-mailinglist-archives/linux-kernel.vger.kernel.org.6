@@ -1,132 +1,127 @@
-Return-Path: <linux-kernel+bounces-382653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAA5C9B117B
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 23:10:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A461A9B117D
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 23:11:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87C2FB23EB0
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 21:10:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 503621F2AE1C
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 21:11:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6719D21CD8E;
-	Fri, 25 Oct 2024 21:06:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4E34216DF8;
+	Fri, 25 Oct 2024 21:06:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dHPY7FII"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=uliege.be header.i=@uliege.be header.b="vV9hKXVF"
+Received: from serv108.segi.ulg.ac.be (serv108.segi.ulg.ac.be [139.165.32.111])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B945E21C2F1;
-	Fri, 25 Oct 2024 21:06:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1706213120;
+	Fri, 25 Oct 2024 21:06:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=139.165.32.111
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729890370; cv=none; b=IYXSzQsSSbVuHDU7Ks7Ill4/VVO3vxkYZ/9upXebFOB6ReB+T0Al6Ejh5gh8QRqO46aYS+euXufJqSkPGVFe5GP0NrfsTHgjRq8oXgO3drR6+qw16RjszCZSz6Go1C5wWfRpd5Z5X58ENoLfiAu2DG10yw5Y5wu6tuGPjtjDfYM=
+	t=1729890402; cv=none; b=nlwHH0rdFA2Y4YC3Dnwi0OmCBbck19C4AcRx6VUb8woZ28kuxhFop5FdKzrC8OnW4jy5S7bimnfu6PB2p4v+3VC4Ime4XhVwKrHIpHtNPYEHg9m3VfQEFDVVsyKQ8EMdTij63fGH/EZ3yQHAL8LAqyelksqwmrQxg/vAmxvFYYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729890370; c=relaxed/simple;
-	bh=SbDhiQQsJeI/5H0yQes94SuNKiHafq1al/d5HAKaqTs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=TnzBjUhFOYBssvUXJhpDVOX7abP80wF9KegfvxZkp+OoFVwtvdaa3HOkUaHSi7sABbMngng+WGJz2M30acTHqRyGDpajXKFRLH4s72LL803eOjADo+k1wwAsMOZ6h6l2AyG9Z80Wxw31rNunWRKD6aMEp41O5IY9w25ZuvjgdvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dHPY7FII; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36BFBC4CEC3;
-	Fri, 25 Oct 2024 21:06:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729890370;
-	bh=SbDhiQQsJeI/5H0yQes94SuNKiHafq1al/d5HAKaqTs=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=dHPY7FIIJaavcX+kyElBfHkBhuIvWKd2QEGKyFTdJDg/q0rtBR0yVJAkFpSZqw+uN
-	 VflU2EaCO5jVBwOxb1apowsxT2BFY5vDDY01ArWcXPBbXHgQQ7tLW6OZckUaFdPj07
-	 hmgqK2eap9ILI4fFF+LTsoT2YyrIrSokJM+uVm34qyqT/WU8ROTdUc2N9+7wdau3Ul
-	 ocyrFupWE+4AthipacC2YQIw8JwS4J4mwonhW1Wuta6lW53w3SYK3D7/r0yUyMXbd5
-	 cIi6d6U1JCPMLhYPGzKwHr5vnXKBASRwu0OdDG9Ui5ZlSEaJKmXmVvGhtN2/LolMG9
-	 ie5v6kYu+TkHw==
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Date: Fri, 25 Oct 2024 16:05:48 -0500
-Subject: [PATCH RFC 3/3] samples: rust: platform: Add property read
- examples
+	s=arc-20240116; t=1729890402; c=relaxed/simple;
+	bh=pqNdeGqpS3ELJrftLu6CbADN4Yt/eviDgPqQ891h5Fs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tHKo9xuQ3rHETKj9DLmeBkpwoo0ritle7dKzCacXZ7jBe7nM4fhtB14qjTj/Mi5QKS6crL3G2WpAdz8ItDTNXfbxnctr0OPUSAHzemH9wWB0FD1AMpKWRDuMAtxHs/W13zDy4Z7wyPvmjlMAeztZuHpk1iypI0cCN2N+gh0LBP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uliege.be; spf=pass smtp.mailfrom=uliege.be; dkim=pass (2048-bit key) header.d=uliege.be header.i=@uliege.be header.b=vV9hKXVF; arc=none smtp.client-ip=139.165.32.111
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uliege.be
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uliege.be
+Received: from [192.168.1.58] (220.24-245-81.adsl-dyn.isp.belgacom.be [81.245.24.220])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by serv108.segi.ulg.ac.be (Postfix) with ESMTPSA id E5CAF200F487;
+	Fri, 25 Oct 2024 23:06:36 +0200 (CEST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 serv108.segi.ulg.ac.be E5CAF200F487
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uliege.be;
+	s=ulg20190529; t=1729890397;
+	bh=o9yNod9FcRqEk/LV8Ey+bAHerVAR7xSMn0rxDJz6Na0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=vV9hKXVFz9ut42jGdcVedjr1G3AAGvkvIm4b8q4izH8/0p76RfijBnuCutNvIsgZ4
+	 4NhqBpOG6USBege9j6n8hQPIEfgPrUqETQfVVKMc391k8meW1+/7QznQBElFzayQNO
+	 xemuzEITNXY6qV+T92Tz0AILaoNS6r7A/Mbm9WTCKuDVuBwl9R+R11nLsLpMa18yHZ
+	 KFUspj43xIomAK+2DBnL1vXLgpmLduB4Sv99L8TuzXeMolyLYYTXTJiNsk4SUxToNk
+	 Y7Ehlbd4o3h6wvzjwc6sSll6zBc2v6sAMlFV0z1INe5x0UE4Th7abxHLzdlsz/0r8u
+	 RR3M1mVD3D1pw==
+Message-ID: <d3bce110-4b1b-44ed-8c1d-a9736a02f1dd@uliege.be>
+Date: Fri, 25 Oct 2024 23:06:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next 1/3] net: ipv6: ioam6_iptunnel: mitigate
+ 2-realloc issue
+To: Alexander Lobakin <aleksander.lobakin@intel.com>
+Cc: netdev@vger.kernel.org, davem@davemloft.net, dsahern@kernel.org,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241025133727.27742-1-justin.iurman@uliege.be>
+ <20241025133727.27742-2-justin.iurman@uliege.be>
+ <59a875a9-2072-467d-8989-f01525ecd08c@intel.com>
+Content-Language: en-US
+From: Justin Iurman <justin.iurman@uliege.be>
+In-Reply-To: <59a875a9-2072-467d-8989-f01525ecd08c@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241025-rust-platform-dev-v1-3-0df8dcf7c20b@kernel.org>
-References: <20241025-rust-platform-dev-v1-0-0df8dcf7c20b@kernel.org>
-In-Reply-To: <20241025-rust-platform-dev-v1-0-0df8dcf7c20b@kernel.org>
-To: Saravana Kannan <saravanak@google.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
- Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
- Gary Guo <gary@garyguo.net>, 
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
- Benno Lossin <benno.lossin@proton.me>, 
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
- Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
- Dirk Behme <dirk.behme@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- rust-for-linux@vger.kernel.org
-X-Mailer: b4 0.15-dev
 
-Add some example usage of the device property read methods for
-DT/ACPI/swnode properties.
+On 10/25/24 17:12, Alexander Lobakin wrote:
+> From: Justin Iurman <justin.iurman@uliege.be>
+> Date: Fri, 25 Oct 2024 15:37:25 +0200
+> 
+>> This patch mitigates the two-reallocations issue with ioam6_iptunnel by
+>> providing the dst_entry (in the cache) to the first call to
+>> skb_cow_head(). As a result, the very first iteration would still
+>> trigger two reallocations (i.e., empty cache), while next iterations
+>> would only trigger a single reallocation.
+> 
+> [...]
+> 
+>>   static int ioam6_do_inline(struct net *net, struct sk_buff *skb,
+>> -			   struct ioam6_lwt_encap *tuninfo)
+>> +			   struct ioam6_lwt_encap *tuninfo,
+>> +			   struct dst_entry *dst)
+>>   {
+>>   	struct ipv6hdr *oldhdr, *hdr;
+>>   	int hdrlen, err;
+>>   
+>>   	hdrlen = (tuninfo->eh.hdrlen + 1) << 3;
+>>   
+>> -	err = skb_cow_head(skb, hdrlen + skb->mac_len);
+>> +	err = skb_cow_head(skb, hdrlen + (!dst ? skb->mac_len
+>> +					       : LL_RESERVED_SPACE(dst->dev)));
+> 
+> You use this pattern a lot throughout the series. I believe you should
+> make a static inline or a macro from it.
+> 
+> static inline u32 some_name(const *dst, const *skb)
+> {
+> 	return dst ? LL_RESERVED_SPACE(dst->dev) : skb->mac_len;
+> }
+> 
+> BTW why do you check for `!dst`, not `dst`? Does changing this affects
+> performance?
 
-Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
----
- drivers/of/unittest-data/tests-platform.dtsi |  3 +++
- samples/rust/rust_driver_platform.rs         | 22 ++++++++++++++++++++++
- 2 files changed, 25 insertions(+)
+Not at all, you're right... even the opposite actually. Regarding the 
+static inline suggestion, it could be a good idea and may even look like 
+this as an optimization:
 
-diff --git a/drivers/of/unittest-data/tests-platform.dtsi b/drivers/of/unittest-data/tests-platform.dtsi
-index 2caaf1c10ee6..a5369b9343b8 100644
---- a/drivers/of/unittest-data/tests-platform.dtsi
-+++ b/drivers/of/unittest-data/tests-platform.dtsi
-@@ -37,6 +37,9 @@ dev@100 {
- 			test-device@2 {
- 				compatible = "test,rust-device";
- 				reg = <0x2>;
-+
-+				test,u32-prop = <0xdeadbeef>;
-+				test,i16-array = /bits/ 16 <1 2 (-3) (-4)>;
- 			};
- 		};
- 	};
-diff --git a/samples/rust/rust_driver_platform.rs b/samples/rust/rust_driver_platform.rs
-index 5cf4a8f86c13..95c290806862 100644
---- a/samples/rust/rust_driver_platform.rs
-+++ b/samples/rust/rust_driver_platform.rs
-@@ -41,6 +41,28 @@ fn probe(pdev: &mut platform::Device, info: Option<&Self::IdInfo>) -> Result<Pin
-             }
-         };
- 
-+        let dev = pdev.as_ref();
-+        if let Ok(idx) = dev.property_match_string(c_str!("compatible"), c_str!("test,rust-device"))
-+        {
-+            dev_info!(pdev.as_ref(), "matched compatible string idx = {}\n", idx);
-+        }
-+
-+        let prop = dev.property_read_bool(c_str!("test,bool-prop"));
-+        dev_info!(dev, "bool prop is {}\n", prop);
-+
-+        let _prop = dev.property_read::<u32>(c_str!("test,u32-prop"))?;
-+        let prop: u32 = dev.property_read(c_str!("test,u32-prop"))?;
-+        dev_info!(dev, "'test,u32-prop' is {:#x}\n", prop);
-+
-+        let prop: [i16; 4] = dev.property_read_array(c_str!("test,i16-array"))?;
-+        dev_info!(dev, "'test,i16-array' is {:?}\n", prop);
-+        dev_info!(
-+            dev,
-+            "'test,i16-array' length is {}\n",
-+            dev.property_count_elem::<u16>(c_str!("test,i16-array"))
-+                .unwrap()
-+        );
-+
-         let drvdata = KBox::new(Self { pdev: pdev.clone() }, GFP_KERNEL)?;
- 
-         Ok(drvdata.into())
+static inline u32 dev_overhead(struct dst_entry *dst, struct sk_buff *skb)
+{
+	if (likely(dst))
+		return LL_RESERVED_SPACE(dst->dev);
 
--- 
-2.45.2
+	return skb->mac_len;
+}
 
+The question is... where should it go then? A static inline function per 
+file (i.e., ioam6_iptunnel.c, seg6_iptunnel.c, and rpl_iptunnel.c)? In 
+that case, it would still be repeated 3 times. Or in a header file 
+somewhere, to have it defined only once? If so, what location do you 
+think would be best?
 
