@@ -1,164 +1,97 @@
-Return-Path: <linux-kernel+bounces-381550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 519ED9B00BF
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 13:01:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 549BE9B00C2
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 13:02:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75D4F1C22A2D
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 11:01:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E877B21581
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 11:02:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E878B1E378A;
-	Fri, 25 Oct 2024 11:01:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E57C61D356E;
+	Fri, 25 Oct 2024 11:02:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jlKfz4sk"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pRHeK0Fx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40CB422B66D;
-	Fri, 25 Oct 2024 11:01:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3247D1FBF56;
+	Fri, 25 Oct 2024 11:02:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729854100; cv=none; b=oxsj2TwEtIq+aOHplk8AQgRZeTuPHM1GJlaVl/RfOfF+6TZfKangeOwiCCO/jD0sJo/FPWchfct/o1yRzJHgGPWZj/Pc4LIsNqGjCOBPtx4kVi7RgcjenrIwyJJ297rRCAiNx3KmevHoPyUKoRCEW/UNiFABzuQBIiiONlkHODg=
+	t=1729854127; cv=none; b=sGn019SwhAjMrMXlukcg2xMjx1BqNVxgVxAQRUSZnU1gjYikHZOdkHfCerhVOqoRPBtk7eQTYN56BBPo+pWSOVmJsv/VSSYVhyy5fsAaWc27dS0f14/GFws+zi8xW/n/frBhnhHOGUD12uN1OhU3xS38M8RV/baYy/S1+NPmNLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729854100; c=relaxed/simple;
-	bh=EpHGxI23HwWs0Hol513n9znHEe1tbFyOOGZIsqP4KqA=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CXKk0bOdQuWMxxWQhMxZNYF0T1nboVwskK6JRWgkcUfKBpjTWFpwHjzpr5qOjLbL8i03gr2c69trh1VPz5xv6W2zAUH/YqZNe+NiQ2XL1Tg17OCurSJDhEAbudAdYrnB7WLVbmfcoa8sCGUjw4bnVIR/Op2W4UynT5xeCvfIDXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jlKfz4sk; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-431695fa98bso18788505e9.3;
-        Fri, 25 Oct 2024 04:01:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729854096; x=1730458896; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=q2MW9dBfGIjPH9ia2UnRa1xMIgs+qL+dRFmTpOXPkFQ=;
-        b=jlKfz4skfBrhtKacLDEVybwUDUV76XHOq10r7bK7/75XFEfCF0rY/VTyM0f1FdLCEZ
-         ikk7xvjnwKDfVn7Ff2i5/5l/WO7eK1oSoUKS/3ilRibAqRFTKyNBR51EkaIRSdt24LDV
-         qVuIx5JyfesutlVsyEvMDz+jiROBz+JQZUzrmummDDz4kMQsHWv8HWGRxdoefLb1QpB5
-         7ALuPxjvZXoN6o5gljBcZjIXzc9a1+82xbdpgFdpfSCD0wnBsmbM7wD9tEISqRJYjshE
-         T/ngHSNYa4cBtcX782Q0xPPnVZx/5z6+rQAlVX6VmWqwDaRznYGVVNhISRggUfd4FJv9
-         +UWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729854096; x=1730458896;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=q2MW9dBfGIjPH9ia2UnRa1xMIgs+qL+dRFmTpOXPkFQ=;
-        b=R5M1CCWOf5Q39Zb3xczjffjiLEmsm+obOkPwWoP/Lx2W1ie6lH6oC5RVC1IB8XopZA
-         TvF4W0NosdoChKb2x7BFIAhLdSAuBF2/uPT1MYwGbQDOmuXgCBJft7h+ohlM0a2DHY01
-         Yps0yLDpB1j4aOlwr70WY7PpXt3eVnRVGsE7nvsusDgZf1jUVFXrAADX99b+CH98QL1z
-         /F1aBHwjj1h93LJHmRo+zovdPD8fjFKcjrjY3ZMgv2SKMQIm8lfAxSyzYJRLis/hDUlr
-         DjT+rZJqtAIt8kGFjBV+ENKs+B/yL0ZOA4IO+nrS1K5XHyXkP/j6WZ+LtPROQydFgZGd
-         +/yw==
-X-Forwarded-Encrypted: i=1; AJvYcCUWrhPKb5bIC+F/sULoqm0ZjG0bfn3Z+HQ1SazFxZiK7CoZdwUfJNRXpu306su7mNyAV+a1bS6hMpvx@vger.kernel.org, AJvYcCUaBzY1wmVAV8xFYlshzuI9lyJkDOPlL7bE4P0lUJfDOs1IQqonf4dH66+tRf0pjHTWdSA+ZFwSXmLFlqr0@vger.kernel.org, AJvYcCXAvP3D9UiBW8scBR4bBAEFPFAvwQPAEdmvS9QU/zsFReINBesRz19Ur1NkMo+NDLn7RyYi4bCC@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2BIyQAbGksFMvPz7iEyvqhecxsEV4P67euuYreKsjkqW8fUNx
-	u+dDjYQXlPdIeDTHgCwpbCnWVZ8K3EzQRtJ2P+X9CnOtcSMn67Et
-X-Google-Smtp-Source: AGHT+IFNhA5S7E2asJvPBIxZKjdqjJxeVzeuZAGwlEL6Zq8xq/EZ0pf8rhhnc8extFgzX6L5U64l5g==
-X-Received: by 2002:a05:600c:3b9c:b0:42f:7e87:3438 with SMTP id 5b1f17b1804b1-4318beac86fmr46015925e9.0.1729854096266;
-        Fri, 25 Oct 2024 04:01:36 -0700 (PDT)
-Received: from Ansuel-XPS. (93-34-91-161.ip49.fastwebnet.it. [93.34.91.161])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431935f744esm14487515e9.34.2024.10.25.04.01.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2024 04:01:35 -0700 (PDT)
-Message-ID: <671b7a8f.050a0220.5b160.446a@mx.google.com>
-X-Google-Original-Message-ID: <Zxt6i6Rq3Ylr1jnV@Ansuel-XPS.>
-Date: Fri, 25 Oct 2024 13:01:31 +0200
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Florian Fainelli <f.fainelli@gmail.com>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [net-next RFC PATCH v2 3/3] net: phy: Add Airoha AN8855 Internal
- Switch Gigabit PHY
-References: <20241023161958.12056-1-ansuelsmth@gmail.com>
- <20241023161958.12056-4-ansuelsmth@gmail.com>
- <4ad7b2e9-ddf1-4a82-9d60-7afd1856c770@lunn.ch>
- <67192d40.5d0a0220.33f6c1.23bc@mx.google.com>
+	s=arc-20240116; t=1729854127; c=relaxed/simple;
+	bh=ifAcyvypJDtlQncfdXN1N28xOgSvyoF3DwR5ovbT8m4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ibm7/zkutPxmDiW+ataoXR5vvBoeQTD1ueXuLKzRD6jIR5WSf4PsPlVxOh9B7e+uJ462vGBVRreUrA3cDrJNTAolrA2AoBkAqpOcPu3iaTky88KtQi5+j6lowV/WAlBramBX02gr9/Dks4e067a1/IZtcmqPjAblVfEzl4AqKbM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pRHeK0Fx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 056E7C4CECD;
+	Fri, 25 Oct 2024 11:02:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729854126;
+	bh=ifAcyvypJDtlQncfdXN1N28xOgSvyoF3DwR5ovbT8m4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=pRHeK0FxmsUycLEdiG+Rt5J8RXfkDNhWggHzxOQinJeiMMpL94wx9n4ypoxvShgJn
+	 jw4Sl3TBg/XoymFBtow9c3zlhmopy5cbnQmGdnAMc/pAC6KAMZ6jdEGrEZgcdEhEPA
+	 +ytHnlzSQpaV/c/ZIn8Arh2AG7s1AXr2KMcZkS8u8zo1HTwQz4k0/NMiEiq4zyltzK
+	 Xgjf2FbhTDay9TRSJjZMX38l5Cj6aUypuQHBy0AddALH2wtW+2OUnY4TLlkzTHVniu
+	 ffnCxkXuJHv0G64xNja/77OBfEg4c7pwtkUq+yjE4kl95PR3lNSivN/RA7N/nUKHgt
+	 nXBWRwMjxmdPg==
+From: Miguel Ojeda <ojeda@kernel.org>
+To: John Stultz <jstultz@google.com>,
+	Thomas Gleixner <tglx@linutronix.de>
+Cc: Stephen Boyd <sboyd@kernel.org>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Nicholas Mc Guire <hofrat@osadl.org>,
+	linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev,
+	Miguel Ojeda <ojeda@kernel.org>
+Subject: [PATCH 1/2] time: revert cleanup on msecs_to_jiffies() documentation
+Date: Fri, 25 Oct 2024 13:01:40 +0200
+Message-ID: <20241025110141.157205-1-ojeda@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <67192d40.5d0a0220.33f6c1.23bc@mx.google.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 23, 2024 at 07:07:08PM +0200, Christian Marangi wrote:
-> On Wed, Oct 23, 2024 at 07:00:22PM +0200, Andrew Lunn wrote:
-> > > +static int an8855_config_init(struct phy_device *phydev)
-> > > +{
-> > > +	struct air_an8855_priv *priv = phydev->priv;
-> > > +	int ret;
-> > > +
-> > > +	/* Enable HW auto downshift */
-> > > +	ret = phy_write(phydev, AN8855_PHY_PAGE_CTRL, AN8855_PHY_EXT_PAGE);
-> > > +	if (ret)
-> > > +		return ret;
-> > > +	ret = phy_set_bits(phydev, AN8855_PHY_EXT_REG_14,
-> > > +			   AN8855_PHY_EN_DOWN_SHFIT);
-> > > +	if (ret)
-> > > +		return ret;
-> > > +	ret = phy_write(phydev, AN8855_PHY_PAGE_CTRL, AN8855_PHY_NORMAL_PAGE);
-> > > +	if (ret)
-> > > +		return ret;
-> > 
-> > There are locking issues here, which is why we have the helpers
-> > phy_select_page() and phy_restore_page(). The air_en8811h.c gets this
-> > right.
-> 
-> Ugh didn't think about it... The switch address is shared with the PHY
-> so yes this is a problem.
-> 
-> Consider that this page thing comes from my speculation... Not really
-> use if 1f select page... 
-> From what I observed
-> 0x0 PHY page
-> 0x1 this strange EXT
-> 0x4 acess switch register (every PHY can access the switch)
->
+The documentation's intention is to compare `msecs_to_jiffies` (first
+sentence) with `__msecs_to_jiffies` (second sentence), which is what the
+original documentation did. One of the cleanups in commit f3cb80804b82
+("time: Fix various kernel-doc problems") may have thought the paragraph
+was talking about the latter since that is what it is being documented.
 
-Just to followup on this... I checked air_en8811h registers again and
-they match MII access to the switch so yes my speculation is correct.
+Thus revert that part of the change.
 
-Also extra happy since I now know what those magic values means at least
-for MII.
+Fixes: f3cb80804b82 ("time: Fix various kernel-doc problems")
+Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+---
+ kernel/time/time.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> > 
-> > Is there anything in common with the en8811h? Does it also support
-> > downshift? Can its LED code be used here?
-> > 
-> 
-> For some reason part of the LED are controlled by the switch and some
-> are by the PHY. I still have to investigate that (not giving priority to
-> it... just on my todo)
-> 
-> For downshift as you notice it's a single bit with no count...
-> From their comments in the original driver it's said "Enable HW
-> autodownshift"
-> 
-> Trying to reach them but currently it's all very obscure.
-> 
-> -- 
-> 	Ansuel
+diff --git a/kernel/time/time.c b/kernel/time/time.c
+index 642647f5046b..e1879ca32103 100644
+--- a/kernel/time/time.c
++++ b/kernel/time/time.c
+@@ -558,7 +558,7 @@ EXPORT_SYMBOL(ns_to_timespec64);
+  *   handling any 32-bit overflows.
+  *   for the details see __msecs_to_jiffies()
+  *
+- * __msecs_to_jiffies() checks for the passed in value being a constant
++ * msecs_to_jiffies() checks for the passed in value being a constant
+  * via __builtin_constant_p() allowing gcc to eliminate most of the
+  * code, __msecs_to_jiffies() is called if the value passed does not
+  * allow constant folding and the actual conversion must be done at
 
+base-commit: 42f7652d3eb527d03665b09edac47f85fb600924
 -- 
-	Ansuel
+2.47.0
+
 
