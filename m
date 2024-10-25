@@ -1,111 +1,145 @@
-Return-Path: <linux-kernel+bounces-381642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 051A79B01EC
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 14:09:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B26219B01EF
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 14:10:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD4112838A9
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 12:09:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76E532836C1
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 12:10:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9F882022E9;
-	Fri, 25 Oct 2024 12:09:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BA4A202F80;
+	Fri, 25 Oct 2024 12:10:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Z7xLYX+T"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="grndIlir"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D19641F81AF
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 12:09:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BB5A2022DA;
+	Fri, 25 Oct 2024 12:10:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729858191; cv=none; b=QEef00QDl8kaDXDNVmcDEuajczoy84c99RT37rVTTiA6c6qPymXuSOT9TOlV2j6zPaQWHsDZ2mopEwfa8wkII1Rl1dzFrWbZI6oVO5ah2J20yfexflaXb9K4SGI+5HSoD9Ku8WfIj9yNWPBoYVlUMiYK63RwxcrgfmWI31NV8UU=
+	t=1729858212; cv=none; b=sIrREFiWmpSRV/uu2CFJD+998MOMCF+D3Pp3KDD0nMLYlGuTmmz+f2vdHCKi9YC+Oh8Yu2EhErHwGYa9u+7TcqkZjjv12uoSawuYSxlESn7+ahjhz+wZlDTkLB2UNTmidxSU4dG2nvL71sfwJJBmCgGDWAOmygjPWXyYS0/JwZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729858191; c=relaxed/simple;
-	bh=QSqIp6r4ccaY1oM36iLizOPg9O6q8ZsIm5aAN5CBlCU=;
+	s=arc-20240116; t=1729858212; c=relaxed/simple;
+	bh=a0NkGOWfPXvuC0pRrY2V1xNhHthWDgHcKYifaYQcMuI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ummudiw5OXGUbmWTR5Nrzb3gDWQrzTRMaFOkGUuYBEumBKvpU/B+NLTba7h4r/wVpuUYjEc89O08qzZcus+bFIxhWcF6M1vLYEsQ5dumY+6l4sAHvIG9vldOhptYLVvU/H17aDZR8Q2D2yvMqbkMpyhP7iLujCqBHuXgHbdyL2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Z7xLYX+T; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id E876140E0169;
-	Fri, 25 Oct 2024 12:09:40 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id fJUtCPrt8Ui9; Fri, 25 Oct 2024 12:09:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1729858177; bh=RqnEXtnTmpXT6VkJxQWJF9ZhpvnTU6bjBIgOLGamDBc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Z7xLYX+T1s42ytLAxXIjY8EdT8DdCvPhvP65lye67OfVRBHIGXH2fVnBFTgV4+6ka
-	 +m91sCUKoh1Ain51kPihYG2LslRXLh+OGzYShssJ2UjoMz7ZSuIF3ZanxRZBHH9aJx
-	 Ne1TSjaLzdv8aSgrf1ICQ3EuaOdZgotoK+k5FAKm5EE8OCo09GG0PwYIKCdSmydTcv
-	 iQ/8ZiB+DU7hsMSH2jnoKvfNjnMdjEYtyFqQZUwxzyUGWri+bLhZFaYOY417qS2owg
-	 1F2FXQJuVgWosV0Enkt0yXFoMGK+LuCyvRQ6BiSznthUdo5UaduWdgf+1CCHsGKJHe
-	 nAZA8n9Y1onWc3sRniE/rqQBvFh7DiaMgkw/2B6z9+PXZ34jQu4P7chT/NTqodBNK3
-	 xtD28iBJmXnl33w7V0e34d9lzt0TvJl8YhorwlXgc+iBUIlV/MvoPFhbb+EweQ0DhS
-	 IPx4caxTZEImBR1u7sbsGlJsTvalb1a1kBne4RKZc8LnVZlgee74v/EIXY/A1zN/F0
-	 uYO74/pOpXE2UwWK6l/PsE6oIEIS8QVX4X2woRgQdiAo07WftAEi2IsWBQ6ROA9YuS
-	 K0sT9pqrypvngJ5jAT+sg/A0rr04NIXlbxZSJw3/l8K/KbAQg8CdxC/JNrdzr8L2ZV
-	 l+sG+0UexOWtl7FnbsCXhmgc=
-Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 0365840E0191;
-	Fri, 25 Oct 2024 12:09:26 +0000 (UTC)
-Date: Fri, 25 Oct 2024 14:09:20 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Michael Roth <michael.roth@amd.com>,
-	Ashish Kalra <ashish.kalra@amd.com>,
-	Nikunj A Dadhania <nikunj@amd.com>,
-	Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-Subject: Re: [PATCH v4 1/8] x86/sev: Prepare for using the RMPREAD
- instruction to access the RMP
-Message-ID: <20241025120920.GNZxuKcBsMvYTd0ki-@fat_crate.local>
-References: <cover.1729708922.git.thomas.lendacky@amd.com>
- <5e8bbb786f0579b615a5b32bddbf552e0b2c29c8.1729708922.git.thomas.lendacky@amd.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=DAISP3deAT0U/QTgCCf2vlkC+dZKe47kf68+hCAc253VYT54fakcpDuGvb8BZigPNPAsoOGUCk2y4H97eomWTmwg+4xFGmMbWmc7S70AZChJEiOecAtqA3HT+lBFHcIipCY+MRjz9PhYcFsIpM+SebCwHyPig8/ZmFD4QkEAaK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=grndIlir; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729858211; x=1761394211;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=a0NkGOWfPXvuC0pRrY2V1xNhHthWDgHcKYifaYQcMuI=;
+  b=grndIlirvwmJWQAfbj0CBCEvDKEt2cRMzFOmud3jEV+/q3q6JNn3tedq
+   YAUT+KvT4A80W6gqhuJ1+sPOj4u44TKBL8eMV1QrjUq7ipz4IKzEiJzFK
+   2Xbp9miwo1fprcOd8tllz0202o+r6DBoy5jcNERIs3yXOYo2W50y1eXGM
+   1hM5RwysnEzDj99nt/gw40PhO7JLp2zHuRy2jFowL5LQo6NamvtXr2C1G
+   JsZ/a32s4nERx/6npfu3lUBW9lEmSBHelAeit0YKvBnihrQphf0sYNVyl
+   wIH3xXHdMLQLnyQq3fHc/FluqnzI9CRj/zAuuRAMiI4yWtHrMAWL9Nprm
+   g==;
+X-CSE-ConnectionGUID: sTIWyVf7TqmmY6G6KXSezQ==
+X-CSE-MsgGUID: m+DIviJpTi+/nLhudoIzHQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="29692403"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="29692403"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2024 05:10:10 -0700
+X-CSE-ConnectionGUID: UO8b6M5ER5iqox+HpdnRPg==
+X-CSE-MsgGUID: g74Ybz18R9a361uG3aHnZg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,231,1725346800"; 
+   d="scan'208";a="111711060"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa001.fm.intel.com with ESMTP; 25 Oct 2024 05:10:03 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t4J8j-000YD2-0w;
+	Fri, 25 Oct 2024 12:10:01 +0000
+Date: Fri, 25 Oct 2024 20:09:47 +0800
+From: kernel test robot <lkp@intel.com>
+To: Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	=?iso-8859-1?Q?Ma=EDra?= Canal <mcanal@igalia.com>,
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Javier Martinez Canillas <javierm@redhat.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>
+Subject: Re: [PATCH 22/37] drm/vc4: txp: Add BCM2712 MOPLET support
+Message-ID: <202410251938.rnvcIesU-lkp@intel.com>
+References: <20241023-drm-vc4-2712-support-v1-22-1cc2d5594907@raspberrypi.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5e8bbb786f0579b615a5b32bddbf552e0b2c29c8.1729708922.git.thomas.lendacky@amd.com>
+In-Reply-To: <20241023-drm-vc4-2712-support-v1-22-1cc2d5594907@raspberrypi.com>
 
-On Wed, Oct 23, 2024 at 01:41:55PM -0500, Tom Lendacky wrote:
-> +/*
-> + * The RMP entry format as returned by the RMPREAD instruction.
-> + */
-> +struct rmpread {
+Hi Dave,
 
-Hmm, I'm not sure this is better. "rmread" is an instruction but then you have
-a struct called this way too. Strange. :-\
+kernel test robot noticed the following build warnings:
 
-I think you almost had it already with a little more explanations:
+[auto build test WARNING on 91e21479c81dd4e9e22a78d7446f92f6b96a7284]
 
-https://lore.kernel.org/r/20241018111043.GAZxJCM8DK-wEjDJZR@fat_crate.local
+url:    https://github.com/intel-lab-lkp/linux/commits/Dave-Stevenson/drm-vc4-Limit-max_bpc-to-8-on-Pi0-3/20241024-005239
+base:   91e21479c81dd4e9e22a78d7446f92f6b96a7284
+patch link:    https://lore.kernel.org/r/20241023-drm-vc4-2712-support-v1-22-1cc2d5594907%40raspberrypi.com
+patch subject: [PATCH 22/37] drm/vc4: txp: Add BCM2712 MOPLET support
+config: arc-randconfig-r111-20241025 (https://download.01.org/0day-ci/archive/20241025/202410251938.rnvcIesU-lkp@intel.com/config)
+compiler: arc-elf-gcc (GCC) 13.2.0
+reproduce: (https://download.01.org/0day-ci/archive/20241025/202410251938.rnvcIesU-lkp@intel.com/reproduce)
 
-The convention being that the _raw entry is what's in the actual table and
-rmpentry is what RMPREAD returns. I think this is waaay more natural.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410251938.rnvcIesU-lkp@intel.com/
 
-Hmmm.
+sparse warnings: (new ones prefixed by >>)
+   drivers/gpu/drm/vc4/vc4_txp.c:513:27: sparse: sparse: symbol 'bcm2712_mop_data' was not declared. Should it be static?
+>> drivers/gpu/drm/vc4/vc4_txp.c:527:27: sparse: sparse: symbol 'bcm2712_moplet_data' was not declared. Should it be static?
+
+vim +/bcm2712_moplet_data +527 drivers/gpu/drm/vc4/vc4_txp.c
+
+   526	
+ > 527	const struct vc4_txp_data bcm2712_moplet_data = {
+   528		.base = {
+   529			.name = "moplet",
+   530			.debugfs_name = "moplet_regs",
+   531			.hvs_available_channels = BIT(1),
+   532			.hvs_output = 4,
+   533		},
+   534		.encoder_type = VC4_ENCODER_TYPE_TXP1,
+   535		.high_addr_ptr_reg = TXP_DST_PTR_HIGH_MOPLET,
+   536		.size_minus_one = true,
+   537		.supports_40bit_addresses = true,
+   538	};
+   539	
 
 -- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
