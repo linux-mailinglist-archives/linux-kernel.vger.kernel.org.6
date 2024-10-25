@@ -1,191 +1,126 @@
-Return-Path: <linux-kernel+bounces-382387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45F009B0D15
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 20:22:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61FF79B0D17
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 20:22:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 695801C2279E
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 18:22:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6AD92841CA
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 18:22:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D2CF18DF91;
-	Fri, 25 Oct 2024 18:22:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0225800;
+	Fri, 25 Oct 2024 18:22:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gjcxmZ1Z"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="IRbI2otm"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F27D18BC0E;
-	Fri, 25 Oct 2024 18:22:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6094C18CC08
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 18:22:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729880560; cv=none; b=efbzicnPWGs6WzzvthtcV1tomrqTM8G7T9/B84j5PZXXvVlAb5wU+JK2vYCfTIb2SFRD/UKhJheYDVrfHqCa/NxJELjWVkDEJQ5DNLgw4pUz8zW5YqGCaMKsyAMudVAP/wYy142JFv3DkiQYNfXcXZw5tH1FI/yh3+KDprZsyco=
+	t=1729880562; cv=none; b=Ii85W2rVs/Rmhs7Da1hoCRGB3sj4Q3lA3dlzWWwgyPu1sAcImYlrHr0EvkiOmQjPMsM64pMG6Oec4IiUzGTEMMlRdXTDaeCUvRW1ggcEb5SRk9I2sDV7lRLDHJ2CQW8x0qDgamGyb7Z3EMVoft4hZaf2JGLIFSlI7O2hBvxSJkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729880560; c=relaxed/simple;
-	bh=/OBP+eHB23x72DLaO+CERFVjaZx2M1cz+29AbwRyQHY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CD8wELkQzf3ODx9HzPJG2M0z6iLYBACT0/NN5PGK04Z2dTdfrIC9h3zb4BPrtiGShWiPC/XKYuZwvCOIDYt2hgVgqWxT5tLaa/L2Zqgflr/UD814vGe1kEQznere50Lln4pwSwDaxSgzXHhUwWtlNXK5z+bNkjwS5nU/10N8NUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gjcxmZ1Z; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-20cdbe608b3so18915945ad.1;
-        Fri, 25 Oct 2024 11:22:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729880558; x=1730485358; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=CdZgAeQbXwDS7g4GyXvG4yiWM59tpYiPm04+9PqDW4I=;
-        b=gjcxmZ1ZcSSWo4b/CViiUE1d7N7H1lbzGVXRsZ8QQ5kbrsDntlsbnEI6jQpl3qbN3v
-         WJD1Hwen34j9HKWS/KUa29/XGLDYmzw5e/L0eE5ZinXoUJRf7zlOrWVUMqogCvnHDcym
-         Vl85mLIqhzPUukL4hZOJp0BTg2kZXcgmASLCz+55of15ta7j4NVNBa61JyoqFLclDSoY
-         tAOnADhDj3d+PUJ8COtCVB7Yh8LEJjFJuL7P8/DR0Co57MeFuv4peCCTsG7ko5vYeP3S
-         BUNCJjLUzb7TgtcnUP3US7h5kypxcRNOBH+5GHO6nZjfdxGDeIPWSQJOX7oovvXdPrEu
-         PY5w==
+	s=arc-20240116; t=1729880562; c=relaxed/simple;
+	bh=VVN0PdcmBPQfjoc1MTt87iX++qvbvC4L0wHPDemjHy8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tH5oUTgiB62SMYrURIS6augbjk1i2LJ+Xj7F8xyDfCSENNH4kUw4ljxFtGz/eSOmOgDvu3V1EN9riuKYAHbpfdsT/cQBoMgbZYdANqfI31cBnk+jAiom+NTbb/sIVJalOtNNn5cJlontKqAbez8TQlqcB9P95+29hPZMhgs7jr8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=IRbI2otm; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49PBPOdp026083
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 18:22:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	VVN0PdcmBPQfjoc1MTt87iX++qvbvC4L0wHPDemjHy8=; b=IRbI2otmkiWV9Q9B
+	9x8aLfekuffre+yqorP4enPhLFiv83I3ZNfDpWeai6qHKM8pxGbPxb5lONV+gtFY
+	+bFGuKSJx+Rx6P6TA77fs919SJV+MfOOypD1Teov+O4tv2NUuBZJr0t+1z+EH5+r
+	BexsZhwH38JC8vixAIsqNA6LRdLxuJ+2cETL+VnLiepK4KxT2cmH3kfO567XJEct
+	jt9Qi3zJ568g3guSDhBYJ80kkFxTBmZ1SZeeYqw3gklXT7jKPY5A04ZEci2i+0hu
+	0Ceb+yRhdOgPdhqxyqIGRUTEf0uDvDCGYU/J3J4Rq5Qr5VtgOg1CIeTuUSfkDceE
+	ELF+vg==
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42em3wt3y4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 18:22:39 +0000 (GMT)
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6cbe944435fso3693316d6.1
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 11:22:39 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1729880558; x=1730485358;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CdZgAeQbXwDS7g4GyXvG4yiWM59tpYiPm04+9PqDW4I=;
-        b=a/m/2ioHQgrgsCdEg7BPtw39OsdAqN6zQglAW9QqF1cFdgRRVjoHoq2A/lNmVcFiZe
-         KEkqPU2t8wpvsQ8BvYtHZ4zoOooyY2t7oSniGL4DTOp5nClrDFcQw52VnV0y+2ow3fT6
-         8gG1ZuzoWOumAnm011/EZfRVKnuyyRGmyJw9fAYWkRF5gCGMW7E1o94PB9nzF598hOOE
-         7xiIJN41dKQbvIDr0VPsc+sqgoM1uAuLoo0GDSLjThyA5U/SpGJ8oOnpGKV8Bm+1puK2
-         YFeaXU1dOtOQAtkZENGxRc38du4d8v0ZsOBv1dGaR1epZbP7c50W3peNIv7KF+3Exf6i
-         FLGA==
-X-Forwarded-Encrypted: i=1; AJvYcCU+vfiaIqVHUVC/han6BGjfsaEOuJrchn1j0HgjoBZIdkJUjxCO1C1d6Sz+dRe99pF7m0LlAVtLFsSb@vger.kernel.org, AJvYcCXWeQmS49tX3nDjZgMgJhFMc2uBdycIYReMe58s8H2akhQLMdTctPb/Nr05qvUgYdHkOtra6vKrOuary0+6@vger.kernel.org
-X-Gm-Message-State: AOJu0YyaKxqCGg2DIeslFFfjKZyyd+edDWVioV6CUYcEF5xWfQmkrJzC
-	lkDbuWf1x21Q2TZJcOEY7LFWkSvHFSnkc+u7D5RMFT16d0cmzoi9
-X-Google-Smtp-Source: AGHT+IECgj/DRT4MIRpjfxiNTH0AcYMnjzisn+25RaTmGnxcNSh6nxoiQDFDrmRc5aFmXn9tiE4VBQ==
-X-Received: by 2002:a17:902:e951:b0:20b:6458:ec83 with SMTP id d9443c01a7336-210c686c57fmr1051845ad.4.1729880557787;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VVN0PdcmBPQfjoc1MTt87iX++qvbvC4L0wHPDemjHy8=;
+        b=NETGSowOmIBZ/nW+xXlB49tenlISzrix4P7cYqdAv1XRyIXAu1BVOsSRHwoEIv/IqK
+         XC/Vsmk8LHR+zvYTknMF+ASMIwIhb7KByBxx/szFwg6XOClulAhFB+Mad+DViSX6G2xa
+         nOEnrakBS0ZoYtyP2crlZKB/1iTbBzYeLRbC5vy9X0yiYh5EESpzMUh/HoCbSb4BDr83
+         PNsHx1Yjkm0MdkdeTlxryq3yxU3KmNJFebPIcw18GMTIOOsDU+TF99lLchg9Qf1mev/w
+         OUWRiZeBUNF+DB4ab8PusoQxcaLNCXQKGBug5ouWSPyNGn/N7sem1xzjlS+aVM5rONbC
+         QJyA==
+X-Forwarded-Encrypted: i=1; AJvYcCVPHxH6elefa7HGUpXDDteX0hGsZZy2I+5JVPs58K3/AdUZQ7wUB3LAGRRXzlknIabk1N2pLR0BKeAxPZc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0q5zNywApOQ5Kv9H7N1k9eXGRTixhy1xBI9y7OCamWlOr8ebz
+	gZNlJwf+SjUn+2wvYVgDtcmWA4A7hwPBUDFzqnAcUIxyB5vz5ZvMR5nvtPCvS9fF1pfFq4CdHx/
+	hfyuHMNJdUFD035h9vKrqykqo414IvgmcycCvnqjoCSIs2OlKPC3BA8InXSJ/qFQ=
+X-Received: by 2002:ad4:5768:0:b0:6c5:1267:a821 with SMTP id 6a1803df08f44-6d18568ee91mr2660236d6.4.1729880558537;
+        Fri, 25 Oct 2024 11:22:38 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IErYETrz5z+JTzJDS/w6aa74JBTcFF+3fs+FeslWWgXc2PFwmJ7slZ9PvjLEovXl/4iUj0HKA==
+X-Received: by 2002:ad4:5768:0:b0:6c5:1267:a821 with SMTP id 6a1803df08f44-6d18568ee91mr2660006d6.4.1729880558262;
+        Fri, 25 Oct 2024 11:22:38 -0700 (PDT)
+Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b3a084ae4sm95214166b.197.2024.10.25.11.22.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
         Fri, 25 Oct 2024 11:22:37 -0700 (PDT)
-Received: from Emma ([2401:4900:1c96:f151:5054:ff:fe53:2787])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bc043d13sm12038805ad.233.2024.10.25.11.22.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2024 11:22:37 -0700 (PDT)
-Date: Fri, 25 Oct 2024 18:22:28 +0000
-From: Karan Sanghavi <karansanghvi98@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Ray Jui <rjui@broadcom.com>, 
-	Scott Branden <sbranden@broadcom.com>, devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Shuah Khan <skhan@linuxfoundation.org>, Alexander Aring <alex.aring@gmail.com>, 
-	Eric Anholt <eric@anholt.net>
-Subject: Re: [PATCH v2] dt-bindings: soc: bcm: Convert
- raspberrypi,bcm2835-power to Dt schema
-Message-ID: <zaqykppssizdpd2mynpoatp4smbzkr7atuurxkkegbegk5dw6s@a2daqovt2aod>
-References: <20241022-raspberrypi-bcm2835-power-v2-1-1a4a8a8a5737@gmail.com>
- <lfzxcilud65ype66frb7eihq2hvranzxp6fomjvjyxvciiixlj@2efv5266wt5r>
+Message-ID: <070ebd3e-f521-4592-ac7f-277c294e73f9@oss.qualcomm.com>
+Date: Fri, 25 Oct 2024 20:22:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <lfzxcilud65ype66frb7eihq2hvranzxp6fomjvjyxvciiixlj@2efv5266wt5r>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 07/11] clk: qcom: rpmh: add support for SAR2130P
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241025-sar2130p-clocks-v3-0-48f1842fd156@linaro.org>
+ <20241025-sar2130p-clocks-v3-7-48f1842fd156@linaro.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20241025-sar2130p-clocks-v3-7-48f1842fd156@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: wFCAqQ4lRP5wZNOxj0H7CZ60eBz8D6Lb
+X-Proofpoint-ORIG-GUID: wFCAqQ4lRP5wZNOxj0H7CZ60eBz8D6Lb
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 phishscore=0
+ mlxlogscore=740 lowpriorityscore=0 malwarescore=0 suspectscore=0
+ spamscore=0 mlxscore=0 impostorscore=0 clxscore=1015 priorityscore=1501
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410250140
 
-On Wed, Oct 23, 2024 at 09:12:53AM +0200, Krzysztof Kozlowski wrote:
-> On Tue, Oct 22, 2024 at 06:17:03PM +0000, Karan Sanghavi wrote:
-> > Convert the raspberrypi,bcm2835-power binding to Dt schema
-> > 
-> > Signed-off-by: Karan Sanghavi <karansanghvi98@gmail.com>
-> > ---
-> > Changes in v2:
-> > - Added original file maintainers
-> > - Removed unnecessary headers from example and formating from description 
-> > - Link to v1: https://lore.kernel.org/r/20241019-raspberrypi-bcm2835-power-v1-1-75e924dc3745@gmail.com
-> > ---
-> 
-> > @@ -0,0 +1,42 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/soc/bcm/raspberrypi,bcm2835-power.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Broadcom BCM2835 power domain driver
-> 
-> Drop "driver"
-> 
-> > +
-> > +maintainers:
-> > +  - Alexander Aring <alex.aring@gmail.com>
-> > +  - Eric Anholt <eric@anholt.net>
-> > +
-> > +description:
-> > +  The Raspberry Pi power domain driver manages power for various subsystems
-> 
-> Drop "driver"
-> 
-> > +  in the Raspberry Pi BCM2835 SoC.
-> > +
-> > +properties:
-> > +  compatible:
-> > +    enum:
-> > +      - raspberrypi,bcm2835-power
-> > +
-> > +  firmware:
-> > +    $ref: /schemas/types.yaml#/definitions/phandle
-> 
-> phandle to what? Missing description.
-> 
-> > +
-> > +  '#power-domain-cells':
-> 
-> Use consistent quotes, either ' or ".
-> 
-> > +    const: 1
-> > +
-> > +required:
-> > +  - compatible
-> > +  - firmware
-> > +  - "#power-domain-cells"
-> > +
-> > +unevaluatedProperties: false
-> > +
-> > +examples:
-> > +  - |
-> > +    power: power {
-> 
-> Drop label. Node name: power-controller
-> 
-> I don't think this passes tests because of this. See power-domain.yaml
-> schema.
->
+On 25.10.2024 5:03 PM, Dmitry Baryshkov wrote:
+> Define clocks as supported by the RPMh on the SAR2130P platform. It
+> seems that on this platform RPMh models only CXO clock.
 
-Below code is from bcm2711-rpi-4-b.dts decompiled from the dtb file.
+This commit message is no longer up to date
 
-firmware {
-         compatible = "raspberrypi,bcm2835-firmware\0simple-mfd";
-         mboxes = <0x1d>;
-         phandle = <0x1e>;
-        ...
-};
-
-power {
-         compatible = "raspberrypi,bcm2835-power";
-         firmware = <0x1e>;
-         #power-domain-cells = <0x01>;
-         phandle = <0x0b>;
-};
-
-I had a doubt that as above the raspberrypi,bcm2835-power compatible node
-is defined with power keyword, so should I still rename the node as
-power-controll or keep it has power?
-
-Also it does passes the dt_binding_check and CHECK_DTBS=y broadcom/bcm2711-rpi-4-b.dtb
-but does gives the message as
-soc: power: 'ranges' is a required property
-so do I need to add the range property here?
-
-> Best regards,
-> Krzysztof
-> 
+Konrad
 
