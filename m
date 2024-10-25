@@ -1,75 +1,75 @@
-Return-Path: <linux-kernel+bounces-382248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 816B29B0B7C
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 19:27:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16BC09B0B7E
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 19:27:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8A172855B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:27:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D799B235A1
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:27:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C90C920EA31;
-	Fri, 25 Oct 2024 17:16:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4080920EA48;
+	Fri, 25 Oct 2024 17:16:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="kNdafAIY"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="QkROaNsk"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ECEA22AD9E
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 17:16:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 720C922ADBF
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 17:16:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729876598; cv=none; b=QZPoE+tlEG3KiA4zrMOJC2uwRE3BYenjFRnfZbpwOsnzK2S/vZXzBKh4VqqYO8VfXEx5Vgg4BY6fVbbHmpiyuGvSV34tSeXhvdAC1wqHR1EWR6w1GI2+Z5ossuyQIU/WQLZHycF//6HkoutptO+6ZN1yMax5kHk6kjpZp0O9qgo=
+	t=1729876599; cv=none; b=c0Assqo98wlAr/ejqZixXwVXQg4RAVDvs4LO0+EnV8cdXw2htbgRC4o5wA1+bOFdcrTZ3XNBhloTDitGF0YCFcsZr03Q+aKCKhA/atKBWqTQc8F2vByYSggACDgQlt1rQtgG9Ihz89Ieo0aI2XYgGm1F4H8uWlwF68A1AtvxZUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729876598; c=relaxed/simple;
-	bh=XBzj1denapOs56Du29PEQKEZahYGIqXLFsG73uRG2VE=;
+	s=arc-20240116; t=1729876599; c=relaxed/simple;
+	bh=gDetkg9bcTzrR7O835LrIsBPAY/4zF75oSJMNh2My2Y=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=OiU1EgnwNNlWXAewQxHhSZLQYUS87IL4OkolwkOb9aiH4Q0TxkuZfgr0E4+8LDZwhbRVQWGXGZyJv6koQUD8U0xmUwnHlKKAydedEHQ0K0pCxLfRpNc4BtkBSRHHKALq8iUeGgbdpjEMPKMWDBsnX/CL3jOXdRZV403RbprePuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=kNdafAIY; arc=none smtp.client-ip=209.85.128.54
+	 In-Reply-To:To:Cc; b=iWgpQxoTWg2C1loMG0+/gT6nlmSksD7wMDn19N7aTSN/zY6BEYhi0T/exyJIM5QK48zQryoA9jMobhJSczjFnLbeBkIWlaH9TYDXPRcVQV1pO0ORobek5FRbNBgNV4WaEJZNlqK5ydxvfJpNHRB8Otn7LXfebaJm5vnUzIVAhXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=QkROaNsk; arc=none smtp.client-ip=209.85.221.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4315baa51d8so22546315e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 10:16:33 -0700 (PDT)
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-37d70df0b1aso1770648f8f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 10:16:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.com; s=google; t=1729876591; x=1730481391; darn=vger.kernel.org;
+        d=raspberrypi.com; s=google; t=1729876592; x=1730481392; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=RLNEe24VVIwAaP5agwCiuxY7rB4nwlR4wJvUVCZVQ/E=;
-        b=kNdafAIYshrHa6sbvPV0peVIFCgeHSpHEHygIXhw87zhQ/hIrUZmEU7zMi3WKFq+z4
-         lUHKxwNB0k3dFJetKPrXlxp2zbshMp1zjPolYYPBN478inYGDi2iD/GhvqL9hXrD/HUW
-         jJ7emcdeurB9AXrwN5l6b3fAB0D6K4RJTQmQ+W67IW9O/00SI6l+7FUnBeGW+BQRHxCK
-         TmhWzKZv1S2ZwIKdyV0jsjOu0hwK0SutmoQxWWXYbjtaxb8ll0rP4YRYYHNa1g+BjMPs
-         RlzxnMavvYF7VBm075frWU2S0nSRohtfEjRBI0jXsQgeKJ+8J/6UPPaHFcnZxGUXDvo6
-         U6Gw==
+        bh=yUMbW8c4fnS4xc6t+S+xmsFii0Nh8WSEhqluNBn7tHo=;
+        b=QkROaNsk7CrE2+ZJ9WwKDE+K172he2S2K1jv/3GHo7jFJIkcLwtK31dPp3dLDSQT1e
+         0qdc3/XkpTfYBDQKX7d0lsD3L1gGH6csAMO0SqU0EtFS3HRg4APiCBp+KU53W1nTAY27
+         eZfClYZnvjLxbrWJZs57VP/zgqU3OD4X8lFHZ/isn4qgRPWm/YRLAYyBFhF8tISR8qSu
+         +o9ssVYqaHJcOAW09eZP2uIgmXFiWJH2u5/OZbbcBwT+nHyuV3Oiw8UN+PRmCFWgkkJa
+         jiSkBxL72vsaKnmXksuiCkLMfaPMpFHk31i/2fFJ9vpKKfwUH9T3UL9wOPPrBAHP8jqQ
+         79tw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729876591; x=1730481391;
+        d=1e100.net; s=20230601; t=1729876592; x=1730481392;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=RLNEe24VVIwAaP5agwCiuxY7rB4nwlR4wJvUVCZVQ/E=;
-        b=WbM6/3DS9gftirHUfqiQ0eefAadI9T3j+IFwiZf0biJv+Myy2wi+UPrqTNLGc+vJty
-         +n9BWxJZ7FjY9X1tUNDWUdPeYxVohdfw/3QIhM8YAfPzWIem3F+iWVrnADUJzhbv3RAF
-         jUMTBJUHrsWjrS2clEDAOTuyu6uPFrd6Bbyfe/Vemf9lmiEP0dWLApqWoTx/QOC2h4hX
-         U7E5VHFZNx87mRUbuCODV+m7QP1HfzBTHAEltwSueKodnR/ScXgwKz/lIj5R0kom1JU9
-         D5JbUaJGOz6VBP3Ij0CXSMCKSMVYdm8wBM5IG+0y6/n/bMZIrwOSGnCwzuehcAqVWyEk
-         m24A==
-X-Forwarded-Encrypted: i=1; AJvYcCXQ2KbUTrjp+6/AJextQZwAyHrrt1AYl1IS/jF4QvfE/xC1gMGpb+30memx1KtSNCD1KU033sePaQy0vqM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywc4muamr9oKpEQEMzFRtQPZftAP8fE9vhfZU+iVIy2KGx8MxTP
-	ZqXocJv8Rgmr+jxExRlJd8gBqsF14IMYpGh18aygJwL4HqlC5B6YYkpRw2wMCXI=
-X-Google-Smtp-Source: AGHT+IEf4KZxMhq0qk7/lCgwke2nZYw7jfKwbBRjQajizbRblmsymhNJTGNxxKLe3CTSVhp57vlUig==
-X-Received: by 2002:adf:f411:0:b0:37d:4e59:549a with SMTP id ffacd0b85a97d-380611418abmr124517f8f.16.1729876591324;
-        Fri, 25 Oct 2024 10:16:31 -0700 (PDT)
+        bh=yUMbW8c4fnS4xc6t+S+xmsFii0Nh8WSEhqluNBn7tHo=;
+        b=LqozPqQ+tYApydE9mzRFdPayIh9e+OFeaDMYjzB/rmHC20ZBKH/DhIELYk/dD7TlzY
+         raQ5PmSrsvt0X50XXp4A6KIwpm3NxDm8x+Z/om2HejBRfyYdsBraaJZ4s3Py+ueWaifR
+         jtl0sNInNAwRL66JD1Iln+UUYHzvJRxRUPCWMQfDlPGcpIhx5lfAMLxOBRSGkRWXCuFk
+         q76/xCvrWUbQXyjuMWPZMQCYjog/zdTb6L9hlELLsqb60UmwLMzZGa6tU8y18rb8HXw4
+         2QI/oUAHsATwl4llg1dxtk0eFA8+HjSYW40RMbaGfP2FycM0iSmsneYcIe0gzivJETOG
+         XLiw==
+X-Forwarded-Encrypted: i=1; AJvYcCVkQu0yc5oGCi2umToAuMFCK/NDZ+sCZqV7D44fN2k2/yZaIU3WIYS2l4YYDI7DR9HJMrRwnwcra5hW9HA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJ17A+coKYKbFxwcQR6jDOP9dlvBEeBiSso3kOu3xD0dmub7Xo
+	BH2vWFBzudGHljAUe+09OM0Fwh+WoIrgyQnhj9sGd4TEyi3VV9RoqwIAUpfZKo4=
+X-Google-Smtp-Source: AGHT+IGlWiJn7Ozkgg+McXgEdyvgzuVLywKtK/tT5oVLgmb42gKrNvsGZclRa3uCRrKPuzJCn2aCmA==
+X-Received: by 2002:adf:9bd4:0:b0:37d:4e74:687 with SMTP id ffacd0b85a97d-380611e1392mr111275f8f.41.1729876592186;
+        Fri, 25 Oct 2024 10:16:32 -0700 (PDT)
 Received: from [127.0.1.1] ([2a00:1098:3142:e::8])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-38058b91f50sm2013649f8f.94.2024.10.25.10.16.30
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-38058b91f50sm2013649f8f.94.2024.10.25.10.16.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2024 10:16:30 -0700 (PDT)
+        Fri, 25 Oct 2024 10:16:31 -0700 (PDT)
 From: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Date: Fri, 25 Oct 2024 18:16:02 +0100
-Subject: [PATCH v2 31/36] clk: bcm: rpi: Enable minimize for all firmware
- clocks
+Date: Fri, 25 Oct 2024 18:16:03 +0100
+Subject: [PATCH v2 32/36] clk: bcm: rpi: Create helper to retrieve private
+ data
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,7 +78,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241025-drm-vc4-2712-support-v2-31-35efa83c8fc0@raspberrypi.com>
+Message-Id: <20241025-drm-vc4-2712-support-v2-32-35efa83c8fc0@raspberrypi.com>
 References: <20241025-drm-vc4-2712-support-v2-0-35efa83c8fc0@raspberrypi.com>
 In-Reply-To: <20241025-drm-vc4-2712-support-v2-0-35efa83c8fc0@raspberrypi.com>
 To: Maxime Ripard <mripard@kernel.org>, 
@@ -99,53 +99,79 @@ To: Maxime Ripard <mripard@kernel.org>,
 Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
  devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, 
  linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
- Dave Stevenson <dave.stevenson@raspberrypi.com>, 
- Dom Cobley <popcornmix@gmail.com>
+ Dave Stevenson <dave.stevenson@raspberrypi.com>
 X-Mailer: b4 0.14.1
 
-From: Dom Cobley <popcornmix@gmail.com>
+From: Maxime Ripard <mripard@kernel.org>
 
-There isn't a reason not to minimise the clocks, and it saves
-some power.
+The RaspberryPi firmware clocks driver uses in several instances a
+container_of to retrieve the struct raspberrypi_clk_data from a pointer
+to struct clk_hw. Let's create a small function to avoid duplicating it
+all over the place.
 
-Signed-off-by: Dom Cobley <popcornmix@gmail.com>
+Signed-off-by: Maxime Ripard <mripard@kernel.org>
 Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
 ---
- drivers/clk/bcm/clk-raspberrypi.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/clk/bcm/clk-raspberrypi.c | 18 ++++++++++--------
+ 1 file changed, 10 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/clk/bcm/clk-raspberrypi.c b/drivers/clk/bcm/clk-raspberrypi.c
-index d374538e7108..9f716b2223ae 100644
+index 9f716b2223ae..b12d86720207 100644
 --- a/drivers/clk/bcm/clk-raspberrypi.c
 +++ b/drivers/clk/bcm/clk-raspberrypi.c
-@@ -111,21 +111,27 @@ raspberrypi_clk_variants[RPI_FIRMWARE_NUM_CLK_ID] = {
- 	},
- 	[RPI_FIRMWARE_V3D_CLK_ID] = {
- 		.export = true,
-+		.minimize = true,
- 	},
- 	[RPI_FIRMWARE_PIXEL_CLK_ID] = {
- 		.export = true,
-+		.minimize = true,
- 	},
- 	[RPI_FIRMWARE_HEVC_CLK_ID] = {
- 		.export = true,
-+		.minimize = true,
- 	},
- 	[RPI_FIRMWARE_ISP_CLK_ID] = {
- 		.export = true,
-+		.minimize = true,
- 	},
- 	[RPI_FIRMWARE_PIXEL_BVB_CLK_ID] = {
- 		.export = true,
-+		.minimize = true,
- 	},
- 	[RPI_FIRMWARE_VEC_CLK_ID] = {
- 		.export = true,
-+		.minimize = true,
- 	},
+@@ -56,6 +56,12 @@ struct raspberrypi_clk_data {
+ 	struct raspberrypi_clk *rpi;
  };
  
++static inline
++const struct raspberrypi_clk_data *clk_hw_to_data(const struct clk_hw *hw)
++{
++	return container_of(hw, struct raspberrypi_clk_data, hw);
++}
++
+ struct raspberrypi_clk_variant {
+ 	bool		export;
+ 	char		*clkdev;
+@@ -176,8 +182,7 @@ static int raspberrypi_clock_property(struct rpi_firmware *firmware,
+ 
+ static int raspberrypi_fw_is_prepared(struct clk_hw *hw)
+ {
+-	struct raspberrypi_clk_data *data =
+-		container_of(hw, struct raspberrypi_clk_data, hw);
++	const struct raspberrypi_clk_data *data = clk_hw_to_data(hw);
+ 	struct raspberrypi_clk *rpi = data->rpi;
+ 	u32 val = 0;
+ 	int ret;
+@@ -194,8 +199,7 @@ static int raspberrypi_fw_is_prepared(struct clk_hw *hw)
+ static unsigned long raspberrypi_fw_get_rate(struct clk_hw *hw,
+ 					     unsigned long parent_rate)
+ {
+-	struct raspberrypi_clk_data *data =
+-		container_of(hw, struct raspberrypi_clk_data, hw);
++	const struct raspberrypi_clk_data *data = clk_hw_to_data(hw);
+ 	struct raspberrypi_clk *rpi = data->rpi;
+ 	u32 val = 0;
+ 	int ret;
+@@ -211,8 +215,7 @@ static unsigned long raspberrypi_fw_get_rate(struct clk_hw *hw,
+ static int raspberrypi_fw_set_rate(struct clk_hw *hw, unsigned long rate,
+ 				   unsigned long parent_rate)
+ {
+-	struct raspberrypi_clk_data *data =
+-		container_of(hw, struct raspberrypi_clk_data, hw);
++	const struct raspberrypi_clk_data *data = clk_hw_to_data(hw);
+ 	struct raspberrypi_clk *rpi = data->rpi;
+ 	u32 _rate = rate;
+ 	int ret;
+@@ -229,8 +232,7 @@ static int raspberrypi_fw_set_rate(struct clk_hw *hw, unsigned long rate,
+ static int raspberrypi_fw_dumb_determine_rate(struct clk_hw *hw,
+ 					      struct clk_rate_request *req)
+ {
+-	struct raspberrypi_clk_data *data =
+-		container_of(hw, struct raspberrypi_clk_data, hw);
++	const struct raspberrypi_clk_data *data = clk_hw_to_data(hw);
+ 	struct raspberrypi_clk_variant *variant = data->variant;
+ 
+ 	/*
 
 -- 
 2.34.1
