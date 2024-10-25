@@ -1,157 +1,113 @@
-Return-Path: <linux-kernel+bounces-382180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF3CA9B0A72
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 18:58:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D32F79B0A75
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 18:59:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 446F6282D70
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:58:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 414722831D8
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:59:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0A9C20BB2C;
-	Fri, 25 Oct 2024 16:58:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D5E21FB89E;
+	Fri, 25 Oct 2024 16:59:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="gW8dV9sJ"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YUFEwHSd"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B79F11FB8A9
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 16:58:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22E521F754F
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 16:59:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729875490; cv=none; b=D8/MNB+EzSZUBNKaMC6VZsOWthP3TS27lIVQk1ABFo4zM7XZoNFIeRksFIcfN+W/Ttx3oc6EC+7+WxsoWEQRAPjC3YEfB1KwghOepmotsKnYNc2+HpWiQg1d53rEKFYteTpuh24QuJt5YfVD7+aKcONDggYAYc4+Z/1wPyN8HSA=
+	t=1729875580; cv=none; b=R+iCjSThz9Iui3zBXimUx6OH7m6ondOa5r1ZbXsl6V+PnPjV/XMRMiAWmHQ7Xbd8yt0pAa04kbr6cKQCYCHxzhWar9ViY8GihAtdGMiLRUW3K1/dX1CgNRKUz2PNg0oGE+IVSAGy/7njgYHZVpku55xrjw+ITf37Fybpr4zMLf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729875490; c=relaxed/simple;
-	bh=gBji1iKPogbN1GllzSKm4KJasKl61k+qGo9SkmDkjUY=;
+	s=arc-20240116; t=1729875580; c=relaxed/simple;
+	bh=OVoTc0YV8T4o3On04xQYtTNGHm7Z0vcN9aBbhum2xac=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mdhXYrJXo2LEE8agQLhuoPwdOuJl1vZHvt/L0+Wbfcg4FWDWI+tH8pDb3N9AExnGG0TNHsrlkq8q1w3nBxu4o2OnEBryRFlWovUgz5HMLe1Su5xdk4ykIQLmy46CT8H6uxJg8cBZrKTS6gYjFYbFEkvgf3bMeyVJOdSFfVQTyow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=gW8dV9sJ; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2fb51f39394so24023911fa.2
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 09:58:07 -0700 (PDT)
+	 To:Cc:Content-Type; b=GDqn9lJBkt6hjip4akP9pDLIeT6EcwL6blPBA4YILNCbqirtjkVchyGhaV0Ytg/MZGKOco/pWkNXeDdDHcKCe0z2GoyFDTa6m9nwawEh8aPPiL+K2VOpzNJj20dLy0SJfTFloKJ9jRNo02Vpb3zfDgyKY6xSQf/qt7482HwJLCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YUFEwHSd; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-37d6ff1cbe1so1581587f8f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 09:59:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1729875486; x=1730480286; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1729875577; x=1730480377; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=VnNtZV1Nj+ZplC7sJE1rA3hnVfsCt9+YnjfLdsGByNU=;
-        b=gW8dV9sJE7yjrghuytA4Sy0fU0VQMXerKOu+Ds5SE+EmyYrtzByJyfqa6s3lVfQJDj
-         eR0llIN/SseBGC1SLPX//HLsFSvNfsMkvNn4Pt6o+eAaFGvhyhKS2uocZQbeXniT8AZV
-         31arHGjVEAp+s7xyoLarJFsQn3qC3n/Xr4gBNjw8gui17u8t3IfLBUEC78384JrLTWW5
-         8PkdmwnQo06HJSmA/GTd5AmLPvnS7bm1d5dq02cXfoFDqJ4GNh3Ci8u6Y2P/HhFntawY
-         hTa5ITfWIRuhFZLoxwoHh8B0glRU6lAo16YupPtzsny7qX4gbCNQPofbjLa42IRF6ti4
-         1CPA==
+        bh=9B2cVTHJK0N8Rua3Nes4Pd7LPA0lRXUOHcZHyL1EAuU=;
+        b=YUFEwHSdFiFugCXi6NYVQCiawcXHRarubkQrrxKQ1BSE8+bOhj1Cobu/Wg5J+v/fAA
+         0OuKXoXALvpJifrUZF8qQIxOmUE9JZfAuDuXNLOAyRKsQbOUsHRebgSjrtRwrzU1u07D
+         fqntPSOMtKr9hcAl/A7URGur9I9d6ekA+tt431evMC+PWF2Dgy/rYu+rt5gNiwT0ekwK
+         x5GY5o223ZlLqLofl4gMYqPnazvVRKJyULMRqPkonrjjYFR+MdtDJ7elJShrHzvHH/z1
+         5VbK3UOSAF8Ew0UZG+77BHkecSv3NZAhysHflXnJWONdx9MjA3s7XfnBbzqw/7JewkYv
+         XOUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729875486; x=1730480286;
+        d=1e100.net; s=20230601; t=1729875577; x=1730480377;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=VnNtZV1Nj+ZplC7sJE1rA3hnVfsCt9+YnjfLdsGByNU=;
-        b=J/ZIqQXLfCj1SBLOOdqEQ0E46W5GisSlQKViBsHADAUYa40Os+TWe8xDL7y5AqLmFG
-         B/9Wx7W0+Obf9/MfVLCQspLibGRgzbJAJrYfMwN/qfgpG4MSSsg4SW/8aTuTbj/lOIsp
-         2Oc7HRG4nI57hoR987QUhQYxtFKG1CnSH/cWre7+5aWlZoqVXOW8Zq20xcoVE+JPVCIk
-         BLJs2nB8ZZwKDjik96WwOOQ13pXgmcDhHEnwfx2FoM7z01yy/EZa9suhpAfxaMUbe2if
-         6umcmJn9wpYom9T0+fLgvwmDN+0dyXujNBO/6NZDnhPj1eGBQI03+LhPVpEDYI7CWY9A
-         IMpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXuGCSx3/j4wk7epnwHlcaA89vH+ZXJKM27sza9P//tG0eAqoy1UaCE96Tjz1FB+tcVzP+z38tgLH8AyVg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLr64iSWCPLRQZHtKBy9Xi8pS0cjHcoJjleJE9H+x/v2yi66Ut
-	BkxRwRON2miv19A3fNkAK6iHqxbRrDPZKG4SDlsLqgTW1WQf4fm8w/7oAErNX8LVbCdYOTIGPiK
-	LQgLql0K6o8pbDI0L+eMjqnSXEsmJngQNvOEN0A==
-X-Google-Smtp-Source: AGHT+IGkuarMMIQ+lexEInGHQT599Zcgs3u7VHe9+e328XtdhOpOUCnZpi5ObKnAGmst12pwrMUGM9L80YD5HY+KpX8=
-X-Received: by 2002:a2e:d12:0:b0:2fb:3a12:a582 with SMTP id
- 38308e7fff4ca-2fca8227c1emr34732541fa.23.1729875485826; Fri, 25 Oct 2024
- 09:58:05 -0700 (PDT)
+        bh=9B2cVTHJK0N8Rua3Nes4Pd7LPA0lRXUOHcZHyL1EAuU=;
+        b=mXjfQMuyH986bbekAZappzeukmEQzDaQDBe0LBt5TPSfFQLAvueVRXyEHhfJLKBme0
+         LeRHk7dkc9eFqEjA/vuLFlOudWxY/jNFovYYIlI+oIW10qY58UghQKK5y78zLQwf1m0m
+         eWupES3e6Ccci7VkYA2kq/lHBctuPAcua5Cqhh9gFip4/A2QRnFMkgcThwW33WyAPstc
+         unyPRCjocargafkP41KjguXIOjBiejU+4gsMatkuef0LwTngkWJpiOLOuMmsHgp2Pb9H
+         +CtndsiXG6aZ+1RLceLu7amuQJfH1BqrTVaEMnkNOPEdPi4x5qosyVbdt1zIdA/BkVYt
+         Uu+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXImrgfWpv19pAlY0iZ7pvy9nD/HQ3f7Q6V+J/FkhCgksgmM7KYm58c3/DOdhlYPEmLWiF+9Rsi27p/FcQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YylhGB1MfFFClWoU/3ZTFSppvIyxuyAXAyvblT99DvyT9ZDzqg2
+	gQeReA0US2HM8J+yXuMkwRPKWgtDgUxgqXPIMeEXnVihPi1kpKIU2j6cNU+VWOnU8vhMSXX8fyn
+	ll5Q+mFQP/1kzutQwMFmzn/kmUu8=
+X-Google-Smtp-Source: AGHT+IFAiS4fJ4bly9uLtEmKKdid+ZZVj2dnyAoKdGOFh2vB62Qli5eND3YFrvAL4sXerOTWFnytAdUMonV83uAoq6w=
+X-Received: by 2002:adf:f650:0:b0:37d:4e9d:34d1 with SMTP id
+ ffacd0b85a97d-380611eea37mr70919f8f.37.1729875577264; Fri, 25 Oct 2024
+ 09:59:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241020194734.58686-1-apatel@ventanamicro.com>
-In-Reply-To: <20241020194734.58686-1-apatel@ventanamicro.com>
-From: Anup Patel <apatel@ventanamicro.com>
-Date: Fri, 25 Oct 2024 22:27:54 +0530
-Message-ID: <CAK9=C2VS6=azRSqXmkuFfp+65s4PUe+GbcTrYwLxQwfB4iB4_Q@mail.gmail.com>
-Subject: Re: [PATCH v2 00/13] Accelerate KVM RISC-V when running as a guest
-To: Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>
-Cc: Atish Patra <atishp@atishpatra.org>, Andrew Jones <ajones@ventanamicro.com>, 
-	Anup Patel <anup@brainfault.org>, kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20241021195714.50473-1-niharchaithanya@gmail.com>
+ <CA+fCnZf7sX2-H_jRMcJhiYxYZ=5f5oQ7iO__pQnjEXDLUS+fkg@mail.gmail.com> <f26691b2-fe26-4e13-a34f-c4a2a995f25f@gmail.com>
+In-Reply-To: <f26691b2-fe26-4e13-a34f-c4a2a995f25f@gmail.com>
+From: Andrey Konovalov <andreyknvl@gmail.com>
+Date: Fri, 25 Oct 2024 18:59:26 +0200
+Message-ID: <CA+fCnZenG-jQqXigPDOrxrnfzXnuirLOigvCWOCoXu=5Wp12EA@mail.gmail.com>
+Subject: Re: [PATCH v2] kasan:report: filter out kasan related stack entries
+To: Nihar Chaithanya <niharchaithanya@gmail.com>
+Cc: elver@google.com, ryabinin.a.a@gmail.com, glider@google.com, 
+	dvyukov@google.com, skhan@linuxfoundation.org, kasan-dev@googlegroups.com, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 21, 2024 at 1:17=E2=80=AFAM Anup Patel <apatel@ventanamicro.com=
-> wrote:
+On Fri, Oct 25, 2024 at 4:48=E2=80=AFAM Nihar Chaithanya
+<niharchaithanya@gmail.com> wrote:
 >
-> The KVM RISC-V hypervisor might be running as a guest under some other
-> host hypervisor in which case the complete H-extension functionality will
-> be trap-n-emulated by the host hypervisor. In this case, the KVM RISC-V
-> performance can be accelerated using the SBI nested acceleration (NACL)
-> extension if the host hypervisor provides it.
+> When I included ip-based skipping for filtering access stack trace the
+> output was
+> inconsistent where the Freed track was not fully printed and it also
+> triggered
+> the following warning a few times:
 >
-> These series extends KVM RISC-V to use SBI NACL extension whenever
-> underlying SBI implementation (aka host hypervisor) provides it.
+> [    6.467470][ T4653] Freed by task 511183648:
+> [    6.467792][ T4653] ------------[ cut here ]------------
+> [    6.468194][ T4653] pool index 100479 out of bounds (466) for stack
+> id ffff8880
+> [    6.468862][ T4653] WARNING: CPU: 1 PID: 4653 at lib/stackdepot.c:452
+> depot_fetch_stack+0x86/0xb0
 >
-> These patches can also be found in the riscv_sbi_nested_v2 branch at:
-> https://github.com/avpatel/linux.git
->
-> To test these patches, run KVM RISC-V as Guest under latest Xvisor
-> found at: https://github.com/xvisor/xvisor.git
->
-> For the steps to test on Xvisor, refer the Xvisor documentation
-> <xvisor_source>/docs/riscv/riscv64-qemu.txt with two small changes:
->
-> 1) In step#11, make sure compressed kvm.ko, guest kernel image, and
->    kvmtool are present in the rootfs.img
-> 2) In step#14, make sure AIA is available to Xvisor by using
->    "virt,aia=3Daplic-imsic" as the QEMU machine name.
->
-> Changes since v1:
->  - Dropped nacl_shmem_fast() macro from PATCH8
->  - Added comments in PATCH8 about which back-to-back ncsr_xyz()
->    macros are sub-optimal
->  - Moved nacl_scratch_xyz() macros to PATCH8
->
-> Anup Patel (13):
->   RISC-V: KVM: Order the object files alphabetically
->   RISC-V: KVM: Save/restore HSTATUS in C source
->   RISC-V: KVM: Save/restore SCOUNTEREN in C source
->   RISC-V: KVM: Break down the __kvm_riscv_switch_to() into macros
->   RISC-V: KVM: Replace aia_set_hvictl() with aia_hvictl_value()
->   RISC-V: KVM: Don't setup SGEI for zero guest external interrupts
->   RISC-V: Add defines for the SBI nested acceleration extension
->   RISC-V: KVM: Add common nested acceleration support
->   RISC-V: KVM: Use nacl_csr_xyz() for accessing H-extension CSRs
->   RISC-V: KVM: Use nacl_csr_xyz() for accessing AIA CSRs
->   RISC-V: KVM: Use SBI sync SRET call when available
->   RISC-V: KVM: Save trap CSRs in kvm_riscv_vcpu_enter_exit()
->   RISC-V: KVM: Use NACL HFENCEs for KVM request based HFENCEs
+> This was not present when using pattern based skipping. Does modifying
+> access
+> stack trace when using sanitize_stack_entries() modify the free and
+> alloc tracks
+> as well? In that case shall we just use pattern based skipping.
 
-Queued this series for Linux-6.13
-
-Regards,
-Anup
-
->
->  arch/riscv/include/asm/kvm_nacl.h | 245 ++++++++++++++++++++++++++++++
->  arch/riscv/include/asm/sbi.h      | 120 +++++++++++++++
->  arch/riscv/kvm/Makefile           |  27 ++--
->  arch/riscv/kvm/aia.c              | 114 +++++++++-----
->  arch/riscv/kvm/main.c             |  51 ++++++-
->  arch/riscv/kvm/mmu.c              |   4 +-
->  arch/riscv/kvm/nacl.c             | 152 ++++++++++++++++++
->  arch/riscv/kvm/tlb.c              |  57 ++++---
->  arch/riscv/kvm/vcpu.c             | 184 ++++++++++++++++------
->  arch/riscv/kvm/vcpu_switch.S      | 137 +++++++++++------
->  arch/riscv/kvm/vcpu_timer.c       |  28 ++--
->  11 files changed, 941 insertions(+), 178 deletions(-)
->  create mode 100644 arch/riscv/include/asm/kvm_nacl.h
->  create mode 100644 arch/riscv/kvm/nacl.c
->
-> --
-> 2.43.0
->
+To clarify once again: we only want the ip-based filtering for the
+access stack trace (the one printed directly from print_report()). For
+Allocated/Freed stack traces, we want to use the pattern-based
+filtering.
 
