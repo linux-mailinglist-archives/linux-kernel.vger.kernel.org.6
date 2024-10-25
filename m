@@ -1,134 +1,127 @@
-Return-Path: <linux-kernel+bounces-382428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAACB9B0D87
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 20:39:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDA819B0D89
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 20:40:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8690E284A37
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 18:39:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4161E2867C4
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 18:40:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B08920D51E;
-	Fri, 25 Oct 2024 18:39:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6976220C313;
+	Fri, 25 Oct 2024 18:40:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PMdwQHrz"
-Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com [209.85.222.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="kVS1VXkm"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0D1E1D8E10;
-	Fri, 25 Oct 2024 18:39:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EE7918C01F
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 18:40:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729881553; cv=none; b=OWqF16S9nnvSjykSkvml6l1GwqbzTstNVuVaqKQAv0l2Jf81n0Wmvw+4d1tGfk0uyFIyOXCknsIYRnTPPD+J5MvCXEuxKOTK7yQ2uqIpvqp3ZCTtNjc6B6A0g8LD1D3Ap/JvYoj8JW2OPMF9IAsYGsRBwdExETTkTjH5s9bxdZY=
+	t=1729881635; cv=none; b=m/1EcWYV+YJBt3xNtH8ipO44DNZ0LZRFLvvUtXYyl97x5hZqq0bEbDPMSTx57tiGTEAikyWOiffco+6Mreyjqp2MlzLhD1hi5X9vpeLJTpdU8GaNr7AxfFg7C4ZA/A6JTIu0t5RMbQ774IqXY6y+9sYVhI4tA9Ev5UEr6uT9vDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729881553; c=relaxed/simple;
-	bh=Bx1WolEnd/YIJN1S54UWNZpg5E+EUTLa0+1yugHcioM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mKiHCtYoAPE8qoV6duQy0Hvr7linSHoNjb6hiTGByYnnov2uP1lLGbn5Hzqp1bH/dj0BqPFyEdm6vBzP9F+zT27wLEsxTWlIqPSm0bN90ODD+OWthqWiBEauZifMUMUE8IGEE1G3ncw5VfNzBHDLnkt6QtSeXXIjmv4/3bTgIoU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PMdwQHrz; arc=none smtp.client-ip=209.85.222.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f48.google.com with SMTP id a1e0cc1a2514c-84fccf51df1so717887241.2;
-        Fri, 25 Oct 2024 11:39:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729881551; x=1730486351; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GrkqYuMSqbUzEQhPW44lBubxGtAuzrgS+e75bGGESs0=;
-        b=PMdwQHrzxVXjPZ8zI7u435ZgkpE+/YpHKAo9w1rzThsOKCz4tDK2oM62faGjsIDBWs
-         l/xjZzKtoMuSjRIvN03hK7MDbqGRw8ZJDAv5SeHs5GAHMo59vLs/vpwHh26UjOs1FENu
-         QgbteoryNSFzs38sZLiucaIvmTMf6wAKXfhLpsoBVknr+BtcieQioUM4N7i37BGlrLqC
-         s7oOkkedN6KtMub+G9FMVvtU1ejMkmZj//kUJBa7lOx5E4UPPGyU9rTdhRjGPIdOO/AT
-         CuA8nqrBjwXWOQFgNRp1488cVlHgVejWJAbar6o/OFK/k//5kSVbNwmwcIOQ7KkxX4Wb
-         ZwaA==
+	s=arc-20240116; t=1729881635; c=relaxed/simple;
+	bh=pHSh3XPSaFVV84kA7tilhdhkPW5JX36He6gVwTk2sUQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aCKH7+PzOf2B1VJqjmlvIJjiUP6O0ORopllo+r45sf3BUVenScOLYVPq0pupCyXLqpGkfQOcjLXYAqXINHqiaO6cHXFEnHNsPNxEshpm1hr7/YMCYD7gqyZSFmoYlb6HcotCf9SAxhXCf2t+OME2RPeEw7ERzYvZsu6AqEMvsSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=kVS1VXkm; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49PB2Agw001022
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 18:40:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	gVvgWoKlcV9LtUsUs6yWkyXRhBCiJ5gKYOTtTqqtPO8=; b=kVS1VXkmNnXzZMXO
+	RB96+9SH3GtfraqsLuzYUkLUGIGlGiZbu1jkPwiAFiyHPSv5YUs8L9BLxA28bAIx
+	vyxVRwKHa3G1ptCi9MnKnvcGe8ZYL1E72zpkRvfaWGLMt+UCf1IISoMHly0RLDk2
+	+su8DJr8YA1P0YoWd6D0tlT/lQbiNRH7F40s24miM7hlNQkQwinjvg67ndtATaCx
+	xc+dyeVsqgHbNC4jCeHgMieMq9sBkGIIZMoM5U7bMklfp98weGHF0Ta7n+tSd8BA
+	Iswx6CsLF9TwZus82XfgwGxgkYGicL7eueSSqDUIZTxiDHkQg/sUhgCo19bGVtIi
+	8m5drQ==
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42ga3s1brg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 18:40:33 +0000 (GMT)
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a39c1b88abso3941945ab.1
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 11:40:33 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729881551; x=1730486351;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GrkqYuMSqbUzEQhPW44lBubxGtAuzrgS+e75bGGESs0=;
-        b=fRHfHJF5BiCOlxMZaTaNSDlZXmv8ogdvscGwjIjoYCbVWoANcP2d2gJiOEDnk5aMXG
-         L+JAUW4DkoBm6Qb9vpF2Mjv1AmWK8pih07uh3B+aHvxBvbLFTwjrW4a0F1teYI6Csuif
-         9rdQGBXq/JW4XZ5MwhA8TSCUp4Py2gg3wLrrJOwKkOb9WBDWCCuRrHvFx3+JrFDCizQv
-         fmOniAp3DVx9zatZYCrjD2Fha4C1XSLFxNqU8RwPvnUHfHdi11F6AmK1Nlrm1mP+pRru
-         kCmbWqPV8WIFkv2qc1RSvg2Sn28ThBz3KDnDlYaqZPozXzfNXclmiy9w21/lgxPLPKfo
-         DgmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUDhF8p29GsCLVUPyUXKZWA5/JU5lBwS0RKUaj8yrsoxlxRtvxY42JmnGyvf6bWTYT0DHgN7yVu0E1xgS2LMX5Q@vger.kernel.org, AJvYcCUYcHGt/738n2xHYX1PZoohp4GNoBh25qXrVgXVpo/cb/IC0CMd/XKgTrDSgXhDudmwXcRuZZD9s5moHf/l4A==@vger.kernel.org, AJvYcCW1Uh94J7AjG77UdfQlYnR8Qo7phEwiZTYbo/xrr67olkGFHUw2Uo77pQ0f/J1iwZbiwMPu3hxnpRk=@vger.kernel.org, AJvYcCXwLPGANVUY81yVpaO+jzIhyX+Mi55Dcmf2kK5JT3S2kQK52o5E4DDn4RR/4RVxGtn2vDrH3QUsz0iBZSRb@vger.kernel.org
-X-Gm-Message-State: AOJu0YyfYnd10d6jsEu+VDkIq2EpEznNUJ66vBGcHRQYXfXOk4r+F7qC
-	TQsFKu4DJLTi8AfyCUXzBHrT3isZX68QO3cBD62RuSX7HpswBzSYf/9YHtYvFlfY2Tl0HScoHr8
-	utCr2v3lyRA4UMycFk75eAq2s5bd26OMy
-X-Google-Smtp-Source: AGHT+IEVUq57VuR5XJDhYVOCvnCwTfmEHGvoTOOB+teIWs3F3TJQh8yeiHRLwccdv5kTX5+vj5zTsLfWMZ4F/nufsZs=
-X-Received: by 2002:a05:6102:32ca:b0:4a4:7609:35f with SMTP id
- ada2fe7eead31-4a8cfd6d7bemr401289137.24.1729881550725; Fri, 25 Oct 2024
- 11:39:10 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729881632; x=1730486432;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gVvgWoKlcV9LtUsUs6yWkyXRhBCiJ5gKYOTtTqqtPO8=;
+        b=jwx9LjDuZCsLMSqHZhJUhGLgOE4lWU4UY0URdjjJVeviOU7hfod98xYLh1OYyqqd8y
+         tQ+j/FAEdSxi7CQP23Frn3nqHQV7a32NDXEMp2qIcQA2a+zF8HUq3nfNGQirN8ubXM4l
+         kdX7VGR/m0XBvRxonNNMu1OXoBxDriIUNb0D4AMeDDKN6tNZPhfoC6vJqK29sxD39f3d
+         jQvTWQQH0JCsvTCTaIJsxzDEzJ9MgVddH58knw+uUGkVrBovJ0/lakyuJyANO7mpqGv7
+         7Ah/DGXluGbamjoNr3UYo32ZBxl2cNyqiA8FNa8V5G5x5THr75U3Z7viHNdN5aCPtvE2
+         xhSw==
+X-Forwarded-Encrypted: i=1; AJvYcCUe2chLKa2tbqXwI4K5FycmS/Q7JOS33l+7XfbYBCyQerRPABg4Uxe3vetVnw41yTyPKDqgV89jXCk0AnI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzu3SG1XaqOjwuJNWnWp1p33OcF5r49xqGKu9lqswrQLYaYs5xQ
+	LAVmJjrj00Wkn2McHm2evFXPdGCAFMbiHbVq6FT54oX1lcLsQr2xfcZ61ss9iViiUM4oMpCpIrq
+	jKyO68IY/zpwtAPMJk9j5tzvwvYByIcXWRcUpBVQ1vo6TyXliDZlk+KLENtyqABM=
+X-Received: by 2002:a05:6e02:1566:b0:3a1:a227:c8a5 with SMTP id e9e14a558f8ab-3a4ed31fea8mr360435ab.5.1729881631800;
+        Fri, 25 Oct 2024 11:40:31 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGjSzBGiWU/ckW48xJT/7uhrcEOsittz0zEh+q6ENMSKuiPW4j11zulREu0udCO3SUIwIwiUw==
+X-Received: by 2002:a05:6e02:1566:b0:3a1:a227:c8a5 with SMTP id e9e14a558f8ab-3a4ed31fea8mr360375ab.5.1729881631352;
+        Fri, 25 Oct 2024 11:40:31 -0700 (PDT)
+Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cbb631b0bcsm861369a12.60.2024.10.25.11.40.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 25 Oct 2024 11:40:29 -0700 (PDT)
+Message-ID: <fae33f7a-aa29-4254-a846-cf90d49e0193@oss.qualcomm.com>
+Date: Fri, 25 Oct 2024 20:40:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1729848252.git.lorenzo.stoakes@oracle.com>
- <788fdfcc9ef602b408951d68097918d6ae379395.1729848252.git.lorenzo.stoakes@oracle.com>
- <CAKbZUD2ZB+U3GKJftfRH_2ejNja26v38OLVE2Lbfn_1KSOKhNQ@mail.gmail.com> <828674d9-e862-4438-86b6-61977f4cf3b5@nvidia.com>
-In-Reply-To: <828674d9-e862-4438-86b6-61977f4cf3b5@nvidia.com>
-From: Pedro Falcato <pedro.falcato@gmail.com>
-Date: Fri, 25 Oct 2024 19:38:59 +0100
-Message-ID: <CAKbZUD0fxczjSJo34MnWRNT4M6HTfWN0DRXr9CFe_+cKJW_mog@mail.gmail.com>
-Subject: Re: [PATCH v5 2/5] pidfd: add PIDFD_SELF_* sentinels to refer to own thread/process
-To: John Hubbard <jhubbard@nvidia.com>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Christian Brauner <christian@brauner.io>, 
-	Shuah Khan <shuah@kernel.org>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
-	Suren Baghdasaryan <surenb@google.com>, Vlastimil Babka <vbabka@suse.cz>, linux-kselftest@vger.kernel.org, 
-	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Oliver Sang <oliver.sang@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/3] arm64: dts: qcom: x1e80100-qcp: Enable SD card
+ support
+To: Abel Vesa <abel.vesa@linaro.org>, Ulf Hansson <ulf.hansson@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: Johan Hovold <johan@kernel.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+References: <20241022-x1e80100-qcp-sdhc-v3-0-46c401e32cbf@linaro.org>
+ <20241022-x1e80100-qcp-sdhc-v3-3-46c401e32cbf@linaro.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20241022-x1e80100-qcp-sdhc-v3-3-46c401e32cbf@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: O0_3MM6amvDGEGrftoq5eWMf0hx2jqOM
+X-Proofpoint-GUID: O0_3MM6amvDGEGrftoq5eWMf0hx2jqOM
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1015
+ impostorscore=0 bulkscore=0 mlxlogscore=700 malwarescore=0 suspectscore=0
+ phishscore=0 lowpriorityscore=0 mlxscore=0 priorityscore=1501 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2410250142
 
-On Fri, Oct 25, 2024 at 6:41=E2=80=AFPM John Hubbard <jhubbard@nvidia.com> =
-wrote:
->
-> On 10/25/24 5:50 AM, Pedro Falcato wrote:
-> > On Fri, Oct 25, 2024 at 10:41=E2=80=AFAM Lorenzo Stoakes
-> > <lorenzo.stoakes@oracle.com> wrote:
-> ...
-> >> +static inline int pidfd_is_self_sentinel(pid_t pid)
-> >> +{
-> >> +       return pid =3D=3D PIDFD_SELF_THREAD || pid =3D=3D PIDFD_SELF_T=
-HREAD_GROUP;
-> >> +}
-> >
-> > Do we want this in the uapi header? Even if this is useful, it might
-> > come with several drawbacks such as breaking scripts that parse kernel
-> > headers (and a quick git grep suggests we do have static inlines in
-> > headers, but in rather obscure ones) and breaking C89:
-> >
->
-> Let's please not say "C89" anymore, we've moved on! :)
->
-> The notes in [1], which is now nearly 2.5 years old, discuss the move to
-> C11, and specifically how to handle the inline keyword.
+On 22.10.2024 12:46 PM, Abel Vesa wrote:
+> One of the SD card slots found on the X Elite QCP board is
+> controlled by the SDC2. Enable it and describe the board
+> specific resources.
+> 
+> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> ---
 
-That seems to only apply to the kernel internally, uapi headers are
-included from userspace too (-std=3Dc89 -pedantic doesn't know what a
-gnu extension is). And uapi headers _generally_ keep to defining
-constants and structs, nothing more.
-I don't know what the guidelines for uapi headers are nowadays, but we
-generally want to not break userspace.
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
->
-> I think it's quite clear at this point, that we should not hold up new
-> work, based on concerns about handling the inline keyword, nor about
-> C89.
-
-Right, but the correct solution is probably to move
-pidfd_is_self_sentinel to some other place, since it's not even
-supposed to be used by userspace (it's semantically useless to
-userspace, and it's only two users are in the kernel, kernel/pid.c and
-exit.c).
-
---=20
-Pedro
+Konrad
 
