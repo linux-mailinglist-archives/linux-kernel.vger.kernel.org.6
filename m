@@ -1,201 +1,187 @@
-Return-Path: <linux-kernel+bounces-380883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BFA19AF744
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 04:11:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69E979AF748
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 04:11:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 902B51C2177C
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 02:11:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D91F1C216FC
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 02:11:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C596A54727;
-	Fri, 25 Oct 2024 02:11:02 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFF8413BC0E;
+	Fri, 25 Oct 2024 02:11:11 +0000 (UTC)
+Received: from CHN02-BJS-obe.outbound.protection.partner.outlook.cn (mail-bjschn02on2130.outbound.protection.partner.outlook.cn [139.219.17.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 026F14409
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 02:10:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729822262; cv=none; b=gGkwGx/OanmldqocCQvKyCEn1EwOWItL3OcEr4ckz5QMVN0F83NmoxE+YysunHdH9U8ajclKFMVUCk1onAwlhpzr4ORFCU7nrIfsllzRAibPzA3xTZK2mkwKwekFWSMCyWQiYpKD3WRU3ATy310GSuhoLqFpDjbGq5WGxXPa61U=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729822262; c=relaxed/simple;
-	bh=d3Da7q3PcdTnA7z1IqUx2DTYwTSrQVOBqs0AHA9bhrA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=KrPvNhGKyehlnU0cmsRh+UX/+JjgM9qv0b7HM7d1FnQWq7ilubBEqrZuXN1MTZbhBdCHTq4FPecy65M5a2efjMrowvNk59Bvwzpm8rpk5Sq4fUjdKRClCENw6qzzsyFd2ry04SpJOFn8btgAE4b0ygNx1xU38QiHAfNdWHL9xw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4XZR666nKLz10NrW;
-	Fri, 25 Oct 2024 10:08:46 +0800 (CST)
-Received: from kwepemg200008.china.huawei.com (unknown [7.202.181.35])
-	by mail.maildlp.com (Postfix) with ESMTPS id 07D0B1401F3;
-	Fri, 25 Oct 2024 10:10:51 +0800 (CST)
-Received: from [10.67.109.254] (10.67.109.254) by
- kwepemg200008.china.huawei.com (7.202.181.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 25 Oct 2024 10:10:50 +0800
-Message-ID: <511392f2-8e94-d2fc-63a6-ac3b4cac10e1@huawei.com>
-Date: Fri, 25 Oct 2024 10:10:49 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D04994409;
+	Fri, 25 Oct 2024 02:11:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.17.130
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729822271; cv=fail; b=HcocXcmQROzzcoZCkOVvyZOsMqSnySeKYwn1rZa3yxQZBujTOhoBvXn7Ck50qXkMTB9rgEGS0EzYMpLQwSpRo0V9Kz9mmAswF9nUbf23mCBVHesUvGj5+eGx3SznPiS6QjOSIutyKm+Ko2TUwmdQDggq7Z7PeeYrZ9KcErapRVY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729822271; c=relaxed/simple;
+	bh=YCvP0Z0ALzV0ZngMrJkay999acFXsyWLsPyqmhb7koI=;
+	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=HgDt09t33V+gMzLcyEN8SQ1eGbLssm3IFMYOFMfNkYzqBrq3WYPQUq6tYzC8gn086b76v5E7NB6YJ6PCL+vcF/NA2b68MJ/vKVRuxKRqdfiAVnbv1RJaCnw7WfvFSM0xZlhvPYxcDOIaNI3sxDT3VKk8B7VES64LSdm2LYfJ564=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.17.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=QmD5TBrz1d8psYMushEzawmw+xXSuFnw6svW4Q7safsPz/5gouAsy5ka0uJzExJGDqgFKBnflkQaKWO35gDiIP5qrjsXoBU83WR0vGwLbNvJW3Nm91/w0/wLusNxpNAqQEXvavIhVoHbv5n23EJwc3a6Qp+jAFieTgp6aEFQtEHFVB2LSO+YjvuK3iRwlocwxjsuLO+ndKOxw8j6od3uXgBmFdQWUv7emiTpPNCZc0DbZEitrHomilJ+TadWnD+WpRQf+EIbtWSmr4++/qMILjvDsuMJW3MUGuichZmJmszNHtMfym4lz7/xMG/n6XpxPzhToCFU6fBB4fyP78Pqww==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=iXve3JTMO9j7JYE3j0kQd0CKnXLUfrlY354SqZNl/a8=;
+ b=fGeDxSHxzsYtfp42aHEzPf62VmdGe/dHih+okU5/9D8gUarASwL0oiWkvE1tfJG1qwWJ5GaH72q0UWIhiePKfqhUR4139R78BRAftU6Z9CH2/F3rEK5ZZ9Q8ZaUmQZRcEA5WfaSLBNdbCHHoYWpm5HFEtM/ZmmAL+qgTQrJqmN9f2nFeAX+9Mx9nVOnMibHTaqBQkkGohVQmMGwZQQG6FMgAX3CafKoWPvCBCOtm46oGoKXr+pQHqkzWkt5i7Kl6t+PvhOhvzkXKzklFS7Utpa3nbJ838KhcQPCamMkfkl1oKLR8WB2ipvGlYPCKH1hPBfBh73ZBPlJ60hnVbT/QSw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=starfivetech.com; dmarc=pass action=none
+ header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
+Received: from ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c550:7::14) by ZQ2PR01MB1291.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c550:7::5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.33; Fri, 25 Oct
+ 2024 02:11:10 +0000
+Received: from ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn
+ ([fe80::2595:ef4d:fae:37d7]) by ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn
+ ([fe80::2595:ef4d:fae:37d7%4]) with mapi id 15.20.8069.031; Fri, 25 Oct 2024
+ 02:11:10 +0000
+From: Hal Feng <hal.feng@starfivetech.com>
+To: Andrew Lunn <andrew@lunn.ch>
+CC: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Marc Kleine-Budde <mkl@pengutronix.de>,
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>, "David S . Miller"
+	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Philipp Zabel
+	<p.zabel@pengutronix.de>, Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley
+	<paul.walmsley@sifive.com>, Albert Ou <aou@eecs.berkeley.edu>, Emil Renner
+ Berthing <emil.renner.berthing@canonical.com>, William Qiu
+	<william.qiu@starfivetech.com>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "linux-can@vger.kernel.org"
+	<linux-can@vger.kernel.org>, "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>, "linux-riscv@lists.infradead.org"
+	<linux-riscv@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v2 3/4] can: Add driver for CAST CAN Bus Controller
+Thread-Index: AQHbDP78QyTswaw7pki8MOjaOJeAtrJkAHKAgAC5iGCAAI/MgIAxnAvw
+Date: Fri, 25 Oct 2024 02:11:09 +0000
+Message-ID:
+ <ZQ2PR01MB13076C761C45F2D5834DA718E64F2@ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=starfivetech.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: ZQ2PR01MB1307:EE_|ZQ2PR01MB1291:EE_
+x-ms-office365-filtering-correlation-id: 5ee6e6b3-d73d-4fde-4029-08dcf49a4b03
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|7416014|41320700013|366016|1800799024|38070700018;
+x-microsoft-antispam-message-info:
+ ZV7vdnYnKu/IPmzURWv2K3L3quePUfB+kHLeZV9wlov53zmzg0rpROfDgImasLpl4FZe61QKP5MPW57z2TAce7m3qpUXxQ9pku2WRBbHhHy2MryvNBVnUGg6PfXwXIWef6EsQkORruxiXH7s+ol5IMR+34SL/4wMQ9smUea6DY7St9RS8hpV/uJaiD3I4GmhpTj86tA0rKShQBYcnE6GZWqWc24K7ACeca7ZWgZHPHbmlaXLZ4o7BVEo4IT7BtnNEfRGVHSAoLEYBQ+J5+YUR7Yi5aWstE9zxOC+oIfp7musYz6kqEzY7Vx22yQ7nv3LvjftBUortTqZDsyaUrou9Bz4+ItxgOi2aVbPOsp2syXMbd2jhridiDElP6nPV3UMhExix8+UQgN7/kE+GN4RRUVmIYzFRSIPEVloldXixtPYJc/X/81yT3HrKbX+gsvcqqRI5Ly7XSjk85qXJP3yGWHXsbY6sFJtzPEyIf4cYI2R/qkYcKxObCWfgsq+Jvl81SJlR7cbxM9Ti0/vvet641SJVSiGNY/rvNFffPq7UIohy5lTuOXHNB4dyGBuir33O0AyyiTEghOU3lXgs4HBLwWWNlEDrLE4ChmHXita1rJyq6rFSfzTt1hddR3NuJo+
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230040)(7416014)(41320700013)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?vrQo/2+v4clwuscgBDbo9+0vaiG5jpWrGFs0NLcRy2zj/eDa9tmjDIckP+ys?=
+ =?us-ascii?Q?HHW7dNmkFJCjCiFHmhroxGbdcirLXizbmS642E3PTYfa6n+Yzjt+/Q2LNoRH?=
+ =?us-ascii?Q?UYqWVJRJdckkpQoLL0FoMk0OnUMmrkFabhqc35Z/rTUTBBAWSVaHmmXNPrOH?=
+ =?us-ascii?Q?LVLou4NSr1KJuqV2yUfpXEzQizua48OsYCM0Ay19zI/EJ7zRAzkJMRjzdCMb?=
+ =?us-ascii?Q?zPA4TqutHq6cW/Or6+8O3oEgDwqv4qqg2AbGDhExjwJXr5hYkq0UsTGfD6uX?=
+ =?us-ascii?Q?tB3F0oNnjcDLrDTF5A+jnczfj6N4Ht24bG9DlMi/HCb1sAOFdvlGmF0uf9yT?=
+ =?us-ascii?Q?RBcWxCBNi+ivy56S1abBqHoWmlPqdXoI2dkqBWDxitar+8yeSgqPJNlfw1JO?=
+ =?us-ascii?Q?O3i+wDoJ3mu7wgPQseJ/pcCLyN8N/9113rId4nFXAbpTXELaRjlw0cqDp47e?=
+ =?us-ascii?Q?3uwUrb9GEWLUm7tZ9p14gEMPuGS+c+YF0Fw8l0RGgclue0GKpiujBO38QAHm?=
+ =?us-ascii?Q?6Pr3bci9gjbpqKCF8+s08anCE1Ki9E9ha99CWVUHYv1jIXzJDWJuBiT8er6D?=
+ =?us-ascii?Q?gvTvaFM0reD1pRfPzsQVMItfRLg/AfUAB4yHwXE0J8B5X7YqKTw70qgcmZHf?=
+ =?us-ascii?Q?xBhgKXYrSI4uHtAQ3FMmAcylnghGbIY0xif5TU6mUaz+tKEqrnC0S984uovs?=
+ =?us-ascii?Q?YaLb+X/sqvaA+A1FZ1y3q0mq+PqWiveEAKQkudGaiyEGBKoocpdVj9XjEsYM?=
+ =?us-ascii?Q?79cillnRAY+/U90ZSqmoQmKed0loiv0p5qv08ZIZtH/ValKta1i+FyAci6x/?=
+ =?us-ascii?Q?3EgBYvspJv2XCusBt2+3gDmv1GlSD4k+vnjTc5Bp1mtVdIdCPAQKz5MqQfV1?=
+ =?us-ascii?Q?yN9g01NykRjA2FPjMUnaUbN7kIElWY4dJSg9/KqbSXA1DWtb0b2hGncyAAhE?=
+ =?us-ascii?Q?dWttapqdDeUdqZjj2Y9GEgQZAIrsuH9bQR5+tdasV0EaLsRpozZCQO9Y1gzB?=
+ =?us-ascii?Q?goM6m4WM27FnDtVyKAtLr0PEXkxBs/h17WFZ4DLM0yEKWnC79urQHRIUwTy9?=
+ =?us-ascii?Q?vecPPtdBvsRnxFXZgRoYr1RQQi6LQOXOfM9vapi13BPMKNHGVE0MIvZLi0DE?=
+ =?us-ascii?Q?Sspn0+kU/q+gJcgzqKoPcl7UkTiBAV7F8/VxtFx2bt/4i8lKZ92bVMHwM9s+?=
+ =?us-ascii?Q?ClDnI9b1JNAu1MxlzK8046xrzxq+iN0lbSuj/2WFNE21S1oonWhsahUT+ga1?=
+ =?us-ascii?Q?8/jXwJp3QIFDl/f0sUFbeb1NWJuU/N/O8nBE7jwJiJsdBbg1rs3XZZY94Hsa?=
+ =?us-ascii?Q?TOeACyztqZ6qRpeQCz8oLnmMUdJtGveZHemNnCaZmYotpffG0HNcHO5Vv6pK?=
+ =?us-ascii?Q?BXH2+N6hjvT8gAXCbde+SYT9+K/jmxeGGpET4YhkCGObSM7Fv/Mj9T0F236r?=
+ =?us-ascii?Q?1EgfbCXc4FNV8H65hBIQkAbprszmsSD0d8ucoQrgQJzpPGW7Kplu0yhUZMmu?=
+ =?us-ascii?Q?9OoljftsU+HnTYrh2L/4VPKg0XTYAff0/BlCJ/AVWyKN2Bcw6Y3DJy2G6lEZ?=
+ =?us-ascii?Q?FvaTReRzpXKBehn6gLrlucVj+i84yKQVkfPgGj1X?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH v4 3/3] mm/slub: Fix memory leak of kobj->name in
- sysfs_slab_add()
-Content-Language: en-US
-To: Vlastimil Babka <vbabka@suse.cz>, Hyeonggon Yoo <42.hyeyoo@gmail.com>
-CC: Liu Shixin <liushixin2@huawei.com>, Christoph Lameter <cl@linux.com>,
-	Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>,
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>, Andrew Morton
-	<akpm@linux-foundation.org>, Roman Gushchin <roman.gushchin@linux.dev>, Linux
- Memory Management List <linux-mm@kvack.org>, LKML
-	<linux-kernel@vger.kernel.org>
-References: <20221112114602.1268989-1-liushixin2@huawei.com>
- <20221112114602.1268989-4-liushixin2@huawei.com>
- <3780a622-03f2-4cfe-5705-0e9d0be61d57@huawei.com>
- <CAB=+i9SiiH7JN1tTrmO6FS+HqQcKnwoAs3O2PKxfPy2parM8WA@mail.gmail.com>
- <68b86f66-cd00-bb7d-b8bb-5a94e8dd1ea2@huawei.com>
- <02820eb8-0b8f-4aa8-9315-85368e9c331e@suse.cz>
- <0F94364A-F0C8-4C0A-B38D-3DDEA653B6B7@gmail.com>
- <7707ff34-16e1-4f8c-9af6-8b5b6591c77e@suse.cz>
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-In-Reply-To: <7707ff34-16e1-4f8c-9af6-8b5b6591c77e@suse.cz>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemg200008.china.huawei.com (7.202.181.35)
+X-OriginatorOrg: starfivetech.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5ee6e6b3-d73d-4fde-4029-08dcf49a4b03
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Oct 2024 02:11:09.9851
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: IWUOU/V0TMVBtWqtZYRUHVoPBH7Stv2DWeBoLKMXp40YWR4CSWehTrLIfYwqIPwHZwlPX0ZRymA/9FkfTfOoj3alE0YNKj+Ec36Ae+u2xUQ=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: ZQ2PR01MB1291
 
+> On 23.9.24 20:13, Andrew Lunn wrote:
+> > > > +	reset_test =3D ccan_read_reg_8bit(priv, CCAN_CFG_STAT);
+> > > > +
+> > > > +	if (!(reset_test & CCAN_RST_MASK)) {
+> > > > +		netdev_alert(ndev, "Not in reset mode, cannot set bit
+> > > timing\n");
+> > > > +		return -EPERM;
+> > > > +	}
+> > >
+> > >
+> > > You don't see nedev_alert() used very often. If this is fatal then
+> netdev_err().
+> > >
+> > > Also, EPERM? man 3 errno say:
+> > >
+> > >        EPERM           Operation not permitted (POSIX.1-2001).
+> > >
+> > > Why is this a permission issue?
+> >
+> > Will use netdev_err() and return -EWOULDBLOCK instead.
+>=20
+> I'm not sure that is any better.
+>=20
+>        EAGAIN          Resource  temporarily unavailable (may be the same=
+ value
+>                        as EWOULDBLOCK) (POSIX.1-2001).
+>=20
+> This is generally used when the kernel expects user space to try a system=
+ call
+> again, and it might then work. Is that what you expect here?
 
+The bit timing should only be set when the module is in reset mode.
+So we return an error here if the module is not in the correct mode.
+Could you give me some suggestions about the return value here?
 
-On 2024/10/2 19:35, Vlastimil Babka wrote:
-> On 9/13/24 17:00, Hyeonggon Yoo wrote:
->>
->>
->>> On Sep 13, 2024, at 11:10 PM, Vlastimil Babka <vbabka@suse.cz> wrote:
->>>
->>> On 9/6/24 10:10, Jinjie Ruan wrote:
->>>>
->>>>
->>>> On 2024/9/5 21:59, Hyeonggon Yoo wrote:
->>>>> On Thu, Sep 5, 2024 at 12:41 PM Jinjie Ruan <ruanjinjie@huawei.com> wrote:
->>>>>>
->>>>>>
->>>>>>
->>>>>> On 2022/11/12 19:46, Liu Shixin wrote:
->>>>>>> There is a memory leak of kobj->name in sysfs_slab_add():
->>>>>>>
->>>>>>> unreferenced object 0xffff88817e446440 (size 32):
->>>>>>>   comm "insmod", pid 4085, jiffies 4296564501 (age 126.272s)
->>>>>>>   hex dump (first 32 bytes):
->>>>>>>     75 62 69 66 73 5f 69 6e 6f 64 65 5f 73 6c 61 62  ubifs_inode_slab
->>>>>>>     00 65 44 7e 81 88 ff ff 00 00 00 00 00 00 00 00  .eD~............
->>>>>>>   backtrace:
->>>>>>>     [<000000005b30fbbd>] __kmalloc_node_track_caller+0x4e/0x150
->>>>>>>     [<000000002f70da0c>] kstrdup_const+0x4b/0x80
->>>>>>>     [<00000000c6712c61>] kobject_set_name_vargs+0x2f/0xb0
->>>>>>>     [<00000000b151218e>] kobject_init_and_add+0xb0/0x120
->>>>>>>     [<00000000e56a4cf5>] sysfs_slab_add+0x17d/0x220
->>>>>>>     [<000000009326fd57>] __kmem_cache_create+0x406/0x590
->>>>>>>     [<00000000dde33cff>] kmem_cache_create_usercopy+0x1fc/0x300
->>>>>>>     [<00000000fe90cedb>] kmem_cache_create+0x12/0x20
->>>>>>>     [<000000007a6531c8>] 0xffffffffa02d802d
->>>>>>>     [<000000000e3b13c7>] do_one_initcall+0x87/0x2a0
->>>>>>>     [<00000000995ecdcf>] do_init_module+0xdf/0x320
->>>>>>>     [<000000008821941f>] load_module+0x2f98/0x3330
->>>>>>>     [<00000000ef51efa4>] __do_sys_finit_module+0x113/0x1b0
->>>>>>>     [<000000009339fbce>] do_syscall_64+0x35/0x80
->>>>>>>     [<000000006b7f2033>] entry_SYSCALL_64_after_hwframe+0x46/0xb0
->>>>>>
->>>>>>
->>>>>> Hi，every one,
->>>>>
->>>>> Hi.
->>>>>
->>>>>> I found the same problem and it solve this problem with the patch, is
->>>>>> there any plan to update the patch and solve it.
->>>
->>> Hmm looks like back in 2022, Hyeonggon had some feedback to the series which
->>> was not answered and then it got forgotten. Feel free to take over and send
->>> an updated version.
->>
->>
->> I was thinking of what the fix would be with my feedback,
->> and I still think passing different kobj_type (with a dummy release function) for early kmem_caches
->> will be a more appropriate approach.
->>
->> However, there is one concern: people that wrote kobject.rst might not like it :(
->>
->> in Documentation/core-api/kobject.rst:
->>> One important point cannot be overstated: every kobject must have a release() method,
->>> and the kobject must persist (in a consistent state) until that method is called. If these constraints are not met,
->>> the code is flawed. Note that the kernel will warn you if you forget to provide a release() method.
->>> Do not try to get rid of this warning by providing an "empty" release function.
->>
->> But obviously we don't want to release caches just because the kernel failed to add it to sysfs.
->>
->>>>> What kernel version do you use,
->>>>
->>>> 6.11.0-rc6
->>>>
->>>>> and when do you encounter it or how do you reproduce it?
->>>>
->>>> Hi, Hyeonggon,
->>>>
->>>> Thank you, I encounter it when doing inject fault test while modprobe
->>>> amdgpu.ko.
->>>
->>> So I wonder where's the problem that results in kobject_init_and_add()
->>> failing. If it's genuinely duplicate name as commit 80da026a8e5d suggests,
->>> 6.12-rc1 will have a warning to prevent that. Delayed destruction of
->>> SLAB_TYPESAFE_BY_RCU caches should also no longer happen with 6.12-rc1. So
->>> worth retrying with that and if it's still failing, we should look at the
->>> root cause perhaps.
->>
->> I thought it was because the memory allocation for a name string failed due to fault injection?
-> 
-> Well in any case 6.12-rc1 introduced a new one, fixed by:
-> https://git.kernel.org/pub/scm/linux/kernel/git/vbabka/slab.git/commit/?h=slab/for-6.12-rc1/fixes&id=77ced98f0f03fdc196561d1afbe652899c318073
-> 
-> So once that's mainline, we can see if anything remains
+>=20
+> > > > +static irqreturn_t ccan_interrupt(int irq, void *dev_id) {
+> > > > +	struct net_device *ndev =3D (struct net_device *)dev_id;
+> > >
+> > > dev_id is a void *, so you don't need the cast.
+> >
+> > OK, drop it.
+>=20
+> Please look at the whole patch. There might be other instances where a vo=
+id *
+> is used with a cast, which can be removed. This was just the first i spot=
+ted.
 
-Using the newest 6.12.0-rc4, the issue still exists in slab:
+OK. Will modify for the whole patch.
 
-unreferenced object 0xffffff80ce6da9c0 (size 16):
-  comm "modprobe", pid 12782, jiffies 4299073226
-  hex dump (first 16 bytes):
-    6f 76 6c 5f 69 6e 6f 64 65 00 6d ce 80 ff ff ff  ovl_inode.m.....
-  backtrace (crc 1a460899):
-    [<00000000edf3be8b>] kmemleak_alloc+0x34/0x40
-    [<0000000004121c8d>] __kmalloc_node_track_caller_noprof+0x304/0x3e8
-    [<00000000515e9eda>] kstrdup+0x48/0x84
-    [<000000005d2d0c1a>] kstrdup_const+0x34/0x40
-    [<00000000d14076ce>] kvasprintf_const+0x170/0x1e0
-    [<0000000060f79972>] kobject_set_name_vargs+0x5c/0x12c
-    [<00000000299f544a>] kobject_init_and_add+0xd4/0x168
-    [<000000008ceb40f4>] sysfs_slab_add+0x190/0x21c
-    [<00000000027371b9>] do_kmem_cache_create+0x354/0x5cc
-    [<00000000cc9eb2aa>] __kmem_cache_create_args+0x1b8/0x2c8
-    [<000000006a3e21cc>] 0xffffffea545a409c
-    [<0000000002f945b3>] do_one_initcall+0x110/0x77c
-    [<0000000024f23211>] do_init_module+0x1dc/0x5c8
-    [<00000000a16337d6>] load_module+0x4acc/0x4e90
-    [<00000000be447e77>] init_module_from_file+0xd4/0x128
-    [<0000000048065de1>] idempotent_init_module+0x2d4/0x57c
-
-> 
->>>
->>>>>
->>>>> --
->>>>> Hyeonggon
->>
->>
-> 
+Best regards,
+Hal
 
