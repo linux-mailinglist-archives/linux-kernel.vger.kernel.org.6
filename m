@@ -1,90 +1,100 @@
-Return-Path: <linux-kernel+bounces-380874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 304879AF72B
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 03:50:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CE5D9AF72D
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 03:56:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9EA39B215D3
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 01:50:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7A0B282FF1
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 01:56:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04018433CE;
-	Fri, 25 Oct 2024 01:50:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13FFE2C853;
+	Fri, 25 Oct 2024 01:56:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s4Kug1+4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="VZYyhKog"
+Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B3B64C8C;
-	Fri, 25 Oct 2024 01:50:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F84B10A0E
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 01:56:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729821042; cv=none; b=DBouBFyec/9yPeIR2lpYT00k0UaZu3T6472s7ITwXokGHqPaZWS21XbbZF2thAnY33NOdzotvVz6fgyhpcoTAlKnTYq03AWcCYmm+en4wqnNklq2sL1UfAsOb64Aj6pp/YjE2JZWAYtOIKiJZYqi6nOSJ81ctC/2mMsKMmO5x4o=
+	t=1729821373; cv=none; b=FXtn9Gwn5u5m+z8UIK411n4GH0uxO7wGCX1n3WLHZsSy29wqly4mjnV1dHn8omoK0axtXm+r/mbuF/PE2bOwq6kB5Mnlz7NfJm5D0p6afiZVM4VJzCnj1Fxm1P6oUZ0gDi6zMS71gV0zgtkWejqvkC1xaySXKktxblBfr2IBS7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729821042; c=relaxed/simple;
-	bh=RwJI6eSZUGGBcNo2fLcmRIdAXn7/yZO/iBQPT87j1Yg=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=dQNcy1y5UMmZ2u9HKgws1QJxqSpzFVNZe1cvokDiS8N0Z0tG3Rz8tbV//kYck0/7W+aZKqNlWKnrvnde5sVSHXj7lOfMPMFy1vwafjvLvF9Frm9j9YUAtgZjHlOE9+ZQpDONMVwRyvwLY1AkW397rNypFDNXE2QCv+ypiQPrpmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s4Kug1+4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7A74C4CEC7;
-	Fri, 25 Oct 2024 01:50:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729821040;
-	bh=RwJI6eSZUGGBcNo2fLcmRIdAXn7/yZO/iBQPT87j1Yg=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=s4Kug1+46Ei7tiCmG6SlYm1LbZ1cz8tAmIaj0TdWlgOD9XizdGuMW1fQ14J4ianAS
-	 0f1ME+ppWCchlEB5R4CoKrU7h2OUsePmDOw9WzA2ba0p63gOcfJ+8r2VlHnu/oRrqt
-	 4t+tAdySHqngGNhB6nNpXFP666eg31HIDUQ78vpaHURO1/P9KdDrBpoNMSrfgsEu2T
-	 qZLLWI/xs4Q7D1T4ZP+DKO4KXBHHIueVP5Fa0X0zUZODkEOjJ5ay62oZyfjTRBLUa5
-	 jr1kG3f0zpA1hfsf7LbBT50ruvDbXlc5ugRKT4S2Ch5iX/ipK/SX5ZH5X+Cr0/BKrl
-	 g11rzI+F5IGGg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADCA4380DBDC;
-	Fri, 25 Oct 2024 01:50:48 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1729821373; c=relaxed/simple;
+	bh=r/MFzY3Xt1bwzG6T1Oi1IB0Snx1YQ+BS4dc4k4LV+yc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RRcZctpE+uNwPkoVR2GPqVUnEzYduEtY3sGrHAJvSDffm1VfvSTbvjSeTKaHTYzZ4frJpZA5XpBQZwv+gni9rNRGCkmaaQE5PjeJXWlVBTPhpVxoMFzLXY1/n+lbaK5YFu+t611cf0lxTmGWJnHeBxGLVJdHaBSJ1FcSTSmm5MI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=VZYyhKog; arc=none smtp.client-ip=115.124.30.119
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1729821368; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=JXc4Oh+KXKinub95ckQcMbW8B7vWBlit/eXWPuy9/uk=;
+	b=VZYyhKogmTVTv1YUC2846j3WPb7CSW38Q30ayuUwvIaRF2DecNnYwFxsXQ4UT3Oz8O+3FZQJ6RJExWmVmKYZcoRUKmyM4HHzOj0/ORG2B/sbPcZVowBsejm2RdekFrxNHzt7p1yBqsZDtjOFf63BwKqWuOJ6FLBbRBTx/yZqS50=
+Received: from 30.74.144.130(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WHqcrzD_1729821365 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Fri, 25 Oct 2024 09:56:06 +0800
+Message-ID: <8c77c582-262a-4419-be9e-45ad76bfd36d@linux.alibaba.com>
+Date: Fri, 25 Oct 2024 09:56:05 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [GIT PULL] Networking for v6.12-rc5
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172982104752.2439163.457544303766936897.git-patchwork-notify@kernel.org>
-Date: Fri, 25 Oct 2024 01:50:47 +0000
-References: <20241024140101.24610-1-pabeni@redhat.com>
-In-Reply-To: <20241024140101.24610-1-pabeni@redhat.com>
-To: Paolo Abeni <pabeni@redhat.com>
-Cc: torvalds@linux-foundation.org, kuba@kernel.org, davem@davemloft.net,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH hotfix 1/2] mm/thp: fix deferred split queue not
+ partially_mapped
+To: Hugh Dickins <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>
+Cc: Usama Arif <usamaarif642@gmail.com>, Yang Shi <shy828301@gmail.com>,
+ Wei Yang <richard.weiyang@gmail.com>,
+ "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+ Matthew Wilcox <willy@infradead.org>, David Hildenbrand <david@redhat.com>,
+ Johannes Weiner <hannes@cmpxchg.org>, Barry Song <baohua@kernel.org>,
+ Kefeng Wang <wangkefeng.wang@huawei.com>, Ryan Roberts
+ <ryan.roberts@arm.com>, Nhat Pham <nphamcs@gmail.com>,
+ Zi Yan <ziy@nvidia.com>, Chris Li <chrisl@kernel.org>,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org
+References: <760237a3-69d6-9197-432d-0306d52c048a@google.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <760237a3-69d6-9197-432d-0306d52c048a@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello:
 
-This pull request was applied to bpf/bpf.git (master)
-by Linus Torvalds <torvalds@linux-foundation.org>:
 
-On Thu, 24 Oct 2024 16:01:01 +0200 you wrote:
-> Hi Linus!
+On 2024/10/24 12:10, Hugh Dickins wrote:
+> Recent changes are putting more pressure on THP deferred split queues:
+> under load revealing long-standing races, causing list_del corruptions,
+> "Bad page state"s and worse (I keep BUGs in both of those, so usually
+> don't get to see how badly they end up without).  The relevant recent
+> changes being 6.8's mTHP, 6.10's mTHP swapout, and 6.12's mTHP swapin,
+> improved swap allocation, and underused THP splitting.
 > 
-> Oddily this includes a fix for posix clock regression; in our previous PR
-> we included a change there as a pre-requisite for networking one.
-> Such fix proved to be buggy and requires the follow-up included here.
-> Thomas suggested we should send it, given we sent the buggy patch.
+> The new unlocked list_del_init() in deferred_split_scan() is buggy.
+> I gave bad advice, it looks plausible since that's a local on-stack
+> list, but the fact is that it can race with a third party freeing or
+> migrating the preceding folio (properly unqueueing it with refcount 0
+> while holding split_queue_lock), thereby corrupting the list linkage.
 > 
-> [...]
+> The obvious answer would be to take split_queue_lock there: but it has
+> a long history of contention, so I'm reluctant to add to that. Instead,
+> make sure that there is always one safe (raised refcount) folio before,
+> by delaying its folio_put().  (And of course I was wrong to suggest
+> updating split_queue_len without the lock: leave that until the splice.)
+> 
+> And remove two over-eager partially_mapped checks, restoring those tests
+> to how they were before: if uncharge_folio() or free_tail_page_prepare()
+> finds _deferred_list non-empty, it's in trouble whether or not that folio
+> is partially_mapped (and the flag was already cleared in the latter case).
+> 
+> Fixes: dafff3f4c850 ("mm: split underused THPs")
+> Signed-off-by: Hugh Dickins <hughd@google.com>
 
-Here is the summary with links:
-  - [GIT,PULL] Networking for v6.12-rc5
-    https://git.kernel.org/bpf/bpf/c/d44cd8226449
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Good catch. LGTM.
+Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
 
