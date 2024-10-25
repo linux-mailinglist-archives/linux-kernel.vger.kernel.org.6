@@ -1,173 +1,185 @@
-Return-Path: <linux-kernel+bounces-382607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A12F9B10FE
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 22:57:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 051A09B1106
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 22:58:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B9F8282ABE
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 20:57:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D7E31F228A6
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 20:58:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C99421216D;
-	Fri, 25 Oct 2024 20:47:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6A62216DFB;
+	Fri, 25 Oct 2024 20:47:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nBi3KV04"
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gekfskCv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9A8F20C333;
-	Fri, 25 Oct 2024 20:47:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3236216208;
+	Fri, 25 Oct 2024 20:47:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729889240; cv=none; b=qfztRHrPyzicTtfyQRv4t0TnWiwUeI7gtTjxHPN7nrRmFA/5CCFCL9Ap5mC1mVfPnczofWjUHhfZuTRUFoDwUaAATj2jjW56BEmMidKllWqh8YB0Mrk0zHVGzHB8KZYXCdRClveTcKxPLxpgUyEoTSX3vcekZYR5sCyHWAjA0NY=
+	t=1729889249; cv=none; b=BSmgGm6S4qZiuO8CmWRRcvt1HNpHQHmvwSfxvtXFurHEDqRBMdhzM51FoMhvxqImJAih+MFdkHYw0dHuvp93jQwlBwBM3OQ3NDizhESjXcirDXq2ntmalkYskjLysIE7GtiRxbajfNkiB41E9OL4GmdK8dJPFug2YO8p11Vse+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729889240; c=relaxed/simple;
-	bh=oAnrTg6+ZTNIYv2RxYzpft0paLcpuLFASlreiuS/n6M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=izBgJsoogw76Lf9R9IQyrmSVslEjfNMWuG4IVO1CsN+JIPxgQbAR7bX9jpPoIzLkNDEHpQISA/m4pEu3fGEd8TMDAYCR/ouL+FQtmBMUwcT0ShLGTaysuOadY4KAtsVjwRSWG66Ghp6BYlRfDbv2MzoYuROGGg3x/gY/dr668Z8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nBi3KV04; arc=none smtp.client-ip=209.85.222.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-7b18da94ba9so81136585a.0;
-        Fri, 25 Oct 2024 13:47:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729889237; x=1730494037; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=gIZHEwfOmBS9mPV2oH+jrJ1aoa5lOVY1207ho5mBV/4=;
-        b=nBi3KV04MZovTkNkj3s0J0gOxq/OyLICLP/+4uxAv8ezUyH316Wv8JNWVRfxZYm5/D
-         v3gvHB11SVRUnmAx6j62AXLGxZrgao/faV6IWGXinwEbTMrOy9MVkdcOFpHB74drZbn8
-         FQst2gLcQpPYQFIRgvhd2bnBEjVDo6XHnv0L2eKT9pmgLf5emNxVGYN9Cen+SrVqZLZG
-         urddUMIFF75xkeQd3WYd6MO2MBYIfFve4HJcx0g6CPIEizSSPl0QiipcxtgOpKOY9+7i
-         fcUp+vGAO19k4OZAWh+H9Wp2eyvV62Qb4TWhENPaze9H7hQQi65Wee/njeRAV76rZDHM
-         kQIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729889237; x=1730494037;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gIZHEwfOmBS9mPV2oH+jrJ1aoa5lOVY1207ho5mBV/4=;
-        b=txkejXdT8FL4DVGChv+wopmYM99fBkOkUHG2GjajMJNdfEnQHerQj+lkM9Kv3cXdxz
-         gesofrPN6F7OHAh1+JBBpPxraGwazenj+ylgqb+F9ZZlB1CA4vJsPCgDSheI/Cn0gJn5
-         kzAxE1CVJbXSbRStmMnNBS99NJ+TMNM9PJyxEyczd456BezMxFPVROoZhN0lKUGK4grB
-         ZFYG37J3oghMqJOYv14VPc+Y/5rDyzLe+ItMA2XtDBhaRei4jpUbqpLmHwIhr62/NS8p
-         krRdeo/xqkDPN2ThDJCFRcH+5ad8SU4bJk3tvRIkr6BovrAMlzxhMlAY6QUES43tpYsC
-         ydGg==
-X-Forwarded-Encrypted: i=1; AJvYcCVkjvUi/xkRZ/vKZGImb5J0Xz92mhGT+N1dzrJASL0Na34no3u1lCqOtB54m852CP67pJ8d3WK+MFrNPMQ=@vger.kernel.org, AJvYcCVnHD3gWHA3JGDuKbvpHBe0VwVasgVTcr/VsVoG6do0kQr3o4v2foq3Y2dvKXB2+1zxQiZbQ0ZQ@vger.kernel.org, AJvYcCXNA/sdIWiNRLvaA22goeCdLy+j4fwv3Z6lYlDEIhC9GrJlH4CCGAdjFX8rEqbyf2RO288gAxemJAoiaqBgoXk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5t3V4celdPzk5lrl8MwzwxyUh/RA2Jdye7PQBki6vFzNC31wu
-	GcDUuwTB25Czmlcqqd3t9dBT4rgqU7ZscFs9FGXxE1tXtDU+5wve
-X-Google-Smtp-Source: AGHT+IH2FI4G4iwczx681DALwQQysvh3yFn4NumpmmuRMTRiuhG0SfWEU5XfTdFxZTORE6bjseWPOQ==
-X-Received: by 2002:a05:620a:4543:b0:7a1:e37c:bde0 with SMTP id af79cd13be357-7b186648ce9mr1207119285a.24.1729889236669;
-        Fri, 25 Oct 2024 13:47:16 -0700 (PDT)
-Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b18d359a47sm87530885a.125.2024.10.25.13.47.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2024 13:47:16 -0700 (PDT)
-Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 62C971200043;
-	Fri, 25 Oct 2024 16:47:15 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-03.internal (MEProxy); Fri, 25 Oct 2024 16:47:15 -0400
-X-ME-Sender: <xms:0wMcZ4hqovkZOvEhqb4qGxi6HONlVNR1HuKl-99aCQeKECDjrNJO6w>
-    <xme:0wMcZxCoM6M-EnctoKkoam0eKpiP7PUyYcaYuUHlS-ODtW89-_jgzJeNf22FAWVYs
-    Pnh8e54ilQWgmesZg>
-X-ME-Received: <xmr:0wMcZwFHHazRslYFNrU19f4eNVSASw0CWetmtsHC-49Ly5xSjayeCmgHUvs>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdejvddgudehfecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtugfgjgesthekredttddt
-    jeenucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrih
-    hlrdgtohhmqeenucggtffrrghtthgvrhhnpeevgffhueevkedutefgveduuedujeefledt
-    hffgheegkeekiefgudekhffggeelfeenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
-    grmhepmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgr
-    lhhithihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppe
-    hgmhgrihhlrdgtohhmsehfihigmhgvrdhnrghmvgdpnhgspghrtghpthhtohepvddvpdhm
-    ohguvgepshhmthhpohhuthdprhgtphhtthhopehmihhguhgvlhdrohhjvggurgdrshgrnh
-    guohhnihhssehgmhgrihhlrdgtohhmpdhrtghpthhtohepfhhujhhithgrrdhtohhmohhn
-    ohhrihesghhmrghilhdrtghomhdprhgtphhtthhopehnvghtuggvvhesvhhgvghrrdhkvg
-    hrnhgvlhdrohhrghdprhgtphhtthhopehruhhsthdqfhhorhdqlhhinhhugiesvhhgvghr
-    rdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprh
-    gtphhtthhopehhkhgrlhhlfigvihhtudesghhmrghilhdrtghomhdprhgtphhtthhopeht
-    mhhgrhhoshhssehumhhitghhrdgvughupdhrtghpthhtohepohhjvggurgeskhgvrhhnvg
-    hlrdhorhhgpdhrtghpthhtoheprghlvgigrdhgrgihnhhorhesghhmrghilhdrtghomh
-X-ME-Proxy: <xmx:0wMcZ5SNES7DWLHZot_3OvBz7f84w1Cx27vegPIashITca-o4BReJg>
-    <xmx:0wMcZ1wEYHshKzftML6YAAkREYupRUKkjia05ruzf2Nc_QNh3OQQ2A>
-    <xmx:0wMcZ34fgxl9vw42G_M52n6cqdxvnyp9jdCvLegIqk5SfBSjO5lXbw>
-    <xmx:0wMcZywu5WmZmjjtCD3rVQa2UXSC5S4_pzCG7k_N51-6RJf9BZTREg>
-    <xmx:0wMcZ5j9UL-4vBjc-Gwg42a1NoSaAY_TMiKPEmaA4hG6z35jYv44HK8Z>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 25 Oct 2024 16:47:14 -0400 (EDT)
-Date: Fri, 25 Oct 2024 13:47:13 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: FUJITA Tomonori <fujita.tomonori@gmail.com>, netdev@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, andrew@lunn.ch,
-	hkallweit1@gmail.com, tmgross@umich.edu, ojeda@kernel.org,
-	alex.gaynor@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
-	benno.lossin@proton.me, a.hindborg@samsung.com,
-	aliceryhl@google.com, anna-maria@linutronix.de, frederic@kernel.org,
-	tglx@linutronix.de, arnd@arndb.de, jstultz@google.com,
-	sboyd@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v3 4/8] rust: time: Implement addition of Ktime
- and Delta
-Message-ID: <ZxwD0fG3hTT1Nkf3@Boquns-Mac-mini.local>
-References: <20241016035214.2229-1-fujita.tomonori@gmail.com>
- <20241016035214.2229-5-fujita.tomonori@gmail.com>
- <ZxAZ36EUKapnp-Fk@Boquns-Mac-mini.local>
- <20241017.183141.1257175603297746364.fujita.tomonori@gmail.com>
- <CANiq72mbWVVCA_EjV_7DtMYHH_RF9P9Br=sRdyLtPFkythST1w@mail.gmail.com>
- <ZxFDWRIrgkuneX7_@boqun-archlinux>
- <CANiq72kWH8dGfnzB-wKk93NJY+k3vFSz-Z+bkPCdoehqEzFojA@mail.gmail.com>
+	s=arc-20240116; t=1729889249; c=relaxed/simple;
+	bh=Tfo5X6uc3w/hrU+iP8PZcK2t41JlU/D+FAY3HHNYJHM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uz0idFK0+FDYC1vKPUppdQdbUMKry4c59RLJq18PXK/28fNrA5SF2kJEN90R8i5ksZe6+4Av3NQ3p4qubcLzI8Bf1OOlZD9ghuCAoda05W0qX2akM2Ot+78jP9MydsxK1FrMpkuJgEDT8ZmYOSwiB1QS48LObS2nb+gRZGIV+RI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gekfskCv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F185C4CECC;
+	Fri, 25 Oct 2024 20:47:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729889248;
+	bh=Tfo5X6uc3w/hrU+iP8PZcK2t41JlU/D+FAY3HHNYJHM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=gekfskCvWOfIqlAZ/aSuuXFxlPUBLAq/1J8u7BRk+K9IG78a6VWhRP79Fdow15YPf
+	 44uCMphVFXEm62CFfo0bnfd3n1CW10JYtALJafsVUKuPU3z4maXZ5sT1Bb2UV9pycN
+	 TGG3d8+d3WVZMhgB/k7H5BucarzeptU7ro6s0+7jd2rjHTv2j/nmLH6oV/WpNORUDA
+	 xnh/zY6v5NxPpq11QA6EDyZllc/Y/OnW+6atxbqNYXt6wo/B0emCq9krojm4qbnglg
+	 hOSv/XbGNEBeJM/x1STwgIFbH8+hKzyAcfr+T2d5ym7TYHf4gr/dfs1497Uiengm5Q
+	 UWHjgLfRLSMlw==
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2fb58980711so23975541fa.0;
+        Fri, 25 Oct 2024 13:47:28 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV6+l7GF7hItrAUm2cgRn4knvPHZQvmh/rkMP8oCJkMNuO9xTm7Jq6XWqyrMubbiQ8FA+tdAgpS2dXfcQ==@vger.kernel.org, AJvYcCVSDjca1u8kA7A9ToqBJnM0IW8t/OKYuS7gcWTuLSI0BYiv6Mu7tgpdVBW/0xsNqn+1YJG7qaxKFezcCA==@vger.kernel.org, AJvYcCVwTglbP3ldzWMbP0E80XR1MGUwM22ER4isD3QSy5kdYAuUtVXKG8aixmRw0XMEDH2xgozPFWwzFggvNoq1@vger.kernel.org, AJvYcCW7dBrsHeYXNRIYN2pE39fmGoQea/3SAsnclBoJ0IfWGcLxV4rrO7ICMlhnqY2POecFPGFziLVMfdiO+w==@vger.kernel.org, AJvYcCWYC6gy3RhqMNUb08o8lE8/WJYdYfksaAadR+uincIvHtcE4worwqo55EGhhJi/br1DYcZI/qZUBnyiqw==@vger.kernel.org, AJvYcCWs776YWy7xtL4/Pidoo+1r5PLZ4Jq793bYNrEQO4tYeO4MZoQaNaLti166phnMRbLWTRi6c24mzQivTw==@vger.kernel.org, AJvYcCWy3D5vgZWWZSQ9KnQ59NFi94gpOPDGvaNBUKO4aRyHG95oWfjCwIazrxas/0RI/BEeUhpXcbh/C0ME@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzk6KcwbOQBrEPpAn9gf1pzTS00wkFrAnhnJRJfY/lE9C3lN3em
+	F5lPK1c1O5/VeqSuOn7YvhazBPinNbs0GDnQwd13Ovk5ZijqffxFSLV3tcS2PulMBKbD+FKFekh
+	KZSXd94sGyf2Wo8vYjPIKmlyaVZA=
+X-Google-Smtp-Source: AGHT+IEp6Dx2HlT+U0iGzL8ulgjfv3Yq0fFTV7/qQsnbI5MKZCd6PlYP7CAgGzk4GX/wuTuxR8r9WXnoQ2sPlcjTw1A=
+X-Received: by 2002:a05:651c:2123:b0:2fb:45cf:5eef with SMTP id
+ 38308e7fff4ca-2fcbe04dc90mr3314601fa.30.1729889246941; Fri, 25 Oct 2024
+ 13:47:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANiq72kWH8dGfnzB-wKk93NJY+k3vFSz-Z+bkPCdoehqEzFojA@mail.gmail.com>
+References: <20241025191454.72616-1-ebiggers@kernel.org> <20241025191454.72616-5-ebiggers@kernel.org>
+In-Reply-To: <20241025191454.72616-5-ebiggers@kernel.org>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Fri, 25 Oct 2024 22:47:15 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXEsq7iJThqZ7WA00ei4m59vpC23wPM+Mrj9W+HXfk-aSg@mail.gmail.com>
+Message-ID: <CAMj1kXEsq7iJThqZ7WA00ei4m59vpC23wPM+Mrj9W+HXfk-aSg@mail.gmail.com>
+Subject: Re: [PATCH v2 04/18] crypto: crc32 - don't unnecessarily register
+ arch algorithms
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org, 
+	linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, 
+	linux-mips@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org, 
+	linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev, 
+	sparclinux@vger.kernel.org, x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Oct 17, 2024 at 08:58:48PM +0200, Miguel Ojeda wrote:
-> On Thu, Oct 17, 2024 at 7:03 PM Boqun Feng <boqun.feng@gmail.com> wrote:
-> >
-> > but one thing I'm not sure is since it looks like saturating to
-> > KTIME_SEC_MAX is the current C choice, if we want to do the same, should
-> > we use the name `add_safe()` instead of `saturating_add()`? FWIW, it
-> > seems harmless to saturate at KTIME_MAX to me. So personally, I like
-> 
-> Wait -- `ktime_add_safe()` calls `ktime_set(KTIME_SEC_MAX, 0)` which
-> goes into the conditional that returns `KTIME_MAX`, not `KTIME_SEC_MAX
-> * NSEC_PER_SEC` (which is what I guess you were saying).
-> 
+On Fri, 25 Oct 2024 at 21:15, Eric Biggers <ebiggers@kernel.org> wrote:
+>
+> From: Eric Biggers <ebiggers@google.com>
+>
+> Instead of registering the crc32-$arch and crc32c-$arch algorithms if
+> the arch-specific code was built, only register them when that code was
+> built *and* is not falling back to the base implementation at runtime.
+>
+> This avoids confusing users like btrfs which checks the shash driver
+> name to determine whether it is crc32c-generic.
+>
 
-Yeah.. this is very interesting ;-) I missed that.
+I think we agree that 'generic' specifically means a C implementation
+that is identical across all architectures, which is why I updated my
+patch to export -arch instead of wrapping the C code in yet another
+driver just for the fuzzing tests.
 
-> So I am confused -- it doesn't saturate to `KTIME_SEC_MAX` (scaled)
-> anyway. Which is confusing in itself.
-> 
+So why is this a problem? If no optimizations are available at
+runtime, crc32-arch and crc32-generic are interchangeable, and so it
+shouldn't matter whether you use one or the other.
 
-Then I think it suffices to say ktime_add_safe() is just a
-saturating_add() for i64? ;-)
+You can infer from the driver name whether the C code is being used,
+not whether or not the implementation is 'fast', and the btrfs hack is
+already broken on arm64.
 
-> In fact, it means that `ktime_add_safe()` allows you to get any value
-> whatsoever as long as you don't overflow, but `ktime_set` does not
-> allow you to -- unless you use enough nanoseconds to get you there
-> (i.e. over a second in nanoseconds).
-> 
+> (It would also make sense to change btrfs to test the crc32_optimization
+> flags itself, so that it doesn't have to use the weird hack of parsing
+> the driver name.  This change still makes sense either way though.)
+>
 
-That seems to the be case.
+Indeed. That hack is very dubious and I'd be inclined just to ignore
+this. On x86 and arm64, it shouldn't make a difference, given that
+crc32-arch will be 'fast' in the vast majority of cases. On other
+architectures, btrfs may use the C implementation while assuming it is
+something faster, and if anyone actually notices the difference, we
+can work with the btrfs devs to do something more sensible here.
 
-Regards,
-Boqun
 
-> Cheers,
-> Miguel
-> 
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
+> ---
+>  crypto/crc32_generic.c  | 8 ++++++--
+>  crypto/crc32c_generic.c | 8 ++++++--
+>  2 files changed, 12 insertions(+), 4 deletions(-)
+>
+> diff --git a/crypto/crc32_generic.c b/crypto/crc32_generic.c
+> index cc064ea8240e..cecd01e4d6e6 100644
+> --- a/crypto/crc32_generic.c
+> +++ b/crypto/crc32_generic.c
+> @@ -155,19 +155,23 @@ static struct shash_alg algs[] = {{
+>         .base.cra_ctxsize       = sizeof(u32),
+>         .base.cra_module        = THIS_MODULE,
+>         .base.cra_init          = crc32_cra_init,
+>  }};
+>
+> +static int num_algs;
+> +
+>  static int __init crc32_mod_init(void)
+>  {
+>         /* register the arch flavor only if it differs from the generic one */
+> -       return crypto_register_shashes(algs, 1 + IS_ENABLED(CONFIG_CRC32_ARCH));
+> +       num_algs = 1 + ((crc32_optimizations & CRC32_LE_OPTIMIZATION) != 0);
+> +
+> +       return crypto_register_shashes(algs, num_algs);
+>  }
+>
+>  static void __exit crc32_mod_fini(void)
+>  {
+> -       crypto_unregister_shashes(algs, 1 + IS_ENABLED(CONFIG_CRC32_ARCH));
+> +       crypto_unregister_shashes(algs, num_algs);
+>  }
+>
+>  subsys_initcall(crc32_mod_init);
+>  module_exit(crc32_mod_fini);
+>
+> diff --git a/crypto/crc32c_generic.c b/crypto/crc32c_generic.c
+> index 04b03d825cf4..47d694da9d4a 100644
+> --- a/crypto/crc32c_generic.c
+> +++ b/crypto/crc32c_generic.c
+> @@ -195,19 +195,23 @@ static struct shash_alg algs[] = {{
+>         .base.cra_ctxsize       = sizeof(struct chksum_ctx),
+>         .base.cra_module        = THIS_MODULE,
+>         .base.cra_init          = crc32c_cra_init,
+>  }};
+>
+> +static int num_algs;
+> +
+>  static int __init crc32c_mod_init(void)
+>  {
+>         /* register the arch flavor only if it differs from the generic one */
+> -       return crypto_register_shashes(algs, 1 + IS_ENABLED(CONFIG_CRC32_ARCH));
+> +       num_algs = 1 + ((crc32_optimizations & CRC32C_OPTIMIZATION) != 0);
+> +
+> +       return crypto_register_shashes(algs, num_algs);
+>  }
+>
+>  static void __exit crc32c_mod_fini(void)
+>  {
+> -       crypto_unregister_shashes(algs, 1 + IS_ENABLED(CONFIG_CRC32_ARCH));
+> +       crypto_unregister_shashes(algs, num_algs);
+>  }
+>
+>  subsys_initcall(crc32c_mod_init);
+>  module_exit(crc32c_mod_fini);
+>
+> --
+> 2.47.0
+>
+>
 
