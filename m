@@ -1,173 +1,167 @@
-Return-Path: <linux-kernel+bounces-381137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A16F9AFADE
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 09:19:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 92F289AFADF
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 09:21:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADEBA1C2241B
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 07:19:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4DA51C2144D
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 07:21:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46B9F1B21A7;
-	Fri, 25 Oct 2024 07:19:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86FA41B395C;
+	Fri, 25 Oct 2024 07:20:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IovrI5Gl"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="e9t4AggV"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38F514D8C8
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 07:19:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC5101BC5C;
+	Fri, 25 Oct 2024 07:20:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729840781; cv=none; b=ns8KG2WyfjwsA2uznn0G/TUhYhaHN4/J6urz7m1FohdNVr749zYLBrxBtDhU1v542kUYt8MWffl6QK0Q7Zni/4qpFdYzWB8z4Nb9HIFddsw95Ptrd9NAqb/n8wpggk8NhWMds9njUJgGlKwtxwVBXU9z5HUzlZr/6dUcyUymaJY=
+	t=1729840854; cv=none; b=ch0jF7GLW7Ld91XduUVmOf35HWB/B+s0pttOk498/GSuvTVDXgMk0qmtTBBhLdiQ1UXd2puKFsmeyJiVmFOKedxR61CRcDW2y0KBYikHABm+efOczNEtbJFAP5av9rEi9c+AVh+Ut/Mmel64sn7CONFl99WRv9yOygu9f3mDZG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729840781; c=relaxed/simple;
-	bh=/wSStfEhPSHeZJiEUePtTfIBSJEUMkwEljOu59Vn9no=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LFn1U40yH7rAx7brK2PzQp4Km16xr6GpjWKt9qweKxJ5RQr+haozBUBSckkVrjpuTlFHZKdTvcJtoRtoqvIxJjLhmw0+HZ5+tzL+0R8V5UPNYjVUIRb1bLh5gmdaieVsP+cQqzBU6edjnqbC1APZ81qfk/D/uW/c2XXmMdGiJnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IovrI5Gl; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43161c0068bso17302295e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 00:19:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729840777; x=1730445577; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=3bss9bc42ivC2cChRotwSlxrtitEdG/EsNtcIe7xud4=;
-        b=IovrI5GlqpD/bEsLkANXE4tsafEhlYseEUpxh7cEtqusFB4JSm10Y8Notj3XnGeKBi
-         x4iTf/MCce+P+pXCeDrW+rwVcx0rQxTCW+IUGAXWD+q5Ce0O3AVyZO26couMYHhzaiCm
-         KqBn+n0D73c04FqeHMohCbwkubd91J63JFwKy+OMHfOW8mZP7hteuPjYX+V0EMQNZDE8
-         ySgYNAVbQFXbVIlni1BSQnN4CTVpOEPBl48jBmkA6lMb8jkKawxpzYts5zo/3MVr+ISu
-         m/HTKvYg4L7uj2sqBME+clDBpKm/EMsR8vL8opwAywswFl5P/ZvaQ98IneXHpobJYUzm
-         YSmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729840777; x=1730445577;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3bss9bc42ivC2cChRotwSlxrtitEdG/EsNtcIe7xud4=;
-        b=eCRNtxSZbRhyjbp7tw+gTzo/4zUaPdj4gT9+U8sEn6mtRu0jCb5MDNsxE5KtNTfSuO
-         gnMaJLez+s6ayHvOOqecwHZdsWtFhTZS9L76wQz9iUqbXIBAU3sivyJp7dmCPJ644SON
-         /SqpBImZl+Qx+v7u6tqBJmmg/eJBgJNHa1e3DDTYbfPaxj4UpxO9dwkcXMeFRDoGrv9b
-         TqjsksP+Gs59eCl4HovOFCcA7mVJx3kQKDdX4kohRvBsRsoM7pb/TQKGy3zT03xBkqaC
-         BHOJ4x5InJdemxTjqc559UgCmAW+qlHMnQfjlaZWK1u22cuP4/j+hgF4Wn3p+GtYpNrc
-         PJwg==
-X-Forwarded-Encrypted: i=1; AJvYcCVlOt5NCUU0QqycM8NXKD6+TnAuD072SkpbgYZYJDiOAGN8UXUbHIMHUQMW8HW5klr1cOfsX/dhhdcI7YI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyv1bJ4d5iP43C5SS+TV6c5WGUs0rDrGQZBN8KadxrzB0Cwsd8K
-	5Cs4TyGHZVOJRcVoa4r3wV89njc6Gdw0Fv4irytsVfmQcJTPrLpkPMJjZyverPI=
-X-Google-Smtp-Source: AGHT+IHNFvL9ngLdJ2Ef8zFL1tFE3yh5k72SJ5sriFGjDAW8ul7HkN6Susi0cERRtc5r9wYwLcmsfw==
-X-Received: by 2002:a05:600c:19c7:b0:431:5ce5:4864 with SMTP id 5b1f17b1804b1-43184254536mr60334325e9.35.1729840777477;
-        Fri, 25 Oct 2024 00:19:37 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4318b579613sm39381865e9.38.2024.10.25.00.19.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2024 00:19:36 -0700 (PDT)
-Date: Fri, 25 Oct 2024 10:19:33 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
-Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-	linux-staging@lists.linux.dev, philipp.g.hortmann@gmail.com,
-	~lkcamp/patches@lists.sr.ht
-Subject: Re: staging: rtl8723bs: change remaining printk to proper api
-Message-ID: <e12bc7eb-07ed-4bec-84f7-5b178ba802c2@stanley.mountain>
-References: <f61d8272-4af3-40d6-a333-e7731c3fc5ae@stanley.mountain>
- <20241024225512.7464-1-rodrigo.gobbi.7@gmail.com>
+	s=arc-20240116; t=1729840854; c=relaxed/simple;
+	bh=xcnQdEWitE+JOZF4Lhq4NQPGksoAjZwaIOW0Tsx3TBk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Uy6GuHVHC4FBRJeVKig/byg9hqfLW/QiNQmuK2Tk8aILA66sjMiVBrJT3t4wtUnUti0vLDeOsenu5Ut+zZpbDd/YDZiOW2+WqOPCcDlZxrATu8jXUO4KDw3rEibObIhpF02Kh9rp4gSOH5ka2QIV8DFDIjVcdPKdRz+MRovj2mA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=e9t4AggV; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49ONNUkc027468;
+	Fri, 25 Oct 2024 07:20:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	8L/7v4Sq1tK1HoMGG9g6e83yWe2noHI95ISx4xWR/lw=; b=e9t4AggV0QfKSCfP
+	1t68Rr0DL0+Tu02MOd10UCR9chC6i6oPkg5bIYXix04Sn7pfBcst1QzWiyDEWyQk
+	4wKxoGcwPIAwz3kDJ8f+hWTDMZ3ekhN4x+r26AJy3b+oIVoxOIIWS+8xLgC3lnwZ
+	9PlPndJTaux/C4D3e9s8rkrIIak8iPPQJiN8JlRVb7TOkFv5Ilnih3Q/gujpCcJM
+	MnskABP9UzezfmpMLOnGZ3ax1Bcb1g6GANnpQWiXGgVn1WqPoh91LmBL4z6uzhE+
+	FCr5TgpeT8rHgaIR/R/msxLtYAG5tohVL3i6SDkppl9y7I3bz+lJJRYi0fh3bIQY
+	IpkLDQ==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42em3wr3nw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Oct 2024 07:20:47 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49P7KkVS027198
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Oct 2024 07:20:46 GMT
+Received: from [10.204.101.50] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 25 Oct
+ 2024 00:20:44 -0700
+Message-ID: <9a818584-3f14-ac6e-149d-901668956233@quicinc.com>
+Date: Fri, 25 Oct 2024 12:50:41 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241024225512.7464-1-rodrigo.gobbi.7@gmail.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCHv3 1/3] media: venus: fix enc/dec destruction order
+Content-Language: en-US
+To: Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Stanimir Varbanov
+	<stanimir.k.varbanov@gmail.com>,
+        Vikash Garodia <quic_vgarodia@quicinc.com>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+CC: <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Tomasz Figa
+	<tfiga@google.com>
+References: <20241025034629.660047-1-senozhatsky@chromium.org>
+ <20241025034629.660047-2-senozhatsky@chromium.org>
+From: Dikshita Agarwal <quic_dikshita@quicinc.com>
+In-Reply-To: <20241025034629.660047-2-senozhatsky@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: Y3UE1hpN7K1hVa8DGkt1D1XJ5yQDANeL
+X-Proofpoint-ORIG-GUID: Y3UE1hpN7K1hVa8DGkt1D1XJ5yQDANeL
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 phishscore=0
+ mlxlogscore=935 lowpriorityscore=0 malwarescore=0 suspectscore=0
+ spamscore=0 mlxscore=0 impostorscore=0 clxscore=1011 priorityscore=1501
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410250056
 
-On Thu, Oct 24, 2024 at 07:55:12PM -0300, Rodrigo Gobbi wrote:
-> First, tks for the answer, Dan.
-> 
-> > little broken with -DDBG_RX_SIGNAL_DISPLAY_RAW_DATA, maybe we can 
-> > fix that in a next patch. 
-> > How is it broken?
-> 
-> make -j<> ./drivers/staging/rtl8723bs/r8723bs.ko EXTRA_CFLAGS="-DDBG_RX_SIGNAL_DISPLAY_RAW_DATA"
 
-Why are you pasing -DDBG_RX_SIGNAL_DISPLAY_RAW_DATA?  Is there some document
-somewhere which says to do that?  Normally we would just say "Nothing ever
-enables DDBG_RX_SIGNAL_DISPLAY_RAW_DATA so just delete that code" and delete
-it.  But if there is some external document which says to enable it, and it's
-useful stuff then maybe we should keep it?
 
+On 10/25/2024 9:16 AM, Sergey Senozhatsky wrote:
+> We destroy mutex-es too early as they are still taken in
+> v4l2_fh_exit()->v4l2_event_unsubscribe()->v4l2_ctrl_find().
 > 
-> drivers/staging/rtl8723bs/hal/hal_com.c: In function ‘rtw_store_phy_info’:
-> drivers/staging/rtl8723bs/hal/hal_com.c:927:43: error: ‘PODM_PHY_INFO_T’ undeclared (first use in this function)
->   927 |         struct odm_phy_info *pPhyInfo  = (PODM_PHY_INFO_T)(&pattrib->phy_info);
->       |                                           ^~~~~~~~~~~~~~~
-> drivers/staging/rtl8723bs/hal/hal_com.c:927:43: note: each undeclared identifier is reported only once for each function it appears in
-> drivers/staging/rtl8723bs/hal/hal_com.c:940:73: error: ‘struct odm_phy_info’ has no member named ‘RxPwr’; did you mean ‘rx_pwr’?
->   940 |                         psample_pkt_rssi->ofdm_pwr[rf_path] = pPhyInfo->RxPwr[rf_path];
->       |                                                                         ^~~~~
->       |                                                                         rx_pwr
-> drivers/staging/rtl8723bs/hal/hal_com.c:941:71: error: ‘struct odm_phy_info’ has no member named ‘RxSNR’
->   941 |                         psample_pkt_rssi->ofdm_snr[rf_path] = pPhyInfo->RxSNR[rf_path];
+> We should destroy mutex-es right before kfree().  Also
+> do not vdec_ctrl_deinit() before v4l2_fh_exit().
 > 
-> Actually it's not exaclty in the same line of pr_debug/netdev_dbg replacement. Do you think
-> we can do the replacement at:
+> Fixes: 7472c1c69138 ("[media] media: venus: vdec: add video decoder files")
+> Suggested-by: Tomasz Figa <tfiga@google.com>
+> Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
+> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> ---
+>  drivers/media/platform/qcom/venus/vdec.c | 7 ++++---
+>  drivers/media/platform/qcom/venus/venc.c | 6 +++---
+>  2 files changed, 7 insertions(+), 6 deletions(-)
 > 
+> diff --git a/drivers/media/platform/qcom/venus/vdec.c b/drivers/media/platform/qcom/venus/vdec.c
+> index 6252a6b3d4ba..0013c4704f03 100644
+> --- a/drivers/media/platform/qcom/venus/vdec.c
+> +++ b/drivers/media/platform/qcom/venus/vdec.c
+> @@ -1752,13 +1752,14 @@ static int vdec_close(struct file *file)
+>  	cancel_work_sync(&inst->delayed_process_work);
+>  	v4l2_m2m_ctx_release(inst->m2m_ctx);
+>  	v4l2_m2m_release(inst->m2m_dev);
+> -	vdec_ctrl_deinit(inst);
+>  	ida_destroy(&inst->dpb_ids);
+>  	hfi_session_destroy(inst);
+> -	mutex_destroy(&inst->lock);
+> -	mutex_destroy(&inst->ctx_q_lock);
+>  	v4l2_fh_del(&inst->fh);
+>  	v4l2_fh_exit(&inst->fh);
+> +	vdec_ctrl_deinit(inst);
+Why vdec_ctrl_deinit ->v4l2_ctrl_handler_free(&inst->ctrl_handler) needs to
+be called after v4l2_fh_exit?
+Ideally it should be before v4l2_fh_exit.
 
-This has nothing to do with pr_debug/netdev_dbg replacement as you say.
-
-On the other hand, how useful can DDBG_RX_SIGNAL_DISPLAY_RAW_DATA be if it
-doesn't compile?  If you sent a patch to delete it, we will apply that patch.
-
-> > +			pr_debug(", rx_ofdm_pwr:%d(dBm), rx_ofdm_snr:%d(dB)\n",...
-> 
-> regardless of this build errors? I mean, fixing it here in this patch
-> would not be related to the purpose of this simple patch.
-> 
-> > Just delete this line.
-> Ok.
-> 
-> > -		printk(KERN_CRIT "%s: sdio_claim_irq FAIL(%d)!\n", __func__, err);
-> > +		pr_crit("%s: sdio_claim_irq FAIL(%d)!\n", __func__, err);
-> >                ^^^^^^^?
-> 
-> Originally, I didn't replace this because at dvobj of sdio_alloc_irq(struct dvobj_priv *dvobj)  
-> there are two adapter fields:
-> 
-> struct dvobj_priv {
-> 	struct adapter *if1; /* PRIMARY_ADAPTER */
-> ...
-> 	struct adapter *padapters;
-> ...
-> }
-> 
-> Checking the "counter part" function of sdio_alloc_irq(), the sdio_free_irq() (which is not used), 
-> the if1 (primary) is used for debug purpose:
-
-If it's not used, just delete it?
-
-> 
-> netdev_err(dvobj->if1->pnetdev...
-> 
-> And checking the initialization path, if1 should be ok at this point.
-> But since I can't test this, do you suggest to replace anyway?
-
-Most drivers/staging patches are not tested before sending.  The printk
-conversions are a leading source of bugs.  The common bug with these conversions
-looks like this:
-
-	if (!dev)
-		netdev_err(dev, "no device\n");
-
-Anyway, it's fine to send untested patches so long as you've looked at the
-initialization path and it's okay as you said.
-
-regards,
-dan carpenter
-
+Thanks,
+Dikshita
+> +
+> +	mutex_destroy(&inst->lock);
+> +	mutex_destroy(&inst->ctx_q_lock);
+>  
+>  	vdec_pm_put(inst, false);
+>  
+> diff --git a/drivers/media/platform/qcom/venus/venc.c b/drivers/media/platform/qcom/venus/venc.c
+> index 322a7737e2c7..6a26a6592424 100644
+> --- a/drivers/media/platform/qcom/venus/venc.c
+> +++ b/drivers/media/platform/qcom/venus/venc.c
+> @@ -1519,14 +1519,14 @@ static int venc_close(struct file *file)
+>  
+>  	v4l2_m2m_ctx_release(inst->m2m_ctx);
+>  	v4l2_m2m_release(inst->m2m_dev);
+> -	venc_ctrl_deinit(inst);
+>  	hfi_session_destroy(inst);
+> -	mutex_destroy(&inst->lock);
+> -	mutex_destroy(&inst->ctx_q_lock);
+>  	v4l2_fh_del(&inst->fh);
+>  	v4l2_fh_exit(&inst->fh);
+> +	venc_ctrl_deinit(inst);
+>  
+>  	inst->enc_state = VENUS_ENC_STATE_DEINIT;
+> +	mutex_destroy(&inst->lock);
+> +	mutex_destroy(&inst->ctx_q_lock);
+>  
+>  	venc_pm_put(inst, false);
+>  
 
