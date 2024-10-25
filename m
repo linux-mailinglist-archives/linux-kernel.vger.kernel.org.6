@@ -1,150 +1,157 @@
-Return-Path: <linux-kernel+bounces-381186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCD2D9AFBAA
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 09:58:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDB339AFBB0
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 09:58:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4ACACB22F83
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 07:58:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADF802844B9
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 07:58:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B7761C173D;
-	Fri, 25 Oct 2024 07:58:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="X+QcQpMp"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD5971C3F36;
+	Fri, 25 Oct 2024 07:58:41 +0000 (UTC)
+Received: from mail115-171.sinamail.sina.com.cn (mail115-171.sinamail.sina.com.cn [218.30.115.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B52C71B6CFE
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 07:58:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6261018A93F
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 07:58:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729843095; cv=none; b=Zpbou3Ged0TPhCtpe1w+ZYZ/kOlYYt6JXJGZx83NEd53ICe0fx0mofzKDebnWFYRJGyBhXIUZ/J0HU3cnuZcxuoAZzp+WtKR+dmzsPIatD5PPUwoiQf2UdTkmA+BnSqZYzQUDG4ciYqlc7levkdvv1aPrF89rWmR1ULPcAuwtuQ=
+	t=1729843121; cv=none; b=ZEP7n5oORUF7ndZzF8TN88U48rtSRMIoG6DKvvAgNfx723bMktiGHV+DEu+jVVRGn9l5n50NWD1aE2R6I5xkXCjtwTpmEnl6bqi7HmVqvIUroOYKdYxYRtM2UzEc2auKJSDtrK+C08J+r2RLs0AQe6EcbOr0wtbvoLy9kuZbunY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729843095; c=relaxed/simple;
-	bh=F3OTFb+Ka41zug8DD/JcTMAO7la9WvVw47fnZrElHRY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lFCLq+fQFUibaC8yiYkgeS/nESaR4nHeEm4q/CJQC1Zg8TI3ihkknia2tFxlIj+vZiE/pwmJLzwBjGvqu3E/9UobVcUqzjAH9ptQB/+K3DC0CltGkKNPnUqIMnWirEL+cejpwz8eSf6qGbD6orLcEM++cgSXJgCDrbRb65glAeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=X+QcQpMp; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4314f38d274so23179535e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 00:58:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729843092; x=1730447892; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gvsJwj5OC8LoQ+z+43ue0ktqi67sFQ/7TMkfuB2TfQo=;
-        b=X+QcQpMp9R0Il4UDJLXKn646bF8DoYYK6PYSys4kmeM1g84HVKd7donhyxVk4yahuq
-         MxxuBFyrdVbImuvWKeS/c/0gJpPzqghaLWJ5hR7/uxRsm3y5b8iri5cUrFxnpthZNzqe
-         6a/Cpb3rYndPW9ZSyRJck0pLhNdenI8mG0HayCzh13WOyeDwTey5oFpyJjsNOD3TTEJe
-         e8RVlzTOiekbNXRPP/cn7PCOanPChj99omTp4CKfmK4U1YzDkZ6511vGCvkmsXeXLM1r
-         SC7DvUOz+z0QliPihKpb8NoabchbTmVdCgvph78vGn+dY7fepH6Ma9BH+NDosLJotqrr
-         w8ig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729843092; x=1730447892;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gvsJwj5OC8LoQ+z+43ue0ktqi67sFQ/7TMkfuB2TfQo=;
-        b=i0VKYF2wv2VTiPxeLydRgNHGuPEnLa1BRFaBCK0rNG/4xRSsNJXv6KkmZFcjyb3Cqp
-         YmrosLtvdxIdMxGAHWdInPwgneEXqZOaAzWUPp5b/Pyq3AcqZoZjMKbpl53iH7+BTKEn
-         SpppWLLV/aNaTvvzF1uTv6xVW3y5oY3onQdJYUtLTKzEWS+4R5b+0uqB/d1I7qBafBix
-         S/FtsFRm21dOeNUgDQ0pxdaBHP7Cj6HMUzRHmlrkLgLV9PSNAKyPOBJal67gb9LY79GB
-         L0ax1/fqB5uRtuSh6f/IjsHd1X/pb4lDGcmtexpJ9xAyWfRxcMKUCalUTmxoHtZPXTNC
-         i+1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVphwr7HAeLcDwHnQk404qjDAwaNywR4XkKRPk9W5zy3Q6XMSFBEEzFfZmCopGhn+Tunbr0573tfw064zU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7gJJYsCw0fBr9gybZEZV8IDG2+8mGoQkGU47Dh308m2j/2IZA
-	nAFRBvxqsVsUUVT1S+FgoxOzQBFbsVkJDoUIVweFl1ZzvcExDMPea4ri/nXqH029qGmZbc+6mP4
-	RO2ow26pdcBe0gfweNV7LN9ZRUNjcx8ATdadM
-X-Google-Smtp-Source: AGHT+IF9+NCbOu+bXyKItOLR5RH+FlGastQlQIJxhsNhdaqorYjditBHdDFu9kDS7X1pMearnA6JmaII6gKT8FNLJ54=
-X-Received: by 2002:a05:600c:1909:b0:42f:8229:a09e with SMTP id
- 5b1f17b1804b1-4318424df6fmr95356955e9.29.1729843092034; Fri, 25 Oct 2024
- 00:58:12 -0700 (PDT)
+	s=arc-20240116; t=1729843121; c=relaxed/simple;
+	bh=ifnjEylBt8ZpbTe7kIenvCIjX1GouPeBXV/g+8bWH4E=;
+	h=Date:From:To:Cc:Subject:Mime-Version:Message-ID:Content-Type:
+	 Content-Disposition; b=pr3zVAC7FBh1/dnTboY116SqOxK8CaEYbvic7mnlWCgLAaPKaqsgsRkgReLnRnSyQLkwCPf+cHHdKGtKi/fkYj8rPQ4fnxGxUtwk3fOz79wLAz8uIlx+GFC9lUlcW0Vbyey7eIJX43IeNJCYgUAIbMPkw8imcjx4kU0GXyPQbjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: webmail.sinamail.sina.com.cn
+Received: from unknown (HELO webmail.sinamail.sina.com.cn)([10.2.23.146])
+	by sina.com (10.185.250.24) with SMTP
+	id 671B4FA200003AD4; Fri, 25 Oct 2024 15:58:26 +0800 (CST)
+X-Sender: louletian@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=louletian@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=louletian@sina.com
+X-SMAIL-MID: 24294610748435
+Received: by webmail.sinamail.sina.com.cn (Postfix, from userid 993)
+	id 29912250A; Fri, 25 Oct 2024 15:58:26 +0800 (CST)
+Date: Fri, 25 Oct 2024 15:58:26 +0800
+Received: from louletian@sina.com ([39.188.14.154]) by m1.mail.sina.com.cn via HTTP;
+ Fri, 25 Oct 2024 15:58:26 +0800
+From: louletian@sina.com
+Reply-To: louletian@sina.com
+To: "Edward Cree" <ec429@cantab.net>,
+ "Linus Torvalds" <torvalds@linux-foundation.org>,
+ "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>
+Cc: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
+Subject: =?utf-8?B?5Zue5aSN77yaW1BBVENIXSBDUkVESVRTOiBkbyB0aGUgZGVjZW50IHQ=?=
+ =?utf-8?B?aGluZw==?=
+X-Priority: 3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20241001-b4-miscdevice-v2-0-330d760041fa@google.com>
- <20241001-b4-miscdevice-v2-1-330d760041fa@google.com> <CALNs47tbt46VAcT5rm0Y6QBP6kc4ocBFDPOZugthPmNdaHrwPQ@mail.gmail.com>
-In-Reply-To: <CALNs47tbt46VAcT5rm0Y6QBP6kc4ocBFDPOZugthPmNdaHrwPQ@mail.gmail.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Fri, 25 Oct 2024 09:57:59 +0200
-Message-ID: <CAH5fLgj=+aXo3sj9wKJudHYtL5pBHB8AzGS5njWEDzD0wydrOw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] rust: types: add Opaque::try_ffi_init
-To: Trevor Gross <tmgross@umich.edu>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+Message-ID: <671b4fa2243302.77021280.555be92b@m1.mail.sina.com.cn>
+X-MessageID: 891bdb19445abd9dff16e29451556017_202410
+X-SMAIL-UIID: 0440153DB8E65A079351D5B95BB3CE87-20241025-155826-2
+X-Mailer: Sina WebMail 4.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
 
-On Fri, Oct 25, 2024 at 6:10=E2=80=AFAM Trevor Gross <tmgross@umich.edu> wr=
-ote:
->
-> On Tue, Oct 1, 2024 at 3:23=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> =
-wrote:
-> >
-> > This will be used by the miscdevice abstractions, as the C function
-> > `misc_register` is fallible.
-> >
-> > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> > ---
-> >  rust/kernel/types.rs | 16 ++++++++++++++++
-> >  1 file changed, 16 insertions(+)
-> >
-> > diff --git a/rust/kernel/types.rs b/rust/kernel/types.rs
-> > index 9e7ca066355c..070d03152937 100644
-> > --- a/rust/kernel/types.rs
-> > +++ b/rust/kernel/types.rs
-> > @@ -299,6 +299,22 @@ pub fn ffi_init(init_func: impl FnOnce(*mut T)) ->=
- impl PinInit<Self> {
-> >          }
-> >      }
-> >
-> > +    /// Creates a fallible pin-initializer from the given initializer =
-closure.
-> > +    ///
-> > +    /// The returned initializer calls the given closure with the poin=
-ter to the inner `T` of this
-> > +    /// `Opaque`. Since this memory is uninitialized, the closure is n=
-ot allowed to read from it.
-> > +    ///
-> > +    /// This function is safe, because the `T` inside of an `Opaque` i=
-s allowed to be
-> > +    /// uninitialized. Additionally, access to the inner `T` requires =
-`unsafe`, so the caller needs
-> > +    /// to verify at that point that the inner value is valid.
-> > +    pub fn try_ffi_init<E>(
-> > +        init_func: impl FnOnce(*mut T) -> Result<(), E>,
-> > +    ) -> impl PinInit<Self, E> {
-> > +        // SAFETY: We contain a `MaybeUninit`, so it is OK for the `in=
-it_func` to not fully
-> > +        // initialize the `T`.
-> > +        unsafe { init::pin_init_from_closure::<_, E>(move |slot| init_=
-func(Self::raw_get(slot))) }
-> > +    }
->
-> [1] adjusts `ffi_init` to use `try_ffi_init`. Maybe this should do the sa=
-me?
->
-> [1]: https://lore.kernel.org/rust-for-linux/20241022213221.2383-2-dakr@ke=
-rnel.org/
+WWVhaCxJdCdzIHRoZSBiZXN0IHNvbHV0aW9uLkFjY2VwdCBvdGhlcnMgZWZmb3J0LGJ1dCB3aXBl
+IHRoZWlyIG5hbWVzLkl0J3MgdW5qdXN0Lg0KDQotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLQ0KDQotLS0tLSDljp/lp4vpgq7ku7YgLS0tLS0NCuWPkeS7tuS6uu+8mkVkd2FyZCBDcmVl
+IDxlYzQyOUBjYW50YWIubmV0Pg0K5pS25Lu25Lq677yaTGludXMgVG9ydmFsZHMgPHRvcnZhbGRz
+QGxpbnV4LWZvdW5kYXRpb24ub3JnPiwgTGludXggS2VybmVsIE1haWxpbmcgTGlzdCA8bGludXgt
+a2VybmVsQHZnZXIua2VybmVsLm9yZz4NCuaKhOmAgeS6uu+8mkdyZWcgS3JvYWgtSGFydG1hbiA8
+Z3JlZ2toQGxpbnV4Zm91bmRhdGlvbi5vcmc+DQrkuLvpopjvvJpbUEFUQ0hdIENSRURJVFM6IGRv
+IHRoZSBkZWNlbnQgdGhpbmcNCuaXpeacn++8mjIwMjTlubQxMOaciDI15pelIDA254K5NDnliIYN
+Cg0KQWNrbm93bGVkZ2UgdGhlIHBhc3QgY29udHJpYnV0aW9ucyBvZiB0aG9zZSB3aG9tIHRoZSBM
+aW51eCBwcm9qZWN0IG5vDQogbG9uZ2VyIHBlcm1pdHMgdG8gYmUgbWFpbnRhaW5lcnMgb3dpbmcg
+dG8gc2FuY3Rpb25zIGFnYWluc3QgdGhlaXINCiBlbXBsb3llcnMuDQpGaXhlczogNmU5MGI2NzVj
+Zjk0ICgiTUFJTlRBSU5FUlM6IFJlbW92ZSBzb21lIGVudHJpZXMgZHVlIHRvIHZhcmlvdXMgY29t
+cGxpYW5jZSByZXF1aXJlbWVudHMuIikNClNpZ25lZC1vZmYtYnk6IEVkd2FyZCBDcmVlIDxlYzQy
+OUBjYW50YWIubmV0Pg0KLS0tDQpKdXN0IGJlY2F1c2Ugd2UgY2FuIG5vIGxvbmdlciB3b3JrIHdp
+dGggc29tZW9uZSBkb2VzIG5vdCBtZWFuIHdlIGhhdmUNCiB0byBlZmZhY2UgdGhlaXIgbmFtZSBm
+cm9tIGhpc3RvcnkuICBXaGV0aGVyIHdlIGNvbnNpZGVyIHRoZW0gdG8gYmUNCiBnb29kIG9yIGJh
+ZCBwZW9wbGUsIEkgaGF2ZSBzZWVuIG5vLW9uZSBjbGFpbWluZyB0aGF0IGFueSBvZiB0aGVtIHdl
+cmUNCiBiYWQgKmtlcm5lbCBtYWludGFpbmVycyouICBBcyBhbiBpbnRlcm5hdGlvbmFsIGNvbGxh
+Ym9yYXRpb24sIExpbnV4DQogc2hvdWxkIGJlIGFib3ZlIG5hdGlvbmFsIGFuaW1vc2l0aWVzLCBh
+bmQgd2hlcmUgbG9jYWwgbGF3cyBmb3JjZSBvdXINCiBoYW5kIHdlIHNob3VsZCBub3QgZ28gb25l
+IHN0ZXAgZnVydGhlciB0aGFuIHRob3NlIGxhd3MgcmVxdWlyZS4gIEFyZQ0KIHdlIHRydWx5IHNv
+IHNtYWxsLCBzbyBzZWxmLXJpZ2h0ZW91cz8NCk9oLCBhbmQgZGVhciBMaW51czogSSdtIG5vdCBh
+IFJ1c3NpYW4gdHJvbGwuICBJIGhhdGUgUnVzc2lhbiBtaWxpdGFyeQ0KIGV4cGFuc2lvbmlzbSAo
+Y3VycmVudCBhbmQgaGlzdG9yaWMpIGp1c3QgYXMgbXVjaCBhcyB5b3UuICBUcnkgdG8gdXNlDQog
+KnlvdXIqIG11c2ggdG8gcmVhbGlzZSB0aGF0IG9wcG9zaW5nIHRoZSBoYW0taGFuZGVkIGFuZCBz
+ZWNyZXRpdmUgd2F5DQogdGhlIE1BSU5UQUlORVJTIHBhdGNoIHdhcyBkb25lIGRvZXMgbm90IG1h
+a2Ugb25lIGEgc3VwcG9ydGVyIG9mDQogUnVzc2lhbiBhZ2dyZXNzaW9uLg0KU2VudCBmcm9tIG15
+IHBlcnNvbmFsIGFkZHJlc3MgcmF0aGVyIHRoYW4gbXkgd29yayBhY2NvdW50LCBiZWNhdXNlIEkN
+CiBkb24ndCB3YW50IHRvIGdpdmUgbXkgZW1wbG95ZXIncyBsYXd5ZXJzIGFueSBtb3JlIG9mIGFu
+IGFuZXVyeXNtIHRoYW4NCiBJIGRvdWJ0bGVzcyBhbHJlYWR5IGFtLg0KLS0tDQogQ1JFRElUUyB8
+IDUzICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
+DQogMSBmaWxlIGNoYW5nZWQsIDUzIGluc2VydGlvbnMoKykNCmRpZmYgLS1naXQgYS9DUkVESVRT
+IGIvQ1JFRElUUw0KaW5kZXggNjNmNTNmZWVmYTBhLi41NjlmYWQzNzIwNTkgMTAwNjQ0DQotLS0g
+YS9DUkVESVRTDQorKysgYi9DUkVESVRTDQpAQCAtMTA5Miw2ICsxMDkyLDEwIEBAIEU6IGNpZGVy
+QHNwZWFrZWFzeS5vcmcNCiBXOiBodHRwOi8vd3d3LnNwZWFrZWFzeS5vcmcvfmNpZGVyLw0KIEQ6
+IGltcGxlbWVudGVkIGttb2QNCiANCitOOiBFdmdlbml5IER1c2hpc3Rvdg0KK0U6IGR1c2hpc3Rv
+dkBtYWlsLnJ1DQorRDogVUZTIGZpbGVzeXN0ZW0NCisNCiBOOiBUb3JzdGVuIER1d2UNCiBFOiBU
+b3JzdGVuLkR1d2VAaW5mb3JtYXRpay51bmktZXJsYW5nZW4uZGUNCiBEOiBQYXJ0LXRpbWUga2Vy
+bmVsIGhhY2tlcg0KQEAgLTEzNTIsNiArMTM1NiwxMCBAQCBTOiA2MDAgTm9ydGggQmVsbCBBdmVu
+dWUsIFN1aXRlIDE2MA0KIFM6IENhcm5lZ2llLCBQZW5uc3lsdmFuaWEgMTUxMDYtNDMwNA0KIFM6
+IFVTQQ0KIA0KK046IFZsYWRpbWlyIEdlb3JnaWV2DQorRTogdi5nZW9yZ2lldkBtZXRyb3Rlay5y
+dQ0KK0Q6IE1pY3JvY2hpcCBQb2xhcmZpcmUgRlBHQSBkcml2ZXIgcmV2aWV3cw0KKw0KIE46IEth
+aSBHZXJtYXNjaGV3c2tpDQogRToga2FpQGdlcm1hc2NoZXdza2kubmFtZQ0KIEQ6IE1ham9yIGti
+dWlsZCByZXdvcmsgZHVyaW5nIHRoZSAyLjUgY3ljbGUNCkBAIC0yMTQxLDYgKzIxNDksMTAgQEAg
+RDogREVDc3RhdGlvbiBwb3J0LCBTaGFycCBNb2JpbG9uIHBvcnQNCiBTOiBELTUwOTMxIEtvZWxu
+DQogUzogR2VybWFueQ0KIA0KK046IEl2YW4gS29rc2hheXNreQ0KK0U6IGlua0BqdXJhc3NpYy5w
+YXJrLm1zdS5ydQ0KK0Q6IEFscGhhIHBvcnQgbWFpbnRlbmFuY2UNCisNCiBOOiBXaWxseSBLb255
+bmVuYmVyZw0KIEU6IHdpbGx5QHhvcy5ubA0KIFc6IGh0dHA6Ly93d3cueG9zLm5sLw0KQEAgLTIx
+NzMsNiArMjE4NSwxNiBAQCBTOiBNYXJraGFtLCBPbnRhcmlvDQogUzogTDNSIDhCMg0KIFM6IENh
+bmFkYQ0KIA0KK046IERtaXRyeSBLb3psb3YNCitFOiB4ZWJAbWFpbC5ydQ0KK0Q6IEdSRSBkZW11
+bHRpcGxleGVyIGRyaXZlcg0KK0Q6IFBQVFAgZHJpdmVyDQorDQorTjogU2VyZ2V5IEtvemxvdg0K
+K0U6IHNlcmprQG5ldHVwLnJ1DQorRDogTWVkaWEgZHJpdmVycyBmb3IgYXNjb3QyZSwgY3hkMjg0
+MWVyLCBob3J1czNhLCBsbmJoMjUNCitEOiBNZWRpYSBkcml2ZXJzIGZvciBuZXR1cCBQQ0kgdW5p
+dmVyc2FsIERWQiBkZXZpY2VzDQorDQogTjogTWF4aW0gS3Jhc255YW5za3kNCiBFOiBtYXhrQHF1
+YWxjb21tLmNvbQ0KIFc6IGh0dHA6Ly92dHVuLnNmLm5ldA0KQEAgLTMwMDAsNiArMzAyMiwxMSBA
+QCBOOiBQZXRlciBPcnViYQ0KIEQ6IEFNRCBNaWNyb2NvZGUgbG9hZGVyIGRyaXZlcg0KIFM6IEdl
+cm1hbnkNCiANCitOOiBBYnlsYXkgT3NwYW4NCitFOiBhb3NwYW5AbmV0dXAucnUNCitEOiBNZWRp
+YSBkcml2ZXJzIGZvciBhc2NvdDJlLCBjeGQyODQxZXIsIGhlbGVuZSwgaG9ydXMzYSwgbG5iaDI1
+DQorRDogTWVkaWEgZHJpdmVycyBmb3IgbmV0dXAgUENJIHVuaXZlcnNhbCBEVkIgZGV2aWNlcw0K
+Kw0KIE46IEplbnMgT3N0ZXJrYW1wDQogRTogamVuc0BkZS5pYm0uY29tDQogRDogTWFpbnRhaW5l
+ciBvZiBTcGlkZXJuZXQgbmV0d29yayBkcml2ZXIgZm9yIENlbGwNCkBAIC0zMzk3LDYgKzM0MjQs
+MTAgQEAgUzogTmV1ZSBIZWltYXQgU3RyLiA4DQogUzogRC02ODc4OSBTdC5MZW9uLVJvdA0KIFM6
+IEdlcm1hbnkNCiANCitOOiBEbWl0cnkgUm9rb3Nvdg0KK0U6IGRkcm9rb3NvdkBzYmVyZGV2aWNl
+cy5ydQ0KK0Q6IE1lbXNlbnNpbmcgTWljcm9zeXN0ZW1zIG1zYTMxMSBkcml2ZXINCisNCiBOOiBU
+aGlhZ28gQmVybGl0eiBSb25kb24NCiBFOiBtYWx1Y29AbWlsZW5pdW1uZXQuY29tLmJyDQogVzog
+aHR0cDovL3ZpdmFsZGkubGludXhtcy5jb20uYnIvfm1hbHVjbw0KQEAgLTM1OTQsNiArMzYyNSwx
+NSBAQCBOOiBNYXJjZWwgU2VsaG9yc3QNCiBFOiB0cG1kZEBzZWxob3JzdC5uZXQNCiBEOiBUUE0g
+ZHJpdmVyDQogDQorTjogU2VyZ2UgU2VtaW4NCitFOiBmYW5jZXIubGFuY2VyQGdtYWlsLmNvbQ0K
+K0Q6IE1JUFMgQmFpa2FsLVQxIHBsYXRmb3JtOyBNSVBTIGNvcmUgZHJpdmVycw0KK0Q6IEJhaWth
+bC1UMSBQVlQgaGFyZHdhcmUgbW9uaXRvciBkcml2ZXINCitEOiBEZXNpZ253YXJlIEVETUEgY29y
+ZSBJUCBkcml2ZXIgcmV2aWV3cw0KK0Q6IGxpYmF0YSBTQVRBIEFIQ0kgU3lub3BzeXMgRFdDIGNv
+bnRyb2xsZXIgZHJpdmVyDQorRDogU3lub3BzeXMgRGVzaWdud2FyZSBBUEIgU1NJIGRyaXZlcg0K
+K0Q6IE5UQiBJRFQgZHJpdmVyDQorDQogTjogRGFycmVuIFNlbm4NCiBFOiBzaW5zdGVyQGRhcmt3
+YXRlci5jb20NCiBEOiBXaGF0ZXZlciBJIG5vdGljZSBuZWVkcyBkb2luZyAoc28gZmFyOiBpdGlt
+ZXJzLCAvcHJvYykNCkBAIC0zNjM2LDYgKzM2NzYsMTUgQEAgTjogSm9vbnlvdW5nIFNoaW0NCiBF
+OiB5MDkyMi5zaGltQHNhbXN1bmcuY29tDQogRDogU2Ftc3VuZyBFeHlub3MgRFJNIGRyaXZlcnMN
+CiANCitOOiBBbGV4YW5kZXIgU2hpeWFuDQorRTogc2hjX3dvcmtAbWFpbC5ydQ0KK0Q6IEFybS9D
+aXJydXMgTG9naWMgY2xwczcxMXggYXJjaGl0ZWN0dXJlDQorDQorTjogU2VyZ2V5IFNodHlseW92
+DQorRTogcy5zaHR5bHlvdkBvbXAucnUNCitEOiBsaWJhdGEgUEFUQSBkcml2ZXIgcmV2aWV3cw0K
+K0Q6IFJlbmVzYXMgZXRoZXJuZXQgQVZCLCBSLUNBUiBTQVRBIGFuZCBTdXBlckggZXRoZXJuZXQg
+ZHJpdmVyIHJldmlld3MNCisNCiBOOiBSb2JlcnQgU2llbWVyDQogRTogUm9iZXJ0LlNpZW1lckBn
+bXguZGUNCiBQOiAyMDQ4L0M5OUE0Mjg5IDJGIERDIDE3IDJFIDU2IDYyIDAxIEM4ICAzRCBGMiBB
+QyAwOSBGMiBFNSBERCBFRQ0KQEAgLTM4NjgsNiArMzkxNywxMCBAQCBTOiAxIExhdXJpZSBDb3Vy
+dA0KIFM6IEthbmF0YSwgT250YXJpbw0KIFM6IENhbmFkYSBLMkwgMVMyDQogDQorTjogTmlraXRh
+IFRyYXZraW4NCitFOiBuaWtpdGFAdHJ2bi5ydQ0KK0Q6IEFjZXIgQXNwaXJlIDEgRW1iZWRkZWQg
+Q29udHJvbGxlciBkcml2ZXINCisNCiBOOiBBbmRyZXcgVHJpZGdlbGwNCiBFOiB0cmlkZ2VAc2Ft
+YmEub3JnDQogVzogaHR0cHM6Ly9zYW1iYS5vcmcvdHJpZGdlLw0KLS0gDQoyLjM5LjI=
 
-Ah, I wasn't able to find previous patches for this, but I guess there was =
-one.
-
-This patch has already landed in char-misc-next, so this can be a
-follow-up if you want to change it.
-
-Alice
 
