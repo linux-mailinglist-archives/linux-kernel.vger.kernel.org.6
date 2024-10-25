@@ -1,92 +1,174 @@
-Return-Path: <linux-kernel+bounces-381024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 216C39AF936
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 07:44:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AD009AF93C
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 07:45:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3EEF2834F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 05:44:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5F1E1C21B83
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 05:45:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A49018E058;
-	Fri, 25 Oct 2024 05:44:11 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C200E18F2F0;
+	Fri, 25 Oct 2024 05:45:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZPcal5CL"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D4DB1BC5C
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 05:44:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D88B1763F8;
+	Fri, 25 Oct 2024 05:45:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729835051; cv=none; b=h89yvMY4BAcHjRntku+tjtAADFyPooPNJxfHHn/nLEAuPVWgXYercacDhFrzqFF9JMPyzqvwDd9Mx9InTC0yAwaNwn0Vt4EpmYaYh0G4qVmzDCtX/2LcYzlIPQ8sKod9FaJKMzRTKamSq8kiZeqbCyeCtDXsCUOXHbHQFxSJ1bI=
+	t=1729835149; cv=none; b=dlbetUf10+IuB2knzGlNkYjuvCDp+EaS9iglTbWV/J+186jLmlw64zKco8YXToamZnMoDQRCnU7EEo/31oBVuX8XhIi6YqqIi4xDoC7YP7S4jFN742AYgSmW97n8SPxZ++J1zY6ZTzBjh28Zw9HIWWQSTH7rpNoFYGyZnoGy4xA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729835051; c=relaxed/simple;
-	bh=b37uSE3Denko+MGREyZXx9iSU2x92nZ+Nz79EOZkaEA=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=dv8ym0sYbfc9rLpXHmRfHFjNCHtNnkqT7UPTD1Efwm1BQ5wg7Gx45HmEqhivIV/8woB6Yxw/kgUGNmOBGgEtnh1NR+B0CApaRrP/lijxSC1TH7YvwxhBPtATNlWEor8Wimo/4BFimp6yAbylXnL+GzEOIDf0nKKd0Dxt2KDzK5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a3b7b13910so14983045ab.1
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 22:44:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729835048; x=1730439848;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XiT6nIdw2XJzUlwCgPuAoXE6wrcRpvlHvMAwMozDubo=;
-        b=ow+q6WhHR8FRynjyy8dVpJWNPyCb1dTVcNjQD3OnU0dKZ+QMEQY3vSVGCd6XUpRv7p
-         khCK/GDOVZ2VQ/LG9vAcCaVCKKAuT6xXPkmo1RQoNUJCEtnB6+klRp70NkaUX9ornhYx
-         BF812I1z1YVOeT0qOQze8k8HZJuOSEeIJYl4oMXFL957pTpQtSET9zOb7Bo2nEf1A8pg
-         1nJ9uEVOFceiUf0GagAehEv9TzAileIY5M/N5uBbw4+B4VrlNP7FfVzGkZm/QO1HWYgR
-         LEXOrMTBgVxAZGzXfWaszfEcrEAYK05VZrij/S0TZN5B59MPghRdqwaYuQl+dic/bWf4
-         /l8w==
-X-Gm-Message-State: AOJu0Yz3m3YxT0b/hz5Gbd2TtAqEz52Qu/wy4vOcdINAJzood6uqcCDk
-	hc6GYNTnDxKjYWbNZaHl2zcUA2yNRg5lO0/yYl0ZLHlOuOwlGk3IN5/gRTsVOlyAtaHh4Z7lonY
-	W7PGwLewmTI+02edVFKZ2rC8KXkIqTn7UXVyyeiUe9yBxx5UQrJ5J7t0=
-X-Google-Smtp-Source: AGHT+IH5bd7gApNn2i4xDz+4dKZdktINiayVFJASpnKMSmuEuVF8PBBXOHPvd4cLtHA+t9zGm7xUg/GCOiAmfrvRVoUI74Ud01rb
+	s=arc-20240116; t=1729835149; c=relaxed/simple;
+	bh=VFoRwLLckE9CmXD34UHCnai2nD8CGWfBO6i1MhJP/K8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XYSplMXywaTp74H2W4uSySFXmJ/I3pYeOyWDePOy/EzhFsWYyGQ/ntPJV0YUE8HkKDns1o9uazNCR3g+nattfw4sf2HjCxVEh69IR22VYEHjeJqDW8d5mCqRZy1f27BP3zDeQcSvilu5M4QvOPcvpionI9Y8xMpWq5kgEU7B5Fg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZPcal5CL; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729835147; x=1761371147;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=VFoRwLLckE9CmXD34UHCnai2nD8CGWfBO6i1MhJP/K8=;
+  b=ZPcal5CLIez3tvsVGBmSN6L5LCSRq6sakqkeLpl6Z8mw6SEU00XyTP1q
+   u0CmdrYEs14AUCTwBuuiJVC2SVk4kan56jsUKJqZfXRNhhpBDtBr/6BCs
+   f12F7m5r5NymLSz/DYHwA7AV/n6GJgdjU+RVuQoZsx35NL5C1dyyCmXgG
+   2jfZp1XM9wUgvZlJJwupZnL6Y/LZy/DTsj/o/8MNYb9ZQ0vBwu6SzBSlN
+   DYetpKR79vRHA7U0qOJi+jE6Jn4JjlkywiOM8s7aYcdn046qLGqD47s15
+   PYjdZylz3mUaP/9jd9bIXJqk4YNWumaOoIsubXvz+ZwH7FFj57zjpe4R8
+   w==;
+X-CSE-ConnectionGUID: I+L23OXTTEmwn6o2fx4zoA==
+X-CSE-MsgGUID: 19bfxwAwS3iYantB/73Ijw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="29619457"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="29619457"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2024 22:45:46 -0700
+X-CSE-ConnectionGUID: Sm/IibPHSO+voWKbOv2mVw==
+X-CSE-MsgGUID: sXFE2jUKSNq4j6zxgeMCTA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,231,1725346800"; 
+   d="scan'208";a="80917407"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa008.fm.intel.com with ESMTP; 24 Oct 2024 22:45:43 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t4D8m-000Xe0-29;
+	Fri, 25 Oct 2024 05:45:40 +0000
+Date: Fri, 25 Oct 2024 13:44:58 +0800
+From: kernel test robot <lkp@intel.com>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	intel-xe@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, Tejun Heo <tj@kernel.org>,
+	Zefan Li <lizefan.x@bytedance.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: oe-kbuild-all@lists.linux.dev,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	Friedrich Vock <friedrich.vock@gmx.de>, cgroups@vger.kernel.org,
+	Maxime Ripard <mripard@kernel.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Subject: Re: [PATCH 1/7] kernel/cgroup: Add "dev" memory accounting cgroup
+Message-ID: <202410251311.OLEnaBoD-lkp@intel.com>
+References: <20241023075302.27194-2-maarten.lankhorst@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1fec:b0:3a0:b471:9651 with SMTP id
- e9e14a558f8ab-3a4de826f4dmr52621325ab.24.1729835048352; Thu, 24 Oct 2024
- 22:44:08 -0700 (PDT)
-Date: Thu, 24 Oct 2024 22:44:08 -0700
-In-Reply-To: <0000000000004e41110614187d35@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <671b3028.050a0220.381c35.000d.GAE@google.com>
-Subject: Re: [syzbot] Re: UBSAN: array-index-out-of-bounds in htc_issue_send
-From: syzbot <syzbot+93cbd5fbb85814306ba1@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241023075302.27194-2-maarten.lankhorst@linux.intel.com>
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+Hi Maarten,
 
-***
+kernel test robot noticed the following build warnings:
 
-Subject: Re: UBSAN: array-index-out-of-bounds in htc_issue_send
-Author: dmantipov@yandex.ru
+[auto build test WARNING on drm/drm-next]
+[also build test WARNING on drm-exynos/exynos-drm-next linus/master v6.12-rc4 next-20241024]
+[cannot apply to tj-cgroup/for-next drm-xe/drm-xe-next akpm-mm/mm-everything drm-intel/for-linux-next drm-intel/for-linux-next-fixes drm-misc/drm-misc-next drm-tip/drm-tip]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-#syz test https://git.kernel.org/pub/scm/linux/kernel/git/wireless/wireless-next eaed5fc0c322d75cfcdbc7a16c0c5023d9e4f6fe
+url:    https://github.com/intel-lab-lkp/linux/commits/Maarten-Lankhorst/kernel-cgroup-Add-dev-memory-accounting-cgroup/20241023-155504
+base:   git://anongit.freedesktop.org/drm/drm drm-next
+patch link:    https://lore.kernel.org/r/20241023075302.27194-2-maarten.lankhorst%40linux.intel.com
+patch subject: [PATCH 1/7] kernel/cgroup: Add "dev" memory accounting cgroup
+config: i386-randconfig-061-20241025 (https://download.01.org/0day-ci/archive/20241025/202410251311.OLEnaBoD-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241025/202410251311.OLEnaBoD-lkp@intel.com/reproduce)
 
-diff --git a/drivers/net/wireless/ath/ath9k/htc_hst.c b/drivers/net/wireless/ath/ath9k/htc_hst.c
-index eb631fd3336d..a5bc0a5dfe7c 100644
---- a/drivers/net/wireless/ath/ath9k/htc_hst.c
-+++ b/drivers/net/wireless/ath/ath9k/htc_hst.c
-@@ -294,6 +294,9 @@ int htc_connect_service(struct htc_target *target,
-  		return -ETIMEDOUT;
-  	}
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410251311.OLEnaBoD-lkp@intel.com/
 
-+	if (unlikely(target->conn_rsp_epid == ENDPOINT_UNUSED))
-+		return -ENODEV;
-+
-  	*conn_rsp_epid = target->conn_rsp_epid;
-  	return 0;
-  err:
+sparse warnings: (new ones prefixed by >>)
+>> kernel/cgroup/dev.c:423:9: sparse: sparse: incompatible types in comparison expression (different address spaces):
+   kernel/cgroup/dev.c:423:9: sparse:    struct list_head [noderef] __rcu *
+   kernel/cgroup/dev.c:423:9: sparse:    struct list_head *
+>> kernel/cgroup/dev.c:423:9: sparse: sparse: incompatible types in comparison expression (different address spaces):
+   kernel/cgroup/dev.c:423:9: sparse:    struct list_head [noderef] __rcu *
+   kernel/cgroup/dev.c:423:9: sparse:    struct list_head *
+   kernel/cgroup/dev.c: note: in included file (through include/linux/smp.h, include/linux/lockdep.h, include/linux/spinlock.h, ...):
+   include/linux/list.h:83:21: sparse: sparse: self-comparison always evaluates to true
+   include/linux/list.h:83:21: sparse: sparse: self-comparison always evaluates to true
+   include/linux/list.h:83:21: sparse: sparse: self-comparison always evaluates to true
 
+vim +423 kernel/cgroup/dev.c
+
+   400	
+   401	/**
+   402	 * dev_cgroup_unregister_device() - Unregister a previously registered device.
+   403	 * @cgdev: The device to unregister.
+   404	 *
+   405	 * This function undoes dev_cgroup_register_device.
+   406	 */
+   407	void dev_cgroup_unregister_device(struct dev_cgroup_device *cgdev)
+   408	{
+   409		struct devcg_device *dev;
+   410		struct list_head *entry;
+   411	
+   412		if (!cgdev || !cgdev->priv)
+   413			return;
+   414	
+   415		dev = cgdev->priv;
+   416		cgdev->priv = NULL;
+   417	
+   418		spin_lock(&devcg_lock);
+   419	
+   420		/* Remove from global device list */
+   421		list_del_rcu(&dev->dev_node);
+   422	
+ > 423		list_for_each_rcu(entry, &dev->pools) {
+   424			struct dev_cgroup_pool_state *pool =
+   425				container_of(entry, typeof(*pool), dev_node);
+   426	
+   427			list_del_rcu(&pool->css_node);
+   428		}
+   429	
+   430		/*
+   431		 * Ensure any RCU based lookups fail. Additionally,
+   432		 * no new pools should be added to the dead device
+   433		 * by get_cg_pool_unlocked.
+   434		 */
+   435		dev->unregistered = true;
+   436		spin_unlock(&devcg_lock);
+   437	
+   438		kref_put(&dev->ref, devcg_free_device);
+   439	}
+   440	EXPORT_SYMBOL_GPL(dev_cgroup_unregister_device);
+   441	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
