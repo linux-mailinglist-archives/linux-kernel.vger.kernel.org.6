@@ -1,162 +1,211 @@
-Return-Path: <linux-kernel+bounces-382298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0712C9B0C02
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 19:43:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C11019B0C01
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 19:43:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 398471C22F4B
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:43:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2FE828ACB8
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:43:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4410A20BB44;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D75D1F754F;
 	Fri, 25 Oct 2024 17:42:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="VE6wSRv7"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="S8Q80AED"
+Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE9C718452E;
-	Fri, 25 Oct 2024 17:42:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88B07187FE2
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 17:42:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729878138; cv=none; b=JhTkGwOgj2hRYkU0PhR2YukVXmKrhiuOkCqXQPC6Gfd7u6ty1GblN1+7igTygx2ayAoTffKTlTvI58mYG4nyaFjGDUYtmrNnhZAL0Q6jswWLE/iq4BT3tGX8T6HQBPJlby67L4fRsy5IbAcThS7txcX+kpyhT+NvkS6q8rqNQcM=
+	t=1729878138; cv=none; b=I9VjXzupP2cEF9MUMCRwYH/KBgs5Isbrc74PiQor0VsJGqw9bUaMxfhnz34G9oj2WCsHB6LB8ZSvwuv5SB+nRjZiM2jhe5hTa6olP+DdwdE9wyN3JiZSZd9Wl7rx/hotHViFa6Ccdix3TAWBzsPtZCPk538pBySyuX3Bc097JG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1729878138; c=relaxed/simple;
-	bh=PwyeLzwC8ipsRtMBNOMt7RMlZVMwSI+R8kgLXOHJxdE=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P1iBEzXRqbDWNZaGnDczhRlQ9MSzzptRVNatDYwp4ljQau+zK5sQ74dlUFMK14GKwM3bTTkPpmoNQ+bTp7BArXHDLdC6YUYOGB8HOd69DdpwTApfWSdv5v0iuCr76AeKeWAALSs2ulftqVNsNvPI8b8kI5iVY7x7zCJZEMXzfEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=VE6wSRv7; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49PHg5wc021530;
-	Fri, 25 Oct 2024 12:42:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1729878125;
-	bh=pwKM75sCFnfctTtbj/opwnkqiPuhZWuGKbKWcmwTyIY=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=VE6wSRv7zxAis0MClAfx62Vw8upuraUz6En61GTY3JhXbfzImFcpblBr1W0a+nASO
-	 NaGFszhOPgI7MhmNVnGjjPHRtsUqfYjyKZpfr3mxRzE0NYwYstYXKDrbNjfJh8youM
-	 QbMHDDQhPNlGCe36910F7UUSlTKEBAWwgP/RrnZI=
-Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 49PHg5UT068344
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 25 Oct 2024 12:42:05 -0500
-Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 25
- Oct 2024 12:42:05 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 25 Oct 2024 12:42:04 -0500
-Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49PHg4lt109361;
-	Fri, 25 Oct 2024 12:42:04 -0500
-Date: Fri, 25 Oct 2024 12:42:04 -0500
-From: Nishanth Menon <nm@ti.com>
-To: Markus Schneider-Pargmann <msp@baylibre.com>
-CC: Tero Kristo <kristo@kernel.org>, Santosh Shilimkar <ssantosh@kernel.org>,
-        Vignesh Raghavendra <vigneshr@ti.com>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Anand Gadiyar <gadiyar@ti.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, Vishal Mahaveer
-	<vishalm@ti.com>,
-        Kevin Hilman <khilman@baylibre.com>, Dhruva Gole
-	<d-gole@ti.com>
-Subject: Re: [PATCH v3 2/6] firmware: ti_sci: Partial-IO support
-Message-ID: <20241025174204.xwmsn2arcy4q63xu@reaction>
-References: <20241012-topic-am62-partialio-v6-12-b4-v3-0-f7c6c2739681@baylibre.com>
- <20241012-topic-am62-partialio-v6-12-b4-v3-2-f7c6c2739681@baylibre.com>
+	bh=ZVkWonxPuHKs4Tp9YBN1AFtCCfroY/xroAgtS+5QJZo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MlizJWrgtO4QsMTOlIIw5W5jeglMgJ/IbaTSFIryNF0Mjjdt4f0tOpOTMCDpxgYKq4T1gcKchqcIXPU5wXhz7We1ASlTTDt3FJlnuorp2H9IuqVDbEGWcWpA3fq6kyMqMuGm3XQcjIiEllRAz21WCQ3O1g4Se3VN3nXC6jvyxlU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=S8Q80AED; arc=none smtp.client-ip=91.218.175.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <712eea49-37f3-4d15-9e04-676937766b65@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1729878133;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3+Jj2781dcd+BwBoELpxEdGuTpRCIY6QYhPS0y3qUZo=;
+	b=S8Q80AEDkavT2o7WucvJJPPV26dWwEjL+JWM+QC4JNItX3+we6/04KXTE97tPiGjRuzxV5
+	nJGkZ3vZ6bpgpDPWjLcNnzwUNbvNhhXvzZGKvC5YKlAQFsk4NVpJWjA7H6SqmGhrYL9RE8
+	C9hxNCVjhQLiB+4FBDRW+UbAtJYE9go=
+Date: Sat, 26 Oct 2024 01:42:06 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20241012-topic-am62-partialio-v6-12-b4-v3-2-f7c6c2739681@baylibre.com>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Subject: Re: [PATCH 1/3] drm/etnaviv: Track GPU VA size separately
+To: Lucas Stach <l.stach@pengutronix.de>,
+ Russell King <linux+etnaviv@armlinux.org.uk>,
+ Christian Gmeiner <christian.gmeiner@gmail.com>
+Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+References: <20241004194207.1013744-1-sui.jingfeng@linux.dev>
+ <20241004194207.1013744-2-sui.jingfeng@linux.dev>
+ <b93c08b0bab16c86190ca186f20d2cb036a4b8d0.camel@pengutronix.de>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Sui Jingfeng <sui.jingfeng@linux.dev>
+In-Reply-To: <b93c08b0bab16c86190ca186f20d2cb036a4b8d0.camel@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On 16:39-20241012, Markus Schneider-Pargmann wrote:
-[...]
-> 
-> The possible wakeup devices are found by checking which devices are
-> powered by the regulator supplying the "vddshv_canuart" line. These are
-> considered possible wakeup sources. Only wakeup sources that are
-> actually enabled by the user will be considered as a an active wakeup
-> source. If none of the wakeup sources are enabled the system will do a
-> normal poweroff. If at least one wakeup source is enabled it will
-> instead send a TI_SCI_MSG_PREPARE_SLEEP message from the sys_off
-> handler. Sending this message will result in an immediate shutdown of
-> the system. No execution is expected after this point. The code will
-> wait for 5s and do an emergency_restart afterwards if Partial-IO wasn't
-> entered at that point.
-> 
-[...]
+Hi,
 
-> +static bool tisci_canuart_wakeup_enabled(struct ti_sci_info *info)
-> +{
-> +	static const char canuart_name[] = "vddshv_canuart";
-> +	struct device_node *wakeup_node = NULL;
-> +
-> +	for (wakeup_node = of_find_node_with_property(NULL, "vio-supply");
-> +	     wakeup_node;
-> +	     wakeup_node = of_find_node_with_property(wakeup_node, "vio-supply")) {
-> +		struct device_node *supply_node;
-> +		const char *supply_name;
-> +		struct platform_device *pdev;
-> +		int ret;
-> +
-> +		supply_node = of_parse_phandle(wakeup_node, "vio-supply", 0);
-> +		if (!supply_node)
-> +			continue;
-> +
-> +		ret = of_property_read_string(supply_node, "regulator-name", &supply_name);
-> +		of_node_put(supply_node);
-> +		if (ret) {
-> +			dev_warn(info->dev, "Failed to parse vio-supply phandle at %pOF %d\n",
-> +				 wakeup_node, ret);
-> +			continue;
-> +		}
-> +
-> +		if (strncmp(canuart_name, supply_name, strlen(canuart_name)))
-> +			continue;
-> +
-> +		pdev = of_find_device_by_node(wakeup_node);
-> +		if (!pdev)
-> +			continue;
-> +
-> +		if (device_may_wakeup(&pdev->dev)) {
-> +			dev_dbg(info->dev, "%pOF identified as wakeup source for Partial-IO\n",
-> +				wakeup_node);
-> +			put_device(&pdev->dev);
-> +			of_node_put(wakeup_node);
-> +			return true;
-> +		}
-> +		put_device(&pdev->dev);
-> +	}
-> +
-> +	return false;
-> +}
-> +
+On 2024/10/7 18:12, Lucas Stach wrote:
+> Am Samstag, dem 05.10.2024 um 03:42 +0800 schrieb Sui Jingfeng:
+>> Etnaviv assumes that GPU page size is 4KiB, yet on some systems, the CPU
+>> page size is 16KiB. The size of etnaviv buffer objects will be aligned
+>> to CPU page size on kernel side, however, userspace still assumes the
+>> page size is 4KiB and doing allocation with 4KiB page as unit. This
+>> results in userspace allocated GPU virtual address range collision and
+>> therefore unable to be inserted to the specified hole exactly.
+>>
+>> The root cause is that kernel side BO takes up bigger address space than
+>> userspace assumes when the size of it is not CPU page size aligned. To
+>> Preserve GPU VA continuous as much as possible, track the size that
+>> userspace/GPU think of it is.
+>>
+>> Yes, we still need to overallocate to suit the CPU, but there is no need
+>> to waste GPU VA space anymore.
+>>
+>> Signed-off-by: Sui Jingfeng <sui.jingfeng@linux.dev>
+>> ---
+>>   drivers/gpu/drm/etnaviv/etnaviv_gem.c | 8 +++++---
+>>   drivers/gpu/drm/etnaviv/etnaviv_gem.h | 1 +
+>>   drivers/gpu/drm/etnaviv/etnaviv_mmu.c | 8 ++++----
+>>   3 files changed, 10 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gem.c b/drivers/gpu/drm/etnaviv/etnaviv_gem.c
+>> index 5c0c9d4e3be1..943fc20093e6 100644
+>> --- a/drivers/gpu/drm/etnaviv/etnaviv_gem.c
+>> +++ b/drivers/gpu/drm/etnaviv/etnaviv_gem.c
+>> @@ -543,7 +543,7 @@ static const struct drm_gem_object_funcs etnaviv_gem_object_funcs = {
+>>   	.vm_ops = &vm_ops,
+>>   };
+>>   
+>> -static int etnaviv_gem_new_impl(struct drm_device *dev, u32 flags,
+>> +static int etnaviv_gem_new_impl(struct drm_device *dev, u32 size, u32 flags,
+>>   	const struct etnaviv_gem_ops *ops, struct drm_gem_object **obj)
+>>   {
+>>   	struct etnaviv_gem_object *etnaviv_obj;
+>> @@ -570,6 +570,7 @@ static int etnaviv_gem_new_impl(struct drm_device *dev, u32 flags,
+>>   	if (!etnaviv_obj)
+>>   		return -ENOMEM;
+>>   
+>> +	etnaviv_obj->user_size = size;
+>>   	etnaviv_obj->flags = flags;
+>>   	etnaviv_obj->ops = ops;
+>>   
+>> @@ -588,11 +589,12 @@ int etnaviv_gem_new_handle(struct drm_device *dev, struct drm_file *file,
+>>   {
+>>   	struct etnaviv_drm_private *priv = dev->dev_private;
+>>   	struct drm_gem_object *obj = NULL;
+>> +	unsigned int user_size = size;
+> This still needs to be be aligned to 4K. Userspace may request
+> unaligned buffer sizes and we don't want to risk any confusion about
+> which part is visible to the GPU, so better make sure this size is
+> aligned to the GPU page size.
 
-What is the binding that supports this? I just do not think that
-scanning the entire tree for vio-supply implies you will get thr right
-property here.
 
-Just giving an example to illustrate this point:
-Documentation/devicetree/bindings/net/wireless/ti,wl1251.txt says it
-needs vio-supply -> so i have a node with the wireless supply as
-vio-supply -> Since we are scanning from NULL for vio-supply, we hit
-that, that is a bad choice for enabling io-retention.
+OK,aligned to the GPU page size is reasonable. Since the buffer is very high likely be used by GPU.
+
+
+> Also, that more personal preference, but I would call this gpu_size or
+> something like that, to avoid any confusion with the user_size in
+> etnaviv_cmdbuf, where user_size doesn't denote the GPU visible size.
+
+Yeah, theuser_size denote the length of command buffer, it's usually just need to 
+aligned to 8 bytes. And generally, the size command buffer won't larger 
+than 4KiB (a GPU PAGE).
+
+I'm imagine that just 'size' with some extra comment, as it's possible
+that a buffer is only get used by CPU for specific purpose.
+
+Best Regards,
+Sui
+
+> Regards,
+> Lucas
+>
+>>   	int ret;
+>>   
+>>   	size = PAGE_ALIGN(size);
+>>   
+>> -	ret = etnaviv_gem_new_impl(dev, flags, &etnaviv_gem_shmem_ops, &obj);
+>> +	ret = etnaviv_gem_new_impl(dev, user_size, flags, &etnaviv_gem_shmem_ops, &obj);
+>>   	if (ret)
+>>   		goto fail;
+>>   
+>> @@ -627,7 +629,7 @@ int etnaviv_gem_new_private(struct drm_device *dev, size_t size, u32 flags,
+>>   	struct drm_gem_object *obj;
+>>   	int ret;
+>>   
+>> -	ret = etnaviv_gem_new_impl(dev, flags, ops, &obj);
+>> +	ret = etnaviv_gem_new_impl(dev, size, flags, ops, &obj);
+>>   	if (ret)
+>>   		return ret;
+>>   
+>> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gem.h b/drivers/gpu/drm/etnaviv/etnaviv_gem.h
+>> index a42d260cac2c..c6e27b9abb0c 100644
+>> --- a/drivers/gpu/drm/etnaviv/etnaviv_gem.h
+>> +++ b/drivers/gpu/drm/etnaviv/etnaviv_gem.h
+>> @@ -36,6 +36,7 @@ struct etnaviv_gem_object {
+>>   	const struct etnaviv_gem_ops *ops;
+>>   	struct mutex lock;
+>>   
+>> +	u32 user_size;
+>>   	u32 flags;
+>>   
+>>   	struct list_head gem_node;
+>> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_mmu.c b/drivers/gpu/drm/etnaviv/etnaviv_mmu.c
+>> index 1661d589bf3e..6fbc62772d85 100644
+>> --- a/drivers/gpu/drm/etnaviv/etnaviv_mmu.c
+>> +++ b/drivers/gpu/drm/etnaviv/etnaviv_mmu.c
+>> @@ -281,6 +281,7 @@ int etnaviv_iommu_map_gem(struct etnaviv_iommu_context *context,
+>>   {
+>>   	struct sg_table *sgt = etnaviv_obj->sgt;
+>>   	struct drm_mm_node *node;
+>> +	unsigned int user_size;
+>>   	int ret;
+>>   
+>>   	lockdep_assert_held(&etnaviv_obj->lock);
+>> @@ -303,13 +304,12 @@ int etnaviv_iommu_map_gem(struct etnaviv_iommu_context *context,
+>>   	}
+>>   
+>>   	node = &mapping->vram_node;
+>> +	user_size = etnaviv_obj->user_size;
+>>   
+>>   	if (va)
+>> -		ret = etnaviv_iommu_insert_exact(context, node,
+>> -						 etnaviv_obj->base.size, va);
+>> +		ret = etnaviv_iommu_insert_exact(context, node, user_size, va);
+>>   	else
+>> -		ret = etnaviv_iommu_find_iova(context, node,
+>> -					      etnaviv_obj->base.size);
+>> +		ret = etnaviv_iommu_find_iova(context, node, user_size);
+>>   	if (ret < 0)
+>>   		goto unlock;
+>>   
 
 -- 
-Regards,
-Nishanth Menon
-Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
+Best regards,
+Sui
+
 
