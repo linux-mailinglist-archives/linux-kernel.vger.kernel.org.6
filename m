@@ -1,193 +1,150 @@
-Return-Path: <linux-kernel+bounces-382564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 939469B0FED
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 22:40:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF8339B1001
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 22:41:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 578952847C3
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 20:40:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7660D1F21651
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 20:41:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9557215C4F;
-	Fri, 25 Oct 2024 20:40:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74CB0216E02;
+	Fri, 25 Oct 2024 20:40:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="IWxGcF2a"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="wiBV5pfA"
+Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F61217DFEC;
-	Fri, 25 Oct 2024 20:40:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16CEB2161FF
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 20:40:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729888832; cv=none; b=b2qKV1CSf75hX421sjmvHkiST7MJEOpgU2rSbLeu+uHLeFfxh4gXyyvnls+yOLNdDfxpaMuLZ3FchHQaedgRrKwn9Ay8Oee474MnHZX619DLQT7Q8T0FWa0SuNyfO4/BpJlqeMVB92822PVa6jGpb9W2rGAKHzzhoP/L1K9+JGA=
+	t=1729888837; cv=none; b=CSMEm+bC+xE3AOuP8lcubINvbCGUZ3Ob1GZtOmVyadKwza1aqqNVDJha9wc0cncY6k9DVVRrXnQ6uSf1M5W1pUHVOoXV0TqNbgNENQV8WihhJsQ1VPdhM4g9rVkg/F2I1MZqU5DTTbrSQKfxoRsNChP6LkUDAzprCWVDDZd1rpo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729888832; c=relaxed/simple;
-	bh=wrnRETKQ4YSgOhHYXSpv32z2hbqqzr8TLZ24YvIR7cs=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=iENNrxk4fj7I88uCezB0wZvkAUyX0b2RtH6rLlDfIfKQ7STXzt2z5iyraegZTh0oJddMPNI1RaYvG1G3sUyqBZeW8TAp8htDX+UF5zn/La3kn3TMENjtaEcQkmHN4mumWkgeXfI7EUdB58r5MY12LtdjX/d5nNC7AUiJTJC5eQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=IWxGcF2a; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id E2F0DC0004;
-	Fri, 25 Oct 2024 20:40:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1729888824;
+	s=arc-20240116; t=1729888837; c=relaxed/simple;
+	bh=1VR9nQjGldSxwX5w5pEmypJuoDm8azOUI2JHhYVwkjE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JPWOZqh9tgGl7VutoMuPg1dvddpl/novXuX+QokO79AzVcghyawWZt2ckhBrSvl3wsOgkz+sVt3WmOEjItCJBBs3DJRBI1U3auyrhCtegTuEVFZpcBFPbY4aJhz0PQVlRBEfMawmubnNAa4m0qisPEo8yyXq1Nm1ePnh3wLa5As=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=wiBV5pfA; arc=none smtp.client-ip=91.218.175.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Fri, 25 Oct 2024 13:40:24 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1729888833;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=8xq1CEYvKfazHRRqSvJNHsgXbDIHvVRxgJJhpycPiz4=;
-	b=IWxGcF2aOI2alODIYwMNXrTahabVAsIXJZDF+rwKEIM39ZSJ3kyt7sR764Z1o70trh7S+x
-	oHJuXhEYg0ajQCr56+z96wM7johTjaP/AH4fLS2aed7qvpbpd+VzUwhYgxJMT6ITDOgDxR
-	02Yd8g870dF4kgfxMYPTTDCrhIHap7kmgmjlL3u4w3F+G/mX+vJpKdwKIaZxkU94yvkd2V
-	MDoKOxOLJ/asYjuB1T+/jAmdsow450fbio0oY5vjtOEkn66Ekil2osfiVuejDg3n6Yt7Eo
-	WzR13xM9qQ4WOSJNjRmMWsZpmUH9Pn0a8ijZfqMA0EiNeA2kd3iZIY1BzbAPBw==
-From: Gregory CLEMENT <gregory.clement@bootlin.com>
-To: Jiaxun Yang <jiaxun.yang@flygoat.com>, Aleksandar Rikalo
- <arikalo@gmail.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- Thomas Gleixner <tglx@linutronix.de>
-Cc: "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
- linux-kernel@vger.kernel.org, Vladimir Kondratiev
- <vladimir.kondratiev@mobileye.com>, =?utf-8?Q?Th=C3=A9o?= Lebrun
- <theo.lebrun@bootlin.com>,
- Tawfik Bayouk <tawfik.bayouk@mobileye.com>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH] irqchip: mips-gic: Handle case with cluster without CPU
- cores
-In-Reply-To: <70b28614-e40e-4022-818b-80711c05c7a4@app.fastmail.com>
-References: <20241025-no-cpu-cluster-support-v1-1-5e81fcf9f25c@bootlin.com>
- <70b28614-e40e-4022-818b-80711c05c7a4@app.fastmail.com>
-Date: Fri, 25 Oct 2024 22:40:23 +0200
-Message-ID: <87jzdvc3wo.fsf@BLaptop.bootlin.com>
+	bh=YMAXXsBpu7Ehcn655+wzQ1uMVEuNQVBFhx8QRZMZ0rg=;
+	b=wiBV5pfAS60vsXVuI1GT02TDemB6eoQa7vMvOYPdvau9og9kfHNCrIwzOsxNAEvNzLpZH5
+	nEbImKrpEPXD3n9ZjlOveq+RV/QdwpoLnPdZkIzeOVTkeyM+wnWeOnrb2/cM7PjeccRfV0
+	hCmdOXTju1vks2ugKnuwkE14UmBoEuk=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Oliver Upton <oliver.upton@linux.dev>
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: Miguel Luis <miguel.luis@oracle.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
+	Shuah Khan <shuah@kernel.org>, David Woodhouse <dwmw@amazon.co.uk>,
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+	Francesco Lavra <francescolavra.fl@gmail.com>
+Subject: Re: [PATCH v6 6/6] arm64: Use SYSTEM_OFF2 PSCI call to power off for
+ hibernate
+Message-ID: <ZxwCOHd-DbUT8dsT@linux.dev>
+References: <20241019172459.2241939-1-dwmw2@infradead.org>
+ <20241019172459.2241939-7-dwmw2@infradead.org>
+ <23C91005-7304-4312-A5E0-F5E6C05B3209@oracle.com>
+ <ECD0CA58-2C3B-48F3-AF12-95E37CB0FC48@infradead.org>
+ <ZxprcWDe2AXuLhD_@linux.dev>
+ <691447A1-8F3F-4890-B00F-8068A14CA126@infradead.org>
+ <ZxqmsiXV6ZYTANKY@linux.dev>
+ <627769A8-AF84-47A1-B4F9-5F44C75A8058@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: gregory.clement@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <627769A8-AF84-47A1-B4F9-5F44C75A8058@infradead.org>
+X-Migadu-Flow: FLOW_OUT
 
-Hi Jiaxun,
+On Fri, Oct 25, 2024 at 08:13:03AM +0200, David Woodhouse wrote:
+> On 24 October 2024 21:57:38 CEST, Oliver Upton <oliver.upton@linux.dev> wrote:
+> >On Thu, Oct 24, 2024 at 05:56:09PM +0200, David Woodhouse wrote:
+> >> On 24 October 2024 17:44:49 CEST, Oliver Upton <oliver.upton@linux.dev> wrote:
+> >> >IIUC, you're really wanting to 0x0 because there are hypervisors out
+> >> >there that violate the final spec and *only* accept this value.
+> >> >
+> >> >That's perfectly fine, but it'd help avoid confusion if the supporting
+> >> >comment was a bit more direct:
+> >> >
+> >> >	/*
+> >> >	 * If no hibernate type is specified SYSTEM_OFF2 defaults to
+> >> >	 * selecting HIBERNATE_OFF.
+> >> >	 *
+> >> >	 * There are hypervisors in the wild that violate the spec and
+> >> >	 * reject calls that explicitly provide a hibernate type. For
+> >> >	 * compatibility with these nonstandard implementations, pass 0
+> >> >	 * as the type.
+> >> >	 */
+> >> >	 if (system_entering_hibernation())
+> >> >		invoke_psci_fn(PSCI_FN_NATIVE(1_3, SYSTEM_OFF2), 0 , 0, 0);
+> >> 
+> >> By the time this makes it into released versions of the guest Linux kernel, that comment won't be true any more.
+> >
+> >Then does it even matter? What is the problem you're trying to solve
+> >with using a particular value for the hibernate type?
+> >
+> >Either the goal of this is to make the PSCI client code compatible with
+> >your hypervisor today (and any other implementation based on 'F ALP1') or
+> >we don't care and go with whatever value we want.
+> >
+> >Even if the comment eventually becomes stale, there is a ton of value in
+> >documenting the exact implementation decision being made.
+> >
+> 
+> Eventually it won't matter and we can go with whatever value we want. But yes, the goal is to be compatible with the hypervisor *today* until it catches up the changes to the final versions of the spec. I didn't spend much time overthinking the comment. What was it....
+> 
+> 	/*
+> 	 * Zero is an acceptable alternative to PSCI_1_3_OFF_TYPE_HIBERNATE_OFF
+> 	 * and is supported by hypervisors implementing an earlier version
+> 	 * of the pSCI v1.3 spec.
+> 	 */
+> 
+> That seems to cover it just fine, I think.
 
-> =E5=9C=A82024=E5=B9=B410=E6=9C=8825=E6=97=A5=E5=8D=81=E6=9C=88 =E4=B8=8B=
-=E5=8D=884:46=EF=BC=8CGregory CLEMENT=E5=86=99=E9=81=93=EF=BC=9A
->> It is possible to have no CPU cores in a cluster; in such cases, it is
->> not possible to access the GIC, and any indirect access leads to an
->> exception. This patch dynamically skips the indirect access in such
->> situations.
->
-> Hi Gregory,
->
-> I'm a little bit confused here, as I have never seen such wired configura=
-tion.
->
-> Is second cluster IOCU only?
+No. You're leaving the work for the reader to:
 
-Yes indeed in EyeQ5, the second cluster is the place for many
-accelerator for vision that benefit of the L2 cache and of the coherency
-unit.
+ (1) Figure out what you're talking about
+ (2) Go dig up an "earlier version" of the spec
+ (3) Realise that it means certain hypervisors only take 0x0 as an
+     argument
 
-Gregory
+If you speak *directly* about the problem you're trying to address then
+reviewers are less likely to get hung up on what you're trying to do.
 
->
-> Thanks
-> - Jiaxun
->
->>
->> Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
->> ---
->> This patch is a follow-up of the series "MIPS: Support I6500
->> multi-cluster configuration"
->> https://lore.kernel.org/lkml/20241019071037.145314-1-arikalo@gmail.com/#t
->> ---
->>  drivers/irqchip/irq-mips-gic.c | 20 ++++++++++++++++----
->>  1 file changed, 16 insertions(+), 4 deletions(-)
->>
->> diff --git a/drivers/irqchip/irq-mips-gic.c b/drivers/irqchip/irq-mips-g=
-ic.c
->> index f42f69bbd6fb1..bca8053864b2c 100644
->> --- a/drivers/irqchip/irq-mips-gic.c
->> +++ b/drivers/irqchip/irq-mips-gic.c
->> @@ -141,7 +141,8 @@ static bool gic_irq_lock_cluster(struct irq_data *d)
->>  	cl =3D cpu_cluster(&cpu_data[cpu]);
->>  	if (cl =3D=3D cpu_cluster(&current_cpu_data))
->>  		return false;
->> -
->> +	if (mips_cps_numcores(cl) =3D=3D 0)
->> +		return false;
->>  	mips_cm_lock_other(cl, 0, 0, CM_GCR_Cx_OTHER_BLOCK_GLOBAL);
->>  	return true;
->>  }
->> @@ -507,6 +508,9 @@ static void gic_mask_local_irq_all_vpes(struct irq_d=
-ata *d)
->>  	struct gic_all_vpes_chip_data *cd;
->>  	int intr, cpu;
->>=20
->> +	if (!mips_cps_multicluster_cpus())
->> +		return;
->> +
->>  	intr =3D GIC_HWIRQ_TO_LOCAL(d->hwirq);
->>  	cd =3D irq_data_get_irq_chip_data(d);
->>  	cd->mask =3D false;
->> @@ -520,6 +524,9 @@ static void gic_unmask_local_irq_all_vpes(struct=20
->> irq_data *d)
->>  	struct gic_all_vpes_chip_data *cd;
->>  	int intr, cpu;
->>=20
->> +	if (!mips_cps_multicluster_cpus())
->> +		return;
->> +
->>  	intr =3D GIC_HWIRQ_TO_LOCAL(d->hwirq);
->>  	cd =3D irq_data_get_irq_chip_data(d);
->>  	cd->mask =3D true;
->> @@ -687,8 +694,10 @@ static int gic_irq_domain_map(struct irq_domain=20
->> *d, unsigned int virq,
->>  	if (!gic_local_irq_is_routable(intr))
->>  		return -EPERM;
->>=20
->> -	for_each_online_cpu_gic(cpu, &gic_lock)
->> -		write_gic_vo_map(mips_gic_vx_map_reg(intr), map);
->> +	if (mips_cps_multicluster_cpus()) {
->> +		for_each_online_cpu_gic(cpu, &gic_lock)
->> +			write_gic_vo_map(mips_gic_vx_map_reg(intr), map);
->> +	}
->>=20
->>  	return 0;
->>  }
->> @@ -982,7 +991,7 @@ static int __init gic_of_init(struct device_node *no=
-de,
->>  				change_gic_trig(i, GIC_TRIG_LEVEL);
->>  				write_gic_rmask(i);
->>  			}
->> -		} else {
->> +		} else if (mips_cps_numcores(cl) !=3D 0) {
->>  			mips_cm_lock_other(cl, 0, 0, CM_GCR_Cx_OTHER_BLOCK_GLOBAL);
->>  			for (i =3D 0; i < gic_shared_intrs; i++) {
->>  				change_gic_redir_pol(i, GIC_POL_ACTIVE_HIGH);
->> @@ -990,6 +999,9 @@ static int __init gic_of_init(struct device_node *no=
-de,
->>  				write_gic_redir_rmask(i);
->>  			}
->>  			mips_cm_unlock_other();
->> +
->> +		} else {
->> +			pr_warn("No CPU cores on the cluster %d skip it\n", cl);
->>  		}
->>  	}
->>=20
->>
->> ---
->> base-commit: 10e44701486e25d630d714ace2b0c6d9a178b331
->> change-id: 20241025-no-cpu-cluster-support-1745e8abd7d1
->>
->> Best regards,
->> --=20
->> Gregory CLEMENT <gregory.clement@bootlin.com>
->
-> --=20
-> - Jiaxun
+I'm genuinely at a loss for why you would want to present this as an
+"acceptable alterantive" rather than a functional requirement for this
+driver to run on your hypervisor.
+
+-- 
+Thanks,
+Oliver
 
