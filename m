@@ -1,79 +1,102 @@
-Return-Path: <linux-kernel+bounces-381310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CBCA9AFD7C
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 11:02:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F7C19AFD79
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 11:02:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF7CC281F89
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 09:02:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBB2F1F214DB
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 09:02:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C3411D434D;
-	Fri, 25 Oct 2024 09:01:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 190571D27BB;
+	Fri, 25 Oct 2024 09:01:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hhTLQZQ6"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="fYlUkdjh";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="FZQouovp"
+Received: from fout-a4-smtp.messagingengine.com (fout-a4-smtp.messagingengine.com [103.168.172.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44C551D4325;
-	Fri, 25 Oct 2024 09:01:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C162922B645
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 09:01:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729846917; cv=none; b=Gz+9N5de7QdR1Bw1YHiDjZNvpOyCdks4VsNdk0JSG0P6aWS294k3enawozl01TE2B1FsAzsKngNpwoJOoBAL6FgOEq+86/wQ/75SyaP3R6Y0/STmjo1CjGGA8kLlfDxHVJMWrWMQFvtGTbxC+5BiFHswtATwr0s0yHvPO2WkREg=
+	t=1729846911; cv=none; b=WZmkOHBdXf/92syndsGEPEqBAt7X6LE8b/EbNxrR9nPZYGU0wy5jLQ8mizEkk/BkGY+gmUfwTSaGSRb3ldY6sVFbRY4gXjDevBggdWk6thEMpffQwLrJ+MJ+mZrICui5ivseuDUB4wyVgCaHu3DvECCiCT3LftbCnmIyEW49fC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729846917; c=relaxed/simple;
-	bh=htC/6QMDF8HVGn5CRNi07vqi5NpRMzbknlYRKztT9jk=;
+	s=arc-20240116; t=1729846911; c=relaxed/simple;
+	bh=f40bl+bDnNMSeF6tiBj6jAMQNsTgkTkFyQYCLRy73UA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hKT2w6i5txAfRnJFELcQdRlgL1AXcCpoLM8fgqeLfjyNDRUGpFkYVbMDIC1jRX9GJiQxLQCfRxUY5BMk5WpZOQiFVZN2Srx72DAhru0UARyoZrYq75lLjD0N9bS+6Y3Vx2w2O9b29ZIXEOowswIn4uQ83RDZNr1wmr2imnx1Qv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hhTLQZQ6; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729846916; x=1761382916;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=htC/6QMDF8HVGn5CRNi07vqi5NpRMzbknlYRKztT9jk=;
-  b=hhTLQZQ6yr9GVJeXoPK8AjnTKrneaWjS9yR4LB4u1JSfal7eSLwWhn4B
-   RwRzKKT+ieGHbeR/BfaiHZmm4Qpe/YKPCQJckeX7MLHgQHskKW8ltUvP6
-   Ylmt62uXx9UjGxERANiMrVfGlBEnt2LCdewF/Ivy1s+X9e7BDfrRx8Qky
-   sb45ROQRa61oQZCC4hMNbTpNmyn2JsNtPs6Ac30esJF2gZvOoWp/txz3Q
-   9asMcucPq1D9fDR+fMpo1x1ad3EpSGOtRPBZmzJYCTmy5IvNVo8veNMuq
-   eVh/iMemV/r+50h94FVJKwKjhcm4C+FhmJdiFhv/IRQYSpKOJ6Zga/mgC
-   A==;
-X-CSE-ConnectionGUID: DGKbz6hVTjSL3lrEAPsgNg==
-X-CSE-MsgGUID: E7I9ATUyTKatCMAmiM3Thw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="52064597"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="52064597"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2024 02:01:55 -0700
-X-CSE-ConnectionGUID: aomwVR+sSpSr6jfrzBx1Aw==
-X-CSE-MsgGUID: QKJd9hcgRwaUxHbYSG+U3g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="85620158"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa003.jf.intel.com with ESMTP; 25 Oct 2024 02:01:52 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t4GCb-000Xuo-2n;
-	Fri, 25 Oct 2024 09:01:49 +0000
-Date: Fri, 25 Oct 2024 17:01:18 +0800
-From: kernel test robot <lkp@intel.com>
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Rishi Gupta <gupt21@gmail.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Subject: Re: [PATCH v3 2/2] iio: light: add support for veml3235
-Message-ID: <202410251610.kB7u6xMJ-lkp@intel.com>
-References: <20241023-veml3235-v3-2-8490f2622f9a@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=FeMu3vVY+VRUc2vF3ccgY+fz8sehgSqhoNi7rmdoEEqi/CzY7C6XFkVFgfQW96Bb9WE3DWLvpIH4w4k1puA+U7VCcBHDmA1ZiNnm/ozpdjy4EUj6bg+1pOvasdaJU5zQAek/qEn38BYHLin23wTyPXIlUYNIae3nn/kdXg+sed8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=fYlUkdjh; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=FZQouovp; arc=none smtp.client-ip=103.168.172.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
+Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
+	by mailfout.phl.internal (Postfix) with ESMTP id 9D38413801F6;
+	Fri, 25 Oct 2024 05:01:47 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-06.internal (MEProxy); Fri, 25 Oct 2024 05:01:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm1; t=1729846907; x=
+	1729933307; bh=VJyoij9gQj7K9r+mYyYBMOHs+agIRsVJ5VPI6PMEB7Q=; b=f
+	YlUkdjhsmR3kgHsKiZ1pLbHZ9G+I2mCIWDXlVl1qSQLuTuQLyf3HnsGyyOH5C252
+	+aozPsHZ1ZAbDEPGM4ExXuwwUBWMvSe8ctJzQoqtJtRY3SYOQ6qQnV0gXPc0xZrL
+	a0JwKI8HdHCzVltTJSEia2QYCDYwYBFFpKIU6SoYBZyzXWW482gSaOd2+bNefiwr
+	1RToAiL+F4QmWQ5CJQ+2R44a8sywDUZoq7WpeD5WggsfEkuFx4Lx8QdjrTy0Neuw
+	uyKj6TQH/OmT4Vp/pd07El4HrK6zlbkfpAbQGgH9qD6t+YDvKxgfkS7rxXw0N8eI
+	VhSJY6FF+9B9d63r63KDA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm3; t=1729846907; x=1729933307; bh=VJyoij9gQj7K9r+mYyYBMOHs+agI
+	RsVJ5VPI6PMEB7Q=; b=FZQouovp1FDF37GRzX7TkK/pIWpIJFj1W7hYmu7EOQ3H
+	W2bfDojCyAL7Ohm11d/097NDM5KZzejQ7E4mr3tMk6wR1dHliiJ11bbm77iYhfQw
+	bxiLyzvXW5jnPrv9uOMW3in1+sXc8x08I3dQ/IiW5ul2+Lf7yUVqv3KIATVx0lhn
+	KJLvWyCCpXP2qPIlTyOUjP/wL1LhzocVrYtDq8ByE3CnHU9yYrA4SQD+pNiyALKw
+	37n70dawK1C6aQlfQsPzgTY6HM9eABzMj4O1EmuTEhMt3WJ5O8dQsGOmj5cxCamy
+	4GR6P+5L5ghI/iC5VE6QHefimHNeBujLFrWNEUH05g==
+X-ME-Sender: <xms:e14bZ0MCX-ZmzmTqAJsNIP4m0cjkMPy7grVQDJqDKxOPm8hWZzdYUg>
+    <xme:e14bZ69ENupVm7nNSDtm329llQvWxLDUWyhAvBUg667MflhQHFXnfW2hn-hKm-69n
+    HunAiEGoa5PI1fZ8IE>
+X-ME-Received: <xmr:e14bZ7TQhIUhEJxgDW5xpvn6w01ZrERpICLXxSSu2FBcm4g9Kp7cFwtgHLEMNdxrUJRMww>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdejvddgudduucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvden
+    ucfhrhhomhepfdfmihhrihhllhcutedrucfuhhhuthgvmhhovhdfuceokhhirhhilhhlse
+    hshhhuthgvmhhovhdrnhgrmhgvqeenucggtffrrghtthgvrhhnpeffvdevueetudfhhfff
+    veelhfetfeevveekleevjeduudevvdduvdelteduvefhkeenucevlhhushhtvghrufhiii
+    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehkihhrihhllhesshhhuhhtvghmohhv
+    rdhnrghmvgdpnhgspghrtghpthhtohepiedpmhhouggvpehsmhhtphhouhhtpdhrtghpth
+    htohepthhorhhvrghlughssehlihhnuhigqdhfohhunhgurghtihhonhdrohhrghdprhgt
+    phhtthhopehjphhoihhmsghovgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinh
+    hugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepgiek
+    ieeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghnughrvgifrdgtohhophgvrhefse
+    gtihhtrhhigidrtghomhdprhgtphhtthhopegsphesrghlihgvnhekrdguvg
+X-ME-Proxy: <xmx:e14bZ8sA4u_223ZPRQTBiLiv3pmJQr2ddoqfv_EhvatrN_H0ZdVMsQ>
+    <xmx:e14bZ8d8WDH1NJaJnjLn2vvKfqu7O8v5ZQbjexdIVCwA5FIUcL8tUA>
+    <xmx:e14bZw2HIp11-LqEnc3Y0DiT9u-wxnn6qEwhcPjixLD7D9TBRRfArw>
+    <xmx:e14bZw_AoiXFzh4X4kTiApxTs3CNwP-11wj6Y-PG08W8ZNaTHLs8LA>
+    <xmx:e14bZ0R-7Q1u2081nzS8btzoJYwsYEsYEd9YdwrQyOdKOPHMO5LF0MIT>
+Feedback-ID: ie3994620:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 25 Oct 2024 05:01:44 -0400 (EDT)
+Date: Fri, 25 Oct 2024 12:01:39 +0300
+From: "Kirill A. Shutemov" <kirill@shutemov.name>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, x86@kernel.org, Andrew Cooper <andrew.cooper3@citrix.com>, 
+	Borislav Petkov <bp@alien8.de>
+Subject: Re: [PATCH] x86: fix user address masking non-canonical speculation
+ issue
+Message-ID: <m3xpbkhc3vuk3so5fxjs7stx4fmhkhvew27uhhxyht3s4yhm7d@etnhvnhzln6k>
+References: <20241024013214.129639-1-torvalds@linux-foundation.org>
+ <20241024061300.l5y4ng5gmkfrfdht@treble.attlocal.net>
+ <CAHk-=wihBAdfL+OgaO71H_n4NFVyDdTXWEA_fjrdEFUc-=D1Sg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,125 +105,24 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241023-veml3235-v3-2-8490f2622f9a@gmail.com>
+In-Reply-To: <CAHk-=wihBAdfL+OgaO71H_n4NFVyDdTXWEA_fjrdEFUc-=D1Sg@mail.gmail.com>
 
-Hi Javier,
+On Thu, Oct 24, 2024 at 10:35:33AM -0700, Linus Torvalds wrote:
+> On Wed, 23 Oct 2024 at 23:13, Josh Poimboeuf <jpoimboe@kernel.org> wrote:
+> >
+> > I'm probably missing something but once LAM is enabled, how wouldn't
+> > this allow non-canonical address speculation?
+> 
+> Once LAM is enabled, together with LASS, non-canonical addresses
+> basically don't exit.
 
-kernel test robot noticed the following build warnings:
+That's not true.
 
-[auto build test WARNING on ceab669fdf7b7510b4e4997b33d6f66e433a96db]
+With LAM, canonically check is relaxed to bit 63 == bit 47/56.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Javier-Carrasco/dt-bindings-iio-light-veml6030-add-veml3235/20241024-030144
-base:   ceab669fdf7b7510b4e4997b33d6f66e433a96db
-patch link:    https://lore.kernel.org/r/20241023-veml3235-v3-2-8490f2622f9a%40gmail.com
-patch subject: [PATCH v3 2/2] iio: light: add support for veml3235
-config: loongarch-allmodconfig (https://download.01.org/0day-ci/archive/20241025/202410251610.kB7u6xMJ-lkp@intel.com/config)
-compiler: loongarch64-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241025/202410251610.kB7u6xMJ-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410251610.kB7u6xMJ-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   drivers/iio/light/veml3235.c: In function 'veml3235_set_it':
->> drivers/iio/light/veml3235.c:148:26: warning: variable 'it_idx' set but not used [-Wunused-but-set-variable]
-     148 |         int ret, new_it, it_idx;
-         |                          ^~~~~~
-   drivers/iio/light/veml3235.c: In function 'veml3235_set_gain':
->> drivers/iio/light/veml3235.c:191:28: warning: variable 'gain_idx' set but not used [-Wunused-but-set-variable]
-     191 |         int ret, new_gain, gain_idx;
-         |                            ^~~~~~~~
-
-
-vim +/it_idx +148 drivers/iio/light/veml3235.c
-
-   144	
-   145	static int veml3235_set_it(struct iio_dev *indio_dev, int val, int val2)
-   146	{
-   147		struct veml3235_data *data = iio_priv(indio_dev);
- > 148		int ret, new_it, it_idx;
-   149	
-   150		if (val)
-   151			return -EINVAL;
-   152	
-   153		switch (val2) {
-   154		case 50000:
-   155			new_it = 0x00;
-   156			it_idx = 4;
-   157			break;
-   158		case 100000:
-   159			new_it = 0x01;
-   160			it_idx = 3;
-   161			break;
-   162		case 200000:
-   163			new_it = 0x02;
-   164			it_idx = 2;
-   165			break;
-   166		case 400000:
-   167			new_it = 0x03;
-   168			it_idx = 1;
-   169			break;
-   170		case 800000:
-   171			new_it = 0x04;
-   172			it_idx = 0;
-   173			break;
-   174		default:
-   175			return -EINVAL;
-   176		}
-   177	
-   178		ret = regmap_field_write(data->rf.it, new_it);
-   179		if (ret) {
-   180			dev_err(data->dev,
-   181				"failed to update integration time: %d\n", ret);
-   182			return ret;
-   183		}
-   184	
-   185		return 0;
-   186	}
-   187	
-   188	static int veml3235_set_gain(struct iio_dev *indio_dev, int val, int val2)
-   189	{
-   190		struct veml3235_data *data = iio_priv(indio_dev);
- > 191		int ret, new_gain, gain_idx;
-   192	
-   193		if (val2 != 0)
-   194			return -EINVAL;
-   195	
-   196		switch (val) {
-   197		case 1:
-   198			new_gain = 0x00;
-   199			gain_idx = 3;
-   200			break;
-   201		case 2:
-   202			new_gain = 0x01;
-   203			gain_idx = 2;
-   204			break;
-   205		case 4:
-   206			new_gain = 0x03;
-   207			gain_idx = 1;
-   208			break;
-   209		case 8:
-   210			new_gain = 0x07;
-   211			gain_idx = 0;
-   212			break;
-   213		default:
-   214			return -EINVAL;
-   215		}
-   216	
-   217		ret = regmap_field_write(data->rf.gain, new_gain);
-   218		if (ret) {
-   219			dev_err(data->dev, "failed to set gain: %d\n", ret);
-   220			return ret;
-   221		}
-   222	
-   223		return 0;
-   224	}
-   225	
+I try to confirm internally that we don't speculate past this relaxed
+canonically check. I believe we don't, but I want to double-check.
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+  Kiryl Shutsemau / Kirill A. Shutemov
 
