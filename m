@@ -1,240 +1,125 @@
-Return-Path: <linux-kernel+bounces-381189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E05319AFBC0
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 10:00:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2D2F9AFBC4
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 10:00:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F3BF1C2271C
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 08:00:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8168282C9E
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 08:00:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9E861CB33E;
-	Fri, 25 Oct 2024 08:00:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 536A2155308;
+	Fri, 25 Oct 2024 08:00:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Q3bpuJkx";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="iSm5PcWT";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Q3bpuJkx";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="iSm5PcWT"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="rJIRevGV"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D153170A1C;
-	Fri, 25 Oct 2024 08:00:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDE6719993F
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 08:00:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729843206; cv=none; b=Z0/HCLoboPmDTFXc4UYOP9EtiJl+NxxJNwJpFcJjQFjDxsq5ozrZElkXqj0QlLzinMo8TAYKos5LwoSotfvqls1TQAxViqXOU+LpFVBC8EZFmNDPmTHLkhh52qZK3zgiYyLC0CVm5ZVGP0JPjsTsOxf+oRAWYVJBbiFaJ2bQyms=
+	t=1729843222; cv=none; b=loGlN1NFomcndwIoprErHldYLoKPbFHiWIzAJVGgNiYJaWBOkxIa7d8jXtn0e4sLeAtetJwGR/0gRRASkSROjwFop121pAjXOh+zKZ/czzwvUvt1RCwSGeP3M+NIXmjOlA/BjHyVHGdKfJXUAbBXRVJwk5Xuo+Z0/6VjL26SOdo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729843206; c=relaxed/simple;
-	bh=pDKoYNWc5esSfmM2VKEvc47EU0gOkj8FOL8qQDFJZYk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M3yUSWnigy60bFbw7c6IRgfHlXshTyd+aONOTTjV3D1AbMfwNKn0aQb2NHlMtGeQctlI7kpE9ubJuzrLZF7HqKOHOhkHuLUw03rkIrlWFsAIiBC0c5ZS+2bng8wJeEfmMvrE9x1td4JrOkqiFV6t8pqJWbe/GUXp8AG3qhP0VLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Q3bpuJkx; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=iSm5PcWT; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Q3bpuJkx; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=iSm5PcWT; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 6FE8821E1F;
-	Fri, 25 Oct 2024 08:00:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1729843202; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Gt4eKGHTaDKGDIpEe7BbcCU3OPOhB5+NbtQhvob/2u0=;
-	b=Q3bpuJkxSkOVve5uvDfli9jz2KlAsWAiPZucR6NpoGrjTSqrlZ9/qm3XU/eT9vQVnbET3I
-	TTAAXXZP+7z0PHH0dA3MZuiTGQ2TFSNvfRJuCAYA+pc5kGIbuwT5wE/GSeonj4dnHxaqqc
-	Fg6YV45j4Ieg70gSybwep693JDKmHFw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1729843202;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Gt4eKGHTaDKGDIpEe7BbcCU3OPOhB5+NbtQhvob/2u0=;
-	b=iSm5PcWTohwwYs+NwSceqzvMUzvEepB2n1+Qq0val4EWG9nqyrd/iHlwKVqznKHhda8xxm
-	Jc1ZYwjEHHsRlQDQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1729843202; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Gt4eKGHTaDKGDIpEe7BbcCU3OPOhB5+NbtQhvob/2u0=;
-	b=Q3bpuJkxSkOVve5uvDfli9jz2KlAsWAiPZucR6NpoGrjTSqrlZ9/qm3XU/eT9vQVnbET3I
-	TTAAXXZP+7z0PHH0dA3MZuiTGQ2TFSNvfRJuCAYA+pc5kGIbuwT5wE/GSeonj4dnHxaqqc
-	Fg6YV45j4Ieg70gSybwep693JDKmHFw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1729843202;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Gt4eKGHTaDKGDIpEe7BbcCU3OPOhB5+NbtQhvob/2u0=;
-	b=iSm5PcWTohwwYs+NwSceqzvMUzvEepB2n1+Qq0val4EWG9nqyrd/iHlwKVqznKHhda8xxm
-	Jc1ZYwjEHHsRlQDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C94FB132D3;
-	Fri, 25 Oct 2024 07:59:59 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 1OmFJ/9PG2coWQAAD6G6ig
-	(envelope-from <aherrmann@suse.de>); Fri, 25 Oct 2024 07:59:59 +0000
-Date: Fri, 25 Oct 2024 09:59:53 +0200
-From: Andreas Herrmann <aherrmann@suse.de>
-To: Jiaxun Yang <jiaxun.yang@flygoat.com>
-Cc: James Bottomley <James.Bottomley@hansenpartnership.com>,
-	Serge Semin <fancer.lancer@gmail.com>, Jon Mason <jdmason@kudzu.us>,
-	Dave Jiang <dave.jiang@intel.com>, Allen Hubbe <allenbh@gmail.com>,
-	ntb@lists.linux.dev, Andy Shevchenko <andy@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Kory Maincent <kory.maincent@bootlin.com>,
-	Cai Huoqing <cai.huoqing@linux.dev>, dmaengine@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
-	Damien Le Moal <dlemoal@kernel.org>, linux-ide@vger.kernel.org,
-	"paulburton@kernel.org" <paulburton@kernel.org>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Arnd Bergmann <arnd@arndb.de>,
-	"linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	linux-pci <linux-pci@vger.kernel.org>,
-	"David S . Miller" <davem@davemloft.net>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Andrew Lunn <andrew@lunn.ch>, Russell King <linux@armlinux.org.uk>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	Kelvin Cheung <keguang.zhang@gmail.com>,
-	Yanteng Si <siyanteng@loongson.cn>, netdev@vger.kernel.org,
+	s=arc-20240116; t=1729843222; c=relaxed/simple;
+	bh=B/pPKlr0lRVJhgrG29eGgTDXqOAPeaIJatsGuvQ/Ch8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jaebZznhKxJ3aQJTwIrGFVH/QLtVjdfQbNHlRCTd95n0kaSfzxUsVJQJ7NGyIztFBveE12r0A+QGIvTgTkM6S3JUj/r+7Ysr/K3U9VWh0IQppSUcYm4aYqtGFm3camPeF8rETq4dCQbwIPVUvfMmM15Gsr4Si53W1mQ2OcxmvdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=rJIRevGV; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4314c4cb752so17733205e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 01:00:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1729843219; x=1730448019; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yvFcTWY0qWSGbaMXRds52cphNo7N/U6FFOoRM52IPjQ=;
+        b=rJIRevGVVgSQyIQp0G3bQ9bvKqG91fcrfcLTVe/9mLkO2H8JJK6jQT40NXOBax4SpX
+         Y8WyxmWVtHlF2yYn3XuJ+cIyi5Vxog+b7YhWjR5IDeTfZqZ1o0To7+HXpZVWDK7g9T33
+         d/s0B/Sf+P1QTbKcYaYjtY8cDKje8f/n9tJOU0vDMHsZWLYVa1jSmgbSTyd8IgQWIeYT
+         3hqcEdFlSTK/9FTAoCaLmR4TgU0gfXDkAJ3rs7e086uAloVNQQbIT6SmTM9AmpI40UFr
+         QXIx5GUXqS4S4PmOB9tqZ4sHZ/uOd62vONCr5oUotllTxB3M0FMW65e3PwIwuPgD/X2v
+         htbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729843219; x=1730448019;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yvFcTWY0qWSGbaMXRds52cphNo7N/U6FFOoRM52IPjQ=;
+        b=gPiz6b/bD24cF14CXnfGbsIe9xpmlnMj6TYPkUTZM8scBZf8kSFPKLCTmuHYwaIi06
+         InQktHa7O9AdofkiS4V3a5d8ajnxPgPfSWDcKHE/44pPGMJ33CTI1TQfS8a+GbKTbOn2
+         vNSFU1UEVel7WSXLpAgZdPc/DowrMHCySlZuV/pj/KjWKRbNizkWG76MeEhEpYYoE61s
+         gMbEWAauGYzLMZmJ6S+Oan8Qr5BJ7w8viNn3xAa03IKR67zKjKtQVVAt/oK48143cj8T
+         4wKQL36cSSsjEmn5XJmddQB+B4VCrYB7D5p0qDQbcZaps1GnYdZ4yjvcQecMgrbYFC24
+         EumA==
+X-Forwarded-Encrypted: i=1; AJvYcCVjmDUFMPXaXTfnf6JMfP2gV2fKoX2Rx2IcUXhL2ydCm9ehQ9hBvxIqokncAvJPsF7yz04mlbN2PTtRAtM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGhqKGDDMjCzWRoLuP1TBCz4N8Oo94cQiaI3vX44y0FXtEi/1g
+	IfmZhXLfbBpiLWWIfLVtsvDeFwC1X1Wn3diAyRWFc9PZSHafdKDZOE8g7ssfqyk=
+X-Google-Smtp-Source: AGHT+IFLSkse8IfhVHvgfEgOy5tBpZmoSqAyk/ZSA/CmtZwjlrTEnVPdKx/3WSd47HCYFbcdc5HV3w==
+X-Received: by 2002:a05:600c:1e22:b0:431:53db:3d29 with SMTP id 5b1f17b1804b1-4318415f712mr64765315e9.18.1729843219138;
+        Fri, 25 Oct 2024 01:00:19 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:a207:5d17:c81:613b])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4318b570880sm40499215e9.35.2024.10.25.01.00.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Oct 2024 01:00:18 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
 	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org,
-	Borislav Petkov <bp@alien8.de>, linux-edac@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-serial@vger.kernel.org, Andrew Halaney <ajhalaney@gmail.com>,
-	Nikita Travkin <nikita@trvn.ru>,
-	Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-	Alexander Shiyan <shc_work@mail.ru>, Dmitry Kozlov <xeb@mail.ru>,
-	Sergey Shtylyov <s.shtylyov@omp.ru>,
-	Evgeniy Dushistov <dushistov@mail.ru>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Sergio Paracuellos <sergio.paracuellos@gmail.com>,
-	Nikita Shubin <nikita.shubin@maquefel.me>,
-	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: linux: Goodbye from a Linux community volunteer
-Message-ID: <20241025075953.GA3559@alberich>
-References: <2m53bmuzemamzc4jzk2bj7tli22ruaaqqe34a2shtdtqrd52hp@alifh66en3rj>
- <e7d548a7fc835f9f3c9cb2e5ed97dfdfa164813f.camel@HansenPartnership.com>
- <753d203a-a008-4cd3-b053-38b5ce31281b@app.fastmail.com>
- <f90bba20e86dac698472d686be7ec565736adca0.camel@HansenPartnership.com>
- <2f203b14-be13-4eef-bcb1-743dd9e9e9bd@app.fastmail.com>
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Johan Hovold <johan+linaro@kernel.org>,
+	Kalle Valo <kvalo@kernel.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Abel Vesa <abel.vesa@linaro.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	Steev Klimaszewski <steev@kali.org>
+Subject: Re: (subset) [PATCH v6 0/6] arm64: dts: qcom: enable Bluetooth and WLAN on sc8280xp and sm8450 boards
+Date: Fri, 25 Oct 2024 10:00:16 +0200
+Message-ID: <172984321024.15202.13178717583088352972.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20241018-sc8280xp-pwrseq-v6-0-8da8310d9564@linaro.org>
+References: <20241018-sc8280xp-pwrseq-v6-0-8da8310d9564@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <2f203b14-be13-4eef-bcb1-743dd9e9e9bd@app.fastmail.com>
-X-Spam-Score: -2.30
-X-Spamd-Result: default: False [-2.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com,mail.ru];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[hansenpartnership.com,gmail.com,kudzu.us,intel.com,lists.linux.dev,kernel.org,linux.intel.com,bootlin.com,linux.dev,vger.kernel.org,alpha.franken.de,arndb.de,google.com,linaro.org,renesas.com,davemloft.net,redhat.com,lunn.ch,armlinux.org.uk,loongson.cn,roeck-us.net,alien8.de,linuxfoundation.org,trvn.ru,jurassic.park.msu.ru,mail.ru,omp.ru,linux-m68k.org,maquefel.me];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	TO_MATCH_ENVRCPT_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCVD_TLS_ALL(0.00)[];
-	RCPT_COUNT_GT_50(0.00)[53];
-	R_RATELIMIT(0.00)[to_ip_from(RL9za9u4kxnfaar3549n6tyhyx)]
-X-Spam-Flag: NO
-X-Spam-Level: 
 
-On Thu, Oct 24, 2024 at 05:58:45PM +0100, Jiaxun Yang wrote:
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+
+
+On Fri, 18 Oct 2024 14:49:10 +0200, Bartosz Golaszewski wrote:
+> This series previously only concerned sc8280xp but while enabling
+> WLAN/BT on sm8450 I noticed some more changes will be required so I
+> folded the latter into this series and updated the sc8280xp CRD and X13
+> patches.
 > 
+> ==
 > 
-> 在2024年10月24日十月 下午5:27，James Bottomley写道：
-> > On Thu, 2024-10-24 at 16:59 +0100, Jiaxun Yang wrote:
 > [...]
-> 
-> Hi James,
-> 
-> >
-> > It's Linux, so no official capacity at all.  However, I am expressing
-> > the views of a number of people I talked to but it's not fair of me to
-> > name them.
-> 
-> Fair enough, I was hoping that it's from Linux Foundation but it's still
-> good news to me that it do represent some respectful individuals.
-> 
-> >
-> [...]
-> >> How should we handle it?
-> >
-> > A big chunk of the reason it's taken so long just to get the above is
-> > that the Lawyers (of which I'm not one) are still discussing the
-> > specifics and will produce a much longer policy document later, so they
-> > don't want to be drawn into questions like this.  However, my non-
-> > legal-advice rule of thumb that I'm applying until I hear otherwise is
-> > not on the SDN list, not a problem.
-> 
-> Thank you for sharing your insights. I'm looking forward to the document.
 
-+1
+Applied, thanks!
 
-> While I remain quite upset about how things were handled, your message has
-> helped restore some of my confidence in the community.
+[2/6] power: sequencing: qcom-wcn: improve support for wcn6855
+      commit: bd4c8bafcf50b6bd415c8bf04e98ebfba78071f9
 
-+1
-
-> I agree with Peter Cai's earlier comment that steps should be taken to address
-> the harm caused by the initial reckless actions, particularly to those who were
-> humiliated.
-
-+1
-
-> It is also important to put measures in place to prevent such drama from recurring.
-> A formal procedure for handling urgent compliance requests may be a sensible step
-> forward.
-
-+1
-
-> I hold our community in high regard and would be heartbreaking to see the reputation
-> of the Linux Kernel undermined in such an unfortunate manner. I would appreciate it
-> if you could convey those thoughts to the relevant individuals.
-
-+1
-
+Best regards,
 -- 
-Regards,
-Andreas
-
-PS: What people also tend to forget. No matter how worse it gets in
-world affairs there always will come a time after a conflict. And
-people with brains should look forward to such times and how they can
-continue to work together then.
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
