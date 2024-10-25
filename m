@@ -1,135 +1,182 @@
-Return-Path: <linux-kernel+bounces-381090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1503A9AFA3B
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 08:46:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F2BB9AFA41
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 08:46:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4700F1C22C59
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 06:46:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FF7428310B
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 06:46:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71C7E18E058;
-	Fri, 25 Oct 2024 06:46:17 +0000 (UTC)
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AEF21B0F14;
+	Fri, 25 Oct 2024 06:46:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="JKYUtI2y"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02E3518A95E
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 06:46:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A934018CBFF;
+	Fri, 25 Oct 2024 06:46:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729838777; cv=none; b=DWWf9kIA9DSCLpa9Eg3qed+Sya5tzpkBL9thVmBQtAahJ7BzMADR5oBNTRPpNpuzdgd79mxXa7giM+x8gOl5YXL2Ki0xs/upU+z/eGPXpRONSC5AkibcS3GNZEoMpvag9F4HjqU0KZH+0qte6N/XKiPkc1LTLfU44tFLIqJDFZI=
+	t=1729838794; cv=none; b=WnuYw0EbYhnORzMfZJT1PZ0WuhNqAh8+dHrfiPZKKuZ2+vTTPRIzqng2KVE0JvqNbiuCvx2vOiGr+MUfvdS6y9rg3VFSYdW+Bi6V1TSIk3Ql367ngq1OD5z89tQhUBmuzfUQMp0Crt7MmiREI3cvYwADXbbIg604GTg6Pnjs9PM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729838777; c=relaxed/simple;
-	bh=QkqW6s327z+ygsoSwPA1NUOQ5fAMZ5PTERwG1rLA0cU=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=BOv/ggEYk7+55565orJNkITlSG396NNeJmysJudNxqFv2tpDgZkRkgw2Ur3oo7h1kRQlCUowNpzQRLZoWW90Qhyp5JiOKAIKTISVn59AVCBpt4+uBqMzEPJYs0t9l6ZWjV2gkTXf92GQ9dl2wmq2IW6vQ55xEXr4Z3mbYHyqJhQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-53a0c160b94so2034754e87.2
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 23:46:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729838773; x=1730443573;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Gdq4o+Qshs6DiQxY0guUXC4Pj+i51VATb6fP1cxTPww=;
-        b=bq5Nfezua1jmEXsVLnrF8qo8QuEQIQnfhIj4RMrDlnqChEZLka1FQgSGwbypCLmGCQ
-         PRXsEfXqj3evxiIDq/c2CFL4kFSuDiwYzHyuzMqLSIZAF0w0BBJLl5JXvyjpl4cH4CX5
-         9rvK8PRbHvfP/dWhckbZI6brbrKZMz5NbPr9HLgxIUl3Cm0UWaiKXkcwiFNH2X5sFs7w
-         bck67RiykVNBBmAfNsy5q3DkP6rTPGYHUvnxrjcvGJiEzAyegjSJ5zB2+Ny74wsur4xR
-         xp5VvGMkzLprAS6wSBCXC3TFbmM6OyKC8o43nb2nX5Y3Ww6aFBHh4MA1oBFhpkGwD6C5
-         EP2g==
-X-Forwarded-Encrypted: i=1; AJvYcCUelIEd9kQvulbk2Ze5+i08a4WK80fw34gM+LO6O1Sic0RXEnpPHPdtoaphluDV189gB1kWqMIdQ2naf6s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZvJ9PbMX5nw0b61tEBihJ1+d69iOYJMvR0X0iW16mtdxpxlYn
-	c3iU+VLWcy9R18XGFfs2mBfl8xVe+ehN6fbnkNTD+c+vngkv+k87
-X-Google-Smtp-Source: AGHT+IHRnvptD1sNXaUetBs9gaGaAfrFp3hQpM1OVFXg32yqY0LRu8gUB7PSshEV6CdGgy1uuzChug==
-X-Received: by 2002:a05:6512:a93:b0:539:ccfd:8f36 with SMTP id 2adb3069b0e04-53b1a310742mr4873763e87.28.1729838772880;
-        Thu, 24 Oct 2024 23:46:12 -0700 (PDT)
-Received: from costa-tp.redhat.com ([2a00:a041:e281:f300:ddd7:8878:b93d:7c0b])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43193595baesm8762645e9.17.2024.10.24.23.46.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Oct 2024 23:46:12 -0700 (PDT)
-From: Costa Shulyupin <costa.shul@redhat.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Wei Yang <richard.weiyang@gmail.com>,
-	Costa Shulyupin <costa.shul@redhat.com>,
-	=?UTF-8?q?Ren=C3=A9=20Nyffenegger?= <mail@renenyffenegger.ch>,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] scripts/tags.sh: use list of identifiers to ignore
-Date: Fri, 25 Oct 2024 09:45:30 +0300
-Message-ID: <20241025064536.3022849-1-costa.shul@redhat.com>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1729838794; c=relaxed/simple;
+	bh=HbzNVb05Uj1hqES+knVoK7VLmXX+JeMnwTqZSV/9Zfw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=PUZlz4iC8Ysvj23huELJzxjr1yZnMH9tfBnE5JZBEabCtQGvY01jaMJYN6JupjBbdcSdobM8ATIROIP0mOedIFTvOc3uB5XkUjFm+n345J72+H+Rj2SrefMhiwBo9p3C+zCfceN4BAx590aZ+aVdduWqs8+nJZXlmLnHRe9puG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=JKYUtI2y; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49P0lt4h031208;
+	Fri, 25 Oct 2024 06:46:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	nU7X9QJtXj4kr5U7czhxv7z8S81VcdkIgIHIJueaW8A=; b=JKYUtI2yQZXS6sB/
+	gKG+vuJzWC3vWUED+jzgtVe31wRCCpLb8Hk8+wYBfcz/Igi8NuhnnsNO40CAjP1t
+	HafryVKCl0q91IxrFxsYKUUHDAXGtD4VnjA0kevEpoqyuX9lj45PZ4MkcLxSZ6B2
+	Ni6Fxa/R3Wc1Pp5FyvvjDAlzCPJhHx51OmxE0nebryJcIZVjRWsf8mWaqiQkjDwt
+	q2ucgcqle5AGIeUwNh2cmQLRnzRHG5UmztXieX+zmmtFAGlYMR+sVfWx5f35aFYQ
+	uX08aBq9o5qam1ebtqk0g2NpTATEtF0hlVvjY0Qt0R7HF0lPspjGJwDAZL6sFFgv
+	yeEBKg==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42em6880d6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Oct 2024 06:46:09 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49P6k7G8025201
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Oct 2024 06:46:07 GMT
+Received: from [10.131.33.37] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 24 Oct
+ 2024 23:46:03 -0700
+Message-ID: <83b635a7-fc69-7522-d985-810262500cb3@quicinc.com>
+Date: Fri, 25 Oct 2024 12:15:59 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH V3 0/4] firmware: arm_scmi: Misc Fixes
+Content-Language: en-US
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Johan Hovold <johan@kernel.org>, <sudeep.holla@arm.com>,
+        <cristian.marussi@arm.com>, <ulf.hansson@linaro.org>,
+        <jassisinghbrar@gmail.com>, <linux-kernel@vger.kernel.org>,
+        <arm-scmi@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-arm-msm@vger.kernel.org>, <konradybcio@kernel.org>,
+        <linux-pm@vger.kernel.org>, <tstrudel@google.com>, <rafael@kernel.org>
+References: <20241007060642.1978049-1-quic_sibis@quicinc.com>
+ <ZwfsmqInJlqkQD_3@hovoldconsulting.com>
+ <ae5eaef9-301f-7d3f-c973-faa22ae780ee@quicinc.com>
+ <ZxkjqEmkBAsC6UkL@hovoldconsulting.com>
+ <c8e7420b-a7b4-89cd-1b6e-c1f6693c062d@quicinc.com>
+ <ik4dyfbphm7lkeipm2dbr7cmdfxewxd4jtuz2jfnscfwcyo2r4@lrin5hnsqvyd>
+From: Sibi Sankar <quic_sibis@quicinc.com>
+In-Reply-To: <ik4dyfbphm7lkeipm2dbr7cmdfxewxd4jtuz2jfnscfwcyo2r4@lrin5hnsqvyd>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 0uP27WzQWy28EEKegj99PL56GdP6O9UZ
+X-Proofpoint-GUID: 0uP27WzQWy28EEKegj99PL56GdP6O9UZ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 malwarescore=0
+ priorityscore=1501 adultscore=0 bulkscore=0 phishscore=0 mlxscore=0
+ lowpriorityscore=0 mlxlogscore=999 impostorscore=0 suspectscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410250051
 
-Literal string of ctags arguments is too long and overloaded.
 
-Replace it with neat bash list.
 
-Identifiers are sorted, and those with a new first
-letter start on a new line for better maintainability.
+On 10/25/24 11:44, Dmitry Baryshkov wrote:
+> On Fri, Oct 25, 2024 at 11:38:36AM +0530, Sibi Sankar wrote:
+>>
+>>
+>> On 10/23/24 21:56, Johan Hovold wrote:
+>>> On Wed, Oct 23, 2024 at 01:16:47PM +0530, Sibi Sankar wrote:
+>>>> On 10/10/24 20:32, Johan Hovold wrote:
+>>>>> On Mon, Oct 07, 2024 at 11:36:38AM +0530, Sibi Sankar wrote:
+>>>>>> The series addresses the kernel warnings reported by Johan at [1] and are
+>>>>>> are required to X1E cpufreq device tree changes [2] to land.
+>>>>>>
+>>>>>> [1] - https://lore.kernel.org/lkml/ZoQjAWse2YxwyRJv@hovoldconsulting.com/
+>>>>>> [2] - https://lore.kernel.org/lkml/20240612124056.39230-1-quic_sibis@quicinc.com/
+>>>>>>
+>>>>>> The following warnings remain unadressed:
+>>>>>> arm-scmi arm-scmi.0.auto: Failed to add opps_by_lvl at 3417600 for NCC - ret:-16
+>>>>>> arm-scmi arm-scmi.0.auto: Failed to add opps_by_lvl at 3417600 for NCC - ret:-16
+>>>>>
+>>>>> Are there any plans for how to address these?
+>>>
+>>>> Sorry missed replying to this. The error implies that duplicate
+>>>> opps are reported by the SCP firmware and appear once during probe.
+>>>
+>>> I only see it at boot, but it shows up four times here with the CRD:
+>>
+>> https://lore.kernel.org/lkml/d54f6851-d479-a136-f747-4c0180904a5e@quicinc.com/
+>>
+>> As explained ^^, we see duplicates for max sustainable performance twice
+>> for each domain.
+> 
+> If existing products were shipped with the firmware that lists single
+> freq twice, please filter the frequencies like qcom-cpufreq-hw does.
 
-Signed-off-by: Costa Shulyupin <costa.shul@redhat.com>
----
- scripts/tags.sh | 36 +++++++++++++++++++++++-------------
- 1 file changed, 23 insertions(+), 13 deletions(-)
+That was a qualcomm specific driver and hence we could do such
+kind of filtering. This however is the generic scmi perf protocol
+and it's not something we should ever consider introducing :/
 
-diff --git a/scripts/tags.sh b/scripts/tags.sh
-index 994245ef540a..db7972b6109e 100755
---- a/scripts/tags.sh
-+++ b/scripts/tags.sh
-@@ -257,19 +257,29 @@ exuberant()
- 	    CTAGS_EXTRA="extras"
- 	fi
- 	setup_regex exuberant asm c
--	all_target_sources | xargs $1 -a                        \
--	-I __initdata,__exitdata,__initconst,__ro_after_init	\
--	-I __initdata_memblock					\
--	-I __refdata,__attribute,__maybe_unused,__always_unused \
--	-I __acquires,__releases,__deprecated,__always_inline	\
--	-I __read_mostly,__aligned,____cacheline_aligned        \
--	-I ____cacheline_aligned_in_smp                         \
--	-I __cacheline_aligned,__cacheline_aligned_in_smp	\
--	-I ____cacheline_internodealigned_in_smp                \
--	-I __used,__packed,__packed2__,__must_check,__must_hold	\
--	-I EXPORT_SYMBOL,EXPORT_SYMBOL_GPL,ACPI_EXPORT_SYMBOL   \
--	-I DEFINE_TRACE,EXPORT_TRACEPOINT_SYMBOL,EXPORT_TRACEPOINT_SYMBOL_GPL \
--	-I static,const						\
-+	# identifiers to ignore by ctags
-+	local ign=(
-+		ACPI_EXPORT_SYMBOL
-+		DEFINE_TRACE
-+		EXPORT_SYMBOL EXPORT_SYMBOL_GPL
-+		EXPORT_TRACEPOINT_SYMBOL EXPORT_TRACEPOINT_SYMBOL_GPL
-+		____cacheline_aligned ____cacheline_aligned_in_smp
-+		____cacheline_internodealigned_in_smp
-+		__acquires __aligned __always_inline __always_unused
-+		__attribute
-+		__cacheline_aligned __cacheline_aligned_in_smp
-+		__deprecated
-+		__exitdata
-+		__initconst __initdata __initdata_memblock
-+		__maybe_unused __must_check __must_hold
-+		__packed __packed2__
-+		__read_mostly __refdata __releases __ro_after_init
-+		__used
-+		const
-+		static
-+	)
-+	all_target_sources | \
-+	xargs $1 -a -I "$(IFS=','; echo "${ign[*]}")" \
- 	--$CTAGS_EXTRA=+fq --c-kinds=+px --fields=+iaS --langmap=c:+.h \
- 	"${regex[@]}"
- 
--- 
-2.47.0
+> 
+>>
+>>>
+>>> [    8.098452] arm-scmi arm-scmi.0.auto: Failed to add opps_by_lvl at 3417600 for NCC - ret:-16
+>>> [    8.109647] arm-scmi arm-scmi.0.auto: Failed to add opps_by_lvl at 3417600 for NCC - ret:-16
+>>> [    8.128970] arm-scmi arm-scmi.0.auto: Failed to add opps_by_lvl at 3417600 for NCC - ret:-16
+>>> [    8.142455] arm-scmi arm-scmi.0.auto: Failed to add opps_by_lvl at 3417600 for NCC - ret:-16
+>>>
+>>>> This particular error can be fixed only by a firmware update and you
+>>>> should be able to test it out soon on the CRD first.
+>>>
+>>> Can you explain why this can only be fixed by a firmware update? Why
+>>> can't we suppress these warnings as well, like we did for the other
+>>> warnings related to the duplicate entries?
+>>>
+>>> IIUC the firmware is not really broken, but rather describes a feature
+>>> that Linux does not (yet) support, right?
+>>
+>> We keep saying it's a buggy firmware because the SCP firmware reports
+>> identical perf and power levels for the additional two opps and the
+>> kernel has no way of treating it otherwise and we shouldn't suppress
+>> them. Out of the two duplicate opps reported one is a artifact from how
+>> Qualcomm usually show a transition to boost frequencies. The second opp
+>> which you say is a feature should be treated as a boost opp i.e. one
+>> core can run at max at a lower power when other cores are at idle but
+>> we can start marking them as such once they start advertising their
+>> correct power requirements. So I maintain that this is the best we
+>> can do and need a firmware update for us to address anything more.
+> 
+> Will existing shipping products get these firmware updates?
 
+They are sure to trickle out but I guess it's upto the oem
+to decide if they do want to pick these up like some of the
+other firmware updates being tested only on CRD. Not sure why
+warnings duplicates should block cpufreq from landing for x1e
+but if that's what the community wants I can drop reposting
+this series!
+
+-Sibi
+
+> 
 
