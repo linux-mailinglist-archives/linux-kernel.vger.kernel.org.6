@@ -1,220 +1,246 @@
-Return-Path: <linux-kernel+bounces-380938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 556349AF80E
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 05:12:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB9649AF80F
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 05:13:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DAE671F23017
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 03:12:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F5A2B225E2
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 03:13:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB92318BC29;
-	Fri, 25 Oct 2024 03:12:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26DC818BBBB;
+	Fri, 25 Oct 2024 03:13:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="b1GHIvuV"
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2073.outbound.protection.outlook.com [40.107.20.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ct3Yrmju"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B03418BBB6;
-	Fri, 25 Oct 2024 03:12:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.73
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729825954; cv=fail; b=qoy0yrsW41Zf4zPw3kxpuu699UlRfqRFsKvI399djAr6r65WnJPQGSGtPbYHbBcYGGMGU2vvlC5OH3aEClrZIQ7HaLxqDMaiIKHDx76FgddYAgdvN0/wnFr3PkxJTMo00bhshlBaEtkDVoP8tVIsUuZW/jvWMDz0L1jHhpzVJck=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729825954; c=relaxed/simple;
-	bh=9OrJJjU+arIJZP3JOmAZjphQBgP4imZIpcxBQZ/Qs08=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=rq5TGOjGup8TND5HNOLH2I9WMXKIjYMbSlyOBKUz9TBP7j+4kSpF6Wszdm9qY/AEomuZ1q9FlebQXuckFZ7WBMCrz44hIDRVCIhI/z8riF8NQDVUcJ4Zbzl7XZj1ZQQDEcjio0494qU/lxlvcapfoapFDPgfaS8Fh4d/FA2jKfk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=b1GHIvuV; arc=fail smtp.client-ip=40.107.20.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=HhbWQeIx3/1TGapq3Udt18IoL4Dz5kJv89Y2GJN7kKhFYWDXN0qmMgF2KLGFFxzUkwsc2XBjG57fK6oPc68kFY+wJL47ZzOzvvzWAkd2r6qQTbwwJiO14RVBbV87vvlFD0lngyTJ+YdeOvwjT3imS4wehOq3C4AOAu4+9yBZnWQzlAk6TVNRQN5jKnutt/5r4O140GRaa0aJVK6zfE8/n8oYhpViB/T5JluPQCUxO+vgyz01CcSFGgeeMMix13Z8j76TkQSHpKp60zEQpxTg58tClEY6m4gRjDGJgwYWSkKMLomJ328uCe6PaaR6S/ckQcfVe+Z2fhkNrFXQqd3plA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=rNrlB28U7gmZsgC7UHvjsVyV4otCqO/TDNoDIAQE95g=;
- b=E84KI0ruZc/C2eL18FzvZNDN3wPZjPBfIJHTpuAB828I6AzCSLrOFNxndjLzWlZDTeCs5SAdum3mf7zkuSmiTWBPtcf3rPEmwwo1UDtLhPFxcSFslfbj129hJRGMxnueMjMfUMmAW4pNWmU2O/SvjGFzbb/vGt3yo+JRPADStiaqFDTsdlHRudp85N55MVVN9c1vza8bJ8k5O2Et4lQeAV+ktLWhYAfJ4MOPoVhb2iMyc4glhOPFrVXp/2y0mNpPdSNNwTLbV/ayOE2gIT/COIlps3EBv3EaUiW9btdIHsijEMJiW51JX9JEm/WXTYa+ZxLD8u76chIY7nI/h7NlcA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rNrlB28U7gmZsgC7UHvjsVyV4otCqO/TDNoDIAQE95g=;
- b=b1GHIvuV17aXnZHzhGU98Uv6NhBsMer3e3Utum1UfIWwxwyFKB0YbB3j6/Ib7uqdtxMYimra5xRs0HxcTB11gyzXBICr19yx7Exx50wrMqYS0zD4/rJNsWi4T9689YVL94ad5eUHiVu85FBUp6rF3bJdTyw3IS2M/IFS2dHXxY38u37921XdJJjtaWnoLY4oydeI8OacpMimKfnF4DvXhs1EF/JDwQ9tXNy7x/ZoGC80kiO0e5D5e270mLRZ+ZL0njdVVzT1bmnxI2Xo18WRSQkAUUczYwcsNs+nMpCmVS1NIohlZtsKgHa87Fgd7av/YgOFPqdYOxc9EDtb9b6zcw==
-Received: from PAXPR04MB8510.eurprd04.prod.outlook.com (2603:10a6:102:211::7)
- by PA4PR04MB7808.eurprd04.prod.outlook.com (2603:10a6:102:c8::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.21; Fri, 25 Oct
- 2024 03:12:29 +0000
-Received: from PAXPR04MB8510.eurprd04.prod.outlook.com
- ([fe80::a7c2:e2fa:8e04:40db]) by PAXPR04MB8510.eurprd04.prod.outlook.com
- ([fe80::a7c2:e2fa:8e04:40db%7]) with mapi id 15.20.8069.027; Fri, 25 Oct 2024
- 03:12:29 +0000
-From: Wei Fang <wei.fang@nxp.com>
-To: Vladimir Oltean <vladimir.oltean@nxp.com>
-CC: "davem@davemloft.net" <davem@davemloft.net>, "edumazet@google.com"
-	<edumazet@google.com>, "kuba@kernel.org" <kuba@kernel.org>,
-	"pabeni@redhat.com" <pabeni@redhat.com>, "robh@kernel.org" <robh@kernel.org>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org"
-	<conor+dt@kernel.org>, Claudiu Manoil <claudiu.manoil@nxp.com>, Clark Wang
-	<xiaoning.wang@nxp.com>, Frank Li <frank.li@nxp.com>,
-	"christophe.leroy@csgroup.eu" <christophe.leroy@csgroup.eu>,
-	"linux@armlinux.org.uk" <linux@armlinux.org.uk>, "bhelgaas@google.com"
-	<bhelgaas@google.com>, "horms@kernel.org" <horms@kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>, "netdev@vger.kernel.org"
-	<netdev@vger.kernel.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-pci@vger.kernel.org"
-	<linux-pci@vger.kernel.org>, "alexander.stein@ew.tq-group.com"
-	<alexander.stein@ew.tq-group.com>
-Subject: RE: [PATCH v5 net-next 09/13] net: enetc: add i.MX95 EMDIO support
-Thread-Topic: [PATCH v5 net-next 09/13] net: enetc: add i.MX95 EMDIO support
-Thread-Index: AQHbJeOuQPYjy02H9USxeFoL+ztOjbKWMWrogACY5YA=
-Date: Fri, 25 Oct 2024 03:12:29 +0000
-Message-ID:
- <PAXPR04MB85109E3A5F7D94D8FD00B43B884F2@PAXPR04MB8510.eurprd04.prod.outlook.com>
-References: <20241024065328.521518-1-wei.fang@nxp.com>
- <20241024065328.521518-1-wei.fang@nxp.com>
- <20241024065328.521518-10-wei.fang@nxp.com>
- <20241024065328.521518-10-wei.fang@nxp.com>
- <20241024180018.i6bizcc5amrapody@skbuf>
-In-Reply-To: <20241024180018.i6bizcc5amrapody@skbuf>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PAXPR04MB8510:EE_|PA4PR04MB7808:EE_
-x-ms-office365-filtering-correlation-id: 54857f2b-dfbe-499d-78fc-08dcf4a2dc3c
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|376014|7416014|366016|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?4uSHWNf1UWFynOnyjDOzlqU0CwUR2QMkQD9hovMw3Ekt1yZc3DbamfbxlCvV?=
- =?us-ascii?Q?1ZjbnAynwRSJQNKaw9bV1GvWwRJ6gTNVv8N3QewIZjMEUJRTOD1tB/kGfVvD?=
- =?us-ascii?Q?/fK76YN6CGtMS1dpNs1tHD0lcQmpHXSHvI3aHgg2V+IILKk9RuI8cLDfnQL+?=
- =?us-ascii?Q?imtQT8YCeveHFLZfGlPawyViaIXA2h6rTFZ/xd/6d2eTaZT7dVB6zPdNljLj?=
- =?us-ascii?Q?zfuWOZHyB0Mt9+QHnlWt6Q2x6ZT22KyiIlmB2ZdqYtnQ80DofT3tVNB82+iG?=
- =?us-ascii?Q?Ix4/hFcHyIOPuCGU56oOEVyRQKncOqHyIDYP2OoiWHRfRH4X8Gi2FOjsJFWu?=
- =?us-ascii?Q?14/KAuOSDfb6ALMRTWyUypC1vOJoujAzu1HIbF3PId7HTMPNHgL8GmNubTeH?=
- =?us-ascii?Q?JMRhGPUVqfKrGa8kN8JSfgC5wjO+Jxs+YHsrqoULNVo/XX4V1VqX570Alsnq?=
- =?us-ascii?Q?jmW3oHxPItA9X+TwrGVUvKRQVW8OxeGa4n+tBN0ZDEduJHSmgD2Edr5WPGP4?=
- =?us-ascii?Q?ubHc0x/d6hpSr5bPqetj7Ht/AYlUhAqDxTmjcg7Rf7n+ll9PUTHSZ2ukKErd?=
- =?us-ascii?Q?axmMczdVTYuhLQCwQWPTQe3NGp6MaEe/NS6P3b77y25l3l9wHPevG4Ca8Sc8?=
- =?us-ascii?Q?msmXpG353qjfIu5st5JarcGsq8JEOYipk86puiRvu+H/Vo+k36SbWTt4ph7w?=
- =?us-ascii?Q?3Eze4/tPWQntvah9O88oEqRarReUKu/zTFtl/R0Sp8Nf9t7VTN40UAl6B1u6?=
- =?us-ascii?Q?ZOuFWQWr5Exa1F1vmqzBciO52l5O1QIplcmnneJqXvq5C7UQXbAQxlc86KEH?=
- =?us-ascii?Q?rADDLhk8w/vcDpNoGPZppHJT2/aaP7dE70Z2joCiR/gwBxUvRVkzCFqK5sPL?=
- =?us-ascii?Q?gF7HLiRa6vv668ehaXRUnVha04miy72EaDXRh8csXCrRePPYAjcLr+aqy8hm?=
- =?us-ascii?Q?YhYaT6jfq36CZYTBRshBVtlqOSi+g/j8ueD9+1t+ot5z7EUR1MpkgWqyrunE?=
- =?us-ascii?Q?30NEw7lmF7Ftwrpmn9YFtzEl6rb3t4hdWUgM/QXCJtGS1Koen4g/Np3hq0Ro?=
- =?us-ascii?Q?GCns+8bf0gN3aWIPcTQGer35Y0vRn1dPN65WyX6NsW4E982Onv9vPorwUgNR?=
- =?us-ascii?Q?chmrU/06Q+8NqplT0Sxme7R9bjbXRYDU9+J1mjlOZ32V2qQlfFCRQwhPvowY?=
- =?us-ascii?Q?XIOzpfEuSUt0ONTnJqsr85mqx4hZq5xmUn6ZuaUk/jTdL4t6VX8M4WEmKEnM?=
- =?us-ascii?Q?MDWB4e6PvshCeyGi0NWXuCmZJwptaqBsz/aPv0Ku8lE1cpqjbQ9zcLtBkYQE?=
- =?us-ascii?Q?0lmBpsQMwmV9V+TY6sm+KcF9z0MPq9ZxmCJ2zR7P6GhbNdowjoWfRbeqoSGO?=
- =?us-ascii?Q?kwkc9iE=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8510.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?H5aCbnwabiclrKfh/v+WG/K3v4Jt4gEazgaGUtCpPX7NvyCeCfwBUkj8fFcr?=
- =?us-ascii?Q?sf+9xeeSIGQ8tBMHxfNOAlx1W3u9jyFBnNOjXuryUk0W7KD3QFxFpjZ2F1QN?=
- =?us-ascii?Q?r6HV5Tn6/GfEUNaoUC5Cu0xFh0frkQXs5QSiBG/IHdL4wBtYPKkBF01Xmmsd?=
- =?us-ascii?Q?QTPPAly9rZ7w7j8/tStnD7JoPJifKy+cN1MKfI5CrCPv7ZfwjF6n6U7uf4QW?=
- =?us-ascii?Q?4dhQiwkTCHXS1X7t/OuRuQrBxHfvF92Ip1e5CiTUxqm4b343ubDnZGEGxjRy?=
- =?us-ascii?Q?Wk/uT5G6u3VcJMZd0gy0AwQULGNrGTMAtI1A/ko6lYIXsO/mHxKV0zzcenTW?=
- =?us-ascii?Q?3RbhRp5auypA8CeHTziSL9AXp3vwsQN6w6pt6KoXaIk05jkUMTzlP3VHwDsS?=
- =?us-ascii?Q?pA75zcp25Xnok9wUCCp+DUblQJF6OWTPSc6lrFZsPWFXosw+TiiA5jlKxAFR?=
- =?us-ascii?Q?KvrEmH+7uJ5JRZDV6vJJpY7nT9WyQeubHeke2vIRKazI10Ro8aPdvK0cNYMI?=
- =?us-ascii?Q?lk1RZgY2L6W647aGRrtNpNqXq7/CuNM9iWf6Hc8BUDGmXIX3ag+2x6rYLwCo?=
- =?us-ascii?Q?N7azWh5GSBQG5OonuQsdS4K7aS5vTei/d4GzF9SSSF35cfWgLVBDUpvA75Ud?=
- =?us-ascii?Q?f3NbzwtXBCiITPfQFDS4GybukQ+Z74YVsqro3HmeMrdpyAJWbezmnWfsQXix?=
- =?us-ascii?Q?R+lU7Y/Ill50SgSinwLlN3s3IHQW9j595kiyTzcfmgXTw0ZCpzWHgZlFJlOw?=
- =?us-ascii?Q?Ore3I2CbCV3KlxiF8/HJ3zlCiKA/cIxpD+Hjvtb7utZPQ6H7Qg/0NSoxUqp9?=
- =?us-ascii?Q?H2yclvbJczy3nIJWkxxDRpwU8Girg8gPC1BcaJTqoYRNlrX8i6Ru4rDcEPgY?=
- =?us-ascii?Q?UIhif0x/vitlh79Ft38uC7Bx0D7iirhklHUkRJLC6XR8qTmkACkZ4XgzWjqC?=
- =?us-ascii?Q?B+CiTHIYZodvgc6JzanRpI4P3lSBAJzlLx83i4CXrFNozbZN2yILDW7G9Bjd?=
- =?us-ascii?Q?l3Fs4L0kfvfkZ+IUsK0IyIoS9A08Ohi0LvkC1+CGemPCQZCWtTP9AzTdnHg4?=
- =?us-ascii?Q?Z/pAubdqMYBmE5stAS+UphIbkpa4i+sY+rlIJDPY/LVbeuejhTTBI5sibuaE?=
- =?us-ascii?Q?Uhqy2hOSMTL5W3KeXZ/s8Di14YZX0EGKP78c1+56ikWPi9WdHsnAwK0YvV8n?=
- =?us-ascii?Q?D1subCsVjmJlOtqQMR4/HttOOje9wEoXOthaVmhbI2AYpZpIvLxyhoxyw/yU?=
- =?us-ascii?Q?R+2M6mrMguQJkkTL+/g4E77RJuhDCd+q0HWA1lVsVx2zer6je/pOvXO5arrB?=
- =?us-ascii?Q?80gi/FAJTS1Y1evAmn7YflTq+mNSs0ecftnoqvpIdmLhb/FeXAdNL1LqzdEm?=
- =?us-ascii?Q?f1241+pTOkzPGjVd+H4PUbeV3ngKytrxBDy50QPyLpHoE4dGPMbkAY0diVVT?=
- =?us-ascii?Q?L23M9cqZoHlL09JuBApeSwhNC2vnKSNjtUuFbOzkZUNp1W67B/WQAQgjoD0Q?=
- =?us-ascii?Q?fSWKDynpP3jtKBM8Wa1+0ui9+CEnOUR73J2alyFo937JysJhwxhd0wdrP/3V?=
- =?us-ascii?Q?xQVht6hmWStTppcGyqM=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19FAD18BBB2
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 03:12:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729825979; cv=none; b=Ym9IyXf0+juI33Ne9k9GsaxFtiIgdNwGD6q4Yk8Gva2wxuW63ZoA8zAN6+6I/p5TWq5m66GfIfe/kV7K4Le9xcWFmJf7RctM4lUJthuc09MwvaEwniUj3BnbvvPfGe4Eoi+bFFrx/M3iLmE2TVtwpHYpeiTy1Yq19R314NHtITU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729825979; c=relaxed/simple;
+	bh=fmX52bVLdAGgnV5QgOXHDMxBc7/9SNfxadGP/9nM74A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XLhADh6rDfBC82HktITAO7X9UswoChNYwDxoevx8HYUQsYyUt1JyrvLTKe9zQ/+V8uXcgxlAklfzc4OhouSL1rAUnH2dxOWFvOoABXQyjhDAu2oYBwsDHQLkaEwCpYt7DcvOn5yIdLKnqattKSw1zZMT8TyZIzvKttUTE8u5zVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ct3Yrmju; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-539f0f9ee49so1598066e87.1
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 20:12:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729825975; x=1730430775; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=J57jc6caP7dneGqTVVmCu4gt6t7MlPQxrlJAMM0H5nY=;
+        b=ct3Yrmjut4M0lL66derHt8lPpbcerC6TCKjpcuoDi4PKfJIEvlyRYN/Xu8eoR4rCL7
+         kxSD8OUvacj0Tw0IFnqSW3yjCg2J832TdNXgp/6MlwejrQT/kE3bVYOGOg8jMdB/9vBM
+         fVACbVjVMOb+bKs98Mf+8n37T8yE+0all1psGSJ/dMQ7cHBBSsbHE5fBcZlvalGTmluu
+         5qHxkvPy1XZ5+zcv7oudJWM7x/2f6FYuRynMauLVwBFT/ibI1tAnL1KHWJgQkr+Xsxsw
+         yxOxpz5DgJntBIC/4Dwy8ogxBF70He6/WrWumw+gU+9JI20DtvQ6N+KJoSzyOGerL31A
+         y1SA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729825975; x=1730430775;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=J57jc6caP7dneGqTVVmCu4gt6t7MlPQxrlJAMM0H5nY=;
+        b=DmETAeIYfE2ROytEg1/Dj4triHTBdWm00xan5auBAdAQX8cUu7QgWuz54xDaFOHRvN
+         cBHun+U3HVIBOKpZ9N+U71dUlNa+nPpCyBv8ssZ+h2aR5psqZg0kQeOrvRH0C+B2p8XB
+         6oyyZjee5p9zUB9PwuCVZdhhDFEZSuR37GK25znvRbAoLEeHAShsws33E/tARgDHXojd
+         j4ySKYigewtKb9iUeNRjUqebEBw7I5CpKmedvcf5dLJ+1PtHLDEUAtH90SlihsUpRuuz
+         pf6Evk8bcOP6wMNCXa5zIeB2Y3F7GftVjzWmnRWVkKnDGXRjfHuJQMoPkyNSGegPuU8d
+         XBzw==
+X-Forwarded-Encrypted: i=1; AJvYcCVUkjM4eDdc1ACuYvZJ+FEGUuJ6joFv7TPls6VvI8IdlWMmyEtuweJklLCQmQ47Ot+hPZXCO50erTDIBec=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz95knPZ4380ADK4ytcb+QzOTd16gfDnlK2kC8qII0YQIZAOnb0
+	W3VCWdqTWnvzw7f9h4TDs2DNikctCD5AYw64u6xPK6RRe8OVt4D7PaBZ6Bbufb0QNW+4d7NnyS7
+	cCR2Azkv9hgMr5xM6IBzTbXg+N9o=
+X-Google-Smtp-Source: AGHT+IHGZoM4BzjsepQKCRxZadMrSN1riS94M2w7dDDfpmR7a3YGSEZoI7pzq+qK5MpPoCrynFj7HcqXbCuLU/yu0gc=
+X-Received: by 2002:a05:6512:3a91:b0:53b:2041:e78c with SMTP id
+ 2adb3069b0e04-53b23e8dd14mr2457674e87.56.1729825974772; Thu, 24 Oct 2024
+ 20:12:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8510.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 54857f2b-dfbe-499d-78fc-08dcf4a2dc3c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Oct 2024 03:12:29.6532
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: CxCQinXY/zoEv94rbqssSYQnJu+XJ+S8Yowfax1cDqKTnwc8zT5PLzCyle4grlpwp1TBwmKM2sKZbhYfzF89vA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4PR04MB7808
+References: <20221112114602.1268989-1-liushixin2@huawei.com>
+ <20221112114602.1268989-4-liushixin2@huawei.com> <3780a622-03f2-4cfe-5705-0e9d0be61d57@huawei.com>
+ <CAB=+i9SiiH7JN1tTrmO6FS+HqQcKnwoAs3O2PKxfPy2parM8WA@mail.gmail.com>
+ <68b86f66-cd00-bb7d-b8bb-5a94e8dd1ea2@huawei.com> <02820eb8-0b8f-4aa8-9315-85368e9c331e@suse.cz>
+ <0F94364A-F0C8-4C0A-B38D-3DDEA653B6B7@gmail.com> <7707ff34-16e1-4f8c-9af6-8b5b6591c77e@suse.cz>
+ <511392f2-8e94-d2fc-63a6-ac3b4cac10e1@huawei.com>
+In-Reply-To: <511392f2-8e94-d2fc-63a6-ac3b4cac10e1@huawei.com>
+From: Hyeonggon Yoo <42.hyeyoo@gmail.com>
+Date: Fri, 25 Oct 2024 12:12:42 +0900
+Message-ID: <CAB=+i9SEgtkXUaD9WXLgr5Mrywm_g3c+ALZwsvMa0-y697pkqg@mail.gmail.com>
+Subject: Re: [PATCH v4 3/3] mm/slub: Fix memory leak of kobj->name in sysfs_slab_add()
+To: Jinjie Ruan <ruanjinjie@huawei.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>, Liu Shixin <liushixin2@huawei.com>, 
+	Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>, 
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, 
+	Linux Memory Management List <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, Oct 25, 2024 at 11:10=E2=80=AFAM Jinjie Ruan <ruanjinjie@huawei.com=
+> wrote:
+>
+>
+>
+> On 2024/10/2 19:35, Vlastimil Babka wrote:
+> > On 9/13/24 17:00, Hyeonggon Yoo wrote:
+> >>
+> >>
+> >>> On Sep 13, 2024, at 11:10=E2=80=AFPM, Vlastimil Babka <vbabka@suse.cz=
+> wrote:
+> >>>
+> >>> On 9/6/24 10:10, Jinjie Ruan wrote:
+> >>>>
+> >>>>
+> >>>> On 2024/9/5 21:59, Hyeonggon Yoo wrote:
+> >>>>> On Thu, Sep 5, 2024 at 12:41=E2=80=AFPM Jinjie Ruan <ruanjinjie@hua=
+wei.com> wrote:
+> >>>>>>
+> >>>>>>
+> >>>>>>
+> >>>>>> On 2022/11/12 19:46, Liu Shixin wrote:
+> >>>>>>> There is a memory leak of kobj->name in sysfs_slab_add():
+> >>>>>>>
+> >>>>>>> unreferenced object 0xffff88817e446440 (size 32):
+> >>>>>>>   comm "insmod", pid 4085, jiffies 4296564501 (age 126.272s)
+> >>>>>>>   hex dump (first 32 bytes):
+> >>>>>>>     75 62 69 66 73 5f 69 6e 6f 64 65 5f 73 6c 61 62  ubifs_inode_=
+slab
+> >>>>>>>     00 65 44 7e 81 88 ff ff 00 00 00 00 00 00 00 00  .eD~........=
+....
+> >>>>>>>   backtrace:
+> >>>>>>>     [<000000005b30fbbd>] __kmalloc_node_track_caller+0x4e/0x150
+> >>>>>>>     [<000000002f70da0c>] kstrdup_const+0x4b/0x80
+> >>>>>>>     [<00000000c6712c61>] kobject_set_name_vargs+0x2f/0xb0
+> >>>>>>>     [<00000000b151218e>] kobject_init_and_add+0xb0/0x120
+> >>>>>>>     [<00000000e56a4cf5>] sysfs_slab_add+0x17d/0x220
+> >>>>>>>     [<000000009326fd57>] __kmem_cache_create+0x406/0x590
+> >>>>>>>     [<00000000dde33cff>] kmem_cache_create_usercopy+0x1fc/0x300
+> >>>>>>>     [<00000000fe90cedb>] kmem_cache_create+0x12/0x20
+> >>>>>>>     [<000000007a6531c8>] 0xffffffffa02d802d
+> >>>>>>>     [<000000000e3b13c7>] do_one_initcall+0x87/0x2a0
+> >>>>>>>     [<00000000995ecdcf>] do_init_module+0xdf/0x320
+> >>>>>>>     [<000000008821941f>] load_module+0x2f98/0x3330
+> >>>>>>>     [<00000000ef51efa4>] __do_sys_finit_module+0x113/0x1b0
+> >>>>>>>     [<000000009339fbce>] do_syscall_64+0x35/0x80
+> >>>>>>>     [<000000006b7f2033>] entry_SYSCALL_64_after_hwframe+0x46/0xb0
+> >>>>>>
+> >>>>>>
+> >>>>>> Hi=EF=BC=8Cevery one,
+> >>>>>
+> >>>>> Hi.
+> >>>>>
+> >>>>>> I found the same problem and it solve this problem with the patch,=
+ is
+> >>>>>> there any plan to update the patch and solve it.
+> >>>
+> >>> Hmm looks like back in 2022, Hyeonggon had some feedback to the serie=
+s which
+> >>> was not answered and then it got forgotten. Feel free to take over an=
+d send
+> >>> an updated version.
+> >>
+> >>
+> >> I was thinking of what the fix would be with my feedback,
+> >> and I still think passing different kobj_type (with a dummy release fu=
+nction) for early kmem_caches
+> >> will be a more appropriate approach.
+> >>
+> >> However, there is one concern: people that wrote kobject.rst might not=
+ like it :(
+> >>
+> >> in Documentation/core-api/kobject.rst:
+> >>> One important point cannot be overstated: every kobject must have a r=
+elease() method,
+> >>> and the kobject must persist (in a consistent state) until that metho=
+d is called. If these constraints are not met,
+> >>> the code is flawed. Note that the kernel will warn you if you forget =
+to provide a release() method.
+> >>> Do not try to get rid of this warning by providing an "empty" release=
+ function.
+> >>
+> >> But obviously we don't want to release caches just because the kernel =
+failed to add it to sysfs.
+> >>
+> >>>>> What kernel version do you use,
+> >>>>
+> >>>> 6.11.0-rc6
+> >>>>
+> >>>>> and when do you encounter it or how do you reproduce it?
+> >>>>
+> >>>> Hi, Hyeonggon,
+> >>>>
+> >>>> Thank you, I encounter it when doing inject fault test while modprob=
+e
+> >>>> amdgpu.ko.
+> >>>
+> >>> So I wonder where's the problem that results in kobject_init_and_add(=
+)
+> >>> failing. If it's genuinely duplicate name as commit 80da026a8e5d sugg=
+ests,
+> >>> 6.12-rc1 will have a warning to prevent that. Delayed destruction of
+> >>> SLAB_TYPESAFE_BY_RCU caches should also no longer happen with 6.12-rc=
+1. So
+> >>> worth retrying with that and if it's still failing, we should look at=
+ the
+> >>> root cause perhaps.
+> >>
+> >> I thought it was because the memory allocation for a name string faile=
+d due to fault injection?
 > >
-> > Signed-off-by: Wei Fang <wei.fang@nxp.com>
-> > Reviewed-by: Frank Li <Frank.Li@nxp.com>
-> > ---
-> > v5: no changes
-> > ---
-> >  drivers/net/ethernet/freescale/enetc/enetc_pci_mdio.c | 4 ++++
-> >  1 file changed, 4 insertions(+)
+> > Well in any case 6.12-rc1 introduced a new one, fixed by:
+> > https://git.kernel.org/pub/scm/linux/kernel/git/vbabka/slab.git/commit/=
+?h=3Dslab/for-6.12-rc1/fixes&id=3D77ced98f0f03fdc196561d1afbe652899c318073
 > >
-> > diff --git a/drivers/net/ethernet/freescale/enetc/enetc_pci_mdio.c
-> b/drivers/net/ethernet/freescale/enetc/enetc_pci_mdio.c
-> > index 2445e35a764a..9968a1e9b5ef 100644
-> > --- a/drivers/net/ethernet/freescale/enetc/enetc_pci_mdio.c
-> > +++ b/drivers/net/ethernet/freescale/enetc/enetc_pci_mdio.c
-> > @@ -2,6 +2,7 @@
-> >  /* Copyright 2019 NXP */
-> >  #include <linux/fsl/enetc_mdio.h>
-> >  #include <linux/of_mdio.h>
-> > +#include <linux/pinctrl/consumer.h>
-> >  #include "enetc_pf.h"
-> >
-> >  #define ENETC_MDIO_DEV_ID	0xee01
-> > @@ -71,6 +72,8 @@ static int enetc_pci_mdio_probe(struct pci_dev *pdev,
-> >  		dev_info(&pdev->dev, "Enabled ERR050089 workaround\n");
-> >  	}
-> >
-> > +	pinctrl_pm_select_default_state(dev);
-> > +
->=20
-> Not an expert on pinctrl by any means.. but is this needed?
-> Documentation/driver-api/pin-control.rst says:
->=20
-> | When a device driver is about to probe the device core will automatical=
-ly
-> | attempt to issue ``pinctrl_get_select_default()`` on these devices.
-> | This way driver writers do not need to add any of the boilerplate code
-> | of the type found below.
->=20
-> The documentation is obsolete, because pinctrl_get_select_default()
-> doesn't seem to be the current mechanism through which that happens. But
-> there is a pinctrl_bind_pins() function in really_probe() which looks
-> like it does that job. So.. is this needed?
+> > So once that's mainline, we can see if anything remains
+>
+> Using the newest 6.12.0-rc4, the issue still exists in slab:
+>
+> unreferenced object 0xffffff80ce6da9c0 (size 16):
+>   comm "modprobe", pid 12782, jiffies 4299073226
+>   hex dump (first 16 bytes):
+>     6f 76 6c 5f 69 6e 6f 64 65 00 6d ce 80 ff ff ff  ovl_inode.m.....
+>   backtrace (crc 1a460899):
+>     [<00000000edf3be8b>] kmemleak_alloc+0x34/0x40
+>     [<0000000004121c8d>] __kmalloc_node_track_caller_noprof+0x304/0x3e8
+>     [<00000000515e9eda>] kstrdup+0x48/0x84
+>     [<000000005d2d0c1a>] kstrdup_const+0x34/0x40
+>     [<00000000d14076ce>] kvasprintf_const+0x170/0x1e0
+>     [<0000000060f79972>] kobject_set_name_vargs+0x5c/0x12c
+>     [<00000000299f544a>] kobject_init_and_add+0xd4/0x168
+>     [<000000008ceb40f4>] sysfs_slab_add+0x190/0x21c
+>     [<00000000027371b9>] do_kmem_cache_create+0x354/0x5cc
+>     [<00000000cc9eb2aa>] __kmem_cache_create_args+0x1b8/0x2c8
+>     [<000000006a3e21cc>] 0xffffffea545a409c
+>     [<0000000002f945b3>] do_one_initcall+0x110/0x77c
+>     [<0000000024f23211>] do_init_module+0x1dc/0x5c8
+>     [<00000000a16337d6>] load_module+0x4acc/0x4e90
+>     [<00000000be447e77>] init_module_from_file+0xd4/0x128
+>     [<0000000048065de1>] idempotent_init_module+0x2d4/0x57c
 
-I think it is no need, I will remove it, thanks.
+Hi Jinjie,
 
+Oh, I should've Cc'd you...
 
+https://lore.kernel.org/linux-mm/20241021091413.154775-1-42.hyeyoo@gmail.co=
+m/
+
+I wrote a fix for this and I'm adjusting feedback from Christoph and Vlasti=
+mil.
+
+Thanks,
+Hyeonggon
 
