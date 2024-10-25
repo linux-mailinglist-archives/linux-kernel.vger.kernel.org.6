@@ -1,211 +1,180 @@
-Return-Path: <linux-kernel+bounces-382067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1849D9B08A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:43:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0EB89B08A3
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:42:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE2C4B24B7C
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:42:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E46241C21655
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:42:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D708218595F;
-	Fri, 25 Oct 2024 15:41:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73D4B165F1A;
+	Fri, 25 Oct 2024 15:41:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="obVaT2ri"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2040.outbound.protection.outlook.com [40.107.223.40])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="s88mfr5N"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 056F817B428;
-	Fri, 25 Oct 2024 15:41:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.40
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729870870; cv=fail; b=c3B+yfpNyqHqOLtn9GkvTcy34e969piGwFhhrfJnMPLsw9LeEK/3ZTd6gpbhg3eM7SFID6Ue25Y+7mwhBfS5tLWbXRhqsm4OfDIxMmlCyL9UqIQuGgBB14XEiRDD4mp6QYMQJBY9k1Mu1dIpFaQMt14dAJSfHbC7g4TJZJZ5Hs0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729870870; c=relaxed/simple;
-	bh=rojsxuJFT50R57E54bAiOLp58heo6X5wVbGkdSy2PIY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=GxKMiNAFx8rBDfZKOfuFg0qjHVYLtOnR9uTFECZbzrhN2sl4bFW7WB1qtPdZNXx65UKsvgx16evHxjUCWpP8ZeyH9u7J3T8vMBEgXepBgwac3Ixh4zoHRrkQMXSmnsdXZ3Le53dew6Kp+m3I3UbxKTPJ20MhdRsgl1lw4s78ZmM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=obVaT2ri; arc=fail smtp.client-ip=40.107.223.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=DMJTCi7PfN8yUjW54xyxPj9mNLXHPk0ek4cTz4mKJwoCHGZegTiKVgCklDvyl/0hxBWnG3B0tNPt7H8Wwyf+jCqygZBs290EX2UrbMoZABPzYTES21dwKU6qN5shhwT8EkG9zh4iu/wnTPicWhQ5XTFLfZ4MSTFxM0Yn3YDP76yfw7oqeVxKaURWWlM2TiyfX/pekfXrzqfVtZNw48uovRZeTQij35CqFcz9Fdkwph1tHcii8W75IrCrHnhyWr+rPG1E/yvxaanxMKoirzEiKrozpV34RrK2PExRRF307Q7FxgTogaUqiJZzcdZ19GLUwhHFs4BvgpNGb30wZp3zDg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=bC+wKFkFB4zirm3fgZhjz0CMZ3bRFB3UE3TDR0Czu5M=;
- b=YEnDSkMz/+ksSupIADlDZCiOIn15+g7bhuG/ElMuEzdf01eG1IEZx1noVjkKXnhEMbaRix2AVLCxMNaY5tAdHGNhPqieTyyzXgDVEmbgprDFPS6O7/x3ACMTif7hQjBNqEYpzxETmQIgmsSJfAOzz0oCcNKRY3Og3+YyFBlOXQDlZt8k+ws63EisBGRPJ9tQqFp7TFaBHwMPXZnHCU6enK1QbMEPzx+jr/yndWVYk4362kTR9b32oc9gcRvato7UyJT+GiudppU/WmDqlw/gKv120rkti0KbDd1kPgrilZjsf15wdOwk6BKvFBAfPjP++ITdf27ludN8bOJreTx8DQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bC+wKFkFB4zirm3fgZhjz0CMZ3bRFB3UE3TDR0Czu5M=;
- b=obVaT2riigReIqqQFm3Kn4N8YJZf7LahuucFwFRRK1+Y1OF89gWfezzsS+/7wHJERwVzHvMWFc9s7fH+iFgdE8JS0nHZYqHd5o86xRRhlKyhJ5lQ6V1tN8+yT0MViWZkVx2s1e9SDZ0UgGQh82g/682WdC08BtlIKchTPUGwgBHL6FIx03AwkzWauMYEtLjlRmUBZIsZfKQsV6C9hHPJ7VNDIIlG0TxIVOGIuDh0/DlB46SfiT11rSj86e/MkaJjXQOSU8SPxR2ZqFiFhd5wtbrMTx6ZxhSXBxSLMPVXF+ZPs1xNvYln6v8t1yCp6aXqb0i+FtKmGVemdpg9tCs/ZA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
- by PH7PR12MB7211.namprd12.prod.outlook.com (2603:10b6:510:206::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.28; Fri, 25 Oct
- 2024 15:41:04 +0000
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.8093.018; Fri, 25 Oct 2024
- 15:41:03 +0000
-Date: Fri, 25 Oct 2024 12:41:02 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: "Tian, Kevin" <kevin.tian@intel.com>
-Cc: Nicolin Chen <nicolinc@nvidia.com>, "will@kernel.org" <will@kernel.org>,
-	"joro@8bytes.org" <joro@8bytes.org>,
-	"suravee.suthikulpanit@amd.com" <suravee.suthikulpanit@amd.com>,
-	"robin.murphy@arm.com" <robin.murphy@arm.com>,
-	"dwmw2@infradead.org" <dwmw2@infradead.org>,
-	"baolu.lu@linux.intel.com" <baolu.lu@linux.intel.com>,
-	"shuah@kernel.org" <shuah@kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-	"eric.auger@redhat.com" <eric.auger@redhat.com>,
-	"jean-philippe@linaro.org" <jean-philippe@linaro.org>,
-	"mdf@kernel.org" <mdf@kernel.org>,
-	"mshavit@google.com" <mshavit@google.com>,
-	"shameerali.kolothum.thodi@huawei.com" <shameerali.kolothum.thodi@huawei.com>,
-	"smostafa@google.com" <smostafa@google.com>,
-	"Liu, Yi L" <yi.l.liu@intel.com>, "aik@amd.com" <aik@amd.com>,
-	"zhangfei.gao@linaro.org" <zhangfei.gao@linaro.org>,
-	"patches@lists.linux.dev" <patches@lists.linux.dev>
-Subject: Re: [PATCH v4 11/11] iommu/arm-smmu-v3: Add
- IOMMU_VIOMMU_TYPE_ARM_SMMUV3 support
-Message-ID: <20241025154102.GI6956@nvidia.com>
-References: <cover.1729553811.git.nicolinc@nvidia.com>
- <2180fdf423d0f2fcc5c031687690100b12c2ba51.1729553811.git.nicolinc@nvidia.com>
- <BN9PR11MB5276C3BC659CCCDF3A1189458C4F2@BN9PR11MB5276.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <BN9PR11MB5276C3BC659CCCDF3A1189458C4F2@BN9PR11MB5276.namprd11.prod.outlook.com>
-X-ClientProxiedBy: BN6PR17CA0039.namprd17.prod.outlook.com
- (2603:10b6:405:75::28) To CH3PR12MB8659.namprd12.prod.outlook.com
- (2603:10b6:610:17c::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C10A221A4AA;
+	Fri, 25 Oct 2024 15:41:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729870915; cv=none; b=S+4v+4fRalwqdLKHEHgyDkh3jmYen1dmHsLENr+puFZIwz5UH+DsLPj7o0iRfVge4nuUey/ENqkJntBZK+ZPLVfhTH7cWv53c5XwRatRSwqnoTy49dxv//HBY4QD4JLWoPvlmr5eiecvidq0TL50GcxEhIt6JzFVUDI/TygIIKY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729870915; c=relaxed/simple;
+	bh=NQrucM9x+saoFF0bKhfOtTTsmlsmJGDQESQbN+cJ5T8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MAcSWtJCC773eE0f2l1W/Cxnz5QKdnV4/vXhnh4oPUs0d4q+hNtEA03IP3ekeexECDGFDtEPrjUvkwHDC2olNFQETfDF+tf7duBeeaTC/EEtenyVMSd4/hR8y8uX/TNZBJIArq6U+jRb5eVEcflobZh228mCtFSbKDQfx7Y5KFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=s88mfr5N; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49PDpA4b021561;
+	Fri, 25 Oct 2024 15:41:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=5LJ+VKt8Wb3JvYVN3+XmhS5GVyUE5yneVa6dfImU/
+	6Q=; b=s88mfr5NqxxZLp2ghjviqDWcV4e7B7+RkZ9hCrVxF1rkJle8jAXdvYrFq
+	5WkbRV6UQ/o9sv/Ne5SPD19QfoUUveP3X4BfuSVYgkoh+q0S7xAObhVXgvYefKff
+	hTft4M9xuR9dbOnqINJm4CHzhHfmq3Va2jrvRQzIM7vP0bvK9WrpPnrU/JNlr0DV
+	gPZAur1aBtDiV7RT5ctIir4fgLS0tfxCl9d2fnGFxe2wG5HQ07iWIF0IxGOTT+/G
+	vL9KQAzS3jMwdHfu0z7ilNs5WeciMS6OOKdah7s5B+bVGSUDEGjBFBQm8SdBjvgN
+	sIvYvhHYnOuyZdEeWD47ZDwGifQjw==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42fbw494td-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Oct 2024 15:41:48 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49PEDICt014571;
+	Fri, 25 Oct 2024 15:41:48 GMT
+Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42emk86cj4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Oct 2024 15:41:48 +0000
+Received: from smtpav05.dal12v.mail.ibm.com (smtpav05.dal12v.mail.ibm.com [10.241.53.104])
+	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49PFfkUM64946464
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 25 Oct 2024 15:41:47 GMT
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A4CCA58056;
+	Fri, 25 Oct 2024 15:41:46 +0000 (GMT)
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6ED6258052;
+	Fri, 25 Oct 2024 15:41:46 +0000 (GMT)
+Received: from WIN-DU0DFC9G5VV.ibm.com (unknown [9.61.242.95])
+	by smtpav05.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 25 Oct 2024 15:41:46 +0000 (GMT)
+From: Konstantin Shkolnyy <kshk@linux.ibm.com>
+To: sgarzare@redhat.com
+Cc: virtualization@lists.linux.dev, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mjrosato@linux.ibm.com,
+        Konstantin Shkolnyy <kshk@linux.ibm.com>
+Subject: [PATCH v3] vsock/test: fix failures due to wrong SO_RCVLOWAT parameter
+Date: Fri, 25 Oct 2024 10:41:24 -0500
+Message-Id: <20241025154124.732008-1-kshk@linux.ibm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|PH7PR12MB7211:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0e6f9c03-a343-4fbc-cbd5-08dcf50b6eff
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?/LypfrChAFwfwTx+NasvHgCoQ7ZWg2G/WBsdFTCfwncM6eVYvrQSd8A58HqI?=
- =?us-ascii?Q?/ByIlskqOS8FwWH+7rDYaABAc+I22zlg2MP6TujTZpRhZC5glqh/jo+GjFfD?=
- =?us-ascii?Q?TJHrm3fEirNpLrTvozG9RJJnb/6P/NYsYA7wak+kenKNzWsegyoGtJAiRlFk?=
- =?us-ascii?Q?YxNLr7fU1Ymc1G7/JtatRFncLoi3Uz25BdeqICJXcYhG4o3ZNnn4uk6DXVdl?=
- =?us-ascii?Q?2WASX5T36iDgDUuk90tmdOhjeOD0TPmr2weTNt8gW2lYzNkbIMqJ9ja+ippZ?=
- =?us-ascii?Q?BVW/5oaYAkEji6qBpqLdHLm+z91R31lUkrzL6W64i9E96pWyxqp/RdFrRLYr?=
- =?us-ascii?Q?mZeUqaCoqwGjyCn1MKh0qG+SJ3UXCSJ0HPVVZOw9H2K/iRaRCVHwaF7jnBTS?=
- =?us-ascii?Q?UgzNFFqejXL2Gh1Qe+68FMBU4O3GEGgzNZwBG+hpGeCcrJoB/+zcaoFfzaw9?=
- =?us-ascii?Q?XQcS7vIeho4lnzK0/NOB7gJhH+WdkqA9nyHSfT/PXUGv0fNmubRs7WGgsyss?=
- =?us-ascii?Q?Jet48gAvaUOHTztd5UL6XhugUx1Xhm4KPlf7j8w5E2KPP/3mVSmlM3XgXhk+?=
- =?us-ascii?Q?HHGeg2n4Jm3zUW7adu1spXjAeJLjJtphzhrJ+t9MUNfU2/XzRcnHa7cIjYmg?=
- =?us-ascii?Q?gH/QfEWFDsMM/R05pJRAWI0dg58HEk3a1aA7TE7CKs38AvH8/MjE5MAjoigI?=
- =?us-ascii?Q?x0uhBXhW6O8/ctZlbO183PoIy/jkwTSoOUFYWW7RbRnjGxtL2GQOd/ZxXagg?=
- =?us-ascii?Q?Po03kZOIDwxt47e7G/zsAfS8TNh5Boe/16YQ39qEW5wrFsnnDPHCrMst+Kfh?=
- =?us-ascii?Q?Ww9QF99Hu23oJLzVZrc5yw75tK4NjJrbQvHPVtulqaE3VWEb0Of3QGBn0NH1?=
- =?us-ascii?Q?VB/xUedNfzCdSq6OWKYwo/GCIRftuTbXojzztbcZIjUD3sF66DQXzC+hZM0L?=
- =?us-ascii?Q?0RBd80bQcX17+8HxBACh5n9ZUqYWiLkY3mZ+lLkvacyyT+QhprYkWCGfSwk5?=
- =?us-ascii?Q?1ds4LkDeVtSGamp8ATyxA124V25LlGXid3E1oX9AVMuWMRV/2mSDEWfHwg2P?=
- =?us-ascii?Q?rypAt5/dlcKjfnBIn98wY+phOF3paNVOR5cggktC9WOjwXaP1qWcJ9nq56BQ?=
- =?us-ascii?Q?MlmDb2hWzJ7/ZD+0uwv8mY8Kgx0BXoDFERQk4Zdtoaix/N5LxVgcD3Xl5QgO?=
- =?us-ascii?Q?zitf2VxpxgkNvbgrGZAXQ5cMLI9n+JuXJRgm0ykjKq/XusJ1FsNlYvZtWmXj?=
- =?us-ascii?Q?B1ikUr5VT2pmegrJBNuLjRojN4ZUI3W8HWfoYRjDRcT5WxJLcyDj9ofmyay6?=
- =?us-ascii?Q?sD6bvft9k3G8sfbMhtA1EuY9?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Mu+fsFP42vY8BNl4+bsaMc+uGemQ6zATd7NS5GZsA24BTQ1dUXJAbRzUmfe/?=
- =?us-ascii?Q?0m41vwnf7rbm4w9z74HN9GA3ENKvc2YHKdCU0xwzxH2ceKo/HASFypZUXUky?=
- =?us-ascii?Q?JSOSBK2LpTAWH0tVsYX+2IIT+r6MxSMDNmG+jCzaTR1HD8esj7PIxi2tKwfd?=
- =?us-ascii?Q?wTQXJ7QifDJ0dUPZEP7sjxb3c+jPmpGNhL09yoRBMPXzFL63HGfJeOHXVicW?=
- =?us-ascii?Q?FotRYB3SITALW2V/oEXdWZMr3uEdV+nEMsCoccGv99VWpudCK+BtlB1m7Equ?=
- =?us-ascii?Q?rzTI5IN6CJ+sshEow0ZyL5W9D+zXPcbI5gCxP2vVSyf6EzKhr7dV6Q003K82?=
- =?us-ascii?Q?gjvtxKGlFrKnP+vZ6ElXZaJ0XBy4x+psIkpJW30053fOC8hoJ0dVwPuxia8C?=
- =?us-ascii?Q?E47lodn2j57ph80ch3I9SbX4LzrUcjmTu2R2P/qkg2XK/0pg+lwLghn14FcT?=
- =?us-ascii?Q?xwx7+nzo7R9VfHMxmj9IC2bhcAc/ggpjTseRHdShNYxvTq7qia1DplBskmdU?=
- =?us-ascii?Q?XvSIuxXYhpcQxRl6vxcqtftXp1uPhfZJGPTWK5tsF6g0jPHQXuP/AcJyuvqm?=
- =?us-ascii?Q?c5UqfuOjiORuwKtFHZuIFE8ueF6r8egc+GatvL2e7qhSu/139XRSf4kGknwR?=
- =?us-ascii?Q?sKXxh+C6z02YEByygMpORjODqo9UMxst+3X0wMgqHO9fMz/ivIIGln1Udni+?=
- =?us-ascii?Q?5eg+qbS+C2aaiWmxwZFBnVI2yeCJmRIp3wsyhxIxtncg2FyVeq6mRfI7zkEJ?=
- =?us-ascii?Q?Wnf3AcghsykZIkVUNdhu+2Jovy/SOfwpJz4CZQwNuOuP96Br0sgYzXgEFWgb?=
- =?us-ascii?Q?jKap5tGpbrAc1mikKe5gMT/odHN3mvcwVPwsZOaPxZcBAeiZmWKN15NivuGk?=
- =?us-ascii?Q?JPAF2V3WpHtneZbtwJc5kfv+jWwEysliAQqRf/HELR/m0RAA49hTMoLb7MJy?=
- =?us-ascii?Q?/x0sRrr6/T+R6BkXz2nlC4fXHUv/0dN8u5u22h6a+SAW+FGtKR1TJSyY7K4k?=
- =?us-ascii?Q?BQkVeHvdO9cMcCv7jyL7zc40GiBFwC87kJ3RP7PHW1G/8TIFlS8o+a4Yvwq3?=
- =?us-ascii?Q?7ibzFTxOeVBCpIWtx0Ps4sr+P1rRALK84jLFlEmMc9Rfpl/D0juigQE7FrBu?=
- =?us-ascii?Q?jVvxfye1hT5qGcIXXrLSSoV7KAFrbicqFQrrOdhUB40TrYWQua2C5k2aZu0G?=
- =?us-ascii?Q?XaUqo0itNfN/b9NXO2Fs12RBC3PvsZhEfecKxUhILKuJLNVL0A/jWhcn7GKp?=
- =?us-ascii?Q?WBke8zTAqbsWfeSg+DEkubRlZNFFZP4L3n01bY/B9PU/zU1JEmTY6j3ALI9Y?=
- =?us-ascii?Q?2RqQ4xLghOEeKJ8hkPOrhxb1yE+/gFQBiUQPsRn9tJKfX6G9PiiD9Nd8XL0w?=
- =?us-ascii?Q?Ob/MKW9O9+A0xDau/PxosJWXsqZAJXxt7LEwgTXrHCbGhpYFifRh/HDJOZcT?=
- =?us-ascii?Q?YBTaZMmbuhCL+tUroZtZac2w+eLOBgaFbnEC+wJkTH3etcNFuMgsTlTVlWEQ?=
- =?us-ascii?Q?m1TGlWJ0ujmSpGxewdBEQ3fYA+06WltCWh1bMxBJBpT4VJG88zg8MQ6DMztl?=
- =?us-ascii?Q?i1wSUClBvpc68tjQEPOyjOE60zzrH4wf0L0t559p?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0e6f9c03-a343-4fbc-cbd5-08dcf50b6eff
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Oct 2024 15:41:03.7294
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: WmzPBCgszRs0/RO6yUXf6nzBDDJOVbag5y1k1enq3AmXHQ2br/Szs01RyseUPEfE
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7211
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: PJJO1tMEtrrwJ16oFZKthF54PSAHqkis
+X-Proofpoint-GUID: PJJO1tMEtrrwJ16oFZKthF54PSAHqkis
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 mlxscore=0
+ bulkscore=0 suspectscore=0 spamscore=0 phishscore=0 adultscore=0
+ priorityscore=1501 clxscore=1015 lowpriorityscore=0 malwarescore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410250122
 
-On Fri, Oct 25, 2024 at 09:18:05AM +0000, Tian, Kevin wrote:
-> > From: Nicolin Chen <nicolinc@nvidia.com>
-> > Sent: Tuesday, October 22, 2024 8:20 AM
-> > 
-> > Add a new driver-type for ARM SMMUv3 to enum iommu_viommu_type.
-> > Implement
-> > an arm_vsmmu_alloc() with its viommu op
-> > arm_vsmmu_domain_alloc_nested(),
-> > to replace arm_smmu_domain_alloc_nesting(). As an initial step, copy the
-> > VMID from s2_parent. A later cleanup series is required to move the VMID
-> > allocation out of the stage-2 domain allocation routine to this.
-> > 
-> > After that, replace nested_domain->s2_parent with nested_domain->vsmmu.
-> > 
-> > Note that the validatting conditions for a nested_domain allocation are
-> > moved from arm_vsmmu_domain_alloc_nested to arm_vsmmu_alloc, since
-> > there
-> > is no point in creating a vIOMMU (vsmmu) from the beginning if it would
-> > not support a nested_domain.
-> > 
-> > Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
-> 
-> hmm I wonder whether this series should be merged with Jason's
-> nesting series together and directly use vIOMMU to create nesting.
-> Otherwise it looks a bit weird for one series to first enable a uAPI
-> which is immediately replaced by another uAPI from the following
-> series.
+This happens on 64-bit big-endian machines.
+SO_RCVLOWAT requires an int parameter. However, instead of int, the test
+uses unsigned long in one place and size_t in another. Both are 8 bytes
+long on 64-bit machines. The kernel, having received the 8 bytes, doesn't
+test for the exact size of the parameter, it only cares that it's >=
+sizeof(int), and casts the 4 lower-addressed bytes to an int, which, on
+a big-endian machine, contains 0. 0 doesn't trigger an error, SO_RCVLOWAT
+returns with success and the socket stays with the default SO_RCVLOWAT = 1,
+which results in vsock_test failures, while vsock_perf doesn't even notice
+that it's failed to change it.
 
-It has changed from my original expectation, that's for sure. I've
-wondered the same thing.
+Fixes: b1346338fbae ("vsock_test: POLLIN + SO_RCVLOWAT test")
+Fixes: 542e893fbadc ("vsock/test: two tests to check credit update logic")
+Fixes: 8abbffd27ced ("test/vsock: vsock_perf utility")
+Signed-off-by: Konstantin Shkolnyy <kshk@linux.ibm.com>
+---
 
-For now I've been keeping them separate and was going to review when
-this is all settled down.
+Notes:
+    The problem was found on s390 (big endian), while x86-64 didn't show it. After this fix, all tests pass on s390.
+Changes for v3:
+- fix the same problem in vsock_perf and update commit message
+Changes for v2:
+- add "Fixes:" lines to the commit message
 
-It is troublesome because of all the branches, but if we don't have a
-conflict we could take the whole lot through iommufd.
+ tools/testing/vsock/vsock_perf.c | 6 +++---
+ tools/testing/vsock/vsock_test.c | 4 ++--
+ 2 files changed, 5 insertions(+), 5 deletions(-)
 
-Jason
+diff --git a/tools/testing/vsock/vsock_perf.c b/tools/testing/vsock/vsock_perf.c
+index 4e8578f815e0..22633c2848cc 100644
+--- a/tools/testing/vsock/vsock_perf.c
++++ b/tools/testing/vsock/vsock_perf.c
+@@ -133,7 +133,7 @@ static float get_gbps(unsigned long bits, time_t ns_delta)
+ 	       ((float)ns_delta / NSEC_PER_SEC);
+ }
+ 
+-static void run_receiver(unsigned long rcvlowat_bytes)
++static void run_receiver(int rcvlowat_bytes)
+ {
+ 	unsigned int read_cnt;
+ 	time_t rx_begin_ns;
+@@ -163,7 +163,7 @@ static void run_receiver(unsigned long rcvlowat_bytes)
+ 	printf("Listen port %u\n", port);
+ 	printf("RX buffer %lu bytes\n", buf_size_bytes);
+ 	printf("vsock buffer %lu bytes\n", vsock_buf_bytes);
+-	printf("SO_RCVLOWAT %lu bytes\n", rcvlowat_bytes);
++	printf("SO_RCVLOWAT %d bytes\n", rcvlowat_bytes);
+ 
+ 	fd = socket(AF_VSOCK, SOCK_STREAM, 0);
+ 
+@@ -439,7 +439,7 @@ static long strtolx(const char *arg)
+ int main(int argc, char **argv)
+ {
+ 	unsigned long to_send_bytes = DEFAULT_TO_SEND_BYTES;
+-	unsigned long rcvlowat_bytes = DEFAULT_RCVLOWAT_BYTES;
++	int rcvlowat_bytes = DEFAULT_RCVLOWAT_BYTES;
+ 	int peer_cid = -1;
+ 	bool sender = false;
+ 
+diff --git a/tools/testing/vsock/vsock_test.c b/tools/testing/vsock/vsock_test.c
+index f851f8961247..30857dd4ca97 100644
+--- a/tools/testing/vsock/vsock_test.c
++++ b/tools/testing/vsock/vsock_test.c
+@@ -833,7 +833,7 @@ static void test_stream_poll_rcvlowat_server(const struct test_opts *opts)
+ 
+ static void test_stream_poll_rcvlowat_client(const struct test_opts *opts)
+ {
+-	unsigned long lowat_val = RCVLOWAT_BUF_SIZE;
++	int lowat_val = RCVLOWAT_BUF_SIZE;
+ 	char buf[RCVLOWAT_BUF_SIZE];
+ 	struct pollfd fds;
+ 	short poll_flags;
+@@ -1282,7 +1282,7 @@ static void test_stream_rcvlowat_def_cred_upd_client(const struct test_opts *opt
+ static void test_stream_credit_update_test(const struct test_opts *opts,
+ 					   bool low_rx_bytes_test)
+ {
+-	size_t recv_buf_size;
++	int recv_buf_size;
+ 	struct pollfd fds;
+ 	size_t buf_size;
+ 	void *buf;
+-- 
+2.34.1
+
 
