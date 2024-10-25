@@ -1,56 +1,107 @@
-Return-Path: <linux-kernel+bounces-381252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95C099AFC8B
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 10:29:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18CC19AFC88
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 10:29:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DF121F244A0
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 08:29:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F14E2827C5
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 08:28:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EE801CFECE;
-	Fri, 25 Oct 2024 08:28:53 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27B941D1E79;
-	Fri, 25 Oct 2024 08:28:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 813A51D0E28;
+	Fri, 25 Oct 2024 08:28:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="MVrd6H/2"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B11251CFECE
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 08:28:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729844932; cv=none; b=UsdSLAEKV0vHP0EMOzsy9jVnRniFB8wtB/oS2GhP4M0H1c54T1TYt+8YzGJpGt9T0FZwNHMKR3jtfEkfqSr0rzBt0B1+0CyWYW2tzn58JSIAjaMaXHvQYTrOWIlppEiFCXv8jmFEfNE0rsA+yMJ+kn4opS0ZHRdpUw32Nl6AHp8=
+	t=1729844929; cv=none; b=PcdiKNoyUJFkpgFav2hDid9wouGX8Q8SQVofNx+5T+PWThphc1kPwE6WYzrt+LvBhp7K6R9nM6Kxu305TeKM+LDc+jBCPdANHzB4plsNvlpgikOBXW7XOO842Oo7Kta5g106cJje0FoXECVtbaf+qBB4d1+5C/CwL8tXG5BFiWs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729844932; c=relaxed/simple;
-	bh=Qh0w84bisMxn6v4DNS3rR1p5e79heOUwAl9dMkiZdTU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u/k65oAd/x29k6XEK6fnYNo45jKTtzWOpFyLavFl/wIWC96hkjG2kpV6FcP2FroNQvSiwnvXDJKQ0fLB3FzA3PsrXx2iZAoc0uF9aRkk/Lzt3koAM/VG22zip+hOX89F7r1rypt2SqCVUnkBUX+70/YZYUzgWnh6FbJv7NFf98s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0CD8A339;
-	Fri, 25 Oct 2024 01:29:19 -0700 (PDT)
-Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 549333F73B;
-	Fri, 25 Oct 2024 01:28:47 -0700 (PDT)
-Date: Fri, 25 Oct 2024 09:28:38 +0100
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: Sibi Sankar <quic_sibis@quicinc.com>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Johan Hovold <johan@kernel.org>, sudeep.holla@arm.com,
-	cristian.marussi@arm.com, ulf.hansson@linaro.org,
-	jassisinghbrar@gmail.com, linux-kernel@vger.kernel.org,
-	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-arm-msm@vger.kernel.org, konradybcio@kernel.org,
-	linux-pm@vger.kernel.org, tstrudel@google.com, rafael@kernel.org
-Subject: Re: [PATCH V3 0/4] firmware: arm_scmi: Misc Fixes
-Message-ID: <ZxtWtqsP5HdJYp5w@pluto>
-References: <20241007060642.1978049-1-quic_sibis@quicinc.com>
- <ZwfsmqInJlqkQD_3@hovoldconsulting.com>
- <ae5eaef9-301f-7d3f-c973-faa22ae780ee@quicinc.com>
- <ZxkjqEmkBAsC6UkL@hovoldconsulting.com>
- <c8e7420b-a7b4-89cd-1b6e-c1f6693c062d@quicinc.com>
- <ik4dyfbphm7lkeipm2dbr7cmdfxewxd4jtuz2jfnscfwcyo2r4@lrin5hnsqvyd>
- <83b635a7-fc69-7522-d985-810262500cb3@quicinc.com>
+	s=arc-20240116; t=1729844929; c=relaxed/simple;
+	bh=jc+y/m1J5iDLVGvo7GE1rUcCJ9JarTubgikr5ubFVBU=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y/aHde0V+TBh6c0s0Kmhenf9ZWuEIsZksspX0NqONbNmlAv0MhOI5XM5e0/eMIGegiKBYyrYJz2/xwO/L67yuOBPo4uoZbo8TBvUdBozWEpsrNayXSltSjiF+X1AYG9ERGrmEIrf/l2/+CkXxtNrvXzMY/WQ8D2G8SW34FG6eVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=MVrd6H/2; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a9a0472306cso235995566b.3
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 01:28:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1729844926; x=1730449726; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=GKQtKEQ691WB5aL1CY9xzFRryNO/YNcfGDP3okJsWkk=;
+        b=MVrd6H/2/vvwaAm9jZwHrv28+0/70CDDnOI3/SpFsy7l6BsTae8knAuq3Aohm0OOjQ
+         vng/RZGsX8VFvWWE1SDPfkxh72rbksDgB9WpibfFFk9/9M1UAFbPQqywBuq3LUe0UV4B
+         bx/Wp2aUFll0h0VDGkf3v5O0JXkviNBrwGhnqpvWzJQYlaHgPd3Q5ELF50WXZjDQNJND
+         ZdPXD5EiQ8EFeTCKoe+LmoD7eS6WoxZzbsVaUg4d3VdPQAdi5xLTNR0lr559JNzMd5Gi
+         RdO7UAnLa3Ewr8JmgT3AjNh5UBGLuCqajsHYfp5PYO96Bqen4wuaSOnfyL5ik/9ykxkb
+         TA1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729844926; x=1730449726;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GKQtKEQ691WB5aL1CY9xzFRryNO/YNcfGDP3okJsWkk=;
+        b=tVSaGVJxHqG3nghfyC1nRmqvHm2zOGu90IHyYj/zmYlh2A13NbwDbM0hyQVI8cUlUx
+         QuNuFxAu7QUCAQkaJ5JNMSBEXi9nTqT9uH4M92HsrAq+Osl+yivznAOSmG3YBoOmTJ45
+         dT6OhjaP+1wzkX/tE0rkNvBC2PncAUKs/Jf3Fy7cMdkFemmW9XKR64r6/6Jx6p1V/sfs
+         1/Pfyu9+x+Fwk4jejZ/Jnp7A/rWQe6ize1DPjHcukSLreL1Id41TbO0KtDF2q+t4X42s
+         mA8umn/tL5Veel3J12pbsmTGSXDgk9Ie9XlgScjqOZulR8fmTZV+YIx0Gd8tb7hRMF3C
+         Bj4A==
+X-Forwarded-Encrypted: i=1; AJvYcCVhFzaJIdGsvTOH02ec5qjRpu1CbmE78LSbcmRLYgxKZuVg0zqj7f/jLvkkQNn5Aq17RXBTRrbwWB0EMMY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJRH4r5T4Hd3pgdxQ01GJgKDXbNwdUa2JpsD49xuqx5YuqaboE
+	5VswZDWqbnEeAoALBYPfBmCPZMAtM35Lw0SmMejQWHf4WH92t0TwKu2t9l+g+/k=
+X-Google-Smtp-Source: AGHT+IEKAsvpP2dybXSJ7Ofjl3bCLXFPuuy1eHgZQTXd9CLcGnC5HYUafi69GsS8vo706m6wGKRfWw==
+X-Received: by 2002:a17:907:9406:b0:a99:e850:deb3 with SMTP id a640c23a62f3a-a9abf890eaamr841444666b.18.1729844925999;
+        Fri, 25 Oct 2024 01:28:45 -0700 (PDT)
+Received: from localhost (host-79-35-211-193.retail.telecomitalia.it. [79.35.211.193])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cbb62c803asm391336a12.56.2024.10.25.01.28.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Oct 2024 01:28:45 -0700 (PDT)
+From: Andrea della Porta <andrea.porta@suse.com>
+X-Google-Original-From: Andrea della Porta <aporta@suse.de>
+Date: Fri, 25 Oct 2024 10:29:07 +0200
+To: Dave Stevenson <dave.stevenson@raspberrypi.com>
+Cc: Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Andrew Lunn <andrew@lunn.ch>
+Subject: Re: [PATCH v2 11/14] misc: rp1: RaspberryPi RP1 misc driver
+Message-ID: <ZxtW0z7-JaK3dWdQ@apocalypse>
+References: <cover.1728300189.git.andrea.porta@suse.com>
+ <c5b072393d2dc157d34f6dbeff6261d142d4de69.1728300190.git.andrea.porta@suse.com>
+ <CAPY8ntC0B0RdNmvGMaDcp-p9gZOcWBbeC6BjbcihrijRXjRVkA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,115 +110,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <83b635a7-fc69-7522-d985-810262500cb3@quicinc.com>
+In-Reply-To: <CAPY8ntC0B0RdNmvGMaDcp-p9gZOcWBbeC6BjbcihrijRXjRVkA@mail.gmail.com>
 
-On Fri, Oct 25, 2024 at 12:15:59PM +0530, Sibi Sankar wrote:
+Hi Dave,
+
+On 16:21 Thu 24 Oct     , Dave Stevenson wrote:
+> Hi Andrea
 > 
+> On Mon, 7 Oct 2024 at 14:07, Andrea della Porta <andrea.porta@suse.com> wrote:
+> >
+
+...
+
+> > +static const struct pci_device_id dev_id_table[] = {
+> > +       { PCI_DEVICE(PCI_VENDOR_ID_RPI, PCI_DEVICE_ID_RPI_RP1_C0), },
+> > +       { 0, }
+> > +};
 > 
-> On 10/25/24 11:44, Dmitry Baryshkov wrote:
-> > On Fri, Oct 25, 2024 at 11:38:36AM +0530, Sibi Sankar wrote:
-> > > 
-
-Hi,
-
-> > > 
-> > > On 10/23/24 21:56, Johan Hovold wrote:
-> > > > On Wed, Oct 23, 2024 at 01:16:47PM +0530, Sibi Sankar wrote:
-> > > > > On 10/10/24 20:32, Johan Hovold wrote:
-> > > > > > On Mon, Oct 07, 2024 at 11:36:38AM +0530, Sibi Sankar wrote:
-> > > > > > > The series addresses the kernel warnings reported by Johan at [1] and are
-> > > > > > > are required to X1E cpufreq device tree changes [2] to land.
-> > > > > > > 
-> > > > > > > [1] - https://lore.kernel.org/lkml/ZoQjAWse2YxwyRJv@hovoldconsulting.com/
-> > > > > > > [2] - https://lore.kernel.org/lkml/20240612124056.39230-1-quic_sibis@quicinc.com/
-> > > > > > > 
-> > > > > > > The following warnings remain unadressed:
-> > > > > > > arm-scmi arm-scmi.0.auto: Failed to add opps_by_lvl at 3417600 for NCC - ret:-16
-> > > > > > > arm-scmi arm-scmi.0.auto: Failed to add opps_by_lvl at 3417600 for NCC - ret:-16
-> > > > > > 
-> > > > > > Are there any plans for how to address these?
-> > > > 
-> > > > > Sorry missed replying to this. The error implies that duplicate
-> > > > > opps are reported by the SCP firmware and appear once during probe.
-> > > > 
-> > > > I only see it at boot, but it shows up four times here with the CRD:
-> > > 
-> > > https://lore.kernel.org/lkml/d54f6851-d479-a136-f747-4c0180904a5e@quicinc.com/
-> > > 
-> > > As explained ^^, we see duplicates for max sustainable performance twice
-> > > for each domain.
-> > 
-> > If existing products were shipped with the firmware that lists single
-> > freq twice, please filter the frequencies like qcom-cpufreq-hw does.
+> You need a
 > 
-> That was a qualcomm specific driver and hence we could do such
-> kind of filtering. This however is the generic scmi perf protocol
-> and it's not something we should ever consider introducing :/
+> MODULE_DEVICE_TABLE(pci, dev_id_table);
 > 
+> here in order to load the module for the cases where it isn't
+> built-in. Otherwise you have to manually modprobe the module.
 
-+1
+Sure, thanks for the heads up!
 
-In the case of the other warnings, those were similarly related to
-duplicates, but the warns themselves were genereated by the OPP
-subsystem when trying to register a duplicate...it was indeed a bug
-at the SCMI layer to try registering a well-known duplicate with
-the OPP subsytem, so it was fixed in the SCMI stack...avoiding to
-propagate it to the OPP layer...but the duplicate error condition
-indeed still exist (since dependent on what the fw spits out) and they
-are trapped at the SCMI level and those noisy warning are just meant
-to trap this kind of firmware anomalies...
+Regards,
+Andrea
 
-...IOW who would have ever spotted this thing and considered to fix the
-firmware in future releases without the warnings :P ?
-
-> > 
-> > > 
-> > > > 
-> > > > [    8.098452] arm-scmi arm-scmi.0.auto: Failed to add opps_by_lvl at 3417600 for NCC - ret:-16
-> > > > [    8.109647] arm-scmi arm-scmi.0.auto: Failed to add opps_by_lvl at 3417600 for NCC - ret:-16
-> > > > [    8.128970] arm-scmi arm-scmi.0.auto: Failed to add opps_by_lvl at 3417600 for NCC - ret:-16
-> > > > [    8.142455] arm-scmi arm-scmi.0.auto: Failed to add opps_by_lvl at 3417600 for NCC - ret:-16
-> > > > 
-> > > > > This particular error can be fixed only by a firmware update and you
-> > > > > should be able to test it out soon on the CRD first.
-> > > > 
-> > > > Can you explain why this can only be fixed by a firmware update? Why
-> > > > can't we suppress these warnings as well, like we did for the other
-> > > > warnings related to the duplicate entries?
-> > > > 
-> > > > IIUC the firmware is not really broken, but rather describes a feature
-> > > > that Linux does not (yet) support, right?
-> > > 
-> > > We keep saying it's a buggy firmware because the SCP firmware reports
-> > > identical perf and power levels for the additional two opps and the
-> > > kernel has no way of treating it otherwise and we shouldn't suppress
-> > > them. Out of the two duplicate opps reported one is a artifact from how
-> > > Qualcomm usually show a transition to boost frequencies. The second opp
-> > > which you say is a feature should be treated as a boost opp i.e. one
-> > > core can run at max at a lower power when other cores are at idle but
-> > > we can start marking them as such once they start advertising their
-> > > correct power requirements. So I maintain that this is the best we
-> > > can do and need a firmware update for us to address anything more.
-> > 
-> > Will existing shipping products get these firmware updates?
 > 
-> They are sure to trickle out but I guess it's upto the oem
-> to decide if they do want to pick these up like some of the
-> other firmware updates being tested only on CRD. Not sure why
-> warnings duplicates should block cpufreq from landing for x1e
-> but if that's what the community wants I can drop reposting
-> this series!
+> Cheers.
+>   Dave
 
-Not sure indeed which is the problem with such warnings since they are
-just doing their job...in general we tend not to disrupt operation even
-when the firmware is buggy (if possible) BUT we definitely try to be
-noisy about that to have firmware fixed (...not that fw guys seems so
-scared usually about warnings though :P)
-
-Anyway, I'm totally with Sibi here unless there is an impact at the
-functional level...Sudeep may think otherwise of course ...
-
-Thanks
-Cristian
-
+...
 
