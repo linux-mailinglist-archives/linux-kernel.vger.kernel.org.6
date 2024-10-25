@@ -1,97 +1,86 @@
-Return-Path: <linux-kernel+bounces-380964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD8649AF84E
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 05:41:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A742F9AF854
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 05:46:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78A111F2293E
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 03:41:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8D6B1C2137B
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 03:46:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79EF118C020;
-	Fri, 25 Oct 2024 03:41:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C89CD18C034;
+	Fri, 25 Oct 2024 03:46:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="shTyDLwQ";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="XJPQT9pf"
-Received: from fhigh-a5-smtp.messagingengine.com (fhigh-a5-smtp.messagingengine.com [103.168.172.156])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="homTtz1q"
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0237A12CD88;
-	Fri, 25 Oct 2024 03:41:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6838523B0;
+	Fri, 25 Oct 2024 03:46:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729827708; cv=none; b=snMwAN6pl02GjDGsz6hLm8v4M14iWhiFzSo4q4/N8t8L+YvI0wWbMfzogiFj6NvCT+NkpgX9ZQX8d82LYZE1T/g/WtZlOHXBsLzkuRcLfvBJo6uG59ujznx+lQznaHOA9PucjSNqK7aTxMs1cIGE+qaDHUnrjXYZa2uj4G1IDYA=
+	t=1729827970; cv=none; b=LZtRUdnuWqlB68Ml22l2Y1HZy0i+Hxtk/Gmf0wE2Y0PLUECQ9sQRXJXDD9EYPy5J8jFEbQUv9GJfkETOCgmNKYX6EWFqoO41cUNP/o+vVuowbH5RPO7mWUcbRlIExqG36uQVuYfdp7ozF3F8o9g9Ct2kDHZz4v6E+Ja68zWJCks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729827708; c=relaxed/simple;
-	bh=QFFtBJzAZAp2FrLiSmCcVMgaZP7MAdsUChE27fQNMBM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=vEbAHkRFSnjjJb/VIuP6dxem9AAb+Q4/XxCDGqt70+539YMbey/pSvt3NZABXaC0kXHV9LwyzaH4CFv/omRbRS34QHDK/NF1y2CvSMGu74aKe+4t9vmYeqTonw07p+f00B0CBm6UBwWhEI1PK0n9BKEAh+cIJCY2Linf6qyRxpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=shTyDLwQ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=XJPQT9pf; arc=none smtp.client-ip=103.168.172.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
-Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id D025E114018B;
-	Thu, 24 Oct 2024 23:41:43 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-01.internal (MEProxy); Thu, 24 Oct 2024 23:41:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
-	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
-	:from:in-reply-to:message-id:mime-version:reply-to:subject
-	:subject:to:to; s=fm3; t=1729827703; x=1729914103; bh=hGbndDvPKU
-	T6KhzJcrOUEZbPMjMh5KNkkA/oX8Q0dNU=; b=shTyDLwQnYFZKH4sdHIYlvjwH4
-	ojGjW0FglhBwTRuaKDXosPwWrNqAjTTfKCL/do/Zwsctuco3082v5qr//iaLpU4k
-	ww6S39304W++AH1cTgt+lpKX4tKGDykbpWBdQVLjSW5jrqT7EdHvofMW2m7sLem8
-	YNGU+T/u+5vhswYOqHKKjlwgERNVlHoI4ezcdwcnrMDxfCbTlQsVvDEk0P8Kx0AU
-	9t/C8TNpG7zrhqtWaDkyJ5EkBE9KvDpFTZGkqPFr4GRw3FBytUFvZeOsj3y+IO9p
-	6MZRiGk0lqA79kY6ZiFYboHyJ/sQ0UjBRX73FZPLARbJLTyPtBF8rVdeECHA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm3; t=1729827703; x=1729914103; bh=hGbndDvPKUT6KhzJcrOUEZbPMjMh
-	5KNkkA/oX8Q0dNU=; b=XJPQT9pfH1uxMnbKR9Yi0/hufT1urt2HUSTjH1REm76Y
-	p0KB+2Zd0ckmVFBs3z9VY4iCD/hy9/nd/OgrdbQk4qXVeu568MiI4agJsGAnhmHe
-	0R/Q9bmH4EZC1OC/YLajU5ZHGRpioGsFq5UxenW/G1OHAjIIPB8rEU+Y9BzLYqnd
-	Gn5CYtYsan640bIxt17nSrhw41yEPH5fZzR0KuZ57ybXCsIvfSn1GOAqlCqS0T3G
-	XFWXMnMEutnZ2AMEZcXZibFHfoZYZevqgyN0muetAcYtvofmIWh3oeGB44n5K4vM
-	6e7ONhF7OKlJjopU8cqp18zoaSXxZ16WcAYULfFHAA==
-X-ME-Sender: <xms:dxMbZ7542-OO7h8ZeEqMEQxDiRe2hnJYXpsYgO9N7pukSDZWMKIDsw>
-    <xme:dxMbZw45C45E80GqudxFIOG0SuLgExxqSBxN-Llmx1egXJqMSwY8FAr5esuCPdHK7
-    ZfB8prmkBLD-6GIHUs>
-X-ME-Received: <xmr:dxMbZyc3UkSJpZYUqlJC1A5J_Y5rVVrWrGf4DVTnHxDTTsdd53TkTYs5WPokv7MYJ33ejTUvASvqko7IOdqP-2_pkLnzkzesgW4W0S2tLqxHAg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdejuddgjeegucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhephffvvefufffkofgggfestdekredtredttdenucfh
-    rhhomhepvfgrkhgrshhhihcuufgrkhgrmhhothhouceoohdqthgrkhgrshhhihesshgrkh
-    grmhhotggthhhirdhjpheqnecuggftrfgrthhtvghrnhepgefgheelheejieelheevfeek
-    hfdtfeeftdefgefhkeffteduveejgeekvefhvdeunecuffhomhgrihhnpehkvghrnhgvlh
-    drohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhm
-    pehoqdhtrghkrghshhhisehsrghkrghmohgttghhihdrjhhppdhnsggprhgtphhtthhope
-    egpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehlihhnuhigudefleegqdguvghv
-    vghlsehlihhsthhsrdhsohhurhgtvghfohhrghgvrdhnvghtpdhrtghpthhtoheplhhinh
-    hugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshht
-    rggslhgvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepvggumhhunhgurd
-    hrrghilhgvsehprhhothhonhdrmhgv
-X-ME-Proxy: <xmx:dxMbZ8LxZeNrmFsb-Lza1Jd4KcqiRx1W20RWBqCk0trVdTVyr7lt7g>
-    <xmx:dxMbZ_L_t8AZhhBtCH3ZU44Pf5ABWjisgfemKvufSkLJ19jRYPI8Ig>
-    <xmx:dxMbZ1wCSq7F8rj0K4vLrk3wVFio3M0GVrqocqFI7uaXVim24Y2g-g>
-    <xmx:dxMbZ7I6DxvypIxLRKc4mfk1SruYrq-c_v55vuklWJVumC-Dgl37rA>
-    <xmx:dxMbZ8GtFlHLjNkP5wRRrFyMh0kqWiRi-TxbZzmbCBJq8s5COXpLDEN8>
-Feedback-ID: ie8e14432:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 24 Oct 2024 23:41:42 -0400 (EDT)
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-To: linux1394-devel@lists.sourceforge.net
-Cc: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	Edmund Raile <edmund.raile@proton.me>
-Subject: [PATCH] firewire: core: fix invalid port index for parent device
-Date: Fri, 25 Oct 2024 12:41:37 +0900
-Message-ID: <20241025034137.99317-1-o-takashi@sakamocchi.jp>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1729827970; c=relaxed/simple;
+	bh=IpSDviff1S3+091J4xvIHrzHFLBNwc8q7usHNs+O0Lk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=a8eRz8re/OX1G+M/UMwUo9WlceXyrQJu3IZXIDrBK+UDk1obd3UmVWfdFY2SwvJVl+XyzK6c6olqBQAJJNjzA+FzKIH95u1UyX8OHhEyqM/7bbpiJ0osrSiBDopPjLP4Qid8GsWFFg8LioKDKGRjr8DRidbMFaq1YkfzzmTjcJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=homTtz1q; arc=none smtp.client-ip=209.85.215.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-7ea9739647bso1058974a12.0;
+        Thu, 24 Oct 2024 20:46:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729827967; x=1730432767; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=s/Cmq2CEq+3uxXR5Vbe4rzkkmedKYgo3PQp1L/DKxjY=;
+        b=homTtz1qbGlY18BFDOGq43gsrffZERSDc0CEFxibTrmPJM8ml2+CtFVNQUrjXHvS05
+         8vV3//6ktAyevTvR2AtXWqY6RDzecUtOAUKfFCpRFtpy8HRmNiTsp2shmASXD17ZPEAS
+         SP4kEQZPrrBTUaM0tBzGLx9V2ni3zjrx/sh/N+s5j2hLpVT0X7z7CN8w3Fd3vsnqAVDt
+         8xHvInLIZBWAbUNSm/mHsS9P0cAB6uzkmOyjgZi8WqTqpmW0TevMw1JR4l11y4P1Asct
+         Z7D7L2+Q3dBBhLn7v5COTDeyyDX3nJE/ftWt5Tdn9OwfVY83iAX/9wqwY8odzha3iyWc
+         Jl3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729827967; x=1730432767;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=s/Cmq2CEq+3uxXR5Vbe4rzkkmedKYgo3PQp1L/DKxjY=;
+        b=uz9PMWvLR0mSrrUWyj7eP1mec+D5CCmv5IsULsYogZqZd6W1AiljuGfLjOUtUw3RJG
+         Z68z9+eyANFt9wRJDvsZ0eFYDXcVvM7rfuGoMPqlaIjtnDBsHqlcJbkLbHaNh6N00RO8
+         A3kkQHamFxkGhWiZOEgvt8H2ikbvAWuqWPHF9AbJIc27RbOBnCSj2pBF/XLA06TO61jv
+         jGFJT8zsY1JqZBI06y1T3YFprXXh632U8XP26AK6fLcHk7dKs1pIm8adSUHwWDx0wfv5
+         MJI0/dYUz5RWmQSypwaNNCr58EOr8KY6nK7xDBGdzLkiVB+Rb9HRDt83UIhGEybrqHzb
+         It2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVncdXwp0nggoxqEeydawQPozWtYGZgrG6dXjp3Um1s7fj84zRlPE5l/FFPwgQrWNFJfjMPYY6k56U5VdqM@vger.kernel.org, AJvYcCW+jiBntODavN2O+t6LtPMdyth8QGgHPomM9dIfW2OOMCCPMjr7AAhPJeAqjUIpTZi4a0KISqn95WLU@vger.kernel.org, AJvYcCXvjQ9fLUDjg0F8rHRyeOh6I11KZtCh0K990wa3uea9cC3L/X9UfiedQC26Ggg0jwOfVEo00ywkm5bpjIPE@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkogV/btVyXiHgtlCqhx8u/wbICUjz5cZ3bB4y7RaZVor8Fz5b
+	3e675nuyyXluYMPjvhck8woDcv3Jhya1v2ZnDHDbQjX+OcxipT7nTcDKNg==
+X-Google-Smtp-Source: AGHT+IGX0smSJ6X3tJWPAEU44ev3GBgQVSNg/eJRYX7tN2JSEy/lPJC2mpLw4jCaABJJ5/DxtFsMlA==
+X-Received: by 2002:a05:6a21:3a96:b0:1d9:3b81:cdd3 with SMTP id adf61e73a8af0-1d9898ff76fmr5252861637.1.1729827967180;
+        Thu, 24 Oct 2024 20:46:07 -0700 (PDT)
+Received: from dw-tp.ibmuc.com ([171.76.85.20])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e5df40265fsm3463176a91.0.2024.10.24.20.46.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Oct 2024 20:46:06 -0700 (PDT)
+From: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
+To: linux-ext4@vger.kernel.org
+Cc: Theodore Ts'o <tytso@mit.edu>,
+	Jan Kara <jack@suse.cz>,
+	"Darrick J . Wong" <djwong@kernel.org>,
+	Christoph Hellwig <hch@infradead.org>,
+	John Garry <john.g.garry@oracle.com>,
+	Ojaswin Mujoo <ojaswin@linux.ibm.com>,
+	Dave Chinner <david@fromorbit.com>,
+	linux-kernel@vger.kernel.org,
+	linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	"Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
+Subject: [PATCH 0/6] ext4: Add atomic write support for DIO
+Date: Fri, 25 Oct 2024 09:15:49 +0530
+Message-ID: <cover.1729825985.git.ritesh.list@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -100,43 +89,45 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In a commit 24b7f8e5cd65 ("firewire: core: use helper functions for self
-ID sequence"), the enumeration over self ID sequence was refactored with
-some helper functions with KUnit tests. These helper functions are
-guaranteed to work expectedly by the KUnit tests, however their application
-includes a mistake to assign invalid value to the index of port connected
-to parent device.
+This series adds the base feature support to enable atomic writes in
+direct-io path for ext4. We advertise the minimum and the maximum atomic
+write unit sizes via statx on a regular file.
 
-This bug affects the case that any extra node devices which has three or
-more ports are connected to 1394 OHCI controller. In the case, the path
-to update the tree cache could hits WARN_ON(), and gets general protection
-fault due to the access to invalid address computed by the invalid value.
+This series allows users to utilize atomic write support using -
+1. on bs < ps systems via - mkfs.ext4 -F -b 16384 /dev/sda
+2. on bs = ps systems via bigalloc - mkfs.ext4 -O bigalloc -F -b 4096 -C 65536 /dev/sda
 
-This commit fixes the bug to assign correct port index.
+This can then be utilized using -
+	xfs_io -fdc "pwrite -V 1 -A -b16k 0 16k" /mnt/f1
 
-Cc: stable@vger.kernel.org
-Reported-by: Edmund Raile <edmund.raile@proton.me>
-Closes: https://lore.kernel.org/lkml/8a9902a4ece9329af1e1e42f5fea76861f0bf0e8.camel@proton.me/
-Fixes: 24b7f8e5cd65 ("firewire: core: use helper functions for self ID sequence")
-Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
----
- drivers/firewire/core-topology.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This is built on top of John's DIO atomic write series for XFS [1].
+The VFS and block layer enablement for atomic writes were merged already.
 
-diff --git a/drivers/firewire/core-topology.c b/drivers/firewire/core-topology.c
-index 6adadb11962e..892b94cfd626 100644
---- a/drivers/firewire/core-topology.c
-+++ b/drivers/firewire/core-topology.c
-@@ -204,7 +204,7 @@ static struct fw_node *build_tree(struct fw_card *card, const u32 *sid, int self
- 				// the node->ports array where the parent node should be.  Later,
- 				// when we handle the parent node, we fix up the reference.
- 				++parent_count;
--				node->color = i;
-+				node->color = port_index;
- 				break;
- 
- 			case PHY_PACKET_SELF_ID_PORT_STATUS_CHILD:
--- 
-2.45.2
+[1]: https://lore.kernel.org/linux-xfs/20241019125113.369994-1-john.g.garry@oracle.com/
+
+RFC -> PATCH:
+- Dropped RFC tag
+- Last RFC was posted a while ago but back then a lot of VFS and block layer
+  interfaces were still not merged. Those are now merged, thanks to John and
+  everyone else.
+- [RFC] - https://lore.kernel.org/linux-ext4/cover.1709356594.git.ritesh.list@gmail.com/
+
+Ritesh Harjani (IBM) (6):
+  ext4: Add statx support for atomic writes
+  ext4: Check for atomic writes support in write iter
+  ext4: Support setting FMODE_CAN_ATOMIC_WRITE
+  ext4: Warn if we ever fallback to buffered-io for DIO atomic writes
+  iomap: Lift blocksize restriction on atomic writes
+  ext4: Add atomic write support for bigalloc
+
+ fs/ext4/ext4.h       | 14 +++++++++++++-
+ fs/ext4/file.c       | 27 ++++++++++++++++++++++++++-
+ fs/ext4/inode.c      | 27 +++++++++++++++++++++++++++
+ fs/ext4/super.c      | 37 +++++++++++++++++++++++++++++++++++++
+ fs/iomap/direct-io.c |  2 +-
+ 5 files changed, 104 insertions(+), 3 deletions(-)
+
+--
+2.46.0
 
 
