@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-381957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C9439B06B7
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:02:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1104A9B06C4
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:02:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F8D01C2277F
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:02:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C44D32834AF
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:02:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1CE82064EF;
-	Fri, 25 Oct 2024 15:00:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3234620BB49;
+	Fri, 25 Oct 2024 15:00:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LYLss4zR"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KA6neiaP"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9B78185B7B
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 15:00:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62749166F23
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 15:00:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729868447; cv=none; b=djk0kUCwp+hGekMYNDzCncpGH9tqKP26ciIcxCXPvURMFFOfqRvyzVF8PH5iG9jH0pUJbwkrtuMwA1NyB+07dijRg+arKu/7kPW6vn4IIlQoGyNl/66vNnxpx8nubg6Nq8for4uQr2iNkSL+0bMDDR3Npg6i4hVWyWa2MY3jYd8=
+	t=1729868450; cv=none; b=ZYnc2q+q+8Esp7lmbAVE+lenuEUIKOGaC0cryXuvkOr5ZgG6pgaNLuMogit7cYO/o9rPolpx7PHN4OCxJW1WBei48Kk5+Ia4c14PJT2aNfTOOU+wr0Z7H64sH7uP74GtVu4tqn/+V/1TlVUSUrv9T33bkOzF8z7QnwWNVx8Xcss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729868447; c=relaxed/simple;
-	bh=s6xBjYgC8JsEjVYTXZALRaY3DljRr0l2UeRg0HzxlUs=;
+	s=arc-20240116; t=1729868450; c=relaxed/simple;
+	bh=YCSleCRL8+zgmB0F5bhpOuGHDhDr1YVS5o/lIBwlqhI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nJtbS72V4axtsscwvKldOsI7yIELCn8ujoahDqw8ngfOFaSUJExKRDWxK+IFF+98D4Ba177cFTFJGbbo2L6/aXbSIvq6gFpDagnQz9D3rKBi9samu9qBMGgGcl5duADLj8TazO4KUXu7Wey5lz/Dj1nwNsPhB1o/We6edpXlb0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LYLss4zR; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version; b=baEkGvho+XjQHDjNQg7RVvjxnbXIvqgIe2z/8/cDkGlPJZpzSb0A9JwpyANIfIGUeo+xkRkLhNYfuIOAmrVg40ptWbTBNqUa/7ellbJpY3UNJ1qR7z92PTrrOW19tkLYBDk3IOoyNQty9P4iRxpfsI9lN10LkQowYgZOmrfUSXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KA6neiaP; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729868442;
+	s=mimecast20190719; t=1729868444;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ryss9fvWehXfEU+PDJn7zlGdxW8bFi37+f8Je+z7dQs=;
-	b=LYLss4zRzRg2Bi4zIc0gF+BDtc2tiiJKRudJ1rVGOPa3j1n2kFEIzGOGyDvCM9vyJ9+796
-	IWqf/yvdoOB2FgMl3fm+4TcBtZz6ONkXBIZS+d63Cl8P1Eyj5G7LyA/x5X8dILoKfpnZ42
-	rsrxTSDQkRtgeYibysNh+NYD8y/2YF0=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=W8Pv00ipT6Qdh9I20/5aALEzhWkgYoXaIfeUPDxIxig=;
+	b=KA6neiaPBqnoRKFTAcRAYcFH+6JOEEpN0zwJqx1xLw13CwhzwHGwkYX5r5O7kggy6e6pNp
+	ZImS6zBaS+ntVdOWu6KUcTQnWlVSD6puwTGL7vqyit3aX9Bm7LDaRuAn/F14FBMqHhOajy
+	ZUmw5qNfkhvcFmdCtcQ0Neclq01aa7k=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-433-p4Og4kEXM0qyXdxZeWOHvQ-1; Fri, 25 Oct 2024 11:00:41 -0400
-X-MC-Unique: p4Og4kEXM0qyXdxZeWOHvQ-1
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-37d432f9f5eso1117808f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 08:00:41 -0700 (PDT)
+ us-mta-54-XTJwOMmyOCGeMMpDql2rxw-1; Fri, 25 Oct 2024 11:00:43 -0400
+X-MC-Unique: XTJwOMmyOCGeMMpDql2rxw-1
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-37d5116f0a6so1025064f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 08:00:43 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729868440; x=1730473240;
+        d=1e100.net; s=20230601; t=1729868442; x=1730473242;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ryss9fvWehXfEU+PDJn7zlGdxW8bFi37+f8Je+z7dQs=;
-        b=nXSM0NFwqlQhiSfMOsht1EfB6eCwbA5aOyHRrbxlWxiq21oKC0pAdPFaCQvtyw/cZJ
-         jYm7/ZN/k8X6SfZVBZnEbOVaPb/XeELwjJBvERu5q2ojkVkVLjJNe3jNPxCkOc1xg1VK
-         zdRDwgrq8LGhPlxoelB0qwa6NAnYzRA/HzezCLfcrnk9k0pvnjRDnxzdSj7gf8Xhg49W
-         YVuo+lshVLeDZ4vfHPvo4tSB8jNEAViK40uSfga+jyJHc3LrzHws5mcELGnpOV2KyTyR
-         8iLqIRT2ziO5qAXygul5Vg+/CHNOLzRZGft8kitlW1dt73RchqnEUTKqhyBVojCfN4Xq
-         3vCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW6yQUaYRR53+AbuCPDLZZc2ROoYGY3MvDeeLZqZqVIq10rO/lia2S5ywsJ/e9J0mQWa6p68P5ve8ccPqs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhvCY1kI0piaHjN24mbjgpehSeRtlEtaFjSrZOjZjFj+cqYG8a
-	2RVQ2N7B17iM5CNLkhdGMVeASJAqsuK8JL+ag8CEnh7a/oWnHgQpwf6zfR84QSF8BKkBySz+Ayj
-	ztttgssyBU5il47w06zQFQObaOe/k+PS8oz9yfn9axLoM5cU06LXDscMJQbsIqQ==
-X-Received: by 2002:a5d:56c2:0:b0:374:c17a:55b5 with SMTP id ffacd0b85a97d-37efcf06dc1mr6436979f8f.14.1729868439446;
-        Fri, 25 Oct 2024 08:00:39 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF8ckOXkNlZIey2we3esP6YdjimmyCdm/ffeP6OkAIjJrVOU9m50FFPLlquaywIvtz5sXMgiw==
-X-Received: by 2002:a5d:56c2:0:b0:374:c17a:55b5 with SMTP id ffacd0b85a97d-37efcf06dc1mr6436886f8f.14.1729868438713;
-        Fri, 25 Oct 2024 08:00:38 -0700 (PDT)
+        bh=W8Pv00ipT6Qdh9I20/5aALEzhWkgYoXaIfeUPDxIxig=;
+        b=GshWkM/1Hvqso47s1GO2QH/fDGuKy3p8JIVORWRN9bxH9GWG2hiHZhGvxzuTQP0tuQ
+         fOSAjD2WR0oBZdQdaWAYg1r5OrHkYTJcxHMbhxCUNcKpTo83PwO5wMMfve7xAColXiSD
+         WBI8+xP4wgDL5G6Hmmgj5r0/T4i3eo45y2yvRj8zpO2bn39XmHBtENwIdgDPdUQMKOvZ
+         ikpWz62X3RJw+73HRBKThkKASRYWR7r4t0+ZsEgCMMNR9oqJ9WDfKwE8LbhsHGby7Hp4
+         fKyOtLOP+5is/Wci64b2Ksm9QpVDOp2vM5nBRejxL85IKoCnTzQrGdt4hh8ydVWdC71y
+         Xn4g==
+X-Forwarded-Encrypted: i=1; AJvYcCW0kmTJl4JvjTb8kzD2ZzwPTxxrcYqSbvNfXOAYr7g0HcqkzgDceEwlHU18UEUw9jG5xjeuNNZfWKbJobA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+HNDwdCjhajTlec24ytz1GyGeldkaxINduIpmKPMj8iccrc/e
+	1RsXHHxQn8aVSt3spnKFUuexRfPN+0NKQqpFGKp0Gy9Dj2UlWoKoP5UttyId8XKQDjIwwkpC575
+	L0jJN5kLQy+ZQSXTxa7eKZ2SjIR8jiR1GKGak8b4XPWrFUyqF5GVGXoXd4Nr8PA==
+X-Received: by 2002:a5d:6604:0:b0:378:89d8:8242 with SMTP id ffacd0b85a97d-37efcf15f2amr6047611f8f.26.1729868442462;
+        Fri, 25 Oct 2024 08:00:42 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFseA1GnH6pKk4l885xPTSVzTwbgSgavQh+OieTeQi98Ek+SEn6EQGbHopZP84s8uTkOnT8ug==
+X-Received: by 2002:a5d:6604:0:b0:378:89d8:8242 with SMTP id ffacd0b85a97d-37efcf15f2amr6047433f8f.26.1729868440625;
+        Fri, 25 Oct 2024 08:00:40 -0700 (PDT)
 Received: from eisenberg.fritz.box (200116b82de5ba00738ac8dadaac7543.dip.versatel-1u1.de. [2001:16b8:2de5:ba00:738a:c8da:daac:7543])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b9216fsm1727189f8f.100.2024.10.25.08.00.37
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b9216fsm1727189f8f.100.2024.10.25.08.00.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2024 08:00:38 -0700 (PDT)
+        Fri, 25 Oct 2024 08:00:40 -0700 (PDT)
 From: Philipp Stanner <pstanner@redhat.com>
 To: Jonathan Corbet <corbet@lwn.net>,
 	Damien Le Moal <dlemoal@kernel.org>,
@@ -124,9 +124,9 @@ Cc: linux-doc@vger.kernel.org,
 	linux-pci@vger.kernel.org,
 	linux-serial@vger.kernel.org,
 	linux-sound@vger.kernel.org
-Subject: [PATCH 02/10] ata: ahci: Replace deprecated PCI functions
-Date: Fri, 25 Oct 2024 16:59:45 +0200
-Message-ID: <20241025145959.185373-3-pstanner@redhat.com>
+Subject: [PATCH 03/10] crypto: qat - replace deprecated PCI functions
+Date: Fri, 25 Oct 2024 16:59:46 +0200
+Message-ID: <20241025145959.185373-4-pstanner@redhat.com>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <20241025145959.185373-1-pstanner@redhat.com>
 References: <20241025145959.185373-1-pstanner@redhat.com>
@@ -138,7 +138,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-pcim_iomap_regions_request_all() and pcim_iomap_table() have been
+pcim_iomap_table() and pcim_iomap_regions_request_all() have been
 deprecated by the PCI subsystem in commit e354bb84a4c1 ("PCI: Deprecate
 pcim_iomap_table(), pcim_iomap_regions_request_all()").
 
@@ -146,60 +146,70 @@ Replace these functions with their successors, pcim_iomap() and
 pcim_request_all_regions().
 
 Signed-off-by: Philipp Stanner <pstanner@redhat.com>
-Acked-by: Damien Le Moal <dlemoal@kernel.org>
+Acked-by: Giovanni Cabiddu <giovanni.cabiddu@intel.com>
 ---
- drivers/ata/acard-ahci.c | 6 ++++--
- drivers/ata/ahci.c       | 6 ++++--
- 2 files changed, 8 insertions(+), 4 deletions(-)
+ drivers/crypto/intel/qat/qat_420xx/adf_drv.c | 11 ++++++++---
+ drivers/crypto/intel/qat/qat_4xxx/adf_drv.c  | 11 ++++++++---
+ 2 files changed, 16 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/ata/acard-ahci.c b/drivers/ata/acard-ahci.c
-index 547f56341705..3999305b5356 100644
---- a/drivers/ata/acard-ahci.c
-+++ b/drivers/ata/acard-ahci.c
-@@ -370,7 +370,7 @@ static int acard_ahci_init_one(struct pci_dev *pdev, const struct pci_device_id
- 	/* AHCI controllers often implement SFF compatible interface.
- 	 * Grab all PCI BARs just in case.
- 	 */
--	rc = pcim_iomap_regions_request_all(pdev, 1 << AHCI_PCI_BAR, DRV_NAME);
-+	rc = pcim_request_all_regions(pdev, DRV_NAME);
- 	if (rc == -EBUSY)
- 		pcim_pin_device(pdev);
- 	if (rc)
-@@ -386,7 +386,9 @@ static int acard_ahci_init_one(struct pci_dev *pdev, const struct pci_device_id
- 	if (!(hpriv->flags & AHCI_HFLAG_NO_MSI))
- 		pci_enable_msi(pdev);
+diff --git a/drivers/crypto/intel/qat/qat_420xx/adf_drv.c b/drivers/crypto/intel/qat/qat_420xx/adf_drv.c
+index f49818a13013..788a11cdb34b 100644
+--- a/drivers/crypto/intel/qat/qat_420xx/adf_drv.c
++++ b/drivers/crypto/intel/qat/qat_420xx/adf_drv.c
+@@ -129,16 +129,21 @@ static int adf_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	/* Find and map all the device's BARS */
+ 	bar_mask = pci_select_bars(pdev, IORESOURCE_MEM) & ADF_GEN4_BAR_MASK;
  
--	hpriv->mmio = pcim_iomap_table(pdev)[AHCI_PCI_BAR];
-+	hpriv->mmio = pcim_iomap(pdev, AHCI_PCI_BAR, 0);
-+	if (!hpriv->mmio)
-+		return -ENOMEM;
+-	ret = pcim_iomap_regions_request_all(pdev, bar_mask, pci_name(pdev));
++	ret = pcim_request_all_regions(pdev, pci_name(pdev));
+ 	if (ret) {
+-		dev_err(&pdev->dev, "Failed to map pci regions.\n");
++		dev_err(&pdev->dev, "Failed to request PCI regions.\n");
+ 		goto out_err;
+ 	}
  
- 	/* save initial config */
- 	ahci_save_initial_config(&pdev->dev, hpriv);
-diff --git a/drivers/ata/ahci.c b/drivers/ata/ahci.c
-index 45f63b09828a..2043dfb52ae8 100644
---- a/drivers/ata/ahci.c
-+++ b/drivers/ata/ahci.c
-@@ -1869,7 +1869,7 @@ static int ahci_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	/* AHCI controllers often implement SFF compatible interface.
- 	 * Grab all PCI BARs just in case.
- 	 */
--	rc = pcim_iomap_regions_request_all(pdev, 1 << ahci_pci_bar, DRV_NAME);
-+	rc = pcim_request_all_regions(pdev, DRV_NAME);
- 	if (rc == -EBUSY)
- 		pcim_pin_device(pdev);
- 	if (rc)
-@@ -1893,7 +1893,9 @@ static int ahci_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	if (ahci_sb600_enable_64bit(pdev))
- 		hpriv->flags &= ~AHCI_HFLAG_32BIT_ONLY;
+ 	i = 0;
+ 	for_each_set_bit(bar_nr, &bar_mask, PCI_STD_NUM_BARS) {
+ 		bar = &accel_pci_dev->pci_bars[i++];
+-		bar->virt_addr = pcim_iomap_table(pdev)[bar_nr];
++		bar->virt_addr = pcim_iomap(pdev, bar_nr, 0);
++		if (!bar->virt_addr) {
++			dev_err(&pdev->dev, "Failed to ioremap PCI region.\n");
++			ret = -ENOMEM;
++			goto out_err;
++		}
+ 	}
  
--	hpriv->mmio = pcim_iomap_table(pdev)[ahci_pci_bar];
-+	hpriv->mmio = pcim_iomap(pdev, ahci_pci_bar, 0);
-+	if (!hpriv->mmio)
-+		return -ENOMEM;
+ 	pci_set_master(pdev);
+diff --git a/drivers/crypto/intel/qat/qat_4xxx/adf_drv.c b/drivers/crypto/intel/qat/qat_4xxx/adf_drv.c
+index 659905e45950..115eabfd1f6b 100644
+--- a/drivers/crypto/intel/qat/qat_4xxx/adf_drv.c
++++ b/drivers/crypto/intel/qat/qat_4xxx/adf_drv.c
+@@ -131,16 +131,21 @@ static int adf_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	/* Find and map all the device's BARS */
+ 	bar_mask = pci_select_bars(pdev, IORESOURCE_MEM) & ADF_GEN4_BAR_MASK;
  
- 	/* detect remapped nvme devices */
- 	ahci_remap_check(pdev, ahci_pci_bar, hpriv);
+-	ret = pcim_iomap_regions_request_all(pdev, bar_mask, pci_name(pdev));
++	ret = pcim_request_all_regions(pdev, pci_name(pdev));
+ 	if (ret) {
+-		dev_err(&pdev->dev, "Failed to map pci regions.\n");
++		dev_err(&pdev->dev, "Failed to request PCI regions.\n");
+ 		goto out_err;
+ 	}
+ 
+ 	i = 0;
+ 	for_each_set_bit(bar_nr, &bar_mask, PCI_STD_NUM_BARS) {
+ 		bar = &accel_pci_dev->pci_bars[i++];
+-		bar->virt_addr = pcim_iomap_table(pdev)[bar_nr];
++		bar->virt_addr = pcim_iomap(pdev, bar_nr, 0);
++		if (!bar->virt_addr) {
++			dev_err(&pdev->dev, "Failed to ioremap PCI region.\n");
++			ret = -ENOMEM;
++			goto out_err;
++		}
+ 	}
+ 
+ 	pci_set_master(pdev);
 -- 
 2.47.0
 
