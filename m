@@ -1,71 +1,83 @@
-Return-Path: <linux-kernel+bounces-381159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E161C9AFB51
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 09:43:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0E7D9AFB52
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 09:44:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1EA5A1C21C23
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 07:43:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66E761F22750
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 07:44:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED8BA1B85CD;
-	Fri, 25 Oct 2024 07:43:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4EB618BC34;
+	Fri, 25 Oct 2024 07:44:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="V0NHcwcs"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="s8MAiDCH"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B36C31B2185;
-	Fri, 25 Oct 2024 07:42:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB0A61B393A
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 07:44:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729842181; cv=none; b=DUT7kpGKmFu8Eydc9V1oK1lAHvdP3o2U51Jtt59WtYXEVbGPEj7At8Nyh5sAjsZqRIVPnq3IN6OBdQIc6wG8S1XiXPbE67/neM+KKVcp4Az1xn+TsP76qC3rlTX7Uxv2stsz/B+QgsqMbQQ4xpAp6eAW9ZTPVxjqHLs/mDkxIQo=
+	t=1729842258; cv=none; b=Bar6C/extdWR4NHQU/UUYNsLWg5kudzUaXUj3SKI7qXTXlfyQHYa+SEHJBuowwdQXle2LHIc0hlRiVQe5dJyrm78VPWY8wicesX/HR+NXEPw2XBQJTyOTwipmJGypwJSG5A4l9e/uJVHBRdJlSlU4W8xqXdoxu78mXeMWbChn80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729842181; c=relaxed/simple;
-	bh=VRcbP3OAbFoSwSqNqfosv/0smAfY8fDeq48XQuD940Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m3Yh/7Nisjbj7Lf68GoyMvvFdFCMnRAfRc0lA0aEe8qp6LPffwpCxvf1IwSnzXM+nXvHjiwmJpuvfiCdwknrHg8p4JRsNAQZdJqJ9x5siyDnGeg1aypmY9nOpVtC5zz3VyURw4xkkHi+VWqhfWHXQU+LiFRJ5Ozf41N/tVvD6PE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=V0NHcwcs; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=Oyz3AH73jsvhVuXMvukfXv65WS9wp+HqrXkM26N9vJA=; b=V0NHcwcsuxdvKzX6wLX6w2QjPl
-	hwQ9HeHnsPa5m5iToxLcJVUcjwqRu15DO9EAUV0QQzHoW3FWDTkDPB146XOSRbDixULZZdd+sQoB/
-	h759sk759Vnxe5iEa6rXDG93SYvAR49+cFxWSPGN+ca9AneGxFt/XCATxAuW/SaGe9WgUvJm0qvTk
-	aMF0lxHntpStWCNittH0792WL+K3Ce5zCswq7V2gj2gEyAGSPIKR1sTiU66iCQWBs+4T8fXkJnG1a
-	oztq3Xiu24GdhNPG+DtUtRRQvh3z/QNC3n9ZAsVeO6XEVqTjzAFvaraslBH0Il5ZSY30n5Q4UjhSx
-	GFrYWFHg==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1t4Ey4-00000008r2u-41M1;
-	Fri, 25 Oct 2024 07:42:45 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 96CFE30083E; Fri, 25 Oct 2024 09:42:44 +0200 (CEST)
-Date: Fri, 25 Oct 2024 09:42:44 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: "Christoph Lameter (Ampere)" <cl@gentwo.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Will Deacon <will@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Ingo Molnar <mingo@redhat.com>, Waiman Long <longman@redhat.com>,
-	Boqun Feng <boqun.feng@gmail.com>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-arch@vger.kernel.org
-Subject: Re: [PATCH v3] Avoid memory barrier in read_seqcount() through load
- acquire
-Message-ID: <20241025074244.GB14555@noisy.programming.kicks-ass.net>
-References: <20240912-seq_optimize-v3-1-8ee25e04dffa@gentwo.org>
- <20240917071246.GA27290@willie-the-truck>
- <4b546151-d5e1-22a3-a6d5-167a82c5724d@gentwo.org>
- <CAHk-=wgw3UErQuBuUOOfjzejGek6Cao1sSW4AosR9WPZ1dfyZg@mail.gmail.com>
- <CAHk-=wjdOX0t45a7aHerVPv_WBM3AmMi3sEp8xb19jpLFnk0dA@mail.gmail.com>
- <20241023194543.GD11151@noisy.programming.kicks-ass.net>
- <e9fd5ba0-bd84-76a8-a96e-1378c66d0774@gentwo.org>
+	s=arc-20240116; t=1729842258; c=relaxed/simple;
+	bh=dJo0OCZTS17hWD5C48chC43bhuVPP74TT2WmtHdlfvE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=m1w+bpfzX/qUxSCNx5m1iWjdYKv0JF5kpK4n90SnzwKH/aTxYJw3EzlKLlKZZbei9nwPnPtYE3EZMo1h9TDQ5UghZQZ4jb6h6xPU4lVM54Mec2qVZ6SKteM5Si8krl5g37hkSsv0Nf3yyV16GwmtnV+iaKjFxeqiZwjyQCm4cBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=s8MAiDCH; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-431616c23b5so12230045e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 00:44:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729842254; x=1730447054; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Shoxcp3h480bf/MaRlp7RFfSIiO1DRQ9b/G/3O5b+1c=;
+        b=s8MAiDCHHM6e6T7VxhUFbayzd4qgtIj4cZYFF3n6zDtPLJxfmyxcot6sxBOxcLxPjM
+         tof+7vuH4mkUHROxTvbZo9T2gfkz2VKTz2VH6AXR3Q8tBk5XudLPH6fP4C88Iuhd5HlA
+         Md19ndHsk8AADhGgK0SNpyfjkyNBIEEWOtK91kZBD/GqH+xx/Mvi9BBZtjGn29ArJbrx
+         yWAKiPvBws5M2lP0aR/g3zDRiZAGXMheWK1uzZq9kdsDn307yrdnrH4kH5auFfpevTlR
+         v8zoPMvPzUqthbfiImohmOnFwqCoGPr/xMbsABwI9or12L0tkW0ylXgt7i0gkcsqykVS
+         yR/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729842254; x=1730447054;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Shoxcp3h480bf/MaRlp7RFfSIiO1DRQ9b/G/3O5b+1c=;
+        b=TiY+Fj12iuBVLYhp4exmnoULOKgv5+x5bgnsmhreP9+JJTqILK77WtrAqjNY/zNK1k
+         BKhPnUXnRCfg7U1j5JjD68SFJ4YoGhARmNodGWeXHfrKpy2+d6j59dQ4Zt3r6GXbUwTy
+         jXKs6JdLh6t2tJKSzXOWkL1DZ8Uds3HQxU0PzJCmdvznyhez5c43BOrLPFlLZmBGxUbC
+         ggOaPFR0VuxibPAI+ihlmWocWXEmMKxbh0QWnYgpmVTGyprw5+SSPg5Aa15VqEjIzThc
+         QMgpc0jIVd/k1XUVAtBFCaRW4W/FcJWR8R83uqYi4FYkBoo34f+XX1Dc7RUV9vtZjfnH
+         IMoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUv5v/EbzE6gi8V93wKwbl4u3xVfDq8qNbhuj7QAV8yu0vBX6nEWLcyCz/2lwt1nYhDtnPBdF3MHw9YNmk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjPMOAsVLbSZXmV/XxcgtysFhsZGu8ie4+rF3meqJQdfNpWJqO
+	RbSftlA0nCDRhnDK2oQYfjVzHBdNcVGFMtTIyBASZuO/rMVEaReQy6EjL9MlpQk=
+X-Google-Smtp-Source: AGHT+IHqGpEQ/vKDPecI19Mf9I/hj7pHAGWAj1QEt5pPdkx4Mu+LCIjrnm1o5CIW71lKN73l8P+HoA==
+X-Received: by 2002:a05:600c:4689:b0:42c:b826:a26c with SMTP id 5b1f17b1804b1-4318b5a561cmr32758465e9.8.1729842254093;
+        Fri, 25 Oct 2024 00:44:14 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4319360d318sm9865635e9.47.2024.10.25.00.44.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Oct 2024 00:44:13 -0700 (PDT)
+Date: Fri, 25 Oct 2024 10:44:09 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: oe-kbuild@lists.linux.dev, Remi Pommarel <repk@triplefau.lt>,
+	ath10k@lists.infradead.org, linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
+	Kalle Valo <kvalo@kernel.org>, Jeff Johnson <jjohnson@kernel.org>,
+	Cedric Veilleux <veilleux.cedric@gmail.com>,
+	Vasanthakumar Thiagarajan <quic_vthiagar@quicinc.com>,
+	Remi Pommarel <repk@triplefau.lt>
+Subject: Re: [PATCH v2 2/2] wifi: ath10k: Flush only requested txq in
+ ath10k_flush()
+Message-ID: <60d579e2-5eb7-4239-9a23-95fa4b32f351@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,26 +86,76 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <e9fd5ba0-bd84-76a8-a96e-1378c66d0774@gentwo.org>
+In-Reply-To: <0f55986ebe34f2b5aa4ccbcb0bed445324099fbd.1729586267.git.repk@triplefau.lt>
 
-On Wed, Oct 23, 2024 at 04:42:36PM -0700, Christoph Lameter (Ampere) wrote:
-> On Wed, 23 Oct 2024, Peter Zijlstra wrote:
-> 
-> > > I doubt anybody will notice, and smp_load_acquire() is the future. Any
-> > > architecture that does badly on it just doesn't matter (and, as
-> > > mentioned, I don't think they even exist - "smp_rmb()" is generally at
-> > > least as expensive).
-> >
-> > Do we want to do the complementing patch and make write_seqcount_end()
-> > use smp_store_release() ?
-> >
-> > I think at least ARM (the 32bit thing) has wmb but uses mb for
-> > store_release. But I also think I don't really care about that.
-> 
-> The proper instruction would be something like
-> 
-> atomic_inc_release(&seqcount)
+Hi Remi,
 
-It would not be, making the increment itself atomic would make the whole
-thing far more expensive.
+kernel test robot noticed the following build warnings:
+
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Remi-Pommarel/wifi-ath10k-Implement-ieee80211-flush_sta-callback/20241022-172038
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/ath/ath.git ath-next
+patch link:    https://lore.kernel.org/r/0f55986ebe34f2b5aa4ccbcb0bed445324099fbd.1729586267.git.repk%40triplefau.lt
+patch subject: [PATCH v2 2/2] wifi: ath10k: Flush only requested txq in ath10k_flush()
+config: parisc-randconfig-r071-20241024 (https://download.01.org/0day-ci/archive/20241025/202410251152.A5axJliR-lkp@intel.com/config)
+compiler: hppa-linux-gcc (GCC) 14.1.0
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+| Closes: https://lore.kernel.org/r/202410251152.A5axJliR-lkp@intel.com/
+
+New smatch warnings:
+drivers/net/wireless/ath/ath10k/mac.c:8076 _ath10k_mac_wait_tx_complete() error: uninitialized symbol 'empty'.
+
+vim +/empty +8076 drivers/net/wireless/ath/ath10k/mac.c
+
+c4f7022f0ef0aa Remi Pommarel     2024-10-22  8062  static void _ath10k_mac_wait_tx_complete(struct ath10k *ar,
+c4f7022f0ef0aa Remi Pommarel     2024-10-22  8063  					 unsigned long queues)
+5e3dd157d7e70f Kalle Valo        2013-06-12  8064  {
+affd321733eebc Michal Kazior     2013-07-16  8065  	bool skip;
+d4298a3a8c92a1 Nicholas Mc Guire 2015-06-15  8066  	long time_left;
+c4f7022f0ef0aa Remi Pommarel     2024-10-22  8067  	unsigned int q;
+5e3dd157d7e70f Kalle Valo        2013-06-12  8068  
+5e3dd157d7e70f Kalle Valo        2013-06-12  8069  	/* mac80211 doesn't care if we really xmit queued frames or not
+d6dfe25c8bb200 Marcin Rokicki    2017-02-20  8070  	 * we'll collect those frames either way if we stop/delete vdevs
+d6dfe25c8bb200 Marcin Rokicki    2017-02-20  8071  	 */
+548db54cc1890b Michal Kazior     2013-07-05  8072  
+affd321733eebc Michal Kazior     2013-07-16  8073  	if (ar->state == ATH10K_STATE_WEDGED)
+828853ac58265c Wen Gong          2018-08-28  8074  		return;
+affd321733eebc Michal Kazior     2013-07-16  8075  
+d4298a3a8c92a1 Nicholas Mc Guire 2015-06-15 @8076  	time_left = wait_event_timeout(ar->htt.empty_tx_wq, ({
+5e3dd157d7e70f Kalle Valo        2013-06-12  8077  			bool empty;
+affd321733eebc Michal Kazior     2013-07-16  8078  
+edb8236df4d042 Michal Kazior     2013-07-05  8079  			spin_lock_bh(&ar->htt.tx_lock);
+c4f7022f0ef0aa Remi Pommarel     2024-10-22  8080  			for_each_set_bit(q, &queues, ar->hw->queues) {
+
+Smatch is concerned that there might not be any set bits.  (You know that the
+compiler is automatically going to ininitialize empty to false so it costs
+nothing to initialize it to false explicitly and silence this warning).
+
+c4f7022f0ef0aa Remi Pommarel     2024-10-22  8081  				empty = (ar->htt.num_pending_per_queue[q] == 0);
+c4f7022f0ef0aa Remi Pommarel     2024-10-22  8082  				if (!empty)
+c4f7022f0ef0aa Remi Pommarel     2024-10-22  8083  					break;
+c4f7022f0ef0aa Remi Pommarel     2024-10-22  8084  			}
+edb8236df4d042 Michal Kazior     2013-07-05  8085  			spin_unlock_bh(&ar->htt.tx_lock);
+affd321733eebc Michal Kazior     2013-07-16  8086  
+7962b0d898accd Michal Kazior     2014-10-28  8087  			skip = (ar->state == ATH10K_STATE_WEDGED) ||
+7962b0d898accd Michal Kazior     2014-10-28  8088  			       test_bit(ATH10K_FLAG_CRASH_FLUSH,
+7962b0d898accd Michal Kazior     2014-10-28  8089  					&ar->dev_flags);
+affd321733eebc Michal Kazior     2013-07-16  8090  
+affd321733eebc Michal Kazior     2013-07-16  8091  			(empty || skip);
+5e3dd157d7e70f Kalle Valo        2013-06-12  8092  		}), ATH10K_FLUSH_TIMEOUT_HZ);
+affd321733eebc Michal Kazior     2013-07-16  8093  
+d4298a3a8c92a1 Nicholas Mc Guire 2015-06-15  8094  	if (time_left == 0 || skip)
+d4298a3a8c92a1 Nicholas Mc Guire 2015-06-15  8095  		ath10k_warn(ar, "failed to flush transmit queue (skip %i ar-state %i): %ld\n",
+d4298a3a8c92a1 Nicholas Mc Guire 2015-06-15  8096  			    skip, ar->state, time_left);
+828853ac58265c Wen Gong          2018-08-28  8097  }
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
+
 
