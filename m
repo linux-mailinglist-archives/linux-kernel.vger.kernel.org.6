@@ -1,632 +1,178 @@
-Return-Path: <linux-kernel+bounces-381683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C9769B028F
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 14:37:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EB2E9B0349
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 14:59:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E76F1F23578
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 12:37:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B9F11F2324F
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 12:59:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A4931F754A;
-	Fri, 25 Oct 2024 12:36:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B459B7080D;
+	Fri, 25 Oct 2024 12:59:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="pJZkxDnH"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SJ7wJu7D"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC2D71632FC;
-	Fri, 25 Oct 2024 12:36:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 163572064FE;
+	Fri, 25 Oct 2024 12:59:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729859794; cv=none; b=La8zPWoglOuPwQVsDxol8bc7IlcBg005m9bfcheMtVkLcfdpGe7twHHTmkYNO0DRJD3YgwfamdY16G3S5ABeweH+z3ihU2WxS3VKE45PCzGxO9j0bXrUJwPiZbLOdouLxSga9pWtrNt4GEkSF+gMF7xGtuFdFNet6vRTWFWOJrk=
+	t=1729861178; cv=none; b=Lj7pP4CFnJ6IFXf/MvnTrImmomlFh/ZJT1t//QgkgvSB+PzMMlKmRXQXrw9L9i38H0/1mltECK2xqAcl9M8RL0DU8TUEkQ/9w2gelbMkAppx6m8FNbSPl09ruf6iTsrEQQj9EA4ZNxh4IRiB3rozssC0aaEmyf2HQBxuNuRnohk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729859794; c=relaxed/simple;
-	bh=cfeurgQs2tJmtrnz/mJzzdUt96hFlpoORjHf0Mnf8fk=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MkIT3bJcfxVpx79oMTCcqhhDYYx/8wOm56ZTIHP1m6NyCRf2VGbl1hcp9pmHhBrNnObtjqbGreViQcdxUyYT/RWlg/BuG8iAio43epG7F7DwLlJogeYYxTbs+vHkXljd2cb8jkKaGDCKPMJvYhsLjxqcBCWTvthkvJlTCpKk+uc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=pJZkxDnH; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49P33b0C030045;
-	Fri, 25 Oct 2024 12:36:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	2+siVXxtWwGmEQ3+YuGWJsO+mMnehjKS9yIG9E8wBhA=; b=pJZkxDnHrjuVD7vj
-	BXKGLVE/DSSpT4sD0+GZwkNgFRm3cSeUiONd2WhbiUxW9OX3nAVJxtL3BQHIjdGd
-	ZX3hhOnShG4sFai+1uHQ2UPFqmgG7ji0DYm2Ayn5shgTUwst29zgu4IeOc0qpxRM
-	fJrUzJNKt05pOdU6MbFKzMEDUFE9lNZJPsHHsAnSZAlh19zocEKw2G2BeesY3IFc
-	066rnspAugypL60lv0UZB8XQhQI7l/5pSiqh4IeaA3RBCmEKz/10ZDXqtEiSOCkD
-	DjwPZAlJoW6kFygW+jDfympN2AJxV5KiSIpNWHAL9BvlAlyjm+CC76f89/tkz4PS
-	PJmDOQ==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42fdtxmu2j-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 25 Oct 2024 12:36:25 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49PCaOT0000589
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 25 Oct 2024 12:36:24 GMT
-Received: from hu-sibis-blr.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Fri, 25 Oct 2024 05:36:19 -0700
-From: Sibi Sankar <quic_sibis@quicinc.com>
-To: <andersson@kernel.org>, <konradybcio@kernel.org>, <krzk+dt@kernel.org>,
-        <robh+dt@kernel.org>, <dmitry.baryshkov@linaro.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <quic_sibis@quicinc.com>,
-        <conor+dt@kernel.org>, <abel.vesa@linaro.org>,
-        <srinivas.kandagatla@linaro.org>, <quic_jjohnson@quicinc.com>,
-        <maz@kernel.org>, <jens.glathe@oldschoolsolutions.biz>
-Subject: [PATCH V1 3/3] arm64: dts: qcom: x1e001de-devkit: Enable external DP support
-Date: Fri, 25 Oct 2024 18:05:51 +0530
-Message-ID: <20241025123551.3528206-4-quic_sibis@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241025123551.3528206-1-quic_sibis@quicinc.com>
-References: <20241025123551.3528206-1-quic_sibis@quicinc.com>
+	s=arc-20240116; t=1729861178; c=relaxed/simple;
+	bh=l0sytxywCiAfXKGcO9SLlzfTkZ0ecVvtu6hWrTMitsE=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=nXrBeLDbR3iEcgLlpny0OGM4c30hXJn0oM59+4v55Xv/kUF4g0yBx+6tPneXujO9h+6WDjS91zWJf0t7LwdJmGHROaldeDR1Al/fmRAYVrMKhXM73tRc1ryCMyLEikSRYiwlSdHxvO1GRF1kfbmpwE59Nuao9fT4VLTHjzjLhCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SJ7wJu7D; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-20c805a0753so19210885ad.0;
+        Fri, 25 Oct 2024 05:59:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729861174; x=1730465974; darn=vger.kernel.org;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=sS0sCHvb+I6L+9QyAsfqaRm1T+v1p6mphFE4KTK0Jys=;
+        b=SJ7wJu7DEURCcL9lbNxju8nKwQlBy+M+6ia/sN5S38Uf6jQ22No/p3r8ycyl5T7+SG
+         txHxLyKLC3jFZsnDe5qpllyK4CooDnsZ3di35M1z4nJBcCt8YA10o6eASuzxKrXC5joU
+         BgOTRWC7UUt2qlnO5Pf2+1PX2N/iU6RdM3zhZU9yRCnZd1Pa86dI6WdQyYY26JrWqaAU
+         Suz777A1B+BgP2aZv2Q7SIkeDxTIxVfXAwaH8U2bFCjOqkT2zhAeBsi+mn5gSK4w9PSy
+         Gdf+MA7ocs9VG4TBbCUkJvxLfkGVXqQAJqQlGloWXidIyZGzq6JTmpthR8vd5kq1kFoQ
+         66yg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729861174; x=1730465974;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=sS0sCHvb+I6L+9QyAsfqaRm1T+v1p6mphFE4KTK0Jys=;
+        b=SvC+EwsDO38GYMSC48yssFB/etqNjs/17Hv1B04u6DdbpXP565Kq1gPPtB3k0ZF+9x
+         qbF1mVfo7zEADXxJ8kKeXCQ8MWp3VAz6BvdtVlohylC373PTSn9AK3MhA75wwXM3ScaS
+         BWK82LUJLbqydlOC4zWACZveA211nFlPQENx7+nP02DToJ3KX6INgd1/LGTSLrZK2P6h
+         RwVOJ1M4aj6Cv1zMQwzL/BzRDoGzS/aOeVMRUS1b0J5+eM9ShU9HKAHw+Z0OjT1D+tg8
+         YYQ0hifpPOvWtGxE+HuDDffdc/THgw/p24Az9yAYxl3O4j/rgAHppVeZ2D4ZXTlwnQUM
+         Y3bw==
+X-Forwarded-Encrypted: i=1; AJvYcCU8z1GECdJKhKCVou2qw+++B5Opd3bozpDRXNyr+lXe8s2QBfMlfbK3trGOCRAyNvJMe0yD7LN0qhF/w0cy@vger.kernel.org, AJvYcCVIfOjTThuSU9gko4tY0O3YM2djJoXGh9MWkuVwiL99uv59saCNhOx+mOPMSiw1ZK9QdLQaJM7aQfJrfVcEKg==@vger.kernel.org, AJvYcCVr0hDdC7BCO/C5Ws4ftUlKXaFBYpY/yFP2xrCwQNTMElPUVHVqWrmPOJnsUMRprzEzS52i7LJq1mw0@vger.kernel.org, AJvYcCW3f9buCXZnPoIWaCzZC3GruoVItyzOsWF7bR4HU2DizJQ+mZwm+s8fB7TA+Sc3Hn7Yew/Z+jXQdano@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyu3LiFW/EdxmLiR+D99Y4yhvoM4GZ6xIEAw+Xfyz/RJ5IzvcOd
+	TTaOEls6URDjDVzn9nnj5AnPjzXtB+15J35YH8SBJT0ddPVJvSkgkMjzxw==
+X-Google-Smtp-Source: AGHT+IG+TukVZ5cKFAVsZkN3PXK9I6J6zGYg6kmbkictFDjWrWJwFkWpgfljYTCv/kpR03zG9YKbeg==
+X-Received: by 2002:a17:903:2292:b0:20c:7be3:2816 with SMTP id d9443c01a7336-20fb9aa20d1mr76427815ad.40.1729861174280;
+        Fri, 25 Oct 2024 05:59:34 -0700 (PDT)
+Received: from dw-tp ([171.76.85.20])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bbf6df97sm8983925ad.100.2024.10.25.05.59.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Oct 2024 05:59:33 -0700 (PDT)
+From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+To: John Garry <john.g.garry@oracle.com>, linux-ext4@vger.kernel.org
+Cc: Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.cz>, "Darrick J . Wong" <djwong@kernel.org>, Christoph Hellwig <hch@infradead.org>, Ojaswin Mujoo <ojaswin@linux.ibm.com>, Dave Chinner <david@fromorbit.com>, linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 5/6] iomap: Lift blocksize restriction on atomic writes
+In-Reply-To: <7aea00d4-3914-414d-a18f-586a303868c1@oracle.com>
+Date: Fri, 25 Oct 2024 18:06:10 +0530
+Message-ID: <87r084mkat.fsf@gmail.com>
+References: <cover.1729825985.git.ritesh.list@gmail.com> <f5bd55d32031b49bdd9e2c6d073787d1ac4b6d78.1729825985.git.ritesh.list@gmail.com> <1efb8d6d-ba2e-499d-abc5-e4f9a1e54e89@oracle.com> <87zfmsmsvc.fsf@gmail.com> <fc6fddee-2707-4cca-b0b7-983c8dd17e16@oracle.com> <87v7xgmpwo.fsf@gmail.com> <7e322989-c6e0-424a-94bd-3ad6ce5ffee9@oracle.com> <87ttd0mnuo.fsf@gmail.com> <7aea00d4-3914-414d-a18f-586a303868c1@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: vIAnnQexZGHu9iKTxQK6Sow44zVfoIWF
-X-Proofpoint-ORIG-GUID: vIAnnQexZGHu9iKTxQK6Sow44zVfoIWF
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxscore=0
- lowpriorityscore=0 phishscore=0 adultscore=0 mlxlogscore=999
- priorityscore=1501 impostorscore=0 bulkscore=0 spamscore=0 malwarescore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410250097
 
-The Qualcomm Snapdragon X Elite Devkit for Windows has the same
-configuration as the CRD variant i.e. all 3 of the type C ports
-support external DP altmode. Add all the nodes needed to enable
-them.
+John Garry <john.g.garry@oracle.com> writes:
 
-Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
----
+> On 25/10/2024 12:19, Ritesh Harjani (IBM) wrote:
+>> John Garry <john.g.garry@oracle.com> writes:
+>> 
+>>> On 25/10/2024 11:35, Ritesh Harjani (IBM) wrote:
+>>>>>> Same as mentioned above. We can't have atomic writes to get split.
+>>>>>> This patch is just lifting the restriction of iomap to allow more than
+>>>>>> blocksize but the mapped length should still meet iter->len, as
+>>>>>> otherwise the writes can get split.
+>>>>> Sure, I get this. But I wonder why would we be getting multiple
+>>>>> mappings? Why cannot the FS always provide a single mapping?
+>>>> FS can decide to split the mappings when it couldn't allocate a single
+>>>> large mapping of the requested length. Could be due to -
+>>>> - already allocated extent followed by EOF,
+>>>> - already allocated extent followed by a hole
+>>>> - already mapped extent followed by an extent of different type (e.g. written followed by unwritten or unwritten followed by written)
+>>>
+>>> This is the sort of scenario which I am concerned with. This issue has
+>>> been discussed at length for XFS forcealign support for atomic writes.
+>> 
+>> extsize and forcealign is being worked for ext4 as well where we can
+>> add such support, sure.
+>> 
+>>>
+>>> So far, the user can atomic write a single FS block regardless of
+>>> whether the extent in which it would be part of is in written or
+>>> unwritten state.
+>>>
+>>> Now the rule will be to write multiple FS blocks atomically, all blocks
+>>> need to be in same written or unwritten state.
+>> 
+>> FS needs to ensure that the writes does not get torned. So for whatever reason
+>> FS splits the mapping then we need to return an -EINVAL error to not
+>> allow such writes to get torned. This patch just does that.
+>> 
+>> But I get your point. More below.
+>> 
+>>>
+>>> This oddity at least needs to be documented.
+>> 
+>> Got it. Yes, we can do that.
+>> 
+>>>
+>>> Better yet would be to not have this restriction.
+>>>
+>> 
+>> I haven't thought of a clever way where we don't have to zero out the
+>> rest of the unwritten mapping. With ext4 bigalloc since the entire
+>> cluster is anyway reserved - I was thinking if we can come up with a
+>> clever way for doing atomic writes to the entire user requested size w/o
+>> zeroing out.
+>
+> This following was main method which was being attempted:
+>
+> https://lore.kernel.org/linux-fsdevel/20240429174746.2132161-15-john.g.garry@oracle.com/
+>
+> There were other ideas in different versions of the forcelign/xfs block 
+> atomic writes series.
+>
+>> 
+>> Zeroing out the other unwritten extent is also a cost penalty to the
+>> user anyways.
+>
+> Sure, unless we have a special inode flag to say "pre-zero the extent".
+>
+>> So user will anyway will have to be made aware of not to
+>> attempt writes of fashion which can cause them such penalties.
+>> 
+>> As patch-6 mentions this is a base support for bs = ps systems for
+>> enabling atomic writes using bigalloc. For now we return -EINVAL when we
+>> can't allocate a continuous user requested mapping which means it won't
+>> support operations of types 8k followed by 16k.
+>> 
+>
+> That's my least-preferred option.
+>
+> I think better would be reject atomic writes that cover unwritten 
+> extents always - but that boat is about to sail...
 
-PS: The ext display patch 3 needs pin-conf and updates from comments on
-    the list. Just included it in the series so that people can get
-    display up. Type c to DP was tested on all ports with [1] as the
-    base branch.
+That's what this patch does. For whatever reason if we couldn't allocate
+a single contiguous region of requested size for atomic write, then we
+reject the request always, isn't it. Or maybe I didn't understand your comment.
 
-[1] https://git.codelinaro.org/abel.vesa/linux/-/commits/x1e-next-20240930
+If others prefer - we can maybe add such a check (e.g. ext4_dio_atomic_write_checks()) 
+for atomic writes in ext4_dio_write_checks(), similar to how we detect
+overwrites case to decide whether we need a read v/s write semaphore. 
+So this can check if the user has a partially allocated extent for the
+user requested region and if yes, we can return -EINVAL from
+ext4_dio_write_iter() itself. 
 
- arch/arm64/boot/dts/qcom/x1e001de-devkit.dts | 444 ++++++++++++++++++-
- 1 file changed, 438 insertions(+), 6 deletions(-)
+I think this maybe better option than waiting until ->iomap_begin().
+This might also bring all atomic write constraints to be checked in one
+place i.e. during ext4_file_write_iter() itself.
 
-diff --git a/arch/arm64/boot/dts/qcom/x1e001de-devkit.dts b/arch/arm64/boot/dts/qcom/x1e001de-devkit.dts
-index f169714abcd3..a1dc29a3a05e 100644
---- a/arch/arm64/boot/dts/qcom/x1e001de-devkit.dts
-+++ b/arch/arm64/boot/dts/qcom/x1e001de-devkit.dts
-@@ -82,7 +82,15 @@ port@1 {
- 					reg = <1>;
- 
- 					pmic_glink_ss0_ss_in: endpoint {
--						remote-endpoint = <&usb_1_ss0_qmpphy_out>;
-+						remote-endpoint = <&retimer_ss0_ss_out>;
-+					};
-+				};
-+
-+				port@2 {
-+					reg = <2>;
-+
-+					pmic_glink_ss0_con_sbu_in: endpoint {
-+						remote-endpoint = <&retimer_ss0_con_sbu_out>;
- 					};
- 				};
- 			};
-@@ -111,7 +119,15 @@ port@1 {
- 					reg = <1>;
- 
- 					pmic_glink_ss1_ss_in: endpoint {
--						remote-endpoint = <&usb_1_ss1_qmpphy_out>;
-+						remote-endpoint = <&retimer_ss1_ss_out>;
-+					};
-+				};
-+
-+				port@2 {
-+					reg = <2>;
-+
-+					pmic_glink_ss1_con_sbu_in: endpoint {
-+						remote-endpoint = <&retimer_ss1_con_sbu_out>;
- 					};
- 				};
- 			};
-@@ -140,7 +156,15 @@ port@1 {
- 					reg = <1>;
- 
- 					pmic_glink_ss2_ss_in: endpoint {
--						remote-endpoint = <&usb_1_ss2_qmpphy_out>;
-+						remote-endpoint = <&retimer_ss2_ss_out>;
-+					};
-+				};
-+
-+				port@2 {
-+					reg = <2>;
-+
-+					pmic_glink_ss2_con_sbu_in: endpoint {
-+						remote-endpoint = <&retimer_ss2_con_sbu_out>;
- 					};
- 				};
- 			};
-@@ -213,6 +237,150 @@ vreg_nvme: regulator-nvme {
- 		regulator-boot-on;
- 	};
- 
-+	vreg_rtmr0_1p15: regulator-rtmr0-1p15 {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "VREG_RTMR0_1P15";
-+		regulator-min-microvolt = <1150000>;
-+		regulator-max-microvolt = <1150000>;
-+
-+		gpio = <&pmc8380_5_gpios 8 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+
-+		pinctrl-0 = <&usb0_pwr_1p15_en>;
-+		pinctrl-names = "default";
-+
-+		regulator-boot-on;
-+	};
-+
-+	vreg_rtmr0_1p8: regulator-rtmr0-1p8 {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "VREG_RTMR0_1P8";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+
-+		gpio = <&pm8550ve_9_gpios 8 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+
-+		pinctrl-0 = <&usb0_1p8_reg_en>;
-+		pinctrl-names = "default";
-+
-+		regulator-boot-on;
-+	};
-+
-+	vreg_rtmr0_3p3: regulator-rtmr0-3p3 {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "VREG_RTMR0_3P3";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+
-+		gpio = <&pm8550_gpios 11 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+
-+		pinctrl-0 = <&usb0_3p3_reg_en>;
-+		pinctrl-names = "default";
-+
-+		regulator-boot-on;
-+	};
-+
-+	vreg_rtmr1_1p15: regulator-rtmr1-1p15 {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "VREG_RTMR1_1P15";
-+		regulator-min-microvolt = <1150000>;
-+		regulator-max-microvolt = <1150000>;
-+
-+		gpio = <&tlmm 188 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+
-+		pinctrl-0 = <&rtmr1_1p15_reg_en>;
-+		pinctrl-names = "default";
-+
-+		regulator-boot-on;
-+	};
-+
-+	vreg_rtmr1_1p8: regulator-rtmr1-1p8 {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "VREG_RTMR1_1P8";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+
-+		gpio = <&tlmm 175 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+
-+		pinctrl-0 = <&rtmr1_1p8_reg_en>;
-+		pinctrl-names = "default";
-+
-+		regulator-boot-on;
-+	};
-+
-+	vreg_rtmr1_3p3: regulator-rtmr1-3p3 {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "VREG_RTMR1_3P3";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+
-+		gpio = <&tlmm 186 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+
-+		pinctrl-0 = <&rtmr1_3p3_reg_en>;
-+		pinctrl-names = "default";
-+
-+		regulator-boot-on;
-+	};
-+
-+	vreg_rtmr2_1p15: regulator-rtmr2-1p15 {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "VREG_RTMR2_1P15";
-+		regulator-min-microvolt = <1150000>;
-+		regulator-max-microvolt = <1150000>;
-+
-+		gpio = <&tlmm 189 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+
-+		pinctrl-0 = <&rtmr2_1p15_reg_en>;
-+		pinctrl-names = "default";
-+
-+		regulator-boot-on;
-+	};
-+
-+	vreg_rtmr2_1p8: regulator-rtmr2-1p8 {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "VREG_RTMR2_1P8";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+
-+		gpio = <&tlmm 126 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+
-+		pinctrl-0 = <&rtmr2_1p8_reg_en>;
-+		pinctrl-names = "default";
-+
-+		regulator-boot-on;
-+	};
-+
-+	vreg_rtmr2_3p3: regulator-rtmr2-3p3 {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "VREG_RTMR2_3P3";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+
-+		gpio = <&tlmm 187 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+
-+		pinctrl-0 = <&rtmr2_3p3_reg_en>;
-+		pinctrl-names = "default";
-+
-+		regulator-boot-on;
-+	};
-+
- 	vph_pwr: regulator-vph-pwr {
- 		compatible = "regulator-fixed";
- 
-@@ -591,6 +759,207 @@ vreg_l3j_0p8: ldo3 {
- 	};
- };
- 
-+&gpu {
-+	status = "okay";
-+
-+	zap-shader {
-+		firmware-name = "qcom/x1e80100/Thundercomm/DEVKIT/qcdxkmsuc8380.mbn";
-+	};
-+};
-+
-+&i2c1 {
-+	clock-frequency = <400000>;
-+
-+	status = "okay";
-+
-+	typec-mux@8 {
-+		compatible = "parade,ps8830";
-+		reg = <0x08>;
-+
-+		clocks = <&rpmhcc RPMH_RF_CLK5>;
-+		clock-names = "xo";
-+
-+		vdd-supply = <&vreg_rtmr2_1p15>;
-+		vdd33-supply = <&vreg_rtmr2_3p3>;
-+		vdd33-cap-supply = <&vreg_rtmr2_3p3>;
-+		vddar-supply = <&vreg_rtmr2_1p15>;
-+		vddat-supply = <&vreg_rtmr2_1p15>;
-+		vddio-supply = <&vreg_rtmr2_1p8>;
-+
-+		reset-gpios = <&tlmm 185 GPIO_ACTIVE_HIGH>;
-+
-+		orientation-switch;
-+		retimer-switch;
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+
-+				retimer_ss2_ss_out: endpoint {
-+					remote-endpoint = <&pmic_glink_ss2_ss_in>;
-+				};
-+			};
-+
-+			port@1 {
-+				reg = <1>;
-+
-+				retimer_ss2_ss_in: endpoint {
-+					remote-endpoint = <&usb_1_ss2_qmpphy_out>;
-+				};
-+			};
-+
-+			port@2 {
-+				reg = <2>;
-+
-+				retimer_ss2_con_sbu_out: endpoint {
-+					remote-endpoint = <&pmic_glink_ss2_con_sbu_in>;
-+				};
-+			};
-+		};
-+	};
-+};
-+
-+&i2c3 {
-+	clock-frequency = <400000>;
-+
-+	status = "okay";
-+
-+	typec-mux@8 {
-+		compatible = "parade,ps8830";
-+		reg = <0x08>;
-+
-+		clocks = <&rpmhcc RPMH_RF_CLK3>;
-+		clock-names = "xo";
-+
-+		vdd-supply = <&vreg_rtmr0_1p15>;
-+		vdd33-supply = <&vreg_rtmr0_3p3>;
-+		vdd33-cap-supply = <&vreg_rtmr0_3p3>;
-+		vddar-supply = <&vreg_rtmr0_1p15>;
-+		vddat-supply = <&vreg_rtmr0_1p15>;
-+		vddio-supply = <&vreg_rtmr0_1p8>;
-+
-+		reset-gpios = <&pm8550_gpios 10 GPIO_ACTIVE_HIGH>;
-+
-+		retimer-switch;
-+		orientation-switch;
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+
-+				retimer_ss0_ss_out: endpoint {
-+					remote-endpoint = <&pmic_glink_ss0_ss_in>;
-+				};
-+			};
-+
-+			port@1 {
-+				reg = <1>;
-+
-+				retimer_ss0_ss_in: endpoint {
-+					remote-endpoint = <&usb_1_ss0_qmpphy_out>;
-+				};
-+			};
-+
-+			port@2 {
-+				reg = <2>;
-+
-+				retimer_ss0_con_sbu_out: endpoint {
-+					remote-endpoint = <&pmic_glink_ss0_con_sbu_in>;
-+				};
-+			};
-+		};
-+	};
-+};
-+
-+&i2c7 {
-+	clock-frequency = <400000>;
-+
-+	status = "okay";
-+
-+	typec-mux@8 {
-+		compatible = "parade,ps8830";
-+		reg = <0x8>;
-+
-+		clocks = <&rpmhcc RPMH_RF_CLK4>;
-+		clock-names = "xo";
-+
-+		vdd-supply = <&vreg_rtmr1_1p15>;
-+		vdd33-supply = <&vreg_rtmr1_3p3>;
-+		vdd33-cap-supply = <&vreg_rtmr1_3p3>;
-+		vddar-supply = <&vreg_rtmr1_1p15>;
-+		vddat-supply = <&vreg_rtmr1_1p15>;
-+		vddio-supply = <&vreg_rtmr1_1p8>;
-+
-+		reset-gpios = <&tlmm 176 GPIO_ACTIVE_HIGH>;
-+
-+		retimer-switch;
-+		orientation-switch;
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+
-+				retimer_ss1_ss_out: endpoint {
-+					remote-endpoint = <&pmic_glink_ss1_ss_in>;
-+				};
-+			};
-+
-+			port@1 {
-+				reg = <1>;
-+
-+				retimer_ss1_ss_in: endpoint {
-+					remote-endpoint = <&usb_1_ss1_qmpphy_out>;
-+				};
-+			};
-+
-+			port@2 {
-+				reg = <2>;
-+
-+				retimer_ss1_con_sbu_out: endpoint {
-+					remote-endpoint = <&pmic_glink_ss1_con_sbu_in>;
-+				};
-+			};
-+		};
-+	};
-+};
-+
-+&mdss {
-+	status = "okay";
-+};
-+
-+&mdss_dp0 {
-+	status = "okay";
-+};
-+
-+&mdss_dp0_out {
-+	data-lanes = <0 1>;
-+};
-+
-+&mdss_dp1 {
-+	status = "okay";
-+};
-+
-+&mdss_dp1_out {
-+	data-lanes = <0 1>;
-+};
-+
-+&mdss_dp2 {
-+	status = "okay";
-+};
-+
-+&mdss_dp2_out {
-+	data-lanes = <0 1>;
-+};
-+
- &pcie4 {
- 	perst-gpios = <&tlmm 146 GPIO_ACTIVE_LOW>;
- 	wake-gpios = <&tlmm 148 GPIO_ACTIVE_LOW>;
-@@ -646,6 +1015,27 @@ &pcie6a_phy {
- 	status = "okay";
- };
- 
-+&pm8550_gpios {
-+	usb0_3p3_reg_en: usb0-3p3-reg-en-state {
-+		pins = "gpio11";
-+		function = "normal";
-+	};
-+};
-+
-+&pmc8380_5_gpios {
-+	usb0_pwr_1p15_en: usb0-pwr-1p15-en-state {
-+		pins = "gpio8";
-+		function = "normal";
-+	};
-+};
-+
-+&pm8550ve_9_gpios {
-+	usb0_1p8_reg_en: usb0-1p8-reg-en-state {
-+		pins = "gpio8";
-+		function = "normal";
-+	};
-+};
-+
- &qupv3_0 {
- 	status = "okay";
- };
-@@ -805,6 +1195,48 @@ wake-n-pins {
- 		};
- 	};
- 
-+	rtmr1_1p15_reg_en: rtmr1-1p15-reg-en-state {
-+		pins = "gpio188";
-+		function = "gpio";
-+		drive-strength = <2>;
-+		bias-disable;
-+	};
-+
-+	rtmr1_1p8_reg_en: rtmr1-1p8-reg-en-state {
-+		pins = "gpio175";
-+		function = "gpio";
-+		drive-strength = <2>;
-+		bias-disable;
-+	};
-+
-+	rtmr1_3p3_reg_en: rtmr1-3p3-reg-en-state {
-+		pins = "gpio186";
-+		function = "gpio";
-+		drive-strength = <2>;
-+		bias-disable;
-+	};
-+
-+	rtmr2_1p15_reg_en: rtmr2-1p15-reg-en-state {
-+		pins = "gpio189";
-+		function = "gpio";
-+		drive-strength = <2>;
-+		bias-disable;
-+	};
-+
-+	rtmr2_1p8_reg_en: rtmr2-1p8-reg-en-state {
-+		pins = "gpio126";
-+		function = "gpio";
-+		drive-strength = <2>;
-+		bias-disable;
-+	};
-+
-+	rtmr2_3p3_reg_en: rtmr2-3p3-reg-en-state {
-+		pins = "gpio187";
-+		function = "gpio";
-+		drive-strength = <2>;
-+		bias-disable;
-+	};
-+
- 	sdc2_card_det_n: sdc2-card-det-state {
- 		pins = "gpio71";
- 		function = "gpio";
-@@ -863,7 +1295,7 @@ &usb_1_ss0_dwc3_hs {
- };
- 
- &usb_1_ss0_qmpphy_out {
--	remote-endpoint = <&pmic_glink_ss0_ss_in>;
-+	remote-endpoint = <&retimer_ss0_ss_in>;
- };
- 
- &usb_1_ss1_hsphy {
-@@ -895,7 +1327,7 @@ &usb_1_ss1_dwc3_hs {
- };
- 
- &usb_1_ss1_qmpphy_out {
--	remote-endpoint = <&pmic_glink_ss1_ss_in>;
-+	remote-endpoint = <&retimer_ss1_ss_in>;
- };
- 
- &usb_1_ss2_hsphy {
-@@ -927,5 +1359,5 @@ &usb_1_ss2_dwc3_hs {
- };
- 
- &usb_1_ss2_qmpphy_out {
--	remote-endpoint = <&pmic_glink_ss2_ss_in>;
-+	remote-endpoint = <&retimer_ss2_ss_in>;
- };
--- 
-2.34.1
+Thoughts?
 
+-ritesh
 
