@@ -1,131 +1,167 @@
-Return-Path: <linux-kernel+bounces-382520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E5FE9B0F4C
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 21:43:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CD4F9B0F51
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 21:45:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE8491F2190A
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 19:43:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBAA8284508
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 19:45:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42FFB20F3CB;
-	Fri, 25 Oct 2024 19:43:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFAA120F3E1;
+	Fri, 25 Oct 2024 19:45:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="siQQdafL"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZlFixrc1"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACED520EA3A
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 19:43:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A2AA20EA50;
+	Fri, 25 Oct 2024 19:45:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729885423; cv=none; b=c4TBJzRm7zUdpeh7SkrNH9r9VA+nMOHdswHSvedvqERkDZ3L1SzvD7jpQl8hzoY1FrczPxZ+jPbkhOLTPqJoY7o3F0yAE9GsqRJSZDLflXDtL9TaU4YX7iw70ZyQXkGFBMwMV5gWtJAa7QHqObFM2/hKgekYJIStJXyRgFCYh2I=
+	t=1729885535; cv=none; b=IQw43yvAcLDLGBdTr6PL9BEDZXxcC2S5PWOH3Uc0ZL8xZ9wwXm8WXkRHkr89AzsXQcuPPGb4sQIvMMlYvPmhDYUgM6n4mdyopHCz9YHCUwdoOH3Z2pzVBUcVdDiuvRbn73QtnR/g6CgPN1Xa5ePIBky+jdzRF+uSrPJNOy0t9+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729885423; c=relaxed/simple;
-	bh=lSsZDvEhOeZyn9VaJIiTtvyjKgumKCFxoFXoQeta2sM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lXq/HLak/mr05HZ5uNO4x5cBocCro2wR2GYjh7Lm8B4SEFI3AbMrZ4HBVxzzwyL4cBq1PhmJwY1v5K76TGoeGrdMzmtoizFJYot0qWwAHrmQScy1Na7Vz/vPXOpG26veJFtH+9KP/nVbRFuN9XsZzQNwGtwjd3GmskSsiBvrlq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=siQQdafL; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43169902057so22988175e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 12:43:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729885420; x=1730490220; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lSsZDvEhOeZyn9VaJIiTtvyjKgumKCFxoFXoQeta2sM=;
-        b=siQQdafLfr2b26TzbRCNEFeNl6HuYZy+5xwOiEHjKNpUlUo83GKf8R4s6fmbMl9s78
-         ExoxSsbSojQlvLgE5YZrgcDflqH782Hehwitn2Hj3YaMgl+blfaXav1j0ivVpi3tNupY
-         psyU8wqjUmneidMaaJt1iRgWfBl36Ki8dh5NcSk8DAgYf177FDcWwovwlVgskMSFsHJ+
-         YMv+3b+b7gIg1AYAHwG1RPd3TIzbNaEjk2iXSw9rbFeADUYUS7vNcUYvDEiE53XZYOiT
-         h6xYqBBTQOpojYMc/aEivkwDkVQxWkqMedKp4/I5ErECZ6nX1+efzizmeudSnZkViEKd
-         8Pxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729885420; x=1730490220;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lSsZDvEhOeZyn9VaJIiTtvyjKgumKCFxoFXoQeta2sM=;
-        b=TINfFhajV6CihqcE7Aiupt9QEAlHd7LtEUGtWcGWXoeLMMeko6Tc1S32Wfac08lvvc
-         UbHnbW6+7X2+It+fs2GMK3YW1sEw+//vnSkc5oCNfvlr6hUN1/4tYhS3j/qDcnJgs6HF
-         nf3NoDH9htLQcPOM2DbmVLzqyTYMKueg4r8Si+jEpH40KUEpC0fUAChlVGijP1AFSVMU
-         QaiM3JUn1Opdof7aO/9H2yjDCNVdoJwDWeBNknzv1OcwjqMS2ECVNMZakcED2Y7EzbSS
-         kO5wq3dZOuPLBCRM/GXfP7gaUCiK8hqga51nvDT/seyzia7gui5TZEm8GZL8IbhhYc0Z
-         OnMg==
-X-Forwarded-Encrypted: i=1; AJvYcCUCJ1ivqZj4+cZ8A/sIl5JaS9HWF/BIQ+1IzIPStsxg3g60cWw+JVUKWnmBk+eje/S9/+KkgklJzlyojhA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyoepU5oqQ4ktgI/kitUFC7Ovp2CnK7OoaZ1yJK0gSvlp8+LpG2
-	WXU9ZjQRkkzVCfLacV4w1SM/KB27d0ClIEmtNdingvVQQrH6e0eEjq99njBwJ2A=
-X-Google-Smtp-Source: AGHT+IEzPuLj09sW3XJSXTYzYRkCzcdUHuV5hctMILxMB/GePRDvwaT9iOwJTJZ47PpX92GjYN8nCA==
-X-Received: by 2002:a05:600c:4f51:b0:431:59b2:f0d1 with SMTP id 5b1f17b1804b1-4319ac6fd9dmr2332175e9.4.1729885420036;
-        Fri, 25 Oct 2024 12:43:40 -0700 (PDT)
-Received: from [192.168.0.40] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4318b5430absm56939735e9.6.2024.10.25.12.43.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 25 Oct 2024 12:43:39 -0700 (PDT)
-Message-ID: <94eca595-6ac2-40cf-9437-cb6695c45344@linaro.org>
-Date: Fri, 25 Oct 2024 20:43:38 +0100
+	s=arc-20240116; t=1729885535; c=relaxed/simple;
+	bh=Odm8rM5oG6O35cTkBqAj/y5K/dJEj/4GZ5eaaAaoIhE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NoT89M4EtKfbfNUOktovTsUOrlXlvW5CYjuM19yIgbgPu8EZi+pAJ4bMXcZja9DEB3wXiV7EQc7XEbBj16opo00klqkc6jjIcLm99L4NCrHgO48GvtEIWDlN/AGbVCWQb4Hbz/lrwtoPfYIGq7195e1klnuaaYshlf4Xs4efaCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZlFixrc1; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729885533; x=1761421533;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Odm8rM5oG6O35cTkBqAj/y5K/dJEj/4GZ5eaaAaoIhE=;
+  b=ZlFixrc1o3OJ7LRpDkd/s4PR0nDS+pFK2bsOcV/8sd8jntlp0jXs/m3X
+   20/lpqhOpThrKb0aRvTLZbTpSy/tggdymoWNZ+xIN6dnGWPevA/u46M4h
+   lC3jwnE3k/3YGVzgrkvvMM2j2zZg370YnBqoP7ANMEGeVcBa147r+iRrH
+   2B29XwnR5yBPvpA5aK28sJeW7CY1jjWo3M5tp8x5NrY2Of9GILk1mh3Tr
+   agdET/RS+3sQpIRq7I+1ygaWBgS4Jz50239NxrEtVPBla66PDcFcRzNMJ
+   mdUVfQ7eN7NxD6Mck3MY8Yzj2lWkB8R7F4/NxvO1G6BB3Avx8saAcLdRd
+   Q==;
+X-CSE-ConnectionGUID: 0SLS9YykT9Wsj1w1hNojDw==
+X-CSE-MsgGUID: Egg5X3jXS5ajElwiXBjDNw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="29432378"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="29432378"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2024 12:45:33 -0700
+X-CSE-ConnectionGUID: +xmLViUaSXaFuDaMWKK8sQ==
+X-CSE-MsgGUID: 2XwIh/TkTOmQovypF9PlIw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,232,1725346800"; 
+   d="scan'208";a="104331697"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa002.fm.intel.com with ESMTP; 25 Oct 2024 12:45:27 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t4QFR-000YpB-1b;
+	Fri, 25 Oct 2024 19:45:25 +0000
+Date: Sat, 26 Oct 2024 03:44:53 +0800
+From: kernel test robot <lkp@intel.com>
+To: Huan Tang <tanghuan@vivo.com>, alim.akhtar@samsung.com,
+	avri.altman@wdc.com, bvanassche@acm.org,
+	James.Bottomley@hansenpartnership.com, martin.petersen@oracle.com,
+	beanhuo@micron.com, luhongfei@vivo.com, quic_cang@quicinc.com,
+	keosung.park@samsung.com, viro@zeniv.linux.org.uk,
+	quic_mnaresh@quicinc.com, peter.wang@mediatek.com,
+	manivannan.sadhasivam@linaro.org, ahalaney@redhat.com,
+	quic_nguyenb@quicinc.com, linux@weissschuh.net, ebiggers@google.com,
+	minwoo.im@samsung.com, linux-kernel@vger.kernel.org,
+	linux-scsi@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, opensource.kernel@vivo.com,
+	Huan Tang <tanghuan@vivo.com>
+Subject: Re: [PATCH] ufs: core: Add WB buffer resize support
+Message-ID: <202410260352.WRMItCze-lkp@intel.com>
+References: <20241025085924.4855-1-tanghuan@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] media: dt-bindings: Remove assigned-clock-* from
- various schema
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Dave Stevenson <dave.stevenson@raspberrypi.com>,
- Sakari Ailus <sakari.ailus@linux.intel.com>, Shawn Guo
- <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Martin Kepplinger <martink@posteo.de>,
- Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
- "Paul J. Murphy" <paul.j.murphy@intel.com>,
- Daniele Alessandrelli <daniele.alessandrelli@intel.com>,
- Tommaso Merciai <tomm.merciai@gmail.com>,
- Martin Hecht <martin.hecht@avnet.eu>, Zhi Mao <zhi.mao@mediatek.com>,
- Alain Volmat <alain.volmat@foss.st.com>,
- Mikhail Rudenko <mike.rudenko@gmail.com>,
- Ricardo Ribalda <ribalda@kernel.org>,
- Kieran Bingham <kieran.bingham@ideasonboard.com>,
- Umang Jain <umang.jain@ideasonboard.com>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- Dongchun Zhu <dongchun.zhu@mediatek.com>,
- Quentin Schulz <quentin.schulz@theobroma-systems.com>,
- Todor Tomov <todor.too@gmail.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-References: <20241025-b4-linux-next-202041004-i2c-media-yaml-fixes-v2-1-1b4535174a5a@linaro.org>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <20241025-b4-linux-next-202041004-i2c-media-yaml-fixes-v2-1-1b4535174a5a@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241025085924.4855-1-tanghuan@vivo.com>
 
-On 25/10/2024 17:21, Bryan O'Donoghue wrote:
-> Remove extraneous assigned-clock* from media/i2c/* schemas, retain in the
-> relevant examples.
+Hi Huan,
 
-Ah, pardon me.
+kernel test robot noticed the following build warnings:
 
-I've neglected to update the commit log.
+[auto build test WARNING on jejb-scsi/for-next]
+[also build test WARNING on mkp-scsi/for-next linus/master v6.12-rc4 next-20241025]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-https://lore.kernel.org/all/20241012172430.GB5212@pendragon.ideasonboard.com/
+url:    https://github.com/intel-lab-lkp/linux/commits/Huan-Tang/ufs-core-Add-WB-buffer-resize-support/20241025-170131
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git for-next
+patch link:    https://lore.kernel.org/r/20241025085924.4855-1-tanghuan%40vivo.com
+patch subject: [PATCH] ufs: core: Add WB buffer resize support
+config: arm-randconfig-004-20241026 (https://download.01.org/0day-ci/archive/20241026/202410260352.WRMItCze-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241026/202410260352.WRMItCze-lkp@intel.com/reproduce)
 
-I will send a V3 to make it so.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410260352.WRMItCze-lkp@intel.com/
 
----
-bod
+All warnings (new ones prefixed by >>):
+
+   drivers/ufs/core/ufs-sysfs.c: In function 'wb_toggle_buf_resize_store':
+>> drivers/ufs/core/ufs-sysfs.c:419:12: warning: variable 'index' set but not used [-Wunused-but-set-variable]
+     419 |         u8 index;
+         |            ^~~~~
 
 
+vim +/index +419 drivers/ufs/core/ufs-sysfs.c
+
+   413	
+   414	static ssize_t wb_toggle_buf_resize_store(struct device *dev,
+   415			struct device_attribute *attr, const char *buf, size_t count)
+   416	{
+   417		struct ufs_hba *hba = dev_get_drvdata(dev);
+   418		unsigned int wb_buf_resize_op;
+ > 419		u8 index;
+   420		ssize_t res;
+   421	
+   422		if (!ufshcd_is_wb_allowed(hba) || !hba->dev_info.wb_enabled ||
+   423			!hba->dev_info.b_presrv_uspc_en) {
+   424			dev_err(dev, "The WB buf resize is not allowed!\n");
+   425			return -EOPNOTSUPP;
+   426		}
+   427	
+   428		if (kstrtouint(buf, 0, &wb_buf_resize_op))
+   429			return -EINVAL;
+   430	
+   431		if (wb_buf_resize_op != 0x01 && wb_buf_resize_op != 0x02) {
+   432			dev_err(dev, "The operation %u is invalid!\n", wb_buf_resize_op);
+   433			return -EINVAL;
+   434		}
+   435	
+   436		down(&hba->host_sem);
+   437		if (!ufshcd_is_user_access_allowed(hba)) {
+   438			res = -EBUSY;
+   439			goto out;
+   440		}
+   441	
+   442		index = ufshcd_wb_get_query_index(hba);
+   443		ufshcd_rpm_get_sync(hba);
+   444		res = ufshcd_wb_toggle_buf_resize(hba, wb_buf_resize_op);
+   445		ufshcd_rpm_put_sync(hba);
+   446	
+   447	out:
+   448		up(&hba->host_sem);
+   449		return res < 0 ? res : count;
+   450	}
+   451	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
