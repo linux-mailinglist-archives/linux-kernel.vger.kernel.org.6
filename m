@@ -1,187 +1,402 @@
-Return-Path: <linux-kernel+bounces-381153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381155-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1F649AFB32
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 09:37:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C5019AFB3E
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 09:39:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E13D11C224FB
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 07:37:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B2C0EB214A3
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 07:39:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 765521B0F22;
-	Fri, 25 Oct 2024 07:37:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A638F1BAED6;
+	Fri, 25 Oct 2024 07:39:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EoBNGPmZ"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lfjfruEt"
+Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 383B618B498
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 07:36:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 248211714B8;
+	Fri, 25 Oct 2024 07:39:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729841821; cv=none; b=fxnUZ2y0EZYqNoT7yLhQZv35qgg16xzoVtvTlO3VrGa8k/RTuzorlBVslrDvzFPWevXH5cAYVJjlEeq1W7wB2ijHdencmWKQjYAfy2irF063S5esT0i5y3ekSXawuX8g7SRfCVGXOM6mqYPiLrisd/xqZY9wBNXseLhzQ1fitCU=
+	t=1729841945; cv=none; b=b5o3a8t8MuQTo2jhoHhkPLnblEpTMLEXYNlfgKfwWAw0wXoRVTWKMAAwksKiSQ4wcaGjyqqOmJ+3igUeJXcEM4iapUpPXJBOr/jHlNqa4PXnLQXq3geb08GnGbocvVLjrSD3ighJ9mrRzT3AZsb60vifFarlYZy44+plpBLsmYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729841821; c=relaxed/simple;
-	bh=Z7SiB+LqEbLMO/o1Bt1vSxMTz1GWzTnzXMO4ACTmoK0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ZVLpS/ACpVQOfQZz14LE/2oPylI3+opgEMJUu/qCEKg7QxhB6jAl7ToMWEGh6yd0qPnKB9rofvWIXFCeSC21R97Ao0Y6QzW3Wm/VD8eqW8xOmGFwobivzq6QrpAAumktkhoMCxpxm2/Z2NL8n32qd8kRLu2Ve0blu2209M1wWys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EoBNGPmZ; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-37f52925fc8so1198458f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 00:36:58 -0700 (PDT)
+	s=arc-20240116; t=1729841945; c=relaxed/simple;
+	bh=cBQxL/2Rq3Fob1hcXBLk0wujh2/MV+AyC0ao+S/xQek=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UFoRF7oxB0zFMewchM4DfNR6Fo/95dzvNUUBZ7PI55YNVmE+ARKlxAT7AW/LI0ttY/Xh0sUq+jCX/Fy8ByV8wqGXwWYoMCI07XoC6gYadwYZ1VK+dGakvCL9oBsBw2NgvQM6j89e5CAO5WjOcIziFZaSPcSmFh71+CJbJnqJea8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lfjfruEt; arc=none smtp.client-ip=209.85.219.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e291f1d659aso2084895276.3;
+        Fri, 25 Oct 2024 00:39:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729841817; x=1730446617; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=veXYQwtmDRavjPuCQQXGHKCeeVy6UPnN7/+dsEWJD4k=;
-        b=EoBNGPmZgfOwc3IjEuzejd5uCxOwoRUWWXYwuVuNC7S6t7OVJ5lKKy7wtya0NPyzDQ
-         EZY99iNjIxTrTnW+3UnyY6oQqqqEVSjoJrndQJMKcbQuUhrBhxlaKe+zJJT0oHfpBdHH
-         +uvfe0mBtBwjxuNc8A6iJAfqTljiICQF95tRXY18zqBhea2Sp4E7H0s0/wi15DP2M5YM
-         quMxf19TxnJBJaEddf4soq8AeWx33mWiXRLrDlE7JMThzWQqnJzpv6MX24C1cUPpYQMB
-         DiC/I/lQDOLi0sLzzd19yNX8M2IJ8YNASg4XTLnnzLH8fyS6pwsBfprEFdyldtMJAmN+
-         7T2Q==
+        d=gmail.com; s=20230601; t=1729841942; x=1730446742; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=y4pZDfebFFkVewdLIhSt4ZSKyPCjkQIctMcGbulG07o=;
+        b=lfjfruEtt3p3EU3r4zYjSDMcJlGLChIUplUVffko6SgY+NDkF6z9+9bbPoKceZOYue
+         cpW4k4ZcSeXzKp2TG53FBrWSGYMoTn3nWd+j/n1Jasni/w/nErGeM9QG7F3/quCwIsB+
+         eDAbtHpF40yPYyJMiUpwJPpAkgqNFMMJHv7oTu/m9MZiSqlvQ98qCHeG3s+OkK0L8ver
+         xxlB++f31Hi1QvDvPxBg7jg+l71IwGTiF34oDiqrIlNSxGaim/qzm2Z6UDKIJnFyWgg7
+         6/hK4V1xpabBauiNKguUoRNfrh8VjQsFSdhuomh3giQ1mFFg12lZkgf36TBWw4gLUeVf
+         5XJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729841817; x=1730446617;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=veXYQwtmDRavjPuCQQXGHKCeeVy6UPnN7/+dsEWJD4k=;
-        b=ddbXwBpS5Yxqf26ght9Ot24ZRzJs74d9zrdvYp/1+Bt3Q1SVcW+9GawupUJ4efrdUb
-         qzgHMieWrFIVv6MjcLPGWNoqjqg3MNCmsMJb4m43GbdbI4ptDAzsnGUiqT2oF1GW0BU6
-         reAUkQEoxuZCCAt/uXRSRQ+dtLXPAKijNi0G+hj25PqaCqWHHqcIn7iQiX9tPR3QbWuu
-         rxp5URUDdPagzskQZFxaRWPyNEDTSm+gZabLqkvqYrJ0xjlNxWl4VGBOz98YPrbJbYv9
-         mvR2gzCNIsb/gxuH0S8v7xdEL2BzOlMKtWIlh1754qESrdnMD93p2YTFpFnjhcmBct9+
-         nHDg==
-X-Forwarded-Encrypted: i=1; AJvYcCVrzqCThU6sK8S1t9mrM8Z6s6BkxFQ2XAdgdzHIFNpwWZjUEfD5d5PBBvY0+KWCGatsHTv9YDrqGmF5xf4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFUrw0dAEmJhlJIm2XbMUdpTns1vCG/VIMkYWptCygBEDNtLCH
-	Xk3057R2vnI4+BbmrSSHjmrg6As7yPIYcwUwRWMopCLTVc3+/1NVLEe/f3wUdOw=
-X-Google-Smtp-Source: AGHT+IE1HMa+UJGOQlVpyW2tRbd/xNeDb7P38b7MEb//J1ghs6sMp6lGLK5DVdY5NBNrPabhy9MTBw==
-X-Received: by 2002:a05:6000:e07:b0:37d:446b:7dfb with SMTP id ffacd0b85a97d-37efcf843d1mr5972300f8f.45.1729841816056;
-        Fri, 25 Oct 2024 00:36:56 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b712cbsm819573f8f.77.2024.10.25.00.36.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2024 00:36:55 -0700 (PDT)
-Date: Fri, 25 Oct 2024 10:36:52 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: oe-kbuild@lists.linux.dev, Ming Yen Hsieh <mingyen.hsieh@mediatek.com>
-Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Felix Fietkau <nbd@nbd.name>
-Subject: drivers/net/wireless/mediatek/mt76/mt7925/mcu.c:645
- mt7925_load_clc() error: buffer overflow 'phy->clc' 2 <= 2
-Message-ID: <e3c426c9-c3d0-4b72-b2db-8780d61b1583@stanley.mountain>
+        d=1e100.net; s=20230601; t=1729841942; x=1730446742;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=y4pZDfebFFkVewdLIhSt4ZSKyPCjkQIctMcGbulG07o=;
+        b=w6zeSIc8XHpdBTarzJcgfCN6cxmJ/wsVFae89i3I5BP3DXUhWSREg7UGem3ofEMjpb
+         Q4s2GQz+KRHCNlYOrOCCwuTwHtHUdc9+Uz7sIcPk4P9ybB5Rza14a86xBd1i8NfHUkvP
+         10tdTy7mXuJhgCE5l2A/L5DulmyAq8AyFoLzO50u1NfVqpKIEfvxHblkb+xhOlrgLqEU
+         vHdqOY2iRyJt/+PfVYiWyceQwaRKaLQAL1OCTJaSAjnTW6u0Cc5pUTpn5q6O3UI7bI3w
+         +lOFpDyuJfc2dDIpWxekkxbCTzitQUxZW8TlTd67GV22jz63hbj8Ei26Jja3Nj6vR0V4
+         kQ8A==
+X-Forwarded-Encrypted: i=1; AJvYcCUc4Ndx8ucxI8dXtYsIx7gzsTH8uB/qhPuCGkYU7sgpC75d+3v0tpyCIPClpRwGAZDHrc01adfEwCtD@vger.kernel.org, AJvYcCUjxBsFhPUCzhVTYU8ZfUVYrTL95u5Wp6n0qw41GzcjqEjHI8Ize7fcMa9umuSk1q28YlAqPgXkpf3M@vger.kernel.org, AJvYcCUrsOL9nTiVW/qG/Sn6hBB8xCvtQ0In9eDf7ysZb+1VYJDJPTAOg7KR9qmTbwnObCkBDuddS+kAdYcf/L9T@vger.kernel.org, AJvYcCUwoCDux/zVulRJhzWlnA9v7VWtHKf0uO4m1xjv0cDsqdbA9U3vGPkBm3rM7LdFZTUmh90y8CIXckRb8Y0=@vger.kernel.org, AJvYcCVC71exD/69WWZKx42R1RGOuCZ8Q4gYj1MHjKKYj77j+ZGbUMFsGpVfa60Mqyb9hqiAE9FcLUbZYTE=@vger.kernel.org, AJvYcCW+e5jlk1cGAEhsNcuA3yWEPiav0ScnnP1WTgRauMhBdSxxb3WFDa8j0j1SxIxN659TnRJxlIcs@vger.kernel.org, AJvYcCWGJh0/72S59HmVahn7rpUMW0pdOn719EbN/ERATb8/9DCFJuKcqVFjCGrQIKOkUGAJIOW9WyOb40RvYQ==@vger.kernel.org, AJvYcCXR+AdpDQto4XFv6F3MtrLRWoEUaRhRRLT6kDjpncenDGQ6RF4QIhTkOS6t1rRQ+LWYX2ZtYTrGZegApm+YB8Y=@vger.kernel.org, AJvYcCXkD8f3HD4SDY1twDbYb2onuixzPz+ZHvyBgQ6eqKe9iPmE09rknLzsNRz4QbCK31wiVJZHNPyGMRA6@vger.kernel.org, AJvYcCXrgnbUEARireivYR0+nZraf5CIBOjT
+ XrBRLH7tpzLX9M06GOA/cUszPmuD5dnHJXO8w0Wr4cTShhmU@vger.kernel.org
+X-Gm-Message-State: AOJu0YyM96LIOPjGPtsdp7taIzdiVGI5xWEr1Mg2bRQbCKAzeG++PBef
+	G1l/x3YuZTKb5MBQWYmGZrA30LlfY/JhnHIuxntmIhmd1g+3kzGz2+VvduikoGuBiJTQfbECCig
+	jQMvhX0wMXDkhDN6ekl5CZnRICp8=
+X-Google-Smtp-Source: AGHT+IHtWHvmcHrPJZlJuCBSGAWADRoEGByk6bKfJXEb1aOavubnGUftZvjMl5apmpl8NLLh/2FYrDvOm/NTiNWjylE=
+X-Received: by 2002:a05:6902:1085:b0:e28:eb16:dd5e with SMTP id
+ 3f1490d57ef6-e2e3a6dd1a5mr8539029276.52.1729841942048; Fri, 25 Oct 2024
+ 00:39:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20241024085922.133071-1-tmyu0@nuvoton.com> <20241024085922.133071-3-tmyu0@nuvoton.com>
+ <CAMRc=Mc+SZN=EytxY=qA-qBEAY_F17GP-7FRE9oLojLbdUoPaQ@mail.gmail.com>
+In-Reply-To: <CAMRc=Mc+SZN=EytxY=qA-qBEAY_F17GP-7FRE9oLojLbdUoPaQ@mail.gmail.com>
+From: =?UTF-8?B?5ri45a2Q5rCR?= <a0282524688@gmail.com>
+Date: Fri, 25 Oct 2024 15:38:51 +0800
+Message-ID: <CAOoeyxW4=+5-QMcd_wgncFC9jgx_1Zf1Tq8RTnBvVqZ1JcUBQg@mail.gmail.com>
+Subject: Re: [PATCH v1 2/9] gpio: Add Nuvoton NCT6694 GPIO support
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: tmyu0@nuvoton.com, lee@kernel.org, linus.walleij@linaro.org, 
+	andi.shyti@kernel.org, mkl@pengutronix.de, mailhol.vincent@wanadoo.fr, 
+	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, 
+	kuba@kernel.org, pabeni@redhat.com, wim@linux-watchdog.org, 
+	linux@roeck-us.net, jdelvare@suse.com, jic23@kernel.org, lars@metafoo.de, 
+	ukleinek@kernel.org, alexandre.belloni@bootlin.com, 
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-i2c@vger.kernel.org, linux-can@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-watchdog@vger.kernel.org, linux-hwmon@vger.kernel.org, 
+	linux-iio@vger.kernel.org, linux-pwm@vger.kernel.org, 
+	linux-rtc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   4e46774408d942efe4eb35dc62e5af3af71b9a30
-commit: 9679ca7326e52282cc923c4d71d81c999cb6cd55 wifi: mt76: mt7925: fix a potential array-index-out-of-bounds issue for clc
-config: parisc-randconfig-r071-20241024 (https://download.01.org/0day-ci/archive/20241025/202410250608.Ly4Aj2NI-lkp@intel.com/config)
-compiler: hppa-linux-gcc (GCC) 14.1.0
+Sorry, resending this email in plain text format.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-| Closes: https://lore.kernel.org/r/202410250608.Ly4Aj2NI-lkp@intel.com/
+Dear Bart,
 
-New smatch warnings:
-drivers/net/wireless/mediatek/mt76/mt7925/mcu.c:645 mt7925_load_clc() error: buffer overflow 'phy->clc' 2 <= 2
+Thank you for your comments.
 
-Old smatch warnings:
-drivers/net/wireless/mediatek/mt76/mt7925/mcu.c:1158 mt7925_mcu_set_mlo_roc() warn: variable dereferenced before check 'mconf' (see line 1130)
+Bartosz Golaszewski <brgl@bgdev.pl> =E6=96=BC 2024=E5=B9=B410=E6=9C=8824=E6=
+=97=A5 =E9=80=B1=E5=9B=9B =E4=B8=8B=E5=8D=885:47=E5=AF=AB=E9=81=93=EF=BC=9A
+>
+> On Thu, Oct 24, 2024 at 10:59=E2=80=AFAM Ming Yu <a0282524688@gmail.com> =
+wrote:
+> >
+> > This driver supports GPIO and IRQ functionality for NCT6694 MFD
+> > device based on USB interface.
+> >
+> > Signed-off-by: Ming Yu <tmyu0@nuvoton.com>
+> > ---
+> >  MAINTAINERS                 |   1 +
+> >  drivers/gpio/Kconfig        |  12 +
+> >  drivers/gpio/Makefile       |   1 +
+> >  drivers/gpio/gpio-nct6694.c | 489 ++++++++++++++++++++++++++++++++++++
+> >  4 files changed, 503 insertions(+)
+> >  create mode 100644 drivers/gpio/gpio-nct6694.c
+> >
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index 30157ca95cf3..2c86d5dab3f1 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -16438,6 +16438,7 @@ NUVOTON NCT6694 MFD DRIVER
+> >  M:     Ming Yu <tmyu0@nuvoton.com>
+> >  L:     linux-kernel@vger.kernel.org
+> >  S:     Supported
+> > +F:     drivers/gpio/gpio-nct6694.c
+> >  F:     drivers/mfd/nct6694.c
+> >  F:     include/linux/mfd/nct6694.h
+> >
+> > diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+> > index d93cd4f722b4..aa78ad9ff4ac 100644
+> > --- a/drivers/gpio/Kconfig
+> > +++ b/drivers/gpio/Kconfig
+> > @@ -1450,6 +1450,18 @@ config GPIO_MAX77650
+> >           GPIO driver for MAX77650/77651 PMIC from Maxim Semiconductor.
+> >           These chips have a single pin that can be configured as GPIO.
+> >
+> > +config GPIO_NCT6694
+> > +       tristate "Nuvoton NCT6694 GPIO controller support"
+> > +       depends on MFD_NCT6694
+> > +       select GENERIC_IRQ_CHIP
+> > +       select GPIOLIB_IRQCHIP
+> > +       help
+> > +         This driver supports 8 GPIO pins per bank that can all be int=
+errupt
+> > +         sources.
+> > +
+> > +         This driver can also be built as a module. If so, the module =
+will be
+> > +         called gpio-nct6694.
+> > +
+> >  config GPIO_PALMAS
+> >         bool "TI PALMAS series PMICs GPIO"
+> >         depends on MFD_PALMAS
+> > diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
+> > index 1429e8c0229b..02c94aa28017 100644
+> > --- a/drivers/gpio/Makefile
+> > +++ b/drivers/gpio/Makefile
+> > @@ -121,6 +121,7 @@ obj-$(CONFIG_GPIO_MXC)                      +=3D gp=
+io-mxc.o
+> >  obj-$(CONFIG_GPIO_MXS)                 +=3D gpio-mxs.o
+> >  obj-$(CONFIG_GPIO_NOMADIK)             +=3D gpio-nomadik.o
+> >  obj-$(CONFIG_GPIO_NPCM_SGPIO)          +=3D gpio-npcm-sgpio.o
+> > +obj-$(CONFIG_GPIO_NCT6694)             +=3D gpio-nct6694.o
+> >  obj-$(CONFIG_GPIO_OCTEON)              +=3D gpio-octeon.o
+> >  obj-$(CONFIG_GPIO_OMAP)                        +=3D gpio-omap.o
+> >  obj-$(CONFIG_GPIO_PALMAS)              +=3D gpio-palmas.o
+> > diff --git a/drivers/gpio/gpio-nct6694.c b/drivers/gpio/gpio-nct6694.c
+> > new file mode 100644
+> > index 000000000000..42c0e6e76730
+> > --- /dev/null
+> > +++ b/drivers/gpio/gpio-nct6694.c
+> > @@ -0,0 +1,489 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * Nuvoton NCT6694 GPIO controller driver based on USB interface.
+> > + *
+> > + * Copyright (C) 2024 Nuvoton Technology Corp.
+> > + */
+> > +
+> > +#include <linux/gpio.h>
+>
+> Don't include this header. It's documented as obsolete.
 
-vim +645 drivers/net/wireless/mediatek/mt76/mt7925/mcu.c
+[Ming] Okay! I'll drop it in the next patch.
 
-c948b5da6bbec7 Deren Wu       2023-09-18  589  static int mt7925_load_clc(struct mt792x_dev *dev, const char *fw_name)
-c948b5da6bbec7 Deren Wu       2023-09-18  590  {
-c948b5da6bbec7 Deren Wu       2023-09-18  591  	const struct mt76_connac2_fw_trailer *hdr;
-c948b5da6bbec7 Deren Wu       2023-09-18  592  	const struct mt76_connac2_fw_region *region;
-c948b5da6bbec7 Deren Wu       2023-09-18  593  	const struct mt7925_clc *clc;
-c948b5da6bbec7 Deren Wu       2023-09-18  594  	struct mt76_dev *mdev = &dev->mt76;
-c948b5da6bbec7 Deren Wu       2023-09-18  595  	struct mt792x_phy *phy = &dev->phy;
-c948b5da6bbec7 Deren Wu       2023-09-18  596  	const struct firmware *fw;
-c948b5da6bbec7 Deren Wu       2023-09-18  597  	int ret, i, len, offset = 0;
-c948b5da6bbec7 Deren Wu       2023-09-18  598  	u8 *clc_base = NULL;
-c948b5da6bbec7 Deren Wu       2023-09-18  599  
-c948b5da6bbec7 Deren Wu       2023-09-18  600  	if (mt7925_disable_clc ||
-c948b5da6bbec7 Deren Wu       2023-09-18  601  	    mt76_is_usb(&dev->mt76))
-c948b5da6bbec7 Deren Wu       2023-09-18  602  		return 0;
-c948b5da6bbec7 Deren Wu       2023-09-18  603  
-c948b5da6bbec7 Deren Wu       2023-09-18  604  	ret = request_firmware(&fw, fw_name, mdev->dev);
-c948b5da6bbec7 Deren Wu       2023-09-18  605  	if (ret)
-c948b5da6bbec7 Deren Wu       2023-09-18  606  		return ret;
-c948b5da6bbec7 Deren Wu       2023-09-18  607  
-c948b5da6bbec7 Deren Wu       2023-09-18  608  	if (!fw || !fw->data || fw->size < sizeof(*hdr)) {
-c948b5da6bbec7 Deren Wu       2023-09-18  609  		dev_err(mdev->dev, "Invalid firmware\n");
-c948b5da6bbec7 Deren Wu       2023-09-18  610  		ret = -EINVAL;
-c948b5da6bbec7 Deren Wu       2023-09-18  611  		goto out;
-c948b5da6bbec7 Deren Wu       2023-09-18  612  	}
-c948b5da6bbec7 Deren Wu       2023-09-18  613  
-c948b5da6bbec7 Deren Wu       2023-09-18  614  	hdr = (const void *)(fw->data + fw->size - sizeof(*hdr));
-c948b5da6bbec7 Deren Wu       2023-09-18  615  	for (i = 0; i < hdr->n_region; i++) {
-c948b5da6bbec7 Deren Wu       2023-09-18  616  		region = (const void *)((const u8 *)hdr -
-c948b5da6bbec7 Deren Wu       2023-09-18  617  					(hdr->n_region - i) * sizeof(*region));
-c948b5da6bbec7 Deren Wu       2023-09-18  618  		len = le32_to_cpu(region->len);
-c948b5da6bbec7 Deren Wu       2023-09-18  619  
-c948b5da6bbec7 Deren Wu       2023-09-18  620  		/* check if we have valid buffer size */
-c948b5da6bbec7 Deren Wu       2023-09-18  621  		if (offset + len > fw->size) {
-c948b5da6bbec7 Deren Wu       2023-09-18  622  			dev_err(mdev->dev, "Invalid firmware region\n");
-c948b5da6bbec7 Deren Wu       2023-09-18  623  			ret = -EINVAL;
-c948b5da6bbec7 Deren Wu       2023-09-18  624  			goto out;
-c948b5da6bbec7 Deren Wu       2023-09-18  625  		}
-c948b5da6bbec7 Deren Wu       2023-09-18  626  
-c948b5da6bbec7 Deren Wu       2023-09-18  627  		if ((region->feature_set & FW_FEATURE_NON_DL) &&
-c948b5da6bbec7 Deren Wu       2023-09-18  628  		    region->type == FW_TYPE_CLC) {
-c948b5da6bbec7 Deren Wu       2023-09-18  629  			clc_base = (u8 *)(fw->data + offset);
-c948b5da6bbec7 Deren Wu       2023-09-18  630  			break;
-c948b5da6bbec7 Deren Wu       2023-09-18  631  		}
-c948b5da6bbec7 Deren Wu       2023-09-18  632  		offset += len;
-c948b5da6bbec7 Deren Wu       2023-09-18  633  	}
-c948b5da6bbec7 Deren Wu       2023-09-18  634  
-c948b5da6bbec7 Deren Wu       2023-09-18  635  	if (!clc_base)
-c948b5da6bbec7 Deren Wu       2023-09-18  636  		goto out;
-c948b5da6bbec7 Deren Wu       2023-09-18  637  
-c948b5da6bbec7 Deren Wu       2023-09-18  638  	for (offset = 0; offset < len; offset += le32_to_cpu(clc->len)) {
-c948b5da6bbec7 Deren Wu       2023-09-18  639  		clc = (const struct mt7925_clc *)(clc_base + offset);
-c948b5da6bbec7 Deren Wu       2023-09-18  640  
-9679ca7326e522 Ming Yen Hsieh 2024-08-19  641  		if (clc->idx > ARRAY_SIZE(phy->clc))
+>
+> > +#include <linux/gpio/driver.h>
+> > +#include <linux/module.h>
+> > +#include <linux/interrupt.h>
+> > +#include <linux/platform_device.h>
+> > +#include <linux/mfd/core.h>
+> > +#include <linux/mfd/nct6694.h>
+> > +
+>
+> You only use it once, drop it.
 
-This should be >= instead of >.
+[Ming] That line is blank, did you mean #include <linux/gpio.h>?
 
-9679ca7326e522 Ming Yen Hsieh 2024-08-19  642  			break;
-9679ca7326e522 Ming Yen Hsieh 2024-08-19  643  
-c948b5da6bbec7 Deren Wu       2023-09-18  644  		/* do not init buf again if chip reset triggered */
-c948b5da6bbec7 Deren Wu       2023-09-18 @645  		if (phy->clc[clc->idx])
-c948b5da6bbec7 Deren Wu       2023-09-18  646  			continue;
-c948b5da6bbec7 Deren Wu       2023-09-18  647  
-c948b5da6bbec7 Deren Wu       2023-09-18  648  		phy->clc[clc->idx] = devm_kmemdup(mdev->dev, clc,
-c948b5da6bbec7 Deren Wu       2023-09-18  649  						  le32_to_cpu(clc->len),
-c948b5da6bbec7 Deren Wu       2023-09-18  650  						  GFP_KERNEL);
-c948b5da6bbec7 Deren Wu       2023-09-18  651  
-c948b5da6bbec7 Deren Wu       2023-09-18  652  		if (!phy->clc[clc->idx]) {
-c948b5da6bbec7 Deren Wu       2023-09-18  653  			ret = -ENOMEM;
-c948b5da6bbec7 Deren Wu       2023-09-18  654  			goto out;
-c948b5da6bbec7 Deren Wu       2023-09-18  655  		}
-c948b5da6bbec7 Deren Wu       2023-09-18  656  	}
-c948b5da6bbec7 Deren Wu       2023-09-18  657  
-c948b5da6bbec7 Deren Wu       2023-09-18  658  	ret = mt7925_mcu_set_clc(dev, "00", ENVIRON_INDOOR);
-c948b5da6bbec7 Deren Wu       2023-09-18  659  out:
-c948b5da6bbec7 Deren Wu       2023-09-18  660  	release_firmware(fw);
-c948b5da6bbec7 Deren Wu       2023-09-18  661  
-c948b5da6bbec7 Deren Wu       2023-09-18  662  	return ret;
-c948b5da6bbec7 Deren Wu       2023-09-18  663  }
+>
+> > +#define DRVNAME "nct6694-gpio"
+> > +
+> > +/* Host interface */
+> > +#define REQUEST_GPIO_MOD               0xFF
+> > +#define REQUEST_GPIO_LEN               0x01
+> > +
+> > +/* Report Channel */
+> > +#define GPIO_VER_REG                   0x90
+> > +#define GPIO_VALID_REG                 0x110
+> > +#define GPI_DATA_REG                   0x120
+> > +#define GPO_DIR_REG                    0x170
+> > +#define GPO_TYPE_REG                   0x180
+> > +#define GPO_DATA_REG                   0x190
+> > +
+> > +#define GPI_STS_REG                    0x130
+> > +#define GPI_CLR_REG                    0x140
+> > +#define GPI_FALLING_REG                        0x150
+> > +#define GPI_RISING_REG                 0x160
+> > +
+>
+> Please use the NCT6694 prefix for these defines, otherwise it's not
+> clear whether they come from the driver or from GPIO core.
+>
+> []
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+[Ming] Okay! I'll add the prefix to the defines in the next patch.
 
+>
+> > +
+> > +static const char * const nct6694_gpio_name[] =3D {
+> > +       "NCT6694-GPIO0",
+> > +       "NCT6694-GPIO1",
+> > +       "NCT6694-GPIO2",
+> > +       "NCT6694-GPIO3",
+> > +       "NCT6694-GPIO4",
+> > +       "NCT6694-GPIO5",
+> > +       "NCT6694-GPIO6",
+> > +       "NCT6694-GPIO7",
+> > +       "NCT6694-GPIO8",
+> > +       "NCT6694-GPIO9",
+> > +       "NCT6694-GPIOA",
+> > +       "NCT6694-GPIOB",
+> > +       "NCT6694-GPIOC",
+> > +       "NCT6694-GPIOD",
+> > +       "NCT6694-GPIOE",
+> > +       "NCT6694-GPIOF",
+> > +};
+>
+> This looks like it corresponds with the MFD cells and makes me wonder:
+> am I getting that wrong or do you want to register 0xf GPIO chips? Or
+> a single GPIO chip with 0xf lines? What is the topology?
+
+[Ming] Yes, it corresponds to the MFD cells.
+I would like to register 16 GPIO chips, each with 8 lines.
+The chip has 128 pins totally, the core can check if the pin is valid throu=
+gh
+the init_valid_mask() callback.
+
+>
+> > +
+> > +static int nct6694_gpio_probe(struct platform_device *pdev)
+> > +{
+> > +       const struct mfd_cell *cell =3D mfd_get_cell(pdev);
+> > +       struct nct6694 *nct6694 =3D dev_get_drvdata(pdev->dev.parent);
+> > +       struct nct6694_gpio_data *data;
+> > +       struct gpio_irq_chip *girq;
+> > +       int ret;
+> > +
+> > +       data =3D devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
+> > +       if (!data)
+> > +               return -ENOMEM;
+> > +
+> > +       data->nct6694 =3D nct6694;
+> > +       data->group =3D cell->id;
+> > +
+> > +       data->gpio.label                =3D nct6694_gpio_name[cell->id]=
+;
+> > +       data->gpio.direction_input      =3D nct6694_direction_input;
+> > +       data->gpio.get                  =3D nct6694_get_value;
+> > +       data->gpio.direction_output     =3D nct6694_direction_output;
+> > +       data->gpio.set                  =3D nct6694_set_value;
+> > +       data->gpio.get_direction        =3D nct6694_get_direction;
+> > +       data->gpio.set_config           =3D nct6694_set_config;
+> > +       data->gpio.init_valid_mask      =3D nct6694_init_valid_mask;
+> > +       data->gpio.base                 =3D -1;
+> > +       data->gpio.can_sleep            =3D false;
+> > +       data->gpio.owner                =3D THIS_MODULE;
+> > +       data->gpio.ngpio                =3D 8;
+> > +
+> > +       INIT_WORK(&data->irq_work, nct6694_irq);
+> > +       INIT_WORK(&data->irq_trig_work, nct6694_irq_trig);
+> > +       mutex_init(&data->irq_lock);
+> > +
+> > +       ret =3D nct6694_register_handler(nct6694, GPIO_IRQ_STATUS,
+> > +                                      nct6694_gpio_handler, data);
+> > +       if (ret) {
+> > +               dev_err(&pdev->dev, "%s:  Failed to register handler: %=
+pe\n",
+> > +                       __func__, ERR_PTR(ret));
+> > +               return ret;
+> > +       }
+> > +
+> > +       platform_set_drvdata(pdev, data);
+> > +
+> > +       ret =3D nct6694_get_irq_trig(data);
+> > +       if (ret)
+> > +               return ret;
+> > +
+> > +       /* Register gpio chip to GPIO framework */
+> > +       girq =3D &data->gpio.irq;
+> > +       gpio_irq_chip_set_chip(girq, &nct6694_irq_chip);
+> > +       girq->parent_handler =3D NULL;
+> > +       girq->num_parents =3D 0;
+> > +       girq->parents =3D NULL;
+> > +       girq->default_type =3D IRQ_TYPE_NONE;
+> > +       girq->handler =3D handle_level_irq;
+> > +       girq->threaded =3D true;
+> > +
+> > +       ret =3D gpiochip_add_data(&data->gpio, data);
+> > +       if (ret) {
+> > +               dev_err(&pdev->dev, "%s: Failed to register GPIO chip: =
+%pe",
+> > +                       __func__, ERR_PTR(ret));
+> > +               return ret;
+> > +       }
+> > +
+> > +       return 0;
+> > +}
+> > +
+> > +static void nct6694_gpio_remove(struct platform_device *pdev)
+> > +{
+> > +       struct nct6694_gpio_data *data =3D platform_get_drvdata(pdev);
+> > +
+> > +       gpiochip_remove(&data->gpio);
+>
+> This should be dropped in favor of using devm_gpiochip_add_data().
+> Especially since you probably want to cancel the irq_work before
+> removing the chip.
+
+[Ming] Okay! I'll change it in the next patch.
+
+>
+> > +       cancel_work(&data->irq_work);
+> > +       cancel_work(&data->irq_trig_work);
+> > +}
+> > +
+> > +static struct platform_driver nct6694_gpio_driver =3D {
+> > +       .driver =3D {
+> > +               .name   =3D DRVNAME,
+> > +       },
+> > +       .probe          =3D nct6694_gpio_probe,
+> > +       .remove         =3D nct6694_gpio_remove,
+> > +};
+> > +
+> > +static int __init nct6694_init(void)
+> > +{
+> > +       int err;
+> > +
+> > +       err =3D platform_driver_register(&nct6694_gpio_driver);
+> > +       if (!err) {
+> > +               if (err)
+>
+> If err is equal to 0, check if it's not equal to zero?
+>
+> > +                       platform_driver_unregister(&nct6694_gpio_driver=
+);
+>
+> If platform_driver_register() failed, then the device was never registere=
+d.
+>
+> > +       }
+> > +
+> > +       return err;
+> > +}
+> > +subsys_initcall(nct6694_init);
+>
+> Any reason why this must be initialized earlier? It's a USB driver after =
+all.
+
+[Ming] For platform driver registration, I'll change it to
+module_platform_driver()
+in the next patch.
+
+>
+> > +
+> > +static void __exit nct6694_exit(void)
+> > +{
+> > +       platform_driver_unregister(&nct6694_gpio_driver);
+> > +}
+> > +module_exit(nct6694_exit);
+> > +
+> > +MODULE_DESCRIPTION("USB-GPIO controller driver for NCT6694");
+> > +MODULE_AUTHOR("Ming Yu <tmyu0@nuvoton.com>");
+> > +MODULE_LICENSE("GPL");
+> > --
+> > 2.34.1
+> >
+>
+> Bart
 
