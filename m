@@ -1,185 +1,172 @@
-Return-Path: <linux-kernel+bounces-382777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A16E69B135D
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 01:37:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D43769B135F
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 01:39:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 303CD1F2366A
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 23:37:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DF64282729
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 23:39:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A6CB20EA57;
-	Fri, 25 Oct 2024 23:36:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59ED720F3D3;
+	Fri, 25 Oct 2024 23:39:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jqRt6V+S"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="Z2xyqHvq"
+Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 488931DD0C9;
-	Fri, 25 Oct 2024 23:36:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5DA81DD0C9
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 23:39:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729899415; cv=none; b=MyNOodyG+4nDNA3aE9TqF8btxvKeWo91BeDdEF0GNZr8H9dOfFHFKznPr5fhyZdYkDx8gJMTKHPgN9PllnnvgrjG7u9AU5A4V3zjTiYo2J6Nqeu0AbAYyaoq0XLkQsswcufmPexqYszO2tYdTzDF2pW7mOlut8LmIjmjaJK646g=
+	t=1729899587; cv=none; b=aExrAEF82PiReQOWJTxNbeum0NTo8hIq876rO+fPxqkY5QoexRw8NW/DTfCocqVJLRIqP4A9JQHSijtVgScLvRSrkR8rAXaX6E5QRznfoA0MPZqGVZqKugAkoI3970Y7bVga2qpt8zZcSNDuTTFz0PkwbKR/rVYjZRoVovpzUzU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729899415; c=relaxed/simple;
-	bh=IGGzg2XSMEgYDbtmoEgullvHERYz9k0xD4DeSP9VkBg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=a8IJ8/As42X65m74Ayef7qYy0C26nhpd/4druViIx99fzVwm/wZFwZ50mTIG57SaBCliexjcOOFQKg0TmGPfwdyu+0L27XPuRI4NcZS8ZjTj62dOB/lalzVBRNyVUg0oQY1K5iesZ/NR9bjw1tPjuXsFdlFH3/E1j6jX028+14k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jqRt6V+S; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-539e63c8678so2741333e87.0;
-        Fri, 25 Oct 2024 16:36:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729899411; x=1730504211; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9sonXZqQPpkluHOHAfTU27yt9d8MezlEJ1IInPVvVSs=;
-        b=jqRt6V+SzPTiHUo3uXC+mW/HR8DoeohTVi9XNVrsqXi3Qn1bnMoA1aqxIAKVi4s9a8
-         AcryHZrQG3QQ2+iWAYTjUqldYTiUP+Z+LC4msjA6ZvHW9fltjpTPMXgA/6wwL1SITYic
-         kBpzYGZ1/IRvFAYz3RJD6D5uG/D2TD6kMynsk4ofJvGSJb7dLw5L/4oqZQ7o5izvJtRw
-         jn/Eh1izsKyu2DAzifoXvWAdwadziTygbDc6O6qjgezj/OTWI/OtWtV/5Nl/+Os6Fmen
-         fxI+sV+CJ89Ae1Eo28YF770yQA+uqrOIJaAZyh0Id2H+3JntLNa+WhClf2GgJl57DqsG
-         m+TQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729899411; x=1730504211;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9sonXZqQPpkluHOHAfTU27yt9d8MezlEJ1IInPVvVSs=;
-        b=d95UWaw+/06gXs5rOnpspqlfHZO+j/MjCmzjtRYxoJf3S4z0amQzHQy03wRQBWtwNY
-         axorH6JeUPQBChNMG4yezwSFT7VCPwUlcvpuGUXcNHQDgRxlzlTC0ZHDZsqKL0sKHTO3
-         EdeKNW2QVhgt3kOKwXEmvOkc7e0rLWaaqmLG8WxTlX/2I5qWvBqNHJ729uNPGVyIH/lE
-         UXpscMnl1zyzFrDsXkzp/C108cBVCpdAcj/o86dY9/QLmwZsxMdFVec5ofxvIrzAyDQg
-         JJ/kF55yM6wUoGbq3/8udAUCMZDu6MwGqejl7OB+kGGwvgXuxWxIAbwz/pXtiHlD9gLv
-         TSaw==
-X-Forwarded-Encrypted: i=1; AJvYcCUdt5CFcSz9WDRiJS8n8Ro5lFf+lnrYBG5O6nNmj1oaZFiyTwudzOPxbT0uJAVVaK9EBVs2X80eI+XSBg==@vger.kernel.org, AJvYcCVkjjBQFyiGRcN/Mo3kinvzJ42BTia/pXTUY3eA7PGRFRZtjonfBic2bfaLpGbkHUFhg1Z3HFaIzJUaYEw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLoth45DOGl7Hsgh0gpH9C34uDRUBLm4iiQa3jCv7WyFWc4Xm/
-	EY9Uc+E8m/qeuaDBt0wGYt4kXbJlyOaB3RKaK+gkWKkd+9km0Mgra65Ux/0DACYbI9JPEV9CLrf
-	A7Qba9X09JcdUVm2dNo39b+01MVY=
-X-Google-Smtp-Source: AGHT+IFoVkurUIdmqu9xXNZo4jjLV3P0kCi/QWphDA4nIZpZd7wQ4MC7cQtGwcSQ106PimrY2VSlrAkZlKdWKufcles=
-X-Received: by 2002:a05:6512:23a4:b0:539:e214:20e5 with SMTP id
- 2adb3069b0e04-53b34c3fe07mr452676e87.59.1729899411030; Fri, 25 Oct 2024
- 16:36:51 -0700 (PDT)
+	s=arc-20240116; t=1729899587; c=relaxed/simple;
+	bh=IW7vPXI7BVX8NzADDiT5aIc+IieWqSCcKo2tzaVRMfg=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ShcgdZt7qo7WIjnkKv4UPfqtO/HqObJhHRXVPE02tmIOcinEEpEbHluvHYUlL3AVM2G9M34G3PDzhftaYUj+plSwBr2PEBZPEKlvHNHBJxquzTsK0z/VTQX67egk6d5i5vPiF/Q5K1aWiIEjhhVrBkxrZiOJKpZ1gWCAL+MmifQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=Z2xyqHvq; arc=none smtp.client-ip=185.70.43.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1729899582; x=1730158782;
+	bh=l0pfVjigw5ZvqCB21r+SsSYkMhK0lEHs2lWzwtPAAUc=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=Z2xyqHvqPl73wgY/2PJ+SqofoNcYRkexzO/IHM1Q3SM2gWZ6XFJ5l66oF6y041J69
+	 8GnWwTPx/0NjTpr353Kkb6fPqAln7005ZcGdyW4jsPBQnlusDSSutJLrP4wNe8DofE
+	 sy7FBidg+OK6LsR8Yz1RsFPEsSJUI548P4u2gewxr12QtOMUiPRAOtqmW6hz8TBrjT
+	 hl86xoOYlzR568RKrF9gjMos2/XnsNcmXWFaYBcBdXtf25TjTS9kcCbG9LlpT/bWo9
+	 tdnKkSi4kddi2ROh6ALCuyZK0lPHKtP8U2p7L4+oVj0wor4N7p8Q0Z8eL0ZhCLyCOR
+	 SCXIEF9tAhpQg==
+Date: Fri, 25 Oct 2024 23:39:38 +0000
+To: Piotr Zalewski <pZ010001011111@proton.me>
+From: Piotr Zalewski <pZ010001011111@proton.me>
+Cc: Alan Huang <mmpgouride@gmail.com>, Kent Overstreet <kent.overstreet@linux.dev>, linux-bcachefs@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, skhan@linuxfoundation.org, syzbot+005ef9aa519f30d97657@syzkaller.appspotmail.com
+Subject: Re: [PATCH] bcachefs: Fix NULL ptr dereference in btree_node_iter_and_journal_peek
+Message-ID: <8aW4pK0ZSmglofzD-Ej0W2ClwAV-1qDS95_nUqwxsw_I4w6gERwlUN-uqb-n2fiMyh5r_1pzEj4vCIBLL5vSJAAnzqTgijxAHB2pRnIFNww=@proton.me>
+In-Reply-To: <L78wBCQQaurE7tyQP_T2Fklx8afGKmTXxDh-gweSzakgUoCwjCYeMHINndXWj4LWdUFpOvynoYeKlE7N0rUMiXYEM_VLDye48iN5ysgM09A=@proton.me>
+References: <20241023072024.98915-3-pZ010001011111@proton.me> <09A7740A-3113-4ABF-8587-8E0A4231DD61@gmail.com> <L78wBCQQaurE7tyQP_T2Fklx8afGKmTXxDh-gweSzakgUoCwjCYeMHINndXWj4LWdUFpOvynoYeKlE7N0rUMiXYEM_VLDye48iN5ysgM09A=@proton.me>
+Feedback-ID: 53478694:user:proton
+X-Pm-Message-ID: e30d18e7309e114e032e52e476fe9bf37bc10238
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241022173921.6fdbdd38@canb.auug.org.au> <ZxtAWopjlF9unBno@kernel.org>
- <CALe3CaAehCC6WOpCAGtMX3qsTqMc8jh3kn1Fz_m7_7_M6SMgfQ@mail.gmail.com>
- <CALe3CaDW9vWcrukmWP+tj-ToSUh8p6==goL+B3aiGvxBDg79Ww@mail.gmail.com> <ZxtZ5q5HH-gu0zeQ@kernel.org>
-In-Reply-To: <ZxtZ5q5HH-gu0zeQ@kernel.org>
-From: Su Hua <suhua.tanke@gmail.com>
-Date: Sat, 26 Oct 2024 07:36:13 +0800
-Message-ID: <CALe3CaA9cc8fagJwA5ux6-U8mKTK=DEGU1Mb3LeCeKPrUGS5ig@mail.gmail.com>
-Subject: Re: linux-next: boot failure after merge of the memblock tree
-To: Mike Rapoport <rppt@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-Mike Rapoport <rppt@kernel.org> =E4=BA=8E2024=E5=B9=B410=E6=9C=8825=E6=97=
-=A5=E5=91=A8=E4=BA=94 16:46=E5=86=99=E9=81=93=EF=BC=9A
->
-> On Fri, Oct 25, 2024 at 04:33:16PM +0800, Su Hua wrote:
-> > Su Hua <suhua.tanke@gmail.com> =E4=BA=8E2024=E5=B9=B410=E6=9C=8825=E6=
-=97=A5=E5=91=A8=E4=BA=94 16:19=E5=86=99=E9=81=93=EF=BC=9A
-> > >
-> > > Appreciate everyone.
-> > >
-> > > Mike Rapoport <rppt@kernel.org> =E4=BA=8E2024=E5=B9=B410=E6=9C=8825=
-=E6=97=A5=E5=91=A8=E4=BA=94 14:57=E5=86=99=E9=81=93=EF=BC=9A
-> > > >
-> > > > Hi Stephen,
-> > > >
-> > > > On Tue, Oct 22, 2024 at 05:39:21PM +1100, Stephen Rothwell wrote:
-> > > > > Hi all,
-> > > > >
-> > > > > After merging the memblock tree, today's linux-next build
-> > > > > (powerpc_pseries_le_defconfig) failed my qemu boot test like this=
-:
-> > > > >
-> > > > > Kernel panic - not syncing: Attempted to kill the idle task!
-> > > > >
-> > > > > Caused by commit
-> > > > >
-> > > > >   ad48825232a9 ("memblock: uniformly initialize all reserved page=
-s to MIGRATE_MOVABLE")
-> > > > >
-> > > > > I bisected the failure to this commit and have reverted it for to=
-day.
-> > > >
-> > > > Apparently set_pfnblock_flags_mask() is unhappy when called for
-> > > > uninitialized struct page. With the patch below
-> > > >
-> > > > qemu-system-ppc64el -M pseries -cpu power10 -smp 16 -m 32G -vga non=
-e -nographic -kernel $KERNEL
-> > > >
-> > > > boots up to mounting root filesystem.
-> > > >
-> > > > diff --git a/mm/mm_init.c b/mm/mm_init.c
-> > > > index 49dbd30e71ad..2395970314e7 100644
-> > > > --- a/mm/mm_init.c
-> > > > +++ b/mm/mm_init.c
-> > > > @@ -723,10 +723,10 @@ static void __meminit init_reserved_page(unsi=
-gned long pfn, int nid)
-> > > >                         break;
-> > > >         }
-> > > >
-> > > > +       __init_single_page(pfn_to_page(pfn), pfn, zid, nid);
-> > > > +
-> > > >         if (pageblock_aligned(pfn))
-> > > >                 set_pageblock_migratetype(pfn_to_page(pfn), MIGRATE=
-_MOVABLE);
-> > > > -
-> > > > -       __init_single_page(pfn_to_page(pfn), pfn, zid, nid);
-> > >
-> > > Indeed, when #ifdef NODE_NOT_IN_PAGE_FLAGS is defined, there is no
-> > > problem, and this is why my
-> > > test environment did not reveal any issues. However, when
-> > > NODE_NOT_IN_PAGE_FLAGS is not defined,
-> > > page_to_nid needs to use page->flags to get the node ID, which depend=
-s
-> > > on __init_single_page for initialization.
-> >
-> > Hi Mike
-> > Could you please advise whether the fix for this issue should be
-> > submitted by you or me
-> > as a new patch, or should I submit a patch that adjusts the code
-> > position, just like this:
->
-> I've folded the update into your original commit, it's now in for-next
-> branch of memblock tree
+Hi Alan and all,
 
-Okay, thank you.
+On Wednesday, October 23rd, 2024 at 10:06 AM, Piotr Zalewski <pZ01000101111=
+1@proton.me> wrote:
 
-> > diff --git a/mm/mm_init.c b/mm/mm_init.c
-> > index 4ba5607aaf19..5a8114fb02ae 100644
-> > --- a/mm/mm_init.c
-> > +++ b/mm/mm_init.c
-> > @@ -723,6 +723,9 @@ static void __meminit init_reserved_page(unsigned
-> > long pfn, int nid)
-> >                         break;
-> >         }
-> >         __init_single_page(pfn_to_page(pfn), pfn, zid, nid);
-> > +
-> > +       if (pageblock_aligned(pfn))
-> > +               set_pageblock_migratetype(pfn_to_page(pfn), MIGRATE_MOV=
-ABLE);
-> >  }
-> >  #else
-> >
-> > Sincerely yours,
-> > Su
+> Hi Alan,
 >
-> --
-> Sincerely yours,
-> Mike.
+> On Wednesday, October 23rd, 2024 at 9:33 AM, Alan Huang mmpgouride@gmail.=
+com wrote:
+>
+> > On Oct 23, 2024, at 15:21, Piotr Zalewski pZ010001011111@proton.me wrot=
+e:
+> >
+> > > Add NULL check for key returned from bch2_btree_and_journal_iter_peek=
+ in
+> > > btree_node_iter_and_journal_peek to avoid NULL ptr dereference in
+> > > bch2_bkey_buf_reassemble.
+> >
+> > It would be helpful if the commit message explained why k.k is null in =
+this case
+>
+>
+> I will debug this more thoroughly and provide details. For now I see that
+> during GC it sees journal replay hasn't finished but journal turns out to
+> be empty? Which seems weird, so maybe underlying issue should be solved o=
+n
+> a deeper level.
+>
+
+There is a clean shutdown detected during recovery. Journal has no entries=
+=20
+as it was confirmed by debugging bch2_fs_journal_start. seq and seq_ondisk=
+=20
+members are equal so journal is "quiesced". Also, journal_keys size is 0.
+
+So in check_allocations when keys are being marked for GC journal replay is
+not done so it peeks into journal and there is nothing.
+
+Now, maybe in case journal is empty during start, replay done should be set=
+=20
+already in bch2_fs_journal_start? I tested it and it fixed the issue as wel=
+l.
+```
+diff --git a/fs/bcachefs/journal.c b/fs/bcachefs/journal.c
+index 2cf8f24d50cc..67b342d23346 100644
+--- a/fs/bcachefs/journal.c
++++ b/fs/bcachefs/journal.c
+@@ -1287,6 +1287,9 @@ int bch2_fs_journal_start(struct journal *j, u64 cur_=
+seq)
+        spin_lock(&j->lock);
+
+        set_bit(JOURNAL_running, &j->flags);
++       if (!had_entries) {
++               set_bit(JOURNAL_replay_done, &j->flags);
++       }
+        j->last_flush_write =3D jiffies;
+
+        j->reservations.idx =3D j->reservations.unwritten_idx =3D journal_c=
+ur_seq(j);
+```
+
+
+(But at the same time there is a check for whether there were entries just=
+=20
+above the code which sets journal running so it seems unlikely that if it's=
+=20
+correct approach it's not yet there).
+
+(In need of some pointer/explanation)
+
+>
+> > > Reported-by: syzbot+005ef9aa519f30d97657@syzkaller.appspotmail.com
+> > > Closes: https://syzkaller.appspot.com/bug?extid=3D005ef9aa519f30d9765=
+7
+> > > Fixes: 5222a4607cd8 ("bcachefs: BTREE_ITER_WITH_JOURNAL")
+> > > Signed-off-by: Piotr Zalewski pZ010001011111@proton.me
+> > > ---
+> > > fs/bcachefs/btree_iter.c | 3 +++
+> > > 1 file changed, 3 insertions(+)
+> > >
+> > > diff --git a/fs/bcachefs/btree_iter.c b/fs/bcachefs/btree_iter.c
+> > > index 0883cf6e1a3e..625167ce191f 100644
+> > > --- a/fs/bcachefs/btree_iter.c
+> > > +++ b/fs/bcachefs/btree_iter.c
+> > > @@ -882,6 +882,8 @@ static noinline int btree_node_iter_and_journal_p=
+eek(struct btree_trans *trans,
+> > > __bch2_btree_and_journal_iter_init_node_iter(trans, &jiter, l->b, l->=
+iter, path->pos);
+> > >
+> > > k =3D bch2_btree_and_journal_iter_peek(&jiter);
+> > > + if (!k.k)
+> > > + goto err;
+> > >
+> > > bch2_bkey_buf_reassemble(out, c, k);
+> > >
+> > > @@ -889,6 +891,7 @@ static noinline int btree_node_iter_and_journal_p=
+eek(struct btree_trans *trans,
+> > > c->opts.btree_node_prefetch)
+> > > ret =3D btree_path_prefetch_j(trans, path, &jiter);
+> > >
+> > > +err:
+> > > bch2_btree_and_journal_iter_exit(&jiter);
+> > > return ret;
+> > > }
+> > > --
+> > > 2.47.0
+>
+Best regards, Piotr Zalewski
 
