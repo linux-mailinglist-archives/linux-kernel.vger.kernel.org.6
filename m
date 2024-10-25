@@ -1,43 +1,43 @@
-Return-Path: <linux-kernel+bounces-381465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBA559AFF90
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 12:09:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42E119AFF9B
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 12:09:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7076128252B
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 10:09:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7569F1C22093
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 10:09:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6234B1DD0CD;
-	Fri, 25 Oct 2024 10:08:43 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09DE71E00BF;
+	Fri, 25 Oct 2024 10:08:44 +0000 (UTC)
+Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59A9B1D63CF
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 10:08:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97AAF1D47C7
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 10:08:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729850923; cv=none; b=OB/zoiocmFN7mhcfe1gyIZv3R1ATFhQ1wtN5X0FY7TytcK5RL68YNEY+Fjk+d4S2unUDZ0NRAE0RYUcvgczhtmGdWep0D5b+CNOZ7WI3AA8vM/cUW0vrIVs2RzxC6GSW4PPHhWLg4lt1dTummmPwSot9OaMhjiBO+IvXXQP+twM=
+	t=1729850923; cv=none; b=tO5LOxcqdBC2DjVzDgqINSlHRLmECF/y7rp0Rvc2xZxJ2/UiMLAbgVinlC9B43niRQ2XfXw4shZs7/VTl4QJfD1d4wsYaUaaPXlUJ7QqcJx0+o4sHEO2mdtp5H1a09/ShyouQp6RFw5MrbW1fUc8fJkd/rlpkFsx0c3mCTlcJek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1729850923; c=relaxed/simple;
-	bh=5fv8ItOdHMGLXHFOM+gt6S60jXPYsZCu1eFzAIkLtao=;
+	bh=FLsHu0qjo5G4VRdjZlOasGkexWsOwJQe+LUn8sRCXqo=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Z0D40iInTc+hiQMizx1jXPfNLj1lIcsB4XacLEU99WMxtnqcGu+OP+ig4X4JfbGFKs75zvW4VT9TXDAFHzf/7N5rTr1SzOPS27Fd8zNpfQQihQaMfPv9ZRsgMMjRiH7yLDKz7w1HPCmtEuKnsMQ1/NJWE7tD54DPRNYlwvYtsdo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
+	 MIME-Version:Content-Type; b=Gr1oULvGJNMtE4AS9UtbVxsqwvRr+0stXm6oVqGcmh/FkbwEPuiiS9vgv6BCR4vvGUlCwq8ZLAP6cLjmyAvANpezaGNzlsoCgskpp7Bv1mU2dui4dTg2w8fvXEGVFUyS5vUeO1aliJwLpJcs5lYdRdta61sZtd3el95N6U7aYQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4XZdlw6k9cz1yng3;
-	Fri, 25 Oct 2024 18:08:44 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4XZdk82QfKz1SDBV;
+	Fri, 25 Oct 2024 18:07:12 +0800 (CST)
 Received: from kwepemg200008.china.huawei.com (unknown [7.202.181.35])
-	by mail.maildlp.com (Postfix) with ESMTPS id 41002140360;
-	Fri, 25 Oct 2024 18:08:37 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTPS id 94CA51401F1;
+	Fri, 25 Oct 2024 18:08:38 +0800 (CST)
 Received: from huawei.com (10.90.53.73) by kwepemg200008.china.huawei.com
  (7.202.181.35) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 25 Oct
- 2024 18:08:35 +0800
+ 2024 18:08:37 +0800
 From: Jinjie Ruan <ruanjinjie@huawei.com>
 To: <oleg@redhat.com>, <linux@armlinux.org.uk>, <will@kernel.org>,
 	<mark.rutland@arm.com>, <catalin.marinas@arm.com>, <sstabellini@kernel.org>,
@@ -59,9 +59,9 @@ To: <oleg@redhat.com>, <linux@armlinux.org.uk>, <will@kernel.org>,
 	<liuyuntao12@huawei.com>, <leobras@redhat.com>,
 	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
 	<xen-devel@lists.xenproject.org>
-Subject: [PATCH -next v4 03/19] arm64: entry: Remove __enter_from_user_mode()
-Date: Fri, 25 Oct 2024 18:06:44 +0800
-Message-ID: <20241025100700.3714552-4-ruanjinjie@huawei.com>
+Subject: [PATCH -next v4 04/19] arm64: entry: Remove __enter_from_kernel_mode()
+Date: Fri, 25 Oct 2024 18:06:45 +0800
+Message-ID: <20241025100700.3714552-5-ruanjinjie@huawei.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20241025100700.3714552-1-ruanjinjie@huawei.com>
 References: <20241025100700.3714552-1-ruanjinjie@huawei.com>
@@ -76,41 +76,43 @@ Content-Type: text/plain
 X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
  kwepemg200008.china.huawei.com (7.202.181.35)
 
-The __enter_from_user_mode() is only called by enter_from_user_mode(),
-so replaced it with enter_from_user_mode().
+The __enter_from_kernel_mode() is only called by enter_from_kernel_mode(),
+remove it.
 
 No functional changes.
 
 Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
 ---
- arch/arm64/kernel/entry-common.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+ arch/arm64/kernel/entry-common.c | 9 +--------
+ 1 file changed, 1 insertion(+), 8 deletions(-)
 
 diff --git a/arch/arm64/kernel/entry-common.c b/arch/arm64/kernel/entry-common.c
-index 68a9aecacdb9..ccf59b44464d 100644
+index ccf59b44464d..a7fd4d6c7650 100644
 --- a/arch/arm64/kernel/entry-common.c
 +++ b/arch/arm64/kernel/entry-common.c
-@@ -109,7 +109,7 @@ static void noinstr exit_to_kernel_mode(struct pt_regs *regs,
-  * Before this function is called it is not safe to call regular kernel code,
-  * instrumentable code, or any code which may trigger an exception.
+@@ -36,7 +36,7 @@
+  * This is intended to match the logic in irqentry_enter(), handling the kernel
+  * mode transitions only.
   */
--static __always_inline void __enter_from_user_mode(void)
-+static __always_inline void enter_from_user_mode(struct pt_regs *regs)
+-static __always_inline irqentry_state_t __enter_from_kernel_mode(struct pt_regs *regs)
++static noinstr irqentry_state_t enter_from_kernel_mode(struct pt_regs *regs)
  {
- 	lockdep_hardirqs_off(CALLER_ADDR0);
- 	CT_WARN_ON(ct_state() != CT_STATE_USER);
-@@ -118,11 +118,6 @@ static __always_inline void __enter_from_user_mode(void)
- 	mte_disable_tco_entry(current);
- }
+ 	irqentry_state_t ret = {
+ 		.exit_rcu = false,
+@@ -55,13 +55,6 @@ static __always_inline irqentry_state_t __enter_from_kernel_mode(struct pt_regs
+ 	rcu_irq_enter_check_tick();
+ 	trace_hardirqs_off_finish();
  
--static __always_inline void enter_from_user_mode(struct pt_regs *regs)
--{
--	__enter_from_user_mode();
+-	return ret;
 -}
 -
- /*
-  * Handle IRQ/context state management when exiting to user mode.
-  * After this function returns it is not safe to call regular kernel code,
+-static noinstr irqentry_state_t enter_from_kernel_mode(struct pt_regs *regs)
+-{
+-	irqentry_state_t ret = __enter_from_kernel_mode(regs);
+-
+ 	mte_check_tfsr_entry();
+ 	mte_disable_tco_entry(current);
+ 
 -- 
 2.34.1
 
