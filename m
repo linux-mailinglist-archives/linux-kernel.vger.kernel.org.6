@@ -1,132 +1,124 @@
-Return-Path: <linux-kernel+bounces-381499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF8609B0017
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 12:25:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 715CF9AFFA5
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 12:09:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 940502823B9
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 10:25:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34CA32852CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 10:09:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A0E21E2602;
-	Fri, 25 Oct 2024 10:25:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="stX288jr"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1ABE1FAC5E;
+	Fri, 25 Oct 2024 10:08:46 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88D2A18BC1C;
-	Fri, 25 Oct 2024 10:25:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 633DE1E5732
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 10:08:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729851945; cv=none; b=uYFOqpzMwrQj4lZr757e8dnIyPcHiLSfWwSr4u8l38SmRIBeobPR50t5lhbGMWHDeoC8CYf+/MVhn2hBiQlaNETDDXrcXh511aqgCvAn6WXLvp1hul2OjKf8mVLGT4j3wCBC2aP8Ohus1eaP5ms+0aHUKnghYfgE6RPUkZyguqA=
+	t=1729850926; cv=none; b=twMUFOEu61MKo94ixzjIMVVqFHl2L7tD7RWG0Oh+ZXuIf3mWcGAWz3TuBq3iYVOI+DEH0dT6KgHskaZVzvGOr66JForYIa9wz6AKQaHpgU5pMPGJoIdcHS+ht5aENShPPR41NnfhBmRaxqicc1v3YR3EDw2oUBOVbc3TOjLpCB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729851945; c=relaxed/simple;
-	bh=l6zYx3EpY8E06f6D9Nq2OmEIa8ymCnBBvQHwnns2fMU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=nZAWKsSjSMEZ00hhHZT0IXNguBdzvUJ84GAE/S5wnPDjGE7q/31t9bFV5qVFcH7OWg1C1cXz9PZw1vee7QCGlmAFr9lz4rC8LqtEs0RcXQ4wLXmbWBHeZkDXVyf20oFXVvtUcRoWenUKn1tpXm9sJleDJ5XTRNbMbiqVdv+B5sQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=stX288jr; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49P1v1M4032541;
-	Fri, 25 Oct 2024 10:25:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=u/wjAQliUeOUevukzQrFYo45PuDDJe
-	S43AJbPPaIqao=; b=stX288jrkgMtzuDZx2BjnKyCnDLhgKyFBIpSMqgmn1yDFW
-	kq3bAyzBp7zyBgiYqMEcQz/mmR37qn6gTErcnsXA4f/jFtKtD9wS/PehekNcxp5Q
-	3bMY2RJNbb/4ZQbBMPvdT3XPDrrgokvNcciZACc7V17M2nC0OZR6/Sua9ztcHwAN
-	ZktNKWdlEur4wL/aWoIEBV45GuygZEH82IwYCIQghSN9qHs16uUpc7FT8TnmAjAA
-	GJqCp+hl8/u7ss/x3kz1pFoOREThY6V8cOi4EHZ9p07D8RNp79b+5c9ut7WXyb53
-	9yYCB2NnQhhLUcnSLAcR+6E32gCjpIRnvttAGmiA==
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42g246su3s-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 25 Oct 2024 10:25:35 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49PAGYUr001516;
-	Fri, 25 Oct 2024 10:25:34 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 42emk9n5xh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 25 Oct 2024 10:25:34 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49PAPWhE33292794
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 25 Oct 2024 10:25:33 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B3472202F9;
-	Fri, 25 Oct 2024 10:05:18 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 45FD8202F8;
-	Fri, 25 Oct 2024 10:05:18 +0000 (GMT)
-Received: from osiris (unknown [9.171.89.199])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Fri, 25 Oct 2024 10:05:18 +0000 (GMT)
-Date: Fri, 25 Oct 2024 12:05:16 +0200
-From: Heiko Carstens <hca@linux.ibm.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: oe-kbuild@lists.linux.dev, lkp@intel.com, oe-kbuild-all@lists.linux.dev,
-        linux-kernel@vger.kernel.org, Vasily Gorbik <gor@linux.ibm.com>
-Subject: Re: arch/s390/mm/fault.c:566 do_secure_storage_access() warn:
- inconsistent returns '&mm->mmap_lock'.
-Message-ID: <20241025100516.7541-B-hca@linux.ibm.com>
-References: <5e4a2c40-9fc4-439a-8166-3a694e705d8e@stanley.mountain>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5e4a2c40-9fc4-439a-8166-3a694e705d8e@stanley.mountain>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: bGTE1v5lWVjbTpUNIiFH0Sm7m-1KdEOh
-X-Proofpoint-GUID: bGTE1v5lWVjbTpUNIiFH0Sm7m-1KdEOh
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	s=arc-20240116; t=1729850926; c=relaxed/simple;
+	bh=H8EuLieIC77R6j2EtEuSulAlVvNnozvONuwW1MZqVXs=;
+	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OEReEC/xDCbkQceEq2tdxcV9Q54WlbwUu43/r1fFOn2epwT0LMCZLjrwDj+wNAc/D0LyPT1+PYD/jSCiLql2Pfz2uUbDzaitAOgZ3TWRhKf013lRsaJWSYKCZ/GSPdsVUanNB46T9wwinJMqA2hoAjF3gUUBnPIeV2fvmPUGbrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4XZdkB3WLkz1jvxM;
+	Fri, 25 Oct 2024 18:07:14 +0800 (CST)
+Received: from kwepemg200008.china.huawei.com (unknown [7.202.181.35])
+	by mail.maildlp.com (Postfix) with ESMTPS id F313F180043;
+	Fri, 25 Oct 2024 18:08:39 +0800 (CST)
+Received: from huawei.com (10.90.53.73) by kwepemg200008.china.huawei.com
+ (7.202.181.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 25 Oct
+ 2024 18:08:38 +0800
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+To: <oleg@redhat.com>, <linux@armlinux.org.uk>, <will@kernel.org>,
+	<mark.rutland@arm.com>, <catalin.marinas@arm.com>, <sstabellini@kernel.org>,
+	<maz@kernel.org>, <tglx@linutronix.de>, <peterz@infradead.org>,
+	<luto@kernel.org>, <kees@kernel.org>, <wad@chromium.org>,
+	<akpm@linux-foundation.org>, <samitolvanen@google.com>, <arnd@arndb.de>,
+	<ojeda@kernel.org>, <rppt@kernel.org>, <hca@linux.ibm.com>,
+	<aliceryhl@google.com>, <samuel.holland@sifive.com>, <paulmck@kernel.org>,
+	<aquini@redhat.com>, <petr.pavlu@suse.com>, <ruanjinjie@huawei.com>,
+	<viro@zeniv.linux.org.uk>, <rmk+kernel@armlinux.org.uk>, <ardb@kernel.org>,
+	<wangkefeng.wang@huawei.com>, <surenb@google.com>,
+	<linus.walleij@linaro.org>, <yangyj.ee@gmail.com>, <broonie@kernel.org>,
+	<mbenes@suse.cz>, <puranjay@kernel.org>, <pcc@google.com>,
+	<guohanjun@huawei.com>, <sudeep.holla@arm.com>,
+	<Jonathan.Cameron@huawei.com>, <prarit@redhat.com>, <liuwei09@cestc.cn>,
+	<dwmw@amazon.co.uk>, <oliver.upton@linux.dev>, <kristina.martsenko@arm.com>,
+	<ptosi@google.com>, <frederic@kernel.org>, <vschneid@redhat.com>,
+	<thiago.bauermann@linaro.org>, <joey.gouly@arm.com>,
+	<liuyuntao12@huawei.com>, <leobras@redhat.com>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<xen-devel@lists.xenproject.org>
+Subject: [PATCH -next v4 05/19] arm64: entry: Remove __exit_to_kernel_mode()
+Date: Fri, 25 Oct 2024 18:06:46 +0800
+Message-ID: <20241025100700.3714552-6-ruanjinjie@huawei.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20241025100700.3714552-1-ruanjinjie@huawei.com>
+References: <20241025100700.3714552-1-ruanjinjie@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
- priorityscore=1501 malwarescore=0 suspectscore=0 adultscore=0
- mlxlogscore=749 clxscore=1011 impostorscore=0 mlxscore=0 phishscore=0
- bulkscore=0 lowpriorityscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2409260000 definitions=main-2410250080
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemg200008.china.huawei.com (7.202.181.35)
 
-On Fri, Oct 25, 2024 at 10:35:47AM +0300, Dan Carpenter wrote:
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-> head:   c2ee9f594da826bea183ed14f2cc029c719bf4da
-> commit: 7c194d84a9ce662426b2ecb59da54bb80c6b1d91 s390/mm,fault: remove VM_FAULT_BADMAP and VM_FAULT_BADACCESS
-> config: s390-randconfig-r072-20241024 (https://download.01.org/0day-ci/archive/20241025/202410250552.XsMLl1sx-lkp@intel.com/config)
-> compiler: s390-linux-gcc (GCC) 14.1.0
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> | Closes: https://lore.kernel.org/r/202410250552.XsMLl1sx-lkp@intel.com/
-> 
-> smatch warnings:
-> arch/s390/mm/fault.c:566 do_secure_storage_access() warn: inconsistent returns '&mm->mmap_lock'.
-...
-> 084ea4d611a3d0 Vasily Gorbik     2020-01-21  540  	case USER_FAULT:
-> 084ea4d611a3d0 Vasily Gorbik     2020-01-21  541  		mm = current->mm;
-> d8ed45c5dcd455 Michel Lespinasse 2020-06-08  542  		mmap_read_lock(mm);
-> 084ea4d611a3d0 Vasily Gorbik     2020-01-21  543  		vma = find_vma(mm, addr);
-> 7c194d84a9ce66 Heiko Carstens    2023-10-12  544  		if (!vma)
-> 7c194d84a9ce66 Heiko Carstens    2023-10-12  545  			return handle_fault_error(regs, SEGV_MAPERR);
-> 
-> mmap_read_unlock() before returning?
+__exit_to_kernel_mode() is only called by exit_to_kernel_mode(),
+remove it.
 
-This is a false positive: handle_fault_error() contains an unconditional
-mmap_read_unlock() call. I would wish the __acquires() and __releases()
-annotations would work better (or maybe I just can't figure out to use them
-properly.
+No functional changes.
 
-In any case: do_secure_storage_access() will very likely go away with the next
-merge window and its functionality will be implemented differently.
+Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+---
+ arch/arm64/kernel/entry-common.c | 13 ++++---------
+ 1 file changed, 4 insertions(+), 9 deletions(-)
+
+diff --git a/arch/arm64/kernel/entry-common.c b/arch/arm64/kernel/entry-common.c
+index a7fd4d6c7650..137481a3f0fa 100644
+--- a/arch/arm64/kernel/entry-common.c
++++ b/arch/arm64/kernel/entry-common.c
+@@ -69,9 +69,11 @@ static noinstr irqentry_state_t enter_from_kernel_mode(struct pt_regs *regs)
+  * This is intended to match the logic in irqentry_exit(), handling the kernel
+  * mode transitions only, and with preemption handled elsewhere.
+  */
+-static __always_inline void __exit_to_kernel_mode(struct pt_regs *regs,
+-						  irqentry_state_t state)
++static void noinstr exit_to_kernel_mode(struct pt_regs *regs,
++					irqentry_state_t state)
+ {
++	mte_check_tfsr_exit();
++
+ 	lockdep_assert_irqs_disabled();
+ 
+ 	if (!regs_irqs_disabled(regs)) {
+@@ -90,13 +92,6 @@ static __always_inline void __exit_to_kernel_mode(struct pt_regs *regs,
+ 	}
+ }
+ 
+-static void noinstr exit_to_kernel_mode(struct pt_regs *regs,
+-					irqentry_state_t state)
+-{
+-	mte_check_tfsr_exit();
+-	__exit_to_kernel_mode(regs, state);
+-}
+-
+ /*
+  * Handle IRQ/context state management when entering from user mode.
+  * Before this function is called it is not safe to call regular kernel code,
+-- 
+2.34.1
+
 
