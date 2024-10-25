@@ -1,156 +1,223 @@
-Return-Path: <linux-kernel+bounces-382257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA1079B0B91
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 19:31:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7087A9B0B93
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 19:31:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16A0B1F27E8D
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:31:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8D892867BE
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:31:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8EAF20BB38;
-	Fri, 25 Oct 2024 17:20:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9814B20D4FA;
+	Fri, 25 Oct 2024 17:21:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="pL14LhjP"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="OG4V+Fcl"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F72920BB3A
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 17:20:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A2A320D4E4;
+	Fri, 25 Oct 2024 17:21:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729876826; cv=none; b=GO2O9/P3Y79/4TvZmRAIzUw4LjhwR0+mzATZKxNTXI5QFTpiGK1SSnZuXtvo54yD0sM82xI3Ci5ULC4oM1rwTiUxXi2KXmDwUJUjNOIlJNR+R0KxUgZN7J/RxOqK5j6F2/KYXvzS8bVMowRProsxPDSrcwYYYdUFi2UJhMQLyb0=
+	t=1729876865; cv=none; b=mENuUOkeFver4wa0N10Twt6cIuGNcfcYw2rgaW1TuxB9vtSh+reA+uxfMt9hwqPj6d951IuH8gZy5wLpIWdptBqfd4pOi//ZfneH9/LJ8fvq5VpU80Sw/l2BRy+xCiwSwcRswlPGelWYUZZTYFDJ+uNUYJxo9U214rxYs6FnYZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729876826; c=relaxed/simple;
-	bh=JZLdGnvbLARIGe5ZTVOuslFOTi2s6s++7iwLcBEBFCc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sl23QK2wdL62YMHBl9J2WqnllzZgZWcEt60UhKFeHusNF2VlgQg36TOYz7z6xJmj3NoklNQes+BSm/Vrf+CfVZGEyIJVr464GgFEUSQny5GhkytyjAj7OpuK8nx8voJO277+Lwh3oIpDOIr+jjsI5+WyKfy2QpOVfxHfYE/Ve2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=pL14LhjP; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49PB3dVB019387
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 17:20:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ioJoqSdO3mYmi5MI3yxlXmhEsUY+jkvC0eBwhFf0TrU=; b=pL14LhjPj4eN6+Qj
-	+r9vc02RTNoQC30/mBHJnrfr4gbiLNJJGPZY+NPeB2xhvZFI4pPjdH4oAKoqbuqF
-	UG+bH/ZUudsrDc/y35DHBlvlaLFcfFKxesYJLNa5qq6l/9dXqeMqCM6CqTcmm9bI
-	Ut4gFlFZ+5KmDxdeWCCl+Wgaas8Mh8+LaEqVlwoXUTKQhIpl0HiSpyEZjqgwH07O
-	d32TUAWd2NG6TMH8UeovB1hzoXsUq88M0yc1pVEz3metR67BJR94AMjzItfy33Wx
-	u6V7UxfUXWt6a3lUDmI8Z2Zj5JrmA2XAPspqvkTisUAzB6tC6KnpL1U7Ex1cX7Um
-	82A6kg==
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42em3wj083-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 17:20:22 +0000 (GMT)
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6cbe6e6bcf2so6536856d6.2
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 10:20:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729876822; x=1730481622;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ioJoqSdO3mYmi5MI3yxlXmhEsUY+jkvC0eBwhFf0TrU=;
-        b=u3vlYdRu1C7k65zDs91kX4qIuvYgo5gI3u2yfx76YGUgoXyaECf1yNNsSmFti0yI66
-         STuIwN9ILFhaprN3WjmNBGk6wPIYtyWMIymlCfJI7H20InGhWTpor9L7hfzPITmUFbUI
-         sZ3PkkKB6X8Kgo1Fn7daqggsL1z0SBv1ZWuL3Ynbw0Jr6RbmNd3B47cXEpynn8WWxa/n
-         ZRoJ2NWV+IfjUdE9k0ETmaj33D1YWH07DC6X5H17lfsr7zPbCYlu2VoVLuIICZsztQj7
-         X/hgfESBUNvQlzatEWrc+y6FsvP1CBVWytHU4XG4qk5EHu+ZcCGJVUQLp0FX2CfmQw6P
-         51BA==
-X-Forwarded-Encrypted: i=1; AJvYcCX7tc4yD2jX+5vX7ZWajDDqTODcAwBO1KljZYBNc06PCYTYXgPWllLeXApV41eQcbLJh33mrCDPg5B6Oeg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5BNWGTI5A4mWuGQLBGC/I7V5wJDfHTF6b8SrShr6V2ulm7cs1
-	KOfRLTH4OxEdPLWEMF93r1YR7G1Y4EEG1XrJWBnUO+27fYjlCjMGCx02wDyHNW11xo1xRraz3G2
-	DxN/tqTgW4mQBioUeLs0x5+dQiKN/qdn7z1b0jYPPfD5dUdSaXie6/T+XCJ5HvEs=
-X-Received: by 2002:a0c:fc48:0:b0:6cc:2295:8724 with SMTP id 6a1803df08f44-6d185682eafmr1256676d6.5.1729876822069;
-        Fri, 25 Oct 2024 10:20:22 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHVRtOxwLAfBjXD25YCeJd2XrgSjviqO4RyNQJHomWQ/y7f5nG0bpuWE3oRUPkM3IbuyZoGog==
-X-Received: by 2002:a0c:fc48:0:b0:6cc:2295:8724 with SMTP id 6a1803df08f44-6d185682eafmr1256506d6.5.1729876821721;
-        Fri, 25 Oct 2024 10:20:21 -0700 (PDT)
-Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cbb62c4547sm813471a12.53.2024.10.25.10.20.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 25 Oct 2024 10:20:20 -0700 (PDT)
-Message-ID: <955e6f06-ab4c-49d9-bfe6-d96d2a81f656@oss.qualcomm.com>
-Date: Fri, 25 Oct 2024 19:20:17 +0200
+	s=arc-20240116; t=1729876865; c=relaxed/simple;
+	bh=/FAcDI/56mYIWBh5/V5Q2gqst/uvYSXDchwxmhBfEhU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=G16Yum2BcqIEF5t7m0xVd5hALMjgqFzBF7UoKzKcgTgDVWHpnTFqdyBnlhew1hkVCH4SJBBriUcInaDLb3efiUPWTIN8VEqKkQm2v0fFUN9rRVfGwXSUkQVOjo80i6EDVXvR0+8QBUHoZ3HCQ89Tkcd87ihE8800HnNFBUstKxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=OG4V+Fcl; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1729876859;
+	bh=/FAcDI/56mYIWBh5/V5Q2gqst/uvYSXDchwxmhBfEhU=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=OG4V+Fcln6jxQpBt/7+/Z7ji7O5uATDtsuTictsFXoj0tXYhiOt0b/vcQU8XhjykW
+	 Ty21nRZG44TSNlKJzAGzheyVDOcZYO+rUcZEZu1zHrMjrSHsGSlczxuoBaZ3zM7Gcz
+	 A1qNyUtLKEAlNeWgvUGkoX5BA/MUj+YZNguLMhWBIxy+ICT5bmcuBN+wtmB+EXOqDb
+	 coCTxG9QAS3LFcCGCPtfXTGlJUZ2ADIbcS3JxaHMFDukH1hVoS5Sn62ZpZjUZ1mlMP
+	 v2aWK8W1nmdWihdptvRdhEi/eRUAgNLljSnIFoYV0ulX/z3JRbI1xhe9r/uxs6K/GL
+	 vzcwN6euhq6IQ==
+Received: from nicolas-tpx395.lan (unknown [IPv6:2606:6d00:15:862e::7a9])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nicolas)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 7491717E3683;
+	Fri, 25 Oct 2024 19:20:57 +0200 (CEST)
+Message-ID: <70a13bcfda7565efc1cf7117a559edfed5318819.camel@collabora.com>
+Subject: Re: [PATCH v6 01/11] media: v4l2-common: Add helpers to calculate
+ bytesperline and sizeimage
+From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+To: Jonas Karlman <jonas@kwiboo.se>, Sebastian Fricke
+ <sebastian.fricke@collabora.com>, Ezequiel Garcia
+ <ezequiel@vanguardiasur.com.ar>, Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Alex Bee <knaerzche@gmail.com>, Benjamin Gaignard
+ <benjamin.gaignard@collabora.com>, Detlev Casanova
+ <detlev.casanova@collabora.com>, Dan Carpenter <dan.carpenter@linaro.org>, 
+ linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+ linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org, Christopher
+ Obbard <chris.obbard@collabora.com>
+Date: Fri, 25 Oct 2024 13:20:55 -0400
+In-Reply-To: <20240909192522.1076704-2-jonas@kwiboo.se>
+References: <20240909192522.1076704-1-jonas@kwiboo.se>
+	 <20240909192522.1076704-2-jonas@kwiboo.se>
+Organization: Collabora
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] nvme-pci: Force NVME_QUIRK_SIMPLE_SUSPEND on Qualcomm
- hosts
-To: Keith Busch <kbusch@kernel.org>
-Cc: Konrad Dybcio <konradybcio@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-        Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
-        Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20241024-topic-nvmequirk-v1-1-51249999d409@oss.qualcomm.com>
- <ZxvDZVKtM9qGYBP_@kbusch-mbp.dhcp.thefacebook.com>
- <867d7b15-6861-4300-83aa-55a6cdf87f58@oss.qualcomm.com>
- <ZxvOEOXzLIsbEbve@kbusch-mbp.dhcp.thefacebook.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <ZxvOEOXzLIsbEbve@kbusch-mbp.dhcp.thefacebook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: RnMzjntuyChF2DTfw4Db6mBmpnFATgG_
-X-Proofpoint-ORIG-GUID: RnMzjntuyChF2DTfw4Db6mBmpnFATgG_
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 malwarescore=0
- mlxscore=0 lowpriorityscore=0 phishscore=0 impostorscore=0 clxscore=1015
- priorityscore=1501 mlxlogscore=999 suspectscore=0 bulkscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2410250133
+Content-Transfer-Encoding: 8bit
 
-On 25.10.2024 6:57 PM, Keith Busch wrote:
-> On Fri, Oct 25, 2024 at 06:40:23PM +0200, Konrad Dybcio wrote:
->> On 25.10.2024 6:12 PM, Keith Busch wrote:
->>> On Thu, Oct 24, 2024 at 07:33:07PM +0200, Konrad Dybcio wrote:
->>>> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
->>>>
->>>> The Qualcomm SC8280XP SoC requires that all PCIe hosts are powered down
->>>> before the platform can reach S3-like sleep states. This is very much
->>>> similar in nature to the issue described in [1].
->>>
->>> The "SIMPLE" quirk is only supposed to affect kernel managed runtime
->>> suspend states, s2idle or s0ix. Shouldn't s3 already be using the simple
->>> suspend?
->>
->> So on these platforms, all system sleep states (incl. S3) are entered
->> through what Linux sees as s2idle, with a separate MCU doing a lot
->> behind the scenes. s2idle of course also covers the runtime cpuidle
->> cases.
->>
->> All but the deepest state (which Linux doesn't differentiate as of
->> today) are effectively somewhat like s0ix.
->> It's a bit hard to draw accurate lines between Intel terminology and
->> what we have here, as there's way more things onboard than just the CPU
->> cluster that may be operating independently..
+Le lundi 09 septembre 2024 à 19:24 +0000, Jonas Karlman a écrit :
+> Add helper functions to calculate plane bytesperline and sizeimage,
+> these new helpers consider bpp div, block width and height when
+> calculating plane bytesperline and sizeimage.
 > 
-> Gotcha.
+> Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
+> Tested-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+> Tested-by: Christopher Obbard <chris.obbard@collabora.com>
+> ---
+> v6:
+> - No change
 > 
-> Is there any sleep state on this where using the nvme managed power is
-> advantageous, or is the simple suspend preferred in every scenario for
-> this platform?
+> v5:
+> - Collect t-b tags
+> 
+> v4:
+> - No change
+> 
+> v3:
+> - Consider bpp_div in calculation
+> ---
+>  drivers/media/v4l2-core/v4l2-common.c | 78 +++++++++++++--------------
+>  1 file changed, 39 insertions(+), 39 deletions(-)
+> 
+> diff --git a/drivers/media/v4l2-core/v4l2-common.c b/drivers/media/v4l2-core/v4l2-common.c
+> index 0a2f4f0d0a07..8ad04d48a023 100644
+> --- a/drivers/media/v4l2-core/v4l2-common.c
+> +++ b/drivers/media/v4l2-core/v4l2-common.c
+> @@ -357,6 +357,34 @@ static inline unsigned int v4l2_format_block_height(const struct v4l2_format_inf
+>  	return info->block_h[plane];
+>  }
+>  
+> +static inline unsigned int v4l2_format_plane_width(const struct v4l2_format_info *info, int plane,
 
-On the special snowflake SC8280XP, simple suspend is the only choice
-that makes sense here. Otherwise, you'd need to keep the entire SoC
-powered, which (even if most of it would be driver-suspended) ruins
-battery life.
+nit: What would you think of naming this one v4l2_format_plane_stride() ? As the
+returned value is in bytes, not in pixels. (I'm not a huge fan of
+_bytesperline(), but would seem valid and consistent too).
 
-On other platforms (where we'll be able to sustain the PCIe link,
-eventually), I can see both options being useful for different use
-cases. But again, that's only for when we can actually get that working
-on mainline.
+With or without this, I'm happy to see this land:
 
-Konrad
+Reviewed-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+
+> +						   unsigned int width)
+> +{
+> +	unsigned int hdiv = plane ? info->hdiv : 1;
+> +	unsigned int aligned_width =
+> +		ALIGN(width, v4l2_format_block_width(info, plane));
+> +
+> +	return DIV_ROUND_UP(aligned_width, hdiv) *
+> +	       info->bpp[plane] / info->bpp_div[plane];
+> +}
+> +
+> +static inline unsigned int v4l2_format_plane_height(const struct v4l2_format_info *info, int plane,
+> +						    unsigned int height)
+> +{
+> +	unsigned int vdiv = plane ? info->vdiv : 1;
+> +	unsigned int aligned_height =
+> +		ALIGN(height, v4l2_format_block_height(info, plane));
+> +
+> +	return DIV_ROUND_UP(aligned_height, vdiv);
+> +}
+> +
+> +static inline unsigned int v4l2_format_plane_size(const struct v4l2_format_info *info, int plane,
+> +						  unsigned int width, unsigned int height)
+> +{
+> +	return v4l2_format_plane_width(info, plane, width) *
+> +	       v4l2_format_plane_height(info, plane, height);
+> +}
+> +
+>  void v4l2_apply_frmsize_constraints(u32 *width, u32 *height,
+>  				    const struct v4l2_frmsize_stepwise *frmsize)
+>  {
+> @@ -392,37 +420,19 @@ int v4l2_fill_pixfmt_mp(struct v4l2_pix_format_mplane *pixfmt,
+>  
+>  	if (info->mem_planes == 1) {
+>  		plane = &pixfmt->plane_fmt[0];
+> -		plane->bytesperline = ALIGN(width, v4l2_format_block_width(info, 0)) * info->bpp[0] / info->bpp_div[0];
+> +		plane->bytesperline = v4l2_format_plane_width(info, 0, width);
+>  		plane->sizeimage = 0;
+>  
+> -		for (i = 0; i < info->comp_planes; i++) {
+> -			unsigned int hdiv = (i == 0) ? 1 : info->hdiv;
+> -			unsigned int vdiv = (i == 0) ? 1 : info->vdiv;
+> -			unsigned int aligned_width;
+> -			unsigned int aligned_height;
+> -
+> -			aligned_width = ALIGN(width, v4l2_format_block_width(info, i));
+> -			aligned_height = ALIGN(height, v4l2_format_block_height(info, i));
+> -
+> -			plane->sizeimage += info->bpp[i] *
+> -				DIV_ROUND_UP(aligned_width, hdiv) *
+> -				DIV_ROUND_UP(aligned_height, vdiv) / info->bpp_div[i];
+> -		}
+> +		for (i = 0; i < info->comp_planes; i++)
+> +			plane->sizeimage +=
+> +				v4l2_format_plane_size(info, i, width, height);
+>  	} else {
+>  		for (i = 0; i < info->comp_planes; i++) {
+> -			unsigned int hdiv = (i == 0) ? 1 : info->hdiv;
+> -			unsigned int vdiv = (i == 0) ? 1 : info->vdiv;
+> -			unsigned int aligned_width;
+> -			unsigned int aligned_height;
+> -
+> -			aligned_width = ALIGN(width, v4l2_format_block_width(info, i));
+> -			aligned_height = ALIGN(height, v4l2_format_block_height(info, i));
+> -
+>  			plane = &pixfmt->plane_fmt[i];
+>  			plane->bytesperline =
+> -				info->bpp[i] * DIV_ROUND_UP(aligned_width, hdiv) / info->bpp_div[i];
+> -			plane->sizeimage =
+> -				plane->bytesperline * DIV_ROUND_UP(aligned_height, vdiv);
+> +				v4l2_format_plane_width(info, i, width);
+> +			plane->sizeimage = plane->bytesperline *
+> +				v4l2_format_plane_height(info, i, height);
+>  		}
+>  	}
+>  	return 0;
+> @@ -446,22 +456,12 @@ int v4l2_fill_pixfmt(struct v4l2_pix_format *pixfmt, u32 pixelformat,
+>  	pixfmt->width = width;
+>  	pixfmt->height = height;
+>  	pixfmt->pixelformat = pixelformat;
+> -	pixfmt->bytesperline = ALIGN(width, v4l2_format_block_width(info, 0)) * info->bpp[0] / info->bpp_div[0];
+> +	pixfmt->bytesperline = v4l2_format_plane_width(info, 0, width);
+>  	pixfmt->sizeimage = 0;
+>  
+> -	for (i = 0; i < info->comp_planes; i++) {
+> -		unsigned int hdiv = (i == 0) ? 1 : info->hdiv;
+> -		unsigned int vdiv = (i == 0) ? 1 : info->vdiv;
+> -		unsigned int aligned_width;
+> -		unsigned int aligned_height;
+> -
+> -		aligned_width = ALIGN(width, v4l2_format_block_width(info, i));
+> -		aligned_height = ALIGN(height, v4l2_format_block_height(info, i));
+> -
+> -		pixfmt->sizeimage += info->bpp[i] *
+> -			DIV_ROUND_UP(aligned_width, hdiv) *
+> -			DIV_ROUND_UP(aligned_height, vdiv) / info->bpp_div[i];
+> -	}
+> +	for (i = 0; i < info->comp_planes; i++)
+> +		pixfmt->sizeimage +=
+> +			v4l2_format_plane_size(info, i, width, height);
+>  	return 0;
+>  }
+>  EXPORT_SYMBOL_GPL(v4l2_fill_pixfmt);
+
 
