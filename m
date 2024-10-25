@@ -1,228 +1,297 @@
-Return-Path: <linux-kernel+bounces-382713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAD7C9B1293
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 00:30:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4E029B1296
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 00:31:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 485EB1F21ABE
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 22:30:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 842D11C21763
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 22:31:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D289F1D2202;
-	Fri, 25 Oct 2024 22:30:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F80320EA27;
+	Fri, 25 Oct 2024 22:31:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iG/D/dyV"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qNEiENyR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 192FF217F31
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 22:30:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8618D13D8B1;
+	Fri, 25 Oct 2024 22:31:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729895439; cv=none; b=EkeicKeoUAcjMwnSOBXWpTdzihH/6WhDXfr3Qz15zU6lvD2sfAHghm2O5zcVrJfM6BOaYoiqj90O6GXZIQOaP4aWAoDq+7pJoMncbBUapkVH6ARyMq06gi7EyG6tENT+HnYaxDO3gCqZ3XBEswCZ9KGvBV7Px5jnTlqKKu6Ds7w=
+	t=1729895464; cv=none; b=K3Gm4geXsuKhgshTA9DGxRkBk81xqINvEMBdLFP2PgQn5ruMSH32HTpolOqVk/DzhQNjRCxoIym0EFDonWs3EbdThpQXYQvUtalPphWXJapCeXOz+N3WwQxQ1HEN3zccVgUcxIFttoNtr5jwTAwDFpQeuuu+LYzZt2D0kecCK4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729895439; c=relaxed/simple;
-	bh=xEQCAdq9iQXXkLjdeUukpG0YsZCj+dnaxH5NC6cmjpk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uwz3UJ0/ZPmJGIbkI3NZY/eEKDNrhKu9960VGH293q2RTDiOfCUfcBOk2KicFf2VBMCw4vtKSYpXR00h5VcZzyXT+zGBYZ7q7fvLWXFrym+GcepNFpRvVZWtJHAkqt7135qYZNrB5K329rxNlNMA9Rip4Y3bW3H57IwRoOf9UIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iG/D/dyV; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729895436; x=1761431436;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=xEQCAdq9iQXXkLjdeUukpG0YsZCj+dnaxH5NC6cmjpk=;
-  b=iG/D/dyVOpkpQIZCCywR0Y6sOpKt9QFlUM5G+HcWJBfCbgozH/88PEVF
-   HMEKFOfu/+icT0RAWARP3hmiOrqv+bfwaJWV4CrG4/STJPFKqNxvRrJL3
-   thzJdaweVfaxMZmvr1zrNmR0AtGsVLiJbh30fUmKYX0TEqKU9cG+1jUU3
-   uMpfjdB2rag9X80HSS4zP+XRjufvdG+hytYr+coJ88EYd502PGTxFaGf/
-   8MDo/19FWHudj3WMUimgSqEYYxn1l0d4iEQZC24h1XFrKLnaAUoFimTkD
-   fAOWZrk/ijgfKd8iEyJqEXvsuKuwKuYvm0Pvm5o5HSLzkNG7t2DSYvoWY
-   Q==;
-X-CSE-ConnectionGUID: PZjArEsFQhiAuFYfSK0wuw==
-X-CSE-MsgGUID: 6eyy4DMiR/OnqlGWeeXjfQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11236"; a="40161012"
-X-IronPort-AV: E=Sophos;i="6.11,233,1725346800"; 
-   d="scan'208";a="40161012"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2024 15:30:35 -0700
-X-CSE-ConnectionGUID: rzXVUWM3TF+XxvFqwDotKg==
-X-CSE-MsgGUID: QvMgxuR7SxO/BOM7n/Tibg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="85824037"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa003.jf.intel.com with ESMTP; 25 Oct 2024 15:30:33 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t4SpD-000Yz8-0o;
-	Fri, 25 Oct 2024 22:30:31 +0000
-Date: Sat, 26 Oct 2024 06:29:37 +0800
-From: kernel test robot <lkp@intel.com>
-To: 412574090@163.com, sudipm.mukherjee@gmail.com
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	xiongxin@kylinos.cn, weiyufeng <weiyufeng@kylinos.cn>
-Subject: Re: [PATCH 2/4] parport: change struct parport member to iobase
-Message-ID: <202410260604.8KzF4khS-lkp@intel.com>
-References: <20241025082128.60034-2-412574090@163.com>
+	s=arc-20240116; t=1729895464; c=relaxed/simple;
+	bh=e9UZsK6yoNGuTeM8ImClDT58R9Ad0kplRUUu9ysuAJ4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=UbiI5Fjx7G2F/KVR4ltUo9+wDYwvlncDzmf+YnK7TdAVEnU75pLhi/8p+i5vtyfh6GMkd/iFA4dlw4BbWEM7C/zaM4530H+Z7rp5Jlw56PcVooIg+s7u592DGLLtbeYvVsHfwX9JTmRU2y1iGGAAFokwkRYjz+X/hafq2S/oLr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qNEiENyR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD3ABC4CEC3;
+	Fri, 25 Oct 2024 22:31:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729895464;
+	bh=e9UZsK6yoNGuTeM8ImClDT58R9Ad0kplRUUu9ysuAJ4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=qNEiENyRow1zkUKlGDesaiB2BCDUXVV6QJFBiRhrK7QwB0dqBCWzpQL/G16crJrxq
+	 tkqmEXINJDcVW98hnnk+gLaDxetCPb+SQ4ZJ7t+M9TCrQ1pvW+RjLNubTFBZiKFHOL
+	 fKQNw25C8RCDbkbrZHdtoEIvm2k+/+TQHc/ycYL02WXA0Q95ue85LBZMUAOXG6U4z6
+	 1Y1hes/gexQjwToENV6Z+FrqU7R0uT/SibpnwW+hs+ZrScxYYchmZxsOcIi4N73+yX
+	 L/EV16/tyiKqhBkQCgCbLH8s9E6CgwB8nUTl22CYjCb0EvGC6OVUT7pP3Y7QBM0jPG
+	 vOe8MRT+27rtg==
+Date: Fri, 25 Oct 2024 17:31:02 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Abraham I <kishon@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+	Jesper Nilsson <jesper.nilsson@axis.com>,
+	Richard Zhu <hongxing.zhu@nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@axis.com, linux-arm-kernel@lists.infradead.org,
+	imx@lists.linux.dev,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>
+Subject: Re: [PATCH v4 1/4] PCI: dwc: ep: Add bus_addr_base for outbound
+ window
+Message-ID: <20241025223102.GA1029107@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241025082128.60034-2-412574090@163.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241024-pcie_ep_range-v4-1-08f8dcd4e481@nxp.com>
 
-Hi,
+On Thu, Oct 24, 2024 at 04:41:43PM -0400, Frank Li wrote:
+>                                Endpoint          Root complex
+>                              ┌───────┐        ┌─────────┐
+>                ┌─────┐       │ EP    │        │         │      ┌─────┐
+>                │     │       │ Ctrl  │        │         │      │ CPU │
+>                │ DDR │       │       │        │ ┌────┐  │      └──┬──┘
+>                │     │◄──────┼─ATU ◄─┼────────┼─┤BarN│◄─┼─────────┘
+>                │     │       │       │        │ └────┘  │ Outbound Transfer
+>                └─────┘       │       │        │         │
+>                              │       │        │         │
+>                              │       │        │         │
+>                              │       │        │         │ Inbound Transfer
+>                              │       │        │         │      ┌──▼──┐
+>               ┌───────┐      │       │        │ ┌───────┼─────►│DDR  │
+>               │       │ outbound Transfer*    │ │       │      └─────┘
+>    ┌─────┐    │ Bus   ┼─────►│ ATU  ─┬────────┼─┘       │
+>    │     │    │ Fabric│Bus   │       │ PCI Addr         │
+>    │ CPU ├───►│       │Addr  │       │ 0xA000_0000      │
+>    │     │CPU │       │0x8000_0000   │        │         │
+>    └─────┘Addr└───────┘      │       │        │         │
+>           0x7000_0000        └───────┘        └─────────┘
+> 
+> Add `bus_addr_base` to configure the outbound window address for CPU write.
+> The bus fabric generally passes the same address to the PCIe EP controller,
+> but some bus fabrics convert the address before sending it to the PCIe EP
+> controller.
+> 
+> Above diagram, CPU write data to outbound windows address 0x7000_0000,
+> Bus fabric convert it to 0x8000_0000. ATU should use bus address
+> 0x8000_0000 as input address and convert to PCI address 0xA000_0000.
 
-kernel test robot noticed the following build errors:
+Thanks for the diagram and description.  I don't think the top half is
+relevant to *this* patch, is it?  I think this patch is only concerned
+with the address translations between the CPU in the endpoint and the
+PCI bus address.  In this case it happens in two steps: the bus fabric
+applies one offset, and the ATU applies a second offset.
 
-[auto build test ERROR on linus/master]
-[also build test ERROR on v6.12-rc4 next-20241025]
-[cannot apply to deller-parisc/for-next mkp-scsi/for-next jejb-scsi/for-next tiwai-sound/for-next tiwai-sound/for-linus]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Unless the top half is relevant, I would omit it and simply use
+something like this:
 
-url:    https://github.com/intel-lab-lkp/linux/commits/412574090-163-com/parport-change-struct-parport-member-to-iobase/20241025-162302
-base:   linus/master
-patch link:    https://lore.kernel.org/r/20241025082128.60034-2-412574090%40163.com
-patch subject: [PATCH 2/4] parport: change struct parport member to iobase
-config: alpha-allyesconfig (https://download.01.org/0day-ci/archive/20241026/202410260604.8KzF4khS-lkp@intel.com/config)
-compiler: alpha-linux-gcc (GCC) 13.3.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241026/202410260604.8KzF4khS-lkp@intel.com/reproduce)
+                   Endpoint
+  ┌───────────────────────────────────────────────┐
+  │                             pcie-ep@5f010000  │
+  │                             ┌────────────────┐│
+  │                             │   Endpoint     ││
+  │                             │   PCIe         ││
+  │                             │   Controller   ││
+  │           bus@5f000000      │                ││
+  │           ┌──────────┐      │                ││
+  │           │          │ Outbound Transfer     ││
+  │┌─────┐    │  Bus     ┼─────►│ ATU  ──────────┬┬─────►
+  ││     │    │  Fabric  │Bus   │                ││PCI Addr
+  ││ CPU ├───►│          │Addr  │                ││0xA000_0000
+  ││     │CPU │          │0x8000_0000            ││
+  │└─────┘Addr└──────────┘      │                ││
+  │       0x7000_0000           └────────────────┘│
+  └───────────────────────────────────────────────┘
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410260604.8KzF4khS-lkp@intel.com/
+If you don't want a big "Endpoint" box including the CPU and bus
+fabric, that's OK with me, too.  I added it because everything on the
+PCI side only sees TLPs that contain PCI bus addresses, and can't tell
+anything about the internal implementation of the Endpoint.
 
-All errors (new ones prefixed by >>):
+> Previously, `cpu_addr_fixup()` was used to handle address conversion. Now,
+> the device tree provides this information, preferring a common method.
+> 
+> bus@5f000000 {
+> 	compatible = "simple-bus";
+> 	ranges = <0x80000000 0x0 0x70000000 0x10000000>;
+> 
+> 	pcie-ep@5f010000 {
+> 		reg = <0x5f010000 0x00010000>,
+> 		      <0x80000000 0x10000000>;
+> 		reg-names = "dbi", "addr_space";
+> 		...
+> 	};
+> 	...
+> };
 
-   drivers/ata/pata_parport/pata_parport.c: In function 'pi_init_one':
->> drivers/ata/pata_parport/pata_parport.c:542:29: error: 'struct parport' has no member named 'base'; did you mean 'iobase'?
-     542 |         pi->port = parport->base;
-         |                             ^~~~
-         |                             iobase
---
-   In file included from include/linux/device.h:15,
-                    from include/linux/parport.h:16,
-                    from drivers/ata/pata_parport/bpck6.c:16:
-   drivers/ata/pata_parport/bpck6.c: In function 'bpck6_test_port':
->> drivers/ata/pata_parport/bpck6.c:397:60: error: 'struct parport' has no member named 'base'; did you mean 'iobase'?
-     397 |                 pi->pardev->port->modes, pi->pardev->port->base);
-         |                                                            ^~~~
-   include/linux/dev_printk.h:139:56: note: in definition of macro 'dev_no_printk'
-     139 |                         _dev_printk(level, dev, fmt, ##__VA_ARGS__);    \
-         |                                                        ^~~~~~~~~~~
-   drivers/ata/pata_parport/bpck6.c:396:9: note: in expansion of macro 'dev_dbg'
-     396 |         dev_dbg(&pi->dev, "PARPORT indicates modes=%x for lp=0x%lx\n",
-         |         ^~~~~~~
+I guess bus@5f000000 includes a "ranges" property because that
+translation from 0x7000_0000 -> 0x8000_0000 is fixed or at least
+not touched by Linux?
 
+And the pcie-ep@5f010000 address translation from 0x8000_0000 to
+0xA000_0000 *is* programmed by Linux and therefore can't be described
+by a DT?  But I guess Linux only programs the *PCI* side, and the
+parent side (0x8000_0000) is fixed?
 
-vim +542 drivers/ata/pata_parport/pata_parport.c
+AFAICT, the "reg = <0x5f010000 0x00010000>" part is not relevant here.
 
-246a1c4c6b7ffb drivers/ata/pata_parport.c              Ondrej Zary 2023-01-23  492  
-246a1c4c6b7ffb drivers/ata/pata_parport.c              Ondrej Zary 2023-01-23  493  static struct pi_adapter *pi_init_one(struct parport *parport,
-246a1c4c6b7ffb drivers/ata/pata_parport.c              Ondrej Zary 2023-01-23  494  			struct pi_protocol *pr, int mode, int unit, int delay)
-246a1c4c6b7ffb drivers/ata/pata_parport.c              Ondrej Zary 2023-01-23  495  {
-246a1c4c6b7ffb drivers/ata/pata_parport.c              Ondrej Zary 2023-01-23  496  	struct pardev_cb par_cb = { };
-246a1c4c6b7ffb drivers/ata/pata_parport.c              Ondrej Zary 2023-01-23  497  	const struct ata_port_info *ppi[] = { &pata_parport_port_info };
-246a1c4c6b7ffb drivers/ata/pata_parport.c              Ondrej Zary 2023-01-23  498  	struct ata_host *host;
-246a1c4c6b7ffb drivers/ata/pata_parport.c              Ondrej Zary 2023-01-23  499  	struct pi_adapter *pi;
-246a1c4c6b7ffb drivers/ata/pata_parport.c              Ondrej Zary 2023-01-23  500  	struct pi_device_match match = { .parport = parport, .proto = pr };
-8844f0aa8dc42f drivers/ata/pata_parport/pata_parport.c Ondrej Zary 2023-02-04  501  	int id;
-246a1c4c6b7ffb drivers/ata/pata_parport.c              Ondrej Zary 2023-01-23  502  
-246a1c4c6b7ffb drivers/ata/pata_parport.c              Ondrej Zary 2023-01-23  503  	/*
-246a1c4c6b7ffb drivers/ata/pata_parport.c              Ondrej Zary 2023-01-23  504  	 * Abort if there's a device already registered on the same parport
-246a1c4c6b7ffb drivers/ata/pata_parport.c              Ondrej Zary 2023-01-23  505  	 * using the same protocol.
-246a1c4c6b7ffb drivers/ata/pata_parport.c              Ondrej Zary 2023-01-23  506  	 */
-246a1c4c6b7ffb drivers/ata/pata_parport.c              Ondrej Zary 2023-01-23  507  	if (bus_for_each_dev(&pata_parport_bus_type, NULL, &match, pi_find_dev))
-246a1c4c6b7ffb drivers/ata/pata_parport.c              Ondrej Zary 2023-01-23  508  		return NULL;
-246a1c4c6b7ffb drivers/ata/pata_parport.c              Ondrej Zary 2023-01-23  509  
-5bc9e2d43f8610 drivers/ata/pata_parport/pata_parport.c Ondrej Zary 2023-03-14  510  	id = ida_alloc(&pata_parport_bus_dev_ids, GFP_KERNEL);
-5bc9e2d43f8610 drivers/ata/pata_parport/pata_parport.c Ondrej Zary 2023-03-14  511  	if (id < 0)
-5bc9e2d43f8610 drivers/ata/pata_parport/pata_parport.c Ondrej Zary 2023-03-14  512  		return NULL;
-5bc9e2d43f8610 drivers/ata/pata_parport/pata_parport.c Ondrej Zary 2023-03-14  513  
-246a1c4c6b7ffb drivers/ata/pata_parport.c              Ondrej Zary 2023-01-23  514  	pi = kzalloc(sizeof(struct pi_adapter), GFP_KERNEL);
-5bc9e2d43f8610 drivers/ata/pata_parport/pata_parport.c Ondrej Zary 2023-03-14  515  	if (!pi) {
-5bc9e2d43f8610 drivers/ata/pata_parport/pata_parport.c Ondrej Zary 2023-03-14  516  		ida_free(&pata_parport_bus_dev_ids, id);
-246a1c4c6b7ffb drivers/ata/pata_parport.c              Ondrej Zary 2023-01-23  517  		return NULL;
-5bc9e2d43f8610 drivers/ata/pata_parport/pata_parport.c Ondrej Zary 2023-03-14  518  	}
-246a1c4c6b7ffb drivers/ata/pata_parport.c              Ondrej Zary 2023-01-23  519  
-246a1c4c6b7ffb drivers/ata/pata_parport.c              Ondrej Zary 2023-01-23  520  	/* set up pi->dev before pi_probe_unit() so it can use dev_printk() */
-246a1c4c6b7ffb drivers/ata/pata_parport.c              Ondrej Zary 2023-01-23  521  	pi->dev.parent = &pata_parport_bus;
-246a1c4c6b7ffb drivers/ata/pata_parport.c              Ondrej Zary 2023-01-23  522  	pi->dev.bus = &pata_parport_bus_type;
-246a1c4c6b7ffb drivers/ata/pata_parport.c              Ondrej Zary 2023-01-23  523  	pi->dev.driver = &pr->driver;
-246a1c4c6b7ffb drivers/ata/pata_parport.c              Ondrej Zary 2023-01-23  524  	pi->dev.release = pata_parport_dev_release;
-8844f0aa8dc42f drivers/ata/pata_parport/pata_parport.c Ondrej Zary 2023-02-04  525  	pi->dev.id = id;
-246a1c4c6b7ffb drivers/ata/pata_parport.c              Ondrej Zary 2023-01-23  526  	dev_set_name(&pi->dev, "pata_parport.%u", pi->dev.id);
-246a1c4c6b7ffb drivers/ata/pata_parport.c              Ondrej Zary 2023-01-23  527  	if (device_register(&pi->dev)) {
-246a1c4c6b7ffb drivers/ata/pata_parport.c              Ondrej Zary 2023-01-23  528  		put_device(&pi->dev);
-5bc9e2d43f8610 drivers/ata/pata_parport/pata_parport.c Ondrej Zary 2023-03-14  529  		/* pata_parport_dev_release will do ida_free(dev->id) and kfree(pi) */
-5bc9e2d43f8610 drivers/ata/pata_parport/pata_parport.c Ondrej Zary 2023-03-14  530  		return NULL;
-246a1c4c6b7ffb drivers/ata/pata_parport.c              Ondrej Zary 2023-01-23  531  	}
-246a1c4c6b7ffb drivers/ata/pata_parport.c              Ondrej Zary 2023-01-23  532  
-246a1c4c6b7ffb drivers/ata/pata_parport.c              Ondrej Zary 2023-01-23  533  	pi->proto = pr;
-246a1c4c6b7ffb drivers/ata/pata_parport.c              Ondrej Zary 2023-01-23  534  
-246a1c4c6b7ffb drivers/ata/pata_parport.c              Ondrej Zary 2023-01-23  535  	if (!try_module_get(pi->proto->owner))
-246a1c4c6b7ffb drivers/ata/pata_parport.c              Ondrej Zary 2023-01-23  536  		goto out_unreg_dev;
-246a1c4c6b7ffb drivers/ata/pata_parport.c              Ondrej Zary 2023-01-23  537  	if (pi->proto->init_proto && pi->proto->init_proto(pi) < 0)
-246a1c4c6b7ffb drivers/ata/pata_parport.c              Ondrej Zary 2023-01-23  538  		goto out_module_put;
-246a1c4c6b7ffb drivers/ata/pata_parport.c              Ondrej Zary 2023-01-23  539  
-246a1c4c6b7ffb drivers/ata/pata_parport.c              Ondrej Zary 2023-01-23  540  	pi->delay = (delay == -1) ? pi->proto->default_delay : delay;
-246a1c4c6b7ffb drivers/ata/pata_parport.c              Ondrej Zary 2023-01-23  541  	pi->mode = mode;
-246a1c4c6b7ffb drivers/ata/pata_parport.c              Ondrej Zary 2023-01-23 @542  	pi->port = parport->base;
-246a1c4c6b7ffb drivers/ata/pata_parport.c              Ondrej Zary 2023-01-23  543  
-246a1c4c6b7ffb drivers/ata/pata_parport.c              Ondrej Zary 2023-01-23  544  	par_cb.private = pi;
-5bc9e2d43f8610 drivers/ata/pata_parport/pata_parport.c Ondrej Zary 2023-03-14  545  	pi->pardev = parport_register_dev_model(parport, DRV_NAME, &par_cb, id);
-246a1c4c6b7ffb drivers/ata/pata_parport.c              Ondrej Zary 2023-01-23  546  	if (!pi->pardev)
-246a1c4c6b7ffb drivers/ata/pata_parport.c              Ondrej Zary 2023-01-23  547  		goto out_module_put;
-246a1c4c6b7ffb drivers/ata/pata_parport.c              Ondrej Zary 2023-01-23  548  
-b42251a867a985 drivers/ata/pata_parport/pata_parport.c Ondrej Zary 2023-02-18  549  	if (!pi_probe_unit(pi, unit)) {
-246a1c4c6b7ffb drivers/ata/pata_parport.c              Ondrej Zary 2023-01-23  550  		dev_info(&pi->dev, "Adapter not found\n");
-246a1c4c6b7ffb drivers/ata/pata_parport.c              Ondrej Zary 2023-01-23  551  		goto out_unreg_parport;
-246a1c4c6b7ffb drivers/ata/pata_parport.c              Ondrej Zary 2023-01-23  552  	}
-246a1c4c6b7ffb drivers/ata/pata_parport.c              Ondrej Zary 2023-01-23  553  
-5b77db9ccff444 drivers/ata/pata_parport/pata_parport.c Ondrej Zary 2023-02-18  554  	pi->proto->log_adapter(pi);
-246a1c4c6b7ffb drivers/ata/pata_parport.c              Ondrej Zary 2023-01-23  555  
-246a1c4c6b7ffb drivers/ata/pata_parport.c              Ondrej Zary 2023-01-23  556  	host = ata_host_alloc_pinfo(&pi->pardev->dev, ppi, 1);
-246a1c4c6b7ffb drivers/ata/pata_parport.c              Ondrej Zary 2023-01-23  557  	if (!host)
-246a1c4c6b7ffb drivers/ata/pata_parport.c              Ondrej Zary 2023-01-23  558  		goto out_unreg_parport;
-246a1c4c6b7ffb drivers/ata/pata_parport.c              Ondrej Zary 2023-01-23  559  	dev_set_drvdata(&pi->dev, host);
-246a1c4c6b7ffb drivers/ata/pata_parport.c              Ondrej Zary 2023-01-23  560  	host->private_data = pi;
-246a1c4c6b7ffb drivers/ata/pata_parport.c              Ondrej Zary 2023-01-23  561  
-246a1c4c6b7ffb drivers/ata/pata_parport.c              Ondrej Zary 2023-01-23  562  	ata_port_desc(host->ports[0], "port %s", pi->pardev->port->name);
-246a1c4c6b7ffb drivers/ata/pata_parport.c              Ondrej Zary 2023-01-23  563  	ata_port_desc(host->ports[0], "protocol %s", pi->proto->name);
-246a1c4c6b7ffb drivers/ata/pata_parport.c              Ondrej Zary 2023-01-23  564  
-246a1c4c6b7ffb drivers/ata/pata_parport.c              Ondrej Zary 2023-01-23  565  	pi_connect(pi);
-246a1c4c6b7ffb drivers/ata/pata_parport.c              Ondrej Zary 2023-01-23  566  	if (ata_host_activate(host, 0, NULL, 0, &pata_parport_sht))
-dc472c7612297f drivers/ata/pata_parport/pata_parport.c Ondrej Zary 2023-03-11  567  		goto out_disconnect;
-246a1c4c6b7ffb drivers/ata/pata_parport.c              Ondrej Zary 2023-01-23  568  
-246a1c4c6b7ffb drivers/ata/pata_parport.c              Ondrej Zary 2023-01-23  569  	return pi;
-246a1c4c6b7ffb drivers/ata/pata_parport.c              Ondrej Zary 2023-01-23  570  
-dc472c7612297f drivers/ata/pata_parport/pata_parport.c Ondrej Zary 2023-03-11  571  out_disconnect:
-246a1c4c6b7ffb drivers/ata/pata_parport.c              Ondrej Zary 2023-01-23  572  	pi_disconnect(pi);
-dc472c7612297f drivers/ata/pata_parport/pata_parport.c Ondrej Zary 2023-03-11  573  out_unreg_parport:
-246a1c4c6b7ffb drivers/ata/pata_parport.c              Ondrej Zary 2023-01-23  574  	parport_unregister_device(pi->pardev);
-246a1c4c6b7ffb drivers/ata/pata_parport.c              Ondrej Zary 2023-01-23  575  	if (pi->proto->release_proto)
-246a1c4c6b7ffb drivers/ata/pata_parport.c              Ondrej Zary 2023-01-23  576  		pi->proto->release_proto(pi);
-246a1c4c6b7ffb drivers/ata/pata_parport.c              Ondrej Zary 2023-01-23  577  out_module_put:
-246a1c4c6b7ffb drivers/ata/pata_parport.c              Ondrej Zary 2023-01-23  578  	module_put(pi->proto->owner);
-246a1c4c6b7ffb drivers/ata/pata_parport.c              Ondrej Zary 2023-01-23  579  out_unreg_dev:
-246a1c4c6b7ffb drivers/ata/pata_parport.c              Ondrej Zary 2023-01-23  580  	device_unregister(&pi->dev);
-5bc9e2d43f8610 drivers/ata/pata_parport/pata_parport.c Ondrej Zary 2023-03-14  581  	/* pata_parport_dev_release will do ida_free(dev->id) and kfree(pi) */
-246a1c4c6b7ffb drivers/ata/pata_parport.c              Ondrej Zary 2023-01-23  582  	return NULL;
-246a1c4c6b7ffb drivers/ata/pata_parport.c              Ondrej Zary 2023-01-23  583  }
-246a1c4c6b7ffb drivers/ata/pata_parport.c              Ondrej Zary 2023-01-23  584  
+I guess this implementation assumes there's only a single aperture
+through the Bus Fabric, right?
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+And also a single ATU aperture through the endpoint PCIe controller?
+
+And also that there's only one layer of Bus Fabric address
+translation?  The fact that only a few DWC controllers have this
+translation suggests that this part of the picture might be external
+to the DWC IP and there could be more variation.  But I guess there's
+no point in adding code for topologies that don't exist; we can deal
+with that if the need ever arises.
+
+> 'ranges' in bus@5f000000 descript how address convert from CPU address
+> to bus address.
+> 
+> Use `of_property_read_reg()` to obtain the bus address and set it to the
+> ATU correctly, eliminating the need for vendor-specific cpu_addr_fixup().
+> 
+> Add 'using_dtbus_info' to indicate device tree reflect correctly bus
+> address translation in case break compatibility.
+> 
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+> Change from v3 to v4
+> - change bus_addr_base to u64 to fix 32bit build error
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202410230328.BTHareG1-lkp@intel.com/
+> 
+> Change from v2 to v3
+> - Add using_dtbus_info to control if use device tree bus ranges
+> information.
+> ---
+>  drivers/pci/controller/dwc/pcie-designware-ep.c | 14 +++++++++++++-
+>  drivers/pci/controller/dwc/pcie-designware.h    |  9 +++++++++
+>  2 files changed, 22 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/controller/dwc/pcie-designware-ep.c
+> index 43ba5c6738df1..81b4057befa62 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware-ep.c
+> +++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
+> @@ -9,6 +9,7 @@
+>  #include <linux/align.h>
+>  #include <linux/bitfield.h>
+>  #include <linux/of.h>
+> +#include <linux/of_address.h>
+>  #include <linux/platform_device.h>
+>  
+>  #include "pcie-designware.h"
+> @@ -294,7 +295,7 @@ static int dw_pcie_ep_map_addr(struct pci_epc *epc, u8 func_no, u8 vfunc_no,
+>  
+>  	atu.func_no = func_no;
+>  	atu.type = PCIE_ATU_TYPE_MEM;
+> -	atu.cpu_addr = addr;
+> +	atu.cpu_addr = addr - ep->phys_base + ep->bus_addr_base;
+
+Tangent: Maybe dw_pcie_ob_atu_cfg.cpu_addr isn't exactly the right
+name, since it now contains an address that is not a CPU physical
+address.  Not a question for *this* patch though.
+
+>  	atu.pci_addr = pci_addr;
+>  	atu.size = size;
+>  	ret = dw_pcie_ep_outbound_atu(ep, &atu);
+> @@ -861,6 +862,7 @@ int dw_pcie_ep_init(struct dw_pcie_ep *ep)
+>  	struct device *dev = pci->dev;
+>  	struct platform_device *pdev = to_platform_device(dev);
+>  	struct device_node *np = dev->of_node;
+> +	int index;
+>  
+>  	INIT_LIST_HEAD(&ep->func_list);
+>  
+> @@ -873,6 +875,16 @@ int dw_pcie_ep_init(struct dw_pcie_ep *ep)
+>  		return -EINVAL;
+>  
+>  	ep->phys_base = res->start;
+> +	ep->bus_addr_base = ep->phys_base;
+> +
+> +	if (pci->using_dtbus_info) {
+> +		index = of_property_match_string(np, "reg-names", "addr_space");
+> +		if (index < 0)
+> +			return -EINVAL;
+> +
+> +		of_property_read_reg(np, index, &ep->bus_addr_base, NULL);
+> +	}
+
+If this translation were fixed, I suppose we'd extract something from
+a "ranges" property that contains (child-bus-address,
+parent-bus-address) information.  So I suppose "addr_space" contains a
+fixed parent-bus-address, and is setting the child (PCI) bus address,
+right?
+
+If so, I might add a comment here for other readers who come this way.
+(And me, because I won't remember the next time I read it :)
+
+>  	ep->addr_size = resource_size(res);
+>  
+>  	if (ep->ops->pre_init)
+> diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
+> index 347ab74ac35aa..f10b533b04f77 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware.h
+> +++ b/drivers/pci/controller/dwc/pcie-designware.h
+> @@ -410,6 +410,7 @@ struct dw_pcie_ep {
+>  	struct list_head	func_list;
+>  	const struct dw_pcie_ep_ops *ops;
+>  	phys_addr_t		phys_base;
+> +	u64			bus_addr_base;
+>  	size_t			addr_size;
+>  	size_t			page_size;
+>  	u8			bar_to_atu[PCI_STD_NUM_BARS];
+> @@ -463,6 +464,14 @@ struct dw_pcie {
+>  	struct reset_control_bulk_data	core_rsts[DW_PCIE_NUM_CORE_RSTS];
+>  	struct gpio_desc		*pe_rst;
+>  	bool			suspended;
+> +	/*
+> +	 * Use device tree 'ranges' property of bus node instead using
+> +	 * cpu_addr_fixup(). Some old platform dts 'ranges' in bus node may not
+> +	 * reflect real hardware's behavior. In case break these platform back
+> +	 * compatibility, add below flags. Set it true if dts already correct
+> +	 * indicate bus fabric address convert.
+> +	 */
+> +	bool			using_dtbus_info;
+>  };
+>  
+>  #define to_dw_pcie_from_pp(port) container_of((port), struct dw_pcie, pp)
+> 
+> -- 
+> 2.34.1
+> 
 
