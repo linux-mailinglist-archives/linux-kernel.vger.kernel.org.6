@@ -1,61 +1,122 @@
-Return-Path: <linux-kernel+bounces-382691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45B0A9B1247
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 00:02:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D317C9B124B
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 00:03:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77E3C1C21264
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 22:02:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00A641C21369
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 22:03:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4EA1217F2C;
-	Fri, 25 Oct 2024 22:02:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DEFF20EA55;
+	Fri, 25 Oct 2024 22:03:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nQ+Gvwdd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LsfHVAf7"
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 292FA217F2D;
-	Fri, 25 Oct 2024 22:02:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C830217F2C;
+	Fri, 25 Oct 2024 22:03:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729893761; cv=none; b=vBkld9uaLJtB7jHlSJqCa+1O69HAbz9lJWs6fIY28NSl6LLnvjFXAFyI9w9EETcx7ykvw6J2C0CkM60xcgcBcw5A02mzHTzlYt/tcR3VJLxPULd32btiJnwUSN06uOTyRqW3cSlGcPTe5uwaOaTgEPo7DLW5yK1naICPJs03IVA=
+	t=1729893824; cv=none; b=a3YSjQ2+sOQRGP1rvHPrP/zE85O9L5baKWvUOnT576HxjXAkg4F5SjeHlUORtEDJ+ipDyR0nn+A4hesrhBu861pvqaceRiyLvIH7oL0jwWgoX/IQwECL+8yJwnFNUkOMP6k8jxKbDZhfStqIK1KwHsV4hU8YQfFgOWO4Pz3kPhg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729893761; c=relaxed/simple;
-	bh=ehUyipyJYKOHtqA1xl/ASG6Px2MP+X3bw4HigUGDv+s=;
+	s=arc-20240116; t=1729893824; c=relaxed/simple;
+	bh=FOTLbL7gbW7YTtHMiRM1I70X/lPdVT4Cyr/dpLlXWgs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fw0eBs9QXyNS8iCS8juRlUfNLE9U9hHTCmrTZ0I16QiPGx7Toh/hPFCga5NpRy7LzWOvOLYoc4LduIJm4hQFtJ/rhajjlgYGyTlXFssktB8hsjw+DZhChW8uo6WSCAwav4Y/yO7DzVdNdca9rp896pSnTuQuMz25T/O6xu7FHNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nQ+Gvwdd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 779EAC4CEC3;
-	Fri, 25 Oct 2024 22:02:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729893760;
-	bh=ehUyipyJYKOHtqA1xl/ASG6Px2MP+X3bw4HigUGDv+s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nQ+Gvwdd9yysGsp0/7UPqj/qXd3zSzWYpyvhpi0++ZJ5oQTUKoSH0rAiYPTtQ9twV
-	 qkHDbr3AJhjxOl6A1njpP1LPsg5esbBqjAK0dw53bkgrilMNsjgC8+SWoctEzkofEe
-	 q5umojB4/VPj4s/EOR8drq3xpoD+hK70iS+el1oIMN7x3T4ma4ag8dWhGsBPuFPD08
-	 X7fDq4cuocWDtE6fuI3dssWTW6C4FHK/Nv0gXa6ZDOzj9d21s6umvhxfOdT6/qSJJk
-	 9Kfr57sbZvF4ubur0lRMtnU0gryP99paij167WI2Z/0vW9vxVu0blssafGUNty8k6B
-	 scwlea49za9xA==
-Date: Fri, 25 Oct 2024 22:02:39 +0000
-From: Eric Biggers <ebiggers@kernel.org>
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
-	linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-	linux-mips@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev,
-	sparclinux@vger.kernel.org, x86@kernel.org
-Subject: Re: [PATCH v2 04/18] crypto: crc32 - don't unnecessarily register
- arch algorithms
-Message-ID: <20241025220239.GB2637569@google.com>
-References: <20241025191454.72616-1-ebiggers@kernel.org>
- <20241025191454.72616-5-ebiggers@kernel.org>
- <CAMj1kXEsq7iJThqZ7WA00ei4m59vpC23wPM+Mrj9W+HXfk-aSg@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=H8hQ4FiyY4FDnCYqPmwXgK2pXhzKyfi+GBBSMi/IW0Ka9/0sC3i3QA9Ko3oaoYyMoK4iFjwQbglo8bIOJFyd7A11E/oYVERVG8nI99yusk4oA0i4kjntn4fjYEyEdTbw0juWxsKbCvbIaNEM5of09EHcZ7Dp/CSlDDOKJRmaycc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LsfHVAf7; arc=none smtp.client-ip=209.85.160.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-460b16d4534so12649111cf.3;
+        Fri, 25 Oct 2024 15:03:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729893821; x=1730498621; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JT5COGsxViqKRAdujVI1CBo0jutDQ8MfmHu6RZKf300=;
+        b=LsfHVAf7yCd5k5G3EEDwXi4uyVvkSUFCyVcflnuaqgHoWICMqNwb9bh+b+VgPFDdwR
+         2ysYGZC+RfYz7CUJqx/h9RPOB4id3KZ2HJn/KS7/RpeRUPJvnafTiFT40Vh9+46zGaQI
+         Bc38WRUcYf1/lxGLsRXSPqrXiMvLvM8X8pSYBWfHtp0VuHKQ7wWSqBb6IyEHpfvns6uf
+         zvE0ceWW24fLshjThhaMzqvSq7Hd7P1UWOm+lT/xP0gNfTADIybJ6v2CJtgOTkhdp/xN
+         l3X87svaE3gyObKR+8ca1r+2j54N4xVThI5k1dlcGx6oGEf5iwJBourzPOtCOnqYKWx0
+         w6oA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729893821; x=1730498621;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JT5COGsxViqKRAdujVI1CBo0jutDQ8MfmHu6RZKf300=;
+        b=DFr5kFV2jmlMcc7bihPeSnqYBTMqUNDiSFLikHrPO6ZSts9Mh18CqoMeoW1XPEXW+K
+         yVAiyLtfEk9OgSMHggD+1IbJeDUpZTGUf4LZt5EHMyodck5SHSHw4pfLL+VzKbSa2Vm4
+         p4NKqBiHiCeF6wk3dcdaZqT/Ru8bI1q6cfu6X8LyMvJP5lqWteHscLH2X9TIy+bBk4i2
+         04QKKYCe25yYPG/U6apK4VfLsvHBLUSM2rAT+rajaIDQ8zBh3/FAq0ApiHMs51mDH1H9
+         Zxz2dRgCcJYcUhddR77vdjuvYs1xeUmaAEdGQZXWjaR0LFNwlemPA9qsSEBzx5eTXrOt
+         rQTw==
+X-Forwarded-Encrypted: i=1; AJvYcCW8ISeT5MzORLG1jeB3kgh+7VxhXA31nj6xMZFB6dvSxAkIUX7MehnBYEqbu/Y7Vkiz9ojux4i3@vger.kernel.org, AJvYcCWTxGsLUcYibedImUD/U9opTiWxIO8eM4n1UFiLV2WwXp8adkjdnAYx9RN7erpF6Y/frUZUUDstz8sFf3E=@vger.kernel.org, AJvYcCXCgQUI0WwLfCXHpEfrd5nc5ptl/Oqg2JMvJB0dj3Ptbgbcle6IgaUDbmF60eO+kUmvgcHtwlTTVHAvDsVydDo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5r4PiFr9Oet4nrbH9dvXxlep2tpzZHEplwiUiRL4AJ5Go3ujq
+	doGo3WLD/VQbG69km2fZTbK/+S97P3AUHuTmIfao/+d3mZKt0GBBpaLK7g==
+X-Google-Smtp-Source: AGHT+IFfvSEpk8tbWKhiexx3cSY8b2ZjrPMrXV0fEahdYXPYpGoYpmPb5mOS2mmhspGWWMBQJFIz/g==
+X-Received: by 2002:a05:622a:54d:b0:460:b2ce:ce96 with SMTP id d75a77b69052e-4613c177337mr9454031cf.41.1729893820827;
+        Fri, 25 Oct 2024 15:03:40 -0700 (PDT)
+Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4613237f394sm10110511cf.65.2024.10.25.15.03.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Oct 2024 15:03:40 -0700 (PDT)
+Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 82AEF1200068;
+	Fri, 25 Oct 2024 18:03:39 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-03.internal (MEProxy); Fri, 25 Oct 2024 18:03:39 -0400
+X-ME-Sender: <xms:uxUcZzYxhY7zfrSCndYL7pFXUJX3f5URE3g4Ltc-HQC3V54qxmlP3g>
+    <xme:uxUcZyaUqtKwMFwlx1JWOD9IYOHPvcVoeFU2-rKOMoPX8KuO53crmL0gNbiR7FrLh
+    1vxYiE2eua3II_vhA>
+X-ME-Received: <xmr:uxUcZ1-QI3IfrtnWaGvuSKQl1IbpBpABd1Rr4Qmb_iLL1RwcnT-Ft5CNUAE>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdejfedgtdehucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvden
+    ucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrd
+    gtohhmqeenucggtffrrghtthgvrhhnpeevuefgjeeugfeuveeifeegjeetleffleegteek
+    ueethfdvgfekgeffuefghfejffenucffohhmrghinheprhhushhtqdhfohhrqdhlihhnuh
+    igrdgtohhmpdhkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgr
+    rhgrmhepmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonh
+    grlhhithihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvghnghep
+    pehgmhgrihhlrdgtohhmsehfihigmhgvrdhnrghmvgdpnhgspghrtghpthhtohepvddupd
+    hmohguvgepshhmthhpohhuthdprhgtphhtthhopehfuhhjihhtrgdrthhomhhonhhorhhi
+    sehgmhgrihhlrdgtohhmpdhrtghpthhtoheprghnnhgrqdhmrghrihgrsehlihhnuhhtrh
+    honhhigidruggvpdhrtghpthhtohepfhhrvgguvghrihgtsehkvghrnhgvlhdrohhrghdp
+    rhgtphhtthhopehtghhlgieslhhinhhuthhrohhnihigrdguvgdprhgtphhtthhopehjsh
+    htuhhlthiisehgohhoghhlvgdrtghomhdprhgtphhtthhopehssghohigusehkvghrnhgv
+    lhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnh
+    gvlhdrohhrghdprhgtphhtthhopehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlhdrohhr
+    ghdprhgtphhtthhopehruhhsthdqfhhorhdqlhhinhhugiesvhhgvghrrdhkvghrnhgvlh
+    drohhrgh
+X-ME-Proxy: <xmx:uxUcZ5o-UUs0Pe01KdXEw3y_1xWpIUaaYsd_x5_YWJ2NJZDrxd6mcg>
+    <xmx:uxUcZ-rHEY4nYpTu-5sXpLU9S1tv_cosR8sjlxDwmy3nNZZI4o7bAQ>
+    <xmx:uxUcZ_T2zC9gvKM31wpKJ0XgRAVOyjZ0y-p5HDIqDvMaHZ-pmrqAcA>
+    <xmx:uxUcZ2rvsTNO_PXsqPrKGvbw_QFbyyGRJEa1Jh5IqqYEQfaUXdJa_w>
+    <xmx:uxUcZ_74RIpdOOfPuT4syf-7MFTCfOvM29GPdr45ky6VxFZLn5odLHqZ>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 25 Oct 2024 18:03:38 -0400 (EDT)
+Date: Fri, 25 Oct 2024 15:03:37 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: FUJITA Tomonori <fujita.tomonori@gmail.com>
+Cc: anna-maria@linutronix.de, frederic@kernel.org, tglx@linutronix.de,
+	jstultz@google.com, sboyd@kernel.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	andrew@lunn.ch, hkallweit1@gmail.com, tmgross@umich.edu,
+	ojeda@kernel.org, alex.gaynor@gmail.com, gary@garyguo.net,
+	bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+	a.hindborg@samsung.com, aliceryhl@google.com, arnd@arndb.de
+Subject: Re: [PATCH v4 4/7] rust: time: Add wrapper for fsleep function
+Message-ID: <ZxwVuceNORRAI7FV@Boquns-Mac-mini.local>
+References: <20241025033118.44452-1-fujita.tomonori@gmail.com>
+ <20241025033118.44452-5-fujita.tomonori@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,58 +125,155 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMj1kXEsq7iJThqZ7WA00ei4m59vpC23wPM+Mrj9W+HXfk-aSg@mail.gmail.com>
+In-Reply-To: <20241025033118.44452-5-fujita.tomonori@gmail.com>
 
-On Fri, Oct 25, 2024 at 10:47:15PM +0200, Ard Biesheuvel wrote:
-> On Fri, 25 Oct 2024 at 21:15, Eric Biggers <ebiggers@kernel.org> wrote:
-> >
-> > From: Eric Biggers <ebiggers@google.com>
-> >
-> > Instead of registering the crc32-$arch and crc32c-$arch algorithms if
-> > the arch-specific code was built, only register them when that code was
-> > built *and* is not falling back to the base implementation at runtime.
-> >
-> > This avoids confusing users like btrfs which checks the shash driver
-> > name to determine whether it is crc32c-generic.
-> >
+On Fri, Oct 25, 2024 at 12:31:15PM +0900, FUJITA Tomonori wrote:
+> Add a wrapper for fsleep, flexible sleep functions in
+> `include/linux/delay.h` which typically deals with hardware delays.
 > 
-> I think we agree that 'generic' specifically means a C implementation
-> that is identical across all architectures, which is why I updated my
-> patch to export -arch instead of wrapping the C code in yet another
-> driver just for the fuzzing tests.
+> The kernel supports several `sleep` functions to handle various
+> lengths of delay. This adds fsleep, automatically chooses the best
+> sleep method based on a duration.
 > 
-> So why is this a problem? If no optimizations are available at
-> runtime, crc32-arch and crc32-generic are interchangeable, and so it
-> shouldn't matter whether you use one or the other.
+> `sleep` functions including `fsleep` belongs to TIMERS, not
+> TIMEKEEPING. They are maintained separately. rust/kernel/time.rs is an
+> abstraction for TIMEKEEPING. To make Rust abstractions match the C
+> side, add rust/kernel/time/delay.rs for this wrapper.
 > 
-> You can infer from the driver name whether the C code is being used,
-> not whether or not the implementation is 'fast', and the btrfs hack is
-> already broken on arm64.
+> fsleep() can only be used in a nonatomic context. This requirement is
+> not checked by these abstractions, but it is intended that klint [1]
+> or a similar tool will be used to check it in the future.
 > 
-> > (It would also make sense to change btrfs to test the crc32_optimization
-> > flags itself, so that it doesn't have to use the weird hack of parsing
-> > the driver name.  This change still makes sense either way though.)
-> >
+> Link: https://rust-for-linux.com/klint [1]
+> Signed-off-by: FUJITA Tomonori <fujita.tomonori@gmail.com>
+> ---
+>  rust/helpers/helpers.c    |  1 +
+>  rust/helpers/time.c       |  8 ++++++++
+>  rust/kernel/time.rs       |  4 +++-
+>  rust/kernel/time/delay.rs | 30 ++++++++++++++++++++++++++++++
+>  4 files changed, 42 insertions(+), 1 deletion(-)
+>  create mode 100644 rust/helpers/time.c
+>  create mode 100644 rust/kernel/time/delay.rs
 > 
-> Indeed. That hack is very dubious and I'd be inclined just to ignore
-> this. On x86 and arm64, it shouldn't make a difference, given that
-> crc32-arch will be 'fast' in the vast majority of cases. On other
-> architectures, btrfs may use the C implementation while assuming it is
-> something faster, and if anyone actually notices the difference, we
-> can work with the btrfs devs to do something more sensible here.
+> diff --git a/rust/helpers/helpers.c b/rust/helpers/helpers.c
+> index 30f40149f3a9..c274546bcf78 100644
+> --- a/rust/helpers/helpers.c
+> +++ b/rust/helpers/helpers.c
+> @@ -21,6 +21,7 @@
+>  #include "slab.c"
+>  #include "spinlock.c"
+>  #include "task.c"
+> +#include "time.c"
+>  #include "uaccess.c"
+>  #include "wait.c"
+>  #include "workqueue.c"
+> diff --git a/rust/helpers/time.c b/rust/helpers/time.c
+> new file mode 100644
+> index 000000000000..7ae64ad8141d
+> --- /dev/null
+> +++ b/rust/helpers/time.c
+> @@ -0,0 +1,8 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +#include <linux/delay.h>
+> +
+> +void rust_helper_fsleep(unsigned long usecs)
+> +{
+> +	fsleep(usecs);
+> +}
+> diff --git a/rust/kernel/time.rs b/rust/kernel/time.rs
+> index 3cc1a8a76777..cfc31f908710 100644
+> --- a/rust/kernel/time.rs
+> +++ b/rust/kernel/time.rs
+> @@ -2,12 +2,14 @@
+>  
+>  //! Time related primitives.
+>  //!
+> -//! This module contains the kernel APIs related to time and timers that
+> +//! This module contains the kernel APIs related to time that
+>  //! have been ported or wrapped for usage by Rust code in the kernel.
+>  //!
+>  //! C header: [`include/linux/jiffies.h`](srctree/include/linux/jiffies.h).
+>  //! C header: [`include/linux/ktime.h`](srctree/include/linux/ktime.h).
+>  
+> +pub mod delay;
+> +
+>  /// The number of nanoseconds per microsecond.
+>  pub const NSEC_PER_USEC: i64 = bindings::NSEC_PER_USEC as i64;
+>  
+> diff --git a/rust/kernel/time/delay.rs b/rust/kernel/time/delay.rs
+> new file mode 100644
+> index 000000000000..f80f35f50949
+> --- /dev/null
+> +++ b/rust/kernel/time/delay.rs
+> @@ -0,0 +1,30 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +//! Delay and sleep primitives.
+> +//!
+> +//! This module contains the kernel APIs related to delay and sleep that
+> +//! have been ported or wrapped for usage by Rust code in the kernel.
+> +//!
+> +//! C header: [`include/linux/delay.h`](srctree/include/linux/delay.h).
+> +
+> +use crate::time;
+> +use core::ffi::c_ulong;
+> +
+> +/// Sleeps for a given duration at least.
+> +///
+> +/// Equivalent to the kernel's [`fsleep`], flexible sleep function,
+> +/// which automatically chooses the best sleep method based on a duration.
+> +///
+> +/// The function sleeps infinitely (MAX_JIFFY_OFFSET) if `Delta` is negative
+> +/// or exceedes i32::MAX milliseconds.
+> +///
 
-Yes, we probably could get away without this.  It's never really been
-appropriate to use the crypto driver names for anything important.  And btrfs
-probably should just assume CRC32C == fast unconditionally, like what it does
-with xxHash64, or even do a quick benchmark to measure the actual speed of its
-hash algorithm (which can also be sha256 or blake2b which can be very fast too).
+I know Miguel has made his suggestion:
 
-Besides the btrfs case, my concern was there may be advice floating around about
-checking /proc/crypto to check what optimized code is being used.  Having
-crc32-$arch potentially be running the generic code would make that misleading.
-It might make sense to keep it working similar to how it did before.
+	https://lore.kernel.org/rust-for-linux/CANiq72kWqSCSkUk1efZyAi+0ScNTtfALn+wiJY_aoQefu2TNvg@mail.gmail.com/
 
-But I do agree that we could probably get away without this.
+, but I think what we should really do here is just panic if `Delta` is
+negative or exceedes i32::MAX milliseconds, and document clearly that
+this function expects `Delta` to be in a certain range, i.e. it's the
+user's responsibility to check. Because:
 
-- Eric
+*	You can simply call schedule() with task state set properly to
+	"sleep infinitely".
+
+*	Most of the users of fsleep() don't need this "sleep infinitely"
+	functionality. Instead, they want to sleep with a reasonable
+	short time.
+
+> +/// This function can only be used in a nonatomic context.
+> +pub fn fsleep(delta: time::Delta) {
+> +    // SAFETY: FFI call.
+> +    unsafe {
+> +        // Convert the duration to microseconds and round up to preserve
+> +        // the guarantee; fsleep sleeps for at least the provided duration,
+> +        // but that it may sleep for longer under some circumstances.
+> +        bindings::fsleep(delta.as_micros_ceil() as c_ulong)
+
+If delta is 0x10000_0000i64 * 1000_000 (=0xf424000000000i64), which
+exceeds i32::MAX milliseconds, the result of `delta.as_micros_ceil() as
+c_ulong` is:
+
+*	0 on 32bit
+*	0x3e800000000 on 64bit
+
+, if I got my math right. The first is obviously not "sleeps
+infinitely".
+
+Continue on 64bit case, in C's fsleep(), 0x3e800000000 will be cast to
+"int" (to call msleep()), which results as 0, still not "sleep
+infinitely"?
+
+Regards,
+Boqun
+
+> +    }
+> +}
+> -- 
+> 2.43.0
+> 
+> 
 
