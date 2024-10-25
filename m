@@ -1,120 +1,145 @@
-Return-Path: <linux-kernel+bounces-381752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95F789B03D4
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:19:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58C2C9B03C8
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:19:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C857E1C219C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 13:19:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C27DCB21F25
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 13:19:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2BE8212191;
-	Fri, 25 Oct 2024 13:19:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E5BB212171;
+	Fri, 25 Oct 2024 13:19:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QI3j/BnC"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GMgzJIXY";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="P1FxEngj"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E200452F76;
-	Fri, 25 Oct 2024 13:19:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A191A212167
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 13:19:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729862384; cv=none; b=iYRDfiwzqQsXaU5jkkKxhz7tGDNhu7bHLD29V6cAb9gWsYCjfXTBXXTIkZ4zWyvypel8wdIAHV5fAi96X9gM0AGc/yGb37AQzR1I2Cv03VHpSiRYHybgbGqtVcrLXbLgmg887mn3YfPTwhdsVcfyermS6pn72cBVXAVH4CcyX2M=
+	t=1729862375; cv=none; b=LlSt/fxa5gOkkJB3741dsYeYtEnDOugZIwBlsiedF/OQi8y/zikua9FKUwicQJLzHFTF5zcVdCnxAqIgMvop06D1xCsGHJDF/roXcTU2tA2e8ZzA8Wq2DHFKMfdFOkxu/s25GVR2oxd3hoQ5GJRVEGM5wI15W0c8Jmx1//xBSYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729862384; c=relaxed/simple;
-	bh=V1sOFV4W/vYmfHOo/YccbeoVgUSseDX9b1vcA4AQoKM=;
+	s=arc-20240116; t=1729862375; c=relaxed/simple;
+	bh=h/nXSoCzi8upY64Z1TXiDZ9JZaa/yNyWfYxebAEpJo0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=upFX3+12YziKHGC9VS9BwK1FMODYS3Ve2/+uBUR8XupRoSgQ8ibI72SpnBviiupnp3dqmSmFcZtF9w+byXDxNEX8dMOii0S9pglWGq7DvFEaQC7rAPDysM7RPm0oeewXzM1k/JBSfWCc8D4UWZjyiJCEmx2C/Ci8YW2E3uZyxkE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QI3j/BnC; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729862382; x=1761398382;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=V1sOFV4W/vYmfHOo/YccbeoVgUSseDX9b1vcA4AQoKM=;
-  b=QI3j/BnCYIGI0MU9Q+TJ17TcwbEVYW5m0WvLVTaBueYUkrOBkW6nyP4M
-   n+2e7lnp6t797f0K6W8zSkMqPU7WtQQQa9/0mFF5KLVn6F/DPjQbNWxTN
-   dnwLLRzgKnpC3NxxWbVXtYss84DzZdLAPhX7WS/qJVs5guaNjp4c1Dr0M
-   nUqbY/FJWUP6BQ5w06gX48p/NdBkfmEi2g67T+HK8jVjEhvIeGAkAvnqw
-   pPdf7nhl2Of4ekcyFOU8yuQn5Uybw3HjyjJeQTJ1LK1nLnQgdbd14Gro1
-   kQgG4jj+ii1abvGuLibXr1oyFJGJ4UmhBd+2HoZMS7XCcU05ZrBDySIhv
-   Q==;
-X-CSE-ConnectionGUID: OLNuQvDyRlmR41UclrXNrA==
-X-CSE-MsgGUID: CgICE2zCQxC4K5iaf8DH9g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11236"; a="40145735"
-X-IronPort-AV: E=Sophos;i="6.11,231,1725346800"; 
-   d="scan'208";a="40145735"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2024 06:19:24 -0700
-X-CSE-ConnectionGUID: Bl0XnzdTSbukqiK0fd1Znw==
-X-CSE-MsgGUID: f6sOCNSFReipYddQD8BK3w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,231,1725346800"; 
-   d="scan'208";a="80931768"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2024 06:19:14 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1t4KDd-00000006vFW-1Hxw;
-	Fri, 25 Oct 2024 16:19:09 +0300
-Date: Fri, 25 Oct 2024 16:19:09 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Oleksiy Protas <elfy.ua@gmail.com>
-Cc: d.milivojevic@gmail.com, ajhalaney@gmail.com, allenbh@gmail.com,
-	andrew@lunn.ch, arnd@arndb.de, bhelgaas@google.com, bp@alien8.de,
-	broonie@kernel.org, cai.huoqing@linux.dev, dave.jiang@intel.com,
-	davem@davemloft.net, dlemoal@kernel.org, dmaengine@vger.kernel.org,
-	dushistov@mail.ru, fancer.lancer@gmail.com, geert@linux-m68k.org,
-	gregkh@linuxfoundation.org, ink@jurassic.park.msu.ru,
-	jdmason@kudzu.us, jiaxun.yang@flygoat.com, keguang.zhang@gmail.com,
-	kory.maincent@bootlin.com, krzk@kernel.org, kuba@kernel.org,
-	linux-edac@vger.kernel.org, linux-hwmon@vger.kernel.org,
-	linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mips@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, linux-serial@vger.kernel.org,
-	linux-spi@vger.kernel.org, linux@armlinux.org.uk,
-	linux@roeck-us.net, manivannan.sadhasivam@linaro.org,
-	netdev@vger.kernel.org, nikita.shubin@maquefel.me, nikita@trvn.ru,
-	ntb@lists.linux.dev, olteanv@gmail.com, pabeni@redhat.com,
-	paulburton@kernel.org, robh@kernel.org, s.shtylyov@omp.ru,
-	sergio.paracuellos@gmail.com, shc_work@mail.ru,
-	siyanteng@loongson.cn, tsbogend@alpha.franken.de, xeb@mail.ru,
-	yoshihiro.shimoda.uh@renesas.com
-Subject: Re: linux: Goodbye from a Linux community volunteer
-Message-ID: <ZxuazYt5GMJWJ8xP@smile.fi.intel.com>
-References: <CALtW_ahkg9W0wm09cxkJxiSQCH=42smeK=fqh5cQ9sRSNsjeXA@mail.gmail.com>
- <20241025030102.319485-1-elfy.ua@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=QfFdXAasvbNfMkdb9jqGGarPONt8l5ZLEs59766LTk3rODmSVsxMftPUhZk8TGzPXdn6rqd+9r/jThhKPJirBKkSUBeTrhMaES18nZF31NELdhab4l2EURbPxgf1F75YH+FxWOqu747p6P2R7aNKa6WcopYnkhKVoSVFZvu2mII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GMgzJIXY; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=P1FxEngj; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 25 Oct 2024 15:19:30 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1729862372;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xZzoK6wO/WRgPUCt+z9le+lN0Jra0KXjelgNgcWkVDQ=;
+	b=GMgzJIXYyttgAawwDtMWcFw1RQ+DU+cN1jbDGKV/l6P3WBgCLxEtEB1/q12q5BwavKh5qq
+	8+e/VTIw++ZT62gZPztqTjqhrVrnsdIDABgvEz+EFv0TN1hA4MiL59HRdxrfLZI/+7XgCx
+	LHTs1yHxvGq4AGMkaRZ4YObYaeqxiMVB4PsTIIRzkAm8ggPs15bttAp7obrFJfadA+bSph
+	6WJjz8BftDcUBJ1hl/fKzFrKpvobRQqrGkX4k+ba3rxA2aDsh05FimdXzZJXmCDDcZE2tj
+	VFiFhHkgJT6RlGmDALVPl1r56V2iFKZ/4eaFCI8BfWumv0IbO8u8FJZm1/3NLw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1729862372;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xZzoK6wO/WRgPUCt+z9le+lN0Jra0KXjelgNgcWkVDQ=;
+	b=P1FxEngjLVBCZa9nTxTh1zhpxy5n4gXygBCrcMoQm6zsoaJiNdSjupakr64qfHJRY+p99g
+	RfmaaGjGnni8KwAQ==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Shrikanth Hegde <sshegde@linux.ibm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
+	juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, vschneid@redhat.com, ankur.a.arora@oracle.com,
+	efault@gmx.de, tglx@linutronix.de, mingo@kernel.org
+Subject: Re: [PATCH 2/5] sched: Add Lazy preemption model
+Message-ID: <20241025131930.cVOckvQQ@linutronix.de>
+References: <20241007074609.447006177@infradead.org>
+ <20241007075055.331243614@infradead.org>
+ <e334aff9-248c-4a00-98e1-7bcb7cdd5e90@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241025030102.319485-1-elfy.ua@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <e334aff9-248c-4a00-98e1-7bcb7cdd5e90@linux.ibm.com>
 
-On Fri, Oct 25, 2024 at 06:01:02AM +0300, Oleksiy Protas wrote:
-> Brate Dragane,
+On 2024-10-22 22:14:41 [+0530], Shrikanth Hegde wrote:
+> > --- a/kernel/sched/fair.c
+> > +++ b/kernel/sched/fair.c
+> > @@ -1251,7 +1251,7 @@ static void update_curr(struct cfs_rq *c
+> >   		return;
+> >   	if (resched || did_preempt_short(cfs_rq, curr)) {
 > 
-> I was not aware of the fact that either Raytheon or Boeing are directly supplying the Russian invasion. That would be a concerning development indeed.
 > 
-> If you possess any information of that being the case, I urge you to contact GUR anonymously at their official whistleblowing email: gur_official@proton.me
 > 
-> Thank you for your diligence, only together we can stop the war.
+> If there is a long running task, only after it is not eligible, LAZY would be set and
+> subsequent tick would upgrade it to NR. If one sets sysctl_sched_base_slice to a large
+> value (max 4seconds), LAZY would set thereafter(max 4 seconds) if there in no wakeup in
+> that CPU.
+> 
+> If i set sysctl_sched_base_slice=300ms, spawn 2 stress-ng on one CPU, then LAZY bit is
+> set usually after 300ms of sched_switch if there are no wakeups. Subsequent tick NR is set.
+> Initially I was thinking, if there is a long running process, then LAZY would be set after
+> one tick and on subsequent tick NR would set. I was wrong. It might take a long time for LAZY
+> to be set, and On subsequent tick NR would be set.
+> 
+> That would be expected behavior since one setting sysctl_sched_base_slice know what to expect?
 
-Bravo!
+I guess so. Once the slice is up then the NEED_RESCHED bit is replaced
+with the LAZY bit. That means a return-to-userland (from a syscall) or
+the following tick will lead to a scheduling event.
 
-P.S. "Don't feed the trolls".
+> > -		resched_curr(rq);
+> > +		resched_curr_lazy(rq);
+> >   		clear_buddies(cfs_rq, curr);
+> >   	}
+> >   }
+> > @@ -5677,7 +5677,7 @@ entity_tick(struct cfs_rq *cfs_rq, struc
+> >   	 * validating it and just reschedule.
+> >   	 */
+> >   	if (queued) {
+> 
+> What's this queued used for? hrtick seems to set it. I haven't understood how it works.
 
--- 
-With Best Regards,
-Andy Shevchenko
+from 20241009074631.GH17263@noisy.programming.kicks-ass.net:
+| hrtick is disabled by default (because expensive) and so it doesn't
+| matter much, but it's purpose is to increase accuracy and hence I left
+| it untouched for now.
 
+This setups a hrtimer for the (remaining) time slice and invokes the
+task_tick from there (instead of the regular tick).
 
+> > -		resched_curr(rq_of(cfs_rq));
+> > +		resched_curr_lazy(rq_of(cfs_rq));
+> >   		return;
+> >   	}
+> >   	/*
+> > @@ -8832,7 +8832,7 @@ static void check_preempt_wakeup_fair(st
+> >   	return;
+> >   preempt:
+> > -	resched_curr(rq);
+> 
+> Is it better to call resched_curr here? When the code arrives here, it wants to
+> run pse as soon as possible right?
+
+But wouldn't then every try_to_wakeup()/ wake_up() result in immediate
+preemption? Letting it run and waiting to give up on its own, having the
+preemption on return to userland results usually in better performance.
+At least this is what I observed while playing with this.
+
+> > +	resched_curr_lazy(rq);
+> >   }
+> >   static struct task_struct *pick_task_fair(struct rq *rq)
+
+Sebastian
 
