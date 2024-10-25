@@ -1,161 +1,427 @@
-Return-Path: <linux-kernel+bounces-381160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0E7D9AFB52
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 09:44:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 749D99AFB69
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 09:47:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66E761F22750
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 07:44:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9938C1C22454
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 07:47:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4EB618BC34;
-	Fri, 25 Oct 2024 07:44:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE7251C0DD3;
+	Fri, 25 Oct 2024 07:47:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="s8MAiDCH"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="i0t7bwMg"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB0A61B393A
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 07:44:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF9F5198856
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 07:47:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729842258; cv=none; b=Bar6C/extdWR4NHQU/UUYNsLWg5kudzUaXUj3SKI7qXTXlfyQHYa+SEHJBuowwdQXle2LHIc0hlRiVQe5dJyrm78VPWY8wicesX/HR+NXEPw2XBQJTyOTwipmJGypwJSG5A4l9e/uJVHBRdJlSlU4W8xqXdoxu78mXeMWbChn80=
+	t=1729842426; cv=none; b=CpdfbB4Cl6AL3HK915X1pnF4esaWUyLyAQc9rtIkw2g9el5DB0Kc6B3sVaum0gc/wvvPEtrJpoxjmd30VibRKZ2NLbWGzBzCPrQ5fwoEZZ3SobWN6J41ctNKTqUpyZn27lpmPtwJNHeQZcuegf8v8RwyPIx8GKIKXZkQRg5r/ew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729842258; c=relaxed/simple;
-	bh=dJo0OCZTS17hWD5C48chC43bhuVPP74TT2WmtHdlfvE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=m1w+bpfzX/qUxSCNx5m1iWjdYKv0JF5kpK4n90SnzwKH/aTxYJw3EzlKLlKZZbei9nwPnPtYE3EZMo1h9TDQ5UghZQZ4jb6h6xPU4lVM54Mec2qVZ6SKteM5Si8krl5g37hkSsv0Nf3yyV16GwmtnV+iaKjFxeqiZwjyQCm4cBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=s8MAiDCH; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-431616c23b5so12230045e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 00:44:15 -0700 (PDT)
+	s=arc-20240116; t=1729842426; c=relaxed/simple;
+	bh=yL0Mvvf7qq1Y4rNXTuPmIR0iozdsFte6MC6K2q2Fnc0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=M+DrhBkiwxApn4TFvE0z06QCWg7hFs5Bcq+SszzeaIiXGdno0K1CdSUWApNfYFPDPPeRgIL9IVvWdOAzA9cYEazNIjg0fF1/xTPZ/rYHJSjB71X+gca8osf8fujSNw1VA+WPXJhrm0oxO5tOH9vDwZurbR4c2Z+MzV/jCl693n0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=i0t7bwMg; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-539f1292a9bso2215523e87.2
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 00:47:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729842254; x=1730447054; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Shoxcp3h480bf/MaRlp7RFfSIiO1DRQ9b/G/3O5b+1c=;
-        b=s8MAiDCHHM6e6T7VxhUFbayzd4qgtIj4cZYFF3n6zDtPLJxfmyxcot6sxBOxcLxPjM
-         tof+7vuH4mkUHROxTvbZo9T2gfkz2VKTz2VH6AXR3Q8tBk5XudLPH6fP4C88Iuhd5HlA
-         Md19ndHsk8AADhGgK0SNpyfjkyNBIEEWOtK91kZBD/GqH+xx/Mvi9BBZtjGn29ArJbrx
-         yWAKiPvBws5M2lP0aR/g3zDRiZAGXMheWK1uzZq9kdsDn307yrdnrH4kH5auFfpevTlR
-         v8zoPMvPzUqthbfiImohmOnFwqCoGPr/xMbsABwI9or12L0tkW0ylXgt7i0gkcsqykVS
-         yR/A==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1729842421; x=1730447221; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=x5BXqPz+EiACZmro698gTzPxIy7XLZgbgeDLsd6A9LQ=;
+        b=i0t7bwMgh1f7nvVNQn5KFDIFxioTto0fbAY3I+Kgcp48SmIfXpDiJmUuurBksfxGC1
+         BhPOxwzBPTwZCO+wL5i6lDZiyYZ2RgCo8xcB/bzNGmZ2locwB7AGpdzrJG2HjrTjPLSn
+         EXeg0HqQ9Q+5pn2O6etveYxI0bfzRRDZ7engBzn6v4tPSLr+ff4TPFoNfEvvysr0+MAs
+         rkFH67YjmEpXpFzEl80dkcr+/iGdlkEA9N7w1oPBoPCZ5LGi+6pPccYQAeo5CD2Hz5UX
+         4idbUUEB3pT98+rscOSJNp/sFatkhKwYpeWj7Oiv+EVeffQDTFiZNGmRm/+0qcgWQj0O
+         LBcQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729842254; x=1730447054;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Shoxcp3h480bf/MaRlp7RFfSIiO1DRQ9b/G/3O5b+1c=;
-        b=TiY+Fj12iuBVLYhp4exmnoULOKgv5+x5bgnsmhreP9+JJTqILK77WtrAqjNY/zNK1k
-         BKhPnUXnRCfg7U1j5JjD68SFJ4YoGhARmNodGWeXHfrKpy2+d6j59dQ4Zt3r6GXbUwTy
-         jXKs6JdLh6t2tJKSzXOWkL1DZ8Uds3HQxU0PzJCmdvznyhez5c43BOrLPFlLZmBGxUbC
-         ggOaPFR0VuxibPAI+ihlmWocWXEmMKxbh0QWnYgpmVTGyprw5+SSPg5Aa15VqEjIzThc
-         QMgpc0jIVd/k1XUVAtBFCaRW4W/FcJWR8R83uqYi4FYkBoo34f+XX1Dc7RUV9vtZjfnH
-         IMoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUv5v/EbzE6gi8V93wKwbl4u3xVfDq8qNbhuj7QAV8yu0vBX6nEWLcyCz/2lwt1nYhDtnPBdF3MHw9YNmk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyjPMOAsVLbSZXmV/XxcgtysFhsZGu8ie4+rF3meqJQdfNpWJqO
-	RbSftlA0nCDRhnDK2oQYfjVzHBdNcVGFMtTIyBASZuO/rMVEaReQy6EjL9MlpQk=
-X-Google-Smtp-Source: AGHT+IHqGpEQ/vKDPecI19Mf9I/hj7pHAGWAj1QEt5pPdkx4Mu+LCIjrnm1o5CIW71lKN73l8P+HoA==
-X-Received: by 2002:a05:600c:4689:b0:42c:b826:a26c with SMTP id 5b1f17b1804b1-4318b5a561cmr32758465e9.8.1729842254093;
-        Fri, 25 Oct 2024 00:44:14 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4319360d318sm9865635e9.47.2024.10.25.00.44.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2024 00:44:13 -0700 (PDT)
-Date: Fri, 25 Oct 2024 10:44:09 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: oe-kbuild@lists.linux.dev, Remi Pommarel <repk@triplefau.lt>,
-	ath10k@lists.infradead.org, linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
-	Kalle Valo <kvalo@kernel.org>, Jeff Johnson <jjohnson@kernel.org>,
-	Cedric Veilleux <veilleux.cedric@gmail.com>,
-	Vasanthakumar Thiagarajan <quic_vthiagar@quicinc.com>,
-	Remi Pommarel <repk@triplefau.lt>
-Subject: Re: [PATCH v2 2/2] wifi: ath10k: Flush only requested txq in
- ath10k_flush()
-Message-ID: <60d579e2-5eb7-4239-9a23-95fa4b32f351@stanley.mountain>
+        d=1e100.net; s=20230601; t=1729842421; x=1730447221;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=x5BXqPz+EiACZmro698gTzPxIy7XLZgbgeDLsd6A9LQ=;
+        b=iU0zrvKifQ521/bQ3pnKIThBUO4IeC12VK3QtrSQaTVtQAX7gAbFV0ZYlEeEJDpDMY
+         TscuVEyLxn6HE/0At6Y7WdHbvUmgerwwzVtzdosf5QUtrfwzwcNuXAdHvjAsosagzvU0
+         TGK3G062VqeRf7kDZedhtpkzIHoI1eF6hOXWnCvZB3JVqwl0DRO4R+WBN+9IrVewaOTn
+         70Va8CiHVW+ESBGSf5Jiald8zOl8+qYkzcmDnfgXD4pacoVV3rm4RwPs7odZ6vgDQj19
+         fjVIwtsdGyICfyaw9vOTJuLIrGSVhixQqmaAYXa7Af3gCXrqGiXSy66sRnSx99OzE0gZ
+         pKgg==
+X-Forwarded-Encrypted: i=1; AJvYcCWYOMMIX2sO/AqjDUcn3rFG8q1VVLmPXHklsD2zIMHfOztwb0kCp4ZWuawdkzjB/JYxQ9aiIR4H9tI/r0E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFMICYMegwqgV6HxoF+42BzFRMdExhCBlA5LGK8lGL5caIFnQ1
+	XYU5+dGCA0AmzPuKzCDrDvrtK4gmIR4iSeSGsMn1doM4fmd3511wEapx9vf8VdvasYqOTjddj4S
+	Nm7KxBRMtYn4rdF0josBozvWh7nIT76OCXwv21A==
+X-Google-Smtp-Source: AGHT+IGAHycQKfyA3pvkDtZQaRw+AzWgoTGQ5UlGGgLNgaehs/rFe+OX4bOQul/HgfGcvuaKmgk23lw/eCRCMcYWMYA=
+X-Received: by 2002:a05:6512:6ca:b0:52e:f2a6:8e1a with SMTP id
+ 2adb3069b0e04-53b23e1913amr2531941e87.29.1729842421028; Fri, 25 Oct 2024
+ 00:47:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0f55986ebe34f2b5aa4ccbcb0bed445324099fbd.1729586267.git.repk@triplefau.lt>
+References: <20241024085922.133071-1-tmyu0@nuvoton.com> <20241024085922.133071-3-tmyu0@nuvoton.com>
+ <CAMRc=Mc+SZN=EytxY=qA-qBEAY_F17GP-7FRE9oLojLbdUoPaQ@mail.gmail.com> <CAOoeyxW4=+5-QMcd_wgncFC9jgx_1Zf1Tq8RTnBvVqZ1JcUBQg@mail.gmail.com>
+In-Reply-To: <CAOoeyxW4=+5-QMcd_wgncFC9jgx_1Zf1Tq8RTnBvVqZ1JcUBQg@mail.gmail.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Fri, 25 Oct 2024 09:46:50 +0200
+Message-ID: <CAMRc=MexqwSCDrsBS0mK0fo_MCwngAH9XVgjRuDQjw0TVUBmPw@mail.gmail.com>
+Subject: Re: [PATCH v1 2/9] gpio: Add Nuvoton NCT6694 GPIO support
+To: =?UTF-8?B?5ri45a2Q5rCR?= <a0282524688@gmail.com>
+Cc: tmyu0@nuvoton.com, lee@kernel.org, linus.walleij@linaro.org, 
+	andi.shyti@kernel.org, mkl@pengutronix.de, mailhol.vincent@wanadoo.fr, 
+	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, 
+	kuba@kernel.org, pabeni@redhat.com, wim@linux-watchdog.org, 
+	linux@roeck-us.net, jdelvare@suse.com, jic23@kernel.org, lars@metafoo.de, 
+	ukleinek@kernel.org, alexandre.belloni@bootlin.com, 
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-i2c@vger.kernel.org, linux-can@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-watchdog@vger.kernel.org, linux-hwmon@vger.kernel.org, 
+	linux-iio@vger.kernel.org, linux-pwm@vger.kernel.org, 
+	linux-rtc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Remi,
+On Fri, Oct 25, 2024 at 9:39=E2=80=AFAM =E6=B8=B8=E5=AD=90=E6=B0=91 <a02825=
+24688@gmail.com> wrote:
+>
+> Sorry, resending this email in plain text format.
+>
+> Dear Bart,
+>
+> Thank you for your comments.
+>
+> Bartosz Golaszewski <brgl@bgdev.pl> =E6=96=BC 2024=E5=B9=B410=E6=9C=8824=
+=E6=97=A5 =E9=80=B1=E5=9B=9B =E4=B8=8B=E5=8D=885:47=E5=AF=AB=E9=81=93=EF=BC=
+=9A
+> >
+> > On Thu, Oct 24, 2024 at 10:59=E2=80=AFAM Ming Yu <a0282524688@gmail.com=
+> wrote:
+> > >
+> > > This driver supports GPIO and IRQ functionality for NCT6694 MFD
+> > > device based on USB interface.
+> > >
+> > > Signed-off-by: Ming Yu <tmyu0@nuvoton.com>
+> > > ---
+> > >  MAINTAINERS                 |   1 +
+> > >  drivers/gpio/Kconfig        |  12 +
+> > >  drivers/gpio/Makefile       |   1 +
+> > >  drivers/gpio/gpio-nct6694.c | 489 ++++++++++++++++++++++++++++++++++=
+++
+> > >  4 files changed, 503 insertions(+)
+> > >  create mode 100644 drivers/gpio/gpio-nct6694.c
+> > >
+> > > diff --git a/MAINTAINERS b/MAINTAINERS
+> > > index 30157ca95cf3..2c86d5dab3f1 100644
+> > > --- a/MAINTAINERS
+> > > +++ b/MAINTAINERS
+> > > @@ -16438,6 +16438,7 @@ NUVOTON NCT6694 MFD DRIVER
+> > >  M:     Ming Yu <tmyu0@nuvoton.com>
+> > >  L:     linux-kernel@vger.kernel.org
+> > >  S:     Supported
+> > > +F:     drivers/gpio/gpio-nct6694.c
+> > >  F:     drivers/mfd/nct6694.c
+> > >  F:     include/linux/mfd/nct6694.h
+> > >
+> > > diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+> > > index d93cd4f722b4..aa78ad9ff4ac 100644
+> > > --- a/drivers/gpio/Kconfig
+> > > +++ b/drivers/gpio/Kconfig
+> > > @@ -1450,6 +1450,18 @@ config GPIO_MAX77650
+> > >           GPIO driver for MAX77650/77651 PMIC from Maxim Semiconducto=
+r.
+> > >           These chips have a single pin that can be configured as GPI=
+O.
+> > >
+> > > +config GPIO_NCT6694
+> > > +       tristate "Nuvoton NCT6694 GPIO controller support"
+> > > +       depends on MFD_NCT6694
+> > > +       select GENERIC_IRQ_CHIP
+> > > +       select GPIOLIB_IRQCHIP
+> > > +       help
+> > > +         This driver supports 8 GPIO pins per bank that can all be i=
+nterrupt
+> > > +         sources.
+> > > +
+> > > +         This driver can also be built as a module. If so, the modul=
+e will be
+> > > +         called gpio-nct6694.
+> > > +
+> > >  config GPIO_PALMAS
+> > >         bool "TI PALMAS series PMICs GPIO"
+> > >         depends on MFD_PALMAS
+> > > diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
+> > > index 1429e8c0229b..02c94aa28017 100644
+> > > --- a/drivers/gpio/Makefile
+> > > +++ b/drivers/gpio/Makefile
+> > > @@ -121,6 +121,7 @@ obj-$(CONFIG_GPIO_MXC)                      +=3D =
+gpio-mxc.o
+> > >  obj-$(CONFIG_GPIO_MXS)                 +=3D gpio-mxs.o
+> > >  obj-$(CONFIG_GPIO_NOMADIK)             +=3D gpio-nomadik.o
+> > >  obj-$(CONFIG_GPIO_NPCM_SGPIO)          +=3D gpio-npcm-sgpio.o
+> > > +obj-$(CONFIG_GPIO_NCT6694)             +=3D gpio-nct6694.o
+> > >  obj-$(CONFIG_GPIO_OCTEON)              +=3D gpio-octeon.o
+> > >  obj-$(CONFIG_GPIO_OMAP)                        +=3D gpio-omap.o
+> > >  obj-$(CONFIG_GPIO_PALMAS)              +=3D gpio-palmas.o
+> > > diff --git a/drivers/gpio/gpio-nct6694.c b/drivers/gpio/gpio-nct6694.=
+c
+> > > new file mode 100644
+> > > index 000000000000..42c0e6e76730
+> > > --- /dev/null
+> > > +++ b/drivers/gpio/gpio-nct6694.c
+> > > @@ -0,0 +1,489 @@
+> > > +// SPDX-License-Identifier: GPL-2.0
+> > > +/*
+> > > + * Nuvoton NCT6694 GPIO controller driver based on USB interface.
+> > > + *
+> > > + * Copyright (C) 2024 Nuvoton Technology Corp.
+> > > + */
+> > > +
+> > > +#include <linux/gpio.h>
+> >
+> > Don't include this header. It's documented as obsolete.
+>
+> [Ming] Okay! I'll drop it in the next patch.
+>
+> >
+> > > +#include <linux/gpio/driver.h>
+> > > +#include <linux/module.h>
+> > > +#include <linux/interrupt.h>
+> > > +#include <linux/platform_device.h>
+> > > +#include <linux/mfd/core.h>
+> > > +#include <linux/mfd/nct6694.h>
+> > > +
+> >
+> > You only use it once, drop it.
+>
+> [Ming] That line is blank, did you mean #include <linux/gpio.h>?
+>
+> >
+> > > +#define DRVNAME "nct6694-gpio"
 
-kernel test robot noticed the following build warnings:
+I meant this line. Just put the driver name in the driver struct
+definition directly.
 
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> > > +
+> > > +/* Host interface */
+> > > +#define REQUEST_GPIO_MOD               0xFF
+> > > +#define REQUEST_GPIO_LEN               0x01
+> > > +
+> > > +/* Report Channel */
+> > > +#define GPIO_VER_REG                   0x90
+> > > +#define GPIO_VALID_REG                 0x110
+> > > +#define GPI_DATA_REG                   0x120
+> > > +#define GPO_DIR_REG                    0x170
+> > > +#define GPO_TYPE_REG                   0x180
+> > > +#define GPO_DATA_REG                   0x190
+> > > +
+> > > +#define GPI_STS_REG                    0x130
+> > > +#define GPI_CLR_REG                    0x140
+> > > +#define GPI_FALLING_REG                        0x150
+> > > +#define GPI_RISING_REG                 0x160
+> > > +
+> >
+> > Please use the NCT6694 prefix for these defines, otherwise it's not
+> > clear whether they come from the driver or from GPIO core.
+> >
+> > []
+>
+> [Ming] Okay! I'll add the prefix to the defines in the next patch.
+>
+> >
+> > > +
+> > > +static const char * const nct6694_gpio_name[] =3D {
+> > > +       "NCT6694-GPIO0",
+> > > +       "NCT6694-GPIO1",
+> > > +       "NCT6694-GPIO2",
+> > > +       "NCT6694-GPIO3",
+> > > +       "NCT6694-GPIO4",
+> > > +       "NCT6694-GPIO5",
+> > > +       "NCT6694-GPIO6",
+> > > +       "NCT6694-GPIO7",
+> > > +       "NCT6694-GPIO8",
+> > > +       "NCT6694-GPIO9",
+> > > +       "NCT6694-GPIOA",
+> > > +       "NCT6694-GPIOB",
+> > > +       "NCT6694-GPIOC",
+> > > +       "NCT6694-GPIOD",
+> > > +       "NCT6694-GPIOE",
+> > > +       "NCT6694-GPIOF",
+> > > +};
+> >
+> > This looks like it corresponds with the MFD cells and makes me wonder:
+> > am I getting that wrong or do you want to register 0xf GPIO chips? Or
+> > a single GPIO chip with 0xf lines? What is the topology?
+>
+> [Ming] Yes, it corresponds to the MFD cells.
+> I would like to register 16 GPIO chips, each with 8 lines.
+> The chip has 128 pins totally, the core can check if the pin is valid thr=
+ough
+> the init_valid_mask() callback.
+>
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Remi-Pommarel/wifi-ath10k-Implement-ieee80211-flush_sta-callback/20241022-172038
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/ath/ath.git ath-next
-patch link:    https://lore.kernel.org/r/0f55986ebe34f2b5aa4ccbcb0bed445324099fbd.1729586267.git.repk%40triplefau.lt
-patch subject: [PATCH v2 2/2] wifi: ath10k: Flush only requested txq in ath10k_flush()
-config: parisc-randconfig-r071-20241024 (https://download.01.org/0day-ci/archive/20241025/202410251152.A5axJliR-lkp@intel.com/config)
-compiler: hppa-linux-gcc (GCC) 14.1.0
+Ok, that's fine but the GPIO chip names should be in the MFD driver
+only, it doesn't make sense to have them here. It's the MFD core that
+will register the GPIO platform devices.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-| Closes: https://lore.kernel.org/r/202410251152.A5axJliR-lkp@intel.com/
+No for line names - as this is a dynamic USB expander, I'd suggest to
+have them in the driver and assign to gc->names.
 
-New smatch warnings:
-drivers/net/wireless/ath/ath10k/mac.c:8076 _ath10k_mac_wait_tx_complete() error: uninitialized symbol 'empty'.
+> >
+> > > +
+> > > +static int nct6694_gpio_probe(struct platform_device *pdev)
+> > > +{
+> > > +       const struct mfd_cell *cell =3D mfd_get_cell(pdev);
+> > > +       struct nct6694 *nct6694 =3D dev_get_drvdata(pdev->dev.parent)=
+;
+> > > +       struct nct6694_gpio_data *data;
+> > > +       struct gpio_irq_chip *girq;
+> > > +       int ret;
+> > > +
+> > > +       data =3D devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
+> > > +       if (!data)
+> > > +               return -ENOMEM;
+> > > +
+> > > +       data->nct6694 =3D nct6694;
+> > > +       data->group =3D cell->id;
+> > > +
+> > > +       data->gpio.label                =3D nct6694_gpio_name[cell->i=
+d];
+> > > +       data->gpio.direction_input      =3D nct6694_direction_input;
+> > > +       data->gpio.get                  =3D nct6694_get_value;
+> > > +       data->gpio.direction_output     =3D nct6694_direction_output;
+> > > +       data->gpio.set                  =3D nct6694_set_value;
+> > > +       data->gpio.get_direction        =3D nct6694_get_direction;
+> > > +       data->gpio.set_config           =3D nct6694_set_config;
+> > > +       data->gpio.init_valid_mask      =3D nct6694_init_valid_mask;
+> > > +       data->gpio.base                 =3D -1;
+> > > +       data->gpio.can_sleep            =3D false;
+> > > +       data->gpio.owner                =3D THIS_MODULE;
+> > > +       data->gpio.ngpio                =3D 8;
+> > > +
+> > > +       INIT_WORK(&data->irq_work, nct6694_irq);
+> > > +       INIT_WORK(&data->irq_trig_work, nct6694_irq_trig);
+> > > +       mutex_init(&data->irq_lock);
+> > > +
+> > > +       ret =3D nct6694_register_handler(nct6694, GPIO_IRQ_STATUS,
+> > > +                                      nct6694_gpio_handler, data);
+> > > +       if (ret) {
+> > > +               dev_err(&pdev->dev, "%s:  Failed to register handler:=
+ %pe\n",
+> > > +                       __func__, ERR_PTR(ret));
+> > > +               return ret;
+> > > +       }
+> > > +
+> > > +       platform_set_drvdata(pdev, data);
+> > > +
+> > > +       ret =3D nct6694_get_irq_trig(data);
+> > > +       if (ret)
+> > > +               return ret;
+> > > +
+> > > +       /* Register gpio chip to GPIO framework */
+> > > +       girq =3D &data->gpio.irq;
+> > > +       gpio_irq_chip_set_chip(girq, &nct6694_irq_chip);
+> > > +       girq->parent_handler =3D NULL;
+> > > +       girq->num_parents =3D 0;
+> > > +       girq->parents =3D NULL;
+> > > +       girq->default_type =3D IRQ_TYPE_NONE;
+> > > +       girq->handler =3D handle_level_irq;
+> > > +       girq->threaded =3D true;
+> > > +
+> > > +       ret =3D gpiochip_add_data(&data->gpio, data);
+> > > +       if (ret) {
+> > > +               dev_err(&pdev->dev, "%s: Failed to register GPIO chip=
+: %pe",
+> > > +                       __func__, ERR_PTR(ret));
+> > > +               return ret;
+> > > +       }
+> > > +
+> > > +       return 0;
+> > > +}
+> > > +
+> > > +static void nct6694_gpio_remove(struct platform_device *pdev)
+> > > +{
+> > > +       struct nct6694_gpio_data *data =3D platform_get_drvdata(pdev)=
+;
+> > > +
+> > > +       gpiochip_remove(&data->gpio);
+> >
+> > This should be dropped in favor of using devm_gpiochip_add_data().
+> > Especially since you probably want to cancel the irq_work before
+> > removing the chip.
+>
+> [Ming] Okay! I'll change it in the next patch.
+>
+> >
+> > > +       cancel_work(&data->irq_work);
+> > > +       cancel_work(&data->irq_trig_work);
+> > > +}
+> > > +
+> > > +static struct platform_driver nct6694_gpio_driver =3D {
+> > > +       .driver =3D {
+> > > +               .name   =3D DRVNAME,
+> > > +       },
+> > > +       .probe          =3D nct6694_gpio_probe,
+> > > +       .remove         =3D nct6694_gpio_remove,
+> > > +};
+> > > +
+> > > +static int __init nct6694_init(void)
+> > > +{
+> > > +       int err;
+> > > +
+> > > +       err =3D platform_driver_register(&nct6694_gpio_driver);
+> > > +       if (!err) {
+> > > +               if (err)
+> >
+> > If err is equal to 0, check if it's not equal to zero?
+> >
+> > > +                       platform_driver_unregister(&nct6694_gpio_driv=
+er);
+> >
+> > If platform_driver_register() failed, then the device was never registe=
+red.
+> >
+> > > +       }
+> > > +
+> > > +       return err;
+> > > +}
+> > > +subsys_initcall(nct6694_init);
+> >
+> > Any reason why this must be initialized earlier? It's a USB driver afte=
+r all.
+>
+> [Ming] For platform driver registration, I'll change it to
+> module_platform_driver()
+> in the next patch.
+>
 
-vim +/empty +8076 drivers/net/wireless/ath/ath10k/mac.c
+Thanks,
+Bartosz
 
-c4f7022f0ef0aa Remi Pommarel     2024-10-22  8062  static void _ath10k_mac_wait_tx_complete(struct ath10k *ar,
-c4f7022f0ef0aa Remi Pommarel     2024-10-22  8063  					 unsigned long queues)
-5e3dd157d7e70f Kalle Valo        2013-06-12  8064  {
-affd321733eebc Michal Kazior     2013-07-16  8065  	bool skip;
-d4298a3a8c92a1 Nicholas Mc Guire 2015-06-15  8066  	long time_left;
-c4f7022f0ef0aa Remi Pommarel     2024-10-22  8067  	unsigned int q;
-5e3dd157d7e70f Kalle Valo        2013-06-12  8068  
-5e3dd157d7e70f Kalle Valo        2013-06-12  8069  	/* mac80211 doesn't care if we really xmit queued frames or not
-d6dfe25c8bb200 Marcin Rokicki    2017-02-20  8070  	 * we'll collect those frames either way if we stop/delete vdevs
-d6dfe25c8bb200 Marcin Rokicki    2017-02-20  8071  	 */
-548db54cc1890b Michal Kazior     2013-07-05  8072  
-affd321733eebc Michal Kazior     2013-07-16  8073  	if (ar->state == ATH10K_STATE_WEDGED)
-828853ac58265c Wen Gong          2018-08-28  8074  		return;
-affd321733eebc Michal Kazior     2013-07-16  8075  
-d4298a3a8c92a1 Nicholas Mc Guire 2015-06-15 @8076  	time_left = wait_event_timeout(ar->htt.empty_tx_wq, ({
-5e3dd157d7e70f Kalle Valo        2013-06-12  8077  			bool empty;
-affd321733eebc Michal Kazior     2013-07-16  8078  
-edb8236df4d042 Michal Kazior     2013-07-05  8079  			spin_lock_bh(&ar->htt.tx_lock);
-c4f7022f0ef0aa Remi Pommarel     2024-10-22  8080  			for_each_set_bit(q, &queues, ar->hw->queues) {
-
-Smatch is concerned that there might not be any set bits.  (You know that the
-compiler is automatically going to ininitialize empty to false so it costs
-nothing to initialize it to false explicitly and silence this warning).
-
-c4f7022f0ef0aa Remi Pommarel     2024-10-22  8081  				empty = (ar->htt.num_pending_per_queue[q] == 0);
-c4f7022f0ef0aa Remi Pommarel     2024-10-22  8082  				if (!empty)
-c4f7022f0ef0aa Remi Pommarel     2024-10-22  8083  					break;
-c4f7022f0ef0aa Remi Pommarel     2024-10-22  8084  			}
-edb8236df4d042 Michal Kazior     2013-07-05  8085  			spin_unlock_bh(&ar->htt.tx_lock);
-affd321733eebc Michal Kazior     2013-07-16  8086  
-7962b0d898accd Michal Kazior     2014-10-28  8087  			skip = (ar->state == ATH10K_STATE_WEDGED) ||
-7962b0d898accd Michal Kazior     2014-10-28  8088  			       test_bit(ATH10K_FLAG_CRASH_FLUSH,
-7962b0d898accd Michal Kazior     2014-10-28  8089  					&ar->dev_flags);
-affd321733eebc Michal Kazior     2013-07-16  8090  
-affd321733eebc Michal Kazior     2013-07-16  8091  			(empty || skip);
-5e3dd157d7e70f Kalle Valo        2013-06-12  8092  		}), ATH10K_FLUSH_TIMEOUT_HZ);
-affd321733eebc Michal Kazior     2013-07-16  8093  
-d4298a3a8c92a1 Nicholas Mc Guire 2015-06-15  8094  	if (time_left == 0 || skip)
-d4298a3a8c92a1 Nicholas Mc Guire 2015-06-15  8095  		ath10k_warn(ar, "failed to flush transmit queue (skip %i ar-state %i): %ld\n",
-d4298a3a8c92a1 Nicholas Mc Guire 2015-06-15  8096  			    skip, ar->state, time_left);
-828853ac58265c Wen Gong          2018-08-28  8097  }
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
-
+> >
+> > > +
+> > > +static void __exit nct6694_exit(void)
+> > > +{
+> > > +       platform_driver_unregister(&nct6694_gpio_driver);
+> > > +}
+> > > +module_exit(nct6694_exit);
+> > > +
+> > > +MODULE_DESCRIPTION("USB-GPIO controller driver for NCT6694");
+> > > +MODULE_AUTHOR("Ming Yu <tmyu0@nuvoton.com>");
+> > > +MODULE_LICENSE("GPL");
+> > > --
+> > > 2.34.1
+> > >
+> >
+> > Bart
 
