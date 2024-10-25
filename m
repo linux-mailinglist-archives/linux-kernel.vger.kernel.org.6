@@ -1,132 +1,175 @@
-Return-Path: <linux-kernel+bounces-381761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CEF99B03F0
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:24:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B64A59B03F1
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:25:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DDED1B2193E
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 13:24:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 503921F23880
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 13:25:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D35770809;
-	Fri, 25 Oct 2024 13:24:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ARUhDD/z"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E93CF21218B;
-	Fri, 25 Oct 2024 13:24:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21ED870831;
+	Fri, 25 Oct 2024 13:24:51 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F38E7212185;
+	Fri, 25 Oct 2024 13:24:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729862667; cv=none; b=SJCg1cDEzI8p9zhXkydixLEHc7/DzBBUVarormQLub7f/MEKlXGxqGwqw1fTKQXOICDIfG4IrDI0S/OBmC614DwhBLLZ5uAn7cv/9b3JOrB0Sff298+IdnMvBR8kDS0828fbAoQ+ha5XVf1AfWKxXh8p1iClYa2MEeJdxUHG0XE=
+	t=1729862690; cv=none; b=cADULzDp45Fsiet7/EPwucpl0SRkcBFO3ahqMJrSiIwKc0wkgqd3pmPckyCNjnYm8g5mtIdxFjdSIwhohttR4/JFUvGHKjAhqd3f8wxepnqfUnZ/d9La47d/pRnQJkGo+etBY4V2tqluKN1HnQ1K+F91oG+W1Hr90/QvKHsLbYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729862667; c=relaxed/simple;
-	bh=51dKJ7Ed57t8VicYOCxosy6fY1zFlccA6PO1eALXl9c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L6O9Jj2HmIoExj3nCmJ62k9tcd/r43jq937NtZHeHOkFTxIe6G58aZ1nO/sdRS3fuKFbkHsCWqoZ9T4xHJXhvoULjWLZYN3RI3TlzFnTdajddZQjn8I7GK79DHYkPTzF38ykYEkpRFyFmbPCp8J0f3cCX5R5itygW86vVsn0/Kw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ARUhDD/z; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-20cb7139d9dso17012405ad.1;
-        Fri, 25 Oct 2024 06:24:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729862665; x=1730467465; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=WU9qxxvxTf7zt9wyjlFg/kFNR6xBLJ3MYlfdsRtKf18=;
-        b=ARUhDD/zz9r/GbRQOJsNH7qRc6ONG340M8PNRXHoIDOcmSY1nAl91v4ZXhu8ReR/jd
-         1P6McbqWXQjRBZ35QXcMsoedkJuRUie+lAh89bPwHFMQQPFbollKKcPadNSf/0aeMQpH
-         RhBvshn9GKolbGc+W6ogI4JY96qY0o6XHd7rQ/7gQpiYhhMHPhKD5fw+mwxvxXNCot+8
-         HqKfv7ZHCy1mu/p2oPOFaFcdngB0jKd41rTDtbvvVpcsUoYTJz/TESvOdvEP/AKE4vAJ
-         ukf5h+KBf2O+Ea/CprxkA3flgTUdmcmAGAdE8qC78+UFqrtbJhZuQs+eXGhAYH92OuOl
-         OOQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729862665; x=1730467465;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WU9qxxvxTf7zt9wyjlFg/kFNR6xBLJ3MYlfdsRtKf18=;
-        b=KGRFItHYtoF5qyj0GNN/R2ipML81D/mr21g2YVtvCv69Pi1kPdOof4dRGRX7lQjenF
-         +ZofckU9qktmjOw2olTrUkEqDLpJfmqnZGKgrE3xxjGB0wT8VnYU/j8xHjN/iQPVQBX9
-         SV5DQzEzzPs3oLePbdlor9e6Uf3Wv3DkFCGTTtKS011weDhcqJ2Zri/rsngjoDuu3brq
-         ADMK/ea5RWE531sUCyrYqZwaBxGGYPF/7sfbk6UdCuEFX+E938fefDukQSQTd+6rYzzz
-         XhrEa95jvxE3NsnvbXsUC4HC5llNIsGONOfkanFWioHxuPgGaeooNSNHT0r+egDjQ+fU
-         arDw==
-X-Forwarded-Encrypted: i=1; AJvYcCW8cGmqhGEPaU8bBlNXIu+4PAuAhUTQZ++3rpSTbvwl+b1skSB+xCMPyDmWvzwnFWbZIepqaSFK1999tYta@vger.kernel.org, AJvYcCXosNxQnKbYpqk+obaquyj/eeFrH26ihO/RrRTWJOQ1kEVqtkMznfa9GFFARFvTl4YvIwdGxzb9dI5S@vger.kernel.org
-X-Gm-Message-State: AOJu0YxV60sVGb83SzUQwPhSlI9gudvqkpebvTVfyaQit1l2na7M/oVP
-	ChEoy9VnsdeP/8w7BGhQ6xEVu3OXKDp6bt1G73S18n1nakecsnUh
-X-Google-Smtp-Source: AGHT+IF5NE36x5VPAHBd5xQ4qLx+mrIG4HheWP3ds4tnL5KR2QeFM3qikFeqt1DkjxepgK1ck5X/TQ==
-X-Received: by 2002:a17:902:f549:b0:205:8bad:171c with SMTP id d9443c01a7336-20fb98f1e18mr67697415ad.12.1729862665050;
-        Fri, 25 Oct 2024 06:24:25 -0700 (PDT)
-Received: from rigel (60-240-10-139.tpgi.com.au. [60.240.10.139])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bc02eceasm9221015ad.212.2024.10.25.06.24.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2024 06:24:24 -0700 (PDT)
-Date: Fri, 25 Oct 2024 21:24:20 +0800
-From: Kent Gibson <warthog618@gmail.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH v2 1/5] gpio: sysfs: use cleanup guards for
- gpiod_data::mutex
-Message-ID: <20241025132420.GA155087@rigel>
-References: <20241025-gpio-notify-sysfs-v2-0-5bd1b1b0b3e6@linaro.org>
- <20241025-gpio-notify-sysfs-v2-1-5bd1b1b0b3e6@linaro.org>
+	s=arc-20240116; t=1729862690; c=relaxed/simple;
+	bh=wD6jUuBlvN6RbhnBKl+0OEQCxIdsQrDQgvnBlzR2yBc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ATYEES3gt8wvuaaacolEX0dx8QU/6VPjM0CI2aC+a8BrdXjHo/QXkYNJKHOLGKJmMTWnbsYINkxTaUnS+fIrRhWMl8ZHU/cDpEoMxTFdEpkpdCeOtP0jtoldX+4utC1gfO5ToM78RsDbc/gU6Lo8COrRSi68BFuoYasiMlu7A18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E512C339;
+	Fri, 25 Oct 2024 06:25:15 -0700 (PDT)
+Received: from [10.1.36.18] (e122027.cambridge.arm.com [10.1.36.18])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C42393F71E;
+	Fri, 25 Oct 2024 06:24:41 -0700 (PDT)
+Message-ID: <bba3e573-989f-432b-82c9-3f5872563e9f@arm.com>
+Date: Fri, 25 Oct 2024 14:24:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241025-gpio-notify-sysfs-v2-1-5bd1b1b0b3e6@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 04/43] arm64: RME: Handle Granule Protection Faults
+ (GPFs)
+To: "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>, kvm@vger.kernel.org,
+ kvmarm@lists.linux.dev
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
+ Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
+ Oliver Upton <oliver.upton@linux.dev>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
+ <yuzenghui@huawei.com>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Joey Gouly <joey.gouly@arm.com>,
+ Alexandru Elisei <alexandru.elisei@arm.com>,
+ Christoffer Dall <christoffer.dall@arm.com>, Fuad Tabba <tabba@google.com>,
+ linux-coco@lists.linux.dev,
+ Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
+ Gavin Shan <gshan@redhat.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
+ Alper Gun <alpergun@google.com>
+References: <20241004152804.72508-1-steven.price@arm.com>
+ <20241004152804.72508-5-steven.price@arm.com> <yq5a8qudmvp6.fsf@kernel.org>
+From: Steven Price <steven.price@arm.com>
+Content-Language: en-GB
+In-Reply-To: <yq5a8qudmvp6.fsf@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Oct 25, 2024 at 02:18:51PM +0200, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->
-> Shrink the code and drop some goto labels by using lock guards around
-> gpiod_data::mutex.
->
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> ---
->  drivers/gpio/gpiolib-sysfs.c | 81 ++++++++++++++++----------------------------
->  1 file changed, 29 insertions(+), 52 deletions(-)
->
-> @@ -139,19 +132,17 @@ static ssize_t value_store(struct device *dev,
->  	long value;
->
->  	status = kstrtol(buf, 0, &value);
-> +	if (status)
-> +		return status;
->
-> -	mutex_lock(&data->mutex);
-> +	guard(mutex)(&data->mutex);
->
-> -	if (!test_bit(FLAG_IS_OUT, &desc->flags)) {
-> -		status = -EPERM;
-> -	} else if (status == 0) {
-> -		gpiod_set_value_cansleep(desc, value);
-> -		status = size;
-> -	}
-> +	if (!test_bit(FLAG_IS_OUT, &desc->flags))
-> +		return -EPERM;
->
-> -	mutex_unlock(&data->mutex);
-> +	gpiod_set_value_cansleep(desc, value);
->
-> -	return status;
-> +	return size;
->  }
+On 24/10/2024 15:17, Aneesh Kumar K.V wrote:
+> Steven Price <steven.price@arm.com> writes:
+> 
+>> If the host attempts to access granules that have been delegated for use
+>> in a realm these accesses will be caught and will trigger a Granule
+>> Protection Fault (GPF).
+>>
+>> A fault during a page walk signals a bug in the kernel and is handled by
+>> oopsing the kernel. A non-page walk fault could be caused by user space
+>> having access to a page which has been delegated to the kernel and will
+>> trigger a SIGBUS to allow debugging why user space is trying to access a
+>> delegated page.
+>>
+> 
+> A non-page walk fault can also be caused by host kernel trying to access a
+> page which it had delegated before. It would be nice to dump details
+> like FAR in that case. Right now it shows only the below.
 
-This is a behavioural change as you've moved the decode check before the
-permission check.  Not sure if that is significant or not, so in my
-suggestion I retained the old order.
+While I agree FAR would be handy, this isn't specific to a GPF.
 
-Cheers,
-Kent.
+arm64_notify_die() takes the FAR, but in the case of a kernel fault
+ignores it and calls die(). I'm not sure if there's a good reason for it
+not calling die_kernel_fault() instead which would print the FAR. Or
+indeed whether the FAR should be passed instead of the ESR (although
+changing that now would probably be confusing).
+
+This affects e.g. do_sea(), do_mem_abort() and others too. It might be
+worth sending a patch to improve that behaviour, but I think the
+handling for GPFs of using arm64_notify_die() is correct.
+
+Thanks,
+Steve
+
+> [  285.122310] Internal error: Granule Protection Fault not on table walk: 0000000096000068 [#1] PREEMPT SMP               
+> [  285.122427] Modules linked in:                                                                                                                                                
+> [  285.122512] CPU: 1 UID: 0 PID: 217 Comm: kvm-vcpu-0 Not tainted 6.12.0-rc1-00082-g8461d8333829 #42
+> [  285.122656] Hardware name: FVP Base RevC (DT)
+> [  285.122733] pstate: 81400009 (Nzcv daif +PAN -UAO -TCO +DIT -SSBS BTYPE=--)
+> [  285.122871] pc : clear_page+0x18/0x50
+> [  285.122975] lr : kvm_gmem_get_pfn+0xbc/0x190
+> [  285.123110] sp : ffff800082cef900
+> [  285.123182] x29: ffff800082cef910 x28: 0000000090000000 x27: 0000000090000006
+> .....
+> 
+> -aneesh
+> 
+>>
+>> Signed-off-by: Steven Price <steven.price@arm.com>
+>> ---
+>> Changes since v2:
+>>  * Include missing "Granule Protection Fault at level -1"
+>> ---
+>>  arch/arm64/mm/fault.c | 31 +++++++++++++++++++++++++------
+>>  1 file changed, 25 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
+>> index 8b281cf308b3..f9d72a936d48 100644
+>> --- a/arch/arm64/mm/fault.c
+>> +++ b/arch/arm64/mm/fault.c
+>> @@ -804,6 +804,25 @@ static int do_tag_check_fault(unsigned long far, unsigned long esr,
+>>  	return 0;
+>>  }
+>>  
+>> +static int do_gpf_ptw(unsigned long far, unsigned long esr, struct pt_regs *regs)
+>> +{
+>> +	const struct fault_info *inf = esr_to_fault_info(esr);
+>> +
+>> +	die_kernel_fault(inf->name, far, esr, regs);
+>> +	return 0;
+>> +}
+>> +
+>> +static int do_gpf(unsigned long far, unsigned long esr, struct pt_regs *regs)
+>> +{
+>> +	const struct fault_info *inf = esr_to_fault_info(esr);
+>> +
+>> +	if (!is_el1_instruction_abort(esr) && fixup_exception(regs))
+>> +		return 0;
+>> +
+>> +	arm64_notify_die(inf->name, regs, inf->sig, inf->code, far, esr);
+>> +	return 0;
+>> +}
+>> +
+>>  static const struct fault_info fault_info[] = {
+>>  	{ do_bad,		SIGKILL, SI_KERNEL,	"ttbr address size fault"	},
+>>  	{ do_bad,		SIGKILL, SI_KERNEL,	"level 1 address size fault"	},
+>> @@ -840,12 +859,12 @@ static const struct fault_info fault_info[] = {
+>>  	{ do_bad,		SIGKILL, SI_KERNEL,	"unknown 32"			},
+>>  	{ do_alignment_fault,	SIGBUS,  BUS_ADRALN,	"alignment fault"		},
+>>  	{ do_bad,		SIGKILL, SI_KERNEL,	"unknown 34"			},
+>> -	{ do_bad,		SIGKILL, SI_KERNEL,	"unknown 35"			},
+>> -	{ do_bad,		SIGKILL, SI_KERNEL,	"unknown 36"			},
+>> -	{ do_bad,		SIGKILL, SI_KERNEL,	"unknown 37"			},
+>> -	{ do_bad,		SIGKILL, SI_KERNEL,	"unknown 38"			},
+>> -	{ do_bad,		SIGKILL, SI_KERNEL,	"unknown 39"			},
+>> -	{ do_bad,		SIGKILL, SI_KERNEL,	"unknown 40"			},
+>> +	{ do_gpf_ptw,		SIGKILL, SI_KERNEL,	"Granule Protection Fault at level -1" },
+>> +	{ do_gpf_ptw,		SIGKILL, SI_KERNEL,	"Granule Protection Fault at level 0" },
+>> +	{ do_gpf_ptw,		SIGKILL, SI_KERNEL,	"Granule Protection Fault at level 1" },
+>> +	{ do_gpf_ptw,		SIGKILL, SI_KERNEL,	"Granule Protection Fault at level 2" },
+>> +	{ do_gpf_ptw,		SIGKILL, SI_KERNEL,	"Granule Protection Fault at level 3" },
+>> +	{ do_gpf,		SIGBUS,  SI_KERNEL,	"Granule Protection Fault not on table walk" },
+>>  	{ do_bad,		SIGKILL, SI_KERNEL,	"level -1 address size fault"	},
+>>  	{ do_bad,		SIGKILL, SI_KERNEL,	"unknown 42"			},
+>>  	{ do_translation_fault,	SIGSEGV, SEGV_MAPERR,	"level -1 translation fault"	},
+>> -- 
+>> 2.34.1
+
 
