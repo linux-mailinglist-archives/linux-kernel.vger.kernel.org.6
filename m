@@ -1,163 +1,241 @@
-Return-Path: <linux-kernel+bounces-381897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52B7F9B05FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:39:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 41AD79B0606
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:41:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D84731F2406C
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 14:39:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2FA91F22792
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 14:41:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8308820264D;
-	Fri, 25 Oct 2024 14:39:37 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B18A92036FC;
+	Fri, 25 Oct 2024 14:40:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DsLuE4Yu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 061DF70811
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 14:39:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3EF91FB89A;
+	Fri, 25 Oct 2024 14:40:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729867177; cv=none; b=oJhw/PH9nwUsgKZ+WH1KUYmMBlHQteLYNRsqsxcP617uf2ZIEiEDBaweS5ZJ1jtLoET/KIZNbefDdEyyfeXSfD9uSIZWY09/J+BnwJXxBHRzscWfT54KOp0BAPNux39UKm387MKHHKjzEMl2nJCkjQbHEuy66Gm5Pfrdh7p3YAM=
+	t=1729867257; cv=none; b=M/Gy4NtPGO/82MAB5dl8+ZhxOc4hxZJCWuaaMjt4Q4wsC7VCdRwE63dJpbuJQKvqm3BTdfRixuieSQ7cVZLyUW/07Y5RFUt1IXn5xJPeaCjH4U0HUCACT4tSmJ2ZmVNcYlQIRzJmOjOnO7uLXdpCWx5uVUcGkUdAlPVyP9mlBHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729867177; c=relaxed/simple;
-	bh=qyoNb4gFNWAKzMfRXUhVvi8eghxxKxX5bRlKKiDfpTs=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=UjAzOf3xnVVBAWpQchjDyD6RIba0/RETB2H2ozhUnUmUFL6U3bWvJfhxswf0UHyWl9gbV16uN98TCSHWJnVFZ7s8N+kqURzUseDMZZDSPUfFoF8ckWy6q1BZAOxrHuK44FBXVJXsEFU0NOtj9dFeDSPkdKN+akS5vAs6tVjYiMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a3b506c87cso21734565ab.1
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 07:39:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729867174; x=1730471974;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rKl93ItWUSNrBvfWKQMOqbQF7/2yw2Cr9mseQ1DUXyU=;
-        b=bmP6p+W4wPJ1wP3G2UuV9VHZwYGWzlSraa4+37z311fO6E6AMvQ2FYSPbOcmkEIHlB
-         ak9TzhGOZsQBKu7vEk/CECGFPKolt7rwDmIIZe+wGy95IY8XJiWk3jes0MnLiWGp/qYu
-         2VlClgrAWKlQSVQpXm31A8bxM1xfSMMVecPeww1Ydt4exWiPGra2uC7jNh3TGef0mr1S
-         pSJOwrXI8wTHVqs0vOc2WVfoSUXe1Rg/hxrcP/E7le6Aqem2CXnzIlRxfmzPW4MuypnN
-         e9pLDYRovMnLyO6B1ppiHm2eW5Hfqodwy1YTJ//638KM1o/ODaWxOapTyvRpp+u2yqH0
-         KBIg==
-X-Forwarded-Encrypted: i=1; AJvYcCVwxkSfMeLf0zdWJ7kI/og6/x+UxMBHVXIkpOvsTrNXwBHfh/uhOwOS1fwPdGxj8Ye7hyELWWCaYHMz8iY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzD/ZN5+Gcr2HcFndAgQnw0stXySR/tPmlCsFqJzI0rQW4c7hEk
-	aqJ3Q1ytWn4Lt6x+DiCd0ypMHnpeP5+VuJPx5qSCAWXLUdWu21oA2NHif+gJRtpTd31e3M96fB6
-	u10r1FmyS3Gor70HkIMv89B1ZTWsxUJo5wp/7ji7BSkw13wYH4vhnTj8=
-X-Google-Smtp-Source: AGHT+IF5X01qRaytUlYxWlPuPfkPH7I6f9pfWsBOQ8fw82TWis59znWK9kYgR6tC62F/EalL5FCBW769pgdsfIG5z8JCRhFzKTpG
+	s=arc-20240116; t=1729867257; c=relaxed/simple;
+	bh=dsMthO8Jrb9+1L6ZnDBu1t1OOQmY7jYi7dCIH4VZXdU=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=LSyyhzggLpzzD3dgSDimIdYxRq6ahFzgNo4A8I+NuPtyQA7UeQnWYJyWmwrbTXxNabqD7mEkRMhJSxRs7kjOBon9wxqkSy9ZkBbHNUDmv8eMzKQg0yNErhxRw4vgvgV96u0gbkYhdxWTL805znLqEHzWUgR1SFe3GKWadqs2PxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DsLuE4Yu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C79BFC4CEC3;
+	Fri, 25 Oct 2024 14:40:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729867256;
+	bh=dsMthO8Jrb9+1L6ZnDBu1t1OOQmY7jYi7dCIH4VZXdU=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=DsLuE4YuLKTOMLwG4QbYcC/9yEVkwhUZJSvX6byCliyWU1yve4qV6bXccnRnvPJjy
+	 hQt9TUaaD7vnPRgsNPSzA3knTTqaiRHdpAtWkgBqS3hwh5QYRN+DbjGSEPva2RuCai
+	 S6ywofDYDrnJ+cXFONwgAVuS0pjNLNS/pXX0O3fciG6Gin4qYttjqZf49GswGeVLQJ
+	 DIrSm19K/gfKrz+D7PFEVz8ZPZnZb4oJYVv2REqZnDHGgzX8ISatwGSkevd3Vz9wDK
+	 bZb70FzWq0oht19nQCS1hq2gcSqpV5A+b4J84N48CQCj1MggHe/KcTucXhYFuNf0x+
+	 rio8u6IbkoRCQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a92:cd88:0:b0:3a3:b4ec:b3ea with SMTP id
- e9e14a558f8ab-3a4de80b5dbmr67873115ab.16.1729867174092; Fri, 25 Oct 2024
- 07:39:34 -0700 (PDT)
-Date: Fri, 25 Oct 2024 07:39:34 -0700
-In-Reply-To: <000000000000cfe4e90618c6d17c@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <671bada6.050a0220.2e773.0007.GAE@google.com>
-Subject: Re: [syzbot] [bluetooth?] possible deadlock in mgmt_set_connectable_complete
-From: syzbot <syzbot+b1752fcfa8658bb8984a@syzkaller.appspotmail.com>
-To: johan.hedberg@gmail.com, linux-bluetooth@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, luiz.dentz@gmail.com, marcel@holtmann.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 25 Oct 2024 17:40:52 +0300
+Message-Id: <D54YRGZ47LLS.2BGS3F7T80DF4@kernel.org>
+Cc: <linux-acpi@vger.kernel.org>, <linux-mm@kvack.org>,
+ <linux-kernel@vger.kernel.org>, <akpm@linux-foundation.org>,
+ <linux-edac@vger.kernel.org>, <x86@kernel.org>, <justin.he@arm.com>,
+ <ardb@kernel.org>, <ying.huang@intel.com>, <ashish.kalra@amd.com>,
+ <baolin.wang@linux.alibaba.com>, <tglx@linutronix.de>,
+ <dave.hansen@linux.intel.com>, <lenb@kernel.org>, <hpa@zytor.com>,
+ <robert.moore@intel.com>, <lvying6@huawei.com>, <xiexiuqi@huawei.com>,
+ <zhuo.song@linux.alibaba.com>
+Subject: Re: [PATCH v14 3/3] ACPI: APEI: handle synchronous exceptions in
+ task work
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Shuai Xue" <xueshuai@linux.alibaba.com>, <mark.rutland@arm.com>,
+ <catalin.marinas@arm.com>, <mingo@redhat.com>, <robin.murphy@arm.com>,
+ <Jonathan.Cameron@Huawei.com>, <bp@alien8.de>, <rafael@kernel.org>,
+ <wangkefeng.wang@huawei.com>, <tanxiaofei@huawei.com>,
+ <mawupeng1@huawei.com>, <tony.luck@intel.com>, <linmiaohe@huawei.com>,
+ <naoya.horiguchi@nec.com>, <james.morse@arm.com>, <tongtiangen@huawei.com>,
+ <gregkh@linuxfoundation.org>, <will@kernel.org>
+X-Mailer: aerc 0.18.2
+References: <20221027042445.60108-1-xueshuai@linux.alibaba.com>
+ <20241014084240.18614-4-xueshuai@linux.alibaba.com>
+ <05a8d26b-b023-426f-879c-7d33be4a6406@linux.alibaba.com>
+In-Reply-To: <05a8d26b-b023-426f-879c-7d33be4a6406@linux.alibaba.com>
 
-syzbot has found a reproducer for the following issue on:
+On Tue Oct 22, 2024 at 4:11 AM EEST, Shuai Xue wrote:
+> Hi, Jarkko,
+>
+>
+> =E5=9C=A8 2024/10/14 16:42, Shuai Xue =E5=86=99=E9=81=93:
+> > The memory uncorrected error could be signaled by asynchronous interrup=
+t
+> > (specifically, SPI in arm64 platform), e.g. when an error is detected b=
+y
+> > a background scrubber, or signaled by synchronous exception
+> > (specifically, data abort excepction in arm64 platform), e.g. when a CP=
+U
+> > tries to access a poisoned cache line. Currently, both synchronous and
+> > asynchronous error use memory_failure_queue() to schedule
+> > memory_failure() exectute in kworker context.
+> >=20
+> > As a result, when a user-space process is accessing a poisoned data, a
+> > data abort is taken and the memory_failure() is executed in the kworker
+> > context:
+> >=20
+> >    - will send wrong si_code by SIGBUS signal in early_kill mode, and
+> >    - can not kill the user-space in some cases resulting a synchronous
+> >      error infinite loop
+> >=20
+> > Issue 1: send wrong si_code in early_kill mode
+> >=20
+> > Since commit a70297d22132 ("ACPI: APEI: set memory failure flags as
+> > MF_ACTION_REQUIRED on synchronous events")', the flag MF_ACTION_REQUIRE=
+D
+> > could be used to determine whether a synchronous exception occurs on
+> > ARM64 platform.  When a synchronous exception is detected, the kernel i=
+s
+> > expected to terminate the current process which has accessed poisoned
+> > page. This is done by sending a SIGBUS signal with an error code
+> > BUS_MCEERR_AR, indicating an action-required machine check error on
+> > read.
+> >=20
+> > However, when kill_proc() is called to terminate the processes who have
+> > the poisoned page mapped, it sends the incorrect SIGBUS error code
+> > BUS_MCEERR_AO because the context in which it operates is not the one
+> > where the error was triggered.
+> >=20
+> > To reproduce this problem:
+> >=20
+> >    #sysctl -w vm.memory_failure_early_kill=3D1
+> >    vm.memory_failure_early_kill =3D 1
+> >=20
+> >    # STEP2: inject an UCE error and consume it to trigger a synchronous=
+ error
+> >    #einj_mem_uc single
+> >    0: single   vaddr =3D 0xffffb0d75400 paddr =3D 4092d55b400
+> >    injecting ...
+> >    triggering ...
+> >    signal 7 code 5 addr 0xffffb0d75000
+> >    page not present
+> >    Test passed
+> >=20
+> > The si_code (code 5) from einj_mem_uc indicates that it is BUS_MCEERR_A=
+O
+> > error and it is not fact.
+> >=20
+> > After this patch:
+> >=20
+> >    # STEP1: enable early kill mode
+> >    #sysctl -w vm.memory_failure_early_kill=3D1
+> >    vm.memory_failure_early_kill =3D 1
+> >    # STEP2: inject an UCE error and consume it to trigger a synchronous=
+ error
+> >    #einj_mem_uc single
+> >    0: single   vaddr =3D 0xffffb0d75400 paddr =3D 4092d55b400
+> >    injecting ...
+> >    triggering ...
+> >    signal 7 code 4 addr 0xffffb0d75000
+> >    page not present
+> >    Test passed
+> >=20
+> > The si_code (code 4) from einj_mem_uc indicates that it is BUS_MCEERR_A=
+R
+> > error as we expected.
+> >=20
+> > Issue 2: a synchronous error infinite loop
+> >=20
+> > If a user-space process, e.g. devmem, a poisoned page which has been se=
+t
+> > HWPosion flag, kill_accessing_process() is called to send SIGBUS to the
+> > current processs with error info. Because the memory_failure() is
+> > executed in the kworker contex, it will just do nothing but return
+> > EFAULT. So, devmem will access the posioned page and trigger an
+> > excepction again, resulting in a synchronous error infinite loop. Such
+> > loop may cause platform firmware to exceed some threshold and reboot
+> > when Linux could have recovered from this error.
+> >=20
+> > To reproduce this problem:
+> >=20
+> >    # STEP 1: inject an UCE error, and kernel will set HWPosion flag for=
+ related page
+> >    #einj_mem_uc single
+> >    0: single   vaddr =3D 0xffffb0d75400 paddr =3D 4092d55b400
+> >    injecting ...
+> >    triggering ...
+> >    signal 7 code 4 addr 0xffffb0d75000
+> >    page not present
+> >    Test passed
+> >=20
+> >    # STEP 2: access the same page and it will trigger a synchronous err=
+or infinite loop
+> >    devmem 0x4092d55b400
+> >=20
+> > To fix above two issues, queue memory_failure() as a task_work so that =
+it runs in
+> > the context of the process that is actually consuming the poisoned data=
+.
+> >=20
+> > Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
+> > Tested-by: Ma Wupeng <mawupeng1@huawei.com>
+> > Reviewed-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+> > Reviewed-by: Xiaofei Tan <tanxiaofei@huawei.com>
+> > Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+> > ---
+> >   drivers/acpi/apei/ghes.c | 78 +++++++++++++++++++++++----------------=
+-
+> >   include/acpi/ghes.h      |  3 --
+> >   include/linux/mm.h       |  1 -
+> >   mm/memory-failure.c      | 13 -------
+> >   4 files changed, 45 insertions(+), 50 deletions(-)
+> >=20
+> > diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
+> > index f2ee28c44d7a..95e9520eb803 100644
+> > --- a/drivers/acpi/apei/ghes.c
+> > +++ b/drivers/acpi/apei/ghes.c
+> > @@ -467,28 +467,42 @@ static void ghes_clear_estatus(struct ghes *ghes,
+> >   }
+> >  =20
+> >   /*
+> > - * Called as task_work before returning to user-space.
+> > - * Ensure any queued work has been done before we return to the contex=
+t that
+> > - * triggered the notification.
+> > + * struct ghes_task_work - for synchronous RAS event
+> > + *
+> > + * @twork:                callback_head for task work
+> > + * @pfn:                  page frame number of corrupted page
+> > + * @flags:                work control flags
+> > + *
+> > + * Structure to pass task work to be handled before
+> > + * returning to user-space via task_work_add().
+> >    */
+>
+>
+> Do you have any futer comments about this patch? Any comments are
+> welcomed. If not, are you happy to explictly give the reveiwed-by tag?
 
-HEAD commit:    ae90f6a6170d Merge tag 'bpf-fixes' of git://git.kernel.org..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=10bc8230580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=309bb816d40abc28
-dashboard link: https://syzkaller.appspot.com/bug?extid=b1752fcfa8658bb8984a
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11fab287980000
+Sorry I've been busy switching to a new job.
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-ae90f6a6.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/c242e171fdc8/vmlinux-ae90f6a6.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/a180678c27b3/bzImage-ae90f6a6.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/2fbc68333ee1/mount_0.gz
+I read this now through and both commit messages and the code changes
+look sane to me so I guess I don't have any problem with that:
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+b1752fcfa8658bb8984a@syzkaller.appspotmail.com
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 
-============================================
-WARNING: possible recursive locking detected
-6.12.0-rc4-syzkaller-00161-gae90f6a6170d #0 Not tainted
---------------------------------------------
-syz.4.19/5588 is trying to acquire lock:
-ffff888058a28078 (&hdev->lock){+.+.}-{3:3}, at: mgmt_set_connectable_complete+0xaf/0x500 net/bluetooth/mgmt.c:1690
+>
+> Best Regard,
+> Shuai
 
-but task is already holding lock:
-ffff888058a28078 (&hdev->lock){+.+.}-{3:3}, at: hci_dev_close_sync+0x5c8/0x11c0 net/bluetooth/hci_sync.c:5189
-
-other info that might help us debug this:
- Possible unsafe locking scenario:
-
-       CPU0
-       ----
-  lock(&hdev->lock);
-  lock(&hdev->lock);
-
- *** DEADLOCK ***
-
- May be due to missing lock nesting notation
-
-3 locks held by syz.4.19/5588:
- #0: ffff888058a28d80 (&hdev->req_lock){+.+.}-{3:3}, at: hci_dev_do_close net/bluetooth/hci_core.c:481 [inline]
- #0: ffff888058a28d80 (&hdev->req_lock){+.+.}-{3:3}, at: hci_dev_close+0x10a/0x210 net/bluetooth/hci_core.c:508
- #1: ffff888058a28078 (&hdev->lock){+.+.}-{3:3}, at: hci_dev_close_sync+0x5c8/0x11c0 net/bluetooth/hci_sync.c:5189
- #2: ffff888058a28690 (&hdev->cmd_sync_work_lock){+.+.}-{3:3}, at: hci_cmd_sync_dequeue+0x44/0x3d0 net/bluetooth/hci_sync.c:883
-
-stack backtrace:
-CPU: 0 UID: 0 PID: 5588 Comm: syz.4.19 Not tainted 6.12.0-rc4-syzkaller-00161-gae90f6a6170d #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- print_deadlock_bug+0x483/0x620 kernel/locking/lockdep.c:3037
- check_deadlock kernel/locking/lockdep.c:3089 [inline]
- validate_chain+0x15e2/0x5920 kernel/locking/lockdep.c:3891
- __lock_acquire+0x1384/0x2050 kernel/locking/lockdep.c:5202
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5825
- __mutex_lock_common kernel/locking/mutex.c:608 [inline]
- __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
- mgmt_set_connectable_complete+0xaf/0x500 net/bluetooth/mgmt.c:1690
- _hci_cmd_sync_cancel_entry net/bluetooth/hci_sync.c:641 [inline]
- hci_cmd_sync_dequeue+0x22b/0x3d0 net/bluetooth/hci_sync.c:886
- cmd_complete_rsp+0x4c/0x180 net/bluetooth/mgmt.c:1461
- mgmt_pending_foreach+0xd1/0x130 net/bluetooth/mgmt_util.c:259
- __mgmt_power_off+0x183/0x430 net/bluetooth/mgmt.c:9474
- hci_dev_close_sync+0x6c4/0x11c0 net/bluetooth/hci_sync.c:5197
- hci_dev_do_close net/bluetooth/hci_core.c:483 [inline]
- hci_dev_close+0x112/0x210 net/bluetooth/hci_core.c:508
- sock_do_ioctl+0x158/0x460 net/socket.c:1227
- sock_ioctl+0x626/0x8e0 net/socket.c:1346
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:907 [inline]
- __se_sys_ioctl+0xf9/0x170 fs/ioctl.c:893
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f404e97e719
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f404e3ff038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007f404eb35f80 RCX: 00007f404e97e719
-RDX: 0000000000000000 RSI: 00000000400448ca RDI: 0000000000000005
-RBP: 00007f404e9f132e R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007f404eb35f80 R15: 00007ffde86e4688
- </TASK>
-
-
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+BR, Jarkko
 
