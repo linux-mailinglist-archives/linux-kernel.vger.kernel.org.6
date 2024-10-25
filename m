@@ -1,200 +1,220 @@
-Return-Path: <linux-kernel+bounces-381757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 865579B03E3
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:22:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 592F29B03EC
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:23:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA8981C221DA
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 13:22:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7DBF71C22595
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 13:23:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 350FF21218F;
-	Fri, 25 Oct 2024 13:22:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A8951B6D17;
+	Fri, 25 Oct 2024 13:23:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="T1OelPvO"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RnP+Znk3"
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E01521216E;
-	Fri, 25 Oct 2024 13:22:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6518B21218B
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 13:23:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729862543; cv=none; b=OPdsSWSDS2gzpeF89nTQf62n91OkjBlRxWJDwGz4+Zkz3VjaeM6lMHSZ3Q2XAHL8Dkez2IfSUwTwpz3OdcJq2xU4koF5UkobnGS3WPq7hGnjb+DoeM1byhmsywfMQVcElYwzmJG0b27/ffeoZD/qGRS04bJFf784NP8sU0tUCgU=
+	t=1729862607; cv=none; b=H1tXZDFIFHwCFJdvSRPYZFWMdQ7xytvktg5iAmFmzGeKpzJ6Bvb7bHAWD7dgUbSgavcZwIZ1T5fpiD5yjPKz27+Yd1Vq7eUcmcGY6u0IR4AZ/yW7m54LTbCV50xAIlnshT/ho6gNPDmiDYD0NUbCDIn/o0+EH2N5aecYySVK1rs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729862543; c=relaxed/simple;
-	bh=81WNh0s1O8ZXozmBExAYQXh9JrGJ8eiJSzANEkWiXFQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nCuezJxAOYVsc/kx9UCaIxU1/C7ocnojVjyYFMcCP8gdQedCHDVu4B8pc7h3bPxF39TSGQF1dY6DGQ/pz4Zardcd7KN0ksEjdwoNhcxo3WWIRm+8IEmmCHNXHujchQpiQYYDIVO9wWI7ApD/JrZ3rWCjEuy54k/RAliNTTj/y0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=T1OelPvO; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729862541; x=1761398541;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=81WNh0s1O8ZXozmBExAYQXh9JrGJ8eiJSzANEkWiXFQ=;
-  b=T1OelPvOze4KGmV+1HQWuDS6cFBzZExR2tIliFaamkALyU0SxPzFrwxU
-   Xk3ub0wZaUAbu+23kQah1TnRnw3gOwEAUkLPe9QssltO2lkg3kGUezzzx
-   VeVb2GZN7CJWXJb7HWQKUGPnVdS1OPvj42x21ALWqyqZodAeEJMIXUxd1
-   2hWGBuSsE5oMiPeb6ggKuRih/JWNHVjsVFZ8L/9k/jG5OU4iOSQen93f2
-   0NCCU0d5XIBYMWekofiPV2NIYuVFsysQx7Wk76gf9+Pk4iPPYZDfGDQh0
-   QTpPvmNxxPBD7OZa9t+FmTrNsP3KaEAAhnThnWKpR5aq0+xo3wqjBWnya
-   Q==;
-X-CSE-ConnectionGUID: VI6xweafROuPPyc/u+me0w==
-X-CSE-MsgGUID: DYJLxCCnQYKpHoNRcKOLLQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11236"; a="40906447"
-X-IronPort-AV: E=Sophos;i="6.11,231,1725346800"; 
-   d="scan'208";a="40906447"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2024 06:22:21 -0700
-X-CSE-ConnectionGUID: k1uxzFdQS76ExSjTuzTOog==
-X-CSE-MsgGUID: vGv3hZq0Svq40xrst0dsxA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,231,1725346800"; 
-   d="scan'208";a="80514115"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2024 06:22:17 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1t4KGc-00000006vI8-3X11;
-	Fri, 25 Oct 2024 16:22:14 +0300
-Date: Fri, 25 Oct 2024 16:22:14 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: "Huang, Ying" <ying.huang@intel.com>,
-	David Hildenbrand <david@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Alistair Popple <apopple@nvidia.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, Baoquan He <bhe@redhat.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Alison Schofield <alison.schofield@intel.com>
-Subject: Re: [RFC] resource: Avoid unnecessary resource tree walking in
- __region_intersects()
-Message-ID: <ZxubhuEwL5GrhBdu@smile.fi.intel.com>
-References: <20241010065558.1347018-1-ying.huang@intel.com>
- <d129bbe4-8ae8-4915-bd9c-b38b684e8103@redhat.com>
- <87set3a1nm.fsf@yhuang6-desk2.ccr.corp.intel.com>
- <ZwkCt_ip5VOGWp4u@smile.fi.intel.com>
- <671965a8b37a2_1bbc629489@dwillia2-xfh.jf.intel.com.notmuch>
- <ZxnvyIme98Q8ey1c@smile.fi.intel.com>
- <87wmhx3cpc.fsf@yhuang6-desk2.ccr.corp.intel.com>
- <ZxpFQBRqWMDjhtSY@smile.fi.intel.com>
- <671ac2d2b7bea_10e59294f2@dwillia2-xfh.jf.intel.com.notmuch>
+	s=arc-20240116; t=1729862607; c=relaxed/simple;
+	bh=peqexeuw5wHJv6totkmML0VJIDG0DCMQ+5G4N1JjCyc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jwGnaj187jAzsRsKlV05Wh6vi3HBdMp76J8ycOaxZGAtaCcicrvJMPvYpRiEpnQ0Tvh7ADneHgc/yKSbZVhis+lHJ6Ak7/cbIrche2e33UMIodPnSoepQZZ+4YGPYzHdOZPFwupu7NTf/Va0heU0yj+OrA91lWvCjirrEP/+BGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RnP+Znk3; arc=none smtp.client-ip=209.85.128.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6e390d9ad1dso17930777b3.3
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 06:23:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729862604; x=1730467404; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=RSi07GpJCTtbyn49PZY5VKqw+hphFmZmbrjr6WKqC9o=;
+        b=RnP+Znk3kbUHkdVoBQ1sEe1sJ+KwwqNOUVuAO9iiizqOrQuWjjYJTsZhmQNGc88n5c
+         1PbEMafMQdfVy4xKY36vvtN5mk1GwZqcg49EmoPVWom+ZAxXAe8EATAlpCCpxwgd08yS
+         mIsxQiQwEVsnrrOenG0U7Nh6Z8gfTejPT4cLfDIo63kwyNcGEQtTFep5H4amTssdRm4J
+         TmiAksbRylzIrKQD8O0HSqKMTy1tXzqor/wpzj+UeHhl4viQCvJ5o+x0LZNvjkQo7K5I
+         YC5wbxdSgtczK8K48S/JOgOj99HbtYcqPreNQbCV8jzOK2i7O73E5CDoeRxJStPLXLaN
+         po1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729862604; x=1730467404;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RSi07GpJCTtbyn49PZY5VKqw+hphFmZmbrjr6WKqC9o=;
+        b=tkye3ILzrsldUgVzBOcd4iR8ROUac8UXheSb7vV6u28nQjZOv9izLaM48OuvlyyZ9o
+         ypPMh+K633zFdcIKV2uCmhEvmPX26z2fYUTgWvng0ohUbQOVx3xM1Ya438dQsIDQ5h8Q
+         PBPrQW04i3H3yCrxFN/cw7QD4fgU0WvaDYep6PJfqrOdJk8OtiRHN9YL5wO5NZ5p7N75
+         XrleVoOSm82i8b6VYAYHfds20h/7kBmvzddtGdP+mhGy5UM+aeVoC/U+d2km7MS2ux9p
+         a1DnY5yQutL7TKV2pXmCgktfNAaEq+d3F/b9Gdh7XJ46bBqzSYf8k+kZuxEq1XpwKOjk
+         yZjg==
+X-Forwarded-Encrypted: i=1; AJvYcCWmRo/nkoGAcNzdsu85ctQvRF7y1RTjP/RMGY6Cjig4N2VqEV8RIXThA0imi7jlIrbhE8sMtj23L9jIock=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBz+9MrWosL/UNYfBCHNHJNUBZ0hs5nPmbrT6gezGXY07HsIzj
+	1lCNHtqvwSAsPr2IrNXZ/vSPNhofgriIldBUQwqhtH1btlWCisgS08SOiWwnv5/Yp2qcgfMA5bu
+	Gd458Lt8LuLMbi4yPQWEDF8nIIHCL7UoLgM2vAQ==
+X-Google-Smtp-Source: AGHT+IFnMJBu2OdHwDe03B0G8MXo39DHb96dxUSQUCPRpHdFteV2Ewfi7/O4fZ5SMm83m1s55hqH4aLeqgoc995xDHg=
+X-Received: by 2002:a05:690c:660c:b0:6dd:cdd7:ce5a with SMTP id
+ 00721157ae682-6e7f0e14dc2mr102640547b3.18.1729862604209; Fri, 25 Oct 2024
+ 06:23:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <671ac2d2b7bea_10e59294f2@dwillia2-xfh.jf.intel.com.notmuch>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20241025060017.1663697-1-benchuanggli@gmail.com>
+In-Reply-To: <20241025060017.1663697-1-benchuanggli@gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Fri, 25 Oct 2024 15:22:48 +0200
+Message-ID: <CAPDyKFpb5ZePhXziLH3VbuKKywJZbo8UBF1NM1_dyOWq9oLDng@mail.gmail.com>
+Subject: Re: [PATCH 1/2] mmc: sdhci-pci-gli: GL9767: Fix low power mode on the
+ set clock function
+To: Ben Chuang <benchuanggli@gmail.com>
+Cc: adrian.hunter@intel.com, victor.shih@genesyslogic.com.tw, 
+	greg.tu@genesyslogic.com.tw, ben.chuang@genesyslogic.com.tw, 
+	HL.Liu@genesyslogic.com.tw, Lucas.Lai@genesyslogic.com.tw, 
+	victorshihgli@gmail.com, linux-mmc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Georg Gottleuber <ggo@tuxedocomputers.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Oct 24, 2024 at 02:57:38PM -0700, Dan Williams wrote:
-> Andy Shevchenko wrote:
-> > On Thu, Oct 24, 2024 at 08:30:39PM +0800, Huang, Ying wrote:
-> > > Andy Shevchenko <andriy.shevchenko@linux.intel.com> writes:
-> > > > On Wed, Oct 23, 2024 at 02:07:52PM -0700, Dan Williams wrote:
-> > > >> Andy Shevchenko wrote:
-> > > >> > On Fri, Oct 11, 2024 at 09:06:37AM +0800, Huang, Ying wrote:
-> > > >> > > David Hildenbrand <david@redhat.com> writes:
-> > > >> > > > On 10.10.24 08:55, Huang Ying wrote:
++ Georg
 
-...
+On Fri, 25 Oct 2024 at 08:01, Ben Chuang <benchuanggli@gmail.com> wrote:
+>
+> From: Ben Chuang <ben.chuang@genesyslogic.com.tw>
+>
+> On sdhci_gl9767_set_clock(), the vendor header space(VHS) is read-only
+> after calling gl9767_disable_ssc_pll() and gl9767_set_ssc_pll_205mhz().
+> So the low power negotiation mode cannot be enabled again.
+> Introduce gl9767_set_low_power_negotiation() function to fix it.
+>
+> The explanation process is as below.
+>
+> static void sdhci_gl9767_set_clock()
+> {
+>         ...
+>         gl9767_vhs_write();
+>         ...
+>         value |= PCIE_GLI_9767_CFG_LOW_PWR_OFF;
+>         pci_write_config_dword(pdev, PCIE_GLI_9767_CFG, value); <--- (a)
+>
+>         gl9767_disable_ssc_pll(); <--- (b)
+>         sdhci_writew(host, 0, SDHCI_CLOCK_CONTROL);
+>
+>         if (clock == 0)
+>                 return;  <-- (I)
+>
+>         ...
+>         if (clock == 200000000 && ios->timing == MMC_TIMING_UHS_SDR104) {
+>                 ...
+>                 gl9767_set_ssc_pll_205mhz(); <--- (c)
+>         }
+>         ...
+>         value &= ~PCIE_GLI_9767_CFG_LOW_PWR_OFF;
+>         pci_write_config_dword(pdev, PCIE_GLI_9767_CFG, value); <-- (II)
+>         gl9767_vhs_read();
+> }
+>
+> (a) disable low power negotiation mode. When return on (I), the low power
+> mode is disabled.  After (b) and (c), VHS is read-only, the low power mode
+> cannot be enabled on (II).
+>
+> Fixes: d2754355512e ("mmc: sdhci-pci-gli: Set SDR104's clock to 205MHz and enable SSC for GL9767")
 
-> > > >> > > > 	for ((_p) = (_root)->child; (_p); (_p) = next_resource_XXX(_root, _p))
-> > > >> > > 
-> > > >> > > Yes.  This can improve code readability.
-> > > >> > > 
-> > > >> > > A possible issue is that "_root" will be evaluated twice in above macro
-> > > >> > > definition.  IMO, this should be avoided.
-> > > >> > 
-> > > >> > Ideally, yes. But how many for_each type of macros you see that really try hard
-> > > >> > to achieve that? I believe we shouldn't worry right now about this and rely on
-> > > >> > the fact that root is the given variable. Or do you have an example of what you
-> > > >> > suggested in the other reply, i.e. where it's an evaluation of the heavy call?
-> > > >> > 
-> > > >> > > Do you have some idea about
-> > > >> > > how to do that?  Something like below?
-> > > >> > > 
-> > > >> > > #define for_each_resource_XXX(_root, _p)                                \
-> > > >> > > 	for (typeof(_root) __root = (_root), __p = (_p) = (__root)->child; \
-> > > >> > > 	     __p && (_p); (_p) = next_resource_XXX(__root, _p))
-> > > >> > 
-> > > >> > This is a bit ugly :-( I would avoid ugliness as long as we have no problem to
-> > > >> > solve (see above).
-> > > >> 
-> > > >> Using a local defined variable to avoid double evaluation is standard
-> > > >> practice. I do not understand "avoid ugliness as long as we have no problem to
-> > > >> solve", the problem to solve will be if someone accidentally does
-> > > >> something like "for_each_resource_descendant(root++, res)". *That* will
-> > > >> be a problem when someone finally realizes that the macro is hiding a
-> > > >> double evaluation.
-> > > >
-> > > > Can you explain, why do we need __p and how can we get rid of that?
-> > > > I understand the part of the local variable for root.
-> > > 
-> > > If don't use '__p', the macro becomes
-> > > 
-> > > #define for_each_resource_XXX(_root, _p)                                \
-> > > 	for (typeof(_root) __root = (_root), (_p) = (__root)->child; \
-> > > 	     (_p); (_p) = next_resource_XXX(__root, _p))
-> > > 
-> > > Where, '_p' must be a variable name, and it will be a new variable
-> > > inside for loop and mask the variable with same name outside of macro.
-> > > IIUC, this breaks the macro convention in kernel and has subtle variable
-> > > masking semantics.
-> > 
-> > Yep.
-> 
-> Oh, due to the comment expression, good catch.
-> 
-> > In property.h nobody cares about evaluation which makes the macro as simple as
-> > 
-> > #define for_each_resource_XXX(_root, _p)		\
-> > 	for (_p = next_resource_XXX(__root, NULL); _p;	\
-> > 	     _p = next_resource_XXX(__root, _p))
-> > 
-> > (Dan,
-> >  that's what I called to avoid solving issues we don't have and most likely
-> >  will never have.)
-> 
-> Ah, my apologies, I thought the objection was to the macro altogether. 
+Is this the same problem as being reported in
+https://lore.kernel.org/all/41c1c88a-b2c9-4c05-863a-467785027f49@tuxedocomputers.com/
 
-No, no, I'm supporting the idea!
+?
 
-> > but if you want to stick with your variant some improvements can be done:
-> > 
-> > #define for_each_resource_XXX(_root, _p)				\
-> > 	for (typeof(_root) __root = (_root), __p = _p = __root->child;	\
-> > 	     __p && _p; _p = next_resource_XXX(__root, _p))
-> > 
-> > 
-> > 1) no need to have local variable in parentheses;
-> > 2) no need to have iterator in parentheses, otherwise it would be crazy code
-> > that has put something really wrong there and still expect the thing to work.
-> 
-> Why not:
-> 
-> #define for_each_resource_XXX(_root, _p)				\
-> 	for (typeof(_root) __root = (_root), __p = _p = __root->child;	\
-> 	     _p; _p = next_resource_XXX(__root, _p))
-> 
-> The __p is only to allow for _p to be initialized in the first statement
-> without causing a new "_p" shadow to be declared.
+> Signed-off-by: Ben Chuang <benchuanggli@gmail.com>
 
-If people think this would be better than the existing patterns, okay. fine.
+Not sure the above SoB makes sense. The below is perfectly sufficient, right?
 
--- 
-With Best Regards,
-Andy Shevchenko
+> Signed-off-by: Ben Chuang <ben.chuang@genesyslogic.com.tw>
+
+Kind regards
+Uffe
 
 
+> ---
+>  drivers/mmc/host/sdhci-pci-gli.c | 35 +++++++++++++++++++-------------
+>  1 file changed, 21 insertions(+), 14 deletions(-)
+>
+> diff --git a/drivers/mmc/host/sdhci-pci-gli.c b/drivers/mmc/host/sdhci-pci-gli.c
+> index 0f81586a19df..22a927ce2c88 100644
+> --- a/drivers/mmc/host/sdhci-pci-gli.c
+> +++ b/drivers/mmc/host/sdhci-pci-gli.c
+> @@ -892,28 +892,40 @@ static void gl9767_disable_ssc_pll(struct pci_dev *pdev)
+>         gl9767_vhs_read(pdev);
+>  }
+>
+> +static void gl9767_set_low_power_negotiation(struct pci_dev *pdev, bool enable)
+> +{
+> +       u32 value;
+> +
+> +       gl9767_vhs_write(pdev);
+> +
+> +       pci_read_config_dword(pdev, PCIE_GLI_9767_CFG, &value);
+> +       if (enable)
+> +               value &= ~PCIE_GLI_9767_CFG_LOW_PWR_OFF;
+> +       else
+> +               value |= PCIE_GLI_9767_CFG_LOW_PWR_OFF;
+> +       pci_write_config_dword(pdev, PCIE_GLI_9767_CFG, value);
+> +
+> +       gl9767_vhs_read(pdev);
+> +}
+> +
+>  static void sdhci_gl9767_set_clock(struct sdhci_host *host, unsigned int clock)
+>  {
+>         struct sdhci_pci_slot *slot = sdhci_priv(host);
+>         struct mmc_ios *ios = &host->mmc->ios;
+>         struct pci_dev *pdev;
+> -       u32 value;
+>         u16 clk;
+>
+>         pdev = slot->chip->pdev;
+>         host->mmc->actual_clock = 0;
+>
+> -       gl9767_vhs_write(pdev);
+> -
+> -       pci_read_config_dword(pdev, PCIE_GLI_9767_CFG, &value);
+> -       value |= PCIE_GLI_9767_CFG_LOW_PWR_OFF;
+> -       pci_write_config_dword(pdev, PCIE_GLI_9767_CFG, value);
+> -
+> +       gl9767_set_low_power_negotiation(pdev, false);
+>         gl9767_disable_ssc_pll(pdev);
+>         sdhci_writew(host, 0, SDHCI_CLOCK_CONTROL);
+>
+> -       if (clock == 0)
+> +       if (clock == 0) {
+> +               gl9767_set_low_power_negotiation(pdev, true);
+>                 return;
+> +       }
+>
+>         clk = sdhci_calc_clk(host, clock, &host->mmc->actual_clock);
+>         if (clock == 200000000 && ios->timing == MMC_TIMING_UHS_SDR104) {
+> @@ -922,12 +934,7 @@ static void sdhci_gl9767_set_clock(struct sdhci_host *host, unsigned int clock)
+>         }
+>
+>         sdhci_enable_clk(host, clk);
+> -
+> -       pci_read_config_dword(pdev, PCIE_GLI_9767_CFG, &value);
+> -       value &= ~PCIE_GLI_9767_CFG_LOW_PWR_OFF;
+> -       pci_write_config_dword(pdev, PCIE_GLI_9767_CFG, value);
+> -
+> -       gl9767_vhs_read(pdev);
+> +       gl9767_set_low_power_negotiation(pdev, true);
+>  }
+>
+>  static void gli_set_9767(struct sdhci_host *host)
+> --
+> 2.47.0
+>
 
