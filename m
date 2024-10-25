@@ -1,114 +1,124 @@
-Return-Path: <linux-kernel+bounces-381275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAB3D9AFCDC
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 10:43:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40B169AFCDB
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 10:43:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66424B22C11
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 08:43:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 068A628300E
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 08:43:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8611C1D356E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86D9D1D3576;
 	Fri, 25 Oct 2024 08:43:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OhwjyihS"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lDMKwPCx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0BCA1D2234
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 08:43:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA8631D2B3E;
+	Fri, 25 Oct 2024 08:43:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729845799; cv=none; b=o5sPzmQt246VwR4URb3rGYME839M4rkajGA5Z2HkZ7Ytol03/KdcciOqUTbRKl/4TOPr7+s7od2eFui7heK5t/d9Ds5Q4n0PbZr6Nw7uhQYqHUXq3rGXPw6/eI2pMNekioYKThPhgUKJqgMeRdMXt0ICjdmG/ycChaVf9HPoBMs=
+	t=1729845799; cv=none; b=X2g3/Vf8uV3EVccURXuGivbnt2Ji5SXZbsi24nFnSQ0/GgVaUCBbTvuOhDgWFxJheikuzhu1hKaJ+CE2lca+7Fe3ppMsB/dZYR3GkQiWKh1nOljKPKnTXQTKSFuAapfYIXSMxzPn6NRZ5BU/vnI3fzWxhi+pOTxnypr0A2WCa2Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1729845799; c=relaxed/simple;
-	bh=Is6fCU7r2O627z6txt09DGR3k7pJC1u2UpNlPdCrthw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VrSkh3GPRleRirvxji2cNMMBnWC6R482HlySIDwU0d38f7899l19y1AJh92aWo2holj4P7zeDfabnBPd9t3Qlgq2DPy4yYRz1Gcqk0XIpatodktL4FDi4SIkh5TzhnQyDgMnTb1zIQAjmW0DkxHOGnPr2xWBnEoZLONpscGy6FI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OhwjyihS; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2fb59652cb9so18218251fa.3
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 01:43:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729845796; x=1730450596; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5bnGk2OAtXC2qhYzxaIFFCqNFOv/GnSjD450ML+33Ug=;
-        b=OhwjyihS7PDKATuISukhE/gTsFO0++MeLlAa4En2haUcxfoxt/FJjEfQcp6tpHsPRG
-         7+brU8WGJT7nut5a0zitfFNknM3sUwmDLULfkYXkBA5wTlrelX9pgeTYrs7ToABHZH5M
-         6dsfINdkySTMkU6LiMGov08QwJwNVo1a4Q72NnSZOw/H+qZbtFVcsv0YFlRc81cw4fgp
-         31wf/OR48ES74u5wVKj/ls4itIHZioPXdsl7PAR2c/msYwhpGdN6YbiJlXGgvVn2xkiU
-         QpccuriUEQGqLqEMrjr1fXK+sA8CuRjHlJgirow0Q8tzNWNyF1kHorx9ZPy4aRaE9ymp
-         2Tcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729845796; x=1730450596;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5bnGk2OAtXC2qhYzxaIFFCqNFOv/GnSjD450ML+33Ug=;
-        b=dV6QTVuwmHCM8SNgJ2ngWncGxVswa1Xr2DbS9Gla08YtsQT9qjVZXs13258TBLcq9O
-         EmTCKkC9043dPDVhcLlBBnZHxeCa4HTmKQtGgPOyfUGv3CLwPcjxPHMDE1J9tAgzwVDO
-         JietX9FuX2bLXYw/z5XtV5QWveAi5NNDa0QByK7xCkmO6wiRbfUXAxEGbiGtfC3FKPvl
-         VIcGD1Td3ep3Py4wIQGczS/YNPBrej+m95BEVac6zXIRMpZMGPpTYSk3+65BGw8Une0n
-         uFA4oqrQhkMnrU7TYkrmyNjg0RB+R/ttmJBOCpNI+1VRmXzhiYp90OTQ6INHGcz5ztQw
-         Diqg==
-X-Forwarded-Encrypted: i=1; AJvYcCXg22OTv4f+sIdHBx/xtB1JKk0n43s6vdg3RvHHaG4wO+huYdvpEZU9WwaxVUrhc8rKiiDJXomykRkiLZ8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxgAip5V24SCLVTP2rPLvpGzK1oPk23NXNelYHoprH7lrWjtEC
-	Q7KYs0UnDi8mkP9banf+c1DqgyfzW/Zd4+7rdKtkNdmhysOrel/dshTHN5hDwgJpNa7JjJxn1yE
-	cXd0IJT6m8mXhPz9yJw69u+s1PvljrDmnx+RGpw==
-X-Google-Smtp-Source: AGHT+IFTV81QGcolch/8VXee4TeMVNEV9PtzSPTWGGsHdEXX8yJwrIRqHsjgTqxOKepxlFwseluy+FDPbbQYHwW5Z4c=
-X-Received: by 2002:a2e:602:0:b0:2fb:4982:daea with SMTP id
- 38308e7fff4ca-2fc9d5a992emr39283951fa.32.1729845795871; Fri, 25 Oct 2024
- 01:43:15 -0700 (PDT)
+	bh=fj3SlDFFgK1T96jJxceeTB1arH14QHo9IPHlNN/fBXE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LuQMNBgW77nl2MMU4OrN1T1XqjvvYXB6ju1JFkUPUMinS2ZBPnSIbR3S/ztqFgW95wni3VreFgf9VxD4Lako2TX2LC+5eC0oq6iATQGwg8T7MgotyK4IkHa0bi/aW12MH4QIKXlo2Ps43kcb3qoxO90Hb8gzprdzMdjj0yFdw2Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lDMKwPCx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79803C4CEC3;
+	Fri, 25 Oct 2024 08:43:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729845799;
+	bh=fj3SlDFFgK1T96jJxceeTB1arH14QHo9IPHlNN/fBXE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=lDMKwPCxcWeLmXaScvl1FsNuu+tltMJQvaEj2kc7U95gVNZ5b6J41LG8guzpMMUVZ
+	 RnQuUuBmoBGmN5A2HEjMnZKnTQP86shAUKdvwcXIy+VQOBfQq1kkibSkpAtMcfsNYK
+	 fjF3P+XeglsBBcWtAOsEWLa4ofVw1gTfsKXzx6d4GI7Hx5dGSv5c7453thSuXh/HYr
+	 +zcgtBy52PDHNHsx+81f/oMelR3R7eenjN0VF7u8xIA+6JhbmVuWBxpbKQOKMXJ+yA
+	 0ZUfbPwiBnV/+ayV1i+vqr/w6aebEZnWvsWM/EpWhVchhessruQqVXWWddJFYN1J4L
+	 ArKKdg/9vy1xQ==
+Message-ID: <2ec762b1-fd80-4fb7-91f3-a9f94f9274c7@kernel.org>
+Date: Fri, 25 Oct 2024 10:43:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241021230414.2632428-1-quic_molvera@quicinc.com>
- <20241021230414.2632428-3-quic_molvera@quicinc.com> <dnri3nqq2una3atjwl437ujzrl2txl2zdyb2ima5qeeudqotxn@5zdxizip6mhb>
- <d21b259a-1f04-4108-a201-254b44f07529@quicinc.com>
-In-Reply-To: <d21b259a-1f04-4108-a201-254b44f07529@quicinc.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 25 Oct 2024 10:43:04 +0200
-Message-ID: <CACRpkdZX1qrMDR-6LuUtc0nqLK3MwrUYQm9bsRZL376Qj6x8XQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] pinctrl: qcom: Add sm8750 pinctrl driver
-To: Melody Olvera <quic_molvera@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Trilok Soni <quic_tsoni@quicinc.com>, 
-	Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>, linux-arm-msm@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] crypto: qat - Fix typo "accelaration"
+To: WangYuli <wangyuli@uniontech.com>, giovanni.cabiddu@intel.com,
+ herbert@gondor.apana.org.au, davem@davemloft.net, jie.wang@intel.com,
+ dong.xie@intel.com
+Cc: qat-linux@intel.com, linux-crypto@vger.kernel.org,
+ linux-kernel@vger.kernel.org, bo.cui@intel.com, bruce.w.allan@intel.com,
+ karen.xiang@intel.com, pingchaox.yang@intel.com
+References: <1D2B5A3330DAD82E+20241017082946.314361-1-wangyuli@uniontech.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <1D2B5A3330DAD82E+20241017082946.314361-1-wangyuli@uniontech.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 23, 2024 at 8:18=E2=80=AFPM Melody Olvera <quic_molvera@quicinc=
-.com> wrote:
-> On 10/22/2024 8:27 PM, Bjorn Andersson wrote:
-> > On Mon, Oct 21, 2024 at 04:04:14PM GMT, Melody Olvera wrote:
+On 17/10/2024 10:29, WangYuli wrote:
+> There is a spelling mistake of 'accelaration' in comments which
+> should be 'acceleration'.
+> 
+> Signed-off-by: WangYuli <wangyuli@uniontech.com>
+> ---
+>  drivers/crypto/intel/qat/qat_common/qat_hal.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-> > [..]
-> >> +static const int sm8750_reserved_gpios[] =3D {
-> >> +    36, 37, 38, 39, 74, -1
-> > Any particular reason why these are not gpio-reserved-ranges in
-> > DeviceTree?
-> >
->
-> Not particularly; I wasn't sure whether or not to include in the initial
-> dt patch.
-> Will add.
+Please fix all of such irrelevant typos in given set of drivers or
+susbsystem, not one word per patch. This is just churn.
 
-Can we also write (as a comment in the device tree) *why* they
-are reserved? Such as "used by BIOS/ACPI/secure world"?
-Just a minor nit but it's very helpful for newcomers reading the
-DTS.
+Best regards,
+Krzysztof
 
-Yours,
-Linus Walleij
 
