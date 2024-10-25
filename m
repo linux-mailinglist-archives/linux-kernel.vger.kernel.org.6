@@ -1,129 +1,136 @@
-Return-Path: <linux-kernel+bounces-382325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE0CC9B0C63
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 20:00:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6F729B0C67
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 20:01:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 088D01C221ED
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 18:00:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 470771F24BFE
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 18:01:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D318920A5D0;
-	Fri, 25 Oct 2024 17:59:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EF7F18BC0E;
+	Fri, 25 Oct 2024 18:01:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="UFU6Hiib"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bU7HY15l";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="YaUW9P/E"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E75B20102B
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 17:59:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729879190; cv=pass; b=vE0ySHJ+B5wd2OHrMFENtZpYfHFZPslgr0jM2PQlTr4ELROlCITvXrCMkgvq1Zn5ebFzGkEIP7BSSO64yyhTns33ttD3uK8Q0nAmN5EVhnj18JvfMk61w28GOk6UfGdCWOgVPne3l17/MLcMlyp/IrEIBD3/GVSNdB6owbmYnp8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729879190; c=relaxed/simple;
-	bh=hKFUCTWT0BkFYd3KtDUY9k1SzReqA9ctSD2OwdkCiGE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RuWbYSdo1vjbCSJoO8NlFRfN0PElMXO/jpuyU4nf8Q9dn4/NtT8JLVYruewKQQi2GYRbQrW6sEIx5Stq9/oUUotHozhdQYlpm6tgID5qUsMqyuPrM/wPLeO9WkDQQ6lhoUB7ww1QqQvshNbaHz7S7M3GPkUNLuL4cUtCyGF2VcY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=UFU6Hiib; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1729879175; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=YotU0suanNeLwfdlee4TTl/JSM8MRVMfMZH6cawJ7PepI697YKjEdj6tJPqRT/CN0KU3kKZM9sK6oMmFUsrOtKr+k29XgOJ0ixsIi3Pfp3rB/8LFmb2R1ckwvLDYtFqzxW81eMUSZaxLaNm/75LNHgic73ENG0D2xS+KkktmiWI=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1729879175; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=SDR/2walgN8msRG3na8ZVPKgJth6f+dq/ymHTRdWh1g=; 
-	b=YZbOFTQ2bqUoKPz1inD0p3qU6GWaygJMWMty7Too31Z3ysdW9xCtKc5VLKTA60inJTMJYSXS+Feube2sAn2TVGZwZaofBTmx86Xv4BiwqaH2vsBS7jju8GO0PsQ2/MGFQ+0CE5iipNMHv7ykUq3fTqfNCjku85c2ZmjAIoS8bsY=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
-	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1729879175;
-	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=SDR/2walgN8msRG3na8ZVPKgJth6f+dq/ymHTRdWh1g=;
-	b=UFU6HiibijfIbCD3IgoIt0i8YZbW5LaS1WebHtNo7TPkCyVedvSnE2F8lUG84mMb
-	sXm/JaTxBbNRK1Ut4k2F68JEotcYd3C2SR91vhY94a556+DaMvPYnHmotmQdikym6Dz
-	X86udJP/SpFN1QDvMdRTA9b45iC42fPrbU3FVZy0=
-Received: by mx.zohomail.com with SMTPS id 1729879172868517.0244715513983;
-	Fri, 25 Oct 2024 10:59:32 -0700 (PDT)
-Message-ID: <18415279-39d3-4ce3-bef2-58566276799b@collabora.com>
-Date: Fri, 25 Oct 2024 20:59:27 +0300
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F98420C326;
+	Fri, 25 Oct 2024 18:01:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729879275; cv=none; b=PtiDXdOipWBYqlo1Bky+Nd9LBJRMaYVA2ulLxbVosEozUHDzJ4GL7vCjElnltOuJeRbxGSDKtmSx4YKGTNd0wOFOL/qUCyHHTwpbO184joekubgkWyKn6obOeyTAvN4ojq/BlPPhpFPyufAefheZW/h8XcHs5chac+JvUogX2sM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729879275; c=relaxed/simple;
+	bh=x8CZHayInUEkHDL3QVPFGqkX+ENVSTOhs7fu4S2yZrY=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=OyE0LPDJhlqX2A6U4pbI5YDCtn++eAocCsuusuWGQOeZEXtipmvqFNZ9+U8YrY1olou5dEkZMrDQn3t2ZlaZYMP/mTU7Lb7fvYUvcj7DbtKCqikxu7h8Ewot0ty5rIDR1AnLH67VnpKLP4G/Xrr7M2FGiyBWfPaLHbUOckaIXHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bU7HY15l; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=YaUW9P/E; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 25 Oct 2024 18:01:09 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1729879271;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VpNnBcdlWFmovmxH9wzOjO8Y59qwyGDvIsV2etumXdQ=;
+	b=bU7HY15lwuQFhXAIsvcqAYWZWb8wwxrNQDyaNDZjeRchqGC7EMsA0LMtaZPbTPPIeyDHj2
+	1oNbDgDXaHGkSm0H5tINhZtyV+4JHLVNGqHt8bS0QcX8XJT7oN6iovEU3NAeEWNcB3HPA1
+	gK3ZWjRlumFtQ/i+n6MNcVspGPJKqkpzVOaHbCZHRdEizwYuh8z6w7HkO8SmUbFLwwYD8h
+	1a3E2nvev7PCku9I+yF1vJ9s8FnZhDMtI6POYIgBz/2Ri7QkxIsqAHnxBYIunUWE4BKioo
+	Q7ydBMYVLTToV8OFGuLf1kBgfUy+Pun0OB74lrzYc8ghlPYExYQ5xVqmtF/CwA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1729879271;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VpNnBcdlWFmovmxH9wzOjO8Y59qwyGDvIsV2etumXdQ=;
+	b=YaUW9P/EPYVKlAX/TPu+rUnpAqV9I5wyLW7ZyWOHRY5PGBQ2HNX3tUO11klngz3bS4G9s/
+	WCHrKjT66Ug5RSCQ==
+From: "tip-bot2 for Miguel Ojeda" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: timers/core] time: Fix references to _msecs_to_jiffies()
+ handling of values
+Cc: Miguel Ojeda <ojeda@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20241025110141.157205-2-ojeda@kernel.org>
+References: <20241025110141.157205-2-ojeda@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] drm/virtio: New fence for every plane update
-To: "Kasireddy, Vivek" <vivek.kasireddy@intel.com>,
- David Airlie <airlied@redhat.com>, Gerd Hoffmann <kraxel@redhat.com>,
- Gurchetan Singh <gurchetansingh@chromium.org>, Chia-I Wu
- <olvaffe@gmail.com>, Rob Clark <robdclark@gmail.com>,
- Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>,
- "Kim, Dongwon" <dongwon.kim@intel.com>
-Cc: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
- "virtualization@lists.linux-foundation.org"
- <virtualization@lists.linux-foundation.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "kernel@collabora.com" <kernel@collabora.com>
-References: <20241020230803.247419-1-dmitry.osipenko@collabora.com>
- <20241020230803.247419-2-dmitry.osipenko@collabora.com>
- <IA0PR11MB7185FA36BD2988FD75239C5EF84C2@IA0PR11MB7185.namprd11.prod.outlook.com>
-Content-Language: en-US
-From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
-In-Reply-To: <IA0PR11MB7185FA36BD2988FD75239C5EF84C2@IA0PR11MB7185.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
+Message-ID: <172987926907.1442.10531063821416197986.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
 
-On 10/22/24 07:44, Kasireddy, Vivek wrote:
->>  		virtio_gpu_cmd_resource_flush(vgdev, bo->hw_res_handle,
->> x, y,
->> -					      width, height, objs, vgfb->fence);
->> +					      width, height, objs,
->> +					      vgplane_st->fence);
->>  		virtio_gpu_notify(vgdev);
->> -
->> -		dma_fence_wait_timeout(&vgfb->fence->f, true,
->> +		dma_fence_wait_timeout(&vgplane_st->fence->f, true,
->>  				       msecs_to_jiffies(50));
->> -		dma_fence_put(&vgfb->fence->f);
->> -		vgfb->fence = NULL;
-> Not sure if it makes any difference but would there be a problem if you unref
-> the fence here (existing behavior) instead of deferring it until cleanup?
+The following commit has been merged into the timers/core branch of tip:
 
-Previously fence was a part of virtio-gpu framebuffer, which was kind of
-a hack. Maybe there was no better option back then, when this code was
-written initially.
+Commit-ID:     92b043fd995a63a57aae29ff85a39b6f30cd440c
+Gitweb:        https://git.kernel.org/tip/92b043fd995a63a57aae29ff85a39b6f30cd440c
+Author:        Miguel Ojeda <ojeda@kernel.org>
+AuthorDate:    Fri, 25 Oct 2024 13:01:41 +02:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Fri, 25 Oct 2024 19:50:10 +02:00
 
-Now fence is a part of plane's atomic state, like it should be. We
-shouldn't change atomic state at the commit time.
+time: Fix references to _msecs_to_jiffies() handling of values
 
-...
->> @@ -326,11 +348,9 @@ static void virtio_gpu_cursor_plane_update(struct
->> drm_plane *plane,
->>  			(vgdev, 0,
->>  			 plane->state->crtc_w,
->>  			 plane->state->crtc_h,
->> -			 0, 0, objs, vgfb->fence);
->> +			 0, 0, objs, vgplane_st->fence);
->>  		virtio_gpu_notify(vgdev);
->> -		dma_fence_wait(&vgfb->fence->f, true);
->> -		dma_fence_put(&vgfb->fence->f);
->> -		vgfb->fence = NULL;
-> Same comment as above.
-> Regardless, the patch LGTM.
-> 
-> Acked-by: Vivek Kasireddy <vivek.kasireddy@intel.com>
+The details about the handling of the "normal" values were moved
+to the _msecs_to_jiffies() helpers in commit ca42aaf0c861 ("time:
+Refactor msecs_to_jiffies"). However, the same commit still mentioned
+__msecs_to_jiffies() in the added documentation.
 
-Thanks for the review :)
+Thus point to _msecs_to_jiffies() instead.
 
--- 
-Best regards,
-Dmitry
+Fixes: ca42aaf0c861 ("time: Refactor msecs_to_jiffies")
+Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lore.kernel.org/all/20241025110141.157205-2-ojeda@kernel.org
+
+---
+ include/linux/jiffies.h | 2 +-
+ kernel/time/time.c      | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/include/linux/jiffies.h b/include/linux/jiffies.h
+index 1220f0f..5d21dac 100644
+--- a/include/linux/jiffies.h
++++ b/include/linux/jiffies.h
+@@ -502,7 +502,7 @@ static inline unsigned long _msecs_to_jiffies(const unsigned int m)
+  * - all other values are converted to jiffies by either multiplying
+  *   the input value by a factor or dividing it with a factor and
+  *   handling any 32-bit overflows.
+- *   for the details see __msecs_to_jiffies()
++ *   for the details see _msecs_to_jiffies()
+  *
+  * msecs_to_jiffies() checks for the passed in value being a constant
+  * via __builtin_constant_p() allowing gcc to eliminate most of the
+diff --git a/kernel/time/time.c b/kernel/time/time.c
+index b1809a1..1b69caa 100644
+--- a/kernel/time/time.c
++++ b/kernel/time/time.c
+@@ -556,7 +556,7 @@ EXPORT_SYMBOL(ns_to_timespec64);
+  * - all other values are converted to jiffies by either multiplying
+  *   the input value by a factor or dividing it with a factor and
+  *   handling any 32-bit overflows.
+- *   for the details see __msecs_to_jiffies()
++ *   for the details see _msecs_to_jiffies()
+  *
+  * msecs_to_jiffies() checks for the passed in value being a constant
+  * via __builtin_constant_p() allowing gcc to eliminate most of the
 
