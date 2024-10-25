@@ -1,187 +1,154 @@
-Return-Path: <linux-kernel+bounces-380884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69E979AF748
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 04:11:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC73B9AF74A
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 04:12:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D91F1C216FC
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 02:11:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51FFE1F22B1B
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 02:12:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFF8413BC0E;
-	Fri, 25 Oct 2024 02:11:11 +0000 (UTC)
-Received: from CHN02-BJS-obe.outbound.protection.partner.outlook.cn (mail-bjschn02on2130.outbound.protection.partner.outlook.cn [139.219.17.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 369596F30C;
+	Fri, 25 Oct 2024 02:12:35 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D04994409;
-	Fri, 25 Oct 2024 02:11:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.17.130
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729822271; cv=fail; b=HcocXcmQROzzcoZCkOVvyZOsMqSnySeKYwn1rZa3yxQZBujTOhoBvXn7Ck50qXkMTB9rgEGS0EzYMpLQwSpRo0V9Kz9mmAswF9nUbf23mCBVHesUvGj5+eGx3SznPiS6QjOSIutyKm+Ko2TUwmdQDggq7Z7PeeYrZ9KcErapRVY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729822271; c=relaxed/simple;
-	bh=YCvP0Z0ALzV0ZngMrJkay999acFXsyWLsPyqmhb7koI=;
-	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=HgDt09t33V+gMzLcyEN8SQ1eGbLssm3IFMYOFMfNkYzqBrq3WYPQUq6tYzC8gn086b76v5E7NB6YJ6PCL+vcF/NA2b68MJ/vKVRuxKRqdfiAVnbv1RJaCnw7WfvFSM0xZlhvPYxcDOIaNI3sxDT3VKk8B7VES64LSdm2LYfJ564=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.17.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=QmD5TBrz1d8psYMushEzawmw+xXSuFnw6svW4Q7safsPz/5gouAsy5ka0uJzExJGDqgFKBnflkQaKWO35gDiIP5qrjsXoBU83WR0vGwLbNvJW3Nm91/w0/wLusNxpNAqQEXvavIhVoHbv5n23EJwc3a6Qp+jAFieTgp6aEFQtEHFVB2LSO+YjvuK3iRwlocwxjsuLO+ndKOxw8j6od3uXgBmFdQWUv7emiTpPNCZc0DbZEitrHomilJ+TadWnD+WpRQf+EIbtWSmr4++/qMILjvDsuMJW3MUGuichZmJmszNHtMfym4lz7/xMG/n6XpxPzhToCFU6fBB4fyP78Pqww==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=iXve3JTMO9j7JYE3j0kQd0CKnXLUfrlY354SqZNl/a8=;
- b=fGeDxSHxzsYtfp42aHEzPf62VmdGe/dHih+okU5/9D8gUarASwL0oiWkvE1tfJG1qwWJ5GaH72q0UWIhiePKfqhUR4139R78BRAftU6Z9CH2/F3rEK5ZZ9Q8ZaUmQZRcEA5WfaSLBNdbCHHoYWpm5HFEtM/ZmmAL+qgTQrJqmN9f2nFeAX+9Mx9nVOnMibHTaqBQkkGohVQmMGwZQQG6FMgAX3CafKoWPvCBCOtm46oGoKXr+pQHqkzWkt5i7Kl6t+PvhOhvzkXKzklFS7Utpa3nbJ838KhcQPCamMkfkl1oKLR8WB2ipvGlYPCKH1hPBfBh73ZBPlJ60hnVbT/QSw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=starfivetech.com; dmarc=pass action=none
- header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
-Received: from ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:7::14) by ZQ2PR01MB1291.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:7::5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.33; Fri, 25 Oct
- 2024 02:11:10 +0000
-Received: from ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn
- ([fe80::2595:ef4d:fae:37d7]) by ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn
- ([fe80::2595:ef4d:fae:37d7%4]) with mapi id 15.20.8069.031; Fri, 25 Oct 2024
- 02:11:10 +0000
-From: Hal Feng <hal.feng@starfivetech.com>
-To: Andrew Lunn <andrew@lunn.ch>
-CC: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Marc Kleine-Budde <mkl@pengutronix.de>,
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>, "David S . Miller"
-	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Philipp Zabel
-	<p.zabel@pengutronix.de>, Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley
-	<paul.walmsley@sifive.com>, Albert Ou <aou@eecs.berkeley.edu>, Emil Renner
- Berthing <emil.renner.berthing@canonical.com>, William Qiu
-	<william.qiu@starfivetech.com>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-can@vger.kernel.org"
-	<linux-can@vger.kernel.org>, "netdev@vger.kernel.org"
-	<netdev@vger.kernel.org>, "linux-riscv@lists.infradead.org"
-	<linux-riscv@lists.infradead.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v2 3/4] can: Add driver for CAST CAN Bus Controller
-Thread-Index: AQHbDP78QyTswaw7pki8MOjaOJeAtrJkAHKAgAC5iGCAAI/MgIAxnAvw
-Date: Fri, 25 Oct 2024 02:11:09 +0000
-Message-ID:
- <ZQ2PR01MB13076C761C45F2D5834DA718E64F2@ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=starfivetech.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: ZQ2PR01MB1307:EE_|ZQ2PR01MB1291:EE_
-x-ms-office365-filtering-correlation-id: 5ee6e6b3-d73d-4fde-4029-08dcf49a4b03
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam:
- BCL:0;ARA:13230040|7416014|41320700013|366016|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- ZV7vdnYnKu/IPmzURWv2K3L3quePUfB+kHLeZV9wlov53zmzg0rpROfDgImasLpl4FZe61QKP5MPW57z2TAce7m3qpUXxQ9pku2WRBbHhHy2MryvNBVnUGg6PfXwXIWef6EsQkORruxiXH7s+ol5IMR+34SL/4wMQ9smUea6DY7St9RS8hpV/uJaiD3I4GmhpTj86tA0rKShQBYcnE6GZWqWc24K7ACeca7ZWgZHPHbmlaXLZ4o7BVEo4IT7BtnNEfRGVHSAoLEYBQ+J5+YUR7Yi5aWstE9zxOC+oIfp7musYz6kqEzY7Vx22yQ7nv3LvjftBUortTqZDsyaUrou9Bz4+ItxgOi2aVbPOsp2syXMbd2jhridiDElP6nPV3UMhExix8+UQgN7/kE+GN4RRUVmIYzFRSIPEVloldXixtPYJc/X/81yT3HrKbX+gsvcqqRI5Ly7XSjk85qXJP3yGWHXsbY6sFJtzPEyIf4cYI2R/qkYcKxObCWfgsq+Jvl81SJlR7cbxM9Ti0/vvet641SJVSiGNY/rvNFffPq7UIohy5lTuOXHNB4dyGBuir33O0AyyiTEghOU3lXgs4HBLwWWNlEDrLE4ChmHXita1rJyq6rFSfzTt1hddR3NuJo+
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230040)(7416014)(41320700013)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?vrQo/2+v4clwuscgBDbo9+0vaiG5jpWrGFs0NLcRy2zj/eDa9tmjDIckP+ys?=
- =?us-ascii?Q?HHW7dNmkFJCjCiFHmhroxGbdcirLXizbmS642E3PTYfa6n+Yzjt+/Q2LNoRH?=
- =?us-ascii?Q?UYqWVJRJdckkpQoLL0FoMk0OnUMmrkFabhqc35Z/rTUTBBAWSVaHmmXNPrOH?=
- =?us-ascii?Q?LVLou4NSr1KJuqV2yUfpXEzQizua48OsYCM0Ay19zI/EJ7zRAzkJMRjzdCMb?=
- =?us-ascii?Q?zPA4TqutHq6cW/Or6+8O3oEgDwqv4qqg2AbGDhExjwJXr5hYkq0UsTGfD6uX?=
- =?us-ascii?Q?tB3F0oNnjcDLrDTF5A+jnczfj6N4Ht24bG9DlMi/HCb1sAOFdvlGmF0uf9yT?=
- =?us-ascii?Q?RBcWxCBNi+ivy56S1abBqHoWmlPqdXoI2dkqBWDxitar+8yeSgqPJNlfw1JO?=
- =?us-ascii?Q?O3i+wDoJ3mu7wgPQseJ/pcCLyN8N/9113rId4nFXAbpTXELaRjlw0cqDp47e?=
- =?us-ascii?Q?3uwUrb9GEWLUm7tZ9p14gEMPuGS+c+YF0Fw8l0RGgclue0GKpiujBO38QAHm?=
- =?us-ascii?Q?6Pr3bci9gjbpqKCF8+s08anCE1Ki9E9ha99CWVUHYv1jIXzJDWJuBiT8er6D?=
- =?us-ascii?Q?gvTvaFM0reD1pRfPzsQVMItfRLg/AfUAB4yHwXE0J8B5X7YqKTw70qgcmZHf?=
- =?us-ascii?Q?xBhgKXYrSI4uHtAQ3FMmAcylnghGbIY0xif5TU6mUaz+tKEqrnC0S984uovs?=
- =?us-ascii?Q?YaLb+X/sqvaA+A1FZ1y3q0mq+PqWiveEAKQkudGaiyEGBKoocpdVj9XjEsYM?=
- =?us-ascii?Q?79cillnRAY+/U90ZSqmoQmKed0loiv0p5qv08ZIZtH/ValKta1i+FyAci6x/?=
- =?us-ascii?Q?3EgBYvspJv2XCusBt2+3gDmv1GlSD4k+vnjTc5Bp1mtVdIdCPAQKz5MqQfV1?=
- =?us-ascii?Q?yN9g01NykRjA2FPjMUnaUbN7kIElWY4dJSg9/KqbSXA1DWtb0b2hGncyAAhE?=
- =?us-ascii?Q?dWttapqdDeUdqZjj2Y9GEgQZAIrsuH9bQR5+tdasV0EaLsRpozZCQO9Y1gzB?=
- =?us-ascii?Q?goM6m4WM27FnDtVyKAtLr0PEXkxBs/h17WFZ4DLM0yEKWnC79urQHRIUwTy9?=
- =?us-ascii?Q?vecPPtdBvsRnxFXZgRoYr1RQQi6LQOXOfM9vapi13BPMKNHGVE0MIvZLi0DE?=
- =?us-ascii?Q?Sspn0+kU/q+gJcgzqKoPcl7UkTiBAV7F8/VxtFx2bt/4i8lKZ92bVMHwM9s+?=
- =?us-ascii?Q?ClDnI9b1JNAu1MxlzK8046xrzxq+iN0lbSuj/2WFNE21S1oonWhsahUT+ga1?=
- =?us-ascii?Q?8/jXwJp3QIFDl/f0sUFbeb1NWJuU/N/O8nBE7jwJiJsdBbg1rs3XZZY94Hsa?=
- =?us-ascii?Q?TOeACyztqZ6qRpeQCz8oLnmMUdJtGveZHemNnCaZmYotpffG0HNcHO5Vv6pK?=
- =?us-ascii?Q?BXH2+N6hjvT8gAXCbde+SYT9+K/jmxeGGpET4YhkCGObSM7Fv/Mj9T0F236r?=
- =?us-ascii?Q?1EgfbCXc4FNV8H65hBIQkAbprszmsSD0d8ucoQrgQJzpPGW7Kplu0yhUZMmu?=
- =?us-ascii?Q?9OoljftsU+HnTYrh2L/4VPKg0XTYAff0/BlCJ/AVWyKN2Bcw6Y3DJy2G6lEZ?=
- =?us-ascii?Q?FvaTReRzpXKBehn6gLrlucVj+i84yKQVkfPgGj1X?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A06F74409
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 02:12:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729822354; cv=none; b=K+3U6RVngmCpV+cq6ShJLKv+bBqOcZ/+xOhJVoXKZ1kKkn/ZJf9mQiQN4ifZDIR2lXG06z6q6i/kY3eFE+A1lus+5uot2MwS2X1Wf5eRA5LVLn6S8i7t5tSrkHkGt513IUozbx5F/su7DrFs+JpR09EaB0ZFpCZSsxc+fddsWhQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729822354; c=relaxed/simple;
+	bh=1aMxInPhgdbQLKj929wl57Juz1874puJLc85vZ41OdI=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Grei27C9KmOblNXQEq1e6CC9UpBPR35X1QPh50tZrV5X+XJ+gz7h2y1bMLVdbfvCExPaE6QHAsJ+8CJGIZV073F7QmFLbK5gMqUjeB5heXUmLDhyPwK/DcEsalayuVwLEf8JmSYjlSGmQ+Ib8vRqx0yIn/sLRcb5DpdRumLry9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a3ba4fcf24so16794095ab.0
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 19:12:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729822352; x=1730427152;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=T2Oiy5qXfx9l65r4lozq0HbAn1nAorcfgQqKjsjjHp0=;
+        b=wrJcMjWjkGenVPkjl7ARHpJZGuHEiGixim0peUU2ubwLP7o+22eCBhBTsnLv1nOESC
+         Gqj0WEW3DBJrSXcFA+b5L0LlLcTYs1ldQf4C+OUDs5tRSx63M0Gw0Bjhrt6epyR5PeQa
+         Ryi5Rj5mxVjF5wGU8C1rx2kKlQ4xB97QfH98vQqKUp7gDGgTEtrT7Z4750ElUBcrF1dE
+         m9+gReJ7TFal6TdUm+eMmqZ2cAgH+Bk8FGpLmVpBeUA3Z3Hm9aw5CbmLCg0ZkBTTobK6
+         q+KTDhlFG1iMSQUeezrkqxmNkw0Sg7tEsdSH9QoTDxtH7DSxCU7EJz+7tSUlRQCNJXa+
+         l3CQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUwOFUfJKaIQuIz2uCpY+3/q1BMmvnjN7cXzxns+yZiykfQIoqADFV/Bm2q/LPMCv5neQT3O6fQCToD2Yg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxnmOCYg3t1pTuZmzYDEjw52vzG8werqHv6eKmM2BTjMC6Zsg1d
+	H+H+YL1kQpbmcCmfkGNL5RM/t3ykr6bS6R6GI/IUhBlY+f/gPIV7dCp5BssMCJgzQ2k82mHCi9k
+	kRoQm+7OWbFHwzXUjYFMUEKHSYDhelBxfhgPZe1JBB5V/MnxBt9mXkTQ=
+X-Google-Smtp-Source: AGHT+IHqBpPJJCOcW5WSnWSxdL34lrftyAeTP8WsAdMcEov3O+7eNVTJw1iXctMGR+Y7bah7LsSNgWZ6ZLrlr9efeBvVKmckqnlc
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: starfivetech.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5ee6e6b3-d73d-4fde-4029-08dcf49a4b03
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Oct 2024 02:11:09.9851
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: IWUOU/V0TMVBtWqtZYRUHVoPBH7Stv2DWeBoLKMXp40YWR4CSWehTrLIfYwqIPwHZwlPX0ZRymA/9FkfTfOoj3alE0YNKj+Ec36Ae+u2xUQ=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: ZQ2PR01MB1291
+X-Received: by 2002:a05:6e02:1a67:b0:3a0:b384:219b with SMTP id
+ e9e14a558f8ab-3a4d59ff663mr81867485ab.26.1729822351735; Thu, 24 Oct 2024
+ 19:12:31 -0700 (PDT)
+Date: Thu, 24 Oct 2024 19:12:31 -0700
+In-Reply-To: <66f76648.050a0220.46d20.002c.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <671afe8f.050a0220.381c35.0007.GAE@google.com>
+Subject: Re: [syzbot] [bcachefs?] kernel BUG in bch2_fs_btree_write_buffer_exit
+From: syzbot <syzbot+e4b5080f1e963225063e@syzkaller.appspotmail.com>
+To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-> On 23.9.24 20:13, Andrew Lunn wrote:
-> > > > +	reset_test =3D ccan_read_reg_8bit(priv, CCAN_CFG_STAT);
-> > > > +
-> > > > +	if (!(reset_test & CCAN_RST_MASK)) {
-> > > > +		netdev_alert(ndev, "Not in reset mode, cannot set bit
-> > > timing\n");
-> > > > +		return -EPERM;
-> > > > +	}
-> > >
-> > >
-> > > You don't see nedev_alert() used very often. If this is fatal then
-> netdev_err().
-> > >
-> > > Also, EPERM? man 3 errno say:
-> > >
-> > >        EPERM           Operation not permitted (POSIX.1-2001).
-> > >
-> > > Why is this a permission issue?
-> >
-> > Will use netdev_err() and return -EWOULDBLOCK instead.
->=20
-> I'm not sure that is any better.
->=20
->        EAGAIN          Resource  temporarily unavailable (may be the same=
- value
->                        as EWOULDBLOCK) (POSIX.1-2001).
->=20
-> This is generally used when the kernel expects user space to try a system=
- call
-> again, and it might then work. Is that what you expect here?
+syzbot has found a reproducer for the following issue on:
 
-The bit timing should only be set when the module is in reset mode.
-So we return an error here if the module is not in the correct mode.
-Could you give me some suggestions about the return value here?
+HEAD commit:    c2ee9f594da8 KVM: selftests: Fix build on on non-x86 archi..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=10580230580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=309bb816d40abc28
+dashboard link: https://syzkaller.appspot.com/bug?extid=e4b5080f1e963225063e
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1218165f980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13d0a8a7980000
 
->=20
-> > > > +static irqreturn_t ccan_interrupt(int irq, void *dev_id) {
-> > > > +	struct net_device *ndev =3D (struct net_device *)dev_id;
-> > >
-> > > dev_id is a void *, so you don't need the cast.
-> >
-> > OK, drop it.
->=20
-> Please look at the whole patch. There might be other instances where a vo=
-id *
-> is used with a cast, which can be removed. This was just the first i spot=
-ted.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/679bd327d6c3/disk-c2ee9f59.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/878a4498ae97/vmlinux-c2ee9f59.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/a01c90b897c0/bzImage-c2ee9f59.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/886e4f0a9bc0/mount_0.gz
 
-OK. Will modify for the whole patch.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+e4b5080f1e963225063e@syzkaller.appspotmail.com
 
-Best regards,
-Hal
+------------[ cut here ]------------
+kernel BUG at fs/bcachefs/btree_write_buffer.c:801!
+Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
+CPU: 1 UID: 0 PID: 5857 Comm: syz-executor596 Not tainted 6.12.0-rc4-syzkaller-00047-gc2ee9f594da8 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+RIP: 0010:bch2_fs_btree_write_buffer_exit+0x1e2/0x1f0 fs/bcachefs/btree_write_buffer.c:800
+Code: 00 4c 89 f7 31 f6 e8 1d 41 da fd 5b 41 5c 41 5d 41 5e 41 5f 5d e9 f9 e1 cb 07 e8 c9 78 70 fd e9 f9 fe ff ff e8 bf 78 70 fd 90 <0f> 0b 66 2e 0f 1f 84 00 00 00 00 00 66 90 90 90 90 90 90 90 90 90
+RSP: 0018:ffffc90004a77b70 EFLAGS: 00010293
+RAX: ffffffff84245f21 RBX: 00000000000ffffe RCX: ffff88806e189e00
+RDX: 0000000000000000 RSI: 00000000000ffffe RDI: 00000000000fffff
+RBP: ffff888067200000 R08: ffffffff84245e03 R09: 1ffff1100ce4965e
+R10: dffffc0000000000 R11: ffffed100ce4965f R12: dffffc0000000000
+R13: ffff888067200000 R14: ffff8880672045d8 R15: ffff8880672046a0
+FS:  000055557d532380(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055557d53b6f8 CR3: 0000000024df8000 CR4: 0000000000350ef0
+Call Trace:
+ <TASK>
+ __bch2_fs_free fs/bcachefs/super.c:566 [inline]
+ bch2_fs_release+0x2fd/0x7d0 fs/bcachefs/super.c:610
+ kobject_cleanup lib/kobject.c:689 [inline]
+ kobject_release lib/kobject.c:720 [inline]
+ kref_put include/linux/kref.h:65 [inline]
+ kobject_put+0x231/0x480 lib/kobject.c:737
+ deactivate_locked_super+0xc6/0x130 fs/super.c:473
+ cleanup_mnt+0x41f/0x4b0 fs/namespace.c:1373
+ task_work_run+0x251/0x310 kernel/task_work.c:239
+ ptrace_notify+0x2d2/0x380 kernel/signal.c:2403
+ ptrace_report_syscall include/linux/ptrace.h:415 [inline]
+ ptrace_report_syscall_exit include/linux/ptrace.h:477 [inline]
+ syscall_exit_work+0xc6/0x190 kernel/entry/common.c:173
+ syscall_exit_to_user_mode_prepare kernel/entry/common.c:200 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:205 [inline]
+ syscall_exit_to_user_mode+0x279/0x370 kernel/entry/common.c:218
+ do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fe5ea8b56c7
+Code: 00 00 00 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 31 f6 e9 09 00 00 00 66 0f 1f 84 00 00 00 00 00 b8 a6 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 01 c3 48 c7 c2 b8 ff ff ff f7 d8 64 89 02 b8
+RSP: 002b:00007ffdef8fdfc8 EFLAGS: 00000202 ORIG_RAX: 00000000000000a6
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: 00007fe5ea8b56c7
+RDX: 0000000000000000 RSI: 0000000000000009 RDI: 00007ffdef8fe080
+RBP: 00007ffdef8fe080 R08: 0000000000000000 R09: 0000000000000000
+R10: 00000000ffffffff R11: 0000000000000202 R12: 00007ffdef8ff0f0
+R13: 000055557d5336c0 R14: 00007ffdef8ff0e8 R15: 431bde82d7b634db
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:bch2_fs_btree_write_buffer_exit+0x1e2/0x1f0 fs/bcachefs/btree_write_buffer.c:800
+Code: 00 4c 89 f7 31 f6 e8 1d 41 da fd 5b 41 5c 41 5d 41 5e 41 5f 5d e9 f9 e1 cb 07 e8 c9 78 70 fd e9 f9 fe ff ff e8 bf 78 70 fd 90 <0f> 0b 66 2e 0f 1f 84 00 00 00 00 00 66 90 90 90 90 90 90 90 90 90
+RSP: 0018:ffffc90004a77b70 EFLAGS: 00010293
+
+RAX: ffffffff84245f21 RBX: 00000000000ffffe RCX: ffff88806e189e00
+RDX: 0000000000000000 RSI: 00000000000ffffe RDI: 00000000000fffff
+RBP: ffff888067200000 R08: ffffffff84245e03 R09: 1ffff1100ce4965e
+R10: dffffc0000000000 R11: ffffed100ce4965f R12: dffffc0000000000
+R13: ffff888067200000 R14: ffff8880672045d8 R15: ffff8880672046a0
+FS:  000055557d532380(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055557d53b6f8 CR3: 0000000024df8000 CR4: 0000000000350ef0
+
+
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
