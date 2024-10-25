@@ -1,110 +1,97 @@
-Return-Path: <linux-kernel+bounces-381631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15D2E9B01C2
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 13:56:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 860A09B01CA
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 14:00:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BAB301F2244D
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 11:56:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1D4B8B21CCA
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 12:00:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5EF01FF7B9;
-	Fri, 25 Oct 2024 11:56:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C9B7202622;
+	Fri, 25 Oct 2024 12:00:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kijh+oDs"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eFMr3E5a"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7827D1B6D1E;
-	Fri, 25 Oct 2024 11:56:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7DA218B48F;
+	Fri, 25 Oct 2024 12:00:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729857395; cv=none; b=BPsIChgS1iU2J/SSvySpDfNle065sGAxQuxFYwJf4ATd427dx7CKlJYL56PxH5JUJvvBo8urN9l4NkhvM0cMZrWtY9JsBBZj8YAi3H7x27jPehpygqTflXlH85GrV4zZtZaNecgi8g0UwcP1WjqoqRq4eKhbcCnpYsy/9tMPiUo=
+	t=1729857629; cv=none; b=B/niz5O/NQih93t4AA6GVRaFmJ9mzMVpdJ1jEplu/HyilYgklvz+tyccjSEgIDl+8bkC4/sky0gGpOckwF4ZVIXoJpHDawMOAu4SLXkDjsq2vIJpffv29nO9myHSMh7RA+TAmn2ETEt2OXMbTZR+c2VvT5eYvNgbx8+ag5mKrrU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729857395; c=relaxed/simple;
-	bh=6HqTo/vuQ12dw/8DMCMepPCaa6btVdh3kQW8Yveq/xk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ErSOdjj8kKoLcyOsqFf7l5WMdjVdK6wdGL1TOP0GVHuqOGXx2MvEMkM53gkNF2p7yMTmZtmXP4DndpPCNO2YGJD6Wm0c6UZGTMXto04hceaQLGDg3qPZG/GwPUoH9aCX2bG/PNstsfOOgzfQ/wfdYSNjDK+PaecVu77iGQBYmsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kijh+oDs; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-7204dff188eso928063b3a.1;
-        Fri, 25 Oct 2024 04:56:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729857393; x=1730462193; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Jtuzcx/hdWcvqRVO+awpwiv6gXjX6atu7il7J/8W+2E=;
-        b=kijh+oDsNeLb5WzdFdEyFO31C58Cv6PuqRlkwPBimI2vIKdcdC2bxV73RgmKsskFtu
-         SZNSJqigMd29umj7EJnLKKm6KM8/tUxIKVu0ccLmUeDjbbOrTDjmz++suLXVtdYNHSKb
-         x/1uBnzw3IkfKnLZClNxQf7iFe1ZV/zBrM9i0mYyCojl1BeU1DuODgGa4XGjbJq3UKG+
-         WfZ1e67dw5H88NJCRPwTP4jryE/FCZDSe+f/zVIgFrv3XRz+VzoI1vyEldzd3YSSsn46
-         OgA600KKA7D6cwtcy4S6YdzdVfzBLr7A0RBbHROTbU+8HBXEBW/fYq5SbvirTzmbQVGE
-         /RRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729857393; x=1730462193;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Jtuzcx/hdWcvqRVO+awpwiv6gXjX6atu7il7J/8W+2E=;
-        b=UzLTRAw0X+1oUpOUoiTwaGb4cZ5g/BGCsUg8vKxc6WXz4Z2yj3BypRi+oK3kKfT+Aq
-         wrMnHrXgf3FZd3ySgvbm6cs46omy4TO0jvF/6WwqVzjbzg0gQCch3rNoJpsP8JgWcVLY
-         4TB7/5mn4zjFR0+Erxz/SlQoD63Iki/LpAEYasxSps9bYldP2ziQSHB7RzVySrsLeS/z
-         j9IYwj47Iq5P4B3lX5LbpshU2zP8HHqLcruu7nqq02MdXpLbBal3pgrEUsF6vl8J3b33
-         i84B462hHyBYfNTSG7VxvO9ts38Sn4zRBnwvF0Q8PWnzdsDexyRNOxVKaiD6pf4gv0vs
-         lE2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUpu5xSWIDo/yoBd8zwZbSO+UmH0LeE09TPsIUs8QPn2nX8m62G/xtxsmp43RmnwAcZjqt6enz+q9OsFjw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwUoVBkGfE7CV9T8Xx8+X32590tQuHEvvbVofg1fkSYBQcwbSe
-	9PcEjYep/+e8xlwbREuMfKwIqjUgnMZ6mJKyy7pqGorIFV+nCgkM
-X-Google-Smtp-Source: AGHT+IF3y9KZ65luuZBemliAlnSB7asdtvZRjwl86FCjOLiFWv/tcBwE39EqJ/JoFeUleIdzn2CnkA==
-X-Received: by 2002:a05:6a00:852:b0:71e:3b8f:926 with SMTP id d2e1a72fcca58-72030b677bcmr13363511b3a.22.1729857392634;
-        Fri, 25 Oct 2024 04:56:32 -0700 (PDT)
-Received: from kernelexploit-virtual-machine.localdomain ([121.185.186.233])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72057a3da8dsm911687b3a.195.2024.10.25.04.56.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2024 04:56:32 -0700 (PDT)
-From: Jeongjun Park <aha310510@gmail.com>
-To: kent.overstreet@linux.dev
-Cc: linux-bcachefs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	syzbot+b468b9fef56949c3b528@syzkaller.appspotmail.com,
-	Jeongjun Park <aha310510@gmail.com>
-Subject: [PATCH v2] bcachefs: fix null-ptr-deref in have_stripes()
-Date: Fri, 25 Oct 2024 20:56:18 +0900
-Message-Id: <20241025115618.2908-1-aha310510@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1729857629; c=relaxed/simple;
+	bh=JQwR/chXzlq/cfm1F9FSdwlz8BaZGJQ7hxLBy6o2r70=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YkCdjYQ1HXkoTO+evj9Hj0UDIseJ3RCVbuk50UWYvB/o6UIwiByZ/iDlB1YAUcvwRNh5zHQYFQEtq5CDa/bJBRA85lCMJft57f73O2K6+st3tDpqhrSgmnmt4guYOuobobGwnfcRcVjEdBVIwdi/6Cvf1+URurxHbvt8TO/PvEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eFMr3E5a; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B975C4CECD;
+	Fri, 25 Oct 2024 12:00:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729857629;
+	bh=JQwR/chXzlq/cfm1F9FSdwlz8BaZGJQ7hxLBy6o2r70=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eFMr3E5atngJrrfXomJ8sggk5kYc52xPUiMWbJG8e9REsB8qS6m5oKahLDsOrS6ej
+	 XcP97XsIAB1fTjdXj9bfR97BlvQ9Pt1HobJFz1wC0+MfYfzIelt6KlgTKEt7Zbdv7w
+	 KN+NYfE3+8MBy1yt070yeslEuOv/Au6GoVwWRzVZHKJYrNsbAvRITn7o2alDGDknXT
+	 J/yQqpcO+Dr8HDZqc1RmYzTjuoF/VEO5SumcAyHBEIIVXRS3/RZF4eTONinhHQg3ih
+	 r3NWn/NChPENa3ZolwDaxUi7Gfgl48YKM+wPyFfEqoaPhyGbOGq8NXn/cofUnp/MC/
+	 TTXjAC25znh5A==
+Date: Fri, 25 Oct 2024 14:00:25 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+Cc: andersson@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, konradybcio@kernel.org, 
+	catalin.marinas@arm.com, will@kernel.org, p.zabel@pengutronix.de, 
+	richardcochran@gmail.com, geert+renesas@glider.be, dmitry.baryshkov@linaro.org, 
+	angelogioacchino.delregno@collabora.com, neil.armstrong@linaro.org, arnd@arndb.de, 
+	nfraprado@collabora.com, quic_anusha@quicinc.com, linux-arm-msm@vger.kernel.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org, quic_srichara@quicinc.com, 
+	quic_varada@quicinc.com
+Subject: Re: [PATCH v8 4/7] dt-bindings: clock: Add ipq9574 NSSCC clock and
+ reset definitions
+Message-ID: <lyafg7jwbwoe3j7voecgd5tnhrb65utc3vkc5qqxoqug3qd47m@iudkp4w2mrso>
+References: <20241025035520.1841792-1-quic_mmanikan@quicinc.com>
+ <20241025035520.1841792-5-quic_mmanikan@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241025035520.1841792-5-quic_mmanikan@quicinc.com>
 
-c->btree_roots_known[i].b can be NULL. In this case, a NULL pointer dereference
-occurs, so you need to add code to check the variable.
+On Fri, Oct 25, 2024 at 09:25:17AM +0530, Manikanta Mylavarapu wrote:
+> From: Devi Priya <quic_devipriy@quicinc.com>
+> 
+> Add NSSCC clock and reset definitions for ipq9574.
+> 
+> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
+> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+> ---
+> Changes in V8:
+> 	- Replace bias_pll_cc_clk, bias_pll_ubi_nc_clk with CMN_PLL
+> 	  NSS_1200MHZ_CLK and PPE_353MHZ_CLK
+> 	- Remove bias_pll_nss_noc_clk because it's not required.
+> 	- Drop R-b tag
 
-Reported-by: syzbot+b468b9fef56949c3b528@syzkaller.appspotmail.com
-Fixes: 7773df19c35f ("bcachefs: metadata version bucket_stripe_sectors")
-Signed-off-by: Jeongjun Park <aha310510@gmail.com>
----
- fs/bcachefs/sb-downgrade.c | 3 +++
- 1 file changed, 3 insertions(+)
+That's not really a change waranting re-review.
 
-diff --git a/fs/bcachefs/sb-downgrade.c b/fs/bcachefs/sb-downgrade.c
-index ae715ff658e8..8767c33c2b51 100644
---- a/fs/bcachefs/sb-downgrade.c
-+++ b/fs/bcachefs/sb-downgrade.c
-@@ -143,6 +143,9 @@ UPGRADE_TABLE()
- 
- static int have_stripes(struct bch_fs *c)
- {
-+	if (IS_ERR_OR_NULL(c->btree_roots_known[BTREE_ID_stripes].b))
-+		return 0;
-+
- 	return !btree_node_fake(c->btree_roots_known[BTREE_ID_stripes].b);
- }
- 
---
+I wished you did not create here dependency, skipped the header and just
+use some number for the clock. Having dependencies does not help anyone:
+neither you to get this merged, nor us to see that it was tested.
+
+Please confirm that this patch was fully tested.
+
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+Best regards,
+Krzysztof
+
 
