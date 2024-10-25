@@ -1,665 +1,239 @@
-Return-Path: <linux-kernel+bounces-381764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD0269B03F6
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:25:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E01509B03FB
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:25:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 426F81F239FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 13:25:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10F981C226C0
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 13:25:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3F661FB88B;
-	Fri, 25 Oct 2024 13:25:02 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91D7970815;
-	Fri, 25 Oct 2024 13:24:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9411B1632D6;
+	Fri, 25 Oct 2024 13:25:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O/ORAz4F"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 770CA70830;
+	Fri, 25 Oct 2024 13:25:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729862701; cv=none; b=SRfcap8Xit6bvQvmvv/mb5iIfHpq/G9hxdiZ0dwa8CzEqdsXMftRvf25vtUb2p8bBhCOQCiK5vwJSVphqaeqCF9birMc0TyzDtfO7+GO8sfXiGe9ibQ4XZ7LmCpa3BedjRnFkeEspx9LOwXQjqVf5eeXaaS+dDdivArN8m22LYY=
+	t=1729862703; cv=none; b=ZhPqJ42kIUMdU76p/BCBrp/VoCrBilpVblZcTAB4rPuX0STbPRImZ2OHDZVMz/OWbc4fNGxudb5hZJa8iOuOCo80Bz+CjIcR6EHy0Mczz9eDAMdt2UG1Uvezj9kHY/kN6vpShPDMjI10Dxlw7my9KtBRqXHGUxf5omZb5koGPf8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729862701; c=relaxed/simple;
-	bh=9kIPJntVFBJpIRVJQlNXZDtAH3SnFCOm/q6zzE8MoK4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Jw5JcL8aieKkfkGAoBcvxzQPtPU2wyFYwloQY95qkUrtK+0pnvES3i6vHglDwGdnCwiwJddUxT2o60tcO3I4wV8puU0lkh/2ZR5g3UjqAyWhcAnHk865+DsBQq8qAelkdtjC0F2fk+cplCZKv6B4e2gTb4gXCB2lgLR7vdcf+ME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C656D339;
-	Fri, 25 Oct 2024 06:25:27 -0700 (PDT)
-Received: from [10.1.36.18] (e122027.cambridge.arm.com [10.1.36.18])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4E7BA3F71E;
-	Fri, 25 Oct 2024 06:24:51 -0700 (PDT)
-Message-ID: <e1b8fca1-bdf1-4ac8-9e02-fe0ca4aa2fcf@arm.com>
-Date: Fri, 25 Oct 2024 14:24:43 +0100
+	s=arc-20240116; t=1729862703; c=relaxed/simple;
+	bh=gQI8AnluPQVjf5h9lbIkR64rIZxE+qdCSb0pvD97Q9c=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=s8mmlK9K/jPCeL5HjA/Xsq6s9dY2LyJmjNf3xfZMatwqo0ukyintLcUxz+Yx7TDKFs6U4cQEDs7TZt6ChbDoLWs45ktomGEWV0YFXp1+eynGzBr3taTjRy9aIeCQxUBUOfC8z/3JmoEr08baiLFdqJYxU/61xCtmNUU1pQREEsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O/ORAz4F; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43152b79d25so18856215e9.1;
+        Fri, 25 Oct 2024 06:25:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729862700; x=1730467500; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=6QG7Ws+6+SNR9ioREvh/7ICHjVTNzGhU7yaZq8M3HQ4=;
+        b=O/ORAz4FnSJLjL3QUDEqLPryBDlOwuYrGdgpcnIBqihcYlOWcZPLGqTl6t12x6iB7d
+         k/rvfJobgqeEHz3/1euOzjRT7jdcF8NQPxdp4tEb9YgzyQQtnhU1UPXpzXKec8Qv1Xzi
+         EK5WZQI+6ZAOQuLkQiYnq+UFJNciYs/F5K5XE0XIktCVcnZk0zWInGUwJeuoyMDpHq1+
+         4K1a9IiWQT3/FxsHSTANotkZBqjxcQVBalVVY6vgcVccdto0qPDdzQLu1NpssWueggOd
+         DYgC2axNWeDaPmvwDiN/4cyhyjf973w4fCeGxexpJbHyzSlL0QDwn2pZe+GRn0UtU6Ul
+         BQrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729862700; x=1730467500;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6QG7Ws+6+SNR9ioREvh/7ICHjVTNzGhU7yaZq8M3HQ4=;
+        b=bzs8OxEx11H3Aoibsj5vK6eKdgpbNp2S1thxHwqc1Phu6VJTMHlljsvLxZu2OnmyEA
+         nPWdDtGcmRkQA4EoQemKM8ac+W3/vZRd6/c4oBdQtyjpXQLbM4hQrrlp9bPCB0L5RpmP
+         SAy0viGXjB5SYOUAx7pngV5UH8MX2T+oW82Wu2FeHvuJPVt1/u7nVsLyO+epMK+3UgZG
+         q+weJirLnbvZFAwQVfgolZTDsTkHj4floO9aGXheqJMuzn1/IU6rzGMY9qZSRqxxhml0
+         maJD7eGHx07ohT611aZN5RQitKBTWqJ5TRh1PlM3egpcbyUmqgLRhD1Oki2OgZBCD7wd
+         9PJA==
+X-Forwarded-Encrypted: i=1; AJvYcCUdpCoIHLvY6dyKAY0WhrGZsaljMyhk3AxYGwen6Q+/GWKpghHcNW3McDitDIKvom9SVlh9eXzKmux7C71k@vger.kernel.org, AJvYcCUqtj4cgD7PONt4k63eb7qV9YuHtQUPHfi3CzjQIUzgL7kG/5OKxHXfkoZTOdDnUjrhB3GKC2jbzLxn@vger.kernel.org, AJvYcCVRtG4EZeA5GuENCT4JKRREqv5RNbxCnly2cAtRsLtHL8kVdZSCuWy47R4YAOSv5LzOfX6rL+YqKdYJ@vger.kernel.org, AJvYcCWfaz29KHUngZjynUKbnDK3zp5zPMVe5lahCDt53wJfAejcW03aSvUkM1RBy/cgkYi2gfl/Nr11ujGu@vger.kernel.org, AJvYcCXcQ7wX6pAnx43dt4Q8QjI6OqxJ/5EuHZ7Ax3IlZskwnDtQFtZViHW8J8NfemIM6zOl+3JkntQyE7iu@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyh4v2kfXQMKzQrfZPn1LDiD0G1gHa40evQy65IMSBKq4hI4umW
+	Y0Z4vRb4pbTavgrDcg9tLMOjSAS7WGuHMRJjsVyNE7eYJtpISCgb
+X-Google-Smtp-Source: AGHT+IF1i/8pAlv114ybh4HJ+3sr/T3dg6DbQ/nVTN+F6FLTDerxqpIrM0OKiBQlHItNSqGIpLa1ig==
+X-Received: by 2002:a05:600c:35cd:b0:430:52ec:1e41 with SMTP id 5b1f17b1804b1-4318415c0acmr96593995e9.17.1729862699565;
+        Fri, 25 Oct 2024 06:24:59 -0700 (PDT)
+Received: from nsa.fritz.box ([2001:a61:34c9:ea01:14b4:7ed9:5135:9381])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431935a4c0esm17805085e9.27.2024.10.25.06.24.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Oct 2024 06:24:59 -0700 (PDT)
+Message-ID: <1f4156e8c6c4da09fc5d72661d1e002ae6ee4f31.camel@gmail.com>
+Subject: Re: [PATCH RFC v4 11/15] iio: buffer-dmaengine: add
+ devm_iio_dmaengine_buffer_setup_ext2()
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: David Lechner <dlechner@baylibre.com>, Mark Brown <broonie@kernel.org>, 
+ Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Nuno =?ISO-8859-1?Q?S=E1?= <nuno.sa@analog.com>, Uwe
+ =?ISO-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>
+Cc: Michael Hennerich <Michael.Hennerich@analog.com>, Lars-Peter Clausen
+	 <lars@metafoo.de>, David Jander <david@protonic.nl>, Martin Sperl
+	 <kernel@martin.sperl.org>, linux-spi@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-iio@vger.kernel.org, linux-pwm@vger.kernel.org
+Date: Fri, 25 Oct 2024 15:24:58 +0200
+In-Reply-To: <20241023-dlech-mainline-spi-engine-offload-2-v4-11-f8125b99f5a1@baylibre.com>
+References: 
+	<20241023-dlech-mainline-spi-engine-offload-2-v4-0-f8125b99f5a1@baylibre.com>
+	 <20241023-dlech-mainline-spi-engine-offload-2-v4-11-f8125b99f5a1@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 06/43] arm64: RME: Add wrappers for RMI calls
-To: Gavin Shan <gshan@redhat.com>, kvm@vger.kernel.org, kvmarm@lists.linux.dev
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
- Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
- Oliver Upton <oliver.upton@linux.dev>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
- <yuzenghui@huawei.com>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Joey Gouly <joey.gouly@arm.com>,
- Alexandru Elisei <alexandru.elisei@arm.com>,
- Christoffer Dall <christoffer.dall@arm.com>, Fuad Tabba <tabba@google.com>,
- linux-coco@lists.linux.dev,
- Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
- Shanker Donthineni <sdonthineni@nvidia.com>, Alper Gun
- <alpergun@google.com>, "Aneesh Kumar K . V" <aneesh.kumar@kernel.org>
-References: <20241004152804.72508-1-steven.price@arm.com>
- <20241004152804.72508-7-steven.price@arm.com>
- <d3e0b74a-7c01-487e-ac77-5c8afbd720d4@redhat.com>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <d3e0b74a-7c01-487e-ac77-5c8afbd720d4@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 
-On 25/10/2024 08:03, Gavin Shan wrote:
-> On 10/5/24 1:27 AM, Steven Price wrote:
->> The wrappers make the call sites easier to read and deal with the
->> boiler plate of handling the error codes from the RMM.
->>
->> Signed-off-by: Steven Price <steven.price@arm.com>
->> ---
->> Changes from v4:
->>   * Improve comments
->> Changes from v2:
->>   * Make output arguments optional.
->>   * Mask RIPAS value rmi_rtt_read_entry()
->>   * Drop unused rmi_rtt_get_phys()
->> ---
->>   arch/arm64/include/asm/rmi_cmds.h | 510 ++++++++++++++++++++++++++++++
->>   1 file changed, 510 insertions(+)
->>   create mode 100644 arch/arm64/include/asm/rmi_cmds.h
->>
->> diff --git a/arch/arm64/include/asm/rmi_cmds.h
->> b/arch/arm64/include/asm/rmi_cmds.h
->> new file mode 100644
->> index 000000000000..3ed32809a608
->> --- /dev/null
->> +++ b/arch/arm64/include/asm/rmi_cmds.h
->> @@ -0,0 +1,510 @@
->> +/* SPDX-License-Identifier: GPL-2.0 */
->> +/*
->> + * Copyright (C) 2023 ARM Ltd.
->> + */
->> +
->> +#ifndef __ASM_RMI_CMDS_H
->> +#define __ASM_RMI_CMDS_H
->> +
->> +#include <linux/arm-smccc.h>
->> +
-> 
-> It can be dropped since the header file has been included by
-> <asm/rmi_smc.h>
+I still need to look better at this but I do have one though already :)
 
-I thought the usual idea was that you included header files for the
-functions you needed. While technically it can be dropped, the only
-reason asm/rmi_smc.h includes linux/arm-smccc.h is because of the
-ARM_SMCCC_CALL_VAL() macro. If that macro were to be moved to another
-file in the future then the linux/arm-smccc.h include would be dropped.
-Whereas rmi_cmds.h obviously needs that file for arm_smccc_1_1_invoke()
-and relevant structs.
+On Wed, 2024-10-23 at 15:59 -0500, David Lechner wrote:
+> Add a new devm_iio_dmaengine_buffer_setup_ext2() function to handle
+> cases where the DMA channel is managed by the caller rather than being
+> requested and released by the iio_dmaengine module.
+>=20
+> Signed-off-by: David Lechner <dlechner@baylibre.com>
+> ---
+>=20
+> v4 changes:
+> * This replaces "iio: buffer-dmaengine: generalize requesting DMA channel=
+"
+> ---
+> =C2=A0drivers/iio/buffer/industrialio-buffer-dmaengine.c | 107 ++++++++++=
++++++------
+> =C2=A0include/linux/iio/buffer-dmaengine.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 5 +
+> =C2=A02 files changed, 81 insertions(+), 31 deletions(-)
+>=20
+> diff --git a/drivers/iio/buffer/industrialio-buffer-dmaengine.c
+> b/drivers/iio/buffer/industrialio-buffer-dmaengine.c
+> index 054af21dfa65..602cb2e147a6 100644
+> --- a/drivers/iio/buffer/industrialio-buffer-dmaengine.c
+> +++ b/drivers/iio/buffer/industrialio-buffer-dmaengine.c
+> @@ -33,6 +33,7 @@ struct dmaengine_buffer {
+> =C2=A0	struct iio_dma_buffer_queue queue;
+> =C2=A0
+> =C2=A0	struct dma_chan *chan;
+> +	bool owns_chan;
+> =C2=A0	struct list_head active;
+> =C2=A0
+> =C2=A0	size_t align;
+> @@ -216,28 +217,23 @@ static const struct iio_dev_attr
+> *iio_dmaengine_buffer_attrs[] =3D {
+> =C2=A0 * Once done using the buffer iio_dmaengine_buffer_free() should be=
+ used to
+> =C2=A0 * release it.
+> =C2=A0 */
+> -static struct iio_buffer *iio_dmaengine_buffer_alloc(struct device *dev,
+> -	const char *channel)
+> +static struct iio_buffer *iio_dmaengine_buffer_alloc(struct dma_chan *ch=
+an,
+> +						=C2=A0=C2=A0=C2=A0=C2=A0 bool owns_chan)
+> =C2=A0{
+> =C2=A0	struct dmaengine_buffer *dmaengine_buffer;
+> =C2=A0	unsigned int width, src_width, dest_width;
+> =C2=A0	struct dma_slave_caps caps;
+> -	struct dma_chan *chan;
+> =C2=A0	int ret;
+> =C2=A0
+> =C2=A0	dmaengine_buffer =3D kzalloc(sizeof(*dmaengine_buffer), GFP_KERNEL=
+);
+> -	if (!dmaengine_buffer)
+> -		return ERR_PTR(-ENOMEM);
+> -
+> -	chan =3D dma_request_chan(dev, channel);
+> -	if (IS_ERR(chan)) {
+> -		ret =3D PTR_ERR(chan);
+> -		goto err_free;
+> +	if (!dmaengine_buffer) {
+> +		ret =3D -ENOMEM;
+> +		goto err_release;
+> =C2=A0	}
+> =C2=A0
+> =C2=A0	ret =3D dma_get_slave_caps(chan, &caps);
+> =C2=A0	if (ret < 0)
+> -		goto err_release;
+> +		goto err_free;
+> =C2=A0
+> =C2=A0	/* Needs to be aligned to the maximum of the minimums */
+> =C2=A0	if (caps.src_addr_widths)
+> @@ -252,6 +248,7 @@ static struct iio_buffer *iio_dmaengine_buffer_alloc(=
+struct
+> device *dev,
+> =C2=A0
+> =C2=A0	INIT_LIST_HEAD(&dmaengine_buffer->active);
+> =C2=A0	dmaengine_buffer->chan =3D chan;
+> +	dmaengine_buffer->owns_chan =3D owns_chan;
+> =C2=A0	dmaengine_buffer->align =3D width;
+> =C2=A0	dmaengine_buffer->max_size =3D dma_get_max_seg_size(chan->device->=
+dev);
+> =C2=A0
+> @@ -263,10 +260,12 @@ static struct iio_buffer *iio_dmaengine_buffer_allo=
+c(struct
+> device *dev,
+> =C2=A0
+> =C2=A0	return &dmaengine_buffer->queue.buffer;
+> =C2=A0
+> -err_release:
+> -	dma_release_channel(chan);
+> =C2=A0err_free:
+> =C2=A0	kfree(dmaengine_buffer);
+> +err_release:
+> +	if (owns_chan)
+> +		dma_release_channel(chan);
+> +
+> =C2=A0	return ERR_PTR(ret);
+> =C2=A0}
+> =C2=A0
+> @@ -282,12 +281,38 @@ void iio_dmaengine_buffer_free(struct iio_buffer *b=
+uffer)
+> =C2=A0		iio_buffer_to_dmaengine_buffer(buffer);
+> =C2=A0
+> =C2=A0	iio_dma_buffer_exit(&dmaengine_buffer->queue);
+> -	dma_release_channel(dmaengine_buffer->chan);
+> -
+> =C2=A0	iio_buffer_put(buffer);
+> +
+> +	if (dmaengine_buffer->owns_chan)
+> +		dma_release_channel(dmaengine_buffer->chan);
 
->> +#include <asm/rmi_smc.h>
->> +
->> +struct rtt_entry {
->> +    unsigned long walk_level;
->> +    unsigned long desc;
->> +    int state;
->> +    int ripas;
->> +};
->> +
->> +/**
->> + * rmi_data_create() - Create a Data Granule
->> + * @rd: PA of the RD
->> + * @data: PA of the target granule
->> + * @ipa: IPA at which the granule will be mapped in the guest
->> + * @src: PA of the source granule
->> + * @flags: RMI_MEASURE_CONTENT if the contents should be measured
->> + *
->> + * Create a new Data Granule, copying contents from a Non-secure
->> Granule.
->> + *
->> + * Return: RMI return code
->> + */
->> +static inline int rmi_data_create(unsigned long rd, unsigned long data,
->> +                  unsigned long ipa, unsigned long src,
->> +                  unsigned long flags)
->> +{
->> +    struct arm_smccc_res res;
->> +
->> +    arm_smccc_1_1_invoke(SMC_RMI_DATA_CREATE, rd, data, ipa, src,
->> +                 flags, &res);
->> +
->> +    return res.a0;
->> +}
->> +
-> 
-> Is there a particular reason why the first letter for 'Data Granule' and
-> 'Granule' has to be upper-case?
+Not sure if I agree much with this owns_chan flag. The way I see it, we sho=
+uld always
+handover the lifetime of the DMA channel to the IIO DMA framework. Note tha=
+t even the
+device you pass in for both requesting the channel of the spi_offload  and =
+for
+setting up the DMA buffer is the same (and i suspect it will always be) so =
+I would
+not go with the trouble. And with this assumption we could simplify a bit m=
+ore the
+spi implementation.
 
-I think I was trying to rub in that "Granule" has a specific meaning the
-spec, but actually this file is a mish-mash of different capitalisation.
-I'll switch to lower case - the upper case is more confusing that helpful.
+And not even related but I even suspect the current implementation could be
+problematic. Basically I'm suspecting that the lifetime of the DMA channel =
+should be
+attached to the lifetime of the iio_buffer. IOW, we should only release the=
+ channel
+in iio_dmaengine_buffer_release() - in which case the current implementatio=
+n with the
+spi_offload would also be buggy.
 
->> +/**
->> + * rmi_data_create_unknown() - Create a Data Granule with unknown
->> contents
->> + * @rd: PA of the RD
->> + * @data: PA of the target granule
->> + * @ipa: IPA at which the granule will be mapped in the guest
->> + *
->> + * Create a new Data Granule with unknown contents
->       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> 
-> This line can be dropped since the same content has been given at the
-> beginning.
+But bah, the second point is completely theoretical and likely very hard to=
+ reproduce
+in real life (if reproducible at all - for now it's only something I suspec=
+t)
 
-Ack
+- Nuno S=C3=A1=20
 
->> + *
->> + * Return: RMI return code
->> + */
->> +static inline int rmi_data_create_unknown(unsigned long rd,
->> +                      unsigned long data,
->> +                      unsigned long ipa)
->> +{
->> +    struct arm_smccc_res res;
->> +
->> +    arm_smccc_1_1_invoke(SMC_RMI_DATA_CREATE_UNKNOWN, rd, data, ipa,
->> &res);
->> +
->> +    return res.a0;
->> +}
->> +
->> +/**
->> + * rmi_data_destroy() - Destroy a Data Granule
->> + * @rd: PA of the RD
->> + * @ipa: IPA at which the granule is mapped in the guest
->> + * @data_out: PA of the granule which was destroyed
->> + * @top_out: Top IPA of non-live RTT entries
->> + *
->> + * Unmap a protected IPA from stage 2, transitioning it to DESTROYED.
->> + * The IPA cannot be used by the guest unless it is transitioned to
->> RAM again
->> + * by the Realm guest.
->> + *
->> + * Return: RMI return code
->> + */
->> +static inline int rmi_data_destroy(unsigned long rd, unsigned long ipa,
->> +                   unsigned long *data_out,
->> +                   unsigned long *top_out)
->> +{
->> +    struct arm_smccc_res res;
->> +
->> +    arm_smccc_1_1_invoke(SMC_RMI_DATA_DESTROY, rd, ipa, &res);
->> +
->> +    if (data_out)
->> +        *data_out = res.a1;
->> +    if (top_out)
->> +        *top_out = res.a2;
->> +
->> +    return res.a0;
->> +}
->> +
->> +/**
->> + * rmi_features() - Read feature register
->> + * @index: Feature register index
->> + * @out: Feature register value is written to this pointer
->> + *
->> + * Return: RMI return code
->> + */
->> +static inline int rmi_features(unsigned long index, unsigned long *out)
->> +{
->> +    struct arm_smccc_res res;
->> +
->> +    arm_smccc_1_1_invoke(SMC_RMI_FEATURES, index, &res);
->> +
->> +    if (out)
->> +        *out = res.a1;
->> +    return res.a0;
->> +}
->> +
->> +/**
->> + * rmi_granule_delegate() - Delegate a Granule
->> + * @phys: PA of the Granule
->> + *
->> + * Delegate a Granule for use by the Realm World.
->> + *
->> + * Return: RMI return code
->> + */
->> +static inline int rmi_granule_delegate(unsigned long phys)
->> +{
->> +    struct arm_smccc_res res;
->> +
->> +    arm_smccc_1_1_invoke(SMC_RMI_GRANULE_DELEGATE, phys, &res);
->> +
->> +    return res.a0;
->> +}
->> +
-> 
-> Same as above, why the first letters for 'Realm World' have to be
-> in upper-case? :-)
-
-Will switch to lower case.
-
->> +/**
->> + * rmi_granule_undelegate() - Undelegate a Granule
->> + * @phys: PA of the Granule
->> + *
->> + * Undelegate a Granule to allow use by the Normal World. Will fail
->> if the
->> + * Granule is in use.
->> + *
->> + * Return: RMI return code
->> + */
->> +static inline int rmi_granule_undelegate(unsigned long phys)
->> +{
->> +    struct arm_smccc_res res;
->> +
->> +    arm_smccc_1_1_invoke(SMC_RMI_GRANULE_UNDELEGATE, phys, &res);
->> +
->> +    return res.a0;
->> +}
->> +
->> +/**
->> + * rmi_psci_complete() - Complete pending PSCI command
->> + * @calling_rec: PA of the calling REC
->> + * @target_rec: PA of the target REC
->> + * @status: Status of the PSCI request
->> + *
->> + * Completes a pending PSCI command which was called with an MPIDR
->> argument, by
->> + * providing the corresponding REC.
->> + *
->> + * Return: RMI return code
->> + */
->> +static inline int rmi_psci_complete(unsigned long calling_rec,
->> +                    unsigned long target_rec,
->> +                    unsigned long status)
->> +{
->> +    struct arm_smccc_res res;
->> +
->> +    arm_smccc_1_1_invoke(SMC_RMI_PSCI_COMPLETE, calling_rec, target_rec,
->> +                 status, &res);
->> +
->> +    return res.a0;
->> +}
->> +
->> +/**
->> + * rmi_realm_activate() - Active a Realm
->> + * @rd: PA of the RD
->> + *
->> + * Mark a Realm as Active signalling that creation is complete and
->> allowing
->> + * execution of the Realm.
->> + *
->> + * Return: RMI return code
->> + */
->> +static inline int rmi_realm_activate(unsigned long rd)
->> +{
->> +    struct arm_smccc_res res;
->> +
->> +    arm_smccc_1_1_invoke(SMC_RMI_REALM_ACTIVATE, rd, &res);
->> +
->> +    return res.a0;
->> +}
->> +
->> +/**
->> + * rmi_realm_create() - Create a Realm
->> + * @rd: PA of the RD
->> + * @params_ptr: PA of Realm parameters
->> + *
->> + * Create a new Realm using the given parameters.
->> + *
->> + * Return: RMI return code
->> + */
->> +static inline int rmi_realm_create(unsigned long rd, unsigned long
->> params_ptr)
->> +{
->> +    struct arm_smccc_res res;
->> +
->> +    arm_smccc_1_1_invoke(SMC_RMI_REALM_CREATE, rd, params_ptr, &res);
->> +
->> +    return res.a0;
->> +}
->> +
->> +/**
->> + * rmi_realm_destroy() - Destroy a Realm
->> + * @rd: PA of the RD
->> + *
->> + * Destroys a Realm, all objects belonging to the Realm must be
->> destroyed first.
->> + *
->> + * Return: RMI return code
->> + */
->> +static inline int rmi_realm_destroy(unsigned long rd)
->> +{
->> +    struct arm_smccc_res res;
->> +
->> +    arm_smccc_1_1_invoke(SMC_RMI_REALM_DESTROY, rd, &res);
->> +
->> +    return res.a0;
->> +}
->> +
->> +/**
->> + * rmi_rec_aux_count() - Get number of auxiliary Granules required
->> + * @rd: PA of the RD
->> + * @aux_count: Number of pages written to this pointer
->> + *
->> + * A REC may require extra auxiliary pages to be delegated for the
->> RMM to
->> + * store metadata (not visible to the normal world) in. This function
->> provides
->> + * the number of pages that are required.
->> + *
->> + * Return: RMI return code
->> + */
->> +static inline int rmi_rec_aux_count(unsigned long rd, unsigned long
->> *aux_count)
->> +{
->> +    struct arm_smccc_res res;
->> +
->> +    arm_smccc_1_1_invoke(SMC_RMI_REC_AUX_COUNT, rd, &res);
->> +
->> +    if (aux_count)
->> +        *aux_count = res.a1;
->> +    return res.a0;
->> +}
->> +
->> +/**
->> + * rmi_rec_create() - Create a REC
->> + * @rd: PA of the RD
->> + * @rec: PA of the target REC
->> + * @params_ptr: PA of REC parameters
->> + *
->> + * Create a REC using the parameters specified in the struct
->> rec_params pointed
->> + * to by @params_ptr.
->> + *
->> + * Return: RMI return code
->> + */
->> +static inline int rmi_rec_create(unsigned long rd, unsigned long rec,
->> +                 unsigned long params_ptr)
->> +{
->> +    struct arm_smccc_res res;
->> +
->> +    arm_smccc_1_1_invoke(SMC_RMI_REC_CREATE, rd, rec, params_ptr, &res);
->> +
->> +    return res.a0;
->> +}
->> +
->> +/**
->> + * rmi_rec_destroy() - Destroy a REC
->> + * @rec: PA of the target REC
->> + *
->> + * Destroys a REC. The REC must not be running.
->> + *
->> + * Return: RMI return code
->> + */
->> +static inline int rmi_rec_destroy(unsigned long rec)
->> +{
->> +    struct arm_smccc_res res;
->> +
->> +    arm_smccc_1_1_invoke(SMC_RMI_REC_DESTROY, rec, &res);
->> +
->> +    return res.a0;
->> +}
->> +
->> +/**
->> + * rmi_rec_enter() - Enter a REC
->> + * @rec: PA of the target REC
->> + * @run_ptr: PA of RecRun structure
->> + *
->> + * Starts (or continues) execution within a REC.
->> + *
->> + * Return: RMI return code
->> + */
->> +static inline int rmi_rec_enter(unsigned long rec, unsigned long
->> run_ptr)
->> +{
->> +    struct arm_smccc_res res;
->> +
->> +    arm_smccc_1_1_invoke(SMC_RMI_REC_ENTER, rec, run_ptr, &res);
->> +
->> +    return res.a0;
->> +}
->> +
->> +/**
->> + * rmi_rtt_create() - Creates an RTT
->> + * @rd: PA of the RD
->> + * @rtt: PA of the target RTT
->> + * @ipa: Base of the IPA range described by the RTT
->> + * @level: Depth of the RTT within the tree
->> + *
->> + * Creates an RTT (Realm Translation Table) at the specified level
->> for the
->> + * translation of the specified address within the Realm.
->> + *
->> + * Return: RMI return code
->> + */
->> +static inline int rmi_rtt_create(unsigned long rd, unsigned long rtt,
->> +                 unsigned long ipa, long level)
->> +{
->> +    struct arm_smccc_res res;
->> +
->> +    arm_smccc_1_1_invoke(SMC_RMI_RTT_CREATE, rd, rtt, ipa, level, &res);
->> +
->> +    return res.a0;
->> +}
->> +
->> +/**
->> + * rmi_rtt_destroy() - Destroy an RTT
->> + * @rd: PA of the RD
->> + * @ipa: Base of the IPA range described by the RTT
->> + * @level: Depth of the RTT within the tree
->> + * @out_rtt: Pointer to write the PA of the RTT which was destroyed
->> + * @out_top: Pointer to write the top IPA of non-live RTT entries
->> + *
->> + * Destroys an RTT. The RTT must be non-live, i.e. none of the
->> entries in the
->> + * table are in ASSIGNED or TABLE state.
->> + *
->> + * Return: RMI return code.
->> + */
->> +static inline int rmi_rtt_destroy(unsigned long rd,
->> +                  unsigned long ipa,
->> +                  long level,
->> +                  unsigned long *out_rtt,
->> +                  unsigned long *out_top)
->> +{
->> +    struct arm_smccc_res res;
->> +
->> +    arm_smccc_1_1_invoke(SMC_RMI_RTT_DESTROY, rd, ipa, level, &res);
->> +
->> +    if (out_rtt)
->> +        *out_rtt = res.a1;
->> +    if (out_top)
->> +        *out_top = res.a2;
->> +
->> +    return res.a0;
->> +}
->> +
->> +/**
->> + * rmi_rtt_fold() - Fold an RTT
->> + * @rd: PA of the RD
->> + * @ipa: Base of the IPA range described by the RTT
->> + * @level: Depth of the RTT within the tree
->> + * @out_rtt: Pointer to write the PA of the RTT which was destroyed
->> + *
->> + * Folds an RTT. If all entries with the RTT are 'homogeneous' the
->> RTT can be
->> + * folded into the parent and the RTT destroyed.
->> + *
->> + * Return: RMI return code
->> + */
->> +static inline int rmi_rtt_fold(unsigned long rd, unsigned long ipa,
->> +                   long level, unsigned long *out_rtt)
->> +{
->> +    struct arm_smccc_res res;
->> +
->> +    arm_smccc_1_1_invoke(SMC_RMI_RTT_FOLD, rd, ipa, level, &res);
->> +
->> +    if (out_rtt)
->> +        *out_rtt = res.a1;
->> +
->> +    return res.a0;
->> +}
->> +
->> +/**
->> + * rmi_rtt_init_ripas() - Set RIPAS for new Realm
->> + * @rd: PA of the RD
->> + * @base: Base of target IPA region
->> + * @top: Top of target IPA region
->> + * @out_top: Top IPA of range whose RIPAS was modified
->> + *
->> + * Sets the RIPAS of a target IPA range to RAM, for a Realm in the
->> NEW state.
->> + *
->> + * Return: RMI return code
->> + */
->> +static inline int rmi_rtt_init_ripas(unsigned long rd, unsigned long
->> base,
->> +                     unsigned long top, unsigned long *out_top)
->> +{
->> +    struct arm_smccc_res res;
->> +
->> +    arm_smccc_1_1_invoke(SMC_RMI_RTT_INIT_RIPAS, rd, base, top, &res);
->> +
->> +    if (out_top)
->> +        *out_top = res.a1;
->> +
->> +    return res.a0;
->> +}
->> +
->> +/**
->> + * rmi_rtt_map_unprotected() - Map NS pages into a Realm
->> + * @rd: PA of the RD
->> + * @ipa: Base IPA of the mapping
->> + * @level: Depth within the RTT tree
->> + * @desc: RTTE descriptor
->> + *
->> + * Create a mapping from an Unprotected IPA to a Non-secure PA.
->> + *
->> + * Return: RMI return code
->> + */
->> +static inline int rmi_rtt_map_unprotected(unsigned long rd,
->> +                      unsigned long ipa,
->> +                      long level,
->> +                      unsigned long desc)
->> +{
->> +    struct arm_smccc_res res;
->> +
->> +    arm_smccc_1_1_invoke(SMC_RMI_RTT_MAP_UNPROTECTED, rd, ipa, level,
->> +                 desc, &res);
->> +
->> +    return res.a0;
->> +}
->> +
->> +/**
->> + * rmi_rtt_read_entry() - Read an RTTE
->> + * @rd: PA of the RD
->> + * @ipa: IPA for which to read the RTTE
->> + * @level: RTT level at which to read the RTTE
->> + * @rtt: Output structure describing the RTTE
->> + *
->> + * Reads a RTTE (Realm Translation Table Entry).
->> + *
->> + * Return: RMI return code
->> + */
->> +static inline int rmi_rtt_read_entry(unsigned long rd, unsigned long
->> ipa,
->> +                     long level, struct rtt_entry *rtt)
->> +{
->> +    struct arm_smccc_1_2_regs regs = {
->> +        SMC_RMI_RTT_READ_ENTRY,
->> +        rd, ipa, level
->> +    };
->> +
->> +    arm_smccc_1_2_smc(&regs, &regs);
->> +
->> +    rtt->walk_level = regs.a1;
->> +    rtt->state = regs.a2 & 0xFF;
->> +    rtt->desc = regs.a3;
->> +    rtt->ripas = regs.a4 & 0xFF;
->> +
->> +    return regs.a0;
->> +}
->> +
->> +/**
->> + * rmi_rtt_set_ripas() - Set RIPAS for an running Realm
->> + * @rd: PA of the RD
->> + * @rec: PA of the REC making the request
->> + * @base: Base of target IPA region
->> + * @top: Top of target IPA region
->> + * @out_top: Pointer to write top IPA of range whose RIPAS was modified
->> + *
->> + * Completes a request made by the Realm to change the RIPAS of a
->> target IPA
->> + * range.
->> + *
->> + * Return: RMI return code
->> + */
->> +static inline int rmi_rtt_set_ripas(unsigned long rd, unsigned long rec,
->> +                    unsigned long base, unsigned long top,
->> +                    unsigned long *out_top)
->> +{
->> +    struct arm_smccc_res res;
->> +
->> +    arm_smccc_1_1_invoke(SMC_RMI_RTT_SET_RIPAS, rd, rec, base, top,
->> &res);
->> +
->> +    if (out_top)
->> +        *out_top = res.a1;
->> +
->> +    return res.a0;
->> +}
->> +
->> +/**
->> + * rmi_rtt_unmap_unprotected() - Remove a NS mapping
->> + * @rd: PA of the RD
->> + * @ipa: Base IPA of the mapping
->> + * @level: Depth within the RTT tree
->> + * @out_top: Pointer to write top IPA of non-live RTT entries
->> + *
->> + * Removes a mapping at an Unprotected IPA.
->> + *
->> + * Return: RMI return code
->> + */
->> +static inline int rmi_rtt_unmap_unprotected(unsigned long rd,
->> +                        unsigned long ipa,
->> +                        long level,
->> +                        unsigned long *out_top)
->> +{
->> +    struct arm_smccc_res res;
->> +
->> +    arm_smccc_1_1_invoke(SMC_RMI_RTT_UNMAP_UNPROTECTED, rd, ipa,
->> +                 level, &res);
->> +
->> +    if (out_top)
->> +        *out_top = res.a1;
->> +
->> +    return res.a0;
->> +}
->> +
->> +#endif
-> 
-> #endif /* __ASM_RMI_CMDS_H */
-
-Ack.
-
-Thanks,
-Steve
 
 
