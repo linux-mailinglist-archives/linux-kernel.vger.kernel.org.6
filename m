@@ -1,267 +1,182 @@
-Return-Path: <linux-kernel+bounces-382285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D53849B0BC9
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 19:39:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B22B19B0BCE
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 19:39:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04E791C24D4A
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:39:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2881E1F2ADD0
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:39:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A29D970815;
-	Fri, 25 Oct 2024 17:38:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A47FB20C31E;
+	Fri, 25 Oct 2024 17:39:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f33xLJ9k"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b="EwYpP+Is"
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5983820C31F;
-	Fri, 25 Oct 2024 17:38:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF0C220C300
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 17:39:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729877915; cv=none; b=D3BhgoWMO6O7G7HRjpztGKZeWZmS1df+UaJWVt5OPEuoML1zBBXhB0cAoK2DZV4iL0GDEus4/81eWroMsIS5vK6OcgARcajCEp71L+3OwWh8JQx1Ti76QmC9fyV12jK2uvp08z2RAKtWz0vJ9tEXbmOv19yR3qQXCg41SGiWOQE=
+	t=1729877983; cv=none; b=gJ6EfW/H5dZMGRYy1aYDzCoT+tpQo5ZuRRRSpBuTaAoTohRJowntlyKivzgeO74h8+ORr4XD/u244WZZdvUv/MS7kCXH7pLPOxGaYsRi2Tvgfdm7zW3iMefqzfHTS3exPx1c889lV+bt3qgotPX++0NElMrpwE+hTtNE8Om0VCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729877915; c=relaxed/simple;
-	bh=gD7gai+8+e+XqyRYz6DgQyaNtMkK8qGXrU7mo/3ff9Y=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m08K002GBKYOyq1wKaGGobqDhasXcb7wac218YrjaMXAtP2rAFxy7IkO40WrysQUlYSQMHtuNKmzDLwIxjWn1LRcDXyhugn3UWNBsxcEg5G3N20HLHPYW/ZZr1O1MQHzQDgSmh77fyvD30UKPEb53ji1mNdG6S7Iv7Ej193UjpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f33xLJ9k; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-37d4b0943c7so1511143f8f.1;
-        Fri, 25 Oct 2024 10:38:33 -0700 (PDT)
+	s=arc-20240116; t=1729877983; c=relaxed/simple;
+	bh=fm54hayvMANe3JxZyEsSTvLXltZ8DtFFJvJHij8VzGs=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=P5eXtMKh9j9sqhPtgqv4QihAqq6iX2VonvAF+9mj74U3FAQTSl4KsJ9cStOGhguyB8p7Ez/IJ6hp3TRXL/cue0OLcSGbIuNHGwaEcs743+6z/8kWrL2UVcDmvz128TUQr+tgBbvC/QA/drjCQSF7UtLcf7knihsCkr/rt6APqoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com; spf=pass smtp.mailfrom=tenstorrent.com; dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b=EwYpP+Is; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tenstorrent.com
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2e3686088c3so1703982a91.0
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 10:39:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729877911; x=1730482711; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=icrbjufJnRgwt68MAU/y4XC+360m+aOHWM5i4IT1Xks=;
-        b=f33xLJ9kfvJu4pLoKdFU+mcGduV2zeJBM4JDnegd1XPteKLTNs3Ax+Vcv5QJersFPQ
-         reWmS1a1sDm6Ii2bhGspULuR5kB5NdxiUDEl6LL5zBUXSV6zfZJgoDiRvS5p6RN19nHY
-         SBntlKJeIj5oxe1zu375Lnjtpx9oPnTRWBRY/vsWbN7cX5nhmf0vFC24I2qlnMZLQYHE
-         Sv+jFx/OUAFTj6gzS7aAqGyCy1w3LQRp1HKOeap4LYx6avaoF4uGtpZa3foB7C938X90
-         fVbtYtsEYvUlI7E0MniigiKB2jvKaa8IWuXY5tnXRrWgso5WdqKz1XAGOKOvfD3WyDFK
-         blGA==
+        d=tenstorrent.com; s=google; t=1729877980; x=1730482780; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rRtgBgW6s/EQDOLVk7vTju3fTexfS9nXJ3lju+LyV5U=;
+        b=EwYpP+Isg21dcqb4LwodTM4ts4zf3onoCu3Vu+7kmJMGs0yX2kJN3xLyB3hjwNsrXP
+         XV/K+KPekezduTuBgC+ylwZdAu1Y9mQ96Zv/5jBCiADFSlePz0EZj5rxTY2ZNkn/dndi
+         q83WPt2OQ5ooC+WUYy0gK6JUfmtNMyfQ0DBO9eSidu5jPBcFpSNpAdkrBk//irXyz5WT
+         29U02nrkGBUMWpOayz740JffLWqVYMoe23Uxd5v30/UMNDe4D4u1nMc4J2Fnt92xiaQp
+         I/uMC7fa+94bDGXbKB8cnHBQ9tWYZpzBEw++PH7sTMIXD1N+4CYUZOM6DxmdKxEpoXfz
+         kI5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729877911; x=1730482711;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=icrbjufJnRgwt68MAU/y4XC+360m+aOHWM5i4IT1Xks=;
-        b=puTfgYPyT3iCO7olnzABhfDUI+1KPHr44u7Z0ib8+QJVJsLAWFOQiC59XX0qMP0Ffg
-         ii+tMu6vZ25z65lIg75dmLAIUsodn7drUcEd/UTGNgNMmdxxRVLGN7xR8nLxL2n9i4m6
-         TJLXjQwh4hvsUwPSa7kaEhsssmt281Y07IjbvMADuvh+Ol8iFvsnTINb8PRcoz6lnLmm
-         hPEWNPKUNV1uz70pPYOfqQDLjTb6CkZ6VGARpl3miSzyPvrr1oaUZPz7Eewg9wV/+0NW
-         Z/pOX8rCUcq60yQs/hxRAvt/jt5AmqpL+Sx0yBD+0Xrv3BCXFOR9UikKpgwKTPcQYd1+
-         vevw==
-X-Forwarded-Encrypted: i=1; AJvYcCUe7Bk6peOxxBchfxV+nCT1Yun9NY/x9kXSHaPJgivhUA9ajbt8d1am/vB/kmQSyNFqS/ofrntZviBO@vger.kernel.org, AJvYcCV8zRIc/FNzgOgc5yYFr8b3Ip93pOJQFAl+XZmeE+OiNn9xbSF4o8cdo27AQgTa8FuzE/e6oMm9Muyuuwd7@vger.kernel.org, AJvYcCXknDa3snFJ7TRi7FYu1sSqkc/xPTWpuMtx2ncXqWdwmtajk4j476TOB9MLdFhVLO5KYihYh1zV8ja4Y15M@vger.kernel.org
-X-Gm-Message-State: AOJu0YxAGw6NLw1jJon+UmO1tDGc72HQo1bAFgrsyq+fqQJrhjSj5hH4
-	tzSEZ7S+4+E7W0krS2TmaKSU1lJoqXOzu92u8mlBTOLJHUdNS/W0yZCRrA==
-X-Google-Smtp-Source: AGHT+IFcGZFAS8CInDpA9qvFdcQqnYrmtRC4DUQ5GHTNRF3RvoHorTdnAhB8kgVDB0PC1FrWTEt9iA==
-X-Received: by 2002:adf:e0d2:0:b0:37d:493c:f7b8 with SMTP id ffacd0b85a97d-380610f245dmr173222f8f.2.1729877911277;
-        Fri, 25 Oct 2024 10:38:31 -0700 (PDT)
-Received: from Ansuel-XPS. (93-34-91-161.ip49.fastwebnet.it. [93.34.91.161])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b712bfsm2071948f8f.79.2024.10.25.10.38.30
+        d=1e100.net; s=20230601; t=1729877980; x=1730482780;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rRtgBgW6s/EQDOLVk7vTju3fTexfS9nXJ3lju+LyV5U=;
+        b=EAvTLIsECkmBVRxe+56NVjixsZUvAS5Ihx2lZ5tGb41cvzcus3RdBzM1ytN3DtN1iV
+         gkDtwFoT6iWBhmlavL8qkMUZ2gu52dUP46NIywd7L7fvJqXW6mQe7lvYQxY7cIvyEiXX
+         BP73TBzd8I9TT2sBYT1W+9d+YOi2nui0zFVsoVuFs8tj+pvwDy71KIZoJTLEc5WgCczx
+         1M5v2ZRnVsnpCK0zrZqPohYWlStmSauXNG/YoueOgG24xjnBTh+jDlhXO3KgVZDMatzE
+         BquwmYqoE5JgBG5Z5L5TyZF3yRdyxSvfIOl6uS/UIv71z5TjW4XECDcf2of/h6fJEaLd
+         Tt3w==
+X-Forwarded-Encrypted: i=1; AJvYcCXqgXu1xY+UuRhmU+5VE0x3Tt22UuyY/GWPYFMViuZM0KOaNz+F5eT/rQbcoLiip7zA/dQSoujm24N0n6I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBNy2aOh1FaJs4FVS8mG2Y5/R8nByBHzO/2ZgD/bxdoPhKDHx2
+	aGnmrR0WT5AAdb9AwPYuzAomrsd6iPWcLJro5GuJOwG+gZa0KbuqNvDoodGJ3sQ=
+X-Google-Smtp-Source: AGHT+IEaYZjwmDMtPye4RiuOg02mqdtcGwqC0dAPHwGmLr3SmAM/hWVbsZOksmPjY0Qxh811xJrTgQ==
+X-Received: by 2002:a17:90b:3ec9:b0:2d3:da6d:8330 with SMTP id 98e67ed59e1d1-2e8f10507f6mr183354a91.4.1729877980066;
+        Fri, 25 Oct 2024 10:39:40 -0700 (PDT)
+Received: from [127.0.1.1] ([4.28.11.157])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e77e4ca3fcsm3813961a91.13.2024.10.25.10.39.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2024 10:38:30 -0700 (PDT)
-Message-ID: <671bd796.df0a0220.216be3.8504@mx.google.com>
-X-Google-Original-Message-ID: <ZxvXkl10_RuUJMxW@Ansuel-XPS.>
-Date: Fri, 25 Oct 2024 19:38:26 +0200
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Conor Dooley <conor@kernel.org>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Antoine Tenart <atenart@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>, linux-crypto@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev, upstream@airoha.com
-Subject: Re: [PATCH v4 2/3] dt-bindings: crypto: Add Inside Secure SafeXcel
- EIP-93 crypto engine
-References: <20241025094734.1614-1-ansuelsmth@gmail.com>
- <20241025094734.1614-2-ansuelsmth@gmail.com>
- <20241025-marmalade-constant-1c733ef5f3e8@spud>
+        Fri, 25 Oct 2024 10:39:39 -0700 (PDT)
+From: Drew Fustini <dfustini@tenstorrent.com>
+Subject: [PATCH net-next v5 0/2] Add the dwmac driver support for T-HEAD
+ TH1520 SoC
+Date: Fri, 25 Oct 2024 10:39:07 -0700
+Message-Id: <20241025-th1520-gmac-v5-0-38d0a48406ff@tenstorrent.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241025-marmalade-constant-1c733ef5f3e8@spud>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALvXG2cC/x3MPQqAMAxA4atIZgM1WP+uIg6hRs1glbaIIN7d4
+ vgN7z0QJahEGIoHglwa9fAZtizAbexXQZ2zgQzVlSGLaassGVx3dth23DbMvXENQS7OIIve/20
+ ELwm93Amm9/0AtTd5gmcAAAA=
+To: Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+ Giuseppe Cavallaro <peppe.cavallaro@st.com>, 
+ Jose Abreu <joabreu@synopsys.com>, 
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Emil Renner Berthing <emil.renner.berthing@canonical.com>, 
+ Jisheng Zhang <jszhang@kernel.org>, Guo Ren <guoren@kernel.org>, 
+ Fu Wei <wefu@redhat.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Andrew Lunn <andrew+netdev@lunn.ch>, Drew Fustini <drew@pdp7.com>
+Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-riscv@lists.infradead.org, Drew Fustini <dfustini@tenstorrent.com>, 
+ linux-stm32@st-md-mailman.stormreply.com, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.1
 
-On Fri, Oct 25, 2024 at 05:44:39PM +0100, Conor Dooley wrote:
-> On Fri, Oct 25, 2024 at 11:47:23AM +0200, Christian Marangi wrote:
-> > Add bindings for the Inside Secure SafeXcel EIP-93 crypto engine.
-> > 
-> > The IP is present on Airoha SoC and on various Mediatek devices and
-> > other SoC under different names like mtk-eip93 or PKTE.
-> > 
-> > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> > ---
-> > Changes v4:
-> > - Out of RFC
-> 
-> I left comments on v3, that I do not see addressed here.
->
+This series adds support for dwmac gigabit ethernet in the T-Head TH1520
+RISC-V SoC used on boards like BeagleV Ahead and the LicheePi 4A.
 
-I missed them sorry, I was confused with the other reply about RFC not
-asking for comments. Let me copy the comments here so we can continue
-here.
+The gigabit ethernet on these boards does need pinctrl support to mux
+the necessary pads. The pinctrl-th1520 driver, pinctrl binding, and
+related dts patches are in linux-next. However, they are not yet in
+net-next/main.
 
-> > Changes v3:
-> > - Add SoC compatible with generic one
-> > Changes v2:
-> > - Change to better compatible
-> > - Add description for EIP93 models
-> > 
-> >  .../crypto/inside-secure,safexcel-eip93.yaml  | 63 +++++++++++++++++++
-> >  1 file changed, 63 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/crypto/inside-secure,safexcel-eip93.yaml
-> > 
-> > diff --git a/Documentation/devicetree/bindings/crypto/inside-secure,safexcel-eip93.yaml b/Documentation/devicetree/bindings/crypto/inside-secure,safexcel-eip93.yaml
-> > new file mode 100644
-> > index 000000000000..13341710ee31
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/crypto/inside-secure,safexcel-eip93.yaml
-> > @@ -0,0 +1,63 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/crypto/inside-secure,safexcel-eip93.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Inside Secure SafeXcel EIP-93 cryptographic engine
-> > +
-> > +maintainers:
-> > +  - Christian Marangi <ansuelsmth@gmail.com>
-> > +
-> > +description: |
-> > +  The Inside Secure SafeXcel EIP-93 is a cryptographic engine IP block
-> > +  integrated in varios devices with very different and generic name from
-> > +  PKTE to simply vendor+EIP93. The real IP under the hood is actually
-> > +  developed by Inside Secure and given to license to vendors.
-> > +
-> > +  The IP block is sold with different model based on what feature are
-> > +  needed and are identified with the final letter. Each letter correspond
-> > +  to a specific set of feature and multiple letter reflect the sum of the
-> > +  feature set.
-> > +
-> > +  EIP-93 models:
-> > +    - EIP-93i: (basic) DES/Triple DES, AES, PRNG, IPsec ESP, SRTP, SHA1
-> > +    - EIP-93ie: i + SHA224/256, AES-192/256
-> > +    - EIP-93is: i + SSL/DTLS/DTLS, MD5, ARC4
-> > +    - EIP-93ies: i + e + s
-> > +    - EIP-93iw: i + AES-XCB-MAC, AES-CCM
-> >
-> This implies that you should have a non-trivial set of fallbacks, with
-> the "i" model as the base for that. eg:
-> 
-> "ie", "i"
-> "is", "i"
-> "iw", "i"
-> "ies", "ie, "is", "i" (I dunno which would be a better order here)
->
+Therefore, I am dropping the dts patch for v5 as it will not build on
+net-next/main due to the lack of the padctrl0_apsys pin controller node
+in next-next/main version th1520.dtsi. It does exist in linux-next [1]
+and the two patches in this series allow the ethernet ports to work
+correctly on the LPi4A and Ahead when applied to linux-next.
 
-These info are what I found around since informations about models are very
-scarce. The driver itself makes use of a bitmap in the IP to detect the
-supported stuff so the meaning of this is really to comunicate the set
-of feature mounted on the system.
+The dwmac-thead driver in this series does not need the pinctrl-th1520
+driver to build. Nor does the thead,th1520-gmac.yaml binding need the
+pinctrl binding to pass the schema check.
 
-Any hint on how to describe this better? I assume you refer to some kind
-of yaml logic structure to put in the compatible?
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/arch/riscv/boot/dts/thead/th1520.dtsi
 
-> > +
-> > +properties:
-> > +  compatible:
-> > +    items:
-> > +      - const: airoha,crypto-eip93
-> > +      - enum:
-> > +          - inside-secure,safexcel-eip93i
-> > +          - inside-secure,safexcel-eip93ie
-> > +          - inside-secure,safexcel-eip93is
-> > +          - inside-secure,safexcel-eip93ies
-> > +          - inside-secure,safexcel-eip93iw
-> > +
->
-> I don't really get what's going on here. Why is the first compatible the
-> generic one? That seems suspect to me, as I doubt the crypto block on a
-> particular SoC varies? I'd expect to see some soc-specific compatibles
-> with a fallback to the inside-secure IP version that it integrates.
->
+Changes in v5:
+ - Rebase on net-next/main
+ - Drop the dts patch from this series. It applies to linux-next but
+   not net-next/main.
+ - Remove repeated properties from required: in binding
+ - Add Rb from Krzysztof for binding
+ - Link to v4: https://lore.kernel.org/r/20241020-th1520-dwmac-v4-0-c77acd33ccef@tenstorrent.com
 
-This was already discussed and hoped this solution was accepted (I
-didn't get any reply in the other revision, so I'm probably wrong)
+Changes in v4:
+ - Rebase on next for pinctrl dependency
+ - Add 'net-next' prefix to subject per maintainer-netdev.rst
+ - Add clocks, clock-names, interrupts and interrupt-names to binding
+ - Simplify driver code by switching from regmap to regualar mmio
 
-Everything started with:
-- airoha,mtk-eip93
+Changes in v3:
+ - Rebase on v6.12-rc1
+ - Remove thead,rx-internal-delay and thead,tx-internal-delay properties
+ - Remove unneeded call to thead_dwmac_fix_speed() during probe
+ - Fix filename for the yaml file in MAINTAINERS patch
+ - Link: https://lore.kernel.org/linux-riscv/20240930-th1520-dwmac-v3-0-ae3e03c225ab@tenstorrent.com/
 
-Was wrong as the compatible wasn't clear on what mtk was and if the IP
-was from airoha (it's not, it's licensed to...)
+Changes in v2:
+ - Drop the first patch as it is no longer needed due to upstream commit
+   d01e0e98de31 ("dt-bindings: net: dwmac: Validate PBL for all IP-cores")
+ - Rename compatible from "thead,th1520-dwmac" to "thead,th1520-gmac"
+ - Add thead,rx-internal-delay and thead,tx-internal-delay properties
+   and check that it does not exceed the maximum value
+ - Convert from stmmac_dvr_probe() to devm_stmmac_pltfr_probe() and
+   delete the .remove_new hook as it is no longer needed
+ - Handle return value of regmap_write() in case it fails
+ - Add phy reset delay properties to the BeagleV Ahead device tree
+ - Link: https://lore.kernel.org/linux-riscv/20240926-th1520-dwmac-v2-0-f34f28ad1dc9@tenstorrent.com/
 
-Then only the inside-secure ones, following how it's done for the newer
-inside-secure eip197.
+Changes in v1:
+ - remove thead,gmacapb that references syscon for APB registers
+ - add a second memory region to gmac nodes for the APB registers
+ - Link: https://lore.kernel.org/all/20240713-thead-dwmac-v1-0-81f04480cd31@tenstorrent.com/
 
-Krzysztof then suggested that, since it's licensed but OEM can make
-modification, it should be sensible to put a compatible of the SoC where
-the thing is mounted at the front of the other compatible. Eip197 should
-have received the same treatement but for some reason it didn't.
+---
+Jisheng Zhang (2):
+      dt-bindings: net: Add T-HEAD dwmac support
+      net: stmmac: Add glue layer for T-HEAD TH1520 SoC
 
-So here in v3/v4 with this proposed solution.
+ .../devicetree/bindings/net/snps,dwmac.yaml        |   1 +
+ .../devicetree/bindings/net/thead,th1520-gmac.yaml | 110 +++++++++
+ MAINTAINERS                                        |   2 +
+ drivers/net/ethernet/stmicro/stmmac/Kconfig        |  10 +
+ drivers/net/ethernet/stmicro/stmmac/Makefile       |   1 +
+ drivers/net/ethernet/stmicro/stmmac/dwmac-thead.c  | 268 +++++++++++++++++++++
+ 6 files changed, 392 insertions(+)
+---
+base-commit: 03fc07a24735e0be8646563913abf5f5cb71ad19
+change-id: 20241025-th1520-gmac-78a76aa90c62
 
-First compatible is SoC name, useful if the Vendor made modification to
-the IP. Then the generic model that describe the set of feature
-supported.
-
-I checked the register of 3 different device where EIP93 is implemented
-and they ALL match them. ONLY additional register are added for debug
-purpose and never conflicting bits are introduced.
-
-Hence why IMHO it's OK to use the combo of Vendor + second compatible
-for the generic implementation.
-
-From both comments I'm not really sure what do you mean about fallback,
-anyway hope it's clear now.
-
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  interrupts:
-> > +    maxItems: 1
-> > +
-> > +required:
-> > +  - compatible
-> > +  - reg
-> > +  - interrupts
-> > +
-> > +additionalProperties: false
-> > +
-> > +examples:
-> > +  - |
-> > +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> > +
-> > +    crypto@1e004000 {
-> > +      compatible = "airoha,crypto-eip93", "inside-secure,safexcel-eip93ies";
-> > +      reg = <0x1fb70000 0x1000>;
-> > +
-> > +      interrupts = <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>;
-> > +    };
-> > -- 
-> > 2.45.2
-> > 
-
-
-
+Best regards,
 -- 
-	Ansuel
+Drew Fustini <dfustini@tenstorrent.com>
+
 
