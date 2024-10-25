@@ -1,139 +1,198 @@
-Return-Path: <linux-kernel+bounces-381237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F7119AFC5B
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 10:20:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79D939AFC5E
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 10:21:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C9521F23ADA
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 08:20:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D9401C22728
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 08:21:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F4911CCEE7;
-	Fri, 25 Oct 2024 08:20:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 426E51D1E75;
+	Fri, 25 Oct 2024 08:21:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="irUoVhg3"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="NC3vnxa+"
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [207.246.76.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96B2C189914;
-	Fri, 25 Oct 2024 08:20:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 286791C07F9
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 08:21:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.246.76.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729844427; cv=none; b=VlZ/G4sicsWVKgsmu24qP8FQ82OP4bZGQQkPOdxCYN7gh3K/sHgqjyfr5ZortJcb3xBLXrAUlELUyqyUGIpWOsb/dleQs/uSHYzGeYm7Jsl6nQjbWNvMHM0EfRn6CmLL3Hajt3rEXCp2rN+4efTX0itmNDYIQ5tg1gu6Uu4ywpc=
+	t=1729844472; cv=none; b=lD2k3DlFXRJewl3WGQPmP7aCnzbfsBRdMIcOI9jK/aFCP+pTVe41uooD825jOa7N8gpOvk6PQVKkyPOxFG5K+cbVyw0+E8EMs73Si8/9t79y0hVZywij6E4xv9hg0Bdk15jzuFubPbgoxSBFjCeC5DgAHQFcCbGgP3yMTMOQ3co=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729844427; c=relaxed/simple;
-	bh=IGnhVY9qWQQlfpRCk+kdklhvIcFoKmf03HVY3gYCAbg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZNY83BIgG2VtvJPH0k+UCuZyH2CWP/a/GpP2XpC8QtU/3MnGUo2dgnMDyttvGd1iAfxH9Htrn+kuxgMIwkH8FUzTV+YhTrDaOB69jNSJCPPwb3nJkbM1ao0dHyucbYGSvUqNC0Qu2n5/5XfuGyrymHZjesIeA6NZgPTtxsrsB6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=irUoVhg3; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=EdrzlG5lxzYsBwtXdHwYIAcoVtX295ayqSh/lYdVec0=; b=irUoVhg32hUHfrvRiFRjIldb7Z
-	m+5BIoOTE0fm/Ybxny87+tDr3T57Gr1Fl2IPaDwPCQ5x2/h16LhCu6mBrnNimNPtPpAxqmZpLshcc
-	vYEieCgGHG4nptx8A+9fLlFw4TH3bCIg5cGAHg3AiktMKNdbObNwn3Qd7MZ9bncT/FE1S5Q20Z5EX
-	FkbOrfdwnIyNFppm+Iga9XW+3iggOnmGnCN865WOflZPpTL0/Wfsv/wvsEYLJX5prcsdISmH2dPHj
-	aS1x5Dx9tqXxdVkLJOleffHceUgrPmqHDN68FVRef9GITm69UHAnxMe2aoEjdlIS/UpVFoa+orFAJ
-	9htJROBw==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1t4FYQ-00000008rTV-1G0I;
-	Fri, 25 Oct 2024 08:20:20 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 83F3630083E; Fri, 25 Oct 2024 10:20:17 +0200 (CEST)
-Date: Fri, 25 Oct 2024 10:20:17 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: kernel test robot <oliver.sang@intel.com>
-Cc: oe-lkp@lists.linux.dev, lkp@intel.com, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [peterz-queue:perf/pmu-unregister] [perf] 4cbf3df69c:
- BUG:kernel_NULL_pointer_dereference,address
-Message-ID: <20241025082017.GF14555@noisy.programming.kicks-ass.net>
-References: <202410251048.2505fe51-lkp@intel.com>
+	s=arc-20240116; t=1729844472; c=relaxed/simple;
+	bh=G/6ckttVcaH30xmrrUOhZM99NObo8lQEa+x32+FeI14=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PTVw1toy3bxMB5gMiXlJh0Xo5ccjON8FgYIusKo6P0IuxpxUECgmUZ7GFXgRenDB3uSXOkxzMPwxWMpJT70I3GtTZg/NVpyVgyP+5dIwwphQv6AFDdWxHrhWndemq6JzeOVkk0sQjsw1/p5xBeOh6hdJTW9jAuLS/4eI9dMhO7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=NC3vnxa+; arc=none smtp.client-ip=207.246.76.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
+ Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
+ s=fe-e1b5cab7be; t=1729844449;
+ bh=LkZZAR59UvfigAsheIWK4sIE2MkApoDkQ9BtG/CzxhA=;
+ b=NC3vnxa+lDaylXiMJFMcPI5QLU6Lqo63iMH+9de0Mr3oCL6PsrJhHk36Dv7+JZyjtHKJy5crt
+ 1NiLQAgRkCSRmMyzeCzYBJthJRLGSZhromlxRlIbinFA/w9z+eF+AsQc4rLRf0lxls5jCo1YKgM
+ dAWkVQNdY/unyUQr92Eb5yJ63ZTb3qkkjlH5EYXLwqEx5sk8oT9r54+3MQ4KBBJGAawq/+MUXQh
+ 9td3NIo3nMnx/3sUqvgZ3WqfskSwb2DdIr3LIgKEeEbbbEiYtogsjwCZNjohYahlkDVh/mOXWAc
+ TYz+YlXB0W+toDWMxoWMo9Mo5YsnywCbyM05JDi4V83g==
+Message-ID: <71159f58-be8b-41a4-9fed-522e09a7a564@kwiboo.se>
+Date: Fri, 25 Oct 2024 10:20:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202410251048.2505fe51-lkp@intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 00/11] media: rkvdec: Add H.264 High 10 and 4:2:2
+ profile support
+To: Sebastian Fricke <sebastian.fricke@collabora.com>
+Cc: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Alex Bee <knaerzche@gmail.com>,
+ Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+ Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+ Detlev Casanova <detlev.casanova@collabora.com>,
+ Dan Carpenter <dan.carpenter@linaro.org>, linux-media@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, linux-staging@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+References: <20240909192522.1076704-1-jonas@kwiboo.se>
+Content-Language: en-US
+From: Jonas Karlman <jonas@kwiboo.se>
+In-Reply-To: <20240909192522.1076704-1-jonas@kwiboo.se>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Report-Abuse-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-ForwardEmail-Version: 0.4.40
+X-ForwardEmail-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 207.246.76.47
+X-ForwardEmail-ID: 671b54df038a5e08a321fe5c
 
-On Fri, Oct 25, 2024 at 10:19:41AM +0800, kernel test robot wrote:
-> 
-> 
-> Hello,
-> 
-> kernel test robot noticed "BUG:kernel_NULL_pointer_dereference,address" on:
-> 
-> commit: 4cbf3df69c5697061018989b08423d4c04bbe101 ("perf: Make perf_pmu_unregister() useable")
-> https://git.kernel.org/cgit/linux/kernel/git/peterz/queue.git perf/pmu-unregister
-> 
-> in testcase: trinity
-> version: trinity-x86_64-ba2360ed-1_20240923
-> with following parameters:
-> 
-> 	runtime: 600s
-> 
-> 
-> 
-> config: x86_64-kexec
-> compiler: clang-18
-> test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m 16G
-> 
-> (please refer to attached dmesg/kmsg for entire log/backtrace)
-> 
-> 
-> +-----------------------------------------------------------+------------+------------+
-> |                                                           | d4187ab34e | 4cbf3df69c |
-> +-----------------------------------------------------------+------------+------------+
-> | BUG:kernel_NULL_pointer_dereference,address               | 0          | 15         |
-> | Oops                                                      | 0          | 15         |
-> | RIP:__free_event                                          | 0          | 15         |
-> | Kernel_panic-not_syncing:Fatal_exception                  | 0          | 15         |
-> +-----------------------------------------------------------+------------+------------+
-> 
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <oliver.sang@intel.com>
-> | Closes: https://lore.kernel.org/oe-lkp/202410251048.2505fe51-lkp@intel.com
-> 
-> 
-> [   27.301103][ T3733] BUG: kernel NULL pointer dereference, address: 0000000000000008
-> [   27.302392][ T3733] #PF: supervisor write access in kernel mode
-> [   27.303317][ T3733] #PF: error_code(0x0002) - not-present page
-> [   27.304207][ T3733] PGD 80000001bfbc3067 P4D 80000001bfbc3067 PUD 1ae899067 PMD 0
-> [   27.305417][ T3733] Oops: Oops: 0002 [#1] PREEMPT SMP PTI
-> [   27.306260][ T3733] CPU: 0 UID: 65534 PID: 3733 Comm: trinity-c0 Not tainted 6.12.0-rc2-00028-g4cbf3df69c56 #1
-> [   27.307747][ T3733] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-> [ 27.309232][ T3733] RIP: 0010:__free_event (include/linux/list.h:195 include/linux/list.h:218 include/linux/list.h:229 kernel/events/core.c:5395) 
+Hi Sebastian,
 
-> [ 27.334428][ T3733] ? __free_event (include/linux/list.h:195 include/linux/list.h:218 include/linux/list.h:229 kernel/events/core.c:5395) 
-> [ 27.335253][ T3733] ? __free_event (include/linux/list.h:218 include/linux/list.h:229 kernel/events/core.c:5395) 
-> [ 27.336027][ T3733] perf_event_alloc (kernel/events/core.c:12566) 
-> [ 27.336836][ T3733] __se_sys_perf_event_open (kernel/events/core.c:12978) 
-> [ 27.337703][ T3733] ? enqueue_hrtimer (kernel/time/hrtimer.c:1093) 
-> [ 27.338512][ T3733] ? hrtimer_start_range_ns (kernel/time/hrtimer.c:1302) 
-> [ 27.339427][ T3733] do_syscall_64 (arch/x86/entry/common.c:?) 
-> [ 27.340215][ T3733] ? irqentry_exit_to_user_mode (arch/x86/include/asm/processor.h:701 arch/x86/include/asm/entry-common.h:100 include/linux/entry-common.h:364 kernel/entry/common.c:233) 
+Will you have time to look at this series any time soon?
 
-This might help... Let me fold that and push out an updated brranch.
+Would like to send a v2 of the now one year old rkvdec hevc series but
+this series is sort of holding that back ;-)
 
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -12395,6 +12395,7 @@ perf_event_alloc(struct perf_event_attr
- 	INIT_LIST_HEAD(&event->active_entry);
- 	INIT_LIST_HEAD(&event->addr_filters.list);
- 	INIT_HLIST_NODE(&event->hlist_entry);
-+	INIT_LIST_HEAD(&event->pmu_list);
- 
- 
- 	init_waitqueue_head(&event->waitq);
+Regards,
+Jonas
+
+On 2024-09-09 21:24, Jonas Karlman wrote:
+> This series add H.264 High 10 and 4:2:2 profile support to the Rockchip
+> Video Decoder driver.
+> 
+> Patch 1 add helpers for calculating plane bytesperline and sizeimage.
+> Patch 2 add two new pixelformats for semi-planer 10-bit 4:2:0/4:2:2 YUV.
+> 
+> Patch 3 change to use bytesperline and buffer height to configure strides.
+> Patch 4 change to use values from SPS/PPS control to configure the HW.
+> 
+> Patch 5-9 refactor code to support filtering of CAPUTRE formats based
+> on the image format returned from a get_image_fmt ops.
+> 
+> Patch 10 add final bits to support H.264 High 10 and 4:2:2 profiles.
+> 
+> Patch 11 add a fix for enumerated frame sizes returned to userspace.
+> 
+> Tested on a ROCK Pi 4 (RK3399) and Rock64 (RK3328):
+> 
+>   v4l2-compliance 1.28.1, 64 bits, 64-bit time_t
+>   ...
+>   Total for rkvdec device /dev/video1: 48, Succeeded: 48, Failed: 0, Warnings: 0
+> 
+>   Running test suite JVT-FR-EXT with decoder FFmpeg-H.264-v4l2request
+>   ...
+>   Ran 65/69 tests successfully
+> 
+>   Running test suite JVT-AVC_V1 with decoder FFmpeg-H.264-v4l2request
+>   ...
+>   Ran 129/135 tests successfully
+> 
+> Before this series:
+> 
+>   Running test suite JVT-FR-EXT with decoder FFmpeg-H.264-v4l2request
+>   ...
+>   Ran 44/69 tests successfully
+> 
+> Changes in v6:
+> - Change to use fmt_idx instead of j++ tucked inside a condition (Dan)
+> - Add patch to fix enumerated frame sizes returned to userspace (Alex)
+> - Fluster test score is same as v4 and v5, see [4] and [5]
+> Link to v5: https://lore.kernel.org/linux-media/20240618194647.742037-1-jonas@kwiboo.se/
+> 
+> Changes in v5:
+> - Drop Remove SPS validation at streaming start patch
+> - Move buffer align from rkvdec_fill_decoded_pixfmt to min/step_width
+> - Use correct profiles for V4L2_CID_MPEG_VIDEO_H264_PROFILE
+> - Collect r-b and t-b tags
+> - Fluster test score is same as v4, see [4] and [5]
+> Link to v4: https://lore.kernel.org/linux-media/20231105165521.3592037-1-jonas@kwiboo.se/
+> 
+> Changes in v4:
+> - Fix failed v4l2-compliance tests related to CAPTURE queue
+> - Rework CAPTURE format filter anv validate to use an image format
+> - Run fluster test suite JVT-FR-EXT [4] and JVT-AVC_V1 [5]
+> Link to v3: https://lore.kernel.org/linux-media/20231029183427.1781554-1-jonas@kwiboo.se/
+> 
+> Changes in v3:
+> - Drop merged patches
+> - Use bpp and bpp_div instead of prior misuse of block_w/block_h
+> - New patch to use values from SPS/PPS control to configure the HW
+> - New patch to remove an unnecessary call to validate sps at streaming start
+> - Reworked pixel format validation
+> Link to v2: https://lore.kernel.org/linux-media/20200706215430.22859-1-jonas@kwiboo.se/
+> 
+> Changes in v2:
+> - Collect r-b tags
+> - SPS pic width and height in mbs validation moved to rkvdec_try_ctrl
+> - New patch to not override output buffer sizeimage
+> - Reworked pixel format validation
+> - Only align decoded buffer instead of changing frmsize step_width
+> Link to v1: https://lore.kernel.org/linux-media/20200701215616.30874-1-jonas@kwiboo.se/
+> 
+> To fully runtime test this series you may need FFmpeg patches from [1]
+> and fluster patches from [2], this series is also available at [3].
+> 
+> [1] https://github.com/Kwiboo/FFmpeg/commits/v4l2request-2024-v2-rkvdec/
+> [2] https://github.com/Kwiboo/fluster/commits/ffmpeg-v4l2request-rkvdec/
+> [3] https://github.com/Kwiboo/linux-rockchip/commits/linuxtv-rkvdec-high-10-v6/
+> [4] https://gist.github.com/Kwiboo/f4ac15576b2c72887ae2bc5d58b5c865
+> [5] https://gist.github.com/Kwiboo/459a1c8f1dcb56e45dc7a7a29cc28adf
+> 
+> Regards,
+> Jonas
+> 
+> Alex Bee (1):
+>   media: rkvdec: h264: Don't hardcode SPS/PPS parameters
+> 
+> Jonas Karlman (10):
+>   media: v4l2-common: Add helpers to calculate bytesperline and
+>     sizeimage
+>   media: v4l2: Add NV15 and NV20 pixel formats
+>   media: rkvdec: h264: Use bytesperline and buffer height as virstride
+>   media: rkvdec: Extract rkvdec_fill_decoded_pixfmt into helper
+>   media: rkvdec: Move rkvdec_reset_decoded_fmt helper
+>   media: rkvdec: Extract decoded format enumeration into helper
+>   media: rkvdec: Add image format concept
+>   media: rkvdec: Add get_image_fmt ops
+>   media: rkvdec: h264: Support High 10 and 4:2:2 profiles
+>   media: rkvdec: Fix enumerate frame sizes
+> 
+>  .../media/v4l/pixfmt-yuv-planar.rst           | 128 ++++++++++
+>  drivers/media/v4l2-core/v4l2-common.c         |  80 +++---
+>  drivers/media/v4l2-core/v4l2-ioctl.c          |   2 +
+>  drivers/staging/media/rkvdec/rkvdec-h264.c    |  64 +++--
+>  drivers/staging/media/rkvdec/rkvdec.c         | 239 +++++++++++++-----
+>  drivers/staging/media/rkvdec/rkvdec.h         |  18 +-
+>  include/uapi/linux/videodev2.h                |   2 +
+>  7 files changed, 410 insertions(+), 123 deletions(-)
+> 
+
 
