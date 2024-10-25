@@ -1,188 +1,156 @@
-Return-Path: <linux-kernel+bounces-382129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 361439B09D5
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 18:24:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A55669B09D2
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 18:24:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 957561F23E9F
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:24:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D9651F23B5A
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:24:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A69C41CF7DB;
-	Fri, 25 Oct 2024 16:24:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C15718785B;
+	Fri, 25 Oct 2024 16:24:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="FQYy+FGu"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2048.outbound.protection.outlook.com [40.107.92.48])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GAo1CEck";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="kyr8t2KD"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED55C70830;
-	Fri, 25 Oct 2024 16:24:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.48
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729873461; cv=fail; b=iOMftnCdaeF8LU7PY2Ht3cj7mfso2tuuvmIZ6d0Eku8pQg+uxefUotIY8ocirJFbFwyY9AGJmrMhcHIeuEPy3Z2gr2VLNC2FUbH1TZTjFbufj8Y91DknX+Fdt53pTZftVphWL5uoTYcI2ogRaCgpCvPxCmQybE3tHxP2kzRssWk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729873461; c=relaxed/simple;
-	bh=oNw0FBzBk3hCU8KMD0sblU/bCWAOKdN+ihV/rl2KlWs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=KfOdAUMaQ28im8ulSHZ1VohbD3wNK10Hw2YAbOBkQt3wmAGU0aiVtZGCerrnFck4lvWw6//q89027id11SWjlGQgc93j1+gI/eOkNY7Rhjr9AgDkjmWhzFbQtKQVeHuIFovHg2Zh/xv0j83czDFOmzow6t1cpYhskmYJvLAN7TQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=FQYy+FGu; arc=fail smtp.client-ip=40.107.92.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=PdbUagQgsXJsBmUi0WL/jE+CsPI6ayGp+aobCWDiZY6KYCd3zt2zMXZ2oQdaWwZwa7ko4LqQQbvUi9zvCVdPdYWWzXcyWHcCcva9wYxq5B6SRB9DrxYlSLjNEa2+C3GxB7YiLc2/TQOWRJzHWF7KROu4tsm4sm76AlP2RrcX6UlNTSy3zjg/moPs2kDFCiuau2Fki9s/lLUN7ByKdA0OC4bsWB/npRpfPxyfggWzqd7LPlo6AbcgyEfCx+NotkgbP1u4KsrmudEVqNQp64/XoYUPcFYgURadcHcYMiuFqEitzCs+IixPGfbfevvetC9w8yzD08/bURq531ljM6y9cg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=BsMdh2EDVNNn2f/Gx+2EWuyJhBHWCi5V4bOYJw6jnsc=;
- b=WkzqMBHn5EypdyqoPE9qeFWQ69r/REOVNAHM+jkWtyAmTHemXbmIlCJNP97lqMIKFNdlP3sYZu2ok39TkI+VgEnELCJCcXvo9jjb5eTDgmZzsUITkxfgilWPK8XQlOmwPpLjCiGCjy+goGTMx4nYI4yQVPPMAK9qm3Lh5Nk/k3BTI6sqad7IVxggyLe6nGFdObMtV8EyYcOmOiHI/FRTJmUcC+8rteE9KBZQJkZXMWiJS9bzSzuIl0dDTdxtEB9f5BRwdWxLlm9LR/m45V1V6eGZKb3uDGpyuVWqym6zEiLHy7lDxM8NUwhK5RB/9o+6+AsXxcaMNn00h4BLbw5ySA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BsMdh2EDVNNn2f/Gx+2EWuyJhBHWCi5V4bOYJw6jnsc=;
- b=FQYy+FGuwzAIIGJaUDc/T101jAA2cbQsjRIl9G0snkPXhQBEWnK2Gr6Eu75Jh8Dw1P5BqYJhC5wDYG73fq6Sj2JF1ZvrG8Al7db0Qr30ls31A2tXEwtrFtfUpBowdEH3ysSt8I7IB824IRLcNd9X/Srn50VpqXeuh1rVGOZuGR0=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DS7PR12MB8252.namprd12.prod.outlook.com (2603:10b6:8:ee::7) by
- IA1PR12MB6457.namprd12.prod.outlook.com (2603:10b6:208:3ab::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.27; Fri, 25 Oct
- 2024 16:24:12 +0000
-Received: from DS7PR12MB8252.namprd12.prod.outlook.com
- ([fe80::2d0c:4206:cb3c:96b7]) by DS7PR12MB8252.namprd12.prod.outlook.com
- ([fe80::2d0c:4206:cb3c:96b7%6]) with mapi id 15.20.8093.018; Fri, 25 Oct 2024
- 16:24:11 +0000
-Date: Fri, 25 Oct 2024 21:54:03 +0530
-From: "Gautham R. Shenoy" <gautham.shenoy@amd.com>
-To: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
-Cc: mario.limonciello@amd.com, perry.yuan@amd.com, rafael@kernel.org,
-	viresh.kumar@linaro.org, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/4] cpufreq/amd-pstate: Do not attempt to clear
- MSR_AMD_CPPC_ENABLE
-Message-ID: <ZxvGI0qob6YQT+YO@BLRRASHENOY1.amd.com>
-References: <20241023102108.5980-1-Dhananjay.Ugwekar@amd.com>
- <20241023102108.5980-3-Dhananjay.Ugwekar@amd.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241023102108.5980-3-Dhananjay.Ugwekar@amd.com>
-X-ClientProxiedBy: PN1PEPF000067F9.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c04::30) To DS7PR12MB8252.namprd12.prod.outlook.com
- (2603:10b6:8:ee::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9FF370830;
+	Fri, 25 Oct 2024 16:24:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729873454; cv=none; b=C1BTV7hltAu3JjKwf9639PJ447dy0jbDXHYvqjcN9V1NK98Ef1PPOgFHlBABiosSV3h4MhT5L7apVtCUNdTA21QCcglLhANqsYgaYA+/3OGZoR/2xSXg1x4Cl4t7jpLT8xv98ayVCoUI0OWb1JV2vU0nijoQZdi1+eH8FvwVX0s=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729873454; c=relaxed/simple;
+	bh=1AUzMA1lgBnut9yvvMAhxlbnYNi7Wnh5Oycjbboz52k=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=fN2CCQz1rH51FouGOCheaCs83F9TpEHtnZtYjyNhpWlRkaiIvExjDWaVzyqO44vRu4E0yfcWC02KnbY+0rCZhqi+FUi4gUkOEFsS9RCUi8kqLm9r9L9Zz/jOXde/wB+dZ/3a7mSx/Imwy/V3EqRqTSX9+jRK8PTGlrneQBj6JRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GAo1CEck; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=kyr8t2KD; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 25 Oct 2024 16:24:04 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1729873445;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IwRIzgszYY7oyVQQojRBuBkDuJOmg3Z9fkiO4V/EZHc=;
+	b=GAo1CEckq5n3C2W1jq1mRNNErxZg6ehHJZfK6eLd4dOhCfjEBisezzGeV9E4CKYVfBnhCP
+	WqzQ6biWShVjh2f7bAUCFDA4OtmwC1F833URTdy4rAGuDq0UUZbi4Ue4EIFUH2+RYzJqWd
+	ar8BY6URfE428cndSxC7jYWB1PlX2ysgsKYeGCTS+Gpg9e4z9hjCRG/RguTwNY/L9KC+qw
+	VXQdUOFhZRjiLucprFSAt7Jj73J/CPepJB09JQJe5/lw8AtdPsxdQX4Kac3N2GeKcOly4p
+	8aIcosb9ObI/EPEIzpvtGye5vlKLMAiQJ3e/i9vSmIN70MlOfoQRs5kvBEP4NQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1729873445;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IwRIzgszYY7oyVQQojRBuBkDuJOmg3Z9fkiO4V/EZHc=;
+	b=kyr8t2KDGcPbygqDzi9o/xsROfdMF1CtspUcirXFcw9dgD4dEJO1/eB4oI6ZRZ0QmP0bMx
+	+kBoslvACDrWHIDg==
+From: "tip-bot2 for Chang S. Bae" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/microcode] x86/microcode/intel: Remove unnecessary cache
+ writeback and invalidation
+Cc: Yan Hua Wu <yanhua1.wu@intel.com>, William Xie <william.xie@intel.com>,
+ "Chang S. Bae" <chang.seok.bae@intel.com>,
+ "Borislav Petkov (AMD)" <bp@alien8.de>, Ashok Raj <ashok.raj@intel.com>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20241001161042.465584-2-chang.seok.bae@intel.com>
+References: <20241001161042.465584-2-chang.seok.bae@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB8252:EE_|IA1PR12MB6457:EE_
-X-MS-Office365-Filtering-Correlation-Id: fd153319-cbab-4883-59ad-08dcf511750f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?gzTo8a4PZpG2T3uYh/JG/lgfm2K0ppt4b7zZQOCav9E+OesaHY1siAeFRbdh?=
- =?us-ascii?Q?MXblHWqDgVElCIZpr5uEYEAY/TqLdy3GtFYbjSFFNM5iObHnH7q2rfuf9H+b?=
- =?us-ascii?Q?2yQzbx+NqZl9CFcp5CTLWXA1ZOKbUsSYu9HmAuxOZuD0+yc1VE0l20ikWPvY?=
- =?us-ascii?Q?BtgDlqnt/O9Cg/zqGQcbO5lx9qJKzYaF2bVpKqBCfL3qD42Szz5bO/vE/GbV?=
- =?us-ascii?Q?K5HVO6PhCUXo6s+FQ0DKB9NalOvDQhOULeL5ASfVnlbbyZEphKkD2r5rTVJ5?=
- =?us-ascii?Q?vDl9Wv9MltNtehUIZTODMFoSUioc0Eslw1+C9TCbwoEscKI59cf7vkRZSka6?=
- =?us-ascii?Q?r4yYohY0F0aznZE5jroXjBylfDEJNwNpGKLqy6/P0fIm/ccmTNN6x+apopF8?=
- =?us-ascii?Q?FKFs7EStgmZtasg4W73xanlsVFfJ5HI4r0nYtNVvNvYfquvS61oY6SvcnpVm?=
- =?us-ascii?Q?kqiB9YsYQHIc0CKZEZ8QHZ2OV/cHNLmwTYSapqjbzH3Qfcn4Kwu5jISzZaM5?=
- =?us-ascii?Q?/zssH49EQda8wKNU/C9x4EyYfGSNaqCCOgOKqlqdiO/PqTIlrqsYAiJrRtU1?=
- =?us-ascii?Q?E+7MNcwbsaFe7Pnm6+MgjRCPCMrwudyGX7evz1lQOhK3Vds86zDhhE/7M0GW?=
- =?us-ascii?Q?KHAns5kSmf14gHsb/7L0l4QaGrylEUo/0KPtgdj08mgIaXMtMnyQmz5IaCjQ?=
- =?us-ascii?Q?Ks8AcVPARj9q2sA5V82Z+yukGATCJ8llAJEB0Su2IzORJ8oOYzMWJZGz0dKR?=
- =?us-ascii?Q?iwXWpyomuzkmidN2WYyhwc3NT8phclkVNxonkP15nCVJ6Kkuw0xoUDDPYw+e?=
- =?us-ascii?Q?Lp42fhubZJgAtGf8rurTaMkubTvQaaTw0c4jTdBU/gVGc7mLN7dKi0dq0+1H?=
- =?us-ascii?Q?YkjHFQCHK4guDay74P8AO/jqBYbgVeA6nnnzkzy00rD1a5QcN2bwOYqaRnC4?=
- =?us-ascii?Q?NOn2UMe0yc483qMk2FCQiEbUw8nSLbZ5KANJ+iei2erTdSM7/j8XYNnyK4n2?=
- =?us-ascii?Q?0/SXGaBV96rm1hCsnLcf9xpWhG2o22PxkshyuCdr15P3CWH3yRQF3TQb3kdi?=
- =?us-ascii?Q?mjDNcDmJbx5/uxK4wucYUB25r9QIR3UrvPED8zuwEb8jYJmcnuiBcYNIwpGk?=
- =?us-ascii?Q?km2bE33oMyUWhwWWh0qFvfD4Hov1bjZM1orSuQHOrQ5i29s6MCfOk8BMidBF?=
- =?us-ascii?Q?BjHq8T+0reulDrys/KJEQ6om8J1IpERWCfEEdfZCKLtfKELljzUjRlF4nLNl?=
- =?us-ascii?Q?9zs6/esjU1hPcUkiZD6XeB2pBV8VZOuJ8+UTmCaEnJBivpea5MJeGr+K6Tfk?=
- =?us-ascii?Q?Mesjg9RH9/fmmKIJOoYZ21W3?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB8252.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Q4bt+gbv+ajaDfJOuZaUkRDJKivVS58moSN35Y+vI6MFKebtX1JDOw9qZJKz?=
- =?us-ascii?Q?omA2CasFPCge5LQ/T+5+uWsuft2rSumrVEk2ay1b37qcXwqKsaybaqpM+qcG?=
- =?us-ascii?Q?S2ibTVWMYaAVl2CkmCzLTqVwNDkWJcRrjRxUan3i50B2R3shH93C+3szv1fT?=
- =?us-ascii?Q?mkXZEGX3jcVHMTXh9YTqTP53Lkf70hzF04XNPyXwMbcDfb7ol72u1ESnNJA8?=
- =?us-ascii?Q?dYsFtzWD1f0iz0qeSpxmUw923Kgx4pnlQjD6aWx2IarfdpHuqu8hhms1wd9v?=
- =?us-ascii?Q?yyQcSs5w9PABuRk+ZlSh6EqOIDqCDpDHbNkiT/pMW8pJoVpHO8VB6zFm64Fs?=
- =?us-ascii?Q?O02U04MUm6GAFOwrrsSw9IYBzdHMoRa3VTcgt2/p1H86n63jwWgUt0QTIh1H?=
- =?us-ascii?Q?tMiAmi2QxJBIZ9fzGVhaC8usz/CNBgsgHHDqQAe5Z5y5WZnsmo5WwPAVm8gD?=
- =?us-ascii?Q?fIjLLVPXhjUYRcIGNkVUTjBxD/wumpPXcd2KaR88wSf2RQ2LxLy+G2dDgDWA?=
- =?us-ascii?Q?PtQN3jFkmoWDo3fWMgTjYCuOrrb2HhFO9XPGysHYiGGU/KHWim+IBeckGtoO?=
- =?us-ascii?Q?Q76/a8ELdljssAu9EoWFfooiY7A1R0Mmg+XriG7ECEtOU5IIZmORVTpOYwO3?=
- =?us-ascii?Q?EqfJ+jLRA3IR9zLhQ5I5+haWWVsAgvmjMunQhfji8cMZixh/7lcpgCmfBoX5?=
- =?us-ascii?Q?WdyrObQ/hkOy8qTeaK/o+g3+5lPxMauzopV61bY1/IU+ShCj/quQht7ZqSw+?=
- =?us-ascii?Q?c5N4yvvsDuOSGNE+Xnlpf6JlXsv0KhiT/uxS6hFdSQAnQwBVX0yhVh5K9HW6?=
- =?us-ascii?Q?dvSonFdBSBIF2GM+9fSjfARtTAxWFqydoPrr7Pc/AMx2uj5vJIIn6e+ZwVrU?=
- =?us-ascii?Q?Vt8emNWSZH96Ez3nzNfDkpxCEwdPRcYBwCdHu2B2eDWOgIsLfVjDTJkE26Td?=
- =?us-ascii?Q?31vdG6hiBok5PqiFG4tNQVkBKHp0kU5Ez7PbYxWepbFVbusFNd1GcQX9yyae?=
- =?us-ascii?Q?9sLjtQR8Fy5E8ImQq1ZOMyJnwLxjjG0YgJYZRGxWZFbn51O3HmCgZ2m5miC7?=
- =?us-ascii?Q?iyRyLH94FuCGY7OzgO3lSrLLqvPqolRXK2JSn0ATTdn/Yl2mvUMChzn6ZJpM?=
- =?us-ascii?Q?QU5N5jAmk15bnj6/JaRSbAD5njACikMVKoZDry2PGalmdfK0zHdGt2oIUd26?=
- =?us-ascii?Q?2wW8S8aW5lsGlRzzlSkLvucbg7Pi7/x4Spfc4bnj3y8oNCsmSx8NeGpmHWu9?=
- =?us-ascii?Q?6jONkL+Y1FPcWO8HkZh4lpMCCXmiJ2syTDPHaxOqlMkuBzrf29r8TY6e1AX0?=
- =?us-ascii?Q?H54TOAxp1hw8/23lpJ7B5KkQ2Pes3A9cy80oOk3WTASHSSsVc1+JRfapZOih?=
- =?us-ascii?Q?oyBof7b4gMCd1nRvcOzbEUVxntGPnePZcyo04fhJij/bMs7Ijc6yjDZ6dH5a?=
- =?us-ascii?Q?LqpPPyEKHt8r3toykQmQOc4SgWPfmDhjQxkJkP0RR5uOXmsRkupCuVp3idQq?=
- =?us-ascii?Q?y0gxfXOXeTAdR4Qnjq/uGyz0mCv+GT11rGTcnKkghtyHSkNBRi7zGXrv2f0R?=
- =?us-ascii?Q?CVEUdxSGRG3i/2Kjr6LHvPQ5tCqTDwnVwRdOzwB5?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fd153319-cbab-4883-59ad-08dcf511750f
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB8252.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Oct 2024 16:24:11.1034
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: gfsv8snI5Or2Op8fhF6jUFWkoH274ouIGfkyMvvx2hboiIJRDURXWMVpEtE7nJ7BySy8TbBjZAFOx4o/6PS6Rw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6457
+Message-ID: <172987344401.1442.10090182228431782658.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 23, 2024 at 10:21:08AM +0000, Dhananjay Ugwekar wrote:
-> MSR_AMD_CPPC_ENABLE is a write once register, i.e. attempting to clear
-> it is futile, it will not take effect. Hence, return if disable (0)
-> argument is passed to the msr_cppc_enable()
-> 
-> Signed-off-by: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
+The following commit has been merged into the x86/microcode branch of tip:
 
-Reviewed-by: Gautham R. Shenoy <gautham.shenoy@amd.com>
+Commit-ID:     9a819753b0209c6edebdea447a1aa53e8c697653
+Gitweb:        https://git.kernel.org/tip/9a819753b0209c6edebdea447a1aa53e8c697653
+Author:        Chang S. Bae <chang.seok.bae@intel.com>
+AuthorDate:    Tue, 01 Oct 2024 09:10:36 -07:00
+Committer:     Borislav Petkov (AMD) <bp@alien8.de>
+CommitterDate: Fri, 25 Oct 2024 18:12:03 +02:00
 
+x86/microcode/intel: Remove unnecessary cache writeback and invalidation
 
-> ---
->  drivers/cpufreq/amd-pstate.c | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
-> index 0b4a4d69c14d..576251e61ce0 100644
-> --- a/drivers/cpufreq/amd-pstate.c
-> +++ b/drivers/cpufreq/amd-pstate.c
-> @@ -311,6 +311,12 @@ static inline int msr_cppc_enable(bool enable)
->  	int ret, cpu;
->  	unsigned long logical_proc_id_mask = 0;
->  
-> +       /*
-> +        * MSR_AMD_CPPC_ENABLE is write-once, once set it cannot be cleared.
-> +        */
-> +	if (!enable)
-> +		return 0;
-> +
->  	if (enable == cppc_enabled)
->  		return 0;
->  
-> -- 
-> 2.34.1
-> 
+Currently, an unconditional cache flush is performed during every
+microcode update. Although the original changelog did not mention
+a specific erratum, this measure was primarily intended to address
+a specific microcode bug, the load of which has already been blocked by
+is_blacklisted(). Therefore, this cache flush is no longer necessary.
+
+Additionally, the side effects of doing this have been overlooked. It
+increases CPU rendezvous time during late loading, where the cache flush
+takes between 1x to 3.5x longer than the actual microcode update.
+
+Remove native_wbinvd() and update the erratum name to align with the
+latest errata documentation, document ID 334163 Version 022US.
+
+  [ bp: Zap the flaky documentation URL. ]
+
+Fixes: 91df9fdf5149 ("x86/microcode/intel: Writeback and invalidate caches before updating microcode")
+Reported-by: Yan Hua Wu <yanhua1.wu@intel.com>
+Reported-by: William Xie <william.xie@intel.com>
+Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Acked-by: Ashok Raj <ashok.raj@intel.com>
+Tested-by: Yan Hua Wu <yanhua1.wu@intel.com>
+Link: https://lore.kernel.org/r/20241001161042.465584-2-chang.seok.bae@intel.com
+---
+ arch/x86/kernel/cpu/microcode/intel.c | 10 ++--------
+ 1 file changed, 2 insertions(+), 8 deletions(-)
+
+diff --git a/arch/x86/kernel/cpu/microcode/intel.c b/arch/x86/kernel/cpu/microcode/intel.c
+index 815fa67..f3d5348 100644
+--- a/arch/x86/kernel/cpu/microcode/intel.c
++++ b/arch/x86/kernel/cpu/microcode/intel.c
+@@ -319,12 +319,6 @@ static enum ucode_state __apply_microcode(struct ucode_cpu_info *uci,
+ 		return UCODE_OK;
+ 	}
+ 
+-	/*
+-	 * Writeback and invalidate caches before updating microcode to avoid
+-	 * internal issues depending on what the microcode is updating.
+-	 */
+-	native_wbinvd();
+-
+ 	/* write microcode via MSR 0x79 */
+ 	native_wrmsrl(MSR_IA32_UCODE_WRITE, (unsigned long)mc->bits);
+ 
+@@ -574,14 +568,14 @@ static bool is_blacklisted(unsigned int cpu)
+ 	/*
+ 	 * Late loading on model 79 with microcode revision less than 0x0b000021
+ 	 * and LLC size per core bigger than 2.5MB may result in a system hang.
+-	 * This behavior is documented in item BDF90, #334165 (Intel Xeon
++	 * This behavior is documented in item BDX90, #334165 (Intel Xeon
+ 	 * Processor E7-8800/4800 v4 Product Family).
+ 	 */
+ 	if (c->x86_vfm == INTEL_BROADWELL_X &&
+ 	    c->x86_stepping == 0x01 &&
+ 	    llc_size_per_core > 2621440 &&
+ 	    c->microcode < 0x0b000021) {
+-		pr_err_once("Erratum BDF90: late loading with revision < 0x0b000021 (0x%x) disabled.\n", c->microcode);
++		pr_err_once("Erratum BDX90: late loading with revision < 0x0b000021 (0x%x) disabled.\n", c->microcode);
+ 		pr_err_once("Please consider either early loading through initrd/built-in or a potential BIOS update.\n");
+ 		return true;
+ 	}
 
