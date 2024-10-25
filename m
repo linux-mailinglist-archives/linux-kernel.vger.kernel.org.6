@@ -1,150 +1,111 @@
-Return-Path: <linux-kernel+bounces-382294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46C079B0BF8
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 19:42:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 33FD89B0BFC
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 19:42:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A568028AC9A
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:42:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8266128AAEB
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:42:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED90A20C31E;
-	Fri, 25 Oct 2024 17:41:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B426D1586D3;
+	Fri, 25 Oct 2024 17:42:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="KSlBfm+O"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="JzFTHL/d"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83A4720C313
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 17:41:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 660A420C32D
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 17:42:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729878110; cv=none; b=roQxf8AW3e9IyimVr0eHrvhqf0656pemdKlStzzMD80gIM+ZyVCclpCekIPIASsAaYkR1sSjWyGAO4GtEv6yzxwYMLIi9HxUcjMoHuk3IAFUL/C4FgBSqTKJmLPL2ovoOjQ1S+sc6iBvO5GDn6/1If7hSngHSN7Hqr7CHooXgE0=
+	t=1729878124; cv=none; b=JHR70Jp6UUcnvlshdhA8HX2jBJuj6xME6mkaqwIZvPeqrOEXpHPInTL2rlzJN7YIQUrx1lzbMK+YeJPeDdLa7+maZTFbcmg5UTK7xMES5DbFuBtS7casnNb5laW9fQcQzPiuM6eDYvLAaTTJ/X6IMWvoRXqhbriZxdjOInc9QR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729878110; c=relaxed/simple;
-	bh=JFUudwqmv14JueSq6ucl5OfPdZQpWR7y3jLotykLqV8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=S8Xu8y6Gghm0tXQi+j8YAoY5X6k9S+lbhMy8sVJ+OMKoO7lPDR+IRg90c4B3m5aZyrWtR+I7h1vAWzEbIxMFiPQVtlfP9ymCii+Ge7dTDEFKUgB0V3X9sY1QmGE9b4yImlo3f1ddmk8vvSiKclaWMHM6MF93TXwMBzE/Brvzwqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=KSlBfm+O; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49PG3Iex020204
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 17:41:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	FHu7Dsvv0DBV1i9mgCw48KlX1tl0tTx9s/NTZdtmkws=; b=KSlBfm+OEuHMMrMA
-	aI6TnejfhH2w7Ou7w4JWf4YOVdp6MO7A0/f3ZNoVL+AracM2p1BocSBoQJ7FYiPX
-	3Hpw3HHW4GemWzP4aqEl6J/EIqac9unHt5Lrs+CHXw0iyVYTWZb6iwZli9JHcWNu
-	m9wygjLS4PlMS2SkEF4SAD4dtMO+tr6Rfi/5YzkeUaBKhLHyneokwpSz+9UUjm/o
-	8zNh8nAsjHnrfhY5Z2rFyPF/yB+vbXP8yVgFQWx9T73f06Sv2rzXXrs7pS0OwAPM
-	4/l3ymLe+mhfvAzETrpfmvFdse0DlBvp4gdan2j9V2Un53NKa5Y0ii0A9IllqgSr
-	5bDhuw==
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42g6y91tt2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 17:41:47 +0000 (GMT)
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6cda6fd171bso5042086d6.3
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 10:41:47 -0700 (PDT)
+	s=arc-20240116; t=1729878124; c=relaxed/simple;
+	bh=7m1CbyNbzwRznOSwkqdI/3Hw7KLdl4LtvhYRSsWVjzI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DOlFvdx2MfTseAdWSERQAOCYOX5BJ22yaLmj8pU4KPRL/viHAhST8iyU2bgU8PxWuWVcp/qtxUO1mQjlTk195Anu/jUt6GTOOAybJWpBgl8rLZVXtbo8sPTdz2LMcTfWhy+GdodkT/4fuPZTiDCwljLgmgusqqLPDQIIuH7Yt0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=JzFTHL/d; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a9a850270e2so377216066b.0
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 10:42:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1729878119; x=1730482919; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=yLdP5NGAgbV2CtQjeAnOgWQ96jll7UvhXWw9FMt7xWE=;
+        b=JzFTHL/dK8cX6OrvV6V7Hu4piIfDwa266yRGaHF2lc6bRJEA0et9/nU9CWyrCQc60O
+         fO40f6602QId9BljEN1hwFca4xyLLMB4Bs/2GsZtQQTm4NLIGyhJvvf2ZUp/SIQyzkUr
+         nJefr5YDEH6FOLp5HBN9rtzS64EZS5DMfPz18=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729878106; x=1730482906;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FHu7Dsvv0DBV1i9mgCw48KlX1tl0tTx9s/NTZdtmkws=;
-        b=kxWVfePsyiGM6g2U/78a1mbjB4CKDyYrdt4kz2plXZPBmtg5hK6Q6XzQbsazXH+lAS
-         NeEXaFtHIrDhAVmJNteLBldWZ5g0CzQnszn9++KRzyObpAp0PnT/PK/4WTWhK3jufAl0
-         Raa6+1VE5vTYnL+eFTn8wyTgEaGCSbZ7BQLqLNtXyO5thTefx70h2YuKpQfO2UW3Zs+F
-         9SAqjSaH8om75iPo4Y0JgV8jsW4y5rv46pW0sJMsjr0SnekNAQ+7gfK77DfTJiAIKGGc
-         1x1P4Q05BhPB/4NfdEATfE0R+YOBWQck785T/7SzbE2uF3Pfz4nBYCzeZG1ZGbTlAzjZ
-         eM2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXpEhe3+7/h9rvxtsfv+ZhhNL9YK5+ozEHwiqtlJPzqoO54oAvgzE+75IzsDDalBiOCp6eK3wL8KIirysA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvjD51mpKnh78FvHNFlZeffJ06wjKy7NilxcNSxoYAk1ZBzaFG
-	3cPFl2vtrEA2mlv0rT0yew2J1NmFSy+/MkWcui34FSU9+5xmL0c+ZCX4ef3/nmnaToSXX3VogqQ
-	4SqnQf8ZLoP8hi1jxLoQ68bSFCzxSmtVXQNYiwUq0cV9kuFSrrMWKgbdLE/y2/t0=
-X-Received: by 2002:ad4:5cc1:0:b0:6cb:4e9f:7370 with SMTP id 6a1803df08f44-6d185862964mr1286646d6.12.1729878106036;
-        Fri, 25 Oct 2024 10:41:46 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEhW4SFYE0P93aiXTyZ6Wv8eX/yrl4zliE5iVX82/C3QvC8L++dxHQwOPeBNcTiVrDp7AoBWA==
-X-Received: by 2002:ad4:5cc1:0:b0:6cb:4e9f:7370 with SMTP id 6a1803df08f44-6d185862964mr1286446d6.12.1729878105708;
-        Fri, 25 Oct 2024 10:41:45 -0700 (PDT)
-Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cbb6347f20sm816629a12.86.2024.10.25.10.41.42
+        d=1e100.net; s=20230601; t=1729878119; x=1730482919;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yLdP5NGAgbV2CtQjeAnOgWQ96jll7UvhXWw9FMt7xWE=;
+        b=Ao/DHGdu4OBnHXfy9PfNDSr64IQ+TcQIPYYhOsHc7wV0sDYphJtAfvrxM3RJtXMSfp
+         Femst+RjK2NcGsu6R6S7H7emilEA4E7q7hvSCLXB8exCvb7L1xwJs0XXiB4VVcmshZ5A
+         3blmfkDkzUaY4pQRMTh041Irad7OOGNooJAIV0Pwj/4XJDL1cpTpdo9c1VafgT+2TUbI
+         85/Z8cCmE/LgasD3GGUGtPY6NwmE2tRqIwSp/cApGAfmXfaMLLPfjrEAToSCiyx07r6B
+         /9iSYZXVA/NItqHxUuy6GhcvL/iFpC8bXv5W0A4DA9kJ7LGZGaIsRyrVGvCbcC1/3Fo7
+         PXJQ==
+X-Gm-Message-State: AOJu0YwA0RJWXweE+u6npsHJpIrKELD1AYfOfRIE1HpVihKYnDjkPyAd
+	JFUpC2jSTnAFXQTFp9JFVDhFuJFcu86hDfc3DNjbXqBkwhxDSLrfWPu//4fMwEJ5kCrXebHXMGt
+	kNYbF7Q==
+X-Google-Smtp-Source: AGHT+IGHeEccaB/uXQ9S5fO95vneIuNzLC+U1dBRyd/DdmaGeiweIpsHtN+xHkOY1xzxRMDtmECPDg==
+X-Received: by 2002:a17:907:3187:b0:a99:f945:8776 with SMTP id a640c23a62f3a-a9abf88a58bmr909715866b.24.1729878119353;
+        Fri, 25 Oct 2024 10:41:59 -0700 (PDT)
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com. [209.85.208.51])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b3a082548sm92550366b.196.2024.10.25.10.41.58
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 25 Oct 2024 10:41:45 -0700 (PDT)
-Message-ID: <8e49de35-59dc-4308-b93a-19791e6b05e2@oss.qualcomm.com>
-Date: Fri, 25 Oct 2024 19:41:41 +0200
+        Fri, 25 Oct 2024 10:41:58 -0700 (PDT)
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5c97c7852e8so3347552a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 10:41:58 -0700 (PDT)
+X-Received: by 2002:a17:907:3e9f:b0:a99:4ce4:27eb with SMTP id
+ a640c23a62f3a-a9abf94da13mr789277966b.46.1729878118424; Fri, 25 Oct 2024
+ 10:41:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] soc: qcom: llcc: Add LLCC configuration for the
- QCS8300 platform
-To: Jingyi Wang <quic_jingyw@quicinc.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc: quic_tengfan@quicinc.com, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        quic_tingweiz@quicinc.com, quic_aiquny@quicinc.com
-References: <20241010-qcs8300_llcc-v2-0-d4123a241db2@quicinc.com>
- <20241010-qcs8300_llcc-v2-2-d4123a241db2@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20241010-qcs8300_llcc-v2-2-d4123a241db2@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: rJPjFfMUNsCuQ7KV_hL98wULT7mh3qij
-X-Proofpoint-ORIG-GUID: rJPjFfMUNsCuQ7KV_hL98wULT7mh3qij
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 phishscore=0
- spamscore=0 adultscore=0 suspectscore=0 mlxlogscore=999 clxscore=1015
- lowpriorityscore=0 priorityscore=1501 mlxscore=0 malwarescore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410250135
+References: <20241024013214.129639-1-torvalds@linux-foundation.org> <dak3d3rnzx5o6faogq3awougwateiwkf7a7o6el3iiwlghjxgf@dn2dxxg4ttfb>
+In-Reply-To: <dak3d3rnzx5o6faogq3awougwateiwkf7a7o6el3iiwlghjxgf@dn2dxxg4ttfb>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 25 Oct 2024 10:41:41 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wh2FoBH63Sap4=DY+QNwZ5WULYWKojVn8YzKmYv0xpDpQ@mail.gmail.com>
+Message-ID: <CAHk-=wh2FoBH63Sap4=DY+QNwZ5WULYWKojVn8YzKmYv0xpDpQ@mail.gmail.com>
+Subject: Re: [PATCH] x86: fix user address masking non-canonical speculation issue
+To: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, x86@kernel.org, 
+	Andrew Cooper <andrew.cooper3@citrix.com>, Josh Poimboeuf <jpoimboe@kernel.org>, 
+	Borislav Petkov <bp@alien8.de>
+Content-Type: text/plain; charset="UTF-8"
 
-On 10.10.2024 12:08 PM, Jingyi Wang wrote:
-> Add LLCC configuration for the QCS8300 platform. There is an errata on
-> LB_CNT information on QCS8300 platform, override the value to get the
-> right number of banks.
-> 
-> Signed-off-by: Jingyi Wang <quic_jingyw@quicinc.com>
-> ---
->  drivers/soc/qcom/llcc-qcom.c | 72 ++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 72 insertions(+)
-> 
-> diff --git a/drivers/soc/qcom/llcc-qcom.c b/drivers/soc/qcom/llcc-qcom.c
-> index a470285f54a8..d867b1596725 100644
-> --- a/drivers/soc/qcom/llcc-qcom.c
-> +++ b/drivers/soc/qcom/llcc-qcom.c
-> @@ -2225,6 +2225,56 @@ static const struct llcc_slice_config sm8650_data[] = {
->  	},
->  };
->  
-> +static const struct llcc_slice_config qcs8300_data[] = {
+On Fri, 25 Oct 2024 at 07:16, Maciej Wieczor-Retman
+<maciej.wieczor-retman@intel.com> wrote:
+>
+> I tested the patch on a Sierra Forest Xeon that is LAM capable and I didn't find
+> any issues.
+>
+> To test the LAM related portion I uncommented the above if statement
+> and enabled LAM_SUP during the boot process as well as enabled LAM for the user
+> process with a syscall.
 
-This part looks good and in line with the data I have
+Thanks. I've applied the patch (with the LAM case still commented
+out), and let's see if something comes up.
 
-[...]
+I guess that backporting it might be slightly painful due to the
+runtime-const use, but I'm not even convinced it's needed for stable.
 
->  
-> +	/* LB_CNT information is wrong on QCS8300, override the value */
-> +	if (of_device_is_compatible(dev->of_node, "qcom,qcs8300-llcc")) {
-> +		num_banks = 4;
-> +		drv_data->num_banks = 4;
-> +	}
+I'd expect that even on Zen 5 it's not actually a _practical_
+information leak due to the whole GP exception thing going to mess
+with any leaking signal.
 
-This, please rebase on <20241025-sar2130p-llcc-v2-0-7455dc40e952@linaro.org>
-and reuse the thing added there
-
-Konrad
+          Linus
 
