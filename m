@@ -1,144 +1,225 @@
-Return-Path: <linux-kernel+bounces-381858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A699C9B058A
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:18:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B0B89B058F
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:20:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A95A28424D
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 14:18:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85CF41F24A72
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 14:20:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7485206505;
-	Fri, 25 Oct 2024 14:17:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0788D1FB894;
+	Fri, 25 Oct 2024 14:20:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="uIj8TvxQ"
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="ABY0h0DT";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="AMDBtAyi"
+Received: from fout-b4-smtp.messagingengine.com (fout-b4-smtp.messagingengine.com [202.12.124.147])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F9521FB89B
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 14:17:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBC7521216E;
+	Fri, 25 Oct 2024 14:20:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729865855; cv=none; b=kZZbZMZ1XKGfgbTSSbOgNLabfR/n1W4g4N9a7hVfe0PKd2zde3/s8XkPadFtYO0A1/eOd7Xq2kZm78EJT6XTyEVFqWvTH8mru4ztczMgInSUreI6kwa87iUC0LPbRFv2imaPmRU5wNphevbIaSM6/HPu7REbfjOqt7pqeRdsGbo=
+	t=1729866034; cv=none; b=Abwv/t2YNoFN8y7XBNB3cEsVhOyJO5/bdGYRftISrDMrS0s3WYVSLkJmYf/BvUK5rf0khCaYRMlfzxAZegow4m+VpgJr195IHC0A0Chbg3RMdCKVDJjxVGSb8tEr08sCwuTA0hwHvdz5bcgTskPQ8bdQScRvvC69wR8429nucw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729865855; c=relaxed/simple;
-	bh=TWudHctEQ5knuTlK6Wu7BZNOHdMM0HIGFJ1bh884wfk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=t7GagY5iGsqni37q5tLjGP0SljjH9ylggESsrlg0d8Ufw17cNaeMbM8Rl68LeqNaYxiC3BL6gckcs47H3+8IVf9b7mJzo+vsiKeNl4vk2TCgg/2Qw5RiHnaaqgwnO8tq/6vkcNvYf+NAi6b2Mx3SDvtbiiot+t5ISOFe7/SK7uE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=uIj8TvxQ; arc=none smtp.client-ip=209.85.222.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7b152a23e9aso145637185a.0
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 07:17:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1729865850; x=1730470650; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=wFJ7qeo3WN9Qtar7fFSc4KOFTyi0KFll6s9kH9IhHuM=;
-        b=uIj8TvxQYayP18CDbfRyXOSKZfMs8hQxXJlF4455h1oIMwFyRb2i714pzI0VvLjOsx
-         wLEb2mxz+bKVnLNCC8sevj+ED47+JD5BM5s1KF6T2lbkKkY2nfGvX6+zCX2C3tdgvo5m
-         pzTKfiYGKFQWnsm18cKBow1an6LSDC+WioennO2/5bsy3s6xEtQm8zP2/6vXtRi5FiRX
-         CFuJ5IftYtCbBjNYpLRovBWP0Nt3q+/VBnAl0ZoHuDYNk9L8B57nIgxYt7jvdlqcE9wx
-         RphZrY55v3g2fGRyd+X1y7a/ISC5Z6XH+I66d9lLz2rf2ye8iBDy0m5QAohtg3UVyRQ+
-         SacQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729865850; x=1730470650;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wFJ7qeo3WN9Qtar7fFSc4KOFTyi0KFll6s9kH9IhHuM=;
-        b=qIbtjycmmrPvabcACmIZGNgIKUz0r+wGNAQTywiZ3zkcUZYwmq615tYCI6pptBkBQN
-         mdlnJPL6UCv6l3NI3auSfg8yldmlVTvz6EbhxlptRvdC4ep/kwNBEazvOhnFuyXhBans
-         4q1U1Z1HKszIa1sfAxKM5WP9hE7t6yLc1DFuegDI0nQKu+vqDyqowyf+QeHel3JD1vLk
-         JnrS50qGgYQ6RkSRR1quR1IpdqF+MYyBevFA2tnTmCIWjIiq5rS5QA71l9vstdVFsfrB
-         8pb50fk+sc3Y6W9YJjY+DZvdH3gbGbLcS1NCJTnwxl04DEOZrETP1KfYruZk4U5gRall
-         SZQA==
-X-Gm-Message-State: AOJu0YzgobRpChkK34+bj1ymtYHCWUENHS0/p0tJbykY14L+79O9zDrN
-	kLpDq4uVBvb894+7Dm+aCh9le5HaEbNuQiKIZUpHawsi7ZhAEiKzeri1lJMsLeHKddEyAJ9D2KP
-	t
-X-Google-Smtp-Source: AGHT+IE7mLrQ4PS1T6eK7H6zyqpO+N3XayG6pjPmJzubg5i3rO0Sb5RLmu37pfnSWox+jGrQ8fS7Pg==
-X-Received: by 2002:a05:6214:5bc4:b0:6ce:12da:1dfc with SMTP id 6a1803df08f44-6d08d6dbc20mr74253646d6.4.1729865848617;
-        Fri, 25 Oct 2024 07:17:28 -0700 (PDT)
-Received: from PC2K9PVX.TheFacebook.com (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d179753621sm6115576d6.22.2024.10.25.07.17.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2024 07:17:28 -0700 (PDT)
-From: Gregory Price <gourry@gourry.net>
-To: linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Cc: kernel-team@meta.com,
-	akpm@linux-foundation.org,
-	ying.huang@intel.com,
-	weixugc@google.com,
-	dave.hansen@linux.intel.com,
-	osalvador@suse.de,
-	shy828301@gmail.com,
-	stable@vger.kernel.org
-Subject: [PATCH] vmscan,migrate: fix double-decrement on node stats when demoting pages
-Date: Fri, 25 Oct 2024 10:17:24 -0400
-Message-ID: <20241025141724.17927-1-gourry@gourry.net>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1729866034; c=relaxed/simple;
+	bh=jO2eJCq3o1UQyWfSIXb4J+AN0Vw5/ZfDFBnPWf9w6Uc=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=o+u8UMk7GiGTFXXE49kDTHV3eo7Pt8amkkuqqVeG9Lck0QX61KAWSO7PNxjgB0D0ZNpXKIgROOJV0XkP9qYionY/O/YRnZF2JqOeg3x0ch0pVzIn0m2ESKJzvVM8n1HEvKtan0oU3P560Xne2t8KET9KZekNUknIOa9KX5EjgFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=ABY0h0DT; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=AMDBtAyi; arc=none smtp.client-ip=202.12.124.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfout.stl.internal (Postfix) with ESMTP id 7146011400DA;
+	Fri, 25 Oct 2024 10:20:29 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-10.internal (MEProxy); Fri, 25 Oct 2024 10:20:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1729866029;
+	 x=1729952429; bh=wscwvk+/zfYGrxB9o7ElzO1RcnFw9HTQg1kU47YxPvw=; b=
+	ABY0h0DTDAGctuJpIL6sS/zNH1ENNSmPu1GTEjlpQ5i/MnCrJwqbpzaF8Fzl6SAE
+	ty89srR+XMB3y0GO59LDr1lbqoSGUHF5vYQgUpFuvNnO1I9a4HVWWkekFIh4+iw3
+	++kRrGeULuovgoGE3lEBDVxVt76SyxQs7lrHVSg8RuKA40TCIekZuPf24SgW3VWv
+	y3Go9YZsNXysA0v31RtM5mhjq55MKMYCRF8fvYc4ghnxRT3QD8XS1b9MC2d8P6d6
+	Z8U2JobiENX6AweBG/AEkr2ZKdC++1C11Tmg1u0yUG3X4E9UHQDdWn82DAio4qtN
+	aMp4W5bYIp8Yz6/pab3idg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1729866029; x=
+	1729952429; bh=wscwvk+/zfYGrxB9o7ElzO1RcnFw9HTQg1kU47YxPvw=; b=A
+	MDBtAyiMr0utwlTGZ9ahqEfZF+IyfWeBqehZ/0Ns+cmcssE0+i0bkROW05yMQsdU
+	cOTraYDNR+PM39pXp17Q9l9ugknz+vTCTQqT/gZhppAEN6O0InRdGseTWr8j1cze
+	Fh85jShfOWDbEdB0hWDEpn6IEq1jIfU7dSqLAnRoCGh4mEvMa8892HRjDW/qPVrh
+	sqZA/2i1Ti+Bigv3Tveu8uo1Y8isbmRx0sJLqb1tUaroWhRIpYaXvCvPydz38kPd
+	pYcZr+L3SnOemqTzyNUjsUx5qUUrTSGRa8aYrLXmY/VkDwv4EtZ/DOZ7py6b/hVf
+	mW3ecRgZZT5G1a+zLc9rw==
+X-ME-Sender: <xms:LKkbZ6icSWtXOvkpYM87hQ0HLds7qfX9s7056_cXCQ0XSAle9zkPOA>
+    <xme:LKkbZ7C_7DPvl407kdsjlRrFBtoBQJcEsNgwljwRSIMZwcU56VrT5yfDgceTXrYKx
+    0resZ0Qv9r5yzYJWd0>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdejvddgjeehucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
+    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
+    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
+    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
+    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepvddu
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegurghvihgurdhlrghighhhthesrg
+    gtuhhlrggsrdgtohhmpdhrtghpthhtoheptggrthgrlhhinhdrmhgrrhhinhgrshesrghr
+    mhdrtghomhdprhgtphhtthhopehmihhquhgvlhdrrhgrhihnrghlsegsohhothhlihhnrd
+    gtohhmpdhrtghpthhtohephhgthhesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthho
+    pehjvhgvthhtvghrsehkrghlrhgrhihinhgtrdgtohhmpdhrtghpthhtohephihsihhonh
+    hnvggruheskhgrlhhrrgihihhntgdrtghomhdprhgtphhtthhopegthhgvnhhhuhgrtggr
+    iheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepghhuohhrvghnsehkvghrnhgvlhdroh
+    hrghdprhgtphhtthhopeifihhllheskhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:LKkbZyEWph2OfuX5rp36qDXrBJGFeVx6L1j670c9oST-ROWHYLjhYQ>
+    <xmx:LKkbZzR-6CCISyD9v6h5geDwiCkn4rdaBNnAtm7k4SX1CIBqrMUUXQ>
+    <xmx:LKkbZ3w4lJB7XWYZExVb0i0_12fv6iRgHLcVQnpS3OZQYPaEV3l1GQ>
+    <xmx:LKkbZx4REtWx5i2Ye5_3HOyXw3kOW56cp2xiDUXTExtzk2q_YJoAQw>
+    <xmx:LakbZ8y4B_V6lMqvAbM25tHAe9VzZYCl0gf6JwYlrpYjDtQ8-3zK5Ogl>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 1E61A2220071; Fri, 25 Oct 2024 10:20:27 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Date: Fri, 25 Oct 2024 14:20:06 +0000
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "David Laight" <David.Laight@aculab.com>,
+ "Julian Vetter" <jvetter@kalrayinc.com>,
+ "Catalin Marinas" <catalin.marinas@arm.com>, "Will Deacon" <will@kernel.org>,
+ guoren <guoren@kernel.org>, "Huacai Chen" <chenhuacai@kernel.org>,
+ "WANG Xuerui" <kernel@xen0n.name>,
+ "Andrew Morton" <akpm@linux-foundation.org>,
+ "Geert Uytterhoeven" <geert@linux-m68k.org>,
+ "Richard Henderson" <richard.henderson@linaro.org>,
+ "Niklas Schnelle" <schnelle@linux.ibm.com>, "Takashi Iwai" <tiwai@suse.com>,
+ "Miquel Raynal" <miquel.raynal@bootlin.com>,
+ "Johannes Berg" <johannes@sipsolutions.net>,
+ "Christoph Hellwig" <hch@infradead.org>
+Cc: 
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-csky@vger.kernel.org" <linux-csky@vger.kernel.org>,
+ "loongarch@lists.linux.dev" <loongarch@lists.linux.dev>,
+ Linux-Arch <linux-arch@vger.kernel.org>,
+ "Yann Sionneau" <ysionneau@kalrayinc.com>
+Message-Id: <a6c524d4-d741-438a-b8ae-2492058a3b3b@app.fastmail.com>
+In-Reply-To: <0577266edb9440acb082c9e02c0a73b9@AcuMS.aculab.com>
+References: <20241021133154.516847-1-jvetter@kalrayinc.com>
+ <0577266edb9440acb082c9e02c0a73b9@AcuMS.aculab.com>
+Subject: Re: [PATCH v10 0/4] Replace fallback for IO memcpy and IO memset
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-When numa balancing is enabled with demotion, vmscan will call
-migrate_pages when shrinking LRUs.  Successful demotions will
-cause node vmstat numbers to double-decrement, leading to an
-imbalanced page count.  The result is dmesg output like such:
+On Mon, Oct 21, 2024, at 14:16, David Laight wrote:
+> From: Julian Vetter
+>> Sent: 21 October 2024 14:32
+>> 
+>> Thank you again for your remarks Arnd and Christoph! I have updated the
+>> patchset, and placed the functions directly in asm-generic/io.h. I have
+>> dropped the libs/iomem_copy.c and have updated/clarified the commit
+>> message in the first patch.
+>
+> Apart from build 'issues' what is the justification for inlining
+> these functions?
 
-$ cat /proc/sys/vm/stat_refresh
+I think I wasn't clear enough with my previous comment, and Julian
+just misunderstood what I was asking him to do. Sorry about causing
+extra work here.
 
-[77383.088417] vmstat_refresh: nr_isolated_anon -103212
-[77383.088417] vmstat_refresh: nr_isolated_file -899642
+> They are quite large for inlining and some drivers could easily
+> call them many times.
+>
+> The I/O cycles themselves are likely to be slow enough that
+> the cost of a function call is pretty much likely to be noise.
 
-This negative value may impact compaction and reclaim throttling.
+I'm not overly worried about the this, as the functions are
+not that big and there are not that many callers. If a file
+contains multiple calls to this function, we can expect the
+compiler to be smart enough to keep it out of line, though it
+still gets duplicated in each driver calling it.
 
-The double-decrement occurs in the migrate_pages path:
+The bit that I am worried about however is the extra #include
+for linux/unaligned.h that pulls in fairly large headers
+and may lead to circular header dependencies.
 
-caller to shrink_folio_list decrements the count
-  shrink_folio_list
-    demote_folio_list
-      migrate_pages
-        migrate_pages_batch
-          migrate_folio_move
-            migrate_folio_done
-              mod_node_page_state(-ve) <- second decrement
+To be clear: what I had expected here was to not have any
+changes to the v9 version of lib/iomem_copy.c and to simplify
+the asm-generic/io.h change to the version below.
 
-This path happens for SUCCESSFUL migrations, not failures. Typically
-callers to migrate_pages are required to handle putback/accounting for
-failures, but this is already handled in the shrink code.
+       Arnd
 
-When accounting for migrations, instead do not decrement the count
-when the migration reason is MR_DEMOTION. As of v6.11, this demotion
-logic is the only source of MR_DEMOTION.
-
-Signed-off-by: Gregory Price <gourry@gourry.net>
-Fixes: 26aa2d199d6f2 ("mm/migrate: demote pages during reclaim")
-Cc: stable@vger.kernel.org
 ---
- mm/migrate.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/mm/migrate.c b/mm/migrate.c
-index 923ea80ba744..e3aac274cf16 100644
---- a/mm/migrate.c
-+++ b/mm/migrate.c
-@@ -1099,7 +1099,7 @@ static void migrate_folio_done(struct folio *src,
- 	 * not accounted to NR_ISOLATED_*. They can be recognized
- 	 * as __folio_test_movable
- 	 */
--	if (likely(!__folio_test_movable(src)))
-+	if (likely(!__folio_test_movable(src)) && reason != MR_DEMOTION)
- 		mod_node_page_state(folio_pgdat(src), NR_ISOLATED_ANON +
- 				    folio_is_file_lru(src), -folio_nr_pages(src));
+--- a/include/asm-generic/io.h
++++ b/include/asm-generic/io.h
+@@ -1211,7 +1211,6 @@ static inline void unxlate_dev_mem_ptr(phys_addr_t phys, void *addr)
+ #endif
  
--- 
-2.43.0
-
+ #ifndef memset_io
+-#define memset_io memset_io
+ /**
+  * memset_io   Set a range of I/O memory to a constant value
+  * @addr:      The beginning of the I/O-memory range to set
+@@ -1220,15 +1219,10 @@ static inline void unxlate_dev_mem_ptr(phys_addr_t phys, void *addr)
+  *
+  * Set a range of I/O memory to a given value.
+  */
+-static inline void memset_io(volatile void __iomem *addr, int value,
+-                            size_t size)
+-{
+-       memset(__io_virt(addr), value, size);
+-}
++void memset_io(volatile void __iomem *addr, int value, size_t size);
+ #endif
+ 
+ #ifndef memcpy_fromio
+-#define memcpy_fromio memcpy_fromio
+ /**
+  * memcpy_fromio       Copy a block of data from I/O memory
+  * @dst:               The (RAM) destination for the copy
+@@ -1237,16 +1231,11 @@ static inline void memset_io(volatile void __iomem *addr, int value,
+  *
+  * Copy a block of data from I/O memory.
+  */
+-static inline void memcpy_fromio(void *buffer,
+-                                const volatile void __iomem *addr,
+-                                size_t size)
+-{
+-       memcpy(buffer, __io_virt(addr), size);
+-}
++void memcpy_fromio(void *buffer, const volatile void __iomem *addr,
++                  size_t size);
+ #endif
+ 
+ #ifndef memcpy_toio
+-#define memcpy_toio memcpy_toio
+ /**
+  * memcpy_toio         Copy a block of data into I/O memory
+  * @dst:               The (I/O memory) destination for the copy
+@@ -1255,11 +1244,8 @@ static inline void memcpy_fromio(void *buffer,
+  *
+  * Copy a block of data to I/O memory.
+  */
+-static inline void memcpy_toio(volatile void __iomem *addr, const void *buffer,
+-                              size_t size)
+-{
+-       memcpy(__io_virt(addr), buffer, size);
+-}
++void memcpy_toio(volatile void __iomem *addr, const void *buffer,
++                size_t size);
+ #endif
+ 
+ extern int devmem_is_allowed(unsigned long pfn);
 
