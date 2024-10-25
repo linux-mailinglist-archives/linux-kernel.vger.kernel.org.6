@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-381439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01A779AFF43
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 12:00:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5D8B9AFF47
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 12:00:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E6A91F210CD
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 10:00:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8012BB233A4
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 10:00:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E3281D45FC;
-	Fri, 25 Oct 2024 09:59:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86D231E2851;
+	Fri, 25 Oct 2024 09:59:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="W+MefqaC"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="X0cpvvEK"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72ED01D5ADD
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 09:59:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 917311D9A5B
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 09:59:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729850393; cv=none; b=gHf/JiXnh7PwNcwvADCvaUGhTHSG+zgRShhxnPevY7hUNBIpaXUjxJhXLxNL75f7EJV6+FLkl3fLC06hUsteGLJ7+rs5dfmpMZDsX+yb5M+ywpU4BZoX5as/QB+hzD4ph4kGvygBj4fghMz6bHHjaI4VQ8HdZSejWfV126+yM8o=
+	t=1729850395; cv=none; b=IuidRzfXU0xZIKnm44bret2le0iidxpQNOny9l43Qz5SGaldS3LA9Yo2DvCLseIMxSFqx4pb1zMZXJw3AwPKZSTgK2ptuPCmnnXDAZeIylwdq8hf3nz2128xQ3Nh69tKUSnuX/D28D9AUciur+35FXCDWjahBHnyAosfpXWEo9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729850393; c=relaxed/simple;
-	bh=rGc3MWfnfDGr6DVhiTPyA4ENZmPwmhTHYX0jVVNz4Pg=;
+	s=arc-20240116; t=1729850395; c=relaxed/simple;
+	bh=thXhUwQLx0ic152I/8ZIoekXqTF65zPinRE8fIvjkp4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bPPVuE2VuE6DkLtMuZECLG6Yaj1jP5DigtVCO4UPMNKlDItpculyYkEf2abWkQ9fuzfMVyWLzBG8gjYe/zO3uyhw4Xr+DSMp9pD7zI9w84aKASIrGHwNqLA+JH0M3OY7w34hJUpUyMDBuqizj1jtah0jr52vR27k97AHutalzSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=W+MefqaC; arc=none smtp.client-ip=209.85.208.48
+	 MIME-Version; b=MFCWamJTNrLFM6KG68t2IBeMSIKx1JcVmoNNsLDK8+sscHO7szxNXgdYQ3NgReRF71rhP0rL/iTQKNJhlXAZuh0U/g7aQMkrzggkgMrorqalKN+vPPOjtl/8WQ5wLiZ2v5wt78YcN/0nuD78k3qRNN08lszQ9hZPv0yYDANwKmc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=X0cpvvEK; arc=none smtp.client-ip=209.85.218.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5c94c4ad9d8so2287589a12.2
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 02:59:51 -0700 (PDT)
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a9a0472306cso248159466b.3
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 02:59:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729850390; x=1730455190; darn=vger.kernel.org;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729850392; x=1730455192; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ZMGdrMcJaMIE/WsVeQifPxez2nYQfB71+FONgrmlyfk=;
-        b=W+MefqaCmXKrfcbB+KWDoEWvL5VQOL5ZIm+dpBDcnsc39HcYuFa+336drolcn4LRn5
-         45Cht9ul6SEngeKqkk6dHrqzZ+MXTqKXSGwiaibB5SDIuI3xGexBn7ZVeQ9QWXU5Y2Or
-         eiMMIuVzm54PzqKVZ6GZk31yz+Dj0Jr60C9/Jckcm32HfA3JutzI21Qf0KOTQU/LNTUz
-         UwyQnBrInWiJvFby1W0GezX9o8cV9EVEKwHqB1ei0ruScJiVyPbvAvu47fgAgyev2eF7
-         P8PDuyehqXL3/7l0U7S2zNQunqaba15hNbuOZKxrV9knpfzFSNdKzpl8KTvrYtosAZMO
-         aNdg==
+        bh=7eIz+/d8S1VI98YfeSXtMvF+ChCheDsXPx+QBArarYM=;
+        b=X0cpvvEK0/v13/DGizmwZtwZcicFOzD0rJHXHZHBWGZSyvXXCrvHsQGeaVNvCHrd81
+         k6XNZxFagWBk+yEvFrHPKdfkcIe/jLdkp29sXc3ixaZo8mF4FO/EyRRKROLbs+ALZtLO
+         F8gzml1zdO8wjhCPFkXTF7mZSmEIrdTJCjpiAH32yCt1MUWuQVavTlEkeZDwrhOTo0Dm
+         A0rUPePq4FjAUB3qWzjLU2wG4QKlG+vJx96Z68XyZ0dBWgp0IoQ/QhD6T+O6CJlws0Fj
+         qhKa/D9QfXkMQ2Yw31SuxX58CyHTKkH5VoEgxJLp9BzR9q8HRaVu5blUTFOyjEX4zRWx
+         YEZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729850390; x=1730455190;
+        d=1e100.net; s=20230601; t=1729850392; x=1730455192;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ZMGdrMcJaMIE/WsVeQifPxez2nYQfB71+FONgrmlyfk=;
-        b=nDeBmveowVz5GQqiz71m2CvUjH9AwrtF9s0+vP6NINiMSle3YSL0clQbpN4ZkR+l/C
-         0ZGOMzc3tqeSqT8wUpWXm7KDsiqljrPV3mQ1ZxIjxQQ4ppBnsbsvaHtHQJNyj32Pjfbp
-         xo+Wi7xznxmehRdE1ojcbtaevN92LhUz7eexFfYdOytp6hOLP7Qqv4ieaqJ37s1I/9fC
-         bma6wn3HMjPwgQw5Ps5ojT31zKkO34+i2LGJ/+ZHMGuDR8DaG5kmmYdadbpPIAPL57/6
-         jo3IqfhhQbjiFayb+egzshH8RuMOofUcEJ7r9wGroN9Mnbm19K/i4pgkWh3cFxQ/rGtu
-         6UGw==
-X-Forwarded-Encrypted: i=1; AJvYcCWhjxnQy8dfnvH679iuBiN1ooENbfKCLQ2VIBJrFaJD2cB1MlOnjJHMQk5welt95lDWO+3qUPb9BYUut9Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YztAlUoY2TZfQV9y00GW04ZDsbOcMn45bmjx5l4o/aK60Kklj8/
-	ZEoxWhlONsBb+3wF68/phd05RIJcyasFU+s8+0bpnrBc69k5OUGKfZQD5woRyfQ=
-X-Google-Smtp-Source: AGHT+IFHx4c5CALGB7W5EOFi/W4CgKWigUrzNoYjfJYsnyAu+NVG1D+ZwiEpouJlqZdc8Zwp0c9FeA==
-X-Received: by 2002:a17:907:1c12:b0:a9a:4cf:5cea with SMTP id a640c23a62f3a-a9abf9a588amr851098666b.54.1729850389745;
-        Fri, 25 Oct 2024 02:59:49 -0700 (PDT)
+        bh=7eIz+/d8S1VI98YfeSXtMvF+ChCheDsXPx+QBArarYM=;
+        b=tF/Ch4mLxsCpunogAKZhyiqDjXjnPBqEua98jEip1ioKRX4CuUEWJT/objF0wRpnuN
+         TlmbeaC6IgKH7fdhDL6Th9B/fgvo6yHElowRXHsbAkzdPtFKnWP8/McdXYDZ5Y75Q2yo
+         iQe7+pBUTd9Sw0RVtxVBI14RXlw0rfJHYPnqeYf4tOHPapVdIfjipp3YOPEkm5PsCrO2
+         1weEuQE407/L7yPGtDRdvo41WwjwIC91hOwtuPIo0t96fKStjwSmfzZtW0AtZuWl6H7d
+         Z6I2YO42p2TzUKYxAX1gBhPVdLTk/gdOvnWU5gkLoqoQ2Fv9piKwgiqPwbb+9kZXe3v3
+         KeSA==
+X-Forwarded-Encrypted: i=1; AJvYcCU4o9rWIlXwvPEQC14ZNAVL4oPMSle1rWmLM+7FB5KGZ057ofnZSA1ymLaSOO/OrSNNQNuSlKU+YRJfROE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIWWsTPv8BRYjG4NXxiH4wKQq1m54TQrd1BAvjzkqZTq1ndrEm
+	nyFTufzYZ5Z/ZHVBlaTwIqRBUXG7hF3pOPY2v0f9y0dQhdG+hIivGdG5pcaWu1c=
+X-Google-Smtp-Source: AGHT+IF08eLYlnCW/ybZxW+hu8+oUE5zIA5uhxkWd2NWFN12lvQV4rLrwcF+j4/GG6fKFTUULtQzMA==
+X-Received: by 2002:a17:906:7309:b0:a99:dde6:9f42 with SMTP id a640c23a62f3a-a9abf96ce04mr899693866b.47.1729850391685;
+        Fri, 25 Oct 2024 02:59:51 -0700 (PDT)
 Received: from localhost.localdomain ([188.27.128.50])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b1f02951esm51737266b.71.2024.10.25.02.59.47
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b1f02951esm51737266b.71.2024.10.25.02.59.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2024 02:59:49 -0700 (PDT)
+        Fri, 25 Oct 2024 02:59:51 -0700 (PDT)
 From: Alexandru Ardelean <aardelean@baylibre.com>
 To: linux-iio@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
@@ -79,9 +79,9 @@ Cc: jic23@kernel.org,
 	dlechner@baylibre.com,
 	conor.dooley@microchip.com,
 	Alexandru Ardelean <aardelean@baylibre.com>
-Subject: [PATCH v2 1/5] iio: adc: ad7606: fix/persist oversampling_ratio setting
-Date: Fri, 25 Oct 2024 12:59:35 +0300
-Message-ID: <20241025095939.271811-2-aardelean@baylibre.com>
+Subject: [PATCH v2 2/5] iio: adc: ad7606: use realbits for sign-extending in scan_direct
+Date: Fri, 25 Oct 2024 12:59:36 +0300
+Message-ID: <20241025095939.271811-3-aardelean@baylibre.com>
 X-Mailer: git-send-email 2.46.1
 In-Reply-To: <20241025095939.271811-1-aardelean@baylibre.com>
 References: <20241025095939.271811-1-aardelean@baylibre.com>
@@ -93,32 +93,49 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-When the mutexes were reworked to guards, the caching of the
-oversampling_ratio values was removed by accident.
+Currently the 'ad7606' driver supports parts with 18 and 16 bits
+resolutions.
+But when adding support for AD7607 (which has a 14-bit resolution) we
+should check for the 'realbits' field, to be able to sign-extend correctly.
 
-The main effect of this change is that, after setting the
-oversampling_ratio value, reading it back would result in the initial value
-(of 1).
-The value would get sent to the device correctly though.
-
-Fixes 2956979dbd0d: ("iio: adc: ad7606: switch mutexes to guard")
 Signed-off-by: Alexandru Ardelean <aardelean@baylibre.com>
 ---
- drivers/iio/adc/ad7606.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/iio/adc/ad7606.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/iio/adc/ad7606.c b/drivers/iio/adc/ad7606.c
-index 0e830a17fc19..ae49f4ba50d9 100644
+index ae49f4ba50d9..effb98b4dc77 100644
 --- a/drivers/iio/adc/ad7606.c
 +++ b/drivers/iio/adc/ad7606.c
-@@ -753,6 +753,7 @@ static int ad7606_write_raw(struct iio_dev *indio_dev,
- 		ret = st->write_os(indio_dev, i);
- 		if (ret < 0)
- 			return ret;
-+		st->oversampling = st->oversampling_avail[i];
+@@ -568,7 +568,7 @@ static int ad7606_scan_direct(struct iio_dev *indio_dev, unsigned int ch,
+ 			      int *val)
+ {
+ 	struct ad7606_state *st = iio_priv(indio_dev);
+-	unsigned int storagebits = st->chip_info->channels[1].scan_type.storagebits;
++	unsigned int realbits = st->chip_info->channels[1].scan_type.realbits;
+ 	const struct iio_chan_spec *chan;
+ 	int ret;
  
- 		return 0;
- 	case IIO_CHAN_INFO_SAMP_FREQ:
+@@ -603,15 +603,15 @@ static int ad7606_scan_direct(struct iio_dev *indio_dev, unsigned int ch,
+ 
+ 	chan = &indio_dev->channels[ch + 1];
+ 	if (chan->scan_type.sign == 'u') {
+-		if (storagebits > 16)
++		if (realbits > 16)
+ 			*val = st->data.buf32[ch];
+ 		else
+ 			*val = st->data.buf16[ch];
+ 	} else {
+-		if (storagebits > 16)
+-			*val = sign_extend32(st->data.buf32[ch], 17);
++		if (realbits > 16)
++			*val = sign_extend32(st->data.buf32[ch], realbits - 1);
+ 		else
+-			*val = sign_extend32(st->data.buf16[ch], 15);
++			*val = sign_extend32(st->data.buf16[ch], realbits - 1);
+ 	}
+ 
+ error_ret:
 -- 
 2.46.1
 
