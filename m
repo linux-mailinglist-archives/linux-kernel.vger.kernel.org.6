@@ -1,122 +1,196 @@
-Return-Path: <linux-kernel+bounces-382171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EC609B0A5C
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 18:54:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2B159B0A63
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 18:55:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72DD71C22831
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:54:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 402792813BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:55:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24FED209F57;
-	Fri, 25 Oct 2024 16:53:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F6EA1FB8BC;
+	Fri, 25 Oct 2024 16:55:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rJ57wxgQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="g7/DMDLo"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 653C31FB895;
-	Fri, 25 Oct 2024 16:53:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729875234; cv=none; b=j0vY7jrMJkoGyZey71CoJtUflJAAWuyngAD6LNRYrtNbavq/kgF57BKuy/WY8sVfm/KULcF91qQID3u7ahDbobX7xFnP5a7TFAksdLvtZexMEcEomLm7TR5T+kjY+oq4GvRDWwafcUEaIdiLHwmYK0z7ZHWrtaXuV7fpmzsFhS8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729875234; c=relaxed/simple;
-	bh=mZ20vGt23x6kwR08MBJTGLjtyFlZt4JECmZ6eocGZhQ=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ED9915ADAB;
+	Fri, 25 Oct 2024 16:55:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729875318; cv=pass; b=ZKovqU/uEq5P79KFvL6xocXghrBMfdvc5+VSiPQlrCHDPjDKs+f9pf6zmn6nizAIHqL/EcjTcwgPoNw4GzXrEb9wIu67HBaUbZ6UP7l+foMYz2yO0QKvS52cVGUDxWLAEfpZmnwuG42OkX2Qpw48j20j0MTvmp3kK5zXOoxaf8M=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729875318; c=relaxed/simple;
+	bh=TkHNarZS4pSLxIgyzxiNyeSWF41bzLLV19/JuUBB2s8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A8HN8HVH25S6AmE98YBDWA6iWFuiU38tzEafBALYDK8+CbRGKY9VHdBycLHHezYhf0jrNiZw14fQxngkA7iXDNsRd49tg0cuo3R4pErvCoP4NEsDp4xDuZd3uTIEd3ZRrl39El8wc4UpmFQUTkwsw3tRShwZIM63ASd0iwqMoNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rJ57wxgQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE92AC4CEE3;
-	Fri, 25 Oct 2024 16:53:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729875234;
-	bh=mZ20vGt23x6kwR08MBJTGLjtyFlZt4JECmZ6eocGZhQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rJ57wxgQl26dw00jvHIkCz8BY1qNcJDhne+yEt/g4C1GpC37DYHrUWIihVaeIarNp
-	 mssbN/R1+BPJk1WgortTtVjvlA22spTtqlYk2OFsAkDieVUX1r2N00G1nLUzB5nbf7
-	 paofRo4TGF7QfBOFz0NKmyuw3T7aoLxozQejOcE42tC0jkSCFCMmX2ZuzilWIysDm4
-	 y2YEDe4wDXobiG49pUP3NdDDMvdEq8W64uvE66Ufxse+n3T/sLOzgbUskepEVbMchJ
-	 WeFTB1FvrvdUImm86JPec/9AwCpIotR7+NxC5801UHdVrASyXDQJkI4PdRuYqFlcQj
-	 LvcddiaYd8rOQ==
-Date: Fri, 25 Oct 2024 17:53:49 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: linux-riscv@lists.infradead.org,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	=?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <cleger@rivosinc.com>,
-	Andy Chiu <andybnac@gmail.com>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v2 5/5] dt-bindings: riscv: document vector crypto
- requirements
-Message-ID: <20241025-defile-blaming-12fc1e3a62e0@spud>
-References: <20241024-fanning-enrage-bcc39f8ed47d@spud>
- <20241024-pungent-lasso-42dd3512a3c8@spud>
- <20241025022411.GB1781@sol.localdomain>
- <20241025024224.GC1781@sol.localdomain>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nS4fdZi5cKeUKdRdgPhBToOU+FZ3Ape23sQBrMjMFKey4vCz+mqhiKRl9+ZiHj8Y7dnOcQ+k/Pcymra2xvqUALuId2d6Vaq334/rYjW64yK6PGplYQKqda8bXNwiHCVRJv9mLHXPpYsAOSfuMM83klnX8xiu8icyd6HuKLAquRs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=g7/DMDLo; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1729875298; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=YUmaYjF4Ps/jgwwt8/w3jiVpmXPW2tS7pX9mbRYmKXRZK39X0LzUbrpNsAW/PfGnOyUoKypbs5AXCtCFJy1PdrOIi3dM8jDm4WJEm2KC2GHliBd57mz5h0uUEtCoAAG5BQejcx9rEz3Y9u0VyLsDHstJR7lhjVknQdo8yNRTNcg=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1729875298; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=Jr7SWzsSYm+eYx+rG17jTZS+t8t8d9UsF7LOAdFCyXQ=; 
+	b=FBpNYlBPzft95xuA6saSFAM8If2KmlhJyq1gTBwMJ1rPlkGLtWCzLwOMd58g6rmXtGoHy/D+izL67aHT8pQcIVW2GXdMou6+jkTEZcTBC4GChPeX+Zmm0hG/uHRW0RNpIk3imdjFnSEBBactOCQshAiO0H/nONYt5TwuMUoF4eQ=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
+	dmarc=pass header.from=<sebastian.reichel@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1729875298;
+	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
+	bh=Jr7SWzsSYm+eYx+rG17jTZS+t8t8d9UsF7LOAdFCyXQ=;
+	b=g7/DMDLoZaY/789N1WdT8gQwVjsqsZs1RHPJ/kd1nslYuOnUFIDAgI3lET6SIKDF
+	tDoc/rylfl3nprWWf4j6YfXzpTcJH1Fu4NANAm4kJ/YlINsT6c+ZJQyUF0ltSGA41NO
+	1mQkP13kaW0Jy/ntB7L5hNbkxju3IoMXpkyBPtCs=
+Received: by mx.zohomail.com with SMTPS id 1729875295395343.5082836686537;
+	Fri, 25 Oct 2024 09:54:55 -0700 (PDT)
+Received: by mercury (Postfix, from userid 1000)
+	id 6BA4510603F9; Fri, 25 Oct 2024 18:54:51 +0200 (CEST)
+Date: Fri, 25 Oct 2024 18:54:51 +0200
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Amit Sunil Dhamne <amitsd@google.com>
+Cc: heikki.krogerus@linux.intel.com, gregkh@linuxfoundation.org, 
+	rdbabiera@google.com, badhri@google.com, xu.yang_2@nxp.com, linux-usb@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v1] usb: typec: tcpm: restrict
+ SNK_WAIT_CAPABILITIES_TIMEOUT transitions to non self-powered devices
+Message-ID: <qycbz2nxyh2i2yebmuvzzixxou2jvrojvqlfyfx334qxozu27n@uwge5gudmttn>
+References: <20241024022233.3276995-1-amitsd@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="C3HU7TQO57knau1B"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="a4nnbsddgl3uyol6"
 Content-Disposition: inline
-In-Reply-To: <20241025024224.GC1781@sol.localdomain>
+In-Reply-To: <20241024022233.3276995-1-amitsd@google.com>
+X-Zoho-Virus-Status: 1
+X-Zoho-AV-Stamp: zmail-av-1.3.1/229.360.92
+X-ZohoMailClient: External
 
 
---C3HU7TQO57knau1B
-Content-Type: text/plain; charset=us-ascii
+--a4nnbsddgl3uyol6
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v1] usb: typec: tcpm: restrict
+ SNK_WAIT_CAPABILITIES_TIMEOUT transitions to non self-powered devices
+MIME-Version: 1.0
 
-On Thu, Oct 24, 2024 at 07:42:24PM -0700, Eric Biggers wrote:
-> On Thu, Oct 24, 2024 at 07:24:11PM -0700, Eric Biggers wrote:
-> > On Thu, Oct 24, 2024 at 01:34:33PM +0100, Conor Dooley wrote:
-> > > From: Conor Dooley <conor.dooley@microchip.com>
-> > >=20
-> > > Section 35.2. Extensions Overview of [1] says:
-> > > | The Zvknhb and Zvbc Vector Crypto Extensions --and accordingly the =
-composite extensions Zvkn and
-> > > | Zvks-- (sic) require a Zve64x base, or application ("V") base Vecto=
-r Extension.
-> > > | All of the other Vector Crypto Extensions can be built on any embed=
-ded (Zve*) or application ("V") base
-> > > | Vector Extension
-> > >=20
-> > > Apply these rules in the binding, so that invalid combinations can be
-> > > avoided.
-> >=20
-> > It looks like that part of the spec is wrong, though.  The Zvknhb and Z=
-vbc are
-> > correct, but the list of the composite extensions that at least one of =
-them is
-> > included in is: Zvkn, Zvknc, Zvkng, Zvksc.
-> >=20
+Hi,
+
+On Wed, Oct 23, 2024 at 07:22:30PM -0700, Amit Sunil Dhamne wrote:
+> PD3.1 spec ("8.3.3.3.3 PE_SNK_Wait_for_Capabilities State") mandates
+> that the policy engine perform a hard reset when SinkWaitCapTimer
+> expires. Instead the code explicitly does a GET_SOURCE_CAP when the
+> timer expires as part of SNK_WAIT_CAPABILITIES_TIMEOUT. Due to this the
+> following compliance test failures are reported by the compliance tester
+> (added excerpts from the PD Test Spec):
 >=20
-> I am attempting to fix this in
-> https://github.com/riscv/riscv-isa-manual/pull/1697
+> * COMMON.PROC.PD.2#1:
+>   The Tester receives a Get_Source_Cap Message from the UUT. This
+>   message is valid except the following conditions: [COMMON.PROC.PD.2#1]
+>     a. The check fails if the UUT sends this message before the Tester
+>        has established an Explicit Contract
+>     ...
+>=20
+> * TEST.PD.PROT.SNK.4:
+>   ...
+>   4. The check fails if the UUT does not send a Hard Reset between
+>     tTypeCSinkWaitCap min and max. [TEST.PD.PROT.SNK.4#1] The delay is
+>     between the VBUS present vSafe5V min and the time of the first bit
+>     of Preamble of the Hard Reset sent by the UUT.
+>=20
+> For the purpose of interoperability, restrict the quirk introduced in
+> https://lore.kernel.org/all/20240523171806.223727-1-sebastian.reichel@col=
+labora.com/
+> to only non self-powered devices as battery powered devices will not
+> have the issue mentioned in that commit.
+>=20
+> Cc: stable@vger.kernel.org
+> Fixes: 122968f8dda8 ("usb: typec: tcpm: avoid resets for missing source c=
+apability messages")
+> Reported-by: Badhri Jagan Sridharan <badhri@google.com>
+> Closes: https://lore.kernel.org/all/CAPTae5LAwsVugb0dxuKLHFqncjeZeJ785nkY=
+4Jfd+M-tCjHSnQ@mail.gmail.com/
+> Signed-off-by: Amit Sunil Dhamne <amitsd@google.com>
+> Reviewed-by: Badhri Jagan Sridharan <badhri@google.com>
+> ---
 
-Looks like at least one person agrees with you, but I'll wait til that's
-merged before submitting another version. Thanks for reporting it.
+I actually had this constrained to the !self_powered use-case
+originally (before sending to the ML). Since I didn't see a good
+reason for the extra check, I decided to keep the code simple :)
 
---C3HU7TQO57knau1B
+Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+
+-- Sebastian
+
+>  drivers/usb/typec/tcpm/tcpm.c | 10 +++++++---
+>  1 file changed, 7 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/drivers/usb/typec/tcpm/tcpm.c b/drivers/usb/typec/tcpm/tcpm.c
+> index d6f2412381cf..c8f467d24fbb 100644
+> --- a/drivers/usb/typec/tcpm/tcpm.c
+> +++ b/drivers/usb/typec/tcpm/tcpm.c
+> @@ -4515,7 +4515,8 @@ static inline enum tcpm_state hard_reset_state(stru=
+ct tcpm_port *port)
+>  		return ERROR_RECOVERY;
+>  	if (port->pwr_role =3D=3D TYPEC_SOURCE)
+>  		return SRC_UNATTACHED;
+> -	if (port->state =3D=3D SNK_WAIT_CAPABILITIES_TIMEOUT)
+> +	if (port->state =3D=3D SNK_WAIT_CAPABILITIES ||
+> +	    port->state =3D=3D SNK_WAIT_CAPABILITIES_TIMEOUT)
+>  		return SNK_READY;
+>  	return SNK_UNATTACHED;
+>  }
+> @@ -5043,8 +5044,11 @@ static void run_state_machine(struct tcpm_port *po=
+rt)
+>  			tcpm_set_state(port, SNK_SOFT_RESET,
+>  				       PD_T_SINK_WAIT_CAP);
+>  		} else {
+> -			tcpm_set_state(port, SNK_WAIT_CAPABILITIES_TIMEOUT,
+> -				       PD_T_SINK_WAIT_CAP);
+> +			if (!port->self_powered)
+> +				upcoming_state =3D SNK_WAIT_CAPABILITIES_TIMEOUT;
+> +			else
+> +				upcoming_state =3D hard_reset_state(port);
+> +			tcpm_set_state(port, upcoming_state, PD_T_SINK_WAIT_CAP);
+>  		}
+>  		break;
+>  	case SNK_WAIT_CAPABILITIES_TIMEOUT:
+>=20
+> base-commit: c6d9e43954bfa7415a1e9efdb2806ec1d8a8afc8
+> --=20
+> 2.47.0.105.g07ac214952-goog
+>=20
+
+--a4nnbsddgl3uyol6
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZxvNHQAKCRB4tDGHoIJi
-0rPiAQDKaBX0AuIAHT3DnlKh92juYKdfZUvId9M1ah/kZAXt0QEAmmMl+zMQ+XSZ
-rnymJW1NSZtykaUKiLZaZ5MgTaVR6Ag=
-=nlLZ
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmcbzVgACgkQ2O7X88g7
++pqdCg//QuiUnHno4TZ9ZYeLw5BBTQwTtXLKErchyyfuJVYMWza1tDQMwWGLNMeh
+g+hvjmcGWSJZwKnZd/kBAW4muF+qbhx58FgCfRQ/WwwXkf5i+Um7h0cwOoq6hMFx
+DkqsER04hCx4skB4tDUSC9T4/PWnnWVQBwi4h7Ugb0VYeCUdGmQqLrbamqh+6aAR
+BFZUxZ/UJZyUrJJJrTKL3BNpEe9ZfFYo73lSTetis4coFXBy0bhBpIVczEoJDA+w
+q7iMtYoDzLZ7O3MGAeIhqgg6Kaie0V2JeQr0OoXa3viHrC6i/LyZ0J+PGlFIbsDo
+No/eUsozAY1lBO/d9tKSY4Z62NYtssbcpiqMrLU3kIn8u/32oCyG4GgHogHzZBiK
+npbyV/kVKamGRgmwVAFk46g1qtb8IanSuo8kBWS0H9EKahH08IUhoac004wyF1yB
+9Aoc8cFBXV0KXV9vyUsQMOsxWyadgUjjPRGOrwMaYN9CkDxwvxdJyyMSaAl0PxSN
+W1x0WojnTz0g6EtJ/xM+AZtO3mDgqKDFceRxABaBdPnR2khROViF8xNxAs7RHLAY
+KF3dZSAjEo5wLdZOIB+0Evj0g307ikf9hH1k29zCVz8s4w6N50h1/F8sM/2tsBd2
+1jwGZS3/9nanoTFksabwt3pDzvZ7BHcHQF8tL/HDDh/f105WNXs=
+=2MN7
 -----END PGP SIGNATURE-----
 
---C3HU7TQO57knau1B--
+--a4nnbsddgl3uyol6--
 
