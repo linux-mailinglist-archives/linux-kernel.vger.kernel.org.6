@@ -1,290 +1,206 @@
-Return-Path: <linux-kernel+bounces-380977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3B7E9AF877
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 05:49:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A37059AF87A
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 05:50:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52A731F2319F
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 03:49:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D58841C21CB7
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 03:50:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C83CE18C029;
-	Fri, 25 Oct 2024 03:49:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E852018BC27;
+	Fri, 25 Oct 2024 03:50:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="nad+USn6";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="mtmn86KY"
-Received: from fhigh-a5-smtp.messagingengine.com (fhigh-a5-smtp.messagingengine.com [103.168.172.156])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="TmGZTsw6"
+Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DB7C18BBA1;
-	Fri, 25 Oct 2024 03:49:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AE3C23B0;
+	Fri, 25 Oct 2024 03:50:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729828181; cv=none; b=fzSy4g7nBcD/WWA5ApG8QuoY2KArat/gt5SQA4ZkiNOHYnoUjZ6Utl+S/BAHmyZ3v7/XtqEHtMcZxbb/FRDcP+x1/mDCyjG1JnQZipA7n2hLGYre8VWPXvh6GD0h3Zuq4LJzJ724Aa6iOSXSCK+B15SFbJkHSbrNu99bo8JdmTw=
+	t=1729828251; cv=none; b=UHLgA+3N9I9USAaKES5MHLqVggEtFe0ux5P792IZvl4RC1GA4PQkH9SwsCLehtseAgJk/JkVu5DDCOup4ibQGP2G/oQpqoFsu4XP4UN6l0k1WSpJTle5UAvM2xKMbDL7u3U63Juso7GirTvATlBjv32Q1HXxeKoZPbBXm/yssP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729828181; c=relaxed/simple;
-	bh=biyN6BFINDLG9M70e01SzJIMheNqG2jq1GnZO+ddetg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=phyxc+xCTSrsxkU8fIxN5nSFqfHH2NwTxDnM0MW+okM+YhRzgfttxYZ3OCexIoQTUz2FClzp0xzmYMcTc7PFThV7hPKGVvS8rqXJT194qgNkXuQ92Fl8yTZG/77yUWSSJ6cty1M27JuyIP79wf6Al4PCKIZ+BCy7uMLjWheFqP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=nad+USn6; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=mtmn86KY; arc=none smtp.client-ip=103.168.172.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
-Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 37C1E114017A;
-	Thu, 24 Oct 2024 23:49:38 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-09.internal (MEProxy); Thu, 24 Oct 2024 23:49:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm3; t=1729828178; x=
-	1729914578; bh=WgS6yhK7Z1D4ST/hhcqeRn9rI9T894JvSD6lnkO9Iy4=; b=n
-	ad+USn6oL36B3vvBbXK3HNJ3K1+oFehHGDpVnpnN9Bup8hAnBvflA2x92/MMkhnZ
-	DhVu+dZUlvr/Scuol7rLXmHqaqHphQ3ZdOfmE3l0OjUW5oLEW/OGj23IkXcrebn9
-	UlrwluUhpGRilpEIOkOgWXzqNOCIK+adbZ8u8IN584B6LB9UmyhgpFb9CXwI74xZ
-	rXh9/nuYAibemxgHlAz5hfIvuj1j4TP7JXPVxcRRWBwfxcoaBRpe2VUeodKx6ucM
-	BGA5SzgxepDMscFVDIE7oAcQFKejHd+6RnF8yKVq0cbKae2FQuobSdenHHBBUk72
-	J1R2ZZxnRJof1n1Zwys1w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm3; t=1729828178; x=1729914578; bh=WgS6yhK7Z1D4ST/hhcqeRn9rI9T8
-	94JvSD6lnkO9Iy4=; b=mtmn86KYzMkBgKjm/XzfBAMvaaIfK62AG2JqMOcFlBjc
-	avCcLDIzgvpfscevO1wQYkxmpdqQ/cJ3nd3aCAiTqD80tKoHyC878AJWCrwAOu2U
-	1AeBpB6wV+1vSWLNFJNvLc6qwmJ/LPliwQ+lo/Bj+ac1WBFZDzVTaDsEUd/+U1nu
-	H67vF9cHEkFMfwrbjfD4PgQ/TreuMWNompbXIBQzN+A0UJRvD7JLwxyCh6MFHYI2
-	+1bR3LUki1qgkBxyGZBqMHLAjH61Ghf0/FJHBLxok7rJ8A0OE2BbUwPMQz3B4uu5
-	Ib0iAyJTtEy5FE2lu0qPKGmoWJ5Jvrq6qTFzXoKydQ==
-X-ME-Sender: <xms:URUbZ3XU3sljmavQL1E0brgNdxFN4ViJevjVqZt7palS7FqrUOM0Hg>
-    <xme:URUbZ_mvk8CUT6ppK0gAS3ULEhMPJ8-RFvpigA-qfIfyTpeyFzS64xiSJTwcSIUaO
-    8u8fkYUG6EgbIKOaCM>
-X-ME-Received: <xmr:URUbZzb7580JRctQCXlPNiwyT-ALm82TojAMT0bOloW0ubo8_xg54MSbrymF2rDpnHDRsGSMO-QNhHaeWbRRxkOkHNnEU6Jbm50>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdejuddgjeeiucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvden
-    ucfhrhhomhepvfgrkhgrshhhihcuufgrkhgrmhhothhouceoohdqthgrkhgrshhhihessh
-    grkhgrmhhotggthhhirdhjpheqnecuggftrfgrthhtvghrnhepveeilefhudekffehkeff
-    udduvedvfeduleelfeegieeljeehjeeuvdeghfetvedvnecuffhomhgrihhnpehkvghrnh
-    gvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhr
-    ohhmpehoqdhtrghkrghshhhisehsrghkrghmohgttghhihdrjhhppdhnsggprhgtphhtth
-    hopeehpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegvughmuhhnugdrrhgrihhl
-    vgesphhrohhtohhnrdhmvgdprhgtphhtthhopehlihhnuhigudefleegqdguvghvvghlse
-    hlihhsthhsrdhsohhurhgtvghfohhrghgvrdhnvghtpdhrtghpthhtoheplhhinhhugidq
-    khgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhgvghhrvg
-    hsshhiohhnsheslhhishhtshdrlhhinhhugidruggvvhdprhgtphhtthhopehsthgrsghl
-    vgesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:URUbZyXmI8YdVWkCnmjP5hcuhlH0mmavj5vkZD-TO-GhVtXig6zGIw>
-    <xmx:URUbZxkAbhpeTGaVOVbEvFZSgWS6ABe-d6Og9VDvbqF9tTJD5Uxw-w>
-    <xmx:URUbZ_cc31pZbPBLRgXHeuw24B_6_FJiWp2My0UlelTqDPxMUwwwfQ>
-    <xmx:URUbZ7HQVn2PfJEMlvpAaamk20HRRb_sLVVjjgaRrUO5hnkHVOBYsA>
-    <xmx:UhUbZ0uOjIHDpDSCv9ffevWSR9tOIfChPe4W8n4Z_NN-UBFAeEUZL7QP>
-Feedback-ID: ie8e14432:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 24 Oct 2024 23:49:36 -0400 (EDT)
-Date: Fri, 25 Oct 2024 12:49:34 +0900
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-To: Edmund Raile <edmund.raile@proton.me>
-Cc: linux1394-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
-	regressions@lists.linux.dev, stable@vger.kernel.org
-Subject: Re: firewire-ohci: device rediscovery hardlock regression
-Message-ID: <20241025034934.GA95457@workstation.local>
-Mail-Followup-To: Edmund Raile <edmund.raile@proton.me>,
-	linux1394-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
-	regressions@lists.linux.dev, stable@vger.kernel.org
-References: <8a9902a4ece9329af1e1e42f5fea76861f0bf0e8.camel@proton.me>
+	s=arc-20240116; t=1729828251; c=relaxed/simple;
+	bh=BAfCx1BUhJEiTvQh+lxJIaEH29wG0UZqb0XAr0QgVMU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BAdYoVXRN0d6bTRscuKcIIo303oR6dXrw+L1wxm0e85xFtmzLO/r4cRk26AftHZYnhqbzBeRoHTTMsDLqRYyBOTA6KVwmZmwQQ7SlXGvpAN5VhSOEikHGkUtUXklEdSxussKAwwOvpcE1P3maOB5Elrk9dzljmItJSDEHHeTkbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=TmGZTsw6; arc=none smtp.client-ip=115.124.30.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1729828244; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=csXrtLmLvSSe1liKlQmsgcqYt2pEi6/QWS4TVjAn6dI=;
+	b=TmGZTsw6sbPcd36rUFfg7zARhHdA+UJHiaVEFLnzO0a4k6k3jGOC54Xit+5jDN5qeJmQ1aSCsiSsHRBbtviyGv4XMPZmK6c9hiiOAasUqEq+qvTDalrxlF8bgdgyM+PbePttvfQNGo995duSeckbwzXExv7NzkkYw3xRKu2dcTQ=
+Received: from 30.221.128.174(mailfrom:lulie@linux.alibaba.com fp:SMTPD_---0WHqz3cK_1729828242 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Fri, 25 Oct 2024 11:50:43 +0800
+Message-ID: <80fbd73f-ce75-44bf-a444-116217a50c91@linux.alibaba.com>
+Date: Fri, 25 Oct 2024 11:50:42 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8a9902a4ece9329af1e1e42f5fea76861f0bf0e8.camel@proton.me>
-
-Hi,
-
-Thanks for the bug report.
-
-Coincidentally, I face the same problem with my TC Electronic Desktop
-Konnekt 6, which reports one available port and two invalidated ports, and
-investigate its cause. I think the problem occurs just for the devices
-which have three or more ports.
-
-I sent a fix[1] just now by referring to your suggestions. Would you please
-evaluate the fix with your device?
-
-I'm sorry for your inconvenience.
-
-
-[1] [PATCH] firewire: core: fix invalid port index for parent device
-https://lore.kernel.org/lkml/20241025034137.99317-1-o-takashi@sakamocchi.jp/
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 net-next 3/3] ipv4/udp: Add 4-tuple hash for connected
+ socket
+To: Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org
+Cc: willemdebruijn.kernel@gmail.com, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, dsahern@kernel.org,
+ antony.antony@secunet.com, steffen.klassert@secunet.com,
+ linux-kernel@vger.kernel.org, dust.li@linux.alibaba.com,
+ jakub@cloudflare.com, fred.cc@alibaba-inc.com,
+ yubing.qiuyubing@alibaba-inc.com
+References: <20241018114535.35712-1-lulie@linux.alibaba.com>
+ <20241018114535.35712-4-lulie@linux.alibaba.com>
+ <b232a642-2f0d-4bac-9bcf-50d653ea875d@redhat.com>
+From: Philo Lu <lulie@linux.alibaba.com>
+In-Reply-To: <b232a642-2f0d-4bac-9bcf-50d653ea875d@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
-Thanks
 
-Takashi Sakamoto
+On 2024/10/24 23:01, Paolo Abeni wrote:
+> On 10/18/24 13:45, Philo Lu wrote:
+> [...]
+>> +/* In hash4, rehash can also happen in connect(), where hash4_cnt keeps unchanged. */
+>> +static void udp4_rehash4(struct udp_table *udptable, struct sock *sk, u16 newhash4)
+>> +{
+>> +	struct udp_hslot *hslot4, *nhslot4;
+>> +
+>> +	hslot4 = udp_hashslot4(udptable, udp_sk(sk)->udp_lrpa_hash);
+>> +	nhslot4 = udp_hashslot4(udptable, newhash4);
+>> +	udp_sk(sk)->udp_lrpa_hash = newhash4;
+>> +
+>> +	if (hslot4 != nhslot4) {
+>> +		spin_lock_bh(&hslot4->lock);
+>> +		hlist_del_init_rcu(&udp_sk(sk)->udp_lrpa_node);
+>> +		hslot4->count--;
+>> +		spin_unlock_bh(&hslot4->lock);
+>> +
+>> +		synchronize_rcu();
+> 
+> This deserve a comment explaining why it's needed. I had to dig in past
+> revision to understand it.
+> 
 
-On Thu, Oct 24, 2024 at 01:56:31PM +0000, Edmund Raile wrote:
-> Hello,
+Got it. And a short explanation here (see [1] for detail):
+
+Here, we move a node from a hlist to another new one, i.e., update 
+node->next from the old hlist to the new hlist. For readers traversing 
+the old hlist, if we update node->next just when readers move onto the 
+moved node, then the readers also move to the new hlist. This is unexpected.
+
+     Reader(lookup)     Writer(rehash)
+     -----------------  ---------------
+1. rcu_read_lock()
+2. pos = sk;
+3.                     hlist_del_init_rcu(sk, old_slot)
+4.                     hlist_add_head_rcu(sk, new_slot)
+5. pos = pos->next; <=
+6. rcu_read_unlock()
+
+[1]
+https://lore.kernel.org/all/0fb425e0-5482-4cdf-9dc1-3906751f8f81@linux.alibaba.com/
+
+>> +
+>> +		spin_lock_bh(&nhslot4->lock);
+>> +		hlist_add_head_rcu(&udp_sk(sk)->udp_lrpa_node, &nhslot4->head);
+>> +		nhslot4->count++;
+>> +		spin_unlock_bh(&nhslot4->lock);
+>> +	}
+>> +}
+>> +
+>> +static void udp4_unhash4(struct udp_table *udptable, struct sock *sk)
+>> +{
+>> +	struct udp_hslot *hslot2, *hslot4;
+>> +
+>> +	if (udp_hashed4(sk)) {
+>> +		hslot2 = udp_hashslot2(udptable, udp_sk(sk)->udp_portaddr_hash);
+>> +		hslot4 = udp_hashslot4(udptable, udp_sk(sk)->udp_lrpa_hash);
+>> +
+>> +		spin_lock(&hslot4->lock);
+>> +		hlist_del_init_rcu(&udp_sk(sk)->udp_lrpa_node);
+>> +		hslot4->count--;
+>> +		spin_unlock(&hslot4->lock);
+>> +
+>> +		spin_lock(&hslot2->lock);
+>> +		udp_hash4_dec(hslot2);
+>> +		spin_unlock(&hslot2->lock);
+>> +	}
+>> +}
+>> +
+>> +/* call with sock lock */
+>> +static void udp4_hash4(struct sock *sk)
+>> +{
+>> +	struct udp_hslot *hslot, *hslot2, *hslot4;
+>> +	struct net *net = sock_net(sk);
+>> +	struct udp_table *udptable;
+>> +	unsigned int hash;
+>> +
+>> +	if (sk_unhashed(sk) || inet_sk(sk)->inet_rcv_saddr == htonl(INADDR_ANY))
+>> +		return;
+>> +
+>> +	hash = udp_ehashfn(net, inet_sk(sk)->inet_rcv_saddr, inet_sk(sk)->inet_num,
+>> +			   inet_sk(sk)->inet_daddr, inet_sk(sk)->inet_dport);
+>> +
+>> +	udptable = net->ipv4.udp_table;
+>> +	if (udp_hashed4(sk)) {
+>> +		udp4_rehash4(udptable, sk, hash);
 > 
-> I'd like to report a regression in firewire-ohci that results
-> in the kernel hardlocking when re-discovering a FireWire device.
+> It's unclear to me how we can enter this branch. Also it's unclear why
+> here you don't need to call udp_hash4_inc()udp_hash4_dec, too. Why such
+> accounting can't be placed in udp4_rehash4()?
 > 
-> TI XIO2213B
-> RME FireFace 800
+
+It's possible that a connected udp socket _re-connect_ to another remote 
+address. Then, because the local address is not changed, hash2 and its 
+hash4_cnt keep unchanged. But rehash4 need to be done.
+
+I'll also add a comment here.
+
+> [...]
+>> @@ -2031,6 +2180,19 @@ void udp_lib_rehash(struct sock *sk, u16 newhash)
+>>   				spin_unlock(&nhslot2->lock);
+>>   			}
+>>   
+>> +			if (udp_hashed4(sk)) {
+>> +				udp4_rehash4(udptable, sk, newhash4);
+>> +
+>> +				if (hslot2 != nhslot2) {
+>> +					spin_lock(&hslot2->lock);
+>> +					udp_hash4_dec(hslot2);
+>> +					spin_unlock(&hslot2->lock);
+>> +
+>> +					spin_lock(&nhslot2->lock);
+>> +					udp_hash4_inc(nhslot2);
+>> +					spin_unlock(&nhslot2->lock);
+>> +				}
+>> +			}
+>>   			spin_unlock_bh(&hslot->lock);
 > 
-> It will occur under three conditions:
->  * power-cycling the FireWire device
->  * un- and re-plugging the FireWire device
->  * suspending and then waking the PC
+> The udp4_rehash4() call above is in atomic context and could end-up
+> calling synchronize_rcu() which is a blocking function. You must avoid that.
 > 
-> Often it would also occur directly on boot in QEMU but I have not
-> yet observed this specific behavior on bare metal.
+
+I see, synchronize_rcu() cannot be used with spinlock. However, I don't 
+have a good idea to solve it by now. Do you have any thoughts or 
+suggestions?
+
+> Cheers,
 > 
-> Here is an excerpt from the stack trace (don't know whether it is
-> acceptable to send in full):
-> 
-> kernel: ------------[ cut here ]------------
-> kernel: refcount_t: addition on 0; use-after-free.
-> kernel: WARNING: CPU: 3 PID: 116 at lib/refcount.c:25
-> refcount_warn_saturate (/build/linux/lib/refcount.c:25 (discriminator
-> 1)) 
-> kernel: Workqueue: firewire_ohci bus_reset_work
-> kernel: RIP: 0010:refcount_warn_saturate
-> (/build/linux/lib/refcount.c:25 (discriminator 1)) 
-> kernel: Call Trace:
-> kernel:  <TASK>
-> kernel: ? refcount_warn_saturate (/build/linux/lib/refcount.c:25
-> (discriminator 1)) 
-> kernel: ? __warn.cold (/build/linux/kernel/panic.c:693) 
-> kernel: ? refcount_warn_saturate (/build/linux/lib/refcount.c:25
-> (discriminator 1)) 
-> kernel: ? report_bug (/build/linux/lib/bug.c:180
-> /build/linux/lib/bug.c:219) 
-> kernel: ? handle_bug (/build/linux/arch/x86/kernel/traps.c:218) 
-> kernel: ? exc_invalid_op (/build/linux/arch/x86/kernel/traps.c:260
-> (discriminator 1)) 
-> kernel: ? asm_exc_invalid_op
-> (/build/linux/./arch/x86/include/asm/idtentry.h:621) 
-> kernel: ? refcount_warn_saturate (/build/linux/lib/refcount.c:25
-> (discriminator 1)) 
-> kernel: for_each_fw_node (/build/linux/./include/linux/refcount.h:190
-> /build/linux/./include/linux/refcount.h:241
-> /build/linux/./include/linux/refcount.h:258
-> /build/linux/drivers/firewire/core.h:199
-> /build/linux/drivers/firewire/core-topology.c:275) 
-> kernel: ? __pfx_report_found_node (/build/linux/drivers/firewire/core-
-> topology.c:312) 
-> kernel: fw_core_handle_bus_reset (/build/linux/drivers/firewire/core-
-> topology.c:399 (discriminator 1) /build/linux/drivers/firewire/core-
-> topology.c:504 (discriminator 1)) 
-> kernel: bus_reset_work (/build/linux/drivers/firewire/ohci.c:2121) 
-> kernel: process_one_work
-> (/build/linux/./arch/x86/include/asm/jump_label.h:27
-> /build/linux/./include/linux/jump_label.h:207
-> /build/linux/./include/trace/events/workqueue.h:110
-> /build/linux/kernel/workqueue.c:3236) 
-> kernel: worker_thread (/build/linux/kernel/workqueue.c:3306
-> (discriminator 2) /build/linux/kernel/workqueue.c:3393 (discriminator
-> 2)) 
-> kernel: ? __pfx_worker_thread (/build/linux/kernel/workqueue.c:3339) 
-> kernel: kthread (/build/linux/kernel/kthread.c:389) 
-> kernel: ? __pfx_kthread (/build/linux/kernel/kthread.c:342) 
-> kernel: ret_from_fork (/build/linux/arch/x86/kernel/process.c:153) 
-> kernel: ? __pfx_kthread (/build/linux/kernel/kthread.c:342) 
-> kernel: ret_from_fork_asm (/build/linux/arch/x86/entry/entry_64.S:254) 
-> kernel:  </TASK>
-> 
-> I have identified the commit via bisection:
-> 24b7f8e5cd656196a13077e160aec45ad89b58d9
-> firewire: core: use helper functions for self ID sequence
-> 
-> It was part of the following patch series:
-> firewire: add tracepoints events for self ID sequence
-> https://lore.kernel.org/all/20240605235155.116468-6-o-takashi@sakamocchi.jp/
-> 
-> #regzbot introduced: 24b7f8e5cd65
-> 
-> Since this was before v6.10-rc5 and stable 6.10.14 is EOL,
-> stable v6.11.5 and mainline are affected.
-> 
-> Reversion appears to be non-trivial as it is part of a patch
-> series, other files have been altered as well and other commits
-> build on top of it.
-> 
-> Call chain:
-> core-topology.c fw_core_handle_bus_reset()
-> -> core-topology.c   for_each_fw_node(card, local_node,
-> report_found_node)
-> -> core.h            fw_node_get(root)
-> -> refcount.h        __refcount_inc(&node)
-> -> refcount.h        __refcount_add(1, r, oldp);
-> -> refcount.h        refcount_warn_saturate(r, REFCOUNT_ADD_UAF);
-> -> refcount.h        REFCOUNT_WARN("addition on 0; use-after-free")
-> 
-> Since local_node of fw_core_handle_bus_reset() is retrieved by
-> 	local_node = build_tree(card, self_ids, self_id_count);
-> build_tree() needs to be looked at, it was indeed altered by
-> 24b7f8e5cd65.
-> 
-> After a hard 3 hour look traversing all used functions and comparing
-> against the original function (as of e404cacfc5ed), this caught my eye:
->        for (port_index = 0; port_index < total_port_count;
-> ++port_index) {
->                switch (port_status) {
->                case PHY_PACKET_SELF_ID_PORT_STATUS_PARENT:
->                        node->color = i;
-> 
-> In both for loops, "port_index" was replaced by "i"
-> "i" remains in use above:
->        for (i = 0, h = &stack; i < child_port_count; i++)
->                h = h->prev;
-> 
-> While the original also used the less descriptive i in the loop
->        for (i = 0; i < port_count; i++) {
->                switch (get_port_type(sid, i)) {
->                case SELFID_PORT_PARENT:
->                         node->color = i;
-> but reset it to 0 at the beginning of the loop.
-> 
-> So the stray "i" in the for loop should be replaced with the loop
-> iterator "port_index" as it is meant to be synchronous with the
-> loop iterator (i.e. the port_index), no?
-> 
-> diff --git a/drivers/firewire/core-topology.c b/drivers/firewire/core-
-> topology.c
-> index 8c10f47cc8fc..7fd91ba9c9c4 100644
-> --- a/drivers/firewire/core-topology.c
-> +++ b/drivers/firewire/core-topology.c
-> @@ -207,7 +207,7 @@ static struct fw_node *build_tree(struct fw_card
-> *card, const u32 *sid, int self
->                                 // the node->ports array where the
-> parent node should be.  Later,
->                                 // when we handle the parent node, we
-> fix up the reference.
->                                 ++parent_count;
-> -                               node->color = i;
-> +                               node->color = port_index;
->                                 break;
-> 
-> What threw me off was discaridng node->color as it would be replaced
-> later anyways (can't be important!), or so I thought.
-> 
-> Please tell me, is this line of reasoning correct or am I missing
-> something?
-> 
-> Compiling 24b7f8e5cd65 and later mainline with the patch above
-> resulted in a kernel that didn't crash!
-> 
-> In case my solution should turn out to be correct, I will gladly
-> submit the patch.
-> 
-> Kind regards,
-> Edmund Raile.
+> Paolo
+
+Thanks for your reviewing, Paolo. I'll address all your concerns in the 
+next version.
+
+-- 
+Philo
+
 
