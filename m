@@ -1,51 +1,94 @@
-Return-Path: <linux-kernel+bounces-381411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 885E59AFEC2
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 11:47:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90DAD9AFEC9
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 11:48:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA5511C213A1
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 09:47:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4E361C21301
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 09:48:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35A091D3633;
-	Fri, 25 Oct 2024 09:47:09 +0000 (UTC)
-Received: from unicom146.biz-email.net (unicom146.biz-email.net [210.51.26.146])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF1661D4610;
+	Fri, 25 Oct 2024 09:48:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eBG3Aug+"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 819AE12FB1B
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 09:47:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.26.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3697F12FB1B;
+	Fri, 25 Oct 2024 09:48:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729849628; cv=none; b=dEj14rOp94llg8A3C/l/BTu5qUa3VxgD+SL2C+XbJAdD9PcK1nsERg9E0fLAy0DZ9Q0Oh/zerb6sf5/capCXZj7H5+m7gRTs2+1ZfJM4dwDNG8x6e/OlASuFPxvPMBYoaeCiCo0V1bDSKNtBO5zROcwMEB2ClLiYwq8qyMOSoU0=
+	t=1729849690; cv=none; b=hWj4umLs4FYWOUbx5vP/VHYa0zRzKTELZ7vcWXQG4WbaEqD6NJU74ZsD1k4dVRD3NoR2LWDF66p3yw2IQrsCG7cSTiLamVjChmOxaHklRT/UHcZOhQymRkt7Hk13jFcr8fIIDkVTPJlJFLikLiWwzMqhVLPdXI3wvIt76BCf8K0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729849628; c=relaxed/simple;
-	bh=XDLgBvKsETXqAR3dxS3p599wKKcS2nz21XKup0ObEPw=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BRY64fzZ/Gtb8DOA5ipEfxrA7LyuWjblJQXbqDiy/Y2sXQW4FcqJGkptZ0WmvuqBF0QunkmWPqv9kM2KSaPNdv0Q+dZmMltN6LsKqv3QbgoNLIcC351TTihIxOEmG3jAIF8Jt9m+LoF5WYQ7qQblX5p3ne71gNqNGamCPUIlNeo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.26.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
-Received: from unicom146.biz-email.net
-        by unicom146.biz-email.net ((D)) with ASMTP (SSL) id WLU00151;
-        Fri, 25 Oct 2024 17:46:51 +0800
-Received: from jtjnmail201607.home.langchao.com (10.100.2.7) by
- jtjnmail201611.home.langchao.com (10.100.2.11) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Fri, 25 Oct 2024 17:46:52 +0800
-Received: from localhost.localdomain (10.94.19.204) by
- jtjnmail201607.home.langchao.com (10.100.2.7) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Fri, 25 Oct 2024 17:46:52 +0800
-From: Charles Han <hanchunchao@inspur.com>
-To: <stanley_chang@realtek.com>, <myungjoo.ham@samsung.com>,
-	<cw00.choi@samsung.com>
-CC: <linux-kernel@vger.kernel.org>, Charles Han <hanchunchao@inspur.com>
-Subject: [PATCH] extcon: realtek: fix NULL deref check in extcon_rtk_type_c_probe
-Date: Fri, 25 Oct 2024 17:46:50 +0800
-Message-ID: <20241025094650.253599-1-hanchunchao@inspur.com>
-X-Mailer: git-send-email 2.31.1
+	s=arc-20240116; t=1729849690; c=relaxed/simple;
+	bh=ThNvSYZfVe6QKlfxCYRKH8iB/n3TbOriKl7MaLULAAI=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=h5PvL+RIKuvP3h0yZCtUi6RqCv4r0oi8UryYVyCaGs7CRE7xaUvmKm9dGtNBJY2Aonts57N8NlXovCAYnB/Eb1Hevd/M8gDs8YalDG3gtUR12qd/AvlhO0olk+Vf4y/taB5C0yLLkZU8td5RW21rKVrhFI84ZxrxF+i844LLEyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eBG3Aug+; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2fb561f273eso17935981fa.2;
+        Fri, 25 Oct 2024 02:48:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729849686; x=1730454486; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=DYXk8J3KGsQhDnC6wKQa2Bh6Djnz5JRK+lEco2zJMUk=;
+        b=eBG3Aug+yQfA5PIm9NZwP4C/NGAg5vTZCTg0KnifPTKeQ0DKmNUVVvHowDNXqY2DHa
+         hnThdFD9kZs8Jn7NUGP3mSIOsRfRTkl5WDl0nxP/u+ALAzVen8r6C0Kn9GFSlQ9VzFTR
+         2EPn+dQgoSJwJtisfDKV1Q8d7305XahFyvAx0qRDysIGHK9QPYGnSL8vu3k1HhwfyDX8
+         h0XdUUdp3je17wptAaQ4e2jZZA3uNzky1jRzGnQRqSo5Xns7vcpPjFr21B9rCQXP0n/o
+         8ORYsY7NC925fcVkXyB1k4CyS6wAyyTiwpykr5uNd/se+RJ2m27Mo8tx3ETWlduLwSmz
+         DVsw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729849686; x=1730454486;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DYXk8J3KGsQhDnC6wKQa2Bh6Djnz5JRK+lEco2zJMUk=;
+        b=WTY47QdP+ozwP4VTu7UOsn6wdSKNYWQrIezFTFNyCSCszsMfW7ylnZLauElANYnWqB
+         J4Cjv97xuOSi/apBJk3oV+b5shYGKLXUheBhAoksaoSUIVOdj8uwyNbo8DLyGMsXI2O9
+         I5dGaurQyCOi0ERQU6Z7Cl3yglK6v4NUIOQdxEMhG66gXG7ByOjsw0guSxWGWZbyTHCT
+         o5GgaGj9x+9ykEmLXqqJRJXUz9tWsW+Z0sVrTfYKNE6b8RGxlchIcabB+oActu1if/eq
+         +46QDOGbTfQ8oyaV8Cn/4MYaIK37pm6YDmthBp7XRixT3+tyExAKGgVHZ1ofmD8syk8Z
+         F6Ig==
+X-Forwarded-Encrypted: i=1; AJvYcCV86a5Zml4ptxMeuoVdiC9y4XLZlGjeYzrTGj9b+nieqaCHH8PcFBSS/WwEjQVYL3ljiG8qiS+bHcwXGflY@vger.kernel.org, AJvYcCVPvkgLy0B3gVuqmJM4JgjkLC+lLVkLTPhTnQi5Qo/2FRYl+rLZRAPGfMP5Br3E5omf9C9+qj4jG+sf@vger.kernel.org, AJvYcCVe7zoBVE4tepoMOLIsRbgsDWsVVT4oQ0FPkssOPJHqtT1CJSSlleqx3HTx0Nn0C7cZgiFzaFEIsraWBGQB@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/AX6Pg/o7mTbs4m0IplaOVaEKKMNuXD0s5XPz89dpUtc2MkKG
+	bTwxHVvEaSgMPgAux5ZoXCPfFfLZICLd/co5V9ZeONPZbcJq+ipg
+X-Google-Smtp-Source: AGHT+IGL3uChiYeGKtJomYvkUJIYvNEpHy1hENHRApI/vHuYwn6oMN9tfoB9YDLfeAdwSvGKyYrMMw==
+X-Received: by 2002:a2e:a554:0:b0:2fb:407b:1702 with SMTP id 38308e7fff4ca-2fc9d392a94mr51934231fa.20.1729849686055;
+        Fri, 25 Oct 2024 02:48:06 -0700 (PDT)
+Received: from localhost.localdomain (93-34-91-161.ip49.fastwebnet.it. [93.34.91.161])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4318b55f50csm42785605e9.17.2024.10.25.02.48.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Oct 2024 02:48:05 -0700 (PDT)
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Christian Marangi <ansuelsmth@gmail.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Antoine Tenart <atenart@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	linux-crypto@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev,
+	upstream@airoha.com
+Subject: [PATCH v4 1/3] spinlock: extend guard with spinlock_bh variants
+Date: Fri, 25 Oct 2024 11:47:22 +0200
+Message-ID: <20241025094734.1614-1-ansuelsmth@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,38 +96,51 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: Jtjnmail201614.home.langchao.com (10.100.2.14) To
- jtjnmail201607.home.langchao.com (10.100.2.7)
-tUid: 202410251746512ec169933b9b7889252f923db7329132
-X-Abuse-Reports-To: service@corp-email.com
-Abuse-Reports-To: service@corp-email.com
-X-Complaints-To: service@corp-email.com
-X-Report-Abuse-To: service@corp-email.com
 
-In extcon_rtk_type_c_probe() devm_kzalloc() may return NULL but this
-returned value is not checked.
+Extend guard APIs with missing raw/spinlock_bh variants.
 
-Fixes: 8a590d7371f0 ("extcon: add Realtek DHC RTD SoC Type-C driver")
-Signed-off-by: Charles Han <hanchunchao@inspur.com>
+Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
 ---
- drivers/extcon/extcon-rtk-type-c.c | 2 ++
- 1 file changed, 2 insertions(+)
+Changes v4:
+- Out of RFC
+Changes v2:
+- Add this patch
 
-diff --git a/drivers/extcon/extcon-rtk-type-c.c b/drivers/extcon/extcon-rtk-type-c.c
-index 19a01e663733..2820c7e82481 100644
---- a/drivers/extcon/extcon-rtk-type-c.c
-+++ b/drivers/extcon/extcon-rtk-type-c.c
-@@ -1369,6 +1369,8 @@ static int extcon_rtk_type_c_probe(struct platform_device *pdev)
- 	}
+ include/linux/spinlock.h | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/include/linux/spinlock.h b/include/linux/spinlock.h
+index 63dd8cf3c3c2..d3561c4a080e 100644
+--- a/include/linux/spinlock.h
++++ b/include/linux/spinlock.h
+@@ -548,6 +548,12 @@ DEFINE_LOCK_GUARD_1(raw_spinlock_irq, raw_spinlock_t,
  
- 	type_c->type_c_cfg = devm_kzalloc(dev, sizeof(*type_c_cfg), GFP_KERNEL);
-+	if (!type_c->type_c_cfg)
-+		return -ENOMEM;
+ DEFINE_LOCK_GUARD_1_COND(raw_spinlock_irq, _try, raw_spin_trylock_irq(_T->lock))
  
- 	memcpy(type_c->type_c_cfg, type_c_cfg, sizeof(*type_c_cfg));
++DEFINE_LOCK_GUARD_1(raw_spinlock_bh, raw_spinlock_t,
++		    raw_spin_lock_bh(_T->lock),
++		    raw_spin_unlock_bh(_T->lock))
++
++DEFINE_LOCK_GUARD_1_COND(raw_spinlock_bh, _try, raw_spin_trylock_bh(_T->lock))
++
+ DEFINE_LOCK_GUARD_1(raw_spinlock_irqsave, raw_spinlock_t,
+ 		    raw_spin_lock_irqsave(_T->lock, _T->flags),
+ 		    raw_spin_unlock_irqrestore(_T->lock, _T->flags),
+@@ -569,6 +575,13 @@ DEFINE_LOCK_GUARD_1(spinlock_irq, spinlock_t,
+ DEFINE_LOCK_GUARD_1_COND(spinlock_irq, _try,
+ 			 spin_trylock_irq(_T->lock))
  
++DEFINE_LOCK_GUARD_1(spinlock_bh, spinlock_t,
++		    spin_lock_bh(_T->lock),
++		    spin_unlock_bh(_T->lock))
++
++DEFINE_LOCK_GUARD_1_COND(spinlock_bh, _try,
++			 spin_trylock_bh(_T->lock))
++
+ DEFINE_LOCK_GUARD_1(spinlock_irqsave, spinlock_t,
+ 		    spin_lock_irqsave(_T->lock, _T->flags),
+ 		    spin_unlock_irqrestore(_T->lock, _T->flags),
 -- 
-2.31.1
+2.45.2
 
 
