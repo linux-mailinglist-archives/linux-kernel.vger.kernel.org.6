@@ -1,110 +1,207 @@
-Return-Path: <linux-kernel+bounces-381953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6960E9B069B
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:01:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A97339B06A6
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:01:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D7496B2127D
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:01:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61A45281AA6
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:01:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AF2418859E;
-	Fri, 25 Oct 2024 14:58:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDA1C17333D;
+	Fri, 25 Oct 2024 15:00:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iRwxe262"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XMFXXuqC"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29FD9188588
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 14:58:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 706CC166310
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 15:00:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729868335; cv=none; b=HoDOJitLJyk6/yQms8NQJu0LAIPAg/Sdhu+u9AYrk7DinkoVo+yruCElKddq6+oFxcsnjjNxkAUXa6REeqrnFt6fge/iyyN3pOm7fAciqXMIdB2SqevFBeaDn7LIJPO/G6ILWsNDCBzzHWWlBzbqu/t0qS9IkkYDpL7c2VDUvOI=
+	t=1729868442; cv=none; b=ITNLo0qj2DeaUJStBkDjrScMrfJGdEhwPlunpePDwO6zzWlGsUVPmbzRooORo1q/xTdjOt3tkPWzAY9vb67LjUGtofBhwSoyeLLXsNMVUG9H0uy4QNolrGGwnFAraagvjV+QIDeh5YkFlwQqoZMQV1dkV6tfo8G6QN4YckELVPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729868335; c=relaxed/simple;
-	bh=sBG/dcLi08PfCfK8oMZfQK7/QZ48KUs5hSThy2bJzww=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Z6H57npeApG8Fq7re17rvLb8ImLV7E9sSj6wbfWTpIlvq7vHSeNel/twUmsRiF5Gz2fMqceUlgoD0AT+3d3qL/kGMVTiA3ifD3FKcFDXTGmMhPNcKUpvZPWHGW+njn36MHPkBY6gf5arEcbFJ+4c4wwQ+tHstgQPMyjLbejWOBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iRwxe262; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-7203c431f93so1671833b3a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 07:58:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729868332; x=1730473132; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=GmnpJhJhZ+H4a0YQJ0NmfUt9oLEgwDhsqXS0+70xNtM=;
-        b=iRwxe2629Qa92s0zlDRJmThnEGXOyX+/qoJvNCQyUrL5jgzvgaOnqy/kYVXwsowMId
-         5uIzuYniwHlTdroS+IyEJA/9f/uebceP/SrEMSiT6tKrh0My3JwMAkG4/upvNI4F5Z0x
-         yfMmcSMbnJYlZEE4rAI8X0ut2Zw1kSwtY0mdJAEq/quQnqQxZCCnjMjhl+3M+lP8lru8
-         GJj5pDaAq9Lyz/VBAbJM/EsDTZo34YC4ueceSFYiKzK1Hb8YlWUAnDXCzes8BtfPKODH
-         nlBZrT2M/rAcv0DL8cEsG1PWxBb8/emL1qPVACjwO0V+yDwvhXNdtHC58R/OOgyGk6zP
-         Hhxg==
+	s=arc-20240116; t=1729868442; c=relaxed/simple;
+	bh=qn2zisIVAp1A3sOByjD0CKUjzgN/331GtrAdNv9H2Gs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=aw1U366HIJnumf4azO3sjLr8BO51Y46FEA5nwlttGwFGLW44aN4AaUUdOt/1s6H2AHdogcYHPRUwr/uHdRVDtc6ata5ZqtoQdlNb/LxxF0jNgxW9xfcUnCtkXKwOffjQrpYNCGhGUhceEj2/BrtYUmM6nLMqFF5oXXZxo2R2NO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XMFXXuqC; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729868438;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=6mk7pVJi4FxC5YCmtGMcoceHkePQhE8sXwo0Yl4cl4Y=;
+	b=XMFXXuqCWVUAVm2tG0dM6PHfyyu2sAT5PygTKygfI0PlWJGAFHZ3iM/d2ihMi/CP50iLyq
+	cZZbMf6XKhTF+mAjaPJoOiRsVUXeCPIGNVTjqyGiCMTSG7nZaKRqfg+nt77nzC63/p0nNY
+	hYKf70wC3UUel+04RKeBK0NIJHhSEI8=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-609-MKoVbivtNWmSi7DfJt03nw-1; Fri, 25 Oct 2024 11:00:37 -0400
+X-MC-Unique: MKoVbivtNWmSi7DfJt03nw-1
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-37d4a211177so1076044f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 08:00:37 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729868332; x=1730473132;
+        d=1e100.net; s=20230601; t=1729868436; x=1730473236;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=GmnpJhJhZ+H4a0YQJ0NmfUt9oLEgwDhsqXS0+70xNtM=;
-        b=iMjtO2LvmS3tjiBm7RXnUpnZzrq0+vNY8jtq5CYkGVrbTINY95A7JXAhCXDf8FJyZR
-         FFvOrGwyU1R0lNHa/7rG8uo1T3ca3HIzvsTfNxMjq9YG4vLT0hqs932iEZ2uLQ1xt1dK
-         65GijI7/VAv9awLqLXqu124egLRa/ognn4wYWganmjpcRbMJ7gtlqrpuq5g41SZ1rG9T
-         uhi+FGAQ9GS20AWr/1tCEf73TR1WFInRZluWYxEKyD/AD3Ah+XmVwSs+yfJcWRREvPGq
-         DB+Fxcyc+YxH4lARYEsyJvSvG3lsrhpisjpMy9beCBydpnPEU3Y0/BXTHsV4xTNt821x
-         1s8g==
-X-Forwarded-Encrypted: i=1; AJvYcCUygiu77Xzlo8B3EcooDbzcHreCjeaZmEj3rB/ubs4geonbU/JzMcrqGsJXEGBbD+eTDjcNTD1O5j9d/zk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwjQuaudAX+3dVsgyZKKgZf8NHSkrHzm9x0wdxWcEcGBK2ozoi
-	BWlQtz1112eGtEAzxGhVnwXu4RUvIFWper+w23qiXhRH9k9gaint
-X-Google-Smtp-Source: AGHT+IF7KtDeQ31S7AxZo2zL9s4UHqylhFu64vx6lAS8Pc9c0Lk5OAwAOuV3oQjRkjuiXO9mwWNDKg==
-X-Received: by 2002:a05:6a00:cc9:b0:71e:5a6a:94ca with SMTP id d2e1a72fcca58-72030b7c2f4mr14573433b3a.19.1729868332106;
-        Fri, 25 Oct 2024 07:58:52 -0700 (PDT)
-Received: from TW-MATTJAN1.eu.trendnet.org (219-87-142-18.static.tfn.net.tw. [219.87.142.18])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7205792198fsm1154200b3a.26.2024.10.25.07.58.50
+        bh=6mk7pVJi4FxC5YCmtGMcoceHkePQhE8sXwo0Yl4cl4Y=;
+        b=v7rQnq6yzDK9XuklIQEVQKFeMKACflzbF/AMUPESK6waLLbEtJatwMukrv333ef8R9
+         X4NYVO6HmvZoZqk6dZwP82uDyXXA9doeiX0nXZvXYJwyAPKgd+F6g0umwFk6AjBiQvMr
+         2aO4BECwXY2LmvijxheV7FvxvcLgC73Gov4uurkl1sEPlY9EIwqu7R1RP0ZTxm2jt0cP
+         X/UOGFRJST/wVMiVPcTaQ0Ys18h+TUDucbkx5qFBInC7SHjs6fUC+M036APsUWRKk+a6
+         behVZpHQipxTgIqX2T/MH/1aHkHN1bFxMe8QhGYJ5Mqv+4iwOR0qw72a5NUxWFchA00a
+         DD6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXytwdAbw1nIvpqI4gVD3Fsk9w2PMWc8pimT4ihnGOSJnY0VPfY+t/gyPm61Q7RzyTcArqPkWKRrGRsQI0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxfQoYsUl9vNjoVjvrPF71sd6iFo3cgkaLAF3lGUqdSvPX8oWDI
+	qgQg0kwaN0QzRsB5Lm+ATnxgf9avDBsNa4l8G1E0K2o3+E8C4W+WWdPlDhkd/o1/xcDvGOfzGGF
+	flXzmvNKFh8IoUxgYNNjZF0vRZjfo8w8QlEkSgfw6wOcbhTWG2AfX3Qc4jBftoA==
+X-Received: by 2002:adf:eac4:0:b0:37c:d2f0:7331 with SMTP id ffacd0b85a97d-3803ab1a8bbmr4410336f8f.0.1729868435657;
+        Fri, 25 Oct 2024 08:00:35 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHDs+qGkPhYGAaZ+QRORXNw+V6iATQJifr1mVHJ8hw/ogKGV0BNUWn6+ubNlvP8p8bNny4MNA==
+X-Received: by 2002:adf:eac4:0:b0:37c:d2f0:7331 with SMTP id ffacd0b85a97d-3803ab1a8bbmr4410253f8f.0.1729868435070;
+        Fri, 25 Oct 2024 08:00:35 -0700 (PDT)
+Received: from eisenberg.fritz.box (200116b82de5ba00738ac8dadaac7543.dip.versatel-1u1.de. [2001:16b8:2de5:ba00:738a:c8da:daac:7543])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b9216fsm1727189f8f.100.2024.10.25.08.00.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2024 07:58:51 -0700 (PDT)
-From: Matt Jan <zoo868e@gmail.com>
-To: Dave Kleikamp <shaggy@kernel.org>,
-	jfs-discussion@lists.sourceforge.net,
+        Fri, 25 Oct 2024 08:00:34 -0700 (PDT)
+From: Philipp Stanner <pstanner@redhat.com>
+To: Jonathan Corbet <corbet@lwn.net>,
+	Damien Le Moal <dlemoal@kernel.org>,
+	Niklas Cassel <cassel@kernel.org>,
+	Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Boris Brezillon <bbrezillon@kernel.org>,
+	Arnaud Ebalard <arno@natisbad.org>,
+	Srujana Challa <schalla@marvell.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Miri Korenblit <miriam.rachel.korenblit@intel.com>,
+	Kalle Valo <kvalo@kernel.org>,
+	Serge Semin <fancer.lancer@gmail.com>,
+	Jon Mason <jdmason@kudzu.us>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Allen Hubbe <allenbh@gmail.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Kevin Cernekee <cernekee@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Mark Brown <broonie@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Philipp Stanner <pstanner@redhat.com>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+	Jie Wang <jie.wang@intel.com>,
+	Tero Kristo <tero.kristo@linux.intel.com>,
+	Adam Guerin <adam.guerin@intel.com>,
+	Shashank Gupta <shashank.gupta@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Bharat Bhushan <bbhushan2@marvell.com>,
+	Nithin Dabilpuram <ndabilpuram@marvell.com>,
+	Johannes Berg <johannes.berg@intel.com>,
+	Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+	Gregory Greenman <gregory.greenman@intel.com>,
+	Benjamin Berg <benjamin.berg@intel.com>,
+	Yedidya Benshimol <yedidya.ben.shimol@intel.com>,
+	Breno Leitao <leitao@debian.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Shuah Khan <skhan@linuxfoundation.org>
-Cc: Matt Jan <zoo868e@gmail.com>
-Subject: [PATCH] jfs: UBSAN: shift-out-of-bounds in dbFindBits
-Date: Fri, 25 Oct 2024 22:58:20 +0800
-Message-Id: <20241025145820.96761-1-zoo868e@gmail.com>
-X-Mailer: git-send-email 2.25.1
+	linux-ide@vger.kernel.org,
+	qat-linux@intel.com,
+	linux-crypto@vger.kernel.org,
+	linux-wireless@vger.kernel.org,
+	ntb@lists.linux.dev,
+	linux-pci@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	linux-sound@vger.kernel.org
+Subject: [PATCH 00/10] Remove pcim_iomap_regions_request_all()
+Date: Fri, 25 Oct 2024 16:59:43 +0200
+Message-ID: <20241025145959.185373-1-pstanner@redhat.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-The starting bit number of free bits should not be >= 32 as it is
-0-indexed.Assert that the number of bits is < 32, or if it is 32, the
-input word must be 0.
+All Acked-by's are in place now.
 
-Signed-off-by: Matt Jan <zoo868e@gmail.com>
----
- fs/jfs/jfs_dmap.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes in v5:
+  - Add Acked-by's from Alexander and Bharat (the latter sent off-list,
+    because of some issue with receiving the previous patch sets).
 
-diff --git a/fs/jfs/jfs_dmap.c b/fs/jfs/jfs_dmap.c
-index 974ecf5e0d95..b9eccf8900eb 100644
---- a/fs/jfs/jfs_dmap.c
-+++ b/fs/jfs/jfs_dmap.c
-@@ -3015,7 +3015,7 @@ static int dbFindBits(u32 word, int l2nb)
- 	/* get the number of bits.
- 	 */
- 	nb = 1 << l2nb;
--	assert(nb <= DBWORD);
-+	assert(nb < DBWORD || (nb == DBWORD && !word));
- 
- 	/* complement the word so we can use a mask (i.e. 0s represent
- 	 * free bits) and compute the mask.
+Changes in v4:
+  - Add Acked-by's from Giovanni and Kalle.
+
+Changes in v3:
+  - Add missing full stops to commit messages (Andy).
+
+Changes in v2:
+  - Fix a bug in patch №4 ("crypto: marvell ...") where an error code
+    was not set before printing it. (Me)
+  - Apply Damien's Reviewed- / Acked-by to patches 1, 2 and 10. (Damien)
+  - Apply Serge's Acked-by to patch №7. (Serge)
+  - Apply Jiri's Reviewed-by to patch №8. (Jiri)
+  - Apply Takashi Iwai's Reviewed-by to patch №9. (Takashi)
+
+
+Hi all,
+
+the PCI subsystem is currently working on cleaning up its devres API. To
+do so, a few functions will be replaced with better alternatives.
+
+This series removes pcim_iomap_regions_request_all(), which has been
+deprecated already, and accordingly replaces the calls to
+pcim_iomap_table() (which were only necessary because of
+pcim_iomap_regions_request_all() in the first place) with calls to
+pcim_iomap().
+
+Would be great if you can take a look whether this behaves as you
+intended for your respective component.
+
+Cheers,
+Philipp
+
+Philipp Stanner (10):
+  PCI: Make pcim_request_all_regions() a public function
+  ata: ahci: Replace deprecated PCI functions
+  crypto: qat - replace deprecated PCI functions
+  crypto: marvell - replace deprecated PCI functions
+  intel_th: pci: Replace deprecated PCI functions
+  wifi: iwlwifi: replace deprecated PCI functions
+  ntb: idt: Replace deprecated PCI functions
+  serial: rp2: Replace deprecated PCI functions
+  ALSA: korg1212: Replace deprecated PCI functions
+  PCI: Remove pcim_iomap_regions_request_all()
+
+ .../driver-api/driver-model/devres.rst        |  1 -
+ drivers/ata/acard-ahci.c                      |  6 +-
+ drivers/ata/ahci.c                            |  6 +-
+ drivers/crypto/intel/qat/qat_420xx/adf_drv.c  | 11 +++-
+ drivers/crypto/intel/qat/qat_4xxx/adf_drv.c   | 11 +++-
+ .../marvell/octeontx2/otx2_cptpf_main.c       | 14 +++--
+ .../marvell/octeontx2/otx2_cptvf_main.c       | 13 ++--
+ drivers/hwtracing/intel_th/pci.c              |  9 ++-
+ .../net/wireless/intel/iwlwifi/pcie/trans.c   | 16 ++---
+ drivers/ntb/hw/idt/ntb_hw_idt.c               | 13 ++--
+ drivers/pci/devres.c                          | 59 +------------------
+ drivers/tty/serial/rp2.c                      | 12 ++--
+ include/linux/pci.h                           |  3 +-
+ sound/pci/korg1212/korg1212.c                 |  6 +-
+ 14 files changed, 76 insertions(+), 104 deletions(-)
+
 -- 
-2.25.1
+2.47.0
 
 
