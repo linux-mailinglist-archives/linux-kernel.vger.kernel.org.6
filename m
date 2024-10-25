@@ -1,155 +1,270 @@
-Return-Path: <linux-kernel+bounces-382515-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0DC29B0F3F
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 21:39:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 469969B0F4A
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 21:42:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88E9B287586
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 19:39:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC04BB26EED
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 19:42:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E56F820EA39;
-	Fri, 25 Oct 2024 19:39:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1864720F3C2;
+	Fri, 25 Oct 2024 19:42:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mkZWIwbt"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="awXnidT5"
+Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49E8420EA3A
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 19:39:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE84920EA4A;
+	Fri, 25 Oct 2024 19:41:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729885183; cv=none; b=UIReTZsQBWJVPF5bjBJsetY5WCEMFLBr6iq8oDfZN+T5G8deX9tTpypauQVXE0DS/kR/6OUdqG/p1rjKqGVkKynEVS1hrX06BTugBeRtBns4WCTepioojXX/NcvsRFWO0aU3CWwa/63IRDRWJSFYAoMzNapYuXv32W5TirJSaLo=
+	t=1729885319; cv=none; b=WLLca6+8Cdb3nS0siRXqiI4x9kmzggZa7qQ5EZQj7ewVR6w5aBzSbEp5bIV/SlUta+Y8bcAf11gvsDRMSFmhh5hJAgqoZvgW/k60oiD7yT0u+H/UoJbNrlIjH77CrN2X+arTJ4KuVsTBigy1Wy76TYlj7KjaKGT3k3cfk9f1lic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729885183; c=relaxed/simple;
-	bh=h3swVIaCm3gH7Ok3aF1n02u5px+9KfKP7NCgLtPvcuw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YRZ0Dk2EeKgV/M82lLFJRmoIseIcX2BwOVmPDZMyhrPZy5EMlVGAYK1SDselOKuFaqEXJKIDNQUJ754YESgwkUHkPGxAw4d6Ii1tEjwL/B823CgqKX+7kRegYXNYy3/5zRqj+Oxqd7PgIHO0AMVm8mSyeAzA0Y+SB6nYPsqjiO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mkZWIwbt; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43155afca99so23719815e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 12:39:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729885179; x=1730489979; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=rNudOakrgi09S9+yizP0qtRalV2gTsXxi5NDtk4FIIo=;
-        b=mkZWIwbtA5nFwj4Fyz7/LyY7WhvPrzRWWnqvZbfvWehopHlcyAyMfa62/4wc8K6k6X
-         PipJAX3qdP8wunX0ULERO7Z7gKpu1X/t9DdCE9fqOZnLRYubMpGdHNjRbWQu+na1fgxF
-         N0HGSKMFycBU/+H7PYu/IaGNrUngqMcnMWxS9F1LlZqefJs7wUbevmZknBT2f0Msb47b
-         C8RNyrLMvOblGeqoujZg5m4T4lfecntejg53pMBb+OklFXwxZRthK+wyWFvE0sr+pyuq
-         BE13AmU0tKuUkb4YgX3oObaF7y69MhzXmfY7Wf1T3of2tm0ZtfaIq0vDJ588zyGgAwdF
-         lv1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729885179; x=1730489979;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rNudOakrgi09S9+yizP0qtRalV2gTsXxi5NDtk4FIIo=;
-        b=rvOVtCOjZjPCgOPGjC9zekN1p/ZTP+WK7e2tnzxB5gllc6WDSIRJPmNhkvLpkthvVF
-         60DNM0UNS29ITo22735V071Uwm3IsHIQH2VKNU9BJPSLxwljQZ2ZnynlVTZETgg7wSST
-         4etp+K+QgzN/AysO7Nbc036gDiZkF3s+84txvfYu2clRelvhCexKSJ64Y5tJCTEGlnGK
-         o7dRg0X6s4hzzA4PB5D0QidSysCLYC/hzaY5YMAz2QAHnvEScz+i04IxYXNjaikNnbgW
-         0o5XeVjaxlEwGxVEslqIeAo7OnbKHiyhxxmKh4NUQgSX2S2thHCaSLFQ7gojCf94bn/7
-         Muvw==
-X-Forwarded-Encrypted: i=1; AJvYcCVLvWaGIAMUbMQPSTZAaaxf6tizJZOSzFBZzLf1kRs3wf4uQwt+WJo6EvK37cJ/x7OSzdaV/9xUmp8Ukfk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVr3xx6TFkv027hYfgNEBp+VFGONSYEsdrrDvTCi5O25IEqvGe
-	GrHShvBbHxdUpogiKl/QCgxR7hVImyZtCB+GEgdrAn0lmS/Ieegjcpcc1szd+P0=
-X-Google-Smtp-Source: AGHT+IFAsGfICqjFEVag/1dSMIzHpMXghtsoTxIwbYv1J4KwUX5ZFmRRVF/tsXOYk/1h2HaqEmKmmQ==
-X-Received: by 2002:a05:600c:45c3:b0:431:55af:a220 with SMTP id 5b1f17b1804b1-4319a5bbffemr5287305e9.12.1729885177852;
-        Fri, 25 Oct 2024 12:39:37 -0700 (PDT)
-Received: from [192.168.0.40] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43193573cd4sm26695675e9.5.2024.10.25.12.39.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 25 Oct 2024 12:39:37 -0700 (PDT)
-Message-ID: <1bd45da1-0b14-441c-8ad8-1837e31eb449@linaro.org>
-Date: Fri, 25 Oct 2024 20:39:36 +0100
+	s=arc-20240116; t=1729885319; c=relaxed/simple;
+	bh=dppblIz1pBp4r1wgur1T1P7Xk4sFCLPXO+HIzohymS8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FVofEtytwLYncDCHKMRvcLcEVrPf1MQUXOFDyxkbfFnn8o7gtCsAPdrD9ZmN3bJrgAwg9XQo/5K9ZtKDl9oDwPxgDHEb0WCESLRQzyDEM7Tz7iosNTNEZg0YDqFavENrBP1diljPmYsYbVCxastHPFGvmpp7glCSgGETC1ucEK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=awXnidT5; arc=none smtp.client-ip=167.114.26.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
+	s=smtpout1; t=1729885315;
+	bh=dppblIz1pBp4r1wgur1T1P7Xk4sFCLPXO+HIzohymS8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=awXnidT52OTcWAI3S75BOHN8HYktUCwd6gTXgOmoeBs61ugdt+cxn/JDKK1/iOrRd
+	 8Jo7HlxLjkHOOUPoXmJi9ufiLUHqQzTOeGxY8miKmDV5gSY6hpy5Hp+YO3QQh/gur2
+	 QiIBZQmeSJpoGimI7MqsEsJekK+m0f7O93HSb/d/sXF/PulIwBn1zVqzpd/UDGdO+a
+	 oqAds6N3XysQ+4TOY+Gho8KyqjnULh4y5GinMLjP/+U/RTVsbEALQP7iD6By2KFrxc
+	 cqHBz7Iaw4k7coMW9gJwomOBOiUPfptRzC9T6Li9MVS7skjxGBdiU+7LoPTzb4tzk3
+	 0AUQluecnrHHQ==
+Received: from thinkos.internal.efficios.com (96-127-217-162.qc.cable.ebox.net [96.127.217.162])
+	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XZtTH4vBqz19L5;
+	Fri, 25 Oct 2024 15:41:55 -0400 (EDT)
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel@vger.kernel.org,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	syzbot+b390c8062d8387b6272a@syzkaller.appspotmail.com,
+	Michael Jeanson <mjeanson@efficios.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Yonghong Song <yhs@fb.com>,
+	"Paul E . McKenney" <paulmck@kernel.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+	bpf@vger.kernel.org,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Jordan Rife <jrife@google.com>
+Subject: [RFC PATCH v2] tracing: Fix syscall tracepoint use-after-free
+Date: Fri, 25 Oct 2024 15:40:10 -0400
+Message-Id: <20241025194010.515253-1-mathieu.desnoyers@efficios.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/6] arm64: dts: qcom: sc8280xp-x13s: Drop redundant
- clock-lanes from camera@10
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: Depeng Shao <quic_depengs@quicinc.com>,
- Vikram Sharma <quic_vikramsa@quicinc.com>,
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241025-b4-linux-next-24-10-25-camss-dts-fixups-v1-0-cdff2f1a5792@linaro.org>
- <20241025-b4-linux-next-24-10-25-camss-dts-fixups-v1-3-cdff2f1a5792@linaro.org>
- <7620b929-dbf0-47f1-bedc-1ce87bf6e988@oss.qualcomm.com>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <7620b929-dbf0-47f1-bedc-1ce87bf6e988@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 25/10/2024 18:23, Konrad Dybcio wrote:
-> On 25.10.2024 5:43 PM, Bryan O'Donoghue wrote:
->> clock-lanes does nothing here - the sensor doesn't care about this
->> property, remove it.
->>
->> Tested-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org> # x13s
->> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
->> ---
-> 
-> drivers/media/platform/qcom/camss/camss.c : camss_of_parse_endpoint_node()
-> 
-> seems to reference it and pass it on to the PHY drivers
-> 
-> Konrad
+The grace period used internally within tracepoint.c:release_probes()
+uses call_rcu() to batch waiting for quiescence of old probe arrays,
+rather than using the tracepoint_synchronize_unregister() which blocks
+while waiting for quiescence.
 
-Yep but that parses the clock-lane indicator in camss ports
+With the introduction of faultable syscall tracepoints, this causes
+use-after-free issues reproduced with syzkaller.
 
-&camss {
-         vdda-phy-supply = <&vreg_l6d>;
-         vdda-pll-supply = <&vreg_l4d>;
+Fix this by introducing tracepoint_call_rcu(), which uses the
+appropriate call_rcu() or call_rcu_tasks_trace() before invoking the
+rcu_free_old_probes callback.
 
-         status = "okay";
+Use tracepoint_call_rcu() in bpf_link_free() for raw tracepoints as
+well, which has the same problem for syscall tracepoints. Ditto for
+bpf_prog_put().
 
-         ports {
-                 port@0 {
-                         csiphy0_lanes01_ep: endpoint@0 {
-                                 reg = <0>; // HERE
-                                 clock-lanes = <7>;
-                                 data-lanes = <0 1>;
-                                 remote-endpoint = <&ov5675_ep>;
-                         };
-                 };
-         };
-};
-
-this patch and its sister patch remove clock-lanes form the sensor
-
-&cci2_i2c1 {
-         camera@10 {
-
-		<snip>
-                 port {
-                         ov5675_ep: endpoint {
-				clock-lanes = <0>;//HERE
-                                 data-lanes = <1 2>;
-				<snip>
-                         };
-                 };
-
-         };
-};
-
-This is removing the camera@10{} clock-lanes not the camss{} clock lanes 
-which you're right is referenced.
-
+Reported-by: syzbot+b390c8062d8387b6272a@syzkaller.appspotmail.com
+Fixes: a363d27cdbc2 ("tracing: Allow system call tracepoints to handle page faults")
+Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Michael Jeanson <mjeanson@efficios.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Alexei Starovoitov <ast@kernel.org>
+Cc: Yonghong Song <yhs@fb.com>
+Cc: Paul E. McKenney <paulmck@kernel.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: bpf@vger.kernel.org
+Cc: Joel Fernandes <joel@joelfernandes.org>
+Cc: Jordan Rife <jrife@google.com>
 ---
-bod
+Changes since v0:
+- Introduce tracepoint_call_rcu(),
+- Fix bpf_link_free() use of call_rcu as well.
+
+Changes since v1:
+- Use tracepoint_call_rcu() for bpf_prog_put as well.
+---
+ include/linux/tracepoint.h |  9 +++++++++
+ kernel/bpf/syscall.c       | 36 +++++++++++++++++++++++++++---------
+ kernel/tracepoint.c        | 22 ++++++++++++++++++----
+ 3 files changed, 54 insertions(+), 13 deletions(-)
+
+diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
+index 0dc67fad706c..45025d6b2dd6 100644
+--- a/include/linux/tracepoint.h
++++ b/include/linux/tracepoint.h
+@@ -104,6 +104,8 @@ void for_each_tracepoint_in_module(struct module *mod,
+  * tracepoint_synchronize_unregister must be called between the last tracepoint
+  * probe unregistration and the end of module exit to make sure there is no
+  * caller executing a probe when it is freed.
++ * An alternative to tracepoint_synchronize_unregister() is to use
++ * tracepoint_call_rcu() for batched reclaim.
+  */
+ #ifdef CONFIG_TRACEPOINTS
+ static inline void tracepoint_synchronize_unregister(void)
+@@ -111,9 +113,16 @@ static inline void tracepoint_synchronize_unregister(void)
+ 	synchronize_rcu_tasks_trace();
+ 	synchronize_rcu();
+ }
++
++void tracepoint_call_rcu(struct tracepoint *tp, struct rcu_head *head,
++			 void (*callback)(struct rcu_head *head));
++
+ #else
+ static inline void tracepoint_synchronize_unregister(void)
+ { }
++static inline void tracepoint_call_rcu(struct tracepoint *tp, struct rcu_head *head,
++				       void (*callback)(struct rcu_head *head))
++{ }
+ #endif
+ 
+ #ifdef CONFIG_HAVE_SYSCALL_TRACEPOINTS
+diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+index 59de664e580d..f21000f33a61 100644
+--- a/kernel/bpf/syscall.c
++++ b/kernel/bpf/syscall.c
+@@ -2992,28 +2992,46 @@ static void bpf_link_defer_dealloc_mult_rcu_gp(struct rcu_head *rcu)
+ 		call_rcu(rcu, bpf_link_defer_dealloc_rcu_gp);
+ }
+ 
++static void bpf_link_defer_bpf_prog_put(struct rcu_head *rcu)
++{
++	struct bpf_prog_aux *aux = container_of(rcu, struct bpf_prog_aux, rcu);
++
++	bpf_prog_put(aux->prog);
++}
++
+ /* bpf_link_free is guaranteed to be called from process context */
+ static void bpf_link_free(struct bpf_link *link)
+ {
+ 	const struct bpf_link_ops *ops = link->ops;
++	struct bpf_raw_tp_link *raw_tp = NULL;
+ 	bool sleepable = false;
+ 
++	if (link->type == BPF_LINK_TYPE_RAW_TRACEPOINT)
++		raw_tp = container_of(link, struct bpf_raw_tp_link, link);
+ 	bpf_link_free_id(link->id);
+ 	if (link->prog) {
+ 		sleepable = link->prog->sleepable;
+ 		/* detach BPF program, clean up used resources */
+ 		ops->release(link);
+-		bpf_prog_put(link->prog);
++		if (raw_tp)
++			tracepoint_call_rcu(raw_tp->btp->tp, &link->prog->aux->rcu,
++					    bpf_link_defer_bpf_prog_put);
++		else
++			bpf_prog_put(link->prog);
+ 	}
+ 	if (ops->dealloc_deferred) {
+-		/* schedule BPF link deallocation; if underlying BPF program
+-		 * is sleepable, we need to first wait for RCU tasks trace
+-		 * sync, then go through "classic" RCU grace period
+-		 */
+-		if (sleepable)
+-			call_rcu_tasks_trace(&link->rcu, bpf_link_defer_dealloc_mult_rcu_gp);
+-		else
+-			call_rcu(&link->rcu, bpf_link_defer_dealloc_rcu_gp);
++		if (raw_tp) {
++			tracepoint_call_rcu(raw_tp->btp->tp, &link->rcu, bpf_link_defer_dealloc_rcu_gp);
++		} else {
++			/* schedule BPF link deallocation; if underlying BPF program
++			 * is sleepable, we need to first wait for RCU tasks trace
++			 * sync, then go through "classic" RCU grace period
++			 */
++			if (sleepable)
++				call_rcu_tasks_trace(&link->rcu, bpf_link_defer_dealloc_mult_rcu_gp);
++			else
++				call_rcu(&link->rcu, bpf_link_defer_dealloc_rcu_gp);
++		}
+ 	} else if (ops->dealloc)
+ 		ops->dealloc(link);
+ }
+diff --git a/kernel/tracepoint.c b/kernel/tracepoint.c
+index 6474e2cf22c9..ef60c5484eda 100644
+--- a/kernel/tracepoint.c
++++ b/kernel/tracepoint.c
+@@ -106,13 +106,27 @@ static void rcu_free_old_probes(struct rcu_head *head)
+ 	kfree(container_of(head, struct tp_probes, rcu));
+ }
+ 
+-static inline void release_probes(struct tracepoint_func *old)
++static bool tracepoint_is_syscall(struct tracepoint *tp)
++{
++	return !strcmp(tp->name, "sys_enter") || !strcmp(tp->name, "sys_exit");
++}
++
++void tracepoint_call_rcu(struct tracepoint *tp, struct rcu_head *head,
++			 void (*callback)(struct rcu_head *head))
++{
++	if (tracepoint_is_syscall(tp))
++		call_rcu_tasks_trace(head, callback);
++	else
++		call_rcu(head, callback);
++}
++
++static inline void release_probes(struct tracepoint *tp, struct tracepoint_func *old)
+ {
+ 	if (old) {
+ 		struct tp_probes *tp_probes = container_of(old,
+ 			struct tp_probes, probes[0]);
+ 
+-		call_rcu(&tp_probes->rcu, rcu_free_old_probes);
++		tracepoint_call_rcu(tp, &tp_probes->rcu, rcu_free_old_probes);
+ 	}
+ }
+ 
+@@ -334,7 +348,7 @@ static int tracepoint_add_func(struct tracepoint *tp,
+ 		break;
+ 	}
+ 
+-	release_probes(old);
++	release_probes(tp, old);
+ 	return 0;
+ }
+ 
+@@ -406,7 +420,7 @@ static int tracepoint_remove_func(struct tracepoint *tp,
+ 		WARN_ON_ONCE(1);
+ 		break;
+ 	}
+-	release_probes(old);
++	release_probes(tp, old);
+ 	return 0;
+ }
+ 
+-- 
+2.39.5
+
 
