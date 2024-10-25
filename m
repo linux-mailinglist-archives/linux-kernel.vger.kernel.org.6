@@ -1,117 +1,158 @@
-Return-Path: <linux-kernel+bounces-381141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 069A09AFAEC
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 09:26:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5182F9AFAEE
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 09:27:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF9C328150D
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 07:26:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D71291F23CE0
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 07:26:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5077818D655;
-	Fri, 25 Oct 2024 07:26:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7B2414F9FD;
+	Fri, 25 Oct 2024 07:26:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="NNeY31bl"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="dtjjIfU0"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF6A41B393A
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 07:25:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90A0F166F1B;
+	Fri, 25 Oct 2024 07:26:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729841159; cv=none; b=ariMZkxmtOQBjowE8SNEbczRHWIEUty97yOcFxJQ0RzsmfHl/oX3hGfdLYlbk67rwC5tghQ2hXc4koCy9si0oMOpgE3TcU/OsQ6kF5BLp3fp37jhPMJ301XUre0R+U9cQZzPns8UxD2dqv7a/7TpDVGL1+uIsiQmQzpcMGywpVo=
+	t=1729841210; cv=none; b=oCP2FIpa5+zPtLwGGFQBZtH/dvptpmtsRrdt2eBGT1bkpENOecdBm0pKw+J7JUzGmk0DWZ42M6OOvYo5Lvg3XCDyFCsQDfrH/A7laIrigfj5200kwWRPY0M3vw9pCnmqhRE2TG1k0uBAvdmqxiNoGBcK0lR6iAGYYFVT3DiW9cc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729841159; c=relaxed/simple;
-	bh=JFKQGkzoJxF/22a+VPfGsDNqyIxoXEnmvkJ4rlwJMjU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RaETRrz8D+3Y517igiSkC7l5CHQ97txvqqc3zcQEJJf7dau88tMlJRKDKXYpj/NazS6l7JKHEXRT215dF9qAo+JDp/1Jbw6cHdprXkZHbeJ8BOmPLoIPo+ItdZuQmvDi/gqHZnNRxhrv3HGZ9aOkeJiaHV4Hi9gh93qUQ7/DYTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=NNeY31bl; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-539f72c913aso2239864e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 00:25:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1729841156; x=1730445956; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4g2gos01gcs3ARV9xOeM9xEQeRnKHcL1K/otT/YNFqk=;
-        b=NNeY31bl4CL2K6eVfkF1QUcrwIsdwetHupudcq1NrtSEIpvRZNIh1eB4CvvTDihQ5T
-         5KfclZk74AGwF6XpUfSJGhPA3PUHZ+nMAM36koKuHvtBdS8Vne6x1xGmEEBp12LV2Eje
-         VEKSxfMB8x3Yy9cqGKK0fNqUYg5YoxtZi8ehVmltaWhpEGr74lmAZMe8c3PvSji3pwf4
-         77hy2d7crgF8bgrIzifcOcA3JL2vD83I/3JhaJjvluazPrGByOsmWHoxIZH359cvxonY
-         s1qsGdBbNurdvmXUyZiOMxqRN3YEReJns1qNuLbvsl5vxivl7qOEaut0Zml2T0ujyEsx
-         Ra7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729841156; x=1730445956;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4g2gos01gcs3ARV9xOeM9xEQeRnKHcL1K/otT/YNFqk=;
-        b=u9KL2I46tU1+/QG2yb3G5QnDJ7hNSBly3iuCLGc8leeFBLr1dEVwMNl5+hYGYKDcXf
-         U5/oBVobo8C5J9drBzMkrm9vG/OBlosOEdM4uKaFMTNPMAa6anlpRAxW7EbKiuNKpSjM
-         JoJOpD20l4mbiWy+cKeaDGuFyz8AjgpO6GC0emJqj8sevP4ZrLNTDepq7AV1WRjhzFbp
-         o2fr+0oiow+0Vm1NkSzVTK/qxV832nfOCo+O+PRKAkPz2gbU84MEDJxednPvcnOwZ8TS
-         Kde3pAdNwIQfJNqoUIb1muIChMrQBhYU08r9rSvoEkpmQJ72jn7ORz0MHhbENl76umib
-         4Smg==
-X-Forwarded-Encrypted: i=1; AJvYcCW3sOwfGWKBEWLgmf8A5ZOW7jShqaXQq7UoiGqZSoZ15g4Vn7dBXnoubrAIBR974ToZT4etz8frbkZRwNk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkeF1Mw0o2cTb1/lcOsgtK9IEqd/QQ8hpcZOF4EVOJZ8FuDZAW
-	oa+0pU/OVKrjQYpSPdsNNyoE8XAnoQ5C3JEhOMw2Kso9C+EeocDcRA0dVnt1b3n3zNiLtsF2xAA
-	/iQFYeIVI3dnH8ASzQWpzUgTmux8fUZk+D5nEnw==
-X-Google-Smtp-Source: AGHT+IHXU/RWVGusZgTS+hnrrCbnABNHUWKcp7Gd9i5eDRQCyJgRfL6gJjAxp02BR0Ho5+hu73aPvO5Z/5YPkljz63Q=
-X-Received: by 2002:a05:6512:68d:b0:539:e9b4:7ff6 with SMTP id
- 2adb3069b0e04-53b23e8f1b5mr2874194e87.45.1729841155737; Fri, 25 Oct 2024
- 00:25:55 -0700 (PDT)
+	s=arc-20240116; t=1729841210; c=relaxed/simple;
+	bh=mfuwS2CBw28SWOw71UxCe0uVYFNhYMJ9pb0TPJRGl78=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=av+hrmLbeEDev2QnJLRle7smQnITCs5V/H1hXZHjWyHIja/G8WpWCUE9sIHjpFc3vD8BrDGC+N2kXFFGwAxbAYykgOWUDRMBTTMRPM48FgcXJS8KUXmjRoiP4BevOapwd37Ll1r/pSgabhJJGCoSOMbpTQvtksPEr+2NKt586l0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=dtjjIfU0; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [192.168.7.205] ([71.202.166.45])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 49P7Pk5b2106563
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Fri, 25 Oct 2024 00:25:47 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 49P7Pk5b2106563
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2024101701; t=1729841150;
+	bh=NMQEGMNoS1kjt2ZrIrRF8/paM/PCBwmYLnmq+XRI1GI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=dtjjIfU0jwte8iB+16b3u9aCi45gWHmC3k277R/avs9h9Zg0QkQ/8xjtzAe0saMP7
+	 vKo69yEK9wm+Xq73m4AskoAss7DFNTl3muUjEqkuFiNe82oh/3q9gilYjsAciLIOQQ
+	 R0J3o4azFBaOmXLyPLOBVT6KoSol+20KO9IlcJop41L+zvBEUM3DDOuf3vEnyhRj9+
+	 OPxUwwHSauda8lVW1jO7cZHtY8j32IMjvM6KkV7J1PJ58kObBoi7qeBJQ3yuD7uaAX
+	 CvciviQ4ztHKtRrarLRAryyYomrrfZMrthuHWPI/VR1QNIYKwg+ylAY/oz63BJcvOW
+	 DCi9QTs2SFD9g==
+Message-ID: <f9bb0740-21ec-482d-92fb-7fed3fef7d36@zytor.com>
+Date: Fri, 25 Oct 2024 00:25:45 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241018015640.2924794-1-fj5100bi@fujitsu.com>
-In-Reply-To: <20241018015640.2924794-1-fj5100bi@fujitsu.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Fri, 25 Oct 2024 09:25:44 +0200
-Message-ID: <CAMRc=MdsgJOFK-U9pxK2NDjQ=MSCnq1oZtVALvKLwMbuHPrLGA@mail.gmail.com>
-Subject: Re: [PATCH] gpio: dwapb: Add ACPI HID for DWAPB GPIO controller on
- Fujitsu MONAKA
-To: Yoshihiro Furudera <fj5100bi@fujitsu.com>
-Cc: Hoan Tran <hoan@os.amperecomputing.com>, Serge Semin <fancer.lancer@gmail.com>, 
-	Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 25/27] KVM: nVMX: Add FRED VMCS fields
+To: Chao Gao <chao.gao@intel.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, seanjc@google.com, pbonzini@redhat.com,
+        corbet@lwn.net, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+        luto@kernel.org, peterz@infradead.org, andrew.cooper3@citrix.com
+References: <20241001050110.3643764-1-xin@zytor.com>
+ <20241001050110.3643764-26-xin@zytor.com> <Zxn6Vc/2vvJ3VHCb@intel.com>
+Content-Language: en-US
+From: Xin Li <xin@zytor.com>
+Autocrypt: addr=xin@zytor.com; keydata=
+ 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
+ l75w1xInsg==
+In-Reply-To: <Zxn6Vc/2vvJ3VHCb@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Oct 18, 2024 at 3:56=E2=80=AFAM Yoshihiro Furudera <fj5100bi@fujits=
-u.com> wrote:
->
-> This patch enables DWAPB GPIO controller support on Fujitsu MONAKA.
->
-> Signed-off-by: Yoshihiro Furudera <fj5100bi@fujitsu.com>
-> ---
->  drivers/gpio/gpio-dwapb.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
-> index 798235791f70..6113ab1bc8de 100644
-> --- a/drivers/gpio/gpio-dwapb.c
-> +++ b/drivers/gpio/gpio-dwapb.c
-> @@ -694,6 +694,7 @@ static const struct acpi_device_id dwapb_acpi_match[]=
- =3D {
->         {"HISI0181", GPIO_REG_OFFSET_V1},
->         {"APMC0D07", GPIO_REG_OFFSET_V1},
->         {"APMC0D81", GPIO_REG_OFFSET_V2},
-> +       {"FUJI200A", GPIO_REG_OFFSET_V1},
->         { }
->  };
->  MODULE_DEVICE_TABLE(acpi, dwapb_acpi_match);
-> --
-> 2.34.1
->
+On 10/24/2024 12:42 AM, Chao Gao wrote:
+>> @@ -7197,6 +7250,9 @@ static void nested_vmx_setup_basic(struct nested_vmx_msrs *msrs)
+>> 	msrs->basic |= VMX_BASIC_TRUE_CTLS;
+>> 	if (cpu_has_vmx_basic_inout())
+>> 		msrs->basic |= VMX_BASIC_INOUT;
+>> +
+>> +	if (cpu_has_vmx_fred())
+>> +		msrs->basic |= VMX_BASIC_NESTED_EXCEPTION;
+> 
+> why not advertising VMX_BASIC_NESTED_EXCEPTION if the CPU supports it? just like
+> VMX_BASIC_INOUT right above.
 
-Hoan, can you leave your Ack here, please?
+Because VMX nested-exception support only works with FRED.
 
-Bart
+We could pass host MSR_IA32_VMX_BASIC.VMX_BASIC_NESTED_EXCEPTION to
+nested, but it's meaningless w/o VMX FRED.
+
+> 
+> 
+>> }
+>>
+>> static void nested_vmx_setup_cr_fixed(struct nested_vmx_msrs *msrs)
+>> diff --git a/arch/x86/kvm/vmx/nested.h b/arch/x86/kvm/vmx/nested.h
+>> index 2c296b6abb8c..5272f617fcef 100644
+>> --- a/arch/x86/kvm/vmx/nested.h
+>> +++ b/arch/x86/kvm/vmx/nested.h
+>> @@ -251,6 +251,14 @@ static inline bool nested_cpu_has_encls_exit(struct vmcs12 *vmcs12)
+>> 	return nested_cpu_has2(vmcs12, SECONDARY_EXEC_ENCLS_EXITING);
+>> }
+>>
+>> +static inline bool nested_cpu_has_fred(struct vmcs12 *vmcs12)
+>> +{
+>> +	return vmcs12->vm_entry_controls & VM_ENTRY_LOAD_IA32_FRED &&
+>> +	       vmcs12->vm_exit_controls & VM_EXIT_ACTIVATE_SECONDARY_CONTROLS &&
+>> +	       vmcs12->secondary_vm_exit_controls & SECONDARY_VM_EXIT_SAVE_IA32_FRED &&
+>> +	       vmcs12->secondary_vm_exit_controls & SECONDARY_VM_EXIT_LOAD_IA32_FRED;
+> 
+> Is it a requirement in the SDM that the VMM should enable all FRED controls or
+> none? If not, the VMM is allowed to enable only one or two of them. This means
+> KVM would need to emulate FRED controls for the L1 VMM as three separate
+> features.
+
+The SDM doesn't say that.  But FRED states are used during and
+immediately after VM entry and exit, I don't see a good reason for a VMM
+to enable only one or two of the 3 save/load configs.
+
+Say if VM_ENTRY_LOAD_IA32_FRED is not set, it means a VMM needs to
+switch to guest FRED states before it does a VM entry, which is
+absolutely a big mess.
+
+TBH I'm not sure this is the question you have in mind.
 
