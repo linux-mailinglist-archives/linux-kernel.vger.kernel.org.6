@@ -1,234 +1,109 @@
-Return-Path: <linux-kernel+bounces-382303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E7439B0C14
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 19:48:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CBA39B0C16
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 19:49:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A9681B22712
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:48:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DFEC1C232E2
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:49:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D5F718C93B;
-	Fri, 25 Oct 2024 17:48:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE6A6187FE2;
+	Fri, 25 Oct 2024 17:49:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="km/nXGHu"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="MSYXnvOi"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FD9920C31F;
-	Fri, 25 Oct 2024 17:48:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85141169AC5
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 17:49:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729878485; cv=none; b=gp+borCbs4jQLaiYPni27cHqg2SoYDGeKSaqpqIzH0mlz9y4afKnBbk7nyUBo+RqiP+ovYaS59OtP3gXt+b1ab60YV9XJ3EMFClZHiFEb4Zyj6XI5PeKWrA0wTfO7+zFTM8TrFBQnDM6tZ46XTm/H2jdMtjjkmuDbBNsYQd4qt8=
+	t=1729878542; cv=none; b=U0HDYd/99/XGz6mrK/8uHKr89jCOdvktduF22DmVmjFWJMI1GPLd5EJIAM1SKE64QKPpqmmWL7OCxGOTQDt1YvnKxEtH6rkdPN9oqEWJKiv9uVe5INJOC5l2ZYKUd7v7nJPrtwzVppK5eu7awyFVtr1pofmoplB3ozsbgs7ZDrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729878485; c=relaxed/simple;
-	bh=JEMC93gOTFEVpQhQTHlWxoYkWl6H9AItyV6mDgrZKvc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=sbVyPpngVVfUfNXZ3wyssGvjd0vPJosd6E8HVFp3aUiP5rOfzDAuvhh5gEEl3irnGFORlcm6QpeRKVbzVd4ssIrQaJJUyssKTU8DfMulQCbTJwVSiqYkECfaHDVAjPBUKNZRnQzw5hy8aOzmJ1F6MucsVJvdt+r1ikTLtgYyqmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=km/nXGHu; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1729878479;
-	bh=JEMC93gOTFEVpQhQTHlWxoYkWl6H9AItyV6mDgrZKvc=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=km/nXGHudisgqioUPVzEwXqToc9twh7P7zHvh2AFNeYMT7k0a3lGZ4bJox3mz8udW
-	 iVvXJLXnubsh1jagA22JlX4yoTjRUSNBPj9zxioyFTRVrupeyd/xNf0TDsIeEsyIoL
-	 kHxz9imqRGRRd9qoYotL/JSsZ8kHwhUJCUoacwxY91cEti7P/hYvN0p5rRzK/+20RT
-	 SZVL6zXoBIRjkkI481KlVef3qEPzzgGCC5yhqvH1y9gZtT2H/r1bpOX6+K/iOyTWSP
-	 9hzhD64n/3T9ZIrWYKDc6Sv2eM0dBnNQvCu1ZyTEKhrhshMAkstvAMZDGI/zOeWsw1
-	 y289FFjpJPrkg==
-Received: from nicolas-tpx395.lan (unknown [IPv6:2606:6d00:15:862e::7a9])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: nicolas)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 07B0117E36B5;
-	Fri, 25 Oct 2024 19:47:57 +0200 (CEST)
-Message-ID: <ab14cb57f3ef22c486afad9eb4aa9abec1b33dd2.camel@collabora.com>
-Subject: Re: [PATCH v6 00/11] media: rkvdec: Add H.264 High 10 and 4:2:2
- profile support
-From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-To: Sebastian Fricke <sebastian.fricke@collabora.com>, Jonas Karlman
-	 <jonas@kwiboo.se>
-Cc: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>, Mauro Carvalho Chehab
- <mchehab@kernel.org>, Alex Bee <knaerzche@gmail.com>, Benjamin Gaignard
- <benjamin.gaignard@collabora.com>, Detlev Casanova
- <detlev.casanova@collabora.com>, Dan Carpenter <dan.carpenter@linaro.org>, 
- linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org, 
- linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Date: Fri, 25 Oct 2024 13:47:57 -0400
-In-Reply-To: <07674bcb4b7650c21bbb3dbe9855b2240444d4f3.camel@collabora.com>
-References: <20240909192522.1076704-1-jonas@kwiboo.se>
-	 <71159f58-be8b-41a4-9fed-522e09a7a564@kwiboo.se>
-	 <20241025103022.yuaepqxllwi7gghb@basti-XPS-13-9310>
-	 <07674bcb4b7650c21bbb3dbe9855b2240444d4f3.camel@collabora.com>
-Organization: Collabora
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+	s=arc-20240116; t=1729878542; c=relaxed/simple;
+	bh=3w9xTcSLwVY9awlM4yhYl9Axwo7w98pdayZVdCZKbXk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=e9RqvOnK2ONs0cLiyWKLpFtp77GaWJvdS7wzKfBNafnGQvzMF+CmV+9z6VqbzoJfGYQHUV5wOglldrxdtzNg0re8bjcXu9JXAyHzJ8yRJ8ZyizyNAxp8nSpEW6Dimiu0XKmrU+I+Wfrgzb/tyusJw5Ce0jcHGPdXKPhtw5pEF1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=MSYXnvOi; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49PBjONp009174;
+	Fri, 25 Oct 2024 17:48:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	7pWi13LTGv1OARIyBbyQjH23hmWACd6rJZqZxMpdY8s=; b=MSYXnvOibanRFPhs
+	KliJoHKeFsddxkIbHm4hOMgmdXLBg27skurRpjIrJnl6z+pQLLY+T7pY8wFprRSA
+	HAk/EXbVtmj8dbB95CQgneudQGk4kIQExUtJLc9tD3Ql813TYRja9XQKVuhl3ejo
+	E3WPLiiKZdj3fVWfQpjqNRPmP3fle6gPef6FxHCgb0eGiu09IC6XkAb8m9Jm5acc
+	fNLzNcRcrZ8Mn+JXVH/CNA0qAVD9TX58+CV0Fs0J8qnMKiJ9vK4rs4mSe8rhAXz8
+	qqGr863nGJNNoh6E2bc2faZz30kCcL243s1auComP2Ovg8HHPaTUO0VhuvnxgHfy
+	6JAUEw==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42em43j032-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Oct 2024 17:48:54 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49PHmr5x014246
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Oct 2024 17:48:53 GMT
+Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 25 Oct
+ 2024 10:48:52 -0700
+Message-ID: <3d66e80a-7781-5682-2dd3-571407798d81@quicinc.com>
+Date: Fri, 25 Oct 2024 11:48:51 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.0
+Subject: Re: [PATCH V5 09/10] accel/amdxdna: Add error handling
+Content-Language: en-US
+To: Lizhi Hou <lizhi.hou@amd.com>, <ogabbay@kernel.org>,
+        <dri-devel@lists.freedesktop.org>
+CC: <linux-kernel@vger.kernel.org>, <min.ma@amd.com>, <max.zhen@amd.com>,
+        <sonal.santan@amd.com>, <king.tam@amd.com>
+References: <20241021161931.3701754-1-lizhi.hou@amd.com>
+ <20241021161931.3701754-10-lizhi.hou@amd.com>
+From: Jeffrey Hugo <quic_jhugo@quicinc.com>
+In-Reply-To: <20241021161931.3701754-10-lizhi.hou@amd.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: QigT02SBC6BNQOdbDKfeULY2ETnpjpfr
+X-Proofpoint-ORIG-GUID: QigT02SBC6BNQOdbDKfeULY2ETnpjpfr
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
+ adultscore=0 mlxlogscore=924 spamscore=0 malwarescore=0 impostorscore=0
+ phishscore=0 bulkscore=0 clxscore=1015 priorityscore=1501 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2410250136
 
-Le vendredi 25 octobre 2024 à 08:54 -0400, Nicolas Dufresne a écrit :
-> Le vendredi 25 octobre 2024 à 12:30 +0200, Sebastian Fricke a écrit :
-> > Hey Jonas,
-> > 
-> > On 25.10.2024 10:20, Jonas Karlman wrote:
-> > > Hi Sebastian,
-> > > 
-> > > Will you have time to look at this series any time soon?
-> > > 
-> > > Would like to send a v2 of the now one year old rkvdec hevc series but
-> > > this series is sort of holding that back ;-)
-> > 
-> > Sorry for the delay we (maintainer & reviewer from Collabora) are
-> > currently a bit busy, this is on top of our review list however, so
-> > please another 1 or 2 weeks of patience :).
+On 10/21/2024 10:19 AM, Lizhi Hou wrote:
+> When there is a hardware error, the NPU firmware notifies the host through
+> a mailbox message. The message includes details of the error, such as the
+> tile and column indexes where the error occurred.
 > 
-> Actually, I'll go over it today.
+> The driver starts a thread to handle the NPU error message. The thread
+> stops the clients which are using the column where error occurred. Then
+> the driver resets that column.
+> 
+> Co-developed-by: Min Ma<min.ma@amd.com>
+> Signed-off-by: Min Ma<min.ma@amd.com>
+> Signed-off-by: Lizhi Hou<lizhi.hou@amd.com>
 
-I'm done, there is only cosmetic comment, if you respin quickly, I'm sure we can
-get this one in soon.
-
-> 
-> regards,
-> Nicolas
-> 
-> > 
-> > > 
-> > > Regards,
-> > > Jonas
-> > 
-> > Thanks for your work and regards!
-> > Sebastian
-> > 
-> > > 
-> > > On 2024-09-09 21:24, Jonas Karlman wrote:
-> > > > This series add H.264 High 10 and 4:2:2 profile support to the Rockchip
-> > > > Video Decoder driver.
-> > > > 
-> > > > Patch 1 add helpers for calculating plane bytesperline and sizeimage.
-> > > > Patch 2 add two new pixelformats for semi-planer 10-bit 4:2:0/4:2:2 YUV.
-> > > > 
-> > > > Patch 3 change to use bytesperline and buffer height to configure strides.
-> > > > Patch 4 change to use values from SPS/PPS control to configure the HW.
-> > > > 
-> > > > Patch 5-9 refactor code to support filtering of CAPUTRE formats based
-> > > > on the image format returned from a get_image_fmt ops.
-> > > > 
-> > > > Patch 10 add final bits to support H.264 High 10 and 4:2:2 profiles.
-> > > > 
-> > > > Patch 11 add a fix for enumerated frame sizes returned to userspace.
-> > > > 
-> > > > Tested on a ROCK Pi 4 (RK3399) and Rock64 (RK3328):
-> > > > 
-> > > >   v4l2-compliance 1.28.1, 64 bits, 64-bit time_t
-> > > >   ...
-> > > >   Total for rkvdec device /dev/video1: 48, Succeeded: 48, Failed: 0, Warnings: 0
-> > > > 
-> > > >   Running test suite JVT-FR-EXT with decoder FFmpeg-H.264-v4l2request
-> > > >   ...
-> > > >   Ran 65/69 tests successfully
-> > > > 
-> > > >   Running test suite JVT-AVC_V1 with decoder FFmpeg-H.264-v4l2request
-> > > >   ...
-> > > >   Ran 129/135 tests successfully
-> > > > 
-> > > > Before this series:
-> > > > 
-> > > >   Running test suite JVT-FR-EXT with decoder FFmpeg-H.264-v4l2request
-> > > >   ...
-> > > >   Ran 44/69 tests successfully
-> > > > 
-> > > > Changes in v6:
-> > > > - Change to use fmt_idx instead of j++ tucked inside a condition (Dan)
-> > > > - Add patch to fix enumerated frame sizes returned to userspace (Alex)
-> > > > - Fluster test score is same as v4 and v5, see [4] and [5]
-> > > > Link to v5: https://lore.kernel.org/linux-media/20240618194647.742037-1-jonas@kwiboo.se/
-> > > > 
-> > > > Changes in v5:
-> > > > - Drop Remove SPS validation at streaming start patch
-> > > > - Move buffer align from rkvdec_fill_decoded_pixfmt to min/step_width
-> > > > - Use correct profiles for V4L2_CID_MPEG_VIDEO_H264_PROFILE
-> > > > - Collect r-b and t-b tags
-> > > > - Fluster test score is same as v4, see [4] and [5]
-> > > > Link to v4: https://lore.kernel.org/linux-media/20231105165521.3592037-1-jonas@kwiboo.se/
-> > > > 
-> > > > Changes in v4:
-> > > > - Fix failed v4l2-compliance tests related to CAPTURE queue
-> > > > - Rework CAPTURE format filter anv validate to use an image format
-> > > > - Run fluster test suite JVT-FR-EXT [4] and JVT-AVC_V1 [5]
-> > > > Link to v3: https://lore.kernel.org/linux-media/20231029183427.1781554-1-jonas@kwiboo.se/
-> > > > 
-> > > > Changes in v3:
-> > > > - Drop merged patches
-> > > > - Use bpp and bpp_div instead of prior misuse of block_w/block_h
-> > > > - New patch to use values from SPS/PPS control to configure the HW
-> > > > - New patch to remove an unnecessary call to validate sps at streaming start
-> > > > - Reworked pixel format validation
-> > > > Link to v2: https://lore.kernel.org/linux-media/20200706215430.22859-1-jonas@kwiboo.se/
-> > > > 
-> > > > Changes in v2:
-> > > > - Collect r-b tags
-> > > > - SPS pic width and height in mbs validation moved to rkvdec_try_ctrl
-> > > > - New patch to not override output buffer sizeimage
-> > > > - Reworked pixel format validation
-> > > > - Only align decoded buffer instead of changing frmsize step_width
-> > > > Link to v1: https://lore.kernel.org/linux-media/20200701215616.30874-1-jonas@kwiboo.se/
-> > > > 
-> > > > To fully runtime test this series you may need FFmpeg patches from [1]
-> > > > and fluster patches from [2], this series is also available at [3].
-> > > > 
-> > > > [1] https://github.com/Kwiboo/FFmpeg/commits/v4l2request-2024-v2-rkvdec/
-> > > > [2] https://github.com/Kwiboo/fluster/commits/ffmpeg-v4l2request-rkvdec/
-> > > > [3] https://github.com/Kwiboo/linux-rockchip/commits/linuxtv-rkvdec-high-10-v6/
-> > > > [4] https://gist.github.com/Kwiboo/f4ac15576b2c72887ae2bc5d58b5c865
-> > > > [5] https://gist.github.com/Kwiboo/459a1c8f1dcb56e45dc7a7a29cc28adf
-> > > > 
-> > > > Regards,
-> > > > Jonas
-> > > > 
-> > > > Alex Bee (1):
-> > > >   media: rkvdec: h264: Don't hardcode SPS/PPS parameters
-> > > > 
-> > > > Jonas Karlman (10):
-> > > >   media: v4l2-common: Add helpers to calculate bytesperline and
-> > > >     sizeimage
-> > > >   media: v4l2: Add NV15 and NV20 pixel formats
-> > > >   media: rkvdec: h264: Use bytesperline and buffer height as virstride
-> > > >   media: rkvdec: Extract rkvdec_fill_decoded_pixfmt into helper
-> > > >   media: rkvdec: Move rkvdec_reset_decoded_fmt helper
-> > > >   media: rkvdec: Extract decoded format enumeration into helper
-> > > >   media: rkvdec: Add image format concept
-> > > >   media: rkvdec: Add get_image_fmt ops
-> > > >   media: rkvdec: h264: Support High 10 and 4:2:2 profiles
-> > > >   media: rkvdec: Fix enumerate frame sizes
-> > > > 
-> > > >  .../media/v4l/pixfmt-yuv-planar.rst           | 128 ++++++++++
-> > > >  drivers/media/v4l2-core/v4l2-common.c         |  80 +++---
-> > > >  drivers/media/v4l2-core/v4l2-ioctl.c          |   2 +
-> > > >  drivers/staging/media/rkvdec/rkvdec-h264.c    |  64 +++--
-> > > >  drivers/staging/media/rkvdec/rkvdec.c         | 239 +++++++++++++-----
-> > > >  drivers/staging/media/rkvdec/rkvdec.h         |  18 +-
-> > > >  include/uapi/linux/videodev2.h                |   2 +
-> > > >  7 files changed, 410 insertions(+), 123 deletions(-)
-> > > > 
-> > > 
-> > > 
-> > Sebastian Fricke
-> > Consultant Software Engineer
-> > 
-> > Collabora Ltd
-> > Platinum Building, St John's Innovation Park, Cambridge CB4 0DS, UK
-> > Registered in England & Wales no 5513718.
-> 
-> 
-
+Reviewed-by: Jeffrey Hugo <quic_jhugo@quicinc.com>
 
