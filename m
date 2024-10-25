@@ -1,126 +1,150 @@
-Return-Path: <linux-kernel+bounces-381315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F4F59AFD8A
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 11:03:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 293BE9AFD95
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 11:04:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DAFA7B21638
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 09:03:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E26F12822A3
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 09:04:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B06111D47AF;
-	Fri, 25 Oct 2024 09:03:03 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1E6C1D4352;
+	Fri, 25 Oct 2024 09:03:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="AglFB3Hq"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F6301D4610
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 09:03:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CEC61D359C;
+	Fri, 25 Oct 2024 09:03:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729846983; cv=none; b=kayGzNAkuH3LCTGYznSYi+btGK5SDjmUllrZSdjRKnmv8Ku0aXmOUo/4/IaByzNWeQo4GnwgLBPw61mbRV68+uuUyPClRrNBDafkIeAJoXrnPrGLBoP7Ks/SKROiDrRAWeIg8BL8eOvSFCGFV0S2GrPaQsThPTECKpXfOLiIzZ0=
+	t=1729846999; cv=none; b=HUTUQhNO5L5jz+QyOAmNj2rU3kqs3q3xt7l8d17VoI3QEnsYq7bUEkqhoDFkd15G1ZR7fkCfSJME5NZ1IuOmR9ZV54DWhOBXaZvC7puJ2uNH2Yjvad/hQDF2MMGzNW56Ka/hFn768DKojqJUo+w1d9xEivIy1CSAMQLob9UOjWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729846983; c=relaxed/simple;
-	bh=MSNa8VidgGFndoM5D+stANMch+8+eFrp9sAOIyBpKWE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uhJfh4KoVib2SU+s74d3qhtH1tU9FhSZSTS05Y9CnXd3HKbtAwnJhXCGCEV5dzXVxDSnEU9TavIjvHbF57ktMC0wYvlItveqZx4jyTWS8n94dRTkoZMBcP5MjtNkX+Iv+IH3wRLmKV3GcPXfg/dT0tqQVrd+qjGVyIUHJElIj+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1t4GDF-0002Vw-3H; Fri, 25 Oct 2024 11:02:29 +0200
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1t4GDD-000KtQ-1v;
-	Fri, 25 Oct 2024 11:02:27 +0200
-Received: from pengutronix.de (pd9e595f8.dip0.t-ipconnect.de [217.229.149.248])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 163F235E85E;
-	Fri, 25 Oct 2024 09:02:27 +0000 (UTC)
-Date: Fri, 25 Oct 2024 11:02:26 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Ming Yu <a0282524688@gmail.com>
-Cc: tmyu0@nuvoton.com, lee@kernel.org, linus.walleij@linaro.org, 
-	brgl@bgdev.pl, andi.shyti@kernel.org, mailhol.vincent@wanadoo.fr, 
-	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
-	pabeni@redhat.com, wim@linux-watchdog.org, linux@roeck-us.net, jdelvare@suse.com, 
-	jic23@kernel.org, lars@metafoo.de, ukleinek@kernel.org, 
-	alexandre.belloni@bootlin.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-i2c@vger.kernel.org, linux-can@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-watchdog@vger.kernel.org, linux-hwmon@vger.kernel.org, linux-iio@vger.kernel.org, 
-	linux-pwm@vger.kernel.org, linux-rtc@vger.kernel.org
-Subject: Re: [PATCH v1 1/9] mfd: Add core driver for Nuvoton NCT6694
-Message-ID: <20241025-dark-efficient-bird-6b09b9-mkl@pengutronix.de>
-References: <20241024085922.133071-1-tmyu0@nuvoton.com>
- <20241024085922.133071-2-tmyu0@nuvoton.com>
- <20241024-adventurous-imaginary-hornet-4d5c46-mkl@pengutronix.de>
- <20241024-pumpkin-parrot-of-excellence-299c57-mkl@pengutronix.de>
- <CAOoeyxXX2fpHVJ8urLmy+pBjH1aRdYu6qrtwOmwUxTUyQq30DA@mail.gmail.com>
- <20241025-sexy-fanatic-snail-a1d2e7-mkl@pengutronix.de>
+	s=arc-20240116; t=1729846999; c=relaxed/simple;
+	bh=Uf1vEBTwHbgxfJRUBR0KvPulBh7lDI+M5ckZLrbCmxQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=kZprP9l0YI8jBqN2m3/rtkH21VLR5/kiiAMWFleZPXkLrJ9JHo17hwaWiwC1tn00peWWk6cQjawKN6XDn3TK5hhLqZCflNjHzo9chzXr1KQS47XP5jFkitVR8fbVH2CAvmz6NgSGEHXL7O/H83mZrYQefObmZ39bo16qkr3hVdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=AglFB3Hq; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49P7SHFe020881;
+	Fri, 25 Oct 2024 09:02:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=44TX79ALW/lpoOXazIpFa0
+	2hliovVgFvnIMZ51zPpdU=; b=AglFB3HqdjmTUSrNhzm9SIWmoH5xGe/NvPU3Jr
+	c/m9J7W+EVsiKlpjssY0mCxdEmB/plAyahMTzhXjK8SGFG1c1aScCEUROyzPdkll
+	VI6K53+pUTH2jt0P88wxlBe4IQ+hUupEtD+y8ZSBZNChLrvpfWxclBzMGU9cDOw1
+	OHvnIERNDcRV6zS2ILhdYb8tgcJgO4eAhl8MvTUNlT1nY/L6xawJTirS9QHMIt/M
+	mlHE2Lz5NE15csNVekrmvdnsvW88yBZrN24+lB5xb+FXAEByfdHCiSkoR0IZ31Hz
+	Q3U9V7iLqK2aqFIq+5BU4rpwZRCJ+3d5VpdnFzwBNd0qFsZA==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42g6y90804-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Oct 2024 09:02:54 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49P92sBJ005636
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Oct 2024 09:02:54 GMT
+Received: from shaojied-gv.ap.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Fri, 25 Oct 2024 02:02:52 -0700
+From: Shaojie Dong <quic_shaojied@quicinc.com>
+Date: Fri, 25 Oct 2024 17:02:37 +0800
+Subject: [PATCH v5] um: Remove double zero check
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="hvvsexv3tqputmip"
-Content-Disposition: inline
-In-Reply-To: <20241025-sexy-fanatic-snail-a1d2e7-mkl@pengutronix.de>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20241025-upstream_branch-v5-1-b8998beb2c64@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAKxeG2cC/4XNQQ6CMBCF4auYrq2ZDqWlrryHMaa0g3QhYKtEQ
+ 7i7xZ0xhuX/kvlmYolioMT2m4lFGkMKfZej3G6Ya213IR58boaAUgCW/DGkeyR7PdfRdq7loKw
+ ha9DIyrN8NURqwvMjHk+525DufXx9HoxiWf9bo+CCywpNCcpp5+vD7RFc6NzO9Ve2aCOuCJgF0
+ Ahg6sZqD79CsSIUWWgUOaWBAEH9CnJFkFmojNJe1IpsYb+FeZ7fidxJ1XYBAAA=
+X-Change-ID: 20241025-upstream_branch-06a9ea92948d
+To: Richard Weinberger <richard@nod.at>,
+        Anton Ivanov
+	<anton.ivanov@cambridgegreys.com>,
+        Johannes Berg <johannes@sipsolutions.net>
+CC: <linux-um@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>,
+        Shaojie Dong <quic_shaojied@quicinc.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1729846972; l=1623;
+ i=quic_shaojied@quicinc.com; s=20241025; h=from:subject:message-id;
+ bh=Uf1vEBTwHbgxfJRUBR0KvPulBh7lDI+M5ckZLrbCmxQ=;
+ b=mo83FOlyWbhvDbwn+tiD6uW3yrB/cNPDohWefBvoY09HMQGoU69oM11RSJvdFgcYZ4dij+9z0
+ cVYz26TSBYXAAZaFFn3ftQuUe9j2Wx3FFrds8OKLOXXr7R/BkzlSXr4
+X-Developer-Key: i=quic_shaojied@quicinc.com; a=ed25519;
+ pk=33bgN72hchuZbXKwEWehpvql40CPvTfN8DSdi8JrU6E=
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: o2PROcHqkRpxQ_8rS2VLYdNHMm6Uqq2R
+X-Proofpoint-ORIG-GUID: o2PROcHqkRpxQ_8rS2VLYdNHMm6Uqq2R
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 phishscore=0
+ spamscore=0 adultscore=0 suspectscore=0 mlxlogscore=999 clxscore=1015
+ lowpriorityscore=0 priorityscore=1501 mlxscore=0 malwarescore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410250069
 
+free_pages() performs a parameter null check inside
+therefore remove double zero check here.
 
---hvvsexv3tqputmip
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v1 1/9] mfd: Add core driver for Nuvoton NCT6694
-MIME-Version: 1.0
+Signed-off-by: Shaojie Dong <quic_shaojied@quicinc.com>
+---
+Changes in v5:
+- EDITME: fit the git setup and simplify commit description
+- Link to v4: https://lore.kernel.org/r/20241025-upstream_branch-v4-1-8967d1b6ea3a@quicinc.com
 
-On 25.10.2024 10:35:35, Marc Kleine-Budde wrote:
-> > Excuse me, I'm a bit confused. Is there anything I need to
-> > improve on?
->=20
-> It looks racy to _first_ add the devices and _then_ the workqueue.
->=20
-> So the obvious solution is to allocate the worklist first and then add
-                                             workqueue
-> the devices.
+Changes in v4:
+- Link to v3: https://lore.kernel.org/r/20241025-upstream_branch-v3-1-f6ec670e0206@quicinc.com
 
-Marc
+Changes in v3:
+- EDITME: fit the git setup and simplify commit description
+- Link to v2: https://lore.kernel.org/r/20241025-upstream_branch-v2-1-072009bfa7d0@quicinc.com
 
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+Changes in v2:
+- EDITME: describe what is new in this series revision.
+- EDITME: use bulletpoints and terse descriptions.
+- Link to v1: https://lore.kernel.org/r/20241025-upstream_branch-v1-1-4829506c7cdb@quicinc.com
+---
+ arch/um/kernel/skas/mmu.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---hvvsexv3tqputmip
-Content-Type: application/pgp-signature; name="signature.asc"
+diff --git a/arch/um/kernel/skas/mmu.c b/arch/um/kernel/skas/mmu.c
+index d3fb506d5bd6084046cf5903c629432cd42b5ab3..0eb5a1d3ba70134f75d9b2af18544fca7248c6d6 100644
+--- a/arch/um/kernel/skas/mmu.c
++++ b/arch/um/kernel/skas/mmu.c
+@@ -46,8 +46,7 @@ int init_new_context(struct task_struct *task, struct mm_struct *mm)
+ 	return 0;
+ 
+  out_free:
+-	if (new_id->stack != 0)
+-		free_pages(new_id->stack, ilog2(STUB_DATA_PAGES));
++	free_pages(new_id->stack, ilog2(STUB_DATA_PAGES));
+  out:
+ 	return ret;
+ }
 
------BEGIN PGP SIGNATURE-----
+---
+base-commit: fd21fa4a912ebbf8a6a341c31d8456f61e7d4170
+change-id: 20241025-upstream_branch-06a9ea92948d
 
-iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmcbXqAACgkQKDiiPnot
-vG/v8gf/ZnYZ8UX7isWhAOloRjzqHr1tCeRD0dNOcVRIA2O5jDm1vOg1oHVf4tCm
-Y+crw/DQeALVVHoLDLru8STjvEbqTt2x/b88OletCJHckvwLapQaQsRUhX1RHJtp
-W3PaKTZPAFpjFdATjCEhrPPX73bJzok9lExwap2uF0R7dzv/XCz5tnVsVqKCp4lu
-MhhEesF7ssLrmU5lvCmRj3iw8yssq1sGuPjYRyfL81VameNbcXdzpl//GGx3XBOC
-pCYZ1iaK/KuzfSaDtR18JzOiG8o68WkIRDAJUDWRt+OoSg04EcPkma4MONH+uHqt
-Ddg9vZTO2m/TN/IbNekjrp0BdO6nqw==
-=BAyk
------END PGP SIGNATURE-----
+Best regards,
+-- 
+Shaojie Dong <quic_shaojied@quicinc.com>
 
---hvvsexv3tqputmip--
 
