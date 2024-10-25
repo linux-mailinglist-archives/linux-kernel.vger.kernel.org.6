@@ -1,135 +1,261 @@
-Return-Path: <linux-kernel+bounces-382187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C99929B0A82
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 19:06:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3F9B9B0A8A
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 19:07:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 724871F25232
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:06:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5818BB21086
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:07:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2EC518CC19;
-	Fri, 25 Oct 2024 17:06:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD46D1FB89D;
+	Fri, 25 Oct 2024 17:07:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B7V3+QWc"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mNQjSnzn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 755BF21A4BF;
-	Fri, 25 Oct 2024 17:06:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C78F1862AE;
+	Fri, 25 Oct 2024 17:07:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729875968; cv=none; b=s0yejTmvAKJPaNWgypajjQpniyJusDfywOf9ILo4AXRP3msLoKp8cM5d3uJHWjsMzGDf6gyEAoMKRf0czH/dMN6SwCRcFzXP25uELqRRxIrd8n77Glj/5BdQfQyvWd0GonQwECYnNBADyPhLTPgPmG8fBwD+pSmWTXlMSZpUrB4=
+	t=1729876024; cv=none; b=QHmbVr/ZbuQtmUmd1KPYZLuNP2IqkTCkiG0qrnxWXKj5V3Jh207BUoguhC+2OTaXaIz3QsKLnsOUFf4lXNq7WqqgCXbZpxoz6yCfXlfGwVTOABfArkU0NaF/9SlSLfmUfCfuR82QBcXY0z/IBtQvb4VqsuGO5/QfPvIzfRsElkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729875968; c=relaxed/simple;
-	bh=gMxNwUWjfD6AVMCOuHhJuIkD1HXSaoicnWuBiDkVE48=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=TsFr2Ee992wlckdIW1coQMdL43J65Rj/sSBlgzdyUfblUIz4BdRo/ZSEtWE5mQomtVbLnuBSkhCtda8dROVkbybbM5bnng02yoMsKYO/jUEmgZ68M1AEwGybeZOBgZJEYVGiPsG0MgDLitnA20lGgjfO9CcEVp27sVYkD1RM7FQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B7V3+QWc; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20c70abba48so18874465ad.0;
-        Fri, 25 Oct 2024 10:06:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729875966; x=1730480766; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gMxNwUWjfD6AVMCOuHhJuIkD1HXSaoicnWuBiDkVE48=;
-        b=B7V3+QWcHPDj1yY1+omsI9B1kHGYKGN97WdZ6xcor33v9T5I4mU42NL7SKhM4ix69+
-         Xn+oSsg4JFMOFAbKVhpjsLgLm+Uay8Am9oSzqnYeRrKyuQ+UBiQezSwolzFskGhCYsti
-         iyCn2DeaLibhEljQAYitWaljTHwuluK1DQpbXnSUrj1qXOPcdc3jU79bN9qlUIm4BpOl
-         1+83sF9geI/guNY8y6rZPE+H7o0igUlXPHwEu7nzo4GoFajzAsO0nlsxXpGJEuamzYeE
-         3ysITCgKjp58r57Sh6ky/L3q1Ur6fVSue+f223khryijU6S/JnNoHYKM4hfeP8jveYHW
-         sa8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729875966; x=1730480766;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gMxNwUWjfD6AVMCOuHhJuIkD1HXSaoicnWuBiDkVE48=;
-        b=goemOQmHl0Dv7pHj9uJyqoHb4BjuIKW8e6V1bXqWGVuLPdhA79GvyE3wPSDZY6qZcX
-         nFXd63ONGmmrcj3eTZcz288cHEI/5v+tFHzS3nmGhVb6u3WatzmbevWxqNOyQ2o+dSbK
-         26Kq7IP3LDPU6Quo+PmOXS2MDL7C2kqHqhDJ6lYmpjV6uTEm8Zwc+n7Oi29E+7mrlxXs
-         8Sh6YLI6IjbUoIGZZHGUuVBurNfZ80z2MpTE/AUrPKPECfxha3WsOG/GWs/k8WgyyRs/
-         JEKaa/TCMphyXaPIoZD1V/Mb+J6/HRhkFAMiciVbv2uvKaV8VhXE2woQAQqFHBV+sYWT
-         2J5g==
-X-Forwarded-Encrypted: i=1; AJvYcCVcChKWqu08sI9WhMY7pNBXVlSjjZqwumxHJq2SBzG96h0N5fqjgax8CEh07XW+NL/6ZjsmriCXgAY8uVndxg==@vger.kernel.org, AJvYcCXYA50TXiEFv31AZ7XK914kjQ0sflqDX3vMFm3McMydBHvC5muY2OomRjQgJrKhk/ZHLvSSirI/dOKvgUdg@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+mPkriBYWXc9NqtJpOHqGLL/JGzG2y0T7YVf0TkZXPa9rcoxd
-	AosdVGoHo3Yd1W2FOmUSRr3BV4MSP8rxqs8TGtkNqbSTUOanfOMS
-X-Google-Smtp-Source: AGHT+IEbVsPREU0PaV0m2ZFM4QrmS1D6eGOKw1dtKUxSnUgK+zUftyTe3SSQbazseb6sxOAnFau63A==
-X-Received: by 2002:a17:903:1106:b0:208:d856:dbb7 with SMTP id d9443c01a7336-20fab2da1ebmr133653615ad.39.1729875965749;
-        Fri, 25 Oct 2024 10:06:05 -0700 (PDT)
-Received: from smtpclient.apple ([2402:d0c0:11:86::1])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bc017a38sm11442745ad.163.2024.10.25.10.06.03
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 25 Oct 2024 10:06:05 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	s=arc-20240116; t=1729876024; c=relaxed/simple;
+	bh=JD3au4w/jb4VjNY1ylI9zqqEX9kXTpATWVFuGCg6nwE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BuLHwHXWlsdPjwJbjH3LrPfXgXFALtSktzhBtT08O1Q93tdMNkuF+Sj39yeRYI/4+c5cHyLIbKmvyyDa3HBfQiRQ0N6/Yb18DW5skAkQZKkqymS9BBWTYq0xjaq57dn8z2NzOaMM1vyABjvlQCKbngAUSx8tMp9OcIeCLlvGXyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mNQjSnzn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 679DFC4CEE4;
+	Fri, 25 Oct 2024 17:07:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729876023;
+	bh=JD3au4w/jb4VjNY1ylI9zqqEX9kXTpATWVFuGCg6nwE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mNQjSnznBSjiWLwwV7faCJ3W/3rgsSVLF+BsQqx3E7uoH6bw++JTrJKY5M7aHsRmd
+	 2oZuYf3Rm8/l2fKQ/B8dDcO+76HLBynkmONZw0kqER7JIuw2mdD31DvVlcfy0WsqzV
+	 VkOqHaHSgXGnciSW1UUeCVS6xSlKkIYIb9qZLl6OPXiEVJtnJmpSkVAW2xDAsrgQEK
+	 +4DqWMn/d0zXaHLrKssqdeyits5M1hVw0m9CEKYhxz5+CdAV/v4ZpunqJLt7a0ydX2
+	 Vg1ndjCU/z+tAydhwnT4kDm5mBxBXIhyaZkztSgBqYl6omM9+AgZZkwQBd0cZrMp5f
+	 3cexuT8X/GuCg==
+Date: Fri, 25 Oct 2024 13:07:01 -0400
+From: Sasha Levin <sashal@kernel.org>
+To: Michael Ellerman <mpe@ellerman.id.au>
+Cc: torvalds@linux-foundation.org, kuba@kernel.org, davem@davemloft.net,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	pabeni@redhat.com, kees@kernel.org, broonie@kernel.org
+Subject: Re: [GIT PULL] Networking for v6.12-rc5
+Message-ID: <ZxvQNdnKWMQLN6l2@sashalap>
+References: <20241024140101.24610-1-pabeni@redhat.com>
+ <ZxpZcz3jZv2wokh8@sashalap>
+ <87cyjpj6qx.fsf@mail.lhotse>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
-Subject: Re: [PATCH v2] bcachefs: fix null-ptr-deref in have_stripes()
-From: Alan Huang <mmpgouride@gmail.com>
-In-Reply-To: <n6nisrv3mklka3whfosvhrcevivri76clgijy3ijdxfbzjkuc3@wuogkgi5kf4s>
-Date: Sat, 26 Oct 2024 01:05:50 +0800
-Cc: Jeongjun Park <aha310510@gmail.com>,
- linux-bcachefs@vger.kernel.org,
- LKML <linux-kernel@vger.kernel.org>,
- syzbot+b468b9fef56949c3b528@syzkaller.appspotmail.com
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <C6638CB8-4DAF-466F-B1F1-34883C693C2E@gmail.com>
-References: <20241025115618.2908-1-aha310510@gmail.com>
- <n6nisrv3mklka3whfosvhrcevivri76clgijy3ijdxfbzjkuc3@wuogkgi5kf4s>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-X-Mailer: Apple Mail (2.3776.700.51)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <87cyjpj6qx.fsf@mail.lhotse>
 
-On Oct 26, 2024, at 00:54, Kent Overstreet <kent.overstreet@linux.dev> =
-wrote:
->=20
-> On Fri, Oct 25, 2024 at 08:56:18PM +0900, Jeongjun Park wrote:
->> c->btree_roots_known[i].b can be NULL. In this case, a NULL pointer =
-dereference
->> occurs, so you need to add code to check the variable.
->>=20
->> Reported-by: syzbot+b468b9fef56949c3b528@syzkaller.appspotmail.com
->> Fixes: 7773df19c35f ("bcachefs: metadata version =
-bucket_stripe_sectors")
->> Signed-off-by: Jeongjun Park <aha310510@gmail.com>
->=20
-> This looks identical to the v1? It's already in my testing branch
+[snip]
 
-This version fix the =E2=80=9CFixes" tag, the original one is:
+I ran the current state of the scripts on the delta between Linus's
+master and linus-next. It is pasted below.
 
-"Fixes: ("bcachefs: metadata version bucket_stripe_sectors=E2=80=9D)"
+The number of patches that haven't been in -next in this random sample
+is indeed worrysome (and provides a good justification to the
+(unrelated) linus-next effort).
 
->=20
-> (But it should be in my hotfix branch, doing that now)
->=20
->> ---
->> fs/bcachefs/sb-downgrade.c | 3 +++
->> 1 file changed, 3 insertions(+)
->>=20
->> diff --git a/fs/bcachefs/sb-downgrade.c b/fs/bcachefs/sb-downgrade.c
->> index ae715ff658e8..8767c33c2b51 100644
->> --- a/fs/bcachefs/sb-downgrade.c
->> +++ b/fs/bcachefs/sb-downgrade.c
->> @@ -143,6 +143,9 @@ UPGRADE_TABLE()
->>=20
->> static int have_stripes(struct bch_fs *c)
->> {
->> + if (IS_ERR_OR_NULL(c->btree_roots_known[BTREE_ID_stripes].b))
->> + return 0;
->> +
->> return !btree_node_fake(c->btree_roots_known[BTREE_ID_stripes].b);
->> }
->>=20
->> --
->=20
+As a reminder, the scripts are available at
+https://git.kernel.org/pub/scm/linux/kernel/git/sashal/next-analysis.git/
+, and I'm happy to help with issues around them.
 
+To avoid getting on everyone's nerves, I don't plan on bringing these up
+again in the context of random PRs unless asked to do so by the relevant
+maintainers/Linus.
+
+
+
+Days in linux-next:
+----------------------------------------
+  0 | ██████████████████████████████████████████████████ (32)
+<1 | ████ (3)
+  1 | ████ (3)
+  2 | ████████████ (8)
+  3 | ███████████████ (10)
+  4 | ███████████████ (10)
+  5 | 
+  6 | 
+  7 | 
+  8 | ███ (2)
+  9 | ██████ (4)
+10 | █ (1)
+11 | ███████ (5)
+12 | 
+13 | 
+14+| █████████████████ (11)
+
+Commits with 0 days in linux-next (35 of 89: 39.3%):
+--------------------------------
+d34a5575e6d23 fuse: remove stray debug line
+  fs/fuse/passthrough.c | 1 -
+  1 file changed, 1 deletion(-)
+
+cdc21021f0351 drm/xe: Don't restart parallel queues multiple times on GT reset
+  drivers/gpu/drm/xe/xe_guc_submit.c | 14 ++++++++++++--
+  1 file changed, 12 insertions(+), 2 deletions(-)
+
+9c1813b325348 drm/xe/ufence: Prefetch ufence addr to catch bogus address
+  drivers/gpu/drm/xe/xe_sync.c | 3 ++-
+  1 file changed, 2 insertions(+), 1 deletion(-)
+
+69418db678567 drm/xe: Handle unreliable MMIO reads during forcewake
+  drivers/gpu/drm/xe/xe_force_wake.c | 12 +++++++++---
+  1 file changed, 9 insertions(+), 3 deletions(-)
+
+22ef43c78647d drm/xe/guc/ct: Flush g2h worker in case of g2h response timeout
+  drivers/gpu/drm/xe/xe_guc_ct.c | 18 ++++++++++++++++++
+  1 file changed, 18 insertions(+)
+
+c8fb95e7a5431 drm/xe: Enlarge the invalidation timeout from 150 to 500
+  drivers/gpu/drm/xe/xe_device.c | 2 +-
+  1 file changed, 1 insertion(+), 1 deletion(-)
+
+d93df29bdab13 cpufreq: CPPC: fix perf_to_khz/khz_to_perf conversion exception
+  drivers/acpi/cppc_acpi.c | 22 +++++++++++++++++-----
+  1 file changed, 17 insertions(+), 5 deletions(-)
+
+3d1c651272cf1 ACPI: PRM: Clean up guid type in struct prm_handler_info
+  drivers/acpi/prmt.c | 2 +-
+  1 file changed, 1 insertion(+), 1 deletion(-)
+
+8e59a2a5459fd ata: libata: Set DID_TIME_OUT for commands that actually timed out
+  drivers/ata/libata-eh.c | 1 +
+  1 file changed, 1 insertion(+)
+
+7c210ca5a2d72 drm/amdgpu: handle default profile on on devices without fullscreen 3D
+  drivers/gpu/drm/amd/pm/swsmu/amdgpu_smu.c | 11 ++++++++++-
+  1 file changed, 10 insertions(+), 1 deletion(-)
+
+ba1959f71117b drm/amd/display: Disable PSR-SU on Parade 08-01 TCON too
+  drivers/gpu/drm/amd/display/modules/power/power_helpers.c | 2 ++
+  1 file changed, 2 insertions(+)
+
+108bc59fe8176 drm/amdgpu: fix random data corruption for sdma 7
+  drivers/gpu/drm/amd/amdgpu/sdma_v7_0.c | 9 ++++++++-
+  1 file changed, 8 insertions(+), 1 deletion(-)
+
+63feb35cd2655 drm/amd/display: temp w/a for DP Link Layer compliance
+  drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_helpers.c | 13 +++++++++++++
+  1 file changed, 13 insertions(+)
+
+23d16ede33a4d drm/amd/display: temp w/a for dGPU to enter idle optimizations
+  drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 3 ++-
+  1 file changed, 2 insertions(+), 1 deletion(-)
+
+f67644b219d45 drm/amd/pm: update deep sleep status on smu v14.0.2/3
+  drivers/gpu/drm/amd/pm/swsmu/smu14/smu_v14_0_2_ppt.c | 7 ++++++-
+  1 file changed, 6 insertions(+), 1 deletion(-)
+
+f888e3d34b864 drm/amd/pm: update overdrive function on smu v14.0.2/3
+  drivers/gpu/drm/amd/pm/swsmu/smu14/smu_v14_0_2_ppt.c | 2 +-
+  1 file changed, 1 insertion(+), 1 deletion(-)
+
+9515e74d756b6 drm/amd/pm: update the driver-fw interface file for smu v14.0.2/3
+  drivers/gpu/drm/amd/pm/swsmu/inc/pmfw_if/smu14_driver_if_v14_0.h | 132 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-----------------------------------
+  drivers/gpu/drm/amd/pm/swsmu/inc/smu_v14_0.h                     |   2 +-
+  drivers/gpu/drm/amd/pm/swsmu/smu14/smu_v14_0_2_ppt.c             |  57 +++++++++++++-----------------------------
+  3 files changed, 102 insertions(+), 89 deletions(-)
+
+bf58f03931fdc drm/amd: Guard against bad data for ATIF ACPI method
+  drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c | 15 ++++++++++++---
+  1 file changed, 12 insertions(+), 3 deletions(-)
+
+d719fecdc2d6d media: i2c: tc358743: export InfoFrames to debugfs
+  drivers/media/i2c/tc358743.c | 36 +++++++++++++++++++++++++++++++++++-
+  1 file changed, 35 insertions(+), 1 deletion(-)
+
+be3aeece83e23 media: i2c: adv7842: export InfoFrames to debugfs
+  drivers/media/i2c/adv7842.c | 120 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++--------------------------------
+  1 file changed, 88 insertions(+), 32 deletions(-)
+
+6703538b8b6f8 media: i2c: adv7604: export InfoFrames to debugfs
+  drivers/media/i2c/adv7604.c | 90 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++--------------------
+  1 file changed, 70 insertions(+), 20 deletions(-)
+
+b0644b12f2579 media: i2c: adv7511-v4l2: export InfoFrames to debugfs
+  drivers/media/i2c/adv7511-v4l2.c | 91 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-----------------
+  1 file changed, 74 insertions(+), 17 deletions(-)
+
+155043e173660 media: v4l2-core: add v4l2_debugfs_if_alloc/free()
+  drivers/media/v4l2-core/v4l2-dv-timings.c | 67 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  include/media/v4l2-dv-timings.h           | 48 ++++++++++++++++++++++++++++++++++++++++++++++++
+  2 files changed, 115 insertions(+)
+
+e24486d0c6992 media: v4l2-core: add v4l2_debugfs_root()
+  drivers/media/v4l2-core/v4l2-dev.c | 14 ++++++++++++++
+  include/media/v4l2-dev.h           | 15 +++++++++++++++
+  2 files changed, 29 insertions(+)
+
+3d882f3a391db media: vb2: use lock if wait_prepare/finish are NULL
+  drivers/media/common/videobuf2/videobuf2-core.c | 13 ++++++++++---
+  1 file changed, 10 insertions(+), 3 deletions(-)
+
+aea26177c7175 media: vb2: vb2_core_queue_init(): sanity check lock and wait_prepare/finish
+  drivers/media/common/videobuf2/videobuf2-core.c | 8 ++++++++
+  1 file changed, 8 insertions(+)
+
+22122f2094934 media: video-i2c: set lock before calling vb2_queue_init()
+  drivers/media/i2c/video-i2c.c | 2 +-
+  1 file changed, 1 insertion(+), 1 deletion(-)
+
+b251fe7db1cde media: rcar_drif.c: set lock before calling vb2_queue_init()
+  drivers/media/platform/renesas/rcar_drif.c | 2 +-
+  1 file changed, 1 insertion(+), 1 deletion(-)
+
+89795432ae06a media: airspy: set lock before calling vb2_queue_init()
+  drivers/media/usb/airspy/airspy.c | 2 +-
+  1 file changed, 1 insertion(+), 1 deletion(-)
+
+734f583127067 media: hackrf: set lock before calling vb2_queue_init()
+  drivers/media/usb/hackrf/hackrf.c | 4 ++--
+  1 file changed, 2 insertions(+), 2 deletions(-)
+
+cc123e96b0c44 media: msi2500: set lock before calling vb2_queue_init()
+  drivers/media/usb/msi2500/msi2500.c | 2 +-
+  1 file changed, 1 insertion(+), 1 deletion(-)
+
+8d7d72a400c43 media: pwc: set lock before calling vb2_queue_init()
+  drivers/media/usb/pwc/pwc-if.c | 2 +-
+  1 file changed, 1 insertion(+), 1 deletion(-)
+
+38b1ea00360b9 media: venus: add missing wait_prepare/finish ops
+  drivers/media/platform/qcom/venus/vdec.c | 2 ++
+  drivers/media/platform/qcom/venus/venc.c | 2 ++
+  2 files changed, 4 insertions(+)
+
+fc3c6515678bf media: pisp_be: add missing wait_prepare/finish ops
+  drivers/media/platform/raspberrypi/pisp_be/pisp_be.c | 2 ++
+  1 file changed, 2 insertions(+)
+
+8ebcb4796639e media: omap3isp: add missing wait_prepare/finish ops
+  drivers/media/platform/ti/omap3isp/ispvideo.c | 18 ++++++++++++++++++
+  1 file changed, 18 insertions(+)
+
+
+Commits not found on lore.kernel.org/all (4 of 89: 4%):
+----------------------------------------
+d34a5575e6d23 fuse: remove stray debug line
+e3ea2757c312e ALSA: hda/realtek: Update default depop procedure
+f888e3d34b864 drm/amd/pm: update overdrive function on smu v14.0.2/3
+155043e173660 media: v4l2-core: add v4l2_debugfs_if_alloc/free()
+
+-- 
+Thanks,
+Sasha
 
