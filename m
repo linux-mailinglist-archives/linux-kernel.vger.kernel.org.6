@@ -1,152 +1,110 @@
-Return-Path: <linux-kernel+bounces-381873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68D649B05BB
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:25:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 569299B05C3
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:27:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2000A1F23C07
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 14:25:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C277284D20
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 14:27:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 336521FB8B6;
-	Fri, 25 Oct 2024 14:25:43 +0000 (UTC)
-Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA3EB1FB8AD;
+	Fri, 25 Oct 2024 14:27:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LBicwHlm"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 494497083A;
-	Fri, 25 Oct 2024 14:25:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35AE854673;
+	Fri, 25 Oct 2024 14:27:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729866342; cv=none; b=AZgb8r7Db+iextBOHVcJIgy+99A7unBn1l7oJVBKtYRenBufS2CSjvkNYZzfTt8oSQPHMAxyQswhnouW99cXd3qesrahib4LURMfgazD59RmnZdjmRQ/J2QonPSh4VTOnEDx0UuoApw9Yl8jSQg3J5Dh9/NcAgTvCTiSQ4oE9Uw=
+	t=1729866431; cv=none; b=cIx7sqR0knzCqP+nppBRkNcMkJq8n/K8HYxkav5xruboetkthTzSTpDjwXJqSgR6ydl0N8PfQ8iNG0htg1EplVMA3IzCbUfe+O6sQK29Z+sNgMNzjpFIZTkzS9C4fU3yztwSAXuMr6Y9QQZHoEQAL4+GTnuw3iKB1sD3EZcqpWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729866342; c=relaxed/simple;
-	bh=IQlo4fzujYrh6juGwTH0ViLCcbe7mFaoqEvtzDjRK/Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MiVUZuxaqtUOhGcw+IDjYGduC6j1KEzKc09N8sJMWl02DF6xVMaYkqmT2RHszggu2HkL3yupACx58RonEvd2RZ3GsM8UXSbSgx07ej8sJl7Bh4EvASYNrAUAfq7h7ujYnstCQIUet5cCrdgvZFcHc88R/Af8IsuQULzkE4A5/TM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e29267b4dc4so2397812276.0;
-        Fri, 25 Oct 2024 07:25:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729866336; x=1730471136;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5vWIrOKPsKtZ20LJ18A22SjkWvM2IeMrsdgL7ijaJrU=;
-        b=YJyLGJEPand/dbJjET/ZHv6hQuRjDpcZIwwrJlEiNCjJJARptTIVfJ7HK1nFw5lBp+
-         f3hRt15kYB6gG9tre1DqhJXNFLW25vQNwG/gTruw8Yl+QOhclEjpzXHJtteaTMDq5WXd
-         CGBH48k67JggRGmDs6lCUUPKt+oT4KLQmqX6NoUy/3XmTascD0SwnFtw+mukyfNz+jgL
-         dXZ4NdVPQStWZjjiWB0C4xgvv2yc7Ed3mr+4p7rzvXr/j/V98kHnOWSZkRuVxeSam4PX
-         XTZ9Bfc4I/pZwajb1zQNUdTYk+lk1vrpjYkPHuanU59mtJXyp9f300e/qsCkg81eQe9s
-         0X2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUU/vS7fTs5bQ2tKmqjqs/d/X8FYOPOk0PNQ+LAuWm2h8loj0NKmKWI6hl0lmuium7hCc+8re9yOPcdt0mx@vger.kernel.org, AJvYcCV8WfRm2lHjSNiNhHh9c+urZoIqA+s2g0tI1/6cXsYmhhvXSlguPX/BVFRekudJntdSNL7iAL5Zv3llc+x2J63w2dc=@vger.kernel.org, AJvYcCXbn28vEhwT0eLwDipGkzVr1E9cdgKOgznumAqBtXxhhDepiKgt2GSD9LUJieMJa+78hIxyZSE+6ksB@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyteiu83wYxtCkWvq24IVIffujFy1ZUJ/264RB1on9e2zVxl66a
-	o2507UxyLY9KjtNZ/Vt4//rEtvFsOI5hrF0Fi+HDzKjykB0TMtWjiLOL+O9t
-X-Google-Smtp-Source: AGHT+IHf59uJyPCUcVGOoTHjEmfQjAzI+MxRM0u1DvlA10tyRwn654cF/QPXk9hirDn8RJsr7fmKxA==
-X-Received: by 2002:a05:6902:2511:b0:e29:ac5:ef88 with SMTP id 3f1490d57ef6-e2e3a6642edmr10118729276.27.1729866336170;
-        Fri, 25 Oct 2024 07:25:36 -0700 (PDT)
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com. [209.85.128.169])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e3079d52658sm257746276.8.2024.10.25.07.25.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 25 Oct 2024 07:25:36 -0700 (PDT)
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6e2e41bd08bso27193167b3.2;
-        Fri, 25 Oct 2024 07:25:35 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUZhjc1PnLSp3Tg4weDZL0lx/V4sZuk0uNIdnqt9qQEl9BS8+3SFcYOYjx75eZw4XgXVEtAenXBIMos1Qyo@vger.kernel.org, AJvYcCVBfCAbgzheT3Y/wyeaW2NY7yW2cAyO22Fy2LnNNDo7e0DUvDSiVfBudSFeVrtMGct5bxqKYBbBjC67q/zLktPc1w8=@vger.kernel.org, AJvYcCXBawIerKT/pnzBulnoMn3qELcjQqYL6sqbi+qDziTY5T8Qu2aveR9npVdu0Olq2GvjiAH0Lnqu1Tnl@vger.kernel.org
-X-Received: by 2002:a05:690c:4287:b0:6e3:1537:3d54 with SMTP id
- 00721157ae682-6e7f0fadb37mr69785967b3.45.1729866335564; Fri, 25 Oct 2024
- 07:25:35 -0700 (PDT)
+	s=arc-20240116; t=1729866431; c=relaxed/simple;
+	bh=y/ESaW7hqBHSRxXTCjJE5nYVptS9dhH9deT14G4i2as=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sCPhuDglYwUi7VP4XiXRgIevB9HeXkuN8qL7chV5slVrXub7+cNtJE8BtQjsji68KiQw9ZeEIxguVHIpOBH9PzBLVitGp51p4f9d6n9gNbOhKZ1mxpSO9D85uGT2ZkBQH++BzwMd9Mmd+TPARgt/aLGsIz9JNtSMFeQniIXNkjo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LBicwHlm; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729866429; x=1761402429;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=y/ESaW7hqBHSRxXTCjJE5nYVptS9dhH9deT14G4i2as=;
+  b=LBicwHlm5aPvrjX0t4y8oJ8T5oSW+n7MZdmH/12jLNIiCQ9ekxQiTBIZ
+   gSO025+mArrzQanb+spdRELr0OKe85vaQR+us2VMPczJhIDJBVFpVn4cA
+   AVc3Gif+MSwnn7iGl8ynJv9vvg2sG3VIPZSfpOLe9yYZzL0mbqDm6vbRv
+   jAy42vyhAzbD487oEvdVLfqxP1s6lihZ+3phQ3nChoMChFgcN4xgxGIdC
+   RLyd73dI5AwCa/+ZDkf3diTPdsahF4EFPEIc31O7/JpcB7nEoVOc6NoN+
+   iG05d6Ad3VNePts/Gcgogcw7j56RZQJXMW52Ex/GgheOv5Po1w+A0cs51
+   A==;
+X-CSE-ConnectionGUID: QznHNRu5SayVF6+p+YQm9A==
+X-CSE-MsgGUID: RzINz88SSWiveyRawcyDwA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="29668260"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="29668260"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2024 07:27:08 -0700
+X-CSE-ConnectionGUID: 3P6omm70RiqDyR0w0y8w/w==
+X-CSE-MsgGUID: 1/KMsAPqT8OkxGUGCRaUCg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,232,1725346800"; 
+   d="scan'208";a="80575755"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa007.fm.intel.com with ESMTP; 25 Oct 2024 07:27:07 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id DCF4F251; Fri, 25 Oct 2024 17:27:05 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+	linux-pwm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v2 1/1] pwm: core: use device_match_name() instead of strcmp(dev_name(...
+Date: Fri, 25 Oct 2024 17:26:34 +0300
+Message-ID: <20241025142704.405340-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241010135332.710648-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20241010135332.710648-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 25 Oct 2024 16:25:23 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVX7hYdH3iLKttqkYeTC_ZGyCNmSycUtUx+QKSDCjaP1g@mail.gmail.com>
-Message-ID: <CAMuHMdVX7hYdH3iLKttqkYeTC_ZGyCNmSycUtUx+QKSDCjaP1g@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: renesas: hihope: Drop #sound-dai-cells
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-CC morimoto-san
+Use the dedicated helper for comparing device names against strings.
 
-On Thu, Oct 10, 2024 at 3:53=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.c=
-om> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> `#sound-dai-cells` is required if board is using "simple-card", and on
-> the hihope board we are using "audio-graph" thus remove the unneeded
-> `#sound-dai-cells`.
->
-> Commit 9e72606cd2db ("arm64: dts: renesas: #sound-dai-cells is used when
-> simple-card") updated the comment regarding usage of `#sound-dai-cells`
-> in SoC DTSI but missed to remove the `#sound-dai-cells` from board DTS
-> files.
->
-> Fixes: 9e72606cd2db ("arm64: dts: renesas: #sound-dai-cells is used when =
-simple-card")
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Note, the current code has a check for the dev_name() against NULL.
+With the current implementations of the device_add() and dev_set_name()
+it most likely a theoretical assumption that that might happen, while
+I don't see how. Hence, that check has simply been removed.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-devel for v6.13, unless Morimoto-san objects.
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+v2: elaborated a dead code elimination in the commit message (Uwe)
+ drivers/pwm/core.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-> diff --git a/arch/arm64/boot/dts/renesas/hihope-rev2.dtsi b/arch/arm64/bo=
-ot/dts/renesas/hihope-rev2.dtsi
-> index 8e2db1d6ca81..25c55b32aafe 100644
-> --- a/arch/arm64/boot/dts/renesas/hihope-rev2.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/hihope-rev2.dtsi
-> @@ -69,9 +69,6 @@ &rcar_sound {
->
->         status =3D "okay";
->
-> -       /* Single DAI */
-> -       #sound-dai-cells =3D <0>;
-> -
->         rsnd_port: port {
->                 rsnd_endpoint: endpoint {
->                         remote-endpoint =3D <&dw_hdmi0_snd_in>;
-> diff --git a/arch/arm64/boot/dts/renesas/hihope-rev4.dtsi b/arch/arm64/bo=
-ot/dts/renesas/hihope-rev4.dtsi
-> index 66f3affe0469..deb69c272775 100644
-> --- a/arch/arm64/boot/dts/renesas/hihope-rev4.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/hihope-rev4.dtsi
-> @@ -84,9 +84,6 @@ &rcar_sound {
->         pinctrl-names =3D "default";
->         status =3D "okay";
->
-> -       /* Single DAI */
-> -       #sound-dai-cells =3D <0>;
-> -
->         /* audio_clkout0/1/2/3 */
->         #clock-cells =3D <1>;
->         clock-frequency =3D <12288000 11289600>;
+diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
+index 634be56e204b..4399e793efaf 100644
+--- a/drivers/pwm/core.c
++++ b/drivers/pwm/core.c
+@@ -852,9 +852,7 @@ static struct pwm_chip *pwmchip_find_by_name(const char *name)
+ 	guard(mutex)(&pwm_lock);
+ 
+ 	idr_for_each_entry_ul(&pwm_chips, chip, tmp, id) {
+-		const char *chip_name = dev_name(pwmchip_parent(chip));
+-
+-		if (chip_name && strcmp(chip_name, name) == 0)
++		if (device_match_name(pwmchip_parent(chip), name))
+ 			return chip;
+ 	}
+ 
+-- 
+2.43.0.rc1.1336.g36b5255a03ac
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
