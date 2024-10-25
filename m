@@ -1,172 +1,174 @@
-Return-Path: <linux-kernel+bounces-381653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D5509B020D
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 14:20:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E0F7E9B0211
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 14:20:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F9661F21A56
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 12:20:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7240F1F23469
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 12:20:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28A1F20514D;
-	Fri, 25 Oct 2024 12:19:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="iVDc9yy8"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEAEC205E0E;
+	Fri, 25 Oct 2024 12:19:37 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC4A120370F
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 12:19:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3139220263D
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 12:19:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729858758; cv=none; b=SnqZtub/bEUQ/yaHEGn8enFOIaUXNbW/mC9KuUb7eNFjlg0Q4ES52mkw3xFNQCdZaJXLjnexDRDj8s2xwY5f+NAVFNzDeMlalY/VuBYy+/+ghFqDqbwRkfMs5A+PDggfYoI0RJo9Sje7V+72SB6a9dYZ4b+KmlWiAyG5gktC9JM=
+	t=1729858777; cv=none; b=KGlXKVu1zIrnnPuI1Gq96z1ZeG0HOEAZT1l398ZFgvtFUDspcjOt96d5NhrsF1cvI9h2hTvtZaQ96FagQr1412WtZIF8Al1yk9mjkBdZrc9oLWKO6sWNrP+8gQFcbR2wbcofWD8XiLXEcF9bjP+OlY8+KXVpwR6HpMEdSo1PaZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729858758; c=relaxed/simple;
-	bh=vGacZSJsF/zEPOCOfp2fY4vg3hpQjD8RerqM2FLf0i8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=g2miAbZjBm9ZXmPDhXepIZutl9vEU4nppR97/OkdCqVN4Gx5ItK/+RkRD+rHeEUGrIP2ae9vdDQI/z+PB6t2FX/k1LqReNPvTnDBS5vWlG2EBInSD15twGOV1HALlCdl7rG+8GzH5LXI4iSK+Evi2hcOVlW18cJq3xNN+dqCq+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=iVDc9yy8; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-37ed7eb07a4so1499943f8f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 05:19:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1729858754; x=1730463554; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lkXhfQ9nM60iv4H/xHYROLBa8xfrajHImGbE7g895+c=;
-        b=iVDc9yy85avPclPX8dBxrraV69yjwpYjp2i640XCwynL7fxNO0Q3KCArKb9DbNENOu
-         qpP/6/9g3M2xwZsBMu5HFFZ3QejFA0bNuv2xtibJ5b0eo3/Zr00qXav2KRsYtxBwYN4z
-         HDZC/5ds+6H5uXylP5G6TViIuyv5e/51ae+xT41pjmreN9E/CX8MUmlC5gIMmUhuoGIL
-         ewbUiSOWS1IDETaw6B+FRb7BuSO/5nEz16V/l85kX3TAyZRMFUQSzF2NiR7FJ8FEKFoq
-         TYYcFFeCOT39JCXdi8Z3a6Ff0CsowrUCAo/6fBJbvT807lhIC+IB9qJKL2bHQhhQWpOZ
-         ehEg==
+	s=arc-20240116; t=1729858777; c=relaxed/simple;
+	bh=pMFVEzKWD6P3P5myDTcKhhd54zg+H7Lva5B8ujucrPY=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=OjJ530JejqHhOnTdoYB1pIDSFh/xbBe9rGBXXBvakayRQ2WngUYe/mqugz7tF5mbGduWcHSMdjZ6HWYhA8KOsPXfk8GJX1XtsWST6ReC3QWJF0x9gFgRoFOiStIIDA2iC48C0NR/7Mt1iOzPec5WPcZQVv5QCeR7SQFFPvDc8Lc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a3a6afd01eso17442325ab.3
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 05:19:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729858754; x=1730463554;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lkXhfQ9nM60iv4H/xHYROLBa8xfrajHImGbE7g895+c=;
-        b=uHhXHdPuwsmLf3EK75z8DI6o+Bosx4vSgpp8OCToxJUEmy9RFsh3vdBr3TVLTrs/2r
-         Djr8scsqIEIITSJE56Tt9f1L3Hk6BwncDR2JuNgjBG4uHinWHpWSCOBU/evvDtLhboDU
-         Lji8foGLhVyun94prm76ajSQBakD25J8J2ClSvEgeBAdjk9ukB3BLewn3u4lF8uH/hMC
-         nQO7DHDBzt9UihvhbizqRwbTriEtwrMDI/F+E4MymXhkgf0EisCzoyhi2akUOqCKe16P
-         qM61tONSZ4ThWadNt0UfKxmvw3o6ngB1yL1N2o/Ecs5itwLpn4ATxQ87K/8+888UsLFz
-         w08g==
-X-Forwarded-Encrypted: i=1; AJvYcCVbyTIgYqUwkTPjxionskGgmAGaPlHKej+nyVCneT5RLwL4j7sgFBYL0wjtAywr3gwMAy8bLK173opOqLE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHpI7c9gaEJhtp//RL9UQPYl4XtXhxZwxyoTsbvnxgwMLsTmim
-	oV/sCX1q8Uv5eer8dWogF1HdXJQ8niZfT20jyEr+sOHTwonnNSOSoBbyJ61FOtU=
-X-Google-Smtp-Source: AGHT+IE2tXt2Qer18t+wkhSxAxHD2caHuxLHzHS1zu2TOmYNonvrqSJZJIeBGjAkop7lbDUz4Mqz9w==
-X-Received: by 2002:a5d:4f84:0:b0:37d:524e:9431 with SMTP id ffacd0b85a97d-37efcf92886mr6259120f8f.57.1729858754237;
-        Fri, 25 Oct 2024 05:19:14 -0700 (PDT)
-Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:a207:5d17:c81:613b])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b132ecsm1388966f8f.5.2024.10.25.05.19.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2024 05:19:13 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Fri, 25 Oct 2024 14:18:55 +0200
-Subject: [PATCH v2 5/5] gpio: sysfs: emit chardev line-state events on edge
- store
+        d=1e100.net; s=20230601; t=1729858774; x=1730463574;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=sIsU4C8/mQHTI4yb5M/cpmsOZdKq3dkg5gMtXJeEvFM=;
+        b=dLdLrm5gwBxL1uFQO3d8YBQkue7Pvt7kESW8mAAypcvh4an2+xCWQiYj5Mk+JvLMQ1
+         b97C5OZGJBBBIV9h0CU6RYWMBxKQIFYyc2TrdOjfMPN5rK7QIWV8kZudjoYeiVAjl5ek
+         ldZdRvcyLTP8fwAjp/oJ4t+R8EJX//QedBzNymY5vRkM6WCymHmOTXKBPK3QoA/1fXh+
+         b5JSzrv5FL6Ua4Z/xYGGR/3nJFjvOyOctEdbun6haIkw1qvfqvFn2VR90CUQgwtC5A7w
+         4FjlusIWo8l4/TzJWyr1fsnW72zbS/RwlKfweOWz7X0pmpe7+Pqa1xHCWg0X2W6PhkkC
+         FzWA==
+X-Forwarded-Encrypted: i=1; AJvYcCVHkki/k+LejP1AhCteAg0pXdoq/WIDBghZscZyOAvTBa4QxTj2kRY6pEpsI9jWhWqJ3VcUVY4s2qumuGI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBwciT2PnePLW7S7BpjzDxTuKKfO7ZeCXgElcNcigj9GxmGepF
+	Z+8LiZO4b2OX1uBea3gDTmsgSbIlrH4gezY99GJ5/Om0cB+cFPZajyOUrUqKPrc6fCKrt4XP2FO
+	5q3p3sXDxaliLC80e9HdjE6NgZBHLBVFEIKviuJfI3Al+VhMLsS1Th5g=
+X-Google-Smtp-Source: AGHT+IFFpzoFs6kbLBeH+fP1KLHkweu+LGMp/pYSdIfpLn1uFU70M5V70rJG5MfqsD1SczulVSfgkzluDO8xlNMjZTcIhTgKZtZg
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241025-gpio-notify-sysfs-v2-5-5bd1b1b0b3e6@linaro.org>
-References: <20241025-gpio-notify-sysfs-v2-0-5bd1b1b0b3e6@linaro.org>
-In-Reply-To: <20241025-gpio-notify-sysfs-v2-0-5bd1b1b0b3e6@linaro.org>
-To: Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, Kent Gibson <warthog618@gmail.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2143;
- i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
- bh=KEBKmL5Mi8XWBz+1StVeG7MRKVKk3MzCpGTWbbctQO8=;
- b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBnG4y96DCODDSye9DZO0Oi3IwIep2yJrN6mlBXk
- qsaAT+cf1iJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZxuMvQAKCRARpy6gFHHX
- ckqXD/92s3lNaJeWMk7N4OgOFtmjrvlE81T0x8hTutmv4Enkn1WkR75okUE1gZVMihVmVP8slTc
- ZHX9ZkJoojMcsLXIeIEx62mA9uE3lHHKJppHCEAo0R9JOhpQEQMVfz14FGdQu62FHBUC0LNfwV0
- n5H2g3j4Mc0OERpNOABocWTXj9hFueqHlT3PK3m1rgAenlQ4c0E2P+ycdhVgExBG1qP4kGIWu76
- f1dwsouCJvLuGLJBHth6cmAzme0mHH+7CHVskViipJtno0McELQptlEZsSVVvcYLBY/wOLwWJpt
- u+pu+upg+gb8Y2ewNaeNBVIlcraNapxGQ0KAg43/y4lRL3iUSV/iGZim3fVE3ijgGinGtWFxb65
- aJRJjYrtjhG31W3Hev2FL9EuzuegAzIZxERLjtQi9nJ2/w53gOU2Vbk9vhBAoq7i3v7ILZdRU8i
- eD/uVgHD9SVmdrONj9ZP7AQ/FwKb1LfT9xHC22RuXS+0fA/m5Wh7fKhnLCgbhYQHB22QwqpkCNI
- Q9TK1lMC1fwD0RRZqQ3sS/TYa05wsi10yY1Ur5XVZTDKgNXlYM8OzhuDkZ6P8qZB75DAr2dzA7i
- hQVH1qoL5WZ2Yoef/okwJMM+cF49PpVDqXenCb7fB6/svV50Y8PlDEmqaKrU7N4rOxwGhkgQ/t2
- 65dsbVomjVn+7Vg==
-X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
- fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
+X-Received: by 2002:a05:6e02:152c:b0:3a0:985b:ddb4 with SMTP id
+ e9e14a558f8ab-3a4de7825fbmr57932285ab.2.1729858774295; Fri, 25 Oct 2024
+ 05:19:34 -0700 (PDT)
+Date: Fri, 25 Oct 2024 05:19:34 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <671b8cd6.050a0220.2e773.0001.GAE@google.com>
+Subject: [syzbot] [bcachefs?] WARNING: locking bug in rcu_pending_pcpu_dequeue
+From: syzbot <syzbot+e103923b16da1cda0ae0@syzkaller.appspotmail.com>
+To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Hello,
 
-In order to emit line-state events on edge changes in sysfs, update the
-EDGE flags in the descriptor in gpio_sysfs_request_irq() and emit the
-event on a successful store.
+syzbot found the following issue on:
 
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+HEAD commit:    15e7d45e786a Add linux-next specific files for 20241016
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=13b56a40580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c36416f1c54640c0
+dashboard link: https://syzkaller.appspot.com/bug?extid=e103923b16da1cda0ae0
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/cf2ad43c81cc/disk-15e7d45e.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/c85347a66a1c/vmlinux-15e7d45e.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/648cf8e59c13/bzImage-15e7d45e.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+e103923b16da1cda0ae0@syzkaller.appspotmail.com
+
+while marking u64s 11 type btree_ptr_v2 SPOS_MAX len 0 ver 0: seq 1db8f60c84bb244c written 8 min_key POS_MIN durability: 1 ptr: 0:42:0 gen 0, fixing
+bucket 0:0 gen 0 has wrong data_type: got free, should be sb, fixing
+bucket 0:0 gen 0 data type sb has wrong dirty_sectors: got 0, should be 256, fixing
+------------[ cut here ]------------
+Looking for class "->lock" with key rcu_pending_init.__key, but found a different class "&p->lock" with the same key
+WARNING: CPU: 1 PID: 5348 at kernel/locking/lockdep.c:939 look_up_lock_class+0xdc/0x170 kernel/locking/lockdep.c:936
+Modules linked in:
+CPU: 1 UID: 0 PID: 5348 Comm: syz.2.3 Not tainted 6.12.0-rc3-next-20241016-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+RIP: 0010:look_up_lock_class+0xdc/0x170 kernel/locking/lockdep.c:936
+Code: 01 0f 85 8a 00 00 00 c6 05 85 31 3b 04 01 90 49 8b 16 49 8b 76 18 48 8b 8b b8 00 00 00 48 c7 c7 60 f0 0a 8c e8 c5 9c 89 f5 90 <0f> 0b 90 90 eb 61 90 e8 c8 d2 ed f8 e8 53 d7 a8 f5 48 c7 c7 a0 ef
+RSP: 0018:ffffc900042dd810 EFLAGS: 00010046
+RAX: a3cf1fd56a819d00 RBX: ffffffff93cc6b10 RCX: 0000000000040000
+RDX: ffffc90009742000 RSI: 000000000003ffff RDI: 0000000000040000
+RBP: ffffc900042dd920 R08: ffffffff8155d7b2 R09: 1ffff110170e519a
+R10: dffffc0000000000 R11: ffffed10170e519b R12: ffffe8ffffd748a0
+R13: ffffe8ffffd748a0 R14: ffffe8ffffd748a0 R15: ffffffff9a5954a0
+FS:  00007f2715b246c0(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000555c28f0cb00 CR3: 0000000077a9a000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ register_lock_class+0x102/0x980 kernel/locking/lockdep.c:1290
+ __lock_acquire+0xf0/0x2050 kernel/locking/lockdep.c:5077
+ lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5825
+ __raw_spin_lock_irq include/linux/spinlock_api_smp.h:119 [inline]
+ _raw_spin_lock_irq+0xd3/0x120 kernel/locking/spinlock.c:170
+ spin_lock_irq include/linux/spinlock.h:376 [inline]
+ rcu_pending_pcpu_dequeue+0x29/0x2b0 fs/bcachefs/rcu_pending.c:524
+ bkey_cached_alloc fs/bcachefs/btree_key_cache.c:143 [inline]
+ btree_key_cache_create fs/bcachefs/btree_key_cache.c:220 [inline]
+ btree_key_cache_fill+0x43a/0x2920 fs/bcachefs/btree_key_cache.c:309
+ bch2_btree_path_traverse_cached+0x84e/0xbe0 fs/bcachefs/btree_key_cache.c:361
+ bch2_btree_path_traverse_one+0x45d/0x2900 fs/bcachefs/btree_iter.c:1144
+ bch2_btree_path_traverse fs/bcachefs/btree_iter.h:249 [inline]
+ bch2_trans_update_get_key_cache+0x6c0/0x1230 fs/bcachefs/btree_update.c:494
+ bch2_trans_update+0x9b1/0x2550 fs/bcachefs/btree_update.c:539
+ bch2_alloc_write_key fs/bcachefs/btree_gc.c:886 [inline]
+ bch2_gc_alloc_done fs/bcachefs/btree_gc.c:896 [inline]
+ bch2_check_allocations+0x4574/0x7350 fs/bcachefs/btree_gc.c:1138
+ bch2_run_recovery_pass+0xf0/0x1e0 fs/bcachefs/recovery_passes.c:216
+ bch2_run_recovery_passes+0x27e/0x9a0 fs/bcachefs/recovery_passes.c:280
+ bch2_fs_recovery+0x25cc/0x39a0 fs/bcachefs/recovery.c:892
+ bch2_fs_start+0x356/0x5b0 fs/bcachefs/super.c:1037
+ bch2_fs_get_tree+0xd68/0x1710 fs/bcachefs/fs.c:2174
+ vfs_get_tree+0x90/0x2b0 fs/super.c:1814
+ do_new_mount+0x2be/0xb40 fs/namespace.c:3507
+ do_mount fs/namespace.c:3847 [inline]
+ __do_sys_mount fs/namespace.c:4055 [inline]
+ __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4032
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f2714d7f79a
+Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 de 1a 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f2715b23e68 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007f2715b23ef0 RCX: 00007f2714d7f79a
+RDX: 0000000020000040 RSI: 0000000020000080 RDI: 00007f2715b23eb0
+RBP: 0000000020000040 R08: 00007f2715b23ef0 R09: 0000000002200006
+R10: 0000000002200006 R11: 0000000000000246 R12: 0000000020000080
+R13: 00007f2715b23eb0 R14: 00000000000059d2 R15: 0000000020000740
+ </TASK>
+
+
 ---
- drivers/gpio/gpiolib-sysfs.c | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/drivers/gpio/gpiolib-sysfs.c b/drivers/gpio/gpiolib-sysfs.c
-index cc5c51ca9478..5b7d65117d83 100644
---- a/drivers/gpio/gpiolib-sysfs.c
-+++ b/drivers/gpio/gpiolib-sysfs.c
-@@ -178,12 +178,16 @@ static int gpio_sysfs_request_irq(struct device *dev, unsigned char flags)
- 		return -ENODEV;
- 
- 	irq_flags = IRQF_SHARED;
--	if (flags & GPIO_IRQF_TRIGGER_FALLING)
-+	if (flags & GPIO_IRQF_TRIGGER_FALLING) {
- 		irq_flags |= test_bit(FLAG_ACTIVE_LOW, &desc->flags) ?
- 			IRQF_TRIGGER_RISING : IRQF_TRIGGER_FALLING;
--	if (flags & GPIO_IRQF_TRIGGER_RISING)
-+		set_bit(FLAG_EDGE_FALLING, &desc->flags);
-+	}
-+	if (flags & GPIO_IRQF_TRIGGER_RISING) {
- 		irq_flags |= test_bit(FLAG_ACTIVE_LOW, &desc->flags) ?
- 			IRQF_TRIGGER_FALLING : IRQF_TRIGGER_RISING;
-+		set_bit(FLAG_EDGE_RISING, &desc->flags);
-+	}
- 
- 	/*
- 	 * FIXME: This should be done in the irq_request_resources callback
-@@ -209,6 +213,8 @@ static int gpio_sysfs_request_irq(struct device *dev, unsigned char flags)
- err_unlock:
- 	gpiochip_unlock_as_irq(guard.gc, gpio_chip_hwgpio(desc));
- err_put_kn:
-+	clear_bit(FLAG_EDGE_RISING, &desc->flags);
-+	clear_bit(FLAG_EDGE_FALLING, &desc->flags);
- 	sysfs_put(data->value_kn);
- 
- 	return ret;
-@@ -230,6 +236,8 @@ static void gpio_sysfs_free_irq(struct device *dev)
- 	data->irq_flags = 0;
- 	free_irq(data->irq, data);
- 	gpiochip_unlock_as_irq(guard.gc, gpio_chip_hwgpio(desc));
-+	clear_bit(FLAG_EDGE_RISING, &desc->flags);
-+	clear_bit(FLAG_EDGE_FALLING, &desc->flags);
- 	sysfs_put(data->value_kn);
- }
- 
-@@ -281,6 +289,8 @@ static ssize_t edge_store(struct device *dev,
- 	if (status)
- 		return status;
- 
-+	gpiod_line_state_notify(data->desc, GPIO_V2_LINE_CHANGED_CONFIG);
-+
- 	return size;
- }
- static DEVICE_ATTR_RW(edge);
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
--- 
-2.45.2
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
