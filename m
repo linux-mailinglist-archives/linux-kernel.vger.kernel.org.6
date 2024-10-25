@@ -1,88 +1,125 @@
-Return-Path: <linux-kernel+bounces-381030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E21A49AF94E
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 07:51:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0335C9AF953
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 07:51:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1EF9A1C21E32
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 05:51:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD7DF283697
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 05:51:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B44A518E058;
-	Fri, 25 Oct 2024 05:51:08 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE24A18F2F0;
+	Fri, 25 Oct 2024 05:51:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PuRYNcxb"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0052433CE
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 05:51:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C5DC18E76C
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 05:51:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729835468; cv=none; b=LuJT4H2o2+NUlLaE06K20gy9zlj82piemRspob0pK5OxXocA3+fnXXvvX/IIvsQVceIkhGhiHY9o0+5p5FuhRRQFwzFpAmlcHgAeY+xnYr09sbGmjdZQ7Lw/H3w0dvhqZa4TCY4Tb7I26G9GhRa1eZEO+uTb4T6GXJ0ZzPt8udA=
+	t=1729835484; cv=none; b=YFAcf6a/1Gns0FN+l8cobvhMtVPGfmnaWOep/hNjltIfRmwOXblhmOncHSBVyxj1OcWsExiYPEeuzzXNfcqaIFdKKj6okblCk8a1nL2TewVrLZjigPjYfhTEemA2AbaubWMym1yE61sXQ4Vb49Kj0FT8lNU7kc40eOZA0lD43ag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729835468; c=relaxed/simple;
-	bh=kaIDtti5ztLlhYQtWcRvX3nNnZFCos8gY4VpmzEz0Ws=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=AAWt8+n+UaEASjnbqWBww0QUrKvZKf7lYIBXPn2H5pA3t5YUk0ejtuWR/TxaLB4D0/W2PJF1yRRGl4umApdhusoiqLU5Pu13K1MbYpO8FfeVHROXk9Ysq9SmwRoJ64f/2F5FRwxVUS99sBr16t5J7DMCWzPhRZdFRwePBfh6p8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-83ac354a75fso165764939f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 22:51:06 -0700 (PDT)
+	s=arc-20240116; t=1729835484; c=relaxed/simple;
+	bh=mzeWPkYZvbrYZZyygIkwlVdONmZi77eqy+7dxIb1gvw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LA9iSrD4hUU3QGM119ARWJ910VtYuYNevHGsbdCuw1NZJfUGovZ/tlnZJiK51ag1UtazdOEq13xmdzkzQq6YCW6qRbIC1bgNC29wYhbDukzv8GptfgNsJ0ZrwT+yJl2+rRbg62yAR4yhUxoyYU1uywTEjjQ+SZDOL9f3vaPRjFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PuRYNcxb; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5366fd6fdf1so2298197e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 22:51:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729835480; x=1730440280; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=LENYqwcqgnLHnXVBhDyfSMRgdbqUwUn0CP6hPe43hIE=;
+        b=PuRYNcxbH4bEoEve9PwIpB0ChjXofqchmlL2i+VAA56VKwddh1Hk2S6xa3fTmkdKYK
+         ekVJDiETHVGF2QXH6wdfbRYjHRJUJapzI3318jbLOjgYYK45epEIwuzBiqJK1DeInJYp
+         E16ax5WsFDR5Y6ExDfU/4PL6xN8qG163x7kllZ5UcZb5OhBh2cP7neVBwyMLUqzQyKP8
+         ZZYGY/VjesSO774l3FPUxatBF4BOHKqsTJx6HTa8D/9cZZkOULVxSNOoMiFn+am/SU7b
+         QgPFNihDN18KintgPgZx8hL5wzV8KUmpU+95JgCC1R889yYRtMgUtsK7gNFdjQw/9NQr
+         DEHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729835465; x=1730440265;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=T8cO0Y3s+vIDGgrL4ZpopjujCRB1n9+Cmlj0DW1dNZ4=;
-        b=wLNh3owGokz2Y0JnQgT6DzvImbWHUzx0N8U5ksPRm7q8pjfk3aOCgx1IVf5BhrIEkL
-         dVy/MiP5J/Fh1f4ulcWO3Xew2boLCtvKHNl7NXvrawPTFA3CbMu7MB83ihNvrxvKbWjf
-         fcVN4OuJwblxyL26SRvFuWwhMESKeqDcoy7f2w5uxsR4bAuadrNOm4VEZjWvaAVHBXr5
-         Mgb24pYUIbA5y/eDxc6SrAAiPF5pNhYk+7nYZBZKZGOQozPlhmZIfSfBxKNxBvmJwJxV
-         KS2qoWI6tWzQaBbmERvYH8g8nelc3mFsap30c6EWo7asXDBhzx8n2Mw22qjLtrWLeOpZ
-         VrpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUC1CubusOswGCkpbnChh7q5wGvgFMtgNDdOHWkFMI2DoboQ5w2hku9MHfT0LrFB34UcIJc4eYuKEXWrdk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YznKPZ4J13wbWXaVaNtcMgdSP5jGsDxxxagqWexX2unjmSBChHE
-	BIKaDd8c4XfZGYtmWozIzWejVt6Z8Kt9eh3XV59YtA34Sdlov/wLqZ9jdaNF57ikJBFcHHoooVo
-	4e+cPFWzEBWRivDLpjdpHXyS5mtDL1Eq/t3xgjoxUbIToOltD/Pm7IkI=
-X-Google-Smtp-Source: AGHT+IHz0DJFM0dWMDe7qJ0C7fa+k2EXRF/CGEcIxKHFpo1rMLKzrBJ9hfBtQUqLtezguq9nvnJyCINFRBUCZgUKvFHAWJlO0lBd
+        d=1e100.net; s=20230601; t=1729835480; x=1730440280;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LENYqwcqgnLHnXVBhDyfSMRgdbqUwUn0CP6hPe43hIE=;
+        b=Uv02x8j09BnrJW7V7NGnMIqx9IJp6Hu+AxvIAn9VJv/iE384kgIA9hP1n+7m2kCErO
+         wTHxGJMb7eTpOjWSnu+mv6ONW6ZmDCvxsv8FuBxuJQbLENbbft/f0ttpt/N+RiH4FxWB
+         uEGamSJ+4WbFtSi5v+gGzG6CefO/jNcFTfPjZ9eluED68pGGiiUsHEc+TAJ7iD+WWDTP
+         C7iRZSQWemyPkI47s1qMC/6rxgbySrLgQTL0FDsis/GyZV0mFG5LIhNtK3sN6WqRIPjM
+         1a4nx0FU3mckVgo0o3dPrJUhV8Tu7crmkLHx6UFDSLa/5NB/VWhCs4uLoFa2k7tO92aG
+         bsaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUaHaPHC2IgTkeXlcpMZDej8PlZq0yq+aqJXaIJQee9H9ib7w1zVbpAJiG5RB32w09FPNlSgFRnhB8tv4Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZgXvQSCpemw0xd4Ooe07rCFxPMp4F9z9t5XzOClpHTjO8cv0U
+	MNSQSpcfQR3kJ5wEu5KYa8zx2tmrYWKhXbFs1nXfQQiZXS2cIRk62apVRgtcERw=
+X-Google-Smtp-Source: AGHT+IFFazcNX159kK7SKOq3ShS1WRwWJWRp6OZkagarAkcqWS51wR1mfV0IdI+S6h5u6ZnObCUCUQ==
+X-Received: by 2002:a05:6512:6ca:b0:52e:f2a6:8e1a with SMTP id 2adb3069b0e04-53b23e1913amr2312323e87.29.1729835479883;
+        Thu, 24 Oct 2024 22:51:19 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53b2e1c7aa8sm60541e87.187.2024.10.24.22.51.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Oct 2024 22:51:19 -0700 (PDT)
+Date: Fri, 25 Oct 2024 08:51:16 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+Cc: andersson@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, konradybcio@kernel.org, 
+	catalin.marinas@arm.com, will@kernel.org, p.zabel@pengutronix.de, 
+	richardcochran@gmail.com, geert+renesas@glider.be, angelogioacchino.delregno@collabora.com, 
+	neil.armstrong@linaro.org, arnd@arndb.de, nfraprado@collabora.com, quic_anusha@quicinc.com, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org, 
+	quic_srichara@quicinc.com, quic_varada@quicinc.com
+Subject: Re: [PATCH v8 5/7] clk: qcom: Add NSS clock Controller driver for
+ IPQ9574
+Message-ID: <jhykmuvgltvuqf74evvenbagmftam2gaeoknuq5msxop4mkh65@dya6vvqytfcx>
+References: <20241025035520.1841792-1-quic_mmanikan@quicinc.com>
+ <20241025035520.1841792-6-quic_mmanikan@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:6d08:b0:82a:9cab:9be1 with SMTP id
- ca18e2360f4ac-83af61e95fcmr1062861039f.12.1729835465645; Thu, 24 Oct 2024
- 22:51:05 -0700 (PDT)
-Date: Thu, 24 Oct 2024 22:51:05 -0700
-In-Reply-To: <5950655c-b84f-4a78-a44f-d2fc798cfb03@yandex.ru>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <671b31c9.050a0220.381c35.000e.GAE@google.com>
-Subject: Re: [syzbot] [wireless?] UBSAN: array-index-out-of-bounds in htc_issue_send
-From: syzbot <syzbot+93cbd5fbb85814306ba1@syzkaller.appspotmail.com>
-To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241025035520.1841792-6-quic_mmanikan@quicinc.com>
 
-Hello,
+On Fri, Oct 25, 2024 at 09:25:18AM +0530, Manikanta Mylavarapu wrote:
+> From: Devi Priya <quic_devipriy@quicinc.com>
+> 
+> Add Networking Sub System Clock Controller(NSSCC) driver for ipq9574 based
+> devices.
+> 
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202410101431.tjpSRNTY-lkp@intel.com/
 
-syzbot tried to test the proposed patch but the build/boot failed:
+These tags are incorrect. Please read the text of the email that you've
+got.
 
-failed to apply patch:
-checking file drivers/net/wireless/ath/ath9k/htc_hst.c
-patch: **** unexpected end of file in patch
+> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
+> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+> ---
+> Changes in V8:
+> 	- Remove DT_BIAS_PLL_NSS_NOC_CLK and P_BIAS_PLL_NSS_NOC_CLK
+> 	  because these are not required
 
+What was changed to overcome the LKP error?
 
-
-Tested on:
-
-commit:         eaed5fc0 mac80211: Remove NOP call to ieee80211_hw_con..
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/wireless/wireless-next
-kernel config:  https://syzkaller.appspot.com/x/.config?x=dd8c589043bc2b49
-dashboard link: https://syzkaller.appspot.com/bug?extid=93cbd5fbb85814306ba1
-compiler:       
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=10caa8a7980000
-
+> 
+>  drivers/clk/qcom/Kconfig         |    7 +
+>  drivers/clk/qcom/Makefile        |    1 +
+>  drivers/clk/qcom/nsscc-ipq9574.c | 3080 ++++++++++++++++++++++++++++++
+>  3 files changed, 3088 insertions(+)
+>  create mode 100644 drivers/clk/qcom/nsscc-ipq9574.c
+> 
+-- 
+With best wishes
+Dmitry
 
