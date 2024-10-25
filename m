@@ -1,226 +1,219 @@
-Return-Path: <linux-kernel+bounces-382214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF0B69B0B0A
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 19:20:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 322EC9B0B16
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 19:20:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3180528853F
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:20:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A474A1F20F1B
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:20:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4C0021F4C7;
-	Fri, 25 Oct 2024 17:15:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3237F20F3E9;
+	Fri, 25 Oct 2024 17:16:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="l8/gmoc1"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2041.outbound.protection.outlook.com [40.107.236.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="W8hyX7q0"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9D1C21F4B7;
-	Fri, 25 Oct 2024 17:15:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.41
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729876545; cv=fail; b=U8g8Kbz2a7wT/uVk+e15hh3uMqJfriTZcu7dqWN/wdAifXd1PJiDnlOUEWsfUTj6Brnq6H9nJcNCjGMdNweu1AVKmlipBLYHDfZnQFfrVO4hrJr4Rav1kygB/wdNpymKyq4Lg4imAw6bxuXeNNLRKCV17fnTKU0ZCtpVPfb1GaM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729876545; c=relaxed/simple;
-	bh=HqOMIGxdcmnUObKEcq0BqU6f3N++DdZHQfiedXOeP9o=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ipg5hVMyFw1mnwQpA8XaXa2Gc8PWCINN4AtaqPjbpNTf9txXKLeZWPORBpa99hdgJdtujQDlV6gbIHKLU6a8JWL9hqf6O03T1zou7f2ffruQGmUd37Imumxdgg/LY2BHeT6E4Z6kycjSeZtJPFpFFWBf7Qaiqy+z/yMcMNdk+Og=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=l8/gmoc1; arc=fail smtp.client-ip=40.107.236.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=CNIyBN9F1B/qSZ7tKOmNsWhVwxMEXqjXQt+0/0q1Bh5dUSrUu1gRplwVl2R91Sih6zca1KiGfZEnKdTMT2cKO3qfy+oq1d0hFba3rOHmORkhM8pYHwhekdWYBJ+NWJgyT9/M3D88za9LsO3F4NaSlt+NKqHw6I/c2Tlskt54wsTTG5iMvt/B2AckH/xxo08O+Mfo5+CvlPQyfBbwXGhavqvGKCP67+SWU1E5Ss1k2mWAT/KxEfd0TBQymy5XQWQEZrFFQkOz1PsXLGaOO97+Z6PzcCB0QSnuwXwkbUl+JWiry4jWfDsZIZTXr9XQ3p770jJI2KO0DOa8cqTd927bug==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=7oPT1wDjaPCzp3IXZUhsV8ghi6JTITj/MUyI6FqVPt4=;
- b=vC5Cy9MpU69W1IATEl9JKVG/5Vww3qLENfjxZm4FvvqN+6FaEVWhKx0KQ5vzDz44NszglhTQwcIMQN/5ajwfG6x1l5V+En1pnIVBjpnpMvR0y5mN8/9nceTAUcHOoawisxgZqm1v8ZQuiLtQRxKu8JlRO5xQUkfu7h6f1fKz0I6C9OAuuuNg9JMT7HhoD7did7RNuZRr/UH7OC4wOshOA0Bh/CSRenCbLnwHIOETd4fxduXYPVNPtWZAizZlDxaTxp3MFVIIqVoGpeCmypMqxQgckmAVIUFoYBmGPabS7u6/EmybVpMcAmsPHGP++4exsvI3WWVMsozzFd2bJISQcA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=alien8.de smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7oPT1wDjaPCzp3IXZUhsV8ghi6JTITj/MUyI6FqVPt4=;
- b=l8/gmoc1sX1EvI866bXhX9DHcxVLjgSBl4Tgs5OeOFvkfq7BXyG1E9Y71JJEtItzgRPNilz+fSee/iNS4PQs6Rv5rgCvVyhaq3rcr1vRl4c8Ac2hUA5FXY3rcWpAIna+D3alSy3dgEU02UgQLfPfYRCfeNoiZF6aCgNYI+dOGiU=
-Received: from BN8PR03CA0020.namprd03.prod.outlook.com (2603:10b6:408:94::33)
- by PH0PR12MB8029.namprd12.prod.outlook.com (2603:10b6:510:26c::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.21; Fri, 25 Oct
- 2024 17:15:38 +0000
-Received: from BN2PEPF00004FBE.namprd04.prod.outlook.com
- (2603:10b6:408:94:cafe::81) by BN8PR03CA0020.outlook.office365.com
- (2603:10b6:408:94::33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.21 via Frontend
- Transport; Fri, 25 Oct 2024 17:15:38 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- BN2PEPF00004FBE.mail.protection.outlook.com (10.167.243.184) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8093.14 via Frontend Transport; Fri, 25 Oct 2024 17:15:38 +0000
-Received: from AUS-P9-MLIMONCI.xilinx.com (10.180.168.240) by
- SATLEXMB04.amd.com (10.181.40.145) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Fri, 25 Oct 2024 12:15:35 -0500
-From: Mario Limonciello <mario.limonciello@amd.com>
-To: Borislav Petkov <bp@alien8.de>
-CC: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	"Dave Hansen" <dave.hansen@linux.intel.com>, "maintainer:X86 ARCHITECTURE
- (32-BIT AND 64-BIT)" <x86@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>,
-	"Rafael J . Wysocki" <rafael@kernel.org>, "Gautham R . Shenoy"
-	<gautham.shenoy@amd.com>, Mario Limonciello <mario.limonciello@amd.com>,
-	Perry Yuan <perry.yuan@amd.com>, Brijesh Singh <brijesh.singh@amd.com>, Peter
- Zijlstra <peterz@infradead.org>, Li RongQing <lirongqing@baidu.com>, "open
- list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>,
-	"open list:ACPI" <linux-acpi@vger.kernel.org>, "open list:AMD PSTATE DRIVER"
-	<linux-pm@vger.kernel.org>, Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	Eric Naim <dnaim@cachyos.org>, Peter Jung <ptr1337@cachyos.org>
-Subject: [PATCH v4 5/5] x86/amd: Use heterogeneous core topology for identifying boost numerator
-Date: Fri, 25 Oct 2024 12:14:59 -0500
-Message-ID: <20241025171459.1093-6-mario.limonciello@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241025171459.1093-1-mario.limonciello@amd.com>
-References: <20241025171459.1093-1-mario.limonciello@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A138B20F3DA
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 17:16:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729876566; cv=none; b=YmwzQN9snmDQy71kG2m38lG9LgB5YAe8SYHDHsPhk//33IRJ89+lQARWqq31y+iwG6whddrp6TpXGha0kVA4krHsQ1dnr0o/k3laVuwVwnMzAnFnZ3/SEPZr+ZiZWC4UyR26lkg3uNZ+iPOQRKq8xcXoSTg8+U/ao9CmtkcY/u8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729876566; c=relaxed/simple;
+	bh=MgkkUcMYNnVDxl5Ht92rDmj1JTcqFQYUlxNOYOSYbIQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=YDfBsspfJ82MI1oCm2ioCrFLjV485a/lUKTrOoqDl5XcmSqRb5eWNmru+JEw2HDxaHG7BLmnhKsNXuEfyRVIhF3nmE6UPH98TDZr5QNIE6OEKKetvC7/pVhluzbw+WRftIjCChij6FDf021SKVSzISYqdkFOA9CR0MQum324Bu4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=W8hyX7q0; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4315baec69eso22729465e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 10:16:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=raspberrypi.com; s=google; t=1729876561; x=1730481361; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=D8BkQHxl/jl98jZceXhfQCyyW7/L0TBeWdJpzjggPMw=;
+        b=W8hyX7q0+Wx9tp8hYLL7dtfDN2miUkap7mH4vzTbdblaG5+rO6oIzyA4zOZ9iRmlqA
+         RkB8ueRzGgqG20FdVeQkF1YjKSfaDbbcaxxaA9zgcZ0X0F4EI0AWoCf9ihapEMs9L3uX
+         bXINBmUNjuq4u3UFOlSuTfQwQiGMAnt0iA81m1wTj1kxuEnINMBoryE3ZVrTW2+oJvgN
+         l1csIDpePNKtE9LXg/w+ZBA1zvei/vJnC5WjcHFwB89XGYRDIlIRptaGGLZ02Q50g5IT
+         p72+Da4JoaAVmsz3ircPYxlhrb+j2bw/t6r4ZOpizEJBd1VD63W+zmGS52rX/fvKxu0V
+         yoxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729876561; x=1730481361;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=D8BkQHxl/jl98jZceXhfQCyyW7/L0TBeWdJpzjggPMw=;
+        b=WBLYqtufBJqvStXGuaICxrYqbUQNtVQloIYcBcG3gRAZ5JQOr8d8mrtX8qt15f1PNj
+         Q6Ret96VnbWQ1G4OTBZEt37VK5lPdmB3//k16hvESq7x45Wl54CV2htFxl01QYHmoOaB
+         914IWUfLedVwCgSWTSPzIBtwhUMrvEYAe58yV9+99UWZSkKxsU7XFVQnIdITCVeMroku
+         haXlm2ZaIxiAjEenduBsVQcsmpYTHJTv/wsG83mzMBLX7OqRTETEPM1BJa74EAbMnriV
+         F00u+5/67ETgAMwJhipBc0flSV8kiZ28knHXT6XgfIzx5Uawz9Ckpcm6SXghJlsqQoUk
+         a7LA==
+X-Forwarded-Encrypted: i=1; AJvYcCVIB7LNxcyXFjeIDvhTkfZ0quxee9+txTLqLpKIafKKd/ZDIamfMjfxuPAlAfPn67JLq+/GijSZVplHMmQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHR9Xdp6e5ueiVkNNzW/eCW+A1MVQVFsl9JqQR3PTSQso6t4i/
+	YBFxU5Edi/yAfdu/O6wDct1ee6kZVn6vbSlxSOPmJTfEhK7t2hKXji/7IRy1g9g=
+X-Google-Smtp-Source: AGHT+IFmFpJPOGOxqboe3FSCJG1p90kkm0iTmlWq/Ni/uCdlNc+9cgBNSEFM0DbQDQceCqmCnrSi6Q==
+X-Received: by 2002:a05:6000:11cc:b0:37d:3650:fae5 with SMTP id ffacd0b85a97d-380611f5202mr113855f8f.52.1729876560748;
+        Fri, 25 Oct 2024 10:16:00 -0700 (PDT)
+Received: from [127.0.1.1] ([2a00:1098:3142:e::8])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-38058b91f50sm2013649f8f.94.2024.10.25.10.15.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Oct 2024 10:16:00 -0700 (PDT)
+From: Dave Stevenson <dave.stevenson@raspberrypi.com>
+Subject: [PATCH v2 00/36] drm/vc4: Add support for BCM2712 / Pi5 display
+ hardware
+Date: Fri, 25 Oct 2024 18:15:31 +0100
+Message-Id: <20241025-drm-vc4-2712-support-v2-0-35efa83c8fc0@raspberrypi.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN2PEPF00004FBE:EE_|PH0PR12MB8029:EE_
-X-MS-Office365-Filtering-Correlation-Id: d29b2044-9045-4a65-245f-08dcf518a552
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|36860700013|7416014|376014|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?S4nEfaduS0sc1bPMPbK4IZt4E53ogdkkttYGDgohzVc60jBvhBv2SLTcYkd3?=
- =?us-ascii?Q?4QFJpPyCYSWDr2JDsros/WCNO7a/Fm0ZEDlQwebbkrq93BQbsHnME0ZCJQsx?=
- =?us-ascii?Q?MB0VhFihIxwZtpQuL6r4jIm7+Z3e4bBw1XbyBrE3jyaadar141WA6wRRfzC0?=
- =?us-ascii?Q?81m+LP3NE/DQzm7NZQXpfPFFEKtkTAP2pDMLm1fnaRWaMQsRldM+Dg7GZ3Db?=
- =?us-ascii?Q?7eVEexp68HSVq7YjBBu+o2dkFtc3grxFxdWG8EU1bDnr2Ygdo4wdp3nbmues?=
- =?us-ascii?Q?eYuYqrhdBIoxuwMtFjJ4BavvCJU+AxP1pCLOvf6FutvoMh0wLHawq/NxK7Vp?=
- =?us-ascii?Q?80OVw4MpCsrRsGNSuaV7tH0SMoTaYAj9A2NDsBJlknFQLdq1NEeBq7YjmuLp?=
- =?us-ascii?Q?2UUVO7hX+bgpLGfrm5vGDCDSQutozlS0u9W7tTOzUTuaLMEfbuWm45326VGD?=
- =?us-ascii?Q?TRq/X2FiSd8PwOzWfSZyHehpZ/7WbHTh8uI9h9gufZSmN44fTphI6JMvjfX5?=
- =?us-ascii?Q?QSynkINPWOZrt4AVjXBHaOHIEdzSMWq4+P8lZawx2VbB/X+2Z1iliKUVj/L2?=
- =?us-ascii?Q?aFg+QCg5f+2BrQYKLPkuYxJe5H+PEEaFYQ+tAs6LJzZkDs3n7faq2Ma0uk7t?=
- =?us-ascii?Q?eYjBLERuiW3Ao5bN1/REpq+rUipPQ6gOsStHPAKlN11umKCNJ+IaJRQn6huy?=
- =?us-ascii?Q?j6OizDC9G6J63SkFs7/QBg/ioWA4mDJmfh9C8Bif+GFSuZ6mzJmH9m6+w3Fg?=
- =?us-ascii?Q?4wdnEggEQpjFPuuUATMV226IeLwYbJjvUkFlFsZJNpTBytpb4xPkxgZWwANB?=
- =?us-ascii?Q?5pNYvdhbiOyX4pBHgg4tc70OyNqdf7Ncyn55X5fNAjptdCzCq5229ahVBvJk?=
- =?us-ascii?Q?36lV+u8PbtXou2t+K+SsN9dhKzubMHj6rodjl+UFE3R4T34byme0jtIoVrTs?=
- =?us-ascii?Q?x4BIgaAoFpAwugKgB9jwZnmookXSRcX5zIWpQyGQh7+vFuNz/64GNDogS6vK?=
- =?us-ascii?Q?vfS/Uza6MN2s7llvJMafioL8vQ1S7Xo2KxOhGwYqKMS//XSDXDdBDR9S0qoq?=
- =?us-ascii?Q?LzEAzzv7S3aYxmJUl90JhTsOgpy6cIhkidiO/LZTrOamKXjaLZ0Ugq6ls2KN?=
- =?us-ascii?Q?Sw/a5YQRI1th70ZT8PaGB6P+lI3zufaO0crxg/m9aZ6ftIIowkiCITZdAAP1?=
- =?us-ascii?Q?VWwQeBdQ4k0zJQg1KzbANL6ZLmKVfP6oqOzNoqKO2nwsWXfrNxu5775RuSrH?=
- =?us-ascii?Q?TzagifZcFgUqz5FWsgHwP2nkbvsjtZwKvy5GeBT8F3i2yIvH5rcdPFf/OF0i?=
- =?us-ascii?Q?Toi/tw6qfME0HCScKNaZdD/z21VDxd3nnb5bHAkUbKlZthHJo8JvjO2bvNKo?=
- =?us-ascii?Q?KrtxwNFXch8i+Xo3a972y8ahFip8K/Xe+Ys21S99g0HH9U2qMQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(7416014)(376014)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Oct 2024 17:15:38.0630
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d29b2044-9045-4a65-245f-08dcf518a552
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN2PEPF00004FBE.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB8029
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADTSG2cC/22NQQ6CMBBFr0Jm7Zh2ChJceQ/DorZFuoA2U2wkh
+ LtbiUuX7yX//Q2SY+8SXKsN2GWffJgL0KkCM+r56dDbwkCCaikEoeUJs6mRWkmYXjEGXrDTVpG
+ 6OGX0AGUa2Q3+fWTvfeHRpyXwerxk+bW/IKn/wSxRoDSGbNN0dSfaG+sUH455jf5swgT9vu8fY
+ xbB6b4AAAA=
+To: Maxime Ripard <mripard@kernel.org>, 
+ =?utf-8?q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>, 
+ Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+ Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Florian Fainelli <florian.fainelli@broadcom.com>, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, 
+ Javier Martinez Canillas <javierm@redhat.com>, 
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, 
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
+ Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+ Dom Cobley <popcornmix@gmail.com>
+X-Mailer: b4 0.14.1
 
-AMD heterogeneous designs include two types of cores:
- * Performance
- * Efficiency
+This series adds the required DRM, clock, and DT changes
+required to support the display hardware on Pi5.
+There are a couple of minor fixes first before the main patches.
 
-Each core type has different highest performance values configured by the
-platform.  Drivers such as `amd_pstate` need to identify the type of
-core to correctly set an appropriate boost numerator to calculate the
-maximum frequency.
+Many of the patches were authored by Maxime whilst working
+for us, however there have been a number of fixes squashed
+into his original patches as issues have been found. I also
+reworked the way UBM allocations are done to avoid double
+buffering of the handles as they are quite a limited resource.
 
-X86_FEATURE_AMD_HETEROGENEOUS_CORES is used to identify whether the SoC
-supports heterogeneous core type by reading CPUID leaf Fn_0x80000026.
+There are 2 variants of the IP. Most Pi5's released to date
+have used the C1 step of the SoC, whilst the 2GB Pi5 released
+in August is using the D0 step, as will other boards in future.
 
-On performance cores the scaling factor of 196 is used.  On efficiency
-cores the scaling factor is the value reported as the highest perf.
-Efficiency cores have the same preferred core rankings.
+Due to various reasons the register map got reworked between
+the steps, so there is extra code to handle the differences.
+Which step is in use is read out of the hardware, so they
+share a compatible string.
 
-Tested-by: Eric Naim <dnaim@cachyos.org>
-Tested-by: Peter Jung <ptr1337@cachyos.org>
-Suggested-by: Perry Yuan <perry.yuan@amd.com>
-Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+Thanks!
+
+Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
 ---
-v3->v4:
- * Drop default case and show warning in unknown case if hetero cores
-   were detected (Boris)
- * Change get_topology_generic_cpu_type to get_topology_cpu_type (Mario)
- * Only performance boost numerator to hetero designs.  This fixes
-   an issue on Zen5 9950X which supports the CPUID for identifying core
-   types but only has performance cores (Peter Jung)
----
- arch/x86/kernel/acpi/cppc.c | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+Changes in v2:
+- Collected Acks and R-b tags
+- Dropped patch 1 "drm/vc4: Limit max_bpc to 8 on Pi0-3". Already fixed as
+  noted by Maxime.
+- Fix unintialised var "mux" in vc6_hvs_pv_muxing_commit.
+- Fixed uninitialised var "reg" in vc4_hvs_cob_init.
+- Make bcm2712_mop_data and bcm2712_moplet_data static.
+- Removed the "disable_turbo" line from the struct in
+  raspberrypi_clock_property
+- I'm confused by the CI error "performing pointer arithmetic on a null
+  pointer has undefined behavior" for PCI_IOBASE as I'm not using it.
+- Link to v1: https://lore.kernel.org/r/20241023-drm-vc4-2712-support-v1-0-1cc2d5594907@raspberrypi.com
 
-diff --git a/arch/x86/kernel/acpi/cppc.c b/arch/x86/kernel/acpi/cppc.c
-index 956984054bf30..59edf64ad9edc 100644
---- a/arch/x86/kernel/acpi/cppc.c
-+++ b/arch/x86/kernel/acpi/cppc.c
-@@ -234,8 +234,10 @@ EXPORT_SYMBOL_GPL(amd_detect_prefcore);
-  */
- int amd_get_boost_ratio_numerator(unsigned int cpu, u64 *numerator)
- {
-+	enum x86_topology_cpu_type core_type = get_topology_cpu_type(&cpu_data(cpu));
- 	bool prefcore;
- 	int ret;
-+	u32 tmp;
- 
- 	ret = amd_detect_prefcore(&prefcore);
- 	if (ret)
-@@ -261,6 +263,27 @@ int amd_get_boost_ratio_numerator(unsigned int cpu, u64 *numerator)
- 			break;
- 		}
- 	}
-+
-+	/* detect if running on heterogeneous design */
-+	if (cpu_feature_enabled(X86_FEATURE_AMD_HETEROGENEOUS_CORES)) {
-+		switch (core_type) {
-+		case TOPO_CPU_TYPE_UNKNOWN:
-+			pr_warn("Undefined core type found for cpu %d\n", cpu);
-+			break;
-+		case TOPO_CPU_TYPE_PERFORMANCE:
-+			/* use the max scale for performance cores */
-+			*numerator = CPPC_HIGHEST_PERF_PERFORMANCE;
-+			return 0;
-+		case TOPO_CPU_TYPE_EFFICIENCY:
-+			/* use the highest perf value for efficiency cores */
-+			ret = amd_get_highest_perf(cpu, &tmp);
-+			if (ret)
-+				return ret;
-+			*numerator = tmp;
-+			return 0;
-+		}
-+	}
-+
- 	*numerator = CPPC_HIGHEST_PERF_PREFCORE;
- 
- 	return 0;
+---
+Dave Stevenson (11):
+      drm/vc4: Use of_device_get_match_data to set generation
+      drm/vc4: Fix reading of frame count on GEN5 / Pi4
+      drm/vc4: drv: Add support for 2712 D-step
+      drm/vc4: hvs: Add in support for 2712 D-step.
+      drm/vc4: plane: Add support for 2712 D-step.
+      drm/vc4: hdmi: Support 2712 D-step register map
+      drm/vc4: Enable bg_fill if there are no planes enabled
+      drm/vc4: Drop planes that are completely off-screen or 0 crtc size
+      arm64: dts: broadcom: Add firmware clocks and power nodes to Pi5 DT
+      arm64: dts: broadcom: Add display pipeline support to BCM2712
+      arm64: dts: broadcom: Add DT for D-step version of BCM2712
+
+Dom Cobley (3):
+      clk: bcm: rpi: Add ISP to exported clocks
+      clk: bcm: rpi: Allow cpufreq driver to also adjust gpu clocks
+      clk: bcm: rpi: Enable minimize for all firmware clocks
+
+Maxime Ripard (22):
+      dt-bindings: display: Add BCM2712 HDMI bindings
+      dt-bindings: display: Add BCM2712 HVS bindings
+      dt-bindings: display: Add BCM2712 PixelValve bindings
+      dt-bindings: display: Add BCM2712 MOP bindings
+      dt-bindings: display: Add BCM2712 MOPLET bindings
+      dt-bindings: display: Add BCM2712 KMS driver bindings
+      drm/vc4: drv: Support BCM2712
+      drm/vc4: hvs: Add support for BCM2712 HVS
+      drm/vc4: crtc: Add support for BCM2712 PixelValves
+      drm/vc4: hdmi: Add support for BCM2712 HDMI controllers
+      drm/vc4: txp: Introduce structure to deal with revision differences
+      drm/vc4: txp: Rename TXP data structure
+      drm/vc4: txp: Add byte enable toggle bit
+      drm/vc4: txp: Add horizontal and vertical size offset toggle bit
+      drm/vc4: txp: Handle 40-bits DMA Addresses
+      drm/vc4: txp: Move the encoder type in the variant structure
+      drm/vc4: txp: Add a new TXP encoder type
+      drm/vc4: txp: Add support for BCM2712 MOP
+      drm/vc4: txp: Add BCM2712 MOPLET support
+      drm/vc4: Add additional warn_on for incorrect revisions
+      clk: bcm: rpi: Create helper to retrieve private data
+      clk: bcm: rpi: Add disp clock
+
+ .../bindings/display/brcm,bcm2711-hdmi.yaml        |   2 +
+ .../bindings/display/brcm,bcm2835-hvs.yaml         |   5 +-
+ .../bindings/display/brcm,bcm2835-pixelvalve0.yaml |   3 +
+ .../bindings/display/brcm,bcm2835-txp.yaml         |   5 +-
+ .../bindings/display/brcm,bcm2835-vc4.yaml         |   1 +
+ arch/arm64/boot/dts/broadcom/Makefile              |   1 +
+ arch/arm64/boot/dts/broadcom/bcm2712-d-rpi-5-b.dts |  37 +
+ arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dts   |  42 +
+ arch/arm64/boot/dts/broadcom/bcm2712.dtsi          | 188 +++++
+ drivers/clk/bcm/clk-raspberrypi.c                  |  33 +-
+ drivers/gpu/drm/vc4/tests/vc4_mock.c               |   8 +-
+ drivers/gpu/drm/vc4/tests/vc4_test_pv_muxing.c     | 106 +--
+ drivers/gpu/drm/vc4/vc4_crtc.c                     |  96 ++-
+ drivers/gpu/drm/vc4/vc4_drv.c                      |  19 +-
+ drivers/gpu/drm/vc4/vc4_drv.h                      |  54 +-
+ drivers/gpu/drm/vc4/vc4_hdmi.c                     | 107 ++-
+ drivers/gpu/drm/vc4/vc4_hdmi.h                     |   4 +
+ drivers/gpu/drm/vc4/vc4_hdmi_phy.c                 | 640 +++++++++++++++
+ drivers/gpu/drm/vc4/vc4_hdmi_regs.h                | 217 ++++++
+ drivers/gpu/drm/vc4/vc4_hvs.c                      | 737 ++++++++++++++++--
+ drivers/gpu/drm/vc4/vc4_kms.c                      | 105 ++-
+ drivers/gpu/drm/vc4/vc4_plane.c                    | 866 ++++++++++++++++++++-
+ drivers/gpu/drm/vc4/vc4_regs.h                     | 297 +++++++
+ drivers/gpu/drm/vc4/vc4_txp.c                      |  91 ++-
+ include/soc/bcm2835/raspberrypi-firmware.h         |   1 +
+ 25 files changed, 3461 insertions(+), 204 deletions(-)
+---
+base-commit: 3ae80b375739495e36fc6143ff27716fe390a13e
+change-id: 20241002-drm-vc4-2712-support-9ad3236e3caf
+
+Best regards,
 -- 
-2.43.0
+Dave Stevenson <dave.stevenson@raspberrypi.com>
 
 
