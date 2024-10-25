@@ -1,205 +1,147 @@
-Return-Path: <linux-kernel+bounces-382306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40D949B0C22
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 19:50:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 482319B0C0D
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 19:46:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63FDD1C20B77
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:50:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7149284218
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:46:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4822420BB55;
-	Fri, 25 Oct 2024 17:50:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 966C118452E;
+	Fri, 25 Oct 2024 17:46:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MxVNGMeO"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ljImiyuC"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7389118452E;
-	Fri, 25 Oct 2024 17:50:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 301BD15444E
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 17:46:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729878607; cv=none; b=mDRJkt62KNFwyDrb3o1uFl+hz20J9GeqtH5MWupfuc9HQnRXxOWvpi9gGiUgggjqxoPYpxFf+cpHSModBu1elidVJiB57trNk4OnKKJGXY18WDA/135ds/091hMmsk9K4Svs5zVxX4DSlfZgvlP79+Ug8t+Kr19/uil1ncsDpuU=
+	t=1729878382; cv=none; b=kUE1G4SDpIOgYgIluzRtZDyF3he9UiW12WvQw3rXHJWOgoZ2Vw4kzqw1sRssiiFq3VHqhyBXR1CfxuN3jvpCPHVVzupsYO7j8Eo8xpAPqhtgOsboXPxx2peC5tMFBYRcGnJIo6o8I2dcjm8r+kCSeN757kVcz1x+QdCFqjnmdy0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729878607; c=relaxed/simple;
-	bh=V5FM+c7WNDBvhvHLthI/EB48NAmOrHnLnwoSw/yegAQ=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=QvIlhxq36WEJb2qd790yWd8v6tACijSAUucfGYTEU5IjTVr9tzk6V1QUkxMJnYU+HS6o0YpGQVV28RiKVZ3WWMzLvDOSKXS7SFFqDN/jBtMPfin3Ue2BBifqX7ACUWmE6JU2FpHwIDKlkKBRHjaaiR1j9kfiWSQmYQpgPuw/09o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MxVNGMeO; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-20cb7139d9dso19925025ad.1;
-        Fri, 25 Oct 2024 10:50:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729878604; x=1730483404; darn=vger.kernel.org;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=i/KK5QLto1FiOLyb3xhyK+mUwfcmuzgexBLcrS8nrw4=;
-        b=MxVNGMeOPI8VdTCq5fosIft7N5AflP7gvnfLcxEqDM+PVymvutXoUV2dYpRJKreZ5/
-         BazdcWwWLa5aQk6UHXJZOtmGb79fIu8FGrpA2VyVyJRPiSccRL2Eks8KNsDtZB57rg1q
-         sX54VEh2wxfHTRtsy5ke0pLjeuhULX6bs4xzqsY9T8B5e3nj1bIy2+bZ/2MtvoL8UJwh
-         t67WGhNRk9HWO++flp0IltxBav1xZdu4v4yecY1GyTGPcDpoB47m+WMtWnmCWAqSeGpP
-         frj9xxnCs1xBh+U50cIDkwSCFWTBVw91zIOOjgo14UcxINWupH89Z9c1OEqxuZREGIQq
-         jAaA==
+	s=arc-20240116; t=1729878382; c=relaxed/simple;
+	bh=oIuIuspz76OCuYP6ZhuCIco1Uhz8q72qC71gvsc83xY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=S0Xa9jTGYWWXOfwyVMi2bHNDLDMm/aFUmTqp7NGu9kQDhzbxK8/IAG9QqsZp3OOLYnrsBstMTlKd9lGY8oM+nRGETHv4SxQ4BvG7wk+4P2rzFrAmiSOAxYJSDFooBtfkjNcpqF5Hcl+jqJHjAFYAAZUokEuLg9YN1Z+3tZl6Q5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ljImiyuC; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49PDMpbY028676
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 17:46:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	gp4O+oOSOissF91Pvneay/lgbVotgfOx/AKhK7rAXrg=; b=ljImiyuC/X0YEfWW
+	pFPe7pES7hK57F+CBg7FmRM5K72bP+yG81uWphYP0gx29K5UB9ljCa0nACWMbidc
+	LliPRMH5+/PtJjs8pT9UT5PRTHSpymjwXZNCRYPgrtSs6aDieLC6ovKmMXLmhU5J
+	gcI9CoK1halYW5dhQPpcbWLMHa+VYu3vPKzebwV0LF92fpji3TaQhci3hNBlYNbs
+	rF4lYvILDUqZOV0nd26POlt7PnyLXl73zOwyzLcZxE9dJY6UR0hndsaKh1RUCTuJ
+	KIxO1A+8naMA3rnP4ATelU8q8RTW+U8ms4AAQ20FgHYfZ0nYe+6UTybbLv7v7sfk
+	TrVnwg==
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42fdtxntqp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 17:46:20 +0000 (GMT)
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6cbe149b1cfso6428356d6.0
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 10:46:20 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729878604; x=1730483404;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from
+        d=1e100.net; s=20230601; t=1729878371; x=1730483171;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=i/KK5QLto1FiOLyb3xhyK+mUwfcmuzgexBLcrS8nrw4=;
-        b=OlYcY99jT2p8rnut/kQHsT6pOAmZV9HaKrnCJ4ZoE5iQz8LTse8wqHHmOKF/nBgu39
-         6dhxr4EgiZrboQNpUaj7flgTD+u8g6kyBRM+pqAD5keGvDDC3Dz8lL7WwOwaiueRkKFB
-         MX7RpHaGRTEjZfstwqcy/nWgS39tWxt0qZtSlE9NOz2+Cl6HM/tHYu6ANAzolXP5WHYe
-         PO0bRXffTjZFDyGz4awll2tR9jUWLYzEDlb2y4FA96HXXXJ8cV1iZuyget85nguq/+rv
-         qTzsf9VQhggJKHgj9NTBo/5HiufYH2N9Tka3Vvzs7FRGP0Z1n1fHflticbn1e7bv3veY
-         zlQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVFgHFpSpOOGAKOpHe/EMtUY8LyDa+qAAoVi7ZKSkN9XXWePpIA4HS4VgDaZn3oa/RxnuxeJIDl8weh@vger.kernel.org, AJvYcCVVSyhQFY6WP/qwDIEbSVbSKVtqEgtjahI8rUXW8XhY/lLoCaf3wrHC1xzbcE6Ix6MfMiZteV0iQj+mvZwNWg==@vger.kernel.org, AJvYcCWnPyQqAtpc/TDVbX3O5Zz2+OFeNlLuVPQ04U4aARNqXc3CZVThOE6jg/5d2rtg5xUH1GMKh8tj6BAd@vger.kernel.org, AJvYcCWtd42OXuqmmOBFGz2BWpKbPCU5CzREI/4ms2OQ8axnUWO13F26QgoouZjnsOrvzubay/+L/F5xXBCfzHJh@vger.kernel.org
-X-Gm-Message-State: AOJu0YyXPCOiKcCzr8fTDCSIiXOu6DzgB0Nuf6kgaYVV78SE2MMbWrcF
-	SwVmN19qSEmcmEFjLSpbgV3043+T9yFy65OR1J8BKOdy9iKOgIcfQnM1Aw==
-X-Google-Smtp-Source: AGHT+IFz7Yp1fLWW/5z7mu1Mw7Lgf0pQOdAc+0Y/WU9QcHDWcwRybp6SR7G3bWK8gWk4dN3ng8nYNA==
-X-Received: by 2002:a17:90b:1c10:b0:2e2:cef9:8f68 with SMTP id 98e67ed59e1d1-2e8f1059571mr213139a91.4.1729878604144;
-        Fri, 25 Oct 2024 10:50:04 -0700 (PDT)
-Received: from dw-tp ([171.76.85.20])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e77e534f09sm3762668a91.32.2024.10.25.10.50.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2024 10:50:03 -0700 (PDT)
-From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: John Garry <john.g.garry@oracle.com>, linux-ext4@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@infradead.org>, Ojaswin Mujoo <ojaswin@linux.ibm.com>, Dave Chinner <david@fromorbit.com>, linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 1/6] ext4: Add statx support for atomic writes
-In-Reply-To: <20241025160942.GJ2386201@frogsfrogsfrogs>
-Date: Fri, 25 Oct 2024 23:15:55 +0530
-Message-ID: <87o738m5yk.fsf@gmail.com>
-References: <cover.1729825985.git.ritesh.list@gmail.com> <e6af669b237690491ecff0717039e28e949208c8.1729825985.git.ritesh.list@gmail.com> <314835ec-98bf-472c-8be7-0b26e50cfc9b@oracle.com> <87y12cmr5o.fsf@gmail.com> <20241025160942.GJ2386201@frogsfrogsfrogs>
+        bh=gp4O+oOSOissF91Pvneay/lgbVotgfOx/AKhK7rAXrg=;
+        b=trcHeSOUcKdpqt1JtMeJfuZz+SKEz8GBIu9cJNyTJXUqDbc6jFovcdnJkEA/u9Zpni
+         he1anLSDQ2+biH+HvmwCIEbSyhAQF/AA1jQ3pq+Uw6fqUOKux61BT+0vjRUaa5pC1hGi
+         78XBCyw2gKjk/rv40xwXg9TA0TKaQoHpuhg6UroCZ7oFAWcC6zUivv4bPL/mafy+1j4m
+         We0Kc9M6bOMylCA+2LfKnXZzWRRW9sEQc85NUzPlpUdufwW/pPi5UiAxkVTVMS43VXW3
+         xod2a5mYDH5dhB7ywLdZMdluiMHFP9J/LO9m1U2GmKNNsreNpMs9X3AuHv3Aug4f0J/g
+         El5A==
+X-Forwarded-Encrypted: i=1; AJvYcCUnxTEz/S6zMa+3bAYw9i+9M9Equ8cEjL8VFieYfEixO5+r6m0MI7OLiliFNPCkpZQHS5iueF0yqJOxMGU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YybhvFJgoI4F/PT1lL2+t6BvXFku9J8xCNdfo7LmxoH9K1Jw6rL
+	0dBA12QB4UQv+TLnYv7+H3CpYlP4FJC7FaJh5M8/ZdRJzbeG0C9kyAkGKDT78ylkxMdc2QSmVjS
+	R/8oglCqPmTjNQ3Csom4VqT4w2f9JS5UiND+jtKudnOKl8nRvzJIZhOTSX5WjD1A=
+X-Received: by 2002:ad4:5cee:0:b0:6cb:f3df:cb9 with SMTP id 6a1803df08f44-6d185837663mr1613566d6.9.1729878371379;
+        Fri, 25 Oct 2024 10:46:11 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFpDSpwMF/KD6STy7ZyXj15CbXpF87KjDotLoxTNXjlOrvboEQbQCx49/+xITyhMb+FVdgP2g==
+X-Received: by 2002:ad4:5cee:0:b0:6cb:f3df:cb9 with SMTP id 6a1803df08f44-6d185837663mr1613396d6.9.1729878371019;
+        Fri, 25 Oct 2024 10:46:11 -0700 (PDT)
+Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cbb63197d5sm833015a12.72.2024.10.25.10.46.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 25 Oct 2024 10:46:09 -0700 (PDT)
+Message-ID: <c81b26dc-1c52-42b6-ba68-95906b9c524c@oss.qualcomm.com>
+Date: Fri, 25 Oct 2024 19:46:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: qcom: qcs615: Add LLCC support for QCS615
+To: Song Xue <quic_songxue@quicinc.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: kernel@quicinc.com, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241011-add_llcc_dts_node_for_qcs615-v1-1-e7aa45244c36@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20241011-add_llcc_dts_node_for_qcs615-v1-1-e7aa45244c36@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: vhRaLBRk0JOpM9JeVUlhDkH7jxu8-qBr
+X-Proofpoint-ORIG-GUID: vhRaLBRk0JOpM9JeVUlhDkH7jxu8-qBr
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxscore=0
+ lowpriorityscore=0 phishscore=0 adultscore=0 mlxlogscore=999
+ priorityscore=1501 impostorscore=0 bulkscore=0 spamscore=0 malwarescore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410250136
 
-"Darrick J. Wong" <djwong@kernel.org> writes:
+On 11.10.2024 12:41 PM, Song Xue wrote:
+> The QCS615 platform has LLCC(Last Level Cache Controller) as the system
+> cache controller. It includes 1 LLCC instance and 1 LLCC broadcast
+> interface.
+> 
+> Add LLCC node support for the QCS615 platform.
+> 
+> Signed-off-by: Song Xue <quic_songxue@quicinc.com>
+> ---
+> This patch series depends on below patch series:
+> https://lore.kernel.org/all/20240926-add_initial_support_for_qcs615-v3-0-e37617e91c62@quicinc.com/
+> https://lore.kernel.org/linux-arm-msm/20241010-add_llcc_support_for_qcs615-v2-1-044432450a75@quicinc.com/
+> ---
+>  arch/arm64/boot/dts/qcom/qcs615.dtsi | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/qcs615.dtsi b/arch/arm64/boot/dts/qcom/qcs615.dtsi
+> index ac4c4c751da1fbb28865877555ba317677bc6bd2..b718a4d2270d64ed43c2eca078bfe52b78ff680c 100644
+> --- a/arch/arm64/boot/dts/qcom/qcs615.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/qcs615.dtsi
+> @@ -495,6 +495,14 @@ dc_noc: interconnect@9160000 {
+>  			qcom,bcm-voters = <&apps_bcm_voter>;
+>  		};
+>  
+> +		llcc: system-cache-controller@9200000 {
+> +			compatible = "qcom,qcs615-llcc";
+> +			reg = <0x0 0x9200000 0x0 0x50000>,
+> +			      <0x0 0x9600000 0x0 0x50000>;
 
-> On Fri, Oct 25, 2024 at 03:38:03PM +0530, Ritesh Harjani wrote:
->> John Garry <john.g.garry@oracle.com> writes:
->> 
->> > On 25/10/2024 04:45, Ritesh Harjani (IBM) wrote:
->> >> This patch adds base support for atomic writes via statx getattr.
->> >> On bs < ps systems, we can create FS with say bs of 16k. That means
->> >> both atomic write min and max unit can be set to 16k for supporting
->> >> atomic writes.
->> >> 
->> >> Later patches adds support for bigalloc as well so that ext4 can also
->> >> support doing atomic writes for bs = ps systems.
->> >> 
->> >> Co-developed-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
->> >> Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
->> >> Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
->> >> ---
->> >>   fs/ext4/ext4.h  |  7 ++++++-
->> >>   fs/ext4/inode.c | 14 ++++++++++++++
->> >>   fs/ext4/super.c | 32 ++++++++++++++++++++++++++++++++
->> >>   3 files changed, 52 insertions(+), 1 deletion(-)
->> >> 
->> >> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
->> >> index 44b0d418143c..a41e56c2c628 100644
->> >> --- a/fs/ext4/ext4.h
->> >> +++ b/fs/ext4/ext4.h
->> >> @@ -1729,6 +1729,10 @@ struct ext4_sb_info {
->> >>   	 */
->> >>   	struct work_struct s_sb_upd_work;
->> >>   
->> >> +	/* Atomic write unit values */
->> >> +	unsigned int fs_awu_min;
->> >> +	unsigned int fs_awu_max;
->> >> +
->> >>   	/* Ext4 fast commit sub transaction ID */
->> >>   	atomic_t s_fc_subtid;
->> >>   
->> >> @@ -1820,7 +1824,8 @@ static inline int ext4_valid_inum(struct super_block *sb, unsigned long ino)
->> >>    */
->> >>   enum {
->> >>   	EXT4_MF_MNTDIR_SAMPLED,
->> >> -	EXT4_MF_FC_INELIGIBLE	/* Fast commit ineligible */
->> >> +	EXT4_MF_FC_INELIGIBLE,	/* Fast commit ineligible */
->> >> +	EXT4_MF_ATOMIC_WRITE	/* Supports atomic write */
->> >
->> > Does this flag really buy us much?
->> >
->> 
->> I felt it is cleaner this way than comparing non-zero values of
->> fs_awu_min and fs_awu_max.
->
-> What does it mean when MF_ATOMIC_WRITE is set and fs_awu_* are zero?
-> The awu values don't change at runtime, so I think you can save yourself
-> an atomic test by checking (non-atomically) for awu_min>0.
+Please pad both addresses to 8 hex digits (e.g. 0x09200000)
 
-Sure. I agree with the reasoning that we can just check for awu_min > 0.
-I can write an inline helper for this.
+With that:
 
->
-> (I don't know anything about the flags, those came after my time iirc.)
->
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-Thanks for the review :) 
-
--ritesh
-
-> --D
->
->> Now that you pointed at it - Maybe a question for others who might have
->> the history of which one to use when - or do we think there is a scope
->> of merging the two into just one as a later cleanup?
->> 
->> I know that s_mount_flags was added for fastcommit and it needed the
->> state manipulations to be done in atomic way. Similarly s_ext4_flags
->> also was renamed from s_resize_flags for more general purpose use. Both
->> of these looks like could be merged isn't it?
->> 
->> 
->> 
->> >>   };
->> >>   
->> >>   static inline void ext4_set_mount_flag(struct super_block *sb, int bit)
->> >> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
->> >> index 54bdd4884fe6..897c028d5bc9 100644
->> >> --- a/fs/ext4/inode.c
->> >> +++ b/fs/ext4/inode.c
->> >> @@ -5578,6 +5578,20 @@ int ext4_getattr(struct mnt_idmap *idmap, const struct path *path,
->> >>   		}
->> >>   	}
->> >>   
->> >> +	if (S_ISREG(inode->i_mode) && (request_mask & STATX_WRITE_ATOMIC)) {
->> >> +		struct ext4_sb_info *sbi = EXT4_SB(inode->i_sb);
->> >> +		unsigned int awu_min, awu_max;
->> >> +
->> >> +		if (ext4_test_mount_flag(inode->i_sb, EXT4_MF_ATOMIC_WRITE)) {
->> >
->> > I'd use ext4_inode_can_atomicwrite() here, similar to what is done for xfs
->> >
->> 
->> Sure since it is inode operation, we can check against ext4_inode_can_atomicwrite().
->> 
->> 
->> >> +			awu_min = sbi->fs_awu_min;
->> >> +			awu_max = sbi->fs_awu_max;
->> >> +		} else {
->> >> +			awu_min = awu_max = 0;
->> >> +		}
->> >> +
->> >> +		generic_fill_statx_atomic_writes(stat, awu_min, awu_max);
->> >> +	}
->> >> +
->> >>   	flags = ei->i_flags & EXT4_FL_USER_VISIBLE;
->> >>   	if (flags & EXT4_APPEND_FL)
->> >>   		stat->attributes |= STATX_ATTR_APPEND;
->> >> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
->> >> index 16a4ce704460..f5c075aff060 100644
->> >> --- a/fs/ext4/super.c
->> >> +++ b/fs/ext4/super.c
->> >> @@ -4425,6 +4425,37 @@ static int ext4_handle_clustersize(struct super_block *sb)
->> >>   	return 0;
->> >>   }
->> >>   
->> >> +/*
->> 
+Konrad
 
