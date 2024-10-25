@@ -1,121 +1,225 @@
-Return-Path: <linux-kernel+bounces-382038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50E959B0829
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:27:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E8949B0830
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:27:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15E02283E06
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:27:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC51D1C212BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:27:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9367570816;
-	Fri, 25 Oct 2024 15:25:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE5C0176237;
+	Fri, 25 Oct 2024 15:25:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MkoDOmT0"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 437D021A4DE
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 15:25:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="XoTpv3v3"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6E1E166F23;
+	Fri, 25 Oct 2024 15:25:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729869919; cv=none; b=k6ddAXKgbBIekrmXxQ6knzrah0MDnL5dfKUoSBr8Ya2fCYN/JGhUbuUgU2oy30YdZzCy3eUvjTCxQbQHxGSeGFtN7ufhd/sJbHhbgmIvfycbDFeoduxLuMymgGk0dwRwZrvAjxnKnVC3TNVJ/Ca9u2VLIr8Re3rYgdLhOOxGBGs=
+	t=1729869956; cv=none; b=qzbUI0WwbJ3turLVF6Lzl30BvPQnaaCuTacKbhq402hYGo+8xy7sg25w6tXbqdElTIDgBV3i0DaNRGnYBQWbAfkjvLVpmN3zxQYph+4WcA9qLdZK61YGjjGKyPHxk49vlRIM550b7uh/LbeF4RJKl8d22ZAZ0sGE2QK4MiwB9zA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729869919; c=relaxed/simple;
-	bh=RRzFe9tUsjDykCJzHoZbL7lPHCyXflbAzZnuo6F+oRw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=QbmiADYzmeYZIcQuB9SsF6n/pZw2/L74x7XE+rkLCobtvv1AhrMKlxHjp0CARECpH+EP95aIhbIv6OeBy9oBgv6IiVim4zSe8rHLGUDD4x1y8RDKLxSFvTEn9LoDFkMg4Phj642YJXVR0DpmvcfQbX3rwhTMeZce1xWQO++vhu4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MkoDOmT0; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-20caea61132so16769385ad.2
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 08:25:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729869916; x=1730474716; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JFXeo8/I5ZSuSmBjM2oOfVhjv5mq57dZ19wKVuXleow=;
-        b=MkoDOmT0kErCUfqJYaptc8i9imTM/V23B4bPXG7SjvE2+MGaBbGpuX16Aex42PRNol
-         jc/eJ0hri8jcyFUtarhXNAgQv6t1qTMLkgFWzObTBQceWfNLxjBFzdzgkk8vp8qu5Z0q
-         23KQS8IiJAcIA/dJJVbsW46etFiZLeGD6c5sw8xc6YF5rsbZCPNn/eer2WHrcMndFNGN
-         jEZnWhlz5VqFWXD+rGITWZ1f3shDNFr7ax4QDVvvaIKbWrXidMvEUREB+ea3DTgJxrp5
-         dADsXK/aRFlXWXCEMd18qzqLgF4bi/nyTiF2pVI/RFEtUuhgj2H81MNDAJpEAE4XoDxH
-         anjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729869916; x=1730474716;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JFXeo8/I5ZSuSmBjM2oOfVhjv5mq57dZ19wKVuXleow=;
-        b=OY2PTqOiCAijm0z+bc/1h6GCkJFo04nTRIIiU5kvTU/lvl/E1iikFVEO9mVVDAwSDp
-         xsDQi6vDg9nzl8I8GP5c3HHsVH7lkRlrflZU25zy1aXO/CF5s6bwNGTACdIoh7JUVG+5
-         CwgplMvhhcXNO4VSTjQrM1iXKOj4cY+MwpsAqokbdmjmJS6Dpltq5eiTih3A+J8I/M4W
-         dps9SE9mj/EKqJcXacNHes9w0rIerNvJOG+979Qw0YOX5NI4oWQxeBUzf9WShdFEcxt2
-         roqJcO0o3wcLk4iUNMorYflwRAIKZqtrYU9mIbTtVu5HHI7BUgpzsPWhPUuDlBLEeNLU
-         D0/w==
-X-Forwarded-Encrypted: i=1; AJvYcCUb4kCLgZ8suFBc50EY94kuEkdiw6TQAB1OEHBZoxhruzdUnKOYf+EE8eZNZE+kE7yFhzJdFoklS2MZ6kw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDlvY2EVI4KB+bKlBTUSd87VJMeMBZUbqZINYlV9NqXUObtQz+
-	kazq8AunxRBtV9i5rRkbRIut7F0YhTW9bxbOM4rc+5bNLesY2jQK
-X-Google-Smtp-Source: AGHT+IHzjCi6zjSBygdsDkNmJ6tFYS3/lnJ4kMlhURm+u9y8ACOWIxEtCPG5z40xCu4MBUYeOmt50g==
-X-Received: by 2002:a17:903:2441:b0:20c:8331:cb6e with SMTP id d9443c01a7336-20fa9e2b2f3mr140776935ad.19.1729869916409;
-        Fri, 25 Oct 2024 08:25:16 -0700 (PDT)
-Received: from TW-MATTJAN1.eu.trendnet.org (61-216-130-235.hinet-ip.hinet.net. [61.216.130.235])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bbf6d10esm10606075ad.70.2024.10.25.08.25.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2024 08:25:16 -0700 (PDT)
-From: Matt Jan <zoo868e@gmail.com>
-To: Dave Kleikamp <shaggy@kernel.org>,
-	jfs-discussion@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	Shuah Khan <skhan@linuxfoundation.org>
-Cc: Matt Jan <zoo868e@gmail.com>,
-	syzbot+9e90a1c5eedb9dc4c6cc@syzkaller.appspotmail.com
-Subject: [PATCH v2] jfs: UBSAN: shift-out-of-bounds in dbFindBits
-Date: Fri, 25 Oct 2024 23:24:59 +0800
-Message-Id: <20241025152459.485-1-zoo868e@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <671b3f75.050a0220.2eb763.00d7.GAE@google.com>
-References: <671b3f75.050a0220.2eb763.00d7.GAE@google.com>
+	s=arc-20240116; t=1729869956; c=relaxed/simple;
+	bh=hbsFD+YaFzPHyt/eMlC7hsrHeIOi0W22CnfP4S4x5aA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=giHaSqqmDeYvY9GyJoJQViiDK+q0mdcd/9GFvvXdh4BSg0Mijzqj5ehOBMwNA3VHux2c0FSt/VsZK7YVnUmSVARolHK4O3KI0V6T7FNm8OSEnZt4B5lJmheD2BVBpm2XzohJErFaSvhtq8vsO+r1ZDYFc1zigb5cE0hL8UW09WI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=XoTpv3v3; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from pwmachine.localnet (84-115-216-151.cable.dynamic.surfer.at [84.115.216.151])
+	by linux.microsoft.com (Postfix) with ESMTPSA id B1591211A5B7;
+	Fri, 25 Oct 2024 08:25:47 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com B1591211A5B7
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1729869953;
+	bh=ANP6GkLuBGGbk8Pcly384KRE+EVRs/CpCPPDX92ra0g=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=XoTpv3v3SQM6EUslxPlPW3Y8UdsJCExgZ3ENt9zw/vUJYqTyblxacqY+ZfoJd5ydK
+	 u9uOxO7LWOo8uoFgJVqN/asWTR22pXkIG/xSon8YnjnbvwfCx/OZxunMALjP5kcXJg
+	 20LKlshhJLLKk7kktnSDKIYZDcklnZh0BQxmQT38=
+From: Francis Laniel <flaniel@linux.microsoft.com>
+To: Eric Paris <eparis@redhat.com>, Paul Moore <paul@paul-moore.com>, =?ISO-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>, "Serge E . Hallyn" <serge@hallyn.com>, =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc: =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>, Ben Scarlato <akhna@google.com>, Casey Schaufler <casey@schaufler-ca.com>, Charles Zaffery <czaffery@roblox.com>, James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, Jorge Lucangeli Obes <jorgelo@google.com>, Kees Cook <kees@kernel.org>, Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <mattbobrowski@google.com>, Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, Praveen K Paladugu <prapal@linux.microsoft.com>, Robert Salvet <robert.salvet@roblox.com>, Shervin Oloumi <enlightened@google.com>, Song Liu <song@kernel.org>, Tahera Fahimi <fahimitahera@gmail.com>, audit@vger.kernel.org, linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [RFC PATCH v2 12/14] landlock: Log TCP bind and connect denials
+Date: Fri, 25 Oct 2024 17:25:45 +0200
+Message-ID: <2345615.iZASKD2KPV@pwmachine>
+In-Reply-To: <20241022161009.982584-13-mic@digikod.net>
+References: <20241022161009.982584-1-mic@digikod.net> <20241022161009.982584-13-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 
-The starting bit number of free bits should not be >= 32 as it is
-0-indexed.Assert that the number of bits is < 32, or if it is 32, the
-input word must be 0.
+Le mardi 22 octobre 2024, 18:10:07 CEST Micka=EBl Sala=FCn a =E9crit :
+> Add audit support to socket_bind and socket_connect hooks.
+>=20
+> Audit record sample:
+>=20
+>   DENY:    domain=3D4533720601 blockers=3Dnet_connect_tcp daddr=3D127.0.0=
+=2E1
+> dest=3D80 SYSCALL: arch=3Dc000003e syscall=3D42 success=3Dno exit=3D-13 .=
+=2E.
+>=20
+> Cc: G=FCnther Noack <gnoack@google.com>
+> Cc: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+> Cc: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
+> Signed-off-by: Micka=EBl Sala=FCn <mic@digikod.net>
+> Link: https://lore.kernel.org/r/20241022161009.982584-13-mic@digikod.net
+> ---
+>  security/landlock/audit.c | 11 +++++++++
+>  security/landlock/audit.h |  1 +
+>  security/landlock/net.c   | 52 ++++++++++++++++++++++++++++++++++++---
+>  3 files changed, 60 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/security/landlock/audit.c b/security/landlock/audit.c
+> index 898c95ebe847..c31a4a8719ee 100644
+> --- a/security/landlock/audit.c
+> +++ b/security/landlock/audit.c
+> @@ -41,6 +41,12 @@ static const char *const fs_access_strings[] =3D {
+>  };
+>  static_assert(ARRAY_SIZE(fs_access_strings) =3D=3D LANDLOCK_NUM_ACCESS_F=
+S);
+>=20
+> +static const char *const net_access_strings[] =3D {
+> +	[BIT_INDEX(LANDLOCK_ACCESS_NET_BIND_TCP)] =3D "net_bind_tcp",
+> +	[BIT_INDEX(LANDLOCK_ACCESS_NET_CONNECT_TCP)] =3D "net_connect_tcp",
+> +};
+> +static_assert(ARRAY_SIZE(net_access_strings) =3D=3D LANDLOCK_NUM_ACCESS_=
+NET);
+> +
+>  static __attribute_const__ const char *
+>  get_blocker(const enum landlock_request_type type,
+>  	    const unsigned long access_bit)
+> @@ -58,6 +64,11 @@ get_blocker(const enum landlock_request_type type,
+>  		if (WARN_ON_ONCE(access_bit >=3D ARRAY_SIZE(fs_access_strings)))
+>  			return "unknown";
+>  		return fs_access_strings[access_bit];
+> +
+> +	case LANDLOCK_REQUEST_NET_ACCESS:
+> +		if (WARN_ON_ONCE(access_bit >=3D ARRAY_SIZE(net_access_strings)))
+> +			return "unknown";
+> +		return net_access_strings[access_bit];
+>  	}
+>=20
+>  	WARN_ON_ONCE(1);
+> diff --git a/security/landlock/audit.h b/security/landlock/audit.h
+> index 320394fd6b84..1075b0c8401f 100644
+> --- a/security/landlock/audit.h
+> +++ b/security/landlock/audit.h
+> @@ -18,6 +18,7 @@ enum landlock_request_type {
+>  	LANDLOCK_REQUEST_PTRACE =3D 1,
+>  	LANDLOCK_REQUEST_FS_CHANGE_LAYOUT,
+>  	LANDLOCK_REQUEST_FS_ACCESS,
+> +	LANDLOCK_REQUEST_NET_ACCESS,
+>  };
+>=20
+>  /*
+> diff --git a/security/landlock/net.c b/security/landlock/net.c
+> index 27872d0f7e11..c21afd6e0b4d 100644
+> --- a/security/landlock/net.c
+> +++ b/security/landlock/net.c
+> @@ -7,10 +7,12 @@
+>   */
+>=20
+>  #include <linux/in.h>
+> +#include <linux/lsm_audit.h>
+>  #include <linux/net.h>
+>  #include <linux/socket.h>
+>  #include <net/ipv6.h>
+>=20
+> +#include "audit.h"
+>  #include "common.h"
+>  #include "cred.h"
+>  #include "limits.h"
+> @@ -56,6 +58,10 @@ static int current_check_access_socket(struct socket
+> *const sock, };
+>  	const struct landlock_ruleset *const dom =3D
+>  		landlock_match_ruleset(landlock_get_current_domain(), any_net);
+> +	struct lsm_network_audit audit_net =3D {};
+> +	struct landlock_request request =3D {
+> +		.type =3D LANDLOCK_REQUEST_NET_ACCESS,
+> +	};
+>=20
+>  	if (!dom)
+>  		return 0;
+> @@ -72,18 +78,49 @@ static int current_check_access_socket(struct socket
+> *const sock,
+>=20
+>  	switch (address->sa_family) {
+>  	case AF_UNSPEC:
+> -	case AF_INET:
+> +	case AF_INET: {
+> +		const struct sockaddr_in *addr4;
+> +
+>  		if (addrlen < sizeof(struct sockaddr_in))
+>  			return -EINVAL;
+> -		port =3D ((struct sockaddr_in *)address)->sin_port;
+> +
+> +		addr4 =3D (struct sockaddr_in *)address;
+> +		port =3D addr4->sin_port;
+> +
+> +		if (access_request =3D=3D LANDLOCK_ACCESS_NET_CONNECT_TCP) {
+> +			audit_net.dport =3D port;
+> +			audit_net.v4info.daddr =3D addr4->sin_addr.s_addr;
+> +		} else if (access_request =3D=3D LANDLOCK_ACCESS_NET_BIND_TCP) {
+> +			audit_net.sport =3D port;
+> +			audit_net.v4info.saddr =3D addr4->sin_addr.s_addr;
+> +		} else {
+> +			WARN_ON_ONCE(1);
+> +		}
+>  		break;
+> +	}
+>=20
+>  #if IS_ENABLED(CONFIG_IPV6)
+> -	case AF_INET6:
+> +	case AF_INET6: {
+> +		const struct sockaddr_in6 *addr6;
+> +
+>  		if (addrlen < SIN6_LEN_RFC2133)
+>  			return -EINVAL;
+> -		port =3D ((struct sockaddr_in6 *)address)->sin6_port;
+> +
+> +		addr6 =3D (struct sockaddr_in6 *)address;
+> +		port =3D addr6->sin6_port;
+> +		audit_net.v6info.saddr =3D addr6->sin6_addr;
 
-#syz test
+You set this for all access_request, but not for IPv4, is this done on=20
+purpose?
 
-Reported-by: syzbot+9e90a1c5eedb9dc4c6cc@syzkaller.appspotmail.com
-Signed-off-by: Matt Jan <zoo868e@gmail.com>
----
-Changes in v2: Test if the patch resolve the issue through syzbot and
-reference the reporter.
+> +
+> +		if (access_request =3D=3D LANDLOCK_ACCESS_NET_CONNECT_TCP) {
+> +			audit_net.dport =3D port;
+> +			audit_net.v6info.daddr =3D addr6->sin6_addr;
+> +		} else if (access_request =3D=3D LANDLOCK_ACCESS_NET_BIND_TCP) {
+> +			audit_net.sport =3D port;
+> +			audit_net.v6info.saddr =3D addr6->sin6_addr;
+> +		} else {
+> +			WARN_ON_ONCE(1);
+> +		}
+>  		break;
+> +	}
+>  #endif /* IS_ENABLED(CONFIG_IPV6) */
+>=20
+>  	default:
+> @@ -152,6 +189,13 @@ static int current_check_access_socket(struct socket
+> *const sock, ARRAY_SIZE(layer_masks)))
+>  		return 0;
+>=20
+> +	audit_net.family =3D address->sa_family;
+> +	request.audit.type =3D LSM_AUDIT_DATA_NET;
+> +	request.audit.u.net =3D &audit_net;
+> +	request.access =3D access_request;
+> +	request.layer_masks =3D &layer_masks;
+> +	request.layer_masks_size =3D ARRAY_SIZE(layer_masks);
+> +	landlock_log_denial(dom, &request);
+>  	return -EACCES;
+>  }
 
- fs/jfs/jfs_dmap.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/jfs/jfs_dmap.c b/fs/jfs/jfs_dmap.c
-index 974ecf5e0d95..b9eccf8900eb 100644
---- a/fs/jfs/jfs_dmap.c
-+++ b/fs/jfs/jfs_dmap.c
-@@ -3015,7 +3015,7 @@ static int dbFindBits(u32 word, int l2nb)
- 	/* get the number of bits.
- 	 */
- 	nb = 1 << l2nb;
--	assert(nb <= DBWORD);
-+	assert(nb < DBWORD || (nb == DBWORD && !word));
- 
- 	/* complement the word so we can use a mask (i.e. 0s represent
- 	 * free bits) and compute the mask.
--- 
-2.25.1
 
 
