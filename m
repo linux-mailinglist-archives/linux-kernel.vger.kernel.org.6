@@ -1,137 +1,86 @@
-Return-Path: <linux-kernel+bounces-380830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39E0C9AF6AA
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 03:23:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A458F9AF6A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 03:23:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D933D1F2295A
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 01:23:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 505F01F228A4
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 01:23:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B52781ADA;
-	Fri, 25 Oct 2024 01:22:46 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3439502BE;
+	Fri, 25 Oct 2024 01:22:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bc3a5qD4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BA3A82485
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 01:22:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 492614500E;
+	Fri, 25 Oct 2024 01:22:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729819366; cv=none; b=XIIh/ASi/a5ZvznLAeTrhL68zux8ninrELVW3JewPXJ1nfUD51SzGKwTFgLXQIJr4wumZ7He4aqryvI0gHFboRwRcSeu5Duy/EVk9+s1sRt1y6xgNjRVOTSGdFuseS56T08rfNaOHMpDy0RmK/JfPjnlU7PmxjeWi42Ur/9raWI=
+	t=1729819360; cv=none; b=HPtexDwmJt2P+Zwec6Nph93OKNTtkSosIcw7fB9x7/ln6B73Efe/dDbsGhe71lMYmYYs74qv/qRjSnV8+/Qvos20a1qVx/H6LsbmqIrx1SDwIsKpZLuAXtPLlqs0M4XoalrbEnO43WLGAPQMKt5hgEIAZFGb9vN2RfPN56mC8y8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729819366; c=relaxed/simple;
-	bh=l4aT2ax3ymf7fFdq7Q7PT55NBKiLUz0XzmMHWvK2QRE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WdjWn7HM+aOL4M3SWIw5XQ6IyOBl3R7641t0FoEbiVq3RXPb9SaVepcIhIQ2VJ6/1d2pxQfqekVuaulT32w2/jyHnAvWsVyxxYwzN7i7k6Lok5jNiArXMxJV9OHuszJs0rdufJiR91q1Pcxp3U+WbUOjAweFlH57sVxiIIKBipY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XZQ4X5g4Xz4f3lfZ
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 09:22:20 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 1C1131A018D
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 09:22:39 +0800 (CST)
-Received: from [10.67.109.79] (unknown [10.67.109.79])
-	by APP2 (Coremail) with SMTP id Syh0CgDnZVvb8hpnVB4aFA--.37378S2;
-	Fri, 25 Oct 2024 09:22:36 +0800 (CST)
-Message-ID: <b57f30e4-b1c3-4ceb-abb0-bd300cb80645@huaweicloud.com>
-Date: Fri, 25 Oct 2024 09:22:35 +0800
+	s=arc-20240116; t=1729819360; c=relaxed/simple;
+	bh=PHk+f02gxxCH78JZbRAia+WbVbQ0AJGC2OCKGNTcjio=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uW71+Sca8fKZWF7SLf/zpDev8XkiySYXRbsXZthvy1HlcKD09/87q6wITgW0s1C8Q5o5JyL++/m2KtBddcUUnkcVjxuF6kv3fgBA29AoGwdAVwk7hpdg4slyU51ugsUISBo1bdfkmvden3OWRcpm6pBpURAJJCy//gvl9kNMt1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bc3a5qD4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56E6DC4CEC7;
+	Fri, 25 Oct 2024 01:22:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729819359;
+	bh=PHk+f02gxxCH78JZbRAia+WbVbQ0AJGC2OCKGNTcjio=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Bc3a5qD4OqjSXdFp0YC/YQR9lx762k8SHCwE/zwZhxpyXyv48dUIt717zB96aKR7+
+	 SbtSj8MwlVbEqKW6C26c2Gv6o2zrqmo5IcAdf9trqDWBrMN/JvUjo92s26V3q3ucWi
+	 SwVTMP6SfuQ2T5YNj8O3yup9tLtPg6g55ljJSSSjBxw7k6gXkQa7QfiMG9awCkDHQD
+	 4gwwY+qWszL0lQR6wpzSm5d2Y2wu3LFG30dKdvTnS3bFB7J/TTDGEYJ3awBZVLKiC5
+	 ccRmySNrAF1EkoMB+XET2jpjv2HIDPApBSDm1XnR6mUqYlDl43boiMQwrU+Fj4sUuh
+	 LLqYU6N14X0ow==
+Date: Thu, 24 Oct 2024 18:22:37 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc: clang-built-linux <llvm@lists.linux.dev>,
+	open list <linux-kernel@vger.kernel.org>,
+	lkft-triage@lists.linaro.org,
+	linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Anders Roxell <anders.roxell@linaro.org>
+Subject: Re: powerpc: clang-nightly: fatal error: error in backend: Trying to
+ obtain a reserved register "r2".
+Message-ID: <20241025012237.GC740745@thelio-3990X>
+References: <CA+G9fYs2G_4jyv-V7f85oE53rw5rX0Tnf2V8RQ=O9CuPcbfb2A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] mm: shrinker: avoid memleak in alloc_shrinker_info
-To: Vlastimil Babka <vbabka@suse.cz>,
- Roman Gushchin <roman.gushchin@linux.dev>, akpm@linux-foundation.org,
- david@fromorbit.com
-Cc: Muchun Song <muchun.song@linux.dev>,
- Anshuman Khandual <anshuman.khandual@arm.com>,
- "Kirill A. Shutemov" <kirill@shutemov.name>, zhengqi.arch@bytedance.com,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, wangweiyang2@huawei.com
-References: <fff87be9-fdc8-4c27-8335-17b0c7e16413@suse.cz>
- <1BD74B20-879A-4159-B957-1223553217C1@linux.dev>
- <0b883f9e-451f-41c2-805f-7f5bc7eebee2@suse.cz> <Zw_4fOm_4ifT1uft@google.com>
- <e919c9ba-1d93-4e68-9146-33d1e28103dc@huaweicloud.com>
- <1625e2e0-06ad-459c-b941-41fadea2008d@suse.cz>
-Content-Language: en-US
-From: Chen Ridong <chenridong@huaweicloud.com>
-In-Reply-To: <1625e2e0-06ad-459c-b941-41fadea2008d@suse.cz>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:Syh0CgDnZVvb8hpnVB4aFA--.37378S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7tw1fZrWktF13Gr4kZF47Arb_yoW8Wr4Upr
-	WFgFW2kF4kJr17CFn2gw13ZFWFv3yftw13Wrn5tryku3Z8trnaqrW7KF1q9F95uFnYkF42
-	93yUXr9Iyw4YyFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
-	14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
-	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8
-	ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
-	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
-	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1
-	7KsUUUUUU==
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+G9fYs2G_4jyv-V7f85oE53rw5rX0Tnf2V8RQ=O9CuPcbfb2A@mail.gmail.com>
 
+Hi Naresh,
 
+On Thu, Oct 24, 2024 at 08:35:11PM +0530, Naresh Kamboju wrote:
+> The powerpc clang-nightly version 20.0.0 build warnings / errors noticed on
+> the Today's Linux next-20241024 tag.
+...
+> Build errors:
+> ----------
+> fatal error: error in backend: Trying to obtain a reserved register "r2".
 
-On 2024/10/24 17:08, Vlastimil Babka wrote:
-> On 10/24/24 03:26, Chen Ridong wrote:
->>>>> For example, if we use his v1 proposal, we should do
->>>>> the cleanups again for info. But for goto-based
->>>>> version, we just add another label to do the
->>>>> cleanups and go to the new label for failure case. goto-based fix is what I insisted on. I copied my previous suggested fix here to clarify my opinion.
->>>>
->>>> Again, info is a loop-iteration-local variable, v1 fix making it truly local
->>>> is the way to go. If there are further cleanups added in the loop itself in
->>>> the future, they could hopefully keep being local to the loop as well.
->>>> Cleanup of info outside the loop iteration is breaking its real scope.
->>>
->>> +1 to that.
->>>
->>> I don't think it's such a big deal and both versions are ok, but I strongly
->>> prefer the original version (without introduction of a new label).
->>>
->>> Please, feel free to use
->>> Acked-by: Roman Gushchin <roman.gushchin@linux.dev>
->>> with the original version.
->>>
->>> Thanks!
->>
->> I agree with Roman.
->> Hello, Andrew and Dave, Do you have any opinions?
->>
->> The original version:
->> https://lore.kernel.org/linux-kernel/4184c61f-80f7-4adc-8929-c29f959cb8df@huawei.com/
-> 
-> Hi,
-> 
-> Can you resend the v1 as v3, but also move the declaration of "struct
-> shrinker_info *info;" inside the for_each_node() block? Also you can add all
-> the acks collected for that version and mine too:
-> 
-> Acked-by: Vlastimil Babka <vbabka@suse.cz>
-> 
-> Thanks.
-> 
->> Best regards,
->> Ridong
->>
->>
+Thanks for the report. I reported this upstream earlier, it should be
+resolved now but it will take a little bit for that to filter into
+clang-nightly from Debian.
 
-Will update, Thanks.
+https://github.com/llvm/llvm-project/pull/112603#issuecomment-2430709704
 
-Best regards,
-Ridong
-
+Cheers,
+Nathan
 
