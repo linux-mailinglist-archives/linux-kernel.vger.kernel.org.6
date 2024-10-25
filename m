@@ -1,97 +1,249 @@
-Return-Path: <linux-kernel+bounces-380818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB3E49AF68A
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 03:14:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA0839AF68C
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 03:15:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FD35280FF3
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 01:14:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A857C281009
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 01:15:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA5BA1E89C;
-	Fri, 25 Oct 2024 01:14:08 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FFD51DA26;
+	Fri, 25 Oct 2024 01:15:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PSn2yBtu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3D00101C4
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 01:14:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF84DBA3D;
+	Fri, 25 Oct 2024 01:15:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729818848; cv=none; b=pl8m4beNaSYfQfrAcbReak+OhoBreqzBDuHe8d3J3xtaQ5mlZ5zXPq9wZtQOnFSL5ZPw8hZwDWbfs++zhxYj0wY3U9RsCud9oTSCYsrXaffN2HxXYMx86OnJITt4KakdG8gUFo7M0z5LkSVJvw7f2imj7+J6cBvRfA3Cd3Pu07o=
+	t=1729818930; cv=none; b=aeimM8m9G62jBVkVY3jCjmGNEHDo7CZ7bWknSgEUhAnaTwbl6g0gvOyZmh825Rn7T2q7jVhjZx0CofzYNxTIiWmCGKQ57oIoLfrSFMbTRObBmhoDM934T/XWFxRi6IxpVG0Ardsg0fXbnFGIGliHeOsUG7BrAOuuQDmcglc0stM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729818848; c=relaxed/simple;
-	bh=pDpDrDPgqn1rWuPf4vWJjM/QhwM5DXeysn5Qug/olq4=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=dSsY5IytLgZUbc/MC87L+ykQrgoQzmEjQxSjvc0xRj1pTQgwtZXXopIdXI9R8fV8d/k2xBnHtt4duOETZ4f8jR/Ha6qE2L1rqfLTZMV0Lay0tQnUgke8YqVzwwVk31nQS5x0QtVim7P7Hw7tyVdZtpdaK3QmQcp5IHc2G8n90ro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a3c4ed972bso11376985ab.2
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 18:14:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729818846; x=1730423646;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cOZsZyIJmZeHEQPVNHkWmGsoWMx76fs5Fvyz/nsiQgY=;
-        b=qFb4tglUhr2nczgJ+KT2uf4QMiLZDhAXeMTy4r+A+v29VKCvApP/CQiegVMBASQrAo
-         AlpXJwDJbFzGbNstcUX23Uj9TmfO38FEGuE+Wwq8mLX3FAiBSYa5S5SgDsTgcFth/aDB
-         36hrov+qhZbXaW4gVuDSjW/Rtjin/Axcfu3ewZoxdn9+u3hhTBzsC1OsfSaPOpx78qP2
-         kHO7Ojx55S/yraklyKvvUQvFVawYjGKOXlCMz7ddTMNjfJYQPdjV4cd5uGMHjju2yyuw
-         MynFPfTk5cotuD8poe+S7DQu6ex6P5+Tl1GvjH4tXTRwAVDSq1ywL6wy0yQTTYZhLvCD
-         xLLg==
-X-Forwarded-Encrypted: i=1; AJvYcCW5eKdcH2g9ByTOh/x4ErGK8uWRaj2uxTaxH5jiNCjwxXDTG75YzdMVk/2j/ITYE50qBQiWK3xigoyPNCc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSkuG+7H6PhAusZQ5WT24p7mYp6rl72cZYlQ2wIyLDL4zqEl1L
-	oruXCf+UiwIswQUOoM6IHF3S4JVBV9NucAkxqFcquc819DifkcCpecddrpB+fFvl6Inx5vLkzG0
-	9ZZQM8skGQMtysa3xFt/FO8G1cht4wI+o+FzvEwM8EcRVl3cMPdzQH5g=
-X-Google-Smtp-Source: AGHT+IGOjltPBrz6CEsrXS0y1SoDlaDKKPoKA5PSdGZVz6ycSLBxXb8Nnn0qnpjr6zRJ+fl8sGud8IaiQJe6+LFu8+phyUzjp/zo
+	s=arc-20240116; t=1729818930; c=relaxed/simple;
+	bh=vCt26z8Q/nN2hXXXf/3s0lEZ6H6OLpIZ1+pICKG3AHM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BTxcopAMNTBFXqa3QW+xXFfTqODuUQEGykoxr2Zkwp2YBF5T4Gb9qj8H/CstMj7VxstMllg+khvOHf7qV53TZ0KWlFjr0YJJbBBScbv7G7c/32xbtPFj2T/4tTpxIVaL91NamllRq4H0KoCP3R/rBxaFq6B6NpYEcqpz1/FwMeA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PSn2yBtu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94518C4CEC7;
+	Fri, 25 Oct 2024 01:15:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729818930;
+	bh=vCt26z8Q/nN2hXXXf/3s0lEZ6H6OLpIZ1+pICKG3AHM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PSn2yBtugOSxaX05toB/b8OAh5VrwUNycHLUvvEz4qHqRZSCVYPypEiGTCLbH7qG/
+	 SXV3F0mCS6nuSk8hu3sF83c8oY/ze7ni1Khxz2sUffeCpyQtKjUrY5JK/u43wisVPl
+	 V90aRtm3YOCtWsTdxqWxXdYUcL5lB3YLYCdS0zBtVafo2j8KH2WM5t7EHfg3HZqaTa
+	 KItDCGuIldaKDsQLEhJbsOE2c55ZO4cygP7H3izitHqEO7W2zG5g2rEVCmTRs8KK6q
+	 jwwx3qa3lofx5rV7fwehxwD5r9UFvfxElbg9xpdTjGiLMKEiGtGZkCmwKBoVjBO+ky
+	 njjjYOyCkKhpg==
+Date: Thu, 24 Oct 2024 18:15:27 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Jan Hendrik Farr <kernel@jfarr.cc>
+Cc: Bill Wendling <morbo@google.com>, Kees Cook <kees@kernel.org>,
+	Thorsten Blum <thorsten.blum@toblux.com>, kent.overstreet@linux.dev,
+	regressions@lists.linux.dev, linux-bcachefs@vger.kernel.org,
+	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
+	ardb@kernel.org, ojeda@kernel.org
+Subject: Re: [REGRESSION][BISECTED] erroneous buffer overflow detected in
+ bch2_xattr_validate
+Message-ID: <20241025011527.GA740745@thelio-3990X>
+References: <Zv8RIs-htdc-PtXB@archlinux>
+ <202410040958.C19D3B9E48@keescook>
+ <ZwNb-_UPL9BPSg9N@archlinux>
+ <CAGG=3QUatjhoDHdkDtZ+ftz7JvMhvaQ9XkFyyZSt_95V_nSN8A@mail.gmail.com>
+ <CAGG=3QVcsuN0Sk79oZWjY_nNTo_XfGYsDT3gc7vEmLyS8OK3rA@mail.gmail.com>
+ <ZxB-uh1KzfD4ww2a@archlinux>
+ <20241017165522.GA370674@thelio-3990X>
+ <ZxWvcAPHPaRxp9UE@archlinux>
+ <20241021192557.GA2041610@thelio-3990X>
+ <ZxpIwkfg9_mHO3lq@archlinux>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1707:b0:3a0:915d:a4a7 with SMTP id
- e9e14a558f8ab-3a4d592fb67mr91969855ab.2.1729818845820; Thu, 24 Oct 2024
- 18:14:05 -0700 (PDT)
-Date: Thu, 24 Oct 2024 18:14:05 -0700
-In-Reply-To: <000000000000a519120616f973cb@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <671af0dd.050a0220.2eb763.00ce.GAE@google.com>
-Subject: Re: [syzbot] [fs] INFO: rcu detected stall in sys_mount (7)
-From: syzbot <syzbot+de026b20f56e1598e760@syzkaller.appspotmail.com>
-To: andrii@kernel.org, asmadeus@codewreck.org, ast@kernel.org, 
-	bpf@vger.kernel.org, bristot@kernel.org, daniel@iogearbox.net, 
-	eddyz87@gmail.com, ericvh@kernel.org, haoluo@google.com, 
-	john.fastabend@gmail.com, jolsa@kernel.org, juri.lelli@redhat.com, 
-	kpsingh@kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, lucho@ionkov.net, martin.lau@linux.dev, 
-	peterz@infradead.org, sdf@google.com, song@kernel.org, 
-	syzkaller-bugs@googlegroups.com, v9fs@lists.linux.dev, 
-	vineeth@bitbyteword.org, yonghong.song@linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZxpIwkfg9_mHO3lq@archlinux>
 
-syzbot suspects this issue was fixed by commit:
+Hi Jan,
 
-commit 5f6bd380c7bdbe10f7b4e8ddcceed60ce0714c6d
-Author: Peter Zijlstra <peterz@infradead.org>
-Date:   Mon May 27 12:06:55 2024 +0000
+On Thu, Oct 24, 2024 at 03:16:50PM +0200, Jan Hendrik Farr wrote:
+> Do you want me to add a Co-Developed-by tag for you? I feel bad just
+> taking it.
 
-    sched/rt: Remove default bandwidth control
+I would not be opposed to a Co-developed-by tag since it reflects the
+collaborative nature of the change but I do not need it just for the
+sake of credit because you have done a good amount of work analyzing and
+driving getting this problem resolved. I would argue I just
+"Kconfig-ified" your proposed change :) So you have my permission to add
+one but I will not be offended with just the Suggested-by!
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=126a5e40580000
-start commit:   3b68086599f8 Merge tag 'sched_urgent_for_v6.9_rc5' of git:..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f47e5e015c177e57
-dashboard link: https://syzkaller.appspot.com/bug?extid=de026b20f56e1598e760
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1775971b180000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1290b320980000
+> For reference here is the current state of the patch, still waiting on
+> the merge into clang 19.1.x:
+> 
+> It needs three prerequisite commits on top of 6.6.x, but unfortunately
+> still requires a small amount of manual conflict resolution, but it's
+> easy enough
+> 
+> 1. include/linux/compiler_types.h:
+> 	use the incoming change until before (but not including) the
+> 	"Apply __counted_by() when the Endianness matches to increase test coverage."
+> 	comment)
+> 
+> 2. lib/overflow_kunit.c: 
+> 	HEAD is correct
 
-If the result looks correct, please mark the issue as fixed by replying with:
+Good to know. If they cannot resolve the conflicts, we'll get notified
+that it has failed to apply so you (or one of us) can send a massaged
+backport as a reply.
 
-#syz fix: sched/rt: Remove default bandwidth control
+> From 6c667a43af0c57cd3f260fd75d5c4a198ba94220 Mon Sep 17 00:00:00 2001
+> From: Jan Hendrik Farr <kernel@jfarr.cc>
+> Date: Thu, 17 Oct 2024 04:39:40 +0200
+> Subject: [PATCH] Compiler Attributes: disable __counted_by for clang < 19.1.3
+> 
+> This patch disables __counted_by for clang versions < 19.1.3 because
+> of the two issues listed below. It does this by introducing
+> CONFIG_CC_HAS_COUNTED_BY.
+> 
+> 1. clang < 19.1.2 has a bug that can lead to __bdos returning 0:
+> https://github.com/llvm/llvm-project/pull/110497
+> 
+> 2. clang < 19.1.3 has a bug that can lead to __bdos being off by 4:
+> https://github.com/llvm/llvm-project/pull/112636
+> 
+> Fixes: c8248faf3ca2 ("Compiler Attributes: counted_by: Adjust name and identifier expansion")
+> Cc: stable@vger.kernel.org # 6.6.x: 16c31dd7fdf6: Compiler Attributes: counted_by: bump min gcc version
+> Cc: stable@vger.kernel.org # 6.6.x: 2993eb7a8d34: Compiler Attributes: counted_by: fixup clang URL
+> Cc: stable@vger.kernel.org # 6.6.x: 231dc3f0c936: lkdtm/bugs: Improve warning message for compilers without counted_by support
+> Cc: stable@vger.kernel.org # 6.6.x
+> Reported-by: Nathan Chancellor <nathan@kernel.org>
+> Closes: https://lore.kernel.org/all/20240913164630.GA4091534@thelio-3990X/
+> Reported-by: kernel test robot <oliver.sang@intel.com>
+> Closes: https://lore.kernel.org/oe-lkp/202409260949.a1254989-oliver.sang@intel.com
+> Link: https://lore.kernel.org/all/Zw8iawAF5W2uzGuh@archlinux/T/#m204c09f63c076586a02d194b87dffc7e81b8de7b
+> Signed-off-by: Jan Hendrik Farr <kernel@jfarr.cc>
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+If you do not add the Co-developed-by, feel free to carry forward
+
+Reviewed-by: Nathan Chancellor <nathan@kernel.org>
+Tested-by: Nathan Chancellor <nathan@kernel.org>
+
+on the official submission.
+
+> ---
+>  drivers/misc/lkdtm/bugs.c           |  2 +-
+>  include/linux/compiler_attributes.h | 13 -------------
+>  include/linux/compiler_types.h      | 19 +++++++++++++++++++
+>  init/Kconfig                        |  8 ++++++++
+>  lib/overflow_kunit.c                |  2 +-
+>  5 files changed, 29 insertions(+), 15 deletions(-)
+> 
+> diff --git a/drivers/misc/lkdtm/bugs.c b/drivers/misc/lkdtm/bugs.c
+> index 62ba01525479..376047beea3d 100644
+> --- a/drivers/misc/lkdtm/bugs.c
+> +++ b/drivers/misc/lkdtm/bugs.c
+> @@ -445,7 +445,7 @@ static void lkdtm_FAM_BOUNDS(void)
+>  
+>  	pr_err("FAIL: survived access of invalid flexible array member index!\n");
+>  
+> -	if (!__has_attribute(__counted_by__))
+> +	if (!IS_ENABLED(CONFIG_CC_HAS_COUNTED_BY))
+>  		pr_warn("This is expected since this %s was built with a compiler that does not support __counted_by\n",
+>  			lkdtm_kernel_info);
+>  	else if (IS_ENABLED(CONFIG_UBSAN_BOUNDS))
+> diff --git a/include/linux/compiler_attributes.h b/include/linux/compiler_attributes.h
+> index 32284cd26d52..c16d4199bf92 100644
+> --- a/include/linux/compiler_attributes.h
+> +++ b/include/linux/compiler_attributes.h
+> @@ -94,19 +94,6 @@
+>  # define __copy(symbol)
+>  #endif
+>  
+> -/*
+> - * Optional: only supported since gcc >= 15
+> - * Optional: only supported since clang >= 18
+> - *
+> - *   gcc: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=108896
+> - * clang: https://github.com/llvm/llvm-project/pull/76348
+> - */
+> -#if __has_attribute(__counted_by__)
+> -# define __counted_by(member)		__attribute__((__counted_by__(member)))
+> -#else
+> -# define __counted_by(member)
+> -#endif
+> -
+>  /*
+>   * Optional: not supported by gcc
+>   * Optional: only supported since clang >= 14.0
+> diff --git a/include/linux/compiler_types.h b/include/linux/compiler_types.h
+> index 1a957ea2f4fe..639be0f30b45 100644
+> --- a/include/linux/compiler_types.h
+> +++ b/include/linux/compiler_types.h
+> @@ -323,6 +323,25 @@ struct ftrace_likely_data {
+>  #define __no_sanitize_or_inline __always_inline
+>  #endif
+>  
+> +/*
+> + * Optional: only supported since gcc >= 15
+> + * Optional: only supported since clang >= 18
+> + *
+> + *   gcc: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=108896
+> + * clang: https://github.com/llvm/llvm-project/pull/76348
+> + *
+> + * __bdos on clang < 19.1.2 can erroneously return 0:
+> + * https://github.com/llvm/llvm-project/pull/110497
+> + *
+> + * __bdos on clang < 19.1.3 can be off by 4:
+> + * https://github.com/llvm/llvm-project/pull/112636
+> + */
+> +#ifdef CONFIG_CC_HAS_COUNTED_BY
+> +# define __counted_by(member)		__attribute__((__counted_by__(member)))
+> +#else
+> +# define __counted_by(member)
+> +#endif
+> +
+>  /*
+>   * Apply __counted_by() when the Endianness matches to increase test coverage.
+>   */
+> diff --git a/init/Kconfig b/init/Kconfig
+> index 530a382ee0fe..5f1fe3583f20 100644
+> --- a/init/Kconfig
+> +++ b/init/Kconfig
+> @@ -116,6 +116,14 @@ config CC_HAS_ASM_INLINE
+>  config CC_HAS_NO_PROFILE_FN_ATTR
+>  	def_bool $(success,echo '__attribute__((no_profile_instrument_function)) int x();' | $(CC) -x c - -c -o /dev/null -Werror)
+>  
+> +# clang needs to be at least 19.1.3 to avoid __bdos miscalculations
+> +# https://github.com/llvm/llvm-project/pull/110497
+> +# https://github.com/llvm/llvm-project/pull/112636
+> +# TODO: when gcc 15 is released remove the build test and add gcc version check
+> +config CC_HAS_COUNTED_BY
+> +	def_bool $(success,echo 'struct flex { int count; int array[] __attribute__((__counted_by__(count))); };' | $(CC) $(CLANG_FLAGS) -x c - -c -o /dev/null -Werror)
+> +	depends on !(CC_IS_CLANG && CLANG_VERSION < 190103)
+> +
+>  config PAHOLE_VERSION
+>  	int
+>  	default $(shell,$(srctree)/scripts/pahole-version.sh $(PAHOLE))
+> diff --git a/lib/overflow_kunit.c b/lib/overflow_kunit.c
+> index 2abc78367dd1..5222c6393f11 100644
+> --- a/lib/overflow_kunit.c
+> +++ b/lib/overflow_kunit.c
+> @@ -1187,7 +1187,7 @@ static void DEFINE_FLEX_test(struct kunit *test)
+>  {
+>  	/* Using _RAW_ on a __counted_by struct will initialize "counter" to zero */
+>  	DEFINE_RAW_FLEX(struct foo, two_but_zero, array, 2);
+> -#if __has_attribute(__counted_by__)
+> +#ifdef CONFIG_CC_HAS_COUNTED_BY
+>  	int expected_raw_size = sizeof(struct foo);
+>  #else
+>  	int expected_raw_size = sizeof(struct foo) + 2 * sizeof(s16);
+> -- 
+> 2.47.0
 
