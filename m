@@ -1,95 +1,102 @@
-Return-Path: <linux-kernel+bounces-381458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86D129AFF80
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 12:05:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38D9D9AFF81
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 12:06:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E746CB258A4
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 10:05:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5B531F21A75
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 10:06:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80EC21D9669;
-	Fri, 25 Oct 2024 10:05:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E798F1D8E1A;
+	Fri, 25 Oct 2024 10:05:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="saWduF+r"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YbeKOElD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2592218A93F;
-	Fri, 25 Oct 2024 10:05:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AF3C1C0DF0;
+	Fri, 25 Oct 2024 10:05:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729850716; cv=none; b=eflID4UzrmyJFap/zI218pok7pzFMhE2lcgiGRLud/kmMNcTOo2Nn1m5T71QT5Z6DRACGEWR/XhZarceXgtn7vTf6nw1ak+MifSovUGyY9dYGAvyfyrcnI8isYlDs55h7sMUEACxKNfd9ZJH0WA9ZyqV2co+rrPv508OOAjuBxo=
+	t=1729850755; cv=none; b=QF5dQKOfczkVzwLU9/LZfMmXQ6vmZ32EbiMadKs062oByhYYeep/8Jczk5cLdzwZWynXEdswLCAUS7vxACdBM+dz0qqObnEESeJi+KVBIouSOqiUDkSUVJVld4jSKjz77AgVe0bIWf4yynt1IO9Hl6eY+FQZSCFlxTLTbivYKBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729850716; c=relaxed/simple;
-	bh=5Rmgse8OJ9Svz+cStz1SqIUagwANKfQx5Aew6921C2A=;
+	s=arc-20240116; t=1729850755; c=relaxed/simple;
+	bh=d80JKrTzHZwxS7GVDWBKiR0+iPVCU3MTwX4pzo7j3Q4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DOflMscL00MC4JzW8FivfO4KDEg3I5ow65Slax+CvBtKS9cpMhAwDLvpAx3VXWXqXR/qGoOKVjLd3+6uJCiMVz3nIt4ZNPMLmVd0pbr4HKmcGtkS2/AdHU5SCPc6fmzyG/FkSE6SB16FVcGnkAW/r3irR88SHwYxttTyrRzIx+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=saWduF+r; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=F5eurqf5UlrsNfBs8L/ryTJL5XF2hPl7LkVdrOAI/+U=; b=saWduF+rw4whm/ncm4eoOE7X36
-	LwL51Pl25i1Af0VWtOFpsE+UqNFFysEUkFO0fyrA7L8iSBrZNsVlopBQir/a65KW/pOHW3Wr4vWHd
-	43UIwjy7EvKtPfmSaSA7r2t29fc+qgutMCAHVKbzLfFMAkmfiYCarZuNlwpY71am4WC5LOx+1ypDf
-	DSF2Mw+SUVjACQNeG4kora21fhn1A3CWsDaKuqMR61/BAV2VB/DTwfyNSkoNmuY13/rCn1f+S94lA
-	uZKB9o8cWK4lFrtxRrQcx21YzSzLbMgx9VsPly+60eVmP+IMDobZhv5Cn/cB3Lbe/LomzRgggqTIT
-	dU++cFuA==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1t4HBw-000000055hT-1wb0;
-	Fri, 25 Oct 2024 10:05:13 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 7966430083E; Fri, 25 Oct 2024 12:05:12 +0200 (CEST)
-Date: Fri, 25 Oct 2024 12:05:12 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: kernel test robot <oliver.sang@intel.com>
-Cc: oe-lkp@lists.linux.dev, lkp@intel.com, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [peterz-queue:perf/pmu-unregister] [perf] 24b8359383:
- WARNING:possible_circular_locking_dependency_detected
-Message-ID: <20241025100512.GJ14555@noisy.programming.kicks-ass.net>
-References: <202410251647.21bf487b-lkp@intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=bhdzvPaTrGGobHJx9V3hoxE+KbGi07tHcS+dJHSuz7pawzFjpEKHMYbGbkvyeKUEB9170nOn/x4hf+JSGVRMjawBbozGtyvxLYfi60BTgHR4+CtjeC/6qCGOd4XvQ2TqY1J+s/TdZzvQe0kO54WP6I3GmVwL1tVRS+pXihxi1XQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YbeKOElD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CF13C4CEC3;
+	Fri, 25 Oct 2024 10:05:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729850754;
+	bh=d80JKrTzHZwxS7GVDWBKiR0+iPVCU3MTwX4pzo7j3Q4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YbeKOElDGrzQwUM9UVmzs4FTlB9A0/BYnlt1Kg2q3SwmDNNKLtLP2xWkROR5qMeWB
+	 mxSqBKRtSWalfWKej0GSOdeoxwMD+nmr/L3OKNoP+ICLc2KEcf3kKXFhs/2Q1uDJAj
+	 /W2bCFozALgudtfsbx/7fOxX3AE+SDLwt3s89zL8XtGigGq0xgmoLUD04hfqVVwNNt
+	 4yoBYQk6T56I085+aEglB8syzhbUGl1tqaOQK49u/xjp1E8PW2xQq/UPKxLOVRDOn7
+	 euLfbxTPTf4umhWhUh2KykEc2bqaBYqHlGxnp1vkgeOMco/WgpBPkMbW3OZyyEFLTu
+	 Rc/QNVU2Ysr7A==
+Date: Fri, 25 Oct 2024 11:05:50 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Li Zhijian <lizhijian@fujitsu.com>
+Cc: linux-kselftest@vger.kernel.org, shuah@kernel.org,
+	linux-kernel@vger.kernel.org, Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>, linux-sound@vger.kernel.org
+Subject: Re: [PATCH for-next 1/7] selftests/alsa: Add a few missing gitignore
+ files
+Message-ID: <831f5cfd-2a4a-4b48-9ce0-55215cf2c600@sirena.org.uk>
+References: <20241025014010.6533-1-lizhijian@fujitsu.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ZPDZZejE6/rt7ECm"
+Content-Disposition: inline
+In-Reply-To: <20241025014010.6533-1-lizhijian@fujitsu.com>
+X-Cookie: Often things ARE as bad as they seem!
+
+
+--ZPDZZejE6/rt7ECm
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <202410251647.21bf487b-lkp@intel.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 25, 2024 at 04:37:22PM +0800, kernel test robot wrote:
+On Fri, Oct 25, 2024 at 09:40:04AM +0800, Li Zhijian wrote:
 
-> [   90.688729][  T589] WARNING: possible circular locking dependency detected
-> [   90.689307][  T589] 6.12.0-rc2-00016-g24b8359383ae #1 Tainted: G                T
-> [   90.689852][  T589] ------------------------------------------------------
-> [   90.690348][  T589] trinity-c2/589 is trying to acquire lock:
-> [ 90.690768][ T589] ee61f668 (&ctx->mutex){+.+.}-{3:3}, at: perf_event_ctx_lock_nested (kernel/events/core.c:1318) 
-> [   90.691425][  T589]
-> [   90.691425][  T589] but task is already holding lock:
-> [ 90.691944][ T589] ed2041d4 (&mm->mmap_lock){++++}-{3:3}, at: vm_mmap_pgoff (arch/x86/include/asm/jump_label.h:41 include/linux/jump_label.h:207 include/linux/mmap_lock.h:35 include/linux/mmap_lock.h:123 mm/util.c:586) 
-> [   90.692525][  T589]
-> [   90.692525][  T589] which lock already depends on the new lock.
-> [   90.692525][  T589]
-> [   90.693271][  T589]
-> [   90.693271][  T589] the existing dependency chain (in reverse order) is:
-> [   90.693907][  T589]
-> [   90.693907][  T589] -> #1 (&mm->mmap_lock){++++}-{3:3}:
-> [   90.697787][  T589] -> #0 (&ctx->mutex){+.+.}-{3:3}:
+> index 12dc3fcd3456..1407fd24a97b 100644
+> --- a/tools/testing/selftests/alsa/.gitignore
+> +++ b/tools/testing/selftests/alsa/.gitignore
+> @@ -1,3 +1,5 @@
+>  mixer-test
+>  pcm-test
+>  test-pcmtest-driver
+> +global-timer
+> +utimer-test
+> --=20
 
-> [   90.707850][  T589] 1 lock held by trinity-c2/589:
-> [ 90.708198][ T589] #0: ed2041d4 (&mm->mmap_lock){++++}-{3:3}, at: vm_mmap_pgoff (arch/x86/include/asm/jump_label.h:41 include/linux/jump_label.h:207 include/linux/mmap_lock.h:35 include/linux/mmap_lock.h:123 mm/util.c:586) 
-> [   90.708811][  T589]
+Please keep the file sorted, this avoids spurious conflicts in future.
 
-Damn, I'm an idiot. But also, how did I not manage to trigger this
-myself...
+--ZPDZZejE6/rt7ECm
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Oh well, something to do over the weekend I suppose :/
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcbbW0ACgkQJNaLcl1U
+h9DLngf9HZN3G/r08l2XIWByPI07w1WsERP+h6ZC6ozmgsOl+NOMfYEArrLAKTTw
+Q1Y3hA2E/Iga3ATg1w6z/2ycTGSS0YYnO4A2pl2Z6IMopFzho/bQoZQ5OTZ2/ITH
+n9/ENmyjP8xF2Xz2iYsWVWCDEZijX1ZW541cSHD6QF7XJVAZjAGt3gNPPi7e7AJx
+79bZJihkwKdWIlpZuJT7aNzWOydA6cIoj1X1AoM3tWo+Qvt4LRciJ/Cx78oZg+XA
+KRfjUYceQbe5e04ZvLNHu+zbv72i2ogzVZJOOnn/001NF8aFNP4mYHHwWVgqYyOV
+VbDxvShANHI/UsPo7QJl4KRZ9o9NBA==
+=gRPk
+-----END PGP SIGNATURE-----
+
+--ZPDZZejE6/rt7ECm--
 
