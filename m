@@ -1,101 +1,160 @@
-Return-Path: <linux-kernel+bounces-382043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20E2C9B083A
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:29:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14C3A9B0841
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:29:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA5DA2844B9
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:28:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FB791F22318
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:29:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B22CB1494CC;
-	Fri, 25 Oct 2024 15:28:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B24D521A4A1;
+	Fri, 25 Oct 2024 15:29:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yjAbxMFe"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="NRaGT+dV"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AE6C43AA1
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 15:28:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E33EB13AF2
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 15:29:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729870123; cv=none; b=mKUcTMK9ZhwwPHpQMpe6PibgdyzZjuFFjCjv8bZKPhR7cANeMrtxiEF+y4WJ9GA56xNywne8PhD5LcjRxmWuNj5fsDhQhtUmU7mZxFC+Yfq6lwW+3ykAZ08wbItWZezBjCpr+vx+kRrymC0GliV2prf0yK5JkZU91ABwT/0pKck=
+	t=1729870178; cv=none; b=WHQ6YGDhLp6eLhGYI3rh2B/hN66cNBm1qVyia2tLnyQ83e2P8Pz4VeaT8Pz04xUBQt30QFJOjFm5rOP44jfeSp9TLKYdbtZFs70RsC80IG2s9QrjdZP3+Y9nLiVEYoyQCDXO80nJjp5MHf6a4xVVKjKkDUkJ3fH1GgEktvVU60Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729870123; c=relaxed/simple;
-	bh=TPLNGREibIadmUC7AbHzKfAjrIRt1A7o5p8SIlwyePY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=o5yOVZklMp4PBi2/6Bq6oQOzactDOjTRiC+GhJAmiEle46/NYqecHoATlt+JhUdibbgEJfVHucsBRt5myjv+Ijj3iebiaZnycCq+nnm4a+BzPRoC4bOaPnEBXlYz2qwx27HrfeSNsLF9aVJkpQjvXf3pMm+hsTbgsEViGgRBY1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yjAbxMFe; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4315baec69eso21797525e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 08:28:40 -0700 (PDT)
+	s=arc-20240116; t=1729870178; c=relaxed/simple;
+	bh=mfVU3o+HrP2O0BnPv1WlOSU0JlgkC5nDnn2XkoVB8u0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gS3iJrjWbmLZmAR33T9t/+AcFpTtfqRYGzJGrpjFpK4JXrRiIRVyMOe1IZbhMaHkx1PKDc9/LLD2FrPvsEegNr5Buoqj7MpY34lhcydeyKSZX2TO177INItTGSeuujmeBQ/QVMGvNkVMYhHILgmiKyJqxppnWOH48k8OgNFzvP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=NRaGT+dV; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-539e59dadebso2889504e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 08:29:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729870119; x=1730474919; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=gwi5fJapzFJHJ1EZ8CDQGKguKx6U+UJZ6uS+K0pO9KY=;
-        b=yjAbxMFezZl/o2MvLsFWhQQNJ25Aeml01DI8EG+y1NKnqAYdzL6HhoqVzW6JCKrk5x
-         NRDGQcPfrQcNydFXcT19eBvktUhHyzHbc2NWEuKcTdqa0xum8rVkrzFYXFezXM7LibIQ
-         GVrBnE03jchettE/syz1rn1cIJAQtVuzvvZ2Eu+BjbTZqodeRndU7kUlI5890SLILHfV
-         NYEsai3ADKKArLp8KbmsIXwepQGnwqTk/nIGcIlfh1nsNdS5fDEdJIWBVDX6JZYcXCIJ
-         Jsvv5juXw212RRV+uFpolziPCvQpnl46GFSIvAkPuxKyTURgEAtUE/omjfIc4z4gf90G
-         f8Ww==
+        d=chromium.org; s=google; t=1729870172; x=1730474972; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XGXZTlcKhnhORAVfmpbxlvJi6p/7XxY3P3Hx5lHoMU8=;
+        b=NRaGT+dVu4l7ByF1S2KZFQecyLR4ZZfaAY1HsDB7y8Fgy4GJZRhDPMjmPe6AJSvFEB
+         6Qkl/3xrOW/B+vHVecgEkf5DbAq3pZVzQgF2ONF1iEtF9Ja6gq7YSMIMmmzZ34AwPHxa
+         KXzStMHluzUbeBjrwRxJy2hiNcwUW7UyCYFhM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729870119; x=1730474919;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gwi5fJapzFJHJ1EZ8CDQGKguKx6U+UJZ6uS+K0pO9KY=;
-        b=m9Xtu6oKPElLD8tFfhV3D1AfUlBga7ETmR8g8YGwTqtKJ/DcMAzfPJ+imeUYYTaQ2E
-         81oz3ckz2jAaMeIJUxl01YW7hmOTgF4My/Q9GWSQeT0F7wpGX+jUFXMje7RtbD5zMiPJ
-         Qgb4rbgJpwOTDXsXxBV35Doa0odPBl8NMDebodAP+v9vDDqDpzclL3IJBtApsPH3cITD
-         F06T3gTeKdoyDOuw18LPeQiuNIiotEmfIq/7uFXekYQZfYYExuyB3dIJ2Kb9Ry53vDun
-         ZaEIgrem6HvyYQamB9f3Q+KR+zMvVFE/v3zxk1yv2mhbsiBO2ouFGfX0GevSNB6TFVMM
-         xODw==
-X-Forwarded-Encrypted: i=1; AJvYcCVIuUR1rCR+NP6s9sA4fNnDAteAT0+SglMP4s41sk10vz3EA4EFwKvpvB/O054nAAbyNTowJpojeYR38Ys=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWngXZg1cq6lseyraFI5ATxefFfEo3XKmgyJfqsaFaJ+3Rm+Gg
-	7u/J6b2tqfusRCTkBCwqH+/+ZWicpa70ygTOY4iCijjQFmAgtf1JwJ76fJEGYhw=
-X-Google-Smtp-Source: AGHT+IHHiVTelEepIRcreU7kj3W5ReMmTDDEE1z2hoxrf5ppaSHlQGvr05Io956A+fDSJB3J67XptQ==
-X-Received: by 2002:a05:600c:584b:b0:431:9397:9ace with SMTP id 5b1f17b1804b1-43193979de0mr24191885e9.10.1729870119415;
-        Fri, 25 Oct 2024 08:28:39 -0700 (PDT)
-Received: from [192.168.0.40] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b6f838sm1788206f8f.83.2024.10.25.08.28.38
+        d=1e100.net; s=20230601; t=1729870172; x=1730474972;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XGXZTlcKhnhORAVfmpbxlvJi6p/7XxY3P3Hx5lHoMU8=;
+        b=ZEWwVzlddRJ3xvdokOmONbn8c6xXrmW93H4Fo4ZbLsoR4cXy7btSE6t8qqRZWekjk5
+         5DXJcwvNSJxFVW0iYw3iT9OsCxK3tkq+XwNEGnLMrL9zqDCcpVSBadxbymMB9px4U1+X
+         Huc7IhjcKT5JKbHU0ijWPtleXpUim8ewb81/WHzqYSDjWb8PvujnP2yBe9G8UpUseDAE
+         eSIYHqJcpRG0+mWsiiJfnHv9W/Kk+4YHGiMxckPImRmtCsCmMJOhQMRJgI1de3eP9x1B
+         0sppuxKi0YSG8ks3arFitCpmIabnGyQZ7b0cO9V9j8iXAO6gbeLKRWFWNqNpcpkcH2QL
+         liDg==
+X-Forwarded-Encrypted: i=1; AJvYcCUHdWDuRIB/Lm1Pz69xZvJl79HqITxIwc/S1HElWVtyBYTN3aMiIJZjpc5vbzeY+fS6Ho4mHX8xjrXV4Y0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTS/G2PgRV/8Yh7g2pw7kd49L9Hv547KpnqnQ254COjRiAu55g
+	nAG/aHuRRoiLky/quM13psop5h2ln74kbu4hAB2mfKgBROOE8FAw8YGxWDKPAq055KYkM164YkD
+	1997M
+X-Google-Smtp-Source: AGHT+IFV2oUsW0F4wv9Zg82dZ7rj5cBE5B9dPN3unHVtqn/nd1Eoo444CXuaNgSt3yW7YGoSttALrg==
+X-Received: by 2002:a05:6512:1086:b0:539:e776:71f7 with SMTP id 2adb3069b0e04-53b23e85758mr3898149e87.37.1729870172152;
+        Fri, 25 Oct 2024 08:29:32 -0700 (PDT)
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com. [209.85.208.182])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53b2e1244adsm215712e87.69.2024.10.25.08.29.30
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 25 Oct 2024 08:28:39 -0700 (PDT)
-Message-ID: <ec78e336-b0c5-4d92-8716-46e435009495@linaro.org>
-Date: Fri, 25 Oct 2024 16:28:38 +0100
+        Fri, 25 Oct 2024 08:29:31 -0700 (PDT)
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2fb5be4381dso24251451fa.2
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 08:29:30 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUQLI7SFvQ5eZA8ZRBnoljNCrLaCxJIpOxY3MXEO7J3OztOeObbcPr3NECGga++PxRmWYE3ZOcO9QC/fow=@vger.kernel.org
+X-Received: by 2002:a2e:6112:0:b0:2fb:5ac6:90ef with SMTP id
+ 38308e7fff4ca-2fca81d665cmr29753751fa.11.1729870170017; Fri, 25 Oct 2024
+ 08:29:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv5 3/3] media: venus: factor out inst destruction routine
-To: Sergey Senozhatsky <senozhatsky@chromium.org>,
- Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
- Vikash Garodia <quic_vgarodia@quicinc.com>
-Cc: Dikshita Agarwal <quic_dikshita@quicinc.com>,
- linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241025131200.747889-1-senozhatsky@chromium.org>
- <20241025131200.747889-4-senozhatsky@chromium.org>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <20241025131200.747889-4-senozhatsky@chromium.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20241025114642.40793-2-charles.goodix@gmail.com> <3ypn62dsgarvmxkmdglugcinxmvpmhdqub2zvkygaonn54odf6@amfgijfcd3l3>
+In-Reply-To: <3ypn62dsgarvmxkmdglugcinxmvpmhdqub2zvkygaonn54odf6@amfgijfcd3l3>
+From: Doug Anderson <dianders@chromium.org>
+Date: Fri, 25 Oct 2024 08:29:13 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=X1F3QC=eSXcCn-78iQBzHMzT3z9Sis3yXKW_Bzun3+EA@mail.gmail.com>
+Message-ID: <CAD=FV=X1F3QC=eSXcCn-78iQBzHMzT3z9Sis3yXKW_Bzun3+EA@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: input: Goodix SPI HID Touchscreen
+To: Charles Wang <charles.goodix@gmail.com>
+Cc: dmitry.torokhov@gmail.com, hbarnor@chromium.org, 
+	conor.dooley@microchip.com, jikos@kernel.org, bentiss@kernel.org, 
+	linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 25/10/2024 14:11, Sergey Senozhatsky wrote:
-> Factor out common instance destruction code into
-> a common function.
-> 
-> Suggested-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
-> ---
+Charles,
 
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+On Fri, Oct 25, 2024 at 5:03=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.or=
+g> wrote:
+>
+> > +properties:
+> > +  compatible:
+> > +    enum:
+> > +      - goodix,gt7986u-spi
+>
+> Compatible is already documented and nothing here explains why we should
+> spi variant.
+>
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  interrupts:
+> > +    maxItems: 1
+> > +
+> > +  reset-gpios:
+> > +    maxItems: 1
+> > +
+> > +  goodix,hid-report-addr:
+>
+> I do not see this patch addressing previous review. Sending something
+> like this as v1 after long discussions also does not help.
+
+Krzysztof is right that it's better to wait until we get consensus on
+the previous discussion before sending a new patch. I know you were
+just trying to help move things forward, but because of the way the
+email workflow works, sending a new version tends to fork the
+discussion into two threads and adds confusion.
+
+I know Krzysztof and Rob have been silent during our recent
+discussion, but it's also a long discussion. I've been assuming that
+they will take some time to digest and reply in a little bit. If they
+didn't, IMO it would have been reasonable to explicitly ask them for
+feedback in the other thread after giving a bit of time.
+
+As Krzysztof mentioned, if/when you send the "goodix,gt7986u-spi"
+bindings again you'd want to:
+
+* Make sure it's marked as v2.
+
+* Make sure any previous review feedback has been addressed. For
+instance, I think Krzysztof requested that you _remove_ the
+goodix,hid-report-addr from the bindings and hardcode this into the
+driver because every GT7986U will have the same hid-report-addr. I
+know that kinda got lost in the discussion but it still needs to be
+addressed or at least responded to. I guess there was at least one
+other comment about "additionalProperties" that you should look for
+and address.
+
+* Make sure there's some type of version history after-the-cut. Tools
+like "patman" and "b4" can help with this.
+
+* The commit message should proactively address concerns that came up
+during the review process. In this case if we go with
+"goodix,gt7986u-spi" the commit message would want to say something
+explaining _why_ the "-spi" suffix is appropriate here even though
+normally it wouldn't be. That will help anyone digging through
+history.
+
+-Doug
 
