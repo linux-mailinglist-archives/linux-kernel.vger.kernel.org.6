@@ -1,194 +1,140 @@
-Return-Path: <linux-kernel+bounces-381603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E1F09B0173
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 13:38:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 549CF9B017B
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 13:40:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 898C11F22EEA
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 11:38:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A4D71C21DFF
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 11:40:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 366B720101A;
-	Fri, 25 Oct 2024 11:37:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA76D200BA4;
+	Fri, 25 Oct 2024 11:40:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Qo853Jkt"
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sl3O2XqW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ABF41FDF8B
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 11:37:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26DEA1C9B62;
+	Fri, 25 Oct 2024 11:40:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729856277; cv=none; b=sTtHQVqEUmk8mA9Oecvmh/uXTKorzS1mxOPxJl9cqEtu5WKeDEsPQ6ByPMzSoscMui2i23kI7wBpkDtssstg2Uiji8+6XiUsa2Xb/RH4NwFOMKQQm5R+GhqI6DmvAeWa2g4tiaz8M26JmJSAh+nOjenCSaJ1wYmifD7Vi4W70Ms=
+	t=1729856421; cv=none; b=GpR4I7v83z/JwwSAN4iAIGVDPKdpEd+/hv7yDxBJhLom2XCO7Cu6Ub+XEX3p1z4zP7IJUfXUG81qSydzGezDTVItrAoPZkml/sL3XE0DM8fuptTlnewWYGiFtX3ljdrOXKnmieY8NGENPeSaR03vU0XOot72tauWzZPpjq2lT0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729856277; c=relaxed/simple;
-	bh=JBPlVg6/v6xkLhr502ea/jDXXq8F1N17DPmNfwDEhpo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pPdyBaFaMVzm0lsDzK8LLKeqCA5mJSWE3b6OF4UPl22rMnv8R6W+5Me933zX6/mWhsl0ix9mCb5bgmoEBlC8AQwBlaUy0qA0PTliyGsUUPLOlcIYH/Pe13gZckZ85j6YZa2PVdBxsl7gLcKHJjAjLjvx1huti/gwZ2L447Dsn+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Qo853Jkt; arc=none smtp.client-ip=209.85.128.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-6e5b7cd1ef5so19099867b3.1
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 04:37:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729856274; x=1730461074; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Q0pj9tzR92Ou3K3UATrngQxHQphalhdLPCHq3UGtO/E=;
-        b=Qo853Jkth6Akaaga1PorJMmHjiMhl/g6rThlGOLI4mF3mRacS8itmWlCGweX5Uid58
-         4X75YTCyKxcimI2WUdVv+OpeFySkqf2ImkICbFnGA/EbC2B+mPe/OxiEZ+q9sZaEVD5Q
-         4vQCqoRZCtxuiAaiMownF1vbofYJnlNNhkmofQChfLw66+HdEh47MmIObsNUyacNLQPF
-         vOooRV54V3ARgVvjs/ibK48Ag7JWS+uTZv7G2+OapNFZv0RXA41DyLYN+fgjlBzUf3rt
-         izl3+N6PVs/0FQzBMAGB28sl4hiYEQWtEBu7V0Dkbqxtz35Avolpi+yB2gYTa4xDLUn+
-         UAJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729856274; x=1730461074;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Q0pj9tzR92Ou3K3UATrngQxHQphalhdLPCHq3UGtO/E=;
-        b=aweMN753NZOO0cMYYEThFbPXzFOfBZOlX9DT58+7k5f5Stf3CPBaq4amOWo76fMwFo
-         FHnwAcorJvRDRSx/Ia369jJl1S5a+az3IVwz0U+k2qaXCdGuXHtVxHQtcnW790cqQxGe
-         f1o3so2E0rrubBnulZM5GtIPToUQDkxfopc9X2Hh2P4K89xHAnrwvrf5IQ9cLr3RiPPz
-         /1h6NtaBaf0PumqIt2NOvLt/W4Ov+aCGYVI+j9FxVIh2J/9iAS7BnKOYz52soJIGl7YE
-         tS5/GblyvaG0GH8W1ilqKVpo/2UPGgfblNZ8BZeyc0hnyRl8vMBEErmIGIRUMXY9x3a2
-         yaHw==
-X-Forwarded-Encrypted: i=1; AJvYcCXFZlV3xoL3A2HMs18c5uljJbU1ELfWZnX8znn318LbNbHKA4b82XWvQoNZTqlhJr4Ws2iwIokSGF0Qs8w=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4o9v6DANHYf5Ah/koX0nXnas8RodRfq6qP4SUGmv5hgmvdplD
-	JIn4UBLx/tCab+phnf+db7pzEJi002Vmwix9f4V7OL9o7Bx5lEPEYGUvOMzxr/sFnfKP9zlw4K9
-	xLRiHgi48WaafyghitaX3F5oP1Q9JX9SlmFgFIQ==
-X-Google-Smtp-Source: AGHT+IFD7BTwdcuI9robY2MpZ2IUhz+lf5Zd1wfHJA/mGIwmXrFvkZLAnH4rQ6mJPWdfJLOdnu4/9FdSj1zt0edPMB0=
-X-Received: by 2002:a05:690c:4b0a:b0:6e7:d974:8d05 with SMTP id
- 00721157ae682-6e858152039mr66322057b3.4.1729856274035; Fri, 25 Oct 2024
- 04:37:54 -0700 (PDT)
+	s=arc-20240116; t=1729856421; c=relaxed/simple;
+	bh=ofSPYgFrnu8JAd+kBqIWgAgIW4Xr/a4YZqs3eSHQFog=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=TsAXkIxb0tmXC8YZ2pgyjRQr5L2zSH+aZUQ+VauOchR7znaavNwXL5XYQQkdLBrn4Y70HU1nsha86ZEw9SwZayeCKxWiD7C7FGHWN2umuLu/r/vO2T94H8CezEh93iuIqHOuRq2VqgwxGv7ovnRosAYXycsPD6MJt1dgO9C1su0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sl3O2XqW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EDEAC4CEC3;
+	Fri, 25 Oct 2024 11:40:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729856420;
+	bh=ofSPYgFrnu8JAd+kBqIWgAgIW4Xr/a4YZqs3eSHQFog=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=Sl3O2XqWZDBw8pmzVtZwnlZBqE8CmJK8JRlxrWtudGBdlvwZ2sKJdvVQ2aKboogSe
+	 yzL8RDCiLjk4k07dUK2ntF7ERHNQs6v7JH9pHtSJTFErM5c8MjEF3Q5JCHO11aK8kV
+	 wFS4Gwl6gGiYYQHLhMjofLamNC8b7GmI0lOA+sCPIwGescFrXHx+ve206nboo60rHU
+	 BNtG2cCOsU+4OnMj1mVRlPIPVGLqmPlpT6fyLyNzG+WY+E+UHat7sMtHMZcMuPqaMi
+	 TETDLEGyZJz6B/HWqeXcr+E6yOiE5PUtNF3VFkIgKHy+v+1TaicWSqH41kLT/xEt7T
+	 sTWGRMmbuWXQw==
+From: Mark Brown <broonie@kernel.org>
+To: Vladimir Oltean <olteanv@gmail.com>, 
+ William Zhang <william.zhang@broadcom.com>, 
+ Heiko Stuebner <heiko@sntech.de>, 
+ =?utf-8?q?C=C3=A9dric_Le_Goater?= <clg@kaod.org>, 
+ Dhruva Gole <d-gole@ti.com>, 
+ Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>, 
+ linux-spi@vger.kernel.org, imx@lists.linux.dev, 
+ linux-kernel@vger.kernel.org, Frank Li <Frank.Li@nxp.com>
+Cc: imx@lists.linux.dev
+In-Reply-To: <20241023203032.1388491-1-Frank.Li@nxp.com>
+References: <20241023203032.1388491-1-Frank.Li@nxp.com>
+Subject: Re: [PATCH 1/1] spi: spi-fsl-dspi: Fix crash when not using GPIO
+ chip select
+Message-Id: <172985641837.7496.8327028410387327926.b4-ty@kernel.org>
+Date: Fri, 25 Oct 2024 12:40:18 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241007060642.1978049-1-quic_sibis@quicinc.com>
- <ZwfsmqInJlqkQD_3@hovoldconsulting.com> <ae5eaef9-301f-7d3f-c973-faa22ae780ee@quicinc.com>
- <ZxkjqEmkBAsC6UkL@hovoldconsulting.com> <c8e7420b-a7b4-89cd-1b6e-c1f6693c062d@quicinc.com>
- <ik4dyfbphm7lkeipm2dbr7cmdfxewxd4jtuz2jfnscfwcyo2r4@lrin5hnsqvyd>
- <83b635a7-fc69-7522-d985-810262500cb3@quicinc.com> <CAA8EJppx1OmYnfSsMDebRRTbNb3dfAE_MM55T1SpLccP=s_K1A@mail.gmail.com>
- <Zxty8VaMPrU3fJAN@pluto>
-In-Reply-To: <Zxty8VaMPrU3fJAN@pluto>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Fri, 25 Oct 2024 14:37:42 +0300
-Message-ID: <CAA8EJpp-2UhcGSZwVmggVcqtM8acrHKX3WijdfiY_bJo2v+LfA@mail.gmail.com>
-Subject: Re: [PATCH V3 0/4] firmware: arm_scmi: Misc Fixes
-To: Cristian Marussi <cristian.marussi@arm.com>
-Cc: Sibi Sankar <quic_sibis@quicinc.com>, Johan Hovold <johan@kernel.org>, sudeep.holla@arm.com, 
-	ulf.hansson@linaro.org, jassisinghbrar@gmail.com, 
-	linux-kernel@vger.kernel.org, arm-scmi@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, 
-	konradybcio@kernel.org, linux-pm@vger.kernel.org, tstrudel@google.com, 
-	rafael@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-9b746
 
-On Fri, 25 Oct 2024 at 13:29, Cristian Marussi <cristian.marussi@arm.com> wrote:
->
-> On Fri, Oct 25, 2024 at 01:11:37PM +0300, Dmitry Baryshkov wrote:
-> > On Fri, 25 Oct 2024 at 09:46, Sibi Sankar <quic_sibis@quicinc.com> wrote:
-> > >
-> > >
-> > >
-> > > On 10/25/24 11:44, Dmitry Baryshkov wrote:
-> > > > On Fri, Oct 25, 2024 at 11:38:36AM +0530, Sibi Sankar wrote:
-> > > >>
-> > > >>
-> > > >> On 10/23/24 21:56, Johan Hovold wrote:
-> > > >>> On Wed, Oct 23, 2024 at 01:16:47PM +0530, Sibi Sankar wrote:
-> > > >>>> On 10/10/24 20:32, Johan Hovold wrote:
-> > > >>>>> On Mon, Oct 07, 2024 at 11:36:38AM +0530, Sibi Sankar wrote:
-> > > >>>>>> The series addresses the kernel warnings reported by Johan at [1] and are
-> > > >>>>>> are required to X1E cpufreq device tree changes [2] to land.
-> > > >>>>>>
-> > > >>>>>> [1] - https://lore.kernel.org/lkml/ZoQjAWse2YxwyRJv@hovoldconsulting.com/
-> > > >>>>>> [2] - https://lore.kernel.org/lkml/20240612124056.39230-1-quic_sibis@quicinc.com/
-> > > >>>>>>
-> > > >>>>>> The following warnings remain unadressed:
-> > > >>>>>> arm-scmi arm-scmi.0.auto: Failed to add opps_by_lvl at 3417600 for NCC - ret:-16
-> > > >>>>>> arm-scmi arm-scmi.0.auto: Failed to add opps_by_lvl at 3417600 for NCC - ret:-16
-> > > >>>>>
-> > > >>>>> Are there any plans for how to address these?
-> > > >>>
-> > > >>>> Sorry missed replying to this. The error implies that duplicate
-> > > >>>> opps are reported by the SCP firmware and appear once during probe.
-> > > >>>
-> > > >>> I only see it at boot, but it shows up four times here with the CRD:
-> > > >>
-> > > >> https://lore.kernel.org/lkml/d54f6851-d479-a136-f747-4c0180904a5e@quicinc.com/
-> > > >>
-> > > >> As explained ^^, we see duplicates for max sustainable performance twice
-> > > >> for each domain.
-> > > >
-> > > > If existing products were shipped with the firmware that lists single
-> > > > freq twice, please filter the frequencies like qcom-cpufreq-hw does.
-> > >
-> > > That was a qualcomm specific driver and hence we could do such
-> > > kind of filtering. This however is the generic scmi perf protocol
-> > > and it's not something we should ever consider introducing :/
-> >
-> > This depends on the maintainer's discretion.
-> >
-> > >
-> > > >
-> > > >>
-> > > >>>
-> > > >>> [    8.098452] arm-scmi arm-scmi.0.auto: Failed to add opps_by_lvl at 3417600 for NCC - ret:-16
-> > > >>> [    8.109647] arm-scmi arm-scmi.0.auto: Failed to add opps_by_lvl at 3417600 for NCC - ret:-16
-> > > >>> [    8.128970] arm-scmi arm-scmi.0.auto: Failed to add opps_by_lvl at 3417600 for NCC - ret:-16
-> > > >>> [    8.142455] arm-scmi arm-scmi.0.auto: Failed to add opps_by_lvl at 3417600 for NCC - ret:-16
-> > > >>>
-> > > >>>> This particular error can be fixed only by a firmware update and you
-> > > >>>> should be able to test it out soon on the CRD first.
-> > > >>>
-> > > >>> Can you explain why this can only be fixed by a firmware update? Why
-> > > >>> can't we suppress these warnings as well, like we did for the other
-> > > >>> warnings related to the duplicate entries?
-> > > >>>
-> > > >>> IIUC the firmware is not really broken, but rather describes a feature
-> > > >>> that Linux does not (yet) support, right?
-> > > >>
-> > > >> We keep saying it's a buggy firmware because the SCP firmware reports
-> > > >> identical perf and power levels for the additional two opps and the
-> > > >> kernel has no way of treating it otherwise and we shouldn't suppress
-> > > >> them. Out of the two duplicate opps reported one is a artifact from how
-> > > >> Qualcomm usually show a transition to boost frequencies. The second opp
-> > > >> which you say is a feature should be treated as a boost opp i.e. one
-> > > >> core can run at max at a lower power when other cores are at idle but
-> > > >> we can start marking them as such once they start advertising their
-> > > >> correct power requirements. So I maintain that this is the best we
-> > > >> can do and need a firmware update for us to address anything more.
-> > > >
-> > > > Will existing shipping products get these firmware updates?
-> > >
-> > > They are sure to trickle out but I guess it's upto the oem
-> > > to decide if they do want to pick these up like some of the
-> > > other firmware updates being tested only on CRD. Not sure why
-> > > warnings duplicates should block cpufreq from landing for x1e
-> > > but if that's what the community wants I can drop reposting
-> > > this series!
-> >
-> > No, the community definitely wants to have cpufreq for X1E.
-> > But at the same time some reviewers prefer to have a warning-free boot
-> > if those warnings can't be really fixed. I don't have such a strict
-> > position, but I'd prefer to see those messages at dev_info or dev_dbg
-> > level.
->
-> I think dev_info could be an option from the SCMI perspective (as per my
-> other mail), the important thing in these regards is to NOT go
-> completely silent against fw anomalies...to avoid the the risk of being
-> silently ignored .... I'll see what Sudeep thinks about...
+On Wed, 23 Oct 2024 16:30:32 -0400, Frank Li wrote:
+> Add check for the return value of spi_get_csgpiod() to avoid passing a NULL
+> pointer to gpiod_direction_output(), preventing a crash when GPIO chip
+> select is not used.
+> 
+> Fix below crash:
+> [    4.251960] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000000
+> [    4.260762] Mem abort info:
+> [    4.263556]   ESR = 0x0000000096000004
+> [    4.267308]   EC = 0x25: DABT (current EL), IL = 32 bits
+> [    4.272624]   SET = 0, FnV = 0
+> [    4.275681]   EA = 0, S1PTW = 0
+> [    4.278822]   FSC = 0x04: level 0 translation fault
+> [    4.283704] Data abort info:
+> [    4.286583]   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
+> [    4.292074]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+> [    4.297130]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+> [    4.302445] [0000000000000000] user address but active_mm is swapper
+> [    4.308805] Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
+> [    4.315072] Modules linked in:
+> [    4.318124] CPU: 2 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.12.0-rc4-next-20241023-00008-ga20ec42c5fc1 #359
+> [    4.328130] Hardware name: LS1046A QDS Board (DT)
+> [    4.332832] pstate: 40000005 (nZcv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> [    4.339794] pc : gpiod_direction_output+0x34/0x5c
+> [    4.344505] lr : gpiod_direction_output+0x18/0x5c
+> [    4.349208] sp : ffff80008003b8f0
+> [    4.352517] x29: ffff80008003b8f0 x28: 0000000000000000 x27: ffffc96bcc7e9068
+> [    4.359659] x26: ffffc96bcc6e00b0 x25: ffffc96bcc598398 x24: ffff447400132810
+> [    4.366800] x23: 0000000000000000 x22: 0000000011e1a300 x21: 0000000000020002
+> [    4.373940] x20: 0000000000000000 x19: 0000000000000000 x18: ffffffffffffffff
+> [    4.381081] x17: ffff44740016e600 x16: 0000000500000003 x15: 0000000000000007
+> [    4.388221] x14: 0000000000989680 x13: 0000000000020000 x12: 000000000000001e
+> [    4.395362] x11: 0044b82fa09b5a53 x10: 0000000000000019 x9 : 0000000000000008
+> [    4.402502] x8 : 0000000000000002 x7 : 0000000000000007 x6 : 0000000000000000
+> [    4.409641] x5 : 0000000000000200 x4 : 0000000002000000 x3 : 0000000000000000
+> [    4.416781] x2 : 0000000000022202 x1 : 0000000000000000 x0 : 0000000000000000
+> [    4.423921] Call trace:
+> [    4.426362]  gpiod_direction_output+0x34/0x5c (P)
+> [    4.431067]  gpiod_direction_output+0x18/0x5c (L)
+> [    4.435771]  dspi_setup+0x220/0x334
+> 
+> [...]
 
-Absolutely. SCMI layer knows that such a problem might exist and knows
-how to handle it, so it should bug the user in a polite way.
+Applied to
 
--- 
-With best wishes
-Dmitry
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+
+Thanks!
+
+[1/1] spi: spi-fsl-dspi: Fix crash when not using GPIO chip select
+      commit: 25f00a13dccf8e45441265768de46c8bf58e08f6
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
