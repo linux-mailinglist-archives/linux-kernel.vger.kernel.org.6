@@ -1,147 +1,305 @@
-Return-Path: <linux-kernel+bounces-381640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FE849B01E3
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 14:06:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0058A9B01E9
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 14:07:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52BDD2837A0
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 12:06:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 240A01C21E79
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 12:07:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F24220103F;
-	Fri, 25 Oct 2024 12:06:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14314202F94;
+	Fri, 25 Oct 2024 12:07:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="G2Q5qQrh"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VQoxykPB"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B27301D63D9
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 12:06:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1DFB18B48F;
+	Fri, 25 Oct 2024 12:07:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729857999; cv=none; b=bC7nTsb2omx7IX5B2QYKeOFuHpf39rYJs63d02ACtAZ5vzy0psz8iTqt7xGydZrnZ5546Pz64Or8HHfZVtw71mJFvfPB9+/CQTSIH2NnB06nmlatrHjCTD0QSLxtz0+s2yoV087Sv2sz8FrWsan5wFqJMj9aCkhSW271dRS0IWw=
+	t=1729858059; cv=none; b=NTcUFBBQ6Y8JGFs1Ch2dqWY7rYwZTHhXuU3wf04S8XVsafoF0VWLnfEJHnsUQp+19fdP1VxCiKd+70RuxPDizzZFKRJPZb7Ja03ACovHawZm1KRzkpKfVh3FUjeCQAk/3WHa7Kjb8C8hDEwUqFqO4r7BR1P+plswwOjzpEWoURo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729857999; c=relaxed/simple;
-	bh=yHxGn1FgTze473sMlb4L10Cjc+gww5KIznxNbwnUCjw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Px9LzcKbFwX6yZ0XiK98FlbiMlFHTjTRzN8EKfkX7rxomEfVw/MYTPE/2Zq5aD1X3q5Gixk1ZWaWILUEtP9rdztGKB6lvJV5j+tHrJL9hko21X7vPc7XJLHUkvq+awAnLm+/EX/F6cyJ2U4h97L6DEXlB7jhu1sk/SOOpAfrWtI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=G2Q5qQrh; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a9a4031f69fso273619166b.0
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 05:06:37 -0700 (PDT)
+	s=arc-20240116; t=1729858059; c=relaxed/simple;
+	bh=Fi7dXG4uaynmJ0n9RLdhB8ZP1J0VU4wgRJkJG9JJODY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=YdlMvDrrF81ycBObcJg9bkvqq2dlroisfddG9trrDM1Ui4xeqYfxNj4+pAjlhxCPQZVQ9tyU+DRIwxRwOd+Fd6GeGoaXFNTZQHnAfHy9CphelQfTFXtjLVAy/DixKH9pYObkMrhLEREoKl+4LCfazsYIcU/EmLuKEarQ+5k5I+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VQoxykPB; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-37d4821e6b4so1236470f8f.3;
+        Fri, 25 Oct 2024 05:07:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729857996; x=1730462796; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=LjMhfRloR5OEoW9abd4Ews9Mh5OTmcBwj2xC3WUGJko=;
-        b=G2Q5qQrhq43H0utX1uRO04UkXcMi2ZLSRorc/AtnLfRVmwPgVABrAjU524z5RbOLbs
-         QFvvzo/LRIl8Qc1nJmWAGoVB4pdByaipbklTj0l9DZkDwOhuMP6YJWbgQWmxu1MKck40
-         /ecIRHZ55V8c+KPR/JMZ4qcgtQx/tGYzmDMfAG79xcDeImw0k0aUwJrHnrTPLnFkgjtm
-         sEK0VaYlcXHA9/dYu9+tYoIMPJEHANcU/zInsTZFBYMZaTj7pmy/AIcWBi/+HLrDcFPb
-         4NdVD1FftmTokhjn4O4KYen3duR3r8tPN9E23Mct7MTMXSTPP+jTntU0+iVJLeVT8gPv
-         UawQ==
+        d=gmail.com; s=20230601; t=1729858055; x=1730462855; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=IWsuk5W4z0hys3FesjB0y6f/oYwGY3GGML7np/7ZRwk=;
+        b=VQoxykPBaUf7IYMnRou0CAs6OoZtu8ixvs5eLEG2/HoQnlRuNlyU8QRe/OJUYKIHnI
+         xm1FQaLX0osmtLBFiUWsvYhvBVwdlkSzQ89txif0cJzQOMLtZ/dTwnQg1P1PKU4mutKg
+         VnqBkDYbC3jPQY87CRQ01F1FmOxk5hT6mElU1FYRW0l21pDp9SatHR4nknODHzz4q+Oj
+         miK93fdCwYLPOatykyAwh4zf7CmMpcRgKvL9ifG3fOZqHfZ+t7jM6fa+2wsiGPz3nccH
+         dxGB3fYYXK5cLuWiVq7ymNh64ZInPDP8LHoKj5/RQbr/obT0QhBjmeAI/YG09LFzDPcj
+         1ymA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729857996; x=1730462796;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LjMhfRloR5OEoW9abd4Ews9Mh5OTmcBwj2xC3WUGJko=;
-        b=FtPGzyeTV0eHdnyXaetkVquDNSm742zHlZhFTMl/Oz919y0WKT/HohC8s/sZqvm7Tu
-         vIRQjh+wzz1KhJZfsx4A/KScexjz8bhfGXjYsS+YfoBlBrKTNuNeGbaLm9JHhpW9TAMe
-         a4HORTEdzLKbxVscmE2L/v9YGaWTVC9UFgxQX/80HJrH1dcJgn6vNXfd8mpTtxuL+L78
-         2l5DOexWUPM+6bK/vTUJzldkykEIvGiz+KEu8bEYL5AV9zl48LOpQ8VH34+5Ms3QZayy
-         8C7xMT6B5NXyxE/dw6Uyuj6q9MqRkEroTrNgyZ6kLJm/W5O5cnh+jMTGxRvUVBZA3e3a
-         r0Pw==
-X-Forwarded-Encrypted: i=1; AJvYcCUrfA2W8U3IWojPSdQFO0ZTcfBps0zv7FHcmTWQknV56rmXBkmbRub2G75CsAPAlFPQsjncfQC7H4D9nyE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyuef3TWj4M7BRYXKEaFCAFvREgfXdqmX75yxQ8CPqxSzZMggKL
-	Ad32ZkjkgT02uBWiPQGHxR59VaXcLkv1ZuIoSk7SMXFpYjVRca+ANGjUs2jQ9HM=
-X-Google-Smtp-Source: AGHT+IF8+yFn1XfjKbiftT0Zhl5TWbjjF6V4v6mo+nNQ6DxXzSAa5nQPJQtB8TdlKFyLuBFNoZaXBw==
-X-Received: by 2002:a17:907:72d3:b0:a99:f779:adf9 with SMTP id a640c23a62f3a-a9ad2863046mr406619766b.63.1729857995954;
-        Fri, 25 Oct 2024 05:06:35 -0700 (PDT)
-Received: from [192.168.0.140] ([82.76.24.202])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b1dfbdfe2sm64056766b.36.2024.10.25.05.06.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 25 Oct 2024 05:06:35 -0700 (PDT)
-Message-ID: <a4c44b88-d106-4365-b405-ced561b9e526@linaro.org>
-Date: Fri, 25 Oct 2024 15:06:34 +0300
+        d=1e100.net; s=20230601; t=1729858055; x=1730462855;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=IWsuk5W4z0hys3FesjB0y6f/oYwGY3GGML7np/7ZRwk=;
+        b=VfvQEeSxbmnHJkt4k47fjynPSWzUT6pEoEJNfa0V23RFNwD0x7TbrvbZ0a7y4/AnoA
+         TBFp/5ihpqmhhEWgwFbix1uoWJOcAiWx992kH4GEXRgYv8zPwV+cSWg9s/AGyQNeTI2s
+         dWKksZiAWXhjwG4UbWBqioNeixI19hzgzE8im1/gEHhEmIUnxrP4aEpQh2peC5b9xz65
+         z/CsPrXWuSZYCcQ89sl3bvZiIKNO7545Jr+Q8A1Uhg5DU5cnTGLGqDaMmQ0Ikb5i9K3c
+         183hl7fOywcdtgjGO2FyrkpZ5PIZGKJbu5nbZYvg4Q9gTFMBe95L/Y2kl5ORbyvj1XHq
+         V/ag==
+X-Forwarded-Encrypted: i=1; AJvYcCUogBWz9mIiGvoy5AyOjPDdMnpVZg4fjjrfHpkc6Ej8cEEmFCaXbcLYdj3djx5K05nFu2kDXyoLli0K@vger.kernel.org, AJvYcCVPVm02/vHcXhPG6TOMYak3Lqnx9L/+TYGNtSv+tOhkCGLTwYkjJYGuN7RrpBAqK160ZYGFq9WkWDctVuS6@vger.kernel.org, AJvYcCXahqvyL/RGhd5E+TzZ6ddMoxR7T+zu/Csp8gmAOgM7OzQwOJXH5ZR4KYz1d/VViMEjg1ArUcBppbmY@vger.kernel.org, AJvYcCXciPtNUhgT1gizKOlPnhDnYhMrmCBApOICyChcdvJFVnMKQnAWcJmTin6a8E7R64z7g9DKd4mHwVNa@vger.kernel.org, AJvYcCXjQemDTJxkkoiB8EsNqlAl8ePVJMAwki9WI+Fvuq8QOoc+0567xXPYqYi9dyDLJqJhUTTbQb7ubzyE@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCQIpzFtbAkHdx7oC0bEVAQnj9DzdImqqaP6YaRHusD3sBvtlB
+	BzgRUqLfoXwvzxHECLajeKx3hoa0Iig2OD+iDZxI4rl84NHnsEw6
+X-Google-Smtp-Source: AGHT+IFG/s/9pjlSrOD62Ubm5oO46WanxGuXBtDDnHqRg1d+Of3RBLbBi99eFc2jv9DF84GZ0kT77Q==
+X-Received: by 2002:adf:a79a:0:b0:37d:5405:817b with SMTP id ffacd0b85a97d-3803ac83979mr2993845f8f.7.1729858054728;
+        Fri, 25 Oct 2024 05:07:34 -0700 (PDT)
+Received: from nsa.fritz.box ([2001:a61:34c9:ea01:14b4:7ed9:5135:9381])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b9279esm1346939f8f.104.2024.10.25.05.07.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Oct 2024 05:07:34 -0700 (PDT)
+Message-ID: <b47e7168a58e840f65c1ef150c914c077905fabf.camel@gmail.com>
+Subject: Re: [PATCH RFC v4 06/15] spi: offload-trigger: add PWM trigger
+ driver
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: David Lechner <dlechner@baylibre.com>, Mark Brown <broonie@kernel.org>, 
+ Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Nuno =?ISO-8859-1?Q?S=E1?= <nuno.sa@analog.com>, Uwe
+ =?ISO-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>
+Cc: Michael Hennerich <Michael.Hennerich@analog.com>, Lars-Peter Clausen
+	 <lars@metafoo.de>, David Jander <david@protonic.nl>, Martin Sperl
+	 <kernel@martin.sperl.org>, linux-spi@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-iio@vger.kernel.org, linux-pwm@vger.kernel.org
+Date: Fri, 25 Oct 2024 14:07:33 +0200
+In-Reply-To: <20241023-dlech-mainline-spi-engine-offload-2-v4-6-f8125b99f5a1@baylibre.com>
+References: 
+	<20241023-dlech-mainline-spi-engine-offload-2-v4-0-f8125b99f5a1@baylibre.com>
+	 <20241023-dlech-mainline-spi-engine-offload-2-v4-6-f8125b99f5a1@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] soc: qcom: Rework BCM_TCS_CMD macro
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: andersson@kernel.org, konradybcio@kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-References: <20241025084823.475199-1-eugen.hristev@linaro.org>
- <c1d4c2b6-85a0-467a-930c-ac2797c72699@oss.qualcomm.com>
-Content-Language: en-US
-From: Eugen Hristev <eugen.hristev@linaro.org>
-In-Reply-To: <c1d4c2b6-85a0-467a-930c-ac2797c72699@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+
+Hi David,
+
+Looks mostly good... Just one minor comments from me.
+
+On Wed, 2024-10-23 at 15:59 -0500, David Lechner wrote:
+> Add a new driver for a generic PWM trigger for SPI offloads.
+>=20
+> Signed-off-by: David Lechner <dlechner@baylibre.com>
+> ---
+>=20
+> v4 changes: new patch in v4
+> ---
+> =C2=A0drivers/spi/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 12 +++
+> =C2=A0drivers/spi/Makefile=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 3 +
+> =C2=A0drivers/spi/spi-offload-trigger-pwm.c | 169 +++++++++++++++++++++++=
++++++++++++
+> =C2=A03 files changed, 184 insertions(+)
+>=20
+> diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
+> index d65074b85f62..50d04fa317b7 100644
+> --- a/drivers/spi/Kconfig
+> +++ b/drivers/spi/Kconfig
+> @@ -1286,4 +1286,16 @@ endif # SPI_SLAVE
+> =C2=A0config SPI_DYNAMIC
+> =C2=A0	def_bool ACPI || OF_DYNAMIC || SPI_SLAVE
+> =C2=A0
+> +if SPI_OFFLOAD
+> +
+> +comment "SPI Offload triggers"
+> +
+> +config SPI_OFFLOAD_TRIGGER_PWM
+> +	tristate "SPI offload trigger using PWM"
+> +	depends on PWM
+> +	help
+> +	=C2=A0 Generic SPI offload trigger implemented using PWM output.
+> +
+> +endif # SPI_OFFLOAD
+> +
+> =C2=A0endif # SPI
+> diff --git a/drivers/spi/Makefile b/drivers/spi/Makefile
+> index 6a470eb475a2..3a76b9c61486 100644
+> --- a/drivers/spi/Makefile
+> +++ b/drivers/spi/Makefile
+> @@ -161,3 +161,6 @@ obj-$(CONFIG_SPI_AMD)			+=3D spi-amd.o
+> =C2=A0# SPI slave protocol handlers
+> =C2=A0obj-$(CONFIG_SPI_SLAVE_TIME)		+=3D spi-slave-time.o
+> =C2=A0obj-$(CONFIG_SPI_SLAVE_SYSTEM_CONTROL)	+=3D spi-slave-system-contro=
+l.o
+> +
+> +# SPI offload triggers
+> +obj-$(CONFIG_SPI_OFFLOAD_TRIGGER_PWM)	+=3D spi-offload-trigger-pwm.o
+> diff --git a/drivers/spi/spi-offload-trigger-pwm.c b/drivers/spi/spi-offl=
+oad-
+> trigger-pwm.c
+> new file mode 100644
+> index 000000000000..ffb0bf75cace
+> --- /dev/null
+> +++ b/drivers/spi/spi-offload-trigger-pwm.c
+> @@ -0,0 +1,169 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (C) 2024 Analog Devices Inc.
+> + * Copyright (C) 2024 BayLibre, SAS
+> + *
+> + * Generic PWM trigger for SPI offload.
+> + */
+> +
+> +#include <linux/platform_device.h>
+> +#include <linux/pwm.h>
+> +#include <linux/mod_devicetable.h>
+> +#include <linux/spi/spi-offload.h>
+> +#include <linux/types.h>
+> +
+> +struct spi_offload_trigger_pwm_state {
+> +	struct device *dev;
+> +	struct pwm_device *pwm;
+> +};
+> +
+> +static bool spi_offload_trigger_pwm_match(void *priv,
+> +					=C2=A0 enum spi_offload_trigger_type type,
+> +					=C2=A0 u64 *args, u32 nargs)
+> +{
+> +	if (nargs)
+> +		return false;
+> +
+> +	return type =3D=3D SPI_OFFLOAD_TRIGGER_PERIODIC;
+
+Hmm will we ever be in a place where a trigger provide might have multiple =
+types? If
+so, then I'm mostly fine with this match() callback. But we could still avo=
+id it if
+we use a bitmask for trigger types and having any trigger provider to give =
+the
+supported types. Then the core could pretty much do the match between the r=
+equested
+trigger type and what the provider supports.
+
+> +}
+> +
+> +static int spi_offload_trigger_pwm_validate(void *priv,
+> +					=C2=A0=C2=A0=C2=A0 struct spi_offload_trigger_config
+> *config)
+> +{
+> +	struct spi_offload_trigger_pwm_state *st =3D priv;
+> +	struct spi_offload_trigger_periodic *periodic =3D &config->periodic;
+> +	struct pwm_waveform wf =3D { };
+> +	int ret;
+> +
+> +	if (config->type !=3D SPI_OFFLOAD_TRIGGER_PERIODIC)
+> +		return -EINVAL;
+
+Checking the above every time seems redundant to me. We should match it onc=
+e during
+the trigger request and then just use that trigger type. Otherwise I'm not =
+seeing the
+point of the match() callback.
+
+> +
+> +	if (!periodic->frequency_hz)
+> +		return -EINVAL;
+> +
+> +	wf.period_length_ns =3D DIV_ROUND_UP_ULL(NSEC_PER_SEC, periodic-
+> >frequency_hz);
+> +	/* REVISIT: 50% duty-cycle for now - may add config parameter later */
+> +	wf.duty_length_ns =3D wf.period_length_ns / 2;
+> +
+> +	ret =3D pwm_round_waveform_might_sleep(st->pwm, &wf);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	periodic->frequency_hz =3D DIV_ROUND_UP_ULL(NSEC_PER_SEC,
+> wf.period_length_ns);
+> +
+> +	return 0;
+> +}
+> +
+> +static int spi_offload_trigger_pwm_enable(void *priv,
+> +					=C2=A0 struct spi_offload_trigger_config
+> *config)
+> +{
+> +	struct spi_offload_trigger_pwm_state *st =3D priv;
+> +	struct spi_offload_trigger_periodic *periodic =3D &config->periodic;
+> +	struct pwm_waveform wf =3D { };
+> +
+> +	if (config->type !=3D SPI_OFFLOAD_TRIGGER_PERIODIC)
+> +		return -EINVAL;
+> +
+> +	if (!periodic->frequency_hz)
+> +		return -EINVAL;
+> +
+> +	wf.period_length_ns =3D DIV_ROUND_UP_ULL(NSEC_PER_SEC, periodic-
+> >frequency_hz);
+> +	/* REVISIT: 50% duty-cycle for now - may add config parameter later */
+> +	wf.duty_length_ns =3D wf.period_length_ns / 2;
+> +
+> +	return pwm_set_waveform_might_sleep(st->pwm, &wf, false);
+> +}
+> +
+> +static void spi_offload_trigger_pwm_disable(void *priv)
+> +{
+> +	struct spi_offload_trigger_pwm_state *st =3D priv;
+> +	struct pwm_waveform wf;
+> +	int ret;
+> +
+> +	ret =3D pwm_get_waveform_might_sleep(st->pwm, &wf);
+> +	if (ret < 0) {
+> +		dev_err(st->dev, "failed to get waveform: %d\n", ret);
+> +		return;
+> +	}
+> +
+> +	wf.duty_length_ns =3D 0;
+> +
+> +	ret =3D pwm_set_waveform_might_sleep(st->pwm, &wf, false);
+> +	if (ret < 0)
+> +		dev_err(st->dev, "failed to disable PWM: %d\n", ret);
+> +}
+> +
+> +static const struct spi_offload_trigger_ops spi_offload_trigger_pwm_ops =
+=3D {
+> +	.match =3D spi_offload_trigger_pwm_match,
+> +	.validate =3D spi_offload_trigger_pwm_validate,
+> +	.enable =3D spi_offload_trigger_pwm_enable,
+> +	.disable =3D spi_offload_trigger_pwm_disable,
+> +};
+> +
+> +static void spi_offload_trigger_pwm_release(void *data)
+> +{
+> +	pwm_disable(data);
+> +}
+> +
+> +static int spi_offload_trigger_pwm_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev =3D &pdev->dev;
+> +	struct spi_offload_trigger_info info =3D {
+> +		.name =3D "trigger",
+
+pwm-trigger or trigger-pwm?
+
+> +		.id =3D 0,
+
+nit: Not really needed
+
+- Nuno S=C3=A1
 
 
-
-On 10/25/24 12:03, Konrad Dybcio wrote:
-> On 25.10.2024 10:48 AM, Eugen Hristev wrote:
->> Reworked BCM_TCS_CMD macro in order to fix warnings from sparse:
->>
->> drivers/clk/qcom/clk-rpmh.c:270:28: warning: restricted __le32 degrades to integer
->> drivers/clk/qcom/clk-rpmh.c:270:28: warning: restricted __le32 degrades to integer
->>
->> While at it, used u32_encode_bits which made the code easier to
->> follow and removed unnecessary shift definitions.
->>
->> Signed-off-by: Eugen Hristev <eugen.hristev@linaro.org>
->> ---
->>   include/soc/qcom/tcs.h | 19 ++++++++-----------
->>   1 file changed, 8 insertions(+), 11 deletions(-)
->>
->> diff --git a/include/soc/qcom/tcs.h b/include/soc/qcom/tcs.h
->> index 3acca067c72b..130ed2582f37 100644
->> --- a/include/soc/qcom/tcs.h
->> +++ b/include/soc/qcom/tcs.h
->> @@ -60,22 +60,19 @@ struct tcs_request {
->>   	struct tcs_cmd *cmds;
->>   };
->>   
->> -#define BCM_TCS_CMD_COMMIT_SHFT		30
->>   #define BCM_TCS_CMD_COMMIT_MASK		0x40000000
->> -#define BCM_TCS_CMD_VALID_SHFT		29
->>   #define BCM_TCS_CMD_VALID_MASK		0x20000000
->> -#define BCM_TCS_CMD_VOTE_X_SHFT		14
->>   #define BCM_TCS_CMD_VOTE_MASK		0x3fff
->> -#define BCM_TCS_CMD_VOTE_Y_SHFT		0
->> -#define BCM_TCS_CMD_VOTE_Y_MASK		0xfffc000
->> +#define BCM_TCS_CMD_VOTE_Y_MASK		0x3fff
->> +#define BCM_TCS_CMD_VOTE_X_MASK		0xfffc000
->>   
->>   /* Construct a Bus Clock Manager (BCM) specific TCS command */
->>   #define BCM_TCS_CMD(commit, valid, vote_x, vote_y)		\
->> -	(((commit) << BCM_TCS_CMD_COMMIT_SHFT) |		\
->> -	((valid) << BCM_TCS_CMD_VALID_SHFT) |			\
->> -	((cpu_to_le32(vote_x) &					\
->> -	BCM_TCS_CMD_VOTE_MASK) << BCM_TCS_CMD_VOTE_X_SHFT) |	\
->> -	((cpu_to_le32(vote_y) &					\
->> -	BCM_TCS_CMD_VOTE_MASK) << BCM_TCS_CMD_VOTE_Y_SHFT))
->> +	(u32_encode_bits(commit, BCM_TCS_CMD_COMMIT_MASK) |	\
->> +	u32_encode_bits(valid, BCM_TCS_CMD_VALID_MASK) |	\
->> +	u32_encode_bits((__force u32)cpu_to_le32(vote_x),	\
->> +			BCM_TCS_CMD_VOTE_X_MASK) |		\
->> +	u32_encode_bits((__force u32)cpu_to_le32(vote_y),	\
->> +			BCM_TCS_CMD_VOTE_Y_MASK))
-> 
-> FIELD_PREP/GET?
-> 
-> Konrad
-
-What would be the difference/advantage in using FIELD_PREP/GET instead 
-of u32_encode_bits ?
 
