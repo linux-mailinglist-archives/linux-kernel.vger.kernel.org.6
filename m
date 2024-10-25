@@ -1,151 +1,128 @@
-Return-Path: <linux-kernel+bounces-382100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 988E89B0957
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 18:11:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AD2C9B095C
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 18:11:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C50828197B
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:11:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 547D61F21515
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:11:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1089B185B46;
-	Fri, 25 Oct 2024 16:11:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14424186298;
+	Fri, 25 Oct 2024 16:11:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="NkQveD4I"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QbxenkET"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6398170A31;
-	Fri, 25 Oct 2024 16:11:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 598A521A4AA;
+	Fri, 25 Oct 2024 16:11:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729872668; cv=none; b=b1FaDhPR2E/dFBge2wAgGHGOkr0daV02Z6P0EywAsCpUiQw1wJsF5c792e2QXPh4LjfKiQCsKl9qN61/9vSvzvj1CDPHI12LECfVBo6dMee/Wg0+837K7lG7fY95hCwvXNSmu54pkwLqYsNleO/2BaAZH8hAZ0ReCishqvE+IUQ=
+	t=1729872692; cv=none; b=gBaYKnx8o7rI6vR5RIkFeg0jdiQunBvZ6W3wF/DFhqO1ven/dD8XadwLrvmBuqtuzwZG/wntMXkcaDnuZWBN8KDCG+39bDff5o4QOCkl1M3KIEBKrlRUTQn3riJkYVlqvujCoOj2LFUohiQffwiEJzUZCEj0JtkcHJY/Zo7glVw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729872668; c=relaxed/simple;
-	bh=W41hJnhNQLCvtcUj0/7OFMCwUbb3LaViC2imU7/jxs8=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=p8imSrQgLNy9u871yirQWkc/M8ZEb0WOqQwaoXwxcdgi0AXROKe9heQjkLq4ZLbpF6gogUgglu1LLxTlKygamIF09/01bVXKH8nUu2dOoCgQDQH/lH2oZnLea6H2Ig51ihcHKcr47zArd9AppSt1T/GkU2+sHsckGx7wKb/LpQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=NkQveD4I; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	s=arc-20240116; t=1729872692; c=relaxed/simple;
+	bh=RseRiHUC42HLSCp27J/DRr2aifRRP4Q+wScoHuoDK8Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q53fSOOh3lJJOmt2yE/8jkRjTNwZa0EuVy/Wg/Gkl7uzJHuyQhFq/VZ4UySJpmiVQNZiBRCROmeiD/CXq5sJ05nL+OjNdNNyElTEXFKuaKRBYwO6FIGOt2P5dT0QBhYyeIetKec5O3KI9aCHI5/SyV/AILxTDfVpSQSgrjqYqLo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QbxenkET; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE4F7C4CEC3;
+	Fri, 25 Oct 2024 16:11:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729872691;
+	bh=RseRiHUC42HLSCp27J/DRr2aifRRP4Q+wScoHuoDK8Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QbxenkET/CvR4cdxA1G9MWctFObj2H5JqW4fMFx0iXOFt8dHSlL8zd8icZOQ0lDB5
+	 zRe60XcuULd3daQfd8X/v9Hguge8v48+GcB6zch4YRhZ5CcgFhkGTPMnjEw7tZ/a8E
+	 jaUGjeeLoGDlmMtnVA1G2eCIY6w5/tLOsu2524FXp/RUhQOP7CzGzSQVqDTF4U+Uyu
+	 6rP24/7dI0lK29KNMTPVI4njPaCWNa5JfNcUDmIDzZnlsQIqe8mMNeKyb4rJV/J0kj
+	 mddYAzs63WTl7lEbGG+0Dg6ZH8WeZD2cdjJKvYRO5dye+VeQ3CwgGVzkHGp5wDCfNN
+	 xSNmxvr3cTlvQ==
+Date: Fri, 25 Oct 2024 09:11:31 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Ritesh Harjani <ritesh.list@gmail.com>
+Cc: John Garry <john.g.garry@oracle.com>, linux-ext4@vger.kernel.org,
+	Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+	Christoph Hellwig <hch@infradead.org>,
+	Ojaswin Mujoo <ojaswin@linux.ibm.com>,
+	Dave Chinner <david@fromorbit.com>, linux-kernel@vger.kernel.org,
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 2/6] ext4: Check for atomic writes support in write iter
+Message-ID: <20241025161131.GK2386201@frogsfrogsfrogs>
+References: <cover.1729825985.git.ritesh.list@gmail.com>
+ <319766d2fd03bd47f773d320577f263f68ba67a1.1729825985.git.ritesh.list@gmail.com>
+ <b6f456bb-9998-4789-830d-45767dbbfdea@oracle.com>
+ <87wmhwmq01.fsf@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1729872662;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7Iw4mSeihGj1YsgWe8Zsotpic8lQYd8a9F0LzrpwBY4=;
-	b=NkQveD4IeJyVYkwl4GNW11zstxIvo/Pkwm9FiFHL9Bu79vy3H890U5m7g1JxmTLm1xnuh/
-	Gkkd+S9bwz+MA/6wG/u1lvxrG/88/tEat2A6sW5Uk2LPhZgAh7GHstuFbYjBFpUUaSeJfj
-	hD3+6yQwvxWA/HqQvDI+p1hj7tDc8n3XXJ5AzuNQIN6jM1TLr6GwPwcGXO4F3jmGufT62T
-	bAaYRoGAdKyE3mUaHqfFjOPmL/ie+INilHsXVre0CNwM5X+TvQQTgBIGufdKRgUZvdbhzX
-	Z6gKNlS/v39pS6OZTZ5QP0NSAwknEXY6meB+kPmgTfnSEoZNytTH+mfPWvIG1A==
-Date: Fri, 25 Oct 2024 18:11:01 +0200
-From: Dragan Simic <dsimic@manjaro.org>
-To: wens@csie.org
-Cc: linux-sunxi@lists.linux.dev, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, jernej.skrabec@gmail.com, samuel@sholland.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org, Ondrej Jirman
- <megi@xff.cz>, Andrey Skvortsov <andrej.skvortzov@gmail.com>
-Subject: Re: [PATCH] arm64: dts: allwinner: pinephone: Add mount matrix to
- accelerometer
-In-Reply-To: <CAGb2v66aody60h=Bpk49pxogq93FekmO48uThPET2RKxvx=OGw@mail.gmail.com>
-References: <129f0c754d071cca1db5d207d9d4a7bd9831dff7.1726773282.git.dsimic@manjaro.org>
- <bef0570137358c6c4a55f59e7a4977c4@manjaro.org>
- <CAGb2v66aody60h=Bpk49pxogq93FekmO48uThPET2RKxvx=OGw@mail.gmail.com>
-Message-ID: <cfc090cb87a8b926116d1a436694d17d@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87wmhwmq01.fsf@gmail.com>
 
-Hello Chen-Yu,
-
-On 2024-10-25 16:47, Chen-Yu Tsai wrote:
-> On Wed, Oct 23, 2024 at 5:11 AM Dragan Simic <dsimic@manjaro.org> 
-> wrote:
->> On 2024-09-19 21:15, Dragan Simic wrote:
->> > The way InvenSense MPU-6050 accelerometer is mounted on the user-facing
->> > side
->> > of the Pine64 PinePhone mainboard, which makes it rotated 90 degrees
->> > counter-
->> > clockwise, [1] requires the accelerometer's x- and y-axis to be
->> > swapped, and
->> > the direction of the accelerometer's y-axis to be inverted.
->> >
->> > Rectify this by adding a mount-matrix to the accelerometer definition
->> > in the Pine64 PinePhone dtsi file.
->> >
->> > [1] https://files.pine64.org/doc/PinePhone/PinePhone%20mainboard%20bottom%20placement%20v1.1%2020191031.pdf
->> >
->> > Fixes: 91f480d40942 ("arm64: dts: allwinner: Add initial support for
->> > Pine64 PinePhone")
->> > Cc: stable@vger.kernel.org
->> > Helped-by: Ondrej Jirman <megi@xff.cz>
->> > Helped-by: Andrey Skvortsov <andrej.skvortzov@gmail.com>
->> > Signed-off-by: Dragan Simic <dsimic@manjaro.org>
->> 
->> Just a brief reminder about this patch...  Please, let me know if some
->> further work is needed for it to become accepted.
+On Fri, Oct 25, 2024 at 04:03:02PM +0530, Ritesh Harjani wrote:
+> John Garry <john.g.garry@oracle.com> writes:
 > 
-> There's no "Helped-by" tag, and checkpatch would complain. The closest
-> would be either Suggested-by or Co-developed-by, but with the latter
-> you would also need their Signed-off-by.
+> > On 25/10/2024 04:45, Ritesh Harjani (IBM) wrote:
+> >> Let's validate using generic_atomic_write_valid() in
+> >> ext4_file_write_iter() if the write request has IOCB_ATOMIC set.
+> >> 
+> >> Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+> >> ---
+> >>   fs/ext4/file.c | 14 ++++++++++++++
+> >>   1 file changed, 14 insertions(+)
+> >> 
+> >> diff --git a/fs/ext4/file.c b/fs/ext4/file.c
+> >> index f14aed14b9cf..b06c5d34bbd2 100644
+> >> --- a/fs/ext4/file.c
+> >> +++ b/fs/ext4/file.c
+> >> @@ -692,6 +692,20 @@ ext4_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+> >>   	if (IS_DAX(inode))
+> >>   		return ext4_dax_write_iter(iocb, from);
+> >>   #endif
+> >> +
+> >> +	if (iocb->ki_flags & IOCB_ATOMIC) {
+> >> +		size_t len = iov_iter_count(from);
+> >> +		int ret;
+> >> +
+> >> +		if (!IS_ALIGNED(len, EXT4_SB(inode->i_sb)->fs_awu_min) ||
+> >> +			len > EXT4_SB(inode->i_sb)->fs_awu_max)
+> >> +			return -EINVAL;
+> >
+> > this looks ok, but the IS_ALIGNED() check looks odd. I am not sure why 
+> > you don't just check that fs_awu_max >= len >= fs_awu_min
+> >
+> 
+> I guess this was just a stricter check. But we anyways have power_of_2
+> and other checks in generic_atomic_write_valid(). So it does not matter. 
+> 
+> I can change this in v2. 
 
-Thanks for your response.  You're totally right about checkpatch.pl
-not supporting Helped-by tags, but including neither Suggested-by
-nor Co-developed-by would fit very well in this case, because the
-associated level of credit falls right somewhere between what's
-indicated by these two tags.
+Also please fix the weird indenting in the if test:
 
-> I can change it to Suggested-by if that's OK with you.
+		if (len < EXT4_SB(inode->i_sb)->fs_awu_min) ||
+		    len > EXT4_SB(inode->i_sb)->fs_awu_max)
+			return -EINVAL;
 
-I've created and submitted a patch [*] that adds support for Helped-by
-tags to checkpatch.pl.  Let's see what kind of feedback that patch
-will receive, and then we'll be able to move forward accordingly.
+--D
 
-[*] 
-https://lore.kernel.org/linux-kernel/0e1ef28710e3e49222c966f07958a9879fa4e903.1729871544.git.dsimic@manjaro.org/T/#u
-
->> > ---
->> >
->> > Notes:
->> >     See also the linux-sunxi thread [2] that has led to this patch,
->> > which
->> >     provides a rather detailed analysis with additional details and
->> > pictures.
->> >     This patch effectively replaces the patch submitted in that thread.
->> >
->> >     [2]
->> > https://lore.kernel.org/linux-sunxi/20240916204521.2033218-1-andrej.skvortzov@gmail.com/T/#u
->> >
->> >  arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi | 3 +++
->> >  1 file changed, 3 insertions(+)
->> >
->> > diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi
->> > b/arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi
->> > index 6eab61a12cd8..b844759f52c0 100644
->> > --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi
->> > +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi
->> > @@ -212,6 +212,9 @@ accelerometer@68 {
->> >               interrupts = <7 5 IRQ_TYPE_EDGE_RISING>; /* PH5 */
->> >               vdd-supply = <&reg_dldo1>;
->> >               vddio-supply = <&reg_dldo1>;
->> > +             mount-matrix = "0", "1", "0",
->> > +                            "-1", "0", "0",
->> > +                            "0", "0", "1";
->> >       };
->> >  };
->> 
+> Thanks!
+> 
+> >> +
+> >> +		ret = generic_atomic_write_valid(iocb, from);
+> >> +		if (ret)
+> >> +			return ret;
+> >> +	}
+> >> +
+> >>   	if (iocb->ki_flags & IOCB_DIRECT)
+> >>   		return ext4_dio_write_iter(iocb, from);
+> >>   	else
+> 
+> -ritesh
+> 
 
