@@ -1,146 +1,128 @@
-Return-Path: <linux-kernel+bounces-381831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0072D9B0511
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:06:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17BFC9B0514
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:07:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23F311C21EDF
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 14:06:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96E17B24339
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 14:07:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A34A41B6CF8;
-	Fri, 25 Oct 2024 14:06:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C25171D4604;
+	Fri, 25 Oct 2024 14:07:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="cHyVY4Y+"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yO2UYc42"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3271745F2;
-	Fri, 25 Oct 2024 14:06:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 850E870820
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 14:07:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729865200; cv=none; b=o8E1htZubZSAumBkFeckgV5aiXxP/bmgpzZGpJYUvvLjuCYulB9hyVlTIlGTLI4/V9/WOSw53gfT7RLJDZf0gzRGx24T3j4eSTITwX1OWqNYlPij7wwhtYRzN3/3ES58rUYwSPR9F2QzMQ9b1Gc5s7h8XC8PS6F0eJickJwJClw=
+	t=1729865226; cv=none; b=p3e0pI5zxNscbiZLWB2x8dAQCecIgzkei4nVyFyx/1v4vkvQsa3rV7XLzqSpEKmmnEr/zYamkv1UBtlpqsgn1qoYjjAWMcqpstK2sHGrEyg0WkLobppVy8S03HoWAx8VxPTwbv8RxW3GahI16Kr8sIGxMG/uS4cpd1fzqRxDykM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729865200; c=relaxed/simple;
-	bh=cKKDyIrt/dTt0wDdrBO4uVeZ0gwCFendhBdq9JKk1n0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=k3oxAqHuzvblPBi11bIqApKKm+OIcY6XZp3c/vFy2xEhT9QeZwT6JFRoRMnhZNXAEJLWzsTKfWTGf3eGWQi6hliWQFqGI8gX08MvixcffErPo7pRwELJEOIz6uosA/teqmHfN84ufT3eK3Ts+TZaw2xuBoyLUM3VgF0+JOQZ6zk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=cHyVY4Y+; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49P62N8m011840;
-	Fri, 25 Oct 2024 14:06:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	c8Zb7tpksoD7fMvqbTloS+8Cuu9LoyXtYTMubuP1Hpc=; b=cHyVY4Y+LpwOph0K
-	x0rE8GwEuo/82S5c9vhu99LQC2ynyaBZGuhFZJmrz+fHSArvw6sFa2by40NhwJtL
-	6D3G5mYe1cqnuZZfGOp7z3+o0WCZWLcXfOUEDzC+jkQKWE2P7lxBO3HJ7eB7p2V2
-	piiyuBXuSWV+JGIU6wVFeFdbzaXBPWhfmgwzYhcZS5QOd2XTH7P7zEdPGo3q3uoT
-	QbAypr0gIJYlY2NS/HKxTqFFvS9v9dA2R2leWRXB8C3pe5glg4xzInZ1upbSfaGw
-	FHlaoM+Qd0J3oCPaxVEECy1GNEt83cqITAoczCuWw2xQgoOGqvw7x0goBbvz0R4r
-	k+pxDQ==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42g5q81be3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 25 Oct 2024 14:06:25 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49PE6OIX012362
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 25 Oct 2024 14:06:24 GMT
-Received: from [10.131.33.37] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 25 Oct
- 2024 07:06:20 -0700
-Message-ID: <72a0b7b5-4209-f969-0726-e411b5a74e01@quicinc.com>
-Date: Fri, 25 Oct 2024 19:36:16 +0530
+	s=arc-20240116; t=1729865226; c=relaxed/simple;
+	bh=R25u/LjXumh7VQ2NXXhe49BRHZfuAiM2pmfukxXsC1c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UotVDiQ56jphNqnaSGDgRFFFkRbQphl11/H93bz7YXqdk7WCtqnkmOjLkyrcJ4BQ6RDLzvbnSZpjsmTJT+JYi+EX92mBeY7bG6DsW6M4yYzPQRs2lql9xHW8lGdF+jxC6vVnhRXRvxVYDFrrd9M1K9cU7/xZi5BYb+FdaqBQa7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yO2UYc42; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-37d3ecad390so2348877f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 07:07:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729865222; x=1730470022; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=luQpIwsQ81BxpLvWcfVNOBQaOkbZgajGGn3YLiW8HX4=;
+        b=yO2UYc42/la6R7Dm+KqeBIxUVhZxj/11aJCpR/bLy3hzY6Wvzgke+yRRCCQbbR6N8O
+         LMAh752RWIaU8HpXlpcJDJu/uYW9YBNUkAhb6nHff4MMyTQRAIG/mNGcf1wi94JzO4fd
+         yh2u/i76JaVR13m8KHFZKeZTWrwOqvHue8AvWTjIEqfZbF6AvwYpdtjYQ3QP1Ohavxwa
+         FsF0V6XmjC+8DxWN6TqWNBK/vrIm/9EM7qpxA2b1jRyHA6dfoHtyU5WicoUzZQs13wUd
+         ssEGlfL8dAd/3U6iZq/JX9PnFsyKzXBnfvlGIyR2bS+nfwPneoLlUGbgfgLZEj6mItz+
+         VPFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729865222; x=1730470022;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=luQpIwsQ81BxpLvWcfVNOBQaOkbZgajGGn3YLiW8HX4=;
+        b=WVA1xYSw24mKs8C+jMLkhTPdSR1od6VVqvT0Xm00ulDfT7DLzBcHH3m2uot3q78yq4
+         g/Ndp6RbZWCx4KOm1o/KfWLauqwZUvnHJe8zUchlEIEnhSFVThum2U3p5vOIRWXZ66pz
+         DCA0eiEJA6FPvHDtaGT9NJVdBBRnoG28vXy9++KT5BcB3PdD7R4Ht4P5L9tK+tDPxfCK
+         mkMQPdMS7X9S7G6MZ15JAdUxF5Pws1634JUM9xqfGl6h2Afi+0v39q1VgNkYamsLUeAK
+         JjTsixjsCoWoyVrAisCiI9hrlQyXO09Ty+5rxRB9GM8Iy/yIbIVT//yolD3HzyZ6JRTR
+         eYRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVuqz+BiyWKJl98kzh0FbnD7jqGMuxgt1uh0180mbgJXTk8TMJyaQ5Z/mKeAB8BtJL5MhrCdLvS8AJ1cEc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTVCP14AwOTkSg7Fo8gUjkxYnSWDbvq7f7aGoncuzJ4xKCuQ/g
+	s5z1R7HTN7TGpEINT9iZRsdW4kZBwqwMU+xvxN+ry3HvXLQ4Aci1pnsx8xOynkM=
+X-Google-Smtp-Source: AGHT+IG794v//4CoU35jZ4JOp2qrHO0NPj4GP9c6zL37F3w1s4Wzz6eOSMuHZrhCt0fTdpXgvlBABQ==
+X-Received: by 2002:a05:6000:1a54:b0:37c:f561:1130 with SMTP id ffacd0b85a97d-3803ac0c1cbmr4633067f8f.18.1729865221746;
+        Fri, 25 Oct 2024 07:07:01 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058bb4348sm1583563f8f.111.2024.10.25.07.07.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Oct 2024 07:07:01 -0700 (PDT)
+Date: Fri, 25 Oct 2024 17:06:57 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Yazen Ghannam <yazen.ghannam@amd.com>
+Cc: Tony Luck <tony.luck@intel.com>, Borislav Petkov <bp@alien8.de>,
+	linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] RAS/AMD/FMPM: Remove some dead code
+Message-ID: <8412cc2d-7713-4a79-a7e8-5759e3320aa6@stanley.mountain>
+References: <6b914abf-b3ce-4baa-b4d7-f8da9a840a3f@stanley.mountain>
+ <20241025135616.GA407109@yaz-khff2.amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH V4 3/4] pmdomain: core: Fix debugfs node creation failure
-Content-Language: en-US
-To: Johan Hovold <johan@kernel.org>
-CC: <sudeep.holla@arm.com>, <cristian.marussi@arm.com>,
-        <ulf.hansson@linaro.org>, <jassisinghbrar@gmail.com>,
-        <dmitry.baryshkov@linaro.org>, <linux-kernel@vger.kernel.org>,
-        <arm-scmi@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-arm-msm@vger.kernel.org>, <konradybcio@kernel.org>,
-        <linux-pm@vger.kernel.org>, <tstrudel@google.com>, <rafael@kernel.org>,
-        Johan
- Hovold <johan+linaro@kernel.org>
-References: <20241023102148.1698910-1-quic_sibis@quicinc.com>
- <20241023102148.1698910-4-quic_sibis@quicinc.com>
- <ZxuixxBzQZUdIW1c@hovoldconsulting.com>
-From: Sibi Sankar <quic_sibis@quicinc.com>
-In-Reply-To: <ZxuixxBzQZUdIW1c@hovoldconsulting.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: ehmzMwQX5Q7m_GJ1jVenFpukylRey0u9
-X-Proofpoint-GUID: ehmzMwQX5Q7m_GJ1jVenFpukylRey0u9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 suspectscore=0
- impostorscore=0 priorityscore=1501 mlxlogscore=999 bulkscore=0
- lowpriorityscore=0 spamscore=0 phishscore=0 malwarescore=0 adultscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410250109
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241025135616.GA407109@yaz-khff2.amd.com>
 
-
-
-On 10/25/24 19:23, Johan Hovold wrote:
-> On Wed, Oct 23, 2024 at 03:51:47PM +0530, Sibi Sankar wrote:
->> The domain attributes returned by the perf protocol can end up
->> reporting identical names across domains, resulting in debugfs
->> node creation failure. Fix this failure by ensuring that pm domains
->> get a unique name using ida in pm_genpd_init.
->>
->> Logs: [X1E reports 'NCC' for all its scmi perf domains]
->> debugfs: Directory 'NCC' with parent 'pm_genpd' already present!
->> debugfs: Directory 'NCC' with parent 'pm_genpd' already present!
->>
->> Reported-by: Johan Hovold <johan+linaro@kernel.org>
->> Closes: https://lore.kernel.org/lkml/ZoQjAWse2YxwyRJv@hovoldconsulting.com/
->> Fixes: 718072ceb211 ("PM: domains: create debugfs nodes when adding power domains")
->> Suggested-by: Ulf Hansson <ulf.hansson@linaro.org>
->> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
->> ---
->>
->> v3:
->> * Update device names only when a name collision occurs [Dmitry/Ulf]
->> * Drop Johan's T-b from "fix debugfs node creation failure"
+On Fri, Oct 25, 2024 at 09:56:16AM -0400, Yazen Ghannam wrote:
+> On Fri, Oct 25, 2024 at 10:08:34AM +0300, Dan Carpenter wrote:
+> > Debugfs functions don't return NULL, they return error pointers.  Debugfs
+> > functions are slightly unusual because they're not supposed to be checked
+> > for errors in the normal case.  Delete these checks.
+> > 
+> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > ---
+> >  drivers/ras/amd/fmpm.c | 5 -----
+> >  1 file changed, 5 deletions(-)
+> > 
+> > diff --git a/drivers/ras/amd/fmpm.c b/drivers/ras/amd/fmpm.c
+> > index 90de737fbc90..3cde1fe17a7a 100644
+> > --- a/drivers/ras/amd/fmpm.c
+> > +++ b/drivers/ras/amd/fmpm.c
+> > @@ -956,12 +956,7 @@ static void setup_debugfs(void)
+> >  		return;
+> >  
+> >  	fmpm_dfs_dir = debugfs_create_dir("fmpm", dfs);
+> > -	if (!fmpm_dfs_dir)
+> > -		return;
+> > -
+> >  	fmpm_dfs_entries = debugfs_create_file("entries", 0400, fmpm_dfs_dir, NULL, &fmpm_fops);
+> > -	if (!fmpm_dfs_entries)
+> > -		debugfs_remove(fmpm_dfs_dir);
+> >  }
+> >  
+> >  static const struct x86_cpu_id fmpm_cpuids[] = {
+> > -- 
 > 
-> Also seems to do the trick:
+> Seems like we had the same idea. :)
 > 
-> Tested-by: Johan Hovold <johan+linaro@kernel.org>
+> https://lore.kernel.org/r/20241024155503.GA965@yaz-khff2.amd.com
 > 
-> But perhaps you could consider starting enumerating the duplicate
-> domains from 2 (or 1) instead of 0?:
-> 
-> NCC_1                           on                              0
-> NCC_0                           on                              0
-> NCC                             on                              0
 
-We are just trying to make sure node names are unique and
-can't ensure the pd-name correctness since ida starts its
-number generation from 0 and I didn't want to shape the
-fix just to cater to our specific case. The firmware fix
-will be in charge of ensuring pd-name correctness.
+Ah.  Good.  To me it's always encouraging when people end up writing basically
+the exact same patch.
 
--Sibi
-
-> 
-> Johan
+regards,
+dan carpenter
 
