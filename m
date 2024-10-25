@@ -1,80 +1,56 @@
-Return-Path: <linux-kernel+bounces-381036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D1449AF965
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 07:56:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F39479AF968
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 07:57:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 414691C21ED7
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 05:56:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A695B214E8
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 05:57:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D98018C930;
-	Fri, 25 Oct 2024 05:55:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADB60192582;
+	Fri, 25 Oct 2024 05:57:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dAjRalvl"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A8A118F2F0
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 05:55:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="L2A+2Tlk"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F2C418BB89;
+	Fri, 25 Oct 2024 05:57:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729835749; cv=none; b=oV/BtW++ILwiSQoQgcDrHvXhyV1O/89xY+3PrjJ3szjy5Xp1YuODHuTrQVFEYs/y8QUTCfv2idP2HUfyOvCT7YAh8uehdlSsim1I/9+87MLRZ6l8HSqMsa03+iXWO3snHd/Aa2FNiWihGkd86q7wN/8IyxKCEA5ovx4usm8m9x4=
+	t=1729835870; cv=none; b=i5QSs47fCP5QIte/4tisNV2myROZFpnqKahSdYd37GsjtjyG0Go/QAm86UDeZzTLRXc4Q+DH/SWwFMTOKPKkDbcC1bUN9XnwGw3AkCQ6qNSyZ0l3EONa9r7MqAez7zXm1f2vIL4/efZAwmptiM9F3W6V0T4WJ0BjQICmDFDWegA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729835749; c=relaxed/simple;
-	bh=ihN9tLagLqN+X4m2rDGdBN+nxGXvbHRzDHkz4gXlS7I=;
+	s=arc-20240116; t=1729835870; c=relaxed/simple;
+	bh=44nlQ61xtKlViEZbHLZo3wssRWfP7SavUPjJqVaWWLY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C1lpE14AjotpEH7Fu8e7JeuMHoW/21HRkOH4hrU7VgD3Vlq8aR5VxLO5i5L3xaeKTAJXUICkxYXeF+e7dMFd6CuSDHUF0IgPdbdaAwGI0gpqsFA7VQtScXA0s7Avm58iI+mR6lKuaFEOh59QF3axK0bS7fUNB8Alq1f8UbGMua0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dAjRalvl; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729835747; x=1761371747;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ihN9tLagLqN+X4m2rDGdBN+nxGXvbHRzDHkz4gXlS7I=;
-  b=dAjRalvluPUE5BvNTpCtFgdmGoReBXKySgOrtBCq5yDNa0D51HZ8O5MI
-   flycwP+PRva/oR0o1slmwONxbWzKfR986+56qrniEt28HgiI6eRyDdknl
-   iT0KdOdNOqIZa0eFRZ6LJuGubvu8V99Zer+x7SWunENLTpT2Q5t/tc46/
-   aWUSLNLIedtG6m0XBy5O+JYDyuEE/EA0dzRvCj2OQ8lASdwwShz3Jc9iT
-   bcErpfMzeWvvqgpnozKLJuzgewoTOPaGU+E4994EejBeQ2kMy1MO1Z83e
-   bQtaNdBvMsN/WGHpCI0NkD5ByknIHbsvVgEVova+tYFDp/FyKSAYLnEXS
-   w==;
-X-CSE-ConnectionGUID: Jbv78rEGTi+oG+YoTZVSCA==
-X-CSE-MsgGUID: b6SGBojHRXaBiuOhTJ0/xg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="29434823"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="29434823"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2024 22:55:47 -0700
-X-CSE-ConnectionGUID: zTGlRI0mTFy3nvanWu1jeQ==
-X-CSE-MsgGUID: 4Gef3XNkSBGEFn/4Gq6+qQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,231,1725346800"; 
-   d="scan'208";a="81651364"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa008.jf.intel.com with ESMTP; 24 Oct 2024 22:55:43 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t4DIT-000Xeo-07;
-	Fri, 25 Oct 2024 05:55:41 +0000
-Date: Fri, 25 Oct 2024 13:55:27 +0800
-From: kernel test robot <lkp@intel.com>
-To: goutongchen <goutongchen@uniontech.com>,
-	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>, Rob Clark <robdclark@chromium.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: oe-kbuild-all@lists.linux.dev, goutongchen <goutongchen@uniontech.com>,
-	=?utf-8?B?6Iuf5rWp?= <gouhao@uniontech.com>
-Subject: Re: [PATCH] iommu/arm-smmu: Add judgment on the size and granule
- parameters passed in
-Message-ID: <202410251314.KllYat7L-lkp@intel.com>
-References: <20241024100224.62942-1-goutongchen@uniontech.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=dSPGrih6turKHFkXhxrnUb5JLmXe4iGsXgjepw7xWxeQWvAhXcCbZKkyW+QadrtIuGZIIHAox9NqUQ5xU07GZOle7iZfAN8ZzqTD+90+z4NnKQ8P+W6JkTiAptF0I6WqrrryC4lgFcwUKv+uyv3oMzfWh7+ZzEAI1NsCwP832e8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=L2A+2Tlk; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1127)
+	id 4941A211A536; Thu, 24 Oct 2024 22:57:42 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 4941A211A536
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1729835862;
+	bh=UIIhnRqjV6h0yjPSM88EYu2gh7SLLk6FJcI1uVxDcNo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=L2A+2TlkEuO31+vchht75PqmmLfoYbqcR5EFVO+gmb3FVuFVJeEiJbtPRhmeJXk0v
+	 SYYWyJD++XWQusixW7UwK4W0vV37vduf/nWCwSWU8hHy92W/PZzhQoJd1qvfbNPcRp
+	 zQgjA9dkWXuWt0aIQLVs777Y3hmswhYDj7OQ5uus=
+Date: Thu, 24 Oct 2024 22:57:42 -0700
+From: Saurabh Singh Sengar <ssengar@linux.microsoft.com>
+To: Valentin Schneider <vschneid@redhat.com>
+Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+	ssengar@microsoft.com, srivatsa@csail.mit.edu
+Subject: Re: [PATCH] sched/topology: Enable topology_span_sane check only for
+ debug builds
+Message-ID: <20241025055742.GA8206@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+References: <1729619853-2597-1-git-send-email-ssengar@linux.microsoft.com>
+ <xhsmhsesmu62e.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,158 +59,46 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241024100224.62942-1-goutongchen@uniontech.com>
+In-Reply-To: <xhsmhsesmu62e.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 
-Hi goutongchen,
+On Wed, Oct 23, 2024 at 06:39:37PM +0200, Valentin Schneider wrote:
+> On 22/10/24 10:57, Saurabh Sengar wrote:
+> > On a x86 system under test with 1780 CPUs, topology_span_sane() takes
+> > around 8 seconds cumulatively for all the iterations. It is an expensive
+> > operation which does the sanity of non-NUMA topology masks.
+> >
+> > CPU topology is not something which changes very frequently hence make
+> > this check optional for the systems where the topology is trusted and
+> > need faster bootup.
+> >
+> > Restrict this to SCHED_DEBUG builds so that this penalty can be avoided
+> > for the systems who wants to avoid it.
+> >
+> > Fixes: ccf74128d66c ("sched/topology: Assert non-NUMA topology masks don't (partially) overlap")
+> > Signed-off-by: Saurabh Sengar <ssengar@linux.microsoft.com>
+> 
+> Please see:
+> http://lore.kernel.org/r/20241010155111.230674-1-steve.wahl@hpe.com
+> 
+> Also note that most distros ship with CONFIG_SCHED_DEBUG=y, so while I'm
+> not 100% against it this would at the very least need to be gated behind
+> e.g. the sched_verbose cmdline argument to be useful.
 
-kernel test robot noticed the following build warnings:
+Thanks for your review. I thought of using sched_verbose first, but I assumed
+that many systems might not be using this command line option and I didn't
+want them to have change in behaviour after my patch.
 
-[auto build test WARNING on soc/for-next]
-[also build test WARNING on arm-perf/for-next/perf linus/master joro-iommu/next v6.12-rc4 next-20241024]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+But if you think this is the right approach, I can send the V2.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/goutongchen/iommu-arm-smmu-Add-judgment-on-the-size-and-granule-parameters-passed-in/20241024-181048
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git for-next
-patch link:    https://lore.kernel.org/r/20241024100224.62942-1-goutongchen%40uniontech.com
-patch subject: [PATCH] iommu/arm-smmu: Add judgment on the size and granule parameters passed in
-config: i386-buildonly-randconfig-005-20241025 (https://download.01.org/0day-ci/archive/20241025/202410251314.KllYat7L-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241025/202410251314.KllYat7L-lkp@intel.com/reproduce)
+> 
+> But before that I'd like the "just run it once" option to be explored
+> first.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410251314.KllYat7L-lkp@intel.com/
+That's a great improvement, but I understand there will still be a linear
+penalty to pay for this sanity check. In my opinion, regardless of whether
+these improvements are accepted or not, we should make this sanity check
+optional.
 
-All warnings (new ones prefixed by >>):
-
-   In file included from include/linux/device.h:15,
-                    from include/linux/acpi.h:14,
-                    from drivers/iommu/arm/arm-smmu/arm-smmu.c:20:
-   drivers/iommu/arm/arm-smmu/arm-smmu.c: In function 'arm_smmu_tlb_inv_range_s1':
->> drivers/iommu/arm/arm-smmu/arm-smmu.c:287:34: warning: format '%lu' expects argument of type 'long unsigned int', but argument 3 has type 'size_t' {aka 'unsigned int'} [-Wformat=]
-     287 |                                  "The size or granule passed in is err. size=%lu, granule=%lu\n",
-         |                                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/dev_printk.h:110:30: note: in definition of macro 'dev_printk_index_wrap'
-     110 |                 _p_func(dev, fmt, ##__VA_ARGS__);                       \
-         |                              ^~~
-   include/linux/dev_printk.h:154:56: note: in expansion of macro 'dev_fmt'
-     154 |         dev_printk_index_wrap(_dev_err, KERN_ERR, dev, dev_fmt(fmt), ##__VA_ARGS__)
-         |                                                        ^~~~~~~
-   drivers/iommu/arm/arm-smmu/arm-smmu.c:286:17: note: in expansion of macro 'dev_err'
-     286 |                 dev_err(smmu->dev,
-         |                 ^~~~~~~
-   drivers/iommu/arm/arm-smmu/arm-smmu.c:287:80: note: format string is defined here
-     287 |                                  "The size or granule passed in is err. size=%lu, granule=%lu\n",
-         |                                                                              ~~^
-         |                                                                                |
-         |                                                                                long unsigned int
-         |                                                                              %u
-   drivers/iommu/arm/arm-smmu/arm-smmu.c:287:34: warning: format '%lu' expects argument of type 'long unsigned int', but argument 4 has type 'size_t' {aka 'unsigned int'} [-Wformat=]
-     287 |                                  "The size or granule passed in is err. size=%lu, granule=%lu\n",
-         |                                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/dev_printk.h:110:30: note: in definition of macro 'dev_printk_index_wrap'
-     110 |                 _p_func(dev, fmt, ##__VA_ARGS__);                       \
-         |                              ^~~
-   include/linux/dev_printk.h:154:56: note: in expansion of macro 'dev_fmt'
-     154 |         dev_printk_index_wrap(_dev_err, KERN_ERR, dev, dev_fmt(fmt), ##__VA_ARGS__)
-         |                                                        ^~~~~~~
-   drivers/iommu/arm/arm-smmu/arm-smmu.c:286:17: note: in expansion of macro 'dev_err'
-     286 |                 dev_err(smmu->dev,
-         |                 ^~~~~~~
-   drivers/iommu/arm/arm-smmu/arm-smmu.c:287:93: note: format string is defined here
-     287 |                                  "The size or granule passed in is err. size=%lu, granule=%lu\n",
-         |                                                                                           ~~^
-         |                                                                                             |
-         |                                                                                             long unsigned int
-         |                                                                                           %u
-   drivers/iommu/arm/arm-smmu/arm-smmu.c: In function 'arm_smmu_tlb_inv_range_s2':
-   drivers/iommu/arm/arm-smmu/arm-smmu.c:321:34: warning: format '%lu' expects argument of type 'long unsigned int', but argument 3 has type 'size_t' {aka 'unsigned int'} [-Wformat=]
-     321 |                                  "The size or granule passed in is err. size=%lu, granule=%lu\n",
-         |                                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/dev_printk.h:110:30: note: in definition of macro 'dev_printk_index_wrap'
-     110 |                 _p_func(dev, fmt, ##__VA_ARGS__);                       \
-         |                              ^~~
-   include/linux/dev_printk.h:154:56: note: in expansion of macro 'dev_fmt'
-     154 |         dev_printk_index_wrap(_dev_err, KERN_ERR, dev, dev_fmt(fmt), ##__VA_ARGS__)
-         |                                                        ^~~~~~~
-   drivers/iommu/arm/arm-smmu/arm-smmu.c:320:17: note: in expansion of macro 'dev_err'
-     320 |                 dev_err(smmu->dev,
-         |                 ^~~~~~~
-   drivers/iommu/arm/arm-smmu/arm-smmu.c:321:80: note: format string is defined here
-     321 |                                  "The size or granule passed in is err. size=%lu, granule=%lu\n",
-         |                                                                              ~~^
-         |                                                                                |
-         |                                                                                long unsigned int
-         |                                                                              %u
-   drivers/iommu/arm/arm-smmu/arm-smmu.c:321:34: warning: format '%lu' expects argument of type 'long unsigned int', but argument 4 has type 'size_t' {aka 'unsigned int'} [-Wformat=]
-     321 |                                  "The size or granule passed in is err. size=%lu, granule=%lu\n",
-         |                                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/dev_printk.h:110:30: note: in definition of macro 'dev_printk_index_wrap'
-     110 |                 _p_func(dev, fmt, ##__VA_ARGS__);                       \
-         |                              ^~~
-   include/linux/dev_printk.h:154:56: note: in expansion of macro 'dev_fmt'
-     154 |         dev_printk_index_wrap(_dev_err, KERN_ERR, dev, dev_fmt(fmt), ##__VA_ARGS__)
-         |                                                        ^~~~~~~
-   drivers/iommu/arm/arm-smmu/arm-smmu.c:320:17: note: in expansion of macro 'dev_err'
-     320 |                 dev_err(smmu->dev,
-         |                 ^~~~~~~
-   drivers/iommu/arm/arm-smmu/arm-smmu.c:321:93: note: format string is defined here
-     321 |                                  "The size or granule passed in is err. size=%lu, granule=%lu\n",
-         |                                                                                           ~~^
-         |                                                                                             |
-         |                                                                                             long unsigned int
-         |                                                                                           %u
-
-Kconfig warnings: (for reference only)
-   WARNING: unmet direct dependencies detected for GET_FREE_REGION
-   Depends on [n]: SPARSEMEM [=n]
-   Selected by [m]:
-   - RESOURCE_KUNIT_TEST [=m] && RUNTIME_TESTING_MENU [=y] && KUNIT [=m]
-
-
-vim +287 drivers/iommu/arm/arm-smmu/arm-smmu.c
-
-   276	
-   277	static void arm_smmu_tlb_inv_range_s1(unsigned long iova, size_t size,
-   278					      size_t granule, void *cookie, int reg)
-   279	{
-   280		struct arm_smmu_domain *smmu_domain = cookie;
-   281		struct arm_smmu_device *smmu = smmu_domain->smmu;
-   282		struct arm_smmu_cfg *cfg = &smmu_domain->cfg;
-   283		int idx = cfg->cbndx;
-   284	
-   285		if (size == 0 || granule == 0 || (size % granule) != 0) {
-   286			dev_err(smmu->dev,
- > 287					 "The size or granule passed in is err. size=%lu, granule=%lu\n",
-   288					 size, granule);
-   289			return;
-   290		}
-   291	
-   292		if (smmu->features & ARM_SMMU_FEAT_COHERENT_WALK)
-   293			wmb();
-   294	
-   295		if (cfg->fmt != ARM_SMMU_CTX_FMT_AARCH64) {
-   296			iova = (iova >> 12) << 12;
-   297			iova |= cfg->asid;
-   298			do {
-   299				arm_smmu_cb_write(smmu, idx, reg, iova);
-   300				iova += granule;
-   301			} while (size -= granule);
-   302		} else {
-   303			iova >>= 12;
-   304			iova |= (u64)cfg->asid << 48;
-   305			do {
-   306				arm_smmu_cb_writeq(smmu, idx, reg, iova);
-   307				iova += granule >> 12;
-   308			} while (size -= granule);
-   309		}
-   310	}
-   311	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+- Saurabh
 
