@@ -1,660 +1,547 @@
-Return-Path: <linux-kernel+bounces-382035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 313219B0821
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:26:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94F7D9B0824
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:26:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B55821F2109A
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:26:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54FEE281300
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:26:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46F9E20BB38;
-	Fri, 25 Oct 2024 15:23:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EFE121A4BB;
+	Fri, 25 Oct 2024 15:24:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VbPZgpMV"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EEFF20D4E4
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 15:23:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="iyPz6Hs9"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 477791F7547;
+	Fri, 25 Oct 2024 15:23:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729869792; cv=none; b=Os59JoLx1bLqAtW6Gt6R3IAhfvJBTzozCXrfhyweY0MeuS6xcuNXjLvsQsmuP4PPojr8zprrswTU9ccT0V9IhJUKLxS/4J+YutElNWMogqyYO3Q3wWPkFuWL8xqJAhAJci9Sbzdn+2bABFkjuIlvOkNl0v7BlcNUTiQCqgsp2X8=
+	t=1729869840; cv=none; b=Hf00SYfo/LAAsMc5o8jhhYZ6BtQZKP5BpDp7vWOQ+hgbAwJIs4zSA33+wHWfYCNhaZ4fwMAx6t4KsD8tnNIkPEv1g+6cQq/UiUx/nbnPiByWrZzWuTEGu9bKX9YtXWnKpmjVXqAw+g8iu8SFFoyBbZLiwM/xGqAh7zICpGUVzsA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729869792; c=relaxed/simple;
-	bh=8FbeicR87fUKKJuKBDf5OiGYnoTGgTDP768BkLjnows=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=b4y/rMb1w/DtQ+2eoPsjDCVJ3r0ivoIDf+OQyXFsUb3mcfXZ9cRXlf9+4JEEzCMdntK6AXGw/DcE26slgNVnbhAnEZ8fHGsqtxmD5juwecGouxMEeZRprivVgMeTZe1EN5kRlLAZsloo/UJ8xAJy05j1zdrrjqZYsmuhjTTbnow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VbPZgpMV; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2fb5111747cso21491311fa.2
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 08:23:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729869787; x=1730474587; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=n/+QskIXdzcW+et8E4WD6OyvnlorVlqZ0XDg9qDj3+c=;
-        b=VbPZgpMVAgKQ/frIIGHJLN4BXqGnZ4gvUAa62SefDC7PZQyuEQgJ4AU91IMlCjAuwp
-         zSDIQlmvYswzluoTCV5+72aTmmsB+tYFJnSYJuix9b9f4mcToD1QDuXuoufeIBjmAc5V
-         3edCtyAko53gyYgMNrNh/du4376UUG9IuPbjRlWQp5kV3D1KU2i3+nbRC9uOIc3Hl6zj
-         9cGEzGwPHkhAYeL9+pMWO+gPcAlT48W23s4m4UcHSpIUeZeYzSY8KcO9tS+FyWyaGnKd
-         Ma37hoKa1yHripU8A2J5xjqT8oieftayD2WNarxXpmGaOZVV7pi4f532VsW8vyYzxFsK
-         G45A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729869787; x=1730474587;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=n/+QskIXdzcW+et8E4WD6OyvnlorVlqZ0XDg9qDj3+c=;
-        b=foCMbu+wcGb8CEptedtn88R/TwlHUTum1wLfWcneh1Kqz9qmAdEM6JS02F5KcXtVBM
-         wCanEBrTpNeohqlYogAmKx/HtAVa0xs4I8iMrJnVcp5WW4yMw7LVMf0Y/k7f2NixG6CI
-         QdpbjAO0E0v01LeTPvVSIDotOZjtSROvThf87Zitt1vnEMjLfw1P2W2OzEar6v976Y8k
-         pd0LM5FsArS44GzizQuwEX/wwtylnP4xyPqDl1K7kM9Ix2NXON7PqIEMlwyICNUD5fJY
-         /HHqlFLwKbLqcOFVcqnoErjD9yFr6rZ051jkdbjJxpkRsoi/noccUB3+wUl+47lyJ5Cu
-         KveQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWbN+yK5h1O67JO3dqd4z6gsgbHHOzC+a+2+pOUUnwA1aEtXHsinWY5qIH5+syyfXkP6+HXPtDX8Jaj+yU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhZc9yz1lelZBrOkYcbc7IYUlOq3/P7CrzRyOwkK/SKRws1rqn
-	d//Wkb+MBYcJHAlVyPdvbR9H1F0NO8Lw7kpxtmvZviWYDZpJfOL6dgnTyZz/e8E=
-X-Google-Smtp-Source: AGHT+IF9wgbrox6j6lN8CGv6/Q/9ChwfZpJKyciZPAPHKN8VsER20WcxzNSCnBm/r/jsLuBJ0VSU1w==
-X-Received: by 2002:a2e:be26:0:b0:2fb:4bee:47ec with SMTP id 38308e7fff4ca-2fc9d59ef88mr59347791fa.33.1729869787202;
-        Fri, 25 Oct 2024 08:23:07 -0700 (PDT)
-Received: from [127.0.1.1] (2001-14ba-a0c3-3a00-70b-e6fc-b322-6a1b.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:70b:e6fc:b322:6a1b])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fcb46017bdsm2135721fa.104.2024.10.25.08.23.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2024 08:23:05 -0700 (PDT)
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Fri, 25 Oct 2024 18:22:54 +0300
-Subject: [PATCH v2 2/2] soc: qcom: llcc: add support for SAR2130P and
- SAR1130P
+	s=arc-20240116; t=1729869840; c=relaxed/simple;
+	bh=LPe9PDDHsb1edCu1M8o7YlZyo8qGP77hiMrydhq7oxg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=O8WGe7kORbholvqNySK4kQBMu8eMxm1Gzen9Lt7ofJd5B7PfPQMEgvnM5F8q0jTZUoR/ibAQamcxJvVjl7ZrtRB8GrX+Arot+HdxkFbxDvG8xhsx9Zeb3snMNCFSjmROgH9W1PPCaGDtWi2pMezLSfZL3eyvwU8YOO/k6MGLzo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=iyPz6Hs9; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from pwmachine.localnet (84-115-216-151.cable.dynamic.surfer.at [84.115.216.151])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 15F9A211A5AF;
+	Fri, 25 Oct 2024 08:23:50 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 15F9A211A5AF
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1729869836;
+	bh=C8hQTH5DteYO9ta8j0G7ZbJVPnF04IeGGSRGN0H5rmM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=iyPz6Hs9vOcNz4U9hoWZ/jDFnMONjsWMwvGU7aQd7Sb69URqqH7UT+AR7jcKNBQj/
+	 VIFSCfmIi1BYNBfrj+P//05f2MPprLJxH6YC+/JIjXTn8PnQCfRzaAwk/U0038Njmc
+	 oL0XgulGpZfi+g8mBrbxgq53YKi3gA1MxROWlW/s=
+From: Francis Laniel <flaniel@linux.microsoft.com>
+To: Eric Paris <eparis@redhat.com>, Paul Moore <paul@paul-moore.com>, =?ISO-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>, "Serge E . Hallyn" <serge@hallyn.com>, =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc: =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>, Ben Scarlato <akhna@google.com>, Casey Schaufler <casey@schaufler-ca.com>, Charles Zaffery <czaffery@roblox.com>, James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, Jorge Lucangeli Obes <jorgelo@google.com>, Kees Cook <kees@kernel.org>, Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <mattbobrowski@google.com>, Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, Praveen K Paladugu <prapal@linux.microsoft.com>, Robert Salvet <robert.salvet@roblox.com>, Shervin Oloumi <enlightened@google.com>, Song Liu <song@kernel.org>, Tahera Fahimi <fahimitahera@gmail.com>, audit@vger.kernel.org, linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [RFC PATCH v2 10/14] landlock: Log file-related denials
+Date: Fri, 25 Oct 2024 17:23:48 +0200
+Message-ID: <8501854.T7Z3S40VBb@pwmachine>
+In-Reply-To: <20241022161009.982584-11-mic@digikod.net>
+References: <20241022161009.982584-1-mic@digikod.net> <20241022161009.982584-11-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241025-sar2130p-llcc-v2-2-7455dc40e952@linaro.org>
-References: <20241025-sar2130p-llcc-v2-0-7455dc40e952@linaro.org>
-In-Reply-To: <20241025-sar2130p-llcc-v2-0-7455dc40e952@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Conor Dooley <conor@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=13837;
- i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=8FbeicR87fUKKJuKBDf5OiGYnoTGgTDP768BkLjnows=;
- b=owEBbQKS/ZANAwAKARTbcu2+gGW4AcsmYgBnG7fP0YqsE/JOEf2MgIk/aicNopE/N6HwEiRny
- S+NiqtnEveJAjMEAAEKAB0WIQRdB85SOKWMgfgVe+4U23LtvoBluAUCZxu3zwAKCRAU23LtvoBl
- uCO2EADAz5LE9YpH9WKIT3z3KBepk2dxGH8qbSjm8trAhHCGeulGwKDcuu2bYCTNmGKuaDm8+L8
- tfmzGNyTEA0naacr7liogC9jYZQPJzOESppXJDWfry/SpycgZP4mWJq+d4LrwZpw2hx10mvcWDY
- ISxhWXt7RfVstYAeTngVrMeaZmOZQwXGf8UXlOCMB4IYs6PYOxeD3bVcsk2WYOcFP+ULmTf2u/L
- QWV70hVk1YEkE1vJ5klHPyCeKaoZHGLq8Rz0npKuQpoBwMNULOunDMML48TRvHGT4HwopLV2pIY
- LLCIiyj81FFguu3k0BoNhdKuqzrr4DgLj7f0YWYUB7C0C4OYUY33hiaQ3z5pb/9OzkA2GboeZGK
- zaowolFsMcY9lLgQbddKF5QDnV36kMw/dDLafpbooKAqTXH/vKw/yNcZtQROjV05wig6fTz46yz
- FgltI2hTDXajB2Tmmbls28ihsuUmnzWwhPz09n9m2ybvpfUSB3A/YS4vCAWJB8I8N84XE9Ll+RM
- KraHwZhOZ7Tem+gg5y3oLT5I4SxNhx6+LF/HWEn6aH85bZZFXPU90ZkS5P4VHBW7+fRRwAdFH/g
- yQPqfx3laXV2VB/8JIaQlWVsD8D8eoZFBUayeFkDAGo6q6cjvFDFH3L0PmXDTzVUUXu8M2/mo9R
- uAim5uZlR2heP7A==
-X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
- fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 
-Implement necessary support for the LLCC control on the SAR1130P and
-SAR2130P platforms. These two platforms use different ATTR1_MAX_CAP
-shift and also require manual override for num_banks.
+Le mardi 22 octobre 2024, 18:10:05 CEST Micka=EBl Sala=FCn a =E9crit :
+> Add audit support for path_mkdir, path_mknod, path_symlink, path_unlink,
+> path_rmdir, path_truncate, path_link, path_rename, and file_open hooks.
+>=20
+> Audit record sample for a link action:
+>=20
+>   DENY:     domain=3D4533720568 blockers=3Dfs_refer path=3D"/usr/bin" dev=
+=3D"vda2"
+> ino=3D351 DOM_INFO: domain=3D4533720568 parent=3D0 pid=3D325 uid=3D0
+> exe=3D"/root/sandboxer" comm=3D"sandboxer" DENY:     domain=3D4533720568
+> blockers=3Dfs_make_reg,fs_refer path=3D"/usr/local" dev=3D"vda2" ino=3D36=
+5 SYSCALL:
+>  arch=3Dc000003e syscall=3D265 success=3Dno exit=3D-13 ...
+>=20
+> Cc: G=FCnther Noack <gnoack@google.com>
+> Signed-off-by: Micka=EBl Sala=FCn <mic@digikod.net>
+> Link: https://lore.kernel.org/r/20241022161009.982584-11-mic@digikod.net
+> ---
+>=20
+> Changes since v2:
+> * Revamp logging and support the path_link and path_rename hooks.
+> * Add KUnit tests.
+>=20
+> Changes since v1:
+> * Move audit code to the ptrace patch.
+> ---
+>  security/landlock/audit.c | 173 ++++++++++++++++++++++++++++++++++++--
+>  security/landlock/audit.h |   9 ++
+>  security/landlock/fs.c    |  64 +++++++++++---
+>  3 files changed, 229 insertions(+), 17 deletions(-)
+>=20
+> diff --git a/security/landlock/audit.c b/security/landlock/audit.c
+> index 4cd9407459d2..9c8b6c246884 100644
+> --- a/security/landlock/audit.c
+> +++ b/security/landlock/audit.c
+> @@ -7,23 +7,55 @@
+>=20
+>  #include <kunit/test.h>
+>  #include <linux/audit.h>
+> +#include <linux/bitops.h>
+>  #include <linux/lsm_audit.h>
+>  #include <linux/pid.h>
+>  #include <linux/uidgid.h>
+> +#include <uapi/linux/landlock.h>
+>=20
+>  #include "audit.h"
+> +#include "common.h"
+>  #include "cred.h"
+>  #include "domain.h"
+>  #include "ruleset.h"
+>=20
+> -static const char *get_blocker(const enum landlock_request_type type)
+> +static const char *const fs_access_strings[] =3D {
+> +	[BIT_INDEX(LANDLOCK_ACCESS_FS_EXECUTE)] =3D "fs_execute",
+> +	[BIT_INDEX(LANDLOCK_ACCESS_FS_WRITE_FILE)] =3D "fs_write_file",
+> +	[BIT_INDEX(LANDLOCK_ACCESS_FS_READ_FILE)] =3D "fs_read_file",
+> +	[BIT_INDEX(LANDLOCK_ACCESS_FS_READ_DIR)] =3D "fs_read_dir",
+> +	[BIT_INDEX(LANDLOCK_ACCESS_FS_REMOVE_DIR)] =3D "fs_remove_dir",
+> +	[BIT_INDEX(LANDLOCK_ACCESS_FS_REMOVE_FILE)] =3D "fs_remove_file",
+> +	[BIT_INDEX(LANDLOCK_ACCESS_FS_MAKE_CHAR)] =3D "fs_make_char",
+> +	[BIT_INDEX(LANDLOCK_ACCESS_FS_MAKE_DIR)] =3D "fs_make_dir",
+> +	[BIT_INDEX(LANDLOCK_ACCESS_FS_MAKE_REG)] =3D "fs_make_reg",
+> +	[BIT_INDEX(LANDLOCK_ACCESS_FS_MAKE_SOCK)] =3D "fs_make_sock",
+> +	[BIT_INDEX(LANDLOCK_ACCESS_FS_MAKE_FIFO)] =3D "fs_make_fifo",
+> +	[BIT_INDEX(LANDLOCK_ACCESS_FS_MAKE_BLOCK)] =3D "fs_make_block",
+> +	[BIT_INDEX(LANDLOCK_ACCESS_FS_MAKE_SYM)] =3D "fs_make_sym",
+> +	[BIT_INDEX(LANDLOCK_ACCESS_FS_REFER)] =3D "fs_refer",
+> +	[BIT_INDEX(LANDLOCK_ACCESS_FS_TRUNCATE)] =3D "fs_truncate",
+> +	[BIT_INDEX(LANDLOCK_ACCESS_FS_IOCTL_DEV)] =3D "fs_ioctl_dev",
+> +};
+> +static_assert(ARRAY_SIZE(fs_access_strings) =3D=3D LANDLOCK_NUM_ACCESS_F=
+S);
+> +
+> +static __attribute_const__ const char *
+> +get_blocker(const enum landlock_request_type type,
+> +	    const unsigned long access_bit)
+>  {
+>  	switch (type) {
+>  	case LANDLOCK_REQUEST_PTRACE:
+> +		WARN_ON_ONCE(access_bit !=3D -1);
+>  		return "ptrace";
+>=20
+>  	case LANDLOCK_REQUEST_FS_CHANGE_LAYOUT:
+> +		WARN_ON_ONCE(access_bit !=3D -1);
+>  		return "fs_change_layout";
+> +
+> +	case LANDLOCK_REQUEST_FS_ACCESS:
+> +		if (WARN_ON_ONCE(access_bit >=3D ARRAY_SIZE(fs_access_strings)))
+> +			return "unknown";
+> +		return fs_access_strings[access_bit];
+>  	}
+>=20
+>  	WARN_ON_ONCE(1);
+> @@ -31,9 +63,20 @@ static const char *get_blocker(const enum
+> landlock_request_type type) }
+>=20
+>  static void log_blockers(struct audit_buffer *const ab,
+> -			 const enum landlock_request_type type)
+> +			 const enum landlock_request_type type,
+> +			 const access_mask_t access)
+>  {
+> -	audit_log_format(ab, "%s", get_blocker(type));
+> +	const unsigned long access_mask =3D access;
+> +	unsigned long access_bit;
+> +	size_t i =3D 0;
+> +
+> +	for_each_set_bit(access_bit, &access_mask, BITS_PER_TYPE(access)) {
+> +		audit_log_format(ab, "%s%s", (i =3D=3D 0) ? "" : ",",
+> +				 get_blocker(type, access_bit));
+> +		i++;
+> +	}
+> +	if (i =3D=3D 0)
+> +		audit_log_format(ab, "%s", get_blocker(type, -1));
+>  }
+>=20
+>  static void log_node(struct landlock_hierarchy *const node)
+> @@ -121,9 +164,110 @@ static void test_get_hierarchy(struct kunit *const
+> test)
+>=20
+>  #endif /* CONFIG_SECURITY_LANDLOCK_KUNIT_TEST */
+>=20
+> +static size_t get_denied_layer(const struct landlock_ruleset *const doma=
+in,
+> +			       access_mask_t *const access_request,
+> +			       const layer_mask_t (*const layer_masks)[],
+> +			       const size_t layer_masks_size)
+> +{
+> +	const unsigned long access_req =3D *access_request;
 
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- drivers/soc/qcom/llcc-qcom.c       | 460 ++++++++++++++++++++++++++++++++++++-
- include/linux/soc/qcom/llcc-qcom.h |  12 +
- 2 files changed, 466 insertions(+), 6 deletions(-)
+Nit: should access_request being checked for not being NULL?
 
-diff --git a/drivers/soc/qcom/llcc-qcom.c b/drivers/soc/qcom/llcc-qcom.c
-index a470285f54a875bf2262aac7b0f84ed8fd028ef1..49526486d1025995eb7678e8bbd3facf313721ea 100644
---- a/drivers/soc/qcom/llcc-qcom.c
-+++ b/drivers/soc/qcom/llcc-qcom.c
-@@ -136,6 +136,8 @@ struct qcom_llcc_config {
- 	const struct llcc_slice_config *sct_data;
- 	const u32 *reg_offset;
- 	const struct llcc_edac_reg_offset *edac_reg_offset;
-+	u32 max_cap_shift; /* instead of ATTR1_MAX_CAP_SHIFT */
-+	u32 num_banks;
- 	int size;
- 	bool need_llcc_cfg;
- 	bool no_edac;
-@@ -298,6 +300,408 @@ static const struct llcc_slice_config sa8775p_data[] =  {
- 	},
- };
- 
-+static const struct llcc_slice_config sar1130p_data[] = {
-+	{
-+		.usecase_id = LLCC_CPUSS,
-+		.slice_id = 1,
-+		.max_cap = 4096,
-+		.priority = 1,
-+		.bonus_ways = 0x1fff,
-+		.res_ways = 0x0,
-+		.cache_mode = 0,
-+		.retain_on_pc = true,
-+		.activate_on_init = true,
-+	}, {
-+		.usecase_id = LLCC_VIDSC0,
-+		.slice_id = 2,
-+		.max_cap = 512,
-+		.priority = 3,
-+		.fixed_size = true,
-+		.bonus_ways = 0x1fff,
-+		.res_ways = 0x0,
-+		.cache_mode = 0,
-+		.retain_on_pc = true,
-+	}, {
-+		.usecase_id = LLCC_AUDIO,
-+		.slice_id = 6,
-+		.max_cap = 1024,
-+		.priority = 3,
-+		.fixed_size = true,
-+		.bonus_ways = 0x1fff,
-+		.res_ways = 0x0,
-+		.cache_mode = 0,
-+		.retain_on_pc = true,
-+	}, {
-+		.usecase_id = LLCC_CMPT,
-+		.slice_id = 10,
-+		.max_cap = 1024,
-+		.priority = 1,
-+		.fixed_size = true,
-+		.bonus_ways = 0x1fff,
-+		.res_ways = 0x0,
-+		.cache_mode = 0,
-+		.retain_on_pc = true,
-+	}, {
-+		.usecase_id = LLCC_GPUHTW,
-+		.slice_id = 11,
-+		.max_cap = 0,
-+		.priority = 1,
-+		.fixed_size = true,
-+		.bonus_ways = 0x1fff,
-+		.res_ways = 0x0,
-+		.cache_mode = 0,
-+		.retain_on_pc = true,
-+	}, {
-+		.usecase_id = LLCC_GPU,
-+		.slice_id = 12,
-+		.max_cap = 3072,
-+		.priority = 3,
-+		.fixed_size = true,
-+		.bonus_ways = 0x1fff,
-+		.res_ways = 0x0,
-+		.cache_mode = 0,
-+		.retain_on_pc = true,
-+		.write_scid_en = true,
-+	}, {
-+		.usecase_id = LLCC_MMUHWT,
-+		.slice_id = 13,
-+		.max_cap = 512,
-+		.priority = 1,
-+		.fixed_size = true,
-+		.bonus_ways = 0x1fff,
-+		.res_ways = 0x0,
-+		.cache_mode = 0,
-+	}, {
-+		.usecase_id = LLCC_DISP,
-+		.slice_id = 16,
-+		.max_cap = 12800,
-+		.priority = 1,
-+		.fixed_size = true,
-+		.bonus_ways = 0x1fff,
-+		.res_ways = 0x0,
-+		.cache_mode = 0,
-+		.retain_on_pc = true,
-+	}, {
-+		.usecase_id = LLCC_CVP,
-+		.slice_id = 28,
-+		.max_cap = 256,
-+		.priority = 3,
-+		.fixed_size = true,
-+		.bonus_ways = 0x1fff,
-+		.res_ways = 0x0,
-+		.cache_mode = 0,
-+		.retain_on_pc = true,
-+	}, {
-+		.usecase_id = LLCC_APTCM,
-+		.slice_id = 26,
-+		.max_cap = 2048,
-+		.priority = 3,
-+		.fixed_size = true,
-+		.bonus_ways = 0x0,
-+		.res_ways = 0x3,
-+		.cache_mode = true,
-+		.dis_cap_alloc = true,
-+		.retain_on_pc = true,
-+	}, {
-+		.usecase_id = LLCC_WRCACHE,
-+		.slice_id = 31,
-+		.max_cap = 256,
-+		.priority = 1,
-+		.fixed_size = true,
-+		.bonus_ways = 0x1fff,
-+		.res_ways = 0x0,
-+		.cache_mode = 0,
-+		.activate_on_init = true,
-+	}, {
-+		.usecase_id = LLCC_AENPU,
-+		.slice_id = 30,
-+		.max_cap = 3072,
-+		.priority = 3,
-+		.fixed_size = true,
-+		.bonus_ways = 0x1fff,
-+		.res_ways = 0x0,
-+		.cache_mode = 0,
-+		.retain_on_pc = true,
-+	}, {
-+		.usecase_id = LLCC_DISP_LEFT,
-+		.slice_id = 17,
-+		.max_cap = 0,
-+		.priority = 1,
-+		.fixed_size = true,
-+		.bonus_ways = 0x0,
-+		.res_ways = 0x0,
-+		.cache_mode = 0,
-+		.retain_on_pc = true,
-+	}, {
-+		.usecase_id = LLCC_DISP_RIGHT,
-+		.slice_id = 18,
-+		.max_cap = 0,
-+		.priority = 1,
-+		.fixed_size = true,
-+		.bonus_ways = 0x0,
-+		.res_ways = 0x0,
-+		.cache_mode = 0,
-+		.retain_on_pc = true,
-+	}, {
-+		.usecase_id = LLCC_EVCS_LEFT,
-+		.slice_id = 22,
-+		.max_cap = 0,
-+		.priority = 1,
-+		.fixed_size = true,
-+		.bonus_ways = 0x0,
-+		.res_ways = 0x0,
-+		.cache_mode = 0,
-+		.retain_on_pc = true,
-+	}, {
-+		.usecase_id = LLCC_EVCS_RIGHT,
-+		.slice_id = 23,
-+		.max_cap = 0,
-+		.priority = 1,
-+		.fixed_size = true,
-+		.bonus_ways = 0x0,
-+		.res_ways = 0x0,
-+		.cache_mode = 0,
-+		.retain_on_pc = true,
-+	},
-+};
-+
-+static const struct llcc_slice_config sar2130p_data[] = {
-+	{
-+		.usecase_id = LLCC_CPUSS,
-+		.slice_id = 1,
-+		.max_cap = 6144,
-+		.priority = 1,
-+		.fixed_size = 0,
-+		.bonus_ways = 0x3fffffff,
-+		.res_ways = 0x0,
-+		.cache_mode = 0,
-+		.retain_on_pc = true,
-+		.activate_on_init = true,
-+	}, {
-+		.usecase_id = LLCC_VIDSC0,
-+		.slice_id = 2,
-+		.max_cap = 128,
-+		.priority = 2,
-+		.fixed_size = true,
-+		.bonus_ways = 0x3fffffff,
-+		.res_ways = 0x0,
-+		.cache_mode = 0,
-+		.retain_on_pc = true,
-+	}, {
-+		.usecase_id = LLCC_AUDIO,
-+		.slice_id = 6,
-+		.max_cap = 1024,
-+		.priority = 3,
-+		.fixed_size = true,
-+		.bonus_ways = 0x3fffffff,
-+		.res_ways = 0x0,
-+		.cache_mode = 0,
-+		.retain_on_pc = true,
-+	}, {
-+		.usecase_id = LLCC_CMPT,
-+		.slice_id = 10,
-+		.max_cap = 1024,
-+		.priority = 1,
-+		.fixed_size = true,
-+		.bonus_ways = 0x3fffffff,
-+		.res_ways = 0x0,
-+		.cache_mode = 0,
-+		.retain_on_pc = true,
-+	}, {
-+		.usecase_id = LLCC_GPUHTW,
-+		.slice_id = 11,
-+		.max_cap = 0,
-+		.priority = 1,
-+		.fixed_size = true,
-+		.bonus_ways = 0x3fffffff,
-+		.res_ways = 0x0,
-+		.cache_mode = 0,
-+		.retain_on_pc = true,
-+	}, {
-+		.usecase_id = LLCC_GPU,
-+		.slice_id = 12,
-+		.max_cap = 1536,
-+		.priority = 2,
-+		.fixed_size = true,
-+		.bonus_ways = 0x3fffffff,
-+		.res_ways = 0x0,
-+		.cache_mode = 0,
-+		.retain_on_pc = true,
-+		.write_scid_en = true,
-+	}, {
-+		.usecase_id = LLCC_MMUHWT,
-+		.slice_id = 13,
-+		.max_cap = 1024,
-+		.priority = 1,
-+		.fixed_size = true,
-+		.bonus_ways = 0x3fffffff,
-+		.res_ways = 0x0,
-+		.cache_mode = 0,
-+		.activate_on_init = true,
-+	}, {
-+		.usecase_id = LLCC_DISP,
-+		.slice_id = 16,
-+		.max_cap = 0,
-+		.priority = 1,
-+		.fixed_size = true,
-+		.bonus_ways = 0x3fffffff,
-+		.res_ways = 0x0,
-+		.cache_mode = 0,
-+		.retain_on_pc = true,
-+	}, {
-+		.usecase_id = LLCC_APTCM,
-+		.slice_id = 26,
-+		.max_cap = 2048,
-+		.priority = 3,
-+		.fixed_size = true,
-+		.bonus_ways = 0x0,
-+		.res_ways = 0x3,
-+		.cache_mode = true,
-+		.dis_cap_alloc = true,
-+		.retain_on_pc = true,
-+	}, {
-+		.usecase_id = LLCC_WRCACHE,
-+		.slice_id = 31,
-+		.max_cap = 256,
-+		.priority = 1,
-+		.fixed_size = true,
-+		.bonus_ways = 0x3fffffff,
-+		.res_ways = 0x0,
-+		.cache_mode = 0,
-+		.activate_on_init = true,
-+	}, {
-+		.usecase_id = LLCC_VIEYE,
-+		.slice_id = 7,
-+		.max_cap = 7168,
-+		.priority = 4,
-+		.fixed_size = true,
-+		.bonus_ways = 0x3fffffff,
-+		.res_ways = 0x0,
-+		.cache_mode = 0,
-+		.retain_on_pc = true,
-+	}, {
-+		.usecase_id = LLCC_VIDPTH,
-+		.slice_id = 8,
-+		.max_cap = 7168,
-+		.priority = 4,
-+		.fixed_size = true,
-+		.bonus_ways = 0x3fffffff,
-+		.res_ways = 0x0,
-+		.cache_mode = 0,
-+		.retain_on_pc = true,
-+	}, {
-+		.usecase_id = LLCC_GPUMV,
-+		.slice_id = 9,
-+		.max_cap = 2048,
-+		.priority = 2,
-+		.fixed_size = true,
-+		.bonus_ways = 0x3fffffff,
-+		.res_ways = 0x0,
-+		.cache_mode = 0,
-+		.retain_on_pc = true,
-+	}, {
-+		.usecase_id = LLCC_EVA_LEFT,
-+		.slice_id = 20,
-+		.max_cap = 7168,
-+		.priority = 5,
-+		.fixed_size = true,
-+		.bonus_ways = 0x3ffffffc,
-+		.res_ways = 0x0,
-+		.cache_mode = 0,
-+		.retain_on_pc = true,
-+	}, {
-+		.usecase_id = LLCC_EVA_RIGHT,
-+		.slice_id = 21,
-+		.max_cap = 7168,
-+		.priority = 5,
-+		.fixed_size = true,
-+		.bonus_ways = 0x3ffffffc,
-+		.res_ways = 0x0,
-+		.cache_mode = 0,
-+		.retain_on_pc = true,
-+	}, {
-+		.usecase_id = LLCC_EVAGAIN,
-+		.slice_id = 25,
-+		.max_cap = 1024,
-+		.priority = 2,
-+		.fixed_size = true,
-+		.bonus_ways = 0x3fffffff,
-+		.res_ways = 0x0,
-+		.cache_mode = 0,
-+		.retain_on_pc = true,
-+	}, {
-+		.usecase_id = LLCC_AENPU,
-+		.slice_id = 30,
-+		.max_cap = 3072,
-+		.priority = 3,
-+		.fixed_size = true,
-+		.bonus_ways = 0x3fffffff,
-+		.res_ways = 0x0,
-+		.cache_mode = 0,
-+		.retain_on_pc = true,
-+	}, {
-+		.usecase_id = LLCC_VIPTH,
-+		.slice_id = 29,
-+		.max_cap = 1024,
-+		.priority = 4,
-+		.fixed_size = true,
-+		.bonus_ways = 0x3fffffff,
-+		.res_ways = 0x0,
-+		.cache_mode = 0,
-+		.retain_on_pc = true,
-+	}, {
-+		.usecase_id = LLCC_DISP_LEFT,
-+		.slice_id = 17,
-+		.max_cap = 0,
-+		.priority = 1,
-+		.fixed_size = true,
-+		.bonus_ways = 0x0,
-+		.res_ways = 0x0,
-+		.cache_mode = 0,
-+		.retain_on_pc = true,
-+	}, {
-+		.usecase_id = LLCC_DISP_RIGHT,
-+		.slice_id = 18,
-+		.max_cap = 0,
-+		.priority = 1,
-+		.fixed_size = true,
-+		.bonus_ways = 0x0,
-+		.res_ways = 0x0,
-+		.cache_mode = 0,
-+		.retain_on_pc = true,
-+	}, {
-+		.usecase_id = LLCC_EVCS_LEFT,
-+		.slice_id = 22,
-+		.max_cap = 0,
-+		.priority = 1,
-+		.fixed_size = true,
-+		.bonus_ways = 0x0,
-+		.res_ways = 0x0,
-+		.cache_mode = 0,
-+		.retain_on_pc = true,
-+	}, {
-+		.usecase_id = LLCC_EVCS_RIGHT,
-+		.slice_id = 23,
-+		.max_cap = 0,
-+		.priority = 1,
-+		.fixed_size = true,
-+		.bonus_ways = 0x0,
-+		.res_ways = 0x0,
-+		.cache_mode = 0,
-+		.retain_on_pc = true,
-+	}, {
-+		.usecase_id = LLCC_SPAD,
-+		.slice_id = 24,
-+		.max_cap = 7168,
-+		.priority = 1,
-+		.fixed_size = true,
-+		.bonus_ways = 0x0,
-+		.res_ways = 0x0,
-+		.cache_mode = 0,
-+		.retain_on_pc = true,
-+	},
-+};
-+
- static const struct llcc_slice_config sc7180_data[] =  {
- 	{
- 		.usecase_id = LLCC_CPUSS,
-@@ -2687,6 +3091,30 @@ static const struct qcom_llcc_config sa8775p_cfg[] = {
- 	},
- };
- 
-+static const struct qcom_llcc_config sar1130p_cfg[] = {
-+	{
-+		.sct_data	= sar1130p_data,
-+		.size		= ARRAY_SIZE(sar1130p_data),
-+		.need_llcc_cfg	= true,
-+		.reg_offset	= llcc_v2_1_reg_offset,
-+		.edac_reg_offset = &llcc_v2_1_edac_reg_offset,
-+		.max_cap_shift	= 0x0e,
-+		.num_banks	= 2,
-+	},
-+};
-+
-+static const struct qcom_llcc_config sar2130p_cfg[] = {
-+	{
-+		.sct_data	= sar2130p_data,
-+		.size		= ARRAY_SIZE(sar2130p_data),
-+		.need_llcc_cfg	= true,
-+		.reg_offset	= llcc_v2_1_reg_offset,
-+		.edac_reg_offset = &llcc_v2_1_edac_reg_offset,
-+		.max_cap_shift	= 0x0e,
-+		.num_banks	= 2,
-+	},
-+};
-+
- static const struct qcom_llcc_config sc7180_cfg[] = {
- 	{
- 		.sct_data	= sc7180_data,
-@@ -2839,6 +3267,16 @@ static const struct qcom_sct_config sa8775p_cfgs = {
- 	.num_config	= ARRAY_SIZE(sa8775p_cfg),
- };
- 
-+static const struct qcom_sct_config sar1130p_cfgs = {
-+	.llcc_config	= sar1130p_cfg,
-+	.num_config	= ARRAY_SIZE(sar1130p_cfg),
-+};
-+
-+static const struct qcom_sct_config sar2130p_cfgs = {
-+	.llcc_config	= sar2130p_cfg,
-+	.num_config	= ARRAY_SIZE(sar2130p_cfg),
-+};
-+
- static const struct qcom_sct_config sc7180_cfgs = {
- 	.llcc_config	= sc7180_cfg,
- 	.num_config	= ARRAY_SIZE(sc7180_cfg),
-@@ -3146,7 +3584,10 @@ static int _qcom_llcc_cfg_program(const struct llcc_slice_config *config,
- 	 */
- 	max_cap_cacheline = max_cap_cacheline / drv_data->num_banks;
- 	max_cap_cacheline >>= CACHE_LINE_SIZE_SHIFT;
--	attr1_val |= max_cap_cacheline << ATTR1_MAX_CAP_SHIFT;
-+	if (cfg->max_cap_shift)
-+		attr1_val |= max_cap_cacheline << cfg->max_cap_shift;
-+	else
-+		attr1_val |= max_cap_cacheline << ATTR1_MAX_CAP_SHIFT;
- 
- 	attr1_cfg = LLCC_TRP_ATTR1_CFGn(config->slice_id);
- 
-@@ -3383,12 +3824,17 @@ static int qcom_llcc_probe(struct platform_device *pdev)
- 		goto err;
- 	cfg = &cfgs->llcc_config[cfg_index];
- 
--	ret = regmap_read(regmap, cfg->reg_offset[LLCC_COMMON_STATUS0], &num_banks);
--	if (ret)
--		goto err;
-+	if (cfg->num_banks) {
-+		num_banks = cfg->num_banks;
-+	} else {
-+		ret = regmap_read(regmap, cfg->reg_offset[LLCC_COMMON_STATUS0], &num_banks);
-+		if (ret)
-+			goto err;
-+
-+		num_banks &= LLCC_LB_CNT_MASK;
-+		num_banks >>= LLCC_LB_CNT_SHIFT;
-+	}
- 
--	num_banks &= LLCC_LB_CNT_MASK;
--	num_banks >>= LLCC_LB_CNT_SHIFT;
- 	drv_data->num_banks = num_banks;
- 
- 	drv_data->regmaps = devm_kcalloc(dev, num_banks, sizeof(*drv_data->regmaps), GFP_KERNEL);
-@@ -3486,6 +3932,8 @@ static int qcom_llcc_probe(struct platform_device *pdev)
- static const struct of_device_id qcom_llcc_of_match[] = {
- 	{ .compatible = "qcom,qdu1000-llcc", .data = &qdu1000_cfgs},
- 	{ .compatible = "qcom,sa8775p-llcc", .data = &sa8775p_cfgs },
-+	{ .compatible = "qcom,sar1130p-llcc", .data = &sar1130p_cfgs },
-+	{ .compatible = "qcom,sar2130p-llcc", .data = &sar2130p_cfgs },
- 	{ .compatible = "qcom,sc7180-llcc", .data = &sc7180_cfgs },
- 	{ .compatible = "qcom,sc7280-llcc", .data = &sc7280_cfgs },
- 	{ .compatible = "qcom,sc8180x-llcc", .data = &sc8180x_cfgs },
-diff --git a/include/linux/soc/qcom/llcc-qcom.h b/include/linux/soc/qcom/llcc-qcom.h
-index 2f20281d4ad4352ef59e7b19148cd324c7991012..8e5d78fb4847a232ab17a66c2775552dcb287752 100644
---- a/include/linux/soc/qcom/llcc-qcom.h
-+++ b/include/linux/soc/qcom/llcc-qcom.h
-@@ -54,7 +54,19 @@
- #define LLCC_CAMEXP4	 52
- #define LLCC_DISP_WB	 53
- #define LLCC_DISP_1	 54
-+#define LLCC_VIEYE	 57
-+#define LLCC_VIDPTH	 58
-+#define LLCC_GPUMV	 59
-+#define LLCC_EVA_LEFT	 60
-+#define LLCC_EVA_RIGHT	 61
-+#define LLCC_EVAGAIN	 62
-+#define LLCC_VIPTH	 63
- #define LLCC_VIDVSP	 64
-+#define LLCC_DISP_LEFT	 65
-+#define LLCC_DISP_RIGHT	 66
-+#define LLCC_EVCS_LEFT	 67
-+#define LLCC_EVCS_RIGHT	 68
-+#define LLCC_SPAD	 69
- 
- /**
-  * struct llcc_slice_desc - Cache slice descriptor
+> +	unsigned long access_bit;
+> +	access_mask_t missing =3D 0;
+> +	long youngest_layer =3D -1;
+> +
+> +	for_each_set_bit(access_bit, &access_req, layer_masks_size) {
+> +		const access_mask_t mask =3D (*layer_masks)[access_bit];
+> +		long layer;
+> +
+> +		if (!mask)
+> +			continue;
+> +
+> +		/* __fls(1) =3D=3D 0 */
+> +		layer =3D __fls(mask);
+> +		if (layer > youngest_layer) {
+> +			youngest_layer =3D layer;
+> +			missing =3D BIT(access_bit);
+> +		} else if (layer =3D=3D youngest_layer) {
+> +			missing |=3D BIT(access_bit);
+> +		}
+> +	}
+> +
+> +	*access_request =3D missing;
+> +	if (youngest_layer =3D=3D -1)
+> +		return domain->num_layers - 1;
+> +
+> +	return youngest_layer;
+> +}
+> +
+> +#ifdef CONFIG_SECURITY_LANDLOCK_KUNIT_TEST
+> +
+> +static void test_get_denied_layer(struct kunit *const test)
+> +{
+> +	const struct landlock_ruleset dom =3D {
+> +		.num_layers =3D 5,
+> +	};
+> +	const layer_mask_t layer_masks[LANDLOCK_NUM_ACCESS_FS] =3D {
+> +		[BIT_INDEX(LANDLOCK_ACCESS_FS_EXECUTE)] =3D BIT(0),
+> +		[BIT_INDEX(LANDLOCK_ACCESS_FS_READ_FILE)] =3D BIT(1),
+> +		[BIT_INDEX(LANDLOCK_ACCESS_FS_READ_DIR)] =3D BIT(1) | BIT(0),
+> +		[BIT_INDEX(LANDLOCK_ACCESS_FS_REMOVE_DIR)] =3D BIT(2),
+> +	};
+> +	access_mask_t access;
+> +
+> +	access =3D LANDLOCK_ACCESS_FS_EXECUTE;
+> +	KUNIT_EXPECT_EQ(test, 0,
+> +			get_denied_layer(&dom, &access, &layer_masks,
+> +					 sizeof(layer_masks)));
+> +	KUNIT_EXPECT_EQ(test, access, LANDLOCK_ACCESS_FS_EXECUTE);
+> +
+> +	access =3D LANDLOCK_ACCESS_FS_READ_FILE;
+> +	KUNIT_EXPECT_EQ(test, 1,
+> +			get_denied_layer(&dom, &access, &layer_masks,
+> +					 sizeof(layer_masks)));
+> +	KUNIT_EXPECT_EQ(test, access, LANDLOCK_ACCESS_FS_READ_FILE);
+> +
+> +	access =3D LANDLOCK_ACCESS_FS_READ_DIR;
+> +	KUNIT_EXPECT_EQ(test, 1,
+> +			get_denied_layer(&dom, &access, &layer_masks,
+> +					 sizeof(layer_masks)));
+> +	KUNIT_EXPECT_EQ(test, access, LANDLOCK_ACCESS_FS_READ_DIR);
+> +
+> +	access =3D LANDLOCK_ACCESS_FS_READ_FILE | LANDLOCK_ACCESS_FS_READ_DIR;
+> +	KUNIT_EXPECT_EQ(test, 1,
+> +			get_denied_layer(&dom, &access, &layer_masks,
+> +					 sizeof(layer_masks)));
+> +	KUNIT_EXPECT_EQ(test, access,
+> +			LANDLOCK_ACCESS_FS_READ_FILE |
+> +				LANDLOCK_ACCESS_FS_READ_DIR);
+> +
+> +	access =3D LANDLOCK_ACCESS_FS_EXECUTE | LANDLOCK_ACCESS_FS_READ_DIR;
+> +	KUNIT_EXPECT_EQ(test, 1,
+> +			get_denied_layer(&dom, &access, &layer_masks,
+> +					 sizeof(layer_masks)));
+> +	KUNIT_EXPECT_EQ(test, access, LANDLOCK_ACCESS_FS_READ_DIR);
+> +
+> +	access =3D LANDLOCK_ACCESS_FS_WRITE_FILE;
+> +	KUNIT_EXPECT_EQ(test, 4,
+> +			get_denied_layer(&dom, &access, &layer_masks,
+> +					 sizeof(layer_masks)));
+> +	KUNIT_EXPECT_EQ(test, access, 0);
+> +}
+> +
+> +#endif /* CONFIG_SECURITY_LANDLOCK_KUNIT_TEST */
+> +
+>  static bool is_valid_request(const struct landlock_request *const reques=
+t)
+>  {
+> -	if (WARN_ON_ONCE(!request->layer_plus_one))
+> +	if (WARN_ON_ONCE(!(!!request->layer_plus_one ^ !!request->access)))
+> +		return false;
+> +
+> +	if (request->access) {
+> +		if (WARN_ON_ONCE(!request->layer_masks))
+> +			return false;
+> +	} else {
+> +		if (WARN_ON_ONCE(request->layer_masks))
+> +			return false;
+> +	}
+> +
+> +	if (WARN_ON_ONCE(!!request->layer_masks ^ !!request-
+>layer_masks_size))
+>  		return false;
+>=20
+>  	return true;
+> @@ -140,6 +284,7 @@ void landlock_log_denial(const struct landlock_ruleset
+> *const domain, {
+>  	struct audit_buffer *ab;
+>  	struct landlock_hierarchy *youngest_denied;
+> +	access_mask_t missing;
+>=20
+>  	if (WARN_ON_ONCE(!domain || !domain->hierarchy || !request))
+>  		return;
+> @@ -155,9 +300,24 @@ void landlock_log_denial(const struct landlock_rules=
+et
+> *const domain, if (!ab)
+>  		return;
+>=20
+> -	youngest_denied =3D get_hierarchy(domain, request->layer_plus_one - 1);
+> +	missing =3D request->access;
+> +	if (missing) {
+> +		size_t youngest_layer;
+> +
+> +		/* Gets the nearest domain that denies the request. */
+> +		if (request->layer_masks) {
+> +			youngest_layer =3D get_denied_layer(
+> +				domain, &missing, request->layer_masks,
+> +				request->layer_masks_size);
+> +		}
+> +		youngest_denied =3D get_hierarchy(domain, youngest_layer);
 
--- 
-2.39.5
+If request->layer_masks is 0, it is possible to call get_hierarchy() with
+uninitialized youngest_layer, is this wanted?
+
+> +	} else {
+> +		youngest_denied =3D
+> +			get_hierarchy(domain, request->layer_plus_one - 1);
+> +	}
+> +
+>  	audit_log_format(ab, "domain=3D%llu blockers=3D", youngest_denied->id);
+> -	log_blockers(ab, request->type);
+> +	log_blockers(ab, request->type, missing);
+>  	audit_log_lsm_data(ab, &request->audit);
+>  	audit_log_end(ab);
+>=20
+> @@ -204,6 +364,7 @@ void landlock_log_drop_domain(const struct
+> landlock_ruleset *const domain) static struct kunit_case test_cases[] =3D=
+ {
+>  	/* clang-format off */
+>  	KUNIT_CASE(test_get_hierarchy),
+> +	KUNIT_CASE(test_get_denied_layer),
+>  	{}
+>  	/* clang-format on */
+>  };
+> diff --git a/security/landlock/audit.h b/security/landlock/audit.h
+> index 6f5ad04b83c2..25fc8333cddc 100644
+> --- a/security/landlock/audit.h
+> +++ b/security/landlock/audit.h
+> @@ -11,11 +11,13 @@
+>  #include <linux/audit.h>
+>  #include <linux/lsm_audit.h>
+>=20
+> +#include "access.h"
+>  #include "ruleset.h"
+>=20
+>  enum landlock_request_type {
+>  	LANDLOCK_REQUEST_PTRACE =3D 1,
+>  	LANDLOCK_REQUEST_FS_CHANGE_LAYOUT,
+> +	LANDLOCK_REQUEST_FS_ACCESS,
+>  };
+>=20
+>  /*
+> @@ -33,6 +35,13 @@ struct landlock_request {
+>  	 * extra one is useful to detect uninitialized field.
+>  	 */
+>  	size_t layer_plus_one;
+> +
+> +	/* Required field for configurable access control. */
+> +	access_mask_t access;
+> +
+> +	/* Required fields for requests with layer masks. */
+> +	const layer_mask_t (*layer_masks)[];
+> +	size_t layer_masks_size;
+>  };
+>=20
+>  #ifdef CONFIG_AUDIT
+> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+> index a099167d2347..7f69bed9e095 100644
+> --- a/security/landlock/fs.c
+> +++ b/security/landlock/fs.c
+> @@ -730,6 +730,7 @@ static void test_is_eacces_with_write(struct kunit
+> *const test) *     those identified by @access_request_parent1).  This
+> matrix can *     initially refer to domain layer masks and, when the
+> accesses for the *     destination and source are the same, to requested
+> layer masks. + * @log_request_parent1: Audit request to fill if the relat=
+ed
+> access is denied. * @dentry_child1: Dentry to the initial child of the
+> parent1 path.  This *     pointer must be NULL for non-refer actions (i.e.
+> not link nor rename). * @access_request_parent2: Similar to
+> @access_request_parent1 but for a @@ -738,6 +739,7 @@ static void
+> test_is_eacces_with_write(struct kunit *const test) *     the source.  Mu=
+st
+> be set to 0 when using a simple path request. * @layer_masks_parent2:
+> Similar to @layer_masks_parent1 but for a refer *     action.  This must =
+be
+> NULL otherwise.
+> + * @log_request_parent2: Audit request to fill if the related access is
+> denied. * @dentry_child2: Dentry to the initial child of the parent2 path=
+=2E=20
+> This *     pointer is only set for RENAME_EXCHANGE actions and must be NU=
+LL
+> *     otherwise.
+> @@ -757,10 +759,12 @@ static bool is_access_to_paths_allowed(
+>  	const struct path *const path,
+>  	const access_mask_t access_request_parent1,
+>  	layer_mask_t (*const layer_masks_parent1)[LANDLOCK_NUM_ACCESS_FS],
+> -	const struct dentry *const dentry_child1,
+> +	struct landlock_request *const log_request_parent1,
+> +	struct dentry *const dentry_child1,
+>  	const access_mask_t access_request_parent2,
+>  	layer_mask_t (*const layer_masks_parent2)[LANDLOCK_NUM_ACCESS_FS],
+> -	const struct dentry *const dentry_child2)
+> +	struct landlock_request *const log_request_parent2,
+> +	struct dentry *const dentry_child2)
+>  {
+>  	bool allowed_parent1 =3D false, allowed_parent2 =3D false, is_dom_check,
+>  	     child1_is_directory =3D true, child2_is_directory =3D true;
+> @@ -907,6 +911,24 @@ static bool is_access_to_paths_allowed(
+>  	}
+>  	path_put(&walker_path);
+>=20
+> +	if (!allowed_parent1 && log_request_parent1) {
+> +		log_request_parent1->type =3D LANDLOCK_REQUEST_FS_ACCESS,
+> +		log_request_parent1->audit.type =3D LSM_AUDIT_DATA_PATH,
+> +		log_request_parent1->audit.u.path =3D *path;
+> +		log_request_parent1->access =3D access_request_parent1;
+> +		log_request_parent1->layer_masks =3D layer_masks_parent1;
+> +		log_request_parent1->layer_masks_size =3D
+> +			ARRAY_SIZE(*layer_masks_parent1);
+> +	}
+> +	if (!allowed_parent2 && log_request_parent2) {
+> +		log_request_parent2->type =3D LANDLOCK_REQUEST_FS_ACCESS,
+> +		log_request_parent2->audit.type =3D LSM_AUDIT_DATA_PATH,
+> +		log_request_parent2->audit.u.path =3D *path;
+> +		log_request_parent2->access =3D access_request_parent2;
+> +		log_request_parent2->layer_masks =3D layer_masks_parent2;
+> +		log_request_parent2->layer_masks_size =3D
+> +			ARRAY_SIZE(*layer_masks_parent2);
+> +	}
+
+You may want to add a function to set these fields in log_request.
+
+>  	return allowed_parent1 && allowed_parent2;
+>  }
+>=20
+> @@ -915,6 +937,7 @@ static int current_check_access_path(const struct path
+> *const path, {
+>  	const struct landlock_ruleset *const dom =3D get_current_fs_domain();
+>  	layer_mask_t layer_masks[LANDLOCK_NUM_ACCESS_FS] =3D {};
+> +	struct landlock_request request =3D {};
+>=20
+>  	if (!dom)
+>  		return 0;
+> @@ -922,9 +945,10 @@ static int current_check_access_path(const struct pa=
+th
+> *const path, access_request =3D landlock_init_layer_masks(
+>  		dom, access_request, &layer_masks, LANDLOCK_KEY_INODE);
+>  	if (is_access_to_paths_allowed(dom, path, access_request,=20
+&layer_masks,
+> -				       NULL, 0, NULL, NULL))
+> +				       &request, NULL, 0, NULL, NULL, NULL))
+>  		return 0;
+>=20
+> +	landlock_log_denial(dom, &request);
+>  	return -EACCES;
+>  }
+>=20
+> @@ -1093,6 +1117,7 @@ static int current_check_refer_path(struct dentry
+> *const old_dentry, struct dentry *old_parent;
+>  	layer_mask_t layer_masks_parent1[LANDLOCK_NUM_ACCESS_FS] =3D {},
+>  		     layer_masks_parent2[LANDLOCK_NUM_ACCESS_FS] =3D {};
+> +	struct landlock_request request1 =3D {}, request2 =3D {};
+>=20
+>  	if (!dom)
+>  		return 0;
+> @@ -1124,10 +1149,13 @@ static int current_check_refer_path(struct dentry
+> *const old_dentry, access_request_parent1 =3D landlock_init_layer_masks(
+>  			dom, access_request_parent1 | access_request_parent2,
+>  			&layer_masks_parent1, LANDLOCK_KEY_INODE);
+> -		if (is_access_to_paths_allowed(
+> -			    dom, new_dir, access_request_parent1,
+> -			    &layer_masks_parent1, NULL, 0, NULL, NULL))
+> +		if (is_access_to_paths_allowed(dom, new_dir,
+> +					       access_request_parent1,
+> +					       &layer_masks_parent1, &request1,
+> +					       NULL, 0, NULL, NULL, NULL))
+>  			return 0;
+> +
+> +		landlock_log_denial(dom, &request1);
+>  		return -EACCES;
+>  	}
+>=20
+> @@ -1162,12 +1190,22 @@ static int current_check_refer_path(struct dentry
+> *const old_dentry, * parent access rights.  This will be useful to compare
+> with the * destination parent access rights.
+>  	 */
+> -	if (is_access_to_paths_allowed(
+> -		    dom, &mnt_dir, access_request_parent1,=20
+&layer_masks_parent1,
+> -		    old_dentry, access_request_parent2, &layer_masks_parent2,
+> -		    exchange ? new_dentry : NULL))
+> +	if (is_access_to_paths_allowed(dom, &mnt_dir, access_request_parent1,
+> +				       &layer_masks_parent1, &request1,
+> +				       old_dentry, access_request_parent2,
+> +				       &layer_masks_parent2, &request2,
+> +				       exchange ? new_dentry : NULL))
+>  		return 0;
+>=20
+> +	if (request1.access) {
+> +		request1.audit.u.path.dentry =3D old_parent;
+> +		landlock_log_denial(dom, &request1);
+> +	}
+> +	if (request2.access) {
+> +		request2.audit.u.path.dentry =3D new_dir->dentry;
+> +		landlock_log_denial(dom, &request2);
+> +	}
+> +
+>  	/*
+>  	 * This prioritizes EACCES over EXDEV for all actions, including
+>  	 * renames with RENAME_EXCHANGE.
+> @@ -1546,6 +1584,7 @@ static int hook_file_open(struct file *const file)
+>  		optional_access;
+>  	const struct landlock_ruleset *const dom =3D landlock_match_ruleset(
+>  		landlock_cred(file->f_cred)->domain, any_fs);
+> +	struct landlock_request request =3D {};
+>=20
+>  	if (!dom)
+>  		return 0;
+> @@ -1571,7 +1610,7 @@ static int hook_file_open(struct file *const file)
+>  		    dom, &file->f_path,
+>  		    landlock_init_layer_masks(dom, full_access_request,
+>  					      &layer_masks, LANDLOCK_KEY_INODE),
+> -		    &layer_masks, NULL, 0, NULL, NULL)) {
+> +		    &layer_masks, &request, NULL, 0, NULL, NULL, NULL)) {
+>  		allowed_access =3D full_access_request;
+>  	} else {
+>  		unsigned long access_bit;
+> @@ -1601,6 +1640,9 @@ static int hook_file_open(struct file *const file)
+>  	if ((open_access_request & allowed_access) =3D=3D open_access_request)
+>  		return 0;
+>=20
+> +	/* Sets access to reflect the actual request. */
+> +	request.access =3D open_access_request;
+> +	landlock_log_denial(dom, &request);
+>  	return -EACCES;
+>  }
+
 
 
