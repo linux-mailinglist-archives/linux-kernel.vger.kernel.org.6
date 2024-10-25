@@ -1,225 +1,125 @@
-Return-Path: <linux-kernel+bounces-381859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B0B89B058F
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:20:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F3329B0591
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:20:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85CF41F24A72
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 14:20:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB3971F24967
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 14:20:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0788D1FB894;
-	Fri, 25 Oct 2024 14:20:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="ABY0h0DT";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="AMDBtAyi"
-Received: from fout-b4-smtp.messagingengine.com (fout-b4-smtp.messagingengine.com [202.12.124.147])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12F2C1FB8B4;
+	Fri, 25 Oct 2024 14:20:43 +0000 (UTC)
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBC7521216E;
-	Fri, 25 Oct 2024 14:20:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8749E1487C8;
+	Fri, 25 Oct 2024 14:20:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729866034; cv=none; b=Abwv/t2YNoFN8y7XBNB3cEsVhOyJO5/bdGYRftISrDMrS0s3WYVSLkJmYf/BvUK5rf0khCaYRMlfzxAZegow4m+VpgJr195IHC0A0Chbg3RMdCKVDJjxVGSb8tEr08sCwuTA0hwHvdz5bcgTskPQ8bdQScRvvC69wR8429nucw0=
+	t=1729866042; cv=none; b=Gxj2QgrekERopdSrLTsKTTtoMRDCB/HHbBf/q2Dr+nuSwKEj1XKX46MK8qqgD8VY+1aC8A3aCS+KYrg+7OCMm2DBMmVtxBzW0hYUDDuWIKOkOphDFoIaxPivyhCkEYWOVqfAbqcEYmcl+pos0cr5RgZerquYczrnaHpVecDx6fI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729866034; c=relaxed/simple;
-	bh=jO2eJCq3o1UQyWfSIXb4J+AN0Vw5/ZfDFBnPWf9w6Uc=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=o+u8UMk7GiGTFXXE49kDTHV3eo7Pt8amkkuqqVeG9Lck0QX61KAWSO7PNxjgB0D0ZNpXKIgROOJV0XkP9qYionY/O/YRnZF2JqOeg3x0ch0pVzIn0m2ESKJzvVM8n1HEvKtan0oU3P560Xne2t8KET9KZekNUknIOa9KX5EjgFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=ABY0h0DT; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=AMDBtAyi; arc=none smtp.client-ip=202.12.124.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfout.stl.internal (Postfix) with ESMTP id 7146011400DA;
-	Fri, 25 Oct 2024 10:20:29 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Fri, 25 Oct 2024 10:20:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1729866029;
-	 x=1729952429; bh=wscwvk+/zfYGrxB9o7ElzO1RcnFw9HTQg1kU47YxPvw=; b=
-	ABY0h0DTDAGctuJpIL6sS/zNH1ENNSmPu1GTEjlpQ5i/MnCrJwqbpzaF8Fzl6SAE
-	ty89srR+XMB3y0GO59LDr1lbqoSGUHF5vYQgUpFuvNnO1I9a4HVWWkekFIh4+iw3
-	++kRrGeULuovgoGE3lEBDVxVt76SyxQs7lrHVSg8RuKA40TCIekZuPf24SgW3VWv
-	y3Go9YZsNXysA0v31RtM5mhjq55MKMYCRF8fvYc4ghnxRT3QD8XS1b9MC2d8P6d6
-	Z8U2JobiENX6AweBG/AEkr2ZKdC++1C11Tmg1u0yUG3X4E9UHQDdWn82DAio4qtN
-	aMp4W5bYIp8Yz6/pab3idg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1729866029; x=
-	1729952429; bh=wscwvk+/zfYGrxB9o7ElzO1RcnFw9HTQg1kU47YxPvw=; b=A
-	MDBtAyiMr0utwlTGZ9ahqEfZF+IyfWeBqehZ/0Ns+cmcssE0+i0bkROW05yMQsdU
-	cOTraYDNR+PM39pXp17Q9l9ugknz+vTCTQqT/gZhppAEN6O0InRdGseTWr8j1cze
-	Fh85jShfOWDbEdB0hWDEpn6IEq1jIfU7dSqLAnRoCGh4mEvMa8892HRjDW/qPVrh
-	sqZA/2i1Ti+Bigv3Tveu8uo1Y8isbmRx0sJLqb1tUaroWhRIpYaXvCvPydz38kPd
-	pYcZr+L3SnOemqTzyNUjsUx5qUUrTSGRa8aYrLXmY/VkDwv4EtZ/DOZ7py6b/hVf
-	mW3ecRgZZT5G1a+zLc9rw==
-X-ME-Sender: <xms:LKkbZ6icSWtXOvkpYM87hQ0HLds7qfX9s7056_cXCQ0XSAle9zkPOA>
-    <xme:LKkbZ7C_7DPvl407kdsjlRrFBtoBQJcEsNgwljwRSIMZwcU56VrT5yfDgceTXrYKx
-    0resZ0Qv9r5yzYJWd0>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdejvddgjeehucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
-    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
-    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
-    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepvddu
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegurghvihgurdhlrghighhhthesrg
-    gtuhhlrggsrdgtohhmpdhrtghpthhtoheptggrthgrlhhinhdrmhgrrhhinhgrshesrghr
-    mhdrtghomhdprhgtphhtthhopehmihhquhgvlhdrrhgrhihnrghlsegsohhothhlihhnrd
-    gtohhmpdhrtghpthhtohephhgthhesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthho
-    pehjvhgvthhtvghrsehkrghlrhgrhihinhgtrdgtohhmpdhrtghpthhtohephihsihhonh
-    hnvggruheskhgrlhhrrgihihhntgdrtghomhdprhgtphhtthhopegthhgvnhhhuhgrtggr
-    iheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepghhuohhrvghnsehkvghrnhgvlhdroh
-    hrghdprhgtphhtthhopeifihhllheskhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:LKkbZyEWph2OfuX5rp36qDXrBJGFeVx6L1j670c9oST-ROWHYLjhYQ>
-    <xmx:LKkbZzR-6CCISyD9v6h5geDwiCkn4rdaBNnAtm7k4SX1CIBqrMUUXQ>
-    <xmx:LKkbZ3w4lJB7XWYZExVb0i0_12fv6iRgHLcVQnpS3OZQYPaEV3l1GQ>
-    <xmx:LKkbZx4REtWx5i2Ye5_3HOyXw3kOW56cp2xiDUXTExtzk2q_YJoAQw>
-    <xmx:LakbZ8y4B_V6lMqvAbM25tHAe9VzZYCl0gf6JwYlrpYjDtQ8-3zK5Ogl>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 1E61A2220071; Fri, 25 Oct 2024 10:20:27 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1729866042; c=relaxed/simple;
+	bh=hQWDTvm89tWKO5eXqVO9t55fZxRuRvxPhzOjV7MmF9g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jANHexVhZiPDVYkHx/CCAp1IDgKXNPMU7htR90BBACPYPWvt/QdzD/d3GI9XcPjzOz+SXZ4oVr37zez0PJNWTVkKSqaZvXYfBSKj5/FyrdWiAyn/FoEUnKojiNphU+gT+Mytmn2JK7Z+G0ZcucSlQ6ufZQxg4QCigurXfWNj75A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5c9428152c0so2403307a12.1;
+        Fri, 25 Oct 2024 07:20:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729866038; x=1730470838;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Zvn1KRM3j0B0fP/qbHc6ItNU4Hwxo1I+cSw77XnpIyk=;
+        b=iantGBGBwfOesCZlnWdrMwcX9XqOoYb7kOzfgQq0MXEhVl/3H0f+OqmteafORoqVFp
+         UPH6rVulfIYPXHtG8DTPw+ex1cHJP5eJ9wAlRnqYvPD2mrtD+63A0AxTvpZek3tROgC5
+         WRqHZE4QZUg8Pu3ITIAruIH0SgOH5ZU44FgqtzUKdGY2vRhFkosfmZJqPrRuMm/j6y+o
+         Fxfirp7rEnRSs8pxyXA8VshLNN+dB9pgSDRjvmJ7HOUQ6eYTIc4fnU6eG0WXHhGEuAT9
+         2U7WrVtpuXGeomKaRTEU6Ra9RW+AZblR9g1nKvZvDb8ED6p2W1p0a0veSUVvwGKyKEjr
+         Tc5A==
+X-Forwarded-Encrypted: i=1; AJvYcCVwrsD8jHDW+2/jcsbjMlHYm00XfC2EyOZlKjYxJprGJ5z7Y/F0xLBKTY7jgtqWZE9CwzgOmj+I@vger.kernel.org, AJvYcCWqss6AAcqUTyI19Nz8jHdFxj6yVkkhvDiBwIxuB4AG8AGz3dZ1ONHJYrI4+XaldfHm0DY8i/O/2XmzDuY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw59BCLJgZjzqLTPcZ9eew90fdmT6YovqqyKf43mSvBYjahnFJ9
+	W4UURXSKVHfx5u10VCm/oe/JvHgtI5TQ9YdywJvHbQLLTo5AKTsTrfPUeg==
+X-Google-Smtp-Source: AGHT+IGKrGaC7E3/HjS9KHr+9npvN9Ap8ToiC3grd4wlZ/5uUeR3+NM7KKDbLEPurzE7HDDqCC96bQ==
+X-Received: by 2002:a17:906:f5a4:b0:a99:fe71:bd76 with SMTP id a640c23a62f3a-a9ad275e4demr524127966b.34.1729866037721;
+        Fri, 25 Oct 2024 07:20:37 -0700 (PDT)
+Received: from localhost (fwdproxy-lla-008.fbsv.net. [2a03:2880:30ff:8::face:b00c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b30d6f902sm75694666b.162.2024.10.25.07.20.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Oct 2024 07:20:37 -0700 (PDT)
+From: Breno Leitao <leitao@debian.org>
+To: kuba@kernel.org,
+	horms@kernel.org,
+	davem@davemloft.net,
+	edumazet@google.com,
+	pabeni@redhat.com
+Cc: thepacketgeek@gmail.com,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	davej@codemonkey.org.uk,
+	vlad.wing@gmail.com,
+	max@kutsevol.com,
+	kernel-team@meta.com,
+	jiri@resnulli.us,
+	jv@jvosburgh.net,
+	andy@greyhouse.net,
+	aehkn@xenhub.one
+Subject: [PATCH net-next 0/3] net: netpoll: Improve SKB pool management
+Date: Fri, 25 Oct 2024 07:20:17 -0700
+Message-ID: <20241025142025.3558051-1-leitao@debian.org>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Fri, 25 Oct 2024 14:20:06 +0000
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "David Laight" <David.Laight@aculab.com>,
- "Julian Vetter" <jvetter@kalrayinc.com>,
- "Catalin Marinas" <catalin.marinas@arm.com>, "Will Deacon" <will@kernel.org>,
- guoren <guoren@kernel.org>, "Huacai Chen" <chenhuacai@kernel.org>,
- "WANG Xuerui" <kernel@xen0n.name>,
- "Andrew Morton" <akpm@linux-foundation.org>,
- "Geert Uytterhoeven" <geert@linux-m68k.org>,
- "Richard Henderson" <richard.henderson@linaro.org>,
- "Niklas Schnelle" <schnelle@linux.ibm.com>, "Takashi Iwai" <tiwai@suse.com>,
- "Miquel Raynal" <miquel.raynal@bootlin.com>,
- "Johannes Berg" <johannes@sipsolutions.net>,
- "Christoph Hellwig" <hch@infradead.org>
-Cc: 
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-csky@vger.kernel.org" <linux-csky@vger.kernel.org>,
- "loongarch@lists.linux.dev" <loongarch@lists.linux.dev>,
- Linux-Arch <linux-arch@vger.kernel.org>,
- "Yann Sionneau" <ysionneau@kalrayinc.com>
-Message-Id: <a6c524d4-d741-438a-b8ae-2492058a3b3b@app.fastmail.com>
-In-Reply-To: <0577266edb9440acb082c9e02c0a73b9@AcuMS.aculab.com>
-References: <20241021133154.516847-1-jvetter@kalrayinc.com>
- <0577266edb9440acb082c9e02c0a73b9@AcuMS.aculab.com>
-Subject: Re: [PATCH v10 0/4] Replace fallback for IO memcpy and IO memset
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 21, 2024, at 14:16, David Laight wrote:
-> From: Julian Vetter
->> Sent: 21 October 2024 14:32
->> 
->> Thank you again for your remarks Arnd and Christoph! I have updated the
->> patchset, and placed the functions directly in asm-generic/io.h. I have
->> dropped the libs/iomem_copy.c and have updated/clarified the commit
->> message in the first patch.
->
-> Apart from build 'issues' what is the justification for inlining
-> these functions?
+The netpoll subsystem pre-allocates 32 SKBs in a pool for emergency use
+during out-of-memory conditions. However, the current implementation has
+several inefficiencies:
 
-I think I wasn't clear enough with my previous comment, and Julian
-just misunderstood what I was asking him to do. Sorry about causing
-extra work here.
+ * The SKB pool, once allocated, is never freed:
+	 * Resources remain allocated even after netpoll users are removed
+	 * Failed initialization can leave pool populated forever
+ * The global pool design makes resource tracking difficult
 
-> They are quite large for inlining and some drivers could easily
-> call them many times.
->
-> The I/O cycles themselves are likely to be slow enough that
-> the cost of a function call is pretty much likely to be noise.
+This series addresses these issues through three patches:
 
-I'm not overly worried about the this, as the functions are
-not that big and there are not that many callers. If a file
-contains multiple calls to this function, we can expect the
-compiler to be smart enough to keep it out of line, though it
-still gets duplicated in each driver calling it.
 
-The bit that I am worried about however is the extra #include
-for linux/unaligned.h that pulls in fairly large headers
-and may lead to circular header dependencies.
+Patch 1 ("net: netpoll: Defer skb_pool population until setup success"):
+ - Defer SKB pool population until setup validation passes
 
-To be clear: what I had expected here was to not have any
-changes to the v9 version of lib/iomem_copy.c and to simplify
-the asm-generic/io.h change to the version below.
+Patch 2 ("net: netpoll: Individualize the skb pool"):
+ - Replace global pool with per-user pools in netpoll struct
 
-       Arnd
+Patch 3 ("net: netpoll: flush skb pool during cleanup"):
+- Properly free pool resources during netconsole cleanup
 
----
---- a/include/asm-generic/io.h
-+++ b/include/asm-generic/io.h
-@@ -1211,7 +1211,6 @@ static inline void unxlate_dev_mem_ptr(phys_addr_t phys, void *addr)
- #endif
- 
- #ifndef memset_io
--#define memset_io memset_io
- /**
-  * memset_io   Set a range of I/O memory to a constant value
-  * @addr:      The beginning of the I/O-memory range to set
-@@ -1220,15 +1219,10 @@ static inline void unxlate_dev_mem_ptr(phys_addr_t phys, void *addr)
-  *
-  * Set a range of I/O memory to a given value.
-  */
--static inline void memset_io(volatile void __iomem *addr, int value,
--                            size_t size)
--{
--       memset(__io_virt(addr), value, size);
--}
-+void memset_io(volatile void __iomem *addr, int value, size_t size);
- #endif
- 
- #ifndef memcpy_fromio
--#define memcpy_fromio memcpy_fromio
- /**
-  * memcpy_fromio       Copy a block of data from I/O memory
-  * @dst:               The (RAM) destination for the copy
-@@ -1237,16 +1231,11 @@ static inline void memset_io(volatile void __iomem *addr, int value,
-  *
-  * Copy a block of data from I/O memory.
-  */
--static inline void memcpy_fromio(void *buffer,
--                                const volatile void __iomem *addr,
--                                size_t size)
--{
--       memcpy(buffer, __io_virt(addr), size);
--}
-+void memcpy_fromio(void *buffer, const volatile void __iomem *addr,
-+                  size_t size);
- #endif
- 
- #ifndef memcpy_toio
--#define memcpy_toio memcpy_toio
- /**
-  * memcpy_toio         Copy a block of data into I/O memory
-  * @dst:               The (I/O memory) destination for the copy
-@@ -1255,11 +1244,8 @@ static inline void memcpy_fromio(void *buffer,
-  *
-  * Copy a block of data to I/O memory.
-  */
--static inline void memcpy_toio(volatile void __iomem *addr, const void *buffer,
--                              size_t size)
--{
--       memcpy(__io_virt(addr), buffer, size);
--}
-+void memcpy_toio(volatile void __iomem *addr, const void *buffer,
-+                size_t size);
- #endif
- 
- extern int devmem_is_allowed(unsigned long pfn);
+These changes improve resource management and make the code more
+maintainable.  As a side benefit, the improved structure would allow
+netpoll to be modularized if desired in the future.
+
+What is coming next?
+
+Once this patch is integrated, I am planning to have the SKBs being
+refilled outside of hot (send) path, in a work thread.
+
+Breno Leitao (3):
+  net: netpoll: Defer skb_pool population until setup success
+  net: netpoll: Individualize the skb pool
+  net: netpoll: flush skb pool during cleanup
+
+ include/linux/netpoll.h |  1 +
+ net/core/netpoll.c      | 52 +++++++++++++++++++++++++----------------
+ 2 files changed, 33 insertions(+), 20 deletions(-)
+
+-- 
+2.43.5
+
 
