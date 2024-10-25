@@ -1,141 +1,130 @@
-Return-Path: <linux-kernel+bounces-381876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A93209B05CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:28:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4223D9B05E7
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:33:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 616AE1F24469
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 14:28:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72DE31C20FF5
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 14:33:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4957A208234;
-	Fri, 25 Oct 2024 14:27:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC53B1FB8A9;
+	Fri, 25 Oct 2024 14:33:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CGZA6lvs"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=aepfle.de header.i=@aepfle.de header.b="SrCgi3We";
+	dkim=permerror (0-bit key) header.d=aepfle.de header.i=@aepfle.de header.b="G2d4iblY"
+Received: from mo4-p00-ob.smtp.rzone.de (mo4-p00-ob.smtp.rzone.de [85.215.255.22])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92B7A200BA4;
-	Fri, 25 Oct 2024 14:27:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729866465; cv=none; b=FtwHZFg4wDAookHN2IdRXlkuZgO+MnUMQu1cIZ/J8RSNAILdOWpvDUTM4Jzthf758nbaEFV2lq5GXWK00PYcAtNpRCSxc6Bw0p2ntBVNtYEADGGhGnytEDzk0gBzIKXt1sdShEICEWChHYV2gm+YgR6Y2nhJaqsSO/G/7OQmdmA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729866465; c=relaxed/simple;
-	bh=SNOT2iG1uo43SZFt0GZqyBwcm+SiJ5JmL6rlhz0NOv8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jzEwvsoA8Rx7rI4tUvc0vQYp9w/nt1z3KWMmUIXKQdTDOSWXwkeIpTQ4kIw9q6w8FmWquE4TQy1NX1Tpf842cpgPp0zpSI8Vu2H0pg6bdxLBZq6UW8SajahsSQRP2ZgQoxkGj1CXLbkZeT1+n1Yaw7DY7R9Z40k2pB/iwWc615U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CGZA6lvs; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a9a26a5d6bfso303371266b.1;
-        Fri, 25 Oct 2024 07:27:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729866462; x=1730471262; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=fR5hzdpK0KAXZdWFhkN0m31lZEsfiSfvLl8lR/kVQKI=;
-        b=CGZA6lvseLbgAnRAcYpH1VRs5Kvq3j89s22Sf/0fVWpwtVJpTJCbQF1PYfYbKaMO4m
-         QuL61M/g30w/MPslAFzsI06Tm8VhYIQe81CDo9+zRtFoLZicCSEEikKIaOSDOlKUiA/H
-         lHlYnz5RMueSUh0S36XZWeSsAF0tltMVC9Zchm6GpAbArhav2QjuD+FoQgH1viOSC8uy
-         OzOgEbxfV+6NqMaMTmnhvn+EyJDHBsA9Mj4stbD7JeteDH0zexerVzv9/JmJRYiUDnP7
-         kEbOVlU8uvaP487DOjjkfGCAStqwhiSBZ1gMEa1dpjaMfauYs8gtekPUUA+gIA0a2CXT
-         MlBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729866462; x=1730471262;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fR5hzdpK0KAXZdWFhkN0m31lZEsfiSfvLl8lR/kVQKI=;
-        b=hXB+k+sqkboaNOdouIUWuyIlerRUorl30dKYMsgFoS9OTiX8MsfGghsSPxTeVxf94v
-         anenAhKVrh6Q8BLpbe/Qg3RN+h7m1gWdaazak96OKq40TNEt6hBk3SqUjAdJ1RihRGEM
-         JJJ9GOA1f42GYmM3MXpCxdXx4be2OQzx2UgozQvINWPEsK2AYHsJNXWzmlcwzt7hRsHd
-         bN6XhVgRMYfXR1zVkgzEK0SPO4o09AK/dPLocK5pBuBCRZ2Mg9khNZuYKJ8rj8ZNdoZB
-         ijAliQIosx856Zuu5qSePVllxXqJi+Sbfu/8ZPDhUiUmd9rLouhRVBvJ1ShP0FDjvkVf
-         fVVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXdnmfHMMQrRyMURLt5WsX9No+BjKP3ZgQQTsJWCmaTEWl8+AntuoejmeNC6XPZYOte1bVp5ElImphEC4y5@vger.kernel.org, AJvYcCXiTOJTSmtaUzossPjgWuaBeEQ7xKDgmAbnKJBKgO3ms7vZJZkQ7496Lx3grLN0b0aRZaQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyoruXzGk5sBqjQ0JXeWJV9a/bpD4nGYJK5A1fV1qLnJE27CHCh
-	r4siF9aqd8bfwtLCH0oJyXfNwV/M8vm7+zu5fo48iT6rWYbqShRaB8ihHObVwnE=
-X-Google-Smtp-Source: AGHT+IGPQeVt+Ho9WeKCaan/AgLgjEin4LNAeAKET0Nw1qGl80K+N4Zeg8GXUkU+/j6Y1Rr/fpdcmA==
-X-Received: by 2002:a17:907:6d24:b0:a86:94e2:2a47 with SMTP id a640c23a62f3a-a9abf887496mr901934066b.15.1729866461696;
-        Fri, 25 Oct 2024 07:27:41 -0700 (PDT)
-Received: from andrea ([2a01:5a8:300:22d3:a281:3d89:19cb:ed96])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b3a088ae9sm75669966b.217.2024.10.25.07.27.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2024 07:27:41 -0700 (PDT)
-Date: Fri, 25 Oct 2024 17:27:37 +0300
-From: Andrea Parri <parri.andrea@gmail.com>
-To: Hernan Ponce de Leon <hernan.poncedeleon@huaweicloud.com>
-Cc: puranjay@kernel.org, paulmck@kernel.org, bpf@vger.kernel.org,
-	lkmm@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: Some observations (results) on BPF acquire and release
-Message-ID: <Zxuq2Zvpn7ap4ZR5@andrea>
-References: <Zxk2wNs4sxEIg-4d@andrea>
- <daa60273-d01a-8fc5-5e26-e8fc9364c1d8@huaweicloud.com>
- <ZxuZ-wGccb3yhBAD@andrea>
- <d8aa61a8-e2fc-7668-9845-81664c9d181f@huaweicloud.com>
- <ZxugzP0yB3zeqKSn@andrea>
- <8360f999-0d64-3b4f-e4b8-8c84f7311af2@huaweicloud.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74BBE21219A;
+	Fri, 25 Oct 2024 14:33:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=85.215.255.22
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729866808; cv=pass; b=gZlX+qKLOEyMR1fUOj3siouXRY6LuFi2uTdMhnq8bMkaTWJDbFbnQjJ3GGc2c/wt0xMdAHzy3vC7S9lU9x66IqrOZcXbWy2q/kh2ESPKTJ9ktZcnW0EFcdv5nQUes309Q49NQHIHuK0taS49A2VsRNnE6hZBLIGp9UT+aiFLVfs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729866808; c=relaxed/simple;
+	bh=MJG6llzNA1Ezi9Qp1EpDbMs427CVbL8entNvriXXFJU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NCgGifopGUrAaeOKdTjNzds04U0PzK1e73TKDx7IdKr8u5Urzpw0FOdthVScsojBLEoPPUzZmVYUOfX/xl0ZlvYxv6cn2ipkUvfPNjJcHDot7ktOTsGMGC9nuyVC8UQUHrAzbeCN9g0GebzHOaPfh7Y5F7SYM7djfowfcHwvIbs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aepfle.de; spf=pass smtp.mailfrom=aepfle.de; dkim=pass (2048-bit key) header.d=aepfle.de header.i=@aepfle.de header.b=SrCgi3We; dkim=permerror (0-bit key) header.d=aepfle.de header.i=@aepfle.de header.b=G2d4iblY; arc=pass smtp.client-ip=85.215.255.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aepfle.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aepfle.de
+ARC-Seal: i=1; a=rsa-sha256; t=1729866620; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=dzz96Ed7V1X4JOMay7KMwtzaIIkIAA9ARd/Cj5xQaUUzhpL4/sloUjvkRlTs2NY/u+
+    Mazobpeoo/x4SugEd74k/k3sMKMrrgmnyPsqdBe/l3pLiU7dFkA4T1bhnf6hkAuO+HlV
+    8iEWyZsD89AirUIDqpqKHjONB9LTLJVTOeIXlKMsmdo6Ez/a9uW20su0GG1J+sRG0ubr
+    kTwvt3Ql0K6rwJcpuKq2r/RAmwFleik/mvv4EA+7S1SdNotx0ENYBCkmTTJhvqPSe4US
+    e/2e1HezSxXwkhSzkvomA2GMn9w0EZt2eRqgsRVivPfb/Q8jN4uKfMPgaxI6QANeUU5T
+    PDLA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1729866620;
+    s=strato-dkim-0002; d=strato.com;
+    h=Message-ID:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
+    bh=r3TwFbSRh2bryWKsoEKGGo3Mz07EwENxVAlOr4Sus7Q=;
+    b=PS+KMiGSRYDfIeynvqGTfSZiCIzgqJJl0+Wf/9alghmiwPlUTWfohsAIqBOPC1/B0h
+    ITNzwPIveb3XF8DjjlmSyjQ4vIEPOTm3meT5KTwIRpx0QH0mafnmx1RV8OXrCjYt26Ul
+    Xgd9Rp/QF7glpZy7/l+2e7d5r/uua3qZDqK67U+Nze0Gq58lh9N/BZgFyiMQxkWIUleG
+    6a7w7gl0/47GTkn66VD2k9UDGRv7rMVL/50zxBFfykQuFVqnaC6LAsm+fVTMlic5txIw
+    1nRs/VzH4cITqN4kPOZ6chxsMEulzb37c44UlaxBHlzBOFJGMY2Xd+XkqSWX0s4nzlF5
+    2icw==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo00
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1729866620;
+    s=strato-dkim-0002; d=aepfle.de;
+    h=Message-ID:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
+    bh=r3TwFbSRh2bryWKsoEKGGo3Mz07EwENxVAlOr4Sus7Q=;
+    b=SrCgi3We2QKgHZWzB7peeeVO/FYOZOjJunGIhmjnDeayQ3zqfEqm8mxXxAyTKv/FE+
+    LBHFTFEWc0vKcqkj+D2LaA0pWV8azy73p45iQ1i9DALrfrgplTpG7uFU9q6G3WPbmsdW
+    a0/bTJW5ZZeAXkqTqxbwF99i2td27xwcrJkeks0Yu+Sw13hs1SXdHb3jj9e5P5hrLCYV
+    NlDn61ze6Vjmr1Ru1/ntYmxCIs6n2lDC4D9qFpmfHaKI5XvQEp9nYdTX3Xna60Zb02NH
+    3GLjTPll1izAv7d7DFN2wizK+H8PLemMxRg2wH9Ixj8anMaQXxKBJhXmpkW63AC2Y7po
+    5Mgw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1729866620;
+    s=strato-dkim-0003; d=aepfle.de;
+    h=Message-ID:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
+    bh=r3TwFbSRh2bryWKsoEKGGo3Mz07EwENxVAlOr4Sus7Q=;
+    b=G2d4iblY+M1149OV/SWOKBmk/3k9yfhVWG1vOaVib9YGSlMvIzIr/wSgneFixmaSXw
+    0C66r7NDG9zezKLGW+BQ==
+X-RZG-AUTH: ":P2EQZWCpfu+qG7CngxMFH1J+3q8wa/QXkBR9MXjAuzpIG0mv9coXAg4x9Fz7RcwtehfOImJwE3/YIR5VTNLPLdtEAAwSMQ=="
+Received: from sender
+    by smtp.strato.de (RZmta 51.2.11 AUTH)
+    with ESMTPSA id Dd652509PEUKemK
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+	(Client did not present a certificate);
+    Fri, 25 Oct 2024 16:30:20 +0200 (CEST)
+From: Olaf Hering <olaf@aepfle.de>
+To: linux-hyperv@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: "K. Y. Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>,
+	Dexuan Cui <decui@microsoft.com>
+Subject: [PATCH v1] tools/hv: terminate fcopy daemon if read from uio fails
+Date: Fri, 25 Oct 2024 16:28:27 +0200
+Message-ID: <20241025143009.4571-1-olaf@aepfle.de>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8360f999-0d64-3b4f-e4b8-8c84f7311af2@huaweicloud.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
 
-> I am particularly interested in tests using lwarx and stwcx instructions
-> (this is what I understood would be used if one follows [1] to compile the
-> tests in this thread).
-> 
-> I have not yet check the cambridge website, but due to the timeline, I don't
-> expect to find tests with those instructions. The same is true with [2].
-> 
-> I have limited experience with diy7, but I remember that it had some
-> limitations to generate RMW instructions, at least for C [3].
+Terminate endless loop in reading fails, to avoid flooding syslog.
 
-Oh, I'm sure there are, though I'd also not consider myself the 'expert'
-when it comes to diy7 internals.  ;-)  Here's an example use of diy7 /
-diyone7 generating lwarx and stwcx and reflecting the previous pattern:
+This happens if the "Guest services" integration service is
+disabled at runtime in the VM settings.
 
-$ diyone7 -arch PPC LwSyncdWW Coe SyncdWRPA SyncdRRAP Fre
-PPC A
-"LwSyncdWW Coe SyncdWRNaA SyncdRRANa Fre"
-Generator=diyone7 (version 7.57+1)
-Prefetch=0:x=F,0:y=W,1:y=F,1:x=T
-Com=Co Fr
-Orig=LwSyncdWW Coe SyncdWRNaA SyncdRRANa Fre
-{
-0:r2=x; 0:r4=y;
-1:r2=y; 1:r3=z; 1:r6=x;
-}
- P0           | P1              ;
- li r1,1      | li r1,2         ;
- stw r1,0(r2) | stw r1,0(r2)    ;
- lwsync       | sync            ;
- li r3,1      | Loop00:         ;
- stw r3,0(r4) | lwarx r4,r0,r3  ;
-              | stwcx. r4,r0,r3 ;
-              | bne  Loop00     ;
-              | sync            ;
-              | lwz r5,0(r6)    ;
-exists ([y]=2 /\ 1:r5=0)
+Also handle an interrupted system call, and continue in this case.
 
-But again, I'd probably have to defer to proper herdtools7 developers
-and maintainers for any diy7 bug or misbehavior you'd have to discover.
+Signed-off-by: Olaf Hering <olaf@aepfle.de>
+---
 
-  Andrea
+A more complete fix is to handle this properly in the kernel,
+by making the file descriptor unavailable for further operations.
 
+ tools/hv/hv_fcopy_uio_daemon.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-> 
-> Hernan
-> 
-> [1] https://github.com/torvalds/linux/blob/master/arch/powerpc/net/bpf_jit_comp32.c
-> [2] https://github.com/herd/herdtools7/tree/master/catalogue/herding-cats/ppc/tests/campaign
-> [3] https://github.com/herd/herdtools7/issues/905
-> 
+diff --git a/tools/hv/hv_fcopy_uio_daemon.c b/tools/hv/hv_fcopy_uio_daemon.c
+index 7a00f3066a98..281fd95dc0d8 100644
+--- a/tools/hv/hv_fcopy_uio_daemon.c
++++ b/tools/hv/hv_fcopy_uio_daemon.c
+@@ -468,8 +468,10 @@ int main(int argc, char *argv[])
+ 		 */
+ 		ret = pread(fcopy_fd, &tmp, sizeof(int), 0);
+ 		if (ret < 0) {
++			if (errno == EINTR || errno == EAGAIN)
++				continue;
+ 			syslog(LOG_ERR, "pread failed: %s", strerror(errno));
+-			continue;
++			goto close;
+ 		}
+ 
+ 		len = HV_RING_SIZE;
 
