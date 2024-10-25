@@ -1,179 +1,214 @@
-Return-Path: <linux-kernel+bounces-380794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DBAF9AF632
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 02:29:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C12669AF634
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 02:35:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C74BC1C217A8
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 00:29:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17A28B21E4D
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 00:35:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76330AD21;
-	Fri, 25 Oct 2024 00:29:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BA397494;
+	Fri, 25 Oct 2024 00:35:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="iabFei46"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jeWXkcHm"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0773F6FC5
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 00:29:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20FC91859;
+	Fri, 25 Oct 2024 00:34:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729816187; cv=none; b=WdV/nU9WHcC9kMYmhHF50gklROlk0jwHL+IwI176sp0OnwNUYBFicJOSGLtQG/734XLesyr+hmbnrTulqjIE6q9kwQvxhWQAOE7GoXLhSAx6J9nedTGOq9MKNENajfD+YKBu81oLcpaCp5S6Oie0sl77BiUA3s4ZxFwiEonw9YU=
+	t=1729816500; cv=none; b=ba01ZwyqdRpFJynN2GCfkWwMAtTRAF4FUO+B0dUj3bzLqmTZFPNnKbCkejetFXkO1RFXzDpyiYy8010rgXYxGpTgEaZc/c8W6gadH8CJwm11l/AVNbeSuv9PAoaTTM+My9GS/tXH1S6cYvj7bswG5JbJywJuPCYgkwjMYYEQ8nw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729816187; c=relaxed/simple;
-	bh=LB817QyFJvPBhuyk3cvh2gd2ab0x5mcnlPSDdXFAXhg=;
+	s=arc-20240116; t=1729816500; c=relaxed/simple;
+	bh=WZLcB/JIp9eAIRtXS44KhQy+6u4FTbvIx6i23GslbnM=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=DsjM8JjgyPxqw2NPoRe81feGjE8FRGdW6P+aD7gUvpC6aZKSnVdtWdwBGluvtcD3iyhNL8nZTN+hlNU2tGLPsoPliA9vTz4ni9C226b5Kg7UxVAWKFLJlSDtto3CzDyNYXVr0XrK0oU0gGKsocpiBV2aYgptf2TCeemQMW93Kas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=iabFei46; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
-	s=201909; t=1729816180;
-	bh=EnB2ce/rVYDY5AA6/sx9y4i1CZuXEVtDGbu8N7gt0+U=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=iabFei46eTD/ZABVvZ6sJZ8FoaRnbZc0gsNTN7ITADjc8l4Isggqg8L8ZZm2BQw2G
-	 hZhVqbbbO5Abiy+EBJ8OLftUG7OYK7V57k0+qm20ipD+Xpiq88+l7NLLWKscAbZB/X
-	 3StMn1YeJGl0pvUG/KOHJViw0qbhWvdMD+GFq0NhRnCgk+uPNmxLD7HkDDJojf2PmU
-	 0Phdv4G2lFFeeDxZdPQk40AIutU5DJfklA8tnxUNaoKh17PNsRLT2SyK4kqfF2HYIk
-	 nK7/g1OT4qt4LJGqzdMi0/RK+HzwyV9C2QFv0vgSuQFBX92bnnmY+Yagksy+sGz1VA
-	 go5DInxlYiB9Q==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XZNvl59fLz4x2g;
-	Fri, 25 Oct 2024 11:29:39 +1100 (AEDT)
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: "Nysal Jan K.A." <nysal@linux.ibm.com>, Andrew Morton
- <akpm@linux-foundation.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>
-Cc: linuxppc-dev@lists.ozlabs.org, "Nysal Jan K.A" <nysal@linux.ibm.com>,
- Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers
- <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, Justin Stitt
- <justinstitt@google.com>, Vlastimil Babka <vbabka@suse.cz>, Kent
- Overstreet <kent.overstreet@linux.dev>, Rick Edgecombe
- <rick.p.edgecombe@intel.com>, Roman Gushchin <roman.gushchin@linux.dev>,
- linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH] sched/membarrier: Fix redundant load of membarrier_state
-In-Reply-To: <20241007053936.833392-1-nysal@linux.ibm.com>
-References: <20241007053936.833392-1-nysal@linux.ibm.com>
-Date: Fri, 25 Oct 2024 11:29:38 +1100
-Message-ID: <87frolja8d.fsf@mail.lhotse>
+	 MIME-Version:Content-Type; b=AoH8hf+0IPUgKk6AzrLFhQqwWjdJL8hMDVXj/nVCz7lzaoUtrMaw2gaYzjyjOD8NxmuysP0l0DEAbBjVeXGteSzXVjJ3NTyMo2ElNWXWwXELGWyIEEclUpF0k+gHxnWiHhwKTgdLS/S0Bvyk6FNOSoVSEbhfGPPqnLmU8QoWHwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jeWXkcHm; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729816498; x=1761352498;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version:content-transfer-encoding;
+  bh=WZLcB/JIp9eAIRtXS44KhQy+6u4FTbvIx6i23GslbnM=;
+  b=jeWXkcHm5Y73p7VWCxlGv8xCR/mvHVe6I+44/eRYrA9I4lNTloAmfb2/
+   6a9FGtJqDvs/UqMXiWEy3qMr5vF9AoL93lqD7PlV5tNeI9aDjv5g/hm7Y
+   EHRl8Vm/FCSieKviimz4eRcJC51IusOnDYSr+X/ktmbWomnkxFqbPsBYe
+   G1KCzBz3AmgNxF/Vy5lCPlnzUAhsLiczK+bkzrbP0bfuM14W+nIo2Dj/m
+   41enf5y+SmV8/VphyOR6vD7wcC0dMgQd1x0aHQSRGs6vpeNdHTYNXd3iP
+   dRSClYXpLzGWlbXxD0LWKwMZCJNNoUllp36to9usESpKPZpPoCtdYGwFO
+   Q==;
+X-CSE-ConnectionGUID: PSNYYFqERM6ctNhHT+EHdQ==
+X-CSE-MsgGUID: HGpj0FzqQ/SgFEFs6qsrrg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11235"; a="40065036"
+X-IronPort-AV: E=Sophos;i="6.11,230,1725346800"; 
+   d="scan'208";a="40065036"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2024 17:34:57 -0700
+X-CSE-ConnectionGUID: ZUpTV2XERfSb8sYEZNtsng==
+X-CSE-MsgGUID: lMDrP+CLSxGFFav1q8Ue3w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,230,1725346800"; 
+   d="scan'208";a="81580938"
+Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2024 17:34:54 -0700
+From: "Huang, Ying" <ying.huang@intel.com>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,  David Hildenbrand
+ <david@redhat.com>,  Andrew Morton <akpm@linux-foundation.org>,
+  linux-mm@kvack.org,  linux-kernel@vger.kernel.org,
+  linux-cxl@vger.kernel.org,  Davidlohr Bueso <dave@stgolabs.net>,
+  Jonathan Cameron <jonathan.cameron@huawei.com>,  Alistair Popple
+ <apopple@nvidia.com>,  Bjorn Helgaas <bhelgaas@google.com>,  Baoquan He
+ <bhe@redhat.com>,  Dave Jiang <dave.jiang@intel.com>,  Alison Schofield
+ <alison.schofield@intel.com>
+Subject: Re: [RFC] resource: Avoid unnecessary resource tree walking in
+ __region_intersects()
+In-Reply-To: <671ac2d2b7bea_10e59294f2@dwillia2-xfh.jf.intel.com.notmuch> (Dan
+	Williams's message of "Thu, 24 Oct 2024 14:57:38 -0700")
+References: <20241010065558.1347018-1-ying.huang@intel.com>
+	<d129bbe4-8ae8-4915-bd9c-b38b684e8103@redhat.com>
+	<87set3a1nm.fsf@yhuang6-desk2.ccr.corp.intel.com>
+	<ZwkCt_ip5VOGWp4u@smile.fi.intel.com>
+	<671965a8b37a2_1bbc629489@dwillia2-xfh.jf.intel.com.notmuch>
+	<ZxnvyIme98Q8ey1c@smile.fi.intel.com>
+	<87wmhx3cpc.fsf@yhuang6-desk2.ccr.corp.intel.com>
+	<ZxpFQBRqWMDjhtSY@smile.fi.intel.com>
+	<671ac2d2b7bea_10e59294f2@dwillia2-xfh.jf.intel.com.notmuch>
+Date: Fri, 25 Oct 2024 08:31:21 +0800
+Message-ID: <87sesl2fc6.fsf@yhuang6-desk2.ccr.corp.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-[To += Mathieu]
+Dan Williams <dan.j.williams@intel.com> writes:
 
-"Nysal Jan K.A." <nysal@linux.ibm.com> writes:
-> From: "Nysal Jan K.A" <nysal@linux.ibm.com>
+> Andy Shevchenko wrote:
+>> On Thu, Oct 24, 2024 at 08:30:39PM +0800, Huang, Ying wrote:
+>> > Andy Shevchenko <andriy.shevchenko@linux.intel.com> writes:
+>> > > On Wed, Oct 23, 2024 at 02:07:52PM -0700, Dan Williams wrote:
+>> > >> Andy Shevchenko wrote:
+>> > >> > On Fri, Oct 11, 2024 at 09:06:37AM +0800, Huang, Ying wrote:
+>> > >> > > David Hildenbrand <david@redhat.com> writes:
+>> > >> > > > On 10.10.24 08:55, Huang Ying wrote:
+>>=20
+>> ...
+>>=20
+>> > >> > > > 	for ((_p) =3D (_root)->child; (_p); (_p) =3D next_resource_X=
+XX(_root, _p))
+>> > >> > >=20
+>> > >> > > Yes.  This can improve code readability.
+>> > >> > >=20
+>> > >> > > A possible issue is that "_root" will be evaluated twice in abo=
+ve macro
+>> > >> > > definition.  IMO, this should be avoided.
+>> > >> >=20
+>> > >> > Ideally, yes. But how many for_each type of macros you see that r=
+eally try hard
+>> > >> > to achieve that? I believe we shouldn't worry right now about thi=
+s and rely on
+>> > >> > the fact that root is the given variable. Or do you have an examp=
+le of what you
+>> > >> > suggested in the other reply, i.e. where it's an evaluation of th=
+e heavy call?
+>> > >> >=20
+>> > >> > > Do you have some idea about
+>> > >> > > how to do that?  Something like below?
+>> > >> > >=20
+>> > >> > > #define for_each_resource_XXX(_root, _p)                       =
+         \
+>> > >> > > 	for (typeof(_root) __root =3D (_root), __p =3D (_p) =3D (__roo=
+t)->child; \
+>> > >> > > 	     __p && (_p); (_p) =3D next_resource_XXX(__root, _p))
+>> > >> >=20
+>> > >> > This is a bit ugly :-( I would avoid ugliness as long as we have =
+no problem to
+>> > >> > solve (see above).
+>> > >>=20
+>> > >> Using a local defined variable to avoid double evaluation is standa=
+rd
+>> > >> practice. I do not understand "avoid ugliness as long as we have no=
+ problem to
+>> > >> solve", the problem to solve will be if someone accidentally does
+>> > >> something like "for_each_resource_descendant(root++, res)". *That* =
+will
+>> > >> be a problem when someone finally realizes that the macro is hiding=
+ a
+>> > >> double evaluation.
+>> > >
+>> > > Can you explain, why do we need __p and how can we get rid of that?
+>> > > I understand the part of the local variable for root.
+>> >=20
+>> > If don't use '__p', the macro becomes
+>> >=20
+>> > #define for_each_resource_XXX(_root, _p)                              =
+  \
+>> > 	for (typeof(_root) __root =3D (_root), (_p) =3D (__root)->child; \
+>> > 	     (_p); (_p) =3D next_resource_XXX(__root, _p))
+>> >=20
+>> > Where, '_p' must be a variable name, and it will be a new variable
+>> > inside for loop and mask the variable with same name outside of macro.
+>> > IIUC, this breaks the macro convention in kernel and has subtle variab=
+le
+>> > masking semantics.
+>>=20
+>> Yep.
 >
-> On architectures where ARCH_HAS_SYNC_CORE_BEFORE_USERMODE
-> is not selected, sync_core_before_usermode() is a no-op.
-> In membarrier_mm_sync_core_before_usermode() the compiler does not
-> eliminate redundant branches and the load of mm->membarrier_state
-> for this case as the atomic_read() cannot be optimized away.
-
-I was wondering if this was caused by powerpc's arch_atomic_read() which
-uses asm volatile.
-
-But replacing arch_atomic_read() with READ_ONCE() makes no difference,
-presumably because the compiler still can't see that the READ_ONCE() is
-unnecessary (which is kind of by design).
-
-> Here's a snippet of the code generated for finish_task_switch() on powerpc:
+> Oh, due to the comment expression, good catch.
 >
-> 1b786c:   ld      r26,2624(r30)   # mm = rq->prev_mm;
-> .......
-> 1b78c8:   cmpdi   cr7,r26,0
-> 1b78cc:   beq     cr7,1b78e4 <finish_task_switch+0xd0>
-> 1b78d0:   ld      r9,2312(r13)    # current
-> 1b78d4:   ld      r9,1888(r9)     # current->mm
-> 1b78d8:   cmpd    cr7,r26,r9
-> 1b78dc:   beq     cr7,1b7a70 <finish_task_switch+0x25c>
-> 1b78e0:   hwsync
-> 1b78e4:   cmplwi  cr7,r27,128
-> .......
-> 1b7a70:   lwz     r9,176(r26)     # atomic_read(&mm->membarrier_state)
-> 1b7a74:   b       1b78e0 <finish_task_switch+0xcc>
+>>=20
+>> In property.h nobody cares about evaluation which makes the macro as sim=
+ple as
+>>=20
+>> #define for_each_resource_XXX(_root, _p)		\
+>> 	for (_p =3D next_resource_XXX(__root, NULL); _p;	\
+>> 	     _p =3D next_resource_XXX(__root, _p))
+>>=20
+>> (Dan,
+>>  that's what I called to avoid solving issues we don't have and most lik=
+ely
+>>  will never have.)
 >
-> This was found while analyzing "perf c2c" reports on kernels prior
-> to commit c1753fd02a00 ("mm: move mm_count into its own cache line")
-> where mm_count was false sharing with membarrier_state.
-
-So it was causing a noticable performance blip? But isn't anymore?
-
-> There is a minor improvement in the size of finish_task_switch().
-> The following are results from bloat-o-meter:
+> Ah, my apologies, I thought the objection was to the macro altogether.=20
 >
-> GCC 7.5.0:
-> ----------
-> add/remove: 0/0 grow/shrink: 0/1 up/down: 0/-32 (-32)
-> Function                                     old     new   delta
-> finish_task_switch                           884     852     -32
+>> but if you want to stick with your variant some improvements can be done:
+>>=20
+>> #define for_each_resource_XXX(_root, _p)				\
+>> 	for (typeof(_root) __root =3D (_root), __p =3D _p =3D __root->child;	\
+>> 	     __p && _p; _p =3D next_resource_XXX(__root, _p))
+>>=20
+>>=20
+>> 1) no need to have local variable in parentheses;
+>> 2) no need to have iterator in parentheses, otherwise it would be crazy =
+code
+>> that has put something really wrong there and still expect the thing to =
+work.
 >
-> GCC 12.2.1:
-> -----------
-> add/remove: 0/0 grow/shrink: 0/1 up/down: 0/-32 (-32)
-> Function                                     old     new   delta
-> finish_task_switch.isra                      852     820     -32
-
-GCC 12 is a couple of years old, I assume GCC 14 behaves similarly?
-
-> LLVM 17.0.6:
-> ------------
-> add/remove: 0/0 grow/shrink: 0/2 up/down: 0/-36 (-36)
-> Function                                     old     new   delta
-> rt_mutex_schedule                            120     104     -16
-> finish_task_switch                           792     772     -20
+> Why not:
 >
-> Signed-off-by: Nysal Jan K.A <nysal@linux.ibm.com>
-> ---
->  include/linux/sched/mm.h | 2 ++
->  1 file changed, 2 insertions(+)
+> #define for_each_resource_XXX(_root, _p)				\
+> 	for (typeof(_root) __root =3D (_root), __p =3D _p =3D __root->child;	\
+> 	     _p; _p =3D next_resource_XXX(__root, _p))
 >
-> diff --git a/include/linux/sched/mm.h b/include/linux/sched/mm.h
-> index 07bb8d4181d7..042e60ab853a 100644
-> --- a/include/linux/sched/mm.h
-> +++ b/include/linux/sched/mm.h
-> @@ -540,6 +540,8 @@ enum {
->  
->  static inline void membarrier_mm_sync_core_before_usermode(struct mm_struct *mm)
->  {
-> +	if (!IS_ENABLED(CONFIG_ARCH_HAS_SYNC_CORE_BEFORE_USERMODE))
-> +		return;
->  	if (current->mm != mm)
->  		return;
->  	if (likely(!(atomic_read(&mm->membarrier_state) &
+> The __p is only to allow for _p to be initialized in the first statement
+> without causing a new "_p" shadow to be declared.
 
-The other option would be to have a completely separate stub, eg:
+I have tries this before.  Compiler will complain with
 
-  #ifdef CONFIG_ARCH_HAS_SYNC_CORE_BEFORE_USERMODE
-  static inline void membarrier_mm_sync_core_before_usermode(struct mm_struct *mm)
-  {
-          if (current->mm != mm)
-                  return;
-          if (likely(!(atomic_read(&mm->membarrier_state) &
-                       MEMBARRIER_STATE_PRIVATE_EXPEDITED_SYNC_CORE)))
-                  return;
-          sync_core_before_usermode();
-  }
-  #else
-  static inline void membarrier_mm_sync_core_before_usermode(struct mm_struct *mm) { }
-  #endif
+warning: unused variable =E2=80=98__p=E2=80=99 [-Wunused-variable]
 
-Not sure what folks prefer.
-
-In either case I think it's probably worth a short comment explaining
-why it's worth the trouble (ie. that the atomic_read() prevents the
-compiler from doing DCE).
-
-cheers
+--
+Best Regards,
+Huang, Ying
 
