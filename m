@@ -1,132 +1,120 @@
-Return-Path: <linux-kernel+bounces-380792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E5BE9AF626
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 02:22:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 565B49AF628
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 02:23:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 03886B221D8
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 00:22:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 83D931C217E8
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 00:23:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DFCC1537C8;
-	Fri, 25 Oct 2024 00:20:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3DF9AD21;
+	Fri, 25 Oct 2024 00:22:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="V+UPJgAN"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EiWxIlMj"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5CA114387B
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 00:20:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B51CAD31
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 00:22:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729815635; cv=none; b=pjGyJjDYAMFt6TEV4D80ex3BwF6Vwxp776k6qs10IykClkBwBr8OYB6EydOV8AhZiBPW2NV5W8FBLCb3OtcQ3wsliZ63JY/+ImD7po1Yt78H3nrjMbZ2xtmXTfEQCURmKLkW6yOfzGxvuZqxI9w86QaqUqaSNPcuBP2cq5V3sVU=
+	t=1729815740; cv=none; b=cWNFaALaYfe/fXugsZK62jmCrAZFuGdEgWSz5xMYr9OFDmm/A6NUQQrYG5SdjpyGFGEw3ZgSXTg0xFs0raJmugnHZHUlGcjReS/xGru6KyQZSmlLmpXFRY7pwiLf1YXpddn0w6/EPvcYS374KwPQ+jCAfydTI3JTUghJ2hoICgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729815635; c=relaxed/simple;
-	bh=/x10ZQOFNnrOHCvquV4PYPO+BtvRCVRen69O3Zo5eJc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=aBXKmlSmVrChtELqc8glV9vzGZXiFz3+g17BgVQLyaCPXhRk5UTB8cf4NLwop5i01mEW8vCs/CXvvk4nD8SBzTCf848DdiNSWrgmNUax2RdCH7Tebb1GD6hpdj8+Q5+FlU/5NQkzTTW2JzkCCA/fC03wZzsYlLtQFa6zN0W4zHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=V+UPJgAN; arc=none smtp.client-ip=209.85.167.46
+	s=arc-20240116; t=1729815740; c=relaxed/simple;
+	bh=t179xpjE+Y8BfVZf2kDDN6v2eJPd57xr+hMX9hglcg4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kvtfoPE3qQGbs3CZWu9WHSuB83z0jbTxfofMmtUl59fboM60EOghd9Du7LPekswHrk8wUla6mXD3R0A6wSfabEsBpCEql7ztClAT61y3qneiEktEgK5hUnD7XgWrvy8xLPVGFsIKdPlvSkNblqkn6M54j/43Wl6C/B2zMa9LTog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EiWxIlMj; arc=none smtp.client-ip=209.85.167.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-539e59dadebso1897017e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 17:20:32 -0700 (PDT)
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-539e6c754bdso1375336e87.2
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 17:22:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729815631; x=1730420431; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YnsgcmkfN1od+i3QCrjb0kSya8UAkCFrFzEGNEe+M2o=;
-        b=V+UPJgANGBDXWt1+Vloe0g7QCgQoVHsuoiHm3T+eJU5Igoy2yjUluK+ZOqhvcD/bZY
-         0SjldmPUtdGdmgMMy8UqJ+igtfW08UpN5ys43jhI9SW9HZdTLQObP767OeHKCN4BU6qd
-         Dif2Igcz2KutPK69u5SUesZRSMB4BrOV477ylmq/sXQ0GA0EbyQ3RelTLPrhv+l3HBzx
-         9glR0GtR5/3yNE/Ukx6pMFzi7uIUSWVbbxF2YVat9HnUMbagySzpoxDfuP8Xqo4TKqjL
-         O3ciyvsVvvW3zAvhk5uQQ90u63kQqf/92+02NFREnc+BkgmxK0JzTt4YyQPUFkwJP0AJ
-         wcOA==
+        d=linaro.org; s=google; t=1729815736; x=1730420536; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=R5EDM7WCg2HOqPHWF0Z+QG+aYFeqPcDdQtBhvkydGgw=;
+        b=EiWxIlMjpdrv+QImvg/c5oayAG1NKwwv9FRGE0N8O7aGoIIxsxqHX6P9KSdcxJgqPh
+         L4DI0GroEUVfsw8zKpIQpOzAqUauYm8s9PI7fYSH8H4QkwxSltA/ZvVb+GU1rwpnvF/5
+         IQmI7IG/lRYxAzb3nEx6FAlUn1+u5zGWrcyqyuR/Lucenk+v8aEwJQcurma3JzXRsVGj
+         RKNTaL1ch1NUuy1/RteerPvJU5y3AIDYEMb0hbktxz1NQnL8H2X4vCXbfx7KSDU6GWXm
+         hGladPehANWq/c6jRqa8eqJ7r3NfMULsQG5K7+b6n2yw3treYCnUYfj48lGZJTREwBHt
+         QBjg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729815631; x=1730420431;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YnsgcmkfN1od+i3QCrjb0kSya8UAkCFrFzEGNEe+M2o=;
-        b=hisurlNf1rz3Fj99xtdSG4nvuEhy19mBMUwSJtap/QUfypGwnHh3rCmma0qqEol5O6
-         POeKBEPFrZv1O90uhoQX6ebE7cSIxkM4fEZDP2nGx8nHaEOUu5oN76c2gDes6+AOnIns
-         KVOhc6ZRAB89Mv4nx19Uxr4WZrqMdLUxGRnEcNCalml43Ncdunhzp8z9Ow9DYFPjm8/l
-         GOSov2jQGlQd4OqjodkhKPswsxHLCLIAShOidlQTs8KpdMHG2hCInHTkJd3heCJz/bzh
-         35DekYirszsH1X+6d2IFdE8c6WSBDjNziegJecw0BRy6T4q93HQd53zxbBUvQIHeVE/G
-         kaQw==
-X-Forwarded-Encrypted: i=1; AJvYcCUN1D03OfeMN5p+FeUNNJGC8BmGN2Dx8F18EhRdtkGVJAOv8dlqXaiDN7YZ8hwoYfXULGUU1u0Zxnl5jq8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+bQik7JLmiVWUCWsYPmx91VGV1Y71tkBPwl115eiVHDmtoQG/
-	fticBVycEutsR35gyqDF8TtmjaY4alklvk6QQxRTCV3M3+0uYdqaxCvQdfLDi4o=
-X-Google-Smtp-Source: AGHT+IFjutZORqKbfgc53uyEGbDicErOUwyPgAVT1fb+CcFo4WDQgCGdaVvmQ/aQ+wWA73orPkLUAA==
-X-Received: by 2002:a05:6512:3ba5:b0:539:fb56:7790 with SMTP id 2adb3069b0e04-53b23ddcfb2mr2306341e87.6.1729815630768;
-        Thu, 24 Oct 2024 17:20:30 -0700 (PDT)
-Received: from umbar.lan ([192.130.178.90])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53b2e1b05b3sm6227e87.161.2024.10.24.17.20.28
+        d=1e100.net; s=20230601; t=1729815736; x=1730420536;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=R5EDM7WCg2HOqPHWF0Z+QG+aYFeqPcDdQtBhvkydGgw=;
+        b=XXo87T4vK65yBkXrKuLRGR57igXcccAMt8N7Sq18WnGteJ9G8cvpCAtxv8sMUDZPOI
+         Xc3fuK+aoE45uAytxGX7VBnGaOpYbP2jetPycyhKzHcpGZI6BA8CxTgTl3IzQ13sIbtU
+         s7eKJ69IAZB0qO5cp+cpEHtiJ3VMIOzpHjJ693BM1gDWVH0IRiaN+nLSRVU9j3wgILTD
+         RsqJ1zEvP1z1tyXxilnRdy99xOZYFDxZSF67ynD1PJPdxZwqBxpKG12NCPtBOh0pJxPC
+         RCrPUC5QpCaOVS2nKKxD2R2dHbO6nnHYHBEj/4rk/7PZ+rm3eLsvMfr51wjYSm1oq4SR
+         pOxg==
+X-Forwarded-Encrypted: i=1; AJvYcCWhrvYoExy4UWjy64kTqQTM7AAKTpt29k7yV8T1M4ztjLEeaXc4OzEY+csI8n4kP2w7n+kNryTlvZlh4wg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhS0kvK/71ujIt6I7rKSB4hLnGFptpLmOyNKO+tUNnDZ1OF0J0
+	pWVzBLGUM69RilSeyOBqDaBbHT0pgpp8/cHep90WgX3MOWC0AgxeeH094/5HSpM=
+X-Google-Smtp-Source: AGHT+IEwuZSNpMSc/jRW5N16zJFZH30TVd1uv/g/woovx2Ntbz3yvr/09wQ54BLmhll7f9heX5zoUg==
+X-Received: by 2002:a05:6512:10c5:b0:535:699b:b076 with SMTP id 2adb3069b0e04-53b1a31f1d6mr4467181e87.16.1729815736306;
+        Thu, 24 Oct 2024 17:22:16 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53b2e1afe39sm6621e87.140.2024.10.24.17.22.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Oct 2024 17:20:28 -0700 (PDT)
+        Thu, 24 Oct 2024 17:22:15 -0700 (PDT)
+Date: Fri, 25 Oct 2024 03:22:13 +0300
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Fri, 25 Oct 2024 03:20:16 +0300
-Subject: [PATCH v6 9/9] drm/msm/dpu: include SSPP allocation state into the
- dumped state
+To: Saravana Kannan <saravanak@google.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, JC Kuo <jckuo@nvidia.com>, 
+	Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, 
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	=?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>, kernel-team@android.com, linux-kernel@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linux-phy@lists.infradead.org, linux-tegra@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH 1/3] drm: display: Set fwnode for aux bus devices
+Message-ID: <dz2tfpufzgmvxls2stxagz73x3krbammkc2zdycqsiy62tnlog@ztg4yujvyeob>
+References: <20241024061347.1771063-1-saravanak@google.com>
+ <20241024061347.1771063-2-saravanak@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241025-dpu-virtual-wide-v6-9-0310fd519765@linaro.org>
-References: <20241025-dpu-virtual-wide-v6-0-0310fd519765@linaro.org>
-In-Reply-To: <20241025-dpu-virtual-wide-v6-0-0310fd519765@linaro.org>
-To: Rob Clark <robdclark@gmail.com>, 
- Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
- Marijn Suijten <marijn.suijten@somainline.org>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1010;
- i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=/x10ZQOFNnrOHCvquV4PYPO+BtvRCVRen69O3Zo5eJc=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBnGuQ7xW6fGPhMHL5I5gTlICUHt4HcwMqATO6//
- pP8jQkH9tqJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZxrkOwAKCRCLPIo+Aiko
- 1YyRB/9FdE4ntc7MI6xk/sYWQY4g1oLbMyWgqCz+ug9khSnwuI00+BqQWK8pmjYQKCK/KkLAsS0
- 4XdwWIYeGBXlnMAr8XxsZHhi/x1fX2ozujBDVlhmvpjZ2XwzjZ7DsWj768OZePy5/3A9i2yedJQ
- t5Elq4v31GtxU81W9y97Lq4JdvcFtqjVymbzi+qK0/2X0c6AN2tXteYdPm06/fTpdfBWem5wDAY
- 1gj/WtJdRXFpQsvJPT69eoWGf2Lswm0GchikofWrycPcwhhEhfwYyJ2BqYE7kRzGbqL4iiI4d52
- lZhqX0Y4VuJE/1UTe1Jd3laU++EIthXlOjOUvi/m/qj9jUd8
-X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
- fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241024061347.1771063-2-saravanak@google.com>
 
-Make dpu_rm_print_state() also output the SSPP allocation state.
+On Wed, Oct 23, 2024 at 11:13:42PM -0700, Saravana Kannan wrote:
+> fwnode needs to be set for a device for fw_devlink to be able to
+> track/enforce its dependencies correctly. Without this, you'll see error
+> messages like this when the supplier has probed and tries to make sure
+> all its fwnode consumers are linked to it using device links:
+> 
+> mediatek-drm-dp 1c500000.edp-tx: Failed to create device link (0x180) with backlight-lcd0
+> 
+> Reported-by: "Nícolas F. R. A. Prado" <nfraprado@collabora.com>
+> Closes: https://lore.kernel.org/all/7b995947-4540-4b17-872e-e107adca4598@notapiano/
+> Tested-by: "Nícolas F. R. A. Prado" <nfraprado@collabora.com>
+> Signed-off-by: Saravana Kannan <saravanak@google.com>
+> ---
+>  drivers/gpu/drm/display/drm_dp_aux_bus.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
 
-Reviewed-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c
-index feeef9d31653..e5b0abe515ff 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c
-@@ -881,4 +881,11 @@ void dpu_rm_print_state(struct drm_printer *p,
- 	dpu_rm_print_state_helper(p, rm->cdm_blk,
- 				  global_state->cdm_to_enc_id);
- 	drm_puts(p, "\n");
-+
-+	drm_puts(p, "\tsspp=");
-+	/* skip SSPP_NONE and start from the next index */
-+	for (i = SSPP_NONE + 1; i < ARRAY_SIZE(global_state->sspp_to_crtc_id); i++)
-+		dpu_rm_print_state_helper(p, rm->hw_sspp[i] ? &rm->hw_sspp[i]->base : NULL,
-+					  global_state->sspp_to_crtc_id[i]);
-+	drm_puts(p, "\n");
- }
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
 -- 
-2.39.5
-
+With best wishes
+Dmitry
 
