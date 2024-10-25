@@ -1,435 +1,211 @@
-Return-Path: <linux-kernel+bounces-380799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3D7F9AF63B
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 02:38:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4E9F9AF647
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 02:39:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8368E2824C9
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 00:38:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 447441F22704
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 00:39:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 535DD1859;
-	Fri, 25 Oct 2024 00:37:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0407179C8;
+	Fri, 25 Oct 2024 00:39:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gthvQVR5"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b="Xe87zI7C"
+Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11023095.outbound.protection.outlook.com [40.107.44.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94A1038389
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 00:37:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729816677; cv=none; b=nRDD+uN0ih8FIKbF54JyLNYENvqQdjlIt3nAphaw9HrA9UUglQYPuanHjjrkHHFvU+EAtUrjqKCk17KSeKsEVKjSXq6mYcg9w1PiAifDchqYrHTEv86WEEaDPdmNU6mGYnJfEimREExtXh+8T9OF+XcC2U7tDPbe3EWuYWPrh8M=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729816677; c=relaxed/simple;
-	bh=sMgwvjUhq3tF+Lgl21ldlA1Yr4MwGWW6sshpk9Pt6j8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XziLjvLj6r1WKi2rFPFRUzdHM4bkGINcWK7OhDRi//ZlPScZeW2ZNgdMIpqgWOgPdr6g5hO1moVOszK5mPeTiyR7g6hPaDrEJrc2lYwZdz+kaUM1o2DYWNsVWqcnrzvcFOOxAlhhmqpUsrSnpVe5iEEI0a7TFrd3OLQRU4f7mpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gthvQVR5; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729816673;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Y6+zLF7qyVynVu0svG5QjzT7pX1JxbR+qHzl6WhHYkg=;
-	b=gthvQVR5pIbTNHrSI1igEsgkJqRhFT8LRBMNNaSiVe7spEMByDYRqYIyy7epL6NsJaNAEZ
-	at4nikkn+1zOPRCcsMxUIQIPoD72U87LHo5Po8G55lt+payeePIQC51x5JCaZfJUMn8k3W
-	kDaMhjDcM9GclV4xuX6eKl0ZRsbu5ME=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-694-JiQOOPfnMTeq_LkXDEuFLw-1; Thu,
- 24 Oct 2024 20:37:50 -0400
-X-MC-Unique: JiQOOPfnMTeq_LkXDEuFLw-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9901119560B4;
-	Fri, 25 Oct 2024 00:37:48 +0000 (UTC)
-Received: from localhost (unknown [10.72.116.27])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 7BA341956088;
-	Fri, 25 Oct 2024 00:37:46 +0000 (UTC)
-From: Ming Lei <ming.lei@redhat.com>
-To: Jens Axboe <axboe@kernel.dk>,
-	linux-block@vger.kernel.org
-Cc: Christoph Hellwig <hch@lst.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Waiman Long <longman@redhat.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Will Deacon <will@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Bart Van Assche <bvanassche@acm.org>,
-	Ming Lei <ming.lei@redhat.com>
-Subject: [PATCH V2 3/3] block: model freeze & enter queue as lock for supporting lockdep
-Date: Fri, 25 Oct 2024 08:37:20 +0800
-Message-ID: <20241025003722.3630252-4-ming.lei@redhat.com>
-In-Reply-To: <20241025003722.3630252-1-ming.lei@redhat.com>
-References: <20241025003722.3630252-1-ming.lei@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B37522B64E;
+	Fri, 25 Oct 2024 00:39:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.95
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729816784; cv=fail; b=rROEGbxvjP4p8RSx0rl+64u7HhyjjTsuGikleGrn/pI40O9eXJVxzUkMvPbTmckvvbL5ZuX6oxAWxWS5+GGfkB8u4/PwHHzYE3xABbtmB7DcFwyOHjSabV8y9YEJLbnx2VYnu0n0tkvoe69ljQd+J+tjXIqmEsYVc1wiaFAUy1A=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729816784; c=relaxed/simple;
+	bh=DPxqBbZhL69DKhi363+QODrVtKf4GLLhJD5Z55PDpM4=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=b8OCQEcyJBtLVyNTrkuKiu/XcBgXqbYUly52nHiV27VH6xiKtjjpVn/6xiUdPNBWcN4Sxt7UTaN8tvr2wXEue1QuuLmXdYFPprU/eiiLeo780J9FwiNeiPOLbpe3n1WE1BeTVfnlS967hYUSTWzkZ+Mzq6R6e1nqaep9qnGCULE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b=Xe87zI7C; arc=fail smtp.client-ip=40.107.44.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=N201OLJByOK86O9USq0iSocrfAyvyD+at5bmlfbsYswQbOk8Ex+glX2puVWmWkTxZNKlC59DX55nmx5JnRjOTx4R9ylI1y81HsIjE5S8JzpmQs3V+H9M3vjUtQJXozVUidc5oDlzYIvlVxPNCcLNiOaBeLA05z7/UWUEdTWlif2FsvGy649Xf1Ofv281zdK7hSvn4VuSrLhVqtZzcCjVyawS4Ssz17NMjjS/rRTKc2nW1TAfrmZ2f/YlwtwQiLBHyCF35/cp+6ZH8lEO3g/uXWOenjAQxumt9HKUkqZGc7AMtcI/1i6cziR7yxovgY23whKgf310KzAPYMLPouyzAA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=oIfnPqHfdWVwYekGgMpEcXxrVJUQDmCKp6dluc7N0HI=;
+ b=JiA30Ls/LyIgts6cHu6kx9lN2aIE8MC16iuVVlzw7m691twViVDBWfF+JYPDaygtRimC9yk2+ulhE68dI/HoS5LKRMPQqbFcJ+bfGN/8bjbFyMXnjCVppLhHDTtPoaxgm+RlM9Apr3otUPXy9tHgjtWzND4JHT6aFPxLpiPayH4xxAd4nq7CtM0eaLcuW4nYsIkio/Rizr7GXz5ya7Ej2OkzMMjLhPh3ZtPjkCjX9/Xv2Ee/0GXNxz8kk6ZuNo4TYbuwjxsydIIAAlYozAD1GngCDN4pw70xm+Tr6Mdn7kSUnggzu6cxBEnCKGbFbcMUBkxTgr8mud2K27rnuIFj3A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=aspeedtech.com; dmarc=pass action=none
+ header.from=aspeedtech.com; dkim=pass header.d=aspeedtech.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aspeedtech.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=oIfnPqHfdWVwYekGgMpEcXxrVJUQDmCKp6dluc7N0HI=;
+ b=Xe87zI7C9kOF31bjJAnH8wH4p+5RPLY2/oHuJbAMk2rlEnNvaOl9TeyKjpO3G7AwlZyefcmFcU1PDYfmUP6bJ/dtL4DZFCbvtRv3ll9kQSGQJXdcuh1yi2n8zKZPl4fLzAnyzSlAAwfc955Aw08nI7zj1nuRZpRtC4AnUsdwzHajjWXMcDBSKYea/jqHFIXEj3GkkT7JYmdMx0v0K61PlNjR5/Lc51RBV+DUgze6Iul/WLTBQ4gGoTas7Y6PN+2dFB6O8m5OAs9X4/441+qleJx2pctB+Ea+P44XVyDufGwiRfXP+rFa6bcmHI1ESV97XCjIU/RRhUgdFkFv6PfF+Q==
+Received: from TYZPR06MB6191.apcprd06.prod.outlook.com (2603:1096:400:33d::12)
+ by TYZPR06MB7216.apcprd06.prod.outlook.com (2603:1096:405:aa::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.14; Fri, 25 Oct
+ 2024 00:39:26 +0000
+Received: from TYZPR06MB6191.apcprd06.prod.outlook.com
+ ([fe80::cc07:35e3:9143:c8e2]) by TYZPR06MB6191.apcprd06.prod.outlook.com
+ ([fe80::cc07:35e3:9143:c8e2%3]) with mapi id 15.20.8093.013; Fri, 25 Oct 2024
+ 00:39:26 +0000
+From: Tommy Huang <tommy_huang@aspeedtech.com>
+To: Andi Shyti <andi.shyti@kernel.org>
+CC: Andrew Jeffery <andrew@codeconstruct.com.au>, "brendanhiggins@google.com"
+	<brendanhiggins@google.com>, "benh@kernel.crashing.org"
+	<benh@kernel.crashing.org>, "joel@jms.id.au" <joel@jms.id.au>, BMC-SW
+	<BMC-SW@aspeedtech.com>, "linux-aspeed@lists.ozlabs.org"
+	<linux-aspeed@lists.ozlabs.org>, "openbmc@lists.ozlabs.org"
+	<openbmc@lists.ozlabs.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-i2c@vger.kernel.org"
+	<linux-i2c@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>
+Subject: RE: [PATCH] i2c: aspeed: Consider i2c reset for muti-master case
+Thread-Topic: [PATCH] i2c: aspeed: Consider i2c reset for muti-master case
+Thread-Index: AQHbIRC4mm8MiKb1p0WGejEQka9JT7KRHGgAgADqSOCAA+bbAIAAu/qA
+Date: Fri, 25 Oct 2024 00:39:25 +0000
+Message-ID:
+ <TYZPR06MB6191583EC51EE578E1A8910AE14F2@TYZPR06MB6191.apcprd06.prod.outlook.com>
+References: <20241018034919.974025-1-tommy_huang@aspeedtech.com>
+ <e06a0db538bf62d4aeb7352ecc81a3a679fb9eec.camel@codeconstruct.com.au>
+ <TYZPR06MB6191EBA63B87FE5152AF029DE14C2@TYZPR06MB6191.apcprd06.prod.outlook.com>
+ <c3ss6ralf4tpyknsda5p745a65xjprlzecdq3s4zy4dpckuxi4@izf7emrzykay>
+In-Reply-To: <c3ss6ralf4tpyknsda5p745a65xjprlzecdq3s4zy4dpckuxi4@izf7emrzykay>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=aspeedtech.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TYZPR06MB6191:EE_|TYZPR06MB7216:EE_
+x-ms-office365-filtering-correlation-id: a51fa328-0642-4d76-08a6-08dcf48d7a59
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|376014|1800799024|7416014|366016|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?V9QFX2ktq7XxQsROXEEqga90qjfujxSh93dah11AJVIzxdsfx4HQfUUF/s4y?=
+ =?us-ascii?Q?e5PKq8psI6H6uRVEqjEsvtpZNsFXSnrEs7R6y0vb+vraioA3/L63l4hBOSDU?=
+ =?us-ascii?Q?KFkWV3RGbKn2VpYVL6k3SReLlsITLGXx+ZccyS6PlhBWMD41zsX7o9VABf/H?=
+ =?us-ascii?Q?mVk0f8Fzal3YiO0KrFBf4vnJKzq+LA7ZB7er9bJAStGTXtST+vQ4hTLJOtX2?=
+ =?us-ascii?Q?/PYkXAVdq5l78aGTKzQnNmw+7EkNN/DG4vvO6GSFjw+3OROwFR/r8kQg++pU?=
+ =?us-ascii?Q?rHNd2wZgwyO6ZiGQ+u+9X0B3f1UVPnIfdfvTXt9wENgZ59StY/pVsXIWPoas?=
+ =?us-ascii?Q?FFlSsu0GPuC5q88KeWYcAz1C/DCWIR3TNsaJW7Dw+dBteqeDBju4I4LT3Q72?=
+ =?us-ascii?Q?tAoRQICf42o6rDZ8OQhMGXbcMLBL+euvp0Zjk19Lg4nhHrXGtSGKXdSZBBQg?=
+ =?us-ascii?Q?t1FwulkPATlD5Htd+Nm2ydgAXAH2W9peIVzHhq+R3EAuiqFfcVD1bSE9nUs8?=
+ =?us-ascii?Q?VHQaf0/9rVA2iCVV88OY5Nr/3WeAmseUoVqeqZaqEx/rN08OLP7I3aU8c5KM?=
+ =?us-ascii?Q?YHj6TrYt+LURqKsApwwd5Ix+Hto4a0mVQnG9N3tYIcOxwv0vASuZmV0+dZiL?=
+ =?us-ascii?Q?epRp/E5CrDS9h/KTVkbTG7Qq62luj40iOgjtNWrqmXhiCCRAHCXczqDYxm1Q?=
+ =?us-ascii?Q?j2r3ji1WgkqstPXF3T27+GmtSn+pqsYXqTp0uKoWT/IuVdGIFjWHW1S4vibP?=
+ =?us-ascii?Q?Rpg+cBxBGvvVHQo1UJ/2LUGO1hb8/wdZQAQDUtj7X9jeNdWCNq3mgeqO352t?=
+ =?us-ascii?Q?VPCyPBxqEeZ3V7KGddLtHqI+5sVUWNZnppZIAP0lVjJjT4NebVyhOU3+KjC7?=
+ =?us-ascii?Q?gQKdyEqd5zBhsh/2hBB7yB7K3/1W0FbQUX98+4+PIswhMMics7L43d2dtm5O?=
+ =?us-ascii?Q?0bDltzlOu/8FtLafbR44MeL5P0vQOE+gBUm2NuLT/BMg3Vj+d6LvimsuvXAu?=
+ =?us-ascii?Q?Uy/prdrQ/MqJ2LwneLD672xr1Ymp8qTzzCNwJ3OGvpqKdfj1fkhChWsDqMGA?=
+ =?us-ascii?Q?dk+WjRXNF74+NQQ3RjUkxv1v8Aj9QA8Q08vSOwiujItfk+CaR39+TocKOO3S?=
+ =?us-ascii?Q?6mMstaz1owF1/KUSDyRY6aOoDWYB42Qng+NmNvMrPUlHoDkbJt5I8RsiA8op?=
+ =?us-ascii?Q?Qy4XYdSNhaX30DMvZARPoTP60eyerjs19Daew/mXi9I/ONQXi4wDAJXXTzIm?=
+ =?us-ascii?Q?OOeSlSzk1Xoe87AzOt0pESYjFlYEs7sCMoPWwm9pusdO9zAYX1ETS7Zc3YxF?=
+ =?us-ascii?Q?HrJFOErO29GvMfP0vdwlnqaqIm6bkk6TduFpDyyXijAlChu7kOgMf9qoNfN4?=
+ =?us-ascii?Q?lqMtf0s=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR06MB6191.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(7416014)(366016)(38070700018);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?8ckmcC1yrpcde/UfNNtET/Lpkwt6L5Wo27ySHKNO8EWfPOHxZeY9MMBoLk3q?=
+ =?us-ascii?Q?CSMlZGVfEnpQ3f5ynnKKngQYDawOqM5bRZaCcB4L9OdkyjVL6qwBNvJoyCcP?=
+ =?us-ascii?Q?sXfyW8JUKu5T25S19mpH82WwB2qIZ0dSFBNbp5p4kgvwRjj1E75PrOZS5gbY?=
+ =?us-ascii?Q?OWNp7Jk/vOOQrojui5PBrGxriQs5IBq2JHTqSOOWcg8m9IeRDPtT/71RDx9E?=
+ =?us-ascii?Q?LgADc3pq/lw33g0gCW6PXFVnQ1O/T1uyyhmrwKWZFRqNp+A5GrtPWRPIaYVd?=
+ =?us-ascii?Q?onyxJffRT8prLRotGDfn9jK88sq1x6P9jZAwOrceG1cVrwK1A3eiiinYqn/k?=
+ =?us-ascii?Q?4q8+IAtyqrSR+lP33ASSyXFIHiewEzHhz4XICJRWikgHqZIR8Xin5OKh9EPt?=
+ =?us-ascii?Q?ea6Y9QKwkLWcYNiS/nlJLgHYb18L8zbhndDoKhx8AlQxvz40SNar/9sNDEux?=
+ =?us-ascii?Q?k+LuXXkngK7cKoYCqvqqXp/bsocG0hPij+a7QotnpsgvTina2P3SC7Wd5O7V?=
+ =?us-ascii?Q?IXFkHYO/tc696rBpp19bi6nhE+Z5siJcjRxXvP9mMtn5xLwOBA5WYesQg3bT?=
+ =?us-ascii?Q?gN9Cpnxf6YMOzuzW0BY4SfrlYwNxuMTcSF4qqp6B3A1dt5d5gUth/eCNcQmi?=
+ =?us-ascii?Q?QGs55o+TNpFLEUCgGeUZJ39HqtjzHlcvumBEgXIWCnkIpd5Al0laFKr4aSuV?=
+ =?us-ascii?Q?ohB8f8tl9uB5NLgIUsfM1uFcJGZsmi39Egf6yByUhMWcLl1z0+esLR8vUsRG?=
+ =?us-ascii?Q?mZXEFtDTHvrO8zjiab17dGoEnksrsFGOepKd4eZdoY4i8ypiZhPoBVkWhqGB?=
+ =?us-ascii?Q?ObdST5vAlMI0pe8YEwBakR7ST6whuvzNyAD9qPSRyC5Xx8SyLZcWL2JcdpBZ?=
+ =?us-ascii?Q?e8WPYDCSVbibQbgvnZ2qSe5dAqOZoi+NZ+Clm5Hdn5aHZIJg2yTQg1m3K7Jn?=
+ =?us-ascii?Q?+BrOhHKKqKMDjejStBDIJlveSCyohV/yB+hgLfT/1kZIbMfTluGYSf2iCCCm?=
+ =?us-ascii?Q?wPGQ6zyv+nXlQ6i42X+UGjyi2HcNSfmTnbe8CenxgZ/vDcvXm8RFdYGwxj+2?=
+ =?us-ascii?Q?3tRJ91YlWKlSKK0wuVxIYREjZTu9LIGRTbSWyvZhZDkQC2cVs+tJrhSnI9D4?=
+ =?us-ascii?Q?F63F1ynYx5XRzRsVmtD04JCd9XbnImAZpIr1p85zePBIcOwkcsberCyxMAFj?=
+ =?us-ascii?Q?U4rc/VzeEX5Ypc5AkFvyibZ4Yx5EQRBTtnSm61nYyfLZccckS2XXv06m9Md4?=
+ =?us-ascii?Q?0h/1/b5RyUtFWQmdRazNhPuNdRkqp8tmZsJqKdbN1wyFFhy+65NmkyZZH3mF?=
+ =?us-ascii?Q?5rIRUIanQP3g3P5ZvXQYKeMpZKSGri1HHItGBdmJeLBIqJgadSj1JialmAxF?=
+ =?us-ascii?Q?uyqBNw+/BcK0IdseBrPc9ZVhjAwK1Ib04tZB1iuxxpz3vLjB2l7syZDT3rQP?=
+ =?us-ascii?Q?OkV/I3BaCvyS9TI0M5kenwn1+F/S2KJtnr5W8R0SeTl7NPCfuNhicvlws9Ih?=
+ =?us-ascii?Q?n9Nf8gYAxe/XnMoJyhy5EEetsxUQR3/COJ2IXDJ9cF9n/KEHUJOkA8ilh8DR?=
+ =?us-ascii?Q?Qei6CzIUrcWxahRbarahHoG2roOHE1sepsykChtNPqtRVtu6gszqkVYB4iY+?=
+ =?us-ascii?Q?VQ=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+X-OriginatorOrg: aspeedtech.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TYZPR06MB6191.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a51fa328-0642-4d76-08a6-08dcf48d7a59
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Oct 2024 00:39:25.9482
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43d4aa98-e35b-4575-8939-080e90d5a249
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: nANy4ygpE3DsUdE7Af8865+Um+rWgA3WuG3q10AYg6nEtNwczqno2VjY60wOEw3fO9fEQ9Y7msuwFOM42ISDZ6Lbdp109qiK8P54xBB1aAI=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB7216
 
-Recently we got several deadlock report[1][2][3] caused by
-blk_mq_freeze_queue and blk_enter_queue().
+> -----Original Message-----
+> From: Andi Shyti <andi.shyti@kernel.org>
+> Sent: Thursday, October 24, 2024 9:23 PM
+> To: Tommy Huang <tommy_huang@aspeedtech.com>
+> Cc: Andrew Jeffery <andrew@codeconstruct.com.au>;
+> brendanhiggins@google.com; benh@kernel.crashing.org; joel@jms.id.au;
+> BMC-SW <BMC-SW@aspeedtech.com>; linux-aspeed@lists.ozlabs.org;
+> openbmc@lists.ozlabs.org; linux-kernel@vger.kernel.org;
+> stable@vger.kernel.org; linux-i2c@vger.kernel.org;
+> linux-arm-kernel@lists.infradead.org
+> Subject: Re: [PATCH] i2c: aspeed: Consider i2c reset for muti-master case
+>=20
+> Hi Tommy,
+>=20
+> On Tue, Oct 22, 2024 at 02:42:08AM +0000, Tommy Huang wrote:
+> > Hi Andrew,
+> >
+> > 	Thanks for your comments.
+> > 	I want to fix the situation when our controller is set as target mode =
+and
+> reading / writing by other i2c host.
+> > 	However, this host is stopped by any other reason (DC on/off..etc).
+> > 	It will cause the controller is stuck in this situation.
+> > 	But I find it might not have clear hints to identify this situation is=
+ normal
+> or abnormal.
+> > 	So, this patch should not be applied into mainstream.
+>=20
+> Please, avoid top posting, I don't understand which part of the original
+> message you are trying to comment on.
 
-Turns out the two are just like acquiring read/write lock, so model them
-as read/write lock for supporting lockdep:
+Got it.
 
-1) model q->q_usage_counter as two locks(io and queue lock)
+> Second thing, please, before sending a patch, always always always make s=
+ure
+> that checkpatch.pl reports '0' errors and '0'
+> warnings, except for few sporadic cases.
 
-- queue lock covers sync with blk_enter_queue()
+Sure. Thanks for your suggestion.
 
-- io lock covers sync with bio_enter_queue()
-
-2) make the lockdep class/key as per-queue:
-
-- different subsystem has very different lock use pattern, shared lock
- class causes false positive easily
-
-- freeze_queue degrades to no lock in case that disk state becomes DEAD
-  because bio_enter_queue() won't be blocked any more
-
-- freeze_queue degrades to no lock in case that request queue becomes dying
-  because blk_enter_queue() won't be blocked any more
-
-3) model blk_mq_freeze_queue() as acquire_exclusive & try_lock
-- it is exclusive lock, so dependency with blk_enter_queue() is covered
-
-- it is trylock because blk_mq_freeze_queue() are allowed to run
-  concurrently
-
-4) model blk_enter_queue() & bio_enter_queue() as acquire_read()
-- nested blk_enter_queue() are allowed
-
-- dependency with blk_mq_freeze_queue() is covered
-
-- blk_queue_exit() is often called from other contexts(such as irq), and
-it can't be annotated as lock_release(), so simply do it in
-blk_enter_queue(), this way still covered cases as many as possible
-
-With lockdep support, such kind of reports may be reported asap and
-needn't wait until the real deadlock is triggered.
-
-For example, lockdep report can be triggered in the report[3] with this
-patch applied.
-
-[1] occasional block layer hang when setting 'echo noop > /sys/block/sda/queue/scheduler'
-https://bugzilla.kernel.org/show_bug.cgi?id=219166
-
-[2] del_gendisk() vs blk_queue_enter() race condition
-https://lore.kernel.org/linux-block/20241003085610.GK11458@google.com/
-
-[3] queue_freeze & queue_enter deadlock in scsi
-https://lore.kernel.org/linux-block/ZxG38G9BuFdBpBHZ@fedora/T/#u
-
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
----
- block/blk-core.c       | 18 ++++++++++++++++--
- block/blk-mq.c         | 26 ++++++++++++++++++++++----
- block/blk.h            | 29 ++++++++++++++++++++++++++---
- block/genhd.c          | 15 +++++++++++----
- include/linux/blkdev.h |  6 ++++++
- 5 files changed, 81 insertions(+), 13 deletions(-)
-
-diff --git a/block/blk-core.c b/block/blk-core.c
-index bc5e8c5eaac9..09d10bb95fda 100644
---- a/block/blk-core.c
-+++ b/block/blk-core.c
-@@ -261,6 +261,8 @@ static void blk_free_queue(struct request_queue *q)
- 		blk_mq_release(q);
- 
- 	ida_free(&blk_queue_ida, q->id);
-+	lockdep_unregister_key(&q->io_lock_cls_key);
-+	lockdep_unregister_key(&q->q_lock_cls_key);
- 	call_rcu(&q->rcu_head, blk_free_queue_rcu);
- }
- 
-@@ -278,18 +280,20 @@ void blk_put_queue(struct request_queue *q)
- }
- EXPORT_SYMBOL(blk_put_queue);
- 
--void blk_queue_start_drain(struct request_queue *q)
-+bool blk_queue_start_drain(struct request_queue *q)
- {
- 	/*
- 	 * When queue DYING flag is set, we need to block new req
- 	 * entering queue, so we call blk_freeze_queue_start() to
- 	 * prevent I/O from crossing blk_queue_enter().
- 	 */
--	blk_freeze_queue_start(q);
-+	bool freeze = __blk_freeze_queue_start(q);
- 	if (queue_is_mq(q))
- 		blk_mq_wake_waiters(q);
- 	/* Make blk_queue_enter() reexamine the DYING flag. */
- 	wake_up_all(&q->mq_freeze_wq);
-+
-+	return freeze;
- }
- 
- /**
-@@ -321,6 +325,8 @@ int blk_queue_enter(struct request_queue *q, blk_mq_req_flags_t flags)
- 			return -ENODEV;
- 	}
- 
-+	rwsem_acquire_read(&q->q_lockdep_map, 0, 0, _RET_IP_);
-+	rwsem_release(&q->q_lockdep_map, _RET_IP_);
- 	return 0;
- }
- 
-@@ -352,6 +358,8 @@ int __bio_queue_enter(struct request_queue *q, struct bio *bio)
- 			goto dead;
- 	}
- 
-+	rwsem_acquire_read(&q->io_lockdep_map, 0, 0, _RET_IP_);
-+	rwsem_release(&q->io_lockdep_map, _RET_IP_);
- 	return 0;
- dead:
- 	bio_io_error(bio);
-@@ -441,6 +449,12 @@ struct request_queue *blk_alloc_queue(struct queue_limits *lim, int node_id)
- 				PERCPU_REF_INIT_ATOMIC, GFP_KERNEL);
- 	if (error)
- 		goto fail_stats;
-+	lockdep_register_key(&q->io_lock_cls_key);
-+	lockdep_register_key(&q->q_lock_cls_key);
-+	lockdep_init_map(&q->io_lockdep_map, "&q->q_usage_counter(io)",
-+			 &q->io_lock_cls_key, 0);
-+	lockdep_init_map(&q->q_lockdep_map, "&q->q_usage_counter(queue)",
-+			 &q->q_lock_cls_key, 0);
- 
- 	q->nr_requests = BLKDEV_DEFAULT_RQ;
- 
-diff --git a/block/blk-mq.c b/block/blk-mq.c
-index 96858fb3b9ff..76f277a30c11 100644
---- a/block/blk-mq.c
-+++ b/block/blk-mq.c
-@@ -120,17 +120,29 @@ void blk_mq_in_flight_rw(struct request_queue *q, struct block_device *part,
- 	inflight[1] = mi.inflight[1];
- }
- 
--void blk_freeze_queue_start(struct request_queue *q)
-+bool __blk_freeze_queue_start(struct request_queue *q)
- {
-+	int freeze;
-+
- 	mutex_lock(&q->mq_freeze_lock);
- 	if (++q->mq_freeze_depth == 1) {
- 		percpu_ref_kill(&q->q_usage_counter);
- 		mutex_unlock(&q->mq_freeze_lock);
- 		if (queue_is_mq(q))
- 			blk_mq_run_hw_queues(q, false);
-+		freeze = true;
- 	} else {
- 		mutex_unlock(&q->mq_freeze_lock);
-+		freeze = false;
- 	}
-+
-+	return freeze;
-+}
-+
-+void blk_freeze_queue_start(struct request_queue *q)
-+{
-+	if (__blk_freeze_queue_start(q))
-+		blk_freeze_acquire_lock(q, false, false);
- }
- EXPORT_SYMBOL_GPL(blk_freeze_queue_start);
- 
-@@ -176,8 +188,10 @@ void blk_mq_freeze_queue(struct request_queue *q)
- }
- EXPORT_SYMBOL_GPL(blk_mq_freeze_queue);
- 
--void __blk_mq_unfreeze_queue(struct request_queue *q, bool force_atomic)
-+bool __blk_mq_unfreeze_queue(struct request_queue *q, bool force_atomic)
- {
-+	int unfreeze = false;
-+
- 	mutex_lock(&q->mq_freeze_lock);
- 	if (force_atomic)
- 		q->q_usage_counter.data->force_atomic = true;
-@@ -186,13 +200,17 @@ void __blk_mq_unfreeze_queue(struct request_queue *q, bool force_atomic)
- 	if (!q->mq_freeze_depth) {
- 		percpu_ref_resurrect(&q->q_usage_counter);
- 		wake_up_all(&q->mq_freeze_wq);
-+		unfreeze = true;
- 	}
- 	mutex_unlock(&q->mq_freeze_lock);
-+
-+	return unfreeze;
- }
- 
- void blk_mq_unfreeze_queue(struct request_queue *q)
- {
--	__blk_mq_unfreeze_queue(q, false);
-+	if (__blk_mq_unfreeze_queue(q, false))
-+		blk_unfreeze_release_lock(q, false, false);
- }
- EXPORT_SYMBOL_GPL(blk_mq_unfreeze_queue);
- 
-@@ -205,7 +223,7 @@ EXPORT_SYMBOL_GPL(blk_mq_unfreeze_queue);
-  */
- void blk_freeze_queue_start_non_owner(struct request_queue *q)
- {
--	blk_freeze_queue_start(q);
-+	__blk_freeze_queue_start(q);
- }
- EXPORT_SYMBOL_GPL(blk_freeze_queue_start_non_owner);
- 
-diff --git a/block/blk.h b/block/blk.h
-index c718e4291db0..832e54c5a271 100644
---- a/block/blk.h
-+++ b/block/blk.h
-@@ -4,6 +4,7 @@
- 
- #include <linux/bio-integrity.h>
- #include <linux/blk-crypto.h>
-+#include <linux/lockdep.h>
- #include <linux/memblock.h>	/* for max_pfn/max_low_pfn */
- #include <linux/sched/sysctl.h>
- #include <linux/timekeeping.h>
-@@ -35,8 +36,9 @@ struct blk_flush_queue *blk_alloc_flush_queue(int node, int cmd_size,
- void blk_free_flush_queue(struct blk_flush_queue *q);
- 
- void blk_freeze_queue(struct request_queue *q);
--void __blk_mq_unfreeze_queue(struct request_queue *q, bool force_atomic);
--void blk_queue_start_drain(struct request_queue *q);
-+bool __blk_mq_unfreeze_queue(struct request_queue *q, bool force_atomic);
-+bool blk_queue_start_drain(struct request_queue *q);
-+bool __blk_freeze_queue_start(struct request_queue *q);
- int __bio_queue_enter(struct request_queue *q, struct bio *bio);
- void submit_bio_noacct_nocheck(struct bio *bio);
- void bio_await_chain(struct bio *bio);
-@@ -69,8 +71,11 @@ static inline int bio_queue_enter(struct bio *bio)
- {
- 	struct request_queue *q = bdev_get_queue(bio->bi_bdev);
- 
--	if (blk_try_enter_queue(q, false))
-+	if (blk_try_enter_queue(q, false)) {
-+		rwsem_acquire_read(&q->io_lockdep_map, 0, 0, _RET_IP_);
-+		rwsem_release(&q->io_lockdep_map, _RET_IP_);
- 		return 0;
-+	}
- 	return __bio_queue_enter(q, bio);
- }
- 
-@@ -734,4 +739,22 @@ void blk_integrity_verify(struct bio *bio);
- void blk_integrity_prepare(struct request *rq);
- void blk_integrity_complete(struct request *rq, unsigned int nr_bytes);
- 
-+static inline void blk_freeze_acquire_lock(struct request_queue *q, bool
-+		disk_dead, bool queue_dying)
-+{
-+	if (!disk_dead)
-+		rwsem_acquire(&q->io_lockdep_map, 0, 1, _RET_IP_);
-+	if (!queue_dying)
-+		rwsem_acquire(&q->q_lockdep_map, 0, 1, _RET_IP_);
-+}
-+
-+static inline void blk_unfreeze_release_lock(struct request_queue *q, bool
-+		disk_dead, bool queue_dying)
-+{
-+	if (!queue_dying)
-+		rwsem_release(&q->q_lockdep_map, _RET_IP_);
-+	if (!disk_dead)
-+		rwsem_release(&q->io_lockdep_map, _RET_IP_);
-+}
-+
- #endif /* BLK_INTERNAL_H */
-diff --git a/block/genhd.c b/block/genhd.c
-index 1c05dd4c6980..6ad3fcde0110 100644
---- a/block/genhd.c
-+++ b/block/genhd.c
-@@ -581,13 +581,13 @@ static void blk_report_disk_dead(struct gendisk *disk, bool surprise)
- 	rcu_read_unlock();
- }
- 
--static void __blk_mark_disk_dead(struct gendisk *disk)
-+static bool __blk_mark_disk_dead(struct gendisk *disk)
- {
- 	/*
- 	 * Fail any new I/O.
- 	 */
- 	if (test_and_set_bit(GD_DEAD, &disk->state))
--		return;
-+		return false;
- 
- 	if (test_bit(GD_OWNS_QUEUE, &disk->state))
- 		blk_queue_flag_set(QUEUE_FLAG_DYING, disk->queue);
-@@ -600,7 +600,7 @@ static void __blk_mark_disk_dead(struct gendisk *disk)
- 	/*
- 	 * Prevent new I/O from crossing bio_queue_enter().
- 	 */
--	blk_queue_start_drain(disk->queue);
-+	return blk_queue_start_drain(disk->queue);
- }
- 
- /**
-@@ -641,6 +641,7 @@ void del_gendisk(struct gendisk *disk)
- 	struct request_queue *q = disk->queue;
- 	struct block_device *part;
- 	unsigned long idx;
-+	bool start_drain, queue_dying;
- 
- 	might_sleep();
- 
-@@ -668,7 +669,10 @@ void del_gendisk(struct gendisk *disk)
- 	 * Drop all partitions now that the disk is marked dead.
- 	 */
- 	mutex_lock(&disk->open_mutex);
--	__blk_mark_disk_dead(disk);
-+	start_drain = __blk_mark_disk_dead(disk);
-+	queue_dying = blk_queue_dying(q);
-+	if (start_drain)
-+		blk_freeze_acquire_lock(q, true, queue_dying);
- 	xa_for_each_start(&disk->part_tbl, idx, part, 1)
- 		drop_partition(part);
- 	mutex_unlock(&disk->open_mutex);
-@@ -725,6 +729,9 @@ void del_gendisk(struct gendisk *disk)
- 		if (queue_is_mq(q))
- 			blk_mq_exit_queue(q);
- 	}
-+
-+	if (start_drain)
-+		blk_unfreeze_release_lock(q, true, queue_dying);
- }
- EXPORT_SYMBOL(del_gendisk);
- 
-diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index 50c3b959da28..57f1ee386b57 100644
---- a/include/linux/blkdev.h
-+++ b/include/linux/blkdev.h
-@@ -25,6 +25,7 @@
- #include <linux/uuid.h>
- #include <linux/xarray.h>
- #include <linux/file.h>
-+#include <linux/lockdep.h>
- 
- struct module;
- struct request_queue;
-@@ -471,6 +472,11 @@ struct request_queue {
- 	struct xarray		hctx_table;
- 
- 	struct percpu_ref	q_usage_counter;
-+	struct lock_class_key	io_lock_cls_key;
-+	struct lockdep_map	io_lockdep_map;
-+
-+	struct lock_class_key	q_lock_cls_key;
-+	struct lockdep_map	q_lockdep_map;
- 
- 	struct request		*last_merge;
- 
--- 
-2.46.0
-
+>=20
+> Andi
 
