@@ -1,257 +1,206 @@
-Return-Path: <linux-kernel+bounces-381039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46A6C9AF96A
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 07:58:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D3809AF96F
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 08:01:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE8521F23337
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 05:58:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1BEE2B21507
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 06:01:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24457192592;
-	Fri, 25 Oct 2024 05:58:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B5E718DF97;
+	Fri, 25 Oct 2024 06:01:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="sInP0h+S"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2051.outbound.protection.outlook.com [40.107.94.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ey7ssW+G"
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3691418BB89;
-	Fri, 25 Oct 2024 05:58:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.51
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729835928; cv=fail; b=bpnAaygDdQbMWmmyASI3Qmx+XiHo3xMbac/RixLGmJ5+86y0UR0KqKkG1aUYyus9NTbruYpWq1w7t3GSWYWk61CLrPI/79AUqwmt+fVTq/3XkVYgUrmaszRCMBnIerZ7MGnC6FQJNRqSQ/JUdK/uUK2k6TFnmYjjTac4Id896co=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729835928; c=relaxed/simple;
-	bh=O6Xc2vLoCuODmmoX7LpIqxroaxOBq5FFfgbyccpTvho=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=cg4cGOYid+PGOXwG/VufxfehoRyckXo5ycn+AmcAMGV6FETQ2r+StaTGFzZK8RJMnj+b/zBLDnFbfjUZcX97Txllgd1zWCTnyvT2XHWn+5XrtjhaUdkGt1SFeFUheCivlfm4S2ohstOzE/qAjRCYPdSN32itGiKRXaclg2wdbAk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=sInP0h+S; arc=fail smtp.client-ip=40.107.94.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=xqqSbulRZPgIN4FerAr2joaxEx/XhzVLB9tYZQoZ+/eg/CliSm8v8ovNecfqX9sZ3lpQg2od8Pj/T61tbjEZVwgSSSCdO/uDLOytzvHGwVsAOGnYMTGVE1dtOyn053jEzooJ79FCuZQBqq89Qz2oD+Xxr4aXlLTRr7y34VJxsJbgojQPJFBxoU92LuPXrfIS0HLeYsdII0Ue2G+vOp8QFevjnTDMFKcijv1hjT39HgdQi16f2HS7SmT7C4uxdtVRK1ZCvd4/M2Ty+wyS7z1GuBwz4DylDSkFSEj3lsS/H/dpPf6ORDNrE7Bx6+6I4PcofxiCdWBiMcMwdkoZfGKPMw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=DHPFv0ip7HCJfpY8mXjRdpzfNRb7TydUCSBeXjmkHv0=;
- b=aZFnjfae/w49J5uiFPeguw32BrDlVVVOWNKPycdXfnYUXpLYkkAKi45X5azihzYVy96OCMPQVq/z2gUxw9d6CYipSN6XWx+xV2PAJPr4nMlyygSfg5z4dKIvBM8/+kYfvBKEqL3HDKPrP/KdilirkqQ4qz/FXg397CzWYscF7WYcrSibPE2dtGFkEh74hpRvtMmuM9AltQeA8HjMnEFcD3uS8NmP3vW1aGjrd59SU91sR+Aojh2GuI6QmFbWEOSeOHi5Oi9gi43Ovaum23ZPDcu5SAAa2Byxnsw2qO5kLWyrMEU0oQz+HPRJm+ZpVAFZuPgL9uaPudgqZIpL+djMfw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DHPFv0ip7HCJfpY8mXjRdpzfNRb7TydUCSBeXjmkHv0=;
- b=sInP0h+SHEuc52ZWeM10lkGrLXqUuvx1DFSZZ88HJhK0iHbE1RXDc4E93Plbmux22nzOfwfz74+e1e7wZSYbyJvoxY+mx25uvN3/pAxDyrURZmPIiX4hWT2tf5AY4SyRv29LF/74jytEmJjb4v+OvN3R3mdgObYZpLTEz4HF76E=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from CH3PR12MB9194.namprd12.prod.outlook.com (2603:10b6:610:19f::7)
- by DS0PR12MB9057.namprd12.prod.outlook.com (2603:10b6:8:c7::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.28; Fri, 25 Oct
- 2024 05:58:43 +0000
-Received: from CH3PR12MB9194.namprd12.prod.outlook.com
- ([fe80::53fb:bf76:727f:d00f]) by CH3PR12MB9194.namprd12.prod.outlook.com
- ([fe80::53fb:bf76:727f:d00f%4]) with mapi id 15.20.8069.020; Fri, 25 Oct 2024
- 05:58:43 +0000
-Message-ID: <607d019e-25b7-45b8-8c85-3829d4b53a82@amd.com>
-Date: Fri, 25 Oct 2024 16:58:33 +1100
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [PATCH v4 00/14] iommufd: Add vIOMMU infrastructure (Part-2:
- vDEVICE)
-Content-Language: en-US
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: jgg@nvidia.com, kevin.tian@intel.com, will@kernel.org, joro@8bytes.org,
- suravee.suthikulpanit@amd.com, robin.murphy@arm.com, dwmw2@infradead.org,
- baolu.lu@linux.intel.com, shuah@kernel.org, linux-kernel@vger.kernel.org,
- iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-kselftest@vger.kernel.org, eric.auger@redhat.com,
- jean-philippe@linaro.org, mdf@kernel.org, mshavit@google.com,
- shameerali.kolothum.thodi@huawei.com, smostafa@google.com,
- yi.l.liu@intel.com, zhangfei.gao@linaro.org, patches@lists.linux.dev
-References: <cover.1729555967.git.nicolinc@nvidia.com>
- <98a0e135-4f9b-4a2e-94b5-f1a830a49f19@amd.com>
- <ZxslrakslZbphayO@Asurada-Nvidia>
- <487ebe2c-718f-405c-8f20-213eab59ca0f@amd.com>
- <ZxsvofcC9xSSEMHi@Asurada-Nvidia>
-From: Alexey Kardashevskiy <aik@amd.com>
-In-Reply-To: <ZxsvofcC9xSSEMHi@Asurada-Nvidia>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SYAPR01CA0031.ausprd01.prod.outlook.com (2603:10c6:1:1::19)
- To CH3PR12MB9194.namprd12.prod.outlook.com (2603:10b6:610:19f::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E09321BF2B;
+	Fri, 25 Oct 2024 06:01:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729836066; cv=none; b=c3aojPPhlT/iX6b7UTabguTUpdbw7pIPBnRUpixE60p7U6h9HPJpxsdZIbCFajZPMFIdU5AGsha+u/FonOa+zdbLLwimosook0Re1QhwzHrVxmCp3eOW0WfKw2rDS3644Abv/aO+ISZuGSZTTjngidygY0Or6E1DYy9HRo270cw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729836066; c=relaxed/simple;
+	bh=OS0UVRvlt1s9coimwIHuyfG3Bm4e+hCBpF+aO3huxw0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iI1348Reeg3nolVIBoZekehLLVWm7gHdUSZiSKL4bKhcq9DNFYMAvF8ErGvU8U2In74fLS01iNqo+ngRqosQo6H+U+FWi0v9TzdOnhZMyPTXl+nl6VyPqMDmzRUP62X3rtsZpb0eU8wgzSOFmBwT1VwvhD2SDr7O9A7yJKQ4T8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ey7ssW+G; arc=none smtp.client-ip=209.85.215.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7ea7ad1e01fso1119386a12.0;
+        Thu, 24 Oct 2024 23:01:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729836063; x=1730440863; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cHsltCjYk2l8xbGPXpxva0UoOStLYFhJUfhmHUZULaA=;
+        b=ey7ssW+G+esUXbbi01g6SD2XUWeVr69LV47BWl2rvVP6597TxD18w/LAQPvrIrU6K9
+         //V2Xy6Mj55aLr2S9hhqrv23bW8rxWDs53nCCewtZye91NxcLoOakH/kGb702STwAW2j
+         x5bv1eQza43n9VBHEaviLsGcV/fiaymMmtCUGjbwaAKeXZs8uVl6mv2p+oGMBN56Abnl
+         o10BhejZJoH5HD5Ab/hpfrHjIXjdZEIn9cW1ANkQpCwvaUh53D+uzd3YGqpQRDvNAt9b
+         KYUCMQ4iD6wL9PFsoqJapshj8KEcYd2tLXYhUemBmezpewMiDw3Bphc2OX5A21dhr1nD
+         ezTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729836063; x=1730440863;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cHsltCjYk2l8xbGPXpxva0UoOStLYFhJUfhmHUZULaA=;
+        b=d0L9dOYsP5m/H8pGV2C+mGaLQO/Tf3CCBDezEa5Vv2VB1/9YrjcJoVw4gPw6eKL7G3
+         ZJypiL1vu6q6nytNd9mJoJkKj+wiTCak8b6all/JwYOObLqJlkGqyRPJIbdyqx/3OfQK
+         D8Xue+N2Ih2Bn09uk/HTKF4+sJaRSDIz1uU/97BFg+bzJcziI6q6zg0qo+BqjJiuhcjK
+         D9kPE3fvAwvpcHmcVawiA52I+BCPWiFXhqfkotKy0Z66llQ1J/NFkzliwm+cgyKfaLbO
+         2W7SKETP7lDZJm9IcmYe7cuZQsqY6kHkSPCMUBk1+Pu2FE/Zid0ysHPNbdXHVtc3p7Jf
+         Pqbw==
+X-Forwarded-Encrypted: i=1; AJvYcCVy9Dbf4bt+OwIgkZRTns0LSvgO0q+jFK+Uz/t5/NPKDOo4SVwGfvmYsN1ZlSxt9YJlgkXS15BkuIMz@vger.kernel.org, AJvYcCWpqyEq/mhl7mkMoff+E2M1WVi/MdaY0TCeSZ0/PvY/X87u4hNLT6R3LdJqmv+ul5TUO6GbZJ8ye0ufUQE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3dZmZYI1wM11iv15nIPMvXSYOBBUyx4saCAoq17IJwJstAN8y
+	XZi6dKqyhWS/j8XZb/GtMs3pnrnmhd0Qgy+5yDXfW6frq5OuhHs9KcA5Ww==
+X-Google-Smtp-Source: AGHT+IHNBMW8srxqG4xJuBBdWY52yy2dbGfJ2RwXjMtKa47S+m3uV66e2GjLQDwz+nLf178+BZGbVw==
+X-Received: by 2002:a05:6a20:9f89:b0:1d9:761:8ad8 with SMTP id adf61e73a8af0-1d9889975a9mr8988513637.21.1729836063025;
+        Thu, 24 Oct 2024 23:01:03 -0700 (PDT)
+Received: from arch-pc.genesyslogic.com.tw (60-251-58-169.hinet-ip.hinet.net. [60.251.58.169])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72057a3c024sm363557b3a.192.2024.10.24.23.00.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Oct 2024 23:01:02 -0700 (PDT)
+From: Ben Chuang <benchuanggli@gmail.com>
+To: adrian.hunter@intel.com,
+	ulf.hansson@linaro.org,
+	victor.shih@genesyslogic.com.tw
+Cc: greg.tu@genesyslogic.com.tw,
+	ben.chuang@genesyslogic.com.tw,
+	HL.Liu@genesyslogic.com.tw,
+	Lucas.Lai@genesyslogic.com.tw,
+	benchuanggli@gmail.com,
+	victorshihgli@gmail.com,
+	linux-mmc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] mmc: sdhci-pci-gli: GL9767: Fix low power mode on the set clock function
+Date: Fri, 25 Oct 2024 14:00:16 +0800
+Message-ID: <20241025060017.1663697-1-benchuanggli@gmail.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB9194:EE_|DS0PR12MB9057:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5c16caa0-953c-4414-f900-08dcf4ba14aa
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?MGh0eml2OERTb01JSzRidmFyNHV3YXNTcjRyb2hKcEI5TVB2WUpOWDRjcHF1?=
- =?utf-8?B?L1JuWGhtYmNWZ1MyWUgveUlUbzFvRFhpM2hKMlJ1SXhZQmpVVmxIbnZxeGRQ?=
- =?utf-8?B?Z1BNK1N2SDl4S0hFOUdZUEYzeFNZaGVxWGtNZnlneDlzOEVDYTUwUWdQajg0?=
- =?utf-8?B?Z1huNk55MndCd3l3NjNtNTdXa0hpaHN6WmlBeFBBcDlzUStYVTBaVGsxZTZT?=
- =?utf-8?B?SFBKVEJSOTU1Z3N1d0RHUFU5L1A5ZHEyOUF5cjdGbUlaZG4xNDZsdnZac280?=
- =?utf-8?B?Vk1CWkdKSWxtdnZRZFF4UDdPazNnemVLb0ZocTdHb0ZpcVo3WG5abHZGNlpX?=
- =?utf-8?B?VTIzRlNHU3BQOHdFR1lPbmRCL2liVEdtcFBIai9nek43dHV4S3R2ZFBnbThM?=
- =?utf-8?B?dXpUVUYxdkhyUXNXdjE0aERsWERuWEg0dDBkdlJWdjFNWXRMS1lRcjRYaDd4?=
- =?utf-8?B?dHRkS2FLc1lWSE1oSHlRU0tYTUNkWDFNRkRZcVJ1SGlncDVJYTBTcWJacnlo?=
- =?utf-8?B?TVZWeGFCcm5EMWRkaEtXdG9SODQ4OXl6aUhHRHp6NFZVUkFTcTZWY3ZjYWtH?=
- =?utf-8?B?emQ2dkxDV1M5NWxrRUFvNkQ5ZnNsZE1MUkYxRWJLNXhlbXFBajduYlZ1U0pm?=
- =?utf-8?B?cG9Rd1RoOXRIRVFrUzFBZmNyYldFWUFsYzAzV01pZ3FYZHJkdW1TQ3pHZ3RO?=
- =?utf-8?B?SzUyYW1EK294cDVIckhZMlh5RmluRkkrTGVoRUpOeE9hK2hLeThIUzF5K2dM?=
- =?utf-8?B?NEorTG9YZGJDTzdwU0Z0SzJFdHRjQ2FJcXl1UkRSTGswZGo1YXVCNUJTNk9B?=
- =?utf-8?B?c2lkM3J4WUhadXhyVWtsa0F1cnZEZFRxMzVyQjQzR2xRVzR0Ylo3b01ka2pP?=
- =?utf-8?B?SXlaTzBheGlwd0g5dUgvT0xyOEZGV2F0Tit1UUtUczRpWlZhRGNwQkxRMkNF?=
- =?utf-8?B?eVBDNUlKMGplZk5IU2pmZ2g4MkJ6Ti9jYXlWeFBXcHBtTHBvcGliUmJKdFcy?=
- =?utf-8?B?b2JWN0w0Sk83K1BFbzVaMmw1TnBNRnAwWlUxeXRKK3hUZXlTS2FKS1dtL1dW?=
- =?utf-8?B?akFZVHc5WEVnL0dtY0pwZndxSURWQmQxcUlBdG9QQk9vcHhiK2hzbDEwRm5a?=
- =?utf-8?B?RW5zTlNzUFloRXQvMnRRajJxNGNxbkRpbWwwSURXWXVxZjRXbDFUUk52Wm51?=
- =?utf-8?B?eGZpZm9wdVcyL2lTQm5yR0dnVy94Yms4aHdTWm9hdHBNaVBCTURGdGw0TjB5?=
- =?utf-8?B?M0wxTEJWdVp0WnBGMVlsU1I4VWtnUmtSWHZoZFlDREczY2F3ek1LSlRJQkdi?=
- =?utf-8?B?RVE1MVpwMEVSZzhhMDRSTHY2eHJlSXBvMkh0d0NidWlzeVJ0b1c5M2kzRVlZ?=
- =?utf-8?B?QlA0a1NDSkduakJjRmticDZIV3A1MmlqMjZFdnZuSlNzQ0lLVUJTSnBjUXVK?=
- =?utf-8?B?c2F2V3VFNTROa285WGRRSW1IN3VsWkNHdEE2ZklwNUdVdEhueVAwL25lNGtD?=
- =?utf-8?B?d3FGSllabVhsdXdaWStFcHZSdkZnVmViVVhiLzlZSnhOUkJTL0t2c2tqNnRn?=
- =?utf-8?B?ZGd1bG5IR0I4TUZSaTAxVWgrR3BzNWFJL3ZtNGUvZjFnd0pqWEkrYjNEdVky?=
- =?utf-8?B?bDlMRC9pelJSc2szc2pIb1M1TDJ1RjRJbTFvVmFBNVhyTmdhUllMSGY3SDdp?=
- =?utf-8?B?d0hNMDNwMmtmcFV2OEJyL3AzTmI2RFZuU0RIZ0V1bW9jb1owOXg1WERRPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB9194.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?TEtCc0xYQXlsUTlQR3ZOWFFvV3VzRG0rS0drbVAwcTRmMTZXY2VsN3JkTjJS?=
- =?utf-8?B?MmNCUm1HMUt4V0I3L1FyQWNkU3JxN2lSaENWUmVLWTBHeFlLNElWeUZxY3VO?=
- =?utf-8?B?SEp5S0lvblVKK1FUS0xvQnBGMHdjQklZck13WnpWeDBzQ2dDOE41aEJNMkRn?=
- =?utf-8?B?TTZHU3Q5WVlkME1Oc25TM2pPQXo4a2RUTWJXanBKSXFvYitpVFVWcUNqYSt1?=
- =?utf-8?B?YjRDdmI1a2RWbkNGTmJ6c09TcUMvZFFBdFd1ZEhydjdYbUZLOUEwbDI1aW1E?=
- =?utf-8?B?VzViY2liN0ZkMlZiNW12N3R2d2FXUldZdENOSmRacTgrVEdpcDZuWkliUStM?=
- =?utf-8?B?VFAwNTJKdWcrR25mQkhpUFArOVc0UDFLQ3dXbjZtTGlkcU5VejQzNEhQUDF5?=
- =?utf-8?B?aGZlT0RTbXFkdUVLY3RwSTZKUmFxV2tPNHRmbjFLZnNHSGZCdEN4UHdDakFo?=
- =?utf-8?B?WHprblZaTE9CTVdSYnVJbVlGQnM3bG00ekFmbTVHdEl6SVNzL3FHUUc2WEhK?=
- =?utf-8?B?QUlTdHVoQW05M2lML3Q5VDMrVnVISGkyVFc0bVgrSUl1UW03Tm9SdlV0OWp1?=
- =?utf-8?B?VVNXYW0xM3R4UUFYYnlObDF3K0dISk9xSk43V3lsaUFUWFZvMXlTQ2xrdHpO?=
- =?utf-8?B?akJXdFhJU0lCTzNlS1kxT3lmQmdHbFA1MFhybm81aXoxMDBWWFFNVTBKUUcv?=
- =?utf-8?B?K3I3UmZUVlVoQ1FOb0ptNmVpZ0oyQStXL3RNR1dZKzJOakxaenBCaGQvb3JO?=
- =?utf-8?B?Z3BBOUM5aFdJS0JGcVRTYWNSNzN3NDZub3hWS0lLU1VTbXZTQkNpQW9heERT?=
- =?utf-8?B?TjNXbUtTWVJLMWl2V0t2MlZrNlBma1paRm9Kckg4eFRZMkovdFlvTitqeUJR?=
- =?utf-8?B?VGFXOWx1d0FpT2hZQ2t5M1BnQVpZeWpab1Z4b2xEVUZxZUR4L21jUWt2R2tY?=
- =?utf-8?B?T1RSRVRaSU5FV2NyTlpMcGo4QzhVRE9BQTJOSEVhdnpqNDBReHF2RHNkY2VW?=
- =?utf-8?B?S2dJRnkyYyt5SnRNQWc5N1ZJM1pRWGI5Y0w2VVFwZTE2Y2cxb2luMFptV0Z4?=
- =?utf-8?B?QmNUbU91QjBpVnVtb0Y3REI3QmZEUm83dGZ4bnRGTGJqRWdtY2xlTzA0ZjZq?=
- =?utf-8?B?c2lTVDN6NU1JUC9GNC8zdWluRTZidWdxc1NWeHlTNE9RWXlLQmtVeFV3dnFp?=
- =?utf-8?B?YkFtWE1nZ09EUytvdGlwajJRdExFc0ZpTkkyOWJJTmtBUkRtQnhQOTEzdnNu?=
- =?utf-8?B?eU5rUHdkNW1QNWlmUGl4ckhUdWU2N2lwRzlIUDZMakY3SjRLMk9rWFhnaFVm?=
- =?utf-8?B?MldFV2d5ZVN3WnJhN2EyTjZZN28vZEVVOVpJT1NrdmpJTjhvNGNKeWhJRTFZ?=
- =?utf-8?B?dlNhNWljcndjQjdqZ0UvNVhSaTVwMGR5R0lqT1JkRXZJVko3Z3k5UFRobHg2?=
- =?utf-8?B?V2pYcFVVL0dKejNSVWttK0dJMmx2NkZVUndwb0tvczNTcWxFeUh2UXlWNDdQ?=
- =?utf-8?B?TGRqRW51Y0JDTHB6R01HMzN3SlEwT0tnMnVHa0g2NnVkbFExK1Ntc1FwUHRk?=
- =?utf-8?B?SENQY1JhNWliU0ovZ1hiY3FJSXFGQkNiOFdqL2MxNmh2R0xLWFprR0VmdEtu?=
- =?utf-8?B?aFBoRWhhUGN6Q014MSt1QjRVMDM2MzJFR0RBZUNzTmp6Qi91VGhzUk91cGRR?=
- =?utf-8?B?cFZHTlpyS1JyaDNtUlhxOFVTRVp1U0gxK1o3S21VSkFSdGNFQTdaOEt5Tkhx?=
- =?utf-8?B?Zm01SXZLYnU2cFJqQUNVREVPTDBpbnZSa3NzdGdGbkp5amdOVW8wQncxSUR4?=
- =?utf-8?B?czJqaDdMT2wyVlplNkJXakw3dDdDTC84dXJFQmpjVjN5cS9JOG5wbHBXNTlj?=
- =?utf-8?B?UHMyMGVtYytJZjZycGpaMU9LanNla29qQjUxb2dxTU1KUzhRSmkvSmFRaXcx?=
- =?utf-8?B?L1dhVGVkOW4wZm5RM0NXL0JVdGlyd2RMSnhXanlMWExPVXZTSEwwdGtTdlh6?=
- =?utf-8?B?RUlmeGpRS2s3bXphUEEwOG42MUFnYTZCNHpOSlE3aFdHOFUxZm0zUjZ6UnFn?=
- =?utf-8?B?eVJZb0E2SUx4Z2tpT3ppZUVWdFMvTE81eUJXK2VJVWVyVERPRXUrcWUxZzYx?=
- =?utf-8?Q?9OZ1UJtn/JBqt3WcUvbRYjwRu?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5c16caa0-953c-4414-f900-08dcf4ba14aa
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB9194.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Oct 2024 05:58:43.0729
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: rhgh/vHSvNKqbJDo7a9mZmX8GEek1rddq/7WchtEKbDJqZ/wD+CNvcO8DUcaxKY9HoAbLyCYe9AgCzQyYgEcwA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB9057
+Content-Transfer-Encoding: 8bit
 
+From: Ben Chuang <ben.chuang@genesyslogic.com.tw>
 
+On sdhci_gl9767_set_clock(), the vendor header space(VHS) is read-only
+after calling gl9767_disable_ssc_pll() and gl9767_set_ssc_pll_205mhz().
+So the low power negotiation mode cannot be enabled again.
+Introduce gl9767_set_low_power_negotiation() function to fix it.
 
-On 25/10/24 16:41, Nicolin Chen wrote:
-> On Fri, Oct 25, 2024 at 04:32:10PM +1100, Alexey Kardashevskiy wrote:
->> External email: Use caution opening links or attachments
->>
->>
->> On 25/10/24 15:59, Nicolin Chen wrote:
->>> On Fri, Oct 25, 2024 at 03:54:44PM +1100, Alexey Kardashevskiy wrote:
->>>> On 22/10/24 11:20, Nicolin Chen wrote:
->>>>> Following the previous vIOMMU series, this adds another vDEVICE structure,
->>>>> representing the association from an iommufd_device to an iommufd_viommu.
->>>>> This gives the whole architecture a new "v" layer:
->>>>>      _______________________________________________________________________
->>>>>     |                      iommufd (with vIOMMU/vDEVICE)                    |
->>>>>     |                        _____________      _____________               |
->>>>>     |                       |             |    |             |              |
->>>>>     |      |----------------|    vIOMMU   |<---|   vDEVICE   |<------|      |
->>>>>     |      |                |             |    |_____________|       |      |
->>>>>     |      |     ______     |             |     _____________     ___|____  |
->>>>>     |      |    |      |    |             |    |             |   |        | |
->>>>>     |      |    | IOAS |<---|(HWPT_PAGING)|<---| HWPT_NESTED |<--| DEVICE | |
->>>>>     |      |    |______|    |_____________|    |_____________|   |________| |
->>>>>     |______|________|______________|__________________|_______________|_____|
->>>>>            |        |              |                  |               |
->>>>>      ______v_____   |        ______v_____       ______v_____       ___v__
->>>>>     |   struct   |  |  PFN  |  (paging)  |     |  (nested)  |     |struct|
->>>>>     |iommu_device|  |------>|iommu_domain|<----|iommu_domain|<----|device|
->>>>>     |____________|   storage|____________|     |____________|     |______|
->>>>>
->>>>> This vDEVICE object is used to collect and store all vIOMMU-related device
->>>>> information/attributes in a VM. As an initial series for vDEVICE, add only
->>>>> the virt_id to the vDEVICE, which is a vIOMMU specific device ID in a VM:
->>>>> e.g. vSID of ARM SMMUv3, vDeviceID of AMD IOMMU, and vID of Intel VT-d to
->>>>> a Context Table. This virt_id helps IOMMU drivers to link the vID to a pID
->>>>> of the device against the physical IOMMU instance. This is essential for a
->>>>> vIOMMU-based invalidation, where the request contains a device's vID for a
->>>>> device cache flush, e.g. ATC invalidation.
->>>>>
->>>>> Therefore, with this vDEVICE object, support a vIOMMU-based invalidation,
->>>>> by reusing IOMMUFD_CMD_HWPT_INVALIDATE for a vIOMMU object to flush cache
->>>>> with a given driver data.
->>>>>
->>>>> As for the implementation of the series, add driver support in ARM SMMUv3
->>>>> for a real world use case.
->>>>>
->>>>> This series is on Github:
->>>>> https://github.com/nicolinc/iommufd/commits/iommufd_viommu_p2-v4
->>>>>
->>>>> For testing, try this "with-rmr" branch:
->>>>> https://github.com/nicolinc/iommufd/commits/iommufd_viommu_p2-v4-with-rmr
->>>>
->>>> Is there any real example of a .vdevice_alloc hook, besides the
->>>> selftests? It is not in iommufd_viommu_p2-v4-with-rmr, hence the
->>>> question. I am trying to sketch something with this new machinery and
->>>> less guessing would be nice. Thanks,
->>>
->>> No, I am actually dropping that one, and moving the vdevice struct
->>> to the private header, as there seems to be no use case:
->>
->> Why keep it then?
-> 
-> We need that structure to store per-vIOMMU virtual ID. Hiding it
-> in the core only means we need to provide another vIOMMU APIs for
-> drivers to look up the ID, v.s. exposing it for drivers to access
-> directly.
+The explanation process is as below.
 
-Sorry I lost you here. If we need it, then there should be an example of 
-.vdevice_alloc() somewhere but you say they is not one. How do you test 
-this, with just selftests? :) Thanks,
+static void sdhci_gl9767_set_clock()
+{
+	...
+        gl9767_vhs_write();
+        ...
+	value |= PCIE_GLI_9767_CFG_LOW_PWR_OFF;
+        pci_write_config_dword(pdev, PCIE_GLI_9767_CFG, value); <--- (a)
 
+        gl9767_disable_ssc_pll(); <--- (b)
+        sdhci_writew(host, 0, SDHCI_CLOCK_CONTROL);
 
-> 
-> Thanks
-> Nicolin
+        if (clock == 0)
+                return;  <-- (I)
 
+	...
+        if (clock == 200000000 && ios->timing == MMC_TIMING_UHS_SDR104) {
+		...
+                gl9767_set_ssc_pll_205mhz(); <--- (c)
+        }
+	...
+	value &= ~PCIE_GLI_9767_CFG_LOW_PWR_OFF;
+        pci_write_config_dword(pdev, PCIE_GLI_9767_CFG, value); <-- (II)
+        gl9767_vhs_read();
+}
+
+(a) disable low power negotiation mode. When return on (I), the low power
+mode is disabled.  After (b) and (c), VHS is read-only, the low power mode
+cannot be enabled on (II).
+
+Fixes: d2754355512e ("mmc: sdhci-pci-gli: Set SDR104's clock to 205MHz and enable SSC for GL9767")
+Signed-off-by: Ben Chuang <benchuanggli@gmail.com>
+Signed-off-by: Ben Chuang <ben.chuang@genesyslogic.com.tw>
+---
+ drivers/mmc/host/sdhci-pci-gli.c | 35 +++++++++++++++++++-------------
+ 1 file changed, 21 insertions(+), 14 deletions(-)
+
+diff --git a/drivers/mmc/host/sdhci-pci-gli.c b/drivers/mmc/host/sdhci-pci-gli.c
+index 0f81586a19df..22a927ce2c88 100644
+--- a/drivers/mmc/host/sdhci-pci-gli.c
++++ b/drivers/mmc/host/sdhci-pci-gli.c
+@@ -892,28 +892,40 @@ static void gl9767_disable_ssc_pll(struct pci_dev *pdev)
+ 	gl9767_vhs_read(pdev);
+ }
+ 
++static void gl9767_set_low_power_negotiation(struct pci_dev *pdev, bool enable)
++{
++	u32 value;
++
++	gl9767_vhs_write(pdev);
++
++	pci_read_config_dword(pdev, PCIE_GLI_9767_CFG, &value);
++	if (enable)
++		value &= ~PCIE_GLI_9767_CFG_LOW_PWR_OFF;
++	else
++		value |= PCIE_GLI_9767_CFG_LOW_PWR_OFF;
++	pci_write_config_dword(pdev, PCIE_GLI_9767_CFG, value);
++
++	gl9767_vhs_read(pdev);
++}
++
+ static void sdhci_gl9767_set_clock(struct sdhci_host *host, unsigned int clock)
+ {
+ 	struct sdhci_pci_slot *slot = sdhci_priv(host);
+ 	struct mmc_ios *ios = &host->mmc->ios;
+ 	struct pci_dev *pdev;
+-	u32 value;
+ 	u16 clk;
+ 
+ 	pdev = slot->chip->pdev;
+ 	host->mmc->actual_clock = 0;
+ 
+-	gl9767_vhs_write(pdev);
+-
+-	pci_read_config_dword(pdev, PCIE_GLI_9767_CFG, &value);
+-	value |= PCIE_GLI_9767_CFG_LOW_PWR_OFF;
+-	pci_write_config_dword(pdev, PCIE_GLI_9767_CFG, value);
+-
++	gl9767_set_low_power_negotiation(pdev, false);
+ 	gl9767_disable_ssc_pll(pdev);
+ 	sdhci_writew(host, 0, SDHCI_CLOCK_CONTROL);
+ 
+-	if (clock == 0)
++	if (clock == 0) {
++		gl9767_set_low_power_negotiation(pdev, true);
+ 		return;
++	}
+ 
+ 	clk = sdhci_calc_clk(host, clock, &host->mmc->actual_clock);
+ 	if (clock == 200000000 && ios->timing == MMC_TIMING_UHS_SDR104) {
+@@ -922,12 +934,7 @@ static void sdhci_gl9767_set_clock(struct sdhci_host *host, unsigned int clock)
+ 	}
+ 
+ 	sdhci_enable_clk(host, clk);
+-
+-	pci_read_config_dword(pdev, PCIE_GLI_9767_CFG, &value);
+-	value &= ~PCIE_GLI_9767_CFG_LOW_PWR_OFF;
+-	pci_write_config_dword(pdev, PCIE_GLI_9767_CFG, value);
+-
+-	gl9767_vhs_read(pdev);
++	gl9767_set_low_power_negotiation(pdev, true);
+ }
+ 
+ static void gli_set_9767(struct sdhci_host *host)
 -- 
-Alexey
+2.47.0
 
 
