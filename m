@@ -1,136 +1,167 @@
-Return-Path: <linux-kernel+bounces-381904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3463E9B0619
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:47:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78C169B061D
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:47:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 661491C2123B
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 14:47:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35F80283C8B
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 14:47:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FEF213635B;
-	Fri, 25 Oct 2024 14:47:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 730FB13B294;
+	Fri, 25 Oct 2024 14:47:39 +0000 (UTC)
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D14621218A
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 14:47:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D063270809
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 14:47:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729867625; cv=none; b=h5UsEMilb5+L8RptBpwtSNasVZuiMDqfSk0A/8Ot8Uxv29uymRA9ngBfmCLl47yBeAHgvaSHMMsNE0Aogp3htnWnKJhyS2az7nGuVrgZNAoz/G+YRCHZNXCpJu8EY5/vB3EepCMVJosV8Pb7xgbDtMDihwkUTLpxsv69ARXRVPk=
+	t=1729867659; cv=none; b=GxmCwoqQ7290OeJRAyYWw29OTY4jALHhuv7JDhSkQdDjD05Wk/Hju1nBcCeikevX1ytRyMGb701CTvXhdapoO15nmmh8O/YT6C/UURLAZL3Z/4C2fGrjLSssb4yMAfKYlWu8F9GtwyH24qVhbrgyBd3jMq0YW6emEfuPgqKtmH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729867625; c=relaxed/simple;
-	bh=Uzkr6q47eov0IbRLSpaLxWzPtpQ7YKN5vQ+eSXa1cIg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=L9KnYcv5AdIyuLTmYiABk9KJSb9/PrfFcIe1O+nk9Go5/2PGVzqNuDMf2v+kMVi/ItCLM74QumPlOFVoCtbQv8Yhs/yOlycqZuytX+FANa0hYsnkzGSoDnViPGmwaHPAoSQHRN8u3EcvT6bk1qD3YxlnARairEQVNM5LZIdgAi0=
+	s=arc-20240116; t=1729867659; c=relaxed/simple;
+	bh=6YwKegnpwMlkce+A8tzgEAQWND4eqyOep74ce/8am10=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=FZo19DAA/8EPsTGUdj5XA4H67LvV4PiU5wz3F7nsAlnted3G824Kn5zxVhgLhNgwNMdzJSnQRqNDS+tcxrE9b19k8/cZ1RevFqji9suNDBy0LIFXv3bio1vOjiuJBTSID07jawszUufP20WkWwN2SNrIELx2/MBWMAYkY9SL8Yc=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
 Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
 	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
 	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1t4LaZ-0000em-Lb; Fri, 25 Oct 2024 16:46:55 +0200
-Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1t4LbD-0000i0-4V
+	for linux-kernel@vger.kernel.org; Fri, 25 Oct 2024 16:47:35 +0200
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
 	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1t4LaY-000NuE-22;
-	Fri, 25 Oct 2024 16:46:54 +0200
-Received: from pza by lupine with local (Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1t4LaY-000BjX-1o;
-	Fri, 25 Oct 2024 16:46:54 +0200
-Message-ID: <ad2a190a1f93edb787478ed3433b154b9753f7c8.camel@pengutronix.de>
-Subject: Re: linux-next: build warning after merge of the reset tree
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Rob Herring <robh@kernel.org>, Herve Codina <herve.codina@bootlin.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux Kernel Mailing List
-	 <linux-kernel@vger.kernel.org>, Linux Next Mailing List
-	 <linux-next@vger.kernel.org>
-Date: Fri, 25 Oct 2024 16:46:54 +0200
-In-Reply-To: <CAL_JsqLvUygPQYhsaCuRjwPXJrKR9sASWWLvrSTsBdR44SBbuA@mail.gmail.com>
-References: <20241025110919.64b1cffb@canb.auug.org.au>
-	 <20241025082817.28056f52@bootlin.com>
-	 <CAL_JsqLvUygPQYhsaCuRjwPXJrKR9sASWWLvrSTsBdR44SBbuA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	(envelope-from <mkl@pengutronix.de>)
+	id 1t4LbC-000Nuo-30
+	for linux-kernel@vger.kernel.org;
+	Fri, 25 Oct 2024 16:47:34 +0200
+Received: from dspam.blackshift.org (localhost [127.0.0.1])
+	by bjornoya.blackshift.org (Postfix) with SMTP id 9930F35EB81
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 14:47:34 +0000 (UTC)
+Received: from hardanger.blackshift.org (unknown [172.20.34.65])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by bjornoya.blackshift.org (Postfix) with ESMTPS id 3AD6B35EB77;
+	Fri, 25 Oct 2024 14:47:32 +0000 (UTC)
+Received: from [172.20.34.65] (localhost [::1])
+	by hardanger.blackshift.org (OpenSMTPD) with ESMTP id b75e4293;
+	Fri, 25 Oct 2024 14:47:31 +0000 (UTC)
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+Date: Fri, 25 Oct 2024 16:47:19 +0200
+Subject: [PATCH can] can: mcp251xfd: mcp251xfd_ring_alloc(): fix coalescing
+ configuration when switching CAN modes
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241025-mcp251xfd-fix-coalesing-v1-1-9d11416de1df@pengutronix.de>
+X-B4-Tracking: v=1; b=H4sIAHavG2cC/x2MWwqAIBAAryL73YLaC7pK9CG61kKpKEQQ3j3pc
+ 2BmXiiUmQos4oVMNxeOoYHqBNjDhJ2QXWPQUg9KKomXTXpUj3fo+UEbzUmFw46+n3s5Tc4NmqD
+ VKVMT/vMK1gTYav0Ah+2cCG4AAAA=
+X-Change-ID: 20241010-mcp251xfd-fix-coalesing-f373066dd42e
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+ Thomas Kopp <thomas.kopp@microchip.com>, 
+ Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
+ Andrew Lunn <andrew+netdev@lunn.ch>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: linux-can@vger.kernel.org, netdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
+ Marc Kleine-Budde <mkl@pengutronix.de>
+X-Mailer: b4 0.15-dev-dedf8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2950; i=mkl@pengutronix.de;
+ h=from:subject:message-id; bh=6YwKegnpwMlkce+A8tzgEAQWND4eqyOep74ce/8am10=;
+ b=owEBbQGS/pANAwAKASg4oj56LbxvAcsmYgBnG6+APmOzIpFu7mVzEWzfdERoWACNGIZbPKSmb
+ 7Rfjvf0RtmJATMEAAEKAB0WIQRQQLqG4LYE3Sm8Pl8oOKI+ei28bwUCZxuvgAAKCRAoOKI+ei28
+ b9JGB/9415TnRd2nP4b1F9ld7bXPBD5mcCPrnZjUALn5Et0lzORblfBk6dCB5gBWhZAqGKmB9hJ
+ ZcivmgNo0BgzISK7xSd8cu6kWUqK/VoX7geTASTzhdyH3kufioTp0YsQ8+7tjoTOAXlqpoUQE9N
+ AgJkRUNtBUu4xOfojsenqyVpmHGD0hqzxGpkaXjgMLUVX2K4E5Rg1ojzj9TS9aMo8ASb/1h5x3E
+ 6kYT01M/M++Gv/4IC3o/qAPECFtByOLKD+4Ovdh13Ww0wi0a00mV9ucHyxYyYhp1+u5KYeYfokQ
+ cmoCT76hvg6irc4F2dijXrJhAMgLDNba2wlS9P+v0tWkYEUj
+X-Developer-Key: i=mkl@pengutronix.de; a=openpgp;
+ fpr=C1400BA0B3989E6FBC7D5B5C2B5EE211C58AEA54
 X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Mail-From: mkl@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Fr, 2024-10-25 at 08:44 -0500, Rob Herring wrote:
-> On Fri, Oct 25, 2024 at 1:28=E2=80=AFAM Herve Codina <herve.codina@bootli=
-n.com> wrote:
-> >=20
-> > Hi all,
-> >=20
-> > On Fri, 25 Oct 2024 11:09:19 +1100
-> > Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >=20
-> > > Hi all,
-> > >=20
-> > > After merging the reset tree, today's linux-next build (x86_64
-> > > allmodconfig) produced this warning:
-> > >=20
-> > > drivers/misc/lan966x_pci.dtso:34.23-40.7: Warning (interrupts_propert=
-y): /fragment@0/__overlay__/pci-ep-bus@0/oic@e00c0120: Missing interrupt-pa=
-rent
-> > >=20
-> > > Introduced by commit
-> > >=20
-> > >   185686beb464 ("misc: Add support for LAN966x PCI device")
-> > >=20
-> >=20
-> > This warning is normal.
-> > interrupt-parent is not present in the oic node. This was discussed in
-> > https://lore.kernel.org/all/CAL_Jsq+je7+9ATR=3DB6jXHjEJHjn24vQFs4Tvi9=
-=3DvhDeK9n42Aw@mail.gmail.com/
->=20
-> We can't have warnings especially in things outside of arch/. Doesn't
-> matter why.
->=20
-> The choices to fix are:
->=20
-> - Override DTC_FLAGS in drivers/misc/. You can set DTC_FLAGS_lan966x_pci
->=20
-> - Disable the check in dtc for overlays. We've done this for other cases.
->=20
-> - Add enough info into the overlay to avoid the warnings. This might
-> mean the overlay has to be applied up one node level. It is
-> duplicating a few things which are in the base tree. This is my
-> preference because it makes the overlay stand on its own. We'll have
-> the same issue with dtschema checks too if we don't do this.
+Since commit 50ea5449c563 ("can: mcp251xfd: fix ring configuration
+when switching from CAN-CC to CAN-FD mode"), the current ring and
+coalescing configuration is passed to can_ram_get_layout(). That fixed
+the issue when switching between CAN-CC and CAN-FD mode with
+configured ring (rx, tx) and/or coalescing parameters (rx-frames-irq,
+tx-frames-irq).
 
-I see four more warnings that look like false positives to me:
+However 50ea5449c563 ("can: mcp251xfd: fix ring configuration when
+switching from CAN-CC to CAN-FD mode"), introduced a regression when
+switching CAN modes with disabled coalescing configuration: Even if
+the previous CAN mode has no coalescing configured, the new mode is
+configured with active coalescing. This leads to delayed receiving of
+CAN-FD frames.
 
-drivers/misc/lan966x_pci.dtso:42.22-46.7: Warning (simple_bus_reg): /fragme=
-nt@0/__overlay__/pci-ep-bus@0/cpu_clk: missing or empty reg/ranges property
-drivers/misc/lan966x_pci.dtso:48.22-52.7: Warning (simple_bus_reg): /fragme=
-nt@0/__overlay__/pci-ep-bus@0/ddr_clk: missing or empty reg/ranges property
-drivers/misc/lan966x_pci.dtso:54.22-58.7: Warning (simple_bus_reg): /fragme=
-nt@0/__overlay__/pci-ep-bus@0/sys_clk: missing or empty reg/ranges property
-drivers/misc/lan966x_pci.dtso:18.15-165.5: Warning (avoid_unnecessary_addr_=
-size): /fragment@0/__overlay__: unnecessary #address-cells/#size-cells with=
-out "ranges", "dma-ranges" or child "reg" property
+This comes from the fact, that ethtool uses usecs = 0 and max_frames =
+1 to disable coalescing, however the driver uses internally
+priv->{rx,tx}_obj_num_coalesce_irq = 0 to indicate disabled
+coalescing.
 
-Setting
+Fix the regression by assigning struct ethtool_coalesce
+ec->{rx,tx}_max_coalesced_frames_irq = 1 if coalescing is disabled in
+the driver as can_ram_get_layout() expects this.
 
-DTC_FLAGS_lan966x_pci :=3D -Wno-interrupts_property -Wno-simple_bus_reg -Wn=
-o-avoid_unnecessary_addr_size
+Reported-by: https://github.com/vdh-robothania
+Closes: https://github.com/raspberrypi/linux/issues/6407
+Fixes: 50ea5449c563 ("can: mcp251xfd: fix ring configuration when switching from CAN-CC to CAN-FD mode")
+Cc: stable@vger.kernel.org
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+---
+ drivers/net/can/spi/mcp251xfd/mcp251xfd-ring.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-silences them all.
+diff --git a/drivers/net/can/spi/mcp251xfd/mcp251xfd-ring.c b/drivers/net/can/spi/mcp251xfd/mcp251xfd-ring.c
+index e684991fa3917d4f6b6ebda8329f72971237574e..7209a831f0f2089e409c6be635f0e5dc7b2271da 100644
+--- a/drivers/net/can/spi/mcp251xfd/mcp251xfd-ring.c
++++ b/drivers/net/can/spi/mcp251xfd/mcp251xfd-ring.c
+@@ -2,7 +2,7 @@
+ //
+ // mcp251xfd - Microchip MCP251xFD Family CAN controller driver
+ //
+-// Copyright (c) 2019, 2020, 2021 Pengutronix,
++// Copyright (c) 2019, 2020, 2021, 2024 Pengutronix,
+ //               Marc Kleine-Budde <kernel@pengutronix.de>
+ //
+ // Based on:
+@@ -483,9 +483,11 @@ int mcp251xfd_ring_alloc(struct mcp251xfd_priv *priv)
+ 		};
+ 		const struct ethtool_coalesce ec = {
+ 			.rx_coalesce_usecs_irq = priv->rx_coalesce_usecs_irq,
+-			.rx_max_coalesced_frames_irq = priv->rx_obj_num_coalesce_irq,
++			.rx_max_coalesced_frames_irq = priv->rx_obj_num_coalesce_irq == 0 ?
++				1 : priv->rx_obj_num_coalesce_irq,
+ 			.tx_coalesce_usecs_irq = priv->tx_coalesce_usecs_irq,
+-			.tx_max_coalesced_frames_irq = priv->tx_obj_num_coalesce_irq,
++			.tx_max_coalesced_frames_irq = priv->tx_obj_num_coalesce_irq == 0 ?
++				1 : priv->tx_obj_num_coalesce_irq,
+ 		};
+ 		struct can_ram_layout layout;
+ 
 
-regards
-Philipp
+---
+base-commit: 9efc44fb2dba6138b0575826319200049078679a
+change-id: 20241010-mcp251xfd-fix-coalesing-f373066dd42e
+
+Best regards,
+-- 
+Marc Kleine-Budde <mkl@pengutronix.de>
+
+
 
