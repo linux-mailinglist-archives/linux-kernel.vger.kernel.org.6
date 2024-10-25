@@ -1,149 +1,107 @@
-Return-Path: <linux-kernel+bounces-380999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 636679AF8E0
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 06:20:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DE319AF8E6
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 06:29:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2764B283816
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 04:20:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E23DC2825D0
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 04:29:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5E6B18C353;
-	Fri, 25 Oct 2024 04:20:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F1FD18C357;
+	Fri, 25 Oct 2024 04:29:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b="t/KJmJ12"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=umich.edu header.i=@umich.edu header.b="CMmcVlZP"
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CD1C107A0;
-	Fri, 25 Oct 2024 04:20:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1561107A0
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 04:29:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729830007; cv=none; b=gr7GuFRXHa9Kx/77zDX0zZvW/Sgq74dRhxZgkL3L2ZHOU3lcWCUGWEdPAREJeKdWZjNSrWbFwvqWJknisPc3v2m+ghE9RNHURpfGaKr3revTaBTlB1Z2xyDLLJgyuXGg7qIVJKOyosUVM30fkuduF9KU6XG8M0isAM++w20Lsws=
+	t=1729830556; cv=none; b=DoznIyZZ5EqzkXbqxth6t6nKJOLtHZBQKZ3B4PPUA19seHsrc4q1L4lg9GbSHyzdq7hKcRAMXfSl8xZv1Q8mfDKBioXxHcrZGwCZluaem7HDhfmEKEhjGfuWxD7oBOiiz0ulBpA8Vf/yR1it4c0unxcpbQvxsozjsHL4afnbk1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729830007; c=relaxed/simple;
-	bh=c5yxC9gJ8KkhHVCenpjsoKbUoejtmfQEzaoOUt1QpSM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=T9136xBpb3xsxuZhTKjrw7o/XAaeRy7+49tGHMk0szXoDoYqqvaIq7BzuUZFtFVHStJtAG6I7o8KM9iyc/mHbtnU/b+Q0QQgHjQPzL7JX00fKUfPBmv0MHMqnqO4wK1FbO8V6LWhDwrsAaVrS1ViPQkmLRD11Nk+1HjYsJGvnO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com; spf=pass smtp.mailfrom=gmx.com; dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b=t/KJmJ12; arc=none smtp.client-ip=212.227.15.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.com;
-	s=s31663417; t=1729829994; x=1730434794; i=quwenruo.btrfs@gmx.com;
-	bh=KmMbrajsjNSdrkNV4/WlHQFb+UuzwQPAkDUaveFQEQM=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=t/KJmJ12+PhLLpxVqhnsu2wyyoSKGRGj7Wh1+pPpI49HXQW7YTPUpeflQ5nkRrzh
-	 BPGCRbTFQ6BMPjmvT1O5mPTkVS/nc+b5Fibk19e0YZbR4IX5lh4gePgXMT97M5gHw
-	 LVtbM55iRn7gTjyKzVpUUlSyHwJOD9HPXss3ZLsT0i5POkoT4+GeWAKlLX8EFltML
-	 5PK+0VWhYCgJrib3YWrTz4s6LNvpajFH8dKsVwq3z9TwEfryIjanDFLPExaC/aNWc
-	 s9yYkyNrxbLaD//Pgxq+1ETibK1Ed8P/nKzC/aHoQ6H2BIAJxO4G9X0H/QqTPlebV
-	 b8EOcsrPCatcorjgjQ==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [172.16.0.191] ([159.196.52.54]) by mail.gmx.net (mrgmx004
- [212.227.17.184]) with ESMTPSA (Nemesis) id 1MmULr-1tm5KC2Ngf-00nk40; Fri, 25
- Oct 2024 06:19:54 +0200
-Message-ID: <7f0a7b2d-369c-42ae-9054-7436bc98f7c1@gmx.com>
-Date: Fri, 25 Oct 2024 14:49:48 +1030
+	s=arc-20240116; t=1729830556; c=relaxed/simple;
+	bh=EWCK8syvlG430LCfer51vMNGSWA+i5Z13fpF3yXP7Hg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VVwYl9p/xNyQ/T7DoQpl4Q0luJavddY/EUvhTo6XBxwX5c0U3e6sJl1XnPwCN8WtT0Q28NuLQO67SYoZHgOpf/IWFgvzNBd+hNxInei9U/CWYbk1fAsVB2/g8WtUR/FMk+m8FPD4/9/qWN2EHQwuYNe8qC8+MCk8useytZyMzAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=umich.edu; spf=pass smtp.mailfrom=umich.edu; dkim=pass (2048-bit key) header.d=umich.edu header.i=@umich.edu header.b=CMmcVlZP; arc=none smtp.client-ip=209.85.128.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=umich.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=umich.edu
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-6e5a15845easo15789057b3.0
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 21:29:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=umich.edu; s=google-2016-06-03; t=1729830553; x=1730435353; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EWCK8syvlG430LCfer51vMNGSWA+i5Z13fpF3yXP7Hg=;
+        b=CMmcVlZPoAWmezduIuZGWyt/a7o9ZFPeE3mLACnXT9yfNlBUqSU143ypr3OXRO8Nco
+         o5egG9DX8uVvqpdie+Sa53oN/VRC5ezxAx66u4LI5kHlz6BN2rfwYRXDV6ZCv5LvqtaI
+         GxRw7OYVSu+BaiKqaXu3026KcGHmxqg/uZBaD36YFaqzUM5pyyOLEVuoJTFqzChMEwTy
+         C6g9AOTkeZ+xzo8SMTJ1oxmXbUOIiZWC1rQw+A6FfUwAyyLl8Gk7lFQ5L6NvS4uN9fLJ
+         m96y/CN/Br6ezL7/T+5KmcpgXAABNWVpbdUqczgoQX2nmgd3zXgmJklqq5il/bS6PVd0
+         SkzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729830553; x=1730435353;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EWCK8syvlG430LCfer51vMNGSWA+i5Z13fpF3yXP7Hg=;
+        b=MyoMsusxV1fPXn9gTfMGxkRQvTAg0CeGzImPvpceQ5r3wcs6nfUlLESI4y6hUwxju9
+         um01XuFp6cnusgfxYh5DRLRicxzCclRRavbKWMTdcGI0f96RM8I8KqIpn24PzJZwH7DS
+         tzpxudKUSbIHgWXFMFHurMOZ67R9o87i+g36gf8HapYwN9WrlPDlLJSXHuA5K89qNuk7
+         oo+wNB6dPZu1BzXHJ0mHWmsRRwUmNe0IUEuZvr0WrCqSqYNCGHP3fFwAFSH5TVKYtPMG
+         UHcNxrad5uUcA9+8tR2GXjr9Jy+pm/E8PjjGvOhOyiopVah4kONeVM66kci4HBYcMNi5
+         jd1w==
+X-Forwarded-Encrypted: i=1; AJvYcCWAnpnRAFFR+k9MxM6fEIEhHySk4FgOoKvdUvalXDCZHSBFfLOpW+nXkZoeJJ6KiAqFQ7oL2c/Xwqqf6Fo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz06YC7cGEPQhL3ssqivsjVIf7WX8CwhCSJ0xqC92RSQSJh+m5E
+	u/9gsTL5wyWwlc1uQSfFZtrEe4yL+NP8GgHMl8K1ClcjggEux1qF/QQFGtMv6eRpZ9M1sRAuy87
+	ML27luFkU9TTrhCKJg3H09XCcfQO2ypbartz5OQ==
+X-Google-Smtp-Source: AGHT+IFxXvvTdE3yugP3KWorwEDSHTOOfHgNN/Z+duUWd0Akjtp00/GgCjbXkozJntXhXwb5dgIWMV2hMm2N1FcFclI=
+X-Received: by 2002:a05:690c:6687:b0:6b1:1476:d3c5 with SMTP id
+ 00721157ae682-6e7f0e04bbcmr104496997b3.12.1729830552972; Thu, 24 Oct 2024
+ 21:29:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [btrfs?] general protection fault in btrfs_search_slot
-To: Lizhi Xu <lizhi.xu@windriver.com>,
- syzbot+3030e17bd57a73d39bd7@syzkaller.appspotmail.com
-Cc: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com,
- linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
- syzkaller-bugs@googlegroups.com
-References: <6719c407.050a0220.10f4f4.01dc.GAE@google.com>
- <20241025022348.1255662-1-lizhi.xu@windriver.com>
-Content-Language: en-US
-From: Qu Wenruo <quwenruo.btrfs@gmx.com>
-Autocrypt: addr=quwenruo.btrfs@gmx.com; keydata=
- xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
- 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
- 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
- 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
- gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
- AAHNIlF1IFdlbnJ1byA8cXV3ZW5ydW8uYnRyZnNAZ214LmNvbT7CwJQEEwEIAD4CGwMFCwkI
- BwIGFQgJCgsCBBYCAwECHgECF4AWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCZxF1YAUJEP5a
- sQAKCRDCPZHzoSX+qF+mB/9gXu9C3BV0omDZBDWevJHxpWpOwQ8DxZEbk9b9LcrQlWdhFhyn
- xi+l5lRziV9ZGyYXp7N35a9t7GQJndMCFUWYoEa+1NCuxDs6bslfrCaGEGG/+wd6oIPb85xo
- naxnQ+SQtYLUFbU77WkUPaaIU8hH2BAfn9ZSDX9lIxheQE8ZYGGmo4wYpnN7/hSXALD7+oun
- tZljjGNT1o+/B8WVZtw/YZuCuHgZeaFdhcV2jsz7+iGb+LsqzHuznrXqbyUQgQT9kn8ZYFNW
- 7tf+LNxXuwedzRag4fxtR+5GVvJ41Oh/eygp8VqiMAtnFYaSlb9sjia1Mh+m+OBFeuXjgGlG
- VvQFzsBNBFnVga8BCACqU+th4Esy/c8BnvliFAjAfpzhI1wH76FD1MJPmAhA3DnX5JDORcga
- CbPEwhLj1xlwTgpeT+QfDmGJ5B5BlrrQFZVE1fChEjiJvyiSAO4yQPkrPVYTI7Xj34FnscPj
- /IrRUUka68MlHxPtFnAHr25VIuOS41lmYKYNwPNLRz9Ik6DmeTG3WJO2BQRNvXA0pXrJH1fN
- GSsRb+pKEKHKtL1803x71zQxCwLh+zLP1iXHVM5j8gX9zqupigQR/Cel2XPS44zWcDW8r7B0
- q1eW4Jrv0x19p4P923voqn+joIAostyNTUjCeSrUdKth9jcdlam9X2DziA/DHDFfS5eq4fEv
- ABEBAAHCwHwEGAEIACYCGwwWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCZxF1gQUJEP5a0gAK
- CRDCPZHzoSX+qHGpB/kB8A7M7KGL5qzat+jBRoLwB0Y3Zax0QWuANVdZM3eJDlKJKJ4HKzjo
- B2Pcn4JXL2apSan2uJftaMbNQbwotvabLXkE7cPpnppnBq7iovmBw++/d8zQjLQLWInQ5kNq
- Vmi36kmq8o5c0f97QVjMryHlmSlEZ2Wwc1kURAe4lsRG2dNeAd4CAqmTw0cMIrR6R/Dpt3ma
- +8oGXJOmwWuDFKNV4G2XLKcghqrtcRf2zAGNogg3KulCykHHripG3kPKsb7fYVcSQtlt5R6v
- HZStaZBzw4PcDiaAF3pPDBd+0fIKS6BlpeNRSFG94RYrt84Qw77JWDOAZsyNfEIEE0J6LSR/
-In-Reply-To: <20241025022348.1255662-1-lizhi.xu@windriver.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+References: <20241025033118.44452-1-fujita.tomonori@gmail.com> <20241025033118.44452-2-fujita.tomonori@gmail.com>
+In-Reply-To: <20241025033118.44452-2-fujita.tomonori@gmail.com>
+From: Trevor Gross <tmgross@umich.edu>
+Date: Thu, 24 Oct 2024 23:29:02 -0500
+Message-ID: <CALNs47typNN-Zp=Lf44DUkS8vUQme08zt_qPtxO3mngmfrnnFA@mail.gmail.com>
+Subject: Re: [PATCH v4 1/7] rust: time: Add PartialEq/Eq/PartialOrd/Ord trait
+ to Ktime
+To: FUJITA Tomonori <fujita.tomonori@gmail.com>
+Cc: anna-maria@linutronix.de, frederic@kernel.org, tglx@linutronix.de, 
+	jstultz@google.com, sboyd@kernel.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, rust-for-linux@vger.kernel.org, andrew@lunn.ch, 
+	hkallweit1@gmail.com, ojeda@kernel.org, alex.gaynor@gmail.com, 
+	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me, 
+	a.hindborg@samsung.com, aliceryhl@google.com, arnd@arndb.de
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:rGpeGgQzn4k23Znrv7/bXwiIplg7ZUsDE/Jpsnzl6sW6zQ/wG9J
- mXIH8OVumsyg9oCVwrVEqawJaaZW4GCoIyu9RAkh7qYw9Ov6x2ShCLNi3mcRm9r3HP1AfI8
- YWp5kgm/BDKH1AejYuC9xeUcNtT1ryMnJPvcC27vQscqhM4+BDbh8J1L8ps5tBhv+Srh/1H
- HzvC+w/t8dpuahSDGWtgQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:TGlN2lxXdTc=;96WlCGQoCilvlK6fF/9H2DvQeBF
- YmCFhGfbJ+01vEYT6XxXhtKkTKjBgG6BLshFeW/vYIkECxFy9/or8/2izucQAfl9QtkioP5VR
- gkGXIjxkP2E+7H1qzBK6IY6kmkHBIICNbT3Rqno0onLBvvvaKk0zFKPVfAn/e1JP/3pVpLiC+
- vYo32mZjmyrUZtwtan13wu4s83WmMAfgiqKEG7vc2H7RUa3Ao+wOtSfVZEyfVEpTCCFL7kOrL
- l8gR301+LDBeF56XZW8e1KQ+WjiDiQQkJU9EFawLpuo8tBxDTrxBdRHNkvNT8QaHC5bvDObJZ
- 89yBU6+K58Ia3M1qIXJefJC5xMNLBI8eIgGfeLGcKV3kIkGhI2JGyZZ/CrbaZZlv1yuAYApE4
- 0RXMCUU6Ss4q6Ole58vBUNy6Un9Lwtg2jaXCJwKqkhosAiL9Uq2zZUejlXpl0x1/xWE7JwLPV
- GzT4iWJtWjzcGPA6K2LNul9c6K5C2XmntvPw/WE+Ff4vx4bNFK+AmCrmz6lrLPcA9yJqte/qE
- Jj2yeuEgSQvt1IL7547zcmh3W/MfRL4syZHv9wcgmGBKUAEjmZogAbwOvwqiPFxmnSCoWE3hZ
- v/mdaSkKoz0sUhbePgm+QIWuyocZicd9vpaIlEufhMjvXSTpp/ou24U2SQm5c/h/5oDiTlEja
- VI7QcUbWS6hRjnzOxDpvoENwZ95vr7xQXYBZEkeGux5PIUGRbuqg6pXy6nCcp+z5G7hKySiXa
- 9SxNopBQLwdgA4O4DOFn0eLpyGb1gvjU7e3IYqhM/tjMaZEd+bw9G0+goD87oz0+rltrCex0p
- QQFUltS4/OzTjgOiLcqDfSfg==
 
-
-
-=E5=9C=A8 2024/10/25 12:53, Lizhi Xu =E5=86=99=E9=81=93:
-> use the input logical can't find the extent root, so add sanity check fo=
-r
-> extent root before search slot.
+On Thu, Oct 24, 2024 at 10:34=E2=80=AFPM FUJITA Tomonori
+<fujita.tomonori@gmail.com> wrote:
 >
-> #syz test
+> Add PartialEq/Eq/PartialOrd/Ord trait to Ktime so two Ktime instances
+> can be compared to determine whether a timeout is met or not.
 >
-> diff --git a/fs/btrfs/backref.c b/fs/btrfs/backref.c
-> index f8e1d5b2c512..87eaf5dd2d5d 100644
-> --- a/fs/btrfs/backref.c
-> +++ b/fs/btrfs/backref.c
-> @@ -2213,6 +2213,9 @@ int extent_from_logical(struct btrfs_fs_info *fs_i=
-nfo, u64 logical,
->   	key.objectid =3D logical;
->   	key.offset =3D (u64)-1;
+> Use the derive implements; we directly touch C's ktime_t rather than
+> using the C's accessors because more efficient and we already do in
+
+"because more efficient" -> "because it is more efficient"
+
+> the existing code (Ktime::sub).
 >
-> +	if (!extent_root)
-> +		return -ENOENT;
+> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+> Signed-off-by: FUJITA Tomonori <fujita.tomonori@gmail.com>
 
-Considering we have a lot of such btrfs_search_slot() without checking
-if the csum/extent root is NULL, can we move the check into
-btrfs_search_slot()?
-
-Thanks,
-Qu
-> +
->   	ret =3D btrfs_search_slot(NULL, extent_root, &key, path, 0, 0);
->   	if (ret < 0)
->   		return ret;
->
-
+Reviewed-by: Trevor Gross <tmgross@umich.edu>
 
