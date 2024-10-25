@@ -1,135 +1,295 @@
-Return-Path: <linux-kernel+bounces-382441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 150C69B0DC0
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 20:50:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42EE79B0DC1
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 20:51:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8070B2873E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 18:50:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 666A01C230A1
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 18:51:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F50820EA28;
-	Fri, 25 Oct 2024 18:50:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C281120D4E3;
+	Fri, 25 Oct 2024 18:50:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ttkvU98y"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="RziIvO6r"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B51720102B
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 18:50:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA66820102B
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 18:50:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729882216; cv=none; b=PW6fjjfVpV9mHJQBwI9DXq0YcEQhBRR8KI6Ejmj5HG6qIAsnZnchp6E3uVMI1741hFXvQJAVyg+2RA62aSW/4sb68CxeoI6I8+SyZSUx5CG9aWpZCt5WZObOHQVR7rcCmMiL82/mcMq7cyr1vSmov/HVEE+vYEsanOxdPutxN+s=
+	t=1729882255; cv=none; b=BZ+riuuX/6Ni9GPooxlbCtkZOv4wKMJ2sFBgyAknawYlgYmBQnf/yNjc5bKfy7hFZUx+r2EoFTHICiUtBIoq/twl4zTZb5GxVbR8swT9az6bP7A2e+K5HmdupZt+ldfhS3p0EBYwQBDKko+VLZ/S2NNUX2nJJrm9Iy8ZtxcRzDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729882216; c=relaxed/simple;
-	bh=CGB6LxmT0WXhEjsf6xrepgUWVuXW/Zv1jXqqTyC2SJo=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=Z4t1XKdp2R051YSMl0usjo6TU4IB6A9Xo8e+/WhHPkhC0DQwd59UMvUrvN7JrGDgpzM16Khj5/+oh6Ov5GnDT5Pbv7uuuZUr35q/HrXK0bbAqdHQ/TYFDaqRjHNzjKUAgQK9cO7B3F8BHytHjnHbofSv/nDsUJ3IRGkhT/+s3/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ipylypiv.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ttkvU98y; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ipylypiv.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-20c8b0b0736so24970975ad.3
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 11:50:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729882214; x=1730487014; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=e0+NHsCuboH95g4yQb8qYWh0zFmSJiQuZvvpd/g2KQA=;
-        b=ttkvU98yL+mcy3GYGZhq0+Z/f+Lsk2pqb6Njgzjmbvg9mKgNdx6YfHN+ccj+rhSVsV
-         LxswnyskcCjxkksMDhHY2iDX6OIIxHlizrckEBmu2KPr9KVztq8emRMwkuX/7dim7jju
-         XDw5+aY0PKBJkXBkQb2poLt0DizYYvVmqH5hTH7dyr2D9lAf+19n8e2Pir8IKBUngkUO
-         QjYOBGcZSM4uCGtBFH2tIfbv+iNCtdC5aLtRo84qnl5mjzbCuvtWFg07dWjTnPFFQq4W
-         h5/FqAcRhNxiCwFmS5IUVN+LtOX5oO8YU6srMEKPMGrVAjBK9Xi9YmoWMCPIkBQY8dwr
-         oljg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729882214; x=1730487014;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=e0+NHsCuboH95g4yQb8qYWh0zFmSJiQuZvvpd/g2KQA=;
-        b=MMfOuYpeN0hddBOBft0hzAEY3Lwn9KBuX663jAwW6t1m+7xC2H1StThh7j6j2PdZMc
-         uAGhtpRbB6Io91e+ZpKjfG4uouPpJGGTLWj+M/X80SrQAP1fAkdLqOsUo43qm8oV3vPg
-         X3oZu66CuWxTIhH3vc5Lc8lE/oIgYHxpjOOB4GRwOfC0uyW8kzsWPRgelFxuypUPRl+V
-         PshHmu5mnqXctkrgQZFF9KMHmclo3s2x1qoxW4WNsg6RYNXO7LAaEPAeNXtNN4A2I7SD
-         kbjAhcR4N/m/LGdK9E/B8BkHh7UK7Ffgfup0Ozlau4YtP2HSBz3r0j/Jy8EC2BPZFqPZ
-         Z4Hg==
-X-Forwarded-Encrypted: i=1; AJvYcCW3icW2wOa8x1/lIKqcDx2Aqxv/kQRj0ngv+u/fRBvChk12SoPKidrqfCXQuGRAg9duAhhQTrUUqETm3ds=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzl6ZfXtmJCssy0RWqLoVzJz0gNyooaZ6/4JWIZfyY4G4SgqouH
-	vCq1OdmSAEqW0RJBfVGdLRsMiahuyt40U5F9n8TkLqAZVBkiqP1aAFiLWckQiDClPxCvLPfPw87
-	FMSJ0m6IrCQ==
-X-Google-Smtp-Source: AGHT+IHm7qoXaMzwNAnNJmodVt+UDTG1/KMKRAhan8DuhRdo0c3Sn8G90KEAwU47YeMs5XVE86rIcoyZHC9Vww==
-X-Received: from ip.c.googlers.com ([fda3:e722:ac3:cc00:ef:85c8:ac13:4138])
- (user=ipylypiv job=sendgmr) by 2002:a17:902:f544:b0:20c:ee32:75a6 with SMTP
- id d9443c01a7336-210c6731cdcmr2755ad.0.1729882213968; Fri, 25 Oct 2024
- 11:50:13 -0700 (PDT)
-Date: Fri, 25 Oct 2024 18:50:09 +0000
+	s=arc-20240116; t=1729882255; c=relaxed/simple;
+	bh=8hAABrJJbWqvYw02eph31ohO20CW5zw9K7omo5B2fTM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=myYlDAB3eb25VT4j18Nyn/6QSfJqlsJt6mtB5vfFM+r7dX7OZ2iz9bQlSEIQ0yprugJ7YAcDLecAxrEC+6T7ssotF9fm++RW1Pf8qBkjkBucbh7sFX/bSYxZEbPaHtoGTj9LlsacjdB2E+KwrdCPMVcKoMDHCw8UtGBkrEcrNGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=RziIvO6r; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49PBn6Ma012483;
+	Fri, 25 Oct 2024 18:50:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=TdMxc7kprPO6fqOE3CsuTjKAoauA/lGiHfNLxz2/r
+	b4=; b=RziIvO6r2SZuvdJ0a8pCgI+K6kUGwapE1uDpCYJ/84nCpMAObh5YG9oRe
+	huqHcV4o+2cG4AGLE85NnTLz1R0GIislVuW4INioJRUyCYcp/aghDlk4OMgwa2mq
+	HcrSPB4s1IpTBSRCjpyk0pe+1L7RypycJE1cQsHcLCbQ/9Qcbnk7nVLzvwBwI0P6
+	+eE3xCD74aMuXnnmd5YLjwT9mMUtt0NgFhzc6D4xza9AuXRcUb6TwmlvXjIWxaGg
+	XFxwufoKr7BM8BjPHEBDQpKuWK3ZYu/PA/XNixwvWohFVeEyKjtqVFlyufJZUSvV
+	zTwDRSVbHojyafBR7bMH1JFgLGdfg==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42fbw4a15b-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Oct 2024 18:50:29 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49PIkd5q001307;
+	Fri, 25 Oct 2024 18:50:29 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42fbw4a157-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Oct 2024 18:50:29 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49PHnGmT008816;
+	Fri, 25 Oct 2024 18:50:28 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 42emkay7h5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Oct 2024 18:50:28 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49PIoQvc58655206
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 25 Oct 2024 18:50:27 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D8A1720043;
+	Fri, 25 Oct 2024 18:50:26 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 71AEF20040;
+	Fri, 25 Oct 2024 18:50:24 +0000 (GMT)
+Received: from li-34d1fccc-27cd-11b2-a85c-c167793e56f7.ibm.com.com (unknown [9.179.0.227])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 25 Oct 2024 18:50:24 +0000 (GMT)
+From: Aboorva Devarajan <aboorvad@linux.ibm.com>
+To: peterz@infradead.org, tj@kernel.org, void@manifault.com,
+        vincent.guittot@linaro.org, juri.lelli@redhat.com, mingo@redhat.com
+Cc: bsegall@google.com, rostedt@goodmis.org, dietmar.eggemann@arm.com,
+        vschneid@redhat.com, mgorman@suse.de, aboorvad@linux.ibm.com,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] sched: Pass correct scheduling policy to __setscheduler_class
+Date: Sat, 26 Oct 2024 00:20:20 +0530
+Message-ID: <20241025185020.277143-1-aboorvad@linux.ibm.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.47.0.163.g1226f6d8fa-goog
-Message-ID: <20241025185009.3278297-1-ipylypiv@google.com>
-Subject: [PATCH v2] scsi: pm8001: Increase request sg length to support 4MiB requests
-From: Igor Pylypiv <ipylypiv@google.com>
-To: Jack Wang <jinpu.wang@cloud.ionos.com>, 
-	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, 
-	"Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Igor Pylypiv <ipylypiv@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: ulTrUVlY1bVKK5AotPLRwcxAXkVuaiG6
+X-Proofpoint-GUID: r-eG7QFE70p2UPZxAUjG8a7DxiJpAcGA
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 mlxscore=0
+ bulkscore=0 suspectscore=0 spamscore=0 phishscore=0 adultscore=0
+ priorityscore=1501 clxscore=1011 lowpriorityscore=0 malwarescore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410250144
 
-Increasing the per-request size maximum to 4MiB (8192 sectors x 512 bytes)
-runs into the per-device DMA scatter gather list limit (max_segments) for
-users of the io vector system calls (e.g. readv and writev).
+The function __setscheduler_class determines the appropriate
+sched_class based on the scheduling policy and priority. Previously,
+the function used the task's pointer to retrieve the scheduling policy,
+which could lead to incorrect decisions if the task's struct had an
+outdated policy. This behaviour where the task pointer may reference an
+outdated policy when __setscheduler_class is called, was introduced in
+commit 98442f0ccd82 ("sched: Fix delayed_dequeue vs switched_from_fair()")
 
-This change increases the max scatter gather list length to 1024 to enable
-kernel to send 4MiB (1024 * 4KiB page size) requests.
+To resolve this, corresponding scheduling policy is passed directly
+to __setscheduler_class instead of relying on the task pointer's cached
+policy. This ensures that the correct policy is always used when
+determining the scheduling class.
 
-Signed-off-by: Igor Pylypiv <ipylypiv@google.com>
+-------------------------------------------------------
+Before Patch:
+-------------------------------------------------------
+
+```
+sched_ext # ./runner -t init_enable_count
+===== START =====
+TEST: init_enable_count
+DESCRIPTION: Verify we do the correct amount of counting of init,
+             enable, etc callbacks.
+OUTPUT:
+ERR: init_enable_count.c:132
+Expected skel->bss->enable_cnt == num_children (3 == 5)
+not ok 1 init_enable_count #
+=====  END  =====
+
+=============================
+
+RESULTS:
+
+PASSED:  0
+SKIPPED: 0
+FAILED:  1
+```
+-------------------------------------------------------
+After Patch:
+-------------------------------------------------------
+
+```
+sched-ext # ./runner -t init_enable_count
+===== START =====
+TEST: init_enable_count
+DESCRIPTION: Verify we do the correct amount of counting of init,
+             enable, etc callbacks.
+OUTPUT:
+ok 1 init_enable_count #
+=====  END  =====
+
+=============================
+
+RESULTS:
+
+PASSED:  1
+SKIPPED: 0
+FAILED:  0
+```
+
+Fixes: 98442f0ccd82 ("sched: Fix delayed_dequeue vs switched_from_fair()")
+Signed-off-by: Aboorva Devarajan <aboorvad@linux.ibm.com>
 ---
+ kernel/sched/core.c     | 8 ++++----
+ kernel/sched/ext.c      | 8 ++++----
+ kernel/sched/ext.h      | 2 +-
+ kernel/sched/sched.h    | 2 +-
+ kernel/sched/syscalls.c | 2 +-
+ 5 files changed, 11 insertions(+), 11 deletions(-)
 
-Changes since v1:
-- Added .max_sectors = 8192 to pm8001 scsi host template.
-- Defined page size, sector size, and max I/O size to calculate max_sectors
-  and sg_tablesize values.
-
- drivers/scsi/pm8001/pm8001_defs.h | 7 +++++--
- drivers/scsi/pm8001/pm8001_init.c | 1 +
- 2 files changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/scsi/pm8001/pm8001_defs.h b/drivers/scsi/pm8001/pm8001_defs.h
-index 501b574239e8..7871e29a820a 100644
---- a/drivers/scsi/pm8001/pm8001_defs.h
-+++ b/drivers/scsi/pm8001/pm8001_defs.h
-@@ -92,8 +92,11 @@ enum port_type {
- #define	PM8001_MAX_MSIX_VEC	 64	/* max msi-x int for spcv/ve */
- #define	PM8001_RESERVE_SLOT	 8
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index dbfb5717d6af..719e0ed1e976 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -4711,7 +4711,7 @@ int sched_fork(unsigned long clone_flags, struct task_struct *p)
+ 	if (rt_prio(p->prio)) {
+ 		p->sched_class = &rt_sched_class;
+ #ifdef CONFIG_SCHED_CLASS_EXT
+-	} else if (task_should_scx(p)) {
++	} else if (task_should_scx(p->policy)) {
+ 		p->sched_class = &ext_sched_class;
+ #endif
+ 	} else {
+@@ -7025,7 +7025,7 @@ int default_wake_function(wait_queue_entry_t *curr, unsigned mode, int wake_flag
+ }
+ EXPORT_SYMBOL(default_wake_function);
  
--#define	CONFIG_SCSI_PM8001_MAX_DMA_SG	528
--#define PM8001_MAX_DMA_SG	CONFIG_SCSI_PM8001_MAX_DMA_SG
-+#define PM8001_SECTOR_SIZE	512
-+#define PM8001_PAGE_SIZE_4K	4096
-+#define PM8001_MAX_IO_SIZE	(4 * 1024 * 1024)
-+#define PM8001_MAX_DMA_SG	(PM8001_MAX_IO_SIZE / PM8001_PAGE_SIZE_4K)
-+#define PM8001_MAX_SECTORS	(PM8001_MAX_IO_SIZE / PM8001_SECTOR_SIZE)
+-const struct sched_class *__setscheduler_class(struct task_struct *p, int prio)
++const struct sched_class *__setscheduler_class(int policy, int prio)
+ {
+ 	if (dl_prio(prio))
+ 		return &dl_sched_class;
+@@ -7034,7 +7034,7 @@ const struct sched_class *__setscheduler_class(struct task_struct *p, int prio)
+ 		return &rt_sched_class;
  
- enum memory_region_num {
- 	AAP1 = 0x0, /* application acceleration processor */
-diff --git a/drivers/scsi/pm8001/pm8001_init.c b/drivers/scsi/pm8001/pm8001_init.c
-index 33e1eba62ca1..c87443b14ff7 100644
---- a/drivers/scsi/pm8001/pm8001_init.c
-+++ b/drivers/scsi/pm8001/pm8001_init.c
-@@ -117,6 +117,7 @@ static const struct scsi_host_template pm8001_sht = {
- 	.scan_start		= pm8001_scan_start,
- 	.can_queue		= 1,
- 	.sg_tablesize		= PM8001_MAX_DMA_SG,
-+	.max_sectors		= PM8001_MAX_SECTORS,
- 	.shost_groups		= pm8001_host_groups,
- 	.sdev_groups		= pm8001_sdev_groups,
- 	.track_queue_depth	= 1,
+ #ifdef CONFIG_SCHED_CLASS_EXT
+-	if (task_should_scx(p))
++	if (task_should_scx(policy))
+ 		return &ext_sched_class;
+ #endif
+ 
+@@ -7142,7 +7142,7 @@ void rt_mutex_setprio(struct task_struct *p, struct task_struct *pi_task)
+ 		queue_flag &= ~DEQUEUE_MOVE;
+ 
+ 	prev_class = p->sched_class;
+-	next_class = __setscheduler_class(p, prio);
++	next_class = __setscheduler_class(p->policy, prio);
+ 
+ 	if (prev_class != next_class && p->se.sched_delayed)
+ 		dequeue_task(rq, p, DEQUEUE_SLEEP | DEQUEUE_DELAYED | DEQUEUE_NOCLOCK);
+diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
+index 5900b06fd036..40bdfe84e4f0 100644
+--- a/kernel/sched/ext.c
++++ b/kernel/sched/ext.c
+@@ -4256,14 +4256,14 @@ static const struct kset_uevent_ops scx_uevent_ops = {
+  * Used by sched_fork() and __setscheduler_prio() to pick the matching
+  * sched_class. dl/rt are already handled.
+  */
+-bool task_should_scx(struct task_struct *p)
++bool task_should_scx(int policy)
+ {
+ 	if (!scx_enabled() ||
+ 	    unlikely(scx_ops_enable_state() == SCX_OPS_DISABLING))
+ 		return false;
+ 	if (READ_ONCE(scx_switching_all))
+ 		return true;
+-	return p->policy == SCHED_EXT;
++	return policy == SCHED_EXT;
+ }
+ 
+ /**
+@@ -4493,7 +4493,7 @@ static void scx_ops_disable_workfn(struct kthread_work *work)
+ 
+ 		sched_deq_and_put_task(p, DEQUEUE_SAVE | DEQUEUE_MOVE, &ctx);
+ 
+-		p->sched_class = __setscheduler_class(p, p->prio);
++		p->sched_class = __setscheduler_class(p->policy, p->prio);
+ 		check_class_changing(task_rq(p), p, old_class);
+ 
+ 		sched_enq_and_set_task(&ctx);
+@@ -5204,7 +5204,7 @@ static int scx_ops_enable(struct sched_ext_ops *ops, struct bpf_link *link)
+ 		sched_deq_and_put_task(p, DEQUEUE_SAVE | DEQUEUE_MOVE, &ctx);
+ 
+ 		p->scx.slice = SCX_SLICE_DFL;
+-		p->sched_class = __setscheduler_class(p, p->prio);
++		p->sched_class = __setscheduler_class(p->policy, p->prio);
+ 		check_class_changing(task_rq(p), p, old_class);
+ 
+ 		sched_enq_and_set_task(&ctx);
+diff --git a/kernel/sched/ext.h b/kernel/sched/ext.h
+index 246019519231..b1675bb59fc4 100644
+--- a/kernel/sched/ext.h
++++ b/kernel/sched/ext.h
+@@ -18,7 +18,7 @@ bool scx_can_stop_tick(struct rq *rq);
+ void scx_rq_activate(struct rq *rq);
+ void scx_rq_deactivate(struct rq *rq);
+ int scx_check_setscheduler(struct task_struct *p, int policy);
+-bool task_should_scx(struct task_struct *p);
++bool task_should_scx(int policy);
+ void init_sched_ext_class(void);
+ 
+ static inline u32 scx_cpuperf_target(s32 cpu)
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index 081519ffab46..29180ae51e54 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -3800,7 +3800,7 @@ static inline int rt_effective_prio(struct task_struct *p, int prio)
+ 
+ extern int __sched_setscheduler(struct task_struct *p, const struct sched_attr *attr, bool user, bool pi);
+ extern int __sched_setaffinity(struct task_struct *p, struct affinity_context *ctx);
+-extern const struct sched_class *__setscheduler_class(struct task_struct *p, int prio);
++extern const struct sched_class *__setscheduler_class(int policy, int prio);
+ extern void set_load_weight(struct task_struct *p, bool update_load);
+ extern void enqueue_task(struct rq *rq, struct task_struct *p, int flags);
+ extern bool dequeue_task(struct rq *rq, struct task_struct *p, int flags);
+diff --git a/kernel/sched/syscalls.c b/kernel/sched/syscalls.c
+index 0470bcc3d204..24f9f90b6574 100644
+--- a/kernel/sched/syscalls.c
++++ b/kernel/sched/syscalls.c
+@@ -707,7 +707,7 @@ int __sched_setscheduler(struct task_struct *p,
+ 	}
+ 
+ 	prev_class = p->sched_class;
+-	next_class = __setscheduler_class(p, newprio);
++	next_class = __setscheduler_class(policy, newprio);
+ 
+ 	if (prev_class != next_class && p->se.sched_delayed)
+ 		dequeue_task(rq, p, DEQUEUE_SLEEP | DEQUEUE_DELAYED | DEQUEUE_NOCLOCK);
 -- 
-2.47.0.163.g1226f6d8fa-goog
+2.25.1
 
 
