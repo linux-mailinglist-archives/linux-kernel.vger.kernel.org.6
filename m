@@ -1,136 +1,91 @@
-Return-Path: <linux-kernel+bounces-382064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA2BA9B0894
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:41:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDF869B088F
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:40:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 890ADB24703
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:41:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 831AE28231B
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:40:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EFF115D5CF;
-	Fri, 25 Oct 2024 15:40:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4F3D1632F7;
+	Fri, 25 Oct 2024 15:40:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="coBG6Tt7"
-Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oqP+nC6m"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3B5D169AC5;
-	Fri, 25 Oct 2024 15:40:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1915B158A2E;
+	Fri, 25 Oct 2024 15:40:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729870843; cv=none; b=KhxGGAfU1fomA2Eu1eew888CSZvvYH+bApnEtniQZfW4eKZACgWEmj+T8ef7JadqPLi6XaOyaVE+JXD7Y+dyMaUJSRAR1woW+HB04b8mHWBsHHpDB6ajoimRKw3KBfY+EFP63nh3Dp0Nm+MEeUTd7OH2+hkO+8+yWPpRXT6t8DI=
+	t=1729870832; cv=none; b=JgxJj+AqOrqdXmDiVbc1Ct2EfHI9wzoXn7QhbpmwSJBkK18QlsfZsFVrcmjlfKX5Xb4tlovQGLr6Cj5GSedlszgJt5Mf9ZIhu6jbJDV0xhx4SCOctgb+N0BSa8s05hU5IIuIxHDwqMrpvuxGi/90aV1cSD9cgiar6o3FxExIH44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729870843; c=relaxed/simple;
-	bh=lnzej9riwoP0T3XvrgsBen19+FPab1L5CE0OE6JawpQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aa1aGpGUtv7RKkHupRlncuCZLi/K0eLCFRC5D2ySp7q7sPU2ZGioUV9zirIBs79ERluxEV42CZ7VOvin/yr7hlvRV1Pa5RzfAIeMBeOIybNvEfPizY2PJJaLGSMiINXbVG1Suj+DaeqmFe6ak+vFyFPXiOSIMrODeVa1y1S0ULo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=coBG6Tt7; arc=none smtp.client-ip=157.90.84.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
-Received: from [192.168.178.76] (host-212-18-30-247.customer.m-online.net [212.18.30.247])
-	(Authenticated sender: g.gottleuber@tuxedocomputers.com)
-	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id 81C8D2FC0063;
-	Fri, 25 Oct 2024 17:40:26 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
-	s=default; t=1729870830;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=c//f/7s6BWOQiiDwzMLRRIcTmPrSjbMYXtncbing1bQ=;
-	b=coBG6Tt7Bzq424t8FVpqd5E+0hRt40TI+qQnzcTQGSWbaYChpiAGIZ3vkk3oZA7Zg2cMCo
-	9aYNyHwL/tH+3EwenOn2IpQhVKg+p28azFIkgSU9hMuBksHhKeCeReEnypg28tzTCHpCHz
-	7y6hWHMyTFNT3AdB8gTIa8dD7rNqCNg=
-Authentication-Results: mail.tuxedocomputers.com;
-	auth=pass smtp.auth=g.gottleuber@tuxedocomputers.com smtp.mailfrom=ggo@tuxedocomputers.com
-Message-ID: <4dd25dca-f217-4abd-88e8-0a6b03760dd7@tuxedocomputers.com>
-Date: Fri, 25 Oct 2024 17:40:26 +0200
+	s=arc-20240116; t=1729870832; c=relaxed/simple;
+	bh=rfDs7n0OMRo6BkZBWN6gBjPhf7jqv37K9pbAlMiZKas=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=bCHBpeNeBfpWssGiba6I+47ZDxim+FAvIgrAimwoy9ruRuzRgYsMHi7vki3Rm/0SLJIp1nHQxJ/jwMaj2UPMuEejUofUduUnH3dW5RGsLsLA3iGS0lNAxgbVSyIE++Eppz5xrr8ted7ioUF7nhJLFFKhtYKEK5P7xcKp5LkQIaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oqP+nC6m; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96828C4CEC3;
+	Fri, 25 Oct 2024 15:40:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729870831;
+	bh=rfDs7n0OMRo6BkZBWN6gBjPhf7jqv37K9pbAlMiZKas=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=oqP+nC6m/pmYqukKy0B+oYpTXvh2RUI9vRb3MX5u7akofNYu0Oj/f4J+z1GN988Ls
+	 5wbKuJP/f/C5SpWvmYeZZbfCzSR9QOaat1mFD08mnmks2phfqO0s0UQET4j8hZ4/kp
+	 3bygZ1ZfchoIE7WFhPU6EZyM1Dfy2HFd2240kTOJJhauEW3acFrK+D0rxPLJWipJt4
+	 DyWXGi+Nd3XDR2riphWauexcgIaeDMObwZNXQMNptxMXt7lqBl257LZFRSS3MajqXq
+	 JUr0gqmWlizye5Ho6NTQJw0kjmazUBfwxreNkkIN8sChkvTv8KN3q5oOsbuCt8Fh+H
+	 M12e9goXnGR1g==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id B002B3809A8A;
+	Fri, 25 Oct 2024 15:40:39 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] mmc: sdhci-pci-gli: GL9767: Fix low power mode on the
- set clock function
-To: Ulf Hansson <ulf.hansson@linaro.org>, Ben Chuang <benchuanggli@gmail.com>
-Cc: adrian.hunter@intel.com, victor.shih@genesyslogic.com.tw,
- greg.tu@genesyslogic.com.tw, ben.chuang@genesyslogic.com.tw,
- HL.Liu@genesyslogic.com.tw, Lucas.Lai@genesyslogic.com.tw,
- victorshihgli@gmail.com, linux-mmc@vger.kernel.org,
- linux-kernel@vger.kernel.org, Georg Gottleuber <ggo@tuxedocomputers.com>,
- Werner Sembach <wse@tuxedocomputers.com>, cs@tuxedo.de
-References: <20241025060017.1663697-1-benchuanggli@gmail.com>
- <CAPDyKFpb5ZePhXziLH3VbuKKywJZbo8UBF1NM1_dyOWq9oLDng@mail.gmail.com>
-Content-Language: en-US
-From: Georg Gottleuber <ggo@tuxedocomputers.com>
-In-Reply-To: <CAPDyKFpb5ZePhXziLH3VbuKKywJZbo8UBF1NM1_dyOWq9oLDng@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] Bluetooth: btintel_pcie: Replace deprecated PCI functions
+From: patchwork-bot+bluetooth@kernel.org
+Message-Id: 
+ <172987083849.2948690.14161816452888127017.git-patchwork-notify@kernel.org>
+Date: Fri, 25 Oct 2024 15:40:38 +0000
+References: <20241024111509.141884-2-pstanner@redhat.com>
+In-Reply-To: <20241024111509.141884-2-pstanner@redhat.com>
+To: Philipp Stanner <pstanner@redhat.com>
+Cc: marcel@holtmann.org, luiz.dentz@gmail.com,
+ linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello Ben, hello Uffe,
+Hello:
 
-thank you for this fix.
+This patch was applied to bluetooth/bluetooth-next.git (master)
+by Luiz Augusto von Dentz <luiz.von.dentz@intel.com>:
 
-Am 25.10.24 um 15:22 schrieb Ulf Hansson:
-> + Georg
+On Thu, 24 Oct 2024 13:15:10 +0200 you wrote:
+> pcim_iomap_regions() and pcim_iomap_table() have been deprecated in
+> commit e354bb84a4c1 ("PCI: Deprecate pcim_iomap_table(),
+> pcim_iomap_regions_request_all()").
 > 
-> On Fri, 25 Oct 2024 at 08:01, Ben Chuang <benchuanggli@gmail.com> wrote:
->>
->> From: Ben Chuang <ben.chuang@genesyslogic.com.tw>
->>
->> On sdhci_gl9767_set_clock(), the vendor header space(VHS) is read-only
->> after calling gl9767_disable_ssc_pll() and gl9767_set_ssc_pll_205mhz().
->> So the low power negotiation mode cannot be enabled again.
->> Introduce gl9767_set_low_power_negotiation() function to fix it.
->>
->> The explanation process is as below.
->>
->> static void sdhci_gl9767_set_clock()
->> {
->>         ...
->>         gl9767_vhs_write();
->>         ...
->>         value |= PCIE_GLI_9767_CFG_LOW_PWR_OFF;
->>         pci_write_config_dword(pdev, PCIE_GLI_9767_CFG, value); <--- (a)
->>
->>         gl9767_disable_ssc_pll(); <--- (b)
->>         sdhci_writew(host, 0, SDHCI_CLOCK_CONTROL);
->>
->>         if (clock == 0)
->>                 return;  <-- (I)
->>
->>         ...
->>         if (clock == 200000000 && ios->timing == MMC_TIMING_UHS_SDR104) {
->>                 ...
->>                 gl9767_set_ssc_pll_205mhz(); <--- (c)
->>         }
->>         ...
->>         value &= ~PCIE_GLI_9767_CFG_LOW_PWR_OFF;
->>         pci_write_config_dword(pdev, PCIE_GLI_9767_CFG, value); <-- (II)
->>         gl9767_vhs_read();
->> }
->>
->> (a) disable low power negotiation mode. When return on (I), the low power
->> mode is disabled.  After (b) and (c), VHS is read-only, the low power mode
->> cannot be enabled on (II).
->>
->> Fixes: d2754355512e ("mmc: sdhci-pci-gli: Set SDR104's clock to 205MHz and enable SSC for GL9767")
+> Replace these functions with pcim_iomap_region().
 > 
-> Is this the same problem as being reported in
-> https://lore.kernel.org/all/41c1c88a-b2c9-4c05-863a-467785027f49@tuxedocomputers.com/
+> Signed-off-by: Philipp Stanner <pstanner@redhat.com>
 > 
-> ?
+> [...]
 
-Yes, this patch fixes
-https://bugzilla.kernel.org/show_bug.cgi?id=219284
+Here is the summary with links:
+  - Bluetooth: btintel_pcie: Replace deprecated PCI functions
+    https://git.kernel.org/bluetooth/bluetooth-next/c/1923b289c745
 
-This makes my patch obsolete.
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-Kind regards,
-Georg
+
 
