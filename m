@@ -1,201 +1,167 @@
-Return-Path: <linux-kernel+bounces-381083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 600679AFA13
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 08:35:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0AC19AFA22
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 08:37:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 831CC1C22323
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 06:35:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4BA81C20F52
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 06:37:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D774199FD3;
-	Fri, 25 Oct 2024 06:34:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A00A1B0F14;
+	Fri, 25 Oct 2024 06:37:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="es4JsFK9"
-Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GYs7q0Xf"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEBFB18DF85;
-	Fri, 25 Oct 2024 06:34:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D52131A4F2F
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 06:36:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729838096; cv=none; b=A4kK8UDJk/6/lzW62c3cU2rM0qeIc3k2RUABzHiLPaxLJS3LNMeOJxanQZx3Vlv5dYEVvk439XgDe1EvEyJBOb2BSRzV0yd68J9N42iGK6d8t6hlgvilhEfaBrWRgX1Y9AqHAmsETBpwnJUlJjTghP0ExVyii6vf5k4WTEWvCxY=
+	t=1729838222; cv=none; b=ostB4zLZIvPsbUZwVHTVsg6dKEu9TE3o0uh5pd9W1+4uXgmSqDd1LMK42Xh6uLHitkVn0WV7yFP/WBmESDbIw/uqcKzJb4GXsHIGPUsM/FWuYo2e4+dMn5c4nNVI5d/bBhfEksgsP0x2ZGIlybByudd877cTHTqAx54Bp/u17NQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729838096; c=relaxed/simple;
-	bh=M/+x2mpWZr7PBV9kF6t/mireJ1mJlWQCgAnedpEA9bk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=EGkKiYcOwLGC/o9WjOWtUwENHPDaCm4K+TPh/DgDjpT17J+QGnGZe5UEdVwOkXVFy1Ekh44QPGOgdTJE1Y0SlDOvyT1SaCwnrYd4bLgimOSQ/ERRyTWfTEgOUCLeEWeO5SiXV5FXnmhLfFuXEv91AKxBaa7C3W2btpm/7abykcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=es4JsFK9; arc=none smtp.client-ip=209.85.166.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-83ab694ebe5so67985939f.0;
-        Thu, 24 Oct 2024 23:34:54 -0700 (PDT)
+	s=arc-20240116; t=1729838222; c=relaxed/simple;
+	bh=76iF+HoeaObIOvzYVxcE5SrRSGI44xQ5VLVhbj7HBHw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oNmshJcMANpdwr37A9PqYF7ZsacGUTq1khDuysvouZQOBRb5YDeYRRvd7sxxsfoIke32wstuoLsnrywE5AqE+E0IzAw5o9lTRMCpDcvY0siffnscQ/gE7mLGb7pX8c0Um0lC6sHB7f9Ht6Iks8Gu+MxPJ57t+q58v3XqEFup+l8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GYs7q0Xf; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-539eb97f26aso1730203e87.2
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 23:36:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729838093; x=1730442893; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=XWYBRj6CmYkNb42zlkk4hhoqwzra4+EVY46cpjPSL4o=;
-        b=es4JsFK9e2gBBNm6hJoNvJpvf2kMglxUfmHq/5Uckc6blY0eRxk/u2TnG0/ubJCY0x
-         O9mcw/uClotqR6tFIYPscY5RfNyGIREqAMTLn25Zcw+7cgMCAJKuVLHMfpxsX20gCmc3
-         1RWlty0bOpy6WYy38yVxcY9C6MpvNDlCzzvH1bh97wbSiKmP73b68DiswhgrHyyyCe41
-         D+zxz5AT511N8hYPjvlum0t42DIMGebBGb1/pib7JNVyHldPm75CGGsp0WRoUq0AoR2R
-         nn2LQ39veklTmRNHhXTo8nE3bYo+Xop3guGaLRW4vFItAqCZd6gE+99s7ehjVLx2jmWi
-         B3tg==
+        d=linaro.org; s=google; t=1729838217; x=1730443017; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Db9W0DcUi/dDjwgp0S1+zwbk/KalyyaD0ylTsRWE1NQ=;
+        b=GYs7q0XfOvlwoMF2SSTCedPhsAh7B7f9WmfNIzEBNIfbaxwQysPvEIo+uAvfDNREJZ
+         TqF9NMvUuH7870whJdZ4kcIMipDYedq8cOJYlhclHzaf+5tCb7RR+eYIyE41Q1a5gGDC
+         AvgDCYwlkhd2gjcVGRJhGF4rlq63LBT4qx/yjbBRSmLedTVua6qTqgKRGZA7mqLFeSJl
+         /NzaGK2Kw2eOs8xygTqcsyWA8/XJwP6/CrfXGlDkJBkRxaIuLrxTHn/iyBJJuKQTQV6d
+         xLCGJerYbznOao6iPX8eq23hub15ckbvAa9kSkBzShWq7NEmK64FXnjYqZo4HxtmEP8R
+         rIyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729838093; x=1730442893;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XWYBRj6CmYkNb42zlkk4hhoqwzra4+EVY46cpjPSL4o=;
-        b=cCvqNQ5BEW/Kc8QzvI5abQxY8Fbo5f3tlvivfDD03f/8YG9hBCrKzi7CEcuBNf4wn8
-         WZKWzN3kK0C9x/rXm9JWZaRobdj+0NkOBGp4+xeMbNgtawiLC0rZROVcnnUI8BGfG6Fl
-         tUAgBpn3K4Y+akyr9ikxUWqXThKFKivGnzV5b/sjvCUzbVjsxEUGssrpX3cEq6vCsnUO
-         6G0OLsqGgPD1ihdEG629hdNkHXuJ/SLX/BygOPffv+B32mSfwzq4EQ4Xp7Mz3fbjQJtV
-         J2Hk44HLn0b+/DupM9acR3kZ/g7RmUOnhQ7ULLwno83EieYm1iC8c9ih9JRpXC935pBI
-         Femw==
-X-Forwarded-Encrypted: i=1; AJvYcCUoC9XumpEWZ4fleJXrFLrhl0EsbUPfxnGPT06jdWZukOYKsY9FSi9D7jGi4dV2KimBKAXhMAtpwc3HguU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy505ro2LFqP4C7kye+BE292BZIT+8q3mdbqnVpIrqQzvwFfsJB
-	T1O7BAmsX9GpFcd7bvDp+3GffpefMPVc0qiap/0emynWJcHgGEQrBw/M5w==
-X-Google-Smtp-Source: AGHT+IGh1Va6/7C51TeNjaOekWAVBiwKThLFEX1TZYMT0N26+Q39IC98A2k4YsqYgpY3J5CNtkrknA==
-X-Received: by 2002:a05:6602:14c6:b0:82a:2a67:9429 with SMTP id ca18e2360f4ac-83b0401bc85mr535279939f.5.1729838093543;
-        Thu, 24 Oct 2024 23:34:53 -0700 (PDT)
-Received: from james-x399.localdomain (97-118-131-57.hlrn.qwest.net. [97.118.131.57])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-83b13804ec6sm9807139f.32.2024.10.24.23.34.52
+        d=1e100.net; s=20230601; t=1729838217; x=1730443017;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Db9W0DcUi/dDjwgp0S1+zwbk/KalyyaD0ylTsRWE1NQ=;
+        b=noFzZzTBE/99tqAolYRSgRSuY1WIK9NmBm2XF7e67N2/E3I0emB5oHTzgcQ37bv5Mi
+         pQFd204Z/Gc/hMWBSaFuIzmP1ZUBaSJAw5JKHlQuNZp8IC5sUjXtlvz/6xVZguaT8Qsr
+         h1hHtwX1a2ScileXpOHRfPyqEfvv3eafHA3OKA60gF64zKtGr5NUwZFQd7CHeqZ+jaZd
+         CGqSaRmFo3nHnq4xj+zxSQdo4kUvmBT4wVGmKtYgwuRCfDA3c3DFG0KU6zFQNNET6e6n
+         PFQZKgWak/Unnur+++rnnb9MV30xKx1lqfomwboVuPv3Mq0kwAK4ouoCoPkoM/JUJWTH
+         q9GA==
+X-Forwarded-Encrypted: i=1; AJvYcCXssMXeErBaOJeDFLWnfk1R8FhhQbMesx9xAyz+xANyHG37AT/CYvpjgJ+i2OfnsQ3JgtBriAWZDDRT/oM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywi7nvFqokwKJosC4pJ/lPc5GHq4DXQFyaNzeqDgX3zlHTxO576
+	E4N5f7yGkOgs8JSkWzRCVJqXCNyZP/rih6Q5tLbrdCBOe8VYicOOdVIJABx7R4o=
+X-Google-Smtp-Source: AGHT+IHWV57T+/9EhAWqxTiykSOfZ5lc9WHgI9sMVd6VKkCShvL2exL1I+UVy6hyP0AKb8v0iecgSw==
+X-Received: by 2002:a05:6512:3e0d:b0:52e:9fe0:bee4 with SMTP id 2adb3069b0e04-53b1a2fe533mr5111135e87.9.1729838216924;
+        Thu, 24 Oct 2024 23:36:56 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53b2e10a53csm72820e87.55.2024.10.24.23.36.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Oct 2024 23:34:52 -0700 (PDT)
-From: James Hilliard <james.hilliard1@gmail.com>
-To: linux-watchdog@vger.kernel.org
-Cc: James Hilliard <james.hilliard1@gmail.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v4] watchdog: it87_wdt: add PWRGD enable quirk for Qotom QCML04
-Date: Fri, 25 Oct 2024 00:34:40 -0600
-Message-Id: <20241025063441.3494837-1-james.hilliard1@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        Thu, 24 Oct 2024 23:36:54 -0700 (PDT)
+Date: Fri, 25 Oct 2024 09:36:51 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Stephen Boyd <swboyd@chromium.org>
+Cc: chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	patches@lists.linux.dev, devicetree@vger.kernel.org, 
+	Douglas Anderson <dianders@chromium.org>, Pin-yen Lin <treapking@chromium.org>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Benson Leung <bleung@chromium.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Daniel Vetter <daniel@ffwll.ch>, 
+	David Airlie <airlied@gmail.com>, dri-devel@lists.freedesktop.org, 
+	Guenter Roeck <groeck@chromium.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Lee Jones <lee@kernel.org>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Prashant Malani <pmalani@chromium.org>, 
+	Robert Foss <rfoss@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Tzung-Bi Shih <tzungbi@kernel.org>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Daniel Scally <djrscally@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Ivan Orlov <ivan.orlov0322@gmail.com>, 
+	linux-acpi@vger.kernel.org, linux-usb@vger.kernel.org, 
+	Mika Westerberg <mika.westerberg@linux.intel.com>, "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v4 13/18] dt-bindings: usb-switch: Extend for DisplayPort
+ altmode
+Message-ID: <yatu2snt2w7lrveftlfbkw6yfvso3jbsma5v6jij4rn7v37hjt@ww42wer6bytj>
+References: <20240901040658.157425-1-swboyd@chromium.org>
+ <20240901040658.157425-14-swboyd@chromium.org>
+ <27acewh6h2xcwp63z5o3tgrjmimf4d3mftpnmkvhdhv273zgsp@i6i5ke4btdqx>
+ <CAE-0n53S2dFz74_rgx22_1i_bbEC6kj1SL5LAEq_F2wrdCgBNg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAE-0n53S2dFz74_rgx22_1i_bbEC6kj1SL5LAEq_F2wrdCgBNg@mail.gmail.com>
 
-For the watchdog timer to work properly on the QCML04 board we need to
-set PWRGD enable in the Environment Controller Configuration Registers
-Special Configuration Register 1 when it is not already set, this may
-be the case when the watchdog is not enabled from within the BIOS.
+On Thu, Oct 10, 2024 at 06:43:35PM -0400, Stephen Boyd wrote:
+> Quoting Dmitry Baryshkov (2024-09-19 03:40:19)
+> > On Sat, Aug 31, 2024 at 09:06:51PM GMT, Stephen Boyd wrote:
+> > > diff --git a/Documentation/devicetree/bindings/usb/usb-switch.yaml b/Documentation/devicetree/bindings/usb/usb-switch.yaml
+> > > index f5dc7e23b134..816f295f322f 100644
+> > > --- a/Documentation/devicetree/bindings/usb/usb-switch.yaml
+> > > +++ b/Documentation/devicetree/bindings/usb/usb-switch.yaml
+> > > @@ -52,6 +52,14 @@ properties:
+> > >            endpoint:
+> > >              $ref: '#/$defs/usbc-in-endpoint'
+> > >
+> > > +      port@2:
+> > > +        $ref: /schemas/graph.yaml#/$defs/port-base
+> > > +        unevaluatedProperties: false
+> > > +
+> > > +        properties:
+> > > +          endpoint:
+> > > +            $ref: '#/$defs/dp-endpoint'
+> >
+> > Is it a separate port or is it an endpoint of the same upstream-facing
+> > (non-connector-facing) SS port?
+> 
+> I don't quite follow this comment. This is an input DP endpoint/port.
 
-Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
----
-Changes v3 -> v4:
-  - NULL terminate it87_quirks table
-Changes v2 -> v3:
-  - add linux/bits.h header
-  - check for quirks on all it87 chips
-Changes v1 -> v2:
-  - remove QGLK02/IT87_WDT_BROKEN
----
- drivers/watchdog/it87_wdt.c | 39 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 39 insertions(+)
+This is the question: is this a separate port or just an endpoint on the
+port?
 
-diff --git a/drivers/watchdog/it87_wdt.c b/drivers/watchdog/it87_wdt.c
-index 3e8c15138edd..1a5a0a2c3f2e 100644
---- a/drivers/watchdog/it87_wdt.c
-+++ b/drivers/watchdog/it87_wdt.c
-@@ -20,6 +20,8 @@
- 
- #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
- 
-+#include <linux/bits.h>
-+#include <linux/dmi.h>
- #include <linux/init.h>
- #include <linux/io.h>
- #include <linux/kernel.h>
-@@ -40,6 +42,7 @@
- #define VAL		0x2f
- 
- /* Logical device Numbers LDN */
-+#define EC		0x04
- #define GPIO		0x07
- 
- /* Configuration Registers and Functions */
-@@ -73,6 +76,12 @@
- #define IT8784_ID	0x8784
- #define IT8786_ID	0x8786
- 
-+/* Environment Controller Configuration Registers LDN=0x04 */
-+#define SCR1		0xfa
-+
-+/* Environment Controller Bits SCR1 */
-+#define WDT_PWRGD	0x20
-+
- /* GPIO Configuration Registers LDN=0x07 */
- #define WDTCTRL		0x71
- #define WDTCFG		0x72
-@@ -240,6 +249,21 @@ static int wdt_set_timeout(struct watchdog_device *wdd, unsigned int t)
- 	return ret;
- }
- 
-+enum {
-+	IT87_WDT_OUTPUT_THROUGH_PWRGD	= BIT(0),
-+};
-+
-+static const struct dmi_system_id it87_quirks[] = {
-+	{
-+		/* Qotom Q30900P (IT8786) */
-+		.matches = {
-+			DMI_EXACT_MATCH(DMI_BOARD_NAME, "QCML04"),
-+		},
-+		.driver_data = (void *)IT87_WDT_OUTPUT_THROUGH_PWRGD,
-+	},
-+	{}
-+};
-+
- static const struct watchdog_info ident = {
- 	.options = WDIOF_SETTIMEOUT | WDIOF_MAGICCLOSE | WDIOF_KEEPALIVEPING,
- 	.firmware_version = 1,
-@@ -261,8 +285,10 @@ static struct watchdog_device wdt_dev = {
- 
- static int __init it87_wdt_init(void)
- {
-+	const struct dmi_system_id *dmi_id;
- 	u8  chip_rev;
- 	u8 ctrl;
-+	int quirks = 0;
- 	int rc;
- 
- 	rc = superio_enter();
-@@ -273,6 +299,10 @@ static int __init it87_wdt_init(void)
- 	chip_rev  = superio_inb(CHIPREV) & 0x0f;
- 	superio_exit();
- 
-+	dmi_id = dmi_first_match(it87_quirks);
-+	if (dmi_id)
-+		quirks = (long)dmi_id->driver_data;
-+
- 	switch (chip_type) {
- 	case IT8702_ID:
- 		max_units = 255;
-@@ -333,6 +363,15 @@ static int __init it87_wdt_init(void)
- 		superio_outb(0x00, WDTCTRL);
- 	}
- 
-+	if (quirks & IT87_WDT_OUTPUT_THROUGH_PWRGD) {
-+		superio_select(EC);
-+		ctrl = superio_inb(SCR1);
-+		if (!(ctrl & WDT_PWRGD)) {
-+			ctrl |= WDT_PWRGD;
-+			superio_outb(ctrl, SCR1);
-+		}
-+	}
-+
- 	superio_exit();
- 
- 	if (timeout < 1 || timeout > max_units * 60) {
+> 
+> >
+> > > +
+> > >  oneOf:
+> > >    - required:
+> > >        - port
+> > > @@ -65,6 +73,19 @@ $defs:
+> > >      $ref: /schemas/graph.yaml#/$defs/endpoint-base
+> > >      description: Super Speed (SS) output endpoint to a type-c connector
+> > >      unevaluatedProperties: false
+> > > +    properties:
+> > > +      data-lanes:
+> > > +        $ref: /schemas/types.yaml#/definitions/uint32-array
+> > > +        description: |
+> > > +          An array of physical USB Type-C data lane indexes.
+> > > +          - 0 is SSRX1 lane
+> > > +          - 1 is SSTX1 lane
+> > > +          - 2 is SSTX2 lane
+> > > +          - 3 is SSRX2 lane
+> > > +        minItems: 4
+> > > +        maxItems: 4
+> > > +        items:
+> > > +          maximum: 3
+> >
+> > What is the usecase to delare less than 4 lanes going to the USB-C
+> > connector?
+> 
+> I'm not aware of any usecase. The 'maximum: 3' is the max value in the
+> cell, i.e. 0, 1, 2, or 3.
+
 -- 
-2.34.1
-
+With best wishes
+Dmitry
 
