@@ -1,99 +1,116 @@
-Return-Path: <linux-kernel+bounces-381767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EA7C9B0401
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:28:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C68B09B0405
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:28:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59BD51C2278F
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 13:28:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 050821C22764
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 13:28:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F7AC7081F;
-	Fri, 25 Oct 2024 13:27:55 +0000 (UTC)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D221970824;
+	Fri, 25 Oct 2024 13:28:43 +0000 (UTC)
+Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE937212163
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 13:27:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D11621216E;
+	Fri, 25 Oct 2024 13:28:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729862874; cv=none; b=oc+Sh+SR64Lm/+Lc1joOJsqg9gmLooyEO7XYqc5ljpG8qTuP8PC2622Oo5BlP34J08FOC7A7u2MsZ17FxZnWAwu4fCmTKCb2GDbkWyi9REVjyuLSpo+1qDhoNXdOBH+JyVlKudc9jZCN7OqC+MgaM/HoNcEb32CVIqQy5p1BVXw=
+	t=1729862923; cv=none; b=mCEfgLaZNDluz0B2PufH2yXRi3kMI7otEniTK8L24bjO4H0UdRqGN8JDD/Ah1/Vzz79cZAFTbnWn/uldjZIb0W9EtfzmiBrhUOsZ7GjOOFVbzvf/HvkkeYdbBA/e36PeKOaw4Q9ckO2VLrKHnKobtyeuhYfUEgffrFxmO9R1MCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729862874; c=relaxed/simple;
-	bh=YgmNlNpDv38rSkr31Q2JhEJBCLoRadnU8thJmyMYviQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kWYy7uNs2K1LooXQP3pHa/f1bpHUgZdLVfezKjZbErtWxSquhILoEHhwWU0Q8tqEGE6i2jd999+SsTski/eBtPccj9mZiEHPuZdTK1k8aNXcp4UqwDt0S9Wwfu8WnTB5GLO4KL5BEq3KDw6YI0TNGRgpCGlswc1/E4t7uFbnFAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
-X-CSE-ConnectionGUID: 9iz3n2U/TtyegKQwplLfgg==
-X-CSE-MsgGUID: 1K6KFXEdT5aAdFN4YlR8wA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="29701549"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="29701549"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2024 06:27:52 -0700
-X-CSE-ConnectionGUID: Ltc9prMrTo6NHroRe1bz4A==
-X-CSE-MsgGUID: +mZeiuhoQMWz40fyJMAHaA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,231,1725346800"; 
-   d="scan'208";a="80933337"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2024 06:27:51 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andy@kernel.org>)
-	id 1t4KM1-00000006vO2-0neg;
-	Fri, 25 Oct 2024 16:27:49 +0300
-Date: Fri, 25 Oct 2024 16:27:48 +0300
-From: Andy Shevchenko <andy@kernel.org>
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: Lee Jones <lee@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mfd: intel_soc_pmic_crc: Add support for non ACPI
- instantiated i2c_client
-Message-ID: <Zxuc1HWTIiUJ3Rwo@smile.fi.intel.com>
-References: <20241025083712.15070-1-hdegoede@redhat.com>
+	s=arc-20240116; t=1729862923; c=relaxed/simple;
+	bh=rqD8O7ASW2YD34InFNtypxnf2obGHXh6ceZe7cQlsGA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lHjdQeYjlUykJOXzT63z0jesllqlthtfNdfROfpM6o1AKklR2i/emilIV+7hJz7LXCY0jQ1XfQOviskgX+FuwOqJXGHTyxhv3iHNEsxg7iTbs6CwkKQuvPAuzzhujC1sv1f0B19/HQ7UFBU21DBgGXP/m2CZ9Vq/j4MpM87aXQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.51])
+	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4XZjkw1gpdz9v7NL;
+	Fri, 25 Oct 2024 21:08:08 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.47])
+	by mail.maildlp.com (Postfix) with ESMTP id 366D21402DE;
+	Fri, 25 Oct 2024 21:28:29 +0800 (CST)
+Received: from [10.221.99.159] (unknown [10.221.99.159])
+	by APP1 (Coremail) with SMTP id LxC2BwD3aDnznBtnO2VpAA--.54724S2;
+	Fri, 25 Oct 2024 14:28:28 +0100 (CET)
+Message-ID: <d8aa61a8-e2fc-7668-9845-81664c9d181f@huaweicloud.com>
+Date: Fri, 25 Oct 2024 15:28:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241025083712.15070-1-hdegoede@redhat.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: Some observations (results) on BPF acquire and release
+Content-Language: en-US
+To: Andrea Parri <parri.andrea@gmail.com>
+Cc: puranjay@kernel.org, paulmck@kernel.org, bpf@vger.kernel.org,
+ lkmm@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <Zxk2wNs4sxEIg-4d@andrea>
+ <daa60273-d01a-8fc5-5e26-e8fc9364c1d8@huaweicloud.com>
+ <ZxuZ-wGccb3yhBAD@andrea>
+From: Hernan Ponce de Leon <hernan.poncedeleon@huaweicloud.com>
+In-Reply-To: <ZxuZ-wGccb3yhBAD@andrea>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:LxC2BwD3aDnznBtnO2VpAA--.54724S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7KF1fWw1ktw17Kw4rtFyrZwb_yoW8GryDpF
+	Wvkan8KFn7t3yakrZ2qr13WFs5uF4fAr45XF18Jw47Cwn0kr1ftF4xKF40gFZrJwn2ka10
+	qr1jkFZ3W3WIvrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkEb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AK
+	xVWUAVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F4
+	0E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1l
+	IxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxV
+	AFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j
+	6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UK2N
+	tUUUUU=
+X-CM-SenderInfo: xkhu0tnqos00pfhgvzhhrqqx5xdzvxpfor3voofrz/
 
-On Fri, Oct 25, 2024 at 10:37:12AM +0200, Hans de Goede wrote:
-> On some x86 Bay Trail tablets which shipped with Android as factory OS,
-> the DSDT is so broken that the PMIC needs to be manually instantiated by
-> the special x86-android-tablets.ko "fixup" driver for cases like this.
+On 10/25/2024 3:15 PM, Andrea Parri wrote:
+>>> BPF R+release+fence
+>>> {
+>>>    0:r2=x; 0:r4=y;
+>>>    1:r2=y; 1:r4=x; 1:r6=l;
+>>> }
+>>>    P0                                 | P1                                         ;
+>>>    r1 = 1                             | r1 = 2                                     ;
+>>>    *(u32 *)(r2 + 0) = r1              | *(u32 *)(r2 + 0) = r1                      ;
+>>>    r3 = 1                             | r5 = atomic_fetch_add((u32 *)(r6 + 0), r5) ;
+>>>    store_release((u32 *)(r4 + 0), r3) | r3 = *(u32 *)(r4 + 0)                      ;
+>>> exists ([y]=2 /\ 1:r3=0)
+>>>
+>>> This "exists" condition is not satisfiable according to the BPF model;
+>>> however, if we adopt the "natural"/intended(?) PowerPC implementations
+>>> of the synchronization primitives above (aka, with store_release() -->
+>>> LWSYNC and atomic_fetch_add() --> SYNC ; [...] ), then we see that the
+>>> condition in question becomes (architecturally) satisfiable on PowerPC
+>>> (although I'm not aware of actual observations on PowerPC hardware).
+>>
+>> Are the resulting PPC tests available somewhere?
 > 
-> Add an i2c_device_id table so that the driver can match on manually
-> instantiated i2c_client-s (which lack an ACPI fwnode to match on).
+> My data go back to the LKMM paper, cf. e.g. the R+pooncerelease+fencembonceonce
+> entry at https://diy.inria.fr/linux/hard.html#unseen .
+> 
+>    Andrea
 
-...
+I guess I understood you wrong. I thought you had manually "compiled" 
+those to PPC litmus format (i.e., doing exactly what the JIT compiler 
+would do). I can obviously write them manually myself, but I find this 
+painful and error prone (I am particularly bad at this task), so I 
+wanted to avoid this if someone else had already done it.
 
-> +static const struct i2c_device_id crystal_cove_i2c_match[] = {
-> +	{ "intel-crystal-cove" },
-
-Why this can't be "crystal_cove_i2c"?
-
-> +	{ }
-> +};
-
-...
-
->  	.driver = {
->  		.name = "crystal_cove_i2c",
->  		.pm = pm_sleep_ptr(&crystal_cove_pm_ops),
->  		.acpi_match_table = crystal_cove_acpi_match,
->  	},
-
--- 
-With Best Regards,
-Andy Shevchenko
-
+Hernan
 
 
