@@ -1,195 +1,245 @@
-Return-Path: <linux-kernel+bounces-382272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EDC89B0BAD
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 19:35:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA98F9B0BAF
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 19:35:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9ED98B23698
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:35:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69FAB1F29383
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:35:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 864A320EA4F;
-	Fri, 25 Oct 2024 17:29:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1CCC20C316;
+	Fri, 25 Oct 2024 17:30:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GJFZn0dg"
-Received: from mail-ua1-f73.google.com (mail-ua1-f73.google.com [209.85.222.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EKZi+w7o"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7790A20EA24
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 17:29:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BA1120C30B;
+	Fri, 25 Oct 2024 17:30:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729877377; cv=none; b=SXWe34VB/7vPiLogZtheTpQnEnnxpiKaqS1K4J9CPt8CHvnDB6okQNlfT17eRHBOgBJM65jGe+Zf5saODropm887yeDiKsiCUQyWPRAXXkxM5LKCaDh2CiWtFeJCnr7tFoukQUmp6aCzar7e072t0hry44oypKjHPCD+q3/v3yg=
+	t=1729877438; cv=none; b=Xgy/R1Qke5FRH7Ily2Kas2Cduizk6gN0fYbvNKVo00agaoCbr97nQ5WVgsh413ZeqPxwzUYOFboKfysmQotNpmKmHT5P/P2C/LbqdonwFlXL2Kep4wyzsHfgQXLfBcPX5PdBg7NGeRRXH1fOXVpJtmv795Us/AQLa3dtbpC6w8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729877377; c=relaxed/simple;
-	bh=vaWqE33Jp7HhvmUBvUQBmOBfExpF5yd2WBDLLHr3k1g=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=SlEe9ojA+u4e6/7gNXkW4OPWKL9oDpOCC8rp73gOUvgvk0tPh+2/x4roP8icLoC3cSkdgIa1ArCGs2Z58R6IgYd/hHoOynz7oj5inGyrpi1lyQ+iZTikdu2kvcjkKo2g8lQnM0TVHQszjGWNhjNiELi2IXNN9yFgpNhO0f0hUZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--moritzf.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GJFZn0dg; arc=none smtp.client-ip=209.85.222.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--moritzf.bounces.google.com
-Received: by mail-ua1-f73.google.com with SMTP id a1e0cc1a2514c-84fdfb0203eso665549241.2
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 10:29:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729877373; x=1730482173; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vaWqE33Jp7HhvmUBvUQBmOBfExpF5yd2WBDLLHr3k1g=;
-        b=GJFZn0dg8dbOpPDEhKXb6fqvm34L86rfYyCyPQbwgY9ao4jnWh+X/TtNpTXlDTj/hO
-         9WwR36q1yTLYU3D1OG1h/Lr3RseoyZU30BFajsFsey3nIfPs4HE2bLJ7HQ3/seKDNDe6
-         HfX/DSEz1nEnC13GQd/tvd3vyujq65HXpAKwisKApVYvh6pXoJ8Xlkfl8/yEzp8hXziH
-         gVhuCJW/wCGoaBY6gryLlnno+t7j7IzQR7pONqf6ZB6Wevz3vH3sncjAi+jNO5pYSQ4Q
-         T+sRKQXQTMAmovxwARlQCSC0/6dKYUMq+qAVWhsbMAh72hLWR5lBdK2fotr/3cz2DIHz
-         4CRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729877373; x=1730482173;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=vaWqE33Jp7HhvmUBvUQBmOBfExpF5yd2WBDLLHr3k1g=;
-        b=fJjgwFQeUpCnlbNNYfiBkNL/mZcpiV7kAnnItWQPhbphhMEtU+03/ZHf7it4dJllay
-         4HEDCDQncpZZIqKnMxdw9QwJw2pKkYZ6gU+TgWAMD1ObGJCKTVn0/NH/hXKuaUfOUkhl
-         9Bu9Yd8MR4X4G49HtSgxtzYYcYo8Z1HV2ZcPhjLXjoI6pGUYFY4xFDFtSHd6v3+JAf4y
-         VEtmzPP1LH3wCyDVyzdFcZwMB4UImknzS8Zrp9EQefBVniXhOeM4SZ9E/hi8BWj5tl+w
-         qOVw4jFzxH2AvqsQokOi86QXTkpLHyX1ssXVGgzYTH3gP5Yp1RrI7AcoBk2ZADZsRYg7
-         DDqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXVECU0N69mCYxiVF/m0L6o9XBZgaOIW608cg6ZcLvGvHP00WCLNd5th8KIwYoPin05O29hKNXSUN9fcks=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKnwNT0vjBIMpygSyOjeyH/nqda0dnKJoakUYz41DOT89OHnDX
-	mRLrmXwEcd48t8ObhEpBUkCCbSqfLvy1HJtR5DBCb7EE1Qtgx4TqYeQqPWJAs40aHvn5DIG2+1W
-	MSPiiWA==
-X-Google-Smtp-Source: AGHT+IHvR9B99oJaoIKK1hLWj8GKaITp7BpvPF0jOKvhMdVFUorXpcgarVI0m/9EYmbjpSpv134t+JBKnhKl
-X-Received: from morats.c.googlers.com ([fda3:e722:ac3:cc00:13f:f0c:ac12:c151])
- (user=moritzf job=sendgmr) by 2002:ab0:69c3:0:b0:848:92ea:87dd with SMTP id
- a1e0cc1a2514c-853f01a4d6bmr13173241.2.1729877373187; Fri, 25 Oct 2024
- 10:29:33 -0700 (PDT)
-Date: Fri, 25 Oct 2024 17:29:32 +0000
-In-Reply-To: <lbffqd6wuigivpd4ryrxwirhkc5ghj6k4nenm75dtgeea42535@7v2fzt5i7app>
+	s=arc-20240116; t=1729877438; c=relaxed/simple;
+	bh=ANS/gOrVqrxuajygy/OjPOoYLboLMlnXl9LVM3C87TU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=q0S785lGYMzEdDoCrSVYUa76qzu8+qh7uVpi5O+kHW59dm0b91YnFdrV41pA1gO2/WT/Pae6/FTuTOyfKc8PedakLxmThFa5YXC913gBmdO7zLeQd19vTwxIOTwuugkfRPLyYN27r7rvR8dCR49m7nwivO6gmtP3TRdixzWpDN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EKZi+w7o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEC0BC4CEC3;
+	Fri, 25 Oct 2024 17:30:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729877437;
+	bh=ANS/gOrVqrxuajygy/OjPOoYLboLMlnXl9LVM3C87TU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EKZi+w7oOiybHc4xqTorEzGtVN9yu6ZIC2LyD1PLMKbfLngS9xDt2n2JijbG83FI4
+	 jO2gpq9YKbpxd3FUkDbEuMbdR7nAeG0uWV3Q+6O838iLQkwa4vm73byERo3843Vnix
+	 2DWRJP1Y6OQMtkVPVaX9gQcHuOcGojWcZc6lj81oSyIBK73GoCYW51Ubga+tjwBc0R
+	 7oWZmgh5wfSkaWdLd5EB7QIak8xH4Mh2claTi4EZeaCLD6KR+yuVsHqlL/a0A4g6XM
+	 eXnUj5XjkYerhZOwHZe8KEC+CVcz8sbR6E6PNvQtmOvzblJOgKuy/IA56645v/gGQo
+	 dVsLEe5DfW2tw==
+Date: Fri, 25 Oct 2024 10:30:32 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Ravi Bangoria <ravi.bangoria@amd.com>,
+	Weilin Wang <weilin.wang@intel.com>,
+	Yoshihiro Furudera <fj5100bi@fujitsu.com>,
+	James Clark <james.clark@linaro.org>,
+	Athira Jajeev <atrajeev@linux.vnet.ibm.com>,
+	Howard Chu <howardchu95@gmail.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Changbin Du <changbin.du@huawei.com>, Ze Gao <zegao2021@gmail.com>,
+	Junhao He <hejunhao3@huawei.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v6 0/5] Hwmon PMUs
+Message-ID: <ZxvVuFqef2CLwtCs@google.com>
+References: <20241022180623.463131-1-irogers@google.com>
+ <Zxm5w6wXLxpbERZx@google.com>
+ <CAP-5=fXfyd9b7Ns-SL5F+iffc7oy4NFHBsT3oj3CRMbBa1QCfg@mail.gmail.com>
+ <Zxp4mbzsFyO5nUh7@google.com>
+ <CAP-5=fWP-T57-Bb60eixhgO3m7f_v3y-tWmV=ypuR52iNSAQvQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241017035940.4067922-1-payamm@google.com> <CAJZ5v0hbg_5VLCT3cXgK4WkCTwNAUGrUuRe66DoCHf6xydsTzQ@mail.gmail.com>
- <lbffqd6wuigivpd4ryrxwirhkc5ghj6k4nenm75dtgeea42535@7v2fzt5i7app>
-Message-ID: <ei3jeuuslvva5ka7tcdwn4abcidfuvdfdhymlxx66sxabmowo2@35iasm2ew6ws>
-Subject: Re: [PATCH] acpi: zero-initialize acpi_object union structure
-From: Moritz Fischer <moritzf@google.com>
-To: Payam Moradshahi <payamm@google.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
-Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAP-5=fWP-T57-Bb60eixhgO3m7f_v3y-tWmV=ypuR52iNSAQvQ@mail.gmail.com>
 
-SGkgUmFmYWVsLA0KDQpPbiBUaHUsIE9jdCAyNCwgMjAyNCBhdCAwMjo1ODoyN1BNIEdNVCwgUGF5
-YW0gTW9yYWRzaGFoaSB3cm90ZToNCj4gSGkgUmFmYWVsLA0KDQo+IFRoYW5rIHlvdSBmb3IgeW91
-ciByZXNwb25zZS4gUGxlYXNlIHNlZSBiZWxvdyBmb3IgbXkgcmVzcG9uc2UuDQoNCj4gUGF5YW0N
-Cg0KPiBPbiBNb24sIE9jdCAyMSwgMjAyNCBhdCAwMTozMTozOVBNIEdNVCwgUmFmYWVsIEouIFd5
-c29ja2kgd3JvdGU6DQo+ID4gT24gVGh1LCBPY3QgMTcsIDIwMjQgYXQgNTo1OeKAr0FNIFBheWFt
-IE1vcmFkc2hhaGkgPHBheWFtbUBnb29nbGUuY29tPg0KPiA+IHdyb3RlOg0KPiA+ID4NCj4gPiA+
-IFRoZSB3YXkgaW4gd2hpY2ggYWNwaV9vYmplY3QgdW5pb24gaXMgYmVpbmcgaW5pdGlhbGl6ZWQg
-dmFyaWVzIGJhc2VkICANCj4gb24NCj4gPiA+IGNvbXBpbGVyIHR5cGUsIHZlcnNpb24gYW5kIGZs
-YWdzIHVzZWQuIFNvbWUgd2lsbCB6ZXJvLWluaXRpYWxpemUgdGhlDQo+ID4gPiBlbnRpcmUgdW5p
-b24gc3RydWN0dXJlIGFuZCBzb21lIHdpbGwgb25seSBpbml0aWFsaXplIHRoZSBmaXJzdCBOLWJ5
-dGVzDQo+ID4gPiBvZiB0aGUgdW5pb24gc3RydWN0dXJlLg0KDQo+ID4gQW55IGRldGFpbHM/DQo+
-IEkgZHVtcGVkIGFjcGlfb2JqZWN0IGFmdGVyIGluaXRpYWxpemF0aW9uIGFuZCBub3RpY2VkIGVp
-dGhlciB0aGUNCj4gZW50aXJlIHN0cnVjdHVyZSB3YXMgemVyby1pbml0aWFsaXplZCBvciBqdXN0
-IHRoZSBmaXJzdCA4IGJ5dGVzDQo+IGRlcGVuZGluZyBvbiBjb21waWxlciB0eXBlIGFuZCB2ZXJz
-aW9uLg0KDQo+IGdjYyAxMy4yLjA6IGJhZA0KPiBDTEFOR19DTD0zNjIxMjEyNjk6IGdvb2QNCj4g
-Q0xBTkdfQ0w9NjA5NDQzMTI2OiBiYWQNCj4gQ0xBTkdfQ0w9Njg0NzczOTYwOiBnb29kDQoNCkZv
-ciByZWZlcmVuY2UgdGhlIGxhdHRlciBvbmVzIGFyZSBHb29nbGUgaW50ZXJuYWwgYnVpbGRzIG9m
-IGNsYW5nLCBidXQNCndlJ3ZlIHBsYXllZCBhcm91bmQgaW4gZ29kYm9sdCB3aXRoIHRoaXMgaW4g
-YSB2YXJpZXR5IG9mIHZlcnNpb25zIGFuZA0Kc29tZSB3b3JrIGFuZCBzb21lIGRvbid0LiBQYXlh
-bSBoYXMgdGhlIHJlbGV2YW50IHNlY3Rpb24gZnJvbSB0aGUgQw0Kc3RhbmRhcmQgYmVsb3cuDQoN
-Cg0KPiA+ID4gVGhpcyBjb3VsZCBsZWFkIHRvIHVuaW5pdGlhbGl6ZWQgdW5pb24gbWVtYmVycy4N
-Cg0KPiA+IFNvIHRoaXMgaXMgd29ya2luZyBhcm91bmQgYSBjb21waWxlciBidWcgQUZBSUNTLg0K
-DQo+ID4gSWYgdGhlIGNvbXBpbGVyIGhhcyB0aGlzIGJ1ZywgaXMgaXQgZ3VhcmFudGVlZCB0byBj
-b21waWxlIHRoZSByZXN0IG9mDQo+ID4gdGhlIGtlcm5lbCBjb3JyZWN0bHk/DQo+IFRoaXMgaXMg
-bm90IGEgY29tcGlsZXIgYnVnLiBUaGUgd2F5IGFjcGlfb2JqZWN0IHVuaW9uIGlzIGJlaW5nDQo+
-IGluaXRpYWxpemVkIGlzIG5vdCBjLXNwZWMgY29tcGxpYW50Lg0KDQpJIHRoaW5rIGluIHBhc3Qg
-dmVyc2lvbnMgd2UgbWlnaHQndmUgZ290dGVuIGx1Y2t5IHdpdGggdGhpcywgcmVjZW50DQpjb21w
-aWxlcnMgbWlnaHQndmUgdGlnaHRlbmVkIHRoaXMgdXAgc29tZSBvciBjaGFuZ2VkIGJlaGF2aW9y
-Lg0KDQoNCj4gQmFzZWQgb24gQyBTdGFuZGFyZCBJU08vSUVDIDk4OTk6MjAyeCAoRSk6DQoNCj4g
-U2VjdGlvbiA2LjIuNi4xICg3KSBzYXlzOg0KDQo+IFdoZW4gYSB2YWx1ZSBpcyBzdG9yZWQgaW4g
-YSBtZW1iZXIgb2YgYW4gb2JqZWN0IG9mIHVuaW9uIHR5cGUsIHRoZSBieXRlcyAgDQo+IG9mDQo+
-IHRoZQ0KPiBvYmplY3QgcmVwcmVzZW50YXRpb24gdGhhdCBkbyBub3QgY29ycmVzcG9uZCB0byB0
-aGF0IG1lbWJlciBidXQgZG8NCj4gY29ycmVzcG9uZA0KPiB0byBvdGhlciBtZW1iZXJzIHRha2Ug
-dW5zcGVjaWZpZWQgdmFsdWVzDQoNCj4gU2VjdGlvbiA2LjcuOSBzYXlzOg0KDQo+IElmIGFuIG9i
-amVjdCB0aGF0IGhhcyBhdXRvbWF0aWMgc3RvcmFnZSBkdXJhdGlvbiBpcyBub3QgaW5pdGlhbGl6
-ZWQNCj4gZXhwbGljaXRseSwNCj4gaXRzIHZhbHVlIGlzIGluZGV0ZXJtaW5hdGUuDQoNCj4gSWYg
-YW4gb2JqZWN0IHRoYXQgaGFzIHN0YXRpYyBvciB0aHJlYWQgc3RvcmFnZSBkdXJhdGlvbiBpcyBu
-b3QgaW5pdGlhbGl6ZWQNCj4gZXhwbGljaXRseSwgdGhlbjoNCj4gICAtIGlmIGl0IGlzIGEgdW5p
-b24sIHRoZSBmaXJzdCBuYW1lZCBtZW1iZXIgaXMgaW5pdGlhbGl6ZWQgKHJlY3Vyc2l2ZWx5KQ0K
-PiAgICAgYWNjb3JkaW5nIHRvIHRoZXNlIHJ1bGVzLCBhbmQgYW55IHBhZGRpbmcgaXMgaW5pdGlh
-bGl6ZWQgdG8gemVybyBiaXRzOw0KDQo+IFRoZSBhYm92ZSBndWFyYW50ZWVzIHplcm8gb25seSBp
-biB0aGUgY2FzZSBvZiBzdGF0aWMgb3IgdGhyZWFkIHN0b3JhZ2UsDQo+IHdoaWNoIGlzIG5vdCB0
-aGUgY2FzZSBoZXJlLg0KDQoNCj4gPiA+IFRoaXMgYnVnIHdhcyBjb25maXJtZWQgYnkgb2JzZXJ2
-aW5nIG5vbi16ZXJvIHZhbHVlIGZvciAgDQo+IG9iamVjdC0+cHJvY2Vzc29yDQo+ID4gPiBzdHJ1
-Y3R1cmUgdmFyaWFibGVzLg0KDQo+ID4gV2hlcmUgaGFzIGl0IGJlZW4gb2JzZXJ2ZWQ/ICBXaGF0
-IGNvbXBpbGVyIHZlcnNpb24ocyk/IGV0Yy4NCj4gU2VlIGFib3ZlIGZvciBzb21lIGV4YW1wbGVz
-DQoNClRoaXMgbWFuaWZlc3RzIGxpa2UgdGhpcyBvbiBHb29nbGUgQXhpb24gYXJtNjQgYnVpbGRz
-IHVzaW5nIEFybSdzDQpwcmVidWlsdCBHQ0MgMTMuMi4wOg0KDQpbICAgIDEuODQ0NTA4XSBhY3Bp
-IEFDUEkwMDA3OjA4OiBJbnZhbGlkIFBCTEsgbGVuZ3RoIFsyNzExNzAxMTJdDQpbICAgIDEuODUw
-MjUzXSBhY3BpIEFDUEkwMDA3OjA5OiBJbnZhbGlkIFBCTEsgbGVuZ3RoIFsyNzExNzAxMTJdDQpb
-ICAgIDEuODU1OTkyXSBhY3BpIEFDUEkwMDA3OjBhOiBJbnZhbGlkIFBCTEsgbGVuZ3RoIFsyNzEx
-NzAxMTJdDQpbICAgIDEuODYxNzMwXSBhY3BpIEFDUEkwMDA3OjBiOiBJbnZhbGlkIFBCTEsgbGVu
-Z3RoIFsyNzExNzAxMTJdDQpbICAgIDEuODY3NDcwXSBhY3BpIEFDUEkwMDA3OjBjOiBJbnZhbGlk
-IFBCTEsgbGVuZ3RoIFsyNzExNzAxMTJdDQpbICAgIDEuODczMjA4XSBhY3BpIEFDUEkwMDA3OjBk
-OiBJbnZhbGlkIFBCTEsgbGVuZ3RoIFsyNzExNzAxMTJdDQpbICAgIDEuODc4OTQ3XSBhY3BpIEFD
-UEkwMDA3OjBlOiBJbnZhbGlkIFBCTEsgbGVuZ3RoIFsyNzExNzAxMTJdDQpbICAgIDEuODg0Njg2
-XSBhY3BpIEFDUEkwMDA3OjBmOiBJbnZhbGlkIFBCTEsgbGVuZ3RoIFsyNzExNzAxMTJdDQpbICAg
-IDEuODkwNDI0XSBhY3BpIEFDUEkwMDA3OjEwOiBJbnZhbGlkIFBCTEsgbGVuZ3RoIFsyNzExNzAx
-MTJdDQpbICAgIDEuODk2MTYxXSBhY3BpIEFDUEkwMDA3OjExOiBJbnZhbGlkIFBCTEsgbGVuZ3Ro
-IFsyNzExNzAxMTJdDQpbICAgIDEuOTAxODk4XSBhY3BpIEFDUEkwMDA3OjEyOiBJbnZhbGlkIFBC
-TEsgbGVuZ3RoIFsyNzExNzAxMTJdDQpbICAgIDEuOTA3NjM2XSBhY3BpIEFDUEkwMDA3OjEzOiBJ
-bnZhbGlkIFBCTEsgbGVuZ3RoIFsyNzExNzAxMTJdDQpbICAgIDEuOTEzMzc0XSBhY3BpIEFDUEkw
-MDA3OjE0OiBJbnZhbGlkIFBCTEsgbGVuZ3RoIFsyNzExNzAxMTJdDQpbICAgIDEuOTE5MTEzXSBh
-Y3BpIEFDUEkwMDA3OjE1OiBJbnZhbGlkIFBCTEsgbGVuZ3RoIFsyNzExNzAxMTJdDQpbICAgIDEu
-OTI0ODUxXSBhY3BpIEFDUEkwMDA3OjE2OiBJbnZhbGlkIFBCTEsgbGVuZ3RoIFsyNzExNzAxMTJd
-DQoNCg0KPiA+ID4gbm9uLXplcm8gaW5pdGlhbGl6ZWQgbWVtYmVycyBvZiBhY3BpX29iamVjdCB1
-bmlvbiBzdHJ1Y3R1cmUgY2F1c2VzDQo+ID4gPiBpbmNvcnJlY3QgZXJyb3IgcmVwb3J0aW5nIGJ5
-IHRoZSBkcml2ZXIuDQo+ID4gPg0KPiA+ID4gSWYgYSBCSU9TIGlzIHVzaW5nICJEZXZpY2UiIHN0
-YXRlbWVudCBhcyBvcHBvc2VkIHRvICJQcm9jZXNzb3IiDQo+ID4gPiBzdGF0ZW1lbnQsIG9iamVj
-dCB2YXJpYWJsZSBtYXkgY29udGFpbiB1bmluaXRpYWxpemVkIG1lbWJlcnMgY2F1c2luZyAgDQo+
-IHRoZQ0KPiA+ID4gZHJpdmVyIHRvIHJlcG9ydCAiSW52YWxpZCBQQkxLIGxlbmd0aCIgaW5jb3Jy
-ZWN0bHkuDQo+ID4gPg0KPiA+ID4gVXNpbmcgbWVtc2V0IHRvIHplcm8taW5pdGlhbGl6ZSB0aGUg
-dW5pb24gc3RydWN0dXJlIGZpeGVzIHRoaXMgaXNzdWUgIA0KPiBhbmQNCj4gPiA+IGFsc28gcmVt
-b3ZlcyB0aGUgZGVwZW5kZW5jeSBvZiB0aGlzIGZ1bmN0aW9uIG9uIGNvbXBpbGVyIHZlcnNpb25z
-IGFuZA0KPiA+ID4gZmxhZ3MgYmVpbmcgdXNlZC4NCj4gPiA+DQo+ID4gPiBUZXN0ZWQ6IFRlc3Rl
-ZCBvbiBBUk02NCBoYXJkd2FyZSB0aGF0IHdhcyBwcmludGluZyB0aGlzIGVycm9yIGFuZA0KPiA+
-ID4gY29uZmlybWVkIHRoZSBwcmludHMgd2VyZSBnb25lLg0KPiA+ID4NCj4gPiA+IEFsc28gY29u
-ZmlybWVkIHRoaXMgZG9lcyBub3QgY2F1c2UgcmVncmVzc2lvbiBvbiBBUk02NCBhbmQgWDg2DQo+
-ID4gPiBtYWNoaW5lcy4NCj4gPiA+DQo+ID4gPiBTaWduZWQtb2ZmLWJ5OiBQYXlhbSBNb3JhZHNo
-YWhpIDxwYXlhbW1AZ29vZ2xlLmNvbT4NCj4gPiA+IC0tLQ0KPiA+ID4gIGRyaXZlcnMvYWNwaS9h
-Y3BpX3Byb2Nlc3Nvci5jIHwgNCArKystDQo+ID4gPiAgMSBmaWxlIGNoYW5nZWQsIDMgaW5zZXJ0
-aW9ucygrKSwgMSBkZWxldGlvbigtKQ0KPiA+ID4NCj4gPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJz
-L2FjcGkvYWNwaV9wcm9jZXNzb3IuYw0KPiA+IGIvZHJpdmVycy9hY3BpL2FjcGlfcHJvY2Vzc29y
-LmMNCj4gPiA+IGluZGV4IDdjZjYxMDFjYjRjNzMuLjY2OTZhZDQ5MzdkMjEgMTAwNjQ0DQo+ID4g
-PiAtLS0gYS9kcml2ZXJzL2FjcGkvYWNwaV9wcm9jZXNzb3IuYw0KPiA+ID4gKysrIGIvZHJpdmVy
-cy9hY3BpL2FjcGlfcHJvY2Vzc29yLmMNCj4gPiA+IEBAIC0yNzUsNyArMjc1LDcgQEAgc3RhdGlj
-IGlubGluZSBpbnQNCj4gPiBhY3BpX3Byb2Nlc3Nvcl9ob3RhZGRfaW5pdChzdHJ1Y3QgYWNwaV9w
-cm9jZXNzb3IgKnByLA0KPiA+ID4NCj4gPiA+ICBzdGF0aWMgaW50IGFjcGlfcHJvY2Vzc29yX2dl
-dF9pbmZvKHN0cnVjdCBhY3BpX2RldmljZSAqZGV2aWNlKQ0KPiA+ID4gIHsNCj4gPiA+IC0gICAg
-ICAgdW5pb24gYWNwaV9vYmplY3Qgb2JqZWN0ID0geyAwIH07DQo+ID4gPiArICAgICAgIHVuaW9u
-IGFjcGlfb2JqZWN0IG9iamVjdDsNCj4gPiA+ICAgICAgICAgc3RydWN0IGFjcGlfYnVmZmVyIGJ1
-ZmZlciA9IHsgc2l6ZW9mKHVuaW9uIGFjcGlfb2JqZWN0KSwNCj4gPiAmb2JqZWN0IH07DQo+ID4g
-PiAgICAgICAgIHN0cnVjdCBhY3BpX3Byb2Nlc3NvciAqcHIgPSBhY3BpX2RyaXZlcl9kYXRhKGRl
-dmljZSk7DQo+ID4gPiAgICAgICAgIGludCBkZXZpY2VfZGVjbGFyYXRpb24gPSAwOw0KPiA+ID4g
-QEAgLTI4NCw2ICsyODQsOCBAQCBzdGF0aWMgaW50IGFjcGlfcHJvY2Vzc29yX2dldF9pbmZvKHN0
-cnVjdA0KPiA+IGFjcGlfZGV2aWNlICpkZXZpY2UpDQo+ID4gPiAgICAgICAgIHVuc2lnbmVkIGxv
-bmcgbG9uZyB2YWx1ZTsNCj4gPiA+ICAgICAgICAgaW50IHJldDsNCj4gPiA+DQo+ID4gPiArICAg
-ICAgIG1lbXNldCgmb2JqZWN0LCAwLCBzaXplb2YodW5pb24gYWNwaV9vYmplY3QpKTsNCj4gPiA+
-ICsNCj4gPiA+ICAgICAgICAgYWNwaV9wcm9jZXNzb3JfZXJyYXRhKCk7DQo+ID4gPg0KPiA+ID4g
-ICAgICAgICAvKg0KPiA+ID4gLS0NCg0KUGF5YW0sIGl0IG1pZ2h0IGJlIGdvb2QgdG8gYWRkIGEg
-bG9nIHNuaXBwZXQgYW5kIHJlZmVyZW5jZXMgdG8gdGhlIHJlbGV2YW50ICANCnNwZWMNCnNlY3Rp
-b25zIHRvIHlvdXIgdjIgY29tbWl0IG1lc3NhZ2UuDQoNCk1vcmVvdmVyLCBmb3IgdjIgb2YgdGhl
-IHBhdGNoIHlvdSBwcm9iYWJseSB3YW50IHRvIGFkZCBhDQogICBDYzogc3RhYmxlQHZnZXIua2Vy
-bmVsLm9yZw0KDQp0byB5b3VyIHBhdGNoIHRvIG1ha2Ugc3VyZSBpdCBnZXRzIHBpY2tlZCB1cCBv
-bmNlIGl0IGdldHMgcGlja2VkIHVwDQpmb3IgbWFpbmxpbmUuIFNlZSBbMV0gZm9yIG1vcmUgaW5m
-byBvbiB0aGUgc3RhYmxlIHByb2Nlc3MuDQoNCkNoZWVycywNCk1vcml0eg0KDQpbMV0gaHR0cHM6
-Ly93d3cua2VybmVsLm9yZy9kb2MvRG9jdW1lbnRhdGlvbi9wcm9jZXNzL3N0YWJsZS1rZXJuZWwt
-cnVsZXMucnN0DQo=
+On Thu, Oct 24, 2024 at 06:33:27PM -0700, Ian Rogers wrote:
+> On Thu, Oct 24, 2024 at 9:41 AM Namhyung Kim <namhyung@kernel.org> wrote:
+> >
+> > On Thu, Oct 24, 2024 at 12:07:46AM -0700, Ian Rogers wrote:
+> > > On Wed, Oct 23, 2024 at 8:06 PM Namhyung Kim <namhyung@kernel.org> wrote:
+> > > >
+> > > > Hi Ian,
+> > > >
+> > > > On Tue, Oct 22, 2024 at 11:06:18AM -0700, Ian Rogers wrote:
+> > > > > Following the convention of the tool PMU, create a hwmon PMU that
+> > > > > exposes hwmon data for reading. For example, the following shows
+> > > > > reading the CPU temperature and 2 fan speeds alongside the uncore
+> > > > > frequency:
+> > > > > ```
+> > > > > $ perf stat -e temp_cpu,fan1,hwmon_thinkpad/fan2/,tool/num_cpus_online/ -M UNCORE_FREQ -I 1000
+> > > > >      1.001153138              52.00 'C   temp_cpu
+> > > > >      1.001153138              2,588 rpm  fan1
+> > > > >      1.001153138              2,482 rpm  hwmon_thinkpad/fan2/
+> > > > >      1.001153138                  8      tool/num_cpus_online/
+> > > > >      1.001153138      1,077,101,397      UNC_CLOCK.SOCKET                 #     1.08 UNCORE_FREQ
+> > > > >      1.001153138      1,012,773,595      duration_time
+> > > > > ...
+> > > > > ```
+> > > > >
+> > > > > Additional data on the hwmon events is in perf list:
+> > > > > ```
+> > > > > $ perf list
+> > > > > ...
+> > > > > hwmon:
+> > > > > ...
+> > > > >   temp_core_0 OR temp2
+> > > > >        [Temperature in unit coretemp named Core 0. crit=100'C,max=100'C crit_alarm=0'C. Unit:
+> > > > >         hwmon_coretemp]
+> > > > > ...
+> > > > > ```
+> > > > >
+> > > > > v6: Add string.h #include for issue reported by kernel test robot.
+> > > > > v5: Fix asan issue in parse_hwmon_filename caught by a TMA metric.
+> > > > > v4: Drop merged patches 1 to 10. Separate adding the hwmon_pmu from
+> > > > >     the update to perf_pmu to use it. Try to make source of literal
+> > > > >     strings clearer via named #defines. Fix a number of GCC warnings.
+> > > > > v3: Rebase, add Namhyung's acked-by to patches 1 to 10.
+> > > > > v2: Address Namhyung's review feedback. Rebase dropping 4 patches
+> > > > >     applied by Arnaldo, fix build breakage reported by Arnaldo.
+> > > > >
+> > > > > Ian Rogers (5):
+> > > > >   tools api io: Ensure line_len_out is always initialized
+> > > > >   perf hwmon_pmu: Add a tool PMU exposing events from hwmon in sysfs
+> > > > >   perf pmu: Add calls enabling the hwmon_pmu
+> > > > >   perf test: Add hwmon "PMU" test
+> > > > >   perf docs: Document tool and hwmon events
+> > > >
+> > > > I think the patch 2 can be easily splitted into core and other parts
+> > > > like dealing with aliases and units.  I believe it'd be helpful for
+> > > > others (like me) to understand how it works.
+> > > >
+> > > > Please take a look at 'perf/hwmon-pmu' branch in:
+> > > >
+> > > >   https://git.kernel.org/pub/scm/linux/kernel/git/namhyung/linux-perf.git
+> > >
+> > > Thanks Namhyung but I'm not really seeing this making anything simpler
+> > > and I can see significant new bugs. Your new patch:
+> > > https://git.kernel.org/pub/scm/linux/kernel/git/namhyung/linux-perf.git/commit/?h=perf/hwmon-pmu&id=85c78b5bf71fb3e67ae815f7b2d044648fa08391
+> > > Has taken about 40% out of patch 2, but done so by splitting function
+> > > declarations from their definitions, enum declarations from any use,
+> >
+> > Yeah, it's just because I was lazy and you can split header files too
+> > (and please do so).
+> >
+> > > etc. It also adds in code like:
+> > >
+> > > snprintf(buf, sizeof(buf), "%s_input", evsel->name);
+> > >
+> > > but this would be a strange thing to do. The evsel->name is rewritten
+> > > by fallback logic, so cycles may become cycles:u if kernel profiling
+> >
+> > I know it doesn't work but just want to highlight how it's supposed to
+> > work.  Eventually what we need is a correct file name.  In fact, I think
+> > it'd work if we can pass a correct event name probably like:
+> >
+> >   perf stat -e hwmon5/name=fan1/ true
+> 
+> But this isn't what the term name and evsel's name are for. They are
+> to allow you to do:
+> ```
+> $ perf stat -e cycles/name=foobar/ true
+> 
+> Performance counter stats for 'true':
+> 
+>         1,126,942      foobar
+> 
+>       0.001681805 seconds time elapsed
+> 
+>       0.001757000 seconds user
+>       0.000000000 seconds sys
+> ```
+> Why would you do this in code, change a fundamental of evsel behavior,
+> then just to delete it in the next patch?
+
+Well, I didn't change the actual behavior and it doesn't work yet.
+The deletion is just one line, and I think it reveals the intention of
+the next patch very well.
+
+> 
+> > > is restricted. This is why we have metric-id in the evsel as we cannot
+> > > rely on the evsel->name not mutating when looking up events for the
+> > > sake of metrics. Using the name as part of a sysfs filename lookup
+> > > doesn't make sense to me as now the evsel fallback logic can break a
+> > > hwmon event. In the original patch the code was:
+> >
+> > The fallback logic is used only if the kernel returns an error.  Thus
+> > it'd be fine as long as it correctly finds the sysfs filename.  But it's
+> > not used in the final code and the change is a simple one-liner.
+> 
+> But it's not. It's changing what evsel->name means to be an event
+> encoding. How does reverse config to name lookup work in this model?
+> How does the normal use of the name term work?
+
+It's intermediate code that is not activated yet.  So I think it's about
+to say how the code works.  If you really don't like to use evsel->name,
+maybe you can put a dummy name with a comment saying it'll be updated in
+next patch.
+
+> 
+> > >
+> > > snprintf(buf, sizeof(buf), "%s%d_input", hwmon_type_strs[key.type], key.num);
+> > >
+> > > where those two values are constants and key.type and key.num both
+> > > values embedded in the config value the evsel fallback logic won't
+> > > change. But bringing in the code that does that basically brings in
+> > > all of the rest of patch 2.
+> >
+> > Right, that's why I did that way.
+> >
+> > >
+> > > So the patch is adding a PMU that looks broken, so rather than
+> > > simplifying things it just creates a broken intermediate state and
+> > > should that be fixed for the benefit of bisects?
+> >
+> > Actually it's not broken since it's not enabled yet. :)
+> >
+> >
+> > > It also complicates understanding as the declarations of functions and
+> > > enums have kernel-doc, but now the definitions of enums and functions
+> > > are split apart. For me, to understand the code I'd want to squash the
+> > > patches back together again so I could see a declaration with its
+> > > definition.
+> >
+> > Yep, please move the declarations to the patch 3.
+> 
+> So I think moving the enum declarations into one patch is okay. But as
+> the enum values have no bearing on hardware constants, or something
+> outside of the code that uses them it smells strange to me. Ultimately
+> this is going to do little to the lines of code count but damage
+> readability. I'm not sure why we're doing this given the kernel model
+> for adding a driver is to add it as a large chunk. For example, here
+> is adding the intel PT driver:
+> https://lore.kernel.org/all/1422614392-114498-1-git-send-email-alexander.shishkin@linux.intel.com/T/#u
+
+Maybe others can understand a big patch easily, but I'm not.
+
+Thanks,
+Namhyung
+
 
