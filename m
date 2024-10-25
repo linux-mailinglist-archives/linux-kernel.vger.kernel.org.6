@@ -1,79 +1,97 @@
-Return-Path: <linux-kernel+bounces-381156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72DC69AFB40
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 09:40:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42D269AFB44
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 09:40:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3306628119E
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 07:40:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 666A21C22071
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 07:40:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6395A1B6D00;
-	Fri, 25 Oct 2024 07:39:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFD831C07EA;
+	Fri, 25 Oct 2024 07:40:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ly2SHXeA"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BbuIIGYW"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EED81714B8;
-	Fri, 25 Oct 2024 07:39:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E5231BC9E6;
+	Fri, 25 Oct 2024 07:40:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729841997; cv=none; b=YCIHx0kHIH8pq9twmN3fXHbczfhmq9DnBYULk2sGtLgKCMtzA7bUL4AHpJi4+tqrRNxikQTLEjjBbAH4RMO6E15nNLNahcOoXZwvWAhZn/22K8awlSzeobRkbsHgHPf3XTWqBttyKn+7O1TGhtELOg2e7jQHo7wh8ysCDQRgqdI=
+	t=1729842004; cv=none; b=T2w0V/20AvnImW6ZDNJdcM5TNaDnQZlDQ7Jz08vzA2uyjlfUgBhawN/QVEdFc8MMheAKmqCrfxRU6JAsgUN1vzk7tMn0RAfk6Ydtq7Dlu7WcfMNv/4bQOi+CEeJB9KoPS3AsK3oQNdy0QfUxdqcYIggFnHz7t4ZHla1r1x+9W08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729841997; c=relaxed/simple;
-	bh=YNh9X+sKu3F4oHhz2LxLQxpn+h6J6qjTFKyLVPjNTcQ=;
+	s=arc-20240116; t=1729842004; c=relaxed/simple;
+	bh=yBbBH9p6aqtBMVil5u+tl7Fqa8eFLhohsl5YWvv6Zaw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QSWf8m3lWHFONeCG9+FL0t7Z3YtSrHM4w0VNoJPnYs9w+n6oUsoHw5ciYxhilUqBz6g9PpeQNaIy3KCLQM/5I6ro7ZndSUH8YsnJF1+mdOhb3SNtmdKh44gMoBq7CI2rpMkIUp+EBSK5+WKmHksEdpqOgPPi7r2FeZZ35/VU1mU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ly2SHXeA; arc=none smtp.client-ip=198.175.65.13
+	 Content-Type:Content-Disposition:In-Reply-To; b=ln9wWztVXhRPfDWxpLv5pBVGWst1PdUgfTx52C9QVFglCvFmq8yDFyLsjLEvin1TaihNr7Bc79UnVLZKF1Pqhikk8iaOPy9L9lF84WPkTk4/U2bNNoQp2CuDgJAs+p39nL5GBOAKhnlBtq30okGfcl9odoPvn828+9VzORfK/oE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BbuIIGYW; arc=none smtp.client-ip=198.175.65.13
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729841995; x=1761377995;
+  t=1729842003; x=1761378003;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=YNh9X+sKu3F4oHhz2LxLQxpn+h6J6qjTFKyLVPjNTcQ=;
-  b=ly2SHXeAAGQU9Hlb+pzRjTeZN+htqV6QGHyxNHKtXdmMdWqhWTaR5DKB
-   NE4pnJr/jkG63uMaDzT0d46dmkN2TIxxVWgCBt6Z6xL4maASybq2S4z/7
-   Q2gAxYRzJ0+VkEB2SUdHaQtP5YBKjr49L6cKLXgrTFv87wfqdsKjHQkL/
-   03oDBFPYawz5IWhYFN7+y8SaQ8aFTjiUXMOOJFHu8vLfYd1h13Fsam5rj
-   7Bdz2w7H41cmlwlV2yWGjxNj+RprX3jZc5xPlH/jcj+Z2rUZ4pcT9pk97
-   tg3ePTSoYPMh5FZxHZqQX7LyUMOQE96r8wy8mqUjs/4rdcCx+ekNm505S
-   g==;
-X-CSE-ConnectionGUID: o4XCv7eYRImN8+R4QMxwcw==
-X-CSE-MsgGUID: 6wwltDTJRIWKTVj7CUtuUg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="40610777"
+  bh=yBbBH9p6aqtBMVil5u+tl7Fqa8eFLhohsl5YWvv6Zaw=;
+  b=BbuIIGYWwc7TKbIyB5Yj6y9+CSa1D1VWajTcwNymHKOCpPRDk9SGZK4o
+   /mWfy7ryuM4xHjeLtVcsGNZEfPg+2Q5nuemb+5S0Z6jkxO57dVkWsPwfR
+   UqCF57MFireOUBFCSmWYvm5njQq9jny61xN4EOnGvWU3ZDYELpc1jUTtv
+   3HN1DiPgNL3spIlZ5N+jr7VZDzFAEkSww9GULm5G5M+ZGLOWCwbZX/D7A
+   9ARgoxKCBazxzMBZ//LU0YuSESNsxStmsJrw/6vML+yU747MNyZE1WTWa
+   qCVIwsZTo/4YijfN+e9ANYPOfUHc019vyD7s2lKDCirX+B/kuCjdcQsbH
+   w==;
+X-CSE-ConnectionGUID: SSMEOhRgSt2GHSYCHRz4tg==
+X-CSE-MsgGUID: a/gFFDT8TQunwyLBc1gJxQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="40610793"
 X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="40610777"
+   d="scan'208";a="40610793"
 Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2024 00:39:51 -0700
-X-CSE-ConnectionGUID: FMQpQUSYStW/aAdih13W3Q==
-X-CSE-MsgGUID: k69e6RSbSJ2UkOTx059wDw==
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2024 00:40:01 -0700
+X-CSE-ConnectionGUID: +EtDZenqS3uQRCXmiEZu3w==
+X-CSE-MsgGUID: NtENei+HSruYwJ95nzTfEg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.11,231,1725346800"; 
-   d="scan'208";a="85632622"
+   d="scan'208";a="85632621"
 Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
   by orviesa005.jf.intel.com with ESMTP; 25 Oct 2024 00:39:48 -0700
 Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1t4EvB-000Xme-1f;
+	id 1t4EvB-000Xmi-1n;
 	Fri, 25 Oct 2024 07:39:45 +0000
-Date: Fri, 25 Oct 2024 15:38:56 +0800
+Date: Fri, 25 Oct 2024 15:38:57 +0800
 From: kernel test robot <lkp@intel.com>
-To: Richard Guy Briggs <rgb@redhat.com>,
-	Linux-Audit Mailing List <linux-audit@lists.linux-audit.osci.io>,
-	LKML <linux-kernel@vger.kernel.org>, linux-modules@vger.kernel.org,
-	Linux Kernel Audit Mailing List <audit@vger.kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, Paul Moore <paul@paul-moore.com>,
-	Eric Paris <eparis@parisplace.org>, Steve Grubb <sgrubb@redhat.com>,
-	Richard Guy Briggs <rgb@redhat.com>
-Subject: Re: [PATCH v1] audit,module: restore audit logging in load failure
- case
-Message-ID: <202410251446.xzMTe7Yk-lkp@intel.com>
-References: <999cdd694f951acd2f4ad665fe7ab97d0834e162.1729717542.git.rgb@redhat.com>
+To: Puranjay Mohan <puranjay@kernel.org>, Albert Ou <aou@eecs.berkeley.edu>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Eric Dumazet <edumazet@google.com>, Hao Luo <haoluo@google.com>,
+	Helge Deller <deller@gmx.de>, Jakub Kicinski <kuba@kernel.org>,
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-parisc@vger.kernel.org, linux-riscv@lists.infradead.org,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Mykola Lysenko <mykolal@fb.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Puranjay Mohan <puranjay12@gmail.com>,
+	Shuah Khan <skhan@linuxfoundation.org>, Song Liu <song@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>
+Cc: oe-kbuild-all@lists.linux.dev,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH bpf-next v2 2/4] bpf: bpf_csum_diff: optimize and
+ homogenize for all archs
+Message-ID: <202410251552.LR73LP4V-lkp@intel.com>
+References: <20241023153922.86909-3-puranjay@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,257 +100,141 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <999cdd694f951acd2f4ad665fe7ab97d0834e162.1729717542.git.rgb@redhat.com>
+In-Reply-To: <20241023153922.86909-3-puranjay@kernel.org>
 
-Hi Richard,
+Hi Puranjay,
 
 kernel test robot noticed the following build warnings:
 
-[auto build test WARNING on mcgrof/modules-next]
-[also build test WARNING on linus/master v6.12-rc4 next-20241024]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+[auto build test WARNING on bpf-next/master]
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Richard-Guy-Briggs/audit-module-restore-audit-logging-in-load-failure-case/20241024-051515
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/mcgrof/linux.git modules-next
-patch link:    https://lore.kernel.org/r/999cdd694f951acd2f4ad665fe7ab97d0834e162.1729717542.git.rgb%40redhat.com
-patch subject: [PATCH v1] audit,module: restore audit logging in load failure case
-config: x86_64-randconfig-121-20241025 (https://download.01.org/0day-ci/archive/20241025/202410251446.xzMTe7Yk-lkp@intel.com/config)
+url:    https://github.com/intel-lab-lkp/linux/commits/Puranjay-Mohan/net-checksum-move-from32to16-to-generic-header/20241023-234347
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git master
+patch link:    https://lore.kernel.org/r/20241023153922.86909-3-puranjay%40kernel.org
+patch subject: [PATCH bpf-next v2 2/4] bpf: bpf_csum_diff: optimize and homogenize for all archs
+config: i386-randconfig-061-20241025 (https://download.01.org/0day-ci/archive/20241025/202410251552.LR73LP4V-lkp@intel.com/config)
 compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241025/202410251446.xzMTe7Yk-lkp@intel.com/reproduce)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241025/202410251552.LR73LP4V-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410251446.xzMTe7Yk-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410251552.LR73LP4V-lkp@intel.com/
 
 sparse warnings: (new ones prefixed by >>)
->> kernel/module/main.c:3336:50: sparse: sparse: incorrect type in argument 1 (different modifiers) @@     expected char *name @@     got char const * @@
-   kernel/module/main.c:3336:50: sparse:     expected char *name
-   kernel/module/main.c:3336:50: sparse:     got char const *
+   net/core/filter.c:1423:39: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct sock_filter const *filter @@     got struct sock_filter [noderef] __user *filter @@
+   net/core/filter.c:1423:39: sparse:     expected struct sock_filter const *filter
+   net/core/filter.c:1423:39: sparse:     got struct sock_filter [noderef] __user *filter
+   net/core/filter.c:1501:39: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct sock_filter const *filter @@     got struct sock_filter [noderef] __user *filter @@
+   net/core/filter.c:1501:39: sparse:     expected struct sock_filter const *filter
+   net/core/filter.c:1501:39: sparse:     got struct sock_filter [noderef] __user *filter
+   net/core/filter.c:2321:45: sparse: sparse: incorrect type in argument 2 (different base types) @@     expected restricted __be32 [usertype] daddr @@     got unsigned int [usertype] ipv4_nh @@
+   net/core/filter.c:2321:45: sparse:     expected restricted __be32 [usertype] daddr
+   net/core/filter.c:2321:45: sparse:     got unsigned int [usertype] ipv4_nh
+   net/core/filter.c:10993:31: sparse: sparse: symbol 'sk_filter_verifier_ops' was not declared. Should it be static?
+   net/core/filter.c:11000:27: sparse: sparse: symbol 'sk_filter_prog_ops' was not declared. Should it be static?
+   net/core/filter.c:11004:31: sparse: sparse: symbol 'tc_cls_act_verifier_ops' was not declared. Should it be static?
+   net/core/filter.c:11013:27: sparse: sparse: symbol 'tc_cls_act_prog_ops' was not declared. Should it be static?
+   net/core/filter.c:11017:31: sparse: sparse: symbol 'xdp_verifier_ops' was not declared. Should it be static?
+   net/core/filter.c:11029:31: sparse: sparse: symbol 'cg_skb_verifier_ops' was not declared. Should it be static?
+   net/core/filter.c:11035:27: sparse: sparse: symbol 'cg_skb_prog_ops' was not declared. Should it be static?
+   net/core/filter.c:11039:31: sparse: sparse: symbol 'lwt_in_verifier_ops' was not declared. Should it be static?
+   net/core/filter.c:11045:27: sparse: sparse: symbol 'lwt_in_prog_ops' was not declared. Should it be static?
+   net/core/filter.c:11049:31: sparse: sparse: symbol 'lwt_out_verifier_ops' was not declared. Should it be static?
+   net/core/filter.c:11055:27: sparse: sparse: symbol 'lwt_out_prog_ops' was not declared. Should it be static?
+   net/core/filter.c:11059:31: sparse: sparse: symbol 'lwt_xmit_verifier_ops' was not declared. Should it be static?
+   net/core/filter.c:11066:27: sparse: sparse: symbol 'lwt_xmit_prog_ops' was not declared. Should it be static?
+   net/core/filter.c:11070:31: sparse: sparse: symbol 'lwt_seg6local_verifier_ops' was not declared. Should it be static?
+   net/core/filter.c:11076:27: sparse: sparse: symbol 'lwt_seg6local_prog_ops' was not declared. Should it be static?
+   net/core/filter.c:11079:31: sparse: sparse: symbol 'cg_sock_verifier_ops' was not declared. Should it be static?
+   net/core/filter.c:11085:27: sparse: sparse: symbol 'cg_sock_prog_ops' was not declared. Should it be static?
+   net/core/filter.c:11088:31: sparse: sparse: symbol 'cg_sock_addr_verifier_ops' was not declared. Should it be static?
+   net/core/filter.c:11094:27: sparse: sparse: symbol 'cg_sock_addr_prog_ops' was not declared. Should it be static?
+   net/core/filter.c:11097:31: sparse: sparse: symbol 'sock_ops_verifier_ops' was not declared. Should it be static?
+   net/core/filter.c:11103:27: sparse: sparse: symbol 'sock_ops_prog_ops' was not declared. Should it be static?
+   net/core/filter.c:11106:31: sparse: sparse: symbol 'sk_skb_verifier_ops' was not declared. Should it be static?
+   net/core/filter.c:11113:27: sparse: sparse: symbol 'sk_skb_prog_ops' was not declared. Should it be static?
+   net/core/filter.c:11116:31: sparse: sparse: symbol 'sk_msg_verifier_ops' was not declared. Should it be static?
+   net/core/filter.c:11123:27: sparse: sparse: symbol 'sk_msg_prog_ops' was not declared. Should it be static?
+   net/core/filter.c:11126:31: sparse: sparse: symbol 'flow_dissector_verifier_ops' was not declared. Should it be static?
+   net/core/filter.c:11132:27: sparse: sparse: symbol 'flow_dissector_prog_ops' was not declared. Should it be static?
+   net/core/filter.c:11460:31: sparse: sparse: symbol 'sk_reuseport_verifier_ops' was not declared. Should it be static?
+   net/core/filter.c:11466:27: sparse: sparse: symbol 'sk_reuseport_prog_ops' was not declared. Should it be static?
+   net/core/filter.c:11668:27: sparse: sparse: symbol 'sk_lookup_prog_ops' was not declared. Should it be static?
+   net/core/filter.c:11672:31: sparse: sparse: symbol 'sk_lookup_verifier_ops' was not declared. Should it be static?
+   net/core/filter.c:1931:43: sparse: sparse: incorrect type in argument 2 (different base types) @@     expected restricted __wsum [usertype] diff @@     got unsigned long long [usertype] to @@
+   net/core/filter.c:1931:43: sparse:     expected restricted __wsum [usertype] diff
+   net/core/filter.c:1931:43: sparse:     got unsigned long long [usertype] to
+   net/core/filter.c:1934:36: sparse: sparse: incorrect type in argument 2 (different base types) @@     expected restricted __be16 [usertype] old @@     got unsigned long long [usertype] from @@
+   net/core/filter.c:1934:36: sparse:     expected restricted __be16 [usertype] old
+   net/core/filter.c:1934:36: sparse:     got unsigned long long [usertype] from
+   net/core/filter.c:1934:42: sparse: sparse: incorrect type in argument 3 (different base types) @@     expected restricted __be16 [usertype] new @@     got unsigned long long [usertype] to @@
+   net/core/filter.c:1934:42: sparse:     expected restricted __be16 [usertype] new
+   net/core/filter.c:1934:42: sparse:     got unsigned long long [usertype] to
+   net/core/filter.c:1937:36: sparse: sparse: incorrect type in argument 2 (different base types) @@     expected restricted __be32 [usertype] from @@     got unsigned long long [usertype] from @@
+   net/core/filter.c:1937:36: sparse:     expected restricted __be32 [usertype] from
+   net/core/filter.c:1937:36: sparse:     got unsigned long long [usertype] from
+   net/core/filter.c:1937:42: sparse: sparse: incorrect type in argument 3 (different base types) @@     expected restricted __be32 [usertype] to @@     got unsigned long long [usertype] to @@
+   net/core/filter.c:1937:42: sparse:     expected restricted __be32 [usertype] to
+   net/core/filter.c:1937:42: sparse:     got unsigned long long [usertype] to
+   net/core/filter.c:1982:59: sparse: sparse: incorrect type in argument 3 (different base types) @@     expected restricted __wsum [usertype] diff @@     got unsigned long long [usertype] to @@
+   net/core/filter.c:1982:59: sparse:     expected restricted __wsum [usertype] diff
+   net/core/filter.c:1982:59: sparse:     got unsigned long long [usertype] to
+   net/core/filter.c:1985:52: sparse: sparse: incorrect type in argument 3 (different base types) @@     expected restricted __be16 [usertype] from @@     got unsigned long long [usertype] from @@
+   net/core/filter.c:1985:52: sparse:     expected restricted __be16 [usertype] from
+   net/core/filter.c:1985:52: sparse:     got unsigned long long [usertype] from
+   net/core/filter.c:1985:58: sparse: sparse: incorrect type in argument 4 (different base types) @@     expected restricted __be16 [usertype] to @@     got unsigned long long [usertype] to @@
+   net/core/filter.c:1985:58: sparse:     expected restricted __be16 [usertype] to
+   net/core/filter.c:1985:58: sparse:     got unsigned long long [usertype] to
+   net/core/filter.c:1988:52: sparse: sparse: incorrect type in argument 3 (different base types) @@     expected restricted __be32 [usertype] from @@     got unsigned long long [usertype] from @@
+   net/core/filter.c:1988:52: sparse:     expected restricted __be32 [usertype] from
+   net/core/filter.c:1988:52: sparse:     got unsigned long long [usertype] from
+   net/core/filter.c:1988:58: sparse: sparse: incorrect type in argument 4 (different base types) @@     expected restricted __be32 [usertype] to @@     got unsigned long long [usertype] to @@
+   net/core/filter.c:1988:58: sparse:     expected restricted __be32 [usertype] to
+   net/core/filter.c:1988:58: sparse:     got unsigned long long [usertype] to
+>> net/core/filter.c:2023:48: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected unsigned int sum @@     got restricted __wsum @@
+   net/core/filter.c:2023:48: sparse:     expected unsigned int sum
+   net/core/filter.c:2023:48: sparse:     got restricted __wsum
+   net/core/filter.c:2026:52: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected unsigned int sum @@     got restricted __wsum @@
+   net/core/filter.c:2026:52: sparse:     expected unsigned int sum
+   net/core/filter.c:2026:52: sparse:     got restricted __wsum
+   net/core/filter.c:2029:40: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected unsigned int sum @@     got restricted __wsum @@
+   net/core/filter.c:2029:40: sparse:     expected unsigned int sum
+   net/core/filter.c:2029:40: sparse:     got restricted __wsum
+   net/core/filter.c:2031:16: sparse: sparse: incorrect type in return expression (different base types) @@     expected unsigned long long @@     got restricted __wsum [usertype] seed @@
+   net/core/filter.c:2031:16: sparse:     expected unsigned long long
+   net/core/filter.c:2031:16: sparse:     got restricted __wsum [usertype] seed
+   net/core/filter.c:2053:35: sparse: sparse: incorrect type in return expression (different base types) @@     expected unsigned long long @@     got restricted __wsum [usertype] csum @@
+   net/core/filter.c:2053:35: sparse:     expected unsigned long long
+   net/core/filter.c:2053:35: sparse:     got restricted __wsum [usertype] csum
 
-vim +3336 kernel/module/main.c
+vim +2023 net/core/filter.c
 
-  3124	
-  3125	/*
-  3126	 * Allocate and load the module: note that size of section 0 is always
-  3127	 * zero, and we rely on this for optional sections.
-  3128	 */
-  3129	static int load_module(struct load_info *info, const char __user *uargs,
-  3130			       int flags)
-  3131	{
-  3132		struct module *mod;
-  3133		bool module_allocated = false;
-  3134		long err = 0;
-  3135		char *after_dashes;
-  3136	
-  3137		/*
-  3138		 * Do the signature check (if any) first. All that
-  3139		 * the signature check needs is info->len, it does
-  3140		 * not need any of the section info. That can be
-  3141		 * set up later. This will minimize the chances
-  3142		 * of a corrupt module causing problems before
-  3143		 * we even get to the signature check.
-  3144		 *
-  3145		 * The check will also adjust info->len by stripping
-  3146		 * off the sig length at the end of the module, making
-  3147		 * checks against info->len more correct.
-  3148		 */
-  3149		err = module_sig_check(info, flags);
-  3150		if (err)
-  3151			goto free_copy;
-  3152	
-  3153		/*
-  3154		 * Do basic sanity checks against the ELF header and
-  3155		 * sections. Cache useful sections and set the
-  3156		 * info->mod to the userspace passed struct module.
-  3157		 */
-  3158		err = elf_validity_cache_copy(info, flags);
-  3159		if (err)
-  3160			goto free_copy;
-  3161	
-  3162		err = early_mod_check(info, flags);
-  3163		if (err)
-  3164			goto free_copy;
-  3165	
-  3166		/* Figure out module layout, and allocate all the memory. */
-  3167		mod = layout_and_allocate(info, flags);
-  3168		if (IS_ERR(mod)) {
-  3169			err = PTR_ERR(mod);
-  3170			goto free_copy;
-  3171		}
-  3172	
-  3173		module_allocated = true;
-  3174	
-  3175		audit_log_kern_module(mod->name);
-  3176	
-  3177		/* Reserve our place in the list. */
-  3178		err = add_unformed_module(mod);
-  3179		if (err)
-  3180			goto free_module;
-  3181	
-  3182		/*
-  3183		 * We are tainting your kernel if your module gets into
-  3184		 * the modules linked list somehow.
-  3185		 */
-  3186		module_augment_kernel_taints(mod, info);
-  3187	
-  3188		/* To avoid stressing percpu allocator, do this once we're unique. */
-  3189		err = percpu_modalloc(mod, info);
-  3190		if (err)
-  3191			goto unlink_mod;
-  3192	
-  3193		/* Now module is in final location, initialize linked lists, etc. */
-  3194		err = module_unload_init(mod);
-  3195		if (err)
-  3196			goto unlink_mod;
-  3197	
-  3198		init_param_lock(mod);
-  3199	
-  3200		/*
-  3201		 * Now we've got everything in the final locations, we can
-  3202		 * find optional sections.
-  3203		 */
-  3204		err = find_module_sections(mod, info);
-  3205		if (err)
-  3206			goto free_unload;
-  3207	
-  3208		err = check_export_symbol_versions(mod);
-  3209		if (err)
-  3210			goto free_unload;
-  3211	
-  3212		/* Set up MODINFO_ATTR fields */
-  3213		setup_modinfo(mod, info);
-  3214	
-  3215		/* Fix up syms, so that st_value is a pointer to location. */
-  3216		err = simplify_symbols(mod, info);
-  3217		if (err < 0)
-  3218			goto free_modinfo;
-  3219	
-  3220		err = apply_relocations(mod, info);
-  3221		if (err < 0)
-  3222			goto free_modinfo;
-  3223	
-  3224		err = post_relocation(mod, info);
-  3225		if (err < 0)
-  3226			goto free_modinfo;
-  3227	
-  3228		flush_module_icache(mod);
-  3229	
-  3230		/* Now copy in args */
-  3231		mod->args = strndup_user(uargs, ~0UL >> 1);
-  3232		if (IS_ERR(mod->args)) {
-  3233			err = PTR_ERR(mod->args);
-  3234			goto free_arch_cleanup;
-  3235		}
-  3236	
-  3237		init_build_id(mod, info);
-  3238	
-  3239		/* Ftrace init must be called in the MODULE_STATE_UNFORMED state */
-  3240		ftrace_module_init(mod);
-  3241	
-  3242		/* Finally it's fully formed, ready to start executing. */
-  3243		err = complete_formation(mod, info);
-  3244		if (err)
-  3245			goto ddebug_cleanup;
-  3246	
-  3247		err = prepare_coming_module(mod);
-  3248		if (err)
-  3249			goto bug_cleanup;
-  3250	
-  3251		mod->async_probe_requested = async_probe;
-  3252	
-  3253		/* Module is ready to execute: parsing args may do that. */
-  3254		after_dashes = parse_args(mod->name, mod->args, mod->kp, mod->num_kp,
-  3255					  -32768, 32767, mod,
-  3256					  unknown_module_param_cb);
-  3257		if (IS_ERR(after_dashes)) {
-  3258			err = PTR_ERR(after_dashes);
-  3259			goto coming_cleanup;
-  3260		} else if (after_dashes) {
-  3261			pr_warn("%s: parameters '%s' after `--' ignored\n",
-  3262			       mod->name, after_dashes);
-  3263		}
-  3264	
-  3265		/* Link in to sysfs. */
-  3266		err = mod_sysfs_setup(mod, info, mod->kp, mod->num_kp);
-  3267		if (err < 0)
-  3268			goto coming_cleanup;
-  3269	
-  3270		if (is_livepatch_module(mod)) {
-  3271			err = copy_module_elf(mod, info);
-  3272			if (err < 0)
-  3273				goto sysfs_cleanup;
-  3274		}
-  3275	
-  3276		/* Get rid of temporary copy. */
-  3277		free_copy(info, flags);
-  3278	
-  3279		codetag_load_module(mod);
-  3280	
-  3281		/* Done! */
-  3282		trace_module_load(mod);
-  3283	
-  3284		return do_init_module(mod);
-  3285	
-  3286	 sysfs_cleanup:
-  3287		mod_sysfs_teardown(mod);
-  3288	 coming_cleanup:
-  3289		mod->state = MODULE_STATE_GOING;
-  3290		destroy_params(mod->kp, mod->num_kp);
-  3291		blocking_notifier_call_chain(&module_notify_list,
-  3292					     MODULE_STATE_GOING, mod);
-  3293		klp_module_going(mod);
-  3294	 bug_cleanup:
-  3295		mod->state = MODULE_STATE_GOING;
-  3296		/* module_bug_cleanup needs module_mutex protection */
-  3297		mutex_lock(&module_mutex);
-  3298		module_bug_cleanup(mod);
-  3299		mutex_unlock(&module_mutex);
-  3300	
-  3301	 ddebug_cleanup:
-  3302		ftrace_release_mod(mod);
-  3303		synchronize_rcu();
-  3304		kfree(mod->args);
-  3305	 free_arch_cleanup:
-  3306		module_arch_cleanup(mod);
-  3307	 free_modinfo:
-  3308		free_modinfo(mod);
-  3309	 free_unload:
-  3310		module_unload_free(mod);
-  3311	 unlink_mod:
-  3312		mutex_lock(&module_mutex);
-  3313		/* Unlink carefully: kallsyms could be walking list. */
-  3314		list_del_rcu(&mod->list);
-  3315		mod_tree_remove(mod);
-  3316		wake_up_all(&module_wq);
-  3317		/* Wait for RCU-sched synchronizing before releasing mod->list. */
-  3318		synchronize_rcu();
-  3319		mutex_unlock(&module_mutex);
-  3320	 free_module:
-  3321		mod_stat_bump_invalid(info, flags);
-  3322		/* Free lock-classes; relies on the preceding sync_rcu() */
-  3323		for_class_mod_mem_type(type, core_data) {
-  3324			lockdep_free_key_range(mod->mem[type].base,
-  3325					       mod->mem[type].size);
-  3326		}
-  3327	
-  3328		module_deallocate(mod, info);
-  3329	 free_copy:
-  3330		/*
-  3331		 * The info->len is always set. We distinguish between
-  3332		 * failures once the proper module was allocated and
-  3333		 * before that.
-  3334		 */
-  3335		if (!module_allocated) {
-> 3336			audit_log_kern_module(info->name ? info->name : "(unavailable)");
-  3337			mod_stat_bump_becoming(info, flags);
-  3338		}
-  3339		free_copy(info, flags);
-  3340		return err;
-  3341	}
-  3342	
+  2009	
+  2010	BPF_CALL_5(bpf_csum_diff, __be32 *, from, u32, from_size,
+  2011		   __be32 *, to, u32, to_size, __wsum, seed)
+  2012	{
+  2013		/* This is quite flexible, some examples:
+  2014		 *
+  2015		 * from_size == 0, to_size > 0,  seed := csum --> pushing data
+  2016		 * from_size > 0,  to_size == 0, seed := csum --> pulling data
+  2017		 * from_size > 0,  to_size > 0,  seed := 0    --> diffing data
+  2018		 *
+  2019		 * Even for diffing, from_size and to_size don't need to be equal.
+  2020		 */
+  2021	
+  2022		if (from_size && to_size)
+> 2023			return csum_from32to16(csum_sub(csum_partial(to, to_size, seed),
+  2024							csum_partial(from, from_size, 0)));
+  2025		if (to_size)
+  2026			return csum_from32to16(csum_partial(to, to_size, seed));
+  2027	
+  2028		if (from_size)
+  2029			return csum_from32to16(~csum_partial(from, from_size, ~seed));
+  2030	
+  2031		return seed;
+  2032	}
+  2033	
 
 -- 
 0-DAY CI Kernel Test Service
