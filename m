@@ -1,213 +1,328 @@
-Return-Path: <linux-kernel+bounces-382022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B58E99B07E4
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:21:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6DD69B07F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:22:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70F2D282894
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:21:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77B921F24782
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:22:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D083186E34;
-	Fri, 25 Oct 2024 15:17:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E4882161ED;
+	Fri, 25 Oct 2024 15:18:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="dl7F8s1a"
-Received: from TY3P286CU002.outbound.protection.outlook.com (mail-japaneastazon11010035.outbound.protection.outlook.com [52.101.229.35])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nbjv3wiR"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34E73185939;
-	Fri, 25 Oct 2024 15:17:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.229.35
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729869445; cv=fail; b=DEIAV7rztabicspHvyXbzZJErU25q36CZ8JGacyfHnitguUwbg/OC5FClDvZmf4eSe82Mbw9XDxrrXp6SREHWgOt5wEkA3LvOlKjjppX5ytfFURA7f4g7dHC+HxHypZt8PqgdCmTqBzWQbqyffmK/dYHKa3TwY1C1EF0cDbzlkE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729869445; c=relaxed/simple;
-	bh=euIG9LQJ5w2w1rrnTs+c7j5wnaNhwn9zAkTc62Z+iz8=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=SLPhxWxELoPgyUFMFllE7Q+mt2CLR6MmjN/58uMLedmUtOx8qUpUv4jzJl5zgYj2DTCO+/hz0LjNi01sb0XL2qWt3ItELdtGZNQcNz6E3k1Np0yb4i5vKi0PKDFazXcMkgYWJjqjK/Rtnd+brS/4xMaE07ZVhfk1lIFQI1XfjO0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=dl7F8s1a; arc=fail smtp.client-ip=52.101.229.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NFi/rAoawspdtJAyVcyZEHdN0DrX8xWphRVI+98se2GdJuHTCsO4WuC9lWkNxP0QATNc9lxJdnA+kfX48JATuJy6k0DEzKGKlV4+xg/OzDIPMvLAAWFUQKK1fjnPtvNAcJwFI3op0UIYzbap369j4clwyhGKNL7GnUPHzpDPjtwrqZdcl8KihOgH4me8W8o3UHw1xL/HhBLQmDE4/BTRfuP1COxYDGlVh5NkjPioD/eqi/931ln+rqlT9jU/n9KXKjhJXAxmfTb9PbdfQitFygsDfFn5Xe4PINXWVogsNm01ElptadH0MC5SLj7klTBqD5yG3rno3M8GbrXjjF1wUA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9Ue1OP8Ao3kvTHHG4JTi33xQmMtkvFDkYV/zPjMtfu8=;
- b=cMOKwGL05A1o0OqXiJ+Xd0gx9+EAm7nifRn1TevL2FOkH+eF22cVgGdV5Yihf5n5aGIxuQCcWhEKOag57vvUdJ8gt5rCoFhqV4VJlsingqIrOpfzAdG4m7K4MwDSLpM4mZfneigE02teMB+/gP7TFyBxUaAIDOSz6wsZEsre6dz0KuKxXM3Gqh90Spl+9+0SiljGXPDah853Rn5Y4cOiGkJr66x1qxDRSEPG0urbUs7EhBxvn13CV+YgjnnWIZLP//XB7jLHGIdCyGuWf1z1Vd/Ri2LWFm2dxBZagt3wGBZbkqBn2M57ONbWUQFqqYFjatoWg4Dj8mLif5RCfYC4Rg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9Ue1OP8Ao3kvTHHG4JTi33xQmMtkvFDkYV/zPjMtfu8=;
- b=dl7F8s1a6ljNEHgajcQcJKe7sJAtbp3VjUDE/dD5WOT+dg60Z+lR1tA+GGhwxFe+aUQ9Kcc+R4BhqOWXj3omJBJiAvrIvDGgw88J7sBJD/pxXgWxqt9nRGZB6nRJOLgdFycK4/8XffzJ2chGD2vBkVOGiEb8tYcEqpc16JzSSv0=
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
- by TYAPR01MB5707.jpnprd01.prod.outlook.com (2603:1096:404:8059::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.24; Fri, 25 Oct
- 2024 15:17:18 +0000
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::86ef:ca98:234d:60e1]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::86ef:ca98:234d:60e1%3]) with mapi id 15.20.8093.018; Fri, 25 Oct 2024
- 15:17:14 +0000
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Prabhakar <prabhakar.csengg@gmail.com>, Kuninori Morimoto
-	<kuninori.morimoto.gx@renesas.com>, Geert Uytterhoeven
-	<geert+renesas@glider.be>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown
-	<broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai
-	<tiwai@suse.com>
-CC: "linux-sound@vger.kernel.org" <linux-sound@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, Prabhakar Mahadev Lad
-	<prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: RE: [PATCH v3 5/5] MAINTAINERS: Add entry for Renesas RZ ASoC driver
-Thread-Topic: [PATCH v3 5/5] MAINTAINERS: Add entry for Renesas RZ ASoC driver
-Thread-Index: AQHbJu9U3bKms2FiqEecYgge0A0xQbKXk9tQ
-Date: Fri, 25 Oct 2024 15:17:14 +0000
-Message-ID:
- <TY3PR01MB11346F4D887726EC5833E3C65864F2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-References: <20241025150511.722040-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20241025150511.722040-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20241025150511.722040-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|TYAPR01MB5707:EE_
-x-ms-office365-filtering-correlation-id: 70245e6e-7746-4144-4b63-08dcf5081b75
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|376014|366016|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?ADCRtzrg/zEvKi1YIXMPuusWOEezwrFrn9OsWnhJyCJd01mauDhle+87auv3?=
- =?us-ascii?Q?ecvQGFhGfUj7T4pcsOGcRx0/rBqSx3LHoWnn5eb7hC2THIJ4VpDpgn/SHIZZ?=
- =?us-ascii?Q?A25+OE7bK9ZlE4rm7fo8+u/7fVdhc0H10njxLTg5X5vnU2FsCs+roUs4e12e?=
- =?us-ascii?Q?AQgfwjrMfDBUdXOoAJcACDx1eJREw8Mfc6yEHpf9TJn7hD0XxCJ2fY2Ip6At?=
- =?us-ascii?Q?/cuocDrC8Jl09umHSnbVHPu/zcO/xtSYUUJIwr254jEI3GzmtzaUmCDyuSD6?=
- =?us-ascii?Q?WsanqYz11LXHv0OM4sRBy3+DWIwCxw8ARC3HFlWU+C7+B13yCauzbbtmHOnV?=
- =?us-ascii?Q?PruQyuV5pYmGugV6kHYFxp8/Qa9vasT34uV5ooVd+cGYhnshx8vTjfDk10vz?=
- =?us-ascii?Q?cHisLvHO4vAwx+plZ1sV5gX90KRBrqLomWxWd5dRSyKadqLJgUcp9YTP2+tA?=
- =?us-ascii?Q?Ewt7221a2tmawbdMkOw/ozmjQEZyTCO58V+YMD7jXuDzLt7eoGu4UI/D0DZZ?=
- =?us-ascii?Q?jvJycl11xPSh2ky9SMw+cvZH7HJDKJfB/kaN3fjnd+t7JFkKBrowhq1z70yR?=
- =?us-ascii?Q?6PL58VedK1WKv2ouPtXXpaQTv79k5EMVAQK3PtJ/Bypsg5FfZ2PbrX/W0AvB?=
- =?us-ascii?Q?rizZTdQ7634DBlb2TetTBlui9u54874EHKaa6HjUZNwCmnETgSd0TSYflXTB?=
- =?us-ascii?Q?aawyhvvqeQVR0B4JD69iyjprTldu5WdXhGXbkwe0OuM0mCam0IB9X5D2V2Xm?=
- =?us-ascii?Q?WPW3eskeju8F1sgUz+/0UNsbqI8bTgv+7+hO1dlu6EtcNN4KhmsGGO35KZJU?=
- =?us-ascii?Q?XJN/j4EWf+MCwNZJ75LlYhDV+0H2rINBQPLE2xnhmaoAxj7ei3HTBZOuhYMH?=
- =?us-ascii?Q?Z09jf2G5r4KzA9WHZFOViuInP0CyMnKMUd4lAqd3HVIfY1n26UG02/SnSZ15?=
- =?us-ascii?Q?tG6hvKL1YvNdTSDenQBYIqFzzGyKtlf8wQT7/xFwg9Jvrm9UqZ9Bi6zim22D?=
- =?us-ascii?Q?4mEk1PS6cMBUJzPLMDY54zjFeyeCvdJAz9heRv6rwyOAqR6CVycS0t2Y65/a?=
- =?us-ascii?Q?288d0Xf6M95XxRXsayX7jfD1oaiNyo9lE/fRmeuGDw4RirosFE3VTFN2yRwC?=
- =?us-ascii?Q?p1eWr/MUIszCZdsjoS1vm74fp8nD/Jmg1sF0KmZe5BxF1JtPTyeDrnAt09ec?=
- =?us-ascii?Q?MNdKvl6UDGLz8qX4jocHB0XT3u3tIOch2fuzP/HeBjxh6a9fb5btdKJZ7Ooc?=
- =?us-ascii?Q?VParjevlHgbij6dbT1G7uVSaNmlHmGxt9QhdIQfd32Cfu8QwVMoNFt2qR1Bw?=
- =?us-ascii?Q?6qXV9/2BUjixuxmHqIWW5GTfApmTW9MqsKxfvxQcyFq5n5bnivKRqFLeaZ0S?=
- =?us-ascii?Q?xUSkVEU=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?Mz2KhlmDsdIE/gg7fsu4vodhX53hos48eXLKpOkYSI21zy/7V0FosemJPqMg?=
- =?us-ascii?Q?8R8jufpmBweIMbXDnAlNzZIE3bpruPJ9VAwWP4kqov0McbFo1XB3PmDC9dqy?=
- =?us-ascii?Q?fpo794y3UnaIgH/kRB8LW7LaMU5Ma063mGQy5hTar8Gw4oeUyTdX8ry6Z8hr?=
- =?us-ascii?Q?rkZbXCwJ1SD+gBBvqaQrvN1dZHVKsnTX9mm/U7IcUuEFpuO0ndeH++UJ96Pe?=
- =?us-ascii?Q?nKTVPplWyEYlqErkQVFBrhKx7lB4SFZP0mppGvAj3j6dIswOLpjOtlDnkiWJ?=
- =?us-ascii?Q?mCXCZ7X2f+egJibCzLMQYfr5bN921byPOP1I2bK2SbN/zmM+84bHhkFH9fkX?=
- =?us-ascii?Q?siuOMyw1YQmjD+5fMfwU1U1sjLAZgyMACHbXR2j6m9+hupQjDQpr8nG7dVVw?=
- =?us-ascii?Q?sMgNwOpmf0QWPoQuq+UpSzFxFJdWj3wJIQSBcln/l76yfMPDv9TCofiZW96K?=
- =?us-ascii?Q?wVO6OfaXe5SC+K5FKUNkYeoU+GvAtvSlNWpRhxcP/V/CEOkTISYZqgZgwrR1?=
- =?us-ascii?Q?cbehHdQ2GMUSmmP8KTROmJe6b4ax46Wrma/VUD5K9ZROMIsJlXQg3s68ifrP?=
- =?us-ascii?Q?gKkOwTbElwZXz5S9+R74PS1dAYS1GfTKMl+Cg2lDP1RU5msfw/FK2qr73jA9?=
- =?us-ascii?Q?NaCmYP4y9s2Bu8oTXB4LwxAb3yLRtQguK9eVISnqyP09WY010gY5hoPeeuzB?=
- =?us-ascii?Q?bwsc9Mlr5IX4G64JD1UTP0F87QoN1CfO3YnBLP63cGL68B8TIvRDgky1IccR?=
- =?us-ascii?Q?ur13GbA+Ztg7NxqrVu4MmtVrTtHSe9yY5rrpWXzQ56ujgg/hx/lSqVeYo1o0?=
- =?us-ascii?Q?yFUDR9bNlNDGNTVepe4rnxuAoOUCRuqikntjCyY8TLFfje+jFs0p6aqPQQXY?=
- =?us-ascii?Q?qdDzTH4qIQkF62410id2cA84wy94qyMohcZQSuwqQkQOA2H/e5LE2uBCPDxS?=
- =?us-ascii?Q?wbR9/q2xiOes4HOBOx9e/7WTS9qwRkM4txXR8Ne9/3/3g9ab9teBHWAcfNau?=
- =?us-ascii?Q?lyUSgv6Z7Q+1oP13R1vrGt0i4fjvuKQt6YKf5ZGcvqKMCuv06yr4VrixieC+?=
- =?us-ascii?Q?fhGAL3L/jd+d3pNOT2AgF7ljnpYyGfvJWwPk4zFSpmtPfW8jaag/q2jbZjZU?=
- =?us-ascii?Q?iQ8e0CKUROCNhbNjHu4RwRsi77EgRVrEfEJRw0yzRTEwFdQJKywHgInGR+zZ?=
- =?us-ascii?Q?Kqb91zSfsXXOlN3aF92ygQxwsqjvOAUx8rj5shHgTjnfh3AwlI9Cwj4tpjxC?=
- =?us-ascii?Q?ea1jDwM6p3Ck26Td+zs/zWAW9VTtbHLvlHbANF0Qfa+XNQ3GfwIGC+VVgxyf?=
- =?us-ascii?Q?e9fpLuFxWTZoUeC2NTU8PagOeQ4kF1D+67DX12RJbOtZWVH2jgXWz9LlYH1i?=
- =?us-ascii?Q?4/ele24Sht/oejRF7A3DSq52n6Z49u1GmL0kz2sg8SzabzKWK1e+e2Y2GKJY?=
- =?us-ascii?Q?/beKuF/8MoN498Xz7Z41NRKYgNZ8lPvjcYTfb17Clt/8sFCdzeN59hWSX4w1?=
- =?us-ascii?Q?rNnPo1iw97DXVRmNTWSqKLltJsc09mkiClnHN5400aQUrxlIKFSWohyQZIuo?=
- =?us-ascii?Q?9m6E7xDeseO9y9McytDzuHBG/J+ZF3XjvzSvde7BKHG8BWT2kAkdfyywTYqM?=
- =?us-ascii?Q?0w=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C93C620F3E9;
+	Fri, 25 Oct 2024 15:18:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729869496; cv=none; b=iE/i4kdJuVU/sDUHfDGWfYdgWx94Ehk8pFi7wJoDM1vBq4GB/OpGqogAxMQlHAzINayLwoJarX0xjmBY0UTNY6jSKLbshF7nCeGmP9iXdfCZJUywsStLkpqs25EEt7dbdI0LIjP10AG1H02EyEF7sMhLU/UbtzAGXsXX81gfLEw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729869496; c=relaxed/simple;
+	bh=enc7ArYN6z9V0tX3nNZjICrseiCbidmUvlTURUF1Fto=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=to87enqF0ZElDPPhyNv0Pluy84bQ9KRa8f3ajZkSOAJ5Me02XSY9ktcR3myyCnLOcPMnwCaGrCMsQU7/IdwWL9qSWLzhKn2AHyYtCkdk2d7Eo2eV+nuxJocda/97cCZ8dzAQhs/Anb+WZPJFaqS46ziacfsHxgrdQ0OeJa7Vl9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nbjv3wiR; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729869494; x=1761405494;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=enc7ArYN6z9V0tX3nNZjICrseiCbidmUvlTURUF1Fto=;
+  b=nbjv3wiRGpYuzG1iYAZHkJoyymI40GD6p1O6RiCsEDOsWKSWeLYPw0Jn
+   KmVpvAwSP6wVDmycC9RL+rO/0heXxbGwF4ZIVS/q/MXDiU9nQX62F3/3P
+   NPJ2kOR7hWGG6fD3hDjhBHAhHaOJPddDfG4cyNCUVx4Ko1Yies7Yzybes
+   bf1C0/CR+u3PHqw5cKFWyOaAXt1dFHvKJ+wGUZ3HDDpenzOgP4j2/E57b
+   yX4rdbVC5zWN1SE+a97EMU9TLbZiyH6JxNOJElHBrXy/0jpKbUcmQpzg1
+   F30U95ZugVjjoZWSLoyIVIDMiRcmTnE4fG+Yd/mRS38+ChrpINY7xzgN2
+   Q==;
+X-CSE-ConnectionGUID: ROjhOAiQRES2pJ/V1J6ljw==
+X-CSE-MsgGUID: SlA74OysR4q6rJVpnnFdYA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="29486910"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="29486910"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2024 08:18:14 -0700
+X-CSE-ConnectionGUID: ZKjH/9KwRkS3B3Tu/QjDuA==
+X-CSE-MsgGUID: 9mOoshv+T4qqJAkrFdAZ6A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="85712474"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa003.jf.intel.com with ESMTP; 25 Oct 2024 08:18:09 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t4M4l-000YPG-1y;
+	Fri, 25 Oct 2024 15:18:07 +0000
+Date: Fri, 25 Oct 2024 23:17:32 +0800
+From: kernel test robot <lkp@intel.com>
+To: Li Lingfeng <lilingfeng3@huawei.com>, trondmy@kernel.org,
+	anna@kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, dros@netapp.com,
+	trond.myklebust@hammerspace.com, jlayton@kernel.org,
+	linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	yukuai1@huaweicloud.com, houtao1@huawei.com, yi.zhang@huawei.com,
+	yangerkun@huawei.com, lilingfeng@huaweicloud.com,
+	lilingfeng3@huawei.com
+Subject: Re: [PATCH v3] nfs: protect nfs41_impl_id by rcu
+Message-ID: <202410252304.ImkycETw-lkp@intel.com>
+References: <20241022115847.1283892-1-lilingfeng3@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 70245e6e-7746-4144-4b63-08dcf5081b75
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Oct 2024 15:17:14.8893
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: zgbUOE2OD/Q5f5/Utm0xffaOB5hUKE6gKTasGDCao/bqkxxXDwWjhZAOAeDnXJu9LTdcGNijPnxI/+67uULhi+Kxh/gCqqXNam2NQ4qWYBw=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYAPR01MB5707
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241022115847.1283892-1-lilingfeng3@huawei.com>
 
-Hi Prabhakar,
+Hi Li,
 
-Thanks for the patch.
+kernel test robot noticed the following build warnings:
 
-> -----Original Message-----
-> From: Prabhakar <prabhakar.csengg@gmail.com>
-> Sent: 25 October 2024 16:05
-> Subject: [PATCH v3 5/5] MAINTAINERS: Add entry for Renesas RZ ASoC driver
->=20
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->=20
-> Add a new entry to the MAINTAINERS file for Renesas RZ ASoC driver.
->=20
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+[auto build test WARNING on trondmy-nfs/linux-next]
+[also build test WARNING on linus/master v6.12-rc4 next-20241025]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Acked-by: Biju Das <biju.das.jz@bp.renesas.com>
+url:    https://github.com/intel-lab-lkp/linux/commits/Li-Lingfeng/nfs-protect-nfs41_impl_id-by-rcu/20241022-194521
+base:   git://git.linux-nfs.org/projects/trondmy/linux-nfs.git linux-next
+patch link:    https://lore.kernel.org/r/20241022115847.1283892-1-lilingfeng3%40huawei.com
+patch subject: [PATCH v3] nfs: protect nfs41_impl_id by rcu
+config: alpha-randconfig-r132-20241025 (https://download.01.org/0day-ci/archive/20241025/202410252304.ImkycETw-lkp@intel.com/config)
+compiler: alpha-linux-gcc (GCC) 13.3.0
+reproduce: (https://download.01.org/0day-ci/archive/20241025/202410252304.ImkycETw-lkp@intel.com/reproduce)
 
-Cheers,
-Biju
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410252304.ImkycETw-lkp@intel.com/
 
-> ---
->  MAINTAINERS | 9 +++++++++
->  1 file changed, 9 insertions(+)
->=20
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 041df0410e81..9e8a17623486 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -19734,6 +19734,15 @@ S:	Supported
->  F:	Documentation/devicetree/bindings/i2c/renesas,riic.yaml
->  F:	drivers/i2c/busses/i2c-riic.c
->=20
-> +RENESAS RZ AUDIO (ASoC) DRIVER
-> +M:	Biju Das <biju.das.jz@bp.renesas.com>
-> +M:	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> +L:	linux-sound@vger.kernel.org
-> +L:	linux-renesas-soc@vger.kernel.org
-> +S:	Supported
-> +F:	Documentation/devicetree/bindings/sound/renesas,rz-ssi.yaml
-> +F:	sound/soc/renesas/rz-ssi.c
-> +
->  RENESAS RZ/G2L A/D DRIVER
->  M:	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->  L:	linux-iio@vger.kernel.org
-> --
-> 2.43.0
+sparse warnings: (new ones prefixed by >>)
+>> fs/nfs/nfs4proc.c:8876:17: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct callback_head *head @@     got struct callback_head [noderef] __rcu * @@
+   fs/nfs/nfs4proc.c:8876:17: sparse:     expected struct callback_head *head
+   fs/nfs/nfs4proc.c:8876:17: sparse:     got struct callback_head [noderef] __rcu *
+>> fs/nfs/nfs4proc.c:8876:17: sparse: sparse: cast removes address space '__rcu' of expression
+>> fs/nfs/nfs4proc.c:8933:31: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct nfs41_impl_id [noderef] __rcu *impl_id @@     got void *_res @@
+   fs/nfs/nfs4proc.c:8933:31: sparse:     expected struct nfs41_impl_id [noderef] __rcu *impl_id
+   fs/nfs/nfs4proc.c:8933:31: sparse:     got void *_res
+>> fs/nfs/nfs4proc.c:8973:28: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void const *objp @@     got struct nfs41_impl_id [noderef] __rcu *impl_id @@
+   fs/nfs/nfs4proc.c:8973:28: sparse:     expected void const *objp
+   fs/nfs/nfs4proc.c:8973:28: sparse:     got struct nfs41_impl_id [noderef] __rcu *impl_id
+>> fs/nfs/nfs4proc.c:9038:25: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected struct nfs41_impl_id [noderef] __rcu *__tmp @@     got struct nfs41_impl_id * @@
+   fs/nfs/nfs4proc.c:9038:25: sparse:     expected struct nfs41_impl_id [noderef] __rcu *__tmp
+   fs/nfs/nfs4proc.c:9038:25: sparse:     got struct nfs41_impl_id *
+--
+>> fs/nfs/nfs4xdr.c:5788:27: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void * @@     got char [noderef] __rcu * @@
+   fs/nfs/nfs4xdr.c:5788:27: sparse:     expected void *
+   fs/nfs/nfs4xdr.c:5788:27: sparse:     got char [noderef] __rcu *
+   fs/nfs/nfs4xdr.c:5794:27: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void * @@     got char [noderef] __rcu * @@
+   fs/nfs/nfs4xdr.c:5794:27: sparse:     expected void *
+   fs/nfs/nfs4xdr.c:5794:27: sparse:     got char [noderef] __rcu *
+>> fs/nfs/nfs4xdr.c:5800:45: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected unsigned long long [usertype] *valp @@     got unsigned long long [noderef] __rcu * @@
+   fs/nfs/nfs4xdr.c:5800:45: sparse:     expected unsigned long long [usertype] *valp
+   fs/nfs/nfs4xdr.c:5800:45: sparse:     got unsigned long long [noderef] __rcu *
+>> fs/nfs/nfs4xdr.c:5801:20: sparse: sparse: dereference of noderef expression
+--
+>> fs/nfs/nfs4client.c:298:17: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct callback_head *head @@     got struct callback_head [noderef] __rcu * @@
+   fs/nfs/nfs4client.c:298:17: sparse:     expected struct callback_head *head
+   fs/nfs/nfs4client.c:298:17: sparse:     got struct callback_head [noderef] __rcu *
+>> fs/nfs/nfs4client.c:298:17: sparse: sparse: cast removes address space '__rcu' of expression
 
+vim +8876 fs/nfs/nfs4proc.c
+
+  8868	
+  8869	static void nfs4_exchange_id_release(void *data)
+  8870	{
+  8871		struct nfs41_exchange_id_data *cdata =
+  8872						(struct nfs41_exchange_id_data *)data;
+  8873	
+  8874		nfs_put_client(cdata->args.client);
+  8875		if (cdata->res.impl_id)
+> 8876			kfree_rcu(cdata->res.impl_id, __rcu_head);
+  8877		kfree(cdata->res.server_scope);
+  8878		kfree(cdata->res.server_owner);
+  8879		kfree(cdata);
+  8880	}
+  8881	
+  8882	static const struct rpc_call_ops nfs4_exchange_id_call_ops = {
+  8883		.rpc_release = nfs4_exchange_id_release,
+  8884	};
+  8885	
+  8886	/*
+  8887	 * _nfs4_proc_exchange_id()
+  8888	 *
+  8889	 * Wrapper for EXCHANGE_ID operation.
+  8890	 */
+  8891	static struct rpc_task *
+  8892	nfs4_run_exchange_id(struct nfs_client *clp, const struct cred *cred,
+  8893				u32 sp4_how, struct rpc_xprt *xprt)
+  8894	{
+  8895		struct rpc_message msg = {
+  8896			.rpc_proc = &nfs4_procedures[NFSPROC4_CLNT_EXCHANGE_ID],
+  8897			.rpc_cred = cred,
+  8898		};
+  8899		struct rpc_task_setup task_setup_data = {
+  8900			.rpc_client = clp->cl_rpcclient,
+  8901			.callback_ops = &nfs4_exchange_id_call_ops,
+  8902			.rpc_message = &msg,
+  8903			.flags = RPC_TASK_TIMEOUT | RPC_TASK_NO_ROUND_ROBIN,
+  8904		};
+  8905		struct nfs41_exchange_id_data *calldata;
+  8906		int status;
+  8907	
+  8908		if (!refcount_inc_not_zero(&clp->cl_count))
+  8909			return ERR_PTR(-EIO);
+  8910	
+  8911		status = -ENOMEM;
+  8912		calldata = kzalloc(sizeof(*calldata), GFP_NOFS);
+  8913		if (!calldata)
+  8914			goto out;
+  8915	
+  8916		nfs4_init_boot_verifier(clp, &calldata->args.verifier);
+  8917	
+  8918		status = nfs4_init_uniform_client_string(clp);
+  8919		if (status)
+  8920			goto out_calldata;
+  8921	
+  8922		calldata->res.server_owner = kzalloc(sizeof(struct nfs41_server_owner),
+  8923							GFP_NOFS);
+  8924		status = -ENOMEM;
+  8925		if (unlikely(calldata->res.server_owner == NULL))
+  8926			goto out_calldata;
+  8927	
+  8928		calldata->res.server_scope = kzalloc(sizeof(struct nfs41_server_scope),
+  8929						GFP_NOFS);
+  8930		if (unlikely(calldata->res.server_scope == NULL))
+  8931			goto out_server_owner;
+  8932	
+> 8933		calldata->res.impl_id = kzalloc(sizeof(struct nfs41_impl_id), GFP_NOFS);
+  8934		if (unlikely(calldata->res.impl_id == NULL))
+  8935			goto out_server_scope;
+  8936	
+  8937		switch (sp4_how) {
+  8938		case SP4_NONE:
+  8939			calldata->args.state_protect.how = SP4_NONE;
+  8940			break;
+  8941	
+  8942		case SP4_MACH_CRED:
+  8943			calldata->args.state_protect = nfs4_sp4_mach_cred_request;
+  8944			break;
+  8945	
+  8946		default:
+  8947			/* unsupported! */
+  8948			WARN_ON_ONCE(1);
+  8949			status = -EINVAL;
+  8950			goto out_impl_id;
+  8951		}
+  8952		if (xprt) {
+  8953			task_setup_data.rpc_xprt = xprt;
+  8954			task_setup_data.flags |= RPC_TASK_SOFTCONN;
+  8955			memcpy(calldata->args.verifier.data, clp->cl_confirm.data,
+  8956					sizeof(calldata->args.verifier.data));
+  8957		}
+  8958		calldata->args.client = clp;
+  8959		calldata->args.flags = EXCHGID4_FLAG_SUPP_MOVED_REFER |
+  8960		EXCHGID4_FLAG_BIND_PRINC_STATEID;
+  8961	#ifdef CONFIG_NFS_V4_1_MIGRATION
+  8962		calldata->args.flags |= EXCHGID4_FLAG_SUPP_MOVED_MIGR;
+  8963	#endif
+  8964		if (test_bit(NFS_CS_PNFS, &clp->cl_flags))
+  8965			calldata->args.flags |= EXCHGID4_FLAG_USE_PNFS_DS;
+  8966		msg.rpc_argp = &calldata->args;
+  8967		msg.rpc_resp = &calldata->res;
+  8968		task_setup_data.callback_data = calldata;
+  8969	
+  8970		return rpc_run_task(&task_setup_data);
+  8971	
+  8972	out_impl_id:
+> 8973		kfree(calldata->res.impl_id);
+  8974	out_server_scope:
+  8975		kfree(calldata->res.server_scope);
+  8976	out_server_owner:
+  8977		kfree(calldata->res.server_owner);
+  8978	out_calldata:
+  8979		kfree(calldata);
+  8980	out:
+  8981		nfs_put_client(clp);
+  8982		return ERR_PTR(status);
+  8983	}
+  8984	
+  8985	/*
+  8986	 * _nfs4_proc_exchange_id()
+  8987	 *
+  8988	 * Wrapper for EXCHANGE_ID operation.
+  8989	 */
+  8990	static int _nfs4_proc_exchange_id(struct nfs_client *clp, const struct cred *cred,
+  8991				u32 sp4_how)
+  8992	{
+  8993		struct rpc_task *task;
+  8994		struct nfs41_exchange_id_args *argp;
+  8995		struct nfs41_exchange_id_res *resp;
+  8996		unsigned long now = jiffies;
+  8997		int status;
+  8998	
+  8999		task = nfs4_run_exchange_id(clp, cred, sp4_how, NULL);
+  9000		if (IS_ERR(task))
+  9001			return PTR_ERR(task);
+  9002	
+  9003		argp = task->tk_msg.rpc_argp;
+  9004		resp = task->tk_msg.rpc_resp;
+  9005		status = task->tk_status;
+  9006		if (status  != 0)
+  9007			goto out;
+  9008	
+  9009		status = nfs4_check_cl_exchange_flags(resp->flags,
+  9010				clp->cl_mvops->minor_version);
+  9011		if (status  != 0)
+  9012			goto out;
+  9013	
+  9014		status = nfs4_sp4_select_mode(clp, &resp->state_protect);
+  9015		if (status != 0)
+  9016			goto out;
+  9017	
+  9018		do_renew_lease(clp, now);
+  9019	
+  9020		clp->cl_clientid = resp->clientid;
+  9021		clp->cl_exchange_flags = resp->flags;
+  9022		clp->cl_seqid = resp->seqid;
+  9023		/* Client ID is not confirmed */
+  9024		if (!(resp->flags & EXCHGID4_FLAG_CONFIRMED_R))
+  9025			clear_bit(NFS4_SESSION_ESTABLISHED,
+  9026				  &clp->cl_session->session_state);
+  9027	
+  9028		if (clp->cl_serverscope != NULL &&
+  9029		    !nfs41_same_server_scope(clp->cl_serverscope,
+  9030					resp->server_scope)) {
+  9031			dprintk("%s: server_scope mismatch detected\n",
+  9032				__func__);
+  9033			set_bit(NFS4CLNT_SERVER_SCOPE_MISMATCH, &clp->cl_state);
+  9034		}
+  9035	
+  9036		swap(clp->cl_serverowner, resp->server_owner);
+  9037		swap(clp->cl_serverscope, resp->server_scope);
+> 9038		resp->impl_id = rcu_replace_pointer(clp->cl_implid, resp->impl_id, 1);
+  9039	
+  9040		/* Save the EXCHANGE_ID verifier session trunk tests */
+  9041		memcpy(clp->cl_confirm.data, argp->verifier.data,
+  9042		       sizeof(clp->cl_confirm.data));
+  9043	out:
+  9044		trace_nfs4_exchange_id(clp, status);
+  9045		rpc_put_task(task);
+  9046		return status;
+  9047	}
+  9048	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
