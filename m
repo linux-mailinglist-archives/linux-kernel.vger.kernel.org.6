@@ -1,320 +1,118 @@
-Return-Path: <linux-kernel+bounces-381270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E916F9AFCC1
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 10:38:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A98A79AFCCE
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 10:42:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12F8A1C212A9
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 08:38:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBA651C2145E
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 08:42:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 340511D318C;
-	Fri, 25 Oct 2024 08:38:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D5821D27B1;
+	Fri, 25 Oct 2024 08:42:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BNkTu9Zv"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TQKFRDA2"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0A991D2F49
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 08:38:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1368B1D0E26
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 08:42:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729845487; cv=none; b=sWR/yYghF9SO/nuDEk0MxEgWu20FHNd/MqmM20OEz9lt/DjpCX7gbXiN3pJyNF4rN5eOq/CDtAUG1txLXEgA7I4OR3dCdB3ISncvC/QheqS8AGW+P70HpwQG8VMfVVh3fk8NpeZlwBFEfa2JuHdOJrWSgLfaKeVkZPxHoFWStJQ=
+	t=1729845744; cv=none; b=Eo0rE/WIYyu+EX3Q4TOp4hBqAMDux5Pf2yt514LL0OKUyb8xIX4JMf7jdYDL1xp1PJLZwTbk3sjVNN1wz39sdZjG5CZPiiczDgp/19FX0MXxbDLa5hNFLWaJBh8DfIh/C4JoGYNOU6f9DNBzcjVMyL2Mh6w2CszNE8KyJ6DB9dM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729845487; c=relaxed/simple;
-	bh=Kj+t7bUL5B0QKM5IwQHw3NNDOxblEb5Nefz9XwGv6eA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ACqnOwpD71tEwXHyESmGz/nT/M3btGGRs2yMLz/Jypj1Lkc7fMeP0EOPD9E3+NM2Zb77ME/pXahdbzrdsYr9dO12x1wrXHdONIhnrv34U27nt02uRJOZb6kL0k4Clo4s50gEusnmm4ZmNMSB+4fcl9dYJ9uXmrDT2kI/XCG90vk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BNkTu9Zv; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1729845744; c=relaxed/simple;
+	bh=fa6jPLAUyoylgiVXw+EMDWO7dRDSrn4n1a/XLj2kxcs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XA2QwAC2fLohqKCi6mQWgAZgWDYgVzrDDyikeYExjWZ6KVvxiXFKV4v8gf6lKapkJGWnsARFrDUcs2FfplvHi0dNyOF+DX5P8A31ORooPC4zYIW5EmMALJvjZc/bvYtz2RxU8A9eTBCquRXic085j7zFm1eBTPLSfn5CqC4mNbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TQKFRDA2; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729845483;
+	s=mimecast20190719; t=1729845742;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=t5SfsCaa6OQtbrocW2yvj8So2+UMhrgJURtFbTDl4+U=;
-	b=BNkTu9ZvvvhDMZ0Hr6SC/2AWGptrt8/oV/bdzIXri6TUzZuMIKJNpyruMJuh06bd6nVnR/
-	txI+Ob6zQ80sIwaWga5TvqAwVImykUy5O9bIV2ulS1eGDDZcyQQrN6lLf5X+DP5MdFQDdZ
-	x2I/kmNDFU6/Wx8drSYc++BtKxlizFs=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=fa6jPLAUyoylgiVXw+EMDWO7dRDSrn4n1a/XLj2kxcs=;
+	b=TQKFRDA2U8HSOKIYP8+GqsID/gG5oUulW6gJvxXTiWjgamHAQwusVc/HalziEvC4rfTFNv
+	LTOjIRlQI2AAaxrml7dGS5o/AtQw79656BE1IZMMPmeQdrH+FGFYzcRIyJcIdgT1LDAFEx
+	zu1atF0qjV35rNJHKNuZGpF289YrHGc=
+Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com
+ [209.85.210.197]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-135-UkyWYOb6OtSKC96Ied__zg-1; Fri, 25 Oct 2024 04:38:02 -0400
-X-MC-Unique: UkyWYOb6OtSKC96Ied__zg-1
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-37d5a3afa84so1054142f8f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 01:38:02 -0700 (PDT)
+ us-mta-434-P5CqrZ60OxWqBadERZNimA-1; Fri, 25 Oct 2024 04:42:20 -0400
+X-MC-Unique: P5CqrZ60OxWqBadERZNimA-1
+Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-71e467c39a4so2036452b3a.3
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 01:42:20 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729845481; x=1730450281;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=t5SfsCaa6OQtbrocW2yvj8So2+UMhrgJURtFbTDl4+U=;
-        b=w5X9SHfLcek7b8MoBiqyhP34ltov4UcY82YGF+kOVF6fRKRD6GV4ZnwK3ImdGrVfCy
-         b0yax/pvVo9rjOEigCWq8YJEY+spHFhj4tWMrxcHet4CffUe7xENwdtLD+ybfrqkuSaC
-         QtsxWJkulcAAlRilVJ3vXECgLmn5Sqsi2KxvwWjcaNwNphr48aT94bICN053P4o/ou1n
-         avjM5E8qdpBLyxj5Hm+nsmDhOs9yNeUn+oZl1gyYfjlPHT1AyvALbUTTfwv1oE5zDkj1
-         i0dATy12H1yMLY2yb4lmfnv+Ov8IAK/UsPdElh/BAjjMWwgMv2BXr6qD2/104Kd0ZOYW
-         UNIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWaWLN+qZWo8JALcjfRboTcns+DOWqIyoTdL4PJh/SNB/TmEoTXrAwdz/F6pqFwokFC3VBawUM0Aghxz0Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9murGAwQ+NxqL6AeBOy3f8oTy8JMAze8B94T63A9cCxMKlATf
-	cgsluGEErXDBIGFhMnGR7A285LFxsXHdE5K8IbYxOhFI/6NM3gL1TZt+Z+jP88tbDlNsD0Aq/8i
-	xfzJLp43oVJwmntM2Mij7tEZUbYmOAijRjlFSSngzdm2vblULoG1edqBk247eZA==
-X-Received: by 2002:a5d:45d2:0:b0:37d:5103:8894 with SMTP id ffacd0b85a97d-37efcf78dadmr5976804f8f.42.1729845481091;
-        Fri, 25 Oct 2024 01:38:01 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGcYWpz+kQZdr3vU0ccyDv2e4lUiNEwepdTyBtEeS9wkTJkf/x/0hfBIa/kJv59+/PzqJJV1A==
-X-Received: by 2002:a5d:45d2:0:b0:37d:5103:8894 with SMTP id ffacd0b85a97d-37efcf78dadmr5976745f8f.42.1729845480512;
-        Fri, 25 Oct 2024 01:38:00 -0700 (PDT)
-Received: from ?IPv6:2001:16b8:2de5:ba00:738a:c8da:daac:7543? (200116b82de5ba00738ac8dadaac7543.dip.versatel-1u1.de. [2001:16b8:2de5:ba00:738a:c8da:daac:7543])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b70c44sm932452f8f.80.2024.10.25.01.37.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2024 01:38:00 -0700 (PDT)
-Message-ID: <ae081c36c49733b007a8946dceeec0af94fc449a.camel@redhat.com>
-Subject: Re: [PATCH 02/13] ALSA: hda_intel: Use always-managed version of
- pcim_intx()
-From: Philipp Stanner <pstanner@redhat.com>
-To: Takashi Iwai <tiwai@suse.de>
-Cc: Damien Le Moal <dlemoal@kernel.org>, Niklas Cassel <cassel@kernel.org>, 
- Sergey Shtylyov <s.shtylyov@omp.ru>, Basavaraj Natikar
- <basavaraj.natikar@amd.com>, Jiri Kosina <jikos@kernel.org>,  Benjamin
- Tissoires <bentiss@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, Alex Dubov <oakad@yahoo.com>,
- Sudarsana Kalluru <skalluru@marvell.com>, Manish Chopra
- <manishc@marvell.com>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
- Abeni <pabeni@redhat.com>, Rasesh Mody <rmody@marvell.com>,
- GR-Linux-NIC-Dev@marvell.com, Igor Mitsyanko <imitsyanko@quantenna.com>,
- Sergey Matyukevich <geomatsi@gmail.com>, Kalle Valo <kvalo@kernel.org>,
- Sanjay R Mehta <sanju.mehta@amd.com>, Shyam Sundar S K
- <Shyam-sundar.S-k@amd.com>, Jon Mason <jdmason@kudzu.us>, Dave Jiang
- <dave.jiang@intel.com>, Allen Hubbe <allenbh@gmail.com>, Bjorn Helgaas
- <bhelgaas@google.com>, Alex Williamson <alex.williamson@redhat.com>,
- Juergen Gross <jgross@suse.com>, Stefano Stabellini
- <sstabellini@kernel.org>, Oleksandr Tyshchenko
- <oleksandr_tyshchenko@epam.com>, Jaroslav Kysela <perex@perex.cz>, Takashi
- Iwai <tiwai@suse.com>, Chen Ni <nichen@iscas.ac.cn>, Mario Limonciello
- <mario.limonciello@amd.com>, Ricky Wu <ricky_wu@realtek.com>, Al Viro
- <viro@zeniv.linux.org.uk>, Breno Leitao <leitao@debian.org>, Kevin Tian
- <kevin.tian@intel.com>, Thomas Gleixner <tglx@linutronix.de>, Ilpo
- =?ISO-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>, Andy
- Shevchenko <andriy.shevchenko@linux.intel.com>, Mostafa Saleh
- <smostafa@google.com>, Jason Gunthorpe <jgg@ziepe.ca>, Yi Liu
- <yi.l.liu@intel.com>,  Christian Brauner <brauner@kernel.org>, Ankit
- Agrawal <ankita@nvidia.com>, Eric Auger <eric.auger@redhat.com>, Reinette
- Chatre <reinette.chatre@intel.com>, Ye Bin <yebin10@huawei.com>, Marek
- =?ISO-8859-1?Q?Marczykowski-G=F3recki?= <marmarek@invisiblethingslab.com>,
- Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>, Peter Ujfalusi
- <peter.ujfalusi@linux.intel.com>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Kai Vehmanen
- <kai.vehmanen@linux.intel.com>,  Rui Salvaterra <rsalvaterra@gmail.com>,
- linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-input@vger.kernel.org, netdev@vger.kernel.org, 
- linux-wireless@vger.kernel.org, ntb@lists.linux.dev,
- linux-pci@vger.kernel.org,  kvm@vger.kernel.org,
- xen-devel@lists.xenproject.org, linux-sound@vger.kernel.org
-Date: Fri, 25 Oct 2024 10:37:57 +0200
-In-Reply-To: <875xphzeun.wl-tiwai@suse.de>
-References: <20241015185124.64726-1-pstanner@redhat.com>
-	 <20241015185124.64726-3-pstanner@redhat.com> <87v7xk2ps5.wl-tiwai@suse.de>
-	 <6f3db65fe9a5dcd1a7a8d9bd5352ecb248ef57b1.camel@redhat.com>
-	 <87ttd2276j.wl-tiwai@suse.de>
-	 <aec23bb79b9ff7dd7f13eb67460e0605eac22912.camel@redhat.com>
-	 <875xphzeun.wl-tiwai@suse.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+        d=1e100.net; s=20230601; t=1729845739; x=1730450539;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fa6jPLAUyoylgiVXw+EMDWO7dRDSrn4n1a/XLj2kxcs=;
+        b=m3fcTF1AD98OQd7Cvz9fSjcnFt8SRi3e1flFXVB4AaXElC3DGLoiMzDTECXb2X41hq
+         eSpzbc4z+fGAHo08wYwx/91KzAF8ioKOfkppiLtr2eGFF8psy3sV/OGTmfOy6sBbtIqP
+         MFlQwNtUA8GAUsECaw/kIxoBzKfJZfXBlO0yxYCqFdryRxKD8tHa7GK9FElb+n8/BZeH
+         PlTyLEeZ2C0QqrDdGjiR+byJW2T2RLBIPWQ83JxoEcSRkWEuHKxTLxtg9ns0/vcCvcbR
+         MLKl4nkhcsTcR5WZuwsYZfN+BMmJuNakGoLXPQVFXjJ8JUJLVeO/NqCu3dAw+gNsIijP
+         3JJg==
+X-Forwarded-Encrypted: i=1; AJvYcCU8rxdFu3YdilgraLKkoxkGBlLCciV94wfZnpCNj6lr7DKRJSj5acuAGRwGWT2HninEh7cqsIl82kReMds=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwoR1aEulM3DAxrOMV+LC0Se+vJGRbYxR0beYKy0HIL3B+fb0+j
+	TV7eHP7CHK6Zl0FZMff4PMW7GbIT1gJBC+FevKR5KDBj4AAbpKTHiqh4H7hPGmkBTNXSdZ88LJk
+	/iUSDkck4SwwuF47KIDtGfXusDFgoaCOFzVFfJ7ItdQbv8Y4/HjyRE26gqZOhTmdtx3aVH6PdoT
+	hYmVtjURlc28InsEYnLAdOHx3LWsdKb+nmF6F5
+X-Received: by 2002:a05:6a00:2d25:b0:71e:6a99:472f with SMTP id d2e1a72fcca58-72030b992eemr10914881b3a.24.1729845739462;
+        Fri, 25 Oct 2024 01:42:19 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGyONlkxsszC6bt2HwLRo0KgqsF5/esIacDeqECLFtgNld+V9hMbY+nI2xXS/5AUrgS8dzn+R2BzN6meo0fD9c=
+X-Received: by 2002:a05:6a00:2d25:b0:71e:6a99:472f with SMTP id
+ d2e1a72fcca58-72030b992eemr10914845b3a.24.1729845738965; Fri, 25 Oct 2024
+ 01:42:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20241021134040.975221-1-dtatulea@nvidia.com> <20241021134040.975221-2-dtatulea@nvidia.com>
+In-Reply-To: <20241021134040.975221-2-dtatulea@nvidia.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Fri, 25 Oct 2024 16:42:07 +0800
+Message-ID: <CACGkMEsmp3q=TQr7qUhdqtAw4ALLXYagn=BKZegks-=CAsF_XQ@mail.gmail.com>
+Subject: Re: [PATCH vhost 1/2] vdpa/mlx5: Fix PA offset with unaligned
+ starting iotlb map
+To: Dragos Tatulea <dtatulea@nvidia.com>
+Cc: "Michael S . Tsirkin" <mst@redhat.com>, virtualization@lists.linux.dev, 
+	Si-Wei Liu <si-wei.liu@oracle.com>, Eugenio Perez Martin <eperezma@redhat.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Gal Pressman <gal@nvidia.com>, 
+	Parav Pandit <parav@nvidia.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 2024-10-24 at 17:43 +0200, Takashi Iwai wrote:
-> On Thu, 24 Oct 2024 10:02:59 +0200,
-> Philipp Stanner wrote:
-> >=20
-> > On Wed, 2024-10-23 at 17:03 +0200, Takashi Iwai wrote:
-> > > On Wed, 23 Oct 2024 15:50:09 +0200,
-> > > Philipp Stanner wrote:
-> > > >=20
-> > > > On Tue, 2024-10-22 at 16:08 +0200, Takashi Iwai wrote:
-> > > > > On Tue, 15 Oct 2024 20:51:12 +0200,
-> > > > > Philipp Stanner wrote:
-> > > > > >=20
-> > > > > > pci_intx() is a hybrid function which can sometimes be
-> > > > > > managed
-> > > > > > through
-> > > > > > devres. To remove this hybrid nature from pci_intx(), it is
-> > > > > > necessary to
-> > > > > > port users to either an always-managed or a never-managed
-> > > > > > version.
-> > > > > >=20
-> > > > > > hda_intel enables its PCI-Device with pcim_enable_device().
-> > > > > > Thus,
-> > > > > > it needs
-> > > > > > the always-managed version.
-> > > > > >=20
-> > > > > > Replace pci_intx() with pcim_intx().
-> > > > > >=20
-> > > > > > Signed-off-by: Philipp Stanner <pstanner@redhat.com>
-> > > > > > ---
-> > > > > > =C2=A0sound/pci/hda/hda_intel.c | 2 +-
-> > > > > > =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
-> > > > > >=20
-> > > > > > diff --git a/sound/pci/hda/hda_intel.c
-> > > > > > b/sound/pci/hda/hda_intel.c
-> > > > > > index b4540c5cd2a6..b44ca7b6e54f 100644
-> > > > > > --- a/sound/pci/hda/hda_intel.c
-> > > > > > +++ b/sound/pci/hda/hda_intel.c
-> > > > > > @@ -786,7 +786,7 @@ static int azx_acquire_irq(struct azx
-> > > > > > *chip,
-> > > > > > int do_disconnect)
-> > > > > > =C2=A0	}
-> > > > > > =C2=A0	bus->irq =3D chip->pci->irq;
-> > > > > > =C2=A0	chip->card->sync_irq =3D bus->irq;
-> > > > > > -	pci_intx(chip->pci, !chip->msi);
-> > > > > > +	pcim_intx(chip->pci, !chip->msi);
-> > > > > > =C2=A0	return 0;
-> > > > > > =C2=A0}
-> > > > > > =C2=A0
-> > > > >=20
-> > > > > Hm, it's OK-ish to do this as it's practically same as what
-> > > > > pci_intx()
-> > > > > currently does.=C2=A0 But, the current code can be a bit
-> > > > > inconsistent
-> > > > > about
-> > > > > the original intx value.=C2=A0 pcim_intx() always stores !enable
-> > > > > to
-> > > > > res->orig_intx unconditionally, and it means that the
-> > > > > orig_intx
-> > > > > value
-> > > > > gets overridden at each time pcim_intx() gets called.
-> > > >=20
-> > > > Yes.
-> > > >=20
-> > > > >=20
-> > > > > Meanwhile, HD-audio driver does release and re-acquire the
-> > > > > interrupt
-> > > > > after disabling MSI when something goes wrong, and pci_intx()
-> > > > > call
-> > > > > above is a part of that procedure.=C2=A0 So, it can rewrite the
-> > > > > res->orig_intx to another value by retry without MSI.=C2=A0 And
-> > > > > after
-> > > > > the
-> > > > > driver removal, it'll lead to another state.
-> > > >=20
-> > > > I'm not sure that I understand this paragraph completely.
-> > > > Still,
-> > > > could
-> > > > a solution for the driver on the long-term just be to use
-> > > > pci_intx()?
-> > >=20
-> > > pci_intx() misses the restore of the original value, so it's no
-> > > long-term solution, either.
-> >=20
-> > Sure that is missing =E2=80=93 I was basically asking whether the drive=
-r
-> > could
-> > live without that feature.
-> >=20
-> > Consider that point obsolete, see below
-> >=20
-> > >=20
-> > > What I meant is that pcim_intx() blindly assumes the negative of
-> > > the
-> > > passed argument as the original state, which isn't always true.=C2=A0
-> > > e.g.
-> > > when the driver calls it twice with different values, a wrong
-> > > value
-> > > may be remembered.
-> >=20
-> > Ah, I see =E2=80=93 thoguh the issue is when it's called several times =
-with
-> > the
-> > *same* value, isn't it?
-> >=20
-> > E.g.
-> >=20
-> > pcim_intx(pdev, 1); // 0 is remembered as the old value
-> > pcim_intx(pdev, 1); // 0 is falsely remembered as the old value
-> >=20
-> > Also, it would seem that calling the function for the first time
-> > like
-> > that:
-> >=20
-> > pcim_intx(pdev, 0); // old value: 1
-> >=20
-> > is at least incorrect, because INTx should be 0 per default,
-> > shouldn't
-> > it? Could then even be a 1st class bug, because INTx would end up
-> > being
-> > enabled despite having been disabled all the time.
->=20
-> Yeah, and the unexpected restore can happen even with a single call
-> of
-> pcim_intx(), if the driver calls it unnecessarily.
->=20
-> > > That said, I thought of something like below.
-> >=20
-> > At first glance that looks like a good idea to me, thanks for
-> > working
-> > this out!
-> >=20
-> > IMO you can submit that as a patch so we can discuss it separately.
->=20
-> Sure, I'm going to submit later.
+On Mon, Oct 21, 2024 at 9:41=E2=80=AFPM Dragos Tatulea <dtatulea@nvidia.com=
+> wrote:
+>
+> From: Si-Wei Liu <si-wei.liu@oracle.com>
+>
+> When calculating the physical address range based on the iotlb and mr
+> [start,end) ranges, the offset of mr->start relative to map->start
+> is not taken into account. This leads to some incorrect and duplicate
+> mappings.
+>
+> For the case when mr->start < map->start the code is already correct:
+> the range in [mr->start, map->start) was handled by a different
+> iteration.
+>
+> Fixes: 94abbccdf291 ("vdpa/mlx5: Add shared memory registration code")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Si-Wei Liu <si-wei.liu@oracle.com>
+> Signed-off-by: Dragos Tatulea <dtatulea@nvidia.com>
+> ---
 
-I just took a look into the old implementation of pci_intx() (there was
-no pcim_intx() back then), before I started cleaning up PCI's devres.
-This what it looked like before
-25216afc9db53d85dc648aba8fb7f6d31f2c8731:
+Acked-by: Jason Wang <jasowang@redhat.com>
 
-void pci_intx(struct pci_dev *pdev, int enable)
-{
-	u16 pci_command, new;
-
-	pci_read_config_word(pdev, PCI_COMMAND, &pci_command);
-
-	if (enable)
-		new =3D pci_command & ~PCI_COMMAND_INTX_DISABLE;
-	else
-		new =3D pci_command | PCI_COMMAND_INTX_DISABLE;
-
-	if (new !=3D pci_command) {
-		struct pci_devres *dr;
-
-		pci_write_config_word(pdev, PCI_COMMAND, new);
-
-		dr =3D find_pci_dr(pdev);
-		if (dr && !dr->restore_intx) {
-			dr->restore_intx =3D 1;
-			dr->orig_intx =3D !enable;
-		}
-	}
-}
-EXPORT_SYMBOL_GPL(pci_intx);
-
-If I'm not mistaken the old version did not have the problem because
-the value to be restored only changed if new !=3D pci_command.
-
-That should always be correct, what do you think?
-
-If so, only my commit 25216afc9db53d85dc648aba8fb7f6d31f2c8731 needs to
-be fixed.
-
-Thanks,
-P.
-
-
->=20
->=20
-> thanks,
->=20
-> Takashi
->=20
+Thanks
 
 
