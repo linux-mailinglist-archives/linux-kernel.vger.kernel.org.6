@@ -1,301 +1,205 @@
-Return-Path: <linux-kernel+bounces-382300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AC7C9B0C0B
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 19:46:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40D949B0C22
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 19:50:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 51451B2231C
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:46:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63FDD1C20B77
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:50:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8FE818CC1A;
-	Fri, 25 Oct 2024 17:45:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4822420BB55;
+	Fri, 25 Oct 2024 17:50:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="fPjvJ3ny"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MxVNGMeO"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65BCB70832;
-	Fri, 25 Oct 2024 17:45:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7389118452E;
+	Fri, 25 Oct 2024 17:50:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729878352; cv=none; b=cVqVjECkIOsmyu+jDHpdYIBtIZuIv0WMWlj0w1sCmoN6s66DCv7BrWLSoM1nT4j44IeehjHy5wfk7R+1cRVpjZv7hG9lABte1MjRlCqZOYbFRZZyIsyDetjRasBquguPRcn2HsAsEpBqfqoxODHS/CRyZdpadHp0U6viffuGJek=
+	t=1729878607; cv=none; b=mDRJkt62KNFwyDrb3o1uFl+hz20J9GeqtH5MWupfuc9HQnRXxOWvpi9gGiUgggjqxoPYpxFf+cpHSModBu1elidVJiB57trNk4OnKKJGXY18WDA/135ds/091hMmsk9K4Svs5zVxX4DSlfZgvlP79+Ug8t+Kr19/uil1ncsDpuU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729878352; c=relaxed/simple;
-	bh=bNv4jIyQDliGcVawBrOSvkpb5zpdi3jBSjsJjCPEVEc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=rsRgD8OM7ME59gTGqDNUdg8X4yfbpjHvzTH2OZ8YRdYLum5E9z/p+BIBWEgqBY6IZ+xucaXp7FWudcCSbQLvPuwpEHMjg4YCyOHp4KmpcndumUuAic/2ZkIn6iCyz+wsJCFlcd+U7SCFobIjaCO52fCq1yOOQIKhVjaN/cEv8Vs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=fPjvJ3ny; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1729878347;
-	bh=bNv4jIyQDliGcVawBrOSvkpb5zpdi3jBSjsJjCPEVEc=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=fPjvJ3nynAedGwttLkqjAiCTDRn+hUKvfZQus61FeEwQ0GY2Y5FKcxwZavucLuRzx
-	 ztn6IijoH7PBYy771wY6qh4jCZNekkzLBiLIPGGILnx5DTa/LWJst3LCKEjeSlfZ1Y
-	 ESX5UeKFwCSKHZjW1UhUyq1mHd47dNsArvETkwUQNa4YjzEz6T7upKB3MKrF3mh8SW
-	 jDtkxMLiqIPQP3NG+hSOkhkCOfoTHXgxa6QqK6IIwrOyf+cUp31FcVe1ll86CazEdA
-	 N+SaFGcOoZksv5691roGUlw6kcRzcMeZ7iossAFHqywgGGfoGXA8bYXITqnGH7AtK5
-	 tROwehnxYQdMw==
-Received: from nicolas-tpx395.lan (unknown [IPv6:2606:6d00:15:862e::7a9])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: nicolas)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 9667F17E36B5;
-	Fri, 25 Oct 2024 19:45:45 +0200 (CEST)
-Message-ID: <8e6f209cbc2c33e445b544d13b06374338910d78.camel@collabora.com>
-Subject: Re: [PATCH v6 10/11] media: rkvdec: h264: Support High 10 and 4:2:2
- profiles
-From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-To: Jonas Karlman <jonas@kwiboo.se>, Sebastian Fricke
- <sebastian.fricke@collabora.com>, Ezequiel Garcia
- <ezequiel@vanguardiasur.com.ar>, Mauro Carvalho Chehab
- <mchehab@kernel.org>,  Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Alex Bee <knaerzche@gmail.com>, Benjamin Gaignard
- <benjamin.gaignard@collabora.com>, Detlev Casanova
- <detlev.casanova@collabora.com>, Dan Carpenter <dan.carpenter@linaro.org>, 
- linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org, 
- linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org, Christopher
- Obbard <chris.obbard@collabora.com>
-Date: Fri, 25 Oct 2024 13:45:44 -0400
-In-Reply-To: <20240909192522.1076704-11-jonas@kwiboo.se>
-References: <20240909192522.1076704-1-jonas@kwiboo.se>
-	 <20240909192522.1076704-11-jonas@kwiboo.se>
-Organization: Collabora
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+	s=arc-20240116; t=1729878607; c=relaxed/simple;
+	bh=V5FM+c7WNDBvhvHLthI/EB48NAmOrHnLnwoSw/yegAQ=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=QvIlhxq36WEJb2qd790yWd8v6tACijSAUucfGYTEU5IjTVr9tzk6V1QUkxMJnYU+HS6o0YpGQVV28RiKVZ3WWMzLvDOSKXS7SFFqDN/jBtMPfin3Ue2BBifqX7ACUWmE6JU2FpHwIDKlkKBRHjaaiR1j9kfiWSQmYQpgPuw/09o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MxVNGMeO; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-20cb7139d9dso19925025ad.1;
+        Fri, 25 Oct 2024 10:50:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729878604; x=1730483404; darn=vger.kernel.org;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=i/KK5QLto1FiOLyb3xhyK+mUwfcmuzgexBLcrS8nrw4=;
+        b=MxVNGMeOPI8VdTCq5fosIft7N5AflP7gvnfLcxEqDM+PVymvutXoUV2dYpRJKreZ5/
+         BazdcWwWLa5aQk6UHXJZOtmGb79fIu8FGrpA2VyVyJRPiSccRL2Eks8KNsDtZB57rg1q
+         sX54VEh2wxfHTRtsy5ke0pLjeuhULX6bs4xzqsY9T8B5e3nj1bIy2+bZ/2MtvoL8UJwh
+         t67WGhNRk9HWO++flp0IltxBav1xZdu4v4yecY1GyTGPcDpoB47m+WMtWnmCWAqSeGpP
+         frj9xxnCs1xBh+U50cIDkwSCFWTBVw91zIOOjgo14UcxINWupH89Z9c1OEqxuZREGIQq
+         jAaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729878604; x=1730483404;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=i/KK5QLto1FiOLyb3xhyK+mUwfcmuzgexBLcrS8nrw4=;
+        b=OlYcY99jT2p8rnut/kQHsT6pOAmZV9HaKrnCJ4ZoE5iQz8LTse8wqHHmOKF/nBgu39
+         6dhxr4EgiZrboQNpUaj7flgTD+u8g6kyBRM+pqAD5keGvDDC3Dz8lL7WwOwaiueRkKFB
+         MX7RpHaGRTEjZfstwqcy/nWgS39tWxt0qZtSlE9NOz2+Cl6HM/tHYu6ANAzolXP5WHYe
+         PO0bRXffTjZFDyGz4awll2tR9jUWLYzEDlb2y4FA96HXXXJ8cV1iZuyget85nguq/+rv
+         qTzsf9VQhggJKHgj9NTBo/5HiufYH2N9Tka3Vvzs7FRGP0Z1n1fHflticbn1e7bv3veY
+         zlQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVFgHFpSpOOGAKOpHe/EMtUY8LyDa+qAAoVi7ZKSkN9XXWePpIA4HS4VgDaZn3oa/RxnuxeJIDl8weh@vger.kernel.org, AJvYcCVVSyhQFY6WP/qwDIEbSVbSKVtqEgtjahI8rUXW8XhY/lLoCaf3wrHC1xzbcE6Ix6MfMiZteV0iQj+mvZwNWg==@vger.kernel.org, AJvYcCWnPyQqAtpc/TDVbX3O5Zz2+OFeNlLuVPQ04U4aARNqXc3CZVThOE6jg/5d2rtg5xUH1GMKh8tj6BAd@vger.kernel.org, AJvYcCWtd42OXuqmmOBFGz2BWpKbPCU5CzREI/4ms2OQ8axnUWO13F26QgoouZjnsOrvzubay/+L/F5xXBCfzHJh@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXPCOiKcCzr8fTDCSIiXOu6DzgB0Nuf6kgaYVV78SE2MMbWrcF
+	SwVmN19qSEmcmEFjLSpbgV3043+T9yFy65OR1J8BKOdy9iKOgIcfQnM1Aw==
+X-Google-Smtp-Source: AGHT+IFz7Yp1fLWW/5z7mu1Mw7Lgf0pQOdAc+0Y/WU9QcHDWcwRybp6SR7G3bWK8gWk4dN3ng8nYNA==
+X-Received: by 2002:a17:90b:1c10:b0:2e2:cef9:8f68 with SMTP id 98e67ed59e1d1-2e8f1059571mr213139a91.4.1729878604144;
+        Fri, 25 Oct 2024 10:50:04 -0700 (PDT)
+Received: from dw-tp ([171.76.85.20])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e77e534f09sm3762668a91.32.2024.10.25.10.50.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Oct 2024 10:50:03 -0700 (PDT)
+From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: John Garry <john.g.garry@oracle.com>, linux-ext4@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@infradead.org>, Ojaswin Mujoo <ojaswin@linux.ibm.com>, Dave Chinner <david@fromorbit.com>, linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 1/6] ext4: Add statx support for atomic writes
+In-Reply-To: <20241025160942.GJ2386201@frogsfrogsfrogs>
+Date: Fri, 25 Oct 2024 23:15:55 +0530
+Message-ID: <87o738m5yk.fsf@gmail.com>
+References: <cover.1729825985.git.ritesh.list@gmail.com> <e6af669b237690491ecff0717039e28e949208c8.1729825985.git.ritesh.list@gmail.com> <314835ec-98bf-472c-8be7-0b26e50cfc9b@oracle.com> <87y12cmr5o.fsf@gmail.com> <20241025160942.GJ2386201@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Le lundi 09 septembre 2024 à 19:25 +0000, Jonas Karlman a écrit :
-> Add support and enable decoding of H264 High 10 and 4:2:2 profiles.
-> 
-> Decoded CAPTURE buffer width is aligned to 64 pixels to accommodate HW
-> requirement of 10-bit format buffers, fixes decoding of:
-> 
-> - Hi422FR13_SONY_A
-> - Hi422FR14_SONY_A
-> - Hi422FR15_SONY_A
-> - Hi422FR6_SONY_A
-> - Hi422FR7_SONY_A
-> - Hi422FR8_SONY_A
-> - Hi422FR9_SONY_A
-> - Hi422FREXT18_SONY_A
-> 
-> The get_image_fmt() ops is implemented to select an image format
-> required for the provided SPS control.
-> 
-> Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
-> Tested-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-> Tested-by: Christopher Obbard <chris.obbard@collabora.com>
-> ---
-> v6:
-> - No change
-> 
-> v5:
-> - Move buffer align from rkvdec_fill_decoded_pixfmt to min/step_width
-> - Use correct profiles for V4L2_CID_MPEG_VIDEO_H264_PROFILE
-> - Collect t-b tags
-> 
-> v4:
-> - Change to use get_image_fmt() ops
-> 
-> v3:
-> - Add get_fmt_opaque ops, the expected pixelformat is used as opaque
-> - Add new valid_fmt ops that validate pixelformat matches opaque
-> - Update H264_PROFILE control max value
-> ---
->  drivers/staging/media/rkvdec/rkvdec-h264.c | 37 +++++++++++++++-----
->  drivers/staging/media/rkvdec/rkvdec.c      | 40 ++++++++++++++++------
->  drivers/staging/media/rkvdec/rkvdec.h      |  3 ++
->  3 files changed, 61 insertions(+), 19 deletions(-)
-> 
-> diff --git a/drivers/staging/media/rkvdec/rkvdec-h264.c b/drivers/staging/media/rkvdec/rkvdec-h264.c
-> index 8bce8902b8dd..d14b4d173448 100644
-> --- a/drivers/staging/media/rkvdec/rkvdec-h264.c
-> +++ b/drivers/staging/media/rkvdec/rkvdec-h264.c
-> @@ -1027,24 +1027,42 @@ static int rkvdec_h264_adjust_fmt(struct rkvdec_ctx *ctx,
->  	return 0;
->  }
->  
-> +static enum rkvdec_image_fmt rkvdec_h264_get_image_fmt(struct rkvdec_ctx *ctx,
-> +						       struct v4l2_ctrl *ctrl)
-> +{
-> +	const struct v4l2_ctrl_h264_sps *sps = ctrl->p_new.p_h264_sps;
-> +
-> +	if (ctrl->id != V4L2_CID_STATELESS_H264_SPS)
-> +		return RKVDEC_IMG_FMT_ANY;
-> +
-> +	if (sps->bit_depth_luma_minus8 == 0) {
-> +		if (sps->chroma_format_idc == 2)
-> +			return RKVDEC_IMG_FMT_422_8BIT;
-> +		else
-> +			return RKVDEC_IMG_FMT_420_8BIT;
-> +	} else if (sps->bit_depth_luma_minus8 == 2) {
-> +		if (sps->chroma_format_idc == 2)
-> +			return RKVDEC_IMG_FMT_422_10BIT;
-> +		else
-> +			return RKVDEC_IMG_FMT_420_10BIT;
-> +	}
-> +
-> +	return RKVDEC_IMG_FMT_ANY;
-> +}
-> +
->  static int rkvdec_h264_validate_sps(struct rkvdec_ctx *ctx,
->  				    const struct v4l2_ctrl_h264_sps *sps)
->  {
->  	unsigned int width, height;
->  
-> -	/*
-> -	 * TODO: The hardware supports 10-bit and 4:2:2 profiles,
-> -	 * but it's currently broken in the driver.
-> -	 * Reject them for now, until it's fixed.
-> -	 */
-> -	if (sps->chroma_format_idc > 1)
-> -		/* Only 4:0:0 and 4:2:0 are supported */
-> +	if (sps->chroma_format_idc > 2)
-> +		/* Only 4:0:0, 4:2:0 and 4:2:2 are supported */
->  		return -EINVAL;
->  	if (sps->bit_depth_luma_minus8 != sps->bit_depth_chroma_minus8)
->  		/* Luma and chroma bit depth mismatch */
->  		return -EINVAL;
-> -	if (sps->bit_depth_luma_minus8 != 0)
-> -		/* Only 8-bit is supported */
-> +	if (sps->bit_depth_luma_minus8 != 0 && sps->bit_depth_luma_minus8 != 2)
-> +		/* Only 8-bit and 10-bit is supported */
->  		return -EINVAL;
->  
->  	width = (sps->pic_width_in_mbs_minus1 + 1) * 16;
-> @@ -1190,4 +1208,5 @@ const struct rkvdec_coded_fmt_ops rkvdec_h264_fmt_ops = {
->  	.stop = rkvdec_h264_stop,
->  	.run = rkvdec_h264_run,
->  	.try_ctrl = rkvdec_h264_try_ctrl,
-> +	.get_image_fmt = rkvdec_h264_get_image_fmt,
->  };
-> diff --git a/drivers/staging/media/rkvdec/rkvdec.c b/drivers/staging/media/rkvdec/rkvdec.c
-> index 8df49ee12820..c8c14f35ac44 100644
-> --- a/drivers/staging/media/rkvdec/rkvdec.c
-> +++ b/drivers/staging/media/rkvdec/rkvdec.c
-> @@ -195,10 +195,11 @@ static const struct rkvdec_ctrl_desc rkvdec_h264_ctrl_descs[] = {
->  	},
->  	{
->  		.cfg.id = V4L2_CID_MPEG_VIDEO_H264_PROFILE,
-> -		.cfg.min = V4L2_MPEG_VIDEO_H264_PROFILE_BASELINE,
-> -		.cfg.max = V4L2_MPEG_VIDEO_H264_PROFILE_HIGH,
-> +		.cfg.min = V4L2_MPEG_VIDEO_H264_PROFILE_CONSTRAINED_BASELINE,
+"Darrick J. Wong" <djwong@kernel.org> writes:
 
-The change from BASELINE to CONSTRAINED_BASELINE is correct, but it bugs me a
-little to hide it into this patch. Do you mind splitting it out ?
+> On Fri, Oct 25, 2024 at 03:38:03PM +0530, Ritesh Harjani wrote:
+>> John Garry <john.g.garry@oracle.com> writes:
+>> 
+>> > On 25/10/2024 04:45, Ritesh Harjani (IBM) wrote:
+>> >> This patch adds base support for atomic writes via statx getattr.
+>> >> On bs < ps systems, we can create FS with say bs of 16k. That means
+>> >> both atomic write min and max unit can be set to 16k for supporting
+>> >> atomic writes.
+>> >> 
+>> >> Later patches adds support for bigalloc as well so that ext4 can also
+>> >> support doing atomic writes for bs = ps systems.
+>> >> 
+>> >> Co-developed-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+>> >> Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+>> >> Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+>> >> ---
+>> >>   fs/ext4/ext4.h  |  7 ++++++-
+>> >>   fs/ext4/inode.c | 14 ++++++++++++++
+>> >>   fs/ext4/super.c | 32 ++++++++++++++++++++++++++++++++
+>> >>   3 files changed, 52 insertions(+), 1 deletion(-)
+>> >> 
+>> >> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+>> >> index 44b0d418143c..a41e56c2c628 100644
+>> >> --- a/fs/ext4/ext4.h
+>> >> +++ b/fs/ext4/ext4.h
+>> >> @@ -1729,6 +1729,10 @@ struct ext4_sb_info {
+>> >>   	 */
+>> >>   	struct work_struct s_sb_upd_work;
+>> >>   
+>> >> +	/* Atomic write unit values */
+>> >> +	unsigned int fs_awu_min;
+>> >> +	unsigned int fs_awu_max;
+>> >> +
+>> >>   	/* Ext4 fast commit sub transaction ID */
+>> >>   	atomic_t s_fc_subtid;
+>> >>   
+>> >> @@ -1820,7 +1824,8 @@ static inline int ext4_valid_inum(struct super_block *sb, unsigned long ino)
+>> >>    */
+>> >>   enum {
+>> >>   	EXT4_MF_MNTDIR_SAMPLED,
+>> >> -	EXT4_MF_FC_INELIGIBLE	/* Fast commit ineligible */
+>> >> +	EXT4_MF_FC_INELIGIBLE,	/* Fast commit ineligible */
+>> >> +	EXT4_MF_ATOMIC_WRITE	/* Supports atomic write */
+>> >
+>> > Does this flag really buy us much?
+>> >
+>> 
+>> I felt it is cleaner this way than comparing non-zero values of
+>> fs_awu_min and fs_awu_max.
+>
+> What does it mean when MF_ATOMIC_WRITE is set and fs_awu_* are zero?
+> The awu values don't change at runtime, so I think you can save yourself
+> an atomic test by checking (non-atomically) for awu_min>0.
 
-Note that these days, since we have no software fallback for it, GStreamer, and
-probably FFMPEG too, still try out contrained-baseline decoders for baseline
-content, as very often the bitstream does not actually uses FMO and ASO
-features. So perhaps we can just edit this one out to help with merging this
-set?
+Sure. I agree with the reasoning that we can just check for awu_min > 0.
+I can write an inline helper for this.
 
-With one of these two fix:
+>
+> (I don't know anything about the flags, those came after my time iirc.)
+>
 
-Reviewed-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+Thanks for the review :) 
 
-> +		.cfg.max = V4L2_MPEG_VIDEO_H264_PROFILE_HIGH_422_INTRA,
->  		.cfg.menu_skip_mask =
-> -			BIT(V4L2_MPEG_VIDEO_H264_PROFILE_EXTENDED),
-> +			BIT(V4L2_MPEG_VIDEO_H264_PROFILE_EXTENDED) |
-> +			BIT(V4L2_MPEG_VIDEO_H264_PROFILE_HIGH_444_PREDICTIVE),
->  		.cfg.def = V4L2_MPEG_VIDEO_H264_PROFILE_MAIN,
->  	},
->  	{
-> @@ -213,11 +214,23 @@ static const struct rkvdec_ctrls rkvdec_h264_ctrls = {
->  	.num_ctrls = ARRAY_SIZE(rkvdec_h264_ctrl_descs),
->  };
->  
-> -static const struct rkvdec_decoded_fmt_desc rkvdec_h264_vp9_decoded_fmts[] = {
-> +static const struct rkvdec_decoded_fmt_desc rkvdec_h264_decoded_fmts[] = {
->  	{
->  		.fourcc = V4L2_PIX_FMT_NV12,
->  		.image_fmt = RKVDEC_IMG_FMT_420_8BIT,
->  	},
-> +	{
-> +		.fourcc = V4L2_PIX_FMT_NV15,
-> +		.image_fmt = RKVDEC_IMG_FMT_420_10BIT,
-> +	},
-> +	{
-> +		.fourcc = V4L2_PIX_FMT_NV16,
-> +		.image_fmt = RKVDEC_IMG_FMT_422_8BIT,
-> +	},
-> +	{
-> +		.fourcc = V4L2_PIX_FMT_NV20,
-> +		.image_fmt = RKVDEC_IMG_FMT_422_10BIT,
-> +	},
->  };
->  
->  static const struct rkvdec_ctrl_desc rkvdec_vp9_ctrl_descs[] = {
-> @@ -240,21 +253,28 @@ static const struct rkvdec_ctrls rkvdec_vp9_ctrls = {
->  	.num_ctrls = ARRAY_SIZE(rkvdec_vp9_ctrl_descs),
->  };
->  
-> +static const struct rkvdec_decoded_fmt_desc rkvdec_vp9_decoded_fmts[] = {
-> +	{
-> +		.fourcc = V4L2_PIX_FMT_NV12,
-> +		.image_fmt = RKVDEC_IMG_FMT_420_8BIT,
-> +	},
-> +};
-> +
->  static const struct rkvdec_coded_fmt_desc rkvdec_coded_fmts[] = {
->  	{
->  		.fourcc = V4L2_PIX_FMT_H264_SLICE,
->  		.frmsize = {
-> -			.min_width = 48,
-> +			.min_width = 64,
->  			.max_width = 4096,
-> -			.step_width = 16,
-> +			.step_width = 64,
->  			.min_height = 48,
->  			.max_height = 2560,
->  			.step_height = 16,
->  		},
->  		.ctrls = &rkvdec_h264_ctrls,
->  		.ops = &rkvdec_h264_fmt_ops,
-> -		.num_decoded_fmts = ARRAY_SIZE(rkvdec_h264_vp9_decoded_fmts),
-> -		.decoded_fmts = rkvdec_h264_vp9_decoded_fmts,
-> +		.num_decoded_fmts = ARRAY_SIZE(rkvdec_h264_decoded_fmts),
-> +		.decoded_fmts = rkvdec_h264_decoded_fmts,
->  		.subsystem_flags = VB2_V4L2_FL_SUPPORTS_M2M_HOLD_CAPTURE_BUF,
->  	},
->  	{
-> @@ -269,8 +289,8 @@ static const struct rkvdec_coded_fmt_desc rkvdec_coded_fmts[] = {
->  		},
->  		.ctrls = &rkvdec_vp9_ctrls,
->  		.ops = &rkvdec_vp9_fmt_ops,
-> -		.num_decoded_fmts = ARRAY_SIZE(rkvdec_h264_vp9_decoded_fmts),
-> -		.decoded_fmts = rkvdec_h264_vp9_decoded_fmts,
-> +		.num_decoded_fmts = ARRAY_SIZE(rkvdec_vp9_decoded_fmts),
-> +		.decoded_fmts = rkvdec_vp9_decoded_fmts,
->  	}
->  };
->  
-> diff --git a/drivers/staging/media/rkvdec/rkvdec.h b/drivers/staging/media/rkvdec/rkvdec.h
-> index e466a2753ccf..9a9f4fced7a1 100644
-> --- a/drivers/staging/media/rkvdec/rkvdec.h
-> +++ b/drivers/staging/media/rkvdec/rkvdec.h
-> @@ -80,6 +80,9 @@ struct rkvdec_coded_fmt_ops {
->  enum rkvdec_image_fmt {
->  	RKVDEC_IMG_FMT_ANY = 0,
->  	RKVDEC_IMG_FMT_420_8BIT,
-> +	RKVDEC_IMG_FMT_420_10BIT,
-> +	RKVDEC_IMG_FMT_422_8BIT,
-> +	RKVDEC_IMG_FMT_422_10BIT,
->  };
->  
->  struct rkvdec_decoded_fmt_desc {
+-ritesh
 
+> --D
+>
+>> Now that you pointed at it - Maybe a question for others who might have
+>> the history of which one to use when - or do we think there is a scope
+>> of merging the two into just one as a later cleanup?
+>> 
+>> I know that s_mount_flags was added for fastcommit and it needed the
+>> state manipulations to be done in atomic way. Similarly s_ext4_flags
+>> also was renamed from s_resize_flags for more general purpose use. Both
+>> of these looks like could be merged isn't it?
+>> 
+>> 
+>> 
+>> >>   };
+>> >>   
+>> >>   static inline void ext4_set_mount_flag(struct super_block *sb, int bit)
+>> >> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+>> >> index 54bdd4884fe6..897c028d5bc9 100644
+>> >> --- a/fs/ext4/inode.c
+>> >> +++ b/fs/ext4/inode.c
+>> >> @@ -5578,6 +5578,20 @@ int ext4_getattr(struct mnt_idmap *idmap, const struct path *path,
+>> >>   		}
+>> >>   	}
+>> >>   
+>> >> +	if (S_ISREG(inode->i_mode) && (request_mask & STATX_WRITE_ATOMIC)) {
+>> >> +		struct ext4_sb_info *sbi = EXT4_SB(inode->i_sb);
+>> >> +		unsigned int awu_min, awu_max;
+>> >> +
+>> >> +		if (ext4_test_mount_flag(inode->i_sb, EXT4_MF_ATOMIC_WRITE)) {
+>> >
+>> > I'd use ext4_inode_can_atomicwrite() here, similar to what is done for xfs
+>> >
+>> 
+>> Sure since it is inode operation, we can check against ext4_inode_can_atomicwrite().
+>> 
+>> 
+>> >> +			awu_min = sbi->fs_awu_min;
+>> >> +			awu_max = sbi->fs_awu_max;
+>> >> +		} else {
+>> >> +			awu_min = awu_max = 0;
+>> >> +		}
+>> >> +
+>> >> +		generic_fill_statx_atomic_writes(stat, awu_min, awu_max);
+>> >> +	}
+>> >> +
+>> >>   	flags = ei->i_flags & EXT4_FL_USER_VISIBLE;
+>> >>   	if (flags & EXT4_APPEND_FL)
+>> >>   		stat->attributes |= STATX_ATTR_APPEND;
+>> >> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+>> >> index 16a4ce704460..f5c075aff060 100644
+>> >> --- a/fs/ext4/super.c
+>> >> +++ b/fs/ext4/super.c
+>> >> @@ -4425,6 +4425,37 @@ static int ext4_handle_clustersize(struct super_block *sb)
+>> >>   	return 0;
+>> >>   }
+>> >>   
+>> >> +/*
+>> 
 
