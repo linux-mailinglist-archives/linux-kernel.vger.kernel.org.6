@@ -1,195 +1,139 @@
-Return-Path: <linux-kernel+bounces-382315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCEB29B0C41
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 19:55:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 452309B0C45
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 19:55:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF33028161A
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:55:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A21CF281D10
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:55:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4F2A20BB30;
-	Fri, 25 Oct 2024 17:55:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D00320D4F2;
+	Fri, 25 Oct 2024 17:55:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="b0f3CgbP"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="T2MWjDkz"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24BE8800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 009EE16D9BF
 	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 17:55:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729878908; cv=none; b=LX3e1ghb74Bra+iU78gK3sHQ8Ai3foiUFMU+rfxlRqyf7paHvNpZ491nSf3r0mYFbYg1aDaAA2/tJqUUR0jFf44EtONtlPjlICO30hu3Iz8r8qjEjbOoyRn+QwGk4GZJoeVjOyvPCidyMP20/xr/bCloQLDgxyLcgQ4talaW70U=
+	t=1729878909; cv=none; b=IMLlNJDQMY+FX1bRGXVmX05/somuN0uF5bFbES00J9fmlfHBlJ40IuqD6ISIVP83R+GQ+I0HV6x3EiN6nZG46Bp+/7DzoELKoEUDAtz3Z+PYiRrbNodtQ17+JWDJMpIYhAHXVXEzyBOBHgwk8rkS8ToKmKKBjleOq8BkoxorpqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729878908; c=relaxed/simple;
-	bh=3YHhZdaS5a3qrVkwtilj2uaOwvvIwUHe8GD2JoPrmew=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=EMJHoywYeK7Kc/6ygz8Gjhu7Pq4aAPP0b+d5jvj432zABxQR1HX6UO5l98ApjT3qjoZXwF0byAVhR8WIL6nVQxZByYjdMBEmzq6Q25ENlTXfGbmQqimPqV+tYKIGIXKkj8ljH0VGAX5k9z8CO4qqnkjg0o2J7Zat/qwuujmzlcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=b0f3CgbP; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49PB69lr016490;
-	Fri, 25 Oct 2024 17:55:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	s=arc-20240116; t=1729878909; c=relaxed/simple;
+	bh=H64cwn/YI+xahZM5R2yS0Dl/XbXQeq2fR8JVMbZATBE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ay+pcrEQ9yemhpZCWMbaBcMsbda8YjJ2v+3PzzLVaco+b0n16zCPL0hxX8++CJZvdekHy8LzqGDBZFqimlrkf37Brio07C9ctr2Dos2KggmuNtYvmqaZgiVq2EAvHVljBnuBQ/7ok4B0kk+CPOq0ZB53M9RIvN/wriNxPgIncNY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=T2MWjDkz; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49PBj6vn027468
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 17:55:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	BMUguSwfBOZPn7n/2hNIIMG965a8TqhWDHdHceGrhTE=; b=b0f3CgbPK4wlYtOs
-	v5dIZyU9lbI5dE4bExTTWFtYRFs/cYtj60LSAWpbCtXUfkzAizXGwAT/u3JaCMk2
-	NBti+DC9uicNWkURwlhWeeN5Xg4zsqgPvWffKnj85T9PFjbEm/iK6dwnjXhBHUjP
-	BZpweQ+YrJ0qelMyN5Tl+RF1f+YMWMRZsjZUl6ZF7mVl8iPlx4cxaz0wvpcZP2/s
-	XsAda1fknWG39rvufs//qPKHWTYE8QRWahCmX6VW9kRXT9dsRGb2cFZLB0DpoFlw
-	Pdn396tLnHgQkFsCCF69oLQftwI3jpo9irGhq/r2hOp439GmVktifTulGImMczFy
-	qrhibg==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42ga5js8ay-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 25 Oct 2024 17:55:02 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49PHt1GZ009940
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 25 Oct 2024 17:55:01 GMT
-Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 25 Oct
- 2024 10:55:01 -0700
-Message-ID: <72765a2d-2e4d-b8fc-8caa-8d4a131357bd@quicinc.com>
-Date: Fri, 25 Oct 2024 11:55:00 -0600
+	PDDJozuZu4zaPv6m9oMVj0bpssXrcVhycEDLywhRjgc=; b=T2MWjDkzJ1e6mJrH
+	EqYCq2WxCPILCmPQRaSBcaVYp/z37Y0ZuuQrJAUJ7r+aNcJY0U7lpwNjCFOYcHT7
+	Q1AFfcD++B7qbajIO1MgeB0VGJcxGIuPsnQWAKzy8/0PM7Vno+CKhkzaTQnYZKd6
+	QiZTeXNgTkTBZdOe4pryA2w1qd9i6JrOpqF+8omI0JYroANjoV2fEpXkW5PNHPaD
+	tPpTgacPK6fCVcmSEEUcZTL7fCWLaxhbbw4II1x+2JncznrxxLPeZC8IyxRt5GcY
+	14+UhzJ7i9K1uZH6Ib98S73xgVE+xTV8r2C5Su8wxhIaD3VxrBx532V/d6lSdRNt
+	QoHyvw==
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42em3wt1yy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 17:55:05 +0000 (GMT)
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6cbe5e8658fso4595306d6.0
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 10:55:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729878905; x=1730483705;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PDDJozuZu4zaPv6m9oMVj0bpssXrcVhycEDLywhRjgc=;
+        b=W5SYHJFht/3Z//Q+LQ5/FaXhmOGIDkdBSwY1yzebnoQXjhrG9Yho/5wenXRnhGQ9Qa
+         7k8AI42UgNOgof7bgzZWUclcJWIgATGpJTRbq4aXsAaVOy7qEtz4mPbuQdiyvcIMJffA
+         x8f7D92wkfAv95lYw1prsGOjq88KoGu/RyoIkCSxeZrRnXwMW7fTgdz7Axu6mGbIPOnZ
+         FR96zrgg0EC/2QZzy68vUlvMnu5/3FqqNOUUrvuKoVNB90oE+taYBQB3EAnQiOPWbALT
+         ijN+uVBadx46XzDjvfofsLYglrCX8CaSBsjoLRe03gzHTZQrzlNMvHIxDTIbP5d26fjN
+         dg4g==
+X-Forwarded-Encrypted: i=1; AJvYcCVhNBQU/G7nFPcTCUdlaYt0DkUpOELkAn9aKMuH3SmuQLiCh1ubRYRzSpy0+HCGnTiW2osEd06+RH5Lc8E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YynhtqEDGj1Hy7Jgsrgkslj62x5VeyNfrScIe3FnpSK+3p1vssm
+	OCQr0mXUWIju7S3n2vJa01UzWIzGvBWwE8AsNRseUgDkYFtTSj2YguMfsO119JDapWgCE15yqL6
+	QD0Tkw1bvzTNCL/lzpjOYgsc9mysJ3Pi1inRg2wmMBX6uFcuxdZg5KVrt38zwXl0=
+X-Received: by 2002:a05:6214:246a:b0:6cb:bc57:d840 with SMTP id 6a1803df08f44-6d1856b5615mr1922506d6.3.1729878905186;
+        Fri, 25 Oct 2024 10:55:05 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFtUtIC+fHNLiU+/kDeF55Vgxs+NaItUmbI4LMdDeHbRHKwKsO/SElBGpjQ2p6QUOy8POh7KQ==
+X-Received: by 2002:a05:6214:246a:b0:6cb:bc57:d840 with SMTP id 6a1803df08f44-6d1856b5615mr1922306d6.3.1729878904852;
+        Fri, 25 Oct 2024 10:55:04 -0700 (PDT)
+Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b331b0d44sm92945966b.187.2024.10.25.10.55.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 25 Oct 2024 10:55:04 -0700 (PDT)
+Message-ID: <d08b8dd0-18f9-42e2-b0ac-b4283df0af79@oss.qualcomm.com>
+Date: Fri, 25 Oct 2024 19:55:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.0
-Subject: Re: [PATCH V5 07/10] accel/amdxdna: Add command execution
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 4/5] arm64: dts: qcom: move common parts for
+ qcs8300-ride variants into a .dtsi
+To: YijieYang <quic_yijiyang@quicinc.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Richard Cochran <richardcochran@gmail.com>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        quic_tingweiz@quicinc.com, quic_aiquny@quicinc.com
+References: <20241017102728.2844274-1-quic_yijiyang@quicinc.com>
+ <20241017102728.2844274-5-quic_yijiyang@quicinc.com>
 Content-Language: en-US
-To: Lizhi Hou <lizhi.hou@amd.com>, <ogabbay@kernel.org>,
-        <dri-devel@lists.freedesktop.org>
-CC: <linux-kernel@vger.kernel.org>, <min.ma@amd.com>, <max.zhen@amd.com>,
-        <sonal.santan@amd.com>, <king.tam@amd.com>
-References: <20241021161931.3701754-1-lizhi.hou@amd.com>
- <20241021161931.3701754-8-lizhi.hou@amd.com>
-From: Jeffrey Hugo <quic_jhugo@quicinc.com>
-In-Reply-To: <20241021161931.3701754-8-lizhi.hou@amd.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20241017102728.2844274-5-quic_yijiyang@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: DABxdHmJeE9a_8v7GGwbJli4bffM51g8
-X-Proofpoint-GUID: DABxdHmJeE9a_8v7GGwbJli4bffM51g8
+X-Proofpoint-GUID: L7_DvLTGOsTYQzHP_eTo17vFPUKx9C0y
+X-Proofpoint-ORIG-GUID: L7_DvLTGOsTYQzHP_eTo17vFPUKx9C0y
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
  definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- impostorscore=0 mlxlogscore=999 malwarescore=0 clxscore=1015
- priorityscore=1501 adultscore=0 mlxscore=0 spamscore=0 suspectscore=0
- phishscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 phishscore=0
+ mlxlogscore=999 lowpriorityscore=0 malwarescore=0 suspectscore=0
+ spamscore=0 mlxscore=0 impostorscore=0 clxscore=1015 priorityscore=1501
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.19.0-2409260000 definitions=main-2410250136
 
-On 10/21/2024 10:19 AM, Lizhi Hou wrote:
-> diff --git a/include/uapi/drm/amdxdna_accel.h b/include/uapi/drm/amdxdna_accel.h
-> index 3792750834b2..08f3ec7146ab 100644
-> --- a/include/uapi/drm/amdxdna_accel.h
-> +++ b/include/uapi/drm/amdxdna_accel.h
-> @@ -13,6 +13,7 @@
->   extern "C" {
->   #endif
->   
-> +#define AMDXDNA_INVALID_CMD_HANDLE	(~0UL)
->   #define AMDXDNA_INVALID_ADDR		(~0UL)
->   #define AMDXDNA_INVALID_CTX_HANDLE	0
->   #define AMDXDNA_INVALID_BO_HANDLE	0
-> @@ -29,6 +30,8 @@ enum amdxdna_drm_ioctl_id {
->   	DRM_AMDXDNA_CREATE_BO,
->   	DRM_AMDXDNA_GET_BO_INFO,
->   	DRM_AMDXDNA_SYNC_BO,
-> +	DRM_AMDXDNA_EXEC_CMD,
-> +	DRM_AMDXDNA_WAIT_CMD,
->   };
->   
->   /**
-> @@ -201,6 +204,54 @@ struct amdxdna_drm_sync_bo {
->   	__u64 size;
->   };
->   
-> +enum amdxdna_cmd_type {
-> +	AMDXDNA_CMD_SUBMIT_EXEC_BUF = 0,
-> +	AMDXDNA_CMD_SUBMIT_DEPENDENCY,
-> +	AMDXDNA_CMD_SUBMIT_SIGNAL,
-> +};
-> +
-> +/**
-> + * struct amdxdna_drm_exec_cmd - Execute command.
-> + * @ext: MBZ.
-> + * @ext_flags: MBZ.
-> + * @hwctx: Hardware context handle.
-> + * @type: One of command type in enum amdxdna_cmd_type.
-> + * @cmd_handles: Array of command handles or the command handle itself
-> + *               in case of just one.
-> + * @args: Array of arguments for all command handles.
-> + * @cmd_count: Number of command handles in the cmd_handles array.
-> + * @arg_count: Number of arguments in the args array.
-> + * @seq: Returned sequence number for this command.
-> + */
-> +struct amdxdna_drm_exec_cmd {
-> +	__u64 ext;
-> +	__u64 ext_flags;
-> +	__u32 hwctx;
-> +	__u32 type;
-> +	__u64 cmd_handles;
-> +	__u64 args;
-> +	__u32 cmd_count;
-> +	__u32 arg_count;
-> +	__u64 seq;
-> +};
-> +
-> +/**
-> + * struct amdxdna_drm_wait_cmd - Wait exectuion command.
-> + *
-> + * @hwctx: hardware context handle.
-> + * @timeout: timeout in ms, 0 implies infinite wait.
-> + * @seq: sequence number of the command returned by execute command.
-> + *
-> + * Wait a command specified by seq to be completed.
-> + * Using AMDXDNA_INVALID_CMD_HANDLE as seq means wait till there is a free slot
-> + * to submit a new command.
-> + */
-> +struct amdxdna_drm_wait_cmd {
-> +	__u32 hwctx;
-> +	__u32 timeout;
-> +	__u64 seq;
-> +};
-> +
->   #define DRM_IOCTL_AMDXDNA_CREATE_HWCTX \
->   	DRM_IOWR(DRM_COMMAND_BASE + DRM_AMDXDNA_CREATE_HWCTX, \
->   		 struct amdxdna_drm_create_hwctx)
-> @@ -225,6 +276,14 @@ struct amdxdna_drm_sync_bo {
->   	DRM_IOWR(DRM_COMMAND_BASE + DRM_AMDXDNA_SYNC_BO, \
->   		 struct amdxdna_drm_sync_bo)
->   
-> +#define DRM_IOCTL_AMDXDNA_EXEC_CMD \
-> +	DRM_IOWR(DRM_COMMAND_BASE + DRM_AMDXDNA_EXEC_CMD, \
-> +		 struct amdxdna_drm_exec_cmd)
-> +
-> +#define DRM_IOCTL_AMDXDNA_WAIT_CMD \
-> +	DRM_IOWR(DRM_COMMAND_BASE + DRM_AMDXDNA_WAIT_CMD, \
-> +		 struct amdxdna_drm_wait_cmd)
-> +
+On 17.10.2024 12:27 PM, YijieYang wrote:
+> From: Yijie Yang <quic_yijiyang@quicinc.com>
+> 
+> In order to support multiple revisions of the qcs8300-ride board, create
+> a .dtsi containing the common parts and split out the ethernet bits into
+> the actual board file as they will change in revision 2.
+> 
+> Signed-off-by: Yijie Yang <quic_yijiyang@quicinc.com>
+> ---
 
-Nope.  This looks like a driver private wait ioctl on a specific BO. 
-That is not the modern way to do things per Vetter -
+[...]
 
-https://lore.kernel.org/dri-devel/ZC75%2Fq34YnDDsGpB@phenom.ffwll.local/
+>  	chosen {
+> -		stdout-path = "serial0:115200n8";
+> +		stdout-path = "serial0: 115200n8";
+>  	};
 
-Skimming the implementation, it looks like you are already using fences 
-and the drm scheduler, so plumbing in syncobjs is not much more than 
-what you are already doing, I think.
+This looks unintended
 
--Jeff
+The rest looks good, except I think you forgot to drop /dts-v1/
+from the dtsi
+
+Konrad
 
