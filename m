@@ -1,135 +1,139 @@
-Return-Path: <linux-kernel+bounces-382091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CF2D9B090A
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 18:01:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 568C59B0925
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 18:04:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8DB95B2313F
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:01:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15B5B28202C
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:04:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DE7E166F33;
-	Fri, 25 Oct 2024 16:00:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EE3B185B7B;
+	Fri, 25 Oct 2024 16:04:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b="VDIAY7g3"
-Received: from bisque.elm.relay.mailchannels.net (bisque.elm.relay.mailchannels.net [23.83.212.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="naxm2wnp"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA0C970825;
-	Fri, 25 Oct 2024 16:00:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.212.18
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729872053; cv=pass; b=NlQCUP6pz+9GEKja/eyUfsmi5teis9MmXZp0tFgYFRy1P5seMc00Ml97A5UPrFl2ak9WGlaSOX2Q8z3bKDJPFQKL3S+UPxxX8FuPYrBw8bQD430okJ21FLaLljpOhak0v5R+1hw5Nr1tYnnMRI3MvrDVpEd4QFQYNXVVzoUOXBA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729872053; c=relaxed/simple;
-	bh=suKnIkzHl52GQ3uUBRyZ4/13NfkZfz1GZL+ygVGh2O8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pz8KGEWd6sGiMkVtQganGZ5ZsshSwEP2QSimma9BimVLmBfGeuYEN7o2SWxCTZNPi67F0ofHkqWn3jmgrekmWeacIEmGnQj/5plKPI7h7Ssoo1o7NcgByuOjXGQcEG2kBxVJOp7ohNjxYuRVPelnKyGEetkTCy1j7Xze5slpFsM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net; spf=pass smtp.mailfrom=stgolabs.net; dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b=VDIAY7g3; arc=pass smtp.client-ip=23.83.212.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=stgolabs.net
-X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
-Received: from relay.mailchannels.net (localhost [127.0.0.1])
-	by relay.mailchannels.net (Postfix) with ESMTP id 5CBCBC6740;
-	Fri, 25 Oct 2024 16:00:44 +0000 (UTC)
-Received: from pdx1-sub0-mail-a287.dreamhost.com (trex-13.trex.outbound.svc.cluster.local [100.102.223.228])
-	(Authenticated sender: dreamhost)
-	by relay.mailchannels.net (Postfix) with ESMTPA id BC10BC6842;
-	Fri, 25 Oct 2024 16:00:40 +0000 (UTC)
-ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1729872040; a=rsa-sha256;
-	cv=none;
-	b=LN9t0SSJ70DJWx1oZL7Mu1n5qBApWU7NnH2YAGkoTFiDDrYpmHXRck1cDV3ekXPQnJiNTx
-	ewOkWOwbuqq5kl5MwlbO+/RLPJMl+kLXcd+QsWwcqO2MCh36Low4kjqzsSiaaTczmsq3fP
-	ThQFzvdqr7IwUucdAHDqSVDQSPzmu+SqPfFDU6wJ/KwiHHoWYiwICbFGSRutvI6e5Sq316
-	MyIntLCQqQS7hjIpYdk26d9V4PnqFBBlaLzXPI4N4IH2q3ssM/Ui6w5NdJL0H8gmUfECWF
-	v85q/VNi+orUum91DAJ3e6FGkbm97Prb5mwndU+HnzlvooRKHxibnBioaiZVig==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mailchannels.net;
-	s=arc-2022; t=1729872040;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references:dkim-signature;
-	bh=suKnIkzHl52GQ3uUBRyZ4/13NfkZfz1GZL+ygVGh2O8=;
-	b=wkNI2XsD4d1rgzvZDkAe84IJs5Z4W3sRkGfDDnushht1thyOx8S8A0aiDLXcPdoZmq4Aoq
-	6QOKpwUZpOuj+PrDFcyAgpIpHdoSLhHnhT7PKwNX3SfTNKVQBBmL4GKBE9VN56Q4BLZeVp
-	qBYJaxpjVth9wn2i+2GUajVEBGwKg7BIWLewmZVgp+mIZAKxt0br4hxz7/SXWIBUq6OxYC
-	JMGMNGccUGsGa2+DkSfRbTTDUIhctKPthJ+0ndvR21cgOPc66TQPscJ331p8Xbv5mMNUeU
-	dgeQ4+gRQmdQdM/mf7w3QCCU7QOXlsOPW7T3/IvimNtnENJSF8wFKKyAObM1Zw==
-ARC-Authentication-Results: i=1;
-	rspamd-78ff97654b-tkhlg;
-	auth=pass smtp.auth=dreamhost smtp.mailfrom=dave@stgolabs.net
-X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
-X-MC-Relay: Neutral
-X-MailChannels-SenderId: dreamhost|x-authsender|dave@stgolabs.net
-X-MailChannels-Auth-Id: dreamhost
-X-Share-Oafish: 78ba8f760e311cf0_1729872042984_934192089
-X-MC-Loop-Signature: 1729872042984:564840505
-X-MC-Ingress-Time: 1729872042984
-Received: from pdx1-sub0-mail-a287.dreamhost.com (pop.dreamhost.com
- [64.90.62.162])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
-	by 100.102.223.228 (trex/7.0.2);
-	Fri, 25 Oct 2024 16:00:42 +0000
-Received: from offworld (ip72-199-50-187.sd.sd.cox.net [72.199.50.187])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dave@stgolabs.net)
-	by pdx1-sub0-mail-a287.dreamhost.com (Postfix) with ESMTPSA id 4XZnYz4s2nzBF;
-	Fri, 25 Oct 2024 09:00:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=stgolabs.net;
-	s=dreamhost; t=1729872040;
-	bh=suKnIkzHl52GQ3uUBRyZ4/13NfkZfz1GZL+ygVGh2O8=;
-	h=Date:From:To:Cc:Subject:Content-Type;
-	b=VDIAY7g34MhrN3et69nORKt+92m9EF/j/oBrcen+OdVLK1t8CcYpzk0CrkvlXfPPT
-	 Z1PgbjGDkSWQusAHf38iuUXdgojHWFrO8DMWZXyCo8erPz56WQo9Xkom89uHUCv8xt
-	 Xk9jnbkkgUPlzoQ9YS+9kdONnTqKs6s2Hoas6WGUXrO2Sajksfn805dAReF70FkwlN
-	 UDBm5ETwCoxTys1EjrQ2edO6gSiVk2QuPky8buVnzirX6AKkc1U1v7++QeWiA5TQjA
-	 Bm/05l2wJ0b20HEpIJbpKf8R/v/LAfj1zgQBWitwesCIULwc0L3erHpXOkqP9EsaXD
-	 JaLWgNxYaRC7w==
-Date: Fri, 25 Oct 2024 09:00:36 -0700
-From: Davidlohr Bueso <dave@stgolabs.net>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: tglx@linutronix.de, linux-kernel@vger.kernel.org, mingo@redhat.com,
-	dvhart@infradead.org, andrealmeid@igalia.com,
-	Andrew Morton <akpm@linux-foundation.org>, urezki@gmail.com,
-	hch@infradead.org, lstoakes@gmail.com,
-	Arnd Bergmann <arnd@arndb.de>, linux-api@vger.kernel.org,
-	linux-mm@kvack.org, linux-arch@vger.kernel.org,
-	malteskarupke@web.de, cl@linux.com, llong@redhat.com,
-	Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH 1/6] mm: Add vmalloc_huge_node()
-Message-ID: <20241025160036.awgzmuafq57k53yq@offworld>
-Mail-Followup-To: Peter Zijlstra <peterz@infradead.org>, tglx@linutronix.de,
-	linux-kernel@vger.kernel.org, mingo@redhat.com,
-	dvhart@infradead.org, andrealmeid@igalia.com,
-	Andrew Morton <akpm@linux-foundation.org>, urezki@gmail.com,
-	hch@infradead.org, lstoakes@gmail.com,
-	Arnd Bergmann <arnd@arndb.de>, linux-api@vger.kernel.org,
-	linux-mm@kvack.org, linux-arch@vger.kernel.org,
-	malteskarupke@web.de, cl@linux.com, llong@redhat.com,
-	Christoph Hellwig <hch@lst.de>
-References: <20241025090347.244183920@infradead.org>
- <20241025093944.372391936@infradead.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFF241865E7
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 16:04:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729872280; cv=none; b=tGbMbpRYM9x+k2rHFe5l4HQZOGBTUew2+ZgmDnQENMhfSBhl39A1DAFUdsTuLx5RFyRBDkV/oJdGYxbqc6xShr/Ejy2emsh08pazhfYXtj173wo0Hd52xrbwQaWgdzZeEQZqN5nNHPCoRAAiTzgpf0NP8Wj7AE3PRMZDOJ/6zdc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729872280; c=relaxed/simple;
+	bh=rv5rJ4jmTrZ27qkbyvCgIO215qm4tAl0JboSDanP3hQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Q2SdsZT56dW7Sz40dDvOCAtHt5Q5SW5r6f0NC1T+G93t7K7XbTVujgGVCf0edBlIg9mGuiV1JwJ84wXdwMi0Fy//u+PgryHacL6+842ikddopp9QGLWl78no6CIzySfi02QKW4OtYxNcaxlBQ5B3L/yjo/DIrmN6vKsosqIsI1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=naxm2wnp; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2fb56cb61baso18099751fa.1
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 09:04:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google; t=1729872277; x=1730477077; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1xCM1ACcR+e8vZp8ZeWNxMr9lABciJDnozk61Zgoap0=;
+        b=naxm2wnpTOjEvHretXyAmPU1/YrO8SA7WfkGp0j0JGmIFso6pdna0poLesiQE9T9Qe
+         FBH2473tdWbDsPPdPOxeGtg2pkggqhFCI8VOQGj/IulcL8wLnW5vRtRoSGhSWxtqA7ot
+         5ZdQ408y21jXB4QAE77AlGZe0nVhM7ruPez+o=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729872277; x=1730477077;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1xCM1ACcR+e8vZp8ZeWNxMr9lABciJDnozk61Zgoap0=;
+        b=X4aglQA3Nsf5WavZaViCmD3DkiSPqJnCCKrnsOVQ8pjDj4x9+J7aF4Y4mxz/mlGo7N
+         xjtGHQ3GNzCXJ3NQPsOFTpyIYftGsoff38iX2jlQrk5Tw0JqLuBnqeefVJWM7Bu7TVNn
+         dzi6qxEFr07dhcClFNGGRPJNdaGVGLUj6vTwU6HLuQDSssVz+CVJ7RD5XdWmFYCw5+h4
+         pF9ZK1Lotw+BpJOZbHI7oNE/1tsKHcHGKJzUDbQC0fFldfefiIaAiI7gSn+aqfbwh1Yt
+         weZEAQsa6UBHup4jKRVK85jjQ5ZQItuRdZeABaESHaEvoiWPBTfcmNBH8qg1HdKbv3dx
+         6zCQ==
+X-Gm-Message-State: AOJu0YweeQNJaLk3xcCrJXh9VKNgX/HpgKzJAfIOMPayE+BeBgyVBYtQ
+	rksCVROwDBe5J8wWiNlcY0hV+wtdWlR7ql60Yb/q5P8B/hiTxQXqLpR4xMUt6KZtfpgEiJgh851
+	4ozk=
+X-Google-Smtp-Source: AGHT+IE5tAGEzSGr1VKCRE9qh4Kh62Hto2hpFgEH+icsAjjqXGeOuQHrKjPabwauzhg1pQ0otdSs8A==
+X-Received: by 2002:a2e:bc09:0:b0:2f7:6653:8046 with SMTP id 38308e7fff4ca-2fc9d37468fmr61995861fa.25.1729872276573;
+        Fri, 25 Oct 2024 09:04:36 -0700 (PDT)
+Received: from dario-ThinkPad-T14s-Gen-2i.. ([2.196.43.251])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058bb4348sm1848614f8f.111.2024.10.25.09.04.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Oct 2024 09:04:36 -0700 (PDT)
+From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-amarula@amarulasolutions.com,
+	Dario Binacchi <dario.binacchi@amarulasolutions.com>,
+	Michael Trimarchi <michael@amarulasolutions.com>,
+	Marco Felsch <m.felsch@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Shengjiu Wang <shengjiu.wang@nxp.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-pm@vger.kernel.org
+Subject: [PATCH v2] pmdomain: imx: gpcv2: replace dev_err() with dev_err_probe()
+Date: Fri, 25 Oct 2024 18:03:56 +0200
+Message-ID: <20241025160430.4113467-1-dario.binacchi@amarulasolutions.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20241025093944.372391936@infradead.org>
-User-Agent: NeoMutt/20220429
+Content-Transfer-Encoding: 8bit
 
-On Fri, 25 Oct 2024, Peter Zijlstra wrote:
+The patch standardizes the probe() code by replacing the two occurrences
+of dev_err() with dev_err_probe(). Indeed, dev_err_probe() was used in all
+other error paths of the probe() function.
+Note that dev_err_probe() has advantages even if the error code is not
+EPROBE_DEFER, such as the symbolic output of the error code. Therefore,
+it should generally be preferred over dev_err().
 
->To enable node specific hash-tables.
->
->Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
->Reviewed-by: Christoph Hellwig <hch@lst.de>
+Co-developed-by: Michael Trimarchi <michael@amarulasolutions.com>
+Signed-off-by: Michael Trimarchi <michael@amarulasolutions.com>
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Reviewed-by: Marco Felsch <m.felsch@pengutronix.de>
 
-Reviewed-by: Davidlohr Bueso <dave@stgolabs.net>
+---
+
+Changes in v2:
+- Improve the commit message.
+- Add 'Reviewed-by' tag of Marco Felsch.
+
+ drivers/pmdomain/imx/gpcv2.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/pmdomain/imx/gpcv2.c b/drivers/pmdomain/imx/gpcv2.c
+index 963d61c5af6d..6e6ecbf2e152 100644
+--- a/drivers/pmdomain/imx/gpcv2.c
++++ b/drivers/pmdomain/imx/gpcv2.c
+@@ -1356,7 +1356,7 @@ static int imx_pgc_domain_probe(struct platform_device *pdev)
+ 
+ 	ret = pm_genpd_init(&domain->genpd, NULL, true);
+ 	if (ret) {
+-		dev_err(domain->dev, "Failed to init power domain\n");
++		dev_err_probe(domain->dev, ret, "Failed to init power domain\n");
+ 		goto out_domain_unmap;
+ 	}
+ 
+@@ -1367,7 +1367,7 @@ static int imx_pgc_domain_probe(struct platform_device *pdev)
+ 	ret = of_genpd_add_provider_simple(domain->dev->of_node,
+ 					   &domain->genpd);
+ 	if (ret) {
+-		dev_err(domain->dev, "Failed to add genpd provider\n");
++		dev_err_probe(domain->dev, ret, "Failed to add genpd provider\n");
+ 		goto out_genpd_remove;
+ 	}
+ 
+-- 
+2.43.0
+
 
