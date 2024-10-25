@@ -1,160 +1,139 @@
-Return-Path: <linux-kernel+bounces-381833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCE4E9B0518
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:07:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAFBD9B051D
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:08:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8264A2849F7
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 14:07:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1898A1C22539
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 14:08:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9D071F757E;
-	Fri, 25 Oct 2024 14:07:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B6251FB880;
+	Fri, 25 Oct 2024 14:08:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BX+p1F+S"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="TGi/SKeF"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 129AB70815;
-	Fri, 25 Oct 2024 14:07:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7229D14884C;
+	Fri, 25 Oct 2024 14:08:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729865267; cv=none; b=Rqdlaf5VtzFRW7oGGoW55uwvWw7TpnTjqBdMgh8Gc2539Gk/eY6RDqlK55ijYyr6+S42H6efxoaDoMok1yUIomjsKdBvmT0JW5wwTbEK2lqALEINF89N8eGCWgeMU3s//cpqsCq3k19K+YajALwpu+KsdXU82H5VynJljZ5yPVQ=
+	t=1729865287; cv=none; b=iod9s8CoO6YUpTa0uhMRaPTsZmDJ4BOV+tV9a8UhFKns3c+4IG3P5l3XH8Eq8aKfCfbtNyfoPoXcTfBKFadYkuIap4BjkmH91fwraZKh8yzh0lQOjTp5zNEImgMT9xIy76TLNn3P0VlbkFfAl4BsiFz6M18ThKgFX5QXu1psKN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729865267; c=relaxed/simple;
-	bh=gND61iG+K/9p0y+1117PkpZdIqHcRUWD0xS62lpezW0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eEz0P4ws49u3v2cLuYKjR6kYPhwwzExiro49YkNc1oIYxJ/z5Toy6XiPk1zzDdioz0/x7gxy0U9H4suOAiwRDYhSdUuqOQE194iMoAA2VCQxSKAFNayUUq7STx18yej77bohT2saOVec2FaLs808h+EOuQNvYYxL933XFmA6CLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BX+p1F+S; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D212C4CEE3;
-	Fri, 25 Oct 2024 14:07:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729865266;
-	bh=gND61iG+K/9p0y+1117PkpZdIqHcRUWD0xS62lpezW0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BX+p1F+SOzZT9BkIcdyNjKmbv0cIonvd2FBG7v4LLrUCE9nZWrKB4xgODPeXhH1wy
-	 zS26PxyXHhrkDjqT09rbiaOkpAEt3YnunzGQv8/+4g+KH9Xy5rW3MB6VnBpxIvkdpS
-	 yhgorz6fW+bZp+ymmwA9Fb6WX0PU3csGuuyB02Ydo1qYNwITtxDRCzrg0euJAR4fMC
-	 8z7xhswj7lgeX4doIYje1k9n5hGZ3lkrd9lvqDKx/KqDl93ykkarMI/yRLyM8oeRoH
-	 uE4Jrovawz/TPYCHoYGWZtdwyqwMyBCOcpSLVU6SxX9eMOsZgk9Vl5JUHSZ9kwvaXn
-	 SGqQl7N6VjFQw==
-Date: Fri, 25 Oct 2024 09:07:45 -0500
-From: Rob Herring <robh@kernel.org>
-To: Wei Fang <wei.fang@nxp.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, krzk+dt@kernel.org, conor+dt@kernel.org,
-	vladimir.oltean@nxp.com, claudiu.manoil@nxp.com,
-	xiaoning.wang@nxp.com, Frank.Li@nxp.com,
-	christophe.leroy@csgroup.eu, linux@armlinux.org.uk,
-	bhelgaas@google.com, horms@kernel.org, imx@lists.linux.dev,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	alexander.stein@ew.tq-group.com
-Subject: Re: [PATCH v5 net-next 02/13] dt-bindings: net: add i.MX95 ENETC
- support
-Message-ID: <20241025140745.GA2021164-robh@kernel.org>
-References: <20241024065328.521518-1-wei.fang@nxp.com>
- <20241024065328.521518-3-wei.fang@nxp.com>
+	s=arc-20240116; t=1729865287; c=relaxed/simple;
+	bh=5WisrcgviY6o4UVcxq/ftKm7E3q6azuqEKTgUfYSJuw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=GZwQXMxJVelEn6SLeNmkbrkk2Q8/19fK4si6Z5+/W06UvNwar+ys5GFbHgjVgEd9EoPWk+WSOkJVXoxIiVB/TgaEN4Ao6+kmvMrZhwXPK5ueApVKmJIHw1aquMVFAyNirWqcydyX5hRinTDOZ4g3558A19OHC2xIMlL9Q1OUL78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=TGi/SKeF; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49PBurNX004988;
+	Fri, 25 Oct 2024 14:07:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	tkk5ZSyPcxaL6A+xV84EKq63bfDmIqcaz//n9nMPm4g=; b=TGi/SKeFZ/tRqUWC
+	sbvuu9+F62fz+eqBX9CdNPLB36SBJdB36Nd3tdwwwM13g5FhI1E03zuCJc5PB31o
+	7J/xjbLcn6r/jWkyvqwi4Y19KQWRxWyHdY6fxK/hO+LnP9/jYW/wWFAC9zlVUOQY
+	fYZXYZxovaeAzR3xRHI7OkW04JWGrJRyGh2ujRCcURn4OV7MMaciIIe2S1BzirHN
+	/H44LWEcgyKWez5hG9tZ/rGFAnGezpiReGfe61F5nnmySgKL5XAhEijLqLYx6RHB
+	yqCdr6H1EUZdreO608qatMDsQ/gku2rQmCefiET/ngdVGSw1yN5yW9sESgL+0ymk
+	oixFwQ==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42em689ant-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Oct 2024 14:07:53 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49PE7qL6003944
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Oct 2024 14:07:52 GMT
+Received: from [10.131.33.37] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 25 Oct
+ 2024 07:07:47 -0700
+Message-ID: <99fe6e85-aed7-fb30-e0c4-9812667cd0e4@quicinc.com>
+Date: Fri, 25 Oct 2024 19:37:45 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241024065328.521518-3-wei.fang@nxp.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH V4 1/4] firmware: arm_scmi: Ensure that the message-id
+ supports fastchannel
+Content-Language: en-US
+To: Johan Hovold <johan@kernel.org>
+CC: <sudeep.holla@arm.com>, <cristian.marussi@arm.com>,
+        <ulf.hansson@linaro.org>, <jassisinghbrar@gmail.com>,
+        <dmitry.baryshkov@linaro.org>, <linux-kernel@vger.kernel.org>,
+        <arm-scmi@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-arm-msm@vger.kernel.org>, <konradybcio@kernel.org>,
+        <linux-pm@vger.kernel.org>, <tstrudel@google.com>, <rafael@kernel.org>,
+        Johan
+ Hovold <johan+linaro@kernel.org>
+References: <20241023102148.1698910-1-quic_sibis@quicinc.com>
+ <20241023102148.1698910-2-quic_sibis@quicinc.com>
+ <ZxufoL3NjYs8Lyq0@hovoldconsulting.com>
+From: Sibi Sankar <quic_sibis@quicinc.com>
+In-Reply-To: <ZxufoL3NjYs8Lyq0@hovoldconsulting.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 1J-w4zd-_qt8A4RcmPqmaCa1AcdjxHEZ
+X-Proofpoint-GUID: 1J-w4zd-_qt8A4RcmPqmaCa1AcdjxHEZ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 malwarescore=0
+ priorityscore=1501 adultscore=0 bulkscore=0 phishscore=0 mlxscore=0
+ lowpriorityscore=0 mlxlogscore=999 impostorscore=0 suspectscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410250109
 
-On Thu, Oct 24, 2024 at 02:53:17PM +0800, Wei Fang wrote:
-> The ENETC of i.MX95 has been upgraded to revision 4.1, and the vendor
-> ID and device ID have also changed, so add the new compatible strings
-> for i.MX95 ENETC. In addition, i.MX95 supports configuration of RGMII
-> or RMII reference clock.
+
+
+On 10/25/24 19:09, Johan Hovold wrote:
+> On Wed, Oct 23, 2024 at 03:51:45PM +0530, Sibi Sankar wrote:
+>> Currently the perf and powercap protocol relies on the protocol domain
+>> attributes, which just ensures that one fastchannel per domain, before
+>> instantiating fastchannels for all possible message-ids. Fix this by
+>> ensuring that each message-id supports fastchannel before initialization.
 > 
-> Signed-off-by: Wei Fang <wei.fang@nxp.com>
-> ---
-> v2: Remove "nxp,imx95-enetc" compatible string.
-> v3:
-> 1. Add restriction to "clcoks" and "clock-names" properties and rename
-> the clock, also remove the items from these two properties.
-> 2. Remove unnecessary items for "pci1131,e101" compatible string.
-> v4: Move clocks and clock-names to top level.
-> v5: Add items to clocks and clock-names
-> ---
->  .../devicetree/bindings/net/fsl,enetc.yaml    | 34 +++++++++++++++++--
->  1 file changed, 31 insertions(+), 3 deletions(-)
+> Again, perhaps you could include the error message I reported here so
+> that anyone searching for that error will find this fix more easily?
+
+Ack
+
+>   
+>> Reported-by: Johan Hovold <johan+linaro@kernel.org>
+>> Closes: https://lore.kernel.org/lkml/ZoQjAWse2YxwyRJv@hovoldconsulting.com/
+>> Fixes: 6f9ea4dabd2d ("firmware: arm_scmi: Generalize the fast channel support")
 > 
-> diff --git a/Documentation/devicetree/bindings/net/fsl,enetc.yaml b/Documentation/devicetree/bindings/net/fsl,enetc.yaml
-> index e152c93998fe..72d2d5d285cd 100644
-> --- a/Documentation/devicetree/bindings/net/fsl,enetc.yaml
-> +++ b/Documentation/devicetree/bindings/net/fsl,enetc.yaml
-> @@ -20,14 +20,23 @@ maintainers:
->  
->  properties:
->    compatible:
-> -    items:
-> +    oneOf:
-> +      - items:
-> +          - enum:
-> +              - pci1957,e100
-> +          - const: fsl,enetc
->        - enum:
-> -          - pci1957,e100
-> -      - const: fsl,enetc
-> +          - pci1131,e101
->  
->    reg:
->      maxItems: 1
->  
-> +  clocks:
-> +    maxItems: 1
-> +
-> +  clock-names:
-> +    maxItems: 1
-> +
->    mdio:
->      $ref: mdio.yaml
->      unevaluatedProperties: false
-> @@ -40,6 +49,25 @@ required:
->  allOf:
->    - $ref: /schemas/pci/pci-device.yaml
->    - $ref: ethernet-controller.yaml
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - pci1131,e101
-> +    then:
-> +      properties:
-> +        clocks:
-> +          items:
-> +            - description: MAC transmit/receiver reference clock
+> And, also again, should you add a CC-stable tag here to get this
+> backported?
 
-This goes in the top-level or can just be dropped.
+Ack
 
-> +
-> +        clock-names:
-> +          items:
-> +            - const: ref
+-Sibi
 
-This goes in the top-level.
-
-
-> +    else:
-
-Then negate the 'if' schema (not: contains: ...) and you just need the 
-part below:
-
-> +      properties:
-> +        clocks: false
-> +        clock-names: false
->  
->  unevaluatedProperties: false
->  
-> -- 
-> 2.34.1
 > 
+>> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
+>> Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
+>> Tested-by: Johan Hovold <johan+linaro@kernel.org>
+>> ---
+>>
+>> v3:
+>> * Pick up R-b, T-b from the list.
+>> * Move scmi_protocol_msg_check to the top [Sudeep]
+> 
+> Johan
 
