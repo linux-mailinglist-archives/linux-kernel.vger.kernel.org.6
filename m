@@ -1,76 +1,82 @@
-Return-Path: <linux-kernel+bounces-381011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F3C19AF90F
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 07:03:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 746BE9AF913
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 07:06:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52DBC1C21C9C
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 05:03:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 240181F22DE0
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 05:06:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EFD018D626;
-	Fri, 25 Oct 2024 05:03:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E962618DF85;
+	Fri, 25 Oct 2024 05:06:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="h1WAhLvf"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RzLwX3A4"
+Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A6EA18BC05;
-	Fri, 25 Oct 2024 05:03:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EF251E492;
+	Fri, 25 Oct 2024 05:06:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729832627; cv=none; b=jbUPyJ+DjQmEYsI4UczFALNI7tskd4Mh9MkuYP6hRha7U5X5wYaVS2njH/zDbIkL93HPqBLAdorI8E2jxPpnOtYurqyZhp4TGng8+tFjoH1lGtTf8NmF8Jdg+GuN265gsSndbaRYXVtstYKP1y6JrGBMAi5NsOTwsw+a3czPk7Q=
+	t=1729832781; cv=none; b=F8MM2PhJu15FRukri6km+awbDgaRi4tN5R0FbReufBn4D0xrE6OVyY5qoDH0BpzgcMq7hqQx30rYNeORXO/9+8uTxzonQ0HFEEqZhJwF0Ky2qsJZI2DQGCSmrBG1Aswt8eaBL1H72JI3P1ozgz/JVGVC7t+BHuY8gRtw9yD1RkU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729832627; c=relaxed/simple;
-	bh=k/3YIX2cJB3IDhrvzlIsnk9CNBlCnPkg+bpj8kp+nZQ=;
+	s=arc-20240116; t=1729832781; c=relaxed/simple;
+	bh=G0TW1MHX9q3O94Z9uB5GhQ/gVEMlXD7XcVH1NUUhal8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cF+ETT6e6xORu5d+onXKCdTiIQvULwpW5G1+l6RzQchRM+jUSnSctOXtxjGm2MbSeB7a/YuvyswZsbn+0E3eeTu1V7JsKlxXBprvaM/S6L2M3oLAG0/tcGcqFW9LM+YZ6k2CgOKEXyzOp1t3gCLtNl06xlevu5IJXVxUZfPN0Ko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=h1WAhLvf; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729832625; x=1761368625;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=k/3YIX2cJB3IDhrvzlIsnk9CNBlCnPkg+bpj8kp+nZQ=;
-  b=h1WAhLvfDLaIt3QsO1x2Daw6unekOmNR5wm/auetvKEEhO1EMI1Y32sq
-   8zkHMkzpWzohP/tUWJ3+N8BuZDizZ9HStWGvyuYfu7VDHC7bbaqwN1j/3
-   c0gQ2bSwLuOW3/1MSfPTW2vs/qnovCJwa5qUjLYxWBtzfvlfXgA/Dh64+
-   AQGh3OtQtoX/5uetf1auodaYH/pQVqCRFSQsObIyVpuYI/9S5q6QxvZOU
-   yJYePm/fSTJ8/jB4+K00c2dELVq35iVf979fDb+TD43THBwvw/halW5CV
-   44kzFAMLOhAQ5buH1n18QFWTT4pQKEh6/f3B43kQfu8dnEw5pzbfiZ5oW
-   w==;
-X-CSE-ConnectionGUID: VEv9+eDkRGm8HWSE8++FTA==
-X-CSE-MsgGUID: mP7+yizxSdeJAkKifDJ8vg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11235"; a="29392905"
-X-IronPort-AV: E=Sophos;i="6.11,231,1725346800"; 
-   d="scan'208";a="29392905"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2024 22:03:44 -0700
-X-CSE-ConnectionGUID: hWcveicxSgGnL22dtfsTBw==
-X-CSE-MsgGUID: q5FeS5fsRbu3j/lMYyR0vg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,231,1725346800"; 
-   d="scan'208";a="81123475"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 24 Oct 2024 22:03:42 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t4CU7-000Xc2-2d;
-	Fri, 25 Oct 2024 05:03:39 +0000
-Date: Fri, 25 Oct 2024 13:03:22 +0800
-From: kernel test robot <lkp@intel.com>
-To: Zeng Heng <zengheng4@huawei.com>, bp@suse.de, javierm@redhat.com,
-	ardb@kernel.org, tzimmermann@suse.de, simona.vetter@ffwll.ch
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	bobo.shaobowang@huawei.com, linux-efi@vger.kernel.org
-Subject: Re: [PATCH] drivers/firmware: Fix unused const variable
- 'efifb_fwnode_ops'
-Message-ID: <202410251211.Jze0KkZR-lkp@intel.com>
-References: <20241024084435.165333-1-zengheng4@huawei.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=W43H/NEcO2an/v7Hp7IQG+x52X5ROX53jRrrociLuFfPuEig5uY+PbyFKqtaBAkyPT/HP/yGnhjLzAHv/BibquHeh3iUdmmHCqiNLIm8VtLZlJjmcX83N8WVVgjq1i6rOpxdfxjt07yZkwLqK8NCRe0g/4nMVdWrFim1q2WQLQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RzLwX3A4; arc=none smtp.client-ip=209.85.166.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-3a4e40a1d7eso2244965ab.1;
+        Thu, 24 Oct 2024 22:06:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729832778; x=1730437578; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=lrrFN+mHZMwxcP5FxfkCqubko9uzPwGKW+YiwvO7WRE=;
+        b=RzLwX3A4GhHLRQl42FG1ypSIB5NqIHgWpZ6C3ElJSTNhvH19948Yu1XQuM5cG/Sx2c
+         FYuRiFLiGDYgUcUlB/tQmVhYH3V1HMvurkVRzen0dHLWBB3JeqO2LHrngRZX0M6+o7f9
+         wo5IZ1FQbHxCz0BGzpqhcrbD4gMR4NBQAGZ+ht5CjfO8OMPEkoumtQmQUPfEyM44juDn
+         Dqi0If4yFUjVpp39gPbMr2tlUjnsTDffP1mZX9nUvN6WDc0tFbRzq1+HnHpWuZjAZvAV
+         kMo8TCIV67sgR+mqFmkxBuz06tX9u0Sdad9dXJgIFH8MrKls6dGDWYMXPLtyhVX1miJC
+         7nHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729832778; x=1730437578;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lrrFN+mHZMwxcP5FxfkCqubko9uzPwGKW+YiwvO7WRE=;
+        b=J9SPjHk9gXhkOxoJar+epMM82t6QE5Yhbw0ymJT5hKMqUea+CwuWi58CmERfzKGXA9
+         S03g8GPuWaf8al1HaG/ggZiwIla+n3KgGuDBW0qpO0C05PzZUwdlyzSFq4pFILxu6RO1
+         Ifgrq/kGtAsrQM4gX4MmJpIn9YVNGytRT+WJCtAzy88+dbgGXSMY6AkGulNfRXCzFUpo
+         DK0CGpnIuZeFSLFF45ooQjni1bwczhjPg0nn25MdMWHCx9XSoRpIhQ8/2tlrJOrN0XSq
+         UrwdMzLm8HVvjCFKuxgAiAC/9vzwuJCHJ48stEO3clVd2ZpzcgOmTXB/+cqHgsAJU97+
+         /g0w==
+X-Forwarded-Encrypted: i=1; AJvYcCU4Lgh5BkouvpWquc86Hp4vhht3Q7mp7fsdQhRHK2b8ZwpTztCeENlPDrN6ygCm5OVo62W5yM2QXVSuiH8D@vger.kernel.org, AJvYcCWCeZestfg5iSwOBPtvBRHZL7fjLKr2DDPpop0T1TlQSBY9c0CLWIlxwsVWPnsOHQZ4EyN1yeTb@vger.kernel.org, AJvYcCX8Y25SYcE4wNTPGCZXEzSyVeNlqlm4ifWy+Jzx0czo0h3rA81bcQUKhK9GiBa/NUASd9McyR0Y0jQ0EYDUKMQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxu5kDAp69HoSG8oyStL6UvtUy/0eHNhaorNmu/fdDiqn16g8My
+	O+bYt9KzrnZmXLh4m/OwKL1WmJvm/UhnYtIlFFolmAIjHjI/smjD
+X-Google-Smtp-Source: AGHT+IG9eFw1S1NRd1I3j1OEIDPkFWdnUdNub1uGVLvjvjh+3FMVMCl9vW8ceP5nCaJkh4kCZkZGJg==
+X-Received: by 2002:a05:6e02:b2a:b0:39d:2939:3076 with SMTP id e9e14a558f8ab-3a4d5a0431cmr97853315ab.25.1729832778418;
+        Thu, 24 Oct 2024 22:06:18 -0700 (PDT)
+Received: from Fantasy-Ubuntu ([2001:56a:7eb6:f700:63af:26f:9965:8909])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7edc8a72e92sm224534a12.92.2024.10.24.22.06.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Oct 2024 22:06:17 -0700 (PDT)
+Date: Thu, 24 Oct 2024 23:06:15 -0600
+From: Johnny Park <pjohnny0508@gmail.com>
+To: Przemek Kitszel <przemyslaw.kitszel@intel.com>
+Cc: horms@kernel.org, intel-wired-lan@lists.osuosl.org,
+	netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org, anthony.l.nguyen@intel.com,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, andrew+netdev@lunn.ch, pmenzel@molgen.mpg.de
+Subject: Re: [PATCH v3] [net-next] igb: Fix 2 typos in comments in igb_main.c
+Message-ID: <ZxsnR_fJ5aGKWJTq@Fantasy-Ubuntu>
+References: <Zxne9hBl5E5VhKGm@Fantasy-Ubuntu>
+ <91005d18-37c7-483b-bda5-2fa57a884a17@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,72 +85,30 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241024084435.165333-1-zengheng4@huawei.com>
+In-Reply-To: <91005d18-37c7-483b-bda5-2fa57a884a17@intel.com>
 
-Hi Zeng,
+On Thu, Oct 24, 2024 at 10:41:25AM +0200, Przemek Kitszel wrote:
+> On 10/24/24 07:45, Johnny Park wrote:
+> you should collect Reviewed-by tags, as the one from Simon on v2.
+Sorry, I wasn't aware of that rule. For future pathces I'll include reviewed/acked tags.
 
-kernel test robot noticed the following build warnings:
+> for future Intel Ethernet drivers series, please target them to IWL
+> (net-next in the Subject becomes iwl-next)
+Sorry again, from the other patchworks https://patchwork.ozlabs.org/project/intel-wired-lan/list/ I should have noticed that pattern.  
+> >   	ring = q_vector->ring;
+> > -	/* intialize ITR */
+> > +	/* initialize ITR */
+> >   	if (rxr_count) {
+> >   		/* rx or rx/tx vector */
+> 
+> Would be great to have capitalization errors fixed too, Rx, Tx, VF, not
+> necessarily in this patch.
+That sounds like a good idea, perhaps fixing those will be my next patch.
+ 
+> to reduce traffic, I'm fine with this, to go via any tree:
+> Acked-by: Przemek Kitszel <przemyslaw.kitszel@intel.com>
+Thank you for the review!
 
-[auto build test WARNING on efi/next]
-[also build test WARNING on linus/master v6.12-rc4 next-20241024]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Zeng-Heng/drivers-firmware-Fix-unused-const-variable-efifb_fwnode_ops/20241024-163259
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/efi/efi.git next
-patch link:    https://lore.kernel.org/r/20241024084435.165333-1-zengheng4%40huawei.com
-patch subject: [PATCH] drivers/firmware: Fix unused const variable 'efifb_fwnode_ops'
-config: x86_64-buildonly-randconfig-002-20241025 (https://download.01.org/0day-ci/archive/20241025/202410251211.Jze0KkZR-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241025/202410251211.Jze0KkZR-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410251211.Jze0KkZR-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/firmware/efi/sysfb_efi.c:328:12: warning: 'efifb_add_links' defined but not used [-Wunused-function]
-     328 | static int efifb_add_links(struct fwnode_handle *fwnode)
-         |            ^~~~~~~~~~~~~~~
->> drivers/firmware/efi/sysfb_efi.c:94:19: warning: 'efifb_set_system' defined but not used [-Wunused-function]
-      94 | static int __init efifb_set_system(const struct dmi_system_id *id)
-         |                   ^~~~~~~~~~~~~~~~
-
-
-vim +/efifb_add_links +328 drivers/firmware/efi/sysfb_efi.c
-
-8633ef82f101c0 Javier Martinez Canillas 2021-06-25  320  
-8633ef82f101c0 Javier Martinez Canillas 2021-06-25  321  /*
-8633ef82f101c0 Javier Martinez Canillas 2021-06-25  322   * If the efifb framebuffer is backed by a PCI graphics controller, we have
-8633ef82f101c0 Javier Martinez Canillas 2021-06-25  323   * to ensure that this relation is expressed using a device link when
-8633ef82f101c0 Javier Martinez Canillas 2021-06-25  324   * running in DT mode, or the probe order may be reversed, resulting in a
-8633ef82f101c0 Javier Martinez Canillas 2021-06-25  325   * resource reservation conflict on the memory window that the efifb
-8633ef82f101c0 Javier Martinez Canillas 2021-06-25  326   * framebuffer steals from the PCIe host bridge.
-8633ef82f101c0 Javier Martinez Canillas 2021-06-25  327   */
-8633ef82f101c0 Javier Martinez Canillas 2021-06-25 @328  static int efifb_add_links(struct fwnode_handle *fwnode)
-8633ef82f101c0 Javier Martinez Canillas 2021-06-25  329  {
-8633ef82f101c0 Javier Martinez Canillas 2021-06-25  330  	struct device_node *sup_np;
-8633ef82f101c0 Javier Martinez Canillas 2021-06-25  331  
-8633ef82f101c0 Javier Martinez Canillas 2021-06-25  332  	sup_np = find_pci_overlap_node();
-8633ef82f101c0 Javier Martinez Canillas 2021-06-25  333  
-8633ef82f101c0 Javier Martinez Canillas 2021-06-25  334  	/*
-8633ef82f101c0 Javier Martinez Canillas 2021-06-25  335  	 * If there's no PCI graphics controller backing the efifb, we are
-8633ef82f101c0 Javier Martinez Canillas 2021-06-25  336  	 * done here.
-8633ef82f101c0 Javier Martinez Canillas 2021-06-25  337  	 */
-8633ef82f101c0 Javier Martinez Canillas 2021-06-25  338  	if (!sup_np)
-8633ef82f101c0 Javier Martinez Canillas 2021-06-25  339  		return 0;
-8633ef82f101c0 Javier Martinez Canillas 2021-06-25  340  
-75cde56a5b504d Saravana Kannan          2024-03-04  341  	fwnode_link_add(fwnode, of_fwnode_handle(sup_np), 0);
-8633ef82f101c0 Javier Martinez Canillas 2021-06-25  342  	of_node_put(sup_np);
-8633ef82f101c0 Javier Martinez Canillas 2021-06-25  343  
-8633ef82f101c0 Javier Martinez Canillas 2021-06-25  344  	return 0;
-8633ef82f101c0 Javier Martinez Canillas 2021-06-25  345  }
-8633ef82f101c0 Javier Martinez Canillas 2021-06-25  346  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Regards,
+Johnny
 
