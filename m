@@ -1,195 +1,662 @@
-Return-Path: <linux-kernel+bounces-381117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD46D9AFA90
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 09:04:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D82EB9AFA93
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 09:04:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CBAC2855E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 07:04:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 680421F235FC
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 07:04:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2C8B18DF8F;
-	Fri, 25 Oct 2024 07:04:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C186F1B3953;
+	Fri, 25 Oct 2024 07:04:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="n+hPA2Mx"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="i3mG4BVx"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 138E418C03C;
-	Fri, 25 Oct 2024 07:03:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A866B1B395F
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 07:04:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729839841; cv=none; b=geMysVVkuvhIZKjBKV3W8163CpgbXZpz0G7Kx+wV9P2MekkO6bXHj28Qe06q0cwOaL24rcADILl4MRQ3YvDG35Fe707qRBw5Uc2IK6PtbjimrClKMsJTvGkezJrRp0G4LSYEDfeocEYFBPIg0d5IdSyu19Trc8GwZ7XRqZhCxq8=
+	t=1729839846; cv=none; b=P5jMWU5E+TgclMpomoj+xS3SVLmSGVtDQJTzzJKaIfJrTRLdnGXNfQ19C+w+BPGAl+aMwGg+gqiCZMiwsl7js4mr+BZUHAEGBcrUgsLefgezu4A9qbJ+TatH+hR7i2Cly4N4FBa92FmBYNQGUe8CCj9sLj8ohr5XXXXK5+rRUtM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729839841; c=relaxed/simple;
-	bh=RrmpoaeNC3dVKZ/DC1etAOhpvrdxvQQqG9ApIPiFbsY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=iHIl/Amd/ZS1BJaOryfsTEqAixWOIlQ8akcHHF3wdI0iAPd06rV9J/s4j0ehgH7PDaoP52RY2rwS6kc1czI/9fp15fsr5Yrhg0JcP5n1B2Etp8Zftxv77cE5WYlj5s0MGWbinW75RedDTf5kTUy9KHRJ30vSg3nOwzuaOy0hxeo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=n+hPA2Mx; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49OKJAZS007584;
-	Fri, 25 Oct 2024 07:03:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	H12WWhv8FOUiCDonwvBI5Fi7D35TFw0MNbyE7M+cQHk=; b=n+hPA2MxIW6MtoN+
-	MIcl2Nxt2t6p+Kab953270P43CODnZP5iOZVvghm90Va7dMn2aGxFtCrzZQ9xKGa
-	9eIhLAsyskyD1NXdCWxj3bppfjPd5bWCxcSxFkYu7Rgfu0mBmNqOSCIUNGHn9C7v
-	yhCv89kvMYbe1eHbcnZMuFSiDN16zI2nSzd0Sf9h3sk8bL+vWLh65rAepuGZY+tr
-	qHo4X68a/EgBQiyfkANzDF70Mzz9SaGiaHmPnRqc+udT/AICq+/eUMyHrkWHVUYE
-	nVyQVPk8zx43ZX2EhC5ZhA6EbTxJfHfNUkKVQp913l/7uzV/7Qywk2AzzZwyOsau
-	VWWgdQ==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42fk52jyqh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 25 Oct 2024 07:03:49 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49P73m5n020709
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 25 Oct 2024 07:03:48 GMT
-Received: from [10.204.101.50] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 25 Oct
- 2024 00:03:44 -0700
-Message-ID: <eea14133-2152-37bb-e2ff-fcc7ed4c47f5@quicinc.com>
-Date: Fri, 25 Oct 2024 12:33:41 +0530
+	s=arc-20240116; t=1729839846; c=relaxed/simple;
+	bh=DBv6l7GloxbmSNMewON9UjbH4GqdMp2fpBD3pszXpE8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JyMDCipkaVxWHJrln+B/rs3RAVW1sY9nDbO3eWx9eAZnJmrlml0WJv524fUAtdXIS9i//HioNgYGbU6PVO3DKoE+K0vQYoSMy/VK/K07dRIyUm3PE+kXdVsEWJEOy8Go+B85h3kdj4iBkQcllptaX3k1bGZm7Tn0QtpO3wBn4y4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=i3mG4BVx; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729839842;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9p12DVJrh2/KaL703mBvE4NfeJ/21HDpgwP+rDFnf/I=;
+	b=i3mG4BVx/BVf4YdwdnRIiFAomiNyHNLg4TKYk4FMUYVWn7A8dWTqPB2alde/qPGWB6aB1X
+	c4vrbUsmhm8ga9N0yd3WnfsQEBypGF20seaQnrWqXljLew2EhbQlQ/LLMUQ5nKEassW23S
+	PgUzWy1PpsA0+GbGBvyo5zMoFF2htoY=
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com
+ [209.85.214.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-635-y1wKZOZoMciZLIwdoD9ZvQ-1; Fri, 25 Oct 2024 03:04:00 -0400
+X-MC-Unique: y1wKZOZoMciZLIwdoD9ZvQ-1
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-20e67b82aa6so20304145ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 00:04:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729839840; x=1730444640;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9p12DVJrh2/KaL703mBvE4NfeJ/21HDpgwP+rDFnf/I=;
+        b=BlE+lk4osHBfsONQgmDTkqBUZ/9zsdreogYZ+SVF7Us4Qa4fr2UlJ9MjyD4K/fzbTV
+         Ofyx13vSDB5HJocgs2CPTwpGs2WoTnvJfzLQeFrldkCWaytlgiKNNaKc7+yvnrhWlvVD
+         OLGecYH/Zlzhty1G+h44jLd1MNDO2q001Yk4lmUg9KTqJG8acA8vE9cMpUa2Gg1E94R1
+         2pcr5mxHyahUMMJVNsIbHH9AEmfIPFky84Dy8/cR/q0K2nvcXvJ1HwyHbR/TzT4olEqj
+         SRN+1k/h0B8/fmX3hN+95DVp1nfkQ1NJ3Da3U1M0LPk8mbZSpMTp0cybwyTsZJqYNsqg
+         5Uug==
+X-Forwarded-Encrypted: i=1; AJvYcCUAhJ4eb48JpU/6ITIioiB5mjrmi0yQh8myKNZypRwPuWBTXY0DTLEEtZd4Gu1th/4wHmhLZmSsUXSTvfc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywb7TJql9//zaBmoQQl6McqThkRTXoFyonmbRshuTbDH8vPSKvP
+	njbFlsaRTv+DWz+C7USxJXIfwITho/vunFtXKbETB6AAJoTLfqUVbzsLF5617g16s1vdKRvbAQY
+	e/6cyKXinn29I3d9HzJueOYVFXqbTdZ74l/F6sz3hNJ4mB/FyNCf0Pdv/z+Cubg==
+X-Received: by 2002:a17:903:1cb:b0:20f:c094:b80f with SMTP id d9443c01a7336-20fc094bce6mr29520155ad.49.1729839839649;
+        Fri, 25 Oct 2024 00:03:59 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHqNkHcZK+wAbGtTfwcXjrQGB/oivx/BdHMIgJdpiz9apxigQic1a/Lr06F1uzOyU4AhBxK1g==
+X-Received: by 2002:a17:903:1cb:b0:20f:c094:b80f with SMTP id d9443c01a7336-20fc094bce6mr29519855ad.49.1729839839211;
+        Fri, 25 Oct 2024 00:03:59 -0700 (PDT)
+Received: from [192.168.68.55] ([180.233.125.129])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bc02f6f1sm4190065ad.226.2024.10.25.00.03.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 25 Oct 2024 00:03:58 -0700 (PDT)
+Message-ID: <d3e0b74a-7c01-487e-ac77-5c8afbd720d4@redhat.com>
+Date: Fri, 25 Oct 2024 17:03:49 +1000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH v4 27/28] media: iris: enable video driver probe of SM8250
- SoC
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 06/43] arm64: RME: Add wrappers for RMI calls
+To: Steven Price <steven.price@arm.com>, kvm@vger.kernel.org,
+ kvmarm@lists.linux.dev
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
+ Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
+ Oliver Upton <oliver.upton@linux.dev>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
+ <yuzenghui@huawei.com>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Joey Gouly <joey.gouly@arm.com>,
+ Alexandru Elisei <alexandru.elisei@arm.com>,
+ Christoffer Dall <christoffer.dall@arm.com>, Fuad Tabba <tabba@google.com>,
+ linux-coco@lists.linux.dev,
+ Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
+ Shanker Donthineni <sdonthineni@nvidia.com>, Alper Gun
+ <alpergun@google.com>, "Aneesh Kumar K . V" <aneesh.kumar@kernel.org>
+References: <20241004152804.72508-1-steven.price@arm.com>
+ <20241004152804.72508-7-steven.price@arm.com>
 Content-Language: en-US
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Jianhua Lu <lujianhua000@gmail.com>,
-        Vikash Garodia
-	<quic_vgarodia@quicinc.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        "Mauro Carvalho Chehab" <mchehab@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Sebastian Fricke <sebastian.fricke@collabora.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-media@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20241014-qcom-video-iris-v4-v4-0-c5eaa4e9ab9e@quicinc.com>
- <20241014-qcom-video-iris-v4-v4-27-c5eaa4e9ab9e@quicinc.com>
- <Zw0j9UeJmC1MZ3Xt@localhost.localdomain>
- <7vmxx5qtbvhyfcdeariqiult27j5rmykxrefl2qmkhqnrw5wi5@6ugxtx643bmq>
- <48f0e7a1-f5d4-62ec-ec4b-f5bf2ca9caa5@quicinc.com>
- <CAA8EJpq6Q80fcUZfP-DRmo8LHLHrwnkFd5FQ4Mrs0hiwPUyuSw@mail.gmail.com>
-From: Dikshita Agarwal <quic_dikshita@quicinc.com>
-In-Reply-To: <CAA8EJpq6Q80fcUZfP-DRmo8LHLHrwnkFd5FQ4Mrs0hiwPUyuSw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+From: Gavin Shan <gshan@redhat.com>
+In-Reply-To: <20241004152804.72508-7-steven.price@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: mgVQ5jytlnL7Pjmgy3TST1KJezn3i6Bc
-X-Proofpoint-ORIG-GUID: mgVQ5jytlnL7Pjmgy3TST1KJezn3i6Bc
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 mlxscore=0
- lowpriorityscore=0 malwarescore=0 impostorscore=0 phishscore=0
- adultscore=0 mlxlogscore=999 priorityscore=1501 spamscore=0 bulkscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410250053
 
-Hi Dmitry,
-
-On 10/15/2024 5:56 PM, Dmitry Baryshkov wrote:
-> On Tue, 15 Oct 2024 at 12:22, Dikshita Agarwal
-> <quic_dikshita@quicinc.com> wrote:
->>
->>
->>
->> On 10/14/2024 7:38 PM, Dmitry Baryshkov wrote:
->>> On Mon, Oct 14, 2024 at 10:00:21PM +0800, Jianhua Lu wrote:
->>>> On Mon, Oct 14, 2024 at 02:37:48PM +0530, Dikshita Agarwal wrote:
->>>>> Initialize the platform data and enable video driver
->>>>> probe of SM8250 SoC.
->>>>>
->>>>> Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
->>>>> ---
->>>> [..]
->>>>> diff --git a/drivers/media/platform/qcom/iris/iris_probe.c b/drivers/media/platform/qcom/iris/iris_probe.c
->>>>> index 86ef2e5c488e..a2aadd48926f 100644
->>>>> --- a/drivers/media/platform/qcom/iris/iris_probe.c
->>>>> +++ b/drivers/media/platform/qcom/iris/iris_probe.c
->>>>> @@ -325,6 +325,10 @@ static const struct of_device_id iris_dt_match[] = {
->>>>>             .compatible = "qcom,sm8550-iris",
->>>>>             .data = &sm8550_data,
->>>>>     },
->>>>> +   {
->>>>> +           .compatible = "qcom,sm8250-venus",
->>>>> +           .data = &sm8250_data,
->>>>> +   },
->>>>>     { },
->>>>>  };
->>>>>  MODULE_DEVICE_TABLE(of, iris_dt_match);
->>>>
->>>> qcom-venus driver has already supported sm8250 soc, I think you should add
->>>> an extra patch to drop sm8250 releated code from qcom-venus driver if you
->>>> tend to add support for sm8250 in qcom-iris driver.
->>>
->>> Iris driver did not feature parity with the venus driver, so it is
->>> expected that two drivers will exist side by side for some time.
->>> Nevertheless ideally we should have a way to specify which driver should
->>> be used for sm8250 (and other platforms being migrated).
->>>
->> Agree, we should have a way to specify this. Any suggestions to achieve
->> this are welcomed.
+On 10/5/24 1:27 AM, Steven Price wrote:
+> The wrappers make the call sites easier to read and deal with the
+> boiler plate of handling the error codes from the RMM.
 > 
-> See how this is handled for the drm/msm/mdp5 vs dpu drivers.
+> Signed-off-by: Steven Price <steven.price@arm.com>
+> ---
+> Changes from v4:
+>   * Improve comments
+> Changes from v2:
+>   * Make output arguments optional.
+>   * Mask RIPAS value rmi_rtt_read_entry()
+>   * Drop unused rmi_rtt_get_phys()
+> ---
+>   arch/arm64/include/asm/rmi_cmds.h | 510 ++++++++++++++++++++++++++++++
+>   1 file changed, 510 insertions(+)
+>   create mode 100644 arch/arm64/include/asm/rmi_cmds.h
 > 
+> diff --git a/arch/arm64/include/asm/rmi_cmds.h b/arch/arm64/include/asm/rmi_cmds.h
+> new file mode 100644
+> index 000000000000..3ed32809a608
+> --- /dev/null
+> +++ b/arch/arm64/include/asm/rmi_cmds.h
+> @@ -0,0 +1,510 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Copyright (C) 2023 ARM Ltd.
+> + */
+> +
+> +#ifndef __ASM_RMI_CMDS_H
+> +#define __ASM_RMI_CMDS_H
+> +
+> +#include <linux/arm-smccc.h>
+> +
 
-We are also thinking to handle this as combination of compatible + module
-param similar to display driver, like below:
+It can be dropped since the header file has been included by <asm/rmi_smc.h>
 
-static bool prefer_venus = true;
-MODULE_PARM_DESC(prefer_venus, "Select whether venus or iris driver should
-be preferred");
-module_param(prefer_venus, bool, 0444);
+> +#include <asm/rmi_smc.h>
+> +
+> +struct rtt_entry {
+> +	unsigned long walk_level;
+> +	unsigned long desc;
+> +	int state;
+> +	int ripas;
+> +};
+> +
+> +/**
+> + * rmi_data_create() - Create a Data Granule
+> + * @rd: PA of the RD
+> + * @data: PA of the target granule
+> + * @ipa: IPA at which the granule will be mapped in the guest
+> + * @src: PA of the source granule
+> + * @flags: RMI_MEASURE_CONTENT if the contents should be measured
+> + *
+> + * Create a new Data Granule, copying contents from a Non-secure Granule.
+> + *
+> + * Return: RMI return code
+> + */
+> +static inline int rmi_data_create(unsigned long rd, unsigned long data,
+> +				  unsigned long ipa, unsigned long src,
+> +				  unsigned long flags)
+> +{
+> +	struct arm_smccc_res res;
+> +
+> +	arm_smccc_1_1_invoke(SMC_RMI_DATA_CREATE, rd, data, ipa, src,
+> +			     flags, &res);
+> +
+> +	return res.a0;
+> +}
+> +
 
-/* list all platforms supported by only iris driver */
-static const char *const iris_only_platforms[] = {
-	"qcom,sm8550-iris",
-	NULL,
-};
+Is there a particular reason why the first letter for 'Data Granule' and
+'Granule' has to be upper-case?
 
-/* list all platforms supported by both venus and iris drivers */
-static const char *const venus_to_iris_migration[] = {
-	"qcom,sm8250-venus",
-	NULL,
-};
+> +/**
+> + * rmi_data_create_unknown() - Create a Data Granule with unknown contents
+> + * @rd: PA of the RD
+> + * @data: PA of the target granule
+> + * @ipa: IPA at which the granule will be mapped in the guest
+> + *
+> + * Create a new Data Granule with unknown contents
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-static bool video_drv_should_bind(struct device *dev, bool iris_driver)
-{
-	if (of_device_compatible_match(dev->of_node, iris_only_platforms))
-		return iris_driver;
+This line can be dropped since the same content has been given at the
+beginning.
 
-	/* If it is not in the migration list, use venus */
-	if (!of_device_compatible_match(dev->of_node, venus_to_iris_migration))
-		return !iris_driver;
+> + *
+> + * Return: RMI return code
+> + */
+> +static inline int rmi_data_create_unknown(unsigned long rd,
+> +					  unsigned long data,
+> +					  unsigned long ipa)
+> +{
+> +	struct arm_smccc_res res;
+> +
+> +	arm_smccc_1_1_invoke(SMC_RMI_DATA_CREATE_UNKNOWN, rd, data, ipa, &res);
+> +
+> +	return res.a0;
+> +}
+> +
+> +/**
+> + * rmi_data_destroy() - Destroy a Data Granule
+> + * @rd: PA of the RD
+> + * @ipa: IPA at which the granule is mapped in the guest
+> + * @data_out: PA of the granule which was destroyed
+> + * @top_out: Top IPA of non-live RTT entries
+> + *
+> + * Unmap a protected IPA from stage 2, transitioning it to DESTROYED.
+> + * The IPA cannot be used by the guest unless it is transitioned to RAM again
+> + * by the Realm guest.
+> + *
+> + * Return: RMI return code
+> + */
+> +static inline int rmi_data_destroy(unsigned long rd, unsigned long ipa,
+> +				   unsigned long *data_out,
+> +				   unsigned long *top_out)
+> +{
+> +	struct arm_smccc_res res;
+> +
+> +	arm_smccc_1_1_invoke(SMC_RMI_DATA_DESTROY, rd, ipa, &res);
+> +
+> +	if (data_out)
+> +		*data_out = res.a1;
+> +	if (top_out)
+> +		*top_out = res.a2;
+> +
+> +	return res.a0;
+> +}
+> +
+> +/**
+> + * rmi_features() - Read feature register
+> + * @index: Feature register index
+> + * @out: Feature register value is written to this pointer
+> + *
+> + * Return: RMI return code
+> + */
+> +static inline int rmi_features(unsigned long index, unsigned long *out)
+> +{
+> +	struct arm_smccc_res res;
+> +
+> +	arm_smccc_1_1_invoke(SMC_RMI_FEATURES, index, &res);
+> +
+> +	if (out)
+> +		*out = res.a1;
+> +	return res.a0;
+> +}
+> +
+> +/**
+> + * rmi_granule_delegate() - Delegate a Granule
+> + * @phys: PA of the Granule
+> + *
+> + * Delegate a Granule for use by the Realm World.
+> + *
+> + * Return: RMI return code
+> + */
+> +static inline int rmi_granule_delegate(unsigned long phys)
+> +{
+> +	struct arm_smccc_res res;
+> +
+> +	arm_smccc_1_1_invoke(SMC_RMI_GRANULE_DELEGATE, phys, &res);
+> +
+> +	return res.a0;
+> +}
+> +
 
-	return prefer_venus ? !iris_driver : iris_driver;
-}
+Same as above, why the first letters for 'Realm World' have to be
+in upper-case? :-)
 
-And invoke "video_drv_should_bind" API in iris driver probe.
-Please see if this approach looks good to you.
+> +/**
+> + * rmi_granule_undelegate() - Undelegate a Granule
+> + * @phys: PA of the Granule
+> + *
+> + * Undelegate a Granule to allow use by the Normal World. Will fail if the
+> + * Granule is in use.
+> + *
+> + * Return: RMI return code
+> + */
+> +static inline int rmi_granule_undelegate(unsigned long phys)
+> +{
+> +	struct arm_smccc_res res;
+> +
+> +	arm_smccc_1_1_invoke(SMC_RMI_GRANULE_UNDELEGATE, phys, &res);
+> +
+> +	return res.a0;
+> +}
+> +
+> +/**
+> + * rmi_psci_complete() - Complete pending PSCI command
+> + * @calling_rec: PA of the calling REC
+> + * @target_rec: PA of the target REC
+> + * @status: Status of the PSCI request
+> + *
+> + * Completes a pending PSCI command which was called with an MPIDR argument, by
+> + * providing the corresponding REC.
+> + *
+> + * Return: RMI return code
+> + */
+> +static inline int rmi_psci_complete(unsigned long calling_rec,
+> +				    unsigned long target_rec,
+> +				    unsigned long status)
+> +{
+> +	struct arm_smccc_res res;
+> +
+> +	arm_smccc_1_1_invoke(SMC_RMI_PSCI_COMPLETE, calling_rec, target_rec,
+> +			     status, &res);
+> +
+> +	return res.a0;
+> +}
+> +
+> +/**
+> + * rmi_realm_activate() - Active a Realm
+> + * @rd: PA of the RD
+> + *
+> + * Mark a Realm as Active signalling that creation is complete and allowing
+> + * execution of the Realm.
+> + *
+> + * Return: RMI return code
+> + */
+> +static inline int rmi_realm_activate(unsigned long rd)
+> +{
+> +	struct arm_smccc_res res;
+> +
+> +	arm_smccc_1_1_invoke(SMC_RMI_REALM_ACTIVATE, rd, &res);
+> +
+> +	return res.a0;
+> +}
+> +
+> +/**
+> + * rmi_realm_create() - Create a Realm
+> + * @rd: PA of the RD
+> + * @params_ptr: PA of Realm parameters
+> + *
+> + * Create a new Realm using the given parameters.
+> + *
+> + * Return: RMI return code
+> + */
+> +static inline int rmi_realm_create(unsigned long rd, unsigned long params_ptr)
+> +{
+> +	struct arm_smccc_res res;
+> +
+> +	arm_smccc_1_1_invoke(SMC_RMI_REALM_CREATE, rd, params_ptr, &res);
+> +
+> +	return res.a0;
+> +}
+> +
+> +/**
+> + * rmi_realm_destroy() - Destroy a Realm
+> + * @rd: PA of the RD
+> + *
+> + * Destroys a Realm, all objects belonging to the Realm must be destroyed first.
+> + *
+> + * Return: RMI return code
+> + */
+> +static inline int rmi_realm_destroy(unsigned long rd)
+> +{
+> +	struct arm_smccc_res res;
+> +
+> +	arm_smccc_1_1_invoke(SMC_RMI_REALM_DESTROY, rd, &res);
+> +
+> +	return res.a0;
+> +}
+> +
+> +/**
+> + * rmi_rec_aux_count() - Get number of auxiliary Granules required
+> + * @rd: PA of the RD
+> + * @aux_count: Number of pages written to this pointer
+> + *
+> + * A REC may require extra auxiliary pages to be delegated for the RMM to
+> + * store metadata (not visible to the normal world) in. This function provides
+> + * the number of pages that are required.
+> + *
+> + * Return: RMI return code
+> + */
+> +static inline int rmi_rec_aux_count(unsigned long rd, unsigned long *aux_count)
+> +{
+> +	struct arm_smccc_res res;
+> +
+> +	arm_smccc_1_1_invoke(SMC_RMI_REC_AUX_COUNT, rd, &res);
+> +
+> +	if (aux_count)
+> +		*aux_count = res.a1;
+> +	return res.a0;
+> +}
+> +
+> +/**
+> + * rmi_rec_create() - Create a REC
+> + * @rd: PA of the RD
+> + * @rec: PA of the target REC
+> + * @params_ptr: PA of REC parameters
+> + *
+> + * Create a REC using the parameters specified in the struct rec_params pointed
+> + * to by @params_ptr.
+> + *
+> + * Return: RMI return code
+> + */
+> +static inline int rmi_rec_create(unsigned long rd, unsigned long rec,
+> +				 unsigned long params_ptr)
+> +{
+> +	struct arm_smccc_res res;
+> +
+> +	arm_smccc_1_1_invoke(SMC_RMI_REC_CREATE, rd, rec, params_ptr, &res);
+> +
+> +	return res.a0;
+> +}
+> +
+> +/**
+> + * rmi_rec_destroy() - Destroy a REC
+> + * @rec: PA of the target REC
+> + *
+> + * Destroys a REC. The REC must not be running.
+> + *
+> + * Return: RMI return code
+> + */
+> +static inline int rmi_rec_destroy(unsigned long rec)
+> +{
+> +	struct arm_smccc_res res;
+> +
+> +	arm_smccc_1_1_invoke(SMC_RMI_REC_DESTROY, rec, &res);
+> +
+> +	return res.a0;
+> +}
+> +
+> +/**
+> + * rmi_rec_enter() - Enter a REC
+> + * @rec: PA of the target REC
+> + * @run_ptr: PA of RecRun structure
+> + *
+> + * Starts (or continues) execution within a REC.
+> + *
+> + * Return: RMI return code
+> + */
+> +static inline int rmi_rec_enter(unsigned long rec, unsigned long run_ptr)
+> +{
+> +	struct arm_smccc_res res;
+> +
+> +	arm_smccc_1_1_invoke(SMC_RMI_REC_ENTER, rec, run_ptr, &res);
+> +
+> +	return res.a0;
+> +}
+> +
+> +/**
+> + * rmi_rtt_create() - Creates an RTT
+> + * @rd: PA of the RD
+> + * @rtt: PA of the target RTT
+> + * @ipa: Base of the IPA range described by the RTT
+> + * @level: Depth of the RTT within the tree
+> + *
+> + * Creates an RTT (Realm Translation Table) at the specified level for the
+> + * translation of the specified address within the Realm.
+> + *
+> + * Return: RMI return code
+> + */
+> +static inline int rmi_rtt_create(unsigned long rd, unsigned long rtt,
+> +				 unsigned long ipa, long level)
+> +{
+> +	struct arm_smccc_res res;
+> +
+> +	arm_smccc_1_1_invoke(SMC_RMI_RTT_CREATE, rd, rtt, ipa, level, &res);
+> +
+> +	return res.a0;
+> +}
+> +
+> +/**
+> + * rmi_rtt_destroy() - Destroy an RTT
+> + * @rd: PA of the RD
+> + * @ipa: Base of the IPA range described by the RTT
+> + * @level: Depth of the RTT within the tree
+> + * @out_rtt: Pointer to write the PA of the RTT which was destroyed
+> + * @out_top: Pointer to write the top IPA of non-live RTT entries
+> + *
+> + * Destroys an RTT. The RTT must be non-live, i.e. none of the entries in the
+> + * table are in ASSIGNED or TABLE state.
+> + *
+> + * Return: RMI return code.
+> + */
+> +static inline int rmi_rtt_destroy(unsigned long rd,
+> +				  unsigned long ipa,
+> +				  long level,
+> +				  unsigned long *out_rtt,
+> +				  unsigned long *out_top)
+> +{
+> +	struct arm_smccc_res res;
+> +
+> +	arm_smccc_1_1_invoke(SMC_RMI_RTT_DESTROY, rd, ipa, level, &res);
+> +
+> +	if (out_rtt)
+> +		*out_rtt = res.a1;
+> +	if (out_top)
+> +		*out_top = res.a2;
+> +
+> +	return res.a0;
+> +}
+> +
+> +/**
+> + * rmi_rtt_fold() - Fold an RTT
+> + * @rd: PA of the RD
+> + * @ipa: Base of the IPA range described by the RTT
+> + * @level: Depth of the RTT within the tree
+> + * @out_rtt: Pointer to write the PA of the RTT which was destroyed
+> + *
+> + * Folds an RTT. If all entries with the RTT are 'homogeneous' the RTT can be
+> + * folded into the parent and the RTT destroyed.
+> + *
+> + * Return: RMI return code
+> + */
+> +static inline int rmi_rtt_fold(unsigned long rd, unsigned long ipa,
+> +			       long level, unsigned long *out_rtt)
+> +{
+> +	struct arm_smccc_res res;
+> +
+> +	arm_smccc_1_1_invoke(SMC_RMI_RTT_FOLD, rd, ipa, level, &res);
+> +
+> +	if (out_rtt)
+> +		*out_rtt = res.a1;
+> +
+> +	return res.a0;
+> +}
+> +
+> +/**
+> + * rmi_rtt_init_ripas() - Set RIPAS for new Realm
+> + * @rd: PA of the RD
+> + * @base: Base of target IPA region
+> + * @top: Top of target IPA region
+> + * @out_top: Top IPA of range whose RIPAS was modified
+> + *
+> + * Sets the RIPAS of a target IPA range to RAM, for a Realm in the NEW state.
+> + *
+> + * Return: RMI return code
+> + */
+> +static inline int rmi_rtt_init_ripas(unsigned long rd, unsigned long base,
+> +				     unsigned long top, unsigned long *out_top)
+> +{
+> +	struct arm_smccc_res res;
+> +
+> +	arm_smccc_1_1_invoke(SMC_RMI_RTT_INIT_RIPAS, rd, base, top, &res);
+> +
+> +	if (out_top)
+> +		*out_top = res.a1;
+> +
+> +	return res.a0;
+> +}
+> +
+> +/**
+> + * rmi_rtt_map_unprotected() - Map NS pages into a Realm
+> + * @rd: PA of the RD
+> + * @ipa: Base IPA of the mapping
+> + * @level: Depth within the RTT tree
+> + * @desc: RTTE descriptor
+> + *
+> + * Create a mapping from an Unprotected IPA to a Non-secure PA.
+> + *
+> + * Return: RMI return code
+> + */
+> +static inline int rmi_rtt_map_unprotected(unsigned long rd,
+> +					  unsigned long ipa,
+> +					  long level,
+> +					  unsigned long desc)
+> +{
+> +	struct arm_smccc_res res;
+> +
+> +	arm_smccc_1_1_invoke(SMC_RMI_RTT_MAP_UNPROTECTED, rd, ipa, level,
+> +			     desc, &res);
+> +
+> +	return res.a0;
+> +}
+> +
+> +/**
+> + * rmi_rtt_read_entry() - Read an RTTE
+> + * @rd: PA of the RD
+> + * @ipa: IPA for which to read the RTTE
+> + * @level: RTT level at which to read the RTTE
+> + * @rtt: Output structure describing the RTTE
+> + *
+> + * Reads a RTTE (Realm Translation Table Entry).
+> + *
+> + * Return: RMI return code
+> + */
+> +static inline int rmi_rtt_read_entry(unsigned long rd, unsigned long ipa,
+> +				     long level, struct rtt_entry *rtt)
+> +{
+> +	struct arm_smccc_1_2_regs regs = {
+> +		SMC_RMI_RTT_READ_ENTRY,
+> +		rd, ipa, level
+> +	};
+> +
+> +	arm_smccc_1_2_smc(&regs, &regs);
+> +
+> +	rtt->walk_level = regs.a1;
+> +	rtt->state = regs.a2 & 0xFF;
+> +	rtt->desc = regs.a3;
+> +	rtt->ripas = regs.a4 & 0xFF;
+> +
+> +	return regs.a0;
+> +}
+> +
+> +/**
+> + * rmi_rtt_set_ripas() - Set RIPAS for an running Realm
+> + * @rd: PA of the RD
+> + * @rec: PA of the REC making the request
+> + * @base: Base of target IPA region
+> + * @top: Top of target IPA region
+> + * @out_top: Pointer to write top IPA of range whose RIPAS was modified
+> + *
+> + * Completes a request made by the Realm to change the RIPAS of a target IPA
+> + * range.
+> + *
+> + * Return: RMI return code
+> + */
+> +static inline int rmi_rtt_set_ripas(unsigned long rd, unsigned long rec,
+> +				    unsigned long base, unsigned long top,
+> +				    unsigned long *out_top)
+> +{
+> +	struct arm_smccc_res res;
+> +
+> +	arm_smccc_1_1_invoke(SMC_RMI_RTT_SET_RIPAS, rd, rec, base, top, &res);
+> +
+> +	if (out_top)
+> +		*out_top = res.a1;
+> +
+> +	return res.a0;
+> +}
+> +
+> +/**
+> + * rmi_rtt_unmap_unprotected() - Remove a NS mapping
+> + * @rd: PA of the RD
+> + * @ipa: Base IPA of the mapping
+> + * @level: Depth within the RTT tree
+> + * @out_top: Pointer to write top IPA of non-live RTT entries
+> + *
+> + * Removes a mapping at an Unprotected IPA.
+> + *
+> + * Return: RMI return code
+> + */
+> +static inline int rmi_rtt_unmap_unprotected(unsigned long rd,
+> +					    unsigned long ipa,
+> +					    long level,
+> +					    unsigned long *out_top)
+> +{
+> +	struct arm_smccc_res res;
+> +
+> +	arm_smccc_1_1_invoke(SMC_RMI_RTT_UNMAP_UNPROTECTED, rd, ipa,
+> +			     level, &res);
+> +
+> +	if (out_top)
+> +		*out_top = res.a1;
+> +
+> +	return res.a0;
+> +}
+> +
+> +#endif
+
+#endif /* __ASM_RMI_CMDS_H */
 
 Thanks,
-Dikshita
+Gavin
+
 
