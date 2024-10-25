@@ -1,103 +1,140 @@
-Return-Path: <linux-kernel+bounces-381821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09AA99B04ED
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:02:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 680E99B04F4
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:03:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C209B283D73
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 14:02:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 978DDB237B9
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 14:03:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 881BD1D435C;
-	Fri, 25 Oct 2024 14:02:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SRBx6Rbx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2383613B787;
+	Fri, 25 Oct 2024 14:03:49 +0000 (UTC)
+Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC482212168;
-	Fri, 25 Oct 2024 14:02:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A429E212189;
+	Fri, 25 Oct 2024 14:03:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729864932; cv=none; b=SznTjFjikCbOvNGQJe+/08mSBa22HNj6/sY9KMlno9pIHPSftRsu+1k17noc6A4m6NxJ9/kthCo6uQpnMVDi2T28r5CyqEGTJASfiCrxxGkCkmFfMzn7FzkCP5I2CGyZnQKIDhpqUy50zRMDciU6kYh4Cj9hqIPf3lWOfBCmOQ0=
+	t=1729865028; cv=none; b=TeuYlzwnHKN0Xh63y48Y4bDHGJaGFSdMuRwMoL0EmP8RosvMxYYgHSDj1vo10F6zve/WB1x7oNwOnlj5aemrleqoRroZs6pCmtbUi8CrNScKq5KWeMVUBTtr+NhjgIPPeGaxQyCxsU9V1axGzy+aXNDePga3gxEN3OlQpbPTwKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729864932; c=relaxed/simple;
-	bh=uOUytvJeyy3SqYRpdRsBWf13Adk6SJC8Eee84d3Etug=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fZKjaC9WnWegxuITYYWKQtj+dDiQVT5dL10ZPIj02DM3c8vZ8cEyzeAvfWhRvE/+z7sdrZvW8RBFcm3VbDFUYQtY4RxNbx/YaVfx89o5Hosc0nOQ9gWHAZu1x2uwX0DgKM3TU8nud9TqPjhe5isBgiqSa/2nvnMGiYaEXimehvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SRBx6Rbx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69293C4CEC3;
-	Fri, 25 Oct 2024 14:02:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729864931;
-	bh=uOUytvJeyy3SqYRpdRsBWf13Adk6SJC8Eee84d3Etug=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SRBx6RbxR5nuw+gDjyclmxQ45SMY1Z/wdsODDoBv6EDDt+cfCE0A8C09z77A44GsG
-	 Fl3YD9mvL1lKw75XRpaHg4GDOFkWuf0rDOOA25f/rDWFltcJup7FlMmxYPb1fe1l36
-	 9pKZsLZAeWLDgbjbtmwylseIT/ExTOBC6HhCqjcHtxPdZtRxeRzK7tIY9veBhxdNrz
-	 J3KfUdiFeCmCbu+Jzx+XX8M5fGkJ/hlWtA7Py7Hv6ozszRWqhEpSBRNSl3ahtscPrX
-	 CUGmopX0JoU2qGKy31gd2JdOD+mQapW8KxNxUfdoP/9XSVC+rwwhSm/v+d0/Oo3SFO
-	 qF2//B8TjtyLw==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1t4Kta-000000005yi-0WFi;
-	Fri, 25 Oct 2024 16:02:30 +0200
-Date: Fri, 25 Oct 2024 16:02:30 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Sibi Sankar <quic_sibis@quicinc.com>
-Cc: sudeep.holla@arm.com, cristian.marussi@arm.com, ulf.hansson@linaro.org,
-	jassisinghbrar@gmail.com, dmitry.baryshkov@linaro.org,
-	linux-kernel@vger.kernel.org, arm-scmi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	konradybcio@kernel.org, linux-pm@vger.kernel.org,
-	tstrudel@google.com, rafael@kernel.org
-Subject: Re: [PATCH V4 0/4] firmware: arm_scmi: Misc Fixes
-Message-ID: <Zxuk9jlibn8ffEVZ@hovoldconsulting.com>
-References: <20241023102148.1698910-1-quic_sibis@quicinc.com>
+	s=arc-20240116; t=1729865028; c=relaxed/simple;
+	bh=Nl+3bOnR2Unji8mkIuA4GaO14wA+JZUVRZbEaFWBh+k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=P+dE8tDfthtvwctbgVclnT/MEMTxE6g/Q3DtBFrGGklOCAxQJz49ldq5udeZdvQejAgx7NTBWMnDm78ai2eR7Un+kDzmPKIltLXfzV1HmaUAgVJZU746ik1HoXjQ2EzyZFgHqJ/oAbOKmOHodIvem751X9UeQouzce13+Tiw248=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.51])
+	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4XZkWY4ht0z9v7JC;
+	Fri, 25 Oct 2024 21:43:21 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.47])
+	by mail.maildlp.com (Postfix) with ESMTP id 9F98614035F;
+	Fri, 25 Oct 2024 22:03:37 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.204.63.22])
+	by APP1 (Coremail) with SMTP id LxC2BwCH+Tk0pRtnjsZpAA--.22140S2;
+	Fri, 25 Oct 2024 15:03:37 +0100 (CET)
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: trondmy@kernel.org,
+	anna@kernel.org
+Cc: linux-nfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] nfs: Fix KMSAN warning in decode_getfattr_attrs()
+Date: Fri, 25 Oct 2024 16:03:27 +0200
+Message-ID: <20241025140327.2666623-1-roberto.sassu@huaweicloud.com>
+X-Mailer: git-send-email 2.47.0.118.gfd3785337b
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241023102148.1698910-1-quic_sibis@quicinc.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:LxC2BwCH+Tk0pRtnjsZpAA--.22140S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7AF1xXw48Jw4DWw4fuw4xtFb_yoW8uw45pr
+	Wqk34fCr15Ary8JF4Fva13X34UXay8trW7Wrs7tr1xZ3WrJrnxKa48tr4agrnrCr4UAFyF
+	g3WUJr4rJ3yDAFDanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUyKb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lc7CjxVAaw2AFwI0_GFv_Wryl42xK82IYc2Ij
+	64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
+	8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE
+	2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
+	xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF
+	7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxU4NB_UUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAHBGcbAm8JvAABsk
 
-On Wed, Oct 23, 2024 at 03:51:44PM +0530, Sibi Sankar wrote:
-> The series addresses the kernel warnings reported by Johan at [1] and are
-> are required to X1E cpufreq device tree changes [2] to land.
-> 
-> [1] - https://lore.kernel.org/lkml/ZoQjAWse2YxwyRJv@hovoldconsulting.com/
-> [2] - https://lore.kernel.org/lkml/20240612124056.39230-1-quic_sibis@quicinc.com/
-> 
-> The following warnings remain unadressed:
-> arm-scmi arm-scmi.0.auto: Failed to add opps_by_lvl at 3417600 for NCC - ret:-16
-> arm-scmi arm-scmi.0.auto: Failed to add opps_by_lvl at 3417600 for NCC - ret:-16
-> 
-> They indicate that duplicate opps are reported by the SCP firmware and
-> they are seen during probe. They will get addressed by firmware updates. 
-> 
-> Duplicate levels:
-> arm-scmi arm-scmi.0.auto: Level 2976000 Power 218062 Latency 30us Ifreq 2976000 Index 10
-> arm-scmi arm-scmi.0.auto: Level 3206400 Power 264356 Latency 30us Ifreq 3206400 Index 11
-> arm-scmi arm-scmi.0.auto: Level 3417600 Power 314966 Latency 30us Ifreq 3417600 Index 12
-> arm-scmi arm-scmi.0.auto: Failed to add opps_by_lvl at 3417600 for NCC - ret:-16
-> arm-scmi arm-scmi.0.auto: Failed to add opps_by_lvl at 3417600 for NCC - ret:-16
-> arm-scmi arm-scmi.0.auto: Level 4012800 Power 528848 Latency 30us Ifreq 4012800 Index 15
-> 
-> ^^ exist because SCP reports duplicate values for the highest sustainable
-> freq for perf domains 1 and 2. These are the only freqs that appear as
-> duplicates and will be fixed with a firmware update. FWIW the warnings
-> that we are addressing in this series will also get fixed by a firmware
-> update but they still have to land for devices already out in the wild.
+From: Roberto Sassu <roberto.sassu@huawei.com>
 
-Thanks for sorting this out, Sibi!
+Fix the following KMSAN warning:
 
-I guess the above description is clear enough too as to why the
-opps_by_lvl warnings should stay (in some form).
+CPU: 1 UID: 0 PID: 7651 Comm: cp Tainted: G    B
+Tainted: [B]=BAD_PAGE
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009)
+=====================================================
+=====================================================
+BUG: KMSAN: uninit-value in decode_getfattr_attrs+0x2d6d/0x2f90
+ decode_getfattr_attrs+0x2d6d/0x2f90
+ decode_getfattr_generic+0x806/0xb00
+ nfs4_xdr_dec_getattr+0x1de/0x240
+ rpcauth_unwrap_resp_decode+0xab/0x100
+ rpcauth_unwrap_resp+0x95/0xc0
+ call_decode+0x4ff/0xb50
+ __rpc_execute+0x57b/0x19d0
+ rpc_execute+0x368/0x5e0
+ rpc_run_task+0xcfe/0xee0
+ nfs4_proc_getattr+0x5b5/0x990
+ __nfs_revalidate_inode+0x477/0xd00
+ nfs_access_get_cached+0x1021/0x1cc0
+ nfs_do_access+0x9f/0xae0
+ nfs_permission+0x1e4/0x8c0
+ inode_permission+0x356/0x6c0
+ link_path_walk+0x958/0x1330
+ path_lookupat+0xce/0x6b0
+ filename_lookup+0x23e/0x770
+ vfs_statx+0xe7/0x970
+ vfs_fstatat+0x1f2/0x2c0
+ __se_sys_newfstatat+0x67/0x880
+ __x64_sys_newfstatat+0xbd/0x120
+ x64_sys_call+0x1826/0x3cf0
+ do_syscall_64+0xd0/0x1b0
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-Johan
+The KMSAN warning is triggered in decode_getfattr_attrs(), when calling
+decode_attr_mdsthreshold(). It appears that fattr->mdsthreshold is not
+initialized.
+
+Fix the issue by initializing fattr->mdsthreshold to NULL in
+nfs_fattr_init().
+
+Cc: stable@vger.kernel.org # v3.5.x
+Fixes: 88034c3d88c2 ("NFSv4.1 mdsthreshold attribute xdr")
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+---
+ fs/nfs/inode.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/fs/nfs/inode.c b/fs/nfs/inode.c
+index 542c7d97b235..1e71b029da58 100644
+--- a/fs/nfs/inode.c
++++ b/fs/nfs/inode.c
+@@ -1633,6 +1633,7 @@ void nfs_fattr_init(struct nfs_fattr *fattr)
+ 	fattr->gencount = nfs_inc_attr_generation_counter();
+ 	fattr->owner_name = NULL;
+ 	fattr->group_name = NULL;
++	fattr->mdsthreshold = NULL;
+ }
+ EXPORT_SYMBOL_GPL(nfs_fattr_init);
+ 
+-- 
+2.47.0.118.gfd3785337b
+
 
