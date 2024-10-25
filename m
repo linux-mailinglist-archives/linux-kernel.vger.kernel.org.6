@@ -1,173 +1,127 @@
-Return-Path: <linux-kernel+bounces-382117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 167629B09AB
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 18:19:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEFDB9B09B6
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 18:21:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58944284E52
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:19:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0EB1F1C24AAA
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:21:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5014185B46;
-	Fri, 25 Oct 2024 16:19:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00F2314A0A7;
+	Fri, 25 Oct 2024 16:21:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="oFXMV6hG"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="rPpP+ONl"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1F9017622F
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 16:19:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7273B18595F
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 16:21:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729873178; cv=none; b=Jvnly84Mw9TujTY99FJZZbY6s1TDcccXXB/601ZJ/ZfDg8rHVKbGjJ3d6QSmmtSX4LbBTaPHY2HJLy15DvZg1Br7VDNysomT0KFF5ODo01FggcoP6CdoeoxTcGOLy3PyQAVLfgjFWyQp11DpGeFfUkhYJIlba/Dgx8gOQI/EXlQ=
+	t=1729873285; cv=none; b=EAF4tDJK08PbtW0sywm1Fuq8LflLPslpK1et4Z1trDR+sM//vOhkovgJUN57V7BJY42w8pxGfc8Njjg2JzGEG7kS0TMutcj1B/Qns2WuNWwUKpKOnd3wHEvO0Abeidn+JZCdgbBoPBUSGjSecbPC4Jou1VQi70wsmhObD2LlJc0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729873178; c=relaxed/simple;
-	bh=20kvON+allBWG+dOYdEwydFA2kFbEWyepoiWZBEaUn8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Z11WuG00H82fKUDe8lDAHKHRtPONPL2digj466tokoOY9DLLxJDY5imhLn132a8/3vnNkkhenNXiguItXd6oKRw9XIrTob4OZheEOP4LfG9tCciBZ+igZXORIK/dSc7lvaShIdwEHZDJaBlMVOjuUJN7dqagiZ6UygH3FAFr4xg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=oFXMV6hG; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-539f76a6f0dso2153516e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 09:19:35 -0700 (PDT)
+	s=arc-20240116; t=1729873285; c=relaxed/simple;
+	bh=z7WweRdQheGI3pzAwFkk9rNTL8TZfEB+/oDFKzELXm4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IkHa/a9MCWoueu0HTaps7jvsGJR3I9a+6Zb5tUQ7nLfrXzksjBujccwWxfRoP3f50T/BdsL15c7WpX8d5YJEullA7xHlvuJA27SRyLvSTJObB+3x07zlW4VrtycX4OAUySc6trFUH5+Tex2ddYwzFo0f/cqQph3dMJmn1tzbmZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=rPpP+ONl; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-539fe76e802so2867602e87.1
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 09:21:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1729873172; x=1730477972; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WvhVvwnQMETeLbhAdwS48ux8c3HSfVAk89SUO2m7NmQ=;
-        b=oFXMV6hG9ypjLVDNbGL0rc1B4OeRXvg0UnUM8GCIwQm3tuibYP0T/17ucARnNgiV8G
-         MFk+KdGh+vdisizgfA7dyz1wdUZypF51cVekHN1P9tOtdifuhRh5AuPS1sC07duDOI0D
-         PwnuM5kWzh/xpzVukjsC5FkMO3XaUuoTB32HQ=
+        d=amarulasolutions.com; s=google; t=1729873281; x=1730478081; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZMjnh9e7Jw2TD0W4BB+OtBZvaU7qr6SdoxJVRCE4W9g=;
+        b=rPpP+ONlW+d7kZ4j+aknyglECG8xu33sKDlU7MJJKUf1WQeyyN9HV5QSUACaHk8od7
+         JFCulwRkM/XtYQg0icic2CxKqXoEqrqv1gx+OPRwYBaU2NjRzLhQo6L1FaOvk1+W8cTF
+         q9iVgaUoW5yYgiq+o/hinDye5fMdvuT4kz5Ek=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729873172; x=1730477972;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WvhVvwnQMETeLbhAdwS48ux8c3HSfVAk89SUO2m7NmQ=;
-        b=MrR1Fmk0RyK9UL29qyDUGY0vc2Gax+vDp6wcM8iP8jjGI77FJZSRjabDf6qoLQCwYT
-         Ag4Kbry4O8Y4Fkc8vYTH0S/rcsA02N/n1UqwX80dnCf4QpD2sM3TXlm/TqN7529I+kvM
-         yFs7Jnsa+Eu7ly8zwX1gqGmAupKd1JtwHc3CFhLosk8gDEnH8wyg6fhKwhg831xDocu6
-         13x3mNV8BNDeDHQBT/xd0LA3NMqyTE7Jabki1RhMjJTOFjuQYvsJvycMr7JFP7ALTJFL
-         bfRC3cfThAjNrtZnrRhTx33/rGTNuJIVHfTN+P2VFjLF8Pf23M7gjFMTjb5B+4tgsCOz
-         t2mg==
-X-Forwarded-Encrypted: i=1; AJvYcCXDB43dAh2WcqUbuvVlA5PF2nailUniHpmV9mwnCPlMGs11kRXXEF//IGE/7tOa7eYF/9QkBVFQvDSA25U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yywo5aNUGRR/GusHSrKYYTYPJoeoJNdGhNUTVod7mrdSIDRYEIh
-	CfzwWAQoURcvx/YbmIR3Kj+6C3TnMgJvke1C0kawQzabeGpjTOlReOILPcnpHJyHhc9GPyiadLg
-	JgWiJ
-X-Google-Smtp-Source: AGHT+IFnDk7GKEuQ8cWWMw0Vew9/4hqSeysVEpuw+9T6ad+F4/+F62Dpk+1y1xZaxqURc8/iDafIXA==
-X-Received: by 2002:a05:6512:3d0e:b0:539:f035:e158 with SMTP id 2adb3069b0e04-53b1a30824fmr5075194e87.18.1729873171662;
-        Fri, 25 Oct 2024 09:19:31 -0700 (PDT)
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com. [209.85.208.170])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53b2e128957sm227399e87.101.2024.10.25.09.19.30
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 25 Oct 2024 09:19:30 -0700 (PDT)
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2fb59652cb9so23340271fa.3
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 09:19:30 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWzlfliLu/ZzNmuOXLfZMG37J+dnh/8SqGIR1EIg+2a/f0mVxOSl7E81GKF/XZAZCHootXhZeZzXCaKiEo=@vger.kernel.org
-X-Received: by 2002:a2e:802:0:b0:2fb:587d:310 with SMTP id 38308e7fff4ca-2fc9d59ef65mr49259721fa.30.1729873169955;
- Fri, 25 Oct 2024 09:19:29 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729873281; x=1730478081;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZMjnh9e7Jw2TD0W4BB+OtBZvaU7qr6SdoxJVRCE4W9g=;
+        b=i76ifBx/chIfkIy+kRZNgjxbcku5EuqT6VLQELBjxjTS2pIW2bpMywFw4Cx5e1JfVi
+         t0U2NUyPdOXSJNMhDdKwQObPGQmXTSgn9YqpEQCP5HY1fbq8osNDVftrRrmR+HeBVsZ6
+         ELtBz9TPTaqWLMNs1MGVhcqy701ZXGM3JMyvPxsfiBVeL5HjwTYa8j8SKmlUpfxPlHzQ
+         hmvXkMWSgZt8wib6pXx/yhkqm7yl5FaAjWaGkxIFdez4/idRSmuA+iBWlv34VCH0whyf
+         Rdh3KcwrHNcbE9M3oadDqjsQ31dgCWcHZcmibl66lj/ebMwgeZrFzoMxkmhtPpFLkzXI
+         5yAA==
+X-Gm-Message-State: AOJu0YxNpLgVHWXBhZ+ycuWwOAGodru0EFnQmQsYjMCUEvEtmd0EsgDG
+	ud7unGNACYFZGAtJ6dumjUwEjrNtXebg+sVgXwwAxmqXgg31sM9dYfsG+7pRtk37Gfw5Xk+/ODF
+	+M7Y=
+X-Google-Smtp-Source: AGHT+IHpRXVcg9COz+CBZOVkqqUYia7I4b+x2BPKv04aHOjbK1ZReF3rzypWbORxTuCO5E/o/yIaGQ==
+X-Received: by 2002:a05:6512:acc:b0:533:43e2:6ac4 with SMTP id 2adb3069b0e04-53b1a37540fmr5770667e87.49.1729873281276;
+        Fri, 25 Oct 2024 09:21:21 -0700 (PDT)
+Received: from dario-ThinkPad-T14s-Gen-2i.. ([2.196.43.251])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b3af02sm1906019f8f.25.2024.10.25.09.21.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Oct 2024 09:21:20 -0700 (PDT)
+From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-amarula@amarulasolutions.com,
+	Michael Trimarchi <michael@amarulasolutions.com>,
+	Dario Binacchi <dario.binacchi@amarulasolutions.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	David Airlie <airlied@gmail.com>,
+	Jessica Zhang <quic_jesszhan@quicinc.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Simona Vetter <simona@ffwll.ch>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	dri-devel@lists.freedesktop.org
+Subject: [PATCH v2] drm/panel: synaptics-r63353: Fix regulator unbalance
+Date: Fri, 25 Oct 2024 18:20:49 +0200
+Message-ID: <20241025162115.4115352-1-dario.binacchi@amarulasolutions.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241025114642.40793-2-charles.goodix@gmail.com>
- <3ypn62dsgarvmxkmdglugcinxmvpmhdqub2zvkygaonn54odf6@amfgijfcd3l3>
- <CAD=FV=X1F3QC=eSXcCn-78iQBzHMzT3z9Sis3yXKW_Bzun3+EA@mail.gmail.com> <CAL_JsqLwOekE1mz+3g8NTE3o4GhE9PWwR1Jfk_tL0RYKQmCg-A@mail.gmail.com>
-In-Reply-To: <CAL_JsqLwOekE1mz+3g8NTE3o4GhE9PWwR1Jfk_tL0RYKQmCg-A@mail.gmail.com>
-From: Doug Anderson <dianders@chromium.org>
-Date: Fri, 25 Oct 2024 09:19:14 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=VHMfc2kJo2N3jkB9BR0H7SN2g9JqoDkZuZOOuq0OV6gw@mail.gmail.com>
-Message-ID: <CAD=FV=VHMfc2kJo2N3jkB9BR0H7SN2g9JqoDkZuZOOuq0OV6gw@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: input: Goodix SPI HID Touchscreen
-To: Rob Herring <robh@kernel.org>
-Cc: Charles Wang <charles.goodix@gmail.com>, dmitry.torokhov@gmail.com, 
-	hbarnor@chromium.org, conor.dooley@microchip.com, jikos@kernel.org, 
-	bentiss@kernel.org, linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi,
+From: Michael Trimarchi <michael@amarulasolutions.com>
 
-On Fri, Oct 25, 2024 at 8:59=E2=80=AFAM Rob Herring <robh@kernel.org> wrote=
-:
->
-> On Fri, Oct 25, 2024 at 10:29=E2=80=AFAM Doug Anderson <dianders@chromium=
-.org> wrote:
-> >
-> > Charles,
-> >
-> > On Fri, Oct 25, 2024 at 5:03=E2=80=AFAM Krzysztof Kozlowski <krzk@kerne=
-l.org> wrote:
-> > >
-> > > > +properties:
-> > > > +  compatible:
-> > > > +    enum:
-> > > > +      - goodix,gt7986u-spi
-> > >
-> > > Compatible is already documented and nothing here explains why we sho=
-uld
-> > > spi variant.
-> > >
-> > > > +
-> > > > +  reg:
-> > > > +    maxItems: 1
-> > > > +
-> > > > +  interrupts:
-> > > > +    maxItems: 1
-> > > > +
-> > > > +  reset-gpios:
-> > > > +    maxItems: 1
-> > > > +
-> > > > +  goodix,hid-report-addr:
-> > >
-> > > I do not see this patch addressing previous review. Sending something
-> > > like this as v1 after long discussions also does not help.
-> >
-> > Krzysztof is right that it's better to wait until we get consensus on
-> > the previous discussion before sending a new patch. I know you were
-> > just trying to help move things forward, but because of the way the
-> > email workflow works, sending a new version tends to fork the
-> > discussion into two threads and adds confusion.
-> >
-> > I know Krzysztof and Rob have been silent during our recent
-> > discussion, but it's also a long discussion. I've been assuming that
-> > they will take some time to digest and reply in a little bit. If they
-> > didn't, IMO it would have been reasonable to explicitly ask them for
-> > feedback in the other thread after giving a bit of time.
->
-> If the firmware creates fundamentally different interfaces, then
-> different compatibles makes sense. If the same driver handles both bus
-> interfaces, then 1 compatible should be fine. The addition of '-spi'
-> to the compatible doesn't give any indication of a different
-> programming model. I wouldn't care except for folks who will see it
-> and just copy it when their only difference is the bus interface and
-> we get to have the same discussion all over again. So if appending
-> '-spi' is the only thing you can come up with, make it abundantly
-> clear so that others don't blindly copy it. The commit msg is useful
-> for convincing us, but not for that purpose.
+The shutdown function can be called when the display is already
+unprepared. For example during reboot this trigger a kernel
+backlog. Calling the drm_panel_unprepare, allow us to avoid
+to trigger the kernel warning.
 
-OK, makes sense. Charles: Can you think of any better description for
-this interface than "goodix,gt7986u-spi"? I suppose you could make it
-super obvious that it's running different firmware with
-"goodix,gt7986u-spifw" and maybe that would be a little better.
+Fixes: 2e87bad7cd33 ("drm/panel: Add Synaptics R63353 panel driver")
+Tested-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Signed-off-by: Michael Trimarchi <michael@amarulasolutions.com>
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
 
-I think what Rob is asking for to make it super obvious is that in the
-"description" of the binding you mention that in this case we're
-running a substantially different firmware than GT7986U touchscreens
-represented by the "goodix,gt7986u" binding and thus is considered a
-distinct device.
+---
 
-At this point, IMO you could wait until Monday in case Krzysztof wants
-to add his $0.02 worth and then you could send a "v2" patch addressing
-the comments so far, though of course you could continue to reply to
-this thread if you have further questions / comments.
+Changes in v2:
+- Add 'Fixes' tag.
+- Add 'Reviewed-by' tag of Neil Armstrong.
 
--Doug
+ drivers/gpu/drm/panel/panel-synaptics-r63353.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/panel/panel-synaptics-r63353.c b/drivers/gpu/drm/panel/panel-synaptics-r63353.c
+index 169c629746c7..17349825543f 100644
+--- a/drivers/gpu/drm/panel/panel-synaptics-r63353.c
++++ b/drivers/gpu/drm/panel/panel-synaptics-r63353.c
+@@ -325,7 +325,7 @@ static void r63353_panel_shutdown(struct mipi_dsi_device *dsi)
+ {
+ 	struct r63353_panel *rpanel = mipi_dsi_get_drvdata(dsi);
+ 
+-	r63353_panel_unprepare(&rpanel->base);
++	drm_panel_unprepare(&rpanel->base);
+ }
+ 
+ static const struct r63353_desc sharp_ls068b3sx02_data = {
+-- 
+2.43.0
+
 
