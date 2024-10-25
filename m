@@ -1,174 +1,249 @@
-Return-Path: <linux-kernel+bounces-381025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AD009AF93C
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 07:45:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AF8489AF944
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 07:48:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5F1E1C21B83
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 05:45:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D33461C21C7F
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 05:48:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C200E18F2F0;
-	Fri, 25 Oct 2024 05:45:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9904A176AAD;
+	Fri, 25 Oct 2024 05:47:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZPcal5CL"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WCXmVn1V"
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D88B1763F8;
-	Fri, 25 Oct 2024 05:45:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99071433CE
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 05:47:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729835149; cv=none; b=dlbetUf10+IuB2knzGlNkYjuvCDp+EaS9iglTbWV/J+186jLmlw64zKco8YXToamZnMoDQRCnU7EEo/31oBVuX8XhIi6YqqIi4xDoC7YP7S4jFN742AYgSmW97n8SPxZ++J1zY6ZTzBjh28Zw9HIWWQSTH7rpNoFYGyZnoGy4xA=
+	t=1729835278; cv=none; b=Lk8/QeVEyVf3ghbyAN1/+MXlABcwAspCRh4Bvh1bFoi+pPO/VYwU40DUXLEc1H1votuVXJlLJrkgjZ5k42tK/R3YnGJ34wdocg8HqLGqJB2hxotmoqhDBc7DhUmqDa+30rs6WB5EM/BmTIdNL0gbKzJPPr7dOQ/ozUSprBruNi0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729835149; c=relaxed/simple;
-	bh=VFoRwLLckE9CmXD34UHCnai2nD8CGWfBO6i1MhJP/K8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XYSplMXywaTp74H2W4uSySFXmJ/I3pYeOyWDePOy/EzhFsWYyGQ/ntPJV0YUE8HkKDns1o9uazNCR3g+nattfw4sf2HjCxVEh69IR22VYEHjeJqDW8d5mCqRZy1f27BP3zDeQcSvilu5M4QvOPcvpionI9Y8xMpWq5kgEU7B5Fg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZPcal5CL; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729835147; x=1761371147;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=VFoRwLLckE9CmXD34UHCnai2nD8CGWfBO6i1MhJP/K8=;
-  b=ZPcal5CLIez3tvsVGBmSN6L5LCSRq6sakqkeLpl6Z8mw6SEU00XyTP1q
-   u0CmdrYEs14AUCTwBuuiJVC2SVk4kan56jsUKJqZfXRNhhpBDtBr/6BCs
-   f12F7m5r5NymLSz/DYHwA7AV/n6GJgdjU+RVuQoZsx35NL5C1dyyCmXgG
-   2jfZp1XM9wUgvZlJJwupZnL6Y/LZy/DTsj/o/8MNYb9ZQ0vBwu6SzBSlN
-   DYetpKR79vRHA7U0qOJi+jE6Jn4JjlkywiOM8s7aYcdn046qLGqD47s15
-   PYjdZylz3mUaP/9jd9bIXJqk4YNWumaOoIsubXvz+ZwH7FFj57zjpe4R8
-   w==;
-X-CSE-ConnectionGUID: I+L23OXTTEmwn6o2fx4zoA==
-X-CSE-MsgGUID: 19bfxwAwS3iYantB/73Ijw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="29619457"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="29619457"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2024 22:45:46 -0700
-X-CSE-ConnectionGUID: Sm/IibPHSO+voWKbOv2mVw==
-X-CSE-MsgGUID: sXFE2jUKSNq4j6zxgeMCTA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,231,1725346800"; 
-   d="scan'208";a="80917407"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa008.fm.intel.com with ESMTP; 24 Oct 2024 22:45:43 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t4D8m-000Xe0-29;
-	Fri, 25 Oct 2024 05:45:40 +0000
-Date: Fri, 25 Oct 2024 13:44:58 +0800
-From: kernel test robot <lkp@intel.com>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	intel-xe@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, Tejun Heo <tj@kernel.org>,
-	Zefan Li <lizefan.x@bytedance.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: oe-kbuild-all@lists.linux.dev,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	Friedrich Vock <friedrich.vock@gmx.de>, cgroups@vger.kernel.org,
-	Maxime Ripard <mripard@kernel.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Subject: Re: [PATCH 1/7] kernel/cgroup: Add "dev" memory accounting cgroup
-Message-ID: <202410251311.OLEnaBoD-lkp@intel.com>
-References: <20241023075302.27194-2-maarten.lankhorst@linux.intel.com>
+	s=arc-20240116; t=1729835278; c=relaxed/simple;
+	bh=lJQ1WHYAhrL5HBnnhuX25B0c94sVYGFWR3u2dwp9rvk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bPc2AhAO/3oycI8lsQ4ZrRgKaz+KffJy+Is7xDTBjtOj0Quk0iPznOAUyskV7bl6PzLESoxmaBxHfWli49yWheJP6vDNWWiX0inUuY78rrxtXXd1VB3et5ojAMFufpJh4N/MsbYk5xTCSFbsqU12c3SCGnM94DEXZSdAm1ZkW+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WCXmVn1V; arc=none smtp.client-ip=209.85.128.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-6e2f4c1f79bso14980567b3.1
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 22:47:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729835275; x=1730440075; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=wl6YifJ4SUzVbUe53cxHW8w6WiKuaOl79ml6CEbwbHk=;
+        b=WCXmVn1V6LDBOy0FjWJDrLOgXO6Cfp3dLQmdH720ntZ8+oEFLjSYDsEQREcdF8cWJq
+         ChxZrdYSaiizmyS0FsqICO+kGE3OB9OkHFmVrPkSQOPLmrIaFvoLp+gRrQAPQSxeMoDt
+         GEkCLjlYCihqcrpRbL2z8RtxUMyVJx9D1xuUb4aGgXhVWitz0stSHI27c7Gc1OHh1tiV
+         gLBhhHruprsE4dUnk7cSsG8m9kDdmJC8vDirShq2jZTTyRKdmOA9UWLE6EodYz1ujBzC
+         u7KxdYPX8aQJV7ki+6xFuZStDn3kWzF5Z2jrcIIi10ytjG0IGOQJ865SKdeurF9g8Rx9
+         pNLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729835275; x=1730440075;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wl6YifJ4SUzVbUe53cxHW8w6WiKuaOl79ml6CEbwbHk=;
+        b=TLTJa+J96ZryjK+NBYHA5YLPdxOMkglsduo1+Dtk6FVNqAV31LJQeaBzVGpzBttd1Q
+         tnT4filPy/jyWutSSPkD3xv+XY9BlivWnkUclnOXHQRD98WojekhfKBlWzwIwzXkalyG
+         b4tShbmT5cesBX01XyxwMu8YoAUz6Wc4LtEJ/wUAEaB8kH4bONCbiBDMyD+W0Js0goLI
+         9EN897850zudmp1Ht2q8pJOwR+29HAXWmLXQfl3aEYZXvxtl7LUog6QMF+nCQCysU9fB
+         TtN/eIvvuM8kJI6GsW5wPkYNyl3Y5B57Fk8Z9zYmaFDhDK7GZ6MKu1597dXafeAbptuL
+         oYag==
+X-Forwarded-Encrypted: i=1; AJvYcCWdFoDMSOMM2b88/4WLQP/ZMc01Euik9jMeMsYjWABqP53IZQpAdBmr3G8J/c6sCtooMRBk+6/zKFkDLvw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YygCOJ+fw9Jg9XCWzHvNrJmuI+Av8hup4t5ExXB81hgXhALJlV2
+	S8xe8or5DZDHfS+dUd8m5z0mHWwYVkLROCD5WlVW/9g4bCLyzijH2SucDut6p21P+mHDzOG6KlS
+	ScgGcIniPQKEmdOZZ1pdxrJ6YxphzYZK64IUTqg==
+X-Google-Smtp-Source: AGHT+IEsaI/6tz7DT/S4WkGZIbdt80SDqgonFiXQSxZEpVOm4o7NhIft5y8tZp6wPwiJGnccrS/yDyoo/AojGneZeGY=
+X-Received: by 2002:a05:690c:650c:b0:6e5:adb6:5d8 with SMTP id
+ 00721157ae682-6e7f0fd6c9emr103635937b3.44.1729835275503; Thu, 24 Oct 2024
+ 22:47:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241023075302.27194-2-maarten.lankhorst@linux.intel.com>
+References: <20241024-adds-spmi-pmic-peripherals-for-qcs615-v2-1-f262ba243b63@quicinc.com>
+ <ddonr55gfcmaj74ciowd23y2qtq3l6yj7g6hp63xoojvkgepwr@czigbkgexbpj> <17a7079b-f05a-4272-b4c4-780a02d455fe@quicinc.com>
+In-Reply-To: <17a7079b-f05a-4272-b4c4-780a02d455fe@quicinc.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Fri, 25 Oct 2024 08:47:44 +0300
+Message-ID: <CAA8EJppOxbT+rY35yvYao0r5ezLkNAOtQu6wY8xPAJ5d0eKjvg@mail.gmail.com>
+Subject: Re: [PATCH v2] arm64: dts: qcom: qcs615: Adds SPMI bus, PMIC and peripherals
+To: Tingguo Cheng <quic_tingguoc@quicinc.com>
+Cc: quic_fenglinw@quicinc.com, quic_tingweiz@quicinc.com, kernel@quicinc.com, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Maarten,
+On Fri, 25 Oct 2024 at 06:03, Tingguo Cheng <quic_tingguoc@quicinc.com> wrote:
+>
+>
+>
+> On 10/24/2024 10:11 PM, Dmitry Baryshkov wrote:
+> > On Thu, Oct 24, 2024 at 04:09:48PM +0800, Tingguo Cheng wrote:
+> >> Add SPMI bus arbiter and include pm8150.dtsi for PMIC peripherals in
+> >> pmm6155au which is a variant of pm8150. The power key and volume do-
+> >> wn key are controlled by PMIC PON hardware on pmm6155au.
+> >>
+> >> Signed-off-by: Tingguo Cheng <quic_tingguoc@quicinc.com>
+> >> ---
+> >> This patch depends on the patch series:
+> >> - https://lore.kernel.org/all/20241022-add_initial_support_for_qcs615-v4-0-0a551c6dd342@quicinc.com/
+> >> ---
+> >> Changes in v2:
+> >> - Include "pm8150.dtsi" for QCS615 PMIC instead of creating a new
+> >>    qcs615-pmic.dtsi in the case that pmm6155au is a variant of pm8150.
+> >> - Fixed comments from community in V1.
+> >> - Link to v1: https://lore.kernel.org/r/20241014-adds-spmi-pmic-peripherals-for-qcs615-v1-1-8a3c67d894d8@quicinc.com
+> >> ---
+> >>   arch/arm64/boot/dts/qcom/qcs615-ride.dts | 27 +++++++++++++++++++++++++++
+> >>   arch/arm64/boot/dts/qcom/qcs615.dtsi     | 23 +++++++++++++++++++++++
+> >>   2 files changed, 50 insertions(+)
+> >>
+> >> diff --git a/arch/arm64/boot/dts/qcom/qcs615-ride.dts b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
+> >> index ee6cab3924a6d71f29934a8debba3a832882abdd..71ea0cb32eebed713b2a80ab692b14fdb4bd0ce4 100644
+> >> --- a/arch/arm64/boot/dts/qcom/qcs615-ride.dts
+> >> +++ b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
+> >> @@ -6,6 +6,7 @@
+> >>
+> >>   #include <dt-bindings/regulator/qcom,rpmh-regulator.h>
+> >>   #include "qcs615.dtsi"
+> >> +#include "pm8150.dtsi"
+> >>   / {
+> >>      model = "Qualcomm Technologies, Inc. QCS615 Ride";
+> >>      compatible = "qcom,qcs615-ride", "qcom,qcs615";
+> >> @@ -210,6 +211,32 @@ &rpmhcc {
+> >>      clocks = <&xo_board_clk>;
+> >>   };
+> >>
+> >> +&spmi_bus {
+> >> +    pmm6155au_0: pmic@0 {
+> >
+> > There is a label already, please use it.
+> Okay, then pm8150.
+> >
+> >> +
+> >> +            pon: pon@800 {
+> >
+> > No, use the label syntax instead of extending the node in-tree.
+> Okay, I will use &lable instead.
+> >
+> >> +
+> >> +                    /delete-property/ mode-bootloader;
+> >> +                    /delete-property/ mode-recovery;
+> >> +
+> >> +                    pon_pwrkey: pwrkey {
+> >> +                            status = "okay";
+> >> +                    };
+> >> +
+> >> +                    pon_resin: resin {
+> >> +                            linux,code = <KEY_VOLUMEDOWN>;
+> >> +                            status = "okay";
+> >> +                    };
+> >> +            };
+> >> +
+> >> +            pmm6155au_0_gpios: gpio@c000 {};
+> >
+> > What for?
+> Because the silk screen is pmm6155au, I'm thinking using this phandle
+> name could be more accurate.
 
-kernel test robot noticed the following build warnings:
+Could you please post /sys/kernel/debug/qcom_socinfo/pmic_* contents?
 
-[auto build test WARNING on drm/drm-next]
-[also build test WARNING on drm-exynos/exynos-drm-next linus/master v6.12-rc4 next-20241024]
-[cannot apply to tj-cgroup/for-next drm-xe/drm-xe-next akpm-mm/mm-everything drm-intel/for-linux-next drm-intel/for-linux-next-fixes drm-misc/drm-misc-next drm-tip/drm-tip]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> >
+> >> +    };
+> >> +
+> >> +    pmm6155au_1: pmic@1 {
+> >> +            status = "disabled";
+> >
+> > Why?
+> qcs615-ride board only contains 1 PMIC on the board, this is the board
+> settings.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Maarten-Lankhorst/kernel-cgroup-Add-dev-memory-accounting-cgroup/20241023-155504
-base:   git://anongit.freedesktop.org/drm/drm drm-next
-patch link:    https://lore.kernel.org/r/20241023075302.27194-2-maarten.lankhorst%40linux.intel.com
-patch subject: [PATCH 1/7] kernel/cgroup: Add "dev" memory accounting cgroup
-config: i386-randconfig-061-20241025 (https://download.01.org/0day-ci/archive/20241025/202410251311.OLEnaBoD-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241025/202410251311.OLEnaBoD-lkp@intel.com/reproduce)
+PM8150 takes two USIDs, so this is not for the second PMIC, this is
+for a part of the same PMIC.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410251311.OLEnaBoD-lkp@intel.com/
+> >
+> >> +    };
+> >> +};
+> >> +
+> >>   &uart0 {
+> >>      status = "okay";
+> >>   };
+> >> diff --git a/arch/arm64/boot/dts/qcom/qcs615.dtsi b/arch/arm64/boot/dts/qcom/qcs615.dtsi
+> >> index ac4c4c751da1fbb28865877555ba317677bc6bd2..3fc928913239cfc61c24d1b16c183b96f38e589d 100644
+> >> --- a/arch/arm64/boot/dts/qcom/qcs615.dtsi
+> >> +++ b/arch/arm64/boot/dts/qcom/qcs615.dtsi
+> >
+> > Don't mix SoC and board changes into a single patch, unless they are
+> > really touching the same function. In this case they are not.
+> Okay, will split into two patches.
+> >
+> >> @@ -517,6 +517,29 @@ sram@c3f0000 {
+> >>                      reg = <0x0 0x0c3f0000 0x0 0x400>;
+> >>              };
+> >>
+> >> +            spmi_bus: spmi@c440000 {
+> >> +                    compatible = "qcom,spmi-pmic-arb";
+> >> +                    reg = <0x0 0x0c440000 0x0 0x1100>,
+> >> +                          <0x0 0x0c600000 0x0 0x2000000>,
+> >> +                          <0x0 0x0e600000 0x0 0x100000>,
+> >> +                          <0x0 0x0e700000 0x0 0xa0000>,
+> >> +                          <0x0 0x0c40a000 0x0 0x26000>;
+> >> +                    reg-names = "core",
+> >> +                                "chnls",
+> >> +                                "obsrvr",
+> >> +                                "intr",
+> >> +                                "cnfg";
+> >> +                    interrupts-extended = <&pdc 1 IRQ_TYPE_LEVEL_HIGH>;
+> >> +                    interrupt-names = "periph_irq";
+> >> +                    interrupt-controller;
+> >> +                    #interrupt-cells = <4>;
+> >> +                    #address-cells = <2>;
+> >> +                    #size-cells = <0>;
+> >> +                    cell-index = <0>;
+> >> +                    qcom,channel = <0>;
+> >> +                    qcom,ee = <0>;
+> >> +            };
+> >> +
+> >>              intc: interrupt-controller@17a00000 {
+> >>                      compatible = "arm,gic-v3";
+> >>                      reg = <0x0 0x17a00000 0x0 0x10000>,     /* GICD */
+> >>
+> >> ---
+> >> base-commit: de938618db2bafbe1a70c8fc43f06ccdd60364b2
+> >> change-id: 20240929-adds-spmi-pmic-peripherals-for-qcs615-16ee53179a7d
+> >> prerequisite-change-id: 20241022-add_initial_support_for_qcs615-2256f64a9c24:v4
+> >> prerequisite-patch-id: 09782474af7eecf1013425fd34f9d2f082fb3616
+> >> prerequisite-patch-id: 624720e543d7857e46d3ee49b8cea413772deb4c
+> >> prerequisite-patch-id: 04ca722967256efddc402b7bab94136a5174b0b9
+> >> prerequisite-patch-id: ab88a42ec69ad90e8509c9c5b7c6bdd595a7f783
+> >> prerequisite-patch-id: 918724fafe43acaa4c4b980bfabe36e9c3212cd1
+> >> prerequisite-patch-id: 3bd8edd83297815fcb1b81fcd891d3c14908442f
+> >> prerequisite-patch-id: fc1cfec4ecd56e669c161c4d2c3797fc0abff0ae
+> >>
+> >> Best regards,
+> >> --
+> >> Tingguo Cheng <quic_tingguoc@quicinc.com>
+> >>
+> >
+>
+> --
+> Thank you & BRs
+> Tingguo
+>
 
-sparse warnings: (new ones prefixed by >>)
->> kernel/cgroup/dev.c:423:9: sparse: sparse: incompatible types in comparison expression (different address spaces):
-   kernel/cgroup/dev.c:423:9: sparse:    struct list_head [noderef] __rcu *
-   kernel/cgroup/dev.c:423:9: sparse:    struct list_head *
->> kernel/cgroup/dev.c:423:9: sparse: sparse: incompatible types in comparison expression (different address spaces):
-   kernel/cgroup/dev.c:423:9: sparse:    struct list_head [noderef] __rcu *
-   kernel/cgroup/dev.c:423:9: sparse:    struct list_head *
-   kernel/cgroup/dev.c: note: in included file (through include/linux/smp.h, include/linux/lockdep.h, include/linux/spinlock.h, ...):
-   include/linux/list.h:83:21: sparse: sparse: self-comparison always evaluates to true
-   include/linux/list.h:83:21: sparse: sparse: self-comparison always evaluates to true
-   include/linux/list.h:83:21: sparse: sparse: self-comparison always evaluates to true
-
-vim +423 kernel/cgroup/dev.c
-
-   400	
-   401	/**
-   402	 * dev_cgroup_unregister_device() - Unregister a previously registered device.
-   403	 * @cgdev: The device to unregister.
-   404	 *
-   405	 * This function undoes dev_cgroup_register_device.
-   406	 */
-   407	void dev_cgroup_unregister_device(struct dev_cgroup_device *cgdev)
-   408	{
-   409		struct devcg_device *dev;
-   410		struct list_head *entry;
-   411	
-   412		if (!cgdev || !cgdev->priv)
-   413			return;
-   414	
-   415		dev = cgdev->priv;
-   416		cgdev->priv = NULL;
-   417	
-   418		spin_lock(&devcg_lock);
-   419	
-   420		/* Remove from global device list */
-   421		list_del_rcu(&dev->dev_node);
-   422	
- > 423		list_for_each_rcu(entry, &dev->pools) {
-   424			struct dev_cgroup_pool_state *pool =
-   425				container_of(entry, typeof(*pool), dev_node);
-   426	
-   427			list_del_rcu(&pool->css_node);
-   428		}
-   429	
-   430		/*
-   431		 * Ensure any RCU based lookups fail. Additionally,
-   432		 * no new pools should be added to the dead device
-   433		 * by get_cg_pool_unlocked.
-   434		 */
-   435		dev->unregistered = true;
-   436		spin_unlock(&devcg_lock);
-   437	
-   438		kref_put(&dev->ref, devcg_free_device);
-   439	}
-   440	EXPORT_SYMBOL_GPL(dev_cgroup_unregister_device);
-   441	
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+With best wishes
+Dmitry
 
