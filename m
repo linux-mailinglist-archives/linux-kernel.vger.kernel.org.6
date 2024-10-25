@@ -1,270 +1,204 @@
-Return-Path: <linux-kernel+bounces-382519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 469969B0F4A
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 21:42:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F35E89B0F45
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 21:40:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC04BB26EED
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 19:42:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8195D1F2295F
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 19:40:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1864720F3C2;
-	Fri, 25 Oct 2024 19:42:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B3F520EA50;
+	Fri, 25 Oct 2024 19:40:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="awXnidT5"
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="WyFonUoB"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE84920EA4A;
-	Fri, 25 Oct 2024 19:41:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEBAE20D507
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 19:40:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729885319; cv=none; b=WLLca6+8Cdb3nS0siRXqiI4x9kmzggZa7qQ5EZQj7ewVR6w5aBzSbEp5bIV/SlUta+Y8bcAf11gvsDRMSFmhh5hJAgqoZvgW/k60oiD7yT0u+H/UoJbNrlIjH77CrN2X+arTJ4KuVsTBigy1Wy76TYlj7KjaKGT3k3cfk9f1lic=
+	t=1729885244; cv=none; b=HnkaFS8oMwiaXRLOSmpo/MEluY2XEU9ayf6jMNXfUIdyUJHSOj3aJYCdJAz4kcai0WaTJjzC0FiEvUvXY4tf5AdzaxJmFi0J3KdB17m7APOgj4aiFcsXP0SmytQRkUsiiJsU2Kmmtjqj89gzFPHGSRhF0kuAj265T6uwyhlaDF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729885319; c=relaxed/simple;
-	bh=dppblIz1pBp4r1wgur1T1P7Xk4sFCLPXO+HIzohymS8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FVofEtytwLYncDCHKMRvcLcEVrPf1MQUXOFDyxkbfFnn8o7gtCsAPdrD9ZmN3bJrgAwg9XQo/5K9ZtKDl9oDwPxgDHEb0WCESLRQzyDEM7Tz7iosNTNEZg0YDqFavENrBP1diljPmYsYbVCxastHPFGvmpp7glCSgGETC1ucEK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=awXnidT5; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1729885315;
-	bh=dppblIz1pBp4r1wgur1T1P7Xk4sFCLPXO+HIzohymS8=;
-	h=From:To:Cc:Subject:Date:From;
-	b=awXnidT52OTcWAI3S75BOHN8HYktUCwd6gTXgOmoeBs61ugdt+cxn/JDKK1/iOrRd
-	 8Jo7HlxLjkHOOUPoXmJi9ufiLUHqQzTOeGxY8miKmDV5gSY6hpy5Hp+YO3QQh/gur2
-	 QiIBZQmeSJpoGimI7MqsEsJekK+m0f7O93HSb/d/sXF/PulIwBn1zVqzpd/UDGdO+a
-	 oqAds6N3XysQ+4TOY+Gho8KyqjnULh4y5GinMLjP/+U/RTVsbEALQP7iD6By2KFrxc
-	 cqHBz7Iaw4k7coMW9gJwomOBOiUPfptRzC9T6Li9MVS7skjxGBdiU+7LoPTzb4tzk3
-	 0AUQluecnrHHQ==
-Received: from thinkos.internal.efficios.com (96-127-217-162.qc.cable.ebox.net [96.127.217.162])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XZtTH4vBqz19L5;
-	Fri, 25 Oct 2024 15:41:55 -0400 (EDT)
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-kernel@vger.kernel.org,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	syzbot+b390c8062d8387b6272a@syzkaller.appspotmail.com,
-	Michael Jeanson <mjeanson@efficios.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Yonghong Song <yhs@fb.com>,
-	"Paul E . McKenney" <paulmck@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-	bpf@vger.kernel.org,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Jordan Rife <jrife@google.com>
-Subject: [RFC PATCH v2] tracing: Fix syscall tracepoint use-after-free
-Date: Fri, 25 Oct 2024 15:40:10 -0400
-Message-Id: <20241025194010.515253-1-mathieu.desnoyers@efficios.com>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1729885244; c=relaxed/simple;
+	bh=G/Z6Anw20AvLicT7TkmfUVlXSF34bsbnJfddMl4QaAM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=E8INCK6Ojbxpd7pgDn6yiHs4w3w3sL2W2uvWE+XS+id4cydZPesf/yfPYJSbpxfuqAPKKEsxaiC8YRU76c0JgQA9Wn3nWArygpH4GLZU0Xmv3djZz+v8IfqhbVex0LH17HJ58+m2BOQirCtHzyJPAccYqqytU3Hg9DULqDxT2AM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=WyFonUoB; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49PBh8EY018075
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 19:40:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	zkl9T2i4R+q+2wMdvpjq1/psZmqfc591SVz11qs6NLE=; b=WyFonUoBtbCzigZ9
+	W24hSON4mBrdnMbZCq3zVw/yTdlX9f3hRkVhqOsLl/V3sR25rXeGFbNNEtRHQPLW
+	5vBDJBQrm6MWsv6ST8eMRT+RYE1X11PNqlaXid0mXV2iPp4AeA2c2z8G7rxk1iKG
+	pHetip4KxCnaeEXQGzZfBUjjEiaNhxv6ZXmXh0JYfsZAS3r81Des/28YUgCVlgdr
+	dKywQaukkWJIZN4wZu7objL+JHQwwISysm4oUMph3w5Agc9vJNpmKWRuWNbDEMuQ
+	jjjPGNX+G5aNXyYODfZXbWVFDXXoNWGSce3dvuMLKGxIXNPLWJuD079utpfc2/Zj
+	MZeN7w==
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42em3wj8w3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 19:40:41 +0000 (GMT)
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-20c3ad07bc7so3745655ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 12:40:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729885240; x=1730490040;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zkl9T2i4R+q+2wMdvpjq1/psZmqfc591SVz11qs6NLE=;
+        b=CjC7Y8mCD2+sASsAA2CRs9Fr7NrvhqxnUqum93Um0K14lRBIX/FTk7jQW/+HIDTvEN
+         lLdwEhS/41wfC0z88yNeDBJk847ajQ99xhpbcULx8GqJSwIEn4+m2KKHewDB6M3B580s
+         7e0o2KePnQgLApo2bFxRjrk42lzf9az9c27DffbdA/xuI2Q8eXyuNPyhDsff/XBFrCVw
+         UKO8TybKB0K5xeGoediq/Ui6rTt0zP0pKbfnkIzpprNWH1y5Ue3Di08TMwGUegyYgiYI
+         QznSWou61R/PeYZd72nUvNI261j6zzDvItE6g1qD7ZrjoYnIRr7bsA5UN8GJE6V/oGR2
+         mVsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWdiowtFPeK5WyuElI1i5E23GOsPb4iXWpffVWst0HVwYzafVYByIAxlxMWwH6tL/qfkqRq57eRnXQT3RQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxspXtFLABOEDtdmfdBv6DJusB4VIVTOXZV5wl2pXfbWLLTMqcl
+	xHxcRzc21/x/VmvIxWSK8v9glEECubq37QybaziO0gX1uIf8V52a3m9AxWuLd8wlOS9fbuOgYc1
+	aCl1AW3NuvuaaNVnEGwnptpRjkliRmh33phYarRUWJkvm6wBNNf3LxuTCVGjd4Wc=
+X-Received: by 2002:a17:902:ea07:b0:20d:345a:965b with SMTP id d9443c01a7336-210c6ae4767mr1609665ad.7.1729885240299;
+        Fri, 25 Oct 2024 12:40:40 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFDbEkA9J7EzxFpUTffSKqSYZjdovy9ku+MQA7c1H4oUw/eZUXYvs1TG2JDRWh5H/JpYWW+Eg==
+X-Received: by 2002:a17:902:ea07:b0:20d:345a:965b with SMTP id d9443c01a7336-210c6ae4767mr1609495ad.7.1729885239890;
+        Fri, 25 Oct 2024 12:40:39 -0700 (PDT)
+Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b1f296c66sm100369966b.109.2024.10.25.12.40.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 25 Oct 2024 12:40:39 -0700 (PDT)
+Message-ID: <15238992-4ede-4b85-9947-391baaa4c8a9@oss.qualcomm.com>
+Date: Fri, 25 Oct 2024 21:40:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] arm64: dts: qcom: qcs615: Add QUPv3 configuration
+To: Viken Dadhaniya <quic_vdadhani@quicinc.com>, andersson@kernel.org,
+        konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+        conor+dt@kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: quic_msavaliy@quicinc.com, quic_anupkulk@quicinc.com
+References: <20241011103346.22925-1-quic_vdadhani@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20241011103346.22925-1-quic_vdadhani@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: WGZEWb5Hylp4xRJOfoUKHGpxVlf0Etvx
+X-Proofpoint-ORIG-GUID: WGZEWb5Hylp4xRJOfoUKHGpxVlf0Etvx
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 malwarescore=0
+ mlxscore=0 lowpriorityscore=0 phishscore=0 impostorscore=0 clxscore=1015
+ priorityscore=1501 mlxlogscore=999 suspectscore=0 bulkscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2410250150
 
-The grace period used internally within tracepoint.c:release_probes()
-uses call_rcu() to batch waiting for quiescence of old probe arrays,
-rather than using the tracepoint_synchronize_unregister() which blocks
-while waiting for quiescence.
+On 11.10.2024 12:33 PM, Viken Dadhaniya wrote:
+> Add DT support for QUPv3 Serial Engines.
+> 
+> Co-developed-by: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
+> Signed-off-by: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
+> Signed-off-by: Viken Dadhaniya <quic_vdadhani@quicinc.com>
+> ---
 
-With the introduction of faultable syscall tracepoints, this causes
-use-after-free issues reproduced with syzkaller.
+[...]
 
-Fix this by introducing tracepoint_call_rcu(), which uses the
-appropriate call_rcu() or call_rcu_tasks_trace() before invoking the
-rcu_free_old_probes callback.
+> +	qup_opp_table: opp-table-qup {
+> +		compatible = "operating-points-v2";
 
-Use tracepoint_call_rcu() in bpf_link_free() for raw tracepoints as
-well, which has the same problem for syscall tracepoints. Ditto for
-bpf_prog_put().
+opp-shared;
 
-Reported-by: syzbot+b390c8062d8387b6272a@syzkaller.appspotmail.com
-Fixes: a363d27cdbc2 ("tracing: Allow system call tracepoints to handle page faults")
-Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Michael Jeanson <mjeanson@efficios.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Alexei Starovoitov <ast@kernel.org>
-Cc: Yonghong Song <yhs@fb.com>
-Cc: Paul E. McKenney <paulmck@kernel.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: bpf@vger.kernel.org
-Cc: Joel Fernandes <joel@joelfernandes.org>
-Cc: Jordan Rife <jrife@google.com>
----
-Changes since v0:
-- Introduce tracepoint_call_rcu(),
-- Fix bpf_link_free() use of call_rcu as well.
+> +
+> +		opp-75000000 {
+> +			opp-hz = /bits/ 64 <75000000>;
+> +			required-opps = <&rpmhpd_opp_low_svs>;
+> +		};
+> +
+> +		opp-100000000 {
+> +			opp-hz = /bits/ 64 <100000000>;
+> +			required-opps = <&rpmhpd_opp_svs>;
+> +		};
+> +
+> +		opp-128000000 {
+> +			opp-hz = /bits/ 64 <128000000>;
+> +			required-opps = <&rpmhpd_opp_nom>;
+> +		};
+> +	};
+> +
+>  	psci {
+>  		compatible = "arm,psci-1.0";
+>  		method = "smc";
+> @@ -392,6 +427,24 @@
+>  			#size-cells = <1>;
+>  		};
+>  
+> +		gpi_dma0: qcom,gpi-dma@800000  {
+> +			compatible = "qcom,sdm845-gpi-dma";
 
-Changes since v1:
-- Use tracepoint_call_rcu() for bpf_prog_put as well.
----
- include/linux/tracepoint.h |  9 +++++++++
- kernel/bpf/syscall.c       | 36 +++++++++++++++++++++++++++---------
- kernel/tracepoint.c        | 22 ++++++++++++++++++----
- 3 files changed, 54 insertions(+), 13 deletions(-)
+You must define a new compatible for qcs615, sdm845 is used as a fallback
+(so that we don't have to add new driver entries). You will however need
+to submit a separate dt-bindings change.
 
-diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
-index 0dc67fad706c..45025d6b2dd6 100644
---- a/include/linux/tracepoint.h
-+++ b/include/linux/tracepoint.h
-@@ -104,6 +104,8 @@ void for_each_tracepoint_in_module(struct module *mod,
-  * tracepoint_synchronize_unregister must be called between the last tracepoint
-  * probe unregistration and the end of module exit to make sure there is no
-  * caller executing a probe when it is freed.
-+ * An alternative to tracepoint_synchronize_unregister() is to use
-+ * tracepoint_call_rcu() for batched reclaim.
-  */
- #ifdef CONFIG_TRACEPOINTS
- static inline void tracepoint_synchronize_unregister(void)
-@@ -111,9 +113,16 @@ static inline void tracepoint_synchronize_unregister(void)
- 	synchronize_rcu_tasks_trace();
- 	synchronize_rcu();
- }
-+
-+void tracepoint_call_rcu(struct tracepoint *tp, struct rcu_head *head,
-+			 void (*callback)(struct rcu_head *head));
-+
- #else
- static inline void tracepoint_synchronize_unregister(void)
- { }
-+static inline void tracepoint_call_rcu(struct tracepoint *tp, struct rcu_head *head,
-+				       void (*callback)(struct rcu_head *head))
-+{ }
- #endif
- 
- #ifdef CONFIG_HAVE_SYSCALL_TRACEPOINTS
-diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-index 59de664e580d..f21000f33a61 100644
---- a/kernel/bpf/syscall.c
-+++ b/kernel/bpf/syscall.c
-@@ -2992,28 +2992,46 @@ static void bpf_link_defer_dealloc_mult_rcu_gp(struct rcu_head *rcu)
- 		call_rcu(rcu, bpf_link_defer_dealloc_rcu_gp);
- }
- 
-+static void bpf_link_defer_bpf_prog_put(struct rcu_head *rcu)
-+{
-+	struct bpf_prog_aux *aux = container_of(rcu, struct bpf_prog_aux, rcu);
-+
-+	bpf_prog_put(aux->prog);
-+}
-+
- /* bpf_link_free is guaranteed to be called from process context */
- static void bpf_link_free(struct bpf_link *link)
- {
- 	const struct bpf_link_ops *ops = link->ops;
-+	struct bpf_raw_tp_link *raw_tp = NULL;
- 	bool sleepable = false;
- 
-+	if (link->type == BPF_LINK_TYPE_RAW_TRACEPOINT)
-+		raw_tp = container_of(link, struct bpf_raw_tp_link, link);
- 	bpf_link_free_id(link->id);
- 	if (link->prog) {
- 		sleepable = link->prog->sleepable;
- 		/* detach BPF program, clean up used resources */
- 		ops->release(link);
--		bpf_prog_put(link->prog);
-+		if (raw_tp)
-+			tracepoint_call_rcu(raw_tp->btp->tp, &link->prog->aux->rcu,
-+					    bpf_link_defer_bpf_prog_put);
-+		else
-+			bpf_prog_put(link->prog);
- 	}
- 	if (ops->dealloc_deferred) {
--		/* schedule BPF link deallocation; if underlying BPF program
--		 * is sleepable, we need to first wait for RCU tasks trace
--		 * sync, then go through "classic" RCU grace period
--		 */
--		if (sleepable)
--			call_rcu_tasks_trace(&link->rcu, bpf_link_defer_dealloc_mult_rcu_gp);
--		else
--			call_rcu(&link->rcu, bpf_link_defer_dealloc_rcu_gp);
-+		if (raw_tp) {
-+			tracepoint_call_rcu(raw_tp->btp->tp, &link->rcu, bpf_link_defer_dealloc_rcu_gp);
-+		} else {
-+			/* schedule BPF link deallocation; if underlying BPF program
-+			 * is sleepable, we need to first wait for RCU tasks trace
-+			 * sync, then go through "classic" RCU grace period
-+			 */
-+			if (sleepable)
-+				call_rcu_tasks_trace(&link->rcu, bpf_link_defer_dealloc_mult_rcu_gp);
-+			else
-+				call_rcu(&link->rcu, bpf_link_defer_dealloc_rcu_gp);
-+		}
- 	} else if (ops->dealloc)
- 		ops->dealloc(link);
- }
-diff --git a/kernel/tracepoint.c b/kernel/tracepoint.c
-index 6474e2cf22c9..ef60c5484eda 100644
---- a/kernel/tracepoint.c
-+++ b/kernel/tracepoint.c
-@@ -106,13 +106,27 @@ static void rcu_free_old_probes(struct rcu_head *head)
- 	kfree(container_of(head, struct tp_probes, rcu));
- }
- 
--static inline void release_probes(struct tracepoint_func *old)
-+static bool tracepoint_is_syscall(struct tracepoint *tp)
-+{
-+	return !strcmp(tp->name, "sys_enter") || !strcmp(tp->name, "sys_exit");
-+}
-+
-+void tracepoint_call_rcu(struct tracepoint *tp, struct rcu_head *head,
-+			 void (*callback)(struct rcu_head *head))
-+{
-+	if (tracepoint_is_syscall(tp))
-+		call_rcu_tasks_trace(head, callback);
-+	else
-+		call_rcu(head, callback);
-+}
-+
-+static inline void release_probes(struct tracepoint *tp, struct tracepoint_func *old)
- {
- 	if (old) {
- 		struct tp_probes *tp_probes = container_of(old,
- 			struct tp_probes, probes[0]);
- 
--		call_rcu(&tp_probes->rcu, rcu_free_old_probes);
-+		tracepoint_call_rcu(tp, &tp_probes->rcu, rcu_free_old_probes);
- 	}
- }
- 
-@@ -334,7 +348,7 @@ static int tracepoint_add_func(struct tracepoint *tp,
- 		break;
- 	}
- 
--	release_probes(old);
-+	release_probes(tp, old);
- 	return 0;
- }
- 
-@@ -406,7 +420,7 @@ static int tracepoint_remove_func(struct tracepoint *tp,
- 		WARN_ON_ONCE(1);
- 		break;
- 	}
--	release_probes(old);
-+	release_probes(tp, old);
- 	return 0;
- }
- 
--- 
-2.39.5
+> +			reg = <0x0 0x800000 0x0 0x60000>;
+> +			#dma-cells = <3>;
+> +			interrupts = <GIC_SPI 244 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 245 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 246 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 247 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 248 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 249 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 250 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 251 IRQ_TYPE_LEVEL_HIGH>;
+> +			dma-channels = <8>;
+> +			dma-channel-mask = <0xf>;
+> +			iommus = <&apps_smmu 0xd6 0x0>;
+> +			status = "disabled";
 
+Any reason?
+
+> +		};
+> +
+>  		qupv3_id_0: geniqup@8c0000 {
+>  			compatible = "qcom,geni-se-qup";
+>  			reg = <0x0 0x8c0000 0x0 0x6000>;
+> @@ -400,6 +453,7 @@
+>  				 <&gcc GCC_QUPV3_WRAP_0_S_AHB_CLK>;
+>  			clock-names = "m-ahb",
+>  				      "s-ahb";
+> +			iommus = <&apps_smmu 0xc3 0x0>;
+
+This looks like a separate fix
+
+>  			#address-cells = <2>;
+>  			#size-cells = <2>;
+>  			status = "disabled";
+> @@ -412,13 +466,377 @@
+>  				pinctrl-0 = <&qup_uart0_tx>, <&qup_uart0_rx>;
+>  				pinctrl-names = "default";
+>  				interrupts = <GIC_SPI 601 IRQ_TYPE_LEVEL_HIGH>;
+> -				interconnects = <&aggre1_noc MASTER_QUP_0 0
+> -						 &mc_virt SLAVE_EBI1 0>,
+> -						<&gem_noc MASTER_APPSS_PROC 0
+> -						 &config_noc SLAVE_QUP_0 0>;
+> +				interconnects = <&aggre1_noc MASTER_QUP_0 0 &mc_virt SLAVE_EBI1 0>,
+> +						<&gem_noc MASTER_APPSS_PROC 0 &config_noc SLAVE_QUP_0 0>;
+
+Why?
+
+Also, please use QCOM_ICC_TAG_ALWAYS instead of zeroes
+
+Konrad
 
