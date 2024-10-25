@@ -1,60 +1,57 @@
-Return-Path: <linux-kernel+bounces-381790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24A309B047C
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:48:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F03C19B047F
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:50:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 567FE1C2099B
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 13:48:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 86F59B22A87
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 13:50:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 656E41D9A66;
-	Fri, 25 Oct 2024 13:48:42 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA02612B64;
-	Fri, 25 Oct 2024 13:48:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D07C61D9A66;
+	Fri, 25 Oct 2024 13:50:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mAJzNytW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 306344A1B;
+	Fri, 25 Oct 2024 13:50:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729864122; cv=none; b=CfV9cM2DSwPE5qsDwefcJFonwAZ2eVCipmJD+jACrA6vpKk1KSe86tKkqmdzBAirt/Lc3b78umKJJCo7dgzZc8zb4udI9W8a5DeIZ78wCA95XSJaFkz0NB+d2br8xTCoZlHWxcdwmSDTMtHHQNr3A55yhuieeMs2QVt1Io2woA8=
+	t=1729864207; cv=none; b=tyMvvbNnYQhfGr9qhWBBlHLGv6c8Y5NWapk0/K3iXQptftTQIiHfY2HchF7/Sn6+KCKyzQ6rw6B8Sv9pHK/jEH0kawi9cV+FoyH6k02JvNsNjSFHuwZYgUck6RQJtPPsJn3mJkmp7TNA7zDxhQLcds54/U2FE2TCVGgYuSPs+vI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729864122; c=relaxed/simple;
-	bh=AWWxHlQ7+1+m8GRIlMTOKtAHKxDrjgZ5/Q1TV6hpEKA=;
+	s=arc-20240116; t=1729864207; c=relaxed/simple;
+	bh=wtg/Mg+3id26S9R42SknS3o1wThyyGsm4KNyz92R+GU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RJ8hNJBygkeW0sx6zH2I3RbpNdLS5KBj1obwUU4ixeN4zyuEIvLsN9jZ7bvguDpTISZFgqkVntbQNV4ri8V7pR6of2IleK3fP1SrMQTCJQTwWbyGqftIzxHNZn8xsUEXp2CsdIMfBEMukJ/eCAcgx6ZPjZkY1F+6qM8pxTmeQzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E8BBD339;
-	Fri, 25 Oct 2024 06:49:08 -0700 (PDT)
-Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3E1D63F71E;
-	Fri, 25 Oct 2024 06:48:37 -0700 (PDT)
-Date: Fri, 25 Oct 2024 14:48:26 +0100
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: Johan Hovold <johan@kernel.org>
-Cc: Cristian Marussi <cristian.marussi@arm.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Sibi Sankar <quic_sibis@quicinc.com>, sudeep.holla@arm.com,
-	ulf.hansson@linaro.org, jassisinghbrar@gmail.com,
-	linux-kernel@vger.kernel.org, arm-scmi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	konradybcio@kernel.org, linux-pm@vger.kernel.org,
-	tstrudel@google.com, rafael@kernel.org
-Subject: Re: [PATCH V3 0/4] firmware: arm_scmi: Misc Fixes
-Message-ID: <ZxuhqkDoWF8IYQxL@pluto>
-References: <20241007060642.1978049-1-quic_sibis@quicinc.com>
- <ZwfsmqInJlqkQD_3@hovoldconsulting.com>
- <ae5eaef9-301f-7d3f-c973-faa22ae780ee@quicinc.com>
- <ZxkjqEmkBAsC6UkL@hovoldconsulting.com>
- <c8e7420b-a7b4-89cd-1b6e-c1f6693c062d@quicinc.com>
- <ik4dyfbphm7lkeipm2dbr7cmdfxewxd4jtuz2jfnscfwcyo2r4@lrin5hnsqvyd>
- <83b635a7-fc69-7522-d985-810262500cb3@quicinc.com>
- <CAA8EJppx1OmYnfSsMDebRRTbNb3dfAE_MM55T1SpLccP=s_K1A@mail.gmail.com>
- <Zxty8VaMPrU3fJAN@pluto>
- <ZxueBWB9nJ9Mt7bW@hovoldconsulting.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=dEzRT34IhMRIJez3Iq8NU/WPUOxCD3/fAz/NuDM+lZuzT9mURmGWQUzeHRbHORD6iqnkYQs5vpKRg1RY4I8tNduTryibqWXghoiJZ3p/B9mKSOk1vEr2HqEnfsjUC3swpenHpWetospIyOuee3Njy9h2IfiTdYODnsT6+QURAXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mAJzNytW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FFDFC4CEC3;
+	Fri, 25 Oct 2024 13:50:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729864206;
+	bh=wtg/Mg+3id26S9R42SknS3o1wThyyGsm4KNyz92R+GU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mAJzNytWSi+w5hr+2v6xe+jYrkGHfZEniPXR+zqNeK+zuTFb9DApUvXHRww9K147X
+	 SHQb/JaD71wSx7FKXMReEvm0KssWc1vCm00ac2DNIOW+pdUSiBk9m5RWfBe5by3bdw
+	 do61/r1U4LqELhYYW7fjBVgQLD6n7t8h+GlcyNVvVLrwkfyUQao7znKLmOZnLIszdO
+	 61lIrkh0vbj5UdiF5ECXfyhy7v5SEZ6YTuSo+4bkJ7zkgTFkMaf5CVN8vx/juAymgG
+	 ufALqhQmzp7Nkra0DjCmCaIf9cSSAJhr6BuRcM8u9QneYtrBWDUeQt0i140hhlAuuw
+	 ohZR/UPsPQaWA==
+Date: Fri, 25 Oct 2024 14:50:02 +0100
+From: Simon Horman <horms@kernel.org>
+To: George Guo <dongtai.guo@linux.dev>
+Cc: pabeni@redhat.com, davem@davemloft.net, edumazet@google.com,
+	guodongtai@kylinos.cn, kuba@kernel.org,
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
+	netdev@vger.kernel.org, paul@paul-moore.com
+Subject: Re: [PATCH 1/1] add comment for doi_remove in struct
+ netlbl_lsm_secattr
+Message-ID: <20241025135002.GX1202098@kernel.org>
+References: <0667f18b-2228-4201-9da7-0e3536bae321@redhat.com>
+ <20241025065441.1001852-1-dongtai.guo@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,41 +60,18 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZxueBWB9nJ9Mt7bW@hovoldconsulting.com>
+In-Reply-To: <20241025065441.1001852-1-dongtai.guo@linux.dev>
 
-On Fri, Oct 25, 2024 at 03:32:53PM +0200, Johan Hovold wrote:
-> On Fri, Oct 25, 2024 at 11:29:05AM +0100, Cristian Marussi wrote:
-> 
-> > > > >>> [    8.098452] arm-scmi arm-scmi.0.auto: Failed to add opps_by_lvl at 3417600 for NCC - ret:-16
-> > > > >>> [    8.109647] arm-scmi arm-scmi.0.auto: Failed to add opps_by_lvl at 3417600 for NCC - ret:-16
-> > > > >>> [    8.128970] arm-scmi arm-scmi.0.auto: Failed to add opps_by_lvl at 3417600 for NCC - ret:-16
-> > > > >>> [    8.142455] arm-scmi arm-scmi.0.auto: Failed to add opps_by_lvl at 3417600 for NCC - ret:-16
-> 
-> > I think dev_info could be an option from the SCMI perspective (as per my
-> > other mail), the important thing in these regards is to NOT go
-> > completely silent against fw anomalies...to avoid the the risk of being
-> > silently ignored .... I'll see what Sudeep thinks about...
-> 
-> I agree.
-> 
-> But could the error handling be improved to look less scary for an end
-> user by saying something about duplicate entries being ignored instead
-> perhaps?
-> 
-> Printing something at info level and with a FW_BUG ("[Firmware Bug]: ")
-> prefix as was done here:
-> 
-> 	https://lore.kernel.org/all/20230414084619.31524-1-johan+linaro@kernel.org/
-> 
-> should make it clear that this is not something for end users to worry
-> (too much) about.
+On Fri, Oct 25, 2024 at 02:54:41PM +0800, George Guo wrote:
+> From: George Guo <guodongtai@kylinos.cn>
 
-Sure...and thanks for the suggestion....I will cook something up around
-this....
+Please don't post updated patches more frequently than once per 24h.
+It makes reviewing quite cumbersome.
 
-(I am probably too used to try to scary the FW guys that I forgot there
-are also innocent bystanders like final users :P)
+For comments on a (slightly) earlier version, please see:
 
-Thanks,
-Cristian
+https://lore.kernel.org/netdev/20241025065441.1001852-1-dongtai.guo@linux.dev/T/#mc951365b9ba02e3538efa0f0eb6a215199efc73b
+
+-- 
+pw-bot: changes-requested
 
