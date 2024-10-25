@@ -1,43 +1,43 @@
-Return-Path: <linux-kernel+bounces-381470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 596989AFFA9
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 12:10:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 688E09AFFAA
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 12:10:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7DFC51C229D2
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 10:10:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A2181C22AE7
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 10:10:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D26BA2003C1;
-	Fri, 25 Oct 2024 10:08:49 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27AC320110D;
+	Fri, 25 Oct 2024 10:08:51 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC7031F9ED6
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 10:08:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54E671FDFA8
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 10:08:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729850929; cv=none; b=omKxOGscVKyws1GQhu3QHUrBmkS4Zk6v69Y57wXvphzz9GZ0GamKgeN9knd+wA0D6AcGiLnEXHaO3Q1uNUTLHSF+ybLJ4qyT90yfWf07+HSGYmR04HocIaHFeEV4GJ8WsPUB6ktscrlIqxYHCmJzpYaMGDTIFyRYampWCwg2tPM=
+	t=1729850930; cv=none; b=LXizA08t7nRyjOhwR5IktHX5ROVfWWHkY29TwWapleyIAqzHZMZ0PXLZWKo9WR+J/QfJZh668u7Hv4CKCL1kQaQK10tjTYFmA0RMESqirWdPoY3hyP33Kicbl1kRkpiaLiObfD0nk2kHkzxM1tBV7RgNm9E/cS292HVcVXxBAOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729850929; c=relaxed/simple;
-	bh=0yShuaVHXtynWku1+rmyzSKKxyFHuTdVBGpt6rWM9pw=;
+	s=arc-20240116; t=1729850930; c=relaxed/simple;
+	bh=NAitOL+/OIQKLaKOHSIYfegPX1bpr9BKgO/eXppoyPk=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dZYrQm/NpeR45uE3MEgjeFRApbzn81Ig2IfntPPrxHw8eEx29aDivqlO03f2IVYmNcbtcMQIjNKsO2xhKonv0Jsg0YhHEp+VogYTkpxgUE4DpfTndRMCdD/oHYlnMBS2doOnBJBqXU/GYI7503J6QtVZ3KOFI1y/x6ZP8ubZAgo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+	 MIME-Version:Content-Type; b=S27PdYVJ9FXN4Qh628qSJbanqdD0BHAv2AZ/YQO5bSP+FydSAhGcy9Y4s2f9TTs+OPHXA7qtpWZm79z2uKWGXQpB7srwoRvsSIWOS2RgrnwBR1tFYVqpre90kQOaQZcYgL03N9VOO1mCZdfp+UblxyW3e3PAWqDQp1APhYSEs6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4XZdjW6PJ5z1T95x;
-	Fri, 25 Oct 2024 18:06:39 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4XZdjh6T3TzpX51;
+	Fri, 25 Oct 2024 18:06:48 +0800 (CST)
 Received: from kwepemg200008.china.huawei.com (unknown [7.202.181.35])
-	by mail.maildlp.com (Postfix) with ESMTPS id 1E0281800E2;
-	Fri, 25 Oct 2024 18:08:44 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTPS id 74D8E14011B;
+	Fri, 25 Oct 2024 18:08:45 +0800 (CST)
 Received: from huawei.com (10.90.53.73) by kwepemg200008.china.huawei.com
  (7.202.181.35) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 25 Oct
- 2024 18:08:42 +0800
+ 2024 18:08:43 +0800
 From: Jinjie Ruan <ruanjinjie@huawei.com>
 To: <oleg@redhat.com>, <linux@armlinux.org.uk>, <will@kernel.org>,
 	<mark.rutland@arm.com>, <catalin.marinas@arm.com>, <sstabellini@kernel.org>,
@@ -59,9 +59,9 @@ To: <oleg@redhat.com>, <linux@armlinux.org.uk>, <will@kernel.org>,
 	<liuyuntao12@huawei.com>, <leobras@redhat.com>,
 	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
 	<xen-devel@lists.xenproject.org>
-Subject: [PATCH -next v4 08/19] arm64: entry: Rework arm64_preempt_schedule_irq()
-Date: Fri, 25 Oct 2024 18:06:49 +0800
-Message-ID: <20241025100700.3714552-9-ruanjinjie@huawei.com>
+Subject: [PATCH -next v4 09/19] arm64: entry: Use preempt_count() and need_resched() helper
+Date: Fri, 25 Oct 2024 18:06:50 +0800
+Message-ID: <20241025100700.3714552-10-ruanjinjie@huawei.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20241025100700.3714552-1-ruanjinjie@huawei.com>
 References: <20241025100700.3714552-1-ruanjinjie@huawei.com>
@@ -76,71 +76,46 @@ Content-Type: text/plain
 X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
  kwepemg200008.china.huawei.com (7.202.181.35)
 
-Rework arm64_preempt_schedule_irq() to check whether it need
-resched in a check function arm64_irqentry_exit_need_resched().
+The "READ_ONCE(current_thread_info()->preempt_count = 0" is equivalent
+to "preempt_count() == 0 && need_resched()", so use these helpers to
+replace it, which will make it more clear when switch to generic entry.
 
 No functional changes.
 
 Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
 ---
- arch/arm64/kernel/entry-common.c | 17 ++++++++++-------
- 1 file changed, 10 insertions(+), 7 deletions(-)
+ arch/arm64/kernel/entry-common.c | 14 ++++----------
+ 1 file changed, 4 insertions(+), 10 deletions(-)
 
 diff --git a/arch/arm64/kernel/entry-common.c b/arch/arm64/kernel/entry-common.c
-index b57f6dc66115..a3414fb599fa 100644
+index a3414fb599fa..3ea3ab32d232 100644
 --- a/arch/arm64/kernel/entry-common.c
 +++ b/arch/arm64/kernel/entry-common.c
-@@ -69,10 +69,10 @@ DEFINE_STATIC_KEY_TRUE(sk_dynamic_irqentry_exit_cond_resched);
- #define need_irq_preemption()	(IS_ENABLED(CONFIG_PREEMPTION))
- #endif
- 
--static void __sched arm64_preempt_schedule_irq(void)
-+static inline bool arm64_irqentry_exit_need_resched(void)
- {
+@@ -74,14 +74,6 @@ static inline bool arm64_irqentry_exit_need_resched(void)
  	if (!need_irq_preemption())
--		return;
-+		return false;
+ 		return false;
  
- 	/*
- 	 * Note: thread_info::preempt_count includes both thread_info::count
-@@ -80,7 +80,7 @@ static void __sched arm64_preempt_schedule_irq(void)
- 	 * preempt_count().
- 	 */
- 	if (READ_ONCE(current_thread_info()->preempt_count) != 0)
--		return;
-+		return false;
- 
+-	/*
+-	 * Note: thread_info::preempt_count includes both thread_info::count
+-	 * and thread_info::need_resched, and is not equivalent to
+-	 * preempt_count().
+-	 */
+-	if (READ_ONCE(current_thread_info()->preempt_count) != 0)
+-		return false;
+-
  	/*
  	 * DAIF.DA are cleared at the start of IRQ/FIQ handling, and when GIC
-@@ -89,7 +89,7 @@ static void __sched arm64_preempt_schedule_irq(void)
- 	 * DAIF we must have handled an NMI, so skip preemption.
- 	 */
- 	if (system_uses_irq_prio_masking() && read_sysreg(daif))
--		return;
-+		return false;
- 
- 	/*
- 	 * Preempting a task from an IRQ means we leave copies of PSTATE
-@@ -99,8 +99,10 @@ static void __sched arm64_preempt_schedule_irq(void)
- 	 * Only allow a task to be preempted once cpufeatures have been
- 	 * enabled.
- 	 */
--	if (system_capabilities_finalized())
--		preempt_schedule_irq();
-+	if (!system_capabilities_finalized())
-+		return false;
-+
-+	return true;
- }
- 
- /*
-@@ -127,7 +129,8 @@ static void noinstr exit_to_kernel_mode(struct pt_regs *regs,
+ 	 * priority masking is used the GIC irqchip driver will clear DAIF.IF
+@@ -129,8 +121,10 @@ static void noinstr exit_to_kernel_mode(struct pt_regs *regs,
  			return;
  		}
  
--		arm64_preempt_schedule_irq();
-+		if (arm64_irqentry_exit_need_resched())
-+			preempt_schedule_irq();
+-		if (arm64_irqentry_exit_need_resched())
+-			preempt_schedule_irq();
++		if (!preempt_count()) {
++			if (need_resched() && arm64_irqentry_exit_need_resched())
++				preempt_schedule_irq();
++		}
  
  		trace_hardirqs_on();
  	} else {
