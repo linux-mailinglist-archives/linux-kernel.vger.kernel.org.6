@@ -1,178 +1,136 @@
-Return-Path: <linux-kernel+bounces-382661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41DBC9B118D
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 23:16:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF1149B1196
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 23:23:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 724C31C21316
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 21:16:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 778982829EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 21:23:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B16A1CEE98;
-	Fri, 25 Oct 2024 21:16:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E46D91D26E0;
+	Fri, 25 Oct 2024 21:23:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="Rzg0iyvz"
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="VGYK35Xj"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF65F217F30;
-	Fri, 25 Oct 2024 21:16:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99105217F5C;
+	Fri, 25 Oct 2024 21:23:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729890985; cv=none; b=JKvuMP8jRBTOAWWfJfTjCBu+MISoUapOHtDR9LomuGVJh3HE8AzqM1vx7j4o27R4vYLh08WondOVc9JFpj/Ogr5yHVQWzIvhVwlQ9viPSgribPL2CzCqAzSfZBJLc+fkHFdBqSYBivizJHKeJwmFFqbTTXOGNnbC5jbyUxHCOAE=
+	t=1729891431; cv=none; b=QALDrniB4xoZrXFp1xPcpko/xwoNW32i9cvZaW1WQFkilQJvCMXvpT5uxI11X25l5RKPRug2TQxfGLluSHbkDz3DtdMXNgXaL4XWpcKKtDYB005rQQkUqRAyFYqmnaOAwzC1XUOVaTEsFRSkoPCFIkUVPGEV7NAkn+9JuRzqa4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729890985; c=relaxed/simple;
-	bh=8Nn3A+UdrXv0Swkr7BZ4okxDkyB1splEY8faoNaG2sE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=HeD+jfs486iWDGEk+X+tQqAMUn/jOUxtX5LmjC6CIcvE2nIp8EcBXqVsA+9pC5ARE/NC2vNRJI2VeL0AN7kG9cpszmfWjwqJQxfcbN07nRxIidkGsSTu34wXMyeR9S8hfMXD9X06e1Ulgh+rafHbf3P9B9x1SaOwhMYwRXidI3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=Rzg0iyvz; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=jgMnw5M7Z+ZY5Nf4QUgXosxnvQKmVFPBeE4lXBGNjVE=;
-	t=1729890983; x=1731100583; b=Rzg0iyvzIUN2wZe12yw4kZglZSSdOU4oNk6qFmnqcpOvz0K
-	jZ69mpcnAypen+R+f9BxAaBR3vZrMroC3Quwowj396hvfpMdw59BKmUv5yIUeygDiVlBYivMbB7Mr
-	X9TAeuHOxA6dp6cZ28s2APcGCW4sc2fyyBRcaFH5jIcuuhJvSQdtH+biXH6nLpGSp9k0kd/6ScCPX
-	HH/MYoq432sONiyUvUad6/zshMknPaBx8sejF5d4+H4vNHlF4NiqBZC7+uxIgWAMWJ7mBsv4G5OYh
-	BAIiipOqzzXb6zjW4N4g4xjEcrGbNAdSIT/B21N4MDRBQDkT2PmIj2zEt3BqWVQQ==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.98)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1t4RfP-00000004i3l-48CV;
-	Fri, 25 Oct 2024 23:16:20 +0200
-Message-ID: <49a18a9a482263e9063a0afc8b93de451dbe4d84.camel@sipsolutions.net>
-Subject: Re: [PATCH][next] wifi: mac80211: ieee80211_i: Avoid dozens of
- -Wflex-array-member-not-at-end warnings
-From: Johannes Berg <johannes@sipsolutions.net>
-To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>, "Gustavo A. R. Silva"
-	 <gustavoars@kernel.org>
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-hardening@vger.kernel.org, Aditya Kumar Singh <quic_adisi@quicinc.com>
-Date: Fri, 25 Oct 2024 23:16:19 +0200
-In-Reply-To: <7e2745d9-f607-4b9b-87c6-0623708747ef@embeddedor.com>
-References: <Zxv7KtPEy1kvnTPM@kspp>
-	 <c90c3c9825e3837bf7c47979acd0075b102576ce.camel@sipsolutions.net>
-	 <3471e59f-a414-479f-8fb0-aa1a26aecf16@embeddedor.com>
-	 <5c48b4529bf552d5c16b4dcc951c653f37b6a68e.camel@sipsolutions.net>
-	 <8152a551-1813-4d44-a203-45d30f2ac671@embeddedor.com>
-	 <192eb05afffd37bd13ff9bc1fc9b044b347b5dc4.camel@sipsolutions.net>
-	 <7e2745d9-f607-4b9b-87c6-0623708747ef@embeddedor.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	s=arc-20240116; t=1729891431; c=relaxed/simple;
+	bh=MJteKabF14rmjmcWcfRJoa4ndNm58vj4dt+lQ1sgOZ0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iD8nHIOXiOk9SBhnOBfCb9cDgdVtGAUWyOhttkhCFpsuCBjzwlhJAYdm0bmMIaeJ3YB7Sb6ZjW2SuHDNREOMWG8ixu7ijtuT0hRyB0cvlguSx8V2B7lYOHhwoacAwfdVHNpOwW6O3DKzT5JXWJHys0UAo9Sm8+kShUz3u/I6O+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=VGYK35Xj; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=g/wygeGFZTjCvHlojXiuv3YCs88h6s6phKX2tMfNnIU=; b=VGYK35XjgnDbwp9myvCNunLYiZ
+	ONqbtVc+b9MSgQ8Cs0BFBv4LXdEFY6rWnjnzCUnI1IJHTrFV4DBa9NCNIC+/W2Uc2U4dtrKtboDjU
+	GiCdwuKUu7ezWdbzani+5BULnp7q7SV7xivaGmDlz9f/5JTG2MIVoIVvFre7D1+hcMII/vZc88NDB
+	KWYXrDGUIRAAWDGuhYRaRsuBNtqJaUrtGpoPikDsdAHsBJ3d4rVAngQO5VTrj62QQzF9Sv5L1o0Hp
+	dU//5DCEHJv6c+6smSKVkS1ldBuwH79lmGVqxwckHJakExJAuVMztrljCj3/lTaFSrj6xHmdXw7f8
+	3FCnnnJQ==;
+Received: from [189.78.222.89] (helo=[192.168.15.100])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1t4RmV-00FAr4-MJ; Fri, 25 Oct 2024 23:23:39 +0200
+Message-ID: <4b9a5824-7cb7-4dc6-91dd-536f4dad9771@igalia.com>
+Date: Fri, 25 Oct 2024 18:23:33 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/6] futex: Implement FUTEX2_NUMA
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org, mingo@redhat.com, dvhart@infradead.org,
+ dave@stgolabs.net, Andrew Morton <akpm@linux-foundation.org>,
+ urezki@gmail.com, hch@infradead.org, lstoakes@gmail.com,
+ Arnd Bergmann <arnd@arndb.de>, linux-api@vger.kernel.org,
+ linux-mm@kvack.org, linux-arch@vger.kernel.org, malteskarupke@web.de,
+ cl@linux.com, llong@redhat.com, tglx@linutronix.de
+References: <20241025090347.244183920@infradead.org>
+ <20241025093944.485691531@infradead.org>
+Content-Language: en-US
+From: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+In-Reply-To: <20241025093944.485691531@infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, 2024-10-25 at 15:10 -0600, Gustavo A. R. Silva wrote:
->=20
-> On 25/10/24 14:48, Johannes Berg wrote:
-> > On Fri, 2024-10-25 at 14:36 -0600, Gustavo A. R. Silva wrote:
-> > > > >=20
-> > > > > Yeah, I was actually going to mention this commit, as it's the on=
-e that introduced
-> > > > > that `bool radar_detected` to the flex struct. However, it wasn't=
- obvious to me
-> > > > > how `struct ieee80211_chanctx_conf conf` could overwrite `radar_d=
-etected` as I didn't
-> > > > > see `conf->drv_priv` being accessed through `struct struct ieee80=
-211_chanctx_conf`.
-> > > >=20
-> > > > You have to look at the drivers, see hwsim_clear_chanctx_magic() fo=
-r
-> > > > example; I wonder why hwsim_check_chanctx_magic() never caught this=
-.
-> > >=20
-> > > Sorry, I actually meant through `struct ieee80211_chanctx`. Something=
- like:
-> > >=20
-> > > struct ieee80211_chanctx *foo;
-> > > ...
-> > >=20
-> > > foo->conf.drv_priv[i] =3D something;
-> > >=20
-> > > or
-> > >=20
-> > > struct bar *ptr =3D (void *)foo->conf->drv_priv;
-> > > then write something into *ptr...
-> > >=20
-> > > In the above cases the code will indeed overwrite `radar_detected`.
-> >=20
-> > Right, that's what it does though, no? Except it doesn't have, in the
-> > driver, "foo->conf." because mac80211 only gives it a pointer to conf,
-> > so it's only "conf->drv_priv" (and it's the "struct bar" example.)
->=20
-> OK, so do you mean that pointer to `conf` is actually coming from
-> `foo->conf`?
+Hey Peter,
 
-Well depends what code you're looking at? I guess we should get more
-concrete now. Let's say hwsim:
+Em 25/10/2024 06:03, Peter Zijlstra escreveu:
+> Extend the futex2 interface to be numa aware.
+> 
+> When FUTEX2_NUMA is specified for a futex, the user value is extended
+> to two words (of the same size). The first is the user value we all
+> know, the second one will be the node to place this futex on.
+> 
+>    struct futex_numa_32 {
+> 	u32 val;
+> 	u32 node;
+>    };
+> 
 
-struct hwsim_chanctx_priv {
-        u32 magic;
-};
+Maybe this should live at include/uapi/linux/futex.h.
 
-...
+> When node is set to ~0, WAIT will set it to the current node_id such
+> that WAKE knows where to find it. If userspace corrupts the node value
+> between WAIT and WAKE, the futex will not be found and no wakeup will
+> happen.
+> 
+> When FUTEX2_NUMA is not set, the node is simply an extention of the
+> hash, such that traditional futexes are still interleaved over the
+> nodes.
+> 
+> This is done to avoid having to have a separate !numa hash-table.
+> 
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 
-static inline void hwsim_set_chanctx_magic(struct ieee80211_chanctx_conf *c=
-)
-{
-        struct hwsim_chanctx_priv *cp =3D (void *)c->drv_priv;
-        cp->magic =3D HWSIM_CHANCTX_MAGIC;
-}
+Do you think some of those changes should be guarded with #ifdef 
+CONFIG_NUMA? Or is fine as it is? I see that most of NUMA_ values 
+defines to 1 anyway on !numa, but maybe the futex_init() and 
+futex_hash() would be a bit more simplified.
 
-probably shouldn't be marked 'inline' now that I look at it :-)
+[...]
 
-This is being called in hwsim itself, of course:
+>   
+> +static int futex_get_value(u32 *val, u32 __user *from, unsigned int flags)
+> +{
+> +	switch (futex_size(flags)) {
+> +	case 1: return __get_user(*val, (u8 __user *)from);
+> +	case 2: return __get_user(*val, (u16 __user *)from);
+> +	case 4: return __get_user(*val, (u32 __user *)from);
+> +	default: BUG();
+> +	}
+> +}
+> +
+> +static int futex_put_value(u32 val, u32 __user *to, unsigned int flags)
+> +{
+> +	switch (futex_size(flags)) {
+> +	case 1: return __put_user(val, (u8 __user *)to);
+> +	case 2: return __put_user(val, (u16 __user *)to);
+> +	case 4: return __put_user(val, (u32 __user *)to);
+> +	default: BUG();
+> +	}
+> +}
+> +
 
-static int mac80211_hwsim_add_chanctx(struct ieee80211_hw *hw,
-                                      struct ieee80211_chanctx_conf *ctx)
-{
-        hwsim_set_chanctx_magic(ctx);
-...
+I found a bit confusing that this is here, shouldn't be at [PATCH 4/6] 
+futex: Enable FUTEX2_{8,16}?
 
-which is only referenced as a function pointer in the ops:
-
-static const struct ieee80211_ops mac80211_hwsim_mchan_ops =3D {
-...
-	.add_chanctx =3D mac80211_hwsim_add_chanctx,
-
-(via some macros)
-
-
-And that's called by mac80211:
-
-static inline int drv_add_chanctx(struct ieee80211_local *local,
-                                  struct ieee80211_chanctx *ctx)
-{
-        int ret =3D -EOPNOTSUPP;
-
-        might_sleep();
-        lockdep_assert_wiphy(local->hw.wiphy);
-
-        trace_drv_add_chanctx(local, ctx);
-        if (local->ops->add_chanctx)
-                ret =3D local->ops->add_chanctx(&local->hw, &ctx->conf);
-
-
-so you see that the struct ieee80211_chanctx is never passed to the
-driver, but instead &ctx->conf, which is the struct with the flex array
-for driver priv.
-
-So in this example, struct hwsim_chanctx_priv::magic overlaps the
-radar_detected value.
-
-
-(The allocation happens via chanctx_data_size.)
-
-johannes
 
