@@ -1,279 +1,223 @@
-Return-Path: <linux-kernel+bounces-381774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53D049B0449
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:39:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3346C9B0452
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:39:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9BAE8B21957
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 13:39:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2FB6281348
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 13:39:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14E531632E6;
-	Fri, 25 Oct 2024 13:39:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14C4B1FB88C;
+	Fri, 25 Oct 2024 13:39:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="YYm4FpPJ";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="H3v2NXw2"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TzUt3tKJ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE9EB212178
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 13:39:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729863546; cv=fail; b=vFuOSqmK2+Q0ac7FtQZByLQFUyuQI+x6EL21APu8/YmVCIxsyG16Osi+/24zLwJbBD6J2cpLqUM2qZ7nt2oFV8baOzXw2vZwDRbA5ZEnf6vURzH3/iUqPg0W+Au87ONmYYR6dsL+iiv56kwA4tCGx/BYt6G+1bovSgeB60gIgH0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729863546; c=relaxed/simple;
-	bh=1Cs7jrHCLw2PHqwCJSTja9+5kGQYAHMsvHJ1XrayIzM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=d94UJgqZ6xjqq8eIYFcTVofrOikFyaInrkjg8Ho3+B2qwy1ittvbWX25Xgx6g7swQLtjCL9wYUXFqe9ETZcriufZG2wydqz2KcsNDXOcWPp3lphYwHA1Rl+pPFpMzmqP5kqs3C1ZFX52PRh2DV+VE541x8ruobbAC/aoorv5qI4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=YYm4FpPJ; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=H3v2NXw2; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49PCU2KH030374;
-	Fri, 25 Oct 2024 13:38:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2023-11-20; bh=HZUPGouiHVw+o3OUu3
-	U9lzbZ25BsUIV4aZ1kDzMqzK4=; b=YYm4FpPJLQ/MbjqHtG5flbh8JFH1U3tAjz
-	VSVwuXsmXlAPwOp+uDIcLADn9hM/wMgptTxUQUfT2pS0+3lp2If+3157kEVJq/S1
-	CUjXnFhgC+5wdbjQZmY8EThFp/If76LEq9juTRgFHpg7TzZUX2mEhCj5uFVLzKm5
-	UGgNMS7UR+CJfjhQERxyzOLIiVsHy+MQsYfinQBSBynUG/dS1ydkYQW7pczVqTEm
-	C2YhOEu4Q1cKY3hZTG5uK7bv/Fwo8IYjAVLTGADRmq13wu/afU0AP9YfTqiLYJIb
-	7nYEerlSn4Ow+lHgJdCUK+sZXlkkDrhbNtqWwLCtBgVxk5Ta42FQ==
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 42c55emuph-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 25 Oct 2024 13:38:33 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 49PC2CJW008699;
-	Fri, 25 Oct 2024 13:38:33 GMT
-Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10lp2042.outbound.protection.outlook.com [104.47.70.42])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 42g36aguq0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 25 Oct 2024 13:38:32 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=HmN30vMNjngR+wtHn+jkU5K4hBJbPoNzv6P7RoevtTzwJZHea+jgDlMEOrFxvpbWTNHRV2Lz8axNSXF5h6dywn6LtKXU5e+FLRr1LO/55zkSUGujTIfEOoeMXu2Kf4E70YIUhleHl24iYB9k/+t9/7W8TjRV93TMSjfVUWSjuYVyVATDVNC2dw7mJZ1Q3J5RgdzyLw2XOXeb7FZ9LPokMobvw9MY/BDbt+/csmwqtO0yt3CTBt9Bt/HicpTmnPLbozeKtitbzQrM2BjKVWlI8qAOgEKPnvfinTxwG/rRIRT0xWockUscUJTVFIdHt4e2neRM8klCRFtqVmNtCSpD9Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HZUPGouiHVw+o3OUu3U9lzbZ25BsUIV4aZ1kDzMqzK4=;
- b=W7O9clVqfL8hZdZ2SLmzU9PAFgaOw87gBG3JNdQAtcffyS5fJ/2LD19rmeTtjUy0So4zOWUOORxQRLj2DTFtDXSlFa6kdxOxrmI4fcC9WM9C42nQm08bToo4nVS4CV7Bmyn1qb4ts3zZJLtgQ3UjFQfoBc410hf4fRIfiyzMMEwQ7tNGV7r6pDgy7tNJnnHbsEMJdegaPt87qInaPiu3vt50hhLEgb0oOLMf9gxuCUHYYH+cPfNSGMAHIFRBxolRQ9mu/qLjdqwEl6HTOhKa7RR3jCbPs+8rtOvc5Bf8LHu9OPa+veF0N40gLvz6UBlIeVU5iv+65h+y/O1BrQxcPg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HZUPGouiHVw+o3OUu3U9lzbZ25BsUIV4aZ1kDzMqzK4=;
- b=H3v2NXw2NINZykjLDppUTXs+lGVWfr4pBt3LerD3Bs58drRJtWMcBjbb0l4VNLXyd+VnBGNxxz3rAB2fS3i4FKuuxv3zrDTHjQZ+kxJw9g4DVX/C9lQHpo2RaUxktLlpCRZprbFjgCaz4Nt1kFW3p/1Ia4vASfGTe2NtlvnsY5Y=
-Received: from DS0PR10MB7933.namprd10.prod.outlook.com (2603:10b6:8:1b8::15)
- by CY5PR10MB5962.namprd10.prod.outlook.com (2603:10b6:930:2d::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.20; Fri, 25 Oct
- 2024 13:38:30 +0000
-Received: from DS0PR10MB7933.namprd10.prod.outlook.com
- ([fe80::2561:85b0:ae8f:9490]) by DS0PR10MB7933.namprd10.prod.outlook.com
- ([fe80::2561:85b0:ae8f:9490%7]) with mapi id 15.20.8093.014; Fri, 25 Oct 2024
- 13:38:30 +0000
-Date: Fri, 25 Oct 2024 09:38:28 -0400
-From: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-To: Shawn Wang <shawnwang@linux.alibaba.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        akpm@linux-foundation.org, baolin.wang@linux.alibaba.com,
-        mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
-        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-        vschneid@redhat.com
-Subject: Re: [PATCH] sched/numa: Fix the potential null pointer dereference
- in task_numa_work()
-Message-ID: <rackpsb5traqwwyqirfo7r5k66m73k7n7nxvyhz53v77gprqy3@zzj7dayxltl3>
-Mail-Followup-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Shawn Wang <shawnwang@linux.alibaba.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	akpm@linux-foundation.org, baolin.wang@linux.alibaba.com, mingo@redhat.com, 
-	peterz@infradead.org, juri.lelli@redhat.com, vincent.guittot@linaro.org, 
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de, 
-	vschneid@redhat.com
-References: <20241025022208.125527-1-shawnwang@linux.alibaba.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241025022208.125527-1-shawnwang@linux.alibaba.com>
-User-Agent: NeoMutt/20240425
-X-ClientProxiedBy: YT1P288CA0026.CANP288.PROD.OUTLOOK.COM (2603:10b6:b01::39)
- To DS0PR10MB7933.namprd10.prod.outlook.com (2603:10b6:8:1b8::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98E4C1F7566;
+	Fri, 25 Oct 2024 13:39:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729863573; cv=none; b=OIj3Y4GPZWvdjEJO1HMmv5F4rUa/bW8fROhlJ/tl5gvX2VDShThgX8huBbnBZe6GmiMwEI1Rk3AFmtoWkHbZVwT0hgLN9ea2pWeIAGAJu92BWzvXBU/Sxb3OduD9whWGaBrj5lIBKNF4BCLtbkkmWxC5ekKdAawIq/HgLPw/QKo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729863573; c=relaxed/simple;
+	bh=/HnzH8LIxgCAWX0/LLh1puQjwqcQ1NSbusIo7Y2Mm3Q=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=gu2G+DRsc/IDw/hI/yWgdzXNE6/dQ7fZkL9yPY3JaeUb0WyF/L1EJe8pDJ3o31w2qMRWD4he0UO9BTSGQftLYoOkWd3hOA9C+mG4R8q0xVRlWAJweAxGPS/MxXwVf7vpF65TVf0jrGQtbgVY3xyL0NqL9Vqva0EeNgQmMrQpPB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TzUt3tKJ; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729863571; x=1761399571;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=/HnzH8LIxgCAWX0/LLh1puQjwqcQ1NSbusIo7Y2Mm3Q=;
+  b=TzUt3tKJKFyWLwOZpsSNOr/CnNVKenZRKHG7W7CnzmIvtePLpj65CEuU
+   i4u/9oKhYKSrhXR/JTgJHIcyNSgqvDtCrYYWdGpQTkJPZxZITte1aymn8
+   STXIxnuchSQd/hrem4IxS7CRquATMxqGrmJIvg2frEEIFa4qI7O+0VKrd
+   UUkPIbkGLiB9X9jAg6EeXYkzSpxAQl3fcDpOU6hFU505upV33xK7C+Cc9
+   /7YDBgL5qNQSRaWNZ+O50IhUirpZXMsEqTajvWj8Bx/7y5ZDs/ChO9aMc
+   4YFLLhUE9E23MS5lPKBSydenv0cT8kXujCpplEglmYBWV1Ide7PwAZkwi
+   Q==;
+X-CSE-ConnectionGUID: uVvo5VE1Q9egw6uoeGAbIA==
+X-CSE-MsgGUID: 8uQtQPinRPihbf92JuzMWw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="33229180"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="33229180"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2024 06:39:30 -0700
+X-CSE-ConnectionGUID: 2L9XHif8SVm9IHuMKA3KaQ==
+X-CSE-MsgGUID: m60xT2EDQUCcPtzhB4axHA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,231,1725346800"; 
+   d="scan'208";a="111752941"
+Received: from ettammin-desk.ger.corp.intel.com (HELO localhost) ([10.245.244.225])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2024 06:39:25 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Fri, 25 Oct 2024 16:39:21 +0300 (EEST)
+To: Yazen Ghannam <yazen.ghannam@amd.com>
+cc: linux-edac@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
+    tony.luck@intel.com, x86@kernel.org, avadhut.naik@amd.com, 
+    john.allen@amd.com, mario.limonciello@amd.com, bhelgaas@google.com, 
+    Shyam-sundar.S-k@amd.com, richard.gong@amd.com, jdelvare@suse.com, 
+    linux@roeck-us.net, clemens@ladisch.de, 
+    Hans de Goede <hdegoede@redhat.com>, linux-pci@vger.kernel.org, 
+    linux-hwmon@vger.kernel.org, platform-driver-x86@vger.kernel.org, 
+    naveenkrishna.chatradhi@amd.com, carlos.bilbao.osdev@gmail.com
+Subject: Re: [PATCH 14/16] x86/amd_smn, platform/x86/amd/hsmp: Have HSMP use
+ SMN
+In-Reply-To: <20241024160625.GC965@yaz-khff2.amd.com>
+Message-ID: <d44f45c1-a550-de07-d1fa-91dfe0adb47f@linux.intel.com>
+References: <20241023172150.659002-1-yazen.ghannam@amd.com> <20241023172150.659002-15-yazen.ghannam@amd.com> <2797ecc5-935d-21a2-bb43-273a7eae3a12@linux.intel.com> <20241024160625.GC965@yaz-khff2.amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR10MB7933:EE_|CY5PR10MB5962:EE_
-X-MS-Office365-Filtering-Correlation-Id: f1dcdcc3-3789-4fe1-bb90-08dcf4fa5001
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?bEV7oARJERgxELbk5+XqN0e21ydOA9wAbN1STwo3b2w0WRXVWKniU6UkNTuw?=
- =?us-ascii?Q?Vs/z+yn6pUWnsn7ivxf/h3iNsLSKVFnLC2eJ8yvbrTbF5VDVWEhFfCpqz4n+?=
- =?us-ascii?Q?K94wDmp57Kvr7oRd0YgRYPFAzq09KHZh4lrSiOrYDCRmuDSOhnWnI2U0/VEz?=
- =?us-ascii?Q?AT3yMZW59os9ZCk5eF8qxb9ZoFT3bCUmfJMswCWow5XiojHtq7/8zt5iYf0p?=
- =?us-ascii?Q?HHxIrs/pij4xBXbAte5bIuTgGQSepPV+pdAgXxwR1gF4e37JA168+sHNnTBP?=
- =?us-ascii?Q?w5oEckl7U+l/xslr2yfxkjqRa4OQYWdq7XTvJW0VdTqRL6JH/GvPCOz/yB2j?=
- =?us-ascii?Q?woI6deO9RJemmjy30lMQEP7D8kJRgmmqibPgMGwQ1dgl53NK/SLdB/nUr4Bi?=
- =?us-ascii?Q?ghmJCK8ByCrS1rh82ZH36eQuuwlB6T8Qf5dtgFzIMuFON4udwUDv9qhf9x7G?=
- =?us-ascii?Q?yzs+f3MFXw+2fOO/1OUnjPUMm2l/o3nemJSap4AIt3a6dsITywDjtkdrEqKW?=
- =?us-ascii?Q?fEG9cNlLDUelDrkTtMwOnALM6IfnzWFgBMDewtE8zLXKG5LP1TqPcGgCVrn9?=
- =?us-ascii?Q?J8XID8u3ck4ARo6/j1B+6cBU6VGMFubBIzPeIyyG8ATW3nzJ6uc6aU1ix+up?=
- =?us-ascii?Q?DFVoQty2eEnpjPcGjQxaxJDAD9yxZH198j+jOFc4/Z+ozBoVofdMIzC5gv+X?=
- =?us-ascii?Q?zBj3HmPmW8i2Tqk0MdagHVB/ZbRsGnHgy11cgAUCUI52eD8u0m+4PUwVoCWO?=
- =?us-ascii?Q?gz2aYZUJk/75M4EJShzDt2AruzmfFa3CUwKfw3Lk+HSb86YTJcLIXu24EITk?=
- =?us-ascii?Q?maqKHmtShxfGSdkJISOacbggp62o1yT4QIfwQNDflqqjp7SiCZl5S2356NAu?=
- =?us-ascii?Q?t2MHq2VvUxlXlSJhdDFgvq1oC2fc7UFwXNs/v2wMpl88B2v9ay0Wn24fNdyO?=
- =?us-ascii?Q?lJ8EXR8VrlrdhtdX11skBcafNkcOPKNyrwGpFVYiiuKesviy6zvJQukHRhL2?=
- =?us-ascii?Q?3T3GFiMuQfLeRnFZma2B2NKpCuUwwd7JFBSR+aqlI9t8KLlYub2soVT9OZ9R?=
- =?us-ascii?Q?Y38Qp2dWfBNVVgoOuUUeIQcbtYFya1XDBqlLa7TqV+AzffmQc5PR5B8Xkzw2?=
- =?us-ascii?Q?IF1cTKEir9CnX6stn3MpESrbBdMxtqX82qVyhMfyMLhPCciUNS1SObDGIL60?=
- =?us-ascii?Q?bvIYE9MLmRdTMTS2ezpGTDfj5Pmu5N4ba6GhhhQkI7RV8JkWK6btDZ6lnrEk?=
- =?us-ascii?Q?L8nyQkbefyNisKldyF5pWkBumIsHC1bb03cvPCqk7A2IoVvNFvNV2jgV3GR2?=
- =?us-ascii?Q?qNZjqlXtUBzgP6tlQd7bWiFC?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR10MB7933.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?v6AdWk7+WxEl46ONhuunDyzQeSVZzNB+bjlXRQL8ZX05H+POym3ygeR5ouA/?=
- =?us-ascii?Q?/mssDdLxda0W4fm14ZXz8pLFSoLAEiIL4DiWIt+xzbAQvsvgQLoFbsYKB1PN?=
- =?us-ascii?Q?crIMHn0E3bxmihcrZ+jx/on3aUSU9zkBI7MyiNMFSHLjIayUVY/qLwXEfJbB?=
- =?us-ascii?Q?NGNf8tQVjlwn0UnjCbF0Uy72xkrOYRJ55rmn8GYUUxulNc8ZpU696LPzif1F?=
- =?us-ascii?Q?Lt+PRk5oNI0bkugV0Lw6IQOeZTSaXYP6d357bed3rpRdsKkc99drDYqucU1M?=
- =?us-ascii?Q?ck/nab0Ov2QJZiiGukqQb57tjmYzJK6lwAJkXaegFUovMw/q/Z1HCL9xj98o?=
- =?us-ascii?Q?ozUzaa/snMv4zDNcHQpYKtx+hhi5vCQcolyYN4jjMKleCk7BS/aJXOOr6+QA?=
- =?us-ascii?Q?lp2t/V4l/Sa9E058yZhwT4JW0vr0qbkqELi0SpM7jGqzUN4odRcNmGUgl+/W?=
- =?us-ascii?Q?pFVHfIBSDxr+FvQ/YAazv5B2rBIAHr+C5EOjPEk0CeyWLJwuGg3d7DgybR5w?=
- =?us-ascii?Q?2qL/f1IwGMY8vO/usjyoe17YvwtX1lpj8JqFDumyw7tj3Ago8egXU5Lm/xfC?=
- =?us-ascii?Q?DGO3Z4Wz+OTY0alnOADuyod/+acneID7fSQ/f6xmq92bVFPqFIJbAVi4H3A4?=
- =?us-ascii?Q?IdUxwyjs3S9c3eKy6Y1n6NgPlhFey1fjA2VtvyIPYN+gO/2n6j0SvNcYLOQL?=
- =?us-ascii?Q?HiH+MXz/0eucVOc0vb1LiZFb5Q6+LtcF+MpuJjNRCXy8rA58snweeAFloHXR?=
- =?us-ascii?Q?R1Eb6KVsnKLp4OycPfRPM1RB58SKccRsQUrxaNgTqL+TNCpdhAfQ+f1V/YIX?=
- =?us-ascii?Q?3FaMJTsMScd3GprdzWbVBygouYUhGvxwjPGSjoPOmODMPVY7732rwatWOsH/?=
- =?us-ascii?Q?NfW/Lp11RwCV1qxwvtrUEDHqJ5VcaLsewO9/dJfSwEsLhyGG9wFM5+F6QGw8?=
- =?us-ascii?Q?6cQmg5zM6hbfCW7cEZJfx2EhXaA3OKHaoeh5OWyGSo6GMGMkk36pITg7Dz29?=
- =?us-ascii?Q?dOw+UFikLEdAfXceEOTA28TJskEP7W+8v7LBM/8kxQtlH9IlKB+6sJzvDfvd?=
- =?us-ascii?Q?P5c1+mEdvAyR8unTiNUu8pUwIJaPXMPpXpWd3c/nO1sDHQwbDU4yiVBulAf2?=
- =?us-ascii?Q?hEpE3t/fxFIk/OXxaWiD++ny2WA+KhvfJhvMoRA9IHxVUjIkIth3xkNZGwGF?=
- =?us-ascii?Q?tZL9ZZ2XxSDChADAu2EVef7KwkqVf6r/t3HTsLIakiy3XiiGd0aJ4hFWAjXl?=
- =?us-ascii?Q?A7u+oiHx9d0T8BE0T4HhqKkJDY7RQU/P3ftKHa1l3LtbJgvhgaXrilqFOU0v?=
- =?us-ascii?Q?tjm2luFLvgUcaWclPLEDqPxgtP8v2f6M4UrY+5pfZGSNgqmNtctkD6Dx1NdG?=
- =?us-ascii?Q?0BW/aaGTEbbC/QufyPUj5sz8Ohqrw1RmzkZXtnPnj1tbyGOLInGSdpRhcCzy?=
- =?us-ascii?Q?b+V6G0qGn98hqHWxDnLIVSTEAUpz4KsVjIibbmq7ktBXh3p/scoyl/oDQW9l?=
- =?us-ascii?Q?yn+YjfTN4XMtJ9V53t6vBSTI18BbDO4HLbKlcE2PM9ORjkA1dUA9Z98p1f+l?=
- =?us-ascii?Q?/eZdZtOQaqUoWdJUu/4vjcWmqeAC3/zGL4h15dEy?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	MCzBzDc0koVAG+YOWT3MXN69FB2GWyZbtYenoiUR+8Lec/79yVMTjm8cJHB7AHn70bkYgfyvwsQfHvj5sUHeOYVUrDuVKr/GYDQpPECWHl64I89alZWSLIyCumprRSMp8GPIsnB9DDmysMTEtKP9JpI693K62eVEgjD4/zPuXA8AsL/vfsMSE7ARPF4StG/lS1MzMfmRIuXDbHODUbWDwguEz9E2pAVkOXCfCCiCurgyUHo8ePNXAlFblk9zxCsPHT1r8nQvNvtK2kCW3n6eISTy0lTuyCGizesF0xACeiAZna30md7GtVGg1r9/ygu7FEiX3/K9eyotK9zKZzYO2I6EP/mQ4jQILNCCjutioxnSD5WHFBcTylaUgHvC9/rtMAkU7oPUjlIcMT193QH1KJr9kZy7clmmESYmJQcA92qj7UYSMPdvM8VXiIaoNDdzeVeEgSq1GLcF9w880nbBKamfk0s6v5RP0qd+F8HVM7caAvx3eW/8eSxiUIRV20hzj+uNfjZGsFdat5WgpYLgbEGPP6B44ghelggmWZUssy2ilkGWU/iz0sJRs40+i5qjw7+w0zc0VXoS0xmz7uXaOd2t/psiz2Ch4qV8LwAafuI=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f1dcdcc3-3789-4fe1-bb90-08dcf4fa5001
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR10MB7933.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Oct 2024 13:38:30.2415
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 8WGIhjoEIa581oOhqygJ9U6Rq9xfJeDqToe1kF/Urej5DWuf+L6Q3nn/z4sYnWvrDbsIX/BlIQdyRKTslJtPKQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR10MB5962
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-25_12,2024-10-25_02,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxscore=0 mlxlogscore=999
- suspectscore=0 bulkscore=0 malwarescore=0 adultscore=0 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2409260000
- definitions=main-2410250105
-X-Proofpoint-ORIG-GUID: i62T-9mx3_3oN2N7R3fKFj3bIMUS2tfE
-X-Proofpoint-GUID: i62T-9mx3_3oN2N7R3fKFj3bIMUS2tfE
+Content-Type: multipart/mixed; boundary="8323328-983401245-1729863561=:946"
 
-* Shawn Wang <shawnwang@linux.alibaba.com> [241024 22:22]:
-> When running stress-ng-vm-segv test, we found a null pointer dereference
-> error in task_numa_work(). Here is the backtrace:
-> 
->   [323676.066985] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000020
->   ......
->   [323676.067108] CPU: 35 PID: 2694524 Comm: stress-ng-vm-se
->   ......
->   [323676.067113] pstate: 23401009 (nzCv daif +PAN -UAO +TCO +DIT +SSBS BTYPE=--)
->   [323676.067115] pc : vma_migratable+0x1c/0xd0
->   [323676.067122] lr : task_numa_work+0x1ec/0x4e0
->   [323676.067127] sp : ffff8000ada73d20
->   [323676.067128] x29: ffff8000ada73d20 x28: 0000000000000000 x27: 000000003e89f010
->   [323676.067130] x26: 0000000000080000 x25: ffff800081b5c0d8 x24: ffff800081b27000
->   [323676.067133] x23: 0000000000010000 x22: 0000000104d18cc0 x21: ffff0009f7158000
->   [323676.067135] x20: 0000000000000000 x19: 0000000000000000 x18: ffff8000ada73db8
->   [323676.067138] x17: 0001400000000000 x16: ffff800080df40b0 x15: 0000000000000035
->   [323676.067140] x14: ffff8000ada73cc8 x13: 1fffe0017cc72001 x12: ffff8000ada73cc8
->   [323676.067142] x11: ffff80008001160c x10: ffff000be639000c x9 : ffff8000800f4ba4
->   [323676.067145] x8 : ffff000810375000 x7 : ffff8000ada73974 x6 : 0000000000000001
->   [323676.067147] x5 : 0068000b33e26707 x4 : 0000000000000001 x3 : ffff0009f7158000
->   [323676.067149] x2 : 0000000000000041 x1 : 0000000000004400 x0 : 0000000000000000
->   [323676.067152] Call trace:
->   [323676.067153]  vma_migratable+0x1c/0xd0
->   [323676.067155]  task_numa_work+0x1ec/0x4e0
->   [323676.067157]  task_work_run+0x78/0xd8
->   [323676.067161]  do_notify_resume+0x1ec/0x290
->   [323676.067163]  el0_svc+0x150/0x160
->   [323676.067167]  el0t_64_sync_handler+0xf8/0x128
->   [323676.067170]  el0t_64_sync+0x17c/0x180
->   [323676.067173] Code: d2888001 910003fd f9000bf3 aa0003f3 (f9401000)
->   [323676.067177] SMP: stopping secondary CPUs
->   [323676.070184] Starting crashdump kernel...
-> 
-> stress-ng-vm-segv in stress-ng is used to stress test the SIGSEGV error
-> handling function of the system, which tries to cause a SIGSEGV error on
-> return from unmapping the whole address space of the child process.
-> 
-> Normally this program will not cause kernel crashes. But before the
-> munmap system call returns to user mode, a potential task_numa_work()
-> for numa balancing could be added and executed. In this scenario, since the
-> child process has no vma after munmap, the vma_next() in task_numa_work()
-> will return a null pointer even if the vma iterator restarts from 0.
-> 
-> Recheck the vma pointer before dereferencing it in task_numa_work().
-> 
-> Fixes: 214dbc428137 ("sched: convert to vma iterator")
-> Cc: stable@vger.kernel.org # v6.2+
-> Signed-off-by: Shawn Wang <shawnwang@linux.alibaba.com>
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Reviewed-by:  Liam R. Howlett <Liam.Howlett@oracle.com>
+--8323328-983401245-1729863561=:946
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-> ---
->  kernel/sched/fair.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index c157d4860a3b..b4c3277cd563 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -3369,7 +3369,7 @@ static void task_numa_work(struct callback_head *work)
->  		vma = vma_next(&vmi);
->  	}
->  
-> -	do {
-> +	for (; vma; vma = vma_next(&vmi)) {
->  		if (!vma_migratable(vma) || !vma_policy_mof(vma) ||
->  			is_vm_hugetlb_page(vma) || (vma->vm_flags & VM_MIXEDMAP)) {
->  			trace_sched_skip_vma_numa(mm, vma, NUMAB_SKIP_UNSUITABLE);
-> @@ -3491,7 +3491,7 @@ static void task_numa_work(struct callback_head *work)
->  		 */
->  		if (vma_pids_forced)
->  			break;
-> -	} for_each_vma(vmi, vma);
-> +	}
->  
->  	/*
->  	 * If no VMAs are remaining and VMAs were skipped due to the PID
-> -- 
-> 2.43.5
-> 
-> 
+On Thu, 24 Oct 2024, Yazen Ghannam wrote:
+
+> On Thu, Oct 24, 2024 at 04:23:55PM +0300, Ilpo J=E4rvinen wrote:
+> > On Wed, 23 Oct 2024, Yazen Ghannam wrote:
+> >=20
+> > > The HSMP interface is just an SMN interface with different offsets.
+> > >=20
+> > > Define an HSMP wrapper in the SMN code and have the HSMP platform dri=
+ver
+> > > use that rather than a local solution.
+> > >=20
+> > > Also, remove the "root" member from AMD_NB, since there are no more
+> > > users of it.
+> > >=20
+> > > Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
+> > > ---
+> > >  arch/x86/include/asm/amd_nb.h    |  1 -
+> > >  arch/x86/include/asm/amd_smn.h   |  3 +++
+> > >  arch/x86/kernel/amd_nb.c         |  1 -
+> > >  arch/x86/kernel/amd_smn.c        |  9 +++++++++
+> > >  drivers/platform/x86/amd/Kconfig |  2 +-
+> > >  drivers/platform/x86/amd/hsmp.c  | 32 +++++-------------------------=
+--
+> > >  6 files changed, 18 insertions(+), 30 deletions(-)
+> > >=20
+> > > diff --git a/arch/x86/include/asm/amd_nb.h b/arch/x86/include/asm/amd=
+_nb.h
+> > > index 55c03d3495bc..cbe31e316e39 100644
+> > > --- a/arch/x86/include/asm/amd_nb.h
+> > > +++ b/arch/x86/include/asm/amd_nb.h
+> > > @@ -27,7 +27,6 @@ struct amd_l3_cache {
+> > >  };
+> > > =20
+> > >  struct amd_northbridge {
+> > > -=09struct pci_dev *root;
+> > >  =09struct pci_dev *misc;
+> > >  =09struct pci_dev *link;
+> > >  =09struct amd_l3_cache l3_cache;
+> > > diff --git a/arch/x86/include/asm/amd_smn.h b/arch/x86/include/asm/am=
+d_smn.h
+> > > index 6850de69f863..f0eb12859c42 100644
+> > > --- a/arch/x86/include/asm/amd_smn.h
+> > > +++ b/arch/x86/include/asm/amd_smn.h
+> > > @@ -8,4 +8,7 @@
+> > >  int __must_check amd_smn_read(u16 node, u32 address, u32 *value);
+> > >  int __must_check amd_smn_write(u16 node, u32 address, u32 value);
+> > > =20
+> > > +/* Should only be used by the HSMP driver. */
+> > > +int __must_check amd_smn_hsmp_rdwr(u16 node, u32 address, u32 *value=
+, bool write);
+> > > +
+> > >  #endif /* _ASM_X86_AMD_SMN_H */
+> > > diff --git a/arch/x86/kernel/amd_nb.c b/arch/x86/kernel/amd_nb.c
+> > > index 10cdeddeda02..4c22317a6dfe 100644
+> > > --- a/arch/x86/kernel/amd_nb.c
+> > > +++ b/arch/x86/kernel/amd_nb.c
+> > > @@ -73,7 +73,6 @@ static int amd_cache_northbridges(void)
+> > >  =09amd_northbridges.nb =3D nb;
+> > > =20
+> > >  =09for (i =3D 0; i < amd_northbridges.num; i++) {
+> > > -=09=09node_to_amd_nb(i)->root =3D amd_node_get_root(i);
+> > >  =09=09node_to_amd_nb(i)->misc =3D amd_node_get_func(i, 3);
+> > >  =09=09node_to_amd_nb(i)->link =3D amd_node_get_func(i, 4);
+> > >  =09}
+> > > diff --git a/arch/x86/kernel/amd_smn.c b/arch/x86/kernel/amd_smn.c
+> > > index 997fd3edd9c0..527dda8e3a2b 100644
+> > > --- a/arch/x86/kernel/amd_smn.c
+> > > +++ b/arch/x86/kernel/amd_smn.c
+> > > @@ -18,6 +18,9 @@ static DEFINE_MUTEX(smn_mutex);
+> > >  #define SMN_INDEX_OFFSET=090x60
+> > >  #define SMN_DATA_OFFSET=09=090x64
+> > > =20
+> > > +#define HSMP_INDEX_OFFSET=090xc4
+> > > +#define HSMP_DATA_OFFSET=090xc8
+> > > +
+> > >  /*
+> > >   * SMN accesses may fail in ways that are difficult to detect here i=
+n the called
+> > >   * functions amd_smn_read() and amd_smn_write(). Therefore, callers =
+must do
+> > > @@ -100,6 +103,12 @@ int __must_check amd_smn_write(u16 node, u32 add=
+ress, u32 value)
+> > >  }
+> > >  EXPORT_SYMBOL_GPL(amd_smn_write);
+> > > =20
+> > > +int __must_check amd_smn_hsmp_rdwr(u16 node, u32 address, u32 *value=
+, bool write)
+> > > +{
+> > > +=09return __amd_smn_rw(HSMP_INDEX_OFFSET, HSMP_DATA_OFFSET, node, ad=
+dress, value, write);
+> > > +}
+> > > +EXPORT_SYMBOL_GPL(amd_smn_hsmp_rdwr);
+> > > +
+> > >  static int amd_cache_roots(void)
+> > >  {
+> > >  =09u16 node, num_nodes =3D amd_num_nodes();
+> > > diff --git a/drivers/platform/x86/amd/Kconfig b/drivers/platform/x86/=
+amd/Kconfig
+> > > index f88682d36447..e100b315c62b 100644
+> > > --- a/drivers/platform/x86/amd/Kconfig
+> > > +++ b/drivers/platform/x86/amd/Kconfig
+> > > @@ -8,7 +8,7 @@ source "drivers/platform/x86/amd/pmc/Kconfig"
+> > > =20
+> > >  config AMD_HSMP
+> > >  =09tristate "AMD HSMP Driver"
+> > > -=09depends on AMD_NB && X86_64 && ACPI
+> > > +=09depends on AMD_SMN && X86_64 && ACPI
+> > >  =09help
+> > >  =09  The driver provides a way for user space tools to monitor and m=
+anage
+> > >  =09  system management functionality on EPYC server CPUs from AMD.
+> > > diff --git a/drivers/platform/x86/amd/hsmp.c b/drivers/platform/x86/a=
+md/hsmp.c
+> > > index 8fcf38eed7f0..544efb0255c0 100644
+> > > --- a/drivers/platform/x86/amd/hsmp.c
+> > > +++ b/drivers/platform/x86/amd/hsmp.c
+> >=20
+> > FYI, there has been major restructuring done for this driver in=20
+> > pdx86/for-next.
+> >
+>=20
+> Yep, no problem. I can rebase these changes on top of those.
+>=20
+> Any comments on the general approach?
+
+I deemed looking deeper into the patch waste of my time due to the=20
+expected changes, so no comments at this time.
+
+--=20
+ i.
+
+--8323328-983401245-1729863561=:946--
 
