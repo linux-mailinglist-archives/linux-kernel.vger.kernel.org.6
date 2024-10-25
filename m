@@ -1,119 +1,149 @@
-Return-Path: <linux-kernel+bounces-382693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3752F9B124D
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 00:06:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DACB9B1250
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 00:08:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0085F283438
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 22:06:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A25A3B215DA
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 22:08:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F54D20C333;
-	Fri, 25 Oct 2024 22:05:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D63A217F56;
+	Fri, 25 Oct 2024 22:08:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SLWUMbE9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="KHWvev0b"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7661217F53;
-	Fri, 25 Oct 2024 22:05:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37716217F53
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 22:08:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729893954; cv=none; b=At1bHCcHCOJ5Nw0GIzN6zR/12B0YN5Bh4wXtsyWbI2ybhfNeiU8OsYp2Mv+GtA9TmO3lmxylEiU2stj95SQhjg7sSlxIu4nCGRfEEelMeUEI+ugz3iLR2WrQqpXlmO9c1S9h1Yu9W85PgeVz8pfe9oAKqZmI++mHGjIEPD/kh1U=
+	t=1729894090; cv=none; b=eAcA0/2/4cR3FDbRxRS+f579k3ch0hQwlsrQEaA0qJ3VbcrLTJcpgKYHv7vRr+KiGbFscxF3Y4FeG20tgHkk/mX3Gi4DjcWpma6nivQ8IhEpsOw+6e5BiTAaHxn85bp+czf5xvv9h0vPTagV1LIXlb0KKS/D7Fq2tNxzFs7Fs88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729893954; c=relaxed/simple;
-	bh=FC/t5CIaNNudWpigYqqneQEUamxykiRhAYd41d/2WrM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ZWqkYOtePdadAj097c/GBJdIpYy9dt3EvcSzdbOesRqKJrFShq5hzC2NvVLAp+8c95oqRvuu0BwPIp3wg2/LwED8LXdlrhZ6OwULj5lLqYeTnXTf2oefZB5Pbm1uHoPA4Xu+aBOqREHD/6OXp39uAKKqa6tNzlO3Wq8849tDZZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SLWUMbE9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E83B8C4CEC3;
-	Fri, 25 Oct 2024 22:05:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729893953;
-	bh=FC/t5CIaNNudWpigYqqneQEUamxykiRhAYd41d/2WrM=;
-	h=Date:From:To:Cc:Subject:From;
-	b=SLWUMbE9lrThVgyiRhzZA/O21a3GoxeJ1NYB5+De1PjiiAE+TLQBnjvyeHro9mRXi
-	 ROenmcDxUuPRGGpBq+7Lsa9WgRalgwpB7huiFNyxETiiQzUj1VBjuopd/9dw9koRjp
-	 ITxX48QD/+JcdBPdJQhQCbBDMB92M0R9IcVnx2QtWe0hjQ6GSsRoW2mzrx3WnudhXI
-	 Tiz/yn2QsCKxpkUXx4SAjDV1DcdqKryn1MBgmsugIuKpRM/QQphyW7HP9+39h5xezw
-	 lo/SOLWmjJI8OUNPfGAu0kpPYMvdWvwAR0a8z42SanywiEPJFXbOqP1zsHWYLNoaya
-	 9mtgZLWnsK6sw==
-Date: Fri, 25 Oct 2024 16:05:50 -0600
-From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH v2] wifi: mac80211: ieee80211_i: Fix memory corruption bug in
- struct ieee80211_chanctx
-Message-ID: <ZxwWPrncTeSi1UTq@kspp>
+	s=arc-20240116; t=1729894090; c=relaxed/simple;
+	bh=hFoB7xJXnCTTJFX+b1CH5YGms1/aidjhBonq6XpjBPA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HAXLQ+wTh3WmLiMVPN4yGzFej4UzwUBfdXC/VlRwXtkvzWwCo+NtQivHTcQ4tfxcrtPzRH6MdMxnChcEXaQIABf7TlVCus0NcYPYubMildfbgVS+YNHZWEhundpjoAkmyxdpEkgEgJaclpQXKB0Q0ATHGnTAGJkW0L7hVC0oyo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=KHWvev0b; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-71e5a1c9071so1915697b3a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 15:08:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1729894087; x=1730498887; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=OBqr5/lEqbmI/hDIH3VI4HQy1crlFq/+2LAAjMEPiXM=;
+        b=KHWvev0bTJkrFamPBwg29CNORkQ78y1ZSRO94zAURXJ1GCymPDkRm57ZVu4x3PhOHq
+         vaU1DH9nJw+6ab4VQOnk4wytVjL671RoyynaULXbMb2vCCEPvjf3iflZlG2CqT95xaD9
+         FzcddNMLzAPIg8ALeN0yeNoJQJfx+0fKDbzrY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729894087; x=1730498887;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OBqr5/lEqbmI/hDIH3VI4HQy1crlFq/+2LAAjMEPiXM=;
+        b=gNQ1U2PZWtObfVfzBWHoYIHBuBxDKqu79o1QjnxyxGt2FTeTM125qvsUHY66OaPBkD
+         tkdkamNMkE+cLDGrZkqoUfuSNlHZa7lo3h/p/WlZQK7Yt77re2bK9jmpW5jImFQyaTXm
+         4ljw+GbuyUoRgt3xa6K9Lloou8GZ1pTma5+SDoxrhY7Fo/+XbKzNVXNfK03dt+uwk0mY
+         qKw4mCqIC5ce79Epkm8arX7bW4uqeZggkTiKI3FJkLo+rV3MPSFu70UmkkCJHV6xFWgZ
+         CZGV8F0SRFNSDm0GtJjW9m1LJ0tZoG9hXQFtQ7xIWOnR428y5RO84GvZA7nDt4vn+VB5
+         wzlA==
+X-Forwarded-Encrypted: i=1; AJvYcCXjkb6ED4cEWl9qA1IVvcz9kX3RFFO2bq2F8r8O0woGQFjamNfyfnNLMrGA8re51+DhLkbKAQWOrUtJieY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVhnI8Vh04Wy4kcHt5IVprazFyUceeHhaDLJkz/pxrWyr6Lc+D
+	emnrV4cIAG29uXWdZcucqe+hiio6fbKHmTZhydLYgGXEqXRwxJreSN29VQWYnA==
+X-Google-Smtp-Source: AGHT+IEsAN/vuGOObXJbV29oiWth+FFeEcn13MWc0LfoAFSeMovkdy0dgMlpJxVC05ShdRU2btO0ZQ==
+X-Received: by 2002:a05:6a00:3d49:b0:71d:f510:b791 with SMTP id d2e1a72fcca58-72062f83b0dmr1416532b3a.12.1729894087565;
+        Fri, 25 Oct 2024 15:08:07 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72057a219d9sm1625474b3a.171.2024.10.25.15.08.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 25 Oct 2024 15:08:06 -0700 (PDT)
+Message-ID: <8bf2ff23-9cb3-40f5-84dc-4aaab466961d@broadcom.com>
+Date: Fri, 25 Oct 2024 15:08:01 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 08/10] PCI: brcmstb: Adjust PHY PLL setup to use a
+ 54MHz input refclk
+To: Stanimir Varbanov <svarbanov@suse.de>, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rpi-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jim Quinlan <jim2101024@gmail.com>,
+ Nicolas Saenz Julienne <nsaenz@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, kw@linux.com,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Andrea della Porta <andrea.porta@suse.com>,
+ Phil Elwell <phil@raspberrypi.com>, Jonathan Bell <jonathan@raspberrypi.com>
+References: <20241025124515.14066-1-svarbanov@suse.de>
+ <20241025124515.14066-9-svarbanov@suse.de>
+Content-Language: en-US
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
+ xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
+ M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
+ JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
+ PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
+ KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
+ AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
+ IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
+ ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
+ bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
+ Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
+ tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
+ TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
+ zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
+ WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
+ IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
+ U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
+ 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
+ pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
+ MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
+ IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
+ gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
+ obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
+ N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
+ CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
+ C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
+ wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
+ EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
+ fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
+ MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
+ 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
+ 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
+In-Reply-To: <20241025124515.14066-9-svarbanov@suse.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Move the `struct ieee80211_chanctx_conf conf` to the end of
-`struct ieee80211_chanctx` and fix a memory corruption bug
-triggered in `hwsim_set_chanctx_magic()`: `radar_detected`
-is being overwritten when `cp->magic = HWSIM_CHANCTX_MAGIC;`
-See the function call sequence below:
+On 10/25/24 05:45, Stanimir Varbanov wrote:
+> The default input reference clock for the PHY PLL is 100Mhz, except for
+> some devices where it is 54Mhz like bcm2712C1 and bcm2712D0.
+> 
+> To implement this adjustments introduce a new .post_setup op in
+> pcie_cfg_data and call it at the end of brcm_pcie_setup function.
+> 
+> The bcm2712 .post_setup callback implements the required MDIO writes that
+> switch the PLL refclk and also change PHY PM clock period.
+> 
+> Without this RPi5 PCIex1 is unable to enumerate endpoint devices on
+> the expansion connector.
+> 
+> Signed-off-by: Stanimir Varbanov <svarbanov@suse.de>
 
-drv_add_chanctx(... struct ieee80211_chanctx *ctx) ->
-    local->ops->add_chanctx(&local->hw, &ctx->conf) ->
-	mac80211_hwsim_add_chanctx(... struct ieee80211_chanctx_conf *ctx) ->
-	    hwsim_set_chanctx_magic(ctx)
-
-Also, add a code comment to try to prevent people from introducing
-new members after `struct ieee80211_chanctx_conf conf`. Notice that
-`struct ieee80211_chanctx_conf` is a flexible structure --a structure
-that contains a flexible-array member, so it should always be at
-the end of any other containing structures.
-
-This change also fixes 50 of the following warnings:
-
-net/mac80211/ieee80211_i.h:895:39: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-
--Wflex-array-member-not-at-end was introduced in GCC-14, and we are
-getting ready to enable it, globally.
-
-Fixes: bca8bc0399ac ("wifi: mac80211: handle ieee80211_radar_detected() for MLO")
-Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
----
-Changes in v2:
- - Add `Fixes:` tag. (Johannes)
- - Update Subject line and changelog text to better reflect
-   the severity of this change.
-
-v1:
- - Link: https://lore.kernel.org/linux-hardening/Zxv7KtPEy1kvnTPM@kspp/
-
- net/mac80211/ieee80211_i.h | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/net/mac80211/ieee80211_i.h b/net/mac80211/ieee80211_i.h
-index e7815ffeaf30..c65adbdf2166 100644
---- a/net/mac80211/ieee80211_i.h
-+++ b/net/mac80211/ieee80211_i.h
-@@ -892,9 +892,10 @@ struct ieee80211_chanctx {
- 	/* temporary data for search algorithm etc. */
- 	struct ieee80211_chan_req req;
- 
--	struct ieee80211_chanctx_conf conf;
--
- 	bool radar_detected;
-+
-+	/* MUST be last - ends in a flexible-array member. */
-+	struct ieee80211_chanctx_conf conf;
- };
- 
- struct mac80211_qos_map {
+Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
 -- 
-2.34.1
-
+Florian
 
