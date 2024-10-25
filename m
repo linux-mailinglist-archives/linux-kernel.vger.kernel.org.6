@@ -1,171 +1,102 @@
-Return-Path: <linux-kernel+bounces-380806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C1CD9AF663
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 03:03:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 422729AF664
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 03:05:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08F362832C5
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 01:03:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06DF7282B65
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 01:05:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB6FA171A7;
-	Fri, 25 Oct 2024 01:03:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l6ND4Rfr"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D90810A2A;
+	Fri, 25 Oct 2024 01:05:21 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D6CF29A0;
-	Fri, 25 Oct 2024 01:03:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 001E310A19;
+	Fri, 25 Oct 2024 01:05:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729818215; cv=none; b=RfqxNF0Mtv5UxrnN4Cn1onEfEXXx87DqSSz5rNtg0MT9M/NS0Ufg4g3ezbzIpZX2XIstj/MJambWeW4vk4xO6HKbza77UG4kxAl6Q+soA94tHO7g7H4+6iLu1AUIv9mddHidLDK1r/YeVKENGtsO65mfc9XpDhLHvoyjw481nD4=
+	t=1729818321; cv=none; b=IXt7MKNgUZY9oESlEmgMdx1XY5nnrhbVCmY8qC+Mhz7JTRx2z9jZOo8ujpVYwdFUwsaX2uEGf+EfLyYNEQoLd/6CmK4xdIp9TWVegemMtV8uqhIrFuJm2WcuZCrGk+G+hP75nxkehX5Zi0koVropcwHg2WxIjj3aM0h5mryfy/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729818215; c=relaxed/simple;
-	bh=ANao3SalIylcgaUhcEsnm2zI9WSTU3qx2wawj/Ele28=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZW39MS1qSccMR79hpoM04Cni9gi8oDMaTkg2ew/BeklIVmdXj4+KfqEKd6uFcmyQFN262le0+8k4dPcgr+ppcrO19BfGr8ygQHU9p34d/sdhGvsFJ8WDvasSvTtGQZC8msGXpODWPA+3+RwpGvLqgSajJ37/baBC2x4yp9YzKeg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l6ND4Rfr; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-71e5ae69880so1064285b3a.2;
-        Thu, 24 Oct 2024 18:03:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729818212; x=1730423012; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=SNGcvfWZU2TxEL7LKZ45PLQqJbpzUP1414tKc6KMVMo=;
-        b=l6ND4Rfr2hYUUnv6x9Ae3A1r10HkguThzVTc3SjsnklHXJRzOPlOek6DY+i/dJw2lq
-         oem469zJXvd7oiZEhs18OtttVr4D4SLLE/KfCjALp6+rroMzMZOcgB5Yfv2cF/RxKj4D
-         1p7hOaZWujU+tJmw5z92t52geY11OcVlyefFR6wqdbtJ68XjhMulMNuJNblZynrFKzdN
-         /v9e2bBFzz+HZe0uvkqOKZ58+M24dwmLWPexhHzla/E9Kx7WGu2embQ/zdu6jsHstGYL
-         304laotOTJd/a1UgiEbRQO9HYM+JAGQqgZlFptNPp7boP1L4Gu/ngmp2Xv3e5RDXtQDf
-         E7mQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729818212; x=1730423012;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SNGcvfWZU2TxEL7LKZ45PLQqJbpzUP1414tKc6KMVMo=;
-        b=lEYQ9lPCwAmv/2D7r1j/VuNpk9e5jncM72KOgT47X9Fr7o92f2/sn0E0MCwBmIVlAO
-         +22Kkyng+eJ9ETivjFLwdgN1adVh46FI/cw08SbbdAHfNKF9VpW6sGoX6RiiBsF02l5D
-         lv3t/6QMHcwXlAdY3ROqKMlA3X8G3DAlpRgqXOv6EyJhf3BaDrz0uEnMYrRuTZwpLlYp
-         3PL491XO5rmZ4rYUvB219xnblNF5EhWJd+L103VpCzv2h4+bILxi+O09xqVaVI7SumYE
-         TWkfUCWH1NwuVYpKe4U+I41lpbPAlxcLzkj2pJ7XQqx2U0fJZ8n2BfTlkQRLHD5HuaIO
-         ry9g==
-X-Forwarded-Encrypted: i=1; AJvYcCUlbfAOivhxVXQTmXoVztmupHM87vHdwWRWtIdM+nUQpuhn9AXYMzWRQNAX/tRnbzIyxUCaBsl3@vger.kernel.org, AJvYcCVTUtOiHw+XLt7/PMc6vPtHcX/6hFSC0lkGwpb3C1Bo+IB6KdPgA1e9sMIMf4ZHG0u5a9NH8Fey8B+utTM+@vger.kernel.org, AJvYcCWaMsfjwFx52+xFwyl5zDkHt3fGygosVey34PS3RHz5B3/A5oV321hnIt7NCdfvsrad3KJwYoS8pu8q@vger.kernel.org, AJvYcCX7GfJosawwoyKYd9uEyuRijwyYSmDqTiGU/N/9yPiZPYnxJ3eoCEOBKB/fDDeMqU6Ona8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBgsVDKj39yIeG37KOkcCXIqVNlgeEZvDfM3/OUVOcoeyilquD
-	XaDggT3v6BcPF+rwLEui9VOHWkPXegmr+yZCZueU3PqZBM3yBhUiTZkVLQ==
-X-Google-Smtp-Source: AGHT+IF0cMHbWVTxjfafW97nsmkrbkE+9N3H1YT2wc59PBi6x6/wVg203OFjCMyt2TzZK3h5DDL3hg==
-X-Received: by 2002:a05:6a21:70cb:b0:1d9:181f:e6d8 with SMTP id adf61e73a8af0-1d978bacfeamr8947325637.31.1729818212239;
-        Thu, 24 Oct 2024 18:03:32 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72057a20406sm47220b3a.166.2024.10.24.18.03.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Oct 2024 18:03:31 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id 41D904352F21; Fri, 25 Oct 2024 08:03:28 +0700 (WIB)
-Date: Fri, 25 Oct 2024 08:03:28 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Joe Damato <jdamato@fastly.com>,
-	Linux Networking <netdev@vger.kernel.org>, namangulati@google.com,
-	edumazet@google.com, amritha.nambiar@intel.com,
-	sridhar.samudrala@intel.com, sdf@fomichev.me, peter@typeblog.net,
-	m2shafiei@uwaterloo.ca, bjorn@rivosinc.com, hch@infradead.org,
-	willy@infradead.org, willemdebruijn.kernel@gmail.com,
-	skhawaja@google.com, kuba@kernel.org,
-	Martin Karsten <mkarsten@uwaterloo.ca>,
-	"David S. Miller" <davem@davemloft.net>,
-	Paolo Abeni <pabeni@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
-	Linux Documentation <linux-doc@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux BPF <bpf@vger.kernel.org>
-Subject: Re: [PATCH net-next v2 6/6] docs: networking: Describe irq suspension
-Message-ID: <ZxruYJizjXR8KUz0@archie.me>
-References: <20241021015311.95468-1-jdamato@fastly.com>
- <20241021015311.95468-7-jdamato@fastly.com>
- <ZxYxqhj7cesDO8-j@archie.me>
- <ZxaCUZ5rNd86gDHG@LQ3V64L9R2>
+	s=arc-20240116; t=1729818321; c=relaxed/simple;
+	bh=xYOYJxh6xMZHF0NJHDVigkIS5hoayHXk4j1TF7X8HBA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=I3t2uwKtMiMkgEHitd3F58NU+/yl3rcV+M8poFRdSQg90b7+pKz5CYEuS0yL7eTXTkIO+inrJ2rdokSKiSJu+fSCg3PQYbuYcYspRh3ZVzGPyrw6sH+qc5J4UnYOd4PGzl+cyQpBMjScrTEyVaWcEHxyYd2Z0UC8Bj+Kkpb6bwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6357FC4CEC7;
+	Fri, 25 Oct 2024 01:05:19 +0000 (UTC)
+Date: Thu, 24 Oct 2024 21:05:15 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Mark
+ Rutland <mark.rutland@arm.com>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Andrew Morton
+ <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, Peter
+ Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH 2/2] fgraph: Free ret_stack when task is done with it
+Message-ID: <20241024210515.53943bdf@rorschach.local.home>
+In-Reply-To: <20241025002121.ef5dc8be87e1b6baa2dd544c@kernel.org>
+References: <20241024092723.817582319@goodmis.org>
+	<20241024092952.709200360@goodmis.org>
+	<20241025002121.ef5dc8be87e1b6baa2dd544c@kernel.org>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="nCoJbkgUJcwJ4Pal"
-Content-Disposition: inline
-In-Reply-To: <ZxaCUZ5rNd86gDHG@LQ3V64L9R2>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Fri, 25 Oct 2024 00:21:21 +0900
+Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
 
---nCoJbkgUJcwJ4Pal
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> > +static void fgraph_ret_stack_work_func(struct work_struct *work)
+> > +{
+> > +	mutex_lock(&ftrace_lock);
+> > +	if (!ftrace_graph_active)
+> > +		free_ret_stacks();
+> > +	mutex_unlock(&ftrace_lock);
+> > +}  
+> 
+> Hmm, will you scan all tasks everytime? Shouldn't we have another global
+> list of skipped tasks in remove_ret_stack(), like below?
+> 
+> static void remove_ret_stack(struct task_struct *t, struct list_head *freelist, struct list_head *skiplist, int list_index)
+> {
+> 	struct ret_stack_free_data *free_data;
+> 	struct list_head *head;
+> 
+> 	/* If the ret_stack is still in use, skip this */
+> 	if (t->curr_ret_depth >= 0)
+> 		head = skiplist;
+> 	else
+> 		head = freelist;
+> 
+> 	free_data = (struct ret_stack_free_data*)(t->ret_stack + list_index);
+> 	list_add(&free_data->list, head);
+> 	free_data->task = t;
+> }
+> 
+> Then we can scan only skiplist in free_ret_stacks() in fgraph_ret_stack_work_func().
+> 
+> Of course this will need to decouple preparing freelist/skiplist and
+> actual free function.
 
-On Mon, Oct 21, 2024 at 09:33:21AM -0700, Joe Damato wrote:
-> On Mon, Oct 21, 2024 at 05:49:14PM +0700, Bagas Sanjaya wrote:
-> > On Mon, Oct 21, 2024 at 01:53:01AM +0000, Joe Damato wrote:
-> > > diff --git a/Documentation/networking/napi.rst b/Documentation/networ=
-king/napi.rst
-> > > index dfa5d549be9c..3b43477a52ce 100644
-> > > --- a/Documentation/networking/napi.rst
-> > > +++ b/Documentation/networking/napi.rst
-> > > @@ -192,6 +192,28 @@ is reused to control the delay of the timer, whi=
-le
-> > >  ``napi_defer_hard_irqs`` controls the number of consecutive empty po=
-lls
-> > >  before NAPI gives up and goes back to using hardware IRQs.
-> > > =20
-> > > +The above parameters can also be set on a per-NAPI basis using netli=
-nk via
-> > > +netdev-genl. This can be done programmatically in a user application=
- or by
-> > > +using a script included in the kernel source tree: ``tools/net/ynl/c=
-li.py``.
-> > > +
-> > > +For example, using the script:
-> > > +
-> > > +.. code-block:: bash
-> > > +
-> > > +  $ kernel-source/tools/net/ynl/cli.py \
-> > > +            --spec Documentation/netlink/specs/netdev.yaml \
-> > > +            --do napi-set \
-> > > +            --json=3D'{"id": 345,
-> > > +                     "defer-hard-irqs": 111,
-> > > +                     "gro-flush-timeout": 11111}'
-> > > +
-> > > +Similarly, the parameter ``irq-suspend-timeout`` can be set using ne=
-tlink
-> > > +via netdev-genl. There is no global sysfs parameter for this value.
-> >=20
-> > In JSON, both gro-flush-timeout and irq-suspend-timeout parameter
-> > names are written in hyphens; but the rest of the docs uses underscores
-> > (that is, gro_flush_timeout and irq_suspend_timeout), right?
->=20
-> That's right. The YAML specification uses hyphens throughout, so we
-> follow that convention there.
->=20
-> In the rest of the docs we use the name of the field which appears
-> in the code itself, which uses underscores.
+I thought about doing it this way, but I felt that it made the code
+more complex with little benefit. Yeah, we scan all tasks, but it only
+happens in a work queue that is grabbing the ftrace_lock mutex. If
+anything, I rather keep it this way and if it ends up being an issue we
+can change it later.
 
-OK, thanks!
+One thing Thomas always says is "correctness first, optimize later".
+This is much easier to get correct. Adding a skip list will add
+complexity. Like I said, nothing prevents us from adding that feature
+later, and if it ends up buggy, we can know which change caused the bug.
 
---=20
-An old man doll... just what I always wanted! - Clara
-
---nCoJbkgUJcwJ4Pal
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZxruXAAKCRD2uYlJVVFO
-o+elAQDkoqcE6id9sBM4flYDeF4AKjCK6eoWx1sJOc1cWJZm+gD/Qhegiolned1A
-OLxCqHd6kJJi29DFvz4KZ9i0VkWPUAM=
-=6/03
------END PGP SIGNATURE-----
-
---nCoJbkgUJcwJ4Pal--
+-- Steve
 
