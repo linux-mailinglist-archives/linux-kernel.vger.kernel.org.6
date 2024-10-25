@@ -1,151 +1,94 @@
-Return-Path: <linux-kernel+bounces-381180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BC599AFB9A
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 09:56:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E83E99AFB9E
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 09:56:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F9D01C22266
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 07:56:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63237B23B54
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 07:56:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF8C21D222A;
-	Fri, 25 Oct 2024 07:55:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X7ra5R3S"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 474541C4A03;
+	Fri, 25 Oct 2024 07:56:11 +0000 (UTC)
+Received: from ssh248.corpemail.net (ssh248.corpemail.net [210.51.61.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 472521C4622;
-	Fri, 25 Oct 2024 07:55:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 581F31C07F7;
+	Fri, 25 Oct 2024 07:56:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.61.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729842903; cv=none; b=BbKxldvZ2uVfv/2QPu8sCqs5ubwy11mEOdxRfJIKBxbaJ5U12RNQATSsB9Molkvs+BvxpO4FkHuW3P/de8aRS7f0LWHR5uutLLSfjzzE7eV26hrQVehCdgtmIjtILvBCZWOFL1ctG7rlB2FyxH8WnPAM2N5bT3cTQtlWh9m4cGw=
+	t=1729842970; cv=none; b=iiZ8WBOUkmvrt2z84Gk/9hOqK4o9jiWSEVzExUq2Vc89N3Fnk4cbjATu1fyZuTgJjEslCnrPOen+nNT/Dy6ruecxXG32mYLoSSMEvv8hkh5pTlCJF+wC2HznBO90bwo/BsibvpsFmxU1xyTpWq6jsjTKFd1Rq7l4aHZppoubcLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729842903; c=relaxed/simple;
-	bh=oQKJemLv+DazWWrWtxj8bo8GJRraMiPexo9TrSDVMUw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ADUNO1fR3fwRD1oCOI4WNlOdnUTw7wzZYGAtHqk8/AJE/mT8IoeM7Uv1b/O4T7xebvTQ2kd9+urTgI7aA+iHjz6zYw+qJ0PHm6zn/U2/fw/RpwzJkp+zVOnAHc7QfR5VWFevicNHMEidj+/V8FFM8Z7mewY5F78SvWBDtjNoTjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X7ra5R3S; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id ABD3AC4CEEB;
-	Fri, 25 Oct 2024 07:55:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729842902;
-	bh=oQKJemLv+DazWWrWtxj8bo8GJRraMiPexo9TrSDVMUw=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=X7ra5R3SxN/kvMECqGOUhOGf5mwqrNhRmBJAWYAmPMZKSGQ49Hr3QSX0QOXS9Fuft
-	 xzjUJSotuqXmXcoLJoS2A7yMayCa+VAHLbEGe/n0EzwUTdB14RvmzkNjFBK6if0aV0
-	 pWE9Qvi0Fjh1qy+TwC/+UQPXP1uA591FLbpzmqO1c7qY/L+YeTeBwj/V1+SBPdoZbn
-	 IBtOPr3cns8vdLiH50NRKcj9X61S6D4vHviVV6gg10Oax9D44fPgskp4ceVvzTMErA
-	 Cec/RifNnTPnQVk5n2hOBQ4vTiTd3a9Byq1UygcZk54h391toN8a0B1AJVtUVcU87i
-	 JoXJpBaeb4VVg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1AF2D1171F;
-	Fri, 25 Oct 2024 07:55:02 +0000 (UTC)
-From: Manivannan Sadhasivam via B4 Relay <devnull+manivannan.sadhasivam.linaro.org@kernel.org>
-Date: Fri, 25 Oct 2024 13:24:55 +0530
-Subject: [PATCH v2 5/5] PCI/pwrctl: Remove pwrctl device without iterating
- over all children of pwrctl parent
+	s=arc-20240116; t=1729842970; c=relaxed/simple;
+	bh=bgNWztlxw4rEHrUSzO9YUY59UQ3Mv+IbBmdSrZslzeA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=E/S2dregnt7c5cW+OpBsFBdb0rh9nx7GHNyhaK7xn87FseJqW/5lPAuVMZdeim2HcTvzWEqFAqI3aZ6H4okU0nwjmci/ylipqqGAIr/NtPH8LLBAz5nZLh/ORc9yzVaY+kA/9xPebKxZk+PJcQLj9IgWqBMv7F5FPppqSN6I9GU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.61.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
+Received: from ssh248.corpemail.net
+        by ssh248.corpemail.net ((D)) with ASMTP (SSL) id VHC00152;
+        Fri, 25 Oct 2024 15:55:52 +0800
+Received: from jtjnmail201607.home.langchao.com (10.100.2.7) by
+ jtjnmail201620.home.langchao.com (10.100.2.20) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 25 Oct 2024 15:55:57 +0800
+Received: from localhost.localdomain (10.94.19.204) by
+ jtjnmail201607.home.langchao.com (10.100.2.7) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 25 Oct 2024 15:55:56 +0800
+From: Charles Han <hanchunchao@inspur.com>
+To: <sean.wang@mediatek.com>, <nbd@nbd.name>, <lorenzo@kernel.org>,
+	<ryder.lee@mediatek.com>
+CC: <shayne.chen@mediatek.com>, <kvalo@kernel.org>, <matthias.bgg@gmail.com>,
+	<angelogioacchino.delregno@collabora.com>, <deren.wu@mediatek.com>,
+	<mingyen.hsieh@mediatek.com>, <linux-wireless@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.or>,
+	<linux-mediatek@lists.infradead.org>, Charles Han <hanchunchao@inspur.com>
+Subject: [PATCH] wifi: mt76: mt7925: fix NULL deref check in mt7925_change_vif_links
+Date: Fri, 25 Oct 2024 15:55:54 +0800
+Message-ID: <20241025075554.181572-1-hanchunchao@inspur.com>
+X-Mailer: git-send-email 2.31.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241025-pci-pwrctl-rework-v2-5-568756156cbe@linaro.org>
-References: <20241025-pci-pwrctl-rework-v2-0-568756156cbe@linaro.org>
-In-Reply-To: <20241025-pci-pwrctl-rework-v2-0-568756156cbe@linaro.org>
-To: Bjorn Helgaas <bhelgaas@google.com>, 
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
- Johan Hovold <johan+linaro@kernel.org>, Abel Vesa <abel.vesa@linaro.org>, 
- Stephan Gerhold <stephan.gerhold@linaro.org>, 
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
- Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>, 
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
- Krishna chaitanya chundru <quic_krichai@quicinc.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2043;
- i=manivannan.sadhasivam@linaro.org; h=from:subject:message-id;
- bh=ZMmwlwCRSzjhOUE5z4PNfZQoS9fl60qTZUGrmIa0oTI=;
- b=owEBbQGS/pANAwAKAVWfEeb+kc71AcsmYgBnG07UrEI+ygFFYRiJquOhxF3/HIbsroWH7tQhL
- aK5AVibzrqJATMEAAEKAB0WIQRnpUMqgUjL2KRYJ5dVnxHm/pHO9QUCZxtO1AAKCRBVnxHm/pHO
- 9RnwB/0Wzu1JRJdjBTy8WSMsnT+5odUgmGM2uRrgVJHOE75GND9wNiKEqdu3tffLo3uQIe4l+QN
- q2huoKlgRmUe88U77wsCXrHnZBdLjwByElTa4uP1CoSJfC7RJvx9a+2+BtWVezy4ufj0FYN/Ca/
- kC75FJPe4y8bCWDgA20i2nbRfZ1kUi56iOGrhN9QOUg4UHPaa7bewh0WAyDGsp5TcIE/Bz8gg41
- PbB0Q+ucWngtUGqsttOdjhn+CMjo+udGDfJgdC+aI2VdRbd1OYdgUe4xbMSuKwgkd65wmEXq1g2
- V+n8/BxngjXH+alX4zivvBwsnFiU42THzJRmBsptvG0Dk3b9
-X-Developer-Key: i=manivannan.sadhasivam@linaro.org; a=openpgp;
- fpr=C668AEC3C3188E4C611465E7488550E901166008
-X-Endpoint-Received: by B4 Relay for
- manivannan.sadhasivam@linaro.org/default with auth_id=185
-X-Original-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Reply-To: manivannan.sadhasivam@linaro.org
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: Jtjnmail201614.home.langchao.com (10.100.2.14) To
+ jtjnmail201607.home.langchao.com (10.100.2.7)
+tUid: 202410251555529e83ff3bf139e32a4d242e5986fe8ea6
+X-Abuse-Reports-To: service@corp-email.com
+Abuse-Reports-To: service@corp-email.com
+X-Complaints-To: service@corp-email.com
+X-Report-Abuse-To: service@corp-email.com
 
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+In mt7925_change_vif_links() devm_kzalloc() may return NULL but this
+returned value is not checked.
 
-There is no need to iterate over all children of the pwrctl device parent
-to remove the pwrctl device. Since the pwrctl device associated with the
-PCI device can be found using of_find_device_by_node() API, use it directly
-instead.
-
-If any pwrctl devices lying around without getting associated with the PCI
-devices, then those will be removed once their parent device gets removed.
-
-Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Tested-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-Tested-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Fixes: 69acd6d910b0 ("wifi: mt76: mt7925: add mt7925_change_vif_links")
+Signed-off-by: Charles Han <hanchunchao@inspur.com>
 ---
- drivers/pci/remove.c | 17 ++++++++---------
- 1 file changed, 8 insertions(+), 9 deletions(-)
+ drivers/net/wireless/mediatek/mt76/mt7925/main.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/pci/remove.c b/drivers/pci/remove.c
-index e4ce1145aa3e..3dd9b3024956 100644
---- a/drivers/pci/remove.c
-+++ b/drivers/pci/remove.c
-@@ -17,16 +17,16 @@ static void pci_free_resources(struct pci_dev *dev)
- 	}
- }
+diff --git a/drivers/net/wireless/mediatek/mt76/mt7925/main.c b/drivers/net/wireless/mediatek/mt76/mt7925/main.c
+index 791c8b00e112..a5110f8485e5 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt7925/main.c
++++ b/drivers/net/wireless/mediatek/mt76/mt7925/main.c
+@@ -1946,6 +1946,8 @@ mt7925_change_vif_links(struct ieee80211_hw *hw, struct ieee80211_vif *vif,
+ 					     GFP_KERNEL);
+ 			mlink = devm_kzalloc(dev->mt76.dev, sizeof(*mlink),
+ 					     GFP_KERNEL);
++			if (!mconf || !mlink)
++				return -ENOMEM;
+ 		}
  
--static int pci_pwrctl_unregister(struct device *dev, void *data)
-+static void pci_pwrctl_unregister(struct device *dev)
- {
--	struct device_node *pci_node = data, *plat_node = dev_of_node(dev);
-+	struct platform_device *pdev;
- 
--	if (dev_is_platform(dev) && plat_node && plat_node == pci_node) {
--		of_device_unregister(to_platform_device(dev));
--		of_node_clear_flag(plat_node, OF_POPULATED);
--	}
-+	pdev = of_find_device_by_node(dev_of_node(dev));
-+	if (!pdev)
-+		return;
- 
--	return 0;
-+	of_device_unregister(pdev);
-+	of_node_clear_flag(dev_of_node(dev), OF_POPULATED);
- }
- 
- static void pci_stop_dev(struct pci_dev *dev)
-@@ -34,8 +34,7 @@ static void pci_stop_dev(struct pci_dev *dev)
- 	pci_pme_active(dev, false);
- 
- 	if (pci_dev_is_added(dev)) {
--		device_for_each_child(dev->dev.parent, dev_of_node(&dev->dev),
--				      pci_pwrctl_unregister);
-+		pci_pwrctl_unregister(&dev->dev);
- 		device_release_driver(&dev->dev);
- 		pci_proc_detach_device(dev);
- 		pci_remove_sysfs_dev_files(dev);
-
+ 		mconfs[link_id] = mconf;
 -- 
-2.25.1
-
+2.31.1
 
 
