@@ -1,93 +1,79 @@
-Return-Path: <linux-kernel+bounces-380896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF2909AF766
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 04:28:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4D3E9AF767
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 04:29:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 001861C2137F
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 02:28:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5CDB1C2147B
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 02:29:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EFA4170A20;
-	Fri, 25 Oct 2024 02:28:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="OFXWvgGF"
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88FB3170854;
+	Fri, 25 Oct 2024 02:29:49 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB5BE86AE3;
-	Fri, 25 Oct 2024 02:28:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A1B186AE3;
+	Fri, 25 Oct 2024 02:29:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729823296; cv=none; b=BcWJv7g39mXuRkbum4+bhx4qDTVjkt9vDuGB3qRI/tvtVoVGuoYFABJDHpp3TrxMxg8RSSlHEo9Qv+R7FiMl5zj0UNhgayXUHN3whC12Ek0ljY527Lgao3h4LXxetkat/dRn8jixFaGLCdBy8Ym55Y7cGd8VmYoztSV4gTP7rHc=
+	t=1729823389; cv=none; b=QWF7jhIfUnezUWxXkGw1Kbzc8io/QernuvIhUQcV27wY1yLMfvIBfrGS4W6Zhun71ptvsfeysvmfiGvXo7b3Hj3iRCgtxCzRSucZ9aGdmMxo3GhNAlzgy4mFHXxz2OHW9/A1xbqdazwRh07qO4w3WZr4qVoOu/6SCtnzkznyUaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729823296; c=relaxed/simple;
-	bh=1849vjclysJZlv+ENKSy1ekASMxaCS8EE6Us0leGmdQ=;
-	h=From:To:CC:Subject:In-Reply-To:References:MIME-Version:
-	 Content-Type:Message-ID:Date; b=cvZ7pITHCY3y3Hv14G/LNUXYhD4lXo4V6o9HdfBIbbqn4x/ckyOQJyh3mK2WnKE+PV792Tu8k8bmoWErw6hu/PYDYTZxhzircJp5Hrj7FyJZxSFjEz8QqCT0bPZejXTnJVqXF9E141dRHqg06FKC94m7jpK2XUcTcGvaubnBuOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=OFXWvgGF; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 49P2S6R404101373, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
-	t=1729823286; bh=1849vjclysJZlv+ENKSy1ekASMxaCS8EE6Us0leGmdQ=;
-	h=From:To:CC:Subject:In-Reply-To:References:MIME-Version:
-	 Content-Type:Message-ID:Date;
-	b=OFXWvgGFl2ZMFjojvOxi4nrT6OXTfPVv1m0EqkZs1vvqd8g2xZlmY0NZxQLOoyDQb
-	 rYHQ81/3wtgAY4X4CEKCsSgKBrvCGsz470uofBSxoQM5xjKuSZRINUGxnF6ZW8AWoS
-	 iZmP9a6OeWUMWlDJpBSp1VlIRTU/d1lixI9Gc+PUuVTUdnEfH2HVmmMCLGc9Edc+jE
-	 gj9jtzHlHQMG7Rz/LmVP28ATtc/1dy8Q3ll6h083B47IGWGx8GRkJJBOtewr6SgrFn
-	 Nh57RuX2jHFoVppHZjrJZRWd3PoxPN5z2RX4RJOhJpNvGcHQf0FtmAzoLHbhPfy9Pb
-	 dS5gpeGQ5gvJg==
-Received: from mail.realtek.com (rtexh36505.realtek.com.tw[172.21.6.25])
-	by rtits2.realtek.com.tw (8.15.2/3.06/5.92) with ESMTPS id 49P2S6R404101373
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 25 Oct 2024 10:28:06 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXH36505.realtek.com.tw (172.21.6.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 25 Oct 2024 10:28:06 +0800
-Received: from [127.0.1.1] (172.21.69.94) by RTEXMBS04.realtek.com.tw
- (172.21.6.97) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.35; Fri, 25 Oct
- 2024 10:28:05 +0800
-From: Ping-Ke Shih <pkshih@realtek.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>,
-        Zong-Zhe Yang
-	<kevin_yang@realtek.com>
-CC: Ping-Ke Shih <pkshih@realtek.com>, Kalle Valo <kvalo@kernel.org>,
-        <linux-wireless@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-Subject: Re: [PATCH next] wifi: rtw89: unlock on error path in rtw89_ops_unassign_vif_chanctx()
-In-Reply-To: <8683a712-ffc2-466b-8382-0b264719f8ef@stanley.mountain>
-References: <8683a712-ffc2-466b-8382-0b264719f8ef@stanley.mountain>
+	s=arc-20240116; t=1729823389; c=relaxed/simple;
+	bh=maewG1pabUMM7p9GiBQcQL2cP2/TW16L+uJ1f9eSQM4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=MI39neiBdJK99TNW3wX2qa6BQt+31zty0JoHM2Ng4jb3JXSknkuplu0/7rEETkKGrV6owJCalp3DKxH1f1Ol/d2nWpS9XJCJWPskZpUFxqyHRbbNDACA3GQMFBR/VuRYug+fcbLoIMYAA3SmpcztELi6XNOkItS8nVV4qqAL9hE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F06C4C4CEC7;
+	Fri, 25 Oct 2024 02:29:47 +0000 (UTC)
+Date: Thu, 24 Oct 2024 22:29:44 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: LKML <linux-kernel@vger.kernel.org>, Linux trace kernel
+ <linux-trace-kernel@vger.kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland
+ <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH] fgraph: Change the name of cpuhp state to "fgraph:online"
+Message-ID: <20241024222944.473d88c5@rorschach.local.home>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Message-ID: <fb15987b-3e1c-4922-890a-15b57d356136@RTEXMBS04.realtek.com.tw>
-Date: Fri, 25 Oct 2024 10:28:05 +0800
-X-ClientProxiedBy: RTEXMBS02.realtek.com.tw (172.21.6.95) To
- RTEXMBS04.realtek.com.tw (172.21.6.97)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Dan Carpenter <dan.carpenter@linaro.org> wrote:
+From: Steven Rostedt <rostedt@goodmis.org>
 
-> We need to call mutex_unlock() on this error path.
-> 
-> Fixes: aad0394e7a02 ("wifi: rtw89: tweak driver architecture for impending MLO support")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> Acked-by: Zong-Zhe Yang <kevin_yang@realtek.com>
+The cpuhp state name given to cpuhp_setup_state() is "fgraph_idle_init"
+which doesn't really conform to the names that are used for cpu hotplug
+setups. Instead rename it to "fgraph:online" to be in line with other
+states.
 
-1 patch(es) applied to rtw-next branch of rtw.git, thanks.
-
-ac4f4e5a2039 wifi: rtw89: unlock on error path in rtw89_ops_unassign_vif_chanctx()
-
+Suggested-by: Masami Hiramatsu <mhiramat@kernel.org>
+Fixes: 2c02f7375e658 ("fgraph: Use CPU hotplug mechanism to initialize idle shadow stacks")
+Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
-https://github.com/pkshih/rtw.git
+ kernel/trace/fgraph.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
+index cd1c2946018c..69e226a48daa 100644
+--- a/kernel/trace/fgraph.c
++++ b/kernel/trace/fgraph.c
+@@ -1255,7 +1255,7 @@ int register_ftrace_graph(struct fgraph_ops *gops)
+ 	guard(mutex)(&ftrace_lock);
+ 
+ 	if (!fgraph_initialized) {
+-		ret = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "fgraph_idle_init",
++		ret = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "fgraph:online",
+ 					fgraph_cpu_init, NULL);
+ 		if (ret < 0) {
+ 			pr_warn("fgraph: Error to init cpu hotplug support\n");
+-- 
+2.45.2
 
 
