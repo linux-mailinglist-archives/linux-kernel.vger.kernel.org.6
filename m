@@ -1,168 +1,582 @@
-Return-Path: <linux-kernel+bounces-381895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 194A29B05FA
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:38:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 835A99B053E
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:13:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 703FEB254E6
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 14:38:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A71341C21118
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 14:13:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69270206505;
-	Fri, 25 Oct 2024 14:38:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 922A11EF958;
+	Fri, 25 Oct 2024 14:13:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lur8MBR6"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dPr8Y26Y"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5FFB21219A;
-	Fri, 25 Oct 2024 14:38:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8CFC212182;
+	Fri, 25 Oct 2024 14:13:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729867106; cv=none; b=BvCnf0oqvPG9ZdEGFn5quc6SGHGjQ5un9Avh+RSEZOhw1jYNZ1enrTTJZ+q2z/dgfvUNVF7nfcc4JpK0HxXHFXZdWhR23iQIHNaXFSo8AbzVQlLeLydDQDGvZczlY1jIWWOTAn1LwqKk20BdhwB9mBSto2c+v4prd/VaZlRJ5yE=
+	t=1729865609; cv=none; b=VLt9Zo/aDQSe5FNFcjp+W6380gf9LovVULg0pgjcBPFTIONiHRTx1lhP0YoBP0p/UprnG9o8Z1Qn4XU3LF647lJsva0/s02XzPDio4nYi1cwvsk+lSLps1z109TbciKqYsz5pi3VaD45e7SY4FDelS6GXi+bMYQmkkSjuAdc7mQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729867106; c=relaxed/simple;
-	bh=jOEqqD6eKub5OsQMn1xgga0X/jrQgRJtdPD5dGCwuZU=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=pUe6112lNKez7nliU/rByCrcSTjmeZd2U/iSfUiVy0MrTnyLPl7ObO1mUOF559GrvD5Vn2b90YhHSrBKhU/WidZFp0eESpyxQySMsQheEBdQ8NVnccYPGpP9iRMeGAiQgKbSVjHevkDDjNU16+FERQL3zvhPmKipe/1kK4GearI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Lur8MBR6; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-20cdda5cfb6so18960705ad.3;
-        Fri, 25 Oct 2024 07:38:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729867103; x=1730471903; darn=vger.kernel.org;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=V94RD6jfT9MDE0QIyHUh0lfRze2S4BWxc5Wb309byfA=;
-        b=Lur8MBR67bC5ssjAXNJQVRMEtPcxTzBc76hojiCOVm3IxWKEtPB3CD8Byxgq4HuLRI
-         cDKuym69VVci61rQzMax9lHptOd6Y+sbHuo/TiC8haT3N9leqJsCcZvxGn5V/hKt85IH
-         kPt9ClqO04bDjN7v3ok5zvckvegR4phxupRJCavLjywBOJ2sEKjwSo/aGNhMrXBRby8t
-         SeD53d65YWhZnlwwR98MF45itvUPUHN0Q6IFhUWKe9bZOnQMwQRWQ6zVDqsdNz5Mk8rt
-         aDUL7TW9CM4d7AszsF00ZIlkp6E+Rs0fStv7ZdHPHnHa7HvDMnAcGdeuZ7FIzxiXN03c
-         lvlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729867103; x=1730471903;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=V94RD6jfT9MDE0QIyHUh0lfRze2S4BWxc5Wb309byfA=;
-        b=npn6nlk5qnHx23yD9ZgD7GPfXMC99E8cURE16jPHR0OGdiOvNq9sx0Brpr7VXz6T2g
-         k7L5wJ5dPA7yOzWnOSbkhxvcNfxf0bcd1iKQLi4lLdMEPjjQLTPOL6HHog2uaij0v/6z
-         BTtz5JhnUfc348Dmj/sxxPhNUB+haT1RZktQNQRkWo8I5At+au/6cGQL3idebk5HHGx5
-         ddjoEq1S/mCinsfKwkg9EM6qMIirXcwSv3I1ZLmGVsTGkxz58dcd1zxp6UBFaRQ/kt0Z
-         MHifRTgEJzOzXlOSbdfXFV8wk2f0HDpRV1XRTIxUZW2kpcnxOTddMR6lnFS1g4121XEz
-         eIkw==
-X-Forwarded-Encrypted: i=1; AJvYcCUWvBjuLd8Puo5L1+W4VDlv4D4BHXpxaL6lpi/NoIZc7wbGwJIFNSD+8piWYvO7o5fLss7KSrq63fpv@vger.kernel.org, AJvYcCVWGu3hJiCHjXdTUAbT2qi/ZqooO/+kUxZ68Iq/ETWl8/3sd4EZQXSiRhGXGoatX4RxAap4iKxWNPIP7vDePQ==@vger.kernel.org, AJvYcCWGvdAVJMBYo4J/OywJcFYBiQN+nx5l2CrMzY4JX6tCpaI8BQBE+iw1AWDkDquhHQ5IuTw+Iy+biyVo3iUy@vger.kernel.org, AJvYcCXX32f97r5g8cNDRDIRSi7YDsmxzQ5zexBObixtOzO/9MhFSihVXO4jRidLGVVRSgpIvtdlCOZC7Nvc@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7hxXgbpV9tPniJmAKdHxB5EBi9eaCyC23bwhv1Nd5Dw9JbQLa
-	TqYjnfBOA/VIQTRNH+BZznULLWx4M4vMoE0wxRwciP3+khH7S2NhVOImlA==
-X-Google-Smtp-Source: AGHT+IHv8Tc2MEIhCPRV97Jl1Ckmb69pyWd6ThNw+/dGHKosCC0AoAuTSFm0zs0rvv9kcdK13Ry55g==
-X-Received: by 2002:a17:902:cec6:b0:20c:b483:cce2 with SMTP id d9443c01a7336-20fab2e0fe7mr92648825ad.60.1729867103451;
-        Fri, 25 Oct 2024 07:38:23 -0700 (PDT)
-Received: from dw-tp ([171.76.85.20])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bc082f15sm10079635ad.292.2024.10.25.07.38.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2024 07:38:22 -0700 (PDT)
-From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-To: John Garry <john.g.garry@oracle.com>, linux-ext4@vger.kernel.org
-Cc: Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.cz>, "Darrick J . Wong" <djwong@kernel.org>, Christoph Hellwig <hch@infradead.org>, Ojaswin Mujoo <ojaswin@linux.ibm.com>, Dave Chinner <david@fromorbit.com>, linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 5/6] iomap: Lift blocksize restriction on atomic writes
-In-Reply-To: <509180f3-4cc1-4cc2-9d43-5a1e728fb718@oracle.com>
-Date: Fri, 25 Oct 2024 19:43:17 +0530
-Message-ID: <87plnomfsy.fsf@gmail.com>
-References: <cover.1729825985.git.ritesh.list@gmail.com> <f5bd55d32031b49bdd9e2c6d073787d1ac4b6d78.1729825985.git.ritesh.list@gmail.com> <1efb8d6d-ba2e-499d-abc5-e4f9a1e54e89@oracle.com> <87zfmsmsvc.fsf@gmail.com> <fc6fddee-2707-4cca-b0b7-983c8dd17e16@oracle.com> <87v7xgmpwo.fsf@gmail.com> <7e322989-c6e0-424a-94bd-3ad6ce5ffee9@oracle.com> <87ttd0mnuo.fsf@gmail.com> <7aea00d4-3914-414d-a18f-586a303868c1@oracle.com> <87r084mkat.fsf@gmail.com> <509180f3-4cc1-4cc2-9d43-5a1e728fb718@oracle.com>
+	s=arc-20240116; t=1729865609; c=relaxed/simple;
+	bh=tmxafC4sAtIOobQ05Wlyq5XT0T0lPCRKYjFwTupyqB4=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=kIZYru588pbjwzAHT1DJrmT18ITY+xqdV59r7n23Vlvn11yw1bV2VZ6hpeVQAJMIbpVAouRS6t3HsMjkyX0n1O8lbbicBCdmukfBeKOGwS7+sGk6slsdKWpemCC0EPOgXdkyGMQB4AY/nlEcKhja/t1Ds1LMGgRSJWIqZDNZlZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dPr8Y26Y; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729865607; x=1761401607;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=tmxafC4sAtIOobQ05Wlyq5XT0T0lPCRKYjFwTupyqB4=;
+  b=dPr8Y26Yb00GZps6kVVI3Zr8ab5d03Dt5Tz06tA9C5Y0yFXXA5Nlggof
+   xppjOWe3R+r9HfHVmuyhRFnRy417Mm++oOT6Bt0F6FWB5gZo/E9im/e9i
+   /3JmoInvTM5UoOyDWer748E2A+fSi5nXwCOpPMsM0/ts6bCf4p/KCtoyM
+   0pGhPuC4poBwic1fn3Lw8CNTyQ5KGXXyyYGu+aoDED7VPFtyC8dhZVzcW
+   MI5hm7DfH6CJpTV/5jLYvqYdc8EKvnAlH1za83abnW/iPwANRtH1gsalk
+   ZGzA7XEoFpFzSAJd+9uYSXw/VAq2A9TTdizOoKqQm2EkZ9luj+PiX7XQr
+   A==;
+X-CSE-ConnectionGUID: K14T20xCRzOdPq+XwHCLCg==
+X-CSE-MsgGUID: YDACbm+7TrOCTr/bLQ7kQg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="29480322"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="29480322"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2024 07:13:27 -0700
+X-CSE-ConnectionGUID: A8cgGIrqSS2e+50GNM58NA==
+X-CSE-MsgGUID: lpnmDMGTTA6FTS9UVXP4Dw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,232,1725346800"; 
+   d="scan'208";a="80855219"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.225])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2024 07:13:24 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Fri, 25 Oct 2024 17:13:21 +0300 (EEST)
+To: Kurt Borja <kuurtb@gmail.com>
+cc: W_Armin@gmx.de, Hans de Goede <hdegoede@redhat.com>, 
+    LKML <linux-kernel@vger.kernel.org>, platform-driver-x86@vger.kernel.org
+Subject: Re: [PATCH v8 4/4] alienware-wmi: WMAX interface documentation
+In-Reply-To: <20241025014229.5716-2-kuurtb@gmail.com>
+Message-ID: <46954fcd-01fb-ff36-dfc8-33f240706098@linux.intel.com>
+References: <20241025013856.4729-2-kuurtb@gmail.com> <20241025014229.5716-2-kuurtb@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="8323328-1737758138-1729865601=:946"
 
-John Garry <john.g.garry@oracle.com> writes:
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-> On 25/10/2024 13:36, Ritesh Harjani (IBM) wrote:
->>>> So user will anyway will have to be made aware of not to
->>>> attempt writes of fashion which can cause them such penalties.
->>>>
->>>> As patch-6 mentions this is a base support for bs = ps systems for
->>>> enabling atomic writes using bigalloc. For now we return -EINVAL when we
->>>> can't allocate a continuous user requested mapping which means it won't
->>>> support operations of types 8k followed by 16k.
->>>>
->>> That's my least-preferred option.
->>>
->>> I think better would be reject atomic writes that cover unwritten
->>> extents always - but that boat is about to sail...
->> That's what this patch does.
->
-> Not really.
->
-> Currently we have 2x iomap restrictions:
-> a. mapping length must equal fs block size
-> b. bio created must equal total write size
->
-> This patch just says that the mapping length must equal total write size 
-> (instead of a.). So quite similar to b.
->
->> For whatever reason if we couldn't allocate
->> a single contiguous region of requested size for atomic write, then we
->> reject the request always, isn't it. Or maybe I didn't understand your comment.
->
-> As the simplest example, for an atomic write to an empty file, there 
-> should only be a single mapping returned to iomap_dio_bio_iter() and 
-> that would be of IOMAP_UNWRITTEN type. And we don't reject that.
->
+--8323328-1737758138-1729865601=:946
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-Ok. Maybe this is what I am missing. Could you please help me understand
-why should such writes be rejected? 
+On Thu, 24 Oct 2024, Kurt Borja wrote:
 
-For e.g. 
-If FS could allocate a single contiguous IOMAP_UNWRITTEN extent of
-atomic write request size, that means - 
-1. FS will allocate an unwritten extent.
-2. will do writes (using submit_bio) to the unwritten extent. 
-3. will do unwritten to written conversion. 
+> Added documentation for new WMAX interface, present on some Alienware
+> X-Series, Alienware M-Series and Dell's G-Series laptops.
+>=20
+> Signed-off-by: Kurt Borja <kuurtb@gmail.com>
+> Reviewed-by: Armin Wolf <W_Armin@gmx.de>
 
-It is ok if either of the above operations fail right? If (3) fails
-then the region will still be marked unwritten that means it will read
-zero (old contents). (2) can anyway fail and will not result into
-partial writes. (1) will anyway not result into any write whatsoever.
+Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
 
-So we can never have a situation where there is partial writes leading
-to mix of old and new write contents right for such cases? Which is what the
-requirement of atomic/untorn write also is?
+--
+ i.
 
-Sorry am I missing something here?
-
->> 
->> If others prefer - we can maybe add such a check (e.g. ext4_dio_atomic_write_checks())
->> for atomic writes in ext4_dio_write_checks(), similar to how we detect
->> overwrites case to decide whether we need a read v/s write semaphore.
->> So this can check if the user has a partially allocated extent for the
->> user requested region and if yes, we can return -EINVAL from
->> ext4_dio_write_iter() itself.
->  > > I think this maybe better option than waiting until ->iomap_begin().
->> This might also bring all atomic write constraints to be checked in one
->> place i.e. during ext4_file_write_iter() itself.
->
-> Something like this can be done once we decide how atomic writing to 
-> regions which cover mixed unwritten and written extents is to be handled.
-
-Mixed extent regions (written + unwritten) is a different case all
-together (which can lead to mix of old and new contents).
-
-
-But here what I am suggesting is to add following constraint in case of
-ext4 with bigalloc - 
-
-"Writes to a region which already has partially allocated extent is not supported."
-
-That means we will return -EINVAL if we detect above case in
-ext4_file_write_iter() and sure we can document this behavior.
-
-In retrospect, I am not sure why we cannot add a constraint for atomic
-writes (e.g. for ext4 bigalloc) and reject such writes outright,
-instead of silently incurring a performance penalty by zeroing out the
-partial regions by allowing such write request.
-
--ritesh
+> ---
+> v8:
+>  - Unchanged
+> v7:
+>  - Added GameShiftStatus method to documentation
+>  - Added remark about operation 0x03 of Thermal_Information method
+>  - Removed undocumented methods
+> v6:
+>  - Fixed typos
+>  - Included new file in MAINTAINERS
+> ---
+>  Documentation/wmi/devices/alienware-wmi.rst | 388 ++++++++++++++++++++
+>  MAINTAINERS                                 |   1 +
+>  2 files changed, 389 insertions(+)
+>  create mode 100644 Documentation/wmi/devices/alienware-wmi.rst
+>=20
+> diff --git a/Documentation/wmi/devices/alienware-wmi.rst b/Documentation/=
+wmi/devices/alienware-wmi.rst
+> new file mode 100644
+> index 000000000..36a67ff9a
+> --- /dev/null
+> +++ b/Documentation/wmi/devices/alienware-wmi.rst
+> @@ -0,0 +1,388 @@
+> +.. SPDX-License-Identifier: GPL-2.0-or-later
+> +
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +Dell AWCC WMI interface driver (alienware-wmi)
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +
+> +Introduction
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +
+> +The WMI device WMAX has been implemented for many Alienware and Dell's G=
+-Series
+> +models. Throughout these models, two implementations have been identifie=
+d. The
+> +first one, used by older systems, deals with HDMI, brightness, RGB, ampl=
+ifier
+> +and deep sleep control. The second one used by newer systems deals prima=
+rily
+> +with thermal, overclocking, and GPIO control.
+> +
+> +It is suspected that the latter is used by Alienware Command Center (AWC=
+C) to
+> +manage manufacturer predefined thermal profiles. The alienware-wmi drive=
+r
+> +exposes Thermal_Information and Thermal_Control methods through the Plat=
+form
+> +Profile API to mimic AWCC's behavior.
+> +
+> +This newer interface, named AWCCMethodFunction has been reverse engineer=
+ed, as
+> +Dell has not provided any official documentation. We will try to describ=
+e to the
+> +best of our ability its discovered inner workings.
+> +
+> +.. note::
+> +   The following method description may be incomplete and some operation=
+s have
+> +   different implementations between devices.
+> +
+> +WMI interface description
+> +-------------------------
+> +
+> +The WMI interface description can be decoded from the embedded binary MO=
+F (bmof)
+> +data using the `bmfdec <https://github.com/pali/bmfdec>`_ utility:
+> +
+> +::
+> +
+> + [WMI, Dynamic, Provider("WmiProv"), Locale("MS\\0x409"), Description("W=
+MI Function"), guid("{A70591CE-A997-11DA-B012-B622A1EF5492}")]
+> + class AWCCWmiMethodFunction {
+> +   [key, read] string InstanceName;
+> +   [read] boolean Active;
+> +
+> +   [WmiMethodId(13), Implemented, read, write, Description("Return Overc=
+locking Report.")] void Return_OverclockingReport([out] uint32 argr);
+> +   [WmiMethodId(14), Implemented, read, write, Description("Set OCUIBIOS=
+ Control.")] void Set_OCUIBIOSControl([in] uint32 arg2, [out] uint32 argr);
+> +   [WmiMethodId(15), Implemented, read, write, Description("Clear OC Fai=
+lSafe Flag.")] void Clear_OCFailSafeFlag([out] uint32 argr);
+> +   [WmiMethodId(19), Implemented, read, write, Description("Get Fan Sens=
+ors.")] void GetFanSensors([in] uint32 arg2, [out] uint32 argr);
+> +   [WmiMethodId(20), Implemented, read, write, Description("Thermal Info=
+rmation.")] void Thermal_Information([in] uint32 arg2, [out] uint32 argr);
+> +   [WmiMethodId(21), Implemented, read, write, Description("Thermal Cont=
+rol.")] void Thermal_Control([in] uint32 arg2, [out] uint32 argr);
+> +   [WmiMethodId(23), Implemented, read, write, Description("MemoryOCCont=
+rol.")] void MemoryOCControl([in] uint32 arg2, [out] uint32 argr);
+> +   [WmiMethodId(26), Implemented, read, write, Description("System Infor=
+mation.")] void SystemInformation([in] uint32 arg2, [out] uint32 argr);
+> +   [WmiMethodId(28), Implemented, read, write, Description("Power Inform=
+ation.")] void PowerInformation([in] uint32 arg2, [out] uint32 argr);
+> +   [WmiMethodId(32), Implemented, read, write, Description("FW Update GP=
+IO toggle.")] void FWUpdateGPIOtoggle([in] uint32 arg2, [out] uint32 argr);
+> +   [WmiMethodId(33), Implemented, read, write, Description("Read Total o=
+f GPIOs.")] void ReadTotalofGPIOs([out] uint32 argr);
+> +   [WmiMethodId(34), Implemented, read, write, Description("Read GPIO pi=
+n Status.")] void ReadGPIOpPinStatus([in] uint32 arg2, [out] uint32 argr);
+> +   [WmiMethodId(35), Implemented, read, write, Description("Read Chassis=
+ Color.")] void ReadChassisColor([out] uint32 argr);
+> +   [WmiMethodId(36), Implemented, read, write, Description("Read Platfor=
+m Properties.")] void ReadPlatformProperties([out] uint32 argr);
+> +   [WmiMethodId(37), Implemented, read, write, Description("Game Shift S=
+tatus.")] void GameShiftStatus([in] uint32 arg2, [out] uint32 argr);
+> +   [WmiMethodId(128), Implemented, read, write, Description("Caldera SW =
+installation.")] void CalderaSWInstallation([out] uint32 argr);
+> +   [WmiMethodId(129), Implemented, read, write, Description("Caldera SW =
+is released.")] void CalderaSWReleased([out] uint32 argr);
+> +   [WmiMethodId(130), Implemented, read, write, Description("Caldera Con=
+nection Status.")] void CalderaConnectionStatus([in] uint32 arg2, [out] uin=
+t32 argr);
+> +   [WmiMethodId(131), Implemented, read, write, Description("Surprise Un=
+plugged Flag Status.")] void SurpriseUnpluggedFlagStatus([out] uint32 argr)=
+;
+> +   [WmiMethodId(132), Implemented, read, write, Description("Clear Surpr=
+ise Unplugged Flag.")] void ClearSurpriseUnpluggedFlag([out] uint32 argr);
+> +   [WmiMethodId(133), Implemented, read, write, Description("Cancel Undo=
+ck Request.")] void CancelUndockRequest([out] uint32 argr);
+> +   [WmiMethodId(135), Implemented, read, write, Description("Devices in =
+Caldera.")] void DevicesInCaldera([in] uint32 arg2, [out] uint32 argr);
+> +   [WmiMethodId(136), Implemented, read, write, Description("Notify BIOS=
+ for SW ready to disconnect Caldera.")] void NotifyBIOSForSWReadyToDisconne=
+ctCaldera([out] uint32 argr);
+> +   [WmiMethodId(160), Implemented, read, write, Description("Tobii SW in=
+stallation.")] void TobiiSWinstallation([out] uint32 argr);
+> +   [WmiMethodId(161), Implemented, read, write, Description("Tobii SW Re=
+leased.")] void TobiiSWReleased([out] uint32 argr);
+> +   [WmiMethodId(162), Implemented, read, write, Description("Tobii Camer=
+a Power Reset.")] void TobiiCameraPowerReset([out] uint32 argr);
+> +   [WmiMethodId(163), Implemented, read, write, Description("Tobii Camer=
+a Power On.")] void TobiiCameraPowerOn([out] uint32 argr);
+> +   [WmiMethodId(164), Implemented, read, write, Description("Tobii Camer=
+a Power Off.")] void TobiiCameraPowerOff([out] uint32 argr);
+> + };
+> +
+> +Some of these methods get quite intricate so we will describe them using
+> +pseudo-code that vaguely resembles the original ASL code.
+> +
+> +Methods not described in the following document have unknown behavior.
+> +
+> +Argument Structure
+> +------------------
+> +
+> +All input arguments have type **uint32** and their structure is very sim=
+ilar
+> +between methods. Usually, the first byte corresponds to a specific *oper=
+ation*
+> +the method performs, and the subsequent bytes correspond to *arguments* =
+passed
+> +to this *operation*. For example, if an operation has code 0x01 and requ=
+ires an
+> +ID 0xA0, the argument you would pass to the method is 0xA001.
+> +
+> +
+> +Thermal Methods
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +
+> +WMI method Thermal_Information([in] uint32 arg2, [out] uint32 argr)
+> +-------------------------------------------------------------------
+> +
+> +::
+> +
+> + if BYTE_0(arg2) =3D=3D 0x01:
+> +         argr =3D 1
+> +
+> + if BYTE_0(arg2) =3D=3D 0x02:
+> +         argr =3D UNKNOWN_CONSTANT
+> +
+> + if BYTE_0(arg2) =3D=3D 0x03:
+> +         if BYTE_1(arg2) =3D=3D 0x00:
+> +                 argr =3D FAN_ID_0
+> +
+> +         if BYTE_1(arg2) =3D=3D 0x01:
+> +                 argr =3D FAN_ID_1
+> +
+> +         if BYTE_1(arg2) =3D=3D 0x02:
+> +                 argr =3D FAN_ID_2
+> +
+> +         if BYTE_1(arg2) =3D=3D 0x03:
+> +                 argr =3D FAN_ID_3
+> +
+> +         if BYTE_1(arg2) =3D=3D 0x04:
+> +                 argr =3D SENSOR_ID_CPU | 0x0100
+> +
+> +         if BYTE_1(arg2) =3D=3D 0x05:
+> +                 argr =3D SENSOR_ID_GPU | 0x0100
+> +
+> +         if BYTE_1(arg2) =3D=3D 0x06:
+> +                 argr =3D THERMAL_MODE_QUIET_ID
+> +
+> +         if BYTE_1(arg2) =3D=3D 0x07:
+> +                 argr =3D THERMAL_MODE_BALANCED_ID
+> +
+> +         if BYTE_1(arg2) =3D=3D 0x08:
+> +                 argr =3D THERMAL_MODE_BALANCED_PERFORMANCE_ID
+> +
+> +         if BYTE_1(arg2) =3D=3D 0x09:
+> +                 argr =3D THERMAL_MODE_PERFORMANCE_ID
+> +
+> +         if BYTE_1(arg2) =3D=3D 0x0A:
+> +                 argr =3D THERMAL_MODE_LOW_POWER_ID
+> +
+> +         if BYTE_1(arg2) =3D=3D 0x0B:
+> +                 argr =3D THERMAL_MODE_GMODE_ID
+> +
+> +         else:
+> +                 argr =3D 0xFFFFFFFF
+> +
+> + if BYTE_0(arg2) =3D=3D 0x04:
+> +         if is_valid_sensor(BYTE_1(arg2)):
+> +                 argr =3D SENSOR_TEMP_C
+> +         else:
+> +                 argr =3D 0xFFFFFFFF
+> +
+> + if BYTE_0(arg2) =3D=3D 0x05:
+> +         if is_valid_fan(BYTE_1(arg2)):
+> +                 argr =3D FAN_RPM()
+> +
+> + if BYTE_0(arg2) =3D=3D 0x06:
+> +         skip
+> +
+> + if BYTE_0(arg2) =3D=3D 0x07:
+> +         argr =3D 0
+> +
+> + If BYTE_0(arg2) =3D=3D 0x08:
+> +         if is_valid_fan(BYTE_1(arg2)):
+> +                 argr =3D 0
+> +         else:
+> +                 argr =3D 0xFFFFFFFF
+> +
+> + if BYTE_0(arg2) =3D=3D 0x09:
+> +         if is_valid_fan(BYTE_1(arg2)):
+> +                 argr =3D FAN_UNKNOWN_STAT_0()
+> +
+> +         else:
+> +                 argr =3D 0xFFFFFFFF
+> +
+> + if BYTE_0(arg2) =3D=3D 0x0A:
+> +         argr =3D THERMAL_MODE_BALANCED_ID
+> +
+> + if BYTE_0(arg2) =3D=3D 0x0B:
+> +         argr =3D CURRENT_THERMAL_MODE()
+> +
+> + if BYTE_0(arg2) =3D=3D 0x0C:
+> +         if is_valid_fan(BYTE_1(arg2)):
+> +                 argr =3D FAN_UNKNOWN_STAT_1()
+> +         else:
+> +                 argr =3D 0xFFFFFFFF
+> +
+> +Operation 0x03 list all available fan IDs, sensor IDs and thermal profil=
+e
+> +codes in order, but different models may have different number of fans a=
+nd
+> +thermal profiles. These are the known ranges:
+> +
+> +* Fan IDs: from 2 up to 4
+> +* Sensor IDs: 2
+> +* Thermal profile codes: from 1 up to 7
+> +
+> +In total BYTE_1(ARG2) may range from 0x5 up to 0xD depending on the mode=
+l.
+> +
+> +WMI method Thermal_Control([in] uint32 arg2, [out] uint32 argr)
+> +---------------------------------------------------------------
+> +
+> +::
+> +
+> + if BYTE_0(arg2) =3D=3D 0x01:
+> +         if is_valid_thermal_profile(BYTE_1(arg2)):
+> +                 SET_THERMAL_PROFILE(BYTE_1(arg2))
+> +                 argr =3D 0
+> +
+> + if BYTE_0(arg2) =3D=3D 0x02:
+> +         if is_valid_fan(BYTE_1(arg2)):
+> +                 SET_FAN_SPEED_MULTIPLIER(BYTE_2(arg2))
+> +                 argr =3D 0
+> +         else:
+> +                 argr =3D 0xFFFFFFFF
+> +
+> +.. note::
+> +   While you can manually change the fan speed multiplier with this meth=
+od,
+> +   Dell's BIOS tends to overwrite this changes anyway.
+> +
+> +These are the known thermal profile codes:
+> +
+> +::
+> +
+> + CUSTOM                         0x00
+> +
+> + BALANCED_USTT                  0xA0
+> + BALANCED_PERFORMANCE_USTT      0xA1
+> + COOL_USTT                      0xA2
+> + QUIET_USTT                     0xA3
+> + PERFORMANCE_USTT               0xA4
+> + LOW_POWER_USTT                 0xA5
+> +
+> + QUIET                          0x96
+> + BALANCED                       0x97
+> + BALANCED_PERFORMANCE           0x98
+> + PERFORMANCE                    0x99
+> +
+> + GMODE                          0xAB
+> +
+> +Usually if a model doesn't support the first four profiles they will sup=
+port
+> +the User Selectable Thermal Tables (USTT) profiles and vice-versa.
+> +
+> +GMODE replaces PERFORMANCE in G-Series laptops.
+> +
+> +WMI method GameShiftStatus([in] uint32 arg2, [out] uint32 argr)
+> +---------------------------------------------------------------
+> +
+> +::
+> +
+> + if BYTE_0(arg2) =3D=3D 0x1:
+> +         TOGGLE_GAME_SHIFT()
+> +         argr =3D GET_GAME_SHIFT_STATUS()
+> +
+> + if BYTE_0(arg2) =3D=3D 0x2:
+> +         argr =3D GET_GAME_SHIFT_STATUS()
+> +
+> +Game Shift Status does not change the fan speed profile but it could be =
+some
+> +sort of CPU/GPU power profile. Benchmarks have not been done.
+> +
+> +This method is only present on Dell's G-Series laptops and it's implemen=
+tation
+> +implies GMODE thermal profile is available, even if operation 0x03 of
+> +Thermal_Information does not list it.
+> +
+> +G-key on Dell's G-Series laptops also changes Game Shift status, so both=
+ are
+> +directly related.
+> +
+> +WMI method GetFanSensors([in] uint32 arg2, [out] uint32 argr)
+> +-------------------------------------------------------------
+> +
+> +::
+> +
+> + if BYTE_0(arg2) =3D=3D 0x1:
+> +        if is_valid_fan(BYTE_1(arg2)):
+> +                argr =3D 1
+> +        else:
+> +                argr =3D 0
+> +
+> + if BYTE_0(arg2) =3D=3D 0x2:
+> +        if is_valid_fan(BYTE_1(arg2)):
+> +                if BYTE_2(arg2) =3D=3D 0:
+> +                        argr =3D=3D SENSOR_ID
+> +                else
+> +                        argr =3D=3D 0xFFFFFFFF
+> +        else:
+> +                argr =3D 0
+> +
+> +Overclocking Methods
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +
+> +.. warning::
+> +   These methods have not been tested and are only partially reverse
+> +   engineered.
+> +
+> +WMI method Return_OverclockingReport([out] uint32 argr)
+> +-------------------------------------------------------
+> +
+> +::
+> +
+> + CSMI (0xE3, 0x99)
+> + argr =3D 0
+> +
+> +CSMI is an unknown operation.
+> +
+> +WMI method Set_OCUIBIOSControl([in] uint32 arg2, [out] uint32 argr)
+> +-------------------------------------------------------------------
+> +
+> +::
+> +
+> + CSMI (0xE3, 0x99)
+> + argr =3D 0
+> +
+> +CSMI is an unknown operation.
+> +
+> +WMI method Clear_OCFailSafeFlag([out] uint32 argr)
+> +--------------------------------------------------
+> +
+> +::
+> +
+> + CSMI (0xE3, 0x99)
+> + argr =3D 0
+> +
+> +CSMI is an unknown operation.
+> +
+> +
+> +WMI method MemoryOCControl([in] uint32 arg2, [out] uint32 argr)
+> +---------------------------------------------------------------
+> +
+> +AWCC supports memory overclocking, but this method is very intricate and=
+ has
+> +not been deciphered yet.
+> +
+> +GPIO methods
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +
+> +These methods are probably related to some kind of firmware update syste=
+m,
+> +through a GPIO device.
+> +
+> +.. warning::
+> +   These methods have not been tested and are only partially reverse
+> +   engineered.
+> +
+> +WMI method FWUpdateGPIOtoggle([in] uint32 arg2, [out] uint32 argr)
+> +------------------------------------------------------------------
+> +
+> +::
+> +
+> + if BYTE_0(arg2) =3D=3D 0:
+> +         if BYTE_1(arg2) =3D=3D 1:
+> +                 SET_PIN_A_HIGH()
+> +         else:
+> +                 SET_PIN_A_LOW()
+> +
+> + if BYTE_0(arg2) =3D=3D 1:
+> +         if BYTE_1(arg2) =3D=3D 1:
+> +                 SET_PIN_B_HIGH()
+> +
+> +         else:
+> +                 SET_PIN_B_LOW()
+> +
+> + else:
+> +         argr =3D 1
+> +
+> +WMI method ReadTotalofGPIOs([out] uint32 argr)
+> +----------------------------------------------
+> +
+> +::
+> +
+> + argr =3D 0x02
+> +
+> +WMI method ReadGPIOpPinStatus([in] uint32 arg2, [out] uint32 argr)
+> +------------------------------------------------------------------
+> +
+> +::
+> +
+> + if BYTE_0(arg2) =3D=3D 0:
+> +         argr =3D PIN_A_STATUS
+> +
+> + if BYTE_0(arg2) =3D=3D 1:
+> +         argr =3D PIN_B_STATUS
+> +
+> +Other information Methods
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D
+> +
+> +WMI method ReadChassisColor([out] uint32 argr)
+> +----------------------------------------------
+> +
+> +::
+> +
+> + argr =3D CHASSIS_COLOR_ID
+> +
+> +Acknowledgements
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +
+> +Kudos to `AlexIII <https://github.com/AlexIII/tcc-g15>`_ for documenting
+> +and testing available thermal profile codes.
+> +
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index c27f31907..25f6de4c2 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -792,6 +792,7 @@ F:=09drivers/perf/alibaba_uncore_drw_pmu.c
+>  ALIENWARE WMI DRIVER
+>  L:=09Dell.Client.Kernel@dell.com
+>  S:=09Maintained
+> +F:=09Documentation/wmi/devices/alienware-wmi.rst
+>  F:=09drivers/platform/x86/dell/alienware-wmi.c
+> =20
+>  ALLEGRO DVT VIDEO IP CORE DRIVER
+>=20
+--8323328-1737758138-1729865601=:946--
 
