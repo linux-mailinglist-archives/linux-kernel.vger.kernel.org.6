@@ -1,167 +1,181 @@
-Return-Path: <linux-kernel+bounces-382521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CD4F9B0F51
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 21:45:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 155AC9B0F54
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 21:46:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBAA8284508
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 19:45:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B78B2842C5
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 19:46:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFAA120F3E1;
-	Fri, 25 Oct 2024 19:45:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42A4120F3E6;
+	Fri, 25 Oct 2024 19:46:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZlFixrc1"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="BgYrs3ek"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A2AA20EA50;
-	Fri, 25 Oct 2024 19:45:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38F6920BB2E;
+	Fri, 25 Oct 2024 19:46:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729885535; cv=none; b=IQw43yvAcLDLGBdTr6PL9BEDZXxcC2S5PWOH3Uc0ZL8xZ9wwXm8WXkRHkr89AzsXQcuPPGb4sQIvMMlYvPmhDYUgM6n4mdyopHCz9YHCUwdoOH3Z2pzVBUcVdDiuvRbn73QtnR/g6CgPN1Xa5ePIBky+jdzRF+uSrPJNOy0t9+Q=
+	t=1729885572; cv=none; b=OfJNuOQ+VyYv2QnHxWdQ2l+ZVeeMnCHtTycM/qjx2EgVeXAdqkFC7jNFJaQu/s2R5dRTYi89vYkgOqMRR+tPLHETgHogZRNbxE4rzOvOGaeLn6lTGR0SoLNdGG4qogb6fLADB5BVd06Jegc90idro5F1NOabTJU7vTVmQJCeH9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729885535; c=relaxed/simple;
-	bh=Odm8rM5oG6O35cTkBqAj/y5K/dJEj/4GZ5eaaAaoIhE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NoT89M4EtKfbfNUOktovTsUOrlXlvW5CYjuM19yIgbgPu8EZi+pAJ4bMXcZja9DEB3wXiV7EQc7XEbBj16opo00klqkc6jjIcLm99L4NCrHgO48GvtEIWDlN/AGbVCWQb4Hbz/lrwtoPfYIGq7195e1klnuaaYshlf4Xs4efaCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZlFixrc1; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729885533; x=1761421533;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Odm8rM5oG6O35cTkBqAj/y5K/dJEj/4GZ5eaaAaoIhE=;
-  b=ZlFixrc1o3OJ7LRpDkd/s4PR0nDS+pFK2bsOcV/8sd8jntlp0jXs/m3X
-   20/lpqhOpThrKb0aRvTLZbTpSy/tggdymoWNZ+xIN6dnGWPevA/u46M4h
-   lC3jwnE3k/3YGVzgrkvvMM2j2zZg370YnBqoP7ANMEGeVcBa147r+iRrH
-   2B29XwnR5yBPvpA5aK28sJeW7CY1jjWo3M5tp8x5NrY2Of9GILk1mh3Tr
-   agdET/RS+3sQpIRq7I+1ygaWBgS4Jz50239NxrEtVPBla66PDcFcRzNMJ
-   mdUVfQ7eN7NxD6Mck3MY8Yzj2lWkB8R7F4/NxvO1G6BB3Avx8saAcLdRd
-   Q==;
-X-CSE-ConnectionGUID: 0SLS9YykT9Wsj1w1hNojDw==
-X-CSE-MsgGUID: Egg5X3jXS5ajElwiXBjDNw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="29432378"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="29432378"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2024 12:45:33 -0700
-X-CSE-ConnectionGUID: +xmLViUaSXaFuDaMWKK8sQ==
-X-CSE-MsgGUID: 2XwIh/TkTOmQovypF9PlIw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,232,1725346800"; 
-   d="scan'208";a="104331697"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa002.fm.intel.com with ESMTP; 25 Oct 2024 12:45:27 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t4QFR-000YpB-1b;
-	Fri, 25 Oct 2024 19:45:25 +0000
-Date: Sat, 26 Oct 2024 03:44:53 +0800
-From: kernel test robot <lkp@intel.com>
-To: Huan Tang <tanghuan@vivo.com>, alim.akhtar@samsung.com,
-	avri.altman@wdc.com, bvanassche@acm.org,
-	James.Bottomley@hansenpartnership.com, martin.petersen@oracle.com,
-	beanhuo@micron.com, luhongfei@vivo.com, quic_cang@quicinc.com,
-	keosung.park@samsung.com, viro@zeniv.linux.org.uk,
-	quic_mnaresh@quicinc.com, peter.wang@mediatek.com,
-	manivannan.sadhasivam@linaro.org, ahalaney@redhat.com,
-	quic_nguyenb@quicinc.com, linux@weissschuh.net, ebiggers@google.com,
-	minwoo.im@samsung.com, linux-kernel@vger.kernel.org,
-	linux-scsi@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, opensource.kernel@vivo.com,
-	Huan Tang <tanghuan@vivo.com>
-Subject: Re: [PATCH] ufs: core: Add WB buffer resize support
-Message-ID: <202410260352.WRMItCze-lkp@intel.com>
-References: <20241025085924.4855-1-tanghuan@vivo.com>
+	s=arc-20240116; t=1729885572; c=relaxed/simple;
+	bh=a1xD5U+KJRHHHihCSOYqaYazM7sD048UvQTjfIB42Gs=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=fFjrJbcW5Zq+Z0bXujINIgSYXe01TkdSdP0p4E0blddIQmytZYPbZqS5x2G2SGBw6xaH8gor6npGXQdFHoBmKrOgpo9O9j0jrMDFdA0EmHoMg+vWXOBNbuQA9fI625W7HopV0oUDPcGCT5SM7zIZa3X9FpU6emKZbqa2GQUt2rE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=BgYrs3ek; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1729885568;
+	bh=a1xD5U+KJRHHHihCSOYqaYazM7sD048UvQTjfIB42Gs=;
+	h=From:Subject:Date:To:Cc:From;
+	b=BgYrs3ekdOayxKEFAUcDI91I69Pms2obdaqO60iGnJ+8ccKCq+VqafhPQliizIHv2
+	 4/Om4Yu589ezyURJsJqv4HmTZmRQ0bIRkLyXIhhWdsZvV7fbdVJK7xLUuQ9DnEZlG6
+	 R/ZjygaS8Y0NGtodknIvfvg+Mhfzj4hq3SORioMWnx3ykaCuGIS2ZP2AK93ttOPA5A
+	 wF0Gv6sKFJ+hkGAfHQbzI0xcI5VktsE4SCHngYoRNgToH3lCXZGihUZ/kV/9QUsrdd
+	 T3jufgDRuN2iiogTP0S2o7IqebXyfot3eEEngGO0DIeZbEfA4ZBgCuMeKUEw3xT9Ji
+	 x6O8hHrJY1O6g==
+Received: from [192.168.1.54] (pool-100-2-116-133.nycmny.fios.verizon.net [100.2.116.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nfraprado)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 85DC217E3704;
+	Fri, 25 Oct 2024 21:46:06 +0200 (CEST)
+From: =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
+Subject: [PATCH RFC v2 0/5] Verify bias functionality for pinctrl_paris
+ driver through new gpio test
+Date: Fri, 25 Oct 2024 15:45:35 -0400
+Message-Id: <20241025-kselftest-gpio-set-get-config-v2-0-040d748840bb@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241025085924.4855-1-tanghuan@vivo.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAF/1G2cC/4WNTQrCMBCFr1JmbSSpNlJXguAB3EoX6ThpB9tOS
+ UpRSu9uKO5dPHg/8L0FIgWmCOdsgUAzR5YhhXyXAbZuaEjxM2XIdX7UpbbqFanzE8VJNSOLipR
+ MEsrguVGWirq2J43GFZAYYyDP743/gPvtClUqW46ThM/2OZtt+uHLP/jZKK2MddoWzuMBzQWl6
+ 1wtwe1ReqjWdf0C88Dq29MAAAA=
+X-Change-ID: 20240906-kselftest-gpio-set-get-config-6e5bb670c1a5
+To: Sean Wang <sean.wang@kernel.org>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Bamvor Jian Zhang <bamv2005@gmail.com>, Shuah Khan <shuah@kernel.org>
+Cc: kernel@collabora.com, linux-mediatek@lists.infradead.org, 
+ linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kselftest@vger.kernel.org, 
+ kernelci@lists.linux.dev, 
+ =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
+X-Mailer: b4 0.14.2
 
-Hi Huan,
+This series was motivated by the regression fixed by 166bf8af9122
+("pinctrl: mediatek: common-v2: Fix broken bias-disable for
+PULL_PU_PD_RSEL_TYPE"). A bug was introduced in the pinctrl_paris driver
+which prevented certain pins from having their bias configured.
 
-kernel test robot noticed the following build warnings:
+Running this test on the mt8195-tomato platform with the test plan
+included below[1] shows the test passing with the fix applied, but failing
+without the fix:
 
-[auto build test WARNING on jejb-scsi/for-next]
-[also build test WARNING on mkp-scsi/for-next linus/master v6.12-rc4 next-20241025]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+With fix:
+  $ ./gpio-setget-config.py
+  TAP version 13
+  # Using test plan file: ./google,tomato.yaml
+  1..3
+  ok 1 pinctrl_paris.34.pull-up
+  ok 2 pinctrl_paris.34.pull-down
+  ok 3 pinctrl_paris.34.disabled
+  # Totals: pass:3 fail:0 xfail:0 xpass:0 skip:0 error:0
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Huan-Tang/ufs-core-Add-WB-buffer-resize-support/20241025-170131
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git for-next
-patch link:    https://lore.kernel.org/r/20241025085924.4855-1-tanghuan%40vivo.com
-patch subject: [PATCH] ufs: core: Add WB buffer resize support
-config: arm-randconfig-004-20241026 (https://download.01.org/0day-ci/archive/20241026/202410260352.WRMItCze-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241026/202410260352.WRMItCze-lkp@intel.com/reproduce)
+Without fix:
+  $ ./gpio-setget-config.py
+  TAP version 13
+  # Using test plan file: ./google,tomato.yaml
+  1..3
+  # Bias doesn't match: Expected pull-up, read pull-down.
+  not ok 1 pinctrl_paris.34.pull-up
+  ok 2 pinctrl_paris.34.pull-down
+  # Bias doesn't match: Expected disabled, read pull-down.
+  not ok 3 pinctrl_paris.34.disabled
+  # Totals: pass:1 fail:2 xfail:0 xpass:0 skip:0 error:0
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410260352.WRMItCze-lkp@intel.com/
+In order to achieve this, the first three patches expose bias
+configuration through the GPIO API in the MediaTek pinctrl drivers,
+notably, pinctrl_paris, patch 4 extends the gpio-mockup-cdev utility for
+use by patch 5, and patch 5 introduces a new GPIO kselftest that takes a
+test plan in YAML, which can be tailored per-platform to specify the
+configurations to test, and sets and gets back each pin configuration to
+verify that they match and thus that the driver is behaving as expected.
 
-All warnings (new ones prefixed by >>):
+Since the GPIO uAPI only allows setting the pin configuration, getting
+it back is done through pinconf-pins in the pinctrl debugfs folder.
 
-   drivers/ufs/core/ufs-sysfs.c: In function 'wb_toggle_buf_resize_store':
->> drivers/ufs/core/ufs-sysfs.c:419:12: warning: variable 'index' set but not used [-Wunused-but-set-variable]
-     419 |         u8 index;
-         |            ^~~~~
+The test currently only verifies bias but it would be easy to extend to
+verify other pin configurations.
 
+The test plan YAML file can be customized for each use-case and is
+platform-dependant. For that reason, only an example is included in
+patch 3 and the user is supposed to provide their test plan. That said,
+the aim is to collect test plans for ease of use at [2].
 
-vim +/index +419 drivers/ufs/core/ufs-sysfs.c
+[1] This is the test plan used for mt8195-tomato:
 
-   413	
-   414	static ssize_t wb_toggle_buf_resize_store(struct device *dev,
-   415			struct device_attribute *attr, const char *buf, size_t count)
-   416	{
-   417		struct ufs_hba *hba = dev_get_drvdata(dev);
-   418		unsigned int wb_buf_resize_op;
- > 419		u8 index;
-   420		ssize_t res;
-   421	
-   422		if (!ufshcd_is_wb_allowed(hba) || !hba->dev_info.wb_enabled ||
-   423			!hba->dev_info.b_presrv_uspc_en) {
-   424			dev_err(dev, "The WB buf resize is not allowed!\n");
-   425			return -EOPNOTSUPP;
-   426		}
-   427	
-   428		if (kstrtouint(buf, 0, &wb_buf_resize_op))
-   429			return -EINVAL;
-   430	
-   431		if (wb_buf_resize_op != 0x01 && wb_buf_resize_op != 0x02) {
-   432			dev_err(dev, "The operation %u is invalid!\n", wb_buf_resize_op);
-   433			return -EINVAL;
-   434		}
-   435	
-   436		down(&hba->host_sem);
-   437		if (!ufshcd_is_user_access_allowed(hba)) {
-   438			res = -EBUSY;
-   439			goto out;
-   440		}
-   441	
-   442		index = ufshcd_wb_get_query_index(hba);
-   443		ufshcd_rpm_get_sync(hba);
-   444		res = ufshcd_wb_toggle_buf_resize(hba, wb_buf_resize_op);
-   445		ufshcd_rpm_put_sync(hba);
-   446	
-   447	out:
-   448		up(&hba->host_sem);
-   449		return res < 0 ? res : count;
-   450	}
-   451	
+- label: "pinctrl_paris"
+  tests:
+  # Pin 34 has type MTK_PULL_PU_PD_RSEL_TYPE and is unused.
+  # Setting bias to MTK_PULL_PU_PD_RSEL_TYPE pins was fixed by
+  # 166bf8af9122 ("pinctrl: mediatek: common-v2: Fix broken bias-disable for PULL_PU_PD_RSEL_TYPE")
+  - pin: 34
+    bias: "pull-up"
+  - pin: 34
+    bias: "pull-down"
+  - pin: 34
+    bias: "disabled"
 
+[2] https://github.com/kernelci/platform-test-parameters
+
+Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+---
+Changes in v2:
+- Added patches 2 and 3 enabling the extra GPIO pin configurations on
+  the other mediatek drivers: pinctrl-moore and pinctrl-mtk-common
+- Tweaked function name in patch 1:
+  mtk_pinconf_set -> mtk_paris_pin_config_set,
+  to make it clear it is not a pinconf_ops
+- Adjusted commit message to make it clear the current support is
+  limited to pins supported by the EINT controller
+- Link to v1: https://lore.kernel.org/r/20240909-kselftest-gpio-set-get-config-v1-0-16a065afc3c1@collabora.com
+
+---
+Nícolas F. R. A. Prado (5):
+      pinctrl: mediatek: paris: Expose more configurations to GPIO set_config
+      pinctrl: mediatek: moore: Expose more configurations to GPIO set_config
+      pinctrl: mediatek: common: Expose more configurations to GPIO set_config
+      selftest: gpio: Add wait flag to gpio-mockup-cdev
+      selftest: gpio: Add a new set-get config test
+
+ drivers/pinctrl/mediatek/pinctrl-moore.c           | 283 +++++++++++----------
+ drivers/pinctrl/mediatek/pinctrl-mtk-common.c      |  48 ++--
+ drivers/pinctrl/mediatek/pinctrl-paris.c           |  26 +-
+ tools/testing/selftests/gpio/Makefile              |   2 +-
+ tools/testing/selftests/gpio/gpio-mockup-cdev.c    |  14 +-
+ .../gpio-set-get-config-example-test-plan.yaml     |  15 ++
+ .../testing/selftests/gpio/gpio-set-get-config.py  | 183 +++++++++++++
+ 7 files changed, 395 insertions(+), 176 deletions(-)
+---
+base-commit: a39230ecf6b3057f5897bc4744a790070cfbe7a8
+change-id: 20240906-kselftest-gpio-set-get-config-6e5bb670c1a5
+
+Best regards,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Nícolas F. R. A. Prado <nfraprado@collabora.com>
+
 
