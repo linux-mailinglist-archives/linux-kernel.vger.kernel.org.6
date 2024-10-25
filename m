@@ -1,145 +1,139 @@
-Return-Path: <linux-kernel+bounces-381751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58C2C9B03C8
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:19:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BD059B03D5
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:20:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C27DCB21F25
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 13:19:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10D38284981
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 13:20:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E5BB212171;
-	Fri, 25 Oct 2024 13:19:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GMgzJIXY";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="P1FxEngj"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A191A212167
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 13:19:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B065F21217F;
+	Fri, 25 Oct 2024 13:20:33 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB00952F76;
+	Fri, 25 Oct 2024 13:20:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729862375; cv=none; b=LlSt/fxa5gOkkJB3741dsYeYtEnDOugZIwBlsiedF/OQi8y/zikua9FKUwicQJLzHFTF5zcVdCnxAqIgMvop06D1xCsGHJDF/roXcTU2tA2e8ZzA8Wq2DHFKMfdFOkxu/s25GVR2oxd3hoQ5GJRVEGM5wI15W0c8Jmx1//xBSYU=
+	t=1729862433; cv=none; b=lsYc9URyVbPf+W+bLc8zVK8pYYOiwNhivTfOy8JDZ9D7nym6Y4Eq5UX61CezmMYrDM9j7YfYr84ZVi3svkrfFkdjyCMFebITWRGcUM4g+yWvTogvH6RY1MzNT+QcQOyXg/xVKDoCRl8CnGeOnXnJbffWxdxSZCZnp/eTWy25XPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729862375; c=relaxed/simple;
-	bh=h/nXSoCzi8upY64Z1TXiDZ9JZaa/yNyWfYxebAEpJo0=;
+	s=arc-20240116; t=1729862433; c=relaxed/simple;
+	bh=Eudzm+dYRXS5yMi3FTODqWIFrwzENn5t60Or8yh2U6g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QfFdXAasvbNfMkdb9jqGGarPONt8l5ZLEs59766LTk3rODmSVsxMftPUhZk8TGzPXdn6rqd+9r/jThhKPJirBKkSUBeTrhMaES18nZF31NELdhab4l2EURbPxgf1F75YH+FxWOqu747p6P2R7aNKa6WcopYnkhKVoSVFZvu2mII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GMgzJIXY; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=P1FxEngj; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 25 Oct 2024 15:19:30 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1729862372;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xZzoK6wO/WRgPUCt+z9le+lN0Jra0KXjelgNgcWkVDQ=;
-	b=GMgzJIXYyttgAawwDtMWcFw1RQ+DU+cN1jbDGKV/l6P3WBgCLxEtEB1/q12q5BwavKh5qq
-	8+e/VTIw++ZT62gZPztqTjqhrVrnsdIDABgvEz+EFv0TN1hA4MiL59HRdxrfLZI/+7XgCx
-	LHTs1yHxvGq4AGMkaRZ4YObYaeqxiMVB4PsTIIRzkAm8ggPs15bttAp7obrFJfadA+bSph
-	6WJjz8BftDcUBJ1hl/fKzFrKpvobRQqrGkX4k+ba3rxA2aDsh05FimdXzZJXmCDDcZE2tj
-	VFiFhHkgJT6RlGmDALVPl1r56V2iFKZ/4eaFCI8BfWumv0IbO8u8FJZm1/3NLw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1729862372;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xZzoK6wO/WRgPUCt+z9le+lN0Jra0KXjelgNgcWkVDQ=;
-	b=P1FxEngjLVBCZa9nTxTh1zhpxy5n4gXygBCrcMoQm6zsoaJiNdSjupakr64qfHJRY+p99g
-	RfmaaGjGnni8KwAQ==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Shrikanth Hegde <sshegde@linux.ibm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
-	juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, vschneid@redhat.com, ankur.a.arora@oracle.com,
-	efault@gmx.de, tglx@linutronix.de, mingo@kernel.org
-Subject: Re: [PATCH 2/5] sched: Add Lazy preemption model
-Message-ID: <20241025131930.cVOckvQQ@linutronix.de>
-References: <20241007074609.447006177@infradead.org>
- <20241007075055.331243614@infradead.org>
- <e334aff9-248c-4a00-98e1-7bcb7cdd5e90@linux.ibm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=i2RyIZ90KtQjx9psncclnBSfV1LiqbxKRnxAoQlDBYE8t4OoxhtRIkbfGEglNB8b2g6ruO4oQNcDq2uiZ9StuUJWtUhPajIvlsqTBh1uDCdGoSy0qkISjviFGEq+lK0a9XaE3iYNfwnYUIWyo2TG0FCDTQICSapgdKGKaKIQg14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 60CAC339;
+	Fri, 25 Oct 2024 06:20:57 -0700 (PDT)
+Received: from localhost (e132581.arm.com [10.2.76.71])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 42D3F3F71E;
+	Fri, 25 Oct 2024 06:20:27 -0700 (PDT)
+Date: Fri, 25 Oct 2024 14:20:21 +0100
+From: Leo Yan <leo.yan@arm.com>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Jing Zhang <renyu.zj@linux.alibaba.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Richter <tmricht@linux.ibm.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	xueshuai@linux.alibaba.com, zhuo.song@linux.alibaba.com
+Subject: Re: [PATCH] perf/tests: fix record+probe_libc_inet_pton test on
+ aarch64
+Message-ID: <20241025132021.GB359792@e132581.arm.com>
+References: <1728978807-81116-1-git-send-email-renyu.zj@linux.alibaba.com>
+ <ZxGL1LF9mVzrUGOU@google.com>
+ <20241020113528.GA3209400@e132581.arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <e334aff9-248c-4a00-98e1-7bcb7cdd5e90@linux.ibm.com>
+In-Reply-To: <20241020113528.GA3209400@e132581.arm.com>
 
-On 2024-10-22 22:14:41 [+0530], Shrikanth Hegde wrote:
-> > --- a/kernel/sched/fair.c
-> > +++ b/kernel/sched/fair.c
-> > @@ -1251,7 +1251,7 @@ static void update_curr(struct cfs_rq *c
-> >   		return;
-> >   	if (resched || did_preempt_short(cfs_rq, curr)) {
+On Sun, Oct 20, 2024 at 12:35:28PM +0100, Leo Yan wrote:
+
+> Hi Namhyung, Jing,
 > 
+> On Thu, Oct 17, 2024 at 03:12:36PM -0700, Namhyung Kim wrote:
+> >
+> > Hello,
+> >
+> > On Tue, Oct 15, 2024 at 03:53:27PM +0800, Jing Zhang wrote:
+> > > Since commit 1f85d016768f ("perf test record+probe_libc_inet_pton: Fix
+> > > call chain match on x86_64") remove function getaddrinfo() on expected
+> > > file, the test failed on aarch64. On aarch64, function getaddrinfo()
+> > > show up in the call chain.
+> > >
+> > > $perf script -i /tmp/perf.data.1PV
+> > > ping 2588319 [125] 500119.122843: probe_libc:inet_pton: (ffff9a4f7410)
+> > >             ffff9a4f7410 __GI___inet_pton+0x0 (/usr/lib64/libc-2.32.so)
+> > >             ffff9a4c5f7c getaddrinfo+0xec (/usr/lib64/libc-2.32.so)
+> > >             aaaad6d32b38 [unknown] (/usr/bin/ping)
+> >
+> > I'm curious how other ARM folks don't see this.  Does it depend on
+> > something other?
 > 
+> This test has several dependencies. E.g. libtraceevent and IPv6 (one
+> of my machines skips the test due to lack IPv6 interface).
 > 
-> If there is a long running task, only after it is not eligible, LAZY would be set and
-> subsequent tick would upgrade it to NR. If one sets sysctl_sched_base_slice to a large
-> value (max 4seconds), LAZY would set thereafter(max 4 seconds) if there in no wakeup in
-> that CPU.
+> This test is definitely a regression on Arm64 machine. I will go back to
+> check why this test failure is missed in our CI. If have any update,
+> will let you know.
 > 
-> If i set sysctl_sched_base_slice=300ms, spawn 2 stress-ng on one CPU, then LAZY bit is
-> set usually after 300ms of sched_switch if there are no wakeups. Subsequent tick NR is set.
-> Initially I was thinking, if there is a long running process, then LAZY would be set after
-> one tick and on subsequent tick NR would set. I was wrong. It might take a long time for LAZY
-> to be set, and On subsequent tick NR would be set.
+> > Then can we make the line optional like we did on s390 recently?
 > 
-> That would be expected behavior since one setting sysctl_sched_base_slice know what to expect?
-
-I guess so. Once the slice is up then the NEED_RESCHED bit is replaced
-with the LAZY bit. That means a return-to-userland (from a syscall) or
-the following tick will lead to a scheduling event.
-
-> > -		resched_curr(rq);
-> > +		resched_curr_lazy(rq);
-> >   		clear_buddies(cfs_rq, curr);
-> >   	}
-> >   }
-> > @@ -5677,7 +5677,7 @@ entity_tick(struct cfs_rq *cfs_rq, struc
-> >   	 * validating it and just reschedule.
-> >   	 */
-> >   	if (queued) {
+> I verified two distros (one is libc-2.31 and another is libc-2.37), both of
+> them have the symbol "getaddrinfo":
 > 
-> What's this queued used for? hrtick seems to set it. I haven't understood how it works.
-
-from 20241009074631.GH17263@noisy.programming.kicks-ass.net:
-| hrtick is disabled by default (because expensive) and so it doesn't
-| matter much, but it's purpose is to increase accuracy and hence I left
-| it untouched for now.
-
-This setups a hrtimer for the (remaining) time slice and invokes the
-task_tick from there (instead of the regular tick).
-
-> > -		resched_curr(rq_of(cfs_rq));
-> > +		resched_curr_lazy(rq_of(cfs_rq));
-> >   		return;
-> >   	}
-> >   	/*
-> > @@ -8832,7 +8832,7 @@ static void check_preempt_wakeup_fair(st
-> >   	return;
-> >   preempt:
-> > -	resched_curr(rq);
+> Machine 1:
 > 
-> Is it better to call resched_curr here? When the code arrives here, it wants to
-> run pse as soon as possible right?
+>   # nm -D /usr/lib/aarch64-linux-gnu/libc-2.31.so | grep getaddrinfo
+>     00000000000bdf58 T getaddrinfo
+> 
+> Machine 2:
+> 
+>   # /usr/lib/aarch64-linux-gnu/libc.so.6
+>   GNU C Library (Debian GLIBC 2.37-16) stable release version 2.37.
+> 
+>   # nm -D /usr/lib/aarch64-linux-gnu/libc.so.6 | grep getaddrinfo
+>   00000000000d4da4 T getaddrinfo@@GLIBC_2.17
+>   0000000000114260 T getaddrinfo_a@@GLIBC_2.34
+>   0000000000114260 T getaddrinfo_a@GLIBC_2.17
 
-But wouldn't then every try_to_wakeup()/ wake_up() result in immediate
-preemption? Letting it run and waiting to give up on its own, having the
-preemption on return to userland results usually in better performance.
-At least this is what I observed while playing with this.
+Update a bit for Arm64. Without this patch, we do see the test can pass on
+Debian bookworm (with libc 2.36) but failed on older distros.
 
-> > +	resched_curr_lazy(rq);
-> >   }
-> >   static struct task_struct *pick_task_fair(struct rq *rq)
+On the Debian bookworm, it prints out the log same as above. Seems to me,
+these symbols with suffix "@GLIBC_2.x" are legacy functions for old libc
+compatible but is not used by the new libc.
 
-Sebastian
+So we need to rule out the case for the symbol with suffix. Please check
+if below change is suitable?
+
+diff --git a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
+index f38c8ead0b03..2079c9375af5 100755
+--- a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
++++ b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
+@@ -54,6 +54,11 @@ trace_libc_inet_pton_backtrace() {
+                ;;
+        *)
+                eventattr='max-stack=3'
++               # The new version libc (e.g. libc 2.36) contains symbol getaddrinfo@@GLIBC_2.17
++               # which is not used. Do strick checking for 'getaddrinfo' without any suffix.
++               if nm -D $libc | grep -q 'getaddrinfo$'; then
++                       echo "getaddrinfo\+0x[[:xdigit:]]+[[:space:]]\($libc\)$" >> $expected
++               fi
+                echo ".*(\+0x[[:xdigit:]]+|\[unknown\])[[:space:]]\(.*/bin/ping.*\)$" >> $expected
+                ;;
+        esac
+
+Thanks,
+Leo
 
