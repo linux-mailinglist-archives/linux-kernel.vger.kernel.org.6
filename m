@@ -1,252 +1,160 @@
-Return-Path: <linux-kernel+bounces-381966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D92BC9B06FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:05:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC1739B06A0
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:01:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 087071C2033D
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:05:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71C6C282F2D
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:01:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52C1C21893A;
-	Fri, 25 Oct 2024 15:01:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D5841534E9;
+	Fri, 25 Oct 2024 15:00:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RqUdISU3"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Aps3RB1f"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A34920D4EB
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 15:00:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DF9C290F;
+	Fri, 25 Oct 2024 15:00:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729868463; cv=none; b=AhNkwKEkTZPnlwCglEhiPJzZsioOvPU4S+bb2b6il5hGp1+T6XAnFEameaO6sku3T5v3++QsTZfLW+FJ3YM9LWaifOgySh+pPx+oKdVTY+ZM4Cgbyjr+Xnl7zNFCa4UaL46j/wxPghQWFUo4ZRt+hgAT/FQNdRLdkM7bTdje8Ns=
+	t=1729868422; cv=none; b=S8lFkafrSmGzPHlwoaqltEzb5PBH83Qj6EA7mJqLC5izyp7VQNVY4yzgyIwFygmMDwt6fPZbuhSYEB8wRyrlbJ5SArQvi1E96y2lYsH/TMm2oRmgkqi7xc+8RjffRh/Q5Qnr/w8m7p6M/JfqvK44vOxyuEya279oTtx6g19SVEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729868463; c=relaxed/simple;
-	bh=RcTa7mPaWn9S/3FL+we6iyllf4n7RFykRGESqGJxd90=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Kc6gXEOrWEuNeuyNxjytdwrEA5Wkk57A7VXASLwEXHTSr1pwSF1lJEJFWADGeakAkpt9rl0iL6aRQJbudAGZFsByfCyEGdknHKn9XLzLvkeEKi2hhBseYqtaNH4NF2Y2Pr9ICQfpzCLdWu4yNMEicMDWFmsnQ5VxbbaTofaOM10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RqUdISU3; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729868457;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AonUKd9JFeAmu2FkelnO1Z47g8svJdBoVMsQtMVmtG0=;
-	b=RqUdISU3do1pwaj63hjQtKPcrL6jcHZeCaC4wm3F3kGaXAwiN3Df5LO2+iytCU4VwhHNgn
-	TInL0oeff8Memm3fSb5NHsJsSXk30ch/NjEEDAbxiWgCe3YM81LuMX1Yeh4niBGmvuVZKS
-	l40MOzQn/dIliY8pUG0A2eKNv2PYZyk=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-116-YYuo7jAGMTudqvqXEYZwFg-1; Fri, 25 Oct 2024 11:00:56 -0400
-X-MC-Unique: YYuo7jAGMTudqvqXEYZwFg-1
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-37d4922d8c7so1209621f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 08:00:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729868455; x=1730473255;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AonUKd9JFeAmu2FkelnO1Z47g8svJdBoVMsQtMVmtG0=;
-        b=QCy0yIvduM42GTkcSCbvXqLhteJ3ijnJ8uCu0dRyH/gq5dm1wXDFGrXbwyt3BRGfC5
-         PjFRmCiwhbtsN554cpfS3oYlJRkp8VM33Y9awu5qaYOzsk+W/VjCr9/bH+asduQnbtOQ
-         4tBwJqIoJUQbt+vXqKc56owsD3NAfWkQIsXgiyAS/ChYCbAJGdzNOV6zUvrOyGj8XLRU
-         Wj+3AHraDdI1zNiXW/aV09AxibRJVHuPxiiN3isWODd5oXccFVCGQ5ugxfFiI0vuSNtd
-         iyvGghaerqiuvUNgAMFaZvsqR0l6vXjKi2yKD52IledrA2qkvlrGHPylMH/MsLKQdydC
-         +W2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXbIfNJe2fjme422B7E2Fj310Wh+2RrIQM4D04XwPOWBkItPyZQXk6x8Q7FsMCGa9RL/tDwEx48qq9cp+c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxeDYFNbhNDxbj0XsszNr994Covv8t2jD7WKCPD6wCWoywqgx3V
-	9VefFzwcq94D55bhdBWDPeCvVld88ZfezZx4AIotDKANYTQfv1syGfvz/jPX+1zVKd2uGgG2n1G
-	E+fQTL8cq6WaJQbiAAZrdieaIVicpPo2tASyu5ecAE9hS5fOWhCOoi2DnTuzzOQ==
-X-Received: by 2002:a5d:434e:0:b0:37d:4d3f:51e9 with SMTP id ffacd0b85a97d-37efcf7665amr6749347f8f.40.1729868454497;
-        Fri, 25 Oct 2024 08:00:54 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFYS4KQfglA92Gzw16122qjYNkYIWyEgmDdpCu016/6uuxTInLXjVC7AfMuCfkKwlTQ2XYDlQ==
-X-Received: by 2002:a5d:434e:0:b0:37d:4d3f:51e9 with SMTP id ffacd0b85a97d-37efcf7665amr6749277f8f.40.1729868453962;
-        Fri, 25 Oct 2024 08:00:53 -0700 (PDT)
-Received: from eisenberg.fritz.box (200116b82de5ba00738ac8dadaac7543.dip.versatel-1u1.de. [2001:16b8:2de5:ba00:738a:c8da:daac:7543])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b9216fsm1727189f8f.100.2024.10.25.08.00.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2024 08:00:53 -0700 (PDT)
-From: Philipp Stanner <pstanner@redhat.com>
-To: Jonathan Corbet <corbet@lwn.net>,
-	Damien Le Moal <dlemoal@kernel.org>,
-	Niklas Cassel <cassel@kernel.org>,
-	Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	Boris Brezillon <bbrezillon@kernel.org>,
-	Arnaud Ebalard <arno@natisbad.org>,
-	Srujana Challa <schalla@marvell.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Miri Korenblit <miriam.rachel.korenblit@intel.com>,
-	Kalle Valo <kvalo@kernel.org>,
-	Serge Semin <fancer.lancer@gmail.com>,
-	Jon Mason <jdmason@kudzu.us>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Allen Hubbe <allenbh@gmail.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Kevin Cernekee <cernekee@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Mark Brown <broonie@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Philipp Stanner <pstanner@redhat.com>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
-	Jie Wang <jie.wang@intel.com>,
-	Tero Kristo <tero.kristo@linux.intel.com>,
-	Adam Guerin <adam.guerin@intel.com>,
-	Shashank Gupta <shashank.gupta@intel.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Bharat Bhushan <bbhushan2@marvell.com>,
-	Nithin Dabilpuram <ndabilpuram@marvell.com>,
-	Johannes Berg <johannes.berg@intel.com>,
-	Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
-	Gregory Greenman <gregory.greenman@intel.com>,
-	Benjamin Berg <benjamin.berg@intel.com>,
-	Yedidya Benshimol <yedidya.ben.shimol@intel.com>,
-	Breno Leitao <leitao@debian.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-ide@vger.kernel.org,
-	qat-linux@intel.com,
-	linux-crypto@vger.kernel.org,
-	linux-wireless@vger.kernel.org,
-	ntb@lists.linux.dev,
-	linux-pci@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	linux-sound@vger.kernel.org
-Subject: [PATCH 10/10] PCI: Remove pcim_iomap_regions_request_all()
-Date: Fri, 25 Oct 2024 16:59:53 +0200
-Message-ID: <20241025145959.185373-11-pstanner@redhat.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241025145959.185373-1-pstanner@redhat.com>
-References: <20241025145959.185373-1-pstanner@redhat.com>
+	s=arc-20240116; t=1729868422; c=relaxed/simple;
+	bh=jcuOBnTQ9nGR8T/gweEpKZFTk3dIJqfKF1aIEMo8e6o=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=WZPLvKb8KgoVrWme84q3VHb5XFIFdhPCLkBYSyF3PtXwpO8cX/oTYy5UZAkYkov5hpfIfxp5OJA8ByDgZ1JhMIiKPYGoZM7XxTw4n5hnnj/5P1uuLVzpEpHghGMKG58px3qLbSfu4KRs7ICCzwZ6CM8UY4/SpUjlabi0ShE6phA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Aps3RB1f; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729868421; x=1761404421;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=jcuOBnTQ9nGR8T/gweEpKZFTk3dIJqfKF1aIEMo8e6o=;
+  b=Aps3RB1fYECyi0+JzpIort8K3NliHbr3UVLgWlSGBx6pdyHctqJZGJrf
+   BpprefoHRYuJtcMAUtk887QMcNqeU6vTT6FAKorRL571YYOsiLLy/9sTW
+   W4aXSwVNyF1UbMYP5tuZIdDh2X15t0EsTJLueSATL5YmYHJRkHQTOKz3M
+   KrTCl768UbB9j08/Rrt5YjLWr2txjIAL6gHcQQify8munwSbniDSRjAsQ
+   KCMwAONc99qv1Yz8xX9uuMFAiRnAue3SrnUnr9DR+AuTbqQ/YwbUSEK1a
+   0RXGSA+9LOwUiuDfVfXUK8R60Fbi/pz38ulCkyHrrOZ+6xTSvXZPptjqb
+   Q==;
+X-CSE-ConnectionGUID: iTSbyf7YSDuO0AEptsvYQg==
+X-CSE-MsgGUID: n/nOVaFvQLWRioK/dNKJnw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11236"; a="29657354"
+X-IronPort-AV: E=Sophos;i="6.11,232,1725346800"; 
+   d="scan'208";a="29657354"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2024 08:00:06 -0700
+X-CSE-ConnectionGUID: WvqHZtgVT8mjvZZ+WqGcSA==
+X-CSE-MsgGUID: VpUANam/RnOTNdcOodH2Ig==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,232,1725346800"; 
+   d="scan'208";a="111766739"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.225])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2024 08:00:03 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Fri, 25 Oct 2024 18:00:00 +0300 (EEST)
+To: chen zhang <chenzhang@kylinos.cn>
+cc: Hans de Goede <hdegoede@redhat.com>, cezary.jackiewicz@gmail.com, 
+    platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
+    chenzhang_0901@163.com
+Subject: Re: [PATCH] platform/x86: compal-laptop: use sysfs_emit() instead
+ of sprintf()
+In-Reply-To: <20241024015605.15238-1-chenzhang@kylinos.cn>
+Message-ID: <d85ddd5d-df2c-75fe-2ec8-3444969014b3@linux.intel.com>
+References: <20241024015605.15238-1-chenzhang@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 
-pcim_iomap_regions_request_all() have been deprecated in
-commit e354bb84a4c1 ("PCI: Deprecate pcim_iomap_table(),
-pcim_iomap_regions_request_all()").
+On Thu, 24 Oct 2024, chen zhang wrote:
 
-All users of this function have been ported to other interfaces by now.
+> Follow the advice in Documentation/filesystems/sysfs.rst:
+> show() should only use sysfs_emit() or sysfs_emit_at() when formatting
+> the value to be returned to user space.
+> 
+> Signed-off-by: chen zhang <chenzhang@kylinos.cn>
+> ---
+>  drivers/platform/x86/compal-laptop.c | 13 +++++++------
+>  1 file changed, 7 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/platform/x86/compal-laptop.c b/drivers/platform/x86/compal-laptop.c
+> index 5546fb189491..ba95f342fd59 100644
+> --- a/drivers/platform/x86/compal-laptop.c
+> +++ b/drivers/platform/x86/compal-laptop.c
+> @@ -67,6 +67,7 @@
+>  #include <linux/rfkill.h>
+>  #include <linux/hwmon.h>
+>  #include <linux/hwmon-sysfs.h>
+> +#include <linux/sysfs.h>
+>  #include <linux/power_supply.h>
+>  #include <linux/fb.h>
+>  #include <acpi/video.h>
+> @@ -368,7 +369,7 @@ static const struct rfkill_ops compal_rfkill_ops = {
+>  static ssize_t NAME##_show(struct device *dev,				\
+>  	struct device_attribute *attr, char *buf)			\
+>  {									\
+> -	return sprintf(buf, "%d\n", ((ec_read_u8(ADDR) & MASK) != 0));	\
+> +	return sysfs_emit(buf, "%d\n", ((ec_read_u8(ADDR) & MASK) != 0));	\
+>  }									\
+>  static ssize_t NAME##_store(struct device *dev,				\
+>  	struct device_attribute *attr, const char *buf, size_t count)	\
 
-Remove pcim_iomap_regions_request_all().
+The macro line continuation backslashes should be aligned.
 
-Signed-off-by: Philipp Stanner <pstanner@redhat.com>
-Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
----
- .../driver-api/driver-model/devres.rst        |  1 -
- drivers/pci/devres.c                          | 56 -------------------
- include/linux/pci.h                           |  2 -
- 3 files changed, 59 deletions(-)
+--
+ i.
 
-diff --git a/Documentation/driver-api/driver-model/devres.rst b/Documentation/driver-api/driver-model/devres.rst
-index 5f2ee8d717b1..3a30cf4f6c0d 100644
---- a/Documentation/driver-api/driver-model/devres.rst
-+++ b/Documentation/driver-api/driver-model/devres.rst
-@@ -394,7 +394,6 @@ PCI
-   pcim_enable_device()		: after success, some PCI ops become managed
-   pcim_iomap()			: do iomap() on a single BAR
-   pcim_iomap_regions()		: do request_region() and iomap() on multiple BARs
--  pcim_iomap_regions_request_all() : do request_region() on all and iomap() on multiple BARs
-   pcim_iomap_table()		: array of mapped addresses indexed by BAR
-   pcim_iounmap()		: do iounmap() on a single BAR
-   pcim_iounmap_regions()	: do iounmap() and release_region() on multiple BARs
-diff --git a/drivers/pci/devres.c b/drivers/pci/devres.c
-index 2a64da5c91fb..319a477a2135 100644
---- a/drivers/pci/devres.c
-+++ b/drivers/pci/devres.c
-@@ -959,62 +959,6 @@ int pcim_request_all_regions(struct pci_dev *pdev, const char *name)
- }
- EXPORT_SYMBOL(pcim_request_all_regions);
- 
--/**
-- * pcim_iomap_regions_request_all - Request all BARs and iomap specified ones
-- *			(DEPRECATED)
-- * @pdev: PCI device to map IO resources for
-- * @mask: Mask of BARs to iomap
-- * @name: Name associated with the requests
-- *
-- * Returns: 0 on success, negative error code on failure.
-- *
-- * Request all PCI BARs and iomap regions specified by @mask.
-- *
-- * To release these resources manually, call pcim_release_region() for the
-- * regions and pcim_iounmap() for the mappings.
-- *
-- * This function is DEPRECATED. Don't use it in new code. Instead, use one
-- * of the pcim_* region request functions in combination with a pcim_*
-- * mapping function.
-- */
--int pcim_iomap_regions_request_all(struct pci_dev *pdev, int mask,
--				   const char *name)
--{
--	int bar;
--	int ret;
--	void __iomem **legacy_iomap_table;
--
--	ret = pcim_request_all_regions(pdev, name);
--	if (ret != 0)
--		return ret;
--
--	for (bar = 0; bar < PCI_STD_NUM_BARS; bar++) {
--		if (!mask_contains_bar(mask, bar))
--			continue;
--		if (!pcim_iomap(pdev, bar, 0))
--			goto err;
--	}
--
--	return 0;
--
--err:
--	/*
--	 * If bar is larger than 0, then pcim_iomap() above has most likely
--	 * failed because of -EINVAL. If it is equal 0, most likely the table
--	 * couldn't be created, indicating -ENOMEM.
--	 */
--	ret = bar > 0 ? -EINVAL : -ENOMEM;
--	legacy_iomap_table = (void __iomem **)pcim_iomap_table(pdev);
--
--	while (--bar >= 0)
--		pcim_iounmap(pdev, legacy_iomap_table[bar]);
--
--	pcim_release_all_regions(pdev);
--
--	return ret;
--}
--EXPORT_SYMBOL(pcim_iomap_regions_request_all);
--
- /**
-  * pcim_iounmap_regions - Unmap and release PCI BARs
-  * @pdev: PCI device to map IO resources for
-diff --git a/include/linux/pci.h b/include/linux/pci.h
-index 3b151c8331e5..b59197635c5c 100644
---- a/include/linux/pci.h
-+++ b/include/linux/pci.h
-@@ -2301,8 +2301,6 @@ void pcim_iounmap(struct pci_dev *pdev, void __iomem *addr);
- void __iomem * const *pcim_iomap_table(struct pci_dev *pdev);
- int pcim_request_region(struct pci_dev *pdev, int bar, const char *name);
- int pcim_iomap_regions(struct pci_dev *pdev, int mask, const char *name);
--int pcim_iomap_regions_request_all(struct pci_dev *pdev, int mask,
--				   const char *name);
- void pcim_iounmap_regions(struct pci_dev *pdev, int mask);
- void __iomem *pcim_iomap_range(struct pci_dev *pdev, int bar,
- 				unsigned long offset, unsigned long len);
--- 
-2.47.0
-
+> @@ -393,7 +394,7 @@ static ssize_t pwm_enable_show(struct device *dev,
+>  		struct device_attribute *attr, char *buf)
+>  {
+>  	struct compal_data *data = dev_get_drvdata(dev);
+> -	return sprintf(buf, "%d\n", data->pwm_enable);
+> +	return sysfs_emit(buf, "%d\n", data->pwm_enable);
+>  }
+>  
+>  static ssize_t pwm_enable_store(struct device *dev,
+> @@ -432,7 +433,7 @@ static ssize_t pwm_show(struct device *dev, struct device_attribute *attr,
+>  		char *buf)
+>  {
+>  	struct compal_data *data = dev_get_drvdata(dev);
+> -	return sprintf(buf, "%hhu\n", data->curr_pwm);
+> +	return sysfs_emit(buf, "%hhu\n", data->curr_pwm);
+>  }
+>  
+>  static ssize_t pwm_store(struct device *dev, struct device_attribute *attr,
+> @@ -460,7 +461,7 @@ static ssize_t pwm_store(struct device *dev, struct device_attribute *attr,
+>  static ssize_t fan_show(struct device *dev, struct device_attribute *attr,
+>  		char *buf)
+>  {
+> -	return sprintf(buf, "%d\n", get_fan_rpm());
+> +	return sysfs_emit(buf, "%d\n", get_fan_rpm());
+>  }
+>  
+>  
+> @@ -469,12 +470,12 @@ static ssize_t fan_show(struct device *dev, struct device_attribute *attr,
+>  static ssize_t temp_##POSTFIX(struct device *dev,			\
+>  		struct device_attribute *attr, char *buf)		\
+>  {									\
+> -	return sprintf(buf, "%d\n", 1000 * (int)ec_read_s8(ADDRESS));	\
+> +	return sysfs_emit(buf, "%d\n", 1000 * (int)ec_read_s8(ADDRESS));	\
+>  }									\
+>  static ssize_t label_##POSTFIX(struct device *dev,			\
+>  		struct device_attribute *attr, char *buf)		\
+>  {									\
+> -	return sprintf(buf, "%s\n", LABEL);				\
+> +	return sysfs_emit(buf, "%s\n", LABEL);				\
+>  }
+>  
+>  /* Labels as in service guide */
+> 
 
