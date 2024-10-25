@@ -1,263 +1,182 @@
-Return-Path: <linux-kernel+bounces-381167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71A6F9AFB7C
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 09:50:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22BE69AFB80
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 09:51:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DBB85B232E0
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 07:50:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D70812833CD
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 07:51:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20A5B1C07EA;
-	Fri, 25 Oct 2024 07:50:35 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CF6C1C173C;
+	Fri, 25 Oct 2024 07:51:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nXUTwLR4"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61B8718BC34;
-	Fri, 25 Oct 2024 07:50:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C599818C928
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 07:51:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729842634; cv=none; b=kPUfC+PzN+LFmm2+WhzzsoaPBB1uZtzIUVTMSn5e1RDJtXGTCNfecSN6evAQti8yArRzWHNIgEHOpRE6w0ZYoxX4YLlyznBOGQAyydCVFnVLIBejXLGcgFfyO2ThN0WpX7gDf7Vxg+c2fPJFhJYOqYZlOeLM+rEX8+eDkoG0/kc=
+	t=1729842674; cv=none; b=LVqJyCIEcicKU7VBtEYlXWkf+4aRTOztCfd5wHhSTa9hgvrdFBijvSIiyVIEi4q5YKoJgcvo3/q9/Be1Y+hsZHDDZ9gEl5UAfYwzn2wV6nVYoY6IIOLR8fyqTFvr2cMhxMDeliZk2lrynzfeyyysXOCGxi+RrT0zIqOcXZzDCNY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729842634; c=relaxed/simple;
-	bh=uVyDIzrMhpMILz655M51Vt7BTLiBxwWcOnZzBwsXeH8=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=u5H/QVFzfFjHjVKI7ee27YdXkbhAIWCOeU9p7B5oYIHaLQ911/yhmAPFePQvQn/XaywYnhsXCq0XI5AecFpDA0LAkAQlHFx/Z3Gm0xTPZJ7kTPi0Z4SeOECPQIL27CDSAN6g8B8r9vP8bqPvD8uwwX+qoYvXcc6wz80/ajqTkXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4XZZgv6Pddz4f3jMW;
-	Fri, 25 Oct 2024 15:50:03 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 619E71A0196;
-	Fri, 25 Oct 2024 15:50:21 +0800 (CST)
-Received: from [10.174.176.73] (unknown [10.174.176.73])
-	by APP4 (Coremail) with SMTP id gCh0CgDH+8e7TRtnG0lEFA--.6716S3;
-	Fri, 25 Oct 2024 15:50:21 +0800 (CST)
-Subject: Re: [PATCH] block: refactor rq_qos_wait()
-To: Muchun Song <songmuchun@bytedance.com>, axboe@kernel.dk
-Cc: mingo@redhat.com, peterz@infradead.org, chengming.zhou@linux.dev,
- muchun.song@linux.dev, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, tj@kernel.org, "yukuai (C)"
- <yukuai3@huawei.com>
-References: <20241024043525.98663-1-songmuchun@bytedance.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <9c6099ba-8d95-f2f6-fe36-7333f706c0fc@huaweicloud.com>
-Date: Fri, 25 Oct 2024 15:50:19 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1729842674; c=relaxed/simple;
+	bh=mYxcLajmIErCGZ9qZSY4anQ4rvpJr1sSddJsnYJ54Z4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lDRAwTqpUIuIuTz85aI/LPnoCpNRW12stNAEaahQCL9CCFtxSGaZHbjJIprnp0P0bQUYrrZPgLCouGuA/Im2TC22T0p7DCAeFSAHB13EypLRdsgGDM3kS0AnEgOMl9oAorr0I0Gw31R4YnL28WG/VZXy/sPZN6ZqF4VCpbTTn8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=nXUTwLR4; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20c70abba48so14579145ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 00:51:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1729842670; x=1730447470; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=uF1v/s68/41/rvjjEMQ1dTWdFvcwAdIfUzNDLdC1Pa0=;
+        b=nXUTwLR4+LBDE3phadw3aUshLZohgokTX6MdL89Xtm56ZoRJq+RzjpUPA2egc+/cr3
+         e5g7PDIJVjzRnha7UmO8oJiuZmvyk6ZhWMK4AvXnbyjyPUei+ByDPnUNQrz4tGAREExo
+         GjyetrNrmjmfWgnF8ipopO7/43oSJ9xv+zbGY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729842670; x=1730447470;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uF1v/s68/41/rvjjEMQ1dTWdFvcwAdIfUzNDLdC1Pa0=;
+        b=iUUz1ttwqO1eQW9wVle60ZRx9y0W8t5yz9ww9rPTFLElJCo09tBlsRl2qzmVSrRdCV
+         rdtXVbcCeeYGp0UrulALe2CC7wv0UkC0LuuMlB+s6EK/kepK8rcN1nes9P8iW1puxl4z
+         wwHrStYeLFgmdRGGQuriqujftJMGPXxPubxXHVvcf63MZkmBh4MzzsyG/VW46LSfSv7n
+         PIUJBFdWiyUnr5lflhZ+o3KqYl3Khi0PllvQkKZ6jBqet3iLlaHb6+ppkB1NQ6YSVdRN
+         MN+h5auStIClPE+luhABv9vqH4ykfGSbBFBSEjAX6wNjTrDVDikeRz3HzILpfRsF7vKU
+         COAg==
+X-Forwarded-Encrypted: i=1; AJvYcCVnAH7xJhS2qfCIBuulieluEnWw18t9UCGygT4+LsIBgPZcx0RuThENLPQpEx4VfEXpc+iPQXyrHC1oBCg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPzxMqB+AzxgCtBAu24RETxnxuZKVfX0l+fz9yfEk/JhLPKDh9
+	2v59JxqmXV6SWMEhfY2GBf+UmOP11umRKt/8HBO0lx86zuANd4ovBeeUJVS3Uw==
+X-Google-Smtp-Source: AGHT+IHFw7FXs8Lb1i8yU36Q+6sfxkhIwRqJC7iizk5PAlH9pWgs/YMoQksBdeh0U2ErwU88jUj6Lg==
+X-Received: by 2002:a17:903:3114:b0:20c:6bff:fcae with SMTP id d9443c01a7336-20fa9e46f35mr81303105ad.5.1729842670112;
+        Fri, 25 Oct 2024 00:51:10 -0700 (PDT)
+Received: from li-cloudtop.c.googlers.com.com (201.204.125.34.bc.googleusercontent.com. [34.125.204.201])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bbf6dd23sm4895285ad.92.2024.10.25.00.51.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Oct 2024 00:51:09 -0700 (PDT)
+From: Li Li <dualli@chromium.org>
+To: dualli@google.com,
+	corbet@lwn.net,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	donald.hunter@gmail.com,
+	gregkh@linuxfoundation.org,
+	arve@android.com,
+	tkjos@android.com,
+	maco@android.com,
+	joel@joelfernandes.org,
+	brauner@kernel.org,
+	cmllamas@google.com,
+	surenb@google.com,
+	arnd@arndb.de,
+	masahiroy@kernel.org,
+	bagasdotme@gmail.com,
+	horms@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	netdev@vger.kernel.org,
+	hridya@google.com,
+	smoreland@google.com
+Cc: kernel-team@android.com
+Subject: [PATCH net-next v5 0/1] binder: report txn errors via generic netlink (genl)
+Date: Fri, 25 Oct 2024 00:51:01 -0700
+Message-ID: <20241025075102.1785960-1-dualli@chromium.org>
+X-Mailer: git-send-email 2.47.0.163.g1226f6d8fa-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20241024043525.98663-1-songmuchun@bytedance.com>
-Content-Type: text/plain; charset=gbk; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgDH+8e7TRtnG0lEFA--.6716S3
-X-Coremail-Antispam: 1UD129KBjvJXoW3WF1DtFWDGry3tryUXr1rCrg_yoWxZr43pa
-	yrKF15tF48JrZrKw1xJw4fAa4a9w4rGa43GrWxKasrAr4j9r9YqF1kKF1kWa4Yyrs3XF48
-	Xw40qr9xCrs8A3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU92b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7I2V7IY0VAS
-	07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4
-	IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1r
-	MI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJV
-	WUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j
-	6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYx
-	BIdaVFxhVjvjDU0xZFpf9x07UAwIDUUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-Hi,
+From: Li Li <dualli@google.com>
 
-+CC Tejun
+It's a known issue that neither the frozen processes nor the system
+administration process of the OS can correctly deal with failed binder
+transactions. The reason is that there's no reliable way for the user
+space administration process to fetch the binder errors from the kernel
+binder driver.
 
-ÔÚ 2024/10/24 12:35, Muchun Song Ð´µÀ:
-> When rq_qos_wait() is first introduced, it is easy to understand. But
-> with some bug fixes applied, it is not easy for newcomers to understand
-> the whole logic under those fixes. In this patch, rq_qos_wait() is
-> refactored and more comments are added for better understanding. There
-> are 4 points for the improvement:
-> 
->      1) Use waitqueue_active() instead of wq_has_sleeper() to eliminate
->         unnecessary memory barrier in wq_has_sleeper() which is supposed
->         to be used in waker side. In this case, we do need the barrier.
->         So use the cheaper one to locklessly test for waiters on the queue.
-> 
->      2) There is already a macro DEFINE_WAIT_FUNC() to declare a
->         wait_queue_entry with a specified waking function. But there is not
->         a counterpart for initializing one wait_queue_entry with a
->         specified waking function. So introducing init_wait_func() for
->         this, which also could be used elsewhere (like filemap.c). It can
->         be used in rq_qos_wait() to use default_wake_function() to wake up
->         waiters, which could remove ->task field from rq_qos_wait_data.
+Android is such an OS suffering from this issue. Since cgroup freezer
+was used to freeze user applications to save battery, innocent frozen
+apps have to be killed when they receive sync binder transactions or
+when their async binder buffer is running out.
 
-I think it's better to cook point 2 as a seperate patch.
+This patch introduces the Linux generic netlink messages into the binder
+driver so that the Linux/Android system administration process can
+listen to important events and take corresponding actions, like stopping
+a broken app from attacking the OS by sending huge amount of spamming
+binder transactiions.
 
-Whether or not, this patch LGTM.
-Reviewed-by: Yu Kuai <yukuai3@huawei.com>
+The 1st version uses a global generic netlink for all binder contexts,
+raising potential security concerns. There were a few other feedbacks
+like request to kernel docs and test code. The thread can be found at
+https://lore.kernel.org/lkml/20240812211844.4107494-1-dualli@chromium.org/
 
->
->      3) Remove acquire_inflight_cb() logic for the first waiter out of the
->         while loop to make the code clear.
-> 
->      4) Add more comments to explain how to sync with different waiters and
->         the waker.
-> 
-> Signed-off-by: Muchun Song <songmuchun@bytedance.com>
-> ---
->   block/blk-rq-qos.c   | 82 +++++++++++++++++++++++++++++---------------
->   include/linux/wait.h |  6 ++--
->   2 files changed, 58 insertions(+), 30 deletions(-)
-> 
-> diff --git a/block/blk-rq-qos.c b/block/blk-rq-qos.c
-> index 9b0aa7dd6779f..5d995d389eaf5 100644
-> --- a/block/blk-rq-qos.c
-> +++ b/block/blk-rq-qos.c
-> @@ -196,7 +196,6 @@ bool rq_depth_scale_down(struct rq_depth *rqd, bool hard_throttle)
->   
->   struct rq_qos_wait_data {
->   	struct wait_queue_entry wq;
-> -	struct task_struct *task;
->   	struct rq_wait *rqw;
->   	acquire_inflight_cb_t *cb;
->   	void *private_data;
-> @@ -218,7 +217,20 @@ static int rq_qos_wake_function(struct wait_queue_entry *curr,
->   		return -1;
->   
->   	data->got_token = true;
-> -	wake_up_process(data->task);
-> +	/*
-> +	 * autoremove_wake_function() removes the wait entry only when it
-> +	 * actually changed the task state. We want the wait always removed.
-> +	 * Remove explicitly and use default_wake_function().
-> +	 */
-> +	default_wake_function(curr, mode, wake_flags, key);
-> +	/*
-> +	 * Note that the order of operations is important as finish_wait()
-> +	 * tests whether @curr is removed without grabbing the lock. This
-> +	 * should be the last thing to do to make sure we will not have a
-> +	 * UAF access to @data. And the semantics of memory barrier in it
-> +	 * also make sure the waiter will see the latest @data->got_token
-> +	 * once list_empty_careful() in finish_wait() returns true.
-> +	 */
->   	list_del_init_careful(&curr->entry);
->   	return 1;
->   }
-> @@ -244,41 +256,55 @@ void rq_qos_wait(struct rq_wait *rqw, void *private_data,
->   		 cleanup_cb_t *cleanup_cb)
->   {
->   	struct rq_qos_wait_data data = {
-> -		.wq = {
-> -			.func	= rq_qos_wake_function,
-> -			.entry	= LIST_HEAD_INIT(data.wq.entry),
-> -		},
-> -		.task = current,
-> -		.rqw = rqw,
-> -		.cb = acquire_inflight_cb,
-> -		.private_data = private_data,
-> +		.rqw		= rqw,
-> +		.cb		= acquire_inflight_cb,
-> +		.private_data	= private_data,
-> +		.got_token	= false,
->   	};
-> -	bool has_sleeper;
-> +	bool first_waiter;
->   
-> -	has_sleeper = wq_has_sleeper(&rqw->wait);
-> -	if (!has_sleeper && acquire_inflight_cb(rqw, private_data))
-> +	/*
-> +	 * If there are no waiters in the waiting queue, try to increase the
-> +	 * inflight counter if we can. Otherwise, prepare for adding ourselves
-> +	 * to the waiting queue.
-> +	 */
-> +	if (!waitqueue_active(&rqw->wait) && acquire_inflight_cb(rqw, private_data))
->   		return;
->   
-> -	has_sleeper = !prepare_to_wait_exclusive(&rqw->wait, &data.wq,
-> +	init_wait_func(&data.wq, rq_qos_wake_function);
-> +	first_waiter = prepare_to_wait_exclusive(&rqw->wait, &data.wq,
->   						 TASK_UNINTERRUPTIBLE);
-> +	/*
-> +	 * Make sure there is at least one inflight process; otherwise, waiters
-> +	 * will never be woken up. Since there may be no inflight process before
-> +	 * adding ourselves to the waiting queue above, we need to try to
-> +	 * increase the inflight counter for ourselves. And it is sufficient to
-> +	 * guarantee that at least the first waiter to enter the waiting queue
-> +	 * will re-check the waiting condition before going to sleep, thus
-> +	 * ensuring forward progress.
-> +	 */
-> +	if (!data.got_token && first_waiter && acquire_inflight_cb(rqw, private_data)) {
-> +		finish_wait(&rqw->wait, &data.wq);
-> +		/*
-> +		 * We raced with rq_qos_wake_function() getting a token,
-> +		 * which means we now have two. Put our local token
-> +		 * and wake anyone else potentially waiting for one.
-> +		 *
-> +		 * Enough memory barrier in list_empty_careful() in
-> +		 * finish_wait() is paired with list_del_init_careful()
-> +		 * in rq_qos_wake_function() to make sure we will see
-> +		 * the latest @data->got_token.
-> +		 */
-> +		if (data.got_token)
-> +			cleanup_cb(rqw, private_data);
-> +		return;
-> +	}
-> +
-> +	/* we are now relying on the waker to increase our inflight counter. */
->   	do {
-> -		/* The memory barrier in set_task_state saves us here. */
->   		if (data.got_token)
->   			break;
-> -		if (!has_sleeper && acquire_inflight_cb(rqw, private_data)) {
-> -			finish_wait(&rqw->wait, &data.wq);
-> -
-> -			/*
-> -			 * We raced with rq_qos_wake_function() getting a token,
-> -			 * which means we now have two. Put our local token
-> -			 * and wake anyone else potentially waiting for one.
-> -			 */
-> -			if (data.got_token)
-> -				cleanup_cb(rqw, private_data);
-> -			return;
-> -		}
->   		io_schedule();
-> -		has_sleeper = true;
->   		set_current_state(TASK_UNINTERRUPTIBLE);
->   	} while (1);
->   	finish_wait(&rqw->wait, &data.wq);
-> diff --git a/include/linux/wait.h b/include/linux/wait.h
-> index 8aa3372f21a08..b008ca42b5903 100644
-> --- a/include/linux/wait.h
-> +++ b/include/linux/wait.h
-> @@ -1206,14 +1206,16 @@ int autoremove_wake_function(struct wait_queue_entry *wq_entry, unsigned mode, i
->   
->   #define DEFINE_WAIT(name) DEFINE_WAIT_FUNC(name, autoremove_wake_function)
->   
-> -#define init_wait(wait)								\
-> +#define init_wait_func(wait, function)						\
->   	do {									\
->   		(wait)->private = current;					\
-> -		(wait)->func = autoremove_wake_function;			\
-> +		(wait)->func = function;					\
->   		INIT_LIST_HEAD(&(wait)->entry);					\
->   		(wait)->flags = 0;						\
->   	} while (0)
->   
-> +#define init_wait(wait)	init_wait_func(wait, autoremove_wake_function)
-> +
->   typedef int (*task_call_f)(struct task_struct *p, void *arg);
->   extern int task_call_func(struct task_struct *p, task_call_f func, void *arg);
->   
-> 
+The 2nd version fixes those issues and has been tested on the latest
+version of AOSP. See https://r.android.com/3305462 for how userspace is
+going to use this feature and the test code. It can be found at
+https://lore.kernel.org/lkml/20241011064427.1565287-1-dualli@chromium.org/
+
+The 3rd version replaces the handcrafted netlink source code with the
+netlink protocal specs in YAML. It also fixes the documentation issues.
+https://lore.kernel.org/lkml/20241021182821.1259487-1-dualli@chromium.org/
+
+The 4th version just containsi trivial fixes, making the subject of the
+patch aligned with the subject of the cover letter.
+https://lore.kernel.org/lkml/20241021191233.1334897-1-dualli@chromium.org/
+
+The 5th version incorporates the suggested fixes to the kernel doc and
+the init function. It also removes the unsupported uapi-header in YAML
+that contains "/" for subdirectory.
+
+v1: add a global binder genl socket for all contexts
+v2: change to per-context binder genl for security reason
+    replace the new ioctl with a netlink command
+    add corresponding doc Documentation/admin-guide/binder_genl.rst
+    add user space test code in AOSP
+v3: use YNL spec (./tools/net/ynl/ynl-regen.sh)
+    fix documentation index
+v4: change the subject of the patch and remove unsed #if 0
+v5: improve the kernel doc and the init function
+    remove unsupported uapi-header in YAML
+
+Li Li (1):
+  binder: report txn errors via generic netlink
+
+ Documentation/admin-guide/binder_genl.rst    |  93 ++++++
+ Documentation/admin-guide/index.rst          |   1 +
+ Documentation/netlink/specs/binder_genl.yaml |  59 ++++
+ drivers/android/Kconfig                      |   1 +
+ drivers/android/Makefile                     |   2 +-
+ drivers/android/binder.c                     | 302 ++++++++++++++++++-
+ drivers/android/binder_genl.c                |  38 +++
+ drivers/android/binder_genl.h                |  18 ++
+ drivers/android/binder_internal.h            |  22 ++
+ drivers/android/binder_trace.h               |  37 +++
+ drivers/android/binderfs.c                   |   4 +
+ include/uapi/linux/android/binder.h          |  31 ++
+ include/uapi/linux/binder_genl.h             |  42 +++
+ 13 files changed, 642 insertions(+), 8 deletions(-)
+ create mode 100644 Documentation/admin-guide/binder_genl.rst
+ create mode 100644 Documentation/netlink/specs/binder_genl.yaml
+ create mode 100644 drivers/android/binder_genl.c
+ create mode 100644 drivers/android/binder_genl.h
+ create mode 100644 include/uapi/linux/binder_genl.h
+
+
+base-commit: 81bc949f640f78b507c7523de7c750bcc87c1bb8
+-- 
+2.47.0.163.g1226f6d8fa-goog
 
 
