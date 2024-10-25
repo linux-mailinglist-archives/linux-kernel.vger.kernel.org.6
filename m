@@ -1,175 +1,84 @@
-Return-Path: <linux-kernel+bounces-382253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 880A79B0B86
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 19:29:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 901D29B0B8E
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 19:30:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE7B01F26CA6
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:29:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA030283023
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:30:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25AC120FF77;
-	Fri, 25 Oct 2024 17:16:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A051820C32A;
+	Fri, 25 Oct 2024 17:17:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="Gx05/4Ot"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ctBy0kAR"
+Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36C51228055
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 17:16:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8442520C307;
+	Fri, 25 Oct 2024 17:17:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729876603; cv=none; b=rE7jP//oZHMDi9r7XGwhFT8WDuZazIoqfSF2wUWcX10BsoTqteWsbR1Qius7Enj31xvdyUC6rbxMJODpIO43YLbL1nFC8sZg+IHt1I/q1pA0U6259PGyB6G9LAG4BR45vmitBbAMezu1sSyYjxNSWdwdhD8mIauk3xD4HF1LDuA=
+	t=1729876663; cv=none; b=ITa41uFjBTgQoIJGn96Ahg6g7OlRT+QALpCBfp7+Oc5fL3e1RVaJcKg8+QaH/oUF0syhpM692gwJR6AoyqIfDMwkABQFt3jaqdXOPx12MqbnE2RV+IxCflDspigH4x593FWGlq2W01ENdvtC8cItPESc0tR1n5/G9+M4ZKalAl8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729876603; c=relaxed/simple;
-	bh=YzyDLNl8va/xJl47EHT+vId7czfsGNnbHYHobDKQTlg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=XFuEMqs+VmSxyBVYAa/zPoxWOw3PXZmiV/e+SoQcDlrz8vC2j4d6WAdNYNFijH9QcKxZKKAc8Na76F2gbI+xMuHQwPb0FmIj0Nzm7026+2wru2Jq1OzC897G4VJUqqN8fqqR9SG8tMc1xEYqYtALbEGsvvc+kfWsttSEVAvBDCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=Gx05/4Ot; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-37d3e8d923fso1438126f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 10:16:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.com; s=google; t=1729876596; x=1730481396; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SOV7jAWhbFwwjw/OJ7O7LtE/DWvJ9qhDH2QMAsU+FWw=;
-        b=Gx05/4OtPlxFfZSmKt5wry6KA1iBI3l2cM58HJsFS0sukwTmrSbjdiR6BRbnpnuM2Y
-         VjLk5MbiZ/ITHNJDC2ezGMsCqCHORpMAiUGUx7bOQhTY7Oa+/7UGZpJQ7lbXUH2JOfvF
-         ycTW+8iwckQCqtTbdCLp7P4ogreh1MH7IcFTqA/wQLMmNDgbU3r29A2dq1RuPZ1CCqzj
-         qxe9jAlSU2JNraQPIh5aQ1CUOGWtGxqZr1KyjEtvTeRKN4d/ThyTkjypysckrC+SnZ2E
-         cW/YNjThFtZnFftpG1D5DnftzxJP5RJFDAeh12k9CEVd+V3LsolACACs3O4xIqIMSIa/
-         bbVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729876596; x=1730481396;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SOV7jAWhbFwwjw/OJ7O7LtE/DWvJ9qhDH2QMAsU+FWw=;
-        b=i1XU3KKLV0cHndT9wZAHGfCGr6GbCGbvHMy0WyzBq20zwqAngaAZVeLF6oDVrVIzWw
-         FfnyI426LpmmIWsAt98oXz5rJyvPYL0lydIjbmVfQBLsD04n0MSccR2G6+9RoHEuVJGj
-         iTjo9IEgGrkiaWOjlE6V4egrYeeEcTmV9dlgZKD43fXpmsltkU1TWtWs3h1PsYYdPwv9
-         0S6DvfRUDY5GlaTSejWPxLyJQzPfxrZIJEgg5yyltF5Gt9OZ9fv99ABiwz0A0Wr+fiQk
-         XUk/8gpkMTBKQCfg6QdEekxsI61vdf6+8PEZJJNlCrEsKOlteB5uVgoFIhGIUAWtr6cZ
-         bMpA==
-X-Forwarded-Encrypted: i=1; AJvYcCU2w3vAN6cL8sMe1JAOkSEJC/aZbv201cI4+iAe958lzQ4ly2gZB0JLg3RwHAj9WPH4xvFc9ETEQwkunkY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTUEjauj+Je5AcYi6XMiPoxEpCwWXlMFgoq86ROefJ4jlbMhrt
-	5znDPgOQiaFkE7FkGcFp00fR8UtV0yY+Bj/Bg7r+WLrTgxqlvx4p2U9bUGMVT6Y=
-X-Google-Smtp-Source: AGHT+IHM4SY0KfVAQSpJ1+ccDJ+C4lsK7yh/l9hYanouQQltriHwErlFPV65caR05fmBTRpW7n50vQ==
-X-Received: by 2002:a05:6000:e42:b0:37c:cec2:23c6 with SMTP id ffacd0b85a97d-38061208e5dmr101866f8f.57.1729876596081;
-        Fri, 25 Oct 2024 10:16:36 -0700 (PDT)
-Received: from [127.0.1.1] ([2a00:1098:3142:e::8])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-38058b91f50sm2013649f8f.94.2024.10.25.10.16.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2024 10:16:35 -0700 (PDT)
-From: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Date: Fri, 25 Oct 2024 18:16:07 +0100
-Subject: [PATCH v2 36/36] arm64: dts: broadcom: Add DT for D-step version
- of BCM2712
+	s=arc-20240116; t=1729876663; c=relaxed/simple;
+	bh=/W4BjsF2g/3Ab28MPJejII2YfF/O/fiQLV5AiqxsKKk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oa7gqEkhanoLlMs/7xn1PHe7iPy+WLuM0w4Uih/08L9A/lgVF2lFl7no8jhCScUMzP8amuc6bSEtaFNW8LeA9g2U6JY/1lQPodeGK8xCkVhbn/WSF17DQ5oOWY4QLggVEKcRy0N2jh99wNE3PK+MEKCdWUgyz14X8c6etkNgxS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ctBy0kAR; arc=none smtp.client-ip=95.215.58.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Fri, 25 Oct 2024 13:17:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1729876659;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=smq5rVaIUpH5WH5PYqCq4pJlicNQ2hL9c+U9/UsHKoI=;
+	b=ctBy0kAR1ez1z5+r2SXy6s01ud4hFuNt6wuVgEZ1iJX5dDirfN6rxVlkJoslyU/NDmf3lH
+	66wK8PX+3YX7igBJW5nBHT3bxnJw9cIxgCROc1Dn7I+1+jT3ldXUYmpAxBbtpSRfGAHU3q
+	s8kNAvsgGifcp5Wn5EQmVwGHT/zZL5M=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Alan Huang <mmpgouride@gmail.com>
+Cc: Jeongjun Park <aha310510@gmail.com>, linux-bcachefs@vger.kernel.org, 
+	LKML <linux-kernel@vger.kernel.org>, syzbot+b468b9fef56949c3b528@syzkaller.appspotmail.com
+Subject: Re: [PATCH v2] bcachefs: fix null-ptr-deref in have_stripes()
+Message-ID: <bshr5tserk5lqpfs7xpjz6k3hfptcmoky7z2mhq5mrkbux3bh7@gdsyl2pbmlxx>
+References: <20241025115618.2908-1-aha310510@gmail.com>
+ <n6nisrv3mklka3whfosvhrcevivri76clgijy3ijdxfbzjkuc3@wuogkgi5kf4s>
+ <C6638CB8-4DAF-466F-B1F1-34883C693C2E@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241025-drm-vc4-2712-support-v2-36-35efa83c8fc0@raspberrypi.com>
-References: <20241025-drm-vc4-2712-support-v2-0-35efa83c8fc0@raspberrypi.com>
-In-Reply-To: <20241025-drm-vc4-2712-support-v2-0-35efa83c8fc0@raspberrypi.com>
-To: Maxime Ripard <mripard@kernel.org>, 
- =?utf-8?q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>, 
- Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
- Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Florian Fainelli <florian.fainelli@broadcom.com>, 
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
- Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, 
- Javier Martinez Canillas <javierm@redhat.com>, 
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, 
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
- Dave Stevenson <dave.stevenson@raspberrypi.com>
-X-Mailer: b4 0.14.1
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <C6638CB8-4DAF-466F-B1F1-34883C693C2E@gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-The D-Step has some minor variations in the hardware, so needs
-matching changes to DT.
+On Sat, Oct 26, 2024 at 01:05:50AM +0800, Alan Huang wrote:
+> On Oct 26, 2024, at 00:54, Kent Overstreet <kent.overstreet@linux.dev> wrote:
+> > 
+> > On Fri, Oct 25, 2024 at 08:56:18PM +0900, Jeongjun Park wrote:
+> >> c->btree_roots_known[i].b can be NULL. In this case, a NULL pointer dereference
+> >> occurs, so you need to add code to check the variable.
+> >> 
+> >> Reported-by: syzbot+b468b9fef56949c3b528@syzkaller.appspotmail.com
+> >> Fixes: 7773df19c35f ("bcachefs: metadata version bucket_stripe_sectors")
+> >> Signed-off-by: Jeongjun Park <aha310510@gmail.com>
+> > 
+> > This looks identical to the v1? It's already in my testing branch
+> 
+> This version fix the “Fixes" tag, the original one is:
+> 
+> "Fixes: ("bcachefs: metadata version bucket_stripe_sectors”)"
 
-Add a new DTS file that modifies the existing (C-step) devicetree.
-
-Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
----
- arch/arm64/boot/dts/broadcom/Makefile              |  1 +
- arch/arm64/boot/dts/broadcom/bcm2712-d-rpi-5-b.dts | 37 ++++++++++++++++++++++
- 2 files changed, 38 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/broadcom/Makefile b/arch/arm64/boot/dts/broadcom/Makefile
-index 92565e9781ad..3d0efb93b06d 100644
---- a/arch/arm64/boot/dts/broadcom/Makefile
-+++ b/arch/arm64/boot/dts/broadcom/Makefile
-@@ -7,6 +7,7 @@ dtb-$(CONFIG_ARCH_BCM2835) += bcm2711-rpi-400.dtb \
- 			      bcm2711-rpi-4-b.dtb \
- 			      bcm2711-rpi-cm4-io.dtb \
- 			      bcm2712-rpi-5-b.dtb \
-+			      bcm2712-d-rpi-5-b.dtb \
- 			      bcm2837-rpi-3-a-plus.dtb \
- 			      bcm2837-rpi-3-b.dtb \
- 			      bcm2837-rpi-3-b-plus.dtb \
-diff --git a/arch/arm64/boot/dts/broadcom/bcm2712-d-rpi-5-b.dts b/arch/arm64/boot/dts/broadcom/bcm2712-d-rpi-5-b.dts
-new file mode 100644
-index 000000000000..7de24d60bcd1
---- /dev/null
-+++ b/arch/arm64/boot/dts/broadcom/bcm2712-d-rpi-5-b.dts
-@@ -0,0 +1,37 @@
-+// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-+/dts-v1/;
-+
-+#include "bcm2712-rpi-5-b.dts"
-+
-+&gio_aon {
-+	brcm,gpio-bank-widths = <15 6>;
-+
-+	gpio-line-names =
-+		"RP1_SDA", // AON_GPIO_00
-+		"RP1_SCL", // AON_GPIO_01
-+		"RP1_RUN", // AON_GPIO_02
-+		"SD_IOVDD_SEL", // AON_GPIO_03
-+		"SD_PWR_ON", // AON_GPIO_04
-+		"SD_CDET_N", // AON_GPIO_05
-+		"SD_FLG_N", // AON_GPIO_06
-+		"", // AON_GPIO_07
-+		"2712_WAKE", // AON_GPIO_08
-+		"2712_STAT_LED", // AON_GPIO_09
-+		"", // AON_GPIO_10
-+		"", // AON_GPIO_11
-+		"PMIC_INT", // AON_GPIO_12
-+		"UART_TX_FS", // AON_GPIO_13
-+		"UART_RX_FS", // AON_GPIO_14
-+		"", // AON_GPIO_15
-+		"", // AON_GPIO_16
-+
-+		// Pad bank0 out to 32 entries
-+		"", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
-+
-+		"HDMI0_SCL", // AON_SGPIO_00
-+		"HDMI0_SDA", // AON_SGPIO_01
-+		"HDMI1_SCL", // AON_SGPIO_02
-+		"HDMI1_SDA", // AON_SGPIO_03
-+		"PMIC_SCL", // AON_SGPIO_04
-+		"PMIC_SDA"; // AON_SGPIO_05
-+};
-
--- 
-2.34.1
-
+thanks
 
