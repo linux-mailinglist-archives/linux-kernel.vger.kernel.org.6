@@ -1,166 +1,171 @@
-Return-Path: <linux-kernel+bounces-382637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1ED7C9B115A
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 23:06:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 827279B115B
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 23:06:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41CE61C218CE
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 21:06:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C9A71C21C37
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 21:06:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 227CB216E03;
-	Fri, 25 Oct 2024 21:04:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FA96217447;
+	Fri, 25 Oct 2024 21:04:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UFbAoVbu"
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b="RGK1uiXD"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CA512161F6;
-	Fri, 25 Oct 2024 21:04:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B9AF213122;
+	Fri, 25 Oct 2024 21:04:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729890255; cv=none; b=OFjjwCtZAHrQVAwntFJJ1ppthp7VnFKMk9H/mw8RMT6vL9xn5qrWpO1UIEIOcjp+y572amqZtrI99uzaiy2zGASqobVs8b4+sxA8Sr4LaANrh53LyxK7PRwUsZ2b9gRXamuObR03xyT8LuCpn6ztXF+7Zg4eSZEMBBJ6B0krfqo=
+	t=1729890260; cv=none; b=WUGToSDXBHyamWpND7E2+MBD6YThTfosVkQIVllMrJAxJgOghaCxi8oBT5HPme+f055MahuECo2s9si/DwsOXOQkDgVLGjFsmYdIrbmMgv63xgkwNV3frLGDjEVPUpZuy48XWrBKZ5242Z1gzel1cDmoYHZcUOgo3MBubtiJ0xs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729890255; c=relaxed/simple;
-	bh=ZTqBXUsCMjXnl83i92Nu+/DV25tDzAgk0A0CVeIit9s=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=McQX+7OGUXRR2a+fZmVSfC8Ocxcs5438H6iuiMu/n0Ck1HJp6INT2ypJ+Q8wqLWkjWR0wRg64QPDicwNNm4w/egBVOJh+49y6vAsPCrDSVfludeuH5aLDIQeiE/7nBo/BqjQ6pdjHQzk8ciL1az0LLkVFcV5FVM8Arsg17qEYOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UFbAoVbu; arc=none smtp.client-ip=209.85.222.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7b12a02596aso160520785a.2;
-        Fri, 25 Oct 2024 14:04:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729890252; x=1730495052; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KdrwVQGek2veJ9C+SeMpvoGTn32i6qalpt1cR6XqlsQ=;
-        b=UFbAoVbuxs2OxZ6AbtuH8Wxl0jAvQduQ/0FfWDZYMmu+Ey38AblpEGpOdwiCxgtzwY
-         MmE2Es2K46IWpvC+JRosyao0zyK5CjLUQpc/uEtg+w9rkeIlvn0w4zQ/lRZjPe1UxHDR
-         PCeUypjXMvvx1LDDVItQK8pdeuRN7jfE3XWW0zR6GlOEz3oDCVL4NTFvaU7vnXLnM1Cj
-         4K8wyK+hr4kcQxIiZ2JOjsdwvXOs/Gweely6HltFSNRF1HWXwuriXgY0l4fHfVUVhbFR
-         n9fB8Z807j0thmLZjpenZyAcWFx2l+MBCggHQ8gnIqDSgLnoqTl1g0meDa8fyZy8NF1R
-         il+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729890252; x=1730495052;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KdrwVQGek2veJ9C+SeMpvoGTn32i6qalpt1cR6XqlsQ=;
-        b=XL9tIRKRlqGRrJPN+MGh42cn6izcmZdXvVi0ibQIQtzAmkoOoXZpEMopfp0fLLLL9y
-         7vgAft4anTXMD5bwJuhFCyq8oicm4frR0eM12/FD7GdaYj1us3UoKb45tTbFAzy7m9Mz
-         ffjSCmdi7+S8VxbRqzE3ISDjFKkO/mpSGGIIVNbnPyotbNpDlNx0P5X29S89P6W7EfSD
-         UTlLA+CEqB3/1NZ6rKgXAEVIRWWa1C73be/Rx8TvOuF6jGZ/NoHCQCR5oyMRju8ZnKZ5
-         LmLk4VgytSe/CoZ28AuSCGI8tA6bLjDEZ0i76WHgHyb88JQa/K2oBhIugGMRnW21tM/j
-         kcRg==
-X-Forwarded-Encrypted: i=1; AJvYcCVYEwRUvHrKDgkPRi+mtC5oEHdjYWEoS8Jl3SR1KaWyrQOcfaiWTRViCap5O1W+gfKk5e436x+FHtBotys=@vger.kernel.org
-X-Gm-Message-State: AOJu0YysTUMiGLVpcUjRMGYRsFqs5OhwMxWOSPLwsTChbaCI/PJIIsRn
-	PpNtP+kofZMiVcYVX1eZ+ph/yjLAFrUOG9nnr99QeTWtPUcoIe4R
-X-Google-Smtp-Source: AGHT+IGM0/WmKBbfrLxcsACgUSxPCaWBcJfuFn4svdSAvL3T2T7jPpCY+5Wm+/oRSjFd5YZf+3IFgg==
-X-Received: by 2002:a05:620a:4623:b0:7af:c856:820 with SMTP id af79cd13be357-7b193f3e0b8mr111163485a.46.1729890252100;
-        Fri, 25 Oct 2024 14:04:12 -0700 (PDT)
-Received: from 156.1.168.192.in-addr.arpa (pool-100-37-170-231.nycmny.fios.verizon.net. [100.37.170.231])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b18d27be4csm91036185a.15.2024.10.25.14.04.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2024 14:04:10 -0700 (PDT)
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Fri, 25 Oct 2024 17:03:54 -0400
-Subject: [PATCH 2/2] kunit: enable hardware acceleration when available
+	s=arc-20240116; t=1729890260; c=relaxed/simple;
+	bh=l6rSnfSenp4a+KpZbszpbVj45R2+f83e0lEnS8U/Lpc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZxMl1iAzuygzEjU7F59vLcAiouBfIEm3xoXBoaZKuQj82ae7jx2h3MpZr1V5qmP1AVbMHTcF0fw0TM4iRRi0Lfw86XWBKEszCWtnUwcJ/BhmgwioDybSeX6Y0JDucDNGMM45MdO2cKlzDTqFcH0+LC0RM0Nyoz+zKL5AvLDw6rY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com; spf=pass smtp.mailfrom=gmx.com; dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b=RGK1uiXD; arc=none smtp.client-ip=212.227.15.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.com;
+	s=s31663417; t=1729890245; x=1730495045; i=quwenruo.btrfs@gmx.com;
+	bh=/8VZ/hC6+2pUWzCMQNIABWAwuRdNxobmZZxyBKXusGo=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=RGK1uiXDsbeSD3n+YnZljPd5mYF2b1thVx2AasgjT4t/d/4lQsxcnwtqFd825Wov
+	 vFg0JqPViF8u0bU+V1dVXMKISfFiPvQ+LsDkjfUCDe6WiKhbTIMlX3V/w03YXp9Tv
+	 tlaBO6QzwxhoGvM4xydgPGpBXtfnrfJbjxpuhZ+IE+PFgyDoiH2DRWQPyPXvw1NIz
+	 TuujOqbavMwf4sXUSXr/qs8pcL/k+rXcxfsPNq3fLkGoiDnRKztRrE2y/8/sDhNyg
+	 NXkY1PB9jSC8dYIiT4BRxmIS9ooXUyhaWGsQzZXmwTTv/LQDGh2glJqQnNEYG6hk+
+	 wyW2kvtnPYEYFbPw1w==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [172.16.0.191] ([159.196.52.54]) by mail.gmx.net (mrgmx005
+ [212.227.17.184]) with ESMTPSA (Nemesis) id 1MLzBj-1tMNpl22DZ-00Pl8Q; Fri, 25
+ Oct 2024 23:04:04 +0200
+Message-ID: <e5bc8c4e-771f-4cc7-91e7-291018b9468c@gmx.com>
+Date: Sat, 26 Oct 2024 07:33:59 +1030
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241025-kunit-qemu-accel-macos-v1-2-2f30c26192d4@gmail.com>
-References: <20241025-kunit-qemu-accel-macos-v1-0-2f30c26192d4@gmail.com>
-In-Reply-To: <20241025-kunit-qemu-accel-macos-v1-0-2f30c26192d4@gmail.com>
-To: Brendan Higgins <brendan.higgins@linux.dev>, 
- David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>
-Cc: linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
- linux-kernel@vger.kernel.org, Tamir Duberstein <tamird@gmail.com>
-X-Mailer: b4 0.15-dev
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] btrfs: add a sanity check for btrfs root
+To: dsterba@suse.cz
+Cc: Lizhi Xu <lizhi.xu@windriver.com>,
+ syzbot+3030e17bd57a73d39bd7@syzkaller.appspotmail.com, clm@fb.com,
+ dsterba@suse.com, josef@toxicpanda.com, linux-btrfs@vger.kernel.org,
+ linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <6719c407.050a0220.10f4f4.01dc.GAE@google.com>
+ <20241025045553.2012160-1-lizhi.xu@windriver.com>
+ <03bcaafe-4a15-487a-af2b-b23970162bbb@gmx.com>
+ <20241025180315.GI31418@twin.jikos.cz>
+Content-Language: en-US
+From: Qu Wenruo <quwenruo.btrfs@gmx.com>
+Autocrypt: addr=quwenruo.btrfs@gmx.com; keydata=
+ xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
+ 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
+ 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
+ 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
+ gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
+ AAHNIlF1IFdlbnJ1byA8cXV3ZW5ydW8uYnRyZnNAZ214LmNvbT7CwJQEEwEIAD4CGwMFCwkI
+ BwIGFQgJCgsCBBYCAwECHgECF4AWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCZxF1YAUJEP5a
+ sQAKCRDCPZHzoSX+qF+mB/9gXu9C3BV0omDZBDWevJHxpWpOwQ8DxZEbk9b9LcrQlWdhFhyn
+ xi+l5lRziV9ZGyYXp7N35a9t7GQJndMCFUWYoEa+1NCuxDs6bslfrCaGEGG/+wd6oIPb85xo
+ naxnQ+SQtYLUFbU77WkUPaaIU8hH2BAfn9ZSDX9lIxheQE8ZYGGmo4wYpnN7/hSXALD7+oun
+ tZljjGNT1o+/B8WVZtw/YZuCuHgZeaFdhcV2jsz7+iGb+LsqzHuznrXqbyUQgQT9kn8ZYFNW
+ 7tf+LNxXuwedzRag4fxtR+5GVvJ41Oh/eygp8VqiMAtnFYaSlb9sjia1Mh+m+OBFeuXjgGlG
+ VvQFzsBNBFnVga8BCACqU+th4Esy/c8BnvliFAjAfpzhI1wH76FD1MJPmAhA3DnX5JDORcga
+ CbPEwhLj1xlwTgpeT+QfDmGJ5B5BlrrQFZVE1fChEjiJvyiSAO4yQPkrPVYTI7Xj34FnscPj
+ /IrRUUka68MlHxPtFnAHr25VIuOS41lmYKYNwPNLRz9Ik6DmeTG3WJO2BQRNvXA0pXrJH1fN
+ GSsRb+pKEKHKtL1803x71zQxCwLh+zLP1iXHVM5j8gX9zqupigQR/Cel2XPS44zWcDW8r7B0
+ q1eW4Jrv0x19p4P923voqn+joIAostyNTUjCeSrUdKth9jcdlam9X2DziA/DHDFfS5eq4fEv
+ ABEBAAHCwHwEGAEIACYCGwwWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCZxF1gQUJEP5a0gAK
+ CRDCPZHzoSX+qHGpB/kB8A7M7KGL5qzat+jBRoLwB0Y3Zax0QWuANVdZM3eJDlKJKJ4HKzjo
+ B2Pcn4JXL2apSan2uJftaMbNQbwotvabLXkE7cPpnppnBq7iovmBw++/d8zQjLQLWInQ5kNq
+ Vmi36kmq8o5c0f97QVjMryHlmSlEZ2Wwc1kURAe4lsRG2dNeAd4CAqmTw0cMIrR6R/Dpt3ma
+ +8oGXJOmwWuDFKNV4G2XLKcghqrtcRf2zAGNogg3KulCykHHripG3kPKsb7fYVcSQtlt5R6v
+ HZStaZBzw4PcDiaAF3pPDBd+0fIKS6BlpeNRSFG94RYrt84Qw77JWDOAZsyNfEIEE0J6LSR/
+In-Reply-To: <20241025180315.GI31418@twin.jikos.cz>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:5SKQGQGus0ODslVp11cF3lEdunMDzTif1PxUptWtrc1tvm3hqDz
+ YunZj0Iscr/3v7q/f367yf4CbWxVmvlHQ+mcH4Ib/VbCj/mpgXuQ90xbzn/VMP2BB9Dv4tz
+ zasDCSPVfaWkqqNrP9Tc0/+gc2yWwvIOQdktx9/N7Ei4aXd+JUG2BzVKCi/xuQH8ZMIQDgT
+ 2nWUwm+vEf1ILjUvM/NUQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:ygiZmHliaN8=;7I6evqp2kZUcKH7fpTFs3EmwWOh
+ uB08Fz7/PEJtK3QvQcOjQpKziNAdBdFjk3DBLbApxkS4pkValT4NnPfEVv0Cdli//LUfXiibM
+ oHs0DwcjMiMigIWj682hqkDVMc/DhwQpsna/CXFLgqpQLx3kv8VCC4QMv09NionofJ3x+bGWU
+ ZmxqPs4AepjuPmlEDb8GHSvvMmtyrZcWPrUCLc8GogQTLiemJhdiQHsDn2W52I6IRcITeZzhk
+ mJIRZUERfJ9WnZzFq+Wt9A/jredC/VotGxw6oUS80pujiosBAT3v7l/oTpIJDegRTUC/Mj5vE
+ 5/uyZMUaQq2f8QoH82ot04WILqyeZJ3cTd0TJp2Dfj+p/uYx6ljyV6K9VZK/6k3nHDK5sIUON
+ 4SWu8tWAoQhpVu9aiqu4f+bJy+Lys0/4WE7FbP929enRtElVmiwYJlo2sxhxnTbTErCnfjund
+ /2p2blGO7Csf4fyiPYIgv1TRGnDg4QuQ6xOmjkVDLeapdDBBK3NPlhCpYcBmwYek1upWC0eXO
+ T+wQAfIUGJFMnjmFkN5w6OEXG+WNA8Tos6/pcscdaaAatq6aAUbk8zKdz5VevGKD7ue+tNMKB
+ nj/vw7mDh7u8vLqTOHyUGU9wsGbJUIvvT0aP7dmpiKjLCJE78Bx2uDb5P1vPSJjFXKlpTEBOO
+ 7EvdJRDMyWletuIo6AfDJ1EsMwzoIlSiiJREbQSbAvbHbQqIDUsrVdTBLaOA4cgAeRAnnjf1N
+ KQ/l9wcsPRmpznzhBJN0Qtu6ew211kj1tazgjKcnIE6TRv6rCYjAw6TCuRnYqgWGHjn1MS2Ol
+ ThEW+huQt+kXO+SGtCQNSYFEqxX6bluH9E1kPbWHfMNkU=
 
-Use KVM or HVF if supported by the QEMU binary and available on the
-system.
 
-This produces a nice improvement on my Apple M3 Pro running macOS 14.7:
 
-Before:
-./tools/testing/kunit/kunit.py exec --arch arm64
-[HH:MM:SS] Elapsed time: 10.145s
+=E5=9C=A8 2024/10/26 04:33, David Sterba =E5=86=99=E9=81=93:
+> On Fri, Oct 25, 2024 at 08:23:07PM +1030, Qu Wenruo wrote:
+>>
+>>
+>> =E5=9C=A8 2024/10/25 15:25, Lizhi Xu =E5=86=99=E9=81=93:
+>>> Syzbot report a null-ptr-deref in btrfs_search_slot.
+>>> It use the input logical can't find the extent root in extent_from_log=
+ical,
+>>> and triger the null-ptr-deref in btrfs_search_slot.
+>>> Add sanity check for btrfs root before using it in btrfs_search_slot.
+>>
+>> Although I'd prefer to explain a little more about why the NULL root
+>> pointer can happen (caused by the rescue=3Dall mount option), which can
+>> cause NULL root pointer for non-critical tree roots, like
+>> uuid/csum/extent or even device trees.
+>>
+>> You don't need to bother sending an update.
+>> I can add such info when pushing to the maintainer's tree.
+>>
+>>>
+>>> Reported-by: syzbot+3030e17bd57a73d39bd7@syzkaller.appspotmail.com
+>>> Closes: https://syzkaller.appspot.com/bug?extid=3D3030e17bd57a73d39bd7
+>>> Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
+>>
+>> Reviewed-by: Qu Wenruo <wqu@suse.com>
+>
+>>> @@ -2023,6 +2023,10 @@ int btrfs_search_slot(struct btrfs_trans_handle=
+ *trans, struct btrfs_root *root,
+>>>    	int min_write_lock_level;
+>>>    	int prev_cmp;
+>>>
+>>> +	if (!root)
+>>> +		return -EINVAL;
+>
+> The function returns errors indirectly so it's not clear which could be
+> ultimately returned. I did a quick search over the calls starting in
+> btrfs_search_slot() and it seems that EINVAL is not used so we'd know if
+> it ends up in some error report. The ones I found: EAGAIN, EIO, EUCLEAN,
+> ENOMEM.
+>
 
-After:
-./tools/testing/kunit/kunit.py exec --arch arm64
-[HH:MM:SS] Elapsed time: 1.773s
+If you want, I can add extra (ratelimited though) error/warning message
+for such cases.
 
-Signed-off-by: Tamir Duberstein <tamird@gmail.com>
----
- tools/testing/kunit/kunit_kernel.py       | 26 +++++++++++++++++++++++++-
- tools/testing/kunit/qemu_configs/arm64.py |  2 +-
- 2 files changed, 26 insertions(+), 2 deletions(-)
+Considering this is only possible for rescue=3Dall cases, extra error
+messages should be fine.
 
-diff --git a/tools/testing/kunit/kunit_kernel.py b/tools/testing/kunit/kunit_kernel.py
-index 61931c4926fd6645f2c62dd13f9842a432ec4167..10cacf5a3c443bacd6c074647e4bddfc31599cf8 100644
---- a/tools/testing/kunit/kunit_kernel.py
-+++ b/tools/testing/kunit/kunit_kernel.py
-@@ -116,7 +116,8 @@ class LinuxSourceTreeOperationsQemu(LinuxSourceTreeOperations):
- 
- 	def start(self, params: List[str], build_dir: str) -> subprocess.Popen:
- 		kernel_path = os.path.join(build_dir, self._kernel_path)
--		qemu_command = ['qemu-system-' + self._qemu_arch,
-+		qemu_binary = 'qemu-system-' + self._qemu_arch
-+		qemu_command = [qemu_binary,
- 				'-nodefaults',
- 				'-m', '1024',
- 				'-kernel', kernel_path,
-@@ -124,6 +125,29 @@ class LinuxSourceTreeOperationsQemu(LinuxSourceTreeOperations):
- 				'-no-reboot',
- 				'-nographic',
- 				'-serial', self._serial] + self._extra_qemu_params
-+		accelerators = {
-+			line.strip()
-+			for line in subprocess.check_output([qemu_binary, "-accel", "help"], text=True).splitlines()
-+			if line and line.islower()
-+		}
-+		if 'kvm' in accelerators:
-+			try:
-+				with open('/dev/kvm', 'rb+'):
-+					qemu_command.extend(['-accel', 'kvm'])
-+			except OSError as e:
-+				print(e)
-+		elif 'hvf' in accelerators:
-+			try:
-+				for line in subprocess.check_output(['sysctl', 'kern.hv_support'], text=True).splitlines():
-+					if not line:
-+						continue
-+					key, value = line.split(':')
-+					if key == 'kern.hv_support' and bool(value):
-+						qemu_command.extend(['-accel', 'hvf'])
-+						break
-+			except subprocess.CalledProcessError as e:
-+				print(e)
-+
- 		# Note: shlex.join() does what we want, but requires python 3.8+.
- 		print('Running tests with:\n$', ' '.join(shlex.quote(arg) for arg in qemu_command))
- 		return subprocess.Popen(qemu_command,
-diff --git a/tools/testing/kunit/qemu_configs/arm64.py b/tools/testing/kunit/qemu_configs/arm64.py
-index d3ff27024755411441f910799be30399295c9541..5c44d3a87e6dd2cd6b086138186a277a1473585b 100644
---- a/tools/testing/kunit/qemu_configs/arm64.py
-+++ b/tools/testing/kunit/qemu_configs/arm64.py
-@@ -9,4 +9,4 @@ CONFIG_SERIAL_AMBA_PL011_CONSOLE=y''',
- 			   qemu_arch='aarch64',
- 			   kernel_path='arch/arm64/boot/Image.gz',
- 			   kernel_command_line='console=ttyAMA0',
--			   extra_qemu_params=['-machine', 'virt', '-cpu', 'max,pauth-impdef=on'])
-+			   extra_qemu_params=['-machine', 'virt', '-cpu', 'max'])
+Or do you prefer some more rare return values?
 
--- 
-2.47.0
-
+Thanks,
+Qu
 
