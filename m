@@ -1,79 +1,123 @@
-Return-Path: <linux-kernel+bounces-380897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4D3E9AF767
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 04:29:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBC639AF769
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 04:32:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5CDB1C2147B
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 02:29:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8475E1F22007
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 02:32:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88FB3170854;
-	Fri, 25 Oct 2024 02:29:49 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18BDC18991A;
+	Fri, 25 Oct 2024 02:32:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="qwZfTYwt"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A1B186AE3;
-	Fri, 25 Oct 2024 02:29:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAF0B22B64B
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 02:32:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729823389; cv=none; b=QWF7jhIfUnezUWxXkGw1Kbzc8io/QernuvIhUQcV27wY1yLMfvIBfrGS4W6Zhun71ptvsfeysvmfiGvXo7b3Hj3iRCgtxCzRSucZ9aGdmMxo3GhNAlzgy4mFHXxz2OHW9/A1xbqdazwRh07qO4w3WZr4qVoOu/6SCtnzkznyUaA=
+	t=1729823525; cv=none; b=ZQs3BV7SAb8nCUp1+GfiaP4cNjVzov+YBMJshSsg2l4z7ynraBQeScF+eTb3m3U+Rgy4bYAI5PpOn6Xt4V5JY9818CbX13Dl4ZAfKlzqwQqVdgR1VH9b9VgsZ2x1Q/Z4kWQELao7WZHdBOQc2+WYsf8ohqgrlFITgTEGUF9Yz2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729823389; c=relaxed/simple;
-	bh=maewG1pabUMM7p9GiBQcQL2cP2/TW16L+uJ1f9eSQM4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=MI39neiBdJK99TNW3wX2qa6BQt+31zty0JoHM2Ng4jb3JXSknkuplu0/7rEETkKGrV6owJCalp3DKxH1f1Ol/d2nWpS9XJCJWPskZpUFxqyHRbbNDACA3GQMFBR/VuRYug+fcbLoIMYAA3SmpcztELi6XNOkItS8nVV4qqAL9hE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F06C4C4CEC7;
-	Fri, 25 Oct 2024 02:29:47 +0000 (UTC)
-Date: Thu, 24 Oct 2024 22:29:44 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: LKML <linux-kernel@vger.kernel.org>, Linux trace kernel
- <linux-trace-kernel@vger.kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland
- <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH] fgraph: Change the name of cpuhp state to "fgraph:online"
-Message-ID: <20241024222944.473d88c5@rorschach.local.home>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1729823525; c=relaxed/simple;
+	bh=AgNcZRpl0kYhebHLjHd//nbmonMeQw3355INuwWAfwA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=LsMrZTfgb6hu3a5xzpIOjHvjU3BL95F3YdjrERBKgpGiypsD+x/mJPfIAUoUMNnqYZ3aejaKdhWdWoeoBErkp9C6R63qjIVw7/6neoeOfDcpXsGSQxOoAguEc4uGxnCuxvKoXKPDohZcxW959RrMR8T0Us/UKptk0X4N94T0Q+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=qwZfTYwt; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
+	s=201909; t=1729823519;
+	bh=DLqU6vLdekjlRZZCwD9gnIJ2B6/IvBjWioyusl6prfI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=qwZfTYwt5+TDD7JV1w1VeSXVFG4at6tB2CJKZfLFDHiuL+8Tj/HdLd3uvgNl2lUjb
+	 qNdvLa+SjqmKhoN/dZwYs5ioQ2nbPg7CAm07MX6k/f8e+tfKYJJnZ2+72P9HvFpw3Z
+	 l1vY6FuN0zooFJdb24eKQ1OpGUI1DspLYEnqMrGjTFR1JrHtV0gAsOIveR6maiCxQh
+	 DssoSvCHTOdb/SkSscMzA2YlyfnX8HFR5jU69Q2GV98bQVQuYhUAedqrA+yGtWfy7I
+	 rdZaNIuG95vmcEHAjVKbB+QYR2xqpFZdifpMZuSloLYs4i2GFegjHmUrsVy3e5yZHj
+	 uRV4nKHCoMZ2A==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XZRcv1wQGz4wb1;
+	Fri, 25 Oct 2024 13:31:59 +1100 (AEDT)
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Mukesh Kumar Chaurasiya <mchauras@linux.ibm.com>
+Cc: npiggin@gmail.com, christophe.leroy@csgroup.eu, naveen@kernel.org,
+ maddy@linux.ibm.com, peterx@redhat.com, groug@kaod.org,
+ sshegde@linux.ibm.com, linuxppc-dev@lists.ozlabs.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] powerpc/xmon: symbol lookup length fixed
+In-Reply-To: <zkm6fcxaef4gnvvsvykv7po7joytakyhqnmt2j72ej3r4wffn2@j5p6h6h2bwnw>
+References: <20241023212225.1306609-2-mchauras@linux.ibm.com>
+ <878que2u2i.fsf@mail.lhotse>
+ <nxdkjwqtd7s3fcxebwod6lrfu7rngrj7fa4kk433hgypha66w5@6ahbuz7o2qmu>
+ <zkm6fcxaef4gnvvsvykv7po7joytakyhqnmt2j72ej3r4wffn2@j5p6h6h2bwnw>
+Date: Fri, 25 Oct 2024 13:32:00 +1100
+Message-ID: <87a5eskj4v.fsf@mail.lhotse>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-From: Steven Rostedt <rostedt@goodmis.org>
+Mukesh Kumar Chaurasiya <mchauras@linux.ibm.com> writes:
+> On Thu, Oct 24, 2024 at 10:42:12AM +0530, Mukesh Kumar Chaurasiya wrote:
+>> On Thu, Oct 24, 2024 at 12:00:53PM +1100, Michael Ellerman wrote:
+>> > Mukesh Kumar Chaurasiya <mchauras@linux.ibm.com> writes:
+>> > > Currently xmon cannot lookup symbol beyond 64 characters in some cases.
+>> > 
+>> > Can you mention which commands? It looks like it's "ls" and "lp".
+>> Sure.
+>> > 
+>> > > Fix this by using KSYM_NAME_LEN instead of fixed 64 characters.
+>> > >
+>> > > Signed-off-by: Mukesh Kumar Chaurasiya <mchauras@linux.ibm.com>
+>> > > ---
+>> > >  arch/powerpc/xmon/xmon.c | 6 +++---
+>> > >  1 file changed, 3 insertions(+), 3 deletions(-)
+>> > >
+>> > > diff --git a/arch/powerpc/xmon/xmon.c b/arch/powerpc/xmon/xmon.c
+>> > > index e6cddbb2305f..22b8b5cc4df0 100644
+>> > > --- a/arch/powerpc/xmon/xmon.c
+>> > > +++ b/arch/powerpc/xmon/xmon.c
+>> > > @@ -3662,7 +3662,7 @@ symbol_lookup(void)
+>> > >  	int type = inchar();
+>> > >  	unsigned long addr, cpu;
+>> > >  	void __percpu *ptr = NULL;
+>> > > -	static char tmp[64];
+>> > > +	static char tmp[KSYM_NAME_LEN];
+>> >   
+>> > I think you could use the existing tmpstr buffer.
+>> > 
+>> > It is global so it's a little hard to track down all the users, but I
+>> > think it's only used briefly in get_function_bounds(),
+>> > xmon_print_symbol() and scanhex(). ie. none of the uses persist across
+>> > function calls.
+>> > 
+>> > We don't want to have two 512 byte static arrays lying around if we can
+>> > get by with one.
+>> > 
+>> > cheers
+>> Sure.
 
-The cpuhp state name given to cpuhp_setup_state() is "fgraph_idle_init"
-which doesn't really conform to the names that are used for cpu hotplug
-setups. Instead rename it to "fgraph:online" to be in line with other
-states.
+> For now i don't think so we can get by with only one. There is a lookup being
+> done when the scanhex is using the tmpstr for another lookup.
 
-Suggested-by: Masami Hiramatsu <mhiramat@kernel.org>
-Fixes: 2c02f7375e658 ("fgraph: Use CPU hotplug mechanism to initialize idle shadow stacks")
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- kernel/trace/fgraph.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Yeah I see it, when handling `lp <symbol> <cpu>`.
 
-diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
-index cd1c2946018c..69e226a48daa 100644
---- a/kernel/trace/fgraph.c
-+++ b/kernel/trace/fgraph.c
-@@ -1255,7 +1255,7 @@ int register_ftrace_graph(struct fgraph_ops *gops)
- 	guard(mutex)(&ftrace_lock);
- 
- 	if (!fgraph_initialized) {
--		ret = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "fgraph_idle_init",
-+		ret = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "fgraph:online",
- 					fgraph_cpu_init, NULL);
- 		if (ret < 0) {
- 			pr_warn("fgraph: Error to init cpu hotplug support\n");
--- 
-2.45.2
+That's a bit annoying because for that command the CPU number is only
+meant to be a number, it never makes sense to do a $symbol lookup there.
 
+But I agree with the way the code is structured it's best not to reuse
+tmpstr there.
+
+cheers
 
