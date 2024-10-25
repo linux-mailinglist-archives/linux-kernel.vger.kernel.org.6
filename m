@@ -1,211 +1,168 @@
-Return-Path: <linux-kernel+bounces-381846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 278589B053C
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:12:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 194A29B05FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:38:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 86419B256C7
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 14:12:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 703FEB254E6
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 14:38:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C73621FB89A;
-	Fri, 25 Oct 2024 14:12:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69270206505;
+	Fri, 25 Oct 2024 14:38:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jAWUfHFS"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lur8MBR6"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC1E41173F;
-	Fri, 25 Oct 2024 14:12:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5FFB21219A;
+	Fri, 25 Oct 2024 14:38:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729865535; cv=none; b=op5o+lqrr9jTrRIGqx4hcEg/VQ8lqrwKzm1R5Enp/r2T3eD1pXGTbA3MlFc2SmB3KM1byV1/djNFsGIO9WCaYthvIt+I8gKHDud478gMsdgUEMkVsXgGXrTGpLBoYVdSuxhRwNrvPbh1h0Pjsyc+0F/QuIolsi8X3QRcQON3d2g=
+	t=1729867106; cv=none; b=BvCnf0oqvPG9ZdEGFn5quc6SGHGjQ5un9Avh+RSEZOhw1jYNZ1enrTTJZ+q2z/dgfvUNVF7nfcc4JpK0HxXHFXZdWhR23iQIHNaXFSo8AbzVQlLeLydDQDGvZczlY1jIWWOTAn1LwqKk20BdhwB9mBSto2c+v4prd/VaZlRJ5yE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729865535; c=relaxed/simple;
-	bh=bBUDfwxHOSTXWsEHAFL/6zzCQPfVbtVA7ZxbvpXXEwk=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=BgvugBrCYnJWf90W0Rv+9u+v++SdkLLynwJpxF3inI62Xg57GtssmE3cvV9GpMh1V5b5y+KCou3z7ke6vTDMlttgwa2EXTOEd8qYIOD0kEmGpx/Bhxm6eaQmQCZAS585ucJRMGNrEzFTx9JDTAIE9zyojbDlcXvv2clt1WNRM1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jAWUfHFS; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729865533; x=1761401533;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=bBUDfwxHOSTXWsEHAFL/6zzCQPfVbtVA7ZxbvpXXEwk=;
-  b=jAWUfHFSIfQe0k3rXzfH7GcpG74mK2wpELxeLvJ65DMFDw88JgRPO3Oo
-   mqq2urOueKkJE62rRRV5l4vlvy8D3HHn4Qex95c/O2y4zD24/yfHOUjsf
-   y6VaAXpR0TC+hpZHmMDRyMG0FEzCtcGI17AckLsPGZI5RYziVwQ4eobt4
-   J6jK2Ro3j1DUwH4aN0xh6guedZ70wPpevTLxe03D2jtD4+qNg4Ug5e+hK
-   mIw/fvuf/SSyJDB/ve+Mkx9aX/4hMzkImnIlXBDmQ3RaxGbWQK5U7lbzc
-   5q3UNn7jVnmlYx0ZqZB/4kz7haXMZhrk2dmSVzOSicwUgFzDMp6VkCNnW
-   Q==;
-X-CSE-ConnectionGUID: UJJT4O46QuGui8x5HUV51g==
-X-CSE-MsgGUID: arP/pUK6SJ6iX1Ape0zmmA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="29480205"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="29480205"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2024 07:12:12 -0700
-X-CSE-ConnectionGUID: SQcDvA4yRQiXIkEs8NtlUw==
-X-CSE-MsgGUID: 2NyAD6vBSgOk23QdvneC7g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,232,1725346800"; 
-   d="scan'208";a="85481009"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.225])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2024 07:12:10 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Fri, 25 Oct 2024 17:12:05 +0300 (EEST)
-To: Kurt Borja <kuurtb@gmail.com>
-cc: W_Armin@gmx.de, Hans de Goede <hdegoede@redhat.com>, 
-    LKML <linux-kernel@vger.kernel.org>, platform-driver-x86@vger.kernel.org
-Subject: Re: [PATCH v8 2/4] alienware-wmi: alienware_wmax_command() is now
- input size agnostic
-In-Reply-To: <20241025014108.5096-2-kuurtb@gmail.com>
-Message-ID: <a727f802-9a8b-5e3c-d86f-63fbb7876cac@linux.intel.com>
-References: <20241025013856.4729-2-kuurtb@gmail.com> <20241025014108.5096-2-kuurtb@gmail.com>
+	s=arc-20240116; t=1729867106; c=relaxed/simple;
+	bh=jOEqqD6eKub5OsQMn1xgga0X/jrQgRJtdPD5dGCwuZU=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=pUe6112lNKez7nliU/rByCrcSTjmeZd2U/iSfUiVy0MrTnyLPl7ObO1mUOF559GrvD5Vn2b90YhHSrBKhU/WidZFp0eESpyxQySMsQheEBdQ8NVnccYPGpP9iRMeGAiQgKbSVjHevkDDjNU16+FERQL3zvhPmKipe/1kK4GearI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Lur8MBR6; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-20cdda5cfb6so18960705ad.3;
+        Fri, 25 Oct 2024 07:38:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729867103; x=1730471903; darn=vger.kernel.org;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=V94RD6jfT9MDE0QIyHUh0lfRze2S4BWxc5Wb309byfA=;
+        b=Lur8MBR67bC5ssjAXNJQVRMEtPcxTzBc76hojiCOVm3IxWKEtPB3CD8Byxgq4HuLRI
+         cDKuym69VVci61rQzMax9lHptOd6Y+sbHuo/TiC8haT3N9leqJsCcZvxGn5V/hKt85IH
+         kPt9ClqO04bDjN7v3ok5zvckvegR4phxupRJCavLjywBOJ2sEKjwSo/aGNhMrXBRby8t
+         SeD53d65YWhZnlwwR98MF45itvUPUHN0Q6IFhUWKe9bZOnQMwQRWQ6zVDqsdNz5Mk8rt
+         aDUL7TW9CM4d7AszsF00ZIlkp6E+Rs0fStv7ZdHPHnHa7HvDMnAcGdeuZ7FIzxiXN03c
+         lvlw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729867103; x=1730471903;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=V94RD6jfT9MDE0QIyHUh0lfRze2S4BWxc5Wb309byfA=;
+        b=npn6nlk5qnHx23yD9ZgD7GPfXMC99E8cURE16jPHR0OGdiOvNq9sx0Brpr7VXz6T2g
+         k7L5wJ5dPA7yOzWnOSbkhxvcNfxf0bcd1iKQLi4lLdMEPjjQLTPOL6HHog2uaij0v/6z
+         BTtz5JhnUfc348Dmj/sxxPhNUB+haT1RZktQNQRkWo8I5At+au/6cGQL3idebk5HHGx5
+         ddjoEq1S/mCinsfKwkg9EM6qMIirXcwSv3I1ZLmGVsTGkxz58dcd1zxp6UBFaRQ/kt0Z
+         MHifRTgEJzOzXlOSbdfXFV8wk2f0HDpRV1XRTIxUZW2kpcnxOTddMR6lnFS1g4121XEz
+         eIkw==
+X-Forwarded-Encrypted: i=1; AJvYcCUWvBjuLd8Puo5L1+W4VDlv4D4BHXpxaL6lpi/NoIZc7wbGwJIFNSD+8piWYvO7o5fLss7KSrq63fpv@vger.kernel.org, AJvYcCVWGu3hJiCHjXdTUAbT2qi/ZqooO/+kUxZ68Iq/ETWl8/3sd4EZQXSiRhGXGoatX4RxAap4iKxWNPIP7vDePQ==@vger.kernel.org, AJvYcCWGvdAVJMBYo4J/OywJcFYBiQN+nx5l2CrMzY4JX6tCpaI8BQBE+iw1AWDkDquhHQ5IuTw+Iy+biyVo3iUy@vger.kernel.org, AJvYcCXX32f97r5g8cNDRDIRSi7YDsmxzQ5zexBObixtOzO/9MhFSihVXO4jRidLGVVRSgpIvtdlCOZC7Nvc@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7hxXgbpV9tPniJmAKdHxB5EBi9eaCyC23bwhv1Nd5Dw9JbQLa
+	TqYjnfBOA/VIQTRNH+BZznULLWx4M4vMoE0wxRwciP3+khH7S2NhVOImlA==
+X-Google-Smtp-Source: AGHT+IHv8Tc2MEIhCPRV97Jl1Ckmb69pyWd6ThNw+/dGHKosCC0AoAuTSFm0zs0rvv9kcdK13Ry55g==
+X-Received: by 2002:a17:902:cec6:b0:20c:b483:cce2 with SMTP id d9443c01a7336-20fab2e0fe7mr92648825ad.60.1729867103451;
+        Fri, 25 Oct 2024 07:38:23 -0700 (PDT)
+Received: from dw-tp ([171.76.85.20])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bc082f15sm10079635ad.292.2024.10.25.07.38.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Oct 2024 07:38:22 -0700 (PDT)
+From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+To: John Garry <john.g.garry@oracle.com>, linux-ext4@vger.kernel.org
+Cc: Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.cz>, "Darrick J . Wong" <djwong@kernel.org>, Christoph Hellwig <hch@infradead.org>, Ojaswin Mujoo <ojaswin@linux.ibm.com>, Dave Chinner <david@fromorbit.com>, linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 5/6] iomap: Lift blocksize restriction on atomic writes
+In-Reply-To: <509180f3-4cc1-4cc2-9d43-5a1e728fb718@oracle.com>
+Date: Fri, 25 Oct 2024 19:43:17 +0530
+Message-ID: <87plnomfsy.fsf@gmail.com>
+References: <cover.1729825985.git.ritesh.list@gmail.com> <f5bd55d32031b49bdd9e2c6d073787d1ac4b6d78.1729825985.git.ritesh.list@gmail.com> <1efb8d6d-ba2e-499d-abc5-e4f9a1e54e89@oracle.com> <87zfmsmsvc.fsf@gmail.com> <fc6fddee-2707-4cca-b0b7-983c8dd17e16@oracle.com> <87v7xgmpwo.fsf@gmail.com> <7e322989-c6e0-424a-94bd-3ad6ce5ffee9@oracle.com> <87ttd0mnuo.fsf@gmail.com> <7aea00d4-3914-414d-a18f-586a303868c1@oracle.com> <87r084mkat.fsf@gmail.com> <509180f3-4cc1-4cc2-9d43-5a1e728fb718@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-1519611876-1729865525=:946"
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+John Garry <john.g.garry@oracle.com> writes:
 
---8323328-1519611876-1729865525=:946
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+> On 25/10/2024 13:36, Ritesh Harjani (IBM) wrote:
+>>>> So user will anyway will have to be made aware of not to
+>>>> attempt writes of fashion which can cause them such penalties.
+>>>>
+>>>> As patch-6 mentions this is a base support for bs = ps systems for
+>>>> enabling atomic writes using bigalloc. For now we return -EINVAL when we
+>>>> can't allocate a continuous user requested mapping which means it won't
+>>>> support operations of types 8k followed by 16k.
+>>>>
+>>> That's my least-preferred option.
+>>>
+>>> I think better would be reject atomic writes that cover unwritten
+>>> extents always - but that boat is about to sail...
+>> That's what this patch does.
+>
+> Not really.
+>
+> Currently we have 2x iomap restrictions:
+> a. mapping length must equal fs block size
+> b. bio created must equal total write size
+>
+> This patch just says that the mapping length must equal total write size 
+> (instead of a.). So quite similar to b.
+>
+>> For whatever reason if we couldn't allocate
+>> a single contiguous region of requested size for atomic write, then we
+>> reject the request always, isn't it. Or maybe I didn't understand your comment.
+>
+> As the simplest example, for an atomic write to an empty file, there 
+> should only be a single mapping returned to iomap_dio_bio_iter() and 
+> that would be of IOMAP_UNWRITTEN type. And we don't reject that.
+>
 
-On Thu, 24 Oct 2024, Kurt Borja wrote:
+Ok. Maybe this is what I am missing. Could you please help me understand
+why should such writes be rejected? 
 
-> alienware_wmax_command() now takes void * and size_t instead of struct
-> wmax_basic_args to extend support to new WMAX methods. Also int *out_data
-> was changed to u32 *out_data, because new interface specifies u32 as outp=
-ut
-> parameter and all previous callers would pass u32 * regardless.
->=20
-> Signed-off-by: Kurt Borja <kuurtb@gmail.com>
-> Reviewed-by: Armin Wolf <W_Armin@gmx.de>
+For e.g. 
+If FS could allocate a single contiguous IOMAP_UNWRITTEN extent of
+atomic write request size, that means - 
+1. FS will allocate an unwritten extent.
+2. will do writes (using submit_bio) to the unwritten extent. 
+3. will do unwritten to written conversion. 
 
-Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
+It is ok if either of the above operations fail right? If (3) fails
+then the region will still be marked unwritten that means it will read
+zero (old contents). (2) can anyway fail and will not result into
+partial writes. (1) will anyway not result into any write whatsoever.
 
---=20
- i.
+So we can never have a situation where there is partial writes leading
+to mix of old and new write contents right for such cases? Which is what the
+requirement of atomic/untorn write also is?
 
-> ---
-> v8:
->  - Unchanged
-> v7:
->  - Unchanged
-> v6:
->  - Unchanged
-> ---
->  drivers/platform/x86/dell/alienware-wmi.c | 29 ++++++++++++-----------
->  1 file changed, 15 insertions(+), 14 deletions(-)
->=20
-> diff --git a/drivers/platform/x86/dell/alienware-wmi.c b/drivers/platform=
-/x86/dell/alienware-wmi.c
-> index 16a3fe9ac..b27f3b64c 100644
-> --- a/drivers/platform/x86/dell/alienware-wmi.c
-> +++ b/drivers/platform/x86/dell/alienware-wmi.c
-> @@ -500,15 +500,15 @@ static void alienware_zone_exit(struct platform_dev=
-ice *dev)
->  =09kfree(zone_attrs);
->  }
-> =20
-> -static acpi_status alienware_wmax_command(struct wmax_basic_args *in_arg=
-s,
-> -=09=09=09=09=09  u32 command, int *out_data)
-> +static acpi_status alienware_wmax_command(void *in_args, size_t in_size,
-> +=09=09=09=09=09  u32 command, u32 *out_data)
->  {
->  =09acpi_status status;
->  =09union acpi_object *obj;
->  =09struct acpi_buffer input;
->  =09struct acpi_buffer output;
-> =20
-> -=09input.length =3D sizeof(*in_args);
-> +=09input.length =3D in_size;
->  =09input.pointer =3D in_args;
->  =09if (out_data) {
->  =09=09output.length =3D ACPI_ALLOCATE_BUFFER;
-> @@ -541,8 +541,8 @@ static ssize_t show_hdmi_cable(struct device *dev,
->  =09=09.arg =3D 0,
->  =09};
->  =09status =3D
-> -=09    alienware_wmax_command(&in_args, WMAX_METHOD_HDMI_CABLE,
-> -=09=09=09=09   &out_data);
-> +=09    alienware_wmax_command(&in_args, sizeof(in_args),
-> +=09=09=09=09   WMAX_METHOD_HDMI_CABLE, &out_data);
->  =09if (ACPI_SUCCESS(status)) {
->  =09=09if (out_data =3D=3D 0)
->  =09=09=09return sysfs_emit(buf, "[unconnected] connected unknown\n");
-> @@ -562,8 +562,8 @@ static ssize_t show_hdmi_source(struct device *dev,
->  =09=09.arg =3D 0,
->  =09};
->  =09status =3D
-> -=09    alienware_wmax_command(&in_args, WMAX_METHOD_HDMI_STATUS,
-> -=09=09=09=09   &out_data);
-> +=09    alienware_wmax_command(&in_args, sizeof(in_args),
-> +=09=09=09=09   WMAX_METHOD_HDMI_STATUS, &out_data);
-> =20
->  =09if (ACPI_SUCCESS(status)) {
->  =09=09if (out_data =3D=3D 1)
-> @@ -589,7 +589,8 @@ static ssize_t toggle_hdmi_source(struct device *dev,
->  =09=09args.arg =3D 3;
->  =09pr_debug("alienware-wmi: setting hdmi to %d : %s", args.arg, buf);
-> =20
-> -=09status =3D alienware_wmax_command(&args, WMAX_METHOD_HDMI_SOURCE, NUL=
-L);
-> +=09status =3D alienware_wmax_command(&args, sizeof(args),
-> +=09=09=09=09=09WMAX_METHOD_HDMI_SOURCE, NULL);
-> =20
->  =09if (ACPI_FAILURE(status))
->  =09=09pr_err("alienware-wmi: HDMI toggle failed: results: %u\n",
-> @@ -642,8 +643,8 @@ static ssize_t show_amplifier_status(struct device *d=
-ev,
->  =09=09.arg =3D 0,
->  =09};
->  =09status =3D
-> -=09    alienware_wmax_command(&in_args, WMAX_METHOD_AMPLIFIER_CABLE,
-> -=09=09=09=09   &out_data);
-> +=09    alienware_wmax_command(&in_args, sizeof(in_args),
-> +=09=09=09=09   WMAX_METHOD_AMPLIFIER_CABLE, &out_data);
->  =09if (ACPI_SUCCESS(status)) {
->  =09=09if (out_data =3D=3D 0)
->  =09=09=09return sysfs_emit(buf, "[unconnected] connected unknown\n");
-> @@ -694,8 +695,8 @@ static ssize_t show_deepsleep_status(struct device *d=
-ev,
->  =09struct wmax_basic_args in_args =3D {
->  =09=09.arg =3D 0,
->  =09};
-> -=09status =3D alienware_wmax_command(&in_args, WMAX_METHOD_DEEP_SLEEP_ST=
-ATUS,
-> -=09=09=09=09=09&out_data);
-> +=09status =3D alienware_wmax_command(&in_args, sizeof(in_args),
-> +=09=09=09=09=09WMAX_METHOD_DEEP_SLEEP_STATUS, &out_data);
->  =09if (ACPI_SUCCESS(status)) {
->  =09=09if (out_data =3D=3D 0)
->  =09=09=09return sysfs_emit(buf, "[disabled] s5 s5_s4\n");
-> @@ -723,8 +724,8 @@ static ssize_t toggle_deepsleep(struct device *dev,
->  =09=09args.arg =3D 2;
->  =09pr_debug("alienware-wmi: setting deep sleep to %d : %s", args.arg, bu=
-f);
-> =20
-> -=09status =3D alienware_wmax_command(&args, WMAX_METHOD_DEEP_SLEEP_CONTR=
-OL,
-> -=09=09=09=09=09NULL);
-> +=09status =3D alienware_wmax_command(&args, sizeof(args),
-> +=09=09=09=09=09WMAX_METHOD_DEEP_SLEEP_CONTROL, NULL);
-> =20
->  =09if (ACPI_FAILURE(status))
->  =09=09pr_err("alienware-wmi: deep sleep control failed: results: %u\n",
->=20
---8323328-1519611876-1729865525=:946--
+Sorry am I missing something here?
+
+>> 
+>> If others prefer - we can maybe add such a check (e.g. ext4_dio_atomic_write_checks())
+>> for atomic writes in ext4_dio_write_checks(), similar to how we detect
+>> overwrites case to decide whether we need a read v/s write semaphore.
+>> So this can check if the user has a partially allocated extent for the
+>> user requested region and if yes, we can return -EINVAL from
+>> ext4_dio_write_iter() itself.
+>  > > I think this maybe better option than waiting until ->iomap_begin().
+>> This might also bring all atomic write constraints to be checked in one
+>> place i.e. during ext4_file_write_iter() itself.
+>
+> Something like this can be done once we decide how atomic writing to 
+> regions which cover mixed unwritten and written extents is to be handled.
+
+Mixed extent regions (written + unwritten) is a different case all
+together (which can lead to mix of old and new contents).
+
+
+But here what I am suggesting is to add following constraint in case of
+ext4 with bigalloc - 
+
+"Writes to a region which already has partially allocated extent is not supported."
+
+That means we will return -EINVAL if we detect above case in
+ext4_file_write_iter() and sure we can document this behavior.
+
+In retrospect, I am not sure why we cannot add a constraint for atomic
+writes (e.g. for ext4 bigalloc) and reject such writes outright,
+instead of silently incurring a performance penalty by zeroing out the
+partial regions by allowing such write request.
+
+-ritesh
 
