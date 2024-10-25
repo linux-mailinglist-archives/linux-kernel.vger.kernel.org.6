@@ -1,172 +1,99 @@
-Return-Path: <linux-kernel+bounces-382183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3618E9B0A7A
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 19:03:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ED9C59B0A7F
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 19:03:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F7881F217C3
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:03:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E3C51F2431C
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:03:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5237B17BEC7;
-	Fri, 25 Oct 2024 17:03:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7428220264D;
+	Fri, 25 Oct 2024 17:03:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="FIyjcyfN"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ldYiaUE5"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD89021A4BF
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 17:03:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA11515ADAB;
+	Fri, 25 Oct 2024 17:03:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729875788; cv=none; b=TbP985HspV98J51wfjWi2su+pNxonzjXN9h3oPdqXs5gu64NvP0QKuAK3x9QCQwvb3DGYj3CfJg6oGNsHyPz96bfJyxr+Q9GMocuigbB7Bj4xK1v7IRisCnO6nigcoNpeqDOqO1Q2g5NRVp3JVCqO+Os/wWa3koZFebCmqESl8A=
+	t=1729875823; cv=none; b=IuCDpK667YMrrjP0Be3GZ2E8AE5lseZd7oNIwl2/WyDYqZ0H3tWXwneq+GX80ZcH5MTkF/zrWHDE2EbgcorOeo2KZXy4YC+mPMdlr7NWEuMe6XOPi4cMel1jqUVi1xZqVEDLgaBL6AiaziRv7P9W8g3b22neYCg7xjzFECLpkqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729875788; c=relaxed/simple;
-	bh=WPGGcqaGiVoPmUoLM39b0KmLkesOa7TEdpIDHgfpP54=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=G6Bxybn0TlG4/meXd++RQJb8y9e2TXjUeNAhuVjQX//O251pOZWjGeJZU6kBR5lCq8yQaGG5TXMcF6BNcCykTCUXX4J661kDxGevahoc2EHGPbONQ6Yr2eyKa2vCazPXpI+3qt8oc98uCpKA5PeG8R+jR1rpS56+Kl2eqnwsKzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=FIyjcyfN; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49PFqi3u031742
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 17:03:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	vcTKvOKbWn/IHq1qmbozjkGUKSKdBdJRZlsqwxZRKHk=; b=FIyjcyfNZM2gA28+
-	/9+xiEfvFxJtXtxdG+VY/dCz8RhUszFCmuYtr4Srb26vFA3Kz7RxRAj7Tqc0ZBzf
-	BBIskolE9HHpucIjVPt8bjj03KGFjPF2n0M0DMjlJMTOzfUGM2JPgCfALDdurNwP
-	yiRhgWvgAJPzRzTSS8vnK/ZDE1jQj9K1laOvHxCf8frvoVbzIYfgYDUR+Xt9EOIX
-	ROGTQGWfYUlG8oFrJ7q/6jnerBBKIBhzFHrtbDcZUJl3z3TiXg3J+HiLp/rA0fGG
-	uuOaSVRe+86i0H+j3t480M3iY1Y+q+BDEW1QXsscTcJJa1DmqVUrcL4tuhEBLhYW
-	egc9wQ==
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42em3whxy0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 17:03:05 +0000 (GMT)
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-83aaad1b050so34760839f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 10:03:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729875783; x=1730480583;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vcTKvOKbWn/IHq1qmbozjkGUKSKdBdJRZlsqwxZRKHk=;
-        b=Sd1+DUMSLupTp1hAe9dby/2zqNKGQcl/VJ5h8AvKDLTMpJIiJA7gviGrKHacbgvrta
-         eWjnPTk8vkejUUa5Hu5vjQUTUsMwcg8Th+LnmrOykk5wo7SGmoDOvXQmtj9Dl6WyFNjA
-         8EPOg0fV77XQ3tEhzT09gc9IMRvw1BLBJAVRz4uIYheOfywVywdP/185nKsFHmF83c9c
-         YCdC5bF97zcUCHhJUSSRdF9RV5fwaEUd0bAXQYxuPEVsPwwKpnO9SPJwHR9x1P7Fivqk
-         rVKz0ZZN+a2o8kn0c+OpxpKHqPTkZuSl0zqw/7hhe9Obtzr2NCKVJGXzvYXJuhsOzfzJ
-         cdpg==
-X-Forwarded-Encrypted: i=1; AJvYcCVZkgFK7+8j2jK0sflNVPBXv+phtwpJJMc0zBCo6XlOu+BHkjWpg6NCp7D/epazkRXF/GLJkUyWYircEFI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0ld6/+BHYYPZb5ncTC7A8KkYMWrzuPLEaAhhKLkgFuQ+j1plx
-	kxn6e1oS9zY19ZxFvN4TrX7s0ReZaoyCSAXf39HYaxJvPQYCjLWmdbSdCapB6tWqil2+CWkYtk7
-	Hq/DZqQawQXWY58CI7r/j+y+Mrzmm5Zrx0Y68WnmL0G+GR6j8PtbJNjhS5M7eiI4mQPWnfFk=
-X-Received: by 2002:a92:c56f:0:b0:39a:f126:9d86 with SMTP id e9e14a558f8ab-3a4e806d563mr4396615ab.0.1729875783518;
-        Fri, 25 Oct 2024 10:03:03 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGFSKWdgG6048ZgDp7DafsAW3/5cONZNPlZ3U7SrY42s9TAXMiE0WlKFoU+kd/+YC5PraD7sA==
-X-Received: by 2002:a92:c56f:0:b0:39a:f126:9d86 with SMTP id e9e14a558f8ab-3a4e806d563mr4396375ab.0.1729875783022;
-        Fri, 25 Oct 2024 10:03:03 -0700 (PDT)
-Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b1dec81a1sm90067866b.25.2024.10.25.10.03.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 25 Oct 2024 10:03:02 -0700 (PDT)
-Message-ID: <6852b25f-94a4-4e04-adc5-5c79eb1f17ca@oss.qualcomm.com>
-Date: Fri, 25 Oct 2024 19:03:01 +0200
+	s=arc-20240116; t=1729875823; c=relaxed/simple;
+	bh=7O4j1llDOPHIqoDS4o0gLGd11f2hoagazAXbD/XFBTs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aFU2mTGVJHRstpZ6hSTuSOxXUGAEWTORDenB8lB07oVSGxtLXeHuu0J6bQ0Eo08IHhm2gSfQy4eKWdKxGW69zy5H+3b8gWN79bLTYxF5fpFelCxKVCQhlX1vTmXipmiB8r3vuqYdB47sRoESAHoTQL5eqbSseLG2IdD6tqRx3Kg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ldYiaUE5; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729875822; x=1761411822;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=7O4j1llDOPHIqoDS4o0gLGd11f2hoagazAXbD/XFBTs=;
+  b=ldYiaUE5CuA1zaQM0p0RLzCUlVbhxm6fkg5Hp0REJnSGG/t/M9CxR8nJ
+   9/4+r60KDo9ixr3WAl609iwrlYgTKzhHi72nR/0b0ppk1AdP/Dk2HNv5V
+   g0nWo2ysaFOH8Q+7LOjy5b9YQIxBvZHd5Sn3TaZSYZPFXAbm2Ixq/K7p+
+   Yl1PVY2x1QA0kFr6Sbv7Db2k04cESbYuYGYEZo/bC06WlTa2W3/JwxnDK
+   XUjzYOc4XdbmmKqd+c0AnNvziSYbeuhaONPneMKKgQcOb78ixzYPXp2hk
+   gqb5ReT3VUndsw9VHPDNDWoMB13xECyFWFehEkHRGsUYuRx9GzNt1qrg6
+   g==;
+X-CSE-ConnectionGUID: rWuYt4oES9S0Wi9dquKEzQ==
+X-CSE-MsgGUID: rwid0iEJQ/mJkei/J6yEpQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11236"; a="33459985"
+X-IronPort-AV: E=Sophos;i="6.11,232,1725346800"; 
+   d="scan'208";a="33459985"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2024 10:03:40 -0700
+X-CSE-ConnectionGUID: osjEEqcURKqzBRrTrwYRoQ==
+X-CSE-MsgGUID: C1Wk3zVjSFKumMpCmE1FNg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,232,1725346800"; 
+   d="scan'208";a="84921437"
+Received: from dkukushk-mobl1.amr.corp.intel.com (HELO desk) ([10.125.145.188])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2024 10:03:39 -0700
+Date: Fri, 25 Oct 2024 10:03:24 -0700
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Mario Limonciello <mario.limonciello@amd.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	"maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	"Gautham R . Shenoy" <gautham.shenoy@amd.com>,
+	Perry Yuan <perry.yuan@amd.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Li RongQing <lirongqing@baidu.com>,
+	"open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>,
+	"open list:ACPI" <linux-acpi@vger.kernel.org>,
+	"open list:AMD PSTATE DRIVER" <linux-pm@vger.kernel.org>
+Subject: Re: [PATCH v3 4/5] x86/cpu: Add CPU type to struct cpuinfo_topology
+Message-ID: <20241025170324.ie4mk7vhtb2vdf3l@desk>
+References: <20241023174357.34338-1-mario.limonciello@amd.com>
+ <20241023174357.34338-5-mario.limonciello@amd.com>
+ <20241025134727.GOZxuhb0MSVESR5juz@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] soc: qcom: Rework BCM_TCS_CMD macro
-To: Eugen Hristev <eugen.hristev@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: andersson@kernel.org, konradybcio@kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org
-References: <20241025084823.475199-1-eugen.hristev@linaro.org>
- <c1d4c2b6-85a0-467a-930c-ac2797c72699@oss.qualcomm.com>
- <a4c44b88-d106-4365-b405-ced561b9e526@linaro.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <a4c44b88-d106-4365-b405-ced561b9e526@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: 90ywRAnGgDd578rw5qyLVMQjECW0Sjlo
-X-Proofpoint-ORIG-GUID: 90ywRAnGgDd578rw5qyLVMQjECW0Sjlo
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 malwarescore=0
- mlxscore=0 lowpriorityscore=0 phishscore=0 impostorscore=0 clxscore=1015
- priorityscore=1501 mlxlogscore=999 suspectscore=0 bulkscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2410250131
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241025134727.GOZxuhb0MSVESR5juz@fat_crate.local>
 
-On 25.10.2024 2:06 PM, Eugen Hristev wrote:
+On Fri, Oct 25, 2024 at 03:47:27PM +0200, Borislav Petkov wrote:
+> Except the minor touchup below, I don't have any complaints about this
+> anymore.
 > 
-> 
-> On 10/25/24 12:03, Konrad Dybcio wrote:
->> On 25.10.2024 10:48 AM, Eugen Hristev wrote:
->>> Reworked BCM_TCS_CMD macro in order to fix warnings from sparse:
->>>
->>> drivers/clk/qcom/clk-rpmh.c:270:28: warning: restricted __le32 degrades to integer
->>> drivers/clk/qcom/clk-rpmh.c:270:28: warning: restricted __le32 degrades to integer
->>>
->>> While at it, used u32_encode_bits which made the code easier to
->>> follow and removed unnecessary shift definitions.
->>>
->>> Signed-off-by: Eugen Hristev <eugen.hristev@linaro.org>
->>> ---
->>>   include/soc/qcom/tcs.h | 19 ++++++++-----------
->>>   1 file changed, 8 insertions(+), 11 deletions(-)
->>>
->>> diff --git a/include/soc/qcom/tcs.h b/include/soc/qcom/tcs.h
->>> index 3acca067c72b..130ed2582f37 100644
->>> --- a/include/soc/qcom/tcs.h
->>> +++ b/include/soc/qcom/tcs.h
->>> @@ -60,22 +60,19 @@ struct tcs_request {
->>>       struct tcs_cmd *cmds;
->>>   };
->>>   -#define BCM_TCS_CMD_COMMIT_SHFT        30
->>>   #define BCM_TCS_CMD_COMMIT_MASK        0x40000000
->>> -#define BCM_TCS_CMD_VALID_SHFT        29
->>>   #define BCM_TCS_CMD_VALID_MASK        0x20000000
->>> -#define BCM_TCS_CMD_VOTE_X_SHFT        14
->>>   #define BCM_TCS_CMD_VOTE_MASK        0x3fff
->>> -#define BCM_TCS_CMD_VOTE_Y_SHFT        0
->>> -#define BCM_TCS_CMD_VOTE_Y_MASK        0xfffc000
->>> +#define BCM_TCS_CMD_VOTE_Y_MASK        0x3fff
->>> +#define BCM_TCS_CMD_VOTE_X_MASK        0xfffc000
->>>     /* Construct a Bus Clock Manager (BCM) specific TCS command */
->>>   #define BCM_TCS_CMD(commit, valid, vote_x, vote_y)        \
->>> -    (((commit) << BCM_TCS_CMD_COMMIT_SHFT) |        \
->>> -    ((valid) << BCM_TCS_CMD_VALID_SHFT) |            \
->>> -    ((cpu_to_le32(vote_x) &                    \
->>> -    BCM_TCS_CMD_VOTE_MASK) << BCM_TCS_CMD_VOTE_X_SHFT) |    \
->>> -    ((cpu_to_le32(vote_y) &                    \
->>> -    BCM_TCS_CMD_VOTE_MASK) << BCM_TCS_CMD_VOTE_Y_SHFT))
->>> +    (u32_encode_bits(commit, BCM_TCS_CMD_COMMIT_MASK) |    \
->>> +    u32_encode_bits(valid, BCM_TCS_CMD_VALID_MASK) |    \
->>> +    u32_encode_bits((__force u32)cpu_to_le32(vote_x),    \
->>> +            BCM_TCS_CMD_VOTE_X_MASK) |        \
->>> +    u32_encode_bits((__force u32)cpu_to_le32(vote_y),    \
->>> +            BCM_TCS_CMD_VOTE_Y_MASK))
->>
->> FIELD_PREP/GET?
->>
->> Konrad
-> 
-> What would be the difference/advantage in using FIELD_PREP/GET instead of u32_encode_bits ?
+> Intel folks?
 
-Probably none. I thought it was a function and not another magic macro,
-as it's lowercase..
-
-Doesn't le32_encode_bits do what you need then?
-
-Konrad
+LGTM.
 
