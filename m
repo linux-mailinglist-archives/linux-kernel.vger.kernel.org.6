@@ -1,150 +1,94 @@
-Return-Path: <linux-kernel+bounces-381333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 153C29AFDB9
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 11:12:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB4139AFDBB
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 11:13:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38A721C22BAD
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 09:12:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9008A1F24117
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 09:13:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BAFC1D31A9;
-	Fri, 25 Oct 2024 09:12:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="TywMtwh5";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="iUZ7jcUJ"
-Received: from fout-a4-smtp.messagingengine.com (fout-a4-smtp.messagingengine.com [103.168.172.147])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05DCF1D3585;
+	Fri, 25 Oct 2024 09:13:51 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BFB11D221C
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 09:12:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76EE81CFED9
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 09:13:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729847568; cv=none; b=OmYZxIk5O0AcVDdmc1crjIhn72Mp08W0U9pW5IaJq2aCmeDYz+VoZRqvHdUZ+fU3BVqq7FjrhxsyvZfmnQWmTXuM17oBxCDJmONxLkkAESNyBKHKAGzcA3NjOvZQIQV2r/c9ztavFnfAaEbSsaIV5ahQI7eARd4Rgr0EWAn5LbQ=
+	t=1729847630; cv=none; b=T8tZGAANAOB8LNjKrI75p/gI+U9NiY70m0f28ac4LnaT0McK+rVwrLPANKjNt7lrmmHhkuRaLfMoVZ3pDszrvcWkLOFY0Rl7ii9+MmZy6NpNwYf9M9b2OTkhKx+EitzEkqDm6A7uj7nP94KKhoYNwGzRomWx0EsyxfAJA6hngOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729847568; c=relaxed/simple;
-	bh=mtEHJyRB6xeh/c/dEIRzHBcfXjAZsF2QUuQLansLhAE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=faNbFwNzRYpvOjhzDW8iZlloKdR8EGppjJW2tFzdnDXGlOo3i7jscrCOlZIxd2iDJE5VKOD1cKz6U1NTbuuvZMtxJ0cQZ0SiRI2XF++4f77vBDWEPiCKash8wDHj37k3+bNcjbSRA0LpatIxSzrrPYCcWX8k70zPWVI+Eb8Mebs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=TywMtwh5; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=iUZ7jcUJ; arc=none smtp.client-ip=103.168.172.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
-Received: from phl-compute-02.internal (phl-compute-02.phl.internal [10.202.2.42])
-	by mailfout.phl.internal (Postfix) with ESMTP id 9781413801ED;
-	Fri, 25 Oct 2024 05:12:44 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-02.internal (MEProxy); Fri, 25 Oct 2024 05:12:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1729847564; x=
-	1729933964; bh=w90BgXkrFsRin3ZA0UiaoPIiEDD9yrDl2zP9wy6weXY=; b=T
-	ywMtwh5pNjPoXvkaWMViB0gurqQzbKQ1WduZfHd36oRSIfwSHF8u7gsG8hic2Dqe
-	ffyRZMvsyghPb5CL6Bfq35flzxkmLK87v113FAoaOe2lPrqa4P60gq4njnwYfGx7
-	QLyOtnOlCupjalbjJQpNnxjZA1yNS3W/drgiOGfRb3xefDnps5U9DmegGSk24a3E
-	CJuBIp9vFav6UFwxqCJokRvOJ/A0zQJGv91WzTXAKyG5bOhq4brFQ8wCwtLwsAVd
-	dyHppE1rQYv3M1X0XI0hSis5UFxgpL/oZjFmSDjFfOybgSHhhQsbVcGanXteTPZi
-	Anwn1Q/7eemNnRo7chFow==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm3; t=1729847564; x=1729933964; bh=w90BgXkrFsRin3ZA0UiaoPIiEDD9
-	yrDl2zP9wy6weXY=; b=iUZ7jcUJnGnhD6ztMNffjtXlr5FNyl2M3x5QHOhQvTas
-	GvB1E06inePh/QxpufqBZr8HkdSIIuMnAwJtrjsxpMitGFq7XPxgB8NPvkLcBxCk
-	ugOzjvDzF/R+mDl+NRaocTCzlqFHut5VfPK6z1yySA6vg1LsWGFKD0IwHwn1HWTJ
-	1kbCbVyDcaVUVPCpe9EPoZmBtCImVAk1pPabXaEapsKcksNs+o+Z6zxpveW6T9Le
-	rDGlJcl5Fy3TARkccl04UXYUpPHe3QXO8EM8twRU+FHkYrND+fuHqWeLUtitPhds
-	KuJDE2wxCrg6Sy7OmfZKgQUNVTrIY2yf+tMuWvaICg==
-X-ME-Sender: <xms:CmEbZ6mvkDPXr_r2fsU-O3pLVjK4syV2QbMIPbObDX_fDx7eOnm1Ow>
-    <xme:CmEbZx29Lriu_uFhHDcT_X-th1y54kGroshGZxhXczTkajRO_DNQToBXu7GXSXb7B
-    _vVtnCrO8FN0W6EYBY>
-X-ME-Received: <xmr:CmEbZ4rr6t0QQMOpqnvsYwwsDicbLjIlnhWnyhykU27x4_kIDoYzYdetX9PNAY42UjkFZw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdejvddgudefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvden
-    ucfhrhhomhepfdfmihhrihhllhcutedrucfuhhhuthgvmhhovhdfuceokhhirhhilhhlse
-    hshhhuthgvmhhovhdrnhgrmhgvqeenucggtffrrghtthgvrhhnpeffvdevueetudfhhfff
-    veelhfetfeevveekleevjeduudevvdduvdelteduvefhkeenucevlhhushhtvghrufhiii
-    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehkihhrihhllhesshhhuhhtvghmohhv
-    rdhnrghmvgdpnhgspghrtghpthhtohepuddvpdhmohguvgepshhmthhpohhuthdprhgtph
-    htthhopegthhgvnhhrihguohhngheshhhurgifvghitghlohhuugdrtghomhdprhgtphht
-    thhopegrkhhpmheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtoh
-    epuggrvhhiugesfhhrohhmohhrsghithdrtghomhdprhgtphhtthhopeiihhgvnhhgqhhi
-    rdgrrhgthhessgihthgvuggrnhgtvgdrtghomhdprhgtphhtthhopehrohhmrghnrdhguh
-    hshhgthhhinheslhhinhhugidruggvvhdprhgtphhtthhopehmuhgthhhunhdrshhonhhg
-    sehlihhnuhigrdguvghvpdhrtghpthhtoheprghnshhhuhhmrghnrdhkhhgrnhguuhgrlh
-    esrghrmhdrtghomhdprhgtphhtthhopehvsggrsghkrgesshhushgvrdgtiidprhgtphht
-    thhopehlihhnuhigqdhmmheskhhvrggtkhdrohhrgh
-X-ME-Proxy: <xmx:C2EbZ-mxv6B4lFuCK4TKuy6uAdhDb2answ8NTr1x1XaIfmrvppo2Ww>
-    <xmx:C2EbZ43ahfiEE7tT-4scyDaQrAfiQUurNJAGpHT7Vy2lAihKNHwocA>
-    <xmx:C2EbZ1tYO1SjfHB2GsSdbtJovanf_Y4mMLbJXSLIq0B8YZI0lSXZIA>
-    <xmx:C2EbZ0XyJ__PrZ0K2OpMoI5Lr6p9_ENbdsK1ixSdLzpKuZ_tzbOs5w>
-    <xmx:DGEbZ-MN-WbhzDBtWAKkLFZ7wQ_5eNgyN9-OvEmK76FSS7YQlFUjdT-0>
-Feedback-ID: ie3994620:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 25 Oct 2024 05:12:38 -0400 (EDT)
-Date: Fri, 25 Oct 2024 12:12:34 +0300
-From: "Kirill A. Shutemov" <kirill@shutemov.name>
-To: Chen Ridong <chenridong@huaweicloud.com>
-Cc: akpm@linux-foundation.org, david@fromorbit.com, 
-	zhengqi.arch@bytedance.com, roman.gushchin@linux.dev, muchun.song@linux.dev, 
-	anshuman.khandual@arm.com, vbabka@suse.cz, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	chenridong@huawei.com, wangweiyang2@huawei.com
-Subject: Re: [PATCH v3] mm: shrinker: avoid memleak in alloc_shrinker_info
-Message-ID: <nfxjrdg36rykyjeit7o7jdxaf7h2ta2wbixktf3g6a25vr3qyi@yfcjctjt67g3>
-References: <20241025060942.1049263-1-chenridong@huaweicloud.com>
+	s=arc-20240116; t=1729847630; c=relaxed/simple;
+	bh=aP1V2Qa6H/emozTDBEmOMe1vdAVMsTYcxtck9odG+ds=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YxrFHRisav9m3pGnsI40GpxLHNe0JvraxILFXY6goNojW4UIiDSAEEPub7f/JKv3xIVX7mm9kQIXSqWvEH4GP7UCIO43cTLCcFw4OS8Byb4nhaiBFGnxqdiE8wq1dTbSaTWOJeO3PeyPK4RFTD4jM8yxIv1NvpDn2LoIVnIplWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4XZcWQ1lk2zQrZF;
+	Fri, 25 Oct 2024 17:12:50 +0800 (CST)
+Received: from kwepemm600001.china.huawei.com (unknown [7.193.23.3])
+	by mail.maildlp.com (Postfix) with ESMTPS id 4CE25140361;
+	Fri, 25 Oct 2024 17:13:44 +0800 (CST)
+Received: from huawei.com (10.175.113.133) by kwepemm600001.china.huawei.com
+ (7.193.23.3) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 25 Oct
+ 2024 17:13:42 +0800
+From: Wang Hai <wanghai38@huawei.com>
+To: <lucas.demarchi@intel.com>, <thomas.hellstrom@linux.intel.com>,
+	<rodrigo.vivi@intel.com>, <maarten.lankhorst@linux.intel.com>,
+	<mripard@kernel.org>, <tzimmermann@suse.de>, <airlied@gmail.com>,
+	<simona@ffwll.ch>, <matthew.auld@intel.com>, <matthew.brost@intel.com>,
+	<michal.wajdeczko@intel.com>, <akshata.jahagirdar@intel.com>,
+	<david.kershner@intel.com>, <matthew.d.roper@intel.com>,
+	<zhangxiaoxu5@huawei.com>
+CC: <intel-xe@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
+	<linux-kernel@vger.kernel.org>, <wanghai38@huawei.com>
+Subject: [PATCH] drm/xe/migrate: Fix inappropriate error printing in xe_migrate_sanity_test()
+Date: Fri, 25 Oct 2024 17:13:10 +0800
+Message-ID: <20241025091310.15380-1-wanghai38@huawei.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241025060942.1049263-1-chenridong@huaweicloud.com>
+Content-Type: text/plain
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemm600001.china.huawei.com (7.193.23.3)
 
-On Fri, Oct 25, 2024 at 06:09:42AM +0000, Chen Ridong wrote:
-> From: Chen Ridong <chenridong@huawei.com>
-> 
-> A memleak was found as bellow:
-> 
-> unreferenced object 0xffff8881010d2a80 (size 32):
->   comm "mkdir", pid 1559, jiffies 4294932666
->   hex dump (first 32 bytes):
->     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
->     40 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  @...............
->   backtrace (crc 2e7ef6fa):
->     [<ffffffff81372754>] __kmalloc_node_noprof+0x394/0x470
->     [<ffffffff813024ab>] alloc_shrinker_info+0x7b/0x1a0
->     [<ffffffff813b526a>] mem_cgroup_css_online+0x11a/0x3b0
->     [<ffffffff81198dd9>] online_css+0x29/0xa0
->     [<ffffffff811a243d>] cgroup_apply_control_enable+0x20d/0x360
->     [<ffffffff811a5728>] cgroup_mkdir+0x168/0x5f0
->     [<ffffffff8148543e>] kernfs_iop_mkdir+0x5e/0x90
->     [<ffffffff813dbb24>] vfs_mkdir+0x144/0x220
->     [<ffffffff813e1c97>] do_mkdirat+0x87/0x130
->     [<ffffffff813e1de9>] __x64_sys_mkdir+0x49/0x70
->     [<ffffffff81f8c928>] do_syscall_64+0x68/0x140
->     [<ffffffff8200012f>] entry_SYSCALL_64_after_hwframe+0x76/0x7e
+When creating pin map for tiny fails, the PTR_ERR(pt) is printed instead
+of PTR_ERR(tiny), which makes it impossible to accurately get the true
+cause of the error.
 
-This dump doesn't add much value to the commit message.
+Print PTR_ERR(tiny) after creating pin map for tiny fails.
 
-> In the alloc_shrinker_info function, when shrinker_unit_alloc return
-> err, the info won't be freed. Just fix it.
-> 
-> Fixes: 307bececcd12 ("mm: shrinker: add a secondary array for shrinker_info::{map, nr_deferred}")
-> Signed-off-by: Chen Ridong <chenridong@huawei.com>
-> Acked-by: Qi Zheng <zhengqi.arch@bytedance.com>
-> Acked-by: Roman Gushchin <roman.gushchin@linux.dev>
-> Acked-by: Vlastimil Babka <vbabka@suse.cz>
+Fixes: dd08ebf6c352 ("drm/xe: Introduce a new DRM driver for Intel GPUs")
+Signed-off-by: Wang Hai <wanghai38@huawei.com>
+---
+ drivers/gpu/drm/xe/tests/xe_migrate.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-
+diff --git a/drivers/gpu/drm/xe/tests/xe_migrate.c b/drivers/gpu/drm/xe/tests/xe_migrate.c
+index 1a192a2a941b..4542925445de 100644
+--- a/drivers/gpu/drm/xe/tests/xe_migrate.c
++++ b/drivers/gpu/drm/xe/tests/xe_migrate.c
+@@ -224,8 +224,8 @@ static void xe_migrate_sanity_test(struct xe_migrate *m, struct kunit *test)
+ 				    XE_BO_FLAG_VRAM_IF_DGFX(tile) |
+ 				    XE_BO_FLAG_PINNED);
+ 	if (IS_ERR(tiny)) {
+-		KUNIT_FAIL(test, "Failed to allocate fake pt: %li\n",
+-			   PTR_ERR(pt));
++		KUNIT_FAIL(test, "Failed to allocate fake tiny: %li\n",
++			   PTR_ERR(tiny));
+ 		goto free_pt;
+ 	}
+ 
 -- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+2.17.1
+
 
