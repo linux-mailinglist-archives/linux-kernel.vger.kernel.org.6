@@ -1,227 +1,460 @@
-Return-Path: <linux-kernel+bounces-382748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 555969B12EB
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 00:42:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E88F59B12F1
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 00:43:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19E4C282D00
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 22:42:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD6C5283AD6
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 22:43:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80C98213136;
-	Fri, 25 Oct 2024 22:39:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9A2D216DE7;
+	Fri, 25 Oct 2024 22:41:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mArE1TmI"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xGAVL/kd"
+Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com [209.85.217.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8599213121;
-	Fri, 25 Oct 2024 22:39:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.13
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729895997; cv=fail; b=d0A+F0gby1ct6Zv3L9buxUOV0O0OELBAMlV5xDOiTJ9N5ghJoJw2QILQoa+uxom1OXSb847Qr3O4mBLxLxCbhTZgfux/io3WcG2sNJhUhQ9NjsrOEDqEblK5D/TIERmF3VkNaqXWhxKqr5WFkdjFHTS25y6BfpPNtA4Z5YFImlY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729895997; c=relaxed/simple;
-	bh=322mgrmuCnf/ayctfZGniAeGdYsOEtG8xRRGRdLd6Lc=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=XaJOvh+okF+UrfLSIrOGJyK6wfvXA9J33x81g6BngnYY7ehPPiiofRU53AlHzw/WCBM6idR5ZEult+S1SiC9Xun1FgFj+o66N8zMKxqQ1kyfeMt3H0Xv7JzmPjm+rKdElPZzRsn5sWNZxLDJNDKnpH1WA9QmOj9b8OP0+lqTat8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mArE1TmI; arc=fail smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729895996; x=1761431996;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=322mgrmuCnf/ayctfZGniAeGdYsOEtG8xRRGRdLd6Lc=;
-  b=mArE1TmIjxQraA2Rs5FeKW/z7RtsRQUaYa0TdwrA8gKh5GkTh+fMXolA
-   mObnXJLf5xgTR6DOnRx07Ig+joC9iw4WVoi4+zJx9OIXeVedEoPDfITHb
-   5KF19afL1woSMhWv/aS8dXrT06r2Ktjx3NDdcSbws1uqyJLyXEYDiynvf
-   mwaY1FWFZ3Sm8FEzsK33by5oxcWtu4cfeRjMikgaSoGzYhkuTWdg1BEnP
-   RMnRbfdFtkR+jBi5To1NNuUXIpwfU0XWFF4IBNUjV9yjI0DeWq16g0dGC
-   +30RXuBVG2x9dTf1FIvc9w7QDlsoyk/0F85gABySQRRoHcruglBHS93uP
-   A==;
-X-CSE-ConnectionGUID: bjtxPvR2TUCxjrSUUa9l5Q==
-X-CSE-MsgGUID: S8tLWoacTMeHUPd81DxM7g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11236"; a="32437782"
-X-IronPort-AV: E=Sophos;i="6.11,233,1725346800"; 
-   d="scan'208";a="32437782"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2024 15:39:55 -0700
-X-CSE-ConnectionGUID: NoLpU/b6Q0SclforuLdzrw==
-X-CSE-MsgGUID: uT8a9aomQwKq1FM6N/FY/w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,233,1725346800"; 
-   d="scan'208";a="86165063"
-Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
-  by orviesa004.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 25 Oct 2024 15:39:55 -0700
-Received: from fmsmsx603.amr.corp.intel.com (10.18.126.83) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Fri, 25 Oct 2024 15:39:54 -0700
-Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Fri, 25 Oct 2024 15:39:54 -0700
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.175)
- by edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 25 Oct 2024 15:39:54 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=bag7M/4b4F2nUxd8CdoraABUfdaSOWBqTTRVjFFnlM8uP2IRJVxz5tYYmHxHYem8dcFN4xMnwiYfpIPk3DBPMkU4SN3rI40ppetx+JsPKqUkjvKLx3jHqVz28wN2d9t3Y+OK8CeavCmcwzQtlfR6T/SauyntmkCz8Nmk9PP8fFwua/AxzYuyUhawsGt+6ulfFOcPFad+SuHgjvVYPYBlX8edjMqgvvsAOkOVR3EyIrJqjnBocUARApqvfBA9IkW2zF2pR/5BgC12Q9QJFbPZ5J98ZeFsXiYY/+hx8NLv/BfFQaNDAvHTvg3D6dBif5uj8II853EOGVHP7MJ0kJu6Iw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=322mgrmuCnf/ayctfZGniAeGdYsOEtG8xRRGRdLd6Lc=;
- b=pirCZ5bUeOCubuEapc7dhZpzggA/559lnNaFpq0o0lJTOe8iQ908W33OoWKf4rcrCaR7YbWzBoUL2Q9MlR3NiUn/M9VECSoTGil4GOiYA10kZY2aBpsAzNGdK5MuVsShbupvFqidD7tgkJDFLBIZBltVkG1jGnaOcRhR3aQJyf/UnXsttG9EBd29q83OYc2a45ajLuQL4UJKidky1UO0NfCnggZQ6aeWCIOcF8pE6GQIazREaKyKCRGogtrg6RB4FfF5s3+y1jsxUkIwEx5fHG1meoKv1VU/QpqpWGVgRhnbsWe2dWe3aTh/fZ6ud7xbwBomBoxmqdDOxYRTyAMGaw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from SN7PR11MB7590.namprd11.prod.outlook.com (2603:10b6:806:348::13)
- by SA3PR11MB7463.namprd11.prod.outlook.com (2603:10b6:806:304::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.20; Fri, 25 Oct
- 2024 22:39:51 +0000
-Received: from SN7PR11MB7590.namprd11.prod.outlook.com
- ([fe80::9468:437a:a5dd:5f6]) by SN7PR11MB7590.namprd11.prod.outlook.com
- ([fe80::9468:437a:a5dd:5f6%6]) with mapi id 15.20.8093.021; Fri, 25 Oct 2024
- 22:39:51 +0000
-From: "Colberg, Peter" <peter.colberg@intel.com>
-To: "yilun.xu@linux.intel.com" <yilun.xu@linux.intel.com>
-CC: "Xu, Yilun" <yilun.xu@intel.com>, "linux-fpga@vger.kernel.org"
-	<linux-fpga@vger.kernel.org>, "mdf@kernel.org" <mdf@kernel.org>, "Wu, Hao"
-	<hao.wu@intel.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "russ.weight@linux.dev"
-	<russ.weight@linux.dev>, "Pagani, Marco" <marpagan@redhat.com>,
-	"trix@redhat.com" <trix@redhat.com>, "matthew.gerlach@linux.intel.com"
-	<matthew.gerlach@linux.intel.com>
-Subject: Re: [PATCH v3 2/9] fpga: dfl: omit unneeded null pointer check from
- {afu,fme}_open()
-Thread-Topic: [PATCH v3 2/9] fpga: dfl: omit unneeded null pointer check from
- {afu,fme}_open()
-Thread-Index: AQHbJy7N4meLN5EyiE+qoS7kJ6JSTQ==
-Date: Fri, 25 Oct 2024 22:39:50 +0000
-Message-ID: <9377619cb46809575611951b9e77a4d8b2bbdf3d.camel@intel.com>
-References: <20240919203430.1278067-1-peter.colberg@intel.com>
-	 <20240919203430.1278067-3-peter.colberg@intel.com>
-	 <ZvJb8HhT+5ArWDsL@yilunxu-OptiPlex-7050>
-In-Reply-To: <ZvJb8HhT+5ArWDsL@yilunxu-OptiPlex-7050>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SN7PR11MB7590:EE_|SA3PR11MB7463:EE_
-x-ms-office365-filtering-correlation-id: 88c66db9-81fd-4461-a8b1-08dcf545f01d
-x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|38070700018;
-x-microsoft-antispam-message-info: =?utf-8?B?SlJWeG5VNkhoQ0M0STNZWVkwdG5xdTBJdkoxRTFBK3lxNGMzVlNDd29zcWww?=
- =?utf-8?B?K0VJeHhxVGZUTzI0aVFwSXdzMXZnZW1ucGlZaUpvcVFOc05IYUt5NzZUb0FY?=
- =?utf-8?B?N01DRVV6MGREeW52YXY0RDFSRVRpRnVkKzFMcEI5dVU5ejZGSDVxMnc5TWVo?=
- =?utf-8?B?VmFBZEJIeTYvSVgxNFZJVUgrSDdRSnhiQWpvUGRGR1I5SXkwZmJseHBzUG1I?=
- =?utf-8?B?c2RLSllJVmloMnU3K1ZXcXBoY1V0S3BmQk9HWmtuQTY2TjJKS2gyMTYwYVhU?=
- =?utf-8?B?aDA1b1NucUh6akZ4THZuSktNN3Irc3ZZSktodFlySjIvc2ViTzVRREJPZk81?=
- =?utf-8?B?WUhMVUFrbzh0QnFKU3V4NnByMkMwbkF3eVBqT2I3QjBxM1EyNFVuamdpY0w0?=
- =?utf-8?B?OFhtdm9rVFBkamNIZVdyVFFFaGNSci9PaUpPTlFENkNhTnhKZGNjL2pXZ3ZN?=
- =?utf-8?B?N3BCckRnQlNFMUl0MmNtYWREaUVNRXVhcW5CdnZTM1phZkFZc2srdndHckcz?=
- =?utf-8?B?MnZERnpNdEhoUGJSbGtQbVVxd3NvSUtFVGo2bXBnTlpBQmthalkrNGxUcjJS?=
- =?utf-8?B?TW9hZG5wdkE5VXVmMENUWDFQKzZXWFc2NVIwWGplN3l0N2h2Tkwxd3VDek0v?=
- =?utf-8?B?cDBkVGg1Z1RnSnlzK25iVEFsdCtteEtCVG94WEs1YVNBNjZPdXduRHA5cVl1?=
- =?utf-8?B?bldEQWl0M3U2cWRWd0VZYUhqUXV1b25zKzc0QXJHcEkyWGVrVGlNV3AxWFVL?=
- =?utf-8?B?QWlHN0JmZTBpVzZ0bTUxUi9sU1RCT0UvS1ZqbVJ5WVZsSTlTVnRZR0R1V294?=
- =?utf-8?B?T1RvVDBFYnlJU08vNGNsUEtGN0h6eHQvOWNFSmNIczR6cHR3b3Zwa3dHQTdL?=
- =?utf-8?B?bzJiUEx6QUdCWlRFMlkxcDdrNlNhbmFBREdCNzRhMU1OK1hNQU5veTBacXZL?=
- =?utf-8?B?Uk1NUFJoQ3QzcS9KSElMbDI2anNnTVpUSjJhY2FNWjdOM09hbHVqNzdFZmpO?=
- =?utf-8?B?S1lMV1pEQnN0UGdzQ2ppcjZaVVgrVTFGZTVTU0U4UnpJbVBJcXY1dzVjV3dY?=
- =?utf-8?B?WG1XUWhVQTBJcWNIKzRDQWd0U05uNHJ0VGNzai8xQ01VeDZrN1h1bllNNHNF?=
- =?utf-8?B?MzVtbzcwaVl2Z1g2WEVtRWQ2QTNVQTNkYitHV1N5Uno5NUNvM0tGcmhXV2Uv?=
- =?utf-8?B?VXFQNWlXVzNjcDN0L01XZmtheE4raGpJcHNXbEFxK1ZldlovUGVGZWV3TzZS?=
- =?utf-8?B?Tm5JaGFlL3AvY0VGNkllS1k0ZUY4dnFvRnlsVG5nN3R1SjFZZnlIMXlidlRF?=
- =?utf-8?B?VS9wOUhjRHpXejV3eFhKZzcwbVlKTlJ2MjNkSVJGQ3NvU3Nld2IwbHJUUXdS?=
- =?utf-8?B?L3dvaDZFeWtoRVp3MlV6QXdTOWxnd0lsZFh4QkdZRS9FUjA3dllKN0pKT1hC?=
- =?utf-8?B?MnBXdFNUVHppeDgyZ3piM2lGaGRCODN6WHpTTXZPMlhVRTg5VTNRT1F1Z2Vi?=
- =?utf-8?B?bFdqOTVEd3ZBbXE4aWttczhBdFVRaFA0WG1OekhlQklYMG1mWU0xTVNYZkZM?=
- =?utf-8?B?T0pVemY4dVNHUDBZNXhHWFFSdlg1YXlZMFNJN0tveUJqbjVkQS84OEJTNnZn?=
- =?utf-8?B?VklKb3hvRDg1dDBqTG5MS0ZKRFlDS1JhcTVTQTZYcHI4OGN1d1I0dzU1SFV6?=
- =?utf-8?B?RUFsMWtpdmFVL2N2YU0xVW5jcHZObmh5WUVDUkdLQzJ2RkwwT3VCdlAzc2JD?=
- =?utf-8?B?U3J2Y0cwUng3eUUyd0VwWkRjdTJUVXBKakNlYTRhR29YdnZuTnk1VmU2NnhD?=
- =?utf-8?Q?gxy9RP5ULrISvBjwWqzXgNxTLNJ1ip6e2E1gs=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR11MB7590.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?MlFHdS84VEJUOTdwOWh2clArRDB6MjdyK1o0VTJncnNoRytmT3ozQzdEMXU0?=
- =?utf-8?B?aEdCZjhvdFRrT1l2VzJrYzZIYmNaaVc3Z3ptbEZoNjlxK3hpRlJHUXlzQXBP?=
- =?utf-8?B?Z3NWYytvY0hNeHZPSXp5Y2JTclF0MjEyNFlianplRndCTzJZTmdXN3l0aWcr?=
- =?utf-8?B?UXBSa3k4a0tueURUVldpUXliZCtaU0QvZVkweUVvRjV1Z21RUVlhZGh5S2F1?=
- =?utf-8?B?VW9mR1F1RmZDU202R3JZaXhpN0Nlc3hoN25CY2FNaWg2R3dQSnJqSWlDSENj?=
- =?utf-8?B?ZFNzMHozbHNDWG9IL3Rha3VDOXFtN3Y0czlKaXpSUFJLMGdnR3pOYW9HMFRw?=
- =?utf-8?B?bGtkdEkwSjlzQkpWZlVlUHNtdk9sOGVBR0ExbzVGZm1qOE5LRmpPeUZyOXIv?=
- =?utf-8?B?WFUxTC94emIwbFFsRm0zRmhRUGlOMS85MTR2aUpyeVIrYmhWeHVYSWV5RFc1?=
- =?utf-8?B?dGM0ZHBwOXVsQ0gyUFJNbTZvY1Q3bVRSalliT3c2ZE9VbG5WQnNWUnVYcHor?=
- =?utf-8?B?dzlBZ1F2R2svd0RaZUY1QzIyQWdKL04vT1hFMDFSUncwcjNXQi84dk91Y2dH?=
- =?utf-8?B?bjhteTdTNzh2NlBNazFCQjdtWHNQYyt0aG5zSHBWL1RHNUFudFp1WVhTWDRJ?=
- =?utf-8?B?M0FhYzYvL2ZEZjNTcXJnVTA2Tzh4T1NNT2J4WVV2UkduVUg1MHBLbldVRGNi?=
- =?utf-8?B?RHk2Y2JxdEpGaGNxNmIxK0QrK2VvNGlmZno5VWZuQnNZNjB2alFRby94YlM0?=
- =?utf-8?B?ZkJCY0MwdmN6MjczOEJFYWxJdUJRNUhmcFNRdy9VaXlOQ3JyUERIOXlJVVpq?=
- =?utf-8?B?V0xUcExTclVBeHJpMDN5M05ESU9mSUs5Q2hhVmhselJ2NmxmTW5zQ0lVQzBZ?=
- =?utf-8?B?eU5lMzk5cGowdkRrWjFMTGVUaWRUdCtFTEFOdTBSWGlHYUk3QjRnbW5CcnJy?=
- =?utf-8?B?S2ZROXZnaWpra3M1RW4rVnVRck5LUk9zeExuZXVGVnhDZkxyci84aWtUSnBF?=
- =?utf-8?B?ZlBtNEhkbmRvV01lWnVwdEROY0pjcVVWb2R2cHZxbFhFSjBIVWlRMnVTTTJW?=
- =?utf-8?B?OVY0VDRIUkpXQVIvTUpmZno3ckovM3cxUWlRellLM0RRNDd4MnA5bXFZbzVV?=
- =?utf-8?B?YkVNN29BUGZTb1JpWmxrRDhxY3l3bnlRSm91RzZ2V2JaRnUzOEk5UmFxdWFN?=
- =?utf-8?B?Ui9pcTAwdmFoSS9tc3kxWit5NWlzM2xNcVB0ZkJMOVdGOWxYeDRpdzhRZnc4?=
- =?utf-8?B?a0xJZmVDTy9MSzFGV2dnWk5CVlZ3NUdxbVZGcTdnY2FNYjdYKytmR3dDYmxH?=
- =?utf-8?B?MzZGZGRmYUxnZHZRdXRZdFRFdFVuQytsUG00ckxMRU42b1h2OW5Ua1MrUGVK?=
- =?utf-8?B?YjlZUGRpUUJ1aFRvTzcyUmNDWlo3VlVBZnFFWUl3S3h4RVp5UTZ4akozSVJS?=
- =?utf-8?B?ZU1jWEdxdHlSUm5HOGVEb0JrcFBFSVpKakpBVnd1OFhPdjdxNlpqMk5sMExL?=
- =?utf-8?B?QjNnTDAzMVpaZ2dCRld6UEhkb1FHU2NzeGs4R3RmL1JMRUl1Mk4rdFphV1pD?=
- =?utf-8?B?TWsyTjRaM2Y3czBlOGJSaHdJOWd6NDVVODRSY3FZNUlEQ0ZMTDltbW5TeUN0?=
- =?utf-8?B?ZExOUjhIMjBEUEpESFJHd2xMY0NaejFmV2RpRE5iNWlFQ0l1MERIRHJFN2dw?=
- =?utf-8?B?UjZmMXBUNHQ3TXh1SGkwbGZ3VThRdmZtUHVtRFp2OFpSZjR5WkQ4UE9VcTFV?=
- =?utf-8?B?K2pFSDhPWnhmbXVMaFBHd3JzNnFScHpnQ2NvS01WVVFqb3JvMXhrdTFjTThz?=
- =?utf-8?B?a3RlT2RrNUxBSmtsOFRpbXQvWlRjRmZNUVFla2V3T0lpUGtXbVkzVUFTOHhV?=
- =?utf-8?B?N1NvdWtsUmd2bW1UbHlKVUp5U1N2MEhZQkpCQzlTUndhQlBYZTR1MnhFTHR4?=
- =?utf-8?B?clBmVytTcGVGelBOTE00cUJKNW5sNm53R3J0cFl6MnA5SSt3M3RxTmp6ZlI0?=
- =?utf-8?B?dVBhdlNOQVNjQUtSY29FQW8rZFAvZlpmY0lYTnlrcFN0NElGYkZQVXdPdjlR?=
- =?utf-8?B?Ry9sdDRqK1NPMTJhQWtKcUNXalNKV2JIaWVjalVWMUk1RFcvSEZxM05STDRM?=
- =?utf-8?B?ZTdtQkQyOFpJaExOOW1sNllHb3lTNjk2TFpiYS9NRVk5cDVURFZsWUV2T2pm?=
- =?utf-8?B?MWc9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <9CE86B1327610042A01CDBD464C89E93@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D361E213147
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 22:41:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.41
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729896079; cv=none; b=lAa834k2+SR7/1tecMFOyLsOxUncXHF81SzHlJ8+4/WTQ6rG9NSTzKz8ea/B4uu69ACcirRgBIWz1SUCZc+OEOHvgZHhq/HQ3BuL1tOMBvnz023MePLekhBs6iga8sl8kBbDHwwIQWqFyGwGTk36iMFQJiD6lOxid5mH5Q+3gZM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729896079; c=relaxed/simple;
+	bh=yWSgzVi3K8gEyLOYY0pDLLXQgC6K/W8UjdoXlJ6ktw0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZPfA7PmTFYoBVi27SvMrDroIYRbS/1115z7Uwm5OS8dJTHEjQd3unhx+dqqDeTr5qqrZnlrIXCdIAavNCZGp6uqlP8NnYySDfIsIWvtiDEOMA2BNvtekXWZKuoSi/l8SYbenHAwwvpB3TLjwND/4b8fAZB5CyHSFtQN+VNmgluc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xGAVL/kd; arc=none smtp.client-ip=209.85.217.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-vs1-f41.google.com with SMTP id ada2fe7eead31-4a5b15cedd6so907875137.2
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 15:41:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1729896076; x=1730500876; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ufH+EtsjOy4NqkuM2/R3knbfyq9uu2UMpU5o6nl5xXA=;
+        b=xGAVL/kd8HhGqjxHimLtK+cRbb0+NpjCqM3Y567ipEB/trf3I+6EiWoxwrvNFAZZ4R
+         0ztBP5+jv/QJ9hxohLGK8+ScZGdZfwIAD105gqzKUpQ5jqhj9bASSxVbxFxilXBEjWcu
+         0yOfk4wWwJ/9toRiflbvthihvW3RfPZ1PG9miCQDKXZKJkjGOyIMZia5a+Iope3q4CI1
+         81KsqhkTchLr/knXSC9hujKj072+Rkdc4qiLnvyr2jaf54BrVkJtwmW0Prgvgd/W+An/
+         HPTCS0qxrdt8AbAdZpHOQWrvmkhNwmAV4t4rEv5GymBUdcYCVtm1USCeZMwGQW1ai6T8
+         bzMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729896076; x=1730500876;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ufH+EtsjOy4NqkuM2/R3knbfyq9uu2UMpU5o6nl5xXA=;
+        b=Ke3oFPikAoHgwv+Skz32XwGIqmh6hj2V/GQ+zFiCeFSMcT7tMrh1ogpCQ2nz1d+ZRd
+         bW55yjWmGkAPw7Xg9Na1R51JhOH+tvu9lyB5M/t1JC6LzDL6JixMPF8v/JSQTL9t8EOQ
+         1ceQ3ESU7b8p5AEeplaGRCJ9uOWWwNFMARzASdWh1lf/LfyIleZKkohsz/ryD8qREbYK
+         PbjXg1TfH151FEvA7cn1VTDCJBhnRIA/zNpg5yTywmhuurj6SP56qg9Oc/STA23uHnkN
+         P3Rg8TNo3oa/+eNEjAoiojC0wqpN5CbVjKahQkc950nLtaB3sVU2M7kVTlpbMc2sywma
+         jvSA==
+X-Forwarded-Encrypted: i=1; AJvYcCUDtApzASBmtp1GlqK/LL/ACQLy1AHBXdbd+N2Trqu8orciY3aEB+vt+hMQBqmhPQx9iTmTgPilsG2I+0o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwiS6DwuSgokxv5+yb+ZxSTzl3Ws/Isg6G3kbJdfMY2NbGDXup0
+	JesXChl8jAlaudQIJ60ove5cwBrd9Bwg/1K+dMqtNSVzyb/nprLDVChFkXQ8A7jyw9YCT3GPUf2
+	WyvvZ7/inJS6J9wQPPgIp8gm+tsP8JFeb7Gru
+X-Google-Smtp-Source: AGHT+IFeSVSLul0ubpmO+DY+z+2FGccs5yQ3f6orl28haVEsIOmsuFRneCaTEWvNgqrYwVKn0DMFDsLPZ+Vi8QHSJMo=
+X-Received: by 2002:a05:6102:5094:b0:49c:92d:1041 with SMTP id
+ ada2fe7eead31-4a8cfb63a85mr1130806137.14.1729896075387; Fri, 25 Oct 2024
+ 15:41:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR11MB7590.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 88c66db9-81fd-4461-a8b1-08dcf545f01d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Oct 2024 22:39:50.9356
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: fdnMP10J/fhPnM2umqh944xddnuXveC1vDshjGs1yE4k3uE+PP8dXQIOhOhBXfXzcQ9z+R35uVGod700jChh/w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR11MB7463
-X-OriginatorOrg: intel.com
+References: <1a1ab663-d068-40fb-8c94-f0715403d276@ideasonboard.com>
+ <CAGETcx-LtuMJM1205FwMy0U-fetAKhFdon65qAxHKV3Q2cUOGQ@mail.gmail.com>
+ <4a25cd50-06be-4e95-b29e-4f5eb23d8bca@ideasonboard.com> <CAGETcx9dTokpRGwZrE2t0LfVOOFxGn83O60KOnt7D+D2-YMx+g@mail.gmail.com>
+ <7b8a93c7-ba4a-47b7-9ba9-c94e3c6a7fc5@ideasonboard.com> <CAGETcx9Jxthy1jvNDGCKSseM621DVo4TEAsm2JHn8K+fy3MC-A@mail.gmail.com>
+In-Reply-To: <CAGETcx9Jxthy1jvNDGCKSseM621DVo4TEAsm2JHn8K+fy3MC-A@mail.gmail.com>
+From: Saravana Kannan <saravanak@google.com>
+Date: Fri, 25 Oct 2024 15:40:34 -0700
+Message-ID: <CAGETcx88eFjAh7FEQr_S_WdkCCxaN82j5mnGYG-mvULBF_KYhg@mail.gmail.com>
+Subject: Re: fw_devlinks preventing a panel driver from probing
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Linux Kernel List <linux-kernel@vger.kernel.org>, Aradhya Bhatia <aradhya.bhatia@linux.dev>, 
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Devarsh Thakkar <devarsht@ti.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-T24gVHVlLCAyMDI0LTA5LTI0IGF0IDE0OjI4ICswODAwLCBYdSBZaWx1biB3cm90ZToNCj4gT24g
-VGh1LCBTZXAgMTksIDIwMjQgYXQgMDQ6MzQ6MjNQTSAtMDQwMCwgUGV0ZXIgQ29sYmVyZyB3cm90
-ZToNCj4gPiBUaGUgZmVhdHVyZSBwbGF0Zm9ybSBkZXZpY2UgaXMgZ3VhcmFudGVlZCB0byBoYXZl
-IGFuIGFzc29jaWF0ZWQgcGxhdGZvcm0NCj4gPiBkYXRhLiBSZWZhY3RvciBkZmxfZnBnYV9pbm9k
-ZV90b19mZWF0dXJlX2Rldl9kYXRhKCkgdG8gZGlyZWN0bHkgcmV0dXJuDQo+ID4gdGhlIHBsYXRm
-b3JtIGRhdGEgYW5kIHJldHJpZXZlIHRoZSBkZXZpY2UgZnJvbSB0aGUgZGF0YS4NCj4gDQo+IFRo
-ZSBjb2RlIGlzIGdvb2QuIEJ1dCBwbGVhc2UgZWxhYm9yYXRlIG9uIHRoZSBwdXJwb3NlIG9mIHRo
-ZXNlDQo+IGludGVybWVkaWF0ZSBjaGFuZ2UuDQo+IA0KPiBUaGFua3MsDQo+IFlpbHVuDQoNClRo
-aXMgaGFzIGJlZW4gZG9uZSBpbiB0aGUgcmV2aXNlZCBwYXRjaCAiZnBnYTogZGZsOiByZXR1cm4g
-cGxhdGZvcm0NCmRhdGEgZnJvbSBkZmxfZnBnYV9pbm9kZV90b19mZWF0dXJlX2Rldl9kYXRhKCki
-Lg0KDQpUaGFua3MsDQpQZXRlcg0K
+On Thu, Oct 24, 2024 at 3:55=E2=80=AFPM Saravana Kannan <saravanak@google.c=
+om> wrote:
+>
+> On Wed, Oct 23, 2024 at 1:52=E2=80=AFAM Tomi Valkeinen
+> <tomi.valkeinen@ideasonboard.com> wrote:
+> >
+> > Hi,
+> >
+> > On 22/10/2024 19:07, Saravana Kannan wrote:
+> > > On Tue, Oct 22, 2024 at 12:51=E2=80=AFAM Tomi Valkeinen
+> > > <tomi.valkeinen@ideasonboard.com> wrote:
+> > >>
+> > >> Hi,
+> > >>
+> > >> On 22/10/2024 02:29, Saravana Kannan wrote:
+> > >>> Hi Tomi,
+> > >>>
+> > >>> Sorry it took a while to get back.
+> > >>>
+> > >>> On Mon, Sep 16, 2024 at 4:52=E2=80=AFAM Tomi Valkeinen
+> > >>> <tomi.valkeinen@ideasonboard.com> wrote:
+> > >>>>
+> > >>>> Hi,
+> > >>>>
+> > >>>> We have an issue where two devices have dependencies to each other=
+,
+> > >>>> according to drivers/base/core.c's fw_devlinks, and this prevents =
+them
+> > >>>> from probing. I've been adding debugging to the core.c, but so far=
+ I
+> > >>>> don't quite grasp the issue, so I thought to ask. Maybe someone ca=
+n
+> > >>>> instantly say that this just won't work...
+> > >>>>
+> > >>>> So, we have two devices, DSS (display subsystem) and an LVDS panel=
+. The
+> > >>>> DSS normally outputs parallel video from its video ports (VP), but=
+ it
+> > >>>> has an integrated LVDS block (OLDI, Open LVDS Display Interface). =
+The
+> > >>>> OLDI block takes input from DSS's parallel outputs. The OLDI is no=
+t
+> > >>>> modeled as a separate device (neither in the DT nor in the Linux d=
+evice
+> > >>>> model) as it has no register space, and is controlled fully by the=
+ DSS.
+> > >>>>
+> > >>>> To support dual-link LVDS, the DSS has two OLDI instances. They bo=
+th
+> > >>>> take their input from the same parallel video port, but each OLDI =
+sends
+> > >>>> alternate lines forward. So for a dual-link setup the connections =
+would
+> > >>>> be like this:
+> > >>>>
+> > >>>> +-----+-----+         +-------+         +----------+
+> > >>>> |     |     |         |       |         |          |
+> > >>>> |     | VP1 +----+--->| OLDI0 +-------->|          |
+> > >>>> |     |     |    |    |       |         |          |
+> > >>>> | DSS +-----+    |    +-------+         |  Panel   |
+> > >>>> |     |     |    |    |       |         |          |
+> > >>>> |     | VP2 |    +--->| OLDI1 +-------->|          |
+> > >>>> |     |     |         |       |         |          |
+> > >>>> +-----+-----+         +-------+         +----------+
+> > >>>>
+> > >>>> As the OLDI is not a separate device, it also does not have an
+> > >>>> independent device tree node, but rather it's inside DSS's node. T=
+he DSS
+> > >>>> parallel outputs are under a normal "ports" node, but OLDI ports a=
+re
+> > >>>> under "oldi-txes/ports" (see below for dts to clarify this).
+> > >>>>
+> > >>>> And I think (guess...) this is the root of the issue we're seeing,=
+ as it
+> > >>>> means the following, one or both of which might be the reason for =
+this
+> > >>>> issue:
+> > >>>>
+> > >>>> - OLDI fwnodes don't have an associated struct device *. I think t=
+he
+> > >>>> reason is that the OLDI media graph ports are one level too deep i=
+n the
+> > >>>> hierarchy. So while the DSS ports are associated with the DSS devi=
+ce,
+> > >>>> OLDI ports are not.
+> > >>>
+> > >>> This is the root cause of the issue in some sense. fw_devlink doesn=
+'t
+> > >>> know that DSS depends on the VP. In the current DT, it only appears=
+ as
+> > >>> if the OLDI depends on VP. See further below for the fix.
+> > >>>
+> > >>>>
+> > >>>> - The VP ports inside the DSS point to OLDI ports, which are also =
+inside
+> > >>>> DSS. So ports from a device point to ports in the same device (and=
+ back).
+> > >>>>
+> > >>>> If I understand the fw_devlink code correctly, in a normal case th=
+e
+> > >>>> links formed with media graphs are marked as a cycle
+> > >>>> (FWLINK_FLAG_CYCLE), and then ignored as far as probing goes.
+> > >>>>
+> > >>>> What we see here is that when using a single-link OLDI panel, the =
+panel
+> > >>>> driver's probe never gets called, as it depends on the OLDI, and t=
+he
+> > >>>> link between the panel and the OLDI is not a cycle.
+> > >>>>
+> > >>>> The DSS driver probes, but the probe fails as it requires all the =
+panel
+> > >>>> devices to have been probed (and thus registered to the DRM framew=
+ork)
+> > >>>> before it can finish its setup.
+> > >>>>
+> > >>>> With dual-link, probing does happen and the drivers work. But I be=
+lieve
+> > >>>> this is essentially an accident, in the sense that the first link
+> > >>>> between the panel and the OLDI still blocks the probing, but the s=
+econd
+> > >>>> links allows the driver core to traverse the devlinks further, cau=
+sing
+> > >>>> it to mark the links to the panel as FWLINK_FLAG_CYCLE (or maybe i=
+t only
+> > >>>> marks one of those links, and that's enough).
+> > >>>>
+> > >>>> If I set fw_devlink=3Doff as a kernel parameter, the probing proce=
+eds
+> > >>>> successfully in both single- and dual-link cases.
+> > >>>>
+> > >>>> Now, my questions is, is this a bug in the driver core, a bug in t=
+he DT
+> > >>>> bindings, or something in between (DT is fine-ish, but the structu=
+re is
+> > >>>> something that won't be supported by the driver core).
+> > >>>>
+> > >>>> And a follow-up question, regardless of the answer to the first on=
+e:
+> > >>>> which direction should I go from here =3D).
+> > >>>>
+> > >>>> The device tree data (simplified) for this is as follows, first th=
+e
+> > >>>> dual-link case, then the single-link case:
+> > >>>>
+> > >>>> /* Dual-link */
+> > >>>>
+> > >>>> dss: dss@30200000 {
+> > >>>>           compatible =3D "ti,am625-dss";
+> > >>>>
+> > >>>>           oldi-txes {
+> > >>>>                   oldi0: oldi@0 {
+> > >>>>                           oldi0_ports: ports {
+> > >>>>                                   port@0 {
+> > >>>>                                           oldi_0_in: endpoint {
+> > >>>>                                                   remote-endpoint =
+=3D <&dpi0_out0>;
+> > >>>>                                           };
+> > >>>>                                   };
+> > >>>>
+> > >>>>                                   port@1 {
+> > >>>>                                           oldi_0_out: endpoint {
+> > >>>>                                                   remote-endpoint =
+=3D <&lcd_in0>;
+> > >>>>                                           };
+> > >>>>                                   };
+> > >>>>                           };
+> > >>>>                   };
+> > >>>>
+> > >>>>                   oldi1: oldi@1 {
+> > >>>>                           oldi1_ports: ports {
+> > >>>>                                   port@0 {
+> > >>>>                                           oldi_1_in: endpoint {
+> > >>>>                                                   remote-endpoint =
+=3D <&dpi0_out1>;
+> > >>>>                                           };
+> > >>>>                                   };
+> > >>>>
+> > >>>>                                   port@1 {
+> > >>>>                                           oldi_1_out: endpoint {
+> > >>>>                                                   remote-endpoint =
+=3D <&lcd_in1>;
+> > >>>>                                           };
+> > >>>>                                   };
+> > >>>>                           };
+> > >>>>                   };
+> > >>>>           };
+> > >>>>
+> > >>>>           dss_ports: ports {
+> > >>>>                   port@0 {
+> > >>>>                           dpi0_out0: endpoint@0 {
+> > >>>>                                   remote-endpoint =3D <&oldi_0_in>=
+;
+> > >>>>                           };
+> > >>>>                           dpi0_out1: endpoint@1 {
+> > >>>>                                   remote-endpoint =3D <&oldi_1_in>=
+;
+> > >>>>                           };
+> > >>>>                   };
+> > >>>>           };
+> > >>>> };
+> > >>>>
+> > >>>> display {
+> > >>>>           compatible =3D "microtips,mf-101hiebcaf0", "panel-simple=
+";
+> > >>>
+> > >>> In here, add this new property that I added some time back.
+> > >>>
+> > >>> post-init-providers =3D <&oldi-txes>;
+> > >>
+> > >> Thanks! This helps:
+> > >>
+> > >> post-init-providers =3D <&oldi0>;
+> > >>
+> > >> or for dual-link:
+> > >>
+> > >> post-init-providers =3D <&oldi0>, <&oldi1>;
+> > >>
+> > >>> This tells fw_devlink that VP doesn't depend on this node for
+> > >>> initialization/probing. This property is basically available to bre=
+ak
+> > >>> cycles in DT and mark one of the edges of the cycles as "not a real
+> > >>> init dependency".
+> > >>>
+> > >>> You should do the same for the single link case too.
+> > >>
+> > >> While this helps, it's not very nice... Every new DT overlay that us=
+es
+> > >> OLDI display needs to have these.
+> > >
+> > > Actually, taking a closer look at the DT and assuming I am visualizin=
+g
+> > > it correctly in my head, fw_devlink should notice the cycle between
+> > > oldi-txes and display and shouldn't block display from probing. Can
+> > > you check the cycle detection code and see where it's bailing out
+> > > early and not marking the fwnode link with the CYCLE flag?
+> > >
+> > > __fw_devlink_relax_cycles() is where you want to look. There are a
+> > > bunch of debug log messages inside it and around where it's called
+> > > from.
+> >
+> > I'm not quite sure how to read the debug messages. I have attached thre=
+e
+> > kernel logs, with the debug prints enabled in drivers/base/core.c. The
+> > "fixed" is the one with the post-init-providers.
+> >
+> > I load the display drivers as modules after the main boot has happened,
+> > and at the end of the logs I have the kernel prints when I load the
+> > modules. The single-link.txt also shows the debugfs/devices_deferred fi=
+le.
+> >
+> > The relevant strings to search are "dss", "oldi" and "display" (display
+> > is the panel).
+> >
+> > So... All devlinks are supplier-consumer links. How are those created
+> > with an OF media graph, as there's no clear supplier nor consumer. In
+> > this particular case I see that display is marked as a consumer of oldi=
+,
+> > but also dss is marked as a consumer of oldi. Is this just, essentially=
+,
+> > random?
+>
+> No, the cyclic links you see are "sync state only" links. They don't
+> enforce any ordering other than "sync_state()" callbacks. So, it's not
+> random. In this example, it just ensures that the sync_state()
+> callbacks of display and dss will only get called after both those
+> devices probe. If it's confusing, try to understand what
+> fw_devlink=3Dpermissive does. When we see a cycle, we just put all the
+> devices in the cycle in "permissive" mode wrt each other.
+>
+> > Also, as there's no separate device for OLDI, I don't see oldi at all i=
+n
+> > /sys/class/devlink/. But what I see there is a bit odd...
+> >
+> > For dual link I get:
+> >
+> > platform:display--platform:30200000.dss
+> >
+> > which, I guess, makes sense. But for single link fixed case, I don't
+> > have anything there...
+> >
+> > > Also, can you check debugfs/devices_deferred, or the
+> > > "wait_for_supplier" file under /sys/devices/..../display/ to make sur=
+e
+> > > it's actually stuck on oldi-txes? Just to make cure it's not some
+> > > other corner case that's triggered by oldi-txes?
+> > >
+> > >> I'm still confused about why this is needed. OF graphs are _always_
+> > >> two-way links. Doesn't that mean that OF graphs never can be used fo=
+r
+> > >> dependencies, as they go both ways?
+> > >
+> > > Good question :) Yes, they'll always be ignored as cycles. But with
+> > > post-init-providers, it's actually better to add it so that cycles ar=
+e
+> > > broken and better ordering is enforced. See my talk at LPC referee
+> > > talk about fw_devlink to see all the benefits you get from it. :)
+> >
+> > Thanks for the pointer! It was interesting and I now understand the
+> > whole devlink thing better, although I have to say the details still
+> > escape me... =3D)
+> >
+> > Also, isn't post-init-providers describing software behavior, not
+> > hardware? It doesn't sound like something we should have in the DT.
+>
+> Not really. In real hardware, there can't be a cycle for
+> initialization. And the current DT properties don't tell us which link
+> is not needed for initialization. And post-init-providers is for
+> describing which dependency is not needed for hardware initialization.
+>
+> Take a look at the docs in the dt-schema for post-init-providers and
+> that might help.
+>
+> > >> If so, shouldn't we just always
+> > >> ignore all OF graphs for dependency checking?
+> > >
+> > > There are cases when two devices A and B have remote-endpoints betwee=
+n
+> > > them and ALSO have for example a gpio dependency between them. Where
+> > > the gpio is the "post-init-supplier". If we don't parse
+> > > remote-endpoint and mark the cycles, cases like these don't get to
+> > > probe.
+> >
+> > I'm sorry, I don't understand this. If we have 1) A and B with a (one
+> > way) gpio dependency, and 2) A and B with a (one way) gpio dependency
+> > _and_ two way media graph dependency, shouldn't the cases behave
+> > identically, as the graph dependency should just be ignored?
+>
+> Let's assume in both cases the A and B point to each other using
+> remote-endpoints. Let's also assume in both cases A says it needs a
+> GPIO from B. But the real dependency for probing is that B needs A to
+> probe first (due to the remote end point).
+>
+> The only difference between case 1 and 2 is whether fw_devlink
+> supports remote-endpoint parsing.
+>
+> In case 1, fw_devlink has no way of knowing there is a cycle between A
+> and B because it doesn't know that B depends on A (due to
+> remote-endpoint). So it can't break any cycles and permanently
+> prevents A and B from probing because all it sees is that it needs B
+> to provide a GPIO to A.
+>
+> In case 2, fw_devlink sees that B also depends on A. So there's a
+> cycle and marks them both as part of a cycle. And now A and B can
+> probe.
+>
+> Also, forgot to say this last time: we need to support remote-endpoint
+> to ensure sync_state() callbacks work correctly when X and Y have
+> remote-endpoints between them.
+>
+> > Or maybe I don't understand the example case at all... Why would the
+> > gpio be a post-init-supplier? Isn't gpio something you want at init tim=
+e?
+>
+> Apparently not. There are examples of GPIOs that are used only
+> acquired (get()) at run time in reaction to some event.
+>
+> Anyway, with all that said, I think I have a solution in mind for you
+> that should allow devices to probe without post-init-providers. But
+> I'll need to make the changes and then test it. Let me send it to you
+> in a few days. Btw, you should always use post-init-providers to break
+> cycles and do better enforcing of probe/suspend/resume/shutdown order.
+
+Hey Tomi,
+
+Can you give this a shot and let me know if it fixes your issue? I
+have more instruction in the patch too.
+
+https://lore.kernel.org/all/20241025223721.184998-1-saravanak@google.com/T/=
+#u
+
+-Saravana
 
