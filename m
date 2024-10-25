@@ -1,325 +1,173 @@
-Return-Path: <linux-kernel+bounces-381136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 035279AFADB
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 09:18:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A16F9AFADE
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 09:19:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 239DC1C20D81
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 07:18:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADEBA1C2241B
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 07:19:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B7A31B0F15;
-	Fri, 25 Oct 2024 07:18:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46B9F1B21A7;
+	Fri, 25 Oct 2024 07:19:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="CspKCS3S"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2082.outbound.protection.outlook.com [40.107.220.82])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IovrI5Gl"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C60894D8C8
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 07:18:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.82
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729840719; cv=fail; b=Tpv2FwhzYS+uiJD+4phM9KEiNLXtPUiSMZjvT3k2Vx1zJUqSzpamInJTsKSzLL2PkpBpDTUgYWN+4ELROBnFxLnUenX96xvZopETIfeTdGVLSWy+GAwUSazzFwZCGhyeXxAPTs2PHVG6cwANjIRRE61yVMPSE4h0+LiNo3WxdXs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729840719; c=relaxed/simple;
-	bh=F/U5l9GbPyWK5DSO2dpcofrmpOWB/Y+RqqKlhIsZ/N0=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=ZKnKqLr58gn70hpx6pRIPC++YSgpdJHyQnDXgMrnQgdj52kGHQyzDG6hWt2sy965Y2RKHPhOf05uUccoSJlVgYqIVn6R4zqfS2+l5zffZt44Y2l27RxNoDaZecxm/yOWn5+Djy+xWehL60nZW5l4uy6IEZrEgeUC1Y9Qf9WzzSE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=CspKCS3S; arc=fail smtp.client-ip=40.107.220.82
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=oEmAmQpvuVYQ9Zd68C4AxCqDjcg8QJgAFyY+TVtQCIqBNYI4lRPDfFNTWwJ/QH7JwxmU3yHzg+6Q98rXatVFHSP/R9WCWbdyQ/W6h+p3gPIK/iUoK0kmDOa7HevFfHH69IqrD2OvMtCQW2Tg0JmsXLPbN1AZKLgDLSAgKSJHQUbFVRwRQN4R0crNd3+CAGg2h5Z7TCfrwZ9lVUkuq0fzPEEJE8NWzvSgaDbhWCrJ+weYSSsrEbSwN3t9OPhPijSB1MDZVAezSq/VFflGy1rCMLMamkW6RI67qHLKIruO1JU8mLG/yiS/SrALLJjd0sqX+Htu+yrcMkNHwKighsNDOA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=djc+8cCltekCDZyyv/TJy7NbztSPwwWlDXGoa4LRFE0=;
- b=RiqGhk0rkSdwqN05GD8Az//oQouv7eDDzbmEy0JcX6NGnCqAea+ktG/43pbUdPfaKDMDe/UYLyqO0sKQWWKoYNKpNJ8LJZlBYpD+o0kmKiqeJp2jXOQjKLBpNPR9bl6KETW5qcqEE1E4iQUj5jhCjoeRv04bWxJGMAh+5eQNJNDvjAX1CkIMELcd7yHm4iuS+Uccttz0HEFGgXbs6BW9gGwqCMpaYe0Q587ujlZFrMT1Vh+52nDwha23obd2fUGG9UpTRz0dKWKhcPw+wBUo7y7ATHDAPtGCo69mklBUL0zDkT6BtackyEArNe+//MCfl3okPXAkrq2JwVtINimWtQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=djc+8cCltekCDZyyv/TJy7NbztSPwwWlDXGoa4LRFE0=;
- b=CspKCS3SyimV90w7eTgQHOXji7HeatpGi28CyCwOOvwX23dr5gU8FXMTDK5w6lpJihu3nIwUTv0/bBtKbTmxSF5Wu7jzmzcH7QhEJLgzi2Wz9DxOY8aVzX9FHxZ0uvDfBTRIcVDJsppCxZetqtbMlWEUlmW7pMCvk4s6ouCsgGE=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from BL3PR12MB9049.namprd12.prod.outlook.com (2603:10b6:208:3b8::21)
- by MN6PR12MB8568.namprd12.prod.outlook.com (2603:10b6:208:471::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.21; Fri, 25 Oct
- 2024 07:18:28 +0000
-Received: from BL3PR12MB9049.namprd12.prod.outlook.com
- ([fe80::c170:6906:9ef3:ecef]) by BL3PR12MB9049.namprd12.prod.outlook.com
- ([fe80::c170:6906:9ef3:ecef%7]) with mapi id 15.20.8069.027; Fri, 25 Oct 2024
- 07:18:28 +0000
-Message-ID: <0d3a7f2f-ce1e-401b-bf73-057f1023077c@amd.com>
-Date: Fri, 25 Oct 2024 02:18:18 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 8/8] x86/sev/docs: Document the SNP Reverse Map Table
- (RMP)
-Content-Language: en-US
-To: Tom Lendacky <thomas.lendacky@amd.com>, linux-kernel@vger.kernel.org,
- x86@kernel.org
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- Michael Roth <michael.roth@amd.com>, Nikunj A Dadhania <nikunj@amd.com>,
- Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-References: <cover.1729708922.git.thomas.lendacky@amd.com>
- <69e573fb0415eba78069ed8098b69a8dcb973592.1729708922.git.thomas.lendacky@amd.com>
-From: "Kalra, Ashish" <ashish.kalra@amd.com>
-In-Reply-To: <69e573fb0415eba78069ed8098b69a8dcb973592.1729708922.git.thomas.lendacky@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PN2PR01CA0100.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:27::15) To BL3PR12MB9049.namprd12.prod.outlook.com
- (2603:10b6:208:3b8::21)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38F514D8C8
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 07:19:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729840781; cv=none; b=ns8KG2WyfjwsA2uznn0G/TUhYhaHN4/J6urz7m1FohdNVr749zYLBrxBtDhU1v542kUYt8MWffl6QK0Q7Zni/4qpFdYzWB8z4Nb9HIFddsw95Ptrd9NAqb/n8wpggk8NhWMds9njUJgGlKwtxwVBXU9z5HUzlZr/6dUcyUymaJY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729840781; c=relaxed/simple;
+	bh=/wSStfEhPSHeZJiEUePtTfIBSJEUMkwEljOu59Vn9no=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LFn1U40yH7rAx7brK2PzQp4Km16xr6GpjWKt9qweKxJ5RQr+haozBUBSckkVrjpuTlFHZKdTvcJtoRtoqvIxJjLhmw0+HZ5+tzL+0R8V5UPNYjVUIRb1bLh5gmdaieVsP+cQqzBU6edjnqbC1APZ81qfk/D/uW/c2XXmMdGiJnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IovrI5Gl; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43161c0068bso17302295e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 00:19:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729840777; x=1730445577; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=3bss9bc42ivC2cChRotwSlxrtitEdG/EsNtcIe7xud4=;
+        b=IovrI5GlqpD/bEsLkANXE4tsafEhlYseEUpxh7cEtqusFB4JSm10Y8Notj3XnGeKBi
+         x4iTf/MCce+P+pXCeDrW+rwVcx0rQxTCW+IUGAXWD+q5Ce0O3AVyZO26couMYHhzaiCm
+         KqBn+n0D73c04FqeHMohCbwkubd91J63JFwKy+OMHfOW8mZP7hteuPjYX+V0EMQNZDE8
+         ySgYNAVbQFXbVIlni1BSQnN4CTVpOEPBl48jBmkA6lMb8jkKawxpzYts5zo/3MVr+ISu
+         m/HTKvYg4L7uj2sqBME+clDBpKm/EMsR8vL8opwAywswFl5P/ZvaQ98IneXHpobJYUzm
+         YSmw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729840777; x=1730445577;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3bss9bc42ivC2cChRotwSlxrtitEdG/EsNtcIe7xud4=;
+        b=eCRNtxSZbRhyjbp7tw+gTzo/4zUaPdj4gT9+U8sEn6mtRu0jCb5MDNsxE5KtNTfSuO
+         gnMaJLez+s6ayHvOOqecwHZdsWtFhTZS9L76wQz9iUqbXIBAU3sivyJp7dmCPJ644SON
+         /SqpBImZl+Qx+v7u6tqBJmmg/eJBgJNHa1e3DDTYbfPaxj4UpxO9dwkcXMeFRDoGrv9b
+         TqjsksP+Gs59eCl4HovOFCcA7mVJx3kQKDdX4kohRvBsRsoM7pb/TQKGy3zT03xBkqaC
+         BHOJ4x5InJdemxTjqc559UgCmAW+qlHMnQfjlaZWK1u22cuP4/j+hgF4Wn3p+GtYpNrc
+         PJwg==
+X-Forwarded-Encrypted: i=1; AJvYcCVlOt5NCUU0QqycM8NXKD6+TnAuD072SkpbgYZYJDiOAGN8UXUbHIMHUQMW8HW5klr1cOfsX/dhhdcI7YI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyv1bJ4d5iP43C5SS+TV6c5WGUs0rDrGQZBN8KadxrzB0Cwsd8K
+	5Cs4TyGHZVOJRcVoa4r3wV89njc6Gdw0Fv4irytsVfmQcJTPrLpkPMJjZyverPI=
+X-Google-Smtp-Source: AGHT+IHNFvL9ngLdJ2Ef8zFL1tFE3yh5k72SJ5sriFGjDAW8ul7HkN6Susi0cERRtc5r9wYwLcmsfw==
+X-Received: by 2002:a05:600c:19c7:b0:431:5ce5:4864 with SMTP id 5b1f17b1804b1-43184254536mr60334325e9.35.1729840777477;
+        Fri, 25 Oct 2024 00:19:37 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4318b579613sm39381865e9.38.2024.10.25.00.19.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Oct 2024 00:19:36 -0700 (PDT)
+Date: Fri, 25 Oct 2024 10:19:33 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
+Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+	linux-staging@lists.linux.dev, philipp.g.hortmann@gmail.com,
+	~lkcamp/patches@lists.sr.ht
+Subject: Re: staging: rtl8723bs: change remaining printk to proper api
+Message-ID: <e12bc7eb-07ed-4bec-84f7-5b178ba802c2@stanley.mountain>
+References: <f61d8272-4af3-40d6-a333-e7731c3fc5ae@stanley.mountain>
+ <20241024225512.7464-1-rodrigo.gobbi.7@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL3PR12MB9049:EE_|MN6PR12MB8568:EE_
-X-MS-Office365-Filtering-Correlation-Id: 107bfff7-b16b-4208-b013-08dcf4c538ce
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?RjBhSG5TME1Wem9FSzM3N0VvNE9Xeld3akZGZUxyWXZmK0pPT2ZqNDRmQzJl?=
- =?utf-8?B?aDlUdWdEZFNDWDdFa3VVNnA4cEtxcnFycGYvODE3Rm4zSUV4NE13ZkNPNFF2?=
- =?utf-8?B?enlYUFdnTnROOFdFWEJnaU94Mm1SWmsrcHM1NFhmT00xUGNPRGl2dXlnbmMx?=
- =?utf-8?B?VGgyNXArckwzZENRL0ZCT2RPZmsrY1dZME9JZlFKTXhKRlpYNjJvenhhUmYr?=
- =?utf-8?B?UWtISzZENjVLelFIYkJqR0ZjSmE2d25ZbUw4bERRUGp2bWVONGFVZWp1YVVD?=
- =?utf-8?B?TzY1MHVIWjNlK3FEVHQ0VmFhTHdUQ2RlYjFUSGs0YStOTEU1M1ZvN1ZVcGhq?=
- =?utf-8?B?QXA2YkxZb2JPYUFHaVl5a2xXRldaUWFrZzdYdFFWa2tHWmg5SXAvSGcwMG1p?=
- =?utf-8?B?czYzQndWSDZMV1hYUEdsSmxNdTR5VUJuTDhwNjdyRVpnYzZuOUdQcm5hRW1o?=
- =?utf-8?B?L2djWVpjd3R2Tytta01CSGlYc1B4T2kreVN1VzJSOVVGSVI5TEVyUzVOa2pm?=
- =?utf-8?B?cXA5UTNiWHFNaFZ6TERDSk9Lb1BUaUczbVhqVlRUcUg1Q3l3MHo3UXdYS0Jk?=
- =?utf-8?B?OHdGVVlJdEt0SGQ5QUFudmlPVU1xcG1JVmpvbmVoQVlxRW5QYWZ2UnlrSlN0?=
- =?utf-8?B?VmZnTEpZWGlOUWpPTHlxci9VSGdXd0diaU12a2hTV3lySmErL1NDK2VsM0RG?=
- =?utf-8?B?OEpBbSs2bjRmaHJYZEtDVEp2MnZ4ekJ2Q0NqTXZ6Wm85STh1cVh6UEZJa1BM?=
- =?utf-8?B?ZlhzSHhxSlNQU3NpNmg3MzlGK1ovTzhzNG85blFKTk5xN240Uk1hVC93a2ta?=
- =?utf-8?B?Z0VLNDdTdjZXVk9vTEIxNXJQL3UycE9ZdlFvSTU5VkNmRlIvQU1hKyt6S3pF?=
- =?utf-8?B?M090NStkdklaYlpibndqVitUcUlTMUJvdnRrUTZSd2FEaHRDRHE4cXpGMndC?=
- =?utf-8?B?TmFZOElJSjJ6Rms1S3V2WEJGREdkakFNUktIaTlIVUd3aWszVGdrVmk4eklv?=
- =?utf-8?B?ZDFiU3Q0SjVrZ1JJMVVXVlFQUCtZMko4VmRFckU0QzIwN3MzdmFzQmRBY2Mv?=
- =?utf-8?B?TEhrQVk3UzZ2VXVYT1JYMVFYVFNSaUZ0RlFOZm1SY0dWelNEVU9ZZUJVNzNK?=
- =?utf-8?B?dGVGNDI4L2RHN1p3bUhlcUxhNHZOWFVxamdXL21LZHoxcHp2ckFMQnMrWEdh?=
- =?utf-8?B?Y0NhVkdIVTUyNTZ6K3NWejc5NE8wc3FyVndxSkRDMm0yOUhOWDc5ZnM5TnVY?=
- =?utf-8?B?SXYzUjU0SnhpZnM1K21ZckpFTzZ3bzhYSG9vTXA5WHZLRXRyMUczaVJzWi9n?=
- =?utf-8?B?SUhwSzVCamlrZnZSUmJ6SlVLakZub2ZmNzVaMGpXNFdTVEIrKytvcHlseFRr?=
- =?utf-8?B?RXN6Z0FHZkExZk80dDZjTWdWQ3lsMWJ1d3RxMm5QVUt6NTdlTmVtYW9GZnZP?=
- =?utf-8?B?OG9xY3BESUZ2U1lvTFZ3Z1BBbTV4ZFRpeXBuandiOXlDQ1lMdGVkUks1WnpQ?=
- =?utf-8?B?SFdoZ0tqcnJVOXpVM1ZoUTBCWGtwTGNUV1V4Rm5LNUtOZXhXVzNGSE1HSlRk?=
- =?utf-8?B?dk1kZ0g3VDZ3WnpCM3RwVHo0QVE4c3o0djcvZTdUYWQwU3k0Sk5QRmdpc0hm?=
- =?utf-8?B?cklwSjBaOXByWjFUV0V0WTZoN0o4bms3NSt3Kzh6b2VZZ0JudUcyYmYzdXBW?=
- =?utf-8?B?R1drczV5NHlrZTA0bzVoZ3BScXhsUTZGVFZQVTNqYk9XUjdxQXpVVnYydEVE?=
- =?utf-8?Q?tXXSSnmYhIqT38/QiYXQydWeFj79+klqGKB5xNb?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL3PR12MB9049.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?SWFQbHVDRTh1L3gxOW1BWG5MaWtteGQ5eGVtT1NBd0RJVVM1djVhcDJMMXl0?=
- =?utf-8?B?dEZ1dDAxN2ZJRTJmZnRnUE5PWDMzQXplRlR5Q3FkR05CbDBscjRwTTR0UVls?=
- =?utf-8?B?V0tlY0V3UWwydVhtS1JaRG4zcXpFRWRkSVkyeG5yZnBJd0N0d3FXOFNScXEy?=
- =?utf-8?B?T21nSHNORGk3ZmNaa091VENia0VIZjJlSnNmazl2a0ZuTzNneDZBbC8vV0hJ?=
- =?utf-8?B?b3hDbzlmc1pHdEV0TWhOeDJyV3Rla2NMRVVoRHl4bWo0R3I0dXdGaThURkNY?=
- =?utf-8?B?MEVibW53eDlxSVpmay9DYUhwNUlObXp4amNPWTdzTnlUenhqQUFBUnZhcWhN?=
- =?utf-8?B?Yk9lVUJ6TjI4cTJnbVNqamlsSmdNTWxVVklTaW9aU0wyVllmdlJXTTMzTHI1?=
- =?utf-8?B?YUVhdmhjWHIyUGVubTVNRFhGZmFkU3oweEFZN1VOeG1zcnpKcmxWSjkvbHBM?=
- =?utf-8?B?M3dDRThORGIyOTFjbWs3dG5DaVF6R3RqTGwydmRWMW5zVnVyajdQQW9MWmFP?=
- =?utf-8?B?ZzUzejR4L1hvaXBOL0c3c0RERmNkWjlFWEdQK0E5Y3FaUThBZ0djWHErSU8w?=
- =?utf-8?B?UVM3ZVUrZjdONHJaOVNIRjZGbGFXbmxwRnlldVZnbDZVK0h4dkdCa2JNN1A4?=
- =?utf-8?B?aGIzcTZ4V3VNVVZZd2FsV05KaUgvWndXNjhaRVN0YmpiYnhoTTQ1V0UyZzlH?=
- =?utf-8?B?UXg4YzJ1Qm5VbEtEOEoyc3EydDNYaDNVNHFhS1hRbWd0UEgyY0NVYzhzemJh?=
- =?utf-8?B?bzZscjYzZEtPTWlIWGszdi9tV2o2OW00cW5McXlrRC9wUjdTNGR2dUgzTktF?=
- =?utf-8?B?S0FtVzZRU2dnZ0lubGZBWDZQd2pIdjRMNko0c0Zwa3dsWG1SU3JPaEM1bG9p?=
- =?utf-8?B?dVcvRjVwQnhyTmdMTVluNnBHNWJQMG5hSG9UbEx2K0tSSXpwRFIzK3dqaHcw?=
- =?utf-8?B?a0J4SUVaaElKL3U4c2pQcUFkdVdieEtDWEZnZFd4cFVvSUZvNituaEVkRmh3?=
- =?utf-8?B?YysvUGJOcElKZWM2bFhtYmVZSjlUVDVuMHY5STlUZ3VFakFMeGpHMGtzODB1?=
- =?utf-8?B?bVVjeHVjR1pFa0RHWHJpM05OMnQ2NXpsckJaaTNYZVJsaFptenFFSVBmR0c3?=
- =?utf-8?B?QjN6YzBldkQrZFBBSmRrdlkvZzNpbm1jRVl4bVczMUFXTUkxTkRMZzFIeVVR?=
- =?utf-8?B?V1hSTm1zNk4vTWVBUjBGN0duRHg4alhRQUR2NzZtck5uMXI4eFRNbWh4TzZU?=
- =?utf-8?B?amtJd0tMamtydVZvYkF4Z21EN3Q1aTk0aWFzV013QWpFV2tKMHFJazdqb2kv?=
- =?utf-8?B?V1Z3b01yYldlVGZleE5iemVmTlc0ZzhxTHg2UTcrSHhTYi90YlEwbkZiNElw?=
- =?utf-8?B?NGVVOWwxckRUeFNDeFZyd3ZwRUhqdFIrMVRJbzJpcVVmc3Z2enNKaE5tSGsr?=
- =?utf-8?B?Y1FNTWJaaVBzSjRIRVJQOU5VVnNWYng2S09GTnVFN3BHVDFXSGV0bGdGT3Qy?=
- =?utf-8?B?cWpQdVdmTVF4OFIyK2pGUXBFZW9MclZHb3ZvazdaVzJrRHp0aTBXdFRNWFpG?=
- =?utf-8?B?VkpHTXNucEtlTnBOeWMzZVhmbnNqandhOFp0Q1NyU0owYXNmcXBSRjQ1RDY3?=
- =?utf-8?B?RUsyaW9hSkdvakxxN2owcVh0R244aEhEMUFZS0x4ZlVQeUNIT0NUZWR3Vlph?=
- =?utf-8?B?T2MvZ1ovQWRjU2pUbVRtRlNkaXpqeEM4c3p6L2RaQTVPSWZ6Mlg3a0xZSXps?=
- =?utf-8?B?SkJrd3ljZUdSWEdpQzF1VXZybm85UUdONnptbTJpeEQzbG1NSUtZLzkwQWNm?=
- =?utf-8?B?RS9rVDZqcU52akRvY1V4MGVUQk52WlJXY2RoTVNJSGRJMFIvclNYSmJDdUJV?=
- =?utf-8?B?Ujh4a1pnUjU4Qi9VcmpiSVpXM2JIdzJ3TzFwTi9Xa0g4d0N4bC9WMDNFUCtT?=
- =?utf-8?B?SUFTVUxNK29OK0JGQTRwSEgyMTdEOVdONGFCR00vRWZmQUxESWs2ZEZseXAv?=
- =?utf-8?B?M0YwTUFBcFMyVGJ5QW5SdWtLZGhtMDY0Z3RYT2lOSklrSEJiN0JXOStNc2VC?=
- =?utf-8?B?Uk81RGxaVDRYdk5IMlFFVUx3SWtLbjlCSEZpUThDMjYvYU1laXYvQnRVRlpT?=
- =?utf-8?Q?Qlbvm8w5g69gfKAHFB8mPvl5F?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 107bfff7-b16b-4208-b013-08dcf4c538ce
-X-MS-Exchange-CrossTenant-AuthSource: BL3PR12MB9049.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Oct 2024 07:18:28.1387
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: NADMPuMC+J2lR4TtTzgyd24gnYIDZ3P0aopRn//N4ZWrWSJjvoeYjJiP3GB2BRAhj/7pyApEUTc/c/9e54pUYw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN6PR12MB8568
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241024225512.7464-1-rodrigo.gobbi.7@gmail.com>
 
-
-On 10/23/2024 1:42 PM, Tom Lendacky wrote:
-> Update the AMD memory encryption documentation to include information on
-> the Reverse Map Table (RMP) and the two table formats.
+On Thu, Oct 24, 2024 at 07:55:12PM -0300, Rodrigo Gobbi wrote:
+> First, tks for the answer, Dan.
 > 
-> Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
-> ---
->  .../arch/x86/amd-memory-encryption.rst        | 118 ++++++++++++++++++
->  1 file changed, 118 insertions(+)
+> > little broken with -DDBG_RX_SIGNAL_DISPLAY_RAW_DATA, maybe we can 
+> > fix that in a next patch. 
+> > How is it broken?
 > 
-> diff --git a/Documentation/arch/x86/amd-memory-encryption.rst b/Documentation/arch/x86/amd-memory-encryption.rst
-> index 6df3264f23b9..bd840df708ea 100644
-> --- a/Documentation/arch/x86/amd-memory-encryption.rst
-> +++ b/Documentation/arch/x86/amd-memory-encryption.rst
-> @@ -130,8 +130,126 @@ SNP feature support.
->  
->  More details in AMD64 APM[1] Vol 2: 15.34.10 SEV_STATUS MSR
->  
-> +Reverse Map Table (RMP)
-> +=======================
-> +
-> +The RMP is a structure in system memory that is used to ensure a one-to-one
-> +mapping between system physical addresses and guest physical addresses. Each
-> +page of memory that is potentially assignable to guests has one entry within
-> +the RMP.
-> +
-> +The RMP table can be either contiguous in memory or a collection of segments
-> +in memory.
-> +
-> +Contiguous RMP
-> +--------------
-> +
-> +Support for this form of the RMP is present when support for SEV-SNP is
-> +present, which can be determined using the CPUID instruction::
-> +
-> +	0x8000001f[eax]:
-> +		Bit[4] indicates support for SEV-SNP
-> +
-> +The location of the RMP is identified to the hardware through two MSRs::
-> +
-> +        0xc0010132 (RMP_BASE):
-> +                System physical address of the first byte of the RMP
-> +
-> +        0xc0010133 (RMP_END):
-> +                System physical address of the last byte of the RMP
-> +
-> +Hardware requires that RMP_BASE and (RPM_END + 1) be 8KB aligned, but SEV
-> +firmware increases the alignment requirement to require a 1MB alignment.
-> +
-> +The RMP consists of a 16KB region used for processor bookkeeping followed
-> +by the RMP entries, which are 16 bytes in size. The size of the RMP
-> +determines the range of physical memory that the hypervisor can assign to
-> +SEV-SNP guests. The RMP covers the system physical address from::
-> +
-> +        0 to ((RMP_END + 1 - RMP_BASE - 16KB) / 16B) x 4KB.
-> +
-> +The current Linux support relies on BIOS to allocate/reserve the memory for
-> +the RMP and to set RMP_BASE and RMP_END appropriately. Linux uses the MSR
-> +values to locate the RMP and determine the size of the RMP. The RMP must
-> +cover all of system memory in order for Linux to enable SEV-SNP.
-> +
-> +Segmented RMP
-> +-------------
-> +
-> +Segmented RMP support is a new way of representing the layout of an RMP.
-> +Initial RMP support required the RMP table to be contiguous in memory.
-> +RMP accesses from a NUMA node on which the RMP doesn't reside
-> +can take longer than accesses from a NUMA node on which the RMP resides.
-> +Segmented RMP support allows the RMP entries to be located on the same
-> +node as the memory the RMP is covering, potentially reducing latency
-> +associated with accessing an RMP entry associated with the memory. Each
-> +RMP segment covers a specific range of system physical addresses.
-> +
-> +Support for this form of the RMP can be determined using the CPUID
-> +instruction::
-> +
-> +        0x8000001f[eax]:
-> +                Bit[23] indicates support for segmented RMP
-> +
-> +If supported, segmented RMP attributes can be found using the CPUID
-> +instruction::
-> +
-> +        0x80000025[eax]:
-> +                Bits[5:0]  minimum supported RMP segment size
-> +                Bits[11:6] maximum supported RMP segment size
-> +
-> +        0x80000025[ebx]:
-> +                Bits[9:0]  number of cacheable RMP segment definitions
-> +                Bit[10]    indicates if the number of cacheable RMP segments
-> +                           is a hard limit
-> +
+> make -j<> ./drivers/staging/rtl8723bs/r8723bs.ko EXTRA_CFLAGS="-DDBG_RX_SIGNAL_DISPLAY_RAW_DATA"
 
-Some more details on cacheable RMP segments on why are they supported, platform/processor specific ? 
+Why are you pasing -DDBG_RX_SIGNAL_DISPLAY_RAW_DATA?  Is there some document
+somewhere which says to do that?  Normally we would just say "Nothing ever
+enables DDBG_RX_SIGNAL_DISPLAY_RAW_DATA so just delete that code" and delete
+it.  But if there is some external document which says to enable it, and it's
+useful stuff then maybe we should keep it?
 
-> +To enable a segmented RMP, a new MSR is available::
-> +
-> +        0xc0010136 (RMP_CFG):
-> +                Bit[0]     indicates if segmented RMP is enabled
-> +                Bits[13:8] contains the size of memory covered by an RMP
-> +                           segment (expressed as a power of 2)
-> +
-> +The RMP segment size defined in the RMP_CFG MSR applies to all segments
-> +of the RMP. Therefore each RMP segment covers a specific range of system
-> +physical addresses. For example, if the RMP_CFG MSR value is 0x2401, then
-> +the RMP segment coverage value is 0x24 => 36, meaning the size of memory
-> +covered by an RMP segment is 64GB (1 << 36). So the first RMP segment
-> +covers physical addresses from 0 to 0xF_FFFF_FFFF, the second RMP segment
-> +covers physical addresses from 0x10_0000_0000 to 0x1F_FFFF_FFFF, etc.
-> +
-> +When a segmented RMP is enabled, RMP_BASE points to the RMP bookkeeping
-> +area as it does today (16K in size). However, instead of RMP entries
-> +beginning immediately after the bookkeeping area, there is a 4K RMP
-> +segment table (RST). Each entry in the RST is 8-bytes in size and represents
-> +an RMP segment::
-> +
-> +        Bits[19:0]  mapped size (in GB)
-> +                    The mapped size can be less than the defined segment size.
-> +                    A value of zero, indicates that no RMP exists for the range
-> +                    of system physical addresses associated with this segment.
-> +        Bits[51:20] segment physical address
-> +                    This address is left shift 20-bits (or just masked when
-> +                    read) to form the physical address of the segment (1MB
-> +                    alignment).
-> +
-> +The RST can hold 512 segment entries but can be limited in size to the number
-> +of cacheable RMP segments (CPUID 0x80000025_EBX[9:0]) if the number of cacheable
-> +RMP segments is a hard limit (CPUID 0x80000025_EBX[10]).
-> +
-> +The current Linux support relies on BIOS to allocate/reserve the memory for
-> +the segmented RMP (the bookkeeping area, RST, and all segments), build the RST
-> +and to set RMP_BASE, RMP_END, and RMP_CFG appropriately. Linux uses the MSR
-> +values to locate the RMP and determine the size and location of the RMP
-> +segments. The RMP must cover all of system memory in order for Linux to enable
-> +SEV-SNP.
-> +
-> +More details in the AMD64 APM Vol 2, section "15.36.3 Reverse Map Table",
-> +docID: 24593.
+> 
+> drivers/staging/rtl8723bs/hal/hal_com.c: In function ‘rtw_store_phy_info’:
+> drivers/staging/rtl8723bs/hal/hal_com.c:927:43: error: ‘PODM_PHY_INFO_T’ undeclared (first use in this function)
+>   927 |         struct odm_phy_info *pPhyInfo  = (PODM_PHY_INFO_T)(&pattrib->phy_info);
+>       |                                           ^~~~~~~~~~~~~~~
+> drivers/staging/rtl8723bs/hal/hal_com.c:927:43: note: each undeclared identifier is reported only once for each function it appears in
+> drivers/staging/rtl8723bs/hal/hal_com.c:940:73: error: ‘struct odm_phy_info’ has no member named ‘RxPwr’; did you mean ‘rx_pwr’?
+>   940 |                         psample_pkt_rssi->ofdm_pwr[rf_path] = pPhyInfo->RxPwr[rf_path];
+>       |                                                                         ^~~~~
+>       |                                                                         rx_pwr
+> drivers/staging/rtl8723bs/hal/hal_com.c:941:71: error: ‘struct odm_phy_info’ has no member named ‘RxSNR’
+>   941 |                         psample_pkt_rssi->ofdm_snr[rf_path] = pPhyInfo->RxSNR[rf_path];
+> 
+> Actually it's not exaclty in the same line of pr_debug/netdev_dbg replacement. Do you think
+> we can do the replacement at:
+> 
 
-The document does not cover Segmented RMP specifics, is there any other reference to a document
-containing Segmented RMP details ?
+This has nothing to do with pr_debug/netdev_dbg replacement as you say.
 
-Thanks, 
-Ashish
+On the other hand, how useful can DDBG_RX_SIGNAL_DISPLAY_RAW_DATA be if it
+doesn't compile?  If you sent a patch to delete it, we will apply that patch.
 
-> +
->  Secure VM Service Module (SVSM)
->  ===============================
-> +
->  SNP provides a feature called Virtual Machine Privilege Levels (VMPL) which
->  defines four privilege levels at which guest software can run. The most
->  privileged level is 0 and numerically higher numbers have lesser privileges.
+> > +			pr_debug(", rx_ofdm_pwr:%d(dBm), rx_ofdm_snr:%d(dB)\n",...
+> 
+> regardless of this build errors? I mean, fixing it here in this patch
+> would not be related to the purpose of this simple patch.
+> 
+> > Just delete this line.
+> Ok.
+> 
+> > -		printk(KERN_CRIT "%s: sdio_claim_irq FAIL(%d)!\n", __func__, err);
+> > +		pr_crit("%s: sdio_claim_irq FAIL(%d)!\n", __func__, err);
+> >                ^^^^^^^?
+> 
+> Originally, I didn't replace this because at dvobj of sdio_alloc_irq(struct dvobj_priv *dvobj)  
+> there are two adapter fields:
+> 
+> struct dvobj_priv {
+> 	struct adapter *if1; /* PRIMARY_ADAPTER */
+> ...
+> 	struct adapter *padapters;
+> ...
+> }
+> 
+> Checking the "counter part" function of sdio_alloc_irq(), the sdio_free_irq() (which is not used), 
+> the if1 (primary) is used for debug purpose:
+
+If it's not used, just delete it?
+
+> 
+> netdev_err(dvobj->if1->pnetdev...
+> 
+> And checking the initialization path, if1 should be ok at this point.
+> But since I can't test this, do you suggest to replace anyway?
+
+Most drivers/staging patches are not tested before sending.  The printk
+conversions are a leading source of bugs.  The common bug with these conversions
+looks like this:
+
+	if (!dev)
+		netdev_err(dev, "no device\n");
+
+Anyway, it's fine to send untested patches so long as you've looked at the
+initialization path and it's okay as you said.
+
+regards,
+dan carpenter
+
 
