@@ -1,253 +1,205 @@
-Return-Path: <linux-kernel+bounces-382124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F16489B09C7
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 18:22:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 257559B09CA
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 18:23:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 245CFB2566A
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:22:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DC361C232C2
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:23:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0854518B462;
-	Fri, 25 Oct 2024 16:22:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C2EE18991A;
+	Fri, 25 Oct 2024 16:22:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="N4HWfhGT"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Bs58LzIj"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2087.outbound.protection.outlook.com [40.107.243.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5B9718785B
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 16:22:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729873350; cv=none; b=mQbLhdrMeC60WQA8ze2BBTkiy5PTJsB5neMm19Pajc0zlsal9Z2LNUmNmRoi3G2Dqq0KI+VTrVigP4L1GurdipnGuKQpnodN24uRjNpyN4vY6dKhsEDXcBb7W1NJWdd/cy7tTPWclUk8DblQTsHSxK7B5PvqTYtB7dDQgAX1KuY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729873350; c=relaxed/simple;
-	bh=Nvc3OxwdDJqF6/bh7R12YvLLqr9zIdGMinGLFcdg2v4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ESeMpJgdFMmS59kVnx8IdDGpdnO9RYt63PG0fP+0LHj932BOPey8y54fsEiIV8kJwtRt7yf6cuPWIT2jYTtVALepnpu7hpujk3cDOVfBgYc6t74WV+Wdm/jXjHlGbyFQ9X9A7GUTlneqtjOMtHYZnSdHCjeMoiK3AEGxPuuzrpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=N4HWfhGT; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729873346;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=emwlGOdAV5GPCbDbXU8/cJnDkVRFeD9ng138eIoq4+4=;
-	b=N4HWfhGTp2SoEk1Kp7e15WmSp+4hLdM7rWLPbbWTsHKt9Ay55g4CpMEDrz7ozWgXYcDoia
-	PYO6v4I5WqSyuYwu7CwIB9zTs8I22wEiAVvC3CFtzKzG3B/hsy/gTTLDA1OPFsr10EJtlG
-	YKSKbwirGMJVDS3W3OM5/supobrvRNs=
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
- [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-373-etQARc1XOCyduwH4LZE4KA-1; Fri, 25 Oct 2024 12:22:25 -0400
-X-MC-Unique: etQARc1XOCyduwH4LZE4KA-1
-Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-a99efc7d881so165858766b.1
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 09:22:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729873344; x=1730478144;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=emwlGOdAV5GPCbDbXU8/cJnDkVRFeD9ng138eIoq4+4=;
-        b=S4aTjlm9+F0LR8f/+QVyHTsTKlrx5nygNwzsGIxx9CIzESbBWzUmF/7mZCq+jOLClA
-         5enOTm6ADexInjvyVr1A71B+EGjdOhXDQ9jCH0TrDhuQmlsouWAvoN4YQWFzV/LpWVYE
-         8bz93lJ5b5kXociBnqHOGSnZ8G3/auyMHk6HvvmQA3u0WnbC8AmgpWztl9CJlfXIyqOG
-         bgAsIPV2+phhrjz+CaDQJ20i1CtHemfLW/cBuzguo9x9r4YMZ5FTTztCCY0LC19x9BJG
-         XYNolwFHEfht84/2n2z135FK8JRYyeVK/Bw821sh/zmASlj8Z3NeR5IO6nwngzeqJaqr
-         hLsA==
-X-Forwarded-Encrypted: i=1; AJvYcCURmj08X2o8pR5VRw91UWF7+punxLqvST9SZR5wWIhkaPh1Z0d74Zbr3G3PGr0FhSX0+aUeLIpuL7TXeIs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5ZQlawGOessDefTHV5Hv302nXY08uZAnheu3yA7gYoB6CdnF6
-	7D+wyfAFjKUQo9kr4qAqDGc14DsqHIu0WZK6nY/BCXm6z1em9/aLjOiyOi0WytIZ/+UmStEi536
-	F46Am974zcddrlaUkSLmi/SRaeo2Uz+rAntxCDKunrRsRpftt77krgTi5JvliTg==
-X-Received: by 2002:a17:907:7f15:b0:a9a:7f84:940b with SMTP id a640c23a62f3a-a9abf8458f3mr1007585966b.10.1729873343956;
-        Fri, 25 Oct 2024 09:22:23 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFRdntJoyvupUZ8WixSPs76hFhlXeUzwWu1qndPMO81kxJOWMh5JeS9vrEJtBZYGSJGz+4mZg==
-X-Received: by 2002:a17:907:7f15:b0:a9a:7f84:940b with SMTP id a640c23a62f3a-a9abf8458f3mr1007579766b.10.1729873343429;
-        Fri, 25 Oct 2024 09:22:23 -0700 (PDT)
-Received: from eisenberg.fritz.box (200116b82de5ba00738ac8dadaac7543.dip.versatel-1u1.de. [2001:16b8:2de5:ba00:738a:c8da:daac:7543])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b1f298ef6sm86580966b.136.2024.10.25.09.22.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2024 09:22:23 -0700 (PDT)
-Message-ID: <19f734499f24df1f1835248eba19b136d41cc1d4.camel@redhat.com>
-Subject: Re: [PATCH 02/10] ata: ahci: Replace deprecated PCI functions
-From: Philipp Stanner <pstanner@redhat.com>
-To: Ilpo =?ISO-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Damien Le Moal <dlemoal@kernel.org>, 
- Niklas Cassel <cassel@kernel.org>, Giovanni Cabiddu
- <giovanni.cabiddu@intel.com>, Herbert Xu <herbert@gondor.apana.org.au>,
- "David S. Miller" <davem@davemloft.net>,  Boris Brezillon
- <bbrezillon@kernel.org>, Arnaud Ebalard <arno@natisbad.org>, Srujana Challa
- <schalla@marvell.com>,  Alexander Shishkin
- <alexander.shishkin@linux.intel.com>, Miri Korenblit
- <miriam.rachel.korenblit@intel.com>, Kalle Valo <kvalo@kernel.org>, Serge
- Semin <fancer.lancer@gmail.com>, Jon Mason <jdmason@kudzu.us>, Dave Jiang
- <dave.jiang@intel.com>, Allen Hubbe <allenbh@gmail.com>, Bjorn Helgaas
- <bhelgaas@google.com>, Kevin Cernekee <cernekee@gmail.com>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby
- <jirislaby@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai
- <tiwai@suse.com>,  Mark Brown <broonie@kernel.org>, David Lechner
- <dlechner@baylibre.com>, Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?=
- <u.kleine-koenig@pengutronix.de>, Jie Wang <jie.wang@intel.com>, Tero
- Kristo <tero.kristo@linux.intel.com>, Adam Guerin <adam.guerin@intel.com>,
- Shashank Gupta <shashank.gupta@intel.com>, Przemek Kitszel
- <przemyslaw.kitszel@intel.com>, Bharat Bhushan <bbhushan2@marvell.com>,
- Nithin Dabilpuram <ndabilpuram@marvell.com>, Johannes Berg
- <johannes.berg@intel.com>, Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
-  Gregory Greenman <gregory.greenman@intel.com>, Benjamin Berg
- <benjamin.berg@intel.com>, Yedidya Benshimol
- <yedidya.ben.shimol@intel.com>, Breno Leitao <leitao@debian.org>, Florian
- Fainelli <florian.fainelli@broadcom.com>, linux-doc@vger.kernel.org, LKML
- <linux-kernel@vger.kernel.org>, linux-ide@vger.kernel.org,
- qat-linux@intel.com,  linux-crypto@vger.kernel.org,
- linux-wireless@vger.kernel.org,  ntb@lists.linux.dev,
- linux-pci@vger.kernel.org, linux-serial <linux-serial@vger.kernel.org>,
- linux-sound@vger.kernel.org
-Date: Fri, 25 Oct 2024 18:22:21 +0200
-In-Reply-To: <282ba5d4-cdad-a6f4-8ee0-1936c532dbc5@linux.intel.com>
-References: <20241025145959.185373-1-pstanner@redhat.com>
-	 <20241025145959.185373-3-pstanner@redhat.com>
-	 <282ba5d4-cdad-a6f4-8ee0-1936c532dbc5@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 928C8188583;
+	Fri, 25 Oct 2024 16:22:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.87
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729873362; cv=fail; b=c+TxZP4OqnqekRnNkn2Uq7vdxZbdimnYo0Q46Opx8t747s2y2aRr3XgghFxbYwawL79ZMCw1L2DdY6W5Fe0ckCtm3Li6KzG+y4z4u9L4kOOk+KPDSClOlCBx/uPFiB8AQeG9b3JUFu91ExbNjCbO05Ue940f+IskjXT5uvnBuzU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729873362; c=relaxed/simple;
+	bh=oFi7z5IM30gp71ZXImuYcREfZudTKdpcghdRPz1x8GQ=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fd2JYnfE8f1a/dua3oflZNLLhRDNbVTH0ENUyjVw+sSLNumvKb2No9yOh+PCFhD/TG4ue/JdMafHoNdaxTc0SIsj5/AayQDC0WTRNwTVwJUIHzVZ6O7mHvlU9WV7+mCNKQYec+FJsfDCM2iRTGkSC3OeRsLMLZgf5Kf6nHL5md8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Bs58LzIj; arc=fail smtp.client-ip=40.107.243.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=tvqd+frGUHhu752Bl9fB8Y+jihpSDHDV+N4mvkOWI7LolM289ArXyJMljtl3VjiDLGYBXWst3UaydGy2Vkv60XXzfmRMbAFLh/zYPFuRiQ6znigtfPNSkYpnLzFjaHxKuC3VWIMo9MZpn2Mw0SexYl7pznqe5icnuC7dJ7Jm2UlPDrErQc4+fvT2ClxlXTqIFqAgS5KjzLHbhO60A131v4LUlADjAXfHe7xybtrn4OQAcK0ylX27O+JmvVWvSU7CvGbvU3oaGxUVmfFMKQQqWjDqiTRlv1NP6jJNI6bsJ9aHswCowtGRj9DgTUrXRnx6WjLoqobYy3GOdlfN4YTC2Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=VJdq6qPeaBnkDGwbdq0Do4c4lAgregInf92suqQvNEY=;
+ b=HjYCG7/Sn81hlmV6XmNHXOG0mLLUJ+Jj1mp+6IPzqXHJAvmYjmV0wQHCwwr6hgNEZTNJQIDC7geFOfQIqrWy42zh52V+KOlF+6+JCMw08wP71ku9Rwx0ooOrKstyp+2xqLqDT6pKNiNHwQnozSLSkUvNMPXDx4S63KSjPQV/rWTgx4N5Dy0WkcrO6te9C8Q4nZFi6Vl5Zpd9QbsdCLqnvXggUoiLbZhARR5h622rfubR3884ky5xaw/1m417+1wuqchon49eLW3NGHIsOvCt6+5qf3wz6f1iNVUoo73uGpflZ9mEZ96Y2yOw4D8yRAW1d+htyydHK5sUXV9NFJrzuA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.233) smtp.rcpttodomain=intel.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=VJdq6qPeaBnkDGwbdq0Do4c4lAgregInf92suqQvNEY=;
+ b=Bs58LzIjR+DvF9KeNPe01IkBtpkzHsg6LwhGacgFw4m+zwbxkUND7pTGq466qLE+wJFb+Yg3+yfL2km28z5h2/TTPCwva/wZYQVMQ9RZzxTAqakiRjx0f8PgCxQYm2Yd8uzH8Br+mFu0H9w2eSDz1YFvnX43yOh1WaI70JgZcZ0iJv+u+uilOIzIGzo20H+JxHPyhWgdLcWZtrepFEy0KImhsH1ayUxIvl6ck8J+n9aEV5KTtrKfE9opDT6LycGg3t728dEL1bQ+b34zu5nJAmviqAzJOqCZIKniEUY56mwXw6k7nsEvydWLsv11c/7UDfy7qiC6e3+76/HsIY8EmQ==
+Received: from MW4P221CA0023.NAMP221.PROD.OUTLOOK.COM (2603:10b6:303:8b::28)
+ by CH3PR12MB9124.namprd12.prod.outlook.com (2603:10b6:610:1a7::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.23; Fri, 25 Oct
+ 2024 16:22:35 +0000
+Received: from CO1PEPF000044EE.namprd05.prod.outlook.com
+ (2603:10b6:303:8b:cafe::db) by MW4P221CA0023.outlook.office365.com
+ (2603:10b6:303:8b::28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.29 via Frontend
+ Transport; Fri, 25 Oct 2024 16:22:34 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ CO1PEPF000044EE.mail.protection.outlook.com (10.167.241.68) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8093.14 via Frontend Transport; Fri, 25 Oct 2024 16:22:34 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 25 Oct
+ 2024 09:22:24 -0700
+Received: from drhqmail203.nvidia.com (10.126.190.182) by
+ drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Fri, 25 Oct 2024 09:22:24 -0700
+Received: from Asurada-Nvidia (10.127.8.9) by mail.nvidia.com (10.126.190.182)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
+ Transport; Fri, 25 Oct 2024 09:22:23 -0700
+Date: Fri, 25 Oct 2024 09:22:22 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: "Tian, Kevin" <kevin.tian@intel.com>
+CC: "jgg@nvidia.com" <jgg@nvidia.com>, "will@kernel.org" <will@kernel.org>,
+	"joro@8bytes.org" <joro@8bytes.org>, "suravee.suthikulpanit@amd.com"
+	<suravee.suthikulpanit@amd.com>, "robin.murphy@arm.com"
+	<robin.murphy@arm.com>, "dwmw2@infradead.org" <dwmw2@infradead.org>,
+	"baolu.lu@linux.intel.com" <baolu.lu@linux.intel.com>, "shuah@kernel.org"
+	<shuah@kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "iommu@lists.linux.dev"
+	<iommu@lists.linux.dev>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kselftest@vger.kernel.org"
+	<linux-kselftest@vger.kernel.org>, "eric.auger@redhat.com"
+	<eric.auger@redhat.com>, "jean-philippe@linaro.org"
+	<jean-philippe@linaro.org>, "mdf@kernel.org" <mdf@kernel.org>,
+	"mshavit@google.com" <mshavit@google.com>,
+	"shameerali.kolothum.thodi@huawei.com"
+	<shameerali.kolothum.thodi@huawei.com>, "smostafa@google.com"
+	<smostafa@google.com>, "Liu, Yi L" <yi.l.liu@intel.com>, "aik@amd.com"
+	<aik@amd.com>, "zhangfei.gao@linaro.org" <zhangfei.gao@linaro.org>,
+	"patches@lists.linux.dev" <patches@lists.linux.dev>
+Subject: Re: [PATCH v4 04/11] iommufd/viommu: Add IOMMU_VIOMMU_ALLOC ioctl
+Message-ID: <ZxvFvjRiqNd7Oc4v@Asurada-Nvidia>
+References: <cover.1729553811.git.nicolinc@nvidia.com>
+ <9da2cf334a182ced4d4ffa578b87889e9c0856f3.1729553811.git.nicolinc@nvidia.com>
+ <BN9PR11MB5276BC711E46B073AF8846048C4F2@BN9PR11MB5276.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <BN9PR11MB5276BC711E46B073AF8846048C4F2@BN9PR11MB5276.namprd11.prod.outlook.com>
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PEPF000044EE:EE_|CH3PR12MB9124:EE_
+X-MS-Office365-Filtering-Correlation-Id: 18bba775-6530-48c5-63fd-08dcf5113bcc
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|7416014|36860700013|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?qchBOWBcVkktMsQxxefgUOBw59ITuCegWzWb/ZAfc0RRto0g6q19sUe6UyKo?=
+ =?us-ascii?Q?ZPB26FKo3qEPMd20yi5A2gvFFDv8SG90Nel8tRiWkTug01Cx0iaa/mU81VNv?=
+ =?us-ascii?Q?zRPcLTYUEGkTlih5XWPYkGy2L5hplXHt6eOy5h/q2LmJNEh6yb4KTG2PFleo?=
+ =?us-ascii?Q?9kDSfq6vEj1YKsNk+sGcIoB7LE+vpSkqvm1miESR4dpvjeeFsVhIAvBf2Y/d?=
+ =?us-ascii?Q?gClctotRV5uWfSyHZ5+muwfA0Eo9p3ohH3B9ysALFZn2AH0txJ8FNaknNaJf?=
+ =?us-ascii?Q?+xOoGBGNR/UfIW1v8j3MN1liz2KdzAftK3Mu0uMPLJ3OCHjLCGgk1TLngmZ0?=
+ =?us-ascii?Q?CefP8obynNKgM4r/uQzrAFv3kxfg1to8RC8xSqP7AlZFK7C7zoejIVieaB4f?=
+ =?us-ascii?Q?lcHGp5bhEHzEsZo9/JuK+afInPdYKZnoR3d9Laf33o5W5w4NurMu+gEQVCQc?=
+ =?us-ascii?Q?86coH3v5NUV1bgSLIzCqjT73DvrBOLPMnfbHboBYXrqMxJzy3V147XEuPvsj?=
+ =?us-ascii?Q?9IkmBzWZLPDT5+waATgwxg6Rbf5ZgV1offDQ+btVfgw5MC2K2YuGeH6p1pcK?=
+ =?us-ascii?Q?6rfZk+P8BijwaAHKBvVGL0HsNO9cVPJ/xDR3sI4etOADwutVPBkvInnsct3c?=
+ =?us-ascii?Q?cHEsYHxrOIfAdVzHoV0tFptImnbAscVxGo02St/c0lXOCfmS3vyvTz9jH9TF?=
+ =?us-ascii?Q?ShvnSOAv/hblBYv1ao1EPDl6UxYiaAzMeWFWIwte5fO1pFQ95GYNgsJFtrI9?=
+ =?us-ascii?Q?PNzpoeFiaTgSsYf+y1gy5k4LsqIKPWAdxWvaYPJVVgh3kgS4IdCzAh7Lppdp?=
+ =?us-ascii?Q?mtfmcXCaA3rABFVcIJ0bMpKNFlzhKSTqPCfmQ/wbEEcs+V2yOdSiuCC6OKiH?=
+ =?us-ascii?Q?w3HJGUQGGA41xNc+pXlQacu7KFuUpbinT+T8xQwjvUJ/bRv4Csc7FsnPSh93?=
+ =?us-ascii?Q?hxTblWqtHvTKDZsGUdJtvru7nw3ijxnGgVd2P+MppYO5yiDK6X8wn4BC0Rkv?=
+ =?us-ascii?Q?uOE8coCm/NRdT0d1uQucWd+c3eIfBEWMGcWrm7NArB6EqltIk2oR5fL98KlH?=
+ =?us-ascii?Q?cybUc0KvBL46+nmrTAHvim21a82WieEO4OMW9QT3Fvmy/3fvnFwY7NGwyG4E?=
+ =?us-ascii?Q?jVXyq0QlkWYcyNknTj16YCMIDZJexVvci7uFgKPHNVtIe0XdKKhTLeeiO92R?=
+ =?us-ascii?Q?C+EpGJUjWvQg+SMYKKmSgxf7yoZCbElreWMpzjPwLmAUMSU0fy3LaJrbTjF5?=
+ =?us-ascii?Q?nqDk1kirqmM0welXoLIb1j1mgx/OXFNCCpkOXEgSjdOSNN4x1J0wIKV3e5sk?=
+ =?us-ascii?Q?MfTepC5og1mwQqcLQTrxFvI9nQhKmjs78a289dqnYmjH+IHs6HZjPCLseRks?=
+ =?us-ascii?Q?XQim+okpE3lTOQRYH0lhSrPd8Va3ya+yoVgVwqcNCCYWHS5ouQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(36860700013)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Oct 2024 16:22:34.5330
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 18bba775-6530-48c5-63fd-08dcf5113bcc
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CO1PEPF000044EE.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB9124
 
-On Fri, 2024-10-25 at 18:55 +0300, Ilpo J=C3=A4rvinen wrote:
-> On Fri, 25 Oct 2024, Philipp Stanner wrote:
->=20
-> > pcim_iomap_regions_request_all() and pcim_iomap_table() have been
-> > deprecated by the PCI subsystem in commit e354bb84a4c1 ("PCI:
-> > Deprecate
-> > pcim_iomap_table(), pcim_iomap_regions_request_all()").
-> >=20
-> > Replace these functions with their successors, pcim_iomap() and
-> > pcim_request_all_regions().
-> >=20
-> > Signed-off-by: Philipp Stanner <pstanner@redhat.com>
-> > Acked-by: Damien Le Moal <dlemoal@kernel.org>
-> > ---
-> > =C2=A0drivers/ata/acard-ahci.c | 6 ++++--
-> > =C2=A0drivers/ata/ahci.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 6 ++++--
-> > =C2=A02 files changed, 8 insertions(+), 4 deletions(-)
-> >=20
-> > diff --git a/drivers/ata/acard-ahci.c b/drivers/ata/acard-ahci.c
-> > index 547f56341705..3999305b5356 100644
-> > --- a/drivers/ata/acard-ahci.c
-> > +++ b/drivers/ata/acard-ahci.c
-> > @@ -370,7 +370,7 @@ static int acard_ahci_init_one(struct pci_dev
-> > *pdev, const struct pci_device_id
-> > =C2=A0	/* AHCI controllers often implement SFF compatible
-> > interface.
-> > =C2=A0	 * Grab all PCI BARs just in case.
-> > =C2=A0	 */
-> > -	rc =3D pcim_iomap_regions_request_all(pdev, 1 <<
-> > AHCI_PCI_BAR, DRV_NAME);
-> > +	rc =3D pcim_request_all_regions(pdev, DRV_NAME);
-> > =C2=A0	if (rc =3D=3D -EBUSY)
-> > =C2=A0		pcim_pin_device(pdev);
-> > =C2=A0	if (rc)
-> > @@ -386,7 +386,9 @@ static int acard_ahci_init_one(struct pci_dev
-> > *pdev, const struct pci_device_id
-> > =C2=A0	if (!(hpriv->flags & AHCI_HFLAG_NO_MSI))
-> > =C2=A0		pci_enable_msi(pdev);
-> > =C2=A0
-> > -	hpriv->mmio =3D pcim_iomap_table(pdev)[AHCI_PCI_BAR];
-> > +	hpriv->mmio =3D pcim_iomap(pdev, AHCI_PCI_BAR, 0);
-> > +	if (!hpriv->mmio)
-> > +		return -ENOMEM;
-> > =C2=A0
-> > =C2=A0	/* save initial config */
-> > =C2=A0	ahci_save_initial_config(&pdev->dev, hpriv);
-> > diff --git a/drivers/ata/ahci.c b/drivers/ata/ahci.c
-> > index 45f63b09828a..2043dfb52ae8 100644
-> > --- a/drivers/ata/ahci.c
-> > +++ b/drivers/ata/ahci.c
-> > @@ -1869,7 +1869,7 @@ static int ahci_init_one(struct pci_dev
-> > *pdev, const struct pci_device_id *ent)
-> > =C2=A0	/* AHCI controllers often implement SFF compatible
-> > interface.
-> > =C2=A0	 * Grab all PCI BARs just in case.
-> > =C2=A0	 */
-> > -	rc =3D pcim_iomap_regions_request_all(pdev, 1 <<
-> > ahci_pci_bar, DRV_NAME);
-> > +	rc =3D pcim_request_all_regions(pdev, DRV_NAME);
-> > =C2=A0	if (rc =3D=3D -EBUSY)
-> > =C2=A0		pcim_pin_device(pdev);
-> > =C2=A0	if (rc)
-> > @@ -1893,7 +1893,9 @@ static int ahci_init_one(struct pci_dev
-> > *pdev, const struct pci_device_id *ent)
-> > =C2=A0	if (ahci_sb600_enable_64bit(pdev))
-> > =C2=A0		hpriv->flags &=3D ~AHCI_HFLAG_32BIT_ONLY;
-> > =C2=A0
-> > -	hpriv->mmio =3D pcim_iomap_table(pdev)[ahci_pci_bar];
-> > +	hpriv->mmio =3D pcim_iomap(pdev, ahci_pci_bar, 0);
-> > +	if (!hpriv->mmio)
-> > +		return -ENOMEM;
->=20
-> Hi,
->=20
-> I've probably lost the big picture somewhere and the coverletter
-> wasn't=20
-> helpful focusing only the most immediate goal of getting rid of the=20
-> deprecated function.
->=20
-> These seem to only pcim_iomap() a single BAR. So my question is, what
-> is=20
-> the reason for using pcim_request_all_regions() and not=20
-> pcim_request_region() as mentioned in the commit message of the
-> commit=20
-> e354bb84a4c1 ("PCI: Deprecate pcim_iomap_table(),=20
-> pcim_iomap_regions_request_all()")?
+On Fri, Oct 25, 2024 at 08:59:11AM +0000, Tian, Kevin wrote:
+> > From: Nicolin Chen <nicolinc@nvidia.com>
+> > Sent: Tuesday, October 22, 2024 8:19 AM
+> >
+> > Add a new ioctl for user space to do a vIOMMU allocation. It must be based
+> > on a nesting parent HWPT, so take its refcount.
+> >
+> > If an IOMMU driver supports a driver-managed vIOMMU object, it must
+> > define
+> 
+> why highlight 'driver-managed', implying a core-managed vIOMMU
+> object some day?
 
-That commit message isn't that precise and / or was written when
-pcim_request_all_regions() was still an internal helper function.
+Oh, core-managed vIOMMU is gone since this version. I should have
+updated the commit message here too.
 
->=20
-> I understand it's strictly not wrong to use
-> pcim_request_all_regions()
-> but I'm just trying to understand the logic behind the selection.
-> I'm sorry if this is a stupid question, it's just what I couldn't
-> figure=20
-> out on my own while trying to review these patches.
->=20
+> > +/**
+> > + * struct iommu_viommu_alloc - ioctl(IOMMU_VIOMMU_ALLOC)
+> > + * @size: sizeof(struct iommu_viommu_alloc)
+> > + * @flags: Must be 0
+> > + * @type: Type of the virtual IOMMU. Must be defined in enum
+> > iommu_viommu_type
+> > + * @dev_id: The device's physical IOMMU will be used to back the virtual
+> > IOMMU
+> > + * @hwpt_id: ID of a nesting parent HWPT to associate to
+> > + * @out_viommu_id: Output virtual IOMMU ID for the allocated object
+> > + *
+> > + * Allocate a virtual IOMMU object that represents the underlying physical
+> > + * IOMMU's virtualization support. The vIOMMU object is a security-isolated
+> > + * slice of the physical IOMMU HW that is unique to a specific VM.
+> 
+> the object itself is a software abstraction, while a 'slice' is a set of
+> real hw resources.
 
-The reason pcim_request_all_regions() is used in the entire series is
-to keep behavior of the drivers 100% identical.
-pcim_iomap_regions_request_all() performs a region request on *all* PCI
-BARs and then ioremap()s *specific* ones; namely those set by the
-barmask.
+Yea, let's do this:
+ * Allocate a virtual IOMMU object, representing the underlying physical IOMMU's
+ * virtualization support that is a security-isolated slice of the real IOMMU HW
+ * that is unique to a specific VM.
 
-It seems to me that those drivers were only using
-pcim_iomap_regions_request_all() precisely because of that feature:
-they want to reserve all BARs through a region request. You could do
-that manually with
-
-for (int i =3D 0; i < PCI_STD_NUM_BARS; i++) pcim_request_region();
-mem =3D pcim_iomap(...);
-
-When you look at Patch #10 you'll see the implementation of
-pcim_iomap_regions_request_all() and will discover that it itself uses
-pcim_request_all_regions().
-
-So you could consider this series a partial code-move that handily also
-gets rid of a complicated function that prevents us from removing,
-ultimately, the problematic function pcim_iomap_table().
-
-
-Hope this helps,
-P.
-
-> (I admit not reading all the related discussions in the earlier
-> versions.)
->=20
-
+Thanks
+Nicolin
 
