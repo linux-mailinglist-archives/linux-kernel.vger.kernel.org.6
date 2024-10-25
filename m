@@ -1,201 +1,133 @@
-Return-Path: <linux-kernel+bounces-382404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 037559B0D2F
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 20:27:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5669F9B0D1E
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 20:24:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 277F01C22381
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 18:27:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 881BB1C22782
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 18:24:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBEA021620F;
-	Fri, 25 Oct 2024 18:24:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56A8D20D4EA;
+	Fri, 25 Oct 2024 18:23:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="AHPoUC9f"
-Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="M8sYcjM5"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A6512161EB
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 18:24:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BB9B18C90E
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 18:23:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729880680; cv=none; b=CZwo0vKc3zo9eEo5zvHDNH2JPxglb7fjvm3cDgHjXA/LqZuP2rHaoruHudSCgbj0bW8siP9FJi3uxeD9+FuQ9IvG2A/iUxg5U8r7dHNVFCNlF1OhN3yEL3u0ikWHR+EwoJwb1oat3NaH67z41iOCUm/CCq2YhxTE0V+hARcEPzM=
+	t=1729880636; cv=none; b=KGBnYnYqdARDLZ1pwOGMu9bVwhn97loqkAseYZnDI+qpUbUjW0kcqXaEhqw8kCF6mf88o9+hyyNvdMaQ5kqSCOJkc9vv9ARtVXh7ihj9396xyi0UBB3w9sJ2fjLosB29vzjxoagSL+C7yxe3rtjFgiwfiL8Nv/BKX9cDI3/RfY8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729880680; c=relaxed/simple;
-	bh=9vzq53PCmu/Y7zjKtU/lX/A81aiQzCSYL3Z1OonDC60=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JqCrq8d3iqYvtu7D7xFUPrtWRY9dRX+9h9ymz6/InT8B1LiqoVNn6yuQE7jVAgSK9Le7Cq8hp43hpJLn8BJz7/XolwdMqSqs//23MRGYQq/9NLrx0aL6iySpEVwB21as8vgVHql87tlljx3bv1VUth9I9aMIF8YC/qixu9JbDU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=AHPoUC9f; arc=none smtp.client-ip=95.215.58.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1729880675;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HQbPfXcKqguf2CSntuN0/NMKRu/M0rQKlM/2rK1MGZk=;
-	b=AHPoUC9fdpWn9L1Z6PNl/PyiY2zsU/YeEPLLX12r1jXZ1Pon2gkoHeUmaHyYYpLeys3q1/
-	uVFUNZWFZo0ZyV/3krAe8WdZqr23+kLc8HHxsPY6WNJDKGSbW7d2RsK/oJ6Mj+XSqAqoiE
-	XaxW+2OMkQOMkhtqf7gxZIIVXqWMmLU=
-From: Oliver Upton <oliver.upton@linux.dev>
-To: kvmarm@lists.linux.dev
-Cc: Marc Zyngier <maz@kernel.org>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Oliver Upton <oliver.upton@linux.dev>
-Subject: [PATCH v4 13/18] KVM: arm64: nv: Adjust range of accessible PMCs according to HPMN
-Date: Fri, 25 Oct 2024 18:23:48 +0000
-Message-ID: <20241025182354.3364124-14-oliver.upton@linux.dev>
-In-Reply-To: <20241025182354.3364124-1-oliver.upton@linux.dev>
-References: <20241025182354.3364124-1-oliver.upton@linux.dev>
+	s=arc-20240116; t=1729880636; c=relaxed/simple;
+	bh=VuYfXZbXysbh25PQ4lYW3IZ7zhG5XyHxt5bS/C5tDKA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Z//GAWoLEk+4gSa9S7nT6X2g9A9fbEjZNvYSNWRZtoOeYsgAuEjDJd58kFM1u/yrF962UOAcXjAu6XePHsdikLKGoO8lbp99KPQ8HRS7vJRwr+orr0zYhcb/mkviBJGE6Hzq6dn6fNhcudaaF3+b3/ceTRO/0s5Qj2ExhFeDBBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=M8sYcjM5; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49PB24vQ000997
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 18:23:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	3beKkZbEARnsxmifHxpb705DaWvn5ZgjjjVxCqTJTSg=; b=M8sYcjM5fJ/jXa2z
+	9hxff1l46aHfnI/W+Mr2KY9mftX8xgo5eNNgN96IsRINun8ARviRaQgCSuyPNUe0
+	RhRaWtmamCJnvlnalhZXxqtD6o7UNMALV5ud2S0K1tf1jxk6iRXOJ7lRHvoTyAJe
+	B6B7CjIeO6VFYpFRHA6Ghg4Lp+Lh3k2Ax1l/mgbMk+UW/E1Ornf30Hv4/fZ3Rkph
+	Iql3/GpSHEnIs/kLP3IRmzNtv/1mEo/lDcRd7CsNVCoB8N87zpokOFKevse+JmKC
+	iKgFCPSlLfmmk2DH74SLwxmDWWodkXDJXN+EusRrDFFXXcSmkGtEKABmhzLBcSkD
+	/n0sZA==
+Received: from mail-vs1-f69.google.com (mail-vs1-f69.google.com [209.85.217.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42ga3s1ajq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 18:23:54 +0000 (GMT)
+Received: by mail-vs1-f69.google.com with SMTP id ada2fe7eead31-4a5b5a9c938so47113137.0
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 11:23:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729880632; x=1730485432;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3beKkZbEARnsxmifHxpb705DaWvn5ZgjjjVxCqTJTSg=;
+        b=HZlFOAhSvhUUHNsPJLotQD5NQ3T81kRQNpqBwUaY4WgQjyp25B+QvGyRH7aDa1ZTE5
+         fSXh+HLZCrncIL0qQCOQeHSE6tiWXDoLtXY84kcEOVPH1xOS5+sJ8eTkE2qRf0jAnUGF
+         7sPp6LwwZVdSwdKWKWirM0zONH/73mew7WY6U6UIxypWIQs7BKZp7tLa6k5aE8AAbJA0
+         Ab8k+OJw0wuTc7gYrDNrIeGLOWtZHbRkejaKnW9CaJO6mblWor/GnZek6+i0eFXnR9/9
+         9AaiCqJd7pRDBXao7III4lpUa1Boi8nSBsI5U6dRLJa7vamha92CdbhWNKwRE8R0OheV
+         sisg==
+X-Forwarded-Encrypted: i=1; AJvYcCVk23uJuUk9Iex4n1qPPWGXYdJyhKcwrCeWz44WRvxP/c3UUjfKMJZ8lgAMI8oVF5I9F5bBk1gg/xuqZKY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzc33p+BGi2FXX2rwa0JMXfJzMOTsBYNnxIyIMMz1IlEqZjEvyn
+	bzq+3BfIRqwm6/vKTj2NhtBdLM7cnIkK9zSfeDKheIUtKZ2wUJuPl6SgY50ZO5hSRV4YJqCVGU4
+	2cKlTGkwRfWxToZ52hvHaf37l4FodDu/4j6yMopY4YKCDaR6/6onZXMpPGCCfMsw=
+X-Received: by 2002:a05:6102:1610:b0:4a4:7928:6381 with SMTP id ada2fe7eead31-4a8cfb2cbb1mr246624137.2.1729880632477;
+        Fri, 25 Oct 2024 11:23:52 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE/EV2cJbkJddZttFd9z9JB9kp8Bb/TyAtZgttyKQ7XAZIMKzi2FFIjhsg3QqvsnRbaODGO+A==
+X-Received: by 2002:a05:6102:1610:b0:4a4:7928:6381 with SMTP id ada2fe7eead31-4a8cfb2cbb1mr246611137.2.1729880632106;
+        Fri, 25 Oct 2024 11:23:52 -0700 (PDT)
+Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b3a0834d9sm95176766b.190.2024.10.25.11.23.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 25 Oct 2024 11:23:51 -0700 (PDT)
+Message-ID: <9761224a-08e7-498a-a052-adca6bc405e4@oss.qualcomm.com>
+Date: Fri, 25 Oct 2024 20:23:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 08/11] clk: qcom: add support for GCC on SAR2130P
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Kalpak Kawadkar <quic_kkawadka@quicinc.com>
+References: <20241025-sar2130p-clocks-v3-0-48f1842fd156@linaro.org>
+ <20241025-sar2130p-clocks-v3-8-48f1842fd156@linaro.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20241025-sar2130p-clocks-v3-8-48f1842fd156@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: StahvHUouaBeS53WrmX7NE6htl0jYCIO
+X-Proofpoint-GUID: StahvHUouaBeS53WrmX7NE6htl0jYCIO
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1015
+ impostorscore=0 bulkscore=0 mlxlogscore=632 malwarescore=0 suspectscore=0
+ phishscore=0 lowpriorityscore=0 mlxscore=0 priorityscore=1501 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2410250140
 
-The value of MDCR_EL2.HPMN controls the number of event counters made
-visible to EL0 and EL1. This means it is possible for the guest
-hypervisor to allow direct access to event counters to the L2.
+On 25.10.2024 5:03 PM, Dmitry Baryshkov wrote:
+> Add driver for the Global Clock Controller as present on the Qualcomm
+> SAR2130P platform. This is based on the msm-5.10 tree, tag
+> KERNEL.PLATFORM.1.0.r4-00400-NEO.0.
+> 
+> Co-developed-by: Kalpak Kawadkar <quic_kkawadka@quicinc.com>
+> Signed-off-by: Kalpak Kawadkar <quic_kkawadka@quicinc.com>
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
 
-Rework KVM's PMU register emulation to take the effects of HPMN into
-account when handling a trap. For bitmask-style registers, writes only
-affect accessible registers.
+Acked-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-Signed-off-by: Oliver Upton <oliver.upton@linux.dev>
----
- arch/arm64/kvm/pmu-emul.c | 14 +++++++++++++-
- arch/arm64/kvm/sys_regs.c | 12 ++++++------
- include/kvm/arm_pmu.h     |  5 +++++
- 3 files changed, 24 insertions(+), 7 deletions(-)
-
-diff --git a/arch/arm64/kvm/pmu-emul.c b/arch/arm64/kvm/pmu-emul.c
-index fd08c4b53be3..0d669fb84485 100644
---- a/arch/arm64/kvm/pmu-emul.c
-+++ b/arch/arm64/kvm/pmu-emul.c
-@@ -283,6 +283,18 @@ bool kvm_pmu_counter_is_hyp(struct kvm_vcpu *vcpu, unsigned int idx)
- 	return idx >= hpmn;
- }
- 
-+u64 kvm_pmu_accessible_counter_mask(struct kvm_vcpu *vcpu)
-+{
-+	u64 mask = kvm_pmu_implemented_counter_mask(vcpu);
-+	u64 hpmn;
-+
-+	if (!vcpu_has_nv(vcpu) || vcpu_is_el2(vcpu))
-+		return mask;
-+
-+	hpmn = SYS_FIELD_GET(MDCR_EL2, HPMN, __vcpu_sys_reg(vcpu, MDCR_EL2));
-+	return mask & ~GENMASK(vcpu->kvm->arch.pmcr_n - 1, hpmn);
-+}
-+
- u64 kvm_pmu_implemented_counter_mask(struct kvm_vcpu *vcpu)
- {
- 	u64 val = FIELD_GET(ARMV8_PMU_PMCR_N, kvm_vcpu_read_pmcr(vcpu));
-@@ -592,7 +604,7 @@ void kvm_pmu_handle_pmcr(struct kvm_vcpu *vcpu, u64 val)
- 		kvm_pmu_set_counter_value(vcpu, ARMV8_PMU_CYCLE_IDX, 0);
- 
- 	if (val & ARMV8_PMU_PMCR_P) {
--		unsigned long mask = kvm_pmu_implemented_counter_mask(vcpu);
-+		unsigned long mask = kvm_pmu_accessible_counter_mask(vcpu);
- 		mask &= ~BIT(ARMV8_PMU_CYCLE_IDX);
- 		for_each_set_bit(i, &mask, 32)
- 			kvm_pmu_set_pmc_value(kvm_vcpu_idx_to_pmc(vcpu, i), 0, true);
-diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
-index bd0c116f041b..8c226ec8bc25 100644
---- a/arch/arm64/kvm/sys_regs.c
-+++ b/arch/arm64/kvm/sys_regs.c
-@@ -1131,7 +1131,7 @@ static int set_pmreg(struct kvm_vcpu *vcpu, const struct sys_reg_desc *r, u64 va
- {
- 	bool set;
- 
--	val &= kvm_pmu_implemented_counter_mask(vcpu);
-+	val &= kvm_pmu_accessible_counter_mask(vcpu);
- 
- 	switch (r->reg) {
- 	case PMOVSSET_EL0:
-@@ -1154,7 +1154,7 @@ static int set_pmreg(struct kvm_vcpu *vcpu, const struct sys_reg_desc *r, u64 va
- 
- static int get_pmreg(struct kvm_vcpu *vcpu, const struct sys_reg_desc *r, u64 *val)
- {
--	u64 mask = kvm_pmu_implemented_counter_mask(vcpu);
-+	u64 mask = kvm_pmu_accessible_counter_mask(vcpu);
- 
- 	*val = __vcpu_sys_reg(vcpu, r->reg) & mask;
- 	return 0;
-@@ -1168,7 +1168,7 @@ static bool access_pmcnten(struct kvm_vcpu *vcpu, struct sys_reg_params *p,
- 	if (pmu_access_el0_disabled(vcpu))
- 		return false;
- 
--	mask = kvm_pmu_implemented_counter_mask(vcpu);
-+	mask = kvm_pmu_accessible_counter_mask(vcpu);
- 	if (p->is_write) {
- 		val = p->regval & mask;
- 		if (r->Op2 & 0x1) {
-@@ -1191,7 +1191,7 @@ static bool access_pmcnten(struct kvm_vcpu *vcpu, struct sys_reg_params *p,
- static bool access_pminten(struct kvm_vcpu *vcpu, struct sys_reg_params *p,
- 			   const struct sys_reg_desc *r)
- {
--	u64 mask = kvm_pmu_implemented_counter_mask(vcpu);
-+	u64 mask = kvm_pmu_accessible_counter_mask(vcpu);
- 
- 	if (check_pmu_access_disabled(vcpu, 0))
- 		return false;
-@@ -1215,7 +1215,7 @@ static bool access_pminten(struct kvm_vcpu *vcpu, struct sys_reg_params *p,
- static bool access_pmovs(struct kvm_vcpu *vcpu, struct sys_reg_params *p,
- 			 const struct sys_reg_desc *r)
- {
--	u64 mask = kvm_pmu_implemented_counter_mask(vcpu);
-+	u64 mask = kvm_pmu_accessible_counter_mask(vcpu);
- 
- 	if (pmu_access_el0_disabled(vcpu))
- 		return false;
-@@ -1245,7 +1245,7 @@ static bool access_pmswinc(struct kvm_vcpu *vcpu, struct sys_reg_params *p,
- 	if (pmu_write_swinc_el0_disabled(vcpu))
- 		return false;
- 
--	mask = kvm_pmu_implemented_counter_mask(vcpu);
-+	mask = kvm_pmu_accessible_counter_mask(vcpu);
- 	kvm_pmu_software_increment(vcpu, p->regval & mask);
- 	return true;
- }
-diff --git a/include/kvm/arm_pmu.h b/include/kvm/arm_pmu.h
-index b175b10491f0..b738ffb39bb0 100644
---- a/include/kvm/arm_pmu.h
-+++ b/include/kvm/arm_pmu.h
-@@ -48,6 +48,7 @@ static __always_inline bool kvm_arm_support_pmu_v3(void)
- u64 kvm_pmu_get_counter_value(struct kvm_vcpu *vcpu, u64 select_idx);
- void kvm_pmu_set_counter_value(struct kvm_vcpu *vcpu, u64 select_idx, u64 val);
- u64 kvm_pmu_implemented_counter_mask(struct kvm_vcpu *vcpu);
-+u64 kvm_pmu_accessible_counter_mask(struct kvm_vcpu *vcpu);
- u64 kvm_pmu_get_pmceid(struct kvm_vcpu *vcpu, bool pmceid1);
- void kvm_pmu_vcpu_init(struct kvm_vcpu *vcpu);
- void kvm_pmu_vcpu_reset(struct kvm_vcpu *vcpu);
-@@ -118,6 +119,10 @@ static inline u64 kvm_pmu_implemented_counter_mask(struct kvm_vcpu *vcpu)
- {
- 	return 0;
- }
-+static inline u64 kvm_pmu_accessible_counter_mask(struct kvm_vcpu *vcpu)
-+{
-+	return 0;
-+}
- static inline void kvm_pmu_vcpu_init(struct kvm_vcpu *vcpu) {}
- static inline void kvm_pmu_vcpu_reset(struct kvm_vcpu *vcpu) {}
- static inline void kvm_pmu_vcpu_destroy(struct kvm_vcpu *vcpu) {}
--- 
-2.47.0.163.g1226f6d8fa-goog
-
+Konrad
 
