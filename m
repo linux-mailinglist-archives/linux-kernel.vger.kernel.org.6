@@ -1,138 +1,161 @@
-Return-Path: <linux-kernel+bounces-381184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E92679AFBA6
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 09:57:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36DA49AFBA8
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 09:57:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A86C9284399
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 07:57:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E093B2115C
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 07:57:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FD461C878E;
-	Fri, 25 Oct 2024 07:56:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C75411C0DF0;
+	Fri, 25 Oct 2024 07:57:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YG39SEZn"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="1fOE+Hpq"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 995011C07FB
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 07:56:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E0841B6CFE
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 07:57:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729843003; cv=none; b=augJnFPUyNVJ0NZl9ay9EuIFtIvP/zQAi5WSlzchLzS/0W/cUNzdoJQuk2c2XZlazW30c/jOMIiQOmuAScZGIZ5jbG5lTUxl3RUefbB/UB35fJoWS93VApYFpzaQ5EwKdq3zUkJpG2nfe7HffDXKAj+yriAD9OnS+yKUQ0w+2D8=
+	t=1729843059; cv=none; b=cuPVqa7Ls6L4HQDR+O89HNNKoJpoFpQlQdP4ParbzpanskO0XIZl5zM8rtbRhrGObw83WDEUaIeqCAmjoEAniC/ySOBu7g8Fy8N3OnW9ygb9yQubEIt1N9y+kYH6ea7o+DpajbStpzTx7yQegY/uWFBzuAFlS8lH4UGTveOCvRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729843003; c=relaxed/simple;
-	bh=O0ZPXfmEtbLq9bEA6uggS+2nZDv5E8meibf9NtJRtqI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PUcwQUA5iXEtqiAIA6mMA65IiuyvfCzCEZW1HKZgzJpcWLB4aip5q4oYKgadgQHTMTlUELhkmwTkkng2r/FVaqOryvnmiY+XkElhWEeFS/VJD6Ju+Eu3halON0ffFBAb7JeUCF7cUlaUSx/GHFu29A8v55GfzJinfEjrU+eVHUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=YG39SEZn; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2e2bd347124so1338290a91.1
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 00:56:41 -0700 (PDT)
+	s=arc-20240116; t=1729843059; c=relaxed/simple;
+	bh=GUWVH2uka6Ld8tCz6VApcxZXAPIqIZt0tZL1jnDrQdk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DL2zVdYnjmIZBJrORz3MTPzy9sUSqF9JzjBZSfGRlefV1byqm/Ztk+b35nMbTBb4Uz9x6B2fhhvZagFnt2pyp+3KD1a4Yu6obQ99tJ0QUL0eCZgIDob60sN7LiZscCrEA5kM3k2ob/o7Vq+KBwKPfFb497Ry0m3uthh3T6fKQJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=1fOE+Hpq; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-539983beb19so2240746e87.3
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 00:57:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1729843001; x=1730447801; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1729843055; x=1730447855; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Ocz8O19Ri16sCIqDKqqWyBeGwEbvKhFKD3K8dqT+N6c=;
-        b=YG39SEZnpMQIF3M4YRgXp63HeCypZAK9FCipr+g1ji2cvz9P5M1HL4kqAO42xRCNgJ
-         vkoylHdnfcY9qwU38secXt8tc/uCUKW4KQJmoXh6XbH8GdxuljDYJOFxGlDZllexfZa9
-         0tszhapU8agXfTdGIzw4TvSr/4t+MWPpwJTTI=
+        bh=XMR9mRKdj+7kyzA4vhiQt23W1ro+2aLzgQAgkPaGHvo=;
+        b=1fOE+HpqWTSJs93V/tSdANSYrglX1QBr7zHBd4sR/rYtAibgoLOmMgz1+DM04ZlN+g
+         ZF8EroAa7as8kaQ2t+hnHj1OC5osSmkUC30GNeeapxpXdXJ8QQsvf1y6dM9//QeSc/v2
+         xnU0G8YciREuXgaFGHclkp2ABFoFSXQJIddUJHI763C+e0PMUDCbWom3FeE5TnzjIuO1
+         Hti8HSqtC06JUPecBYJwCLYHrQV4cYky/yvczySIHL0GfkukZLa9aAATGzdgKHfu/MdD
+         ab13Kc3ytDJvNhoXcXa2CaiJIfil4r5UoRYEzQopUqgE1/HpgfmPDneuhM3sBg0S/4HS
+         oqUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729843001; x=1730447801;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1729843055; x=1730447855;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Ocz8O19Ri16sCIqDKqqWyBeGwEbvKhFKD3K8dqT+N6c=;
-        b=f+lhogTcFhfgwkp5axGS5yW1EDlDLdxGF+PZnIhHuMMwGG5NjxIGlBpM7tdR//1lX5
-         kgd+72uqfaUOIOWAjoJr+Ev3gz8vPLjlDGk+jyeZmi5ScWbXYAuEkmnLKZ3CyWEpdP/j
-         BwLOEU8BSTodbLVoPio11WC1M4HMNHvfU1c/zVHn3zIWRv9Tb1rVnI+jjKFI4jmKubeV
-         xjI25/gAjc3ePRzeHJ/2uI9V2o5ZN/G9HkcjvjTXJIgv8yGDWTyOoO64XhtgYwDupEfk
-         VoiOBPII42WOMwOBAUuqGhEKTKVdEoNpcPkn8ciFthU4sGp2tpYWixCIpHbndYM8NBjV
-         E1cQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWMYErFbPBZlViAC37Jq7H7AY9ZvTyw2dkwX77jAjY2NesI2IpKKMazhLiH+OnuH9pYBS2TpGJVQt6W1Iw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxncILwMzxR2mlFzFmiyufWVeHHJfp9BELOBsJ9tb+34UjSF8Bv
-	1PPwQGsSb1RSpbFuzJP4+Ri7GiZvW+FTOio5ERqxA4TSeOjmnBCjQI32Jny5uEXvl6DtUr1B3uQ
-	=
-X-Google-Smtp-Source: AGHT+IEhpzhZePgnGrlXh89W3IHK0viadpu28ous3jPT9MS8vhveF6ukqC0oYeARpOE5I3mtsl0sYA==
-X-Received: by 2002:a17:90b:30f:b0:2e2:e82d:48cf with SMTP id 98e67ed59e1d1-2e77f4a274amr4863299a91.16.1729843000877;
-        Fri, 25 Oct 2024 00:56:40 -0700 (PDT)
-Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:d8f:752c:c7f1:3169])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e77e4c9c1bsm2797553a91.19.2024.10.25.00.56.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2024 00:56:40 -0700 (PDT)
-From: Chen-Yu Tsai <wenst@chromium.org>
-To: Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Chen-Yu Tsai <wenst@chromium.org>,
-	devicetree@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: [PATCH 2/2] arm64: dts: mediatek: mt8183: Disable DSI display output by default
-Date: Fri, 25 Oct 2024 15:56:28 +0800
-Message-ID: <20241025075630.3917458-2-wenst@chromium.org>
-X-Mailer: git-send-email 2.47.0.163.g1226f6d8fa-goog
-In-Reply-To: <20241025075630.3917458-1-wenst@chromium.org>
-References: <20241025075630.3917458-1-wenst@chromium.org>
+        bh=XMR9mRKdj+7kyzA4vhiQt23W1ro+2aLzgQAgkPaGHvo=;
+        b=pZvnNcWvYr1BoCoKdcHH/5AsAFag7vF3D+F6uk7JdCtsWtcqTZGjeWhXyO1f+kGdgp
+         wydhyEOpjxxwzcvAWLGHU1uvF/2syvsM+pIESbRnY83AeEk0aNo5JlliIFwiiWfM8Ty/
+         lMGN/lxeRtlUus9rSOZf5Yxs6d30HzLhNod/Wt8jNsHY87Hgzal5s7KXwllC+GWQRrAB
+         PNtvGm96A6Sy7IF7zsd4S37HOOiPhZkseoZnASx4o+he1qqYUqWfBSg/0A4XKuCfdmqG
+         MhrlCHtWzF6/Cw33nfC9pCMZ0VaNoFIJHeUsg+8bEgLH66TtFzaOqfDEIiE8GbGY2joz
+         527Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWqMTNdRPVXUgoASNflG+0YhMHI+SvDhVkN0jUyRGSIUoDYCc35qXzMWGCxQRuKYdkwMiGvGEPP4IFlVVk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxD3ZRwolwfHeNxdGuyTqQTrS/1GUcELRPiIthqDia2g0xaWdCn
+	p/EY9a4u7GW5DTd4DiiFLF4Itn+WrzliuWA3rDGqA6iM+na6EI7NG+aqXm20ViRjb3Oer7/4ASg
+	UY+10zDT0b8sgK0Tnu58ADqsodGYjYoObkn7EDw==
+X-Google-Smtp-Source: AGHT+IG81yduQs+Bl3t/NFGz2vsyEiOruGsX6ejobqqT+9o7J2c4ElDzuZkjCn3QbP2hahDTUHVemSq8Xd5QxoUYmdw=
+X-Received: by 2002:a05:6512:2354:b0:539:f12f:2531 with SMTP id
+ 2adb3069b0e04-53b1a37ca2bmr5293218e87.50.1729843055382; Fri, 25 Oct 2024
+ 00:57:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241025-pci-pwrctl-rework-v2-0-568756156cbe@linaro.org> <20241025-pci-pwrctl-rework-v2-1-568756156cbe@linaro.org>
+In-Reply-To: <20241025-pci-pwrctl-rework-v2-1-568756156cbe@linaro.org>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Fri, 25 Oct 2024 09:57:23 +0200
+Message-ID: <CAMRc=MeWQLGDcjNpdnwAdXr0k3ME_g65dFXyd78bzK-tPrEW_g@mail.gmail.com>
+Subject: Re: [PATCH v2 1/5] PCI/pwrctl: Use of_platform_device_create() to
+ create pwrctl devices
+To: manivannan.sadhasivam@linaro.org
+Cc: Bjorn Helgaas <bhelgaas@google.com>, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, linux-pci@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	Johan Hovold <johan+linaro@kernel.org>, Abel Vesa <abel.vesa@linaro.org>, 
+	Stephan Gerhold <stephan.gerhold@linaro.org>, 
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>, 
+	Krishna chaitanya chundru <quic_krichai@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Most SoC dtsi files have the display output interfaces disabled by
-default, and only enabled on boards that utilize them. The MT8183
-has it backwards: the display outputs are left enabled by default,
-and only disabled at the board level.
+On Fri, Oct 25, 2024 at 9:55=E2=80=AFAM Manivannan Sadhasivam via B4 Relay
+<devnull+manivannan.sadhasivam.linaro.org@kernel.org> wrote:
+>
+> From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+>
+> of_platform_populate() API creates platform devices by descending through
+> the children of the parent node. But it provides no control over the chil=
+d
+> nodes, which makes it difficult to add checks for the child nodes in the
+> future. So use of_platform_device_create() API together with
+> for_each_child_of_node_scoped() so that it is possible to add checks for
+> each node before creating the platform device.
+>
+> Tested-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+> Tested-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> ---
+>  drivers/pci/bus.c | 12 +++++++-----
+>  1 file changed, 7 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/pci/bus.c b/drivers/pci/bus.c
+> index 55c853686051..9d278d3a19ff 100644
+> --- a/drivers/pci/bus.c
+> +++ b/drivers/pci/bus.c
+> @@ -13,6 +13,7 @@
+>  #include <linux/ioport.h>
+>  #include <linux/of.h>
+>  #include <linux/of_platform.h>
+> +#include <linux/platform_device.h>
+>  #include <linux/proc_fs.h>
+>  #include <linux/slab.h>
+>
+> @@ -329,6 +330,7 @@ void __weak pcibios_bus_add_device(struct pci_dev *pd=
+ev) { }
+>  void pci_bus_add_device(struct pci_dev *dev)
+>  {
+>         struct device_node *dn =3D dev->dev.of_node;
+> +       struct platform_device *pdev;
+>         int retval;
+>
+>         /*
+> @@ -351,11 +353,11 @@ void pci_bus_add_device(struct pci_dev *dev)
+>         pci_dev_assign_added(dev, true);
+>
+>         if (dev_of_node(&dev->dev) && pci_is_bridge(dev)) {
+> -               retval =3D of_platform_populate(dev_of_node(&dev->dev), N=
+ULL, NULL,
+> -                                             &dev->dev);
+> -               if (retval)
+> -                       pci_err(dev, "failed to populate child OF nodes (=
+%d)\n",
+> -                               retval);
+> +               for_each_available_child_of_node_scoped(dn, child) {
+> +                       pdev =3D of_platform_device_create(child, NULL, &=
+dev->dev);
+> +                       if (!pdev)
+> +                               pci_err(dev, "failed to create OF node: %=
+s\n", child->name);
+> +               }
+>         }
+>  }
+>  EXPORT_SYMBOL_GPL(pci_bus_add_device);
+>
+> --
+> 2.25.1
+>
+>
 
-Reverse the situation for the DSI output so that it follows the
-normal scheme. For ease of backporting the DPI output is handled
-in a separate patch.
-
-Fixes: 88ec840270e6 ("arm64: dts: mt8183: Add dsi node")
-Fixes: 19b6403f1e2a ("arm64: dts: mt8183: add mt8183 pumpkin board")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
----
- arch/arm64/boot/dts/mediatek/mt8183-pumpkin.dts | 4 ----
- arch/arm64/boot/dts/mediatek/mt8183.dtsi        | 1 +
- 2 files changed, 1 insertion(+), 4 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/mediatek/mt8183-pumpkin.dts b/arch/arm64/boot/dts/mediatek/mt8183-pumpkin.dts
-index 61a6f66914b8..dbdee604edab 100644
---- a/arch/arm64/boot/dts/mediatek/mt8183-pumpkin.dts
-+++ b/arch/arm64/boot/dts/mediatek/mt8183-pumpkin.dts
-@@ -522,10 +522,6 @@ &scp {
- 	status = "okay";
- };
- 
--&dsi0 {
--	status = "disabled";
--};
--
- &dpi0 {
- 	pinctrl-names = "default", "sleep";
- 	pinctrl-0 = <&dpi_func_pins>;
-diff --git a/arch/arm64/boot/dts/mediatek/mt8183.dtsi b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-index 8f31fc9050ec..c7008bb8a81d 100644
---- a/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-@@ -1834,6 +1834,7 @@ dsi0: dsi@14014000 {
- 			resets = <&mmsys MT8183_MMSYS_SW0_RST_B_DISP_DSI0>;
- 			phys = <&mipi_tx0>;
- 			phy-names = "dphy";
-+			status = "disabled";
- 		};
- 
- 		dpi0: dpi@14015000 {
--- 
-2.47.0.163.g1226f6d8fa-goog
-
+Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
