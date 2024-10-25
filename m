@@ -1,142 +1,146 @@
-Return-Path: <linux-kernel+bounces-381199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DAA19AFBDB
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 10:02:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BC989AFBE9
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 10:03:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F2E7B23EC6
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 08:02:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF889284A92
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 08:03:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 044051CACD9;
-	Fri, 25 Oct 2024 08:02:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D4241CB9ED;
+	Fri, 25 Oct 2024 08:03:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="gQqAjjDN";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="v0BuUikj"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DQTivFSN"
+Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB35A1C4A12;
-	Fri, 25 Oct 2024 08:02:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86AEE18C029;
+	Fri, 25 Oct 2024 08:03:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729843335; cv=none; b=D/GQ4ajF65O0OexM+8KnlM8A4tK3b6YNC5BL2ughmO1q6G5KK33A4LZniefsttm57wIqm2kryS2sNjTIDD0D/eZa6qr+mPqc3x7ZN44fynCIk+DwTqJh6oROivwmVhA+waTUypTBCzBoqPKDxl+JCDVgmljpEg79dlWdosGKFy0=
+	t=1729843391; cv=none; b=YsprWUVz+lctpu5J3xgPbKnxx0I/3gZ85GpjHTVVgkaOHHnLpxoMHGeIwGzwcKJgYqBWzKKDh4dC+EjgOL71eXLtNqBBxJVgAhprMJDjwilKZuUZxo8SXEGThPlEJo4Jx4Z/bUTpVBFviemTyk/tUSxz/7LVaBGqOvReSDl3Hbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729843335; c=relaxed/simple;
-	bh=mrHQijhExrLkbSRNPq66ZACgLhbYQ4yj+NR6ZBveYEc=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=PZ7mnN0MHv7OfT2kDcFvheUM1oH5FrmMT95vWtXho/HjFNl+fTs9IGz5iWXKKXAZkpsh/0tDeqe+A0GgHaIGdPilp2UAEu9qDSGLZHnHrjgEVWCbu5y8Ipm0i8xdzoC07feJn4oYbWhFBkfBRCYyiBIWaGCKVjdWzC1VdjbcrS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=gQqAjjDN; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=v0BuUikj; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 25 Oct 2024 08:02:09 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1729843330;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4A3bkbqzE3mdyb6/CSaT0KRK5i9bRV70ZeKeG/hgY14=;
-	b=gQqAjjDN3MEa3nJBdnt767WwvngTHmoUSr3GoC3WnqO5euFvLjU0X2elIVk3q+Dul2KOYg
-	RjqCcDFwMJT6nwdrnDIjp828AUQfjS+7bleFBO3kH5pAbb0GbubdVxhIrpacw1CaOLFLfl
-	mO7eyrorp/ZB0FhTKfO1WyfwNw35Mb/5Rdpg05z3atQD/+hnxp6CsJyeT+F0UVMTKHgHUF
-	+NJA5nZUkLBdQ3r39IEyuFcqHXHWS8FeJz602CwggQPQ+XO1Os3757Rj+B+zYplshHf1fF
-	CNZBQrqMJyBf5GQFRsdTXA47ySIffUIPG8vjPIBebGHM4+2KXr1MW3cTHR3XTA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1729843330;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4A3bkbqzE3mdyb6/CSaT0KRK5i9bRV70ZeKeG/hgY14=;
-	b=v0BuUikjPWqqJjcgO9ZpMBtJySMst69cXLcWNap4nxAuKeb4bpZ9eM/4I7bFi2JRBaXFp2
-	TMdTXfRJ0ATRLyBQ==
-From: "tip-bot2 for Kan Liang" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/urgent] perf: Fix missing RCU reader protection in
- perf_event_clear_cpumask()
-Cc: "Paul E. McKenney" <paulmck@kernel.org>,
- kernel test robot <oliver.sang@intel.com>,
- Peter Zijlstra <peterz@infradead.org>, Kan Liang <kan.liang@linux.intel.com>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240913162340.2142976-1-kan.liang@linux.intel.com>
-References: <20240913162340.2142976-1-kan.liang@linux.intel.com>
+	s=arc-20240116; t=1729843391; c=relaxed/simple;
+	bh=2VSpbF9QgUyzaQEWrQk8hJO6e6PKVeTvG1IyDPemi5o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Tjhr3GhpnpkYKNduRRuPlf3qgLd4fxYxn1jZSIE88GrUtbcIO4kucdB4PvjBZ/xZJX4iEwVWhP32e3O1MPVMH4dske048s7HgaASHLrm1b/Y/4uknKabn7RlUAy/dFewI3haexZAMforFlVtMBJBoyPVHs/4L/GJnRbbTqGqs/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DQTivFSN; arc=none smtp.client-ip=209.85.219.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e2e32bc454fso1891551276.2;
+        Fri, 25 Oct 2024 01:03:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729843388; x=1730448188; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LIKVp8gwvgvokOujtTW+vUkLfr6ndcUZeZvgHv9P0I4=;
+        b=DQTivFSNrIk5FRaPc/6B6E2G6dY35XK0LtrfcI5mZooc1/Tx7s5LmC61q7dPDCu6Z/
+         Ewr3K3xAfrqOn/xbZl5tzolwhWk2bdnLRkxsCOcGBEif6bVXIV4ynAkRSXOKaUsYvDI1
+         +M7JfZb6YDZXVHUmBlHXAeQ/B95Ip2MHa6XBVEjrCPoX885QtubTnP1ABKZR0xX8Khcj
+         xGtYCq+8Ot6NIsfISL+iI5j3vmYeEeL3q0yn9sHQWSw98/sThhiH4j5/ShUF5X6Pe+tS
+         A9i+H64C/+Abfa2EFoGmz/D5UdnPyyHJNmeHZb2BgBuh/qAmXACrynwMo8VBeXEAZ7Ut
+         z6YQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729843388; x=1730448188;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LIKVp8gwvgvokOujtTW+vUkLfr6ndcUZeZvgHv9P0I4=;
+        b=VmwvuMk7aCHzCuITyoiXsJfh+9O2J0IbKs0IQVWFTDMT/pyZseMzt9TsFjpEbL6Xgv
+         8fkseo3tzjLR6lh66D46Bv/ud5vy9SRmz7odWCX2z267CRAH4JQGRqQF6iBcvag+1VT9
+         cWEWaZ3RJ4Npi6XhYDmY1E2pQ1mH/amleaGxMLAgmpj74nRfcyiGXhLCODUw+NzxzgWR
+         ABs4vzeNmD36s+rxmQ1XKTiGggzZPfVof9vD7MCnLTkmhBeBZT4OCy3ejgG3vqY8ZK4w
+         8f6BgunZq6/ur9YTqBEa5MAGV1GY4F1+dvkDPVshs8hQE2I5c4iDUb712VLd5Z/zDcVx
+         tWGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUJSKf8W12eTdDcc+bdjdVsE0OOjOfah7KCs4AEbx+qxV0fiMOGDD/8zoWUZ2GCtBwxUQwp4fEUkcXS@vger.kernel.org, AJvYcCULyOqNyFAyhEBISmwt+d3LcMdRcxqtb/mXuvZiCPAjsuLRcXNuhAOBzJRmsNMiChsgh56YuDmwYYWI@vger.kernel.org, AJvYcCV/ilkeK9CtcBVn2l2vhzALuTm/wnoBFFTjNw2AuthH8wunpwINxQueIr0jYkd9rDTvYTKt/oEGLSnN5Q==@vger.kernel.org, AJvYcCVDjnaLce124BMnt2TDy1vPaUy4W9WoPoMA5xrKk6gyUC6RN5InhkCt8nT3Rz29F17tM/ZoWklppozAjPpT/WY=@vger.kernel.org, AJvYcCVmNjPYVbLibk6Y+Z1/dJpDYaWz6Cz+i3PpktxXDvfwPcK3Aq5EBXny1FnASCoFa3Q9bA3Z3hSpw8ch7UHi@vger.kernel.org, AJvYcCWZqpztcCYyGYBN05od2gBz4TDH9fDb9D7sQDtDiGoAmaktyrrR6B1SuMVNngg8Nevdna/ohT5u@vger.kernel.org, AJvYcCWyLKI8kXh4hCQFGon8u56fcA6xbE5o0gPDwgqOS7OcqWPCuCkllOH+KVippsInQUGx3vk1i9mVkZ+U@vger.kernel.org, AJvYcCXEreK7yeJzyabJBC6crAg0X6jtv7YSQLfGCCpKZnxAlYWUh9RRIlnj43XAzMxBE/S80e/zHpq2EQN/4xg=@vger.kernel.org, AJvYcCXIrkVouW0e6wEP/VGHuUnQgb84bk9WpbLOPRzhHckB3HjXKw30zmQD1rxyD3eCdJ3l0UMeDXDcmTiS@vger.kernel.org, AJvYcCXMSXDylsUGGQzbXk+6g5yTNX9mNvDj
+ 1iPAYeM5XPdJ4q9KmvoHWE8NZJI4IHh8V5uV7+RWnrHmVWE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzW0mT/5nM/zwdqSGX+xNE/75aYcNAnF9IzbQCybYAg4LhLqVJb
+	y0Q9GeeBYtvmuLfGNR7kty2N1dKYhCHUteMMoxAXcfz5GEzbCkhSAoGvY+qtJw49TsFSXXERv1s
+	jd4GCJTm/YYfFjqVGKvgckbO+8oY=
+X-Google-Smtp-Source: AGHT+IFhrGBtY0FaeflceMDB1cNsUQVzIQ4voOhihnV+lleVBBTJOSnfbOCIkX3S7pNEnyVeC1zDaDXZcGY1K2C1DNM=
+X-Received: by 2002:a05:6902:2086:b0:e2b:d7e4:e5b4 with SMTP id
+ 3f1490d57ef6-e2f2fc077b2mr4962592276.51.1729843388381; Fri, 25 Oct 2024
+ 01:03:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172984332942.1442.8807119394229092755.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+References: <20241024085922.133071-1-tmyu0@nuvoton.com> <20241024085922.133071-2-tmyu0@nuvoton.com>
+ <20241024-ladybug-of-silent-holiness-498562-mkl@pengutronix.de>
+In-Reply-To: <20241024-ladybug-of-silent-holiness-498562-mkl@pengutronix.de>
+From: Ming Yu <a0282524688@gmail.com>
+Date: Fri, 25 Oct 2024 16:02:57 +0800
+Message-ID: <CAOoeyxV=tziXgDKZr+deGpm5xjNiHgd5ykW04=JT6ESnBN7Xmg@mail.gmail.com>
+Subject: Re: [PATCH v1 1/9] mfd: Add core driver for Nuvoton NCT6694
+To: Marc Kleine-Budde <mkl@pengutronix.de>
+Cc: tmyu0@nuvoton.com, lee@kernel.org, linus.walleij@linaro.org, brgl@bgdev.pl, 
+	andi.shyti@kernel.org, mailhol.vincent@wanadoo.fr, andrew+netdev@lunn.ch, 
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
+	wim@linux-watchdog.org, linux@roeck-us.net, jdelvare@suse.com, 
+	jic23@kernel.org, lars@metafoo.de, ukleinek@kernel.org, 
+	alexandre.belloni@bootlin.com, linux-kernel@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, 
+	linux-can@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-watchdog@vger.kernel.org, linux-hwmon@vger.kernel.org, 
+	linux-iio@vger.kernel.org, linux-pwm@vger.kernel.org, 
+	linux-rtc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The following commit has been merged into the perf/urgent branch of tip:
+Sorry, resending this email in plain text format.
 
-Commit-ID:     e3dfd64c1f344ebec9397719244c27b360255855
-Gitweb:        https://git.kernel.org/tip/e3dfd64c1f344ebec9397719244c27b360255855
-Author:        Kan Liang <kan.liang@linux.intel.com>
-AuthorDate:    Fri, 13 Sep 2024 09:23:40 -07:00
-Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Wed, 23 Oct 2024 20:52:25 +02:00
+Marc Kleine-Budde <mkl@pengutronix.de> =E6=96=BC 2024=E5=B9=B410=E6=9C=8824=
+=E6=97=A5 =E9=80=B1=E5=9B=9B =E4=B8=8B=E5=8D=885:57=E5=AF=AB=E9=81=93=EF=BC=
+=9A
+>
+> On 24.10.2024 16:59:14, Ming Yu wrote:
+> > +static int nct6694_usb_probe(struct usb_interface *iface,
+> > +                          const struct usb_device_id *id)
+> > +{
+> > +     struct usb_device *udev =3D interface_to_usbdev(iface);
+> > +     struct device *dev =3D &udev->dev;
+> > +     struct usb_host_interface *interface;
+> > +     struct usb_endpoint_descriptor *int_endpoint;
+> > +     struct nct6694 *nct6694;
+> > +     int pipe, maxp, bulk_pipe;
+> > +     int ret =3D EINVAL;
+> > +
+> > +     interface =3D iface->cur_altsetting;
+> > +     /* Binding interface class : 0xFF */
+> > +     if (interface->desc.bInterfaceClass !=3D USB_CLASS_VENDOR_SPEC ||
+> > +         interface->desc.bInterfaceSubClass !=3D 0x00 ||
+> > +         interface->desc.bInterfaceProtocol !=3D 0x00)
+> > +             return -ENODEV;
+>
+> I think you can use USB_DEVICE_INFO() and remove this manual check
+>
+> https://elixir.bootlin.com/linux/v6.11.5/source/include/linux/usb.h#L1056
+>
+> [...]
 
-perf: Fix missing RCU reader protection in perf_event_clear_cpumask()
+[Ming] Okay! I'll remove it and change USB_DEVICE()
+to USB_DEVICE_AND_INTERFACE_INFO().
 
-Running rcutorture scenario TREE05, the below warning is triggered.
-
-[   32.604594] WARNING: suspicious RCU usage
-[   32.605928] 6.11.0-rc5-00040-g4ba4f1afb6a9 #55238 Not tainted
-[   32.607812] -----------------------------
-[   32.609140] kernel/events/core.c:13946 RCU-list traversed in non-reader section!!
-[   32.611595] other info that might help us debug this:
-[   32.614247] rcu_scheduler_active = 2, debug_locks = 1
-[   32.616392] 3 locks held by cpuhp/4/35:
-[   32.617687]  #0: ffffffffb666a650 (cpu_hotplug_lock){++++}-{0:0}, at: cpuhp_thread_fun+0x4e/0x200
-[   32.620563]  #1: ffffffffb666cd20 (cpuhp_state-down){+.+.}-{0:0}, at: cpuhp_thread_fun+0x4e/0x200
-[   32.623412]  #2: ffffffffb677c288 (pmus_lock){+.+.}-{3:3}, at: perf_event_exit_cpu_context+0x32/0x2f0
-
-In perf_event_clear_cpumask(), uses list_for_each_entry_rcu() without an
-obvious RCU read-side critical section.
-
-Either pmus_srcu or pmus_lock is good enough to protect the pmus list.
-In the current context, pmus_lock is already held. The
-list_for_each_entry_rcu() is not required.
-
-Fixes: 4ba4f1afb6a9 ("perf: Generic hotplug support for a PMU with a scope")
-Closes: https://lore.kernel.org/lkml/2b66dff8-b827-494b-b151-1ad8d56f13e6@paulmck-laptop/
-Closes: https://lore.kernel.org/oe-lkp/202409131559.545634cc-oliver.sang@intel.com
-Reported-by: "Paul E. McKenney" <paulmck@kernel.org>
-Reported-by: kernel test robot <oliver.sang@intel.com>
-Suggested-by: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Tested-by: "Paul E. McKenney" <paulmck@kernel.org>
-Link: https://lore.kernel.org/r/20240913162340.2142976-1-kan.liang@linux.intel.com
----
- kernel/events/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index cdd0976..df27d08 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -13959,7 +13959,7 @@ static void perf_event_clear_cpumask(unsigned int cpu)
- 	}
- 
- 	/* migrate */
--	list_for_each_entry_rcu(pmu, &pmus, entry, lockdep_is_held(&pmus_srcu)) {
-+	list_for_each_entry(pmu, &pmus, entry) {
- 		if (pmu->scope == PERF_PMU_SCOPE_NONE ||
- 		    WARN_ON_ONCE(pmu->scope >= PERF_PMU_MAX_SCOPE))
- 			continue;
+>
+> > +
+> > +static const struct usb_device_id nct6694_ids[] =3D {
+> > +     { USB_DEVICE(NCT6694_VENDOR_ID, NCT6694_PRODUCT_ID)},
+> > +     {},
+> > +};
+> > +MODULE_DEVICE_TABLE(usb, nct6694_ids);
+>
+> regards,
+> Marc
+>
+> --
+> Pengutronix e.K.                 | Marc Kleine-Budde          |
+> Embedded Linux                   | https://www.pengutronix.de |
+> Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+> Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
 
