@@ -1,97 +1,145 @@
-Return-Path: <linux-kernel+bounces-381299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBD6B9AFD57
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 10:58:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 799379AFD5C
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 10:58:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FAA51F22FF2
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 08:58:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F1A81F23DBF
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 08:58:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43D9B1C878E;
-	Fri, 25 Oct 2024 08:57:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E0DA1D415C;
+	Fri, 25 Oct 2024 08:57:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="UIxw0YCB"
-Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VbqwVnO+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D6441D2B3B;
-	Fri, 25 Oct 2024 08:57:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2004171E43;
+	Fri, 25 Oct 2024 08:57:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729846666; cv=none; b=Y8RSX9KIBFXuBU5FykkRxBmqzbY+U+JDesyyhvX9AQufC5Dg0XGtEbMboyIjBqDRACRpyX3eQpCdhyxXDMrFFAqdiYeyxv4oC3ohdMJkYdn9JZm2bVMKY2ofxgrRRwzFfd2R8hpjsKrEljvIExe39nhReFjxWLDMhWMCLTGTfdI=
+	t=1729846678; cv=none; b=awUExLJW/eTNgF3JrDv4tkH8S6pfSUwun2D7JxXFanK1KIp4gx+iaL2hsFyK8sWd32YtY8rwDORJySCLmYh/KmwrvAxCAS1XsbVaKYDoywwPjtW4r0aXXP22rV9r8MOKpT8h5Q7qYG/RmaR71S+3Ny4zo+fQoGHL+jV2MBVAY+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729846666; c=relaxed/simple;
-	bh=yL/f+sZkF9apaQ8WkY7O+IEaSP34RIkKSxZsNkgFpPs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=H7b8VUrBCdo4L3EhEGpSDJtqEZEqu7wqtpEelNA9Tiq0LKp0TAY+rvbY59tDNzsVY0AWjHwNB5LrR8kgPOeaRms3mnb4MiFYwtfk7mqfelWaMEFNDpCyLkZ2vo3GPXolPAu8DZopDbxXqxk3y0tcM06hk2hJQyAodJwtq6jTTwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=UIxw0YCB; arc=none smtp.client-ip=115.124.30.118
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1729846654; h=From:To:Subject:Date:Message-Id:MIME-Version:Content-Type;
-	bh=0q6v9CWAxxTHgiYP/YFQoVfoO9w1id0iATXibxMe+pQ=;
-	b=UIxw0YCBloYjW8QhSkpjuchc7nZV1hRSms4qGW4CxaPwD5yQaaFRuq0kt88u4iPqlw1zIAy+0rPRKPMyaqTBWnuj9bC73AwfP2X7SuYrSS7GR7w6Hz0kvUNQHDhtDx4Fn2f1SW7A0VhVJTk/iyqFD+LwzKTpSf3xPvXweVcNlZY=
-Received: from localhost(mailfrom:jiapeng.chong@linux.alibaba.com fp:SMTPD_---0WHrxpQr_1729846649 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Fri, 25 Oct 2024 16:57:34 +0800
-From: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-To: loic.poulain@linaro.org
-Cc: rfoss@kernel.org,
-	andi.shyti@kernel.org,
-	linux-i2c@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
-	Abaci Robot <abaci@linux.alibaba.com>
-Subject: [PATCH -next] i2c: qcom-cci: Remove the unused variable cci_clk_rate
-Date: Fri, 25 Oct 2024 16:57:28 +0800
-Message-Id: <20241025085728.113098-1-jiapeng.chong@linux.alibaba.com>
-X-Mailer: git-send-email 2.32.0.3.g01195cf9f
+	s=arc-20240116; t=1729846678; c=relaxed/simple;
+	bh=Y/XIwrUUcIZ6gH1/w/6aJvG+nfnvrMmFH2qM6DZcppc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vu7LxhOivDtMBBejHMhsETL5Z7CzJZMYptr4P6BbxLhzozzn566qKE7lBPVwKeBx/dIZv5FJN52MREBblUXF5nfdrCP91eKKlLI8Oz1vu7ARJgs4NeHLl7TBioUgk2n6FCc2NHdE7TY2EPl2a6T1F/0r5k4SOG/K2fUMywmtZ1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VbqwVnO+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8ABB0C4CEC3;
+	Fri, 25 Oct 2024 08:57:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729846678;
+	bh=Y/XIwrUUcIZ6gH1/w/6aJvG+nfnvrMmFH2qM6DZcppc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VbqwVnO+5w95yjLROHnMXt4mjq4MFLyNjWvbMq1A2twdVnKld/MjsBXu2cs/EpNza
+	 PCVwtEr8xe0Lq0ODRA2KdhaIpvrPGsmq98mFp100Zl1GszNfdZpF5dR6azKbtejDip
+	 ypuPBCr2ZZNiR1QVsfNhWeJMpKjqY/XND4Ob0nYuI5i+vBelcs4MR8EbP1aEqPNA1i
+	 Lo+UF1QxP6gVnvtYtYa0x4XrLgQSmoJUHVf10miYX/zMbhetjF45BEQBaur61b9jeS
+	 6phfGWae7h1gNP1jvBYsujV4H36d5TbCLF2PFRj7y9jOM75JzFiWkD+wFU53TddlHK
+	 +cHyh8ahR7Y0Q==
+Date: Fri, 25 Oct 2024 09:57:52 +0100
+From: Lee Jones <lee@kernel.org>
+To: Dzmitry Sankouski <dsankouski@gmail.com>
+Cc: Sebastian Reichel <sre@kernel.org>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Pavel Machek <pavel@ucw.cz>, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-input@vger.kernel.org, linux-leds@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v6 3/7] mfd: Add new driver for MAX77705 PMIC
+Message-ID: <20241025085752.GD10824@google.com>
+References: <20241007-starqltechn_integration_upstream-v6-0-0d38b5090c57@gmail.com>
+ <20241007-starqltechn_integration_upstream-v6-3-0d38b5090c57@gmail.com>
+ <20241015140224.GI8348@google.com>
+ <CABTCjFBpdMv6Qi3CLYNukMn+J1FwhbAg0hMy075Dt0H-g_hrUw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CABTCjFBpdMv6Qi3CLYNukMn+J1FwhbAg0hMy075Dt0H-g_hrUw@mail.gmail.com>
 
-Variable ret is not effectively used, so delete it.
+On Mon, 21 Oct 2024, Dzmitry Sankouski wrote:
 
-drivers/i2c/busses/i2c-qcom-cci.c:526:16: warning: variable ‘cci_clk_rate’ set but not used.
+> > > diff --git a/drivers/mfd/max77705.c b/drivers/mfd/max77705.c
+> > > new file mode 100644
+> > > index 000000000000..553f20a6cdd5
+> > > --- /dev/null
+> > > +++ b/drivers/mfd/max77705.c
+> > > @@ -0,0 +1,248 @@
+> > > +// SPDX-License-Identifier: GPL-2.0+
+> > > +//
+> > > +// max77705.c - mfd core driver for the MAX77705
+> >
+> (...)
+> > > +// Copyright (C) 2024 Dzmitry Sankouski <dsankouski@gmail.com>
+> >
+> > Only the SPDX in C++ comments please.
+> >
+> This conflicts with https://patchwork.kernel.org/comment/25898728/
 
-Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=11532
-Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
----
- drivers/i2c/busses/i2c-qcom-cci.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+a) Mark is only talking about the file header
 
-diff --git a/drivers/i2c/busses/i2c-qcom-cci.c b/drivers/i2c/busses/i2c-qcom-cci.c
-index 5cc791b3b57d..c7c4fbf73183 100644
---- a/drivers/i2c/busses/i2c-qcom-cci.c
-+++ b/drivers/i2c/busses/i2c-qcom-cci.c
-@@ -523,7 +523,6 @@ static const struct dev_pm_ops qcom_cci_pm = {
- static int cci_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
--	unsigned long cci_clk_rate = 0;
- 	struct device_node *child;
- 	struct resource *r;
- 	struct cci *cci;
-@@ -597,7 +596,7 @@ static int cci_probe(struct platform_device *pdev)
- 	/* Retrieve CCI clock rate */
- 	for (i = 0; i < cci->nclocks; i++) {
- 		if (!strcmp(cci->clocks[i].id, "cci")) {
--			cci_clk_rate = clk_get_rate(cci->clocks[i].clk);
-+			clk_get_rate(cci->clocks[i].clk);
- 			break;
- 		}
- 	}
+> > > +
+> (...)
+> 
+> > > +++ b/include/linux/mfd/max77705-private.h
+> > > @@ -0,0 +1,180 @@
+> > > +/* SPDX-License-Identifier: GPL-2.0 */
+> > > +//
+> > > +// Maxim MAX77705 definitions.
+> > > +//
+> > > +// Copyright (C) 2015 Samsung Electronics, Inc.
+> > > +// Copyright (C) 2024 Dzmitry Sankouski <dsankouski@gmail.com>
+> >
+> > No C++ please.
+> 
+> This conflicts with https://patchwork.kernel.org/comment/25898728/
+
+a) Mark is only talking about the file header
+b) Different subsystem, different rules.
+
+> 
+> >
+> > > +
+> > > +#ifndef __LINUX_MFD_MAX77705_PRIV_H
+> > > +#define __LINUX_MFD_MAX77705_PRIV_H
+> > > +
+> > > +#include <linux/pm.h>
+> > > +
+> > > +#define MAX77705_SRC_IRQ_CHG BIT(0)
+> > > +#define MAX77705_SRC_IRQ_TOP BIT(1)
+> > > +#define MAX77705_SRC_IRQ_FG  BIT(2)
+> > > +#define MAX77705_SRC_IRQ_USBC        BIT(3)
+> > > +#define MAX77705_SRC_IRQ_ALL (MAX77705_SRC_IRQ_CHG | MAX77705_SRC_IRQ_TOP | \
+> > > +                             MAX77705_SRC_IRQ_FG | MAX77705_SRC_IRQ_USBC)
+> > > +
+> > > +// MAX77705_PMIC_REG_PMICREV register
+> >
+> > No C++ please.
+> 
+> This conflicts with https://patchwork.kernel.org/comment/25898728/
+
+a) Mark is only talking about the file header
+b) Different subsystem, different rules.
+
+> 
+> -- 
+> 
+> Best regards,
+> Dzmitry
+> 
+
 -- 
-2.32.0.3.g01195cf9f
-
+Lee Jones [李琼斯]
 
