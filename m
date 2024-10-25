@@ -1,102 +1,121 @@
-Return-Path: <linux-kernel+bounces-380948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E703E9AF82E
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 05:30:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2FD19AF830
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 05:31:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB0FB283116
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 03:30:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE596B210F4
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 03:31:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E56F318BC39;
-	Fri, 25 Oct 2024 03:30:33 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C250E18BC37;
+	Fri, 25 Oct 2024 03:31:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jRw/8DNn"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86F351BC5C;
-	Fri, 25 Oct 2024 03:30:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3264E18B49F
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 03:31:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729827033; cv=none; b=adsi8azc3V1q7a9rZpPFG3pl/vgEBgqkxCpz7EbmEWBNXfpCRFcBYzfRvdWhC0bQ0yNf6GOFR33v2ONqu8S/kPMkDBcwEMdg+5/9oCUjn3YnD2lxXtPuzBDcbbUCfuhk4QdfyY9jRwt6CdsFdA7JefbM6v3L4xN9dXUDoq42rCY=
+	t=1729827105; cv=none; b=MZ4DYqh/ebCDVKqKozrCAOtrscrClCsv7Fi8U7s0Vv2i+G/AqqTfBmCyN/xnqEagad0MMm2jAfYWruToP4kqB4zBhb4+IdaZ6hSZ/YlbCe5pYt7olTkhLuIf4ViaUmDvQT5hemfVhwipD1h7bYGQXxmzANG9Lc8dfsJ4sLVbN+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729827033; c=relaxed/simple;
-	bh=vur3pwlndW+oEzqW/c2CZy5UT3diALSOxTxh+OTd7DY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=PKu1qTIIjOkN2U0ZpaFQYDb13swyhpOdAN9LWimSuo8jIJnoM4UnjYMY/nefNBw/yhg70xn1mSR2VlvmJC6ItYkfpnPP6LzWuwMbwpQToCwgJQ7E+HP1AuGmHXllIyNhDjbPRaoYRCnvLaYomqaMUXMJXA6GS3PXQD28LdjzRGM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4XZStk3cX3z1jvrM;
-	Fri, 25 Oct 2024 11:29:02 +0800 (CST)
-Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id A70941400DC;
-	Fri, 25 Oct 2024 11:30:27 +0800 (CST)
-Received: from [10.174.179.113] (10.174.179.113) by
- dggpemf500002.china.huawei.com (7.185.36.57) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 25 Oct 2024 11:30:26 +0800
-Message-ID: <b4332982-2b57-9e54-8225-cd6bee7d2cf8@huawei.com>
-Date: Fri, 25 Oct 2024 11:30:26 +0800
+	s=arc-20240116; t=1729827105; c=relaxed/simple;
+	bh=yKWhaHoKwMvKgUCvzoCF4HnRBfeVm1f1O/hBJcEF5YI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tQGhblVGMwLA0tI3RmTz9GNJfAJ9TBE+7tk2wf0RJ+5Kz5NH6N56Q4tQlyrRukvZOTYG21xkz8G6LDULVIdpmsoyLt8xAhln62c6hmZZDZcGSWi1PA+0ZV9/EWlmEIyv5MPbb+cTpV0aw9h1xR3N+E9p445TcJQQnzeYNJ5e8cY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jRw/8DNn; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729827104; x=1761363104;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=yKWhaHoKwMvKgUCvzoCF4HnRBfeVm1f1O/hBJcEF5YI=;
+  b=jRw/8DNneGIYWmiXGj/cBSixqme+E1u6acjjF8LI4Ri3hrGarDa0YOzd
+   RuXOIUMUKdZlxoXbbT9lWll/exIJP0NQBZ+30qTb6iJreYIqQVg+aRUDp
+   z6t/byP9toAMHSeKYBhFSz8rWpsJLkLdG20cps9YNCF6C/RgMWOcWJL1y
+   KCQFOGunsfBIne9drYiI/zncm3eo7xYqrADt2c3wjHtITCHL9398LkfY/
+   maSsSkzYW5jeVJ3P1v0zlLqzBn+m+mkZETSSz6jCJ+utYtfCzkRatHyEG
+   7WLeCD2GWeqBaW/Y2nURWthn/LoylYm2tPL0vvk/0rRAfdEA+1VlfnuFL
+   A==;
+X-CSE-ConnectionGUID: 2mPSVaI+Szu7l/+aymQBzQ==
+X-CSE-MsgGUID: Tdsg85c2SIqD3xY392Rskw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="40031846"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="40031846"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2024 20:31:43 -0700
+X-CSE-ConnectionGUID: EIGL+UZNTIOmbDWB+69qkQ==
+X-CSE-MsgGUID: xYWNKBsnTZeV8O9mUQFEhw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,231,1725346800"; 
+   d="scan'208";a="118257848"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa001.jf.intel.com with ESMTP; 24 Oct 2024 20:31:38 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t4B31-000XXC-3D;
+	Fri, 25 Oct 2024 03:31:35 +0000
+Date: Fri, 25 Oct 2024 11:30:41 +0800
+From: kernel test robot <lkp@intel.com>
+To: Yongbang Shi <shiyongbang@huawei.com>, xinliang.liu@linaro.org,
+	tiantao6@hisilicon.com, maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
+	daniel@ffwll.ch, kong.kongxinwei@hisilicon.com
+Cc: oe-kbuild-all@lists.linux.dev, liangjian010@huawei.com,
+	chenjianmin@huawei.com, lidongming5@huawei.com,
+	shiyongbang@huawei.com, libaihan@huawei.com, shenjian15@huawei.com,
+	shaojijie@huawei.com, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V2 drm-dp 4/4] drm/hisilicon/hibmc: add dp module in hibmc
+Message-ID: <202410251136.1m7BlR68-lkp@intel.com>
+References: <20241022124148.1952761-5-shiyongbang@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.13.1
-Subject: Re: [PATCH v3 net 0/4] Fix passing 0 to ERR_PTR in intel ether
- drivers
-Content-Language: en-US
-To: Jacob Keller <jacob.e.keller@intel.com>, Simon Horman <horms@kernel.org>
-CC: <anthony.l.nguyen@intel.com>, <przemyslaw.kitszel@intel.com>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <ast@kernel.org>, <daniel@iogearbox.net>,
-	<hawk@kernel.org>, <john.fastabend@gmail.com>,
-	<maciej.fijalkowski@intel.com>, <vedang.patel@intel.com>,
-	<jithu.joseph@intel.com>, <andre.guedes@intel.com>,
-	<sven.auhagen@voleatech.de>, <alexander.h.duyck@intel.com>,
-	<intel-wired-lan@lists.osuosl.org>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <bpf@vger.kernel.org>
-References: <20241022065623.1282224-1-yuehaibing@huawei.com>
- <20241022073225.GO402847@kernel.org>
- <584b87a4-4a69-4119-bcd8-d4561f41ed53@intel.com>
-From: Yue Haibing <yuehaibing@huawei.com>
-In-Reply-To: <584b87a4-4a69-4119-bcd8-d4561f41ed53@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- dggpemf500002.china.huawei.com (7.185.36.57)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241022124148.1952761-5-shiyongbang@huawei.com>
 
-On 2024/10/23 3:17, Jacob Keller wrote:
-> 
-> 
-> On 10/22/2024 12:32 AM, Simon Horman wrote:
->> On Tue, Oct 22, 2024 at 02:56:19PM +0800, Yue Haibing wrote:
->>> Fixing sparse error in xdp run code by introducing new variable xdp_res
->>> instead of overloading this into the skb pointer as i40e drivers done
->>> in commit 12738ac4754e ("i40e: Fix sparse errors in i40e_txrx.c") and
->>> commit ae4393dfd472 ("i40e: fix broken XDP support").
->>>
->>> v3: Fix uninitialized 'xdp_res' in patch 3 and 4 which Reported-by
->>>     kernel test robot
->>> v2: Fix this as i40e drivers done instead of return NULL in xdp run code
->>
->> Hi Yue Haibing, all,
->>
->> I like these changes a lot. But I do wonder if it would
->> be more appropriate to target them at net-next (or iwl-next)
->> rather than net, without Fixes tags. This is because they
->> don't seem to be fixing (user-visible) bugs. Am I missing something?
->>
->> ...
-> 
-> Yea, these do seem like next candidates.
+Hi Yongbang,
 
-Should I resend this serial target to iwl-next?
-> 
-> .
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on drm-misc/drm-misc-next]
+[also build test ERROR on linus/master v6.12-rc4 next-20241024]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Yongbang-Shi/drm-hisilicon-hibmc-add-dp-aux-in-hibmc/20241022-204925
+base:   git://anongit.freedesktop.org/drm/drm-misc drm-misc-next
+patch link:    https://lore.kernel.org/r/20241022124148.1952761-5-shiyongbang%40huawei.com
+patch subject: [PATCH V2 drm-dp 4/4] drm/hisilicon/hibmc: add dp module in hibmc
+config: powerpc-randconfig-003-20241024 (https://download.01.org/0day-ci/archive/20241025/202410251136.1m7BlR68-lkp@intel.com/config)
+compiler: powerpc-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241025/202410251136.1m7BlR68-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410251136.1m7BlR68-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   powerpc-linux-ld: drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.o: in function `dp_link_cfg':
+>> dp_hw.c:(.text.dp_link_cfg+0x250): undefined reference to `__udivdi3'
+>> powerpc-linux-ld: dp_hw.c:(.text.dp_link_cfg+0x340): undefined reference to `__udivdi3'
+   powerpc-linux-ld: dp_hw.c:(.text.dp_link_cfg+0x384): undefined reference to `__udivdi3'
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
