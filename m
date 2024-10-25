@@ -1,424 +1,325 @@
-Return-Path: <linux-kernel+bounces-381911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD3EA9B0632
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:51:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E74E79B064D
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:53:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1FDD0B2544D
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 14:51:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 49ADBB2322F
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 14:53:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF24113B294;
-	Fri, 25 Oct 2024 14:51:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F28691494B1;
+	Fri, 25 Oct 2024 14:53:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="DgJq/EiI";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="7qF3C0DH";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="p2ept/an";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="RcOCTZ5I"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fX+m5eTt"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E59B2212198;
-	Fri, 25 Oct 2024 14:51:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729867901; cv=none; b=FqIOc/noAvtVIeLnXWouqRYsRAOomjFTox5uy48RXEuGTEHm35Q7AVKzgwTdP0OCzZNeCtQSznw/vFNdxHTnknLP52OaB7UVIn18imi6Vm4zIPCbi1d+lus8gnlgczT7p1oc85+hQhdAFldxCOs4VXLf4+KkS4w2/kySH6VkeD4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729867901; c=relaxed/simple;
-	bh=JzQXJixmo0pWU+4DOmASce4WDJG5m+HYBpUMuDnxyJA=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=j4z/y2RqbKlVmg8kRTpOiDAKw3PFuIzsyrEp/bigVw4NVpVVbXF0Gr9Q7/2hUqUx3swVd/K9tKnRVzlPQK8UV4KvoPUSt/rxyxTeJAuXzHA3GvPmS1VPwSxItREPGpo5YWoyuYO0JbyFtA+iAfEiHzin3J/3N6TQHlP9y2ba/18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=DgJq/EiI; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=7qF3C0DH; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=p2ept/an; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=RcOCTZ5I; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id EB7511F7F8;
-	Fri, 25 Oct 2024 14:51:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1729867896; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sUFv99z+SBgkrrBnKamNrjnOE4wIrlieB9qgKNwHbD4=;
-	b=DgJq/EiIZzukmfJ8ORrQIfEWu0YpGl2eyTw6v+ZYJ8jwzvpSA+lwMPFLQhPCXnc6kVTQfS
-	9VrATpolgquLp1NSsUOabrwG9kZVKsnJcFKGHqVSgnPEHkCHkgimPTHSSt2iixVLELfV24
-	m3VuoLx1bDEC6RWhyiqrsxM8XB82A4U=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1729867896;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sUFv99z+SBgkrrBnKamNrjnOE4wIrlieB9qgKNwHbD4=;
-	b=7qF3C0DHsy4URMPQvsFfJ9Tpa5zSpSkgsEQaZ6bVyGEdowHY2c9sVKKq90Gt4e3iZNVX7b
-	k44eLrtFbZQmyfCg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b="p2ept/an";
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=RcOCTZ5I
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1729867895; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sUFv99z+SBgkrrBnKamNrjnOE4wIrlieB9qgKNwHbD4=;
-	b=p2ept/angdVXAEIaWM/QB7chy+U1jSNsUCPUtogk1FokvnH+P9AziLgBg5x1WCAM1Tbodw
-	C1CKeJUd/SUNy0Uv0tfyw4g3fxhgEnpuOW9IG4qUHwtP3yGFUxOd5Hwb1Mg+Ta4IYnT2oh
-	flqxV0FlcgHKqMihprX4tmQJ74ilpEc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1729867895;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sUFv99z+SBgkrrBnKamNrjnOE4wIrlieB9qgKNwHbD4=;
-	b=RcOCTZ5IOcbDCVH5esFFv+pEVGdGh8fygf0w51lwjf/cJDyH3H0tpd0q319ZBXnzQ6X4up
-	BwMDuSjzAvO9fRAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C362A136F5;
-	Fri, 25 Oct 2024 14:51:35 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id JmuDLnewG2c4YwAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Fri, 25 Oct 2024 14:51:35 +0000
-Date: Fri, 25 Oct 2024 16:52:36 +0200
-Message-ID: <87ldycs097.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Philipp Stanner <pstanner@redhat.com>
-Cc: Takashi Iwai <tiwai@suse.de>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI: Restore the original INTX_DISABLE bit by pcim_intx()
-In-Reply-To: <5b2911489844f6a970da053ebfc126eddf7c896c.camel@redhat.com>
-References: <20241024155539.19416-1-tiwai@suse.de>
-	<933083faa55109949cbb5a07dcec27f3e4bff9ec.camel@redhat.com>
-	<87y12csbqe.wl-tiwai@suse.de>
-	<5b2911489844f6a970da053ebfc126eddf7c896c.camel@redhat.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF2CD1384B3;
+	Fri, 25 Oct 2024 14:53:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729868024; cv=fail; b=UhCLW2O5d0cOLDR/ROZ5QoCalDwWR/yXTWw5vcNmOyEpcjcdqyayrwR0oc+HKEfnXdhq2oBnv9k3BuJHk/Fqr1/7m5q1sSAehtLe/yHR9AHlDwoA2V3iw7BwW+/RwEegycXaK92Wf8pb/06oYdcS89J2uL1ln4bL5yq07Q+gUl4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729868024; c=relaxed/simple;
+	bh=mH24FSzLSfj98tcFj53A3prTHoWPrsCqLrPJZ06ku/g=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=e5mJgjqCSJgYA60lzy0C5N3KARvesDZO5DyMBTdnUPXeiW5zgXhN7ycLw3B11XdM+lWyHxI61RqW31LU9Z3tL1aRJfWP9DkEk0V6M2WydHCBIE537BtRBljTw3RpFIQM5fB5ZhIR71zZJriRfmNMX/EBmc+d8JU2sXrXWdXEFns=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fX+m5eTt; arc=fail smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729868022; x=1761404022;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=mH24FSzLSfj98tcFj53A3prTHoWPrsCqLrPJZ06ku/g=;
+  b=fX+m5eTtgCoVLe9omcuw0uLlw+f+JuM0s2Z5w6CHScLI+B6sm0eZ+Ajr
+   gMDEfXuIEZlA3jjFmktO7jYm0OFBDE98GmWlqKxMRmH/kim+JKzsReews
+   zvQIBn+NozKeofRj/uaYtVfzL95Wdge/0J3fmiOql9Ca5E+bOe46gu9k+
+   q/Byv9zsR1hsp2apdGxnb5lkiYGvgkLLSZUJ77pLVqDED4zIa6MWtxBIT
+   OdD1AOLAUJEjFtC+w43cwqLoxp73V1I5eFmP/GLJe3Jll5stb8uSIqsvu
+   nnynl8cU5oqKCnCTQdJqNpz4ITXN7RpTk9V+loQnkqz6IOd5pdPR98Rd4
+   Q==;
+X-CSE-ConnectionGUID: lqvm1weySjCRb5Dfe1t8xA==
+X-CSE-MsgGUID: WDTzvQggTb6vNHmbJaSl6A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11236"; a="29758345"
+X-IronPort-AV: E=Sophos;i="6.11,232,1725346800"; 
+   d="scan'208";a="29758345"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2024 07:53:38 -0700
+X-CSE-ConnectionGUID: miy9gWN1TwqBHTz+mynviw==
+X-CSE-MsgGUID: nulWmb9CR9edgDZzRGnNNA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,232,1725346800"; 
+   d="scan'208";a="80866513"
+Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
+  by orviesa009.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 25 Oct 2024 07:53:37 -0700
+Received: from fmsmsx603.amr.corp.intel.com (10.18.126.83) by
+ fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 25 Oct 2024 07:53:36 -0700
+Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Fri, 25 Oct 2024 07:53:36 -0700
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (104.47.66.42) by
+ edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 25 Oct 2024 07:53:36 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=PlBeukqq6ElkXbZQz71q6qRvRwrH/G/04sf4nBv8Su3P4HlH/bAzk1t721hhXsa+5REGY7nxqqCd+xQ9ri5BC2nrxyLIZMZSWltGHYK24C5n/OeAXGdiK8XMZDFzQ1i/1WkGBeQ1803HUsQdMS2judbhPnjqa3CPXYYFSfhZbu3XPmD5TSK5bVh761sX/BQopmSnrJbEvdMuU0iOZ1M2VuaRvTVVw7T1tjI0PIVIC3MqDB0djXZsZu7l9/Oxd9EOH1c6X3wRP9lzB0XvLxf+TV2tpTtBoGeMiNwNV6x5qARKhQwzrjivhAQLLaRSKZp2T9L0ML2r/pAStHzaXoAlRg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=NUqM/Pd5xJWWPkIFSer5ufrsFgxJvu1rvX0SUfiWmGA=;
+ b=r3EnkOzzIqdYcNdp7Q6nfAOS/6l7875O1hlgADUXe8HvvhkHYKQkHeEa93dzK81N5AJs6yEK4sDthdf3j9v6eE5L2mx1ptLyhRhgZXXYgc8xuHRNW3BzCO0pJSEuzSNUJWMQ+OYT4lBXAWSGz48MAtPgoNlhLk5HfEfnPjy4hcZebsfm1QSLK/qef/ar6yUyRkucOp8ZgvLiFVdIHuupSWJmE5qJmUE/X2dsMTO3eG/T3itYCrT7gW6vfPjK1YFlp8QuIj/O3/sUkVWH1BzrJB/rpP5QxzaPWkpypozt2zr1VtmR/MwKfJ5OqFI8sZ2Mlfysn0Fzm+ET4PGt6ls1bg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS0PR11MB8718.namprd11.prod.outlook.com (2603:10b6:8:1b9::20)
+ by LV8PR11MB8723.namprd11.prod.outlook.com (2603:10b6:408:1f8::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.20; Fri, 25 Oct
+ 2024 14:53:33 +0000
+Received: from DS0PR11MB8718.namprd11.prod.outlook.com
+ ([fe80::4b3b:9dbe:f68c:d808]) by DS0PR11MB8718.namprd11.prod.outlook.com
+ ([fe80::4b3b:9dbe:f68c:d808%4]) with mapi id 15.20.8093.018; Fri, 25 Oct 2024
+ 14:53:33 +0000
+Message-ID: <e00a0277-c298-47ba-9fdd-8f740f7490cc@intel.com>
+Date: Fri, 25 Oct 2024 16:53:07 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 4/4] net: stmmac: Add glue layer for Sophgo SG2044 SoC
+To: Inochi Amaoto <inochiama@gmail.com>
+CC: Chen Wang <unicorn_wang@outlook.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, "Rob
+ Herring" <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, "Conor
+ Dooley" <conor+dt@kernel.org>, Inochi Amaoto <inochiama@outlook.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, Jose Abreu
+	<joabreu@synopsys.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, "Richard
+ Cochran" <richardcochran@gmail.com>, Paul Walmsley
+	<paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
+	<aou@eecs.berkeley.edu>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, Yixun
+ Lan <dlan@gentoo.org>, Longbin Li <looong.bin@gmail.com>,
+	<netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-stm32@st-md-mailman.stormreply.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-riscv@lists.infradead.org>
+References: <20241025011000.244350-1-inochiama@gmail.com>
+ <20241025011000.244350-5-inochiama@gmail.com>
+From: Alexander Lobakin <aleksander.lobakin@intel.com>
+Content-Language: en-US
+In-Reply-To: <20241025011000.244350-5-inochiama@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: DBBPR09CA0011.eurprd09.prod.outlook.com
+ (2603:10a6:10:c0::23) To DS0PR11MB8718.namprd11.prod.outlook.com
+ (2603:10b6:8:1b9::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: EB7511F7F8
-X-Spam-Score: -3.51
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-3.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid,suse.de:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR11MB8718:EE_|LV8PR11MB8723:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2bd8751e-569f-4394-0a99-08dcf504cc2a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024|7416014;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?d2lWcjF0MzNZM3Eyc21JU25GdnJkMVVBUGl3bEdNZHRodWZRV1Y3L2drODgy?=
+ =?utf-8?B?TUp5dlpDUlEzZXdSRDc0bEtHSHFHdHJ0ZFh1c3JybXIzK3B6TitEL0ZwNWs0?=
+ =?utf-8?B?U2svelp3MVdpcTRYKytvWDBZL1lwUXVpN1JXbDR1dXFPaWRqWWZweWxWbDI5?=
+ =?utf-8?B?WGFTR0xKWFBQMGxRbnF5VVcwWWJ2QUhESzAwbW40bEhobTd1ZW1rcnlvM09a?=
+ =?utf-8?B?UGEzQzZqdDNZcFI3T3VwNXhyUlZKVE1TaHk4ZUVFY2xsSS9kc0prRW1remdW?=
+ =?utf-8?B?WG5UYnJYUGVEaHdQQXBBV1ZjbHNDejN1b3k1djU2M3Q0QVA2Rlk4Nyt6Q0Z4?=
+ =?utf-8?B?RXJUUW5UdzRqdUxFMzNMclZobTJnZmViTXROTGFTTWhVVmwvNXI2M0tJZlpp?=
+ =?utf-8?B?WkhWeGhVQ1hEcjNpZ0E5OGQ2WTZWSHN2MGZOVXBNNTBaZUJ6S2lHRTljWFpo?=
+ =?utf-8?B?WGRDOVdYaGsrRFpMZm9qUXUxZW51OFcvQmFzckFCTG9sZ0F0OGhYcXdkZnVF?=
+ =?utf-8?B?bmp3ZjRLOXdmdmhPWlVTRld4R0pna0haWFpoQUhhUGRGVndsQzZDVkcrYW1P?=
+ =?utf-8?B?SjBnSU5BMWVzVVZDaUQyemhsUy9lSkpRL1RjUno4bnBDUWh2ZUdLU25MbnVR?=
+ =?utf-8?B?SVBEWE9qTlcrMFVyeEtCZ1FzN3NIbmhVTEtGUmFUcTlOdEtkSTNJbWxGOERT?=
+ =?utf-8?B?U2FTcmU4WVU2MG4zVmJBVVFaTTl6WHZycnBkMndpSG9LZVRwd0xveGV5NjEr?=
+ =?utf-8?B?QWl4TFFVdlE4emxVMXAvRnNvcDM4U3RHT3Z5MzhGZEFZWEV4V1E0VU12Q2d1?=
+ =?utf-8?B?QTEra1ZmQjJzWDc4WEU1bTN5OVBBQmJxU290R1Rvd3VRdFZvYmhrd3JmZEcz?=
+ =?utf-8?B?d3ZQQnp0ZFJMdjd5SWZ2dzRkallweUp3SFlXTmFsc0FHRS8yV1liYnhJVVdy?=
+ =?utf-8?B?MzdQWjVzUUlxeEdYaTNZcnRtNW5BWlVKTTJqQ3ozWlU4S2pzcDVKOTIwcHhS?=
+ =?utf-8?B?QTUzdENhV3FkOWQwa05DZW82cllDU04wUUF5N3haaWhmbFY5R20xaUlnOFdJ?=
+ =?utf-8?B?NDNtRkZEbVh6cE9Od3kvYmtDdDhueEF5T1BPczNZRWRmN3JWL21kMWtCa3ov?=
+ =?utf-8?B?WnF6cUgwK1J4bGVtZDV1QVpkSGR2ZHdIZ2l1ZHgrMjdYK0M3SW9KWEdpeklJ?=
+ =?utf-8?B?VVl4Misvenl6eGRYYlZCaUpwbXQvV2RQaXYxRjdERS9UbUJUOUp1UGtQYTdI?=
+ =?utf-8?B?dm5QaHNqdzVxYUo4YzlJMitXYWtIMmFCNmVObTBZUGFBTzJVbTVQc3lYbEtP?=
+ =?utf-8?B?S1BsWm1Sb2ZPTStaK3BjQ2R3QXkwcURzNWlDVnc2RFhTYWZqdHZBNFFLV0VN?=
+ =?utf-8?B?NlFBOVg1cWdPNlZiZFZyeWFZeFJqbzVCbXJlMXlQL2k1eGtrRzBJUkNFa2dL?=
+ =?utf-8?B?N0VNKzB1ellrNkJ1VUVYcUZSbXQ3WVh6c1pSQ2RkT2VqSGRML0lpVnByNnFP?=
+ =?utf-8?B?MUhQU2MvRXBpQjB2eXpyeGM5ZFdjZU55VXRXNDN0bDFvVGxPVElqeEZuOFEz?=
+ =?utf-8?B?S0pJdXRvdkV5MUZlRXlYaG5Yb2xwS0F2cWkweTNYV0N5cWpSdWtrNmhRMFEv?=
+ =?utf-8?B?SjNSYUQ0eUx6UjIzU094ZUhjU2JiVGN1VkNYeXVDaXpGM2QzcnFIeEhqK01v?=
+ =?utf-8?B?cllhbTNxQjc3MWllWWJvK1d0bVE5RGRxTExjU0tBbXNBdU1ReGN4Z09MUG1K?=
+ =?utf-8?Q?u2HroA2Paacfo8pyaDMtBwXL5tVqHu5rW/8VTL/?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR11MB8718.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?anpjZ1Q0cEkvbUttVTNETWtFQmllSEZwWW5BRnQwRXQ5QkYzbXRtTGw1MkJM?=
+ =?utf-8?B?WVZiUDFqc3lUd3JPNjEycmlSbVgwOFlvQ0xPb21keVpyd00wV05QaW5ML0JB?=
+ =?utf-8?B?OXBORDlsaHg4QnVad3hjb0djRVFNSzFiZGJnVzQ0ZW4yb1VBWWMxZlhGK3dO?=
+ =?utf-8?B?a0phaEtjc1VnT3VoeXAwWWFQS0xuT1Z3dG9ha3pVNUlUSDZZcEVqeHhyeW4y?=
+ =?utf-8?B?clVzelRsVCthU2V4TDBxbS96Q3BlM2pqRG44eGZ5OTZiS2lsZ1BTVGFOK1Iv?=
+ =?utf-8?B?UW5jWFd0Z2JHcnZ4K3EwRXhMOFVYRm5oaGszZWNJWE01Vk5hRnRQcnlZRXBv?=
+ =?utf-8?B?aXBnYmJuS3UvaTNkRFJ1dzNwbXJJaHM5cHpCN3YxYzFNMVl1c3ZYbTNlTGww?=
+ =?utf-8?B?eGVOS0wxVGdPYWxLeEx0RWo3eXY4SHRCU29EY1lPcWc4Q25QUlc4bldJQVdZ?=
+ =?utf-8?B?MjBMN1lOU3kxYk1GNXdPc1MxdWtqNEVXeEd3QTFLcVZ4Um9aY284NnpsK0VH?=
+ =?utf-8?B?UDUwelcyU3hSa0xHQ0FjY0srSFljVlM2NzM2L29RNTZtSTNTZk9wZ2RUZ295?=
+ =?utf-8?B?TFRTcjBaUlFzZG1KSlZsamNnTW1xTUU2VlhJc0ZSWXUvQXdoV3UvRDVoOEQ1?=
+ =?utf-8?B?eFNsOEU4VmhmbDVKUDlvOUp4OGpDaFdIL2VEYUZ4SDBCenlDOHUzdFYzMFN1?=
+ =?utf-8?B?cDJydld2SVdjbWlHemFKYUVyeDU5VitwZlpCK0hYUmhna09MNzYyd0x6YU9M?=
+ =?utf-8?B?V0RIaXlzcjhuWEV4T3NEUURXaisxMnNTdnRvWXFjQlh1VVNXRG9CVWVjYU1Y?=
+ =?utf-8?B?QnlJOUZJSEZSV2c1akMwR3F5VEFaYzJ3STdjTWJyUExVTjZ3amwxTjZkNWoy?=
+ =?utf-8?B?ZVBrR1NmUzdjU3ZwV29DNXJXM3ltYXFCWWdyMFFJM2dSNW1mdk0vRklNNEVU?=
+ =?utf-8?B?bVFzcHAwQzJRc1BybjkyT2xWMGpGWUJOUnhmRzB1QUlDTm5HbGpBemV5VXR0?=
+ =?utf-8?B?ZjcwcXRjdkhiQncvT1AzbVAwNHl4cy9uZHZIVU9KNEhXNmlMVVpid1AxV2tv?=
+ =?utf-8?B?TDRZc2pDazhObWtiSTI2cm9JKzJ4SUwvT2FEQWVGUmpKTHdER3IzQmttaU1x?=
+ =?utf-8?B?T1c2OHdPSHBHcXZVbnZ4VUxVcGJHUUlEdmlyWEUxcHFvT2dia3hmTGxWZXEw?=
+ =?utf-8?B?K2xibXpOdlR0cTZGOEFxdnZzcHNxVEp0TExsQkhLTTRkWWM0c2owbnZ4V3A0?=
+ =?utf-8?B?cFo1WHFmbndEK3dQczVic0FxN2dKeTYvb3RmenNNYVIvWWdSR1hSSUZINldG?=
+ =?utf-8?B?dWdzTlRZR201a0dUbHY1SzNkVXhIQnA5UFdDdUVLd2NVUE9JRHVlTmpkWUpH?=
+ =?utf-8?B?Rmo1OUpiamxqZnR3eFc3TXBPTXh6SnN0SDVmaFFweDBicjNSSktROXJjRHJN?=
+ =?utf-8?B?ZHhIckIwTmdYK1ExWlhaYjhqNVpJMlM3SmtRN0F2ejU3Ri96MGVtVURFVzZl?=
+ =?utf-8?B?SUdza0NXSnJybE5qNlFPRENaam0xT2pGMnNWaTNnbURGaWVhd05HNHZtdUtY?=
+ =?utf-8?B?S0szeXExeFRWd1QwVXVtSDNKOVJCYlNZek1RRnlsTXNkL2Qra3ZZdWJDN1lD?=
+ =?utf-8?B?bmpLbFN1d0Y2Wmk5MWhFK2RZdkdOVVVWaFRtQ0d3bnltQktFTXFRekdUdENW?=
+ =?utf-8?B?QnpUYUdJWXEvNlp3N2I1UVQ1cGFoaEpjMFVDUjdWdlpUSVJycUhScjRodWtZ?=
+ =?utf-8?B?NHpqR2pCZGVpdmdhWWs2TlBkdnNQYkxRU0gzZ1BMU1RqK0FYS3QwZlIxSElF?=
+ =?utf-8?B?ZTFkN2FCd0lpRUhySWR5ZG9ibDN6dFJyaFJYRmRHZ2VTNlNpUnRjOUZINGJt?=
+ =?utf-8?B?SU9aTjNNangrdUNKT3E4SzlRRDh5RjVQMm8waU53L25idENvZjN0aTAvTmdr?=
+ =?utf-8?B?bEV1ZUtHUG8zSjgwOTRkdDVBeDliWk5OWGFQYko2c3RWbyt2WGdtTHBncC9a?=
+ =?utf-8?B?c3ROczJWSGNTY0NOOURCMFhyTU4wM1lVak1YejdLMWR2eWxNSDlGdEliZGNM?=
+ =?utf-8?B?RG1uQ3JPUC9LYy95U2h4WnVkc1dWLzJEVG51dTluMkpGQVdWRHBYKzFvNVNB?=
+ =?utf-8?B?RFd5R25VSnc5MlZNdTJYdWV6enBHdnZvak5CYUduVnF2dWhZYnQwNG5wanZh?=
+ =?utf-8?B?bHc9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2bd8751e-569f-4394-0a99-08dcf504cc2a
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB8718.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Oct 2024 14:53:33.6826
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: tMFBZs9ULXKP4dgYSJvD2JpKM18OaXn4DJITgBT/wQE7THVQ0AntuJGi5sih6PXfU+cpRLKKSM0hp4EpYq4OyUEQ5lnOywx/HiDsW8miIhs=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR11MB8723
+X-OriginatorOrg: intel.com
 
-On Fri, 25 Oct 2024 16:28:42 +0200,
-Philipp Stanner wrote:
-> 
-> On Fri, 2024-10-25 at 12:44 +0200, Takashi Iwai wrote:
-> > On Fri, 25 Oct 2024 11:26:18 +0200,
-> > Philipp Stanner wrote:
-> > > 
-> > > Hi,
-> > > 
-> > > On Thu, 2024-10-24 at 17:55 +0200, Takashi Iwai wrote:
-> > > > pcim_intx() tries to restore the INTX_DISABLE bit at removal via
-> > > > devres, but there is a chance that it restores a wrong value.
-> > > > Because the value to be restored is blindly assumed to be the
-> > > > negative
-> > > > of the enable argument, when a driver calls pcim_intx()
-> > > > unnecessarily
-> > > > for the already enabled state, it'll restore to the disabled
-> > > > state in
-> > > > turn.
-> > > 
-> > > It depends on how it is called, no?
-> > > 
-> > > // INTx == 1
-> > > pcim_intx(pdev, 0); // old INTx value assumed to be 1 -> correct
-> > > 
-> > > ---
-> > > 
-> > > // INTx == 0
-> > > pcim_intx(pdev, 0); // old INTx value assumed to be 1 -> wrong
-> > > 
-> > > Maybe it makes sense to replace part of the commit text with
-> > > something
-> > > like the example above?
-> > 
-> > If it helps better understanding, why not.
-> > 
-> > > >   Also, when a driver calls pcim_intx() multiple times with
-> > > > different enable argument values, the last one will win no matter
-> > > > what
-> > > > value it is.
-> > > 
-> > > Means
-> > > 
-> > > // INTx == 0
-> > > pcim_intx(pdev, 0); // orig_INTx == 1, INTx == 0
-> > > pcim_intx(pdev, 1); // orig_INTx == 0, INTx == 1
-> > > pcim_intx(pdev, 0); // orig_INTx == 1, INTx == 0
-> > > 
-> > > So in this example the first call would cause a wrong orig_INTx,
-> > > but
-> > > the last call – the one "who will win" – seems to do the right
-> > > thing,
-> > > dosen't it?
-> > 
-> > Yes and no.  The last call wins to write the current value, but
-> > shouldn't win for setting the original value.  The original value
-> > must
-> > be recorded only from the first call.
-> 
-> Alright, so you think that pcim_intx() should always restore the INTx
-> state that existed before the driver was loaded.
-> 
-> > > > This patch addresses those inconsistencies by saving the original
-> > > > INTX_DISABLE state at the first devres_alloc(); this assures that
-> > > > the
-> > > > original state is restored properly, and the later pcim_intx()
-> > > > calls
-> > > > won't overwrite res->orig_intx any longer.
-> > > > 
-> > > > Fixes: 25216afc9db5 ("PCI: Add managed pcim_intx()")
-> > > 
-> > > That commit is also in 6.11, so we need:
-> > > 
-> > > Cc: stable@vger.kernel.org # 6.11+
-> > 
-> > OK.
-> > 
-> > > > Link: https://lore.kernel.org/87v7xk2ps5.wl-tiwai@suse.de
-> > > > Signed-off-by: Takashi Iwai <tiwai@suse.de>
-> > > > ---
-> > > >  drivers/pci/devres.c | 18 ++++++++++++++----
-> > > >  1 file changed, 14 insertions(+), 4 deletions(-)
-> > > > 
-> > > > diff --git a/drivers/pci/devres.c b/drivers/pci/devres.c
-> > > > index b133967faef8..aed3c9a355cb 100644
-> > > > --- a/drivers/pci/devres.c
-> > > > +++ b/drivers/pci/devres.c
-> > > > @@ -438,8 +438,17 @@ static void pcim_intx_restore(struct device
-> > > > *dev, void *data)
-> > > >  	__pcim_intx(pdev, res->orig_intx);
-> > > >  }
-> > > >  
-> > > > -static struct pcim_intx_devres *get_or_create_intx_devres(struct
-> > > > device *dev)
-> > > > +static void save_orig_intx(struct pci_dev *pdev, struct
-> > > > pcim_intx_devres *res)
-> > > >  {
-> > > > +	u16 pci_command;
-> > > > +
-> > > > +	pci_read_config_word(pdev, PCI_COMMAND, &pci_command);
-> > > > +	res->orig_intx = !(pci_command &
-> > > > PCI_COMMAND_INTX_DISABLE);
-> > > > +}
-> > > > +
-> > > > +static struct pcim_intx_devres *get_or_create_intx_devres(struct
-> > > > pci_dev *pdev)
-> > > > +{
-> > > > +	struct device *dev = &pdev->dev;
-> > > >  	struct pcim_intx_devres *res;
-> > > >  
-> > > >  	res = devres_find(dev, pcim_intx_restore, NULL, NULL);
-> > > > @@ -447,8 +456,10 @@ static struct pcim_intx_devres
-> > > > *get_or_create_intx_devres(struct device *dev)
-> > > >  		return res;
-> > > >  
-> > > >  	res = devres_alloc(pcim_intx_restore, sizeof(*res),
-> > > > GFP_KERNEL);
-> > > > -	if (res)
-> > > > +	if (res) {
-> > > > +		save_orig_intx(pdev, res);
-> > > 
-> > > This is not the correct place – get_or_create_intx_devres() should
-> > > get
-> > > the resource if it exists, or allocate it if it doesn't, but its
-> > > purpose is not to modify the resource.
-> > 
-> > The behavior of the function makes the implementation a bit harder,
-> > because the initialization of res->orig_intx should be done only once
-> > at the very first call.
-> > 
-> > > >  		devres_add(dev, res);
-> > > > +	}
-> > > >  
-> > > >  	return res;
-> > > >  }
-> > > > @@ -467,11 +478,10 @@ int pcim_intx(struct pci_dev *pdev, int
-> > > > enable)
-> > > >  {
-> > > >  	struct pcim_intx_devres *res;
-> > > >  
-> > > > -	res = get_or_create_intx_devres(&pdev->dev);
-> > > > +	res = get_or_create_intx_devres(pdev);
-> > > >  	if (!res)
-> > > >  		return -ENOMEM;
-> > > >  
-> > > > -	res->orig_intx = !enable;
-> > > 
-> > > Here is the right place to call save_orig_intx(). That way you also
-> > > won't need the new variable struct device *dev above :)
-> > 
-> > The problem is that, at this place, we don't know whether it's a
-> > freshly created devres or it's an inherited one.  So, we'd need to
-> > modify get_or_create_intx_devres() to indicate that it's a new
-> > creation.  Or, maybe simpler would be rather to flatten
-> > get_or_create_intx_devres() into pcim_intx().  It's a small function,
-> > and it wouldn't be worsen the readability so much.
-> 
-> That might be the best solution. If it's done that way it should
-> include a comment detailing the problem.
-> 
-> Looking at the implementation of pci_intx() before
-> 25216afc9db53d85dc648aba8fb7f6d31f2c8731 probably indicates that you're
-> right:
-> 
-> 	if (dr && !dr->restore_intx) {
-> 		dr->restore_intx = 1;
-> 		dr->orig_intx = !enable;
-> 	}
-> 
-> 
-> So they used a boolean to only take the first state. Although that
-> still wouldn't have necessarily been the pre-driver INTx state.
+From: Inochi Amaoto <inochiama@gmail.com>
+Date: Fri, 25 Oct 2024 09:10:00 +0800
 
-IIRC, this code path is reached only after checking that the INTx
-state is changed.  Hence "!enable" is assured to be the pre-driver
-INTx state in the old code.
-
-
-> > 
-> > That is, something like below.
-> > 
-> > 
-> > thanks,
-> > 
-> > Takashi
-> > 
-> > --- a/drivers/pci/devres.c
-> > +++ b/drivers/pci/devres.c
-> > @@ -438,21 +438,6 @@ static void pcim_intx_restore(struct device
-> > *dev, void *data)
-> >  	__pcim_intx(pdev, res->orig_intx);
-> >  }
-> >  
-> > -static struct pcim_intx_devres *get_or_create_intx_devres(struct
-> > device *dev)
-> > -{
-> > -	struct pcim_intx_devres *res;
-> > -
-> > -	res = devres_find(dev, pcim_intx_restore, NULL, NULL);
-> > -	if (res)
-> > -		return res;
-> > -
-> > -	res = devres_alloc(pcim_intx_restore, sizeof(*res),
-> > GFP_KERNEL);
-> > -	if (res)
-> > -		devres_add(dev, res);
-> > -
-> > -	return res;
-> > -}
-> > -
-> >  /**
-> >   * pcim_intx - managed pci_intx()
-> >   * @pdev: the PCI device to operate on
-> > @@ -466,12 +451,21 @@ static struct pcim_intx_devres
-> > *get_or_create_intx_devres(struct device *dev)
-> >  int pcim_intx(struct pci_dev *pdev, int enable)
-> >  {
-> >  	struct pcim_intx_devres *res;
-> > +	struct device *dev = &pdev->dev;
-> > +	u16 pci_command;
-> >  
-> > -	res = get_or_create_intx_devres(&pdev->dev);
-> > -	if (!res)
-> > -		return -ENOMEM;
-> > +	res = devres_find(dev, pcim_intx_restore, NULL, NULL);
+> Adds Sophgo dwmac driver support on the Sophgo SG2044 SoC.
 > 
-> sth like:
-> 
-> /*
->  * pcim_intx() must only restore the INTx value that existed before the
->  * driver was loaded, i.e., before it called pcim_intx() for the
->  * first time.
->  */
+> Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
+> ---
+>  drivers/net/ethernet/stmicro/stmmac/Kconfig   |  11 ++
+>  drivers/net/ethernet/stmicro/stmmac/Makefile  |   1 +
+>  .../ethernet/stmicro/stmmac/dwmac-sophgo.c    | 109 ++++++++++++++++++
+>  3 files changed, 121 insertions(+)
+>  create mode 100644 drivers/net/ethernet/stmicro/stmmac/dwmac-sophgo.c
 
-OK, will add it.
+[...]
 
-> > +	if (!res) {
-> > +		res = devres_alloc(pcim_intx_restore, sizeof(*res),
-> > GFP_KERNEL);
-> > +		if (!res)
-> > +			return -ENOMEM;
-> > +
-> > +		pci_read_config_word(pdev, PCI_COMMAND,
-> > &pci_command);
-> > +		res->orig_intx = !(pci_command &
-> > PCI_COMMAND_INTX_DISABLE);
-> > +
-> > +		devres_add(dev, res);
-> > +	}
-> >  
-> > -	res->orig_intx = !enable;
-> >  	__pcim_intx(pdev, enable);
-> 
-> Looks like a good idea to me
-> 
-> The only thing I'm wondering about right now is the following: In the
-> old days, there was only pci_intx(), which either did devres or didn't.
-> 
-> Now you have two functions, pcim_intx() and pci_intx().
-> 
-> The thing is that the driver could theoretically still intermingle them
-> and for example call pci_intx() before pcim_intx(), which would lead
-> the latter to still restore the wrong value.
-> 
-> But that's very unlikely and I'm not sure whether we can do something
-> about it.
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-sophgo.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-sophgo.c
+> new file mode 100644
+> index 000000000000..8f37bcf86a73
+> --- /dev/null
+> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-sophgo.c
+> @@ -0,0 +1,109 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/*
+> + * Sophgo DWMAC platform driver
+> + *
+> + * Copyright (C) 2024 Inochi Amaoto <inochiama@gmail.com>
+> + *
 
-Right, pcim_intx() assures to restore INTx value back to the moment it
-was called.  And that should be enough and consistent behavior.
+This empty line is redundant I guess?
 
-BTW, a possible optimization would be to skip the devres if the value
-isn't really changed from the current state (which is similar like the
-old code before pcim_intx()).  OTOH, this can lead to inconsistencies
-when INTx is changed manually after pcim_intx() somehow.  So maybe
-it's not worth.
+> + */
+> +
+> +#include <linux/bits.h>
+> +#include <linux/mod_devicetable.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/property.h>
+> +#include <linux/mfd/syscon.h>
+> +#include <linux/phy.h>
+> +#include <linux/regmap.h>
 
+Here should be alphabetical order.
 
-thanks,
+> +
+> +#include "stmmac_platform.h"
+> +
+> +struct sophgo_dwmac {
+> +	struct device *dev;
+> +	struct clk *clk_tx;
+> +};
+> +
+> +static void sophgo_dwmac_fix_mac_speed(void *priv, unsigned int speed, unsigned int mode)
+> +{
+> +	struct sophgo_dwmac *dwmac = priv;
+> +	long rate;
+> +	int ret;
+> +
+> +	rate = rgmii_clock(speed);
+> +	if (ret < 0) {
 
-Takashi
+Did you mean `if (rate < 0)`?
+
+> +		dev_err(dwmac->dev, "invalid speed %u\n", speed);
+> +		return;
+> +	}
+> +
+> +	ret = clk_set_rate(dwmac->clk_tx, rate);
+> +	if (ret)
+> +		dev_err(dwmac->dev, "failed to set tx rate %lu\n", rate);
+
+Don't you want to print the error code here?
+
+		"failed to set tx rate %lu: %pe\n", rate, ERR_PTR(ret));
+
+> +}
+> +
+> +static int sophgo_sg2044_dwmac_init(struct platform_device *pdev,
+> +				    struct plat_stmmacenet_data *plat_dat,
+> +				    struct stmmac_resources *stmmac_res)
+> +{
+> +	struct sophgo_dwmac *dwmac;
+> +	int ret;
+
+Unused var.
+
+> +
+> +	dwmac = devm_kzalloc(&pdev->dev, sizeof(*dwmac), GFP_KERNEL);
+> +	if (!dwmac)
+> +		return -ENOMEM;
+> +
+> +	dwmac->clk_tx = devm_clk_get_enabled(&pdev->dev, "tx");
+> +	if (IS_ERR(dwmac->clk_tx))
+> +		return dev_err_probe(&pdev->dev, PTR_ERR(dwmac->clk_tx),
+> +				     "failed to get tx clock\n");
+> +
+> +	dwmac->dev = &pdev->dev;
+> +	plat_dat->bsp_priv = dwmac;
+> +	plat_dat->flags |= STMMAC_FLAG_SPH_DISABLE;
+> +	plat_dat->fix_mac_speed = sophgo_dwmac_fix_mac_speed;
+> +	plat_dat->multicast_filter_bins = 0;
+> +	plat_dat->unicast_filter_entries = 1;
+> +
+> +	return 0;
+> +}
+
+[...]
+
++ see the build bot report.
+
+Thanks,
+Olek
 
