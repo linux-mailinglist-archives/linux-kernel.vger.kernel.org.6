@@ -1,114 +1,122 @@
-Return-Path: <linux-kernel+bounces-382170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 919AA9B0A5A
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 18:54:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EC609B0A5C
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 18:54:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA1991C22497
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:54:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72DD71C22831
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:54:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A099D2036E4;
-	Fri, 25 Oct 2024 16:53:54 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24FED209F57;
+	Fri, 25 Oct 2024 16:53:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rJ57wxgQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 863391F7550
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 16:53:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 653C31FB895;
+	Fri, 25 Oct 2024 16:53:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729875234; cv=none; b=qBknWViw6Azb9HuECanDMa3vDGt1m8NF2QUgCztd51m8WdUQCU7QC/ieRe7rOI9unkHU4sDNyTtGS76ptfqX8Z0NE/tTXW66QRKkHhspc3cXTLz83jEtdzk1mtPZMWGeUf8Kt5NZdm6CkraudEvFTvsv40mYak+zqdSa/UI11S8=
+	t=1729875234; cv=none; b=j0vY7jrMJkoGyZey71CoJtUflJAAWuyngAD6LNRYrtNbavq/kgF57BKuy/WY8sVfm/KULcF91qQID3u7ahDbobX7xFnP5a7TFAksdLvtZexMEcEomLm7TR5T+kjY+oq4GvRDWwafcUEaIdiLHwmYK0z7ZHWrtaXuV7fpmzsFhS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1729875234; c=relaxed/simple;
-	bh=jNOciln3xYaeR6t9WCOvNKzn8Se7QV7BsB4uv2Zd5zA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=BYagVhW4eR6ISjC8JvP97MUWNGxbUPkjZTBNopujYAiNqjMTADAv/gD7IeASX6DdJrZrASpOs0KKta3LuAF1n5axzXQOE97na3vjo3MjdgABWoeQ3kxAtDIagkySixAZMHQHk2h4kH/PRZkYe3UNe6pnSQ2973SK4p0ypppbBLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1t4NZK-0002kW-LZ; Fri, 25 Oct 2024 18:53:46 +0200
-Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1t4NZK-000Olo-0o;
-	Fri, 25 Oct 2024 18:53:46 +0200
-Received: from pza by lupine with local (Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1t4NZK-000Ew6-0Z;
-	Fri, 25 Oct 2024 18:53:46 +0200
-Message-ID: <57793bb01e02f03e215dfa6f8783df18034ae2ea.camel@pengutronix.de>
-Subject: Re: [PATCH v2] misc: Silence warning when building the LAN966x
- device tree overlay
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Herve Codina
-	 <herve.codina@bootlin.com>, Rob Herring <robh@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Arnd Bergmann
-	 <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Fri, 25 Oct 2024 18:53:46 +0200
-In-Reply-To: <20241025161739.3643796-1-p.zabel@pengutronix.de>
-References: <20241025161739.3643796-1-p.zabel@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	bh=mZ20vGt23x6kwR08MBJTGLjtyFlZt4JECmZ6eocGZhQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A8HN8HVH25S6AmE98YBDWA6iWFuiU38tzEafBALYDK8+CbRGKY9VHdBycLHHezYhf0jrNiZw14fQxngkA7iXDNsRd49tg0cuo3R4pErvCoP4NEsDp4xDuZd3uTIEd3ZRrl39El8wc4UpmFQUTkwsw3tRShwZIM63ASd0iwqMoNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rJ57wxgQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE92AC4CEE3;
+	Fri, 25 Oct 2024 16:53:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729875234;
+	bh=mZ20vGt23x6kwR08MBJTGLjtyFlZt4JECmZ6eocGZhQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rJ57wxgQl26dw00jvHIkCz8BY1qNcJDhne+yEt/g4C1GpC37DYHrUWIihVaeIarNp
+	 mssbN/R1+BPJk1WgortTtVjvlA22spTtqlYk2OFsAkDieVUX1r2N00G1nLUzB5nbf7
+	 paofRo4TGF7QfBOFz0NKmyuw3T7aoLxozQejOcE42tC0jkSCFCMmX2ZuzilWIysDm4
+	 y2YEDe4wDXobiG49pUP3NdDDMvdEq8W64uvE66Ufxse+n3T/sLOzgbUskepEVbMchJ
+	 WeFTB1FvrvdUImm86JPec/9AwCpIotR7+NxC5801UHdVrASyXDQJkI4PdRuYqFlcQj
+	 LvcddiaYd8rOQ==
+Date: Fri, 25 Oct 2024 17:53:49 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: linux-riscv@lists.infradead.org,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	=?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <cleger@rivosinc.com>,
+	Andy Chiu <andybnac@gmail.com>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v2 5/5] dt-bindings: riscv: document vector crypto
+ requirements
+Message-ID: <20241025-defile-blaming-12fc1e3a62e0@spud>
+References: <20241024-fanning-enrage-bcc39f8ed47d@spud>
+ <20241024-pungent-lasso-42dd3512a3c8@spud>
+ <20241025022411.GB1781@sol.localdomain>
+ <20241025024224.GC1781@sol.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="C3HU7TQO57knau1B"
+Content-Disposition: inline
+In-Reply-To: <20241025024224.GC1781@sol.localdomain>
 
-On Fr, 2024-10-25 at 18:17 +0200, Philipp Zabel wrote:
-> Silence the following warning when building the LAN966x device tree overl=
-ay:
+
+--C3HU7TQO57knau1B
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, Oct 24, 2024 at 07:42:24PM -0700, Eric Biggers wrote:
+> On Thu, Oct 24, 2024 at 07:24:11PM -0700, Eric Biggers wrote:
+> > On Thu, Oct 24, 2024 at 01:34:33PM +0100, Conor Dooley wrote:
+> > > From: Conor Dooley <conor.dooley@microchip.com>
+> > >=20
+> > > Section 35.2. Extensions Overview of [1] says:
+> > > | The Zvknhb and Zvbc Vector Crypto Extensions --and accordingly the =
+composite extensions Zvkn and
+> > > | Zvks-- (sic) require a Zve64x base, or application ("V") base Vecto=
+r Extension.
+> > > | All of the other Vector Crypto Extensions can be built on any embed=
+ded (Zve*) or application ("V") base
+> > > | Vector Extension
+> > >=20
+> > > Apply these rules in the binding, so that invalid combinations can be
+> > > avoided.
+> >=20
+> > It looks like that part of the spec is wrong, though.  The Zvknhb and Z=
+vbc are
+> > correct, but the list of the composite extensions that at least one of =
+them is
+> > included in is: Zvkn, Zvknc, Zvkng, Zvksc.
+> >=20
 >=20
-> drivers/misc/lan966x_pci.dtso:34.23-40.7: Warning (interrupts_property): =
-/fragment@0/__overlay__/pci-ep-bus@0/oic@e00c0120: Missing interrupt-parent
->=20
-> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Link: https://lore.kernel.org/all/20241025110919.64b1cffb@canb.auug.org.a=
-u/
-> Fixes: 185686beb464 ("misc: Add support for LAN966x PCI device")
-> Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
-> ---
-> The referenced commit is in the reset tree.
-> Changes in v2:
-> - Do not handle W=3D1 warnings.
-> - Link to v1: https://lore.kernel.org/all/20241025145353.1620806-1-p.zabe=
-l@pengutronix.de/
-> ---
->  drivers/misc/Makefile | 1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/drivers/misc/Makefile b/drivers/misc/Makefile
-> index 885b22989580..196fb730817e 100644
-> --- a/drivers/misc/Makefile
-> +++ b/drivers/misc/Makefile
-> @@ -72,6 +72,7 @@ obj-$(CONFIG_TPS6594_PFSM)	+=3D tps6594-pfsm.o
->  obj-$(CONFIG_NSM)		+=3D nsm.o
->  obj-$(CONFIG_MARVELL_CN10K_DPI)	+=3D mrvl_cn10k_dpi.o
->  lan966x-pci-objs		:=3D lan966x_pci.o
-> +DTC_FLAGS_lan966x_pci		:=3D -Wno-interrupts_property
->  lan966x-pci-objs		+=3D lan966x_pci.dtbo.o
->  obj-$(CONFIG_MCHP_LAN966X_PCI)	+=3D lan966x-pci.o
->  obj-y				+=3D keba/
+> I am attempting to fix this in
+> https://github.com/riscv/riscv-isa-manual/pull/1697
 
-Applied to reset/next to silence the warning until lan966x_pci.dtso is
-fixed:
+Looks like at least one person agrees with you, but I'll wait til that's
+merged before submitting another version. Thanks for reporting it.
 
-[1/1] misc: Silence warning when building the LAN966x device tree overlay
-      https://git.pengutronix.de/cgit/pza/linux/commit/?id=3D68152eff5240
+--C3HU7TQO57knau1B
+Content-Type: application/pgp-signature; name="signature.asc"
 
-regards
-Philipp
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZxvNHQAKCRB4tDGHoIJi
+0rPiAQDKaBX0AuIAHT3DnlKh92juYKdfZUvId9M1ah/kZAXt0QEAmmMl+zMQ+XSZ
+rnymJW1NSZtykaUKiLZaZ5MgTaVR6Ag=
+=nlLZ
+-----END PGP SIGNATURE-----
+
+--C3HU7TQO57knau1B--
 
