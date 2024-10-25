@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-382405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BD159B0D30
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 20:27:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E5FA9B0D31
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 20:27:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CAF08B25F85
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 18:27:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B49A2289928
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 18:27:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52CC418F2F6;
-	Fri, 25 Oct 2024 18:24:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8D25216E0D;
+	Fri, 25 Oct 2024 18:24:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ejB6tZgt"
-Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="mpQyf5fd"
+Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A22F2216200
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 18:24:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1113E216DE1
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 18:24:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729880681; cv=none; b=GO1bSYwJiWNq8mzP8VOfYiZsOOkXV3M9yEgnPw9Z9uFb1QzsutYeokFF2yR74qTfM1hWo6KFaRPMLEBdL0xHdkPgTxpGmv5mu3qFaw+hP+QVqOPqj07fqI4RziBNYxDV0lgW6J/fnbDR7LmbNQLT/uOZ+3hBJbOZ/kXR1vamlhQ=
+	t=1729880684; cv=none; b=sxynEGTTT5wVVrBSQxp/1pml0EN8FlkwoaSiIxkFIB3MjN8B2BvvliqZMDUZxyKvEoCrQ4NaIk096YKuAASHV4XzW15BZiV0Iw1F5z+r/claFa5j8rg0074OAa0i46TzaKDDX1IKSL4yermhFMjVLkK5Mf7MXTHGJ/qJDaCphQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729880681; c=relaxed/simple;
-	bh=NycnbOmqbmRqcBTORz7kn7nxCumdEciTRup8fIwDwBM=;
+	s=arc-20240116; t=1729880684; c=relaxed/simple;
+	bh=HOnseCa4w27iSy+w9y5fRHyXmlUTzPh/7iSZeSnZbhs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MJsFXJ5/ghigLjX+qCYM2w70TiSsrPT89fNy9jDs7iLjVG3zL8uGyrOWXXaKCCj+RWVluqV8hfUeqt32UgmB6UhrLhsquSZj3ka4ZfMqyVxWYOGqvgnaAXRTs8y+ZAIu+jprinA41tV5GUYnQbwUSPXCMqgnp/ADw7SSwgMzlj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ejB6tZgt; arc=none smtp.client-ip=95.215.58.188
+	 MIME-Version; b=IPfd0PWnEv3P+Y5/5kGafAHgoyocs/nycyxSq9aHhgSt8vNBgqnVks9gt7Bg88aKdGhAC89iUJgy+yhkmWE2whg2IeDfcPDPJzJNwjfOqydQmcOw5qQNKTqNkC1oZpQxhBCu0yP7IZ8xmt5AMdqKRb+WAhBHkzn/xAPLtrHFz2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=mpQyf5fd; arc=none smtp.client-ip=95.215.58.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1729880678;
+	t=1729880680;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=lWJEQN56N/CeKfveDMMoJU65zML9g/eXZiwy9Gw5WvI=;
-	b=ejB6tZgterLk/gbHmBLxWNnprsUUwqRnXUpyPbf/SYm1C0qPn8Ks1SwIKU9WW/VEyoim94
-	aWHL5eKiXMOYI7r2KQkQMiicqSsdEFqd6VX9jp6RVhi5O44qT3bKU3KS7jbpcEAB4TrLkw
-	SLgGU+sYMsYhnSYtXBegEs5nN8IENs0=
+	bh=ZrYN5raZtmWI3hPp7h1MaTZOJ1/CQmOwVJXTIAsdSvU=;
+	b=mpQyf5fdkDWX8vMbgGH7PlXuYSF8BTzvlYcX6H0p4IGeZ/kEntusuo+rmuplKHsnkDsTKY
+	uD0mK395NR1Pxp3tAQUPu8QC+gmRXi9jHuqH4f6XLrY0hWpEN4a6GHX6XS80Hyg4l5hedH
+	8oOuJ78UyWpHzLqYlenhequjjM5IUZM=
 From: Oliver Upton <oliver.upton@linux.dev>
 To: kvmarm@lists.linux.dev
 Cc: Marc Zyngier <maz@kernel.org>,
@@ -53,9 +53,9 @@ Cc: Marc Zyngier <maz@kernel.org>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	Oliver Upton <oliver.upton@linux.dev>
-Subject: [PATCH v4 14/18] KVM: arm64: Add helpers to determine if PMC counts at a given EL
-Date: Fri, 25 Oct 2024 18:23:49 +0000
-Message-ID: <20241025182354.3364124-15-oliver.upton@linux.dev>
+Subject: [PATCH v4 15/18] KVM: arm64: nv: Honor MDCR_EL2.HPME
+Date: Fri, 25 Oct 2024 18:23:50 +0000
+Message-ID: <20241025182354.3364124-16-oliver.upton@linux.dev>
 In-Reply-To: <20241025182354.3364124-1-oliver.upton@linux.dev>
 References: <20241025182354.3364124-1-oliver.upton@linux.dev>
 Precedence: bulk
@@ -67,98 +67,36 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 
-Checking the exception level filters for a PMC is a minor annoyance to
-open code. Add helpers to check if an event counts at EL0 and EL1, which
-will prove useful in a subsequent change.
+When the PMU is configured with split counter ranges, HPME becomes the
+enable bit for the counters reserved for EL2.
 
 Signed-off-by: Oliver Upton <oliver.upton@linux.dev>
 ---
- arch/arm64/kvm/pmu-emul.c | 40 +++++++++++++++++++++++++++------------
- 1 file changed, 28 insertions(+), 12 deletions(-)
+ arch/arm64/kvm/pmu-emul.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
 diff --git a/arch/arm64/kvm/pmu-emul.c b/arch/arm64/kvm/pmu-emul.c
-index 0d669fb84485..03cd1ad7a55a 100644
+index 03cd1ad7a55a..349886f03fd5 100644
 --- a/arch/arm64/kvm/pmu-emul.c
 +++ b/arch/arm64/kvm/pmu-emul.c
-@@ -111,6 +111,11 @@ static u32 counter_index_to_evtreg(u64 idx)
- 	return (idx == ARMV8_PMU_CYCLE_IDX) ? PMCCFILTR_EL0 : PMEVTYPER0_EL0 + idx;
- }
- 
-+static u64 kvm_pmc_read_evtreg(const struct kvm_pmc *pmc)
-+{
-+	return __vcpu_sys_reg(kvm_pmc_to_vcpu(pmc), counter_index_to_evtreg(pmc->idx));
-+}
-+
- static u64 kvm_pmu_get_pmc_value(struct kvm_pmc *pmc)
+@@ -620,8 +620,15 @@ void kvm_pmu_handle_pmcr(struct kvm_vcpu *vcpu, u64 val)
+ static bool kvm_pmu_counter_is_enabled(struct kvm_pmc *pmc)
  {
  	struct kvm_vcpu *vcpu = kvm_pmc_to_vcpu(pmc);
-@@ -619,6 +624,24 @@ static bool kvm_pmu_counter_is_enabled(struct kvm_pmc *pmc)
- 	       (__vcpu_sys_reg(vcpu, PMCNTENSET_EL0) & BIT(pmc->idx));
+-	return (kvm_vcpu_read_pmcr(vcpu) & ARMV8_PMU_PMCR_E) &&
+-	       (__vcpu_sys_reg(vcpu, PMCNTENSET_EL0) & BIT(pmc->idx));
++	unsigned int mdcr = __vcpu_sys_reg(vcpu, MDCR_EL2);
++
++	if (!(__vcpu_sys_reg(vcpu, PMCNTENSET_EL0) & BIT(pmc->idx)))
++		return false;
++
++	if (kvm_pmu_counter_is_hyp(vcpu, pmc->idx))
++		return mdcr & MDCR_EL2_HPME;
++
++	return kvm_vcpu_read_pmcr(vcpu) & ARMV8_PMU_PMCR_E;
  }
  
-+static bool kvm_pmc_counts_at_el0(struct kvm_pmc *pmc)
-+{
-+	u64 evtreg = kvm_pmc_read_evtreg(pmc);
-+	bool nsu = evtreg & ARMV8_PMU_EXCLUDE_NS_EL0;
-+	bool u = evtreg & ARMV8_PMU_EXCLUDE_EL0;
-+
-+	return u == nsu;
-+}
-+
-+static bool kvm_pmc_counts_at_el1(struct kvm_pmc *pmc)
-+{
-+	u64 evtreg = kvm_pmc_read_evtreg(pmc);
-+	bool nsk = evtreg & ARMV8_PMU_EXCLUDE_NS_EL1;
-+	bool p = evtreg & ARMV8_PMU_EXCLUDE_EL1;
-+
-+	return p == nsk;
-+}
-+
- /**
-  * kvm_pmu_create_perf_event - create a perf event for a counter
-  * @pmc: Counter context
-@@ -629,17 +652,15 @@ static void kvm_pmu_create_perf_event(struct kvm_pmc *pmc)
- 	struct arm_pmu *arm_pmu = vcpu->kvm->arch.arm_pmu;
- 	struct perf_event *event;
- 	struct perf_event_attr attr;
--	u64 eventsel, reg, data;
--	bool p, u, nsk, nsu;
-+	u64 eventsel, evtreg;
- 
--	reg = counter_index_to_evtreg(pmc->idx);
--	data = __vcpu_sys_reg(vcpu, reg);
-+	evtreg = kvm_pmc_read_evtreg(pmc);
- 
- 	kvm_pmu_stop_counter(pmc);
- 	if (pmc->idx == ARMV8_PMU_CYCLE_IDX)
- 		eventsel = ARMV8_PMUV3_PERFCTR_CPU_CYCLES;
- 	else
--		eventsel = data & kvm_pmu_event_mask(vcpu->kvm);
-+		eventsel = evtreg & kvm_pmu_event_mask(vcpu->kvm);
- 
- 	/*
- 	 * Neither SW increment nor chained events need to be backed
-@@ -657,18 +678,13 @@ static void kvm_pmu_create_perf_event(struct kvm_pmc *pmc)
- 	    !test_bit(eventsel, vcpu->kvm->arch.pmu_filter))
- 		return;
- 
--	p = data & ARMV8_PMU_EXCLUDE_EL1;
--	u = data & ARMV8_PMU_EXCLUDE_EL0;
--	nsk = data & ARMV8_PMU_EXCLUDE_NS_EL1;
--	nsu = data & ARMV8_PMU_EXCLUDE_NS_EL0;
--
- 	memset(&attr, 0, sizeof(struct perf_event_attr));
- 	attr.type = arm_pmu->pmu.type;
- 	attr.size = sizeof(attr);
- 	attr.pinned = 1;
- 	attr.disabled = !kvm_pmu_counter_is_enabled(pmc);
--	attr.exclude_user = (u != nsu);
--	attr.exclude_kernel = (p != nsk);
-+	attr.exclude_user = !kvm_pmc_counts_at_el0(pmc);
-+	attr.exclude_kernel = !kvm_pmc_counts_at_el1(pmc);
- 	attr.exclude_hv = 1; /* Don't count EL2 events */
- 	attr.exclude_host = 1; /* Don't count host events */
- 	attr.config = eventsel;
+ static bool kvm_pmc_counts_at_el0(struct kvm_pmc *pmc)
 -- 
 2.47.0.163.g1226f6d8fa-goog
 
