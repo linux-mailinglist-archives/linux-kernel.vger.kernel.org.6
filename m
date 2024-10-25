@@ -1,160 +1,142 @@
-Return-Path: <linux-kernel+bounces-381954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC1739B06A0
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:01:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 026479B06E1
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:03:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71C6C282F2D
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:01:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D8A3B25C42
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:03:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D5841534E9;
-	Fri, 25 Oct 2024 15:00:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Aps3RB1f"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0122720F3F6;
+	Fri, 25 Oct 2024 15:00:58 +0000 (UTC)
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DF9C290F;
-	Fri, 25 Oct 2024 15:00:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C764C1E501B;
+	Fri, 25 Oct 2024 15:00:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729868422; cv=none; b=S8lFkafrSmGzPHlwoaqltEzb5PBH83Qj6EA7mJqLC5izyp7VQNVY4yzgyIwFygmMDwt6fPZbuhSYEB8wRyrlbJ5SArQvi1E96y2lYsH/TMm2oRmgkqi7xc+8RjffRh/Q5Qnr/w8m7p6M/JfqvK44vOxyuEya279oTtx6g19SVEA=
+	t=1729868455; cv=none; b=P+bhPBf92PfTm4vh4UZUasQe1nchlHetICcjqxlF3TVCbT27H5DzSs2spQtU0zYbufHtEI+9dGROrxtrBx4mit4h5dmKh3EAKavgh56IaJKQwp6fM2DuhLnU91mxZvosxUSN5+CcduLaxNN1KdG+kkYcVbh2K9i7603y1t8QtXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729868422; c=relaxed/simple;
-	bh=jcuOBnTQ9nGR8T/gweEpKZFTk3dIJqfKF1aIEMo8e6o=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=WZPLvKb8KgoVrWme84q3VHb5XFIFdhPCLkBYSyF3PtXwpO8cX/oTYy5UZAkYkov5hpfIfxp5OJA8ByDgZ1JhMIiKPYGoZM7XxTw4n5hnnj/5P1uuLVzpEpHghGMKG58px3qLbSfu4KRs7ICCzwZ6CM8UY4/SpUjlabi0ShE6phA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Aps3RB1f; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729868421; x=1761404421;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=jcuOBnTQ9nGR8T/gweEpKZFTk3dIJqfKF1aIEMo8e6o=;
-  b=Aps3RB1fYECyi0+JzpIort8K3NliHbr3UVLgWlSGBx6pdyHctqJZGJrf
-   BpprefoHRYuJtcMAUtk887QMcNqeU6vTT6FAKorRL571YYOsiLLy/9sTW
-   W4aXSwVNyF1UbMYP5tuZIdDh2X15t0EsTJLueSATL5YmYHJRkHQTOKz3M
-   KrTCl768UbB9j08/Rrt5YjLWr2txjIAL6gHcQQify8munwSbniDSRjAsQ
-   KCMwAONc99qv1Yz8xX9uuMFAiRnAue3SrnUnr9DR+AuTbqQ/YwbUSEK1a
-   0RXGSA+9LOwUiuDfVfXUK8R60Fbi/pz38ulCkyHrrOZ+6xTSvXZPptjqb
-   Q==;
-X-CSE-ConnectionGUID: iTSbyf7YSDuO0AEptsvYQg==
-X-CSE-MsgGUID: n/nOVaFvQLWRioK/dNKJnw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11236"; a="29657354"
-X-IronPort-AV: E=Sophos;i="6.11,232,1725346800"; 
-   d="scan'208";a="29657354"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2024 08:00:06 -0700
-X-CSE-ConnectionGUID: WvqHZtgVT8mjvZZ+WqGcSA==
-X-CSE-MsgGUID: VpUANam/RnOTNdcOodH2Ig==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,232,1725346800"; 
-   d="scan'208";a="111766739"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.225])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2024 08:00:03 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Fri, 25 Oct 2024 18:00:00 +0300 (EEST)
-To: chen zhang <chenzhang@kylinos.cn>
-cc: Hans de Goede <hdegoede@redhat.com>, cezary.jackiewicz@gmail.com, 
-    platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
-    chenzhang_0901@163.com
-Subject: Re: [PATCH] platform/x86: compal-laptop: use sysfs_emit() instead
- of sprintf()
-In-Reply-To: <20241024015605.15238-1-chenzhang@kylinos.cn>
-Message-ID: <d85ddd5d-df2c-75fe-2ec8-3444969014b3@linux.intel.com>
-References: <20241024015605.15238-1-chenzhang@kylinos.cn>
+	s=arc-20240116; t=1729868455; c=relaxed/simple;
+	bh=2f+OeXc7L8hDW3RrfmTk1SvY5JPPYd2ylwQYzahkVKM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mSS3ZWh2fEHmvRPc4t7mK5Gzzm/yiUfxQiAsy3QMdgd+/A3NvIkFpKYdke5DgDoXHOOgsxYpbKt97Pief2WRJVvZIB5MKE6sGnzcdZAGzA2/EvmN0srKdZjxH6dOkdSo3q+1PPmRN8DCKv7p4k4pY0yTe9cAHGKc6synwfj14ro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.51])
+	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4XZln96dkmz9v7Ht;
+	Fri, 25 Oct 2024 22:40:13 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.47])
+	by mail.maildlp.com (Postfix) with ESMTP id 42240140CF7;
+	Fri, 25 Oct 2024 23:00:29 +0800 (CST)
+Received: from [10.221.99.159] (unknown [10.221.99.159])
+	by APP1 (Coremail) with SMTP id LxC2BwA3qTmGshtnY2NqAA--.55073S2;
+	Fri, 25 Oct 2024 16:00:28 +0100 (CET)
+Message-ID: <727cbf48-0135-de6b-6d05-a6f8f7b4b853@huaweicloud.com>
+Date: Fri, 25 Oct 2024 17:00:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: Some observations (results) on BPF acquire and release
+Content-Language: en-US
+To: Andrea Parri <parri.andrea@gmail.com>
+Cc: puranjay@kernel.org, paulmck@kernel.org, bpf@vger.kernel.org,
+ lkmm@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <Zxk2wNs4sxEIg-4d@andrea>
+ <daa60273-d01a-8fc5-5e26-e8fc9364c1d8@huaweicloud.com>
+ <ZxuZ-wGccb3yhBAD@andrea>
+ <d8aa61a8-e2fc-7668-9845-81664c9d181f@huaweicloud.com>
+ <ZxugzP0yB3zeqKSn@andrea>
+ <8360f999-0d64-3b4f-e4b8-8c84f7311af2@huaweicloud.com>
+ <Zxuq2Zvpn7ap4ZR5@andrea>
+From: Hernan Ponce de Leon <hernan.poncedeleon@huaweicloud.com>
+In-Reply-To: <Zxuq2Zvpn7ap4ZR5@andrea>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:LxC2BwA3qTmGshtnY2NqAA--.55073S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7AF1UZFW5Xr4ktFWDXw4fZrb_yoW8AF43pF
+	48try3Kr40gr48Z3yxKF48ZF4xKFyfCFW5JFWrJrZrZF90qFn0qFyjvr43GFyag392vwsr
+	ZF10ga4xZF98AaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkEb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AK
+	xVWUAVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F4
+	0E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1l
+	IxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxV
+	AFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j
+	6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07jbcT
+	QUUUUU=
+X-CM-SenderInfo: xkhu0tnqos00pfhgvzhhrqqx5xdzvxpfor3voofrz/
 
-On Thu, 24 Oct 2024, chen zhang wrote:
-
-> Follow the advice in Documentation/filesystems/sysfs.rst:
-> show() should only use sysfs_emit() or sysfs_emit_at() when formatting
-> the value to be returned to user space.
+On 10/25/2024 4:27 PM, Andrea Parri wrote:
+>> I am particularly interested in tests using lwarx and stwcx instructions
+>> (this is what I understood would be used if one follows [1] to compile the
+>> tests in this thread).
+>>
+>> I have not yet check the cambridge website, but due to the timeline, I don't
+>> expect to find tests with those instructions. The same is true with [2].
+>>
+>> I have limited experience with diy7, but I remember that it had some
+>> limitations to generate RMW instructions, at least for C [3].
 > 
-> Signed-off-by: chen zhang <chenzhang@kylinos.cn>
-> ---
->  drivers/platform/x86/compal-laptop.c | 13 +++++++------
->  1 file changed, 7 insertions(+), 6 deletions(-)
+> Oh, I'm sure there are, though I'd also not consider myself the 'expert'
+> when it comes to diy7 internals.  ;-)  Here's an example use of diy7 /
+> diyone7 generating lwarx and stwcx and reflecting the previous pattern:
 > 
-> diff --git a/drivers/platform/x86/compal-laptop.c b/drivers/platform/x86/compal-laptop.c
-> index 5546fb189491..ba95f342fd59 100644
-> --- a/drivers/platform/x86/compal-laptop.c
-> +++ b/drivers/platform/x86/compal-laptop.c
-> @@ -67,6 +67,7 @@
->  #include <linux/rfkill.h>
->  #include <linux/hwmon.h>
->  #include <linux/hwmon-sysfs.h>
-> +#include <linux/sysfs.h>
->  #include <linux/power_supply.h>
->  #include <linux/fb.h>
->  #include <acpi/video.h>
-> @@ -368,7 +369,7 @@ static const struct rfkill_ops compal_rfkill_ops = {
->  static ssize_t NAME##_show(struct device *dev,				\
->  	struct device_attribute *attr, char *buf)			\
->  {									\
-> -	return sprintf(buf, "%d\n", ((ec_read_u8(ADDR) & MASK) != 0));	\
-> +	return sysfs_emit(buf, "%d\n", ((ec_read_u8(ADDR) & MASK) != 0));	\
->  }									\
->  static ssize_t NAME##_store(struct device *dev,				\
->  	struct device_attribute *attr, const char *buf, size_t count)	\
+> $ diyone7 -arch PPC LwSyncdWW Coe SyncdWRPA SyncdRRAP Fre
+> PPC A
+> "LwSyncdWW Coe SyncdWRNaA SyncdRRANa Fre"
+> Generator=diyone7 (version 7.57+1)
+> Prefetch=0:x=F,0:y=W,1:y=F,1:x=T
+> Com=Co Fr
+> Orig=LwSyncdWW Coe SyncdWRNaA SyncdRRANa Fre
+> {
+> 0:r2=x; 0:r4=y;
+> 1:r2=y; 1:r3=z; 1:r6=x;
+> }
+>   P0           | P1              ;
+>   li r1,1      | li r1,2         ;
+>   stw r1,0(r2) | stw r1,0(r2)    ;
+>   lwsync       | sync            ;
+>   li r3,1      | Loop00:         ;
+>   stw r3,0(r4) | lwarx r4,r0,r3  ;
+>                | stwcx. r4,r0,r3 ;
+>                | bne  Loop00     ;
+>                | sync            ;
+>                | lwz r5,0(r6)    ;
+> exists ([y]=2 /\ 1:r5=0)
 
-The macro line continuation backslashes should be aligned.
+That is exactly what I was looking for. Thanks Andrea!
 
---
- i.
+Hernan
 
-> @@ -393,7 +394,7 @@ static ssize_t pwm_enable_show(struct device *dev,
->  		struct device_attribute *attr, char *buf)
->  {
->  	struct compal_data *data = dev_get_drvdata(dev);
-> -	return sprintf(buf, "%d\n", data->pwm_enable);
-> +	return sysfs_emit(buf, "%d\n", data->pwm_enable);
->  }
->  
->  static ssize_t pwm_enable_store(struct device *dev,
-> @@ -432,7 +433,7 @@ static ssize_t pwm_show(struct device *dev, struct device_attribute *attr,
->  		char *buf)
->  {
->  	struct compal_data *data = dev_get_drvdata(dev);
-> -	return sprintf(buf, "%hhu\n", data->curr_pwm);
-> +	return sysfs_emit(buf, "%hhu\n", data->curr_pwm);
->  }
->  
->  static ssize_t pwm_store(struct device *dev, struct device_attribute *attr,
-> @@ -460,7 +461,7 @@ static ssize_t pwm_store(struct device *dev, struct device_attribute *attr,
->  static ssize_t fan_show(struct device *dev, struct device_attribute *attr,
->  		char *buf)
->  {
-> -	return sprintf(buf, "%d\n", get_fan_rpm());
-> +	return sysfs_emit(buf, "%d\n", get_fan_rpm());
->  }
->  
->  
-> @@ -469,12 +470,12 @@ static ssize_t fan_show(struct device *dev, struct device_attribute *attr,
->  static ssize_t temp_##POSTFIX(struct device *dev,			\
->  		struct device_attribute *attr, char *buf)		\
->  {									\
-> -	return sprintf(buf, "%d\n", 1000 * (int)ec_read_s8(ADDRESS));	\
-> +	return sysfs_emit(buf, "%d\n", 1000 * (int)ec_read_s8(ADDRESS));	\
->  }									\
->  static ssize_t label_##POSTFIX(struct device *dev,			\
->  		struct device_attribute *attr, char *buf)		\
->  {									\
-> -	return sprintf(buf, "%s\n", LABEL);				\
-> +	return sysfs_emit(buf, "%s\n", LABEL);				\
->  }
->  
->  /* Labels as in service guide */
 > 
+> But again, I'd probably have to defer to proper herdtools7 developers
+> and maintainers for any diy7 bug or misbehavior you'd have to discover.
+> 
+>    Andrea
+> 
+> 
+>>
+>> Hernan
+>>
+>> [1] https://github.com/torvalds/linux/blob/master/arch/powerpc/net/bpf_jit_comp32.c
+>> [2] https://github.com/herd/herdtools7/tree/master/catalogue/herding-cats/ppc/tests/campaign
+>> [3] https://github.com/herd/herdtools7/issues/905
+>>
+
 
