@@ -1,116 +1,156 @@
-Return-Path: <linux-kernel+bounces-381778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E0B89B0456
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:40:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD5E59B045D
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:41:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FC4D1C22497
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 13:40:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52BBE1F23F33
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 13:41:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 962201D9A66;
-	Fri, 25 Oct 2024 13:40:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C12751E491B;
+	Fri, 25 Oct 2024 13:41:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LkSX5Y0O"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="pjD28qXy";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="SBPgG+xz"
+Received: from flow-b6-smtp.messagingengine.com (flow-b6-smtp.messagingengine.com [202.12.124.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E36E9212178;
-	Fri, 25 Oct 2024 13:40:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8859521218A;
+	Fri, 25 Oct 2024 13:41:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729863633; cv=none; b=IhIxfhwZk6Sa6CNt92N6NdhZeca2A05J77fVrUg6cYzlUTPiqUPjZv4M1PlC+i9xgoEwQu77FUZo90W6yCVQs11ubMGL4Jl81iFz39oYY2kTKYc/sjig4qjtv1AOGohc+SZjzKMul7z+oYR2WxWDIzCb+BqDU78xaiGTNUai8PY=
+	t=1729863706; cv=none; b=N5bKdTTJjmpBBNpKS4dj4vibSIcJ4ZpyYl+Hy01ugUQUUn9rtJz0WvVdtALXSsCSYkd+2UYVlZWC8D8EHWt3ld4aszPJX/wlYgF8CtMqmJh5GdBWeb/lIBcCto9JTeDRyGnXWxiO89li5JvgZkPH/8vumDRNVpDKdIOiFElW9rI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729863633; c=relaxed/simple;
-	bh=pVBN/pYnecKbodkMkBrlE2AMRkbGJn4StYxxRVqPtJM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DrZ/yhawpJJVKel00QxeEbAewRx+eWBzV2qb1Dt+e7jOSjH9zJv70kvoFFv8aT+xAFERhJdGv+SXtX6Ha2ZYqFuR6UvlFRoDIw0JJrSCzOzGRzkr5CUdC2RgG2NHaQp1dfJracmtf4UdtByybh5h82K2ufF1X5qb73JN3/oaBRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LkSX5Y0O; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73F69C4CEC3;
-	Fri, 25 Oct 2024 13:40:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729863632;
-	bh=pVBN/pYnecKbodkMkBrlE2AMRkbGJn4StYxxRVqPtJM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LkSX5Y0O06lKZVBTf+07pj6MacCDHVfYJaJ13wd5+BzO/6MXW+9rw2vIfr7mlrbZM
-	 lhfMC9SjIEpl25Lfjdnd17pr4d5IjDpGwExR80cNnRMP0ITR3KG+E8E0hJXRLz7ggr
-	 TWjyrZtC6laDDr2bVPF1plmgEx3ER78I5KwOTxx+FsH9i1910qMsW6qqkiCugLjbe0
-	 5BQ1GZACH8UE6g4MY19zXhAlPyby+WdE794/je0UWdmG5iUY8dlztfVv1+B8yRk7Z8
-	 dDS+kOseJ3cpZspqcynW4Bz9e++wzZ9qQWeCGH2Q5u8AFieiQAj0rdZKFI4kF8dRAp
-	 73rJPZgsNaBEA==
-Date: Fri, 25 Oct 2024 14:40:28 +0100
-From: Simon Horman <horms@kernel.org>
-To: George Guo <dongtai.guo@linux.dev>
-Cc: pabeni@redhat.com, davem@davemloft.net, edumazet@google.com,
-	guodongtai@kylinos.cn, kuba@kernel.org,
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
-	netdev@vger.kernel.org, paul@paul-moore.com
-Subject: Re: [PATCH 1/1] add comment for doi_remove in struct
- netlbl_lsm_secattr
-Message-ID: <20241025134028.GW1202098@kernel.org>
-References: <0667f18b-2228-4201-9da7-0e3536bae321@redhat.com>
- <20241025064031.994215-1-dongtai.guo@linux.dev>
+	s=arc-20240116; t=1729863706; c=relaxed/simple;
+	bh=Wm3muLnceJyby21UvU1uoDEPNrI5UR+r2idw9Fs/ibI=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=XxKNJkEdWGa90UukURTzrvO0Bj6sYNBtMZRVaJF3izcztE2fmn9UBVD3qhwJvOeHXcESnXmdhl8JUtULlTDN9HUQaf8x5MUkjx7ftsHZ9HLJD+K2De1g2WejE+l7hVstDjNIarygOtesGIP4pn9t6kyO42IPNSz+IHUk85fzTxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=pjD28qXy; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=SBPgG+xz; arc=none smtp.client-ip=202.12.124.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailflow.stl.internal (Postfix) with ESMTP id EC6081D400AF;
+	Fri, 25 Oct 2024 09:41:41 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-10.internal (MEProxy); Fri, 25 Oct 2024 09:41:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1729863701;
+	 x=1729870901; bh=gtfk2cbRSvuRRxrihIJOvS/KfF1nzk8xhMXUtPvsUnI=; b=
+	pjD28qXyOpY/LIxXbSbERv3rie6/Izt8nvJXnVFFhB2PBxXkVUlWs06gqvKSF3J4
+	naLVGH1RomAtn/gp9CuMI8EIoAlYiaARGr18Pppe828HCdbHX+IPCIo+Kq0a3kUD
+	XUHerAmJ7z5Wfe8LdM7h/sEseQIvCeVk7Eqf4nNILcsdoN5A4YJze79/h+cR8DXF
+	LN6Me7jKhh6hXhlD7+XjQiQX336Rzs9bWxJUxcL3CmRaBu6fIt4OFg9Rj0oof8Fy
+	2Hd4UT/koWG2vrqcsgoXfZBX8PaHAI9MlyvDefw/q3pLVHq9wV4+fwWD8fnQFp9N
+	EIl+GmX/SPA5dZSq1NSrAA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1729863701; x=
+	1729870901; bh=gtfk2cbRSvuRRxrihIJOvS/KfF1nzk8xhMXUtPvsUnI=; b=S
+	BPgG+xzhv1g2MYdU4AZF7hh9UMShquw74Z2eAmwVsl2zTSrUguBWZiYF2CNJbhVW
+	imRzugNw5phZ8dbUbOS+2l11wuRzI4RK8JEfycORiMx1Wjd/N3zbClZF6IYdPoCv
+	70H++0tO9R/xvoaocFnUU0dOeEm4xjxQ0t/TcRz44iQN/qES7ajUC+nSaImy5ZoI
+	aDjcNYZMl/a1abMv/y2N8EExnl9YVgZJsTNWPEFJ7wzXRt8MvFsRozWE7M9siYN/
+	NJ7RKs6+MpyHhXfHOwxuBt57qZyK11UzBWw5nK9tA8QFODDFPdrmJCmYaeInDdjq
+	VOyF9a6tluJZZZ3s4Zn6A==
+X-ME-Sender: <xms:FKAbZ3qJFUGpbpsUW9_fereCvIhEuKomff311XueYsVaFQRy9hSq5A>
+    <xme:FKAbZxpBHeAYEXwZR4XB1HB-FDE_GiaX8VYvGhuwBQsZh3PYIkiRPI7I_ZaQPSHRe
+    1oH-bPesLZArVAW_c4>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdejvddgieejucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
+    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
+    guvgeqnecuggftrfgrthhtvghrnhepfefhheetffduvdfgieeghfejtedvkeetkeejfeek
+    keelffejteevvdeghffhiefhnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlh
+    hushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnugesrghr
+    nhgusgdruggvpdhnsggprhgtphhtthhopedvledpmhhouggvpehsmhhtphhouhhtpdhrtg
+    hpthhtohepshhimhhonhgrsehffhiflhhlrdgthhdprhgtphhtthhopegrihhrlhhivggu
+    sehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhuihiirdguvghnthiisehgmhgrihhlrd
+    gtohhmpdhrtghpthhtohepphgrthhrihhkrdhrrdhjrghkohgsshhsohhnsehgmhgrihhl
+    rdgtohhmpdhrtghpthhtohepmhgrrhgtvghlsehhohhlthhmrghnnhdrohhrghdprhgtph
+    htthhopehluhgtrghsrdguvghmrghrtghhihesihhnthgvlhdrtghomhdprhgtphhtthho
+    pehrohgurhhighhordhvihhvihesihhnthgvlhdrtghomhdprhgtphhtthhopegrrhhnug
+    eskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhhirhhishhlrggshieskhgvrhhnvghl
+    rdhorhhg
+X-ME-Proxy: <xmx:FKAbZ0NsSjwocGY-XDJ1P7KQXGP_qoc3vqROaN1LyW6uNN_DS-vB2A>
+    <xmx:FKAbZ662m7W6ZMDHKtvgoeDpUmD9Vpl0KgD5uqQpI1MQxmzY8ecOjg>
+    <xmx:FKAbZ27gGML-ufU0a_1Y8OiNjEgKf5iqUggzFXgiBV1uP9QZr-BUkQ>
+    <xmx:FKAbZyj_iMh9pE2a6JJFbCNnnMpSyGii9q8Iu8GGvaTegKT49w4jBA>
+    <xmx:FaAbZ5wrMkfCwMUJK-_yw-HtdhtVOFf66SdycleW6ivOtc1nCpOXItmP>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id B8BF82220071; Fri, 25 Oct 2024 09:41:40 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241025064031.994215-1-dongtai.guo@linux.dev>
+Date: Fri, 25 Oct 2024 13:41:10 +0000
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Niklas Schnelle" <schnelle@linux.ibm.com>,
+ "Brian Cain" <bcain@quicinc.com>, "Marcel Holtmann" <marcel@holtmann.org>,
+ "Luiz Augusto von Dentz" <luiz.dentz@gmail.com>,
+ "Patrik Jakobsson" <patrik.r.jakobsson@gmail.com>,
+ "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>,
+ "Maxime Ripard" <mripard@kernel.org>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>, "Dave Airlie" <airlied@gmail.com>,
+ "Simona Vetter" <simona@ffwll.ch>, "Dave Airlie" <airlied@redhat.com>,
+ "Gerd Hoffmann" <kraxel@redhat.com>,
+ "Lucas De Marchi" <lucas.demarchi@intel.com>,
+ =?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
+ "Rodrigo Vivi" <rodrigo.vivi@intel.com>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ "Jiri Slaby" <jirislaby@kernel.org>, "Maciej W. Rozycki" <macro@orcam.me.uk>,
+ "Heiko Carstens" <hca@linux.ibm.com>
+Cc: linux-kernel@vger.kernel.org, linux-hexagon@vger.kernel.org,
+ linux-bluetooth@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ virtualization@lists.linux.dev, spice-devel@lists.freedesktop.org,
+ intel-xe@lists.freedesktop.org, linux-serial@vger.kernel.org,
+ Linux-Arch <linux-arch@vger.kernel.org>, "Arnd Bergmann" <arnd@kernel.org>
+Message-Id: <72b75acf-743d-4fe7-9246-aa5a4efabb58@app.fastmail.com>
+In-Reply-To: <20241024-b4-has_ioport-v9-0-6a6668593f71@linux.ibm.com>
+References: <20241024-b4-has_ioport-v9-0-6a6668593f71@linux.ibm.com>
+Subject: Re: [PATCH v9 0/5] treewide: Remove I/O port accessors for HAS_IOPORT=n
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Fri, Oct 25, 2024 at 02:40:31PM +0800, George Guo wrote:
-> From: George Guo <guodongtai@kylinos.cn>
+On Thu, Oct 24, 2024, at 17:54, Niklas Schnelle wrote:
+> Hi All,
+>
+> This is a follow up in my long running effort of making inb()/outb() and
+> similar I/O port accessors compile-time optional. After initially
+> sending this as a treewide series with the latest revision at[0]
+> we switched to per subsystem series. Now though as we're left with only
+> 5 patches left I'm going back to a single series with Arnd planning
+> to take this via the the asm-generic tree.
+>
+> This series may also be viewed for your convenience on my git.kernel.org
+> tree[1] under the b4/has_ioport branch. As for compile-time vs runtime
+> see Linus' reply to my first attempt[2].
 
-Hi George,
+Hi Niklas,
 
-Thanks for your patch. I agree that is is correct and a good change
-to make. But there are some process issues to be addressed before this
-patch can be accepted.
+Thanks for your endless work on this. I have now pulled it into
+the asm-generic tree as I want to ensure we get enough time to
+test this as part of linux-next before the merge window.
 
-Firstly, as this is presumably a non-bug fix for networking code,
-it should be targeted at the net-next tree. That it should
-be based on that tree (it seems to be) and explicitly targeted
-at that tree in the Subject.
+If minor issues still come up, I would try to fix those as
+add-on patches to avoid rebasing my tree.
 
-  Subject: [PATCH net-next v2] ...
+I also expect that we will continue with add-on patches in
+the future, in particular I hope to make HAS_IOPORT optional
+on arm, arm64 and powerpc, and only enabled for
+configurations that actually want it.
 
-Secondly, the subject should include a prefix.
-Looking at git log include/net/netlabel.h it
-seems that should be 'netlabel:'
-
-  Subject: [PATCH net-next v2] netlabel: ...
-
-And it might be best to make the subject a bit more descriptive.
-
-  Subject: [PATCH net-next v2] netlabel: document doi_remove field of struct netlbl_calipso_ops
-
-
-Next, a commit message is required. It should explain why the change is
-being made. And, ideally how you found this problem. It should
-also include a Signed-off-by line [1]. e.g.
-
-  Add documentation of do_remove field to Kernel doc for struct
-  netlbl_calipso_ops.
-
-  Found using W=1 build.
-
-  Signed-off-by: ...
-
-[1] https://www.kernel.org/doc/html/latest/process/submitting-patches.html#sign-your-work-the-developer-s-certificate-of-origin
-
-Lastly, please do wait 24h before posting a new version.
-Please include information about what has changed below the scissors ('---').
-And please send the new patch as a new thread.
-
-More information on development processes for Networking can be found here:
-https://docs.kernel.org/process/maintainer-netdev.html
-
-...
-
--- 
-pw-bot: changes-requested
+     Arnd
 
