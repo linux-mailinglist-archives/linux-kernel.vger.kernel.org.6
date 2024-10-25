@@ -1,135 +1,160 @@
-Return-Path: <linux-kernel+bounces-381773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 875229B0446
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:37:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6030A9B046F
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:46:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE901B22672
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 13:37:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 928121C22205
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 13:46:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAC921632E6;
-	Fri, 25 Oct 2024 13:37:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE6251EBA04;
+	Fri, 25 Oct 2024 13:46:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="nTq77u+Y";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="YYd+CaNQ"
-Received: from fhigh-b7-smtp.messagingengine.com (fhigh-b7-smtp.messagingengine.com [202.12.124.158])
+	dkim=pass (2048-bit key) header.d=uliege.be header.i=@uliege.be header.b="AsrPx7d0"
+Received: from serv108.segi.ulg.ac.be (serv108.segi.ulg.ac.be [139.165.32.111])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89E8B1632D5;
-	Fri, 25 Oct 2024 13:37:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCA241E52D;
+	Fri, 25 Oct 2024 13:46:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=139.165.32.111
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729863461; cv=none; b=hKnmYldDJ3SBTW80ZEuX7EhMIYOD5vlPVYJNUN/a9q5Mp1BXcZ3W0OpKyOr2fslE/RZXqpHKUrHE0cd7cQ5Zjm/BfElMLVjeYOKtl9XJVXGHnzxxBCF2uSDbdjiB7r0Gx38pW7dAqk64Nu9x65tVFcPOWXPqJW3bQ/7VWqjAdRo=
+	t=1729863987; cv=none; b=ovZqehkVo24JGg3tZq0mPcwbRW7b11Mrs72e9fo0F45xcUUuDJ4jyTUKnD6eP17kz6R4MDFVVZOlaht2vsIa3T7AFrLntYAc8sSJngVH+7+e6Yo8yDMs+K5h/Nb99lnTl6vmATE6BPMcRdR8ZrgHW/69j2NhWmdfHH0cSjH/OCY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729863461; c=relaxed/simple;
-	bh=IO5JRAi5QVuzB3nZMKM6uhv+seJAQIBK2VjWW9MTLG0=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=pO/WSeOhnV4TRJ57ZlTrvjstVsnX9Aew079uu6wd3sLpHpyTJLIZxB3UkYYmGJIn/i6s3jm7kvHwgkwQ31C9mflou6MPdSBoQM4mBTH7c95fOztk9qBw6uC+eSiYfr0crWrVSBKG4giA9AQv6SSy9nPFSx4objkSXvh8maNrWMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=nTq77u+Y; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=YYd+CaNQ; arc=none smtp.client-ip=202.12.124.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 54D1325400C4;
-	Fri, 25 Oct 2024 09:37:37 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Fri, 25 Oct 2024 09:37:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1729863457;
-	 x=1729949857; bh=mTD/E8mUSNoNp+vtjeW8NYfb5u7ndnKHIytXzDhahwE=; b=
-	nTq77u+YbjEK1oOGqWOEMss4pavBeea5xmfNB5v8n1RQ22NxJIlmfp2TzT4IKpOx
-	caApVTp1/TP1+2AFsH+6DaC7B1jXPpi59lVd0QmK1g4cyigLCbwCjjCU5UZejO28
-	8c3d8AGT1CdV1FpUSe8Ohc2JPaB0EAv7X1aw4eGMMqsDN9QNF4MBCkY7XT7NWXhL
-	O/OEAgSYzhCEctYt3/dxus3LsMgxjvtStf4TUCEi3KDe+iRqYuAwvWG/ws/9TCTb
-	91Febe33d87M4u4RsAc2PSDoS2l7TEXW3ZHH0N9mqk4H/wIO2sYqmM++nNVpXfOu
-	l8mVjbE2Y3ckzB0U2VTGjA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1729863457; x=
-	1729949857; bh=mTD/E8mUSNoNp+vtjeW8NYfb5u7ndnKHIytXzDhahwE=; b=Y
-	Yd+CaNQUnHw9YsFM/xsr4EEUnyKUrgtD2vti8QGZood/Hu9648OKjYo4bH7A6Neg
-	jnJDKNvwBYkFvlybTuqF2bH/KaZKDCsMPx9nvXzHCWTKjsCUnllyUHCbFyKAeDhX
-	YNkya00Lwsz0+acBTk9P7pZOFNJx3BvJUubdQClXQQcfFmAJOHzcSMDEsFGYeUz+
-	Jg9HE+6A7ymczxjo7UpkNZEyk9ue5mso6y8MDn4M5ldn8ZNSI/lsZrOwKW2qGN95
-	SK1C5a5uk//QbB1mqxfMZZhPvCEMy7uIU9Opdu0mHCbXfdkyJRO6uRsr50PfJcTO
-	dO3S1hvvUj92Ys457iJAw==
-X-ME-Sender: <xms:IJ8bZxsuj29dJ1vr5lHn5cEFvY6c8AEcCMtZGM1az7Jp64ZRgbF05Q>
-    <xme:IJ8bZ6f_PFYR1VPWQ6NunpU9GXYmb8uTFHK2WzhvwLuyhGpOciB1CBT9pvUeu8GH4
-    UYBuOr6HJ-I4-vOr1Q>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdejvddgieeiucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
-    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
-    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
-    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepudel
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehlihhnuhigqdgrrhhmqdhkvghrnh
-    gvlheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehlihhnuhig
-    qdhrihhstghvsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheplh
-    hinhhugidqshhnphhsqdgrrhgtsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhr
-    tghpthhtoheplhhinhhugidquhhmsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpd
-    hrtghpthhtoheplhhinhhugidqmheikehksehlihhsthhsrdhlihhnuhigqdhmieekkhdr
-    ohhrghdprhgtphhtthhopehlohhonhhgrghrtghhsehlihhsthhsrdhlihhnuhigrdguvg
-    hvpdhrtghpthhtoheplhhinhhugihpphgtqdguvghvsehlihhsthhsrdhoiihlrggsshdr
-    ohhrghdprhgtphhtthhopehhtghhsehlshhtrdguvgdprhgtphhtthhopehlihhnuhigqd
-    grlhhphhgrsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:IJ8bZ0w8_fyzDu0Dhxg43egcOQd9fPmeL9IF1HbPQzAPODUmdkywqg>
-    <xmx:IJ8bZ4Ng8v61LIOz9Z6hcNW7TrkYDvZ9-QsNLZ7fNM7Okgrh7sPTiA>
-    <xmx:IJ8bZx-O8B7MlF4JofybzIynmnGJvvLwnq8RLzH_1fknLv9ZsqMu1w>
-    <xmx:IJ8bZ4X5lrN7iDkKbGm85k7BOBq5kmsTovQZ6V9cVszatdT146tmOA>
-    <xmx:IZ8bZ02QO2wzbQXTtXh5NJPoq2r5QyMwBKYu4QPUoTFRk_k35DiZGUWq>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 3B9352220071; Fri, 25 Oct 2024 09:37:36 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1729863987; c=relaxed/simple;
+	bh=po3oqvvSsArGXD1EvWQlOiEKTRCDioPTGvw8Mlb4W34=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ARxrjNdSkReJYzoqpKIhzekW29d95WMDD6nwGS20VaQ7Az1Ev6/0949Mo5Bz7kH3bEI0GXl6E6rw9W7mKmAA+PO70K/yjnwfUijDQz/X41ryyniA1wGY3trK3mGbQWJQCim+wxhT5jrH03YgQhueRUMdbUvA1y5V22D7IQy+bW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uliege.be; spf=pass smtp.mailfrom=uliege.be; dkim=pass (2048-bit key) header.d=uliege.be header.i=@uliege.be header.b=AsrPx7d0; arc=none smtp.client-ip=139.165.32.111
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uliege.be
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uliege.be
+Received: from localhost.localdomain (220.24-245-81.adsl-dyn.isp.belgacom.be [81.245.24.220])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by serv108.segi.ulg.ac.be (Postfix) with ESMTPSA id 7370A200EEC3;
+	Fri, 25 Oct 2024 15:37:49 +0200 (CEST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 serv108.segi.ulg.ac.be 7370A200EEC3
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uliege.be;
+	s=ulg20190529; t=1729863469;
+	bh=0zch5HZGpUzO3VSt3kgI73Tmmq2bTZwt6RcGcHiAEd4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=AsrPx7d06HTL+tQD82j5gy7OpZO1iu9DPMfxNJiPpT2XY/HmtlQkP1bOgRuwqUje7
+	 zCXQq03zLPdcv2WbCLtJSEbmwwu3g+8eWEcxvFrENv8jgEoAIZqoyJizsJ4gHl9il6
+	 FPAOAkoChcoIefhuklKT5sKNx3OjD+EbbSLLsia1PbdE6mozQsNmLBiXbOdYEI9nlO
+	 9rG7EnLm/dS/znqtHL9PBD7mCFVorsEqzhGXperL+8xU/ysjCDgM7wEB2vplK6a9s9
+	 PFQnIp1RaBe1qm9hYLP5PTElp4Jhb4v0RhRxPwrnxe4M7WW6cADolzwuUxyL1gNXlZ
+	 WKGkiSYTEG9hA==
+From: Justin Iurman <justin.iurman@uliege.be>
+To: netdev@vger.kernel.org
+Cc: davem@davemloft.net,
+	dsahern@kernel.org,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	horms@kernel.org,
+	linux-kernel@vger.kernel.org,
+	justin.iurman@uliege.be
+Subject: [PATCH net-next 0/3] Mitigate the two-reallocations issue for iptunnels
+Date: Fri, 25 Oct 2024 15:37:24 +0200
+Message-Id: <20241025133727.27742-1-justin.iurman@uliege.be>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Fri, 25 Oct 2024 13:37:15 +0000
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Christoph Hellwig" <hch@lst.de>
-Cc: linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-snps-arc@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- "linux-csky@vger.kernel.org" <linux-csky@vger.kernel.org>,
- linux-hexagon@vger.kernel.org, loongarch@lists.linux.dev,
- linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
- "linux-openrisc@vger.kernel.org" <linux-openrisc@vger.kernel.org>,
- linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
- linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
- linux-um@lists.infradead.org, Linux-Arch <linux-arch@vger.kernel.org>
-Message-Id: <c9f10ee9-697f-4f45-8c82-a6dc61e5a74e@app.fastmail.com>
-In-Reply-To: <20241023053644.311692-1-hch@lst.de>
-References: <20241023053644.311692-1-hch@lst.de>
-Subject: Re: provide generic page_to_phys and phys_to_page implementations v3
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 23, 2024, at 05:36, Christoph Hellwig wrote:
-> page_to_phys is duplicated by all architectures, and from some strange
-> reason placed in <asm/io.h> where it doesn't fit at all.  
->
-> phys_to_page is only provided by a few architectures despite having a lot 
-> of open coded users.
->
-> Provide generic versions in <asm-generic/memory_model.h> to make these
-> helpers more easily usable.
->
+The same pattern is found in ioam6, rpl6, and seg6. Basically, it first
+makes sure there is enough room for inserting a new header:
 
-I've applied this to the asm-generic tree now.
+(1) err = skb_cow_head(skb, len + skb->mac_len);
 
-Thanks for the cleanup!
+Then, when the insertion (encap or inline) is performed, the input and
+output handlers respectively make sure there is enough room for layer 2:
 
-     Arnd
+(2) err = skb_cow_head(skb, LL_RESERVED_SPACE(dst->dev));
+
+skb_cow_head() does nothing when there is enough room. Otherwise, it
+reallocates more room, which depends on the architecture. Briefly,
+skb_cow_head() calls __skb_cow() which then calls pskb_expand_head() as
+follows:
+
+pskb_expand_head(skb, ALIGN(delta, NET_SKB_PAD), 0, GFP_ATOMIC);
+
+"delta" represents the number of bytes to be added. This value is
+aligned with NET_SKB_PAD, which is defined as follows:
+
+NET_SKB_PAD = max(32, L1_CACHE_BYTES)
+
+... where L1_CACHE_BYTES also depends on the architecture. In our case
+(x86), it is defined as follows:
+
+L1_CACHE_BYTES = (1 << CONFIG_X86_L1_CACHE_SHIFT)
+
+... where (again, in our case) CONFIG_X86_L1_CACHE_SHIFT equals 6
+(=X86_GENERIC).
+
+All this to say, skb_cow_head() would reallocate to the next multiple of
+NET_SKB_PAD (in our case a 64-byte multiple) when there is not enough
+room.
+
+Back to the main issue with the pattern: in some cases, two
+reallocations are triggered, resulting in a performance drop (i.e.,
+lines (1) and (2) would both trigger an implicit reallocation). How's
+that possible? Well, this is kind of bad luck as we hit an exact
+NET_SKB_PAD boundary and when skb->mac_len (=14) is smaller than
+LL_RESERVED_SPACE(dst->dev) (=16 in our case). For an x86 arch, it
+happens in the following cases (with the default needed_headroom):
+
+- ioam6:
+ - (inline mode) pre-allocated data trace of 236 or 240 bytes
+ - (encap mode) pre-allocated data trace of 196 or 200 bytes
+- seg6:
+ - (encap mode) for 13, 17, 21, 25, 29, 33, ...(+4)... prefixes
+
+Let's illustrate the problem, i.e., when we fall on the exact
+NET_SKB_PAD boundary. In the case of ioam6, for the above problematic
+values, the total overhead is 256 bytes for both modes. Based on line
+(1), skb->mac_len (=14) is added, therefore passing 270 bytes to
+skb_cow_head(). At that moment, the headroom has 206 bytes available (in
+our case). Since 270 > 206, skb_cow_head() performs a reallocation and
+the new headroom is now 206 + 64 (NET_SKB_PAD) = 270. Which is exactly
+the room we needed. After the insertion, the headroom has 0 byte
+available. But, there's line (2) where 16 bytes are still needed. Which,
+again, triggers another reallocation.
+
+The same logic is applied to seg6 (although it does not happen with the
+inline mode, i.e., -40 bytes). It happens with other L1 cache shifts too
+(the larger the cache shift, the less often it happens). For example,
+with a +32 cache shift (instead of +64), the following number of
+segments would trigger two reallocations: 11, 15, 19, ... With a +128
+cache shift, the following number of segments would trigger two
+reallocations: 17, 25, 33, ... And so on and so forth. Note that it is
+the same for both the "encap" and "l2encap" modes. For the "encap.red"
+and "l2encap.red" modes, it is the same logic but with "segs+1" (e.g.,
+14, 18, 22, 26, etc for a +64 cache shift). Note also that it may happen
+with rpl6 (based on some calculations), although it did not in our case.
+
+This series provides a solution to mitigate the aforementioned issue for
+ioam6, seg6, and rpl6. It provides the dst_entry (in the cache) to
+skb_cow_head() **before** the insertion (line (1)). As a result, the
+very first iteration would still trigger two reallocations (i.e., empty
+cache), while next iterations would only trigger a single reallocation.
+
+Justin Iurman (3):
+  net: ipv6: ioam6_iptunnel: mitigate 2-realloc issue
+  net: ipv6: seg6_iptunnel: mitigate 2-realloc issue
+  net: ipv6: rpl_iptunnel: mitigate 2-realloc issue
+
+ net/ipv6/ioam6_iptunnel.c |  84 ++++++++++++++++---------------
+ net/ipv6/rpl_iptunnel.c   |  60 +++++++++++-----------
+ net/ipv6/seg6_iptunnel.c  | 103 +++++++++++++++++++++-----------------
+ 3 files changed, 132 insertions(+), 115 deletions(-)
+
+-- 
+2.34.1
+
 
