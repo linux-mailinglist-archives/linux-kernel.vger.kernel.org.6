@@ -1,95 +1,179 @@
-Return-Path: <linux-kernel+bounces-382699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECC7D9B1258
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 00:11:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F3FC9B125C
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 00:12:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28F971C21AA9
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 22:11:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB0A5B217F3
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 22:12:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D32320BB42;
-	Fri, 25 Oct 2024 22:11:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EC2B213123;
+	Fri, 25 Oct 2024 22:12:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jDmxDR8s"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LpW8zYBo"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF97E217F53
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 22:11:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47795217F4C
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 22:12:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729894276; cv=none; b=fdYhPKv+iNOZdqb7xddr3svQr7jjGOSzv6Knn7mKwFMRlW3IolWL7CU/iw7R26IEscI6UXD9k+NdlqdSMBHZ5yo5VE4VeZXNqH6MNFD587GxRhvf/witISTYRUHLfIHFwZSw7tv14AyNTg1r+lARrt43JsYANRlErA1Z+hIgziQ=
+	t=1729894347; cv=none; b=szavFZymdqAhBVYf//gus82a5AvBFP2K4MN84eLHU04zWMSYlVY9mxmnHWNDDNlMNF+xgpQUq+SbZvOz6A/HnS4waA+t3YregQ6Y9A/6/1W2DITWlG1IQU/YhUUzcMJuvInEgonai5QdnxNlGhu0Ym8jpnZEL7vMBUKr+3rVY7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729894276; c=relaxed/simple;
-	bh=uT+1EB1n0yJWltMD5gkZ7m9cFroC05EeN9hrvKQRecI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=snAm2K6MiOgVeh6sy2ka64cj2zsb80wooHtbK8ExtOk548RQo/pyJipE0yDmnjZdzBdOs1EDzDwSw0/tsRAjEqAmTFl0XswJ3nwodLrVBqccEfuOaa5PwNkO7EsslMrlkr41xlFWRPGs617SIET+VkFy0Jz92l3XV/PtzMTLkjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jDmxDR8s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61991C4CEC3;
-	Fri, 25 Oct 2024 22:11:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729894275;
-	bh=uT+1EB1n0yJWltMD5gkZ7m9cFroC05EeN9hrvKQRecI=;
-	h=Date:From:To:Cc:Subject:From;
-	b=jDmxDR8s3QOQA+sduyqNkae9X/AJ4I2IY7szMpvqAtiGCq/qESIHfl3hhESxAo5Ga
-	 vOYD0sFcOM4r50utZaYho0Vzwihyrb+xZjBrhm0Yvv9P7QrFx56r3iFlf0hLcEIaYE
-	 tJLqcY2+0vlr8zgsR0w5vaPhWkFfVFWYfwWvWvlZFNfLid7KTA9zggmXi2wObSJFRf
-	 xOnmesB4mMemp+AALLkrCm+oMjMeW9CJA+dSi6AHcyTRsGm+hn/E9lkFvc98tX11RA
-	 HGrOUeKFjm43PVLitihLkxEEbwRye1AJJmuYTvodc3uVK5yK2XBzaKsmm0ST8MRSpk
-	 qa3d0NaGEn45w==
-Date: Fri, 25 Oct 2024 12:11:14 -1000
-From: Tejun Heo <tj@kernel.org>
-To: David Vernet <void@manifault.com>
-Cc: linux-kernel@vger.kernel.org, kernel-team@meta.com, sched-ext@meta.com
-Subject: [PATCH sched_ext/for-6.12-fixes] sched_ext: Make cast_mask() inline
-Message-ID: <ZxwXgmKQ2B3OmIea@slm.duckdns.org>
+	s=arc-20240116; t=1729894347; c=relaxed/simple;
+	bh=NK5OZSsxHrxv1wlh6RU3G8N57LyHfd3rgn7LtmDFZgs=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=fMYd9g2vDXIvNc3z5ud9euhkrsGE2zgE24XDHijUu9u2xfvvlJp1ywg6sRQ9DYNJshnRdVRtWTo2yK47tf4hJt0EXu4M2gR3219sun40nNN5y3EWO6PHp7DKiAwAnrqMkDIWgnMvxaH8eNFcWdQhJD+PrsF8sT761eawcBCXt4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--rananta.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LpW8zYBo; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--rananta.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e02fff66a83so4700690276.0
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 15:12:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1729894343; x=1730499143; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=kAitD5UlZ526DH4CXulhVwZM1+TjXuj2ZSzY1GKH9CI=;
+        b=LpW8zYBoJGSJQz5HZxjoDc3iW/SxIU+zk/EYNBfmdJnoCSC1tqzNAvcA3dqe+Mnjf4
+         O6Ar8h9HbBPiQ5slo993rbHc+GZa2HI54b1/CKtJZyCl7I2M+MmBlAzr1Bw4+PrAgMOS
+         sEGaRMfWOTi0w59EOPtFWuvE5VVBIS90XY4+gz9Tg+AbekjT4Vss/L7pD+GCyn7rfv9K
+         QoxPFf2KmMAif1lKebMvqQG9ATXoO8nWLYmpkMJfimN/W63KmmBsTdiexH0COMcR08GR
+         1tLOPLCg3pHiIKOPZeHzuOu3JEZ33xlrejp+ZZwxcJWFTv6etw1H9lYzqtYHm+LY2T4x
+         3Bgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729894343; x=1730499143;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=kAitD5UlZ526DH4CXulhVwZM1+TjXuj2ZSzY1GKH9CI=;
+        b=u9OUgyoCfmh1rZ2lgxsZXRAoQwZaqYbE1QKC5NBK+7hbPTf0nUD7dotmyw9zFsrlg6
+         hFtXKMaJbzmjeSDzlqX1rkBY1D/AQ6kK+UevIJxWgauy7uSutnivMnultkxV3ZbdhDpe
+         Zik4zCLqGmHoEIGyE2Tcb4uK4XoCYzo0Y5v+cdUcJ1DwQ97RtWUe463ZxM+uRJlCd8l2
+         o11DDsGhm1IW1LzcSHB0cD/tLxSdPghbqh/v5d8iZS5LxQ2ofm2l4TPr6Wn/JR9uyULr
+         dhW/PlY4EmGohMWLGeYvwtPh+cgWBml0OxTiu3JJnHlMzAbi9SfkqFTnF78JPQ8e6aoc
+         AJoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX4a/NQlErL6CB8ivs54Ybc9rkttPR/55JTxiUBBGMsQB+y2baQxM22kOEedg30MMPAljqaT29epLkK9pc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCzB/9k0Rmj9g0jSVUcuc4VX4vbdNM6tE7o1ng1eZanLAhyrYH
+	Qy+J4IJSSdJMMuOBMfG08Y8fMMbmv7l3oxupUSEiDfP0O9K14g1IVCYKDiGe9ovrMd0YaODPPMz
+	KBii/kA==
+X-Google-Smtp-Source: AGHT+IG+6UAmoj1XD96N3OA7Nf/oOruad1eDYvy56vmbEa612keZSXmPriH5DCYyGrnCxORY2rVIPeM7z/tx
+X-Received: from rananta-linux.c.googlers.com ([fda3:e722:ac3:cc00:11b:3898:ac11:fac1])
+ (user=rananta job=sendgmr) by 2002:a25:ec0c:0:b0:e2b:d389:b35c with SMTP id
+ 3f1490d57ef6-e3087bfc151mr497276.8.1729894343080; Fri, 25 Oct 2024 15:12:23
+ -0700 (PDT)
+Date: Fri, 25 Oct 2024 22:12:20 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.163.g1226f6d8fa-goog
+Message-ID: <20241025221220.2985227-1-rananta@google.com>
+Subject: [PATCH] KVM: arm64: Mark the VM as dead for failed initializations
+From: Raghavendra Rao Ananta <rananta@google.com>
+To: Oliver Upton <oliver.upton@linux.dev>, Marc Zyngier <maz@kernel.org>
+Cc: Raghavendra Rao Anata <rananta@google.com>, linux-arm-kernel@lists.infradead.org, 
+	kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
+	stable@vger.kernel.org, syzbot <syzkaller@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 
-cast_mask() doesn't do any actual work and is defined in a header file.
-Force it to be inline. When it is not inlined and the function is not used,
-it can cause verificaiton failures like the following:
+Syzbot hit the following WARN_ON() in kvm_timer_update_irq():
 
-  # tools/testing/selftests/sched_ext/runner -t minimal
-  ===== START =====
-  TEST: minimal
-  DESCRIPTION: Verify we can load a fully minimal scheduler
-  OUTPUT:
-  libbpf: prog 'cast_mask': missing BPF prog type, check ELF section name '.text'
-  libbpf: prog 'cast_mask': failed to load: -22
-  libbpf: failed to load object 'minimal'
-  libbpf: failed to load BPF skeleton 'minimal': -22
-  ERR: minimal.c:20
-  Failed to open and load skel
-  not ok 1 minimal #
-  =====  END  =====
+WARNING: CPU: 0 PID: 3281 at arch/arm64/kvm/arch_timer.c:459
+kvm_timer_update_irq+0x21c/0x394
+Call trace:
+  kvm_timer_update_irq+0x21c/0x394 arch/arm64/kvm/arch_timer.c:459
+  kvm_timer_vcpu_reset+0x158/0x684 arch/arm64/kvm/arch_timer.c:968
+  kvm_reset_vcpu+0x3b4/0x560 arch/arm64/kvm/reset.c:264
+  kvm_vcpu_set_target arch/arm64/kvm/arm.c:1553 [inline]
+  kvm_arch_vcpu_ioctl_vcpu_init arch/arm64/kvm/arm.c:1573 [inline]
+  kvm_arch_vcpu_ioctl+0x112c/0x1b3c arch/arm64/kvm/arm.c:1695
+  kvm_vcpu_ioctl+0x4ec/0xf74 virt/kvm/kvm_main.c:4658
+  vfs_ioctl fs/ioctl.c:51 [inline]
+  __do_sys_ioctl fs/ioctl.c:907 [inline]
+  __se_sys_ioctl fs/ioctl.c:893 [inline]
+  __arm64_sys_ioctl+0x108/0x184 fs/ioctl.c:893
+  __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+  invoke_syscall+0x78/0x1b8 arch/arm64/kernel/syscall.c:49
+  el0_svc_common+0xe8/0x1b0 arch/arm64/kernel/syscall.c:132
+  do_el0_svc+0x40/0x50 arch/arm64/kernel/syscall.c:151
+  el0_svc+0x54/0x14c arch/arm64/kernel/entry-common.c:712
+  el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
+  el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
 
-Signed-off-by: Tejun Heo <tj@kernel.org>
-Fixes: a748db0c8c6a ("tools/sched_ext: Receive misc updates from SCX repo")
+The sequence that led to the report is when KVM_ARM_VCPU_INIT ioctl is
+invoked after a failed first KVM_RUN. In a general sense though, since
+kvm_arch_vcpu_run_pid_change() doesn't tear down any of the past
+initiatializations, it's possible that the VM's state could be left
+half-baked. Any upcoming ioctls could behave erroneously because of
+this.
+
+Since these late vCPU initializations is past the point of attributing
+the failures to any ioctl, instead of tearing down each of the previous
+setups, simply mark the VM as dead, gving an opportunity for the
+userspace to close and try again.
+
+Cc: <stable@vger.kernel.org>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Suggested-by: Oliver Upton <oliver.upton@linux.dev>
+Signed-off-by: Raghavendra Rao Ananta <rananta@google.com>
 ---
- tools/sched_ext/include/scx/common.bpf.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/kvm/arm.c | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
 
-diff --git a/tools/sched_ext/include/scx/common.bpf.h b/tools/sched_ext/include/scx/common.bpf.h
-index 27749c51c3ec..248ab790d143 100644
---- a/tools/sched_ext/include/scx/common.bpf.h
-+++ b/tools/sched_ext/include/scx/common.bpf.h
-@@ -320,7 +320,7 @@ u32 bpf_cpumask_weight(const struct cpumask *cpumask) __ksym;
- /*
-  * Access a cpumask in read-only mode (typically to check bits).
-  */
--const struct cpumask *cast_mask(struct bpf_cpumask *mask)
-+static __always_inline const struct cpumask *cast_mask(struct bpf_cpumask *mask)
- {
- 	return (const struct cpumask *)mask;
+diff --git a/arch/arm64/kvm/arm.c b/arch/arm64/kvm/arm.c
+index a0d01c46e4084..ae3551bc98aeb 100644
+--- a/arch/arm64/kvm/arm.c
++++ b/arch/arm64/kvm/arm.c
+@@ -821,12 +821,12 @@ int kvm_arch_vcpu_run_pid_change(struct kvm_vcpu *vcpu)
+ 		 */
+ 		ret = kvm_vgic_map_resources(kvm);
+ 		if (ret)
+-			return ret;
++			goto out_err;
+ 	}
+ 
+ 	ret = kvm_finalize_sys_regs(vcpu);
+ 	if (ret)
+-		return ret;
++		goto out_err;
+ 
+ 	/*
+ 	 * This needs to happen after any restriction has been applied
+@@ -836,16 +836,16 @@ int kvm_arch_vcpu_run_pid_change(struct kvm_vcpu *vcpu)
+ 
+ 	ret = kvm_timer_enable(vcpu);
+ 	if (ret)
+-		return ret;
++		goto out_err;
+ 
+ 	ret = kvm_arm_pmu_v3_enable(vcpu);
+ 	if (ret)
+-		return ret;
++		goto out_err;
+ 
+ 	if (is_protected_kvm_enabled()) {
+ 		ret = pkvm_create_hyp_vm(kvm);
+ 		if (ret)
+-			return ret;
++			goto out_err;
+ 	}
+ 
+ 	if (!irqchip_in_kernel(kvm)) {
+@@ -869,6 +869,10 @@ int kvm_arch_vcpu_run_pid_change(struct kvm_vcpu *vcpu)
+ 	mutex_unlock(&kvm->arch.config_lock);
+ 
+ 	return ret;
++
++out_err:
++	kvm_vm_dead(kvm);
++	return ret;
  }
+ 
+ bool kvm_arch_intc_initialized(struct kvm *kvm)
+-- 
+2.47.0.163.g1226f6d8fa-goog
+
 
