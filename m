@@ -1,58 +1,80 @@
-Return-Path: <linux-kernel+bounces-381065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8CB09AF9CC
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 08:19:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C80CC9AFA43
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 08:47:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39F50283768
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 06:19:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC05F1C231E3
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 06:47:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 960351925BF;
-	Fri, 25 Oct 2024 06:18:48 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A325199FD0;
+	Fri, 25 Oct 2024 06:47:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ZY47b+MV"
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C8E71B0F11
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 06:18:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B29218D621
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 06:47:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729837128; cv=none; b=uDzoRxS8GwZjIGmD2n/Au8ZsAh4IFmwt27lVBjz7MyxFEgECNTX5sUVoGdH5OiVWTSI8YcR1nARetkLFeQhjl7kbLxEROG/pnDJc0BEwcdjMVLsom9tscbvoD17RFxZd3YkoCrFphC947Hn4N9XCcAo8ctJ66uhkAtrNU2Ddf4g=
+	t=1729838846; cv=none; b=sxSohjh36zbYDsO30PITOTofBSNn7pWHp1zty17q+yiYcYdSzgM3H/tqj2rICtlOSux2DZYSKeVHEbT/WW/MsNlTiJuX1MfSlHZAXI+e24jQJq6Z+UTG0tvLG5NcGLlIqt9qVa29DtQYW6d+ZX0mIOhryQ9kNG9MyRtm5BfiwZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729837128; c=relaxed/simple;
-	bh=GGJrLc6k/IoLknH7t+/8lJ/6J/h6bBy1zYotpMDFG7E=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=THVrm4EVKEtNvBWsJ8XbbWnBH9V7KR/lBPWAI+tU9xUBK5IAJDXBG5VnPcY/L7H0HsKwXHQ7qE7qkxipI8tL4T3zxgeaGEQfSkqYtHHNg0wSS2/WInNErcsIQq+eWzLFkRYn7bH9AUwaNGwbhvWsKwhj4xDK3dK5ANKR+jkcq+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4XZXf66glQz4f3jRC
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 14:18:22 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 6E26C1A07B6
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 14:18:40 +0800 (CST)
-Received: from hulk-vt.huawei.com (unknown [10.67.174.121])
-	by APP4 (Coremail) with SMTP id gCh0CgCXy8cjOBtndSE+FA--.48420S2;
-	Fri, 25 Oct 2024 14:18:40 +0800 (CST)
-From: Chen Ridong <chenridong@huaweicloud.com>
-To: akpm@linux-foundation.org,
-	david@fromorbit.com,
-	zhengqi.arch@bytedance.com,
-	roman.gushchin@linux.dev,
-	muchun.song@linux.dev,
-	anshuman.khandual@arm.com,
-	vbabka@suse.cz,
-	kirill@shutemov.name
-Cc: linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	chenridong@huawei.com,
-	wangweiyang2@huawei.com
-Subject: [PATCH v3] mm: shrinker: avoid memleak in alloc_shrinker_info
-Date: Fri, 25 Oct 2024 06:09:42 +0000
-Message-Id: <20241025060942.1049263-1-chenridong@huaweicloud.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1729838846; c=relaxed/simple;
+	bh=y+GFTNaiiNCvu/E/cjxjx3vJfDPj/k5tRFPQhzmKTsk=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
+	 Content-Type:References; b=t3MhnSO3ByhRzAuyg6OaXZ471bftEHPyak8DH+gRGzc2xY36fZxa6vOy/MmPdMYoV5bwOxo+Y8P2F2/ETqfNVolKXhIt/wcBZLo29uzXy1xZtJhZImZuhKOqMjJd3+aYgdIH8Ku1ZEiDV4VftBDDW9CiNhLi0yvs/Afxuabl/3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=ZY47b+MV; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20241025064715epoutp01a873d739850aa7324149f3816526acd0~Bn0GTR62r2940029400epoutp01E
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 06:47:15 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20241025064715epoutp01a873d739850aa7324149f3816526acd0~Bn0GTR62r2940029400epoutp01E
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1729838835;
+	bh=y+GFTNaiiNCvu/E/cjxjx3vJfDPj/k5tRFPQhzmKTsk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=ZY47b+MVTvbUdMvg5iDizzo5uhcjRTOYE85MRF4/qLG3EaFkO6aMGl7BwfdYmOS59
+	 oZ6tNi17OdmpagDT2qaQUdwD7tg961JMjetKoWBVAph2BxSFnMVfvPbGZK+ShlexEd
+	 b/vLYWtKUng/Jt7qXqwVNGnKjhC3basDn1az9LY0=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
+	20241025064715epcas5p39d505507a9186a50445807615f7baae2~Bn0GBZQVX2439624396epcas5p3F;
+	Fri, 25 Oct 2024 06:47:15 +0000 (GMT)
+Received: from epsmges5p2new.samsung.com (unknown [182.195.38.174]) by
+	epsnrtp1.localdomain (Postfix) with ESMTP id 4XZYHP5DvFz4x9Q7; Fri, 25 Oct
+	2024 06:47:13 +0000 (GMT)
+Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
+	epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	71.53.09770.1FE3B176; Fri, 25 Oct 2024 15:47:13 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20241025061108epcas5p173629b3149be6e3b96853eb32e61b9ab~BnUjsgopU2531625316epcas5p1A;
+	Fri, 25 Oct 2024 06:11:08 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20241025061108epsmtrp1a03e57351e610dc599c005daec147395~BnUjrVCJG0440304403epsmtrp10;
+	Fri, 25 Oct 2024 06:11:08 +0000 (GMT)
+X-AuditID: b6c32a4a-bbfff7000000262a-30-671b3ef1df61
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	1C.44.08229.C763B176; Fri, 25 Oct 2024 15:11:08 +0900 (KST)
+Received: from testpc11818.samsungds.net (unknown [109.105.118.18]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20241025061107epsmtip19e31d0d8b4e4ae59263c4efb1492dfeb~BnUi1KX5U2452724527epsmtip12;
+	Fri, 25 Oct 2024 06:11:07 +0000 (GMT)
+From: hexue <xue01.he@samsung.com>
+To: axboe@kernel.dk, asml.silence@gmail.com
+Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: Re: [PATCH v8] io_uring: releasing CPU resources when polling
+Date: Fri, 25 Oct 2024 14:10:59 +0800
+Message-Id: <20241025061059.1172576-1-xue01.he@samsung.com>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <62e57b0e-b646-4f96-bb83-5a0ecb4050da@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,90 +82,65 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCXy8cjOBtndSE+FA--.48420S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7uF13Cr4rur4Dtr4UGr17Wrg_yoW5JF43pF
-	45GFyUGF4rAr45Wr47KF98XFyrta1UC3W7G393XFy0vw4Sg3W7Xr17Jr4jyrWDu3Z3AFy7
-	trWqqrWjgFyUAw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUv2b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0E
-	n4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I
-	0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWU
-	tVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcV
-	CY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAF
-	wI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa
-	7IU17KsUUUUUU==
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmphk+LIzCtJLcpLzFFi42LZdlhTQ/ejnXS6wfaJahZzVm1jtFh9t5/N
+	4l3rORaLX913GS0u75rDZnF2wgdWBzaPnbPusntcPlvq0bdlFaPH501yASxR2TYZqYkpqUUK
+	qXnJ+SmZeem2St7B8c7xpmYGhrqGlhbmSgp5ibmptkouPgG6bpk5QLuVFMoSc0qBQgGJxcVK
+	+nY2RfmlJakKGfnFJbZKqQUpOQUmBXrFibnFpXnpenmpJVaGBgZGpkCFCdkZ+153MRbsYa14
+	evkdawPjGpYuRk4OCQETiaXfj7N3MXJxCAnsZpR4dG0zE4TziVHi6eWpzBDON0aJ2Q8+w7X8
+	fH0Qqmovo8TuSV9ZIJwfjBLPf55jBKliE1CS2L/lA5gtIqAt8frxVLBuZgEribNzfoLZwgJe
+	Eu83gizn5GARUJX4/2slK4jNK2AtsfzcWnaIbfISN7v2M4PYnAK2Ev87drND1AhKnJz5BGqm
+	vETz1tlgp0oIXGOX6G8+ztbFyAHkuEj0LuCGmCMs8er4FqiZUhIv+9ug7HyJyd/XM0LYNRLr
+	Nr+D+tJa4t+VPSwgY5gFNCXW79KHCMtKTD21jgliLZ9E7+8nTBBxXokd82BsJYklR1ZAjZSQ
+	+D1hESuE7SEx79cesLiQwARGiVffgiYwKsxC8s0sJN/MQti8gJF5FaNkakFxbnpqsWmBUV5q
+	OTySk/NzNzGCk6OW1w7Ghw8+6B1iZOJgPMQowcGsJMJ7MUMyXYg3JbGyKrUoP76oNCe1+BCj
+	KTC4JzJLiSbnA9NzXkm8oYmlgYmZmZmJpbGZoZI47+vWuSlCAumJJanZqakFqUUwfUwcnFIN
+	TN33bQ4cr1xvLery9c8HvkP7UybcnOyl+EFpwanba9bFKk71kM/T9ZrjMHH5kv7GOv3QNPcP
+	wWs/7Yj/MMU5PPsa+ztx5/UOslmCOkECAa1sC/8unVc++cDagPm7pAzk0o0PqmszTRfaVcE4
+	v99887XJ7PeNfl/3cUn93aK755OYdEhDlEPUCi2G/mD10EcTblvbn6qb/v//2l/zG0UtOuNP
+	9Xf8abpweJL3bp6ctNR4hk/rRd/knKsse5bbMt39kEzQhcQPUWyd6q9yuSY97LQ41FibtNdJ
+	kIM5YauYurKB5IQXS/TzitJ/b06Zf+BnT39t2glR55MTXqwNd9rKeuGY9Dwtsy8PFcMNnH7f
+	UGIpzkg01GIuKk4EAMetzqkXBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrNLMWRmVeSWpSXmKPExsWy7bCSnG6NmXS6wdYZQhZzVm1jtFh9t5/N
+	4l3rORaLX913GS0u75rDZnF2wgdWBzaPnbPusntcPlvq0bdlFaPH501yASxRXDYpqTmZZalF
+	+nYJXBn7XncxFuxhrXh6+R1rA+Mali5GTg4JAROJn68PMnUxcnEICexmlNgwYwozREJCYsej
+	P6wQtrDEyn/P2SGKvjFKzJjfCVbEJqAksX/LB8YuRg4OEQFdica7CiBhZgEbiZ0tW9hBbGEB
+	L4n3G4+D2SwCqhL/f60Em8krYC2x/Nxadoj58hI3u/aDjeQUsJX437EbLC4ENGdC/2k2iHpB
+	iZMzn7BAzJeXaN46m3kCo8AsJKlZSFILGJlWMUqmFhTnpucWGxYY5qWW6xUn5haX5qXrJefn
+	bmIEh6+W5g7G7as+6B1iZOJgPMQowcGsJMJ7MUMyXYg3JbGyKrUoP76oNCe1+BCjNAeLkjiv
+	+IveFCGB9MSS1OzU1ILUIpgsEwenVAOTxPRXUaIOJkJLeIyYX7ZLXXwwvfPpNVHLXmH+nznf
+	/214fXJW8cJlqcYBS3l3zrzmlzdXz5K9NCrvQsbOkLM3PCWnSn3rzw5YYbFG8t0vlqS4Ew0G
+	/IEfXmiktEUe3SEuM/HS/d0Sl3vPvPjso9j1vH917LqLn67tu1cooZj+NNoyRUpAfdZXvU1N
+	Nm+eb9htsNjwd3a/aMzX1osWOtuWpXGIVsbemNz4PaeWeXfdk37l2+08nxmEdocIqBWZSkm0
+	lWz5EanJ4qaxiTEuxUegwf7Wuq3pn08HfV7uGrXiUsHGD/OX6XZ/2q1w9lVKzOOrnGWqbR9C
+	FDjfbhGQyPIrb5HbG6a6zJiJT6mJZ5MSS3FGoqEWc1FxIgAQAnMYzgIAAA==
+X-CMS-MailID: 20241025061108epcas5p173629b3149be6e3b96853eb32e61b9ab
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20241025061108epcas5p173629b3149be6e3b96853eb32e61b9ab
+References: <62e57b0e-b646-4f96-bb83-5a0ecb4050da@kernel.dk>
+	<CGME20241025061108epcas5p173629b3149be6e3b96853eb32e61b9ab@epcas5p1.samsung.com>
 
-From: Chen Ridong <chenridong@huawei.com>
+On 10/24/24 14:49 Jens Axboe wrote:
+>On 10/24/24 8:49 AM, Pavel Begunkov wrote:
+>> On 10/24/24 15:40, Jens Axboe wrote:
+>>> On 10/24/24 8:26 AM, Pavel Begunkov wrote:
+>>>> On 10/24/24 15:18, Jens Axboe wrote:
+>>>>> On 10/23/24 8:38 PM, hexue wrote:
+>>>>>> On 9/25/2024 12:12, Pavel Begunkov wrote:
+>>>> ...
 
-A memleak was found as bellow:
+>Ah true, well some other spot then, should be pretty easy to find 8
+>bytes for iopoll_start. As mentioned, the point is really just to THINK
+>about where it should go, rather than lazily just shove it at the end
+>like no thought has been given to it.
 
-unreferenced object 0xffff8881010d2a80 (size 32):
-  comm "mkdir", pid 1559, jiffies 4294932666
-  hex dump (first 32 bytes):
-    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-    40 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  @...............
-  backtrace (crc 2e7ef6fa):
-    [<ffffffff81372754>] __kmalloc_node_noprof+0x394/0x470
-    [<ffffffff813024ab>] alloc_shrinker_info+0x7b/0x1a0
-    [<ffffffff813b526a>] mem_cgroup_css_online+0x11a/0x3b0
-    [<ffffffff81198dd9>] online_css+0x29/0xa0
-    [<ffffffff811a243d>] cgroup_apply_control_enable+0x20d/0x360
-    [<ffffffff811a5728>] cgroup_mkdir+0x168/0x5f0
-    [<ffffffff8148543e>] kernfs_iop_mkdir+0x5e/0x90
-    [<ffffffff813dbb24>] vfs_mkdir+0x144/0x220
-    [<ffffffff813e1c97>] do_mkdirat+0x87/0x130
-    [<ffffffff813e1de9>] __x64_sys_mkdir+0x49/0x70
-    [<ffffffff81f8c928>] do_syscall_64+0x68/0x140
-    [<ffffffff8200012f>] entry_SYSCALL_64_after_hwframe+0x76/0x7e
+Thanks a lot for these suggestions and help. I will revise and submit a
+complete v9 patch, thank you very much.
 
-In the alloc_shrinker_info function, when shrinker_unit_alloc return
-err, the info won't be freed. Just fix it.
-
-Fixes: 307bececcd12 ("mm: shrinker: add a secondary array for shrinker_info::{map, nr_deferred}")
-Signed-off-by: Chen Ridong <chenridong@huawei.com>
-Acked-by: Qi Zheng <zhengqi.arch@bytedance.com>
-Acked-by: Roman Gushchin <roman.gushchin@linux.dev>
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
----
- mm/shrinker.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
-
-diff --git a/mm/shrinker.c b/mm/shrinker.c
-index dc5d2a6fcfc4..4a93fd433689 100644
---- a/mm/shrinker.c
-+++ b/mm/shrinker.c
-@@ -76,19 +76,21 @@ void free_shrinker_info(struct mem_cgroup *memcg)
- 
- int alloc_shrinker_info(struct mem_cgroup *memcg)
- {
--	struct shrinker_info *info;
- 	int nid, ret = 0;
- 	int array_size = 0;
- 
- 	mutex_lock(&shrinker_mutex);
- 	array_size = shrinker_unit_size(shrinker_nr_max);
- 	for_each_node(nid) {
--		info = kvzalloc_node(sizeof(*info) + array_size, GFP_KERNEL, nid);
-+		struct shrinker_info *info = kvzalloc_node(sizeof(*info) + array_size,
-+							   GFP_KERNEL, nid);
- 		if (!info)
- 			goto err;
- 		info->map_nr_max = shrinker_nr_max;
--		if (shrinker_unit_alloc(info, NULL, nid))
-+		if (shrinker_unit_alloc(info, NULL, nid)) {
-+			kvfree(info);
- 			goto err;
-+		}
- 		rcu_assign_pointer(memcg->nodeinfo[nid]->shrinker_info, info);
- 	}
- 	mutex_unlock(&shrinker_mutex);
--- 
-2.34.1
-
+--
+Xue
 
