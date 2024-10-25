@@ -1,83 +1,84 @@
-Return-Path: <linux-kernel+bounces-380855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E2BA9AF6FC
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 03:40:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F78C9AF704
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 03:41:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 402D01C2147D
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 01:40:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73A051C21928
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 01:41:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 844D7156665;
-	Fri, 25 Oct 2024 01:39:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7025582D98;
+	Fri, 25 Oct 2024 01:40:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="s8SS9Yrc"
-Received: from esa6.hc1455-7.c3s2.iphmx.com (esa6.hc1455-7.c3s2.iphmx.com [68.232.139.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LWqbVM7b"
+Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com [209.85.210.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6788522B644;
-	Fri, 25 Oct 2024 01:39:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.139.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 427135588B;
+	Fri, 25 Oct 2024 01:40:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729820389; cv=none; b=mg4dhnZai3mTretoPx/8gAfQMxIIw/z+tdpUK4WU0lMV9JoaSKpo0y4MvW/sG8BIrqQopjB43VdodnWw5QbCBqXizQujl0Cmt5OzKDLQgEDSXzhT5/8Ja2XK0kgQ1RUtLZ+UxzeND5kaa6bZLZUxEW6RqqpxOu6tDXHCpQYO06s=
+	t=1729820450; cv=none; b=XKlHU5i/9Rb83loRcqG6syGlWPoejWSkr1Uq+eHJe7IVk22sqQenUBbOg4jSgp7Wo3bedOV7GhM/tctS8rwKLKr0BYASzO64f591/ZSg+zi3D9hTd8La9iQCENoYxSnh88WHCc5nm9m85LnMTxMriluTixCPxB8QFjwy7eZDivo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729820389; c=relaxed/simple;
-	bh=jyqhRjmJYUC4dlrzZbnwcaBJiIpqnBNzCBrurqjVkFw=;
+	s=arc-20240116; t=1729820450; c=relaxed/simple;
+	bh=zhL7t3AugMi3pNT9/kNXcL7AgYv2eRMyt5OX/Ks8oTU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dXKHWtmMCZt/j987HBOPuFz1a/BZfVNXOUY6Km8RYAJlB88jciVcjA2iM9E8mdVuHA242RL/BqF4mvkqClOqx+h5j/jXMuolohNWteGLVJRjJRCvCorAtszYI+jluA4iSxluCSkWMxQwnlPCbepTUi1wHN60ct3tuqMhXhvL0EY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com; spf=pass smtp.mailfrom=fujitsu.com; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=s8SS9Yrc; arc=none smtp.client-ip=68.232.139.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fujitsu.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=fujitsu.com; i=@fujitsu.com; q=dns/txt; s=fj2;
-  t=1729820388; x=1761356388;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=jyqhRjmJYUC4dlrzZbnwcaBJiIpqnBNzCBrurqjVkFw=;
-  b=s8SS9YrcQ7wO3LOju2FMNXbjWCQefS7/d9eakavYcVH7y5CQrowRoIT3
-   qNRkdF1w5mTlRF2Bbr194a4OLinCmABgQ0Gtt2Q4WZ6Jo+zbqdVjgUGl1
-   Am3HS9XXsG/UhfXk74WLX2muimYSMQ+PKwIN7O2DOlDC1ftY0jMlF7144
-   TyXdqtzax3ij9o2OuC5sIDToo952pl26EFUlxjR0YSrbVQMf1WHtpV/us
-   65xfCQ8Vkh0Xs6KUYahLZ510Vmppez1g0pzbgOO1B2V5JvW7ffjzWGQe5
-   QSb/RdiA5DmUklXBFxB7VLpDoXED8edhRwWR+ESYIPUHs5fNnL6iML/RH
-   g==;
-X-CSE-ConnectionGUID: CA8vzYT3SVySnH5uzc4ZIw==
-X-CSE-MsgGUID: FsSvR9yvSVapvhdFuTKYdg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11235"; a="180136537"
-X-IronPort-AV: E=Sophos;i="6.11,230,1725289200"; 
-   d="scan'208";a="180136537"
-Received: from unknown (HELO yto-r1.gw.nic.fujitsu.com) ([218.44.52.217])
-  by esa6.hc1455-7.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2024 10:39:39 +0900
-Received: from yto-m3.gw.nic.fujitsu.com (yto-nat-yto-m3.gw.nic.fujitsu.com [192.168.83.66])
-	by yto-r1.gw.nic.fujitsu.com (Postfix) with ESMTP id 234DADB3C7;
-	Fri, 25 Oct 2024 10:39:37 +0900 (JST)
-Received: from kws-ab4.gw.nic.fujitsu.com (kws-ab4.gw.nic.fujitsu.com [192.51.206.22])
-	by yto-m3.gw.nic.fujitsu.com (Postfix) with ESMTP id 6A507D968B;
-	Fri, 25 Oct 2024 10:39:36 +0900 (JST)
-Received: from edo.cn.fujitsu.com (edo.cn.fujitsu.com [10.167.33.5])
-	by kws-ab4.gw.nic.fujitsu.com (Postfix) with ESMTP id EF3CF70BC6;
-	Fri, 25 Oct 2024 10:39:35 +0900 (JST)
-Received: from iaas-rdma.. (unknown [10.167.135.44])
-	by edo.cn.fujitsu.com (Postfix) with ESMTP id 462531A01E9;
-	Fri, 25 Oct 2024 09:39:35 +0800 (CST)
-From: Li Zhijian <lizhijian@fujitsu.com>
-To: linux-kselftest@vger.kernel.org
-Cc: shuah@kernel.org,
+	 MIME-Version; b=pPM5bNcCOs44LVbrCzFE6quoSxACOXlmAtKhHjt3+6qK/5KF+tLC9jPoYNogHPjOjsUYy+0g7c+y55cCVBv0Kkqwm5+xL4lv5yTsZehuU3Rf96kCRojeieUNFvBHc9mkUJNp45y3tKf6exeRiBVYBcSjxZ7rsdQnvNTzwixHxBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LWqbVM7b; arc=none smtp.client-ip=209.85.210.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-718066adb47so930506a34.0;
+        Thu, 24 Oct 2024 18:40:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729820447; x=1730425247; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qYCPmx6mUPSspZotT6B7w+SDVO1LigP5ym7s3WSFR30=;
+        b=LWqbVM7b4N+Q6W9vNEns0n32QsK5Me9ChnvAM+FgLbRuXh8fzopyN+pVqNsz79GpEG
+         DRt7zHz6fQ+o5p5b2Uvu7Ky5zodhTstsDXVDgZOYeApUiRqiSa2GGAECeQfwf04GmCHB
+         lkhdzRNA2IA/PmR0Y1mHnLjFYjlt5wQyAA4WubVBWxAiP/cgRQZlBJ5HyGEjT/MDLGb9
+         zqjPgWK8wZhLhE3zza15k6IdRESmnNxBz9lE1K8n0wc0Fos8qmBujD1KuvA2r7s0aBKX
+         GoJy/r/ugD+japEDFlR02x5ZyX0E3rLhI2aU3MYaIqvqOvMBj81ig+fdyUjN5zEZZK8F
+         ZZOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729820447; x=1730425247;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qYCPmx6mUPSspZotT6B7w+SDVO1LigP5ym7s3WSFR30=;
+        b=Vh4igNtbKpJ5dYyEXM9jlV8atSDZK7xv/QEQGKpIong8eEjqG2wjmi7P/aDrCZ8Lcd
+         iSVghFlefDPsu6igMduGaZR4OZ94lk34fFvD4zIukYaG8c9dINvMOR6i3DuJSls/cqJP
+         ZqvdOBNMtrMhsE+/SYXxSQrhNMtMcrCkOBqKPU2TWA9cvuiyGtGE5TFEzT5Tr03pPD0t
+         fZe5NcU0Pi+LaT7doLyGJXpayH0z3g2qKyNP4IdMz4tm5gxOzKtaGgoPwS09YfbppA5i
+         K8KGjyCwBCMK/oHdk2uB+S815pBxo2qMtA2uxi5VQzsGpRAPD+TaY3Hl+lb/1+YHtW1/
+         0vrw==
+X-Forwarded-Encrypted: i=1; AJvYcCVRDZYL7BN2roCxdSOqBvCYpqA/mVLLAbzvhzkA2rFJ1AaqYepPEb92YcnLC4fKg6E9a2s2la9PKgU3jktAPDKQW3/0iQ==@vger.kernel.org, AJvYcCVSwJwd5uR2hHnXl7q63JantE6s0gofOIDiJocCEiy2HDs+XyQJBt3NwIav1LZYH6GsKCxXc/qS3LmdWhU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzi1u4QR0Duf9qo2l8/bv++6zRLud761Rrmyetnzw598evq0sx2
+	0SeqVqZMPXBEDrM6VNaUx9nlcv7ITNxPH+T7w0N2KKKjIieSJP8HC2sIM98F
+X-Google-Smtp-Source: AGHT+IGInXuckqVl9bUW1ABsYzlwnOD6uf7WvTA3qIOhbeVjYy1XJqywTUaXo4p5Rjx7RWr9phU0bQ==
+X-Received: by 2002:a05:6830:2a05:b0:718:118d:2be8 with SMTP id 46e09a7af769-7184b4479d3mr8222978a34.28.1729820447113;
+        Thu, 24 Oct 2024 18:40:47 -0700 (PDT)
+Received: from localhost.localdomain (host95.181-12-202.telecom.net.ar. [181.12.202.95])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7edc8a6e5acsm70992a12.90.2024.10.24.18.40.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Oct 2024 18:40:46 -0700 (PDT)
+From: Kurt Borja <kuurtb@gmail.com>
+To: kuurtb@gmail.com
+Cc: W_Armin@gmx.de,
+	hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com,
 	linux-kernel@vger.kernel.org,
-	Li Zhijian <lizhijian@fujitsu.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org
-Subject: [PATCH for-next 7/7] selftests/net: Fix ./ns-XXXXXX not cleanup
-Date: Fri, 25 Oct 2024 09:40:10 +0800
-Message-ID: <20241025014010.6533-7-lizhijian@fujitsu.com>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <20241025014010.6533-1-lizhijian@fujitsu.com>
-References: <20241025014010.6533-1-lizhijian@fujitsu.com>
+	platform-driver-x86@vger.kernel.org
+Subject: [PATCH v8 1/4] alienware-wmi: fixed indentation and clean up
+Date: Thu, 24 Oct 2024 22:40:17 -0300
+Message-ID: <20241025014016.4927-2-kuurtb@gmail.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <20241025013856.4729-2-kuurtb@gmail.com>
+References: <20241025013856.4729-2-kuurtb@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,63 +86,237 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-TM-AS-Product-Ver: IMSS-9.1.0.1417-9.0.0.1002-28752.003
-X-TM-AS-User-Approved-Sender: Yes
-X-TMASE-Version: IMSS-9.1.0.1417-9.0.1002-28752.003
-X-TMASE-Result: 10--1.620900-10.000000
-X-TMASE-MatchedRID: 6n1zk+md1nW+AcfZRlRvHuOnF2j8nBWbn5nfR7I2dFNlmPP/XnGELrmK
-	lv3K7lvCloSrM+MzMAEa/Rm8RmNZp6s4CIwqUsM8rMZ+BqQt2NrJ5SXtoJPLyFcZNuxCoduSsaY
-	IF6sQsQ7Nbuq5jiJ+bEqGW42c0HkYPCIyO+XnL284hD0Y/Y/a78E5XPQnBzGXq8KsbROd9VSD3F
-	7iC1Qm2idrKX/gwnicYx6ZNoOmH25g/HvJ1232Mp4CIKY/Hg3AaZGo0EeYG95UMLUJu4leYyq2r
-	l3dzGQ1tyaKchQkyE45QtN9xzZW3ugJcSBd3qZSUzqf3+iknU+bV/bRlWl7V3ed4oqRsBtzx8E/
-	iqf5nIPM85RmE6LnSrhZsTzrx0WohLvAid2uj0YVxRB/din+uJ07T8ZSLiAVvR84/OmB1wQp4n8
-	eQBnwiw==
-X-TMASE-SNAP-Result: 1.821001.0001-0-1-22:0,33:0,34:0-0
 
-```
-readonly STATS="$(mktemp -p /tmp ns-XXXXXX)"
-readonly BASE=`basename $STATS`
-```
-It could be a mistake to write to $BASE rather than $STATS, where $STATS
-is used to save the NSTAT_HISTORY and it will be cleaned up before exit.
+Fixed inconsistent indentation and removed unnecessary (acpi_size) and
+(u32 *) casts.
 
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: Eric Dumazet <edumazet@google.com>
-Cc: Jakub Kicinski <kuba@kernel.org>
-Cc: Paolo Abeni <pabeni@redhat.com>
-Signed-off-by: Li Zhijian <lizhijian@fujitsu.com>
+Signed-off-by: Kurt Borja <kuurtb@gmail.com>
+Reviewed-by: Armin Wolf <W_Armin@gmx.de>
 ---
-Cc: netdev@vger.kernel.org
-
+v8:
+ - Unchanged
+v7:
+ - Unchanged
+v6:
+ - Unchanged
 ---
-Hello,
-Cover letter is here.
+ drivers/platform/x86/dell/alienware-wmi.c | 134 +++++++++++-----------
+ 1 file changed, 67 insertions(+), 67 deletions(-)
 
-This patch set aims to make 'git status' clear after 'make' and 'make
-run_tests' for kselftests.
----
-V2: nothing change
----
- tools/testing/selftests/net/veth.sh | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/tools/testing/selftests/net/veth.sh b/tools/testing/selftests/net/veth.sh
-index 4f1edbafb946..457312ef135a 100755
---- a/tools/testing/selftests/net/veth.sh
-+++ b/tools/testing/selftests/net/veth.sh
-@@ -46,8 +46,8 @@ create_ns() {
- 		ip -n $BASE$ns addr add dev veth$ns $BM_NET_V4$ns/24
- 		ip -n $BASE$ns addr add dev veth$ns $BM_NET_V6$ns/64 nodad
- 	done
--	echo "#kernel" > $BASE
--	chmod go-rw $BASE
-+	echo "#kernel" > $STATS
-+	chmod go-rw $STATS
- }
+diff --git a/drivers/platform/x86/dell/alienware-wmi.c b/drivers/platform/x86/dell/alienware-wmi.c
+index f5ee62ce1..16a3fe9ac 100644
+--- a/drivers/platform/x86/dell/alienware-wmi.c
++++ b/drivers/platform/x86/dell/alienware-wmi.c
+@@ -116,68 +116,68 @@ static int __init dmi_matched(const struct dmi_system_id *dmi)
  
- __chk_flag() {
+ static const struct dmi_system_id alienware_quirks[] __initconst = {
+ 	{
+-	 .callback = dmi_matched,
+-	 .ident = "Alienware X51 R3",
+-	 .matches = {
+-		     DMI_MATCH(DMI_SYS_VENDOR, "Alienware"),
+-		     DMI_MATCH(DMI_PRODUCT_NAME, "Alienware X51 R3"),
+-		     },
+-	 .driver_data = &quirk_x51_r3,
+-	 },
++		.callback = dmi_matched,
++		.ident = "Alienware X51 R3",
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "Alienware"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "Alienware X51 R3"),
++		},
++		.driver_data = &quirk_x51_r3,
++	},
+ 	{
+-	 .callback = dmi_matched,
+-	 .ident = "Alienware X51 R2",
+-	 .matches = {
+-		     DMI_MATCH(DMI_SYS_VENDOR, "Alienware"),
+-		     DMI_MATCH(DMI_PRODUCT_NAME, "Alienware X51 R2"),
+-		     },
+-	 .driver_data = &quirk_x51_r1_r2,
+-	 },
++		.callback = dmi_matched,
++		.ident = "Alienware X51 R2",
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "Alienware"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "Alienware X51 R2"),
++		},
++		.driver_data = &quirk_x51_r1_r2,
++	},
+ 	{
+-	 .callback = dmi_matched,
+-	 .ident = "Alienware X51 R1",
+-	 .matches = {
+-		     DMI_MATCH(DMI_SYS_VENDOR, "Alienware"),
+-		     DMI_MATCH(DMI_PRODUCT_NAME, "Alienware X51"),
+-		     },
+-	 .driver_data = &quirk_x51_r1_r2,
+-	 },
++		.callback = dmi_matched,
++		.ident = "Alienware X51 R1",
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "Alienware"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "Alienware X51"),
++		},
++		.driver_data = &quirk_x51_r1_r2,
++	},
+ 	{
+-	 .callback = dmi_matched,
+-	 .ident = "Alienware ASM100",
+-	 .matches = {
+-		     DMI_MATCH(DMI_SYS_VENDOR, "Alienware"),
+-		     DMI_MATCH(DMI_PRODUCT_NAME, "ASM100"),
+-		     },
+-	 .driver_data = &quirk_asm100,
+-	 },
++		.callback = dmi_matched,
++		.ident = "Alienware ASM100",
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "Alienware"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "ASM100"),
++		},
++		.driver_data = &quirk_asm100,
++	},
+ 	{
+-	 .callback = dmi_matched,
+-	 .ident = "Alienware ASM200",
+-	 .matches = {
+-		     DMI_MATCH(DMI_SYS_VENDOR, "Alienware"),
+-		     DMI_MATCH(DMI_PRODUCT_NAME, "ASM200"),
+-		     },
+-	 .driver_data = &quirk_asm200,
+-	 },
++		.callback = dmi_matched,
++		.ident = "Alienware ASM200",
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "Alienware"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "ASM200"),
++		},
++		.driver_data = &quirk_asm200,
++	},
+ 	{
+-	 .callback = dmi_matched,
+-	 .ident = "Alienware ASM201",
+-	 .matches = {
+-		     DMI_MATCH(DMI_SYS_VENDOR, "Alienware"),
+-		     DMI_MATCH(DMI_PRODUCT_NAME, "ASM201"),
+-		     },
+-	 .driver_data = &quirk_asm201,
+-	 },
+-	 {
+-	 .callback = dmi_matched,
+-	 .ident = "Dell Inc. Inspiron 5675",
+-	 .matches = {
+-		     DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
+-		     DMI_MATCH(DMI_PRODUCT_NAME, "Inspiron 5675"),
+-		     },
+-	 .driver_data = &quirk_inspiron5675,
+-	 },
++		.callback = dmi_matched,
++		.ident = "Alienware ASM201",
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "Alienware"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "ASM201"),
++		},
++		.driver_data = &quirk_asm201,
++	},
++	{
++		.callback = dmi_matched,
++		.ident = "Dell Inc. Inspiron 5675",
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
++			DMI_MATCH(DMI_PRODUCT_NAME, "Inspiron 5675"),
++		},
++		.driver_data = &quirk_inspiron5675,
++	},
+ 	{}
+ };
+ 
+@@ -221,8 +221,8 @@ static struct platform_zone *zone_data;
+ 
+ static struct platform_driver platform_driver = {
+ 	.driver = {
+-		   .name = "alienware-wmi",
+-		   }
++		.name = "alienware-wmi",
++	}
+ };
+ 
+ static struct attribute_group zone_attribute_group = {
+@@ -292,7 +292,7 @@ static int alienware_update_led(struct platform_zone *zone)
+ 		guid = WMAX_CONTROL_GUID;
+ 		method_id = WMAX_METHOD_ZONE_CONTROL;
+ 
+-		input.length = (acpi_size) sizeof(wmax_basic_args);
++		input.length = sizeof(wmax_basic_args);
+ 		input.pointer = &wmax_basic_args;
+ 	} else {
+ 		legacy_args.colors = zone->colors;
+@@ -306,7 +306,7 @@ static int alienware_update_led(struct platform_zone *zone)
+ 			guid = LEGACY_CONTROL_GUID;
+ 		method_id = zone->location + 1;
+ 
+-		input.length = (acpi_size) sizeof(legacy_args);
++		input.length = sizeof(legacy_args);
+ 		input.pointer = &legacy_args;
+ 	}
+ 	pr_debug("alienware-wmi: guid %s method %d\n", guid, method_id);
+@@ -358,7 +358,7 @@ static int wmax_brightness(int brightness)
+ 		.led_mask = 0xFF,
+ 		.percentage = brightness,
+ 	};
+-	input.length = (acpi_size) sizeof(args);
++	input.length = sizeof(args);
+ 	input.pointer = &args;
+ 	status = wmi_evaluate_method(WMAX_CONTROL_GUID, 0,
+ 				     WMAX_METHOD_BRIGHTNESS, &input, NULL);
+@@ -508,7 +508,7 @@ static acpi_status alienware_wmax_command(struct wmax_basic_args *in_args,
+ 	struct acpi_buffer input;
+ 	struct acpi_buffer output;
+ 
+-	input.length = (acpi_size) sizeof(*in_args);
++	input.length = sizeof(*in_args);
+ 	input.pointer = in_args;
+ 	if (out_data) {
+ 		output.length = ACPI_ALLOCATE_BUFFER;
+@@ -542,7 +542,7 @@ static ssize_t show_hdmi_cable(struct device *dev,
+ 	};
+ 	status =
+ 	    alienware_wmax_command(&in_args, WMAX_METHOD_HDMI_CABLE,
+-				   (u32 *) &out_data);
++				   &out_data);
+ 	if (ACPI_SUCCESS(status)) {
+ 		if (out_data == 0)
+ 			return sysfs_emit(buf, "[unconnected] connected unknown\n");
+@@ -563,7 +563,7 @@ static ssize_t show_hdmi_source(struct device *dev,
+ 	};
+ 	status =
+ 	    alienware_wmax_command(&in_args, WMAX_METHOD_HDMI_STATUS,
+-				   (u32 *) &out_data);
++				   &out_data);
+ 
+ 	if (ACPI_SUCCESS(status)) {
+ 		if (out_data == 1)
+@@ -643,7 +643,7 @@ static ssize_t show_amplifier_status(struct device *dev,
+ 	};
+ 	status =
+ 	    alienware_wmax_command(&in_args, WMAX_METHOD_AMPLIFIER_CABLE,
+-				   (u32 *) &out_data);
++				   &out_data);
+ 	if (ACPI_SUCCESS(status)) {
+ 		if (out_data == 0)
+ 			return sysfs_emit(buf, "[unconnected] connected unknown\n");
+@@ -695,7 +695,7 @@ static ssize_t show_deepsleep_status(struct device *dev,
+ 		.arg = 0,
+ 	};
+ 	status = alienware_wmax_command(&in_args, WMAX_METHOD_DEEP_SLEEP_STATUS,
+-					(u32 *) &out_data);
++					&out_data);
+ 	if (ACPI_SUCCESS(status)) {
+ 		if (out_data == 0)
+ 			return sysfs_emit(buf, "[disabled] s5 s5_s4\n");
 -- 
-2.44.0
+2.47.0
 
 
