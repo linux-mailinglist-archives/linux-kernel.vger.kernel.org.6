@@ -1,227 +1,177 @@
-Return-Path: <linux-kernel+bounces-380913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 691299AF7C0
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 04:56:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 074069AF7C6
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 05:00:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28968281C20
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 02:56:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F8391F22AE6
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 03:00:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F418218A6D8;
-	Fri, 25 Oct 2024 02:56:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5072518BBA1;
+	Fri, 25 Oct 2024 03:00:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="WIhiqk95"
-Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="MJAGflzy"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB33F3D97A
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 02:56:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A09B3136326;
+	Fri, 25 Oct 2024 03:00:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729824997; cv=none; b=RT8v4XwO1K0intWlR7ZYu6xe2dbcqdhe7ZLhZXN4L9H08Od6IRZDtBKKBX5CW/VOSi87W3RSoXjfLDQjdrtPpVVhPA8oZ14a69WLpj5yK5Rky0cXbggNo/GDIwVDHfey8UOh14QV5kkPKx19GMQtjAy7I0rcTQfve/uB5+VipF4=
+	t=1729825208; cv=none; b=GzS4PcPpuigYS+VsFPY6r5m1WGQCkf24n/8xnn5I5h/On7qF7sRw9v+m/9FTBq6Jsq7258S/CacqhS9umIBMkCQ2M94knO1d7t2ZFThfUynJ3aXPwhkpaN0FQq2NhODhGVNJXAfwM8sOLnySaQb6oPS/Vqc2/w9NpGz5oWk8fN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729824997; c=relaxed/simple;
-	bh=EfC7lgQhhmvhYBLMo1IU1s7Bt6lWSqbZOHA71kdaykc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gUatrF8x0TUqex0S4UdOJnp286J0IUJ1bG/7xwtNshrAsQp1lvTPZx5PX+pxZzAuLAenuV/t8Cp0Wq1MyQk5d3yUCWxVpdU+4GYPxE1G03ulX8R0bmwIxO2yoT4PElJbJhEutWUbewENuLnDJE7s2KZjaZxJOvUhDO4myi86yQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=WIhiqk95; arc=none smtp.client-ip=115.124.30.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1729824992; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=r5sK3skr1wSoBWwJCUEl4n7b+a68KhVtGJHz3Rxecmg=;
-	b=WIhiqk95+Tf4AhjSIOOHnnxXgd+oUrZ7mPi+bUIAno5AhYTP5ZTRFbqXVkFGRspyPbiPOKmvJRwAnqAoFVi3T6wN50kaPlHxHDl6hq7Gz7YvK7B+EaAm14i/6K3hkVQIJTjN4il61L7CKTite/FH3OnxBv7a4DGU/MuvJlSKTYo=
-Received: from 30.74.144.130(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WHqp5Ts_1729824989 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Fri, 25 Oct 2024 10:56:30 +0800
-Message-ID: <645ec5ee-ad60-4114-85fb-d19b5791d8a9@linux.alibaba.com>
-Date: Fri, 25 Oct 2024 10:56:29 +0800
+	s=arc-20240116; t=1729825208; c=relaxed/simple;
+	bh=AS8e/Nl5pwNV3BaA5zEKM1+4fcoc/cezX1VPg5Fbmok=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i/vy3JnBMYAVC7yUP4+iIpWyVP18Y2XKODJ1qD+ZlzDVVuBZmH6g+OhYbz38xlHZCJYVx6n7EpBKtK1weNijRq5bdpWoAjb2V6YNhXuYxkDi8VRmVLRbKtvaEgmxPni0yH3JM3Kfg9tR0PcqR0RlrvNujg8GXZc/NUwmlDfqyYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=MJAGflzy; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49OKcuqE029449;
+	Fri, 25 Oct 2024 03:00:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=zTvjHGQmHShqHVodkQLupmPJ
+	uXE9pqqtxdqU5dalTG4=; b=MJAGflzyGDszkDswVZr37BuabSLQAZ77YWxDbOEM
+	yV86uDyq8riqi0l0NjHFBpkpi6KJNGV2D3SB9FfD3dsgCTOPJMp7h77R+FHXkX0y
+	qhI1UdtQqFKXP0AmcC+bmcjP5E470MiWSmpGdIvwMJPo+4XT5ZhDlwtmIfkegg69
+	3kjeeLyfV+yTqSFatDZhsvPzTxmZLSC+ht8D4aagygOeCrYOUk0nuYCx+M1SfN8U
+	Iw7n/RuO6PVQ5Tzd2TiLRWPatSNP93iwe/4EqZjQQSq79METY0a98LplsrHxiQyQ
+	yj/wPtpLC64D5V6nQ4wZF10gQ5B8wONslHd3AuP35ry3PA==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42em3w7k3x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Oct 2024 03:00:02 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49P301iM007877
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Oct 2024 03:00:01 GMT
+Received: from cse-cd02-lnx.ap.qualcomm.com (10.80.80.8) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 24 Oct 2024 19:59:56 -0700
+Date: Fri, 25 Oct 2024 10:59:51 +0800
+From: Yuanjie Yang <quic_yuanjiey@quicinc.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, <ulf.hansson@linaro.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <bhupesh.sharma@linaro.org>, <andersson@kernel.org>,
+        <konradybcio@kernel.org>
+CC: <linux-mmc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <quic_tingweiz@quicinc.com>, <quic_yuanjiey@quicinc.com>
+Subject: Re: [PATCH v1 2/3] arm64: dts: qcom: qcs615: add SD and emmc node
+Message-ID: <ZxsJp6XtJSfnNJqH@cse-cd02-lnx.ap.qualcomm.com>
+References: <20241023092708.604195-1-quic_yuanjiey@quicinc.com>
+ <20241023092708.604195-3-quic_yuanjiey@quicinc.com>
+ <xfy335jzh5t5a7fdrjfswerjdze3vaybf7rvkxnae3cv3xaii7@rn7iqwga2p62>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v3 0/4] Support large folios for tmpfs
-To: Daniel Gomez <d@kruces.com>, David Hildenbrand <david@redhat.com>,
- Daniel Gomez <da.gomez@samsung.com>,
- "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc: Matthew Wilcox <willy@infradead.org>, akpm@linux-foundation.org,
- hughd@google.com, wangkefeng.wang@huawei.com, 21cnbao@gmail.com,
- ryan.roberts@arm.com, ioworker0@gmail.com, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org,
- "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-References: <cover.1728548374.git.baolin.wang@linux.alibaba.com>
- <Zw_IT136rxW_KuhU@casper.infradead.org>
- <e1b6fa05-019c-4a40-afc0-bc1efd15ad42@linux.alibaba.com>
- <6dohx7zna7x6hxzo4cwnwarep3a7rohx4qxubds3uujfb7gp3c@2xaubczl2n6d>
- <8e48cf24-83e1-486e-b89c-41edb7eeff3e@linux.alibaba.com>
- <CGME20241021085439eucas1p10a0b6e7c3b0ace3c9a0402427595875a@eucas1p1.samsung.com>
- <ppgciwd7cxmeqssryshe42lxwb4sdzr6gjhwwbotw4gx2l7vi5@7y4hedxpf4nx>
- <D51IU4N746MI.FDS6C7GYO4RP@samsung.com>
- <c59f2881-fbbb-41b1-830d-9d81f36ecc0b@linux.alibaba.com>
- <486a72c6-5877-4a95-a587-2a32faa8785d@redhat.com>
- <7eb412d1-f90e-4363-8c7b-072f1124f8a6@linux.alibaba.com>
- <1b0f9f94-06a6-48ac-a68e-848bce1008e9@redhat.com>
- <D53Z7I8D6MRB.XN14XUEFQFG7@kruces.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <D53Z7I8D6MRB.XN14XUEFQFG7@kruces.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <xfy335jzh5t5a7fdrjfswerjdze3vaybf7rvkxnae3cv3xaii7@rn7iqwga2p62>
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 3Xq7Z9kwTsThphRfzQvyR6Q6ZJjx7eBy
+X-Proofpoint-GUID: 3Xq7Z9kwTsThphRfzQvyR6Q6ZJjx7eBy
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=999
+ priorityscore=1501 impostorscore=0 bulkscore=0 lowpriorityscore=0
+ clxscore=1011 suspectscore=0 spamscore=0 malwarescore=0 mlxscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410250021
 
-
-
-On 2024/10/24 18:49, Daniel Gomez wrote:
-> On Wed Oct 23, 2024 at 11:27 AM CEST, David Hildenbrand wrote:
->> On 23.10.24 10:04, Baolin Wang wrote:
->>>
->>>
->>> On 2024/10/22 23:31, David Hildenbrand wrote:
->>>> On 22.10.24 05:41, Baolin Wang wrote:
->>>>>
->>>>>
->>>>> On 2024/10/21 21:34, Daniel Gomez wrote:
->>>>>> On Mon Oct 21, 2024 at 10:54 AM CEST, Kirill A. Shutemov wrote:
->>>>>>> On Mon, Oct 21, 2024 at 02:24:18PM +0800, Baolin Wang wrote:
->>>>>>>>
->>>>>>>>
->>>>>>>> On 2024/10/17 19:26, Kirill A. Shutemov wrote:
->>>>>>>>> On Thu, Oct 17, 2024 at 05:34:15PM +0800, Baolin Wang wrote:
->>>>>>>>>> + Kirill
->>>>>>>>>>
->>>>>>>>>> On 2024/10/16 22:06, Matthew Wilcox wrote:
->>>>>>>>>>> On Thu, Oct 10, 2024 at 05:58:10PM +0800, Baolin Wang wrote:
->>>>>>>>>>>> Considering that tmpfs already has the 'huge=' option to
->>>>>>>>>>>> control the THP
->>>>>>>>>>>> allocation, it is necessary to maintain compatibility with the
->>>>>>>>>>>> 'huge='
->>>>>>>>>>>> option, as well as considering the 'deny' and 'force' option
->>>>>>>>>>>> controlled
->>>>>>>>>>>> by '/sys/kernel/mm/transparent_hugepage/shmem_enabled'.
->>>>>>>>>>>
->>>>>>>>>>> No, it's not.  No other filesystem honours these settings.
->>>>>>>>>>> tmpfs would
->>>>>>>>>>> not have had these settings if it were written today.  It should
->>>>>>>>>>> simply
->>>>>>>>>>> ignore them, the way that NFS ignores the "intr" mount option
->>>>>>>>>>> now that
->>>>>>>>>>> we have a better solution to the original problem.
->>>>>>>>>>>
->>>>>>>>>>> To reiterate my position:
->>>>>>>>>>>
->>>>>>>>>>>        - When using tmpfs as a filesystem, it should behave like
->>>>>>>>>>> other
->>>>>>>>>>>          filesystems.
->>>>>>>>>>>        - When using tmpfs to implement MAP_ANONYMOUS | MAP_SHARED,
->>>>>>>>>>> it should
->>>>>>>>>>>          behave like anonymous memory.
->>>>>>>>>>
->>>>>>>>>> I do agree with your point to some extent, but the ‘huge=’ option
->>>>>>>>>> has
->>>>>>>>>> existed for nearly 8 years, and the huge orders based on write
->>>>>>>>>> size may not
->>>>>>>>>> achieve the performance of PMD-sized THP in some scenarios, such
->>>>>>>>>> as when the
->>>>>>>>>> write length is consistently 4K. So, I am still concerned that
->>>>>>>>>> ignoring the
->>>>>>>>>> 'huge' option could lead to compatibility issues.
->>>>>>>>>
->>>>>>>>> Yeah, I don't think we are there yet to ignore the mount option.
->>>>>>>>
->>>>>>>> OK.
->>>>>>>>
->>>>>>>>> Maybe we need to get a new generic interface to request the semantics
->>>>>>>>> tmpfs has with huge= on per-inode level on any fs. Like a set of
->>>>>>>>> FADV_*
->>>>>>>>> handles to make kernel allocate PMD-size folio on any allocation
->>>>>>>>> or on
->>>>>>>>> allocations within i_size. I think this behaviour is useful beyond
->>>>>>>>> tmpfs.
->>>>>>>>>
->>>>>>>>> Then huge= implementation for tmpfs can be re-defined to set these
->>>>>>>>> per-inode FADV_ flags by default. This way we can keep tmpfs
->>>>>>>>> compatible
->>>>>>>>> with current deployments and less special comparing to rest of
->>>>>>>>> filesystems on kernel side.
->>>>>>>>
->>>>>>>> I did a quick search, and I didn't find any other fs that require
->>>>>>>> PMD-sized
->>>>>>>> huge pages, so I am not sure if FADV_* is useful for filesystems
->>>>>>>> other than
->>>>>>>> tmpfs. Please correct me if I missed something.
->>>>>>>
->>>>>>> What do you mean by "require"? THPs are always opportunistic.
->>>>>>>
->>>>>>> IIUC, we don't have a way to hint kernel to use huge pages for a
->>>>>>> file on
->>>>>>> read from backing storage. Readahead is not always the right way.
->>>>>>>
->>>>>>>>> If huge= is not set, tmpfs would behave the same way as the rest of
->>>>>>>>> filesystems.
->>>>>>>>
->>>>>>>> So if 'huge=' is not set, tmpfs write()/fallocate() can still
->>>>>>>> allocate large
->>>>>>>> folios based on the write size? If yes, that means it will change the
->>>>>>>> default huge behavior for tmpfs. Because previously having 'huge='
->>>>>>>> is not
->>>>>>>> set means the huge option is 'SHMEM_HUGE_NEVER', which is similar
->>>>>>>> to what I
->>>>>>>> mentioned:
->>>>>>>> "Another possible choice is to make the huge pages allocation based
->>>>>>>> on write
->>>>>>>> size as the *default* behavior for tmpfs, ..."
->>>>>>>
->>>>>>> I am more worried about breaking existing users of huge pages. So
->>>>>>> changing
->>>>>>> behaviour of users who don't specify huge is okay to me.
->>>>>>
->>>>>> I think moving tmpfs to allocate large folios opportunistically by
->>>>>> default (as it was proposed initially) doesn't necessary conflict with
->>>>>> the default behaviour (huge=never). We just need to clarify that in
->>>>>> the documentation.
->>>>>>
->>>>>> However, and IIRC, one of the requests from Hugh was to have a way to
->>>>>> disable large folios which is something other FS do not have control
->>>>>> of as of today. Ryan sent a proposal to actually control that globally
->>>>>> but I think it didn't move forward. So, what are we missing to go back
->>>>>> to implement large folios in tmpfs in the default case, as any other fs
->>>>>> leveraging large folios?
->>>>>
->>>>> IMHO, as I discussed with Kirill, we still need maintain compatibility
->>>>> with the 'huge=' mount option. This means that if 'huge=never' is set
->>>>> for tmpfs, huge page allocation will still be prohibited (which can
->>>>> address Hugh's request?). However, if 'huge=' is not set, we can
->>>>> allocate large folios based on the write size.
+On Thu, Oct 24, 2024 at 11:42:26PM +0300, Dmitry Baryshkov wrote:
+> On Wed, Oct 23, 2024 at 05:27:07PM +0800, Yuanjie Yang wrote:
+> > Add SD and emmc support to the QCS615 Ride platform. The SD controller
+> > and emmc controller of QCS615 are derived from SM6115. Include the
+> > relevant binding documents accordingly. Additionally, configure
+> > emmc-related and SD-related opp, power, and interconnect settings
+> > in the device tree.
+> > 
+> > Signed-off-by: Yuanjie Yang <quic_yuanjiey@quicinc.com>
+> > ---
+> >  arch/arm64/boot/dts/qcom/qcs615.dtsi | 198 +++++++++++++++++++++++++++
+> >  1 file changed, 198 insertions(+)
+> > 
+> > diff --git a/arch/arm64/boot/dts/qcom/qcs615.dtsi b/arch/arm64/boot/dts/qcom/qcs615.dtsi
+> > index fcba83fca7cf..3840edf13fe8 100644
+> > --- a/arch/arm64/boot/dts/qcom/qcs615.dtsi
+> > +++ b/arch/arm64/boot/dts/qcom/qcs615.dtsi
+> > @@ -399,6 +399,65 @@ qfprom: efuse@780000 {
+> >  			#size-cells = <1>;
+> >  		};
+> >  
+> > +		sdhc_1: mmc@7c4000 {
+> > +			compatible = "qcom,qcs615-sdhci", "qcom,sdhci-msm-v5";
+> > +			reg = <0 0x7c4000 0 0x1000>,
+> > +			      <0 0x7c5000 0 0x1000>;
 > 
-> So, in order to make tmpfs behave like other filesystems, we need to
-> allocate large folios by default. Not setting 'huge=' is the same as
-> setting it to 'huge=never' as per documentation. But 'huge=' is meant to
-> control THP, not large folios, so it should not have a conflict here, or
-> else, what case are you thinking?
+>  <0x0 0x007c4000 0x0 0x1000> (this applies to all address nodes, so
+>  sdhc_2 too.
+Thanks, in the next version, I will adjust all the values in the reg to hexadecimal.
+
 > 
-> So, to make tmpfs behave like other filesystems, we need to allocate
-> large folios by default. According to the documentation, not setting
+> > +			reg-names = "hc",
+> > +				    "cqhci";
+> > +
+> > +			interrupts = <GIC_SPI 641 IRQ_TYPE_LEVEL_HIGH>,
+> > +				     <GIC_SPI 644 IRQ_TYPE_LEVEL_HIGH>;
+> > +			interrupt-names = "hc_irq",
+> > +					  "pwr_irq";
+> > +
+> > +			clocks = <&gcc GCC_SDCC1_AHB_CLK>,
+> > +				 <&gcc GCC_SDCC1_APPS_CLK>,
+> > +				 <&rpmhcc RPMH_CXO_CLK>,
+> > +				 <&gcc GCC_SDCC1_ICE_CORE_CLK>;
+> > +			clock-names = "iface",
+> > +				      "core",
+> > +				      "xo",
+> > +				      "ice";
+> > +
+> > +			resets = <&gcc GCC_SDCC1_BCR>;
+> > +
+> > +			power-domains = <&rpmhpd RPMHPD_CX>;
+> > +			operating-points-v2 = <&sdhc1_opp_table>;
+> > +			iommus = <&apps_smmu 0x02c0 0x0>;
+> > +			interconnects = <&aggre1_noc MASTER_SDCC_1 QCOM_ICC_TAG_ALWAYS
+> > +					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
+> > +					<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
+> > +					 &config_noc SLAVE_SDCC_1 QCOM_ICC_TAG_ALWAYS>;
+> > +			interconnect-names = "sdhc-ddr",
+> > +					     "cpu-sdhc";
+> > +
+> > +			bus-width = <8>;
+> > +			qcom,dll-config = <0x000f642c>;
+> > +			qcom,ddr-config = <0x80040868>;
+> > +			supports-cqe;
+> > +			dma-coherent;
+> > +			mmc-ddr-1_8v;
+> > +			mmc-hs200-1_8v;
+> > +			mmc-hs400-1_8v;
+> > +			mmc-hs400-enhanced-strobe;
+> 
+> Are these board properties or SoC properties?
+Thanks, these properties are Soc properties, so I put them in dtsi.
 
-Right.
+> > +			status = "disabled";
+> > +
+> 
+> -- 
+> With best wishes
+> Dmitry
 
-> 'huge=' is the same as setting 'huge=never.' However, 'huge=' is
-
-I will update the documentation in next version. That means if 'huge=' 
-option is not set, we can still allocate large folios based on the write 
-size (will be not same as setting 'huge=never').
-
-> intended to control THP, not large folios, so there shouldn't be
-> a conflict in this case. Can you clarify what specific scenario or
-
-Yes, we should still keep the same semantics of 
-'huge=always/within_size/advise' setting, which only controls THP 
-allocations.
-
-> conflict you're considering here? Perhaps when large folios order is the
-> same as PMD-size?
+Thanks,
+Yuanjie
 
