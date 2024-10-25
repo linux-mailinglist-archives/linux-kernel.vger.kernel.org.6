@@ -1,168 +1,141 @@
-Return-Path: <linux-kernel+bounces-381875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 365689B05C5
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:27:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A93209B05CB
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:28:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62BB91C227C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 14:27:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 616AE1F24469
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 14:28:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCDED202648;
-	Fri, 25 Oct 2024 14:27:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4957A208234;
+	Fri, 25 Oct 2024 14:27:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Tb792vHT"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CGZA6lvs"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7480C1D90DC
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 14:27:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92B7A200BA4;
+	Fri, 25 Oct 2024 14:27:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729866435; cv=none; b=d7gHaSTMdr7lrI2qJY79SUWdG4s2KEBgD3Y+Iy9xhPfVePWzSJ2OAcxmXBCee0mpY4dp39GGanSq+fI5R4dkdJP4pK09P7whxtguym8NuqL9YRPGGWO0wd86Xg3Rt+ZB7/xfUCuy0qOia319agzDnx8eewDZmvOaT0cfeHmajjk=
+	t=1729866465; cv=none; b=FtwHZFg4wDAookHN2IdRXlkuZgO+MnUMQu1cIZ/J8RSNAILdOWpvDUTM4Jzthf758nbaEFV2lq5GXWK00PYcAtNpRCSxc6Bw0p2ntBVNtYEADGGhGnytEDzk0gBzIKXt1sdShEICEWChHYV2gm+YgR6Y2nhJaqsSO/G/7OQmdmA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729866435; c=relaxed/simple;
-	bh=cYrU01+vs8JnT1+0uzUTRHT5ISaLXhGhS9KnyMKjeWY=;
+	s=arc-20240116; t=1729866465; c=relaxed/simple;
+	bh=SNOT2iG1uo43SZFt0GZqyBwcm+SiJ5JmL6rlhz0NOv8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O3KBFXvMox2Py/7C4mfbPvQUiKC5T5rP8aPQQzoPtgslnZqsoQgc3EFrawodcYbytjjW+sPvhprVcfG4hwWTLmc44ZZu2klIQ8fanHOj2BAFcfeqJ9Zz6rmo2esG0Y3DjDTYMufkEsBZlRunQlAWJjbI+S/RclUG1ckYFYwzRKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Tb792vHT; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4314f38d274so27331735e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 07:27:10 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=jzEwvsoA8Rx7rI4tUvc0vQYp9w/nt1z3KWMmUIXKQdTDOSWXwkeIpTQ4kIw9q6w8FmWquE4TQy1NX1Tpf842cpgPp0zpSI8Vu2H0pg6bdxLBZq6UW8SajahsSQRP2ZgQoxkGj1CXLbkZeT1+n1Yaw7DY7R9Z40k2pB/iwWc615U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CGZA6lvs; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a9a26a5d6bfso303371266b.1;
+        Fri, 25 Oct 2024 07:27:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729866429; x=1730471229; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1729866462; x=1730471262; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=cz/ZpQzkOEXhpSATdwYFTyjss6etUyLHorpfFXwy6YY=;
-        b=Tb792vHTeufKBmye4pbjqoGoxerwFHxaJFJ5l/rRNkJjTzE3CSzoCp8jl71Uacqyk3
-         06kHMbvFECQw9Te1VhPR7jCZzjz/UfO52YYnnsZtwmTFjak7/8h6kUuRziNoK8EkvGiu
-         QOIsvToYYA6LCyqR4EQKYscHoaoMufkcxTIhw1s65ZOPvuQFJri6vQila40WvgVcQwqL
-         Bp2WtmzNb7D5qVDyAG4uPEim8HCE4h1bzmoaOijayfVQBV/5JHI+21mdDtoXcfx8MkeS
-         /mJ1jb0M0AyY0fJdU2NDwbuZiTFPq6qLmmspS4MClHiuKeN9wMuFWksRQIW5ZoJv/YZf
-         oiQA==
+        bh=fR5hzdpK0KAXZdWFhkN0m31lZEsfiSfvLl8lR/kVQKI=;
+        b=CGZA6lvseLbgAnRAcYpH1VRs5Kvq3j89s22Sf/0fVWpwtVJpTJCbQF1PYfYbKaMO4m
+         QuL61M/g30w/MPslAFzsI06Tm8VhYIQe81CDo9+zRtFoLZicCSEEikKIaOSDOlKUiA/H
+         lHlYnz5RMueSUh0S36XZWeSsAF0tltMVC9Zchm6GpAbArhav2QjuD+FoQgH1viOSC8uy
+         OzOgEbxfV+6NqMaMTmnhvn+EyJDHBsA9Mj4stbD7JeteDH0zexerVzv9/JmJRYiUDnP7
+         kEbOVlU8uvaP487DOjjkfGCAStqwhiSBZ1gMEa1dpjaMfauYs8gtekPUUA+gIA0a2CXT
+         MlBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729866429; x=1730471229;
+        d=1e100.net; s=20230601; t=1729866462; x=1730471262;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=cz/ZpQzkOEXhpSATdwYFTyjss6etUyLHorpfFXwy6YY=;
-        b=GyVp0+F88V56+KDYfJmC/NGTx2lzPefeYPViMTrEASNiPp/LEPUDEzbWNPgyth+YGK
-         YbfEtiM4UjshJBojp8yEhaxxzGx634gNXYyaVNse0VpgvsQdqBbuZJd89O57PjsAuHFA
-         j76uTM00TVPyR0fUVXMnyeeELmbxql/ZpOr2ogIs6w1u+fjcdWA+uML99wgCiAzFMLIg
-         VAIYonr0xy/aIaphMLb0Se1GBSErcC14oW+U28vjCQVlwqTTGKO1SCgz2TboyjWlex+H
-         Ux38dyAg1fW57IHQcyZEJHJKACEx5CakFFmLxsy/iLcsNS847kaX4ihWW3NGl/JO0ylS
-         eHRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVo57qoHaO5cNoj8naWYUj7YrrviE5tL2EGvCfI+02aQdkI1Fg9yeeRUN3XT1Xe8UAcTgbiYat9EqXotJI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpDbsfonmPDVxTwVcvbQfOx/af+pIOCOORtSBtpWAcPMLTShn2
-	tv4SIpwa85mk6Zo1EWdQTAHmyKHWjhTLpM5tJDmNX32AicB2X/bRu0Q+I73UM5E=
-X-Google-Smtp-Source: AGHT+IGzqbaTc2261LLl/UzSQw5vuy2RdBXHXX++uxU+WMogRjLSB/WntDtfLaLSBitiwURijkqQdg==
-X-Received: by 2002:a05:6000:1f86:b0:37d:5359:6753 with SMTP id ffacd0b85a97d-37efcf06030mr10257560f8f.15.1729866428773;
-        Fri, 25 Oct 2024 07:27:08 -0700 (PDT)
-Received: from localhost (p50915d2d.dip0.t-ipconnect.de. [80.145.93.45])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43193595470sm19151505e9.15.2024.10.25.07.27.08
+        bh=fR5hzdpK0KAXZdWFhkN0m31lZEsfiSfvLl8lR/kVQKI=;
+        b=hXB+k+sqkboaNOdouIUWuyIlerRUorl30dKYMsgFoS9OTiX8MsfGghsSPxTeVxf94v
+         anenAhKVrh6Q8BLpbe/Qg3RN+h7m1gWdaazak96OKq40TNEt6hBk3SqUjAdJ1RihRGEM
+         JJJ9GOA1f42GYmM3MXpCxdXx4be2OQzx2UgozQvINWPEsK2AYHsJNXWzmlcwzt7hRsHd
+         bN6XhVgRMYfXR1zVkgzEK0SPO4o09AK/dPLocK5pBuBCRZ2Mg9khNZuYKJ8rj8ZNdoZB
+         ijAliQIosx856Zuu5qSePVllxXqJi+Sbfu/8ZPDhUiUmd9rLouhRVBvJ1ShP0FDjvkVf
+         fVVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXdnmfHMMQrRyMURLt5WsX9No+BjKP3ZgQQTsJWCmaTEWl8+AntuoejmeNC6XPZYOte1bVp5ElImphEC4y5@vger.kernel.org, AJvYcCXiTOJTSmtaUzossPjgWuaBeEQ7xKDgmAbnKJBKgO3ms7vZJZkQ7496Lx3grLN0b0aRZaQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyoruXzGk5sBqjQ0JXeWJV9a/bpD4nGYJK5A1fV1qLnJE27CHCh
+	r4siF9aqd8bfwtLCH0oJyXfNwV/M8vm7+zu5fo48iT6rWYbqShRaB8ihHObVwnE=
+X-Google-Smtp-Source: AGHT+IGPQeVt+Ho9WeKCaan/AgLgjEin4LNAeAKET0Nw1qGl80K+N4Zeg8GXUkU+/j6Y1Rr/fpdcmA==
+X-Received: by 2002:a17:907:6d24:b0:a86:94e2:2a47 with SMTP id a640c23a62f3a-a9abf887496mr901934066b.15.1729866461696;
+        Fri, 25 Oct 2024 07:27:41 -0700 (PDT)
+Received: from andrea ([2a01:5a8:300:22d3:a281:3d89:19cb:ed96])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b3a088ae9sm75669966b.217.2024.10.25.07.27.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2024 07:27:08 -0700 (PDT)
-Date: Fri, 25 Oct 2024 16:27:07 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Zeng Heng <zengheng4@huawei.com>
-Cc: jia-cheng.hu@intel.com, gregkh@linuxfoundation.org, 
-	quic_jjohnson@quicinc.com, jinqian@android.com, alan@linux.intel.com, 
-	linux-kernel@vger.kernel.org, bobo.shaobowang@huawei.com, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH] goldfish: Fix unused const variable
- 'goldfish_pipe_acpi_match'
-Message-ID: <ttlc5ppgljd3plbk6kw4ndi47pqafivtxk2sosdhlw3zeda273@dn74s3eluxqp>
-References: <20241025074129.1920707-1-zengheng4@huawei.com>
+        Fri, 25 Oct 2024 07:27:41 -0700 (PDT)
+Date: Fri, 25 Oct 2024 17:27:37 +0300
+From: Andrea Parri <parri.andrea@gmail.com>
+To: Hernan Ponce de Leon <hernan.poncedeleon@huaweicloud.com>
+Cc: puranjay@kernel.org, paulmck@kernel.org, bpf@vger.kernel.org,
+	lkmm@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: Some observations (results) on BPF acquire and release
+Message-ID: <Zxuq2Zvpn7ap4ZR5@andrea>
+References: <Zxk2wNs4sxEIg-4d@andrea>
+ <daa60273-d01a-8fc5-5e26-e8fc9364c1d8@huaweicloud.com>
+ <ZxuZ-wGccb3yhBAD@andrea>
+ <d8aa61a8-e2fc-7668-9845-81664c9d181f@huaweicloud.com>
+ <ZxugzP0yB3zeqKSn@andrea>
+ <8360f999-0d64-3b4f-e4b8-8c84f7311af2@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="hit3xbxtw6ye6c5j"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241025074129.1920707-1-zengheng4@huawei.com>
+In-Reply-To: <8360f999-0d64-3b4f-e4b8-8c84f7311af2@huaweicloud.com>
+
+> I am particularly interested in tests using lwarx and stwcx instructions
+> (this is what I understood would be used if one follows [1] to compile the
+> tests in this thread).
+> 
+> I have not yet check the cambridge website, but due to the timeline, I don't
+> expect to find tests with those instructions. The same is true with [2].
+> 
+> I have limited experience with diy7, but I remember that it had some
+> limitations to generate RMW instructions, at least for C [3].
+
+Oh, I'm sure there are, though I'd also not consider myself the 'expert'
+when it comes to diy7 internals.  ;-)  Here's an example use of diy7 /
+diyone7 generating lwarx and stwcx and reflecting the previous pattern:
+
+$ diyone7 -arch PPC LwSyncdWW Coe SyncdWRPA SyncdRRAP Fre
+PPC A
+"LwSyncdWW Coe SyncdWRNaA SyncdRRANa Fre"
+Generator=diyone7 (version 7.57+1)
+Prefetch=0:x=F,0:y=W,1:y=F,1:x=T
+Com=Co Fr
+Orig=LwSyncdWW Coe SyncdWRNaA SyncdRRANa Fre
+{
+0:r2=x; 0:r4=y;
+1:r2=y; 1:r3=z; 1:r6=x;
+}
+ P0           | P1              ;
+ li r1,1      | li r1,2         ;
+ stw r1,0(r2) | stw r1,0(r2)    ;
+ lwsync       | sync            ;
+ li r3,1      | Loop00:         ;
+ stw r3,0(r4) | lwarx r4,r0,r3  ;
+              | stwcx. r4,r0,r3 ;
+              | bne  Loop00     ;
+              | sync            ;
+              | lwz r5,0(r6)    ;
+exists ([y]=2 /\ 1:r5=0)
+
+But again, I'd probably have to defer to proper herdtools7 developers
+and maintainers for any diy7 bug or misbehavior you'd have to discover.
+
+  Andrea
 
 
---hit3xbxtw6ye6c5j
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] goldfish: Fix unused const variable
- 'goldfish_pipe_acpi_match'
-MIME-Version: 1.0
-
-Hello,
-
-[Cc +=3D Andy]
-
-On Fri, Oct 25, 2024 at 03:41:29PM +0800, Zeng Heng wrote:
-> Fix the following compilation warning:
->=20
-> drivers/platform/goldfish/goldfish_pipe.c:925:36: warning:
-> =E2=80=98goldfish_pipe_acpi_match=E2=80=99 defined but not used
-> [-Wunused-const-variable=3D]
->   925 | static const struct acpi_device_id goldfish_pipe_acpi_match[] =3D=
- {
->=20
-> Only define the const variable when the CONFIG_ACPI is enabled.
-
-Note you also need CONFIG_MODULE=3Dn to reproduce.
-
-> Fixes: d62f324b0ac8 ("goldfish: Enable ACPI-based enumeration for android=
- pipe")
-> Signed-off-by: Zeng Heng <zengheng4@huawei.com>
-> ---
->  drivers/platform/goldfish/goldfish_pipe.c | 2 ++
->  1 file changed, 2 insertions(+)
->=20
-> diff --git a/drivers/platform/goldfish/goldfish_pipe.c b/drivers/platform=
-/goldfish/goldfish_pipe.c
-> index c2aab0cfab33..aeabacba3760 100644
-> --- a/drivers/platform/goldfish/goldfish_pipe.c
-> +++ b/drivers/platform/goldfish/goldfish_pipe.c
-> @@ -922,11 +922,13 @@ static void goldfish_pipe_remove(struct platform_de=
-vice *pdev)
->  	goldfish_pipe_device_deinit(pdev, dev);
->  }
-> =20
-> +#ifdef CONFIG_ACPI
->  static const struct acpi_device_id goldfish_pipe_acpi_match[] =3D {
->  	{ "GFSH0003", 0 },
->  	{ },
->  };
->  MODULE_DEVICE_TABLE(acpi, goldfish_pipe_acpi_match);
-> +#endif
-> =20
->  static const struct of_device_id goldfish_pipe_of_match[] =3D {
->  	{ .compatible =3D "google,android-pipe", },
-
-Looking at changes like
-https://lore.kernel.org/all/20241024130424.3818291-11-andriy.shevchenko@lin=
-ux.intel.com/
-I suggest to drop the use of ACPI_PTR() instead.
-
-Best regards
-Uwe
-
---hit3xbxtw6ye6c5j
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmcbqrgACgkQj4D7WH0S
-/k6Enwf/RAoLI8smEpzIHrmCNNbja27SEkWThWWrEcuCnZwWPeroRDSZUI3wYWsR
-0mwxEiREvLdf4wwUUk0uN0XDjdw7pUVhti9erQxiK64kmJp0D30crzhTB4z6Mn4l
-CV0mhOzGwUPkW4Q+2Yetw6YE8tsl/Bdco8aPVXsVlAfvg3vqZY1G+X7YKUdjYJqo
-JpKz338wqXjP6qK2y4urHhYWkG58FDAxD7kK6QH0QyJzCn49ZOkxmpdleYd46Ntf
-2fDSG7s91OfF9N3qwetUlHThpvQ/O5HTedpf/wT57dvEqbDspphkMd9H+zMwUAAA
-/Sv7cZUrrSwRsYt6ggfXLuxdS65enA==
-=/oPB
------END PGP SIGNATURE-----
-
---hit3xbxtw6ye6c5j--
+> 
+> Hernan
+> 
+> [1] https://github.com/torvalds/linux/blob/master/arch/powerpc/net/bpf_jit_comp32.c
+> [2] https://github.com/herd/herdtools7/tree/master/catalogue/herding-cats/ppc/tests/campaign
+> [3] https://github.com/herd/herdtools7/issues/905
+> 
 
