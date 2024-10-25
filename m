@@ -1,182 +1,439 @@
-Return-Path: <linux-kernel+bounces-381991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B342B9B075D
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:12:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E7D69B075B
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:12:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6BF31C24A8D
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:12:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1C19284EA9
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:12:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2041C155C8C;
-	Fri, 25 Oct 2024 15:06:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7842D1534E9;
+	Fri, 25 Oct 2024 15:06:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b="kX3780rA"
-Received: from mx0a-002e3701.pphosted.com (mx0a-002e3701.pphosted.com [148.163.147.86])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XpMmpAyw"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5E7E70839
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 15:06:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.147.86
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB7AA70839
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 15:06:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729868799; cv=none; b=nWyScNH0V4bUFX5NP62MyQDDWZ3j9rPO5odymG01iKMyfsZuaDQbp9Sssyns0tSw6iCj6AMqwsKiWaO5RVbKjUApuVnru97Xw3rgvIRJWFFjJkn1WSm/Ie44u8WVdtRyr3TkLKLaTgxFS9s+876CDZSRjXS70u2NyYfZJdK0ci0=
+	t=1729868788; cv=none; b=Ict9nxNuhW6Mt+00uuJSig2XQ5+G+xoBP0mGHuxy7ljC0kkAoZD3cViW45PMfHiX3e6Sfi7i3c80/bOh3QfWt/QC/pMMApxP9EUnaVL/cFX6VVVH31fNafzdUOoMTKaSuiXrW9xkZYwOtYvVMFTCvQLBW+9ik80LAPegDeyeIso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729868799; c=relaxed/simple;
-	bh=RXjbQjWuvBGjAM9mdgID+Z8MbBOg9axZEb0E4R8GZco=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q2RMAUAasBdnfsIBhVb1jJ3+UsfiSc6naPR7Z550cLdesqCQ/TgEtIrhIXYxlErqmNj4K3Yn3O6yCtC66E8VSw9JYSqyrC92/+jnIzxD6jiDGaDe/1VPqYm0+KjArop3MtDFVP1rRFNIxBEEhlw4ewoLGbMN/ZxJd5UfKgiQErs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com; spf=pass smtp.mailfrom=hpe.com; dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b=kX3780rA; arc=none smtp.client-ip=148.163.147.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hpe.com
-Received: from pps.filterd (m0134422.ppops.net [127.0.0.1])
-	by mx0b-002e3701.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49PB3BH4022996;
-	Fri, 25 Oct 2024 15:06:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hpe.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pps0720; bh=RFcTYy3srZYLFshIC0xOHECkko
-	QynMM7aw09SnKhvh4=; b=kX3780rAADPBjmFQ2mDeMFZdtVBT8EmiuuoD1mAX4P
-	A9q75JdVCcORTKDwWDV6idh5xLI3J8+OBW74klD8Ydz3N9KeXF+JrqfNd0Nt5ejY
-	UrvEaBLMIso41YUV8u6g2kFVAB7WLpUrD/RHXPWdrcd87ITUqob9tvjH/pgV+66Y
-	l2BglR4ExAWqVjIvtKwi2vusEq0KgxHRoDekZD05RRDLXjivG8vPF35FMsOAccLN
-	+kf5TfFmBx53OHAdDGvlbyMe+M6tuPLZna1rmjoYHL9n+0PaGoGrvjDESVNxGvs+
-	LBDjVvDYFwy6p+c5OxedmWPRwmq6VDWm2JR7cTeo+n9A==
-Received: from p1lg14879.it.hpe.com ([16.230.97.200])
-	by mx0b-002e3701.pphosted.com (PPS) with ESMTPS id 42g4mc4r94-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 25 Oct 2024 15:06:06 +0000 (GMT)
-Received: from p1lg14885.dc01.its.hpecorp.net (unknown [10.119.18.236])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by p1lg14879.it.hpe.com (Postfix) with ESMTPS id 9EBE213761;
-	Fri, 25 Oct 2024 15:06:05 +0000 (UTC)
-Received: from swahl-home.5wahls.com (unknown [16.231.227.36])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by p1lg14885.dc01.its.hpecorp.net (Postfix) with ESMTPS id 35851800EB1;
-	Fri, 25 Oct 2024 15:06:02 +0000 (UTC)
-Date: Fri, 25 Oct 2024 10:06:00 -0500
-From: Steve Wahl <steve.wahl@hpe.com>
-To: Valentin Schneider <vschneid@redhat.com>
-Cc: Steve Wahl <steve.wahl@hpe.com>, Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
-        Mel Gorman <mgorman@suse.de>, linux-kernel@vger.kernel.org,
-        Russ Anderson <rja@hpe.com>, Dimitri Sivanich <sivanich@hpe.com>
-Subject: Re: [PATCH] sched/topology: improve topology_span_sane speed
-Message-ID: <Zxuz2I1Bn0yG4MYj@swahl-home.5wahls.com>
-References: <20241010155111.230674-1-steve.wahl@hpe.com>
- <xhsmh34kxv3dc.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+	s=arc-20240116; t=1729868788; c=relaxed/simple;
+	bh=iYTgG8NanLdQKD+AsusgTN8Ch4lAf9ypWbQ35xI0bCU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=XaHsroZEsg3WiGCyUZwKMfTpTw6E7XsyYncZVH1apSX4jgzAMcztbuybqQcyUGNLQ1u6iVOssRn+j2U8ZI/jC36H2GG4ikIFAT39uqc2+tZHoHjDbWuagmM0zh3+PIjp45NmtDHKE8JLcKPaIv3sWZrPlY5hGnXu96nPPHIt+Pc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XpMmpAyw; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729868784;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CIz46+x4bRXmvobS/E6y4UXGqgG2y4nXvZMzKFRszJs=;
+	b=XpMmpAywW1Mv2NNV7wiqjp3DMsvA8ewWmkUpnDhzILyPOaH2uFJudQUnpFDS39nQbjv2J+
+	VxQ7HD98IOqoW9aMKrTYa6oyScL3JAdpfAn/p3X/X5eYoBeFX3mNkvle6sEqgReoH1yeHH
+	+/nYUMthIhy0+I0lDnD9b+SuiZ2Wc4Y=
+Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
+ [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-418-uEbKPWjNMCO67Aae8s2kBg-1; Fri, 25 Oct 2024 11:06:23 -0400
+X-MC-Unique: uEbKPWjNMCO67Aae8s2kBg-1
+Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-a9a1af73615so151224866b.0
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 08:06:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729868782; x=1730473582;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=CIz46+x4bRXmvobS/E6y4UXGqgG2y4nXvZMzKFRszJs=;
+        b=ptpfZ32p9L1We6YRp1698ARW2J0a2EQaE82c2/FSY18vg5IdLnFU7QH7ij7BKdkJ/8
+         t1FYXd5LaWyh1hXV0jCwPDl+xpcxgHAGkvItXvTLRMpXzog78wogSdlbLEh5A/zgmZYb
+         U5euwKs8uZ4en1oVOzATJfum1ypK/VZ8rRl6VI4yBF2jCsfAT5fKVK4eI9/T4J1Uj+7y
+         +Imo09MPGEKjLpj9iqTyiiO20+8uPJPiQdJ6I9xRbMxdFi6CM+w4cd/gJiS/mgCAfp16
+         AO9drL/BDacOzTM8zfDh1fPFl9iLLf6A/4/9I1o4VowQ2DLk+iNXqx7SG65JEnVujNgS
+         m+fA==
+X-Forwarded-Encrypted: i=1; AJvYcCURIq/XsQKg/DaXqEJnM7juqPVu3xhSw/glJmlrcZ3rPPpwE5xxaFdrgLLgEz1kpEiWNk/+TlENNbTlRV4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzjxIV4jFF29Zrzyt9liVT/3KRNnR/2fBwbOohqdyvIPOqkKLtj
+	N0BYX25DQx2EJkSER2E75Xbz9tv/bwax2HiXiz2a6odfo55xIvm+xgNqNmfZh3RRbBRRcWVXkx0
+	jxtfTYbYEqhmRcaDNjg1bwhXmFGofUvUBwtJROeDYk/4F22kmejF3frweCpkhcw==
+X-Received: by 2002:a17:907:e9f:b0:a9a:422:ec7 with SMTP id a640c23a62f3a-a9ad275d9cemr511541966b.32.1729868782043;
+        Fri, 25 Oct 2024 08:06:22 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGFdN3GZL4gIyto9nt/eqaWje2kl2AtZnDgm2Uj/IF3mPI6nGQFRBSHLa0Dvg/S6O07CgiZUw==
+X-Received: by 2002:a17:907:e9f:b0:a9a:422:ec7 with SMTP id a640c23a62f3a-a9ad275d9cemr511538766b.32.1729868781503;
+        Fri, 25 Oct 2024 08:06:21 -0700 (PDT)
+Received: from eisenberg.fritz.box (200116b82de5ba00738ac8dadaac7543.dip.versatel-1u1.de. [2001:16b8:2de5:ba00:738a:c8da:daac:7543])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b3a08b478sm79649766b.223.2024.10.25.08.06.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Oct 2024 08:06:21 -0700 (PDT)
+Message-ID: <5a2739f702a59deb51d19d7570c352b98b1e0628.camel@redhat.com>
+Subject: Re: [PATCH] PCI: Restore the original INTX_DISABLE bit by
+ pcim_intx()
+From: Philipp Stanner <pstanner@redhat.com>
+To: Takashi Iwai <tiwai@suse.de>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Date: Fri, 25 Oct 2024 17:06:20 +0200
+In-Reply-To: <87ldycs097.wl-tiwai@suse.de>
+References: <20241024155539.19416-1-tiwai@suse.de>
+	 <933083faa55109949cbb5a07dcec27f3e4bff9ec.camel@redhat.com>
+	 <87y12csbqe.wl-tiwai@suse.de>
+	 <5b2911489844f6a970da053ebfc126eddf7c896c.camel@redhat.com>
+	 <87ldycs097.wl-tiwai@suse.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <xhsmh34kxv3dc.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
-X-Proofpoint-ORIG-GUID: eFVrPvmGA1kCYG14Mk581D5VyKSsV5wy
-X-Proofpoint-GUID: eFVrPvmGA1kCYG14Mk581D5VyKSsV5wy
-X-HPE-SCL: -1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-05_03,2024-10-04_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 impostorscore=0
- phishscore=0 clxscore=1015 lowpriorityscore=0 mlxlogscore=978 spamscore=0
- priorityscore=1501 mlxscore=0 bulkscore=0 malwarescore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2410250117
 
-On Tue, Oct 15, 2024 at 04:37:35PM +0200, Valentin Schneider wrote:
-> On 10/10/24 10:51, Steve Wahl wrote:
-> > Use a different approach to topology_span_sane(), that checks for the
-> > same constraint of no partial overlaps for any two CPU sets for
-> > non-NUMA topology levels, but does so in a way that is O(N) rather
-> > than O(N^2).
-> >
-> > Instead of comparing with all other masks to detect collisions, keep
-> > one mask that includes all CPUs seen so far and detect collisions with
-> > a single cpumask_intersects test.
-> >
-> > If the current mask has no collisions with previously seen masks, it
-> > should be a new mask, which can be uniquely identified by the lowest
-> > bit set in this mask.  Keep a pointer to this mask for future
-> > reference (in an array indexed by the lowest bit set), and add the
-> > CPUs in this mask to the list of those seen.
-> >
-> > If the current mask does collide with previously seen masks, it should
-> > be exactly equal to a mask seen before, looked up in the same array
-> > indexed by the lowest bit set in the mask, a single comparison.
-> >
-> > Move the topology_span_sane() check out of the existing topology level
-> > loop, let it use its own loop so that the array allocation can be done
-> > only once, shared across levels.
-> >
-> > On a system with 1920 processors (16 sockets, 60 cores, 2 threads),
-> > the average time to take one processor offline is reduced from 2.18
-> > seconds to 1.01 seconds.  (Off-lining 959 of 1920 processors took
-> > 34m49.765s without this change, 16m10.038s with this change in place.)
-> >
-> 
-> This isn't the first complaint about topology_span_sane() vs big
-> systems. It might be worth to disable the check once it has scanned all
-> CPUs once - not necessarily at init, since some folks have their systems
-> boot with only a subset of the available CPUs and online them later on.
-> 
-> I'd have to think more about how this behaves vs the dynamic NUMA topology
-> code we got as of
-> 
->   0fb3978b0aac ("sched/numa: Fix NUMA topology for systems with CPU-less nodes")
-> 
-> (i.e. is scanning all possible CPUs enough to guarantee no overlaps when
-> having only a subset of online CPUs? I think so...)
-> 
-> but maybe something like so?
-> ---
-> diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-> index 9748a4c8d6685..bf95c3d4f6072 100644
-> --- a/kernel/sched/topology.c
-> +++ b/kernel/sched/topology.c
-> @@ -2361,12 +2361,25 @@ static struct sched_domain *build_sched_domain(struct sched_domain_topology_leve
->  static bool topology_span_sane(struct sched_domain_topology_level *tl,
->  			      const struct cpumask *cpu_map, int cpu)
->  {
-> +	static bool validated;
->  	int i = cpu + 1;
->  
-> +	if (validated)
-> +		return true;
-> +
->  	/* NUMA levels are allowed to overlap */
->  	if (tl->flags & SDTL_OVERLAP)
->  		return true;
->  
-> +	/*
-> +	 * We're visiting all CPUs available in the system, no need to re-check
-> +	 * things after that. Even if we end up finding overlaps here, we'll
-> +	 * have issued a warning and can skip the per-CPU scan in later
-> +	 * calls to this function.
-> +	 */
-> +	if (cpumask_equal(cpu_map, cpu_possible_mask))
-> +		validated = true;
-> +
->  	/*
->  	 * Non-NUMA levels cannot partially overlap - they must be either
->  	 * completely equal or completely disjoint. Otherwise we can end up
+On Fri, 2024-10-25 at 16:52 +0200, Takashi Iwai wrote:
+> On Fri, 25 Oct 2024 16:28:42 +0200,
+> Philipp Stanner wrote:
+> >=20
+> > On Fri, 2024-10-25 at 12:44 +0200, Takashi Iwai wrote:
+> > > On Fri, 25 Oct 2024 11:26:18 +0200,
+> > > Philipp Stanner wrote:
+> > > >=20
+> > > > Hi,
+> > > >=20
+> > > > On Thu, 2024-10-24 at 17:55 +0200, Takashi Iwai wrote:
+> > > > > pcim_intx() tries to restore the INTX_DISABLE bit at removal
+> > > > > via
+> > > > > devres, but there is a chance that it restores a wrong value.
+> > > > > Because the value to be restored is blindly assumed to be the
+> > > > > negative
+> > > > > of the enable argument, when a driver calls pcim_intx()
+> > > > > unnecessarily
+> > > > > for the already enabled state, it'll restore to the disabled
+> > > > > state in
+> > > > > turn.
 
-I tried adding this, surprisingly I saw no effect on the time taken,
-perhaps even a small slowdown, when combined with my patch.  So at
-this point I don't intend to add it to v2 of the patch.
+btw following our discussion I think the commit message should then
+also explicitly state that pcim_intx() is supposed to restore the value
+before the function itself had been called by that driver for the very
+first time.
 
---> Steve
+> > > >=20
+> > > > It depends on how it is called, no?
+> > > >=20
+> > > > // INTx =3D=3D 1
+> > > > pcim_intx(pdev, 0); // old INTx value assumed to be 1 ->
+> > > > correct
+> > > >=20
+> > > > ---
+> > > >=20
+> > > > // INTx =3D=3D 0
+> > > > pcim_intx(pdev, 0); // old INTx value assumed to be 1 -> wrong
+> > > >=20
+> > > > Maybe it makes sense to replace part of the commit text with
+> > > > something
+> > > > like the example above?
+> > >=20
+> > > If it helps better understanding, why not.
+> > >=20
+> > > > > =C2=A0 Also, when a driver calls pcim_intx() multiple times with
+> > > > > different enable argument values, the last one will win no
+> > > > > matter
+> > > > > what
+> > > > > value it is.
+> > > >=20
+> > > > Means
+> > > >=20
+> > > > // INTx =3D=3D 0
+> > > > pcim_intx(pdev, 0); // orig_INTx =3D=3D 1, INTx =3D=3D 0
+> > > > pcim_intx(pdev, 1); // orig_INTx =3D=3D 0, INTx =3D=3D 1
+> > > > pcim_intx(pdev, 0); // orig_INTx =3D=3D 1, INTx =3D=3D 0
+> > > >=20
+> > > > So in this example the first call would cause a wrong
+> > > > orig_INTx,
+> > > > but
+> > > > the last call =E2=80=93 the one "who will win" =E2=80=93 seems to d=
+o the right
+> > > > thing,
+> > > > dosen't it?
+> > >=20
+> > > Yes and no.=C2=A0 The last call wins to write the current value, but
+> > > shouldn't win for setting the original value.=C2=A0 The original valu=
+e
+> > > must
+> > > be recorded only from the first call.
+> >=20
+> > Alright, so you think that pcim_intx() should always restore the
+> > INTx
+> > state that existed before the driver was loaded.
+> >=20
+> > > > > This patch addresses those inconsistencies by saving the
+> > > > > original
+> > > > > INTX_DISABLE state at the first devres_alloc(); this assures
+> > > > > that
+> > > > > the
+> > > > > original state is restored properly, and the later
+> > > > > pcim_intx()
+> > > > > calls
+> > > > > won't overwrite res->orig_intx any longer.
+> > > > >=20
+> > > > > Fixes: 25216afc9db5 ("PCI: Add managed pcim_intx()")
+> > > >=20
+> > > > That commit is also in 6.11, so we need:
+> > > >=20
+> > > > Cc: stable@vger.kernel.org=C2=A0# 6.11+
+> > >=20
+> > > OK.
+> > >=20
+> > > > > Link: https://lore.kernel.org/87v7xk2ps5.wl-tiwai@suse.de
+> > > > > Signed-off-by: Takashi Iwai <tiwai@suse.de>
+> > > > > ---
+> > > > > =C2=A0drivers/pci/devres.c | 18 ++++++++++++++----
+> > > > > =C2=A01 file changed, 14 insertions(+), 4 deletions(-)
+> > > > >=20
+> > > > > diff --git a/drivers/pci/devres.c b/drivers/pci/devres.c
+> > > > > index b133967faef8..aed3c9a355cb 100644
+> > > > > --- a/drivers/pci/devres.c
+> > > > > +++ b/drivers/pci/devres.c
+> > > > > @@ -438,8 +438,17 @@ static void pcim_intx_restore(struct
+> > > > > device
+> > > > > *dev, void *data)
+> > > > > =C2=A0	__pcim_intx(pdev, res->orig_intx);
+> > > > > =C2=A0}
+> > > > > =C2=A0
+> > > > > -static struct pcim_intx_devres
+> > > > > *get_or_create_intx_devres(struct
+> > > > > device *dev)
+> > > > > +static void save_orig_intx(struct pci_dev *pdev, struct
+> > > > > pcim_intx_devres *res)
+> > > > > =C2=A0{
+> > > > > +	u16 pci_command;
+> > > > > +
+> > > > > +	pci_read_config_word(pdev, PCI_COMMAND,
+> > > > > &pci_command);
+> > > > > +	res->orig_intx =3D !(pci_command &
+> > > > > PCI_COMMAND_INTX_DISABLE);
+> > > > > +}
+> > > > > +
+> > > > > +static struct pcim_intx_devres
+> > > > > *get_or_create_intx_devres(struct
+> > > > > pci_dev *pdev)
+> > > > > +{
+> > > > > +	struct device *dev =3D &pdev->dev;
+> > > > > =C2=A0	struct pcim_intx_devres *res;
+> > > > > =C2=A0
+> > > > > =C2=A0	res =3D devres_find(dev, pcim_intx_restore, NULL,
+> > > > > NULL);
+> > > > > @@ -447,8 +456,10 @@ static struct pcim_intx_devres
+> > > > > *get_or_create_intx_devres(struct device *dev)
+> > > > > =C2=A0		return res;
+> > > > > =C2=A0
+> > > > > =C2=A0	res =3D devres_alloc(pcim_intx_restore, sizeof(*res),
+> > > > > GFP_KERNEL);
+> > > > > -	if (res)
+> > > > > +	if (res) {
+> > > > > +		save_orig_intx(pdev, res);
+> > > >=20
+> > > > This is not the correct place =E2=80=93 get_or_create_intx_devres()
+> > > > should
+> > > > get
+> > > > the resource if it exists, or allocate it if it doesn't, but
+> > > > its
+> > > > purpose is not to modify the resource.
+> > >=20
+> > > The behavior of the function makes the implementation a bit
+> > > harder,
+> > > because the initialization of res->orig_intx should be done only
+> > > once
+> > > at the very first call.
+> > >=20
+> > > > > =C2=A0		devres_add(dev, res);
+> > > > > +	}
+> > > > > =C2=A0
+> > > > > =C2=A0	return res;
+> > > > > =C2=A0}
+> > > > > @@ -467,11 +478,10 @@ int pcim_intx(struct pci_dev *pdev, int
+> > > > > enable)
+> > > > > =C2=A0{
+> > > > > =C2=A0	struct pcim_intx_devres *res;
+> > > > > =C2=A0
+> > > > > -	res =3D get_or_create_intx_devres(&pdev->dev);
+> > > > > +	res =3D get_or_create_intx_devres(pdev);
+> > > > > =C2=A0	if (!res)
+> > > > > =C2=A0		return -ENOMEM;
+> > > > > =C2=A0
+> > > > > -	res->orig_intx =3D !enable;
+> > > >=20
+> > > > Here is the right place to call save_orig_intx(). That way you
+> > > > also
+> > > > won't need the new variable struct device *dev above :)
+> > >=20
+> > > The problem is that, at this place, we don't know whether it's a
+> > > freshly created devres or it's an inherited one.=C2=A0 So, we'd need
+> > > to
+> > > modify get_or_create_intx_devres() to indicate that it's a new
+> > > creation.=C2=A0 Or, maybe simpler would be rather to flatten
+> > > get_or_create_intx_devres() into pcim_intx().=C2=A0 It's a small
+> > > function,
+> > > and it wouldn't be worsen the readability so much.
+> >=20
+> > That might be the best solution. If it's done that way it should
+> > include a comment detailing the problem.
+> >=20
+> > Looking at the implementation of pci_intx() before
+> > 25216afc9db53d85dc648aba8fb7f6d31f2c8731 probably indicates that
+> > you're
+> > right:
+> >=20
+> > 	if (dr && !dr->restore_intx) {
+> > 		dr->restore_intx =3D 1;
+> > 		dr->orig_intx =3D !enable;
+> > 	}
+> >=20
+> >=20
+> > So they used a boolean to only take the first state. Although that
+> > still wouldn't have necessarily been the pre-driver INTx state.
+>=20
+> IIRC, this code path is reached only after checking that the INTx
+> state is changed.=C2=A0 Hence "!enable" is assured to be the pre-driver
+> INTx state in the old code.
 
--- 
-Steve Wahl, Hewlett Packard Enterprise
+Oh man. Have those folks never heard of comments :(
+
+>=20
+>=20
+> > >=20
+> > > That is, something like below.
+> > >=20
+> > >=20
+> > > thanks,
+> > >=20
+> > > Takashi
+> > >=20
+> > > --- a/drivers/pci/devres.c
+> > > +++ b/drivers/pci/devres.c
+> > > @@ -438,21 +438,6 @@ static void pcim_intx_restore(struct device
+> > > *dev, void *data)
+> > > =C2=A0	__pcim_intx(pdev, res->orig_intx);
+> > > =C2=A0}
+> > > =C2=A0
+> > > -static struct pcim_intx_devres *get_or_create_intx_devres(struct
+> > > device *dev)
+> > > -{
+> > > -	struct pcim_intx_devres *res;
+> > > -
+> > > -	res =3D devres_find(dev, pcim_intx_restore, NULL, NULL);
+> > > -	if (res)
+> > > -		return res;
+> > > -
+> > > -	res =3D devres_alloc(pcim_intx_restore, sizeof(*res),
+> > > GFP_KERNEL);
+> > > -	if (res)
+> > > -		devres_add(dev, res);
+> > > -
+> > > -	return res;
+> > > -}
+> > > -
+> > > =C2=A0/**
+> > > =C2=A0 * pcim_intx - managed pci_intx()
+> > > =C2=A0 * @pdev: the PCI device to operate on
+> > > @@ -466,12 +451,21 @@ static struct pcim_intx_devres
+> > > *get_or_create_intx_devres(struct device *dev)
+> > > =C2=A0int pcim_intx(struct pci_dev *pdev, int enable)
+> > > =C2=A0{
+> > > =C2=A0	struct pcim_intx_devres *res;
+> > > +	struct device *dev =3D &pdev->dev;
+> > > +	u16 pci_command;
+> > > =C2=A0
+> > > -	res =3D get_or_create_intx_devres(&pdev->dev);
+> > > -	if (!res)
+> > > -		return -ENOMEM;
+> > > +	res =3D devres_find(dev, pcim_intx_restore, NULL, NULL);
+> >=20
+> > sth like:
+> >=20
+> > /*
+> > =C2=A0* pcim_intx() must only restore the INTx value that existed befor=
+e
+> > the
+> > =C2=A0* driver was loaded, i.e., before it called pcim_intx() for the
+> > =C2=A0* first time.
+> > =C2=A0*/
+>=20
+> OK, will add it.
+>=20
+> > > +	if (!res) {
+> > > +		res =3D devres_alloc(pcim_intx_restore,
+> > > sizeof(*res),
+> > > GFP_KERNEL);
+> > > +		if (!res)
+> > > +			return -ENOMEM;
+> > > +
+> > > +		pci_read_config_word(pdev, PCI_COMMAND,
+> > > &pci_command);
+> > > +		res->orig_intx =3D !(pci_command &
+> > > PCI_COMMAND_INTX_DISABLE);
+> > > +
+> > > +		devres_add(dev, res);
+> > > +	}
+> > > =C2=A0
+> > > -	res->orig_intx =3D !enable;
+> > > =C2=A0	__pcim_intx(pdev, enable);
+> >=20
+> > Looks like a good idea to me
+> >=20
+> > The only thing I'm wondering about right now is the following: In
+> > the
+> > old days, there was only pci_intx(), which either did devres or
+> > didn't.
+> >=20
+> > Now you have two functions, pcim_intx() and pci_intx().
+> >=20
+> > The thing is that the driver could theoretically still intermingle
+> > them
+> > and for example call pci_intx() before pcim_intx(), which would
+> > lead
+> > the latter to still restore the wrong value.
+> >=20
+> > But that's very unlikely and I'm not sure whether we can do
+> > something
+> > about it.
+>=20
+> Right, pcim_intx() assures to restore INTx value back to the moment
+> it
+> was called.=C2=A0 And that should be enough and consistent behavior.
+
+The moment *before* it was called *for the first time*.
+
+
+>=20
+> BTW, a possible optimization would be to skip the devres if the value
+> isn't really changed from the current state (which is similar like
+> the
+> old code before pcim_intx()).=C2=A0 OTOH, this can lead to inconsistencie=
+s
+> when INTx is changed manually after pcim_intx() somehow.=C2=A0 So maybe
+> it's not worth.
+
+There is only a very tiny number of pci{m}_intx() users, they mostly
+use it in their probe() function, and future use is discouraged in
+favor of pci_alloc_irq_vectors().
+
+So I think you can save yourself that effort.
+
+P.
+
+
+>=20
+>=20
+> thanks,
+>=20
+> Takashi
+>=20
+
 
