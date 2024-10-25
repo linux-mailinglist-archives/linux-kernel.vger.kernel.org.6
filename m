@@ -1,167 +1,213 @@
-Return-Path: <linux-kernel+bounces-381014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E1B29AF91A
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 07:12:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 378889AF91D
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 07:15:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B1655B22226
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 05:12:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AF36AB223D0
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 05:15:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E2CF18DF7F;
-	Fri, 25 Oct 2024 05:12:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F7F818DF92;
+	Fri, 25 Oct 2024 05:15:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UFXjaBdP"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=de.bosch.com header.i=@de.bosch.com header.b="n9SC8FMb"
+Received: from EUR02-AM0-obe.outbound.protection.outlook.com (mail-am0eur02on2059.outbound.protection.outlook.com [40.107.247.59])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2F1F22B641;
-	Fri, 25 Oct 2024 05:12:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729833161; cv=none; b=LRGcVxEHtHffAWkj8cUYns90515Qe9CqKl/RIExmkRiPCip9QnaefNYDIPwrIO8hCfNwthAUiVRICAz0Cj8uFX1pQLtRFsjz8gXW/Vx+wChJepmWbUy0enaKYNi1MZri2TN3GD1ZG9ubsbd6QomuO6C/dz9is9dxMT8k3ShMxFU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729833161; c=relaxed/simple;
-	bh=/Tpkj435EOyN50vCRF2Ax6BCjnil4B9JArHmpZ92C68=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DcvdcnNUtNIesWF/Ke7+LtQDlM/2vjtoRmZvnw531f+CHl2pOA3sykdR2HfZmH9HKJNBLYRS7nIBf/qVuLnRkcX3D+bNMeAHyuzLbV7ySRFq8oB6F47qINUR/hLgQ05Mc2UmbnNDEhp7dTBujO/+MOxhbLWJOYzjuTX7G3Qpgvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UFXjaBdP; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-71e67d12d04so1223609b3a.1;
-        Thu, 24 Oct 2024 22:12:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729833159; x=1730437959; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/Tpkj435EOyN50vCRF2Ax6BCjnil4B9JArHmpZ92C68=;
-        b=UFXjaBdPMuEsxjm/8PXonrsCCxbJEUrAzFZ7q7+5gHcGNh9Iq8OJDWkfs9f8kVYBEF
-         IC82IEVkF5mztYBjMqOIQiQEcClMhS15UjxrWkgMpCX0Li20xSh2l3YVOEyKHJtUBx/b
-         0pJSOBLUp+H+Ju2vK51fPmZdU69VVlilsLRFMdOakL4uovJ030YFQcDZRPcr3PToil9M
-         1xUDwK38BJtM4cMbAxiw0BuEVhknSYTc1teEbGh6fTJtDm4yZEV2+snWokAmZZDnl1Rg
-         0aKgC4sVrbMgTvvvYqzpdvTDbZINx0P7uzRtaOFskW7ru5lHp3GtYVB77AA5PQoE89MB
-         U8yg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729833159; x=1730437959;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/Tpkj435EOyN50vCRF2Ax6BCjnil4B9JArHmpZ92C68=;
-        b=NLxXRMxBaDKMj0ABiViNW3B4UXO1n4flmccrjyH/9XnIt9tHuUO9BDXlZEuHK43H6n
-         7MPckXmenJ+WVkfIL6LZwssO1pC3kL9MmDygdygUIWUwhElhc/tVycyqh0/P0sabEs4y
-         4BruU8UkKjg56NV/KuaHxPLppQuLSgK4Ppbw2wXiM3JKoe5dWot/ohqj6Rl+hDEdfRUl
-         ijeUwqNIbV4glnxRJJ2PsORaHdWM9K11d/t+wTsMxHr2gnAQN50fvvrskGrCZ9yn0b7w
-         rdXxJbtWkmvWQOb16B8WiySzYLMvbDwcwj0/jUCP8dKf/O+KMsHOUDaeEpe0CTfj3wju
-         n4qA==
-X-Forwarded-Encrypted: i=1; AJvYcCWy9eJgpbQPCDVcHRm2xOcK+TNZjraiY/mU1LfRBjihAxRJMY9vpCZd8S2dOatl7smPfYG6Y+LXuq/V5r3Lro0AZCYF@vger.kernel.org, AJvYcCX2CplE+3tEnFs0mJ55nJEFuQBvxe+q1LIerxZn5GT1r9BNlgUGpEO8862QLgCwwUK1Lfs=@vger.kernel.org, AJvYcCXFiMYtDQ6roqPRClSZlCSnQjWmdd7fiV2KM4QXsmuvHoc30XlCPprL9PjO9WiL5iNkdqenjPzAhIVmA4xp@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx03yk765VvP9rfd71iz4VOzvE4K4mTZzZh/vvLWyMgdglE+1dh
-	l7CUYubhGlNOHU5NVh7HggdkDdJIPPb6AuVD4q3/kD6DjjoAw8FYAkWZjh46euSa7KohpNngPJ8
-	pv4ljZXvVuG0mRLd+KndAKnYiSig=
-X-Google-Smtp-Source: AGHT+IEAk9YojetBkRLJe53COqtiLGEYhreTaZK/7pHC6B7uYCYlMywQUqjE4kFyEuwzJ2rYrbPOLuLkU41RwAyyzlk=
-X-Received: by 2002:a05:6a21:168e:b0:1d9:2a0e:971e with SMTP id
- adf61e73a8af0-1d978bb27c5mr8798561637.46.1729833159199; Thu, 24 Oct 2024
- 22:12:39 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDBD7B641;
+	Fri, 25 Oct 2024 05:15:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.247.59
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729833331; cv=fail; b=GaCf3koPm7wbBN9wqNS/mWJbk9rl8DYmeDGvaY1nies70Yju2uTMvtExyXhq90g2eN9H65UiPxVVWnX+FQSFquWbdVC4greKdsZNvAR+QZ+e79vcy+JcOMsoU43FmsM/n0i683MTh3zEIjqOQxvNS1grbDTJQHA+fVHXaTNOdM0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729833331; c=relaxed/simple;
+	bh=SaNXVBj+f88hWBdF4TS8HGrhh141obfm0zPuxztEbGc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=g/HZPMb3FBmPaj0atNmOCx3y9PPNtxx02oRCdTcBCF5vS/qt9sjFJ/OoIo9z0u65yEhEUs8TllAwvIYW5iM9AIyGSd0UGNLMWoQLzzfd6rxvLzdDRaHA0I8a25TIPmvo86GPoMVjIcFD6nSFnrJkj+FMXwT3AaFSc2ewylZ5sgo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=de.bosch.com; spf=pass smtp.mailfrom=de.bosch.com; dkim=pass (2048-bit key) header.d=de.bosch.com header.i=@de.bosch.com header.b=n9SC8FMb; arc=fail smtp.client-ip=40.107.247.59
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=de.bosch.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=de.bosch.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=WNNIYL3Vcov3XC/P/Md/KJ2ZlW/FUnjtxggtzWOLlxJx3Tx53pXSmHTTUzFDC4XODFigLJlyD3Lvszh62GKDKHdi9O/JehHJHA8USVyok/Nvo45W77Zg2PJm19Dj98kODCeCKZTosD4UVSLWqBRPiql/VSj7ncju4K/jfMrCzLl9X2dGZ/rlIBjXVJiE3Lo4PxR85lUIYjRsBu8/ZhG/6XRXrU97r6A0DwZeT7QqTf393jlQqIY/1ivutUlVtgG4VNCmdm+tT9A88xRJN8slQmdiixziOCF0+tjARrlJjF90ylCx2NOU2By15U1dBv3LfVa6fNcJEdkJBa3w5zPNhg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Z0pRpCOj9rDEMoYsuBth9GOhFMd+u8z+UeimDyTIpMQ=;
+ b=rUwD4TtA42EnnxqOaWiZV63lqADJmK1y8mC3TkdaoDz5GpZXab6WEUTVP7wEaM55QekFYK10vc571G2o+1QvNr4opsZOVOQKArZlyAGOR6ipcvU0Hy4svtJvgAurAqCxDiqtuxTdEVLRNkAH7MkuyVa35L9d1KuIABs2mTknWYZI/j0Adq3+KS9kcW9ir2YTFniT9oEOrYCQBtEHwJP0Fr6H8OcfGOPToMAvjYNq7+niPIzfHRFhPEjlKOuEDrhWjD2OkufeGrYRVLMSHBAW/Va/ncVElZENYOeHLxsiZsqMt+1v4jJeUM5P6vFPKaSTrzL4BiUdfPIFWg5bTRpg7Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 139.15.153.206) smtp.rcpttodomain=kernel.org smtp.mailfrom=de.bosch.com;
+ dmarc=pass (p=reject sp=none pct=100) action=none header.from=de.bosch.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=de.bosch.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Z0pRpCOj9rDEMoYsuBth9GOhFMd+u8z+UeimDyTIpMQ=;
+ b=n9SC8FMb72APnK+44yrsJtV8Rhz73Iz7Gt3rlbVTTWQwxWeBBLTPtD8HmsiZxEDrOU1HfOV476/IHPR382OLR34kFy4m7rDw4RrV3KoUie1s8MG5gr/zGAFOhoo4y3xz6irKgjaeYsfrPLmx9Ev7ZCxMM+YxkQ/9rKZQeEDIQnttY1K4fcFAT9L5mL391pYdLsgXA9D47gjfqp5tPj/hUapo9pxxCKX/mriexuiAGNhw1byE/dl7qbRjSOBpp6oAGpeZxeHYmCTqGqiI+hzCSJc+6J1pCQ+2YbBugbRcCa67kFXBJ8SqLIrWXfBNE0FX6oaeMVlJDwqlJKdegHIBqw==
+Received: from AS8PR07CA0060.eurprd07.prod.outlook.com (2603:10a6:20b:459::33)
+ by GVXPR10MB8001.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:150:1::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.16; Fri, 25 Oct
+ 2024 05:15:24 +0000
+Received: from AMS1EPF0000003F.eurprd04.prod.outlook.com
+ (2603:10a6:20b:459:cafe::e6) by AS8PR07CA0060.outlook.office365.com
+ (2603:10a6:20b:459::33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.8 via Frontend
+ Transport; Fri, 25 Oct 2024 05:15:24 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 139.15.153.206)
+ smtp.mailfrom=de.bosch.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=de.bosch.com;
+Received-SPF: Pass (protection.outlook.com: domain of de.bosch.com designates
+ 139.15.153.206 as permitted sender) receiver=protection.outlook.com;
+ client-ip=139.15.153.206; helo=eop.bosch-org.com; pr=C
+Received: from eop.bosch-org.com (139.15.153.206) by
+ AMS1EPF0000003F.mail.protection.outlook.com (10.167.16.36) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8093.14 via Frontend Transport; Fri, 25 Oct 2024 05:15:24 +0000
+Received: from SI-EXCAS2001.de.bosch.com (10.139.217.202) by eop.bosch-org.com
+ (139.15.153.206) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 25 Oct
+ 2024 07:15:23 +0200
+Received: from [10.34.219.93] (10.139.217.196) by SI-EXCAS2001.de.bosch.com
+ (10.139.217.202) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 25 Oct
+ 2024 07:15:22 +0200
+Message-ID: <7ce81fa7-c316-48fc-8013-e1aad9e24fd8@de.bosch.com>
+Date: Fri, 25 Oct 2024 07:15:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241010205644.3831427-1-andrii@kernel.org> <20241010205644.3831427-2-andrii@kernel.org>
- <20241023201031.GF11151@noisy.programming.kicks-ass.net> <CAJuCfpFMhoCmqGJMU2uc4JHmk9zh88JzhZAeSz3DgvXEh+u+_g@mail.gmail.com>
- <20241024095659.GD9767@noisy.programming.kicks-ass.net> <CAJuCfpGxu=z-2Wsf41-m4MQ6t7DjfiiWXD408BW8SjTfx0NGTg@mail.gmail.com>
- <CAJuCfpGYzG+3aLjobsXcTSoo9Jo9MCYA_QcROPyLRKEeVHkLGA@mail.gmail.com>
- <CAEf4Bzbf_2tJL1ogZegy2sD=WbNmdKHXuXCXtAALGYuWYgyEEw@mail.gmail.com> <CAJuCfpFJG8MS=LMC2saYYRPGv+xs+UXkrPWD9_Eo1VqY=7v1ow@mail.gmail.com>
-In-Reply-To: <CAJuCfpFJG8MS=LMC2saYYRPGv+xs+UXkrPWD9_Eo1VqY=7v1ow@mail.gmail.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Thu, 24 Oct 2024 22:12:26 -0700
-Message-ID: <CAEf4BzbHs+XQK9GZQ59VB27s9Jz6AR7fQmX2XTsyTdz050xkOw@mail.gmail.com>
-Subject: Re: [PATCH v3 tip/perf/core 1/4] mm: introduce mmap_lock_speculation_{start|end}
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Andrii Nakryiko <andrii@kernel.org>, 
-	linux-trace-kernel@vger.kernel.org, linux-mm@kvack.org, oleg@redhat.com, 
-	rostedt@goodmis.org, mhiramat@kernel.org, bpf@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, jolsa@kernel.org, paulmck@kernel.org, 
-	willy@infradead.org, akpm@linux-foundation.org, mjguzik@gmail.com, 
-	brauner@kernel.org, jannh@google.com, mhocko@kernel.org, vbabka@suse.cz, 
-	shakeel.butt@linux.dev, hannes@cmpxchg.org, Liam.Howlett@oracle.com, 
-	lorenzo.stoakes@oracle.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 00/16] Device / Driver PCI / Platform Rust abstractions
+To: Danilo Krummrich <dakr@kernel.org>, <gregkh@linuxfoundation.org>,
+	<rafael@kernel.org>, <bhelgaas@google.com>, <ojeda@kernel.org>,
+	<alex.gaynor@gmail.com>, <boqun.feng@gmail.com>, <gary@garyguo.net>,
+	<bjorn3_gh@protonmail.com>, <benno.lossin@proton.me>, <tmgross@umich.edu>,
+	<a.hindborg@samsung.com>, <aliceryhl@google.com>, <airlied@gmail.com>,
+	<fujita.tomonori@gmail.com>, <lina@asahilina.net>, <pstanner@redhat.com>,
+	<ajanulgu@redhat.com>, <lyude@redhat.com>, <robh@kernel.org>,
+	<daniel.almeida@collabora.com>, <saravanak@google.com>
+CC: <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>
+References: <20241022213221.2383-1-dakr@kernel.org>
+Content-Language: en-US
+From: Dirk Behme <dirk.behme@de.bosch.com>
+In-Reply-To: <20241022213221.2383-1-dakr@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AMS1EPF0000003F:EE_|GVXPR10MB8001:EE_
+X-MS-Office365-Filtering-Correlation-Id: 04578fb3-d54c-404f-83b4-08dcf4b407ff
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|82310400026|376014|1800799024|36860700013|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?WEFuQXc3VE9nbm5ERGlMNzNLaEtQbDc2aEwvMCtwMkpwMERuaHk5SEhQZndB?=
+ =?utf-8?B?dC84Yzk3RE9CaU5RelUyRC9IYXJmSGdhUTJNSnpQQWxvUFhqQ3Zlc3FsL2Mv?=
+ =?utf-8?B?Q0NaMWp6VTR6QUUvaDVPRlVkcStSTTJvbDJjbzZseXpLQ1N2VHNjRjZYRnZH?=
+ =?utf-8?B?Y0xQT1FSWWtVbDdYbXkzY2RTWTFzSlN1eVkreUpZUmZDc2xaQzBxL0VQUmdt?=
+ =?utf-8?B?QXNoQ3ZEZWVVVklzc2FMcFFZZ0hiaThlQzI0NWxhKzhKT284MGFCWjVXSlM2?=
+ =?utf-8?B?d1dlUEdIcmt2NCtUVFZwZm1Fd3VCV1lsT3ZvN3pVRWZ5Q3ZhU2Zlc3FBdGds?=
+ =?utf-8?B?L0hGL3hPS2svK2pMOGkweG0za29lYjFPQTBBK2dLVU9UT2VyQmZ5RlhkcC9F?=
+ =?utf-8?B?dlFueHpjRjJQWUpSRlFZbHlPOXYzR1RVeXFsNGZPc3hyOGttNE5TSlIyVGVo?=
+ =?utf-8?B?aWNFWWQ1TjVxZWFRakVlQXNEeG0vVjFGTk5IVExJRCtSTmF4RG5md2VYTGZE?=
+ =?utf-8?B?UTI3ZE9PV1V6TEhsZ1dzcVVsOGpsZ281VDVHOUFrMHoyK0Q1UkRRdXU1R05u?=
+ =?utf-8?B?cEdaUXpZMkNXdnFURWpocnVPQlNsUUZvR2ZJaGtuNmlMVFJSdHAwTkZ0ZUg5?=
+ =?utf-8?B?MFVxNm5icnQwRzRmMEV0WFI2S2tiQ0NDazdJYVJPa0QrdDhjVVJBd1VwRTdl?=
+ =?utf-8?B?THVKY1I5SzJOc0piUEFLVDlrd00vd2F2S2pJclB2bUF2dmxzVHYwRTVQSkJT?=
+ =?utf-8?B?cXJEcGZuWktXNkd4NktZUDU3VmZPYjZJUGU0NG5BQTcvTHFubjltZ1djdnNW?=
+ =?utf-8?B?L05HYUlxRm5wZVJIT1JpR2RNM1BEUi9nTWVnMGRhVlRhYTVOMHEwRFNuemRW?=
+ =?utf-8?B?TzFRNTBKRmRTaG03Snl5UldhWFRXNmloRG9VTmhlTjAwbzVGUDhMMVFyaVVN?=
+ =?utf-8?B?cXNSNGwybDVrQkFoUVdQUE1sTjloTkpGTUNEODhUbjVrK08ySU90dVBBL1c3?=
+ =?utf-8?B?UGR6VThEcHZYajl5TVpMNE93aXlZbUY4Y285dVRYTkdNVFozOGtENTJhci8v?=
+ =?utf-8?B?TEN2YkdLRFlmMzBBNFR2c3FKMUVoeDBCMVpRMzZQa3laZVpOTEZLWFFhM3VO?=
+ =?utf-8?B?dzZqb2pwWmhFeTNsTHFpYXVRRGRpbXJWYzlTcHdXdm1PNm4wanl1dDFWSm1F?=
+ =?utf-8?B?NU5COWk2RlNzZk5POXIzYUU0SjNqY0NQQlRibStPVGZqdFlRMndrR3lQaGRn?=
+ =?utf-8?B?VFNwRlQzaVF1eDBDMTNYQ2QvemVWRXBqSk45SWpuTWgrbjdzYVB0L3hzUjYr?=
+ =?utf-8?B?RlRoUFl1aXNQZ29rS20zM1pXVW1BVUZNMVdiWWFSZVBlcUhaOU5vSVBSSndy?=
+ =?utf-8?B?THd2Y0xTQU1PQ3ZoNVV5Y2dxVXcwcmJVbTNTbkpqS21SbVdNaDV1TDQvL2F2?=
+ =?utf-8?B?djRKY3luRjhMbkErR2xJTmpnNkxvQjRaR1BPc2hydzNlNEl0MGFIUnNUaEFT?=
+ =?utf-8?B?a2Z1QVRrYS85WlB0SjR2cHJhYzNwR1lsazhRR1d1cURzV2EzdW1KeU96WFN4?=
+ =?utf-8?B?U2FrcTByVVFFSDYzc3BNajNyYjFrdVhSdm5BWHhwVmZzTHlKZENKS1J2L1Jw?=
+ =?utf-8?B?eHdnaXVYLzhTRjA0SXExdG9WTDJQWHNLL2puNE5INVduaHVBcHpZUTZpQlFP?=
+ =?utf-8?B?OWdaQnRlYUgyUksrZUhOR1B6N2tlR2Rzd2xKWHBvN3hpcnpTd1lDVkQ0RE9l?=
+ =?utf-8?B?Q1MzQWZKWkFBdTJURWRJQ3NTUE5UdEZZOW5YT3F0cWdBR1JOTGtjbkdWNmxZ?=
+ =?utf-8?B?cnk5QzBWcDZGeHlVWXBIT0F6THFiTHhRTTdodldRcE5WV2J3WUdQUGE2T3g2?=
+ =?utf-8?B?TncwV3B6WlV0S1pHOVVFb09Ld08zYWM2a3VVU3FrYm42ZVVoNUlpTmlESGRk?=
+ =?utf-8?Q?T/BIY6n6PU0=3D?=
+X-Forefront-Antispam-Report:
+	CIP:139.15.153.206;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:eop.bosch-org.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(7416014)(82310400026)(376014)(1800799024)(36860700013)(921020);DIR:OUT;SFP:1101;
+X-OriginatorOrg: de.bosch.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Oct 2024 05:15:24.4619
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 04578fb3-d54c-404f-83b4-08dcf4b407ff
+X-MS-Exchange-CrossTenant-Id: 0ae51e19-07c8-4e4b-bb6d-648ee58410f4
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0ae51e19-07c8-4e4b-bb6d-648ee58410f4;Ip=[139.15.153.206];Helo=[eop.bosch-org.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	AMS1EPF0000003F.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR10MB8001
 
-On Thu, Oct 24, 2024 at 4:33=E2=80=AFPM Suren Baghdasaryan <surenb@google.c=
-om> wrote:
->
-> On Thu, Oct 24, 2024 at 4:20=E2=80=AFPM Andrii Nakryiko
-> <andrii.nakryiko@gmail.com> wrote:
-> >
-> > On Thu, Oct 24, 2024 at 2:04=E2=80=AFPM Suren Baghdasaryan <surenb@goog=
-le.com> wrote:
-> > >
-> > > On Thu, Oct 24, 2024 at 9:28=E2=80=AFAM Suren Baghdasaryan <surenb@go=
-ogle.com> wrote:
-> > > >
-> > > > On Thu, Oct 24, 2024 at 2:57=E2=80=AFAM Peter Zijlstra <peterz@infr=
-adead.org> wrote:
-> > > > >
-> > > > > On Wed, Oct 23, 2024 at 03:17:01PM -0700, Suren Baghdasaryan wrot=
-e:
-> > > > >
-> > > > > > > Or better yet, just use seqcount...
-> > > > > >
-> > > > > > Yeah, with these changes it does look a lot like seqcount now..=
-.
-> > > > > > I can take another stab at rewriting this using seqcount_t but =
-one
-> > > > > > issue that Jann was concerned about is the counter being int vs=
- long.
-> > > > > > seqcount_t uses unsigned, so I'm not sure how to address that i=
-f I
-> > > > > > were to use seqcount_t. Any suggestions how to address that bef=
-ore I
-> > > > > > move forward with a rewrite?
-> > > > >
-> > > > > So if that issue is real, it is not specific to this case. Specif=
-ically
-> > > > > preemptible seqcount will be similarly affected. So we should pro=
-bably
-> > > > > address that in the seqcount implementation.
-> > > >
-> > > > Sounds good. Let me try rewriting this patch using seqcount_t and I=
-'ll
-> > > > work with Jann on a separate patch to change seqcount_t.
-> > > > Thanks for the feedback!
-> > >
-> > > I posted the patchset to convert mm_lock_seq into seqcount_t and to
-> > > add speculative functions at
-> > > https://lore.kernel.org/all/20241024205231.1944747-1-surenb@google.co=
-m/.
-> >
-> > Thanks, Suren! Hopefully it can land soon!
->
-> Would incorporating them into your patchset speed things up? If so,
-> feel free to include them into your series.
+Hi Danilo,
 
-I don't really think so. At this point the uprobe part is done (next
-revision has a comment style fix, that's all). So I'll just wait for
-your patches to be acked and applied, then I'll just do a trivial
-rebase. This will be easier for everyone at this point, IMO, to not
-couple them into a single patch set with two authors.
+On 22.10.2024 23:31, Danilo Krummrich wrote:
+> This patch series implements the necessary Rust abstractions to implement
+> device drivers in Rust.
+> 
+> This includes some basic generalizations for driver registration, handling of ID
+> tables, MMIO operations and device resource handling.
+> 
+> Those generalizations are used to implement device driver support for two
+> busses, the PCI and platfrom bus (with OF IDs) in order to provide some evidence
+> that the generalizations work as intended.
+> 
+> The patch series also includes two patches adding two driver samples, one PCI
+> driver and one platform driver.
+> 
+> The PCI bits are motivated by the Nova driver project [1], but are used by at
+> least one more OOT driver (rnvme [2]).
+> 
+> The platform bits, besides adding some more evidence to the base abstractions,
+> are required by a few more OOT drivers aiming at going upstream, i.e. rvkms [3],
+> cpufreq-dt [4], asahi [5] and the i2c work from Fabien [6].
+> 
+> The patches of this series can also be [7], [8] and [9].
 
-Hopefully Peter will take those patches through tip/perf/core, though,
-so I don't have to wait for mm and tip trees to converge.
+Just some minor typos:
 
-> The only required change in your other patches is the renaming of
-> mmap_lock_speculation_start() to mmap_lock_speculation_begin().
+-----------------------------------------------------
+0004_rust_implement_generic_driver_registration.patch
+-----------------------------------------------------
+WARNING: 'privide' may be misspelled - perhaps 'provide'?
+#63: FILE: rust/kernel/driver.rs:14:
++/// Amba, etc.) to privide the corresponding subsystem specific 
+implementation to register /
+                     ^^^^^^^
+---------------------------------------------------------
+0005_rust_implement_idarray_idtable_and_rawdeviceid.patch
+---------------------------------------------------------
+WARNING: 'offest' may be misspelled - perhaps 'offset'?
+#84: FILE: rust/kernel/device_id.rs:39:
++    /// The offest to the context/data field.
+              ^^^^^^
+-----------------------------------
+0009_rust_add_io_io_base_type.patch
+-----------------------------------
+WARNING: 'embedd' may be misspelled - perhaps 'embed'?
+#27:
+bound to, subsystems should embedd the corresponding I/O memory type
+                             ^^^^^^
 
-Yep, no problem.
+Best regards
 
->
-> >
-> > >
-> > > >
-> > > > >
+Dirk
+
 
