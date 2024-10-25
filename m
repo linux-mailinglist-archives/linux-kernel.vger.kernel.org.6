@@ -1,74 +1,253 @@
-Return-Path: <linux-kernel+bounces-382122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A68049B09BC
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 18:22:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F16489B09C7
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 18:22:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8BB61C233EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:22:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 245CFB2566A
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:22:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BABB18870D;
-	Fri, 25 Oct 2024 16:22:10 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0854518B462;
+	Fri, 25 Oct 2024 16:22:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="N4HWfhGT"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 929FC18660B;
-	Fri, 25 Oct 2024 16:22:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5B9718785B
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 16:22:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729873329; cv=none; b=dgcoNQEhaM28d+oSitcLmGFIckfiMb/vbOTKSFwJ6UTl4jJ+tTBazQ7DBj0VgJiuQqsWnvWCuj9ilyx5HWoKtt0uQS6u6zgBW+Kcj3jLd0+MV6mWh0IgcyWQOhQ9gSozyqXQLGoUZw15ud9nDPcR8/BiIlMGrDUoRGkXLeE6gaM=
+	t=1729873350; cv=none; b=mQbLhdrMeC60WQA8ze2BBTkiy5PTJsB5neMm19Pajc0zlsal9Z2LNUmNmRoi3G2Dqq0KI+VTrVigP4L1GurdipnGuKQpnodN24uRjNpyN4vY6dKhsEDXcBb7W1NJWdd/cy7tTPWclUk8DblQTsHSxK7B5PvqTYtB7dDQgAX1KuY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729873329; c=relaxed/simple;
-	bh=FJPXzHtf+OYrg9rW3PpL8n8pW4gtLtTefds9D5VnEAk=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=BpuB/uZISzEJRp/W+9GDG7H6XUx1bbgdoTNnS6/4ITHHqyWLbiXaH+MH5gdyHgd4agoUmmn2pZwdG2sqn8Ts2ETdK9+3nz6GuviH89Y/BFv2KWH1mBYiEiQigXuwYL/rZsYdqCeZq3rP4FtOceXbz+tsybHt7xj9k845OJWuwz4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20DD2C4CEC3;
-	Fri, 25 Oct 2024 16:22:09 +0000 (UTC)
-Received: from wens.tw (localhost [127.0.0.1])
-	by wens.tw (Postfix) with ESMTP id C5E6A5FC74;
-	Sat, 26 Oct 2024 00:22:06 +0800 (CST)
-From: Chen-Yu Tsai <wens@csie.org>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Samuel Holland <samuel@sholland.org>, 
- =?utf-8?q?Kry=C5=A1tof_=C4=8Cern=C3=BD?= <cleverline1mc@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
-In-Reply-To: <20240919-b4-nanopineoplus2-fix-mmc0-wp-v2-1-c708a9abc9eb@gmail.com>
-References: <20240919-b4-nanopineoplus2-fix-mmc0-wp-v2-1-c708a9abc9eb@gmail.com>
-Subject: Re: [PATCH v2] arm64: dts: allwinner: Add disable-wp for boards
- with micro SD card
-Message-Id: <172987332678.809046.10942756189276546172.b4-ty@csie.org>
-Date: Sat, 26 Oct 2024 00:22:06 +0800
+	s=arc-20240116; t=1729873350; c=relaxed/simple;
+	bh=Nvc3OxwdDJqF6/bh7R12YvLLqr9zIdGMinGLFcdg2v4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ESeMpJgdFMmS59kVnx8IdDGpdnO9RYt63PG0fP+0LHj932BOPey8y54fsEiIV8kJwtRt7yf6cuPWIT2jYTtVALepnpu7hpujk3cDOVfBgYc6t74WV+Wdm/jXjHlGbyFQ9X9A7GUTlneqtjOMtHYZnSdHCjeMoiK3AEGxPuuzrpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=N4HWfhGT; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729873346;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=emwlGOdAV5GPCbDbXU8/cJnDkVRFeD9ng138eIoq4+4=;
+	b=N4HWfhGTp2SoEk1Kp7e15WmSp+4hLdM7rWLPbbWTsHKt9Ay55g4CpMEDrz7ozWgXYcDoia
+	PYO6v4I5WqSyuYwu7CwIB9zTs8I22wEiAVvC3CFtzKzG3B/hsy/gTTLDA1OPFsr10EJtlG
+	YKSKbwirGMJVDS3W3OM5/supobrvRNs=
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
+ [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-373-etQARc1XOCyduwH4LZE4KA-1; Fri, 25 Oct 2024 12:22:25 -0400
+X-MC-Unique: etQARc1XOCyduwH4LZE4KA-1
+Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-a99efc7d881so165858766b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 09:22:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729873344; x=1730478144;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=emwlGOdAV5GPCbDbXU8/cJnDkVRFeD9ng138eIoq4+4=;
+        b=S4aTjlm9+F0LR8f/+QVyHTsTKlrx5nygNwzsGIxx9CIzESbBWzUmF/7mZCq+jOLClA
+         5enOTm6ADexInjvyVr1A71B+EGjdOhXDQ9jCH0TrDhuQmlsouWAvoN4YQWFzV/LpWVYE
+         8bz93lJ5b5kXociBnqHOGSnZ8G3/auyMHk6HvvmQA3u0WnbC8AmgpWztl9CJlfXIyqOG
+         bgAsIPV2+phhrjz+CaDQJ20i1CtHemfLW/cBuzguo9x9r4YMZ5FTTztCCY0LC19x9BJG
+         XYNolwFHEfht84/2n2z135FK8JRYyeVK/Bw821sh/zmASlj8Z3NeR5IO6nwngzeqJaqr
+         hLsA==
+X-Forwarded-Encrypted: i=1; AJvYcCURmj08X2o8pR5VRw91UWF7+punxLqvST9SZR5wWIhkaPh1Z0d74Zbr3G3PGr0FhSX0+aUeLIpuL7TXeIs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5ZQlawGOessDefTHV5Hv302nXY08uZAnheu3yA7gYoB6CdnF6
+	7D+wyfAFjKUQo9kr4qAqDGc14DsqHIu0WZK6nY/BCXm6z1em9/aLjOiyOi0WytIZ/+UmStEi536
+	F46Am974zcddrlaUkSLmi/SRaeo2Uz+rAntxCDKunrRsRpftt77krgTi5JvliTg==
+X-Received: by 2002:a17:907:7f15:b0:a9a:7f84:940b with SMTP id a640c23a62f3a-a9abf8458f3mr1007585966b.10.1729873343956;
+        Fri, 25 Oct 2024 09:22:23 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFRdntJoyvupUZ8WixSPs76hFhlXeUzwWu1qndPMO81kxJOWMh5JeS9vrEJtBZYGSJGz+4mZg==
+X-Received: by 2002:a17:907:7f15:b0:a9a:7f84:940b with SMTP id a640c23a62f3a-a9abf8458f3mr1007579766b.10.1729873343429;
+        Fri, 25 Oct 2024 09:22:23 -0700 (PDT)
+Received: from eisenberg.fritz.box (200116b82de5ba00738ac8dadaac7543.dip.versatel-1u1.de. [2001:16b8:2de5:ba00:738a:c8da:daac:7543])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b1f298ef6sm86580966b.136.2024.10.25.09.22.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Oct 2024 09:22:23 -0700 (PDT)
+Message-ID: <19f734499f24df1f1835248eba19b136d41cc1d4.camel@redhat.com>
+Subject: Re: [PATCH 02/10] ata: ahci: Replace deprecated PCI functions
+From: Philipp Stanner <pstanner@redhat.com>
+To: Ilpo =?ISO-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, Damien Le Moal <dlemoal@kernel.org>, 
+ Niklas Cassel <cassel@kernel.org>, Giovanni Cabiddu
+ <giovanni.cabiddu@intel.com>, Herbert Xu <herbert@gondor.apana.org.au>,
+ "David S. Miller" <davem@davemloft.net>,  Boris Brezillon
+ <bbrezillon@kernel.org>, Arnaud Ebalard <arno@natisbad.org>, Srujana Challa
+ <schalla@marvell.com>,  Alexander Shishkin
+ <alexander.shishkin@linux.intel.com>, Miri Korenblit
+ <miriam.rachel.korenblit@intel.com>, Kalle Valo <kvalo@kernel.org>, Serge
+ Semin <fancer.lancer@gmail.com>, Jon Mason <jdmason@kudzu.us>, Dave Jiang
+ <dave.jiang@intel.com>, Allen Hubbe <allenbh@gmail.com>, Bjorn Helgaas
+ <bhelgaas@google.com>, Kevin Cernekee <cernekee@gmail.com>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby
+ <jirislaby@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai
+ <tiwai@suse.com>,  Mark Brown <broonie@kernel.org>, David Lechner
+ <dlechner@baylibre.com>, Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?=
+ <u.kleine-koenig@pengutronix.de>, Jie Wang <jie.wang@intel.com>, Tero
+ Kristo <tero.kristo@linux.intel.com>, Adam Guerin <adam.guerin@intel.com>,
+ Shashank Gupta <shashank.gupta@intel.com>, Przemek Kitszel
+ <przemyslaw.kitszel@intel.com>, Bharat Bhushan <bbhushan2@marvell.com>,
+ Nithin Dabilpuram <ndabilpuram@marvell.com>, Johannes Berg
+ <johannes.berg@intel.com>, Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+  Gregory Greenman <gregory.greenman@intel.com>, Benjamin Berg
+ <benjamin.berg@intel.com>, Yedidya Benshimol
+ <yedidya.ben.shimol@intel.com>, Breno Leitao <leitao@debian.org>, Florian
+ Fainelli <florian.fainelli@broadcom.com>, linux-doc@vger.kernel.org, LKML
+ <linux-kernel@vger.kernel.org>, linux-ide@vger.kernel.org,
+ qat-linux@intel.com,  linux-crypto@vger.kernel.org,
+ linux-wireless@vger.kernel.org,  ntb@lists.linux.dev,
+ linux-pci@vger.kernel.org, linux-serial <linux-serial@vger.kernel.org>,
+ linux-sound@vger.kernel.org
+Date: Fri, 25 Oct 2024 18:22:21 +0200
+In-Reply-To: <282ba5d4-cdad-a6f4-8ee0-1936c532dbc5@linux.intel.com>
+References: <20241025145959.185373-1-pstanner@redhat.com>
+	 <20241025145959.185373-3-pstanner@redhat.com>
+	 <282ba5d4-cdad-a6f4-8ee0-1936c532dbc5@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.14.2
 
-On Thu, 19 Sep 2024 20:35:39 +0200, Kryštof Černý wrote:
-> Adding disable-wp property for micro SD nodes of Allwinner arm64 devices.
-> Boards were verified from online pictures/tables
-> that they have micro SD slots.
-> 
-> 
+On Fri, 2024-10-25 at 18:55 +0300, Ilpo J=C3=A4rvinen wrote:
+> On Fri, 25 Oct 2024, Philipp Stanner wrote:
+>=20
+> > pcim_iomap_regions_request_all() and pcim_iomap_table() have been
+> > deprecated by the PCI subsystem in commit e354bb84a4c1 ("PCI:
+> > Deprecate
+> > pcim_iomap_table(), pcim_iomap_regions_request_all()").
+> >=20
+> > Replace these functions with their successors, pcim_iomap() and
+> > pcim_request_all_regions().
+> >=20
+> > Signed-off-by: Philipp Stanner <pstanner@redhat.com>
+> > Acked-by: Damien Le Moal <dlemoal@kernel.org>
+> > ---
+> > =C2=A0drivers/ata/acard-ahci.c | 6 ++++--
+> > =C2=A0drivers/ata/ahci.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 6 ++++--
+> > =C2=A02 files changed, 8 insertions(+), 4 deletions(-)
+> >=20
+> > diff --git a/drivers/ata/acard-ahci.c b/drivers/ata/acard-ahci.c
+> > index 547f56341705..3999305b5356 100644
+> > --- a/drivers/ata/acard-ahci.c
+> > +++ b/drivers/ata/acard-ahci.c
+> > @@ -370,7 +370,7 @@ static int acard_ahci_init_one(struct pci_dev
+> > *pdev, const struct pci_device_id
+> > =C2=A0	/* AHCI controllers often implement SFF compatible
+> > interface.
+> > =C2=A0	 * Grab all PCI BARs just in case.
+> > =C2=A0	 */
+> > -	rc =3D pcim_iomap_regions_request_all(pdev, 1 <<
+> > AHCI_PCI_BAR, DRV_NAME);
+> > +	rc =3D pcim_request_all_regions(pdev, DRV_NAME);
+> > =C2=A0	if (rc =3D=3D -EBUSY)
+> > =C2=A0		pcim_pin_device(pdev);
+> > =C2=A0	if (rc)
+> > @@ -386,7 +386,9 @@ static int acard_ahci_init_one(struct pci_dev
+> > *pdev, const struct pci_device_id
+> > =C2=A0	if (!(hpriv->flags & AHCI_HFLAG_NO_MSI))
+> > =C2=A0		pci_enable_msi(pdev);
+> > =C2=A0
+> > -	hpriv->mmio =3D pcim_iomap_table(pdev)[AHCI_PCI_BAR];
+> > +	hpriv->mmio =3D pcim_iomap(pdev, AHCI_PCI_BAR, 0);
+> > +	if (!hpriv->mmio)
+> > +		return -ENOMEM;
+> > =C2=A0
+> > =C2=A0	/* save initial config */
+> > =C2=A0	ahci_save_initial_config(&pdev->dev, hpriv);
+> > diff --git a/drivers/ata/ahci.c b/drivers/ata/ahci.c
+> > index 45f63b09828a..2043dfb52ae8 100644
+> > --- a/drivers/ata/ahci.c
+> > +++ b/drivers/ata/ahci.c
+> > @@ -1869,7 +1869,7 @@ static int ahci_init_one(struct pci_dev
+> > *pdev, const struct pci_device_id *ent)
+> > =C2=A0	/* AHCI controllers often implement SFF compatible
+> > interface.
+> > =C2=A0	 * Grab all PCI BARs just in case.
+> > =C2=A0	 */
+> > -	rc =3D pcim_iomap_regions_request_all(pdev, 1 <<
+> > ahci_pci_bar, DRV_NAME);
+> > +	rc =3D pcim_request_all_regions(pdev, DRV_NAME);
+> > =C2=A0	if (rc =3D=3D -EBUSY)
+> > =C2=A0		pcim_pin_device(pdev);
+> > =C2=A0	if (rc)
+> > @@ -1893,7 +1893,9 @@ static int ahci_init_one(struct pci_dev
+> > *pdev, const struct pci_device_id *ent)
+> > =C2=A0	if (ahci_sb600_enable_64bit(pdev))
+> > =C2=A0		hpriv->flags &=3D ~AHCI_HFLAG_32BIT_ONLY;
+> > =C2=A0
+> > -	hpriv->mmio =3D pcim_iomap_table(pdev)[ahci_pci_bar];
+> > +	hpriv->mmio =3D pcim_iomap(pdev, ahci_pci_bar, 0);
+> > +	if (!hpriv->mmio)
+> > +		return -ENOMEM;
+>=20
+> Hi,
+>=20
+> I've probably lost the big picture somewhere and the coverletter
+> wasn't=20
+> helpful focusing only the most immediate goal of getting rid of the=20
+> deprecated function.
+>=20
+> These seem to only pcim_iomap() a single BAR. So my question is, what
+> is=20
+> the reason for using pcim_request_all_regions() and not=20
+> pcim_request_region() as mentioned in the commit message of the
+> commit=20
+> e354bb84a4c1 ("PCI: Deprecate pcim_iomap_table(),=20
+> pcim_iomap_regions_request_all()")?
 
-Applied to dt-for-6.13 in git@github.com:linux-sunxi/linux-sunxi.git, thanks!
+That commit message isn't that precise and / or was written when
+pcim_request_all_regions() was still an internal helper function.
 
-[1/1] arm64: dts: allwinner: Add disable-wp for boards with micro SD card
-      commit: aee2eca83fb4725f3a81166ff21805d87504dac1
+>=20
+> I understand it's strictly not wrong to use
+> pcim_request_all_regions()
+> but I'm just trying to understand the logic behind the selection.
+> I'm sorry if this is a stupid question, it's just what I couldn't
+> figure=20
+> out on my own while trying to review these patches.
+>=20
 
-Best regards,
--- 
-Chen-Yu Tsai <wens@csie.org>
+The reason pcim_request_all_regions() is used in the entire series is
+to keep behavior of the drivers 100% identical.
+pcim_iomap_regions_request_all() performs a region request on *all* PCI
+BARs and then ioremap()s *specific* ones; namely those set by the
+barmask.
+
+It seems to me that those drivers were only using
+pcim_iomap_regions_request_all() precisely because of that feature:
+they want to reserve all BARs through a region request. You could do
+that manually with
+
+for (int i =3D 0; i < PCI_STD_NUM_BARS; i++) pcim_request_region();
+mem =3D pcim_iomap(...);
+
+When you look at Patch #10 you'll see the implementation of
+pcim_iomap_regions_request_all() and will discover that it itself uses
+pcim_request_all_regions().
+
+So you could consider this series a partial code-move that handily also
+gets rid of a complicated function that prevents us from removing,
+ultimately, the problematic function pcim_iomap_table().
+
+
+Hope this helps,
+P.
+
+> (I admit not reading all the related discussions in the earlier
+> versions.)
+>=20
 
 
