@@ -1,57 +1,84 @@
-Return-Path: <linux-kernel+bounces-381791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F03C19B047F
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:50:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A845F9B0483
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:51:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 86F59B22A87
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 13:50:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D2C8B22A98
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 13:51:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D07C61D9A66;
-	Fri, 25 Oct 2024 13:50:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E62381D54E1;
+	Fri, 25 Oct 2024 13:51:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mAJzNytW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DDL0A12A"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 306344A1B;
-	Fri, 25 Oct 2024 13:50:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7140D212177;
+	Fri, 25 Oct 2024 13:51:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729864207; cv=none; b=tyMvvbNnYQhfGr9qhWBBlHLGv6c8Y5NWapk0/K3iXQptftTQIiHfY2HchF7/Sn6+KCKyzQ6rw6B8Sv9pHK/jEH0kawi9cV+FoyH6k02JvNsNjSFHuwZYgUck6RQJtPPsJn3mJkmp7TNA7zDxhQLcds54/U2FE2TCVGgYuSPs+vI=
+	t=1729864276; cv=none; b=cQrHb6Eb5S3xEWoRtbTgVe8GrFrJDSgMc4IdaILxoPr53i61apAZ+SL27C5VpMTcvZQ6/nwtzNpI2duLvcTT/OD4HNkFYuwu2LVkbHpfmFX9YD3pWdjdTIP0y1KM11OEnRXvay00J9wvBsKCm/I++ev0QgvDUas9OUicNhI3goA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729864207; c=relaxed/simple;
-	bh=wtg/Mg+3id26S9R42SknS3o1wThyyGsm4KNyz92R+GU=;
+	s=arc-20240116; t=1729864276; c=relaxed/simple;
+	bh=Wu7EvylJL4VQgi2fQLvllfTkyswJhFa1BfrDPsfeE/E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dEzRT34IhMRIJez3Iq8NU/WPUOxCD3/fAz/NuDM+lZuzT9mURmGWQUzeHRbHORD6iqnkYQs5vpKRg1RY4I8tNduTryibqWXghoiJZ3p/B9mKSOk1vEr2HqEnfsjUC3swpenHpWetospIyOuee3Njy9h2IfiTdYODnsT6+QURAXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mAJzNytW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FFDFC4CEC3;
-	Fri, 25 Oct 2024 13:50:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729864206;
-	bh=wtg/Mg+3id26S9R42SknS3o1wThyyGsm4KNyz92R+GU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mAJzNytWSi+w5hr+2v6xe+jYrkGHfZEniPXR+zqNeK+zuTFb9DApUvXHRww9K147X
-	 SHQb/JaD71wSx7FKXMReEvm0KssWc1vCm00ac2DNIOW+pdUSiBk9m5RWfBe5by3bdw
-	 do61/r1U4LqELhYYW7fjBVgQLD6n7t8h+GlcyNVvVLrwkfyUQao7znKLmOZnLIszdO
-	 61lIrkh0vbj5UdiF5ECXfyhy7v5SEZ6YTuSo+4bkJ7zkgTFkMaf5CVN8vx/juAymgG
-	 ufALqhQmzp7Nkra0DjCmCaIf9cSSAJhr6BuRcM8u9QneYtrBWDUeQt0i140hhlAuuw
-	 ohZR/UPsPQaWA==
-Date: Fri, 25 Oct 2024 14:50:02 +0100
-From: Simon Horman <horms@kernel.org>
-To: George Guo <dongtai.guo@linux.dev>
-Cc: pabeni@redhat.com, davem@davemloft.net, edumazet@google.com,
-	guodongtai@kylinos.cn, kuba@kernel.org,
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
-	netdev@vger.kernel.org, paul@paul-moore.com
-Subject: Re: [PATCH 1/1] add comment for doi_remove in struct
- netlbl_lsm_secattr
-Message-ID: <20241025135002.GX1202098@kernel.org>
-References: <0667f18b-2228-4201-9da7-0e3536bae321@redhat.com>
- <20241025065441.1001852-1-dongtai.guo@linux.dev>
+	 Content-Type:Content-Disposition:In-Reply-To; b=bgtNSFJ9Jrn1PDXENvfub3CoeGTXCKycZMucasfH+T3vSZl/I00wtnHACZvkJdT+7ZMlnVStMOdfAPtcQ2HfWBqvjgf+OP2WjGbc5IH+ceYA9Nx5XjILK1rci1g1JvpI5Pfwfm/qq1krFjxMFESbJDqGc7QxD5hJkCtGfJNrICk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DDL0A12A; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729864274; x=1761400274;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Wu7EvylJL4VQgi2fQLvllfTkyswJhFa1BfrDPsfeE/E=;
+  b=DDL0A12AWJ4MJhoF4fTwOvtEo2uq/DK+YlQNgrGKXDx9sU0yD6eR5L8D
+   dAGDKUYRAih1NBYpc7YkF9EvEscVf4YAlu/8hxpIURam7AGBwvfkFiGyd
+   ajhs9kaoKFkkAmOjgKVgnUsZsS7/zt8SVXlseqsXiH90r7ldQliVflFws
+   XwUYY/XyVtb18+TzFgB4Kb68uyLXfXJYDbn7klam7kbjFxRFTWV5gYIh/
+   HoFvRn7XUIpfoyBUsYlA5nIwOMWoGYbaU5I9c8ITMU9xtDyy+AWEnjLW3
+   yKey//XyoO/bcMtOqyoQsJK3iN4tskZRSAXe9NBcD7UVZBLA6LTEv8ZMu
+   g==;
+X-CSE-ConnectionGUID: SMHDSjGiQwaDQ4RepFaUTw==
+X-CSE-MsgGUID: /usbw4cpR++QUnGSSyP4Sg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11236"; a="28983998"
+X-IronPort-AV: E=Sophos;i="6.11,231,1725346800"; 
+   d="scan'208";a="28983998"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2024 06:50:50 -0700
+X-CSE-ConnectionGUID: Te/ubDqWQiGCIcWeOCpdBA==
+X-CSE-MsgGUID: 2RcdbdnSTLml6qAPZBvGuA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,231,1725346800"; 
+   d="scan'208";a="111755596"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2024 06:50:45 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1t4Ki9-00000006vkd-3NAP;
+	Fri, 25 Oct 2024 16:50:41 +0300
+Date: Fri, 25 Oct 2024 16:50:41 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: John Ogness <john.ogness@linutronix.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>, Petr Mladek <pmladek@suse.com>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Esben Haabendal <esben@geanix.com>, linux-serial@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Rengarajan S <rengarajan.s@microchip.com>,
+	Serge Semin <fancer.lancer@gmail.com>,
+	Lino Sanfilippo <l.sanfilippo@kunbus.com>
+Subject: Re: [PATCH tty-next v3 2/6] serial: 8250: Use high-level write
+ function for FIFO
+Message-ID: <ZxuiMdrGcsuPp8OG@smile.fi.intel.com>
+References: <20241025105728.602310-1-john.ogness@linutronix.de>
+ <20241025105728.602310-3-john.ogness@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,18 +87,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241025065441.1001852-1-dongtai.guo@linux.dev>
+In-Reply-To: <20241025105728.602310-3-john.ogness@linutronix.de>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Fri, Oct 25, 2024 at 02:54:41PM +0800, George Guo wrote:
-> From: George Guo <guodongtai@kylinos.cn>
+On Fri, Oct 25, 2024 at 01:03:24PM +0206, John Ogness wrote:
+> Currently serial8250_console_fifo_write() directly writes into the
+> UART_TX register, rather than using the high-level function
+> serial8250_console_putchar(). This is because
+> serial8250_console_putchar() waits for the holding register to
+> become empty. That would defeat the purpose of the FIFO code.
 
-Please don't post updated patches more frequently than once per 24h.
-It makes reviewing quite cumbersome.
+You can slightly reformat the above to make it less shaky in terms
+of the efficiency of a line capacity usage.
 
-For comments on a (slightly) earlier version, please see:
+Currently serial8250_console_fifo_write() directly writes into
+the UART_TX register, rather than using the high-level function
+serial8250_console_putchar(). This is because
+serial8250_console_putchar() waits for the holding register
+to become empty. That would defeat the purpose of the FIFO code.
 
-https://lore.kernel.org/netdev/20241025065441.1001852-1-dongtai.guo@linux.dev/T/#mc951365b9ba02e3538efa0f0eb6a215199efc73b
+> Move the LSR_THRE waiting to a new function
+> serial8250_console_wait_putchar() so that the FIFO code can use
+> serial8250_console_putchar(). This will be particularly important
+> for a follow-up commit, where output bytes are inspected to track
+> newlines.
+
+> This is only refactoring and has no functional change.
+
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
 -- 
-pw-bot: changes-requested
+With Best Regards,
+Andy Shevchenko
+
+
 
