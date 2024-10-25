@@ -1,327 +1,189 @@
-Return-Path: <linux-kernel+bounces-381056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D3FD9AF9AE
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 08:14:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C51469AF9B1
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 08:14:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C84BD1F239FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 06:14:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E88121C21CFE
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 06:14:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FA1718F2F2;
-	Fri, 25 Oct 2024 06:13:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20025199935;
+	Fri, 25 Oct 2024 06:14:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AoboBaJP"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Uqmbecnb"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2059.outbound.protection.outlook.com [40.107.236.59])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 249E918C030;
-	Fri, 25 Oct 2024 06:13:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729836836; cv=none; b=WzZueWi9L0Vkq7TLrGa+8gWO9ltFcwb+twb1tt5iJyKAOICh3R5xwVc/9HbOLV6ZxdU0DNDQLY7DpVdWAsRAdGKJGewzZg+ycDDaMp87nWynQNbp3QDZECA2rtoC/IExxP0Q3TfHDCd/z4qxd3zvZBiKIglwInIVn7jP1lLyFAo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729836836; c=relaxed/simple;
-	bh=ftZRSZ1gbOsPmw5ihJaDFTNc4xbRCmEIuAcNB+CpY7s=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=QqXgaaFDHIP5v5jAfpBN8jf0NnQVetKVIVCMsAxrXoLiaxsA/aKRHh2Egb/9K8cBXR8iXwRbYXCf1qU9fF5d2/ZU/5xamHC6Wmdv1QIKzPGQ6CSzg1yMPevv2sAHnJO5hGIc3/K0/JmYIfVFYS72Tacv2XF2t3zoFc/k6KRv5hk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AoboBaJP; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a9a0ef5179dso218483866b.1;
-        Thu, 24 Oct 2024 23:13:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729836832; x=1730441632; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=hQxLMO8GfBgHfGm4i8Pyx/epeXStpaAQg45viyWWx70=;
-        b=AoboBaJPdxS98oLYBGRBTGs3wXOGXftb4J19mZnCyi5RugX+M52wifHHfLoF+DhRgR
-         2SGodGUtssMx2j54yevelk1bv8FluvncdAsQ6WOEew8FhDrB1E7Jjg4UcFtS4dcJj+tp
-         +T/VB5chPl/qDXcnTmnSY49PIRue845klRTw/S5TQqTndAFRW9VHHf9i67ufQaHOj+BL
-         k8wRVScM7DBIBY+kJ1yhJCyFRjsmGW6hHL8C6LugRwqL89syANmkU+m/K6xW0WBduBfp
-         /onxpghGL5Kh43gS9vj2h/mvKZL+cODkPHfh3yeqGK3H4GJsF5vW07HMh4qfx5wun763
-         uQ+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729836832; x=1730441632;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hQxLMO8GfBgHfGm4i8Pyx/epeXStpaAQg45viyWWx70=;
-        b=oG4i2BIjbEdoBb18W8DMkONh2kw0DITnv7PrH0a1RZZDh1vFt3IBGT+Sf2Fe5mVDJQ
-         EX/ttueDhGE8XU/LhUOJRw29v7scQX19UMbMz5K7f2DMgGs8wdYKX6uJWq6Wtc8LEsDe
-         3KKbxwQFEmN1gLFOe/YKkwfcdZXUq7o8/hWuKPLWrIw3GtaJzwh4anr21yB1Gu4wJ4HJ
-         0oW6XSZdxaIH7E8Wn9NWHjwWNXaEuWx+1ahaKxzLtfYKciZQALd5/AHOftvEvj1GaggG
-         Ezyt+QUMXlfNUih83Mww/zzXi/V65ag2yENRUYHh7rhhjUwZuwRq7eISFRIMgvT6wUiM
-         S4cw==
-X-Forwarded-Encrypted: i=1; AJvYcCULalIvSBjJqbO96Giv1sCsDZkD74JYuTLzynuU8dpnyNuwdJr825u2eBzug/N/m5imshSuBI2dqCDHutcK@vger.kernel.org, AJvYcCVnYAf9nRxUty0o2z7F4b2yA0KA3HV5/A0y4FlF0sHyLY0GE+VAsXjgAI2fvmuzrytBhXi/w+4Q3bCB@vger.kernel.org, AJvYcCWD3vtieoEJy+EYqgIDSlNEA0Yzicl5ZgedLUcEEsLJ0ndeK534WEn24EfkIqtlivW0Zetz8WPC9r/4@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzErOvjn1roxEQ6iz0FnNom9+SqjzRPY2+NPOvnM4iwOeXvcLU
-	MaKJiQazq85m1+AVz2L3q0BdpDCJxjRyL3sJhEPpuUSrt6DMjqX7nduHX6e0JtD4yQ==
-X-Google-Smtp-Source: AGHT+IHA6RHsMt5MuhUG1erEmFD4uckiBwq5oXRKpLstJF8EE5mZ1SIsRI5TYojYk+uJ2XYnHr1Z9g==
-X-Received: by 2002:a17:907:6e93:b0:a9a:e2b:1711 with SMTP id a640c23a62f3a-a9ad257c4a8mr391769566b.0.1729836832067;
-        Thu, 24 Oct 2024 23:13:52 -0700 (PDT)
-Received: from nsa.fritz.box ([2001:a61:34c9:ea01:14b4:7ed9:5135:9381])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b1dec7b90sm30770166b.28.2024.10.24.23.13.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Oct 2024 23:13:51 -0700 (PDT)
-Message-ID: <31e09df8a3fd562eff9a5bf6bd7a7706f27449b6.camel@gmail.com>
-Subject: Re: [PATCH v7 7/8] iio: dac: ad3552r: add high-speed platform driver
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: Angelo Dureghello <adureghello@baylibre.com>
-Cc: Nuno =?ISO-8859-1?Q?S=E1?= <nuno.sa@analog.com>, Lars-Peter Clausen
- <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, 
- Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Olivier Moysan <olivier.moysan@foss.st.com>,
- linux-iio@vger.kernel.org,  devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, dlechner@baylibre.com,  Mark Brown
- <broonie@kernel.org>
-Date: Fri, 25 Oct 2024 08:13:50 +0200
-In-Reply-To: <wvnyqgng5h2trpjlrwuvxryvy2i7sftnribnkjp5uh5ogrxdoc@wbh5do3rmqqe>
-References: 
-	<20241021-wip-bl-ad3552r-axi-v0-iio-testing-v7-0-969694f53c5d@baylibre.com>
-	 <20241021-wip-bl-ad3552r-axi-v0-iio-testing-v7-7-969694f53c5d@baylibre.com>
-	 <9f00e86e8a7d8f821cdb79d5b083235daec481a9.camel@gmail.com>
-	 <exprb7zhsr5qbpjdhbxisodmm4pf74hwl7ijql5o6zyuc3assg@sf53j42lzurf>
-	 <14d0f5fb4240a7e0c3665d4ffc128117c5515ac6.camel@gmail.com>
-	 <wvnyqgng5h2trpjlrwuvxryvy2i7sftnribnkjp5uh5ogrxdoc@wbh5do3rmqqe>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ED2318F2F2;
+	Fri, 25 Oct 2024 06:14:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.59
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729836885; cv=fail; b=iBNIQfoRymxx3cYcgB3UslvNg3J0adKgOGFFm6UxvwomaUg9Acr3GToqQFFkZLUwGQN9nJOT7mfyCu/2l2eLzmZluzozcInTBjxj9uFIUbg31DzgVkAYE2wf24bG/fqmCaFMdxoGJ7jZffJkw2DkHJtW/M+ohBLDaNJAnlJfsvs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729836885; c=relaxed/simple;
+	bh=07KTbyC5j9Rfaly0wHspwEAayDQi1edPRsGxagVIQQU=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QRzd32OA4lOIV/3sa9DUx8khaofcJ5sl2z3+cEeeaMSDM/h6S/h9Bkyc+FsaDBgcqKbpJUPu+JcPVhW/H9d0zfsLiK1bfrgcMyWyU+gSg4MBvFdE2efQnS4f0hegRG4KcDg2pQvoMCvpShBkyVqmoQJYwDWthdC5Qm4EGg5SKT0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Uqmbecnb; arc=fail smtp.client-ip=40.107.236.59
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=UPHzKdprzadRCEkOIfSLWRPjz/utcK1+gLwRuJNxbHqH2c3jbW997gm/lfkS9ZV5sATdKrgDUITm5WThknydPEs2gxBhVCpxrSuc+GLLAytWW0zSbNrC1e7o0gbj2wT4x4o9lAilw2SGgIyLffHO57kabA0R3+27JzF0e5O91IZxTh2G4V74z8Expu0GF/XUuijF+3t3DALwmYd/pPoL0niQAF1HgRgtwOTkUeaqBH/T222XHEsc7eTu2vRPdLAzpR4zAApiKrSO8iIUI47d3ZIZpy4Jhs4ww43FaOqZG54tIJ1Na5sUO+M3880G5S04Nj7ojDmAvF+gwb0dS9PbFw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=vgJs3UKBunQtx/oopWEMRCgJ94ciQ4Ri20yY4RfyjZM=;
+ b=RXSDOQ/6ADQBhLn42pumONPl4kdipwC7QowoIDRvQ4NmL0yKwQkuaKwQcl4PVcmrvPOWLyBpcbR5siV2tJw9N4C/+KWAigFkH7QXziTjy8RulYPD38/V6jG/yrNEVgvixmUNtes99JIGQzc4mt9/PS4QrzSoAMH/KMns6zjzQGw7NI7WfdOsnSOpXrd8YDp5k39Jua563S8+CrEqrbNx2Sh8X3ip8esO47pUCBXelhHNRfotechRFzqdwJHpQ7RIfx86ImsBvPEi3bWhv/ZuBXGXPeuQIgKA67qPzzaW02OSzTzAT/6yD29QG1oJFPM6kWlmT9kwAHhcihLq8fl5Yw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=amd.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vgJs3UKBunQtx/oopWEMRCgJ94ciQ4Ri20yY4RfyjZM=;
+ b=UqmbecnbMSzUG5/rZUROhG615aLfj9+b4Cgktbbeh1Qm7KOr0q64Xzmk5tRvuH5uZRVj3VYC7pv4z1bto8DbknxMmi9zlFdwa27AVlVyDeK1M+Q14I+A1nv5GlEwctqd40kubOU8y/KKx0yJshYhFNInS/VxKZN5bSlAVFm5NeZoqA8Ezi7s0n2eFkBcezqEyKqSgz/VvbNMnDksI0aWhk9gvpAf4xSI6qUQBwvYThKSRK1/OpIRcpkYYV6cm2hmFwuXCzpO9AsEgJmP1a5/WzOpqrMCpS4vblFspL//mK0JgwWFhEcc2WxVnDV/vY6tbAL7I1ml+LpbrRQt4zfRQQ==
+Received: from DS7PR03CA0285.namprd03.prod.outlook.com (2603:10b6:5:3ad::20)
+ by SA1PR12MB6871.namprd12.prod.outlook.com (2603:10b6:806:25f::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.20; Fri, 25 Oct
+ 2024 06:14:39 +0000
+Received: from CY4PEPF0000FCC0.namprd03.prod.outlook.com
+ (2603:10b6:5:3ad:cafe::3e) by DS7PR03CA0285.outlook.office365.com
+ (2603:10b6:5:3ad::20) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.28 via Frontend
+ Transport; Fri, 25 Oct 2024 06:14:39 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ CY4PEPF0000FCC0.mail.protection.outlook.com (10.167.242.102) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8093.14 via Frontend Transport; Fri, 25 Oct 2024 06:14:39 +0000
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 24 Oct
+ 2024 23:14:24 -0700
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail202.nvidia.com
+ (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 24 Oct
+ 2024 23:14:24 -0700
+Received: from Asurada-Nvidia (10.127.8.9) by mail.nvidia.com (10.129.68.9)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
+ Transport; Thu, 24 Oct 2024 23:14:22 -0700
+Date: Thu, 24 Oct 2024 23:14:21 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: Alexey Kardashevskiy <aik@amd.com>
+CC: <jgg@nvidia.com>, <kevin.tian@intel.com>, <will@kernel.org>,
+	<joro@8bytes.org>, <suravee.suthikulpanit@amd.com>, <robin.murphy@arm.com>,
+	<dwmw2@infradead.org>, <baolu.lu@linux.intel.com>, <shuah@kernel.org>,
+	<linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kselftest@vger.kernel.org>,
+	<eric.auger@redhat.com>, <jean-philippe@linaro.org>, <mdf@kernel.org>,
+	<mshavit@google.com>, <shameerali.kolothum.thodi@huawei.com>,
+	<smostafa@google.com>, <yi.l.liu@intel.com>, <zhangfei.gao@linaro.org>,
+	<patches@lists.linux.dev>
+Subject: Re: [PATCH v4 00/14] iommufd: Add vIOMMU infrastructure (Part-2:
+ vDEVICE)
+Message-ID: <Zxs3PYVLzmRfBf+/@Asurada-Nvidia>
+References: <cover.1729555967.git.nicolinc@nvidia.com>
+ <98a0e135-4f9b-4a2e-94b5-f1a830a49f19@amd.com>
+ <ZxslrakslZbphayO@Asurada-Nvidia>
+ <487ebe2c-718f-405c-8f20-213eab59ca0f@amd.com>
+ <ZxsvofcC9xSSEMHi@Asurada-Nvidia>
+ <607d019e-25b7-45b8-8c85-3829d4b53a82@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <607d019e-25b7-45b8-8c85-3829d4b53a82@amd.com>
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000FCC0:EE_|SA1PR12MB6871:EE_
+X-MS-Office365-Filtering-Correlation-Id: f04b7eb8-8261-496a-6fad-08dcf4bc4efd
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|82310400026|36860700013|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?1p+6EvOTQPpWgpehPPbaZ6nvWsrdHtMN/AftJK/A4UQpo8M8acbZfuJHSnIX?=
+ =?us-ascii?Q?kddrjF9hVnYYLrvWC74i/GymgqYeJRyFTpXMCqRwdwNXpJjR4S24gjjzn2VS?=
+ =?us-ascii?Q?xEzeMQA0Wkk2X6UXo0M0D8+DMpiJbg/0Aez8KcrGi4Icd7MRo54uSLmjOZ7G?=
+ =?us-ascii?Q?dbuJK7n1XPhcxqZH11sdLpA5nRaVdhTL9J44cDQc7WbuOBNM6Y+wqxWnjF2A?=
+ =?us-ascii?Q?GVWjWHWINzx+hZOiLRVznOV5ae8HbW/1OOM85j/3brmf98idQJx2Ukpa1xaX?=
+ =?us-ascii?Q?1nZRG7GQ6qBLAWdykP4qs9oNzsB+ZOJYKOSF7xXE4NC3uBDnptZcG7QpQFN7?=
+ =?us-ascii?Q?437cmzI8pRbIcXvSytqthmPnQqw6tlMpln5XYhJMshIYXF4RZQbf/FK2za/C?=
+ =?us-ascii?Q?l+lOkoe3O63Zpb/qqH5pFAG+O68Dh7TgMNWodD8Lpl5aVLeTzWIw17wjDVHp?=
+ =?us-ascii?Q?Gzp2EtCf4fhBGxqTwToEaFTyjfHnd35FI31GrHkG4m/mxfDEgFbKiJcNPwE1?=
+ =?us-ascii?Q?ohSx3DCbewReeGWVA7ku9k/JlY5RpmsewuV6gOjUo65VJiu1+BTVpjYaTRtz?=
+ =?us-ascii?Q?qJTe+ocK3FNr2R7U9A9E4fVG4LQA5i3w1MaqHcyiJXB8PEBYGKCSuAs4lv2s?=
+ =?us-ascii?Q?0BuLPPiukocKlg/pgw9B/fpPYkfQ06nDksNp6IqVsz1ijy8ygdLTZMjNQeSL?=
+ =?us-ascii?Q?MSF6yImrj4TaJrXdUcXHhuB/xRNj7ohxBfySheUbwhPlderxPL6LJsQYgnEG?=
+ =?us-ascii?Q?u1rz4VfuS1Zu50E595ZdIn8yxR1K6KFiEYnYTP+5sS8UJ75w/qB0XEhoE6aq?=
+ =?us-ascii?Q?p2Y6Fkhl/GenUV91C8Vd9idtXMAxV8IWKJ5+85P/GimnBadCzfa7WjomnIt9?=
+ =?us-ascii?Q?3tF02EaBTjoa9uQN0AMDFHdzGhr9upvaVCoOXB1w/QNKc9UkioZy3a/JBJOa?=
+ =?us-ascii?Q?c+iov+p05Qt1qfNEt5P0eKLSOUb+BsCMN29t/OmTxOfcIlvcmuf2oSJZ3CMe?=
+ =?us-ascii?Q?hi5zoP350d5kRt64WX960lwAbyiuo7L03EjIUZ5+TgZNo927/ZAX9h1p0dxu?=
+ =?us-ascii?Q?oN8RTXkEnLfIki/cXsoD3FGTP0A3HBt/VOMJLgW2S7GZ1tZ7oO4iP2ap78W9?=
+ =?us-ascii?Q?yvxNoO4s0p/SiUR3tUG8TShzVL8hAlniwEko3qEhyN32XJzVZOpSRIAQZKjc?=
+ =?us-ascii?Q?FLTDuSGoXLTYCKF353eI4ZOW5RCG3tqlHwvcdnAhiCzk9xNo+HFEsc1kJDfu?=
+ =?us-ascii?Q?B5Ehxh3rjz8rRhDykiPtORfr+x8Rz3YBg/wGI5x0RaxUWrnzkmtPBcdha8yI?=
+ =?us-ascii?Q?IXHSQT3raENPauHaKG+qPg+Ds0ZbfFAeXgNxcKjSyvAP/S2+ny1qSr5rItsD?=
+ =?us-ascii?Q?dzYD1NO5KsYwkyDQrtRIFfgbt6ZPxSE+JTfVdMpqs4OemRb8tA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(7416014)(82310400026)(36860700013)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Oct 2024 06:14:39.4935
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: f04b7eb8-8261-496a-6fad-08dcf4bc4efd
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CY4PEPF0000FCC0.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB6871
 
-Hi Angelo,
+On Fri, Oct 25, 2024 at 04:58:33PM +1100, Alexey Kardashevskiy wrote:
+> > > > > Is there any real example of a .vdevice_alloc hook, besides the
+> > > > > selftests? It is not in iommufd_viommu_p2-v4-with-rmr, hence the
+> > > > > question. I am trying to sketch something with this new machinery and
+> > > > > less guessing would be nice. Thanks,
+> > > > 
+> > > > No, I am actually dropping that one, and moving the vdevice struct
+> > > > to the private header, as there seems to be no use case:
+> > > 
+> > > Why keep it then?
+> > 
+> > We need that structure to store per-vIOMMU virtual ID. Hiding it
+> > in the core only means we need to provide another vIOMMU APIs for
+> > drivers to look up the ID, v.s. exposing it for drivers to access
+> > directly.
+> 
+> Sorry I lost you here. If we need it, then there should be an example of
+> .vdevice_alloc() somewhere but you say they is not one. How do you test
+> this, with just selftests? :) Thanks,
 
-Just some minor (not that big of a deal comments)
+A vDEVICE object will be core-allocated and core-managed, while the
+vdevice_alloc is for driver-allocated purpose for which there is no
+use case (at least with this series). You can check the vdev ioctl
+in this version that has two pathways to allocate a vDEVICE object.
 
-On Thu, 2024-10-24 at 17:02 +0200, Angelo Dureghello wrote:
-> Hi Nuno,
->=20
-> On 24.10.2024 15:05, Nuno S=C3=A1 wrote:
-> > On Tue, 2024-10-22 at 18:40 +0200, Angelo Dureghello wrote:
-> > > Hi Nuno,
-> > >=20
-> > > On 22.10.2024 14:28, Nuno S=C3=A1 wrote:
-> > > > On Mon, 2024-10-21 at 14:40 +0200, Angelo Dureghello wrote:
-> > > > > From: Angelo Dureghello <adureghello@baylibre.com>
-> > > > >=20
-> > > > > Add High Speed ad3552r platform driver.
-> > > > >=20
-> > > > > The ad3552r DAC is controlled by a custom (fpga-based) DAC IP
-> > > > > through the current AXI backend, or similar alternative IIO backe=
-nd.
-> > > > >=20
-> > > > > Compared to the existing driver (ad3552r.c), that is a simple SPI
-> > > > > driver, this driver is coupled with a DAC IIO backend that finall=
-y
-> > > > > controls the ad3552r by a fpga-based "QSPI+DDR" interface, to rea=
-ch
-> > > > > maximum transfer rate of 33MUPS using dma stream capabilities.
-> > > > >=20
-> > > > > All commands involving QSPI bus read/write are delegated to the b=
-ackend
-> > > > > through the provided APIs for bus read/write.
-> > > > >=20
-> > > > > Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
-> > > > > ---
-> > > > > =C2=A0drivers/iio/dac/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=
-=A0 14 ++
-> > > > > =C2=A0drivers/iio/dac/Makefile=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=
-=A0 1 +
-> > > > > =C2=A0drivers/iio/dac/ad3552r-hs.c | 547
-> > > > > +++++++++++++++++++++++++++++++++++++++++++
-> > > > > =C2=A0drivers/iio/dac/ad3552r-hs.h |=C2=A0 18 ++
-> > > > > =C2=A0drivers/iio/dac/ad3552r.h=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 4=
- +
-> > > > > =C2=A05 files changed, 584 insertions(+)
-> > > > >=20
-> > > > > diff --git a/drivers/iio/dac/Kconfig b/drivers/iio/dac/Kconfig
-> > > > > index fa091995d002..fc11698e88f2 100644
-> > > > > --- a/drivers/iio/dac/Kconfig
-> > > > > +++ b/drivers/iio/dac/Kconfig
-> > > > > @@ -6,6 +6,20 @@
-> > > > > =C2=A0
-> > > > > =C2=A0menu "Digital to analog converters"
-> > > > > =C2=A0
-> > > > > +config AD3552R_HS
-> > > > > +	tristate "Analog Devices AD3552R DAC High Speed driver"
-> > > > > +	select ADI_AXI_DAC
-> > > > > +	help
-> > > > > +	=C2=A0 Say yes here to build support for Analog Devices AD3552R
-> > > > > +	=C2=A0 Digital to Analog Converter High Speed driver.
-> > > > > +
-> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 The drive=
-r requires the assistance of an IP core to operate,
-> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 since dat=
-a is streamed into target device via DMA, sent over a
-> > > > > +	=C2=A0 QSPI + DDR (Double Data Rate) bus.
-> > > > > +
-> > > > > +	=C2=A0 To compile this driver as a module, choose M here: the
-> > > > > +	=C2=A0 module will be called ad3552r-hs.
-> > > > > +
-> > > > > =C2=A0config AD3552R
-> > > > > =C2=A0	tristate "Analog Devices AD3552R DAC driver"
-> > > > > =C2=A0	depends on SPI_MASTER
-> > > > > diff --git a/drivers/iio/dac/Makefile b/drivers/iio/dac/Makefile
-> > > > > index c92de0366238..d92e08ca93ca 100644
-> > > > > --- a/drivers/iio/dac/Makefile
-> > > > > +++ b/drivers/iio/dac/Makefile
-> > > > > @@ -4,6 +4,7 @@
-> > > > > =C2=A0#
-> > > > > =C2=A0
-> > > > > =C2=A0# When adding new entries keep the list in alphabetical ord=
-er
-> > > > > +obj-$(CONFIG_AD3552R_HS) +=3D ad3552r-hs.o ad3552r-common.o
-> > > > > =C2=A0obj-$(CONFIG_AD3552R) +=3D ad3552r.o ad3552r-common.o
-> > > > > =C2=A0obj-$(CONFIG_AD5360) +=3D ad5360.o
-> > > > > =C2=A0obj-$(CONFIG_AD5380) +=3D ad5380.o
-> > > > > diff --git a/drivers/iio/dac/ad3552r-hs.c b/drivers/iio/dac/ad355=
-2r-hs.c
-> > > > > new file mode 100644
-> > > > > index 000000000000..27bdc35fdc29
-> > > > > --- /dev/null
-> > > > > +++ b/drivers/iio/dac/ad3552r-hs.c
-> > > > > @@ -0,0 +1,547 @@
-> > > > > +// SPDX-License-Identifier: GPL-2.0-only
-> > > > > +/*
-> > > > > + * Analog Devices AD3552R
-> > > > > + * Digital to Analog converter driver, High Speed version
-> > > > > + *
-> > > > > + * Copyright 2024 Analog Devices Inc.
-> > > > > + */
-> > > > > +
-> > > > > +#include <linux/bitfield.h>
-> > > > > +#include <linux/delay.h>
-> > > > > +#include <linux/gpio/consumer.h>
-> > > > > +#include <linux/iio/backend.h>
-> > > > > +#include <linux/iio/buffer.h>
-> > > > > +#include <linux/mod_devicetable.h>
-> > > > > +#include <linux/platform_device.h>
-> > > > > +#include <linux/property.h>
-> > > > > +#include <linux/units.h>
-> > > > > +
-> > > > > +#include "ad3552r.h"
-> > > > > +#include "ad3552r-hs.h"
-> > > > > +
-> > > > > +struct ad3552r_hs_state {
-> > > > > +	const struct ad3552r_model_data *model_data;
-> > > > > +	struct gpio_desc *reset_gpio;
-> > > > > +	struct device *dev;
-> > > > > +	struct iio_backend *back;
-> > > > > +	bool single_channel;
-> > > > > +	struct ad3552r_ch_data ch_data[AD3552R_MAX_CH];
-> > > > > +	struct ad3552r_hs_platform_data *data;
-> > > > > +};
-> > > > > +
-> > > > > +static int ad3552r_qspi_update_reg_bits(struct ad3552r_hs_state =
-*st,
-> > > > > +					u32 reg, u32 mask, u32 val,
-> > > > > +					size_t xfer_size)
-> > > > > +{
-> > > > > +	u32 rval;
-> > > > > +	int ret;
-> > > > > +
-> > > > > +	ret =3D st->data->bus_reg_read(st->back, reg, &rval, xfer_size)=
-;
-> > > > > +	if (ret)
-> > > > > +		return ret;
-> > > > > +
-> > > > > +	rval =3D (rval & ~mask) | val;
-> > > > > +
-> > > > > +	return st->data->bus_reg_write(st->back, reg, rval, xfer_size);
-> > > > > +}
-> > > > > +
-> > > > > +static int ad3552r_hs_read_raw(struct iio_dev *indio_dev,
-> > > > > +			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct iio_chan_spec con=
-st *chan,
-> > > > > +			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int *val, int *val2, lon=
-g mask)
-> > > > > +{
-> > > > > +	struct ad3552r_hs_state *st =3D iio_priv(indio_dev);
-> > > > > +	int ret;
-> > > > > +	int ch =3D chan->channel;
-> > > > > +
-> > > > > +	switch (mask) {
-> > > > > +	case IIO_CHAN_INFO_SAMP_FREQ: {
-> > > > > +		int sclk;
-> > > > > +
-> > > > > +		ret =3D iio_backend_read_raw(st->back, chan, &sclk, 0,
-> > > > > +					=C2=A0=C2=A0 IIO_CHAN_INFO_FREQUENCY);
-> > > > > +		if (ret !=3D IIO_VAL_INT)
-> > > > > +			return -EINVAL;
-> > > > > +
-> > > >=20
-> > > > I just saw you had some questions on v6 that everyone failed to see=
-. See my
-> > > > reply to David here:
-> > > >=20
-> > > > https://lore.kernel.org/linux-iio/61cf3072af74a8b2951c948ddc2383ba1=
-e55954d.camel@gmail.com/
-> > > >=20
-> > > > It should be easy and it's something that makes sense (at least to =
-me :))
-> > > >=20
-> > >=20
-> > > I understood that we would improve things later in case.
-> > >=20
-> > > Could we maybe stay with IIO_CHAN_INFO_FREQUENCY ? It doesn't seems t=
-o me
-> > > so out of scope. Sorry but i am trying to finalize someway this job,
-> > > so i am trying to conatain changes now at v7, if code is not really=
-=20
-> > > totally wrong.
-> >=20
-> > I think you're trying to rush in the series. I can understand your frus=
-tration
-> > but
-> > believe me that v7 (or v8) is not so bad :).
-> >=20
-> > David already raised concerns about using IIO_CHAN_INFO_FREQUENCY. I'm =
-also not a
-> > fan
-> > of it and gave you another option that should be trivial and makes sens=
-e (given
-> > that
-> > bus_read and write are already being done through the platform_data int=
-erface).
-> > So
-> > no, I don't think we're going to accept "is not really totally wrong.".=
- IOW, We
-> > want
-> > it to be totally right - if such a thing exists :).
-> >=20
-> > >=20
->=20
-> i changed this way, using platform_data:
->=20
-> static int axi_dac_bus_clok(struct iio_backend *back)
+A vdev_id is used to index viommu's xarray for a driver to convert
+the id to a dev pointer via a vIOMMU API. Dropping .vdevice_alloc
+just means the driver only lost its direct access.
 
-If we don't have error I would change it to:
-
-static void axi_dac_bus_clock(struct iio_backend *back, u64 *rate) - or at =
-the very
-least return u64 and not int.
-
-But alternatively, if you want to take simplicity one step further, you can=
- just save
-a u64 bus_clock variable in your platform_data and access it directly (give=
-n that
-we're only assuming the streaming rate in which case this is constant). And=
- If we
-ever have an usecase where we need more flexibility, it should be fairly st=
-aright to
-bring this the bus_clock() callback.
-
-I'm fine either way so up to you :)
-
-- Nuno S=C3=A1
-
-
+Nicolin
 
