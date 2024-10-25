@@ -1,141 +1,146 @@
-Return-Path: <linux-kernel+bounces-382054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 565339B0871
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:37:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E6849B0876
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:37:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 026BB1F244EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:37:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3616F1F23EA1
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:37:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5D0C14A60D;
-	Fri, 25 Oct 2024 15:36:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8E17167D80;
+	Fri, 25 Oct 2024 15:37:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="QM7LPu1s";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="RW8JfO4s"
-Received: from fhigh-a4-smtp.messagingengine.com (fhigh-a4-smtp.messagingengine.com [103.168.172.155])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="kCQBI6v3"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AF1821A4DC;
-	Fri, 25 Oct 2024 15:36:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A82921A4DC;
+	Fri, 25 Oct 2024 15:37:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729870619; cv=none; b=iZUzjuS4lAT4586hdVuhKQvX+uRQjwpizcMAh3U4KcvOtwgFW+gndT1qIf0pnJdoUye+1MiVX54AgbNYkMNWfsjdmDox3sp/bnqcUAlpIKSZdm2Yd0z36ELG9rbAbYLnsr0J6/qOiKuWPPHC9gs2hLrHTeMGLB8OJTn6JKuPxCU=
+	t=1729870625; cv=none; b=SWJ4ONW7bqoCg3qyeiopG/3aRpj87XBM8yuIgobLKD1P7lnhoHk4YkwkvNQB/OAyEj4DXanI/fMDvH7H0Qj1oiCgWOMus281lTxlO3PxUnEHZGtCwfdTd6qTjZhrCpaynsJuYFLcJ3PpDSgpIRj/eT7468sM25WAc37vsXhEZcg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729870619; c=relaxed/simple;
-	bh=58tBmcAbE8WDoQiDmb6MuPoQvbEp4xrH1h7S3g7lf+w=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=N+Lcj3VwN1QEOQeEhV+PsPkCHpm1csI9LSvAJoRNbOJme5uxUpBvL7p0hACMtHjAav2ZVGffG5tgE39doeT343b91YDM0mB4fAVnWXNyO4zJUuzeZ1JdTbZYlCjD+3e5CmX+todX6XnSwPvIaUTMWe4/8HevqdLP/+VtVxabN14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=QM7LPu1s; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=RW8JfO4s; arc=none smtp.client-ip=103.168.172.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
-Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id EE13B1140132;
-	Fri, 25 Oct 2024 11:36:55 -0400 (EDT)
-Received: from phl-imap-12 ([10.202.2.86])
-  by phl-compute-09.internal (MEProxy); Fri, 25 Oct 2024 11:36:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1729870615;
-	 x=1729957015; bh=58tBmcAbE8WDoQiDmb6MuPoQvbEp4xrH1h7S3g7lf+w=; b=
-	QM7LPu1sE/1gaomj169CAn9tUlZtCIlFjvM0oahlEnGMSlntIOM0omjP8XTA5rpY
-	D0wiG6/NEK7Sln53HVUXKXqFc8fJYv0kMl8RRoVquEF9a+In6+ttOtMINAx0DSjQ
-	A/Hky49COGSuVFYcuv48K3kTnncH3s0Yakvm9yPVvT7aOSk+cWQVCWBJ/+Jngcxa
-	s2OuEKNxgmHQg9wo7V5MkHKkLsbnO/F0l1wQBMrsln7hGOHn3r9tYD+hguQyVu0h
-	+eGFvJ6TaBNFqeo02SjQqS/AtQsPrr7XjiVguQzzQmN5jPbrGVa6MpbQ+nkpkhkU
-	rQRiq0oFX0v71OWOkxDERg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1729870615; x=
-	1729957015; bh=58tBmcAbE8WDoQiDmb6MuPoQvbEp4xrH1h7S3g7lf+w=; b=R
-	W8JfO4sypxJs2giDiVRpKk05PpxYancMlUZntgGZR0KqQ/vCp9SLwRzZ6rU89ElA
-	Xb0ps7bN9M8UXPjLiWBAF8ZAPb7273jdubPAGNCRmZIYISFXLRfDJd5ABaC7Dnj9
-	nxmTd5pcgQ9rSnb5c8MZp1q5qjGVfmdXhcy8YOBN9WGkGm5BCcGF5oiYILUhSoJy
-	t8ppWAs+GSzWeBQvwEw1DEkfuej5yNgqUeLlJvGcqInqWHWFYSG9R+LQOOmpiwWv
-	awtoRY2zbbTFKO7SjlPlUBkxkg+z4xWLyPtXcC8Evfwosf7lUVNfvM8aUtPAPc0K
-	DSnzyOe/AIvkQ5wUeL8PA==
-X-ME-Sender: <xms:F7sbZ6ncZUg_4q5YhdgWD8ZEvNBX10sKPZnbYJNwz2EUAX1v5VSXvw>
-    <xme:F7sbZx3mYJkPTeDNQtovtRWdg9aqyBb88yYq86bHVtDHT95cDCMnigNhY0G6uucua
-    v50QNv2L9JOrtpVgu4>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdejvddgledtucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdej
-    necuhfhrohhmpedflfhirgiguhhnucgjrghnghdfuceojhhirgiguhhnrdihrghnghesfh
-    hlhihgohgrthdrtghomheqnecuggftrfgrthhtvghrnhepffekveettdeuveefhfekhfdu
-    gfegteejffejudeuheeujefgleduveekuddtueehnecuffhomhgrihhnpehkvghrnhgvlh
-    drohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhm
-    pehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtohhmpdhnsggprhgtphhtthhope
-    duvddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheptghonhguuhgttheskhgvrhhn
-    vghlrdhorhhgpdhrtghpthhtoheptghvvgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoh
-    eplhgvvgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshgrshhhrghlsehkvghrnhgv
-    lhdrohhrghdprhgtphhtthhopehsvggtuhhrihhthieskhgvrhhnvghlrdhorhhgpdhrtg
-    hpthhtohepshhhuhgrhheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhorhhvrghl
-    ughssehlihhnuhigqdhfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehgrhgvgh
-    hkhheslhhinhhugihfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopegtohhrsggv
-    theslhifnhdrnhgvth
-X-ME-Proxy: <xmx:F7sbZ4pgHJ2nIeTaTeZcMO1OtHN63xfzLvKWCQ0kFQhP4QTxdMp7xQ>
-    <xmx:F7sbZ-mC7FMPBlVLDNK9F-Q7y8Gy3DBQwj9D51w9SXQFi-9im0CCEQ>
-    <xmx:F7sbZ43XYDJnSIvmqWCJqs6EEp1MUkHZffQ4KfIIpWn5dTbG5VX5nA>
-    <xmx:F7sbZ1sRx_FMfb0LY7bLU1OXEcUjds4o3do-W2nj7fSfsiutCV6czQ>
-    <xmx:F7sbZ9swgC2uWQ3P5xU_U5EzKYTY4gL2rwCeHxHwVEQMgxZRg5fExanl>
-Feedback-ID: ifd894703:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 927BB1C20067; Fri, 25 Oct 2024 11:36:55 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1729870625; c=relaxed/simple;
+	bh=U7a/FhaEaBlq9Y+GGNScoitt5QffxKkyGd7hLp9aPdw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=IkOjji1RTyXsNd28aLXKrxOniSxTx76ucxPq6NiNZP/eq99VyQtZKGzPmCLsofdJd8Zi8zkGvjMERS8L35+oCvkcsPsMFldrO91uVO0s7aMjUU8fae81FoZcBLtOqOxlMmyUw78S/jRuhruSuY05w/TvuSiBxpPZW/aB5VqOVE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=kCQBI6v3; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49PB5rAP015472;
+	Fri, 25 Oct 2024 15:36:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	myh7xxzrJi7sDbWl9S5raZY4azAtv3tbnoi2CofFHyw=; b=kCQBI6v3bHbU+FKV
+	pnt7uOqm/HG1KfLlPcXxur/S7fvAAndsxHbbWXNY/tpS1nf+XndgofFH6bjjebhJ
+	k6VUSa5z+OoTFXs7IBEAtSbE3c/6dZlPXMGwXgOW3ymiQrxeOSLRkrkRw1aeTGfo
+	sAXf7umI22wMIDkety2g91afBk1QaBBc6/u+Yh/K3o4SbpfiscchIOHy5qAM6rs4
+	Ebvi4FtDtBRkBl41wjU/e3oPShZdcmRRMIJYt2HcQk5ocb45erepaUK3vrSql6ty
+	lDIWkZl6LpNeISJnFGeqU5tFSSoJe2zB8MMuVY3d9eQJL80WZAl9OgEx2CCF19jc
+	oMJNGA==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42ga5jrx5v-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Oct 2024 15:36:58 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49PFawll013357
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Oct 2024 15:36:58 GMT
+Received: from [10.216.47.209] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 25 Oct
+ 2024 08:36:53 -0700
+Message-ID: <672ceb3d-1b19-461f-b17c-eaa50d936aa5@quicinc.com>
+Date: Fri, 25 Oct 2024 21:06:50 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Fri, 25 Oct 2024 16:36:35 +0100
-From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
-To: linux-kernel@vger.kernel.org, conduct@kernel.org, security@kernel.org,
- cve@kernel.org, linux-doc@vger.kernel.org,
- "stable@vger.kernel.org" <stable@vger.kernel.org>
-Cc: "Linus Torvalds" <torvalds@linux-foundation.org>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, shuah@kernel.org,
- lee@kernel.org, sashal@kernel.org, "Jonathan Corbet" <corbet@lwn.net>
-Message-Id: <0ac6833c-8e7e-458f-a7c8-833901b3e990@app.fastmail.com>
-In-Reply-To: <73b8017b-fce9-4cb1-be48-fc8085f1c276@app.fastmail.com>
-References: <73b8017b-fce9-4cb1-be48-fc8085f1c276@app.fastmail.com>
-Subject: Re: Concerns over transparency of informal kernel groups
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] dt-bindings: interconnect: Add EPSS L3 compatible for
+ SA8775P
+To: Krzysztof Kozlowski <krzk@kernel.org>, Georgi Djakov <djakov@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Odelu Kukatla
+	<quic_okukatla@quicinc.com>
+CC: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Sibi Sankar
+	<quic_sibis@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20240904171209.29120-1-quic_rlaggysh@quicinc.com>
+ <20240904171209.29120-2-quic_rlaggysh@quicinc.com>
+ <86fad872-ccfe-4aa2-906c-c938946af8b7@kernel.org>
+Content-Language: en-US
+From: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
+In-Reply-To: <86fad872-ccfe-4aa2-906c-c938946af8b7@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: AFNZojUn8lZUg60FfJuXSEKDSOdEm966
+X-Proofpoint-GUID: AFNZojUn8lZUg60FfJuXSEKDSOdEm966
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ impostorscore=0 mlxlogscore=999 malwarescore=0 clxscore=1011
+ priorityscore=1501 adultscore=0 mlxscore=0 spamscore=0 suspectscore=0
+ phishscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410250121
 
 
 
-=E5=9C=A82024=E5=B9=B410=E6=9C=8825=E6=97=A5=E5=8D=81=E6=9C=88 =E4=B8=8B=
-=E5=8D=884:15=EF=BC=8CJiaxun Yang=E5=86=99=E9=81=93=EF=BC=9A
-> Dear Linux Community Members,
->
-> Over recent events, I've taken a closer look at how our community's=20
-> governance
-> operates, only to find that there's remarkably little public=20
-> information available
-> about those informal groups. With the exception of the Linux kernel=20
-> hardware security
-> team, it seems none of these groups maintain a public list of members=20
-> that I can
-> easily find.
+On 9/4/2024 11:53 PM, Krzysztof Kozlowski wrote:
+> On 04/09/2024 19:12, Raviteja Laggyshetty wrote:
+>> Add Epoch Subsystem (EPSS) L3 interconnect provider binding on
+>> SA8775P SoCs.
+>>
+>> Signed-off-by: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
+>> ---
+>>  Documentation/devicetree/bindings/interconnect/qcom,osm-l3.yaml | 2 ++
+>>  1 file changed, 2 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/interconnect/qcom,osm-l3.yaml b/Documentation/devicetree/bindings/interconnect/qcom,osm-l3.yaml
+>> index 21dae0b92819..de2c59ddc94a 100644
+>> --- a/Documentation/devicetree/bindings/interconnect/qcom,osm-l3.yaml
+>> +++ b/Documentation/devicetree/bindings/interconnect/qcom,osm-l3.yaml
+>> @@ -33,6 +33,8 @@ properties:
+>>                - qcom,sm6375-cpucp-l3
+>>                - qcom,sm8250-epss-l3
+>>                - qcom,sm8350-epss-l3
+>> +              - qcom,sa8775p-epss-l3-cl0
+>> +              - qcom,sa8775p-epss-l3-cl1
+> 
+> Your device driver change suggests that cl0 is compatible with other
+> variants.
+> 
+> And what about generic fallback here? Can it be used and device will be
+> operating correctly?
+> 
 
-Just to correct, people notified me that a membership list for Code of
-Conduct Committee is available at kernel.org [1] instead of in source tr=
-ee.
+Falling back to "qcom,epss-l3" won't work because we need to vote into perf state register.
+I am introducing a new fallback compatible "qcom,epss-l3-perf" for perf voting, which can be used for upcoming qcs8300.
 
-[...]
+epss_l3_cl0: interconnect@18590000 {
+       compatible = "qcom,sa8775p-epss-l3", "qcom,epss-l3-perf";	   
+};
 
-Thanks
+> Best regards,
+> Krzysztof
+> 
 
-[1]: https://kernel.org/code-of-conduct.html
-
---=20
-- Jiaxun
 
