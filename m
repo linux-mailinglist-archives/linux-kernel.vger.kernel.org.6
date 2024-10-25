@@ -1,158 +1,101 @@
-Return-Path: <linux-kernel+bounces-382041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4ECCE9B0831
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:27:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 20E2C9B083A
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:29:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DDE528455A
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:27:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA5DA2844B9
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:28:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3030A21A4CD;
-	Fri, 25 Oct 2024 15:27:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B22CB1494CC;
+	Fri, 25 Oct 2024 15:28:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jfarr.cc header.i=@jfarr.cc header.b="SYi+crlH";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="OEKGY1VR"
-Received: from fout-a8-smtp.messagingengine.com (fout-a8-smtp.messagingengine.com [103.168.172.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yjAbxMFe"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7125521A4A6;
-	Fri, 25 Oct 2024 15:27:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AE6C43AA1
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 15:28:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729870034; cv=none; b=Us5wx6wJ2qWfht3GluhzNWd+7V2MVYjTe7HUI8KZkNzX5njxtDeWqU/6fTF2bfwLaVJYWJhaTbm6LjPFr0ljuE21Teg6+L/ZaEkGX0Rm3YN0Bf8s90eTDml9Gl+bGVfpvfIFMZzORGKYJbOKnvaROyI3bUPAhXMiMvSMq72t61A=
+	t=1729870123; cv=none; b=mKUcTMK9ZhwwPHpQMpe6PibgdyzZjuFFjCjv8bZKPhR7cANeMrtxiEF+y4WJ9GA56xNywne8PhD5LcjRxmWuNj5fsDhQhtUmU7mZxFC+Yfq6lwW+3ykAZ08wbItWZezBjCpr+vx+kRrymC0GliV2prf0yK5JkZU91ABwT/0pKck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729870034; c=relaxed/simple;
-	bh=RGW2QulLFv51uPgzrDVtdV/AJ/X8QIUglHvZM+LYZ7g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rMWnz7nMY4AArj9Ky7lmMZ5W1gDZZUPf02Xmck7DTuVw6UAFy1BX4m9BG2gF+sIMIh0bJeI8kMLAj2dtK+lgIwBE8eKjPC7d7QHfJXfERIiKtuhCgekGQX07HY9fp05xDoiIDMHutyyiWQ1SMiMavY9bkIkknWLUZMiOdUB140s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jfarr.cc; spf=pass smtp.mailfrom=jfarr.cc; dkim=pass (2048-bit key) header.d=jfarr.cc header.i=@jfarr.cc header.b=SYi+crlH; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=OEKGY1VR; arc=none smtp.client-ip=103.168.172.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jfarr.cc
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jfarr.cc
-Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
-	by mailfout.phl.internal (Postfix) with ESMTP id A39D513801B5;
-	Fri, 25 Oct 2024 11:27:10 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-01.internal (MEProxy); Fri, 25 Oct 2024 11:27:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jfarr.cc; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1729870030;
-	 x=1729956430; bh=RLih69XQUoMnH4TqrYPUlmUCQn82s+sfVe9uNsKWg9Y=; b=
-	SYi+crlHq0VgyliAZsXMXZqdZI6hm99RwMlwTh11LZdATlBxGsdd7hFgqIsMo6/x
-	aChs69wZWPS15Dw7qGVPi/mbnRX/l218Zlvaj5pwfILR/g4UvfwZfDQWlSStzZTa
-	hoOkxxWygPBQgJK9J5cmFg0G4SOnXrSwx/H5LC5dKE385+KsuMqTRJWHWdT+1mpN
-	Jfzq7CBV1m0J3YJcbO034Pd510rw5Qpzk7Tz++SdOkbxcxv1RE4aCyK8oUxlxTJt
-	hydZckspYI4BYR8ziQIo5mWwQcAwlsy12gdvBIed6zj33XM59G4GkCeK1JQeFLmi
-	8E7K85v+sVxhJ+LF0xsHgQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1729870030; x=
-	1729956430; bh=RLih69XQUoMnH4TqrYPUlmUCQn82s+sfVe9uNsKWg9Y=; b=O
-	EKGY1VR8gNtmI+H7gZdnvrgQwf6nMMIledDZqlTcaxu+s3Ty0wPpfwMbQCz8Aqju
-	vIzPHmuo2GCdvpsr9g0NQDJfqMZCaQldl7xcoSL26HSS0nSax2UUCX+zrkhWyyg6
-	ueeaQBJwQG0phhaQ8bKC3yzW5hZDxK603V2iyUEXcDwzp5Kkd+UN2HHXqBUb9ODj
-	2DNVNYbNTZaUPMyMnrU0Cvux/2IcqqX5W0otmVbXMaJR6gEhmsP+IaTpZGXxnfl9
-	QBIOqPv3vf2yR2OBFGwTCkeHI4rdB+RTuci6AGWEAbQEmg0oEf6sTbjrQkYPI7zH
-	QlIhDbkg72XVQm3no932w==
-X-ME-Sender: <xms:zrgbZ-DHmg_6lLxypIE-pvNCjon6-33m49pNt969bqxKcumCTvZe3Q>
-    <xme:zrgbZ4h28H5FVX78YnNbdTKidBoFiCoaPYElP1OGlITyi738vHUDx4b7S4TadPojU
-    pH1SwHxGS_OYWSYiUY>
-X-ME-Received: <xmr:zrgbZxkAoUOwTebHgL8R8JvFjC_hBALkVTPR_-EOWnb8d6XOTP9EAWQQSOK-yEniOc2CvSBxmCmOCNOaNvsWe6i6ApD3>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdejvddgkeekucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnegfrhhlucfvnfffucdludehmdenucfjughrpeffhffvvefukfhf
-    gggtugfgjgesthekredttddtjeenucfhrhhomheplfgrnhcujfgvnhgurhhikhcuhfgrrh
-    hruceokhgvrhhnvghlsehjfhgrrhhrrdgttgeqnecuggftrfgrthhtvghrnhepudegheef
-    leeitdejheeludevtdfhgeeuiefgveffvedvjeevieeihfegteehkeeknecuffhomhgrih
-    hnpehgihhthhhusgdrtghomhenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhep
-    mhgrihhlfhhrohhmpehkvghrnhgvlhesjhhfrghrrhdrtggtpdhnsggprhgtphhtthhope
-    duvddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepmhhighhuvghlrdhojhgvuggr
-    rdhsrghnughonhhishesghhmrghilhdrtghomhdprhgtphhtthhopehnrghthhgrnheskh
-    gvrhhnvghlrdhorhhgpdhrtghpthhtohepmhhorhgsohesghhoohhglhgvrdgtohhmpdhr
-    tghpthhtohepkhgvvghssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehthhhorhhsth
-    gvnhdrsghluhhmsehtohgslhhugidrtghomhdprhgtphhtthhopehkvghnthdrohhvvghr
-    shhtrhgvvghtsehlihhnuhigrdguvghvpdhrtghpthhtoheprhgvghhrvghsshhiohhnsh
-    eslhhishhtshdrlhhinhhugidruggvvhdprhgtphhtthhopehlihhnuhigqdgstggrtghh
-    vghfshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhhrg
-    hruggvnhhinhhgsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:zrgbZ8zsknsztT8-uJX3OBuZRHbrD2c22d9643eLMRH66WoVe33Zdw>
-    <xmx:zrgbZzTfoQ76r9SNC_yno9ijZaPG6ZU1Lkzz-_AHqm8AMbDDv04BeQ>
-    <xmx:zrgbZ3ZdSwYXbD6vef1jFWAcqBURkrxD8UhZOUg5i1zk8J6Hry3pDQ>
-    <xmx:zrgbZ8RgdFNdsJa9FL3T2YKA9aSFwVWixCY2QV3NboOOGfF9sK4AJg>
-    <xmx:zrgbZyIayhj-rGy8tJYhnj4sdHb_s9os3AP-mHsdaCID68usDt2qxJFn>
-Feedback-ID: i01d149f8:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 25 Oct 2024 11:27:08 -0400 (EDT)
-Date: Fri, 25 Oct 2024 17:27:06 +0200
-From: Jan Hendrik Farr <kernel@jfarr.cc>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Nathan Chancellor <nathan@kernel.org>, Bill Wendling <morbo@google.com>,
-	Kees Cook <kees@kernel.org>,
-	Thorsten Blum <thorsten.blum@toblux.com>, kent.overstreet@linux.dev,
-	regressions@lists.linux.dev, linux-bcachefs@vger.kernel.org,
-	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
-	ardb@kernel.org, ojeda@kernel.org
-Subject: Re: [REGRESSION][BISECTED] erroneous buffer overflow detected in
- bch2_xattr_validate
-Message-ID: <Zxu4yhmxohKEJVSg@archlinux>
-References: <ZwNb-_UPL9BPSg9N@archlinux>
- <CAGG=3QUatjhoDHdkDtZ+ftz7JvMhvaQ9XkFyyZSt_95V_nSN8A@mail.gmail.com>
- <CAGG=3QVcsuN0Sk79oZWjY_nNTo_XfGYsDT3gc7vEmLyS8OK3rA@mail.gmail.com>
- <ZxB-uh1KzfD4ww2a@archlinux>
- <20241017165522.GA370674@thelio-3990X>
- <ZxWvcAPHPaRxp9UE@archlinux>
- <20241021192557.GA2041610@thelio-3990X>
- <ZxpIwkfg9_mHO3lq@archlinux>
- <20241025011527.GA740745@thelio-3990X>
- <CANiq72nbyqrzGr3Uw_vx-+8DLiv6KbeULrxpyK8Lh4ma15cq8g@mail.gmail.com>
+	s=arc-20240116; t=1729870123; c=relaxed/simple;
+	bh=TPLNGREibIadmUC7AbHzKfAjrIRt1A7o5p8SIlwyePY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=o5yOVZklMp4PBi2/6Bq6oQOzactDOjTRiC+GhJAmiEle46/NYqecHoATlt+JhUdibbgEJfVHucsBRt5myjv+Ijj3iebiaZnycCq+nnm4a+BzPRoC4bOaPnEBXlYz2qwx27HrfeSNsLF9aVJkpQjvXf3pMm+hsTbgsEViGgRBY1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yjAbxMFe; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4315baec69eso21797525e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 08:28:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729870119; x=1730474919; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=gwi5fJapzFJHJ1EZ8CDQGKguKx6U+UJZ6uS+K0pO9KY=;
+        b=yjAbxMFezZl/o2MvLsFWhQQNJ25Aeml01DI8EG+y1NKnqAYdzL6HhoqVzW6JCKrk5x
+         NRDGQcPfrQcNydFXcT19eBvktUhHyzHbc2NWEuKcTdqa0xum8rVkrzFYXFezXM7LibIQ
+         GVrBnE03jchettE/syz1rn1cIJAQtVuzvvZ2Eu+BjbTZqodeRndU7kUlI5890SLILHfV
+         NYEsai3ADKKArLp8KbmsIXwepQGnwqTk/nIGcIlfh1nsNdS5fDEdJIWBVDX6JZYcXCIJ
+         Jsvv5juXw212RRV+uFpolziPCvQpnl46GFSIvAkPuxKyTURgEAtUE/omjfIc4z4gf90G
+         f8Ww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729870119; x=1730474919;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gwi5fJapzFJHJ1EZ8CDQGKguKx6U+UJZ6uS+K0pO9KY=;
+        b=m9Xtu6oKPElLD8tFfhV3D1AfUlBga7ETmR8g8YGwTqtKJ/DcMAzfPJ+imeUYYTaQ2E
+         81oz3ckz2jAaMeIJUxl01YW7hmOTgF4My/Q9GWSQeT0F7wpGX+jUFXMje7RtbD5zMiPJ
+         Qgb4rbgJpwOTDXsXxBV35Doa0odPBl8NMDebodAP+v9vDDqDpzclL3IJBtApsPH3cITD
+         F06T3gTeKdoyDOuw18LPeQiuNIiotEmfIq/7uFXekYQZfYYExuyB3dIJ2Kb9Ry53vDun
+         ZaEIgrem6HvyYQamB9f3Q+KR+zMvVFE/v3zxk1yv2mhbsiBO2ouFGfX0GevSNB6TFVMM
+         xODw==
+X-Forwarded-Encrypted: i=1; AJvYcCVIuUR1rCR+NP6s9sA4fNnDAteAT0+SglMP4s41sk10vz3EA4EFwKvpvB/O054nAAbyNTowJpojeYR38Ys=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWngXZg1cq6lseyraFI5ATxefFfEo3XKmgyJfqsaFaJ+3Rm+Gg
+	7u/J6b2tqfusRCTkBCwqH+/+ZWicpa70ygTOY4iCijjQFmAgtf1JwJ76fJEGYhw=
+X-Google-Smtp-Source: AGHT+IHHiVTelEepIRcreU7kj3W5ReMmTDDEE1z2hoxrf5ppaSHlQGvr05Io956A+fDSJB3J67XptQ==
+X-Received: by 2002:a05:600c:584b:b0:431:9397:9ace with SMTP id 5b1f17b1804b1-43193979de0mr24191885e9.10.1729870119415;
+        Fri, 25 Oct 2024 08:28:39 -0700 (PDT)
+Received: from [192.168.0.40] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b6f838sm1788206f8f.83.2024.10.25.08.28.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 25 Oct 2024 08:28:39 -0700 (PDT)
+Message-ID: <ec78e336-b0c5-4d92-8716-46e435009495@linaro.org>
+Date: Fri, 25 Oct 2024 16:28:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANiq72nbyqrzGr3Uw_vx-+8DLiv6KbeULrxpyK8Lh4ma15cq8g@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCHv5 3/3] media: venus: factor out inst destruction routine
+To: Sergey Senozhatsky <senozhatsky@chromium.org>,
+ Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
+ Vikash Garodia <quic_vgarodia@quicinc.com>
+Cc: Dikshita Agarwal <quic_dikshita@quicinc.com>,
+ linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241025131200.747889-1-senozhatsky@chromium.org>
+ <20241025131200.747889-4-senozhatsky@chromium.org>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <20241025131200.747889-4-senozhatsky@chromium.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 25 10:10:38, Miguel Ojeda wrote:
-> On Fri, Oct 25, 2024 at 3:15 AM Nathan Chancellor <nathan@kernel.org> wrote:
-> >
-> > on the official submission.
+On 25/10/2024 14:11, Sergey Senozhatsky wrote:
+> Factor out common instance destruction code into
+> a common function.
 > 
-> Same -- please feel free to add:
-> 
-> Reviewed-by: Miguel Ojeda <ojeda@kernel.org>
-> 
-> One nit below that is fine either way:
-> 
-> > > +# clang needs to be at least 19.1.3 to avoid __bdos miscalculations
-> > > +# https://github.com/llvm/llvm-project/pull/110497
-> > > +# https://github.com/llvm/llvm-project/pull/112636
-> > > +# TODO: when gcc 15 is released remove the build test and add gcc version check
-> 
-> I would perhaps move these closer to the respective lines they are
-> comment on (i.e. `depends on` and `def_bool`).
-> 
+> Suggested-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
+> ---
 
-Done, thanks!
-
-config CC_HAS_COUNTED_BY
-	# TODO: when gcc 15 is released remove the build test and add
-	# a gcc version check
-	def_bool $(success,echo 'struct flex { int count; int array[] __attribute__((__counted_by__(count))); };' | $(CC) $(CLANG_FLAGS) -x c - -c -o /dev/null -Werror)
-	# clang needs to be at least 19.1.3 to avoid __bdos miscalculations
-	# https://github.com/llvm/llvm-project/pull/110497
-	# https://github.com/llvm/llvm-project/pull/112636
-	depends on !(CC_IS_CLANG && CLANG_VERSION < 190103)
-
-
+Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 
