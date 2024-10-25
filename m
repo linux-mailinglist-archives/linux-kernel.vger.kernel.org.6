@@ -1,70 +1,89 @@
-Return-Path: <linux-kernel+bounces-381610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7E5B9B0188
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 13:44:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 018C89B018D
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 13:46:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F52D1F22781
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 11:44:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1E991F226F7
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 11:46:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C0B42003BC;
-	Fri, 25 Oct 2024 11:44:05 +0000 (UTC)
-Received: from vmicros1.altlinux.org (vmicros1.altlinux.org [194.107.17.57])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B4531C9B62
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 11:44:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.107.17.57
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2D7E201016;
+	Fri, 25 Oct 2024 11:46:32 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 600DD192592;
+	Fri, 25 Oct 2024 11:46:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729856644; cv=none; b=lera9RW9h+AVNKdGh6cdXsbLHzi++QUubgdIdu5TW+gjPdKxMJlNlmgfa7/NNw6ko9CwvqrID96ttD6gXwA+FtWjQ34pQW/uNSQTGnie7VtNaJNdw6kUvrRcMPWO4fLcKuRx9FZ07QXuGGPVq7HIOgb6rmrhz+elj3azzMUE3Dc=
+	t=1729856792; cv=none; b=sRcovn3yQ9sjO8e1NxCqHUKqR+ub4lFyN2HORbZtlgpd8nJGrdmXDSMTrNIQ+4pvo4iETUQa2fj6qP0ijCue0Vg4paETQD1aet+W677kvzii9KEyzY7zJCHR90owzkxumChJFZ/zP8GHqxtExYAybqSIT6YSrwS8FYa5zaY3Q30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729856644; c=relaxed/simple;
-	bh=gsN6W5fDUXZ03huDxjBlEwiY1UfaHdn6PeY4sGtQq+A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WU8nMO1MGlgTvJ2xA7Ge3OHETL0tBMrHWqVkpsDkXQJ3MbMCPQzFabn5R2dQaF2CyS+aJ8N+9awUiDV+pfFO307h0m5n7CgA7hGi7LavVpy0s97N4KkDv43ul1MdHQ7IRdiOiDTV+eURgGQ1XuQDYZyg5GU3xWHXkGkqnH5ZjLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org; spf=pass smtp.mailfrom=altlinux.org; arc=none smtp.client-ip=194.107.17.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altlinux.org
-Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
-	by vmicros1.altlinux.org (Postfix) with ESMTP id EA18472C8CC;
-	Fri, 25 Oct 2024 14:43:53 +0300 (MSK)
-Received: by imap.altlinux.org (Postfix, from userid 705)
-	id E6A0A36D070D; Fri, 25 Oct 2024 14:43:53 +0300 (MSK)
-Date: Fri, 25 Oct 2024 14:43:53 +0300
-From: Michael Shigorin <mike@altlinux.org>
-To: NotYourFox <contact@notyourfox.coffee>
-Cc: james.bottomley@hansenpartnership.com, gregkh@linuxfoundation.org,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org
-Subject: 14071 | Re: [PATCH] MAINTAINERS: Remove some entries due to various
- compliance requirements.
-Message-ID: <20241025114353.GA15332@imap.altlinux.org>
-References: <7ee74c1b5b589619a13c6318c9fbd0d6ac7c334a.camel@HansenPartnership.com>
- <51b4a9dc-42a8-4d3d-bd1d-2a5548bdc5b1@notyourfox.coffee>
+	s=arc-20240116; t=1729856792; c=relaxed/simple;
+	bh=j9GWXfv1DxXCNWQTXf0uIL68q2p4Ue8VEhNDnpVsvOI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RIB/pMFX1gZaJNeonBIHiDu0mG9mnMa0XfWXNf++AHVwqkup1cYs9H6kXo//lLckBkzK5GlnIDqCpYQcxJeCBoUNsE0GF7Z+AbeDocxFshgwpsQiwOhfZ1oAY6jQH0LD2kZ0G7oDwDAtKgFx2YVAHffulMY0DLFA/cHIDH0lMrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XZgvR03sjz6K5kc;
+	Fri, 25 Oct 2024 19:45:23 +0800 (CST)
+Received: from frapeml500007.china.huawei.com (unknown [7.182.85.172])
+	by mail.maildlp.com (Postfix) with ESMTPS id 90E04140B35;
+	Fri, 25 Oct 2024 19:46:26 +0800 (CST)
+Received: from P_UKIT01-A7bmah.china.huawei.com (10.48.151.104) by
+ frapeml500007.china.huawei.com (7.182.85.172) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 25 Oct 2024 13:46:25 +0200
+From: <shiju.jose@huawei.com>
+To: <dave.jiang@intel.com>, <dan.j.williams@intel.com>,
+	<jonathan.cameron@huawei.com>, <alison.schofield@intel.com>,
+	<vishal.l.verma@intel.com>, <ira.weiny@intel.com>, <dave@stgolabs.net>,
+	<linux-cxl@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
+	<tanxiaofei@huawei.com>, <prime.zeng@hisilicon.com>, <shiju.jose@huawei.com>
+Subject: [PATCH v3 0/6] Update Event Records to CXL spec rev 3.1
+Date: Fri, 25 Oct 2024 12:45:49 +0100
+Message-ID: <20241025114555.1363-1-shiju.jose@huawei.com>
+X-Mailer: git-send-email 2.43.0.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <51b4a9dc-42a8-4d3d-bd1d-2a5548bdc5b1@notyourfox.coffee>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: lhrpeml500004.china.huawei.com (7.191.163.9) To
+ frapeml500007.china.huawei.com (7.182.85.172)
 
-On Thu, Oct 24, 2024 at 09:41:25PM +0300, NotYourFox wrote:
-> Thanks for clarification.
+From: Shiju Jose <shiju.jose@huawei.com>
 
-There's another one: some lame duck's Executive Order 14071.
-Which IS "the US thing" contrary to Linus' "explanations".
+Add updates for the changes in CXL spec rev 3.1 in the CXL events
+records and CXL trace events implementation.
 
-http://youtu.be/L5Ec5jrpLVk
+Notes:
+1. Please apply following fix patch first if not present.
+https://patchwork.kernel.org/project/cxl/patch/20241014143003.1170-1-shiju.jose@huawei.com/
+2. Verified with modified CXL error injection in QEMU CXL emulation and
+CXL mock test in kernel. (Thanks to Jonathan for verifying with CXL mock test setup).
 
-Wish the US folks recalled Executive Order 11110
-instead of diggin' their own grave as ordered
-by the most real nazis on this planet.
+Shiju Jose (6):
+  cxl/events: Update Common Event Record to CXL spec rev 3.1
+  cxl/events: Add Component Identifier formatting for CXL spec rev 3.1
+  cxl/events: Update General Media Event Record to CXL spec rev 3.1
+  cxl/events: Update DRAM Event Record to CXL spec rev 3.1
+  cxl/events: Update Memory Module Event Record to CXL spec rev 3.1
+  cxl/test: Update test code for event records to CXL spec rev 3.1
+
+ drivers/cxl/core/trace.h     | 258 +++++++++++++++++++++++++++++------
+ include/cxl/event.h          |  20 ++-
+ tools/testing/cxl/test/mem.c |  23 +++-
+ 3 files changed, 252 insertions(+), 49 deletions(-)
 
 -- 
-Michael Shigorin
-http://altlinux.org/elbrus
+2.34.1
+
 
