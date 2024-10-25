@@ -1,219 +1,171 @@
-Return-Path: <linux-kernel+bounces-381107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B51B9AFA6F
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 08:56:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E1C8D9AFA76
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 08:57:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20CD31F21F63
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 06:56:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 741401F239AA
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 06:57:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60F511B2193;
-	Fri, 25 Oct 2024 06:56:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DECD51B0F1E;
+	Fri, 25 Oct 2024 06:57:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="HGW+acVf"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Rbq/C34i"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D246A1AF0BA
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 06:56:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AFC61B0F07
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 06:57:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729839380; cv=none; b=sRVuOApWsmeR/K4jkUhIkqi1W9ja8FCw0JpsW6xA3KwFuSX7f9CxINFmx0uRqWZNwSNfgcO/BrFmOdi1OFUulmzuC5oVUNLGKuGS/rqcftLtvnPQYX3UWTN1r4cf9DeahmurhVxNZVaYm98RUvVK7bt5Vf328ACDGbUQXg3+OQU=
+	t=1729839452; cv=none; b=rok2nnkxOwgn1HiH4ddXRhoi2mHczL1WKZ7DhFGKBJxrs0Q/WrTHXSWi74MCDHKZLQVVN7CO9CU+m+g5XkndfuBGt7zCeiR+CM45A10OK2BClYIV2xXAR2fyPC6IoALflqRm/9Y4E5T/qUZYdqBjxR0PFSwvaaeoAmVWinrW9To=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729839380; c=relaxed/simple;
-	bh=25Jvv1dRU/CqZfXqsQG04QoTrrK/hfjJxNA716kXjgM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s8QBqDXYGI4Fc32W14dGRwuWIkCJrCBR5gTSHh1QORP+jrRGAf97l3j10gkhBVZdrJsKusT6zyMfeOza/LvKB/mFRYTQvt6vxxfJFw49gVlZACggv15gYDC1u7BBgX+hAY5V+OATjr6TUWPlILiaAo0jACVmPJsbTAsurHiqizc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=HGW+acVf; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-37d41894a32so1269779f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 23:56:16 -0700 (PDT)
+	s=arc-20240116; t=1729839452; c=relaxed/simple;
+	bh=fjm+bCO7i/NT9zYLGOS76HMKkHtzcyPL7S9ORd1Fols=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=RSqFKqbNWA50/YtkFKYHj14+/9xxr7zjfLToNTRPRFiDab1Wom6zGAGIWI4vlr3UQ9RRBmK6h8LUoimViALMczsqYnofZf/MeOSFIv3grnj4is0vgWlp/GYhCwEDAL+lXiLSX9Q1qM+JgeNmWUl1krEuy/cPAAgoarAQ3rU+Bbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Rbq/C34i; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2e30fb8cb07so1244396a91.3
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 23:57:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1729839375; x=1730444175; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=sTe9mW5h/PuKAECzVf3PYOF2hJitcmVtXP47DBZfOlw=;
-        b=HGW+acVf4NFa0+p9uMryqVu/sVPuqdMP3+S1xRJCEue1OyVIJY37J5szSk11SOQ/Ul
-         Grpk6Ls27CjqmDMpPG2tKSDyiiwVbNUOOBXfd+WpoduFhVID0Qer6YYxtbxbOKBDlCvR
-         PyCLXQpM+pZW74QDDA41Gc7UBdrRx+q34MLqKJnCpPkC6OLbVIF9CwSgjAXRK+EDRE0Z
-         nJ/pne1d+18H+EfnWFqKqbK5Hr2kbtwNywyGG7q6oNEKRJdh73mFz2wEZqq0Tc19sMdL
-         qzzfmnd0tDo1/u1P+QNs5gXqlNweYZ5m/NM8uoBdrqXNvymO4CCpL7z2CVN84PCW18Yn
-         ZTxQ==
+        d=google.com; s=20230601; t=1729839449; x=1730444249; darn=vger.kernel.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=LpwEmX39tz7GkOoKXscKUueXnv66QRCEFJQBHl3iLv8=;
+        b=Rbq/C34iWEpLQVY9tkieVlREzEak8UhKr0j9NKSRdcSvjXQLggDl+UFFz34QfFOUd8
+         gW52zNCBocRh/WXZTZYrobYZcEgx6J74VWIRn1r0ZUvRV2PQuuEROVXXRpMaAS7q+0Gm
+         YtMdSFnhlOMmsI9cccMmoDwtV6li3DpLh8PxMYP41+MSDfyVD/WR3wsWOl0uNwpCbm+i
+         cHUnmmb8+W3r9qk8xVNqn1csD+lDCyACUHw+MQunc61gnVLjRvGk8bfhbGyuPCqDYF4A
+         1htRxy6c/FO0MRrwtB2dkbpgeOeWoHedn19BUYkuF8NtGNH0deeDE/V4rv9hjhYqCmyx
+         U+0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729839375; x=1730444175;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sTe9mW5h/PuKAECzVf3PYOF2hJitcmVtXP47DBZfOlw=;
-        b=vFGjh0eG78N3DLZkvNAXU64vvqivT+dDgd0zR7DChK9/16sIf9eny0riE0vkMp8K10
-         Yfv34FBkGf734cbINO7edCY+5StgCc3WzhlkoFa1njv0LOY2x8g7KLrCS/mnERDvrNwV
-         PNRcGiUUT558zlT8RWkNv8qgDyBPkOzAXUaHDRufOMqoXoPVlDZCOqfbr+ubmzq6GHRG
-         mJzdmnFB8BWdBRvRlfgomoXnxJ25Ql9jL5hfzSUIC8Cv9vNctC0XnvdIjMjTTaUB+Uzt
-         J7LwmqJJqqyGpC+Vd8gzl7hkJGn/TVgPrO5JM810bhuVmuZI3AUrKe3L7atlEhLetD3C
-         CnhA==
-X-Forwarded-Encrypted: i=1; AJvYcCW/l79Diyj9XrpUztT07wJq++8Hu6LNGNsJQn1FmJ00YW0j4ChjFsjoEoOXhc88ysCRGg7sKa43O1EstNo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTrdhTRZ7DVpWdArMvZuMJQkxkfY+/3xvDeBTCE0PM4nlFckZA
-	wOnbKUKPa/JIP0gjJoLhEZKdQ5HqBS+KSsQYFvJ5qQx5qidRbL+aQTnrIYJQT8c=
-X-Google-Smtp-Source: AGHT+IE0m4dKzQ0gdgNM1YMMDkWjtRcILPbXQDIuhEVhrT0m4N3QefoLH4rvCAehNcVFfiNMs0Kh8Q==
-X-Received: by 2002:adf:ec42:0:b0:37c:ffdd:6d5a with SMTP id ffacd0b85a97d-3803ab6710amr3757362f8f.6.1729839375159;
-        Thu, 24 Oct 2024 23:56:15 -0700 (PDT)
-Received: from localhost (109-81-81-105.rct.o2.cz. [109.81.81.105])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b70e0fsm745692f8f.73.2024.10.24.23.56.14
+        d=1e100.net; s=20230601; t=1729839449; x=1730444249;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LpwEmX39tz7GkOoKXscKUueXnv66QRCEFJQBHl3iLv8=;
+        b=lVnOErXolrtGnIijHyFVjdQ6qB8zbjv4bmyp3ZaakDvbZR1sRgE0LF99Eo19dwsO1v
+         s0tHOaK8MJsb02tN8eEWTHm1pwUeRl6OS3NRwd7t9MMZLrz7efSdHBNC9F1O5i94DT+z
+         Zfb3vVyKlloMP80xx8pjt/HppWWggIBxGzadnAGQpDTlgk5+clG/YMRKcE0GAQhYQ/qc
+         E32if5MOBLDd/jaMb0miKhabIkZBcusXHCpaTZrJ0P7nHT5kvv4HUr6csTscT/SXJ4DL
+         iZu63otsnXPQkkZrGj4LoWcSf/81fodpn/n2L2Ku4BD80hI60tJvjb6TSYbXJF8DlciZ
+         BC+w==
+X-Forwarded-Encrypted: i=1; AJvYcCVK7o+hj+Q+RiQNXDiXyByuhai8V9SVg7v1C/5SCWqtdSy/eOKD2u7tigJwifsMKRYSliPsl56rg5hsqOc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVI30gFNt5iZiFcGBLu+ffsLPF+yMF6qBLON14sjJgawaVswct
+	T1lmvWhN29/NbpAgaJzDxIINo4gJgtw0tPmC1cbclxfs/PHjOjVQ8Zy2xrSmUA==
+X-Google-Smtp-Source: AGHT+IG77oWggEXdNmThy91aq60vF+TSPN5sWh64WR+w6d0aDrUcaGtZToaZcstCLLRoXFKtaIR+ow==
+X-Received: by 2002:a17:90a:3986:b0:2dd:5e86:8c2f with SMTP id 98e67ed59e1d1-2e76b621bd2mr8388977a91.21.1729839449017;
+        Thu, 24 Oct 2024 23:57:29 -0700 (PDT)
+Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e77e56f468sm2654324a91.41.2024.10.24.23.57.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Oct 2024 23:56:14 -0700 (PDT)
-Date: Fri, 25 Oct 2024 08:56:14 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Muchun Song <muchun.song@linux.dev>,
-	Hugh Dickins <hughd@google.com>,
-	Yosry Ahmed <yosryahmed@google.com>, linux-mm@kvack.org,
-	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
-	Meta kernel team <kernel-team@meta.com>
-Subject: Re: [PATCH v1 3/6] memcg-v1: no need for memcg locking for dirty
- tracking
-Message-ID: <ZxtBDglHg0C8aRTT@tiehlicka>
-References: <20241025012304.2473312-1-shakeel.butt@linux.dev>
- <20241025012304.2473312-4-shakeel.butt@linux.dev>
+        Thu, 24 Oct 2024 23:57:28 -0700 (PDT)
+Date: Thu, 24 Oct 2024 23:57:26 -0700 (PDT)
+From: Hugh Dickins <hughd@google.com>
+To: Yang Shi <shy828301@gmail.com>
+cc: Hugh Dickins <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
+    Usama Arif <usamaarif642@gmail.com>, Wei Yang <richard.weiyang@gmail.com>, 
+    "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, 
+    Matthew Wilcox <willy@infradead.org>, David Hildenbrand <david@redhat.com>, 
+    Johannes Weiner <hannes@cmpxchg.org>, 
+    Baolin Wang <baolin.wang@linux.alibaba.com>, 
+    Barry Song <baohua@kernel.org>, Kefeng Wang <wangkefeng.wang@huawei.com>, 
+    Ryan Roberts <ryan.roberts@arm.com>, Nhat Pham <nphamcs@gmail.com>, 
+    Zi Yan <ziy@nvidia.com>, Chris Li <chrisl@kernel.org>, 
+    linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH hotfix 2/2] mm/thp: fix deferred split unqueue naming
+ and locking
+In-Reply-To: <CAHbLzkoRHcC33vj7iajw_JXVig7yghJRGaTpaHXaxhoni76yPw@mail.gmail.com>
+Message-ID: <b3e88e26-5bda-50fc-cc55-a62b4b2a4e24@google.com>
+References: <760237a3-69d6-9197-432d-0306d52c048a@google.com> <7dc6b280-cd87-acd1-1124-e512e3d2217d@google.com> <CAHbLzkoRHcC33vj7iajw_JXVig7yghJRGaTpaHXaxhoni76yPw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241025012304.2473312-4-shakeel.butt@linux.dev>
+Content-Type: multipart/mixed; boundary="-1463770367-1593665756-1729839448=:30812"
 
-On Thu 24-10-24 18:23:00, Shakeel Butt wrote:
-> During the era of memcg charge migration, the kernel has to be make sure
-> that the dirty stat updates do not race with the charge migration.
-> Otherwise it might update the dirty stats of the wrong memcg. Now with
-> the memcg charge migration deprecated, there is no more race for dirty
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-s@deprecated@gone@
+---1463770367-1593665756-1729839448=:30812
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-> stat updates and the previous locking can be removed.
-> 
-> Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
+On Thu, 24 Oct 2024, Yang Shi wrote:
+> On Wed, Oct 23, 2024 at 9:13=E2=80=AFPM Hugh Dickins <hughd@google.com> w=
+rote:
+> >
+> > That goes back to 5.4 commit 87eaceb3faa5 ("mm: thp: make deferred spli=
+t
+> > shrinker memcg aware"): which included a check on swapcache before addi=
+ng
+> > to deferred queue (which can now be removed), but no check on deferred
+> > queue before adding THP to swapcache (maybe other circumstances prevent=
+ed
+> > it at that time, but not now).
+>=20
+> If I remember correctly, THP just can be added to deferred list when
+> there is no PMD map before mTHP swapout, so shrink_page_list() did
+> check THP's compound_mapcount (called _entire_mapcount now) before
+> adding it to swap cache.
+>=20
+> Now the code just checked whether the large folio is on deferred list or =
+not.
 
-LGTM otherwise
-Acked-by: Michal Hocko <mhocko@suse.com>
+I've continued to find it hard to think about, hard to be convinced by
+that sequence of checks, without an actual explicit _deferred_list check.
 
-> ---
->  fs/buffer.c         |  5 -----
->  mm/page-writeback.c | 16 +++-------------
->  2 files changed, 3 insertions(+), 18 deletions(-)
-> 
-> diff --git a/fs/buffer.c b/fs/buffer.c
-> index 1fc9a50def0b..88e765b0699f 100644
-> --- a/fs/buffer.c
-> +++ b/fs/buffer.c
-> @@ -736,15 +736,12 @@ bool block_dirty_folio(struct address_space *mapping, struct folio *folio)
->  	 * Lock out page's memcg migration to keep PageDirty
->  	 * synchronized with per-memcg dirty page counters.
->  	 */
-> -	folio_memcg_lock(folio);
->  	newly_dirty = !folio_test_set_dirty(folio);
->  	spin_unlock(&mapping->i_private_lock);
->  
->  	if (newly_dirty)
->  		__folio_mark_dirty(folio, mapping, 1);
->  
-> -	folio_memcg_unlock(folio);
-> -
->  	if (newly_dirty)
->  		__mark_inode_dirty(mapping->host, I_DIRTY_PAGES);
->  
-> @@ -1194,13 +1191,11 @@ void mark_buffer_dirty(struct buffer_head *bh)
->  		struct folio *folio = bh->b_folio;
->  		struct address_space *mapping = NULL;
->  
-> -		folio_memcg_lock(folio);
->  		if (!folio_test_set_dirty(folio)) {
->  			mapping = folio->mapping;
->  			if (mapping)
->  				__folio_mark_dirty(folio, mapping, 0);
->  		}
-> -		folio_memcg_unlock(folio);
->  		if (mapping)
->  			__mark_inode_dirty(mapping->host, I_DIRTY_PAGES);
->  	}
-> diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-> index 1d7179aba8e3..a76a73529fd9 100644
-> --- a/mm/page-writeback.c
-> +++ b/mm/page-writeback.c
-> @@ -2743,8 +2743,6 @@ EXPORT_SYMBOL(noop_dirty_folio);
->  /*
->   * Helper function for set_page_dirty family.
->   *
-> - * Caller must hold folio_memcg_lock().
-> - *
->   * NOTE: This relies on being atomic wrt interrupts.
->   */
->  static void folio_account_dirtied(struct folio *folio,
-> @@ -2777,7 +2775,6 @@ static void folio_account_dirtied(struct folio *folio,
->  /*
->   * Helper function for deaccounting dirty page without writeback.
->   *
-> - * Caller must hold folio_memcg_lock().
->   */
->  void folio_account_cleaned(struct folio *folio, struct bdi_writeback *wb)
->  {
-> @@ -2795,9 +2792,8 @@ void folio_account_cleaned(struct folio *folio, struct bdi_writeback *wb)
->   * If warn is true, then emit a warning if the folio is not uptodate and has
->   * not been truncated.
->   *
-> - * The caller must hold folio_memcg_lock().  It is the caller's
-> - * responsibility to prevent the folio from being truncated while
-> - * this function is in progress, although it may have been truncated
-> + * It is the caller's responsibility to prevent the folio from being truncated
-> + * while this function is in progress, although it may have been truncated
->   * before this function is called.  Most callers have the folio locked.
->   * A few have the folio blocked from truncation through other means (e.g.
->   * zap_vma_pages() has it mapped and is holding the page table lock).
-> @@ -2841,14 +2837,10 @@ void __folio_mark_dirty(struct folio *folio, struct address_space *mapping,
->   */
->  bool filemap_dirty_folio(struct address_space *mapping, struct folio *folio)
->  {
-> -	folio_memcg_lock(folio);
-> -	if (folio_test_set_dirty(folio)) {
-> -		folio_memcg_unlock(folio);
-> +	if (folio_test_set_dirty(folio))
->  		return false;
-> -	}
->  
->  	__folio_mark_dirty(folio, mapping, !folio_test_private(folio));
-> -	folio_memcg_unlock(folio);
->  
->  	if (mapping->host) {
->  		/* !PageAnon && !swapper_space */
-> @@ -2975,14 +2967,12 @@ void __folio_cancel_dirty(struct folio *folio)
->  		struct bdi_writeback *wb;
->  		struct wb_lock_cookie cookie = {};
->  
-> -		folio_memcg_lock(folio);
->  		wb = unlocked_inode_to_wb_begin(inode, &cookie);
->  
->  		if (folio_test_clear_dirty(folio))
->  			folio_account_cleaned(folio, wb);
->  
->  		unlocked_inode_to_wb_end(inode, &cookie);
-> -		folio_memcg_unlock(folio);
->  	} else {
->  		folio_clear_dirty(folio);
->  	}
-> -- 
-> 2.43.5
+David has brilliantly come up with the failed THP migration example;
+and I think now perhaps 5.8's 5503fbf2b0b8 ("khugepaged: allow to
+collapse PTE-mapped compound pages") introduced another way?
 
--- 
-Michal Hocko
-SUSE Labs
+But I certainly need to reword that wagging finger pointing to your
+commit: these are much more exceptional cases than I was thinking there.
+
+I have this evening tried running swapping load on 5.10 and 6.6 and 6.11,
+each with just a BUG_ON(!list_empty(the deferred list)) before resetting
+memcg in mem_cgroup_swapout() - it would of course be much easier to hit
+such a BUG_ON() than for the consequent wrong locking to be so unlucky
+as to actually result in list corruption.
+
+None of those BUG_ONs hit; though I was only running each for 1.5 hour,
+and looking at vmstats at the end, see the were really not exercising
+deferred split very much at all.  I'd been hoping for an immediate hit
+(as on 6.12-rc) to confirm my doubt, but no.  That doesn't *prove* you're
+right, but (excepting David's and my weird cases) I bet you are right.
+
+> > diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> > index 4b21a368b4e2..57f64b5d0004 100644
+> > --- a/mm/page_alloc.c
+> > +++ b/mm/page_alloc.c
+> > @@ -2681,7 +2681,9 @@ void free_unref_folios(struct folio_batch *folios=
+)
+> >                 unsigned long pfn =3D folio_pfn(folio);
+> >                 unsigned int order =3D folio_order(folio);
+> >
+> > -               folio_undo_large_rmappable(folio);
+> > +               if (mem_cgroup_disabled())
+> > +                       folio_unqueue_deferred_split(folio);
+>=20
+> This looks confusing. It looks all callsites of free_unref_folios()
+> have folio_unqueue_deferred_split() and memcg uncharge called before
+> it. If there is any problem, memcg uncharge should catch it. Did I
+> miss something?
+
+I don't understand what you're suggesting there.  But David remarked
+on it too, so it seems that I do need at least to add some comment.
+
+I'd better re-examine the memcg/non-memcg forking paths again: but by
+strange coincidence (or suggestion?), I'm suddenly now too tired here,
+precisely where David stopped too.  I'll have to come back to this
+tomorrow, sorry.
+
+Hugh
+---1463770367-1593665756-1729839448=:30812--
 
