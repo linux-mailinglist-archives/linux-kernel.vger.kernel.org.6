@@ -1,80 +1,76 @@
-Return-Path: <linux-kernel+bounces-382323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A73B89B0C5B
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 19:59:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29A9A9B0C5E
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 19:59:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 515381F27048
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:59:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B0859B22CA1
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:59:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ED6918FDBB;
-	Fri, 25 Oct 2024 17:59:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 101F618F2F6;
+	Fri, 25 Oct 2024 17:59:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="jiT6XWP3"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Q13IfKNk"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 355A8800;
-	Fri, 25 Oct 2024 17:59:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61BBF189F45
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 17:59:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729879157; cv=none; b=Z7ydio3ROic96Tk0gLCEfy98qW7C0nrOwZnkbwxAsDaqOvDy05QwBhBuPss/ZvDefPIwb8SHjEL+aTTCdNA94BsNaCXcPOru4695wevYX+CnHkEUJX5G8SGGaFf9B+qjC1LaEwH4a5Wqdpg9hpYxt1vRUyl01huNdl/T0Q0zeh8=
+	t=1729879185; cv=none; b=Ga/TUi57G4EXOVrBu9wmnWj7p6JngbgXfRg6zzPjL19SbaEkvUC4nXqtB5z+PvnGC/RteOSKQBvhNNmknZbSTiP92gl0Dl8luqEFfS9AGoCsxthwoVZYq/GHEf6Xn7dX7Cmbo2MPImKj7RcDCjTLS1iKri7jqDbMk5cQs4nrTGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729879157; c=relaxed/simple;
-	bh=u2eL/kAdmCfRHjkRdT0GhObtfJQkXd41mks2/mXhkiA=;
+	s=arc-20240116; t=1729879185; c=relaxed/simple;
+	bh=sDClj3F2zVDw8HHKQa1Rcc7mMEGGNOUgcwk/dqrRQWw=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=H8HTxtKsn4h3sLQ+8ZQeB/1hYGNXCOvnPJNWMAe+PHlN5/wc9zoA/KOxMxt606EbMR4oGUDIQynwqH7CZ39RCItW7QdYHfCAD6stfv5H0JpCylvMN8W/Moy9QVThOV7FsByhktPkbNfgc3ZUeLwfdUP7HxywaHd3Rr+hCDYAHXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=jiT6XWP3; arc=none smtp.client-ip=198.47.19.141
+	 MIME-Version:Content-Type; b=XzqI/t8qzu+ZzjJXqJuCb59xRYD0kPF5XRXdnW/6mCVuv8kK8fsS+iKur5x2e3eNgl0iqbeo1ErkfknvzjBwpyXwKQoddUXfMnMDSWBVbGVpGzerslfX1MwDOV1OmlDDido+BUPH4wFm+pxvr83J4bvtFPPErEFwseZioA3f3ng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Q13IfKNk; arc=none smtp.client-ip=198.47.23.248
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49PHwxRh030612;
-	Fri, 25 Oct 2024 12:58:59 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49PHxQJc007560;
+	Fri, 25 Oct 2024 12:59:26 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1729879139;
-	bh=GpSLalUzNrmD4PotMuaGBUbYK1zZiH71ItNeVXW7vwg=;
+	s=ti-com-17Q1; t=1729879166;
+	bh=jcNoOZBJJBSwyMBSITJGawjX8pnb6pPwRpawRlbsCqY=;
 	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=jiT6XWP3MtkUN8Fn8mLyH9gfqD+XVyV79JzdSj4FU+yIxhqjBbd67YizLn5m7CUK3
-	 XqA+GOjm0tsfwzAiysVbeZyCN5LLxje/eUfSz0LUVl/kZ8V4osONphjWnp9crqRVRw
-	 z8OrR1vSjtUXMQlfKGr1e9l6o9mdqdt79qkO0UJU=
-Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 49PHwxN8078354
+	b=Q13IfKNkSh86qp67RzR7TTIpltxw0DFWl2zM7lReqzU42HCSKehglIAkCDUsJBApv
+	 xzLuShuzQ4tHry8PXhASC/bVmgACOA8VycY7Y/kb8oE0xEWIBEmHDz6gJu7PoTDNTJ
+	 RQr1z3PgEr34bF4uqPVlb2InWdI0+Q6sFp8MLc5k=
+Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 49PHxQ9i027961
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 25 Oct 2024 12:58:59 -0500
-Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+	Fri, 25 Oct 2024 12:59:26 -0500
+Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 25
- Oct 2024 12:58:58 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+ Oct 2024 12:59:26 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 25 Oct 2024 12:58:58 -0500
+ Frontend Transport; Fri, 25 Oct 2024 12:59:25 -0500
 Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49PHwwkI023370;
-	Fri, 25 Oct 2024 12:58:58 -0500
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49PHxPXl128559;
+	Fri, 25 Oct 2024 12:59:25 -0500
 From: Nishanth Menon <nm@ti.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@ucw.cz>,
-        Len
- Brown <len.brown@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Tero Kristo <kristo@kernel.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Markus Schneider-Pargmann <msp@baylibre.com>
-CC: Nishanth Menon <nm@ti.com>, <linux-pm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        Kamlesh Gurudasani <kamlesh@ti.com>,
-        Kevin Hilman <khilman@baylibre.com>, Dhruva Gole <d-gole@ti.com>,
-        Vishal Mahaveer <vishalm@ti.com>, Akashdeep Kaur
-	<a-kaur@ti.com>
-Subject: Re: [PATCH v13 0/5] firmware: ti_sci: Introduce system suspend support
-Date: Fri, 25 Oct 2024 12:58:55 -0500
-Message-ID: <172987909155.476920.13344501386526710095.b4-ty@ti.com>
+To: Jassi Brar <jassisinghbrar@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier
+	<mathieu.poirier@linaro.org>,
+        Martyn Welch <martyn.welch@collabora.com>,
+        Hari
+ Nagalla <hnagalla@ti.com>, Andrew Davis <afd@ti.com>
+CC: Nishanth Menon <nm@ti.com>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: (subset) [PATCH v2 0/3] Enable compile testing of TI MSGMGR/SPROXY driver
+Date: Fri, 25 Oct 2024 12:59:24 -0500
+Message-ID: <172987914538.477005.11816962264560040485.b4-ty@ti.com>
 X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20241007-tisci-syssuspendresume-v13-0-ed54cd659a49@baylibre.com>
-References: <20241007-tisci-syssuspendresume-v13-0-ed54cd659a49@baylibre.com>
+In-Reply-To: <20241015213322.2649011-1-afd@ti.com>
+References: <20241015213322.2649011-1-afd@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,34 +81,23 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hi Markus Schneider-Pargmann,
+Hi Andrew Davis,
 
-On Mon, 07 Oct 2024 08:08:53 +0200, Markus Schneider-Pargmann wrote:
-> Abstract
-> ********
+On Tue, 15 Oct 2024 16:33:19 -0500, Andrew Davis wrote:
+> This driver can be compile tested on non-TI platforms. Enabling this
+> also allows compile testing of drivers down the dependency tree,
+> such as TI_SCI_PROTOCOL.
 > 
-> This series introduces necessary ti_sci driver functionality to support
-> various Suspend-to-RAM modes on TI AM62 family of devices. These Low
-> Power Modes include Deep Sleep and MCU Only as described in section
-> "6.2.4 Power Modes" of the AM62P Technical Reference Manual [0].
+> Thanks,
+> Andrew
 > 
 > [...]
 
 I have applied the following to branch ti-drivers-soc-next on [1].
 Thank you!
 
-NOTE: I have picked up Ack from Rafael per [2] and applied the full series.
-
-[1/5] PM: QoS: Export dev_pm_qos_read_value
-      commit: 3e360703d0bff3bb5643b2a0bf9a670931ba8b71
-[2/5] firmware: ti_sci: Add support for querying the firmware caps
-      commit: 055b6cfb62f5a1ea811aa21b96f2e611329b12b8
-[3/5] firmware: ti_sci: Add system suspend and resume call
-      commit: ec24643bdd625971933451f22b8e33d364920f6e
-[4/5] firmware: ti_sci: Introduce Power Management Ops
-      commit: 60357991f6b9d4bd4dc442a368da3f468cfa4903
-[5/5] firmware: ti_sci: add CPU latency constraint management
-      commit: a7a15754c7f70a833ffeb9ad996b358924f10305
+[1/3] firmware: ti_sci: Remove use of of_match_ptr() helper
+      commit: a4c14f509509a6a24f25edb7619f55f204a8433f
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent up the chain during
@@ -131,7 +116,6 @@ Please add any relevant lists and maintainers to the CCs when replying
 to this mail.
 
 [1] https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git
-[2] https://lore.kernel.org/lkml/CAJZ5v0g1Ri_wKYppomE6RXqcZXRnX7bLOPMtsQaao0uchSfE9A@mail.gmail.com/
 -- 
 Regards,
 Nishanth Menon
