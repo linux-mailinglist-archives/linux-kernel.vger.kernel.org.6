@@ -1,152 +1,162 @@
-Return-Path: <linux-kernel+bounces-381387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 391B89AFE5D
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 11:38:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 073A59AFE31
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 11:30:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B2991C22D71
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 09:38:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7CDBDB228D4
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 09:30:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 781F01FF7CA;
-	Fri, 25 Oct 2024 09:36:31 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40B6F1D9A6F;
-	Fri, 25 Oct 2024 09:36:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 419F51D3654;
+	Fri, 25 Oct 2024 09:29:55 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C555E1CB9EA
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 09:29:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729848991; cv=none; b=Qxky6nCc4I9/hwt0pyMKJAeVR0c6kC6aGYphcRiEEnwWUZKKB4eORRPsTX0s4GUXR9QxwcDpBbP02DkPFEg6DVw3pjk7mygwsTURAEviUhkqU8jlrs4skHjzTFGjDmyF4/fRImqXBacDHNSlVZW5eNDX5K+2UvVK0WJyw2GB1pA=
+	t=1729848594; cv=none; b=lnhK8ZUPCY/T8wUYtKSJ5HEH/q0Axbt26c91rQErJsQ+6n/t2ebpor0hizWxMgqeghjsK6Fdb0yn2sceKxvwH+dalYcNKa8o4jGAvscbuP9yYwcyn/vVN1BFnaoGblAIcN4GfdFuj7uzo8hwyju2vAIqHtcb6R8sVgGTM9fJ7is=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729848991; c=relaxed/simple;
-	bh=eMbUoafWMeG/UhqmuGxOmA4MhgwPVoTSzE/aWUVtWgc=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qlr07HI4qbcmazkg98ZQL84BimNIXuTZUjMmmBgVDG6kNnLzkNQ/wfShXNFl8Ym9YJBY0Vves/pQDh6J9PnIrGkxBD/Dkr27W3BCf7HE5Sr8XjlUuQ559EDrcfOHCNfGSj8k4CHqFRCprrSIzrehthA4nwUGC5w/FlSDMVS7FiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4XZd0F0bT8z10NkQ;
-	Fri, 25 Oct 2024 17:34:21 +0800 (CST)
-Received: from kwepemm000007.china.huawei.com (unknown [7.193.23.189])
-	by mail.maildlp.com (Postfix) with ESMTPS id 8FD471400E3;
-	Fri, 25 Oct 2024 17:36:25 +0800 (CST)
-Received: from localhost.localdomain (10.90.30.45) by
- kwepemm000007.china.huawei.com (7.193.23.189) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 25 Oct 2024 17:36:24 +0800
-From: Jijie Shao <shaojijie@huawei.com>
-To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <andrew+netdev@lunn.ch>, <horms@kernel.org>
-CC: <shenjian15@huawei.com>, <salil.mehta@huawei.com>,
-	<liuyonglong@huawei.com>, <wangpeiyang1@huawei.com>, <shaojijie@huawei.com>,
-	<chenhao418@huawei.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH V3 net 9/9] net: hns3: fix kernel crash when 1588 is sent on HIP08 devices
-Date: Fri, 25 Oct 2024 17:29:38 +0800
-Message-ID: <20241025092938.2912958-10-shaojijie@huawei.com>
-X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20241025092938.2912958-1-shaojijie@huawei.com>
-References: <20241025092938.2912958-1-shaojijie@huawei.com>
+	s=arc-20240116; t=1729848594; c=relaxed/simple;
+	bh=6c8vadWllsbeRadtQr+5FNlPAaeHjE8qc3tHr1swCTc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EBTeJl6kl/oKGeWr7ZVyc0Uow9rByDADc+hvjcQCBFGfAz5HZ5/rpjGRvQstpUF3oaA/bKjUJXZls29kPRh2WkeazZm73XJmc/WvtFEM3VOrYoyvsZyYkSCR6ODHAvwKB/1knCQsKA65iRYmsrZ1gz9szHq8obtLksFIhpXyJsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B60F2339
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 02:30:20 -0700 (PDT)
+Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id CB1563F528
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 02:29:50 -0700 (PDT)
+Date: Fri, 25 Oct 2024 10:29:46 +0100
+From: Liviu Dudau <liviu.dudau@arm.com>
+To: Akash Goel <akash.goel@arm.com>
+Cc: boris.brezillon@collabora.com, steven.price@arm.com,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	mihail.atanassov@arm.com, ketil.johnsen@arm.com,
+	florent.tomasin@arm.com, maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
+	daniel@ffwll.ch, nd@arm.com
+Subject: Re: [PATCH 2/3] drm/panthor: Explicitly set the coherency mode
+Message-ID: <ZxtlCkGA5pdng-KH@e110455-lin.cambridge.arm.com>
+References: <20241024145432.934086-1-akash.goel@arm.com>
+ <20241024145432.934086-3-akash.goel@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemm000007.china.huawei.com (7.193.23.189)
+In-Reply-To: <20241024145432.934086-3-akash.goel@arm.com>
 
-From: Jie Wang <wangjie125@huawei.com>
+On Thu, Oct 24, 2024 at 03:54:31PM +0100, Akash Goel wrote:
+> This commit fixes the potential misalignment between the value of device
+> tree property "dma-coherent" and default value of COHERENCY_ENABLE
+> register.
+> Panthor driver didn't explicitly program the COHERENCY_ENABLE register
+> with the desired coherency mode. The default value of COHERENCY_ENABLE
+> register is implementation defined, so it may not be always aligned with
+> the "dma-coherent" property value.
+> The commit also checks the COHERENCY_FEATURES register to confirm that
+> the coherency protocol is actually supported or not.
+> 
+> Signed-off-by: Akash Goel <akash.goel@arm.com>
 
-Currently, HIP08 devices does not register the ptp devices, so the
-hdev->ptp is NULL. But the tx process would still try to set hardware time
-stamp info with SKBTX_HW_TSTAMP flag and cause a kernel crash.
+Reviewed-by: Liviu Dudau <liviu.dudau@arm.com>
 
-[  128.087798] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000018
-...
-[  128.280251] pc : hclge_ptp_set_tx_info+0x2c/0x140 [hclge]
-[  128.286600] lr : hclge_ptp_set_tx_info+0x20/0x140 [hclge]
-[  128.292938] sp : ffff800059b93140
-[  128.297200] x29: ffff800059b93140 x28: 0000000000003280
-[  128.303455] x27: ffff800020d48280 x26: ffff0cb9dc814080
-[  128.309715] x25: ffff0cb9cde93fa0 x24: 0000000000000001
-[  128.315969] x23: 0000000000000000 x22: 0000000000000194
-[  128.322219] x21: ffff0cd94f986000 x20: 0000000000000000
-[  128.328462] x19: ffff0cb9d2a166c0 x18: 0000000000000000
-[  128.334698] x17: 0000000000000000 x16: ffffcf1fc523ed24
-[  128.340934] x15: 0000ffffd530a518 x14: 0000000000000000
-[  128.347162] x13: ffff0cd6bdb31310 x12: 0000000000000368
-[  128.353388] x11: ffff0cb9cfbc7070 x10: ffff2cf55dd11e02
-[  128.359606] x9 : ffffcf1f85a212b4 x8 : ffff0cd7cf27dab0
-[  128.365831] x7 : 0000000000000a20 x6 : ffff0cd7cf27d000
-[  128.372040] x5 : 0000000000000000 x4 : 000000000000ffff
-[  128.378243] x3 : 0000000000000400 x2 : ffffcf1f85a21294
-[  128.384437] x1 : ffff0cb9db520080 x0 : ffff0cb9db500080
-[  128.390626] Call trace:
-[  128.393964]  hclge_ptp_set_tx_info+0x2c/0x140 [hclge]
-[  128.399893]  hns3_nic_net_xmit+0x39c/0x4c4 [hns3]
-[  128.405468]  xmit_one.constprop.0+0xc4/0x200
-[  128.410600]  dev_hard_start_xmit+0x54/0xf0
-[  128.415556]  sch_direct_xmit+0xe8/0x634
-[  128.420246]  __dev_queue_xmit+0x224/0xc70
-[  128.425101]  dev_queue_xmit+0x1c/0x40
-[  128.429608]  ovs_vport_send+0xac/0x1a0 [openvswitch]
-[  128.435409]  do_output+0x60/0x17c [openvswitch]
-[  128.440770]  do_execute_actions+0x898/0x8c4 [openvswitch]
-[  128.446993]  ovs_execute_actions+0x64/0xf0 [openvswitch]
-[  128.453129]  ovs_dp_process_packet+0xa0/0x224 [openvswitch]
-[  128.459530]  ovs_vport_receive+0x7c/0xfc [openvswitch]
-[  128.465497]  internal_dev_xmit+0x34/0xb0 [openvswitch]
-[  128.471460]  xmit_one.constprop.0+0xc4/0x200
-[  128.476561]  dev_hard_start_xmit+0x54/0xf0
-[  128.481489]  __dev_queue_xmit+0x968/0xc70
-[  128.486330]  dev_queue_xmit+0x1c/0x40
-[  128.490856]  ip_finish_output2+0x250/0x570
-[  128.495810]  __ip_finish_output+0x170/0x1e0
-[  128.500832]  ip_finish_output+0x3c/0xf0
-[  128.505504]  ip_output+0xbc/0x160
-[  128.509654]  ip_send_skb+0x58/0xd4
-[  128.513892]  udp_send_skb+0x12c/0x354
-[  128.518387]  udp_sendmsg+0x7a8/0x9c0
-[  128.522793]  inet_sendmsg+0x4c/0x8c
-[  128.527116]  __sock_sendmsg+0x48/0x80
-[  128.531609]  __sys_sendto+0x124/0x164
-[  128.536099]  __arm64_sys_sendto+0x30/0x5c
-[  128.540935]  invoke_syscall+0x50/0x130
-[  128.545508]  el0_svc_common.constprop.0+0x10c/0x124
-[  128.551205]  do_el0_svc+0x34/0xdc
-[  128.555347]  el0_svc+0x20/0x30
-[  128.559227]  el0_sync_handler+0xb8/0xc0
-[  128.563883]  el0_sync+0x160/0x180
+Best regards,
+Liviu
 
-Fixes: 0bf5eb788512 ("net: hns3: add support for PTP")
-Signed-off-by: Jie Wang <wangjie125@huawei.com>
-Signed-off-by: Jijie Shao <shaojijie@huawei.com>
----
- drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_ptp.c | 3 +++
- 1 file changed, 3 insertions(+)
+> ---
+>  drivers/gpu/drm/panthor/panthor_device.c | 22 +++++++++++++++++++++-
+>  drivers/gpu/drm/panthor/panthor_gpu.c    |  9 +++++++++
+>  2 files changed, 30 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/panthor/panthor_device.c b/drivers/gpu/drm/panthor/panthor_device.c
+> index 4082c8f2951d..984615f4ed27 100644
+> --- a/drivers/gpu/drm/panthor/panthor_device.c
+> +++ b/drivers/gpu/drm/panthor/panthor_device.c
+> @@ -22,6 +22,24 @@
+>  #include "panthor_regs.h"
+>  #include "panthor_sched.h"
+>  
+> +static int panthor_gpu_coherency_init(struct panthor_device *ptdev)
+> +{
+> +	ptdev->coherent = device_get_dma_attr(ptdev->base.dev) == DEV_DMA_COHERENT;
+> +
+> +	if (!ptdev->coherent)
+> +		return 0;
+> +
+> +	/* Check if the ACE-Lite coherency protocol is actually supported by the GPU.
+> +	 * ACE protocol has never been supported for command stream frontend GPUs.
+> +	 */
+> +	if ((gpu_read(ptdev, GPU_COHERENCY_FEATURES) &
+> +		      GPU_COHERENCY_PROT_BIT(ACE_LITE)))
+> +		return 0;
+> +
+> +	drm_err(&ptdev->base, "Coherency not supported by the device");
+> +	return -ENOTSUPP;
+> +}
+> +
+>  static int panthor_clk_init(struct panthor_device *ptdev)
+>  {
+>  	ptdev->clks.core = devm_clk_get(ptdev->base.dev, NULL);
+> @@ -156,7 +174,9 @@ int panthor_device_init(struct panthor_device *ptdev)
+>  	struct page *p;
+>  	int ret;
+>  
+> -	ptdev->coherent = device_get_dma_attr(ptdev->base.dev) == DEV_DMA_COHERENT;
+> +	ret = panthor_gpu_coherency_init(ptdev);
+> +	if (ret)
+> +		return ret;
+>  
+>  	init_completion(&ptdev->unplug.done);
+>  	ret = drmm_mutex_init(&ptdev->base, &ptdev->unplug.lock);
+> diff --git a/drivers/gpu/drm/panthor/panthor_gpu.c b/drivers/gpu/drm/panthor/panthor_gpu.c
+> index 5251d8764e7d..1e24f08a519a 100644
+> --- a/drivers/gpu/drm/panthor/panthor_gpu.c
+> +++ b/drivers/gpu/drm/panthor/panthor_gpu.c
+> @@ -77,6 +77,12 @@ static const struct panthor_model gpu_models[] = {
+>  	 GPU_IRQ_RESET_COMPLETED | \
+>  	 GPU_IRQ_CLEAN_CACHES_COMPLETED)
+>  
+> +static void panthor_gpu_coherency_set(struct panthor_device *ptdev)
+> +{
+> +	gpu_write(ptdev, GPU_COHERENCY_PROTOCOL,
+> +		ptdev->coherent ? GPU_COHERENCY_PROT_BIT(ACE_LITE) : GPU_COHERENCY_NONE);
+> +}
+> +
+>  static void panthor_gpu_init_info(struct panthor_device *ptdev)
+>  {
+>  	const struct panthor_model *model;
+> @@ -365,6 +371,9 @@ int panthor_gpu_l2_power_on(struct panthor_device *ptdev)
+>  			      hweight64(ptdev->gpu_info.shader_present));
+>  	}
+>  
+> +	/* Set the desired coherency mode before the power up of L2 */
+> +	panthor_gpu_coherency_set(ptdev);
+> +
+>  	return panthor_gpu_power_on(ptdev, L2, 1, 20000);
+>  }
+>  
+> -- 
+> 2.25.1
+> 
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_ptp.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_ptp.c
-index 5505caea88e9..bab16c2191b2 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_ptp.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_ptp.c
-@@ -58,6 +58,9 @@ bool hclge_ptp_set_tx_info(struct hnae3_handle *handle, struct sk_buff *skb)
- 	struct hclge_dev *hdev = vport->back;
- 	struct hclge_ptp *ptp = hdev->ptp;
- 
-+	if (!ptp)
-+		return false;
-+
- 	if (!test_bit(HCLGE_PTP_FLAG_TX_EN, &ptp->flags) ||
- 	    test_and_set_bit(HCLGE_STATE_PTP_TX_HANDLING, &hdev->state)) {
- 		ptp->tx_skipped++;
 -- 
-2.33.0
-
+====================
+| I would like to |
+| fix the world,  |
+| but they're not |
+| giving me the   |
+ \ source code!  /
+  ---------------
+    ¯\_(ツ)_/¯
 
