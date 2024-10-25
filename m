@@ -1,203 +1,231 @@
-Return-Path: <linux-kernel+bounces-382017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8E239B07DA
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:20:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B4B19B07D8
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:19:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F1AE1F24BEC
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:20:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 917041F21C89
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:19:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DADA415665D;
-	Fri, 25 Oct 2024 15:15:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9590F21A4B7;
+	Fri, 25 Oct 2024 15:14:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g5yNLLdz"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HqnLE5ts"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D2621386D1;
-	Fri, 25 Oct 2024 15:15:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729869352; cv=none; b=FpcmUquKHyMNA2XHULT8FCTvYmgqn13EpqqUjA2hhWDdUChPsAjWIqOIrk/82B9NzB8aOAIXEKmCq5M3VWrJtZNtKDAPC4cpzhEJP+ofIXNkRHHULrCNG0+N9WseL46tM0wVlVmh3gmtVIaA3FntJXZwpzWXJw8IqPxAo0DSXGw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729869352; c=relaxed/simple;
-	bh=ahrs/3kTg48p/1YcTh3iALzX3pmlHFPihBBlpi5Gjn8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Yt2ljfnJAlWIyvGzmJwa5tLbEq3t49ON9snOyWzi2M95IaABb0VyM8V0uzM5SgVa7lqSNtPmHqv4w/ngXlaX8QlSAzgHm6tim05j/PX50PDoAdAX/4lYrCjLeO6zVv9grSc9tqcawidftzPqVGnHJ4+tkmnIg1hkL7Sc5e02PoU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g5yNLLdz; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-20cb89a4e4cso16055905ad.3;
-        Fri, 25 Oct 2024 08:15:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729869349; x=1730474149; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PHizGO1nzYx2rl0X0OLf84t2MiN5+IfpTWmMKFLMubk=;
-        b=g5yNLLdz7s9xKcH/zR4GrL+W3vt7jIBhLqxTXZ/yDfdaxXfT38vdO+1eNbiQ/8RbEy
-         ascEWdKuf2HizL5Kcc3xgSP8SN7aoE3yxiS0TLIH14zPCXibACUkTkCZzp8HN5dawtsH
-         Q3e7qlyID8qSrgUuhCN4MV6buDUOjun0OkSd6am/QIZww9N1eC2E0K+GhEzWDudFiq+n
-         0sNOJdFFHPMagBKxH6dSx9Swdmc+DHRRhLdQjuJJeplSt9zh8Pg1bopumGeuCAib3673
-         EZfdmhRAKpB7YsunbtuFXbSnYw6Srnale7T+g0Y4majnzITG2W0g6SMy7C9uYFI/D57A
-         OFPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729869349; x=1730474149;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PHizGO1nzYx2rl0X0OLf84t2MiN5+IfpTWmMKFLMubk=;
-        b=kABWCFatVOGSWxANqkbRQUpwzYaFMnfFetO0GJ5Oy1LFaejDdfyGlkBDmBAVmt7t7Y
-         JnQJ1hQmpMcofTFkq+zylGo263S6amCxHuSw8k5JmVPk8rCOxgPxLs8KE7ZpscNEs2gY
-         SKfTtS2xrUVTcIybpmn82a3YPAHb7AzJ6xnSyeBhKh/3I4gzTcmHC0PkFFOaosST7Axv
-         Zu0edMsM3XjZJ5Y9lZevixJ79MXsLWmv+Na8mlg9Rj9ZypFzZeqIpNL96Fpx30SFXhyL
-         xMmJVlwFJlTYVDsIRRq0lrOQeYIjqxPwxnhrUzWE2SxfldIcjhrqAbLgRTH6stCTMVvE
-         7h1w==
-X-Forwarded-Encrypted: i=1; AJvYcCUj+gycm02CUWcDrbCcpiK16UmiBj8cDnZO5EbNsfPkriUil2KLTRUzJPiu0krG5Lvgx1H5PeHIgHkevYk=@vger.kernel.org, AJvYcCWjFcb2683yNLyLlbpyQ3VL/yapKmc2t0UusmsYfajh7VuUhtK0bH6z6UOoFcxUOmOhKyNv3fNiQg98A/lygRW5jBQTdA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyq3kT0VxOBPfvtnEBELWQkA8mNx20I21hM3Au9rxz2WFx0C3Zo
-	yIVRWEvyo1RPgwv9+hL7cJ8/dyTETaTTINBuVnLfdXIYWwpV4Sam
-X-Google-Smtp-Source: AGHT+IGweDyyGKr1T1lwPKZ0ZIp5ZqC2IzpdX9I7cRzCo8A4G3oYMlBH5GcTiDHFlkagXR+gxKFmBA==
-X-Received: by 2002:a17:902:ea09:b0:20c:94f6:3e03 with SMTP id d9443c01a7336-20fb9a972a8mr82399995ad.47.1729869348004;
-        Fri, 25 Oct 2024 08:15:48 -0700 (PDT)
-Received: from localhost.localdomain (host95.181-12-202.telecom.net.ar. [181.12.202.95])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bbf44321sm10497165ad.30.2024.10.25.08.15.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2024 08:15:47 -0700 (PDT)
-From: Kurt Borja <kuurtb@gmail.com>
-To: kuurtb@gmail.com
-Cc: W_Armin@gmx.de,
-	hdegoede@redhat.com,
-	ilpo.jarvinen@linux.intel.com,
-	linux-kernel@vger.kernel.org,
-	platform-driver-x86@vger.kernel.org
-Subject: [PATCH v9 2/4] alienware-wmi: alienware_wmax_command() is now input size agnostic
-Date: Fri, 25 Oct 2024 12:13:47 -0300
-Message-ID: <20241025151357.4071-2-kuurtb@gmail.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241025150916.3618-2-kuurtb@gmail.com>
-References: <20241025150916.3618-2-kuurtb@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDC3721A4AC;
+	Fri, 25 Oct 2024 15:14:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729869274; cv=fail; b=ID/6DPtH5OAKBEzq5QaxQF00XTvZV/hlSYITbjcwKVf2nJCFcaz1o4ZLTjELd5qYryg9RsHXmFrz5qCJerSJzkLBnvz9Mv9R3w4hFppl4yg681XcIo0UwgMXf4orEH4G4JxLDfPI9vOi8PhvQWr9DMKr7jGkI05r8UMvj/PKATc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729869274; c=relaxed/simple;
+	bh=lmsOTlBNkkbvaIodOBo+/oM0y4fE4X5E+kJVleVvsxQ=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=b8e1qwb7CVnTNtDVmc6mDmqkv3cuNl37roHgRzMzhyRHUinzPDeLzmemdNZgPvgBXS5QPERBlca+f5MEHkpy4rOUQKRlasYBWGZKnxBWreLJ/6T6+KfcnUYpKCH+3iXhsWAtaRfL46cfvJQf+3DtoJCQzAqPN4hJNyJi+FYVteQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HqnLE5ts; arc=fail smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729869273; x=1761405273;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=lmsOTlBNkkbvaIodOBo+/oM0y4fE4X5E+kJVleVvsxQ=;
+  b=HqnLE5tsYkt7B5ceCbHzeBUi1wTglSctbU2SUks6Y/+YxwBut7jyRAiH
+   BZMUeOLgtKGs0jc6VjhwGp59equTJIKRvcGFEiRmnRlfv+iYREC1TIIO5
+   vmW695sIrpd1KTPXTDi4Js5Mkz6ND/LaF4a5iDbZAQ/DMHbqAqsmMg6Ft
+   l6wR+YyoBLekIw05liup4g3PcIcPNLdRtmdAHz9Eq8s7Lg+F/B5Bvqe4x
+   35M3bPZWnNAcKWjMF4PJ14WWs8dO9snHGH7vvGCkXzoimBd736ErMqQNS
+   h/+YRRN/OwRN0TamTc+WS3ZhwnLegZgAHq5TqroqffXc02wIf7B8ptXH6
+   g==;
+X-CSE-ConnectionGUID: Y5dSWBsyRQGdKoqUBFvYTA==
+X-CSE-MsgGUID: +FInClbyQ26qwurN/vCegA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11236"; a="29659317"
+X-IronPort-AV: E=Sophos;i="6.11,232,1725346800"; 
+   d="scan'208";a="29659317"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2024 08:14:32 -0700
+X-CSE-ConnectionGUID: YL+MCiRxSeWZOkLGKq96YQ==
+X-CSE-MsgGUID: O1GCSY/DQ6CWZlZSxWI4vg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,232,1725346800"; 
+   d="scan'208";a="104241845"
+Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
+  by fmviesa002.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 25 Oct 2024 08:14:31 -0700
+Received: from fmsmsx603.amr.corp.intel.com (10.18.126.83) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 25 Oct 2024 08:14:31 -0700
+Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Fri, 25 Oct 2024 08:14:31 -0700
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.174)
+ by edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 25 Oct 2024 08:14:31 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=mdEDwvItA2O4g0btcx8It07eY963v/B6t9o+SfK5QEPainaQsQSBFFitx0sr9KAUG4WbCCGkbBr+zqS2DlhgSOzDYlVoIe71lMH1VvPFVfXRIL1zPyAGF34jKLtRwasQQxLV43h0FCu5po5Fh1q5kFvLfrEV+8bUdyu/yqSiX7rAPjIoWmjrZpyicLyMLpwc4zBsE/8e5Rx2PK5npfVi9GsOWFANTeJXW4WRnjtJ2AG2GpJHUEbgpa1ZhnekExcz2Kz6phqmLRsaZ+ErRUMQsY/lLTJaeiqaNhSitMvh8TmTCCpasrzH8d4mg5oqYxiOjxeRib8WFDTNSedE7h9vgQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=OZ4veQmQu37vRf45nONERBFuuMX+sfvnXkzWlxtVKhY=;
+ b=vWgvY5wiV97r1hUdWzL2g3NY5AIcewUeNw3cEjsqCEet7EQAJ9I/1AIm8mcwE0GNuYBlLs8F+Ouj/sZthKit38IqrMZxshDDn7L+JEmFG9LXoQEZqGMHB80DrEWHbQWNtdbkpH0Y2IFf7SaGqtA+bnczS86V3/Xxtep42Sp/gkWZauij+VbNCxzf7aUs0MeI9O5xOho6hOVBt8483tU7tm0sR93vhrXTsfU6/1dyyktlVpl2eUgrvZVJh/QYu/GFuZExoMfB1wYgYXkOBcyuJ3k3G1q97K7kxM5lFDgLkH/JCJsIwDyf3p4pdf3EgJMdDuTIXfpn9aobXVeXTMSo+A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from PH8PR11MB8107.namprd11.prod.outlook.com (2603:10b6:510:256::6)
+ by SA0PR11MB4526.namprd11.prod.outlook.com (2603:10b6:806:96::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.21; Fri, 25 Oct
+ 2024 15:14:28 +0000
+Received: from PH8PR11MB8107.namprd11.prod.outlook.com
+ ([fe80::6b05:74cf:a304:ecd8]) by PH8PR11MB8107.namprd11.prod.outlook.com
+ ([fe80::6b05:74cf:a304:ecd8%5]) with mapi id 15.20.8093.018; Fri, 25 Oct 2024
+ 15:14:28 +0000
+Date: Fri, 25 Oct 2024 08:14:25 -0700
+From: Dan Williams <dan.j.williams@intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Dan Williams
+	<dan.j.williams@intel.com>
+CC: "Huang, Ying" <ying.huang@intel.com>, David Hildenbrand
+	<david@redhat.com>, Andrew Morton <akpm@linux-foundation.org>,
+	<linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
+	<linux-cxl@vger.kernel.org>, Davidlohr Bueso <dave@stgolabs.net>, "Jonathan
+ Cameron" <jonathan.cameron@huawei.com>, Alistair Popple <apopple@nvidia.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, Baoquan He <bhe@redhat.com>, Dave Jiang
+	<dave.jiang@intel.com>, Alison Schofield <alison.schofield@intel.com>
+Subject: Re: [RFC] resource: Avoid unnecessary resource tree walking in
+ __region_intersects()
+Message-ID: <671bb5d165_10e592941e@dwillia2-xfh.jf.intel.com.notmuch>
+References: <20241010065558.1347018-1-ying.huang@intel.com>
+ <d129bbe4-8ae8-4915-bd9c-b38b684e8103@redhat.com>
+ <87set3a1nm.fsf@yhuang6-desk2.ccr.corp.intel.com>
+ <ZwkCt_ip5VOGWp4u@smile.fi.intel.com>
+ <671965a8b37a2_1bbc629489@dwillia2-xfh.jf.intel.com.notmuch>
+ <ZxnvyIme98Q8ey1c@smile.fi.intel.com>
+ <87wmhx3cpc.fsf@yhuang6-desk2.ccr.corp.intel.com>
+ <ZxpFQBRqWMDjhtSY@smile.fi.intel.com>
+ <671ac2d2b7bea_10e59294f2@dwillia2-xfh.jf.intel.com.notmuch>
+ <ZxubhuEwL5GrhBdu@smile.fi.intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <ZxubhuEwL5GrhBdu@smile.fi.intel.com>
+X-ClientProxiedBy: MW4PR03CA0025.namprd03.prod.outlook.com
+ (2603:10b6:303:8f::30) To PH8PR11MB8107.namprd11.prod.outlook.com
+ (2603:10b6:510:256::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH8PR11MB8107:EE_|SA0PR11MB4526:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4fa529ec-f30d-48d0-5fa1-08dcf507b805
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?xpDkTr+ObOE2F1dFAl08GJPsXopXSaz0HWTQdokKIc4X+UnRNHg89ARqGVOg?=
+ =?us-ascii?Q?Q9UagEmMi5Gi0zfqBuu+w1SEc5jkquaiQl5YrACpzc9UpPQBIdb0JhDS1tqo?=
+ =?us-ascii?Q?evCSPzNyoR6ite41wOJsLws4B5hdZMi2LkZRNDoUFq4zxi75onJJkA3Iepr0?=
+ =?us-ascii?Q?pumWajRmOXF/4V4rH7EMRUbYhU7LuPFtAyij3kfG/h8pCh1yc+7oUG2ccO1i?=
+ =?us-ascii?Q?+XUIEhjmr/hxKCMD9QEfEOWlx6p/QVu1DmLpyHxMWvzDWGze1feNK41MTXao?=
+ =?us-ascii?Q?x5PvNYUs/9PTZlH5GEj9Dz8DgAmQa0tE/S4JkkvDFJ2zZqSFTBZ3ETN8SoZx?=
+ =?us-ascii?Q?DSV9qpbXUz3o06BgkHwMrRnsyc3Gaw2XcOCeN7m/EePGmIQPA5T30rIMbADO?=
+ =?us-ascii?Q?+xlTzRj2wNH9CSvXM0pG1MqpBjJUJJkW0cUlGshVvvKNXr62GGaE07nS4H21?=
+ =?us-ascii?Q?bv74SThM6SlQkNLAdTEHtcu8TJsRFkNGIFhDwMskmCGayxeKEu68UNC2e841?=
+ =?us-ascii?Q?d8IDBROVCZYDy8MlDR+meQddF4aBCVqu5KwwLahlGiTTk/wRMK56ArP4UVFv?=
+ =?us-ascii?Q?z3jiYFuX6kLsYqg7Ua/5HBe81i0yiQXU+eGUJUGxqyJbzevYYwQZybImhnB5?=
+ =?us-ascii?Q?RobeEIgZ6GFWSideHqyRdhckW2XowJH5CR4PLJA99P0Ty0fPlm04/7/gLlVA?=
+ =?us-ascii?Q?8645ZpyUAp/BpdauGJR77gwaNKBcVdfzqHOYVF+/k2CYg/XaRfoV83NAoKgW?=
+ =?us-ascii?Q?l94s/ewqK+L/uuAdLz7wriJJTyl+NSNxl4VFyRquK6Q7T5z4cuB6n78DZ/PZ?=
+ =?us-ascii?Q?ZZNlcBkxT1ERCGhQAQ+KYKVoVZIQF2TvJ7Tq9i9HvLwbTxmc1Lw4XCgoXxoP?=
+ =?us-ascii?Q?431Yh1pFIntq8SZE/mgb3NsV2yQU8HrllF/o56plt6RTbIkBLdbaV87D+5IP?=
+ =?us-ascii?Q?2Uc7EwSWbMIEJvve1BlPGh96DKvEcmb0NLMxEjmNlVQ5gO0H811se1fjktRm?=
+ =?us-ascii?Q?Yu4SkW8NnQnXkwZzyYjBQDWW+Ks3qRR6g6BPgHW0lu/UPN9gUISHIbRK0UjT?=
+ =?us-ascii?Q?Rf4oAHOtDB2qOfXRDmfMtCUq6RjSCfM/eZ3hUA/a6fEXm5FSMvU2GfTTZi39?=
+ =?us-ascii?Q?p/zpLihT9QvpNRpNBantvdsonUsSCbACcW2XDjrC/o9Tx/9l7u9yDsXLAkRl?=
+ =?us-ascii?Q?4RbDPe1tWRCco1m9ZQXW1PknQ9pz24sPqEIL35UN3SAkeyEjeGEEeL+wisYj?=
+ =?us-ascii?Q?8kZC3ISPp6pMvZEiE/opoHhgTPt5em741eJ5wfVxEJW1/xGqP/hP8g/cTIX5?=
+ =?us-ascii?Q?R2oMRBiAOsB2A/1X1H11NWmP?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR11MB8107.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?nGBUkoyMdTFaX03HFcdS2k5kcanzAGnopkMKXYbl4xlGMNHATEicraAF5G71?=
+ =?us-ascii?Q?znJWyK5REU5uBLveQwGIw8Z0HLEuc4IRrXUsQo1ItIWI+E44ejJBTHbIiCbJ?=
+ =?us-ascii?Q?YkPQ42019CafuYAXzQWnXx75hFhZEVda2iy6yHTXiKE07wpacAXBJf+oHEF0?=
+ =?us-ascii?Q?MuoOjTjPCiUE/aZ7ZE+MEsh+iIYN90d2XodhOODI9bV3FKOhRjWPtwzbf8Zv?=
+ =?us-ascii?Q?IdD1JvO55Sgn9TT65bK6vF8L4y/wfszI54++/PlyJCz0FBMxJTLizqEXMfBy?=
+ =?us-ascii?Q?5ig4QjlQqZDTygqeBeHu+oc4OLMbUDsK4ERwLomSKoYvYB9azpo/qgHLyruZ?=
+ =?us-ascii?Q?BbvEGv2iMf/G/HNM+pA6kunKlfn402+vAyPVhEtbRVN2W1y/lX/CPlI/g92y?=
+ =?us-ascii?Q?j9wBGFn+2GwTwZJdm9a/oe/lv+MdmKSV3ewGe54/OIIWK4T5VmQRPjiBEwGj?=
+ =?us-ascii?Q?/8SqFH1imHgjXH/IA6hkWvzAWBzRBcDsOIL5Gup73Yf5EIeEYpd1C5v1e4yd?=
+ =?us-ascii?Q?qIijDeRm2Mj1uRUR3gJbjV71FSuXHXtraXqKMEKctK5jjW7bTsBPeIYEfrTt?=
+ =?us-ascii?Q?3N85NvQc94THwT0lTU6T8q3xHgN07oCIO/2JhFxRDjCGl3QE25cPlA1niP2s?=
+ =?us-ascii?Q?HglRrrmYS4C15FcG4FlRlpWNgy5nDDsvuVqFQ2QGKNpbBu+aLFW2CoiiLNUP?=
+ =?us-ascii?Q?OYUw4Nw3iIT8qFhuwSEbS41oHWRN2xGZ1c3rL7XrznyOrJbENy1C4OYcDeLa?=
+ =?us-ascii?Q?s9a3YKoiy52ZUBxbJh2zPqkrZKZM26OCetkRT0OScAQ38NIumkDSulcms1wv?=
+ =?us-ascii?Q?2Wg99CW5GQX9BoHK3INW/3BUjCPmZ5DoUMRxMoUWHUpCNYAR8u5tvk+/58s1?=
+ =?us-ascii?Q?B+uw3lx4c7kHOyxGg7ASG1CjhvKTCNAVLGE7ezOoeBgS0vN+khGROV7S0ceR?=
+ =?us-ascii?Q?2ZP16vjiuzMB+1xgwzSoqYPAx2aNsRpLQhBq35EwNos9iGUDIh2NL1ZwZw27?=
+ =?us-ascii?Q?TsQ4+2hwYIydc96vBaPJVIo8eOkLYI8ZkyprCWNMJqOLthqCgsTgozvzXzSd?=
+ =?us-ascii?Q?ep+cU/7f4RzHQPQVIbr6xRBOBoKpeIewZR5p7Syv076EZvc8THQLH7WjqobE?=
+ =?us-ascii?Q?QSorifQW1zpSeUGTKAbirS1lto9EnRwunzRXAZ5jWOOoLjNpQgEgnRb2iLRA?=
+ =?us-ascii?Q?9MrHvzt/wTjvwrjfi8NgKppNbYROvgCqcnQvrxCHZe0Kmvd5hh4BwO7B5MBp?=
+ =?us-ascii?Q?AVvSNEZ4MAQuQq7FIdud6CZ3SDRj8Ike9GRQJagW0uTBlf2unA+ohETb2aSG?=
+ =?us-ascii?Q?Feu+sD8NxZoBZGfbLOL6Wj2W7xqaENR9otJZwll8BG8zaUYwnd9Kd67I9k9L?=
+ =?us-ascii?Q?veOwkxzXbKXSkjEp4P5Sxdfb1REX+SkDv8CF6WGCm+af3UGuDYm1qaM1xDOD?=
+ =?us-ascii?Q?lDH86wEz48ZYt049ZzCqZxW2NKLeRPbgO6MAUFPyWDeyVRJ6PNepnp6oeQpw?=
+ =?us-ascii?Q?jmEEhzSz+SrntsUn7z2MWN6m/zc70c3f9f6h1dQmS4DvLMOPrq+i98NzGzu+?=
+ =?us-ascii?Q?yqUtLyAOb3ttJZ18vLhw6lsOBguxK8hn9DWFI4WOFSKqwuvPjGagBQDeZ+G1?=
+ =?us-ascii?Q?qw=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4fa529ec-f30d-48d0-5fa1-08dcf507b805
+X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB8107.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Oct 2024 15:14:28.2604
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: zakw20X3VwbicLZ5nUnmY9Hby+rJolPNGAMRjQ78gK+eQv8uYuA1ARuUJXAWxmtxalHOSK4dNbtN07J5Ta8G7CA1ZKlbs+aDkUYWIBpGk50=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR11MB4526
+X-OriginatorOrg: intel.com
 
-alienware_wmax_command() now takes void * and size_t instead of struct
-wmax_basic_args to extend support to new WMAX methods. Also int *out_data
-was changed to u32 *out_data, because new interface specifies u32 as output
-parameter and all previous callers would pass u32 * regardless.
+Andy Shevchenko wrote:
+[..]
+> > > but if you want to stick with your variant some improvements can be done:
+> > > 
+> > > #define for_each_resource_XXX(_root, _p)				\
+> > > 	for (typeof(_root) __root = (_root), __p = _p = __root->child;	\
+> > > 	     __p && _p; _p = next_resource_XXX(__root, _p))
+> > > 
+> > > 
+> > > 1) no need to have local variable in parentheses;
+> > > 2) no need to have iterator in parentheses, otherwise it would be crazy code
+> > > that has put something really wrong there and still expect the thing to work.
+> > 
+> > Why not:
+> > 
+> > #define for_each_resource_XXX(_root, _p)				\
+> > 	for (typeof(_root) __root = (_root), __p = _p = __root->child;	\
+> > 	     _p; _p = next_resource_XXX(__root, _p))
+> > 
+> > The __p is only to allow for _p to be initialized in the first statement
+> > without causing a new "_p" shadow to be declared.
+> 
+> If people think this would be better than the existing patterns, okay. fine.
 
-Signed-off-by: Kurt Borja <kuurtb@gmail.com>
-Reviewed-by: Armin Wolf <W_Armin@gmx.de>
-Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
----
-v9:
- - Unchanged
-v8:
- - Unchanged
-v7:
- - Unchanged
-v6:
- - Unchanged
----
- drivers/platform/x86/dell/alienware-wmi.c | 29 ++++++++++++-----------
- 1 file changed, 15 insertions(+), 14 deletions(-)
+I think this case is different than the existing patterns in that the
+iterator variable needs to be initiatlized from a declared variable, and
+as Ying said, my proposal is busted.
 
-diff --git a/drivers/platform/x86/dell/alienware-wmi.c b/drivers/platform/x86/dell/alienware-wmi.c
-index 16a3fe9ac..b27f3b64c 100644
---- a/drivers/platform/x86/dell/alienware-wmi.c
-+++ b/drivers/platform/x86/dell/alienware-wmi.c
-@@ -500,15 +500,15 @@ static void alienware_zone_exit(struct platform_device *dev)
- 	kfree(zone_attrs);
- }
- 
--static acpi_status alienware_wmax_command(struct wmax_basic_args *in_args,
--					  u32 command, int *out_data)
-+static acpi_status alienware_wmax_command(void *in_args, size_t in_size,
-+					  u32 command, u32 *out_data)
- {
- 	acpi_status status;
- 	union acpi_object *obj;
- 	struct acpi_buffer input;
- 	struct acpi_buffer output;
- 
--	input.length = sizeof(*in_args);
-+	input.length = in_size;
- 	input.pointer = in_args;
- 	if (out_data) {
- 		output.length = ACPI_ALLOCATE_BUFFER;
-@@ -541,8 +541,8 @@ static ssize_t show_hdmi_cable(struct device *dev,
- 		.arg = 0,
- 	};
- 	status =
--	    alienware_wmax_command(&in_args, WMAX_METHOD_HDMI_CABLE,
--				   &out_data);
-+	    alienware_wmax_command(&in_args, sizeof(in_args),
-+				   WMAX_METHOD_HDMI_CABLE, &out_data);
- 	if (ACPI_SUCCESS(status)) {
- 		if (out_data == 0)
- 			return sysfs_emit(buf, "[unconnected] connected unknown\n");
-@@ -562,8 +562,8 @@ static ssize_t show_hdmi_source(struct device *dev,
- 		.arg = 0,
- 	};
- 	status =
--	    alienware_wmax_command(&in_args, WMAX_METHOD_HDMI_STATUS,
--				   &out_data);
-+	    alienware_wmax_command(&in_args, sizeof(in_args),
-+				   WMAX_METHOD_HDMI_STATUS, &out_data);
- 
- 	if (ACPI_SUCCESS(status)) {
- 		if (out_data == 1)
-@@ -589,7 +589,8 @@ static ssize_t toggle_hdmi_source(struct device *dev,
- 		args.arg = 3;
- 	pr_debug("alienware-wmi: setting hdmi to %d : %s", args.arg, buf);
- 
--	status = alienware_wmax_command(&args, WMAX_METHOD_HDMI_SOURCE, NULL);
-+	status = alienware_wmax_command(&args, sizeof(args),
-+					WMAX_METHOD_HDMI_SOURCE, NULL);
- 
- 	if (ACPI_FAILURE(status))
- 		pr_err("alienware-wmi: HDMI toggle failed: results: %u\n",
-@@ -642,8 +643,8 @@ static ssize_t show_amplifier_status(struct device *dev,
- 		.arg = 0,
- 	};
- 	status =
--	    alienware_wmax_command(&in_args, WMAX_METHOD_AMPLIFIER_CABLE,
--				   &out_data);
-+	    alienware_wmax_command(&in_args, sizeof(in_args),
-+				   WMAX_METHOD_AMPLIFIER_CABLE, &out_data);
- 	if (ACPI_SUCCESS(status)) {
- 		if (out_data == 0)
- 			return sysfs_emit(buf, "[unconnected] connected unknown\n");
-@@ -694,8 +695,8 @@ static ssize_t show_deepsleep_status(struct device *dev,
- 	struct wmax_basic_args in_args = {
- 		.arg = 0,
- 	};
--	status = alienware_wmax_command(&in_args, WMAX_METHOD_DEEP_SLEEP_STATUS,
--					&out_data);
-+	status = alienware_wmax_command(&in_args, sizeof(in_args),
-+					WMAX_METHOD_DEEP_SLEEP_STATUS, &out_data);
- 	if (ACPI_SUCCESS(status)) {
- 		if (out_data == 0)
- 			return sysfs_emit(buf, "[disabled] s5 s5_s4\n");
-@@ -723,8 +724,8 @@ static ssize_t toggle_deepsleep(struct device *dev,
- 		args.arg = 2;
- 	pr_debug("alienware-wmi: setting deep sleep to %d : %s", args.arg, buf);
- 
--	status = alienware_wmax_command(&args, WMAX_METHOD_DEEP_SLEEP_CONTROL,
--					NULL);
-+	status = alienware_wmax_command(&args, sizeof(args),
-+					WMAX_METHOD_DEEP_SLEEP_CONTROL, NULL);
- 
- 	if (ACPI_FAILURE(status))
- 		pr_err("alienware-wmi: deep sleep control failed: results: %u\n",
--- 
-2.47.0
-
+To your point though, lets add a comment on why this macro is a bit
+different to avoid people like me making bad cleanup suggestions.
 
