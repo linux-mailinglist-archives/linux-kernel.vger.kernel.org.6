@@ -1,100 +1,81 @@
-Return-Path: <linux-kernel+bounces-381735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EDFF9B0389
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:13:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1DD79B037D
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:13:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7D2F286774
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 13:13:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1023DB218D5
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 13:13:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7E3920BB59;
-	Fri, 25 Oct 2024 13:12:29 +0000 (UTC)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F4221208209;
+	Fri, 25 Oct 2024 13:12:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3opULSf5";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZqBU12QT"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 473291E7660;
-	Fri, 25 Oct 2024 13:12:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 263AA1D515A;
+	Fri, 25 Oct 2024 13:12:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729861949; cv=none; b=Ffk2EfF+aBWfD1t8jNRigw6xRLySGBFZobA4pB5fW9y3jtQmETZT94jzOKHmXDdFjMr/7J2K8+gfRtlZDJZhQGRs3dBdv5sqV2rbUFlsbGkaT/pR7qrO1RDi91goSPZgRF0ktJIaSjQrfwRUSP7kRtBROeeLrl1ugLZNoAeSSoI=
+	t=1729861939; cv=none; b=M1ZoAR7ZPWFAmVrwVJAUoCVe9vtpZPtIyHrZ8Pgtt2Dkseb1Ya3gt2WJdmFO3LloD5LMvw3PqMbwh6netCjzWVVzjp52MW+tjPktMA4gx9xS0Mag1lxbrxaMczM58QVJNMJNwFV/INv7K0afw5bevcgzjL2ou3Skw8h5Sdho7vM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729861949; c=relaxed/simple;
-	bh=DyZekcekX3RtD9pX7NDF9lTJOHreJBPcOIWwl++T12A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pvf/bJ3wygRBqbWdvTMehUBMFoREG4pRNgX762FD/uylbyWIGk1XIVlOxuKXi0NOl8UkV1j5qj3H3YqF7ZhSWGcKhP7dSF531Dg9T3aVT2o99XIOPnQX3G4w8Y+Bqe1eyN1eqfIpNaUC0vWf/B4Wd89+hwegrUMUAbi5/S+Bvw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
-X-CSE-ConnectionGUID: +MippmjcS7GiCHxfKD/FPQ==
-X-CSE-MsgGUID: YqiQFwgNQ2urN4bdSLfTEg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="29474401"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="29474401"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2024 06:12:27 -0700
-X-CSE-ConnectionGUID: YBODLHiKRmKI4N2x3UePrA==
-X-CSE-MsgGUID: ORNpoHttQRiMH14+J3yUxg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,231,1725346800"; 
-   d="scan'208";a="81073104"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2024 06:12:15 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andy@kernel.org>)
-	id 1t4K6r-00000006v8Q-1Pfa;
-	Fri, 25 Oct 2024 16:12:09 +0300
-Date: Fri, 25 Oct 2024 16:12:09 +0300
-From: Andy Shevchenko <andy@kernel.org>
-To: Dragan =?utf-8?Q?Milivojevi=C4=87?= <d.milivojevic@gmail.com>
-Cc: Peter Cai <peter@typeblog.net>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	Serge Semin <fancer.lancer@gmail.com>, Jon Mason <jdmason@kudzu.us>,
-	Dave Jiang <dave.jiang@intel.com>, Allen Hubbe <allenbh@gmail.com>,
-	ntb@lists.linux.dev, Kory Maincent <kory.maincent@bootlin.com>,
-	Cai Huoqing <cai.huoqing@linux.dev>, dmaengine@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
-	Damien Le Moal <dlemoal@kernel.org>, linux-ide@vger.kernel.org,
-	Paul Burton <paulburton@kernel.org>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>, linux-mips@vger.kernel.org,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	linux-pci@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Andrew Lunn <andrew@lunn.ch>, Russell King <linux@armlinux.org.uk>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	Keguang Zhang <keguang.zhang@gmail.com>,
-	Yanteng Si <siyanteng@loongson.cn>, netdev@vger.kernel.org,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Guenter Roeck <linux@roeck-us.net>, linux-hwmon@vger.kernel.org,
-	Borislav Petkov <bp@alien8.de>, linux-edac@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-serial@vger.kernel.org, Andrew Halaney <ajhalaney@gmail.com>,
-	Nikita Travkin <nikita@trvn.ru>,
-	Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-	Alexander Shiyan <shc_work@mail.ru>, Dmitry Kozlov <xeb@mail.ru>,
-	Sergey Shtylyov <s.shtylyov@omp.ru>,
-	Evgeniy Dushistov <dushistov@mail.ru>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Sergio Paracuellos <sergio.paracuellos@gmail.com>,
-	Nikita Shubin <nikita.shubin@maquefel.me>,
-	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Kexy Biscuit <kexybiscuit@aosc.io>, jeffbai@aosc.io,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: linux: Goodbye from a Linux community volunteer
-Message-ID: <ZxuZKcTafSVXLcIe@smile.fi.intel.com>
-References: <2m53bmuzemamzc4jzk2bj7tli22ruaaqqe34a2shtdtqrd52hp@alifh66en3rj>
- <e7d548a7fc835f9f3c9cb2e5ed97dfdfa164813f.camel@HansenPartnership.com>
- <6beb4070-1946-4387-bd0e-34608a76b19e@typeblog.net>
- <CALtW_agj1rurb3DRrPd9o2mkfku5fq_M3CEKY5sW+Zz7shKYHA@mail.gmail.com>
- <ZxqK75WdFBod0rZ9@smile.fi.intel.com>
- <CALtW_ajKAYYwYVGnEArPWz_XaCkEiMFwpoCtzeiO1OLbAk77Sw@mail.gmail.com>
+	s=arc-20240116; t=1729861939; c=relaxed/simple;
+	bh=LMcKy13HKOHUiARSCOxTXaBgVFPbmKvqll5xpfPJqO4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Lcbb+B0jsvQ8OypO3q/BKvSI7eyx5zLjIBmVxfHlJl17J/Wo6e7oFU0h8PFfiNHArXODYhaqT+kVEJ0bxO54LVczCZMJvnDx0OKN1K8x9eLuf28oI+kYIZznB5fThth3wqshRX0pyDbj35a0V9al8elawX+h1vin5beSSyEKSqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3opULSf5; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZqBU12QT; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1729861935;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4CCakkuEsajugg/PgpFQNY8pqc/CyoUnL2IGo8dHuAo=;
+	b=3opULSf5YcYafX2XXc3JliiHlbCwCqGdZGKObFcdRQ+rSX+pTwuA8cytrXvHhUK5gErFKF
+	RPhku62wfhLz+/0lUSYssEBAnaVbQ9zieb8p/caBk6VTn9CdAwmeSxwnuxxpdef5iYcRZ2
+	6SVpCRRXVjZrTYvTXIJKF7QMFvWYPfc6qIxatrbQE6/nzHjbmG2D7niPCHPufjBEvCHEIs
+	gE+WJDOMpNDyk07d4o9V08fus2sT8o8XEk2rFARLveFa3wr24rq8dAvO1+p9B9m3n3Oy9D
+	ZITyYzhRsgv97EOdFhMuAhfsVhPd2UtfNtXXZlwmAsiK8N94EtApTWacal+aMQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1729861935;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4CCakkuEsajugg/PgpFQNY8pqc/CyoUnL2IGo8dHuAo=;
+	b=ZqBU12QTzxdqkbQWnwL3tA/lmm+1CqOFPszaVKX++FHjHGFaYBmDVW7LFFl3wbDA369YLZ
+	or7ODo+dQRGnnfAQ==
+To: =?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>, Celeste Liu
+ <coelacanthushex@gmail.com>,
+ Celeste Liu via B4 Relay <devnull+CoelacanthusHex.gmail.com@kernel.org>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, =?utf-8?B?Qmo=?=
+ =?utf-8?B?w7ZybiBUw7ZwZWw=?=
+ <bjorn@rivosinc.com>
+Cc: Palmer Dabbelt <palmer@rivosinc.com>, Alexandre Ghiti <alex@ghiti.fr>,
+ "Dmitry V. Levin" <ldv@strace.io>, Andrea Bolognani <abologna@redhat.com>,
+ Felix Yan <felixonmars@archlinux.org>, Ruizhe Pan <c141028@gmail.com>,
+ Shiqi Zhang <shiqi@isrc.iscas.ac.cn>, Guo Ren <guoren@kernel.org>, Yao Zi
+ <ziyao@disroot.org>, Han Gao <gaohan@iscas.ac.cn>,
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+Subject: Re: [PATCH] riscv/entry: get correct syscall number from
+ syscall_get_nr()
+In-Reply-To: <8734kpqu8k.fsf@all.your.base.are.belong.to.us>
+References: <20241017-fix-riscv-syscall-nr-v1-1-4edb4ca07f07@gmail.com>
+ <87a5exy2rx.fsf@all.your.base.are.belong.to.us>
+ <b72e3d2b-d540-47bf-adec-0ab6eda135d8@gmail.com>
+ <8734kpqu8k.fsf@all.your.base.are.belong.to.us>
+Date: Fri, 25 Oct 2024 15:12:14 +0200
+Message-ID: <871q045ntd.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -102,36 +83,73 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CALtW_ajKAYYwYVGnEArPWz_XaCkEiMFwpoCtzeiO1OLbAk77Sw@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 24, 2024 at 09:46:58PM +0200, Dragan Milivojević wrote:
-> > Yeah, with my hat of the person whose home town is under (Russian) attack for
-> > the 10+ years (don't be surprised, please, the war lasts more than a decade
-> > already) on I am fully understand Linus' arguments about history and being not
-> > very friendly about Russians.
-> 
-> How about your hat off to the people in the Donbas,
-> ~12K of them that had died from Ukrainian artillery fire,
-> that were under imminent threat of being overrun by
-> the Ukrainian forces in February 2022? Are you going
-> to scream about Russian propaganda when I link
-> the OSCE reports about a 10 fold increase in attacks
-> at that same time?
+On Mon, Oct 21 2024 at 09:46, Bj=C3=B6rn T=C3=B6pel wrote:
+> Celeste Liu <coelacanthushex@gmail.com> writes:
+>> 1. syscall_enter_from_user_mode() will do two things:
+>>    1) the return value is only to inform whether the syscall should be s=
+kipped.
+>>    2) regs will be modified by filters (seccomp or ptrace and so on).
+>> 2. for common entry user, there is two informations: syscall number and
+>>    the return value of syscall_enter_from_user_mode() (called is_skipped=
+ below).
+>>    so there is three situations:
+>>    1) if syscall number is invalid, the syscall should not be performed,=
+ and
+>>       we set a0 to -ENOSYS to inform userspace the syscall doesn't exist.
+>>    2) if syscall number is valid, is_skipped will be used:
+>>       a) if is_skipped is -1, which means there are some filters reject =
+this syscall,
+>>          so the syscall should not performed. (Of course, we can use boo=
+l instead to
+>>          get better semantic)
+>>       b) if is_skipped !=3D -1, which means the filters approved this sy=
+scall,
+>>          so we invoke syscall handler with modified regs.
+>>
+>> In your design, the logical condition is not obvious. Why syscall_enter_=
+from_user_mode()
+>> informed the syscall will be skipped but the syscall handler will be cal=
+led
+>> when syscall number is invalid? The users need to think two things to ge=
+t result:
+>> a) -1 means skip
+>> b) -1 < 0 in signed integer, so the skip condition is always a invalid s=
+yscall number.
+>>
+>> In may way, the users only need to think one thing: The syscall_enter_fr=
+om_user_mode()
+>> said -1 means the syscall should not be performed, so use it as a condit=
+ion of reject
+>> directly. They just need to combine the informations that they get from =
+API as the
+>> condition of control flow.
+>
+> I'm all-in for simpler API usage! Maybe massage the
+> syscall_enter_from_user_mode() (or a new one), so that additional
+> syscall_get_nr() call is not needed?
 
-Yeah, yeah, no point to discuss with you "Russian state-sponsored spam".
-Btw, are you from Serbia?
+It's completely unclear to me what the actual problem is. The flow how
+this works on all architectures is:
 
-> BTW can I be racist towards Germans and Croats since
-> their ancestors exterminated my kin in their death camps?
+       regs->orig_a0  =3D regs->a0
+       regs->a0 =3D -ENOSYS;
 
-You should answer your question yourself.
+       nr =3D syscall_enter_from_user_mode(....);
 
--- 
-With Best Regards,
-Andy Shevchenko
+       if (nr >=3D 0)
+          regs->a0 =3D nr < MAX_SYSCALL ? syscall(nr) : -ENOSYS;
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20
+If syscall_trace_enter() returns -1 to skip the syscall, then regs->a0
+is unmodified, unless one of the magic operations modified it.
 
+If syscall_trace_enter() was not active (no tracer, no seccomp ...) then
+regs->a0 already contains -ENOSYS.
 
+So what's the exact problem?
+
+Thanks,
+
+        tglx
 
