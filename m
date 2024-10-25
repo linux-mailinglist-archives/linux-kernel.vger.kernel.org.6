@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-382001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB8C59B0797
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:15:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 027879B079A
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:15:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1B1B4B23ED8
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:15:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B690B28430F
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:15:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86155167D80;
-	Fri, 25 Oct 2024 15:12:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 028312161EC;
+	Fri, 25 Oct 2024 15:12:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LebQPXrf"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Y81kp5LW"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B66B165F04
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 15:12:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21700170854
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 15:12:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729869139; cv=none; b=kf4fN3y+O0sSVS72Hpc3MNJTOCauomwPqE7ChraZqySrhsrS4OS7zhDoqjDgneB/w35vaq+fvy2RjXxJvaXi26x0fw4maEm3TKJXMMdN38+zmid/s0SiZnjxcV/dQR6Y+DAz0RjKcf7ZPXsvJJ8EDzE3QwxxPdkSCsBKsLJZDm4=
+	t=1729869146; cv=none; b=m3u82O1IoY7+OAULwYGM1FiX773rGVWwpYmOTBIsHtjsdvIKNK5RDhsLQFUGWnoOOHie3JsWEyO/CYWEHfeN1MDIlx6r9EDneleBO2VERoq5Oo1AM26W9Aa70I/VvczpJFqafqxutcKckigXDZsdFrF2Rgo7h7w4CSwwaHGgIQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729869139; c=relaxed/simple;
-	bh=B7PrUz5VAdfRkpHKAqsUYQXPd2NhJV/DByAXCQR//kc=;
+	s=arc-20240116; t=1729869146; c=relaxed/simple;
+	bh=OKuCXCkQYhPRRPyz3j97T+8ZrBgA9TgHLuBXidwiR8I=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gCPLH4PkA55LWEmsJ02cu0L5GNaUNpqKDMGzqdJG2wyWbFNavP0+sD0fo/58eNuz98QcDRXA29y4DpFc6t3R59LUpQ/BZ8cK+BkmGV6W8k170jS3/BCmRKz2edn1rzzW+oHse/ooFaLu5Stslv+2FT24LR9g/4TyLqxwnRIEcXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LebQPXrf; arc=none smtp.client-ip=170.10.133.124
+	 MIME-Version; b=lptjas6WN+JUo6IByxl/Y32/eNc+0zncJpY5f1B7WsrJ5trcCtqybB13i8Qizl/L3x0VG8s1b4fo7MJHwNrYhI1T/vmxdasiBuw7H/Sb2qWjikjwWHkJV4XyAOAJ6CGA1mIema9lT8eJZPKfu5BHDoKYBJbQlXZQ903g4Vu3RwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Y81kp5LW; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729869136;
+	s=mimecast20190719; t=1729869143;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=RBGqG14Ir1TauPvJbSz3jQOA9+mQRgCc4BCTlJgnkuA=;
-	b=LebQPXrfVL7RSUI6S2s+LGqKXscTgYneJrnx4c/I5q/gEVhCzhrdnbAhCOprfYv0ccMju+
-	r7CMfgXrdYWtyZQdbyET0Th/KkD0wvPNz2wvtqq6gnjp3aDMVS5PMPhSN9aGMVzdyl8A6U
-	leZv7uzOou8K8J8wjH7uMCXy01ocINU=
+	bh=D6QGok1SHO7tWBONbTK+qNFzpgcjUP8FVLCibVkMqhw=;
+	b=Y81kp5LWfD1jhMhN0PRGhwpxugehpsvQPUhyfHkHEiIlPx7jYFoymW3mOBTqbMgMHmT9Nq
+	yeOW2BZp8JwYMK9RTgxXd2cpo/iN2+2POQ3/Yl9sIBO41hYWI64tgx1F2ZqcKDYS6VxhG7
+	iEDwCkf96NeJ6iLOTEentRn3jVx8Sic=
 Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-602-pkIUU_7mPiOuJegdS3U3rg-1; Fri,
- 25 Oct 2024 11:12:13 -0400
-X-MC-Unique: pkIUU_7mPiOuJegdS3U3rg-1
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-64-m7d72Gv7PTyqbx3Zkb-x3g-1; Fri,
+ 25 Oct 2024 11:12:21 -0400
+X-MC-Unique: m7d72Gv7PTyqbx3Zkb-x3g-1
 Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7C5211955F43;
-	Fri, 25 Oct 2024 15:12:10 +0000 (UTC)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 65E1F1956077;
+	Fri, 25 Oct 2024 15:12:19 +0000 (UTC)
 Received: from t14s.redhat.com (unknown [10.22.65.27])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id AF463300018D;
-	Fri, 25 Oct 2024 15:12:02 +0000 (UTC)
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id E93DA300018D;
+	Fri, 25 Oct 2024 15:12:10 +0000 (UTC)
 From: David Hildenbrand <david@redhat.com>
 To: linux-kernel@vger.kernel.org
 Cc: linux-mm@kvack.org,
@@ -82,9 +82,9 @@ Cc: linux-mm@kvack.org,
 	Claudio Imbrenda <imbrenda@linux.ibm.com>,
 	Eric Farman <farman@linux.ibm.com>,
 	Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH v1 03/11] fs/proc/vmcore: disallow vmcore modifications after the vmcore was opened
-Date: Fri, 25 Oct 2024 17:11:25 +0200
-Message-ID: <20241025151134.1275575-4-david@redhat.com>
+Subject: [PATCH v1 04/11] fs/proc/vmcore: move vmcore definitions from kcore.h to crash_dump.h
+Date: Fri, 25 Oct 2024 17:11:26 +0200
+Message-ID: <20241025151134.1275575-5-david@redhat.com>
 In-Reply-To: <20241025151134.1275575-1-david@redhat.com>
 References: <20241025151134.1275575-1-david@redhat.com>
 Precedence: bulk
@@ -96,135 +96,163 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-Let's protect all vmcore modifications by the vmcore_mutex and
-disallow vmcore modifications after the vmcore was opened: modifications
-would no longer be safe. Properly synchronize against concurrent opening
-of the vmcore.
-
-As a nice side-effect, we now properly protect concurrent vmcore
-modifications.
-
-No need to grab the mutex during mmap()/read(): after we opened the
-vmcore, modifications are impossible.
+These defines are not related to /proc/kcore, move them to crash_dump.h
+instead. While at it, rename "struct vmcore" to "struct
+vmcore_mem_node", which is a more fitting name.
 
 Signed-off-by: David Hildenbrand <david@redhat.com>
 ---
- fs/proc/vmcore.c | 42 +++++++++++++++++++-----------------------
- 1 file changed, 19 insertions(+), 23 deletions(-)
+ fs/proc/vmcore.c           | 20 ++++++++++----------
+ include/linux/crash_dump.h | 13 +++++++++++++
+ include/linux/kcore.h      | 13 -------------
+ 3 files changed, 23 insertions(+), 23 deletions(-)
 
 diff --git a/fs/proc/vmcore.c b/fs/proc/vmcore.c
-index b91c304463c9..6371dbaa21be 100644
+index 6371dbaa21be..47652df95202 100644
 --- a/fs/proc/vmcore.c
 +++ b/fs/proc/vmcore.c
-@@ -243,33 +243,27 @@ static int vmcoredd_copy_dumps(struct iov_iter *iter, u64 start, size_t size)
+@@ -304,10 +304,10 @@ static int vmcoredd_mmap_dumps(struct vm_area_struct *vma, unsigned long dst,
+  */
+ static ssize_t __read_vmcore(struct iov_iter *iter, loff_t *fpos)
  {
- 	struct vmcoredd_node *dump;
- 	u64 offset = 0;
--	int ret = 0;
++	struct vmcore_mem_node *m = NULL;
+ 	ssize_t acc = 0, tmp;
  	size_t tsz;
- 	char *buf;
+ 	u64 start;
+-	struct vmcore *m = NULL;
  
--	mutex_lock(&vmcore_mutex);
- 	list_for_each_entry(dump, &vmcoredd_list, list) {
- 		if (start < offset + dump->size) {
- 			tsz = min(offset + (u64)dump->size - start, (u64)size);
- 			buf = dump->buf + start - offset;
--			if (copy_to_iter(buf, tsz, iter) < tsz) {
--				ret = -EFAULT;
--				goto out_unlock;
--			}
-+			if (copy_to_iter(buf, tsz, iter) < tsz)
-+				return -EFAULT;
+ 	if (!iov_iter_count(iter) || *fpos >= vmcore_size)
+ 		return 0;
+@@ -560,8 +560,8 @@ static int vmcore_remap_oldmem_pfn(struct vm_area_struct *vma,
+ static int mmap_vmcore(struct file *file, struct vm_area_struct *vma)
+ {
+ 	size_t size = vma->vm_end - vma->vm_start;
++	struct vmcore_mem_node *m;
+ 	u64 start, end, len, tsz;
+-	struct vmcore *m;
  
- 			size -= tsz;
- 			start += tsz;
+ 	start = (u64)vma->vm_pgoff << PAGE_SHIFT;
+ 	end = start + size;
+@@ -683,16 +683,16 @@ static const struct proc_ops vmcore_proc_ops = {
+ 	.proc_mmap	= mmap_vmcore,
+ };
  
- 			/* Leave now if buffer filled already */
- 			if (!size)
--				goto out_unlock;
-+				return 0;
- 		}
- 		offset += dump->size;
- 	}
- 
--out_unlock:
--	mutex_unlock(&vmcore_mutex);
--	return ret;
-+	return 0;
+-static struct vmcore* __init get_new_element(void)
++static struct vmcore_mem_node * __init get_new_element(void)
+ {
+-	return kzalloc(sizeof(struct vmcore), GFP_KERNEL);
++	return kzalloc(sizeof(struct vmcore_mem_node), GFP_KERNEL);
  }
  
- #ifdef CONFIG_MMU
-@@ -278,20 +272,16 @@ static int vmcoredd_mmap_dumps(struct vm_area_struct *vma, unsigned long dst,
+ static u64 get_vmcore_size(size_t elfsz, size_t elfnotesegsz,
+ 			   struct list_head *vc_list)
  {
- 	struct vmcoredd_node *dump;
- 	u64 offset = 0;
--	int ret = 0;
- 	size_t tsz;
- 	char *buf;
++	struct vmcore_mem_node *m;
+ 	u64 size;
+-	struct vmcore *m;
  
--	mutex_lock(&vmcore_mutex);
- 	list_for_each_entry(dump, &vmcoredd_list, list) {
- 		if (start < offset + dump->size) {
- 			tsz = min(offset + (u64)dump->size - start, (u64)size);
- 			buf = dump->buf + start - offset;
- 			if (remap_vmalloc_range_partial(vma, dst, buf, 0,
--							tsz)) {
--				ret = -EFAULT;
--				goto out_unlock;
--			}
-+							tsz))
-+				return -EFAULT;
+ 	size = elfsz + elfnotesegsz;
+ 	list_for_each_entry(m, vc_list, list) {
+@@ -1090,11 +1090,11 @@ static int __init process_ptload_program_headers_elf64(char *elfptr,
+ 						size_t elfnotes_sz,
+ 						struct list_head *vc_list)
+ {
++	struct vmcore_mem_node *new;
+ 	int i;
+ 	Elf64_Ehdr *ehdr_ptr;
+ 	Elf64_Phdr *phdr_ptr;
+ 	loff_t vmcore_off;
+-	struct vmcore *new;
  
- 			size -= tsz;
- 			start += tsz;
-@@ -299,14 +289,12 @@ static int vmcoredd_mmap_dumps(struct vm_area_struct *vma, unsigned long dst,
+ 	ehdr_ptr = (Elf64_Ehdr *)elfptr;
+ 	phdr_ptr = (Elf64_Phdr*)(elfptr + sizeof(Elf64_Ehdr)); /* PT_NOTE hdr */
+@@ -1133,11 +1133,11 @@ static int __init process_ptload_program_headers_elf32(char *elfptr,
+ 						size_t elfnotes_sz,
+ 						struct list_head *vc_list)
+ {
++	struct vmcore_mem_node *new;
+ 	int i;
+ 	Elf32_Ehdr *ehdr_ptr;
+ 	Elf32_Phdr *phdr_ptr;
+ 	loff_t vmcore_off;
+-	struct vmcore *new;
  
- 			/* Leave now if buffer filled already */
- 			if (!size)
--				goto out_unlock;
-+				return 0;
- 		}
- 		offset += dump->size;
+ 	ehdr_ptr = (Elf32_Ehdr *)elfptr;
+ 	phdr_ptr = (Elf32_Phdr*)(elfptr + sizeof(Elf32_Ehdr)); /* PT_NOTE hdr */
+@@ -1175,8 +1175,8 @@ static int __init process_ptload_program_headers_elf32(char *elfptr,
+ static void set_vmcore_list_offsets(size_t elfsz, size_t elfnotes_sz,
+ 				    struct list_head *vc_list)
+ {
++	struct vmcore_mem_node *m;
+ 	loff_t vmcore_off;
+-	struct vmcore *m;
+ 
+ 	/* Skip ELF header, program headers and ELF note segment. */
+ 	vmcore_off = elfsz + elfnotes_sz;
+@@ -1587,9 +1587,9 @@ void vmcore_cleanup(void)
+ 
+ 	/* clear the vmcore list. */
+ 	while (!list_empty(&vmcore_list)) {
+-		struct vmcore *m;
++		struct vmcore_mem_node *m;
+ 
+-		m = list_first_entry(&vmcore_list, struct vmcore, list);
++		m = list_first_entry(&vmcore_list, struct vmcore_mem_node, list);
+ 		list_del(&m->list);
+ 		kfree(m);
  	}
+diff --git a/include/linux/crash_dump.h b/include/linux/crash_dump.h
+index acc55626afdc..5e48ab12c12b 100644
+--- a/include/linux/crash_dump.h
++++ b/include/linux/crash_dump.h
+@@ -114,10 +114,23 @@ struct vmcore_cb {
+ extern void register_vmcore_cb(struct vmcore_cb *cb);
+ extern void unregister_vmcore_cb(struct vmcore_cb *cb);
  
--out_unlock:
--	mutex_unlock(&vmcore_mutex);
--	return ret;
-+	return 0;
- }
- #endif /* CONFIG_MMU */
- #endif /* CONFIG_PROC_VMCORE_DEVICE_DUMP */
-@@ -1482,6 +1470,10 @@ int vmcore_add_device_dump(struct vmcoredd_data *data)
- 		return -EINVAL;
- 	}
- 
-+	/* We'll recheck under lock later. */
-+	if (data_race(vmcore_opened))
-+		return -EBUSY;
++struct vmcore_mem_node {
++	struct list_head list;
++	unsigned long long paddr;
++	unsigned long long size;
++	loff_t offset;
++};
 +
- 	if (!data || !strlen(data->dump_name) ||
- 	    !data->vmcoredd_callback || !data->size)
- 		return -EINVAL;
-@@ -1515,12 +1507,16 @@ int vmcore_add_device_dump(struct vmcoredd_data *data)
- 	dump->buf = buf;
- 	dump->size = data_size;
+ #else /* !CONFIG_CRASH_DUMP */
+ static inline bool is_kdump_kernel(void) { return false; }
+ #endif /* CONFIG_CRASH_DUMP */
  
--	/* Add the dump to driver sysfs list */
-+	/* Add the dump to driver sysfs list and update the elfcore hdr */
- 	mutex_lock(&vmcore_mutex);
--	list_add_tail(&dump->list, &vmcoredd_list);
--	mutex_unlock(&vmcore_mutex);
-+	if (vmcore_opened) {
-+		ret = -EBUSY;
-+		goto out_err;
-+	}
++struct vmcoredd_node {
++	struct list_head list;	/* List of dumps */
++	void *buf;		/* Buffer containing device's dump */
++	unsigned int size;	/* Size of the buffer */
++};
++
+ /* Device Dump information to be filled by drivers */
+ struct vmcoredd_data {
+ 	char dump_name[VMCOREDD_MAX_NAME_BYTES]; /* Unique name of the dump */
+diff --git a/include/linux/kcore.h b/include/linux/kcore.h
+index 86c0f1d18998..9a2fa013c91d 100644
+--- a/include/linux/kcore.h
++++ b/include/linux/kcore.h
+@@ -20,19 +20,6 @@ struct kcore_list {
+ 	int type;
+ };
  
-+	list_add_tail(&dump->list, &vmcoredd_list);
- 	vmcoredd_update_size(data_size);
-+	mutex_unlock(&vmcore_mutex);
- 	return 0;
+-struct vmcore {
+-	struct list_head list;
+-	unsigned long long paddr;
+-	unsigned long long size;
+-	loff_t offset;
+-};
+-
+-struct vmcoredd_node {
+-	struct list_head list;	/* List of dumps */
+-	void *buf;		/* Buffer containing device's dump */
+-	unsigned int size;	/* Size of the buffer */
+-};
+-
+ #ifdef CONFIG_PROC_KCORE
+ void __init kclist_add(struct kcore_list *, void *, size_t, int type);
  
- out_err:
 -- 
 2.46.1
 
