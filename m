@@ -1,258 +1,122 @@
-Return-Path: <linux-kernel+bounces-382281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C02889B0BBE
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 19:37:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22D4B9B0BC2
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 19:38:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8DF21C24077
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:37:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 820B4288606
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:38:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2568C20C31F;
-	Fri, 25 Oct 2024 17:36:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F05F418CC11;
+	Fri, 25 Oct 2024 17:37:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="RhWrmVOG"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zN4FVv4u"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8B5110A0E;
-	Fri, 25 Oct 2024 17:36:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CF5818787C
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 17:37:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729877795; cv=none; b=UmZm24n0VjdWz5VWqFMdNl2ERcDjG0VToxSXUmiuDLtf6umQRECQampEqIcmg5xJ9/MHjZWZK+Gx+dEn5P14Vz6CJYcF3O+1X5Lm2WD2DjYfBZjqdoNgfwBuPXTjZl9KMcSLe4U4HFti+KSp8lgnvPU6M8bXsfUxoJYz+23yqSg=
+	t=1729877834; cv=none; b=Afv4lTpzcknZjnYx4atHpWHJVPGlxjCkzt/bwkLOlAJ3psTcRp28F5FGLQh8WIsGw+Vx5mEqyHbkgLQLDwb/I8B8cWS+N4YmDEMPR9Z2is9DtwDQAYC9DFVpb3z9H/i3APR0it+16ZjnlzdiEltbN+O2RCaBDvAS9CVAxDBiixI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729877795; c=relaxed/simple;
-	bh=x4jpxHklaZinyrxH+w/otUFIrF7xpzlfk3/g5e1I3KE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Hj53lvSFLx3S0tSWHlrH/FoCfHZiYYiu7PSlTF3Bn1st6Z9DsVMDVKY9DGpnel5soZy4mf9C2HWv4uFUoBtt0cQuZWwOq+bwJRmVKU0QsvfvP/TpgqS/s6z6Wuu//wsvbhjED2IPQ5O/1kZFnFnLyXI3f79WQ2imBYRFqJA83ZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=RhWrmVOG; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1729877789;
-	bh=x4jpxHklaZinyrxH+w/otUFIrF7xpzlfk3/g5e1I3KE=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=RhWrmVOGzNQoNyvObXXer83FMP3ggDqn1HjeCx6WApTvtxLFVPvhMvbyP/Vdn+fQV
-	 SqTu2IzyAQB/jetcHZ0JArXoZmd4xdpSi96B53TpGq86qx3jOWqtmQAtasSvO2qxuQ
-	 0Jmry+kTcmHcVh2NRAIkcDDIbu3cvh39CvB2+xEHfOYO6s9AYdz8El+cXYrrCn7kZz
-	 OWl5mfnYC+leB2tT3K+/RVCTb/xEZJuaz9+9ahafQ6UNAzNIdHNXotwSK8OdwLtxt+
-	 qMwEugKqS/vlQmP9qOfx9C3zvcXcG8zdMtwr+qUYenBG+OrAToDRRNVyZ0bfh/ZGsk
-	 Pc65nNhGOGT5Q==
-Received: from nicolas-tpx395.lan (unknown [IPv6:2606:6d00:15:862e::7a9])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: nicolas)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 2450517E36AE;
-	Fri, 25 Oct 2024 19:36:28 +0200 (CEST)
-Message-ID: <59ffa319a35e9e914bb5c8169df782ddabbd68c3.camel@collabora.com>
-Subject: Re: [PATCH v6 08/11] media: rkvdec: Add image format concept
-From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-To: Jonas Karlman <jonas@kwiboo.se>, Sebastian Fricke
- <sebastian.fricke@collabora.com>, Ezequiel Garcia
- <ezequiel@vanguardiasur.com.ar>, Mauro Carvalho Chehab
- <mchehab@kernel.org>,  Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Alex Bee <knaerzche@gmail.com>, Benjamin Gaignard
- <benjamin.gaignard@collabora.com>, Detlev Casanova
- <detlev.casanova@collabora.com>, Dan Carpenter <dan.carpenter@linaro.org>, 
- linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org, 
- linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org, Christopher
- Obbard <chris.obbard@collabora.com>
-Date: Fri, 25 Oct 2024 13:36:27 -0400
-In-Reply-To: <20240909192522.1076704-9-jonas@kwiboo.se>
-References: <20240909192522.1076704-1-jonas@kwiboo.se>
-	 <20240909192522.1076704-9-jonas@kwiboo.se>
-Organization: Collabora
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+	s=arc-20240116; t=1729877834; c=relaxed/simple;
+	bh=vIBV02O+LRvHoGop9H9PTAD4+Ag8TMdrt95BD4uN0YI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CbhnmJNWEEo9cOoa1qW1qvXl8xRaNGlvKJ0K9efAPQPnC3emW0re08WTNyrCOPdMjETkW0LJXoGOKzLdiFPnfPYbP+B6O7NCUj7Uy2kyB8hCMB5pdHiRY28xWJo2trN09SktRUwadimNSxWmmZ/LWjn8deTsyiwpQSy2QOXNWoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zN4FVv4u; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43153c6f70aso16065e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 10:37:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1729877830; x=1730482630; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JUvARlAjWtUkbpBS3b9UleGHLvABqtUp2olkNT4cfjg=;
+        b=zN4FVv4uB0fSNRP2kL7L2TNOTQ3s1cs68KxkL48ruYIDSU9nQ4XYfvj4umbdFWt7/P
+         /2Q5+XIS6WL7O1ejx4TlVT9RZua89/DovHpHivUJ06xt0NNUv1TaT/0D4tRADkC9/yah
+         70lv+FZ78nrwIhxBLAZ8AzVDzZp5OY2CA7AZvpGoYGTMU01FLBZS2CoWa3OyFVJeyjJj
+         TsJK5AhJmYWfjo6lHtGqBmlrGLgj9N0nS5T5J2IbRouuiCz5NE+xJN0HzZK0mFyEViqI
+         33vDHBU6Bl61y+3HP0hexUW2wduQD8H8JVwg2PPhb8ntzYdwGTZO7qfbJuuzrpmNR/pY
+         Fh5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729877830; x=1730482630;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JUvARlAjWtUkbpBS3b9UleGHLvABqtUp2olkNT4cfjg=;
+        b=wCSGLJ3+S4tRjsNKBvXGEH4JNzLsMEb647gJOcC7rf9raVvyT2DgVkf9W+Chx+p++e
+         SXu38IXeNE36Y/a/qH9/hZrs/lZ8l/56PcX4fvkO24S8E1yD1pBzHpSDIAKRDLC2++Zx
+         nWoTyfUEgh2S/dB4iYqIm1ar5vIu2xQXdx8dgqQmVP1Txkjtxostzb1Svb1PVvN71qPN
+         cCwetBaml+UgVsgWOmtQ8a0vOddqj8QxGK09t2p3xXmpCOMrBEXZKov46fPyuwFG6iub
+         1C75F78pqEXk9bxvhNOHMN3gGCFQYVN8gM5tlQXT8TiYQwTgkKBImuDoSZ6/K6LgjcyO
+         967g==
+X-Forwarded-Encrypted: i=1; AJvYcCUI7MR4IwDmj8LrGpqbGa3bMZngCPuyVLLi0uLcdv0cTEAU508PzDJFw5AfWYWAe+G7z8nIilRtvv74bDg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdvC7Ucc/pUpnIeNB8JwyjKBokdrkVHDyqWcSuOoY8NcNhK/XE
+	lqv5J5ItONrAv2GzY0l0c9snuxqsqMKRgFlcR89DW0kSHYo0r3eWVJpbyRUeIHQynhSw+vpkVM3
+	95UX0OmmpxY7+cDaraPHJ5VrqgnMnA6p8k4gi
+X-Google-Smtp-Source: AGHT+IFqFsMMJ5U+cB95wgqsTu4ul7SXq9JYmE8u0H+tFP1iKJCHNDGIWIjq1RVXn0lKRu6Q6q/DVWwtBsFaO9tD9BA=
+X-Received: by 2002:a05:600c:500f:b0:42c:9e35:cde6 with SMTP id
+ 5b1f17b1804b1-4319abf416fmr72475e9.2.1729877830499; Fri, 25 Oct 2024 10:37:10
+ -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241004195540.210396-1-vipinsh@google.com> <20241004195540.210396-3-vipinsh@google.com>
+ <ZxrXe_GWTKqQ-ch8@google.com>
+In-Reply-To: <ZxrXe_GWTKqQ-ch8@google.com>
+From: Vipin Sharma <vipinsh@google.com>
+Date: Fri, 25 Oct 2024 10:36:32 -0700
+Message-ID: <CAHVum0ebkzXecZhEVC6DJyztX-aVD7mTmY6J6qgyBHM4sqT=vg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] KVM: x86/mmu: Use MMU shrinker to shrink KVM MMU
+ memory caches
+To: Sean Christopherson <seanjc@google.com>
+Cc: pbonzini@redhat.com, dmatlack@google.com, zhi.wang.linux@gmail.com, 
+	weijiang.yang@intel.com, mizhang@google.com, liangchen.linux@gmail.com, 
+	kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Le lundi 09 septembre 2024 à 19:25 +0000, Jonas Karlman a écrit :
-> Add an enum rkvdec_image_fmt used to signal an image format, e.g.
-> 4:2:0 8-bit, 4:2:0 10-bit or any.
-> 
-> Tag each supported CAPUTRE format with an image format and use this tag
-> to filter out unsupported CAPTURE formats.
-> 
-> Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
-> Tested-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-> Tested-by: Christopher Obbard <chris.obbard@collabora.com>
-> ---
-> v6:
-> - Change to use fmt_idx instead of j++ tucked inside a condition (Dan)
-> 
-> v5:
-> - Collect t-b tags
-> 
-> v4:
-> - Change fmt_opaque into an image format
-> - Split patch into two
-> 
-> v3:
-> - New patch
-> ---
->  drivers/staging/media/rkvdec/rkvdec.c | 48 ++++++++++++++++++++-------
->  drivers/staging/media/rkvdec/rkvdec.h | 13 +++++++-
->  2 files changed, 48 insertions(+), 13 deletions(-)
-> 
-> diff --git a/drivers/staging/media/rkvdec/rkvdec.c b/drivers/staging/media/rkvdec/rkvdec.c
-> index efbf9aa578ae..467fc05b347a 100644
-> --- a/drivers/staging/media/rkvdec/rkvdec.c
-> +++ b/drivers/staging/media/rkvdec/rkvdec.c
-> @@ -27,26 +27,45 @@
->  #include "rkvdec.h"
->  #include "rkvdec-regs.h"
->  
-> -static u32 rkvdec_enum_decoded_fmt(struct rkvdec_ctx *ctx, int index)
-> +static inline bool rkvdec_image_fmt_match(enum rkvdec_image_fmt fmt1,
-> +					  enum rkvdec_image_fmt fmt2)
+On Thu, Oct 24, 2024 at 4:25=E2=80=AFPM Sean Christopherson <seanjc@google.=
+com> wrote:
+>
+> On Fri, Oct 04, 2024, Vipin Sharma wrote:
+> > +out_mmu_memory_cache_unlock:
+> > +     mutex_unlock(&vcpu->arch.mmu_memory_cache_lock);
+>
+> I've been thinking about this patch on and off for the past few weeks, an=
+d every
+> time I come back to it I can't shake the feeling that we came up with a c=
+lever
+> solution for a problem that doesn't exist.  I can't recall a single compl=
+aint
+> about KVM consuming an unreasonable amount of memory for page tables.  In=
+ fact,
+> the only time I can think of where the code in question caused problems w=
+as when
+> I unintentionally inverted the iterator and zapped the newest SPs instead=
+ of the
+> oldest SPs.
+>
+> So, I'm leaning more and more toward simply removing the shrinker integra=
+tion.
 
-nit: We usually let the compiler inline function, specially when small and
-static.
+One thing we can agree on is that we don't need MMU shrinker in its
+current form because it is removing pages which are very well being
+used by VM instead of shrinking its cache.
 
-Reviewed-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-
-> +{
-> +	return fmt1 == fmt2 || fmt2 == RKVDEC_IMG_FMT_ANY ||
-> +	       fmt1 == RKVDEC_IMG_FMT_ANY;
-> +}
-> +
-> +static u32 rkvdec_enum_decoded_fmt(struct rkvdec_ctx *ctx, int index,
-> +				   enum rkvdec_image_fmt image_fmt)
->  {
->  	const struct rkvdec_coded_fmt_desc *desc = ctx->coded_fmt_desc;
-> +	int fmt_idx = -1;
-> +	unsigned int i;
->  
->  	if (WARN_ON(!desc))
->  		return 0;
->  
-> -	if (index >= desc->num_decoded_fmts)
-> -		return 0;
-> +	for (i = 0; i < desc->num_decoded_fmts; i++) {
-> +		if (!rkvdec_image_fmt_match(desc->decoded_fmts[i].image_fmt,
-> +					    image_fmt))
-> +			continue;
-> +		fmt_idx++;
-> +		if (index == fmt_idx)
-> +			return desc->decoded_fmts[i].fourcc;
-> +	}
->  
-> -	return desc->decoded_fmts[index];
-> +	return 0;
->  }
->  
-> -static bool rkvdec_is_valid_fmt(struct rkvdec_ctx *ctx, u32 fourcc)
-> +static bool rkvdec_is_valid_fmt(struct rkvdec_ctx *ctx, u32 fourcc,
-> +				enum rkvdec_image_fmt image_fmt)
->  {
->  	const struct rkvdec_coded_fmt_desc *desc = ctx->coded_fmt_desc;
->  	unsigned int i;
->  
->  	for (i = 0; i < desc->num_decoded_fmts; i++) {
-> -		if (desc->decoded_fmts[i] == fourcc)
-> +		if (rkvdec_image_fmt_match(desc->decoded_fmts[i].image_fmt,
-> +					   image_fmt) &&
-> +		    desc->decoded_fmts[i].fourcc == fourcc)
->  			return true;
->  	}
->  
-> @@ -80,7 +99,7 @@ static void rkvdec_reset_decoded_fmt(struct rkvdec_ctx *ctx)
->  	struct v4l2_format *f = &ctx->decoded_fmt;
->  	u32 fourcc;
->  
-> -	fourcc = rkvdec_enum_decoded_fmt(ctx, 0);
-> +	fourcc = rkvdec_enum_decoded_fmt(ctx, 0, ctx->image_fmt);
->  	rkvdec_reset_fmt(ctx, f, fourcc);
->  	f->type = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
->  	f->fmt.pix_mp.width = ctx->coded_fmt.fmt.pix_mp.width;
-> @@ -149,8 +168,11 @@ static const struct rkvdec_ctrls rkvdec_h264_ctrls = {
->  	.num_ctrls = ARRAY_SIZE(rkvdec_h264_ctrl_descs),
->  };
->  
-> -static const u32 rkvdec_h264_vp9_decoded_fmts[] = {
-> -	V4L2_PIX_FMT_NV12,
-> +static const struct rkvdec_decoded_fmt_desc rkvdec_h264_vp9_decoded_fmts[] = {
-> +	{
-> +		.fourcc = V4L2_PIX_FMT_NV12,
-> +		.image_fmt = RKVDEC_IMG_FMT_420_8BIT,
-> +	},
->  };
->  
->  static const struct rkvdec_ctrl_desc rkvdec_vp9_ctrl_descs[] = {
-> @@ -282,8 +304,9 @@ static int rkvdec_try_capture_fmt(struct file *file, void *priv,
->  	if (WARN_ON(!coded_desc))
->  		return -EINVAL;
->  
-> -	if (!rkvdec_is_valid_fmt(ctx, pix_mp->pixelformat))
-> -		pix_mp->pixelformat = rkvdec_enum_decoded_fmt(ctx, 0);
-> +	if (!rkvdec_is_valid_fmt(ctx, pix_mp->pixelformat, ctx->image_fmt))
-> +		pix_mp->pixelformat = rkvdec_enum_decoded_fmt(ctx, 0,
-> +							      ctx->image_fmt);
->  
->  	/* Always apply the frmsize constraint of the coded end. */
->  	pix_mp->width = max(pix_mp->width, ctx->coded_fmt.fmt.pix_mp.width);
-> @@ -400,6 +423,7 @@ static int rkvdec_s_output_fmt(struct file *file, void *priv,
->  	 *
->  	 * Note that this will propagates any size changes to the decoded format.
->  	 */
-> +	ctx->image_fmt = RKVDEC_IMG_FMT_ANY;
->  	rkvdec_reset_decoded_fmt(ctx);
->  
->  	/* Propagate colorspace information to capture. */
-> @@ -449,7 +473,7 @@ static int rkvdec_enum_capture_fmt(struct file *file, void *priv,
->  	struct rkvdec_ctx *ctx = fh_to_rkvdec_ctx(priv);
->  	u32 fourcc;
->  
-> -	fourcc = rkvdec_enum_decoded_fmt(ctx, f->index);
-> +	fourcc = rkvdec_enum_decoded_fmt(ctx, f->index, ctx->image_fmt);
->  	if (!fourcc)
->  		return -EINVAL;
->  
-> diff --git a/drivers/staging/media/rkvdec/rkvdec.h b/drivers/staging/media/rkvdec/rkvdec.h
-> index 633335ebb9c4..6f8cf50c5d99 100644
-> --- a/drivers/staging/media/rkvdec/rkvdec.h
-> +++ b/drivers/staging/media/rkvdec/rkvdec.h
-> @@ -75,13 +75,23 @@ struct rkvdec_coded_fmt_ops {
->  	int (*try_ctrl)(struct rkvdec_ctx *ctx, struct v4l2_ctrl *ctrl);
->  };
->  
-> +enum rkvdec_image_fmt {
-> +	RKVDEC_IMG_FMT_ANY = 0,
-> +	RKVDEC_IMG_FMT_420_8BIT,
-> +};
-> +
-> +struct rkvdec_decoded_fmt_desc {
-> +	u32 fourcc;
-> +	enum rkvdec_image_fmt image_fmt;
-> +};
-> +
->  struct rkvdec_coded_fmt_desc {
->  	u32 fourcc;
->  	struct v4l2_frmsize_stepwise frmsize;
->  	const struct rkvdec_ctrls *ctrls;
->  	const struct rkvdec_coded_fmt_ops *ops;
->  	unsigned int num_decoded_fmts;
-> -	const u32 *decoded_fmts;
-> +	const struct rkvdec_decoded_fmt_desc *decoded_fmts;
->  	u32 subsystem_flags;
->  };
->  
-> @@ -104,6 +114,7 @@ struct rkvdec_ctx {
->  	const struct rkvdec_coded_fmt_desc *coded_fmt_desc;
->  	struct v4l2_ctrl_handler ctrl_hdl;
->  	struct rkvdec_dev *dev;
-> +	enum rkvdec_image_fmt image_fmt;
->  	void *priv;
->  };
->  
-
+Regarding the current series, the biggest VM in GCE we can have 416
+vCPUs, considering each thread can have 40 pages in its cache, total
+cost gonna be around 65 MiB, doesn't seem much to me considering these
+VMs have memory in TiB. Since caches in VMs are not unbounded, I think
+it is fine to not have a MMU shrinker as its impact is miniscule in
+KVM.
 
