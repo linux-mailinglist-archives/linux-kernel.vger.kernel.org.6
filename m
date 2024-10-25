@@ -1,178 +1,130 @@
-Return-Path: <linux-kernel+bounces-381716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EB2E9B0349
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 14:59:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A948B9B0295
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 14:38:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B9F11F2324F
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 12:59:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F654283CA2
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 12:38:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B459B7080D;
-	Fri, 25 Oct 2024 12:59:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D0783DABED;
+	Fri, 25 Oct 2024 12:36:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SJ7wJu7D"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DabUAD8C"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 163572064FE;
-	Fri, 25 Oct 2024 12:59:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E556C1F757B;
+	Fri, 25 Oct 2024 12:36:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729861178; cv=none; b=Lj7pP4CFnJ6IFXf/MvnTrImmomlFh/ZJT1t//QgkgvSB+PzMMlKmRXQXrw9L9i38H0/1mltECK2xqAcl9M8RL0DU8TUEkQ/9w2gelbMkAppx6m8FNbSPl09ruf6iTsrEQQj9EA4ZNxh4IRiB3rozssC0aaEmyf2HQBxuNuRnohk=
+	t=1729859816; cv=none; b=TH0fymlCvOzJFeeA9yHu2ALWj/yQO0jJ733tOMOnd4IgbVh6BNMglPNzTbUFF/QpLMeg8IUyi6Rr5QGV64BLK4PQvVjJOTtgwleuvhUt1rSZSWWxmaeSjngZZyIwGXL5seohH0j6a4fGWONnlJ8nHL+zjA1dLWy7xp5K5/1op1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729861178; c=relaxed/simple;
-	bh=l0sytxywCiAfXKGcO9SLlzfTkZ0ecVvtu6hWrTMitsE=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=nXrBeLDbR3iEcgLlpny0OGM4c30hXJn0oM59+4v55Xv/kUF4g0yBx+6tPneXujO9h+6WDjS91zWJf0t7LwdJmGHROaldeDR1Al/fmRAYVrMKhXM73tRc1ryCMyLEikSRYiwlSdHxvO1GRF1kfbmpwE59Nuao9fT4VLTHjzjLhCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SJ7wJu7D; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-20c805a0753so19210885ad.0;
-        Fri, 25 Oct 2024 05:59:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729861174; x=1730465974; darn=vger.kernel.org;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=sS0sCHvb+I6L+9QyAsfqaRm1T+v1p6mphFE4KTK0Jys=;
-        b=SJ7wJu7DEURCcL9lbNxju8nKwQlBy+M+6ia/sN5S38Uf6jQ22No/p3r8ycyl5T7+SG
-         txHxLyKLC3jFZsnDe5qpllyK4CooDnsZ3di35M1z4nJBcCt8YA10o6eASuzxKrXC5joU
-         BgOTRWC7UUt2qlnO5Pf2+1PX2N/iU6RdM3zhZU9yRCnZd1Pa86dI6WdQyYY26JrWqaAU
-         Suz777A1B+BgP2aZv2Q7SIkeDxTIxVfXAwaH8U2bFCjOqkT2zhAeBsi+mn5gSK4w9PSy
-         Gdf+MA7ocs9VG4TBbCUkJvxLfkGVXqQAJqQlGloWXidIyZGzq6JTmpthR8vd5kq1kFoQ
-         66yg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729861174; x=1730465974;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sS0sCHvb+I6L+9QyAsfqaRm1T+v1p6mphFE4KTK0Jys=;
-        b=SvC+EwsDO38GYMSC48yssFB/etqNjs/17Hv1B04u6DdbpXP565Kq1gPPtB3k0ZF+9x
-         qbF1mVfo7zEADXxJ8kKeXCQ8MWp3VAz6BvdtVlohylC373PTSn9AK3MhA75wwXM3ScaS
-         BWK82LUJLbqydlOC4zWACZveA211nFlPQENx7+nP02DToJ3KX6INgd1/LGTSLrZK2P6h
-         RwVOJ1M4aj6Cv1zMQwzL/BzRDoGzS/aOeVMRUS1b0J5+eM9ShU9HKAHw+Z0OjT1D+tg8
-         YYQ0hifpPOvWtGxE+HuDDffdc/THgw/p24Az9yAYxl3O4j/rgAHppVeZ2D4ZXTlwnQUM
-         Y3bw==
-X-Forwarded-Encrypted: i=1; AJvYcCU8z1GECdJKhKCVou2qw+++B5Opd3bozpDRXNyr+lXe8s2QBfMlfbK3trGOCRAyNvJMe0yD7LN0qhF/w0cy@vger.kernel.org, AJvYcCVIfOjTThuSU9gko4tY0O3YM2djJoXGh9MWkuVwiL99uv59saCNhOx+mOPMSiw1ZK9QdLQaJM7aQfJrfVcEKg==@vger.kernel.org, AJvYcCVr0hDdC7BCO/C5Ws4ftUlKXaFBYpY/yFP2xrCwQNTMElPUVHVqWrmPOJnsUMRprzEzS52i7LJq1mw0@vger.kernel.org, AJvYcCW3f9buCXZnPoIWaCzZC3GruoVItyzOsWF7bR4HU2DizJQ+mZwm+s8fB7TA+Sc3Hn7Yew/Z+jXQdano@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyu3LiFW/EdxmLiR+D99Y4yhvoM4GZ6xIEAw+Xfyz/RJ5IzvcOd
-	TTaOEls6URDjDVzn9nnj5AnPjzXtB+15J35YH8SBJT0ddPVJvSkgkMjzxw==
-X-Google-Smtp-Source: AGHT+IG+TukVZ5cKFAVsZkN3PXK9I6J6zGYg6kmbkictFDjWrWJwFkWpgfljYTCv/kpR03zG9YKbeg==
-X-Received: by 2002:a17:903:2292:b0:20c:7be3:2816 with SMTP id d9443c01a7336-20fb9aa20d1mr76427815ad.40.1729861174280;
-        Fri, 25 Oct 2024 05:59:34 -0700 (PDT)
-Received: from dw-tp ([171.76.85.20])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bbf6df97sm8983925ad.100.2024.10.25.05.59.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2024 05:59:33 -0700 (PDT)
-From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-To: John Garry <john.g.garry@oracle.com>, linux-ext4@vger.kernel.org
-Cc: Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.cz>, "Darrick J . Wong" <djwong@kernel.org>, Christoph Hellwig <hch@infradead.org>, Ojaswin Mujoo <ojaswin@linux.ibm.com>, Dave Chinner <david@fromorbit.com>, linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 5/6] iomap: Lift blocksize restriction on atomic writes
-In-Reply-To: <7aea00d4-3914-414d-a18f-586a303868c1@oracle.com>
-Date: Fri, 25 Oct 2024 18:06:10 +0530
-Message-ID: <87r084mkat.fsf@gmail.com>
-References: <cover.1729825985.git.ritesh.list@gmail.com> <f5bd55d32031b49bdd9e2c6d073787d1ac4b6d78.1729825985.git.ritesh.list@gmail.com> <1efb8d6d-ba2e-499d-abc5-e4f9a1e54e89@oracle.com> <87zfmsmsvc.fsf@gmail.com> <fc6fddee-2707-4cca-b0b7-983c8dd17e16@oracle.com> <87v7xgmpwo.fsf@gmail.com> <7e322989-c6e0-424a-94bd-3ad6ce5ffee9@oracle.com> <87ttd0mnuo.fsf@gmail.com> <7aea00d4-3914-414d-a18f-586a303868c1@oracle.com>
+	s=arc-20240116; t=1729859816; c=relaxed/simple;
+	bh=AviaUlBZZ7+hKNoYNAUPRHtZzUriK4vdXQg7T26UsIk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fapZbP/jbn+gpTL3PJ4PjaH2/aJTTJxkDkOglVqHBHnB9S2vyrPfwX+qOaB7JhA5WasghDEURr1yTBXRBc6cSJFw4MLJC/Q6qIubzDrD1UM+GagwRnsn6VAl9ozpYM2L4jKBq87Vouw+lbL5Jt1evRW/CJTgPrre7WFxauiOb/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DabUAD8C; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45CA8C4CEE4;
+	Fri, 25 Oct 2024 12:36:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729859815;
+	bh=AviaUlBZZ7+hKNoYNAUPRHtZzUriK4vdXQg7T26UsIk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=DabUAD8CBTJ/fcvc3I1PcvD64SdtCoiNU47bU5xiPJeACTlIzbRn5vNKsHOiDI/EM
+	 tNcOkxxaPIky8mtODB/szRydZXQ7VZtdhfglH3jKQGDb1NvuFTcO/8hjLQbxq2Cuc4
+	 R/VnmOKyEfIb7ciRw+eOUYgIM//mzezvT+6nxzz4BbPdn8ZofI2OaUZdWT+DHgOlp7
+	 MM5B6gEdo/3CVg2/E6qa5SRczQBNKSLIfxWcRWNYvIk5DxRp2d/EBIButbVpyvx5Jg
+	 ZWwhSouYaKL9kYf7p9osSKg8BSwSc0useKgER3gVWX2Cavsm8zqMC1ssopUx8jD6lZ
+	 Gggw8yUW7X+pQ==
+Message-ID: <2dae341e-2784-40ec-9a06-620c467e62bd@kernel.org>
+Date: Fri, 25 Oct 2024 14:36:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 01/12] dt-bindings: arm: cpus: Add Samsung Mongoose M3
+To: Markuss Broks <markuss.broks@gmail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa
+ <tomasz.figa@gmail.com>, Will Deacon <will@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-gpio@vger.kernel.org, Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
+ Maksym Holovach <nergzd@nergzd723.xyz>
+References: <20241025-exynos9810-v2-0-99ca3f316e21@gmail.com>
+ <20241025-exynos9810-v2-1-99ca3f316e21@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241025-exynos9810-v2-1-99ca3f316e21@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-John Garry <john.g.garry@oracle.com> writes:
+On 25/10/2024 13:24, Markuss Broks wrote:
+> Add the compatible for Samsung Mongoose M3 CPU core to the schema.
+> 
+> Co-developed-by: Maksym Holovach <nergzd@nergzd723.xyz>
+> Signed-off-by: Maksym Holovach <nergzd@nergzd723.xyz>
+> 
+> Signed-off-by: Markuss Broks <markuss.broks@gmail.com>
 
-> On 25/10/2024 12:19, Ritesh Harjani (IBM) wrote:
->> John Garry <john.g.garry@oracle.com> writes:
->> 
->>> On 25/10/2024 11:35, Ritesh Harjani (IBM) wrote:
->>>>>> Same as mentioned above. We can't have atomic writes to get split.
->>>>>> This patch is just lifting the restriction of iomap to allow more than
->>>>>> blocksize but the mapped length should still meet iter->len, as
->>>>>> otherwise the writes can get split.
->>>>> Sure, I get this. But I wonder why would we be getting multiple
->>>>> mappings? Why cannot the FS always provide a single mapping?
->>>> FS can decide to split the mappings when it couldn't allocate a single
->>>> large mapping of the requested length. Could be due to -
->>>> - already allocated extent followed by EOF,
->>>> - already allocated extent followed by a hole
->>>> - already mapped extent followed by an extent of different type (e.g. written followed by unwritten or unwritten followed by written)
->>>
->>> This is the sort of scenario which I am concerned with. This issue has
->>> been discussed at length for XFS forcealign support for atomic writes.
->> 
->> extsize and forcealign is being worked for ext4 as well where we can
->> add such support, sure.
->> 
->>>
->>> So far, the user can atomic write a single FS block regardless of
->>> whether the extent in which it would be part of is in written or
->>> unwritten state.
->>>
->>> Now the rule will be to write multiple FS blocks atomically, all blocks
->>> need to be in same written or unwritten state.
->> 
->> FS needs to ensure that the writes does not get torned. So for whatever reason
->> FS splits the mapping then we need to return an -EINVAL error to not
->> allow such writes to get torned. This patch just does that.
->> 
->> But I get your point. More below.
->> 
->>>
->>> This oddity at least needs to be documented.
->> 
->> Got it. Yes, we can do that.
->> 
->>>
->>> Better yet would be to not have this restriction.
->>>
->> 
->> I haven't thought of a clever way where we don't have to zero out the
->> rest of the unwritten mapping. With ext4 bigalloc since the entire
->> cluster is anyway reserved - I was thinking if we can come up with a
->> clever way for doing atomic writes to the entire user requested size w/o
->> zeroing out.
->
-> This following was main method which was being attempted:
->
-> https://lore.kernel.org/linux-fsdevel/20240429174746.2132161-15-john.g.garry@oracle.com/
->
-> There were other ideas in different versions of the forcelign/xfs block 
-> atomic writes series.
->
->> 
->> Zeroing out the other unwritten extent is also a cost penalty to the
->> user anyways.
->
-> Sure, unless we have a special inode flag to say "pre-zero the extent".
->
->> So user will anyway will have to be made aware of not to
->> attempt writes of fashion which can cause them such penalties.
->> 
->> As patch-6 mentions this is a base support for bs = ps systems for
->> enabling atomic writes using bigalloc. For now we return -EINVAL when we
->> can't allocate a continuous user requested mapping which means it won't
->> support operations of types 8k followed by 16k.
->> 
->
-> That's my least-preferred option.
->
-> I think better would be reject atomic writes that cover unwritten 
-> extents always - but that boat is about to sail...
+There is never a blank line between tags. Use git log to see how people
+were doing it, if you ever have questions.
 
-That's what this patch does. For whatever reason if we couldn't allocate
-a single contiguous region of requested size for atomic write, then we
-reject the request always, isn't it. Or maybe I didn't understand your comment.
+Best regards,
+Krzysztof
 
-If others prefer - we can maybe add such a check (e.g. ext4_dio_atomic_write_checks()) 
-for atomic writes in ext4_dio_write_checks(), similar to how we detect
-overwrites case to decide whether we need a read v/s write semaphore. 
-So this can check if the user has a partially allocated extent for the
-user requested region and if yes, we can return -EINVAL from
-ext4_dio_write_iter() itself. 
-
-I think this maybe better option than waiting until ->iomap_begin().
-This might also bring all atomic write constraints to be checked in one
-place i.e. during ext4_file_write_iter() itself.
-
-Thoughts?
-
--ritesh
 
