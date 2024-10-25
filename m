@@ -1,206 +1,172 @@
-Return-Path: <linux-kernel+bounces-381210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B7769AFBFA
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 10:05:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45C3D9AFBFF
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 10:05:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0608284C41
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 08:05:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F140A1F23BE3
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 08:05:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F26121C4622;
-	Fri, 25 Oct 2024 08:04:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D37AF1CB9ED;
+	Fri, 25 Oct 2024 08:05:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Rg2wjwSJ"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NVvZEqOg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23AB918CBF8
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 08:04:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E2881CBA04;
+	Fri, 25 Oct 2024 08:05:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729843487; cv=none; b=ir4HI+NbHEXBkWpI8ilLtW4LXRuSrsYjHgfUmUV3/csHRPMOMANAQ9Sj84uyOdD+4DitxRkZtSJI0qjisuDyca1sCdIbaZg6QOKKbLdwPklpaBF6Kd74nFhPcCq5JPNG0nkSta8EJA6QJKD7iop0sYYYASW8YS8ktGVlR6G0lnI=
+	t=1729843519; cv=none; b=DK88ZKwBoSLd0S+nTZxo4kcsY8oT/FNNBgxXyqjrwyXPg5syaq6eb7cDIBt7Stmu/yJz9fHQF8pFMnFD0XfoC2trHzi68MtLeuFKMAO1XHavoGbzhXH+bpbRXIEDIfTQ44e5yXQGza/jTYBIqf1nrlkTmCc1D4PocHL17wmNZ0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729843487; c=relaxed/simple;
-	bh=RlNTXHWaff+zW/Ig27eNg95TDnIhVzTtyEJbpUp0Ybc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P47Yf5EBqE5Wgbz1R1L0dqKDV3RGxrNnUf9q1TiJYTqdNB10OPxx4RGg7H6qNr2/UL4NiFTYvFNfq97BCvHbk2iopfI4LCYST1nTOGQC/qOjM6Xn4SvzqhLHQsSUI76lGxL9A6YxDqvbyFpHCuslUrkZbkhJmlHJCs9R7++/1To=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Rg2wjwSJ; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-20bb39d97d1so13539795ad.2
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 01:04:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729843484; x=1730448284; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=9ToZJO2X6kblaBnpE+g9acjvZjb4BRJvfnxVqud+oi4=;
-        b=Rg2wjwSJfIguaBgYijKlgz/Y1ce1SLy7dOFVwvdtwMagmKx2UUtgevxmou9VV/CkVp
-         Nh9sXNuKkJSxklAuOIr6piLxbuMYM5LaxPbNqrE6vDZb2AxEYLr2b4frg9oa6Go8TaE+
-         oT854RGVkhU9dPZMfES4XqhV0liefLokpnNAXuT7aNWhOEoD7/8AHqIXjRMaX2V4RuNV
-         eCya5/Nlw2x9LNHE8We7IUsKCAFZFOOsjlOolSfdu+inNA0KcP3vqwQUj4HFkz0Jel3Z
-         eUYJ9p9rBiajRk/l7mP+edD2FQR7EFt7s8AHbsREhGz7/Vt8WYj6Sno1sPB2ATVEKSiW
-         WBMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729843484; x=1730448284;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9ToZJO2X6kblaBnpE+g9acjvZjb4BRJvfnxVqud+oi4=;
-        b=DRr1Otxj9MO47AXMyjGJM5+IspjymyuPv3bKrxePyLHqiXZOLRJFHZJ4QATQ6vl2Rk
-         DvW6sbNOAIqj7ZDq71589twH4vdYoLgrqeqtzrdIGapEg9+UMKChsxeEiSSlpLkkcnln
-         VZQeOtZ4UyKluhvbTVBnRbp+XId9wV/LD9R9gzAYB858oD8AS8ziTWnmhSBoQXAIgaI1
-         swnGk2EkjIFfYAsBpwmhja9/gjtxmKJPceJmwdvC86tfbLwrvwtKpQtvew2YRFxf6nhk
-         rNd09q2WawzZpPp/KnPwvAxoRhSt4MBHRtl78CZgNfNZ8q4rPC/G0mglo7GVT1Bl3dev
-         sL6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXHIgE/8hILyoMpVcdbMfUXps7V8KK4NmTceddiyGw8fKxvGSWF3TTnUTrpqVe0qmArpuxJCd8k4V6686E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHIfHKSqme9rK22hOMiEKaEJOI3tqZfD8uwkOJK92VKlX4Bdh9
-	yVG55a1O4sYMm1S815v7IBWTtAJnd4Yqaq1pZpFfbY8JjB0CsDASa5TqdHvmng==
-X-Google-Smtp-Source: AGHT+IE3xVfBlAkAWoonLR8AHuCAQ391OAv5h0lkzeSWdIeRnLYGcfA4Wu9ZqlOLiWnAQjSychPilw==
-X-Received: by 2002:a17:903:244e:b0:20b:6624:70b2 with SMTP id d9443c01a7336-20fa9e13cf2mr124552065ad.19.1729843484373;
-        Fri, 25 Oct 2024 01:04:44 -0700 (PDT)
-Received: from thinkpad ([120.56.205.129])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bc088565sm4990395ad.306.2024.10.25.01.04.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2024 01:04:43 -0700 (PDT)
-Date: Fri, 25 Oct 2024 13:34:39 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Johan Hovold <johan+linaro@kernel.org>,
-	Abel Vesa <abel.vesa@linaro.org>,
-	Stephan Gerhold <stephan.gerhold@linaro.org>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
-Subject: Re: [PATCH 4/5] PCI/pwrctl: Move pwrctl device creation to its own
- helper function
-Message-ID: <20241025074827.fdkgyz3k767dgdqv@thinkpad>
-References: <20241022-pci-pwrctl-rework-v1-0-94a7e90f58c5@linaro.org>
- <20241022-pci-pwrctl-rework-v1-4-94a7e90f58c5@linaro.org>
- <CACMJSesmyfS4wj=ys16FmqpAoojuChY1OHSC750bjtM23y5baA@mail.gmail.com>
+	s=arc-20240116; t=1729843519; c=relaxed/simple;
+	bh=KfmEL14rVYtfMW9cS9/j2bydxqHvt8iK8MkWYzJOEvA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=m9YOjjmUrhPjyj16mgSIGyfrtYuxsvY4hicPILvQO4opAhvQeJBEG2UOLKqK0rFLqsN5XP6AVqXe9QEi0WTvS4G8+x+BvKpQ9kvY/py9tCi5nWniS4VDpVL0K+VXsKSU93eC5MT3hrl8dpoAN2+IEm78v4jTTvBMaRFsf15EwfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NVvZEqOg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7C76C4CECC;
+	Fri, 25 Oct 2024 08:05:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729843518;
+	bh=KfmEL14rVYtfMW9cS9/j2bydxqHvt8iK8MkWYzJOEvA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=NVvZEqOgckAGp2/wGcICDCHu1ywbgm66lHVMxvD5Ps1t/KsbQvygjH5NDjD+7xOhv
+	 tPdNyewBDRwuFJD2bf3kEymZHJoyiTgw+eYn5/8gA7bI1gIHLp1EpTk9dUFj2LGm+/
+	 J8vU4SyM1u+pbttYSCzH5uyhBAV4HhkqnPP4qMj9h3f9Zp3sduBWs0NdLGg+1vem7h
+	 EgVt2Rv6ZZ7ZKLq4RJTKTPbu235tbRwm2GDb1WmH0Qw/Z+mU309rlcgp42gDhTjQIO
+	 XRpyAB97ENeBo/S8KkeP2RjhDK7UAnuFkX+48kp9Vf0U7qbyWRTVIMATsJ8BiudR19
+	 /avWhjhSlAt/A==
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-539983beb19so2249780e87.3;
+        Fri, 25 Oct 2024 01:05:18 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU+FskcdzkLP6NEvR1+slzQlWgZQMAxkrq621GH4RBtxi9OD2Z9oEGRaF9cv/jgyq9Z8fmepFgu0p0tINE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhrGj7HHIjuJ5T6oJI+Bd9dPRe5b37Zt3GloWApI4pkNzmOYqN
+	bDuqQlqVCr0JEk+TlnqCS+8u0JerNl+twHh/olrgBSmkH3dDCJHpsnQnUU6bxHsZO84I+Yp+2Uz
+	V2yft9dtJWRM/ailsWsfYAzkgRAs=
+X-Google-Smtp-Source: AGHT+IG27Yb80kx6CJY+4tOhVGsT/ZEj4ynv9I5D6j49Hjrinwf5ULC9VA4qcGFViD1IszHktbXduIrXQPhRWuonH7A=
+X-Received: by 2002:a05:6512:33cf:b0:539:dc87:fd3a with SMTP id
+ 2adb3069b0e04-53b1a2fad1fmr5310677e87.6.1729843517038; Fri, 25 Oct 2024
+ 01:05:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CACMJSesmyfS4wj=ys16FmqpAoojuChY1OHSC750bjtM23y5baA@mail.gmail.com>
+References: <20241018235343.425758-1-ebiggers@kernel.org>
+In-Reply-To: <20241018235343.425758-1-ebiggers@kernel.org>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Fri, 25 Oct 2024 10:05:05 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXGvh3DBGL2g-3Xnj_F1e3w+HDBxoekgiE2iJq9TsOK--g@mail.gmail.com>
+Message-ID: <CAMj1kXGvh3DBGL2g-3Xnj_F1e3w+HDBxoekgiE2iJq9TsOK--g@mail.gmail.com>
+Subject: Re: [PATCH] crypto - move crypto_simd_disabled_for_test to lib
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Oct 23, 2024 at 12:23:57PM +0200, Bartosz Golaszewski wrote:
-> On Tue, 22 Oct 2024 at 12:28, Manivannan Sadhasivam via B4 Relay
-> <devnull+manivannan.sadhasivam.linaro.org@kernel.org> wrote:
-> >
-> > From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> >
-> > This makes the pci_bus_add_device() API easier to maintain. Also add more
-> > comments to the helper to describe how the devices are created.
-> >
-> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > ---
-> >  drivers/pci/bus.c | 59 ++++++++++++++++++++++++++++++++++++++-----------------
-> >  1 file changed, 41 insertions(+), 18 deletions(-)
-> >
-> > diff --git a/drivers/pci/bus.c b/drivers/pci/bus.c
-> > index 351af581904f..c4cae1775c9e 100644
-> > --- a/drivers/pci/bus.c
-> > +++ b/drivers/pci/bus.c
-> > @@ -321,6 +321,46 @@ void __weak pcibios_resource_survey_bus(struct pci_bus *bus) { }
-> >
-> >  void __weak pcibios_bus_add_device(struct pci_dev *pdev) { }
-> >
-> > +/*
-> > + * Create pwrctl devices (if required) for the PCI devices to handle the power
-> > + * state.
-> > + */
-> > +static void pci_pwrctl_create_devices(struct pci_dev *dev)
-> > +{
-> > +       struct device_node *np = dev_of_node(&dev->dev);
-> > +       struct device *parent = &dev->dev;
-> > +       struct platform_device *pdev;
-> > +
-> > +       /*
-> > +        * First ensure that we are starting from a PCI bridge and it has a
-> > +        * corresponding devicetree node.
-> > +        */
-> > +       if (np && pci_is_bridge(dev)) {
-> > +               /*
-> > +                * Now look for the child PCI device nodes and create pwrctl
-> > +                * devices for them. The pwrctl device drivers will manage the
-> > +                * power state of the devices.
-> > +                */
-> > +               for_each_child_of_node_scoped(np, child) {
-> > +                       /*
-> > +                        * First check whether the pwrctl device really needs to
-> > +                        * be created or not. This is decided based on at least
-> > +                        * one of the power supplies being defined in the
-> > +                        * devicetree node of the device.
-> > +                        */
-> > +                       if (!of_pci_is_supply_present(child)) {
-> > +                               pci_dbg(dev, "skipping OF node: %s\n", child->name);
-> > +                               return;
-> > +                       }
-> > +
-> > +                       /* Now create the pwrctl device */
-> > +                       pdev = of_platform_device_create(child, NULL, parent);
-> > +                       if (!pdev)
-> > +                               pci_err(dev, "failed to create OF node: %s\n", child->name);
-> > +               }
-> > +       }
-> > +}
-> > +
-> >  /**
-> >   * pci_bus_add_device - start driver for a single device
-> >   * @dev: device to add
-> > @@ -345,24 +385,7 @@ void pci_bus_add_device(struct pci_dev *dev)
-> >         pci_proc_attach_device(dev);
-> >         pci_bridge_d3_update(dev);
-> >
-> > -       if (dev_of_node(&dev->dev) && pci_is_bridge(dev)) {
-> > -               for_each_child_of_node_scoped(dn, child) {
-> > -                       /*
-> > -                        * First check whether the pwrctl device needs to be
-> > -                        * created or not. This is decided based on at least
-> > -                        * one of the power supplies being defined in the
-> > -                        * devicetree node of the device.
-> > -                        */
-> > -                       if (!of_pci_is_supply_present(child)) {
-> > -                               pci_dbg(dev, "skipping OF node: %s\n", child->name);
-> > -                               continue;
-> > -                       }
-> > -
-> > -                       pdev = of_platform_device_create(child, NULL, &dev->dev);
-> > -                       if (!pdev)
-> > -                               pci_err(dev, "failed to create OF node: %s\n", child->name);
-> > -               }
-> > -       }
-> > +       pci_pwrctl_create_devices(dev);
-> >
-> >         /*
-> >          * Create a device link between the PCI device and pwrctl device (if
-> >
-> > --
-> > 2.25.1
-> >
-> >
-> 
-> Would it be possible to move this into drivers/pwrctl/ and provide a
-> header stub for when PCI_PWRCTL is disabled in Kconfig?
-> 
+On Sat, 19 Oct 2024 at 01:54, Eric Biggers <ebiggers@kernel.org> wrote:
+>
+> From: Eric Biggers <ebiggers@google.com>
+>
+> Move crypto_simd_disabled_for_test to lib/ so that crypto_simd_usable()
+> can be used by library code.
+>
+> This was discussed previously
+> (https://lore.kernel.org/linux-crypto/20220716062920.210381-4-ebiggers@kernel.org/)
+> but was not done because there was no use case yet.  However, this is
+> now needed for the arm64 CRC32 library code.
+>
+> Tested with:
+>     export ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu-
+>     echo CONFIG_CRC32=y > .config
+>     echo CONFIG_MODULES=y >> .config
+>     echo CONFIG_CRYPTO=m >> .config
+>     echo CONFIG_DEBUG_KERNEL=y >> .config
+>     echo CONFIG_CRYPTO_MANAGER_DISABLE_TESTS=n >> .config
+>     echo CONFIG_CRYPTO_MANAGER_EXTRA_TESTS=y >> .config
+>     make olddefconfig
+>     make -j$(nproc)
+>
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
 
-Unfortunately, no. Because the pwrctl drivers are modular and PCI core is
-built-in. So if we use the pwrctl APIs in PCI core, then it will require pwrctl
-to always be built-in, which we do not want.
+Acked-by: Ard Biesheuvel <ardb@kernel.org>
 
-- Mani
 
--- 
-மணிவண்ணன் சதாசிவம்
+> ---
+>  crypto/algapi.c     |  6 ------
+>  lib/crypto/Makefile |  2 ++
+>  lib/crypto/simd.c   | 11 +++++++++++
+>  3 files changed, 13 insertions(+), 6 deletions(-)
+>  create mode 100644 lib/crypto/simd.c
+>
+> diff --git a/crypto/algapi.c b/crypto/algapi.c
+> index 74e2261c184ca..429a832f90fe0 100644
+> --- a/crypto/algapi.c
+> +++ b/crypto/algapi.c
+> @@ -4,11 +4,10 @@
+>   *
+>   * Copyright (c) 2006 Herbert Xu <herbert@gondor.apana.org.au>
+>   */
+>
+>  #include <crypto/algapi.h>
+> -#include <crypto/internal/simd.h>
+>  #include <linux/err.h>
+>  #include <linux/errno.h>
+>  #include <linux/fips.h>
+>  #include <linux/init.h>
+>  #include <linux/kernel.h>
+> @@ -21,15 +20,10 @@
+>
+>  #include "internal.h"
+>
+>  static LIST_HEAD(crypto_template_list);
+>
+> -#ifdef CONFIG_CRYPTO_MANAGER_EXTRA_TESTS
+> -DEFINE_PER_CPU(bool, crypto_simd_disabled_for_test);
+> -EXPORT_PER_CPU_SYMBOL_GPL(crypto_simd_disabled_for_test);
+> -#endif
+> -
+>  static inline void crypto_check_module_sig(struct module *mod)
+>  {
+>         if (fips_enabled && mod && !module_sig_ok(mod))
+>                 panic("Module %s signature verification failed in FIPS mode\n",
+>                       module_name(mod));
+> diff --git a/lib/crypto/Makefile b/lib/crypto/Makefile
+> index 969baab8c805f..01fac1cd05a19 100644
+> --- a/lib/crypto/Makefile
+> +++ b/lib/crypto/Makefile
+> @@ -56,5 +56,7 @@ libblake2s-y                                  += blake2s-selftest.o
+>  libchacha20poly1305-y                          += chacha20poly1305-selftest.o
+>  libcurve25519-y                                        += curve25519-selftest.o
+>  endif
+>
+>  obj-$(CONFIG_MPILIB) += mpi/
+> +
+> +obj-$(CONFIG_CRYPTO_MANAGER_EXTRA_TESTS)       += simd.o
+> diff --git a/lib/crypto/simd.c b/lib/crypto/simd.c
+> new file mode 100644
+> index 0000000000000..9c36cb3bb49c4
+> --- /dev/null
+> +++ b/lib/crypto/simd.c
+> @@ -0,0 +1,11 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +/*
+> + * SIMD testing utility functions
+> + *
+> + * Copyright 2024 Google LLC
+> + */
+> +
+> +#include <crypto/internal/simd.h>
+> +
+> +DEFINE_PER_CPU(bool, crypto_simd_disabled_for_test);
+> +EXPORT_PER_CPU_SYMBOL_GPL(crypto_simd_disabled_for_test);
+>
+> base-commit: 5c20772738e1d1d7bec41664eb9d61497e53c10e
+> --
+> 2.47.0
+>
 
