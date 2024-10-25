@@ -1,179 +1,116 @@
-Return-Path: <linux-kernel+bounces-382700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F3FC9B125C
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 00:12:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66CCA9B1262
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 00:13:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB0A5B217F3
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 22:12:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D7781F21BF5
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 22:13:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EC2B213123;
-	Fri, 25 Oct 2024 22:12:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A860213122;
+	Fri, 25 Oct 2024 22:13:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LpW8zYBo"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="GsqKIeiV"
+Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47795217F4C
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 22:12:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F15920C333;
+	Fri, 25 Oct 2024 22:12:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729894347; cv=none; b=szavFZymdqAhBVYf//gus82a5AvBFP2K4MN84eLHU04zWMSYlVY9mxmnHWNDDNlMNF+xgpQUq+SbZvOz6A/HnS4waA+t3YregQ6Y9A/6/1W2DITWlG1IQU/YhUUzcMJuvInEgonai5QdnxNlGhu0Ym8jpnZEL7vMBUKr+3rVY7Y=
+	t=1729894380; cv=none; b=j6wOBOCkg8xgoYAjEiKw49HfZeo5nCiHhZtlLP6pTIJQwvzickd7W3L30ogYC7ASqH0di2dCxnJ6kZk5p/nM1Sm6MJoAPPhP+ccEwSCyIQng1zPtP7S0YzEUEObplhBSpixceQgl5yIkumBOJeQKCOHzuMQCBjwLpYZJhZf2En8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729894347; c=relaxed/simple;
-	bh=NK5OZSsxHrxv1wlh6RU3G8N57LyHfd3rgn7LtmDFZgs=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=fMYd9g2vDXIvNc3z5ud9euhkrsGE2zgE24XDHijUu9u2xfvvlJp1ywg6sRQ9DYNJshnRdVRtWTo2yK47tf4hJt0EXu4M2gR3219sun40nNN5y3EWO6PHp7DKiAwAnrqMkDIWgnMvxaH8eNFcWdQhJD+PrsF8sT761eawcBCXt4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--rananta.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LpW8zYBo; arc=none smtp.client-ip=209.85.219.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--rananta.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e02fff66a83so4700690276.0
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 15:12:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729894343; x=1730499143; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=kAitD5UlZ526DH4CXulhVwZM1+TjXuj2ZSzY1GKH9CI=;
-        b=LpW8zYBoJGSJQz5HZxjoDc3iW/SxIU+zk/EYNBfmdJnoCSC1tqzNAvcA3dqe+Mnjf4
-         O6Ar8h9HbBPiQ5slo993rbHc+GZa2HI54b1/CKtJZyCl7I2M+MmBlAzr1Bw4+PrAgMOS
-         sEGaRMfWOTi0w59EOPtFWuvE5VVBIS90XY4+gz9Tg+AbekjT4Vss/L7pD+GCyn7rfv9K
-         QoxPFf2KmMAif1lKebMvqQG9ATXoO8nWLYmpkMJfimN/W63KmmBsTdiexH0COMcR08GR
-         1tLOPLCg3pHiIKOPZeHzuOu3JEZ33xlrejp+ZZwxcJWFTv6etw1H9lYzqtYHm+LY2T4x
-         3Bgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729894343; x=1730499143;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=kAitD5UlZ526DH4CXulhVwZM1+TjXuj2ZSzY1GKH9CI=;
-        b=u9OUgyoCfmh1rZ2lgxsZXRAoQwZaqYbE1QKC5NBK+7hbPTf0nUD7dotmyw9zFsrlg6
-         hFtXKMaJbzmjeSDzlqX1rkBY1D/AQ6kK+UevIJxWgauy7uSutnivMnultkxV3ZbdhDpe
-         Zik4zCLqGmHoEIGyE2Tcb4uK4XoCYzo0Y5v+cdUcJ1DwQ97RtWUe463ZxM+uRJlCd8l2
-         o11DDsGhm1IW1LzcSHB0cD/tLxSdPghbqh/v5d8iZS5LxQ2ofm2l4TPr6Wn/JR9uyULr
-         dhW/PlY4EmGohMWLGeYvwtPh+cgWBml0OxTiu3JJnHlMzAbi9SfkqFTnF78JPQ8e6aoc
-         AJoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX4a/NQlErL6CB8ivs54Ybc9rkttPR/55JTxiUBBGMsQB+y2baQxM22kOEedg30MMPAljqaT29epLkK9pc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCzB/9k0Rmj9g0jSVUcuc4VX4vbdNM6tE7o1ng1eZanLAhyrYH
-	Qy+J4IJSSdJMMuOBMfG08Y8fMMbmv7l3oxupUSEiDfP0O9K14g1IVCYKDiGe9ovrMd0YaODPPMz
-	KBii/kA==
-X-Google-Smtp-Source: AGHT+IG+6UAmoj1XD96N3OA7Nf/oOruad1eDYvy56vmbEa612keZSXmPriH5DCYyGrnCxORY2rVIPeM7z/tx
-X-Received: from rananta-linux.c.googlers.com ([fda3:e722:ac3:cc00:11b:3898:ac11:fac1])
- (user=rananta job=sendgmr) by 2002:a25:ec0c:0:b0:e2b:d389:b35c with SMTP id
- 3f1490d57ef6-e3087bfc151mr497276.8.1729894343080; Fri, 25 Oct 2024 15:12:23
- -0700 (PDT)
-Date: Fri, 25 Oct 2024 22:12:20 +0000
+	s=arc-20240116; t=1729894380; c=relaxed/simple;
+	bh=wLE7gbHS/zil2nem3fEemkkOYe/GUpOOrZThEvr7q0s=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Wm8qh/hTCCXGyBpTL6QdkVuiVHJ6NOmDQiKKNC6AqnlwbEOsUjzanehvs5HIRTZKNIWHy27SOWWbahtHeuOBD3amPnK+Cvg6bq9PUnMWOj/7kEVNdTZRs2JIUzi25aQtUsx9pJ2xETlj6/lOxCcfh6fK7xUULSr/A+9U5vtlQkE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=GsqKIeiV; arc=none smtp.client-ip=91.218.175.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1729894375;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zT1JrWE0wCzIdFq3Ykrqf07oSRTFil0hjG6CI7HG/ls=;
+	b=GsqKIeiVrOjDeIqr8pui3jQ5t9ZLl0riwXzeEm3iMypLtUcBfhsFMieprt7Jp5OCC0vXYD
+	VeR8QxXxWX+5gPplyWcBcmvxVFiiLWnU3/GseaivcagIBJbS3cu7H4+xzUuK/o30WeNPCG
+	EK6wMoMIt90L9dhTT5SxTL+0e1zn780=
+From: Oliver Upton <oliver.upton@linux.dev>
+To: Zenghui Yu <yuzenghui@huawei.com>,
+	James Morse <james.morse@arm.com>,
+	linux-doc@vger.kernel.org,
+	David Woodhouse <dwmw2@infradead.org>,
+	Marc Zyngier <maz@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	kvmarm@lists.linux.dev,
+	Len Brown <len.brown@intel.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	linux-kernel@vger.kernel.org,
+	Pavel Machek <pavel@ucw.cz>,
+	Shuah Khan <shuah@kernel.org>,
+	kvm@vger.kernel.org,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	David Woodhouse <dwmw@amazon.co.uk>,
+	Miguel Luis <miguel.luis@oracle.com>,
+	Will Deacon <will@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	linux-kselftest@vger.kernel.org,
+	Francesco Lavra <francescolavra.fl@gmail.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	linux-pm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Oliver Upton <oliver.upton@linux.dev>
+Subject: Re: (subset) [PATCH v6 0/6] Add PSCI v1.3 SYSTEM_OFF2 support for hibernation
+Date: Fri, 25 Oct 2024 22:12:41 +0000
+Message-ID: <172989416837.3684225.4795897590830335669.b4-ty@linux.dev>
+In-Reply-To: <20241019172459.2241939-1-dwmw2@infradead.org>
+References: <20241019172459.2241939-1-dwmw2@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.47.0.163.g1226f6d8fa-goog
-Message-ID: <20241025221220.2985227-1-rananta@google.com>
-Subject: [PATCH] KVM: arm64: Mark the VM as dead for failed initializations
-From: Raghavendra Rao Ananta <rananta@google.com>
-To: Oliver Upton <oliver.upton@linux.dev>, Marc Zyngier <maz@kernel.org>
-Cc: Raghavendra Rao Anata <rananta@google.com>, linux-arm-kernel@lists.infradead.org, 
-	kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
-	stable@vger.kernel.org, syzbot <syzkaller@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Syzbot hit the following WARN_ON() in kvm_timer_update_irq():
+On Sat, 19 Oct 2024 18:15:41 +0100, David Woodhouse wrote:
+> The PSCI v1.3 spec (https://developer.arm.com/documentation/den0022)
+> adds support for a SYSTEM_OFF2 function enabling a HIBERNATE_OFF state
+> which is analogous to ACPI S4. This will allow hosting environments to
+> determine that a guest is hibernated rather than just powered off, and
+> ensure that they preserve the virtual environment appropriately to
+> allow the guest to resume safely (or bump the hardware_signature in the
+> FACS to trigger a clean reboot instead).
+> 
+> [...]
 
-WARNING: CPU: 0 PID: 3281 at arch/arm64/kvm/arch_timer.c:459
-kvm_timer_update_irq+0x21c/0x394
-Call trace:
-  kvm_timer_update_irq+0x21c/0x394 arch/arm64/kvm/arch_timer.c:459
-  kvm_timer_vcpu_reset+0x158/0x684 arch/arm64/kvm/arch_timer.c:968
-  kvm_reset_vcpu+0x3b4/0x560 arch/arm64/kvm/reset.c:264
-  kvm_vcpu_set_target arch/arm64/kvm/arm.c:1553 [inline]
-  kvm_arch_vcpu_ioctl_vcpu_init arch/arm64/kvm/arm.c:1573 [inline]
-  kvm_arch_vcpu_ioctl+0x112c/0x1b3c arch/arm64/kvm/arm.c:1695
-  kvm_vcpu_ioctl+0x4ec/0xf74 virt/kvm/kvm_main.c:4658
-  vfs_ioctl fs/ioctl.c:51 [inline]
-  __do_sys_ioctl fs/ioctl.c:907 [inline]
-  __se_sys_ioctl fs/ioctl.c:893 [inline]
-  __arm64_sys_ioctl+0x108/0x184 fs/ioctl.c:893
-  __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
-  invoke_syscall+0x78/0x1b8 arch/arm64/kernel/syscall.c:49
-  el0_svc_common+0xe8/0x1b0 arch/arm64/kernel/syscall.c:132
-  do_el0_svc+0x40/0x50 arch/arm64/kernel/syscall.c:151
-  el0_svc+0x54/0x14c arch/arm64/kernel/entry-common.c:712
-  el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
-  el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
+I grabbed the KVM portions of this series, as they look ready to go. Happy
+to take the last one through kvmarm tree w/ acks, and can toss it on top.
 
-The sequence that led to the report is when KVM_ARM_VCPU_INIT ioctl is
-invoked after a failed first KVM_RUN. In a general sense though, since
-kvm_arch_vcpu_run_pid_change() doesn't tear down any of the past
-initiatializations, it's possible that the VM's state could be left
-half-baked. Any upcoming ioctls could behave erroneously because of
-this.
+Applied to kvmarm/next, thanks!
 
-Since these late vCPU initializations is past the point of attributing
-the failures to any ioctl, instead of tearing down each of the previous
-setups, simply mark the VM as dead, gving an opportunity for the
-userspace to close and try again.
+[1/6] firmware/psci: Add definitions for PSCI v1.3 specification
+      https://git.kernel.org/kvmarm/kvmarm/c/2f2d46959808
+[2/6] KVM: arm64: Add PSCI v1.3 SYSTEM_OFF2 function for hibernation
+      https://git.kernel.org/kvmarm/kvmarm/c/97413cea1c48
+[3/6] KVM: arm64: Add support for PSCI v1.2 and v1.3
+      https://git.kernel.org/kvmarm/kvmarm/c/8be82d536a9f
+[4/6] KVM: selftests: Add test for PSCI SYSTEM_OFF2
+      https://git.kernel.org/kvmarm/kvmarm/c/72be5aa6be4a
+[5/6] KVM: arm64: nvhe: Pass through PSCI v1.3 SYSTEM_OFF2 call
+      https://git.kernel.org/kvmarm/kvmarm/c/94f985c39a1e
 
-Cc: <stable@vger.kernel.org>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Suggested-by: Oliver Upton <oliver.upton@linux.dev>
-Signed-off-by: Raghavendra Rao Ananta <rananta@google.com>
----
- arch/arm64/kvm/arm.c | 14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
-
-diff --git a/arch/arm64/kvm/arm.c b/arch/arm64/kvm/arm.c
-index a0d01c46e4084..ae3551bc98aeb 100644
---- a/arch/arm64/kvm/arm.c
-+++ b/arch/arm64/kvm/arm.c
-@@ -821,12 +821,12 @@ int kvm_arch_vcpu_run_pid_change(struct kvm_vcpu *vcpu)
- 		 */
- 		ret = kvm_vgic_map_resources(kvm);
- 		if (ret)
--			return ret;
-+			goto out_err;
- 	}
- 
- 	ret = kvm_finalize_sys_regs(vcpu);
- 	if (ret)
--		return ret;
-+		goto out_err;
- 
- 	/*
- 	 * This needs to happen after any restriction has been applied
-@@ -836,16 +836,16 @@ int kvm_arch_vcpu_run_pid_change(struct kvm_vcpu *vcpu)
- 
- 	ret = kvm_timer_enable(vcpu);
- 	if (ret)
--		return ret;
-+		goto out_err;
- 
- 	ret = kvm_arm_pmu_v3_enable(vcpu);
- 	if (ret)
--		return ret;
-+		goto out_err;
- 
- 	if (is_protected_kvm_enabled()) {
- 		ret = pkvm_create_hyp_vm(kvm);
- 		if (ret)
--			return ret;
-+			goto out_err;
- 	}
- 
- 	if (!irqchip_in_kernel(kvm)) {
-@@ -869,6 +869,10 @@ int kvm_arch_vcpu_run_pid_change(struct kvm_vcpu *vcpu)
- 	mutex_unlock(&kvm->arch.config_lock);
- 
- 	return ret;
-+
-+out_err:
-+	kvm_vm_dead(kvm);
-+	return ret;
- }
- 
- bool kvm_arch_intc_initialized(struct kvm *kvm)
--- 
-2.47.0.163.g1226f6d8fa-goog
-
+--
+Best,
+Oliver
 
