@@ -1,153 +1,190 @@
-Return-Path: <linux-kernel+bounces-381818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89F769B04D4
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:58:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B35E19B04DB
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:00:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE179B25170
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 13:58:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C8A71F2419D
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 14:00:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5686A1FB89B;
-	Fri, 25 Oct 2024 13:58:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7084E74BED;
+	Fri, 25 Oct 2024 14:00:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YD2yV3TP"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="bKSoGy63";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="Uui/qTuk"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2FAA70817;
-	Fri, 25 Oct 2024 13:58:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E96121217B;
+	Fri, 25 Oct 2024 14:00:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729864704; cv=none; b=qPEFrnFxZR6wOl//2JQrWk/tI2qJcZ3YstmzFQGS1+8CF7yH/WPgW4nBRcvxeFGp6nNcYEPxtQH7iS8J6a01Q3njMNDEDoSfYq2X9Bd8+Urv+5jhK+6ajjOqLSXVrtEsFturwFdoE0bxeeB5gXb6jPDfverBvy4I1fJmAbBfS8w=
+	t=1729864846; cv=none; b=hlB/AtDG875msDUA1WkbA9/K9XaXXVA+/JiRPFilNItQSOITC5Gy0AuGGTVnXY+7l0CEkIRT0Aaj+a7ma5FuK8rNM+IC00djk/9MG+TVDF17SDH0nzV1bqKkA0R+Ht/ATYjrHkQhxMn5Hg2xm2Y25i3kYQUNz9AJEUMMDyFMrfw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729864704; c=relaxed/simple;
-	bh=6VuCN7L4Lvp32KsLOP8nEDd2sa9hW4SN48lK8/qBOs0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K1Y9ph2uoxEnvu55m24bFX3D29vk4ouTnugm1NglZQWsEfc7M99c9hmwXOH6xwblHIntvCHMebHawa/s6bsp2Enbiu2/xeYDhduGHYZ4VC0eEh5qe3HRB44kiEYjOHGowpDPQeq3F7LAH2mlZidO141B/vruumDrO5srKsnvm9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YD2yV3TP; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729864702; x=1761400702;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=6VuCN7L4Lvp32KsLOP8nEDd2sa9hW4SN48lK8/qBOs0=;
-  b=YD2yV3TPjgLdKtAslGRvGTlrV6sJoSyQ8MB7dTGc7KE1vuJDSin+AgSg
-   U++4ASu4UkawlRM49ahxisjPxe47e985aLRhpFZ7anaSF1HbnnoE4GXQ4
-   JfuXwo1fh36J/2GlikhPQZUR6cqXX0IzFHDw8xubSuZbgBBFYx5pgaKVd
-   jPhDBICDPp788PMLxClothNZWX3TLlHPuAi3eq2YCzDdxFoaLFuUrXstQ
-   A7VHKNpPBXTg4VfAZm3zayLfwASiqIr/SbLmbK22mTwki6wg61knni/JW
-   T7ZlPEtiUkwhRYQ5XCA39L7NNzxq/H9T1zC8Z/hUQu8ncOofmwm6XW03B
-   Q==;
-X-CSE-ConnectionGUID: 9b3PmEQqRdCpgbLSIAW0aw==
-X-CSE-MsgGUID: 9f+ZVVDnQxyp5f8PxHm7rg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="33230980"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="33230980"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2024 06:58:21 -0700
-X-CSE-ConnectionGUID: w88ZmuEJSkyVWZn3ToWBVw==
-X-CSE-MsgGUID: eUoBHrpMQXOmX3CvFN8APg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,231,1725346800"; 
-   d="scan'208";a="104226092"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2024 06:58:15 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1t4KpO-00000006vs3-1f5j;
-	Fri, 25 Oct 2024 16:58:10 +0300
-Date: Fri, 25 Oct 2024 16:58:10 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: John Ogness <john.ogness@linutronix.de>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>, Petr Mladek <pmladek@suse.com>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Esben Haabendal <esben@geanix.com>, linux-serial@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Rengarajan S <rengarajan.s@microchip.com>,
-	Jeff Johnson <quic_jjohnson@quicinc.com>,
-	Serge Semin <fancer.lancer@gmail.com>,
-	Lino Sanfilippo <l.sanfilippo@kunbus.com>,
-	Wander Lairson Costa <wander@redhat.com>,
-	Peter Collingbourne <pcc@google.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>, Stefan Wahren <wahrenst@gmx.net>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Markus Schneider-Pargmann <msp@baylibre.com>,
-	Ronald Wahl <ronald.wahl@raritan.com>, Udit Kumar <u-kumar1@ti.com>,
-	Griffin Kroah-Hartman <griffin@kroah.com>,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
-	Tony Lindgren <tony@atomide.com>
-Subject: Re: [PATCH tty-next v3 0/6] convert 8250 to nbcon
-Message-ID: <Zxuj8rFQikEjr2gR@smile.fi.intel.com>
-References: <20241025105728.602310-1-john.ogness@linutronix.de>
+	s=arc-20240116; t=1729864846; c=relaxed/simple;
+	bh=+EPu0ng0mX46bmmhsOflGiTyDoqp0PK+j6PCVyQQKFs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ngRVZaAtyP6i5WXZ6sJtnNwlQ6jZmlC/iWpLuU/sxeRAOP/xftSmwwkJPQTVNq3Rt4J0aNWAnZQOnPLPm0sNlhCTrwjVIlEQb10Rc76msUXiKBhtz5OcPPBMGivLo76kZTurSRGU+pnHqn8ZzF5qsC8PQOtKYr16WnL9K1hXSkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=bKSoGy63; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=Uui/qTuk reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1729864843; x=1761400843;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=D34ZQYAA4Xy1RlM6CHhSVEaUwrAOhpkBAO+draaH9ns=;
+  b=bKSoGy630WlIx2G9NHPxomiuKjH+SoFPHJx96COGxpuypn6JMnVThu4M
+   /iSGZl5+XAndjfgf4h7HsBzsbVeHwP76XcXG69ztWtr6VgN354AlDpxuY
+   nd/WT//IAk4H1lWnRx14Xh04/+5wleuzHWdKeEiIaufYslRetnMbyZzhN
+   APt4TU9oYaCpVMpQx4YWQ6Ivy211FPzlOEj7TlaL+9ax0js+EHfHF4LFY
+   SgdsGtxS62Ik3PpzK7cwyoXkswEUAv8r1VzbL+czOGR1Uuh8opc/tJexS
+   qTLpvPbc39RMHbUJVDXDOuyw2I2ZPUGUs61peUPPJR7etYW4nqqq5TyL0
+   w==;
+X-CSE-ConnectionGUID: RJyKPL4TQG2I7atbNc+ajg==
+X-CSE-MsgGUID: TkxXlj06TlWhC036/duQ9Q==
+X-IronPort-AV: E=Sophos;i="6.11,231,1725314400"; 
+   d="scan'208";a="39677654"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 25 Oct 2024 16:00:40 +0200
+X-CheckPoint: {671BA488-1-21611FC3-DAD22B0C}
+X-MAIL-CPID: 4622FD0EE2930BE343E156A47A186DF3_4
+X-Control-Analysis: str=0001.0A682F1A.671BA487.0021,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 6297B1644A4;
+	Fri, 25 Oct 2024 16:00:34 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1729864835;
+	h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=D34ZQYAA4Xy1RlM6CHhSVEaUwrAOhpkBAO+draaH9ns=;
+	b=Uui/qTukAHJ7VFZhUcAlQ+OVdccdApCQQcklWBFNMNz1WGm7oXncKjOxbu7Baidju+3IqA
+	53U8ocywj33gbEYU3/JQsNkduuC5UBPIM0ZrkXDFsb7r/rKT32rpt+iBkk0HEBwJG3fXMv
+	MK6xfnWgo6wUGHhRTKkG21FIvzsH76vQfdp0ckeQyxQSU9EPGAlWtChUw7tsp738Mxm6pX
+	+98C+aJJ67rL6U2G7Nsf1nEPL8CFYWx1XRf5YmZ+JiA4DuM6ld3uhoWcv51PN/fh8D+nAM
+	fNdDhwwJBFAwZzhvGiIYYof375B5oisxCpL4y/fQ8oK3drHPa7cV+de9//SVlQ==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: Frank Li <Frank.Li@nxp.com>, Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, "open list:TQ SYSTEMS BOARD & DRIVER SUPPORT" <linux@ew.tq-group.com>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <imx@lists.linux.dev>, "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/1] arm64: dts: imx8mn-tqma8mqnl-mba8mx-usbot: fix coexistence of output-low and output-high in GPIO
+Date: Fri, 25 Oct 2024 16:00:33 +0200
+Message-ID: <2005735.usQuhbGJ8B@steina-w>
+Organization: TQ-Systems GmbH
+In-Reply-To: <CAMuHMdW-tXFYSfTerb-eYmmbJHYN9xNyiGMPoeGArmDnAajUmg@mail.gmail.com>
+References: <20241023210313.1390767-1-Frank.Li@nxp.com> <CAMuHMdW-tXFYSfTerb-eYmmbJHYN9xNyiGMPoeGArmDnAajUmg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241025105728.602310-1-john.ogness@linutronix.de>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Fri, Oct 25, 2024 at 01:03:22PM +0206, John Ogness wrote:
-> This is v3 of a series to convert the 8250 driver to an NBCON
-> console, providing both threaded and atomic printing
-> implementations. v2 of this series is here [0], which also
-> contains additional background information about NBCON consoles
-> in general in the cover letter.
-> 
-> To test this version I acquired real hardware (TI AM3358
-> BeagleBone Black) and tested the following modes:
-> 
-> RS232
-> - no flow control
-> - software flow control
->   (UPF_SOFT_FLOW, UPSTAT_AUTOXOFF)
-> - hardware flow control
->   (UPF_HARD_FLOW, UPSTAT_AUTOCTS, UPSTAT_AUTORTS)
-> - software emulated hardware flow control
->   (UPF_CONS_FLOW, UPSTAT_CTS_ENABLE)
-> 
-> RS485
-> - with SER_RS485_RX_DURING_TX
-> - without SER_RS485_RX_DURING_TX
-> 
-> The tests focussed on kernel logging in various combinations of
-> normal, warning, and panic situations. Although not related to
-> the console printing code changes, the tests also included
-> using a getty/login session on the console.
-> 
-> Note that this UART (TI16750) supports a 64-byte TX-FIFO, which
-> is used in all console printing modes except for the software
-> emulated hardware flow control.
+Hi Geert,
 
-Thank you for the update.
+Am Freitag, 25. Oktober 2024, 15:52:58 CEST schrieb Geert Uytterhoeven:
+> Hi Frank,
+>=20
+> On Wed, Oct 23, 2024 at 11:07=E2=80=AFPM Frank Li <Frank.Li@nxp.com> wrot=
+e:
+> > Fix the issue where both 'output-low' and 'output-high' exist under GPIO
+> > hog nodes  (rst_usb_hub_hog and sel_usb_hub_hog) when applying device
+> > tree overlays. Since /delete-property/ is not supported in the overlays,
+> > setting 'output-low' results in both properties being present. The
+> > workaround is to disable these hogs and create new ones with 'output-lo=
+w'
+> > as needed.
+> >
+> > Fix below CHECK_DTBS warning:
+> > arch/arm64/boot/dts/freescale/imx8mn-tqma8mqnl-mba8mx-usbotg.dtb: sel-u=
+sb-hub-hog:
+> >    {'output-low': True, 'gpio-hog': True, 'gpios': [[1, 0]], 'output-hi=
+gh': True, 'phandle': 108, '$nodename': ['sel-usb-hub-hog']}
+> >        is valid under each of {'required': ['output-low']}, {'required'=
+: ['output-high']
+> >
+> > Fixes: 3f6fc30abebc ("arm64: dts: imx8mn: tqma8mqnl-mba8mx: Add USB DR =
+overlay")
+> > Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> > ---
+> > Alex:
+> >         I have not hardware to run it. I check dtb output is correct.
+> > ---
+> >  .../imx8mn-tqma8mqnl-mba8mx-usbotg.dtso       | 29 +++++++++++++++++--
+> >  1 file changed, 27 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/arch/arm64/boot/dts/freescale/imx8mn-tqma8mqnl-mba8mx-usbo=
+tg.dtso b/arch/arm64/boot/dts/freescale/imx8mn-tqma8mqnl-mba8mx-usbotg.dtso
+> > index 96db07fc9bece..1f2a0fe70a0a2 100644
+> > --- a/arch/arm64/boot/dts/freescale/imx8mn-tqma8mqnl-mba8mx-usbotg.dtso
+> > +++ b/arch/arm64/boot/dts/freescale/imx8mn-tqma8mqnl-mba8mx-usbotg.dtso
+> > @@ -29,12 +29,37 @@ usb_dr_connector: endpoint {
+> >         };
+> >  };
+> >
+> > +/*
+> > + * rst_usb_hub_hog and sel_usb_hub_hog have property 'output-high',
+> > + * dt overlay don't support /delete-property/. Both 'output-low' and
+> > + * 'output-high' will be exist under hog nodes if overlay file set
+> > + * 'output-low'. Workaround is disable these hog and create new hog wi=
+th
+> > + * 'output-low'.
+> > + */
+> > +
+> >  &rst_usb_hub_hog {
+> > -       output-low;
+> > +       status =3D "disabled";
+> > +};
+> > +
+> > +&expander0 {
+> > +       rst-usb-low-hub-hog {
+> > +               gpio-hog;
+> > +               gpios =3D <13 0>;
+> > +               output-low;
+> > +               line-name =3D "RST_USB_HUB#";
+> > +       };
+> >  };
+> >
+> >  &sel_usb_hub_hog {
+> > -       output-low;
+> > +       status =3D "disabled";
+> > +};
+> > +
+> > +&gpio2 {
+> > +       sel-usb-low-hub-hog {
+> > +               gpio-hog;
+> > +               gpios =3D <1 GPIO_ACTIVE_HIGH>;
+> > +               output-low;
+> > +       };
+> >  };
+> >
+> >  &usbotg1 {
+>=20
+> Note that after this, there is still
+>=20
+>     /delete-property/ disable-over-current;
+>=20
+> left, which does not actually remove the property.
 
-I am going to review some patches at some point, but what I want to say here
-is that if you have a new functions to utilise something, please also check
-if the rest of 8250*.c may have an advantage of. It would reduce churn in case
-if your series already exports APIs or provides inliners for such cases.
+This is true, I noticed myself. As this patch does not concern about
+disable-over-current, it still is an improvement.
 
--- 
-With Best Regards,
-Andy Shevchenko
+Unfortunately there is currently no way to fix this right now. This is a
+boolean property, which is impossible to remove in overlays.
+
+Best regards,
+Alexander
+=2D-=20
+TQ-Systems GmbH | M=C3=BChlstra=C3=9Fe 2, Gut Delling | 82229 Seefeld, Germ=
+any
+Amtsgericht M=C3=BCnchen, HRB 105018
+Gesch=C3=A4ftsf=C3=BChrer: Detlef Schneider, R=C3=BCdiger Stahl, Stefan Sch=
+neider
+http://www.tq-group.com/
 
 
 
