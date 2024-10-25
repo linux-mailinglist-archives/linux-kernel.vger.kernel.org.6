@@ -1,84 +1,116 @@
-Return-Path: <linux-kernel+bounces-381148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA6379AFB24
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 09:32:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8092A9AFB29
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 09:34:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B6991F2356A
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 07:32:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45B1F2807AC
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 07:34:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 177CB1925B0;
-	Fri, 25 Oct 2024 07:32:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 814611AB51F;
+	Fri, 25 Oct 2024 07:34:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="fD9UXOrW"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="d7byYg7q"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A5FD1BC5C
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 07:32:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BE411714B8
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 07:34:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729841557; cv=none; b=IRP6Ve6OI1ETPdDX52Jm9lqw5mno3J0SeARW/tIuVf0BvSNUmw0gQpS76c+5EyZeEPXkDn4wjL+Ie2lnZjQ0T3uT6uYmORbetvKo9dfhdNtSi41vJZdAQNxJD0Dpynpew/zkGfQh/nZ7w6EIQwS6bpQaOYaeNkfTbNCy4DjMQ68=
+	t=1729841651; cv=none; b=gN7uNqDn6Pv6toDS0+Q5rRoVyEGTOQMaYE+n7JZg2/bvIaJQJ904NqKeYx86pf92zw6qoRcoKpuQ1ZErIJzlfRqWsK1ZbFicJxvKET0qTMRA51iOSwxHzR2/YAD4qNGWgIv+rfY3740kH2oXDJxme2RsVaDi41iyc+EhR/vPuUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729841557; c=relaxed/simple;
-	bh=6lbmk3Ja7AF21qzc4qMsQjg6M5luu4wNGU150qR0lak=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cN88lMgn/woh4Au+xmJmWge26z0zw52wdWAkqIUY4rc3fxyB4KU4VNhhyPQVaSK62NC1gartueTqWdmsdgsYZWoFfK93639MRJGAE3b0lI/CreymCqvQ1e+2wcts2vZhfhZv1qmHagfDTrS5a+wQWBWvf1xMjvUcj1BM/oVCIK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=fD9UXOrW; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=wMmOJHGDGcVJxSfQ0438UxPZXUdWZaXqCqcr9oFy4Lc=; b=fD9UXOrW/RXuwx03N1Cw0/cckh
-	80m1teRHcpzQFwZ/AFsNIuuw3y/slvvUGk4ueuL8UNQplmCBYpoMI09EW7EEJR54oJ5juHNECj+Sd
-	esyYIDTevlKg5XzA7AJG+ZNmdDdO3DMhEPeWqk6O2viNbpxJy/agNrHrP6X2UksHOAzWjas1j2Tfm
-	CPV+gOrzlLSCiDDnW8rW2q0THdLhDvW75ia8bhfx1rs6uVNd8+dhsEfaEbxycgxtd7G+bt2RuXhIA
-	9TmsZuIRA1caHB3RyxubgY5VAULTSIivxihWL5/1LoZsPiYSiKqXH+4Zm5lsIh0WgJVK2E3CheunT
-	uIXovWRA==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1t4Enu-00000008qu4-2WNL;
-	Fri, 25 Oct 2024 07:32:15 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id B027A30083E; Fri, 25 Oct 2024 09:32:13 +0200 (CEST)
-Date: Fri, 25 Oct 2024 09:32:13 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Qi Xi <xiqi2@huawei.com>
-Cc: kernel@openeuler.org, bobo.shaobowang@huawei.com, mingo@redhat.com,
-	juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, vschneid@redhat.com, patrick.bellasi@arm.com,
-	mkoutny@suse.com, tj@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] sched: Fix compile warning about variable 'uclamp_mutex'
-Message-ID: <20241025073213.GE36494@noisy.programming.kicks-ass.net>
-References: <20241025034740.546570-1-xiqi2@huawei.com>
+	s=arc-20240116; t=1729841651; c=relaxed/simple;
+	bh=MemD0wPJNnwkFC525xZ9QY9sO1X15x2dBA8dLa30uwM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RKjEfcNPd6rEqcTNYqFAS/LCVpvllNTYBlicmnEOkexa5x3CNEZBgsG50ajPB1SzGGKOHKex+PLfb5AMMZlxkpsEYuf8y30p2FIn+c1BX4quolqiIPGwRyPmRcnOqe12ddgwqFj+BnynyTJpus0oKYvwhrtiR7WhVAfSY1uw7Ig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=d7byYg7q; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-539fe02c386so2801070e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 00:34:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1729841648; x=1730446448; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=292meUOdP2sTe6SVfdsv1Mj/FAPGq1edWRLlhywLEw4=;
+        b=d7byYg7q60NpJLQkoVOAXRtB3+1Gvan51nu9G9I1LbwmGdGfqynNaoTqLMzgW5gP6Z
+         OSe0xIoXunNC+CJBdrD315bOI4p6dGuB5+4/aMBTean+KRX+W99sjnAFJ1dWR6mj5UU4
+         ioERp7Q1lEauX+8bMobp9xvffBgT8sGtcXo5Z7kpOoWbwUgxTs9/ZWCoqO1MVO+Y0/17
+         0eE1pRHlTII6On3QG6Kxd2hW9rK3pCVOGdGme8tuaEo4oxwwDdcXyKBDKr8DI5VJASwD
+         nLlZgkcwWyH96dMAYf81Yo6GXxqzd9ccbVsszLd2vBncECGsluQCn0h60T1Zqingi79/
+         l63w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729841648; x=1730446448;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=292meUOdP2sTe6SVfdsv1Mj/FAPGq1edWRLlhywLEw4=;
+        b=pcsLP/rMl0wb5i55+ffc7+w/a6M4ThmojMqpp0MMhXbh6wvBX3KMLsJSQ9XvvoCUHO
+         aWRXEOPSmem31BZUwGHxyO9d3wkqW3OZ3aof+iiWPIgu4hZKfz44TaMq/dLHPMGBsL2X
+         z5mzJo0edvqy9qLKkx0I+zAbMGHBsVRemJMSMHgi3LRcmRhGLRdw5cn6vO2MtvDyoQu9
+         9kiCUy4CnLpR3tubSvFH2t1KW1Y4wkDUqD1apSx72TlNDEO9Oe/Bh9OH/LpuNokvc/pO
+         EiqL6HCeIXvCFLUBdonHlok/Q8CtUobzlDmXgU5fHBeKbrFgbe/M8yRGjgcAUt3QUhh2
+         dYPA==
+X-Forwarded-Encrypted: i=1; AJvYcCWN2OdoExNpG/W58G10v164HQ8/fLguHV6g/x9FPRUVIPb2YfXH4xb0NcJkrhv6pyOH0mBSgcyeFHbnIXk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4oV+6SwZOWTyiJGHdUYPkY6qDmJGzPXBWpVDyrhrSHQedW3fr
+	RJjP9/P5GB8FiXMwYwMhj3NVlf+vxbH4L2mvMd+HU0x3jHlB/7axT5J1FEb9USHXIfx6lNDWPfe
+	sc1yiNP06iXC3unSRLerCgJ9KIRtTvP7/F3jWSQ==
+X-Google-Smtp-Source: AGHT+IFbzRHYE4JGARVJG8EoTWhO8cJq8T1KsJdF5wD66HIobg234/hoZ1bjo6Fl2r8u17cE09EkdD4g+Wc2i/8cNTg=
+X-Received: by 2002:a05:6512:ea8:b0:53a:1d:e3bc with SMTP id
+ 2adb3069b0e04-53b2375d07bmr1609983e87.26.1729841648196; Fri, 25 Oct 2024
+ 00:34:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241025034740.546570-1-xiqi2@huawei.com>
+References: <20241024-gpio-notify-sysfs-v1-0-981f2773e785@linaro.org>
+ <20241024-gpio-notify-sysfs-v1-1-981f2773e785@linaro.org> <20241025025358.GA47379@rigel>
+In-Reply-To: <20241025025358.GA47379@rigel>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Fri, 25 Oct 2024 09:33:56 +0200
+Message-ID: <CAMRc=Mc07xHfvRrZMfZ9ELAs8+02OdWq+XaUfSfiw4a3fH1z6w@mail.gmail.com>
+Subject: Re: [PATCH 1/5] gpio: sysfs: use cleanup guards for gpiod_data::mutex
+To: Kent Gibson <warthog618@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 25, 2024 at 11:47:40AM +0800, Qi Xi wrote:
-> When build with CONFIG_UCLAMP_TASK && !CONFIG_UCLAMP_TASK_GROUP,
-> the variable 'uclamp_mutex' is defined but not used:
-> 
-> kernel/sched/core.c:1361:21: warning: 'uclamp_mutex' defined but not used [-Wunused-variable]
->     1361 | static DEFINE_MUTEX(uclamp_mutex);
-> 
-> Fix this by only defining the variable uclamp_mutex when the
-> CONFIG_UCLAMP_TASK_GROUP is enabled.
+On Fri, Oct 25, 2024 at 4:54=E2=80=AFAM Kent Gibson <warthog618@gmail.com> =
+wrote:
+>
+> > @@ -140,7 +133,7 @@ static ssize_t value_store(struct device *dev,
+> >
+> >       status =3D kstrtol(buf, 0, &value);
+> >
+> > -     mutex_lock(&data->mutex);
+> > +     guard(mutex)(&data->mutex);
+> >
+> >       if (!test_bit(FLAG_IS_OUT, &desc->flags)) {
+> >               status =3D -EPERM;
+> > @@ -149,8 +142,6 @@ static ssize_t value_store(struct device *dev,
+> >               status =3D size;
+> >       }
+> >
+> > -     mutex_unlock(&data->mutex);
+> > -
+> >       return status;
+> >  }
+>
+>
+> With the guard, this can be further simplified by returning immediately
+> and collapsing the if-else chain:
+>
 
-sigh.. I hate our CONFIG space :/
+Ah, right, it's the whole goal of this change after all.
 
-Perhaps add __maybe_unused like the other variables it sits right next
-to instead of adding yet more #ifdef crud?
+Bart
 
