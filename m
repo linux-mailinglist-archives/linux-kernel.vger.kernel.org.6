@@ -1,114 +1,214 @@
-Return-Path: <linux-kernel+bounces-381012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 746BE9AF913
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 07:06:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7F269AF916
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 07:08:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 240181F22DE0
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 05:06:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 23D38B21ED6
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 05:08:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E962618DF85;
-	Fri, 25 Oct 2024 05:06:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3591F18D626;
+	Fri, 25 Oct 2024 05:08:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RzLwX3A4"
-Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AgCbSu0m"
+Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com [209.85.217.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EF251E492;
-	Fri, 25 Oct 2024 05:06:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A3CD22B641
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 05:08:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729832781; cv=none; b=F8MM2PhJu15FRukri6km+awbDgaRi4tN5R0FbReufBn4D0xrE6OVyY5qoDH0BpzgcMq7hqQx30rYNeORXO/9+8uTxzonQ0HFEEqZhJwF0Ky2qsJZI2DQGCSmrBG1Aswt8eaBL1H72JI3P1ozgz/JVGVC7t+BHuY8gRtw9yD1RkU=
+	t=1729832906; cv=none; b=Y8KbKp9VgfzYy7uiq/Spj9wjc2m5KYT7LGVumvjkudlbVkFTKVjs2z1AsTHwA2lcBKC9TuDOW5l6aMcGoQZju1ez/kLfROesn3thoV4Uo913roqav1MP84Rp3k0zyY50ACJrOHes9kaF5zOasJJwf810cHLoKRr3JL9BGedSjOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729832781; c=relaxed/simple;
-	bh=G0TW1MHX9q3O94Z9uB5GhQ/gVEMlXD7XcVH1NUUhal8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W43H/NEcO2an/v7Hp7IQG+x52X5ROX53jRrrociLuFfPuEig5uY+PbyFKqtaBAkyPT/HP/yGnhjLzAHv/BibquHeh3iUdmmHCqiNLIm8VtLZlJjmcX83N8WVVgjq1i6rOpxdfxjt07yZkwLqK8NCRe0g/4nMVdWrFim1q2WQLQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RzLwX3A4; arc=none smtp.client-ip=209.85.166.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-3a4e40a1d7eso2244965ab.1;
-        Thu, 24 Oct 2024 22:06:19 -0700 (PDT)
+	s=arc-20240116; t=1729832906; c=relaxed/simple;
+	bh=mPDnpBu/qqwMsnK2bfZ85Us5LBys/P+Z1F0gtRjDH6o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Hve56r4pTBUMX7Vww9BjNM8srSqJk3j+XMzWKbKDiZOnOhw0zRi7CQyUOch50wiM05i7+/Muai9nk/yxWujQR5NiGbmwE1fm7/eMNnPNlibGPC1kpl4OJ+Bo/Gpaf0x99gPz1bui2e/Hz5v3C36SMv2DmlpTPmC6MJb1CiNhv4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=AgCbSu0m; arc=none smtp.client-ip=209.85.217.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-vs1-f51.google.com with SMTP id ada2fe7eead31-4a46d36c044so889438137.1
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 22:08:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729832778; x=1730437578; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=lrrFN+mHZMwxcP5FxfkCqubko9uzPwGKW+YiwvO7WRE=;
-        b=RzLwX3A4GhHLRQl42FG1ypSIB5NqIHgWpZ6C3ElJSTNhvH19948Yu1XQuM5cG/Sx2c
-         FYuRiFLiGDYgUcUlB/tQmVhYH3V1HMvurkVRzen0dHLWBB3JeqO2LHrngRZX0M6+o7f9
-         wo5IZ1FQbHxCz0BGzpqhcrbD4gMR4NBQAGZ+ht5CjfO8OMPEkoumtQmQUPfEyM44juDn
-         Dqi0If4yFUjVpp39gPbMr2tlUjnsTDffP1mZX9nUvN6WDc0tFbRzq1+HnHpWuZjAZvAV
-         kMo8TCIV67sgR+mqFmkxBuz06tX9u0Sdad9dXJgIFH8MrKls6dGDWYMXPLtyhVX1miJC
-         7nHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729832778; x=1730437578;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1729832903; x=1730437703; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=lrrFN+mHZMwxcP5FxfkCqubko9uzPwGKW+YiwvO7WRE=;
-        b=J9SPjHk9gXhkOxoJar+epMM82t6QE5Yhbw0ymJT5hKMqUea+CwuWi58CmERfzKGXA9
-         S03g8GPuWaf8al1HaG/ggZiwIla+n3KgGuDBW0qpO0C05PzZUwdlyzSFq4pFILxu6RO1
-         Ifgrq/kGtAsrQM4gX4MmJpIn9YVNGytRT+WJCtAzy88+dbgGXSMY6AkGulNfRXCzFUpo
-         DK0CGpnIuZeFSLFF45ooQjni1bwczhjPg0nn25MdMWHCx9XSoRpIhQ8/2tlrJOrN0XSq
-         UrwdMzLm8HVvjCFKuxgAiAC/9vzwuJCHJ48stEO3clVd2ZpzcgOmTXB/+cqHgsAJU97+
-         /g0w==
-X-Forwarded-Encrypted: i=1; AJvYcCU4Lgh5BkouvpWquc86Hp4vhht3Q7mp7fsdQhRHK2b8ZwpTztCeENlPDrN6ygCm5OVo62W5yM2QXVSuiH8D@vger.kernel.org, AJvYcCWCeZestfg5iSwOBPtvBRHZL7fjLKr2DDPpop0T1TlQSBY9c0CLWIlxwsVWPnsOHQZ4EyN1yeTb@vger.kernel.org, AJvYcCX8Y25SYcE4wNTPGCZXEzSyVeNlqlm4ifWy+Jzx0czo0h3rA81bcQUKhK9GiBa/NUASd9McyR0Y0jQ0EYDUKMQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxu5kDAp69HoSG8oyStL6UvtUy/0eHNhaorNmu/fdDiqn16g8My
-	O+bYt9KzrnZmXLh4m/OwKL1WmJvm/UhnYtIlFFolmAIjHjI/smjD
-X-Google-Smtp-Source: AGHT+IG9eFw1S1NRd1I3j1OEIDPkFWdnUdNub1uGVLvjvjh+3FMVMCl9vW8ceP5nCaJkh4kCZkZGJg==
-X-Received: by 2002:a05:6e02:b2a:b0:39d:2939:3076 with SMTP id e9e14a558f8ab-3a4d5a0431cmr97853315ab.25.1729832778418;
-        Thu, 24 Oct 2024 22:06:18 -0700 (PDT)
-Received: from Fantasy-Ubuntu ([2001:56a:7eb6:f700:63af:26f:9965:8909])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7edc8a72e92sm224534a12.92.2024.10.24.22.06.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Oct 2024 22:06:17 -0700 (PDT)
-Date: Thu, 24 Oct 2024 23:06:15 -0600
-From: Johnny Park <pjohnny0508@gmail.com>
-To: Przemek Kitszel <przemyslaw.kitszel@intel.com>
-Cc: horms@kernel.org, intel-wired-lan@lists.osuosl.org,
-	netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org, anthony.l.nguyen@intel.com,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, andrew+netdev@lunn.ch, pmenzel@molgen.mpg.de
-Subject: Re: [PATCH v3] [net-next] igb: Fix 2 typos in comments in igb_main.c
-Message-ID: <ZxsnR_fJ5aGKWJTq@Fantasy-Ubuntu>
-References: <Zxne9hBl5E5VhKGm@Fantasy-Ubuntu>
- <91005d18-37c7-483b-bda5-2fa57a884a17@intel.com>
+        bh=zfGHBHIoxV5kA8YjaOaHcL5pnxUwdfqiiPu15uVoLw0=;
+        b=AgCbSu0mMEV5SF72CtZx/zZ/MpieJZTwpcmNG0dka9kSlm24lEOei8xogFKQoNGtAF
+         wpjBTPP3/C//JPSjCV7YPhVdNe1gca4+Mn/qaerPzxPtrKmx2H0dRFw/EbGozDNeV+vK
+         6fVdnrf1925+8tAtJ+cZI/2N6g+tJi/WDw+H8F6fYz7hAweAk2It0WRyASOblcYiVCcz
+         c1D52XueOSBPknp8NqskuoUpspJlvByljqRX+U6u7aLYY+j7D8Uga+VgqQK16HmYfKVP
+         FvA80nwbrIib4voGrdAF3D23MuTFMttLFzl0JXwzB0lyWyCVuexGSoVob4h8trfUwC0q
+         RX3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729832903; x=1730437703;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zfGHBHIoxV5kA8YjaOaHcL5pnxUwdfqiiPu15uVoLw0=;
+        b=m4/UpK9MWCT6PIl/tFVFsv1ctdrSk7VtjkBVXLsBlkyAN1aQWl6cXIWzLz/JP+usIR
+         jAsg8Y6bVyJCDhWWlF2dEmiY+swGKGEX3LPhEcB15KSEhm396n62Cp3uuR8wGL1XXRZ4
+         Mx/Vcg+3rTfzUkSN3rM2eXYh0PmKSmxaw9sgv0oayXVg7lCyoiNoO7w4mMRQ3teHa3AU
+         NBfw949XO3wLn1nSJxxeTibMroHdtDvV0a6WfaDliX6ifVYkOvjCsIX0aUziIHve2V5V
+         TRpUKe0N18LfpjIET9HDPZEvC3xPHo9V+A80qN85hKA0KzApFVZjvO5CCLzT+UzPHM4G
+         Fg6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCX9l9STfVt9LPaQbvO2b9BZuhFHBX9kps7yoaG2WFoHg1sV9VVgGHfuEkXeg7sH95sps7YlTFZjAHsd8KE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzV6UCMtgRSF4R/A2j+F3T2AR6sUoakRYvRfhsIVoo4A6Y2lX9b
+	cMfwqQY/7GD0i8vLS80O7YpXnn2NU4iS+Tpn3kLM1J6AY2d9kwXlsz+3O2UciLcdjzIze30Yran
+	A+pG2EBifd66Se0CkykhUxRh4a33aeMYT60/3
+X-Google-Smtp-Source: AGHT+IHUDYUoU8LFUbZ4k2PKGpA+ThkXB1QD3CSnJUZbltuRAF2DUtPp005MRVWQoU3kazWygDbzQCvItjMIBV7xf3M=
+X-Received: by 2002:a05:6102:418a:b0:4a4:72f0:7937 with SMTP id
+ ada2fe7eead31-4a870d306d7mr3512838137.8.1729832902928; Thu, 24 Oct 2024
+ 22:08:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <91005d18-37c7-483b-bda5-2fa57a884a17@intel.com>
+References: <20241021042218.746659-1-yuzhao@google.com> <20241021042218.746659-4-yuzhao@google.com>
+ <86a5ew41tp.wl-maz@kernel.org>
+In-Reply-To: <86a5ew41tp.wl-maz@kernel.org>
+From: Yu Zhao <yuzhao@google.com>
+Date: Thu, 24 Oct 2024 23:07:45 -0600
+Message-ID: <CAOUHufanq2_nbNiU_=mCgWufoSGDOS3EpAz+4xB5kB=PV2ECVA@mail.gmail.com>
+Subject: Re: [PATCH v1 3/6] irqchip/gic-v3: support SGI broadcast
+To: Marc Zyngier <maz@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Muchun Song <muchun.song@linux.dev>, Thomas Gleixner <tglx@linutronix.de>, 
+	Will Deacon <will@kernel.org>, Douglas Anderson <dianders@chromium.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Nanyong Sun <sunnanyong@huawei.com>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 24, 2024 at 10:41:25AM +0200, Przemek Kitszel wrote:
-> On 10/24/24 07:45, Johnny Park wrote:
-> you should collect Reviewed-by tags, as the one from Simon on v2.
-Sorry, I wasn't aware of that rule. For future pathces I'll include reviewed/acked tags.
+Hi Marc,
 
-> for future Intel Ethernet drivers series, please target them to IWL
-> (net-next in the Subject becomes iwl-next)
-Sorry again, from the other patchworks https://patchwork.ozlabs.org/project/intel-wired-lan/list/ I should have noticed that pattern.  
-> >   	ring = q_vector->ring;
-> > -	/* intialize ITR */
-> > +	/* initialize ITR */
-> >   	if (rxr_count) {
-> >   		/* rx or rx/tx vector */
-> 
-> Would be great to have capitalization errors fixed too, Rx, Tx, VF, not
-> necessarily in this patch.
-That sounds like a good idea, perhaps fixing those will be my next patch.
- 
-> to reduce traffic, I'm fine with this, to go via any tree:
-> Acked-by: Przemek Kitszel <przemyslaw.kitszel@intel.com>
-Thank you for the review!
+On Tue, Oct 22, 2024 at 9:03=E2=80=AFAM Marc Zyngier <maz@kernel.org> wrote=
+:
+>
+> On Mon, 21 Oct 2024 05:22:15 +0100,
+> Yu Zhao <yuzhao@google.com> wrote:
+> >
+> > GIC v3 and later support SGI broadcast, i.e., the mode that routes
+> > interrupts to all PEs in the system excluding the local CPU.
+> >
+> > Supporting this mode can avoid looping through all the remote CPUs
+> > when broadcasting SGIs, especially for systems with 200+ CPUs. The
+> > performance improvement can be measured with the rest of this series
+> > booted with "hugetlb_free_vmemmap=3Don irqchip.gicv3_pseudo_nmi=3D1":
+> >
+> >   cd /sys/kernel/mm/hugepages/
+> >   echo 600 >hugepages-1048576kB/nr_hugepages
+> >   echo 2048kB >hugepages-1048576kB/demote_size
+> >   perf record -g -- bash -c "echo 600 >hugepages-1048576kB/demote"
+> >
+> >          gic_ipi_send_mask()  bash sys time
+> > Before:  38.14%               0m10.513s
+> > After:    0.20%               0m5.132s
+> >
+> > Signed-off-by: Yu Zhao <yuzhao@google.com>
+> > ---
+> >  drivers/irqchip/irq-gic-v3.c | 20 +++++++++++++++++++-
+> >  1 file changed, 19 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.=
+c
+> > index ce87205e3e82..42c39385e1b9 100644
+> > --- a/drivers/irqchip/irq-gic-v3.c
+> > +++ b/drivers/irqchip/irq-gic-v3.c
+> > @@ -1394,9 +1394,20 @@ static void gic_send_sgi(u64 cluster_id, u16 tli=
+st, unsigned int irq)
+> >       gic_write_sgi1r(val);
+> >  }
+> >
+> > +static void gic_broadcast_sgi(unsigned int irq)
+> > +{
+> > +     u64 val;
+> > +
+> > +     val =3D BIT(ICC_SGI1R_IRQ_ROUTING_MODE_BIT) | (irq << ICC_SGI1R_S=
+GI_ID_SHIFT);
+>
+> As picked up by the test bot, please fix the 32bit build.
 
-Regards,
-Johnny
+Will do.
+
+> > +
+> > +     pr_devel("CPU %d: broadcasting SGI %u\n", smp_processor_id(), irq=
+);
+> > +     gic_write_sgi1r(val);
+> > +}
+> > +
+> >  static void gic_ipi_send_mask(struct irq_data *d, const struct cpumask=
+ *mask)
+> >  {
+> >       int cpu;
+> > +     cpumask_t broadcast;
+> >
+> >       if (WARN_ON(d->hwirq >=3D 16))
+> >               return;
+> > @@ -1407,6 +1418,13 @@ static void gic_ipi_send_mask(struct irq_data *d=
+, const struct cpumask *mask)
+> >        */
+> >       dsb(ishst);
+> >
+> > +     cpumask_copy(&broadcast, cpu_present_mask);
+>
+> Why cpu_present_mask? I'd expect that cpu_online_mask should be the
+> correct mask to use -- we don't IPI offline CPUs, in general.
+
+This is exactly because "we don't IPI offline CPUs, in general",
+assuming "we" means the kernel, not GIC.
+
+My interpretation of what the GIC spec says ("0b1: Interrupts routed
+to all PEs in the system, excluding self") is that it broadcasts IPIs to
+"cpu_present_mask" (minus the local one). So if the kernel uses
+"cpu_online_mask" here, GIC would send IPIs to offline CPUs
+(cpu_present_mask ^ cpu_online_mask), which I don't know whether it's
+a defined behavior.
+
+But if you actually meant GIC doesn't IPI offline CPUs, then yes, here
+the kernel should use "cpu_online_mask".
+
+> > +     cpumask_clear_cpu(smp_processor_id(), &broadcast);
+> > +     if (cpumask_equal(&broadcast, mask)) {
+> > +             gic_broadcast_sgi(d->hwirq);
+> > +             goto done;
+> > +     }
+>
+> So the (valid) case where you would IPI *everyone* is not handled as a
+> fast path? That seems a missed opportunity.
+
+You are right: it should handle that case.
+
+> This also seem an like expensive way to do it. How about something
+> like:
+>
+>         int mcnt =3D cpumask_weight(mask);
+>         int ocnt =3D cpumask_weight(cpu_online_mask);
+>         if (mcnt =3D=3D ocnt)  {
+>                 /* Broadcast to all CPUs including self */
+
+Does the comment mean the following two steps?
+1. Broadcasting to everyone else.
+2. Sending to self.
+
+My understanding of the "Interrupt Routing Mode" is that it can't
+broadcast to all CPUs including self, and therefore we need the above
+two steps, which still can be a lot faster. Is my understanding
+correct?
+
+>         } else if (mcnt =3D=3D (ocnt - 1) &&
+>                    !cpumask_test_cpu(smp_processor_id(), mask)) {
+>                 /* Broadcast to all but self */
+>         }
+>
+> which avoids the copy+update_full compare.
+
+Thank you.
 
