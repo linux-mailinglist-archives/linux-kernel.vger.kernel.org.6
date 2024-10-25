@@ -1,107 +1,92 @@
-Return-Path: <linux-kernel+bounces-382828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 954489B13C7
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 02:14:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5A769B13F8
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 03:12:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACDAD1C21221
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 00:14:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 791BD1F2335D
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 01:12:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E29929A5;
-	Sat, 26 Oct 2024 00:14:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D0922AEF5;
+	Sat, 26 Oct 2024 01:12:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="s3uh1VJp"
-Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
+	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="qicdpxs3"
+Received: from mail-40132.protonmail.ch (mail-40132.protonmail.ch [185.70.40.132])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BDC8161
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 00:14:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A57D8101C8
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 01:12:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729901656; cv=none; b=K++A7mHsqbvQUX51ir4FWSPbYtP/UsXVuqbm9QfrZOnstZFxkZoStPFqWw3DBk+jg2kvkBUE8sRPgroE7GDfEKRhJlstk157HNFvhzQY7crotnF1AItd2E9dOQhH1nksFKKc6BdAd5BgtosGYCwkPv6RMkRytpOYi+cTxq0Co64=
+	t=1729905160; cv=none; b=sBuadYoWmbEltsIisXZBQ9yH7Hq+4w1zzDDBQ9Jhkdo4O9SfF1uk6gWylf2Cdz/GVlJAps8neYkn2S2puMYEA/GVU9LnCd1WeGkP/cUTgKfqjvCHlTkJYOPOSrFVw1Nsgbf/KWDvya7CMSDj2ZttmDmTYoODVl4rD6F5p7YE1Ms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729901656; c=relaxed/simple;
-	bh=HMm+NkhmzZul+EacG1gnfloXwofA9wpUFm31clTgta4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IEFRbl1El45KXwUoNDTfdEwMVCMj2siMTJH0gHGHoI4KY4iv1CKvwggH59tckm5K8McFpmERa1tsuH2aRE/adcLfUqJl6tl9Jv5OC66T2502FKf3nQTdDeoq5z7JF0NdIGu9ng8P9lDMWexW967Q8MxFESq0NmKM7ECgj2TJrz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=s3uh1VJp; arc=none smtp.client-ip=95.215.58.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Fri, 25 Oct 2024 20:14:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1729901652;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=B/fipsK6eJbgphiXcDbsGeQM/SCYkyDHOqibSnL4+pI=;
-	b=s3uh1VJpdtVehN8edMp2V4UEkXnVxpmeGD4qba7XBCEHozig0QDsare5D4E6QJJcix3IEM
-	rcI17GauSFo2tM3UQ2aezSxDT+HfoGQdnv4uV/XniCsIx9ZIXvmBf8pVUagvux/i5+zHHS
-	kmePWrVqXIaw0R5kG2rjoRcUmXzWX/0=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Piotr Zalewski <pZ010001011111@proton.me>
-Cc: Alan Huang <mmpgouride@gmail.com>, linux-bcachefs@vger.kernel.org, 
-	LKML <linux-kernel@vger.kernel.org>, skhan@linuxfoundation.org, 
-	syzbot+005ef9aa519f30d97657@syzkaller.appspotmail.com
-Subject: Re: [PATCH] bcachefs: Fix NULL ptr dereference in
- btree_node_iter_and_journal_peek
-Message-ID: <plhmwoygvh6plwq3d42f6kriyb6fsripwpe2njxn3zdd7yly4y@j6dgwf2ihubq>
-References: <20241023072024.98915-3-pZ010001011111@proton.me>
- <09A7740A-3113-4ABF-8587-8E0A4231DD61@gmail.com>
- <L78wBCQQaurE7tyQP_T2Fklx8afGKmTXxDh-gweSzakgUoCwjCYeMHINndXWj4LWdUFpOvynoYeKlE7N0rUMiXYEM_VLDye48iN5ysgM09A=@proton.me>
- <8aW4pK0ZSmglofzD-Ej0W2ClwAV-1qDS95_nUqwxsw_I4w6gERwlUN-uqb-n2fiMyh5r_1pzEj4vCIBLL5vSJAAnzqTgijxAHB2pRnIFNww=@proton.me>
+	s=arc-20240116; t=1729905160; c=relaxed/simple;
+	bh=l0J++z5bUxW/lfru5HcGgHaNpRXgshd5/6b0H4mjGT4=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=jE7E4ionrluZB4cBHZ+GEEvHnij7LUodbB2i+036uqFIrYb38iRw5auWcsKCAvXBhOlMZI5gDlyXrm3KEDPCLzkK+iE747abp/PwUhd8LcqMbjj0RXmDtLurRFUYNeZs1/vRETFnHOSFQ/5h9Ktebf7DJLN0PwIdibo6ihwCZLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=qicdpxs3; arc=none smtp.client-ip=185.70.40.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+	s=protonmail3; t=1729905156; x=1730164356;
+	bh=l0J++z5bUxW/lfru5HcGgHaNpRXgshd5/6b0H4mjGT4=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=qicdpxs3a3jLRG1JQ2kIKEtucj/lq+w0iTFbj+MPQuTLOTvUgSgvP61nGKi12pKaM
+	 CTfscSTMtUnlU2gBjoDv1IhuIIEugS8gqWHEVlokhf7NSWzEGv8z+8Bjk4uQNlA4JT
+	 Iwm05ltiXqzbv/WrhUWClhH16l3hC6y0+UvnA/BwQCpQTf9R/D7vtkiSPd9wYQjn85
+	 Sfvhj1Bxfthh2/FLx1aGjqaOPHRpZ9a4s1zlTt4A/OORxrwR/fCRclUb/p+ULRvXac
+	 EA8J2URSV0Yhx5Tlwfah8CqMf0u/gxU4ta89HHkERDl4Z8dxhH38UMROupCyLLhOGv
+	 4QBlqrWg0QD8A==
+Date: Fri, 25 Oct 2024 21:12:27 +0000
+To: "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>, "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+From: Joe Putin <joeputinx86@protonmail.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] MAINTAINERS: Remove some entries due to various compliance requirements
+Message-ID: <sVXB8QIhDTUMzW_7mfch_sRnN9KHnRjYjCac4zBmCay7qJkJyPEztYv1Na05J1Hrt8ibulFnMgVz5GLDUIWV5o3qY_FmX-EjeYRlMK3uols=@protonmail.com>
+Feedback-ID: 123953413:user:proton
+X-Pm-Message-ID: dc9ebaba03bb2563a86090e6fc9a1541fa8424d0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8aW4pK0ZSmglofzD-Ej0W2ClwAV-1qDS95_nUqwxsw_I4w6gERwlUN-uqb-n2fiMyh5r_1pzEj4vCIBLL5vSJAAnzqTgijxAHB2pRnIFNww=@proton.me>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 25, 2024 at 11:39:38PM +0000, Piotr Zalewski wrote:
-> Hi Alan and all,
-> 
-> On Wednesday, October 23rd, 2024 at 10:06 AM, Piotr Zalewski <pZ010001011111@proton.me> wrote:
-> 
-> > Hi Alan,
-> >
-> > On Wednesday, October 23rd, 2024 at 9:33 AM, Alan Huang mmpgouride@gmail.com wrote:
-> >
-> > > On Oct 23, 2024, at 15:21, Piotr Zalewski pZ010001011111@proton.me wrote:
-> > >
-> > > > Add NULL check for key returned from bch2_btree_and_journal_iter_peek in
-> > > > btree_node_iter_and_journal_peek to avoid NULL ptr dereference in
-> > > > bch2_bkey_buf_reassemble.
-> > >
-> > > It would be helpful if the commit message explained why k.k is null in this case
-> >
-> >
-> > I will debug this more thoroughly and provide details. For now I see that
-> > during GC it sees journal replay hasn't finished but journal turns out to
-> > be empty? Which seems weird, so maybe underlying issue should be solved on
-> > a deeper level.
-> >
-> 
-> There is a clean shutdown detected during recovery. Journal has no entries 
-> as it was confirmed by debugging bch2_fs_journal_start. seq and seq_ondisk 
-> members are equal so journal is "quiesced". Also, journal_keys size is 0.
-> 
-> So in check_allocations when keys are being marked for GC journal replay is
-> not done so it peeks into journal and there is nothing.
-> 
-> Now, maybe in case journal is empty during start, replay done should be set 
-> already in bch2_fs_journal_start? I tested it and it fixed the issue as well.
+This is certainly a positive development, since for the first time, we=20
+realize that the code we write could be used in missiles/weapons that
+bomb people like you and me. Our families, and our children.
 
-this is "btree_and_journal_iter_peek()" - it's iterating over the btree
-node and overlaying keys from the journal, so the journal being empty is
-fine.
+But it's important to discern "the people" and "the army". Since, people
+all around the world are just like you and me who are trying to survive
+this world.
 
-It's because syzbot is feeding us filesystem images that are broken in
-interesting ways :)
+The best way out here is that we ask these rouge militaries to publicly
+release the code they use to massacre civilians. So, we can put them to
+shame for the algorithms they use to decide who gets to live and who
+not.
+
+Linux is GPL license which requires derived works to be publicly
+released. Hence, not complying would put them in a morally and legally
+wrong position.
+
+For the militaries that are conducting brutal Genocides, bombing
+hospitals, schools, refugee camps, homes. We must speak for the
+innocent civilians.
+
+But we should not side with those, whose objective is ambitious pursuit of
+wealth and power, At cost of the commons.
+
+Linux kernel is the epitome of what collective human effort can achieve.
+The internet has enabled us to communicate, otherwise we would all be
+brainwashed by our respective government's propaganda. Let's make use of=
+=C2=A0
+this for good.
+
+This world is already a terrible place, let's not make it worse. =C2=A0We
+"the people" stand together.
 
