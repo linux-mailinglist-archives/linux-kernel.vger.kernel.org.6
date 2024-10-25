@@ -1,99 +1,109 @@
-Return-Path: <linux-kernel+bounces-381217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BC9E9AFC0F
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 10:07:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4663B9AFC0C
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 10:07:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61E412853A8
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 08:07:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0B3F1F21B25
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 08:07:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 086111CFECF;
-	Fri, 25 Oct 2024 08:06:59 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F3081C07F9;
+	Fri, 25 Oct 2024 08:06:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="nXcmW1wM"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B5771C7B7C
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 08:06:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED5C51B6D00
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 08:06:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729843618; cv=none; b=oA3m7/HsJZd3r2flySO6IiR9TTPOa0cw5IDZtir4Pk9jgH4qj8rJWdrdxv9vJh+HDp0cihPbl698UrVEGmg/7voib17fIBTQ8FSX50kt1K7ZwqNGYTTVYVv9n39m/N6YlENRUCCRFiY3pz3skhR6KsD1YHF2euHpRAchIe6nxvk=
+	t=1729843613; cv=none; b=hGGGrXndbm1EoLHsX9frAIHG3lZ5oSPwElF+TnibCb4LXWPvvaQc+I2V1OgYxtTgI/FT5DxGocF0kkQLa6r5ie3YTIp6Vq27yulu1gk0iXKLl/VUAiGPH4wYQB5Pvlr/WRuOFSw+uv+tL8Qu5E6Em1fhJUldm9tA8eo4H/EMVY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729843618; c=relaxed/simple;
-	bh=py1rQHOuFBpdgeIOQg7+7cMMifT4Bz1wRkm8QyHUXiI=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=pu+v+1h3X5u7tuo5p3cA/QiPFQjZyyn2eA/3CayMZow0c4EJxPXy0rlOZDBqppegysTjY144ScOIHo2+NnOxibECTpggwdrLrhaoTqpC/KQQGFkNQKyPuazfbSsKSSsRlP6pfkgabGLw4mOzSYps7/TKOzRHpjAlhGbDkR8x1zM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[IPv6:::1])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <l.stach@pengutronix.de>)
-	id 1t4FL6-0004hU-KX; Fri, 25 Oct 2024 10:06:32 +0200
-Message-ID: <14677b6975162c59f5bfbe71aec52f9078ae6f64.camel@pengutronix.de>
-Subject: Re: [PATCH 0/3] Fix GPU virtual address collosion when CPU page
- size != GPU page size
-From: Lucas Stach <l.stach@pengutronix.de>
-To: Sui Jingfeng <sui.jingfeng@linux.dev>, Russell King
- <linux+etnaviv@armlinux.org.uk>, Christian Gmeiner
- <christian.gmeiner@gmail.com>
-Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Date: Fri, 25 Oct 2024 10:06:31 +0200
-In-Reply-To: <20241004194207.1013744-1-sui.jingfeng@linux.dev>
-References: <20241004194207.1013744-1-sui.jingfeng@linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
+	s=arc-20240116; t=1729843613; c=relaxed/simple;
+	bh=jdJ006ZBMmwOlbZl2JfmFWMftbKBlrGvxml4UKnYubg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UIpGKREa1BVCwakqwgB13QeKT/j4aY4LqPlrtWA4eZQJJJRsSr6GGSafM9EjQZ4osqhA4oQdEYgym8DmBk4LK79AzqswkfDoLSBJfg/yZyy31Sw4sF/tXI8KmFVd2//d4ZL13RJDIn/EOghaKlpb6URx+Tim21z8k7AqcxhcPSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=nXcmW1wM; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-539e3f35268so2237124e87.3
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 01:06:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1729843610; x=1730448410; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jdJ006ZBMmwOlbZl2JfmFWMftbKBlrGvxml4UKnYubg=;
+        b=nXcmW1wMw8rSRtLUzZ79pDuDXuSmj40rRve13ivkZZFS14zz8oIAvN9h8mMmciNzN1
+         N+fuVKlb66hpfq0Wk2aRYhCgroj0wivvDxvFex1bWZ4TFAm0sUPReoFHpt99zETNGldE
+         wHSctpjF+gvLuaaZDDM7KXjPq8a2/YZJRUIyuelLx4L3iMr7uHZw/162WFZ+OD8cG/tq
+         zBGBkhSQRreeQKQWQBjDERDGMAMvjSdHNDcXDkDBdLaslZx22kolSFXVWXeykOuOsAFx
+         U5VWseJmSIg8bD77IM8hHtrVM1G0xoZAY28xRwIotjRk+NxOp6gZJWhA3M5Ti8ma9jNc
+         20qg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729843610; x=1730448410;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jdJ006ZBMmwOlbZl2JfmFWMftbKBlrGvxml4UKnYubg=;
+        b=eRPKFabNLXROUq4uX24pmI5YTsTzUcG/o8JtsMkAteIwnowArDdjUL5pDKyWlf12Hs
+         xFVDGmcAjXFaQgtd0CW4TVYTuxDfdgA9Fxv0PkN0qkHyDwkTu97EovZOoF53VhuF+ObH
+         mMlpwUuD6bIUBXgM0RS7Kjz+fOQKOgU3s+tVm+3Py7hTTlnEhMEelzHCxFWTgyRvb0j8
+         6m/3z6niKcZIh1/Zapxa1CJVB9m5qUP3VyEeWQzUN+U63H+JtDmuvUtlrfFZryt0ByAw
+         jhIQwCxTWHxHsARqvMGDgqtp2ZwG7vI3jTejcJD9VC/y7h1+BQAtkIDgjaiToSOKg8+o
+         rkuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUyLFu/MelvalmJ4FNwVr0jYW1nq+zzgkxxtanDlg0cDDPqhxFThBZL6VYeNMsKFIQRdHCF0ugJGJojrOg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxthxS4/lA5MmdQjb80i//WLLhy7aDaiMYUqfT3t0Fqvw222tkD
+	2be8y0G2+rNzEwVPG1qwSHpmRxVqIRJ2WRWuk99B77l8advB87Hx0SjfqouVFuU4TFje/P3LQxD
+	Y+VzRRmi07WhWdrDECtGlEyM3ejO3T++c6UosJcqUEQvbNFa6
+X-Google-Smtp-Source: AGHT+IHoOfienUZoSxByrn9xhZ0IVA7ZOL38NKF3midK/3Ptvhzbr+orh3Mh3eABwQLeYbjZo9YTu4qJ3iZcYHDP28Y=
+X-Received: by 2002:a05:6512:3984:b0:530:aa82:a50a with SMTP id
+ 2adb3069b0e04-53b1a361a4emr5135204e87.45.1729843610039; Fri, 25 Oct 2024
+ 01:06:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
-X-SA-Exim-Mail-From: l.stach@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+References: <20241022-pci-pwrctl-rework-v1-0-94a7e90f58c5@linaro.org>
+ <20241022-pci-pwrctl-rework-v1-4-94a7e90f58c5@linaro.org> <CACMJSesmyfS4wj=ys16FmqpAoojuChY1OHSC750bjtM23y5baA@mail.gmail.com>
+ <20241025074827.fdkgyz3k767dgdqv@thinkpad>
+In-Reply-To: <20241025074827.fdkgyz3k767dgdqv@thinkpad>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Fri, 25 Oct 2024 10:06:39 +0200
+Message-ID: <CAMRc=MckdQ1f5jwd8LaFRz3XER-wvRTstRJHxQ9LLasYQHpMBg@mail.gmail.com>
+Subject: Re: [PATCH 4/5] PCI/pwrctl: Move pwrctl device creation to its own
+ helper function
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Johan Hovold <johan+linaro@kernel.org>, 
+	Abel Vesa <abel.vesa@linaro.org>, Stephan Gerhold <stephan.gerhold@linaro.org>, 
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Sui,
+On Fri, Oct 25, 2024 at 10:05=E2=80=AFAM Manivannan Sadhasivam
+<manivannan.sadhasivam@linaro.org> wrote:
+>
+> >
+> > Would it be possible to move this into drivers/pwrctl/ and provide a
+> > header stub for when PCI_PWRCTL is disabled in Kconfig?
+> >
+>
+> Unfortunately, no. Because the pwrctl drivers are modular and PCI core is
+> built-in. So if we use the pwrctl APIs in PCI core, then it will require =
+pwrctl
+> to always be built-in, which we do not want.
+>
 
-Am Samstag, dem 05.10.2024 um 03:42 +0800 schrieb Sui Jingfeng:
-> Etnaviv assumes that GPU page size is 4KiB, however, when using
-> softpin capable GPUs on a different CPU page size configuration.
-> Userspace still doing the allocation with 4KiB page as unit. This
-> results in userspace allocated GPU virtual address ranges collision
-> and therefore unable to be inserted to the specified hole exactly.
->=20
-> The root cause is that kernel side BO takes up bigger address space
-> than userspace assumes when the size of it is not CPU page size aligned.
->=20
-> To solve it with no GPU VA range space wasting, we first track the size
-> of a buffer that userspace/GPU think of it is, then partially map and/or
-> unmap the tail physical page with respect to this 'user size'. Ensure
-> that GPU VA is fully mapped and/or unmapped.
->=20
-Would you be able to get me a updated series with the feedback taken
-care of? I would like to add this series to the next upstream pull
-request, if possible.
+Got it.
 
-Regards,
-Lucas
-
-> Sui Jingfeng (3):
->   drm/etnaviv: Track GPU VA size separately
->   drm/etnaviv: Map and unmap the GPU VA range with respect to its user
->     size
->   drm/etnaviv: Print an error message if inserting IOVA range fails
->=20
->  drivers/gpu/drm/etnaviv/etnaviv_gem.c |  8 +++--
->  drivers/gpu/drm/etnaviv/etnaviv_gem.h |  1 +
->  drivers/gpu/drm/etnaviv/etnaviv_mmu.c | 42 ++++++++++++---------------
->  3 files changed, 24 insertions(+), 27 deletions(-)
->=20
-
+Bartosz
 
