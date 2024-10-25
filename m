@@ -1,157 +1,182 @@
-Return-Path: <linux-kernel+bounces-382096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 654649B0937
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 18:09:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AAC39B093F
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 18:09:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AFACAB23A61
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:09:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F80F1F235F2
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:09:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C00517BB1A;
-	Fri, 25 Oct 2024 16:09:04 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CCEA186298;
+	Fri, 25 Oct 2024 16:09:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lVLfDdbv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C878816FF44;
-	Fri, 25 Oct 2024 16:08:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4C2E17333D;
+	Fri, 25 Oct 2024 16:09:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729872543; cv=none; b=QUnupwe/ftqBAQuWjyf/C8OY7DrwLelr23CJCxzkTc4Z8zOF0umHHBzUUmcnfhheriSGtKH5u1A20tEbvaFTfINaOo34STX5GXg5yq+nEXj0z07TKnjQzPgDn8FpN/eQIMBPc+Zzu01txIyMrF0i1XZl5Fw2P78w8I+SoaZ5YTg=
+	t=1729872583; cv=none; b=MnEO2XHggvol/XytjMOzBlA77Mmg5lhamnb5qDGCVCnIj7kpDWGHg2so9zcXahaGjPIFynpE/kVkVKNG+lbGPW1XE6YqMozfd/HPlHuYF5o33FN300SUiQjIP4KdcCFcr5Ld6vgTrxbslx4UXZvJbkKMEzwp/he8joP7u05iSO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729872543; c=relaxed/simple;
-	bh=zYjnBwvtGTqIrdDRx9LwMu2z0itwomSygbNeb4iemIk=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lhO5VTA/7VGqj4hvlcSg2M2ugGXnD4IqCmFv/x/+xbdmn98qaJDVoIv88EUDaSx1386vUreLk2v8h0S+s5xzVqfjSRzcLEMvh08ECO22qLBlBAWuTBeSATTxOmopP/5Vxirj+VZzoJh9Mfp1tAwPqNMeXuPqXqe2pwnKZdpQAX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XZnj31jzhz6K6Fx;
-	Sat, 26 Oct 2024 00:06:47 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 32D6414039E;
-	Sat, 26 Oct 2024 00:08:57 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 25 Oct
- 2024 18:08:56 +0200
-Date: Fri, 25 Oct 2024 17:08:55 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-CC: Jonathan Cameron <jic23@kernel.org>, Stephen Rothwell
-	<sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>, Arnd Bergmann
-	<arnd@arndb.de>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	<linux-iio@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the char-misc tree with the
- iio-fixes tree
-Message-ID: <20241025170855.00001f0a@Huawei.com>
-In-Reply-To: <d5a57cad-7311-4075-8b6e-04f22ed510f7@gmail.com>
-References: <20241023141015.0ec5346d@canb.auug.org.au>
-	<22f9dbb6-ba5e-4c85-8aa2-6090008e7da4@gmail.com>
-	<20241024184108.6eb3bdf0@jic23-huawei>
-	<d5a57cad-7311-4075-8b6e-04f22ed510f7@gmail.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1729872583; c=relaxed/simple;
+	bh=MSN2XEY66f4jBsAT7ndKMBQc3NEOSQBib4x+RE82ioQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t8s960DfQchuO3LBa0PPJMrjbWsvbyyounyGadjZsLEI+AWPrJD2ZohC20O86KVzYLpHhCpwUrAqUoKPM+BSzWjlX6Rn2ts9Pj1NEzYewFOPwdfI6r/RMe+Set/jUEfE2ksb0P7YfnN0+yzGhpmdvMuJUl4yPGEilaQyxIWH/Bg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lVLfDdbv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24E91C4CEC3;
+	Fri, 25 Oct 2024 16:09:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729872583;
+	bh=MSN2XEY66f4jBsAT7ndKMBQc3NEOSQBib4x+RE82ioQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lVLfDdbvz//coRMXuJCKQp8z8K1FnHrgqCKHX6mR+O+7rGBOivv91o3dBNILvhnaz
+	 /SZIHv7q6UaY5p3cmLusqEDCQhloTXJZpjs2e1DsoTEnp/AiRlpve64b2HWIf86wZv
+	 pnQAmMyzUfoxRP91Djv7YCgPIIu3zAwS2X5lgjKbRyj1hI6JDk/4mWg5bMzwLTqMj2
+	 E3osqnTBnehMbuXpIKGgCSjM2MXsFQKRIbNQscBlcHnPHv+u701L4juuSPFjpcPhhE
+	 iX8NCktPET+9QxqPHmEKB13blpUszm3qC3qUuNpvN7T/Jz2tFNVXTeEJ2o8id3l358
+	 WlE9ZcgUUa8mw==
+Date: Fri, 25 Oct 2024 09:09:42 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Ritesh Harjani <ritesh.list@gmail.com>
+Cc: John Garry <john.g.garry@oracle.com>, linux-ext4@vger.kernel.org,
+	Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+	Christoph Hellwig <hch@infradead.org>,
+	Ojaswin Mujoo <ojaswin@linux.ibm.com>,
+	Dave Chinner <david@fromorbit.com>, linux-kernel@vger.kernel.org,
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 1/6] ext4: Add statx support for atomic writes
+Message-ID: <20241025160942.GJ2386201@frogsfrogsfrogs>
+References: <cover.1729825985.git.ritesh.list@gmail.com>
+ <e6af669b237690491ecff0717039e28e949208c8.1729825985.git.ritesh.list@gmail.com>
+ <314835ec-98bf-472c-8be7-0b26e50cfc9b@oracle.com>
+ <87y12cmr5o.fsf@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100003.china.huawei.com (7.191.160.210) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87y12cmr5o.fsf@gmail.com>
 
-On Thu, 24 Oct 2024 20:39:57 +0200
-Javier Carrasco <javier.carrasco.cruz@gmail.com> wrote:
-
-> On 24/10/2024 19:41, Jonathan Cameron wrote:
-> > On Wed, 23 Oct 2024 20:17:30 +0200
-> > Javier Carrasco <javier.carrasco.cruz@gmail.com> wrote:
-> >   
-> >> On 23/10/2024 05:10, Stephen Rothwell wrote:  
-> >>> Hi all,
-> >>>
-> >>> Today's linux-next merge of the char-misc tree got a conflict in:
-> >>>
-> >>>   drivers/iio/light/veml6030.c
-> >>>
-> >>> between commit:
-> >>>
-> >>>   de9981636774 ("iio: light: veml6030: fix microlux value calculation")
-> >>>
-> >>> from the iio-fixes tree and commit:
-> >>>
-> >>>   ed59fc90f38a ("iio: light: veml6030: drop processed info for white channel")
-> >>>
-> >>> from the char-misc tree.
-> >>>
-> >>> I fixed it up (the latter removed the line updated by the former) and
-> >>> can carry the fix as necessary. This is now fixed as far as linux-next
-> >>> is concerned, but any non trivial conflicts should be mentioned to your
-> >>> upstream maintainer when your tree is submitted for merging.  You may
-> >>> also want to consider cooperating with the maintainer of the conflicting
-> >>> tree to minimise any particularly complex conflicts.
-> >>>     
-> >>
-> >>
-> >> Hi Stephen,
-> >>
-> >> I doubled checked the status of the driver in linux-next, and everything
-> >> looks as it should: the first commit applied as a single chunk, as its
-> >> second chunk affects lines that the second commit removed.
-> >>
-> >> Thank you for fixing it up.  
-> > 
-> > Not quite. This was a lucky merge issue as it highlighted something I'd
-> > messed up.
-> > 
-> > A rare case of a fuzzy application of a patch picking the wrong block but still
-> > giving a very plausible looking diff that fooled me.
-> > 
-> > I picked up the fix via a different tree from where you expected.
-> > In char-misc-next / iio/togreg there is only one instance of this code block because
-> > the larger driver rework removed one of the two that was in the tree that
-> > iio-fixes is based on (effectively mainline).
-> > 
-> > The fix got applied to the one that is going away (which is going away because
-> > the scale makes no sense on the intensity channel) not the illuminance / IIO_LIGHT
-> > channel that was intended.
-> > 
-> > I've move it to the right block with the side effect that the merge conflict
-> > should go away.  Javier, please check iio.git/fixes-togreg to be 100% sure
-> > I haven't messed it up again.
-> > 
-> > Thanks Stephen for your hard work on linux-next!
-> > 
-> > Jonathan
-> >   
-> >>
-> >> Best regards,
-> >> Javier Carrasco  
-> >   
+On Fri, Oct 25, 2024 at 03:38:03PM +0530, Ritesh Harjani wrote:
+> John Garry <john.g.garry@oracle.com> writes:
 > 
-> What I see in iio.git/fixes-togreg is right in the sense that the fix
-> fro the processed value (commit 63dd163cd61dd) is only applied to the
-> processed value of the IIO_LIGHT channel, and not to IIO_INTENSITY.
+> > On 25/10/2024 04:45, Ritesh Harjani (IBM) wrote:
+> >> This patch adds base support for atomic writes via statx getattr.
+> >> On bs < ps systems, we can create FS with say bs of 16k. That means
+> >> both atomic write min and max unit can be set to 16k for supporting
+> >> atomic writes.
+> >> 
+> >> Later patches adds support for bigalloc as well so that ext4 can also
+> >> support doing atomic writes for bs = ps systems.
+> >> 
+> >> Co-developed-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+> >> Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+> >> Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+> >> ---
+> >>   fs/ext4/ext4.h  |  7 ++++++-
+> >>   fs/ext4/inode.c | 14 ++++++++++++++
+> >>   fs/ext4/super.c | 32 ++++++++++++++++++++++++++++++++
+> >>   3 files changed, 52 insertions(+), 1 deletion(-)
+> >> 
+> >> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+> >> index 44b0d418143c..a41e56c2c628 100644
+> >> --- a/fs/ext4/ext4.h
+> >> +++ b/fs/ext4/ext4.h
+> >> @@ -1729,6 +1729,10 @@ struct ext4_sb_info {
+> >>   	 */
+> >>   	struct work_struct s_sb_upd_work;
+> >>   
+> >> +	/* Atomic write unit values */
+> >> +	unsigned int fs_awu_min;
+> >> +	unsigned int fs_awu_max;
+> >> +
+> >>   	/* Ext4 fast commit sub transaction ID */
+> >>   	atomic_t s_fc_subtid;
+> >>   
+> >> @@ -1820,7 +1824,8 @@ static inline int ext4_valid_inum(struct super_block *sb, unsigned long ino)
+> >>    */
+> >>   enum {
+> >>   	EXT4_MF_MNTDIR_SAMPLED,
+> >> -	EXT4_MF_FC_INELIGIBLE	/* Fast commit ineligible */
+> >> +	EXT4_MF_FC_INELIGIBLE,	/* Fast commit ineligible */
+> >> +	EXT4_MF_ATOMIC_WRITE	/* Supports atomic write */
+> >
+> > Does this flag really buy us much?
+> >
 > 
-> The processed value of the IIO_INTENSITY channel should be then dropped
-> at some point with the other patch, as it has already been done in
-> linux-next/master.
+> I felt it is cleaner this way than comparing non-zero values of
+> fs_awu_min and fs_awu_max.
+
+What does it mean when MF_ATOMIC_WRITE is set and fs_awu_* are zero?
+The awu values don't change at runtime, so I think you can save yourself
+an atomic test by checking (non-atomically) for awu_min>0.
+
+(I don't know anything about the flags, those came after my time iirc.)
+
+--D
+
+> Now that you pointed at it - Maybe a question for others who might have
+> the history of which one to use when - or do we think there is a scope
+> of merging the two into just one as a later cleanup?
 > 
-Yes. We may want to separately chase back dropping the processed
-IIO_INTENSITY later given the issues that are left there.
-Once the change is upstream, I'd be fine with that as a backported
-fix.
-
-Jonathan
-
-> Best regards,
-> Javier Carrasco
-
+> I know that s_mount_flags was added for fastcommit and it needed the
+> state manipulations to be done in atomic way. Similarly s_ext4_flags
+> also was renamed from s_resize_flags for more general purpose use. Both
+> of these looks like could be merged isn't it?
+> 
+> 
+> 
+> >>   };
+> >>   
+> >>   static inline void ext4_set_mount_flag(struct super_block *sb, int bit)
+> >> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> >> index 54bdd4884fe6..897c028d5bc9 100644
+> >> --- a/fs/ext4/inode.c
+> >> +++ b/fs/ext4/inode.c
+> >> @@ -5578,6 +5578,20 @@ int ext4_getattr(struct mnt_idmap *idmap, const struct path *path,
+> >>   		}
+> >>   	}
+> >>   
+> >> +	if (S_ISREG(inode->i_mode) && (request_mask & STATX_WRITE_ATOMIC)) {
+> >> +		struct ext4_sb_info *sbi = EXT4_SB(inode->i_sb);
+> >> +		unsigned int awu_min, awu_max;
+> >> +
+> >> +		if (ext4_test_mount_flag(inode->i_sb, EXT4_MF_ATOMIC_WRITE)) {
+> >
+> > I'd use ext4_inode_can_atomicwrite() here, similar to what is done for xfs
+> >
+> 
+> Sure since it is inode operation, we can check against ext4_inode_can_atomicwrite().
+> 
+> 
+> >> +			awu_min = sbi->fs_awu_min;
+> >> +			awu_max = sbi->fs_awu_max;
+> >> +		} else {
+> >> +			awu_min = awu_max = 0;
+> >> +		}
+> >> +
+> >> +		generic_fill_statx_atomic_writes(stat, awu_min, awu_max);
+> >> +	}
+> >> +
+> >>   	flags = ei->i_flags & EXT4_FL_USER_VISIBLE;
+> >>   	if (flags & EXT4_APPEND_FL)
+> >>   		stat->attributes |= STATX_ATTR_APPEND;
+> >> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+> >> index 16a4ce704460..f5c075aff060 100644
+> >> --- a/fs/ext4/super.c
+> >> +++ b/fs/ext4/super.c
+> >> @@ -4425,6 +4425,37 @@ static int ext4_handle_clustersize(struct super_block *sb)
+> >>   	return 0;
+> >>   }
+> >>   
+> >> +/*
+> 
 
