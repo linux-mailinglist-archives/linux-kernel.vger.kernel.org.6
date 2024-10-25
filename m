@@ -1,219 +1,167 @@
-Return-Path: <linux-kernel+bounces-381126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 218269AFAA9
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 09:10:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76B099AFAB7
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 09:12:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF83E281AC2
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 07:10:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07DA51F249C0
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 07:12:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F393B1B2197;
-	Fri, 25 Oct 2024 07:10:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51F591B21AE;
+	Fri, 25 Oct 2024 07:12:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TYV4l1EC"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="A1PBr+Pl"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9DF767A0D
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 07:10:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8F2118BB9A
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 07:12:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729840241; cv=none; b=i1BuSqnZGcqDZvHzUSWR7akUI8HwgRWdGpeoJ+UCvkwabYDe04fxnCDhBZ9nVIW2dFUjePP3/3WOfK6pDQeFHwc27dHqFQd0KEwaYYH5CZ1ECVtkaxYRWTGFQdIpKq30cEWoFcS5tsyUVSS1+SplxEdanPWENOxYIcQim9Wr+FQ=
+	t=1729840337; cv=none; b=kXxKi7+4IPyXY7X96leBl6645SIQRv1jhx8IsX9MMRLVwEA5i/YoeX+n5KE6FeueacfVn2RreBNCZobf8PiC3bP4vhvmugOVJc9z2zyT2piDFE/N9ffP+c+3wUDgRcid+W9TMV4dNcmaxXlaaxKeZgURzjyeiv6o+VvuhYbxkm8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729840241; c=relaxed/simple;
-	bh=3KW7d+KJmbc0374AYq/XLD97rhLrTfllEdHaS/gjRNc=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=n/GKmo1LXmdyILU62aUAi7uTvqQ5J74fwb+kiyIh5ttbtamR4xDE4Yym59UaDUnnIlqWreXa3AcKwSxJo44xxfRYC56hDYfxvTIeHqVFIJBZf4pfbZDiVjiEO8CuEt0CkdsuzlLvqfCdZ1Nt4miD55UyE531/YcQF5CunlY8vyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TYV4l1EC; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5c9362c26d8so5012838a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 00:10:38 -0700 (PDT)
+	s=arc-20240116; t=1729840337; c=relaxed/simple;
+	bh=7i7ka3KzkamKJmAgkbylB2u+ivI+OWNLfAVGoiPgEtI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Mg4tJc+ohZ3Z0fl+HIb6jMhg+mY0QseaXRAtn6EO0OMYj0GLmvTZul38OHAsXUJnLDGrO6XoMP9jL5bQ26Xoboj23125bBnZnUWL13XEKCrChbL4kCVIol2WGuaerZSYxaWa02l8ec7VPLuXjr1XuSuZuLl1GMOTkIkZzqtIhNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=A1PBr+Pl; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2e2ed59a35eso1368785a91.0
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 00:12:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729840237; x=1730445037; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=QN1tsLfbB9d5DyYhuV0X7PZg8MBg1dvti2XZFfsqElk=;
-        b=TYV4l1ECFqNYgeQe/mnSZQYfi3d+o9TMlQdVkyEQ/GiW/l9IyR2DMdWSoIlaIk9zmY
-         uleVwnUmHveHEDmEIf+DNulupo2FdMciUitsUxPni8Jddn2pAlXJa78n7muZEWdq1gIA
-         TxcZzOXYYryDD9js52hb11DamCVwFuXnbY9Z+XmyfElRwWeRfYx6XGtbZj8/6FxyDB2s
-         PWkgOcwjfrVDq1p3RlaaZzM48e53zogmT9RVM1KfiD5agRnVhaOiGzSpt/+Mohd6KQXH
-         RM2AAAIKeiV30Hc0Kksdj2p7Gd1EC6HKcUr9TPnweXl2OLq1FlJgW9vWrEQUaebj93hj
-         lS9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729840237; x=1730445037;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+        d=bytedance.com; s=google; t=1729840333; x=1730445133; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=QN1tsLfbB9d5DyYhuV0X7PZg8MBg1dvti2XZFfsqElk=;
-        b=ewi5mExUUn/Au63JR+tf97NkQWAP+i0JhN+NEkAMXXTta0J7CwHRQh3SJq+xv7LGPM
-         m5wOuBysA0h1ODe4XSqttqBhIMIEBsne4fD/6PBqJ6WIgJyF+9uFzrz2lPAy02LKMkhT
-         XN/eYgVinVXIef4UqBjVMn3+WexLq9h6q41RnOgoRF6Q/Ov5W2fJmOYTmxeghtREtVEB
-         f6monOGs5e4ywiXJk8k8X3EhEZ+O4SjBtdc3WBjOq2digcoVogruw/EkZmeQWJRGfdMR
-         ODSRwPrxX8bhkSRlxJ0xEW1dKuhAKZarbzX7BG7D/LBjbdd93ki3AFacbI0l/XrsBitZ
-         eBSw==
-X-Forwarded-Encrypted: i=1; AJvYcCXBga4vL5sz0KoX6J7/sDpKT6zCGl0eEhwi3LqhR8HtxFLSe8dnF7wNqCKvth+1ON4Vhpfh1WOrnipjtY0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YynMnu+TYsgqvEqv5AlkdEXbS9ym0/tC5kd/30ALJm6Nnpk85ok
-	P3I3S6nkduyFOJSBO8sU/z/bzayX2GmNOh61J4jiokcGFzJqyjNStqgRby9YYImshQQWHYriP+r
-	7JqwM4nNdC3Qu3OgfNMRvxGjY9xE=
-X-Google-Smtp-Source: AGHT+IE69Rqr3iBH6ZNcjuDegoQGEui60s/sn4mr/tPGvtxt6xXxL+X7hGKebCB5jrKTWLLH0Hq1AL+CvD7/bQpwE+0=
-X-Received: by 2002:a17:907:eab:b0:a99:3db2:eb00 with SMTP id
- a640c23a62f3a-a9ad1add979mr449403266b.28.1729840236927; Fri, 25 Oct 2024
- 00:10:36 -0700 (PDT)
+        bh=B/cCbKNuKB3gronXLhNY7Z0mGjddFinoZE4u7tpjqcQ=;
+        b=A1PBr+Pl7VX6pnwRHGZBHx8+HUy1j3XQCnqzpF6ZsNzYBBLnvBBMhP0hc71hkfre3O
+         dHh00Lc1N9zAfyWr4pJIVdbULKQvDOb+h6w1Vecq18MKoAfXkFpExOiX3i78aAn0cQF0
+         zFliDWoXt0fPw57gPXVqHI8/MoHFeYG5VDQPSKyJHPmcIcXRvxEAOrFPdVsUuVaL3812
+         bol1rHEleooC/U6cN7+7EdeXtAil0wVRclz6T3NzSonO74x43MQWBG1QwnRMWOaKDD4s
+         mupZP2uyAf2/7eC8xsD7bvHsVuMVT69+OJX0Wtdky/9NO7liDBfyMCWY9WvZc1UA599g
+         Xr2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729840333; x=1730445133;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=B/cCbKNuKB3gronXLhNY7Z0mGjddFinoZE4u7tpjqcQ=;
+        b=QGATS4YtopElwL9YSvccxNWxhFbLyEVjkMqeM+yB46PhZqkEP6YJBi0919zMRgOQRN
+         L8qW14UfsvgiU/cNhpVbLyQVSLe2E04EjjBYhnBzoL8w2Di7d2i2yZ2Ly7ZlJSIWWN6c
+         e+KY++ZnqgTPKQpER2Mc7acuVFRBSpAXdx/Z407urEj9RtZBO3LjVG5n3LeUqqXHsLeH
+         NgLIIjxXdML7sGwlCpYVAlzZujI8O9eSMg8ph/BEAViOpKaf1K+yMQpCHRZCxdlOWrlE
+         Y/QuczdSMSdMjzGUJdwdE9+BAp4mwgR9Sp3M1uONN9Hzwco6M8HRQ9CxsMD0bK6Zn3Zz
+         7Fiw==
+X-Forwarded-Encrypted: i=1; AJvYcCVfqqZO63N9e5bCrA1kY/on4FRxSMT6rxFKPgCFWxUdMYWifYmzmvPl5ssCyplYAeRVALr43dIAwpIIBoo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyoJs6bzNAt0ao/I9dw9EynvFArvfWIizXOC14FRNYsK2K8DD9D
+	Q27ASceN/eanw2ZNDY/6UZw6Kiokrgy6cphxq3ypNHSPw2IVOX6fDjl613mAv9c=
+X-Google-Smtp-Source: AGHT+IGhkMBbXaJu0HAzi5N/CRI5uaJ6PKnhoP/gUop/fnR0Kchxwudsu8opRczYoCn/Ys9J0p54QQ==
+X-Received: by 2002:a17:90b:17cf:b0:2e2:cc47:f1b0 with SMTP id 98e67ed59e1d1-2e77f321aa7mr5463083a91.3.1729840332999;
+        Fri, 25 Oct 2024 00:12:12 -0700 (PDT)
+Received: from [10.84.149.95] ([63.216.146.178])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e8e377179asm666395a91.53.2024.10.25.00.12.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 25 Oct 2024 00:12:12 -0700 (PDT)
+Message-ID: <b9f5c74a-acc5-42b4-bb7e-0b4f487486c6@bytedance.com>
+Date: Fri, 25 Oct 2024 15:12:03 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Dave Airlie <airlied@gmail.com>
-Date: Fri, 25 Oct 2024 17:10:25 +1000
-Message-ID: <CAPM=9txMNPAbbfxvD+0ouRGY5nojRvu6n+cPc=hjNwQzzj6gtA@mail.gmail.com>
-Subject: [git pull] drm fixes for 6.12-rc5
-To: Linus Torvalds <torvalds@linux-foundation.org>, Sima Vetter <sima@ffwll.ch>
-Cc: dri-devel <dri-devel@lists.freedesktop.org>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] mm: shrinker: avoid memleak in alloc_shrinker_info
+Content-Language: en-US
+To: Chen Ridong <chenridong@huaweicloud.com>
+Cc: akpm@linux-foundation.org, david@fromorbit.com, roman.gushchin@linux.dev,
+ muchun.song@linux.dev, anshuman.khandual@arm.com, vbabka@suse.cz,
+ kirill@shutemov.name, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ chenridong@huawei.com, wangweiyang2@huawei.com
+References: <20241025060942.1049263-1-chenridong@huaweicloud.com>
+From: Qi Zheng <zhengqi.arch@bytedance.com>
+In-Reply-To: <20241025060942.1049263-1-chenridong@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Linus,
 
-Weekly drm fixes, mostly amdgpu and xe, with minor bridge and an i915
-Kconfig fix. Nothing too scary and it seems to be pretty quiet.
 
-Dave.
+On 2024/10/25 14:09, Chen Ridong wrote:
+> From: Chen Ridong <chenridong@huawei.com>
+> 
+> A memleak was found as bellow:
+> 
+> unreferenced object 0xffff8881010d2a80 (size 32):
+>    comm "mkdir", pid 1559, jiffies 4294932666
+>    hex dump (first 32 bytes):
+>      00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>      40 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  @...............
+>    backtrace (crc 2e7ef6fa):
+>      [<ffffffff81372754>] __kmalloc_node_noprof+0x394/0x470
+>      [<ffffffff813024ab>] alloc_shrinker_info+0x7b/0x1a0
+>      [<ffffffff813b526a>] mem_cgroup_css_online+0x11a/0x3b0
+>      [<ffffffff81198dd9>] online_css+0x29/0xa0
+>      [<ffffffff811a243d>] cgroup_apply_control_enable+0x20d/0x360
+>      [<ffffffff811a5728>] cgroup_mkdir+0x168/0x5f0
+>      [<ffffffff8148543e>] kernfs_iop_mkdir+0x5e/0x90
+>      [<ffffffff813dbb24>] vfs_mkdir+0x144/0x220
+>      [<ffffffff813e1c97>] do_mkdirat+0x87/0x130
+>      [<ffffffff813e1de9>] __x64_sys_mkdir+0x49/0x70
+>      [<ffffffff81f8c928>] do_syscall_64+0x68/0x140
+>      [<ffffffff8200012f>] entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> 
+> In the alloc_shrinker_info function, when shrinker_unit_alloc return
+> err, the info won't be freed. Just fix it.
+> 
+> Fixes: 307bececcd12 ("mm: shrinker: add a secondary array for shrinker_info::{map, nr_deferred}")
 
-drm-fixes-2024-10-25:
-drm fixes for 6.12-rc5
+Again, please:
 
-amdgpu:
-- ACPI method handling fixes
-- SMU 14.x fixes
-- Display idle optimization fix
-- DP link layer compliance fix
-- SDMA 7.x fix
-- PSR-SU fix
-- SWSMU fix
+Cc: stable@vger.kernel.org
 
-i915:
-- Fix DRM_I915_GVT_KVMGT dependencies in Kconfig
+I think Andrew can help add that. ;)
 
-xe:
-- Increase invalidation timeout to avoid errors in some hosts
-- Flush worker on timeout
-- Better handling for force wake failure
-- Improve argument check on user fence creation
-- Don't restart parallel queues multiple times on GT reset
+Thanks!
 
-bridge:
-- aux: Fix assignment of OF node
-- tc358767: Add missing of_node_put() in error path
-The following changes since commit 42f7652d3eb527d03665b09edac47f85fb600924:
-
-  Linux 6.12-rc4 (2024-10-20 15:19:38 -0700)
-
-are available in the Git repository at:
-
-  https://gitlab.freedesktop.org/drm/kernel.git tags/drm-fixes-2024-10-25
-
-for you to fetch changes up to 4d95a12beba146b0ca2de59c7ce905bc0aadfd0c:
-
-  Merge tag 'drm-xe-fixes-2024-10-24-1' of
-https://gitlab.freedesktop.org/drm/xe/kernel into drm-fixes
-(2024-10-25 16:55:39 +1000)
-
-----------------------------------------------------------------
-drm fixes for 6.12-rc5
-
-amdgpu:
-- ACPI method handling fixes
-- SMU 14.x fixes
-- Display idle optimization fix
-- DP link layer compliance fix
-- SDMA 7.x fix
-- PSR-SU fix
-- SWSMU fix
-
-i915:
-- Fix DRM_I915_GVT_KVMGT dependencies in Kconfig
-
-xe:
-- Increase invalidation timeout to avoid errors in some hosts
-- Flush worker on timeout
-- Better handling for force wake failure
-- Improve argument check on user fence creation
-- Don't restart parallel queues multiple times on GT reset
-
-bridge:
-- aux: Fix assignment of OF node
-- tc358767: Add missing of_node_put() in error path
-
-----------------------------------------------------------------
-Abel Vesa (1):
-      drm/bridge: Fix assignment of the of_node of the parent to aux bridge
-
-Alex Deucher (1):
-      drm/amdgpu: handle default profile on on devices without fullscreen 3D
-
-Arnd Bergmann (1):
-      i915: fix DRM_I915_GVT_KVMGT dependencies
-
-Aurabindo Pillai (2):
-      drm/amd/display: temp w/a for dGPU to enter idle optimizations
-      drm/amd/display: temp w/a for DP Link Layer compliance
-
-Badal Nilawar (1):
-      drm/xe/guc/ct: Flush g2h worker in case of g2h response timeout
-
-Dave Airlie (4):
-      Merge tag 'amd-drm-fixes-6.12-2024-10-23' of
-https://gitlab.freedesktop.org/agd5f/linux into drm-fixes
-      Merge tag 'drm-intel-fixes-2024-10-24' of
-https://gitlab.freedesktop.org/drm/i915/kernel into drm-fixes
-      Merge tag 'drm-misc-fixes-2024-10-24' of
-https://gitlab.freedesktop.org/drm/misc/kernel into drm-fixes
-      Merge tag 'drm-xe-fixes-2024-10-24-1' of
-https://gitlab.freedesktop.org/drm/xe/kernel into drm-fixes
-
-Frank Min (1):
-      drm/amdgpu: fix random data corruption for sdma 7
-
-Javier Carrasco (1):
-      drm/bridge: tc358767: fix missing of_node_put() in
-for_each_endpoint_of_node()
-
-Kenneth Feng (3):
-      drm/amd/pm: update the driver-fw interface file for smu v14.0.2/3
-      drm/amd/pm: update overdrive function on smu v14.0.2/3
-      drm/amd/pm: update deep sleep status on smu v14.0.2/3
-
-Mario Limonciello (2):
-      drm/amd: Guard against bad data for ATIF ACPI method
-      drm/amd/display: Disable PSR-SU on Parade 08-01 TCON too
-
-Nirmoy Das (2):
-      drm/xe/ufence: Prefetch ufence addr to catch bogus address
-      drm/xe: Don't restart parallel queues multiple times on GT reset
-
-Shuicheng Lin (2):
-      drm/xe: Enlarge the invalidation timeout from 150 to 500
-      drm/xe: Handle unreliable MMIO reads during forcewake
-
- drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c           |  15 ++-
- drivers/gpu/drm/amd/amdgpu/sdma_v7_0.c             |   9 +-
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c  |   3 +-
- .../drm/amd/display/amdgpu_dm/amdgpu_dm_helpers.c  |  13 ++
- .../drm/amd/display/modules/power/power_helpers.c  |   2 +
- drivers/gpu/drm/amd/pm/swsmu/amdgpu_smu.c          |  11 +-
- .../pm/swsmu/inc/pmfw_if/smu14_driver_if_v14_0.h   | 132 +++++++++++++--------
- drivers/gpu/drm/amd/pm/swsmu/inc/smu_v14_0.h       |   2 +-
- .../gpu/drm/amd/pm/swsmu/smu14/smu_v14_0_2_ppt.c   |  66 ++++-------
- drivers/gpu/drm/bridge/aux-bridge.c                |   3 +-
- drivers/gpu/drm/bridge/tc358767.c                  |   1 +
- drivers/gpu/drm/i915/Kconfig                       |   3 +-
- drivers/gpu/drm/xe/xe_device.c                     |   2 +-
- drivers/gpu/drm/xe/xe_force_wake.c                 |  12 +-
- drivers/gpu/drm/xe/xe_guc_ct.c                     |  18 +++
- drivers/gpu/drm/xe/xe_guc_submit.c                 |  14 ++-
- drivers/gpu/drm/xe/xe_sync.c                       |   3 +-
- 17 files changed, 202 insertions(+), 107 deletions(-)
+> Signed-off-by: Chen Ridong <chenridong@huawei.com>
+> Acked-by: Qi Zheng <zhengqi.arch@bytedance.com>
+> Acked-by: Roman Gushchin <roman.gushchin@linux.dev>
+> Acked-by: Vlastimil Babka <vbabka@suse.cz>
+> ---
+>   mm/shrinker.c | 8 +++++---
+>   1 file changed, 5 insertions(+), 3 deletions(-)
+> 
+> diff --git a/mm/shrinker.c b/mm/shrinker.c
+> index dc5d2a6fcfc4..4a93fd433689 100644
+> --- a/mm/shrinker.c
+> +++ b/mm/shrinker.c
+> @@ -76,19 +76,21 @@ void free_shrinker_info(struct mem_cgroup *memcg)
+>   
+>   int alloc_shrinker_info(struct mem_cgroup *memcg)
+>   {
+> -	struct shrinker_info *info;
+>   	int nid, ret = 0;
+>   	int array_size = 0;
+>   
+>   	mutex_lock(&shrinker_mutex);
+>   	array_size = shrinker_unit_size(shrinker_nr_max);
+>   	for_each_node(nid) {
+> -		info = kvzalloc_node(sizeof(*info) + array_size, GFP_KERNEL, nid);
+> +		struct shrinker_info *info = kvzalloc_node(sizeof(*info) + array_size,
+> +							   GFP_KERNEL, nid);
+>   		if (!info)
+>   			goto err;
+>   		info->map_nr_max = shrinker_nr_max;
+> -		if (shrinker_unit_alloc(info, NULL, nid))
+> +		if (shrinker_unit_alloc(info, NULL, nid)) {
+> +			kvfree(info);
+>   			goto err;
+> +		}
+>   		rcu_assign_pointer(memcg->nodeinfo[nid]->shrinker_info, info);
+>   	}
+>   	mutex_unlock(&shrinker_mutex);
 
