@@ -1,111 +1,182 @@
-Return-Path: <linux-kernel+bounces-382612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A375F9B110E
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 22:58:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FD9E9B1110
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 22:59:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C68A283F3D
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 20:58:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C495FB220C1
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 20:59:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A54421F4C2;
-	Fri, 25 Oct 2024 20:48:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD341223A40;
+	Fri, 25 Oct 2024 20:49:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="Lqg1jn7U"
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ikr7ItYi"
+Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1DF7215C42;
-	Fri, 25 Oct 2024 20:48:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DBCE21746D
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 20:49:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729889318; cv=none; b=pMPJSI4rgy4TNhy0afgp4/RPBlWmUivz6rWYGuNhkPtCBsMlEXp6vKZhDV+FOb3oZBPMtF03xRWwZoYFj+hyWvRLIxErHMA8V8j/Rlhw4TxZv71at07QNZDtNNi0wZ42BNvxerW5qa2xkG+Q53AYgepwIuDR9XRx7st6DzpUFFA=
+	t=1729889380; cv=none; b=X7r5U2T0KNMh/X+8If0kxhaCwIl9x8vWbvYV8J2+ZzrV4l1aKE5Sb2IFzisC2bM5WwV6FCyaEqiX4CfYJBa7qwAz/nWyktqFfMT+jm/8K436Ct+myCfWac6zVWandp9vAx2F5qmMomHr/g3ABV+PJOHaLjJghwU/faIBxGgMPxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729889318; c=relaxed/simple;
-	bh=1XU8+0H9J169DLx55vJAv3LxdU26AFcY8jQpKgZIkSo=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=I5/nRj6DtGIAj0N6/OrT8+RlWcqG0V/SjhA1mvAcwcAGAvA5bxpfyYJMW19Qxfjo46ggNbI7mxWvU3PsrMnGYuk1/EhfqUctCPFbX06+6ZSNPkc/dg0bjGnAcYRoZBq9AGRh7Gtkw0sDmF4LzKrYhpDUvEoaDgBILeROQZ2pcfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=Lqg1jn7U; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=1XU8+0H9J169DLx55vJAv3LxdU26AFcY8jQpKgZIkSo=;
-	t=1729889316; x=1731098916; b=Lqg1jn7UpW3LuFnBc0dVC3JBllFeQk+/afm0v0PAOrjlQBm
-	NvmYhcLkyY6Hhu6f22FGiTVzCg66lfdjIFYAJprhWEoW87MPrfEjLve8vWGEiIlp5Yk1c82OsMQ5c
-	J13Qj9m1OmDm092uaBClInw8afPHRhtdg0Rs+1vDonkaJE7of+Bx/hFGLSGbBhOBGN53OZubYSa5/
-	ZNdCU1NaIoPR7adpJjPAIa6U8HXhOeUNVf+y27vWT1E4Xwr7/G0YMGEnlttQnANlyqsrUKdQK6GTs
-	8f1rHto/WQTf9Iq9v4gaFCUgtRxU5N07R+47lT2tb2kUxXqyS7fPIKgBDGaJLH2Q==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.98)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1t4REV-00000004hPm-1b1i;
-	Fri, 25 Oct 2024 22:48:32 +0200
-Message-ID: <192eb05afffd37bd13ff9bc1fc9b044b347b5dc4.camel@sipsolutions.net>
-Subject: Re: [PATCH][next] wifi: mac80211: ieee80211_i: Avoid dozens of
- -Wflex-array-member-not-at-end warnings
-From: Johannes Berg <johannes@sipsolutions.net>
-To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>, "Gustavo A. R. Silva"
-	 <gustavoars@kernel.org>
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-hardening@vger.kernel.org, Aditya Kumar Singh <quic_adisi@quicinc.com>
-Date: Fri, 25 Oct 2024 22:48:30 +0200
-In-Reply-To: <8152a551-1813-4d44-a203-45d30f2ac671@embeddedor.com>
-References: <Zxv7KtPEy1kvnTPM@kspp>
-	 <c90c3c9825e3837bf7c47979acd0075b102576ce.camel@sipsolutions.net>
-	 <3471e59f-a414-479f-8fb0-aa1a26aecf16@embeddedor.com>
-	 <5c48b4529bf552d5c16b4dcc951c653f37b6a68e.camel@sipsolutions.net>
-	 <8152a551-1813-4d44-a203-45d30f2ac671@embeddedor.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	s=arc-20240116; t=1729889380; c=relaxed/simple;
+	bh=LEFNEBRsF3wSEaFE8p7mGPUOPvhHFlmdgo14J6EAyJ4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Ye6mDBZKWdFMN9a3GKlnyN3q3QV5lX5jPB4QOn7dW0IziZotjG/8tn9uc7oJyQUe9d/oMPIAUmGU10CDsD7117q5q46KZpbgkj9gqn2M4sgNgkqy6K9UgVbbV8L2rH6Pui79o1UaX8DHdvzu6LUHcNheAlkfBKbX4R5bY6HMGDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ikr7ItYi; arc=none smtp.client-ip=209.85.222.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-7b14077ec5aso325892185a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 13:49:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729889377; x=1730494177; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=HaNSsC4KUZ64ui98jp8meP1eBKQiBOs+wvC+63/8s/o=;
+        b=Ikr7ItYiU1w8/xUdoib+SX1PbYqORmyT+z/n6szJ3ZA3ngO1tE0ALjAtFrLGzC6ldF
+         zw8pyssjhn9MPX4SpF9SWR71tPHSeK5ldAQnhNFF/Gz1e4fypnKZWnIL9lcYXPXRAC6X
+         GKxNhhCkSpXM00gVAMMkycZ0w2Bet9XbKrhp27zFG1Ew5bZ7eKv5S3e6txFkvDNDouf7
+         QRm6V4CWDX9rjpFSOx7kCH0atjPWAq5McrEiQZjmPA8nPM/BQ5GUcY4HNorUKkDZ1gfu
+         64FgAwy2Cl6LJDivar1349gRiOJ4wiR53dJmvQIOQG8sbqhhXWmv6r/T+qwQY0BLCzy0
+         Je9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729889377; x=1730494177;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HaNSsC4KUZ64ui98jp8meP1eBKQiBOs+wvC+63/8s/o=;
+        b=ITdIK0UryEzWUetHwRXe7uxofiLGjtAJNEe3Tz18o++dNAE2UlBHBAGBbTdqhu+80k
+         Zcl//dAIhkvt9HK14nK2ftwfImMeAivM+6peduFvJg7EHEdH4/sGMPdLv7vJcNwUpl3i
+         SFqoTUYdz3M8w9czpbzN4xM65hpIP6NVA7ACS98lieIKYc5DnGTsZzdM+ui6HWGsekV7
+         lle4GvVUZRtvyMP1Xaogj/0NhHYRQtOHN3XCO8NXHGV8iuZS6w1G1rnie3Z2aZoMcNsD
+         H8d/v979AhrdOQZjenUnvMw6hFNXxE0OZ/b8TRnT4viNJGg4hpAMbQCSCb1TLy+T0fm9
+         z6ow==
+X-Forwarded-Encrypted: i=1; AJvYcCWPL9hHV5brQLwyex2Hmv3u1G4tvZ2KQ6eBXlwwlIGkC1rWzZ0AeyzowlvikuZY8rmCANd252EDmXBAh1E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzT1ARYuESsxYXx9tvZEVsTEfe5wzLOeXEbsnHP378bFthZhNVj
+	WAq4ryOXNxYleV0YUB7tBGr5pbfSz1O4odYbqT4RfklRRADltfaB
+X-Google-Smtp-Source: AGHT+IFM+LN7/ckayj5f9Xw8CmTrs6jwfmfLYNRPJhoYJpT4r0Lsys1hHg6zlDyaz1K3O9N0cxcUyg==
+X-Received: by 2002:a05:620a:1a1d:b0:7ab:3516:56c1 with SMTP id af79cd13be357-7b1865d36f6mr1307891085a.14.1729889376780;
+        Fri, 25 Oct 2024 13:49:36 -0700 (PDT)
+Received: from Tamirs-MBP.mynetworksettings.com (pool-100-37-170-231.nycmny.fios.verizon.net. [100.37.170.231])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-461323abd6csm9393431cf.94.2024.10.25.13.49.34
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Fri, 25 Oct 2024 13:49:35 -0700 (PDT)
+From: Tamir Duberstein <tamird@gmail.com>
+To: Andy Whitcroft <apw@canonical.com>,
+	Joe Perches <joe@perches.com>,
+	Dwaipayan Ray <dwaipayanray1@gmail.com>,
+	Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+	Simon Horman <horms@kernel.org>,
+	=?utf-8?q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: Tamir Duberstein <tamird@gmail.com>,
+	Louis Peens <louis.peens@corigine.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH RESEND] checkpatch: always parse orig_commit in fixes tag
+Date: Fri, 25 Oct 2024 16:48:34 -0400
+Message-ID: <20241025-checkpatch-fixes-commit-v1-1-1b31f9ce178b@gmail.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+Content-Type: text/plain; charset="utf-8"
+X-Mailer: b4 0.15-dev
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 2024-10-25 at 14:36 -0600, Gustavo A. R. Silva wrote:
-> > >=20
-> > > Yeah, I was actually going to mention this commit, as it's the one th=
-at introduced
-> > > that `bool radar_detected` to the flex struct. However, it wasn't obv=
-ious to me
-> > > how `struct ieee80211_chanctx_conf conf` could overwrite `radar_detec=
-ted` as I didn't
-> > > see `conf->drv_priv` being accessed through `struct struct ieee80211_=
-chanctx_conf`.
-> >=20
-> > You have to look at the drivers, see hwsim_clear_chanctx_magic() for
-> > example; I wonder why hwsim_check_chanctx_magic() never caught this.
->=20
-> Sorry, I actually meant through `struct ieee80211_chanctx`. Something lik=
-e:
->=20
-> struct ieee80211_chanctx *foo;
-> ...
->=20
-> foo->conf.drv_priv[i] =3D something;
->=20
-> or
->=20
-> struct bar *ptr =3D (void *)foo->conf->drv_priv;
-> then write something into *ptr...
->=20
-> In the above cases the code will indeed overwrite `radar_detected`.
-
-Right, that's what it does though, no? Except it doesn't have, in the
-driver, "foo->conf." because mac80211 only gives it a pointer to conf,
-so it's only "conf->drv_priv" (and it's the "struct bar" example.)
-
-So yeah, pretty sure it will overwrite that, and I do wonder why it
-wasn't caught. I guess no radar detection tests with MLO yet.
-
-johannes
+Do not require the presence of `$balanced_parens` to get the commit SHA;=0D
+this allows a `Fixes: deadbeef` tag to get a correct suggestion rather=0D
+than a suggestion containing a reference to HEAD.=0D
+=0D
+Ironically this:=0D
+=0D
+Fixes: bd17e036b495 ("checkpatch: warn for non-standard fixes tag style")=0D
+Signed-off-by: Tamir Duberstein <tamird@gmail.com>=0D
+---=0D
+ scripts/checkpatch.pl | 37 ++++++++++++++++---------------------=0D
+ 1 file changed, 16 insertions(+), 21 deletions(-)=0D
+=0D
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl=0D
+index 4427572b24771ddb1f2bf3de3176f9437f643951..b03d526e4c454af7a4262415517=
+5e109d499762f 100755=0D
+--- a/scripts/checkpatch.pl=0D
++++ b/scripts/checkpatch.pl=0D
+@@ -3209,36 +3209,31 @@ sub process {=0D
+ =0D
+ # Check Fixes: styles is correct=0D
+ 		if (!$in_header_lines &&=0D
+-		    $line =3D~ /^\s*fixes:?\s*(?:commit\s*)?[0-9a-f]{5,}\b/i) {=0D
+-			my $orig_commit =3D "";=0D
+-			my $id =3D "0123456789ab";=0D
+-			my $title =3D "commit title";=0D
+-			my $tag_case =3D 1;=0D
+-			my $tag_space =3D 1;=0D
+-			my $id_length =3D 1;=0D
+-			my $id_case =3D 1;=0D
++		    $line =3D~ /^\s*(fixes:?)\s*(?:commit\s*)?([0-9a-f]{5,40})(?:\s*($ba=
+lanced_parens))?/i) {=0D
++			my $tag =3D $1;=0D
++			my $orig_commit =3D $2;=0D
++			my $title;=0D
+ 			my $title_has_quotes =3D 0;=0D
+ 			$fixes_tag =3D 1;=0D
+-=0D
+-			if ($line =3D~ /(\s*fixes:?)\s+([0-9a-f]{5,})\s+($balanced_parens)/i) {=
+=0D
+-				my $tag =3D $1;=0D
+-				$orig_commit =3D $2;=0D
+-				$title =3D $3;=0D
+-=0D
+-				$tag_case =3D 0 if $tag eq "Fixes:";=0D
+-				$tag_space =3D 0 if ($line =3D~ /^fixes:? [0-9a-f]{5,} ($balanced_pare=
+ns)/i);=0D
+-=0D
+-				$id_length =3D 0 if ($orig_commit =3D~ /^[0-9a-f]{12}$/i);=0D
+-				$id_case =3D 0 if ($orig_commit !~ /[A-F]/);=0D
+-=0D
++			if (defined $3) {=0D
+ 				# Always strip leading/trailing parens then double quotes if existing=
+=0D
+-				$title =3D substr($title, 1, -1);=0D
++				$title =3D substr($3, 1, -1);=0D
+ 				if ($title =3D~ /^".*"$/) {=0D
+ 					$title =3D substr($title, 1, -1);=0D
+ 					$title_has_quotes =3D 1;=0D
+ 				}=0D
++			} else {=0D
++				$title =3D "commit title"=0D
+ 			}=0D
+ =0D
++=0D
++			my $tag_case =3D not ($tag eq "Fixes:");=0D
++			my $tag_space =3D not ($line =3D~ /^fixes:? [0-9a-f]{5,40} ($balanced_p=
+arens)/i);=0D
++=0D
++			my $id_length =3D not ($orig_commit =3D~ /^[0-9a-f]{12}$/i);=0D
++			my $id_case =3D not ($orig_commit !~ /[A-F]/);=0D
++=0D
++			my $id =3D "0123456789ab";=0D
+ 			my ($cid, $ctitle) =3D git_commit_info($orig_commit, $id,=0D
+ 							     $title);=0D
+ =0D
+=0D
+---=0D
+base-commit: 3d5ad2d4eca337e80f38df77de89614aa5aaceb9=0D
+change-id: 20241019-checkpatch-fixes-commit-aa014fe6d0b3=0D
+=0D
+Best regards,=0D
+-----BEGIN SSH SIGNATURE-----=0D
+U1NIU0lHAAAAAQAAADMAAAALc3NoLWVkMjU1MTkAAAAgtYz36g7iDMSkY5K7Ab51ksGX7h=0D
+JgsMRt+XVZTrIzMVIAAAADZ2l0AAAAAAAAAAZzaGE1MTIAAABTAAAAC3NzaC1lZDI1NTE5=0D
+AAAAQEhO1Vh/OvD8e3HTwEvNpWeLJl11NLWPF00vpbfhJuWh5YZw0c1Zet+JadYOa+a6By=0D
+vg8Vjtx86wc+UjDmAJbAs=3D=0D
+-----END SSH SIGNATURE-----=0D
+-- =0D
+Tamir Duberstein <tamird@gmail.com>=0D
+=0D
 
