@@ -1,163 +1,112 @@
-Return-Path: <linux-kernel+bounces-382146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B33D69B0A0F
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 18:36:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 690159B0A10
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 18:37:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6B601C22A95
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:36:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63CB01C22585
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:37:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39D121FB8B3;
-	Fri, 25 Oct 2024 16:35:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA9591885BB;
+	Fri, 25 Oct 2024 16:37:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="zrzEY/fe"
-Received: from mail-oo1-f46.google.com (mail-oo1-f46.google.com [209.85.161.46])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="FMhOSvhl"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1027A1D14FC
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 16:35:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A585521A4D0
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 16:36:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729874150; cv=none; b=G67j66paipVGnfNrX7mMxVZ/PTX9TOzi1a98o2McE18trS/I6AFGw3qHXKqNJMa1TwBMjBkmjjoy63q1bkyjakN5nAVJmfW42gGrridHFeiP0Xk56O+wx6cBdjpWarB1VTar9CykrqR9N4JgTDCTAWz2dYHIXcXi2siuOa3yUTU=
+	t=1729874222; cv=none; b=TrkdYbnYVXfHThQXtq1j4I7/UgaqexgBDe6EJtw2XwFcCljzvYXsLu1JF3SM3YLFIRkwiM6xXUB8Xm8dMORL9wQf+EeX9BFPiENerWyh5qc+JEb4XhcV6w/8PztNHhrPwZB2ndhw4TnBwcLDMkfX0TTidXr0pHH2q1iZ9nejaZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729874150; c=relaxed/simple;
-	bh=+mKkqhjOfp/8NKKCudMMe/P4eWYuwxPS5xhBfWoY950=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UNiyW7EoW8mB2nkYIUj6Ly5hzRuPNhQqQQwoCscJqaENbevp9+aqXjZLk3AEwlBJPdQ8SmzgZVKjR0J6Kcvq8fdLNdO0jie0aUWeOdi8FwXbaWiMFc1T9yqELfRmS72vmLTD4NGbr0+r+TUn0HZ38aeXzOejzgvXs0TlnmIMCKM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=zrzEY/fe; arc=none smtp.client-ip=209.85.161.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oo1-f46.google.com with SMTP id 006d021491bc7-5eb5be68c7dso1260932eaf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 09:35:46 -0700 (PDT)
+	s=arc-20240116; t=1729874222; c=relaxed/simple;
+	bh=z8ZYUyX3DegatEokaoi93YFQEe8PkLpJaLNX49odOSU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=d3hloG/208N4To/OxZt7kQ/Y1qaejXaTQGEohU//VNppZmIWrmcQg1ZZ+dJF0dA+s2yy1mPdx6vlX7ZbpE63g0FNbUk8JTf4G63V/yEGBUc0h3uYVtb4HbOsRYjVstxnsJlbxUZc+yhEfbLozldElWCLHAMdOsqRLGZ41em67Ws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=FMhOSvhl; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4316f3d3c21so21471995e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 09:36:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729874146; x=1730478946; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=989e9i6l9ZWGz9AVMP0M9BcfdKAXAdUqBJ5ScVIDhD8=;
-        b=zrzEY/feB5XjwpXRxjHwE6Oz456AYMACAKlTnpKqV0j7nZA8yC50fMxgI32mnLGOR3
-         IKmj2bwDSE1UzEI8zotFhxzguYr53qw1NB38OvvpEDl/0arc/+aSZ6fKl7J8Z/KDxL+9
-         b8qfnLGzdRMU3zKsmu8CjYUCOLpKuwpKdNlYhWehXxaTVTMOM50f3E1uZxuztsU3gsn7
-         3Jc2nvYImlrV7j8q/Pj42dq3xfz3nIFJYWTN2gi9t+C+hSkJxD4JFwA7UC21b8ELokN3
-         G3sv5xncNDshsZQSK3cEkTbsEKhAf3hGjeZuaXWYHQvNTm4smAYt867VF96t0My/vMm6
-         FtYw==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1729874214; x=1730479014; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7lGkP35cJnTIdnyhY5sfY8yz0v3JRW7Q1yvNGRDERrg=;
+        b=FMhOSvhlsLTVhZ/Xst9Vt3tIQ5wAK5a6fJxhe+EIy4Twncc7qW431xKNRbKTwSpOkb
+         GrOfdWjWILmcawnAyBbW6i4NPpoXZH7/unkaHox0jT86HrCJWyRw01E+N1yQ99Omi4Q4
+         UbspEw+E3AH9WujOBYhFqDZ/84btMlhKURSc96tXO2mSsrXZ0cS9fR4sRgxuw2WZ/bzb
+         ibu1okQYdiTmc9xRxFMQZNTOj/gsJZERO9hCofv16isabiCdqNlbg3XUpK74p3ra/9Cm
+         AnCSRS4AvlMgK4bwGCtG/tI2FJXB7QzSi+rzDYJX3pXaLp2A73vwfAogUOtBkmtdwME4
+         o3+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729874146; x=1730478946;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=989e9i6l9ZWGz9AVMP0M9BcfdKAXAdUqBJ5ScVIDhD8=;
-        b=dk4uoB8ZhDDEvaFJuOEh4EPzuzxLVLjwcI6jwCm4HHAPuXsrbkc6Le2OP3VC6+WJKS
-         6xdfjNrKCEtUYRXe+B6nENj7xbcSXultsyONCzlxFlaSYWf4U4Y9bHKTmkG/a3w6S6VP
-         EMGlQz/zg2L1UGCWUbvfQ42iRuMQT/AvXUVEtUcbRVIrUmfEFBbngv+o+zbFX9ygP2Hs
-         81JptPmHHJ1nPwxtuuhD0UboulbnR2Y5mnQh93ztLpzIxW2tEMEN4/UwPWtNrHTvnFTS
-         h40kIlaIWBHnHHwy/58TqAPB8j/Vq60+tz5nd6KYEtS5UwGu5LHsFbMr98m4oNNKQFGQ
-         mRfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX+ZdHDHI+wZVzaJCu+7Wf+KuvKam0zAY2Jn8p606zI+pfJuGOq+epTRt3bQvHQqO+xj/loauznLF1Rbg4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZrNZuEYna5emZxhUFebtKXl9QmbxQdkmGVz/slAF40l7C506T
-	pANAdz51Q683ipjBgBUTVz3EoIKTXLPi8B5lndnsFNthxQ6bVb3Ksj1I+PPi2Us=
-X-Google-Smtp-Source: AGHT+IEFYO1M6pTkfu/lPvM0ue3WVlvBKRAjeNfd/LOIMo54KbBBMSvxxwGrLvo+2kGB0WtDyVR8Mw==
-X-Received: by 2002:a05:6820:1686:b0:5e7:aeed:97be with SMTP id 006d021491bc7-5ebee9a6161mr6603567eaf.8.1729874146115;
-        Fri, 25 Oct 2024 09:35:46 -0700 (PDT)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5ec1843d4a5sm288248eaf.6.2024.10.25.09.35.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 25 Oct 2024 09:35:44 -0700 (PDT)
-Message-ID: <f7fd8929-352a-46e2-8f78-15720ab31b9d@baylibre.com>
-Date: Fri, 25 Oct 2024 11:35:42 -0500
+        d=1e100.net; s=20230601; t=1729874214; x=1730479014;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7lGkP35cJnTIdnyhY5sfY8yz0v3JRW7Q1yvNGRDERrg=;
+        b=w1sAoOq0ZoCdGL2/YfOCE61zRSx1XIW1P7MHkPYDVRXtVrVGmZXmM09QLlbiRtGi5V
+         1ZcIXfl66GdEaICfVb3PTpjybuhL8aBDTe7kidRzUaxSbilkjPLtsHbKda5GZ3qSBuWz
+         BjM9zx2KbxD2h8NF2Dp8bDVjd3pJDXgwH/TkzBYhbSpbQBnrp0GbwZdHZ92VnsFKvzWd
+         s/D3FkOb2v+F3KozGSqjmv3Hv0FXt5Yx5BDXwtpNyEkHIRoer+P8ySjqcZWYYJYc7xiI
+         edWNQPnj8K2s3A9rZLIvlPcG96anvjdjTNLH0qgQgCAluOr8T7NgBQIhdc4brhDF3/dB
+         owJw==
+X-Forwarded-Encrypted: i=1; AJvYcCVVW76QatnNEtlqhGFdJBgkiY+FmvBvwKhCOYwNj+p66ZuNwaEQZZYyj/gEUSWKT8apaHjV1pnWbVvhYGA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSx4afzSF3naswEUpbXyELlzScoaRSX37aUAtzYfuwL9km1OeC
+	s7ECFSjtUCkR3hg0uhIpGMjZoreV8NgKRv7DGh9r3oAZfuNB1ez5lTPOKPj3mBw=
+X-Google-Smtp-Source: AGHT+IEVcCSB/+2gFz0T4Is6uvy0Nb64CEXaviScFcm3jz+lgW5p91JQltzJOKFrgHlsa8gdQwDoUQ==
+X-Received: by 2002:a05:600c:3550:b0:42c:b16e:7a22 with SMTP id 5b1f17b1804b1-4318413f0ccmr90291625e9.12.1729874213802;
+        Fri, 25 Oct 2024 09:36:53 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:a207:5d17:c81:613b])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b92963sm1932967f8f.98.2024.10.25.09.36.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Oct 2024 09:36:53 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [PATCH] gpio: of: drop dependency on HAS_IOMEM
+Date: Fri, 25 Oct 2024 18:36:51 +0200
+Message-ID: <20241025163651.54566-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v4 09/15] spi: axi-spi-engine: implement offload
- support
-To: =?UTF-8?Q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>,
- Mark Brown <broonie@kernel.org>, Jonathan Cameron <jic23@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <nuno.sa@analog.com>, =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-Cc: Michael Hennerich <Michael.Hennerich@analog.com>,
- Lars-Peter Clausen <lars@metafoo.de>, David Jander <david@protonic.nl>,
- Martin Sperl <kernel@martin.sperl.org>, linux-spi@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-iio@vger.kernel.org, linux-pwm@vger.kernel.org
-References: <20241023-dlech-mainline-spi-engine-offload-2-v4-0-f8125b99f5a1@baylibre.com>
- <20241023-dlech-mainline-spi-engine-offload-2-v4-9-f8125b99f5a1@baylibre.com>
- <35e3a616b1cd0b66096795f247604bbe1aa8300d.camel@gmail.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <35e3a616b1cd0b66096795f247604bbe1aa8300d.camel@gmail.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 10/25/24 8:09 AM, Nuno Sá wrote:
-> On Wed, 2024-10-23 at 15:59 -0500, David Lechner wrote:
->> Implement SPI offload support for the AXI SPI Engine. Currently, the
->> hardware only supports triggering offload transfers with a hardware
->> trigger so attempting to use an offload message in the regular SPI
->> message queue will fail. Also, only allows streaming rx data to an
->> external sink, so attempts to use a rx_buf in the offload message will
->> fail.
->>
->> Signed-off-by: David Lechner <dlechner@baylibre.com>
->> ---
->>
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-...
+Commit 2527ecc9195e9 ("gpio: Fix OF build problem on UM") added the
+dependency on HAS_IOMEM to OF_GPIO to address a build-issue on UML (User
+Mode Linux). It's no longer needed as now UM defines stubs for
+ioremap() and iounmap() even with !HAS_IOMEM (and its emulation can also
+be enabled on UM now). Let's remove it.
 
->> +static int spi_engine_offload_prepare(struct spi_message *msg)
->> +{
->> +	struct spi_controller *host = msg->spi->controller;
->> +	struct spi_engine *spi_engine = spi_controller_get_devdata(host);
->> +	struct spi_engine_program *p = msg->opt_state;
->> +	struct spi_engine_offload *priv = msg->offload->priv;
->> +	struct spi_transfer *xfer;
->> +	void __iomem *cmd_addr;
->> +	void __iomem *sdo_addr;
->> +	size_t tx_word_count = 0;
->> +	unsigned int i;
->> +
->> +	if (p->length > spi_engine->offload_ctrl_mem_size)
->> +		return -EINVAL;
->> +
->> +	/* count total number of tx words in message */
->> +	list_for_each_entry(xfer, &msg->transfers, transfer_list) {
->> +		if (!xfer->tx_buf)
->> +			continue;
->> +
->> +		if (xfer->bits_per_word <= 8)
->> +			tx_word_count += xfer->len;
->> +		else if (xfer->bits_per_word <= 16)
->> +			tx_word_count += xfer->len / 2;
->> +		else
->> +			tx_word_count += xfer->len / 4;
->> +	}
->> +
->> +	if (tx_word_count > spi_engine->offload_sdo_mem_size)
->> +		return -EINVAL;
->> +
->> +	if (test_and_set_bit_lock(SPI_ENGINE_OFFLOAD_FLAG_PREPARED, &priv->flags))
->> +		return -EBUSY;
->> +
-> 
-> This is odd. Any special reason for using this with aquire - release semantics? Can
-> optimize() and unoptimize() run concurrently? Because if they can this does not give
-> us mutual exclusion and we really need to do what we're doing with kind of stuff :)
-> 
-> - Nuno Sá
-> 
-> 
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+ drivers/gpio/Kconfig | 1 -
+ 1 file changed, 1 deletion(-)
 
-This looks like another leftover from an in-between revision that
-didn't get fully cleaned up. I will reconsider what is need here.
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index e28efd5f9c17..27c18a1f76b8 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -29,7 +29,6 @@ config GPIOLIB_FASTPATH_LIMIT
+ config OF_GPIO
+ 	def_bool y
+ 	depends on OF
+-	depends on HAS_IOMEM
+ 
+ config GPIO_ACPI
+ 	def_bool y
+-- 
+2.45.2
 
-But to answer the question, strictly speaking, there isn't anything
-to prevent two concurrent calls spi_optimize_message() with different
-messages but the same offload instance.
 
