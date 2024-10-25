@@ -1,289 +1,374 @@
-Return-Path: <linux-kernel+bounces-382689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B74389B122A
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 00:00:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D4099B123E
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 00:02:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB1CC1C210BE
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 22:00:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9007C1F22506
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 22:02:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 137161CEE98;
-	Fri, 25 Oct 2024 22:00:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 931911D5176;
+	Fri, 25 Oct 2024 22:02:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SR+LfxKi"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="mneKf7nz"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AA721C174E;
-	Fri, 25 Oct 2024 22:00:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.16
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729893611; cv=fail; b=Iwclr0cwSZvV3FbChDLojeh+CbfPB5G+AO8OI+xu+Rnv5gNwqoK87twmp0Pgoxm99356NIe+mWQ29fsmxlAKDodVX8AqAAKDnL7CiDZKmE8/UivNZHsDCyQA5NaQRFeRoWZUPpbxzvZq0FWVv7RHjW3yL/BuPwahvkjThHC1qVY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729893611; c=relaxed/simple;
-	bh=95OdYgZT6YxlGPV6l3wAR6kgucGg0/qiOkx0CrRLCAU=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=XPqzpaQyxlMlbKYuP2WtH+rzaLf9FYUBbUJMrcGFFBDEL0gblb5uTmwHfe7NA4CXf64T86cdoj7FkkXYbwhyvXAG8/iSv0nZtzNm1tidiQBZ6B+3sF2LQ7MeFRgXknl3QESVP/Uq9qLw9vhMA5oIG10RqRUMv56LmBBiXEBSxk0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SR+LfxKi; arc=fail smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729893609; x=1761429609;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=95OdYgZT6YxlGPV6l3wAR6kgucGg0/qiOkx0CrRLCAU=;
-  b=SR+LfxKi15lPgt3s/54qsrgQDCfUd07Sk3pEMthQZv3905ZDtDJnGi5y
-   as5c/PbHC72fakYFYF7mOCZi5wTEblw1WoAq8uTKsCLUIiLerhe1U//Je
-   0B5ekMlrUfxPktrF2INmKgQFM5eBjoD2A+EM+EwQb3nCcysDdSnaqDOVk
-   fWkP84mkbeMJix5zuGFnA2aqzFg6IBVM6eYivjUA2kNtBTRnZiGDKOgYS
-   NJXjeMHZkp9GCWzsnLLl5YMtwJtlC9lEqoU1/xieX4Rb0lHrHmYiMRmky
-   hrie6kvl6Lpio8wiqI5s+lDwmyQnRmj7X14nWh7QcJpbAtzyruggfynhw
-   A==;
-X-CSE-ConnectionGUID: L2bD7d7vSI2ZlQ23YkzcgA==
-X-CSE-MsgGUID: u6qc2rG1TDSwc/mn9woDcg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11236"; a="17209157"
-X-IronPort-AV: E=Sophos;i="6.11,233,1725346800"; 
-   d="scan'208";a="17209157"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2024 15:00:08 -0700
-X-CSE-ConnectionGUID: 5MbMC/hPSsy+Gu0w+lPhVw==
-X-CSE-MsgGUID: i9rBcu8JT2OtaKznInG+MQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,233,1725346800"; 
-   d="scan'208";a="85007806"
-Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
-  by fmviesa003.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 25 Oct 2024 15:00:06 -0700
-Received: from orsmsx603.amr.corp.intel.com (10.22.229.16) by
- ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Fri, 25 Oct 2024 15:00:05 -0700
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- orsmsx603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Fri, 25 Oct 2024 15:00:05 -0700
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.47) by
- edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 25 Oct 2024 15:00:04 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=EVdXjVON0cJH4gvkcyIEvFksPgfqYjT8A8Wd9PI0uTt+Yolfe9WuK+hoKb5Vo4UjD/ncw8crsh/1Ooch+lnKM7D4Za+dIpmgKfzsdbqM3c9QqjdqNaawjSZofMMaCE9vffh4jjhzlbr+mD4Rw2dJjNU+phwKEQPPpDfrGBe9Wt7Y3EQAnoPzP1Zv7vlVUQbsCXYZL2i4SRZr0491TYL/3sXTNfeDHbXuV1jWnwt7rGjsxHA4IQqCO/K8/LNaTmF4LBiSqbwZbXyxBNo7HgeBTAQBEblJFwpDGGJNLYpC6xiaiGie8UXsjpN0VWd2WQhcgFJrQ2asCHrgfahTnkkstQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wpUu+p0bJHcTDhv5Cs8chaku3jEWQG9nljDfsn8HY9M=;
- b=l3fIlVrYL/zuCMkPS8DJln2GJjf0NYKZLkawcPEZHZwzh6tLfK6l9Tib4K3R5FvMz4wAcOHuqFg4v3ledzXL62BxwUJEAiWAWnX/wODV7lrayrgjsRZmJWo/rVzBVEhU4dr1uWr7Ac/xkndLLf6Z5Qg16qo4vU3lnN5wPIaIcvjfPo62iBsk+cw85SEc266Lk8M/gE6Jpv28L0BcAEvrU5rlQy/rk11xu9721DqIbvxZuIsYU+DjG19x1Jodf5tbsIOnnMJIF5TYp6G0DVm7HSmG6nb8t2vddVPOaK7Pr9VmLtekuNdkYwNLQG7c1jXjafKvIGieg0uteueFi/qJxw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
- by PH0PR11MB5079.namprd11.prod.outlook.com (2603:10b6:510:3d::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.18; Fri, 25 Oct
- 2024 22:00:02 +0000
-Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
- ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
- ([fe80::61a:aa57:1d81:a9cf%7]) with mapi id 15.20.8093.021; Fri, 25 Oct 2024
- 22:00:02 +0000
-Message-ID: <e09feea2-6024-4196-9096-c1be51bfa375@intel.com>
-Date: Fri, 25 Oct 2024 15:00:00 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 1/4] x86/resctrl: Make input event for MBA Software
- Controller configurable
-To: "Luck, Tony" <tony.luck@intel.com>, "Yu, Fenghua" <fenghua.yu@intel.com>,
-	Peter Newman <peternewman@google.com>, Jonathan Corbet <corbet@lwn.net>,
-	Shuah Khan <skhan@linuxfoundation.org>, "x86@kernel.org" <x86@kernel.org>
-CC: Shaopeng Tan <tan.shaopeng@fujitsu.com>, James Morse
-	<james.morse@arm.com>, Jamie Iles <quic_jiles@quicinc.com>, Babu Moger
-	<babu.moger@amd.com>, Randy Dunlap <rdunlap@infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	"patches@lists.linux.dev" <patches@lists.linux.dev>
-References: <20241003191228.67541-1-tony.luck@intel.com>
- <20241003191228.67541-2-tony.luck@intel.com>
- <bb30835f-5be9-44b4-8544-2f528e7fc573@intel.com>
- <SJ1PR11MB608328D2D772314AF62A2A7AFC4F2@SJ1PR11MB6083.namprd11.prod.outlook.com>
-From: Reinette Chatre <reinette.chatre@intel.com>
-Content-Language: en-US
-In-Reply-To: <SJ1PR11MB608328D2D772314AF62A2A7AFC4F2@SJ1PR11MB6083.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MW4PR04CA0242.namprd04.prod.outlook.com
- (2603:10b6:303:88::7) To SJ2PR11MB7573.namprd11.prod.outlook.com
- (2603:10b6:a03:4d2::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AFC6217F2D
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 22:02:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729893746; cv=none; b=hmPIDVosJltlzmbq6C7bgSGOZPJrW3JOwwHbjjZyMeShCF3e5/AjVBlo2GkO0D2E8ckhmeefMT0Cjkp6aYhKyKmRC9oi82LP16Opwz3zvNDdd0qk4Kp6+bBWqMEJeKEZaFZPddCGW1gds+xk4afh6lGCTn+j0ZBARVCO2lAzHwg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729893746; c=relaxed/simple;
+	bh=kfsZMZKrpjtgHib1WoZhkJ/YfrjuDLVuHwalOGuQ9xw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Hl1dpmKywsVEj09JrWmBJ6b41qxPIA03rJO4enARdpzvhR7j2luyM1qGOAAvbgbj3UjxtMX5EHy8uwZlN30WUTlxaRV5Wjc7lveRZwHIevHsMr1efcMV3zi+FjLNfvtjwo3OwkcB8ejVjOwUDb5LabRQnclx+3Va14wvQX+sq+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=mneKf7nz; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49PBaxLZ003726;
+	Fri, 25 Oct 2024 22:02:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	unqZyCgNu9y3JNL4D+vF9Du7quIUHjBrUhkFlZeyWc4=; b=mneKf7nzD3bc2UoU
+	Ps4RPfTPeFtqBo17RUi0clIKsJDXAzfM8qTM5VlX5Y15x8GtdgcCRJtXjN69uK9E
+	zLbS9hzkDpyc4kBHR4RV2MNR3Ln8DmAMcPj7NayWHHUmfCJMJ1AqQ6nUUYbzT3Ej
+	2lXL9KOL6vp985Y+wBscnKjYSRXc9FCKoVmt5lqR/N4yxiM++Pj7+/9wEKxnH1gK
+	zg5/koF0YW2AUes8+fng8GsdRr2iJ5+vdPfOkFp8jGD46OdzFdnwzbLE9q8cBnUM
+	o3o+SdD8o+3GX3cTBnrUm22Kv3zkZbHsvUdOFdQONnZMLDfUDpaFTIYvVPTwzXkp
+	Ww/OaQ==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42em68ae1e-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Oct 2024 22:02:15 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49PM2EP5016597
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Oct 2024 22:02:14 GMT
+Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 25 Oct
+ 2024 15:02:14 -0700
+Message-ID: <49b76568-572d-b3ef-da79-36f1a3c44f27@quicinc.com>
+Date: Fri, 25 Oct 2024 16:02:13 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|PH0PR11MB5079:EE_
-X-MS-Office365-Filtering-Correlation-Id: e4be587a-92b7-4824-809e-08dcf540603c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016|7416014;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?ajdmYzZQbW0zdW9DMXF6cTN4eTR2UlJHT0t4c0VQSWpmQUZhcFZaL3RUMklW?=
- =?utf-8?B?SWJSR0FYUWVoMmMwRTFDNzdUN1k3MGZFS3dhZGFreWJSZWpkYkZrUzB1QlJu?=
- =?utf-8?B?U0hJSVdFWG9DREQ3aVlkb3JKQ0hqKzZPLzBmbEVIY3UyOWljODF4anpGSGhB?=
- =?utf-8?B?RHNiQzl4N3pwSGErMHV1OFRCOHpMdHRYeVltc2pVbEljSjFnRzRwSXNsbW1x?=
- =?utf-8?B?MlQwaXVxcVhiQnc1eE5LaDQ4YmVORUlVQS82VW9lUEhXZ0dOOFU1YWdxYzJP?=
- =?utf-8?B?YWdnVEh4R1RtU2hsaWRDUEJZUmFJcXVnOHV5UnFFMHM5dHdGYVlYMWM4VHVh?=
- =?utf-8?B?ZUc3ZDBxaEwvbjZXd255YXJVNldubFlyRUdFUTcxQVF4YURQdjlnR3dEc3ZQ?=
- =?utf-8?B?aFNYSkdOOVVQdFNvQkVJVWoyTTdGUTNraG9YYlBBWi9SK05qYVVVSTE0dDQ2?=
- =?utf-8?B?aldrVzFwSG94WmJVaDV1cW91YU9jTGF0VVZneXN4dnFPQW1scE8vNjBLTGxX?=
- =?utf-8?B?aVQrK2FXcWlhdkhMQUllNTRRanBrQWl5eWxEUFFDRmxzbFJLT0dCdGZyK3Fy?=
- =?utf-8?B?WTFxMnhJMVFpRWI0ZWZqTFl4VzBGemFwWnBQVTBiV1JWTXVwL2VnLytzUnFM?=
- =?utf-8?B?VWJ4dW5KeGVGSWZac1FjZDFGQ2FoK25USVBaSDFoR2lWRytlWDJUeGYvRS9H?=
- =?utf-8?B?RzhLQmpFYStXQnptVCtRamdVcDZKd0RhZ3FuUStVLzNvOE8yak9DMTJ3WGdT?=
- =?utf-8?B?bm5QcFltTDFJQVU4a1k0K0FWUENoUlM3YVlEUlRDcW85OUNBclRpYkVmRjRD?=
- =?utf-8?B?ak05dEROT0pwazhRb0JGSDhxOXFYQWJwM25DbUFkZ09tN09CYWJtcDRFaFcw?=
- =?utf-8?B?L2Y3aDUyOHJDM0EzR3J1amQzb2N4ZWF6TFNiWGVxRFlZUE4zcEhIRVlrdzJh?=
- =?utf-8?B?RUtaRkhVVUVUUEhXOWZCcnpFb284VUZNWXQwVE1vWHBXWEFUYk1Ncmk3U1pW?=
- =?utf-8?B?V2hsV2E5bFoydzZWdSs3aXoyTDlhMDNXVkxINzJkNTZQRkFTMXdGbUxzbjdh?=
- =?utf-8?B?elVKVmoxVS94LzFNbWNlQko1eDRsTVZHa1pwc01vNURhNVlsMmJ3RDFOdTVJ?=
- =?utf-8?B?dlhwczEzSm5CVlBueVY0WTgvb3AvbTNDUC81QllxMk8yVForbHl3Y3Jwc2Qy?=
- =?utf-8?B?NnRlemljZzhkWnFub1U5T2tnMzBMVy85ZjFxc21BcHBqVzdMNERNTDJWeWht?=
- =?utf-8?B?dUlsWDNJR1JMVVhTQzhlV0pIcThrMEptZmtDQ1kzTGYvTXU3VjRLWmduRGdw?=
- =?utf-8?B?VytHa1JUajRIKzZSM3pOLyticmc1MURFNEdQTlRPTDNCTFBXMUplRTdHcjJQ?=
- =?utf-8?B?NzN3SjJSWDlUOFVwaHhONnl3cXdVRVZPMkZaeVBRUjJrSHRGKzRQekplNHVS?=
- =?utf-8?B?UWR6VlRSYkU3MnNPKzhDbldmRnB3YjhLSjJ4NHBOOUtWUzJaaW9vQ0xtalVl?=
- =?utf-8?B?YVhhRzNlZnBuaHBqWDNZWVprL2gzSUxxZ3Q4eERmVjgzdk9lS1pmWFNPNTh6?=
- =?utf-8?B?OXJzdmFOZHJPRWFSWDhGT2NFU2tkQno3WWg2MVovUXJtNzR3dDNxZFdxalpo?=
- =?utf-8?B?S2Q0ajJKdEVyRWlUclQ3V2RSeFBmcGdVWFV5bi84eXNTbGtMcGJydHl3SDFM?=
- =?utf-8?B?VmxHL0FXWnNEQkxTS1hPZjVaUHB3N3QwYWhMRTAyRERSSzJINFduVWVDeXdS?=
- =?utf-8?Q?NDlYp5QsFReoMj9yQkpc6QOWsMQJgVYouDSXIw7?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?MHpBWXRaa1B5UHFLSWJUWDFGYUVNbGdENFJ0MlFUZDVwUUVVR1JiWkljOHNZ?=
- =?utf-8?B?aGpiczA3T0haUFpidTRURTdVbkNjd3hMUWwrZzNjVlVubHByczJjOG1xUVhZ?=
- =?utf-8?B?Rys4K1dvbjIwYi8vOVR2MG1nNGVORTlmUHQvQkZPSWtxdlBZdEJWRllmY3lL?=
- =?utf-8?B?TUJpR29iVENDOVpPK05yL2VZYUxnSnB1RE1ERDVmS2RCY28rL2dYMjlWdm1B?=
- =?utf-8?B?b3NsckJDWUROekUvdGI2SE1CeTFvd0JZbzdDbVhqcUYyQmxOc09WUzE5OVFR?=
- =?utf-8?B?R0hmN0plclU2UEpuRjFDWEJoYUdHbmZmOEY2QSs5bExMc090ZnZ2VDNjU0pS?=
- =?utf-8?B?WDNyN1VEWG8vcmpKZzB5aGVsWkJUUzJNUExsdTBabkl6Z1RhSk8wSjRXK1Zn?=
- =?utf-8?B?SzZNTFcvbDJsQmZZdmxUWGdtOWRQeWdlRlJCUW0rSEw4NzZGWHd5Nm82V1Nw?=
- =?utf-8?B?Z3ZJUWFYVEpMQjlFd1E1YXRDVEJ4NjFuL1VwY2x3WTFBSGxMMXNvajIvTzg0?=
- =?utf-8?B?MzVJQURJMGRvVEVvVmcrSkJuSFdkWC9ySzdrYmExWmZDSDFtTlR4R1FTdk1m?=
- =?utf-8?B?T2FnT0ZxTWdtTzE3REpMM21oQkZ5TjRFRzEyYzNTMDVBTUh2aWFQQmpyMVFP?=
- =?utf-8?B?L3krNUFUN1pnaWh1YTRxOEU1emVhL3dHMkJlcHgrbjVTaGMzSDJ0SzlSaFVW?=
- =?utf-8?B?d0c5SCtPYnFzZkVPWTJQKyt6UkFYS2dJKzBGZDB6SjdPK3FIUlEyaTFGQnlX?=
- =?utf-8?B?NTRvdDBvcERRVkhwemdCTU8yYk5TNDhRRGpZNlRLRllEbG1SMGRTZlhjLzVT?=
- =?utf-8?B?Y2czQXZlTEZVcklNNEZ0clh3SWVJdnBLeWVxZjRSc3c5SjZHOEY5VmMzU0gz?=
- =?utf-8?B?cmRvSUJ6QUQzcyt6dHBDUFpmOTN2RGg5dUtMT3JVVC9hVzFUWmp5KzF1MHZD?=
- =?utf-8?B?bllWSTduc3JRb1Jjd0pwSEhwbkF5Q08ycGZSRGtxMjNGU2xSNTFRTzNBaDU1?=
- =?utf-8?B?ZXJ5V2JxWk9hUk43a2sxOVBBN0JaUmtTWHgrb0FoeVJoQVNkdVpJa3ZSWUkr?=
- =?utf-8?B?Qm9uUndQQ3d4dTdWNGxCSWRxT2NlZExZd0hnMG9kblViUytRRDBEblR4Wjcz?=
- =?utf-8?B?bFpPUytLdGhIS2k5b0ZoVW9yTFFOUEN4dVl5aXU1WSs0dXFiTUs1MlR5MC9i?=
- =?utf-8?B?Y0lhaEFmOTdWUHBLN0hKcGtkTEp2T3kzemRXWkloZUZNc0daOXFWRlBSS25w?=
- =?utf-8?B?UzVYUnJYc2hMMkdmdWVPV2ZleWg2ZUEvWkE2WFpQc2RDVDVxdTdRMDBmNGs5?=
- =?utf-8?B?SmJxaWxpb3RQS0Y4ZWpheUtwVkRiTjQ4YlRMV043L0xGL2lPWDBLb0tHMnBX?=
- =?utf-8?B?QjVBb0dOcndkSXRtaWYzdFo5MmlpMlliS3hab0VwQlF1MStHVmxJYkZJZHg2?=
- =?utf-8?B?dkQ5MU5pSWZuVng5S09qNnRVR3F5cThmL0hSSjdESTZYWkFUTGkyL3ZqeGlH?=
- =?utf-8?B?TmxxR3FhNnQxaXVBYWFScmp2d3h5aE5uVXBPMzh2OWl4aWx6K3NURUxSUHhh?=
- =?utf-8?B?QjdOUm1vUmJZckpYS3NBNCtkb0s5RFBmWnFDbUF2R0hNZUlhcklRNDlMOUJX?=
- =?utf-8?B?WU1nS1B3ZVA4aUs3dXpNWXAzRWoxSytxdFF0bWdtcm9kbW9jcW8yWWFEKzZ6?=
- =?utf-8?B?dmlkRVo0UXlsL0htNUNFbkpPUkM3dWs3RFhxNnR1ZnUwTk9IRllnVC84Wm1D?=
- =?utf-8?B?bTFmMDRFNEtpMHhHVVZqa1k0cDBqd0hqWkdCc1NITXBMMEErUUFMdmlsK3pQ?=
- =?utf-8?B?dEhNMDZuR28yTzFuWi9OMVBLcytnTmFvTy84eWxrdUltdUJ3ZHhHVlkzM3Nm?=
- =?utf-8?B?WHN6U0ZqQmpoWUVoMGsxK0tQUUhzSk02V2NzeXA0aXJaRjF2Y3BQUWxyYlUw?=
- =?utf-8?B?YkUwcG1IR2lUQzV1Vnh2cHBNbERsODdPNlRGWFRqQWRpWlNHRjVvakZZdU0r?=
- =?utf-8?B?UW1ZaVVpczhHV2orWURhQWJRS1FCcW9UQmEyRy9tTW9CVzg1QU9FNWExTXNz?=
- =?utf-8?B?K28xeXgyZzBrSUVKdW9scnlZSEhScnNrZGZZS1VybVNuT2pTN0U4TEVSRGd6?=
- =?utf-8?B?N2paaXZiZnozN3ViUHcvOEZzNWovd25DTys5WW9lWG91VWxLMTIxR0lOM1ls?=
- =?utf-8?B?REE9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: e4be587a-92b7-4824-809e-08dcf540603c
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Oct 2024 22:00:02.2508
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: H989+Fb02pySxZrfM9qg9HIoU39whe3gvGKhqJ1XAdrRFIQnU1GK9I6POhHkleoRzvxtX8RhDxYDslQ2HdnQBKR05dp+RQcAyBjhiLivm14=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB5079
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.0
+Subject: Re: [PATCH V5 00/10] AMD XDNA driver
+Content-Language: en-US
+To: Lizhi Hou <lizhi.hou@amd.com>, <ogabbay@kernel.org>,
+        <dri-devel@lists.freedesktop.org>
+CC: <linux-kernel@vger.kernel.org>, <min.ma@amd.com>, <max.zhen@amd.com>,
+        <sonal.santan@amd.com>, <king.tam@amd.com>
+References: <20241021161931.3701754-1-lizhi.hou@amd.com>
+ <de895a18-e40f-4996-b799-0a957bd3ca48@quicinc.com>
+ <28047f7a-ee20-0b5b-5bdc-5dea8e0bd412@amd.com>
+From: Jeffrey Hugo <quic_jhugo@quicinc.com>
+In-Reply-To: <28047f7a-ee20-0b5b-5bdc-5dea8e0bd412@amd.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: JADy4uNBJqIGLIjebYbAyP7zIQoDOOCO
+X-Proofpoint-GUID: JADy4uNBJqIGLIjebYbAyP7zIQoDOOCO
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 malwarescore=0
+ priorityscore=1501 adultscore=0 bulkscore=0 phishscore=0 mlxscore=0
+ lowpriorityscore=0 mlxlogscore=999 impostorscore=0 suspectscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410250170
 
-Hi Tony,
-
-On 10/25/24 1:42 PM, Luck, Tony wrote:
-> Plucking out just the big, direction change, comment for discussion (which may make
-> several of the code comments moot).
+On 10/25/2024 3:28 PM, Lizhi Hou wrote:
 > 
->> I needed to refresh my understanding of this work by re-reading the previous discussions.
->> You mentioned in [2]:
->>       I tried out some code to make the event runtime selectable via a r/w file in the
->>       resctrl/info directories. But that got complicated because of the amount of state
->>       that needs to be updated when switching events.
+> On 10/25/24 10:55, Jeffrey Hugo wrote:
+>> On 10/21/2024 10:19 AM, Lizhi Hou wrote:
+>>> This patchset introduces a new Linux Kernel Driver, amdxdna for AMD 
+>>> NPUs.
+>>> The driver is based on Linux accel subsystem.
+>>>
+>>> NPU (Neural Processing Unit) is an AI inference accelerator integrated
+>>> into AMD client CPUs. NPU enables efficient execution of Machine 
+>>> Learning
+>>> applications like CNNs, LLMs, etc.  NPU is based on AMD XDNA
+>>> architecture [1].
+>>>
+>>> AMD NPU consists of the following components:
+>>>
+>>>    - Tiled array of AMD AI Engine processors.
+>>>    - Micro Controller which runs the NPU Firmware responsible for
+>>>      command processing, AIE array configuration, and execution 
+>>> management.
+>>>    - PCI EP for host control of the NPU device.
+>>>    - Interconnect for connecting the NPU components together.
+>>>    - SRAM for use by the NPU Firmware.
+>>>    - Address translation hardware for protected host memory access by 
+>>> the
+>>>      NPU.
+>>>
+>>> NPU supports multiple concurrent fully isolated contexts. Concurrent
+>>> contexts may be bound to AI Engine array spatially and or temporarily.
+>>>
+>>> The driver is licensed under GPL-2.0 except for UAPI header which is
+>>> licensed GPL-2.0 WITH Linux-syscall-note.
+>>>
+>>> User mode driver stack consists of XRT [2] and AMD AIE Plugin for 
+>>> IREE [3].
+>>>
+>>> The firmware for the NPU is distributed as a closed source binary, 
+>>> and has
+>>> already been pushed to the DRM firmware repository [4].
+>>>
+>>> [1]https://www.amd.com/en/technologies/xdna.html
+>>> [2]https://github.com/Xilinx/XRT
+>>> [3]https://github.com/nod-ai/iree-amd-aie
+>>> [4]https://gitlab.freedesktop.org/drm/firmware/-/tree/amd-ipu-staging/amdnpu 
+>>>
+>>>
+>>> Changes since v4:
+>>> - Fix lockdep errors
+>>> - Use __u* structure for struct aie_error
 >>
->> Could you please clarify which state you referred to? I wonder if it may be the
->> struct mbm_state state maintained by mbm_bw_count()? mbm_bw_count() is lightweight
->> and I see no problem with it being called for all supported MBM events when
->> the software controller is enabled. With state for all supported events always available
->> it seems simpler to runtime switch between which events guide the software controller?
+>> One nit, when you send the next version would you please either To: or 
+>> Cc: me on the entire series?  I only get pieces in my inbox which is 
+>> mildly annoying on my end.
+> Sure.
 >>
->> Thinking about it more, it seems possible for the user to use different
->> MBM events to guide the software controller for different resource groups.
+>> Looks like we are getting close here.  One procedural question I have, 
+>> do you have commit permissions to drm-misc?
+> No, I do not have commit permissions yet.
+
+You should apply for access.  Assuming this series is ready before that 
+goes through, I'll apply it.
+
+>> I applied the series to drm-misc-next and tried to build.  Got the 
+>> following errors -
+> 
+> Could you share the build command line? So I can reproduce and verify my 
+> fix.
+
+The command is simple:
+make -j20
+
+The system details, incase it somehow matters:
+Ubuntu 22.04 w/ 5.15 kernel
+
+$ lsb_release -a
+No LSB modules are available.
+Distributor ID: Ubuntu
+Description:    Ubuntu 22.04.3 LTS
+Release:        22.04
+Codename:       jammy
+
+$ uname -a
+Linux jhugo-lnx 5.15.0-89-generic #99-Ubuntu SMP Mon Oct 30 20:42:41 UTC 
+2023 x86_64 x86_64 x86_64 GNU/Linux
+
+The kernel config is probably the relevant piece.  When I first built 
+after applying the series, I was asked to choose what to do with the new 
+config item.  I selected =m.
+.config can be found at 
+https://gist.github.com/quic-jhugo/4cc249b1e3ba127039fbc709a513a432
+
+> 
+> I used "make M=drivers/accel/amdxdna" and did not reproduce the error 
+> with drm-misc-next. It looks build robot did not complain with the patch 
+> neither.
+> 
+> $ git branch
+> * drm-misc-next
+> $ make M=drivers/accel/amdxdna
+>    CC [M]  drivers/accel/amdxdna/aie2_ctx.o
+>    CC [M]  drivers/accel/amdxdna/aie2_error.o
+>    CC [M]  drivers/accel/amdxdna/aie2_message.o
+>    CC [M]  drivers/accel/amdxdna/aie2_pci.o
+>    CC [M]  drivers/accel/amdxdna/aie2_psp.o
+>    CC [M]  drivers/accel/amdxdna/aie2_smu.o
+>    CC [M]  drivers/accel/amdxdna/aie2_solver.o
+>    CC [M]  drivers/accel/amdxdna/amdxdna_ctx.o
+>    CC [M]  drivers/accel/amdxdna/amdxdna_gem.o
+>    CC [M]  drivers/accel/amdxdna/amdxdna_mailbox.o
+>    CC [M]  drivers/accel/amdxdna/amdxdna_mailbox_helper.o
+>    CC [M]  drivers/accel/amdxdna/amdxdna_pci_drv.o
+>    CC [M]  drivers/accel/amdxdna/amdxdna_sysfs.o
+>    CC [M]  drivers/accel/amdxdna/npu1_regs.o
+>    CC [M]  drivers/accel/amdxdna/npu2_regs.o
+>    CC [M]  drivers/accel/amdxdna/npu4_regs.o
+>    CC [M]  drivers/accel/amdxdna/npu5_regs.o
+>    LD [M]  drivers/accel/amdxdna/amdxdna.o
+>    MODPOST drivers/accel/amdxdna/Module.symvers
+>    CC [M]  drivers/accel/amdxdna/amdxdna.mod.o
+>    CC [M]  drivers/accel/amdxdna/.module-common.o
+>    LD [M]  drivers/accel/amdxdna/amdxdna.ko
+> $
+> 
 >>
->> If it is possible to do runtime switching in this way I do think it will simplify this
->> implementation while not requiring the user to remount resctrl to make changes. You
->> mentioned [3] that "a separate patch series" may be coming to address this but doing this
->> now seems simpler while avoiding any future work as well as confusing duplicate ABI
->> ... unless you were referring to other issues that needs to be addressed separately?
+>>   CC [M]  drivers/accel/amdxdna/aie2_ctx.o
+>>   CC [M]  drivers/accel/amdxdna/aie2_error.o
+>>   CC [M]  drivers/accel/amdxdna/aie2_message.o
+>>   CC [M]  drivers/accel/amdxdna/aie2_pci.o
+>>   CC [M]  drivers/accel/amdxdna/aie2_psp.o
+>>   CC [M]  drivers/accel/amdxdna/aie2_smu.o
+>>   CC [M]  drivers/accel/amdxdna/aie2_solver.o
+>>   CC [M]  drivers/accel/amdxdna/amdxdna_ctx.o
+>>   CC [M]  drivers/accel/amdxdna/amdxdna_gem.o
+>>   CC [M]  drivers/accel/amdxdna/amdxdna_mailbox.o
+>>   CC [M]  drivers/accel/amdxdna/amdxdna_mailbox_helper.o
+>>   CC [M]  drivers/accel/amdxdna/amdxdna_pci_drv.o
+>>   CC [M]  drivers/accel/amdxdna/amdxdna_sysfs.o
+>>   CC [M]  drivers/accel/amdxdna/npu1_regs.o
+>>   CC [M]  drivers/accel/amdxdna/npu2_regs.o
+>>   CC [M]  drivers/accel/amdxdna/npu4_regs.o
+>>   CC [M]  drivers/accel/amdxdna/npu5_regs.o
+>>   AR      drivers/base/firmware_loader/built-in.a
+>>   AR      drivers/base/built-in.a
+>> In file included from drivers/accel/amdxdna/aie2_message.c:19:
+>> drivers/accel/amdxdna/amdxdna_ctx.h: In function ‘amdxdna_cmd_get_op’:
+>> drivers/accel/amdxdna/amdxdna_ctx.h:112:16: error: implicit 
+>> declaration of function ‘FIELD_GET’ 
+>> [-Werror=implicit-function-declaration]
+>>   112 |         return FIELD_GET(AMDXDNA_CMD_OPCODE, cmd->header);
+>>       |                ^~~~~~~~~
+>> In file included from drivers/accel/amdxdna/amdxdna_gem.c:15:
+>> drivers/accel/amdxdna/amdxdna_ctx.h: In function ‘amdxdna_cmd_get_op’:
+>> drivers/accel/amdxdna/amdxdna_ctx.h:112:16: error: implicit 
+>> declaration of function ‘FIELD_GET’ 
+>> [-Werror=implicit-function-declaration]
+>>   112 |         return FIELD_GET(AMDXDNA_CMD_OPCODE, cmd->header);
+>>       |                ^~~~~~~~~
+>> In file included from drivers/accel/amdxdna/aie2_psp.c:11:
+>> drivers/accel/amdxdna/aie2_psp.c: In function ‘psp_exec’:
+>> drivers/accel/amdxdna/aie2_psp.c:62:34: error: implicit declaration of 
+>> function ‘FIELD_GET’ [-Werror=implicit-function-declaration]
+>>    62 | FIELD_GET(PSP_STATUS_READY, ready),
+>>       |                                  ^~~~~~~~~
+>> ./include/linux/iopoll.h:47:21: note: in definition of macro 
+>> ‘read_poll_timeout’
+>>    47 |                 if (cond) \
+>>       |                     ^~~~
+>> drivers/accel/amdxdna/aie2_psp.c:61:15: note: in expansion of macro 
+>> ‘readx_poll_timeout’
+>>    61 |         ret = readx_poll_timeout(readl, PSP_REG(psp, 
+>> PSP_STATUS_REG), ready,
+>>       |               ^~~~~~~~~~~~~~~~~~
+>> drivers/accel/amdxdna/amdxdna_ctx.h: In function ‘amdxdna_cmd_set_state’:
+>> drivers/accel/amdxdna/amdxdna_ctx.h:121:24: error: implicit 
+>> declaration of function ‘FIELD_PREP’ 
+>> [-Werror=implicit-function-declaration]
+>>   121 |         cmd->header |= FIELD_PREP(AMDXDNA_CMD_STATE, s);
+>>       |                        ^~~~~~~~~~
+>> drivers/accel/amdxdna/amdxdna_ctx.h: In function ‘amdxdna_cmd_set_state’:
+>> drivers/accel/amdxdna/amdxdna_ctx.h:121:24: error: implicit 
+>> declaration of function ‘FIELD_PREP’ 
+>> [-Werror=implicit-function-declaration]
+>>   121 |         cmd->header |= FIELD_PREP(AMDXDNA_CMD_STATE, s);
+>>       |                        ^~~~~~~~~~
+>> In file included from drivers/accel/amdxdna/aie2_pci.c:22:
+>> drivers/accel/amdxdna/amdxdna_ctx.h: In function ‘amdxdna_cmd_get_op’:
+>> drivers/accel/amdxdna/amdxdna_ctx.h:112:16: error: implicit 
+>> declaration of function ‘FIELD_GET’ 
+>> [-Werror=implicit-function-declaration]
+>>   112 |         return FIELD_GET(AMDXDNA_CMD_OPCODE, cmd->header);
+>>       |                ^~~~~~~~~
+>> In file included from drivers/accel/amdxdna/aie2_ctx.c:18:
+>> drivers/accel/amdxdna/amdxdna_ctx.h: In function ‘amdxdna_cmd_get_op’:
+>> drivers/accel/amdxdna/amdxdna_ctx.h:112:16: error: implicit 
+>> declaration of function ‘FIELD_GET’ 
+>> [-Werror=implicit-function-declaration]
+>>   112 |         return FIELD_GET(AMDXDNA_CMD_OPCODE, cmd->header);
+>>       |                ^~~~~~~~~
+>> drivers/accel/amdxdna/amdxdna_ctx.h: In function ‘amdxdna_cmd_set_state’:
+>> drivers/accel/amdxdna/amdxdna_ctx.h:121:24: error: implicit 
+>> declaration of function ‘FIELD_PREP’ 
+>> [-Werror=implicit-function-declaration]
+>>   121 |         cmd->header |= FIELD_PREP(AMDXDNA_CMD_STATE, s);
+>>       |                        ^~~~~~~~~~
+>> In file included from drivers/accel/amdxdna/amdxdna_ctx.c:16:
+>> drivers/accel/amdxdna/amdxdna_ctx.h: In function ‘amdxdna_cmd_get_op’:
+>> drivers/accel/amdxdna/amdxdna_ctx.h:112:16: error: implicit 
+>> declaration of function ‘FIELD_GET’ 
+>> [-Werror=implicit-function-declaration]
+>>   112 |         return FIELD_GET(AMDXDNA_CMD_OPCODE, cmd->header);
+>>       |                ^~~~~~~~~
+>> cc1: all warnings being treated as errors
+>> drivers/accel/amdxdna/amdxdna_ctx.h: In function ‘amdxdna_cmd_set_state’:
+>> drivers/accel/amdxdna/amdxdna_ctx.h:121:24: error: implicit 
+>> declaration of function ‘FIELD_PREP’ 
+>> [-Werror=implicit-function-declaration]
+>>   121 |         cmd->header |= FIELD_PREP(AMDXDNA_CMD_STATE, s);
+>>       |                        ^~~~~~~~~~
+>> drivers/accel/amdxdna/aie2_ctx.c: In function ‘aie2_hwctx_restart’:
+>> drivers/accel/amdxdna/aie2_ctx.c:114:9: error: too few arguments to 
+>> function ‘drm_sched_start’
+>>   114 |         drm_sched_start(&hwctx->priv->sched);
+>>       |         ^~~~~~~~~~~~~~~
+>> In file included from ./include/trace/events/amdxdna.h:12,
+>>                  from drivers/accel/amdxdna/aie2_ctx.c:13:
+>> ./include/drm/gpu_scheduler.h:593:6: note: declared here
+>>   593 | void drm_sched_start(struct drm_gpu_scheduler *sched, int errno);
+>>       |      ^~~~~~~~~~~~~~~
+>> make[5]: *** [scripts/Makefile.build:229: 
+>> drivers/accel/amdxdna/aie2_psp.o] Error 1
+>> make[5]: *** Waiting for unfinished jobs....
+>> drivers/accel/amdxdna/amdxdna_ctx.h: In function ‘amdxdna_cmd_set_state’:
+>> drivers/accel/amdxdna/amdxdna_ctx.h:121:24: error: implicit 
+>> declaration of function ‘FIELD_PREP’ 
+>> [-Werror=implicit-function-declaration]
+>>   121 |         cmd->header |= FIELD_PREP(AMDXDNA_CMD_STATE, s);
+>>       |                        ^~~~~~~~~~
+>> In file included from drivers/accel/amdxdna/amdxdna_pci_drv.c:18:
+>> drivers/accel/amdxdna/amdxdna_ctx.h: In function ‘amdxdna_cmd_get_op’:
+>> drivers/accel/amdxdna/amdxdna_ctx.h:112:16: error: implicit 
+>> declaration of function ‘FIELD_GET’ 
+>> [-Werror=implicit-function-declaration]
+>>   112 |         return FIELD_GET(AMDXDNA_CMD_OPCODE, cmd->header);
+>>       |                ^~~~~~~~~
+>> cc1: all warnings being treated as errors
+>> make[5]: *** [scripts/Makefile.build:229: 
+>> drivers/accel/amdxdna/aie2_ctx.o] Error 1
+>> drivers/accel/amdxdna/amdxdna_ctx.h: In function ‘amdxdna_cmd_set_state’:
+>> drivers/accel/amdxdna/amdxdna_ctx.h:121:24: error: implicit 
+>> declaration of function ‘FIELD_PREP’ 
+>> [-Werror=implicit-function-declaration]
+>>   121 |         cmd->header |= FIELD_PREP(AMDXDNA_CMD_STATE, s);
+>>       |                        ^~~~~~~~~~
+>> drivers/accel/amdxdna/amdxdna_mailbox.c: In function 
+>> ‘xdna_mailbox_send_msg’:
+>> drivers/accel/amdxdna/amdxdna_mailbox.c:444:26: error: implicit 
+>> declaration of function ‘FIELD_PREP’ 
+>> [-Werror=implicit-function-declaration]
+>>   444 |         header->sz_ver = FIELD_PREP(MSG_BODY_SZ, 
+>> msg->send_size) |
+>>       |                          ^~~~~~~~~~
+>>
+>>
+>> You also have the following checkpatch issues -
 > 
-> Yes, the state maintained by mbm_bw_count() was the piece that worried me. After
-> a user switch to a different event there would be no bandwidth data until two updates
-> passed by (one to get a baseline, second to compute bandwidth). So update_mba_bw()
-> would need to be aware of this liminal period to avoid making updates with no data to
-> back them up.
-> 
-> Your solution is elegant. The cost to maintain bandwidth data for each event is indeed
-> very low. So there are no weird transition cases. update_mba_bw() can immediately 
-> compare bandwidth for the new event against the target bandwidth and make appropriate
-> adjustments.
+> Could you share the command you used?  I tried to use 'dim checkpatch' 
+> and it did not find out the misspelling issue.
 
-Thank you for considering it.
+./scripts/checkpatch.pl --strict --codespell *.patch
 
-> 
-> This requires a new file in each CTRL_MON directory when mba_sc is enabled so
-> the user can make their selection.
-> 
-> Note that technically it would be possible to make a different selection for each domain.
-> But that seems like an option without an obvious use case and would just complicate
-> the syntax of the new file.
+Note, --codespell requires some local setup.  I beleive the comments in 
+the checkpatch.pl script are fairly straightforward.  I use a copy of 
+the database from the github that is rather recent.  The Ubuntu distro 
+package is really out of date and I don't think I looked to see if there 
+is a pythong pip version.  Grabbing the one file from the github repo 
+seemed simple emough.
 
-I did not consider this possibility. I agree with your assessment.
-
-> 
-> Maybe name this new file "mba_sc_event"[1] with contents that match the names of
-> the mbm_monitor events as listed in /sys/fs/resctrl/info/L3_MON/mon_features?
-
-I do like that the content is connected to existing user interface by using events
-from mon_features. What do you think of connecting the filename to existing 
-user interface (the mount option) also by, for example, being named "mba_MBps_event"?
-
-> 
-> So default state when resctrl is mounted with the software controller enabled would
-> have:
-> 
-> $ cat /sys/fs/resctrl/mba_sc_event
-> mbm_local_bytes
-> 
-> User could switch to total with
-> 
-> # echo mbm_total_bytes > /sys/fs/resctrl/mba_sc_event
-> 
-> On systems where mbm_local_bytes is not supported default would be mbm_total_bytes.
-> 
-> New CTRL_MON directories would also default to mbm_local_bytes if it is supported.
-
-This sounds good to me. Thank you very much for considering the change.
-
-Reinette
-
+-Jeff
 
