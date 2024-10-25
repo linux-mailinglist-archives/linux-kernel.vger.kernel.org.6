@@ -1,285 +1,122 @@
-Return-Path: <linux-kernel+bounces-380821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D6509AF692
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 03:19:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BFA59AF69F
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 03:21:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A11BE1C2118F
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 01:19:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B4C08B21F8F
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 01:21:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE0BE125DE;
-	Fri, 25 Oct 2024 01:19:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78B094D8C8;
+	Fri, 25 Oct 2024 01:21:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h9Y3BuEI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cja+f0J2"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E230DBA3D
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 01:19:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C769CC8DF;
+	Fri, 25 Oct 2024 01:21:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729819143; cv=none; b=V/tN6+7zHI3PmRt8LCHyhoDvh3HYaBCVU6P3Gkc1olZ2+kD1305x0QS5TE3J29deHbE62icfH7BgezU3aheWQLR/IaqnAfvkPQDfAXO6vJXRTVvoCYvGj2xz4imCiOtWm8VerMQcosJ73bl0mK0+v94qElY6i0Se7sVNJNgCR6E=
+	t=1729819263; cv=none; b=tiuHRi3I1D99wypNGTbcQ4xshm3IXMtb+oMtO1j/9H8AnyBpIR73b+L/gdXcWCI+O2x+LT6ztq1vCLSFmFMpQMhaVmQwdMRCl4DBu6qg/4DC8A39HSDDukhK/pko9YF5bTDaEd6xM8kt7C4NKsGzd65gKAzmJ0f5FVmm+DyZ3iM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729819143; c=relaxed/simple;
-	bh=2WUpQv5xSA9L8ZAC0Pr5lb+6yWaR3j3uJ/oUJRsB1Ag=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=SPsk+fmOWOi9afmf8XfJqspxfUZXIrC1SBu6xxH3ASnZgBGWu41uVZg053WDJBzjraRrq5e5jgFPdoYUpNGV3mFPvPWTnQCEZKLIcQMDjIb+ld364TqrP5MnOrVN9oSKWnOUUEnLb3LAsa75dBrPCZ8IAl+C08IyDXTwnsXFy5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h9Y3BuEI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C460BC4CEC7;
-	Fri, 25 Oct 2024 01:18:59 +0000 (UTC)
+	s=arc-20240116; t=1729819263; c=relaxed/simple;
+	bh=1otnsKA6AXNJNQvjX5o3McHr/yUE64d7zrdHdVp9Ttk=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=FlAD1txehWoDmPQ0YDq9j6XT8NAO0pAxXOk5Hrk2vPupo+6fSA4q9yCLns30rLd6DR7MwEhKKFp9YvAqHnl8QyW4hWC//UD+e3bXqSpIGvZGzDjUabv/Urpod2u/7d/PKlbi34VhRu8t6A9Qz3/oH9uc19xBBr0mz0HhOyi+47U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cja+f0J2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 61871C4CEC7;
+	Fri, 25 Oct 2024 01:21:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729819142;
-	bh=2WUpQv5xSA9L8ZAC0Pr5lb+6yWaR3j3uJ/oUJRsB1Ag=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=h9Y3BuEI4nVw2E1L41bOtoCSSTfgH4eThsND/kUt5A53DGtmVSQx90e6fn6GWwt5s
-	 k16QNWI9fV/+Q/0n5QZl9cXCAOsFVIkelUmwWS8JmZWRNWgmhnSpBNvry5jGYjqCL+
-	 kJp11khPimcEpfZUxjly/gy/UnS87UAeFC6b4N6MpR4dXAKpCPNbzvrKcftZvdRijf
-	 cD4wMEkVslnWLWxj4CXx9BDuG7dBTdkvWtEjtqraeC7HpliUrwoCkqdsWAdxUbgdrp
-	 gJ/lqIKoeSXV0mnoIsma+YwNrNu6cG8g5HKKaf9e4bOBvB6F6j2KR1WnUHfEpQZtQ1
-	 Z0D3+QUL7elTA==
-Date: Thu, 24 Oct 2024 18:18:58 -0700 (PDT)
-From: Stefano Stabellini <sstabellini@kernel.org>
-X-X-Sender: sstabellini@ubuntu-linux-20-04-desktop
-To: Ryan Roberts <ryan.roberts@arm.com>
-cc: Stefano Stabellini <sstabellini@kernel.org>, 
-    Andrew Morton <akpm@linux-foundation.org>, 
-    Anshuman Khandual <anshuman.khandual@arm.com>, 
-    Ard Biesheuvel <ardb@kernel.org>, 
-    Catalin Marinas <catalin.marinas@arm.com>, 
-    David Hildenbrand <david@redhat.com>, 
-    Greg Marsden <greg.marsden@oracle.com>, Ivan Ivanov <ivan.ivanov@suse.com>, 
-    Kalesh Singh <kaleshsingh@google.com>, Marc Zyngier <maz@kernel.org>, 
-    Mark Rutland <mark.rutland@arm.com>, Matthias Brugger <mbrugger@suse.com>, 
-    Miroslav Benes <mbenes@suse.cz>, Will Deacon <will@kernel.org>, 
-    Juergen Gross <jgross@suse.com>, linux-arm-kernel@lists.infradead.org, 
-    linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-    xen-devel@lists.xenproject.org, julien@xen.org
-Subject: Re: [RFC PATCH v1 36/57] xen: Remove PAGE_SIZE compile-time constant
- assumption
-In-Reply-To: <3027c366-2cb0-4984-8ee7-aae92fb51512@arm.com>
-Message-ID: <alpine.DEB.2.22.394.2410241810320.2264989@ubuntu-linux-20-04-desktop>
-References: <20241014105514.3206191-1-ryan.roberts@arm.com> <20241014105912.3207374-1-ryan.roberts@arm.com> <20241014105912.3207374-36-ryan.roberts@arm.com> <829b5662-13c0-4728-894c-b2d578681b11@arm.com> <alpine.DEB.2.22.394.2410221808160.3833@ubuntu-linux-20-04-desktop>
- <3027c366-2cb0-4984-8ee7-aae92fb51512@arm.com>
-User-Agent: Alpine 2.22 (DEB 394 2020-01-19)
+	s=k20201202; t=1729819263;
+	bh=1otnsKA6AXNJNQvjX5o3McHr/yUE64d7zrdHdVp9Ttk=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=Cja+f0J2AobTEXJerHNGgQ2j301oISqVcvmxo98EdTohH9Fw6w3cZheDm7W/SBcLd
+	 jJAbR7Q8tED+NLncSYNMycZMBDEnaHnK0JylLaJa7Tqu+f6Plv2/Il+RuNZTG44/SW
+	 1m3v/4yxVry5YStfwZt5qfxBEDq5x6FyRYrXyGDRzYPql/fFb+Fud+JhJXZIlwT2TW
+	 RjRr/16GpvsalgYoJXXmqlqP9t+k9ZVUtTAKKe8I8MrtbMPI/L15Q96Y6ekG0BwFmd
+	 0JqCPCRvbTNRZ+lfyGH7D45Wys4Vu+TemVVeSoEZMH1rMHwF1l6HeoQcypGxDwDimI
+	 UNxqKJ9572hrQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E01CD1039C;
+	Fri, 25 Oct 2024 01:21:03 +0000 (UTC)
+From: Nelson Escobar via B4 Relay <devnull+neescoba.cisco.com@kernel.org>
+Subject: [PATCH net-next v2 0/5] enic: Use all the resources configured on
+ VIC
+Date: Thu, 24 Oct 2024 18:19:42 -0700
+Message-Id: <20241024-remove_vic_resource_limits-v2-0-039b8cae5fdd@cisco.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAC7yGmcC/y2NwQrCMBBEf0X2bEq6xhY9+R9SShq3dsEmko2hU
+ vrvhuJpGB7zZgWhyCRwPawQKbNw8KXg8QBusv5Jih+lA2o0tcaTijSHTH1m10eS8ImO+hfPnES
+ RtY0ZL9ScxwGK4B1p5GWX38FTUp6WBF0hE0sK8bu/5nrn/wPUpm51W2FrNCosExIXBntzXLJyY
+ YZu27YfBfx0wbgAAAA=
+X-Change-ID: 20241023-remove_vic_resource_limits-eaa64f9e65fb
+To: John Daley <johndale@cisco.com>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Christian Benvenuti <benve@cisco.com>, Satish Kharat <satishkh@cisco.com>, 
+ Andrew Lunn <andrew+netdev@lunn.ch>, 
+ "David S. Miller" <davem@davemloft.net>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Nelson Escobar <neescoba@cisco.com>, Simon Horman <horms@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1729819262; l=1555;
+ i=neescoba@cisco.com; s=20241023; h=from:subject:message-id;
+ bh=1otnsKA6AXNJNQvjX5o3McHr/yUE64d7zrdHdVp9Ttk=;
+ b=rxT7brw5elvfAKfY0od+z1O8R1B5DOpECJDXa8DVkzNHCyto+LC4iXbSrZ7Q/Z+Cv6dkmCldO
+ 0rW82RCUmlsD9xDTJ1D4xcs6nx0mqkuFsUj2t0HdCzsdtp0MGBi0VeO
+X-Developer-Key: i=neescoba@cisco.com; a=ed25519;
+ pk=bLqWB7VU0KFoVybF4LVB4c2Redvnplt7+5zLHf4KwZM=
+X-Endpoint-Received: by B4 Relay for neescoba@cisco.com/20241023 with
+ auth_id=255
+X-Original-From: Nelson Escobar <neescoba@cisco.com>
+Reply-To: neescoba@cisco.com
 
-On Thu, 24 Oct 2024, Ryan Roberts wrote:
-> On 23/10/2024 02:23, Stefano Stabellini wrote:
-> > +Julien
-> > 
-> > On Wed, 16 Oct 2024, Ryan Roberts wrote:
-> >> + Juergen Gross, Stefano Stabellini
-> >>
-> >> This was a rather tricky series to get the recipients correct for and my script
-> >> did not realize that "supporter" was a pseudonym for "maintainer" so you were
-> >> missed off the original post. Appologies!
-> >>
-> >> More context in cover letter:
-> >> https://lore.kernel.org/all/20241014105514.3206191-1-ryan.roberts@arm.com/
-> >>
-> >>
-> >> On 14/10/2024 11:58, Ryan Roberts wrote:
-> >>> To prepare for supporting boot-time page size selection, refactor code
-> >>> to remove assumptions about PAGE_SIZE being compile-time constant. Code
-> >>> intended to be equivalent when compile-time page size is active.
-> >>>
-> >>> Allocate enough "frame_list" static storage in the balloon driver for
-> >>> the maximum supported page size. Although continue to use only the first
-> >>> PAGE_SIZE of the buffer at run-time to maintain existing behaviour.
-> >>>
-> >>> Refactor xen_biovec_phys_mergeable() to convert ifdeffery to c if/else.
-> >>> For compile-time page size, the compiler will choose one branch and
-> >>> strip the dead one. For boot-time, it can be evaluated at run time.
-> >>>
-> >>> Refactor a BUILD_BUG_ON to evaluate the limit (when the minimum
-> >>> supported page size is selected at boot-time).
-> >>>
-> >>> Reserve enough storage for max page size in "struct remap_data" and
-> >>> "struct xenbus_map_node".
-> >>>
-> >>> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
-> >>> ---
-> >>>
-> >>> ***NOTE***
-> >>> Any confused maintainers may want to read the cover note here for context:
-> >>> https://lore.kernel.org/all/20241014105514.3206191-1-ryan.roberts@arm.com/
-> >>>
-> >>>  drivers/xen/balloon.c              | 11 ++++++-----
-> >>>  drivers/xen/biomerge.c             | 12 ++++++------
-> >>>  drivers/xen/privcmd.c              |  2 +-
-> >>>  drivers/xen/xenbus/xenbus_client.c |  5 +++--
-> >>>  drivers/xen/xlate_mmu.c            |  6 +++---
-> >>>  include/xen/page.h                 |  2 ++
-> >>>  6 files changed, 21 insertions(+), 17 deletions(-)
-> >>>
-> >>> diff --git a/drivers/xen/balloon.c b/drivers/xen/balloon.c
-> >>> index 528395133b4f8..0ed5f6453af0e 100644
-> >>> --- a/drivers/xen/balloon.c
-> >>> +++ b/drivers/xen/balloon.c
-> >>> @@ -131,7 +131,8 @@ struct balloon_stats balloon_stats;
-> >>>  EXPORT_SYMBOL_GPL(balloon_stats);
-> >>>  
-> >>>  /* We increase/decrease in batches which fit in a page */
-> >>> -static xen_pfn_t frame_list[PAGE_SIZE / sizeof(xen_pfn_t)];
-> >>> +static xen_pfn_t frame_list[PAGE_SIZE_MAX / sizeof(xen_pfn_t)];
-> >>> +#define FRAME_LIST_NR_ENTRIES (PAGE_SIZE / sizeof(xen_pfn_t))
-> >>>  
-> >>>  
-> >>>  /* List of ballooned pages, threaded through the mem_map array. */
-> >>> @@ -389,8 +390,8 @@ static enum bp_state increase_reservation(unsigned long nr_pages)
-> >>>  	unsigned long i;
-> >>>  	struct page   *page;
-> >>>  
-> >>> -	if (nr_pages > ARRAY_SIZE(frame_list))
-> >>> -		nr_pages = ARRAY_SIZE(frame_list);
-> >>> +	if (nr_pages > FRAME_LIST_NR_ENTRIES)
-> >>> +		nr_pages = FRAME_LIST_NR_ENTRIES;
-> >>>  
-> >>>  	page = list_first_entry_or_null(&ballooned_pages, struct page, lru);
-> >>>  	for (i = 0; i < nr_pages; i++) {
-> >>> @@ -434,8 +435,8 @@ static enum bp_state decrease_reservation(unsigned long nr_pages, gfp_t gfp)
-> >>>  	int ret;
-> >>>  	LIST_HEAD(pages);
-> >>>  
-> >>> -	if (nr_pages > ARRAY_SIZE(frame_list))
-> >>> -		nr_pages = ARRAY_SIZE(frame_list);
-> >>> +	if (nr_pages > FRAME_LIST_NR_ENTRIES)
-> >>> +		nr_pages = FRAME_LIST_NR_ENTRIES;
-> >>>  
-> >>>  	for (i = 0; i < nr_pages; i++) {
-> >>>  		page = alloc_page(gfp);
-> >>> diff --git a/drivers/xen/biomerge.c b/drivers/xen/biomerge.c
-> >>> index 05a286d24f148..28f0887e40026 100644
-> >>> --- a/drivers/xen/biomerge.c
-> >>> +++ b/drivers/xen/biomerge.c
-> >>> @@ -8,16 +8,16 @@
-> >>>  bool xen_biovec_phys_mergeable(const struct bio_vec *vec1,
-> >>>  			       const struct page *page)
-> >>>  {
-> >>> -#if XEN_PAGE_SIZE == PAGE_SIZE
-> >>> -	unsigned long bfn1 = pfn_to_bfn(page_to_pfn(vec1->bv_page));
-> >>> -	unsigned long bfn2 = pfn_to_bfn(page_to_pfn(page));
-> >>> +	if (XEN_PAGE_SIZE == PAGE_SIZE) {
-> >>> +		unsigned long bfn1 = pfn_to_bfn(page_to_pfn(vec1->bv_page));
-> >>> +		unsigned long bfn2 = pfn_to_bfn(page_to_pfn(page));
-> >>> +
-> >>> +		return bfn1 + PFN_DOWN(vec1->bv_offset + vec1->bv_len) == bfn2;
-> >>> +	}
-> >>>  
-> >>> -	return bfn1 + PFN_DOWN(vec1->bv_offset + vec1->bv_len) == bfn2;
-> >>> -#else
-> >>>  	/*
-> >>>  	 * XXX: Add support for merging bio_vec when using different page
-> >>>  	 * size in Xen and Linux.
-> >>>  	 */
-> >>>  	return false;
-> >>> -#endif
-> >>>  }
-> >>> diff --git a/drivers/xen/privcmd.c b/drivers/xen/privcmd.c
-> >>> index 9563650dfbafc..847f7b806caf7 100644
-> >>> --- a/drivers/xen/privcmd.c
-> >>> +++ b/drivers/xen/privcmd.c
-> >>> @@ -557,7 +557,7 @@ static long privcmd_ioctl_mmap_batch(
-> >>>  	state.global_error  = 0;
-> >>>  	state.version       = version;
-> >>>  
-> >>> -	BUILD_BUG_ON(((PAGE_SIZE / sizeof(xen_pfn_t)) % XEN_PFN_PER_PAGE) != 0);
-> >>> +	BUILD_BUG_ON(((PAGE_SIZE_MIN / sizeof(xen_pfn_t)) % XEN_PFN_PER_PAGE_MAX) != 0);
-> > 
-> > Is there any value in keep this test? And if so, what should it look
-> > like? I think we should turn it into a WARN_ON:
-> > 
-> > WARN_ON(((PAGE_SIZE / sizeof(xen_pfn_t)) % XEN_PFN_PER_PAGE) != 0);
-> > 
-> > It doesn't make much sense having a BUILD_BUG_ON on a variable that can
-> > change?
-> 
-> I believe that as long as we assume sizeof(xen_pfn_t), PAGE_SIZE and
-> XEN_PAGE_SIZE are all power-of-two sizes, then this single build-time test
-> should cover all possible boot-time PAGE_SIZEs.
-> 
-> Logic:
-> 
-> If PAGE_SIZE and XEN_PAGE_SIZE are power-of-two, then XEN_PFN_PER_PAGE must also
-> be power-of-two. XEN_PFN_PER_PAGE_MAX is just the worst case limit.
-> 
-> (PAGE_SIZE_MIN / sizeof(xen_pfn_t)) is the number of xen_pfn_t that fit on
-> smallest page.
-> 
-> If you can get an integer multiple number of XEN_PFN_PER_PAGE_MAX on the
-> smallest page, then it remains an integer multiple as PAGE_SIZE gets bigger,
-> assuming it is restricted to power-of-two sizes.
-> 
-> Perhaps there is a floor in my logic?
-> 
-> I'd prefer to keep BUILD_BUG_ON where possible to avoid the additional image
-> size bloat and runtime costs.
+Allow users to configure and use more than 8 rx queues and 8 tx queues
+on the Cisco VIC.
 
-You are right. It would be nice to add a in-code comment to explain
-this.
+This series changes the maximum number of tx and rx queues supported
+from 8 to the hardware limit of 256, and allocates memory based on the
+number of resources configured on the VIC.
 
-Reviewed-by: Stefano Stabellini <sstabellini@kernel.org>
+Signed-off-by: Nelson Escobar <neescoba@cisco.com>
+---
+Changes in v2:
+- Followed Kalesh's suggestions: removed redundant NULL assigments,
+  returning -ENOMEM directly
+- Reviewed-by tag for Simon Horman <horms@kernel.org>
+- Marked Satish Kharat and John Daley as co-developers to better reflect
+  their role in this patch set
+- Link to v1: https://lore.kernel.org/r/20241022041707.27402-2-neescoba@cisco.com
+
+---
+Nelson Escobar (5):
+      enic: Create enic_wq/rq structures to bundle per wq/rq data
+      enic: Make MSI-X I/O interrupts come after the other required ones
+      enic: Save resource counts we read from HW
+      enic: Allocate arrays in enic struct based on VIC config
+      enic: Adjust used MSI-X wq/rq/cq/interrupt resources in a more robust way
+
+ drivers/net/ethernet/cisco/enic/enic.h         |  62 ++--
+ drivers/net/ethernet/cisco/enic/enic_ethtool.c |   8 +-
+ drivers/net/ethernet/cisco/enic/enic_main.c    | 397 +++++++++++++++----------
+ drivers/net/ethernet/cisco/enic/enic_res.c     |  33 +-
+ 4 files changed, 294 insertions(+), 206 deletions(-)
+---
+base-commit: 6f07cd8301706b661776074ddc97c991d107cc91
+change-id: 20241023-remove_vic_resource_limits-eaa64f9e65fb
+
+Best regards,
+-- 
+Nelson Escobar <neescoba@cisco.com>
 
 
-> >>>  	/* mmap_batch_fn guarantees ret == 0 */
-> >>>  	BUG_ON(traverse_pages_block(m.num, sizeof(xen_pfn_t),
-> >>>  				    &pagelist, mmap_batch_fn, &state));
-> >>> diff --git a/drivers/xen/xenbus/xenbus_client.c b/drivers/xen/xenbus/xenbus_client.c
-> >>> index 51b3124b0d56c..99bde836c10c4 100644
-> >>> --- a/drivers/xen/xenbus/xenbus_client.c
-> >>> +++ b/drivers/xen/xenbus/xenbus_client.c
-> >>> @@ -49,9 +49,10 @@
-> >>>  
-> >>>  #include "xenbus.h"
-> >>>  
-> >>> -#define XENBUS_PAGES(_grants)	(DIV_ROUND_UP(_grants, XEN_PFN_PER_PAGE))
-> >>> +#define XENBUS_PAGES(_grants)		(DIV_ROUND_UP(_grants, XEN_PFN_PER_PAGE))
-> >>> +#define XENBUS_PAGES_MAX(_grants)	(DIV_ROUND_UP(_grants, XEN_PFN_PER_PAGE_MIN))
-> >>>  
-> >>> -#define XENBUS_MAX_RING_PAGES	(XENBUS_PAGES(XENBUS_MAX_RING_GRANTS))
-> >>> +#define XENBUS_MAX_RING_PAGES		(XENBUS_PAGES_MAX(XENBUS_MAX_RING_GRANTS))
-> >>>  
-> >>>  struct xenbus_map_node {
-> >>>  	struct list_head next;
-> >>> diff --git a/drivers/xen/xlate_mmu.c b/drivers/xen/xlate_mmu.c
-> >>> index f17c4c03db30c..a757c801a7542 100644
-> >>> --- a/drivers/xen/xlate_mmu.c
-> >>> +++ b/drivers/xen/xlate_mmu.c
-> >>> @@ -74,9 +74,9 @@ struct remap_data {
-> >>>  	int mapped;
-> >>>  
-> >>>  	/* Hypercall parameters */
-> >>> -	int h_errs[XEN_PFN_PER_PAGE];
-> >>> -	xen_ulong_t h_idxs[XEN_PFN_PER_PAGE];
-> >>> -	xen_pfn_t h_gpfns[XEN_PFN_PER_PAGE];
-> >>> +	int h_errs[XEN_PFN_PER_PAGE_MAX];
-> >>> +	xen_ulong_t h_idxs[XEN_PFN_PER_PAGE_MAX];
-> >>> +	xen_pfn_t h_gpfns[XEN_PFN_PER_PAGE_MAX];
-> >>>  
-> >>>  	int h_iter;	/* Iterator */
-> >>>  };
-> >>> diff --git a/include/xen/page.h b/include/xen/page.h
-> >>> index 285677b42943a..86683a30038a3 100644
-> >>> --- a/include/xen/page.h
-> >>> +++ b/include/xen/page.h
-> >>> @@ -21,6 +21,8 @@
-> >>>  	((page_to_pfn(page)) << (PAGE_SHIFT - XEN_PAGE_SHIFT))
-> >>>  
-> >>>  #define XEN_PFN_PER_PAGE	(PAGE_SIZE / XEN_PAGE_SIZE)
-> >>> +#define XEN_PFN_PER_PAGE_MIN	(PAGE_SIZE_MIN / XEN_PAGE_SIZE)
-> >>> +#define XEN_PFN_PER_PAGE_MAX	(PAGE_SIZE_MAX / XEN_PAGE_SIZE)
-> >>>  
-> >>>  #define XEN_PFN_DOWN(x)	((x) >> XEN_PAGE_SHIFT)
-> >>>  #define XEN_PFN_UP(x)	(((x) + XEN_PAGE_SIZE-1) >> XEN_PAGE_SHIFT)
-> >>
-> 
 
