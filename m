@@ -1,264 +1,171 @@
-Return-Path: <linux-kernel+bounces-380805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7BED9AF65F
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 03:01:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C1CD9AF663
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 03:03:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 462AD1F2277A
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 01:01:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08F362832C5
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 01:03:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D9A6DDBB;
-	Fri, 25 Oct 2024 01:00:57 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB6FA171A7;
+	Fri, 25 Oct 2024 01:03:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l6ND4Rfr"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4959A50;
-	Fri, 25 Oct 2024 01:00:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D6CF29A0;
+	Fri, 25 Oct 2024 01:03:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729818056; cv=none; b=UE9wT/r5M1cOgaFQZtLtUvvZ1ipYqvEUICSXHkC9fADa/Vr5SRBHh210bL/TzpLtbgSwQvhp9t6e79RRFSKTFk40H37WMiHxu1VUF25VYsjSxBI+XtY0Z3LooqJj6sl/GVLZaTN38+8mkfSfoNvDMZnuOQYBw8o742w6AV3cQuk=
+	t=1729818215; cv=none; b=RfqxNF0Mtv5UxrnN4Cn1onEfEXXx87DqSSz5rNtg0MT9M/NS0Ufg4g3ezbzIpZX2XIstj/MJambWeW4vk4xO6HKbza77UG4kxAl6Q+soA94tHO7g7H4+6iLu1AUIv9mddHidLDK1r/YeVKENGtsO65mfc9XpDhLHvoyjw481nD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729818056; c=relaxed/simple;
-	bh=c7LWaHBGNEtWh1lD48toNptASSDPjGMQHo1Uhw3hwm4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=U/Cqltotiw7u/FkAnFjeABjsSjE9u7xGmwFeTfgo7njnLihC9S5d1P3E8POUKftPob3Y7sykZta+/wyVwSkMqjAltW3DN6QLUNoFTccy5Q6ZsEZzw1FoD0/9SptfOVcts+LukESCJWeCoEWMbubWbWUIFRWGkXjVWmKKSFAcADs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E598C4CEC7;
-	Fri, 25 Oct 2024 01:00:55 +0000 (UTC)
-Date: Thu, 24 Oct 2024 21:00:51 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Mark
- Rutland <mark.rutland@arm.com>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Andrew Morton
- <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, Peter
- Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH 1/2] fgraph: Free ret_stacks when graph tracing is done
-Message-ID: <20241024210051.2a436bc4@rorschach.local.home>
-In-Reply-To: <20241025000044.d81eeaeed5802df08e785c10@kernel.org>
-References: <20241024092723.817582319@goodmis.org>
-	<20241024092952.549693956@goodmis.org>
-	<20241025000044.d81eeaeed5802df08e785c10@kernel.org>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1729818215; c=relaxed/simple;
+	bh=ANao3SalIylcgaUhcEsnm2zI9WSTU3qx2wawj/Ele28=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZW39MS1qSccMR79hpoM04Cni9gi8oDMaTkg2ew/BeklIVmdXj4+KfqEKd6uFcmyQFN262le0+8k4dPcgr+ppcrO19BfGr8ygQHU9p34d/sdhGvsFJ8WDvasSvTtGQZC8msGXpODWPA+3+RwpGvLqgSajJ37/baBC2x4yp9YzKeg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l6ND4Rfr; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-71e5ae69880so1064285b3a.2;
+        Thu, 24 Oct 2024 18:03:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729818212; x=1730423012; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=SNGcvfWZU2TxEL7LKZ45PLQqJbpzUP1414tKc6KMVMo=;
+        b=l6ND4Rfr2hYUUnv6x9Ae3A1r10HkguThzVTc3SjsnklHXJRzOPlOek6DY+i/dJw2lq
+         oem469zJXvd7oiZEhs18OtttVr4D4SLLE/KfCjALp6+rroMzMZOcgB5Yfv2cF/RxKj4D
+         1p7hOaZWujU+tJmw5z92t52geY11OcVlyefFR6wqdbtJ68XjhMulMNuJNblZynrFKzdN
+         /v9e2bBFzz+HZe0uvkqOKZ58+M24dwmLWPexhHzla/E9Kx7WGu2embQ/zdu6jsHstGYL
+         304laotOTJd/a1UgiEbRQO9HYM+JAGQqgZlFptNPp7boP1L4Gu/ngmp2Xv3e5RDXtQDf
+         E7mQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729818212; x=1730423012;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SNGcvfWZU2TxEL7LKZ45PLQqJbpzUP1414tKc6KMVMo=;
+        b=lEYQ9lPCwAmv/2D7r1j/VuNpk9e5jncM72KOgT47X9Fr7o92f2/sn0E0MCwBmIVlAO
+         +22Kkyng+eJ9ETivjFLwdgN1adVh46FI/cw08SbbdAHfNKF9VpW6sGoX6RiiBsF02l5D
+         lv3t/6QMHcwXlAdY3ROqKMlA3X8G3DAlpRgqXOv6EyJhf3BaDrz0uEnMYrRuTZwpLlYp
+         3PL491XO5rmZ4rYUvB219xnblNF5EhWJd+L103VpCzv2h4+bILxi+O09xqVaVI7SumYE
+         TWkfUCWH1NwuVYpKe4U+I41lpbPAlxcLzkj2pJ7XQqx2U0fJZ8n2BfTlkQRLHD5HuaIO
+         ry9g==
+X-Forwarded-Encrypted: i=1; AJvYcCUlbfAOivhxVXQTmXoVztmupHM87vHdwWRWtIdM+nUQpuhn9AXYMzWRQNAX/tRnbzIyxUCaBsl3@vger.kernel.org, AJvYcCVTUtOiHw+XLt7/PMc6vPtHcX/6hFSC0lkGwpb3C1Bo+IB6KdPgA1e9sMIMf4ZHG0u5a9NH8Fey8B+utTM+@vger.kernel.org, AJvYcCWaMsfjwFx52+xFwyl5zDkHt3fGygosVey34PS3RHz5B3/A5oV321hnIt7NCdfvsrad3KJwYoS8pu8q@vger.kernel.org, AJvYcCX7GfJosawwoyKYd9uEyuRijwyYSmDqTiGU/N/9yPiZPYnxJ3eoCEOBKB/fDDeMqU6Ona8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBgsVDKj39yIeG37KOkcCXIqVNlgeEZvDfM3/OUVOcoeyilquD
+	XaDggT3v6BcPF+rwLEui9VOHWkPXegmr+yZCZueU3PqZBM3yBhUiTZkVLQ==
+X-Google-Smtp-Source: AGHT+IF0cMHbWVTxjfafW97nsmkrbkE+9N3H1YT2wc59PBi6x6/wVg203OFjCMyt2TzZK3h5DDL3hg==
+X-Received: by 2002:a05:6a21:70cb:b0:1d9:181f:e6d8 with SMTP id adf61e73a8af0-1d978bacfeamr8947325637.31.1729818212239;
+        Thu, 24 Oct 2024 18:03:32 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72057a20406sm47220b3a.166.2024.10.24.18.03.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Oct 2024 18:03:31 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id 41D904352F21; Fri, 25 Oct 2024 08:03:28 +0700 (WIB)
+Date: Fri, 25 Oct 2024 08:03:28 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Joe Damato <jdamato@fastly.com>,
+	Linux Networking <netdev@vger.kernel.org>, namangulati@google.com,
+	edumazet@google.com, amritha.nambiar@intel.com,
+	sridhar.samudrala@intel.com, sdf@fomichev.me, peter@typeblog.net,
+	m2shafiei@uwaterloo.ca, bjorn@rivosinc.com, hch@infradead.org,
+	willy@infradead.org, willemdebruijn.kernel@gmail.com,
+	skhawaja@google.com, kuba@kernel.org,
+	Martin Karsten <mkarsten@uwaterloo.ca>,
+	"David S. Miller" <davem@davemloft.net>,
+	Paolo Abeni <pabeni@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
+	Linux Documentation <linux-doc@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux BPF <bpf@vger.kernel.org>
+Subject: Re: [PATCH net-next v2 6/6] docs: networking: Describe irq suspension
+Message-ID: <ZxruYJizjXR8KUz0@archie.me>
+References: <20241021015311.95468-1-jdamato@fastly.com>
+ <20241021015311.95468-7-jdamato@fastly.com>
+ <ZxYxqhj7cesDO8-j@archie.me>
+ <ZxaCUZ5rNd86gDHG@LQ3V64L9R2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="nCoJbkgUJcwJ4Pal"
+Content-Disposition: inline
+In-Reply-To: <ZxaCUZ5rNd86gDHG@LQ3V64L9R2>
 
-On Fri, 25 Oct 2024 00:00:44 +0900
-Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
 
-> > ---
-> >  kernel/trace/fgraph.c | 113 ++++++++++++++++++++++++++++++++++++------
-> >  1 file changed, 99 insertions(+), 14 deletions(-)
-> > 
-> > diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
-> > index 0b7cf2507569..3c7f115217b4 100644
-> > --- a/kernel/trace/fgraph.c
-> > +++ b/kernel/trace/fgraph.c
-> > @@ -1144,6 +1144,7 @@ void ftrace_graph_init_task(struct task_struct *t)
-> >  	t->curr_ret_stack = 0;
-> >  	t->curr_ret_depth = -1;
-> >  
-> > +	mutex_lock(&ftrace_lock);
-> >  	if (ftrace_graph_active) {
-> >  		unsigned long *ret_stack;
-> >  
-> > @@ -1155,6 +1156,7 @@ void ftrace_graph_init_task(struct task_struct *t)
-> >  			return;  
-> 
-> The above `return;` shows that you miss unlocking ftrace_lock. B^)
+--nCoJbkgUJcwJ4Pal
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Bah, I added this locking after doing most my tests and then seeing
-this needed protection. The return was here before the mutex, but I
-missed it when I added the mutexes. I'll switch this with guard.
+On Mon, Oct 21, 2024 at 09:33:21AM -0700, Joe Damato wrote:
+> On Mon, Oct 21, 2024 at 05:49:14PM +0700, Bagas Sanjaya wrote:
+> > On Mon, Oct 21, 2024 at 01:53:01AM +0000, Joe Damato wrote:
+> > > diff --git a/Documentation/networking/napi.rst b/Documentation/networ=
+king/napi.rst
+> > > index dfa5d549be9c..3b43477a52ce 100644
+> > > --- a/Documentation/networking/napi.rst
+> > > +++ b/Documentation/networking/napi.rst
+> > > @@ -192,6 +192,28 @@ is reused to control the delay of the timer, whi=
+le
+> > >  ``napi_defer_hard_irqs`` controls the number of consecutive empty po=
+lls
+> > >  before NAPI gives up and goes back to using hardware IRQs.
+> > > =20
+> > > +The above parameters can also be set on a per-NAPI basis using netli=
+nk via
+> > > +netdev-genl. This can be done programmatically in a user application=
+ or by
+> > > +using a script included in the kernel source tree: ``tools/net/ynl/c=
+li.py``.
+> > > +
+> > > +For example, using the script:
+> > > +
+> > > +.. code-block:: bash
+> > > +
+> > > +  $ kernel-source/tools/net/ynl/cli.py \
+> > > +            --spec Documentation/netlink/specs/netdev.yaml \
+> > > +            --do napi-set \
+> > > +            --json=3D'{"id": 345,
+> > > +                     "defer-hard-irqs": 111,
+> > > +                     "gro-flush-timeout": 11111}'
+> > > +
+> > > +Similarly, the parameter ``irq-suspend-timeout`` can be set using ne=
+tlink
+> > > +via netdev-genl. There is no global sysfs parameter for this value.
+> >=20
+> > In JSON, both gro-flush-timeout and irq-suspend-timeout parameter
+> > names are written in hyphens; but the rest of the docs uses underscores
+> > (that is, gro_flush_timeout and irq_suspend_timeout), right?
+>=20
+> That's right. The YAML specification uses hyphens throughout, so we
+> follow that convention there.
+>=20
+> In the rest of the docs we use the name of the field which appears
+> in the code itself, which uses underscores.
 
-> 
-> >  		graph_init_task(t, ret_stack);
-> >  	}
-> > +	mutex_unlock(&ftrace_lock);
-> >  }
-> >  
-> >  void ftrace_graph_exit_task(struct task_struct *t)
-> > @@ -1292,19 +1294,106 @@ static void ftrace_graph_disable_direct(bool disable_branch)
-> >  	fgraph_direct_gops = &fgraph_stub;
-> >  }
-> >  
-> > -/* The cpu_boot init_task->ret_stack will never be freed */
-> > -static int fgraph_cpu_init(unsigned int cpu)
-> > +static void __fgraph_cpu_init(unsigned int cpu)
-> >  {
-> >  	if (!idle_task(cpu)->ret_stack)
-> >  		ftrace_graph_init_idle_task(idle_task(cpu), cpu);
-> > +}
-> > +
-> > +static int fgraph_cpu_init(unsigned int cpu)
-> > +{
-> > +	if (ftrace_graph_active)
-> > +		__fgraph_cpu_init(cpu);
-> >  	return 0;
-> >  }
-> >  
-> > +struct ret_stack_free_data {
-> > +	struct list_head		list;
-> > +	struct task_struct		*task;
-> > +};
-> > +
-> > +static void remove_ret_stack(struct task_struct *t, struct list_head *head, int list_index)
-> > +{
-> > +	struct ret_stack_free_data *free_data;
-> > +
-> > +	/* If the ret_stack is still in use, skip this */
-> > +	if (t->curr_ret_depth >= 0)
-> > +		return;
-> > +
-> > +	free_data = (struct ret_stack_free_data*)(t->ret_stack + list_index);
-> > +	list_add(&free_data->list, head);
-> > +	free_data->task = t;
-> > +}
-> > +
-> > +static void free_ret_stacks(void)
-> > +{
-> > +	struct ret_stack_free_data *free_data, *n;
-> > +	struct task_struct *g, *t;
-> > +	LIST_HEAD(stacks);
-> > +	int list_index;
-> > +	int list_sz;
-> > +	int cpu;
-> > +
-> > +	/* Calculate the size in longs to hold ret_stack_free_data */
-> > +	list_sz = DIV_ROUND_UP(sizeof(struct ret_stack_free_data), sizeof(long));
-> > +
-> > +	/*
-> > +	 * We do not want to race with __ftrace_return_to_handler() where this
-> > +	 * CPU can see the update to curr_ret_depth going to zero before it
-> > +	 * actually does. As tracing is disabled, the ret_stack is not going
-> > +	 * to be used anymore and there will be no more callbacks. Use
-> > +	 * the top of the stack as the link list pointer to attach this  
-> 
-> > +	 * ret_stack to @head. Then at the end, run an RCU trace synthronization
-> > +	 * which will guarantee that there are no more uses of the ret_stacks
-> > +	 * and they can all be freed.  
-> 
-> Just a comment.
-> This part can mislead, the ret_stacks here are the ret_stacks which can be
-> used by currently running callbacks on other CPUs. Some other ret_stack are
-> still used and the owner tasks are in sleep.
+OK, thanks!
 
-OK, I'll update the comment.
+--=20
+An old man doll... just what I always wanted! - Clara
 
-> 
-> > +	 */
-> > +	list_index = SHADOW_STACK_MAX_OFFSET - list_sz;
-> > +
-> > +	read_lock(&tasklist_lock);
-> > +	for_each_process_thread(g, t) {
-> > +		if (t->ret_stack)
-> > +			remove_ret_stack(t, &stacks, list_index);
-> > +	}
-> > +	read_unlock(&tasklist_lock);
-> > +
-> > +	cpus_read_lock();
-> > +	for_each_online_cpu(cpu) {
-> > +		t = idle_task(cpu);
-> > +		if (t->ret_stack)
-> > +			remove_ret_stack(t, &stacks, list_index);
-> > +	}
-> > +	cpus_read_unlock();
-> > +
-> > +	/* Make sure nothing is using the ret_stacks anymore */
-> > +	synchronize_rcu_tasks_trace();
-> > +
-> > +	list_for_each_entry_safe(free_data, n, &stacks, list) {
-> > +		unsigned long *stack = free_data->task->ret_stack;
-> > +
-> > +		free_data->task->ret_stack = NULL;
-> > +		kmem_cache_free(fgraph_stack_cachep, stack);
-> > +	}
-> > +}
-> > +
-> > +static __init int fgraph_init(void)
-> > +{
-> > +	int ret;
-> > +
-> > +	ret = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "fgraph_idle_init",  
-> 
-> nit: Shouldn't we update the name first?
+--nCoJbkgUJcwJ4Pal
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Heh, I guess ;-)
+-----BEGIN PGP SIGNATURE-----
 
-Thank for the review!
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZxruXAAKCRD2uYlJVVFO
+o+elAQDkoqcE6id9sBM4flYDeF4AKjCK6eoWx1sJOc1cWJZm+gD/Qhegiolned1A
+OLxCqHd6kJJi29DFvz4KZ9i0VkWPUAM=
+=6/03
+-----END PGP SIGNATURE-----
 
--- Steve
-
-> 
-> 
-> Thank you,
-> 
-> > +				fgraph_cpu_init, NULL);
-> > +	if (ret < 0) {
-> > +		pr_warn("fgraph: Error to init cpu hotplug support\n");
-> > +		return ret;
-> > +	}
-> > +	return 0;
-> > +}
-> > +core_initcall(fgraph_init)
-> > +
-> >  int register_ftrace_graph(struct fgraph_ops *gops)
-> >  {
-> > -	static bool fgraph_initialized;
-> >  	int command = 0;
-> >  	int ret = 0;
-> > +	int cpu;
-> >  	int i = -1;
-> >  
-> >  	mutex_lock(&ftrace_lock);
-> > @@ -1319,17 +1408,6 @@ int register_ftrace_graph(struct fgraph_ops *gops)
-> >  		}
-> >  	}
-> >  
-> > -	if (!fgraph_initialized) {
-> > -		ret = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "fgraph_idle_init",
-> > -					fgraph_cpu_init, NULL);
-> > -		if (ret < 0) {
-> > -			pr_warn("fgraph: Error to init cpu hotplug support\n");
-> > -			return ret;
-> > -		}
-> > -		fgraph_initialized = true;
-> > -		ret = 0;
-> > -	}
-> > -
-> >  	if (!fgraph_array[0]) {
-> >  		/* The array must always have real data on it */
-> >  		for (i = 0; i < FGRAPH_ARRAY_SIZE; i++)
-> > @@ -1346,6 +1424,12 @@ int register_ftrace_graph(struct fgraph_ops *gops)
-> >  
-> >  	ftrace_graph_active++;
-> >  
-> > +	cpus_read_lock();
-> > +	for_each_online_cpu(cpu) {
-> > +		__fgraph_cpu_init(cpu);
-> > +	}
-> > +	cpus_read_unlock();
-> > +
-> >  	if (ftrace_graph_active == 2)
-> >  		ftrace_graph_disable_direct(true);
-> >  
-> > @@ -1418,6 +1502,7 @@ void unregister_ftrace_graph(struct fgraph_ops *gops)
-> >  		ftrace_graph_entry = ftrace_graph_entry_stub;
-> >  		unregister_pm_notifier(&ftrace_suspend_notifier);
-> >  		unregister_trace_sched_switch(ftrace_graph_probe_sched_switch, NULL);
-> > +		free_ret_stacks();
-> >  	}
-> >   out:
-> >  	gops->saved_func = NULL;
-> > -- 
-> > 2.45.2
+--nCoJbkgUJcwJ4Pal--
 
