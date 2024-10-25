@@ -1,124 +1,129 @@
-Return-Path: <linux-kernel+bounces-382324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29A9A9B0C5E
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 19:59:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE0CC9B0C63
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 20:00:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B0859B22CA1
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:59:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 088D01C221ED
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 18:00:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 101F618F2F6;
-	Fri, 25 Oct 2024 17:59:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D318920A5D0;
+	Fri, 25 Oct 2024 17:59:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Q13IfKNk"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="UFU6Hiib"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61BBF189F45
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 17:59:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729879185; cv=none; b=Ga/TUi57G4EXOVrBu9wmnWj7p6JngbgXfRg6zzPjL19SbaEkvUC4nXqtB5z+PvnGC/RteOSKQBvhNNmknZbSTiP92gl0Dl8luqEFfS9AGoCsxthwoVZYq/GHEf6Xn7dX7Cmbo2MPImKj7RcDCjTLS1iKri7jqDbMk5cQs4nrTGc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729879185; c=relaxed/simple;
-	bh=sDClj3F2zVDw8HHKQa1Rcc7mMEGGNOUgcwk/dqrRQWw=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XzqI/t8qzu+ZzjJXqJuCb59xRYD0kPF5XRXdnW/6mCVuv8kK8fsS+iKur5x2e3eNgl0iqbeo1ErkfknvzjBwpyXwKQoddUXfMnMDSWBVbGVpGzerslfX1MwDOV1OmlDDido+BUPH4wFm+pxvr83J4bvtFPPErEFwseZioA3f3ng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Q13IfKNk; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49PHxQJc007560;
-	Fri, 25 Oct 2024 12:59:26 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1729879166;
-	bh=jcNoOZBJJBSwyMBSITJGawjX8pnb6pPwRpawRlbsCqY=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=Q13IfKNkSh86qp67RzR7TTIpltxw0DFWl2zM7lReqzU42HCSKehglIAkCDUsJBApv
-	 xzLuShuzQ4tHry8PXhASC/bVmgACOA8VycY7Y/kb8oE0xEWIBEmHDz6gJu7PoTDNTJ
-	 RQr1z3PgEr34bF4uqPVlb2InWdI0+Q6sFp8MLc5k=
-Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 49PHxQ9i027961
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 25 Oct 2024 12:59:26 -0500
-Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 25
- Oct 2024 12:59:26 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 25 Oct 2024 12:59:25 -0500
-Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49PHxPXl128559;
-	Fri, 25 Oct 2024 12:59:25 -0500
-From: Nishanth Menon <nm@ti.com>
-To: Jassi Brar <jassisinghbrar@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier
-	<mathieu.poirier@linaro.org>,
-        Martyn Welch <martyn.welch@collabora.com>,
-        Hari
- Nagalla <hnagalla@ti.com>, Andrew Davis <afd@ti.com>
-CC: Nishanth Menon <nm@ti.com>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: (subset) [PATCH v2 0/3] Enable compile testing of TI MSGMGR/SPROXY driver
-Date: Fri, 25 Oct 2024 12:59:24 -0500
-Message-ID: <172987914538.477005.11816962264560040485.b4-ty@ti.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20241015213322.2649011-1-afd@ti.com>
-References: <20241015213322.2649011-1-afd@ti.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E75B20102B
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 17:59:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729879190; cv=pass; b=vE0ySHJ+B5wd2OHrMFENtZpYfHFZPslgr0jM2PQlTr4ELROlCITvXrCMkgvq1Zn5ebFzGkEIP7BSSO64yyhTns33ttD3uK8Q0nAmN5EVhnj18JvfMk61w28GOk6UfGdCWOgVPne3l17/MLcMlyp/IrEIBD3/GVSNdB6owbmYnp8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729879190; c=relaxed/simple;
+	bh=hKFUCTWT0BkFYd3KtDUY9k1SzReqA9ctSD2OwdkCiGE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RuWbYSdo1vjbCSJoO8NlFRfN0PElMXO/jpuyU4nf8Q9dn4/NtT8JLVYruewKQQi2GYRbQrW6sEIx5Stq9/oUUotHozhdQYlpm6tgID5qUsMqyuPrM/wPLeO9WkDQQ6lhoUB7ww1QqQvshNbaHz7S7M3GPkUNLuL4cUtCyGF2VcY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=UFU6Hiib; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1729879175; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=YotU0suanNeLwfdlee4TTl/JSM8MRVMfMZH6cawJ7PepI697YKjEdj6tJPqRT/CN0KU3kKZM9sK6oMmFUsrOtKr+k29XgOJ0ixsIi3Pfp3rB/8LFmb2R1ckwvLDYtFqzxW81eMUSZaxLaNm/75LNHgic73ENG0D2xS+KkktmiWI=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1729879175; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=SDR/2walgN8msRG3na8ZVPKgJth6f+dq/ymHTRdWh1g=; 
+	b=YZbOFTQ2bqUoKPz1inD0p3qU6GWaygJMWMty7Too31Z3ysdW9xCtKc5VLKTA60inJTMJYSXS+Feube2sAn2TVGZwZaofBTmx86Xv4BiwqaH2vsBS7jju8GO0PsQ2/MGFQ+0CE5iipNMHv7ykUq3fTqfNCjku85c2ZmjAIoS8bsY=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
+	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1729879175;
+	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=SDR/2walgN8msRG3na8ZVPKgJth6f+dq/ymHTRdWh1g=;
+	b=UFU6HiibijfIbCD3IgoIt0i8YZbW5LaS1WebHtNo7TPkCyVedvSnE2F8lUG84mMb
+	sXm/JaTxBbNRK1Ut4k2F68JEotcYd3C2SR91vhY94a556+DaMvPYnHmotmQdikym6Dz
+	X86udJP/SpFN1QDvMdRTA9b45iC42fPrbU3FVZy0=
+Received: by mx.zohomail.com with SMTPS id 1729879172868517.0244715513983;
+	Fri, 25 Oct 2024 10:59:32 -0700 (PDT)
+Message-ID: <18415279-39d3-4ce3-bef2-58566276799b@collabora.com>
+Date: Fri, 25 Oct 2024 20:59:27 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/2] drm/virtio: New fence for every plane update
+To: "Kasireddy, Vivek" <vivek.kasireddy@intel.com>,
+ David Airlie <airlied@redhat.com>, Gerd Hoffmann <kraxel@redhat.com>,
+ Gurchetan Singh <gurchetansingh@chromium.org>, Chia-I Wu
+ <olvaffe@gmail.com>, Rob Clark <robdclark@gmail.com>,
+ Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>,
+ "Kim, Dongwon" <dongwon.kim@intel.com>
+Cc: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ "virtualization@lists.linux-foundation.org"
+ <virtualization@lists.linux-foundation.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "kernel@collabora.com" <kernel@collabora.com>
+References: <20241020230803.247419-1-dmitry.osipenko@collabora.com>
+ <20241020230803.247419-2-dmitry.osipenko@collabora.com>
+ <IA0PR11MB7185FA36BD2988FD75239C5EF84C2@IA0PR11MB7185.namprd11.prod.outlook.com>
+Content-Language: en-US
+From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+In-Reply-To: <IA0PR11MB7185FA36BD2988FD75239C5EF84C2@IA0PR11MB7185.namprd11.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
 
-Hi Andrew Davis,
+On 10/22/24 07:44, Kasireddy, Vivek wrote:
+>>  		virtio_gpu_cmd_resource_flush(vgdev, bo->hw_res_handle,
+>> x, y,
+>> -					      width, height, objs, vgfb->fence);
+>> +					      width, height, objs,
+>> +					      vgplane_st->fence);
+>>  		virtio_gpu_notify(vgdev);
+>> -
+>> -		dma_fence_wait_timeout(&vgfb->fence->f, true,
+>> +		dma_fence_wait_timeout(&vgplane_st->fence->f, true,
+>>  				       msecs_to_jiffies(50));
+>> -		dma_fence_put(&vgfb->fence->f);
+>> -		vgfb->fence = NULL;
+> Not sure if it makes any difference but would there be a problem if you unref
+> the fence here (existing behavior) instead of deferring it until cleanup?
 
-On Tue, 15 Oct 2024 16:33:19 -0500, Andrew Davis wrote:
-> This driver can be compile tested on non-TI platforms. Enabling this
-> also allows compile testing of drivers down the dependency tree,
-> such as TI_SCI_PROTOCOL.
+Previously fence was a part of virtio-gpu framebuffer, which was kind of
+a hack. Maybe there was no better option back then, when this code was
+written initially.
+
+Now fence is a part of plane's atomic state, like it should be. We
+shouldn't change atomic state at the commit time.
+
+...
+>> @@ -326,11 +348,9 @@ static void virtio_gpu_cursor_plane_update(struct
+>> drm_plane *plane,
+>>  			(vgdev, 0,
+>>  			 plane->state->crtc_w,
+>>  			 plane->state->crtc_h,
+>> -			 0, 0, objs, vgfb->fence);
+>> +			 0, 0, objs, vgplane_st->fence);
+>>  		virtio_gpu_notify(vgdev);
+>> -		dma_fence_wait(&vgfb->fence->f, true);
+>> -		dma_fence_put(&vgfb->fence->f);
+>> -		vgfb->fence = NULL;
+> Same comment as above.
+> Regardless, the patch LGTM.
 > 
-> Thanks,
-> Andrew
-> 
-> [...]
+> Acked-by: Vivek Kasireddy <vivek.kasireddy@intel.com>
 
-I have applied the following to branch ti-drivers-soc-next on [1].
-Thank you!
+Thanks for the review :)
 
-[1/3] firmware: ti_sci: Remove use of of_match_ptr() helper
-      commit: a4c14f509509a6a24f25edb7619f55f204a8433f
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent up the chain during
-the next merge window (or sooner if it is a relevant bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git
 -- 
-Regards,
-Nishanth Menon
-Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
-
+Best regards,
+Dmitry
 
