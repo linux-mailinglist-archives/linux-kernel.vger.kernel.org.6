@@ -1,110 +1,173 @@
-Return-Path: <linux-kernel+bounces-382047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 634F19B084B
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:30:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40EEC9B0854
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:31:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D8D11C21898
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:30:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64DF31C2202C
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:31:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 712B615ADAB;
-	Fri, 25 Oct 2024 15:30:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2688215ADAB;
+	Fri, 25 Oct 2024 15:31:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="BV/VLkhq"
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="j0YhvipQ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A218B13632B
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 15:30:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47C3F6F099;
+	Fri, 25 Oct 2024 15:31:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729870224; cv=none; b=S1tagyjwqPMNYtqS6hZMTUVsDwNJi5FpeoNTymf4MZ+xuYNBlNEQLAnEBMDZPmWn86aDbEevy/5smmpEftIUwE4BtdoMaZPsup633dpCtmzUYiiMl7VLRSPYozp/tUwjaeK0bxtESucP4jBhbkfoqvWCRBGMh6DMBVyaXdN0Vzk=
+	t=1729870301; cv=none; b=SKeC+xIBEFTcx1UizrEgvMJvZ7Jv24kML6KqAi0+BDWhGyH+wfGnaIehPMZb1EkE1JOnyjwpINxqqd8GGeiBxegVgp4cKd6s/m8K4lTa0WtnR/CdK3/qzMoHHVuwz+nvktMuSZpKoPjSOLTu+V+2JRXkJdtSjSayWgv6179a5I8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729870224; c=relaxed/simple;
-	bh=NdKEYU7SSmomiQox6PG8vZzeDfCa97hRQnFFhOzpm54=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=SmwV2oaovfLTBumvYyma6RYp6R+kdAr5qDj9FPKYoQ1MVFqJcAAhu/QP/tFoAdM9T5doS2eZoxmBMQ8P6F6i6NiRnvO9XaXcMYV7uVF6sfB7ddifzAyYERnIUdc4yxCtX7AggLqCjzMhw1vXUZ4PJV5MFVDqC7f6XUD2ft5+ZCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=BV/VLkhq; arc=none smtp.client-ip=209.85.160.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-460ab1bc2aeso13056491cf.3
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 08:30:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1729870219; x=1730475019; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=0/0gSt9Zn5voS0xYF+67Tc7RHamS0uLc55qNVJevcTg=;
-        b=BV/VLkhqaFKjdf6lWrfAjTUpewRJYfdpbz9SBGiBE08cCyXoYYrDnSRK7FW5l8Pd2I
-         sdD1wbOxtuo4Wt/uK4RV3+tlDzeG/dRI/RmxKY478pZ0w47vBvO5+Ql+w6Bl5A1kIuTa
-         x4Q9stcoMWsvq8ZFABu+tWxNAgqeFVpftrjP4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729870219; x=1730475019;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0/0gSt9Zn5voS0xYF+67Tc7RHamS0uLc55qNVJevcTg=;
-        b=ZiN8Ewo1PuPs6DgD9+Uxz0l6yX/Ql6jUvyU6cHYS7uxT+g060uqp90QGGDrT6lNkLx
-         jknKAzh3rn0nXz33f13TOe5IRRpinPjn4ODrqWnfjC8vnv/BUFB8jAs2hDiZoJvYl8S4
-         3PnMBjJjQxgRdW+INjdotGWSo+YwC65tfUKq3VRBU/QQP2q8nogPQA4+vyYj/KV/jt4l
-         c9+8QOYj0hcc/tT1CscpoCPfDZSk/KU3bezyNMYStSPNGW35PtvXoEZ8ZYlmHDnw6Axg
-         RLsK52fbQdeNIttqu6ogB/cUrnbeH/Ag48qdyGwlUUunroTLzWXtNQPoyHtsRvE6tr4T
-         8Yaw==
-X-Gm-Message-State: AOJu0Yxpo6IXDfpiRlbhycZiPSwMfMvN+bvzXdGjrXXlSxaHzNg3moB9
-	lp82kVbjTeGaUAI5m1Coj8ECikkMqoY4tbgkbzbZok2k9+VoiVhNaF84IF0rulTwXn5iaCKmnGp
-	8PYFVaQnw+I58ftDOIY5poKBbaJuhQ/nfIvDZmOwd3YQd0GSamRk=
-X-Google-Smtp-Source: AGHT+IENPXL5kBY76KVgzzN5iP+92toLqFuO5GmVpaPEr/KAjSQrgUt7sY9WE1S/LY2aq+ByXCkrXVad7005xbl9STI=
-X-Received: by 2002:ac8:598f:0:b0:460:e633:556e with SMTP id
- d75a77b69052e-461146c5a31mr130256971cf.30.1729870219255; Fri, 25 Oct 2024
- 08:30:19 -0700 (PDT)
+	s=arc-20240116; t=1729870301; c=relaxed/simple;
+	bh=/2J1GjARnQin8IDRVr7yEGcvHtYaMVqYqN1depWkivw=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=gHq8xaX/BxZrg/KaWWnWLpM/06+gFIiZfGGe4jgQ17IyI4VBB/kbiUVYsJGg9KNp8VWTBwHdQIL1tuxPysvbnjcpERy1ntJom+ltWjyQ+xUHui9CaUZp8Zq/l1sMOdXYK59eNh4mCPbCdIvxxkgQb0VVG2/dEzI859tEkjUpohs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=j0YhvipQ; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729870300; x=1761406300;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=/2J1GjARnQin8IDRVr7yEGcvHtYaMVqYqN1depWkivw=;
+  b=j0YhvipQwr+avgKEPWAj6YhHi9R/9alz4VKeifNqdeE2AGDoPENP/24D
+   tP3UT9ZGMljKYCCRKonb6XIsUyMKQIo9mJKkxPu1xGSHQgAICWc2CcU/Z
+   DK+QP0P3uDUzrMGcPEd48I3e1v6gWIOS3i4VFGWq2/V/LZeSqBn/CkmEn
+   aDVeI8tlDxmEETa24zDg5q0WXsyQRsIx/3rdt9/XEp3E/fnQt54xhSpmX
+   Uj5OfqPqnVspqkgZTcttdZzDLUK11Xx4AgrnX8sBGTnKZOb83M7meNPO/
+   yL096LqSZ3NwROb9suc4s2DtLVbPEq/kHYqd7iC9/aeQ3eewZh51WcMB7
+   A==;
+X-CSE-ConnectionGUID: 8hmX+HC5QxmKoiux1pZIYQ==
+X-CSE-MsgGUID: RY1L4P91Tbqzb/CMUmcnlQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11236"; a="40935920"
+X-IronPort-AV: E=Sophos;i="6.11,232,1725346800"; 
+   d="scan'208";a="40935920"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2024 08:31:38 -0700
+X-CSE-ConnectionGUID: R52BphinSZOxfUkm8HgmHg==
+X-CSE-MsgGUID: LI6dv1k3QkeHmZVNhcth6A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,232,1725346800"; 
+   d="scan'208";a="84901931"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.225])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2024 08:31:24 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Fri, 25 Oct 2024 18:31:21 +0300 (EEST)
+To: Philipp Stanner <pstanner@redhat.com>
+cc: Jonathan Corbet <corbet@lwn.net>, Damien Le Moal <dlemoal@kernel.org>, 
+    Niklas Cassel <cassel@kernel.org>, 
+    Giovanni Cabiddu <giovanni.cabiddu@intel.com>, 
+    Herbert Xu <herbert@gondor.apana.org.au>, 
+    "David S. Miller" <davem@davemloft.net>, 
+    Boris Brezillon <bbrezillon@kernel.org>, 
+    Arnaud Ebalard <arno@natisbad.org>, Srujana Challa <schalla@marvell.com>, 
+    Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+    Miri Korenblit <miriam.rachel.korenblit@intel.com>, 
+    Kalle Valo <kvalo@kernel.org>, Serge Semin <fancer.lancer@gmail.com>, 
+    Jon Mason <jdmason@kudzu.us>, Dave Jiang <dave.jiang@intel.com>, 
+    Allen Hubbe <allenbh@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>, 
+    Kevin Cernekee <cernekee@gmail.com>, 
+    Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+    Jiri Slaby <jirislaby@kernel.org>, Jaroslav Kysela <perex@perex.cz>, 
+    Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>, 
+    David Lechner <dlechner@baylibre.com>, 
+    =?ISO-8859-15?Q?Uwe_Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, 
+    Jie Wang <jie.wang@intel.com>, Tero Kristo <tero.kristo@linux.intel.com>, 
+    Adam Guerin <adam.guerin@intel.com>, 
+    Shashank Gupta <shashank.gupta@intel.com>, 
+    Przemek Kitszel <przemyslaw.kitszel@intel.com>, 
+    Bharat Bhushan <bbhushan2@marvell.com>, 
+    Nithin Dabilpuram <ndabilpuram@marvell.com>, 
+    Johannes Berg <johannes.berg@intel.com>, 
+    Emmanuel Grumbach <emmanuel.grumbach@intel.com>, 
+    Gregory Greenman <gregory.greenman@intel.com>, 
+    Benjamin Berg <benjamin.berg@intel.com>, 
+    Yedidya Benshimol <yedidya.ben.shimol@intel.com>, 
+    Breno Leitao <leitao@debian.org>, 
+    Florian Fainelli <florian.fainelli@broadcom.com>, 
+    linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
+    linux-ide@vger.kernel.org, qat-linux@intel.com, 
+    linux-crypto@vger.kernel.org, linux-wireless@vger.kernel.org, 
+    ntb@lists.linux.dev, linux-pci@vger.kernel.org, 
+    linux-serial <linux-serial@vger.kernel.org>, linux-sound@vger.kernel.org
+Subject: Re: [PATCH 06/10] wifi: iwlwifi: replace deprecated PCI functions
+In-Reply-To: <20241025145959.185373-7-pstanner@redhat.com>
+Message-ID: <ea7b805a-6c8e-8060-1c6b-4d62c69f78ae@linux.intel.com>
+References: <20241025145959.185373-1-pstanner@redhat.com> <20241025145959.185373-7-pstanner@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Fri, 25 Oct 2024 17:30:08 +0200
-Message-ID: <CAJfpegsjHymOXg++KGrwMUWAP4e18aqWCMC2e83hLBy2AvYZyQ@mail.gmail.com>
-Subject: [GIT PULL] fuse fixes for 6.12-rc5
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 
-Hi Linus,
+On Fri, 25 Oct 2024, Philipp Stanner wrote:
 
-Please pull from:
+> pcim_iomap_table() and pcim_iomap_regions_request_all() have been
+> deprecated by the PCI subsystem in commit e354bb84a4c1 ("PCI: Deprecate
+> pcim_iomap_table(), pcim_iomap_regions_request_all()").
+> 
+> Replace these functions with their successors, pcim_iomap() and
+> pcim_request_all_regions().
+> 
+> Signed-off-by: Philipp Stanner <pstanner@redhat.com>
+> Acked-by: Kalle Valo <kvalo@kernel.org>
+> ---
+>  drivers/net/wireless/intel/iwlwifi/pcie/trans.c | 16 ++++------------
+>  1 file changed, 4 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/net/wireless/intel/iwlwifi/pcie/trans.c b/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
+> index 3b9943eb6934..4b41613ad89d 100644
+> --- a/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
+> +++ b/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
+> @@ -3533,7 +3533,6 @@ struct iwl_trans *iwl_trans_pcie_alloc(struct pci_dev *pdev,
+>  	struct iwl_trans_pcie *trans_pcie, **priv;
+>  	struct iwl_trans *trans;
+>  	int ret, addr_size;
+> -	void __iomem * const *table;
+>  	u32 bar0;
+>  
+>  	/* reassign our BAR 0 if invalid due to possible runtime PM races */
+> @@ -3659,22 +3658,15 @@ struct iwl_trans *iwl_trans_pcie_alloc(struct pci_dev *pdev,
+>  		}
+>  	}
+>  
+> -	ret = pcim_iomap_regions_request_all(pdev, BIT(0), DRV_NAME);
+> +	ret = pcim_request_all_regions(pdev, DRV_NAME);
+>  	if (ret) {
+> -		dev_err(&pdev->dev, "pcim_iomap_regions_request_all failed\n");
+> +		dev_err(&pdev->dev, "pcim_request_all_regions failed\n");
+>  		goto out_no_pci;
+>  	}
+>  
+> -	table = pcim_iomap_table(pdev);
+> -	if (!table) {
+> -		dev_err(&pdev->dev, "pcim_iomap_table failed\n");
+> -		ret = -ENOMEM;
+> -		goto out_no_pci;
+> -	}
+> -
+> -	trans_pcie->hw_base = table[0];
+> +	trans_pcie->hw_base = pcim_iomap(pdev, 0, 0);
+>  	if (!trans_pcie->hw_base) {
+> -		dev_err(&pdev->dev, "couldn't find IO mem in first BAR\n");
+> +		dev_err(&pdev->dev, "pcim_iomap failed\n");
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git
-tags/fuse-fixes-6.12-rc5
+This seems a step backwards as a human readable English error message was 
+replaced with a reference to a function name.
 
-- Fix cached size after passthrough writes
+-- 
+ i.
 
-- Revert a commit meant as a cleanup but which triggered a WARNING
-
-- Remove a stray debug line left in a commit
-
-The passthrough fix needed a trivial change in the backing-file API,
-which resulted in some non-fuse files being touched.
-
-Thanks,
-Miklos
----
-
-Amir Goldstein (2):
-      fs: pass offset and result to backing_file end_write() callback
-      fuse: update inode size after extending passthrough write
-
-Miklos Szeredi (2):
-      Revert "fuse: move initialization of fuse_file to
-fuse_writepages() instead of in callback"
-      fuse: remove stray debug line
-
----
- fs/backing-file.c            |  8 ++++----
- fs/fuse/file.c               | 18 ++++++++++++------
- fs/fuse/passthrough.c        |  9 ++++-----
- fs/overlayfs/file.c          |  9 +++++++--
- include/linux/backing-file.h |  2 +-
- 5 files changed, 28 insertions(+), 18 deletions(-)
+>  		ret = -ENODEV;
+>  		goto out_no_pci;
+>  	}
+> 
 
