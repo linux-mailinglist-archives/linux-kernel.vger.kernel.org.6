@@ -1,130 +1,175 @@
-Return-Path: <linux-kernel+bounces-381945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B92F79B0688
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:58:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7A669B068D
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:59:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64FBD1F2221C
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 14:58:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96AC41C247E1
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 14:59:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9699C20C8A5;
-	Fri, 25 Oct 2024 14:54:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2E5F1586D3;
+	Fri, 25 Oct 2024 14:55:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Q0dpwQiH";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="eLtt5AF4"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lg6zBt1j"
+Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 791BA20C61C;
-	Fri, 25 Oct 2024 14:54:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53A86139CFA;
+	Fri, 25 Oct 2024 14:55:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729868044; cv=none; b=MrxhI2WwqJaPeNy0s9p4CdG2wzbHo81IxCaNyzMjdUZyVHmRqlqJZh8CaeNetJ35Fgw9ob3qGV/jSYlqsh/Qlz336GZFcbhjBNi5T1RFovPFwQhUKSIWRhl5Yaa2isjEDC1rGsTfzmW4FKERLC+GjgtM8/6tIGr+EINgIjCPz1k=
+	t=1729868158; cv=none; b=PccH2xR7qu95ktNPNm+VcIU3aX0404Yk1a+0LLvwWmhJdi0ckBZqIfk+Xeod0emrssLIlcu75K+QIi8MbG/lkQe93t7I/jDYTw+Iv6DHpupzypPwDQ0g9mFGFYR76QeQNPlYYWY5L64szkfLK1yO5Zawn2HDY7IR0MUsYf1qnp0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729868044; c=relaxed/simple;
-	bh=MboG+eiMjKBd7csgMIojh5O5BEf0BQ+atNp4Q4Kjbk4=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=ej3uxLKV6ZFMZhvoFGU2riIHp2UFTjBhgbwV4tI8l6NMaimdgCZpBAvUwEShWj/zeW9raZoVgGtIgJCMpi4fdu8jMdFFXrNsJ/7YJCXE+yjHYeKrVCfekEq1uJ4Cueyrl+a4XhQtoc2p7VAb4jaKH7CvPvHzjhpYVP6BzI1uVGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Q0dpwQiH; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=eLtt5AF4; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 25 Oct 2024 14:54:00 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1729868040;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Z37eKXnirngIRu0lzOo4ghUbmVbTa7wnxdAHVRHQiO8=;
-	b=Q0dpwQiHjcOF28WJphLFrdHPvtYgOLfwbsWV9kFQLa7jE85kuOznOGSAhx/Uut8NKd3vT2
-	HDFvw3bcjum+KQoQ5mGLVGeUwvjLbNZjOlynNtYb/BpRlhhVm2lS/qovYGqShj8U+RQNSe
-	iX5FxOcoFMfZNuzhJvI7xJZYSHPnqg6+CoG5waBrdriNC2abBT9zTWkHqRxHW6LUNHO+f2
-	CmVNVTAWBAH3W0S4d7UDRo22DBVm2qO11PMxW1VLWDh7P1fnRlSTaOlf7dbcohZyzCzENp
-	faH396D9UQM7ErSyhqdE4mTvCmy9rL8QlrFQuVE9vTdbNfzrGUvLLQzXqkYepg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1729868040;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Z37eKXnirngIRu0lzOo4ghUbmVbTa7wnxdAHVRHQiO8=;
-	b=eLtt5AF4riQ4Rc7HWt+P/wxINUjvgHeE/7+JgAIyzsT5W2q+cZ7/Qj3YPvKvKQ15Q5/Wm+
-	o/Q1XvR3E8m4/KBg==
-From: "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: timers/core] timekeeping: Don't stop time readers across
- hard_pps() update
-Cc: Thomas Gleixner <tglx@linutronix.de>,
- "Anna-Maria Behnsen" <anna-maria@linutronix.de>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: =?utf-8?q?=3C20241009-devel-anna-maria-b4-timers-ptp-timekeepin?=
- =?utf-8?q?g-v2-2-554456a44a15=40linutronix=2Ede=3E?=
-References: =?utf-8?q?=3C20241009-devel-anna-maria-b4-timers-ptp-timekeeping?=
- =?utf-8?q?-v2-2-554456a44a15=40linutronix=2Ede=3E?=
+	s=arc-20240116; t=1729868158; c=relaxed/simple;
+	bh=cYC84NVRftr8KOmCtX7HT6d9aXDsbV+gczDOJhFRyN4=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=ts/WF6OOj5W2BQcz3GPhwcA5DS5r3ttspqkKPYRF8PrrFDzZYiPaL7ri4lD4NTMvnLMBUDgH7LHCi9ER/U9YBf4mzVIYKZ2SZmLXjPOs0ygdBeSvlwqw5bDSTkm8aIfuNupj8Tz6yk6qCyUoJst2b/bUgLzesaH2qK7x5Qpm4bY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Lg6zBt1j; arc=none smtp.client-ip=209.85.222.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-7b1488fde46so137775085a.2;
+        Fri, 25 Oct 2024 07:55:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729868155; x=1730472955; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xb4NK7TZAklqsLZ4WbcSQYfLgzsdssWA6GodMIVJSvo=;
+        b=Lg6zBt1jSashAJU2Ef0UmdyB8BeYUdhh+qJ1PYVDX3luwCu6YbQj3P59hCo0wmFf8S
+         UYgD58etm8iWTXjTivFsgkw6r/7OICixijk2aFxYMTxNxV2YtztbA2A2K1H0HqyCx0on
+         2hbj0O8prsLDLpNIY/Wu+Q63JUUE3ttxgD33tkfKvlS3WDmWDQVUeQjk8ZhIuYFF4PUK
+         j3kOk9gQxTbeuTb7ruAgDQAQ6/Hyiog51j/Iiu9jTUvp1Rsv1fZMYQWV9DG6HGHTq7ll
+         Et6ys05R1hrgkegJh+0mgRPlepmxuTFjQXff6t8JS62T8tbuHZt/mIFKFjbpyPtjWioA
+         XnDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729868155; x=1730472955;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=xb4NK7TZAklqsLZ4WbcSQYfLgzsdssWA6GodMIVJSvo=;
+        b=sDPfpoOGZO1Jm7PgqhqPjXsuv2oppFk/Qmq9fxmaDJZbEt910Z1zRZVIJSgBgIu3sU
+         gTIJluuwdxRZLt3I91o7iSnlHzRHkaCKS+qmSqdfAUgPG9fZMlvWIr9d1VMxdkIyMJ2n
+         aqco/VhQh4Ms30rctPahj59tycKTEIUDls+LLgYQc3zdHs0EeSRF7b/ljLNVsm2lHLep
+         wsL05L6cgKb1kyRvD28rnrCZNPDvpxzF8i/TXDIAdn2cUKhVVotFGr6S3ara6rPzihR0
+         1iV3heOpMMVUo05hKBtNEddmBw3Gb50auEIeufOvO2J5kCqA9LeDx4gXVgd5dseXX+mF
+         cT8g==
+X-Forwarded-Encrypted: i=1; AJvYcCWV1G1A032Ze9oGreS4CRxROpfXz4ZbdjzChUhl4HunZ10PRlaYLxKWCUizKF0uqIAHDI+u/XZTue7YUfU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzG2RgwEfUsKXS1GYOhQr6C+Q0No30g2psKTQiSjIyK3Ebo4p4I
+	Dao3a/mA3xZyDIHhjyYB9sT3e6a5ljLHB58VhRnjM6dPZ/wRvr8g
+X-Google-Smtp-Source: AGHT+IFkxvItP4r6zd9To7kU+8mtrX7FKFscGnaLN0+OQtyFj8zqVfn81MOX/LzQrCo1equ2PL+hBw==
+X-Received: by 2002:a05:620a:17a8:b0:7b1:4579:80fc with SMTP id af79cd13be357-7b186d0c9demr702413285a.60.1729868155113;
+        Fri, 25 Oct 2024 07:55:55 -0700 (PDT)
+Received: from localhost (86.235.150.34.bc.googleusercontent.com. [34.150.235.86])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b18d278294sm60984685a.20.2024.10.25.07.55.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Oct 2024 07:55:54 -0700 (PDT)
+Date: Fri, 25 Oct 2024 10:55:53 -0400
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+To: =?UTF-8?B?QmVub8OudCBNb25pbg==?= <benoit.monin@gmx.fr>, 
+ "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, 
+ Jiri Pirko <jiri@resnulli.us>, 
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
+ Lorenzo Bianconi <lorenzo@kernel.org>
+Cc: netdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ =?UTF-8?B?QmVub8OudCBNb25pbg==?= <benoit.monin@gmx.fr>
+Message-ID: <671bb179d039d_34060c294fd@willemb.c.googlers.com.notmuch>
+In-Reply-To: <5fbeecfc311ea182aa1d1c771725ab8b4cac515e.1729778144.git.benoit.monin@gmx.fr>
+References: <5fbeecfc311ea182aa1d1c771725ab8b4cac515e.1729778144.git.benoit.monin@gmx.fr>
+Subject: Re: [PATCH v2 net] net: skip offload for NETIF_F_IPV6_CSUM if ipv6
+ header contains extension
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Message-ID: <172986804008.1442.6590256124537365421.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-The following commit has been merged into the timers/core branch of tip:
+Beno=C3=AEt Monin wrote:
+> As documented in skbuff.h, devices with NETIF_F_IPV6_CSUM capability
+> can only checksum TCP and UDP over IPv6 if the IP header does not
+> contains extension.
+> =
 
-Commit-ID:     708573a8f75ec94e9063d6c47e0571bcf39f0bb0
-Gitweb:        https://git.kernel.org/tip/708573a8f75ec94e9063d6c47e0571bcf39f0bb0
-Author:        Thomas Gleixner <tglx@linutronix.de>
-AuthorDate:    Wed, 09 Oct 2024 10:28:55 +02:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Fri, 25 Oct 2024 16:41:11 +02:00
+> This is enforced for UDP packets emitted from user-space to an IPv6
+> address as they go through ip6_make_skb(), which calls
+> __ip6_append_data() where a check is done on the header size before
+> setting CHECKSUM_PARTIAL.
+> =
 
-timekeeping: Don't stop time readers across hard_pps() update
+> But the introduction of UDP encapsulation with fou6 added a code-path
+> where it is possible to get an skb with a partial UDP checksum and an
+> IPv6 header with extension:
+> * fou6 adds a UDP header with a partial checksum if the inner packet
+> does not contains a valid checksum.
+> * ip6_tunnel adds an IPv6 header with a destination option extension
+> header if encap_limit is non-zero (the default value is 4).
+> =
 
-From: Thomas Gleixner <tglx@linutronix.de>
+> The thread linked below describes in more details how to reproduce the
+> problem with GRE-in-UDP tunnel.
+> =
 
-hard_pps() update does not modify anything which might be required by time
-readers so forcing readers out of the way during the update is a pointless
-exercise.
+> Add a check on the network header size in skb_csum_hwoffload_help() to
+> make sure no IPv6 packet with extension header is handed to a network
+> device with NETIF_F_IPV6_CSUM capability.
+> =
 
-The interaction with adjtimex() and timekeeper updates which call into the
-NTP code is properly serialized by timekeeper_lock.
+> Link: https://lore.kernel.org/netdev/26548921.1r3eYUQgxm@benoit.monin/T=
+/#u
+> Fixes: aa3463d65e7b ("fou: Add encap ops for IPv6 tunnels")
+> Signed-off-by: Beno=C3=AEt Monin <benoit.monin@gmx.fr>
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/20241009-devel-anna-maria-b4-timers-ptp-timekeeping-v2-2-554456a44a15@linutronix.de
+Reviewed-by: Willem de Bruijn <willemb@google.com>
 
----
- kernel/time/timekeeping.c | 4 ----
- 1 file changed, 4 deletions(-)
+> ---
+> changelog
+> * v2:
+>     - patch against net instead of net-next
+>     - clarify documentation of NETIF_F_IPV6_CSUM
+>     - add link to thread describing the problem
+>     - add fixes tag
+>     - use vlan_get_protocol to check for IPv6
+> * v1:
+>     - https://lore.kernel.org/netdev/0dc0c2af98e96b1df20bd36aeaed4eb4e2=
+7d507e.1728056028.git.benoit.monin@gmx.fr/T/#u
+> ---
+>  net/core/dev.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> =
 
-diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
-index 2bc3542..ff98a0b 100644
---- a/kernel/time/timekeeping.c
-+++ b/kernel/time/timekeeping.c
-@@ -2746,11 +2746,7 @@ void hardpps(const struct timespec64 *phase_ts, const struct timespec64 *raw_ts)
- 	unsigned long flags;
- 
- 	raw_spin_lock_irqsave(&timekeeper_lock, flags);
--	write_seqcount_begin(&tk_core.seq);
--
- 	__hardpps(phase_ts, raw_ts);
--
--	write_seqcount_end(&tk_core.seq);
- 	raw_spin_unlock_irqrestore(&timekeeper_lock, flags);
- }
- EXPORT_SYMBOL(hardpps);
+> diff --git a/net/core/dev.c b/net/core/dev.c
+> index ea5fbcd133ae..8453e14d301b 100644
+> --- a/net/core/dev.c
+> +++ b/net/core/dev.c
+> @@ -3639,6 +3639,9 @@ int skb_csum_hwoffload_help(struct sk_buff *skb,
+>  		return 0;
+> =
+
+>  	if (features & (NETIF_F_IP_CSUM | NETIF_F_IPV6_CSUM)) {
+> +		if (vlan_get_protocol(skb) =3D=3D htons(ETH_P_IPV6) &&
+> +		    skb_network_header_len(skb) !=3D sizeof(struct ipv6hdr))
+> +			goto sw_checksum;
+
+skb_network_header_len requires skb->transport_header to be set.
+
+This is not true for all egress packets. See for instance commit
+d2aa125d6290 ("net: Don't set transport offset to invalid value").
+
+But it should be true for all CHECKSUM_PARTIAL packets. See for
+instance skb_partial_csum_set. So LGTM.
+
+Just calling this out as it is not obvious and in case someone
+does know a counter example of CHECKSUM_PARTIAL and
+!skb_transport_header_was_set.
+
 
