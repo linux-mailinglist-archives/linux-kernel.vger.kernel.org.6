@@ -1,252 +1,186 @@
-Return-Path: <linux-kernel+bounces-382191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14DDC9B0A95
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 19:12:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EDE99B0A97
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 19:12:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34D9E1C218DF
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:12:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 618151C22251
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:12:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CD921FB89E;
-	Fri, 25 Oct 2024 17:12:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D82712064EC;
+	Fri, 25 Oct 2024 17:12:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="pJ2QAJX3"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="oD+FengK"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2058.outbound.protection.outlook.com [40.107.220.58])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69C2A18C915;
-	Fri, 25 Oct 2024 17:12:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729876323; cv=none; b=Y0/uwFN+BCLeolDFFX0a0mh3sLtJjcBaSOfChHEpATW75Obv6DyhzqGULdEKeEnusga1yQbHNZAB+vaveMABeMCQiwAkmCeroVM+LctyGi1v1YEbksu+3mc0pbVKmUKeQvnGY4Osa5Q9KmqEAkFpsWyUiYLjpiMpd4kaswD3wI8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729876323; c=relaxed/simple;
-	bh=wDFCS+zc9BqyrFUhW//Q3+IrZGHODUKV9G6eYHCwyIc=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=P6bAvQAah6cj/k7s87EKQ/4Es0GJ25IYKjecVOF7SHgHmNc4MsVlXq3rd5RcEUn0Rg/vjZ18zTxo21fJlb+71xOfZXWzAjrKGrGAqTSN8U3v+6karZmTqOvI1kpfYSkB+GXoirbkqHPHu0PoR9rDQ4QZHMQtXKYVZQKLhqX8hC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=pJ2QAJX3; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49PB3dUm019387;
-	Fri, 25 Oct 2024 17:11:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=lp2OTWfTB0fGXKAT4Ya3ft
-	URHmN/1bGxgog0FXfPB7o=; b=pJ2QAJX38XEqZI3jRq6+NhuyHT6SNEDaKNZ6nG
-	fZXn0vL5tNoGcD6W0uZcgjLqk3v3E8r8QZMKRbEPxuR8Z07cfJPNCwHcqFoZO0Dm
-	H68SrjzIteaKJqhaQKWWVVwb7P4LbdWI6TML43TE40cvBMXkyWfXkdk5WpokUXt5
-	9EBNVIstYuOe1Sml/UqxmbP5uxB7iSU6xXEuuukl8JUyNQqu9TPdMYZuPdxLFXDN
-	8fu/AwxHwBMGZbgIllIucPBV9UA1gba/z0mFOzsSXCpdD27gEFvIbwOYbtG0c+4u
-	HxxO9DP33mngmuarF14rUJBNbRoEoUkNiiGG0yFU1w7GnGiw==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42em3whykn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 25 Oct 2024 17:11:54 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49PHBrr5028251
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 25 Oct 2024 17:11:53 GMT
-Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
- nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Fri, 25 Oct 2024 10:11:51 -0700
-From: Mukesh Ojha <quic_mojha@quicinc.com>
-To: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>
-CC: <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Mukesh Ojha
-	<quic_mojha@quicinc.com>
-Subject: [PATCH v2] leds: class: Protect brightness_show() with led_cdev->led_access mutex
-Date: Fri, 25 Oct 2024 22:41:28 +0530
-Message-ID: <20241025171128.1226045-1-quic_mojha@quicinc.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39B191C173D;
+	Fri, 25 Oct 2024 17:12:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.58
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729876325; cv=fail; b=NMOLWrXirR2KU9/LJuCw0E8y57aZzU7hnRo11y/RDRoz4BIQKz/kFEg/Arhx35nnnZ2JSHhWUxk9FkJn7ml/WbwdYz/mkkZVk2z1p4YFqVF4aEw1d1dSnuLz45645OFjuzMyzWLmcDwswuv7MsyvCq1s3dQDRm3r4iwGH36oqZA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729876325; c=relaxed/simple;
+	bh=NQ+yEFJhM+ZTPX653596lNPtVUA4KArWkk97B/VjWpw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=XpsfY/izfVYbk9UcwZ1YCSeoAWFQJKLXUOzq8XBjjkN2Ry8sf2JnH3VzuLhFSSqAgTDCBdU5NGvIEt2FUypGfFi5a2qdGmAxaV4t+n0yIlNPb7ycwFuYGxDmOxhXpJkJouajLqFcOLlwMDULP8DGzkipDMRXR7s4703hKURp4Pc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=oD+FengK; arc=fail smtp.client-ip=40.107.220.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=i4Bz+7i3pP9RRmNQNkwHA67l0w5oWbRcQZuKD4QhM4GH/owUZQIaMB+SM9diSu7SxmqEWOhMl3NCPhLCXq3npnxFfCnN8jfNhnQhddA8b/OU8d0r0+7EY9y1x0s+IrvTVcU4pR6WlDcgloQ3IOvqbRhVDejFNFi85nPtgJ4HCpzok5T4HysEHXhy4r1ORg++Wwj/eGv4HwiLh/FbhyBSHLwaOmBbEWZHx0feCoOUuJGusKZ1ahX3ivIlrGpmlURvLdCmVBXI4usEL04LByk231WPh5xijwS93Xjyv8vyQ+TnCtvrp2+FnvuRbxpWFSsqf60z+/pepIBqsD4JVP3QSw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=YqHBwXAH2y3myo1qCC6yqA7DXoSFbjKmPYh9um57pi4=;
+ b=NNLgvitPVzdwYq5meHrmoMZUwpdazHqf+wYW8Hduz/wGTuuh6pLavadS0ZdF6TYGO5eGwxJh0hn8ByB6Ci+sf/OUT6DYcj7rod8sn35vR9SMEtpFzc2k1N2tiRMaHfVSxE3fS6MyadRNMaRoaIhl8TVwr1HBhtFvjTreDTbvOCBzrUjGze4PUoOFLz7GqEFnsu8VRn/mTQHWz+90w8zUY/IlEPoL5aZQ7AMufE1+DQ/x5z0TrExXTv6A6rGZP/TBl8xkuUebiP7YvyxHf9XbK4oy4OnzonpCl4PtfUWvqBfSZ6bw897ZoKr+5veEWWawfDKazGs/z7BJQlR0q9p7oA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=YqHBwXAH2y3myo1qCC6yqA7DXoSFbjKmPYh9um57pi4=;
+ b=oD+FengKHWBpe1uQ+5o8BN2HLOmMzK456sbLTE0UcqF55WKw/zxcZNz0/jBNuTNMUwsvHsY+evvnTmu8amq2CrKmqFgVvESps/XoqG8fVU8aO5dgkgIYwKItL9hjgAD3yIRkix+Ux+YHWKFuL9fjeRaogP8MUkyBt4Fk8FRd92I=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DS7PR12MB8252.namprd12.prod.outlook.com (2603:10b6:8:ee::7) by
+ CH2PR12MB4038.namprd12.prod.outlook.com (2603:10b6:610:7b::19) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8093.23; Fri, 25 Oct 2024 17:12:00 +0000
+Received: from DS7PR12MB8252.namprd12.prod.outlook.com
+ ([fe80::2d0c:4206:cb3c:96b7]) by DS7PR12MB8252.namprd12.prod.outlook.com
+ ([fe80::2d0c:4206:cb3c:96b7%6]) with mapi id 15.20.8093.018; Fri, 25 Oct 2024
+ 17:12:00 +0000
+Date: Fri, 25 Oct 2024 22:41:48 +0530
+From: "Gautham R. Shenoy" <gautham.shenoy@amd.com>
+To: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
+Cc: mario.limonciello@amd.com, perry.yuan@amd.com, rafael@kernel.org,
+	viresh.kumar@linaro.org, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/4] cpufreq/amd-pstate: Align offline flow of shared
+ memory and MSR based systems
+Message-ID: <ZxvRVGrOIj21+eTa@BLRRASHENOY1.amd.com>
+References: <20241023102108.5980-1-Dhananjay.Ugwekar@amd.com>
+ <20241023102108.5980-5-Dhananjay.Ugwekar@amd.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241023102108.5980-5-Dhananjay.Ugwekar@amd.com>
+X-ClientProxiedBy: PN2PR01CA0208.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:e9::16) To DS7PR12MB8252.namprd12.prod.outlook.com
+ (2603:10b6:8:ee::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: Ta_fOhxYuWuDKOmSCDxuUTxKR9Y-QZ48
-X-Proofpoint-ORIG-GUID: Ta_fOhxYuWuDKOmSCDxuUTxKR9Y-QZ48
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 malwarescore=0
- mlxscore=0 lowpriorityscore=0 phishscore=0 impostorscore=0 clxscore=1015
- priorityscore=1501 mlxlogscore=695 suspectscore=0 bulkscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2410250132
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB8252:EE_|CH2PR12MB4038:EE_
+X-MS-Office365-Filtering-Correlation-Id: dab3a253-e328-423b-e245-08dcf5182356
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?rJ2ZDeD8lW+yeJTBTjYg+yd5skxKnTpeqir6SklMlWrkER0BVPxcIrS3AP3s?=
+ =?us-ascii?Q?AEIvF/xt/1d85ZdcLuQrwKMWUXPzw1ZaYx4uNUXVFJab8Y49oIlaItWAaRnt?=
+ =?us-ascii?Q?6mummG6pgpDM9oCRqfnDY0rClfHlekn6v+FmksAnfA7ETTi/4QnoJt/XkrfN?=
+ =?us-ascii?Q?MBCeHj66ZLOp/8uHhHj828oBX4qBruMuemXaG/brLe4uixaLwnvdQJpFBW7J?=
+ =?us-ascii?Q?NycF3oVpPVSDhGjt542cpzSQaqBR0ze0UOlO0QIt8AuSaYFKfZxXWZrRItxG?=
+ =?us-ascii?Q?RtMVAZb2Uu8XDwQU6e7r/Mt95fdXh7B4dSaVEPYxY/e6woVmUjTvELBY7Et8?=
+ =?us-ascii?Q?vqkfaBpmIe/f8NoM5muVlmybGaxIf1YqnMlJJLIm4/nIwochPzV8GSny6+zK?=
+ =?us-ascii?Q?3DUhFIZybqdzUafYmcIvztJrLackfKVZZFbdLpC0UvgytRkhUF+vwXLGDkkQ?=
+ =?us-ascii?Q?om+BMO3cg5mCYiTlFUnKrTYYI88Z8h8+HkrMaYPc7mn1mIUbpVRh+h4adcSy?=
+ =?us-ascii?Q?/Hl5UVvZSHP4cz6MO933BKFm1JbjhuDjd2lfkx8ow2gJSY24OYhAe7YDktky?=
+ =?us-ascii?Q?HGRhldB3hsGBLC58RjyFmyVzFy4doD+qthEz4rhuNQqAL92+13DOhtnzZ4p7?=
+ =?us-ascii?Q?gKzZVnCLx/QMC6EISfW4og1DWzuS4GsyhYAuq8kLpzFAfIjQBtNPV3xABI5v?=
+ =?us-ascii?Q?b9dOuUOPxlkVjrSLhTBXp+hyw7wWilkpT6XDS4KN1VMLw9Nbgyvj2o7SdHWZ?=
+ =?us-ascii?Q?pi4ZPECzKxYzjDM7aw7EpoTErNUaVJ9dc77OmYB9RKl+8myWWmz6VyYyTBeI?=
+ =?us-ascii?Q?CHPEbpQlqUeWspxurBqdSWqXCBrccG9SxbJMxwmLsez97bFsFZGi+5xxFUa9?=
+ =?us-ascii?Q?hTcZ9U/UGZ/08GCyhImiaQXgv5+c5A56NXumY1yJcgdTDJFUqtGogmEXGmW7?=
+ =?us-ascii?Q?58eZ86XWNE4+dKWhE8pZpCQpOVOfLVAxZ/KqWmDQRerov5IBblNMif/U37Rm?=
+ =?us-ascii?Q?N89deA363ZYCYtEhA/0uic29i8VvIugVVMfzqnZbu41ssyV+II2XygOqFMKY?=
+ =?us-ascii?Q?UQAf3SJM18Pw0/OkLDgiPx0TNY+fRQjHe8hwVvEe/uCxQbwUhLOr0hvabxyo?=
+ =?us-ascii?Q?O4jimX0lIjLUrO5X+GTw7maVjfb7J3SVwwYXfFLAkl7QJfZOQXIAme2nLBY1?=
+ =?us-ascii?Q?WS/XRG1vR7AJaSAGIHYu2YVix/cB4FLYJQ38WNI5ig6X1AkIaSTLjMvg8QoV?=
+ =?us-ascii?Q?7oiITeMQqhtuJZ1GZp63Q7GjEbpEV3VYHJoQ2eiVgbbYMbfxuxKhwn8oCcd3?=
+ =?us-ascii?Q?W3f4tTpsRIfZjKQXIWcoZCKD?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB8252.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?IYlX7Wjg+3enH+GgG6tFmfN5df6kylTDK6c5AYV8QIaAgJGumGNLtL0P5jOs?=
+ =?us-ascii?Q?DDu23hyrCXJ80YgDrOeLLd/Ob604JSVkBtcVIlxLqg5mXAQP/oVl4GsYB1Pc?=
+ =?us-ascii?Q?6rRoDKtvKs/atSP0Tm2emJVZW37fKU/8h5flCGdDYcJkEePSNPNNK00jW0E+?=
+ =?us-ascii?Q?+VPpaAlPToeuStoWtXG9FJVmkNTeVf67Hgw5a6g+5zFXANjbK7CmjhnHuKSu?=
+ =?us-ascii?Q?Pwks22aBi3/9SZQcYn7QmDvwSF8l7FDytTdab5PRCMWYinBT5s6OjltztNRh?=
+ =?us-ascii?Q?K/jZF85Tf7x5YGGP3i67fN960hoX8hWZOM4Csm/3JzbsnjXMJXg2tQgRTqJc?=
+ =?us-ascii?Q?26vxgx4tKEnZd4619HI81m66BMDVm3HkuCM0HJumomhWQklMC+lHz/WVFPnR?=
+ =?us-ascii?Q?pXY+lgk5fLNkEBqjGea3b37UdQigCYOt++YEyPTJMHo08vR0nWzZlj2RJQAw?=
+ =?us-ascii?Q?D44Qpq9nbgRKVy5TBPzZIFfWUJeBcN2Cy5hHTPcL8XN+0hNfl4/zMbdFLfCU?=
+ =?us-ascii?Q?EIZm0I6ouwYpPb9vlVLK4e4lWSq3YQkeBvaLIrluMBEWh9uBTd07JQ8RzD6V?=
+ =?us-ascii?Q?Rbh6N0IK1KPbcu2LSuEheRdfWAQZJyOfUzFmGTXcXXviRXqEVB89qIq9Jd49?=
+ =?us-ascii?Q?6E4miHjSbNlE+26Gkv92kgpau3/WsMeMYDvGvVrijX11bIlUtRhW62AGcM82?=
+ =?us-ascii?Q?rG7A/Zm9MKZv782XW2lE2McRTI85Whf6AJD2vACv2RRc2R5w65huOtWI5VHA?=
+ =?us-ascii?Q?pfNPef6OGR2Y75OoDpNsRT7EIDlJPyc5xufwbLy9MHn9EpbDK2wE1421sD1c?=
+ =?us-ascii?Q?l2fL6tFagvOqitjRnPYxhykGBrGA6OpOuMeUJ6BLdshbYgg2CIvaxNPGsDxc?=
+ =?us-ascii?Q?YB7+uddN+6Ke33QAJYlMeyY0d6+sOLO9+85Re+Bx71PKENBj+57FlqyR1Fxh?=
+ =?us-ascii?Q?/9FpCtl0steXYrZxlHI2dmpRA2wkiZ/4beQb/6oYQNYxl0ndnddk16vP7xhb?=
+ =?us-ascii?Q?l8XmdfVBZP/71dELvVp+IIly6aWPHvnxVfUhhmFZNdCD+8kOO3GYA9ea17KL?=
+ =?us-ascii?Q?saYVt7jRFBgBJ9D24+HpGQ9eax7FVzQdEcxBJSIYSfEG6/vDu+bq/k1C9Le/?=
+ =?us-ascii?Q?0LiNoVO8rjuRyoYBH1MPw6Aic0KYM/jm3DdD7X/8PvvnM6MV4F7FFVuzJWxp?=
+ =?us-ascii?Q?XsLr0EK6fmEYCNrHNZPxF48xEAe3Q8EVjkdNrx0BOYiLZHOtGoXaD8PfeO+Q?=
+ =?us-ascii?Q?E3cUYpXLxL9cUq9gkMPQceMi+bgGMzm3Z47IAzToPGG65aW+g3td5d2WcNLP?=
+ =?us-ascii?Q?t91C3plzfRJ46DfDUPH6PYZnQCARKvAQ6i5zXfs8VA7f7r/+2nQbR5U/vsBy?=
+ =?us-ascii?Q?wl7m9pNcrOvX/t8I3P1w0/Y9lgwREsz7cw97MeD4KAFta9NivuScrQ3s7Wk9?=
+ =?us-ascii?Q?pYiKi4dMpq7vUnhORxJCqJZmMBJujSTpoFIl7zzI/h/Xo4FqfExMN1ve7xCA?=
+ =?us-ascii?Q?nGhsZ9naFxma5X5FqHfXd1p8OVgxvmMqde+hCzd6vNSFqGJ9H1yEKQIVnPdH?=
+ =?us-ascii?Q?/Iwx1r5m8tN3cjQPWrAXfEP5Wyk6zRnny5Tmd1ww?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: dab3a253-e328-423b-e245-08dcf5182356
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB8252.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Oct 2024 17:12:00.3324
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: og0uYQH0kGYBc9T96lfyaomlU6TEudy+oeWWPUT1Jw1flgq1nMxHqyAKQYeo6PajByRpLIUdq9EyuayZXYlNcA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4038
 
-There is NULL pointer issue observed if from Process A where hid device
-being added which results in adding a led_cdev addition and later a
-another call to access of led_cdev attribute from Process B can result
-in NULL pointer issue.
+On Wed, Oct 23, 2024 at 10:21:12AM +0000, Dhananjay Ugwekar wrote:
+> Set min_perf to lowest_perf for shared memory systems, similar to the MSR
+> based systems.
+> 
+> Signed-off-by: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
 
-Use mutex led_cdev->led_access to protect access to led->cdev and its
-attribute inside brightness_show() and max_brightness_show() and also
-update the comment for mutex that it should be used to protect the led
-class device fields.
+Thanks for fixing this.
 
-	Process A 				Process B
+Reviewed-by: Gautham R. Shenoy <gautham.shenoy@amd.com>
 
- kthread+0x114
- worker_thread+0x244
- process_scheduled_works+0x248
- uhid_device_add_worker+0x24
- hid_add_device+0x120
- device_add+0x268
- bus_probe_device+0x94
- device_initial_probe+0x14
- __device_attach+0xfc
- bus_for_each_drv+0x10c
- __device_attach_driver+0x14c
- driver_probe_device+0x3c
- __driver_probe_device+0xa0
- really_probe+0x190
- hid_device_probe+0x130
- ps_probe+0x990
- ps_led_register+0x94
- devm_led_classdev_register_ext+0x58
- led_classdev_register_ext+0x1f8
- device_create_with_groups+0x48
- device_create_groups_vargs+0xc8
- device_add+0x244
- kobject_uevent+0x14
- kobject_uevent_env[jt]+0x224
- mutex_unlock[jt]+0xc4
- __mutex_unlock_slowpath+0xd4
- wake_up_q+0x70
- try_to_wake_up[jt]+0x48c
- preempt_schedule_common+0x28
- __schedule+0x628
- __switch_to+0x174
-						el0t_64_sync+0x1a8/0x1ac
-						el0t_64_sync_handler+0x68/0xbc
-						el0_svc+0x38/0x68
-						do_el0_svc+0x1c/0x28
-						el0_svc_common+0x80/0xe0
-						invoke_syscall+0x58/0x114
-						__arm64_sys_read+0x1c/0x2c
-						ksys_read+0x78/0xe8
-						vfs_read+0x1e0/0x2c8
-						kernfs_fop_read_iter+0x68/0x1b4
-						seq_read_iter+0x158/0x4ec
-						kernfs_seq_show+0x44/0x54
-						sysfs_kf_seq_show+0xb4/0x130
-						dev_attr_show+0x38/0x74
-						brightness_show+0x20/0x4c
-						dualshock4_led_get_brightness+0xc/0x74
+--
+Thanks and Regards
+gautham.
 
-[ 3313.874295][ T4013] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000060
-[ 3313.874301][ T4013] Mem abort info:
-[ 3313.874303][ T4013]   ESR = 0x0000000096000006
-[ 3313.874305][ T4013]   EC = 0x25: DABT (current EL), IL = 32 bits
-[ 3313.874307][ T4013]   SET = 0, FnV = 0
-[ 3313.874309][ T4013]   EA = 0, S1PTW = 0
-[ 3313.874311][ T4013]   FSC = 0x06: level 2 translation fault
-[ 3313.874313][ T4013] Data abort info:
-[ 3313.874314][ T4013]   ISV = 0, ISS = 0x00000006, ISS2 = 0x00000000
-[ 3313.874316][ T4013]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
-[ 3313.874318][ T4013]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-[ 3313.874320][ T4013] user pgtable: 4k pages, 39-bit VAs, pgdp=00000008f2b0a000
-..
-
-[ 3313.874332][ T4013] Dumping ftrace buffer:
-[ 3313.874334][ T4013]    (ftrace buffer empty)
-..
-..
-[ dd3313.874639][ T4013] CPU: 6 PID: 4013 Comm: InputReader
-[ 3313.874648][ T4013] pc : dualshock4_led_get_brightness+0xc/0x74
-[ 3313.874653][ T4013] lr : led_update_brightness+0x38/0x60
-[ 3313.874656][ T4013] sp : ffffffc0b910bbd0
-..
-..
-[ 3313.874685][ T4013] Call trace:
-[ 3313.874687][ T4013]  dualshock4_led_get_brightness+0xc/0x74
-[ 3313.874690][ T4013]  brightness_show+0x20/0x4c
-[ 3313.874692][ T4013]  dev_attr_show+0x38/0x74
-[ 3313.874696][ T4013]  sysfs_kf_seq_show+0xb4/0x130
-[ 3313.874700][ T4013]  kernfs_seq_show+0x44/0x54
-[ 3313.874703][ T4013]  seq_read_iter+0x158/0x4ec
-[ 3313.874705][ T4013]  kernfs_fop_read_iter+0x68/0x1b4
-[ 3313.874708][ T4013]  vfs_read+0x1e0/0x2c8
-[ 3313.874711][ T4013]  ksys_read+0x78/0xe8
-[ 3313.874714][ T4013]  __arm64_sys_read+0x1c/0x2c
-[ 3313.874718][ T4013]  invoke_syscall+0x58/0x114
-[ 3313.874721][ T4013]  el0_svc_common+0x80/0xe0
-[ 3313.874724][ T4013]  do_el0_svc+0x1c/0x28
-[ 3313.874727][ T4013]  el0_svc+0x38/0x68
-[ 3313.874730][ T4013]  el0t_64_sync_handler+0x68/0xbc
-[ 3313.874732][ T4013]  el0t_64_sync+0x1a8/0x1ac
-
-Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
----
-Changes in v2:
- - Updated the comment for led_access mutex lock.
- - Also added mutex protection for max_brightness_show().
-
- drivers/leds/led-class.c | 14 +++++++++++---
- include/linux/leds.h     |  2 +-
- 2 files changed, 12 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-index 06b97fd49ad9..f69f4e928d61 100644
---- a/drivers/leds/led-class.c
-+++ b/drivers/leds/led-class.c
-@@ -29,11 +29,14 @@ static ssize_t brightness_show(struct device *dev,
- 		struct device_attribute *attr, char *buf)
- {
- 	struct led_classdev *led_cdev = dev_get_drvdata(dev);
-+	unsigned int brightness;
- 
--	/* no lock needed for this */
-+	mutex_lock(&led_cdev->led_access);
- 	led_update_brightness(led_cdev);
-+	brightness = led_cdev->brightness;
-+	mutex_unlock(&led_cdev->led_access);
- 
--	return sprintf(buf, "%u\n", led_cdev->brightness);
-+	return sprintf(buf, "%u\n", brightness);
- }
- 
- static ssize_t brightness_store(struct device *dev,
-@@ -70,8 +73,13 @@ static ssize_t max_brightness_show(struct device *dev,
- 		struct device_attribute *attr, char *buf)
- {
- 	struct led_classdev *led_cdev = dev_get_drvdata(dev);
-+	unsigned int max_brightness;
-+
-+	mutex_lock(&led_cdev->led_access);
-+	max_brightness = led_cdev->max_brightness;
-+	mutex_unlock(&led_cdev->led_access);
- 
--	return sprintf(buf, "%u\n", led_cdev->max_brightness);
-+	return sprintf(buf, "%u\n", max_brightness);
- }
- static DEVICE_ATTR_RO(max_brightness);
- 
-diff --git a/include/linux/leds.h b/include/linux/leds.h
-index e5968c3ed4ae..3524634fcc47 100644
---- a/include/linux/leds.h
-+++ b/include/linux/leds.h
-@@ -238,7 +238,7 @@ struct led_classdev {
- 	struct kernfs_node	*brightness_hw_changed_kn;
- #endif
- 
--	/* Ensures consistent access to the LED Flash Class device */
-+	/* Ensures consistent access to the LED Class device */
- 	struct mutex		led_access;
- };
- 
--- 
-2.34.1
-
+> ---
+>  drivers/cpufreq/amd-pstate.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
+> index bbeddce90823..206725219d8c 100644
+> --- a/drivers/cpufreq/amd-pstate.c
+> +++ b/drivers/cpufreq/amd-pstate.c
+> @@ -1658,6 +1658,7 @@ static void amd_pstate_epp_offline(struct cpufreq_policy *policy)
+>  		wrmsrl_on_cpu(cpudata->cpu, MSR_AMD_CPPC_REQ, value);
+>  	} else {
+>  		perf_ctrls.desired_perf = 0;
+> +		perf_ctrls.min_perf = min_perf;
+>  		perf_ctrls.max_perf = min_perf;
+>  		cppc_set_perf(cpudata->cpu, &perf_ctrls);
+>  		perf_ctrls.energy_perf = AMD_CPPC_ENERGY_PERF_PREF(HWP_EPP_BALANCE_POWERSAVE);
+> -- 
+> 2.34.1
+> 
 
