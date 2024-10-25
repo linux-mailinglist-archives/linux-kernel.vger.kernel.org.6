@@ -1,64 +1,57 @@
-Return-Path: <linux-kernel+bounces-381775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F0F89B044D
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:39:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E0B89B0456
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:40:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7C3F284375
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 13:39:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FC4D1C22497
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 13:40:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74A7D1E491B;
-	Fri, 25 Oct 2024 13:39:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 962201D9A66;
+	Fri, 25 Oct 2024 13:40:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EMCSnz6P"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LkSX5Y0O"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3F1B1632F8;
-	Fri, 25 Oct 2024 13:39:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E36E9212178;
+	Fri, 25 Oct 2024 13:40:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729863568; cv=none; b=TkBFC5OZVgYicRVqt/UWI7xyqfCnLZVdN+yP5KoXMt3QC7mrRgm7E9AWnmf3puaR70lBvBh/5dnFCtZ5wMRKcJSUo3s2ZgYKpRlmZeI9i0FGeop7rjOLHDKoROEctIs7qMX3PB6BpG5I0e9yHKK+9oHiBahWm7GYWb0P53f+gq8=
+	t=1729863633; cv=none; b=IhIxfhwZk6Sa6CNt92N6NdhZeca2A05J77fVrUg6cYzlUTPiqUPjZv4M1PlC+i9xgoEwQu77FUZo90W6yCVQs11ubMGL4Jl81iFz39oYY2kTKYc/sjig4qjtv1AOGohc+SZjzKMul7z+oYR2WxWDIzCb+BqDU78xaiGTNUai8PY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729863568; c=relaxed/simple;
-	bh=iXshz53UY8Tw9bcTb1F+rkddkrEEDdOWrzrTbynhNCw=;
+	s=arc-20240116; t=1729863633; c=relaxed/simple;
+	bh=pVBN/pYnecKbodkMkBrlE2AMRkbGJn4StYxxRVqPtJM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nqn0btEsU0Of4Fsy12LiUkYRXCmdUjIsVfvyWncntUjdx2xHX0WKIscMpIZ94knSBXuVfbKaFsA9TCbikZXWQsh/6TnEJMObts8s92SM/OzAfmgwhDuhxoHHRmaFGFMiOvjg9wox9lz2ENRK9sc09UG8krEeQBpFaphUYyBkv64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EMCSnz6P; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 237A2C4CEC3;
-	Fri, 25 Oct 2024 13:39:26 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=DrZ/yhawpJJVKel00QxeEbAewRx+eWBzV2qb1Dt+e7jOSjH9zJv70kvoFFv8aT+xAFERhJdGv+SXtX6Ha2ZYqFuR6UvlFRoDIw0JJrSCzOzGRzkr5CUdC2RgG2NHaQp1dfJracmtf4UdtByybh5h82K2ufF1X5qb73JN3/oaBRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LkSX5Y0O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73F69C4CEC3;
+	Fri, 25 Oct 2024 13:40:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729863566;
-	bh=iXshz53UY8Tw9bcTb1F+rkddkrEEDdOWrzrTbynhNCw=;
+	s=k20201202; t=1729863632;
+	bh=pVBN/pYnecKbodkMkBrlE2AMRkbGJn4StYxxRVqPtJM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EMCSnz6PQUh62zSItP2OLJ+BdaD+t2T5Q2/vMO2BMIG6pl4JMh8zdB/W5Fwu0UcVa
-	 0JTDecr9LOCsDwkgy4/yq+MNyztwKV0OPv3PaoO6lKMtWwNCQ1lWkYbGVwFhBTkdBp
-	 nWZnTYOmbhoiv5gGoUk0BNU/LyNASN0jUFc90obelR6OSVPpPE6yxe9I5dHHQaXtt1
-	 c/gHx4yz3nTeNIsNgz+VD/daN/oFYe2tKATpPQrv4FfBKKKKVuDxb/kATj5V0rslV0
-	 OX+f/knTUX++MnzANgBLQ/0nS0QuQlilysAhZ/EBocV/5qC8teiu2big/tvXjZ34Jg
-	 wrmqcaHc1gPug==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1t4KXY-000000003M9-2an3;
-	Fri, 25 Oct 2024 15:39:44 +0200
-Date: Fri, 25 Oct 2024 15:39:44 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Sibi Sankar <quic_sibis@quicinc.com>
-Cc: sudeep.holla@arm.com, cristian.marussi@arm.com, ulf.hansson@linaro.org,
-	jassisinghbrar@gmail.com, dmitry.baryshkov@linaro.org,
-	linux-kernel@vger.kernel.org, arm-scmi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	konradybcio@kernel.org, linux-pm@vger.kernel.org,
-	tstrudel@google.com, rafael@kernel.org,
-	Johan Hovold <johan+linaro@kernel.org>
-Subject: Re: [PATCH V4 1/4] firmware: arm_scmi: Ensure that the message-id
- supports fastchannel
-Message-ID: <ZxufoL3NjYs8Lyq0@hovoldconsulting.com>
-References: <20241023102148.1698910-1-quic_sibis@quicinc.com>
- <20241023102148.1698910-2-quic_sibis@quicinc.com>
+	b=LkSX5Y0O06lKZVBTf+07pj6MacCDHVfYJaJ13wd5+BzO/6MXW+9rw2vIfr7mlrbZM
+	 lhfMC9SjIEpl25Lfjdnd17pr4d5IjDpGwExR80cNnRMP0ITR3KG+E8E0hJXRLz7ggr
+	 TWjyrZtC6laDDr2bVPF1plmgEx3ER78I5KwOTxx+FsH9i1910qMsW6qqkiCugLjbe0
+	 5BQ1GZACH8UE6g4MY19zXhAlPyby+WdE794/je0UWdmG5iUY8dlztfVv1+B8yRk7Z8
+	 dDS+kOseJ3cpZspqcynW4Bz9e++wzZ9qQWeCGH2Q5u8AFieiQAj0rdZKFI4kF8dRAp
+	 73rJPZgsNaBEA==
+Date: Fri, 25 Oct 2024 14:40:28 +0100
+From: Simon Horman <horms@kernel.org>
+To: George Guo <dongtai.guo@linux.dev>
+Cc: pabeni@redhat.com, davem@davemloft.net, edumazet@google.com,
+	guodongtai@kylinos.cn, kuba@kernel.org,
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
+	netdev@vger.kernel.org, paul@paul-moore.com
+Subject: Re: [PATCH 1/1] add comment for doi_remove in struct
+ netlbl_lsm_secattr
+Message-ID: <20241025134028.GW1202098@kernel.org>
+References: <0667f18b-2228-4201-9da7-0e3536bae321@redhat.com>
+ <20241025064031.994215-1-dongtai.guo@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,32 +60,57 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241023102148.1698910-2-quic_sibis@quicinc.com>
+In-Reply-To: <20241025064031.994215-1-dongtai.guo@linux.dev>
 
-On Wed, Oct 23, 2024 at 03:51:45PM +0530, Sibi Sankar wrote:
-> Currently the perf and powercap protocol relies on the protocol domain
-> attributes, which just ensures that one fastchannel per domain, before
-> instantiating fastchannels for all possible message-ids. Fix this by
-> ensuring that each message-id supports fastchannel before initialization.
+On Fri, Oct 25, 2024 at 02:40:31PM +0800, George Guo wrote:
+> From: George Guo <guodongtai@kylinos.cn>
 
-Again, perhaps you could include the error message I reported here so
-that anyone searching for that error will find this fix more easily?
- 
-> Reported-by: Johan Hovold <johan+linaro@kernel.org>
-> Closes: https://lore.kernel.org/lkml/ZoQjAWse2YxwyRJv@hovoldconsulting.com/
-> Fixes: 6f9ea4dabd2d ("firmware: arm_scmi: Generalize the fast channel support")
+Hi George,
 
-And, also again, should you add a CC-stable tag here to get this
-backported?
+Thanks for your patch. I agree that is is correct and a good change
+to make. But there are some process issues to be addressed before this
+patch can be accepted.
 
-> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
-> Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
-> Tested-by: Johan Hovold <johan+linaro@kernel.org>
-> ---
-> 
-> v3:
-> * Pick up R-b, T-b from the list.
-> * Move scmi_protocol_msg_check to the top [Sudeep]
+Firstly, as this is presumably a non-bug fix for networking code,
+it should be targeted at the net-next tree. That it should
+be based on that tree (it seems to be) and explicitly targeted
+at that tree in the Subject.
 
-Johan
+  Subject: [PATCH net-next v2] ...
+
+Secondly, the subject should include a prefix.
+Looking at git log include/net/netlabel.h it
+seems that should be 'netlabel:'
+
+  Subject: [PATCH net-next v2] netlabel: ...
+
+And it might be best to make the subject a bit more descriptive.
+
+  Subject: [PATCH net-next v2] netlabel: document doi_remove field of struct netlbl_calipso_ops
+
+
+Next, a commit message is required. It should explain why the change is
+being made. And, ideally how you found this problem. It should
+also include a Signed-off-by line [1]. e.g.
+
+  Add documentation of do_remove field to Kernel doc for struct
+  netlbl_calipso_ops.
+
+  Found using W=1 build.
+
+  Signed-off-by: ...
+
+[1] https://www.kernel.org/doc/html/latest/process/submitting-patches.html#sign-your-work-the-developer-s-certificate-of-origin
+
+Lastly, please do wait 24h before posting a new version.
+Please include information about what has changed below the scissors ('---').
+And please send the new patch as a new thread.
+
+More information on development processes for Networking can be found here:
+https://docs.kernel.org/process/maintainer-netdev.html
+
+...
+
+-- 
+pw-bot: changes-requested
 
