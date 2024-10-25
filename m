@@ -1,189 +1,163 @@
-Return-Path: <linux-kernel+bounces-382145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3AAA9B0A09
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 18:35:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B33D69B0A0F
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 18:36:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23E921C2130B
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:35:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6B601C22A95
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:36:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 379D81865ED;
-	Fri, 25 Oct 2024 16:35:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39D121FB8B3;
+	Fri, 25 Oct 2024 16:35:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="c1zRz6mA"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="zrzEY/fe"
+Received: from mail-oo1-f46.google.com (mail-oo1-f46.google.com [209.85.161.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BE7D21A4D0
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 16:35:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1027A1D14FC
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 16:35:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729874144; cv=none; b=g6F6cd9he8LG2+7ismZjz3xmrnPdW/6KM6I/K8SDtMzMF6viVBn3EKQMrSdMn8iBnYgqHRaQc3M3BNqmk9DC8UZnD5LJBHRsdjK4yhf6s8J62+pkaMgcXV9g60uSqM/GrO8sEtUwjpjej2xqt2wNQQsUTVKkTkl2+bakYfC7wgY=
+	t=1729874150; cv=none; b=G67j66paipVGnfNrX7mMxVZ/PTX9TOzi1a98o2McE18trS/I6AFGw3qHXKqNJMa1TwBMjBkmjjoy63q1bkyjakN5nAVJmfW42gGrridHFeiP0Xk56O+wx6cBdjpWarB1VTar9CykrqR9N4JgTDCTAWz2dYHIXcXi2siuOa3yUTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729874144; c=relaxed/simple;
-	bh=Oa66g0D/K8NQo8ZdHJStJsOpOeB/CdCkRH2Mn/ZHRgI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Uwgbla3vrBQZHduRjSwk7DZvKHusEswYn4CkROnaBP0DNXDUat7OiYK31Sxw6winOf8rl9NT84sLZQePxnA2jzRtQeAc1PIYaP+mbRvmtBmAA9L3+UL1pTCjcc2kyBbkuO5hhLkHT30YgJ9pr7oPL1B0gDGiTdybwLdsuVoYraE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=c1zRz6mA; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-53a007743e7so2793152e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 09:35:41 -0700 (PDT)
+	s=arc-20240116; t=1729874150; c=relaxed/simple;
+	bh=+mKkqhjOfp/8NKKCudMMe/P4eWYuwxPS5xhBfWoY950=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UNiyW7EoW8mB2nkYIUj6Ly5hzRuPNhQqQQwoCscJqaENbevp9+aqXjZLk3AEwlBJPdQ8SmzgZVKjR0J6Kcvq8fdLNdO0jie0aUWeOdi8FwXbaWiMFc1T9yqELfRmS72vmLTD4NGbr0+r+TUn0HZ38aeXzOejzgvXs0TlnmIMCKM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=zrzEY/fe; arc=none smtp.client-ip=209.85.161.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oo1-f46.google.com with SMTP id 006d021491bc7-5eb5be68c7dso1260932eaf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 09:35:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1729874139; x=1730478939; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Eq3fXe6qq3ix8jve6B/lCKB6fSeKNV8aFXZ8E3BzHv4=;
-        b=c1zRz6mA2nsKnEGWv9kpze/tGPVjliDzjJAMWw6VAtkotl7eMod/eSffrwEPlnChal
-         ieb64ltQzrr9q3MlbE5HeJEW6WHwcodmC7jwWa9EdAN1UKaK3nArVYWLFxG16kax6P0r
-         d3eouSU73pBVC6jf+nngUZRX/KFaoXdfJcWP4=
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729874146; x=1730478946; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=989e9i6l9ZWGz9AVMP0M9BcfdKAXAdUqBJ5ScVIDhD8=;
+        b=zrzEY/feB5XjwpXRxjHwE6Oz456AYMACAKlTnpKqV0j7nZA8yC50fMxgI32mnLGOR3
+         IKmj2bwDSE1UzEI8zotFhxzguYr53qw1NB38OvvpEDl/0arc/+aSZ6fKl7J8Z/KDxL+9
+         b8qfnLGzdRMU3zKsmu8CjYUCOLpKuwpKdNlYhWehXxaTVTMOM50f3E1uZxuztsU3gsn7
+         3Jc2nvYImlrV7j8q/Pj42dq3xfz3nIFJYWTN2gi9t+C+hSkJxD4JFwA7UC21b8ELokN3
+         G3sv5xncNDshsZQSK3cEkTbsEKhAf3hGjeZuaXWYHQvNTm4smAYt867VF96t0My/vMm6
+         FtYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729874139; x=1730478939;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Eq3fXe6qq3ix8jve6B/lCKB6fSeKNV8aFXZ8E3BzHv4=;
-        b=qofVIxFzvwtDFqkA7QyUN+/6ljartm80tGPJQz0lUIdlEWzNSvaLvyJZOxlXiebihp
-         LeIxtClj+UZpujux+53nIqDfiomeorVV7T22VBZog7IuvbkckKzgt8Z1f7WrLpTNP+lE
-         EWUUJqbZEGzhyrqF8EBeuQ6vVGvfe2XmnZUlOK1BAGLT6VYn+UbZs9WwgeKzZLwxt1ka
-         5kE5KnazpjmGiKvAYhpfytoyEcYr6BIuyMZIItq3224CR6JOgojTvDu2AQ+GI9JdvJjW
-         eIkfglZs2D3nwT3rsJaoS3AJ/0pBP7mt7kpdkEbNtvTizkol2vhQv2myr2YrG5/HviKy
-         +QSA==
-X-Forwarded-Encrypted: i=1; AJvYcCXzCY4S9uH6xgS+XQ6i6O2AEb3LVm2kJzkoJdyig/Z3Keim2wqNd/ERq5XtnnndKbAeFSYDkOhI41L70Xg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwcI/8z1X/sNMPfNcv7AXYpUg5l8YcvQ4RRJJUhhAWflLXvji0w
-	k7OuQYB9pfwtnEU4heLN+uI8wW5jf4P+IzbQ44f73m54xnNVYPSyEgSuGrdvVdEP/W4IG20w5rc
-	2bNNz
-X-Google-Smtp-Source: AGHT+IEmbM4TFB/uC6ASuun7jMyBimv5VLMAZjLYZ5s53n4NOXjzSMSKotcJV2aYwBhN13ghyaRl4A==
-X-Received: by 2002:a05:6512:3e25:b0:539:f06c:6f1d with SMTP id 2adb3069b0e04-53b1a3a786amr6701060e87.55.1729874138937;
-        Fri, 25 Oct 2024 09:35:38 -0700 (PDT)
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com. [209.85.208.171])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53b2e10a670sm231985e87.20.2024.10.25.09.35.37
-        for <linux-kernel@vger.kernel.org>
+        d=1e100.net; s=20230601; t=1729874146; x=1730478946;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=989e9i6l9ZWGz9AVMP0M9BcfdKAXAdUqBJ5ScVIDhD8=;
+        b=dk4uoB8ZhDDEvaFJuOEh4EPzuzxLVLjwcI6jwCm4HHAPuXsrbkc6Le2OP3VC6+WJKS
+         6xdfjNrKCEtUYRXe+B6nENj7xbcSXultsyONCzlxFlaSYWf4U4Y9bHKTmkG/a3w6S6VP
+         EMGlQz/zg2L1UGCWUbvfQ42iRuMQT/AvXUVEtUcbRVIrUmfEFBbngv+o+zbFX9ygP2Hs
+         81JptPmHHJ1nPwxtuuhD0UboulbnR2Y5mnQh93ztLpzIxW2tEMEN4/UwPWtNrHTvnFTS
+         h40kIlaIWBHnHHwy/58TqAPB8j/Vq60+tz5nd6KYEtS5UwGu5LHsFbMr98m4oNNKQFGQ
+         mRfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX+ZdHDHI+wZVzaJCu+7Wf+KuvKam0zAY2Jn8p606zI+pfJuGOq+epTRt3bQvHQqO+xj/loauznLF1Rbg4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZrNZuEYna5emZxhUFebtKXl9QmbxQdkmGVz/slAF40l7C506T
+	pANAdz51Q683ipjBgBUTVz3EoIKTXLPi8B5lndnsFNthxQ6bVb3Ksj1I+PPi2Us=
+X-Google-Smtp-Source: AGHT+IEFYO1M6pTkfu/lPvM0ue3WVlvBKRAjeNfd/LOIMo54KbBBMSvxxwGrLvo+2kGB0WtDyVR8Mw==
+X-Received: by 2002:a05:6820:1686:b0:5e7:aeed:97be with SMTP id 006d021491bc7-5ebee9a6161mr6603567eaf.8.1729874146115;
+        Fri, 25 Oct 2024 09:35:46 -0700 (PDT)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5ec1843d4a5sm288248eaf.6.2024.10.25.09.35.42
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 25 Oct 2024 09:35:37 -0700 (PDT)
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2fb3debdc09so19199751fa.3
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 09:35:37 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUI3D9w3V/3DPsEcb2sJdWBVxzt7bmm1yKAeUoUjtL69/cFaueOvPhSW2VttUJRLuUVpfY4P7h2t5Nn8II=@vger.kernel.org
-X-Received: by 2002:a05:651c:2210:b0:2fa:beb5:11cc with SMTP id
- 38308e7fff4ca-2fc9d582d71mr53240501fa.40.1729874137392; Fri, 25 Oct 2024
- 09:35:37 -0700 (PDT)
+        Fri, 25 Oct 2024 09:35:44 -0700 (PDT)
+Message-ID: <f7fd8929-352a-46e2-8f78-15720ab31b9d@baylibre.com>
+Date: Fri, 25 Oct 2024 11:35:42 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240620-igt-v3-0-a9d62d2e2c7e@mediatek.com> <20240620-igt-v3-8-a9d62d2e2c7e@mediatek.com>
- <CAD=FV=XTsPBQ7Qp_oQmBXkNY==KQWZdN7VYbuVPoBTHhMvzjUQ@mail.gmail.com> <b75276ff8dc2f73818ccd132530c0d3825e17888.camel@mediatek.com>
-In-Reply-To: <b75276ff8dc2f73818ccd132530c0d3825e17888.camel@mediatek.com>
-From: Doug Anderson <dianders@chromium.org>
-Date: Fri, 25 Oct 2024 09:35:23 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=WSD9p61ePKXVOcUBGktRJkUx+KbiJXF-9QUtWE8zDt0A@mail.gmail.com>
-Message-ID: <CAD=FV=WSD9p61ePKXVOcUBGktRJkUx+KbiJXF-9QUtWE8zDt0A@mail.gmail.com>
-Subject: Re: [PATCH v3 08/14] drm/mediatek: Add DRM_MODE_ROTATE_0 to rotation property
-To: =?UTF-8?B?U2hhd24gU3VuZyAo5a6L5a2d6KyZKQ==?= <Shawn.Sung@mediatek.com>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
-	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	=?UTF-8?B?QmliYnkgSHNpZWggKOisnea/n+mBoCk=?= <Bibby.Hsieh@mediatek.com>, 
-	=?UTF-8?B?SmFzb24tSkggTGluICjmnpfnnb/npaUp?= <Jason-JH.Lin@mediatek.com>, 
-	"chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>, "djkurtz@chromium.org" <djkurtz@chromium.org>, 
-	=?UTF-8?B?TmFuY3kgTGluICjmnpfmrKPonqIp?= <Nancy.Lin@mediatek.com>, 
-	"daniel@ffwll.ch" <daniel@ffwll.ch>, "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>, 
-	=?UTF-8?B?Q0sgSHUgKOiDoeS/iuWFiSk=?= <ck.hu@mediatek.com>, 
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "airlied@gmail.com" <airlied@gmail.com>, 
-	=?UTF-8?B?WVQgU2hlbiAo5rKI5bKz6ZyGKQ==?= <Yt.Shen@mediatek.com>, 
-	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>, "littlecvr@chromium.org" <littlecvr@chromium.org>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Hsin-Yi Wang <hsinyi@chromium.org>, "zwisler@chromium.org" <zwisler@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v4 09/15] spi: axi-spi-engine: implement offload
+ support
+To: =?UTF-8?Q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>,
+ Mark Brown <broonie@kernel.org>, Jonathan Cameron <jic23@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <nuno.sa@analog.com>, =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+Cc: Michael Hennerich <Michael.Hennerich@analog.com>,
+ Lars-Peter Clausen <lars@metafoo.de>, David Jander <david@protonic.nl>,
+ Martin Sperl <kernel@martin.sperl.org>, linux-spi@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-iio@vger.kernel.org, linux-pwm@vger.kernel.org
+References: <20241023-dlech-mainline-spi-engine-offload-2-v4-0-f8125b99f5a1@baylibre.com>
+ <20241023-dlech-mainline-spi-engine-offload-2-v4-9-f8125b99f5a1@baylibre.com>
+ <35e3a616b1cd0b66096795f247604bbe1aa8300d.camel@gmail.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <35e3a616b1cd0b66096795f247604bbe1aa8300d.camel@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Shawn,
+On 10/25/24 8:09 AM, Nuno Sá wrote:
+> On Wed, 2024-10-23 at 15:59 -0500, David Lechner wrote:
+>> Implement SPI offload support for the AXI SPI Engine. Currently, the
+>> hardware only supports triggering offload transfers with a hardware
+>> trigger so attempting to use an offload message in the regular SPI
+>> message queue will fail. Also, only allows streaming rx data to an
+>> external sink, so attempts to use a rx_buf in the offload message will
+>> fail.
+>>
+>> Signed-off-by: David Lechner <dlechner@baylibre.com>
+>> ---
+>>
 
-On Thu, Oct 24, 2024 at 6:32=E2=80=AFPM Shawn Sung (=E5=AE=8B=E5=AD=9D=E8=
-=AC=99)
-<Shawn.Sung@mediatek.com> wrote:
->
-> Hi Doug,
->
-> On Thu, 2024-10-24 at 13:47 -0700, Doug Anderson wrote:
-> >
-> > External email : Please do not click links or open attachments until
-> > you have verified the sender or the content.
-> >  Hi,
-> >
-> > On Wed, Jun 19, 2024 at 9:39=E2=80=AFAM Hsiao Chien Sung via B4 Relay
-> > <devnull+shawn.sung.mediatek.com@kernel.org> wrote:
-> > >
-> > > From: Hsiao Chien Sung <shawn.sung@mediatek.com>
-> > >
-> > > Always add DRM_MODE_ROTATE_0 to rotation property to meet
-> > > IGT's (Intel GPU Tools) requirement.
-> > >
-> > > Reviewed-by: CK Hu <ck.hu@mediatek.com>
-> > > Reviewed-by: AngeloGioacchino Del Regno <
-> > angelogioacchino.delregno@collabora.com>
-> > > Fixes: 119f5173628a ("drm/mediatek: Add DRM Driver for Mediatek SoC
-> > MT8173.")
-> > > Signed-off-by: Hsiao Chien Sung <shawn.sung@mediatek.com>
-> > > ---
-> > >  drivers/gpu/drm/mediatek/mtk_ddp_comp.h |  6 +++++-
-> > >  drivers/gpu/drm/mediatek/mtk_disp_ovl.c | 17 +++++------------
-> > >  drivers/gpu/drm/mediatek/mtk_plane.c    |  2 +-
-> > >  3 files changed, 11 insertions(+), 14 deletions(-)
-> >
-> > FWIW, this patch got into ChromeOS's 5.15 branch via stable merge and
-> > apparently broke things. As a short term fix we've reverted it there:
-> >
-> > https://crrev.com/c/5960799
->
-> Thank you for reporting this issue. We are currently investigating the
-> bug.
->
-> Since I am unable to access the Google issue tracker [1], could you
-> please provide more details about this bug? The message in the revert
-> commit mentions "hana/sycamore360" (MT8173) and it appears that there
-> is a rotation issue in tablet mode.
+...
 
-Thanks for the followup. I've only been peripherally involved in the
-problem, but I can at least copy the relevant bits over.
+>> +static int spi_engine_offload_prepare(struct spi_message *msg)
+>> +{
+>> +	struct spi_controller *host = msg->spi->controller;
+>> +	struct spi_engine *spi_engine = spi_controller_get_devdata(host);
+>> +	struct spi_engine_program *p = msg->opt_state;
+>> +	struct spi_engine_offload *priv = msg->offload->priv;
+>> +	struct spi_transfer *xfer;
+>> +	void __iomem *cmd_addr;
+>> +	void __iomem *sdo_addr;
+>> +	size_t tx_word_count = 0;
+>> +	unsigned int i;
+>> +
+>> +	if (p->length > spi_engine->offload_ctrl_mem_size)
+>> +		return -EINVAL;
+>> +
+>> +	/* count total number of tx words in message */
+>> +	list_for_each_entry(xfer, &msg->transfers, transfer_list) {
+>> +		if (!xfer->tx_buf)
+>> +			continue;
+>> +
+>> +		if (xfer->bits_per_word <= 8)
+>> +			tx_word_count += xfer->len;
+>> +		else if (xfer->bits_per_word <= 16)
+>> +			tx_word_count += xfer->len / 2;
+>> +		else
+>> +			tx_word_count += xfer->len / 4;
+>> +	}
+>> +
+>> +	if (tx_word_count > spi_engine->offload_sdo_mem_size)
+>> +		return -EINVAL;
+>> +
+>> +	if (test_and_set_bit_lock(SPI_ENGINE_OFFLOAD_FLAG_PREPARED, &priv->flags))
+>> +		return -EBUSY;
+>> +
+> 
+> This is odd. Any special reason for using this with aquire - release semantics? Can
+> optimize() and unoptimize() run concurrently? Because if they can this does not give
+> us mutual exclusion and we really need to do what we're doing with kind of stuff :)
+> 
+> - Nuno Sá
+> 
+> 
 
-It looks as if the problem is somehow only showing up when running
-Android apps on those devices, so whatever the problem is it's subtle.
-The report says that the apps work OK when the device is in tablet
-mode and in one rotation but the problem shows up when rotated 90
-degrees. The report says that "Screen content appears inverted". To me
-it also sounds _possible_ that the problem is somewhere in our
-userspace.
+This looks like another leftover from an in-between revision that
+didn't get fully cleaned up. I will reconsider what is need here.
 
-I think Hsin-Yi and Ross are continuing to dig a bit more. Maybe once
-they've dug they can add any details they find or can loop in others
-as it makes sense?
-
-
-> > ...apparently the patch is fine on newer kernels so maybe there is a
-> > missing dependency? Hopefully someone on this list can dig into this
-> > and either post the revert to stable 5.15 kernels or suggest
-> > additional backports.
-> >
->
-> There are known issues [2] regarding forward compatibility. Could you
-> confirm whether this patch is unable to resolve the mentioned problem?
-> Thanks.
->
-> [1] https://issuetracker.google.com/issues/369688659
-> [2]
-> https://patchwork.kernel.org/project/linux-mediatek/list/?series=3D896964
-
-The patches in [2] look related to alpha blending but I think they are
-seeing issues related to rotation. ...so I'm going to assume it's
-different? I don't have this hardware in front of me, so I'm just
-going by the report.
-
--Doug
+But to answer the question, strictly speaking, there isn't anything
+to prevent two concurrent calls spi_optimize_message() with different
+messages but the same offload instance.
 
