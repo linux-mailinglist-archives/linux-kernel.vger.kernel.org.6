@@ -1,374 +1,121 @@
-Return-Path: <linux-kernel+bounces-382690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D4099B123E
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 00:02:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45B0A9B1247
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 00:02:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9007C1F22506
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 22:02:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77E3C1C21264
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 22:02:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 931911D5176;
-	Fri, 25 Oct 2024 22:02:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4EA1217F2C;
+	Fri, 25 Oct 2024 22:02:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="mneKf7nz"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nQ+Gvwdd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AFC6217F2D
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 22:02:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 292FA217F2D;
+	Fri, 25 Oct 2024 22:02:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729893746; cv=none; b=hmPIDVosJltlzmbq6C7bgSGOZPJrW3JOwwHbjjZyMeShCF3e5/AjVBlo2GkO0D2E8ckhmeefMT0Cjkp6aYhKyKmRC9oi82LP16Opwz3zvNDdd0qk4Kp6+bBWqMEJeKEZaFZPddCGW1gds+xk4afh6lGCTn+j0ZBARVCO2lAzHwg=
+	t=1729893761; cv=none; b=vBkld9uaLJtB7jHlSJqCa+1O69HAbz9lJWs6fIY28NSl6LLnvjFXAFyI9w9EETcx7ykvw6J2C0CkM60xcgcBcw5A02mzHTzlYt/tcR3VJLxPULd32btiJnwUSN06uOTyRqW3cSlGcPTe5uwaOaTgEPo7DLW5yK1naICPJs03IVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729893746; c=relaxed/simple;
-	bh=kfsZMZKrpjtgHib1WoZhkJ/YfrjuDLVuHwalOGuQ9xw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Hl1dpmKywsVEj09JrWmBJ6b41qxPIA03rJO4enARdpzvhR7j2luyM1qGOAAvbgbj3UjxtMX5EHy8uwZlN30WUTlxaRV5Wjc7lveRZwHIevHsMr1efcMV3zi+FjLNfvtjwo3OwkcB8ejVjOwUDb5LabRQnclx+3Va14wvQX+sq+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=mneKf7nz; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49PBaxLZ003726;
-	Fri, 25 Oct 2024 22:02:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	unqZyCgNu9y3JNL4D+vF9Du7quIUHjBrUhkFlZeyWc4=; b=mneKf7nzD3bc2UoU
-	Ps4RPfTPeFtqBo17RUi0clIKsJDXAzfM8qTM5VlX5Y15x8GtdgcCRJtXjN69uK9E
-	zLbS9hzkDpyc4kBHR4RV2MNR3Ln8DmAMcPj7NayWHHUmfCJMJ1AqQ6nUUYbzT3Ej
-	2lXL9KOL6vp985Y+wBscnKjYSRXc9FCKoVmt5lqR/N4yxiM++Pj7+/9wEKxnH1gK
-	zg5/koF0YW2AUes8+fng8GsdRr2iJ5+vdPfOkFp8jGD46OdzFdnwzbLE9q8cBnUM
-	o3o+SdD8o+3GX3cTBnrUm22Kv3zkZbHsvUdOFdQONnZMLDfUDpaFTIYvVPTwzXkp
-	Ww/OaQ==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42em68ae1e-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 25 Oct 2024 22:02:15 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49PM2EP5016597
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 25 Oct 2024 22:02:14 GMT
-Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 25 Oct
- 2024 15:02:14 -0700
-Message-ID: <49b76568-572d-b3ef-da79-36f1a3c44f27@quicinc.com>
-Date: Fri, 25 Oct 2024 16:02:13 -0600
+	s=arc-20240116; t=1729893761; c=relaxed/simple;
+	bh=ehUyipyJYKOHtqA1xl/ASG6Px2MP+X3bw4HigUGDv+s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fw0eBs9QXyNS8iCS8juRlUfNLE9U9hHTCmrTZ0I16QiPGx7Toh/hPFCga5NpRy7LzWOvOLYoc4LduIJm4hQFtJ/rhajjlgYGyTlXFssktB8hsjw+DZhChW8uo6WSCAwav4Y/yO7DzVdNdca9rp896pSnTuQuMz25T/O6xu7FHNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nQ+Gvwdd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 779EAC4CEC3;
+	Fri, 25 Oct 2024 22:02:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729893760;
+	bh=ehUyipyJYKOHtqA1xl/ASG6Px2MP+X3bw4HigUGDv+s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nQ+Gvwdd9yysGsp0/7UPqj/qXd3zSzWYpyvhpi0++ZJ5oQTUKoSH0rAiYPTtQ9twV
+	 qkHDbr3AJhjxOl6A1njpP1LPsg5esbBqjAK0dw53bkgrilMNsjgC8+SWoctEzkofEe
+	 q5umojB4/VPj4s/EOR8drq3xpoD+hK70iS+el1oIMN7x3T4ma4ag8dWhGsBPuFPD08
+	 X7fDq4cuocWDtE6fuI3dssWTW6C4FHK/Nv0gXa6ZDOzj9d21s6umvhxfOdT6/qSJJk
+	 9Kfr57sbZvF4ubur0lRMtnU0gryP99paij167WI2Z/0vW9vxVu0blssafGUNty8k6B
+	 scwlea49za9xA==
+Date: Fri, 25 Oct 2024 22:02:39 +0000
+From: Eric Biggers <ebiggers@kernel.org>
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
+	linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+	linux-mips@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev,
+	sparclinux@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCH v2 04/18] crypto: crc32 - don't unnecessarily register
+ arch algorithms
+Message-ID: <20241025220239.GB2637569@google.com>
+References: <20241025191454.72616-1-ebiggers@kernel.org>
+ <20241025191454.72616-5-ebiggers@kernel.org>
+ <CAMj1kXEsq7iJThqZ7WA00ei4m59vpC23wPM+Mrj9W+HXfk-aSg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.0
-Subject: Re: [PATCH V5 00/10] AMD XDNA driver
-Content-Language: en-US
-To: Lizhi Hou <lizhi.hou@amd.com>, <ogabbay@kernel.org>,
-        <dri-devel@lists.freedesktop.org>
-CC: <linux-kernel@vger.kernel.org>, <min.ma@amd.com>, <max.zhen@amd.com>,
-        <sonal.santan@amd.com>, <king.tam@amd.com>
-References: <20241021161931.3701754-1-lizhi.hou@amd.com>
- <de895a18-e40f-4996-b799-0a957bd3ca48@quicinc.com>
- <28047f7a-ee20-0b5b-5bdc-5dea8e0bd412@amd.com>
-From: Jeffrey Hugo <quic_jhugo@quicinc.com>
-In-Reply-To: <28047f7a-ee20-0b5b-5bdc-5dea8e0bd412@amd.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: JADy4uNBJqIGLIjebYbAyP7zIQoDOOCO
-X-Proofpoint-GUID: JADy4uNBJqIGLIjebYbAyP7zIQoDOOCO
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 malwarescore=0
- priorityscore=1501 adultscore=0 bulkscore=0 phishscore=0 mlxscore=0
- lowpriorityscore=0 mlxlogscore=999 impostorscore=0 suspectscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410250170
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMj1kXEsq7iJThqZ7WA00ei4m59vpC23wPM+Mrj9W+HXfk-aSg@mail.gmail.com>
 
-On 10/25/2024 3:28 PM, Lizhi Hou wrote:
+On Fri, Oct 25, 2024 at 10:47:15PM +0200, Ard Biesheuvel wrote:
+> On Fri, 25 Oct 2024 at 21:15, Eric Biggers <ebiggers@kernel.org> wrote:
+> >
+> > From: Eric Biggers <ebiggers@google.com>
+> >
+> > Instead of registering the crc32-$arch and crc32c-$arch algorithms if
+> > the arch-specific code was built, only register them when that code was
+> > built *and* is not falling back to the base implementation at runtime.
+> >
+> > This avoids confusing users like btrfs which checks the shash driver
+> > name to determine whether it is crc32c-generic.
+> >
 > 
-> On 10/25/24 10:55, Jeffrey Hugo wrote:
->> On 10/21/2024 10:19 AM, Lizhi Hou wrote:
->>> This patchset introduces a new Linux Kernel Driver, amdxdna for AMD 
->>> NPUs.
->>> The driver is based on Linux accel subsystem.
->>>
->>> NPU (Neural Processing Unit) is an AI inference accelerator integrated
->>> into AMD client CPUs. NPU enables efficient execution of Machine 
->>> Learning
->>> applications like CNNs, LLMs, etc.  NPU is based on AMD XDNA
->>> architecture [1].
->>>
->>> AMD NPU consists of the following components:
->>>
->>>    - Tiled array of AMD AI Engine processors.
->>>    - Micro Controller which runs the NPU Firmware responsible for
->>>      command processing, AIE array configuration, and execution 
->>> management.
->>>    - PCI EP for host control of the NPU device.
->>>    - Interconnect for connecting the NPU components together.
->>>    - SRAM for use by the NPU Firmware.
->>>    - Address translation hardware for protected host memory access by 
->>> the
->>>      NPU.
->>>
->>> NPU supports multiple concurrent fully isolated contexts. Concurrent
->>> contexts may be bound to AI Engine array spatially and or temporarily.
->>>
->>> The driver is licensed under GPL-2.0 except for UAPI header which is
->>> licensed GPL-2.0 WITH Linux-syscall-note.
->>>
->>> User mode driver stack consists of XRT [2] and AMD AIE Plugin for 
->>> IREE [3].
->>>
->>> The firmware for the NPU is distributed as a closed source binary, 
->>> and has
->>> already been pushed to the DRM firmware repository [4].
->>>
->>> [1]https://www.amd.com/en/technologies/xdna.html
->>> [2]https://github.com/Xilinx/XRT
->>> [3]https://github.com/nod-ai/iree-amd-aie
->>> [4]https://gitlab.freedesktop.org/drm/firmware/-/tree/amd-ipu-staging/amdnpu 
->>>
->>>
->>> Changes since v4:
->>> - Fix lockdep errors
->>> - Use __u* structure for struct aie_error
->>
->> One nit, when you send the next version would you please either To: or 
->> Cc: me on the entire series?  I only get pieces in my inbox which is 
->> mildly annoying on my end.
-> Sure.
->>
->> Looks like we are getting close here.  One procedural question I have, 
->> do you have commit permissions to drm-misc?
-> No, I do not have commit permissions yet.
-
-You should apply for access.  Assuming this series is ready before that 
-goes through, I'll apply it.
-
->> I applied the series to drm-misc-next and tried to build.  Got the 
->> following errors -
+> I think we agree that 'generic' specifically means a C implementation
+> that is identical across all architectures, which is why I updated my
+> patch to export -arch instead of wrapping the C code in yet another
+> driver just for the fuzzing tests.
 > 
-> Could you share the build command line? So I can reproduce and verify my 
-> fix.
-
-The command is simple:
-make -j20
-
-The system details, incase it somehow matters:
-Ubuntu 22.04 w/ 5.15 kernel
-
-$ lsb_release -a
-No LSB modules are available.
-Distributor ID: Ubuntu
-Description:    Ubuntu 22.04.3 LTS
-Release:        22.04
-Codename:       jammy
-
-$ uname -a
-Linux jhugo-lnx 5.15.0-89-generic #99-Ubuntu SMP Mon Oct 30 20:42:41 UTC 
-2023 x86_64 x86_64 x86_64 GNU/Linux
-
-The kernel config is probably the relevant piece.  When I first built 
-after applying the series, I was asked to choose what to do with the new 
-config item.  I selected =m.
-.config can be found at 
-https://gist.github.com/quic-jhugo/4cc249b1e3ba127039fbc709a513a432
-
+> So why is this a problem? If no optimizations are available at
+> runtime, crc32-arch and crc32-generic are interchangeable, and so it
+> shouldn't matter whether you use one or the other.
 > 
-> I used "make M=drivers/accel/amdxdna" and did not reproduce the error 
-> with drm-misc-next. It looks build robot did not complain with the patch 
-> neither.
+> You can infer from the driver name whether the C code is being used,
+> not whether or not the implementation is 'fast', and the btrfs hack is
+> already broken on arm64.
 > 
-> $ git branch
-> * drm-misc-next
-> $ make M=drivers/accel/amdxdna
->    CC [M]  drivers/accel/amdxdna/aie2_ctx.o
->    CC [M]  drivers/accel/amdxdna/aie2_error.o
->    CC [M]  drivers/accel/amdxdna/aie2_message.o
->    CC [M]  drivers/accel/amdxdna/aie2_pci.o
->    CC [M]  drivers/accel/amdxdna/aie2_psp.o
->    CC [M]  drivers/accel/amdxdna/aie2_smu.o
->    CC [M]  drivers/accel/amdxdna/aie2_solver.o
->    CC [M]  drivers/accel/amdxdna/amdxdna_ctx.o
->    CC [M]  drivers/accel/amdxdna/amdxdna_gem.o
->    CC [M]  drivers/accel/amdxdna/amdxdna_mailbox.o
->    CC [M]  drivers/accel/amdxdna/amdxdna_mailbox_helper.o
->    CC [M]  drivers/accel/amdxdna/amdxdna_pci_drv.o
->    CC [M]  drivers/accel/amdxdna/amdxdna_sysfs.o
->    CC [M]  drivers/accel/amdxdna/npu1_regs.o
->    CC [M]  drivers/accel/amdxdna/npu2_regs.o
->    CC [M]  drivers/accel/amdxdna/npu4_regs.o
->    CC [M]  drivers/accel/amdxdna/npu5_regs.o
->    LD [M]  drivers/accel/amdxdna/amdxdna.o
->    MODPOST drivers/accel/amdxdna/Module.symvers
->    CC [M]  drivers/accel/amdxdna/amdxdna.mod.o
->    CC [M]  drivers/accel/amdxdna/.module-common.o
->    LD [M]  drivers/accel/amdxdna/amdxdna.ko
-> $
+> > (It would also make sense to change btrfs to test the crc32_optimization
+> > flags itself, so that it doesn't have to use the weird hack of parsing
+> > the driver name.  This change still makes sense either way though.)
+> >
 > 
->>
->>   CC [M]  drivers/accel/amdxdna/aie2_ctx.o
->>   CC [M]  drivers/accel/amdxdna/aie2_error.o
->>   CC [M]  drivers/accel/amdxdna/aie2_message.o
->>   CC [M]  drivers/accel/amdxdna/aie2_pci.o
->>   CC [M]  drivers/accel/amdxdna/aie2_psp.o
->>   CC [M]  drivers/accel/amdxdna/aie2_smu.o
->>   CC [M]  drivers/accel/amdxdna/aie2_solver.o
->>   CC [M]  drivers/accel/amdxdna/amdxdna_ctx.o
->>   CC [M]  drivers/accel/amdxdna/amdxdna_gem.o
->>   CC [M]  drivers/accel/amdxdna/amdxdna_mailbox.o
->>   CC [M]  drivers/accel/amdxdna/amdxdna_mailbox_helper.o
->>   CC [M]  drivers/accel/amdxdna/amdxdna_pci_drv.o
->>   CC [M]  drivers/accel/amdxdna/amdxdna_sysfs.o
->>   CC [M]  drivers/accel/amdxdna/npu1_regs.o
->>   CC [M]  drivers/accel/amdxdna/npu2_regs.o
->>   CC [M]  drivers/accel/amdxdna/npu4_regs.o
->>   CC [M]  drivers/accel/amdxdna/npu5_regs.o
->>   AR      drivers/base/firmware_loader/built-in.a
->>   AR      drivers/base/built-in.a
->> In file included from drivers/accel/amdxdna/aie2_message.c:19:
->> drivers/accel/amdxdna/amdxdna_ctx.h: In function ‘amdxdna_cmd_get_op’:
->> drivers/accel/amdxdna/amdxdna_ctx.h:112:16: error: implicit 
->> declaration of function ‘FIELD_GET’ 
->> [-Werror=implicit-function-declaration]
->>   112 |         return FIELD_GET(AMDXDNA_CMD_OPCODE, cmd->header);
->>       |                ^~~~~~~~~
->> In file included from drivers/accel/amdxdna/amdxdna_gem.c:15:
->> drivers/accel/amdxdna/amdxdna_ctx.h: In function ‘amdxdna_cmd_get_op’:
->> drivers/accel/amdxdna/amdxdna_ctx.h:112:16: error: implicit 
->> declaration of function ‘FIELD_GET’ 
->> [-Werror=implicit-function-declaration]
->>   112 |         return FIELD_GET(AMDXDNA_CMD_OPCODE, cmd->header);
->>       |                ^~~~~~~~~
->> In file included from drivers/accel/amdxdna/aie2_psp.c:11:
->> drivers/accel/amdxdna/aie2_psp.c: In function ‘psp_exec’:
->> drivers/accel/amdxdna/aie2_psp.c:62:34: error: implicit declaration of 
->> function ‘FIELD_GET’ [-Werror=implicit-function-declaration]
->>    62 | FIELD_GET(PSP_STATUS_READY, ready),
->>       |                                  ^~~~~~~~~
->> ./include/linux/iopoll.h:47:21: note: in definition of macro 
->> ‘read_poll_timeout’
->>    47 |                 if (cond) \
->>       |                     ^~~~
->> drivers/accel/amdxdna/aie2_psp.c:61:15: note: in expansion of macro 
->> ‘readx_poll_timeout’
->>    61 |         ret = readx_poll_timeout(readl, PSP_REG(psp, 
->> PSP_STATUS_REG), ready,
->>       |               ^~~~~~~~~~~~~~~~~~
->> drivers/accel/amdxdna/amdxdna_ctx.h: In function ‘amdxdna_cmd_set_state’:
->> drivers/accel/amdxdna/amdxdna_ctx.h:121:24: error: implicit 
->> declaration of function ‘FIELD_PREP’ 
->> [-Werror=implicit-function-declaration]
->>   121 |         cmd->header |= FIELD_PREP(AMDXDNA_CMD_STATE, s);
->>       |                        ^~~~~~~~~~
->> drivers/accel/amdxdna/amdxdna_ctx.h: In function ‘amdxdna_cmd_set_state’:
->> drivers/accel/amdxdna/amdxdna_ctx.h:121:24: error: implicit 
->> declaration of function ‘FIELD_PREP’ 
->> [-Werror=implicit-function-declaration]
->>   121 |         cmd->header |= FIELD_PREP(AMDXDNA_CMD_STATE, s);
->>       |                        ^~~~~~~~~~
->> In file included from drivers/accel/amdxdna/aie2_pci.c:22:
->> drivers/accel/amdxdna/amdxdna_ctx.h: In function ‘amdxdna_cmd_get_op’:
->> drivers/accel/amdxdna/amdxdna_ctx.h:112:16: error: implicit 
->> declaration of function ‘FIELD_GET’ 
->> [-Werror=implicit-function-declaration]
->>   112 |         return FIELD_GET(AMDXDNA_CMD_OPCODE, cmd->header);
->>       |                ^~~~~~~~~
->> In file included from drivers/accel/amdxdna/aie2_ctx.c:18:
->> drivers/accel/amdxdna/amdxdna_ctx.h: In function ‘amdxdna_cmd_get_op’:
->> drivers/accel/amdxdna/amdxdna_ctx.h:112:16: error: implicit 
->> declaration of function ‘FIELD_GET’ 
->> [-Werror=implicit-function-declaration]
->>   112 |         return FIELD_GET(AMDXDNA_CMD_OPCODE, cmd->header);
->>       |                ^~~~~~~~~
->> drivers/accel/amdxdna/amdxdna_ctx.h: In function ‘amdxdna_cmd_set_state’:
->> drivers/accel/amdxdna/amdxdna_ctx.h:121:24: error: implicit 
->> declaration of function ‘FIELD_PREP’ 
->> [-Werror=implicit-function-declaration]
->>   121 |         cmd->header |= FIELD_PREP(AMDXDNA_CMD_STATE, s);
->>       |                        ^~~~~~~~~~
->> In file included from drivers/accel/amdxdna/amdxdna_ctx.c:16:
->> drivers/accel/amdxdna/amdxdna_ctx.h: In function ‘amdxdna_cmd_get_op’:
->> drivers/accel/amdxdna/amdxdna_ctx.h:112:16: error: implicit 
->> declaration of function ‘FIELD_GET’ 
->> [-Werror=implicit-function-declaration]
->>   112 |         return FIELD_GET(AMDXDNA_CMD_OPCODE, cmd->header);
->>       |                ^~~~~~~~~
->> cc1: all warnings being treated as errors
->> drivers/accel/amdxdna/amdxdna_ctx.h: In function ‘amdxdna_cmd_set_state’:
->> drivers/accel/amdxdna/amdxdna_ctx.h:121:24: error: implicit 
->> declaration of function ‘FIELD_PREP’ 
->> [-Werror=implicit-function-declaration]
->>   121 |         cmd->header |= FIELD_PREP(AMDXDNA_CMD_STATE, s);
->>       |                        ^~~~~~~~~~
->> drivers/accel/amdxdna/aie2_ctx.c: In function ‘aie2_hwctx_restart’:
->> drivers/accel/amdxdna/aie2_ctx.c:114:9: error: too few arguments to 
->> function ‘drm_sched_start’
->>   114 |         drm_sched_start(&hwctx->priv->sched);
->>       |         ^~~~~~~~~~~~~~~
->> In file included from ./include/trace/events/amdxdna.h:12,
->>                  from drivers/accel/amdxdna/aie2_ctx.c:13:
->> ./include/drm/gpu_scheduler.h:593:6: note: declared here
->>   593 | void drm_sched_start(struct drm_gpu_scheduler *sched, int errno);
->>       |      ^~~~~~~~~~~~~~~
->> make[5]: *** [scripts/Makefile.build:229: 
->> drivers/accel/amdxdna/aie2_psp.o] Error 1
->> make[5]: *** Waiting for unfinished jobs....
->> drivers/accel/amdxdna/amdxdna_ctx.h: In function ‘amdxdna_cmd_set_state’:
->> drivers/accel/amdxdna/amdxdna_ctx.h:121:24: error: implicit 
->> declaration of function ‘FIELD_PREP’ 
->> [-Werror=implicit-function-declaration]
->>   121 |         cmd->header |= FIELD_PREP(AMDXDNA_CMD_STATE, s);
->>       |                        ^~~~~~~~~~
->> In file included from drivers/accel/amdxdna/amdxdna_pci_drv.c:18:
->> drivers/accel/amdxdna/amdxdna_ctx.h: In function ‘amdxdna_cmd_get_op’:
->> drivers/accel/amdxdna/amdxdna_ctx.h:112:16: error: implicit 
->> declaration of function ‘FIELD_GET’ 
->> [-Werror=implicit-function-declaration]
->>   112 |         return FIELD_GET(AMDXDNA_CMD_OPCODE, cmd->header);
->>       |                ^~~~~~~~~
->> cc1: all warnings being treated as errors
->> make[5]: *** [scripts/Makefile.build:229: 
->> drivers/accel/amdxdna/aie2_ctx.o] Error 1
->> drivers/accel/amdxdna/amdxdna_ctx.h: In function ‘amdxdna_cmd_set_state’:
->> drivers/accel/amdxdna/amdxdna_ctx.h:121:24: error: implicit 
->> declaration of function ‘FIELD_PREP’ 
->> [-Werror=implicit-function-declaration]
->>   121 |         cmd->header |= FIELD_PREP(AMDXDNA_CMD_STATE, s);
->>       |                        ^~~~~~~~~~
->> drivers/accel/amdxdna/amdxdna_mailbox.c: In function 
->> ‘xdna_mailbox_send_msg’:
->> drivers/accel/amdxdna/amdxdna_mailbox.c:444:26: error: implicit 
->> declaration of function ‘FIELD_PREP’ 
->> [-Werror=implicit-function-declaration]
->>   444 |         header->sz_ver = FIELD_PREP(MSG_BODY_SZ, 
->> msg->send_size) |
->>       |                          ^~~~~~~~~~
->>
->>
->> You also have the following checkpatch issues -
-> 
-> Could you share the command you used?  I tried to use 'dim checkpatch' 
-> and it did not find out the misspelling issue.
+> Indeed. That hack is very dubious and I'd be inclined just to ignore
+> this. On x86 and arm64, it shouldn't make a difference, given that
+> crc32-arch will be 'fast' in the vast majority of cases. On other
+> architectures, btrfs may use the C implementation while assuming it is
+> something faster, and if anyone actually notices the difference, we
+> can work with the btrfs devs to do something more sensible here.
 
-./scripts/checkpatch.pl --strict --codespell *.patch
+Yes, we probably could get away without this.  It's never really been
+appropriate to use the crypto driver names for anything important.  And btrfs
+probably should just assume CRC32C == fast unconditionally, like what it does
+with xxHash64, or even do a quick benchmark to measure the actual speed of its
+hash algorithm (which can also be sha256 or blake2b which can be very fast too).
 
-Note, --codespell requires some local setup.  I beleive the comments in 
-the checkpatch.pl script are fairly straightforward.  I use a copy of 
-the database from the github that is rather recent.  The Ubuntu distro 
-package is really out of date and I don't think I looked to see if there 
-is a pythong pip version.  Grabbing the one file from the github repo 
-seemed simple emough.
+Besides the btrfs case, my concern was there may be advice floating around about
+checking /proc/crypto to check what optimized code is being used.  Having
+crc32-$arch potentially be running the generic code would make that misleading.
+It might make sense to keep it working similar to how it did before.
 
--Jeff
+But I do agree that we could probably get away without this.
+
+- Eric
 
