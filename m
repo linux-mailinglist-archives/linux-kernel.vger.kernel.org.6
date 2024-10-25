@@ -1,152 +1,163 @@
-Return-Path: <linux-kernel+bounces-382559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78BB59B0FD8
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 22:32:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 524FB9B0FDB
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 22:37:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF540B21E78
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 20:32:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84B2B1C20E50
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 20:37:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E623B21216E;
-	Fri, 25 Oct 2024 20:32:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B476120C334;
+	Fri, 25 Oct 2024 20:37:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qQe2ZQ+t"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="YbLWLt2A"
+Received: from omta034.useast.a.cloudfilter.net (omta034.useast.a.cloudfilter.net [44.202.169.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25436139CFA;
-	Fri, 25 Oct 2024 20:32:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 168D4206502
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 20:36:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729888348; cv=none; b=g2Ik+nj1IDUs6ToAvrpW2urDTec0faObLDBVxjPdmQvMFxYIil4f3Pur9888iiDRag2ltoQF5V0G6NxA2ftLrQ3TADqnkj88pU763hXLS4DcLrnmb9fAmp3TTOYa5wqhMBmpncWGYJl3tMaQnY9Ihl+WzOs1YbjjhpsGO68vlDM=
+	t=1729888620; cv=none; b=OHtXlmZ27NsIambnuf4v5HI5Ns7XklZRiIO6Mc9sSSitrSsUHWx8KHZpLxxEMD3z1ZE8R2D8MnXqHzeXoocw/lk2jwXPMK/IvCt6gp4+++p4YMnB3AOVrh/z4otxsiPzK7PN3qI2j1PRB9uxWSJgd+BT7tivjKccf0xEokg301E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729888348; c=relaxed/simple;
-	bh=ZOwjJ8kzzckhcIYE8j5hMZsSJUKc5cYu8yXf20E0HuM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eN7mzVwPJh4mjS8BlNnYLAlTcl/BFHz6MAZbqbPjuHfZMCCQ6PA+qFgLNUoyP0r+HPlX4PQs19sXC8Rm9oZ687jEIIArnpzpq7DzLhM50+YOJN5oMQXWE0dbGWO7EV9bIKXyVowzbnBy5OdrPgWloMxGEJ0OpAtUcqAAHRYLduY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qQe2ZQ+t; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3494C4CEC3;
-	Fri, 25 Oct 2024 20:32:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729888347;
-	bh=ZOwjJ8kzzckhcIYE8j5hMZsSJUKc5cYu8yXf20E0HuM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=qQe2ZQ+tSWetaoVGslaOuLKxN45AkmR2qZL3ILBwg0inR1U0Bmqzc2I/H0SPNy1q+
-	 xqhvZ1lVsaUgvK+i94ztGpOyctfsh9xsUmDl7oWGF8DsRY0dU+ALpo3kC2CFzgTRCs
-	 d1Gn2syKnR1u3PGOMFPA5PNTxrRkzCzY8B16NsRjasHVCOlyrTHAR42WYFBMOtUfdG
-	 GuwI0SitSv5h2cI0j6gOREAiw+lsj8YMWu7ap7hTnjYpP9sp1h+2oosiZ+DKa4ioms
-	 DkdlTrqAnhayaHpQbacjuHAxvBZczD1BLzN5cmfWkxHDMqhlulxn98YRbq9P+Xq7+2
-	 Z2GT/dJ3wtK6A==
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2fb443746b8so25475831fa.0;
-        Fri, 25 Oct 2024 13:32:27 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVN98VksR6kGuSuruUHtdZEYzS3cQw4NydnLv4ZaFF2qZEu6c2eyDWx5FojARqj7RrycnEepiMRxuNQpw==@vger.kernel.org, AJvYcCVUUJPhxbw9IiGsaailm0iHuArlgG7aXHA1C5sJ6JVps2v/BwY3EuA9sS4nuz89ZoWssQL2qryd0zzvFw==@vger.kernel.org, AJvYcCW5j2uKwN3/egI6rZQjg9JqC9eu6t3OcHnGGxjjGbycA0cDn1HNMH49EySaw8rCaWYNTsWM2er5CAd1QA==@vger.kernel.org, AJvYcCWMgtlV+VNCR/xJJtrxLBKkUJldwblR5SObca/a4QpUgVwdaFQXWpjIIy1/k/3SGHDZ6f+yK6uxwCkN1g==@vger.kernel.org, AJvYcCXaK0Pi5KdADshQXppp7jVGkNOkCy0+sm+3GQ1LgkOY6Xxu8hg3J192/xTr3pKZ8ooImbu/QN5uJgaSpw==@vger.kernel.org, AJvYcCXku31dEye2zK92t4eYZ/X9LGHmC0R6AfN7SS84QSX1KFpxuo+1CUI1zsdrZYnAvq71gqOtcf759to+@vger.kernel.org, AJvYcCXtZAc/4GAUpJv54WFcZJLgDIycP8QbHPNTCSTDKvD5NVFOh+OX13ZtgnG9jpJkY8t1t8fmJs2+cKuP2ioA@vger.kernel.org
-X-Gm-Message-State: AOJu0YzT8I6+BwctsXCzjnDsZcbFmzsjcigHc9izYs0toFo+zRK9AaOi
-	R8wO+bfa5NKUeYl9qcs79xrw+m11Ax+rZkS5g4avLLIr+EQ3zheJQBrna3que1stncwf/ucyDIH
-	jNieUQ3DMIVNB4VmHouH4tU18fjs=
-X-Google-Smtp-Source: AGHT+IHWDYSNqGzTxA1yucLBJm6V+3waey3TQHM3kNvlUas/obIoVX4SuU3pAE8hqdaCjuOs8zy+d7cgGIIryFN5WyY=
-X-Received: by 2002:a05:651c:50b:b0:2f9:cc40:6afe with SMTP id
- 38308e7fff4ca-2fcbdfae574mr3209411fa.14.1729888345976; Fri, 25 Oct 2024
- 13:32:25 -0700 (PDT)
+	s=arc-20240116; t=1729888620; c=relaxed/simple;
+	bh=VYBMxqwXMgsrg2pZXoCn+GnZFEkdPmox795KfR3wPwU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YoEFhy7pLnRjNuyDB2iieEDxEKBoHUp6I2RkidxOlaig94vV1z2Q8fpbhc0SuxmmkO5tuNcdRYOdHInS95sULsM3I8+Zyu9tFU3a1WLome2o25fjaBxzHtNXnEaU/3MYUBig0+umcLygeXC4B5cmLHnMXVRwnzde4ZfPMjo/6bg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=YbLWLt2A; arc=none smtp.client-ip=44.202.169.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
+Received: from eig-obgw-5004a.ext.cloudfilter.net ([10.0.29.221])
+	by cmsmtp with ESMTPS
+	id 4QnGtBCjsrKrb4R3DtMNNS; Fri, 25 Oct 2024 20:36:51 +0000
+Received: from gator4166.hostgator.com ([108.167.133.22])
+	by cmsmtp with ESMTPS
+	id 4R3Ct0UMDWvXp4R3CtkKus; Fri, 25 Oct 2024 20:36:51 +0000
+X-Authority-Analysis: v=2.4 cv=LtdZyWdc c=1 sm=1 tr=0 ts=671c0163
+ a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=OKg9RQrQ6+Y1xAlsUndU0w==:17
+ a=IkcTkHD0fZMA:10 a=DAUX931o1VcA:10 a=7T7KSl7uo7wA:10
+ a=mKMXtcfHHMa54xGqesAA:9 a=QEXdDO2ut3YA:10 a=Xt_RvD8W3m28Mn_h3AK8:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=JIXtr/smAzzJVTQu88p4I8Uobao1EUnmCUV2Vs4aLSk=; b=YbLWLt2AcymwsuUAefSHXuVCTB
+	vrKsQUqqpC3r06IYYrhm9idH9+9y3q1dxDBNx5nV5fUArPfZg9GyE12pxw6cgy4nabpTpMKeMVde/
+	Sr8gunywUdjLKywuR4Xzq9GTjbszGZ+aXkEgjJl2ufZOlTk6qlPGsYfs6EPxBY53LTlQ2JYTbOu9S
+	FdIm1HfcxQRebDrYKWPldExzujXPwiMM8W+nNzGIQ7six1ZbQ0jgAaqxZEF8IMXEYcC1OxyODYULx
+	BCF/njqB+9Z3B9iWUwqn5C2//LiokLfSxxJwrZwl83HKtXB/Fcf/LIsbh/DUVJYimZJ0AvWcNL7QS
+	U30+SN4g==;
+Received: from [201.172.173.7] (port=35774 helo=[192.168.15.6])
+	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <gustavo@embeddedor.com>)
+	id 1t4R3B-003Uaa-0P;
+	Fri, 25 Oct 2024 15:36:49 -0500
+Message-ID: <8152a551-1813-4d44-a203-45d30f2ac671@embeddedor.com>
+Date: Fri, 25 Oct 2024 14:36:44 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241025191454.72616-1-ebiggers@kernel.org> <20241025191454.72616-4-ebiggers@kernel.org>
-In-Reply-To: <20241025191454.72616-4-ebiggers@kernel.org>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Fri, 25 Oct 2024 22:32:14 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXFoer+_yZJWtqBVYfYnzqL9X9bbBRomCL3LDqRcYJ6njQ@mail.gmail.com>
-Message-ID: <CAMj1kXFoer+_yZJWtqBVYfYnzqL9X9bbBRomCL3LDqRcYJ6njQ@mail.gmail.com>
-Subject: Re: [PATCH v2 03/18] lib/crc32: expose whether the lib is really
- optimized at runtime
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org, 
-	linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, 
-	linux-mips@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev, 
-	sparclinux@vger.kernel.org, x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH][next] wifi: mac80211: ieee80211_i: Avoid dozens of
+ -Wflex-array-member-not-at-end warnings
+To: Johannes Berg <johannes@sipsolutions.net>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-hardening@vger.kernel.org, Aditya Kumar Singh <quic_adisi@quicinc.com>
+References: <Zxv7KtPEy1kvnTPM@kspp>
+ <c90c3c9825e3837bf7c47979acd0075b102576ce.camel@sipsolutions.net>
+ <3471e59f-a414-479f-8fb0-aa1a26aecf16@embeddedor.com>
+ <5c48b4529bf552d5c16b4dcc951c653f37b6a68e.camel@sipsolutions.net>
+Content-Language: en-US
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+In-Reply-To: <5c48b4529bf552d5c16b4dcc951c653f37b6a68e.camel@sipsolutions.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 201.172.173.7
+X-Source-L: No
+X-Exim-ID: 1t4R3B-003Uaa-0P
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.15.6]) [201.172.173.7]:35774
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 9
+X-Org: HG=hgshared;ORG=hostgator;
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfKhDsS4XVfKL3aO20xh79rcGRWpFeeyaV+Um4l3LcvDQeMZ8ALXoT8rGeQXZEnztZtJzZTpIDEn0j9QJg41rWcXYCeYJdvvqGz5aW0ToneEoX9mvo1mi
+ SjCmzVbQZ3AsW5tIB/V/xUaKFZYZ2Fqs2DQ9EqppQ4l11QVDKP/FBiHF6tYRr0H4Z2/utZkUNQE2VcJPemkrn/Ws6OjS/6Tp4iGgqWI5YUFJ+CqBPymStcXz
 
-On Fri, 25 Oct 2024 at 21:15, Eric Biggers <ebiggers@kernel.org> wrote:
->
-> From: Eric Biggers <ebiggers@google.com>
->
-> Make the CRC32 library export some flags that indicate which CRC32
-> functions are actually executing optimized code at runtime.  Set these
-> correctly from the architectures that implement the CRC32 functions.
->
-> This will be used to determine whether the crc32[c]-$arch shash
-> algorithms should be registered in the crypto API.  btrfs could also
-> start using these flags instead of the hack that it currently uses where
-> it parses the crypto_shash_driver_name.
->
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
-> ---
->  arch/arm64/lib/crc32-glue.c  | 15 +++++++++++++++
->  arch/riscv/lib/crc32-riscv.c | 15 +++++++++++++++
->  include/linux/crc32.h        | 15 +++++++++++++++
->  lib/crc32.c                  |  5 +++++
->  4 files changed, 50 insertions(+)
->
+
+
+On 25/10/24 14:25, Johannes Berg wrote:
+> On Fri, 2024-10-25 at 14:22 -0600, Gustavo A. R. Silva wrote:
+>>
+>>>> -	struct ieee80211_chanctx_conf conf;
+>>>> -
+>>>>    	bool radar_detected;
+>>>> +
+>>>> +	/* MUST be last - ends in a flexible-array member. */
+>>>> +	struct ieee80211_chanctx_conf conf;
+>>>>    };
+>>>
+>>> Oi. That's not just a warnings problem, that's actually a pretty stupid
+>>> bug, this will surely get used and radar_detected will alias stuff that
+>>> the driver puts there - at least for drivers using chanctx_data_size,
+>>> which is a couple: ath9k, iwlmvm, mt792x, rwt89 and hwsim.
+>>>
+>>> Could you resend with a description that this is a bugfix and
+>>>
+>>> Fixes: bca8bc0399ac ("wifi: mac80211: handle ieee80211_radar_detected() for MLO")
+>>
+>> Yeah, I was actually going to mention this commit, as it's the one that introduced
+>> that `bool radar_detected` to the flex struct. However, it wasn't obvious to me
+>> how `struct ieee80211_chanctx_conf conf` could overwrite `radar_detected` as I didn't
+>> see `conf->drv_priv` being accessed through `struct struct ieee80211_chanctx_conf`.
+> 
+> You have to look at the drivers, see hwsim_clear_chanctx_magic() for
+> example; I wonder why hwsim_check_chanctx_magic() never caught this.
+
+Sorry, I actually meant through `struct ieee80211_chanctx`. Something like:
+
+struct ieee80211_chanctx *foo;
 ...
-> diff --git a/include/linux/crc32.h b/include/linux/crc32.h
-> index 58c632533b08..bf26d454b60d 100644
-> --- a/include/linux/crc32.h
-> +++ b/include/linux/crc32.h
-> @@ -35,10 +35,25 @@ static inline u32 __pure __crc32c_le(u32 crc, const u8 *p, size_t len)
->         if (IS_ENABLED(CONFIG_CRC32_ARCH))
->                 return crc32c_le_arch(crc, p, len);
->         return crc32c_le_base(crc, p, len);
->  }
->
-> +/*
-> + * crc32_optimizations contains flags that indicate which CRC32 library
-> + * functions are using architecture-specific optimizations.  Unlike
-> + * IS_ENABLED(CONFIG_CRC32_ARCH) it takes into account the different CRC32
-> + * variants and also whether any needed CPU features are available at runtime.
-> + */
-> +#define CRC32_LE_OPTIMIZATION  BIT(0) /* crc32_le() is optimized */
-> +#define CRC32_BE_OPTIMIZATION  BIT(1) /* crc32_be() is optimized */
-> +#define CRC32C_OPTIMIZATION    BIT(2) /* __crc32c_le() is optimized */
-> +#if IS_ENABLED(CONFIG_CRC32_ARCH)
-> +extern u32 crc32_optimizations;
-> +#else
-> +#define crc32_optimizations 0
-> +#endif
-> +
 
-Wouldn't it be cleaner to add a new library function for this, instead
-of using a global variable?
+foo->conf.drv_priv[i] = something;
 
->  /**
->   * crc32_le_combine - Combine two crc32 check values into one. For two
->   *                   sequences of bytes, seq1 and seq2 with lengths len1
->   *                   and len2, crc32_le() check values were calculated
->   *                   for each, crc1 and crc2.
-> diff --git a/lib/crc32.c b/lib/crc32.c
-> index 47151624332e..194de73f30f8 100644
-> --- a/lib/crc32.c
-> +++ b/lib/crc32.c
-> @@ -336,5 +336,10 @@ u32 __pure crc32_be_base(u32 crc, const u8 *p, size_t len)
->  {
->         return crc32_be_generic(crc, p, len, crc32table_be, CRC32_POLY_BE);
->  }
->  #endif
->  EXPORT_SYMBOL(crc32_be_base);
-> +
-> +#if IS_ENABLED(CONFIG_CRC32_ARCH)
-> +u32 crc32_optimizations;
-> +EXPORT_SYMBOL(crc32_optimizations);
-> +#endif
-> --
-> 2.47.0
->
->
+or
+
+struct bar *ptr = (void *)foo->conf->drv_priv;
+then write something into *ptr...
+
+In the above cases the code will indeed overwrite `radar_detected`.
+
+> 
+>>> please? Or I can do it myself I guess, but ...
+>>
+>> Sure thing. I can CC stable as well.
+> 
+> Thanks!
+> 
+> No need for stable, it got introduced in 6.12-rc1 only.
+
+OK
+
+--
+Gustavo
 
