@@ -1,160 +1,252 @@
-Return-Path: <linux-kernel+bounces-382190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF6679B0A8F
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 19:11:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 14DDC9B0A95
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 19:12:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D50F1C22120
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:11:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34D9E1C218DF
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:12:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BF6B1FB8AB;
-	Fri, 25 Oct 2024 17:11:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CD921FB89E;
+	Fri, 25 Oct 2024 17:12:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ikZDEar7"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="pJ2QAJX3"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 260B618CC19;
-	Fri, 25 Oct 2024 17:11:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69C2A18C915;
+	Fri, 25 Oct 2024 17:12:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729876286; cv=none; b=d4v4ViFeGD2LmAFXcH4qa4wkSUdn7vkOTHInSFKBooA28xssRx6ZE4yt/0Gs3VuvI9nf5y01EFSXyWUYjhYrLKw9FPHu3hHyQFRz1xvN6523rWJ6aLkXNL4XXnrzhNaViQ1Ot2IHVUOaziCorcRdYtFr0MBzHNGNM9iZV0oV/DM=
+	t=1729876323; cv=none; b=Y0/uwFN+BCLeolDFFX0a0mh3sLtJjcBaSOfChHEpATW75Obv6DyhzqGULdEKeEnusga1yQbHNZAB+vaveMABeMCQiwAkmCeroVM+LctyGi1v1YEbksu+3mc0pbVKmUKeQvnGY4Osa5Q9KmqEAkFpsWyUiYLjpiMpd4kaswD3wI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729876286; c=relaxed/simple;
-	bh=MYQYsh2ZM0F5hLiv9jWAnO8EjpYfnIqM2b9zMJRm42c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fsBet9e/DRwbLP6uGdLvr68pRsyhRviIRxHh7k4P2gzmED2WaltvIDtJdzkrrsQZiH/yZeZ6RwK9nkA4fiTgwxEsDWsDhBDDdWEYa7kj1h22pW+NjnD1Ku+rO0UQqW0iAb80wakwNPpW6RxcG2yki994ViT9ifKbYLS8jH0VZxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ikZDEar7; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729876285; x=1761412285;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=MYQYsh2ZM0F5hLiv9jWAnO8EjpYfnIqM2b9zMJRm42c=;
-  b=ikZDEar7QA1SpCS2AIP+nuBrjwkz9yralhRHQzqyv+LsGdq7kUy2ksHW
-   arO3xxopYCxe6dVqE8QRtMPu/XO1m9TVgzf0IRD/kK6otkJDTkuOrJuiu
-   Rb2meY6Oa3iX6ebG5omcJf9JXSw83zTzage+ua1y0v+JCj5ixXbM6a5xN
-   nT+BPNL00ZVYxl0U2rwmsJc+dUjK81/pvmXMTqHr4mGP+dznDYDGCnDFb
-   ZJfSB3f1VGfMUU9p5zMlt8aJgAhhHXjAHLyEUAL2p2o27TBCt/NFwETD2
-   4cWthQk5YfPaxuFY6iExhFFS6jojBpF2KWggCHz8HxU4KXWqrQvjpgpxa
-   g==;
-X-CSE-ConnectionGUID: jmUrpIBvQu2biQQoDHw49A==
-X-CSE-MsgGUID: m8Wm0tluRDqljN4qtgouXQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="29497045"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="29497045"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2024 10:11:24 -0700
-X-CSE-ConnectionGUID: W8ffi6AWRIKUCKXfgRWWzw==
-X-CSE-MsgGUID: jBgwIuxpQcCrOIKJrpn2Yg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,232,1725346800"; 
-   d="scan'208";a="81267315"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 25 Oct 2024 10:11:20 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t4NqH-000Yeq-1K;
-	Fri, 25 Oct 2024 17:11:17 +0000
-Date: Sat, 26 Oct 2024 01:10:17 +0800
-From: kernel test robot <lkp@intel.com>
-To: Furong Xu <0x1207@gmail.com>, netdev@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, Vladimir Oltean <olteanv@gmail.com>,
-	Andrew Lunn <andrew@lunn.ch>, Simon Horman <horms@kernel.org>,
-	andrew+netdev@lunn.ch,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, xfr@outlook.com,
-	Furong Xu <0x1207@gmail.com>
-Subject: Re: [PATCH net-next v4 3/6] net: stmmac: Refactor FPE functions to
- generic version
-Message-ID: <202410260025.sME33DwY-lkp@intel.com>
-References: <cfc647f0d031517f9ec9095235a574aad9dc2c95.1729757625.git.0x1207@gmail.com>
+	s=arc-20240116; t=1729876323; c=relaxed/simple;
+	bh=wDFCS+zc9BqyrFUhW//Q3+IrZGHODUKV9G6eYHCwyIc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=P6bAvQAah6cj/k7s87EKQ/4Es0GJ25IYKjecVOF7SHgHmNc4MsVlXq3rd5RcEUn0Rg/vjZ18zTxo21fJlb+71xOfZXWzAjrKGrGAqTSN8U3v+6karZmTqOvI1kpfYSkB+GXoirbkqHPHu0PoR9rDQ4QZHMQtXKYVZQKLhqX8hC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=pJ2QAJX3; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49PB3dUm019387;
+	Fri, 25 Oct 2024 17:11:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=lp2OTWfTB0fGXKAT4Ya3ft
+	URHmN/1bGxgog0FXfPB7o=; b=pJ2QAJX38XEqZI3jRq6+NhuyHT6SNEDaKNZ6nG
+	fZXn0vL5tNoGcD6W0uZcgjLqk3v3E8r8QZMKRbEPxuR8Z07cfJPNCwHcqFoZO0Dm
+	H68SrjzIteaKJqhaQKWWVVwb7P4LbdWI6TML43TE40cvBMXkyWfXkdk5WpokUXt5
+	9EBNVIstYuOe1Sml/UqxmbP5uxB7iSU6xXEuuukl8JUyNQqu9TPdMYZuPdxLFXDN
+	8fu/AwxHwBMGZbgIllIucPBV9UA1gba/z0mFOzsSXCpdD27gEFvIbwOYbtG0c+4u
+	HxxO9DP33mngmuarF14rUJBNbRoEoUkNiiGG0yFU1w7GnGiw==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42em3whykn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Oct 2024 17:11:54 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49PHBrr5028251
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Oct 2024 17:11:53 GMT
+Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Fri, 25 Oct 2024 10:11:51 -0700
+From: Mukesh Ojha <quic_mojha@quicinc.com>
+To: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>
+CC: <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Mukesh Ojha
+	<quic_mojha@quicinc.com>
+Subject: [PATCH v2] leds: class: Protect brightness_show() with led_cdev->led_access mutex
+Date: Fri, 25 Oct 2024 22:41:28 +0530
+Message-ID: <20241025171128.1226045-1-quic_mojha@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cfc647f0d031517f9ec9095235a574aad9dc2c95.1729757625.git.0x1207@gmail.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: Ta_fOhxYuWuDKOmSCDxuUTxKR9Y-QZ48
+X-Proofpoint-ORIG-GUID: Ta_fOhxYuWuDKOmSCDxuUTxKR9Y-QZ48
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 malwarescore=0
+ mlxscore=0 lowpriorityscore=0 phishscore=0 impostorscore=0 clxscore=1015
+ priorityscore=1501 mlxlogscore=695 suspectscore=0 bulkscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2410250132
 
-Hi Furong,
+There is NULL pointer issue observed if from Process A where hid device
+being added which results in adding a led_cdev addition and later a
+another call to access of led_cdev attribute from Process B can result
+in NULL pointer issue.
 
-kernel test robot noticed the following build errors:
+Use mutex led_cdev->led_access to protect access to led->cdev and its
+attribute inside brightness_show() and max_brightness_show() and also
+update the comment for mutex that it should be used to protect the led
+class device fields.
 
-[auto build test ERROR on net-next/main]
+	Process A 				Process B
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Furong-Xu/net-stmmac-Introduce-separate-files-for-FPE-implementation/20241024-163526
-base:   net-next/main
-patch link:    https://lore.kernel.org/r/cfc647f0d031517f9ec9095235a574aad9dc2c95.1729757625.git.0x1207%40gmail.com
-patch subject: [PATCH net-next v4 3/6] net: stmmac: Refactor FPE functions to generic version
-config: arm-spear13xx_defconfig (https://download.01.org/0day-ci/archive/20241026/202410260025.sME33DwY-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 13.3.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241026/202410260025.sME33DwY-lkp@intel.com/reproduce)
+ kthread+0x114
+ worker_thread+0x244
+ process_scheduled_works+0x248
+ uhid_device_add_worker+0x24
+ hid_add_device+0x120
+ device_add+0x268
+ bus_probe_device+0x94
+ device_initial_probe+0x14
+ __device_attach+0xfc
+ bus_for_each_drv+0x10c
+ __device_attach_driver+0x14c
+ driver_probe_device+0x3c
+ __driver_probe_device+0xa0
+ really_probe+0x190
+ hid_device_probe+0x130
+ ps_probe+0x990
+ ps_led_register+0x94
+ devm_led_classdev_register_ext+0x58
+ led_classdev_register_ext+0x1f8
+ device_create_with_groups+0x48
+ device_create_groups_vargs+0xc8
+ device_add+0x244
+ kobject_uevent+0x14
+ kobject_uevent_env[jt]+0x224
+ mutex_unlock[jt]+0xc4
+ __mutex_unlock_slowpath+0xd4
+ wake_up_q+0x70
+ try_to_wake_up[jt]+0x48c
+ preempt_schedule_common+0x28
+ __schedule+0x628
+ __switch_to+0x174
+						el0t_64_sync+0x1a8/0x1ac
+						el0t_64_sync_handler+0x68/0xbc
+						el0_svc+0x38/0x68
+						do_el0_svc+0x1c/0x28
+						el0_svc_common+0x80/0xe0
+						invoke_syscall+0x58/0x114
+						__arm64_sys_read+0x1c/0x2c
+						ksys_read+0x78/0xe8
+						vfs_read+0x1e0/0x2c8
+						kernfs_fop_read_iter+0x68/0x1b4
+						seq_read_iter+0x158/0x4ec
+						kernfs_seq_show+0x44/0x54
+						sysfs_kf_seq_show+0xb4/0x130
+						dev_attr_show+0x38/0x74
+						brightness_show+0x20/0x4c
+						dualshock4_led_get_brightness+0xc/0x74
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410260025.sME33DwY-lkp@intel.com/
+[ 3313.874295][ T4013] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000060
+[ 3313.874301][ T4013] Mem abort info:
+[ 3313.874303][ T4013]   ESR = 0x0000000096000006
+[ 3313.874305][ T4013]   EC = 0x25: DABT (current EL), IL = 32 bits
+[ 3313.874307][ T4013]   SET = 0, FnV = 0
+[ 3313.874309][ T4013]   EA = 0, S1PTW = 0
+[ 3313.874311][ T4013]   FSC = 0x06: level 2 translation fault
+[ 3313.874313][ T4013] Data abort info:
+[ 3313.874314][ T4013]   ISV = 0, ISS = 0x00000006, ISS2 = 0x00000000
+[ 3313.874316][ T4013]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+[ 3313.874318][ T4013]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+[ 3313.874320][ T4013] user pgtable: 4k pages, 39-bit VAs, pgdp=00000008f2b0a000
+..
 
-All errors (new ones prefixed by >>):
+[ 3313.874332][ T4013] Dumping ftrace buffer:
+[ 3313.874334][ T4013]    (ftrace buffer empty)
+..
+..
+[ dd3313.874639][ T4013] CPU: 6 PID: 4013 Comm: InputReader
+[ 3313.874648][ T4013] pc : dualshock4_led_get_brightness+0xc/0x74
+[ 3313.874653][ T4013] lr : led_update_brightness+0x38/0x60
+[ 3313.874656][ T4013] sp : ffffffc0b910bbd0
+..
+..
+[ 3313.874685][ T4013] Call trace:
+[ 3313.874687][ T4013]  dualshock4_led_get_brightness+0xc/0x74
+[ 3313.874690][ T4013]  brightness_show+0x20/0x4c
+[ 3313.874692][ T4013]  dev_attr_show+0x38/0x74
+[ 3313.874696][ T4013]  sysfs_kf_seq_show+0xb4/0x130
+[ 3313.874700][ T4013]  kernfs_seq_show+0x44/0x54
+[ 3313.874703][ T4013]  seq_read_iter+0x158/0x4ec
+[ 3313.874705][ T4013]  kernfs_fop_read_iter+0x68/0x1b4
+[ 3313.874708][ T4013]  vfs_read+0x1e0/0x2c8
+[ 3313.874711][ T4013]  ksys_read+0x78/0xe8
+[ 3313.874714][ T4013]  __arm64_sys_read+0x1c/0x2c
+[ 3313.874718][ T4013]  invoke_syscall+0x58/0x114
+[ 3313.874721][ T4013]  el0_svc_common+0x80/0xe0
+[ 3313.874724][ T4013]  do_el0_svc+0x1c/0x28
+[ 3313.874727][ T4013]  el0_svc+0x38/0x68
+[ 3313.874730][ T4013]  el0t_64_sync_handler+0x68/0xbc
+[ 3313.874732][ T4013]  el0t_64_sync+0x1a8/0x1ac
 
-   arm-linux-gnueabi-ld: drivers/net/ethernet/stmicro/stmmac/stmmac_fpe.o: in function `stmmac_fpe_configure':
->> drivers/net/ethernet/stmicro/stmmac/stmmac_fpe.c:205:(.text+0x154): undefined reference to `__ffsdi2'
+Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
+---
+Changes in v2:
+ - Updated the comment for led_access mutex lock.
+ - Also added mutex protection for max_brightness_show().
 
+ drivers/leds/led-class.c | 14 +++++++++++---
+ include/linux/leds.h     |  2 +-
+ 2 files changed, 12 insertions(+), 4 deletions(-)
 
-vim +205 drivers/net/ethernet/stmicro/stmmac/stmmac_fpe.c
-
-   191	
-   192	void stmmac_fpe_configure(struct stmmac_priv *priv, u32 num_txq, u32 num_rxq,
-   193				  bool tx_enable, bool pmac_enable)
-   194	{
-   195		struct stmmac_fpe_cfg *cfg = &priv->fpe_cfg;
-   196		const struct stmmac_fpe_reg *reg = cfg->reg;
-   197		void __iomem *ioaddr = priv->ioaddr;
-   198		u32 value;
-   199	
-   200		if (tx_enable) {
-   201			cfg->fpe_csr = STMMAC_MAC_FPE_CTRL_STS_EFPE;
-   202			value = readl(ioaddr + reg->rxq_ctrl1_reg);
-   203			value &= ~reg->fprq_mask;
-   204			/* Keep this SHIFT, FIELD_PREP() expects a constant mask :-/ */
- > 205			value |= (num_rxq - 1) << __bf_shf(reg->fprq_mask);
-   206			writel(value, ioaddr + reg->rxq_ctrl1_reg);
-   207		} else {
-   208			cfg->fpe_csr = 0;
-   209		}
-   210		writel(cfg->fpe_csr, ioaddr + reg->mac_fpe_reg);
-   211	
-   212		value = readl(ioaddr + reg->int_en_reg);
-   213	
-   214		if (pmac_enable) {
-   215			if (!(value & reg->int_en_bit)) {
-   216				/* Dummy read to clear any pending masked interrupts */
-   217				readl(ioaddr + reg->mac_fpe_reg);
-   218	
-   219				value |= reg->int_en_bit;
-   220			}
-   221		} else {
-   222			value &= ~reg->int_en_bit;
-   223		}
-   224	
-   225		writel(value, ioaddr + reg->int_en_reg);
-   226	}
-   227	
-
+diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
+index 06b97fd49ad9..f69f4e928d61 100644
+--- a/drivers/leds/led-class.c
++++ b/drivers/leds/led-class.c
+@@ -29,11 +29,14 @@ static ssize_t brightness_show(struct device *dev,
+ 		struct device_attribute *attr, char *buf)
+ {
+ 	struct led_classdev *led_cdev = dev_get_drvdata(dev);
++	unsigned int brightness;
+ 
+-	/* no lock needed for this */
++	mutex_lock(&led_cdev->led_access);
+ 	led_update_brightness(led_cdev);
++	brightness = led_cdev->brightness;
++	mutex_unlock(&led_cdev->led_access);
+ 
+-	return sprintf(buf, "%u\n", led_cdev->brightness);
++	return sprintf(buf, "%u\n", brightness);
+ }
+ 
+ static ssize_t brightness_store(struct device *dev,
+@@ -70,8 +73,13 @@ static ssize_t max_brightness_show(struct device *dev,
+ 		struct device_attribute *attr, char *buf)
+ {
+ 	struct led_classdev *led_cdev = dev_get_drvdata(dev);
++	unsigned int max_brightness;
++
++	mutex_lock(&led_cdev->led_access);
++	max_brightness = led_cdev->max_brightness;
++	mutex_unlock(&led_cdev->led_access);
+ 
+-	return sprintf(buf, "%u\n", led_cdev->max_brightness);
++	return sprintf(buf, "%u\n", max_brightness);
+ }
+ static DEVICE_ATTR_RO(max_brightness);
+ 
+diff --git a/include/linux/leds.h b/include/linux/leds.h
+index e5968c3ed4ae..3524634fcc47 100644
+--- a/include/linux/leds.h
++++ b/include/linux/leds.h
+@@ -238,7 +238,7 @@ struct led_classdev {
+ 	struct kernfs_node	*brightness_hw_changed_kn;
+ #endif
+ 
+-	/* Ensures consistent access to the LED Flash Class device */
++	/* Ensures consistent access to the LED Class device */
+ 	struct mutex		led_access;
+ };
+ 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.34.1
+
 
