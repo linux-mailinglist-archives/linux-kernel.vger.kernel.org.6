@@ -1,182 +1,149 @@
-Return-Path: <linux-kernel+bounces-381089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 420C39AFA36
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 08:43:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C8CB09AF9CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 08:19:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02322282E8A
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 06:43:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39F50283768
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 06:19:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45EE21AF0CD;
-	Fri, 25 Oct 2024 06:43:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fLsLHJ6b"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 960351925BF;
+	Fri, 25 Oct 2024 06:18:48 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9923118C018;
-	Fri, 25 Oct 2024 06:43:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C8E71B0F11
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 06:18:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729838592; cv=none; b=FUMqKuRoQIfLf6fogz3UhTIesnq0YPHosa2ZpThOTvIoOmFc8KhUKSZfOyRJz5B9DFMnPZXi+iy0T/OZn6aIqa8UzluxTDas0eH02XG3IwMDuuaNBp3aXORYVTCb6wv/JuWSxMKtF7UylK+/64W+GRkWuvQv8XjhpPcTgxFH6r0=
+	t=1729837128; cv=none; b=uDzoRxS8GwZjIGmD2n/Au8ZsAh4IFmwt27lVBjz7MyxFEgECNTX5sUVoGdH5OiVWTSI8YcR1nARetkLFeQhjl7kbLxEROG/pnDJc0BEwcdjMVLsom9tscbvoD17RFxZd3YkoCrFphC947Hn4N9XCcAo8ctJ66uhkAtrNU2Ddf4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729838592; c=relaxed/simple;
-	bh=tYWW8T550R8QEZd5gfGCnQaBxuLELI8mHkKVHTwpUMU=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=ZNZepCL1400CxijCjK8MzPMQrKjnQsgiU43NN1lrPhEblQLvtldkfeZb7dqFI1YO8E3D+/gG6Uny66nMYnqL2TsN1uCjcXeAV2sReizbowH3D4aXcKCu8vmgfk/DeEZ/vkivsnIhZAyL02uaH+lYNVIXfr4lHjG2+zSoAlHTl34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fLsLHJ6b; arc=none smtp.client-ip=209.85.215.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-7ea8d7341e6so1123888a12.3;
-        Thu, 24 Oct 2024 23:43:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729838589; x=1730443389; darn=vger.kernel.org;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=P47I0gdiUlkn3LmA4ci0Px6PUVaCXe2wtW4m1OPAR8s=;
-        b=fLsLHJ6bW8WRrEt31EroqwA80Ok23bqef280bKa5k2tVKRvVQMUM1+BBvfa9dTFRRv
-         jMJlZva4iNaBG5oPPQGQmYhPL92ZQLHCdaXh8aF4DgG2sflO+0mZO/7S20EZlnqtwsPM
-         2gjjDhAjyQ2polYr9i8OSLx8cTz4k0amYz7KnANFMs9ooWcCY6Qdj1hcBpEpDwozUsoh
-         xsej0RI3GSdQnUaaoTSF/HleFALrtWxDfp8wbmWtCs6m55SanQNjt3bZTyRWAuKdF7BH
-         AEWPKaD4pBS77+XC2MCQRAII3VED8qfjoETG8+xOwH/6l0QNxJxiOatLv9Qt6yb8v1AJ
-         mCEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729838589; x=1730443389;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=P47I0gdiUlkn3LmA4ci0Px6PUVaCXe2wtW4m1OPAR8s=;
-        b=PBDqNyLZnhwefTxh04/61B7OBWpDw8Yj6hH+v4y0MK7NxdAsXjmxS1CYkkiFPisxpA
-         GUHTrUlFeau++Me15Yhu1p8PtDHsJrlmsZjT9kaqxV0DsK2IX4TxRZ1lg7lw8eRW3CS3
-         mzHGtOjWQk5OUj5etNa8kZ2yd9RyH80KNLQWobu/NUs8f6Jda8kEYwAHLQwB1BMhQl1P
-         c5tvLb9jKu8bzuHM6jhFLrLqp75nNqZbPTkCioOtCeT80TFQ5q0bqpRNartYkKlM+5kz
-         0aajbbH0pXRzF/67WpYNmh3IEtM8MBl0wJMEVZEraqp9zrDPjKDCmVrLyz1Xvmjep4iK
-         G8ow==
-X-Forwarded-Encrypted: i=1; AJvYcCVt+WaAZQKv0BIhwGmEqR2tzJ9EFCUXofI+XRFi/vfxTMRSJjA6T2Am1Ml9wsX+dvEY50g=@vger.kernel.org, AJvYcCWxcDdD7nQAqb4s73DLpjNnvYEzlOH4SollbBrk9n0QI7tSionYyOrh/x30dLgtrGyK8ow0S1uM5IMzd9Lv@vger.kernel.org
-X-Gm-Message-State: AOJu0YzY1Yp9P37858B0I3K0SBsBVM9xIy3vjU+2tPbaeDXcQve6g0Ti
-	GCPiyegCbdCUtEbxmd6XWwWfrkaGVfV6g8hun8t7cxHwRiSJuRliZyMmMw==
-X-Google-Smtp-Source: AGHT+IFxdZwIFKOQNiOIOKlXyUTiHQUYTmMXDxrzgTed1lrPb/WrWs4hS/ZL7SNSfx+CwmEz3d4d5g==
-X-Received: by 2002:a05:6a21:3a82:b0:1d6:5f3d:4ab7 with SMTP id adf61e73a8af0-1d989b3c990mr5577835637.22.1729838588742;
-        Thu, 24 Oct 2024 23:43:08 -0700 (PDT)
-Received: from dw-tp ([171.76.85.20])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72057a1f18esm446345b3a.146.2024.10.24.23.43.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Oct 2024 23:43:07 -0700 (PDT)
-From: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-To: Gautam Menghani <gautam@linux.ibm.com>, mpe@ellerman.id.au, npiggin@gmail.com, christophe.leroy@csgroup.eu, naveen@kernel.org
-Cc: Gautam Menghani <gautam@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] KVM: PPC: Book3S HV: Mask off LPCR_MER for a vCPU before running it to avoid spurious interrupts
-In-Reply-To: <20241024173417.95395-1-gautam@linux.ibm.com>
-Date: Fri, 25 Oct 2024 11:37:52 +0530
-Message-ID: <871q04oguf.fsf@gmail.com>
-References: <20241024173417.95395-1-gautam@linux.ibm.com>
+	s=arc-20240116; t=1729837128; c=relaxed/simple;
+	bh=GGJrLc6k/IoLknH7t+/8lJ/6J/h6bBy1zYotpMDFG7E=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=THVrm4EVKEtNvBWsJ8XbbWnBH9V7KR/lBPWAI+tU9xUBK5IAJDXBG5VnPcY/L7H0HsKwXHQ7qE7qkxipI8tL4T3zxgeaGEQfSkqYtHHNg0wSS2/WInNErcsIQq+eWzLFkRYn7bH9AUwaNGwbhvWsKwhj4xDK3dK5ANKR+jkcq+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4XZXf66glQz4f3jRC
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 14:18:22 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 6E26C1A07B6
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 14:18:40 +0800 (CST)
+Received: from hulk-vt.huawei.com (unknown [10.67.174.121])
+	by APP4 (Coremail) with SMTP id gCh0CgCXy8cjOBtndSE+FA--.48420S2;
+	Fri, 25 Oct 2024 14:18:40 +0800 (CST)
+From: Chen Ridong <chenridong@huaweicloud.com>
+To: akpm@linux-foundation.org,
+	david@fromorbit.com,
+	zhengqi.arch@bytedance.com,
+	roman.gushchin@linux.dev,
+	muchun.song@linux.dev,
+	anshuman.khandual@arm.com,
+	vbabka@suse.cz,
+	kirill@shutemov.name
+Cc: linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	chenridong@huawei.com,
+	wangweiyang2@huawei.com
+Subject: [PATCH v3] mm: shrinker: avoid memleak in alloc_shrinker_info
+Date: Fri, 25 Oct 2024 06:09:42 +0000
+Message-Id: <20241025060942.1049263-1-chenridong@huaweicloud.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCXy8cjOBtndSE+FA--.48420S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7uF13Cr4rur4Dtr4UGr17Wrg_yoW5JF43pF
+	45GFyUGF4rAr45Wr47KF98XFyrta1UC3W7G393XFy0vw4Sg3W7Xr17Jr4jyrWDu3Z3AFy7
+	trWqqrWjgFyUAw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv2b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0E
+	n4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I
+	0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWU
+	tVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcV
+	CY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAF
+	wI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa
+	7IU17KsUUUUUU==
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-Gautam Menghani <gautam@linux.ibm.com> writes:
+From: Chen Ridong <chenridong@huawei.com>
 
-> Mask off the LPCR_MER bit before running a vCPU to ensure that it is not
-> set if there are no pending interrupts. Running a vCPU with LPCR_MER bit
-> set and no pending interrupts results in L2 vCPU getting an infinite flood
-> of spurious interrupts. The 'if check' in kvmhv_run_single_vcpu() sets
-> the LPCR_MER bit if there are pending interrupts.
->
-> The spurious flood problem can be observed in 2 cases:
-> 1. Crashing the guest while interrupt heavy workload is running
->   a. Start a L2 guest and run an interrupt heavy workload (eg: ipistorm)
->   b. While the workload is running, crash the guest (make sure kdump
->      is configured)
->   c. Any one of the vCPUs of the guest will start getting an infinite
->      flood of spurious interrupts.
->
-> 2. Running LTP stress tests in multiple guests at the same time
->    a. Start 4 L2 guests.
->    b. Start running LTP stress tests on all 4 guests at same time.
->    c. In some time, any one/more of the vCPUs of any of the guests will
->       start getting an infinite flood of spurious interrupts.
->
-> The root cause of both the above issues is the same:
-> 1. A NMI is sent to a running vCPU that has LPCR_MER bit set.
-> 2. In the NMI path, all registers are refreshed, i.e, H_GUEST_GET_STATE
->    is called for all the registers.
-> 3. When H_GUEST_GET_STATE is called for lpcr, the vcpu->arch.vcore->lpcr
->    of that vCPU at L1 level gets updated with LPCR_MER set to 1, and this
->    new value is always used whenever that vCPU runs, regardless of whether
->    there was a pending interrupt.
-> 4. Since LPCR_MER is set, the vCPU in L2 always jumps to the external
->    interrupt handler, and this cycle never ends.
->
-> Fix the spurious flood by making sure a vCPU's LPCR_MER is always masked
-> before running a vCPU.
->
-> Fixes: ec0f6639fa88 ("KVM: PPC: Book3S HV nestedv2: Ensure LPCR_MER bit is passed to the L0")
-> Cc: stable@vger.kernel.org # v6.8+
-> Signed-off-by: Gautam Menghani <gautam@linux.ibm.com>
-> ---
-> V1 -> V2:
-> 1. Mask off the LPCR_MER in vcpu->arch.vcore->lpcr instead of resetting
-> it so that we avoid grabbing vcpu->arch.vcore->lock. (Suggested by
-> Ritesh in an internal review)
+A memleak was found as bellow:
 
-Thanks Gautam for addressing the review comment. But let me improve the
-changelog a little to make it more accurate for others too.
+unreferenced object 0xffff8881010d2a80 (size 32):
+  comm "mkdir", pid 1559, jiffies 4294932666
+  hex dump (first 32 bytes):
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+    40 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  @...............
+  backtrace (crc 2e7ef6fa):
+    [<ffffffff81372754>] __kmalloc_node_noprof+0x394/0x470
+    [<ffffffff813024ab>] alloc_shrinker_info+0x7b/0x1a0
+    [<ffffffff813b526a>] mem_cgroup_css_online+0x11a/0x3b0
+    [<ffffffff81198dd9>] online_css+0x29/0xa0
+    [<ffffffff811a243d>] cgroup_apply_control_enable+0x20d/0x360
+    [<ffffffff811a5728>] cgroup_mkdir+0x168/0x5f0
+    [<ffffffff8148543e>] kernfs_iop_mkdir+0x5e/0x90
+    [<ffffffff813dbb24>] vfs_mkdir+0x144/0x220
+    [<ffffffff813e1c97>] do_mkdirat+0x87/0x130
+    [<ffffffff813e1de9>] __x64_sys_mkdir+0x49/0x70
+    [<ffffffff81f8c928>] do_syscall_64+0x68/0x140
+    [<ffffffff8200012f>] entry_SYSCALL_64_after_hwframe+0x76/0x7e
 
-Removed the macro which was silently clearing LPCR_MER bit from vcore->lpcr
-and instead just mask it off while sending it to kvmhv_run_single_vcpu().
-Added an inline comment describing the reason to avoid anyone tipping
-it over. - (suggested ...)
+In the alloc_shrinker_info function, when shrinker_unit_alloc return
+err, the info won't be freed. Just fix it.
 
+Fixes: 307bececcd12 ("mm: shrinker: add a secondary array for shrinker_info::{map, nr_deferred}")
+Signed-off-by: Chen Ridong <chenridong@huawei.com>
+Acked-by: Qi Zheng <zhengqi.arch@bytedance.com>
+Acked-by: Roman Gushchin <roman.gushchin@linux.dev>
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
+---
+ mm/shrinker.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-Yes, that would also mean that no need of taking any vcore lock since we
-are not modifying any of the vcore state variables which came up in the
-internal review discussion.
-Having said that it will be good to document the usage of vcore->lock
-above the struct kvmppc_vcore definition. Because it isn't obvious of
-when all it should be taken and/or what all it protects?
+diff --git a/mm/shrinker.c b/mm/shrinker.c
+index dc5d2a6fcfc4..4a93fd433689 100644
+--- a/mm/shrinker.c
++++ b/mm/shrinker.c
+@@ -76,19 +76,21 @@ void free_shrinker_info(struct mem_cgroup *memcg)
+ 
+ int alloc_shrinker_info(struct mem_cgroup *memcg)
+ {
+-	struct shrinker_info *info;
+ 	int nid, ret = 0;
+ 	int array_size = 0;
+ 
+ 	mutex_lock(&shrinker_mutex);
+ 	array_size = shrinker_unit_size(shrinker_nr_max);
+ 	for_each_node(nid) {
+-		info = kvzalloc_node(sizeof(*info) + array_size, GFP_KERNEL, nid);
++		struct shrinker_info *info = kvzalloc_node(sizeof(*info) + array_size,
++							   GFP_KERNEL, nid);
+ 		if (!info)
+ 			goto err;
+ 		info->map_nr_max = shrinker_nr_max;
+-		if (shrinker_unit_alloc(info, NULL, nid))
++		if (shrinker_unit_alloc(info, NULL, nid)) {
++			kvfree(info);
+ 			goto err;
++		}
+ 		rcu_assign_pointer(memcg->nodeinfo[nid]->shrinker_info, info);
+ 	}
+ 	mutex_unlock(&shrinker_mutex);
+-- 
+2.34.1
 
->
->  arch/powerpc/kvm/book3s_hv.c | 12 +++++++++++-
->  1 file changed, 11 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/powerpc/kvm/book3s_hv.c b/arch/powerpc/kvm/book3s_hv.c
-> index 8f7d7e37bc8c..b8701b5dde50 100644
-> --- a/arch/powerpc/kvm/book3s_hv.c
-> +++ b/arch/powerpc/kvm/book3s_hv.c
-> @@ -5089,9 +5089,19 @@ static int kvmppc_vcpu_run_hv(struct kvm_vcpu *vcpu)
->  
->  	do {
->  		accumulate_time(vcpu, &vcpu->arch.guest_entry);
-> +		/*
-> +		 * L1's copy of L2's lpcr (vcpu->arch.vcore->lpcr) can get its MER bit
-> +		 * unexpectedly set - for e.g. during NMI handling when all register
-> +		 * states are synchronized from L0 to L1. L1 needs to inform L0 about
-> +		 * MER=1 only when there are pending external interrupts.
-> +		 * kvmhv_run_single_vcpu() anyway sets MER bit if there are pending
-> +		 * external interrupts. Hence, mask off MER bit when passing vcore->lpcr
-> +		 * here as otherwise it may generate spurious interrupts in L2 KVM
-> +		 * causing an endless loop, which results in L2 guest getting hung.
-> +		 */
-
-Thanks for describing this inline.
-
->  		if (cpu_has_feature(CPU_FTR_ARCH_300))
->  			r = kvmhv_run_single_vcpu(vcpu, ~(u64)0,
-> -						  vcpu->arch.vcore->lpcr);
-> +						  vcpu->arch.vcore->lpcr & ~LPCR_MER);
-
-While still at it - 
-I too like mpe suggestion to clear the LPCR_MER bit at one place
-itself within kvmhv_run_single_vcpu(). 
-
->  		else
->  			r = kvmppc_run_vcpu(vcpu);
->  
-> -- 
-> 2.47.0
-
--ritesh
 
