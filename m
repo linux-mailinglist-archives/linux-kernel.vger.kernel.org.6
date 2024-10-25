@@ -1,326 +1,274 @@
-Return-Path: <linux-kernel+bounces-381249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6ABCD9AFC7E
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 10:27:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A66CF9AFC75
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 10:24:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDB4E1F243D6
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 08:27:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66F83283829
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 08:24:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FC7A1D14FA;
-	Fri, 25 Oct 2024 08:26:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C6FA1D172A;
+	Fri, 25 Oct 2024 08:24:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="unknown key version" (0-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b="tC0tMUhz";
-	dkim=pass (2048-bit key) header.d=triplefau.lt header.i=@triplefau.lt header.b="gj4f4wzh"
-Received: from e2i340.smtp2go.com (e2i340.smtp2go.com [103.2.141.84])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="F8Svgnq2"
+Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11011017.outbound.protection.outlook.com [52.101.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A844E1D0F5F
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 08:26:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.2.141.84
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729844804; cv=none; b=Rb2cFrLIKG3D9EBMz0bKb+LvGD3EImhGVi+6anIJXvyDdAR9rD027FttRiK6OvmSYVnbGNFq34DBQatwovXnvQKsV9X9HZGSCm2NjEfmFDxTmeh+aqy5lYN3jTrlqsK0HRrirIeR9Ne8dd76osa+6xmP7LT2lhz7DtS2ST4HN3o=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729844804; c=relaxed/simple;
-	bh=66BJsGKSO0zFJ5xRn6kHzXxXZ0lN+l9CnEWscQpaTEY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=MPF845k8iSu1Wvaf2CmXUCKMMJi1LNPI9U1Ip25ANVKtTho/dJdd8HRPx4VntAkzAkmZkBwMK7a12800fw16aqUXnNRVdo+dRf6YvRjwrfUemczIvEfkvwgO55P6WQ3tU8WFlbSWkVQZu2XcKZlqudF+z4a1nXEPsXDDf2kU+Jk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=triplefau.lt; spf=pass smtp.mailfrom=em510616.triplefau.lt; dkim=fail (0-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b=tC0tMUhz reason="unknown key version"; dkim=pass (2048-bit key) header.d=triplefau.lt header.i=@triplefau.lt header.b=gj4f4wzh; arc=none smtp.client-ip=103.2.141.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=triplefau.lt
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=em510616.triplefau.lt
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=smtpservice.net; s=maxzs0.a1-4.dyn; x=1729845701; h=Feedback-ID:
-	X-Smtpcorp-Track:Message-Id:Date:Subject:To:From:Reply-To:Sender:
-	List-Unsubscribe:List-Unsubscribe-Post;
-	bh=GxT94cQL1fAndlDPcyAmj+ZFucIh1j+4l3cVtvOBc3c=; b=tC0tMUhzEWt2Bw+7t9ZYLg1UY1
-	XXSu1c37jgyps9NvuMLb9ILBgXrzORQUJFwlMzfi1latraBQvjBmIKmsiI63vppLPxAx1sjie9RR7
-	7dVGpRWXfJ2TcqufXR7R4z7RHqMxMSXKjy+AR9NpBmwbp1v3Qe96xAqjSbmHy/+cGBUcenYPjXstn
-	0Kuc+S0uSeduvng5VGa07NrxYLpMAM2zHzLtSqW2rGHY9MSg/hk9FYXe6NxpANH4hV/ajSFBBIYiw
-	+eFmz7mEKyXerLNM8pGocssGLbGceu3epqYrcoLx3NLNE19uauyEc+uFh7pLRF6sJybmqxfiLW/Qr
-	nRFU4DfA==;
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=triplefau.lt;
- i=@triplefau.lt; q=dns/txt; s=s510616; t=1729844801; h=from : subject
- : to : message-id : date;
- bh=GxT94cQL1fAndlDPcyAmj+ZFucIh1j+4l3cVtvOBc3c=;
- b=gj4f4wzh/OeQ3OhDm6UQTmqLMgRLxbGioUA3Ql/enJ/WUdkY20Yoek2fV4c/n/gb6XRxf
- I4KptQ7fzo3GmhkREpUObndtKX+aDwl7VD10641dtM8sSqPaELEhVlCHUbAuHLDADbOXlf2
- brYrzI9iocei7ESvWYD821+v3U49EShR1ZjGywz9XD669MkBdIvXqHUPKDeVhoOeYGpPjPS
- TmembqpvsCqWTpbkp3r1VI4tLxPdlin9zB+1XoMZYqsI0QOYp/tbTa+3DOExhM5tO8ESAYr
- BXA5FG/Pgw/Tb7SKuAChwiFG+lz63orIYWiXcrx8sB7a7a/Wv8p0KiNt22EQ==
-Received: from [10.172.233.45] (helo=SmtpCorp) by smtpcorp.com with esmtpsa
- (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
- (Exim 4.94.2-S2G) (envelope-from <repk@triplefau.lt>)
- id 1t4FeB-TRjx9W-Q5; Fri, 25 Oct 2024 08:26:15 +0000
-Received: from [10.12.239.196] (helo=localhost) by smtpcorp.com with esmtpsa
- (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
- (Exim 4.97.1-S2G) (envelope-from <repk@triplefau.lt>)
- id 1t4FeB-AIkwcC8o9Lr-IbvN; Fri, 25 Oct 2024 08:26:15 +0000
-From: Remi Pommarel <repk@triplefau.lt>
-To: ath10k@lists.infradead.org, linux-wireless@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: Kalle Valo <kvalo@kernel.org>, Jeff Johnson <jjohnson@kernel.org>,
- Cedric Veilleux <veilleux.cedric@gmail.com>,
- Vasanthakumar Thiagarajan <quic_vthiagar@quicinc.com>,
- Remi Pommarel <repk@triplefau.lt>
-Subject: [PATCH v3 2/2] wifi: ath10k: Flush only requested txq in
- ath10k_flush()
-Date: Fri, 25 Oct 2024 10:23:48 +0200
-Message-Id: <d0a3e1b61ae7ff8cc1a474b37d1064eeea11cbff.1729844329.git.repk@triplefau.lt>
-X-Mailer: git-send-email 2.40.0
-In-Reply-To: <cover.1729844329.git.repk@triplefau.lt>
-References: <cover.1729844329.git.repk@triplefau.lt>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00BFE1CF7C9;
+	Fri, 25 Oct 2024 08:24:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.17
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729844672; cv=fail; b=alQFxajkh7lDzEmKAYCXvSUySgMybRnxIYxLEE+AHY3xEqHjUHzXI/xnqnFLShP4lgoxgXaSjEgH8buJVcz65PRq4i50fYoEDwpwLF3MEaOmifJL/ZOtG/L/Fwgiv0g/v/tGT7Jrc+orXlGTsLOrmPWoHoZdU0XTqjk4thGVwd4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729844672; c=relaxed/simple;
+	bh=nrhjMRsthStQoLpZHFa7gTs3iHoF+gjoKxbfKZfmCSk=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=kFfouclmEy452aPshO2QcWFXYbQyrZJmWJErmlUM6GlwKk1BxRFzWfe0tdASVGCe2yco+bUkV/jW6Dhk3Y5UL601CpMv+TrIVh3Qjmlz2nmT202Wbh3k+yOhu0Az8wkJOIEjpUVloKqeYdM3bhCM/Cdn/Pxe9gWuv8VsOuVHsn0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=F8Svgnq2; arc=fail smtp.client-ip=52.101.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=n5HHtOPcC7Rhb/o29qT56kKKU5XSv6ajUXUr9kb5JrMyAGd2x+yIFpt9YFzjQ1aGT/6VzZslPy/V6JB27tlxWLuWEAdETdqOCk86B4mi4zhB6Ud+xl/Qs0noxEwIofVoqOSoZVK4SWsRgrzUP6X3vRq1KLzRggnN9Gm4s1PNj539HWJjNjokn2nz262KokazxnMT57NY69eKV7cOi8Kn1dHIO77j4SAeCmrtIb3AuNIeOLnhWZnbmU1O2JdZV94kdpkpJ4zYBZgoMmakPuPCTew+V5haNKoiSJ8dD7K2oPD1JaALSQtrPgoxrN3dd3mKXgFFx35nHsGpegLgcSho4A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=LcBeeXpFAl/d0FTrrF1GbY9c3oSEWrJNaipXM7WvgR0=;
+ b=T7x1MJJLnhMsRlh8v7AFJeyS6/WbB8XZAzT9T2VhwAE8J8oXqBczmQCK9+BXY6qTWKZ7tZSHvH0lViKfNf5pkNeyQY8BUBFE7Ekx+OPo7rdQ0bMLsc5065HsmwOFn1BQXR9xc11FBFFIt63u3JG3oCY+N8aZOxNJsPZ3JexUlwUy/qMOTfYEG5JxN9/1VpcJYZxolJ57Oq4w4P0g4p9kBF4pIZkRJEdgKE0d16s76GuW2gzih13btcrc9jWL6PuHXB6HeKaFc5duK34d7gKhFjtj1xLzcyFoV6zRFyq3gx8D8d2kq+BS0W9qp30Nn1WNSlJRa3bGT1vKYXrxWEXrgA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=LcBeeXpFAl/d0FTrrF1GbY9c3oSEWrJNaipXM7WvgR0=;
+ b=F8Svgnq24RqX5AWFD39QCQ7DhcLxSDeIheB/+fugpBbhYTmOnpBuKvjcA0jjH2qfXl5OZ22Lw/kU4cfYlKDzs1NsjVlPupYbQkI8OoCNz2RjFph3NA4FOjGfsZGYILPxHVZgsZgnkHq75pZEVFyROOnnmdMRGj703UmSqviyjSGuHviWL9xGQjwxmbEONhDEYz0PoZTcTOUmxGMGJo1LsDW1JQmgPH8DFyP5es2mqLk0omDyjJtMMnQyosaIw5C3QrKl2p9W9PVeJw80sBE8NWLPAhsZZcQRfoae452uoYHp1F/qVAH0epPTtQeTXkibtKAMUnaO1oaSYp3YVsGr5A==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from DB8PR04MB7051.eurprd04.prod.outlook.com (2603:10a6:10:fd::20)
+ by PAXPR04MB9140.eurprd04.prod.outlook.com (2603:10a6:102:22f::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.21; Fri, 25 Oct
+ 2024 08:24:26 +0000
+Received: from DB8PR04MB7051.eurprd04.prod.outlook.com
+ ([fe80::8f9d:4273:ea83:167a]) by DB8PR04MB7051.eurprd04.prod.outlook.com
+ ([fe80::8f9d:4273:ea83:167a%5]) with mapi id 15.20.8093.018; Fri, 25 Oct 2024
+ 08:24:26 +0000
+Message-ID: <4e78781a-bce6-4582-b6aa-417f57c4725f@nxp.com>
+Date: Fri, 25 Oct 2024 16:24:48 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 12/15] drm/bridge: Add ITE IT6263 LVDS to HDMI
+ converter
+To: Biju Das <biju.das.jz@bp.renesas.com>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+ "imx@lists.linux.dev" <imx@lists.linux.dev>,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Cc: "andrzej.hajda@intel.com" <andrzej.hajda@intel.com>,
+ "neil.armstrong@linaro.org" <neil.armstrong@linaro.org>,
+ "rfoss@kernel.org" <rfoss@kernel.org>,
+ "laurent.pinchart" <laurent.pinchart@ideasonboard.com>,
+ "jonas@kwiboo.se" <jonas@kwiboo.se>,
+ "jernej.skrabec@gmail.com" <jernej.skrabec@gmail.com>,
+ "airlied@gmail.com" <airlied@gmail.com>, "simona@ffwll.ch"
+ <simona@ffwll.ch>,
+ "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
+ "mripard@kernel.org" <mripard@kernel.org>,
+ "tzimmermann@suse.de" <tzimmermann@suse.de>,
+ "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+ <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "quic_jesszhan@quicinc.com" <quic_jesszhan@quicinc.com>,
+ "mchehab@kernel.org" <mchehab@kernel.org>,
+ "shawnguo@kernel.org" <shawnguo@kernel.org>,
+ "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+ "kernel@pengutronix.de" <kernel@pengutronix.de>,
+ "festevam@gmail.com" <festevam@gmail.com>,
+ "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+ "will@kernel.org" <will@kernel.org>,
+ "sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>,
+ "hverkuil@xs4all.nl" <hverkuil@xs4all.nl>,
+ "tomi.valkeinen@ideasonboard.com" <tomi.valkeinen@ideasonboard.com>,
+ "quic_bjorande@quicinc.com" <quic_bjorande@quicinc.com>,
+ "geert+renesas@glider.be" <geert+renesas@glider.be>,
+ "dmitry.baryshkov@linaro.org" <dmitry.baryshkov@linaro.org>,
+ "arnd@arndb.de" <arnd@arndb.de>,
+ "nfraprado@collabora.com" <nfraprado@collabora.com>,
+ "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+ Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+ "sam@ravnborg.org" <sam@ravnborg.org>, "marex@denx.de" <marex@denx.de>
+References: <20241021064446.263619-1-victor.liu@nxp.com>
+ <20241021064446.263619-13-victor.liu@nxp.com>
+ <TY3PR01MB113465BBC5FD4EAAE89D9EA57864E2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+From: Liu Ying <victor.liu@nxp.com>
+Content-Language: en-US
+In-Reply-To: <TY3PR01MB113465BBC5FD4EAAE89D9EA57864E2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+X-ClientProxiedBy: SI2PR02CA0048.apcprd02.prod.outlook.com
+ (2603:1096:4:196::23) To DB8PR04MB7051.eurprd04.prod.outlook.com
+ (2603:10a6:10:fd::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Smtpcorp-Track: rOGE1OR-wPMB.MfRlSBb0rz_J.nqOuzACkFap
-Feedback-ID: 510616m:510616apGKSTK:510616sRI4AHN5Hf
-X-Report-Abuse: Please forward a copy of this message, including all headers,
- to <abuse-report@smtp2go.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DB8PR04MB7051:EE_|PAXPR04MB9140:EE_
+X-MS-Office365-Filtering-Correlation-Id: 30020c35-450f-459d-dcc7-08dcf4ce703b
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+ =?utf-8?B?WXlqaEw0MUlWa1U0OHVaUlpjaW02eXNRQ05VdWxxN3BITE5GcXQ5N25qdWtF?=
+ =?utf-8?B?ODl6YzFBQU5kMWNycktCdmRLUC9PQWtUU1VvM2pOVmJEclkwL0c5UHc3Z2F3?=
+ =?utf-8?B?SFNVTEFYek10QWcrYnRDR1BhRGJmTTNTY1FiSllJRXZIc2RJVk8vai9UWjQ3?=
+ =?utf-8?B?UmN1NlRxQ09DN0JUc2ZKSmFON3JQd1V2d0g2ZE45aS9vZGtVcHhodnpieHdy?=
+ =?utf-8?B?azQrWTVKWVk0NEh1eXd5SVVJOG9GbDFvcVB6MFBPVUtXOWUyZDdiZ3F0UUVq?=
+ =?utf-8?B?MTQ5NTRvZG9rMkQzSWovQTZzYUdTTGtJZGlwSUFUSUg3SUpOVjltSm1VTFZr?=
+ =?utf-8?B?SVFnR1lNaFJWNjZWRHQremk3NENzdFEyRzRYaUhmWVlYYkVyNFlsRWNEVGNk?=
+ =?utf-8?B?bjlTeS9nVTlIcDRna1dicEJlWGlkK3BUeDFyNWZXd1lqdHV4Y1RZY0ZCVDB2?=
+ =?utf-8?B?U3FYVFRseC90RDJlaW9YdVp1L29RaGFzM1RqTHlwaSs5OUpYWGx1RjdVWURp?=
+ =?utf-8?B?NkYyWTAxb2ZDc1FSRFlMNE0wMFdGWFF1dHZuSGNQbDc2aGFNS1ZTQnNPTWcx?=
+ =?utf-8?B?YnNkNlZocVliKzNZYTVjMWNML3o2UGsyblZZYVduSElsNGpSOStOZmlaakdB?=
+ =?utf-8?B?K3pLY1lRbkd3amh4dmQyZjEwSUpDKytrY3l4NHVEY01TUWNUOGlIcS8vTk01?=
+ =?utf-8?B?R2xuVy92TXgyenhRcHR4UGdIaTI5SU1NU3JzbXg0SXE1dTA4b1dwL0RNVVVT?=
+ =?utf-8?B?TW1JK055RW5HZU9TeVVJeS84bG4vYlhreS9xY0xRNjZVS2JZWXRkWHhjWXBZ?=
+ =?utf-8?B?UkJQZnBjcWxycmlTN2QyektaK3cyZGhGclhYbldxaXdSem1jaHpvNjN6SVgr?=
+ =?utf-8?B?STJtekVJMlA1L2lyUXBTM0NzaUxlQnpEcXhJMXAyRjNnQlRPcWNMTVhrb1E4?=
+ =?utf-8?B?Y1ZaeW1pbXdFZUV1VzlBNkNsTjNoT3NnSFc3Wk10WG5pUmpFYVRRc1hvZjZF?=
+ =?utf-8?B?d1kvTDlxT29ieWNScWJWVEw0by9YMm96WDlCbGtSd21aa2xuZFNEY05tRVNu?=
+ =?utf-8?B?bXBxWlFYeHYyWGh6NktlNEp6K0ZzcjhTcWJwUVVzZ2lDUDVySU05QWJBZHBq?=
+ =?utf-8?B?ZE9ZMS9UWVc5citXdTlyZzlkSE9uQngwVTlqT3VoeUpPUitXTzZ3TmtGemgx?=
+ =?utf-8?B?TTBtZ1grQmdtY0N4ZHB6Tm5NNldWdHBhb1hZQjRQRVRoa2I4eHRlTkZnWEFy?=
+ =?utf-8?B?cUtsRnJyMkNmUUZFZjdyZWxTMUZqVmFodTRDTk5oRmR6ZndVNUVxM2gwNVJF?=
+ =?utf-8?B?aGt1Q3BHbTltR21HUmZOQzNuU3p4WW51Nk1lOHB3cTkxaVNERTh5UHBvZEdq?=
+ =?utf-8?B?eE9XdWlFQ0dqMXZERnJRQm5oZG13dnhKR2VsOU82SGNaWEZmUzhaOVB1dTB2?=
+ =?utf-8?B?UXQ5Skh1Q25HZVE2TW1XQnhUZTFaQW54b1NZd2FEeUdTSDJlRytMTFNsdkdt?=
+ =?utf-8?B?ekh4S1hNSDNPY0h5RFBuUm1WNHRDdGh2ZFVOZjNHbWVsUEVydUdqOE9jTWpM?=
+ =?utf-8?B?ZkxGbExHYUYzMXhQN1ZuSHB6RWRxYTlHbjJlOVpKSmN6SVZSMkVkL3VTMm9y?=
+ =?utf-8?B?RUJDY1dGZUVFeTJ3cGdsdllnTW9TQmoxbDJUcWVPTkZNNUJORU9YS0xnQ1J1?=
+ =?utf-8?B?MHFjMnQrenRKaUVSZnZXMm1BbkttbHo4eEtHd29UU1E3ZjVERWJadk5Mb2Fs?=
+ =?utf-8?Q?iOure9T770azIK/H9TE4WQ9wskg8AkfEPMyDm8Y?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB8PR04MB7051.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?utf-8?B?S0kzYzlpdVRDM3FXSnN5d0Q1SkorTHFGSFJsSERNbEkvMVFIZmFWY0ZDL1dv?=
+ =?utf-8?B?ZUkxSjArcm1kNFZneTlOdlFGYVNjK0FOdmtET0J6anFvcHRGMjZ2dW5nYVgz?=
+ =?utf-8?B?blVXSDZKRytiekVQeDZGaDhRNWlwazRqeWsxaDRCQjdjVGp5bnFrVG52bmNp?=
+ =?utf-8?B?RTQ2Z3IycVh6VEdrWFhUcng5eXNRU2hQb08xREhYbSs2Z2c2RG5jOUtRN0da?=
+ =?utf-8?B?TFZwc3Y3SFQzQ1BRd0xCMXYwNi9UemIvZ21TcVVIL2FuamJWNitmaThXNUFP?=
+ =?utf-8?B?YkR1QnVhZmg3VTk5Z2htdG1UbzRSalZBd0tvYytyTmlUSnBWSy9QaEFKRUZU?=
+ =?utf-8?B?d1h2NmlXT0JIU2hsRkdSOWpiaDNHU1M1dy9jRlphNlRHRFg2RElUMUYwMlgz?=
+ =?utf-8?B?eHdvZ1duN2gzcnhwOEdYYlFpWm5TUmo1ZjRaeWlTV1VEOGlHcWZ3UkRMcXgv?=
+ =?utf-8?B?bFJHalVxNmhKcFBrcGNyYm1Sc1VrMWVCMnFuZWNtOTRyUUU2emNSMkhLRU5j?=
+ =?utf-8?B?QytUQm5xemtIM2ZIOGZBQWVGVU9nK0JQdWVMT29qMVRzYm1iZVU4b05aK0I3?=
+ =?utf-8?B?MXpmME5TOUxiaWYzZXB1ZzQ5MEQ5cERsYkZ2UUxpNmIyMDkwcFNSaEdlbTlT?=
+ =?utf-8?B?bXRaTWN3NmVvTUtrOHpDSmhGbm03K1BNK01aR0lGbmE1bnp1N2dTZE96dlZ4?=
+ =?utf-8?B?KzRwYnU1TDdzVVVBcVhXb0FYdDhVaGlPVHV4S3d1THRVS1RBWjh0a1Nicnp0?=
+ =?utf-8?B?dWNYaEVTejlUcndkaWNOY1M4TVlhR2VJY1M3ZG1tWStzUmlMeXNERndhOTZR?=
+ =?utf-8?B?TmlkbGxBSkh3d0JqY2NkQ05wek00Sk1yUVNtNFljeEU4UkNjTWlubFM3QlQy?=
+ =?utf-8?B?Y08wOE5iQ0Q0TGdNb2FGamZXRWtueWgzd1hvd3BEOWx6eitlV3dJVHhYd2tE?=
+ =?utf-8?B?UzdGbktYL25MV1RqVUl2T1JyRWVKL1h2a1BCdlllc01IL0RSQnlJMlBSSlhq?=
+ =?utf-8?B?SHoxMVNQaXIvNjFmT21xMGROaDFtZ0I1UTF6dVlieGJhRjhma1pFZUZaQ0JR?=
+ =?utf-8?B?SURWSFZoV2J1cWhhWkRWUkl2SzhSd09pTjYxVGVpRE1EYU84dUIrbGFKZ1Z2?=
+ =?utf-8?B?RFRYaGNrbHFqclBmS1VCL0lWbjNSNmpTUnY3Vk40Y3VadDNIYlFEaEd2TWhh?=
+ =?utf-8?B?SExRazJxdU1HTWtzdmVpTXU1R3pqOGczK2NBb3ZzMkY2OFhvV2xwbEg5QWpZ?=
+ =?utf-8?B?SnV5NDdBZ1FmV0xXVi9jeTZoTktzZkNxTW1wcHAxWjBqZ0JBOEdGNGJnQ3ha?=
+ =?utf-8?B?VXNnVEs4Q0ZwV0xRNDJWZ2F4ajBLZ0JtYTJVNHNvWmR5ZTh5dGUzTHVmamtV?=
+ =?utf-8?B?QjZqNzl2anRmRVIwaWl4NnY2RS9jRW5mc1Y2TVlhL2tpV0Jsc3hPSko3em1U?=
+ =?utf-8?B?REh5NTlObExmc1RDUGhIV1FNQW5nNkRmV0tkcjJhcmpXQWNpaGRQdi9OSlFr?=
+ =?utf-8?B?QVgyK25USjFxdElkeTR2aHFHeVBDMk1DRmp4citOMkNxMG51Y2phWVZhcU5R?=
+ =?utf-8?B?RlkvWE5udmFpZWQ5alNaYTJRTVM4TitTaWdOQWZqdzA2SFNmaUl6SEh4eXc0?=
+ =?utf-8?B?VThaclVwSTJFSnBlTlJ6VEdJcUNpVjhGODN6RW9oOGJaS0ZpMUdjYzlhMnRZ?=
+ =?utf-8?B?K2Z3ZWxPeGxKMTh0QWZzOXZhT0ZmV2dHSXB3cXFVZXVTMmpsLzRrSjFzczcr?=
+ =?utf-8?B?S2VGWCtOdWRjZExJQjNldktNd3RncmZicVBrMU1EYVhpdlN0QkhyOEJEUU1Y?=
+ =?utf-8?B?TjRpZUhsZ3Exc1JiMExDRFF2MzVRK285STF5Y0VwNE9zaHFVd1ZHOVFBK0xH?=
+ =?utf-8?B?azNiKzFyQUorNm9Bd2Q5M0JnQXkzZFlvZ1ZtQVBiNEpWeExBTHpsMHlUOUF0?=
+ =?utf-8?B?cTBNc2dpMUVrQmpGTi9RbC9hWTJXOW11amYyWm9WY3VqRC9uTzlpNEFaZFNB?=
+ =?utf-8?B?dTRuU2kwSXlsemNMa1Q2V3NnYnpXbGU2K3dFYXRTbUd0N3pnbVd2eXNtRjVI?=
+ =?utf-8?B?RUx6U1VVMnVsVWZicEF0c1ZuSnF4Ti9QMVBUQ05UWjh0bWlFK2lJMlNGc25W?=
+ =?utf-8?Q?uZfgvhn14yKvX+9kLSP5oVP5v?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 30020c35-450f-459d-dcc7-08dcf4ce703b
+X-MS-Exchange-CrossTenant-AuthSource: DB8PR04MB7051.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Oct 2024 08:24:26.4705
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Yugeoa6XZy1wbvtUC2RlA+Cwrg6q51eoNeNk05ulFaoCPYLAC2GwBqMyUmZMMlJDZhoooaLfFxaxt/xTYxxINw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB9140
 
-The ieee80211 flush callback can be called to flush only part of all hw
-queues. The ath10k's flush callback implementation (i.e. ath10k_flush())
-was waiting for all pending frames of all queues to be flushed ignoring
-the queue parameter. Because only the queues to be flushed are stopped
-by mac80211, skb can still be queued to other queues meanwhile. Thus
-ath10k_flush() could fail (and wait 5sec holding ar->conf lock) even if
-the requested queues are flushed correctly.
+On 10/24/2024, Biju Das wrote:
+> Hi Liu Ying,
 
-A way to reproduce the issue is to use two different APs because
-each vdev has its own hw queue in ath10k. Connect STA0 to AP0 and STA1
-to AP1. Then generate traffic from AP0 to STA0 and kill STA0 without
-clean disassociation frame (e.g. unplug power cable, reboot -f, ...).
-Now if we were to flush AP1's queue, ath10k_flush() would fail (and
-effectively block 5 seconds with ar->conf or even wiphy's lock held)
-with the following warning:
+Hi Biju,
 
- ath10k_pci 0000:01:00.0: failed to flush transmit queue (skip 0 ar-state 2): 0
+> 
+>> -----Original Message-----
+>> From: Liu Ying <victor.liu@nxp.com>
+>> Sent: Monday, October 21, 2024 7:45 AM
+>> Subject: [PATCH v3 12/15] drm/bridge: Add ITE IT6263 LVDS to HDMI converter
+>>
+>> Add basic HDMI video output support. Currently, only RGB888 output pixel format is supported.  At the
+>> LVDS input side, the driver supports single LVDS link and dual LVDS links with "jeida-24" LVDS
+>> mapping.
+>>
+>> Product link:
+>> https://www.ite.com.tw/en/product/cate1/IT6263
+> 
+> Just a question,
+> 
+> What is the maximum single link and dual link modes you have tested?
 
-Wait only for pending frames of the requested queues to be flushed in
-ath10k_flush() to avoid that long blocking.
+With single LVDS link on i.MX8MP EVK, the highest pixel clock rate I
+tested is 74.25MHz(1280x720@60).  i.MX8MP LVDS Display Bridge(LDB)
+supports the highest 80MHz pixel clock rate with single LVDS link.
 
-Reported-by: Cedric Veilleux <veilleux.cedric@gmail.com>
-Closes: https://lore.kernel.org/all/CA+Xfe4FjUmzM5mvPxGbpJsF3SvSdE5_wgxvgFJ0bsdrKODVXCQ@mail.gmail.com/
-Signed-off-by: Remi Pommarel <repk@triplefau.lt>
----
- drivers/net/wireless/ath/ath10k/htt.h    |  7 +++--
- drivers/net/wireless/ath/ath10k/htt_tx.c | 18 ++++++++++--
- drivers/net/wireless/ath/ath10k/mac.c    | 35 ++++++++++++++++--------
- drivers/net/wireless/ath/ath10k/txrx.c   |  2 +-
- 4 files changed, 45 insertions(+), 17 deletions(-)
+With single LVDS link on i.MX8qxp MEK, the highest pixel clock rate I
+tested is 148.5MHz(1920x1080@60).  i.MX8qxp LDB supports the highest
+150MHz pixel clock rate with single LVDS link.
 
-diff --git a/drivers/net/wireless/ath/ath10k/htt.h b/drivers/net/wireless/ath/ath10k/htt.h
-index d150f9330941..ca8bf3b6766d 100644
---- a/drivers/net/wireless/ath/ath10k/htt.h
-+++ b/drivers/net/wireless/ath/ath10k/htt.h
-@@ -1870,6 +1870,7 @@ struct ath10k_htt {
- 	spinlock_t tx_lock;
- 	int max_num_pending_tx;
- 	int num_pending_tx;
-+	int num_pending_per_queue[IEEE80211_MAX_QUEUES];
- 	int num_pending_mgmt_tx;
- 	struct idr pending_tx;
- 	wait_queue_head_t empty_tx_wq;
-@@ -2447,8 +2448,10 @@ void ath10k_htt_tx_txq_update(struct ieee80211_hw *hw,
- void ath10k_htt_tx_txq_recalc(struct ieee80211_hw *hw,
- 			      struct ieee80211_txq *txq);
- void ath10k_htt_tx_txq_sync(struct ath10k *ar);
--void ath10k_htt_tx_dec_pending(struct ath10k_htt *htt);
--int ath10k_htt_tx_inc_pending(struct ath10k_htt *htt);
-+void ath10k_htt_tx_dec_pending(struct ath10k_htt *htt,
-+			       struct ieee80211_txq *txq);
-+int ath10k_htt_tx_inc_pending(struct ath10k_htt *htt,
-+			      struct ieee80211_txq *txq);
- void ath10k_htt_tx_mgmt_dec_pending(struct ath10k_htt *htt);
- int ath10k_htt_tx_mgmt_inc_pending(struct ath10k_htt *htt, bool is_mgmt,
- 				   bool is_presp);
-diff --git a/drivers/net/wireless/ath/ath10k/htt_tx.c b/drivers/net/wireless/ath/ath10k/htt_tx.c
-index 211752bd0f65..ef5a992e8cce 100644
---- a/drivers/net/wireless/ath/ath10k/htt_tx.c
-+++ b/drivers/net/wireless/ath/ath10k/htt_tx.c
-@@ -140,19 +140,26 @@ void ath10k_htt_tx_txq_update(struct ieee80211_hw *hw,
- 	spin_unlock_bh(&ar->htt.tx_lock);
- }
- 
--void ath10k_htt_tx_dec_pending(struct ath10k_htt *htt)
-+void ath10k_htt_tx_dec_pending(struct ath10k_htt *htt,
-+			       struct ieee80211_txq *txq)
- {
-+	int qnr = -1;
-+
- 	lockdep_assert_held(&htt->tx_lock);
- 
- 	htt->num_pending_tx--;
- 	if (htt->num_pending_tx == htt->max_num_pending_tx - 1)
- 		ath10k_mac_tx_unlock(htt->ar, ATH10K_TX_PAUSE_Q_FULL);
- 
--	if (htt->num_pending_tx == 0)
-+	if (txq)
-+		qnr = --htt->num_pending_per_queue[txq->vif->hw_queue[txq->ac]];
-+
-+	if (htt->num_pending_tx == 0 || qnr == 0)
- 		wake_up(&htt->empty_tx_wq);
- }
- 
--int ath10k_htt_tx_inc_pending(struct ath10k_htt *htt)
-+int ath10k_htt_tx_inc_pending(struct ath10k_htt *htt,
-+			      struct ieee80211_txq *txq)
- {
- 	lockdep_assert_held(&htt->tx_lock);
- 
-@@ -163,6 +170,11 @@ int ath10k_htt_tx_inc_pending(struct ath10k_htt *htt)
- 	if (htt->num_pending_tx == htt->max_num_pending_tx)
- 		ath10k_mac_tx_lock(htt->ar, ATH10K_TX_PAUSE_Q_FULL);
- 
-+	if (!txq)
-+		return 0;
-+
-+	htt->num_pending_per_queue[txq->vif->hw_queue[txq->ac]]++;
-+
- 	return 0;
- }
- 
-diff --git a/drivers/net/wireless/ath/ath10k/mac.c b/drivers/net/wireless/ath/ath10k/mac.c
-index 86386a0af14d..74c28a68a7f0 100644
---- a/drivers/net/wireless/ath/ath10k/mac.c
-+++ b/drivers/net/wireless/ath/ath10k/mac.c
-@@ -4385,7 +4385,7 @@ int ath10k_mac_tx_push_txq(struct ieee80211_hw *hw,
- 	u16 airtime;
- 
- 	spin_lock_bh(&ar->htt.tx_lock);
--	ret = ath10k_htt_tx_inc_pending(htt);
-+	ret = ath10k_htt_tx_inc_pending(htt, txq);
- 	spin_unlock_bh(&ar->htt.tx_lock);
- 
- 	if (ret)
-@@ -4394,7 +4394,7 @@ int ath10k_mac_tx_push_txq(struct ieee80211_hw *hw,
- 	skb = ieee80211_tx_dequeue_ni(hw, txq);
- 	if (!skb) {
- 		spin_lock_bh(&ar->htt.tx_lock);
--		ath10k_htt_tx_dec_pending(htt);
-+		ath10k_htt_tx_dec_pending(htt, txq);
- 		spin_unlock_bh(&ar->htt.tx_lock);
- 
- 		return -ENOENT;
-@@ -4416,7 +4416,7 @@ int ath10k_mac_tx_push_txq(struct ieee80211_hw *hw,
- 		ret = ath10k_htt_tx_mgmt_inc_pending(htt, is_mgmt, is_presp);
- 
- 		if (ret) {
--			ath10k_htt_tx_dec_pending(htt);
-+			ath10k_htt_tx_dec_pending(htt, txq);
- 			spin_unlock_bh(&ar->htt.tx_lock);
- 			return ret;
- 		}
-@@ -4430,7 +4430,7 @@ int ath10k_mac_tx_push_txq(struct ieee80211_hw *hw,
- 		ath10k_warn(ar, "failed to push frame: %d\n", ret);
- 
- 		spin_lock_bh(&ar->htt.tx_lock);
--		ath10k_htt_tx_dec_pending(htt);
-+		ath10k_htt_tx_dec_pending(htt, txq);
- 		if (is_mgmt)
- 			ath10k_htt_tx_mgmt_dec_pending(htt);
- 		spin_unlock_bh(&ar->htt.tx_lock);
-@@ -4693,7 +4693,7 @@ static void ath10k_mac_op_tx(struct ieee80211_hw *hw,
- 			is_presp = ieee80211_is_probe_resp(hdr->frame_control);
- 		}
- 
--		ret = ath10k_htt_tx_inc_pending(htt);
-+		ret = ath10k_htt_tx_inc_pending(htt, txq);
- 		if (ret) {
- 			ath10k_warn(ar, "failed to increase tx pending count: %d, dropping\n",
- 				    ret);
-@@ -4706,7 +4706,7 @@ static void ath10k_mac_op_tx(struct ieee80211_hw *hw,
- 		if (ret) {
- 			ath10k_dbg(ar, ATH10K_DBG_MAC, "failed to increase tx mgmt pending count: %d, dropping\n",
- 				   ret);
--			ath10k_htt_tx_dec_pending(htt);
-+			ath10k_htt_tx_dec_pending(htt, txq);
- 			spin_unlock_bh(&ar->htt.tx_lock);
- 			ieee80211_free_txskb(ar->hw, skb);
- 			return;
-@@ -4719,7 +4719,7 @@ static void ath10k_mac_op_tx(struct ieee80211_hw *hw,
- 		ath10k_warn(ar, "failed to transmit frame: %d\n", ret);
- 		if (is_htt) {
- 			spin_lock_bh(&ar->htt.tx_lock);
--			ath10k_htt_tx_dec_pending(htt);
-+			ath10k_htt_tx_dec_pending(htt, txq);
- 			if (is_mgmt)
- 				ath10k_htt_tx_mgmt_dec_pending(htt);
- 			spin_unlock_bh(&ar->htt.tx_lock);
-@@ -8045,10 +8045,12 @@ static int ath10k_mac_op_set_frag_threshold(struct ieee80211_hw *hw, u32 value)
- 	return -EOPNOTSUPP;
- }
- 
--void ath10k_mac_wait_tx_complete(struct ath10k *ar)
-+static void _ath10k_mac_wait_tx_complete(struct ath10k *ar,
-+					 unsigned long queues)
- {
- 	bool skip;
- 	long time_left;
-+	unsigned int q;
- 
- 	/* mac80211 doesn't care if we really xmit queued frames or not
- 	 * we'll collect those frames either way if we stop/delete vdevs
-@@ -8058,10 +8060,14 @@ void ath10k_mac_wait_tx_complete(struct ath10k *ar)
- 		return;
- 
- 	time_left = wait_event_timeout(ar->htt.empty_tx_wq, ({
--			bool empty;
-+			bool empty = true;
- 
- 			spin_lock_bh(&ar->htt.tx_lock);
--			empty = (ar->htt.num_pending_tx == 0);
-+			for_each_set_bit(q, &queues, ar->hw->queues) {
-+				empty = (ar->htt.num_pending_per_queue[q] == 0);
-+				if (!empty)
-+					break;
-+			}
- 			spin_unlock_bh(&ar->htt.tx_lock);
- 
- 			skip = (ar->state == ATH10K_STATE_WEDGED) ||
-@@ -8076,6 +8082,13 @@ void ath10k_mac_wait_tx_complete(struct ath10k *ar)
- 			    skip, ar->state, time_left);
- }
- 
-+void ath10k_mac_wait_tx_complete(struct ath10k *ar)
-+{
-+	unsigned int queues = GENMASK(ar->hw->queues - 1, 0);
-+
-+	_ath10k_mac_wait_tx_complete(ar, queues);
-+}
-+
- static void ath10k_flush(struct ieee80211_hw *hw, struct ieee80211_vif *vif,
- 			 u32 queues, bool drop)
- {
-@@ -8097,7 +8110,7 @@ static void ath10k_flush(struct ieee80211_hw *hw, struct ieee80211_vif *vif,
- 	}
- 
- 	mutex_lock(&ar->conf_mutex);
--	ath10k_mac_wait_tx_complete(ar);
-+	_ath10k_mac_wait_tx_complete(ar, queues);
- 	mutex_unlock(&ar->conf_mutex);
- }
- 
-diff --git a/drivers/net/wireless/ath/ath10k/txrx.c b/drivers/net/wireless/ath/ath10k/txrx.c
-index 5b6750ef7d19..b848962fc8fb 100644
---- a/drivers/net/wireless/ath/ath10k/txrx.c
-+++ b/drivers/net/wireless/ath/ath10k/txrx.c
-@@ -82,7 +82,7 @@ int ath10k_txrx_tx_unref(struct ath10k_htt *htt,
- 
- 	flags = skb_cb->flags;
- 	ath10k_htt_tx_free_msdu_id(htt, tx_done->msdu_id);
--	ath10k_htt_tx_dec_pending(htt);
-+	ath10k_htt_tx_dec_pending(htt, txq);
- 	spin_unlock_bh(&htt->tx_lock);
- 
- 	rcu_read_lock();
+With dual LVDS links on both i.MX8MP EVK and i.MX8qxp MEK, the highest
+pixel clock rate I tested is 148.5MHz(1920x1080@60).
+
+> 
+> On Renesas SMARC RZ/G3E platform I have tested with this patch set,
+> 
+> Dual link :1080p@60
+> 
+> and
+> 
+> Single link:720p@60
+> 
+> For single link > 720p@60, sometimes I get message
+> "it6263 7-004c: failed to wait for video stable"
+
+I don't see this with i.MX8MP EVK and i.MX8qxp MEK.
+
+> 
+> From SoC side, it can support max dot clock of 87MHz for single link.
+> 
+> So just wondering other than reject modes greater than 87MHz from SOC
+> side, do we need to limit any thing on bridge device for single link Case?
+
+Since IT6263 works with 1920x1080@60(148.5MHz pixel clock rate) on
+i.MX8qxp MEK by using single LVDS link, I'm currently fine with
+the existing clock rate validation against the maximal 150MHz pixel
+clock rate.
+
+> 
+> Cheers,
+> Biju
+
 -- 
-2.40.0
+Regards,
+Liu Ying
 
 
