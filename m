@@ -1,173 +1,200 @@
-Return-Path: <linux-kernel+bounces-381264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 176529AFCAB
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 10:35:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C8E19AFCB1
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 10:36:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C09E7281CD3
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 08:35:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C69DF1F212C5
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 08:36:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1FB71D0E26;
-	Fri, 25 Oct 2024 08:35:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IETPZw0T"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4F611D223A;
+	Fri, 25 Oct 2024 08:36:12 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AADCA18C029
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 08:35:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C70818C029
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 08:36:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729845345; cv=none; b=XmWlNoqYpcWBTqp6GeqJMg7KzLXEBTprek9D4lq94iyFFmgAS18a5c1LpiPgrDJjj2YCtpH/ZnKhCZ0beBIH++Q16Bh/pvfT1YxQUrowXbgrIOb7tkxIzmdfQfnYqCzvYelWKb8tIw35EePN0va59J427jNh9zrh4J+6H2E07Rs=
+	t=1729845372; cv=none; b=o/mdb9D1bKp/Tn8QLMvNDhYMa0KA6n3FtCeiwrmXXbZloMKVf1LsJPUTCQ5w2nKoMAU2wTB82zzcbjGP95/xoLLstaqsrwVPMOiQ+6fUwkcwbA3ZmA5UJgmQsD+TmuKE2FqksBAOobxrZYo9r4AAEIpo0UA6iWJd1T6PdzHMY+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729845345; c=relaxed/simple;
-	bh=EFsUeRfWqfPskfajyHVRxLGSjxxTSZN3OVAmT2dlNWg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tRCc2Bcr2NzeJ6ehUL05CPObBB6O2Z9iiGuwd3jiYiOM3l7uqMlZ1jdx4HDwnrZaeRwCZn9kkBudhjiShc7/w4EqFpo+rs88XUqvX1AIk4yEjjFv4LeXiv+ipTsGzLIjLTOAegnEU1Tb4SFU8N/DjWuyoJsTwHrWzwQBZh4gFF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IETPZw0T; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-37ed7eb07a4so1368361f8f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 01:35:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729845341; x=1730450141; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5k2Y+wXN6Hav1m44Bf7BhVnqUudrumhttYGCCLQPyAo=;
-        b=IETPZw0TlUi0Cg06CXK/CtVWAX0bNgV8l2G6g9PPCaa4qtaal3pu+ct04GNb6ur7Ar
-         GIVvkm70EqLZz62TFh8upCW0F3+yQCFmKwpOEwdzP/B45XQBinu+H01Zpyf8NzEdVO2X
-         4F9lTENVcqLrwc05fEBgVGdubS6wrABHecjLsvS1uhpA2CDtHEhM0JqTD4VJwcN3ilpR
-         iA4THhpjJM9Krs5Y/GjfMLTbJXP27Kheo9DG0nIxfx40bY7CiXXHrSGDDRiGHSlpOOJy
-         NB7NrBa2VRcH5vJy9SG1T6h+D8H5ZPSzcFYUT9lPdd4x3JoRVsqUaM/GnuxIFKMA13zb
-         CwPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729845341; x=1730450141;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5k2Y+wXN6Hav1m44Bf7BhVnqUudrumhttYGCCLQPyAo=;
-        b=UnLJ9MBR/xBuD18GO4OgSF0Ivn1c3QbQMugR5Rhs1Cm4F92ZoOGmRoL+KC5EtKsRUd
-         YZqlfxv9MZDHA+oN+MCQGmfOscnwgHDx5MUcDKHCV1Bhi/QtZSaNs9lj1YIUOB90J/lZ
-         8Ia2D3eJar3TzHaiJeZrZm5pQ14BhEwt/0Y+Llk/poYJu5lye5/V8yPciitN2N/F1dTJ
-         GNudNTspnleGvcEjvB8NJqloAgetSkYdnycOCW6Gmqmv6f08O/g3TrFOTQ1YCdsYaRv1
-         8SJwavY/h6NP3hGHuQE8HrJv/WF10wr0PGuHPwHDgAKfAovgN6sH+Vf8Oxtrk16GDF4C
-         aOiA==
-X-Forwarded-Encrypted: i=1; AJvYcCW43iysnm5YuuBvmZ9zKxs3tdYmQKJQtaroZtFjLWUrWgWaiFeU95N4xv0uH9hf6mDZKeoLUHA8g6u8cxg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDwjOkhwNZeLkEduHMDb+H8EYXvImqunRIqB4LxY5l3j9RFNYs
-	MeHmcKV6Vl1ZmWYnkxnW2DK4Ltc/gkoR9vTLsS90J5NlVP3BGtMNMtHRWyq7chE=
-X-Google-Smtp-Source: AGHT+IF1Dm7/LCI5G/4YSRLj2pNyCW0v5xHJasePqVKzqYtzpxJfSsCdFuesRxA5iyqBt/qELFK6fA==
-X-Received: by 2002:adf:e2cb:0:b0:37c:d1c7:a0c0 with SMTP id ffacd0b85a97d-37efcf1af2amr5912704f8f.30.1729845341033;
-        Fri, 25 Oct 2024 01:35:41 -0700 (PDT)
-Received: from [192.168.68.136] ([145.224.65.57])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b3c7f6sm945622f8f.41.2024.10.25.01.35.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 25 Oct 2024 01:35:40 -0700 (PDT)
-Message-ID: <963d58e4-c00e-40b5-bb64-97476807ed61@linaro.org>
-Date: Fri, 25 Oct 2024 09:35:33 +0100
+	s=arc-20240116; t=1729845372; c=relaxed/simple;
+	bh=rDNzoAVAQ7d9KvhiOmytKGL5nTR62o+4UNsL3k6X9+c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mEvWEr5IniifYRcE4A/uZAy5Qitohyq3FEAA90IOAmnUbwTQ0KHjt+YdxiJIm+aTpHL7B9UsOaYA/Ra3eec6sNmK+mdn76C6EVZaNX362f/0WzwRPbnfstA7yDFVsf+s7Zd3iTL4mfFczfdFdt43rBLziApbepKH2ZcAhmHbuXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1t4FnF-0007rX-1Y; Fri, 25 Oct 2024 10:35:37 +0200
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1t4FnE-000Kpw-1k;
+	Fri, 25 Oct 2024 10:35:36 +0200
+Received: from pengutronix.de (pd9e595f8.dip0.t-ipconnect.de [217.229.149.248])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 1313335E80B;
+	Fri, 25 Oct 2024 08:35:36 +0000 (UTC)
+Date: Fri, 25 Oct 2024 10:35:35 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Ming Yu <a0282524688@gmail.com>
+Cc: tmyu0@nuvoton.com, lee@kernel.org, linus.walleij@linaro.org, 
+	brgl@bgdev.pl, andi.shyti@kernel.org, mailhol.vincent@wanadoo.fr, 
+	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
+	pabeni@redhat.com, wim@linux-watchdog.org, linux@roeck-us.net, jdelvare@suse.com, 
+	jic23@kernel.org, lars@metafoo.de, ukleinek@kernel.org, 
+	alexandre.belloni@bootlin.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-i2c@vger.kernel.org, linux-can@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-watchdog@vger.kernel.org, linux-hwmon@vger.kernel.org, linux-iio@vger.kernel.org, 
+	linux-pwm@vger.kernel.org, linux-rtc@vger.kernel.org
+Subject: Re: [PATCH v1 1/9] mfd: Add core driver for Nuvoton NCT6694
+Message-ID: <20241025-sexy-fanatic-snail-a1d2e7-mkl@pengutronix.de>
+References: <20241024085922.133071-1-tmyu0@nuvoton.com>
+ <20241024085922.133071-2-tmyu0@nuvoton.com>
+ <20241024-adventurous-imaginary-hornet-4d5c46-mkl@pengutronix.de>
+ <20241024-pumpkin-parrot-of-excellence-299c57-mkl@pengutronix.de>
+ <CAOoeyxXX2fpHVJ8urLmy+pBjH1aRdYu6qrtwOmwUxTUyQq30DA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] perf arm-spe: Add support for SPE Data Source packet on
- AmpereOne
-To: Ilkka Koskinen <ilkka@os.amperecomputing.com>
-Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- "Liang, Kan" <kan.liang@linux.intel.com>,
- John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
- Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>
-References: <20241024233035.7979-1-ilkka@os.amperecomputing.com>
-Content-Language: en-US
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <20241024233035.7979-1-ilkka@os.amperecomputing.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="7vgtm2p2hvbpfjse"
+Content-Disposition: inline
+In-Reply-To: <CAOoeyxXX2fpHVJ8urLmy+pBjH1aRdYu6qrtwOmwUxTUyQq30DA@mail.gmail.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
 
+--7vgtm2p2hvbpfjse
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v1 1/9] mfd: Add core driver for Nuvoton NCT6694
+MIME-Version: 1.0
 
-On 25/10/2024 12:30 am, Ilkka Koskinen wrote:
-> Decode SPE Data Source packets on AmpereOne. The field is IMPDEF.
-> 
-> Signed-off-by: Ilkka Koskinen <ilkka@os.amperecomputing.com>
-> ---
->   .../util/arm-spe-decoder/arm-spe-decoder.h    |  9 +++
->   tools/perf/util/arm-spe.c                     | 61 +++++++++++++++++++
->   2 files changed, 70 insertions(+)
-> 
-> diff --git a/tools/perf/util/arm-spe-decoder/arm-spe-decoder.h b/tools/perf/util/arm-spe-decoder/arm-spe-decoder.h
-> index 1443c28545a9..e4115b1e92b2 100644
-> --- a/tools/perf/util/arm-spe-decoder/arm-spe-decoder.h
-> +++ b/tools/perf/util/arm-spe-decoder/arm-spe-decoder.h
-> @@ -67,6 +67,15 @@ enum arm_spe_neoverse_data_source {
->   	ARM_SPE_NV_DRAM		 = 0xe,
->   };
->   
-> +enum arm_spe_ampereone_data_source {
-> +	ARM_SPE_AMPEREONE_LOCAL_CHIP_CACHE_OR_DEVICE	= 0x0,
-> +	ARM_SPE_AMPEREONE_SLC				= 0x3,
-> +	ARM_SPE_AMPEREONE_REMOTE_CHIP_CACHE		= 0x5,
-> +	ARM_SPE_AMPEREONE_DDR				= 0x7,
-> +	ARM_SPE_AMPEREONE_L1D				= 0x8,
-> +	ARM_SPE_AMPEREONE_L2D				= 0x9,
-> +};
-> +
->   struct arm_spe_record {
->   	enum arm_spe_sample_type type;
->   	int err;
-> diff --git a/tools/perf/util/arm-spe.c b/tools/perf/util/arm-spe.c
-> index 138ffc71b32d..04bd21ad7ea8 100644
-> --- a/tools/perf/util/arm-spe.c
-> +++ b/tools/perf/util/arm-spe.c
-> @@ -515,10 +515,69 @@ static void arm_spe__synth_data_source_generic(const struct arm_spe_record *reco
->   		data_src->mem_lvl |= PERF_MEM_LVL_REM_CCE1;
->   }
->   
-> +static const struct midr_range ampereone_source_spe[] = {
-> +	MIDR_ALL_VERSIONS(MIDR_AMPERE1A),
-> +	{},
-> +};
-> +
-> +static void arm_spe__synth_data_source_ampereone(const struct arm_spe_record *record,
-> +						 union perf_mem_data_src *data_src,
-> +						 u64 midr)
-> +{
-> +	if (!is_midr_in_range_list(midr, ampereone_source_spe)) {
-> +		arm_spe__synth_data_source_generic(record, data_src);
-> +		return;
-> +	}
-[...]
->   static u64 arm_spe__synth_data_source(const struct arm_spe_record *record, u64 midr)
->   {
->   	union perf_mem_data_src	data_src = { .mem_op = PERF_MEM_OP_NA };
->   	bool is_neoverse = is_midr_in_range_list(midr, neoverse_spe);
-> +	bool is_ampereone = (read_cpuid_implementor() == ARM_CPU_IMP_AMPERE);
->   
+On 25.10.2024 16:14:03, Ming Yu wrote:
+> Marc Kleine-Budde <mkl@pengutronix.de> =E6=96=BC 2024=E5=B9=B410=E6=9C=88=
+24=E6=97=A5 =E9=80=B1=E5=9B=9B =E4=B8=8B=E5=8D=8811:34=E5=AF=AB=E9=81=93=EF=
+=BC=9A
+> >
+> > On 24.10.2024 17:20:57, Marc Kleine-Budde wrote:
+> >
+> > [...]
+> >
+> > > > +   nct6694->cmd_buffer =3D devm_kcalloc(dev, CMD_PACKET_SZ,
+> > > > +                                      sizeof(unsigned char), GFP_K=
+ERNEL);
+> > > > +   if (!nct6694->cmd_buffer)
+> > > > +           return -ENOMEM;
+> > > > +   nct6694->rx_buffer =3D devm_kcalloc(dev, MAX_PACKET_SZ,
+> > > > +                                     sizeof(unsigned char), GFP_KE=
+RNEL);
+> > > > +   if (!nct6694->rx_buffer)
+> > > > +           return -ENOMEM;
+> > > > +   nct6694->tx_buffer =3D devm_kcalloc(dev, MAX_PACKET_SZ,
+> > > > +                                     sizeof(unsigned char), GFP_KE=
+RNEL);
+> > > > +   if (!nct6694->tx_buffer)
+> > > > +           return -ENOMEM;
+> > > > +   nct6694->int_buffer =3D devm_kcalloc(dev, MAX_PACKET_SZ,
+> > > > +                                      sizeof(unsigned char), GFP_K=
+ERNEL);
+> > > > +   if (!nct6694->int_buffer)
+> > > > +           return -ENOMEM;
+> > > > +
+> > > > +   nct6694->int_in_urb =3D usb_alloc_urb(0, GFP_KERNEL);
+> > > > +   if (!nct6694->int_in_urb) {
+> > > > +           dev_err(&udev->dev, "Failed to allocate INT-in urb!\n");
+> > > > +           return -ENOMEM;
+> > > > +   }
+> > > > +
+> > > > +   /* Bulk pipe maximum packet for each transaction */
+> > > > +   bulk_pipe =3D usb_sndbulkpipe(udev, BULK_OUT_ENDPOINT);
+> > > > +   nct6694->maxp =3D usb_maxpacket(udev, bulk_pipe);
+> > > > +
+> > > > +   mutex_init(&nct6694->access_lock);
+> > > > +   nct6694->udev =3D udev;
+> > > > +   nct6694->timeout =3D URB_TIMEOUT; /* Wait until urb complete */
+> > > > +
+> > > > +   INIT_LIST_HEAD(&nct6694->handler_list);
+> > > > +   spin_lock_init(&nct6694->lock);
+> > > > +
+> > > > +   usb_fill_int_urb(nct6694->int_in_urb, udev, pipe,
+> > > > +                    nct6694->int_buffer, maxp, usb_int_callback,
+> > > > +                    nct6694, int_endpoint->bInterval);
+> > > > +   ret =3D usb_submit_urb(nct6694->int_in_urb, GFP_KERNEL);
+> > > > +   if (ret)
+> > > > +           goto err_urb;
+> > > > +
+> > > > +   dev_set_drvdata(&udev->dev, nct6694);
+> > > > +   usb_set_intfdata(iface, nct6694);
+> > > > +
+> > > > +   ret =3D mfd_add_hotplug_devices(&udev->dev, nct6694_dev,
+> > > > +                                 ARRAY_SIZE(nct6694_dev));
+> > > > +   if (ret) {
+> > > > +           dev_err(&udev->dev, "Failed to add mfd's child device\n=
+");
+> > > > +           goto err_mfd;
+> > > > +   }
+> > > > +
+> > > > +   nct6694->async_workqueue =3D alloc_ordered_workqueue("asyn_work=
+queue", 0);
+> > >
+> > > Where is the async_workqueue used?
+> >
+> > Sorry - it's used in the driver, which live in separate directories -
+> > you can ignore this comment.
+> >
+> > But then the question comes up, it looks racy to _first_ add the devices
+> > and _then_ the workqueue.
 
-Hi Ilkka,
+> Excuse me, I'm a bit confused. Is there anything I need to
+> improve on?
 
-I think this read_cpuid_implementor() is for the device that's running 
-report, rather than record. You need to use the midr that's saved into 
-the file.
+It looks racy to _first_ add the devices and _then_ the workqueue.
 
-But it looks like you've done that for is_midr_in_range_list(midr, 
-ampereone_source_spe) above. Is it possible to just do that and not 
-read_cpuid_implementor() and then it's done the same way as neoverse and 
-also works off target?
+So the obvious solution is to allocate the worklist first and then add
+the devices.
 
-Thanks
+regards,
+Marc
 
-James
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
 
+--7vgtm2p2hvbpfjse
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmcbWFQACgkQKDiiPnot
+vG8m/Qf+LrYDKh2wc2OiqqbICoYJhzy3dfrepHuhn4A2ce4XC6Go2FCD3qi85XhM
+j4ekvJKYU8XLtLWOHSxPp0nmsWXXHZnIc5sYSon9aTFaAdwmhxtUhsF32XYK71iz
+OlLLWNUHqPXhjzU5SBvALysRP7Hmz1wIe+mqTDX3wHS/P51Xxr4h/hEbHs0OeBUa
+EttXTFIg9Lkn69Jg9EReMhgXZOhotZ5GpBx/ZXVt89nDUKczGH8ywHy3wX6a4TFD
+fHTDr0qHcO/2x9ZzMKwGo8M4vxtp7yoTY9zlD4X+sMBXcYb7/OL7Hdpz/wCBzP+r
+GrgqFlm+xuN9eH3oha9j8maht2HgDg==
+=1/zE
+-----END PGP SIGNATURE-----
+
+--7vgtm2p2hvbpfjse--
 
