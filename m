@@ -1,662 +1,171 @@
-Return-Path: <linux-kernel+bounces-381118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D82EB9AFA93
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 09:04:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B309A9AFA97
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 09:06:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 680421F235FC
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 07:04:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D79AB1C21F3D
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 07:05:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C186F1B3953;
-	Fri, 25 Oct 2024 07:04:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C0F71B0F22;
+	Fri, 25 Oct 2024 07:05:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="i3mG4BVx"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="aD9uhcJI"
+Received: from IND01-MAX-obe.outbound.protection.outlook.com (mail-maxind01olkn2038.outbound.protection.outlook.com [40.92.102.38])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A866B1B395F
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 07:04:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729839846; cv=none; b=P5jMWU5E+TgclMpomoj+xS3SVLmSGVtDQJTzzJKaIfJrTRLdnGXNfQ19C+w+BPGAl+aMwGg+gqiCZMiwsl7js4mr+BZUHAEGBcrUgsLefgezu4A9qbJ+TatH+hR7i2Cly4N4FBa92FmBYNQGUe8CCj9sLj8ohr5XXXXK5+rRUtM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729839846; c=relaxed/simple;
-	bh=DBv6l7GloxbmSNMewON9UjbH4GqdMp2fpBD3pszXpE8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JyMDCipkaVxWHJrln+B/rs3RAVW1sY9nDbO3eWx9eAZnJmrlml0WJv524fUAtdXIS9i//HioNgYGbU6PVO3DKoE+K0vQYoSMy/VK/K07dRIyUm3PE+kXdVsEWJEOy8Go+B85h3kdj4iBkQcllptaX3k1bGZm7Tn0QtpO3wBn4y4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=i3mG4BVx; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729839842;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9p12DVJrh2/KaL703mBvE4NfeJ/21HDpgwP+rDFnf/I=;
-	b=i3mG4BVx/BVf4YdwdnRIiFAomiNyHNLg4TKYk4FMUYVWn7A8dWTqPB2alde/qPGWB6aB1X
-	c4vrbUsmhm8ga9N0yd3WnfsQEBypGF20seaQnrWqXljLew2EhbQlQ/LLMUQ5nKEassW23S
-	PgUzWy1PpsA0+GbGBvyo5zMoFF2htoY=
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com
- [209.85.214.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-635-y1wKZOZoMciZLIwdoD9ZvQ-1; Fri, 25 Oct 2024 03:04:00 -0400
-X-MC-Unique: y1wKZOZoMciZLIwdoD9ZvQ-1
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-20e67b82aa6so20304145ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 00:04:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729839840; x=1730444640;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9p12DVJrh2/KaL703mBvE4NfeJ/21HDpgwP+rDFnf/I=;
-        b=BlE+lk4osHBfsONQgmDTkqBUZ/9zsdreogYZ+SVF7Us4Qa4fr2UlJ9MjyD4K/fzbTV
-         Ofyx13vSDB5HJocgs2CPTwpGs2WoTnvJfzLQeFrldkCWaytlgiKNNaKc7+yvnrhWlvVD
-         OLGecYH/Zlzhty1G+h44jLd1MNDO2q001Yk4lmUg9KTqJG8acA8vE9cMpUa2Gg1E94R1
-         2pcr5mxHyahUMMJVNsIbHH9AEmfIPFky84Dy8/cR/q0K2nvcXvJ1HwyHbR/TzT4olEqj
-         SRN+1k/h0B8/fmX3hN+95DVp1nfkQ1NJ3Da3U1M0LPk8mbZSpMTp0cybwyTsZJqYNsqg
-         5Uug==
-X-Forwarded-Encrypted: i=1; AJvYcCUAhJ4eb48JpU/6ITIioiB5mjrmi0yQh8myKNZypRwPuWBTXY0DTLEEtZd4Gu1th/4wHmhLZmSsUXSTvfc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywb7TJql9//zaBmoQQl6McqThkRTXoFyonmbRshuTbDH8vPSKvP
-	njbFlsaRTv+DWz+C7USxJXIfwITho/vunFtXKbETB6AAJoTLfqUVbzsLF5617g16s1vdKRvbAQY
-	e/6cyKXinn29I3d9HzJueOYVFXqbTdZ74l/F6sz3hNJ4mB/FyNCf0Pdv/z+Cubg==
-X-Received: by 2002:a17:903:1cb:b0:20f:c094:b80f with SMTP id d9443c01a7336-20fc094bce6mr29520155ad.49.1729839839649;
-        Fri, 25 Oct 2024 00:03:59 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHqNkHcZK+wAbGtTfwcXjrQGB/oivx/BdHMIgJdpiz9apxigQic1a/Lr06F1uzOyU4AhBxK1g==
-X-Received: by 2002:a17:903:1cb:b0:20f:c094:b80f with SMTP id d9443c01a7336-20fc094bce6mr29519855ad.49.1729839839211;
-        Fri, 25 Oct 2024 00:03:59 -0700 (PDT)
-Received: from [192.168.68.55] ([180.233.125.129])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bc02f6f1sm4190065ad.226.2024.10.25.00.03.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 25 Oct 2024 00:03:58 -0700 (PDT)
-Message-ID: <d3e0b74a-7c01-487e-ac77-5c8afbd720d4@redhat.com>
-Date: Fri, 25 Oct 2024 17:03:49 +1000
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44BC067A0D;
+	Fri, 25 Oct 2024 07:05:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.102.38
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729839953; cv=fail; b=HUP6RPe950BydqKi+ijAEOxKFYdWnmkNYrWmc/lWv9fLyHoeaV+Kh5/QT0vNZFZJWwYjutTrFaeKTqqaeTUo8mVKtLF4wdS3KfvjYYCQmc1xdtv/01phuQrm2nSz+N0lpDre7PNi8YWV/4RfW3/rbEBufQn/PogR88yKrQ/KyQY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729839953; c=relaxed/simple;
+	bh=j8DyTmdDB+XJl+gHre4RdOJW7knaBzbJgW1FS8Xkid8=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=s1PaQcqBBCg0zvnRfUXQs2FO8PlPYJzSXyXAFw05D4+RBWME27Q7Yxj1z5dAWbcuQRhrjMMKYwsqJtMX4rrVj7jkDlw0SZ4xySqSiodM/Ww0UNsiJ8W0OOKDbKWfNFIWrU3sKofqI0UaA8GWKNSttkYxIE8K4q+NtTZ1MGs839E=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=aD9uhcJI; arc=fail smtp.client-ip=40.92.102.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=gUPORLoACdeeLFLxeYXTVEdR4eaDIqU4WBUdSN1/ZMwr7KQ3W8dXsVarhkHBuKKn5+BJgBMxmPFg2YduImxwCt5wu7aX0hwzQvkgCKmnmt0EbPlAxo/tVfj9ld5ImxJ9o4wxqkQ1JWbZq2RTBI15dA0oA9tTFwUB9/129SDDhjsUslUwDkhgRjiI8ZaUoesj3odnZJYQSrqF6lJuGhVUQxares1c+AYRDGG2oycruC33G6rrq4aTSt2XYZ0/HvwX7Gxx9OEZwUt2LTNykTejFpxh0vx4WPq1/9uojpRipVxXhjjB6BvSwyLNiUYkxPfGq61QXGiWCeiJvBGJGkQGUQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=pPWpXgTj+wJeE1WiMq3QqQyHrTo7hbys6bDBoe8hLYU=;
+ b=lEM/LdDz8mxb10MhYpVUkUG6PACZLbY+2dGQVZCGqRYtMvn8fQfP99MvLs2H6az2JaW8KJCOemRSeR1Yemnc3bJjIp3yBk/MRm9+rw7hnYCWYYl4unFxZ+9qbRIURJoNgaOXjz84kbpNblyE4d1v0R7orNoZ9Oip8RahFu7F/NTlwpbQMBLC/1KQhRmyMdHlp2j5NnOmRN6/HUCrYZDUxySymPKb5vt07PbpM2FpBt37LLt/Qk34GLv+QNURSUrhW1/2Pah8ior7naizzaruaLCqi4/StSifjw7nh211ASCvV5pZiMzxZrdGzpEJGwMQRkcAVevVqvM7cnfIgug1gQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=pPWpXgTj+wJeE1WiMq3QqQyHrTo7hbys6bDBoe8hLYU=;
+ b=aD9uhcJIb5WsxRVXvZIM00ckBna6khuLsiCC4uIywjAIKVgGymu48w0fh2T0QJrOGtDWP0TT8++UovJEMf3HPq9wa8407VdkAUtPmvel4tls0aFGXAIN6yHH5iD5bVk+YCzehawNEYicYXT8bY8Dz8Ouptf27HFpyzndIUKnbmhbjRgPqXcCcoG7iJhEv1OYzVPQweIayh/KoMkOrhtRY3ToKRPeazNWTpQbYm4czX6RJpgHe13aL13KRlmyzIXNxJAZutl+kPukKV9dOv543ri7hQwgePw1FL8ec/0UPz8rWHaYElJlDVh5Cqpkzl3ybMslwH+epRYbME75a5KY6g==
+Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:138::5)
+ by PN2PPFA5476DC6D.INDP287.PROD.OUTLOOK.COM (2603:1096:c04:1::140) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.20; Fri, 25 Oct
+ 2024 07:05:44 +0000
+Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+ ([fe80::a94:ad0a:9071:806c]) by MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+ ([fe80::a94:ad0a:9071:806c%3]) with mapi id 15.20.8093.018; Fri, 25 Oct 2024
+ 07:05:44 +0000
+Message-ID:
+ <MA0P287MB28228FA7990371369CEEDD96FE4F2@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
+Date: Fri, 25 Oct 2024 15:05:41 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/3] dt-bindings: pwm: sophgo: add PWM controller for
+ SG2042
+To: Inochi Amaoto <inochiama@gmail.com>, Chen Wang <unicornxw@gmail.com>,
+ ukleinek@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, inochiama@outlook.com, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
+ linux-riscv@lists.infradead.org, chao.wei@sophgo.com,
+ haijiao.liu@sophgo.com, xiaoguang.xing@sophgo.com, chunzhi.lin@sophgo.com
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+References: <cover.1729037302.git.unicorn_wang@outlook.com>
+ <fec7163144d7f7b615695b5fd22a182ed7f1e7e9.1729037302.git.unicorn_wang@outlook.com>
+ <2mwkqy7xqj6bydwutwjmyeq4swnqfmljr45rl474uqciglmpt4@2kgwci2oxyp2>
+From: Chen Wang <unicorn_wang@outlook.com>
+In-Reply-To: <2mwkqy7xqj6bydwutwjmyeq4swnqfmljr45rl474uqciglmpt4@2kgwci2oxyp2>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SI1PR02CA0021.apcprd02.prod.outlook.com
+ (2603:1096:4:1f4::14) To MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+ (2603:1096:a01:138::5)
+X-Microsoft-Original-Message-ID:
+ <ddae7dd6-6379-4180-abd9-ee7eb1ad3ba1@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 06/43] arm64: RME: Add wrappers for RMI calls
-To: Steven Price <steven.price@arm.com>, kvm@vger.kernel.org,
- kvmarm@lists.linux.dev
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
- Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
- Oliver Upton <oliver.upton@linux.dev>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
- <yuzenghui@huawei.com>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Joey Gouly <joey.gouly@arm.com>,
- Alexandru Elisei <alexandru.elisei@arm.com>,
- Christoffer Dall <christoffer.dall@arm.com>, Fuad Tabba <tabba@google.com>,
- linux-coco@lists.linux.dev,
- Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
- Shanker Donthineni <sdonthineni@nvidia.com>, Alper Gun
- <alpergun@google.com>, "Aneesh Kumar K . V" <aneesh.kumar@kernel.org>
-References: <20241004152804.72508-1-steven.price@arm.com>
- <20241004152804.72508-7-steven.price@arm.com>
-Content-Language: en-US
-From: Gavin Shan <gshan@redhat.com>
-In-Reply-To: <20241004152804.72508-7-steven.price@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MA0P287MB2822:EE_|PN2PPFA5476DC6D:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4b1995fa-9f39-4298-b2e8-08dcf4c3716b
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|7092599003|15080799006|461199028|5072599009|19110799003|6090799003|8060799006|3412199025|440099028;
+X-Microsoft-Antispam-Message-Info:
+	0znf/XoyMpnewvp9ObNJno2OY/vXNBkYt6D0znRvJPf5/OQto0Feovxcw08jVZi8t59u3qs2gxqmCohhSo4tyoac/7uxsZmNHwTdGi7yXH1B7V89eTTbwkmDbYakpUP493skpUTJj0pPHBbEx9NCWSGSnJgnNFNio7218buwHr4c6vLKdDTPM2dnMPjob2l7qF2MPHgAOg7pEOkuxA8VWYcNZVa6mb5J75Ncfl2PLlmXcE9JoMUHZ37+UrvW5ABHnojIT8xXWMRieYEoaEHhnWhni9N1CoeMcsECzOLUhnzNS5WOfJiZsqEeUbeYzzREIVvBwoad52MVMqk1S13od9GaJFNlrbf91CaABrfJTPOPCgmyJ3JAWtpiYX/zWPDjpQoLaB2pg3myc2Yvbc5oqIQl5wuGF51KjTxPWD7J1EI+ga6Z2gJhabcD1eL9SPbC4odSj/RB9d+9Swe5Hb9T3YjFWhQDqR0ubFTkCfaT+bwzTD96O3YZLgzWLjr816y8erUWkVelVkkVyUWHHjrspge52ClzLBbiry108SyknHMn5ZpROgRHIv8bbDL3R4vfaloAxSbxW9A193x0P1gN9xwm76JglXVp6CJjV3ym0lCUachWLMoLBZps9GywTpYF11gw404mDxfrNskeQK2ndfGSJ82f8dCv+iFXZkWIQGLvk8r4czlJGWuhTF79xjTe2NgJo8knCUfQ0eR/YAge3QxDaYC2dXbi38NW41n3UssdO8eOZbokGPyFCqNypR3VOFc7NuvIzC0VzT1OUCt2EQ==
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?M3pUelhCRVZYT0NIcHhOUHhJUTV5UzJBd0EwRi8yQVhpa3NpTTNoR1cyT3Rz?=
+ =?utf-8?B?R1ExWVAxZGR5VjQwckNBYmlnSkg4QjlYVFpueks4dmZDK3VrQnNHVlhqVndO?=
+ =?utf-8?B?THdOT3Jjb1M4Y3dPVWJCR01PTy85NFN6R0J5eENqSUdmS29XWkZ4THlpT3pp?=
+ =?utf-8?B?U3pINGw3TzdkVE5oWDdUck1uczRnZWZZQk1NTnJJZy9WVmZBaXowVVlZL2pI?=
+ =?utf-8?B?Zk9RdUhBWXZrS3ZZYmJqK2pjYjZsWUo0NTRyTm9tN0Y5Tm94RXNCUEQ1YlNV?=
+ =?utf-8?B?c1ArWWVRVzRBOXRKMVZDdm9VZkFtSVgzQWxRaC9wNk1YUEpGTEFtbTFmTWdD?=
+ =?utf-8?B?MGptRU9OcXJQSjdRc0xyd3FIVW1Way9zakxYekZXVU5tMFhvL2RmYms5d3lZ?=
+ =?utf-8?B?R1BsWDlzRFZyaG41d0FOTnljM0FVV0taRmNBNkNGQXlrY1hISXJxSDJZaCs0?=
+ =?utf-8?B?Z3lENU03SGxhelpPbTU0Y2c5MlFLdUVUUUVRb09laDZSWTZiTnBFMFJvNlZD?=
+ =?utf-8?B?V3FhQ0kwNWxWL3A0NmxDQ3dBL2ZVb0xHbnRuYlY2K0J0c2hadHlGVXJUUHl3?=
+ =?utf-8?B?bkFIMjFaVHpEZzdRUmVZRk9jaTlFa1RXK3czN21nMEo2UEszU2MzZWtFaVVi?=
+ =?utf-8?B?YmxWcmdSTFI3Vy9NRkNqMVZEMHFxYVVtb1NnSllFcGRLa3ZiWDNUQzdBeXVN?=
+ =?utf-8?B?emtuK0RsN284ckNBKzVqWEsxUWJTSlprZFpFUEpYbTNuUHM5d3NsYnBwMThH?=
+ =?utf-8?B?QzNOUXZ4ODJqQnpkMXMzUE9xeWJBMWw0clNsa1RvQXNxQjh2K21WMU90bTFR?=
+ =?utf-8?B?ZnBWTkt5U1BJSEpoMWFPUXdBaU9IcVV3N2JBVGZ3R01YbFFsNWE2c0tqRXZx?=
+ =?utf-8?B?NzJBMWJCRER4ZFQwekpxUWU3SGMxZzZyYzNwb2FXNGFrbjhiTzV2Z2xQTUZT?=
+ =?utf-8?B?ZkZ1MDNxdEI2eklQN1pSM1RIYk9UcWNWM25wWjVlTWtVd1hrdGpXbnRaSGFa?=
+ =?utf-8?B?THRhTjJhRGM5dFl1T1YrZ0dyMFlnWUtaOXV4OUFpTk1USklrUElYZ1ppb1No?=
+ =?utf-8?B?eGdYamZJQ05qUFhMdzhCZDBRSVhQNnVBZzUvR0lTc2VKeStUQXhGMTU2blM5?=
+ =?utf-8?B?OFVuOUxiWFh5N3NxOFVZU3lBNFZDSGdFUEs2SzJ3QnJOQWRhWVljcFJDUzhs?=
+ =?utf-8?B?ajZXRHFUUVlMYktRejN6UkNFQ0RYUm1PZ2RRenFVQ1dmc1lEYUpXaDhuSTRB?=
+ =?utf-8?B?a09NOVVxbFlTKzlmNk83cjFOQ1p0U1QxZkpRWFZJWUl0a3VJaDg3bnJPTUd6?=
+ =?utf-8?B?NVkrT29qNk54WUZhdWFHN21nMXZienpSa2w3Wkx0U0JMNUdnRndXcjdsRUxZ?=
+ =?utf-8?B?R1pGRW9pd3RMQU1pcHcwbGx3eTBCV3V6UGdGZG5XNWFWZ0NmeGRPQ3JvSTlT?=
+ =?utf-8?B?OFNmc21acnlRdjJ4ZlZVRVNvNWZQeDRoVVROeUk2bjY2VUh0Qkt6RG1vZ1dW?=
+ =?utf-8?B?WTA2QW1ZL1phbXlUd0pPcVNjQldBSFdOaTVOUFdHdjErRlMvTndpN1hzTmk1?=
+ =?utf-8?B?M3dUc2NQS29Dc05UeDhOVDJPTGZkUEU4Y3h5cHlPNVlGQ1BueGI2L3VLOXhm?=
+ =?utf-8?B?S1lzZzNjM2F0d0phRlR2QnhLbk9YT3ViaWlHOENYQ1ZsaFdIYm1kSHlSM0sz?=
+ =?utf-8?Q?BhFvJXdtDwJY/UxTb63Z?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4b1995fa-9f39-4298-b2e8-08dcf4c3716b
+X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Oct 2024 07:05:44.1620
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN2PPFA5476DC6D
 
-On 10/5/24 1:27 AM, Steven Price wrote:
-> The wrappers make the call sites easier to read and deal with the
-> boiler plate of handling the error codes from the RMM.
-> 
-> Signed-off-by: Steven Price <steven.price@arm.com>
-> ---
-> Changes from v4:
->   * Improve comments
-> Changes from v2:
->   * Make output arguments optional.
->   * Mask RIPAS value rmi_rtt_read_entry()
->   * Drop unused rmi_rtt_get_phys()
-> ---
->   arch/arm64/include/asm/rmi_cmds.h | 510 ++++++++++++++++++++++++++++++
->   1 file changed, 510 insertions(+)
->   create mode 100644 arch/arm64/include/asm/rmi_cmds.h
-> 
-> diff --git a/arch/arm64/include/asm/rmi_cmds.h b/arch/arm64/include/asm/rmi_cmds.h
-> new file mode 100644
-> index 000000000000..3ed32809a608
-> --- /dev/null
-> +++ b/arch/arm64/include/asm/rmi_cmds.h
-> @@ -0,0 +1,510 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * Copyright (C) 2023 ARM Ltd.
-> + */
-> +
-> +#ifndef __ASM_RMI_CMDS_H
-> +#define __ASM_RMI_CMDS_H
-> +
-> +#include <linux/arm-smccc.h>
-> +
 
-It can be dropped since the header file has been included by <asm/rmi_smc.h>
+On 2024/10/25 11:28, Inochi Amaoto wrote:
+> On Wed, Oct 16, 2024 at 08:19:22AM +0800, Chen Wang wrote:
+[......]
+> Does this ip need a reset? I see a RST_PWM in the reset bindings.
+> If so, please add reset support for the whole patch.
 
-> +#include <asm/rmi_smc.h>
-> +
-> +struct rtt_entry {
-> +	unsigned long walk_level;
-> +	unsigned long desc;
-> +	int state;
-> +	int ripas;
-> +};
-> +
-> +/**
-> + * rmi_data_create() - Create a Data Granule
-> + * @rd: PA of the RD
-> + * @data: PA of the target granule
-> + * @ipa: IPA at which the granule will be mapped in the guest
-> + * @src: PA of the source granule
-> + * @flags: RMI_MEASURE_CONTENT if the contents should be measured
-> + *
-> + * Create a new Data Granule, copying contents from a Non-secure Granule.
-> + *
-> + * Return: RMI return code
-> + */
-> +static inline int rmi_data_create(unsigned long rd, unsigned long data,
-> +				  unsigned long ipa, unsigned long src,
-> +				  unsigned long flags)
-> +{
-> +	struct arm_smccc_res res;
-> +
-> +	arm_smccc_1_1_invoke(SMC_RMI_DATA_CREATE, rd, data, ipa, src,
-> +			     flags, &res);
-> +
-> +	return res.a0;
-> +}
-> +
-
-Is there a particular reason why the first letter for 'Data Granule' and
-'Granule' has to be upper-case?
-
-> +/**
-> + * rmi_data_create_unknown() - Create a Data Granule with unknown contents
-> + * @rd: PA of the RD
-> + * @data: PA of the target granule
-> + * @ipa: IPA at which the granule will be mapped in the guest
-> + *
-> + * Create a new Data Granule with unknown contents
-       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-This line can be dropped since the same content has been given at the
-beginning.
-
-> + *
-> + * Return: RMI return code
-> + */
-> +static inline int rmi_data_create_unknown(unsigned long rd,
-> +					  unsigned long data,
-> +					  unsigned long ipa)
-> +{
-> +	struct arm_smccc_res res;
-> +
-> +	arm_smccc_1_1_invoke(SMC_RMI_DATA_CREATE_UNKNOWN, rd, data, ipa, &res);
-> +
-> +	return res.a0;
-> +}
-> +
-> +/**
-> + * rmi_data_destroy() - Destroy a Data Granule
-> + * @rd: PA of the RD
-> + * @ipa: IPA at which the granule is mapped in the guest
-> + * @data_out: PA of the granule which was destroyed
-> + * @top_out: Top IPA of non-live RTT entries
-> + *
-> + * Unmap a protected IPA from stage 2, transitioning it to DESTROYED.
-> + * The IPA cannot be used by the guest unless it is transitioned to RAM again
-> + * by the Realm guest.
-> + *
-> + * Return: RMI return code
-> + */
-> +static inline int rmi_data_destroy(unsigned long rd, unsigned long ipa,
-> +				   unsigned long *data_out,
-> +				   unsigned long *top_out)
-> +{
-> +	struct arm_smccc_res res;
-> +
-> +	arm_smccc_1_1_invoke(SMC_RMI_DATA_DESTROY, rd, ipa, &res);
-> +
-> +	if (data_out)
-> +		*data_out = res.a1;
-> +	if (top_out)
-> +		*top_out = res.a2;
-> +
-> +	return res.a0;
-> +}
-> +
-> +/**
-> + * rmi_features() - Read feature register
-> + * @index: Feature register index
-> + * @out: Feature register value is written to this pointer
-> + *
-> + * Return: RMI return code
-> + */
-> +static inline int rmi_features(unsigned long index, unsigned long *out)
-> +{
-> +	struct arm_smccc_res res;
-> +
-> +	arm_smccc_1_1_invoke(SMC_RMI_FEATURES, index, &res);
-> +
-> +	if (out)
-> +		*out = res.a1;
-> +	return res.a0;
-> +}
-> +
-> +/**
-> + * rmi_granule_delegate() - Delegate a Granule
-> + * @phys: PA of the Granule
-> + *
-> + * Delegate a Granule for use by the Realm World.
-> + *
-> + * Return: RMI return code
-> + */
-> +static inline int rmi_granule_delegate(unsigned long phys)
-> +{
-> +	struct arm_smccc_res res;
-> +
-> +	arm_smccc_1_1_invoke(SMC_RMI_GRANULE_DELEGATE, phys, &res);
-> +
-> +	return res.a0;
-> +}
-> +
-
-Same as above, why the first letters for 'Realm World' have to be
-in upper-case? :-)
-
-> +/**
-> + * rmi_granule_undelegate() - Undelegate a Granule
-> + * @phys: PA of the Granule
-> + *
-> + * Undelegate a Granule to allow use by the Normal World. Will fail if the
-> + * Granule is in use.
-> + *
-> + * Return: RMI return code
-> + */
-> +static inline int rmi_granule_undelegate(unsigned long phys)
-> +{
-> +	struct arm_smccc_res res;
-> +
-> +	arm_smccc_1_1_invoke(SMC_RMI_GRANULE_UNDELEGATE, phys, &res);
-> +
-> +	return res.a0;
-> +}
-> +
-> +/**
-> + * rmi_psci_complete() - Complete pending PSCI command
-> + * @calling_rec: PA of the calling REC
-> + * @target_rec: PA of the target REC
-> + * @status: Status of the PSCI request
-> + *
-> + * Completes a pending PSCI command which was called with an MPIDR argument, by
-> + * providing the corresponding REC.
-> + *
-> + * Return: RMI return code
-> + */
-> +static inline int rmi_psci_complete(unsigned long calling_rec,
-> +				    unsigned long target_rec,
-> +				    unsigned long status)
-> +{
-> +	struct arm_smccc_res res;
-> +
-> +	arm_smccc_1_1_invoke(SMC_RMI_PSCI_COMPLETE, calling_rec, target_rec,
-> +			     status, &res);
-> +
-> +	return res.a0;
-> +}
-> +
-> +/**
-> + * rmi_realm_activate() - Active a Realm
-> + * @rd: PA of the RD
-> + *
-> + * Mark a Realm as Active signalling that creation is complete and allowing
-> + * execution of the Realm.
-> + *
-> + * Return: RMI return code
-> + */
-> +static inline int rmi_realm_activate(unsigned long rd)
-> +{
-> +	struct arm_smccc_res res;
-> +
-> +	arm_smccc_1_1_invoke(SMC_RMI_REALM_ACTIVATE, rd, &res);
-> +
-> +	return res.a0;
-> +}
-> +
-> +/**
-> + * rmi_realm_create() - Create a Realm
-> + * @rd: PA of the RD
-> + * @params_ptr: PA of Realm parameters
-> + *
-> + * Create a new Realm using the given parameters.
-> + *
-> + * Return: RMI return code
-> + */
-> +static inline int rmi_realm_create(unsigned long rd, unsigned long params_ptr)
-> +{
-> +	struct arm_smccc_res res;
-> +
-> +	arm_smccc_1_1_invoke(SMC_RMI_REALM_CREATE, rd, params_ptr, &res);
-> +
-> +	return res.a0;
-> +}
-> +
-> +/**
-> + * rmi_realm_destroy() - Destroy a Realm
-> + * @rd: PA of the RD
-> + *
-> + * Destroys a Realm, all objects belonging to the Realm must be destroyed first.
-> + *
-> + * Return: RMI return code
-> + */
-> +static inline int rmi_realm_destroy(unsigned long rd)
-> +{
-> +	struct arm_smccc_res res;
-> +
-> +	arm_smccc_1_1_invoke(SMC_RMI_REALM_DESTROY, rd, &res);
-> +
-> +	return res.a0;
-> +}
-> +
-> +/**
-> + * rmi_rec_aux_count() - Get number of auxiliary Granules required
-> + * @rd: PA of the RD
-> + * @aux_count: Number of pages written to this pointer
-> + *
-> + * A REC may require extra auxiliary pages to be delegated for the RMM to
-> + * store metadata (not visible to the normal world) in. This function provides
-> + * the number of pages that are required.
-> + *
-> + * Return: RMI return code
-> + */
-> +static inline int rmi_rec_aux_count(unsigned long rd, unsigned long *aux_count)
-> +{
-> +	struct arm_smccc_res res;
-> +
-> +	arm_smccc_1_1_invoke(SMC_RMI_REC_AUX_COUNT, rd, &res);
-> +
-> +	if (aux_count)
-> +		*aux_count = res.a1;
-> +	return res.a0;
-> +}
-> +
-> +/**
-> + * rmi_rec_create() - Create a REC
-> + * @rd: PA of the RD
-> + * @rec: PA of the target REC
-> + * @params_ptr: PA of REC parameters
-> + *
-> + * Create a REC using the parameters specified in the struct rec_params pointed
-> + * to by @params_ptr.
-> + *
-> + * Return: RMI return code
-> + */
-> +static inline int rmi_rec_create(unsigned long rd, unsigned long rec,
-> +				 unsigned long params_ptr)
-> +{
-> +	struct arm_smccc_res res;
-> +
-> +	arm_smccc_1_1_invoke(SMC_RMI_REC_CREATE, rd, rec, params_ptr, &res);
-> +
-> +	return res.a0;
-> +}
-> +
-> +/**
-> + * rmi_rec_destroy() - Destroy a REC
-> + * @rec: PA of the target REC
-> + *
-> + * Destroys a REC. The REC must not be running.
-> + *
-> + * Return: RMI return code
-> + */
-> +static inline int rmi_rec_destroy(unsigned long rec)
-> +{
-> +	struct arm_smccc_res res;
-> +
-> +	arm_smccc_1_1_invoke(SMC_RMI_REC_DESTROY, rec, &res);
-> +
-> +	return res.a0;
-> +}
-> +
-> +/**
-> + * rmi_rec_enter() - Enter a REC
-> + * @rec: PA of the target REC
-> + * @run_ptr: PA of RecRun structure
-> + *
-> + * Starts (or continues) execution within a REC.
-> + *
-> + * Return: RMI return code
-> + */
-> +static inline int rmi_rec_enter(unsigned long rec, unsigned long run_ptr)
-> +{
-> +	struct arm_smccc_res res;
-> +
-> +	arm_smccc_1_1_invoke(SMC_RMI_REC_ENTER, rec, run_ptr, &res);
-> +
-> +	return res.a0;
-> +}
-> +
-> +/**
-> + * rmi_rtt_create() - Creates an RTT
-> + * @rd: PA of the RD
-> + * @rtt: PA of the target RTT
-> + * @ipa: Base of the IPA range described by the RTT
-> + * @level: Depth of the RTT within the tree
-> + *
-> + * Creates an RTT (Realm Translation Table) at the specified level for the
-> + * translation of the specified address within the Realm.
-> + *
-> + * Return: RMI return code
-> + */
-> +static inline int rmi_rtt_create(unsigned long rd, unsigned long rtt,
-> +				 unsigned long ipa, long level)
-> +{
-> +	struct arm_smccc_res res;
-> +
-> +	arm_smccc_1_1_invoke(SMC_RMI_RTT_CREATE, rd, rtt, ipa, level, &res);
-> +
-> +	return res.a0;
-> +}
-> +
-> +/**
-> + * rmi_rtt_destroy() - Destroy an RTT
-> + * @rd: PA of the RD
-> + * @ipa: Base of the IPA range described by the RTT
-> + * @level: Depth of the RTT within the tree
-> + * @out_rtt: Pointer to write the PA of the RTT which was destroyed
-> + * @out_top: Pointer to write the top IPA of non-live RTT entries
-> + *
-> + * Destroys an RTT. The RTT must be non-live, i.e. none of the entries in the
-> + * table are in ASSIGNED or TABLE state.
-> + *
-> + * Return: RMI return code.
-> + */
-> +static inline int rmi_rtt_destroy(unsigned long rd,
-> +				  unsigned long ipa,
-> +				  long level,
-> +				  unsigned long *out_rtt,
-> +				  unsigned long *out_top)
-> +{
-> +	struct arm_smccc_res res;
-> +
-> +	arm_smccc_1_1_invoke(SMC_RMI_RTT_DESTROY, rd, ipa, level, &res);
-> +
-> +	if (out_rtt)
-> +		*out_rtt = res.a1;
-> +	if (out_top)
-> +		*out_top = res.a2;
-> +
-> +	return res.a0;
-> +}
-> +
-> +/**
-> + * rmi_rtt_fold() - Fold an RTT
-> + * @rd: PA of the RD
-> + * @ipa: Base of the IPA range described by the RTT
-> + * @level: Depth of the RTT within the tree
-> + * @out_rtt: Pointer to write the PA of the RTT which was destroyed
-> + *
-> + * Folds an RTT. If all entries with the RTT are 'homogeneous' the RTT can be
-> + * folded into the parent and the RTT destroyed.
-> + *
-> + * Return: RMI return code
-> + */
-> +static inline int rmi_rtt_fold(unsigned long rd, unsigned long ipa,
-> +			       long level, unsigned long *out_rtt)
-> +{
-> +	struct arm_smccc_res res;
-> +
-> +	arm_smccc_1_1_invoke(SMC_RMI_RTT_FOLD, rd, ipa, level, &res);
-> +
-> +	if (out_rtt)
-> +		*out_rtt = res.a1;
-> +
-> +	return res.a0;
-> +}
-> +
-> +/**
-> + * rmi_rtt_init_ripas() - Set RIPAS for new Realm
-> + * @rd: PA of the RD
-> + * @base: Base of target IPA region
-> + * @top: Top of target IPA region
-> + * @out_top: Top IPA of range whose RIPAS was modified
-> + *
-> + * Sets the RIPAS of a target IPA range to RAM, for a Realm in the NEW state.
-> + *
-> + * Return: RMI return code
-> + */
-> +static inline int rmi_rtt_init_ripas(unsigned long rd, unsigned long base,
-> +				     unsigned long top, unsigned long *out_top)
-> +{
-> +	struct arm_smccc_res res;
-> +
-> +	arm_smccc_1_1_invoke(SMC_RMI_RTT_INIT_RIPAS, rd, base, top, &res);
-> +
-> +	if (out_top)
-> +		*out_top = res.a1;
-> +
-> +	return res.a0;
-> +}
-> +
-> +/**
-> + * rmi_rtt_map_unprotected() - Map NS pages into a Realm
-> + * @rd: PA of the RD
-> + * @ipa: Base IPA of the mapping
-> + * @level: Depth within the RTT tree
-> + * @desc: RTTE descriptor
-> + *
-> + * Create a mapping from an Unprotected IPA to a Non-secure PA.
-> + *
-> + * Return: RMI return code
-> + */
-> +static inline int rmi_rtt_map_unprotected(unsigned long rd,
-> +					  unsigned long ipa,
-> +					  long level,
-> +					  unsigned long desc)
-> +{
-> +	struct arm_smccc_res res;
-> +
-> +	arm_smccc_1_1_invoke(SMC_RMI_RTT_MAP_UNPROTECTED, rd, ipa, level,
-> +			     desc, &res);
-> +
-> +	return res.a0;
-> +}
-> +
-> +/**
-> + * rmi_rtt_read_entry() - Read an RTTE
-> + * @rd: PA of the RD
-> + * @ipa: IPA for which to read the RTTE
-> + * @level: RTT level at which to read the RTTE
-> + * @rtt: Output structure describing the RTTE
-> + *
-> + * Reads a RTTE (Realm Translation Table Entry).
-> + *
-> + * Return: RMI return code
-> + */
-> +static inline int rmi_rtt_read_entry(unsigned long rd, unsigned long ipa,
-> +				     long level, struct rtt_entry *rtt)
-> +{
-> +	struct arm_smccc_1_2_regs regs = {
-> +		SMC_RMI_RTT_READ_ENTRY,
-> +		rd, ipa, level
-> +	};
-> +
-> +	arm_smccc_1_2_smc(&regs, &regs);
-> +
-> +	rtt->walk_level = regs.a1;
-> +	rtt->state = regs.a2 & 0xFF;
-> +	rtt->desc = regs.a3;
-> +	rtt->ripas = regs.a4 & 0xFF;
-> +
-> +	return regs.a0;
-> +}
-> +
-> +/**
-> + * rmi_rtt_set_ripas() - Set RIPAS for an running Realm
-> + * @rd: PA of the RD
-> + * @rec: PA of the REC making the request
-> + * @base: Base of target IPA region
-> + * @top: Top of target IPA region
-> + * @out_top: Pointer to write top IPA of range whose RIPAS was modified
-> + *
-> + * Completes a request made by the Realm to change the RIPAS of a target IPA
-> + * range.
-> + *
-> + * Return: RMI return code
-> + */
-> +static inline int rmi_rtt_set_ripas(unsigned long rd, unsigned long rec,
-> +				    unsigned long base, unsigned long top,
-> +				    unsigned long *out_top)
-> +{
-> +	struct arm_smccc_res res;
-> +
-> +	arm_smccc_1_1_invoke(SMC_RMI_RTT_SET_RIPAS, rd, rec, base, top, &res);
-> +
-> +	if (out_top)
-> +		*out_top = res.a1;
-> +
-> +	return res.a0;
-> +}
-> +
-> +/**
-> + * rmi_rtt_unmap_unprotected() - Remove a NS mapping
-> + * @rd: PA of the RD
-> + * @ipa: Base IPA of the mapping
-> + * @level: Depth within the RTT tree
-> + * @out_top: Pointer to write top IPA of non-live RTT entries
-> + *
-> + * Removes a mapping at an Unprotected IPA.
-> + *
-> + * Return: RMI return code
-> + */
-> +static inline int rmi_rtt_unmap_unprotected(unsigned long rd,
-> +					    unsigned long ipa,
-> +					    long level,
-> +					    unsigned long *out_top)
-> +{
-> +	struct arm_smccc_res res;
-> +
-> +	arm_smccc_1_1_invoke(SMC_RMI_RTT_UNMAP_UNPROTECTED, rd, ipa,
-> +			     level, &res);
-> +
-> +	if (out_top)
-> +		*out_top = res.a1;
-> +
-> +	return res.a0;
-> +}
-> +
-> +#endif
-
-#endif /* __ASM_RMI_CMDS_H */
+Yes, we need it, I will provide a fix patch quickly.
 
 Thanks,
-Gavin
 
+Chen
+
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +  - clocks
+>> +  - clock-names
+>> +
+>> +unevaluatedProperties: false
+>> +
+>> +examples:
+>> +  - |
+>> +    pwm@7f006000 {
+>> +        compatible = "sophgo,sg2042-pwm";
+>> +        reg = <0x7f006000 0x1000>;
+>> +        #pwm-cells = <2>;
+>> +        clocks = <&clock 67>;
+>> +        clock-names = "apb";
+>> +    };
+>> -- 
+>> 2.34.1
+>>
 
