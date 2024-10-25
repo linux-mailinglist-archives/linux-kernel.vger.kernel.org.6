@@ -1,298 +1,323 @@
-Return-Path: <linux-kernel+bounces-381599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C36D9B0166
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 13:33:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1B329B016C
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 13:35:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C0E8DB22F62
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 11:33:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4708B1F218FF
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 11:35:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC8C1200CB1;
-	Fri, 25 Oct 2024 11:33:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFB6A200CB1;
+	Fri, 25 Oct 2024 11:35:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P+ayE1VE"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="ClJ0ONWK"
+Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32C4D1D63CF;
-	Fri, 25 Oct 2024 11:33:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729856002; cv=none; b=Ii7LxTqcpSYmSXIMNhhAT6cUxPd7cPgL5dCRjuTIwkjcLXrUql63nxjG7mTsERpkud9mfcMZWZ+LspglDV2mj9gfVpgbAIPG+eBucSifhGaZW009iJ0Li2TL4QdyP6EaeBeI6bnT0U+LybyjNrbodlzPeggfyGjLPVPpuQdJfVM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729856002; c=relaxed/simple;
-	bh=v1+FW3oZMBYtNOa3/rr01pkLhuHMELY1TEiarupmRwM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N+uZe8HJC0bmTL/CNq6rlp8DCGwkQ4QmQDw88O9Scj31lB/+l7H51ShZNpuBgfE+kHPJHPYhiC6xIQ5TRvAO6UUbrz9NlirAcRFaqzVK+5QlxYUS2ZqfgM7aGRIqmX2G3RD2JxpMdFQjoMN9vM81qkyFgA5pLi5aVnIvqrzgIpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P+ayE1VE; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2fb498a92f6so19729461fa.1;
-        Fri, 25 Oct 2024 04:33:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729855997; x=1730460797; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=XeufJuKT1ycrKumOhyeqb+AwbwE/ALTkAhfPv+A85Pw=;
-        b=P+ayE1VEvsRw8sThl8oG4teyqfuJ9ibeGKmCTurzgkU08f1uSkpaMm6NzHxFgiLb+k
-         nhUqR+wssthftm7Y2tPrS7XDDRtBolilD5CumApwxKFcDBygPb9Hj2XH2d8birhQfHPx
-         JGmn1RLuTCnbjZgEAY/zzX7uAD6slN9+c29wTpArPQn2NcE9ifTLjePFus3k3xr/9xvI
-         iA54bg5BB/Y6f+oL/Gf5rcJXIxsQKyfLOhtzkDGVQEoFkuPMTNY5qh5yxOrMzmq3fV8C
-         43Fek2cijBXBy4ockrKrOUOthCEzT4PWR9KBRzyQ+eeLUPEFMNO5LM8Aaie8k3r4LiqP
-         /uDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729855997; x=1730460797;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XeufJuKT1ycrKumOhyeqb+AwbwE/ALTkAhfPv+A85Pw=;
-        b=TcFcRtCiw48g2sq+zIrIHLmojfkMW+9iT6cy75TN2doN7oEP5Ya4/4A4wimYi7G9OD
-         lPkLOg4bQPZUjZa3iH4786K6BxHk7PFrw2K7oyFp6kMXaEXoaEYSE1g9dn1TO3qBiSiH
-         FQKup38nKb/lxm6Arzsvm06i+c4/bXAgWAzJ//noZF52S6ApzYhyIKzKOHI7bYfg8Uc6
-         IuI0tO9lPDAP2JtpxqJcUTE26jI27n0gn2TD7hkYJ/+4j6ScxwMHYq5DxgEJC+79mSzO
-         vfMMblon+xF7qNR0bg0SHprDJ6ua7LmhR58nI211Or1RRU9f99hvcmvlyHczm0IZmItt
-         BRLA==
-X-Forwarded-Encrypted: i=1; AJvYcCUzD7C038OytpMidAB0CYvDeXsvKoM67t7Yxbit3fzgCsOzcS4SB90saHukDdsVijzCTbyFNeHl1od3@vger.kernel.org, AJvYcCVOYB6FN28dlsXTlQOdX10TVMbfBUSUGme/0hBxsK3k5pFkaGKExXKl2NcFuHVDbLCcFz4sbdGY0WFCAV8=@vger.kernel.org, AJvYcCXsewj8rYmmwdqLOiQ114mFj/mYLbbEe00hphoaP4Lp7GHw/rcyvhZk4Qgzyxhk19iON/VDWQ4cGa2hVJ/O@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz943bhET8pJxpHIMZYd/DWXOcw4CNjUC44tJzF5CTMbyTodB2O
-	x2vYicjt0LfqdN4O3FnIO43NA1C/ZnY8tWuaHkPcBBJ0DakZdPnoU8K8Z8TP
-X-Google-Smtp-Source: AGHT+IETBtTDPUFSRro6o1TK8GWYShNqhiQJljX9cMhs6N3C8qFJZLlf/P/lyPVZWXMjRgl0VocQog==
-X-Received: by 2002:a05:651c:221d:b0:2fa:d345:18b9 with SMTP id 38308e7fff4ca-2fca827e963mr34668511fa.38.1729855996719;
-        Fri, 25 Oct 2024 04:33:16 -0700 (PDT)
-Received: from ux-UP-WHL01 (mailgw01.gttektw.com. [45.117.96.243])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cbb631a242sm530113a12.76.2024.10.25.04.33.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2024 04:33:16 -0700 (PDT)
-Date: Fri, 25 Oct 2024 19:33:07 +0800
-From: Charles Wang <charles.goodix@gmail.com>
-To: Doug Anderson <dianders@chromium.org>
-Cc: krzk@kernel.org, dmitry.torokhov@gmail.com, hbarnor@chromium.org,
-	conor.dooley@microchip.com, jikos@kernel.org, bentiss@kernel.org,
-	linux-input@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: input: Goodix SPI HID Touchscreen
-Message-ID: <ZxuB8xDebT8DwIqq@ux-UP-WHL01>
-References: <20241018020815.3098263-2-charles.goodix@gmail.com>
- <CAD=FV=UFrk4QCxWzV9zUZnjhwiFf22Fji5KH83svdwba2mPVBA@mail.gmail.com>
- <ZxMfu4yxk961mZWB@ux-UP-WHL01>
- <fbde8a3a-3adc-4c1a-8529-fde0fa149c8e@kernel.org>
- <CAD=FV=VphXewyk_mpGHUZKw8_aK8HnH8T-YumwM70eyz22S+Aw@mail.gmail.com>
- <ZxdRaaCR7eTOCQkB@ux-UP-WHL01>
- <CAD=FV=UFonOVHUP5_9+BfJp71CFX7KKA1Gx=boN0=3_4cCKnZw@mail.gmail.com>
- <ZxiZXeQzIaDYuu1F@ux-UP-WHL01>
- <CAD=FV=WSUrjbEzG83kYt50FRQ-Bu+bQP17JY_wPAEBf_GxGTJg@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91E8A1C0DF0;
+	Fri, 25 Oct 2024 11:35:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.135.77
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729856126; cv=fail; b=J8mzK/mkdtLUlkMhYq0uF0GURMaOyNd77CYOmuCqmrdis0JUumslInmMgOi1bfr78B5gbThyV8j9ihC0Qi5RchsWscKuBZmlo7jNKt7dKw0WOKNXLeqUG/9fEVWnAGLyaye+GzqY6/nFIGxv9dnisigyghGitIcAuGRt+f6ULTw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729856126; c=relaxed/simple;
+	bh=RviqktFmGElanZnyWVzAxLwZHL2spSpdvg3GFC1NRD4=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=mH9trwvTHEwxsglS2jjAfJtCiWFqhbdbOtd94gV+OnYd0VWLxgnmGs84oep5GKq7iTLQ5m44iogWRZz3yPJTqymCGVwi3ANvqsg4YU68m7xy17VRpzFDYWlhum7bqdAFUzxVx50OM+NdQDazAAEenGwgQoSRdW86CIn7Wyx4Qy4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=ClJ0ONWK; arc=fail smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
+	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49P8LfP3029221;
+	Fri, 25 Oct 2024 07:35:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=DKIM; bh=Rviqk
+	tFmGElanZnyWVzAxLwZHL2spSpdvg3GFC1NRD4=; b=ClJ0ONWKFR09eTyR4cle+
+	1d5pp7ZH7gjVvNlQms4vImRewoAa7/v0NoOK0hbaDXJtUWBfWIwp1lOS+5vfRtPr
+	6SskceNS4BlNNMLBSSTddBX9HP+J+saec7JXAMCHjU7niPbtMCOVrsVlV6KaL9pP
+	4M/nRAQ1BkKYN7M3jbq+w7qGWICsft1zbAclo1AD1ZbOk1AUvE/BJCfPMWoYcC6E
+	HW1VAihzAyh7YquiLIjqYQKGcDByV4vKuIxwTwN5iIO4f6iXa482yh8WDK/nGPdz
+	bxvYl07QBzQSNtyTaTKSIf1UB7x/pXPZGqc49qgrjvSvb+mZ28Bm7ycKerrDuBkR
+	w==
+Received: from cy4pr02cu008.outbound.protection.outlook.com (mail-westcentralusazlp17011030.outbound.protection.outlook.com [40.93.6.30])
+	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 42g2uf9x9n-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Oct 2024 07:35:10 -0400 (EDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=IDSrUK1JA1do8Q8oMJQnTihTZgUJeDXH1fY2aHX37Ulc1Cmu+QU0USSM4kzAx8xAVNF84EcNpa/jV3X4RNEo6vNnX7LWwKo06B7aQ26zsK9NbyLRp1/WM+f8Tv81lnRS6Rty5X0gzgcodn1lA8zIClHISjjAjPF2uhB/e7dWMSoi3iCnj8WOK0Ka8Tishf6xqaxrbccaubDI9DhoenqnfkGc3/QGKflamgYTPFs7ElQIq+tHjMA+O0wavPA0TxsvEwX+IBUKxM1y9572aTxwsjWCEzkuXmh3WQs1h6QwmZOBDv6+LXqTz47nMLMUPh/zA6oe/tWd3bOU+tbKKySB4Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=RviqktFmGElanZnyWVzAxLwZHL2spSpdvg3GFC1NRD4=;
+ b=r+TxQ+Mr7Cvx8DxUnWicCvUpvId343qEW5NIaLZhr0j4PO/RQxj0WQQtrQqh6glD4g4bpgpoA8XIOBBWFXO4q0lcdjijIcM6VPgf59qRcccGRrZ+fqylXlFdYdsIyxRIXj33rbXxI42vGhBxU3tel3AKk6VJGUWqkTkg7I/cpLgEsGCxMqMS0gAk1ZseIa/ndpS1eUwS6hUSeATHmVlolRETi2BwEiGDuSvcq3ZiUkTu1zV7HPpFB1kUtxLu8Q+w1IxlwQqB1oTSwLqnmLhypn8riXV+fyvt5wmhcxgQcTxgoex03tclNYrMRHjmrvkYPyVAU7vFDPAhYwWB1DVnwQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=analog.com; dmarc=pass action=none header.from=analog.com;
+ dkim=pass header.d=analog.com; arc=none
+Received: from CY4PR03MB3399.namprd03.prod.outlook.com (2603:10b6:910:57::13)
+ by SA1PR03MB6642.namprd03.prod.outlook.com (2603:10b6:806:1cd::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.28; Fri, 25 Oct
+ 2024 11:35:06 +0000
+Received: from CY4PR03MB3399.namprd03.prod.outlook.com
+ ([fe80::6504:9615:dbab:cc17]) by CY4PR03MB3399.namprd03.prod.outlook.com
+ ([fe80::6504:9615:dbab:cc17%5]) with mapi id 15.20.8093.018; Fri, 25 Oct 2024
+ 11:35:06 +0000
+From: "Miclaus, Antoniu" <Antoniu.Miclaus@analog.com>
+To: David Lechner <dlechner@baylibre.com>
+CC: Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+        Conor
+ Dooley <conor+dt@kernel.org>, "Sa, Nuno" <Nuno.Sa@analog.com>,
+        "Bogdan,
+ Dragos" <Dragos.Bogdan@analog.com>,
+        "linux-iio@vger.kernel.org"
+	<linux-iio@vger.kernel.org>,
+        "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        "linux-pwm@vger.kernel.org"
+	<linux-pwm@vger.kernel.org>
+Subject: RE: [PATCH v3 6/6] iio: adc: ad4851: add ad485x driver
+Thread-Topic: [PATCH v3 6/6] iio: adc: ad4851: add ad485x driver
+Thread-Index: AQHbHh5vTD2IDt3G+0qZAjfsQopGKLKG8ZIAgBBw/PA=
+Date: Fri, 25 Oct 2024 11:35:06 +0000
+Message-ID:
+ <CY4PR03MB33996900AAB90A050375CBB39B4F2@CY4PR03MB3399.namprd03.prod.outlook.com>
+References: <20241014094154.9439-1-antoniu.miclaus@analog.com>
+ <20241014094154.9439-6-antoniu.miclaus@analog.com>
+ <60452f83-28a1-4a80-8e90-1f1ed32a594e@baylibre.com>
+In-Reply-To: <60452f83-28a1-4a80-8e90-1f1ed32a594e@baylibre.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-dg-ref:
+ =?utf-8?B?UEcxbGRHRStQR0YwSUc1dFBTSmliMlI1TG5SNGRDSWdjRDBpWXpwY2RYTmxj?=
+ =?utf-8?B?bk5jWVcxcFkyeGhkWE5jWVhCd1pHRjBZVnh5YjJGdGFXNW5YREE1WkRnME9X?=
+ =?utf-8?B?STJMVE15WkRNdE5HRTBNQzA0TldWbExUWmlPRFJpWVRJNVpUTTFZbHh0YzJk?=
+ =?utf-8?B?elhHMXpaeTB5WTJGalltTmtNUzA1TW1NMUxURXhaV1l0WVdaa01TMWtORGd4?=
+ =?utf-8?B?WkRjMU1EWmtaR1ZjWVcxbExYUmxjM1JjTW1OaFkySmpaREl0T1RKak5TMHhN?=
+ =?utf-8?B?V1ZtTFdGbVpERXRaRFE0TVdRM05UQTJaR1JsWW05a2VTNTBlSFFpSUhONlBT?=
+ =?utf-8?B?STBOalEzSWlCMFBTSXhNek0zTkRNeU9UY3dOREUwTmpRek5UVWlJR2c5SWxW?=
+ =?utf-8?B?VWVuWjJSMlpSUTJOSFJEUnlORFZ4Y1VjM1RFNDVjekkyTUQwaUlHbGtQU0lp?=
+ =?utf-8?B?SUdKc1BTSXdJaUJpYnowaU1TSWdZMms5SW1OQlFVRkJSVkpJVlRGU1UxSlZS?=
+ =?utf-8?B?azVEWjFWQlFVVnZRMEZCUVdvdlJEZDJNRk5pWWtGaVZFZGhTVEpvWjIxR2Ju?=
+ =?utf-8?B?Uk5XbTlxWVVkRFdWZGpSRUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
+ =?utf-8?B?QlFVRklRVUZCUVVSaFFWRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
+ =?utf-8?B?UVVGRlFVRlJRVUpCUVVGQmJXazNTbTFSUVVGQlFVRkJRVUZCUVVGQlFVRkJT?=
+ =?utf-8?B?alJCUVVGQ2FFRkhVVUZoVVVKbVFVaE5RVnBSUW1wQlNGVkJZMmRDYkVGR09F?=
+ =?utf-8?B?RmpRVUo1UVVjNFFXRm5RbXhCUjAxQlpFRkNla0ZHT0VGYVowSm9RVWQzUVdO?=
+ =?utf-8?B?M1FteEJSamhCV21kQ2RrRklUVUZoVVVJd1FVZHJRV1JuUW14QlFVRkJRVUZC?=
+ =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
+ =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
+ =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVWQlFVRkJRVUZCUVVG?=
+ =?utf-8?B?QlowRkJRVUZCUVc1blFVRkJSMFZCV2tGQ2NFRkdPRUZqZDBKc1FVZE5RV1JS?=
+ =?utf-8?B?UW5sQlIxVkJXSGRDZDBGSVNVRmlkMEp4UVVkVlFWbDNRakJCU0UxQldIZENN?=
+ =?utf-8?B?RUZIYTBGYVVVSjVRVVJGUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
+ =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
+ =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
+ =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRlJR?=
+ =?utf-8?B?VUZCUVVGQlFVRkJRMEZCUVVGQlFVTmxRVUZCUVZsUlFtdEJSMnRCV0hkQ2Vr?=
+ =?utf-8?B?RkhWVUZaZDBJeFFVaEpRVnBSUW1aQlNFRkJZMmRDZGtGSGIwRmFVVUpxUVVo?=
+ =?utf-8?B?UlFXTjNRbVpCU0ZGQllWRkNiRUZJU1VGTlowRkJRVUZCUVVGQlFVRkJRVUZC?=
+ =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
+ =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
+ =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
+ =?utf-8?B?QlFVRkJRVUZDUVVGQlFVRkJRVUZCUVVsQlFVRkJRVUZCUFQwaUx6NDhMMjFs?=
+ =?utf-8?Q?dGE+?=
+x-dg-rorf:
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: CY4PR03MB3399:EE_|SA1PR03MB6642:EE_
+x-ms-office365-filtering-correlation-id: 12bd766c-6925-4fa6-c754-08dcf4e9131c
+x-ld-processed: eaa689b4-8f87-40e0-9c6f-7228de4d754a,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|376014|366016|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?TS9pdnZGQ0hiTkduSUpFbmI5d3R3UWYzamVmeWhQUmZSdzNrT2VTRzhlZ0FN?=
+ =?utf-8?B?cld3OEFISVhxSFY1cEVIU1pMYnlDV3pWRCs2RVVDZU1Gc1FqamdTNXdMQ2RI?=
+ =?utf-8?B?RGNRMTRRQjJyVTdYdkZ1d09WbkZManpzNHlKcSsvcFh5dDg2bzRrRXVwNzd5?=
+ =?utf-8?B?SGIwN3JxbVJPOFV5YkJqbmk4UmVVcE5kR3Z0cHlwUWoxMzRLSVltbFZkNWVj?=
+ =?utf-8?B?QmxOcDNzSUJSb0xEQlJqZ0ZydkRnckxTa21Jc3RKanhUNDljTVZqWDM5RzJq?=
+ =?utf-8?B?LzlYOWFaejA1N3hHNWtNR1NrUkxJNkczZTZNYjZpQnJNSnJ1U3BodWJoWlBC?=
+ =?utf-8?B?Q2ZzdTRBWEdtOFJ0UjRkUzd4aGkwSFpyTlFINGYyekZHaVBJRUpJTE96emV5?=
+ =?utf-8?B?S0ZEZElhU1JPOFAwd2xIaEs2bzM0alRNTXJuQndKSDZPcnJkbFUzc05GTjFn?=
+ =?utf-8?B?RGlDRTZQZXRwTDBJRXpwalFLNTRvQ0xpb0l1dXJUd2VZejVvS21WbUpncytT?=
+ =?utf-8?B?bW8xeU15bEh6L1pYR3VRV1ZJMkhiMnBIbXRyeG5FdGE0Qk16bFZIbXJibVNP?=
+ =?utf-8?B?YkoyVlBXaUtaKzQ1THRaeTNrdjh2OHYvWmdvcno5WHcvU2VLdHVaZzMxVllI?=
+ =?utf-8?B?OXJGZ216dlJidkpjZTZNMXJHemFnSkdlM0J4L3VlcXZIdlNmRHBqelZxdURk?=
+ =?utf-8?B?N2lySDJRZkNQaEZ3c1ZEa09ObXZZaHNqWEtFVWVjVGl6VytoajRNMkkzVy80?=
+ =?utf-8?B?eVJKUi95U0xlUWROOHBhY21jTWF1YXVWRXUxWnlWZlFiZVhOckF0SjhWbTFu?=
+ =?utf-8?B?SUt1VkYvNDJHYkhKTGFKYXBsUkd3aWxGNnB3YVdxUy9HV1pOc3g4VVRKNDgr?=
+ =?utf-8?B?TTAzR0U2R2lnOUt2R0ZGVEkzUmpFZnJFNVBhUkNBaHQvVnpXSjlaQnNiZ1ZO?=
+ =?utf-8?B?a0RReEE5MFhoMkNlNjYxMVQwSy9kdmZhQjN5UXJUaUFPOFBoL3gyR3hmYlh5?=
+ =?utf-8?B?QnFJaDRtd2d1VC9JcmF5MkV0ZnppTFlyOHFhQm8rdGpNazQ1TENtZWUyWlNk?=
+ =?utf-8?B?UXVHOTZtclRCQ2VWSlNERU9WMjN3c0RpRHBRamh3aGhGQWEwQzYxY0FBQ3hE?=
+ =?utf-8?B?amg3cnNtb0RVdWd5Z2tNYmVJWlZqSmRLakc2NUdxZ2tnOFdNbGNJdXd4R1FQ?=
+ =?utf-8?B?eHUwZk9wdlRtYW41cjhIcStZSHNBRXVwZDFBVVQvTW1EN2VRdmlxdWh5emFO?=
+ =?utf-8?B?RW1hQTZrbXZ2ajl6ME9taFlqdmpFVFhLOFQzT2pJdlRrT2Vtb2ZWN1VLVjZF?=
+ =?utf-8?B?SzVxajIxcHV5MkVWOGV1MkViWVdSZlNlaWRtYy9mS0VhbSt0U1NlZ3FLc0pN?=
+ =?utf-8?B?K21IV29lNWRSVDcyU0hCaHQzd3YrUnAyaU1VUURYdDk0bU5zNXBpSkp0OWND?=
+ =?utf-8?B?ZGJWM3dVSG84dTdXcjFRTlUvTUJyVnRzZmpqYmVuUW1qcEVtRWZBZDY4ZWNJ?=
+ =?utf-8?B?MElZclNtNFVMNXBzZ2o2RHFucFVQV0lrazgvTEROL2lHZzRldDdleG4vbmpQ?=
+ =?utf-8?B?VEI3ZUg1c0xhZWJLWDNIMWw0QnBsYjFncWNjL2RRSVdwbncwTy9OTWFzcUo3?=
+ =?utf-8?B?QWNTTWRoc0VqVGJtdlRudnRtU3pqaTBiZ0MwblJraldMUmhMWjQ3bFp1RmE4?=
+ =?utf-8?B?dG9ESlVDS0tBVUl6Y3lUS04wc3AvZ3VEemthMUpsYW5ZOGFiYXROSUZVeUlM?=
+ =?utf-8?Q?eqJyBUckR4Q6dtPrYqfD26BaNGHal5n/Mb4m+dI?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY4PR03MB3399.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?R3JsVGhuWEtjOTVQS3lnaWpLeEFlUWx5ZlY2OXMvdWdNSkFCWVg3M0VyZWND?=
+ =?utf-8?B?VWtqcVFrQk5FR09KR0pJb3V0Z2FPSjczdVVWMWloUEFBM0JzSmxZUndNbmVS?=
+ =?utf-8?B?REtmYlZkd2JYRkpvU2ZpZWNvNm1YZUhlQnVlZWhHanc4OERMeHMveEdGL3JC?=
+ =?utf-8?B?bGZVNmRFbmM3dWJEYVlxYXV0cXBrN0c1c3owZnFqRkREWjRBVjdLVFg3Ti9p?=
+ =?utf-8?B?cmdYNTVkM1JWUmN3bmtQL0x6aEhNd0ZrZTQxWkZMT0pWWE5oank3N1kyd1hs?=
+ =?utf-8?B?MzdoRFpYZ01qcTYrQVBSN2tjbzFmYWpYYkJ4UEQ1VllhOEdGSEx6TDV6bU0v?=
+ =?utf-8?B?ZkcwVGNUbTE3QURidkUweVRFTEFDQWFrbmkreklCZmMvT2NCSzJGQnNlRk9a?=
+ =?utf-8?B?c0w5ZmdkL3FMQkhHMVVIQ2cydGtFUUUzU2tzWUxhSlBWOHlVd21HVG9LYVVL?=
+ =?utf-8?B?cnl1dXRCbk43SjFCc0tzQlRwUlNuZTFlSkdDcFVZaFBpK0Z4cStUWWplQlpo?=
+ =?utf-8?B?RjF1V3lySDd2a216Slh2WXExQkROWEhnRklraGh5SEN0T1FKUXFIcjVOc1J0?=
+ =?utf-8?B?a2NpVjRqUUprZGk5dDh4aHFBY3daS1R4LzFCVlJLVGU3TENDV2NIQzJVOVAy?=
+ =?utf-8?B?NEdKZzN0eDdFZWZmbG51VThrYW9kaXpPR0NQbXhxMGhoNjk5S1g5b3Y3NHZa?=
+ =?utf-8?B?QVpvK1pYNENyZ3loM3E3YVBvWSt3MUhwaldXc2Y4dHlONlVjTlZzNWdFNFhj?=
+ =?utf-8?B?dEhRdmk1Vmh3WVN3ZjQ4Z2hKQmRMVG5nSTJrcitwSkpFVjNaYStNL3R1YzFE?=
+ =?utf-8?B?RFBZazVYdUFCb0V1OEdwTzlxUjdUV3pOanRzeFdzNmpNVVdoczNHYzdLK1Av?=
+ =?utf-8?B?akgyVEJIUnBWWG5weHRiZGNqM1ZBbklBdU9QSG5DZWFzaTRuQi9Lbk1yKzRa?=
+ =?utf-8?B?NW9XbTJuMkFnbGxSSnpHMlhQWjRyNmlBOU1tQ21WRno0bVA4Ly83Q3UzOUlJ?=
+ =?utf-8?B?b2t1Zzg0MU5JZFNyYktZV0RGbFdmV0d0cDhLRmcwMWdacUs2ckhSZERCRzhQ?=
+ =?utf-8?B?RmRzTVpvOVR3b2NpK1ZvdjRZSHFvWGhVV0NQekFqQkFvcGZCYkxLUmViWm5W?=
+ =?utf-8?B?VjZyODRYcU1XN25lRXV5MWFTenp2QVpHQ1pNMzJGTFVOYTNPRjVIaUF6T3Nx?=
+ =?utf-8?B?aWJnM1NOQ2huM0dhVWFOTWEwNkE2SWpHNVJqdFl6S2h2MXB1RjAzZlI1b0tF?=
+ =?utf-8?B?OGpRTkJHOFltcXp1QTlXdEJSVHpOWEoyL1VIdnpmblpzRUozMEQ3RHRtMllO?=
+ =?utf-8?B?dDQ3aVpMZEsxbkRHbERIMWdzcG4xWVQzSWk1M2JwenNhaDdXc1FnNTM5azhq?=
+ =?utf-8?B?NGZOTlN1ZmMvUXJTSmQwV0R1QWJ5eGhPOTRySDFpYVlodWpxMHo5eHJVakxm?=
+ =?utf-8?B?aTNibW9pN3lmMnlFT1dXRlpWa0RpSmRxNEtySHBLMHZjaUFIeVhqemFHRHkz?=
+ =?utf-8?B?amZhMlphbGxpcGcyYkNFbUY1NzE0SVFNb0FOdTY2a2U0Y21lOTljL2NCVnRn?=
+ =?utf-8?B?REs5NUNTOFJtL1JYL0g5ZjlrbHlZNzRsTUVub1VzV3AvVXZjdWY0RzN3UUpT?=
+ =?utf-8?B?Y1BvTUllRHpDR1hWTmZ3ejVQS3YxZ3pxYmpUQ25HRTNHdU9pVVJCTjVxNGE1?=
+ =?utf-8?B?RUxvOEZQRUFSWE5ZZXhwOFM3Z1lkV3M5UjZobG0zUnNUT3ducW9kZE1YTlpo?=
+ =?utf-8?B?aXpSRlpPVGxseHQwc1YwbmlqUHNLNkM0VE5NR0g4czFmLzk5aWJhOGJXV3M1?=
+ =?utf-8?B?OWR1RmdqR2FrODVYMGZ0Vi9GbHFwcHFZSHdGdHR2ZEtJeWd6TmFKaGhveHVM?=
+ =?utf-8?B?ZkhTckxjOHdINUZhdTdpVHExcG1TZVB5QVMvVkM4Ynd0cXh4YnphdG9lNS9k?=
+ =?utf-8?B?bmo2MS8wNHZONGlDa2ZLQWluQ3BuK2FFanhYRlBFWHdNZlI0OGJRMUJvRW9q?=
+ =?utf-8?B?SjA3YlB4V1pMbE5ZNkJ2Sk9qMlVkanozbktqc0FGZUk2bDNYbnVsbmR0c2M0?=
+ =?utf-8?B?Sk9IcnRSdmRlc3Y4WW9pbXlTUkxuYWlSTXRpRjRnNEE3dlE2cTlRRU9henk0?=
+ =?utf-8?B?a1dLNzYwRjBjZDJhNTdBTTR5bnJFeXN2TjJoTndkbm10b3F4SG5SaGJtby9K?=
+ =?utf-8?B?Y0E9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAD=FV=WSUrjbEzG83kYt50FRQ-Bu+bQP17JY_wPAEBf_GxGTJg@mail.gmail.com>
+X-OriginatorOrg: analog.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CY4PR03MB3399.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 12bd766c-6925-4fa6-c754-08dcf4e9131c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Oct 2024 11:35:06.4926
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: zlnyh5OlLo3YuAa+6aMiKhNv+flH2+d1v6ktOWoHK3asUtHqTm4E81LYz/MqCYKOgQwfGexYFCgOddYSt4ApNB630NZsoOUYHnUzdaWz8vA=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR03MB6642
+X-Proofpoint-ORIG-GUID: r31pzLDUf9n8U6Ilil465sVFmYx-Hhae
+X-Proofpoint-GUID: r31pzLDUf9n8U6Ilil465sVFmYx-Hhae
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 malwarescore=0
+ bulkscore=0 mlxlogscore=999 impostorscore=0 priorityscore=1501
+ suspectscore=0 adultscore=0 mlxscore=0 lowpriorityscore=0 phishscore=0
+ clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410250088
 
-Hi,
-
-On Wed, Oct 23, 2024 at 12:35:09PM -0700, Doug Anderson wrote:
-> Hi,
-> 
-> On Tue, Oct 22, 2024 at 11:44 PM Charles Wang <charles.goodix@gmail.com> wrote:
-> >
-> > Hi,
-> >
-> > On Tue, Oct 22, 2024 at 09:12:33AM -0700, Doug Anderson wrote:
-> > > Hi,
-> > >
-> > > On Tue, Oct 22, 2024 at 12:19 AM Charles Wang <charles.goodix@gmail.com> wrote:
-> > > >
-> > > > Hi Doug,
-> > > >
-> > > > On Mon, Oct 21, 2024 at 08:37:32AM -0700, Doug Anderson wrote:
-> > > > > Hi,
-> > > > >
-> > > > > On Mon, Oct 21, 2024 at 2:43 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> > > > > >
-> > > > > > On 19/10/2024 04:55, Charles Wang wrote:
-> > > > > > > Hi Doug
-> > > > > > >
-> > > > > > > On Fri, Oct 18, 2024 at 01:48:56PM -0700, Doug Anderson wrote:
-> > > > > > >>
-> > > > > > >> On Thu, Oct 17, 2024 at 7:09 PM Charles Wang <charles.goodix@gmail.com> wrote:
-> > > > > > >>>
-> > > > > > >>> The Goodix GT7986U touch controller report touch data according to the
-> > > > > > >>> HID protocol through the SPI bus. However, it is incompatible with
-> > > > > > >>> Microsoft's HID-over-SPI protocol.
-> > > > > > >>>
-> > > > > > >>> Signed-off-by: Charles Wang <charles.goodix@gmail.com>
-> > > > > > >>> ---
-> > > > > > >>>  .../bindings/input/goodix,gt7375p.yaml        | 68 ++++++++++++++++---
-> > > > > > >>>  1 file changed, 58 insertions(+), 10 deletions(-)
-> > > > > > >>
-> > > > > > >> I'm happy to let device tree folks make the call here, but IMO it
-> > > > > > >> would be much cleaner to just consider the I2C-connected GT7986U and
-> > > > > > >> the SPI-connected GT7986U to be different things and just use a
-> > > > > >
-> > > > > > Same device, you cannot have different compatibles. The way how the same
-> > > > > > (literally same chip) device sits on the bus is not part of the binding,
-> > > > > > thus no different compatibles.
-> > > > >
-> > > > > I don't want to belabour the point too much, but this doesn't feel
-> > > > > completely black and white here.
-> > > > >
-> > > > > "Same chip": a whole lot of laptops and phones all use the "same chip"
-> > > > > (same SoC) yet are different products. ...or you can look at the fact
-> > > > > that many peripherals have the same STM32 or Nuvoton chip in them but
-> > > > > are wildly different peripherals.
-> > > > >
-> > > > > In this case, Goodix may have made an ASIC called "GT7986U" that has
-> > > > > some type of CPU on it that can run firmware that can talk as an I2C
-> > > > > device or a SPI device. This ASIC may be intended to be used as a
-> > > > > touchscreen controller, but fundamentally it doesn't feel that
-> > > > > different from an STM32. You can build different boards designs with
-> > > > > the "GT7986U" on it and those boards are intended to run different
-> > > > > firmware.
-> > > > >
-> > > > > People manufacturing touch controller boards presumably put this
-> > > > > "GT7986U" on their touch controller board, maybe set certain
-> > > > > strappings telling it that it's talking over SPI or I2C or maybe just
-> > > > > decide which pins they're going to wire out to the board-to-board
-> > > > > connector on the touch controller board. A touch controller board
-> > > > > intended to talk over SPI may look 98% the same as a touch controller
-> > > > > board intended to talk over I2C, but what percentage of "sameness"
-> > > > > means that we need the same compatible string?
-> > > > >
-> > > > > Would things be different if Goodix decided to manufacture touch
-> > > > > controller boards themselves and sold two SKUs: a GT7986U-S and a
-> > > > > GT7986U-I?
-> > > > >
-> > > > > I would also note that (reading back in previous conversations) I
-> > > > > think Charles said that they run different firmware on the SPI vs. I2C
-> > > > > touch controllers. As I understand it, the firmware running on a
-> > > > > device can make it a different device from a device tree perspective.
-> > > > > The device tree does its best to describe just the hardware but it can
-> > > > > get fuzzy. For instance the "VID/PID" of a USB device is usually
-> > > > > something programmable and could be updateable by a firmware change
-> > > > > but we still may need to encode the VID/PID of the firmware that is
-> > > > > intended to run on the device in the device tree.
-> > > > >
-> > > > > Anyway, I'm happy to be quiet about this and fine if folks want to
-> > > > > continue to work towards a "unified" binding. It makes me a little
-> > > > > uncomfortable that I'll still end up listed as a "maintainer" of the
-> > > > > unified binding because I don't totally agree with it, but I'm also
-> > > > > pragmatic and I'd rather have something that can land.
-> > > > >
-> > > >
-> > > > Thank you very much for your attention. Your understanding of the GT7986U
-> > > > SPI and I2C devices is correct. There is no fundamental difference between
-> > > > them and the STM32, as they are all ASIC devices. The functionality of the
-> > > > device is determined by the firmware that is loaded, although the GT7986U
-> > > > is an ASIC specifically designed for touchscreens.
-> > > >
-> > > > Additionally, the firmware and devices are generally bound to specific touch
-> > > > panels, meaning that firmware intended for SPI will not function properly on
-> > > > an I2C touch panel.
-> > >
-> > > Just to get clarity: how is GT7986U delivered? For instance:
-> > >
-> > > 1. Maybe Goodix produces touchscreen controller boards and ships them
-> > > to customers for use in their products. In this case, does Goodix ship
-> > > a single board with two connectors, or a separate board for SPI vs.
-> > > I2C? I would have to believe that maybe a "dev" board might have both
-> > > connectors and a bunch of jumpers/switches to choose which ones to
-> > > use, but it feels unlikely someone would ship that in any quantity.
-> > >
-> > > 2. Maybe Goodix provides schematics for customers to produce their own
-> > > touchscreen controller boards and they tell customers to either hook
-> > > up the SPI lines and load the SPI firmware or hook up the I2C lines
-> > > and load the I2C firmware. In this case the assumption is that
-> > > customers using the same communication method are following the
-> > > schematics closely enough that they all behave the same and thus we
-> > > don't need some extra distinction.
-> > >
-> > > In either case it seems like a touchscreen controller board that talks
-> > > over SPI and one that talks over I2C are two different products and
-> > > thus (to me) should have two distinct compatible strings. This is not
-> > > one device that merely has multiple interfaces.
-> > >
-> >
-> > Goodix's approach is similar to Method 2. First, Goodix provides the
-> > schematics and the chips (including initial firmware, no touch function)
-> > to customers, and customers design their touchscreen controller boards and
-> > decide whether to use the I2C or SPI interface. Then, Goodix modifies and
-> > debugs the firmware based on the customer's design and provides the final
-> > firmware for customers to upgrade.
-> 
-> OK, thanks!
-> 
-> From the above that means that if someone uses the "goodix,gt7986u"
-> compatible today (with what's landed in mainline) then by that they
-> mean "This is a touchscreen that's compatible with a Goodix-defined
-> standard way of talking to i2c-based touchscreens built atop a GT7986U
-> touchscreen controller". With what's landed in mainline that "standard
-> way" is the "i2c-hid" protocol plus a reset line (which IIRC is not
-> part of the i2c-hid standard) plus a defined power up/power down
-> sequence.
-> 
-> I suppose one conclusion one might make is that we never should have
-> used "goodix,gt7986u" as a compatible string in the first place and
-> should have instead added a new compatible string for every actual
-> instantiation of a touchscreen. So when Vendor1 made touchscreen 1234
-> based on GT7986U then we could have used the compatible
-> "vendor1,touchscreen1234" and then when Vendor2 made touchscreen 5678
-> based on GT7986U we could have used the compatible
-> "vendor2,touchscreen5678". Should we have done this / should we do it
-> in the future? I don't know. If everyone using GT7986U is adhering to
-> the same interface then it doesn't buy us a ton and adds lots more
-> bindings. I think I ended up originally adding the Goodix GT7375P
-> bindings because someone gave me a datasheet with all the power
-> sequencing and timings that came from Goodix and said it was for the
-> "Goodix GT7375P". Given the fact that Goodix provides such a datasheet
-> and it includes power sequencing is a strong indicator that there
-> truly is a standard and we can use that.
-> 
-> In any case, if we _had_ used a different compatible for each actual
-> touchscreen implementation then we wouldn't be having this discussion.
-> Those touchscreens that shipped with a controller board that had SPI
-> connections and SPI firmware would have had obviously different
-> compatible strings than the touchscreens that shipped with a
-> controller board designed for I2C.
-> 
-> If we _do_ want to keep using a compatible like "goodix,gt7986u" then,
-> IMO, it's beneficial to also have a SPI-variant compatible like
-> "goodix,gt7986u-spi". This is not a second interface to one device but
-> it's actually a distinct interface compared to the Goodix I2C
-> interface. Note: this assumes there isn't some hidden benefit to
-> having a combined "I2C/SPI" bindings file. I find having the combined
-> file buys me nothing and just makes it more confusing / adds
-> complexity. Is there some benefit I'm missing other than towing the
-> line of "one chip, one compatible"?
-> 
-> 
-
-Yes, adding compatible entries in the format of "vendor1,touchscreen1234"
-could indeed address these issues. However, as you pointed out, this
-approach would significantly increase the number of bindings, and making
-it quite challenging for Linux users to locate the corresponding binding
-information using only the SKU ID on the chip.
-
-> > It is important to note that the type of driver used by the final device
-> > is related not only to the bus type but also to the final firmware. Even
-> > when using the same I2C bus, different drivers may be needed, such as
-> > hid-i2c or a customer-specific driver.
-> 
-> Right. ...the firmware that's on the device matters and distinct
-> firmware can make a distinct device, and IMO a GT7986U loaded with I2C
-> firmware is a distinct device than a GT7986U loaded with SPI firmware.
-> They are not the same and thus don't need the same compatible.
-> 
-
-Ack. But before we find a perfect solution, I will modify the compatible
-entry to "goodix,gt7986u-spi" so that this matter can move forward.
-
-Best regards,
-Charles
+PiANCj4gPiArc3RhdGljIGludCBhZDQ4NTFfc2V0X292ZXJzYW1wbGluZ19yYXRpbyhzdHJ1Y3Qg
+YWQ0ODUxX3N0YXRlICpzdCwNCj4gPiArCQkJCQkgY29uc3Qgc3RydWN0IGlpb19jaGFuX3NwZWMg
+KmNoYW4sDQo+ID4gKwkJCQkJIHVuc2lnbmVkIGludCBvc3IpDQo+ID4gK3sNCj4gPiArCXVuc2ln
+bmVkIGludCB2YWw7DQo+ID4gKwlpbnQgcmV0Ow0KPiA+ICsNCj4gPiArCWd1YXJkKG11dGV4KSgm
+c3QtPmxvY2spOw0KPiA+ICsNCj4gPiArCWlmIChvc3IgPT0gMSkgew0KPiA+ICsJCXJldCA9IHJl
+Z21hcF91cGRhdGVfYml0cyhzdC0+cmVnbWFwLA0KPiBBRDQ4NTFfUkVHX09WRVJTQU1QTEUsDQo+
+ID4gKwkJCQkJIEFENDg1MV9PU19FTl9NU0ssIDApOw0KPiA+ICsJCWlmIChyZXQpDQo+ID4gKwkJ
+CXJldHVybiByZXQ7DQo+ID4gKwl9IGVsc2Ugew0KPiA+ICsJCXJldCA9IHJlZ21hcF91cGRhdGVf
+Yml0cyhzdC0+cmVnbWFwLA0KPiBBRDQ4NTFfUkVHX09WRVJTQU1QTEUsDQo+ID4gKwkJCQkJIEFE
+NDg1MV9PU19FTl9NU0ssDQo+IEFENDg1MV9PU19FTl9NU0spOw0KPiA+ICsJCWlmIChyZXQpDQo+
+ID4gKwkJCXJldHVybiByZXQ7DQo+IA0KPiByZWdtYXBfY2xlYXJfYml0cygpIGFuZCByZWdtYXBf
+c2V0X2JpdHMoKSB3b3VsZCBtYWtlIHRoaXMgYSBiaXQNCj4gbGVzcyB2ZXJib3NlIGFuZCBjb25z
+aXN0ZW50IHdpdGggdGhlIGVmZm9ydCBzdGFydGVkIGluIFsxXS4NCj4gDQo+IFsxXTogaHR0cHM6
+Ly91cmxkZWZlbnNlLmNvbS92My9fX2h0dHBzOi8vbG9yZS5rZXJuZWwub3JnL2xpbnV4LQ0KPiBp
+aW8vMjAyNDA2MTctcmV2aWV3LXYzLTAtDQo+IDg4ZDEzMzhjNGNjYUBiYXlsaWJyZS5jb20vX187
+ISFBM05pOENTMHkyWSE0TFM3VUkxMVhxSUhSZ1QzY2t4NzZWWQ0KPiBuQ3llaWtwVHVteWpPMHFE
+VG43ZUY3RmQtDQo+IGpGRkw4eXFwWWNNQXhQX3UzVkMwOWJmSUFCN2dXX3J2M3lHTURXcyQNCj4N
+CldpbGwgZG8gaW4gdjUuDQo+IA0KPiA+ICsNCj4gPiArCQl2YWwgPSBhZDQ4NTFfb3NyX3RvX3Jl
+Z3ZhbChvc3IpOw0KPiA+ICsJCWlmICh2YWwgPCAwKQ0KPiA+ICsJCQlyZXR1cm4gLUVJTlZBTDsN
+Cj4gPiArDQo+ID4gKwkJcmV0ID0gcmVnbWFwX3VwZGF0ZV9iaXRzKHN0LT5yZWdtYXAsDQo+IEFE
+NDg1MV9SRUdfT1ZFUlNBTVBMRSwNCj4gPiArCQkJCQkgQUQ0ODUxX09TX1JBVElPX01TSywgdmFs
+KTsNCj4gPiArCQlpZiAocmV0KQ0KPiA+ICsJCQlyZXR1cm4gcmV0Ow0KPiA+ICsJfQ0KPiA+ICsN
+Cj4gPiArCXN3aXRjaCAoY2hhbi0+c2Nhbl90eXBlLnJlYWxiaXRzKSB7DQo+ID4gKwljYXNlIDIw
+Og0KPiA+ICsJCXN3aXRjaCAob3NyKSB7DQo+ID4gKwkJY2FzZSAxOg0KPiA+ICsJCQl2YWwgPSAy
+MDsNCj4gPiArCQkJYnJlYWs7DQo+ID4gKwkJZGVmYXVsdDoNCj4gPiArCQkJdmFsID0gMjQ7DQo+
+ID4gKwkJCWJyZWFrOw0KPiA+ICsJCX0NCj4gPiArCQlicmVhazsNCj4gPiArCWNhc2UgMTY6DQo+
+ID4gKwkJdmFsID0gMTY7DQo+ID4gKwkJYnJlYWs7DQo+ID4gKwlkZWZhdWx0Og0KPiA+ICsJCXJl
+dHVybiAtRUlOVkFMOw0KPiA+ICsJfQ0KPiA+ICsNCj4gPiArCXJldCA9IGlpb19iYWNrZW5kX2Rh
+dGFfc2l6ZV9zZXQoc3QtPmJhY2ssIHZhbCk7DQo+ID4gKwlpZiAocmV0KQ0KPiA+ICsJCXJldHVy
+biByZXQ7DQo+ID4gKw0KPiA+ICsJcmV0dXJuIHJlZ21hcF91cGRhdGVfYml0cyhzdC0+cmVnbWFw
+LCBBRDQ4NTFfUkVHX1BBQ0tFVCwNCj4gPiArCQkJCSAgQUQ0ODUxX1BBQ0tFVF9GT1JNQVRfTUFT
+SywgKG9zciA9PSAxKQ0KPiA/IDAgOiAxKTsNCj4gPiArfQ0KPiA+ICsNCj4gPiArc3RhdGljIGlu
+dCBhZDQ4NTFfZ2V0X292ZXJzYW1wbGluZ19yYXRpbyhzdHJ1Y3QgYWQ0ODUxX3N0YXRlICpzdCwN
+Cj4gdW5zaWduZWQgaW50ICp2YWwpDQo+ID4gK3sNCj4gPiArCXVuc2lnbmVkIGludCBvc3I7DQo+
+ID4gKwlpbnQgcmV0Ow0KPiA+ICsNCj4gPiArCXJldCA9IHJlZ21hcF9yZWFkKHN0LT5yZWdtYXAs
+IEFENDg1MV9SRUdfT1ZFUlNBTVBMRSwgJm9zcik7DQo+ID4gKwlpZiAocmV0KQ0KPiA+ICsJCXJl
+dHVybiByZXQ7DQo+ID4gKw0KPiA+ICsJaWYgKCFGSUVMRF9HRVQoQUQ0ODUxX09TX0VOX01TSywg
+b3NyKSkNCj4gPiArCQkqdmFsID0gMTsNCj4gPiArCWVsc2UNCj4gPiArCQkqdmFsID0NCj4gYWQ0
+ODUxX292ZXJzYW1wbGluZ19yYXRpb3NbRklFTERfR0VUKEFENDg1MV9PU19SQVRJT19NU0ssIG9z
+cildOw0KPiANCj4gV2h5IGlzIDEgbm90IGluIHRoZSB0YWJsZT8NCkJlY2F1c2UgdGhlcmUgaXMg
+bm8gMSBpbiB0aGUgT1NfUkFUSU8gdGFibGUgZnJvbSBkYXRhc2hlZXQuIDEgbWVhbnMgeW91IGRp
+c2FibGUgdGhlIE9TIHZpYSBPU19FTiBiaXQuDQo+IA0KPiA+ICsNCj4gPiArCXJldHVybiBJSU9f
+VkFMX0lOVDsNCj4gPiArfQ0KPiA+ICsNCj4gPiArc3RhdGljIGludCBhZDQ4NTFfc2V0dXAoc3Ry
+dWN0IGFkNDg1MV9zdGF0ZSAqc3QpDQo+ID4gK3sNCj4gPiArCXVuc2lnbmVkIGludCBwcm9kdWN0
+X2lkOw0KPiA+ICsJaW50IHJldDsNCj4gPiArDQo+IA0KPiBXb3VsZCBiZSBuaWNlIHRvIGRvIGEg
+aGFyZCByZXNldCBoZXJlIGlmIHBvc3NpYmxlIHVzaW5nIHN0LT5wZF9ncGlvDQo+IChkYXRhc2hl
+ZXQgc2F5cyB0byBjeWNsZSB0aGlzIHR3aWNlIGFuZCB0aGVuIHdhaXQgMSBtcykuDQoNClN1cmUs
+IHdpbGwgZG8gaW4gdjUuDQoNCj4gPiArCXJldCA9IGFkNDg1MV9zZXRfc2FtcGxpbmdfZnJlcShz
+dCwgSFpfUEVSX01IWik7DQo+ID4gKwlpZiAocmV0KQ0KPiA+ICsJCXJldHVybiByZXQ7DQo+ID4g
+Kw0KPiA+ICsJcmV0ID0gcmVnbWFwX3dyaXRlKHN0LT5yZWdtYXAsDQo+IEFENDg1MV9SRUdfSU5U
+RVJGQUNFX0NPTkZJR19BLA0KPiA+ICsJCQkgICBBRDQ4NTFfU1dfUkVTRVQpOw0KPiA+ICsJaWYg
+KHJldCkNCj4gPiArCQlyZXR1cm4gcmV0Ow0KPiA+ICsNCi4uLg0KPiANCj4gPiArCS5zY2FuX2lu
+ZGV4ID0gaW5kZXgsCQkJCQkJXA0KPiA+ICsJLnNjYW5fdHlwZSA9IHsJCQkJCQkJXA0KPiA+ICsJ
+CS5zaWduID0gJ3MnLAkJCQkJCVwNCj4gPiArCQkucmVhbGJpdHMgPSByZWFsLAkJCQkJXA0KPiA+
+ICsJCS5zdG9yYWdlYml0cyA9IHN0b3JhZ2UsCQkJCQlcDQo+IA0KPiBTaW5jZSBlbmFibGluZyBv
+dmVyc2FtcGxpbmcgY2FuIGNoYW5nZSByZWFsYml0cywgdGhpcyBkcml2ZXIgd2lsbCBsaWtlbHkN
+Cj4gbmVlZCB0byBpbXBsZW1lbnQgc2Nhbl90eXBlX2V4dCBzbyB0aGF0IHVzZXJzcGFjZSBpcyBh
+d2FyZSBvZiB0aGUNCj4gZGlmZmVyZW5jZSB3aGVuIG92ZXJzYW1wbGluZyBpcyBlbmFibGVkLiAo
+QWRkaW5nIHN1cHBvcnQgZm9yIG92ZXJzYW1wbGluZw0KPiBjb3VsZCBhbHdheXMgYmUgYSBmb2xs
+b3d1cCBwYXRjaCBpbnN0ZWFkIG9mIHRyeWluZyB0byBkbyBldmVyeXRoaW5nDQo+IGFsbCBhdCBv
+bmNlLikNCg0KV2lsbCBkbyBpbiB2NS4NCg0KPiANCj4gU2VlIHRoZSBhZDczODAgZHJpdmVyIGFz
+IGFuIGV4YW1wbGUgb2YgaG93IHRvIGltcGVsZW10IHRoaXMuIFsyXQ0KPiANCj4gWzJdOiBodHRw
+czovL3VybGRlZmVuc2UuY29tL3YzL19faHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvbGludXgtDQo+
+IGlpby8yMDI0MDUzMC1paW8tYWRkLXN1cHBvcnQtZm9yLW11bHRpcGxlLXNjYW4tdHlwZXMtdjMt
+NS0NCj4gY2JjNGFjZWEyY2ZhQGJheWxpYnJlLmNvbS9fXzshIUEzTmk4Q1MweTJZITRMUzdVSTEx
+WHFJSFJnVDNja3g3NlZZbg0KPiBDeWVpa3BUdW15ak8wcURUbjdlRjdGZC0NCj4gakZGTDh5cXBZ
+Y01BeFBfdTNWQzA5YmZJQUI3Z1dfcnZHb01fc0VBJA0KPiANCj4gQWxzbywgSSB3b3VsZCBleHBl
+Y3QgdGhlIC5zaWduIHZhbHVlIHRvIGRlcGVuZCBvbiBob3cgdGhlDQo+IGlucHV0IGlzIGJlaW5n
+IHVzZWQuIElmIGl0IGlzIGRpZmZlcmVudGlhbCBvciBzaW5nbGUtZW5kZWQNCj4gYmlwb2xhciwg
+dGhlbiBpdCBpcyBzaWduZWQsIGJ1dCBpZiBpdCBpcyBzaWdubGUtZW5kZWQgdW5pcG9sb2FyDQo+
+IHRoZW4gaXQgaXMgdW5zaWdlZC4NCj4gDQo+IFR5cGljYWxseSwgdGhpcyBpcyBjb21pbmcgZnJv
+bSB0aGUgZGV2aWNldHJlZSBiZWNhdXNlIGl0DQo+IGRlcGVuZHMgb24gd2hhdCBpcyB3aXJlZCB1
+cCB0byB0aGUgaW5wdXQuDQoNClRoaXMgdG9waWMgaXMgbWVudGlvbmVkIGluIHRoZSBjb3ZlciBs
+ZXR0ZXIsIG1heWJlIG5vdCBhcmd1ZWQgZW5vdWdoIHRoZXJlLg0KWWVzLCB0aGUgZ28tdG8gYXBw
+cm9hY2ggaXMgdG8gc3BlY2lmeSB0aGUgdW5pcG9sYXIvYmlwb2xhciBjb25maWd1cmF0aW9uIGlu
+IHRoZSBkZXZpY2V0cmVlLg0KQnV0IHRoaXMgaXMgYSByZXF1ZXN0IGZyb20gdGhlIGFjdHVhbCB1
+c2VycyBvZiB0aGUgZHJpdmVyOiB0byBoYXZlIHRoZSBzb2Z0c3BhbiBmdWxseQ0KY29udHJvbGxl
+ZCBmcm9tIHVzZXJzcGFjZS4gVGhhdCdzIHdoeSB0aGUgb2Zmc2V0IGFuZCBzY2FsZSBpbXBsZW1l
+bnRhdGlvbnMgd2VyZSBhZGRlZC4NCkJvdGggdGhlc2UgYXR0cmlidXRlcyBhcmUgaW5mbHVlbmNp
+bmcgdGhlIHNvZnRzcGFuLg0KDQo+ID4gKwl9LAkJCQkJCQkJXA0KPiA+ICt9DQo+IA0KPiAuLi4N
+Cg0K
 
