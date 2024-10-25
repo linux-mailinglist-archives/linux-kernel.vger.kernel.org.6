@@ -1,183 +1,130 @@
-Return-Path: <linux-kernel+bounces-381924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 709749B065A
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:54:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 263389B0668
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:56:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94B001C2217C
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 14:54:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62A5F283D40
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 14:56:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAB341865ED;
-	Fri, 25 Oct 2024 14:53:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1F4E20D4E2;
+	Fri, 25 Oct 2024 14:53:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="tyfAWPWS";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LCuq7btT"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xLB1glLv"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD91A165EE3;
-	Fri, 25 Oct 2024 14:53:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B91215665D
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 14:53:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729868032; cv=none; b=CkQgAY5Pd4npTBZPB6HkHFmItKh6VvQM2gh2kNNBMajLup4jVw11OxLeJTR/jxQc2DoGX1jIKypoiko93MJCGV1UmH+Xlgs/dLUJZS6iQyQzo5LoYPpOzjmGqyLdZYWIiubs76szCiMqCy4gAKZtvZBfB7qEioo6VSvM07py4II=
+	t=1729868036; cv=none; b=Hgfht2rj6pldvojSd3Lv57CKDrevqSBi29474ZvXJQtAAM0k4X6D6T5+aPkXs7pusWCe6ooqyeZyhrq8KFB6ZfQbcNxbCGsKI/g3NSSyvZFc68Ju2+bnmkrKEm+rCNFUMj8jzdqW5ehlB8RJ1w/ebvLHSlQPLjwEtOKF4rToSEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729868032; c=relaxed/simple;
-	bh=9eOB2Yi9hD9fdX15jYbsNash9l7IT13UyfQSVLw9nnA=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=MhIeX7ANlJuV4nTQE2OrtV4xx4lolUaXMyRW1pPJyiXHdOrNAdWk3x6aEiqYF9rrBYU8Z1xMCBBX5GxbjCzlnvEsD5nuvNwp2CFKHgpTSZRiRpDeNJU6hP9OGf1r47HYZ0+33uh/sthBbCsl3p9JNNKEaqjIODgESBHLgr3Zvrs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=tyfAWPWS; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LCuq7btT; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 25 Oct 2024 14:53:46 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1729868027;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=X0/+QnpNqTCREWVX6NKyGCrxxIpJTH+3oO/edSnF0lI=;
-	b=tyfAWPWSqyGtBv9BMlgnyG++2fTITQaZnpSC0t4lbyrkevA9mD/H9PePIEw55jwzhMHxrG
-	NimLY6pAupDiPO3bmI54utWtS2a1LYxGuslHgXtM3IVPoRxoDOwkwxxdvbBqhRchyEuUYk
-	ffDDLf6Aj+cuC2QN89Mxw0r38jN4ACKi0WUYrAfrR/VEi0yV44ZZmFbREVsOMNCGqQlKrh
-	jvlWcPepJrBbkklpM6PxHqBNmvpw+yYKwqzZRVERbnTnJRPQHycktugc5xKnymVNNf2SC2
-	RpqCVA610y76oEgTFyo0OsfVaZ/wJ9QGf6H5yg3l8qkz56JNCu1R1NmHPMqHWA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1729868027;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=X0/+QnpNqTCREWVX6NKyGCrxxIpJTH+3oO/edSnF0lI=;
-	b=LCuq7btTuB6X30R1ahhbhskxROP648LHIutM3X5/7Qd46VwxPW80pXCTyc39mb8to15Mq9
-	ahI4vdSYo6LSNuAQ==
-From: "tip-bot2 for Anna-Maria Behnsen" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: timers/core] timekeeping: Rework timekeeping_suspend() to use
- shadow_timekeeper
-Cc: "Anna-Maria Behnsen" <anna-maria@linutronix.de>,
- Thomas Gleixner <tglx@linutronix.de>, John Stultz <jstultz@google.com>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: =?utf-8?q?=3C20241009-devel-anna-maria-b4-timers-ptp-timekeepin?=
- =?utf-8?q?g-v2-22-554456a44a15=40linutronix=2Ede=3E?=
-References: =?utf-8?q?=3C20241009-devel-anna-maria-b4-timers-ptp-timekeeping?=
- =?utf-8?q?-v2-22-554456a44a15=40linutronix=2Ede=3E?=
+	s=arc-20240116; t=1729868036; c=relaxed/simple;
+	bh=G8i4kQ0rfmd7KF5DA0TjWqbaqFjSRhTcygQh8rLG2AM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Hs/2zwGyub2IczU4JeHGrPUTiB/s+/pHsPxtxlfeynnTz2VxWk53SqtFWdzh0iRbFJgHAqwGpANrqlxGEgB/sqanKjwNyGZ6CiYldkjl98qqOS2kXwaiP5rJACwFZKurCyGFenxUOaG8jLzm6+zBxkUC72qvbEP3PEkGJLU5n3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xLB1glLv; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43161e7bb25so20635165e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 07:53:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729868032; x=1730472832; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=eAvBpyoA7p/WU9ezNY7dbESpw2rn52Cl0A6r6A2MshA=;
+        b=xLB1glLvUTgsJY+xizbABya98dpG/Cs4BfnOT3corLo+WzV7IS0K5V0jVbL8bM7Y+z
+         rZT0L0ORsk8ZbBsCB097TJcioLN1WmTh1204YpgcTZK6cFBcVM5JSgWhA6fnbSDtBK2v
+         r1XPWCldaYhL4Qjg32Dor1e85ZRlhywRzBAZzjjj06OYvos3vlKJJn/F6b5CIVm1myx3
+         m4lIUoR/PNJPD6eBruSOaxxqzplHntkqXDVVfxThYwneVQmRikMtvVFvnmOX3aikvIKi
+         WM7k3im6BL23+UWmaAFS41kxy6RPuVPZdIgXEYyFt62dT7Dm2s9RxU4SkufVy4TsSM0P
+         jPXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729868032; x=1730472832;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=eAvBpyoA7p/WU9ezNY7dbESpw2rn52Cl0A6r6A2MshA=;
+        b=qBfidocKCdbtUUI3xjlyo2CMCaKD1DTIvx7PJI4D947Kv7Z1pGHT5gpA3r2WyTrnIV
+         27sm8N8ThKsa7/QN4UG/StdnbSGqfjROrobgfTyS4JgcIjl9uG3zmk59dGBnuz9MzmmS
+         P3nEYYUVpg4BmMzyHZxclBBMeB44c3zJ6LeSdpasuxU5xlbSKLHmQLHPXpew+zlZunhf
+         F4Ra1mTRLO+AsAhAWZthXXEYqkY3LrQzLbmlSPBziIcLSetZSGTlNWyT8JyrNBOLUGye
+         ofGG6E2BduRl3ksfvXYU12sq9mffs3SyoqEihJB/QsoWWas7SAgcHvjgRtvPPWLg1wIW
+         zodg==
+X-Gm-Message-State: AOJu0YxfwpidP2+b1CdVA7EYXJPME291Pfb+L/uPTqzuI0s1rpxbldfK
+	oQcPdf/a3K57108QH5AfzLUwdhXuBMS3mcQdKeQRdCR57IiaahdxerCGQbjC7lk=
+X-Google-Smtp-Source: AGHT+IHqqD58Q4h+Z1tHpG4mKzv+sCqcuzupgvdqH2pjc3In+xcJGw3ZFSuEWgJnBVI83yx2PFst/w==
+X-Received: by 2002:a05:600c:4ecb:b0:42f:8287:c24d with SMTP id 5b1f17b1804b1-4318415cfccmr89969295e9.21.1729868031754;
+        Fri, 25 Oct 2024 07:53:51 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b70e0fsm1717115f8f.73.2024.10.25.07.53.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Oct 2024 07:53:51 -0700 (PDT)
+Date: Fri, 25 Oct 2024 17:53:47 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Cristian Marussi <cristian.marussi@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	arm-scmi@vger.kernel.org, sudeep.holla@arm.com,
+	james.quinlan@broadcom.com, f.fainelli@gmail.com,
+	vincent.guittot@linaro.org, etienne.carriere@st.com,
+	peng.fan@oss.nxp.com, michal.simek@amd.com, quic_sibis@quicinc.com,
+	quic_nkela@quicinc.com
+Subject: Re: [PATCH 5/5] firmware: arm_scmi: Relocate atomic_threshold to
+ scmi_desc
+Message-ID: <5366e0d1-dedc-40a9-a1c5-edfed8f4d9d4@stanley.mountain>
+References: <20241018080602.3952869-1-cristian.marussi@arm.com>
+ <20241018080602.3952869-6-cristian.marussi@arm.com>
+ <842a9844-ac89-4972-9024-72ed0e08c2d3@stanley.mountain>
+ <ZxuszZFKdJoHwiSe@pluto>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172986802662.1442.6970429750463798561.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZxuszZFKdJoHwiSe@pluto>
 
-The following commit has been merged into the timers/core branch of tip:
+On Fri, Oct 25, 2024 at 03:35:57PM +0100, Cristian Marussi wrote:
+> On Wed, Oct 23, 2024 at 04:20:53PM +0300, Dan Carpenter wrote:
+> > On Fri, Oct 18, 2024 at 09:06:02AM +0100, Cristian Marussi wrote:
+> 
+> Hi Dan,
+> 
+> thanks for having a look.
+> 
+> > > @@ -2959,7 +2952,7 @@ static struct scmi_debug_info *scmi_debugfs_common_setup(struct scmi_info *info)
+> > >  			   (char **)&dbg->name);
+> > >  
+> > >  	debugfs_create_u32("atomic_threshold_us", 0400, top_dentry,
+> > > -			   &info->atomic_threshold);
+> > > +			   (u32 *)&info->desc->atomic_threshold);
+> > 
+> > This cast is unnecessary.
+> 
+> I was indeed wondering why I added that....then I remember something
+> about debugfs_create....without that (u32 *):
+> 
+> drivers/firmware/arm_scmi/driver.c: In function ‘scmi_debugfs_common_setup’:
+> drivers/firmware/arm_scmi/driver.c:2988:28: warning: passing argument 4 of ‘debugfs_create_u32’ discards ‘const’ qualifier from pointer target type [-Wdiscarded-qualifiers]
+>                              &info->desc->atomic_threshold);
+>                              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> 
+> since the enclosing struct ->desc is const AND debugfs_create_u32 is NOT
+> smart enough to expect a const when the property is R_ONLY...unless I am
+> missing something.
+> 
 
-Commit-ID:     5f3352c1f24d18d10f052f582365de249b7a81de
-Gitweb:        https://git.kernel.org/tip/5f3352c1f24d18d10f052f582365de249b7a81de
-Author:        Anna-Maria Behnsen <anna-maria@linutronix.de>
-AuthorDate:    Wed, 09 Oct 2024 10:29:15 +02:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Fri, 25 Oct 2024 16:41:13 +02:00
+Ah, I missed the const.  Sorry about that.
 
-timekeeping: Rework timekeeping_suspend() to use shadow_timekeeper
+regards,
+dan carpenter
 
-Updates of the timekeeper can be done by operating on the shadow timekeeper
-and afterwards copying the result into the real timekeeper. This has the
-advantage, that the sequence count write protected region is kept as small
-as possible.
-
-While the sequence count held time is not relevant for the resume path as
-there is no concurrency, there is no reason to have this function
-different than all the other update sites.
-
-Convert timekeeping_inject_offset() to use this scheme and cleanup the
-variable declarations while at it.
-
-As halt_fast_timekeeper() does not need protection sequence counter, it is
-no problem to move it with this change outside of the sequence counter
-protected area. But it still needs to be executed while holding the lock.
-
-Signed-off-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: John Stultz <jstultz@google.com>
-Link: https://lore.kernel.org/all/20241009-devel-anna-maria-b4-timers-ptp-timekeeping-v2-22-554456a44a15@linutronix.de
-
----
- kernel/time/timekeeping.c | 22 ++++++++++------------
- 1 file changed, 10 insertions(+), 12 deletions(-)
-
-diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
-index 94f68e7..231eaa4 100644
---- a/kernel/time/timekeeping.c
-+++ b/kernel/time/timekeeping.c
-@@ -2003,11 +2003,11 @@ void timekeeping_resume(void)
- 
- int timekeeping_suspend(void)
- {
--	struct timekeeper *tk = &tk_core.timekeeper;
--	unsigned long flags;
--	struct timespec64		delta, delta_delta;
--	static struct timespec64	old_delta;
-+	struct timekeeper *tks = &tk_core.shadow_timekeeper;
-+	struct timespec64 delta, delta_delta;
-+	static struct timespec64 old_delta;
- 	struct clocksource *curr_clock;
-+	unsigned long flags;
- 	u64 cycle_now;
- 
- 	read_persistent_clock64(&timekeeping_suspend_time);
-@@ -2023,8 +2023,7 @@ int timekeeping_suspend(void)
- 	suspend_timing_needed = true;
- 
- 	raw_spin_lock_irqsave(&tk_core.lock, flags);
--	write_seqcount_begin(&tk_core.seq);
--	timekeeping_forward_now(tk);
-+	timekeeping_forward_now(tks);
- 	timekeeping_suspended = 1;
- 
- 	/*
-@@ -2032,8 +2031,8 @@ int timekeeping_suspend(void)
- 	 * just read from the current clocksource. Save this to potentially
- 	 * use in suspend timing.
- 	 */
--	curr_clock = tk->tkr_mono.clock;
--	cycle_now = tk->tkr_mono.cycle_last;
-+	curr_clock = tks->tkr_mono.clock;
-+	cycle_now = tks->tkr_mono.cycle_last;
- 	clocksource_start_suspend_timing(curr_clock, cycle_now);
- 
- 	if (persistent_clock_exists) {
-@@ -2043,7 +2042,7 @@ int timekeeping_suspend(void)
- 		 * try to compensate so the difference in system time
- 		 * and persistent_clock time stays close to constant.
- 		 */
--		delta = timespec64_sub(tk_xtime(tk), timekeeping_suspend_time);
-+		delta = timespec64_sub(tk_xtime(tks), timekeeping_suspend_time);
- 		delta_delta = timespec64_sub(delta, old_delta);
- 		if (abs(delta_delta.tv_sec) >= 2) {
- 			/*
-@@ -2058,9 +2057,8 @@ int timekeeping_suspend(void)
- 		}
- 	}
- 
--	timekeeping_update(&tk_core, tk, TK_MIRROR);
--	halt_fast_timekeeper(tk);
--	write_seqcount_end(&tk_core.seq);
-+	timekeeping_update_from_shadow(&tk_core, 0);
-+	halt_fast_timekeeper(tks);
- 	raw_spin_unlock_irqrestore(&tk_core.lock, flags);
- 
- 	tick_suspend();
 
