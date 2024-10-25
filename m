@@ -1,77 +1,244 @@
-Return-Path: <linux-kernel+bounces-382574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A6C49B1043
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 22:44:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 539969B0FBE
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 22:24:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C6D41C21C72
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 20:44:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76BF01C2082F
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 20:24:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B506721F4AA;
-	Fri, 25 Oct 2024 20:41:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D87121440C;
+	Fri, 25 Oct 2024 20:24:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b="tKnIU9yL"
-Received: from gentwo.org (gentwo.org [62.72.0.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="USdxpN/C"
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9C9221E612;
-	Fri, 25 Oct 2024 20:41:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.72.0.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45BDB1925AB
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 20:23:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729888877; cv=none; b=LSWjhFvshjNVmGbgLCd5g6mX6FO746FwHseUleglt83qK6MXBy9dqdLZHlQM7GP0yLYfpy8OCt2U8U9bGjVyHU0AcTJMawmy/9aiyIYvd1lF9IB2ZAd5XTyxOUYFtL7QmNHUK4FnVDgqtVXU7itXQMNZOHENgt5KgRjBtc+p/AM=
+	t=1729887841; cv=none; b=MhV/nbg7Dof4sBfW87XEzflIDUu205FIjpvUOBY2qc+KgCbgyH2GW4pCrd3Ok8VsEZyjjTJc3l+lE2ohOj8dxsZYBU/mgMlHWY5cdNyx86q2JxwfZxkL3b6jhlhbUxqMDtT+nWyMGqZvEOTLoqgh+NR/NX/HI56ZnbAlm/x3NWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729888877; c=relaxed/simple;
-	bh=ePBCrXDkYFx/2MDEBoHUpjfoxbGRLqNpKAELJMFiw1s=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=rYLpF3ERRjX5YOJYDVqjo8FjT4tkX6GG/vZV6LFDRRXBu7igRZ0KbDI13rPhDoELZByAqnTUA/ut5TMd+2bbQEqtrcGeoKDkr6uEcZiUp8Qgiwl060HKaCUGcBi41ZIWTyICa3eUScPdmUpRC2QWkmkcii9Y2hwWVI12ugSftos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org; spf=pass smtp.mailfrom=gentwo.org; dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b=tKnIU9yL; arc=none smtp.client-ip=62.72.0.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentwo.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gentwo.org;
-	s=default; t=1729884632;
-	bh=ePBCrXDkYFx/2MDEBoHUpjfoxbGRLqNpKAELJMFiw1s=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=tKnIU9yLNT99wXsnGjwNZKVelKMhdVUWjq8L2OltJ89liNws7uTd5XHNZ/dh7Rdtg
-	 +Zr9Z+y8LnEli7a/gbrQJZYA2kf7gb6EO0kEY37+chasBXZ/XiOFFk3TAxP8V6lETj
-	 dTN0G6HxplP2egvSeFaopp1BBhME+m3fnTR0OwS4=
-Received: by gentwo.org (Postfix, from userid 1003)
-	id 38560409C6; Fri, 25 Oct 2024 12:30:32 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-	by gentwo.org (Postfix) with ESMTP id 3716240681;
-	Fri, 25 Oct 2024 12:30:32 -0700 (PDT)
-Date: Fri, 25 Oct 2024 12:30:32 -0700 (PDT)
-From: "Christoph Lameter (Ampere)" <cl@gentwo.org>
-To: Peter Zijlstra <peterz@infradead.org>
-cc: Linus Torvalds <torvalds@linux-foundation.org>, 
-    Will Deacon <will@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
-    Catalin Marinas <catalin.marinas@arm.com>, Ingo Molnar <mingo@redhat.com>, 
-    Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>, 
-    linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-    linux-arm-kernel@lists.infradead.org, linux-arch@vger.kernel.org
-Subject: Re: [PATCH v3] Avoid memory barrier in read_seqcount() through load
- acquire
-In-Reply-To: <20241025074244.GB14555@noisy.programming.kicks-ass.net>
-Message-ID: <797cf697-83b2-7f45-4865-2ee394887dc8@gentwo.org>
-References: <20240912-seq_optimize-v3-1-8ee25e04dffa@gentwo.org> <20240917071246.GA27290@willie-the-truck> <4b546151-d5e1-22a3-a6d5-167a82c5724d@gentwo.org> <CAHk-=wgw3UErQuBuUOOfjzejGek6Cao1sSW4AosR9WPZ1dfyZg@mail.gmail.com>
- <CAHk-=wjdOX0t45a7aHerVPv_WBM3AmMi3sEp8xb19jpLFnk0dA@mail.gmail.com> <20241023194543.GD11151@noisy.programming.kicks-ass.net> <e9fd5ba0-bd84-76a8-a96e-1378c66d0774@gentwo.org> <20241025074244.GB14555@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1729887841; c=relaxed/simple;
+	bh=XUtlyn5q5LQ6uMdzIwDiPBE/JkcPOp3atDbm1ws2DUI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TE3hPX++30dCixS3CXHYOSnVuGUku15krg+jjBopFQxDPfcNfNYspyg0dxMU0kTVO3LyYbUjDo07mv2BZu0cbayM3a0m1m/Ea7foDy3D0EHMaxHE0oq+58hsGOIjsQz8LZ5kznsKR0qyZxVWLTaRBLWm2rhtA37yCM8fBhOetwk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=USdxpN/C; arc=none smtp.client-ip=149.28.215.223
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
+ Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
+ s=fe-e1b5cab7be; t=1729887835;
+ bh=74bozFZJmgGck6VJe39IrYdh4GsmkB/jNFiY9XvyFLw=;
+ b=USdxpN/CJ4BXjYE4BUkyFJftRoriyv6ZYLbBgZcsbqJVEwhYaQuQmFdMLAbFkCQRtJd0VvLL2
+ m4NzSe55gUtvrqarYMm30T2eLIURKrnf2RVHRektfPd+v+hxkvPkmxlaHWZouN+8BOsoDNjMSgh
+ f537+BObY+Cn9ew4gtO2HzSydcwPkaFK55vVI+hnwBz8BcaV2xBretZ62O8vLhAqnuuGqXISu83
+ DgAcDUmB24lUiHfmKURlbk6cHTOvyWER/Q0O6H48/2wpJlM6QmBNfQyySDEi05w1uDhiP0Vdq12
+ pkhZQdFj3l5t0L5tA6BeUW240LhC9CEOvYLuqZ2+KSnw==
+Message-ID: <7ceb8209-c292-46bc-88e4-2e19a5ed5fda@kwiboo.se>
+Date: Fri, 25 Oct 2024 22:13:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 00/11] media: rkvdec: Add H.264 High 10 and 4:2:2
+ profile support
+To: Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+ Sebastian Fricke <sebastian.fricke@collabora.com>
+Cc: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Alex Bee <knaerzche@gmail.com>,
+ Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+ Detlev Casanova <detlev.casanova@collabora.com>,
+ Dan Carpenter <dan.carpenter@linaro.org>, linux-media@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, linux-staging@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+References: <20240909192522.1076704-1-jonas@kwiboo.se>
+ <71159f58-be8b-41a4-9fed-522e09a7a564@kwiboo.se>
+ <20241025103022.yuaepqxllwi7gghb@basti-XPS-13-9310>
+ <07674bcb4b7650c21bbb3dbe9855b2240444d4f3.camel@collabora.com>
+ <ab14cb57f3ef22c486afad9eb4aa9abec1b33dd2.camel@collabora.com>
+Content-Language: en-US
+From: Jonas Karlman <jonas@kwiboo.se>
+In-Reply-To: <ab14cb57f3ef22c486afad9eb4aa9abec1b33dd2.camel@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Report-Abuse-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-ForwardEmail-Version: 0.4.40
+X-ForwardEmail-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 149.28.215.223
+X-ForwardEmail-ID: 671bfbfcdada393b6a403ed3
 
-On Fri, 25 Oct 2024, Peter Zijlstra wrote:
+On 2024-10-25 19:47, Nicolas Dufresne wrote:
+> Le vendredi 25 octobre 2024 à 08:54 -0400, Nicolas Dufresne a écrit :
+>> Le vendredi 25 octobre 2024 à 12:30 +0200, Sebastian Fricke a écrit :
+>>> Hey Jonas,
+>>>
+>>> On 25.10.2024 10:20, Jonas Karlman wrote:
+>>>> Hi Sebastian,
+>>>>
+>>>> Will you have time to look at this series any time soon?
+>>>>
+>>>> Would like to send a v2 of the now one year old rkvdec hevc series but
+>>>> this series is sort of holding that back ;-)
+>>>
+>>> Sorry for the delay we (maintainer & reviewer from Collabora) are
+>>> currently a bit busy, this is on top of our review list however, so
+>>> please another 1 or 2 weeks of patience :).
+>>
+>> Actually, I'll go over it today.
+> 
+> I'm done, there is only cosmetic comment, if you respin quickly, I'm sure we can
+> get this one in soon.
 
-> > atomic_inc_release(&seqcount)
->
-> It would not be, making the increment itself atomic would make the whole
-> thing far more expensive.
+Thanks!, I will respin a v7 with the nits fixed later this weekend :-)
 
-True. I was too much taken by a cool hw feature on ARM.
+Regards,
+Jonas
+
+> 
+>>
+>> regards,
+>> Nicolas
+>>
+>>>
+>>>>
+>>>> Regards,
+>>>> Jonas
+>>>
+>>> Thanks for your work and regards!
+>>> Sebastian
+>>>
+>>>>
+>>>> On 2024-09-09 21:24, Jonas Karlman wrote:
+>>>>> This series add H.264 High 10 and 4:2:2 profile support to the Rockchip
+>>>>> Video Decoder driver.
+>>>>>
+>>>>> Patch 1 add helpers for calculating plane bytesperline and sizeimage.
+>>>>> Patch 2 add two new pixelformats for semi-planer 10-bit 4:2:0/4:2:2 YUV.
+>>>>>
+>>>>> Patch 3 change to use bytesperline and buffer height to configure strides.
+>>>>> Patch 4 change to use values from SPS/PPS control to configure the HW.
+>>>>>
+>>>>> Patch 5-9 refactor code to support filtering of CAPUTRE formats based
+>>>>> on the image format returned from a get_image_fmt ops.
+>>>>>
+>>>>> Patch 10 add final bits to support H.264 High 10 and 4:2:2 profiles.
+>>>>>
+>>>>> Patch 11 add a fix for enumerated frame sizes returned to userspace.
+>>>>>
+>>>>> Tested on a ROCK Pi 4 (RK3399) and Rock64 (RK3328):
+>>>>>
+>>>>>   v4l2-compliance 1.28.1, 64 bits, 64-bit time_t
+>>>>>   ...
+>>>>>   Total for rkvdec device /dev/video1: 48, Succeeded: 48, Failed: 0, Warnings: 0
+>>>>>
+>>>>>   Running test suite JVT-FR-EXT with decoder FFmpeg-H.264-v4l2request
+>>>>>   ...
+>>>>>   Ran 65/69 tests successfully
+>>>>>
+>>>>>   Running test suite JVT-AVC_V1 with decoder FFmpeg-H.264-v4l2request
+>>>>>   ...
+>>>>>   Ran 129/135 tests successfully
+>>>>>
+>>>>> Before this series:
+>>>>>
+>>>>>   Running test suite JVT-FR-EXT with decoder FFmpeg-H.264-v4l2request
+>>>>>   ...
+>>>>>   Ran 44/69 tests successfully
+>>>>>
+>>>>> Changes in v6:
+>>>>> - Change to use fmt_idx instead of j++ tucked inside a condition (Dan)
+>>>>> - Add patch to fix enumerated frame sizes returned to userspace (Alex)
+>>>>> - Fluster test score is same as v4 and v5, see [4] and [5]
+>>>>> Link to v5: https://lore.kernel.org/linux-media/20240618194647.742037-1-jonas@kwiboo.se/
+>>>>>
+>>>>> Changes in v5:
+>>>>> - Drop Remove SPS validation at streaming start patch
+>>>>> - Move buffer align from rkvdec_fill_decoded_pixfmt to min/step_width
+>>>>> - Use correct profiles for V4L2_CID_MPEG_VIDEO_H264_PROFILE
+>>>>> - Collect r-b and t-b tags
+>>>>> - Fluster test score is same as v4, see [4] and [5]
+>>>>> Link to v4: https://lore.kernel.org/linux-media/20231105165521.3592037-1-jonas@kwiboo.se/
+>>>>>
+>>>>> Changes in v4:
+>>>>> - Fix failed v4l2-compliance tests related to CAPTURE queue
+>>>>> - Rework CAPTURE format filter anv validate to use an image format
+>>>>> - Run fluster test suite JVT-FR-EXT [4] and JVT-AVC_V1 [5]
+>>>>> Link to v3: https://lore.kernel.org/linux-media/20231029183427.1781554-1-jonas@kwiboo.se/
+>>>>>
+>>>>> Changes in v3:
+>>>>> - Drop merged patches
+>>>>> - Use bpp and bpp_div instead of prior misuse of block_w/block_h
+>>>>> - New patch to use values from SPS/PPS control to configure the HW
+>>>>> - New patch to remove an unnecessary call to validate sps at streaming start
+>>>>> - Reworked pixel format validation
+>>>>> Link to v2: https://lore.kernel.org/linux-media/20200706215430.22859-1-jonas@kwiboo.se/
+>>>>>
+>>>>> Changes in v2:
+>>>>> - Collect r-b tags
+>>>>> - SPS pic width and height in mbs validation moved to rkvdec_try_ctrl
+>>>>> - New patch to not override output buffer sizeimage
+>>>>> - Reworked pixel format validation
+>>>>> - Only align decoded buffer instead of changing frmsize step_width
+>>>>> Link to v1: https://lore.kernel.org/linux-media/20200701215616.30874-1-jonas@kwiboo.se/
+>>>>>
+>>>>> To fully runtime test this series you may need FFmpeg patches from [1]
+>>>>> and fluster patches from [2], this series is also available at [3].
+>>>>>
+>>>>> [1] https://github.com/Kwiboo/FFmpeg/commits/v4l2request-2024-v2-rkvdec/
+>>>>> [2] https://github.com/Kwiboo/fluster/commits/ffmpeg-v4l2request-rkvdec/
+>>>>> [3] https://github.com/Kwiboo/linux-rockchip/commits/linuxtv-rkvdec-high-10-v6/
+>>>>> [4] https://gist.github.com/Kwiboo/f4ac15576b2c72887ae2bc5d58b5c865
+>>>>> [5] https://gist.github.com/Kwiboo/459a1c8f1dcb56e45dc7a7a29cc28adf
+>>>>>
+>>>>> Regards,
+>>>>> Jonas
+>>>>>
+>>>>> Alex Bee (1):
+>>>>>   media: rkvdec: h264: Don't hardcode SPS/PPS parameters
+>>>>>
+>>>>> Jonas Karlman (10):
+>>>>>   media: v4l2-common: Add helpers to calculate bytesperline and
+>>>>>     sizeimage
+>>>>>   media: v4l2: Add NV15 and NV20 pixel formats
+>>>>>   media: rkvdec: h264: Use bytesperline and buffer height as virstride
+>>>>>   media: rkvdec: Extract rkvdec_fill_decoded_pixfmt into helper
+>>>>>   media: rkvdec: Move rkvdec_reset_decoded_fmt helper
+>>>>>   media: rkvdec: Extract decoded format enumeration into helper
+>>>>>   media: rkvdec: Add image format concept
+>>>>>   media: rkvdec: Add get_image_fmt ops
+>>>>>   media: rkvdec: h264: Support High 10 and 4:2:2 profiles
+>>>>>   media: rkvdec: Fix enumerate frame sizes
+>>>>>
+>>>>>  .../media/v4l/pixfmt-yuv-planar.rst           | 128 ++++++++++
+>>>>>  drivers/media/v4l2-core/v4l2-common.c         |  80 +++---
+>>>>>  drivers/media/v4l2-core/v4l2-ioctl.c          |   2 +
+>>>>>  drivers/staging/media/rkvdec/rkvdec-h264.c    |  64 +++--
+>>>>>  drivers/staging/media/rkvdec/rkvdec.c         | 239 +++++++++++++-----
+>>>>>  drivers/staging/media/rkvdec/rkvdec.h         |  18 +-
+>>>>>  include/uapi/linux/videodev2.h                |   2 +
+>>>>>  7 files changed, 410 insertions(+), 123 deletions(-)
+>>>>>
+>>>>
+>>>>
+>>> Sebastian Fricke
+>>> Consultant Software Engineer
+>>>
+>>> Collabora Ltd
+>>> Platinum Building, St John's Innovation Park, Cambridge CB4 0DS, UK
+>>> Registered in England & Wales no 5513718.
+>>
+>>
+> 
 
 
