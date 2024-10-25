@@ -1,91 +1,97 @@
-Return-Path: <linux-kernel+bounces-380817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15ECA9AF687
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 03:12:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB3E49AF68A
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 03:14:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 479041C217C3
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 01:12:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FD35280FF3
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 01:14:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D7EA7405A;
-	Fri, 25 Oct 2024 01:12:00 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA5BA1E89C;
+	Fri, 25 Oct 2024 01:14:08 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD87E61FCE;
-	Fri, 25 Oct 2024 01:11:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3D00101C4
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 01:14:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729818720; cv=none; b=JCygXhAUOU3vwBRLGJA5lKsB3eVBvo8WVKBOtDncQLz3RnaPDF+SJ8rjmP7H2M9y4x8dE8J8OeCfEbZ4Iza31zGGJ91siGDmvWGeujCPGHuLrw7eMI0FhcnUjc6zwzVVFYIkTqJ4bE2RCiDciDYwR8EoNrV2syq74SI/OH1A+q8=
+	t=1729818848; cv=none; b=pl8m4beNaSYfQfrAcbReak+OhoBreqzBDuHe8d3J3xtaQ5mlZ5zXPq9wZtQOnFSL5ZPw8hZwDWbfs++zhxYj0wY3U9RsCud9oTSCYsrXaffN2HxXYMx86OnJITt4KakdG8gUFo7M0z5LkSVJvw7f2imj7+J6cBvRfA3Cd3Pu07o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729818720; c=relaxed/simple;
-	bh=M1nraTNc2QYb99lQD6OmxueQGnEuVGKbB0/JhBsbwbo=;
-	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=JkaEZjjrlkZ0dwh8Bc6ZuAsRzlD5xSkX+hkU1cVmUvkZxcAYJG+K+PKQdYIdcbmpHPeJKQN1RNxZOevAbJKKQfHTWadQWpvAYPsmR7tFavJTQbW6tVr8r95zuv/YUBcxgReRo2XXxjBXUKzeBq8oXSFBHkgHblZvZRhQV7IOKuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4XZPqV18cszQsBm;
-	Fri, 25 Oct 2024 09:11:02 +0800 (CST)
-Received: from kwepemm000007.china.huawei.com (unknown [7.193.23.189])
-	by mail.maildlp.com (Postfix) with ESMTPS id D44B9140337;
-	Fri, 25 Oct 2024 09:11:55 +0800 (CST)
-Received: from [10.67.120.192] (10.67.120.192) by
- kwepemm000007.china.huawei.com (7.193.23.189) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 25 Oct 2024 09:11:54 +0800
-Message-ID: <38d83f29-96b2-44b4-ae1e-51196112b26f@huawei.com>
-Date: Fri, 25 Oct 2024 09:11:54 +0800
+	s=arc-20240116; t=1729818848; c=relaxed/simple;
+	bh=pDpDrDPgqn1rWuPf4vWJjM/QhwM5DXeysn5Qug/olq4=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=dSsY5IytLgZUbc/MC87L+ykQrgoQzmEjQxSjvc0xRj1pTQgwtZXXopIdXI9R8fV8d/k2xBnHtt4duOETZ4f8jR/Ha6qE2L1rqfLTZMV0Lay0tQnUgke8YqVzwwVk31nQS5x0QtVim7P7Hw7tyVdZtpdaK3QmQcp5IHc2G8n90ro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a3c4ed972bso11376985ab.2
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 18:14:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729818846; x=1730423646;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cOZsZyIJmZeHEQPVNHkWmGsoWMx76fs5Fvyz/nsiQgY=;
+        b=qFb4tglUhr2nczgJ+KT2uf4QMiLZDhAXeMTy4r+A+v29VKCvApP/CQiegVMBASQrAo
+         AlpXJwDJbFzGbNstcUX23Uj9TmfO38FEGuE+Wwq8mLX3FAiBSYa5S5SgDsTgcFth/aDB
+         36hrov+qhZbXaW4gVuDSjW/Rtjin/Axcfu3ewZoxdn9+u3hhTBzsC1OsfSaPOpx78qP2
+         kHO7Ojx55S/yraklyKvvUQvFVawYjGKOXlCMz7ddTMNjfJYQPdjV4cd5uGMHjju2yyuw
+         MynFPfTk5cotuD8poe+S7DQu6ex6P5+Tl1GvjH4tXTRwAVDSq1ywL6wy0yQTTYZhLvCD
+         xLLg==
+X-Forwarded-Encrypted: i=1; AJvYcCW5eKdcH2g9ByTOh/x4ErGK8uWRaj2uxTaxH5jiNCjwxXDTG75YzdMVk/2j/ITYE50qBQiWK3xigoyPNCc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSkuG+7H6PhAusZQ5WT24p7mYp6rl72cZYlQ2wIyLDL4zqEl1L
+	oruXCf+UiwIswQUOoM6IHF3S4JVBV9NucAkxqFcquc819DifkcCpecddrpB+fFvl6Inx5vLkzG0
+	9ZZQM8skGQMtysa3xFt/FO8G1cht4wI+o+FzvEwM8EcRVl3cMPdzQH5g=
+X-Google-Smtp-Source: AGHT+IGOjltPBrz6CEsrXS0y1SoDlaDKKPoKA5PSdGZVz6ycSLBxXb8Nnn0qnpjr6zRJ+fl8sGud8IaiQJe6+LFu8+phyUzjp/zo
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-CC: <shaojijie@huawei.com>, <liuyonglong@huawei.com>,
-	<wangpeiyang1@huawei.com>, <lanhao@huawei.com>, <chenhao418@huawei.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH V2 net 2/9] net: hns3: add sync command to sync io-pgtable
-To: Paolo Abeni <pabeni@redhat.com>, "shenjian (K)" <shenjian15@huawei.com>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<salil.mehta@huawei.com>
-References: <20241018101059.1718375-1-shaojijie@huawei.com>
- <20241018101059.1718375-3-shaojijie@huawei.com>
- <214d37cc-96c0-4d47-bea0-3985e920d88c@redhat.com>
- <e8f83833-940a-3542-5c68-3dc25a230383@huawei.com>
- <79005e6e-543e-444b-9acc-f59ac7b04675@redhat.com>
-From: Jijie Shao <shaojijie@huawei.com>
-In-Reply-To: <79005e6e-543e-444b-9acc-f59ac7b04675@redhat.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemm000007.china.huawei.com (7.193.23.189)
+X-Received: by 2002:a05:6e02:1707:b0:3a0:915d:a4a7 with SMTP id
+ e9e14a558f8ab-3a4d592fb67mr91969855ab.2.1729818845820; Thu, 24 Oct 2024
+ 18:14:05 -0700 (PDT)
+Date: Thu, 24 Oct 2024 18:14:05 -0700
+In-Reply-To: <000000000000a519120616f973cb@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <671af0dd.050a0220.2eb763.00ce.GAE@google.com>
+Subject: Re: [syzbot] [fs] INFO: rcu detected stall in sys_mount (7)
+From: syzbot <syzbot+de026b20f56e1598e760@syzkaller.appspotmail.com>
+To: andrii@kernel.org, asmadeus@codewreck.org, ast@kernel.org, 
+	bpf@vger.kernel.org, bristot@kernel.org, daniel@iogearbox.net, 
+	eddyz87@gmail.com, ericvh@kernel.org, haoluo@google.com, 
+	john.fastabend@gmail.com, jolsa@kernel.org, juri.lelli@redhat.com, 
+	kpsingh@kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, lucho@ionkov.net, martin.lau@linux.dev, 
+	peterz@infradead.org, sdf@google.com, song@kernel.org, 
+	syzkaller-bugs@googlegroups.com, v9fs@lists.linux.dev, 
+	vineeth@bitbyteword.org, yonghong.song@linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
+syzbot suspects this issue was fixed by commit:
 
-on 2024/10/24 19:05, Paolo Abeni wrote:
-> On 10/24/24 11:38, shenjian (K) wrote:
->> 在 2024/10/24 16:36, Paolo Abeni 写道:
->>> On 10/18/24 12:10, Jijie Shao wrote:
->> We considered this issue, and since this is not a software defect, we
->> were not too
->>
->> sure which commit should be blamed.
->>
->> It makes sense to choose the commit introducing the support for the
->> buggy H/W, we will add
->>
->> it.
-> Please additionally rephrase the commit message including the more
-> verbose explanation above, thanks!
->
-> Paolo
+commit 5f6bd380c7bdbe10f7b4e8ddcceed60ce0714c6d
+Author: Peter Zijlstra <peterz@infradead.org>
+Date:   Mon May 27 12:06:55 2024 +0000
 
-ok, Thanks!
+    sched/rt: Remove default bandwidth control
 
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=126a5e40580000
+start commit:   3b68086599f8 Merge tag 'sched_urgent_for_v6.9_rc5' of git:..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f47e5e015c177e57
+dashboard link: https://syzkaller.appspot.com/bug?extid=de026b20f56e1598e760
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1775971b180000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1290b320980000
 
+If the result looks correct, please mark the issue as fixed by replying with:
+
+#syz fix: sched/rt: Remove default bandwidth control
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
