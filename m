@@ -1,190 +1,189 @@
-Return-Path: <linux-kernel+bounces-382144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FEA09B0A07
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 18:34:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3AAA9B0A09
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 18:35:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CCF14B2168A
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:34:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23E921C2130B
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:35:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B683918660A;
-	Fri, 25 Oct 2024 16:34:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 379D81865ED;
+	Fri, 25 Oct 2024 16:35:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CYF1Mz8D"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="c1zRz6mA"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B616821A4D0
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 16:34:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BE7D21A4D0
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 16:35:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729874085; cv=none; b=lLv6IGIjnDLsxk50UXOL+yvYsQmKcJV4LKWVtonIho1Ss53gPUq7x+K/AQ5s93pB1xf/MNaZHWclopABJ20m5BWzEvu2+BUFYA5D5cxtPL7Yidi4ePUl2TkLnLY4YUiyWVbiIPk9I9rLApHhvLnzNHdP1JpDdri356RrN6dXARs=
+	t=1729874144; cv=none; b=g6F6cd9he8LG2+7ismZjz3xmrnPdW/6KM6I/K8SDtMzMF6viVBn3EKQMrSdMn8iBnYgqHRaQc3M3BNqmk9DC8UZnD5LJBHRsdjK4yhf6s8J62+pkaMgcXV9g60uSqM/GrO8sEtUwjpjej2xqt2wNQQsUTVKkTkl2+bakYfC7wgY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729874085; c=relaxed/simple;
-	bh=iVgTNuQrNSgFz6uuf8x3IMCi9W2Qazvc9733i17OGJM=;
+	s=arc-20240116; t=1729874144; c=relaxed/simple;
+	bh=Oa66g0D/K8NQo8ZdHJStJsOpOeB/CdCkRH2Mn/ZHRgI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JiyiaaRJKMKG2dUYqCb+EM1+6B9CRiBf9JrWEOLkF2Ejq2F78NJrBmai4uaAqZWedUDGTdmGB3eAWDjr+7+8RE/ne5PoSKD8Wpash72HTd0d2CbNUge/UrTrXrhUNQHNkeRarSgqbDSXb8dSsObbqfi5MSf5xBgDyxEmJp/BrIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CYF1Mz8D; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5c937b5169cso3558877a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 09:34:42 -0700 (PDT)
+	 To:Cc:Content-Type; b=Uwgbla3vrBQZHduRjSwk7DZvKHusEswYn4CkROnaBP0DNXDUat7OiYK31Sxw6winOf8rl9NT84sLZQePxnA2jzRtQeAc1PIYaP+mbRvmtBmAA9L3+UL1pTCjcc2kyBbkuO5hhLkHT30YgJ9pr7oPL1B0gDGiTdybwLdsuVoYraE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=c1zRz6mA; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-53a007743e7so2793152e87.1
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 09:35:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729874081; x=1730478881; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1729874139; x=1730478939; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=/Ac17hdVh+onN5kuR/AiipcbAnn1S6E1bEALkkLK7RY=;
-        b=CYF1Mz8D2V05ZgsR/IC0CmcK+LtZD4gT/vyNuc0wjYimyq27HkJSMrezrheaAGZ62g
-         D6yO05EaVd7iondFJjqpE3ieO80N6uxTtx4Van2S2bIF8eaUSkZxMsnqMJSRixZYRHEt
-         UN67srpZiutIQ0M3rBv3vJPE9prqndTMAOn+m92aDWd3JQq+62vFs5JF+RXN1n+s/XDx
-         Zcis1iNYwxPIBT2v6KPYn2npQ+ZySdL1NA/dTRgED1v1KxulTWloGG9i/aLCGwbkBudM
-         j3LbFQj5BahgWwD7J5ap5reSxxCQqwfmYV1yfCS044hWOsU9YFi5M/pZwoOhMg4tOdCt
-         QUMw==
+        bh=Eq3fXe6qq3ix8jve6B/lCKB6fSeKNV8aFXZ8E3BzHv4=;
+        b=c1zRz6mA2nsKnEGWv9kpze/tGPVjliDzjJAMWw6VAtkotl7eMod/eSffrwEPlnChal
+         ieb64ltQzrr9q3MlbE5HeJEW6WHwcodmC7jwWa9EdAN1UKaK3nArVYWLFxG16kax6P0r
+         d3eouSU73pBVC6jf+nngUZRX/KFaoXdfJcWP4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729874081; x=1730478881;
+        d=1e100.net; s=20230601; t=1729874139; x=1730478939;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=/Ac17hdVh+onN5kuR/AiipcbAnn1S6E1bEALkkLK7RY=;
-        b=UDjIdRgLfFGw2nmTeLGVw11brmpZ+cxbReCKXim+ILIrUIWx0xWtwQXsUruZwD8/Ld
-         KYJxuchB14li+6a2NicRs5/j2PtFeC/z9y1x9EJGAobFclKpq9OB94S7Z76rTMLvjxb5
-         dIpXf4NKSaoi9v4xFMk/5ByI+mAI/HITIvYHwGWcMWxa3QHU1jxTGUjGKWpWEC1pGHdi
-         Axg1kBmmgfbELfzTL9PW1GQN5Gkv9HSSWb+4b7lAg+8Y1mGgN1s45TGXQiVMEy0bSmJI
-         pMFU+8Cp7Ua4PcKvGo3Xj845ZaxVEEBwBM7cLQ7EjKUiXhjDJ/SrI3HqHVSJSUAWcOCw
-         MIBA==
-X-Forwarded-Encrypted: i=1; AJvYcCUBct613fN2HQu9pT+mjmdWietKegXVgMCUFU2XWJd0KPDWRICvdx4TVD97Haj6aQ/J/MBWXDuRSIuLlpw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZd7e7TxowoQeB6O1BZ+Po4Wo3v6BWos5nEphMmRNimNYAp68C
-	W8FjO2erkEKGFrrDz2ObqvS6+/RxVnHdfh9gbhmCHwHjHYqfzNRxVgJftBl1TR0KL3BJB8qyl8y
-	Mjlr6Fg6c+afE7dCeq98is9Qc/FY=
-X-Google-Smtp-Source: AGHT+IHyZlYXlehUxpbIqwguKr8w+asAHNQiFzjOlt0wLqYi5e6BjSpS3oEJ4PG4NomTOLnyJIZxdzocOgL7HHoWQYo=
-X-Received: by 2002:a05:6402:42d6:b0:5cb:be69:1444 with SMTP id
- 4fb4d7f45d1cf-5cbbf1d07b1mr164408a12.9.1729874080758; Fri, 25 Oct 2024
- 09:34:40 -0700 (PDT)
+        bh=Eq3fXe6qq3ix8jve6B/lCKB6fSeKNV8aFXZ8E3BzHv4=;
+        b=qofVIxFzvwtDFqkA7QyUN+/6ljartm80tGPJQz0lUIdlEWzNSvaLvyJZOxlXiebihp
+         LeIxtClj+UZpujux+53nIqDfiomeorVV7T22VBZog7IuvbkckKzgt8Z1f7WrLpTNP+lE
+         EWUUJqbZEGzhyrqF8EBeuQ6vVGvfe2XmnZUlOK1BAGLT6VYn+UbZs9WwgeKzZLwxt1ka
+         5kE5KnazpjmGiKvAYhpfytoyEcYr6BIuyMZIItq3224CR6JOgojTvDu2AQ+GI9JdvJjW
+         eIkfglZs2D3nwT3rsJaoS3AJ/0pBP7mt7kpdkEbNtvTizkol2vhQv2myr2YrG5/HviKy
+         +QSA==
+X-Forwarded-Encrypted: i=1; AJvYcCXzCY4S9uH6xgS+XQ6i6O2AEb3LVm2kJzkoJdyig/Z3Keim2wqNd/ERq5XtnnndKbAeFSYDkOhI41L70Xg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwcI/8z1X/sNMPfNcv7AXYpUg5l8YcvQ4RRJJUhhAWflLXvji0w
+	k7OuQYB9pfwtnEU4heLN+uI8wW5jf4P+IzbQ44f73m54xnNVYPSyEgSuGrdvVdEP/W4IG20w5rc
+	2bNNz
+X-Google-Smtp-Source: AGHT+IEmbM4TFB/uC6ASuun7jMyBimv5VLMAZjLYZ5s53n4NOXjzSMSKotcJV2aYwBhN13ghyaRl4A==
+X-Received: by 2002:a05:6512:3e25:b0:539:f06c:6f1d with SMTP id 2adb3069b0e04-53b1a3a786amr6701060e87.55.1729874138937;
+        Fri, 25 Oct 2024 09:35:38 -0700 (PDT)
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com. [209.85.208.171])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53b2e10a670sm231985e87.20.2024.10.25.09.35.37
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 25 Oct 2024 09:35:37 -0700 (PDT)
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2fb3debdc09so19199751fa.3
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 09:35:37 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUI3D9w3V/3DPsEcb2sJdWBVxzt7bmm1yKAeUoUjtL69/cFaueOvPhSW2VttUJRLuUVpfY4P7h2t5Nn8II=@vger.kernel.org
+X-Received: by 2002:a05:651c:2210:b0:2fa:beb5:11cc with SMTP id
+ 38308e7fff4ca-2fc9d582d71mr53240501fa.40.1729874137392; Fri, 25 Oct 2024
+ 09:35:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <760237a3-69d6-9197-432d-0306d52c048a@google.com>
- <7dc6b280-cd87-acd1-1124-e512e3d2217d@google.com> <CAHbLzkoRHcC33vj7iajw_JXVig7yghJRGaTpaHXaxhoni76yPw@mail.gmail.com>
- <b3e88e26-5bda-50fc-cc55-a62b4b2a4e24@google.com>
-In-Reply-To: <b3e88e26-5bda-50fc-cc55-a62b4b2a4e24@google.com>
-From: Yang Shi <shy828301@gmail.com>
-Date: Fri, 25 Oct 2024 09:34:29 -0700
-Message-ID: <CAHbLzkqjO6X_k91xFFRG+5FLkzxvc0UKsUomW0_oYMv68TCHQg@mail.gmail.com>
-Subject: Re: [PATCH hotfix 2/2] mm/thp: fix deferred split unqueue naming and locking
-To: Hugh Dickins <hughd@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Usama Arif <usamaarif642@gmail.com>, 
-	Wei Yang <richard.weiyang@gmail.com>, 
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Matthew Wilcox <willy@infradead.org>, 
-	David Hildenbrand <david@redhat.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Barry Song <baohua@kernel.org>, 
-	Kefeng Wang <wangkefeng.wang@huawei.com>, Ryan Roberts <ryan.roberts@arm.com>, 
-	Nhat Pham <nphamcs@gmail.com>, Zi Yan <ziy@nvidia.com>, Chris Li <chrisl@kernel.org>, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org
+References: <20240620-igt-v3-0-a9d62d2e2c7e@mediatek.com> <20240620-igt-v3-8-a9d62d2e2c7e@mediatek.com>
+ <CAD=FV=XTsPBQ7Qp_oQmBXkNY==KQWZdN7VYbuVPoBTHhMvzjUQ@mail.gmail.com> <b75276ff8dc2f73818ccd132530c0d3825e17888.camel@mediatek.com>
+In-Reply-To: <b75276ff8dc2f73818ccd132530c0d3825e17888.camel@mediatek.com>
+From: Doug Anderson <dianders@chromium.org>
+Date: Fri, 25 Oct 2024 09:35:23 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=WSD9p61ePKXVOcUBGktRJkUx+KbiJXF-9QUtWE8zDt0A@mail.gmail.com>
+Message-ID: <CAD=FV=WSD9p61ePKXVOcUBGktRJkUx+KbiJXF-9QUtWE8zDt0A@mail.gmail.com>
+Subject: Re: [PATCH v3 08/14] drm/mediatek: Add DRM_MODE_ROTATE_0 to rotation property
+To: =?UTF-8?B?U2hhd24gU3VuZyAo5a6L5a2d6KyZKQ==?= <Shawn.Sung@mediatek.com>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
+	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	=?UTF-8?B?QmliYnkgSHNpZWggKOisnea/n+mBoCk=?= <Bibby.Hsieh@mediatek.com>, 
+	=?UTF-8?B?SmFzb24tSkggTGluICjmnpfnnb/npaUp?= <Jason-JH.Lin@mediatek.com>, 
+	"chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>, "djkurtz@chromium.org" <djkurtz@chromium.org>, 
+	=?UTF-8?B?TmFuY3kgTGluICjmnpfmrKPonqIp?= <Nancy.Lin@mediatek.com>, 
+	"daniel@ffwll.ch" <daniel@ffwll.ch>, "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>, 
+	=?UTF-8?B?Q0sgSHUgKOiDoeS/iuWFiSk=?= <ck.hu@mediatek.com>, 
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "airlied@gmail.com" <airlied@gmail.com>, 
+	=?UTF-8?B?WVQgU2hlbiAo5rKI5bKz6ZyGKQ==?= <Yt.Shen@mediatek.com>, 
+	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>, "littlecvr@chromium.org" <littlecvr@chromium.org>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Hsin-Yi Wang <hsinyi@chromium.org>, "zwisler@chromium.org" <zwisler@chromium.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 24, 2024 at 11:57=E2=80=AFPM Hugh Dickins <hughd@google.com> wr=
-ote:
+Hi Shawn,
+
+On Thu, Oct 24, 2024 at 6:32=E2=80=AFPM Shawn Sung (=E5=AE=8B=E5=AD=9D=E8=
+=AC=99)
+<Shawn.Sung@mediatek.com> wrote:
 >
-> On Thu, 24 Oct 2024, Yang Shi wrote:
-> > On Wed, Oct 23, 2024 at 9:13=E2=80=AFPM Hugh Dickins <hughd@google.com>=
- wrote:
+> Hi Doug,
+>
+> On Thu, 2024-10-24 at 13:47 -0700, Doug Anderson wrote:
+> >
+> > External email : Please do not click links or open attachments until
+> > you have verified the sender or the content.
+> >  Hi,
+> >
+> > On Wed, Jun 19, 2024 at 9:39=E2=80=AFAM Hsiao Chien Sung via B4 Relay
+> > <devnull+shawn.sung.mediatek.com@kernel.org> wrote:
 > > >
-> > > That goes back to 5.4 commit 87eaceb3faa5 ("mm: thp: make deferred sp=
-lit
-> > > shrinker memcg aware"): which included a check on swapcache before ad=
-ding
-> > > to deferred queue (which can now be removed), but no check on deferre=
-d
-> > > queue before adding THP to swapcache (maybe other circumstances preve=
-nted
-> > > it at that time, but not now).
-> >
-> > If I remember correctly, THP just can be added to deferred list when
-> > there is no PMD map before mTHP swapout, so shrink_page_list() did
-> > check THP's compound_mapcount (called _entire_mapcount now) before
-> > adding it to swap cache.
-> >
-> > Now the code just checked whether the large folio is on deferred list o=
-r not.
->
-> I've continued to find it hard to think about, hard to be convinced by
-> that sequence of checks, without an actual explicit _deferred_list check.
-
-You meant the swap cache check? I was trying to recall the reason. If
-I remember correctly (sorry, memory is still vague), if the THP was
-PMD-mapped and PTE-mapped by two processes, the THP may be added to
-swap cache since just compound_mapcount was checked. Then
-try_to_unmap() in shrink_page_list() may add it to deferred list if
-PMD mapping was unmapped first. The potential list corruption fixed by
-you now may be triggered.
-
-But this was based on the assumption that there can't be PMD-mapped
-THP on deferred list. If this happens (as David's migration fail
-example), the swap cache check should be not enough. This case was
-overlooked.
-
->
-> David has brilliantly come up with the failed THP migration example;
-> and I think now perhaps 5.8's 5503fbf2b0b8 ("khugepaged: allow to
-> collapse PTE-mapped compound pages") introduced another way?
->
-> But I certainly need to reword that wagging finger pointing to your
-> commit: these are much more exceptional cases than I was thinking there.
->
-> I have this evening tried running swapping load on 5.10 and 6.6 and 6.11,
-> each with just a BUG_ON(!list_empty(the deferred list)) before resetting
-> memcg in mem_cgroup_swapout() - it would of course be much easier to hit
-> such a BUG_ON() than for the consequent wrong locking to be so unlucky
-> as to actually result in list corruption.
->
-> None of those BUG_ONs hit; though I was only running each for 1.5 hour,
-> and looking at vmstats at the end, see the were really not exercising
-> deferred split very much at all.  I'd been hoping for an immediate hit
-> (as on 6.12-rc) to confirm my doubt, but no.  That doesn't *prove* you're
-> right, but (excepting David's and my weird cases) I bet you are right.
-
-Maybe it just happened rarely and was hard to hit. But still
-theoretically possible. Your fix is more reliable.
-
->
-> > > diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> > > index 4b21a368b4e2..57f64b5d0004 100644
-> > > --- a/mm/page_alloc.c
-> > > +++ b/mm/page_alloc.c
-> > > @@ -2681,7 +2681,9 @@ void free_unref_folios(struct folio_batch *foli=
-os)
-> > >                 unsigned long pfn =3D folio_pfn(folio);
-> > >                 unsigned int order =3D folio_order(folio);
+> > > From: Hsiao Chien Sung <shawn.sung@mediatek.com>
 > > >
-> > > -               folio_undo_large_rmappable(folio);
-> > > +               if (mem_cgroup_disabled())
-> > > +                       folio_unqueue_deferred_split(folio);
+> > > Always add DRM_MODE_ROTATE_0 to rotation property to meet
+> > > IGT's (Intel GPU Tools) requirement.
+> > >
+> > > Reviewed-by: CK Hu <ck.hu@mediatek.com>
+> > > Reviewed-by: AngeloGioacchino Del Regno <
+> > angelogioacchino.delregno@collabora.com>
+> > > Fixes: 119f5173628a ("drm/mediatek: Add DRM Driver for Mediatek SoC
+> > MT8173.")
+> > > Signed-off-by: Hsiao Chien Sung <shawn.sung@mediatek.com>
+> > > ---
+> > >  drivers/gpu/drm/mediatek/mtk_ddp_comp.h |  6 +++++-
+> > >  drivers/gpu/drm/mediatek/mtk_disp_ovl.c | 17 +++++------------
+> > >  drivers/gpu/drm/mediatek/mtk_plane.c    |  2 +-
+> > >  3 files changed, 11 insertions(+), 14 deletions(-)
 > >
-> > This looks confusing. It looks all callsites of free_unref_folios()
-> > have folio_unqueue_deferred_split() and memcg uncharge called before
-> > it. If there is any problem, memcg uncharge should catch it. Did I
-> > miss something?
+> > FWIW, this patch got into ChromeOS's 5.15 branch via stable merge and
+> > apparently broke things. As a short term fix we've reverted it there:
+> >
+> > https://crrev.com/c/5960799
 >
-> I don't understand what you're suggesting there.  But David remarked
-> on it too, so it seems that I do need at least to add some comment.
+> Thank you for reporting this issue. We are currently investigating the
+> bug.
 >
-> I'd better re-examine the memcg/non-memcg forking paths again: but by
-> strange coincidence (or suggestion?), I'm suddenly now too tired here,
-> precisely where David stopped too.  I'll have to come back to this
-> tomorrow, sorry.
+> Since I am unable to access the Google issue tracker [1], could you
+> please provide more details about this bug? The message in the revert
+> commit mentions "hana/sycamore360" (MT8173) and it appears that there
+> is a rotation issue in tablet mode.
 
-I perhaps misunderstood this code. Just feel free to correct me if it
-doesn't make sense to you. But, yes, some comments are definitely
-welcome and helpful for understanding the code and review.
+Thanks for the followup. I've only been peripherally involved in the
+problem, but I can at least copy the relevant bits over.
 
+It looks as if the problem is somehow only showing up when running
+Android apps on those devices, so whatever the problem is it's subtle.
+The report says that the apps work OK when the device is in tablet
+mode and in one rotation but the problem shows up when rotated 90
+degrees. The report says that "Screen content appears inverted". To me
+it also sounds _possible_ that the problem is somewhere in our
+userspace.
+
+I think Hsin-Yi and Ross are continuing to dig a bit more. Maybe once
+they've dug they can add any details they find or can loop in others
+as it makes sense?
+
+
+> > ...apparently the patch is fine on newer kernels so maybe there is a
+> > missing dependency? Hopefully someone on this list can dig into this
+> > and either post the revert to stable 5.15 kernels or suggest
+> > additional backports.
+> >
 >
-> Hugh
+> There are known issues [2] regarding forward compatibility. Could you
+> confirm whether this patch is unable to resolve the mentioned problem?
+> Thanks.
+>
+> [1] https://issuetracker.google.com/issues/369688659
+> [2]
+> https://patchwork.kernel.org/project/linux-mediatek/list/?series=3D896964
+
+The patches in [2] look related to alpha blending but I think they are
+seeing issues related to rotation. ...so I'm going to assume it's
+different? I don't have this hardware in front of me, so I'm just
+going by the report.
+
+-Doug
 
