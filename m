@@ -1,167 +1,426 @@
-Return-Path: <linux-kernel+bounces-381084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0AC19AFA22
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 08:37:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D2A19AFA26
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 08:37:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4BA81C20F52
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 06:37:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E7649B211E5
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 06:37:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A00A1B0F14;
-	Fri, 25 Oct 2024 06:37:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64A021ACE12;
+	Fri, 25 Oct 2024 06:37:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GYs7q0Xf"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SY9tyVTz"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D52131A4F2F
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 06:36:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 123231AF0C3
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 06:37:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729838222; cv=none; b=ostB4zLZIvPsbUZwVHTVsg6dKEu9TE3o0uh5pd9W1+4uXgmSqDd1LMK42Xh6uLHitkVn0WV7yFP/WBmESDbIw/uqcKzJb4GXsHIGPUsM/FWuYo2e4+dMn5c4nNVI5d/bBhfEksgsP0x2ZGIlybByudd877cTHTqAx54Bp/u17NQ=
+	t=1729838253; cv=none; b=emYWh3v7Uj0rDPLLo0wjUWKjFIBnEdZMVM7ZEKbSydTV4SRAjpzTHLOVr6QuJgnRyQw7OcO2sSlxxBxaJK3ZiH+yyJLUBIuiDRMn5KZ/jHRwVe+1YCPn5FXSqf7H5JjiDMYeoT9dZ/XARMSDCJn/9RpGsZYY7oYFH3hfVQkQNBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729838222; c=relaxed/simple;
-	bh=76iF+HoeaObIOvzYVxcE5SrRSGI44xQ5VLVhbj7HBHw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oNmshJcMANpdwr37A9PqYF7ZsacGUTq1khDuysvouZQOBRb5YDeYRRvd7sxxsfoIke32wstuoLsnrywE5AqE+E0IzAw5o9lTRMCpDcvY0siffnscQ/gE7mLGb7pX8c0Um0lC6sHB7f9Ht6Iks8Gu+MxPJ57t+q58v3XqEFup+l8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GYs7q0Xf; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-539eb97f26aso1730203e87.2
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 23:36:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729838217; x=1730443017; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Db9W0DcUi/dDjwgp0S1+zwbk/KalyyaD0ylTsRWE1NQ=;
-        b=GYs7q0XfOvlwoMF2SSTCedPhsAh7B7f9WmfNIzEBNIfbaxwQysPvEIo+uAvfDNREJZ
-         TqF9NMvUuH7870whJdZ4kcIMipDYedq8cOJYlhclHzaf+5tCb7RR+eYIyE41Q1a5gGDC
-         AvgDCYwlkhd2gjcVGRJhGF4rlq63LBT4qx/yjbBRSmLedTVua6qTqgKRGZA7mqLFeSJl
-         /NzaGK2Kw2eOs8xygTqcsyWA8/XJwP6/CrfXGlDkJBkRxaIuLrxTHn/iyBJJuKQTQV6d
-         xLCGJerYbznOao6iPX8eq23hub15ckbvAa9kSkBzShWq7NEmK64FXnjYqZo4HxtmEP8R
-         rIyQ==
+	s=arc-20240116; t=1729838253; c=relaxed/simple;
+	bh=TbRrNFlRcoAEnxlG27xrooJIVjb4CoZ1xI6UgXu0AXY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IMhA7teWOoeh/o0cBokpL3wBcu87q4StMf0xnVnucxIt1I7jGB2sQZ2llHt53dpcjQ3QnudHpVfBTkfIqFdKdyeDDpe2J623bnIs2gAELmGVTNNXITwnZML4nUBFVz44GcPi1bUVwOsIRAQbL4qY8KdbiuOjlqRa/St7SxY0k0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SY9tyVTz; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729838249;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+bDF2PtA8nEwp1BLJ5T0XsLmvVmBVPXORykZ4wJpoak=;
+	b=SY9tyVTz2BVeTxiaKR2a52kf1iUdC+yhAKyvh4bTB4dqkEq/igaVP17+s0gse7Z1O5J0Sg
+	ppXMqPjf8jYc9953WyoyCOcXu5eeAwdyrv6aifJDD0NuKKoqmZ3K6pZW5gr1tuG3albQco
+	58bzM4B83W4JS5mVXtr7ioTCAexFVyY=
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
+ [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-52-7t01VKRKM6imm3oo-FHKQQ-1; Fri, 25 Oct 2024 02:37:27 -0400
+X-MC-Unique: 7t01VKRKM6imm3oo-FHKQQ-1
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-2e3ce03a701so1795721a91.0
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 23:37:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729838217; x=1730443017;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Db9W0DcUi/dDjwgp0S1+zwbk/KalyyaD0ylTsRWE1NQ=;
-        b=noFzZzTBE/99tqAolYRSgRSuY1WIK9NmBm2XF7e67N2/E3I0emB5oHTzgcQ37bv5Mi
-         pQFd204Z/Gc/hMWBSaFuIzmP1ZUBaSJAw5JKHlQuNZp8IC5sUjXtlvz/6xVZguaT8Qsr
-         h1hHtwX1a2ScileXpOHRfPyqEfvv3eafHA3OKA60gF64zKtGr5NUwZFQd7CHeqZ+jaZd
-         CGqSaRmFo3nHnq4xj+zxSQdo4kUvmBT4wVGmKtYgwuRCfDA3c3DFG0KU6zFQNNET6e6n
-         PFQZKgWak/Unnur+++rnnb9MV30xKx1lqfomwboVuPv3Mq0kwAK4ouoCoPkoM/JUJWTH
-         q9GA==
-X-Forwarded-Encrypted: i=1; AJvYcCXssMXeErBaOJeDFLWnfk1R8FhhQbMesx9xAyz+xANyHG37AT/CYvpjgJ+i2OfnsQ3JgtBriAWZDDRT/oM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywi7nvFqokwKJosC4pJ/lPc5GHq4DXQFyaNzeqDgX3zlHTxO576
-	E4N5f7yGkOgs8JSkWzRCVJqXCNyZP/rih6Q5tLbrdCBOe8VYicOOdVIJABx7R4o=
-X-Google-Smtp-Source: AGHT+IHWV57T+/9EhAWqxTiykSOfZ5lc9WHgI9sMVd6VKkCShvL2exL1I+UVy6hyP0AKb8v0iecgSw==
-X-Received: by 2002:a05:6512:3e0d:b0:52e:9fe0:bee4 with SMTP id 2adb3069b0e04-53b1a2fe533mr5111135e87.9.1729838216924;
-        Thu, 24 Oct 2024 23:36:56 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53b2e10a53csm72820e87.55.2024.10.24.23.36.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Oct 2024 23:36:54 -0700 (PDT)
-Date: Fri, 25 Oct 2024 09:36:51 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Stephen Boyd <swboyd@chromium.org>
-Cc: chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	patches@lists.linux.dev, devicetree@vger.kernel.org, 
-	Douglas Anderson <dianders@chromium.org>, Pin-yen Lin <treapking@chromium.org>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Benson Leung <bleung@chromium.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Daniel Vetter <daniel@ffwll.ch>, 
-	David Airlie <airlied@gmail.com>, dri-devel@lists.freedesktop.org, 
-	Guenter Roeck <groeck@chromium.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Lee Jones <lee@kernel.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Prashant Malani <pmalani@chromium.org>, 
-	Robert Foss <rfoss@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Tzung-Bi Shih <tzungbi@kernel.org>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Daniel Scally <djrscally@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Ivan Orlov <ivan.orlov0322@gmail.com>, 
-	linux-acpi@vger.kernel.org, linux-usb@vger.kernel.org, 
-	Mika Westerberg <mika.westerberg@linux.intel.com>, "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v4 13/18] dt-bindings: usb-switch: Extend for DisplayPort
- altmode
-Message-ID: <yatu2snt2w7lrveftlfbkw6yfvso3jbsma5v6jij4rn7v37hjt@ww42wer6bytj>
-References: <20240901040658.157425-1-swboyd@chromium.org>
- <20240901040658.157425-14-swboyd@chromium.org>
- <27acewh6h2xcwp63z5o3tgrjmimf4d3mftpnmkvhdhv273zgsp@i6i5ke4btdqx>
- <CAE-0n53S2dFz74_rgx22_1i_bbEC6kj1SL5LAEq_F2wrdCgBNg@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1729838246; x=1730443046;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+bDF2PtA8nEwp1BLJ5T0XsLmvVmBVPXORykZ4wJpoak=;
+        b=PDXxENcn4cvRI7YY566WqRuiLlVKVVDXAIgbM4c8D2/AwojKL8sHNbvOQLA0749NPB
+         5F2gBa3gRt35T39oQ4VKHbrhw4K0s0BE+gMYW2Vuy+h6A+fcx39IS0G8heAUUWGFrYLL
+         n6kwlHISRNPvww/ib+Gs8Z7IkPzaIYB7alnY3yza4eIl60y3MDFvvkkF27FJKUAliBGg
+         Uu4gy8WOWeugFkhMy64FFaQh2G/+Y+ktGj55ivB2yCKGBGeiG0rw//xHisiAzo3cdBEs
+         SoqJIpbf3lCkZZQfLB1/AYyOoXm6ITqu7vIUJL+OZS/odbW+O5QfZ+/6oYtYGwAhTxsi
+         wCjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWKWICFDoWr8JVzVD6Pt50e2YnfjKEcwVkQQDy8ElHv9ZwniDgd5NtwwCdXZ8DSgbsrMdv6eWSklpjooYo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDBOc7Q4wzw1wP04H/1hq22oT7vjkg3YTtS8S4828kdmn61KrJ
+	vXmJ9r0PF6NsGLSVFcwY77FOAWtI/ZTZKpanlYQ0Z64x/eyRIfqziN5KIpWHmbi6d96BcZ51QcS
+	pzVvKAfNTiNMkJR8GQ4VXafa8Pzr/FkeIucPzloc1pcSJLSUgxKcy89bKitg+iQ==
+X-Received: by 2002:a17:90b:274c:b0:2e2:b922:48a with SMTP id 98e67ed59e1d1-2e76b5fd63dmr9190809a91.18.1729838245867;
+        Thu, 24 Oct 2024 23:37:25 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG+u2nP5jEKVj215KpGw6rOcs0Eagy/ksL64B+QesnMTfSL8FQ2Ri3aw4o0HE9/qEPVorhCqw==
+X-Received: by 2002:a17:90b:274c:b0:2e2:b922:48a with SMTP id 98e67ed59e1d1-2e76b5fd63dmr9190789a91.18.1729838245450;
+        Thu, 24 Oct 2024 23:37:25 -0700 (PDT)
+Received: from [192.168.68.55] ([180.233.125.129])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e7867fd63csm2102774a91.1.2024.10.24.23.37.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 24 Oct 2024 23:37:24 -0700 (PDT)
+Message-ID: <c5f65e60-efc1-49c5-b421-55f2be5e9449@redhat.com>
+Date: Fri, 25 Oct 2024 16:37:15 +1000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAE-0n53S2dFz74_rgx22_1i_bbEC6kj1SL5LAEq_F2wrdCgBNg@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 05/43] arm64: RME: Add SMC definitions for calling the
+ RMM
+To: Steven Price <steven.price@arm.com>, kvm@vger.kernel.org,
+ kvmarm@lists.linux.dev
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
+ Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
+ Oliver Upton <oliver.upton@linux.dev>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
+ <yuzenghui@huawei.com>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Joey Gouly <joey.gouly@arm.com>,
+ Alexandru Elisei <alexandru.elisei@arm.com>,
+ Christoffer Dall <christoffer.dall@arm.com>, Fuad Tabba <tabba@google.com>,
+ linux-coco@lists.linux.dev,
+ Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
+ Shanker Donthineni <sdonthineni@nvidia.com>, Alper Gun
+ <alpergun@google.com>, "Aneesh Kumar K . V" <aneesh.kumar@kernel.org>
+References: <20241004152804.72508-1-steven.price@arm.com>
+ <20241004152804.72508-6-steven.price@arm.com>
+Content-Language: en-US
+From: Gavin Shan <gshan@redhat.com>
+In-Reply-To: <20241004152804.72508-6-steven.price@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 10, 2024 at 06:43:35PM -0400, Stephen Boyd wrote:
-> Quoting Dmitry Baryshkov (2024-09-19 03:40:19)
-> > On Sat, Aug 31, 2024 at 09:06:51PM GMT, Stephen Boyd wrote:
-> > > diff --git a/Documentation/devicetree/bindings/usb/usb-switch.yaml b/Documentation/devicetree/bindings/usb/usb-switch.yaml
-> > > index f5dc7e23b134..816f295f322f 100644
-> > > --- a/Documentation/devicetree/bindings/usb/usb-switch.yaml
-> > > +++ b/Documentation/devicetree/bindings/usb/usb-switch.yaml
-> > > @@ -52,6 +52,14 @@ properties:
-> > >            endpoint:
-> > >              $ref: '#/$defs/usbc-in-endpoint'
-> > >
-> > > +      port@2:
-> > > +        $ref: /schemas/graph.yaml#/$defs/port-base
-> > > +        unevaluatedProperties: false
-> > > +
-> > > +        properties:
-> > > +          endpoint:
-> > > +            $ref: '#/$defs/dp-endpoint'
-> >
-> > Is it a separate port or is it an endpoint of the same upstream-facing
-> > (non-connector-facing) SS port?
+On 10/5/24 1:27 AM, Steven Price wrote:
+> The RMM (Realm Management Monitor) provides functionality that can be
+> accessed by SMC calls from the host.
 > 
-> I don't quite follow this comment. This is an input DP endpoint/port.
-
-This is the question: is this a separate port or just an endpoint on the
-port?
-
+> The SMC definitions are based on DEN0137[1] version 1.0-rel0
 > 
-> >
-> > > +
-> > >  oneOf:
-> > >    - required:
-> > >        - port
-> > > @@ -65,6 +73,19 @@ $defs:
-> > >      $ref: /schemas/graph.yaml#/$defs/endpoint-base
-> > >      description: Super Speed (SS) output endpoint to a type-c connector
-> > >      unevaluatedProperties: false
-> > > +    properties:
-> > > +      data-lanes:
-> > > +        $ref: /schemas/types.yaml#/definitions/uint32-array
-> > > +        description: |
-> > > +          An array of physical USB Type-C data lane indexes.
-> > > +          - 0 is SSRX1 lane
-> > > +          - 1 is SSTX1 lane
-> > > +          - 2 is SSTX2 lane
-> > > +          - 3 is SSRX2 lane
-> > > +        minItems: 4
-> > > +        maxItems: 4
-> > > +        items:
-> > > +          maximum: 3
-> >
-> > What is the usecase to delare less than 4 lanes going to the USB-C
-> > connector?
+> [1] https://developer.arm.com/documentation/den0137/1-0rel0/
 > 
-> I'm not aware of any usecase. The 'maximum: 3' is the max value in the
-> cell, i.e. 0, 1, 2, or 3.
+> Signed-off-by: Steven Price <steven.price@arm.com>
+> ---
+> Changes since v4:
+>   * Update to point to final released RMM spec.
+>   * Minor rearrangements.
+> Changes since v3:
+>   * Update to match RMM spec v1.0-rel0-rc1.
+> Changes since v2:
+>   * Fix specification link.
+>   * Rename rec_entry->rec_enter to match spec.
+>   * Fix size of pmu_ovf_status to match spec.
+> ---
+>   arch/arm64/include/asm/rmi_smc.h | 255 +++++++++++++++++++++++++++++++
+>   1 file changed, 255 insertions(+)
+>   create mode 100644 arch/arm64/include/asm/rmi_smc.h
+> 
+> diff --git a/arch/arm64/include/asm/rmi_smc.h b/arch/arm64/include/asm/rmi_smc.h
+> new file mode 100644
+> index 000000000000..0fde2e06d275
+> --- /dev/null
+> +++ b/arch/arm64/include/asm/rmi_smc.h
+> @@ -0,0 +1,255 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Copyright (C) 2023-2024 ARM Ltd.
+> + *
+> + * The values and structures in this file are from the Realm Management Monitor
+> + * specification (DEN0137) version 1.0-rel0:
+> + * https://developer.arm.com/documentation/den0137/1-0rel0/
+> + */
+> +
+> +#ifndef __ASM_RME_SMC_H
+> +#define __ASM_RME_SMC_H
+> +
+> +#include <linux/arm-smccc.h>
+> +
+> +#define SMC_RxI_CALL(func)				\
+> +	ARM_SMCCC_CALL_VAL(ARM_SMCCC_FAST_CALL,		\
+> +			   ARM_SMCCC_SMC_64,		\
+> +			   ARM_SMCCC_OWNER_STANDARD,	\
+> +			   (func))
+> +
 
--- 
-With best wishes
-Dmitry
+I guess the 'x' of 'RxI' here can be 'M' or 'S'. We already had similar macro
+(SMC_RSI_FID) in rsi_smc.h, so 'RMI' sounds more appropriate to me since this
+macro is only used to define those RMI function calls. SMC_RMI_FID is the name
+consistent to SMC_RSI_FID in rsi_smc.h.
+
+> +#define SMC_RMI_DATA_CREATE		SMC_RxI_CALL(0x0153)
+> +#define SMC_RMI_DATA_CREATE_UNKNOWN	SMC_RxI_CALL(0x0154)
+> +#define SMC_RMI_DATA_DESTROY		SMC_RxI_CALL(0x0155)
+> +#define SMC_RMI_FEATURES		SMC_RxI_CALL(0x0165)
+> +#define SMC_RMI_GRANULE_DELEGATE	SMC_RxI_CALL(0x0151)
+> +#define SMC_RMI_GRANULE_UNDELEGATE	SMC_RxI_CALL(0x0152)
+> +#define SMC_RMI_PSCI_COMPLETE		SMC_RxI_CALL(0x0164)
+> +#define SMC_RMI_REALM_ACTIVATE		SMC_RxI_CALL(0x0157)
+> +#define SMC_RMI_REALM_CREATE		SMC_RxI_CALL(0x0158)
+> +#define SMC_RMI_REALM_DESTROY		SMC_RxI_CALL(0x0159)
+> +#define SMC_RMI_REC_AUX_COUNT		SMC_RxI_CALL(0x0167)
+> +#define SMC_RMI_REC_CREATE		SMC_RxI_CALL(0x015a)
+> +#define SMC_RMI_REC_DESTROY		SMC_RxI_CALL(0x015b)
+> +#define SMC_RMI_REC_ENTER		SMC_RxI_CALL(0x015c)
+> +#define SMC_RMI_RTT_CREATE		SMC_RxI_CALL(0x015d)
+> +#define SMC_RMI_RTT_DESTROY		SMC_RxI_CALL(0x015e)
+> +#define SMC_RMI_RTT_FOLD		SMC_RxI_CALL(0x0166)
+> +#define SMC_RMI_RTT_INIT_RIPAS		SMC_RxI_CALL(0x0168)
+> +#define SMC_RMI_RTT_MAP_UNPROTECTED	SMC_RxI_CALL(0x015f)
+> +#define SMC_RMI_RTT_READ_ENTRY		SMC_RxI_CALL(0x0161)
+> +#define SMC_RMI_RTT_SET_RIPAS		SMC_RxI_CALL(0x0169)
+> +#define SMC_RMI_RTT_UNMAP_UNPROTECTED	SMC_RxI_CALL(0x0162)
+> +#define SMC_RMI_VERSION			SMC_RxI_CALL(0x0150)
+> +
+
+Similar to what we had in rsi_smc.h, it may be good idea to have those definitions
+in the ascending order of the function ID (number). It will help readers to search
+based on the function ID (number) if you agree.
+
+> +#define RMI_ABI_MAJOR_VERSION	1
+> +#define RMI_ABI_MINOR_VERSION	0
+> +
+> +#define RMI_ABI_VERSION_GET_MAJOR(version) ((version) >> 16)
+> +#define RMI_ABI_VERSION_GET_MINOR(version) ((version) & 0xFFFF)
+> +#define RMI_ABI_VERSION(major, minor)      (((major) << 16) | (minor))
+> +
+> +#define RMI_UNASSIGNED			0
+> +#define RMI_ASSIGNED			1
+> +#define RMI_TABLE			2
+> +
+
+Those RTT entry states are associated with struct rtt_entry::state only. So the best
+place to have those definiation would be rmi_cmds.h where 'struct rtt_entry' is
+declared. Besides, there is a enumeration RmiRttEntryState for them as stated in
+the specifiction (B4.4.24).
+
+> +#define RMI_RETURN_STATUS(ret)		((ret) & 0xFF)
+> +#define RMI_RETURN_INDEX(ret)		(((ret) >> 8) & 0xFF)
+> +
+> +#define RMI_SUCCESS		0
+> +#define RMI_ERROR_INPUT		1
+> +#define RMI_ERROR_REALM		2
+> +#define RMI_ERROR_REC		3
+> +#define RMI_ERROR_RTT		4
+> +
+> +enum rmi_ripas {
+> +	RMI_EMPTY = 0,
+> +	RMI_RAM = 1,
+> +	RMI_DESTROYED = 2,
+> +};
+> +
+> +#define RMI_NO_MEASURE_CONTENT	0
+> +#define RMI_MEASURE_CONTENT	1
+> +
+> +#define RMI_FEATURE_REGISTER_0_S2SZ		GENMASK(7, 0)
+> +#define RMI_FEATURE_REGISTER_0_LPA2		BIT(8)
+> +#define RMI_FEATURE_REGISTER_0_SVE_EN		BIT(9)
+> +#define RMI_FEATURE_REGISTER_0_SVE_VL		GENMASK(13, 10)
+> +#define RMI_FEATURE_REGISTER_0_NUM_BPS		GENMASK(19, 14)
+> +#define RMI_FEATURE_REGISTER_0_NUM_WPS		GENMASK(25, 20)
+> +#define RMI_FEATURE_REGISTER_0_PMU_EN		BIT(26)
+> +#define RMI_FEATURE_REGISTER_0_PMU_NUM_CTRS	GENMASK(31, 27)
+> +#define RMI_FEATURE_REGISTER_0_HASH_SHA_256	BIT(32)
+> +#define RMI_FEATURE_REGISTER_0_HASH_SHA_512	BIT(33)
+> +#define RMI_FEATURE_REGISTER_0_GICV3_NUM_LRS	GENMASK(37, 34)
+> +#define RMI_FEATURE_REGISTER_0_MAX_RECS_ORDER	GENMASK(41, 38)
+> +
+
+The 'Reserved' field can be defined as well so that the definitions are complete
+if you agree.
+
+    #define RMI_FEATGURE_REGISTER_0_Reserved	GENMASK(63, 42)
+
+> +#define RMI_REALM_PARAM_FLAG_LPA2		BIT(0)
+> +#define RMI_REALM_PARAM_FLAG_SVE		BIT(1)
+> +#define RMI_REALM_PARAM_FLAG_PMU		BIT(2)
+> +
+> +/*
+> + * Note many of these fields are smaller than u64 but all fields have u64
+> + * alignment, so use u64 to ensure correct alignment.
+> + */
+> +struct realm_params {
+> +	union { /* 0x0 */
+> +		struct {
+> +			u64 flags;
+> +			u64 s2sz;
+> +			u64 sve_vl;
+> +			u64 num_bps;
+> +			u64 num_wps;
+> +			u64 pmu_num_ctrs;
+> +			u64 hash_algo;
+> +		};
+> +		u8 padding1[0x400];
+> +	};
+> +	union { /* 0x400 */
+> +		u8 rpv[64];
+> +		u8 padding2[0x400];
+> +	};
+> +	union { /* 0x800 */
+> +		struct {
+> +			u64 vmid;
+> +			u64 rtt_base;
+> +			s64 rtt_level_start;
+> +			u64 rtt_num_start;
+> +		};
+> +		u8 padding3[0x800];
+> +	};
+> +};
+> +
+> +/*
+> + * The number of GPRs (starting from X0) that are
+> + * configured by the host when a REC is created.
+> + */
+> +#define REC_CREATE_NR_GPRS		8
+> +
+> +#define REC_PARAMS_FLAG_RUNNABLE	BIT_ULL(0)
+> +
+> +#define REC_PARAMS_AUX_GRANULES		16
+> +
+> +struct rec_params {
+> +	union { /* 0x0 */
+> +		u64 flags;
+> +		u8 padding1[0x100];
+> +	};
+> +	union { /* 0x100 */
+> +		u64 mpidr;
+> +		u8 padding2[0x100];
+> +	};
+> +	union { /* 0x200 */
+> +		u64 pc;
+> +		u8 padding3[0x100];
+> +	};
+> +	union { /* 0x300 */
+> +		u64 gprs[REC_CREATE_NR_GPRS];
+> +		u8 padding4[0x500];
+> +	};
+> +	union { /* 0x800 */
+> +		struct {
+> +			u64 num_rec_aux;
+> +			u64 aux[REC_PARAMS_AUX_GRANULES];
+> +		};
+> +		u8 padding5[0x800];
+> +	};
+> +};
+> +
+> +#define REC_ENTER_EMULATED_MMIO		BIT(0)
+> +#define REC_ENTER_INJECT_SEA		BIT(1)
+> +#define REC_ENTER_TRAP_WFI		BIT(2)
+> +#define REC_ENTER_TRAP_WFE		BIT(3)
+> +#define REC_ENTER_RIPAS_RESPONSE	BIT(4)
+> +
+> +#define REC_RUN_GPRS			31
+> +#define REC_GIC_NUM_LRS			16
+> +
+> +struct rec_enter {
+> +	union { /* 0x000 */
+> +		u64 flags;
+> +		u8 padding0[0x200];
+> +	};
+> +	union { /* 0x200 */
+> +		u64 gprs[REC_RUN_GPRS];
+> +		u8 padding2[0x100];
+> +	};
+> +	union { /* 0x300 */
+> +		struct {
+> +			u64 gicv3_hcr;
+> +			u64 gicv3_lrs[REC_GIC_NUM_LRS];
+> +		};
+> +		u8 padding3[0x100];
+> +	};
+> +	u8 padding4[0x400];
+> +};
+> +
+> +#define RMI_EXIT_SYNC			0x00
+> +#define RMI_EXIT_IRQ			0x01
+> +#define RMI_EXIT_FIQ			0x02
+> +#define RMI_EXIT_PSCI			0x03
+> +#define RMI_EXIT_RIPAS_CHANGE		0x04
+> +#define RMI_EXIT_HOST_CALL		0x05
+> +#define RMI_EXIT_SERROR			0x06
+> +
+> +struct rec_exit {
+> +	union { /* 0x000 */
+> +		u8 exit_reason;
+> +		u8 padding0[0x100];
+> +	};
+> +	union { /* 0x100 */
+> +		struct {
+> +			u64 esr;
+> +			u64 far;
+> +			u64 hpfar;
+> +		};
+> +		u8 padding1[0x100];
+> +	};
+> +	union { /* 0x200 */
+> +		u64 gprs[REC_RUN_GPRS];
+> +		u8 padding2[0x100];
+> +	};
+> +	union { /* 0x300 */
+> +		struct {
+> +			u64 gicv3_hcr;
+> +			u64 gicv3_lrs[REC_GIC_NUM_LRS];
+> +			u64 gicv3_misr;
+> +			u64 gicv3_vmcr;
+> +		};
+> +		u8 padding3[0x100];
+> +	};
+> +	union { /* 0x400 */
+> +		struct {
+> +			u64 cntp_ctl;
+> +			u64 cntp_cval;
+> +			u64 cntv_ctl;
+> +			u64 cntv_cval;
+> +		};
+> +		u8 padding4[0x100];
+> +	};
+> +	union { /* 0x500 */
+> +		struct {
+> +			u64 ripas_base;
+> +			u64 ripas_top;
+> +			u64 ripas_value;
+> +		};
+> +		u8 padding5[0x100];
+> +	};
+> +	union { /* 0x600 */
+> +		u16 imm;
+> +		u8 padding6[0x100];
+> +	};
+> +	union { /* 0x700 */
+> +		struct {
+> +			u8 pmu_ovf_status;
+> +		};
+> +		u8 padding7[0x100];
+> +	};
+> +};
+> +
+
+The names for the 'padding' field starts from 'padding1' instead of 'padding0'
+as we did for other structures.
+
+> +struct rec_run {
+> +	struct rec_enter enter;
+> +	struct rec_exit exit;
+> +};
+> +
+> +#endif
+
+#endif /* __ASM_RME_SMC_H */
+
+Thanks,
+Gavin
+
 
