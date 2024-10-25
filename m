@@ -1,186 +1,184 @@
-Return-Path: <linux-kernel+bounces-381812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13DDE9B04C5
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:57:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25FC29B04C6
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:57:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37A1B1C21541
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 13:57:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 864E8B24ACA
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 13:57:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88882206516;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A84E20651B;
 	Fri, 25 Oct 2024 13:56:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="jnK+725G"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2063.outbound.protection.outlook.com [40.107.244.63])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aZUSQdJf"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D17C51FB886;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 938BA1DFF5;
 	Fri, 25 Oct 2024 13:56:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.63
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729864585; cv=fail; b=G8x6OnBX2eTps6/kO9UitChjJyUuHQhLf5h2mGDDa6GE7jKka8FaOh00P/Sx12s5tZMjw2RqsLsPRblN6c/EkuPL+8jI2TorJut/HC5CAS5q7yCCBW7Qu19fPCmCazCIaF1D1VcwFcY5U9P8XwL9FTt4NsDTbqZdZuSU77+JUO8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729864585; cv=none; b=raoxfBdbiDeieiNnk9IZ9SuQ626XPaEzex0AlLk5Gn1dCwJCT+gnxPL2zoxt7MK7yCCJoQpnu7bi59vLi3mYBG7xxFDguTIt+ttyViFZySmt2R5KluGiBud0SGtEG9e06zx7rAoX9sz7vb3292rGSWSM5eJ7d1T2bzVrMqRrOPc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1729864585; c=relaxed/simple;
-	bh=geMda866BnS5Ue13GJ7eD5lQEFOAakoIIM7KYgqf1As=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=FdDxRD07dYEQOzJS2JkcpCkalfsLadMhG9HLJujrXFi3a0XLV0tR4L3EStHVQ/6qYk6xOxZKhkCXKhYfp0iIQMrz1KAhgtIDezCHoZzkl90592bGI5QcOdxicmPR1oaZuUb+jqfvrlWwG9yXsb6G9dTz1NoXMMK6BWkWsT/tLXM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=jnK+725G; arc=fail smtp.client-ip=40.107.244.63
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=DKl0JW6PXmhSl7vgJMx8gBVHGts4YIGXMg4Rct67xtvOEVw8JqDNurf4VdTysUp/tBv/Fc9CG0sy5x5NLycHOEepIPXAt4eUv/RBYusOHqw+mGN+Cs/QTcvM6bFfSLS/LpMkpeiO067WNpqprmoLGhvz8OT8bGSXb0imk38IfZJBZsL51fcSf3oZSykcJ2GzmdjexYdvilKkUaM48/Iaf20cGqpPEpmaTUVIgfzqjJksRZLTFn7g0ktco8cwrxCEhT+w6piMFlFaK0codsCwV0bykM94gSYnLNiSMK0Fngi/A9zKH5K8pb1QFG1edlYc6EPANBDHl6Su/E1rDaruVQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xQKAqtvl3HeRwcp5xQytBxV5ThNic30WnE7kginhiIE=;
- b=cfotV9Z4V/5YtAknFxjk75INkk6A49z6xl4LXZ6TtsW+Qa3Wppab40iq0uUontXDS6sY7JfYK7r9lI6H0pY6Iu//IXUsA1npqnQnqfhr4aPfMoYpHbnS1hWdVo4Jk75WLAFZdhETpt2SGug5cNXHv+B+hvw3nZplNe+ORW12RZ8annvRle3S6keicPc1SI2MyDiJd8NX2urR6XEDtI++KZC/Zi/qYSGO3zqSfdDrB429tKibismf41S/UdpJTh2UgRnmkUCCl0tdJTsPRtYJ0YBjIM6OplJSh+/on1Yb4KscZ+0thauv95qsNqThpBGghT32HjmMWYnpHRz8UxVcYg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xQKAqtvl3HeRwcp5xQytBxV5ThNic30WnE7kginhiIE=;
- b=jnK+725Gd66fJmtUXVors+hYXZgy+m3Ye9D03kNiUfj2fMiNZrMyo+CWDU9l23jffLK736ilJg9M2uDlb2saGOymuJq3GN5YiiQfLd9xYEFjDV+Q9EuC40oGblchmfLjr9nOGqE48Aa4vIu3kuf1gpx+3Ryr694yq6ZhKG5ea3E=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM4PR12MB6373.namprd12.prod.outlook.com (2603:10b6:8:a4::7) by
- DM4PR12MB6160.namprd12.prod.outlook.com (2603:10b6:8:a7::13) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8093.18; Fri, 25 Oct 2024 13:56:21 +0000
-Received: from DM4PR12MB6373.namprd12.prod.outlook.com
- ([fe80::12f7:eff:380b:589f]) by DM4PR12MB6373.namprd12.prod.outlook.com
- ([fe80::12f7:eff:380b:589f%5]) with mapi id 15.20.8093.018; Fri, 25 Oct 2024
- 13:56:20 +0000
-Date: Fri, 25 Oct 2024 09:56:16 -0400
-From: Yazen Ghannam <yazen.ghannam@amd.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Tony Luck <tony.luck@intel.com>, Borislav Petkov <bp@alien8.de>,
-	linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] RAS/AMD/FMPM: Remove some dead code
-Message-ID: <20241025135616.GA407109@yaz-khff2.amd.com>
-References: <6b914abf-b3ce-4baa-b4d7-f8da9a840a3f@stanley.mountain>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6b914abf-b3ce-4baa-b4d7-f8da9a840a3f@stanley.mountain>
-X-ClientProxiedBy: MN2PR11CA0027.namprd11.prod.outlook.com
- (2603:10b6:208:23b::32) To DM4PR12MB6373.namprd12.prod.outlook.com
- (2603:10b6:8:a4::7)
+	bh=zKEwOFq+EedN6EAwXtsg7YlRMhj47oRVAezZTHhLCuk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OoP9Me+kts13pSqz88mEXsvEjd0p3t72RPFE+A1qFnFGsiZASgQFMyHiM3XDA4LoieYGu6Q4ldEukqGziwOTJzpQtGU8fceSUqFBc/xCsQbFeu5DTq3YdVLfpWp4nEQIO9k/eIkxZn+WAs1Th5QE+4MO2guczbadqD49EwQkvgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aZUSQdJf; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a99f629a7aaso342476966b.1;
+        Fri, 25 Oct 2024 06:56:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729864582; x=1730469382; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ld/lzUpMzz/O/gUyxVTjcgsBVURqpGeoKpNyId9bOgY=;
+        b=aZUSQdJfvecwlvNnZKn+8d058XGqHjjjr/qtM0umdCo1SXIEnq/fIGmborA5ggjHLa
+         5XGUknVP6jCh5AwfsCbo9uuZyRSlD7q9VF2fs+f4S56XqYF1jrxWqSVvCsHnW9usTlD4
+         +fFDmeHZQpFy2A2KR7rCw324qywRvThk0Xb4Rsk+j/64PsiRPGr/IKln64OsytfQl1P3
+         eP87k7I3MwMT20SPwK24oRlWx8OTygFxioyctc3Kxa6Akc4mmOM7gnVrFqXomoiXunZK
+         xETKsfzgOBAgIiP5cWW2wvdCMby+ezwZxWWoAB+a4rdPt/EaPNcy+hpqv9hjrWg0Gplw
+         By4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729864582; x=1730469382;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ld/lzUpMzz/O/gUyxVTjcgsBVURqpGeoKpNyId9bOgY=;
+        b=nI2g0k+ddC+qTnxjIu+UBcDETLz+uqIwlIz66CHgDaq4otUmvVr+vUfAC97YscGYDi
+         xS8in2WtJnCz87ddAoI7qZ4FR09++oQGENpH/kFoDVVGiaTiag3TNcbP6M8yJBZ5rC/m
+         hyt1lm5DXb5Qe+loMzyAszZ0zIntJMe/dD1Xb9KIKNSRviApNKr8fMegujTBd3di/t1v
+         Hir0rgScywhvJQVVpeBWTLaYwxJpWeTZ0hZ3cHbjixF2x4FXN9TVDWZpbL+6x8XDSt+Z
+         fzYrdL090hCsuyRMKq+lpK8tsP9pvvvMox9RE5Q41q+HltUmko1X8z47xwfKvDGD9hUr
+         LCPg==
+X-Forwarded-Encrypted: i=1; AJvYcCUvhsiBYA6M2flYtgQtr9sP1cm1ENV0/U58MZYEtQhp8sF61sp1KJPZ7x2fcH679MIQgeoZGCxZpfIKRjaD@vger.kernel.org, AJvYcCXGKysrg1SjJD7y8UULS2ybBU4mfxdnzTcHGuDlCjeeT7LR1WHnzQ7DqcdnenpMOWS9WWw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTSEvSZ1Xfc+OJ3UtKgZtGTxKBLxUOP9r7rehNWGU97iyOvU75
+	0W0ZuN48KbvWjoxTj0w/ARv41eVO17IvpWydDYAClWfssBicoLrfoq7f8KaWzqw=
+X-Google-Smtp-Source: AGHT+IHHBPelfDRmV3ElN7dO5ltfgT7F82NL64uGZgXfpVrJ4bY6gR1Y7aYl4TnBcYL8RwxpvjixVA==
+X-Received: by 2002:a17:907:7ba8:b0:a99:f5d8:726 with SMTP id a640c23a62f3a-a9ad1a02091mr584361666b.23.1729864581671;
+        Fri, 25 Oct 2024 06:56:21 -0700 (PDT)
+Received: from andrea ([2a01:5a8:300:22d3:a281:3d89:19cb:ed96])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b1f029559sm73501266b.58.2024.10.25.06.56.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Oct 2024 06:56:21 -0700 (PDT)
+Date: Fri, 25 Oct 2024 16:56:17 +0300
+From: Andrea Parri <parri.andrea@gmail.com>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: puranjay@kernel.org, bpf@vger.kernel.org, lkmm@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: Some observations (results) on BPF acquire and release
+Message-ID: <ZxujgUwRWLCp6kxF@andrea>
+References: <Zxk2wNs4sxEIg-4d@andrea>
+ <13f60db0-b334-4638-a768-d828ecf7c8d0@paulmck-laptop>
+ <Zxor8xosL-XSxnwr@andrea>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB6373:EE_|DM4PR12MB6160:EE_
-X-MS-Office365-Filtering-Correlation-Id: d30b894f-0ee0-46de-d4e4-08dcf4fcce01
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?F4JzKHZHoTRK4gQDdt2owh1ztd1FTq8tLBGAi4rfVTJoeqTI3mRZHJh6SGMI?=
- =?us-ascii?Q?pxKCzKGBMIbUIJw5req1Rvs7Gxh19VmUJlYu3cVUrdkR5kdA4SmmecD1fCO4?=
- =?us-ascii?Q?tE0dpmGJlqP+/7OEJBbfAnK734GoLkaSX6fxlF8YBPPTFqoc+8pbuoeKhxby?=
- =?us-ascii?Q?1wJ7167JfbmQSNYvs0Rh68hNpzIvDGDuGlkgBeN+MfHxFH6JTqPp/jWzqw0X?=
- =?us-ascii?Q?RnHcosTIkQ7C9ZmgUGyHmA0U4ziuXZRlSyeIJp5aSaK62qHkqnjqEFS//htP?=
- =?us-ascii?Q?KUOec1jzTNcIG7ZefElhb7t+9OVMc7DKpqK4jaYEilFgVkKKM9X5sVOO1dkV?=
- =?us-ascii?Q?uPm4GDOrk9jHQkx+OF79IMzwj+O0UCrbLRvHxpQdxZZsOtLxu65Q9jR7kT6x?=
- =?us-ascii?Q?ucwY4SeqEZlhNBXc+DLCdKXvl7/Pwtf8yr/Au3XWVuJZ5h2+7XasuCo4n5EG?=
- =?us-ascii?Q?ZolwlB+n5ppaEupn3YPiMQZC9h+eRINbIr2Y4DVnm5feSIqDCCancahEBeY1?=
- =?us-ascii?Q?uF/XsTcHQHbVuIL6F14rmKmzeZ1p6PYsIaZU5lHwR2KnqSQUKGoXR+JCFsoP?=
- =?us-ascii?Q?SM7eGwSFy90Cfr7BCQdoo98gKLqkL/slosxJ9aB20ikPO8/Q+qToof0OzSWZ?=
- =?us-ascii?Q?I/x6VoPg9NGLZcbWe0J3k65koSHHS0HOUjURMJIhJ8a2k4mJbf6/wGR4OxHC?=
- =?us-ascii?Q?7a2nrQPONZM7sNpA60JPPMZm3DWVO9yBu0m3p0npxKKqP04Q6GtGer+QFPxT?=
- =?us-ascii?Q?bdJ3IGAsyGDu551PCMYnK6a+6xq63Duk/vNkLTWg2uA9nRvfU48XMv+GDWcI?=
- =?us-ascii?Q?d1q0aMqykE3NGhrn8qnKBgbrYd7HMrbl6djBgS3gMDkrRD8qFf/MYdijbL2Y?=
- =?us-ascii?Q?hpUjyA0k79hR/veLHt0q4iz4YRJpUlyJeqykpP28QMjGAOdKvPgEaass5lN2?=
- =?us-ascii?Q?kkww3DGbD1INtCm+SaDkoOF0R2VvxS9BKehkvg0bJG66ePwFAFRcSm8//kiX?=
- =?us-ascii?Q?BynqpZpEJgU2XC65/XrZkdqeU8cnTYpDG0Ye2sBwBLB9gfJEhhM1TYFTF1zu?=
- =?us-ascii?Q?W49NfQDYx/zkARZSJT1IVSnHPrWrzcraXBBDma6binJLd8mCDO7s+aDNNU2A?=
- =?us-ascii?Q?OVtr9bdQfA2cVz4EX/u4o454UUhPKBLlmPmuaEUzpyNSSWZy2smHHvgT2C3x?=
- =?us-ascii?Q?gtEFi2EKyP3eFFqEY2qafu88SHCtmvyOOtS13njZUYvJarSpBmsOCnObmJ+l?=
- =?us-ascii?Q?x3dmfcFk5RO6Pl9/THyV+OVjnYhVw9g1t7nVOPvg4VOYxLqJfYBcpQ/1iFFZ?=
- =?us-ascii?Q?VVJ5ufEAzvWmuHxIMiHaDtlg?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6373.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?e1guw+0QVcT63xUdKUc1Ci8p7cqKbmksZncng45XfvRolSqCTFqwsBbPORWs?=
- =?us-ascii?Q?vZIknd07EuanlBkY4EBEE+qyNCv7ckwRyzsseGjx9xxUQ/N5pgZO+taGQSKA?=
- =?us-ascii?Q?jlwbC9ZVgC25kiBd++3CYlW5Lu6wJ3Ta6Ghmym6s72+3qIo4IBcMqmFsmBfU?=
- =?us-ascii?Q?ii6bpCPpqaARmKTT0mT4OSAF0EHF/9laKRjyvozPWdlh57y4AzZ88tfPTLWK?=
- =?us-ascii?Q?Cwx1paSbdpbCdF+Ef1KXxkUOOxgKAX/PHbQouRzoN7tA926R58EdIRIY91OY?=
- =?us-ascii?Q?66s1utA/5cspSSU3RENGgRjbE7QAXe53nkmHcBKSzr20YM7Y6avYEQMqkeSl?=
- =?us-ascii?Q?G+37JCfBGz8nAdF9qLst/E3qcvN7xpPpSyRk7arwtRLHzMgfemwi0Q+D5zcy?=
- =?us-ascii?Q?JaT3oSBrHqx9Cu/B6D6PWRQFVQloO3x1diMcfuqI9qseklabAwlC3xtW+ZOi?=
- =?us-ascii?Q?YZL94n4FWgBVOO0qyEdFesGhgOgLs+S37w+FekDP3nWLQNVOkmglvGzPFvcr?=
- =?us-ascii?Q?3OB69mWMf1GiV4ycEMz31VZYj8UXiBHOgepFlytCqEAd4GUZqJdSKxb6GH4R?=
- =?us-ascii?Q?iRc0BVYLX1ofGcJjWCY/F2yWcyF92rgsJINbJ3km60jVkgA9rta3MpA198Z6?=
- =?us-ascii?Q?DOyp/TiLlJgUTRnpNqZnFOQbFqsDVjAGGydGX+52jL8jk1B2QiqF+1N39vTa?=
- =?us-ascii?Q?S4yHKA5rsDf1Kkm6jxaBQsu5TLACso2wCOspNXJt15MfWmULncg+AM+LQSdj?=
- =?us-ascii?Q?OHS2kGHBn0sQTCWb/1u4tjfB/Im0hZKDo60NBMX6TzBg+TtMB3wYR6tva/ZA?=
- =?us-ascii?Q?L9c0jrnwHnscefbtbGr0Gy+8bgQ+hsvkw/v/vxDZcsfX30FMhS4Q09veIqdh?=
- =?us-ascii?Q?YWMqHPVwN7ueG97XaJrolGeZY0dr9lgNsdqcE2uM17IqgGgsuhQyphRhfDOM?=
- =?us-ascii?Q?Abk4NTHkIlCwMsGSFK2T+ZscpM+g1K1+CqviErDbYy/YEs7JQkg9x/itYm+N?=
- =?us-ascii?Q?BRsexQhxH/3Dl3NKct9xbH/Oi3fzauRaR6AfWqKFDE104aLDPVh8PeNR0Pa2?=
- =?us-ascii?Q?4V3saH2RqEZpfpskaje0aBw011PmVfg4UbrPA+4R/U0I4nzWG8PnNvB2woCS?=
- =?us-ascii?Q?5QZpHlkinLKXvC9v6gftz/p7ddPenfhh5UMSotKmnfvPgEv+TG704AT7oWWZ?=
- =?us-ascii?Q?y4y2iYa/fBaQHvI342DLphmKrhgjFjzfYSJpGboJIB+/vtPaGQvqYWV32R3n?=
- =?us-ascii?Q?vutrTUO4/njgB4MlprVK0XhIjBGysvaL/N+17fEYR8EcMLN1TLSJUqPHjPTX?=
- =?us-ascii?Q?BeXG8Yb+sXD2bUXEfMgn+X4E9AFbdP+pb/ocKGvnD4UB6EBqewyINEpsHVF2?=
- =?us-ascii?Q?p9u9Bx8GtcZWaLS+9J/v6Vgney/9P9/OIFFhyvRdOfuToNnvQdNJPD1/ZZmd?=
- =?us-ascii?Q?9ww/Mz7OG7tw9OKiJ2HjWLsxAJWnpInxJEu/PfkCdvn2Lb94ZwxGClH2hAIT?=
- =?us-ascii?Q?hIrjKrSWbekC+L334juCbbwuaD6ehQbekD+2g7X/+XFojeNs7c4P3V4Hdl3A?=
- =?us-ascii?Q?csmn/5opvIbpOTTrZXc3GvZeU7Hvvui3xKKxDFJY?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d30b894f-0ee0-46de-d4e4-08dcf4fcce01
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6373.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Oct 2024 13:56:20.6819
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: zfzCYqvgWJQ9yJ+lBoEBOxhYG8TMWqqFZ3F0ZLlnXufjb/RVj92BQhiWQCXS5Lb9NQhUycWcLtk3f3csLi6/NA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6160
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zxor8xosL-XSxnwr@andrea>
 
-On Fri, Oct 25, 2024 at 10:08:34AM +0300, Dan Carpenter wrote:
-> Debugfs functions don't return NULL, they return error pointers.  Debugfs
-> functions are slightly unusual because they're not supposed to be checked
-> for errors in the normal case.  Delete these checks.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  drivers/ras/amd/fmpm.c | 5 -----
->  1 file changed, 5 deletions(-)
-> 
-> diff --git a/drivers/ras/amd/fmpm.c b/drivers/ras/amd/fmpm.c
-> index 90de737fbc90..3cde1fe17a7a 100644
-> --- a/drivers/ras/amd/fmpm.c
-> +++ b/drivers/ras/amd/fmpm.c
-> @@ -956,12 +956,7 @@ static void setup_debugfs(void)
->  		return;
->  
->  	fmpm_dfs_dir = debugfs_create_dir("fmpm", dfs);
-> -	if (!fmpm_dfs_dir)
-> -		return;
-> -
->  	fmpm_dfs_entries = debugfs_create_file("entries", 0400, fmpm_dfs_dir, NULL, &fmpm_fops);
-> -	if (!fmpm_dfs_entries)
-> -		debugfs_remove(fmpm_dfs_dir);
->  }
->  
->  static const struct x86_cpu_id fmpm_cpuids[] = {
-> -- 
+> But the subset of the LKMM which deals with "strong fences" and Acq &
+> Rel (limited to so called marked accesses) seems relatively contained
+> /simple:  its analysis could be useful, if not determining, in trying
+> to resolve the above issues.
 
-Seems like we had the same idea. :)
+Elaborating on the previous suggestion/comparison with the LKMM, the
+"subset" in question can take the following form (modulo my typos):
 
-https://lore.kernel.org/r/20241024155503.GA965@yaz-khff2.amd.com
+"LKMM with acquire/release, strong fences, and marked accesses only"
 
-Thanks,
-Yazen
+[...]
+
+let acq-po = [Acq] ; po ; [M]
+let po-rel = [M] ; po ; [Rel]
+let strong-fence = [M] ; fencerel(Mb) ; [M]
+let ppo = acq-po | po-rel | strong-fence
+
+let A-cumul(r) = rfe? ; r
+let cumul-fence = A-cumul(strong-fence | po-rel)
+let overwrite = co | fr
+let prop = (overwrite & ext)? ; cumul-fence* ; rfe?
+
+let hb = ppo | rfe | ((prop \ id) & int)
+acyclic hb as Hb
+
+let pb = prop ; strong-fence ; hb*
+acyclic pb as Pb
+
+
+For BPF, we'd want to replace acq-po, po-rel and strong-fence with
+load_acquire, store_release and po_amo_fetch respectively:  Unless
+I'm missing something, this should restore the intended behaviors
+for the R and Z6.3 tests discussed earlier.
+
+A couple of other remarks:
+
+- Notice how the above formalization is completely symmetrical wrt.
+  co <-> fr, IOW, co links are considered "on par with" fr links.
+  In particular, the following test is satisfiable in the above
+  formalization, as is the corresponding C test in the LKMM:
+
+BPF 2+2W+release+fence
+{
+ 0:r2=x; 0:r4=y;
+ 1:r2=y; 1:r4=x; 1:r6=l;
+}
+ P0                                 | P1                                         ;
+ r1 = 1                             | r1 = 1                                     ;
+ *(u32 *)(r2 + 0) = r1              | *(u32 *)(r2 + 0) = r1                      ;
+ r3 = 2                             | r5 = atomic_fetch_add((u32 *)(r6 + 0), r5) ;
+ store_release((u32 *)(r4 + 0), r3) | r3 = 2                                     ;
+                                    | store_release((u32 *)(r4 + 0), r3)         ;
+exists ([x]=1 /\ [y]=1)
+
+  (On an historical note, this wasn't always the case in the LKMM,
+  cf. e.g. [1], but be alerted that the formalization in [1] is
+  decisively more involved and less intuitive than today's / what
+  the LKMM community has converged to.  ;-) )
+
+- The above formalization merges the so called "Observation" axiom
+  in the "Happens-before" axiom.  In the LKMM, this followed the
+  removal of B-cumulativity for smp_wmb() and smp_store_release()
+  and a consequent "great simplification" of the hb relation: link
+  [2] can provide more details and some examples related to those
+  changes.  For completeness, here is the BPF analogue of test
+  "C-release-acquire-is-B-cumulative.litmus" from that article:
+
+BPF ISA2+release+acquire+acquire
+{
+ 0:r2=x; 0:r4=y;
+ 1:r2=y; 1:r4=z;
+ 2:r2=z; 2:r4=x;
+}
+ P0                                 | P1                                 | P2                                 ;
+ r1 = 1                             | r1 = load_acquire((u32 *)(r2 + 0)) | r1 = load_acquire((u32 *)(r2 + 0)) ;
+ *(u32 *)(r2 + 0) = r1              | r3 = 1                             | r3 = *(u32 *)(r4 + 0)              ;
+ r3 = 1                             | *(u32 *)(r4 + 0) = r3              |                                    ;
+ store_release((u32 *)(r4 + 0), r3) |                                    |                                    ;
+exists (1:r1=1 /\ 2:r1=1 /\ 2:r3=0)
+
+  The formalization sketched above allows this behavior.  Notice,
+  however, that the behavior is forbidden after "completion" of
+  the release/acquire chain, i.e. by making the store from P1 a
+  store-release (a property also known as A-cumulativy of the
+  release operation).
+
+
+I guess the next question (once clarified the intentions for the R
+and Z6.3 tests seen earlier) is "Does BPF really care about 2+2W
+and B-cumulativity for store-release?"; I mentioned some tradeoff,
+but in the end this is a call for the BPF community.
+
+  Andrea
+
+[1] https://mirrors.edge.kernel.org/pub/linux/kernel/people/paulmck/LWNLinuxMM/StrongModel.html
+[2] https://mirrors.edge.kernel.org/pub/linux/kernel/people/paulmck/LWNLinuxMM/WeakModel.html#Cumulativity
 
