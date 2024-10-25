@@ -1,71 +1,62 @@
-Return-Path: <linux-kernel+bounces-382445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40D5F9B0DD1
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 21:00:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CFDA9B0DD3
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 21:00:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C306D1F24C23
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 19:00:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3083B1C22589
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 19:00:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E14AE1FB8AE;
-	Fri, 25 Oct 2024 19:00:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D77A20EA2E;
+	Fri, 25 Oct 2024 19:00:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="I6joGSvX"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="CAF5XElo"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 475ECB658
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 19:00:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B5A21B07D4;
+	Fri, 25 Oct 2024 19:00:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729882841; cv=none; b=AwiEz4yZzDAD7R2M0BVey/7TAcNKW9By2s6f/S0vP7DRAwid6gi8zpzqs/9ROKHPAOBn59hHmDZKYM6mTGYkff+ed/iZFFYO795pTgzeS4z8dKDziH5OxQhGBMJMa2MtbExBPAYJytR+yk9ymmrRS/RF5UtlyIvhZx3US9tlqsQ=
+	t=1729882841; cv=none; b=imDLVHzApgGNyJXjT2HhJfxo/GByc5bMtus4JF+sIbAX0/YZiic1MAOLLVVdftwoEApFYt49ITdNgGP6Z5SHz03C++wvaJOwsB5xwG4rQSPUWdjBiqRD9iVjsVkt4Knd0HQOGiVQgP08lNIcpohmSGT3rI6C621vM+2yDtNuncA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1729882841; c=relaxed/simple;
-	bh=3cXnhH971xc+BJd3tbXTf1w1qTwHmDe/QquknJ+Ddps=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=i0Q13k9tV/oZW714SCOwgb4U6n7erbxtVRYTsCqgi8ErSsCopQwfPfjFOuQpzVf3hGHSPi1onnGu72an+ltvpIZMRJTCO7mz3YfvYNjST7Rbx5yzXjhA/vuH/caJvRP9ITPHiRHPb/z3i2CJIiEOVCWluZ2V5wUNC65NDCB5FHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=I6joGSvX; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a9a2cdc6f0cso325059866b.2
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 12:00:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=citrix.com; s=google; t=1729882819; x=1730487619; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=rkrlJI83WTD1bbkwbEC93+bvij0O1qrWlleVslcI4+I=;
-        b=I6joGSvXWsUZHbgh2jspZ2eqek3oebRnlZHfgsICaVK6eljvFAkAEqyWRRD35Ocp5r
-         yXTXHthyPbjCPxP+3iPAz0S4Se6sr+qeComA8fxWhbXSvtXwZ+jSyYr3sQxxWRcmIzXB
-         2KsP5jV1JtwUwwr6ef6YIwic0VDfqQxE7gE0w=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729882819; x=1730487619;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rkrlJI83WTD1bbkwbEC93+bvij0O1qrWlleVslcI4+I=;
-        b=MWjv5dlLx+aebUy2rpHjm6Iue4ONRszcsZrlwarfOJRStiBOhy8QgS4gmO1M2qdA3i
-         kQ/vCPKsGwq9mqHjQlx9cIwzz7wR1kIXBXA8DwrzMomejkByr7NfcZMF/yafQ9KYr0l6
-         7/netNPNSyP9/edTmQ0F9WlV59RRjjSGk4SI/Lvp/GXRAEO+2RtKmBKt9ItqfsFn8WR6
-         QvbUtwjDnr7fQDxoA5qdj4T2+McFGroQ4SaMDrOjk1b3v9bKcaBRDsBCO7YeF4qYW+Gx
-         asCL8HM4zoexRii7UxEd4kYHQ/xh1NG4Ws+TGQVZye3WtczunoZZcgeaDZFmk79WKL2/
-         KPZA==
-X-Forwarded-Encrypted: i=1; AJvYcCVykF32umjo96S6fhnC4iVjRevXWdXUwb9LE11VmwxcfDxhZmSPpaM8bAPQXhtUvZVLNfSSSXYjNE8VMxM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwaUZzNDSjt91+WUtZXW3OW1vSW7BUTZcqW0ffwdA777xfOjQPH
-	tzxshLmFUtzeP8L8zt2SaQB45Bw4Waiw3qWjf+sUIH/9dkftfQs13U/5Ip4r8+s=
-X-Google-Smtp-Source: AGHT+IEBdcMs9eBgtwFOorjOm0UQsaYtZXPWKo4MYyJ5HOwSQ99+9s13KA6niizAWAbADYKWqTj95A==
-X-Received: by 2002:a17:906:c105:b0:a9a:684e:9a64 with SMTP id a640c23a62f3a-a9de619b1damr12450366b.61.1729882819589;
-        Fri, 25 Oct 2024 12:00:19 -0700 (PDT)
-Received: from [10.125.226.166] ([185.25.67.249])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b1dec802csm100247366b.13.2024.10.25.12.00.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 25 Oct 2024 12:00:19 -0700 (PDT)
-Message-ID: <fda92169-224d-45e5-8645-7f4b12fc5ba4@citrix.com>
-Date: Fri, 25 Oct 2024 20:00:17 +0100
+	bh=dOX6ODX9goy93nRBctzz/c0rm0U70NrmZOa8sHSdqek=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Nqliv/t9WCNu6KFGCXhQCzdJUaEk747KrwUXA4rBMlU8mYRIMP5JOH/0eGUV9m3bg0PaVA/D23kilN/NzzWCPLZnNtBA4CMNWNUYQIJuPH9b37wHP6PqRW7wVBSE+BWodxAt6ZnW0eLLcwlwordxa7QtcEuki4/MPBxt/GtTQ04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=CAF5XElo; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49PB1xkB000880;
+	Fri, 25 Oct 2024 19:00:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	4m4ynzInmCYuKFAigjMuDiiA5+f08cG6+h6uxFu2fDQ=; b=CAF5XEloBiGlCdWT
+	43VVSPkg0AyqWJnQOh/vSJrU1RwrYawm339SwppcmAta4kUz0sdl7xwIuF+yjbyc
+	ggqIqXstjim23jfOP/9qpuJ9sV0xQK4aPbRj/CVHjQwBInSrmz7SXhhkkFVz9q80
+	DDavxgl4dE2+h6AE1Ku0smYiscSaO3VjZnEeieBvtVZjLLePGUDMFVGEw9w+fnrV
+	NNeve5tK8J+PDuuUwR7MAgt23PFi0jm1I6CWKcCPJByFt8RJHLtT6T1ye4M753Wd
+	czGNbPNAv9XbYodzF2PG20LSYGDORMMVm7HkhAGYzRtJfsfts2Kae5hrfdzqyAh7
+	MSUJJw==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42ga3s1csn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Oct 2024 19:00:23 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49PJ0MHu011047
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Oct 2024 19:00:22 GMT
+Received: from [10.110.83.151] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 25 Oct
+ 2024 12:00:21 -0700
+Message-ID: <1dcf786e-463f-4e51-af71-66ee6077b5f1@quicinc.com>
+Date: Fri, 25 Oct 2024 12:00:20 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,102 +64,122 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] x86: fix user address masking non-canonical speculation
- issue
-To: Linus Torvalds <torvalds@linux-foundation.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Cc: x86@kernel.org, Josh Poimboeuf <jpoimboe@kernel.org>,
- Borislav Petkov <bp@alien8.de>
-References: <20241024013214.129639-1-torvalds@linux-foundation.org>
-Content-Language: en-GB
-From: Andrew Cooper <andrew.cooper3@citrix.com>
-Autocrypt: addr=andrew.cooper3@citrix.com; keydata=
- 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
- 6+ahAA==
-In-Reply-To: <20241024013214.129639-1-torvalds@linux-foundation.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-
-On 24/10/2024 2:31 am, Linus Torvalds wrote:
-> It turns out that AMD has a "Meltdown Lite(tm)" issue with non-canonical
-> accesses in kernel space.  And so using just the high bit to decide
-> whether an access is in user space or kernel space ends up with the good
-> old "leak speculative data" if you have the right gadget using the
-> result:
->
->   CVE-2020-12965 “Transient Execution of Non-Canonical Accesses“
->
-> Now, the kernel surrounds the access with a STAC/CLAC pair, and those
-> instructions end up serializing execution on older Zen architectures,
-> which closes the speculation window.
->
-> But that was true only up until Zen 5, which renames the AC bit [1].
-> That improves performance of STAC/CLAC a lot, but also means that the
-> speculation window is now open.
->
-> Note that this affects not just the new address masking, but also the
-> regular valid_user_address() check used by access_ok(), and the asm
-> version of the sign bit check in the get_user() helpers.
->
-> It does not affect put_user() or clear_user() variants, since there's no
-> speculative result to be used in a gadget for those operations.
->
-> Reported-by: Andrew Cooper <andrew.cooper3@citrix.com>
-> Link: https://lore.kernel.org/all/80d94591-1297-4afb-b510-c665efd37f10@citrix.com/
-> Link: https://lore.kernel.org/all/20241023094448.GAZxjFkEOOF_DM83TQ@fat_crate.local/ [1]
-> Link: https://www.amd.com/en/resources/product-security/bulletin/amd-sb-1010.html
-> Link: https://arxiv.org/pdf/2108.10771
-> Cc: Josh Poimboeuf <jpoimboe@kernel.org>
-> Cc: Borislav Petkov <bp@alien8.de>
-> Fixes: 2865baf54077 ("x86: support user address masking instead of non-speculative conditional")
-> Fixes: 6014bc27561f ("x86-64: make access_ok() independent of LAM")
-> Fixes: b19b74bc99b1 ("x86/mm: Rework address range check in get_user() and put_user()")
-> Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-
-Thankyou.  This looks a whole lot safer than the prior options.
-
-Tentatively Reviewed-by: Andrew Cooper <andrew.cooper3@citrix.com>, but
-it's probably worth trying to get AMD to rubber stamp it too.
+Subject: Re: [PATCH v6 2/9] drm/msm/dpu: move pstate->pipe initialization to
+ dpu_plane_atomic_check
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Rob Clark
+	<robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona
+ Vetter <simona@ffwll.ch>
+CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+References: <20241025-dpu-virtual-wide-v6-0-0310fd519765@linaro.org>
+ <20241025-dpu-virtual-wide-v6-2-0310fd519765@linaro.org>
+Content-Language: en-US
+From: Abhinav Kumar <quic_abhinavk@quicinc.com>
+In-Reply-To: <20241025-dpu-virtual-wide-v6-2-0310fd519765@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: ZWHZaI5rykXHJ0Ju0Xn8bsZKdz1nYDdx
+X-Proofpoint-GUID: ZWHZaI5rykXHJ0Ju0Xn8bsZKdz1nYDdx
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1015
+ impostorscore=0 bulkscore=0 mlxlogscore=999 malwarescore=0 suspectscore=0
+ phishscore=0 lowpriorityscore=0 mlxscore=0 priorityscore=1501 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2410250145
 
 
+
+On 10/24/2024 5:20 PM, Dmitry Baryshkov wrote:
+> In preparation for virtualized planes support, move pstate->pipe
+> initialization from dpu_plane_reset() to dpu_plane_atomic_check(). In
+> case of virtual planes the plane's pipe will not be known up to the
+> point of atomic_check() callback.
+> 
+
+I had R-bed this in v5. Did anything change in v6?
+
+But one comment below.
+
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>   drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c | 25 +++++++++++--------------
+>   1 file changed, 11 insertions(+), 14 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
+> index 37faf5b238b0..725c9a5826fd 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
+> @@ -797,13 +797,22 @@ static int dpu_plane_atomic_check(struct drm_plane *plane,
+>   	uint32_t max_linewidth;
+>   	unsigned int rotation;
+>   	uint32_t supported_rotations;
+> -	const struct dpu_sspp_cfg *pipe_hw_caps = pstate->pipe.sspp->cap;
+> -	const struct dpu_sspp_sub_blks *sblk = pstate->pipe.sspp->cap->sblk;
+> +	const struct dpu_sspp_cfg *pipe_hw_caps;
+> +	const struct dpu_sspp_sub_blks *sblk;
+>   
+>   	if (new_plane_state->crtc)
+>   		crtc_state = drm_atomic_get_new_crtc_state(state,
+>   							   new_plane_state->crtc);
+>   
+> +	pipe->sspp = dpu_rm_get_sspp(&kms->rm, pdpu->pipe);
+> +	r_pipe->sspp = NULL;
+> +
+> +	if (!pipe->sspp)
+> +		return -EINVAL;
+> +
+> +	pipe_hw_caps = pipe->sspp->cap;
+> +	sblk = pipe->sspp->cap->sblk;
+> +
+>   	min_scale = FRAC_16_16(1, sblk->maxupscale);
+>   	ret = drm_atomic_helper_check_plane_state(new_plane_state, crtc_state,
+>   						  min_scale,
+
+Do you think it will be better to move the get_sspp() call after the 
+drm_atomic_helper_check_plane_state()?
+
+> @@ -820,7 +829,6 @@ static int dpu_plane_atomic_check(struct drm_plane *plane,
+>   	pipe->multirect_mode = DPU_SSPP_MULTIRECT_NONE;
+>   	r_pipe->multirect_index = DPU_SSPP_RECT_SOLO;
+>   	r_pipe->multirect_mode = DPU_SSPP_MULTIRECT_NONE;
+> -	r_pipe->sspp = NULL;
+>   
+>   	pstate->stage = DPU_STAGE_0 + pstate->base.normalized_zpos;
+>   	if (pstate->stage >= pdpu->catalog->caps->max_mixer_blendstages) {
+> @@ -1286,7 +1294,6 @@ static void dpu_plane_reset(struct drm_plane *plane)
+>   {
+>   	struct dpu_plane *pdpu;
+>   	struct dpu_plane_state *pstate;
+> -	struct dpu_kms *dpu_kms = _dpu_plane_get_kms(plane);
+>   
+>   	if (!plane) {
+>   		DPU_ERROR("invalid plane\n");
+> @@ -1308,16 +1315,6 @@ static void dpu_plane_reset(struct drm_plane *plane)
+>   		return;
+>   	}
+>   
+> -	/*
+> -	 * Set the SSPP here until we have proper virtualized DPU planes.
+> -	 * This is the place where the state is allocated, so fill it fully.
+> -	 */
+> -	pstate->pipe.sspp = dpu_rm_get_sspp(&dpu_kms->rm, pdpu->pipe);
+> -	pstate->pipe.multirect_index = DPU_SSPP_RECT_SOLO;
+> -	pstate->pipe.multirect_mode = DPU_SSPP_MULTIRECT_NONE;
+> -
+> -	pstate->r_pipe.sspp = NULL;
+> -
+>   	__drm_atomic_helper_plane_reset(plane, &pstate->base);
+>   }
+>   
+> 
 
