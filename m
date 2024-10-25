@@ -1,144 +1,93 @@
-Return-Path: <linux-kernel+bounces-381404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 515509AFEAA
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 11:45:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 630FC9AFE37
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 11:32:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9B91EB248AA
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 09:45:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D8998B2184D
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 09:32:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB92B1D967F;
-	Fri, 25 Oct 2024 09:44:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32BA91D4159;
+	Fri, 25 Oct 2024 09:32:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nr1ut9cp"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IV8JwWBt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 234291D4350;
-	Fri, 25 Oct 2024 09:44:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B56618D63C;
+	Fri, 25 Oct 2024 09:32:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729849468; cv=none; b=lV8SSo0mOMxfCdlCaKBDiJYN+qRPJHDYopI/a9mDRszDfCYPDK+q/lCO9XYOxJWItF1HO5NCHBWiGQnZsvjotnytncAHe2JsfcIW8uHQKBgbzkXUiVDeSVVznQoHmxGAnupQru4EhDV98ljt6HA8TCAhMdqDlw3KDdmhSqWb2Ck=
+	t=1729848731; cv=none; b=J2IeXqAzEBxLWEVztYTx9Dg1xMFaRdo7Xajg6f/zSKyE3onakq7aJhcKq0ggFRai9487/ONKtJ4XJXUj+CSXxR6FauRwgcDcNdAk8vfJrTJOvdlfOoNC2HvvHU4mpDk3TlviFhpYOe01rY3nEBJCtov+SaE2AKIu8+QYBGM73KQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729849468; c=relaxed/simple;
-	bh=RiySH0Di17880CySej7mFgHZ6gWr+yrYcOvr4fWorhA=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=L31GDCh6+i/E+B1SWFTVOQRnISdFZXzTzbbwekOv7OrZNI3aIeqLuqg3psoynzwt2PBSkcxF5CylVuavU3+YsEZ67XFvgSm1spu6lcUvaMBpCffPFsMffMIpHBgYxCYg9XkhblLzWBZXVzyKar0EqcA8+vWD36k7t8Yjjr58JqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Nr1ut9cp; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-20c767a9c50so15194315ad.1;
-        Fri, 25 Oct 2024 02:44:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729849464; x=1730454264; darn=vger.kernel.org;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=I2vYx2/rEp8wlF3jW81PbjikWNTSn7Ck1hGTS7SC6dw=;
-        b=Nr1ut9cpkh+nwIpEwzf+kLjw5ZKTR5MMOFbnH61a2KLfMpSXqexGQ5MVDDi/ud31du
-         5vXhCUr20tI5AbZJtQ8poVS1+nRXH61rdcjDwaZl0iKSd202ZBmc5Ugx4WmPyE6QBvQ6
-         Sli+F2t7c6LFPJLtg3h7hEdUvVAxMbfo+jZxrVh7+NakIElnsDgSfh3HV+TxKckMEwT2
-         bRSO1sVqGJfqQDqWK3417955peru50/MdhgXPOZw7E5GhrxTqKy37bkY+Wqxt6ViB8OV
-         4AUb6+g2ZgvgczIuUm7vmnpmm6zVzn4Y+NC+W8LoAwgpNt1MXjEH6ky+bN5mFbeXTTxk
-         EhzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729849464; x=1730454264;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=I2vYx2/rEp8wlF3jW81PbjikWNTSn7Ck1hGTS7SC6dw=;
-        b=o9J/Zzw1uwaatQPt1bmyA7v7hip17AlGJt8m74oeO8qNkQuaRmE9EEMASsJdSOc6eS
-         n6TQ1WqKmM5IfZ+dOp6RP+AmZ9k1CbnUSFd+bZsOiBp4N7hc0VUQAZXF05xYqk9l91pw
-         NX5a9Hsecbm0MEsPADK2RAnGln8BYEZcgcAgNhpma4t2y2X3TVjrgLwe4BOTUw9dVoKT
-         0OX5cnejtPF8P74cbqZ9UNiljwQUQQo8i2kjsNkwwVErU0QDRLq9LoPxgVnT3nfUWJpa
-         gwgiGpv6h70/gpeul0pwM8v+Xhdjoh/GwtbYA8Fdv59CN+c75FbRYaxtC+vM3wZC/cCu
-         Otaw==
-X-Forwarded-Encrypted: i=1; AJvYcCVallf1nMmxL6Yct5Nq+akJThP4XkjwbeJHbA/ALvr/hWCk5Hz/Zz2AZWV/2XT3lE07NCfvYJDPpuMJ@vger.kernel.org, AJvYcCVvmH45XEDzxCpjPHGmUyPETOfkRxNadP/MCZWfg8xaMk4cs3XYJ4CzNogFDBYCJHY3rcQhvAs1GkqSr7yA4g==@vger.kernel.org, AJvYcCWXZbs12o8CNV+6pmHATTTY84FnH03tx34P/SY56CeqTZ8SItDDIC7dAz7egtUOSbo2/atESdBEEDGsgave@vger.kernel.org, AJvYcCX5JzKlIocmHp4FnDzeD/sn41fOFffdtgmYRNfJj+k3q0QkBlv8I5cJrTSaBXelEc9/muLDol2OVhFD@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8iCOWXv2SGaxMZ3IsjXO2ggA3GApBMwzwddH5ZoMQcwnB5Jy9
-	MEABOwuePFGHGUyamZPqyfv6C1Gx1QaT/U0vXjTtKWczbU/O9AkpZ2TEzQ==
-X-Google-Smtp-Source: AGHT+IEKMi61ubnLsED0Ch9ULwO86yZJnZaVs5ux4KzM+ZVBXDu99ZcjoX0VFZ66bFtVIBgR4gemHQ==
-X-Received: by 2002:a17:902:f685:b0:20c:6023:2268 with SMTP id d9443c01a7336-20fab2da17dmr99091045ad.40.1729849464273;
-        Fri, 25 Oct 2024 02:44:24 -0700 (PDT)
-Received: from dw-tp ([171.76.85.20])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bc02df41sm6361145ad.192.2024.10.25.02.44.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2024 02:44:23 -0700 (PDT)
-From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-To: John Garry <john.g.garry@oracle.com>, linux-ext4@vger.kernel.org
-Cc: Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.cz>, "Darrick J . Wong" <djwong@kernel.org>, Christoph Hellwig <hch@infradead.org>, Ojaswin Mujoo <ojaswin@linux.ibm.com>, Dave Chinner <david@fromorbit.com>, linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 5/6] iomap: Lift blocksize restriction on atomic writes
-In-Reply-To: <1efb8d6d-ba2e-499d-abc5-e4f9a1e54e89@oracle.com>
-Date: Fri, 25 Oct 2024 15:01:03 +0530
-Message-ID: <87zfmsmsvc.fsf@gmail.com>
-References: <cover.1729825985.git.ritesh.list@gmail.com> <f5bd55d32031b49bdd9e2c6d073787d1ac4b6d78.1729825985.git.ritesh.list@gmail.com> <1efb8d6d-ba2e-499d-abc5-e4f9a1e54e89@oracle.com>
+	s=arc-20240116; t=1729848731; c=relaxed/simple;
+	bh=BIGkXe4S27RvYPC1fUaKy/aC3rYZBY42viXN9VJu3k8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bJ8ry9xRuOHlfpSRFiR5ENQkJ620SSf2yB0YYtVF+W5SOUftiXP+Q5LR0Iu3EIH88+B1e1xSwVLCOJx3HMrPN723z2EW2TExtj+05fG/G801byveqzws4NhBvMNvE1JPOMD0f3voNJgT2qJUDHi0i8qW41bUfi27fGnZtrqzf3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IV8JwWBt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DFA0C4CEC3;
+	Fri, 25 Oct 2024 09:32:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729848731;
+	bh=BIGkXe4S27RvYPC1fUaKy/aC3rYZBY42viXN9VJu3k8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IV8JwWBtVPrQwCA8t5ertdsX+W6JbbD2/zcPcnezJ3fyIvMY69cztoR3oMYwwnZIO
+	 ecVtIuqheHRA6OQrw0zuakqJikN+mNNRxHTmTE6v7hpexx8+CHyOEBRG9Zghqx0BMQ
+	 bpI+WUa+tfCmZPkG+IwAM//npOC371FQDZ65DV/G5yVtg5uNX4cBTjAkbWiSmZ1idX
+	 HYT1Y1G928bBMRLAGJBcCtSeWKBi0ity/efvXk76TZlN5ebz4UWPu/WfT4z58lNJEM
+	 gT7CweBSji2TG1WL6u4Wn3lpDarUQ7lomqyNRlYCP6buFDJcK4wHwPAFfj1F+m5OGv
+	 q4lQgJLzvUV0g==
+Date: Fri, 25 Oct 2024 10:32:03 +0100
+From: Simon Horman <horms@kernel.org>
+To: Rosen Penev <rosenp@gmail.com>
+Cc: netdev@vger.kernel.org, Marcin Wojtas <marcin.s.wojtas@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Veerasenareddy Burru <vburru@marvell.com>,
+	Sathesh Edara <sedara@marvell.com>,
+	Shinas Rasheed <srasheed@marvell.com>,
+	Satananda Burla <sburla@marvell.com>,
+	Sunil Goutham <sgoutham@marvell.com>,
+	Geetha sowjanya <gakula@marvell.com>,
+	Subbaraya Sundeep <sbhatta@marvell.com>,
+	hariprasad <hkelam@marvell.com>,
+	Mirko Lindner <mlindner@marvell.com>,
+	Stephen Hemminger <stephen@networkplumber.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Jacob Keller <jacob.e.keller@intel.com>,
+	Sabrina Dubroca <sd@queasysnail.net>,
+	Mina Almasry <almasrymina@google.com>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:XDP (eXpress Data Path):Keyword:(?:b|_)xdp(?:b|_)" <bpf@vger.kernel.org>
+Subject: Re: [PATCH net-next] net: marvell: use ethtool string helpers
+Message-ID: <20241025093203.GL1202098@kernel.org>
+References: <20241024195833.176843-1-rosenp@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241024195833.176843-1-rosenp@gmail.com>
 
+On Thu, Oct 24, 2024 at 12:58:33PM -0700, Rosen Penev wrote:
+> The latter is the preferred way to copy ethtool strings.
+> 
+> Avoids manually incrementing the pointer. Cleans up the code quite well.
+> 
+> Signed-off-by: Rosen Penev <rosenp@gmail.com>
 
-Hi John, 
+Reviewed-by: Simon Horman <horms@kernel.org>
 
-John Garry <john.g.garry@oracle.com> writes:
-
-> On 25/10/2024 04:45, Ritesh Harjani (IBM) wrote:
->> Filesystems like ext4 can submit writes in multiples of blocksizes.
->> But we still can't allow the writes to be split. Hence let's check if
->> the iomap_length() is same as iter->len or not.
->> 
->> This shouldn't affect XFS since it anyways checks for this in
->> xfs_file_write_iter() to not support atomic write size request of more
->> than FS blocksize.
->> 
->> Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
->> ---
->>   fs/iomap/direct-io.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->> 
->> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
->> index ed4764e3b8f0..1d33b4239b3e 100644
->> --- a/fs/iomap/direct-io.c
->> +++ b/fs/iomap/direct-io.c
->> @@ -306,7 +306,7 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
->>   	size_t copied = 0;
->>   	size_t orig_count;
->>   
->> -	if (atomic && length != fs_block_size)
->> +	if (atomic && length != iter->len)
->>   		return -EINVAL;
->
-> Here you expect just one iter for an atomic write always.
-
-Here we are lifting the limitation of iomap to support entire iter->len
-rather than just 1 fsblock. 
-
->
-> In 6/6, you are saying that iomap does not allow an atomic write which 
-> covers unwritten and written extents, right?
-
-No, it's not that. If FS does not provide a full mapping to iomap in
-->iomap_begin then the writes will get split. For atomic writes this
-should not happen, hence the check in iomap above to return -EINVAL if
-mapped length does not match iter->len.
-
->
-> But for writing a single fs block atomically, we don't mandate it to be 
-> in unwritten state. So there is a difference in behavior in writing a 
-> single FS block vs multiple FS blocks atomically.
-
-Same as mentioned above. We can't have atomic writes to get split.
-This patch is just lifting the restriction of iomap to allow more than
-blocksize but the mapped length should still meet iter->len, as
-otherwise the writes can get split.
-
->
-> So we have 3x choices, as I see:
-> a. add a check now in iomap that the extent is in written state (for an 
-> atomic write)
-> b. add extent zeroing code, as I was trying for originally
-> c. document this peculiarity
->
-> Thanks,
-> John
 
