@@ -1,217 +1,146 @@
-Return-Path: <linux-kernel+bounces-381476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E31079AFFB4
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 12:11:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3173A9AFFB0
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 12:10:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66BA81F24997
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 10:11:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62B4E1C22D5D
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 10:10:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70C57204956;
-	Fri, 25 Oct 2024 10:08:55 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 122DE2036FC;
+	Fri, 25 Oct 2024 10:08:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hAmoK8Np"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE22E2036ED
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 10:08:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62F2D200CB0;
+	Fri, 25 Oct 2024 10:08:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729850934; cv=none; b=pLuA8BS3WSQKuPTrvPsQ/8pL4/+jpYjKEgsMTMvNVAyK2Rp6cMymDNawfwqny/WFnHIvbIEOvHaLJhmUEtxh/IOm0fwjQpE1jzBW/t6XXRCT9qdY+UhWGGZm7ahZVMyGiEcyK0U8TeT/pEc5c64vUFu+TogHzEjTliwWQ3pDols=
+	t=1729850932; cv=none; b=ojir+4ssJCoshol8reN6/BA4++8dpTP6e7OAdHptVW1Fcxlwrq66G58C832bE1Rygj9uz/dhe6t7bVfesOX+gssZGRVzbRflE21EwKHIS8QV+Bbg3d3xrQEPjzCF4hiQVIRZ4p54ja/gRX2w6Ly3Rp71QdInAoFX+Z1SQ3U1IMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729850934; c=relaxed/simple;
-	bh=Id4jYVicQwF482cby8uyMk+tHNJ5kEp195Hkx8X8c+c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WiFfyFhhJ/gOIjkeQJcyCS/NQif6lH9LW2mm+GPmFChwdyep1ic1oJrGCgOo4VV08c1SJ2kBK1TNiVf4eEOV5MQqERtDeBhFWK4VsbG4kGCavfXlu+ya/zQHy5KaNCEbB4dL+c2/kJu/VnEoSqsM2JTVJdoff7jhhd2Obpb8A7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1t4HEv-0001dh-7U; Fri, 25 Oct 2024 12:08:17 +0200
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1t4HEs-000LQz-1i;
-	Fri, 25 Oct 2024 12:08:14 +0200
-Received: from pengutronix.de (pd9e595f8.dip0.t-ipconnect.de [217.229.149.248])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 0F74735E930;
-	Fri, 25 Oct 2024 10:08:13 +0000 (UTC)
-Date: Fri, 25 Oct 2024 12:08:13 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Ming Yu <a0282524688@gmail.com>
-Cc: tmyu0@nuvoton.com, lee@kernel.org, linus.walleij@linaro.org, 
-	brgl@bgdev.pl, andi.shyti@kernel.org, mailhol.vincent@wanadoo.fr, 
-	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
-	pabeni@redhat.com, wim@linux-watchdog.org, linux@roeck-us.net, jdelvare@suse.com, 
-	jic23@kernel.org, lars@metafoo.de, ukleinek@kernel.org, 
-	alexandre.belloni@bootlin.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-i2c@vger.kernel.org, linux-can@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-watchdog@vger.kernel.org, linux-hwmon@vger.kernel.org, linux-iio@vger.kernel.org, 
-	linux-pwm@vger.kernel.org, linux-rtc@vger.kernel.org
-Subject: Re: [PATCH v1 1/9] mfd: Add core driver for Nuvoton NCT6694
-Message-ID: <20241025-truthful-honest-newt-c371c8-mkl@pengutronix.de>
-References: <20241024085922.133071-1-tmyu0@nuvoton.com>
- <20241024085922.133071-2-tmyu0@nuvoton.com>
- <20241024-adventurous-imaginary-hornet-4d5c46-mkl@pengutronix.de>
- <CAOoeyxUhnyYG3p+DQJG-tvU5vc5WYQZLLqCXW=uPcXTjq2gVfw@mail.gmail.com>
+	s=arc-20240116; t=1729850932; c=relaxed/simple;
+	bh=uMsrbKEFzUIIDa3jlcbEjO0ezM4GnYr63OfFQI2mv0Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=eti54e1a0XW7RsiW+BqGMHmvGByW6EZyM1zl2qaMnXzRuXOQG2xFXYodTW0lCUpsKPNGwaQGOTfEFx5M738TG6ViRqI38G84yaecWqdH6oMgjhXSppGaA+Uf+P2fwsozQX14XFX6HgwzE3j3n0PXccwkpuujck98i6dtoQGJeiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hAmoK8Np; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49P0mmpb004988;
+	Fri, 25 Oct 2024 10:08:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	6IgLGyzdm/Oz8+57j6vgG+Bixk6o1KsOnA+JBxBzS9Y=; b=hAmoK8NpDQkVoM+C
+	Gp+hHQSnPI2SOW/HB95nsNQSpeApGf1zR8iS+ZgzCyImmVCQsnqj7QpvmcoF7dl5
+	5XOvf2fzxd0SXntL6RfhcauMFytd9mzQs01NvdjywUzIjtyOKtpFxR2X8JuK+T4V
+	AQxI7yYM6AJz6KJ3gQDhVIKmjFo754A54/9GFeJYvKnj3lDhvHM9kOR+R2t4KTQk
+	H2agamty4Uiv+KvWuW/03W2+59kI8hxCqfK2WmOIDxK+eyc3ZaASCWg3IAazZG2Q
+	Qt243QgSRDRvPeIc6gAtlWVnvLCkl9Rh7n+h6Dk1MhgvZzOwDmF3hTOnm1KEEDjJ
+	pk5SjA==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42em688gvd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Oct 2024 10:08:42 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49PA8fKp025900
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Oct 2024 10:08:41 GMT
+Received: from [10.151.41.25] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 25 Oct
+ 2024 03:08:37 -0700
+Message-ID: <db0a6797-0e51-45b2-bf8a-58d53d8cf959@quicinc.com>
+Date: Fri, 25 Oct 2024 15:38:33 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="4f2xpxewuk3idolr"
-Content-Disposition: inline
-In-Reply-To: <CAOoeyxUhnyYG3p+DQJG-tvU5vc5WYQZLLqCXW=uPcXTjq2gVfw@mail.gmail.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 2/6] dt-bindings: net: wireless: ath12k: describe WSI
+ property for QCN9274
+To: Krzysztof Kozlowski <krzk@kernel.org>, <ath12k@lists.infradead.org>
+CC: <linux-wireless@vger.kernel.org>, Kalle Valo <kvalo@kernel.org>,
+        Rob
+ Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor
+ Dooley <conor+dt@kernel.org>,
+        Jeff Johnson <jjohnson@kernel.org>,
+        Bjorn
+ Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>
+References: <20241023060352.605019-1-quic_rajkbhag@quicinc.com>
+ <20241023060352.605019-3-quic_rajkbhag@quicinc.com>
+ <c7c6bf7e-0f79-44b1-aed4-db1fdbedc9a8@kernel.org>
+Content-Language: en-US
+From: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
+In-Reply-To: <c7c6bf7e-0f79-44b1-aed4-db1fdbedc9a8@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: cTudtVr9yD2hfIhIKlDkE9f4wgUtdiAW
+X-Proofpoint-GUID: cTudtVr9yD2hfIhIKlDkE9f4wgUtdiAW
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 malwarescore=0
+ priorityscore=1501 adultscore=0 bulkscore=0 phishscore=0 mlxscore=0
+ lowpriorityscore=0 mlxlogscore=999 impostorscore=0 suspectscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410250078
 
+On 10/23/2024 12:30 PM, Krzysztof Kozlowski wrote:
+> On 23/10/2024 08:03, Raj Kumar Bhagat wrote:
+>> QCN9274 device has WSI support. WSI stands for WLAN Serial Interface.
+>> It is used for the exchange of specific control information across
+>> radios based on the doorbell mechanism. This WSI connection is
+>> essential to exchange control information among these devices
+>>
+>> Hence, describe WSI interface supported in QCN9274 with the following
+>> properties:
+>>
+>>  - qcom,wsi-group-id: It represents the identifier assigned to the WSI
+>>    connection. All the ath12k devices connected to same WSI connection
+>>    have the same wsi-group-id.
+>>
+>>  - qcom,wsi-index: It represents the identifier assigned to ath12k
+>>    device in the order of the WSI connection.
+>>
+>>  - qcom,wsi-num-devices: Number of devices connected through WSI in
+>>    the same group ID.
+>>
+>> Signed-off-by: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
+>> ---
+>>  .../bindings/net/wireless/qcom,ath12k.yaml    | 61 +++++++++++++++++++
+>>  1 file changed, 61 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/net/wireless/qcom,ath12k.yaml b/Documentation/devicetree/bindings/net/wireless/qcom,ath12k.yaml
+>> index ecf38af747f7..6c8f97865075 100644
+>> --- a/Documentation/devicetree/bindings/net/wireless/qcom,ath12k.yaml
+>> +++ b/Documentation/devicetree/bindings/net/wireless/qcom,ath12k.yaml
+>> @@ -19,6 +19,7 @@ properties:
+>>    compatible:
+>>      enum:
+>>        - pci17cb,1107  # WCN7850
+>> +      - pci17cb,1109  # QCN9274
+> 
+> Missing supplies. How does the device take power? Everything through
+> standard PCI pins? Are you sure? Please submit complete binding, so with
+> all required properties.
+> 
 
---4f2xpxewuk3idolr
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v1 1/9] mfd: Add core driver for Nuvoton NCT6694
-MIME-Version: 1.0
-
-On 25.10.2024 16:08:10, Ming Yu wrote:
-> > > +int nct6694_read_msg(struct nct6694 *nct6694, u8 mod, u16 offset, u1=
-6 length,
-> > > +                  u8 rd_idx, u8 rd_len, unsigned char *buf)
-> >
-> > why not make buf a void *?
->=20
-> [Ming] I'll change the type in the next patch.
->=20
-> >
-> > > +{
-> > > +     struct usb_device *udev =3D nct6694->udev;
-> > > +     unsigned char err_status;
-> > > +     int len, packet_len, tx_len, rx_len;
-> > > +     int i, ret;
-> > > +
-> > > +     mutex_lock(&nct6694->access_lock);
-> > > +
-> > > +     /* Send command packet to USB device */
-> > > +     nct6694->cmd_buffer[REQUEST_MOD_IDX] =3D mod;
-> > > +     nct6694->cmd_buffer[REQUEST_CMD_IDX] =3D offset & 0xFF;
-> > > +     nct6694->cmd_buffer[REQUEST_SEL_IDX] =3D (offset >> 8) & 0xFF;
-> > > +     nct6694->cmd_buffer[REQUEST_HCTRL_IDX] =3D HCTRL_GET;
-> > > +     nct6694->cmd_buffer[REQUEST_LEN_L_IDX] =3D length & 0xFF;
-> > > +     nct6694->cmd_buffer[REQUEST_LEN_H_IDX] =3D (length >> 8) & 0xFF;
-> > > +
-> > > +     ret =3D usb_bulk_msg(udev, usb_sndbulkpipe(udev, BULK_OUT_ENDPO=
-INT),
-> > > +                        nct6694->cmd_buffer, CMD_PACKET_SZ, &tx_len,
-> > > +                        nct6694->timeout);
-> > > +     if (ret)
-> > > +             goto err;
-> > > +
-> > > +     /* Receive response packet from USB device */
-> > > +     ret =3D usb_bulk_msg(udev, usb_rcvbulkpipe(udev, BULK_IN_ENDPOI=
-NT),
-> > > +                        nct6694->rx_buffer, CMD_PACKET_SZ, &rx_len,
-> > > +                        nct6694->timeout);
-> > > +     if (ret)
-> > > +             goto err;
-> > > +
-> > > +     err_status =3D nct6694->rx_buffer[RESPONSE_STS_IDX];
-> > > +
-> > > +     /*
-> > > +      * Segmented reception of messages that exceed the size of USB =
-bulk
-> > > +      * pipe packets.
-> > > +      */
-> >
-> > The Linux USB stack can receive bulk messages longer than the max packe=
-t size.
->=20
-> [Ming] Since NCT6694's bulk pipe endpoint size is 128 bytes for this MFD =
-device.
-> The core will divide packet 256 bytes for high speed USB device, but
-> it is exceeds
-> the hardware limitation, so I am dividing it manually.
-
-You say the endpoint descriptor is correctly reporting it's max packet
-size of 128, but the Linux USB will send packets of 256 bytes?
-
->=20
-> >
-> > > +     for (i =3D 0, len =3D length; len > 0; i++, len -=3D packet_len=
-) {
-> > > +             if (len > nct6694->maxp)
-> > > +                     packet_len =3D nct6694->maxp;
-> > > +             else
-> > > +                     packet_len =3D len;
-> > > +
-> > > +             ret =3D usb_bulk_msg(udev, usb_rcvbulkpipe(udev, BULK_I=
-N_ENDPOINT),
-> > > +                                nct6694->rx_buffer + nct6694->maxp *=
- i,
-> > > +                                packet_len, &rx_len, nct6694->timeou=
-t);
-> > > +             if (ret)
-> > > +                     goto err;
-> > > +     }
-> > > +
-> > > +     for (i =3D 0; i < rd_len; i++)
-> > > +             buf[i] =3D nct6694->rx_buffer[i + rd_idx];
-> >
-> > memcpy()?
-> >
-> > Or why don't you directly receive data into the provided buffer? Copying
-> > of the data doesn't make it faster.
-> >
-> > On the other hand, receiving directly into the target buffer means the
-> > target buffer must not live on the stack.
->=20
-> [Ming] Okay! I'll change it to memcpy().
-
-fine!
-
-> This is my perspective: the data is uniformly received by the rx_bffer he=
-ld
-> by the MFD device. does it need to be changed?
-
-My question is: Why do you first receive into the nct6694->rx_buffer and
-then memcpy() to the buffer provided by the caller, why don't you
-directly receive into the memory provided by the caller?
-
-Marc
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---4f2xpxewuk3idolr
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmcbbgoACgkQKDiiPnot
-vG/Pugf+ObTDE98nVEGp4EcyqhJyQBDA7uMVUaRKfRJjRU3lME9NUAKlI+hFGnJD
-mTOltVrzgv6BxOzCoXZbJyD3STCRKGW6BX3ZGrdHIWQE35gPkjCBOxLjFX43Au+F
-ETIi+NIRxYShZK+4zefxtrHZRzbs8jD2qNzWLunIZiPTNKQQHIFFEcbZBTIDMBNL
-3Vnnp8PYRUAidFfE6TbOst7NN8pO+a0f3sSBWMUxCMkAuPdLw2n/vIDc4IRXFF6A
-aMorZ2+E0L3J9XP4gTpGzT4/qddFfKghSfustNU+x51YHxzYaT76TSF5nnnol5UY
-mwp/qtRNUwo6A7boZWYDPeVhxEtrYA==
-=RKzJ
------END PGP SIGNATURE-----
-
---4f2xpxewuk3idolr--
+QCN9274 gets powered from the standard Pcie (3.3 V) supply. No additional
+regulators are required.
 
