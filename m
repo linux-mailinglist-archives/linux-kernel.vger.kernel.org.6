@@ -1,124 +1,145 @@
-Return-Path: <linux-kernel+bounces-381792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A845F9B0483
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:51:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A60C89B0486
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:51:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D2C8B22A98
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 13:51:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 681FB284C23
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 13:51:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E62381D54E1;
-	Fri, 25 Oct 2024 13:51:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7940A1E491B;
+	Fri, 25 Oct 2024 13:51:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DDL0A12A"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Wm244Aud"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7140D212177;
-	Fri, 25 Oct 2024 13:51:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A71651632E2;
+	Fri, 25 Oct 2024 13:51:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729864276; cv=none; b=cQrHb6Eb5S3xEWoRtbTgVe8GrFrJDSgMc4IdaILxoPr53i61apAZ+SL27C5VpMTcvZQ6/nwtzNpI2duLvcTT/OD4HNkFYuwu2LVkbHpfmFX9YD3pWdjdTIP0y1KM11OEnRXvay00J9wvBsKCm/I++ev0QgvDUas9OUicNhI3goA=
+	t=1729864292; cv=none; b=c4fPMGLOzFi5gOc2/wPjN5DXWRFEQP04tViTj00y449vkGCfG6l+2WX4z27glbeotqcgyk/J+yaAbrPV5bm5cBLYkernWMCFaB2VXzHVATkE0U+7Lc3zs0TjS839rhmuOHP9keWXp7L83EjdMK3ZZhpGQNngcDEWXwYG//nCQlk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729864276; c=relaxed/simple;
-	bh=Wu7EvylJL4VQgi2fQLvllfTkyswJhFa1BfrDPsfeE/E=;
+	s=arc-20240116; t=1729864292; c=relaxed/simple;
+	bh=/9gpRT1rrvW3/WnQ2D+/OotZc6CUH9P9u7DC+yvQo0A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bgtNSFJ9Jrn1PDXENvfub3CoeGTXCKycZMucasfH+T3vSZl/I00wtnHACZvkJdT+7ZMlnVStMOdfAPtcQ2HfWBqvjgf+OP2WjGbc5IH+ceYA9Nx5XjILK1rci1g1JvpI5Pfwfm/qq1krFjxMFESbJDqGc7QxD5hJkCtGfJNrICk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DDL0A12A; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729864274; x=1761400274;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Wu7EvylJL4VQgi2fQLvllfTkyswJhFa1BfrDPsfeE/E=;
-  b=DDL0A12AWJ4MJhoF4fTwOvtEo2uq/DK+YlQNgrGKXDx9sU0yD6eR5L8D
-   dAGDKUYRAih1NBYpc7YkF9EvEscVf4YAlu/8hxpIURam7AGBwvfkFiGyd
-   ajhs9kaoKFkkAmOjgKVgnUsZsS7/zt8SVXlseqsXiH90r7ldQliVflFws
-   XwUYY/XyVtb18+TzFgB4Kb68uyLXfXJYDbn7klam7kbjFxRFTWV5gYIh/
-   HoFvRn7XUIpfoyBUsYlA5nIwOMWoGYbaU5I9c8ITMU9xtDyy+AWEnjLW3
-   yKey//XyoO/bcMtOqyoQsJK3iN4tskZRSAXe9NBcD7UVZBLA6LTEv8ZMu
-   g==;
-X-CSE-ConnectionGUID: SMHDSjGiQwaDQ4RepFaUTw==
-X-CSE-MsgGUID: /usbw4cpR++QUnGSSyP4Sg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11236"; a="28983998"
-X-IronPort-AV: E=Sophos;i="6.11,231,1725346800"; 
-   d="scan'208";a="28983998"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2024 06:50:50 -0700
-X-CSE-ConnectionGUID: Te/ubDqWQiGCIcWeOCpdBA==
-X-CSE-MsgGUID: 2RcdbdnSTLml6qAPZBvGuA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,231,1725346800"; 
-   d="scan'208";a="111755596"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2024 06:50:45 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1t4Ki9-00000006vkd-3NAP;
-	Fri, 25 Oct 2024 16:50:41 +0300
-Date: Fri, 25 Oct 2024 16:50:41 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: John Ogness <john.ogness@linutronix.de>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>, Petr Mladek <pmladek@suse.com>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Esben Haabendal <esben@geanix.com>, linux-serial@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Rengarajan S <rengarajan.s@microchip.com>,
-	Serge Semin <fancer.lancer@gmail.com>,
-	Lino Sanfilippo <l.sanfilippo@kunbus.com>
-Subject: Re: [PATCH tty-next v3 2/6] serial: 8250: Use high-level write
- function for FIFO
-Message-ID: <ZxuiMdrGcsuPp8OG@smile.fi.intel.com>
-References: <20241025105728.602310-1-john.ogness@linutronix.de>
- <20241025105728.602310-3-john.ogness@linutronix.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nTXI9+x3g+Tzwfo78ev8X/oNX0IKmVT8CR3z97jQargA8nW20ggDVOuSayUV/AjxSNaL7o9nEFmmiPsLkRbOqys5RllYYojdfAVvhNEYjXbbp8migWQAurW90tqS6Fh/MCN1OVRF0DOWkDedhNL6Qs5fD9142PMAbsAX4xHbyWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Wm244Aud; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 6566540E0285;
+	Fri, 25 Oct 2024 13:51:28 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id psED-3lxfWbY; Fri, 25 Oct 2024 13:51:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1729864284; bh=m0hkEZxpeJr7ugV2LE9WQ9YG0cnThgfQkWBRiVT0HMo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Wm244Audxi0pyKbQM9vE0pe6KwRVFb93PK0Zg+Fxr1VAf3KSQ8wtBi06quKksUluq
+	 uxRcfYbIJxe00xpsK9IStHxk4IoJUnLCUdkMvZ3EmDLD3soCdwP3ggqMTnXeu+fc6H
+	 9exfXwEIpzOZ2FuyX/QLOZVGAQ8T95lMQeUpxyuaC2OJDB9yNSSREUOz9fkGsFOnxP
+	 v1Tx/mJcktzJq4y0TYMBI3nWT6e3p9+XiVFI5a/gZX3Bsewj0PQshljp1yxdN7xP9G
+	 YQg7GLDwXYZLThYCfXpMWaqMNctPrwIVsYFKuSrrm6pRNF/XcQryLJXveRvabr38JG
+	 YieXVOkuggdCrZZJ6aycV9fILCwLzsfvkOQvr2CVHAyk9BmeE0nOpE5Zl1tRw3q/rW
+	 cWSi7riAOf0WxK4csFkozcblzWp4CAixYHc04aEoQfgA1pWhhyo9R3K02WeYsQbrg9
+	 Gk18qzVWHs/lOtkjnzU49+WUcBbQIJrG5DUIwqlFnZc44TnNuzJWMafPF9ODnPwDDW
+	 Qund2KTfFNDvJKlzO7JJIlSlgdfamjOYgY0UEHpJ+QUGrzP8mqREijha5iTeKLN6T9
+	 r0vLJd2BbrlX/Z5I8AzezUjKPzivCKlmY2ylEzFHXHE1+HPbBjEiLTGGA9xmCT0rgA
+	 O0gpo5AlblMIMalCkfk94944=
+Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 4ED2640E0284;
+	Fri, 25 Oct 2024 13:51:08 +0000 (UTC)
+Date: Fri, 25 Oct 2024 15:51:07 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Mario Limonciello <mario.limonciello@amd.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	"Gautham R . Shenoy" <gautham.shenoy@amd.com>,
+	Perry Yuan <perry.yuan@amd.com>,
+	Brijesh Singh <brijesh.singh@amd.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Li RongQing <lirongqing@baidu.com>,
+	"open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>,
+	"open list:ACPI" <linux-acpi@vger.kernel.org>,
+	"open list:AMD PSTATE DRIVER" <linux-pm@vger.kernel.org>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+Subject: Re: [PATCH v3 5/5] x86/amd: Use heterogeneous core topology for
+ identifying boost numerator
+Message-ID: <20241025135107.GPZxuiS38_s3KWe8xj@fat_crate.local>
+References: <20241023174357.34338-1-mario.limonciello@amd.com>
+ <20241023174357.34338-6-mario.limonciello@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241025105728.602310-3-john.ogness@linutronix.de>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20241023174357.34338-6-mario.limonciello@amd.com>
 
-On Fri, Oct 25, 2024 at 01:03:24PM +0206, John Ogness wrote:
-> Currently serial8250_console_fifo_write() directly writes into the
-> UART_TX register, rather than using the high-level function
-> serial8250_console_putchar(). This is because
-> serial8250_console_putchar() waits for the holding register to
-> become empty. That would defeat the purpose of the FIFO code.
+On Wed, Oct 23, 2024 at 12:43:57PM -0500, Mario Limonciello wrote:
+>  int amd_get_boost_ratio_numerator(unsigned int cpu, u64 *numerator)
+>  {
+> +	enum x86_topology_cpu_type core_type = get_topology_generic_cpu_type(&cpu_data(cpu));
+>  	bool prefcore;
+>  	int ret;
+> +	u32 tmp;
+>  
+>  	ret = amd_detect_prefcore(&prefcore);
+>  	if (ret)
+> @@ -261,6 +263,27 @@ int amd_get_boost_ratio_numerator(unsigned int cpu, u64 *numerator)
+>  			break;
+>  		}
+>  	}
+> +
 
-You can slightly reformat the above to make it less shaky in terms
-of the efficiency of a line capacity usage.
+What's the difference between this case:
 
-Currently serial8250_console_fifo_write() directly writes into
-the UART_TX register, rather than using the high-level function
-serial8250_console_putchar(). This is because
-serial8250_console_putchar() waits for the holding register
-to become empty. That would defeat the purpose of the FIFO code.
+> +	/* detect if running on heterogeneous design */
+> +	switch (core_type) {
+> +	case TOPO_CPU_TYPE_UNKNOWN:
+	     ^^^^^^^^^^^^^^^^^^^^^^^
 
-> Move the LSR_THRE waiting to a new function
-> serial8250_console_wait_putchar() so that the FIFO code can use
-> serial8250_console_putchar(). This will be particularly important
-> for a follow-up commit, where output bytes are inspected to track
-> newlines.
+> +		break;
+> +	case TOPO_CPU_TYPE_PERFORMANCE:
+> +		/* use the max scale for performance cores */
+> +		*numerator = CPPC_HIGHEST_PERF_PERFORMANCE;
+> +		return 0;
+> +	case TOPO_CPU_TYPE_EFFICIENCY:
+> +		/* use the highest perf value for efficiency cores */
+> +		ret = amd_get_highest_perf(cpu, &tmp);
+> +		if (ret)
+> +			return ret;
+> +		*numerator = tmp;
+> +		return 0;
+> +	default:
 
-> This is only refactoring and has no functional change.
+... and this case and why aren't you warning if TOPO_CPU_TYPE_UNKNOWN?
 
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+I think for that you need to check X86_FEATURE_AMD_HETEROGENEOUS_CORES and
+warn if set but still CPU type unknown or?
+
+> +		pr_warn("WARNING: Undefined core type %d found\n", core_type);
+> +		break;
+> +	}
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Regards/Gruss,
+    Boris.
 
-
+https://people.kernel.org/tglx/notes-about-netiquette
 
