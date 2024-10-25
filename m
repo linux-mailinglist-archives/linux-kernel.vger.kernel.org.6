@@ -1,182 +1,144 @@
-Return-Path: <linux-kernel+bounces-381365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C59079AFE1F
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 11:24:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 634A09AFE23
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 11:26:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F2481B25906
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 09:24:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2806B283E19
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 09:26:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F8161D2B2A;
-	Fri, 25 Oct 2024 09:24:42 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F946189F32
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 09:24:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AB6D1D4159;
+	Fri, 25 Oct 2024 09:26:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UTDBUfUt"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFF7C175A6;
+	Fri, 25 Oct 2024 09:25:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729848281; cv=none; b=NTVV9mP9qP44L1lULyb60j0o9SavTwsfi7NEbHRcKZQiyDsfq1C96BOGowzQd7UsEH/E5rDOi2Mkg/JiV9tOsotWNVoLhBeqFh7GNJvKuzF8hKQbNoyN+IBFUEO/AI/hYvERBlL7GcKeD+EgXlhM7Z1lS/g/yRUl2VwMGvJXB+I=
+	t=1729848360; cv=none; b=sMVhrRGg/CNtzaR4NwY++mzsD4JOw0sO1SWJWwIb+2zIIxbxKCr+hX/5VTU0UzMtxTBeg5/utDN/z80yMGnKZ+bSM0tvbRbgSH+eBzmWn+wGc6BAtOc6B3fqtI8qwEVK5Ksj/+AW6Ye20Zn3i6824bElN7CY38ZBtNh3C14BmPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729848281; c=relaxed/simple;
-	bh=TBDkSuo5x3p8mQoUGeLG6MNLepjmbreVxYkVHosW27I=;
+	s=arc-20240116; t=1729848360; c=relaxed/simple;
+	bh=BhMfZ/Qr3xfxsyNGBewyG61lKCjGfrP4CAs7Bh9O61A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vk0RMDM08L9nNo4eQ59vaUfqR/Cx7hpiBWCYvdCzY+gss+vM3vLtr6bVbloXG7Wny4+ib8j2/5qkdoKs4m2b398qnua747xgw+6oGaflnXlYt/KHomFW1WYhH5bLKMzCjtCXGCCjR7Nr32uc6+8t1YEhdmsRIMWlg/3okpDcuW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8E950339
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 02:25:06 -0700 (PDT)
-Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id A3CBE3F528
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 02:24:36 -0700 (PDT)
-Date: Fri, 25 Oct 2024 10:24:32 +0100
-From: Liviu Dudau <liviu.dudau@arm.com>
-To: Boris Brezillon <boris.brezillon@collabora.com>
-Cc: Akash Goel <akash.goel@arm.com>, Robin Murphy <robin.murphy@arm.com>,
-	steven.price@arm.com, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, mihail.atanassov@arm.com,
-	ketil.johnsen@arm.com, florent.tomasin@arm.com,
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-	tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch, nd@arm.com
-Subject: Re: [PATCH 1/3] drm/panthor: Update memattr programing to align with
- GPU spec
-Message-ID: <Zxtj0B3BrMYDt9ID@e110455-lin.cambridge.arm.com>
-References: <20241024145432.934086-1-akash.goel@arm.com>
- <20241024145432.934086-2-akash.goel@arm.com>
- <20241024174944.4e811816@collabora.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fIh7zJ38WS6xZZqNiFIWhlory+3tCtCeuQF70oUdY9wMNM962Vdkw2RtNyPSJ4MbNZVikbw3P/KLVna2m6Q/nnqloYxclBQBc4gIyRpUpwE/dB+C82BTkRNCBeWgMQhy7phTcB71ruRnpuguAKuSfuKOiNMb5zc4Bpk+FrvzoYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UTDBUfUt; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729848359; x=1761384359;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=BhMfZ/Qr3xfxsyNGBewyG61lKCjGfrP4CAs7Bh9O61A=;
+  b=UTDBUfUtWaAPHa12Pk4NndilIzX4V2ZFWzSjbVJ0Y4Xu1KR8AWR8Lnxx
+   PDcUX7qgBjXdQIM1BXOA1PJoXOENXRqrmeZb8t3WuiMnCgW2JhAujHRnm
+   4If2ZeW6/ruZYzkmk3ZTE+nEWD9yZMJWkBgt5Hh0y47Zgfj3g3RhNiPWh
+   7Kn7FAQ2456Pq0UwJ4SIeJxv36io04oGKyxcJ3/ZbOz2oVtgdR3Jfvqkj
+   qm6bwbkXj3i2rj3bxKABKs+HSLKSgZbfqoKEhAMgzdLvM259RgxcnG+J2
+   Sh0gpuHXgI7E+iYZDVTI26aOoB+2JjyJO1Vx1TvKv7kdiFg41MBb4FCQT
+   Q==;
+X-CSE-ConnectionGUID: CFKyILdCTEO/F/ac2P1fLw==
+X-CSE-MsgGUID: GXBl/5A5TDGrQvLxUMjYcg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="46976026"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="46976026"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2024 02:25:59 -0700
+X-CSE-ConnectionGUID: pangIxHsQ+ShqJtRmCy2FA==
+X-CSE-MsgGUID: CfxRfQ4PRX+iuMy4db0xHQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,231,1725346800"; 
+   d="scan'208";a="81288958"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa007.jf.intel.com with ESMTP; 25 Oct 2024 02:25:54 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t4GZr-000Xyv-1t;
+	Fri, 25 Oct 2024 09:25:51 +0000
+Date: Fri, 25 Oct 2024 17:25:04 +0800
+From: kernel test robot <lkp@intel.com>
+To: Jijie Shao <shaojijie@huawei.com>, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	andrew+netdev@lunn.ch, horms@kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, shenjian15@huawei.com,
+	wangpeiyang1@huawei.com, liuyonglong@huawei.com,
+	chenhao418@huawei.com, sudongming1@huawei.com,
+	xujunsheng@huawei.com, shiyongbang@huawei.com, libaihan@huawei.com,
+	jonathan.cameron@huawei.com, shameerali.kolothum.thodi@huawei.com,
+	salil.mehta@huawei.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, shaojijie@huawei.com
+Subject: Re: [PATCH net-next 4/7] net: hibmcge: Add register dump supported
+ in this module
+Message-ID: <202410251738.mRleD5uf-lkp@intel.com>
+References: <20241023134213.3359092-5-shaojijie@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241024174944.4e811816@collabora.com>
+In-Reply-To: <20241023134213.3359092-5-shaojijie@huawei.com>
 
-On Thu, Oct 24, 2024 at 05:49:44PM +0200, Boris Brezillon wrote:
-> +Robin for the MMU details
-> 
-> On Thu, 24 Oct 2024 15:54:30 +0100
-> Akash Goel <akash.goel@arm.com> wrote:
-> 
-> > Mali GPU Arch spec forbids the GPU PTEs to indicate Inner or Outer
-> > shareability when no_coherency protocol is selected. Doing so results in
-> > unexpected or undesired snooping of the CPU caches on some platforms,
-> > such as Juno FPGA, causing functional issues. For example the boot of
-> > MCU firmware fails as GPU ends up reading stale data for the FW memory
-> > pages from the CPU's cache. The FW memory pages are initialized with
-> > uncached mapping when the device is not reported to be dma-coherent.
-> > The shareability bits are set to inner-shareable when IOMMU_CACHE flag
-> > is passed to map_pages() callback and IOMMU_CACHE flag is passed by
-> > Panthor driver when memory needs to be mapped as cached on the GPU side.
-> > 
-> > IOMMU_CACHE seems to imply cache coherent and is probably not fit for
-> > purpose for the memory that is mapped as cached on GPU side but doesn't
-> > need to remain coherent with the CPU.
-> 
-> Yeah, IIRC I've been abusing the _CACHE flag to mean GPU-cached, not
-> cache-coherent. I think it be good to sit down with Rob and add the
-> necessary IOMMU_ flags so we can express all the shareability and
-> cacheability variants we have with the "Mali" MMU. For instance, I
-> think the shareability between MCU/GPU can be expressed properly at the
-> moment, and we unconditionally map things uncached because of that.
+Hi Jijie,
 
-Boris, did you mean to say "shareability between MCU/GPU *can't* be expressed
-properly" ? Currently the sentence reads a bit strange, as if there was a
-negation somewhere.
+kernel test robot noticed the following build warnings:
 
-Our GPU's architecture dictates a lot of coherency attributes, especially at
-the read-write/read-only L1$, so using _CACHE as a flag for something else
-is indeed tempting. We should talk with Rob to see how we can improve things
-here.
+[auto build test WARNING on net-next/main]
 
-> 
-> > 
-> > This commit updates the programming of MEMATTR register to use
-> > MIDGARD_INNER instead of CPU_INNER when coherency is disabled. That way
-> > the inner-shareability specified in the GPU PTEs would map to Mali's
-> > internal-shareable mode, which is always supported by the GPU regardless
-> > of the coherency protocal and is required by the Userspace driver to
-> > ensure coherency between the shader cores.
-> > 
-> > Signed-off-by: Akash Goel <akash.goel@arm.com>
-> 
-> Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
+url:    https://github.com/intel-lab-lkp/linux/commits/Jijie-Shao/net-hibmcge-Add-dump-statistics-supported-in-this-module/20241023-215222
+base:   net-next/main
+patch link:    https://lore.kernel.org/r/20241023134213.3359092-5-shaojijie%40huawei.com
+patch subject: [PATCH net-next 4/7] net: hibmcge: Add register dump supported in this module
+config: loongarch-allmodconfig (https://download.01.org/0day-ci/archive/20241025/202410251738.mRleD5uf-lkp@intel.com/config)
+compiler: loongarch64-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241025/202410251738.mRleD5uf-lkp@intel.com/reproduce)
 
-Reviewed-by: Liviu Dudau <liviu.dudau@arm.com>
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410251738.mRleD5uf-lkp@intel.com/
 
-Best regards,
-Liviu
+All warnings (new ones prefixed by >>):
 
-> 
-> > ---
-> >  drivers/gpu/drm/panthor/panthor_mmu.c | 23 +++++++++++++++--------
-> >  1 file changed, 15 insertions(+), 8 deletions(-)
-> > 
-> > diff --git a/drivers/gpu/drm/panthor/panthor_mmu.c b/drivers/gpu/drm/panthor/panthor_mmu.c
-> > index f3ee5d2753f1..f522a116c1b1 100644
-> > --- a/drivers/gpu/drm/panthor/panthor_mmu.c
-> > +++ b/drivers/gpu/drm/panthor/panthor_mmu.c
-> > @@ -1927,7 +1927,7 @@ struct panthor_heap_pool *panthor_vm_get_heap_pool(struct panthor_vm *vm, bool c
-> >  	return pool;
-> >  }
-> >  
-> > -static u64 mair_to_memattr(u64 mair)
-> > +static u64 mair_to_memattr(u64 mair, bool coherent)
-> >  {
-> >  	u64 memattr = 0;
-> >  	u32 i;
-> > @@ -1946,14 +1946,21 @@ static u64 mair_to_memattr(u64 mair)
-> >  				   AS_MEMATTR_AARCH64_SH_MIDGARD_INNER |
-> >  				   AS_MEMATTR_AARCH64_INNER_ALLOC_EXPL(false, false);
-> >  		} else {
-> > -			/* Use SH_CPU_INNER mode so SH_IS, which is used when
-> > -			 * IOMMU_CACHE is set, actually maps to the standard
-> > -			 * definition of inner-shareable and not Mali's
-> > -			 * internal-shareable mode.
-> > -			 */
-> >  			out_attr = AS_MEMATTR_AARCH64_INNER_OUTER_WB |
-> > -				   AS_MEMATTR_AARCH64_SH_CPU_INNER |
-> >  				   AS_MEMATTR_AARCH64_INNER_ALLOC_EXPL(inner & 1, inner & 2);
-> > +			/* Use SH_MIDGARD_INNER mode when device isn't coherent,
-> > +			 * so SH_IS, which is used when IOMMU_CACHE is set, maps
-> > +			 * to Mali's internal-shareable mode. As per the Mali
-> > +			 * Spec, inner and outer-shareable modes aren't allowed
-> > +			 * for WB memory when coherency is disabled.
-> > +			 * Use SH_CPU_INNER mode when coherency is enabled, so
-> > +			 * that SH_IS actually maps to the standard definition of
-> > +			 * inner-shareable.
-> > +			 */
-> > +			if (!coherent)
-> > +				out_attr |= AS_MEMATTR_AARCH64_SH_MIDGARD_INNER;
-> > +			else
-> > +				out_attr |= AS_MEMATTR_AARCH64_SH_CPU_INNER;
-> >  		}
-> >  
-> >  		memattr |= (u64)out_attr << (8 * i);
-> > @@ -2325,7 +2332,7 @@ panthor_vm_create(struct panthor_device *ptdev, bool for_mcu,
-> >  		goto err_sched_fini;
-> >  
-> >  	mair = io_pgtable_ops_to_pgtable(vm->pgtbl_ops)->cfg.arm_lpae_s1_cfg.mair;
-> > -	vm->memattr = mair_to_memattr(mair);
-> > +	vm->memattr = mair_to_memattr(mair, ptdev->coherent);
-> >  
-> >  	mutex_lock(&ptdev->mmu->vm.lock);
-> >  	list_add_tail(&vm->node, &ptdev->mmu->vm.list);
-> 
+   drivers/net/ethernet/hisilicon/hibmcge/hbg_ethtool.c: In function 'hbg_ethtool_get_regs':
+>> drivers/net/ethernet/hisilicon/hibmcge/hbg_ethtool.c:322:20: warning: '%s' directive output may be truncated writing up to 127 bytes into a region of size 31 [-Wformat-truncation=]
+     322 |                  "[%s] %s", type_info->name, reg_map->name);
+         |                    ^~
+   In function 'hbg_get_reg_info',
+       inlined from 'hbg_ethtool_get_regs' at drivers/net/ethernet/hisilicon/hibmcge/hbg_ethtool.c:338:14:
+   drivers/net/ethernet/hisilicon/hibmcge/hbg_ethtool.c:321:9: note: 'snprintf' output between 4 and 154 bytes into a destination of size 32
+     321 |         snprintf(info->name, sizeof(info->name),
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     322 |                  "[%s] %s", type_info->name, reg_map->name);
+         |                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+vim +322 drivers/net/ethernet/hisilicon/hibmcge/hbg_ethtool.c
+
+   313	
+   314	static u32 hbg_get_reg_info(struct hbg_priv *priv,
+   315				    const struct hbg_reg_type_info *type_info,
+   316				    const struct hbg_reg_offset_name_map *reg_map,
+   317				    struct hbg_reg_info *info)
+   318	{
+   319		info->val = hbg_reg_read(priv, reg_map->reg_offset);
+   320		info->offset = reg_map->reg_offset - type_info->offset_base;
+   321		snprintf(info->name, sizeof(info->name),
+ > 322			 "[%s] %s", type_info->name, reg_map->name);
+   323	
+   324		return sizeof(*info);
+   325	}
+   326	
 
 -- 
-====================
-| I would like to |
-| fix the world,  |
-| but they're not |
-| giving me the   |
- \ source code!  /
-  ---------------
-    ¯\_(ツ)_/¯
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
