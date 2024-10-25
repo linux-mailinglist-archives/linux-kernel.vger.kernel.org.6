@@ -1,264 +1,195 @@
-Return-Path: <linux-kernel+bounces-382313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7A569B0C37
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 19:54:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCEB29B0C41
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 19:55:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB4951C21AD4
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:54:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF33028161A
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:55:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87A8120BB3F;
-	Fri, 25 Oct 2024 17:54:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4F2A20BB30;
+	Fri, 25 Oct 2024 17:55:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uwPgzxk0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="b0f3CgbP"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D81D220BB2D;
-	Fri, 25 Oct 2024 17:54:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24BE8800
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 17:55:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729878859; cv=none; b=p6Axd2Yx+7TZV4dzaK2qfXEqOa60OyBl9A58qKLDiJNplACyEVMJMcQrkUgh5ZjZfYi7TtgMahnkLfgV20IP+r8P7zoZjFClLlX+0R6H/HK5H/aYk+ePTX08vLl695nouCQYFSeRiSPtfhre4UbtRJIqhg+TmAPM1pV1q1JOo78=
+	t=1729878908; cv=none; b=LX3e1ghb74Bra+iU78gK3sHQ8Ai3foiUFMU+rfxlRqyf7paHvNpZ491nSf3r0mYFbYg1aDaAA2/tJqUUR0jFf44EtONtlPjlICO30hu3Iz8r8qjEjbOoyRn+QwGk4GZJoeVjOyvPCidyMP20/xr/bCloQLDgxyLcgQ4talaW70U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729878859; c=relaxed/simple;
-	bh=J9UkJXDKjREDaa5XlvCsqgwwDGJh04HffsdX39Ryvz0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TfI/N3TWtGX7feMn+pDv0loZ1dmT1OTxLc+M4kdUCamQeAAIjQ7APTb4OWIxcUp31eXPae83UJFf7mR+xgs8toDGFpCOsdcvjX77HJLhXSzSO+n0VUmQpra89IYvqAddSpwwOtCCPVZh6XGmg20WwbPExSfwnMTvhwiOzLbBt10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uwPgzxk0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C5BCC4CEE8;
-	Fri, 25 Oct 2024 17:54:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729878859;
-	bh=J9UkJXDKjREDaa5XlvCsqgwwDGJh04HffsdX39Ryvz0=;
-	h=From:To:Cc:Subject:Date:From;
-	b=uwPgzxk0fQqm56dIBtNbszXEA0MWRY8qYv3wuB5H+HE3BNRlocNvVCFLDPu/O2c3N
-	 wqo8GXGyN9KSAxBXLA/SnGGt/bX4Z+qygMLexbxYdAFeRmsFWhKlcKRsYkWu0cJYio
-	 8YDlkrfpkGjp+GMBp4DMvo0DT4WbOJXl/nZ6DJrsbtqr/rDQnJT0dsWOeXn/BgY4UN
-	 /o1mtVRD/I/W318obiOIXO7jkeusPRA+cr+zzV+GmwKM2Gu+KLv3SEk4QiKjxuVoG+
-	 hvmvnaBewe3lvjh5COaZMv9YW7bBqss29RB7nYCtRB2LB+YJTiGGX9nvWtxQsPIZe2
-	 c054mgsyiz5PQ==
-Received: by wens.tw (Postfix, from userid 1000)
-	id 21A4A5FCB4; Sat, 26 Oct 2024 01:54:17 +0800 (CST)
-From: Chen-Yu Tsai <wens@kernel.org>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] arm64: dts: rockchip: orangepi-5-plus: Enable USB 3.0 ports
-Date: Sat, 26 Oct 2024 01:54:15 +0800
-Message-Id: <20241025175415.887368-1-wens@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1729878908; c=relaxed/simple;
+	bh=3YHhZdaS5a3qrVkwtilj2uaOwvvIwUHe8GD2JoPrmew=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=EMJHoywYeK7Kc/6ygz8Gjhu7Pq4aAPP0b+d5jvj432zABxQR1HX6UO5l98ApjT3qjoZXwF0byAVhR8WIL6nVQxZByYjdMBEmzq6Q25ENlTXfGbmQqimPqV+tYKIGIXKkj8ljH0VGAX5k9z8CO4qqnkjg0o2J7Zat/qwuujmzlcI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=b0f3CgbP; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49PB69lr016490;
+	Fri, 25 Oct 2024 17:55:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	BMUguSwfBOZPn7n/2hNIIMG965a8TqhWDHdHceGrhTE=; b=b0f3CgbPK4wlYtOs
+	v5dIZyU9lbI5dE4bExTTWFtYRFs/cYtj60LSAWpbCtXUfkzAizXGwAT/u3JaCMk2
+	NBti+DC9uicNWkURwlhWeeN5Xg4zsqgPvWffKnj85T9PFjbEm/iK6dwnjXhBHUjP
+	BZpweQ+YrJ0qelMyN5Tl+RF1f+YMWMRZsjZUl6ZF7mVl8iPlx4cxaz0wvpcZP2/s
+	XsAda1fknWG39rvufs//qPKHWTYE8QRWahCmX6VW9kRXT9dsRGb2cFZLB0DpoFlw
+	Pdn396tLnHgQkFsCCF69oLQftwI3jpo9irGhq/r2hOp439GmVktifTulGImMczFy
+	qrhibg==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42ga5js8ay-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Oct 2024 17:55:02 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49PHt1GZ009940
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Oct 2024 17:55:01 GMT
+Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 25 Oct
+ 2024 10:55:01 -0700
+Message-ID: <72765a2d-2e4d-b8fc-8caa-8d4a131357bd@quicinc.com>
+Date: Fri, 25 Oct 2024 11:55:00 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.0
+Subject: Re: [PATCH V5 07/10] accel/amdxdna: Add command execution
+Content-Language: en-US
+To: Lizhi Hou <lizhi.hou@amd.com>, <ogabbay@kernel.org>,
+        <dri-devel@lists.freedesktop.org>
+CC: <linux-kernel@vger.kernel.org>, <min.ma@amd.com>, <max.zhen@amd.com>,
+        <sonal.santan@amd.com>, <king.tam@amd.com>
+References: <20241021161931.3701754-1-lizhi.hou@amd.com>
+ <20241021161931.3701754-8-lizhi.hou@amd.com>
+From: Jeffrey Hugo <quic_jhugo@quicinc.com>
+In-Reply-To: <20241021161931.3701754-8-lizhi.hou@amd.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: DABxdHmJeE9a_8v7GGwbJli4bffM51g8
+X-Proofpoint-GUID: DABxdHmJeE9a_8v7GGwbJli4bffM51g8
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ impostorscore=0 mlxlogscore=999 malwarescore=0 clxscore=1015
+ priorityscore=1501 adultscore=0 mlxscore=0 spamscore=0 suspectscore=0
+ phishscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410250136
 
-From: Chen-Yu Tsai <wens@csie.org>
+On 10/21/2024 10:19 AM, Lizhi Hou wrote:
+> diff --git a/include/uapi/drm/amdxdna_accel.h b/include/uapi/drm/amdxdna_accel.h
+> index 3792750834b2..08f3ec7146ab 100644
+> --- a/include/uapi/drm/amdxdna_accel.h
+> +++ b/include/uapi/drm/amdxdna_accel.h
+> @@ -13,6 +13,7 @@
+>   extern "C" {
+>   #endif
+>   
+> +#define AMDXDNA_INVALID_CMD_HANDLE	(~0UL)
+>   #define AMDXDNA_INVALID_ADDR		(~0UL)
+>   #define AMDXDNA_INVALID_CTX_HANDLE	0
+>   #define AMDXDNA_INVALID_BO_HANDLE	0
+> @@ -29,6 +30,8 @@ enum amdxdna_drm_ioctl_id {
+>   	DRM_AMDXDNA_CREATE_BO,
+>   	DRM_AMDXDNA_GET_BO_INFO,
+>   	DRM_AMDXDNA_SYNC_BO,
+> +	DRM_AMDXDNA_EXEC_CMD,
+> +	DRM_AMDXDNA_WAIT_CMD,
+>   };
+>   
+>   /**
+> @@ -201,6 +204,54 @@ struct amdxdna_drm_sync_bo {
+>   	__u64 size;
+>   };
+>   
+> +enum amdxdna_cmd_type {
+> +	AMDXDNA_CMD_SUBMIT_EXEC_BUF = 0,
+> +	AMDXDNA_CMD_SUBMIT_DEPENDENCY,
+> +	AMDXDNA_CMD_SUBMIT_SIGNAL,
+> +};
+> +
+> +/**
+> + * struct amdxdna_drm_exec_cmd - Execute command.
+> + * @ext: MBZ.
+> + * @ext_flags: MBZ.
+> + * @hwctx: Hardware context handle.
+> + * @type: One of command type in enum amdxdna_cmd_type.
+> + * @cmd_handles: Array of command handles or the command handle itself
+> + *               in case of just one.
+> + * @args: Array of arguments for all command handles.
+> + * @cmd_count: Number of command handles in the cmd_handles array.
+> + * @arg_count: Number of arguments in the args array.
+> + * @seq: Returned sequence number for this command.
+> + */
+> +struct amdxdna_drm_exec_cmd {
+> +	__u64 ext;
+> +	__u64 ext_flags;
+> +	__u32 hwctx;
+> +	__u32 type;
+> +	__u64 cmd_handles;
+> +	__u64 args;
+> +	__u32 cmd_count;
+> +	__u32 arg_count;
+> +	__u64 seq;
+> +};
+> +
+> +/**
+> + * struct amdxdna_drm_wait_cmd - Wait exectuion command.
+> + *
+> + * @hwctx: hardware context handle.
+> + * @timeout: timeout in ms, 0 implies infinite wait.
+> + * @seq: sequence number of the command returned by execute command.
+> + *
+> + * Wait a command specified by seq to be completed.
+> + * Using AMDXDNA_INVALID_CMD_HANDLE as seq means wait till there is a free slot
+> + * to submit a new command.
+> + */
+> +struct amdxdna_drm_wait_cmd {
+> +	__u32 hwctx;
+> +	__u32 timeout;
+> +	__u64 seq;
+> +};
+> +
+>   #define DRM_IOCTL_AMDXDNA_CREATE_HWCTX \
+>   	DRM_IOWR(DRM_COMMAND_BASE + DRM_AMDXDNA_CREATE_HWCTX, \
+>   		 struct amdxdna_drm_create_hwctx)
+> @@ -225,6 +276,14 @@ struct amdxdna_drm_sync_bo {
+>   	DRM_IOWR(DRM_COMMAND_BASE + DRM_AMDXDNA_SYNC_BO, \
+>   		 struct amdxdna_drm_sync_bo)
+>   
+> +#define DRM_IOCTL_AMDXDNA_EXEC_CMD \
+> +	DRM_IOWR(DRM_COMMAND_BASE + DRM_AMDXDNA_EXEC_CMD, \
+> +		 struct amdxdna_drm_exec_cmd)
+> +
+> +#define DRM_IOCTL_AMDXDNA_WAIT_CMD \
+> +	DRM_IOWR(DRM_COMMAND_BASE + DRM_AMDXDNA_WAIT_CMD, \
+> +		 struct amdxdna_drm_wait_cmd)
+> +
 
-The Orange Pi 5 Plus has its first USB 3.0 interface on the SoC wired
-directly to the USB type C port next to the MASKROM button, and the
-second interface wired to a USB 3.0 hub which in turn is connected to
-the USB 3.0 host ports on the board, as well as the USB 2.0 connection
-on the M.2 E-key slot.
+Nope.  This looks like a driver private wait ioctl on a specific BO. 
+That is not the modern way to do things per Vetter -
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
- .../dts/rockchip/rk3588-orangepi-5-plus.dts   | 132 ++++++++++++++++++
- 1 file changed, 132 insertions(+)
+https://lore.kernel.org/dri-devel/ZC75%2Fq34YnDDsGpB@phenom.ffwll.local/
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts b/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts
-index dd03c9db6953..b826c5e368aa 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts
-@@ -177,6 +177,18 @@ daicodec: simple-audio-card,codec {
- 		};
- 	};
- 
-+	vbus_typec: vbus-typec-regulator {
-+		compatible = "regulator-fixed";
-+		enable-active-high;
-+		gpio = <&gpio4 RK_PB0 GPIO_ACTIVE_HIGH>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&typec5v_pwren>;
-+		regulator-name = "vbus_typec";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		vin-supply = <&vcc5v0_sys>;
-+	};
-+
- 	vcc3v3_pcie30: vcc3v3-pcie30-regulator {
- 		compatible = "regulator-fixed";
- 		enable-active-high;
-@@ -339,6 +351,56 @@ &i2c6 {
- 	clock-frequency = <400000>;
- 	status = "okay";
- 
-+	usbc0: usb-typec@22 {
-+		compatible = "fcs,fusb302";
-+		reg = <0x22>;
-+		interrupt-parent = <&gpio0>;
-+		interrupts = <RK_PD3 IRQ_TYPE_LEVEL_LOW>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&usbc0_int>;
-+		vbus-supply = <&vbus_typec>;
-+		status = "okay";
-+
-+		usb_con: connector {
-+			compatible = "usb-c-connector";
-+			label = "USB-C";
-+			data-role = "dual";
-+			op-sink-microwatt = <1000000>;
-+			power-role = "dual";
-+			sink-pdos =
-+				<PDO_FIXED(5000, 1000, PDO_FIXED_USB_COMM)>;
-+			source-pdos =
-+				<PDO_FIXED(5000, 3000, PDO_FIXED_USB_COMM)>;
-+			try-power-role = "source";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					usbc0_hs: endpoint {
-+						remote-endpoint = <&usb_host0_xhci_drd_sw>;
-+					};
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+					usbc0_ss: endpoint {
-+						remote-endpoint = <&usbdp_phy0_typec_ss>;
-+					};
-+				};
-+
-+				port@2 {
-+					reg = <2>;
-+					usbc0_sbu: endpoint {
-+						remote-endpoint = <&usbdp_phy0_typec_sbu>;
-+					};
-+				};
-+			};
-+		};
-+	};
-+
- 	hym8563: rtc@51 {
- 		compatible = "haoyu,hym8563";
- 		reg = <0x51>;
-@@ -480,6 +542,16 @@ vcc5v0_usb20_en: vcc5v0-usb20-en {
- 			rockchip,pins = <3 RK_PB7 RK_FUNC_GPIO &pcfg_pull_none>;
- 		};
- 	};
-+
-+	usb-typec {
-+		usbc0_int: usbc0-int {
-+			rockchip,pins = <0 RK_PD3 RK_FUNC_GPIO &pcfg_pull_up>;
-+		};
-+
-+		typec5v_pwren: typec5v-pwren {
-+			rockchip,pins = <4 RK_PB0 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
-+	};
- };
- 
- &pwm2 {
-@@ -871,6 +943,22 @@ &tsadc {
- 	status = "okay";
- };
- 
-+&u2phy0 {
-+	status = "okay";
-+};
-+
-+&u2phy0_otg {
-+	status = "okay";
-+};
-+
-+&u2phy1 {
-+	status = "okay";
-+};
-+
-+&u2phy1_otg {
-+	status = "okay";
-+};
-+
- &u2phy2 {
- 	status = "okay";
- };
-@@ -899,6 +987,33 @@ &uart9 {
- 	status = "okay";
- };
- 
-+&usbdp_phy0 {
-+	mode-switch;
-+	orientation-switch;
-+	sbu1-dc-gpios = <&gpio4 RK_PA6 GPIO_ACTIVE_HIGH>;
-+	sbu2-dc-gpios = <&gpio4 RK_PA7 GPIO_ACTIVE_HIGH>;
-+	status = "okay";
-+
-+	port {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		usbdp_phy0_typec_ss: endpoint@0 {
-+			reg = <0>;
-+			remote-endpoint = <&usbc0_ss>;
-+		};
-+
-+		usbdp_phy0_typec_sbu: endpoint@1 {
-+			reg = <1>;
-+			remote-endpoint = <&usbc0_sbu>;
-+		};
-+	};
-+};
-+
-+&usbdp_phy1 {
-+	status = "okay";
-+};
-+
- &usb_host0_ehci {
- 	status = "okay";
- };
-@@ -907,6 +1022,18 @@ &usb_host0_ohci {
- 	status = "okay";
- };
- 
-+&usb_host0_xhci {
-+	dr_mode = "otg";
-+	usb-role-switch;
-+	status = "okay";
-+
-+	port {
-+		usb_host0_xhci_drd_sw: endpoint {
-+			remote-endpoint = <&usbc0_hs>;
-+		};
-+	};
-+};
-+
- &usb_host1_ehci {
- 	status = "okay";
- };
-@@ -915,6 +1042,11 @@ &usb_host1_ohci {
- 	status = "okay";
- };
- 
-+&usb_host1_xhci {
-+	dr_mode = "host";
-+	status = "okay";
-+};
-+
- &vop_mmu {
- 	status = "okay";
- };
--- 
-2.39.5
+Skimming the implementation, it looks like you are already using fences 
+and the drm scheduler, so plumbing in syncobjs is not much more than 
+what you are already doing, I think.
 
+-Jeff
 
