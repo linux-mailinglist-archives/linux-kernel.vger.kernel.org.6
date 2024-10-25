@@ -1,281 +1,163 @@
-Return-Path: <linux-kernel+bounces-381216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C8C79AFC0D
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 10:07:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F07489AFC12
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 10:07:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4A9D1F245A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 08:07:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A92881F245C3
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 08:07:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E2BD1CEE98;
-	Fri, 25 Oct 2024 08:06:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C62B1CACC0;
+	Fri, 25 Oct 2024 08:07:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="V0gWmptj"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DmYKRuuW"
+Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B53E8155308;
-	Fri, 25 Oct 2024 08:06:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACF981C4A26;
+	Fri, 25 Oct 2024 08:07:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729843616; cv=none; b=sj/3CHvZiCJhaaRf7y2cKVqhmQZ/u3GvDm5n1YT5hCziaOAGDOiuY/sySHX8lnUb5ySqi2PU+/q4jgS2cTIUFCH8TUxL1m9eNJzufnwJ6Vd/GLJE3HxejUtxCwukh8SZ5+Ul7KuRgFQyrKghzKdQNqW9/UZQQbg/7No9vM+CzSg=
+	t=1729843626; cv=none; b=liAdcPTM7FyqDTn0GuAaEWiU9irRkwHODWdxlsk8o37Rbm/yy94ZCsZx9k4LjudUY0+HzlFrBLLuXL+IrYULAjfKagUnyXNQmeZ06DfxtIAsmDZeN2beJJs6dKAA3EHmv+l/AMvMDRvlIBLQapC/CseElhFitX7g2s/K0tdFol0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729843616; c=relaxed/simple;
-	bh=6OWlj7YCfTw7N49KaYA/ckXjIgnW9QjzRptum+J60s8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=k0T0MXCDrNIpr8OIOxEXsn8sO8zr+EpKpS5neJhC8ixFlGhwHKVIn8tIDLVYKczdkaMTq4pVOcpCzoydED9a5LQKHE8u3+1xgL/t30D5uYiMpSnN5LtGEEsNNwu5+aMPjbNX3VMW48MTLB3zcfoD16pFl8Qbj8dLheZu3TOxKVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=V0gWmptj; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49OKhSk7007572;
-	Fri, 25 Oct 2024 08:06:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	YC95ZwZdATrmtRFltjv/VxEOgMRwxg3+BAWxC0j1Ako=; b=V0gWmptjw5/Sfop5
-	h2rtpnCfR6uPqne6QL72D2yheQBmhSIaFxrdIxAuD9v5Tq7MD1RoV69KKU2aR10R
-	dfrgh/Zo9w/XfCIjdA50dFa50WszRaeq014DTLfGL7djVmRY8gvG5zF7S0iOj8fh
-	begehd1TpuL4ktNkf518DltF3Yv5nQmusdyIHybz49hBjAC1GbmQMVN8iNaQ64wF
-	OJRmyv9qNiMPdtsk3nwpSRYsIDivmCnkQ2kkkWLmbPnbUYfHQyeYW9hSqSohf9ZT
-	XJ9p0bUEbixsc7SjqkHEJ+fLLrEBW0MYpuC1ZGrgW7w8Dz17HJKlNNOsmceOjD59
-	Y5U99A==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42fk52k4am-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 25 Oct 2024 08:06:50 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49P86n2j016145
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 25 Oct 2024 08:06:49 GMT
-Received: from [10.204.101.50] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 25 Oct
- 2024 01:06:47 -0700
-Message-ID: <eb8b998a-98b8-704d-8783-9a0def327424@quicinc.com>
-Date: Fri, 25 Oct 2024 13:36:44 +0530
+	s=arc-20240116; t=1729843626; c=relaxed/simple;
+	bh=6PhqsK4X0scvxeS2ZPiwz4VbAxk7bJYz4NaSrXbewV4=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version:Content-Type; b=ZVXYMGgtsv+3/vtlMvF0CwMpqmXmPMcw957sWeW103aUDH9KYSSjZX5nf5RQ+gdbfkb3GXnfqLNzHEpxKtnlwF5J3X93PPplNG9Q1LQE1JlvaATRWsOvVAqf1/iQOrjBZgUnJOxTWNY0fqHoNMO039EsUFu2VrgV5O5WPYjVXek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DmYKRuuW; arc=none smtp.client-ip=209.85.160.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-288d70788d6so970965fac.1;
+        Fri, 25 Oct 2024 01:07:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729843622; x=1730448422; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=aCanS7lm2oIK9WyJeeAEIKg/+DUCUltSdlV8tSxgaXs=;
+        b=DmYKRuuWsbFMkve21jAPnoN4111wu0Ug2Bs90uUDcYZvn6R/qaQ+MVuzKuKKs9GeUO
+         P4yIHgXVEDoMRtaC0+OUaSajiRkm3PffVDuhGynO4VkcCAUlHeSzdPteDiYZljT6inCV
+         WHr3KnzzVQu+8TLQ9xZ3jsZV5+i+LuTaCGSkAb12O8dik+hSZ6m2BW2jxExopgmpLwQS
+         IpaiqybLd2r25KyQa89OnlWxwzqzhUsOnmGgf6nBCNz0pDuSAn4QFw91ZY7CI5azI6EC
+         Rw8I+J7fjheQZVAGtVF1U/2sOcYJMss6noJVZgQ7gcj9lhlzSPaHDka0XL7Sqn7+cd0+
+         C/Mg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729843622; x=1730448422;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=aCanS7lm2oIK9WyJeeAEIKg/+DUCUltSdlV8tSxgaXs=;
+        b=mJ42FuItIiQAXPnrGyo4LVKh91U7+Gg+A8bELkLKOsQGq5ykunscmj2i8PH/D/gFli
+         Ji+1dL1X88vO7msDDNWBqmNp1lVS71dV+buDq2R75A3tAEoYSI1GvewAUAHgHnUqlFVQ
+         3BD+q+StOmrEr42/Cg/tO0jsr/yYrCFrlS+aqeL8q+BtZrpL0IhVgp7icr8JHdSlvN65
+         cS2eLwd9T66g8sPjX9k7vUUxp+Ma/AEHZnquzqxvcqRo2uQqTyNkC4jOq6N/pEWjEpyk
+         kkEbA/fw85plsW5mkHr+WXwnIoZuieWR8BDmVH+NuvBCTyBIjLZyfa8UfQ33/7kyteQD
+         Yzsg==
+X-Forwarded-Encrypted: i=1; AJvYcCVMQhZYiJ9M/4PuMvv3pBHglLcxtvD//6NRijEPlfBKXepl7hENHxcbvRXiRCujmj0tvKNDhDpbXIeSzVD1@vger.kernel.org, AJvYcCVRSQgT9HC0bAf5ksHRYAYRCdWIXors8RAUNnXwCj3FywtJXbms9PuuUR2Ped4IJBXnLMMFjGHqgL9Q@vger.kernel.org, AJvYcCVwB3hKOOf23MTyBNb8Nb8sK7lSn/NEK58rX2rPe2oHRiDvGfQNW6/a6SCtePNfGtJaI6ylFIxmvXQ9@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywm286N3GOBj5PG/7ozmhEw2l/tkjHSfbidNEL/rnJUhXYkZwLs
+	Ma4E6SLtYguDhFgJxVMKCQ75UJzfSSAeXXulIBU68rkkLntSy6Id0yRSiA==
+X-Google-Smtp-Source: AGHT+IEWw+CFqp1TrLaz2UZqvWaNMZU4mMUog4jCovrgVt4urJ8rzGiEs9L4ZK07ucQAa4zt0NSGNA==
+X-Received: by 2002:a05:6870:c0d4:b0:270:276d:fb54 with SMTP id 586e51a60fabf-28ced2eeec4mr4850317fac.21.1729843622484;
+        Fri, 25 Oct 2024 01:07:02 -0700 (PDT)
+Received: from localhost.localdomain ([122.8.183.87])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-29035d20d70sm178319fac.8.2024.10.25.01.06.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Oct 2024 01:07:01 -0700 (PDT)
+From: Chen Wang <unicornxw@gmail.com>
+To: ukleinek@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	unicorn_wang@outlook.com,
+	inochiama@outlook.com,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pwm@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	chao.wei@sophgo.com,
+	haijiao.liu@sophgo.com,
+	xiaoguang.xing@sophgo.com,
+	chunzhi.lin@sophgo.com
+Subject: [PATCH v5 0/3] pwm: Add pwm driver for Sophgo SG2042
+Date: Fri, 25 Oct 2024 16:06:52 +0800
+Message-Id: <cover.1729843087.git.unicorn_wang@outlook.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCHv3 3/3] media: venus: factor out inst destruction routine
-Content-Language: en-US
-To: Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Stanimir Varbanov
-	<stanimir.k.varbanov@gmail.com>,
-        Vikash Garodia <quic_vgarodia@quicinc.com>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-CC: <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20241025034629.660047-1-senozhatsky@chromium.org>
- <20241025034629.660047-4-senozhatsky@chromium.org>
-From: Dikshita Agarwal <quic_dikshita@quicinc.com>
-In-Reply-To: <20241025034629.660047-4-senozhatsky@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: EOMCfihBHz8EmgnQmzD2aJV2Qi90lXNh
-X-Proofpoint-ORIG-GUID: EOMCfihBHz8EmgnQmzD2aJV2Qi90lXNh
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 mlxscore=0
- lowpriorityscore=0 malwarescore=0 impostorscore=0 phishscore=0
- adultscore=0 mlxlogscore=999 priorityscore=1501 spamscore=0 bulkscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410250061
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+From: Chen Wang <unicorn_wang@outlook.com>
+
+Add driver for pwm controller of Sophgo SG2042 SoC.
+
+Thanks,
+Chen
+
+---
+
+Changes in v5:
+  The patch series is based on v6.12-rc1.
+
+  Updated driver to add resets property for pwm controller node as per
+  suggestion from Inochi.
+
+Changes in v4:
+  The patch series is based on v6.12-rc1. You can simply review or test
+  the patches at the link [4].
+
+  Updated driver to set property atomic of pwm_chip to true as per suggestion
+  from Sean.
+
+Changes in v3:
+  The patch series is catched up with v6.12-rc1. You can simply review or test
+  the patches at the link [3].
+
+  Add patch #3 for dts part change.
+
+Changes in v2:
+  The patch series is based on v6.11-rc6. You can simply review or test the
+  patches at the link [2].
+
+  Fixed following issues as per comments from Yixun Lan, Krzysztof Kozlowski
+  and Uwe Kleine-König, thanks.
+
+  - Some minor issues in dt-bindings.
+  - driver issues, use macros with name prefix for registers access; add
+    limitations comments; fixed potential calculation overflow problem;
+    add .get_state() callback and other miscellaneous code improvements.
+
+Changes in v1:
+  The patch series is based on v6.11-rc6. You can simply review or test the
+  patches at the link [1].
+
+Link: https://lore.kernel.org/linux-riscv/cover.1725536870.git.unicorn_wang@outlook.com/ [1]
+Link: https://lore.kernel.org/linux-riscv/cover.1725931796.git.unicorn_wang@outlook.com/ [2]
+Link: https://lore.kernel.org/linux-riscv/cover.1728355974.git.unicorn_wang@outlook.com/ [3]
+Link: https://lore.kernel.org/linux-riscv/cover.1729037302.git.unicorn_wang@outlook.com/ [4]
+---
+
+Chen Wang (3):
+  dt-bindings: pwm: sophgo: add PWM controller for SG2042
+  pwm: sophgo: add driver for Sophgo SG2042 PWM
+  riscv: sophgo: dts: add pwm controller for SG2042 SoC
+
+ .../bindings/pwm/sophgo,sg2042-pwm.yaml       |  58 ++++++
+ arch/riscv/boot/dts/sophgo/sg2042.dtsi        |   9 +
+ drivers/pwm/Kconfig                           |  10 +
+ drivers/pwm/Makefile                          |   1 +
+ drivers/pwm/pwm-sophgo-sg2042.c               | 194 ++++++++++++++++++
+ 5 files changed, 272 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pwm/sophgo,sg2042-pwm.yaml
+ create mode 100644 drivers/pwm/pwm-sophgo-sg2042.c
 
 
+base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
+-- 
+2.34.1
 
-On 10/25/2024 9:16 AM, Sergey Senozhatsky wrote:
-> Factor out common instance destruction code into
-> a common function.
-> 
-> Suggested-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
-> ---
->  drivers/media/platform/qcom/venus/core.c      | 25 +++++++++++++++++++
->  drivers/media/platform/qcom/venus/core.h      |  2 ++
->  drivers/media/platform/qcom/venus/vdec.c      | 22 +---------------
->  drivers/media/platform/qcom/venus/vdec.h      |  7 +++++-
->  .../media/platform/qcom/venus/vdec_ctrls.c    |  6 -----
->  drivers/media/platform/qcom/venus/venc.c      | 22 +---------------
->  6 files changed, 35 insertions(+), 49 deletions(-)
-> 
-> diff --git a/drivers/media/platform/qcom/venus/core.c b/drivers/media/platform/qcom/venus/core.c
-> index 423deb5e94dc..4d90fc1c21fe 100644
-> --- a/drivers/media/platform/qcom/venus/core.c
-> +++ b/drivers/media/platform/qcom/venus/core.c
-> @@ -26,6 +26,7 @@
->  #include "firmware.h"
->  #include "pm_helpers.h"
->  #include "hfi_venus_io.h"
-> +#include "vdec.h"
->  
->  static void venus_coredump(struct venus_core *core)
->  {
-> @@ -502,6 +503,30 @@ static __maybe_unused int venus_runtime_suspend(struct device *dev)
->  	return ret;
->  }
->  
-> +void venus_close_common(struct venus_inst *inst)
-> +{
-> +	/*
-> +	 * First, remove the inst from the ->instances list, so that
-> +	 * to_instance() will return NULL.
-> +	 */
-> +	hfi_session_destroy(inst);
-> +	/*
-> +	 * Second, make sure we don't have IRQ/IRQ-thread currently running
-> +	 * or pending execution, which would race with the inst destruction.
-> +	 */
-> +	synchronize_irq(inst->core->irq);
-> +
-> +	v4l2_m2m_ctx_release(inst->m2m_ctx);
-> +	v4l2_m2m_release(inst->m2m_dev);
-> +	v4l2_fh_del(&inst->fh);
-> +	v4l2_fh_exit(&inst->fh);
-> +	vdec_ctrl_deinit(inst);
-vdec specific APIs shouldn't be invoked from common API.
-Pls call v4l2_ctrl_handler_free(&inst->ctrl_handler) directly from here.
-and remove vdec/venc_ctrl_init.
-> +
-> +	mutex_destroy(&inst->lock);
-> +	mutex_destroy(&inst->ctx_q_lock);
-> +}
-> +EXPORT_SYMBOL_GPL(venus_close_common);
-> +
->  static __maybe_unused int venus_runtime_resume(struct device *dev)
->  {
->  	struct venus_core *core = dev_get_drvdata(dev);
-> diff --git a/drivers/media/platform/qcom/venus/core.h b/drivers/media/platform/qcom/venus/core.h
-> index 435325432922..7bb36a270e15 100644
-> --- a/drivers/media/platform/qcom/venus/core.h
-> +++ b/drivers/media/platform/qcom/venus/core.h
-> @@ -560,4 +560,6 @@ is_fw_rev_or_older(struct venus_core *core, u32 vmajor, u32 vminor, u32 vrev)
->  		(core)->venus_ver.minor == vminor &&
->  		(core)->venus_ver.rev <= vrev);
->  }
-> +
-> +void venus_close_common(struct venus_inst *inst);
->  #endif
-> diff --git a/drivers/media/platform/qcom/venus/vdec.c b/drivers/media/platform/qcom/venus/vdec.c
-> index b3192a36f388..9a680402c711 100644
-> --- a/drivers/media/platform/qcom/venus/vdec.c
-> +++ b/drivers/media/platform/qcom/venus/vdec.c
-> @@ -1748,29 +1748,9 @@ static int vdec_close(struct file *file)
->  	struct venus_inst *inst = to_inst(file);
->  
->  	vdec_pm_get(inst);
-> -
->  	cancel_work_sync(&inst->delayed_process_work);
-> -	/*
-> -	 * First, remove the inst from the ->instances list, so that
-> -	 * to_instance() will return NULL.
-> -	 */
-> -	hfi_session_destroy(inst);
-> -	/*
-> -	 * Second, make sure we don't have IRQ/IRQ-thread currently running
-> -	 * or pending execution, which would race with the inst destruction.
-> -	 */
-> -	synchronize_irq(inst->core->irq);
-> -
-> -	v4l2_m2m_ctx_release(inst->m2m_ctx);
-> -	v4l2_m2m_release(inst->m2m_dev);
-> +	venus_close_common(inst);
->  	ida_destroy(&inst->dpb_ids);
-> -	v4l2_fh_del(&inst->fh);
-> -	v4l2_fh_exit(&inst->fh);
-> -	vdec_ctrl_deinit(inst);
-> -
-> -	mutex_destroy(&inst->lock);
-> -	mutex_destroy(&inst->ctx_q_lock);
-> -
->  	vdec_pm_put(inst, false);
->  
->  	kfree(inst);
-> diff --git a/drivers/media/platform/qcom/venus/vdec.h b/drivers/media/platform/qcom/venus/vdec.h
-> index 6b262d0bf561..2687255b1616 100644
-> --- a/drivers/media/platform/qcom/venus/vdec.h
-> +++ b/drivers/media/platform/qcom/venus/vdec.h
-> @@ -6,9 +6,14 @@
->  #ifndef __VENUS_VDEC_H__
->  #define __VENUS_VDEC_H__
->  
-> +#include <media/v4l2-ctrls.h>
-> +
->  struct venus_inst;
->  
->  int vdec_ctrl_init(struct venus_inst *inst);
-> -void vdec_ctrl_deinit(struct venus_inst *inst);
-> +static inline void vdec_ctrl_deinit(struct venus_inst *inst)
-> +{
-> +	v4l2_ctrl_handler_free(&inst->ctrl_handler);
-> +}
->  
->  #endif
-> diff --git a/drivers/media/platform/qcom/venus/vdec_ctrls.c b/drivers/media/platform/qcom/venus/vdec_ctrls.c
-> index 7e0f29bf7fae..fa034a7fdbed 100644
-> --- a/drivers/media/platform/qcom/venus/vdec_ctrls.c
-> +++ b/drivers/media/platform/qcom/venus/vdec_ctrls.c
-> @@ -4,7 +4,6 @@
->   * Copyright (C) 2017 Linaro Ltd.
->   */
->  #include <linux/types.h>
-> -#include <media/v4l2-ctrls.h>
->  
->  #include "core.h"
->  #include "helpers.h"
-> @@ -187,8 +186,3 @@ int vdec_ctrl_init(struct venus_inst *inst)
->  
->  	return 0;
->  }
-> -
-> -void vdec_ctrl_deinit(struct venus_inst *inst)
-> -{
-> -	v4l2_ctrl_handler_free(&inst->ctrl_handler);
-> -}
-> diff --git a/drivers/media/platform/qcom/venus/venc.c b/drivers/media/platform/qcom/venus/venc.c
-> index 36981ce448f5..2ae22ba156bb 100644
-> --- a/drivers/media/platform/qcom/venus/venc.c
-> +++ b/drivers/media/platform/qcom/venus/venc.c
-> @@ -1516,28 +1516,8 @@ static int venc_close(struct file *file)
->  	struct venus_inst *inst = to_inst(file);
->  
->  	venc_pm_get(inst);
-> -
-> -	/*
-> -	 * First, remove the inst from the ->instances list, so that
-> -	 * to_instance() will return NULL.
-> -	 */
-> -	hfi_session_destroy(inst);
-> -	/*
-> -	 * Second, make sure we don't have IRQ/IRQ-thread currently running
-> -	 * or pending execution, which would race with the inst destruction.
-> -	 */
-> -	synchronize_irq(inst->core->irq);
-> -
-> -	v4l2_m2m_ctx_release(inst->m2m_ctx);
-> -	v4l2_m2m_release(inst->m2m_dev);
-> -	v4l2_fh_del(&inst->fh);
-> -	v4l2_fh_exit(&inst->fh);
-> -	venc_ctrl_deinit(inst);
-> -
-> +	venus_close_common(inst);
->  	inst->enc_state = VENUS_ENC_STATE_DEINIT;
-> -	mutex_destroy(&inst->lock);
-> -	mutex_destroy(&inst->ctx_q_lock);
-> -
->  	venc_pm_put(inst, false);
->  
->  	kfree(inst);
 
