@@ -1,145 +1,87 @@
-Return-Path: <linux-kernel+bounces-381793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A60C89B0486
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:51:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 076419B0488
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:51:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 681FB284C23
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 13:51:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A2B6AB22D91
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 13:51:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7940A1E491B;
-	Fri, 25 Oct 2024 13:51:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF3521F757F;
+	Fri, 25 Oct 2024 13:51:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Wm244Aud"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=lichtman.org header.i=@lichtman.org header.b="hEu00asD"
+Received: from lichtman.org (lichtman.org [149.28.33.109])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A71651632E2;
-	Fri, 25 Oct 2024 13:51:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FAD0139D04;
+	Fri, 25 Oct 2024 13:51:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.33.109
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729864292; cv=none; b=c4fPMGLOzFi5gOc2/wPjN5DXWRFEQP04tViTj00y449vkGCfG6l+2WX4z27glbeotqcgyk/J+yaAbrPV5bm5cBLYkernWMCFaB2VXzHVATkE0U+7Lc3zs0TjS839rhmuOHP9keWXp7L83EjdMK3ZZhpGQNngcDEWXwYG//nCQlk=
+	t=1729864294; cv=none; b=DnVvOMrjz2dch9jKZ85JKL14G5chOx+yCsv/UDAaUc4y236dxuWQ5aoHAQDDfI7DF+5cWQo3dix9w7XdSmLK5nyQZWoYBKWi3ij6xFTiS0ZOVRrxeejd7BcX8UcyTzDdWr1MLwLr89ziFTSK9mZT245ffXoRq0IfLu3XWo9foQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729864292; c=relaxed/simple;
-	bh=/9gpRT1rrvW3/WnQ2D+/OotZc6CUH9P9u7DC+yvQo0A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nTXI9+x3g+Tzwfo78ev8X/oNX0IKmVT8CR3z97jQargA8nW20ggDVOuSayUV/AjxSNaL7o9nEFmmiPsLkRbOqys5RllYYojdfAVvhNEYjXbbp8migWQAurW90tqS6Fh/MCN1OVRF0DOWkDedhNL6Qs5fD9142PMAbsAX4xHbyWM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Wm244Aud; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 6566540E0285;
-	Fri, 25 Oct 2024 13:51:28 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id psED-3lxfWbY; Fri, 25 Oct 2024 13:51:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1729864284; bh=m0hkEZxpeJr7ugV2LE9WQ9YG0cnThgfQkWBRiVT0HMo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Wm244Audxi0pyKbQM9vE0pe6KwRVFb93PK0Zg+Fxr1VAf3KSQ8wtBi06quKksUluq
-	 uxRcfYbIJxe00xpsK9IStHxk4IoJUnLCUdkMvZ3EmDLD3soCdwP3ggqMTnXeu+fc6H
-	 9exfXwEIpzOZ2FuyX/QLOZVGAQ8T95lMQeUpxyuaC2OJDB9yNSSREUOz9fkGsFOnxP
-	 v1Tx/mJcktzJq4y0TYMBI3nWT6e3p9+XiVFI5a/gZX3Bsewj0PQshljp1yxdN7xP9G
-	 YQg7GLDwXYZLThYCfXpMWaqMNctPrwIVsYFKuSrrm6pRNF/XcQryLJXveRvabr38JG
-	 YieXVOkuggdCrZZJ6aycV9fILCwLzsfvkOQvr2CVHAyk9BmeE0nOpE5Zl1tRw3q/rW
-	 cWSi7riAOf0WxK4csFkozcblzWp4CAixYHc04aEoQfgA1pWhhyo9R3K02WeYsQbrg9
-	 Gk18qzVWHs/lOtkjnzU49+WUcBbQIJrG5DUIwqlFnZc44TnNuzJWMafPF9ODnPwDDW
-	 Qund2KTfFNDvJKlzO7JJIlSlgdfamjOYgY0UEHpJ+QUGrzP8mqREijha5iTeKLN6T9
-	 r0vLJd2BbrlX/Z5I8AzezUjKPzivCKlmY2ylEzFHXHE1+HPbBjEiLTGGA9xmCT0rgA
-	 O0gpo5AlblMIMalCkfk94944=
-Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 4ED2640E0284;
-	Fri, 25 Oct 2024 13:51:08 +0000 (UTC)
-Date: Fri, 25 Oct 2024 15:51:07 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Mario Limonciello <mario.limonciello@amd.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	"Gautham R . Shenoy" <gautham.shenoy@amd.com>,
-	Perry Yuan <perry.yuan@amd.com>,
-	Brijesh Singh <brijesh.singh@amd.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Li RongQing <lirongqing@baidu.com>,
-	"open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>,
-	"open list:ACPI" <linux-acpi@vger.kernel.org>,
-	"open list:AMD PSTATE DRIVER" <linux-pm@vger.kernel.org>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-Subject: Re: [PATCH v3 5/5] x86/amd: Use heterogeneous core topology for
- identifying boost numerator
-Message-ID: <20241025135107.GPZxuiS38_s3KWe8xj@fat_crate.local>
-References: <20241023174357.34338-1-mario.limonciello@amd.com>
- <20241023174357.34338-6-mario.limonciello@amd.com>
+	s=arc-20240116; t=1729864294; c=relaxed/simple;
+	bh=obg4rXob060iGRzUDraUr9IY55MEeO6N5oya//idfX0=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=gOCoP2mgt7sVtkFY9f43vvKbJevk+T0Hy9Bvcx8/P3/CH9gTBHyvTNcYPz39o9I5IQbiZW74Z4pp/1ucGX+pDo6zFzXZX/Ku1SJhDSmBKOxqyPuFhts5KZslgMTQ42och5IERMMjpCOchXppL5bGzy+GfouO8gLMKgVyAV1Jz1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lichtman.org; spf=pass smtp.mailfrom=lichtman.org; dkim=pass (2048-bit key) header.d=lichtman.org header.i=@lichtman.org header.b=hEu00asD; arc=none smtp.client-ip=149.28.33.109
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lichtman.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lichtman.org
+Received: by lichtman.org (Postfix, from userid 1000)
+	id B2A82177100; Fri, 25 Oct 2024 13:51:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=lichtman.org; s=mail;
+	t=1729864288; bh=obg4rXob060iGRzUDraUr9IY55MEeO6N5oya//idfX0=;
+	h=Date:From:To:Subject:From;
+	b=hEu00asDZhEDyZcc+HnpHwqQjYYtAfU8zMmX3tos6PzHgcbFqVY2Xu0nOFMpOTwip
+	 cauq7Nfu3RUKtaCByevjFbLjT2RHO3M4AHWiC/QnIsyjl2eFQKasMvsPuS/t9aryCq
+	 cu+zelVlsqtCCTP0Vvdg+bo7HJuyFhxSBcd6qibUb59t5tDCo27UICYbbYYvWY3z4J
+	 TVYtrYRud8NvT+1aj++ltwC7Yd96Jy0X1SsdrUhVTpjbTxG4sHc999UQevQQvcOe/G
+	 FG31bOYwUvL0dsj2H8VJ+TU8N8iay/4djvToeMmQpcZa3JdobNZEmCcJgluCVBI7ze
+	 G7922XRXd36Sw==
+Date: Fri, 25 Oct 2024 13:51:28 +0000
+From: Nir Lichtman <nir@lichtman.org>
+To: corbet@lwn.net, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] Documentation: Fix incorrect paths/magic in magic numbers rst
+Message-ID: <20241025135128.GA879576@lichtman.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241023174357.34338-6-mario.limonciello@amd.com>
 
-On Wed, Oct 23, 2024 at 12:43:57PM -0500, Mario Limonciello wrote:
->  int amd_get_boost_ratio_numerator(unsigned int cpu, u64 *numerator)
->  {
-> +	enum x86_topology_cpu_type core_type = get_topology_generic_cpu_type(&cpu_data(cpu));
->  	bool prefcore;
->  	int ret;
-> +	u32 tmp;
->  
->  	ret = amd_detect_prefcore(&prefcore);
->  	if (ret)
-> @@ -261,6 +263,27 @@ int amd_get_boost_ratio_numerator(unsigned int cpu, u64 *numerator)
->  			break;
->  		}
->  	}
-> +
+Fix some no longer true header/c file paths and correct the BAYCOM_MAGIC
+value to be decimal as in the source instead of incorrectly hexadecimal
 
-What's the difference between this case:
+Signed-off-by: Nir Lichtman <nir@lichtman.org>
+---
+ Documentation/staging/magic-number.rst | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-> +	/* detect if running on heterogeneous design */
-> +	switch (core_type) {
-> +	case TOPO_CPU_TYPE_UNKNOWN:
-	     ^^^^^^^^^^^^^^^^^^^^^^^
-
-> +		break;
-> +	case TOPO_CPU_TYPE_PERFORMANCE:
-> +		/* use the max scale for performance cores */
-> +		*numerator = CPPC_HIGHEST_PERF_PERFORMANCE;
-> +		return 0;
-> +	case TOPO_CPU_TYPE_EFFICIENCY:
-> +		/* use the highest perf value for efficiency cores */
-> +		ret = amd_get_highest_perf(cpu, &tmp);
-> +		if (ret)
-> +			return ret;
-> +		*numerator = tmp;
-> +		return 0;
-> +	default:
-
-... and this case and why aren't you warning if TOPO_CPU_TYPE_UNKNOWN?
-
-I think for that you need to check X86_FEATURE_AMD_HETEROGENEOUS_CORES and
-warn if set but still CPU type unknown or?
-
-> +		pr_warn("WARNING: Undefined core type %d found\n", core_type);
-> +		break;
-> +	}
-
+diff --git a/Documentation/staging/magic-number.rst b/Documentation/staging/magic-number.rst
+index 7029c3c084ee..79afddf0e692 100644
+--- a/Documentation/staging/magic-number.rst
++++ b/Documentation/staging/magic-number.rst
+@@ -68,11 +68,11 @@ Changelog::
+ ===================== ================ ======================== ==========================================
+ Magic Name            Number           Structure                File
+ ===================== ================ ======================== ==========================================
+-PG_MAGIC              'P'              pg_{read,write}_hdr      ``include/linux/pg.h``
++PG_MAGIC              'P'              pg_{read,write}_hdr      ``include/uapi/linux/pg.h``
+ APM_BIOS_MAGIC        0x4101           apm_user                 ``arch/x86/kernel/apm_32.c``
+ FASYNC_MAGIC          0x4601           fasync_struct            ``include/linux/fs.h``
+-SLIP_MAGIC            0x5302           slip                     ``drivers/net/slip.h``
+-BAYCOM_MAGIC          0x19730510       baycom_state             ``drivers/net/baycom_epp.c``
++SLIP_MAGIC            0x5302           slip                     ``drivers/net/slip/slip.h``
++BAYCOM_MAGIC          19730510         baycom_state             ``drivers/net/hamradio/baycom_epp.c``
+ HDLCDRV_MAGIC         0x5ac6e778       hdlcdrv_state            ``include/linux/hdlcdrv.h``
+ KV_MAGIC              0x5f4b565f       kernel_vars_s            ``arch/mips/include/asm/sn/klkernvars.h``
+ CODA_MAGIC            0xC0DAC0DA       coda_file_info           ``fs/coda/coda_fs_i.h``
 -- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+2.39.2
 
