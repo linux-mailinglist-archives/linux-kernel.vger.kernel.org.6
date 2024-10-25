@@ -1,125 +1,111 @@
-Return-Path: <linux-kernel+bounces-382665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22A629B11A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 23:32:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B530C9B11A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 23:36:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A80A0282DB7
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 21:32:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E76DD1C2166D
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 21:36:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 030CA20BB56;
-	Fri, 25 Oct 2024 21:32:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D4BA20D50C;
+	Fri, 25 Oct 2024 21:36:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ui6KR0kd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A4E1217F4C;
-	Fri, 25 Oct 2024 21:32:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="D6PWwpMd"
+Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1249C217F4C
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 21:36:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729891965; cv=none; b=LAHP55paYZmDyzQ4gd3K408NnPAh+izMouT/QUmNlWjF9aL/MAiqOMO6er0faQ2SwrBJQCM6wgnk8txUfgET6CcKkdLEN7G5HQJ9QmSrEE4NegOsZTLszcy1NuLk619UGUK9XrYTXmdmZ5i7s9vaEj0udFP88Egp4onHk6X6QXw=
+	t=1729892190; cv=none; b=Pqc4p7A+kK4HcIVtLrCY2T1bVuus9aj1Or7kRtWXrUIf1fS+VmkPxlLY38ydTQ0B2DloZ7GAUjir89Jxkv6wiB9Jy38sBnPiB8GgnD285Sld0hyLcOeP5H3xSewjV8mbfmka2VOD8peq7vm5pe2Ng4idaQBwMm4Lrj4rU1WXUTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729891965; c=relaxed/simple;
-	bh=karHkl1P4MymVDmMVIm5W0oSGt8WGS2RI4WaZcDwTEk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hU5U0MzS5jL5uFxtZ2NgdRNtz4C+pso7HBPQi8kFpNn6T0MfbqpiaPD5SAR+lpUY1BEV5wb1PCv9Eby76P9vDxWoYRlraMsbOuZcbi0A8okrFvxA5uFe2p0ZFCyOK9hy6Nns2HF/pL5RP+s0SDl13MjMOuOa6Js+xqSocK6LNXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ui6KR0kd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C6D5C4CEC3;
-	Fri, 25 Oct 2024 21:32:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729891964;
-	bh=karHkl1P4MymVDmMVIm5W0oSGt8WGS2RI4WaZcDwTEk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ui6KR0kdPRYlpScOp15X+unLeIAbNEI3oGX0lXMaIurlD0BJ0jl9m7sv68bFBvJ8X
-	 CgmQy4NmGULJhNReu42xHOOaMDZWh8rDiJMHw/GnKiiye07KV68euQMU+mVNPy6Dh5
-	 q+2Nla53/DZid3rdBbpBsYfaayka1Upsz7x35RnBCM/7/4Qef0Iy4By75QnYsA9YNP
-	 PwOXPfwaV3rNp69SYU+sRoFrITlEHpzt+P0+Cem8hn3H149Vz/ognobz0PrT4BXTc/
-	 bchtyRCSYWd93GuJXbMaRcdctbFVLfRi2xAODovc57JIf5w8iiwde7M2cD6qqrEeer
-	 AmGpk7Tij3AcQ==
-Date: Fri, 25 Oct 2024 21:32:43 +0000
-From: Eric Biggers <ebiggers@kernel.org>
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
-	linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-	linux-mips@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev,
-	sparclinux@vger.kernel.org, x86@kernel.org
-Subject: Re: [PATCH v2 03/18] lib/crc32: expose whether the lib is really
- optimized at runtime
-Message-ID: <20241025213243.GA2637569@google.com>
-References: <20241025191454.72616-1-ebiggers@kernel.org>
- <20241025191454.72616-4-ebiggers@kernel.org>
- <CAMj1kXFoer+_yZJWtqBVYfYnzqL9X9bbBRomCL3LDqRcYJ6njQ@mail.gmail.com>
+	s=arc-20240116; t=1729892190; c=relaxed/simple;
+	bh=3+KFcHbQIWjyeAheH/KxRYzNPHaMjPzLwH/4JdM3JuE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=GSgU/ITKYHFKsaP6WsbqJvfsDTWxbn+JM65S/P2qy0aqgPy0wYZwj4cLG5QsYmrD94eDkKRm9kZ97u16/fXPba/n3IvSNqpdOkh/tteGRfNGFAEXzPztxhJuGSKrbZjm/5VR0cx9rkNzzXPMVVY++g4ac82PH6Q2QEDNvY5J5fk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=D6PWwpMd; arc=none smtp.client-ip=62.210.214.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
+Received: from gaia.codewreck.org (localhost [127.0.0.1])
+	by submarine.notk.org (Postfix) with ESMTPS id 7BB8614C1E1;
+	Fri, 25 Oct 2024 23:36:18 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
+	s=2; t=1729892180;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=msbetZUBXaor1UFV07AVhHFCrgXr3mbw/IjluhVXHM4=;
+	b=D6PWwpMdLY9aY8+NBHz88UfHB9v/5gbTZODCv5WB5kCgPBrqKxROqb1TIn1y4ZnIETEzz3
+	HJYic+0mrXHc8otqob6EONxI+PFNOEff5v6QYskoCEBRTYekQDePo6QSIQDmSWshddyt/B
+	4E3Dp9jP6U8gv5icTcGuen6HMUi2Vt1NgEs5rg4gX+CkMIalAd8mfbKKvMO3Pj3/v+GOhb
+	S9oczEeLcaEf2V46lxLNmeOFunRXneWCbNgGMoqqgNxzX1Qn3tQjk62mV1KGFK78lQdBE0
+	IzU/4t+Qe3IUk+12Jy9XhD1iRe3bBvrxfIUu4eP9IliIvuRmKOCnHoGj25jqUg==
+Received: from localhost (gaia.codewreck.org [local])
+	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id 1d34c561;
+	Fri, 25 Oct 2024 21:36:16 +0000 (UTC)
+Date: Sat, 26 Oct 2024 06:36:01 +0900
+From: Dominique Martinet <asmadeus@codewreck.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Will Deacon <will@kernel.org>,
+	Christian Schoenebeck <linux_oss@crudebyte.com>,
+	Eric Van Hensbergen <ericvh@kernel.org>, v9fs@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Thorsten Leemhuis <regressions@leemhuis.info>
+Subject: [GIT PULL] more 9p reverts for 6.12-rc5
+Message-ID: <ZxwPQTUCnbGEt1KQ@codewreck.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAMj1kXFoer+_yZJWtqBVYfYnzqL9X9bbBRomCL3LDqRcYJ6njQ@mail.gmail.com>
 
-On Fri, Oct 25, 2024 at 10:32:14PM +0200, Ard Biesheuvel wrote:
-> On Fri, 25 Oct 2024 at 21:15, Eric Biggers <ebiggers@kernel.org> wrote:
-> >
-> > From: Eric Biggers <ebiggers@google.com>
-> >
-> > Make the CRC32 library export some flags that indicate which CRC32
-> > functions are actually executing optimized code at runtime.  Set these
-> > correctly from the architectures that implement the CRC32 functions.
-> >
-> > This will be used to determine whether the crc32[c]-$arch shash
-> > algorithms should be registered in the crypto API.  btrfs could also
-> > start using these flags instead of the hack that it currently uses where
-> > it parses the crypto_shash_driver_name.
-> >
-> > Signed-off-by: Eric Biggers <ebiggers@google.com>
-> > ---
-> >  arch/arm64/lib/crc32-glue.c  | 15 +++++++++++++++
-> >  arch/riscv/lib/crc32-riscv.c | 15 +++++++++++++++
-> >  include/linux/crc32.h        | 15 +++++++++++++++
-> >  lib/crc32.c                  |  5 +++++
-> >  4 files changed, 50 insertions(+)
-> >
-> ...
-> > diff --git a/include/linux/crc32.h b/include/linux/crc32.h
-> > index 58c632533b08..bf26d454b60d 100644
-> > --- a/include/linux/crc32.h
-> > +++ b/include/linux/crc32.h
-> > @@ -35,10 +35,25 @@ static inline u32 __pure __crc32c_le(u32 crc, const u8 *p, size_t len)
-> >         if (IS_ENABLED(CONFIG_CRC32_ARCH))
-> >                 return crc32c_le_arch(crc, p, len);
-> >         return crc32c_le_base(crc, p, len);
-> >  }
-> >
-> > +/*
-> > + * crc32_optimizations contains flags that indicate which CRC32 library
-> > + * functions are using architecture-specific optimizations.  Unlike
-> > + * IS_ENABLED(CONFIG_CRC32_ARCH) it takes into account the different CRC32
-> > + * variants and also whether any needed CPU features are available at runtime.
-> > + */
-> > +#define CRC32_LE_OPTIMIZATION  BIT(0) /* crc32_le() is optimized */
-> > +#define CRC32_BE_OPTIMIZATION  BIT(1) /* crc32_be() is optimized */
-> > +#define CRC32C_OPTIMIZATION    BIT(2) /* __crc32c_le() is optimized */
-> > +#if IS_ENABLED(CONFIG_CRC32_ARCH)
-> > +extern u32 crc32_optimizations;
-> > +#else
-> > +#define crc32_optimizations 0
-> > +#endif
-> > +
-> 
-> Wouldn't it be cleaner to add a new library function for this, instead
-> of using a global variable?
+Hi Linus,
 
-The architecture crc32 modules need to be able to write to this.  There could be
-a setter function and a getter function, but just using a variable is simpler.
+- see tip commit (simplify iget revert) for full explanation.
+This problem had been ignored for too long and the reverts will also
+head to stable (6.9+)
+- rebased yesterday to remove the use-folio revert that was applied
+directly, but patches are fairly new anyway. I'm confident this set of
+patches gets us back to previous behaviour (another related patch had
+already been reverted back in April and we're almost back to square 1,
+and the rest didn't touch inode lifecycle)
 
-- Eric
+Thanks!
+
+
+The following changes since commit 42f7652d3eb527d03665b09edac47f85fb600924:
+
+  Linux 6.12-rc4 (2024-10-20 15:19:38 -0700)
+
+are available in the Git repository at:
+
+  https://github.com/martinetd/linux tags/9p-for-6.12-rc5
+
+for you to fetch changes up to be2ca3825372085d669d322dccd0542a90e5b434:
+
+  Revert "fs/9p: simplify iget to remove unnecessary paths" (2024-10-25 06:26:09 +0900)
+
+----------------------------------------------------------------
+Revert patches causing inode collision problems
+
+----------------------------------------------------------------
+Dominique Martinet (4):
+      Revert " fs/9p: mitigate inode collisions"
+      Revert "fs/9p: remove redundant pointer v9ses"
+      Revert "fs/9p: fix uaf in in v9fs_stat2inode_dotl"
+      Revert "fs/9p: simplify iget to remove unnecessary paths"
+
+ fs/9p/v9fs.h           |  34 +++++++++++++++----
+ fs/9p/v9fs_vfs.h       |   2 +-
+ fs/9p/vfs_inode.c      | 129 ++++++++++++++++++++++++++++++++++++++++++++++--------------------------
+ fs/9p/vfs_inode_dotl.c | 112 ++++++++++++++++++++++++++++++++++++++++++++------------------
+ fs/9p/vfs_super.c      |   2 +-
+ 5 files changed, 192 insertions(+), 87 deletions(-)
+
+--
+Dominique Martinet | Asmadeus
 
