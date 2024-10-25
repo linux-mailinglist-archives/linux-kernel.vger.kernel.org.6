@@ -1,130 +1,174 @@
-Return-Path: <linux-kernel+bounces-380988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B812C9AF8A8
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 05:58:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 266C59AF893
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 05:56:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D5EF281AAD
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 03:58:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A7781C21F76
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 03:56:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 687241AB6D4;
-	Fri, 25 Oct 2024 03:56:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C4F418E029;
+	Fri, 25 Oct 2024 03:56:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="cF3Xxqf1"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="ghWgbpbQ"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FB8318E056;
-	Fri, 25 Oct 2024 03:56:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8E1518C002;
+	Fri, 25 Oct 2024 03:56:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729828615; cv=none; b=OTBi5Opf1gA0gCLK9X9C6P2ptEHgVBr1AedZasnab+MgX2nnHwmzVhr5LwQWxdlBd+vmFxCA7JMH3iEh+sbVmawg/Aq8OI/ZY+QFWKIwFMfdjU/rnCOGs166ESmlEpIv939vj+VK7p/cb56jjqbdN9a/rtth0MKjn7uaVmVlsq0=
+	t=1729828572; cv=none; b=mdp37DZl1AdQmEJs2RC+oT9CmFFDQLYjODicK4kI8mDw3p27j/bu9Zmc3tYSCz5P9AM1EITgGloT9cPttKYBbXdKaQOHSQ98M3MpYnySkaOE8qafz8puN8na30/XeokaxPTq2Rn4LQZSE8K77pEEERe+A3Bg6AU83REWWldUU+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729828615; c=relaxed/simple;
-	bh=VtWSGEiD4gEb1u8Ffeu5L3k/EsqVQcCny6MFSXIzQ58=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DnuN9z8/0WgziWAYwktDgcyURNv4NJP4WgZXP8R5QhC20ctO5F1rJ1UwHj1eb6W135lju2zXrNTL1Ux9uNaIDJSVE7MB+Z4gC3FEdkE/S6NQliUyeg92KIFLw9/n+3/COYXvWWzpnJ1wvcwZ+v6syHdwiOZo2hTMM7OX1IjbFns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=cF3Xxqf1; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49P1nCnG028685;
-	Fri, 25 Oct 2024 03:56:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	euG3zxgLa0YJs9k5VfGPvwsB7+E/wXLh/+6SGH2tEfs=; b=cF3Xxqf1+gdGt2TQ
-	s+JPfjnKNO/VL2WDDfqRB/QGQeGNk+XPWfKYzEz2nH52oihRvqQOW/bgcMmdWfmG
-	9W7bGKJ+PToWUPh1kZeZ2uiowqA1neQ/azWy/0khpjYRAKhTZOBQcZrfX2TZV2mV
-	vRcH1HpxRW0SQUIYBu/KIpiu7LsHK8AA++3nqfunOvsOL4NLi1Q/zFE9HdwjkqMU
-	qGoVdTcnIVYp7T5VLuCe/Lb3BOeeON617hDiweqhsFvWj0RhPQ+fog1wZ+Q/azaC
-	dwnvzF1JzpALzgVhwFq9LhW+7b+ogUVQKFk4r6I6hvYYbnrfuLa0JUsZCADbxPuI
-	bQ6UnQ==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42fdtxkgpw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 25 Oct 2024 03:56:36 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49P3uZlX016425
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 25 Oct 2024 03:56:35 GMT
-Received: from hu-mmanikan-blr.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 24 Oct 2024 20:56:28 -0700
-From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-To: <andersson@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <konradybcio@kernel.org>, <catalin.marinas@arm.com>, <will@kernel.org>,
-        <p.zabel@pengutronix.de>, <richardcochran@gmail.com>,
-        <geert+renesas@glider.be>, <dmitry.baryshkov@linaro.org>,
-        <angelogioacchino.delregno@collabora.com>, <neil.armstrong@linaro.org>,
-        <arnd@arndb.de>, <nfraprado@collabora.com>, <quic_anusha@quicinc.com>,
-        <quic_mmanikan@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <netdev@vger.kernel.org>
-CC: <quic_srichara@quicinc.com>, <quic_varada@quicinc.com>
-Subject: [PATCH v8 7/7] arm64: defconfig: Build NSS Clock Controller driver for IPQ9574
-Date: Fri, 25 Oct 2024 09:25:20 +0530
-Message-ID: <20241025035520.1841792-8-quic_mmanikan@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241025035520.1841792-1-quic_mmanikan@quicinc.com>
-References: <20241025035520.1841792-1-quic_mmanikan@quicinc.com>
+	s=arc-20240116; t=1729828572; c=relaxed/simple;
+	bh=nFfAqX1nuEjPAzz8vWo8La/0AzColIlWjX443+G9qwY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=KLbxf6mIkqEnvr2XXPSwnFU5AEiLZxa3aEi0cF7vVylSsJbwxgeW8xpX6Lk5v0ebXy80nIy+aI7w85EgmDMclI+xADWzz3O4q32s34stTWeon3XRAm6cFJo/i2Sxcjtvgd35ci8B+J9xyhPIJI7lMotFdayvC/CRWeTtNJ+BZ7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=ghWgbpbQ; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
+	s=201909; t=1729828564;
+	bh=zhqxaFdelNULJR0EVgv2G8QYzzTg5epKTyLS+XXXoa0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=ghWgbpbQ6Ssp0Ya8t/2aTa4zdB6SP0T8GbEZQzex5ddeyDYOJkLpD26nX42ZVWgMw
+	 mbPeOXfF8MELMRShXm17Jk2H9nszVq1HUL4NZKaWkm9m2Ay3nfbEe4aiVFxHOOT1RA
+	 yhP0nLJxqZ985HnQMFIjcF4JwrstDc4f1QKEPypYh997qpSim6EKtD4zne6KElIaar
+	 0g4NitpCjZ0sJh+PalJO2mCjmt1b2uTyGHgmqF5BzdCs996XIxBuZS/Bt35vu9Ii4b
+	 2M3tAe7dq0Lm9jOtVs9/x8DslW0z9/d0vqJ9BY0Ht8Ie4s88CA0EowQJR1XIU2HfPs
+	 JcXvo8Jq6LeuQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XZTTw2Pjsz4w2N;
+	Fri, 25 Oct 2024 14:56:04 +1100 (AEDT)
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Gautam Menghani <gautam@linux.ibm.com>, npiggin@gmail.com,
+ christophe.leroy@csgroup.eu, naveen@kernel.org
+Cc: Gautam Menghani <gautam@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org,
+ kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] KVM: PPC: Book3S HV: Mask off LPCR_MER for a vCPU
+ before running it to avoid spurious interrupts
+In-Reply-To: <20241024173417.95395-1-gautam@linux.ibm.com>
+References: <20241024173417.95395-1-gautam@linux.ibm.com>
+Date: Fri, 25 Oct 2024 14:56:05 +1100
+Message-ID: <877c9wkf8q.fsf@mail.lhotse>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 6Yxxx9GrxMWZLTYo5gIjMw57HIDCUZR2
-X-Proofpoint-ORIG-GUID: 6Yxxx9GrxMWZLTYo5gIjMw57HIDCUZR2
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxscore=0
- lowpriorityscore=0 phishscore=0 adultscore=0 mlxlogscore=881
- priorityscore=1501 impostorscore=0 bulkscore=0 spamscore=0 malwarescore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410250026
 
-From: Devi Priya <quic_devipriy@quicinc.com>
+Hi Gautam,
 
-NSSCC driver is needed to enable the ethernet interfaces present
-in RDP433 based on IPQ9574. Since this is not necessary for bootup
-enabling it as a module.
+A few comments below ...
 
-Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
-Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
----
-Changes in V8:
-	- No change
+Gautam Menghani <gautam@linux.ibm.com> writes:
+> Mask off the LPCR_MER bit before running a vCPU to ensure that it is not
+> set if there are no pending interrupts.
 
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+I would typically leave this until the end of the change log. ie.
+describe the bug and how it happens first, then the fix at the end.
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 5663ebf39748..da33e5c197d4 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -1314,6 +1314,7 @@ CONFIG_IPQ_GCC_5332=y
- CONFIG_IPQ_GCC_6018=y
- CONFIG_IPQ_GCC_8074=y
- CONFIG_IPQ_GCC_9574=y
-+CONFIG_IPQ_NSSCC_9574=m
- CONFIG_MSM_GCC_8916=y
- CONFIG_MSM_MMCC_8994=m
- CONFIG_MSM_GCC_8994=y
--- 
-2.34.1
+But it's not a hard rule, so up to you.
 
+> Running a vCPU with LPCR_MER bit
+            ^
+        "an L2 vCPU"
+
+In general if you can qualify L0 vs L1 vs L2 everywhere it would help
+folks follow the description.
+
+> set and no pending interrupts results in L2 vCPU getting an infinite flood
+> of spurious interrupts. The 'if check' in kvmhv_run_single_vcpu() sets
+> the LPCR_MER bit if there are pending interrupts.
+>
+> The spurious flood problem can be observed in 2 cases:
+> 1. Crashing the guest while interrupt heavy workload is running
+>   a. Start a L2 guest and run an interrupt heavy workload (eg: ipistorm)
+>   b. While the workload is running, crash the guest (make sure kdump
+>      is configured)
+>   c. Any one of the vCPUs of the guest will start getting an infinite
+>      flood of spurious interrupts.
+>
+> 2. Running LTP stress tests in multiple guests at the same time
+>    a. Start 4 L2 guests.
+>    b. Start running LTP stress tests on all 4 guests at same time.
+>    c. In some time, any one/more of the vCPUs of any of the guests will
+>       start getting an infinite flood of spurious interrupts.
+>
+> The root cause of both the above issues is the same:
+> 1. A NMI is sent to a running vCPU that has LPCR_MER bit set.
+> 2. In the NMI path, all registers are refreshed, i.e, H_GUEST_GET_STATE
+>    is called for all the registers.
+> 3. When H_GUEST_GET_STATE is called for lpcr, the vcpu->arch.vcore->lpcr
+>    of that vCPU at L1 level gets updated with LPCR_MER set to 1, and this
+>    new value is always used whenever that vCPU runs, regardless of whether
+>    there was a pending interrupt.
+> 4. Since LPCR_MER is set, the vCPU in L2 always jumps to the external
+>    interrupt handler, and this cycle never ends.
+>
+> Fix the spurious flood by making sure a vCPU's LPCR_MER is always masked
+> before running a vCPU.
+
+I think your original sentence at the top of the change log is actually more
+accurate. ie. it's not that LPCR_MER is always cleared, it's cleared
+*unless there's a pending interrupt*.
+
+> Fixes: ec0f6639fa88 ("KVM: PPC: Book3S HV nestedv2: Ensure LPCR_MER bit is passed to the L0")
+> Cc: stable@vger.kernel.org # v6.8+
+> Signed-off-by: Gautam Menghani <gautam@linux.ibm.com>
+> ---
+> V1 -> V2:
+> 1. Mask off the LPCR_MER in vcpu->arch.vcore->lpcr instead of resetting
+> it so that we avoid grabbing vcpu->arch.vcore->lock. (Suggested by
+> Ritesh in an internal review)
+
+Did v1 take the vcore->lock? I don't remember it.
+
+> diff --git a/arch/powerpc/kvm/book3s_hv.c b/arch/powerpc/kvm/book3s_hv.c
+> index 8f7d7e37bc8c..b8701b5dde50 100644
+> --- a/arch/powerpc/kvm/book3s_hv.c
+> +++ b/arch/powerpc/kvm/book3s_hv.c
+> @@ -5089,9 +5089,19 @@ static int kvmppc_vcpu_run_hv(struct kvm_vcpu *vcpu)
+>  
+>  	do {
+>  		accumulate_time(vcpu, &vcpu->arch.guest_entry);
+> +		/*
+> +		 * L1's copy of L2's lpcr (vcpu->arch.vcore->lpcr) can get its MER bit
+                                     ^
+                                     LPCR
+> +		 * unexpectedly set - for e.g. during NMI handling when all register
+> +		 * states are synchronized from L0 to L1. L1 needs to inform L0 about
+> +		 * MER=1 only when there are pending external interrupts.
+> +		 * kvmhv_run_single_vcpu() anyway sets MER bit if there are pending
+> +		 * external interrupts. Hence, mask off MER bit when passing vcore->lpcr
+> +		 * here as otherwise it may generate spurious interrupts in L2 KVM
+> +		 * causing an endless loop, which results in L2 guest getting hung.
+> +		 */
+>  		if (cpu_has_feature(CPU_FTR_ARCH_300))
+>  			r = kvmhv_run_single_vcpu(vcpu, ~(u64)0,
+> -						  vcpu->arch.vcore->lpcr);
+> +						  vcpu->arch.vcore->lpcr & ~LPCR_MER);
+ 
+This is much better than v1 which hid the clearing of LPCR_MER in a macro.
+
+But I still wonder if it would be better to clear it in
+kvmhv_run_single_vcpu() itself.
+
+The logic to set LPCR_MER is already in there, so why not ensure
+LPCR_MER is cleared as part of that some block?
+
+I realise there's another caller of kvmhv_run_single_vcpu() from the
+nested code, but that's OK because there's already a nested check in
+kvmhv_run_single_vcpu(), so you can still isolate this change to just
+the non-nested case.
+
+cheers
 
