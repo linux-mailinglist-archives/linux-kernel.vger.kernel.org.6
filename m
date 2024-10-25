@@ -1,213 +1,106 @@
-Return-Path: <linux-kernel+bounces-381328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7A659AFDAB
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 11:07:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2DC39AFDAD
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 11:07:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 353A7B240E7
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 09:07:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9A0D1C2123F
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 09:07:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CBF01D1F7B;
-	Fri, 25 Oct 2024 09:07:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CE281CF295;
+	Fri, 25 Oct 2024 09:07:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j10cRNnb"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AFvGhKIZ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E5C718F2F9;
-	Fri, 25 Oct 2024 09:07:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD03E1D0E08
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 09:07:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729847227; cv=none; b=I3zZAsMnn/1YbE5ZVY37wCfr/3pDikfeniTZbxpFX02cukeAU+iMslPUgrjLMJiN3FJVrfPoulKRuSF1UiXWyt/I+3bLiqBbOgBVeoTGhxZq2sBVOxaS86cNMGZ9s7PzJzuLt1CbyHdfIjKZHGsab3BNo/AmEGgjVmrjfkH6Nn0=
+	t=1729847250; cv=none; b=Nmf69uZpdEeQ/lfP1IrUQ/QoHoo0mV/mIXUM/FCCAYJTlsIDTPNX0fa5NMJttvZf44efE880MM5CLoycilvVzHW0DEXVqLxquhUvDA3bxkuJ+sMe1DMamDGgbGBclm6aTgM3aCPY8aG8s6UoUR/QI+wcjIRnOdR2Hi5uPnCymI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729847227; c=relaxed/simple;
-	bh=Rzp9K4Fkjf5MO1eixTWPhfMpvqZgxSqJdynFSyg8cAw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fCcvnldcEuSKgqbqyKsnDXel1nI6pKBcFND/PeFDVkP+Ydc0IWbBYe18hREKlBXscnRTTIFcUmk86PpBwH9nIdy0518ETBBooDXuunSQiWZ2b4dvH/GSQzFRuV1aW0tYWXclV1tnM8rvRnO2Tl+w8EPI/2jrlDxetWEoXmfJG0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j10cRNnb; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-539f7606199so2272895e87.0;
-        Fri, 25 Oct 2024 02:07:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729847223; x=1730452023; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4mECQD/YfbuBuIUcbQm0LGC8NByfVNCBXlQA6CHA+Jk=;
-        b=j10cRNnbDzgFL/r7aIeB7FX+vez7yiYw/0qmuqrHH+ktP0C48m+keWxS8e96osT5X/
-         jish4iBHbG/X+DbQLj/Eef8Uos9RdnHIq+04r4iqQQfQFaZ7fnmquOfuJTcRHws3cOgK
-         TK00QRTosZKV2CJ1zTWN/2Vbu+XqOg51l92Do8eDC9i2FrWR6xZbLezH4PKqHXRskBTJ
-         IJs8tExw9GRRVjwJIug0/bqgbTh0Ey6q1y1TMgQBF6QGZOBDok7kTKMTB/vUyAZSMbKv
-         co+PgZTZs4vyJiI5jQh+FbxSDDTdlSmseh1QO1kkpzI4TZz2lQTlu7egmtf1F0fhM5vm
-         Xsvg==
+	s=arc-20240116; t=1729847250; c=relaxed/simple;
+	bh=MjaRFk1Boxo8P6hdY50yu0DYYNPmnQY1ff3H1sDc0B0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GfU4ZoSobix5ar5Xq/k9M6d4CwC409w5Kn0xIxjJggXjS7wBAh6SGlpU1j+aEf3VMBx52vIZ/7VgMPyJ6KvYSoeq2EB+1x185MlK08bURl78tvHUmIwVgjCjoSjoM4IcGQewFIjRbnp8pUbVGUnK6qmPU/sT8GkYaOyyt8x3xY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AFvGhKIZ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729847247;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MjaRFk1Boxo8P6hdY50yu0DYYNPmnQY1ff3H1sDc0B0=;
+	b=AFvGhKIZwH6cKClzVkSRzM7XsZrc2S4bvSOQPj9XJDNSuXTcey8eOJlDLkW1ESdAcyUEVB
+	epYzqO9ilv7cmH3GxHuB1tvxW4bRfoPz/X8NAY+uAHnQ/DrmbZX29JFOZETpDISSn8S53R
+	vL2yR0nZp7pX0XhSUpfKNWRXJ6VUPfo=
+Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com
+ [209.85.210.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-275-Feo64nSpONmcnWQjE0tPeg-1; Fri, 25 Oct 2024 05:07:25 -0400
+X-MC-Unique: Feo64nSpONmcnWQjE0tPeg-1
+Received: by mail-pf1-f198.google.com with SMTP id d2e1a72fcca58-71e6d31b3bdso2781322b3a.2
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 02:07:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729847223; x=1730452023;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4mECQD/YfbuBuIUcbQm0LGC8NByfVNCBXlQA6CHA+Jk=;
-        b=DUNGbKdnstslkVVEQ8KO0BlT7qpkxdXuuA1GDm1/9qbndMFexLl0hR6LW+9ce+oFr0
-         /GBz+n9W0Io6SIcg+orKXzkdhYDB8hlOOCIK3b+/40hpMyOv8P6agDVUDO8sb0cHtYrD
-         Vudf/3p//vrTFF5/6pNZ/5m/2DZ0nK+26x2TIQTpZmIdcWf49piPAH8NstGjMiuIuyDg
-         eWt9ktasNHQgiN0a1lt2sMlDtBfCaYAHVARcLUgIZS2XZ21iLFU4ECl0QrJGQ5Ky/weJ
-         YjHISnxdoceBQg9jUrbhV7yUPFUp+A0GR+s15epMa7ZkeibylgdQwflLd019kaWZy8HN
-         SiPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW+mEbYF+U4d02c3tuymh6iou83bReg6Tur3Zgs0fb5lme2LjmeJKJZ2Teoh8aUOoA5bfMl3jos3rUk/7Wx@vger.kernel.org, AJvYcCXE7q0NQjjlhqIpdiNCaip6sAhVMkzXOuuTDndTpEwjNLlsjNNp6hrnd3Ts9LmJh+dAC0mZdoMpw8qt@vger.kernel.org, AJvYcCXPmQczSDCPhzS7A/OrOL8vN3NLAGuB+4KVT55ER+HCHxU4yqpj3GIIiDCjoW1H9FcalMLzKph+N9uc@vger.kernel.org
-X-Gm-Message-State: AOJu0YwX9+quS3pfZTe6mDIbor/2a3W7Yo+UCpAojxcLHvtpueJoV3Fy
-	rgjRVd4uPKwtGOgjj05p/ML+8lP66m2CLRk9edWzQUpdp4YQXcBI
-X-Google-Smtp-Source: AGHT+IFqjwEh8TjngAt8TQtp90yZAebVutuszx4Mo6HG7vicBzcpfkrqPYsu816QM+kueZu1ZqVuig==
-X-Received: by 2002:a05:6512:3a85:b0:539:f807:ada5 with SMTP id 2adb3069b0e04-53b1a2fe384mr5517625e87.3.1729847223256;
-        Fri, 25 Oct 2024 02:07:03 -0700 (PDT)
-Received: from [10.10.40.97] (91-118-163-37.static.upcbusiness.at. [91.118.163.37])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b1e75ff3bsm46207966b.1.2024.10.25.02.07.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 25 Oct 2024 02:07:02 -0700 (PDT)
-Message-ID: <19c8e07f-4b9b-4d4b-aa18-f6766b65b33e@gmail.com>
-Date: Fri, 25 Oct 2024 11:07:01 +0200
+        d=1e100.net; s=20230601; t=1729847245; x=1730452045;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MjaRFk1Boxo8P6hdY50yu0DYYNPmnQY1ff3H1sDc0B0=;
+        b=s2L11rXG7/gB7YIBcJVl+F4K8AWpjzdl5Vd+swHP5GcpGXylFFpqvEnsj8D0sONaBh
+         43SRBE97gnq3yJk9E2ouivtOdMoJ/s96BTCm7L6CkDDXyyXgrOoXBxdFZxle1zSlZLkU
+         JSHKZFgmF7J7OlDZxKt196Cr8+99q7mR6Zz4TfkBBTCz02mvTQp9J5Kjzp5aS48dmk5d
+         1PSl9zcZiBpbKeGNunpxUmyDrprM0QWXrSlJBx8HdXoGP1Nh9ymp8zJLQ+lt/61T2reX
+         I8CWG7WN1ynt/35+TaD063dogMNMbL/uGtrWla9TNpPWKGoze0GJupjWHcc1yYWZtupM
+         +Tkg==
+X-Forwarded-Encrypted: i=1; AJvYcCWj8lcHviBf62SSmpUybjSgHDk2ZAlCvMo1me2mT/SlQUGzFX6Zpi2yI6jleI1dM9JuWApq5nwA2v0gYa8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9SRevcIZhG0ZV/gZPHv1640Bfs8jnOtr0i0jiPY9UoZn529U3
+	QcGCdRfeod3pWdqEDlcvPjevZVGQMu5mcCOmJ5goSMyAHK4nIQdHz8MyyPbjjTN6koc2x3j0V45
+	sEi4eC7PHMgDV/A+AloYBWNNfW7zjKoKSGd7hI5p1W+76OCb2HFc8Hyswe3dONckanguDv+8xYv
+	/e85JFpo/ZQP530i24Y8suLESbj0Rwsbz/ROru
+X-Received: by 2002:a05:6a20:d526:b0:1d9:1fac:7257 with SMTP id adf61e73a8af0-1d978bae453mr9708027637.32.1729847244761;
+        Fri, 25 Oct 2024 02:07:24 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGzm9XIV+b509V+3GLeghUV+i/VsJ2ey2JtmN7aeUp/k8VVTwMbhlUV4fpMutg66Dalz6b6Cf67HYDB5jwMFio=
+X-Received: by 2002:a05:6a20:d526:b0:1d9:1fac:7257 with SMTP id
+ adf61e73a8af0-1d978bae453mr9708013637.32.1729847244384; Fri, 25 Oct 2024
+ 02:07:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] iio: light: add support for veml3235
-To: kernel test robot <lkp@intel.com>, Jonathan Cameron <jic23@kernel.org>,
- Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Rishi Gupta <gupt21@gmail.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241023-veml3235-v3-2-8490f2622f9a@gmail.com>
- <202410251610.kB7u6xMJ-lkp@intel.com>
-Content-Language: en-US, de-AT
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-In-Reply-To: <202410251610.kB7u6xMJ-lkp@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241013033233.65026-1-huangwenyu1998@gmail.com>
+In-Reply-To: <20241013033233.65026-1-huangwenyu1998@gmail.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Fri, 25 Oct 2024 17:07:13 +0800
+Message-ID: <CACGkMEuMANCHFSCHCPtcQ4L-qT0uz+B7bWL8gxT46Fyj18fVMQ@mail.gmail.com>
+Subject: Re: [PATCH v4] virtio: Make vring_new_virtqueue support for packed vring
+To: huangwenyu1998@gmail.com
+Cc: mst@redhat.com, xuanzhuo@linux.alibaba.com, sgarzare@redhat.com, 
+	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 25/10/2024 11:01, kernel test robot wrote:
-> Hi Javier,
-> 
-> kernel test robot noticed the following build warnings:
-> 
-> [auto build test WARNING on ceab669fdf7b7510b4e4997b33d6f66e433a96db]
-> 
-> url:    https://github.com/intel-lab-lkp/linux/commits/Javier-Carrasco/dt-bindings-iio-light-veml6030-add-veml3235/20241024-030144
-> base:   ceab669fdf7b7510b4e4997b33d6f66e433a96db
-> patch link:    https://lore.kernel.org/r/20241023-veml3235-v3-2-8490f2622f9a%40gmail.com
-> patch subject: [PATCH v3 2/2] iio: light: add support for veml3235
-> config: loongarch-allmodconfig (https://download.01.org/0day-ci/archive/20241025/202410251610.kB7u6xMJ-lkp@intel.com/config)
-> compiler: loongarch64-linux-gcc (GCC) 14.1.0
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241025/202410251610.kB7u6xMJ-lkp@intel.com/reproduce)
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202410251610.kB7u6xMJ-lkp@intel.com/
-> 
-> All warnings (new ones prefixed by >>):
-> 
->    drivers/iio/light/veml3235.c: In function 'veml3235_set_it':
->>> drivers/iio/light/veml3235.c:148:26: warning: variable 'it_idx' set but not used [-Wunused-but-set-variable]
->      148 |         int ret, new_it, it_idx;
->          |                          ^~~~~~
->    drivers/iio/light/veml3235.c: In function 'veml3235_set_gain':
->>> drivers/iio/light/veml3235.c:191:28: warning: variable 'gain_idx' set but not used [-Wunused-but-set-variable]
->      191 |         int ret, new_gain, gain_idx;
->          |                            ^~~~~~~~
-> 
-> 
-> vim +/it_idx +148 drivers/iio/light/veml3235.c
-> 
->    144	
->    145	static int veml3235_set_it(struct iio_dev *indio_dev, int val, int val2)
->    146	{
->    147		struct veml3235_data *data = iio_priv(indio_dev);
->  > 148		int ret, new_it, it_idx;
->    149	
->    150		if (val)
->    151			return -EINVAL;
->    152	
->    153		switch (val2) {
->    154		case 50000:
->    155			new_it = 0x00;
->    156			it_idx = 4;
->    157			break;
->    158		case 100000:
->    159			new_it = 0x01;
->    160			it_idx = 3;
->    161			break;
->    162		case 200000:
->    163			new_it = 0x02;
->    164			it_idx = 2;
->    165			break;
->    166		case 400000:
->    167			new_it = 0x03;
->    168			it_idx = 1;
->    169			break;
->    170		case 800000:
->    171			new_it = 0x04;
->    172			it_idx = 0;
->    173			break;
->    174		default:
->    175			return -EINVAL;
->    176		}
->    177	
->    178		ret = regmap_field_write(data->rf.it, new_it);
->    179		if (ret) {
->    180			dev_err(data->dev,
->    181				"failed to update integration time: %d\n", ret);
->    182			return ret;
->    183		}
->    184	
->    185		return 0;
->    186	}
->    187	
->    188	static int veml3235_set_gain(struct iio_dev *indio_dev, int val, int val2)
->    189	{
->    190		struct veml3235_data *data = iio_priv(indio_dev);
->  > 191		int ret, new_gain, gain_idx;
->    192	
->    193		if (val2 != 0)
->    194			return -EINVAL;
->    195	
->    196		switch (val) {
->    197		case 1:
->    198			new_gain = 0x00;
->    199			gain_idx = 3;
->    200			break;
->    201		case 2:
->    202			new_gain = 0x01;
->    203			gain_idx = 2;
->    204			break;
->    205		case 4:
->    206			new_gain = 0x03;
->    207			gain_idx = 1;
->    208			break;
->    209		case 8:
->    210			new_gain = 0x07;
->    211			gain_idx = 0;
->    212			break;
->    213		default:
->    214			return -EINVAL;
->    215		}
->    216	
->    217		ret = regmap_field_write(data->rf.gain, new_gain);
->    218		if (ret) {
->    219			dev_err(data->dev, "failed to set gain: %d\n", ret);
->    220			return ret;
->    221		}
->    222	
->    223		return 0;
->    224	}
->    225	
-> 
+On Sun, Oct 13, 2024 at 11:32=E2=80=AFAM <huangwenyu1998@gmail.com> wrote:
+>
+> From: Wenyu Huang <huangwenyu1998@gmail.com>
+>
+> It used for testing in tools/virtio/vringh_test.c.
+> If vring_new_virtqueue supports packed vring, we can add support for
+> packed vring to vringh and test it.
+>
+> Signed-off-by: Wenyu Huang <huangwenyu1998@gmail.com>
+> ---
 
+Acked-by: Jason Wang <jasowang@redhat.com>
 
-Unused as there is no processed values anymore. I will drop them for v4.
+Thanks
+
 
