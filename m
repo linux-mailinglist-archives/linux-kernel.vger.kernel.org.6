@@ -1,157 +1,114 @@
-Return-Path: <linux-kernel+bounces-381188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDB339AFBB0
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 09:58:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BDEB9AFBAF
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 09:58:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADF802844B9
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 07:58:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E5DE1C21F79
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 07:58:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD5971C3F36;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7703E1C2DA2;
 	Fri, 25 Oct 2024 07:58:41 +0000 (UTC)
-Received: from mail115-171.sinamail.sina.com.cn (mail115-171.sinamail.sina.com.cn [218.30.115.171])
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cpvgZVQ3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6261018A93F
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 07:58:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6BE51C07DA;
+	Fri, 25 Oct 2024 07:58:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729843121; cv=none; b=ZEP7n5oORUF7ndZzF8TN88U48rtSRMIoG6DKvvAgNfx723bMktiGHV+DEu+jVVRGn9l5n50NWD1aE2R6I5xkXCjtwTpmEnl6bqi7HmVqvIUroOYKdYxYRtM2UzEc2auKJSDtrK+C08J+r2RLs0AQe6EcbOr0wtbvoLy9kuZbunY=
+	t=1729843120; cv=none; b=abCrjJiZIPFl/tS6m8z/Xnot6ksx9KBZ8VQtoeECqpymF3iOqab+ZluwDV96Z30CUAwE9mJLStSVhBCqyPaqOVHui5O0Nln8tKBDNVApUAwrj5YDFmKEQznd1jKz5QnewMmrZDnBHpWl9ZU+4UJBlK6y6nahaHs8BKLcbJkaz2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729843121; c=relaxed/simple;
-	bh=ifnjEylBt8ZpbTe7kIenvCIjX1GouPeBXV/g+8bWH4E=;
-	h=Date:From:To:Cc:Subject:Mime-Version:Message-ID:Content-Type:
-	 Content-Disposition; b=pr3zVAC7FBh1/dnTboY116SqOxK8CaEYbvic7mnlWCgLAaPKaqsgsRkgReLnRnSyQLkwCPf+cHHdKGtKi/fkYj8rPQ4fnxGxUtwk3fOz79wLAz8uIlx+GFC9lUlcW0Vbyey7eIJX43IeNJCYgUAIbMPkw8imcjx4kU0GXyPQbjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: webmail.sinamail.sina.com.cn
-Received: from unknown (HELO webmail.sinamail.sina.com.cn)([10.2.23.146])
-	by sina.com (10.185.250.24) with SMTP
-	id 671B4FA200003AD4; Fri, 25 Oct 2024 15:58:26 +0800 (CST)
-X-Sender: louletian@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=louletian@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=louletian@sina.com
-X-SMAIL-MID: 24294610748435
-Received: by webmail.sinamail.sina.com.cn (Postfix, from userid 993)
-	id 29912250A; Fri, 25 Oct 2024 15:58:26 +0800 (CST)
-Date: Fri, 25 Oct 2024 15:58:26 +0800
-Received: from louletian@sina.com ([39.188.14.154]) by m1.mail.sina.com.cn via HTTP;
- Fri, 25 Oct 2024 15:58:26 +0800
-From: louletian@sina.com
-Reply-To: louletian@sina.com
-To: "Edward Cree" <ec429@cantab.net>,
- "Linus Torvalds" <torvalds@linux-foundation.org>,
- "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>
-Cc: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
-Subject: =?utf-8?B?5Zue5aSN77yaW1BBVENIXSBDUkVESVRTOiBkbyB0aGUgZGVjZW50IHQ=?=
- =?utf-8?B?aGluZw==?=
-X-Priority: 3
+	s=arc-20240116; t=1729843120; c=relaxed/simple;
+	bh=Qc5sTAeQ60W3V2dierXWzsokifl75oKJ2qzBPZPP+eE=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=T+0qAyLculVFGU0NkX1WtoruQIhhV2F52Nh8APf4soGBd7FMkBZTXBy4OUJJ9t8/sDyakV0OMJDjF09pxhTtXZT0KfSokdP2pPurkZ17nx0CttLyVsWpF+qdeB/jpCXQYNLwavY8yVXALQduZBErvEge4WqubKb/8gd0lPhPa+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cpvgZVQ3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EA76C4CEC3;
+	Fri, 25 Oct 2024 07:58:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729843120;
+	bh=Qc5sTAeQ60W3V2dierXWzsokifl75oKJ2qzBPZPP+eE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=cpvgZVQ3WuTLNmsTjwLfp59utSAA4UNa0Do696ttV7tgylr06MR3eoLT/yG6mon9I
+	 IsDKmvifJBnH15Uvq7nDJEYZ3qWbmo2YAY1QoIVccFUVvt4PrLXd9WVQ36NV/kHP+L
+	 bZK6xan5iis+Yt+14sOQX9ic7Zb4WGaCC3Z922r702yett6BjrSvKv9ewe5s2JQ4Nu
+	 3MtRNDjxwGo3rjfXlFlTaPcrE1WT4K1SEgNtFWLknQkEGHJgfktqoeI/tS0XwZD9+g
+	 aKiucmOWd4F/FBRE5AVLE87wP8WWI3q0AKeNTWochWSGIYW50jPGkaiyEGyWPyzDYW
+	 RCTdkvst7p3lw==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1t4FDQ-006gzT-JH;
+	Fri, 25 Oct 2024 08:58:38 +0100
+Date: Fri, 25 Oct 2024 08:58:36 +0100
+Message-ID: <86jzdw3977.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Jiajie Chen <c@jia.je>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: qcom: x1e80100: Add performance hint for boost clock
+In-Reply-To: <20241025031257.6284-2-c@jia.je>
+References: <20241025031257.6284-2-c@jia.je>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Message-ID: <671b4fa2243302.77021280.555be92b@m1.mail.sina.com.cn>
-X-MessageID: 891bdb19445abd9dff16e29451556017_202410
-X-SMAIL-UIID: 0440153DB8E65A079351D5B95BB3CE87-20241025-155826-2
-X-Mailer: Sina WebMail 4.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: c@jia.je, andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-WWVhaCxJdCdzIHRoZSBiZXN0IHNvbHV0aW9uLkFjY2VwdCBvdGhlcnMgZWZmb3J0LGJ1dCB3aXBl
-IHRoZWlyIG5hbWVzLkl0J3MgdW5qdXN0Lg0KDQotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLQ0KDQotLS0tLSDljp/lp4vpgq7ku7YgLS0tLS0NCuWPkeS7tuS6uu+8mkVkd2FyZCBDcmVl
-IDxlYzQyOUBjYW50YWIubmV0Pg0K5pS25Lu25Lq677yaTGludXMgVG9ydmFsZHMgPHRvcnZhbGRz
-QGxpbnV4LWZvdW5kYXRpb24ub3JnPiwgTGludXggS2VybmVsIE1haWxpbmcgTGlzdCA8bGludXgt
-a2VybmVsQHZnZXIua2VybmVsLm9yZz4NCuaKhOmAgeS6uu+8mkdyZWcgS3JvYWgtSGFydG1hbiA8
-Z3JlZ2toQGxpbnV4Zm91bmRhdGlvbi5vcmc+DQrkuLvpopjvvJpbUEFUQ0hdIENSRURJVFM6IGRv
-IHRoZSBkZWNlbnQgdGhpbmcNCuaXpeacn++8mjIwMjTlubQxMOaciDI15pelIDA254K5NDnliIYN
-Cg0KQWNrbm93bGVkZ2UgdGhlIHBhc3QgY29udHJpYnV0aW9ucyBvZiB0aG9zZSB3aG9tIHRoZSBM
-aW51eCBwcm9qZWN0IG5vDQogbG9uZ2VyIHBlcm1pdHMgdG8gYmUgbWFpbnRhaW5lcnMgb3dpbmcg
-dG8gc2FuY3Rpb25zIGFnYWluc3QgdGhlaXINCiBlbXBsb3llcnMuDQpGaXhlczogNmU5MGI2NzVj
-Zjk0ICgiTUFJTlRBSU5FUlM6IFJlbW92ZSBzb21lIGVudHJpZXMgZHVlIHRvIHZhcmlvdXMgY29t
-cGxpYW5jZSByZXF1aXJlbWVudHMuIikNClNpZ25lZC1vZmYtYnk6IEVkd2FyZCBDcmVlIDxlYzQy
-OUBjYW50YWIubmV0Pg0KLS0tDQpKdXN0IGJlY2F1c2Ugd2UgY2FuIG5vIGxvbmdlciB3b3JrIHdp
-dGggc29tZW9uZSBkb2VzIG5vdCBtZWFuIHdlIGhhdmUNCiB0byBlZmZhY2UgdGhlaXIgbmFtZSBm
-cm9tIGhpc3RvcnkuICBXaGV0aGVyIHdlIGNvbnNpZGVyIHRoZW0gdG8gYmUNCiBnb29kIG9yIGJh
-ZCBwZW9wbGUsIEkgaGF2ZSBzZWVuIG5vLW9uZSBjbGFpbWluZyB0aGF0IGFueSBvZiB0aGVtIHdl
-cmUNCiBiYWQgKmtlcm5lbCBtYWludGFpbmVycyouICBBcyBhbiBpbnRlcm5hdGlvbmFsIGNvbGxh
-Ym9yYXRpb24sIExpbnV4DQogc2hvdWxkIGJlIGFib3ZlIG5hdGlvbmFsIGFuaW1vc2l0aWVzLCBh
-bmQgd2hlcmUgbG9jYWwgbGF3cyBmb3JjZSBvdXINCiBoYW5kIHdlIHNob3VsZCBub3QgZ28gb25l
-IHN0ZXAgZnVydGhlciB0aGFuIHRob3NlIGxhd3MgcmVxdWlyZS4gIEFyZQ0KIHdlIHRydWx5IHNv
-IHNtYWxsLCBzbyBzZWxmLXJpZ2h0ZW91cz8NCk9oLCBhbmQgZGVhciBMaW51czogSSdtIG5vdCBh
-IFJ1c3NpYW4gdHJvbGwuICBJIGhhdGUgUnVzc2lhbiBtaWxpdGFyeQ0KIGV4cGFuc2lvbmlzbSAo
-Y3VycmVudCBhbmQgaGlzdG9yaWMpIGp1c3QgYXMgbXVjaCBhcyB5b3UuICBUcnkgdG8gdXNlDQog
-KnlvdXIqIG11c2ggdG8gcmVhbGlzZSB0aGF0IG9wcG9zaW5nIHRoZSBoYW0taGFuZGVkIGFuZCBz
-ZWNyZXRpdmUgd2F5DQogdGhlIE1BSU5UQUlORVJTIHBhdGNoIHdhcyBkb25lIGRvZXMgbm90IG1h
-a2Ugb25lIGEgc3VwcG9ydGVyIG9mDQogUnVzc2lhbiBhZ2dyZXNzaW9uLg0KU2VudCBmcm9tIG15
-IHBlcnNvbmFsIGFkZHJlc3MgcmF0aGVyIHRoYW4gbXkgd29yayBhY2NvdW50LCBiZWNhdXNlIEkN
-CiBkb24ndCB3YW50IHRvIGdpdmUgbXkgZW1wbG95ZXIncyBsYXd5ZXJzIGFueSBtb3JlIG9mIGFu
-IGFuZXVyeXNtIHRoYW4NCiBJIGRvdWJ0bGVzcyBhbHJlYWR5IGFtLg0KLS0tDQogQ1JFRElUUyB8
-IDUzICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
-DQogMSBmaWxlIGNoYW5nZWQsIDUzIGluc2VydGlvbnMoKykNCmRpZmYgLS1naXQgYS9DUkVESVRT
-IGIvQ1JFRElUUw0KaW5kZXggNjNmNTNmZWVmYTBhLi41NjlmYWQzNzIwNTkgMTAwNjQ0DQotLS0g
-YS9DUkVESVRTDQorKysgYi9DUkVESVRTDQpAQCAtMTA5Miw2ICsxMDkyLDEwIEBAIEU6IGNpZGVy
-QHNwZWFrZWFzeS5vcmcNCiBXOiBodHRwOi8vd3d3LnNwZWFrZWFzeS5vcmcvfmNpZGVyLw0KIEQ6
-IGltcGxlbWVudGVkIGttb2QNCiANCitOOiBFdmdlbml5IER1c2hpc3Rvdg0KK0U6IGR1c2hpc3Rv
-dkBtYWlsLnJ1DQorRDogVUZTIGZpbGVzeXN0ZW0NCisNCiBOOiBUb3JzdGVuIER1d2UNCiBFOiBU
-b3JzdGVuLkR1d2VAaW5mb3JtYXRpay51bmktZXJsYW5nZW4uZGUNCiBEOiBQYXJ0LXRpbWUga2Vy
-bmVsIGhhY2tlcg0KQEAgLTEzNTIsNiArMTM1NiwxMCBAQCBTOiA2MDAgTm9ydGggQmVsbCBBdmVu
-dWUsIFN1aXRlIDE2MA0KIFM6IENhcm5lZ2llLCBQZW5uc3lsdmFuaWEgMTUxMDYtNDMwNA0KIFM6
-IFVTQQ0KIA0KK046IFZsYWRpbWlyIEdlb3JnaWV2DQorRTogdi5nZW9yZ2lldkBtZXRyb3Rlay5y
-dQ0KK0Q6IE1pY3JvY2hpcCBQb2xhcmZpcmUgRlBHQSBkcml2ZXIgcmV2aWV3cw0KKw0KIE46IEth
-aSBHZXJtYXNjaGV3c2tpDQogRToga2FpQGdlcm1hc2NoZXdza2kubmFtZQ0KIEQ6IE1ham9yIGti
-dWlsZCByZXdvcmsgZHVyaW5nIHRoZSAyLjUgY3ljbGUNCkBAIC0yMTQxLDYgKzIxNDksMTAgQEAg
-RDogREVDc3RhdGlvbiBwb3J0LCBTaGFycCBNb2JpbG9uIHBvcnQNCiBTOiBELTUwOTMxIEtvZWxu
-DQogUzogR2VybWFueQ0KIA0KK046IEl2YW4gS29rc2hheXNreQ0KK0U6IGlua0BqdXJhc3NpYy5w
-YXJrLm1zdS5ydQ0KK0Q6IEFscGhhIHBvcnQgbWFpbnRlbmFuY2UNCisNCiBOOiBXaWxseSBLb255
-bmVuYmVyZw0KIEU6IHdpbGx5QHhvcy5ubA0KIFc6IGh0dHA6Ly93d3cueG9zLm5sLw0KQEAgLTIx
-NzMsNiArMjE4NSwxNiBAQCBTOiBNYXJraGFtLCBPbnRhcmlvDQogUzogTDNSIDhCMg0KIFM6IENh
-bmFkYQ0KIA0KK046IERtaXRyeSBLb3psb3YNCitFOiB4ZWJAbWFpbC5ydQ0KK0Q6IEdSRSBkZW11
-bHRpcGxleGVyIGRyaXZlcg0KK0Q6IFBQVFAgZHJpdmVyDQorDQorTjogU2VyZ2V5IEtvemxvdg0K
-K0U6IHNlcmprQG5ldHVwLnJ1DQorRDogTWVkaWEgZHJpdmVycyBmb3IgYXNjb3QyZSwgY3hkMjg0
-MWVyLCBob3J1czNhLCBsbmJoMjUNCitEOiBNZWRpYSBkcml2ZXJzIGZvciBuZXR1cCBQQ0kgdW5p
-dmVyc2FsIERWQiBkZXZpY2VzDQorDQogTjogTWF4aW0gS3Jhc255YW5za3kNCiBFOiBtYXhrQHF1
-YWxjb21tLmNvbQ0KIFc6IGh0dHA6Ly92dHVuLnNmLm5ldA0KQEAgLTMwMDAsNiArMzAyMiwxMSBA
-QCBOOiBQZXRlciBPcnViYQ0KIEQ6IEFNRCBNaWNyb2NvZGUgbG9hZGVyIGRyaXZlcg0KIFM6IEdl
-cm1hbnkNCiANCitOOiBBYnlsYXkgT3NwYW4NCitFOiBhb3NwYW5AbmV0dXAucnUNCitEOiBNZWRp
-YSBkcml2ZXJzIGZvciBhc2NvdDJlLCBjeGQyODQxZXIsIGhlbGVuZSwgaG9ydXMzYSwgbG5iaDI1
-DQorRDogTWVkaWEgZHJpdmVycyBmb3IgbmV0dXAgUENJIHVuaXZlcnNhbCBEVkIgZGV2aWNlcw0K
-Kw0KIE46IEplbnMgT3N0ZXJrYW1wDQogRTogamVuc0BkZS5pYm0uY29tDQogRDogTWFpbnRhaW5l
-ciBvZiBTcGlkZXJuZXQgbmV0d29yayBkcml2ZXIgZm9yIENlbGwNCkBAIC0zMzk3LDYgKzM0MjQs
-MTAgQEAgUzogTmV1ZSBIZWltYXQgU3RyLiA4DQogUzogRC02ODc4OSBTdC5MZW9uLVJvdA0KIFM6
-IEdlcm1hbnkNCiANCitOOiBEbWl0cnkgUm9rb3Nvdg0KK0U6IGRkcm9rb3NvdkBzYmVyZGV2aWNl
-cy5ydQ0KK0Q6IE1lbXNlbnNpbmcgTWljcm9zeXN0ZW1zIG1zYTMxMSBkcml2ZXINCisNCiBOOiBU
-aGlhZ28gQmVybGl0eiBSb25kb24NCiBFOiBtYWx1Y29AbWlsZW5pdW1uZXQuY29tLmJyDQogVzog
-aHR0cDovL3ZpdmFsZGkubGludXhtcy5jb20uYnIvfm1hbHVjbw0KQEAgLTM1OTQsNiArMzYyNSwx
-NSBAQCBOOiBNYXJjZWwgU2VsaG9yc3QNCiBFOiB0cG1kZEBzZWxob3JzdC5uZXQNCiBEOiBUUE0g
-ZHJpdmVyDQogDQorTjogU2VyZ2UgU2VtaW4NCitFOiBmYW5jZXIubGFuY2VyQGdtYWlsLmNvbQ0K
-K0Q6IE1JUFMgQmFpa2FsLVQxIHBsYXRmb3JtOyBNSVBTIGNvcmUgZHJpdmVycw0KK0Q6IEJhaWth
-bC1UMSBQVlQgaGFyZHdhcmUgbW9uaXRvciBkcml2ZXINCitEOiBEZXNpZ253YXJlIEVETUEgY29y
-ZSBJUCBkcml2ZXIgcmV2aWV3cw0KK0Q6IGxpYmF0YSBTQVRBIEFIQ0kgU3lub3BzeXMgRFdDIGNv
-bnRyb2xsZXIgZHJpdmVyDQorRDogU3lub3BzeXMgRGVzaWdud2FyZSBBUEIgU1NJIGRyaXZlcg0K
-K0Q6IE5UQiBJRFQgZHJpdmVyDQorDQogTjogRGFycmVuIFNlbm4NCiBFOiBzaW5zdGVyQGRhcmt3
-YXRlci5jb20NCiBEOiBXaGF0ZXZlciBJIG5vdGljZSBuZWVkcyBkb2luZyAoc28gZmFyOiBpdGlt
-ZXJzLCAvcHJvYykNCkBAIC0zNjM2LDYgKzM2NzYsMTUgQEAgTjogSm9vbnlvdW5nIFNoaW0NCiBF
-OiB5MDkyMi5zaGltQHNhbXN1bmcuY29tDQogRDogU2Ftc3VuZyBFeHlub3MgRFJNIGRyaXZlcnMN
-CiANCitOOiBBbGV4YW5kZXIgU2hpeWFuDQorRTogc2hjX3dvcmtAbWFpbC5ydQ0KK0Q6IEFybS9D
-aXJydXMgTG9naWMgY2xwczcxMXggYXJjaGl0ZWN0dXJlDQorDQorTjogU2VyZ2V5IFNodHlseW92
-DQorRTogcy5zaHR5bHlvdkBvbXAucnUNCitEOiBsaWJhdGEgUEFUQSBkcml2ZXIgcmV2aWV3cw0K
-K0Q6IFJlbmVzYXMgZXRoZXJuZXQgQVZCLCBSLUNBUiBTQVRBIGFuZCBTdXBlckggZXRoZXJuZXQg
-ZHJpdmVyIHJldmlld3MNCisNCiBOOiBSb2JlcnQgU2llbWVyDQogRTogUm9iZXJ0LlNpZW1lckBn
-bXguZGUNCiBQOiAyMDQ4L0M5OUE0Mjg5IDJGIERDIDE3IDJFIDU2IDYyIDAxIEM4ICAzRCBGMiBB
-QyAwOSBGMiBFNSBERCBFRQ0KQEAgLTM4NjgsNiArMzkxNywxMCBAQCBTOiAxIExhdXJpZSBDb3Vy
-dA0KIFM6IEthbmF0YSwgT250YXJpbw0KIFM6IENhbmFkYSBLMkwgMVMyDQogDQorTjogTmlraXRh
-IFRyYXZraW4NCitFOiBuaWtpdGFAdHJ2bi5ydQ0KK0Q6IEFjZXIgQXNwaXJlIDEgRW1iZWRkZWQg
-Q29udHJvbGxlciBkcml2ZXINCisNCiBOOiBBbmRyZXcgVHJpZGdlbGwNCiBFOiB0cmlkZ2VAc2Ft
-YmEub3JnDQogVzogaHR0cHM6Ly9zYW1iYS5vcmcvdHJpZGdlLw0KLS0gDQoyLjM5LjI=
+On Fri, 25 Oct 2024 04:12:58 +0100,
+Jiajie Chen <c@jia.je> wrote:
+> 
+> The x1e80100 CPU can have up to two cores running at 4.0 GHz, with one
+> core in the second cluster (cores 4-7) and the other in the third
+> cluster (cores 8-11). However, the scheduler is currently unaware of
+> this, leading to scenarios where a single core benchmark might run at
+> 3.4 GHz when scheduled to the first cluster.
+> 
+> This patch introduces capacity-dmips-mhz nodes to each CPU node in the
+> DTS. For cores numbered 4 and 8, the capacities are set to 1200, while
+> others are set to 1024. This ensures that the two cores can be
+> prioritized for scheduling. The value 1200 is derived from approximately
+> `1024/3.4*4.0`.
+> 
+> Note that capacity-dmips-mhz is not ideally suited for this purpose, as
+> it was designed to differentiate between performance and efficient
+> cores, not for core boosting. According to its definition, DMIPS/MHz
+> actually decreases with higher frequencies. However, since the CPU does
+> not support AMU, and no elegant solution was found, this approach is
+> used as a workaround.
 
+Are you sure?
+
+[    0.570323] CPU features: detected: Activity Monitors Unit (AMU) on CPU0-11
+
+So activity monitors are available. Not that what you have here is not
+useful, but this comment seems a bit... surprising.
+
+Thanks,
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
