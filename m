@@ -1,165 +1,166 @@
-Return-Path: <linux-kernel+bounces-382722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BC819B12B0
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 00:33:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 069539B12A8
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 00:32:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A08C1C21DAC
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 22:33:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 298F21C20C75
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 22:32:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BA43214426;
-	Fri, 25 Oct 2024 22:32:49 +0000 (UTC)
-Received: from trager.us (trager.us [52.5.81.116])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 182D121312E;
+	Fri, 25 Oct 2024 22:32:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bMqCwlt3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7C4421312D;
-	Fri, 25 Oct 2024 22:32:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.5.81.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64F9E20D4FC;
+	Fri, 25 Oct 2024 22:32:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729895568; cv=none; b=T9kVWajy+6LZkxrMzOKeW7//ZIF/BwXjIeYlHhwIrxTtrQfF4sOdX+V8DfYsZ5qtaoPPiYeYONen2/vAwFhQUBX/JfD2lpLpYlgN7oX6mRplCgin4zz4xkNrEJZp7AajWveNuRbTsCWyvN9S9+lRgFBFDRn7bVn0ooInn19rKPM=
+	t=1729895558; cv=none; b=XjTE8VHQM537vfK0wq6ISUyl/IASYUyUMqRjog/9GMY1DicS36e4eRDO+GTkWG5et3ouLeL/Fl1dv9/el0pwAWNW/vSq9GP4CC73C0zJ2m55k0K1VgM2lGMmOWK6DXJZyUjOj9LnHfycLh1sSwrNYAKClLdprD4yXE+bRoms16o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729895568; c=relaxed/simple;
-	bh=KwnQJqiRsCWMxc9Z25pBZlicEvkalDLV1dR5FfpXCtg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=J+aQKylV15OSbO83s3MRF0e3JWXGhODV9fbV4PZdSv5jaWR95sNv7eqp607fswzXYllB+CGnrAl5mZeaWuD1MkstlG93d860dJOTYZQp0yAB4PYO0KScdvLGWYUJu12S39CSHzkjabI+K0x0i6fbsh7wgKwghbhAVUMUzJwnjBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=trager.us; spf=pass smtp.mailfrom=trager.us; arc=none smtp.client-ip=52.5.81.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=trager.us
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=trager.us
-Received: from c-76-104-255-50.hsd1.wa.comcast.net ([76.104.255.50] helo=[192.168.1.226])
-	by trager.us with esmtpsa (TLSv1.3:TLS_AES_128_GCM_SHA256:128)
-	(Exim 4.92.3)
-	(envelope-from <lee@trager.us>)
-	id 1t4SrI-0002DC-C4; Fri, 25 Oct 2024 22:32:40 +0000
-Message-ID: <13229808-dde5-4805-b908-ce65c8b342b4@trager.us>
-Date: Fri, 25 Oct 2024 15:32:32 -0700
+	s=arc-20240116; t=1729895558; c=relaxed/simple;
+	bh=lvgqZKZL3hTSMXjWYkYB2dg3KyAAN40oIeI42dzGJls=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=sDxGAwGisjA9+1TCWMWScdeY1pgjRLMEGmZ15F7g0vlBGubhNzqQxxDM41UQexRqHkDhCkvSffrGLV8NuR0NWEdOTqLTPNr83TU/zOZXX7rNJPDgwpsOSRj/lAG1W7Ska+z5L+qFKL4qfAble8YejgLTZDfZ8mquG789u0BCbZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bMqCwlt3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B7A4C4CEC3;
+	Fri, 25 Oct 2024 22:32:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729895558;
+	bh=lvgqZKZL3hTSMXjWYkYB2dg3KyAAN40oIeI42dzGJls=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=bMqCwlt3rfSKnmYXP3CO1qHyjKGshQkpsafQF2TFtPpe8OJLF2eHJv0QZVeGh+vbR
+	 mbzYexzaFGMPKNILD/JuyECnaOF+BCjy7vXA8rpIu+ArdNAIBFHXogFUA7gI78NmNw
+	 wOCRX2/ZwmipiTNEyEGV/F1wK5DWL6poIRULNFbfZmKBLUvU5H3rTni7OtT7niq9ka
+	 6DyqbPXG8uK7S+Rc1Pr712yHYZUiycuKhtO6fWFTbc5fYdkealO2joTF2KcJlqVq1C
+	 k9JPcaw/czcYbe+l2XGV0RtVOMjgzc35OBiIKlLVTsemNgsTlJayFIt4grrcdQFn/i
+	 K0gq2aNy4BUKQ==
+Date: Fri, 25 Oct 2024 17:32:36 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Abraham I <kishon@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+	Jesper Nilsson <jesper.nilsson@axis.com>,
+	Richard Zhu <hongxing.zhu@nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@axis.com, linux-arm-kernel@lists.infradead.org,
+	imx@lists.linux.dev,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>
+Subject: Re: [PATCH v4 4/4] PCI: imx6: Add i.MX8Q PCIe Endpoint (EP) support
+Message-ID: <20241025223236.GA1030308@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v2 2/2] eth: fbnic: Add devlink dev flash support
-To: Simon Horman <horms@kernel.org>
-Cc: Alexander Duyck <alexanderduyck@fb.com>, Jakub Kicinski
- <kuba@kernel.org>, kernel-team@meta.com,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Paolo Abeni <pabeni@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
- Andrew Lunn <andrew+netdev@lunn.ch>, Sanman Pradhan
- <sanmanpradhan@meta.com>, Al Viro <viro@zeniv.linux.org.uk>,
- Mohsin Bashir <mohsin.bashr@gmail.com>, netdev@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241012023646.3124717-1-lee@trager.us>
- <20241022014319.3791797-1-lee@trager.us> <20241024091032.GI402847@kernel.org>
-Content-Language: en-US
-From: Lee Trager <lee@trager.us>
-In-Reply-To: <20241024091032.GI402847@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241024-pcie_ep_range-v4-4-08f8dcd4e481@nxp.com>
 
+On Thu, Oct 24, 2024 at 04:41:46PM -0400, Frank Li wrote:
+> Add support for i.MX8Q series (i.MX8QM, i.MX8QXP, and i.MX8DXL) PCIe
+> Endpoint (EP). On i.MX8Q platforms, the PCI bus addresses differ from the
+> CPU addresses. The DesignWare (DWC) driver already handles this in the
+> common code.
+> 
+> Reviewed-by: Richard Zhu <hongxing.zhu@nxp.com>
+> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+> Chagne from v3 to v4
+> - none
+> change from v2 to v3
+> - add Mani's review tag
+> - Add pci->using_dtbus_info = true;
+> ---
+>  drivers/pci/controller/dwc/pci-imx6.c | 22 ++++++++++++++++++++++
+>  1 file changed, 22 insertions(+)
+> 
+> diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
+> index bdc2b372e6c13..5be9bac6206a7 100644
+> --- a/drivers/pci/controller/dwc/pci-imx6.c
+> +++ b/drivers/pci/controller/dwc/pci-imx6.c
+> @@ -70,6 +70,7 @@ enum imx_pcie_variants {
+>  	IMX8MQ_EP,
+>  	IMX8MM_EP,
+>  	IMX8MP_EP,
+> +	IMX8Q_EP,
+>  	IMX95_EP,
+>  };
+>  
+> @@ -1079,6 +1080,16 @@ static const struct pci_epc_features imx8m_pcie_epc_features = {
+>  	.align = SZ_64K,
+>  };
+>  
+> +static const struct pci_epc_features imx8q_pcie_epc_features = {
+> +	.linkup_notifier = false,
+> +	.msi_capable = true,
+> +	.msix_capable = false,
+> +	.bar[BAR_1] = { .type = BAR_RESERVED, },
+> +	.bar[BAR_3] = { .type = BAR_RESERVED, },
+> +	.bar[BAR_5] = { .type = BAR_RESERVED, },
+> +	.align = SZ_64K,
+> +};
+> +
+>  /*
+>   * BAR#	| Default BAR enable	| Default BAR Type	| Default BAR Size	| BAR Sizing Scheme
+>   * ================================================================================================
+> @@ -1448,6 +1459,8 @@ static int imx_pcie_probe(struct platform_device *pdev)
+>  	if (ret)
+>  		return ret;
+>  
+> +	pci->using_dtbus_info = true;
 
-On 10/24/24 2:10 AM, Simon Horman wrote:
-> On Mon, Oct 21, 2024 at 06:42:24PM -0700, Lee Trager wrote:
->> fbnic supports updating firmware using a PLDM image signed and distributed
->> by Meta. PLDM images are written into stored flashed. Flashing does not
->> interrupt operation.
->>
->> On host reboot the newly flashed UEFI driver will be used. To run new
->> control or cmrt firmware the NIC must be power cycled.
->>
->> Signed-off-by: Lee Trager <lee@trager.us>
-> ...
->
->> diff --git a/drivers/net/ethernet/meta/fbnic/fbnic_devlink.c b/drivers/net/ethernet/meta/fbnic/fbnic_devlink.c
-> ...
->
->> @@ -109,8 +110,274 @@ static int fbnic_devlink_info_get(struct devlink *devlink,
->>   	return 0;
->>   }
->>
->> +/**
->> + * fbnic_send_package_data - Send record package data to firmware
->> + * @context: PLDM FW update structure
->> + * @data: pointer to the package data
->> + * @length: length of the package data
->> + *
->> + * Send a copy of the package data associated with the PLDM record matching
->> + * this device to the firmware.
->> + *
->> + * Return: zero on success
->> + *	    negative error code on failure
->> + */
->> +static int fbnic_send_package_data(struct pldmfw *context, const u8 *data,
->> +				   u16 length)
->> +{
->> +	struct device *dev = context->dev;
->> +
->> +	/* Temp placeholder required by devlink */
->> +	dev_info(dev,
->> +		 "Sending %u bytes of PLDM record package data to firmware\n",
->> +		 length);
-> Could you clarify what is meant by "Temp placeholder" here and in
-> fbnic_send_component_table(). And what plans there might be for
-> a non-temporary solution.
+I mentioned this elsewhere, but I think the using_dtbus_info part
+should be part of a series that only deals with the address
+translation, and adding IMX8Q_EP should be in a separate series.
 
-Temp placeholder may not have been the best wording here. pldmfw 
-requires all ops to be defined as they are always called[1] when 
-updating. fbnic has an info message here so its doing something but we 
-have no current plans to expand on fbnic_send_package_data nor 
-fbnic_finalize_update.
-
-[1] 
-https://elixir.bootlin.com/linux/v6.12-rc4/source/lib/pldmfw/pldmfw.c#L723
-
->
->> +
->> +	return 0;
->> +}
->> +
->> +/**
->> + * fbnic_send_component_table - Send PLDM component table to the firmware
->> + * @context: PLDM FW update structure
->> + * @component: The component to send
->> + * @transfer_flag: Flag indication location in component tables
->> + *
->> + * Read relevant data from component table and forward it to the firmware.
->> + * Check response to verify if the firmware indicates that it wishes to
->> + * proceed with the update.
->> + *
->> + * Return: zero on success
->> + *	    negative error code on failure
->> + */
->> +static int fbnic_send_component_table(struct pldmfw *context,
->> +				      struct pldmfw_component *component,
->> +				      u8 transfer_flag)
->> +{
->> +	struct device *dev = context->dev;
->> +	u16 id = component->identifier;
->> +	u8 test_string[80];
->> +
->> +	switch (id) {
->> +	case QSPI_SECTION_CMRT:
->> +	case QSPI_SECTION_CONTROL_FW:
->> +	case QSPI_SECTION_OPTION_ROM:
->> +		break;
->> +	default:
->> +		dev_err(dev, "Unknown component ID %u\n", id);
->> +		return -EINVAL;
->> +	}
->> +
->> +	dev_dbg(dev, "Sending PLDM component table to firmware\n");
->> +
->> +	/* Temp placeholder */
->> +	strscpy(test_string, component->version_string,
->> +		min_t(u8, component->version_len, 79));
->> +	dev_info(dev, "PLDMFW: Component ID: %u version %s\n",
->> +		 id, test_string);
->> +
->> +	return 0;
->> +}
-> ...
->
+>  	if (imx_pcie->drvdata->mode == DW_PCIE_EP_TYPE) {
+>  		ret = imx_add_pcie_ep(imx_pcie, pdev);
+>  		if (ret < 0)
+> @@ -1645,6 +1658,14 @@ static const struct imx_pcie_drvdata drvdata[] = {
+>  		.epc_features = &imx8m_pcie_epc_features,
+>  		.enable_ref_clk = imx8mm_pcie_enable_ref_clk,
+>  	},
+> +	[IMX8Q_EP] = {
+> +		.variant = IMX8Q_EP,
+> +		.flags = IMX_PCIE_FLAG_HAS_PHYDRV,
+> +		.mode = DW_PCIE_EP_TYPE,
+> +		.epc_features = &imx8q_pcie_epc_features,
+> +		.clk_names = imx8q_clks,
+> +		.clks_cnt = ARRAY_SIZE(imx8q_clks),
+> +	},
+>  	[IMX95_EP] = {
+>  		.variant = IMX95_EP,
+>  		.flags = IMX_PCIE_FLAG_HAS_SERDES |
+> @@ -1674,6 +1695,7 @@ static const struct of_device_id imx_pcie_of_match[] = {
+>  	{ .compatible = "fsl,imx8mq-pcie-ep", .data = &drvdata[IMX8MQ_EP], },
+>  	{ .compatible = "fsl,imx8mm-pcie-ep", .data = &drvdata[IMX8MM_EP], },
+>  	{ .compatible = "fsl,imx8mp-pcie-ep", .data = &drvdata[IMX8MP_EP], },
+> +	{ .compatible = "fsl,imx8q-pcie-ep", .data = &drvdata[IMX8Q_EP], },
+>  	{ .compatible = "fsl,imx95-pcie-ep", .data = &drvdata[IMX95_EP], },
+>  	{},
+>  };
+> 
+> -- 
+> 2.34.1
+> 
 
