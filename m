@@ -1,173 +1,133 @@
-Return-Path: <linux-kernel+bounces-381581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF3769B011D
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 13:25:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C13DC9B0129
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 13:25:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 350A61F22380
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 11:25:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 847A52841C7
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 11:25:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E3A91FDF8B;
-	Fri, 25 Oct 2024 11:25:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8673B203700;
+	Fri, 25 Oct 2024 11:25:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="cV7LfZbM"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NtGYadY1"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBC7D1FBF66
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 11:25:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE619201018;
+	Fri, 25 Oct 2024 11:25:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729855510; cv=none; b=HeC9E37IFNVo25G7SUcqa3eE/GB+Dhw9CDdQwZDssIyB9l+77I3oYfEW3EBeWbyiZEvQk4FK7ADpADW+HvLwrxlRzenX3P85nXE4Ifz/OHb9bIE6Fe3E8EwYRgdkp1IpyubBZe17Ugx7EpHBCrElE6vOyV+Abjdhb5FOFgCXUVc=
+	t=1729855515; cv=none; b=VFeaDp4zXpJGnkv8dSMQ0a+9UTNejxXXScUxKF7cXtjoknXPeGJG15nhmRCl7ne1f50Zq3V9PPHbCbr4ZLNpksCdGLtSAxx648UQpnDRgBHa1niXdyKXRou4PMyqgObWUdVRjdQNhuTzsOBOVnv1kaG/ii3Kt0idVv0UOOJWRYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729855510; c=relaxed/simple;
-	bh=rOxsN5DBrlrawsn7kEc1lVVH45aBQniUcXKtMuS2934=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RFuym1gLBurXUfOj6M6tzCwQ1ijV7PLRZvyAUs4BleE6vyAFw4iLX5CNo8zv6gKPiFHGw+e6GQnJfnS14Zz2rZX+HrEbNJKlOYHwe8MNa0f8g5MR4H9jGCYZeSEcLMoxc6+cU0s6ncsBijUx9iqBUwsZ+F45eBt7buiSoSiKdaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=cV7LfZbM; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 1329340E0285;
-	Fri, 25 Oct 2024 11:25:03 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id WdqHwixGTTls; Fri, 25 Oct 2024 11:24:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1729855499; bh=rscGr9593KMEaumPgugwUpRLqbkH6N54FyzA2w1Y8LE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cV7LfZbMGQakvGvase+QTTqi3uXQN3sr1UXc1u8+XH5sXSaeo2dnJ4IFlR1nFfkND
-	 dwDNP7IXpeBD4G5oEGBHO5nlDJAmq51ZQLD/cAJWgqSWMRZDpzwcMbA9llhK6u5DUg
-	 CcxjLBjnK6/6kvodSYacWNoSMmTSLFfvg/q5eM+c4jbYoKL7+NnRcXzu50wNy85sTw
-	 6rKFzGt5TbY/VEJg8oehtXEyK4xRs1X8/RYx2pTJH7vhD1S1dJw3LZKKMP/WoZV2wo
-	 +cNw8vDQ/amIakqt30XA4Ac7/a3DfgaROaEmE5Iss/aLITXFG35ZaPaLqmFhs1rkyu
-	 h6CAGTneP/vUN0M1TPOYk16BtK4WwegAuJjeeEx79YzUrSCj+1dOa+sF1JoQDsoCat
-	 9l8XH3Ypd1aLlX6hE0tJvoUObOf0n2w7u/BpPvyAprwQxWGiP3KjJIg95OncB3njzh
-	 hR7IU3YEr1onn4+Xm8Bt1zBgmqOuvGdJ37p/uU/3TLqjJeuSmj6hRBiBBa0BUL6CRJ
-	 xKXx0oKFrZbftKFpU8TXzxZQZBJ+7pTzPH0F6HkjloRtFcALjqDLoEeh2jWIIDeMax
-	 j8YIA9kPDKphRy/oWe4+9SNj/Fw3YZxm+KCtq9ugusghiKTQm1fQKcHqgD0qqfFtWy
-	 UutstdZZ/P0YWBL41ENp7B2U=
-Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 302DB40E0192;
-	Fri, 25 Oct 2024 11:24:54 +0000 (UTC)
-Date: Fri, 25 Oct 2024 13:24:48 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	x86@kernel.org, Andrew Cooper <andrew.cooper3@citrix.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>
-Subject: Re: [PATCH] x86: fix user address masking non-canonical speculation
- issue
-Message-ID: <20241025112448.GBZxuAAD3kjAFYM_3A@fat_crate.local>
-References: <20241024013214.129639-1-torvalds@linux-foundation.org>
- <20241024110822.GBZxoqppmxp0xxG7ew@fat_crate.local>
- <CAHk-=wgynHGhG9dzwRdySJSHZTOCp9jBHChomEF-mERJmsUeQg@mail.gmail.com>
- <CAHk-=wjBkvHNTy3orkjw=2GH25S4MSFWesSjni2zZNW2+gjomg@mail.gmail.com>
+	s=arc-20240116; t=1729855515; c=relaxed/simple;
+	bh=e0pUeZhnaxoOJxI70AFSXGBv66qAJ/ODZ80pJS01hrw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=Be11Lxs7Bi0Vwa4NGJahpvPxtS3ge2aUN12+ewG1JnYjB/Oz4XCd8EevT8PaFbJ9QQgnzE5HpuXLjskyv1Bb9cIePLhpD6ykQEzLYcT3LFpKoUvfdiJL1IMgfhbNGkSRu2cy5+12W/dXbVO4fs3R57BC7o9KlaL8DXjK5sSt8F0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NtGYadY1; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-539e6c754bdso1764381e87.2;
+        Fri, 25 Oct 2024 04:25:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729855512; x=1730460312; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/HNnYCMWwNqSncdK5XICNLGGS6qqpAsQS7/caik9gL8=;
+        b=NtGYadY1ZufdNWJ97jcPfU9q5AT3atFuB+p3rX1INPT4Z5dALSH2yAJ926MxLuEJB4
+         eF2Ekgze5u5PcUBjEFb/duiFAKYTGI78lUx7X4Xgb3OESXe3i0Du5UZmMR32t0wM/Kil
+         i+vgexUfH+GkXB7WGtMe/zmDaz1oNaZ6Ayukz4elJ/urN/Xf4q7K/cIEolsatHExKAlE
+         btCZNtdOsEFz524IGBpNv7W2HSEk8ymT4MoBo8EwuQwkjSngu9bAwROTYCr3AWn2FhKp
+         VIikW7z8nATW/fp7LZOMtBuS3FnRD+ArDX3Jzfa9Ggix1HbxTJRhxsThhSDP1C1h5ANU
+         wtAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729855512; x=1730460312;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/HNnYCMWwNqSncdK5XICNLGGS6qqpAsQS7/caik9gL8=;
+        b=WqWjjTWQP1GqVOL2IEsWpc/h95E+/991SE1w29RkIAtGPT66jQnYwo3SliXGM8VqtM
+         IwnAYhAbQQpA6/B3IS1U59/NugMATxpVNpORBgHGwcEtcyxsGoYG4vT3trdShUfO76bp
+         ATJixbYgurIjQy8CSgFeX5TS5DssO/qiGF/RqyHge6TKJv+RASppQ58+n1zU+1F4xPdQ
+         fWrY7fVp+vxmy8xQeFXVwAoDTFWanPDWMgsK43tV60cepZedD0Ak49OHHzloSjjy5Got
+         bk4hkvU+NPzrQKQBn53KSCabg2S2mMctK1V/Lja5S6expzmI1EzW36Z0NpUmgJjOGEX8
+         djEw==
+X-Forwarded-Encrypted: i=1; AJvYcCUBWOIUjcZSaAVzwyz8vGLwtiCq/iPlwpg55vwF43GktFDtL1U9/jNLdHGpj0ZlyBeJKCIccIjtHYIfhnhe8nAUDLY=@vger.kernel.org, AJvYcCWBnIbUK5sob7zTztNb32CmNwJNFUoeUqOjh+1Ujnc16HiypEiU91nfayaR6CVFDmYAs+tRn8phlvzZ@vger.kernel.org, AJvYcCXsvDRp0NS9wuJbzi+PjCCWGQqRHnHpYHiQOXbu72EbYljDjjzQFpLEcqmHQsM+SrGhtVfanoQ1ew5Xseil@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJ0/FG0WkXxveuEzOm1PiXzqwJYztb5Z0/A+1vBw/8fzDk7Q30
+	BcXe46c90lYwLKa0sFhYBwF5mYReOFXRyPXl0uv6u5I+6Crdzl7IZYYbUQ==
+X-Google-Smtp-Source: AGHT+IGWhx14LNtltdJxbSM1OwgnZgVxVGD3zuhki3CqEUZoL2D9f/SDtBAiMVIL9e/v9p5gAgVqgw==
+X-Received: by 2002:a05:6512:3d0e:b0:539:f7ab:e161 with SMTP id 2adb3069b0e04-53b1a391e86mr5184359e87.45.1729855511426;
+        Fri, 25 Oct 2024 04:25:11 -0700 (PDT)
+Received: from [192.168.1.105] ([178.136.36.129])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53b2e1c90c0sm144028e87.189.2024.10.25.04.25.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Oct 2024 04:25:11 -0700 (PDT)
+From: Markuss Broks <markuss.broks@gmail.com>
+Date: Fri, 25 Oct 2024 14:24:49 +0300
+Subject: [PATCH v2 02/12] dt-bindings: hwinfo: samsung,exynos-chipid: Add
+ Samsung exynos9810 compatible
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wjBkvHNTy3orkjw=2GH25S4MSFWesSjni2zZNW2+gjomg@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241025-exynos9810-v2-2-99ca3f316e21@gmail.com>
+References: <20241025-exynos9810-v2-0-99ca3f316e21@gmail.com>
+In-Reply-To: <20241025-exynos9810-v2-0-99ca3f316e21@gmail.com>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Tomasz Figa <tomasz.figa@gmail.com>, Will Deacon <will@kernel.org>, 
+ Mark Rutland <mark.rutland@arm.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, 
+ Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>, 
+ Markuss Broks <markuss.broks@gmail.com>, 
+ Maksym Holovach <nergzd@nergzd723.xyz>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1729855507; l=1083;
+ i=markuss.broks@gmail.com; s=20241024; h=from:subject:message-id;
+ bh=e0pUeZhnaxoOJxI70AFSXGBv66qAJ/ODZ80pJS01hrw=;
+ b=sQmGok87n+es/tJA9th7JWqP4Nbe8occLtRJWndKkoWz1YPWdc5GUzrS6sxN43GcJj7SXodIq
+ RLrVmYnnu5HA8KY70kpPWkTvJauKR56ZvAGF4ak34wFnAgZSirOtDrN
+X-Developer-Key: i=markuss.broks@gmail.com; a=ed25519;
+ pk=p3Bh4oPpeCrTpffJvGch5WsWNikteWHJ+4LBICPbZg0=
 
-On Thu, Oct 24, 2024 at 11:13:35AM -0700, Linus Torvalds wrote:
-> Actually, I should also just remove the "or" and move that into C
-> code. It will allow the compiler to decide which way it wants to do
-> the bitwise 'or', which means that the compiler can pick whichever
-> output register is a better choice.
->
-> Probably never matters in practice, but leaving decisions like that to
-> the compiler and avoiding one more fixed asm instruction is a good
-> thing.
+Add the compatible for Samsung Exynos9810 chipid to schema.
 
-Yap, that's the impression I've got too from talking to compiler folks over
-the years.
+Co-developed-by: Maksym Holovach <nergzd@nergzd723.xyz>
+Signed-off-by: Maksym Holovach <nergzd@nergzd723.xyz>
 
-> It does result in a few more casts on the C side, since you can't just
-> do bitwise 'or' on a pointer, but I think it's still the right thing
-> to do. So that thing becomes
-> 
->   static inline void __user *mask_user_address(const void __user *ptr)
->   {
->         unsigned long mask;
->         asm("cmp %1,%0\n\t"
->             "sbb %0,%0"
->                 :"=r" (mask)
->                 :"r" (ptr),
->                  "0" (runtime_const_ptr(USER_PTR_MAX)));
->         return (__force void __user *)(mask | (__force unsigned long)ptr);
->   }
-> 
-> which I'm certainly not claiming is a thing of beauty,
+Signed-off-by: Markuss Broks <markuss.broks@gmail.com>
+---
+ Documentation/devicetree/bindings/hwinfo/samsung,exynos-chipid.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-Bah, 2 insns in asm and an OR in C code? That's fine.
-
-> but the generated code looks ok if you just ignore the #APP/#NOAPP noise:
-> 
->   # ./arch/x86/include/asm/uaccess_64.h:71:                "0"
-> (runtime_const_ptr(USER_PTR_MAX)));
->   #APP
->   # 71 "./arch/x86/include/asm/uaccess_64.h" 1
->         mov $81985529216486895,%rax     #, __ret
->   1:
->   .pushsection runtime_ptr_USER_PTR_MAX,"a"
->         .long 1b - 8 - .        #
->         .popsection
->   # 0 "" 2
->   # lib/strncpy_from_user.c:114: {
->   #NO_APP
->         pushq   %rbx    #
->         movq    %rdi, %r9       # tmp149, dst
->         movq    %rdx, %r11      # tmp151, count
->   # ./arch/x86/include/asm/uaccess_64.h:67:       asm("cmp %1,%0\n\t"
->   #APP
->   # 67 "./arch/x86/include/asm/uaccess_64.h" 1
->         cmp %rsi,%rax   # src, mask
->         sbb %rax,%rax   # mask
->   # 0 "" 2
->   # ./arch/x86/include/asm/uaccess_64.h:72:       return (__force void
-> __user *)(mask | (__force unsigned long)ptr);
->   #NO_APP
->         orq     %rax, %rsi      # mask, _44
-> 
-> so you actually see gcc filling in variable names etc (well "variable
-> names" may be a bit generous: "_44" is a pseudo for the new value of
-> src,
-
-Hmm, how did it come up with "src"?
-
-Oh, strncpy_from_user(). That's actually nice.
-
-> but that's just how compilers are with SSA - assignments create a
-> whole new temporary).
-
-Right.
-
-> So legibility is very much in the eye of the beholder. You have to be
-> pretty damn used to looking at the generated asm to find any of this
-> even remotely legible.
-
-Haha, yeah. Especially if one is curious to see what the compiler spits out.
-
-In any case, yeah, that's readable enough.
-
-Thx.
+diff --git a/Documentation/devicetree/bindings/hwinfo/samsung,exynos-chipid.yaml b/Documentation/devicetree/bindings/hwinfo/samsung,exynos-chipid.yaml
+index 47a8d98346ebb83a7ea4d11e2fc7fc87df6bc5ad..385aac7161a0db9334a92d78a57a125f23ca1920 100644
+--- a/Documentation/devicetree/bindings/hwinfo/samsung,exynos-chipid.yaml
++++ b/Documentation/devicetree/bindings/hwinfo/samsung,exynos-chipid.yaml
+@@ -24,6 +24,7 @@ properties:
+           - enum:
+               - samsung,exynos7885-chipid
+               - samsung,exynos8895-chipid
++              - samsung,exynos9810-chipid
+               - samsung,exynos990-chipid
+               - samsung,exynosautov9-chipid
+               - samsung,exynosautov920-chipid
 
 -- 
-Regards/Gruss,
-    Boris.
+2.46.2
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
