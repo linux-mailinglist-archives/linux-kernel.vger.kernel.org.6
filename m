@@ -1,109 +1,197 @@
-Return-Path: <linux-kernel+bounces-381076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 290EB9AF9E9
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 08:28:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B8209AF9EB
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 08:29:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C2128B21AB8
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 06:28:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 383191F215E8
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 06:28:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B385A19A297;
-	Fri, 25 Oct 2024 06:28:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F9CA1AD3F5;
+	Fri, 25 Oct 2024 06:28:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="NCsdj+DI"
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="W04LpWCW"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 868D64436A;
-	Fri, 25 Oct 2024 06:28:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA1DD4436A
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 06:28:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729837712; cv=none; b=eywioXUYDz/nRgkQvj0iPObsiH7auJiU3uDza+RDSknpFNsSEqNrIFBmqp2hPoF9DIXGMNFCHOieRBl7drTjWJoA6IuTo2s70XOVgIMwF3Rb4Sr7PnTkyhhCSJdWh+bXEQEjtg9BOu5/lb9z45Hd1ytCSnci2BoL5WziSgqpl5c=
+	t=1729837724; cv=none; b=eeoc6BYjr+OQsyFbWh7xtIA4Ze/mUgQnWkGrtghmh6VBNffGffJ1QseaCabaafWMYIBjN5v0H6RzNvSaucMiJF0NZkXtJ4gpFw9XsicaBwrUK0aeSqDBXXpE9WAbq1wn11oaXTC/hu/sTljg0WwayzUbAOfjbzWykNR6Qbxh208=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729837712; c=relaxed/simple;
-	bh=eW5cNoq4HhqCleohpEdEFNz15qAmy3Q0PscLTgWOAvY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Dv5zCUmW4tMemKdFXsb3i767K8HRvo1UnLqzmVdBDlYz0VUMWIJkq62huWzC6ea4VWRBZuq+kw1k2GW5dP36nZTiaPISdjsub132fT8+paeOPO9BZrG22qZj5PhEaeuXgiXN7QlujosTHnG5csFdmNY35OrFoTMy2qGxjd72Q58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=NCsdj+DI; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 0AF88FF804;
-	Fri, 25 Oct 2024 06:28:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1729837700;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=T2urxZr4PdBqe/WP4JjhB39N/OOp7KvKgjKG4IyRf8s=;
-	b=NCsdj+DI5bkXRQexT60OpdJck6eHoD2BwdnMbuETa12Hmld6Oi66EBLttuoNU1Ur4NBQGU
-	WzeayFaZDH2K1uCpbcYsMbNAWZFQMj0zYu6TZrMaJ3VESfDUeX3rSX0R84v4fgjC95DMeC
-	QMYEBr3pFC13a9IsLC/5A12+zErJ4o1yyfBbFtUgGRLDT7DkyGBa1QwUJ8zCx0cqhwFCz0
-	r0p4oXDbKrYKSvPBo+3SU2YoRUEclI/eXhdLN29389NK4PmGAOFWeEQqHq0ADRs6W36r8q
-	hCjQjtkDBFilu5awmdt4Zz2LjYjvf1FTG7Y9o45Zp+2wKkHarwA3rDKojv+7UQ==
-Date: Fri, 25 Oct 2024 08:28:17 +0200
-From: Herve Codina <herve.codina@bootlin.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Rob Herring <robh@kernel.org>
-Subject: Re: linux-next: build warning after merge of the reset tree
-Message-ID: <20241025082817.28056f52@bootlin.com>
-In-Reply-To: <20241025110919.64b1cffb@canb.auug.org.au>
-References: <20241025110919.64b1cffb@canb.auug.org.au>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1729837724; c=relaxed/simple;
+	bh=WwQi+D7FjT7HiEmRpKp14FbmPnTWN2j43SBZvSVshyI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=D/ig9+WbSxjwKXH2bEsQjqws/ccWyaoNCLxhH/QzxGYWsDES6CuYFNK27A13xllagcGc4/qJQzAH06pKrjxR7Qd+B9IZIPmmeYAjUzqX3fWrwLeWU2cZ5sxjkM9dts1OWRd0Pm6Qn79rASiELMmFHttDv5lf4wCa0mfqd9uV9Xs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=W04LpWCW; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2fb6110c8faso16150071fa.1
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 23:28:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729837719; x=1730442519; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ggQprwB+vTricRp85OZCHCZrtqv0PIzjtgOf5gOgeCo=;
+        b=W04LpWCWQuZjfMkPWTQrU4/HaikbvKIpiqEpLXqphOSJrv1zbzBe2QCUuw2ErZqTa4
+         yrvaXnhzCa05lOxWgaMb5u4Ixqp++MYK43m4XEFQb7KO0kiYakQTJEQWOtBvhTEyr5mm
+         Ave5QkvQHrM2pVn0hE6oY/7Kawfg0axoGGsQ+MjcpyZoIT4pEfinkC9Jynli7XSK3Pw5
+         WC1GZgkTKWiEg399U5rl+2OObi+6Wul59OmZkIrw1PxUyr1frTbi5RASxPIFvR4uJKdS
+         KlVIZSWciceky5HKmbLgoiv1MKjW47HWwXrrhw0MpReWooQ0JYPBKfmlj1yfOn4s+vZP
+         qk1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729837719; x=1730442519;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ggQprwB+vTricRp85OZCHCZrtqv0PIzjtgOf5gOgeCo=;
+        b=LAw9s5gLWdxABNl8g9lyBfxgKHb60XHPReKuawY4vzyc/sTX5CfxZ2eq6sKJTUZKzO
+         BZgAaoEvIQKMQ6mKAUyBXtEoZzO+IyztTUAbNuNh9FBeQq8zqjOtuIJIDshHFdmGMW/J
+         TxjYX32cZIKrxw8dOHAdNSa3WqyShI63ZbyOHKmEXAZWIlt95UfObtCK5E5jxTxUmdJk
+         88bLEV1n/z21sFo35fJqZ799F6TdvABLy2OfSGHX5co5BhSHQwrRmun0OEtL3HfiiBPq
+         zGni86NzoKnzajY7syAZh2Suy4BCKuiBclWVht+UUSWveCfJ4rfri7Jj16o59EipECWQ
+         L1Kg==
+X-Forwarded-Encrypted: i=1; AJvYcCWkOBOQNjBTkRni0HlGEYF9KGmhR0b7HXiChGt4M1vZexKZA+LEQ4aCstKEfFmzgq5QJl51uniueMNtq4M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4zU8l7+LymfOYcGX4llHlrQ4G/lpRszBcICIlrCM55rmObOB+
+	g11Znh9oR468fi4rZainZvUm+Zw7poMHaos1vXHXfFhO4DyHBRfIHb1sH8PnxjE=
+X-Google-Smtp-Source: AGHT+IFaqSi3YpsyTfNZEHslT6tXnIucCTkmvLVJIORZGEveGd+wYqYmRBCEZV5qZEaTCrCcylcBhg==
+X-Received: by 2002:a2e:b8c2:0:b0:2fb:382e:410f with SMTP id 38308e7fff4ca-2fca8227ddbmr26408121fa.26.1729837718711;
+        Thu, 24 Oct 2024 23:28:38 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fcb4612a5asm703221fa.122.2024.10.24.23.28.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Oct 2024 23:28:36 -0700 (PDT)
+Date: Fri, 25 Oct 2024 09:28:33 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Akhil P Oommen <quic_akhilpo@quicinc.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Clark <robdclark@gmail.com>, 
+	Sean Paul <sean@poorly.run>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, Marijn Suijten <marijn.suijten@somainline.org>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 2/3] dt-bindings: opp: Add v2-qcom-adreno vendor
+ bindings
+Message-ID: <4426b4kybtac6rc4twa5pgm3hvlegofemvqjcrvh6ni7f5z2h6@5dnlv3hgywh5>
+References: <20241021-gpu-acd-v2-0-9c25a62803bc@quicinc.com>
+ <20241021-gpu-acd-v2-2-9c25a62803bc@quicinc.com>
+ <mz4zpcr4tqh2w7vt75f4ofxjzfve54ozzgpdbi2jjzk5pdxbk7@t36tlt3mmprt>
+ <d858dadb-4098-4c9f-b4f0-393dc988db5f@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: herve.codina@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d858dadb-4098-4c9f-b4f0-393dc988db5f@quicinc.com>
 
-Hi all,
-
-On Fri, 25 Oct 2024 11:09:19 +1100
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-
-> Hi all,
+On Thu, Oct 24, 2024 at 12:56:58AM +0530, Akhil P Oommen wrote:
+> On 10/22/2024 11:19 AM, Krzysztof Kozlowski wrote:
+> > On Mon, Oct 21, 2024 at 05:23:43PM +0530, Akhil P Oommen wrote:
+> >> Add a new schema which extends opp-v2 to support a new vendor specific
+> >> property required for Adreno GPUs found in Qualcomm's SoCs. The new
+> >> property called "qcom,opp-acd-level" carries a u32 value recommended
+> >> for each opp needs to be shared to GMU during runtime.
+> >>
+> >> Cc: Rob Clark <robdclark@gmail.com>
+> >> Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
+> >> ---
+> >>  .../bindings/opp/opp-v2-qcom-adreno.yaml           | 96 ++++++++++++++++++++++
+> >>  1 file changed, 96 insertions(+)
+> >>
+> >> diff --git a/Documentation/devicetree/bindings/opp/opp-v2-qcom-adreno.yaml b/Documentation/devicetree/bindings/opp/opp-v2-qcom-adreno.yaml
+> >> new file mode 100644
+> >> index 000000000000..6d50c0405ef8
+> >> --- /dev/null
+> >> +++ b/Documentation/devicetree/bindings/opp/opp-v2-qcom-adreno.yaml
+> >> @@ -0,0 +1,96 @@
+> >> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> >> +%YAML 1.2
+> >> +---
+> >> +$id: http://devicetree.org/schemas/opp/opp-v2-qcom-adreno.yaml#
+> >> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> >> +
+> >> +title: Qualcomm Adreno compatible OPP supply
+> >> +
+> >> +description:
+> >> +  Adreno GPUs present in Qualcomm's Snapdragon chipsets uses an OPP specific
+> >> +  ACD related information tailored for the specific chipset. This binding
+> >> +  provides the information needed to describe such a hardware value.
+> >> +
+> >> +maintainers:
+> >> +  - Rob Clark <robdclark@gmail.com>
+> >> +
+> >> +allOf:
+> >> +  - $ref: opp-v2-base.yaml#
+> >> +
+> >> +properties:
+> >> +  compatible:
+> >> +    items:
+> >> +      - const: operating-points-v2-adreno
+> >> +      - const: operating-points-v2
+> >> +
+> >> +patternProperties:
+> >> +  '^opp-?[0-9]+$':
+> > 
+> > '-' should not be optional. opp1 is not expected name.
 > 
-> After merging the reset tree, today's linux-next build (x86_64
-> allmodconfig) produced this warning:
+> Agree. Will change this to '^opp-[0-9]+$'
 > 
-> drivers/misc/lan966x_pci.dtso:34.23-40.7: Warning (interrupts_property): /fragment@0/__overlay__/pci-ep-bus@0/oic@e00c0120: Missing interrupt-parent
+> > 
+> >> +    type: object
+> >> +    additionalProperties: false
+> >> +
+> >> +    properties:
+> >> +      opp-hz: true
+> >> +
+> >> +      opp-level: true
+> >> +
+> >> +      opp-peak-kBps: true
+> >> +
+> >> +      opp-supported-hw: true
+> >> +
+> >> +      qcom,opp-acd-level:
+> >> +        description: |
+> >> +          A positive value representing the ACD (Adaptive Clock Distribution,
+> >> +          a fancy name for clk throttling during voltage droop) level associated
+> >> +          with this OPP node. This value is shared to a co-processor inside GPU
+> >> +          (called Graphics Management Unit a.k.a GMU) during wake up. It may not
+> >> +          be present for some OPPs and GMU will disable ACD while transitioning
+> >> +          to that OPP. This value encodes a voltage threshold and few other knobs
+> >> +          which are identified by characterization of the SoC. So, it doesn't have
+> >> +          any unit.
+> > 
+> > Thanks for explanation and other updates. I am still not happy with this
+> > property. I do not see reason why DT should encode magic values in a
+> > quite generic piece of code. This creates poor ABI, difficult to
+> > maintain or understand.
+> > 
 > 
-> Introduced by commit
+> Configuring GPU ACD block with its respective value is a requirement for each OPP.
+> So OPP node seems like the natural place for this data.
 > 
->   185686beb464 ("misc: Add support for LAN966x PCI device")
-> 
+> If it helps to resolve your concerns, I can elaborate the documentation with
+> details on the GMU HFI interface where this value should be passed on to the
+> hardware. Also replace "few other knobs" with "Delay cycles & Calibration margin"
+> in the above doc.
 
-This warning is normal.
-interrupt-parent is not present in the oic node. This was discussed in
-https://lore.kernel.org/all/CAL_Jsq+je7+9ATR=B6jXHjEJHjn24vQFs4Tvi9=vhDeK9n42Aw@mail.gmail.com/
+Usually the preference for DT is to specify data in a sensible way
+rather than just the values being programmed to the register. Is it
+possible to implement this approach for ACD values?
 
-interrupt-parent is not mandatory for a node and if interrupt-parent is not
-present, the interrupt parent resolution code will look at the parent node
-recursively until an interrupt-parent or an interrupt controller is found.
-https://elixir.bootlin.com/linux/v6.12-rc1/source/drivers/of/irq.c#L56
+>  
+> > 
 
-In the LAN966x PCI case, this goes up to the PCI device which is itself an
-interrupt controller. This interrupt controller is not described in the dtso
-because it is the node where the dtso is applied.
-
-The LAN966x PCI device DT node has the #interrupt-cells and the
-interrupt-controller properties. This build at runtime:
-https://elixir.bootlin.com/linux/v6.12-rc1/source/drivers/pci/of_property.c#L186
-
-Best regards,
-Hervé
 -- 
-Hervé Codina, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+With best wishes
+Dmitry
 
