@@ -1,102 +1,171 @@
-Return-Path: <linux-kernel+bounces-381446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66DA69AFF63
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 12:02:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F1189AFF65
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 12:02:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 968891C2218D
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 10:02:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EFFD6285BA3
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 10:02:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C7FD1E0DA0;
-	Fri, 25 Oct 2024 10:00:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 625CD1A0BEE;
+	Fri, 25 Oct 2024 10:01:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LA56r5ua"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kNJ8GBwH"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4E6C1A0BEE;
-	Fri, 25 Oct 2024 10:00:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F86E1E04BD
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 10:00:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729850457; cv=none; b=m3iOXMyeL39a8xF+lFP2DRm+qLsa1BxJ3/dp3+BSS6HgdMnSX2tcLp+A0k3iCKEZmMmU1TQnaTYa41n86RC3vQMxKuzFp6WKh3J00PHZuW8rCbVBi4N0DDH81oSaPh5DJ+qcPEPXKnsYFeMAq0f640otl5KXTWR2K/T+KbSQum0=
+	t=1729850460; cv=none; b=uJR78vSnJOnJ6yJf8Wryuhg35FphWe/0kUTupld8+jMh5pvRBTZcMRo6L3816Y1te/e6LsN/EUp/VGSpaGucWBYM40lC7iiSqEPTIH29vcbMvFb/IPoThh2lTP+MHhfqta0LafqTx4ClLPbjXDa9c9LX/MPFeE+3+AmzywMipCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729850457; c=relaxed/simple;
-	bh=aVscTLXVO2A6+3+8E/Ek0ANx+Z3F0Cm1Fng5HkdRojk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oR345UTfVIIWJS1iKJKH5+HEXpyPZQPHwE+fke3EealpEvXX3iCL5yi8cF4rzVYXeNIxQAVGgBkvt1miyyxetqsdoIXoucmv4corbKonU/mqjPyt36V12I0Uj/5V6KM2QVw/ikA4P4iB/rHzPagMYalRIfOk4/3cUrSpfu1Xw84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LA56r5ua; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C095C4CECD;
-	Fri, 25 Oct 2024 10:00:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729850456;
-	bh=aVscTLXVO2A6+3+8E/Ek0ANx+Z3F0Cm1Fng5HkdRojk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LA56r5uaoLwbRheEYnLRqfCHnEID20EJj9AVZCo7bTAEDQfIcMjZdWR/PPDta8XUg
-	 9fDwO6M/kyEB9qcKY1fqBPDF880trPwrdyo0PP1y2CAzU/gcHyZd8l+UcoNpBhZUjK
-	 5dLp1LeN83iwhUaiie22v0f2u3HyqAI44kwdEJgy0fZu0tlMdVKkXo4psK4A87+STV
-	 yYKoVS33pZmre/5Y+rIK+hGbL6oc7366qlw1YOM2KvNzf4Dbd5NltYVAu4NsC28Uph
-	 dBWwFRfZmW52BrwXwuDYzlrkaxWD82PkCLha3PwoPqq4IeZnhNf/vAzpZmGKR/yMeN
-	 ycMm3RJXU88Yw==
-Date: Fri, 25 Oct 2024 11:00:51 +0100
-From: Simon Horman <horms@kernel.org>
-To: Matthieu Baerts <matttbe@kernel.org>
-Cc: mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>,
-	Geliang Tang <geliang@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Gregory Detal <gregory.detal@gmail.com>,
-	Shuah Khan <shuah@kernel.org>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH net 2/3] mptcp: remove unneeded lock when listing scheds
-Message-ID: <20241025100051.GN1202098@kernel.org>
-References: <20241021-net-mptcp-sched-lock-v1-0-637759cf061c@kernel.org>
- <20241021-net-mptcp-sched-lock-v1-2-637759cf061c@kernel.org>
- <20241023122128.GT402847@kernel.org>
- <4ca239db-6a05-4735-916c-73cee0ee22a0@kernel.org>
+	s=arc-20240116; t=1729850460; c=relaxed/simple;
+	bh=aI1urz9KFxp3vtZsp5jxRvEPBHELYVj3ABjYSNdE2a0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lPBJNM3io/j3nmOmAjawGYV4gSoF5yAH1H9eoAupDF8flD8Zi0FzAo7fOnbyXotBudatUGCy/cm+Ns9omQNWAlZnQDKkpOoww6APj64MTByX6aJ+82zM8u+ASO8pVVJ624vsxOM4Bt7Pwokhxj9b5P9MDd1rdr3uebwRwdvYsCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kNJ8GBwH; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a9a0472306cso248324566b.3
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 03:00:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729850457; x=1730455257; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=AWlbaIJ0hi4JFbHkI72bLaNDNUhZfU2viW5MR4J6woM=;
+        b=kNJ8GBwHhVqVPeGW33AcHAFU6XfCsC1BcrigyhDTFqT1yYyHfTs0ZdiqvSAAKpR+U3
+         JJSpXXhOxYSOOlPq3QvvAqXGvneTTLSSa3GQbtSjboHzCbQKbIobkAEF3GRXm2mG9NIW
+         xqj0E1EX0mQemNpTxp1oMMXRCJAMA6Y0oS4aHhTiSwBjcTGQ54BV1mA6vXu6WYRsyQd1
+         xG84VzbGOEgkhqdLZ8Nv/Vy/qMirVNtLtT3oyjtsXqLBIZ06g91HHZzqwPgP1jxwgVJE
+         dd2IxN6mDt51iudGJ1xUN58EdRUyfaPH0idoENoIsdSxV4G8D69Yy2czAMkKHMF7LgLA
+         KO7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729850457; x=1730455257;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=AWlbaIJ0hi4JFbHkI72bLaNDNUhZfU2viW5MR4J6woM=;
+        b=Mdwh+x0IfILhxc8lwmX1Eym5FZLrUTaWy4UuxpROxVPeZMfr6t/UWBNuuEt/p5/8yw
+         UuhWluPb79R/TZCeUj1DsrW+cB9aG/vEoqSWOW2nc3bVtwLpekHmcAO3gIidXhFs0I+f
+         buuzJd6L4NNX7tYg54oOlS91sge5013DSIsUtoB+4gnuONfcL+ImsN6vVi+L1wTe2zqW
+         NuPxaUS954pSKdOKhj6GNHU7bM3XmsopZcyNzAliYbwQOIQt9Ec2AuKdFTRZcr9x824T
+         Nf31bx1buqf7IfyeISZq/ZVTpeCdvhjgDtUNN+rUf1CHyjoNzcjYKwKWQrxauLO8NRg5
+         tK4w==
+X-Forwarded-Encrypted: i=1; AJvYcCUcD8oDzJrur30Y+ryjB7Bqw+fYa1e0rWaQE/FwdPAZ06AQB+yCmV4tfIUJrB/0LtheTSD9MKmWFbtJkdo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyO3115Xv+NOPT/frDIxUbe3Egb6f4KGZQ/d/lasOeMcaqb1c7x
+	Dbh/x3h3EOliQplnAQ9s46S+ZzLHIx3BHAspErQIdwb7g11+uOFHTEqMN3gtw8M=
+X-Google-Smtp-Source: AGHT+IFdts21GtnD76VhDCeCjho+8OH76wrvaoNYV2Y9mWY9mltExz6Sr41ezR5Fkxr73yIvhagmJg==
+X-Received: by 2002:a17:907:6022:b0:a9a:c57f:9666 with SMTP id a640c23a62f3a-a9ac57f9ba5mr450700966b.2.1729850456437;
+        Fri, 25 Oct 2024 03:00:56 -0700 (PDT)
+Received: from [192.168.0.157] ([79.115.63.43])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b3099df78sm50972466b.158.2024.10.25.03.00.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 25 Oct 2024 03:00:55 -0700 (PDT)
+Message-ID: <88800ef0-2fb5-41f8-a303-e149ade7ed47@linaro.org>
+Date: Fri, 25 Oct 2024 11:00:52 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4ca239db-6a05-4735-916c-73cee0ee22a0@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] firmware: add exynos acpm driver
+To: Krzysztof Kozlowski <krzk@kernel.org>, jassisinghbrar@gmail.com
+Cc: alim.akhtar@samsung.com, mst@redhat.com, javierm@redhat.com,
+ tzimmermann@suse.de, bartosz.golaszewski@linaro.org,
+ luzmaximilian@gmail.com, sudeep.holla@arm.com, conor.dooley@microchip.com,
+ bjorn@rivosinc.com, ulf.hansson@linaro.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, marcan@marcan.st, neal@gompa.dev,
+ alyssa@rosenzweig.io, broonie@kernel.org, andre.draszik@linaro.org,
+ willmcvicker@google.com, peter.griffin@linaro.org, kernel-team@android.com,
+ vincent.guittot@linaro.org, daniel.lezcano@linaro.org
+References: <20241017163649.3007062-1-tudor.ambarus@linaro.org>
+ <20241017163649.3007062-3-tudor.ambarus@linaro.org>
+ <955530a5-ef88-4ed1-94cf-fcd48fd248b2@kernel.org>
+ <d41ee8f6-9a2c-4e33-844a-e71224692133@linaro.org>
+ <1ece02e6-bf78-443a-8143-a54e94dd744c@kernel.org>
+ <d91109a1-532a-4b95-ad4c-3b9cf8e3dbbb@linaro.org>
+ <1e76bc70-21a6-4ac7-99ea-30a7ccf387bb@kernel.org>
+ <2941d65e-8fb4-4d5a-be4b-283de2cb3274@linaro.org>
+ <855101b0-0102-4c77-b110-bdec12b28f29@kernel.org>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <855101b0-0102-4c77-b110-bdec12b28f29@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 23, 2024 at 04:13:36PM +0200, Matthieu Baerts wrote:
-> Hi Simon,
-> 
-> Thank you for the reviews!
-> 
-> On 23/10/2024 14:21, Simon Horman wrote:
-> > On Mon, Oct 21, 2024 at 12:25:27PM +0200, Matthieu Baerts (NGI0) wrote:
-> >> mptcp_get_available_schedulers() needs to iterate over the schedulers'
-> >> list only to read the names: it doesn't modify anything there.
-> >>
-> >> In this case, it is enough to hold the RCU read lock, no need to combine
-> >> this with the associated spin lock.
-> >>
-> >> Fixes: 73c900aa3660 ("mptcp: add net.mptcp.available_schedulers")
-> >> Cc: stable@vger.kernel.org
-> >> Suggested-by: Paolo Abeni <pabeni@redhat.com>
-> >> Reviewed-by: Geliang Tang <geliang@kernel.org>
-> >> Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
-> > 
-> > I do wonder if it would be more appropriate to route this via net-next
-> > (without a fixes tag) rather than via net. But either way this looks good
-> > to me.
-> Good point. On one hand, I marked it as a fix, because when working on
-> the patch 1/3, we noticed these spin_(un)lock() were not supposed to be
-> there in the first place. On the other hand, even it's fixing a small
-> performance issue, it is not fixing a regression.
-> 
-> I think it is easier to route this via -net, but I'm fine if it is
-> applied in net-next.
 
-Understood. FTR, I don't feel strongly about this either way.
+
+On 10/24/24 10:36 AM, Krzysztof Kozlowski wrote:
+> On 23/10/2024 11:53, Tudor Ambarus wrote:
+>>
+>>
+>> On 10/23/24 10:00 AM, Krzysztof Kozlowski wrote:
+>>>>>>> I also cannot find any piece of code setting several of above, e.g. tx_base
+>>>>>> I'm not writing any SRAM configuration fields, these fields are used to
+>>>>>> read/retrive the channel parameters from SRAM.
+>>>>> I meany tx_base is always 0. Where is this property set? Ever?
+>>>> It's not zero. My assumption is it is set in the acpm firmware, but I
+>>> Where is any assignment to this member?
+>>
+>> In probe() you'll see that exynos_acpm->shmem is a pointer in SRAM to a
+>> struct exynos_acpm_shmem __iomem *shmem;
+>>
+>> Then in:
+>>
+>> static int exynos_acpm_chans_init()
+>> {
+>> 	struct exynos_acpm_shmem_chan __iomem *shmem_chans, *shmem_chan;
+>> 	struct exynos_acpm_shmem __iomem *shmem = exynos_acpm->shmem;
+>> 	...
+>>
+>> 	shmem_chans = exynos_acpm_get_iomem_addr(exynos_acpm->sram_base,
+>> 						 &shmem->chans);
+>> 	...
+>> }
+>>
+>> shmem->chans is not initialized (or tx_base). I'm using its address in
+>> SRAM (&shmem->chans) which I then read it with readl_relaxed().
+>>
+>> I guess one can do the same using offsetof:
+>> shmem_chans = readl_realaxed(shmem + offsetof(struct exynos_acpm_shmem,
+>> 					      chans));
+>>
+> 
+> I see, the code and the naming is confusing. Two exynos_acpm_shmem_chan
+
+Noted. I'll refactor exynos_acpm_chans_init() in the next version.
+
+> variables and one exynos_acpm_shmem. shmem_chans is used as an array,
+> but nowhere pointed or indicated that it is array of some size.
+>
+
+I understand , will update. I added documentation for `struct
+exynos_acpm_shmem` describing the array of chans and the number of
+chans, but I'll figure something more, to be clearer.
+
+> All this could be clearer if exynos_acpm_shmem_chan was packed, because
+> then it is obvious it points to defined memory, but maybe packed is not
+
+__packed shall be alright, but it's not needed because all the members
+of the struct are u32 and the address of the struct is u64 aligned.
+
+> correct here? Probably splitting all this into logical chunks would be
+> useful. Like not mixing reading offsets with reading values, because I
+> really have to spend a lot of time to identify which one is which in
+> exynos_acpm_chans_init().
+> 
+
+I understand, will update. Need to figure out what other options we have
+with the mailbox core changes first. Thanks for the suggestions!
+
+Cheers,
+ta
 
