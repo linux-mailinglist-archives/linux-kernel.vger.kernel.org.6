@@ -1,172 +1,111 @@
-Return-Path: <linux-kernel+bounces-381212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45C3D9AFBFF
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 10:05:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D3BE9AFC05
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 10:06:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F140A1F23BE3
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 08:05:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B56D31F24553
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 08:06:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D37AF1CB9ED;
-	Fri, 25 Oct 2024 08:05:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A92D1D0DDE;
+	Fri, 25 Oct 2024 08:06:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NVvZEqOg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bSo+1HFE"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E2881CBA04;
-	Fri, 25 Oct 2024 08:05:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC0C91CEAD3
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 08:06:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729843519; cv=none; b=DK88ZKwBoSLd0S+nTZxo4kcsY8oT/FNNBgxXyqjrwyXPg5syaq6eb7cDIBt7Stmu/yJz9fHQF8pFMnFD0XfoC2trHzi68MtLeuFKMAO1XHavoGbzhXH+bpbRXIEDIfTQ44e5yXQGza/jTYBIqf1nrlkTmCc1D4PocHL17wmNZ0c=
+	t=1729843566; cv=none; b=NvkDiKVhFyvoR9tcetk4qAn0cjvu3tGdEwcb/k/Sg+5ykFkfxtE/6jFcPJtnsaeSp6BK/b9lWb2p0wJh4oNdrvcU1f+X08bvzwwPJU9COE47fgCzwmbJXlA90ELzZK732DcWd+Vv0YMXgWpTFo6Ogr8M7L6UW3p2Zb5h1kVphas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729843519; c=relaxed/simple;
-	bh=KfmEL14rVYtfMW9cS9/j2bydxqHvt8iK8MkWYzJOEvA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=m9YOjjmUrhPjyj16mgSIGyfrtYuxsvY4hicPILvQO4opAhvQeJBEG2UOLKqK0rFLqsN5XP6AVqXe9QEi0WTvS4G8+x+BvKpQ9kvY/py9tCi5nWniS4VDpVL0K+VXsKSU93eC5MT3hrl8dpoAN2+IEm78v4jTTvBMaRFsf15EwfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NVvZEqOg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7C76C4CECC;
-	Fri, 25 Oct 2024 08:05:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729843518;
-	bh=KfmEL14rVYtfMW9cS9/j2bydxqHvt8iK8MkWYzJOEvA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=NVvZEqOgckAGp2/wGcICDCHu1ywbgm66lHVMxvD5Ps1t/KsbQvygjH5NDjD+7xOhv
-	 tPdNyewBDRwuFJD2bf3kEymZHJoyiTgw+eYn5/8gA7bI1gIHLp1EpTk9dUFj2LGm+/
-	 J8vU4SyM1u+pbttYSCzH5uyhBAV4HhkqnPP4qMj9h3f9Zp3sduBWs0NdLGg+1vem7h
-	 EgVt2Rv6ZZ7ZKLq4RJTKTPbu235tbRwm2GDb1WmH0Qw/Z+mU309rlcgp42gDhTjQIO
-	 XRpyAB97ENeBo/S8KkeP2RjhDK7UAnuFkX+48kp9Vf0U7qbyWRTVIMATsJ8BiudR19
-	 /avWhjhSlAt/A==
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-539983beb19so2249780e87.3;
-        Fri, 25 Oct 2024 01:05:18 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU+FskcdzkLP6NEvR1+slzQlWgZQMAxkrq621GH4RBtxi9OD2Z9oEGRaF9cv/jgyq9Z8fmepFgu0p0tINE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhrGj7HHIjuJ5T6oJI+Bd9dPRe5b37Zt3GloWApI4pkNzmOYqN
-	bDuqQlqVCr0JEk+TlnqCS+8u0JerNl+twHh/olrgBSmkH3dDCJHpsnQnUU6bxHsZO84I+Yp+2Uz
-	V2yft9dtJWRM/ailsWsfYAzkgRAs=
-X-Google-Smtp-Source: AGHT+IG27Yb80kx6CJY+4tOhVGsT/ZEj4ynv9I5D6j49Hjrinwf5ULC9VA4qcGFViD1IszHktbXduIrXQPhRWuonH7A=
-X-Received: by 2002:a05:6512:33cf:b0:539:dc87:fd3a with SMTP id
- 2adb3069b0e04-53b1a2fad1fmr5310677e87.6.1729843517038; Fri, 25 Oct 2024
- 01:05:17 -0700 (PDT)
+	s=arc-20240116; t=1729843566; c=relaxed/simple;
+	bh=ATaXUh+6mRM8+DzD6T9X0xAxW2Dm2ynHKp1/NJ1ZYS4=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=mBJ8btpjPV2cAWRO2dP0Qjh2ImmvhnR8aBrI15iEAakc4Fk3Pmckh4ey2ahvQGBOuKAJeQi1HgqRlmUDHx1Bnq2DoHpEytt8bjrW9IviO62nVZTTH0lDavZcXf69BKr0iViSDmLc7ExRCqzI0mTYmNStA8VJraV6+25kTP6u6qc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bSo+1HFE; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729843561;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RJJHsXrgapppl7p0/PyNGlnzqEqHhWtD8NkXnb6nj9g=;
+	b=bSo+1HFE4fm6VqZz9kKoZ0XqxujRJn2ej0/c7OwMiX7Mdv+gLS2nGndbRyN768PaxQ7flN
+	Tyy8eu0Se7jWK2Ytz90X2KYtnrFXS25g5uwCCNvFaBiFS4jOQ69yL/7dY34PYuisqSU0Oc
+	QdSNB8ln9XKllBnXcLBzkiihEvkTsPU=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-133-FPE0XAzzPNeTRp9zwS178w-1; Fri,
+ 25 Oct 2024 04:05:58 -0400
+X-MC-Unique: FPE0XAzzPNeTRp9zwS178w-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1383A1955F43;
+	Fri, 25 Oct 2024 08:05:57 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.231])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B461C1956056;
+	Fri, 25 Oct 2024 08:05:54 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <ZxshMEW4U7MTgQYa@gmail.com>
+References: <ZxshMEW4U7MTgQYa@gmail.com>
+To: Chang Yu <marcus.yu.56@gmail.com>
+Cc: dhowells@redhat.com, jlayton@kernel.org, netfs@lists.linux.dev,
+    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+    syzbot+af5c06208fa71bf31b16@syzkaller.appspotmail.com,
+    skhan@linuxfoundation.org
+Subject: Re: [PATCH] netfs: Add a check for NULL folioq in netfs_writeback_unlock_folios
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241018235343.425758-1-ebiggers@kernel.org>
-In-Reply-To: <20241018235343.425758-1-ebiggers@kernel.org>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Fri, 25 Oct 2024 10:05:05 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXGvh3DBGL2g-3Xnj_F1e3w+HDBxoekgiE2iJq9TsOK--g@mail.gmail.com>
-Message-ID: <CAMj1kXGvh3DBGL2g-3Xnj_F1e3w+HDBxoekgiE2iJq9TsOK--g@mail.gmail.com>
-Subject: Re: [PATCH] crypto - move crypto_simd_disabled_for_test to lib
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3951591.1729843553.1@warthog.procyon.org.uk>
+Date: Fri, 25 Oct 2024 09:05:53 +0100
+Message-ID: <3951592.1729843553@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On Sat, 19 Oct 2024 at 01:54, Eric Biggers <ebiggers@kernel.org> wrote:
->
-> From: Eric Biggers <ebiggers@google.com>
->
-> Move crypto_simd_disabled_for_test to lib/ so that crypto_simd_usable()
-> can be used by library code.
->
-> This was discussed previously
-> (https://lore.kernel.org/linux-crypto/20220716062920.210381-4-ebiggers@kernel.org/)
-> but was not done because there was no use case yet.  However, this is
-> now needed for the arm64 CRC32 library code.
->
-> Tested with:
->     export ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu-
->     echo CONFIG_CRC32=y > .config
->     echo CONFIG_MODULES=y >> .config
->     echo CONFIG_CRYPTO=m >> .config
->     echo CONFIG_DEBUG_KERNEL=y >> .config
->     echo CONFIG_CRYPTO_MANAGER_DISABLE_TESTS=n >> .config
->     echo CONFIG_CRYPTO_MANAGER_EXTRA_TESTS=y >> .config
->     make olddefconfig
->     make -j$(nproc)
->
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
+Chang Yu <marcus.yu.56@gmail.com> wrote:
 
-Acked-by: Ard Biesheuvel <ardb@kernel.org>
+> syzkaller reported a null-pointer dereference bug
+> (https://syzkaller.appspot.com/bug?extid=af5c06208fa71bf31b16) in
+> netfs_writeback_unlock_folios caused by passing a NULL folioq to
+> folioq_folio. Fix by adding a check before entering the loop.
 
+And, of course, the preceding:
 
-> ---
->  crypto/algapi.c     |  6 ------
->  lib/crypto/Makefile |  2 ++
->  lib/crypto/simd.c   | 11 +++++++++++
->  3 files changed, 13 insertions(+), 6 deletions(-)
->  create mode 100644 lib/crypto/simd.c
->
-> diff --git a/crypto/algapi.c b/crypto/algapi.c
-> index 74e2261c184ca..429a832f90fe0 100644
-> --- a/crypto/algapi.c
-> +++ b/crypto/algapi.c
-> @@ -4,11 +4,10 @@
->   *
->   * Copyright (c) 2006 Herbert Xu <herbert@gondor.apana.org.au>
->   */
->
->  #include <crypto/algapi.h>
-> -#include <crypto/internal/simd.h>
->  #include <linux/err.h>
->  #include <linux/errno.h>
->  #include <linux/fips.h>
->  #include <linux/init.h>
->  #include <linux/kernel.h>
-> @@ -21,15 +20,10 @@
->
->  #include "internal.h"
->
->  static LIST_HEAD(crypto_template_list);
->
-> -#ifdef CONFIG_CRYPTO_MANAGER_EXTRA_TESTS
-> -DEFINE_PER_CPU(bool, crypto_simd_disabled_for_test);
-> -EXPORT_PER_CPU_SYMBOL_GPL(crypto_simd_disabled_for_test);
-> -#endif
-> -
->  static inline void crypto_check_module_sig(struct module *mod)
->  {
->         if (fips_enabled && mod && !module_sig_ok(mod))
->                 panic("Module %s signature verification failed in FIPS mode\n",
->                       module_name(mod));
-> diff --git a/lib/crypto/Makefile b/lib/crypto/Makefile
-> index 969baab8c805f..01fac1cd05a19 100644
-> --- a/lib/crypto/Makefile
-> +++ b/lib/crypto/Makefile
-> @@ -56,5 +56,7 @@ libblake2s-y                                  += blake2s-selftest.o
->  libchacha20poly1305-y                          += chacha20poly1305-selftest.o
->  libcurve25519-y                                        += curve25519-selftest.o
->  endif
->
->  obj-$(CONFIG_MPILIB) += mpi/
-> +
-> +obj-$(CONFIG_CRYPTO_MANAGER_EXTRA_TESTS)       += simd.o
-> diff --git a/lib/crypto/simd.c b/lib/crypto/simd.c
-> new file mode 100644
-> index 0000000000000..9c36cb3bb49c4
-> --- /dev/null
-> +++ b/lib/crypto/simd.c
-> @@ -0,0 +1,11 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + * SIMD testing utility functions
-> + *
-> + * Copyright 2024 Google LLC
-> + */
-> +
-> +#include <crypto/internal/simd.h>
-> +
-> +DEFINE_PER_CPU(bool, crypto_simd_disabled_for_test);
-> +EXPORT_PER_CPU_SYMBOL_GPL(crypto_simd_disabled_for_test);
->
-> base-commit: 5c20772738e1d1d7bec41664eb9d61497e53c10e
-> --
-> 2.47.0
->
+	if (slot >= folioq_nr_slots(folioq)) {
+
+doesn't oops because it doesn't actually dereference folioq.
+
+However... if we get into this function, there absolutely *should* be at least
+one folioq in the rolling buffer.  Part of the rolling buffer's method of
+operation involves keeping at least one folioq around at all times so that we
+don't need to use locks to add/remove from the queue.
+
+Either the rolling buffer wasn't initialised yet (and it should be initialised
+for all write requests by netfs_create_write_req()) or it has been destroyed
+already.
+
+Either way, your patch is, unfortunately, just covering up the symptoms rather
+than fixing the root cause.  I suggest instead that we patch the function to
+detect the empty rolling buffer up front, dump some information about the bad
+request and return.
+
+David
+
 
