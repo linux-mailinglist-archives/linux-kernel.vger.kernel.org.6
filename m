@@ -1,237 +1,474 @@
-Return-Path: <linux-kernel+bounces-381133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8D439AFACF
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 09:15:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 642459AFAD7
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 09:17:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88C5E28356F
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 07:15:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C8611C21B50
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 07:17:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F6C61B6D17;
-	Fri, 25 Oct 2024 07:15:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="OMBOZx5t"
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2056.outbound.protection.outlook.com [40.107.22.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2267A1B6CF5;
+	Fri, 25 Oct 2024 07:17:18 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14282166F1B;
-	Fri, 25 Oct 2024 07:15:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.56
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729840513; cv=fail; b=o7Y6aNQNrLu+ucvjTxHWPBiqCZPRxSK5XTD/2gArybwAtotWoFv/niDci4ajkmWA/zpjod07YnduWdNBn5m4pqYvwwk92RRmvGl4DEAscAE1OFy79vzzjIdAVwr6v2lTjebqWLGb44KtxPNsKlYk6DyW6+ClvQxsn77RMsG3gHU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729840513; c=relaxed/simple;
-	bh=3fsGuMZS3V1INg6klUi+iBG3pQL/oFGqYy12QqOvAo4=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=pcmztCwc6Q75YBEl63ZXtljuIIGJMfWdOMjfO7mUn4WuSx//RXcaKkoLKClO5FBsa+wl6EkUT/sYbpD7udjNxVxhQptDUxg0C6N9pbaFMbR622dvSTl8CvEJrUtBQd9P3txKJrn1D8SktJ/vYZgFxjRgjwOj2gFsnagxvZmD43g=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=OMBOZx5t; arc=fail smtp.client-ip=40.107.22.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=HS5fPRU4tUCafxgQs8kMWuBP0Bwdgbe6+FXcyHwpb9dGSqMKQICx/Uv9eWpiF669OgMdmwOvgofyRQB2LXkNXGVoC8MY8I0TAM7fYr/y3kxPI682jpeV3ZkBqDhZDCCxpMEUoQUSlY+CRhcV++kwd87FZa/CfuDglrEdafOZW4Sink5Zn6zmR30RDSxLbIjvqgjW7/C+K6OJLFu1m1p+MMg4V/6qZyYFgVdg/R8NkPhuk1mkwcsaU57qNPWgxeDJiWuWxDfXHsnKZeyDLtcIUpHvEOtIT+Ma8nnL4MtG4+HpSX4xWV72WoeKT9zf3LbUnjzcok/Vk3Lx8GL3V0NchQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3fsGuMZS3V1INg6klUi+iBG3pQL/oFGqYy12QqOvAo4=;
- b=FHEX42ANyLOs+z/yQXR7iX1cURwbNFDcSjlhktCzokqKqIeiQI8pzCutNQbiejoMCarWIpdrwDTabthOUMXtIKLr9qltVoWhLyJWylmSCGWZmG5nqldmkY6pu+P8CbcA7iLIl4e6keLhDCE2M83956vyVH8Fhx/H54v5COnD5B7lRupzpQE9Sht2o7b6Z9dK3z/5nXdD8Sx/EU1n7YJlYiMRglZymMBnhHQ/gNTOVfrret2p46OblkOLhQ9SmwKVlPXmj5fN2QQ1Iov/YSnMnkival+fLwGXicgs98ETnH3lbVvzM5AUBLWsEpGN2q7wS9RmCh3WFIbYIWxFW3UiZg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3fsGuMZS3V1INg6klUi+iBG3pQL/oFGqYy12QqOvAo4=;
- b=OMBOZx5t26O+3X5fRKV9i8HDozaCd+gxDjLN3khaS2h8O0zCutz1OzRxJWeBIEQiLfHAG3LsSoXuACi1S3wr4HBQgtBB/bNmpKFO70Qx2/8UGLaL8m88WhzlUMHSFeNDljJ3KeUEKz0eTJANVa06U+oxrf0M9pLq9w1RGWzOEP+pCW8Apo0FgBsPIMw++22biP3EBAJNXJvQs/iTwZeRWxtnvkxEFdnYx9eB9pkOfnW32GrWO5fpdvOKbBiAHnAgXEa3qxrKKjZoo8Phqdv6jrD6Owu5n/6z/KtC0KN1L2xVCYeeuVVP+HmkDpV4shp+N3BXf7iUxeGKyGHgpgU+RA==
-Received: from PAXPR04MB8510.eurprd04.prod.outlook.com (2603:10a6:102:211::7)
- by AS8PR04MB9206.eurprd04.prod.outlook.com (2603:10a6:20b:44d::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.21; Fri, 25 Oct
- 2024 07:15:08 +0000
-Received: from PAXPR04MB8510.eurprd04.prod.outlook.com
- ([fe80::a7c2:e2fa:8e04:40db]) by PAXPR04MB8510.eurprd04.prod.outlook.com
- ([fe80::a7c2:e2fa:8e04:40db%7]) with mapi id 15.20.8069.027; Fri, 25 Oct 2024
- 07:15:07 +0000
-From: Wei Fang <wei.fang@nxp.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: "davem@davemloft.net" <davem@davemloft.net>, "edumazet@google.com"
-	<edumazet@google.com>, "kuba@kernel.org" <kuba@kernel.org>,
-	"pabeni@redhat.com" <pabeni@redhat.com>, "robh@kernel.org" <robh@kernel.org>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org"
-	<conor+dt@kernel.org>, Vladimir Oltean <vladimir.oltean@nxp.com>, Claudiu
- Manoil <claudiu.manoil@nxp.com>, Clark Wang <xiaoning.wang@nxp.com>, Frank Li
-	<frank.li@nxp.com>, "christophe.leroy@csgroup.eu"
-	<christophe.leroy@csgroup.eu>, "linux@armlinux.org.uk"
-	<linux@armlinux.org.uk>, "bhelgaas@google.com" <bhelgaas@google.com>,
-	"horms@kernel.org" <horms@kernel.org>, "imx@lists.linux.dev"
-	<imx@lists.linux.dev>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-	"alexander.stein@ew.tq-group.com" <alexander.stein@ew.tq-group.com>
-Subject: RE: [PATCH v4 net-next 03/13] dt-bindings: net: add bindings for NETC
- blocks control
-Thread-Topic: [PATCH v4 net-next 03/13] dt-bindings: net: add bindings for
- NETC blocks control
-Thread-Index:
- AQHbJEi1opWCvzFL8kS18Y10TWXurLKT6McAgAAQObCAABEvAIAAEJ5AgAHNioCAASmHQA==
-Date: Fri, 25 Oct 2024 07:15:07 +0000
-Message-ID:
- <PAXPR04MB85108DAF7FA67BC1B36CB6FF884F2@PAXPR04MB8510.eurprd04.prod.outlook.com>
-References: <20241022055223.382277-1-wei.fang@nxp.com>
- <20241022055223.382277-4-wei.fang@nxp.com>
- <xx4l4bs4iqmtgafs63ly2labvqzul2a7wkpyvxkbde257hfgs2@xgfs57rcdsk6>
- <PAXPR04MB851034FDAC4E63F1866356B4884D2@PAXPR04MB8510.eurprd04.prod.outlook.com>
- <f7064783-983a-44bd-a9db-fd20f4e50e33@kernel.org>
- <PAXPR04MB85101A3DFF08F8C8DD7513F8884D2@PAXPR04MB8510.eurprd04.prod.outlook.com>
- <a1528ced-930c-4e5d-91e6-6be5f5363e8d@kernel.org>
-In-Reply-To: <a1528ced-930c-4e5d-91e6-6be5f5363e8d@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PAXPR04MB8510:EE_|AS8PR04MB9206:EE_
-x-ms-office365-filtering-correlation-id: 459a02b0-9530-4cf1-3dd9-08dcf4c4c18d
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|366016|7416014|376014|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?RDF6ME1vU2ZvZWcyK1pMLzI3ckJjUWlHVS96V1o2TFpKeWNwVkUvNjNMZkZQ?=
- =?utf-8?B?WW1rbkNXQXBJcVdxb2JTNGlMb2F2WU1XR2RIYnh2U1dPUjF6bXgvWnpTVW9y?=
- =?utf-8?B?Vit6Zk8yS0dGQ3Z1VUlDY0trYUcydm0yRjNobnIwSXFZVnBJWElkeVYwODVQ?=
- =?utf-8?B?WjhRZFpKWXo5WFFGaFZ2dzlVM053dlNtRTEzR3BDV0lKS3Z0Y1kxY1BJdk41?=
- =?utf-8?B?TExGNnlGdzByQXFpUmlqSTdnZC96ZnpQUmM3d3Y4ei90Z3N0T0JZZC9DM1c1?=
- =?utf-8?B?NURYZXdiam42cnZHcnhtWi9xeDd3QkowL1lmc01GMUxSSXp5ejlId2Y5U01s?=
- =?utf-8?B?cTI4Y1hBVHFSREl1NmhldDBJUWJFL0FIRG5vQURmN21tc01lN3JOOUhkLzZ4?=
- =?utf-8?B?aFRvaVdDMkcxWngrUE1RWEZIL0dXTTNNSThLdVpCbE5qd2FLQnNIUlNOYklo?=
- =?utf-8?B?MkVrZ3F0eFdvbm5pOTQ4TzM2MUhBMTlCeTJNUVdmMVdjS3JBUU1rTmFVY0Yy?=
- =?utf-8?B?cmZSd0wydmtienMrNDl2cUxHbFVROWdmbnhOWDRBbVQ1NDNWdm1ycXBxTGFR?=
- =?utf-8?B?V3dHVUh2VjI1R09POHE3Unc0Wkh5Ymd2aDVKbDc2UmZIU3g1a1FLMjY5N0FU?=
- =?utf-8?B?UVNYOVVqYlFIOTl1ZEpvQ1pGSEQxTlpjMEkrOVZGR0JNL1BLM3Fkc2NiUkxo?=
- =?utf-8?B?S3lkSVp2ODRLcXNIWEU5OHEvbWUxamp1TGlnbmFINVlFNlFZaDdQWUVMM3Np?=
- =?utf-8?B?WXZ0dURibUJHOUY2VHBUcHkyTnh0MU90V3pBQ2QzUTg0aEIvK3c2Z1B1dVJI?=
- =?utf-8?B?N1N1TjhZOXRWelRwVS81emxLeFB2UEN0MERnVWphUTVHbXUwMXFQT3lGekZD?=
- =?utf-8?B?dGZxN3FXQTVwK2Ixc2JoUFZMc0tsM29OMWRxUzhpa2VjTXJZcmtoaHg4RFM1?=
- =?utf-8?B?eFZ0UnQvZUNrZ0VQVCtsVzkzVi9ZNjlQZ1BVeU9jSTNJOVpPcDdmcnI3K1hH?=
- =?utf-8?B?NCtHWHVqcUpXM3hRNWJra2JIVnhpNU1kSS9vNEdjeVBHbzRrTW5TS2s1UWov?=
- =?utf-8?B?MnBBd1NoMGFsRkNkMllCSkpUU3B0RXUzcGhqdTlFUDBNNklkVU5BNEVVL1Ft?=
- =?utf-8?B?Vnd5dzZOdDJUSDFkU1hHVFlFVzhlUHdDa0Z4N0JQaDd3c2tvM3BNQzRrUGpv?=
- =?utf-8?B?cko2eHQwQ05valIzYjIzWTRkeTFXT1B1ZlppcWNXNEdCV2FXTG44SE81aUtT?=
- =?utf-8?B?UkhsR1k5alV5UGZ5YWRNeENTc2FWSVY0bTF1NTlPak1YSVRmVFpBNFJ2OW1Q?=
- =?utf-8?B?RGdmdkJjTmlMSkxiUFVUdFc2VXhIYjZtTDJVd0hwVnR1R01tbCs4YUl4djEw?=
- =?utf-8?B?ZHA5NzRhQnNXUG8wRGRIZnh5YVF4bUJPckR1ZVBIM2s2aTZaNWJ3cUt4THJE?=
- =?utf-8?B?cGdNZVZpOTJpejFpam9Ta3lkYkhqYnZJcUdwbENyS09nZlVobHhaZ1MwTDhu?=
- =?utf-8?B?VzVVSm53Vy9ydFllSGFYZzdHYU9SQmVVMnVmc0kySGh6UWRWd1ZNbm1VcG1R?=
- =?utf-8?B?VGl4emlSY1E4TTJWSENmYWErQXRpT3F2cWQ5cUtyT2djK3BKTFkxS3N3cDNn?=
- =?utf-8?B?WlVPMW9ONFdGWWViWUpFZHVTQ29BaDJPcmNpSzAvb0hBbVVNbnZoYzdteEpz?=
- =?utf-8?B?YllBRzlmK0FKZmVFeThmS3RrcG5oZmRWdDNXMy9lLzUweS9vcEYwN2tEenc2?=
- =?utf-8?B?T2FPYnRGWWVtSzdKTzc5TU5xOVZNUldlZnZ1R04wUE5kM2VVOTVycTJURHlW?=
- =?utf-8?Q?oFJkRA1pUSWX4wnA2z82uI9MEYKvHqxnkFGoM=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8510.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?MGROSEtSQkZKclYxTXZyMjVFajJBNXErWDNUZG5wWTJNZzl3bXg0M0MrOGdv?=
- =?utf-8?B?TmtXU0xTTEpVLzc1dkJBaHlpWGtRWmFsc3FEaXRla0NqZktKT3lkUFhRZjRw?=
- =?utf-8?B?cmx0a2pqWkVGMjJTenF4V2NGNXo0c2V4Wm1QalBjZVhncDhpVE4rMFh2U0JS?=
- =?utf-8?B?c2FpMzlnamcyN3lZQVVkaWhSaGFvbzR5bTRJcCtvMTY1dFN1OU9YQ00wczdp?=
- =?utf-8?B?U2E0TDdySjlqdVVzUVNTVVNna2JxS2MzL2RaaWE4VWcvWjZGSUhBaFlmK05y?=
- =?utf-8?B?aW5oc0VSMlpMK0ZaK2tEOHFsaWxGR0I2Nk5YZ1lyOUlYTnprSTRlaTRuUXFC?=
- =?utf-8?B?MlNsWlhvU3VNa0I5b1dhYUJicUM2c0hsaVI1VWtOUmNSRTZKSUhjOWNKY2pO?=
- =?utf-8?B?K2I1dUlGS05CT1V4aTF6dkJoMlhoamxHSVlWT1FaTzdxZEd4bFZ3QzRGRTl6?=
- =?utf-8?B?TGZHNjdhbnFJZGNBWEZrTjBJSVQvWC92dzZqWldvTHA2ejVXblI2SnZSMVEr?=
- =?utf-8?B?Zm1SZm80WFV5V0ZWSFhZaFJINnppUnpYNkg5YTRFdWFEaXBudGZZYUtncjE2?=
- =?utf-8?B?elplSHdBRVNrZ2REOG5FandRQURMYmR2TTd1NDlmVXFSV0ZPcEx4emVuMVJt?=
- =?utf-8?B?VWxhZHpHamRQS0t1TDhXeEw3MzByTlBQSTZlemVqSUJmRU5JcmNmNmZyRldp?=
- =?utf-8?B?TnVTNG9BUUlqRWJUVFhDbDluRm9YVnFhTEpwSnhrWVp0SmZ5UEVIVGNVSlQr?=
- =?utf-8?B?UTlQYUVvRHpTY1ZwQXErVU9qb29IWVVOQUgrSm1nQnVXbUZpQmJWc0xvTXpo?=
- =?utf-8?B?dE85ZktDaW1nb3NTZ1NYZ3BsL2dIWHIveXR0c3o1UUxpV0JTL2E3V2RtdlFv?=
- =?utf-8?B?MDE0b01mU0FpV0Y3VXY2cHE3Sy84TXB1UGNwallYQ3VmNllkdVM3cTNpbWV4?=
- =?utf-8?B?ZmVsOWlncUhxNG91bzdXRk9NWFRRdTlDM0FwalV5QWkyT0RLdno5V21jZUM3?=
- =?utf-8?B?WHY4Q3VZN2N3UTV2bkRnaDBpeE1idjZHcW1vdDZ4a3QyY0Y4R1ptZE9DQ0xq?=
- =?utf-8?B?UXdmK3hRQ2ZEdG9LTDBwdkcwNzMxbDJaNG1jbFdhUEpwZzdxNnhzZmNhTm9t?=
- =?utf-8?B?SEVtVk9hajBrUGVnYlVKRjMrYmZaNExNU3ZLSkgvRlNXZVh1K0p2dU1ocXBL?=
- =?utf-8?B?WEQzZHBlZGFrU21rcElmMzFIZ1BXRkN4RUUxczYwbTBLYy90TkoveXkzSFZN?=
- =?utf-8?B?aWJvc2hnQjRvanVOTjNGYTZ3dmVZSFdMMGZ2Nm1sNmR4VXRCbHJ0UFZ0T1Vn?=
- =?utf-8?B?STlJNXQ2eGdqZllLdHRzQTIzTjFYdXlUSXZIZjkzZ3p0VEZyTnF6NUF2ZVNN?=
- =?utf-8?B?cGdWVGozbHhBVlRXSjVPTkRVTE12L2hodmFKbVJzV2ttZzcvckswVFI0UFh0?=
- =?utf-8?B?dEJWT1FrSGtoUDFPbVpoUVVwRFQ3YkhobkxWbGo5UlpROWlMeWJ1WWtHcDBh?=
- =?utf-8?B?WmJhRm9aUHpFdExxcjV3UjBTQnFKRTFrL0pRc0EwUjdjRkVadTRQbTJ0Mk1y?=
- =?utf-8?B?UldBUDk1SlAwdWExYzBQQjBUaC8yUDJkUUgzN0xMS1hnU3Zaa2lpcVlEVUNE?=
- =?utf-8?B?ekFTeXU0UGM0RkxlNE9xM2wvczIyNm9NaERqTVk5bUd5bUZPTUVYQ0pYSkdk?=
- =?utf-8?B?aHBVVW1mVUNJWHpiZ3VhWlNrMTBUaTF2WE40QnlZNmZyZ055dHhlNkxHZmVJ?=
- =?utf-8?B?SlY2Zk40c215UlFoeXR1Q1A0RzdZWHNLZERiTURQY0pCenJ4WHVYby80K3VZ?=
- =?utf-8?B?YThWcENXOGI1Wm5TUzBrbWxsUCt5Q096WDJCQVF4cFd2aXFkdW1qRXdjdmNu?=
- =?utf-8?B?VFBMOGdJUzdzaldienpPd0NxWFhod3hkNjZ3cFZ0QVRIMjNXdE4yNG5VdElr?=
- =?utf-8?B?RGxGQysyNWd4MjBGNmdTWDJ1U0UxelZQc2NBbC9JZlJDdzFYbEZBdFJjZEpM?=
- =?utf-8?B?djlyQldsWEhlYlpWNG9LMStneDZWRVhoYlV4bDFnSCtJdStwME1PV3VCMFRP?=
- =?utf-8?B?bjM2eUJwL0ExK0JQMUVtN1J5dktQbEJJdm1VVkt3MVdROEw3aW92S1Q0dlNn?=
- =?utf-8?Q?PdN8=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 886C7192588;
+	Fri, 25 Oct 2024 07:17:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729840637; cv=none; b=r7a7IT7JpBw/FAQ44Ayf7i5OkZp7OSbppnxMidMJ3etexXK7rVp2njxu2JRngMzvWniXjIbKeojPPTwiAL7kGTj6F6cOWjNgbLQgPKM05mU7x4b+hlvq1wS8oYg5cfNkfpBV0lbNtXQBCc+/CWxP6USE0MyYmpUvlMt4KhXDa9k=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729840637; c=relaxed/simple;
+	bh=aiMTuMqkq0mfjcbZbeIDkHUml90UYI7qLgQXdUlayfE=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=PLXIfAxvfKRUqMtnPoTpmm4dTEc4TtrdNTEi9kpMrQobqpsbLrd8NmC6eYdmDhPKEfjzwUvwtIY0IYM1l+ZRpsuUsfzPbeeaIwCnJUGC/Jk1zIczFcCGavqOQJjRkA7gbbMQY7kqD8ST6ZS8oJGK0dxIQZRkPpVCAiA0FtcTRvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XZYxZ2Ks3z4f3lfZ;
+	Fri, 25 Oct 2024 15:16:50 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 9DE671A07B6;
+	Fri, 25 Oct 2024 15:17:08 +0800 (CST)
+Received: from [10.174.176.73] (unknown [10.174.176.73])
+	by APP4 (Coremail) with SMTP id gCh0CgAHPMjyRRtnGwxCFA--.8566S3;
+	Fri, 25 Oct 2024 15:17:08 +0800 (CST)
+Subject: Re: [PATCH RFC 4/4] md/md-bitmap: support to build md-bitmap as
+ kernel module
+To: Mariusz Tkaczyk <mariusz.tkaczyk@linux.intel.com>,
+ Yu Kuai <yukuai1@huaweicloud.com>
+Cc: song@kernel.org, linux-raid@vger.kernel.org,
+ linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <20241024131325.2250880-1-yukuai1@huaweicloud.com>
+ <20241024131325.2250880-5-yukuai1@huaweicloud.com>
+ <20241025090249.000070b3@linux.intel.com>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <7fa875ee-ceed-e2dd-20fc-976e043e08ab@huaweicloud.com>
+Date: Fri, 25 Oct 2024 15:17:06 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8510.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 459a02b0-9530-4cf1-3dd9-08dcf4c4c18d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Oct 2024 07:15:07.7571
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 74dbWR81vWqGqugmsjmZ1octLqPzOaPIalVJWHItVf1RQS2gzRNvil+uK3x9bcYv8qinCsNoOa8oYeuS8T+ffw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB9206
+In-Reply-To: <20241025090249.000070b3@linux.intel.com>
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgAHPMjyRRtnGwxCFA--.8566S3
+X-Coremail-Antispam: 1UD129KBjvJXoW3KrW7ZF1UurW7JF1fJFWUurg_yoWktr1kpF
+	WkJ3W5Cr45JFZIg3WjqFWDuFySgr1kKr9FkryfGw15CF9Fvr93GF48WFWjk34kCrW7WFsI
+	vw1rGr9xur1YgFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvK14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7I2V7IY0VAS07AlzVAY
+	IcxG8wCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbV
+	WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
+	67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42
+	IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF
+	0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxh
+	VjvjDU0xZFpf9x0JUBVbkUUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-PiBPbiAyMy8xMC8yMDI0IDEyOjAzLCBXZWkgRmFuZyB3cm90ZToNCj4gPj4gLS0tLS1PcmlnaW5h
-bCBNZXNzYWdlLS0tLS0NCj4gPj4gRnJvbTogS3J6eXN6dG9mIEtvemxvd3NraSA8a3J6a0BrZXJu
-ZWwub3JnPg0KPiA+PiBTZW50OiAyMDI05bm0MTDmnIgyM+aXpSAxNjo1Ng0KPiA+PiBUbzogV2Vp
-IEZhbmcgPHdlaS5mYW5nQG54cC5jb20+DQo+ID4+IENjOiBkYXZlbUBkYXZlbWxvZnQubmV0OyBl
-ZHVtYXpldEBnb29nbGUuY29tOyBrdWJhQGtlcm5lbC5vcmc7DQo+ID4+IHBhYmVuaUByZWRoYXQu
-Y29tOyByb2JoQGtlcm5lbC5vcmc7IGtyemsrZHRAa2VybmVsLm9yZzsNCj4gPj4gY29ub3IrZHRA
-a2VybmVsLm9yZzsgVmxhZGltaXIgT2x0ZWFuIDx2bGFkaW1pci5vbHRlYW5AbnhwLmNvbT47DQo+
-ID4+IGNvbm9yK0NsYXVkaXUNCj4gPj4gTWFub2lsIDxjbGF1ZGl1Lm1hbm9pbEBueHAuY29tPjsg
-Q2xhcmsgV2FuZw0KPiA8eGlhb25pbmcud2FuZ0BueHAuY29tPjsNCj4gPj4gRnJhbmsgTGkgPGZy
-YW5rLmxpQG54cC5jb20+OyBjaHJpc3RvcGhlLmxlcm95QGNzZ3JvdXAuZXU7DQo+ID4+IGxpbnV4
-QGFybWxpbnV4Lm9yZy51azsgYmhlbGdhYXNAZ29vZ2xlLmNvbTsgaG9ybXNAa2VybmVsLm9yZzsN
-Cj4gPj4gaW14QGxpc3RzLmxpbnV4LmRldjsgbmV0ZGV2QHZnZXIua2VybmVsLm9yZzsNCj4gPj4g
-ZGV2aWNldHJlZUB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7
-DQo+ID4+IGxpbnV4LXBjaUB2Z2VyLmtlcm5lbC5vcmc7IGFsZXhhbmRlci5zdGVpbkBldy50cS1n
-cm91cC5jb20NCj4gPj4gU3ViamVjdDogUmU6IFtQQVRDSCB2NCBuZXQtbmV4dCAwMy8xM10gZHQt
-YmluZGluZ3M6IG5ldDogYWRkIGJpbmRpbmdzDQo+ID4+IGZvciBORVRDIGJsb2NrcyBjb250cm9s
-DQo+ID4+DQo+ID4+IE9uIDIzLzEwLzIwMjQgMTA6MTgsIFdlaSBGYW5nIHdyb3RlOg0KPiA+Pj4+
-PiArbWFpbnRhaW5lcnM6DQo+ID4+Pj4+ICsgIC0gV2VpIEZhbmcgPHdlaS5mYW5nQG54cC5jb20+
-DQo+ID4+Pj4+ICsgIC0gQ2xhcmsgV2FuZyA8eGlhb25pbmcud2FuZ0BueHAuY29tPg0KPiA+Pj4+
-PiArDQo+ID4+Pj4+ICtwcm9wZXJ0aWVzOg0KPiA+Pj4+PiArICBjb21wYXRpYmxlOg0KPiA+Pj4+
-PiArICAgIGVudW06DQo+ID4+Pj4+ICsgICAgICAtIG54cCxpbXg5NS1uZXRjLWJsay1jdHJsDQo+
-ID4+Pj4+ICsNCj4gPj4+Pj4gKyAgcmVnOg0KPiA+Pj4+PiArICAgIG1pbkl0ZW1zOiAyDQo+ID4+
-Pj4+ICsgICAgbWF4SXRlbXM6IDMNCj4gPj4+Pg0KPiA+Pj4+IFlvdSBoYXZlIG9uZSBkZXZpY2Us
-IHdoeSB0aGlzIGlzIGZsZXhpYmxlPyBEZXZpY2UgZWl0aGVyIGhhcw0KPiA+Pj4+IGV4YWN0bHkN
-Cj4gPj4+PiAyIG9yIGV4YWN0bHkgMyBJTyBzcGFjZXMsIG5vdCBib3RoIGRlcGVuZGluZyBvbiB0
-aGUgY29udGV4dC4NCj4gPj4+Pg0KPiA+Pj4NCj4gPj4+IFRoZXJlIGFyZSB0aHJlZSByZWdpc3Rl
-ciBibG9ja3MsIElFUkIgYW5kIFBSQiBhcmUgaW5zaWRlIE5FVEMgSVAsDQo+ID4+PiBidXQgTkVU
-Q01JWCBpcyBvdXRzaWRlIE5FVEMuIFRoZXJlIGFyZSBkZXBlbmRlbmNpZXMgYmV0d2VlbiB0aGVz
-ZQ0KPiA+Pj4gdGhyZWUgYmxvY2tzLCBzbyBpdCBpcyBiZXR0ZXIgdG8gY29uZmlndXJlIHRoZW0g
-aW4gb25lIGRyaXZlci4gQnV0DQo+ID4+PiBmb3Igb3RoZXIgcGxhdGZvcm1zIGxpa2UgUzMyLCBp
-dCBkb2VzIG5vdCBoYXZlIE5FVENNSVgsIHNvIE5FVENNSVggaXMNCj4gb3B0aW9uYWwuDQo+ID4+
-DQo+ID4+IEJ1dCBob3cgczMyIGlzIHJlbGF0ZWQgaGVyZT8gVGhhdCdzIGEgZGlmZmVyZW50IGRl
-dmljZS4NCj4gPj4NCj4gPg0KPiA+IFRoZSBTMzIgU29DIGFsc28gdXNlcyB0aGUgTkVUQyBJUCwg
-c28gdGhpcyBZQU1MIHNob3VsZCBiZSBjb21wYXRpYmxlDQo+ID4gd2l0aA0KPiA+IFMzMiBTb0Mu
-DQo+IA0KPiBXaGF0PyBIb3c/IFdoZXJlIGlzIHRoaXMgY29tcGF0aWJsZSBkb2N1bWVudGVkPw0K
-PiANCg0KWWVzLCBpdCBpcyBub3QgYWRkZWQgeWV0LCBzbyB0aGF0IGlzIHdoeSBJIGFza2VkIHRo
-ZSBiZWxvdyBxdWVzdGlvbi4gSSBzaG91bGQNCm9ubHkgZm9jdXMgb24gaS5NWDk1Lg0KDQoNCj4g
-PiBPciBkbyB5b3UgbWVhbiB3aGVuIFMzMiBORVRDIGlzIHN1cHBvcnRlZCwgd2UgdGhlbiBhZGQg
-cmVzdHJpY3Rpb25zIHRvDQo+ID4gdGhlIHJlZyBwcm9wZXJ0eSBmb3IgUzMyPw0KPiANCj4gSSBk
-b24ndCBrbm93IHdoYXQgeW91IGFyZSBjcmVhdGluZyBoZXJlLiBUaGF0J3MgYSBiaW5kaW5nIGZv
-ciBvbmUgc3BlY2lmaWMgZGV2aWNlDQo+IChzZWUgd3JpdGluZyBiaW5kaW5ncyBndWlkZWxpbmUp
-Lg0KPiANCg0K
+Hi,
+
+ÔÚ 2024/10/25 15:02, Mariusz Tkaczyk Ð´µÀ:
+> On Thu, 24 Oct 2024 21:13:25 +0800
+> Yu Kuai <yukuai1@huaweicloud.com> wrote:
+> 
+>> From: Yu Kuai <yukuai3@huawei.com>
+>>
+>> Now that all implementations are internal, it's sensible to build it as
+>> kernel module now.
+>>
+>> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+>> ---
+>>   drivers/md/Kconfig     | 15 +++++++
+>>   drivers/md/Makefile    |  4 +-
+>>   drivers/md/md-bitmap.c | 28 +++++++++++-
+>>   drivers/md/md-bitmap.h |  8 +++-
+>>   drivers/md/md.c        | 97 +++++++++++++++++++++++++++++++++++++-----
+>>   drivers/md/md.h        |  1 -
+>>   6 files changed, 135 insertions(+), 18 deletions(-)
+>>
+>> diff --git a/drivers/md/Kconfig b/drivers/md/Kconfig
+>> index 1e9db8e4acdf..452d7292b617 100644
+>> --- a/drivers/md/Kconfig
+>> +++ b/drivers/md/Kconfig
+>> @@ -37,6 +37,21 @@ config BLK_DEV_MD
+>>   
+>>   	  If unsure, say N.
+>>   
+>> +config MD_BITMAP
+>> +	tristate "RAID bitmap support"
+> 
+> Maybe "MD RAID bitmap support"? From kernel config GUI description is
+> presented, it seems better to highlight that it is MD internal.
+> 
+>> +	default y
+>> +	depends on BLK_DEV_MD
+>> +	help
+>> +	  If you say Y here, support for the write intent bitmap will be
+>> +	  enabled. The bitmap will be used to record the data regions that
+> 
+> "If you say Y here" is confusing because it could be "Y" or "M".
+> Maybe:
+
+Yeah, I just copy this from other configs.
+> 
+> "MD write intent bitmap support. The bitmap can be used to
+> optimize resync speed after power failure, limiting it to recorded dirty
+> sectors in bitmap. This feature can be added to existing MD array or MD array
+> can be created with bitmap via mdadm(8).
+> If unsure, say M."
+> 
+> "M" because MD is in real life is often compiled as module- shouldn't it be
+> always same?
+> We should not allow "Y" if MD is "M", perhaps we need to do more in Kconfig to
+> prevent this?
+
+Kconfig already do this, if the depends config is 'M', this config can't
+be set to 'Y'.
+
+> 
+> It is always good to refer how it can be configured and who uses it in
+> userspace. You can eventually add that it is MD internal module if you don't
+> see it enough clear.
+> 
+> On other think- what about recovery? Isn't it used to improve recovery speed? We
+> have checkpointing for recovery. If I remember correctly it is always 7
+> checkpoints for the array (at least for IMSM). Isn't bitmap used to improve
+> this? If yes, please add it here.
+
+For recovery means add a new disk to the array? If so, bitmap is useless
+in this case, if you means readd a hot removed disk, then yes, however,
+I think this is actually 'resync'.
+
+Anyway, I'll add both power failure and readd a disk in the next
+version.
+> 
+> The part below should go to the Documentation because these are implementation
+> details that are not needed to take a decision about enabling/disabling the
+> module.
+> Please consider adding Documentation entry.
+
+I probably will delay te Documentation untill the new bitmap, I'll just
+remove the below.
+
+Thanks,
+Kuai
+
+> 
+> For the code- lgtm.
+> 
+> Great job Kuai! I love your contribution.
+> Thanks,
+> Mariusz
+> 
+>> need
+>> +	  to be resynced after a power failure, preventing a full disk
+>> resync.
+>> +	  The bitmap size ranges from 4K to 132K, depending on the array
+>> size.
+>> +	  Each bit corresponds to 2 bytes of data and is managed in
+>> +	  self-maintained memory. All bits are protected by a disk-level
+>> +	  spinlock.
+>> +
+>> +	  If unsure, say Y.
+>> +
+>>   config MD_AUTODETECT
+>>   	bool "Autodetect RAID arrays during kernel boot"
+>>   	depends on BLK_DEV_MD=y
+>> diff --git a/drivers/md/Makefile b/drivers/md/Makefile
+>> index 476a214e4bdc..387670f766b7 100644
+>> --- a/drivers/md/Makefile
+>> +++ b/drivers/md/Makefile
+>> @@ -27,14 +27,14 @@ dm-clone-y	+= dm-clone-target.o dm-clone-metadata.o
+>>   dm-verity-y	+= dm-verity-target.o
+>>   dm-zoned-y	+= dm-zoned-target.o dm-zoned-metadata.o dm-zoned-reclaim.o
+>>   
+>> -md-mod-y	+= md.o md-bitmap.o
+>> +md-mod-y	+= md.o
+>>   raid456-y	+= raid5.o raid5-cache.o raid5-ppl.o
+>>   
+>>   # Note: link order is important.  All raid personalities
+>>   # and must come before md.o, as they each initialise
+>>   # themselves, and md.o may use the personalities when it
+>>   # auto-initialised.
+>> -
+>> +obj-$(CONFIG_MD_BITMAP)		+= md-bitmap.o
+>>   obj-$(CONFIG_MD_RAID0)		+= raid0.o
+>>   obj-$(CONFIG_MD_RAID1)		+= raid1.o
+>>   obj-$(CONFIG_MD_RAID10)		+= raid10.o
+>> diff --git a/drivers/md/md-bitmap.c b/drivers/md/md-bitmap.c
+>> index f68eb79e739d..148a479d32c0 100644
+>> --- a/drivers/md/md-bitmap.c
+>> +++ b/drivers/md/md-bitmap.c
+>> @@ -212,6 +212,8 @@ struct bitmap {
+>>   	int cluster_slot;
+>>   };
+>>   
+>> +static struct workqueue_struct *md_bitmap_wq;
+>> +
+>>   static int __bitmap_resize(struct bitmap *bitmap, sector_t blocks,
+>>   			   int chunksize, bool init);
+>>   
+>> @@ -2970,6 +2972,9 @@ static struct attribute_group md_bitmap_group = {
+>>   };
+>>   
+>>   static struct bitmap_operations bitmap_ops = {
+>> +	.version		= 1,
+>> +	.owner			= THIS_MODULE,
+>> +
+>>   	.enabled		= bitmap_enabled,
+>>   	.create			= bitmap_create,
+>>   	.resize			= bitmap_resize,
+>> @@ -3001,7 +3006,26 @@ static struct bitmap_operations bitmap_ops = {
+>>   	.group			= &md_bitmap_group,
+>>   };
+>>   
+>> -void mddev_set_bitmap_ops(struct mddev *mddev)
+>> +static int __init bitmap_init(void)
+>> +{
+>> +	md_bitmap_wq = alloc_workqueue("md_bitmap", WQ_MEM_RECLAIM |
+>> WQ_UNBOUND,
+>> +				       0);
+>> +	if (!md_bitmap_wq)
+>> +		return -ENOMEM;
+>> +
+>> +	INIT_LIST_HEAD(&bitmap_ops.list);
+>> +	register_md_bitmap(&bitmap_ops);
+>> +	return 0;
+>> +}
+>> +
+>> +static void __exit bitmap_exit(void)
+>>   {
+>> -	mddev->bitmap_ops = &bitmap_ops;
+>> +	destroy_workqueue(md_bitmap_wq);
+>> +	unregister_md_bitmap(&bitmap_ops);
+>>   }
+>> +
+>> +module_init(bitmap_init);
+>> +module_exit(bitmap_exit);
+>> +
+>> +MODULE_LICENSE("GPL");
+>> +MODULE_DESCRIPTION("Bitmap for MD");
+>> diff --git a/drivers/md/md-bitmap.h b/drivers/md/md-bitmap.h
+>> index 0c19983453c7..9d1bf3c43125 100644
+>> --- a/drivers/md/md-bitmap.h
+>> +++ b/drivers/md/md-bitmap.h
+>> @@ -71,6 +71,10 @@ struct md_bitmap_stats {
+>>   };
+>>   
+>>   struct bitmap_operations {
+>> +	int version;
+>> +	struct module *owner;
+>> +	struct list_head list;
+>> +
+>>   	bool (*enabled)(struct mddev *mddev);
+>>   	int (*create)(struct mddev *mddev, int slot);
+>>   	int (*resize)(struct mddev *mddev, sector_t blocks, int chunksize);
+>> @@ -110,7 +114,7 @@ struct bitmap_operations {
+>>   	struct attribute_group *group;
+>>   };
+>>   
+>> -/* the bitmap API */
+>> -void mddev_set_bitmap_ops(struct mddev *mddev);
+>> +void register_md_bitmap(struct bitmap_operations *op);
+>> +void unregister_md_bitmap(struct bitmap_operations *op);
+>>   
+>>   #endif
+>> diff --git a/drivers/md/md.c b/drivers/md/md.c
+>> index d16a3d0f2b90..09fac65b83b8 100644
+>> --- a/drivers/md/md.c
+>> +++ b/drivers/md/md.c
+>> @@ -83,6 +83,9 @@ static const char *action_name[NR_SYNC_ACTIONS] = {
+>>   static LIST_HEAD(pers_list);
+>>   static DEFINE_SPINLOCK(pers_lock);
+>>   
+>> +static LIST_HEAD(bitmap_list);
+>> +static DEFINE_SPINLOCK(bitmap_lock);
+>> +
+>>   static const struct kobj_type md_ktype;
+>>   
+>>   const struct md_cluster_operations *md_cluster_ops;
+>> @@ -100,7 +103,6 @@ static struct workqueue_struct *md_wq;
+>>    * workqueue whith reconfig_mutex grabbed.
+>>    */
+>>   static struct workqueue_struct *md_misc_wq;
+>> -struct workqueue_struct *md_bitmap_wq;
+>>   
+>>   static int remove_and_add_spares(struct mddev *mddev,
+>>   				 struct md_rdev *this);
+>> @@ -630,15 +632,96 @@ static void active_io_release(struct percpu_ref *ref)
+>>   
+>>   static void no_op(struct percpu_ref *r) {}
+>>   
+>> +void register_md_bitmap(struct bitmap_operations *op)
+>> +{
+>> +	pr_info("md: bitmap version %d registered\n", op->version);
+>> +
+>> +	spin_lock(&bitmap_lock);
+>> +	list_add_tail(&op->list, &bitmap_list);
+>> +	spin_unlock(&bitmap_lock);
+>> +}
+>> +EXPORT_SYMBOL_GPL(register_md_bitmap);
+>> +
+>> +void unregister_md_bitmap(struct bitmap_operations *op)
+>> +{
+>> +	pr_info("md: bitmap version %d unregistered\n", op->version);
+>> +
+>> +	spin_lock(&bitmap_lock);
+>> +	list_del_init(&op->list);
+>> +	spin_unlock(&bitmap_lock);
+>> +}
+>> +EXPORT_SYMBOL_GPL(unregister_md_bitmap);
+>> +
+>> +static struct bitmap_operations *__find_bitmap(int version)
+>> +{
+>> +	struct bitmap_operations *op;
+>> +
+>> +	list_for_each_entry(op, &bitmap_list, list)
+>> +		if (op->version == version) {
+>> +			if (try_module_get(op->owner))
+>> +				return op;
+>> +			else
+>> +				return NULL;
+>> +		}
+>> +
+>> +	return NULL;
+>> +}
+>> +
+>> +static struct bitmap_operations *find_bitmap(int version)
+>> +{
+>> +	struct bitmap_operations *op = NULL;
+>> +
+>> +	spin_lock(&bitmap_lock);
+>> +	op = __find_bitmap(version);
+>> +	spin_unlock(&bitmap_lock);
+>> +
+>> +	if (op)
+>> +		return op;
+>> +
+>> +	if (request_module("md-bitmap") != 0)
+>> +		return NULL;
+>> +
+>> +	spin_lock(&bitmap_lock);
+>> +	op = __find_bitmap(version);
+>> +	spin_unlock(&bitmap_lock);
+>> +
+>> +	return op;
+>> +}
+>> +
+>> +/* TODO: support more versions */
+>> +static int mddev_set_bitmap_ops(struct mddev *mddev)
+>> +{
+>> +	struct bitmap_operations *op = find_bitmap(1);
+>> +
+>> +	if (!op)
+>> +		return -ENODEV;
+>> +
+>> +	mddev->bitmap_ops = op;
+>> +	return 0;
+>> +}
+>> +
+>> +static void mddev_clear_bitmap_ops(struct mddev *mddev)
+>> +{
+>> +	module_put(mddev->bitmap_ops->owner);
+>> +	mddev->bitmap_ops = NULL;
+>> +}
+>> +
+>>   int mddev_init(struct mddev *mddev)
+>>   {
+>> +	int ret = mddev_set_bitmap_ops(mddev);
+>> +
+>> +	if (ret)
+>> +		return ret;
+>>   
+>>   	if (percpu_ref_init(&mddev->active_io, active_io_release,
+>> -			    PERCPU_REF_ALLOW_REINIT, GFP_KERNEL))
+>> +			    PERCPU_REF_ALLOW_REINIT, GFP_KERNEL)) {
+>> +		mddev_clear_bitmap_ops(mddev);
+>>   		return -ENOMEM;
+>> +	}
+>>   
+>>   	if (percpu_ref_init(&mddev->writes_pending, no_op,
+>>   			    PERCPU_REF_ALLOW_REINIT, GFP_KERNEL)) {
+>> +		mddev_clear_bitmap_ops(mddev);
+>>   		percpu_ref_exit(&mddev->active_io);
+>>   		return -ENOMEM;
+>>   	}
+>> @@ -666,7 +749,6 @@ int mddev_init(struct mddev *mddev)
+>>   	mddev->resync_min = 0;
+>>   	mddev->resync_max = MaxSector;
+>>   	mddev->level = LEVEL_NONE;
+>> -	mddev_set_bitmap_ops(mddev);
+>>   
+>>   	INIT_WORK(&mddev->sync_work, md_start_sync);
+>>   	INIT_WORK(&mddev->del_work, mddev_delayed_delete);
+>> @@ -677,6 +759,7 @@ EXPORT_SYMBOL_GPL(mddev_init);
+>>   
+>>   void mddev_destroy(struct mddev *mddev)
+>>   {
+>> +	mddev_clear_bitmap_ops(mddev);
+>>   	percpu_ref_exit(&mddev->active_io);
+>>   	percpu_ref_exit(&mddev->writes_pending);
+>>   }
+>> @@ -9898,11 +9981,6 @@ static int __init md_init(void)
+>>   	if (!md_misc_wq)
+>>   		goto err_misc_wq;
+>>   
+>> -	md_bitmap_wq = alloc_workqueue("md_bitmap", WQ_MEM_RECLAIM |
+>> WQ_UNBOUND,
+>> -				       0);
+>> -	if (!md_bitmap_wq)
+>> -		goto err_bitmap_wq;
+>> -
+>>   	ret = __register_blkdev(MD_MAJOR, "md", md_probe);
+>>   	if (ret < 0)
+>>   		goto err_md;
+>> @@ -9921,8 +9999,6 @@ static int __init md_init(void)
+>>   err_mdp:
+>>   	unregister_blkdev(MD_MAJOR, "md");
+>>   err_md:
+>> -	destroy_workqueue(md_bitmap_wq);
+>> -err_bitmap_wq:
+>>   	destroy_workqueue(md_misc_wq);
+>>   err_misc_wq:
+>>   	destroy_workqueue(md_wq);
+>> @@ -10229,7 +10305,6 @@ static __exit void md_exit(void)
+>>   	spin_unlock(&all_mddevs_lock);
+>>   
+>>   	destroy_workqueue(md_misc_wq);
+>> -	destroy_workqueue(md_bitmap_wq);
+>>   	destroy_workqueue(md_wq);
+>>   }
+>>   
+>> diff --git a/drivers/md/md.h b/drivers/md/md.h
+>> index 5eaac1d84523..28347fb3af18 100644
+>> --- a/drivers/md/md.h
+>> +++ b/drivers/md/md.h
+>> @@ -972,7 +972,6 @@ struct mdu_array_info_s;
+>>   struct mdu_disk_info_s;
+>>   
+>>   extern int mdp_major;
+>> -extern struct workqueue_struct *md_bitmap_wq;
+>>   void md_autostart_arrays(int part);
+>>   int md_set_array_info(struct mddev *mddev, struct mdu_array_info_s *info);
+>>   int md_add_new_disk(struct mddev *mddev, struct mdu_disk_info_s *info);
+> 
+> 
+> .
+> 
+
 
