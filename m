@@ -1,157 +1,148 @@
-Return-Path: <linux-kernel+bounces-381195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E9EE9AFBD3
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 10:02:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7746A9AFBDD
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 10:03:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98B4F1F24047
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 08:02:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00E751F2449B
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 08:03:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 303941C173D;
-	Fri, 25 Oct 2024 08:01:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C88A11CB9ED;
+	Fri, 25 Oct 2024 08:02:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VoOP9VQe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="unknown key version" (0-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b="Jh7veACk";
+	dkim=pass (2048-bit key) header.d=triplefau.lt header.i=@triplefau.lt header.b="E7JDPiYC"
+Received: from e2i340.smtp2go.com (e2i340.smtp2go.com [103.2.141.84])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F2F918C029;
-	Fri, 25 Oct 2024 08:01:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BCAD1CACE8
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 08:02:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.2.141.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729843318; cv=none; b=gXstMMAUiRtrbfWXDAH9OeZHNVZZu+KSRtDCU1VQPquqNBX8PMzPdpo0+KOdDU3hHyTr2thbjKuC3IEgjgPrWuhSgXPsxGyWg90pdgi2/oHpQD8UegY/w/zf198gmqnSoMoqIyA790lhShZpLgIbYveUHpNgIkZB1cFTR9GI1ms=
+	t=1729843348; cv=none; b=FPrGJOqnSSqgVyd7ft6JHy34mvXiOivB2pCg+Y7jrheav3+l/fhO9eQTT8avy52ucqA2GefYXzcQwSNT5bTu24fal54WGzgOWkh7Cdb1fTHL6xwo1oKIb/BXnBx1omQGBGQScROaNuzLitcEIMKLKCUtTAGtOE12NESNappodHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729843318; c=relaxed/simple;
-	bh=9LRFwLPFM1t+b4EPBx2bHgjBdKGuFVFTrWFKNDZLGTA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZLr+Or0lULBHWz1AG/BUabA3whxCuobXBzqmHT0I29NihKjFD37CKGAK4vZzbNwqHFf7S+P24ND1VL1JAJZZCSEVI7reAhbkAB1t4lUL2B9qHhmO86hgoNBuFbDOHLXXAnqR/7L/iSiPWMUZffV6zjYDgoWkKA0IEhtBO2UxNXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VoOP9VQe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D529C4CEC3;
-	Fri, 25 Oct 2024 08:01:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729843318;
-	bh=9LRFwLPFM1t+b4EPBx2bHgjBdKGuFVFTrWFKNDZLGTA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=VoOP9VQe+8oyO3s4o10kuofbq+Ql7EquG4php7AvkyNINDuSBvXyCsvX7ZbrTgVRv
-	 VHilwKjv/2gmxCbq3TeARiHNjAS10Kghfcx9Oi8KqOCbMvyyXM1dPKAehbu0gquinx
-	 AQ4JkLa9V0xQhDllrAYt6gN5M2GJXpyM+HucWUkjrPtlgXm3EJ40RH5cMRVSjf1sNP
-	 bRFp3Kzkp29FArdw+NpenVecn0cU+lQvSozVpQ0WqOjwl1jeLV4uuECkmAthpL3yqy
-	 yaTyzKscq0yPJL6oU89Ue+sZQQa/e3WVNF0bMc8PpBxnp8C+vkrod91SAqUkzIDtS6
-	 IFEHpzUtJWTmQ==
-Message-ID: <bda5f5a6-b2ec-4d90-ae66-a6fed4ca30be@kernel.org>
-Date: Fri, 25 Oct 2024 10:01:51 +0200
+	s=arc-20240116; t=1729843348; c=relaxed/simple;
+	bh=eFhDUENnS8zGkZbRU4y5LCpVMnWoZuLkbJIlmtBmFSU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DKWvquaUzBt3r6aIX/M9CyeAftRp++vhFKM7nUfs+sT6BYTP7VYmyXCwDpJoxodB9XCtLAUXxUiwM/ppXq0BXiX2I9hwWCeCkkQT5dc4YnI6uqLsCrrXluCah3nYjR3rSAKCG+6hj76vkAs0JWwRS9klyUcB3gQpwObU27eU76I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=triplefau.lt; spf=pass smtp.mailfrom=em510616.triplefau.lt; dkim=fail (0-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b=Jh7veACk reason="unknown key version"; dkim=pass (2048-bit key) header.d=triplefau.lt header.i=@triplefau.lt header.b=E7JDPiYC; arc=none smtp.client-ip=103.2.141.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=triplefau.lt
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=em510616.triplefau.lt
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=smtpservice.net; s=maxzs0.a1-4.dyn; x=1729844245; h=Feedback-ID:
+	X-Smtpcorp-Track:Message-ID:Subject:To:From:Date:Reply-To:Sender:
+	List-Unsubscribe:List-Unsubscribe-Post;
+	bh=GvO/Y+A5F9D+Z7v2M3j3RiYz27Q9b0KXTCFNKhL41cQ=; b=Jh7veACkWTm2jvXgp7MR6IbPi2
+	ih7Gw977JlYYkp11YVz/ZFfTfjohdvXgwh7W25JNPOnzrObXaXG+IcylCTUggNtZ2Hniba3Dln+qC
+	qGGAn38MYdQjMO1D0z0H8pFo6Bu05lb62HX62TY2mEZCekrumv/rh9gRulUpiayhQAUSlxrgvzTus
+	VCvegVfuLMPN35/Szbvm0CkPaccZ9YprchKs7JKMrlZ7eMlny4pdNgSmNXrumjXt7lgyoD+55CvYC
+	M0ley4nm4ncpGcJOqojFRAm/ZHtk++P/tecX8HL8L+CV/aDO4b3aMRXSHipNn2QZAa1npisnQjopU
+	7rBAJ2Sg==;
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=triplefau.lt;
+ i=@triplefau.lt; q=dns/txt; s=s510616; t=1729843345; h=from : subject
+ : to : message-id : date;
+ bh=GvO/Y+A5F9D+Z7v2M3j3RiYz27Q9b0KXTCFNKhL41cQ=;
+ b=E7JDPiYCi9zSvxEIQw8H8BfGuDwv7gy7T7lNrjCM9tQGW9A1JM8p0Xbk5dzWXoI6xu7vF
+ FVxCgMTcGgIuRPzgIHu3JGoJ1Ymxt7G+YXLy0KeCjFlNZ1PHZqFZX7ZNffuqJy/Gx7nwjhv
+ YJ5yrgGeJnoAoAgpkYMTn8pfIKIltB1D3qfdQLf9MwA/zDwewdZkUZAE6Z0xe9WravZujKz
+ nUQeCALqDIDf6QL4n8d7QyMe0JAUBebMK29ba8IXtqO7UlJ7XhHWWHDh8B9IXQYjzGTsVzK
+ I8l1lZP1boYy7Xr+Ek/iokVk0gO3yMMxI/wfbZ1O9m3H3OlFN+Dn1AxQC6mw==
+Received: from [10.172.233.58] (helo=SmtpCorp) by smtpcorp.com with esmtpsa
+ (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+ (Exim 4.94.2-S2G) (envelope-from <repk@triplefau.lt>)
+ id 1t4FGg-TRjzcT-EX; Fri, 25 Oct 2024 08:01:58 +0000
+Received: from [10.12.239.196] (helo=localhost) by smtpcorp.com with esmtpsa
+ (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+ (Exim 4.97.1-S2G) (envelope-from <repk@triplefau.lt>)
+ id 1t4FGg-FnQW0hQ1BVS-kG4P; Fri, 25 Oct 2024 08:01:58 +0000
+Date: Fri, 25 Oct 2024 10:01:52 +0200
+From: Remi Pommarel <repk@triplefau.lt>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: oe-kbuild@lists.linux.dev, ath10k@lists.infradead.org,
+ linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+ lkp@intel.com, oe-kbuild-all@lists.linux.dev,
+ Kalle Valo <kvalo@kernel.org>, Jeff Johnson <jjohnson@kernel.org>,
+ Cedric Veilleux <veilleux.cedric@gmail.com>,
+ Vasanthakumar Thiagarajan <quic_vthiagar@quicinc.com>
+Subject: Re: [PATCH v2 2/2] wifi: ath10k: Flush only requested txq in
+ ath10k_flush()
+Message-ID: <ZxtQcCZlQOfqkTEa@pilgrim>
+References: <0f55986ebe34f2b5aa4ccbcb0bed445324099fbd.1729586267.git.repk@triplefau.lt>
+ <60d579e2-5eb7-4239-9a23-95fa4b32f351@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv2 12/23] ARM: socfpga: dts: add a10 clock binding yaml
-To: Lothar Rubusch <l.rubusch@gmail.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- dinguyen@kernel.org, marex@denx.de, s.trumtrar@pengutronix.de,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241020194028.2272371-1-l.rubusch@gmail.com>
- <20241020194028.2272371-13-l.rubusch@gmail.com>
- <v4gqnsyhqjccdac3kgmo7y2aunigqquqc3f7n7wgt5hiv3rnip@jfmoq3is4rjh>
- <CAFXKEHZOPioES4guqjco+BE7i=Eqe2DdHiUxAksBCZm7nx1Rog@mail.gmail.com>
- <cdc7032b-4d09-40dc-86a7-16d244517d11@kernel.org>
- <CAFXKEHZhGEJhOxqX04fAR6qs-vee4+-DWC4_pNGaDCzEumMsiw@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <CAFXKEHZhGEJhOxqX04fAR6qs-vee4+-DWC4_pNGaDCzEumMsiw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <60d579e2-5eb7-4239-9a23-95fa4b32f351@stanley.mountain>
+X-Smtpcorp-Track: WbEqxNCPEWl2.5waV-OtHvPrr.AnqRfguGzfy
+Feedback-ID: 510616m:510616apGKSTK:510616sqkavGCBqD
+X-Report-Abuse: Please forward a copy of this message, including all headers,
+ to <abuse-report@smtp2go.com>
 
-On 25/10/2024 08:59, Lothar Rubusch wrote:
-> On Thu, Oct 24, 2024 at 8:24 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>
->> On 24/10/2024 08:10, Lothar Rubusch wrote:
->>> On Mon, Oct 21, 2024 at 9:05 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>>>
-> [...]
->>>>> diff --git a/Documentation/devicetree/bindings/clock/altr,socfpga-a10.yaml b/Documentation/devicetree/bindings/clock/altr,socfpga-a10.yaml
->>>>> new file mode 100644
->>>>> index 000000000..795826f53
->>>>> --- /dev/null
->>>>> +++ b/Documentation/devicetree/bindings/clock/altr,socfpga-a10.yaml
->>>>> @@ -0,0 +1,107 @@
->>>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->>>>> +%YAML 1.2
-> [...]
->> What corresponding txt file? You are adding new binding. Are you saying
->> you duplicated bindings instead of doing conversion?
->>
->> git log -p -- Documentation/devicetree | grep -i convert
+Hi,
 
-This would answer you... You would see hundreds of patches showing what
-to do, including patches from me, Rob or Conor.
-
+On Fri, Oct 25, 2024 at 10:44:09AM +0300, Dan Carpenter wrote:
+> Hi Remi,
 > 
-> Please, try the following:
-
-I know this, what are you asking about?
-
-> $ find ./Documentation/devicetree/bindings -name socfpga-\*.txt
-> ./Documentation/devicetree/bindings/net/socfpga-dwmac.txt
-> ./Documentation/devicetree/bindings/edac/socfpga-eccmgr.txt
-> ./Documentation/devicetree/bindings/arm/altera/socfpga-sdram-edac.txt
-> ./Documentation/devicetree/bindings/arm/altera/socfpga-system.txt
+> kernel test robot noticed the following build warnings:
 > 
-> Currently, bindings described in these .txt files are not covered by
-> bindings check. Is it supposed to be like that, or is this just
-> something "historical"?
+> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> 
+> url:    https://github.com/intel-lab-lkp/linux/commits/Remi-Pommarel/wifi-ath10k-Implement-ieee80211-flush_sta-callback/20241022-172038
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/ath/ath.git ath-next
+> patch link:    https://lore.kernel.org/r/0f55986ebe34f2b5aa4ccbcb0bed445324099fbd.1729586267.git.repk%40triplefau.lt
+> patch subject: [PATCH v2 2/2] wifi: ath10k: Flush only requested txq in ath10k_flush()
+> config: parisc-randconfig-r071-20241024 (https://download.01.org/0day-ci/archive/20241025/202410251152.A5axJliR-lkp@intel.com/config)
+> compiler: hppa-linux-gcc (GCC) 14.1.0
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> | Closes: https://lore.kernel.org/r/202410251152.A5axJliR-lkp@intel.com/
+> 
+> New smatch warnings:
+> drivers/net/wireless/ath/ath10k/mac.c:8076 _ath10k_mac_wait_tx_complete() error: uninitialized symbol 'empty'.
+> 
+> vim +/empty +8076 drivers/net/wireless/ath/ath10k/mac.c
+> 
+> c4f7022f0ef0aa Remi Pommarel     2024-10-22  8062  static void _ath10k_mac_wait_tx_complete(struct ath10k *ar,
+> c4f7022f0ef0aa Remi Pommarel     2024-10-22  8063  					 unsigned long queues)
+> 5e3dd157d7e70f Kalle Valo        2013-06-12  8064  {
+> affd321733eebc Michal Kazior     2013-07-16  8065  	bool skip;
+> d4298a3a8c92a1 Nicholas Mc Guire 2015-06-15  8066  	long time_left;
+> c4f7022f0ef0aa Remi Pommarel     2024-10-22  8067  	unsigned int q;
+> 5e3dd157d7e70f Kalle Valo        2013-06-12  8068  
+> 5e3dd157d7e70f Kalle Valo        2013-06-12  8069  	/* mac80211 doesn't care if we really xmit queued frames or not
+> d6dfe25c8bb200 Marcin Rokicki    2017-02-20  8070  	 * we'll collect those frames either way if we stop/delete vdevs
+> d6dfe25c8bb200 Marcin Rokicki    2017-02-20  8071  	 */
+> 548db54cc1890b Michal Kazior     2013-07-05  8072  
+> affd321733eebc Michal Kazior     2013-07-16  8073  	if (ar->state == ATH10K_STATE_WEDGED)
+> 828853ac58265c Wen Gong          2018-08-28  8074  		return;
+> affd321733eebc Michal Kazior     2013-07-16  8075  
+> d4298a3a8c92a1 Nicholas Mc Guire 2015-06-15 @8076  	time_left = wait_event_timeout(ar->htt.empty_tx_wq, ({
+> 5e3dd157d7e70f Kalle Valo        2013-06-12  8077  			bool empty;
+> affd321733eebc Michal Kazior     2013-07-16  8078  
+> edb8236df4d042 Michal Kazior     2013-07-05  8079  			spin_lock_bh(&ar->htt.tx_lock);
+> c4f7022f0ef0aa Remi Pommarel     2024-10-22  8080  			for_each_set_bit(q, &queues, ar->hw->queues) {
+> 
+> Smatch is concerned that there might not be any set bits.  (You know that the
+> compiler is automatically going to ininitialize empty to false so it costs
+> nothing to initialize it to false explicitly and silence this warning).
 
-These are TXT files, that's nothing to do with dtschema. Everything in
-TXT is just unconverted binding.
+Actually I think empty should be true here, if there is no queue to
+wait for being drained then no need to wait at all. Will send a v3
+with that fixed.
 
-Best regards,
-Krzysztof
+Thanks for the report and the analysis.
 
+-- 
+Remi
 
