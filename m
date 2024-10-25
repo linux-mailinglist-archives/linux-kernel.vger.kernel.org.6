@@ -1,96 +1,137 @@
-Return-Path: <linux-kernel+bounces-381174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9397B9AFB8D
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 09:53:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B1379AFB94
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 09:55:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32E02B232C7
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 07:53:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06D601F23EAE
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 07:55:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83EDF1C07F7;
-	Fri, 25 Oct 2024 07:53:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B3231C7609;
+	Fri, 25 Oct 2024 07:55:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="IuCzne0F"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="unKwLtUY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E20951C3F36
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 07:53:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C485E165F01;
+	Fri, 25 Oct 2024 07:55:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729842803; cv=none; b=G5dbdnUi95FUMORir4O9DwPphaSpkQn/5wP9qQ46QXDtClk61KrVG/FE8IovOVg4LvVXcmeBDwyt9slLytXvIufA3QQTeWgArK+rneJo5V4JnURNySTL2qRKU4QIuuSDL5dbaUmYPgpU+wARMhPaKObBcufaApqRkGgYQ3A4HpE=
+	t=1729842902; cv=none; b=SQQhEyJuT85wgXCpgRfAGPpl5hsV4wdwgnddT3QzxlWbdxvvsHAoixDGZAkBnCVGnmuQctyjXLyMZCcGdk0Oif2cEHZEhXfck6D2IP0dIBdCmslZacFrdsl1zENrCJg6/gHH9AM+t7r+ogZaHcQcIc9kSg2z7SIO7pV9Eru8aJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729842803; c=relaxed/simple;
-	bh=40gzCCCrme78XnXow8uMr43mimnWIXjTPd1lXyTSI+U=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PP8RnI6ZmlXa8M2Ydz7NrydZyj9R/ARfSz2dKTkzH0MIx2F7fe0P0XvmJF+Y1qh/kS45UkPHkpzv87ZRebVzSTiObiHhfgX4vwcvu5l+PvRlhiG034AdijpYvd6Ie/6YfBjaGTNmLs6AT5AqWwz7Kx2/rlq1XWBnc+hU3/gjKxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=IuCzne0F; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 0915FE000A;
-	Fri, 25 Oct 2024 07:53:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1729842799;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=40gzCCCrme78XnXow8uMr43mimnWIXjTPd1lXyTSI+U=;
-	b=IuCzne0Fr3k0KaXrKhpVRMZVA1u6pTHH9Am/Wm0n59VP/F2yx2O8IKisftSqHdeMKul+OL
-	LzlmcJvDa0eXXJsAjhnKPfCKTzLV2FESm92bMfSHgTPllJLbgUShjXHaSeI+hSsVImsIgV
-	Gx+aMJqgATor5HN6VOBIQS6TWpFRMLt+ezca5yea4f8alOciSTrUMvJaJ2uy4N2ASU+K+9
-	2G3cMfLrJzocnWsr1GAtFEyjTsGz+N1p2n1GRIL89X6l7xNxSLiANbiA95q+6bwIePF/pa
-	UJ+jIOdGhowjUsvO58Z3z8KK1mqDP8dW+wH8dK2HdzKwxcvaQQF8ZkfVwqlBsQ==
-Date: Fri, 25 Oct 2024 09:53:18 +0200
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Conor Culhane <conor.culhane@silvaco.com>, Alexandre Belloni
- <alexandre.belloni@bootlin.com>, Clark Wang <xiaoning.wang@nxp.com>,
- linux-i3c@lists.infradead.org (moderated list:SILVACO I3C DUAL-ROLE
- MASTER), linux-kernel@vger.kernel.org (open list), imx@lists.linux.dev
-Subject: Re: [PATCH 1/1] i3c: master: svc: Modify enabled_events bit 7:0 to
- act as IBI enable counter
-Message-ID: <20241025095318.4785df2c@xps-13>
-In-Reply-To: <20241024203855.1584416-1-Frank.Li@nxp.com>
-References: <20241024203855.1584416-1-Frank.Li@nxp.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1729842902; c=relaxed/simple;
+	bh=/P9q2KbiK+vcSshfBjILffb3hynuvF5fiM7tfFtChPU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=PMNxX7ecOqh8/nEZsm0XwyuG+bjp//vwhLzENFtgIBdAZDdqybUsWd9OMpyHcgwqEKyCfn530DNKhnbviMNJIp+C+79mA9hutgfs0h74bh+sINrw7fCFnFJP6pUnkckwJT/3GEOuP/E2AHYdlY53CPopBuBZ69irqzpxduTV/9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=unKwLtUY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 5E676C4CEC3;
+	Fri, 25 Oct 2024 07:55:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729842902;
+	bh=/P9q2KbiK+vcSshfBjILffb3hynuvF5fiM7tfFtChPU=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=unKwLtUYbvMAaxxDDaj46kDvk6obQPVAC/rnCe6cWZXUIr6yLcl6dE/8qGtyApsot
+	 /pW++6RbNZ5Wr664GEWcgLLWGVkiCOCitP4Wqq6lV4V997PghAc8qnKRe9n3lBc9dF
+	 LLaSHDhEBgduhEZO4zhggCBcEP4NeWQFVFq/Bl2RB3zLzvdwm1Y0Teh3N5Rwqr+gOH
+	 hzxTghUaDxepTIJC93ouZsYIceBv/JyGQ93G210XkK2Sa+Xe9+BNUai64vRnLJ1wC8
+	 nco5JAkI8C/Xn6qwQWthvOdYvq8HZ25GLUgJYNdtwFpNkBrYpVkZrw6sd4fGug1vbN
+	 cURnq0HEWUp8A==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45E2ED1171B;
+	Fri, 25 Oct 2024 07:55:02 +0000 (UTC)
+From: Manivannan Sadhasivam via B4 Relay <devnull+manivannan.sadhasivam.linaro.org@kernel.org>
+Subject: [PATCH v2 0/5] PCI/pwrctl: Ensure that the pwrctl drivers are
+ probed before PCI client drivers
+Date: Fri, 25 Oct 2024 13:24:50 +0530
+Message-Id: <20241025-pci-pwrctl-rework-v2-0-568756156cbe@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: miquel.raynal@bootlin.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAMpOG2cC/32NQQqDMBBFryKz7pQkGKpd9R7iIk1HHSpGJhJbx
+ Ls3eoAu3//89zeIJEwR7sUGQokjhymDuRTgBzf1hPzKDEaZUitjcPaM8yp+GVFoDfJGp59HaSt
+ rLeTdLNTx53Q2beaB4xLke14kfaT/bEmjwrp0N6pVZytvHyNPTsI1SA/tvu8/7mwmobMAAAA=
+To: Bjorn Helgaas <bhelgaas@google.com>, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+ Johan Hovold <johan+linaro@kernel.org>, Abel Vesa <abel.vesa@linaro.org>, 
+ Stephan Gerhold <stephan.gerhold@linaro.org>, 
+ Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+ Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>, 
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+ Krishna chaitanya chundru <quic_krichai@quicinc.com>, 
+ stable+noautosel@kernel.org
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1932;
+ i=manivannan.sadhasivam@linaro.org; h=from:subject:message-id;
+ bh=/P9q2KbiK+vcSshfBjILffb3hynuvF5fiM7tfFtChPU=;
+ b=owEBbQGS/pANAwAKAVWfEeb+kc71AcsmYgBnG07Swl0G4ixBGpbr+vGMdccGZh0t6UayFam6Z
+ lb+jRhARDOJATMEAAEKAB0WIQRnpUMqgUjL2KRYJ5dVnxHm/pHO9QUCZxtO0gAKCRBVnxHm/pHO
+ 9ULRCACW7PS0HfebJvSt6rB4hkHg2sIdTDJJxVgdVvmfX0motvf7zRQpEVsBhCBakf83kuwdNh/
+ +wiKL2PimBQbnxReXcmmQjCqRufHCSPxaPdl4KnnNCPr0fNxigeXBcU1WUJctymADBjSIS6T6yZ
+ eG8r1IeyCmoq2lQWSwsEykPRg11bTyDzQ02810G26b4x7c5V3jQrQWE4GLzKgJxjeqIStwj7XL7
+ M3pYz4hPauk0aHMqvhB6b/FfutLh1VdwTD9Gje+zLj9yHTp8U6RKOCq3bFxlLiXniUh2UcFddsx
+ /4ml60f5t44g+dPvAUYYkoRBkqdMS8soTXSfT98GaOjRZtmA
+X-Developer-Key: i=manivannan.sadhasivam@linaro.org; a=openpgp;
+ fpr=C668AEC3C3188E4C611465E7488550E901166008
+X-Endpoint-Received: by B4 Relay for
+ manivannan.sadhasivam@linaro.org/default with auth_id=185
+X-Original-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Reply-To: manivannan.sadhasivam@linaro.org
 
-Hi Frank,
+Hi,
 
-Frank.Li@nxp.com wrote on Thu, 24 Oct 2024 16:38:55 -0400:
+This series reworks the PCI/pwrctl integration to ensure that the pwrctl drivers
+are always probed before the PCI client drivers. This series addresses a race
+condition when both pwrctl and pwrctl/pwrseq drivers probe parallely (even when
+the later one probes last). One such issue was reported for the Qcom X13s
+platform with WLAN module and fixed with 'commit a9aaf1ff88a8 ("power:
+sequencing: request the WLAN enable GPIO as-is")'.
 
-> Fix issue where disabling IBI on one device disables the entire IBI
-> interrupt. Modify bit 7:0 of enabled_events to serve as an IBI enable
+Though the issue was fixed with a hack in the pwrseq driver, it was clear that
+the issue is applicable to all pwrctl drivers. Hence, this series tries to
+address the issue in the PCI/pwrctl integration.
 
-Is this bitfield arbitrary?
+- Mani
 
-Is there a rationale behind it?
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+---
+Changes in v2:
+- Used for_each_available_child_of_node_scoped() to iterate over child nodes
+  (Bartosz)
+- Collected tags
+- Link to v1: https://lore.kernel.org/r/20241022-pci-pwrctl-rework-v1-0-94a7e90f58c5@linaro.org
 
-> counter, ensuring that the system IBI interrupt is disabled only when all
-> I3C devices have IBI disabled.
->=20
-> Cc: stable@kernel.org
-> Fixes: 7ff730ca458e ("i3c: master: svc: enable the interrupt in the enabl=
-e ibi function")
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+---
+Manivannan Sadhasivam (5):
+      PCI/pwrctl: Use of_platform_device_create() to create pwrctl devices
+      PCI/pwrctl: Create pwrctl devices only if at least one power supply is present
+      PCI/pwrctl: Ensure that the pwrctl drivers are probed before the PCI client drivers
+      PCI/pwrctl: Move pwrctl device creation to its own helper function
+      PCI/pwrctl: Remove pwrctl device without iterating over all children of pwrctl parent
 
-Anyway,
+ drivers/pci/bus.c         | 64 +++++++++++++++++++++++++++++++++++++++++------
+ drivers/pci/of.c          | 27 ++++++++++++++++++++
+ drivers/pci/pci.h         |  5 ++++
+ drivers/pci/pwrctl/core.c | 10 --------
+ drivers/pci/remove.c      | 17 ++++++-------
+ 5 files changed, 96 insertions(+), 27 deletions(-)
+---
+base-commit: 48dc7986beb60522eb217c0016f999cc7afaf0b7
+change-id: 20241022-pci-pwrctl-rework-a1b024158555
 
-Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
+Best regards,
+-- 
+Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 
-Thanks,
-Miqu=C3=A8l
+
 
