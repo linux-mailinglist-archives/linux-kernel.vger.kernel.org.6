@@ -1,202 +1,88 @@
-Return-Path: <linux-kernel+bounces-382255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F8949B0B8F
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 19:30:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA1E69B0B90
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 19:31:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8E171F2794C
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:30:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30A431C20C0B
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:31:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DC91186298;
-	Fri, 25 Oct 2024 17:19:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="c9GGxZXT"
-Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 834BF1FB8B9;
+	Fri, 25 Oct 2024 17:20:07 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E9B420C33F
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 17:19:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F43F20C33B
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 17:20:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729876794; cv=none; b=S3GFddWKcmiVFvu6/B8IWTC0L5T3UDAXtRwFm1OpwW9HEOeW1T5/IvRlU5eFcQ7Dyh+Cxc/aRagrIdP/H8bItgLZ9ddzjtPOyYEnD2R6EjBWoUisM5uQW4GHzKIewyG99VKmrPdYdL61SYGUg/Ct8VWfeozAAZCmHAblONGtflA=
+	t=1729876807; cv=none; b=mnxhD/9UiA0POUe6M4htPVWAbz6LgYgwklictwCt98umlxAxiesZn+NbO6ZF6pc/bH5ks1RE45gqIBscquLWoNeJ+d+G5KFOwMXwDJIh2tpDIE0oNhS4tOdHy3V3MHZ7LgmnHbG5234AOCR2tivGzkvnd3CLTUuwFKeTeLZ5aP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729876794; c=relaxed/simple;
-	bh=JsiULp/i7qWpPUFSpqUxpfLp2jBMotdoyc6qrOMODzw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tGoNMmaGODaxRVtD6yQtFe67h6acIExaOT751TqgDUNqaT1DeHWS0SX6HhzMO5bdkUsh3QKS7YeB4nSHizKPLuxHJaVzoUZ56u3ONObsOhmJILDpilaFVeCJs2WYM7h1YHqAsmN3kb8LxTHwYrUs2i1MKy6Rv50x7N0jRnE5pbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=c9GGxZXT; arc=none smtp.client-ip=91.218.175.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <c451e343-4014-4de5-87b8-50429399adaa@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1729876790;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zT8cxh9uxcPpAXeRpOz4K99RVMk98+LQB2m+38sDL18=;
-	b=c9GGxZXTqKq/17PPlPsVMWRapDMJVqwydDYWu2ns/FLqowPdC7ORXzFoI+zJd7C8TDSLir
-	Lj4PH0liZOkEAFW/6AzRORJmkXklKHv2BOBZ7KmK3KPsj+xiO8Akx1wdYUIvqi5/D+MoyA
-	PtGgM1V404IJCS5GcRToxe82udFBhOc=
-Date: Sat, 26 Oct 2024 01:19:42 +0800
+	s=arc-20240116; t=1729876807; c=relaxed/simple;
+	bh=62EMHFhjcX3rGBMzuLvMzPRVswFxaPvXGB3xwXBfo1s=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=ghqLhO8il/Tny8ma+CpOfMBYUuOgWJdfB0KPL+5x969P5nKeAY6R6twn8/Fz6IU95T7Sr2Y/Q+reypmRN+BtBinVsmUfCLMYA2LQot58IC9rtI74X7w8ci9f5aYaucqxEz+XYJ3SSODtiiolrI6ZbulDuB9cStVRr/Vmlexk5Mo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a3bb31e3cfso21933575ab.0
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 10:20:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729876804; x=1730481604;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/mtRFivprD+q70qS1YpzZnnWyJYglXFyE4OXmmBy+Cs=;
+        b=ua0kqOPL5eG/atxokwNyoYhtu0sf+o4G1rwdyG1mm4qwKNd+KRHzIZpRN9HMvnwRFY
+         8cics/fHvWQJY9aBET7CECbvuxVCUfgPvAQvIulgn/dD8nZSUdiqyl7ASdCyX3k3bDyH
+         o/T5d88e97RJsaVuAXBbtQ76hrzLmXsd72OYqQYqQjkR+jIH6mnbbmQPbP8t8LS8XQQV
+         /d+XORSxVpkkjjXnn5tXLEbTBTtONWgHenEhFxT2LTQIqeei3FKXEkBzn1m7IUmgZYQL
+         vdAC1hVII/TTgsglzcsTuegqqat45fmcBAgocmMvTHZLEFV5jteZUMSKLgk4FbtRSzjG
+         b6BA==
+X-Forwarded-Encrypted: i=1; AJvYcCUXOMU3loEhdZ83nDEN0Bxtt7dBmhzvrjqX7fjiaYzdMa79U+1uqfaCJVrBrpp09R1tJS124rsd5OOngsE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMuYI4a/P5OPRS0N6s+T/tEXQL5YJQVY0IF7VL1UtA53+tsBZJ
+	PgV4k2ccR++7ioL89ATzcJynSJwK7ue9FPgxxyEKHAJsWYQbDth5RyR/rxs76MiWbxu4lIssLZb
+	OSYid/WX8tb/hUiY/gaqJujB5re7NJvSwKBZVZlQqJIqGdtnBc4PZFqU=
+X-Google-Smtp-Source: AGHT+IEnSA4DYG2UnQrJ775IZWFe0RTwXMN6mO+pGvTsTto5I/BPaUB8KP31Z3RuOf2ZYjFLgRGHN9mULujlGzuvlUEm22+5ZsgB
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 2/3] drm/etnaviv: Map and unmap the GPU VA range with
- respect to its user size
-To: Lucas Stach <l.stach@pengutronix.de>,
- Russell King <linux+etnaviv@armlinux.org.uk>,
- Christian Gmeiner <christian.gmeiner@gmail.com>
-Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20241004194207.1013744-1-sui.jingfeng@linux.dev>
- <20241004194207.1013744-3-sui.jingfeng@linux.dev>
- <13b9c1bde7f0534f7f3c576126def206bdafd60c.camel@pengutronix.de>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Sui Jingfeng <sui.jingfeng@linux.dev>
-In-Reply-To: <13b9c1bde7f0534f7f3c576126def206bdafd60c.camel@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+X-Received: by 2002:a05:6e02:1fc3:b0:3a3:b1c4:8176 with SMTP id
+ e9e14a558f8ab-3a4de820c0dmr69655325ab.24.1729876804553; Fri, 25 Oct 2024
+ 10:20:04 -0700 (PDT)
+Date: Fri, 25 Oct 2024 10:20:04 -0700
+In-Reply-To: <20241025170010.19654-1-zoo868e@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <671bd344.050a0220.455e8.022e.GAE@google.com>
+Subject: Re: [syzbot] [jfs?] UBSAN: shift-out-of-bounds in dbFindBits (2)
+From: syzbot <syzbot+9e90a1c5eedb9dc4c6cc@syzkaller.appspotmail.com>
+To: jfs-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
+	shaggy@kernel.org, skhan@linuxfoundation.org, syzkaller-bugs@googlegroups.com, 
+	zoo868e@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi,
+Hello,
 
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-On 2024/10/7 18:17, Lucas Stach wrote:
-> Am Samstag, dem 05.10.2024 um 03:42 +0800 schrieb Sui Jingfeng:
->> Since the GPU VA space is compact in terms of 4KiB unit, map and/or unmap
->> the area that doesn't belong to a context breaks the philosophy of PPAS.
->> That results in severe errors: GPU hang and MMU fault (page not present)
->> and such.
->>
->> Shrink the usuable size of etnaviv GEM buffer object to its user size,
->> instead of the original physical size of its backing memory.
->>
->> Signed-off-by: Sui Jingfeng <sui.jingfeng@linux.dev>
->> ---
->>   drivers/gpu/drm/etnaviv/etnaviv_mmu.c | 28 +++++++++------------------
->>   1 file changed, 9 insertions(+), 19 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_mmu.c b/drivers/gpu/drm/etnaviv/etnaviv_mmu.c
->> index 6fbc62772d85..a52ec5eb0e3d 100644
->> --- a/drivers/gpu/drm/etnaviv/etnaviv_mmu.c
->> +++ b/drivers/gpu/drm/etnaviv/etnaviv_mmu.c
->> @@ -70,8 +70,10 @@ static int etnaviv_context_map(struct etnaviv_iommu_context *context,
->>   }
->>   
->>   static int etnaviv_iommu_map(struct etnaviv_iommu_context *context, u32 iova,
->> +			     unsigned int user_len,
->>   			     struct sg_table *sgt, int prot)
->> -{	struct scatterlist *sg;
->> +{
->> +	struct scatterlist *sg;
->>   	unsigned int da = iova;
->>   	unsigned int i;
->>   	int ret;
->> @@ -81,7 +83,8 @@ static int etnaviv_iommu_map(struct etnaviv_iommu_context *context, u32 iova,
->>   
->>   	for_each_sgtable_dma_sg(sgt, sg, i) {
->>   		phys_addr_t pa = sg_dma_address(sg) - sg->offset;
->> -		size_t bytes = sg_dma_len(sg) + sg->offset;
->> +		unsigned int phys_len = sg_dma_len(sg) + sg->offset;
->> +		size_t bytes = MIN(phys_len, user_len);
->>   
->>   		VERB("map[%d]: %08x %pap(%zx)", i, iova, &pa, bytes);
->>   
->> @@ -89,6 +92,7 @@ static int etnaviv_iommu_map(struct etnaviv_iommu_context *context, u32 iova,
->>   		if (ret)
->>   			goto fail;
->>   
->> +		user_len -= bytes;
->>   		da += bytes;
->>   	}
-> Since the MIN(phys_len, user_len) may limit the mapped amount in the
-> wrong direction,
+Reported-by: syzbot+9e90a1c5eedb9dc4c6cc@syzkaller.appspotmail.com
+Tested-by: syzbot+9e90a1c5eedb9dc4c6cc@syzkaller.appspotmail.com
 
-I was thinking that if this will could really happen.
+Tested on:
 
-'if (phys_len <= user_len)' is true, the 'bytes' is a number of multiple
-of PAGE_SIZE. Since our sg table is created by drm_prime_pages_to_sg(),
-so the program still works exactly some as before.
+commit:         ae90f6a6 Merge tag 'bpf-fixes' of git://git.kernel.org..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1274aebb980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=fc6f8ce8c5369043
+dashboard link: https://syzkaller.appspot.com/bug?extid=9e90a1c5eedb9dc4c6cc
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1254aebb980000
 
-It only differs from previous when 'if (phys_len > user_len)' is true,
-but then, it is the tail SG entry that the size of it is not a multiple
-of PAGE_SIZE. The 'bytes' will be *exactly* the size of remain GPUVA
-range we should map.
-
-> I would think it would be good to add a
-> WARN_ON(user_len != 0) after the dma SG iteration.
-
-So the program here seems nearly always correct, no?
-
-Or are you means that when the CPU PAGE size < 4KiB cases ?
-
-I never ever have a CPU has < 4 KiB page configuration.
-
-Regards,
-Sui
-
-
->>   
->> @@ -104,21 +108,7 @@ static int etnaviv_iommu_map(struct etnaviv_iommu_context *context, u32 iova,
->>   static void etnaviv_iommu_unmap(struct etnaviv_iommu_context *context, u32 iova,
->>   				struct sg_table *sgt, unsigned len)
->>   {
->> -	struct scatterlist *sg;
->> -	unsigned int da = iova;
->> -	int i;
->> -
->> -	for_each_sgtable_dma_sg(sgt, sg, i) {
->> -		size_t bytes = sg_dma_len(sg) + sg->offset;
->> -
->> -		etnaviv_context_unmap(context, da, bytes);
->> -
->> -		VERB("unmap[%d]: %08x(%zx)", i, iova, bytes);
->> -
->> -		BUG_ON(!PAGE_ALIGNED(bytes));
->> -
->> -		da += bytes;
->> -	}
->> +	etnaviv_context_unmap(context, iova, len);
-> This drops some sanity checks, but I have only ever seen them fire when
-> we had other kernel memory corruption issues, so I'm fine with the
-> simplification you did here.
->
-> Regards,
-> Lucas
->
->>   
->>   	context->flush_seq++;
->>   }
->> @@ -131,7 +121,7 @@ static void etnaviv_iommu_remove_mapping(struct etnaviv_iommu_context *context,
->>   	lockdep_assert_held(&context->lock);
->>   
->>   	etnaviv_iommu_unmap(context, mapping->vram_node.start,
->> -			    etnaviv_obj->sgt, etnaviv_obj->base.size);
->> +			    etnaviv_obj->sgt, etnaviv_obj->user_size);
->>   	drm_mm_remove_node(&mapping->vram_node);
->>   }
->>   
->> @@ -314,7 +304,7 @@ int etnaviv_iommu_map_gem(struct etnaviv_iommu_context *context,
->>   		goto unlock;
->>   
->>   	mapping->iova = node->start;
->> -	ret = etnaviv_iommu_map(context, node->start, sgt,
->> +	ret = etnaviv_iommu_map(context, node->start, user_size, sgt,
->>   				ETNAVIV_PROT_READ | ETNAVIV_PROT_WRITE);
->>   
->>   	if (ret < 0) {
-
--- 
-Best regards,
-Sui
-
+Note: testing is done by a robot and is best-effort only.
 
