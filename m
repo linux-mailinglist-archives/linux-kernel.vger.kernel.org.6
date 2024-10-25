@@ -1,104 +1,206 @@
-Return-Path: <linux-kernel+bounces-381211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19E8A9AFBFD
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 10:05:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B7769AFBFA
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 10:05:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D252C28500F
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 08:05:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0608284C41
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 08:05:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D51141D14E3;
-	Fri, 25 Oct 2024 08:04:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F26121C4622;
+	Fri, 25 Oct 2024 08:04:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="u5wdzNpC"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Rg2wjwSJ"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8840F1C7B75
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 08:04:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23AB918CBF8
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 08:04:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729843492; cv=none; b=qKktxuMknvnpx4NzltO2XLEmzGAOhzTrRG70kpUKTu2nxicPqFPj58sRfxy1EMG0JG3bHDTghfStZHrneSOA2RrLnVv/F/BH1rgltnNeES7ROQQ5sn+2utt6ixk1pXrg+8yMExR1LRob3cHYVRPu1o9+8GwQObSEISRK57GkC4o=
+	t=1729843487; cv=none; b=ir4HI+NbHEXBkWpI8ilLtW4LXRuSrsYjHgfUmUV3/csHRPMOMANAQ9Sj84uyOdD+4DitxRkZtSJI0qjisuDyca1sCdIbaZg6QOKKbLdwPklpaBF6Kd74nFhPcCq5JPNG0nkSta8EJA6QJKD7iop0sYYYASW8YS8ktGVlR6G0lnI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729843492; c=relaxed/simple;
-	bh=LG27d/Q+yaHGWPjf2V5sya6Fe2YC42WZL5WrAo3sYzw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uNinc6uSf6fCJ2Ij88Axn4fOrkGYZAmjrGKWG5rNp3aHAbOFLGzHqGjTlpsrZpzCVhURBKDwMmQ8KIeyPj7mTSC0HbHnGa3f0n5SU+SmIh/WCJxWgoQ7pTSHCgWLz8/KsWX8t0dJUmxRXWRy0tvc3KDkRECvytK9rkzvkQTUa+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=u5wdzNpC; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-539f72c913aso2284488e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 01:04:50 -0700 (PDT)
+	s=arc-20240116; t=1729843487; c=relaxed/simple;
+	bh=RlNTXHWaff+zW/Ig27eNg95TDnIhVzTtyEJbpUp0Ybc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P47Yf5EBqE5Wgbz1R1L0dqKDV3RGxrNnUf9q1TiJYTqdNB10OPxx4RGg7H6qNr2/UL4NiFTYvFNfq97BCvHbk2iopfI4LCYST1nTOGQC/qOjM6Xn4SvzqhLHQsSUI76lGxL9A6YxDqvbyFpHCuslUrkZbkhJmlHJCs9R7++/1To=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Rg2wjwSJ; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-20bb39d97d1so13539795ad.2
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 01:04:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1729843489; x=1730448289; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LG27d/Q+yaHGWPjf2V5sya6Fe2YC42WZL5WrAo3sYzw=;
-        b=u5wdzNpC6sFSsSqJ6U7oFv9JrL4MWmHo7xxjknEMthUTAb8gYI6ZVWsEnBFYENPB4J
-         Sp/giUW9N2Bqj0Mxrcnv19JSagNa7o9nJD+0EU5J2Sj5O7QlUBdksfLFL1gGvenCywLC
-         5QLPD1cX7OaQWtPb6hRDdbxWJMk5c9pCFEDaNM3aSnw9qD2AgluaZEMkA+IxKHG4ykTZ
-         6kxCfjYTYoekKabI9lAenIF6SSqQ/LVMPjVzLR4JmuqsLoD7FwSDdWNc9Knh+3Stq1dj
-         ZqJ+Boe05X4FURUTaL3qHZRT9ukuGxk6SzOPJ2lSr6usKSJVQy6Ng7IJq/q6woh8Uq2o
-         mrFg==
+        d=linaro.org; s=google; t=1729843484; x=1730448284; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=9ToZJO2X6kblaBnpE+g9acjvZjb4BRJvfnxVqud+oi4=;
+        b=Rg2wjwSJfIguaBgYijKlgz/Y1ce1SLy7dOFVwvdtwMagmKx2UUtgevxmou9VV/CkVp
+         Nh9sXNuKkJSxklAuOIr6piLxbuMYM5LaxPbNqrE6vDZb2AxEYLr2b4frg9oa6Go8TaE+
+         oT854RGVkhU9dPZMfES4XqhV0liefLokpnNAXuT7aNWhOEoD7/8AHqIXjRMaX2V4RuNV
+         eCya5/Nlw2x9LNHE8We7IUsKCAFZFOOsjlOolSfdu+inNA0KcP3vqwQUj4HFkz0Jel3Z
+         eUYJ9p9rBiajRk/l7mP+edD2FQR7EFt7s8AHbsREhGz7/Vt8WYj6Sno1sPB2ATVEKSiW
+         WBMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729843489; x=1730448289;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LG27d/Q+yaHGWPjf2V5sya6Fe2YC42WZL5WrAo3sYzw=;
-        b=c2XZtCErxqFa3u8/ys8mBD9F6UqPzqWIIhj7XpYf/9dRdh98batWnrU+COhKrO1jeT
-         kMEUKWSjTtQ+H11GqWenJ/nQ/9lMaRF6mLoDFRv8eyQEDtcI2NvRWFIMY/TGeA5OFp4j
-         GR0WZu/kWggaa+4W2pY9YtZL56nL1NvtleE1aBbZ5NCIecIuiEzHjh+J2TOSuwDHI+S/
-         IgmidU+gEjUbxdoHcC/MCG9YMgwNTlTw/sZeN3DcGZpTrH+iW6GkvbSpH5A367FArqSk
-         ITZmK8hxNnzkVoyHMIuqPGdjsnsz6FnLOCa2h0s0JWiMJvB0ohavRU6esv37wdH9hJAp
-         rR6w==
-X-Forwarded-Encrypted: i=1; AJvYcCXFMLzpaxMiWeL/y1ceDyFHqpzJZmjTMCcZtl+R46KSg6Um+rZyLu6m+lW+EY1MHqQ2qFMcqjlW6everX4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzfhRMwEtZJOvKaIYBxMQqMqZPFBIdK1SxH2JIQ3/Uon9Uhf0XZ
-	mej4IQVVY8sOT6uKtCE8WE/IYuGh34awqXHa6TeSy70Q2gLyME+zA7JQ4RLsqE/p5fvqE6OHPW4
-	5fyUWW5pF7rGQTIiVd4hKvnHmBVvF4uzzB0Q+MD5Q1iraRCZB
-X-Google-Smtp-Source: AGHT+IEAdmGToJtfPEIP9Z9qjfoac4exMG44N9ap94ZRpqSgEEayDPPOyfI6x6+N6f+f12j0SBz2mkUqGZBDIwXyAY0=
-X-Received: by 2002:a05:6512:3f1d:b0:539:f7ba:c982 with SMTP id
- 2adb3069b0e04-53b23e0d752mr3031299e87.33.1729843488663; Fri, 25 Oct 2024
- 01:04:48 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729843484; x=1730448284;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9ToZJO2X6kblaBnpE+g9acjvZjb4BRJvfnxVqud+oi4=;
+        b=DRr1Otxj9MO47AXMyjGJM5+IspjymyuPv3bKrxePyLHqiXZOLRJFHZJ4QATQ6vl2Rk
+         DvW6sbNOAIqj7ZDq71589twH4vdYoLgrqeqtzrdIGapEg9+UMKChsxeEiSSlpLkkcnln
+         VZQeOtZ4UyKluhvbTVBnRbp+XId9wV/LD9R9gzAYB858oD8AS8ziTWnmhSBoQXAIgaI1
+         swnGk2EkjIFfYAsBpwmhja9/gjtxmKJPceJmwdvC86tfbLwrvwtKpQtvew2YRFxf6nhk
+         rNd09q2WawzZpPp/KnPwvAxoRhSt4MBHRtl78CZgNfNZ8q4rPC/G0mglo7GVT1Bl3dev
+         sL6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXHIgE/8hILyoMpVcdbMfUXps7V8KK4NmTceddiyGw8fKxvGSWF3TTnUTrpqVe0qmArpuxJCd8k4V6686E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHIfHKSqme9rK22hOMiEKaEJOI3tqZfD8uwkOJK92VKlX4Bdh9
+	yVG55a1O4sYMm1S815v7IBWTtAJnd4Yqaq1pZpFfbY8JjB0CsDASa5TqdHvmng==
+X-Google-Smtp-Source: AGHT+IE3xVfBlAkAWoonLR8AHuCAQ391OAv5h0lkzeSWdIeRnLYGcfA4Wu9ZqlOLiWnAQjSychPilw==
+X-Received: by 2002:a17:903:244e:b0:20b:6624:70b2 with SMTP id d9443c01a7336-20fa9e13cf2mr124552065ad.19.1729843484373;
+        Fri, 25 Oct 2024 01:04:44 -0700 (PDT)
+Received: from thinkpad ([120.56.205.129])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bc088565sm4990395ad.306.2024.10.25.01.04.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Oct 2024 01:04:43 -0700 (PDT)
+Date: Fri, 25 Oct 2024 13:34:39 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Johan Hovold <johan+linaro@kernel.org>,
+	Abel Vesa <abel.vesa@linaro.org>,
+	Stephan Gerhold <stephan.gerhold@linaro.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
+Subject: Re: [PATCH 4/5] PCI/pwrctl: Move pwrctl device creation to its own
+ helper function
+Message-ID: <20241025074827.fdkgyz3k767dgdqv@thinkpad>
+References: <20241022-pci-pwrctl-rework-v1-0-94a7e90f58c5@linaro.org>
+ <20241022-pci-pwrctl-rework-v1-4-94a7e90f58c5@linaro.org>
+ <CACMJSesmyfS4wj=ys16FmqpAoojuChY1OHSC750bjtM23y5baA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241008160947.81045-1-brgl@bgdev.pl> <55ecee09-196a-4c7a-b7cf-61c19737735b@linaro.org>
-In-Reply-To: <55ecee09-196a-4c7a-b7cf-61c19737735b@linaro.org>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Fri, 25 Oct 2024 10:04:37 +0200
-Message-ID: <CAMRc=MeTgFaySBFya2e=CYnrXL6R7s9D1DRq+RxKcsf56xMc+g@mail.gmail.com>
-Subject: Re: [PATCH] i2c: qup: use generic device property accessors
-To: Andi Shyti <andi.shyti@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-i2c@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, neil.armstrong@linaro.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACMJSesmyfS4wj=ys16FmqpAoojuChY1OHSC750bjtM23y5baA@mail.gmail.com>
 
-On Tue, Oct 22, 2024 at 2:05=E2=80=AFPM <neil.armstrong@linaro.org> wrote:
->
-> On 08/10/2024 18:09, Bartosz Golaszewski wrote:
-> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Wed, Oct 23, 2024 at 12:23:57PM +0200, Bartosz Golaszewski wrote:
+> On Tue, 22 Oct 2024 at 12:28, Manivannan Sadhasivam via B4 Relay
+> <devnull+manivannan.sadhasivam.linaro.org@kernel.org> wrote:
 > >
-> > There's no reason for this driver to use OF-specific property helpers.
-> > Drop the last one in favor of the generic variant and no longer include
-> > of.h.
+> > From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 > >
-> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->
-> LGTM
->
-> Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+> > This makes the pci_bus_add_device() API easier to maintain. Also add more
+> > comments to the helper to describe how the devices are created.
+> >
+> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > ---
+> >  drivers/pci/bus.c | 59 ++++++++++++++++++++++++++++++++++++++-----------------
+> >  1 file changed, 41 insertions(+), 18 deletions(-)
+> >
+> > diff --git a/drivers/pci/bus.c b/drivers/pci/bus.c
+> > index 351af581904f..c4cae1775c9e 100644
+> > --- a/drivers/pci/bus.c
+> > +++ b/drivers/pci/bus.c
+> > @@ -321,6 +321,46 @@ void __weak pcibios_resource_survey_bus(struct pci_bus *bus) { }
+> >
+> >  void __weak pcibios_bus_add_device(struct pci_dev *pdev) { }
+> >
+> > +/*
+> > + * Create pwrctl devices (if required) for the PCI devices to handle the power
+> > + * state.
+> > + */
+> > +static void pci_pwrctl_create_devices(struct pci_dev *dev)
+> > +{
+> > +       struct device_node *np = dev_of_node(&dev->dev);
+> > +       struct device *parent = &dev->dev;
+> > +       struct platform_device *pdev;
+> > +
+> > +       /*
+> > +        * First ensure that we are starting from a PCI bridge and it has a
+> > +        * corresponding devicetree node.
+> > +        */
+> > +       if (np && pci_is_bridge(dev)) {
+> > +               /*
+> > +                * Now look for the child PCI device nodes and create pwrctl
+> > +                * devices for them. The pwrctl device drivers will manage the
+> > +                * power state of the devices.
+> > +                */
+> > +               for_each_child_of_node_scoped(np, child) {
+> > +                       /*
+> > +                        * First check whether the pwrctl device really needs to
+> > +                        * be created or not. This is decided based on at least
+> > +                        * one of the power supplies being defined in the
+> > +                        * devicetree node of the device.
+> > +                        */
+> > +                       if (!of_pci_is_supply_present(child)) {
+> > +                               pci_dbg(dev, "skipping OF node: %s\n", child->name);
+> > +                               return;
+> > +                       }
+> > +
+> > +                       /* Now create the pwrctl device */
+> > +                       pdev = of_platform_device_create(child, NULL, parent);
+> > +                       if (!pdev)
+> > +                               pci_err(dev, "failed to create OF node: %s\n", child->name);
+> > +               }
+> > +       }
+> > +}
+> > +
+> >  /**
+> >   * pci_bus_add_device - start driver for a single device
+> >   * @dev: device to add
+> > @@ -345,24 +385,7 @@ void pci_bus_add_device(struct pci_dev *dev)
+> >         pci_proc_attach_device(dev);
+> >         pci_bridge_d3_update(dev);
+> >
+> > -       if (dev_of_node(&dev->dev) && pci_is_bridge(dev)) {
+> > -               for_each_child_of_node_scoped(dn, child) {
+> > -                       /*
+> > -                        * First check whether the pwrctl device needs to be
+> > -                        * created or not. This is decided based on at least
+> > -                        * one of the power supplies being defined in the
+> > -                        * devicetree node of the device.
+> > -                        */
+> > -                       if (!of_pci_is_supply_present(child)) {
+> > -                               pci_dbg(dev, "skipping OF node: %s\n", child->name);
+> > -                               continue;
+> > -                       }
+> > -
+> > -                       pdev = of_platform_device_create(child, NULL, &dev->dev);
+> > -                       if (!pdev)
+> > -                               pci_err(dev, "failed to create OF node: %s\n", child->name);
+> > -               }
+> > -       }
+> > +       pci_pwrctl_create_devices(dev);
+> >
+> >         /*
+> >          * Create a device link between the PCI device and pwrctl device (if
+> >
+> > --
+> > 2.25.1
+> >
+> >
+> 
+> Would it be possible to move this into drivers/pwrctl/ and provide a
+> header stub for when PCI_PWRCTL is disabled in Kconfig?
+> 
 
-Andi, can you pick this up, please?
+Unfortunately, no. Because the pwrctl drivers are modular and PCI core is
+built-in. So if we use the pwrctl APIs in PCI core, then it will require pwrctl
+to always be built-in, which we do not want.
 
-Bart
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
