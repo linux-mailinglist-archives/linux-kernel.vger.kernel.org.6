@@ -1,170 +1,94 @@
-Return-Path: <linux-kernel+bounces-381461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9BBB9AFF89
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 12:07:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20BBC9B005B
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 12:42:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B35F1F21818
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 10:07:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7CFA5B22590
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 10:42:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61BE11D9684;
-	Fri, 25 Oct 2024 10:07:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="kc9hnEmm"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EB151DE3A7;
+	Fri, 25 Oct 2024 10:42:09 +0000 (UTC)
+Received: from spe1.ucebox.co.za (spe1.ucebox.co.za [197.242.159.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C59681D3584;
-	Fri, 25 Oct 2024 10:07:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D68C31D967F
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 10:42:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=197.242.159.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729850831; cv=none; b=fClYzla8PRjo/U2USi8DjIxCuDMyxchX+ysQgrJWhtbW377nHPW4k6neyum9OU0ViQ4yO0byumPaQH2OWsibO3ZIqkQ7Nc733rbjG4kWejGP9B8s/wIPPmXK8/5K0puAVPQqpYbGC1XiI68MmB5jFGZQj1KG+AJWqtsTKzGs1RU=
+	t=1729852928; cv=none; b=UitkaKlGMgMPCOzckNnVy14GEIKVilGHZwjsiSy9fc4sm2lDfSU0lb9D7nzdOxZPVlM0NYlGddFWqHWmUTK0rWicR1UqGZjTCaatPwdvZEZxdxsIw5o7RKnSQM8euqVs/4kb+gphKaSqbtqmRbvfo5NjLDderwvS2LZGrtiOVsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729850831; c=relaxed/simple;
-	bh=sRyJ4KdlL76hUgZEKBnCoraiUwdtgySzvQfaKZrpBYM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=N1EQH1A1PS49vtNzciqKXqvFgNJ/sSptuxHBygjXQ7/TtaVpkmNN0wcSO9ZnamnikDOc+tMxMLAtCyCJdaKe9KU1Izb5j+nZ2JBnWvRXz8GaPUbnBofOmgZiXdWJVP1+yFrirpDKo2elvoioJf30bpk12WRXvUILf2mBH2lPDwU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=kc9hnEmm; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49OKTs2E007551;
-	Fri, 25 Oct 2024 10:07:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	06IkTi//D5tgGoX99HX3f2NLiU6Qz5QmsybYsvP4yx4=; b=kc9hnEmmI6kMNPiM
-	Lns4TJrZ0xpa4dY8PIXKRCaM+eDcUE7ehigiiNRcUslUsjkuKtN2zagk1vUvv64K
-	Z3Y0LMnBy9ZHYX9KaaRXP9wzmF+tZWq+oSp69SsT8uMq+DGmZGQ4haRvU5GXN/1R
-	aIu4J5E0vvDItSioR0Sb12KJ3IU31DrYqmdXLF9bgzmVcER0esrpoKcRHtkrV2oQ
-	lPVUevsjbMhSFaaZ34+zKaLUQg3vbcNwqG+VLFqVkbxQKYA3c3iIDIWDvIXwqyYB
-	3vLxMAcBChNXxTO4BjYRtZwWzXnVi/ryRfuSZTPOWE1+3STE/we/3cxIMVJyLA/X
-	V8d03Q==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42fk52keer-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 25 Oct 2024 10:07:03 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49PA72Jf016166
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 25 Oct 2024 10:07:02 GMT
-Received: from [10.151.41.25] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 25 Oct
- 2024 03:06:58 -0700
-Message-ID: <88489191-2dbd-4018-b35b-84f43f8eb55e@quicinc.com>
-Date: Fri, 25 Oct 2024 15:36:55 +0530
+	s=arc-20240116; t=1729852928; c=relaxed/simple;
+	bh=R2SO4Uh4OoOI+5zfsT+aIImi6Lft6YeI+xNybVwTTVs=;
+	h=To:Subject:Date:From:Message-ID:MIME-Version:Content-Type; b=TuAxRFU9q2fY5WjCJH0H82pnZ/ZAgWAoLeJmHcv68Ba2UBYKTP7PH9HoZpeJ5E8163L5bc6VWutr+aE/M93BEjG4uO2LPCXVcSDwITrTWtEtIpjeG6NNgaLcufrVH7QWZMELjiDZPHmCkRIb3xx8jbQnX1NYULwxI2t+GqDF2oc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ucebox.co.za; spf=pass smtp.mailfrom=ucebox.co.za; arc=none smtp.client-ip=197.242.159.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ucebox.co.za
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucebox.co.za
+Received: from crookshanks.aserv.co.za ([154.0.175.149])
+	by spe2.ucebox.co.za with esmtps (TLSv1.2:AES128-GCM-SHA256:128)
+	(Exim 4.92)
+	(envelope-from <support@ucebox.co.za>)
+	id 1t4H0q-000o1F-9i
+	for linux-kernel@vger.kernel.org; Fri, 25 Oct 2024 11:53:55 +0200
+Received: by crookshanks.aserv.co.za (Postfix, from userid 1360)
+	id C54781C418F; Fri, 25 Oct 2024 11:37:54 +0200 (SAST)
+To: linux-kernel@vger.kernel.org
+Subject: Greetings from Bahrain Investors Group.
+X-PHP-Originating-Script: 1360:m1.php
+Date: Fri, 25 Oct 2024 09:37:54 +0000
+From: Faisal Al Rasbi <support@ucebox.co.za>
+Reply-To: bahinvestec@daum.net
+Message-ID: <27c84ceab6b087a6dd56db9a0823f400@spectrapage.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 2/6] dt-bindings: net: wireless: ath12k: describe WSI
- property for QCN9274
-To: Krzysztof Kozlowski <krzk@kernel.org>, <ath12k@lists.infradead.org>
-CC: <linux-wireless@vger.kernel.org>, Kalle Valo <kvalo@kernel.org>,
-        Rob
- Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor
- Dooley <conor+dt@kernel.org>,
-        Jeff Johnson <jjohnson@kernel.org>,
-        Bjorn
- Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>
-References: <20241023060352.605019-1-quic_rajkbhag@quicinc.com>
- <20241023060352.605019-3-quic_rajkbhag@quicinc.com>
- <b42da7f0-2034-467b-ab17-fb13ef7800c4@kernel.org>
- <9c06fdac-df4f-449c-8d58-b57c375c1751@quicinc.com>
- <808cfb83-a80f-431c-be69-ee3da964482a@kernel.org>
-Content-Language: en-US
-From: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
-In-Reply-To: <808cfb83-a80f-431c-be69-ee3da964482a@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: arokTUZefxQ1lTB77yWMn0wb53_-RvuU
-X-Proofpoint-ORIG-GUID: arokTUZefxQ1lTB77yWMn0wb53_-RvuU
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 mlxscore=0
- lowpriorityscore=0 malwarescore=0 impostorscore=0 phishscore=0
- adultscore=0 mlxlogscore=999 priorityscore=1501 spamscore=0 bulkscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410250077
+Content-Type: text/plain; charset=UTF-8
+X-Afrihost-Domain: lungprotectors.aserv.co.za
+X-Afrihost-Username: 154.0.175.149
+Authentication-Results: ucebox.co.za; auth=pass smtp.auth=154.0.175.149@lungprotectors.aserv.co.za
+X-Afrihost-Outgoing-Class: unsure
+X-Afrihost-Outgoing-Evidence: Combined (0.64)
+X-Recommended-Action: accept
+X-Filter-ID: Pt3MvcO5N4iKaDQ5O6lkdGlMVN6RH8bjRMzItlySaT+YMivxyjPtNtu1gZ9JopjZPUtbdvnXkggZ
+ 3YnVId/Y5jcf0yeVQAvfjHznO7+bT5z4WkZ/TJaiaBbP2NJqrVHtfCzdNGNoLjYW00m5NbCHvI9w
+ knWGobBIYos3d1n2bREANfFhzgGKnhXOBx4/N56R5WCy5VkstzhnxgTXqsdmp/MheaOR8DFcfknV
+ 6KncTVylACRMTtf9XzTQrts345XIBVisGv8MyVI5ms3guyJnGjee9lPiWXGgfHdZcoF0IZQUOled
+ bu+r9+W9cDXvzL3SGsKcIKSsYmP/wNV5Hf5n6WOUpTxdKCchl8hZXBhVDaOrMIibkpY46HKySyiI
+ 2P6ot5h+GSkoTFgp5KuAO3q+0gpo5gTGV8MOHLF5fnFItWLiEnzvvDcGs5qmm9XDE2pdZWZmIMWJ
+ G2DzNierwWd45v2o1X92Cn4UU9JJ17dQkS7izDj4VfLGYhV5rU4pWppWtWgKtOvRHZLuH8dYQFiJ
+ 8Umh5c59nea9P7ubwknR2GD4wRgyjQ0N7JdU7e01KBWByQ6fPSazBVdmSkVV7lmAYDQwuOqAvffs
+ BtrSLNo0r6QRJSxBkkSj+sI9KtjNwdevdKutr3/aOAyxedkmfFFeTf0lM75FwKAC8hsGgy/al7K4
+ cM9fALCz9i1i5XCHutk32PksNQ0oQVUYNNd498qHg29MADYJjjS1Yh4GUv9JCXQcC9mETJ96PO0a
+ 0i65pJWRNusxt+gP+bf8jqp+NChqDzR1J1J5HvzpBcvjk2c01yfZcpPgEJKLbDyaC/LdLvvYrBjn
+ CVEpobAHqw4TKsl+nPpVB9v9zY0h8asEYmbGGsLwkU0BDg6bMnMt9KGzfFFaZ0nTupGML/Tc6UIu
+ GqKX9YBjEU6tlt+jXZ7o/lsG+sPCg3nULKgEfpVqfu9EIpcTwyFFEpaxygFbO+0kDcrSr5NR1PPg
+ HrwaDsnnq6AdIb6C30gVIBQfo0Y1A0UrMD7mDxBv1autseTLlsh8H14EGry+BoaQchlaDXZrXQEv
+ X3NJlSqCD2ZoLNyo/ei4CZXg
+X-Report-Abuse-To: spam@spe1.ucebox.co.za
 
-On 10/23/2024 11:27 PM, Krzysztof Kozlowski wrote:
-> On 23/10/2024 14:22, Raj Kumar Bhagat wrote:
->> The above three blocks represent the QCN9274 WiFi devices connected to their
->> respective PCI slots. The dotted line represents the WSI connection that connects
->> these three devices together. Hence, the WSI interface is part of the QCN9274 device.
->>
->> To describe this WSI hardware connection in the device tree, we are adding three
->> properties inside the WSI object:
->>
->> 1. qcom,wsi-group-id:
->>    In the above diagram, we have one WSI connection connecting all three devices.
->>    Hence, “qcom,wsi-group-id” for all three devices can be 0.
->>
->>    This cannot be implied by the compatible property, as explained below:
->>    Let’s take the case of a platform that can have four QCN9274 WiFi devices. Below
->>    is one possibility of a WSI connection:
->>
->>          +-------+       +-------+          +-------+      +-------+
->>          | pcie2 |       | pcie3 |          | pcie1 |      | pcie0 |
->>          |       |       |       |          |       |      |       |
->>    +---->|  wsi  |------>|  wsi  |--+   +-->|  wsi  |----->|  wsi  |----+
->>    |     | idx 0 |       | idx 1 |  |   |   | idx 0 |      | idx 1 |    |
->>    |     +-------+       +-------+  |   |   +-------+      +-------+    |
->>    +--------------------------------+   +-------------------------------+
->>
->>    In this case, QCN9274 devices connected in PCIe2 and PCIe3 will have the same
->>    “qcom,wsi-group-id”. This group-id will be different from the “qcom,wsi-group-id”
->>    of QCN9274 devices connected at PCIe1 and PCIe0.
-> Thanks, this explains why group-id cannot be same...
-> 
->> 2. qcom,wsi-index:
->>    This is a unique identifier of the device within the same group. The value of
->>    wsi-idx is represented in both the above cases (RDP433 and the 4 WiFi device
->>    platform) in the diagram itself.
-> But still any device-indexing is in general not accepted (and was
-> mentioned during reviews multiple times).
-> 
-> This looks like circular list, so phandle will be enough. You only need
-> to mark devices being part of the same chain.
-> 
-> Actually graph with endpoints would be more suitable, assuming above
-> diagram represents connections.
-> 
+Greetings from Bahrain Investors Group!
 
-Thanks for suggesting "graph will endpoints" approach for representing WSI
-connections.
+We understand the importance of securing funding for your projects. Based in Manama, Bahrain, we specialize in providing global financial services tailored to your needs. Our team of experienced Bahrain investors is well-equipped and ready to support your plans with the necessary capital.
 
-I will check on this and come back.
+We focus on offering flexible project funding options, including loans and debt financing in various currencies. Our terms are designed to ensure your satisfaction and financial stability, featuring:
 
-> Please include that diagram in binding description.
-> 
+    A twelve-month grace period
+    Competitive interest rates
+    Extended repayment terms
 
-Sure will include the above diagram in next version.
+We highly value our partnerships with intermediaries and offer generous compensation for successful introductions to project owners.
 
->> 3. qcom,wsi-num-devices:
->>    Represents the number of devices connected through WSI within the same WSI group to
->>    which the device belongs.
->>    
->>    In the case of RDP433, all devices will have this number as 3.
->>    For the second example with four WiFi devices but with two WSI connections, the
->>    value of “qcom,wsi-num-devices” for each device will be 2.
-> Not needed, just iterate over the graph children.
+Please share your loan requirements with us and let us demonstrate how we can assist in bringing your project to fruition. We are committed to seamlessly guiding you through the funding process.
 
-Thanks, based on "graph with endpoints" implementation will have this as well.
+Warm regards,
+
+Faisal Al Rasbi
+MEMBER, Bahrain Investors Group
+
 
