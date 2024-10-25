@@ -1,160 +1,141 @@
-Return-Path: <linux-kernel+bounces-382070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1FA79B08AA
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:43:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A3F39B08B0
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:43:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81958281F48
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:43:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1AFED2825A4
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:43:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3498C1632D0;
-	Fri, 25 Oct 2024 15:43:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 679E2176237;
+	Fri, 25 Oct 2024 15:43:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=justinweiss.com header.i=@justinweiss.com header.b="qS1ZsvmY";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="YgsXXwcY"
-Received: from fout-a8-smtp.messagingengine.com (fout-a8-smtp.messagingengine.com [103.168.172.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Pg8sVaGh"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFDEF157E99;
-	Fri, 25 Oct 2024 15:43:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64B5215D5A1
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 15:43:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729870986; cv=none; b=hih2eUzgOjkWDgRqJjsuQgV6zmj93RQrHak+07cXfiC8J263Tgu/Q48UxBm8GlAyB9iDfTSn5i7CLLZhXfLCEpDY6qoKulHA2SfV+imSHZPwzoUWiDmwGwG8wmiv1G8s8khLiDCDEJkJB475Y9EMWXF6DMrLIuR3/9d5T78USAU=
+	t=1729871011; cv=none; b=Pk9qpwWFU7zs8bt/9vkXSlgotC05Ur0i4f//z16knYdioqYkfJ0TENRQufUqWj5oQw2SC1Gp4DAZyQ6VbKVphpte2e/Ib5bN4cT1QCkZa5+oAq0j8Eq20Kqde/QjxR2n1e2OAmY3w69d5q7Vr+7+Y7mQeJXBQE7qfUJWlkrqguI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729870986; c=relaxed/simple;
-	bh=892FnEDtSqvg3RuO2rPWKHGWLQaTsN2CZ93QHMrgkc0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=e63EDh2ewhgxo57Ui+QrFfXVZUHRUlJXGPR47NsgmtwOUWmQ8Fjr2cFY7ZGG/5/d1D3h+wA2c4qspyFJitAobMAKureG9r+KGputn0puQ9GAAp3h1SOoIzrRfxpDpOMevcZO67UmzHJ3Yh19CIwgKjdlzt7xI5ytG/gX1KQ7jx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=justinweiss.com; spf=pass smtp.mailfrom=justinweiss.com; dkim=pass (2048-bit key) header.d=justinweiss.com header.i=@justinweiss.com header.b=qS1ZsvmY; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=YgsXXwcY; arc=none smtp.client-ip=103.168.172.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=justinweiss.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=justinweiss.com
-Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
-	by mailfout.phl.internal (Postfix) with ESMTP id CD32D13801B4;
-	Fri, 25 Oct 2024 11:43:02 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-04.internal (MEProxy); Fri, 25 Oct 2024 11:43:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=justinweiss.com;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm2; t=1729870982; x=
-	1729957382; bh=ySWm63aAaQ5hTU7bDWqoK4X5fe19ScHre/li5yhiZF0=; b=q
-	S1ZsvmY5mK8Rv3j82BjCuvhZ0MWDqwGG2ZSTI/PiqKGyqgh1RXOyyUZFpliu7hcj
-	RDEqf6sjEFqRr1HDP85DasmHczJGokcqU/bkiOGLjpyvnwesEOBCicYSjFam80sF
-	Vw4WiGz+0h8CxIVjg9sXgUVh4vMDEUghdkEBnqruCjFg7YqNmrKqNDjVmM1VXcLD
-	cudRcBLr/QjYtr80tqpCoMfE2Qn3EYya0tj8ps3ZuBMYh+ut8BJb1EfZMy/adYvY
-	J0NIK5P3BvxcADYkwObYVJDeJJ9SURpQHn+1smpYbH5cS+IYStvyaRiTGlQBTtKa
-	WgtIuiPt1qiWuH56bXfYg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm3; t=1729870982; x=1729957382; bh=ySWm63aAaQ5hTU7bDWqoK4X5fe19
-	ScHre/li5yhiZF0=; b=YgsXXwcYzR1MJWCqBZpsIYskeeg+yMEAjp/C/gdRjkZp
-	qGsZm3nM472s7gLPkaiECz6lEd5Kx9nd6TmVoKAlpv+rf/dE71vXky3CM+TobyCu
-	GHClq2be+V3kQTfIXcvDjYmzH+TmN6uEjw8FAkM80BFHWlHb7HVI04h9zSA5i3/W
-	S+GaTUj1GjfMaUjjPIsIbhxf0veISNIOEXum/14PQr8gM8EhPC+beG2AGjuKRS+i
-	UBQFcE56O4vFtEA3+QpI/pAj1ps328wBynjZbD4PFZKYaMc5ez1aFjgOiy64ODJG
-	Ov7zRM06ptxpL9X3pqbtz0SFXtr1PNQNbjdsu8Yq7A==
-X-ME-Sender: <xms:hrwbZ69bN-Yp5C30rcSpcyqIWVr0H2GWjASsC3e_8DmvEI5MINnwDw>
-    <xme:hrwbZ6tfO1HpUfMTQt5Q2pTv28ZXE1OqdqmcacSsZwWfY4hGfVt2UbBNV960ITA17
-    -zrT6gAXPsQfh8izg>
-X-ME-Received: <xmr:hrwbZwC2P2GipVaN_Ntn3Ea_7E-tCLTKpjf4E_WcCYohzAuUSHzcgx3mu6anA4nYSkQEF8WFlaB0otL1hJCIKL9_6KyjPbNuCIA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdejvddgledvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnegoufhushhpvggtthffohhmrghinhculdegledmnecujfgurhep
-    hffvvefujghffffkfgggtgesthdtredttdertdenucfhrhhomheplfhushhtihhnucghvg
-    hishhsuceojhhushhtihhnsehjuhhsthhinhifvghishhsrdgtohhmqeenucggtffrrght
-    thgvrhhnpeetfeeivdfhudduleffteevleeluedvvdehkeffheffieefuedugeeiudekff
-    egleenucffohhmrghinhepmhihqhgtlhhouhgurdgtohhmnecuvehluhhsthgvrhfuihii
-    vgeptdenucfrrghrrghmpehmrghilhhfrhhomhepjhhushhtihhnsehjuhhsthhinhifvg
-    hishhsrdgtohhmpdhnsggprhgtphhtthhopeduvddpmhhouggvpehsmhhtphhouhhtpdhr
-    tghpthhtoheplhgrnhiirghnohdrrghlvgigsehgmhgrihhlrdgtohhmpdhrtghpthhtoh
-    epphhhihhlmhesmhgrnhhjrghrohdrohhrghdprhgtphhtthhopeguvghrvghkjhhohhhn
-    rdgtlhgrrhhksehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvg
-    hlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggvvhhitggvthhrvggv
-    sehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqihhiohesvh
-    hgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhn
-    vghlrdhorhhgpdhrtghpthhtohepkhhriihkodgutheskhgvrhhnvghlrdhorhhgpdhrtg
-    hpthhtoheprhhosghhsehkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:hrwbZyfqh7KI7aM4_wKss2jM1WuQcm-57mz7oTmuFkpS96fROwKOPw>
-    <xmx:hrwbZ_OAdQpk1uawai-hmd-eLoWc03PwKfzYPI0UaiqHRlleOruh4Q>
-    <xmx:hrwbZ8nVzCBMlgiI8sXDWeXueNHN7yeU0EDBhQHdGIMSDAY1TMW9YQ>
-    <xmx:hrwbZxsuM9UcFD9z_1V-7Qx4mOpQd4wzB5hnnSxtoomAuKzis2oDGg>
-    <xmx:hrwbZznrQjN0nsi0mQenHOqmVgQKuw0IvhOcX0hPWvMvVSYu7Rl32tgW>
-Feedback-ID: icf614246:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 25 Oct 2024 11:43:00 -0400 (EDT)
-From: Justin Weiss <justin@justinweiss.com>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,  Lars-Peter Clausen
- <lars@metafoo.de>,  Rob Herring <robh@kernel.org>,  Krzysztof Kozlowski
- <krzk+dt@kernel.org>,  Conor Dooley <conor+dt@kernel.org>,
-  linux-iio@vger.kernel.org,  devicetree@vger.kernel.org,
-  linux-kernel@vger.kernel.org,  "Derek J . Clark"
- <derekjohn.clark@gmail.com>,  Philip =?utf-8?Q?M=C3=BCller?=
- <philm@manjaro.org>,  Alex
- Lanzano <lanzano.alex@gmail.com>
-Subject: Re: [PATCH v3 4/6] iio: imu: bmi270: Add support for BMI260
-In-Reply-To: <20241022203417.30971eea@jic23-huawei> (Jonathan Cameron's
-	message of "Tue, 22 Oct 2024 20:34:17 +0100")
-References: <20241020220011.212395-1-justin@justinweiss.com>
-	<20241020220011.212395-5-justin@justinweiss.com>
-	<87msiwm90s.fsf@justinweiss.com> <ZxfYq1Eo2xhVhIei@smile.fi.intel.com>
-	<20241022203417.30971eea@jic23-huawei>
-Date: Fri, 25 Oct 2024 08:42:59 -0700
-Message-ID: <878quc194s.fsf@justinweiss.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1729871011; c=relaxed/simple;
+	bh=mKhfq1+puCapBn/RUaMC4AAAqYtKyCwyZwVMFXha+Vs=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=DHrR8nYOqK/l2MxdVYt60bI7WmqqVZt+1hezrbTqiUkFtyccGjmIvMwY9ppPCp5EhX89NDhw/8pwBdgLpSQpc4rlWoSxSHP5o9+jprWgXnr8D1M00as/uDHlfGDjd+C2RG5LoC8dP8k6AWDFtIvvm2Nlimws0DJMMcaZXfloQxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Pg8sVaGh; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-539f76a6f0dso2111731e87.1
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 08:43:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729871005; x=1730475805; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=T0q2T2jCc+5Gv2IPhR62NKSUWGvWUihVhcOzP/hoqIs=;
+        b=Pg8sVaGh3jgx7SIQavBO/yarjZgTKoZzSFJaLdXPJjSGqxESrr1nfsV74BUopDIskU
+         tarjmPTuwq++7K6yfN4jliZzbhI8+JGJcExFGSQxEQOqKKBldDy+VtOyBVEXCm6nzja2
+         0dJYFVk4m9CCKBmoY23VgXnYmc2VImhR4oVOhU6nTrhKwGzlsPPFaEd3kwyPuM5QXg03
+         /TQPOX3/MqBFmpxAjqvpikRO0rU77gy7B/mKzVeuuXAJqaRcOEZNEM6r7SJv3APU2oBM
+         zrIDvrqWxA1f9Pbc98xmVReQyHZ7gRHmCsCCdkNlmfFrx1E25/0u8Vff5O0oowtHc3R2
+         hFFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729871005; x=1730475805;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=T0q2T2jCc+5Gv2IPhR62NKSUWGvWUihVhcOzP/hoqIs=;
+        b=vohL9s8fu+fHrNSi0M3Rcu5CxH1M0Fu+95P7MmYuBjg1K+KgQ/3h67hBjG4hAtJ/tr
+         aSoJ1NfztQQdFzEUSQKo1REqWl0pQZpv88BZrP68YqZtPJobt1H8hSL3YKenfGqTuHn4
+         ymQlC/b+RLgsjKsiF7cgdnwQk5hhbi3KiPMqNg5GFLXW0p20HHznPTRYGTBTsD7DtRxY
+         Yq5zU7acRasU8G4Gt6jzpgwS/ZQigMrPOXN7K/Ba+EEjbmlXSEC/dSuEgfbJxi50z9sl
+         EADvUUf573jY48fjErd8VezDkCPLiNNHtr50HB5v7GDu5dJjx8l3AZkxC/I9X/MWhuk+
+         f9uw==
+X-Forwarded-Encrypted: i=1; AJvYcCW+E3kDcq04/RAiMGDy6dyrXjSpo4UwdaoQbMlNQHfRQP+pVB2ZkjASMwQlpK2FriXy+xOd7+MWPB7Sh1Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhNlts5vI7xiORDvsfZWI3Iuy3JKJvNtoTKmGeaLZO/5BPmuVP
+	aaoJW7OCYP4HhA/FIAHpa8z0f3N0iiFGZHCS/HUPvX2eih+6KKw5w0+WVeG1cug=
+X-Google-Smtp-Source: AGHT+IEJDvJfz9PQjE+CLFa3BEQgscijy/h3LHlHsKI/5k7HVTeduAwy55QLIXYmOX9gP9309kPoJg==
+X-Received: by 2002:a05:6512:3402:b0:53a:aea:a9e1 with SMTP id 2adb3069b0e04-53b1a3a3521mr6945676e87.54.1729871005410;
+        Fri, 25 Oct 2024 08:43:25 -0700 (PDT)
+Received: from [127.0.0.1] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b479ffsm1829092f8f.49.2024.10.25.08.43.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Oct 2024 08:43:25 -0700 (PDT)
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Subject: [PATCH 0/6] qcom: camss: dts: Prune and tidy x13s, rb5 and rb3
+ CAMSS dts
+Date: Fri, 25 Oct 2024 16:43:22 +0100
+Message-Id: <20241025-b4-linux-next-24-10-25-camss-dts-fixups-v1-0-cdff2f1a5792@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJu8G2cC/x2N0QrCMBAEf6XcswuXkAr6K+JDTK56oLHk2hIo/
+ XeDj7MDOzuZVBWj67BTlU1Nv6WDOw2UXrE8BZo7k2cfHPsRj4C3lrWhSFvgAxyjzyl+zJAXw6R
+ tnQ0u8iXkNMYzT9Tf5ird/Eu3+3H8AM+6WVl5AAAA
+X-Change-ID: 20241025-b4-linux-next-24-10-25-camss-dts-fixups-1a094dc5a60f
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Depeng Shao <quic_depengs@quicinc.com>, 
+ Vikram Sharma <quic_vikramsa@quicinc.com>, 
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, 
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+X-Mailer: b4 0.15-dev-dedf8
 
-Jonathan Cameron <jic23@kernel.org> writes:
+This series does a refresh on upstream x13s, rb5 and rb3 dts.
 
-> On Tue, 22 Oct 2024 19:54:03 +0300
-> Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
->
->> On Tue, Oct 22, 2024 at 08:50:43AM -0700, Justin Weiss wrote:
->> > Justin Weiss <justin@justinweiss.com> writes:
->> > ...
->> > I can't find any evidence of BOSC0260 being used, besides existing in
->> > the Windows driver. As suggested in an earlier review, I added it here
->> > to encourage people looking at this driver in the future to use the
->> > correct ACPI ID.  
->> 
->> Are you official representative of Bosch or do you have a proof by the vendor
->> that they allocated this ID? Otherwise we may NOT allocate IDs on their behalf
->> and has not to be added.
-> Fair point. The provenance of the driver is a little disconnected from Bosch:
-> https://ayaneo-1305909189.cos.accelerate.myqcloud.com/ayaneo_com/download/2023/UMDF2.0_BMI260_V1.0.23_5ID_signed_20H1.zip
->
-> Justin, if you have contacts at ayaneo, maybe they can confirm if the IDs come
-> from Bosch. Or maybe we can find someone at Bosch?
->
-> Jonathan
+Firstly:
+Moving from static dts files for the mezzanine cards to dtso.
+A recent examples of this approach is here:
 
-I've asked around a bit but haven't been able to find a contact at Bosch
-to help answer these questions. I also haven't heard back from AYANEO.
+Commit: bc90f56a1699 ("arm64: dts: sm8650-hdk: add support for the Display Card overlay")
 
-In the meantime, I can reorder the patches to add the triggers and
-attributes first and leave the BMI260 support / ACPI ID additions at the
-end.
+Taking this example this series converts rb3 and rb5 to the same overlay
+format. The apq8016-sbc-d3-camera-mezzanine.dtb is omitted from this series
+as I haven't had an opportunity to test on this platform but, will do so at
+a later date.
 
-I'll include the BMI0160 ID (and DSDT) in the patch adding the initial
-support, since we know that one exists in the wild, and hold on adding
-BOSC0260 until there's a way to move forward on it.
+Secondly:
+rb3 and rb5 both declare clock-lanes in their respective sensor blocks.
+Neither sensor actually requires this declaration.
 
-I'll also remove all ACPI IDs from the SPI driver since we haven't seen
-them at all yet. If we get clarification on the correct ACPI IDs to use,
-we can add it later on.
+Drop in both cases.
 
-Justin
+Finally:
+Declare CMA heaps for both mezzanine boards so that libcamera's DMA buf
+will work with upstream rb3/rb5 camera mezzanine boards.
+
+Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+---
+Bryan O'Donoghue (6):
+      arm64: dts: qcom: qrb5165-rb5-vision-mezzanine: Convert mezzanine riser to dtbo
+      arm64: dts: qcom: sdm845-db845c-navigation-mezzanine: Convert mezzanine riser to dtso
+      arm64: dts: qcom: sc8280xp-x13s: Drop redundant clock-lanes from camera@10
+      arm64: dts: qcom: qrb5165-rb5-vision-mezzanine: Drop redundant clock-lanes from camera@1a
+      arm64: dts: qcom: qrb5165-rb5-vision-mezzanine: Add cma heap for libcamera softisp support
+      arm64: dts: qcom: sdm845-db845c-navigation-mezzanine: Add cma heap for libcamera softisp support
+
+ arch/arm64/boot/dts/qcom/Makefile                    |  6 ++++++
+ ...zzanine.dts => qrb5165-rb5-vision-mezzanine.dtso} | 19 +++++++++++++++++--
+ .../boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts  |  1 -
+ ...e.dts => sdm845-db845c-navigation-mezzanine.dtso} | 20 ++++++++++++++++++--
+ 4 files changed, 41 insertions(+), 5 deletions(-)
+---
+base-commit: a39230ecf6b3057f5897bc4744a790070cfbe7a8
+change-id: 20241025-b4-linux-next-24-10-25-camss-dts-fixups-1a094dc5a60f
+
+Best regards,
+-- 
+Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+
 
