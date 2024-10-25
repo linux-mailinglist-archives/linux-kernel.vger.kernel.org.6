@@ -1,173 +1,120 @@
-Return-Path: <linux-kernel+bounces-381247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0581D9AFC79
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 10:26:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 586529AFC96
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 10:32:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66967B24A58
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 08:26:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A4D01C22A85
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 08:32:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22A2A1D1738;
-	Fri, 25 Oct 2024 08:26:24 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1765E1D2794;
+	Fri, 25 Oct 2024 08:32:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="d7+KrT+Y"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 489EF1D0E28
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 08:26:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 712E41C878E
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 08:31:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729844783; cv=none; b=TaunpGO9NPhIu1wYUAAgkrBypUe3BQucC5WOdcUizZnogR616+vK61beQgw4i8vxOcE8bDee+2CnDGyPWPoVkGLPi8lgnD2sQalxxHc8TC//cWULH/xSuvbyd5do82bef148YOOeQ0AysYltq9AOdunl9HX5UoRa/C2zfMVuFK8=
+	t=1729845121; cv=none; b=T9CHVfwxMh6PBS260YuKVwO2d3SqIYT6rcgtFRKbEE6Wihd4YKmbAVup5WHdE7beg7Sm/u2XQie/CLgQVQHjfMaSWvZcf9PO0UMCtsRUEFFD7/Wi2LVml3bkqLZ+Agr8uFGzCCu7VZDp5g5jykSMfeNLMeks7ZM5z9ml6pVEO58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729844783; c=relaxed/simple;
-	bh=/RanIQPlr/Us9s7VWWqUqOTagS90ewt3Ir1W5ak3Ze0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=kN0tBtgCEDac/R7DsDRAh8OV65onwB/2crG70DfDw1iRbY9EYkH74bZJUk69y8W0TNSk4Qqg621gxPOXryofzF+DVP1iVBYimVw6T0Cel/rTVT0+3dZPo7/Qtb7VodsakO3i2T74JvjD78iobTl+ujBI+JVA2pZIn/fYF3AMwvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4XZbTk02jwz1ynf8;
-	Fri, 25 Oct 2024 16:26:18 +0800 (CST)
-Received: from kwepemf500003.china.huawei.com (unknown [7.202.181.241])
-	by mail.maildlp.com (Postfix) with ESMTPS id 567961A0188;
-	Fri, 25 Oct 2024 16:26:10 +0800 (CST)
-Received: from [10.174.176.82] (10.174.176.82) by
- kwepemf500003.china.huawei.com (7.202.181.241) with Microsoft SMTP Server
+	s=arc-20240116; t=1729845121; c=relaxed/simple;
+	bh=FyRcjH3MyU/qU7vAX8oRUCU3GcUlaWf6qQDiUkU/bDI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=CcJvOZAaJx4ZCJj4jqZXgIFb/fF9rCmSfX5U7Qzvo5ZqEcSdbFU5pJpzjwb3YmaObVZ6qU+Zh9PyJSNi9O3NVIbxwHZBJng1AhSJoipdlBP9Ao6BBSAWXqsfVsCD5hcEj9Ypfe+Xau0WA/t0er6ngcEGGWw5B2Ef+CWQSE0uGsU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=d7+KrT+Y; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 9225885492ab11efb88477ffae1fc7a5-20241025
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=BT/Ng943C81aesy7n0Su3FETLClPbDgwCaBp/DvtzrA=;
+	b=d7+KrT+YQLkZHKtWDIIjKRc/Wl3dZ6/Q8HhhYnmaDvKuKuAoFvopb0i6UPLdjVJDIIcQ7cFXiCfoAJvqfh2Kk/E3eADWzCTS6FeZdRL3+cnVRLR0kN3EumINBstlFGXBvtEkHIOw/ASrvakkRpiTDzvaV3RRHMQZAgtiwYUKsHQ=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.42,REQID:791cb5ab-5518-4750-af5f-445bb12aedbd,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:b0fcdc3,CLOUDID:d4d7d241-8751-41b2-98dd-475503d45150,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
+	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 9225885492ab11efb88477ffae1fc7a5-20241025
+Received: from mtkmbs13n1.mediatek.inc [(172.21.101.193)] by mailgw01.mediatek.com
+	(envelope-from <liankun.yang@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 730057307; Fri, 25 Oct 2024 16:31:46 +0800
+Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
+ MTKMBS14N1.mediatek.inc (172.21.101.75) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 25 Oct 2024 16:26:09 +0800
-Message-ID: <ec505433-3929-4a17-b875-198edab3066a@huawei.com>
-Date: Fri, 25 Oct 2024 16:26:04 +0800
+ 15.2.1118.26; Fri, 25 Oct 2024 16:31:44 +0800
+Received: from mszsdclx1211.gcn.mediatek.inc (10.16.7.31) by
+ mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Fri, 25 Oct 2024 16:31:43 +0800
+From: Liankun Yang <liankun.yang@mediatek.com>
+To: <chunkuang.hu@kernel.org>, <p.zabel@pengutronix.de>, <airlied@gmail.com>,
+	<simona@ffwll.ch>, <matthias.bgg@gmail.com>,
+	<angelogioacchino.delregno@collabora.com>, <ck.hu@mediatek.com>,
+	<dmitry.osipenko@collabora.com>, <msp@baylibre.com>,
+	<rex-bc.chen@mediatek.com>, <granquet@baylibre.com>, <peng.liu@mediatek.com>,
+	<jitao.shi@mediatek.com>, <mac.shen@mediatek.com>,
+	<liankun.yang@mediatek.com>,
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>
+CC: <dri-devel@lists.freedesktop.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCH v2 0/3] Adjust YCbCr422/bandwidth/training for DP
+Date: Fri, 25 Oct 2024 16:28:26 +0800
+Message-ID: <20241025083036.8829-1-liankun.yang@mediatek.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: drivers/net/wireless/mediatek/mt76/mt7925/mcu.c:645
- mt7925_load_clc() error: buffer overflow 'phy->clc' 2 <= 2
-To: Dan Carpenter <dan.carpenter@linaro.org>, <oe-kbuild@lists.linux.dev>,
-	Ming Yen Hsieh <mingyen.hsieh@mediatek.com>
-CC: <lkp@intel.com>, <oe-kbuild-all@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>, Felix Fietkau <nbd@nbd.name>
-References: <e3c426c9-c3d0-4b72-b2db-8780d61b1583@stanley.mountain>
-From: "zhangzekun (A)" <zhangzekun11@huawei.com>
-In-Reply-To: <e3c426c9-c3d0-4b72-b2db-8780d61b1583@stanley.mountain>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemf500003.china.huawei.com (7.202.181.241)
+Content-Type: text/plain
+X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-AS-Result: No-10--5.394300-8.000000
+X-TMASE-MatchedRID: gUuz9Ogq75WqO+wHLkIcO7E3FpMbg63SWDdWpJMntKiPaLJ/Ca3STzku
+	TGiiLo1Yx91bb4/YjfE5bsAcOzEG6DK42JVSvu3ARAvohSJUpI++1Vx7rDn4r7v408/GP5HqqcN
+	xd5hReGHi8zVgXoAltoAy6p60ZV62JW+71yEen6Zq8/xv2Um1avoLR4+zsDTtgUicvJ4MChkqZu
+	nyleO9cPKITgppfSr0LQnK66f9ldiohItm7Yy7y/cqHKzCJIUv
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--5.394300-8.000000
+X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-SNTS-SMTP:
+	F32734434536A121CD0B2F2009F6141F52AC7822B31BBEF4922DAF5077C969E42000:8
+X-MTK: N
 
+The change in mode filtering bandwidth calculation method must rely on
+DP training at the beginning, and get the current train info to calculate
+the bandwidth.
 
+Color format support capability must also rely on DP training time to
+get the most reliable link capability and choose which color format to use.
 
-在 2024/10/25 15:36, Dan Carpenter 写道:
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-> head:   4e46774408d942efe4eb35dc62e5af3af71b9a30
-> commit: 9679ca7326e52282cc923c4d71d81c999cb6cd55 wifi: mt76: mt7925: fix a potential array-index-out-of-bounds issue for clc
-> config: parisc-randconfig-r071-20241024 (https://download.01.org/0day-ci/archive/20241025/202410250608.Ly4Aj2NI-lkp@intel.com/config)
-> compiler: hppa-linux-gcc (GCC) 14.1.0
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> | Closes: https://lore.kernel.org/r/202410250608.Ly4Aj2NI-lkp@intel.com/
-> 
-> New smatch warnings:
-> drivers/net/wireless/mediatek/mt76/mt7925/mcu.c:645 mt7925_load_clc() error: buffer overflow 'phy->clc' 2 <= 2
-> 
-> Old smatch warnings:
-> drivers/net/wireless/mediatek/mt76/mt7925/mcu.c:1158 mt7925_mcu_set_mlo_roc() warn: variable dereferenced before check 'mconf' (see line 1130)
-> 
-> vim +645 drivers/net/wireless/mediatek/mt76/mt7925/mcu.c
-> 
-> c948b5da6bbec7 Deren Wu       2023-09-18  589  static int mt7925_load_clc(struct mt792x_dev *dev, const char *fw_name)
-> c948b5da6bbec7 Deren Wu       2023-09-18  590  {
-> c948b5da6bbec7 Deren Wu       2023-09-18  591  	const struct mt76_connac2_fw_trailer *hdr;
-> c948b5da6bbec7 Deren Wu       2023-09-18  592  	const struct mt76_connac2_fw_region *region;
-> c948b5da6bbec7 Deren Wu       2023-09-18  593  	const struct mt7925_clc *clc;
-> c948b5da6bbec7 Deren Wu       2023-09-18  594  	struct mt76_dev *mdev = &dev->mt76;
-> c948b5da6bbec7 Deren Wu       2023-09-18  595  	struct mt792x_phy *phy = &dev->phy;
-> c948b5da6bbec7 Deren Wu       2023-09-18  596  	const struct firmware *fw;
-> c948b5da6bbec7 Deren Wu       2023-09-18  597  	int ret, i, len, offset = 0;
-> c948b5da6bbec7 Deren Wu       2023-09-18  598  	u8 *clc_base = NULL;
-> c948b5da6bbec7 Deren Wu       2023-09-18  599
-> c948b5da6bbec7 Deren Wu       2023-09-18  600  	if (mt7925_disable_clc ||
-> c948b5da6bbec7 Deren Wu       2023-09-18  601  	    mt76_is_usb(&dev->mt76))
-> c948b5da6bbec7 Deren Wu       2023-09-18  602  		return 0;
-> c948b5da6bbec7 Deren Wu       2023-09-18  603
-> c948b5da6bbec7 Deren Wu       2023-09-18  604  	ret = request_firmware(&fw, fw_name, mdev->dev);
-> c948b5da6bbec7 Deren Wu       2023-09-18  605  	if (ret)
-> c948b5da6bbec7 Deren Wu       2023-09-18  606  		return ret;
-> c948b5da6bbec7 Deren Wu       2023-09-18  607
-> c948b5da6bbec7 Deren Wu       2023-09-18  608  	if (!fw || !fw->data || fw->size < sizeof(*hdr)) {
-> c948b5da6bbec7 Deren Wu       2023-09-18  609  		dev_err(mdev->dev, "Invalid firmware\n");
-> c948b5da6bbec7 Deren Wu       2023-09-18  610  		ret = -EINVAL;
-> c948b5da6bbec7 Deren Wu       2023-09-18  611  		goto out;
-> c948b5da6bbec7 Deren Wu       2023-09-18  612  	}
-> c948b5da6bbec7 Deren Wu       2023-09-18  613
-> c948b5da6bbec7 Deren Wu       2023-09-18  614  	hdr = (const void *)(fw->data + fw->size - sizeof(*hdr));
-> c948b5da6bbec7 Deren Wu       2023-09-18  615  	for (i = 0; i < hdr->n_region; i++) {
-> c948b5da6bbec7 Deren Wu       2023-09-18  616  		region = (const void *)((const u8 *)hdr -
-> c948b5da6bbec7 Deren Wu       2023-09-18  617  					(hdr->n_region - i) * sizeof(*region));
-> c948b5da6bbec7 Deren Wu       2023-09-18  618  		len = le32_to_cpu(region->len);
-> c948b5da6bbec7 Deren Wu       2023-09-18  619
-> c948b5da6bbec7 Deren Wu       2023-09-18  620  		/* check if we have valid buffer size */
-> c948b5da6bbec7 Deren Wu       2023-09-18  621  		if (offset + len > fw->size) {
-> c948b5da6bbec7 Deren Wu       2023-09-18  622  			dev_err(mdev->dev, "Invalid firmware region\n");
-> c948b5da6bbec7 Deren Wu       2023-09-18  623  			ret = -EINVAL;
-> c948b5da6bbec7 Deren Wu       2023-09-18  624  			goto out;
-> c948b5da6bbec7 Deren Wu       2023-09-18  625  		}
-> c948b5da6bbec7 Deren Wu       2023-09-18  626
-> c948b5da6bbec7 Deren Wu       2023-09-18  627  		if ((region->feature_set & FW_FEATURE_NON_DL) &&
-> c948b5da6bbec7 Deren Wu       2023-09-18  628  		    region->type == FW_TYPE_CLC) {
-> c948b5da6bbec7 Deren Wu       2023-09-18  629  			clc_base = (u8 *)(fw->data + offset);
-> c948b5da6bbec7 Deren Wu       2023-09-18  630  			break;
-> c948b5da6bbec7 Deren Wu       2023-09-18  631  		}
-> c948b5da6bbec7 Deren Wu       2023-09-18  632  		offset += len;
-> c948b5da6bbec7 Deren Wu       2023-09-18  633  	}
-> c948b5da6bbec7 Deren Wu       2023-09-18  634
-> c948b5da6bbec7 Deren Wu       2023-09-18  635  	if (!clc_base)
-> c948b5da6bbec7 Deren Wu       2023-09-18  636  		goto out;
-> c948b5da6bbec7 Deren Wu       2023-09-18  637
-> c948b5da6bbec7 Deren Wu       2023-09-18  638  	for (offset = 0; offset < len; offset += le32_to_cpu(clc->len)) {
-> c948b5da6bbec7 Deren Wu       2023-09-18  639  		clc = (const struct mt7925_clc *)(clc_base + offset);
-> c948b5da6bbec7 Deren Wu       2023-09-18  640
-> 9679ca7326e522 Ming Yen Hsieh 2024-08-19  641  		if (clc->idx > ARRAY_SIZE(phy->clc))
-> 
-> This should be >= instead of >.
-> 
-> 9679ca7326e522 Ming Yen Hsieh 2024-08-19  642  			break;
-> 9679ca7326e522 Ming Yen Hsieh 2024-08-19  643
-> c948b5da6bbec7 Deren Wu       2023-09-18  644  		/* do not init buf again if chip reset triggered */
-> c948b5da6bbec7 Deren Wu       2023-09-18 @645  		if (phy->clc[clc->idx])
-> c948b5da6bbec7 Deren Wu       2023-09-18  646  			continue;
-> c948b5da6bbec7 Deren Wu       2023-09-18  647
-> c948b5da6bbec7 Deren Wu       2023-09-18  648  		phy->clc[clc->idx] = devm_kmemdup(mdev->dev, clc,
-> c948b5da6bbec7 Deren Wu       2023-09-18  649  						  le32_to_cpu(clc->len),
-> c948b5da6bbec7 Deren Wu       2023-09-18  650  						  GFP_KERNEL);
-> c948b5da6bbec7 Deren Wu       2023-09-18  651
-> c948b5da6bbec7 Deren Wu       2023-09-18  652  		if (!phy->clc[clc->idx]) {
-> c948b5da6bbec7 Deren Wu       2023-09-18  653  			ret = -ENOMEM;
-> c948b5da6bbec7 Deren Wu       2023-09-18  654  			goto out;
-> c948b5da6bbec7 Deren Wu       2023-09-18  655  		}
-> c948b5da6bbec7 Deren Wu       2023-09-18  656  	}
-> c948b5da6bbec7 Deren Wu       2023-09-18  657
-> c948b5da6bbec7 Deren Wu       2023-09-18  658  	ret = mt7925_mcu_set_clc(dev, "00", ENVIRON_INDOOR);
-> c948b5da6bbec7 Deren Wu       2023-09-18  659  out:
-> c948b5da6bbec7 Deren Wu       2023-09-18  660  	release_firmware(fw);
-> c948b5da6bbec7 Deren Wu       2023-09-18  661
-> c948b5da6bbec7 Deren Wu       2023-09-18  662  	return ret;
-> c948b5da6bbec7 Deren Wu       2023-09-18  663  }
-> 
+Fixed YCbCr422 problem and bandwidth calculation from color format are
+both in the color format category, so they are bound.
 
-Hi, Dan,
+In summary, YCbCr 422 and mode valid must rely on DP training timing,
+so they are strongly bound.
 
-The issue is obvious here. Will send a fix soon.
+Liankun Yang (3):
+  drm/mediatek: Fix YCbCr422 color format issue for DP
+  drm/mediatek: Fix mode valid issue for dp
+  drm/mediatek: Adjust bandwidth limit for DP
 
-Thanks,
-Zekun
+ drivers/gpu/drm/mediatek/mtk_dp.c | 78 ++++++++++++++++++-------------
+ 1 file changed, 45 insertions(+), 33 deletions(-)
+
+-- 
+2.45.2
+
 
