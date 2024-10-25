@@ -1,347 +1,145 @@
-Return-Path: <linux-kernel+bounces-382058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9142D9B0880
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:39:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70BFF9B087E
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:39:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50E20283AB9
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:39:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94DE11C20932
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:39:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2595916849F;
-	Fri, 25 Oct 2024 15:39:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lQi4Pbwm"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FEE015ADAB;
+	Fri, 25 Oct 2024 15:39:06 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8DB71662E4
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 15:39:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B927070837
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 15:39:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729870750; cv=none; b=Sgen6g8DL9h+hZtmBtdfXgj0ySzWWnkLaS9EEUKMYG+YAZDqg20ZL+pMAZ2NCcg4nMRFZXfbbmsQ1s7AF4j0rY1dCW7iy7UmdwctDfdh0CNL2YCprAfvgnXtNEafK1c9mt0zpNl1xuuE/h3POEu+qWkbhUlCCAYCwu73d5PyXOg=
+	t=1729870745; cv=none; b=lcIrGeOasV67VfZ4ETmiXWtsAOLR9BLcNk8dJaRqoqTLVWCuz1Pfayv9Y4rH9RSK7EoYazYhFyeYW2zxmlDpIYLpJxREdIyGI8droVZkXlI1jrjdFIIlYEJeLw94D1CQGxUwoqv/VOc2GDr1AHlXsCt2TvH+dJBppwr/PwH26Zk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729870750; c=relaxed/simple;
-	bh=EOvJ0D8TG78IMVWVRxSYtA0OQt6UgWwiQHkwPlaUOi0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UQQouEXhiosN8gpB3+y401zQhWJZnJvqBVsi0WPBFkZnM7C7zC6KA8oIjGuYzPYtpUzjWTGFijlWHCC7jBQByvsX86EzRCeWQL+3OxLzqX1BqRVJSQchwb2oYqEbZasxtQCs6quOHzcdXpJk6o1gD42J2jpr/f1olHONqRxhFSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lQi4Pbwm; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4315b957ae8so2731445e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 08:39:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729870746; x=1730475546; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=/kQLJ1WulOnKboXBM3Jz/ufmddrGHi57pVSzIXTz7Ok=;
-        b=lQi4PbwmipohI5f+XXKLXAvg5KcR8dQm7A36A4uCHKzsVw5AoDXZS2VBkPjoo0qNf3
-         9WZwd6eLCvlb0sKdOFDr3WpBFAQ65ITKudk1rhB0LSIl+u2NlSfpWcyH3aW4TQDKBx3H
-         XiUY54umrZeX4X+fJbmeWuBV6G/z8ivmDsZCyx66YZY7HERWWASMe/M0iZbZTA04jxc7
-         Kgh9x4M26EHqm/rGImMz6kNAc5Jf0jIWdBosBlzwUwovFhurKjG9j8Yisp9j4UPHV2tq
-         yA4VKuqtKEbqGELDjAv7ySVRK86LTIht+wze81G5c919wW7Z7sRxkKABg1c9IvTPKmnd
-         Tl5g==
+	s=arc-20240116; t=1729870745; c=relaxed/simple;
+	bh=p9sUutlW1W8I35BzB1umbiyZrvACpo+idZP5Sscodrg=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=fokOUSIiJBcuv49Rs+gnLcpCWBUFj/hwqJrw2YWMessm8pDcJfmpUUAkTyTUJ6LqGeUXi0y89paMvAqNvG8Gd0MP90kU7/RElsrJo39pJwhzFQ6Xr9+u+bCyrcQ/497kns8vtOaLbQeWtmRlRJn4rVCAD4cSHkNJbgLQ5z8t/xk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a4e52b6577so9982255ab.3
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 08:39:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729870746; x=1730475546;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/kQLJ1WulOnKboXBM3Jz/ufmddrGHi57pVSzIXTz7Ok=;
-        b=Jyddt+e8aj4bSOaZHoOGUGNVnZHOtNOMueN5dexS2ivLLw6e07+Dukm3ei4At5SpJn
-         oXTv9dtk6Ca41BzYJ19+LCXzlw4dIC9aDr8R4JYyH+TkMX6sAM8qywm+BPw2Sm6C4u9o
-         VlOUWL04xqYchEzk/99qswZgwKPebxNpkjgZm5xX7ZfQ++SXzLfgSkcFYXuf1Xl9Owam
-         Zt01nkYHGcH/P1EeXjpTljy/VWfwxPiYq75pXIQeavgq1t/46qy25KVfJJjdkIfnJvCb
-         iW89f83o+TsjGd4vOxwcOfeiucYbgcpxcvQayJDfFiV9qFjm10zzz3Z7tqh65J6Upal6
-         L7aQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUXAKYMxlKJ3jvagYNkRTVHWRLT65lRa2PI3KISfaEZzlX583eDr3YZn2bRmIDULDw3qdQy60tmtK/NgGo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywm1DIujyjnJMFzdvDI5DaRTdGzHOsCUheBC3VDOVLXgFb2yBXf
-	VXkfwqVgBnfU+Ms9yqvsCJyMU2UUFGImWPNyGYqbeZ9fcFTArb3Bf8zNiAnocrA=
-X-Google-Smtp-Source: AGHT+IHBTzIwTHTRLbojQmV6hikqVsR0ckenIkv4UnP+XvG0/HGaL7jpvZiuD0W1h/yM40GSudKt0g==
-X-Received: by 2002:a05:600c:4f91:b0:430:52ec:1e2a with SMTP id 5b1f17b1804b1-43194e37134mr8892645e9.7.1729870746133;
-        Fri, 25 Oct 2024 08:39:06 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.211.167])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4318b55f484sm51022355e9.13.2024.10.25.08.39.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2024 08:39:05 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Abel Vesa <abel.vesa@linaro.org>,
-	Johan Hovold <johan+linaro@kernel.org>
-Subject: [PATCH] arm64: dts: qcom: x1e78100-t14s: add sound support
-Date: Fri, 25 Oct 2024 17:39:01 +0200
-Message-ID: <20241025153901.156891-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1729870743; x=1730475543;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5Oq8HxeYVIUawIesiC01zouDOwHoc+4BYOjOHVRTs+Y=;
+        b=LQxxvo8/zCcMYguYJehLkcXbTou0rPm4hDm5p3gupgn/pdbxInC9exKqaPQHFSZ+Vz
+         ovjh065XJ3ZlU5Ez/+znbmX0djhNZLq2tseZifFTWQfO9YEx7ntM2uvW10ueKLqcAVW8
+         WbrLLwDyLy3/Idfx76fBFCwmuKBcinwlkZYa7Z/hr2qtCl4agr6qzRx4Pkf/CInM335l
+         +LIZNgAsFFWV/tAaJBG+ahkj85OVz+sHoxyxjNBUwAoDosOmnJTIoEXii23IChd5R3GO
+         wNW/0aefFbKi0poaAjL38QDSHgGZbaGgmLikcTMe05yKaXFDKie7GOWnQWw5s5k8m0l1
+         AbOw==
+X-Forwarded-Encrypted: i=1; AJvYcCU/yeDFMLwoaZ+5jkLI3UtIuNvTo5e65HWKzh9OcX2/0yUDd7IStl6Pg6j/AVNlN3fSKD5ZEvHBeBA5dvI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxzFPI+Zoh2Y1rq3tk0dPoEoOG6m4TS+MdRFm8uyTwIoHhesRQ
+	QlnPTv6vKXRGZY4whXPZL08MBcCpYxFq0hsdGQHKE/deMGVPQS/LpGiKsXzWgSPboeI5Nb+t6D2
+	PFs/G+1BeJjAEOWiGocmBhwI3Qlz/+5KU6aePw7D3hATCNbR8eA/xy0Y=
+X-Google-Smtp-Source: AGHT+IEW+6miMwqaGV67v3YaAfuEG8aVAR1vi48q9c5G2ONiHa9saNcMzSStyHkUWKrLpGhCj87HBKenBVPtFz9hiiSPvfy9INs8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:1c21:b0:3a3:da4f:79ec with SMTP id
+ e9e14a558f8ab-3a4de78e854mr64363205ab.7.1729870742768; Fri, 25 Oct 2024
+ 08:39:02 -0700 (PDT)
+Date: Fri, 25 Oct 2024 08:39:02 -0700
+In-Reply-To: <20241025152459.485-1-zoo868e@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <671bbb96.050a0220.2e773.0008.GAE@google.com>
+Subject: Re: [syzbot] [jfs?] UBSAN: shift-out-of-bounds in dbFindBits (2)
+From: syzbot <syzbot+9e90a1c5eedb9dc4c6cc@syzkaller.appspotmail.com>
+To: jfs-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
+	shaggy@kernel.org, skhan@linuxfoundation.org, syzkaller-bugs@googlegroups.com, 
+	zoo868e@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Hello,
 
-Add support for audio on Lenovo T14s laptop, coming with two speakers,
-audio jack and two digital microphones.
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+kernel BUG in dbFindBits
 
-This is very early work, not yet complete:
-1. 2x speakers: work OK.
-2. 2x digital microphones: work OK.
-3. Headset (audio jack) recording: does not work.
-4. Headphones playback (audio jack): channels are intermixed.
+ERROR: (device loop0): dbAllocBits: leaf page corrupt
+BUG at fs/jfs/jfs_dmap.c:3018 assert(nb < DBWORD || (nb == DBWORD && !word))
+------------[ cut here ]------------
+kernel BUG at fs/jfs/jfs_dmap.c:3018!
+Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
+CPU: 0 UID: 0 PID: 5606 Comm: syz.0.15 Not tainted 6.12.0-rc4-syzkaller-00161-gae90f6a6170d-dirty #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:dbFindBits+0x1dc/0x210 fs/jfs/jfs_dmap.c:3018
+Code: e9 fa fe ff ff e8 74 40 68 fe 48 c7 c7 00 33 43 8c 48 c7 c6 40 30 43 8c ba ca 0b 00 00 48 c7 c1 c0 3a 43 8c e8 65 30 97 08 90 <0f> 0b e8 4d 40 68 fe 48 c7 c7 00 33 43 8c 48 c7 c6 40 30 43 8c ba
+RSP: 0018:ffffc9000b107940 EFLAGS: 00010246
+RAX: 000000000000004c RBX: ffff88801f140800 RCX: 37b0eb8928fc2800
+RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
+RBP: 0000000000000020 R08: ffffffff81749f8c R09: 1ffff92001620ec4
+R10: dffffc0000000000 R11: fffff52001620ec5 R12: 0000000000000020
+R13: 1ffff92001620f38 R14: 00000000ffffffff R15: 0000000000000005
+FS:  00007fd1f83196c0(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000001b2ea5ffff CR3: 00000000415e4000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ dbAllocDmapLev+0x1e9/0x4a0 fs/jfs/jfs_dmap.c:1985
+ dbAllocCtl+0x113/0x920 fs/jfs/jfs_dmap.c:1825
+ dbAllocAG+0x28f/0x10b0 fs/jfs/jfs_dmap.c:1364
+ dbDiscardAG+0x352/0xa20 fs/jfs/jfs_dmap.c:1613
+ jfs_ioc_trim+0x45a/0x6b0 fs/jfs/jfs_discard.c:105
+ jfs_ioctl+0x2cd/0x3e0 fs/jfs/ioctl.c:131
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:907 [inline]
+ __se_sys_ioctl+0xf9/0x170 fs/ioctl.c:893
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fd1f757dff9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fd1f8319038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007fd1f7735f80 RCX: 00007fd1f757dff9
+RDX: 00000000200000c0 RSI: 00000000c0185879 RDI: 0000000000000004
+RBP: 00007fd1f75f0296 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007fd1f7735f80 R15: 00007ffdd2e520e8
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:dbFindBits+0x1dc/0x210 fs/jfs/jfs_dmap.c:3018
+Code: e9 fa fe ff ff e8 74 40 68 fe 48 c7 c7 00 33 43 8c 48 c7 c6 40 30 43 8c ba ca 0b 00 00 48 c7 c1 c0 3a 43 8c e8 65 30 97 08 90 <0f> 0b e8 4d 40 68 fe 48 c7 c7 00 33 43 8c 48 c7 c6 40 30 43 8c ba
+RSP: 0018:ffffc9000b107940 EFLAGS: 00010246
+RAX: 000000000000004c RBX: ffff88801f140800 RCX: 37b0eb8928fc2800
+RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
+RBP: 0000000000000020 R08: ffffffff81749f8c R09: 1ffff92001620ec4
+R10: dffffc0000000000 R11: fffff52001620ec5 R12: 0000000000000020
+R13: 1ffff92001620f38 R14: 00000000ffffffff R15: 0000000000000005
+FS:  00007fd1f83196c0(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000001b2ea5ffff CR3: 00000000415e4000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-[krzysztof: correct DMIC routing and vamacro pinctrl, re-order nodes,
- add commit msg]
-Co-developed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
----
+Tested on:
 
-1. Audioreach topology was already pushed to main branch:
-https://github.com/linux-msm/audioreach-topology
-
-2. ALSA UCM files are ready and soon will be pushed by Srini.
-
-Cc: Abel Vesa <abel.vesa@linaro.org>
-Cc: Johan Hovold <johan+linaro@kernel.org>
----
- .../qcom/x1e78100-lenovo-thinkpad-t14s.dts    | 183 ++++++++++++++++++
- 1 file changed, 183 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts b/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts
-index d078c76c6da5..7bc3756803d2 100644
---- a/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts
-+++ b/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts
-@@ -19,6 +19,32 @@ / {
- 	compatible = "lenovo,thinkpad-t14s", "qcom,x1e78100", "qcom,x1e80100";
- 	chassis-type = "laptop";
- 
-+	wcd938x: audio-codec {
-+		compatible = "qcom,wcd9385-codec";
-+
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&wcd_default>;
-+
-+		qcom,micbias1-microvolt = <1800000>;
-+		qcom,micbias2-microvolt = <1800000>;
-+		qcom,micbias3-microvolt = <1800000>;
-+		qcom,micbias4-microvolt = <1800000>;
-+		qcom,mbhc-buttons-vthreshold-microvolt = <75000 150000 237000 500000 500000 500000 500000 500000>;
-+		qcom,mbhc-headset-vthreshold-microvolt = <1700000>;
-+		qcom,mbhc-headphone-vthreshold-microvolt = <50000>;
-+		qcom,rx-device = <&wcd_rx>;
-+		qcom,tx-device = <&wcd_tx>;
-+
-+		reset-gpios = <&tlmm 191 GPIO_ACTIVE_LOW>;
-+
-+		vdd-buck-supply = <&vreg_l15b_1p8>;
-+		vdd-rxtx-supply = <&vreg_l15b_1p8>;
-+		vdd-io-supply = <&vreg_l15b_1p8>;
-+		vdd-mic-bias-supply = <&vreg_bob1>;
-+
-+		#sound-dai-cells = <1>;
-+	};
-+
- 	gpio-keys {
- 		compatible = "gpio-keys";
- 
-@@ -151,6 +177,85 @@ vph_pwr: regulator-vph-pwr {
- 		regulator-always-on;
- 		regulator-boot-on;
- 	};
-+
-+	sound {
-+		compatible = "qcom,x1e80100-sndcard";
-+		model = "X1E80100-LENOVO-Thinkpad-T14s";
-+		audio-routing = "SpkrLeft IN", "WSA WSA_SPK1 OUT",
-+				"SpkrRight IN", "WSA WSA_SPK2 OUT",
-+				"IN1_HPHL", "HPHL_OUT",
-+				"IN2_HPHR", "HPHR_OUT",
-+				"AMIC2", "MIC BIAS2",
-+				"VA DMIC0", "MIC BIAS1",
-+				"VA DMIC1", "MIC BIAS1",
-+				"VA DMIC0", "VA MIC BIAS1",
-+				"VA DMIC1", "VA MIC BIAS1",
-+				"TX SWR_INPUT1", "ADC2_OUTPUT";
-+
-+		wcd-playback-dai-link {
-+			link-name = "WCD Playback";
-+
-+			cpu {
-+				sound-dai = <&q6apmbedai RX_CODEC_DMA_RX_0>;
-+			};
-+
-+			codec {
-+				sound-dai = <&wcd938x 0>, <&swr1 0>, <&lpass_rxmacro 0>;
-+			};
-+
-+			platform {
-+				sound-dai = <&q6apm>;
-+			};
-+		};
-+
-+		wcd-capture-dai-link {
-+			link-name = "WCD Capture";
-+
-+			cpu {
-+				sound-dai = <&q6apmbedai TX_CODEC_DMA_TX_3>;
-+			};
-+
-+			codec {
-+				sound-dai = <&wcd938x 1>, <&swr2 1>, <&lpass_txmacro 0>;
-+			};
-+
-+			platform {
-+				sound-dai = <&q6apm>;
-+			};
-+		};
-+
-+		wsa-dai-link {
-+			link-name = "WSA Playback";
-+
-+			cpu {
-+				sound-dai = <&q6apmbedai WSA_CODEC_DMA_RX_0>;
-+			};
-+
-+			codec {
-+				sound-dai = <&left_spkr>, <&right_spkr>, <&swr0 0>, <&lpass_wsamacro 0>;
-+			};
-+
-+			platform {
-+				sound-dai = <&q6apm>;
-+			};
-+		};
-+
-+		va-dai-link {
-+			link-name = "VA Capture";
-+
-+			cpu {
-+				sound-dai = <&q6apmbedai VA_CODEC_DMA_TX_0>;
-+			};
-+
-+			codec {
-+				sound-dai = <&lpass_vamacro 0>;
-+			};
-+
-+			platform {
-+				sound-dai = <&q6apm>;
-+			};
-+		};
-+	};
- };
- 
- &apps_rsc {
-@@ -183,6 +288,13 @@ vreg_bob2: bob2 {
- 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
- 		};
- 
-+		vreg_l1b_1p8: ldo1 {
-+			regulator-name = "vreg_l1b_1p8";
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
- 		vreg_l2b_3p0: ldo2 {
- 			regulator-name = "vreg_l2b_3p0";
- 			regulator-min-microvolt = <3072000>;
-@@ -513,6 +625,24 @@ touchscreen@10 {
- 	/* TODO: second-sourced touchscreen @ 0x41 */
- };
- 
-+&lpass_tlmm {
-+	spkr_01_sd_n_active: spkr-01-sd-n-active-state {
-+		pins = "gpio12";
-+		function = "gpio";
-+		drive-strength = <16>;
-+		bias-disable;
-+		output-low;
-+	};
-+};
-+
-+&lpass_vamacro {
-+	pinctrl-0 = <&dmic01_default>;
-+	pinctrl-names = "default";
-+
-+	vdd-micb-supply = <&vreg_l1b_1p8>;
-+	qcom,dmic-sample-rate = <4800000>;
-+};
-+
- &mdss {
- 	status = "okay";
- };
-@@ -643,6 +773,59 @@ &smb2360_1_eusb2_repeater {
- 	vdd3-supply = <&vreg_l14b_3p0>;
- };
- 
-+&swr0 {
-+	status = "okay";
-+
-+	pinctrl-0 = <&wsa_swr_active>, <&spkr_01_sd_n_active>;
-+	pinctrl-names = "default";
-+
-+	/* WSA8845, Left Speaker */
-+	left_spkr: speaker@0,0 {
-+		compatible = "sdw20217020400";
-+		reg = <0 0>;
-+		reset-gpios = <&lpass_tlmm 12 GPIO_ACTIVE_LOW>;
-+		#sound-dai-cells = <0>;
-+		sound-name-prefix = "SpkrLeft";
-+		vdd-1p8-supply = <&vreg_l15b_1p8>;
-+		vdd-io-supply = <&vreg_l12b_1p2>;
-+		qcom,port-mapping = <1 2 3 7 10 13>;
-+	};
-+
-+	/* WSA8845, Right Speaker */
-+	right_spkr: speaker@0,1 {
-+		compatible = "sdw20217020400";
-+		reg = <0 1>;
-+		reset-gpios = <&lpass_tlmm 12 GPIO_ACTIVE_LOW>;
-+		#sound-dai-cells = <0>;
-+		sound-name-prefix = "SpkrRight";
-+		vdd-1p8-supply = <&vreg_l15b_1p8>;
-+		vdd-io-supply = <&vreg_l12b_1p2>;
-+		qcom,port-mapping = <4 5 6 7 11 13>;
-+	};
-+};
-+
-+&swr1 {
-+	status = "okay";
-+
-+	/* WCD9385 RX */
-+	wcd_rx: codec@0,4 {
-+		compatible = "sdw20217010d00";
-+		reg = <0 4>;
-+		qcom,rx-port-mapping = <1 2 3 4 5>;
-+	};
-+};
-+
-+&swr2 {
-+	status = "okay";
-+
-+	/* WCD9385 TX */
-+	wcd_tx: codec@0,3 {
-+		compatible = "sdw20217010d00";
-+		reg = <0 3>;
-+		qcom,tx-port-mapping = <2 2 3 4>;
-+	};
-+};
-+
- &tlmm {
- 	gpio-reserved-ranges = <34 2>, /* Unused */
- 			       <44 4>, /* SPI (TPM) */
--- 
-2.43.0
+commit:         ae90f6a6 Merge tag 'bpf-fixes' of git://git.kernel.org..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=166868a7980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=fc6f8ce8c5369043
+dashboard link: https://syzkaller.appspot.com/bug?extid=9e90a1c5eedb9dc4c6cc
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=10a7de40580000
 
 
