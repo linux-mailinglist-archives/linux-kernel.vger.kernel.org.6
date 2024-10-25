@@ -1,206 +1,157 @@
-Return-Path: <linux-kernel+bounces-382097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2B459B093B
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 18:09:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 654649B0937
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 18:09:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00A2E1C20FCF
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:09:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AFACAB23A61
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:09:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47884185B46;
-	Fri, 25 Oct 2024 16:09:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AIsa5Qyv"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C00517BB1A;
+	Fri, 25 Oct 2024 16:09:04 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22F2C16FF44;
-	Fri, 25 Oct 2024 16:09:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C878816FF44;
+	Fri, 25 Oct 2024 16:08:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729872559; cv=none; b=V/LawBlcSzd60EBSupA4KgVOSOTOjrZW6px94980y39nWbGl5RC/G2XFgV+E/TFKYdObh5/A1D8xPhJ1px+skDtQ0XiaZt9K6635TynMfugXfF/TfjOGYUaVeXUNuXwDuPzQn3PFKj5OGBxsiCmYL+6++nq9zlHdkMPj0rJyIvA=
+	t=1729872543; cv=none; b=QUnupwe/ftqBAQuWjyf/C8OY7DrwLelr23CJCxzkTc4Z8zOF0umHHBzUUmcnfhheriSGtKH5u1A20tEbvaFTfINaOo34STX5GXg5yq+nEXj0z07TKnjQzPgDn8FpN/eQIMBPc+Zzu01txIyMrF0i1XZl5Fw2P78w8I+SoaZ5YTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729872559; c=relaxed/simple;
-	bh=bg7ld2Rvq1YDUxAKGt3jeDUJXtPakerYwHO9+3j/ZH8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NZ6D67pxCKGf+D9gg2bHN6k47R0LCpW+QhuXZAIS1fBcUvB0ORemU6crYwjAIlrpgfbEnmOvwFwTkR262356SUYl4Fj35FpWop7JLOUjBYwM+vkmk9pIRTzKJWeXDzRS9PXddAgocigqIMTO70YQhn0CeMVmD9Ab8rdAvfESyj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AIsa5Qyv; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729872558; x=1761408558;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=bg7ld2Rvq1YDUxAKGt3jeDUJXtPakerYwHO9+3j/ZH8=;
-  b=AIsa5QyvA5FU0obTz52OOE07k81Cj3gvBUFFjqXbLhP4g1Y8tJIlQ7Np
-   52rvrFkgWM6OJYWM7bKOyctQlNyqpfIU8iGZqClNIEMieJswwWVcdZcLX
-   tq62ZZEeJHDKXhFQ+c4sX/fEaus8qvd89ErW1KXOhSTHqWYCAivpQd07U
-   a46Rhocs+kl2C0lIaM0uGawFwRH6B7QE7Z0R6RTH30h0FgPfRDE4pYlXn
-   trS873vtU5IOe6QOUfBEnEXkK4lLyouAnHeVZj8E7VPUh4id/TBHhRxGq
-   9RfuEGRGfuvo+fuYSEY/aw/ZwLQncwgMPSmJtZJoBjyNVuDS5x37QuGEr
-   Q==;
-X-CSE-ConnectionGUID: LZjdXDshQU6wzH8fcDkULg==
-X-CSE-MsgGUID: L82BmWEiQHOxY6L3nDsC7Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="29323456"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="29323456"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2024 09:09:17 -0700
-X-CSE-ConnectionGUID: yb5LgQFzSZ6QPHlWDkuyHw==
-X-CSE-MsgGUID: ZS7B1GaAQr+cJ7qU9CNZ0w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,232,1725346800"; 
-   d="scan'208";a="85541252"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa004.fm.intel.com with ESMTP; 25 Oct 2024 09:09:12 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t4MsA-000YS2-0q;
-	Fri, 25 Oct 2024 16:09:10 +0000
-Date: Sat, 26 Oct 2024 00:08:35 +0800
-From: kernel test robot <lkp@intel.com>
-To: Md Sadre Alam <quic_mdalam@quicinc.com>, broonie@kernel.org,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	andersson@kernel.org, konradybcio@kernel.org,
-	miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com,
-	manivannan.sadhasivam@linaro.org, linux-arm-msm@vger.kernel.org,
-	linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org
-Cc: oe-kbuild-all@lists.linux.dev, quic_srichara@quicinc.com,
-	quic_varada@quicinc.com, quic_mdalam@quicinc.com
-Subject: Re: [PATCH v12 6/8] spi: spi-qpic: add driver for QCOM SPI NAND
- flash Interface
-Message-ID: <202410252355.ZofaMeku-lkp@intel.com>
-References: <20241021115620.1616617-7-quic_mdalam@quicinc.com>
+	s=arc-20240116; t=1729872543; c=relaxed/simple;
+	bh=zYjnBwvtGTqIrdDRx9LwMu2z0itwomSygbNeb4iemIk=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lhO5VTA/7VGqj4hvlcSg2M2ugGXnD4IqCmFv/x/+xbdmn98qaJDVoIv88EUDaSx1386vUreLk2v8h0S+s5xzVqfjSRzcLEMvh08ECO22qLBlBAWuTBeSATTxOmopP/5Vxirj+VZzoJh9Mfp1tAwPqNMeXuPqXqe2pwnKZdpQAX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XZnj31jzhz6K6Fx;
+	Sat, 26 Oct 2024 00:06:47 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 32D6414039E;
+	Sat, 26 Oct 2024 00:08:57 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 25 Oct
+ 2024 18:08:56 +0200
+Date: Fri, 25 Oct 2024 17:08:55 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+CC: Jonathan Cameron <jic23@kernel.org>, Stephen Rothwell
+	<sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>, Arnd Bergmann
+	<arnd@arndb.de>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	<linux-iio@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the char-misc tree with the
+ iio-fixes tree
+Message-ID: <20241025170855.00001f0a@Huawei.com>
+In-Reply-To: <d5a57cad-7311-4075-8b6e-04f22ed510f7@gmail.com>
+References: <20241023141015.0ec5346d@canb.auug.org.au>
+	<22f9dbb6-ba5e-4c85-8aa2-6090008e7da4@gmail.com>
+	<20241024184108.6eb3bdf0@jic23-huawei>
+	<d5a57cad-7311-4075-8b6e-04f22ed510f7@gmail.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241021115620.1616617-7-quic_mdalam@quicinc.com>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100003.china.huawei.com (7.191.160.210) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-Hi Md,
+On Thu, 24 Oct 2024 20:39:57 +0200
+Javier Carrasco <javier.carrasco.cruz@gmail.com> wrote:
 
-kernel test robot noticed the following build warnings:
+> On 24/10/2024 19:41, Jonathan Cameron wrote:
+> > On Wed, 23 Oct 2024 20:17:30 +0200
+> > Javier Carrasco <javier.carrasco.cruz@gmail.com> wrote:
+> >   
+> >> On 23/10/2024 05:10, Stephen Rothwell wrote:  
+> >>> Hi all,
+> >>>
+> >>> Today's linux-next merge of the char-misc tree got a conflict in:
+> >>>
+> >>>   drivers/iio/light/veml6030.c
+> >>>
+> >>> between commit:
+> >>>
+> >>>   de9981636774 ("iio: light: veml6030: fix microlux value calculation")
+> >>>
+> >>> from the iio-fixes tree and commit:
+> >>>
+> >>>   ed59fc90f38a ("iio: light: veml6030: drop processed info for white channel")
+> >>>
+> >>> from the char-misc tree.
+> >>>
+> >>> I fixed it up (the latter removed the line updated by the former) and
+> >>> can carry the fix as necessary. This is now fixed as far as linux-next
+> >>> is concerned, but any non trivial conflicts should be mentioned to your
+> >>> upstream maintainer when your tree is submitted for merging.  You may
+> >>> also want to consider cooperating with the maintainer of the conflicting
+> >>> tree to minimise any particularly complex conflicts.
+> >>>     
+> >>
+> >>
+> >> Hi Stephen,
+> >>
+> >> I doubled checked the status of the driver in linux-next, and everything
+> >> looks as it should: the first commit applied as a single chunk, as its
+> >> second chunk affects lines that the second commit removed.
+> >>
+> >> Thank you for fixing it up.  
+> > 
+> > Not quite. This was a lucky merge issue as it highlighted something I'd
+> > messed up.
+> > 
+> > A rare case of a fuzzy application of a patch picking the wrong block but still
+> > giving a very plausible looking diff that fooled me.
+> > 
+> > I picked up the fix via a different tree from where you expected.
+> > In char-misc-next / iio/togreg there is only one instance of this code block because
+> > the larger driver rework removed one of the two that was in the tree that
+> > iio-fixes is based on (effectively mainline).
+> > 
+> > The fix got applied to the one that is going away (which is going away because
+> > the scale makes no sense on the intensity channel) not the illuminance / IIO_LIGHT
+> > channel that was intended.
+> > 
+> > I've move it to the right block with the side effect that the merge conflict
+> > should go away.  Javier, please check iio.git/fixes-togreg to be 100% sure
+> > I haven't messed it up again.
+> > 
+> > Thanks Stephen for your hard work on linux-next!
+> > 
+> > Jonathan
+> >   
+> >>
+> >> Best regards,
+> >> Javier Carrasco  
+> >   
+> 
+> What I see in iio.git/fixes-togreg is right in the sense that the fix
+> fro the processed value (commit 63dd163cd61dd) is only applied to the
+> processed value of the IIO_LIGHT channel, and not to IIO_INTENSITY.
+> 
+> The processed value of the IIO_INTENSITY channel should be then dropped
+> at some point with the other patch, as it has already been done in
+> linux-next/master.
+> 
+Yes. We may want to separately chase back dropping the processed
+IIO_INTENSITY later given the issues that are left there.
+Once the change is upstream, I'd be fine with that as a backported
+fix.
 
-[auto build test WARNING on mtd/nand/next]
-[also build test WARNING on broonie-spi/for-next robh/for-next linus/master v6.12-rc4 next-20241025]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Jonathan
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Md-Sadre-Alam/spi-dt-bindings-Introduce-qcom-spi-qpic-snand/20241021-200849
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git nand/next
-patch link:    https://lore.kernel.org/r/20241021115620.1616617-7-quic_mdalam%40quicinc.com
-patch subject: [PATCH v12 6/8] spi: spi-qpic: add driver for QCOM SPI NAND flash Interface
-config: sparc64-randconfig-r073-20241023 (https://download.01.org/0day-ci/archive/20241025/202410252355.ZofaMeku-lkp@intel.com/config)
-compiler: sparc64-linux-gcc (GCC) 14.1.0
+> Best regards,
+> Javier Carrasco
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410252355.ZofaMeku-lkp@intel.com/
-
-smatch warnings:
-drivers/spi/spi-qpic-snand.c:1260 qcom_spi_write_page() warn: unsigned 'cmd' is never less than zero.
-drivers/spi/spi-qpic-snand.c:1279 qcom_spi_send_cmdaddr() warn: unsigned 'cmd' is never less than zero.
-
-vim +/cmd +1260 drivers/spi/spi-qpic-snand.c
-
-  1252	
-  1253	static int qcom_spi_write_page(struct qcom_nand_controller *snandc,
-  1254				       const struct spi_mem_op *op)
-  1255	{
-  1256		struct qpic_snand_op s_op = {};
-  1257		u32 cmd;
-  1258	
-  1259		cmd = qcom_spi_cmd_mapping(snandc, op->cmd.opcode);
-> 1260		if (cmd < 0)
-  1261			return cmd;
-  1262	
-  1263		s_op.cmd_reg = cmd;
-  1264	
-  1265		if (op->cmd.opcode == SPINAND_PROGRAM_LOAD)
-  1266			snandc->qspi->data_buf = (u8 *)op->data.buf.out;
-  1267	
-  1268		return 0;
-  1269	}
-  1270	
-  1271	static int qcom_spi_send_cmdaddr(struct qcom_nand_controller *snandc,
-  1272					 const struct spi_mem_op *op)
-  1273	{
-  1274		struct qpic_snand_op s_op = {};
-  1275		u32 cmd;
-  1276		int ret, opcode;
-  1277	
-  1278		cmd = qcom_spi_cmd_mapping(snandc, op->cmd.opcode);
-> 1279		if (cmd < 0)
-  1280			return cmd;
-  1281	
-  1282		s_op.cmd_reg = cmd;
-  1283		s_op.addr1_reg = op->addr.val;
-  1284		s_op.addr2_reg = 0;
-  1285	
-  1286		opcode = op->cmd.opcode;
-  1287	
-  1288		switch (opcode) {
-  1289		case SPINAND_WRITE_EN:
-  1290			return 0;
-  1291		case SPINAND_PROGRAM_EXECUTE:
-  1292			s_op.addr1_reg = op->addr.val << 16;
-  1293			s_op.addr2_reg = op->addr.val >> 16 & 0xff;
-  1294			snandc->qspi->addr1 = cpu_to_le32(s_op.addr1_reg);
-  1295			snandc->qspi->addr2 = cpu_to_le32(s_op.addr2_reg);
-  1296			snandc->qspi->cmd = cpu_to_le32(cmd);
-  1297			return qcom_spi_program_execute(snandc, op);
-  1298		case SPINAND_READ:
-  1299			s_op.addr1_reg = (op->addr.val << 16);
-  1300			s_op.addr2_reg = op->addr.val >> 16 & 0xff;
-  1301			snandc->qspi->addr1 = cpu_to_le32(s_op.addr1_reg);
-  1302			snandc->qspi->addr2 = cpu_to_le32(s_op.addr2_reg);
-  1303			snandc->qspi->cmd = cpu_to_le32(cmd);
-  1304			return 0;
-  1305		case SPINAND_ERASE:
-  1306			s_op.addr2_reg = (op->addr.val >> 16) & 0xffff;
-  1307			s_op.addr1_reg = op->addr.val;
-  1308			snandc->qspi->addr1 = cpu_to_le32(s_op.addr1_reg << 16);
-  1309			snandc->qspi->addr2 = cpu_to_le32(s_op.addr2_reg);
-  1310			snandc->qspi->cmd = cpu_to_le32(cmd);
-  1311			qcom_spi_block_erase(snandc);
-  1312			return 0;
-  1313		default:
-  1314			break;
-  1315		}
-  1316	
-  1317		snandc->buf_count = 0;
-  1318		snandc->buf_start = 0;
-  1319		qcom_clear_read_regs(snandc);
-  1320		qcom_clear_bam_transaction(snandc);
-  1321	
-  1322		snandc->regs->cmd = cpu_to_le32(s_op.cmd_reg);
-  1323		snandc->regs->exec = cpu_to_le32(1);
-  1324		snandc->regs->addr0 = cpu_to_le32(s_op.addr1_reg);
-  1325		snandc->regs->addr1 = cpu_to_le32(s_op.addr2_reg);
-  1326	
-  1327		qcom_write_reg_dma(snandc, &snandc->regs->cmd, NAND_FLASH_CMD, 3, NAND_BAM_NEXT_SGL);
-  1328		qcom_write_reg_dma(snandc, &snandc->regs->exec, NAND_EXEC_CMD, 1, NAND_BAM_NEXT_SGL);
-  1329	
-  1330		ret = qcom_submit_descs(snandc);
-  1331		if (ret)
-  1332			dev_err(snandc->dev, "failure in submitting cmd descriptor\n");
-  1333	
-  1334		return ret;
-  1335	}
-  1336	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
