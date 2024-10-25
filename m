@@ -1,154 +1,117 @@
-Return-Path: <linux-kernel+bounces-381303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C78209AFD67
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 10:59:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D95C9AFD65
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 10:58:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58CA61F24117
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 08:59:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19F271F23EDC
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 08:58:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AF2B1D364B;
-	Fri, 25 Oct 2024 08:58:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63C291D4350;
+	Fri, 25 Oct 2024 08:58:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="uKZ/SyOT"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="VfbUIXQ1"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7275A1B0F03;
-	Fri, 25 Oct 2024 08:58:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 948691D363F;
+	Fri, 25 Oct 2024 08:58:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729846727; cv=none; b=h+9ESfTQCYpg6wYj/LN3XcXyYDgno3/bmfjoD1kYoaVh2FU4bbKd+uwk1v+nT/jYz9CwPkVvbUvwRmvdCOexeah7+Gk4ut+6KLxJuxiCZXixZ/H/dx33O8dP7F+oKOIct8qeXDVBpfCsc8q0fnPrCTswMzxlaG2s2OyXpdkzIfI=
+	t=1729846712; cv=none; b=mhVUGdOJ8snZlDkUQqyS5wospRzs0vH92sTXrjfmoWfPb+uOTx3xLRARL6gjisP1ZnMAMNB49Cd73Gtc7vHYaYGLDm6FFaHMp0RwlAE3OuKs9ob3sASOaxGgn2zD2LtTQcZIAtMgLXxWRk37G9YZmpBDEyuRmZAKRBGLMr8maxI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729846727; c=relaxed/simple;
-	bh=JzCBSBixEk8dWmW4Rw6HdWeEaPbU8Qxx4T8HzBbayjE=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ubedzs4e8r+GzoCEHe9tvaGJ4MkhI9uhFLxv1dSBFnGzamUAbTQ5Jk86RS07/iIogyYhWJesDrVMSu3pRdBhGeM7Rj5amThZdmbTNJjGy3/0y1Vkf09httNsMXsyYuKhFXDJa1Qgk/UW/8Q/W7z0hruZgf3DIIRFp5ChclXGbZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=uKZ/SyOT; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 5360d23292af11efbd192953cf12861f-20241025
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=2jONHGUQN65Wp/s13oZofhKzQ9O+ThI0+K9VkaZNt+A=;
-	b=uKZ/SyOT3Mm9rRM83JQ/Iw08q6PU9rhMrxEew2p+XiUtQqWkzv7kjE5TagpjzwiTuQBOBCdPTGIWGDCiODcIjjZ5egMadNpE3bDio0pOFLn4nsD+g58XQiuV+UJtBrVToHQU/DYNot9nRxn1wytfTkd0BpcrZhOpIIPTyw0ebJ8=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.42,REQID:c1f2afcb-eeb2-46bb-bcbb-6455a0acca7f,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:b0fcdc3,CLOUDID:f3c6dacc-110e-4f79-849e-58237df93e70,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:1,EDM:-3,IP:nil,U
-	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
-	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 5360d23292af11efbd192953cf12861f-20241025
-Received: from mtkmbs11n1.mediatek.inc [(172.21.101.185)] by mailgw02.mediatek.com
-	(envelope-from <qun-wei.lin@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1500008180; Fri, 25 Oct 2024 16:58:38 +0800
-Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
- mtkmbs13n1.mediatek.inc (172.21.101.193) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Fri, 25 Oct 2024 16:58:37 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
- mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Fri, 25 Oct 2024 16:58:37 +0800
-From: Qun-Wei Lin <qun-wei.lin@mediatek.com>
-To: Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>, David
- Rientjes <rientjes@google.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>, Andrew
- Morton <akpm@linux-foundation.org>, Vlastimil Babka <vbabka@suse.cz>, Roman
- Gushchin <roman.gushchin@linux.dev>, Hyeonggon Yoo <42.hyeyoo@gmail.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>, Danilo Krummrich <dakr@kernel.org>
-CC: <catalin.marinas@arm.com>, <surenb@google.com>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-mediatek@lists.infradead.org>, <bpf@vger.kernel.org>, Casper Li
-	<casper.li@mediatek.com>, Chinwen Chang <chinwen.chang@mediatek.com>, Andrew
- Yang <andrew.yang@mediatek.com>, John Hsu <john.hsu@mediatek.com>,
-	<wsd_upstream@mediatek.com>, Qun-Wei Lin <qun-wei.lin@mediatek.com>
-Subject: [PATCH] mm: krealloc: Fix MTE false alarm in __do_krealloc
-Date: Fri, 25 Oct 2024 16:58:11 +0800
-Message-ID: <20241025085811.31310-1-qun-wei.lin@mediatek.com>
-X-Mailer: git-send-email 2.18.0
+	s=arc-20240116; t=1729846712; c=relaxed/simple;
+	bh=+uq/niLfEtYf/c6Xlkg9qgvnUOeY+Bos5cq4UWrEjjU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bTMxMQwUPX5q1e+PQTkwh2Cas4xPA7fh1ca5ohC+OLX6gdovFlyZ2uRyf6xWzafW3Xcy96SMq+jI248/FzU2eBTWmHUmBTyzu41E01bO1vmsZX4oYt8Xth4cWg/YMorQm4KS55ql+y02ySL8cjUqrXkMJdQnXqd1agLl3R16owQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=VfbUIXQ1; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=fM1f2YxrgQ2sEgdNsgOBt8r5ECNfwt7LRPGzmtJRH9U=; b=VfbUIXQ13vdAbkhGHISFVV7/6/
+	6xcxH5uE1V4/NNyqD1rm1AA0zKhmTceBIrcHgEkmBVPH+Uq7JqKGMCu4q+avhIP2fDg+5nZPI3RrQ
+	bqIPoKqOW5QhP5G4AH+/6JzhQ4LLlwjr93m0Fwi9upbNunph5ZAA4YWZn53KXsAEVLTldlRUFw94n
+	7EoH37g9NB4bod4Sa48l67V0LRohtd2g7U5om3/Bbw9FQIw69pbFwOnnyvrwBJ0v0qGmr7lZ+VG1F
+	mkcDhSW/s7VwgOeNIdfoKtRz7ieJnk/DWKB91nu86H6biJTsNZrFTwBigDHk8WQiwWeORnyoheue5
+	ueCM+3XA==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t4G9A-00000008sII-3S1k;
+	Fri, 25 Oct 2024 08:58:17 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 0CE20300ABE; Fri, 25 Oct 2024 10:58:16 +0200 (CEST)
+Date: Fri, 25 Oct 2024 10:58:15 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: "Christoph Lameter (Ampere)" <cl@linux.com>
+Cc: tglx@linutronix.de, axboe@kernel.dk, linux-kernel@vger.kernel.org,
+	mingo@redhat.com, dvhart@infradead.org, dave@stgolabs.net,
+	andrealmeid@igalia.com, Andrew Morton <akpm@linux-foundation.org>,
+	urezki@gmail.com, hch@infradead.org, lstoakes@gmail.com,
+	Arnd Bergmann <arnd@arndb.de>, linux-api@vger.kernel.org,
+	linux-mm@kvack.org, linux-arch@vger.kernel.org,
+	malteskarupke@web.de
+Subject: Re: [PATCH v1 11/14] futex: Implement FUTEX2_NUMA
+Message-ID: <20241025085815.GG14555@noisy.programming.kicks-ass.net>
+References: <20230721102237.268073801@infradead.org>
+ <20230721105744.434742902@infradead.org>
+ <9dc04e4c-2adc-5084-4ea1-b200d82be29f@linux.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK: N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9dc04e4c-2adc-5084-4ea1-b200d82be29f@linux.com>
 
-This patch addresses an issue introduced by commit 1a83a716ec233 ("mm:
-krealloc: consider spare memory for __GFP_ZERO") which causes MTE
-(Memory Tagging Extension) to falsely report a slab-out-of-bounds error.
+On Wed, Jun 12, 2024 at 10:23:00AM -0700, Christoph Lameter (Ampere) wrote:
 
-The problem occurs when zeroing out spare memory in __do_krealloc. The
-original code only considered software-based KASAN and did not account
-for MTE. It does not reset the KASAN tag before calling memset, leading
-to a mismatch between the pointer tag and the memory tag, resulting
-in a false positive.
+> > When FUTEX2_NUMA is not set, the node is simply an extention of the
+> > hash, such that traditional futexes are still interleaved over the
+> > nodes.
+> 
+> Could we follow NUMA policies like with other metadata allocations during
+> systen call processing? 
 
-Example of the error:
-==================================================================
-swapper/0: BUG: KASAN: slab-out-of-bounds in __memset+0x84/0x188
-swapper/0: Write at addr f4ffff8005f0fdf0 by task swapper/0/1
-swapper/0: Pointer tag: [f4], memory tag: [fe]
-swapper/0:
-swapper/0: CPU: 4 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.12.
-swapper/0: Hardware name: MT6991(ENG) (DT)
-swapper/0: Call trace:
-swapper/0:  dump_backtrace+0xfc/0x17c
-swapper/0:  show_stack+0x18/0x28
-swapper/0:  dump_stack_lvl+0x40/0xa0
-swapper/0:  print_report+0x1b8/0x71c
-swapper/0:  kasan_report+0xec/0x14c
-swapper/0:  __do_kernel_fault+0x60/0x29c
-swapper/0:  do_bad_area+0x30/0xdc
-swapper/0:  do_tag_check_fault+0x20/0x34
-swapper/0:  do_mem_abort+0x58/0x104
-swapper/0:  el1_abort+0x3c/0x5c
-swapper/0:  el1h_64_sync_handler+0x80/0xcc
-swapper/0:  el1h_64_sync+0x68/0x6c
-swapper/0:  __memset+0x84/0x188
-swapper/0:  btf_populate_kfunc_set+0x280/0x3d8
-swapper/0:  __register_btf_kfunc_id_set+0x43c/0x468
-swapper/0:  register_btf_kfunc_id_set+0x48/0x60
-swapper/0:  register_nf_nat_bpf+0x1c/0x40
-swapper/0:  nf_nat_init+0xc0/0x128
-swapper/0:  do_one_initcall+0x184/0x464
-swapper/0:  do_initcall_level+0xdc/0x1b0
-swapper/0:  do_initcalls+0x70/0xc0
-swapper/0:  do_basic_setup+0x1c/0x28
-swapper/0:  kernel_init_freeable+0x144/0x1b8
-swapper/0:  kernel_init+0x20/0x1a8
-swapper/0:  ret_from_fork+0x10/0x20
-==================================================================
+I had a quick look at this, and since the mempolicy stuff is per vma,
+and we don't have the vma, this is going to be terribly expensive --
+mmap_lock and all that.
 
-Fixes: 1a83a716ec233 ("mm: krealloc: consider spare memory for
-__GFP_ZERO")
-Signed-off-by: Qun-Wei Lin <qun-wei.lin@mediatek.com>
----
- mm/slab_common.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Once lockless vma lookups land (soonish, perhaps), this could be
+reconsidered. But for now there just isn't a sane way to do this.
 
-diff --git a/mm/slab_common.c b/mm/slab_common.c
-index 3d26c257ed8b..3445f4500b54 100644
---- a/mm/slab_common.c
-+++ b/mm/slab_common.c
-@@ -1209,7 +1209,7 @@ __do_krealloc(const void *p, size_t new_size, gfp_t flags)
- 		/* Zero out spare memory. */
- 		if (want_init_on_alloc(flags)) {
- 			kasan_disable_current();
--			memset((void *)p + new_size, 0, ks - new_size);
-+			memset(kasan_reset_tag((void *)p + new_size), 0, ks - new_size);
- 			kasan_enable_current();
- 		}
- 
--- 
-2.45.2
+Using memory policies is probably okay -- but still risky, since you get
+the extra failure case where if you change the mempolicy between WAIT
+and WAKE things will not match and sadness happens, but that *SHOULD*
+hopefully not happen a lot. Mempolicies are typically fairly static.
 
+> If there is no NUMA task policy then the futex
+> should be placed on the local NUMA node.
+
+> That way the placement of the futex can be controlled by the tasks memory
+> policy. We could skip the FUTEX2_NUMA option.
+
+That doesn't work. If we don't have storage for the node across
+WAIT/WAKE, then the node must be deterministic per futex_hash().
+Otherwise wake has no chance of finding the entry.
+
+Consider our random unbound task with no policies etc. (default state)
+doing FUTEX_WAIT and going to sleep while on node-0, it's sibling
+thread, that happens to run on node-1 issues FUTEX_WAKE.
+
+If they disagree on determining 'node', then they will not find match
+and the wakeup doesn't happen and userspace gets really sad.
+
+
+The current scheme where we determine node based on hash bits is fully
+deterministic and WAIT/WAKE will agree on which node-hash to use. The
+interleave is no worse than the global hash today -- OTOH it also isn't
+better.
 
