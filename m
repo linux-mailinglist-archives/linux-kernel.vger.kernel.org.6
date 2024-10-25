@@ -1,123 +1,323 @@
-Return-Path: <linux-kernel+bounces-381532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 851079B008F
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 12:53:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C80859B0091
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 12:53:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 312CF1F23585
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 10:53:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0B0E6B21B12
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 10:53:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 123A72022DA;
-	Fri, 25 Oct 2024 10:52:37 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DA5D201018;
-	Fri, 25 Oct 2024 10:52:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EDCD1E766B;
+	Fri, 25 Oct 2024 10:52:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="XnqHj4eb"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2A6D1D9A5B
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 10:52:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729853556; cv=none; b=NOyjArtmTPvnkNVWv3rmFM6Fsyd7hUCnMDo5YDvQzVzIr5BSJTXUy3pO0Q/h6Iutn0k3ovzqhUPY7gSa1uv2KKev+UUnISMZySJqPvr6JAIPCpnr7CV2RZ+zcvwoXbNyzrH5hPATdgAW6Jfny82yXOvKkTWiitb2wbpUyNyYbOU=
+	t=1729853578; cv=none; b=IvMO0iZ9yaQCpaV50d/HBEOJbm9zgQ+C/c6snB/sUjQu6wSSgIjOp/7pqiVpIPkrQhyTcuJnyjcz2htLDHHvDeTXZZDTNgofoSWSTiG3gl0eAQxP8613kJWH5RMSPVyGacmcWy/wB0iiYBhfkTxvJKj7euIunX17ogfNTM7jpMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729853556; c=relaxed/simple;
-	bh=djfXy4XGascfohifZ7bNy1cCAu0obVtC6gGP1iwhofw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=st+/rsZ1JtDho/rzdwjI/7rB9nCT/zcXHCVS/UnCg0isOB3vaEihOBElQAAUDIxxThqwd0YWhYl0Gl3yB95lJPj0VDqWqQA1IQv7lI/60XDD98wWPiMVgF2WfcMB+fm+0W139phsxo51xUQE36F56acZh6DTYqyFgfvB2pWGY4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C516A339;
-	Fri, 25 Oct 2024 03:53:03 -0700 (PDT)
-Received: from VDW30FN91H.arm.com (unknown [10.57.79.117])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id CC3F53F73B;
-	Fri, 25 Oct 2024 03:52:31 -0700 (PDT)
-From: Graham Woodward <graham.woodward@arm.com>
-To: acme@kernel.org,
-	namhyung@kernel.org,
-	mark.rutland@arm.com,
-	jolsa@kernel.org,
-	irogers@google.com,
-	james.clark@linaro.org,
-	mike.leach@linaro.org,
-	leo.yan@linux.dev,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: nd@arm.com,
-	Graham Woodward <graham.woodward@arm.com>
-Subject: [PATCH v10 4/4] perf arm-spe: Update --itrace help text
-Date: Fri, 25 Oct 2024 11:52:12 +0100
-Message-Id: <20241025105212.51779-5-graham.woodward@arm.com>
-X-Mailer: git-send-email 2.39.3 (Apple Git-146)
-In-Reply-To: <20241025105212.51779-1-graham.woodward@arm.com>
-References: <20241025105212.51779-1-graham.woodward@arm.com>
+	s=arc-20240116; t=1729853578; c=relaxed/simple;
+	bh=DgKF4BjdQJEGFkoe7RckaZnVN6EKH3DF+7wTV4b5as8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=P0ipDC/VvNVEVNBZm13j/PSnl9LcbrrzghIrkBmDjmz3+tctAfKc7Bk1DKOcor7IhTI17A4kJdEzHhMVuqItz+0fsVbmoJLI12HNUC5n10LYaPtG+c/HurWXelPYCM6KA+4ng+mcRQHVa+Oy+Aunx6xpo/qZmASahfvKFO+YbhA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=XnqHj4eb; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-20cbb1cf324so15346175ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 03:52:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1729853575; x=1730458375; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=GAt6KZ2pcfQy1Q7Rf4LRIXYYKzgia9CxnAXXiCJCkII=;
+        b=XnqHj4ebikHdwsxLNxcjzo6ETdB5Pa8VbcJlPwJSka0+a/ULbNsNSbjBMsuxi5QdBE
+         p8gA+nVRve3Zht0Ms9MOOcumKQtAOx1w1urWpQfsMetkBk2gFWTj7CIojbTpdfYu51sF
+         BH7nC6ebZ8G99VSADLngjjnQCtX78IyrYzOqc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729853575; x=1730458375;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GAt6KZ2pcfQy1Q7Rf4LRIXYYKzgia9CxnAXXiCJCkII=;
+        b=Vm+VbmSrvbNve7vUS0PFioCmZafN+/2OV9by6JseXJ5hgJ8plTQycOHkotFO4wwjYa
+         FHvR0hd7DqtK+slMgAf/cOqyS7TMAFRToltDPWfXACcr6OPml2yPSyT549QYN/pmGSnR
+         09zH26WKqDnutCLn35T/8DjgbbPwbWS4rL9o0FiJThrwJLCdCgBv+e8vbsABWb7Tcjcj
+         25UfGVHJskkSV7sdqLFDSS+GgVM8F07fVPv3ef3oWzhzPPMDkk6KrVFMR08cF6h0b0wY
+         oMkmkHvbrwzWID5uNCr9ZWkUt1AEyZyfHQEGs3/VclOyQg7HMy2+hKIlst0GoLw74hbw
+         Nfaw==
+X-Forwarded-Encrypted: i=1; AJvYcCUp+0X9DGQ2b3JY9uGT6f2x2eIIjb76zuCDE0owluwyzDzxs4Twczzz06Mw/eJ0i3PJWQliqAWvO6vnohM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwzPrcI892PV5avCrEjdcOd8xMPrfogpHrvUegg3or4saDwP47A
+	ME031iwl9JreRXxAph6USimfx7t0UfvXGl6IClTKHu6V/59BDzl6Jpnh8fCGXA==
+X-Google-Smtp-Source: AGHT+IG9X1lMdE2CHaDjkcTeXOKM/Gxm5oeIssvu8bLQJ/WsfELPrdu9PDORMYQ1aCw+SrJH6uZIVw==
+X-Received: by 2002:a17:902:ce04:b0:20b:9f8c:e9d3 with SMTP id d9443c01a7336-20fb9a57581mr69168945ad.55.1729853575328;
+        Fri, 25 Oct 2024 03:52:55 -0700 (PDT)
+Received: from yuanhsinte.c.googlers.com (176.220.194.35.bc.googleusercontent.com. [35.194.220.176])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bc02ea58sm7276935ad.196.2024.10.25.03.52.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Oct 2024 03:52:54 -0700 (PDT)
+From: Hsin-Te Yuan <yuanhsinte@chromium.org>
+Date: Fri, 25 Oct 2024 10:52:50 +0000
+Subject: [PATCH v13] thermal/drivers/mediatek/auxadc_thermal: expose all
+ thermal sensors
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241025-auxadc_thermal-v13-1-a5231c52dccb@chromium.org>
+X-B4-Tracking: v=1; b=H4sIAIF4G2cC/3XNTQrCMBAF4KuUrI1kkhAbV95DRNJxYgLWSqqlU
+ np30yKCf8v3hvfNwFpKkVq2LgaWqIttbM45gFoUDIM7H4nHQy6YFFKLUljubr074P4aKNXuxG1
+ FSpWEZQXI8uiSyMd+Fre7nENsr026zw86gKn+a+U7B+68Mogr7ZVTGwypqeOtXjbpyCavA/kyQ
+ Aj4NmQ2ZFUaFFZ7r827sSieUzC/pyi0UmS9Aec/3o/j+ABrmLH2MQEAAA==
+X-Change-ID: 20240809-auxadc_thermal-9be338ec8b1c
+To: "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
+ Lukasz Luba <lukasz.luba@arm.com>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+ James Lo <james.lo@mediatek.com>, Michael Kao <michael.kao@mediatek.com>, 
+ Hsin-Yi Wang <hsinyi@chromium.org>, Ben Tseng <ben.tseng@mediatek.com>, 
+ Hsin-Te Yuan <yuanhsinte@chromium.org>
+X-Mailer: b4 0.15-dev-7be4f
 
-The --itrace help now needs updating to reflect that
-the --itrace=b argument sythesises branches as well
-as branch misses.
+From: James Lo <james.lo@mediatek.com>
 
-Signed-off-by: Graham Woodward <graham.woodward@arm.com>
+Previously, the driver only supported reading the temperature from all
+sensors and returning the maximum value. This update adds another
+get_temp ops to support reading the temperature from each sensor
+separately.
+
+Especially, some thermal zones registered by this patch are needed by
+MT8183 since those thermal zones are necessary for mtk-svs driver.
+
+Signed-off-by: Michael Kao <michael.kao@mediatek.com>
+Signed-off-by: Hsin-Yi Wang <hsinyi@chromium.org>
+Signed-off-by: Ben Tseng <ben.tseng@mediatek.com>
+Signed-off-by: James Lo <james.lo@mediatek.com>
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Signed-off-by: Hsin-Te Yuan <yuanhsinte@chromium.org>
 ---
- tools/perf/Documentation/itrace.txt       | 2 +-
- tools/perf/Documentation/perf-arm-spe.txt | 2 +-
- tools/perf/util/auxtrace.h                | 3 +--
- 3 files changed, 3 insertions(+), 4 deletions(-)
+Changes in v13:
+- Make subject and commit message more clear.
+- Make error message more clear.
+- Link to v12: https://lore.kernel.org/r/20241016-auxadc_thermal-v12-1-c0433e9f61af@chromium.org
 
-diff --git a/tools/perf/Documentation/itrace.txt b/tools/perf/Documentation/itrace.txt
-index 19cc179be..40476b227 100644
---- a/tools/perf/Documentation/itrace.txt
-+++ b/tools/perf/Documentation/itrace.txt
-@@ -1,6 +1,6 @@
- 		i	synthesize instructions events
- 		y	synthesize cycles events
--		b	synthesize branches events (branch misses for Arm SPE)
-+		b	synthesize branches events
- 		c	synthesize branches events (calls only)
- 		r	synthesize branches events (returns only)
- 		x	synthesize transactions events
-diff --git a/tools/perf/Documentation/perf-arm-spe.txt b/tools/perf/Documentation/perf-arm-spe.txt
-index 0a3eda482..de2b0b479 100644
---- a/tools/perf/Documentation/perf-arm-spe.txt
-+++ b/tools/perf/Documentation/perf-arm-spe.txt
-@@ -187,7 +187,7 @@ groups:
-   7 llc-access
-   2 tlb-miss
-   1K tlb-access
--  36 branch-miss
-+  36 branch
-   0 remote-access
-   900 memory
+Changes in v12:
+- Remove unnecessary check and unused variable assignment in mtk_read_sensor_temp.
+- Add more about what this patch achieves in the commit message.
+- Link to v11: https://lore.kernel.org/r/20240809-auxadc_thermal-v11-1-af36cc74f3a3@chromium.org
+
+Changes in V11:
+    - Rebase on kernel v6.11-rc2
+    - Use mtk_thermal_temp_is_valid in mtk_read_sensor_temp just like
+      mtk_thermal_bank_temperature
+    - Change the error handling of devm_thermal_of_zone_register return
+      value
+    - link to V10: https://lore.kernel.org/lkml/20220519101044.16765-1-james.lo@mediatek.com/
+
+Changes in V10:
+    - Rebase to kernel-v5.18-rc7
+    - Resend
+
+Changes in V9:
+    - Rebase to kernel-v5.14-rc1
+    - Bind raw_to_mcelsius_v1 or raw_to_mcelsius_v2 to compatible
+      data of struct mtk_thermal_data
+    - Remove duplicate struct 'mtk_thermal_bank'
+    - Remove unnecessary if condition check
+    - Return error if any thermal zone fail to register
+
+Changes in V8:
+    - Rebase to kernel-v5.13-rc1
+    - Resend
+
+Changes in v7:
+    - Fix build error in v6.
+
+Changes in v6:
+    - Rebase to kernel-5.11-rc1.
+    - [1/3]
+        - add interrupts property.
+    - [2/3]
+        - add the Tested-by in the commit message.
+    - [3/3]
+        - use the mt->conf->msr[id] instead of conf->msr[id] in the
+          _get_sensor_temp and mtk_thermal_bank_temperature.
+        - remove the redundant space in _get_sensor_temp and
+          mtk_read_sensor_temp.
+        - change kmalloc to dev_kmalloc in mtk_thermal_probe.
+
+Changes in v5:
+    - Rebase to kernel-5.9-rc1.
+    - Revise the title of cover letter.
+    - Drop "[v4,7/7] thermal: mediatek: use spinlock to protect PTPCORESEL"
+    - [2/2]
+        -  Add the judgement to the version of raw_to_mcelsius.
+
+Changes in v4:
+    - Rebase to kernel-5.6-rc1.
+    - [1/7]
+        - Squash thermal zone settings in the dtsi from [v3,5/8]
+          arm64: dts: mt8183: Increase polling frequency for CPU thermal zone.
+        - Remove the property of interrupts and mediatek,hw-reset-temp.
+    - [2/7]
+        - Correct commit message.
+    - [4/7]
+        - Change the target temperature to the 80C and change the commit message.
+    - [6/7]
+        - Adjust newline alignment.
+        - Fix the judgement on the return value of registering thermal zone.
+
+Changes in v3:
+    - Rebase to kernel-5.5-rc1.
+    - [1/8]
+        - Update sustainable power of cpu, tzts1~5 and tztsABB.
+    - [7/8]
+        - Bypass the failure that non cpu_thermal sensor is not find in thermal-zones
+          in dts, which is normal for mt8173, so prompt a warning here instead of
+          failing.
+
+    Return -EAGAIN instead of -EACCESS on the first read of sensor that
+        often are bogus values. This can avoid following warning on boot:
+
+          thermal thermal_zone6: failed to read out thermal zone (-13)
+
+Changes in v2:
+    - [1/8]
+        - Add the sustainable-power,trips,cooling-maps to the tzts1~tztsABB.
+    - [4/8]
+        - Add the min opp of cpu throttle.
+---
+
+---
+ drivers/thermal/mediatek/auxadc_thermal.c | 70 +++++++++++++++++++++++++++----
+ 1 file changed, 62 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/thermal/mediatek/auxadc_thermal.c b/drivers/thermal/mediatek/auxadc_thermal.c
+index 9ee2e7283435acfcbb1a956303b6122a08affecc..85cd26bfcc111b8a2ddcf76c697ac60b69d16354 100644
+--- a/drivers/thermal/mediatek/auxadc_thermal.c
++++ b/drivers/thermal/mediatek/auxadc_thermal.c
+@@ -847,7 +847,8 @@ static int mtk_thermal_bank_temperature(struct mtk_thermal_bank *bank)
  
-diff --git a/tools/perf/util/auxtrace.h b/tools/perf/util/auxtrace.h
-index a1895a4f5..dddaf4f3f 100644
---- a/tools/perf/util/auxtrace.h
-+++ b/tools/perf/util/auxtrace.h
-@@ -75,7 +75,6 @@ enum itrace_period_type {
-  *          (not fully accurate, since CYC packets are only emitted
-  *          together with other events, such as branches)
-  * @branches: whether to synthesize 'branches' events
-- *            (branch misses only for Arm SPE)
-  * @transactions: whether to synthesize events for transactions
-  * @ptwrites: whether to synthesize events for ptwrites
-  * @pwr_events: whether to synthesize power events
-@@ -650,7 +649,7 @@ bool auxtrace__evsel_is_auxtrace(struct perf_session *session,
- #define ITRACE_HELP \
- "				i[period]:    		synthesize instructions events\n" \
- "				y[period]:    		synthesize cycles events (same period as i)\n" \
--"				b:	    		synthesize branches events (branch misses for Arm SPE)\n" \
-+"				b:	    		synthesize branches events\n" \
- "				c:	    		synthesize branches events (calls only)\n"	\
- "				r:	    		synthesize branches events (returns only)\n" \
- "				x:	    		synthesize transactions events\n"		\
+ static int mtk_read_temp(struct thermal_zone_device *tz, int *temperature)
+ {
+-	struct mtk_thermal *mt = thermal_zone_device_priv(tz);
++	struct mtk_thermal_bank *bank = thermal_zone_device_priv(tz);
++	struct mtk_thermal *mt = bank->mt;
+ 	int i;
+ 	int tempmax = INT_MIN;
+ 
+@@ -866,10 +867,41 @@ static int mtk_read_temp(struct thermal_zone_device *tz, int *temperature)
+ 	return 0;
+ }
+ 
++static int mtk_read_sensor_temp(struct thermal_zone_device *tz, int *temperature)
++{
++	struct mtk_thermal_bank *bank = thermal_zone_device_priv(tz);
++	struct mtk_thermal *mt = bank->mt;
++	const struct mtk_thermal_data *conf = mt->conf;
++	int id = bank->id - 1;
++	int temp = INT_MIN;
++	u32 raw;
++
++	raw = readl(mt->thermal_base + conf->msr[id]);
++
++	temp = mt->raw_to_mcelsius(mt, id, raw);
++
++	/*
++	 * The first read of a sensor often contains very high bogus
++	 * temperature value. Filter these out so that the system does
++	 * not immediately shut down.
++	 */
++
++	if (unlikely(!mtk_thermal_temp_is_valid(temp)))
++		return -EAGAIN;
++
++	*temperature = temp;
++
++	return 0;
++}
++
+ static const struct thermal_zone_device_ops mtk_thermal_ops = {
+ 	.get_temp = mtk_read_temp,
+ };
+ 
++static const struct thermal_zone_device_ops mtk_thermal_sensor_ops = {
++	.get_temp = mtk_read_sensor_temp,
++};
++
+ static void mtk_thermal_init_bank(struct mtk_thermal *mt, int num,
+ 				  u32 apmixed_phys_base, u32 auxadc_phys_base,
+ 				  int ctrl_id)
+@@ -1199,6 +1231,7 @@ static int mtk_thermal_probe(struct platform_device *pdev)
+ 	u64 auxadc_phys_base, apmixed_phys_base;
+ 	struct thermal_zone_device *tzdev;
+ 	void __iomem *apmixed_base, *auxadc_base;
++	struct mtk_thermal_bank *tz;
+ 
+ 	mt = devm_kzalloc(&pdev->dev, sizeof(*mt), GFP_KERNEL);
+ 	if (!mt)
+@@ -1285,14 +1318,35 @@ static int mtk_thermal_probe(struct platform_device *pdev)
+ 			mtk_thermal_init_bank(mt, i, apmixed_phys_base,
+ 					      auxadc_phys_base, ctrl_id);
+ 
+-	tzdev = devm_thermal_of_zone_register(&pdev->dev, 0, mt,
+-					      &mtk_thermal_ops);
+-	if (IS_ERR(tzdev))
+-		return PTR_ERR(tzdev);
++	for (i = 0; i <= mt->conf->num_sensors; i++) {
++		tz = devm_kmalloc(&pdev->dev, sizeof(*tz), GFP_KERNEL);
++		if (!tz)
++			return -ENOMEM;
++
++		tz->mt = mt;
++		tz->id = i;
++
++		tzdev = devm_thermal_of_zone_register(&pdev->dev, i,
++						      tz, (i == 0) ?
++						      &mtk_thermal_ops
++						      : &mtk_thermal_sensor_ops);
++
++		if (IS_ERR(tzdev)) {
++			ret = PTR_ERR(tzdev);
++			if (ret == -ENODEV) {
++				dev_warn(&pdev->dev, "Can't find thermal zone for sensor %d; sensor skipped.\n", i);
++				continue;
++			}
++			dev_err(&pdev->dev,
++				"Error: Failed to register thermal zone %d, ret = %d\n",
++				i, ret);
++			return dev_err_probe(&pdev->dev, ret, "Failed to register thermal zone %d.\n", i);
++		}
+ 
+-	ret = devm_thermal_add_hwmon_sysfs(&pdev->dev, tzdev);
+-	if (ret)
+-		dev_warn(&pdev->dev, "error in thermal_add_hwmon_sysfs");
++		ret = devm_thermal_add_hwmon_sysfs(&pdev->dev, tzdev);
++		if (ret)
++			dev_warn(&pdev->dev, "Sensor %d: Error in thermal_add_hwmon_sysfs: %d\n", i, ret);
++	}
+ 
+ 	return 0;
+ }
+
+---
+base-commit: b589839414be04b2b37e4bf6f84af576c99faf64
+change-id: 20240809-auxadc_thermal-9be338ec8b1c
+
+Best regards,
 -- 
-2.40.1
+Hsin-Te Yuan <yuanhsinte@chromium.org>
 
 
