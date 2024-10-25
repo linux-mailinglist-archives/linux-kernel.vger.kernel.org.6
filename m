@@ -1,151 +1,165 @@
-Return-Path: <linux-kernel+bounces-382717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1BFC9B12A1
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 00:32:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BC819B12B0
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 00:33:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABEA528313D
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 22:32:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A08C1C21DAC
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 22:33:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61DE6213140;
-	Fri, 25 Oct 2024 22:31:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="de2ooFjp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BA43214426;
+	Fri, 25 Oct 2024 22:32:49 +0000 (UTC)
+Received: from trager.us (trager.us [52.5.81.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87B871D222F;
-	Fri, 25 Oct 2024 22:31:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7C4421312D;
+	Fri, 25 Oct 2024 22:32:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.5.81.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729895514; cv=none; b=W75+aA1tIzzOAW8UyoAj754aDo215XXcoDxReoBtMxGSAIuwW5pIaK9rdjWTBXnmQPmsJM6w4zMZubztgoTzOzByki/C39w0ved8G08IPqKRfabKPa9SZ0C6NrTagK+72jjPXFixi1Alll7LWnFOD0QoWWsNaOCBWnpTqBc9Dw0=
+	t=1729895568; cv=none; b=T9kVWajy+6LZkxrMzOKeW7//ZIF/BwXjIeYlHhwIrxTtrQfF4sOdX+V8DfYsZ5qtaoPPiYeYONen2/vAwFhQUBX/JfD2lpLpYlgN7oX6mRplCgin4zz4xkNrEJZp7AajWveNuRbTsCWyvN9S9+lRgFBFDRn7bVn0ooInn19rKPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729895514; c=relaxed/simple;
-	bh=mVLVxjwpOT42Kb7f4O3vXqKoUSnuXxrku5/kKxjIyIQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B0N46DIg0w4U70SUJEdVZbaqNyIq4XD5+aB6ffOpmmrf4glB4by4sQwllPglxqVbvdqiDkV8lifTSuYp1DqQoFjTNPGXoed4+gkesjwOIDNpYjhWi+4ycKF2je1G8fIzecyIhgZkCmhzpw3fXqyJlXnzss5DmokyZsY/ZMfz5ZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=de2ooFjp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE278C4CEC3;
-	Fri, 25 Oct 2024 22:31:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729895514;
-	bh=mVLVxjwpOT42Kb7f4O3vXqKoUSnuXxrku5/kKxjIyIQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=de2ooFjpzQqfyvs6eWpep/LU6bZMauqxFRrPPIOcoo6RLnaqtZhiBAtYfGHHWnscC
-	 dF2y5c896ibxWAiYOAVTj7IgcnlKP5L75BhK0Tc8wjgHsq9xSq4k1kTDEtU1VCVpVV
-	 KnGgdBnEQWIoO/2j34UM4IMNdYaajjOueVlox5Cf9Q4R746AKJSlNaQMSFchAMua3K
-	 xtNbR4CRre/5BmANz4U4u0zWkBsw0zpk3Hxas9iQsUUMtnzMnCcn+DJ54uFulKs2BJ
-	 SwTm/+DeTIx0AxPhIDiLCAroqEegH6HVTKiWTZ/RBPNhDys5MIq020g5RWnq0r3QWN
-	 +fqhDOV967kMA==
-Date: Fri, 25 Oct 2024 22:31:52 +0000
-From: Eric Biggers <ebiggers@kernel.org>
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
-	linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-	linux-mips@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev,
-	sparclinux@vger.kernel.org, x86@kernel.org
-Subject: Re: [PATCH v2 03/18] lib/crc32: expose whether the lib is really
- optimized at runtime
-Message-ID: <20241025223152.GC2637569@google.com>
-References: <20241025191454.72616-1-ebiggers@kernel.org>
- <20241025191454.72616-4-ebiggers@kernel.org>
- <CAMj1kXFoer+_yZJWtqBVYfYnzqL9X9bbBRomCL3LDqRcYJ6njQ@mail.gmail.com>
- <20241025213243.GA2637569@google.com>
- <CAMj1kXHZy3yPvonS5ZVof0qa0V_Lxhv5Q7i1UVf5P6D3d+=KRw@mail.gmail.com>
+	s=arc-20240116; t=1729895568; c=relaxed/simple;
+	bh=KwnQJqiRsCWMxc9Z25pBZlicEvkalDLV1dR5FfpXCtg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=J+aQKylV15OSbO83s3MRF0e3JWXGhODV9fbV4PZdSv5jaWR95sNv7eqp607fswzXYllB+CGnrAl5mZeaWuD1MkstlG93d860dJOTYZQp0yAB4PYO0KScdvLGWYUJu12S39CSHzkjabI+K0x0i6fbsh7wgKwghbhAVUMUzJwnjBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=trager.us; spf=pass smtp.mailfrom=trager.us; arc=none smtp.client-ip=52.5.81.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=trager.us
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=trager.us
+Received: from c-76-104-255-50.hsd1.wa.comcast.net ([76.104.255.50] helo=[192.168.1.226])
+	by trager.us with esmtpsa (TLSv1.3:TLS_AES_128_GCM_SHA256:128)
+	(Exim 4.92.3)
+	(envelope-from <lee@trager.us>)
+	id 1t4SrI-0002DC-C4; Fri, 25 Oct 2024 22:32:40 +0000
+Message-ID: <13229808-dde5-4805-b908-ce65c8b342b4@trager.us>
+Date: Fri, 25 Oct 2024 15:32:32 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMj1kXHZy3yPvonS5ZVof0qa0V_Lxhv5Q7i1UVf5P6D3d+=KRw@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v2 2/2] eth: fbnic: Add devlink dev flash support
+To: Simon Horman <horms@kernel.org>
+Cc: Alexander Duyck <alexanderduyck@fb.com>, Jakub Kicinski
+ <kuba@kernel.org>, kernel-team@meta.com,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Paolo Abeni <pabeni@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, Sanman Pradhan
+ <sanmanpradhan@meta.com>, Al Viro <viro@zeniv.linux.org.uk>,
+ Mohsin Bashir <mohsin.bashr@gmail.com>, netdev@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241012023646.3124717-1-lee@trager.us>
+ <20241022014319.3791797-1-lee@trager.us> <20241024091032.GI402847@kernel.org>
+Content-Language: en-US
+From: Lee Trager <lee@trager.us>
+In-Reply-To: <20241024091032.GI402847@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Oct 25, 2024 at 11:37:45PM +0200, Ard Biesheuvel wrote:
-> On Fri, 25 Oct 2024 at 23:32, Eric Biggers <ebiggers@kernel.org> wrote:
-> >
-> > On Fri, Oct 25, 2024 at 10:32:14PM +0200, Ard Biesheuvel wrote:
-> > > On Fri, 25 Oct 2024 at 21:15, Eric Biggers <ebiggers@kernel.org> wrote:
-> > > >
-> > > > From: Eric Biggers <ebiggers@google.com>
-> > > >
-> > > > Make the CRC32 library export some flags that indicate which CRC32
-> > > > functions are actually executing optimized code at runtime.  Set these
-> > > > correctly from the architectures that implement the CRC32 functions.
-> > > >
-> > > > This will be used to determine whether the crc32[c]-$arch shash
-> > > > algorithms should be registered in the crypto API.  btrfs could also
-> > > > start using these flags instead of the hack that it currently uses where
-> > > > it parses the crypto_shash_driver_name.
-> > > >
-> > > > Signed-off-by: Eric Biggers <ebiggers@google.com>
-> > > > ---
-> > > >  arch/arm64/lib/crc32-glue.c  | 15 +++++++++++++++
-> > > >  arch/riscv/lib/crc32-riscv.c | 15 +++++++++++++++
-> > > >  include/linux/crc32.h        | 15 +++++++++++++++
-> > > >  lib/crc32.c                  |  5 +++++
-> > > >  4 files changed, 50 insertions(+)
-> > > >
-> > > ...
-> > > > diff --git a/include/linux/crc32.h b/include/linux/crc32.h
-> > > > index 58c632533b08..bf26d454b60d 100644
-> > > > --- a/include/linux/crc32.h
-> > > > +++ b/include/linux/crc32.h
-> > > > @@ -35,10 +35,25 @@ static inline u32 __pure __crc32c_le(u32 crc, const u8 *p, size_t len)
-> > > >         if (IS_ENABLED(CONFIG_CRC32_ARCH))
-> > > >                 return crc32c_le_arch(crc, p, len);
-> > > >         return crc32c_le_base(crc, p, len);
-> > > >  }
-> > > >
-> > > > +/*
-> > > > + * crc32_optimizations contains flags that indicate which CRC32 library
-> > > > + * functions are using architecture-specific optimizations.  Unlike
-> > > > + * IS_ENABLED(CONFIG_CRC32_ARCH) it takes into account the different CRC32
-> > > > + * variants and also whether any needed CPU features are available at runtime.
-> > > > + */
-> > > > +#define CRC32_LE_OPTIMIZATION  BIT(0) /* crc32_le() is optimized */
-> > > > +#define CRC32_BE_OPTIMIZATION  BIT(1) /* crc32_be() is optimized */
-> > > > +#define CRC32C_OPTIMIZATION    BIT(2) /* __crc32c_le() is optimized */
-> > > > +#if IS_ENABLED(CONFIG_CRC32_ARCH)
-> > > > +extern u32 crc32_optimizations;
-> > > > +#else
-> > > > +#define crc32_optimizations 0
-> > > > +#endif
-> > > > +
-> > >
-> > > Wouldn't it be cleaner to add a new library function for this, instead
-> > > of using a global variable?
-> >
-> > The architecture crc32 modules need to be able to write to this.  There could be
-> > a setter function and a getter function, but just using a variable is simpler.
-> >
-> 
-> If we just add 'u32 crc32_optimizations()', there is no need for those
-> modules to have init/exit hooks, the only thing they need to export is
-> this routine.
-> 
-> Or perhaps it could even be a static inline, with the right plumbing
-> of header files. At least on arm64,
-> 
-> static inline u32 crc32_optimizations() {
->   if (!alternative_have_const_cap_likely(ARM64_HAS_CRC32))
->     return 0;
->   return CRC32_LE_OPTIMIZATION | CRC32_BE_OPTIMIZATION | CRC32C_OPTIMIZATION;
-> }
-> 
-> should be all we need.
 
-In 7 of the 9 affected arches, I already have a module_init function that checks
-the CPU features in order to set up static keys.  (arm64 and riscv already used
-alternatives patching, so I kept that.)  It's slightly convenient to set these
-flags at the same time, but yes the above solution would work too.
+On 10/24/24 2:10 AM, Simon Horman wrote:
+> On Mon, Oct 21, 2024 at 06:42:24PM -0700, Lee Trager wrote:
+>> fbnic supports updating firmware using a PLDM image signed and distributed
+>> by Meta. PLDM images are written into stored flashed. Flashing does not
+>> interrupt operation.
+>>
+>> On host reboot the newly flashed UEFI driver will be used. To run new
+>> control or cmrt firmware the NIC must be power cycled.
+>>
+>> Signed-off-by: Lee Trager <lee@trager.us>
+> ...
+>
+>> diff --git a/drivers/net/ethernet/meta/fbnic/fbnic_devlink.c b/drivers/net/ethernet/meta/fbnic/fbnic_devlink.c
+> ...
+>
+>> @@ -109,8 +110,274 @@ static int fbnic_devlink_info_get(struct devlink *devlink,
+>>   	return 0;
+>>   }
+>>
+>> +/**
+>> + * fbnic_send_package_data - Send record package data to firmware
+>> + * @context: PLDM FW update structure
+>> + * @data: pointer to the package data
+>> + * @length: length of the package data
+>> + *
+>> + * Send a copy of the package data associated with the PLDM record matching
+>> + * this device to the firmware.
+>> + *
+>> + * Return: zero on success
+>> + *	    negative error code on failure
+>> + */
+>> +static int fbnic_send_package_data(struct pldmfw *context, const u8 *data,
+>> +				   u16 length)
+>> +{
+>> +	struct device *dev = context->dev;
+>> +
+>> +	/* Temp placeholder required by devlink */
+>> +	dev_info(dev,
+>> +		 "Sending %u bytes of PLDM record package data to firmware\n",
+>> +		 length);
+> Could you clarify what is meant by "Temp placeholder" here and in
+> fbnic_send_component_table(). And what plans there might be for
+> a non-temporary solution.
 
-- Eric
+Temp placeholder may not have been the best wording here. pldmfw 
+requires all ops to be defined as they are always called[1] when 
+updating. fbnic has an info message here so its doing something but we 
+have no current plans to expand on fbnic_send_package_data nor 
+fbnic_finalize_update.
+
+[1] 
+https://elixir.bootlin.com/linux/v6.12-rc4/source/lib/pldmfw/pldmfw.c#L723
+
+>
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +/**
+>> + * fbnic_send_component_table - Send PLDM component table to the firmware
+>> + * @context: PLDM FW update structure
+>> + * @component: The component to send
+>> + * @transfer_flag: Flag indication location in component tables
+>> + *
+>> + * Read relevant data from component table and forward it to the firmware.
+>> + * Check response to verify if the firmware indicates that it wishes to
+>> + * proceed with the update.
+>> + *
+>> + * Return: zero on success
+>> + *	    negative error code on failure
+>> + */
+>> +static int fbnic_send_component_table(struct pldmfw *context,
+>> +				      struct pldmfw_component *component,
+>> +				      u8 transfer_flag)
+>> +{
+>> +	struct device *dev = context->dev;
+>> +	u16 id = component->identifier;
+>> +	u8 test_string[80];
+>> +
+>> +	switch (id) {
+>> +	case QSPI_SECTION_CMRT:
+>> +	case QSPI_SECTION_CONTROL_FW:
+>> +	case QSPI_SECTION_OPTION_ROM:
+>> +		break;
+>> +	default:
+>> +		dev_err(dev, "Unknown component ID %u\n", id);
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	dev_dbg(dev, "Sending PLDM component table to firmware\n");
+>> +
+>> +	/* Temp placeholder */
+>> +	strscpy(test_string, component->version_string,
+>> +		min_t(u8, component->version_len, 79));
+>> +	dev_info(dev, "PLDMFW: Component ID: %u version %s\n",
+>> +		 id, test_string);
+>> +
+>> +	return 0;
+>> +}
+> ...
+>
 
