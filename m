@@ -1,124 +1,166 @@
-Return-Path: <linux-kernel+bounces-381041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B8A49AF974
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 08:01:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F31B9AF98F
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 08:08:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE60EB21371
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 06:01:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9A2D1F231C1
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 06:08:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38EE81A3AB9;
-	Fri, 25 Oct 2024 06:01:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77B6718E372;
+	Fri, 25 Oct 2024 06:08:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dkWN2l5r"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=o2.pl header.i=@o2.pl header.b="ADsETGi/"
+Received: from mx-out.tlen.pl (mx-out.tlen.pl [193.222.135.158])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7BC7193089;
-	Fri, 25 Oct 2024 06:01:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D455318C030
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 06:08:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.222.135.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729836073; cv=none; b=sL7wW+IwZmb+s0Zv5AZhSIL5j9RIWlu7BWHZdYD/paVjqOuZGJnZWFghlb0svTgECIT7GbxWxX+RiTjU4RxO/bVr/PBG8TRpOfa83clU1BURTpnJJ0RT3SvJ3UkJ6L9YK8EFV0iCw20Ejfp38FVRX9nRd+8jR+QYMbVQwg3C4KQ=
+	t=1729836504; cv=none; b=k+fkfBU0f8O1I/ZuZSAd9hKGqADGIWAoZsJiKCjZJXqs4/0qkBgQeVCNS5MCJw+LGw1udl8UkAYfzNXAK/n1VD659WIk2Y2owMzGtn8j7mTvliDu3SxIPDSBLWoDOIrDz3q0pgaSVjA7RuRODI9L+u7z9XbrQpPqYiZjbF0gVo8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729836073; c=relaxed/simple;
-	bh=y01LWBiGrWPkZdH+79GJS8rq6857OtjcXuEavrtOW90=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fTh3grSzTuKyAP76li2rVt/LFVjfVgq0zm/O4ywgalPlwAixtvTioAdOe856DBREyDdpIQ2QIWVQAXU70IpzLVTPmdWTt6F25NHUl4ZdJzYjHlCkmVuJPOT4GlvOgfaQu7sD5PyLWijunDnoeXpB7yAQjhhVyl5zTt63AohqQgg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dkWN2l5r; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-71e983487a1so1235209b3a.2;
-        Thu, 24 Oct 2024 23:01:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729836071; x=1730440871; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=D4qOkIV0mJ9rxtHsHJLKJtD4R7WAh6avEGQBU2zikwI=;
-        b=dkWN2l5ryVCX/MA16z7ldJveIxYCBf/fTE+7fe62/NEubbb63isgoXXorHGV/lM4pZ
-         y5vZv04aB54jqJ/Zrd/G1z8qYYAULAd87M2aNkxShg510pI9VDRLq6db1/8O2yi0kW+e
-         6Iw9sK1yTXoseKckmFbMgjdZaWNzO0beIZcNfwvbNpS38QEeEZu/vd9GrzAIWbhXwZEw
-         57smyQ6y6hnJOUjeca85JVci7sNze/NTcfWLGRbj3UALgdJ1qm7oa7tnfyQlAzRoCOdo
-         Wsx17c1xEOAaSSKrhzHVY7PTQugMbz8wMiBFEe//S294HrgxlAgTu06xDa+DdFg33KL1
-         V/hw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729836071; x=1730440871;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=D4qOkIV0mJ9rxtHsHJLKJtD4R7WAh6avEGQBU2zikwI=;
-        b=rpm3DcyBqAToS7TtV2JAnulp1kAuEkez3yTuLDRQ9r6qHmTjC168Ty7y4faMNGSl4C
-         uA0AODc3JGkuMO7RjwCnMwOPeq0QmFfc+JxSuQ+nfFkecVGohQ6dX0uBOi5PP42ZwDrk
-         k3e/BZOXsiaChcG+gkPzsgpq/BtCNgiRHrk+Adr3DPoYLtvy7WuS30Kj+qa0NgcCgboH
-         ylLNQxouQukNGSyzqiE2pBFXSbH3Cq8ohybmUY4RIIW6Oqv3xPaSEt9e0PvXhDWKhKgY
-         GSgb8ueiB3mz/EpbofFTNKa5mx54rIcnbyeVa5+UAPEOG4ejkyNLTiXf5pJaXdt5ne0x
-         vn9w==
-X-Forwarded-Encrypted: i=1; AJvYcCXKIS3QehZ5wJzkFYw6a7wq52piIYZkemUJCasKpI4RqXozrmso+p3tRmQh6J7xc+e+p4hqj7w0CCm1@vger.kernel.org, AJvYcCXN1VXT/TT+BtZwGbOmomi6fFFJZMV9dd/KNV9UqVlXZ0gvuKQ1aljdop0X7SG+UAkAMBrM/V2cED3t+XA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxljvEZZblaWPzYmSl8JRxO2hEQ7YpPOEHqkheq/7oacry9ntuA
-	wfOYg0wGBlEyY8ZzFiTODUMlyr/qUonn8UZ+zwQ0wwaG234fTzTOV7qBOg==
-X-Google-Smtp-Source: AGHT+IFRcHAfxvWd+XZHDWWpwAvsFqFoJ51P/0+g7ndz2fpY9o/k0SOLM2nN5pCOoyJ7km5GKwwiTQ==
-X-Received: by 2002:a05:6a00:14c9:b0:71e:3b8:666b with SMTP id d2e1a72fcca58-72030a8069amr10476773b3a.15.1729836070978;
-        Thu, 24 Oct 2024 23:01:10 -0700 (PDT)
-Received: from arch-pc.genesyslogic.com.tw (60-251-58-169.hinet-ip.hinet.net. [60.251.58.169])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72057a3c024sm363557b3a.192.2024.10.24.23.01.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Oct 2024 23:01:10 -0700 (PDT)
-From: Ben Chuang <benchuanggli@gmail.com>
-To: adrian.hunter@intel.com,
-	ulf.hansson@linaro.org,
-	victor.shih@genesyslogic.com.tw
-Cc: greg.tu@genesyslogic.com.tw,
-	ben.chuang@genesyslogic.com.tw,
-	HL.Liu@genesyslogic.com.tw,
-	Lucas.Lai@genesyslogic.com.tw,
-	benchuanggli@gmail.com,
-	victorshihgli@gmail.com,
-	linux-mmc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] mmc: sdhci-pci-gli: GL9767: Fix low power mode in the SD Express process
-Date: Fri, 25 Oct 2024 14:00:17 +0800
-Message-ID: <20241025060017.1663697-2-benchuanggli@gmail.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241025060017.1663697-1-benchuanggli@gmail.com>
-References: <20241025060017.1663697-1-benchuanggli@gmail.com>
+	s=arc-20240116; t=1729836504; c=relaxed/simple;
+	bh=lWY1cYjWDT0FuJ3rKkJUgyvPJglMPy9xp12xFCSV+dc=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=qaFoalnzk+E5cNwuzWuflIsXhInQySw6whk3Dk3+GX2pjE4TWxwM+4ABXyVBDELM88lO4hFJt8ur+vPmbazc8QItffu3RaH+RImIVxQ9UPp8WjpaW3J4c93OU2Kf7msKzX46ap3FbC+rXU9HWDioJ2ThN5/xS2omCZ4YX3NS+c8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=o2.pl; spf=pass smtp.mailfrom=o2.pl; dkim=pass (1024-bit key) header.d=o2.pl header.i=@o2.pl header.b=ADsETGi/; arc=none smtp.client-ip=193.222.135.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=o2.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=o2.pl
+Received: (wp-smtpd smtp.tlen.pl 15452 invoked from network); 25 Oct 2024 08:01:38 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=o2.pl; s=1024a;
+          t=1729836098; bh=NS9u9n+cTzjLwF5ONAS/jRv5numrk4hGVCqnQ6MLXjY=;
+          h=From:To:CC:Subject;
+          b=ADsETGi/PVztE9UrbE2ZbQ7ZRQ4jPPVd6oP8tmcExwnw8FRviz+zaNIKKg/AfCPkn
+           GEtV7De4iKF74ZJZOcP9HWoQf0NWNMH7cYFnrJ3drOFNCnr2/Sv7yK/+vMBrlvBVWE
+           3r1sMwc6y/QKkZ165EGzbZtmlFmWGf8o70XIXlFw=
+Received: from 188.146.252.129.mobile.internet.t-mobile.pl (HELO [127.0.0.1]) (mat.jonczyk@o2.pl@[188.146.252.129])
+          (envelope-sender <mat.jonczyk@o2.pl>)
+          by smtp.tlen.pl (WP-SMTPD) with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP
+          for <dmitry.torokhov@gmail.com>; 25 Oct 2024 08:01:38 +0200
+Date: Fri, 25 Oct 2024 08:01:37 +0200
+From: =?UTF-8?Q?Mateusz_Jo=C5=84czyk?= <mat.jonczyk@o2.pl>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>
+CC: Mario Limonciello <mario.limonciello@amd.com>,
+ Dan Carpenter <dan.carpenter@linaro.org>,
+ Joy Chakraborty <joychakr@google.com>, linux-rtc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH=5D_rtc=3A_cmos=3A_avoid_taking_?=
+ =?US-ASCII?Q?rtc=5Flock_for_extended_period_of_time?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <Zxqv9KYnBdtnuqox@google.com>
+References: <Zxqv9KYnBdtnuqox@google.com>
+Message-ID: <B8A0CC86-7C24-4154-B8F3-69CD6B6C94BD@o2.pl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-WP-MailID: ee1af7991353aaae12cf921c9846d82d
+X-WP-AV: skaner antywirusowy Poczty o2
+X-WP-SPAM: NO 0000000 [kQO0]                               
 
-From: Ben Chuang <ben.chuang@genesyslogic.com.tw>
+Dnia 24 pa=C5=BAdziernika 2024 22:37:08 CEST, Dmitry Torokhov <dmitry=2Etor=
+okhov@gmail=2Ecom> napisa=C5=82/a:
+>On my device reading entirety of /sys/devices/pnp0/00:03/cmos_nvram0/nvme=
+m
+>takes about 9 msec during which time interrupts are off on the CPU that
+>does the read and the thread that performs the read can not be migrated
+>or preempted by another higher priority thread (RT or not)=2E
+>
+>Allow readers and writers be preempted by taking and releasing rtc_lock
+>spinlock for each individual byte read or written rather than once per
+>read/write request=2E
 
-When starting the SD Express process, the low power negotiation mode will
-be disabled, so we need to re-enable it after switching back to SD mode.
+Hello,=20
+A nice idea!=20
+(sorry for any formatting problems, I'm on a train right now)=20
 
-Fixes: 0e92aec2efa0 ("mmc: sdhci-pci-gli: Add support SD Express card for GL9767")
-Signed-off-by: Ben Chuang <benchuanggli@gmail.com>
-Signed-off-by: Ben Chuang <ben.chuang@genesyslogic.com.tw>
----
- drivers/mmc/host/sdhci-pci-gli.c | 3 +++
- 1 file changed, 3 insertions(+)
+>
+>Signed-off-by: Dmitry Torokhov <dmitry=2Etorokhov@gmail=2Ecom>
+>---
+> drivers/rtc/rtc-cmos=2Ec | 31 +++++++++++++++----------------
+> 1 file changed, 15 insertions(+), 16 deletions(-)
+>
+>diff --git a/drivers/rtc/rtc-cmos=2Ec b/drivers/rtc/rtc-cmos=2Ec
+>index 35dca2accbb8=2E=2Ee8f2fe0d8560 100644
+>--- a/drivers/rtc/rtc-cmos=2Ec
+>+++ b/drivers/rtc/rtc-cmos=2Ec
+>@@ -645,18 +645,17 @@ static int cmos_nvram_read(void *priv, unsigned int=
+ off, void *val,
+> 	unsigned char *buf =3D val;
+>=20
+> 	off +=3D NVRAM_OFFSET;
+>-	spin_lock_irq(&rtc_lock);
+>-	for (; count; count--, off++) {
+>+	for (; count; count--, off++, buf++) {
+>+		guard(spinlock_irq)(&rtc_lock);
+> 		if (off < 128)
+>-			*buf++ =3D CMOS_READ(off);
+>+			*buf =3D CMOS_READ(off);
+> 		else if (can_bank2)
+>-			*buf++ =3D cmos_read_bank2(off);
+>+			*buf =3D cmos_read_bank2(off);
+> 		else
+>-			break;
+>+			return -EIO;
+> 	}
+>-	spin_unlock_irq(&rtc_lock);
+>=20
+>-	return count ? -EIO : 0;
+>+	return count;
 
-diff --git a/drivers/mmc/host/sdhci-pci-gli.c b/drivers/mmc/host/sdhci-pci-gli.c
-index 22a927ce2c88..68ce4920e01e 100644
---- a/drivers/mmc/host/sdhci-pci-gli.c
-+++ b/drivers/mmc/host/sdhci-pci-gli.c
-@@ -1068,6 +1068,9 @@ static int gl9767_init_sd_express(struct mmc_host *mmc, struct mmc_ios *ios)
- 		sdhci_writew(host, value, SDHCI_CLOCK_CONTROL);
- 	}
- 
-+	pci_read_config_dword(pdev, PCIE_GLI_9767_CFG, &value);
-+	value &= ~PCIE_GLI_9767_CFG_LOW_PWR_OFF;
-+	pci_write_config_dword(pdev, PCIE_GLI_9767_CFG, value);
- 	gl9767_vhs_read(pdev);
- 
- 	return 0;
--- 
-2.47.0
+return 0;
+
+when you are at it=2E=20
+
+> }
+>=20
+> static int cmos_nvram_write(void *priv, unsigned int off, void *val,
+>@@ -671,23 +670,23 @@ static int cmos_nvram_write(void *priv, unsigned in=
+t off, void *val,
+> 	 * NVRAM to update, updating checksums is also part of its job=2E
+> 	 */
+> 	off +=3D NVRAM_OFFSET;
+>-	spin_lock_irq(&rtc_lock);
+>-	for (; count; count--, off++) {
+>+	for (; count; count--, off++, buf++) {
+> 		/* don't trash RTC registers */
+> 		if (off =3D=3D cmos->day_alrm
+> 				|| off =3D=3D cmos->mon_alrm
+> 				|| off =3D=3D cmos->century)
+>-			buf++;
+>-		else if (off < 128)
+>-			CMOS_WRITE(*buf++, off);
+>+			continue;
+>+
+>+		guard(spinlock_irq)(&rtc_lock);
+>+		if (off < 128)
+>+			CMOS_WRITE(*buf, off);
+> 		else if (can_bank2)
+>-			cmos_write_bank2(*buf++, off);
+>+			cmos_write_bank2(*buf, off);
+> 		else
+>-			break;
+>+			return -EIO;
+> 	}
+>-	spin_unlock_irq(&rtc_lock);
+>=20
+>-	return count ? -EIO : 0;
+>+	return count;
+
+return 0;
+
+> }
+>=20
+> /*----------------------------------------------------------------*/
 
 
