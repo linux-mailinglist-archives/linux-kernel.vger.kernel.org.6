@@ -1,206 +1,195 @@
-Return-Path: <linux-kernel+bounces-382271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A7D59B0BAB
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 19:35:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EDC89B0BAD
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 19:35:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B46D285EF4
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:35:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9ED98B23698
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:35:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7981A20EA29;
-	Fri, 25 Oct 2024 17:28:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 864A320EA4F;
+	Fri, 25 Oct 2024 17:29:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hNCouuqQ"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GJFZn0dg"
+Received: from mail-ua1-f73.google.com (mail-ua1-f73.google.com [209.85.222.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 684F120EA27
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 17:28:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7790A20EA24
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 17:29:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729877323; cv=none; b=u2TIeksJoy+hD6hKuIIrlWDDHmvXvblSoJ4kUwctu+/bNVMiTF7UXp96ILhhqfM9Gvxn6lfIus1LZ0RfE3Ssgq/Hi2b+50dPF5jz473cHUzfjsQ4JvpnRjScuo93xQDpmva4ZYmXMR1RqA0UqPkRtcCYQ4b20HcL5dUdf7aSuxA=
+	t=1729877377; cv=none; b=SXWe34VB/7vPiLogZtheTpQnEnnxpiKaqS1K4J9CPt8CHvnDB6okQNlfT17eRHBOgBJM65jGe+Zf5saODropm887yeDiKsiCUQyWPRAXXkxM5LKCaDh2CiWtFeJCnr7tFoukQUmp6aCzar7e072t0hry44oypKjHPCD+q3/v3yg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729877323; c=relaxed/simple;
-	bh=EadSvH1nCXNnbUFXESWMZhX4lkiwkNOvhx8zRKJnB6w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eje+1lO2zzM/zU+DSIyv6IS9pzjwUUeh6K+6j8RQoMQhHt8BKVhI/b0/CJQND3JUdn7nsAkWvft9jjC5Min9eAy7Lqrm36YHQ62Uj8rl59aKyx0ef0IU/9XiRxZ7yw+485PxNqUCYgq9fWgyxeDjNHBhjDcMJc+234wrPZ+waKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hNCouuqQ; arc=none smtp.client-ip=209.85.214.177
+	s=arc-20240116; t=1729877377; c=relaxed/simple;
+	bh=vaWqE33Jp7HhvmUBvUQBmOBfExpF5yd2WBDLLHr3k1g=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=SlEe9ojA+u4e6/7gNXkW4OPWKL9oDpOCC8rp73gOUvgvk0tPh+2/x4roP8icLoC3cSkdgIa1ArCGs2Z58R6IgYd/hHoOynz7oj5inGyrpi1lyQ+iZTikdu2kvcjkKo2g8lQnM0TVHQszjGWNhjNiELi2IXNN9yFgpNhO0f0hUZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--moritzf.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GJFZn0dg; arc=none smtp.client-ip=209.85.222.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-20ca4877690so8745ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 10:28:40 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--moritzf.bounces.google.com
+Received: by mail-ua1-f73.google.com with SMTP id a1e0cc1a2514c-84fdfb0203eso665549241.2
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 10:29:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729877320; x=1730482120; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NERe5BmqqG7td09PWa0YFbRH/pOHK/E81Gszzf1NSQY=;
-        b=hNCouuqQ1PJXnoG0gIaCWoXTCo9EF9mM4JaEq6mNYBVIbLkOHvLLAgQ0bLT2I8kVgb
-         r/R17d0TgShMWBxPNz43SPahReRbPUWZiJfMb0/fdD6cDZ4T5ZvIERYtTf0FiXNjgF5N
-         E6hk6NTZLEyyX9ZM2Xp63+y699bfs9jxSxNRUKy8O+n1g9o3FalncrNB5KXDjL4Vsn8e
-         aqPecwydd0UyFHXUJA5DGvcZHgfdSt9IjfBRKLW2fegANV+wzhjOQ5U+2ipXmPmwqy2G
-         fZZ+Ha/nLgdJVnwk2YgoUEDGY3lwP9QSItV/yn7VrGJ+hnT29YnbitbqRRWFpFIwuDMI
-         RD8A==
+        d=google.com; s=20230601; t=1729877373; x=1730482173; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vaWqE33Jp7HhvmUBvUQBmOBfExpF5yd2WBDLLHr3k1g=;
+        b=GJFZn0dg8dbOpPDEhKXb6fqvm34L86rfYyCyPQbwgY9ao4jnWh+X/TtNpTXlDTj/hO
+         9WwR36q1yTLYU3D1OG1h/Lr3RseoyZU30BFajsFsey3nIfPs4HE2bLJ7HQ3/seKDNDe6
+         HfX/DSEz1nEnC13GQd/tvd3vyujq65HXpAKwisKApVYvh6pXoJ8Xlkfl8/yEzp8hXziH
+         gVhuCJW/wCGoaBY6gryLlnno+t7j7IzQR7pONqf6ZB6Wevz3vH3sncjAi+jNO5pYSQ4Q
+         T+sRKQXQTMAmovxwARlQCSC0/6dKYUMq+qAVWhsbMAh72hLWR5lBdK2fotr/3cz2DIHz
+         4CRA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729877320; x=1730482120;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NERe5BmqqG7td09PWa0YFbRH/pOHK/E81Gszzf1NSQY=;
-        b=i/EypqdeQjv7xwNDj4DYOl6saGVXzoouYsVVi386to8LHrbtPIJaY1v0c+tuvcJIJY
-         bWpJ49Groz4mRxuoKBpnKtsvYRbwFBx09ZRSHsqslBqWPQVQyA6+vOeNFvhWiMDU0Yft
-         MhdZAZrNNxc2Ug8jDp8R6n0qvPuRpigvdqEiArc+QZbi5Po9j0aO2WF6XZD3B+h8a1nZ
-         o4/DzXtlrGJ/1Mg+Zm7C2jPPf+tSd/WlRJ7p5MHlotJhw/k6+aTAa+tDxVslwG1FpK57
-         0Dfx6lC+QhPijgtt+y6JBVBiJvlFiDEw3wcqaHMxNkDDL640idT08om30i9mSdagODlo
-         RiCw==
-X-Forwarded-Encrypted: i=1; AJvYcCUz0NspZz8NL6dtEaJJgSh26llKb6F5i1T6c6R4CSrDGIBLWTUWTNuupaUCnOfIKbo/JVfY5RvYJvNHbow=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVrT0h8FDggWKWvprWQ4EkhY5zHUApTjmvQPtBJtl8odBPyMbm
-	vZOAw3mwcZe2Gz8rozT3AYjvc6u9WIrb358hDPiE/LIG7K+9mDO9isoRLBSlKDXm10WalNa7+F5
-	6HJ9tI9ifOrNuLK2fbDg3cMHBXhh02BwXzqyx
-X-Google-Smtp-Source: AGHT+IGlD/+0J6Xli2Vr61sE6IQaLWKzjV9LwIKjci0mblIVO4/qT00wWXFWVtb8GoDPACyeDllhujorEPXAPYYZejY=
-X-Received: by 2002:a17:903:2281:b0:20b:13a8:9f86 with SMTP id
- d9443c01a7336-20fc221aa04mr3066645ad.28.1729877319825; Fri, 25 Oct 2024
- 10:28:39 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729877373; x=1730482173;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=vaWqE33Jp7HhvmUBvUQBmOBfExpF5yd2WBDLLHr3k1g=;
+        b=fJjgwFQeUpCnlbNNYfiBkNL/mZcpiV7kAnnItWQPhbphhMEtU+03/ZHf7it4dJllay
+         4HEDCDQncpZZIqKnMxdw9QwJw2pKkYZ6gU+TgWAMD1ObGJCKTVn0/NH/hXKuaUfOUkhl
+         9Bu9Yd8MR4X4G49HtSgxtzYYcYo8Z1HV2ZcPhjLXjoI6pGUYFY4xFDFtSHd6v3+JAf4y
+         VEtmzPP1LH3wCyDVyzdFcZwMB4UImknzS8Zrp9EQefBVniXhOeM4SZ9E/hi8BWj5tl+w
+         qOVw4jFzxH2AvqsQokOi86QXTkpLHyX1ssXVGgzYTH3gP5Yp1RrI7AcoBk2ZADZsRYg7
+         DDqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXVECU0N69mCYxiVF/m0L6o9XBZgaOIW608cg6ZcLvGvHP00WCLNd5th8KIwYoPin05O29hKNXSUN9fcks=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKnwNT0vjBIMpygSyOjeyH/nqda0dnKJoakUYz41DOT89OHnDX
+	mRLrmXwEcd48t8ObhEpBUkCCbSqfLvy1HJtR5DBCb7EE1Qtgx4TqYeQqPWJAs40aHvn5DIG2+1W
+	MSPiiWA==
+X-Google-Smtp-Source: AGHT+IHvR9B99oJaoIKK1hLWj8GKaITp7BpvPF0jOKvhMdVFUorXpcgarVI0m/9EYmbjpSpv134t+JBKnhKl
+X-Received: from morats.c.googlers.com ([fda3:e722:ac3:cc00:13f:f0c:ac12:c151])
+ (user=moritzf job=sendgmr) by 2002:ab0:69c3:0:b0:848:92ea:87dd with SMTP id
+ a1e0cc1a2514c-853f01a4d6bmr13173241.2.1729877373187; Fri, 25 Oct 2024
+ 10:29:33 -0700 (PDT)
+Date: Fri, 25 Oct 2024 17:29:32 +0000
+In-Reply-To: <lbffqd6wuigivpd4ryrxwirhkc5ghj6k4nenm75dtgeea42535@7v2fzt5i7app>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20241024073324.1513433-1-irogers@google.com> <ZxvLW-DMFcM9_K71@google.com>
-In-Reply-To: <ZxvLW-DMFcM9_K71@google.com>
-From: Ian Rogers <irogers@google.com>
-Date: Fri, 25 Oct 2024 10:28:25 -0700
-Message-ID: <CAP-5=fU1t_88L5-+JXnvn7DuFU4maXz06sz5ncnmh-71P7PMsg@mail.gmail.com>
-Subject: Re: [PATCH v4 00/10] Run tests in parallel showing number of tests running
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	James Clark <james.clark@linaro.org>, Howard Chu <howardchu95@gmail.com>, 
-	Athira Jajeev <atrajeev@linux.vnet.ibm.com>, Michael Petlan <mpetlan@redhat.com>, 
-	Veronika Molnarova <vmolnaro@redhat.com>, Dapeng Mi <dapeng1.mi@linux.intel.com>, 
-	Thomas Richter <tmricht@linux.ibm.com>, Ilya Leoshkevich <iii@linux.ibm.com>, 
-	Colin Ian King <colin.i.king@gmail.com>, Weilin Wang <weilin.wang@intel.com>, 
-	Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+References: <20241017035940.4067922-1-payamm@google.com> <CAJZ5v0hbg_5VLCT3cXgK4WkCTwNAUGrUuRe66DoCHf6xydsTzQ@mail.gmail.com>
+ <lbffqd6wuigivpd4ryrxwirhkc5ghj6k4nenm75dtgeea42535@7v2fzt5i7app>
+Message-ID: <ei3jeuuslvva5ka7tcdwn4abcidfuvdfdhymlxx66sxabmowo2@35iasm2ew6ws>
+Subject: Re: [PATCH] acpi: zero-initialize acpi_object union structure
+From: Moritz Fischer <moritzf@google.com>
+To: Payam Moradshahi <payamm@google.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Transfer-Encoding: base64
 
-On Fri, Oct 25, 2024 at 9:46=E2=80=AFAM Namhyung Kim <namhyung@kernel.org> =
-wrote:
->
-> Hi Ian,
->
-> On Thu, Oct 24, 2024 at 12:33:14AM -0700, Ian Rogers wrote:
-> > Avoid waitpid so that stdout/stderr aren't destroyed prior to wanting
-> > to read them for display. When running on a color terminal, display
-> > the number of running tests (1 if sequential). To avoid previous
-> > flicker, only delete and refresh the display line when it changes. An
-> > earlier version of this code is here:
-> > https://lore.kernel.org/lkml/20240701044236.475098-1-irogers@google.com=
-/
-> >
-> > Add a signal handler for perf tests so that unexpected signals are
-> > displayed and test clean up is possible.
-> >
-> > In perf test add an "exclusive" flag that causes a test to be run with
-> > no other test. Set this flag manually for C tests and via a
-> > "(exclusive)" in the test description for shell tests. Add the flag to
-> > shell tests that may fail when run with other tests.
-> >
-> > Change the perf test loop to run in two passes. For parallel
-> > execution, the first pass runs all tests that can be run in parallel
-> > then the 2nd runs remaining tests sequentially. This causes the
-> > "exclusive" tests to be run last and with test numbers moderately out
-> > of alignment.
-> >
-> > Change the default to be to run tests in parallel. Running tests in
-> > parallel brings the execution time down to less than half.
->
-> Thanks for the update, but I got a build error for this version.
->
->   tests/builtin-test.c: In function '__cmd_test':
->   tests/builtin-test.c:479:6: error: variable 'width' might be clobbered =
-by 'longjmp' or 'vfork' [-Werror=3Dclobbered]
->     int width =3D 0;
->         ^~~~~
-
-The error is legit but I can't reproduce it with gcc or clang. Making
-the variable static should resolve the issue so I'll post v5 with
-this. I can't confirm the error is gone.
-
-Thanks,
-Ian
-
-> Thanks,
-> Namhyung
->
-> >
-> > v4: Add patch to sort exclusive tests last, this allows for increasing
-> >     test numbers as requested by Namhyung.
-> >
-> > v3: Mark additional shell tests as "(exclusive)" to avoid issues with
-> >     shared resources suggested by Namhyung. Add dependent signal
-> >     handler change so that kill/ctrl-C don't leave lots of processes,
-> >     previously sent here:
-> >     https://lore.kernel.org/lkml/20241017052137.225514-1-irogers@google=
-.com/
-> >
-> > v2: Fix inaccurate remaining counts when running specific
-> >     tests. Rename "remaining" to "active" to better reflect the
-> >     testing behavior. Move the exclusive flag to test cases and not
-> >     entire suites. Add more "(exclusive)" flags to test as
-> >     suggested-by James Clark. Remove "(exclusive)" flag from test
-> >     descriptions to keep the command line output more concise. Add
-> >     James Clark's tested-by.
-> >
-> > Ian Rogers (10):
-> >   tools subcmd: Add non-waitpid check_if_command_finished()
-> >   perf test: Display number of active running tests
-> >   perf test: Reduce scope of parallel variable
-> >   perf test: Avoid list test blocking on writing to stdout
-> >   perf test: Tag parallel failing shell tests with "(exclusive)"
-> >   perf test: Add a signal handler around running a test
-> >   perf test: Run parallel tests in two passes
-> >   perf test: Make parallel testing the default
-> >   perf test: Add a signal handler to kill forked child processes
-> >   perf test: Sort tests placing exclusive tests last
-> >
-> >  tools/lib/subcmd/run-command.c                |  33 ++
-> >  tools/perf/tests/builtin-test.c               | 405 ++++++++++++------
-> >  .../tests/shell/coresight/asm_pure_loop.sh    |   2 +-
-> >  .../shell/coresight/memcpy_thread_16k_10.sh   |   2 +-
-> >  .../coresight/thread_loop_check_tid_10.sh     |   2 +-
-> >  .../coresight/thread_loop_check_tid_2.sh      |   2 +-
-> >  .../shell/coresight/unroll_loop_thread_10.sh  |   2 +-
-> >  tools/perf/tests/shell/list.sh                |   5 +-
-> >  .../tests/shell/perftool-testsuite_report.sh  |   2 +-
-> >  tools/perf/tests/shell/probe_vfs_getname.sh   |   2 +-
-> >  .../shell/record+script_probe_vfs_getname.sh  |   2 +-
-> >  tools/perf/tests/shell/record.sh              |   2 +-
-> >  tools/perf/tests/shell/record_lbr.sh          |   2 +-
-> >  tools/perf/tests/shell/record_offcpu.sh       |   2 +-
-> >  tools/perf/tests/shell/stat_all_pmu.sh        |   2 +-
-> >  tools/perf/tests/shell/stat_bpf_counters.sh   |   2 +-
-> >  tools/perf/tests/shell/test_arm_coresight.sh  |   2 +-
-> >  .../tests/shell/test_arm_coresight_disasm.sh  |   2 +-
-> >  tools/perf/tests/shell/test_arm_spe.sh        |   2 +-
-> >  tools/perf/tests/shell/test_data_symbol.sh    |   2 +-
-> >  tools/perf/tests/shell/test_intel_pt.sh       |   2 +-
-> >  .../perf/tests/shell/test_stat_intel_tpebs.sh |   2 +-
-> >  .../tests/shell/trace+probe_vfs_getname.sh    |   2 +-
-> >  tools/perf/tests/task-exit.c                  |   9 +-
-> >  tools/perf/tests/tests-scripts.c              |   7 +-
-> >  tools/perf/tests/tests.h                      |   9 +
-> >  tools/perf/util/color.h                       |   1 +
-> >  27 files changed, 365 insertions(+), 144 deletions(-)
-> >
-> > --
-> > 2.47.0.163.g1226f6d8fa-goog
-> >
+SGkgUmFmYWVsLA0KDQpPbiBUaHUsIE9jdCAyNCwgMjAyNCBhdCAwMjo1ODoyN1BNIEdNVCwgUGF5
+YW0gTW9yYWRzaGFoaSB3cm90ZToNCj4gSGkgUmFmYWVsLA0KDQo+IFRoYW5rIHlvdSBmb3IgeW91
+ciByZXNwb25zZS4gUGxlYXNlIHNlZSBiZWxvdyBmb3IgbXkgcmVzcG9uc2UuDQoNCj4gUGF5YW0N
+Cg0KPiBPbiBNb24sIE9jdCAyMSwgMjAyNCBhdCAwMTozMTozOVBNIEdNVCwgUmFmYWVsIEouIFd5
+c29ja2kgd3JvdGU6DQo+ID4gT24gVGh1LCBPY3QgMTcsIDIwMjQgYXQgNTo1OeKAr0FNIFBheWFt
+IE1vcmFkc2hhaGkgPHBheWFtbUBnb29nbGUuY29tPg0KPiA+IHdyb3RlOg0KPiA+ID4NCj4gPiA+
+IFRoZSB3YXkgaW4gd2hpY2ggYWNwaV9vYmplY3QgdW5pb24gaXMgYmVpbmcgaW5pdGlhbGl6ZWQg
+dmFyaWVzIGJhc2VkICANCj4gb24NCj4gPiA+IGNvbXBpbGVyIHR5cGUsIHZlcnNpb24gYW5kIGZs
+YWdzIHVzZWQuIFNvbWUgd2lsbCB6ZXJvLWluaXRpYWxpemUgdGhlDQo+ID4gPiBlbnRpcmUgdW5p
+b24gc3RydWN0dXJlIGFuZCBzb21lIHdpbGwgb25seSBpbml0aWFsaXplIHRoZSBmaXJzdCBOLWJ5
+dGVzDQo+ID4gPiBvZiB0aGUgdW5pb24gc3RydWN0dXJlLg0KDQo+ID4gQW55IGRldGFpbHM/DQo+
+IEkgZHVtcGVkIGFjcGlfb2JqZWN0IGFmdGVyIGluaXRpYWxpemF0aW9uIGFuZCBub3RpY2VkIGVp
+dGhlciB0aGUNCj4gZW50aXJlIHN0cnVjdHVyZSB3YXMgemVyby1pbml0aWFsaXplZCBvciBqdXN0
+IHRoZSBmaXJzdCA4IGJ5dGVzDQo+IGRlcGVuZGluZyBvbiBjb21waWxlciB0eXBlIGFuZCB2ZXJz
+aW9uLg0KDQo+IGdjYyAxMy4yLjA6IGJhZA0KPiBDTEFOR19DTD0zNjIxMjEyNjk6IGdvb2QNCj4g
+Q0xBTkdfQ0w9NjA5NDQzMTI2OiBiYWQNCj4gQ0xBTkdfQ0w9Njg0NzczOTYwOiBnb29kDQoNCkZv
+ciByZWZlcmVuY2UgdGhlIGxhdHRlciBvbmVzIGFyZSBHb29nbGUgaW50ZXJuYWwgYnVpbGRzIG9m
+IGNsYW5nLCBidXQNCndlJ3ZlIHBsYXllZCBhcm91bmQgaW4gZ29kYm9sdCB3aXRoIHRoaXMgaW4g
+YSB2YXJpZXR5IG9mIHZlcnNpb25zIGFuZA0Kc29tZSB3b3JrIGFuZCBzb21lIGRvbid0LiBQYXlh
+bSBoYXMgdGhlIHJlbGV2YW50IHNlY3Rpb24gZnJvbSB0aGUgQw0Kc3RhbmRhcmQgYmVsb3cuDQoN
+Cg0KPiA+ID4gVGhpcyBjb3VsZCBsZWFkIHRvIHVuaW5pdGlhbGl6ZWQgdW5pb24gbWVtYmVycy4N
+Cg0KPiA+IFNvIHRoaXMgaXMgd29ya2luZyBhcm91bmQgYSBjb21waWxlciBidWcgQUZBSUNTLg0K
+DQo+ID4gSWYgdGhlIGNvbXBpbGVyIGhhcyB0aGlzIGJ1ZywgaXMgaXQgZ3VhcmFudGVlZCB0byBj
+b21waWxlIHRoZSByZXN0IG9mDQo+ID4gdGhlIGtlcm5lbCBjb3JyZWN0bHk/DQo+IFRoaXMgaXMg
+bm90IGEgY29tcGlsZXIgYnVnLiBUaGUgd2F5IGFjcGlfb2JqZWN0IHVuaW9uIGlzIGJlaW5nDQo+
+IGluaXRpYWxpemVkIGlzIG5vdCBjLXNwZWMgY29tcGxpYW50Lg0KDQpJIHRoaW5rIGluIHBhc3Qg
+dmVyc2lvbnMgd2UgbWlnaHQndmUgZ290dGVuIGx1Y2t5IHdpdGggdGhpcywgcmVjZW50DQpjb21w
+aWxlcnMgbWlnaHQndmUgdGlnaHRlbmVkIHRoaXMgdXAgc29tZSBvciBjaGFuZ2VkIGJlaGF2aW9y
+Lg0KDQoNCj4gQmFzZWQgb24gQyBTdGFuZGFyZCBJU08vSUVDIDk4OTk6MjAyeCAoRSk6DQoNCj4g
+U2VjdGlvbiA2LjIuNi4xICg3KSBzYXlzOg0KDQo+IFdoZW4gYSB2YWx1ZSBpcyBzdG9yZWQgaW4g
+YSBtZW1iZXIgb2YgYW4gb2JqZWN0IG9mIHVuaW9uIHR5cGUsIHRoZSBieXRlcyAgDQo+IG9mDQo+
+IHRoZQ0KPiBvYmplY3QgcmVwcmVzZW50YXRpb24gdGhhdCBkbyBub3QgY29ycmVzcG9uZCB0byB0
+aGF0IG1lbWJlciBidXQgZG8NCj4gY29ycmVzcG9uZA0KPiB0byBvdGhlciBtZW1iZXJzIHRha2Ug
+dW5zcGVjaWZpZWQgdmFsdWVzDQoNCj4gU2VjdGlvbiA2LjcuOSBzYXlzOg0KDQo+IElmIGFuIG9i
+amVjdCB0aGF0IGhhcyBhdXRvbWF0aWMgc3RvcmFnZSBkdXJhdGlvbiBpcyBub3QgaW5pdGlhbGl6
+ZWQNCj4gZXhwbGljaXRseSwNCj4gaXRzIHZhbHVlIGlzIGluZGV0ZXJtaW5hdGUuDQoNCj4gSWYg
+YW4gb2JqZWN0IHRoYXQgaGFzIHN0YXRpYyBvciB0aHJlYWQgc3RvcmFnZSBkdXJhdGlvbiBpcyBu
+b3QgaW5pdGlhbGl6ZWQNCj4gZXhwbGljaXRseSwgdGhlbjoNCj4gICAtIGlmIGl0IGlzIGEgdW5p
+b24sIHRoZSBmaXJzdCBuYW1lZCBtZW1iZXIgaXMgaW5pdGlhbGl6ZWQgKHJlY3Vyc2l2ZWx5KQ0K
+PiAgICAgYWNjb3JkaW5nIHRvIHRoZXNlIHJ1bGVzLCBhbmQgYW55IHBhZGRpbmcgaXMgaW5pdGlh
+bGl6ZWQgdG8gemVybyBiaXRzOw0KDQo+IFRoZSBhYm92ZSBndWFyYW50ZWVzIHplcm8gb25seSBp
+biB0aGUgY2FzZSBvZiBzdGF0aWMgb3IgdGhyZWFkIHN0b3JhZ2UsDQo+IHdoaWNoIGlzIG5vdCB0
+aGUgY2FzZSBoZXJlLg0KDQoNCj4gPiA+IFRoaXMgYnVnIHdhcyBjb25maXJtZWQgYnkgb2JzZXJ2
+aW5nIG5vbi16ZXJvIHZhbHVlIGZvciAgDQo+IG9iamVjdC0+cHJvY2Vzc29yDQo+ID4gPiBzdHJ1
+Y3R1cmUgdmFyaWFibGVzLg0KDQo+ID4gV2hlcmUgaGFzIGl0IGJlZW4gb2JzZXJ2ZWQ/ICBXaGF0
+IGNvbXBpbGVyIHZlcnNpb24ocyk/IGV0Yy4NCj4gU2VlIGFib3ZlIGZvciBzb21lIGV4YW1wbGVz
+DQoNClRoaXMgbWFuaWZlc3RzIGxpa2UgdGhpcyBvbiBHb29nbGUgQXhpb24gYXJtNjQgYnVpbGRz
+IHVzaW5nIEFybSdzDQpwcmVidWlsdCBHQ0MgMTMuMi4wOg0KDQpbICAgIDEuODQ0NTA4XSBhY3Bp
+IEFDUEkwMDA3OjA4OiBJbnZhbGlkIFBCTEsgbGVuZ3RoIFsyNzExNzAxMTJdDQpbICAgIDEuODUw
+MjUzXSBhY3BpIEFDUEkwMDA3OjA5OiBJbnZhbGlkIFBCTEsgbGVuZ3RoIFsyNzExNzAxMTJdDQpb
+ICAgIDEuODU1OTkyXSBhY3BpIEFDUEkwMDA3OjBhOiBJbnZhbGlkIFBCTEsgbGVuZ3RoIFsyNzEx
+NzAxMTJdDQpbICAgIDEuODYxNzMwXSBhY3BpIEFDUEkwMDA3OjBiOiBJbnZhbGlkIFBCTEsgbGVu
+Z3RoIFsyNzExNzAxMTJdDQpbICAgIDEuODY3NDcwXSBhY3BpIEFDUEkwMDA3OjBjOiBJbnZhbGlk
+IFBCTEsgbGVuZ3RoIFsyNzExNzAxMTJdDQpbICAgIDEuODczMjA4XSBhY3BpIEFDUEkwMDA3OjBk
+OiBJbnZhbGlkIFBCTEsgbGVuZ3RoIFsyNzExNzAxMTJdDQpbICAgIDEuODc4OTQ3XSBhY3BpIEFD
+UEkwMDA3OjBlOiBJbnZhbGlkIFBCTEsgbGVuZ3RoIFsyNzExNzAxMTJdDQpbICAgIDEuODg0Njg2
+XSBhY3BpIEFDUEkwMDA3OjBmOiBJbnZhbGlkIFBCTEsgbGVuZ3RoIFsyNzExNzAxMTJdDQpbICAg
+IDEuODkwNDI0XSBhY3BpIEFDUEkwMDA3OjEwOiBJbnZhbGlkIFBCTEsgbGVuZ3RoIFsyNzExNzAx
+MTJdDQpbICAgIDEuODk2MTYxXSBhY3BpIEFDUEkwMDA3OjExOiBJbnZhbGlkIFBCTEsgbGVuZ3Ro
+IFsyNzExNzAxMTJdDQpbICAgIDEuOTAxODk4XSBhY3BpIEFDUEkwMDA3OjEyOiBJbnZhbGlkIFBC
+TEsgbGVuZ3RoIFsyNzExNzAxMTJdDQpbICAgIDEuOTA3NjM2XSBhY3BpIEFDUEkwMDA3OjEzOiBJ
+bnZhbGlkIFBCTEsgbGVuZ3RoIFsyNzExNzAxMTJdDQpbICAgIDEuOTEzMzc0XSBhY3BpIEFDUEkw
+MDA3OjE0OiBJbnZhbGlkIFBCTEsgbGVuZ3RoIFsyNzExNzAxMTJdDQpbICAgIDEuOTE5MTEzXSBh
+Y3BpIEFDUEkwMDA3OjE1OiBJbnZhbGlkIFBCTEsgbGVuZ3RoIFsyNzExNzAxMTJdDQpbICAgIDEu
+OTI0ODUxXSBhY3BpIEFDUEkwMDA3OjE2OiBJbnZhbGlkIFBCTEsgbGVuZ3RoIFsyNzExNzAxMTJd
+DQoNCg0KPiA+ID4gbm9uLXplcm8gaW5pdGlhbGl6ZWQgbWVtYmVycyBvZiBhY3BpX29iamVjdCB1
+bmlvbiBzdHJ1Y3R1cmUgY2F1c2VzDQo+ID4gPiBpbmNvcnJlY3QgZXJyb3IgcmVwb3J0aW5nIGJ5
+IHRoZSBkcml2ZXIuDQo+ID4gPg0KPiA+ID4gSWYgYSBCSU9TIGlzIHVzaW5nICJEZXZpY2UiIHN0
+YXRlbWVudCBhcyBvcHBvc2VkIHRvICJQcm9jZXNzb3IiDQo+ID4gPiBzdGF0ZW1lbnQsIG9iamVj
+dCB2YXJpYWJsZSBtYXkgY29udGFpbiB1bmluaXRpYWxpemVkIG1lbWJlcnMgY2F1c2luZyAgDQo+
+IHRoZQ0KPiA+ID4gZHJpdmVyIHRvIHJlcG9ydCAiSW52YWxpZCBQQkxLIGxlbmd0aCIgaW5jb3Jy
+ZWN0bHkuDQo+ID4gPg0KPiA+ID4gVXNpbmcgbWVtc2V0IHRvIHplcm8taW5pdGlhbGl6ZSB0aGUg
+dW5pb24gc3RydWN0dXJlIGZpeGVzIHRoaXMgaXNzdWUgIA0KPiBhbmQNCj4gPiA+IGFsc28gcmVt
+b3ZlcyB0aGUgZGVwZW5kZW5jeSBvZiB0aGlzIGZ1bmN0aW9uIG9uIGNvbXBpbGVyIHZlcnNpb25z
+IGFuZA0KPiA+ID4gZmxhZ3MgYmVpbmcgdXNlZC4NCj4gPiA+DQo+ID4gPiBUZXN0ZWQ6IFRlc3Rl
+ZCBvbiBBUk02NCBoYXJkd2FyZSB0aGF0IHdhcyBwcmludGluZyB0aGlzIGVycm9yIGFuZA0KPiA+
+ID4gY29uZmlybWVkIHRoZSBwcmludHMgd2VyZSBnb25lLg0KPiA+ID4NCj4gPiA+IEFsc28gY29u
+ZmlybWVkIHRoaXMgZG9lcyBub3QgY2F1c2UgcmVncmVzc2lvbiBvbiBBUk02NCBhbmQgWDg2DQo+
+ID4gPiBtYWNoaW5lcy4NCj4gPiA+DQo+ID4gPiBTaWduZWQtb2ZmLWJ5OiBQYXlhbSBNb3JhZHNo
+YWhpIDxwYXlhbW1AZ29vZ2xlLmNvbT4NCj4gPiA+IC0tLQ0KPiA+ID4gIGRyaXZlcnMvYWNwaS9h
+Y3BpX3Byb2Nlc3Nvci5jIHwgNCArKystDQo+ID4gPiAgMSBmaWxlIGNoYW5nZWQsIDMgaW5zZXJ0
+aW9ucygrKSwgMSBkZWxldGlvbigtKQ0KPiA+ID4NCj4gPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJz
+L2FjcGkvYWNwaV9wcm9jZXNzb3IuYw0KPiA+IGIvZHJpdmVycy9hY3BpL2FjcGlfcHJvY2Vzc29y
+LmMNCj4gPiA+IGluZGV4IDdjZjYxMDFjYjRjNzMuLjY2OTZhZDQ5MzdkMjEgMTAwNjQ0DQo+ID4g
+PiAtLS0gYS9kcml2ZXJzL2FjcGkvYWNwaV9wcm9jZXNzb3IuYw0KPiA+ID4gKysrIGIvZHJpdmVy
+cy9hY3BpL2FjcGlfcHJvY2Vzc29yLmMNCj4gPiA+IEBAIC0yNzUsNyArMjc1LDcgQEAgc3RhdGlj
+IGlubGluZSBpbnQNCj4gPiBhY3BpX3Byb2Nlc3Nvcl9ob3RhZGRfaW5pdChzdHJ1Y3QgYWNwaV9w
+cm9jZXNzb3IgKnByLA0KPiA+ID4NCj4gPiA+ICBzdGF0aWMgaW50IGFjcGlfcHJvY2Vzc29yX2dl
+dF9pbmZvKHN0cnVjdCBhY3BpX2RldmljZSAqZGV2aWNlKQ0KPiA+ID4gIHsNCj4gPiA+IC0gICAg
+ICAgdW5pb24gYWNwaV9vYmplY3Qgb2JqZWN0ID0geyAwIH07DQo+ID4gPiArICAgICAgIHVuaW9u
+IGFjcGlfb2JqZWN0IG9iamVjdDsNCj4gPiA+ICAgICAgICAgc3RydWN0IGFjcGlfYnVmZmVyIGJ1
+ZmZlciA9IHsgc2l6ZW9mKHVuaW9uIGFjcGlfb2JqZWN0KSwNCj4gPiAmb2JqZWN0IH07DQo+ID4g
+PiAgICAgICAgIHN0cnVjdCBhY3BpX3Byb2Nlc3NvciAqcHIgPSBhY3BpX2RyaXZlcl9kYXRhKGRl
+dmljZSk7DQo+ID4gPiAgICAgICAgIGludCBkZXZpY2VfZGVjbGFyYXRpb24gPSAwOw0KPiA+ID4g
+QEAgLTI4NCw2ICsyODQsOCBAQCBzdGF0aWMgaW50IGFjcGlfcHJvY2Vzc29yX2dldF9pbmZvKHN0
+cnVjdA0KPiA+IGFjcGlfZGV2aWNlICpkZXZpY2UpDQo+ID4gPiAgICAgICAgIHVuc2lnbmVkIGxv
+bmcgbG9uZyB2YWx1ZTsNCj4gPiA+ICAgICAgICAgaW50IHJldDsNCj4gPiA+DQo+ID4gPiArICAg
+ICAgIG1lbXNldCgmb2JqZWN0LCAwLCBzaXplb2YodW5pb24gYWNwaV9vYmplY3QpKTsNCj4gPiA+
+ICsNCj4gPiA+ICAgICAgICAgYWNwaV9wcm9jZXNzb3JfZXJyYXRhKCk7DQo+ID4gPg0KPiA+ID4g
+ICAgICAgICAvKg0KPiA+ID4gLS0NCg0KUGF5YW0sIGl0IG1pZ2h0IGJlIGdvb2QgdG8gYWRkIGEg
+bG9nIHNuaXBwZXQgYW5kIHJlZmVyZW5jZXMgdG8gdGhlIHJlbGV2YW50ICANCnNwZWMNCnNlY3Rp
+b25zIHRvIHlvdXIgdjIgY29tbWl0IG1lc3NhZ2UuDQoNCk1vcmVvdmVyLCBmb3IgdjIgb2YgdGhl
+IHBhdGNoIHlvdSBwcm9iYWJseSB3YW50IHRvIGFkZCBhDQogICBDYzogc3RhYmxlQHZnZXIua2Vy
+bmVsLm9yZw0KDQp0byB5b3VyIHBhdGNoIHRvIG1ha2Ugc3VyZSBpdCBnZXRzIHBpY2tlZCB1cCBv
+bmNlIGl0IGdldHMgcGlja2VkIHVwDQpmb3IgbWFpbmxpbmUuIFNlZSBbMV0gZm9yIG1vcmUgaW5m
+byBvbiB0aGUgc3RhYmxlIHByb2Nlc3MuDQoNCkNoZWVycywNCk1vcml0eg0KDQpbMV0gaHR0cHM6
+Ly93d3cua2VybmVsLm9yZy9kb2MvRG9jdW1lbnRhdGlvbi9wcm9jZXNzL3N0YWJsZS1rZXJuZWwt
+cnVsZXMucnN0DQo=
 
