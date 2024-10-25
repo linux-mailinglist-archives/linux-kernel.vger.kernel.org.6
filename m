@@ -1,179 +1,178 @@
-Return-Path: <linux-kernel+bounces-382660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8939B9B118A
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 23:15:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 41DBC9B118D
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 23:16:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FB671C22164
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 21:15:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 724C31C21316
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 21:16:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C369918FC7C;
-	Fri, 25 Oct 2024 21:15:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B16A1CEE98;
+	Fri, 25 Oct 2024 21:16:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b="DvCSw4RR"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="Rzg0iyvz"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66BF5217F30;
-	Fri, 25 Oct 2024 21:15:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF65F217F30;
+	Fri, 25 Oct 2024 21:16:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729890937; cv=none; b=W86tyiJFMxvj5+nmhT1L0Wl0MxcB4QvTq6HU+dLJYcha0w8DdZYpSDFJ6iHz2l4cltjPtQsyhECXKDqWu3qUBNYyjxMuGobvBzE2MlmPb3pP3bIAJ2FpV/7bDRqArC5MStpQ+TEu59/MY4+JaRUUsuIxZp16GcdQTQL9vT+E2k0=
+	t=1729890985; cv=none; b=JKvuMP8jRBTOAWWfJfTjCBu+MISoUapOHtDR9LomuGVJh3HE8AzqM1vx7j4o27R4vYLh08WondOVc9JFpj/Ogr5yHVQWzIvhVwlQ9viPSgribPL2CzCqAzSfZBJLc+fkHFdBqSYBivizJHKeJwmFFqbTTXOGNnbC5jbyUxHCOAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729890937; c=relaxed/simple;
-	bh=F84Q+2TWhtIjgHyGCwo6JzpH3dhFIrLTPNrHtKkDdQ8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Qch5YEiF/TxhX2eQrSYlP7miceBmQa9892W66cghh24HMLtD705qZCgX8UhoTNloMGUbwzhl7NHbWLLGXmlE8036NfmEccdm7IlWfVgQjuIb6j3sms1RAj5JToCB+O2mABZg4QEziCTRwqSXakFsr9akrtXVcPSKIKGFjzDg7d4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com; spf=pass smtp.mailfrom=gmx.com; dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b=DvCSw4RR; arc=none smtp.client-ip=212.227.15.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.com;
-	s=s31663417; t=1729890923; x=1730495723; i=quwenruo.btrfs@gmx.com;
-	bh=lK1MW+D3yvyCmUcUnm1BvQlb7XRKTqmP6xiYvdpMcYI=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=DvCSw4RRPys0R0lhojZrIsgU1guJmkK+TFpZPTt186XcC/hEzbBxN6gW91SSJQoL
-	 TTpS9afhCUNpFZFALXHcdsspxycUPFbJgSYragcgM7YrLXqJFFsSFmJ+6MO9GGNDk
-	 gNXScpt93IAAPgGE6hsrcDGNrT/Yr1326WL6y0l3SNSXYkPpGiB0HJVDknrKbd2pZ
-	 hBiNTcL2UuacwFcGx/YYlURMVjWj1jOjf92HNgBQ/X0+vmxbpS4KtG+OjCQn/vUO5
-	 WY69Os0ildCLYkzyBDQrD8y8LFWzuqBhfBy9bGw4YL+N2Y7EnmaHCMDWTeTU2965A
-	 jzAL1cbe25QEDm8m3A==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [172.16.0.191] ([159.196.52.54]) by mail.gmx.net (mrgmx004
- [212.227.17.184]) with ESMTPSA (Nemesis) id 1McH5a-1taTcE2ve8-00gHzl; Fri, 25
- Oct 2024 23:15:23 +0200
-Message-ID: <09b446c0-0c47-4822-b14f-5df1e7e4f4de@gmx.com>
-Date: Sat, 26 Oct 2024 07:45:18 +1030
+	s=arc-20240116; t=1729890985; c=relaxed/simple;
+	bh=8Nn3A+UdrXv0Swkr7BZ4okxDkyB1splEY8faoNaG2sE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=HeD+jfs486iWDGEk+X+tQqAMUn/jOUxtX5LmjC6CIcvE2nIp8EcBXqVsA+9pC5ARE/NC2vNRJI2VeL0AN7kG9cpszmfWjwqJQxfcbN07nRxIidkGsSTu34wXMyeR9S8hfMXD9X06e1Ulgh+rafHbf3P9B9x1SaOwhMYwRXidI3w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=Rzg0iyvz; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=jgMnw5M7Z+ZY5Nf4QUgXosxnvQKmVFPBeE4lXBGNjVE=;
+	t=1729890983; x=1731100583; b=Rzg0iyvzIUN2wZe12yw4kZglZSSdOU4oNk6qFmnqcpOvz0K
+	jZ69mpcnAypen+R+f9BxAaBR3vZrMroC3Quwowj396hvfpMdw59BKmUv5yIUeygDiVlBYivMbB7Mr
+	X9TAeuHOxA6dp6cZ28s2APcGCW4sc2fyyBRcaFH5jIcuuhJvSQdtH+biXH6nLpGSp9k0kd/6ScCPX
+	HH/MYoq432sONiyUvUad6/zshMknPaBx8sejF5d4+H4vNHlF4NiqBZC7+uxIgWAMWJ7mBsv4G5OYh
+	BAIiipOqzzXb6zjW4N4g4xjEcrGbNAdSIT/B21N4MDRBQDkT2PmIj2zEt3BqWVQQ==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1t4RfP-00000004i3l-48CV;
+	Fri, 25 Oct 2024 23:16:20 +0200
+Message-ID: <49a18a9a482263e9063a0afc8b93de451dbe4d84.camel@sipsolutions.net>
+Subject: Re: [PATCH][next] wifi: mac80211: ieee80211_i: Avoid dozens of
+ -Wflex-array-member-not-at-end warnings
+From: Johannes Berg <johannes@sipsolutions.net>
+To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>, "Gustavo A. R. Silva"
+	 <gustavoars@kernel.org>
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-hardening@vger.kernel.org, Aditya Kumar Singh <quic_adisi@quicinc.com>
+Date: Fri, 25 Oct 2024 23:16:19 +0200
+In-Reply-To: <7e2745d9-f607-4b9b-87c6-0623708747ef@embeddedor.com>
+References: <Zxv7KtPEy1kvnTPM@kspp>
+	 <c90c3c9825e3837bf7c47979acd0075b102576ce.camel@sipsolutions.net>
+	 <3471e59f-a414-479f-8fb0-aa1a26aecf16@embeddedor.com>
+	 <5c48b4529bf552d5c16b4dcc951c653f37b6a68e.camel@sipsolutions.net>
+	 <8152a551-1813-4d44-a203-45d30f2ac671@embeddedor.com>
+	 <192eb05afffd37bd13ff9bc1fc9b044b347b5dc4.camel@sipsolutions.net>
+	 <7e2745d9-f607-4b9b-87c6-0623708747ef@embeddedor.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] btrfs: add a sanity check for csum root before fill the
- data csum
-To: dsterba@suse.cz, Edward Adam Davis <eadavis@qq.com>
-Cc: syzbot+5d2b33d7835870519b5f@syzkaller.appspotmail.com, clm@fb.com,
- dsterba@suse.com, josef@toxicpanda.com, linux-btrfs@vger.kernel.org,
- linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-References: <6718bd15.050a0220.10f4f4.01a0.GAE@google.com>
- <tencent_B5CA92105D925DA2993D4FD20DDD25BF8D07@qq.com>
- <20241025184424.GL31418@twin.jikos.cz>
-Content-Language: en-US
-From: Qu Wenruo <quwenruo.btrfs@gmx.com>
-Autocrypt: addr=quwenruo.btrfs@gmx.com; keydata=
- xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
- 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
- 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
- 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
- gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
- AAHNIlF1IFdlbnJ1byA8cXV3ZW5ydW8uYnRyZnNAZ214LmNvbT7CwJQEEwEIAD4CGwMFCwkI
- BwIGFQgJCgsCBBYCAwECHgECF4AWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCZxF1YAUJEP5a
- sQAKCRDCPZHzoSX+qF+mB/9gXu9C3BV0omDZBDWevJHxpWpOwQ8DxZEbk9b9LcrQlWdhFhyn
- xi+l5lRziV9ZGyYXp7N35a9t7GQJndMCFUWYoEa+1NCuxDs6bslfrCaGEGG/+wd6oIPb85xo
- naxnQ+SQtYLUFbU77WkUPaaIU8hH2BAfn9ZSDX9lIxheQE8ZYGGmo4wYpnN7/hSXALD7+oun
- tZljjGNT1o+/B8WVZtw/YZuCuHgZeaFdhcV2jsz7+iGb+LsqzHuznrXqbyUQgQT9kn8ZYFNW
- 7tf+LNxXuwedzRag4fxtR+5GVvJ41Oh/eygp8VqiMAtnFYaSlb9sjia1Mh+m+OBFeuXjgGlG
- VvQFzsBNBFnVga8BCACqU+th4Esy/c8BnvliFAjAfpzhI1wH76FD1MJPmAhA3DnX5JDORcga
- CbPEwhLj1xlwTgpeT+QfDmGJ5B5BlrrQFZVE1fChEjiJvyiSAO4yQPkrPVYTI7Xj34FnscPj
- /IrRUUka68MlHxPtFnAHr25VIuOS41lmYKYNwPNLRz9Ik6DmeTG3WJO2BQRNvXA0pXrJH1fN
- GSsRb+pKEKHKtL1803x71zQxCwLh+zLP1iXHVM5j8gX9zqupigQR/Cel2XPS44zWcDW8r7B0
- q1eW4Jrv0x19p4P923voqn+joIAostyNTUjCeSrUdKth9jcdlam9X2DziA/DHDFfS5eq4fEv
- ABEBAAHCwHwEGAEIACYCGwwWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCZxF1gQUJEP5a0gAK
- CRDCPZHzoSX+qHGpB/kB8A7M7KGL5qzat+jBRoLwB0Y3Zax0QWuANVdZM3eJDlKJKJ4HKzjo
- B2Pcn4JXL2apSan2uJftaMbNQbwotvabLXkE7cPpnppnBq7iovmBw++/d8zQjLQLWInQ5kNq
- Vmi36kmq8o5c0f97QVjMryHlmSlEZ2Wwc1kURAe4lsRG2dNeAd4CAqmTw0cMIrR6R/Dpt3ma
- +8oGXJOmwWuDFKNV4G2XLKcghqrtcRf2zAGNogg3KulCykHHripG3kPKsb7fYVcSQtlt5R6v
- HZStaZBzw4PcDiaAF3pPDBd+0fIKS6BlpeNRSFG94RYrt84Qw77JWDOAZsyNfEIEE0J6LSR/
-In-Reply-To: <20241025184424.GL31418@twin.jikos.cz>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:pxMtAtl0jChUk0aqUSaZIzTbCaYV9m1A1Ok2H8MPpbBDSK++PKM
- podVyySKA0eNap2nOmjc0OQACKToHEJTi+TWBpQDFJ15x5dOKBXfVKbErK4X3ajMocuBHNT
- 6oRZtJw4nIgDEnTEJ1iOBAf/7yxy9WftxbiU0+YK8qkIKMPG4g7QOqd1JqOydwxxQ6T5j8y
- kFm0/pDfY4Tc0+MaOZYVg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:LaX5ffJmJbQ=;XIGkyU9aVIhCq8Sb29bBz+rcM7E
- Q32IzVgVVgSts1zoYTORJtz1EPXNKRPayMYGPiRxOH3kc8VcllStktqBC8l1GSkiG9Nfvjzvl
- v4XXZcI+kpdTDei85ecoUAS4s6KhLxU8F1j5iqbOnlpVP8fv1WGgsG7svxhmgY+2i/qpiJ+qz
- DRkFtWS3qo2DV9dWG013rS5E/wlUeNDIhNJnfBO3X/faZGBCK3vUB1T8/HGTbOqSyEpkyfQy7
- lsayIs7/x1E2uoQqiXGKc62IkuSUAY6s5Gcfw3PkB0OFgBScN0fY8ep49zlePl4+zgyzqFCQD
- Sel+0z3dNHyMSFeLxx82/h5OJZUQp2Qkhvum3tbJSgn8UlJi7o7N1qw3mUs4ijjzOzjsUWbt4
- Upz98GLlS0omvYxz862WXFoVt5zDzHT3JY3paYA2UL3qvrcoFfxq3Kr0iJLsoYcBRWuMI/jUL
- h8X5X+3T4j3S2u/pguHTSC1HonH9AS8tI+SBcNLZjhn4hanAfNaXp1WuVDaErz09pTdSDispi
- DT8Pfuj15yMlLTDiVtQCHA0XeYbK6fNRWKTzuu+i/QJNgyT3qAK+wf8l8F6ATmCdmzzbOUzge
- +lDyj0yGNx45qxJ5aINDZ3hKpkzJ3NFX8pxzWlNZJpiWakSjpXnIFE+7r9cWlIua8gvgnj7pH
- BXuQfSVZHuzwuFfLBpO6GNku2SJe6h/JlUCS19FPQ83h/9n3fFXxEpclJTq1Wc7zMdQeyUcWq
- iJ7jM+wcm0HxPy3iG/yS2C4jnXBHRS1gzl1jEWouK19tE6yJBSdrnvPH+o2dSFVK5h+88EsZ+
- 9LEtzZxj6s87VUnR1x5ZiTUHMZJZCrZwPFoRJqkooI1os=
+X-malware-bazaar: not-scanned
+
+On Fri, 2024-10-25 at 15:10 -0600, Gustavo A. R. Silva wrote:
+>=20
+> On 25/10/24 14:48, Johannes Berg wrote:
+> > On Fri, 2024-10-25 at 14:36 -0600, Gustavo A. R. Silva wrote:
+> > > > >=20
+> > > > > Yeah, I was actually going to mention this commit, as it's the on=
+e that introduced
+> > > > > that `bool radar_detected` to the flex struct. However, it wasn't=
+ obvious to me
+> > > > > how `struct ieee80211_chanctx_conf conf` could overwrite `radar_d=
+etected` as I didn't
+> > > > > see `conf->drv_priv` being accessed through `struct struct ieee80=
+211_chanctx_conf`.
+> > > >=20
+> > > > You have to look at the drivers, see hwsim_clear_chanctx_magic() fo=
+r
+> > > > example; I wonder why hwsim_check_chanctx_magic() never caught this=
+.
+> > >=20
+> > > Sorry, I actually meant through `struct ieee80211_chanctx`. Something=
+ like:
+> > >=20
+> > > struct ieee80211_chanctx *foo;
+> > > ...
+> > >=20
+> > > foo->conf.drv_priv[i] =3D something;
+> > >=20
+> > > or
+> > >=20
+> > > struct bar *ptr =3D (void *)foo->conf->drv_priv;
+> > > then write something into *ptr...
+> > >=20
+> > > In the above cases the code will indeed overwrite `radar_detected`.
+> >=20
+> > Right, that's what it does though, no? Except it doesn't have, in the
+> > driver, "foo->conf." because mac80211 only gives it a pointer to conf,
+> > so it's only "conf->drv_priv" (and it's the "struct bar" example.)
+>=20
+> OK, so do you mean that pointer to `conf` is actually coming from
+> `foo->conf`?
+
+Well depends what code you're looking at? I guess we should get more
+concrete now. Let's say hwsim:
+
+struct hwsim_chanctx_priv {
+        u32 magic;
+};
+
+...
+
+static inline void hwsim_set_chanctx_magic(struct ieee80211_chanctx_conf *c=
+)
+{
+        struct hwsim_chanctx_priv *cp =3D (void *)c->drv_priv;
+        cp->magic =3D HWSIM_CHANCTX_MAGIC;
+}
+
+probably shouldn't be marked 'inline' now that I look at it :-)
+
+This is being called in hwsim itself, of course:
+
+static int mac80211_hwsim_add_chanctx(struct ieee80211_hw *hw,
+                                      struct ieee80211_chanctx_conf *ctx)
+{
+        hwsim_set_chanctx_magic(ctx);
+...
+
+which is only referenced as a function pointer in the ops:
+
+static const struct ieee80211_ops mac80211_hwsim_mchan_ops =3D {
+...
+	.add_chanctx =3D mac80211_hwsim_add_chanctx,
+
+(via some macros)
 
 
+And that's called by mac80211:
 
-=E5=9C=A8 2024/10/26 05:14, David Sterba =E5=86=99=E9=81=93:
-> On Wed, Oct 23, 2024 at 07:04:40PM +0800, Edward Adam Davis wrote:
->> Syzbot reported a null-ptr-deref in btrfs_lookup_csums_bitmap.
->> The btrfs info contains IGNOREDATACSUMS, which prevents the csum root f=
-rom
->> being loaded.
->> Before filling in the csum data, check the flag BTRFS_FS_STATE_NO_DATA_=
-CSUMS
->> to confirm that the csum root has been loaded.
->>
->> Reported-and-tested-by: syzbot+5d2b33d7835870519b5f@syzkaller.appspotma=
-il.com
->> Closes: https://syzkaller.appspot.com/bug?extid=3D5d2b33d7835870519b5f
->> Signed-off-by: Edward Adam Davis <eadavis@qq.com>
->
-> Added to for-next, thanks.
+static inline int drv_add_chanctx(struct ieee80211_local *local,
+                                  struct ieee80211_chanctx *ctx)
+{
+        int ret =3D -EOPNOTSUPP;
 
-Wait for a second, I believe LiZhi Xu's solution is better.
+        might_sleep();
+        lockdep_assert_wiphy(local->hw.wiphy);
 
-And sorry I didn't notice that until his patch is submitted.
+        trace_drv_add_chanctx(local, ctx);
+        if (local->ops->add_chanctx)
+                ret =3D local->ops->add_chanctx(&local->hw, &ctx->conf);
 
-The problem for this fix is, although it fixes the crash, it also gives
-a false feel of safety that scrub is finding nothing wrong.
 
-But the truth is, there is no csum root, and everything can go wrong.
+so you see that the struct ieee80211_chanctx is never passed to the
+driver, but instead &ctx->conf, which is the struct with the flex array
+for driver priv.
 
-Thus I'd prefer LiZhi's solution which error out and terminate the scrub
-immediately.
+So in this example, struct hwsim_chanctx_priv::magic overlaps the
+radar_detected value.
 
-Thanks,
-Qu
->
->> ---
->>   fs/btrfs/scrub.c | 3 ++-
->>   1 file changed, 2 insertions(+), 1 deletion(-)
->>
->> diff --git a/fs/btrfs/scrub.c b/fs/btrfs/scrub.c
->> index 3a3427428074..1ba4d8ba902b 100644
->> --- a/fs/btrfs/scrub.c
->> +++ b/fs/btrfs/scrub.c
->> @@ -1602,7 +1602,8 @@ static int scrub_find_fill_first_stripe(struct bt=
-rfs_block_group *bg,
->>   	}
->>
->>   	/* Now fill the data csum. */
->> -	if (bg->flags & BTRFS_BLOCK_GROUP_DATA) {
->> +	if (!test_bit(BTRFS_FS_STATE_NO_DATA_CSUMS, &fs_info->fs_state) &&
->
-> I've updatd the coment as this is double negation that could be
-> confusing on a quick read.
->
->> +	    bg->flags & BTRFS_BLOCK_GROUP_DATA) {
->>   		int sector_nr;
->>   		unsigned long csum_bitmap =3D 0;
->>
->> --
->> 2.43.0
->>
->
 
+(The allocation happens via chanctx_data_size.)
+
+johannes
 
