@@ -1,149 +1,187 @@
-Return-Path: <linux-kernel+bounces-382746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C14C9B12E7
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 00:42:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E9999B12E9
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 00:42:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DC9E1C2214B
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 22:41:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A15191F23564
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 22:42:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5C28214422;
-	Fri, 25 Oct 2024 22:38:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3AAB215C4E;
+	Fri, 25 Oct 2024 22:38:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="K7laySyB"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ACW+GFeq"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ECF3214406
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 22:38:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D842213121;
+	Fri, 25 Oct 2024 22:38:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729895889; cv=none; b=GyF/IMPOQ1cKQCKW155/dwiZChD3RcQGOVPkKLECJ6ZWSqlfsyoMRkkXDd/o7tMnwNP36/94y+zj+1M+WBXZbrjgg5s+vyfxaLcWD9PyPvcUCxN6Ys2bi07QR5cPkCN8xOJF+kA4kL4WxDcFa2yUhz4liaQBrU/zBDouvPjkTgM=
+	t=1729895931; cv=none; b=Dml2UxV/pqA9GQDkfD561awgzEeEu9B4A8xUG6znonOximfaEEftooOzjIJaWCFsvTED87D72IAMVpkBc+Nlwmsk3JuY+D0+97VICIPGg98UHGZfal8XLHR0jj6Unm1ej/xP+DjQYRqwXoqYABlSN1COaNI4116urt41C5mYXwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729895889; c=relaxed/simple;
-	bh=1RQLaeS1fpsh0dKZaDhkHLAM8AxZ5BEEQNnV0Y/mxKM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Vtggg+ek8TbViET9iNULnikMfKaB5b+7apIFYNZizCFnhqaC7kecTBD5wz2zq1kV+SypzhnaPa9LGcKRWjv9xM2aztISGKmM8mtcEQJ01cwHp+YI+2VnKdtuqUDzxdHOgNttYKwQ6EN8DMyr5Dga5fVxtuAQtPtY2Cj/8RXP/Us=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=K7laySyB; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-539fe02c386so3466950e87.0
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 15:38:06 -0700 (PDT)
+	s=arc-20240116; t=1729895931; c=relaxed/simple;
+	bh=+VzCTeiXyFsTl6w9pt0ZC2YOO3LE0GgGj2QtoCkSeV4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=m62DtYujH9YRLFhpukxcdcwl3LiH1SVmJiNeyKM4zwYYzDQbUdOedPMvReO2aUs00lWumi0PCPi3eoxmJbA9eXKMyzNstNPogsbhHt3V2ZocRUc3LgE6VSxo4D5JClPz27TCFUdVByu5vZAQHhHxRPXOp4TEwgPLQrC21cra3OQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ACW+GFeq; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-20cdbe608b3so20346385ad.1;
+        Fri, 25 Oct 2024 15:38:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1729895885; x=1730500685; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dcHQXK2FfCQQAxtVJ6yAX2GZbwkk9uqOe7ieSVImr1g=;
-        b=K7laySyBtFSc7adEIcBAJCqO8Zrk6qT0p/0thTf7PhYkis42uvCteAtP0N8/OAUw/5
-         wUpCVz/ebKYjb6YHN3tNCJUukFh5/phxh0/dLfL1YFFPFzJ9yUS20KQlXUtYkyoyB7RH
-         y/dr9T8SqAkbhZVlrxI4v+e77ZWxRjbxANtwY=
+        d=gmail.com; s=20230601; t=1729895928; x=1730500728; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=NULZcaj8cQO9ZbMWMTzwSb1Lf67gGwzP4dkkLG3k3yI=;
+        b=ACW+GFeqo14aRZ6EeERbjV6dcxF7VIDRrI/wpy/4jGc8Z2XhPYAjwXr8RFt1eTEFIW
+         2/ofXGcd9MkLCABVf81tVGnshMwyDcjHAc39BjLv5y1tvj4w6pAYhgxMQ+GN8eW8dekY
+         JlUGXA5D9BR13G0MLlEqSBae1Mts+ndDjxxYyppZc45mSg3aENOWqS8wr8fqfbC/00hR
+         hL8Vaos5rXYJERjmSOapWeNieKMeTcGe6AbJpiVwwOsly/sXEbeKC1h3YEW5NLqHqLeb
+         D9fc8MLJAcGaiY6ZC7W/OMI9qzsu2Y8kJg69f4L2l0BTKT/G88QT8NuAh8D9kMZLeg0R
+         YLnA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729895885; x=1730500685;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dcHQXK2FfCQQAxtVJ6yAX2GZbwkk9uqOe7ieSVImr1g=;
-        b=QfmONqR2v2TDmcxR5tp9vSNySj0sqjUdTclBOC1kntj0tTPeouuWdnHiSMPPUW6JD7
-         0Gc7evXfW3dKisbfuLdB1zTJdHxPx7Bja3w97YBPGBbGjP/RKGuVs4Ip56424V79uZZ1
-         LxYmQLkf+cuc3Xc1/QrFE6VlMXOp79v6qxEh/C+/cIAdoCRLU+D7OyTJbID9l+dve7hi
-         dRKdN4u0tFXph6e3ZbBkYtJMFm/bHAsBhzlNFqVvRiv3XLHEzuxeycvniyzu1zqR4Lye
-         wJt6p7X11YBuJPrcKMe6oXRJ84oMUDQZnACXJlfMKhQbHFGTr2RqGeLUC7PipjMHJ1J1
-         VDJA==
-X-Forwarded-Encrypted: i=1; AJvYcCVMUeqTj3wbEp+cV9YVfx/Ly5XQnn0IClbjva9ivAcRx9NW7Fq1eXOTb5iZxoXnpIOu9VlA9r7f+pkiU8w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwjZ40aL53rvq7YWtsllv7rZ0jSojHH4Sr8DcRFy4EmbUsHxsW
-	CGimeILj1oTRXL6YNtPIGaROscifIupYSDUME8hFWtuN9aSedMcOh3m/r+Am7uQnch3WoYnvrIy
-	FWA==
-X-Google-Smtp-Source: AGHT+IHXreWYok7Y75Cun3VoMWQNel9owE6G22UVwx626w+FZEAzpNPZcaespbaL8mssZ3Uv6k76YA==
-X-Received: by 2002:a05:6512:3c8e:b0:539:fc1b:36d1 with SMTP id 2adb3069b0e04-53b236a68f7mr2805878e87.6.1729895884589;
-        Fri, 25 Oct 2024 15:38:04 -0700 (PDT)
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com. [209.85.167.42])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53b2e10a879sm329753e87.40.2024.10.25.15.38.03
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 25 Oct 2024 15:38:04 -0700 (PDT)
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-539e4b7409fso2565013e87.0
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 15:38:03 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUGYgiHZkZU/4biLw/vhgcwoHRgKj1uLpA7c9DLV7i3qTZBcLJU3Xjm/kZXpQ4ZA4nR9teRsVM7tPVDOrM=@vger.kernel.org
-X-Received: by 2002:a05:6512:31ce:b0:539:e453:d90c with SMTP id
- 2adb3069b0e04-53b33ddf703mr362228e87.2.1729895883411; Fri, 25 Oct 2024
- 15:38:03 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729895928; x=1730500728;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NULZcaj8cQO9ZbMWMTzwSb1Lf67gGwzP4dkkLG3k3yI=;
+        b=N2+0NjbSaEWupf1/HuNQ39+Em0j4ULTswxug2L2JOGs17juPR8PlsP7/hMwuYY+2Kj
+         7zSNkmoMF+MPZEtozo0OsEZiHHdOU1mCqDbZVOw+7pCE1NXeQDH4/qj2VRZJqkwPY5Ag
+         K9D2rlcIyrPm6yiPwkYF7L2i3zsGZKHb9oQdNJNXk0AMv6w+KPR3oqXD82yHvyewTnJc
+         XF8WSJqKJublMLedt5lMBZ22tD/7FqAKWDD/2+JRGEPMFOXFaR8ImJgOXqmeSUw9OpGZ
+         3YoKyHo/tA14BraMgU7UEi1UH+4FHOIB7/pEIZzcm5lRtLOfV9YADks7ED4nXl8ubjgw
+         6XZA==
+X-Gm-Message-State: AOJu0YytFTJPmjQsfu6Uy5SSd5SRwsY8Ve3t2WgwWsGG6AveGDbP2h1/
+	skmIb0vVLg0fC3ksB7GVgNl8L+JK+evSp7DD/65Lb432ytZ86Ak4c4uvig==
+X-Google-Smtp-Source: AGHT+IGOA7AvNQjZoH2zG9m/YtTfEUg+SeJnDJt337aQ82yBU9ApyruYvGyyQ3FIs6vKZhSPDBWpqA==
+X-Received: by 2002:a17:903:32c4:b0:20c:b0c7:92c9 with SMTP id d9443c01a7336-210c6c1e37dmr9076655ad.34.1729895928257;
+        Fri, 25 Oct 2024 15:38:48 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:1691:2dbd:7c00:4e03])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bbf43324sm14176545ad.33.2024.10.25.15.38.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Oct 2024 15:38:47 -0700 (PDT)
+Date: Fri, 25 Oct 2024 15:38:45 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: linux-input@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
+	Lyude Paul <lyude@redhat.com>
+Subject: [PATCH] Input: synaptics-rmi4 - switch to using cleanup functions in
+ F34
+Message-ID: <Zxwd9c0njasZZoal@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241022190217.GA846685@lichtman.org>
-In-Reply-To: <20241022190217.GA846685@lichtman.org>
-From: Doug Anderson <dianders@chromium.org>
-Date: Fri, 25 Oct 2024 15:37:49 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=VRwiXFLz98Px_xpV4JLUMq_Ld_BTX8La0Oe5O9-d_=7Q@mail.gmail.com>
-Message-ID: <CAD=FV=VRwiXFLz98Px_xpV4JLUMq_Ld_BTX8La0Oe5O9-d_=7Q@mail.gmail.com>
-Subject: Re: [PATCH] KDB: Fix missing argument in dmesg command usage help
-To: Nir Lichtman <nir@lichtman.org>
-Cc: jason.wessel@windriver.com, daniel.thompson@linaro.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hi,
+Start using __free() and guard() primitives to simplify the code
+and error handling.
 
-On Tue, Oct 22, 2024 at 12:02=E2=80=AFPM Nir Lichtman <nir@lichtman.org> wr=
-ote:
->
-> Problem: Currently when running "help" in KDB, it shows the "dmesg" comma=
-nd
-> as having only a single argument, when in fact as can be seen in the
-> implementation of the command (kdb_dmesg) it accepts two arguments
->
-> Solution: Add the missing argument to the usage string of the "dmesg" com=
-mand
->
-> Signed-off-by: Nir Lichtman <nir@lichtman.org>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+---
+ drivers/input/rmi4/rmi_f34.c | 37 ++++++++++++++----------------------
+ 1 file changed, 14 insertions(+), 23 deletions(-)
 
-It's not a huge deal, but above your Signed-off-by you could have added:
+diff --git a/drivers/input/rmi4/rmi_f34.c b/drivers/input/rmi4/rmi_f34.c
+index 3b3ac71e53dc..7a05ac00dce2 100644
+--- a/drivers/input/rmi4/rmi_f34.c
++++ b/drivers/input/rmi4/rmi_f34.c
+@@ -246,7 +246,6 @@ static int rmi_f34_update_firmware(struct f34_data *f34,
+ 				(const struct rmi_f34_firmware *)fw->data;
+ 	u32 image_size = le32_to_cpu(syn_fw->image_size);
+ 	u32 config_size = le32_to_cpu(syn_fw->config_size);
+-	int ret;
+ 
+ 	BUILD_BUG_ON(offsetof(struct rmi_f34_firmware, data) !=
+ 			F34_FW_IMAGE_OFFSET);
+@@ -267,8 +266,7 @@ static int rmi_f34_update_firmware(struct f34_data *f34,
+ 		dev_err(&f34->fn->dev,
+ 			"Bad firmware image: fw size %d, expected %d\n",
+ 			image_size, f34->v5.fw_blocks * f34->v5.block_size);
+-		ret = -EILSEQ;
+-		goto out;
++		return -EILSEQ;
+ 	}
+ 
+ 	if (config_size &&
+@@ -277,25 +275,18 @@ static int rmi_f34_update_firmware(struct f34_data *f34,
+ 			"Bad firmware image: config size %d, expected %d\n",
+ 			config_size,
+ 			f34->v5.config_blocks * f34->v5.block_size);
+-		ret = -EILSEQ;
+-		goto out;
++		return -EILSEQ;
+ 	}
+ 
+ 	if (image_size && !config_size) {
+ 		dev_err(&f34->fn->dev, "Bad firmware image: no config data\n");
+-		ret = -EILSEQ;
+-		goto out;
++		return -EILSEQ;
+ 	}
+ 
+ 	dev_info(&f34->fn->dev, "Firmware image OK\n");
+-	mutex_lock(&f34->v5.flash_mutex);
+-
+-	ret = rmi_f34_flash_firmware(f34, syn_fw);
+ 
+-	mutex_unlock(&f34->v5.flash_mutex);
+-
+-out:
+-	return ret;
++	guard(mutex)(&f34->v5.flash_mutex);
++	return rmi_f34_flash_firmware(f34, syn_fw);
+ }
+ 
+ static int rmi_f34_status(struct rmi_function *fn)
+@@ -461,9 +452,8 @@ static ssize_t rmi_driver_update_fw_store(struct device *dev,
+ {
+ 	struct rmi_driver_data *data = dev_get_drvdata(dev);
+ 	char fw_name[NAME_MAX];
+-	const struct firmware *fw;
+ 	size_t copy_count = count;
+-	int ret;
++	int error;
+ 
+ 	if (count == 0 || count >= NAME_MAX)
+ 		return -EINVAL;
+@@ -474,17 +464,18 @@ static ssize_t rmi_driver_update_fw_store(struct device *dev,
+ 	memcpy(fw_name, buf, copy_count);
+ 	fw_name[copy_count] = '\0';
+ 
+-	ret = request_firmware(&fw, fw_name, dev);
+-	if (ret)
+-		return ret;
++	const struct firmware *fw __free(firmware) = NULL;
++	error = request_firmware(&fw, fw_name, dev);
++	if (error)
++		return error;
+ 
+ 	dev_info(dev, "Flashing %s\n", fw_name);
+ 
+-	ret = rmi_firmware_update(data, fw);
+-
+-	release_firmware(fw);
++	error = rmi_firmware_update(data, fw);
++	if (error)
++		return error;
+ 
+-	return ret ?: count;
++	return count;
+ }
+ 
+ static DEVICE_ATTR(update_fw, 0200, NULL, rmi_driver_update_fw_store);
+-- 
+2.47.0.163.g1226f6d8fa-goog
 
-Suggested-by: Douglas Anderson <dianders@chromium.org>
 
-...since this was my suggestion [1].
-
-[1] https://lore.kernel.org/lkml/CAD=3DFV=3DVZ61XFb1Ks79BHr1jL1jwf_36wYXryy=
-0ZXOz1xTQ9zOg@mail.gmail.com/
-
-One other nit is that the ${SUBJECT} tag should have had the prefix
-"kdb:" instead of "KDB:" (AKA not all caps) just based on doing a "git
-log" on other changes to that file and seeing what they were doing.
-It's not always obvious what the tag should be, but in this case I
-think it's fairly consistent.
-
-
->  kernel/debug/kdb/kdb_main.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/kernel/debug/kdb/kdb_main.c b/kernel/debug/kdb/kdb_main.c
-> index f5f7d7fb5936..5f56ade565a6 100644
-> --- a/kernel/debug/kdb/kdb_main.c
-> +++ b/kernel/debug/kdb/kdb_main.c
-> @@ -2827,7 +2827,7 @@ static kdbtab_t maintab[] =3D {
->  #if defined(CONFIG_PRINTK)
->         {       .name =3D "dmesg",
->                 .func =3D kdb_dmesg,
-> -               .usage =3D "[lines]",
-> +               .usage =3D "[lines] [adjust]",
-
-Everything here is just a nit, so:
-
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
-
-If you want, you could post a v2 adding the "Suggested-by" and fixing
-the subject, but it's probably not a big deal. If Daniel cares then
-he'll either ask you to post a v2 or fix it himself when applying. If
-you do post a v2, you'll want to carry my "Reviewed-by" tag and add it
-right above your "Signed-off-by" tag.
-
--Doug
+-- 
+Dmitry
 
