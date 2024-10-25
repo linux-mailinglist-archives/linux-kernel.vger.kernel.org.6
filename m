@@ -1,135 +1,180 @@
-Return-Path: <linux-kernel+bounces-381164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B4C09AFB77
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 09:48:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 545379AFB7A
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 09:50:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1108EB22F9F
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 07:48:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CAD601F23DFA
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 07:50:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF3891BAEDC;
-	Fri, 25 Oct 2024 07:48:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E52C1C175C;
+	Fri, 25 Oct 2024 07:49:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="WwYk1HBL"
-Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dlE9BJ6g"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 574AC18D64C
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 07:48:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57F60199FD0;
+	Fri, 25 Oct 2024 07:49:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729842533; cv=none; b=gHAfBAe50Z0jgniqUy5LzM1a9RFIvmHpS9vSZEQszdJXJDEIITnuEMu3T34qXMT3JIUvOa8A3ysj/Wkm5DiucV9/nWK8Mfj4yWkdgU4BOnZQIxS5xfsMp3DRwMUl8eoUf8JvxA8cOLyX6QpsYk6u8dvyx0uZc3AQPiLaDOWX7Kg=
+	t=1729842592; cv=none; b=LkN7j/Ls/Y0QFfkxHqf3YiZoBg+x8M3oPOlwbXDggcTsmp5HIrx94kVnRL8djlqjOIFrhl5WLrbWEXbCC0GrJ9EJrxiUm0vFDWtaUkQDHrX3WHrTkzhjkCeLm4OcNLhZ3MEC/dX2LIkzs4LflW+jiHRScMz43IJ+aRHtv8fL8Fw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729842533; c=relaxed/simple;
-	bh=AcKtayDA1l3B02uNLoEC1MG1LG4klFVt49WT24NvHCY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=b4LZblKhOJs37O3BUQHHdSzl26NCSIqVOlJrc/HH8/SPjhdjwrHDMauMz2KXBZprCHFd5QV0sV4GqjxXZM2Ud9hV9Q3QbNC08dCjyizBehmsylUqWBtLKtNLMnQrzAOWDB/v8MTuODPrmWs4JYdqF11MJIP1Cr2iW6RIpeiU3zM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=WwYk1HBL; arc=none smtp.client-ip=209.85.210.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-7180c7a4e02so1015789a34.0
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 00:48:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1729842530; x=1730447330; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=L/uGdh4k87UdLsVlqrkIfn4gIIwnutqsKO4ayJkibeU=;
-        b=WwYk1HBLeEN4hAMyOoNLvJeqPSD+JEEKToBcuhbQLAvoeRKvY6W3DXFDVaq1P0skO2
-         0uZ5jutFaH1T+O8ADF+Gb3tWJ1dAc9TMmhvIAhJywwHNV6aqeZpn2LKAv9teia0CZXQl
-         5iYw6aEZFpoQ5LqKhUk8RRDjJu/bujDzYaV6U=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729842530; x=1730447330;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=L/uGdh4k87UdLsVlqrkIfn4gIIwnutqsKO4ayJkibeU=;
-        b=GWl5Zom+595/MwHndC/Lrd0FFvgkkOHOB9PQ9SyI8NQkQUN2FYiRyA3PIJVJHRdnDL
-         l0j5v8ZKQdoenrxLOAbsIuLcP02pKkZsWyKTZgQfz20boqs5SWKyzxSue9fapGScC0wl
-         mJMjij9jYrOaTNW4J+Q739AtfuGHyci/xTVM0+P6yg3rWcO4Yg0wJx6M43/tqrt/ODYr
-         geOzNItg6q+fbokrcp7LNR5PplUAYiN4xucx8bpY5/ye6V1leUZkPWevzX8Qi5Xab97t
-         3oq43Xy10y3L4ZuO3GlCIftBP3g+wxpjOJYcfAPHhMDFf6juAuJiCZEuq7xegH5+F2se
-         tPmg==
-X-Forwarded-Encrypted: i=1; AJvYcCVH11IezwDOaub77iN6arlwxZcgUHCc/XPGZZxVYbo9Sc5EmbTYH66+bd9NhooqefHe8pNcdQlVrRD6Ehk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZEtcDbu9uIjicZ6mdDxA4pp3fO7uPdvJ9xNKPS8VygxrHNrkw
-	3nXou3AHiqpE902FTaXvkhH5Hp9pQcrozIMQAPIvoDRHclnpbG4puUqK0F+3YA==
-X-Google-Smtp-Source: AGHT+IGSIU/bFTwcE96kf/0wGJ0BJfJiuO8y8CrN5NyTUQ2vHijmdL2HboIEe85P5cA+/Hj/rUfY3A==
-X-Received: by 2002:a05:6830:25c2:b0:718:1606:c2df with SMTP id 46e09a7af769-7185940f8e5mr3286435a34.3.1729842530333;
-        Fri, 25 Oct 2024 00:48:50 -0700 (PDT)
-Received: from yuanhsinte-p620-1.tpe.corp.google.com ([2401:fa00:1:10:5a9f:16cc:8d5a:55e5])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7205793189esm535527b3a.58.2024.10.25.00.48.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2024 00:48:49 -0700 (PDT)
-From: Hsin-Te Yuan <yuanhsinte@chromium.org>
-Date: Fri, 25 Oct 2024 15:48:44 +0800
-Subject: [PATCH RESEND v4] arm64: dts: mt8183: set DMIC one-wire mode on
- Damu
+	s=arc-20240116; t=1729842592; c=relaxed/simple;
+	bh=952y0NPkhwarQKxJG1f+kljQakJhI+T6e79joVRiUcg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CvQxSwv24BBv4Iaf9W2Y67FodQMn3GKfwyhfprR4FQTb9YRaMUAlYtfNrWHTLxH9/4xEKGoJrYpLMMmPIhSjg9D+z76rg1JdVGJp6yeRacfiXwRRRueugzuQjOzbSWoK+FwbBoYnKUlLdFSkUlaQn5GMShAOV0r0auVTQSjhHT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dlE9BJ6g; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729842590; x=1761378590;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=952y0NPkhwarQKxJG1f+kljQakJhI+T6e79joVRiUcg=;
+  b=dlE9BJ6gs0n1UBEtIr2AFy+VYd12dRolotRoOGvadNXWg4oFT0mqxMDV
+   O3m64Czms3d+YJhQrzW4H8QAsIXYHFjDcN3D56B9OIvVvzjFFUJBdk5fZ
+   Z5s/qEYl9Z9cT1ngWqMraTqLQ5towQFKfGuzyQBqPbxVHaxyIsB3ABYpg
+   tetbBNg75GQXceMJSKPQZQ7PUBwCZMdtsIkvDIFQK/OOqy7OWunvHtjbP
+   mf9Nsj/gitET/KBcu+7zuPplNBNcJ93oZjmLRMubh0NBziBsyfGc6wiV2
+   FBVoIEZdjsOqfC46dC4HDKh06cKvdt2kGvBmUBQafcsU/rdywjsZMTkU7
+   A==;
+X-CSE-ConnectionGUID: qQ49ByMYSA+zxTkOfujb7w==
+X-CSE-MsgGUID: UZj+t1rCQ3Gbj56b81fcWg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11235"; a="40090468"
+X-IronPort-AV: E=Sophos;i="6.11,231,1725346800"; 
+   d="scan'208";a="40090468"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2024 00:49:50 -0700
+X-CSE-ConnectionGUID: 5CsphyJ0QgaztpFi6nXfbw==
+X-CSE-MsgGUID: YazC/HHFR3Cepcl9LasKHQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,231,1725346800"; 
+   d="scan'208";a="80848388"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa009.fm.intel.com with ESMTP; 25 Oct 2024 00:49:48 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t4F4r-000XnR-2f;
+	Fri, 25 Oct 2024 07:49:45 +0000
+Date: Fri, 25 Oct 2024 15:49:16 +0800
+From: kernel test robot <lkp@intel.com>
+To: Tony Chung <tony467913@gmail.com>, johan@kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, gregkh@linuxfoundation.org,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Tony Chung <tony467913@gmail.com>
+Subject: Re: [PATCH] usb: serial: mos7840: Fix coding style warnings
+Message-ID: <202410251501.9hTgSYCH-lkp@intel.com>
+References: <20241023091414.18098-1-tony467913@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241025-damu-v4-1-241bd9366c20@chromium.org>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Hsin-Yi Wang <hsinyi@chromium.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
- Hsin-Te Yuan <yuanhsinte@chromium.org>
-X-Mailer: b4 0.15-dev-2a633
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241023091414.18098-1-tony467913@gmail.com>
 
-From: Hsin-Yi Wang <hsinyi@chromium.org>
+Hi Tony,
 
-Sets DMIC one-wire mode on Damu.
+kernel test robot noticed the following build errors:
 
-Fixes: cabc71b08eb5 ("arm64: dts: mt8183: Add kukui-jacuzzi-damu board")
-Signed-off-by: Hsin-Yi Wang <hsinyi@chromium.org>
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Signed-off-by: Hsin-Te Yuan <yuanhsinte@chromium.org>
----
-Changes in v4:
-- Add Reviewed-by tag back, which is dropped in v3
-- Link to v3: https://lore.kernel.org/r/20241009-damu-v3-1-1294c8e16829@chromium.org
+[auto build test ERROR on johan-usb-serial/usb-next]
+[also build test ERROR on johan-usb-serial/usb-linus usb/usb-testing usb/usb-next usb/usb-linus tty/tty-testing tty/tty-next tty/tty-linus linus/master v6.12-rc4 next-20241024]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Changes in v3:
-- Add missing Sign-off-by tag
-- Link to v2: https://lore.kernel.org/r/20240910-one-wire-v2-1-2bb40d5a3cf8@chromium.org
+url:    https://github.com/intel-lab-lkp/linux/commits/Tony-Chung/usb-serial-mos7840-Fix-coding-style-warnings/20241023-171615
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/johan/usb-serial.git usb-next
+patch link:    https://lore.kernel.org/r/20241023091414.18098-1-tony467913%40gmail.com
+patch subject: [PATCH] usb: serial: mos7840: Fix coding style warnings
+config: loongarch-allmodconfig (https://download.01.org/0day-ci/archive/20241025/202410251501.9hTgSYCH-lkp@intel.com/config)
+compiler: loongarch64-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241025/202410251501.9hTgSYCH-lkp@intel.com/reproduce)
 
-Changes in v2:
-- Add fixes tag
-- Link to v1: https://lore.kernel.org/r/20240910-one-wire-v1-1-d25486a6ba6d@chromium.org
----
- arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-damu.dts | 4 ++++
- 1 file changed, 4 insertions(+)
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410251501.9hTgSYCH-lkp@intel.com/
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-damu.dts b/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-damu.dts
-index 0b45aee2e29953b6117b462034a00dff2596b9ff..06a689feff52945d141d196d439cba034f25fdf6 100644
---- a/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-damu.dts
-+++ b/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-damu.dts
-@@ -26,6 +26,10 @@ &touchscreen {
- 	hid-descr-addr = <0x0001>;
- };
- 
-+&mt6358codec {
-+	mediatek,dmic-mode = <1>; /* one-wire */
-+};
-+
- &qca_wifi {
- 	qcom,ath10k-calibration-variant = "GO_DAMU";
- };
+All error/warnings (new ones prefixed by >>):
 
----
-base-commit: 75b607fab38d149f232f01eae5e6392b394dd659
-change-id: 20241009-damu-a3f2f3478409
+   drivers/usb/serial/mos7840.c: In function 'mos7840_write':
+>> drivers/usb/serial/mos7840.c:923:39: warning: missing terminating " character
+     923 |                 dev_err_console(port, "%s - usb_submit_urb(write bulk) failed
+         |                                       ^
+   drivers/usb/serial/mos7840.c:924:43: warning: missing terminating " character
+     924 |                         with status = %d\n", __func__, status);
+         |                                           ^
+>> drivers/usb/serial/mos7840.c:1832:23: error: unterminated argument list invoking macro "dev_err_console"
+    1832 | MODULE_LICENSE("GPL");
+         |                       ^
+>> drivers/usb/serial/mos7840.c:923:17: error: 'dev_err_console' undeclared (first use in this function); did you mean 'dev_err_probe'?
+     923 |                 dev_err_console(port, "%s - usb_submit_urb(write bulk) failed
+         |                 ^~~~~~~~~~~~~~~
+         |                 dev_err_probe
+   drivers/usb/serial/mos7840.c:923:17: note: each undeclared identifier is reported only once for each function it appears in
+>> drivers/usb/serial/mos7840.c:923:32: error: expected ';' at end of input
+     923 |                 dev_err_console(port, "%s - usb_submit_urb(write bulk) failed
+         |                                ^
+         |                                ;
+   ......
+>> drivers/usb/serial/mos7840.c:923:17: error: expected declaration or statement at end of input
+     923 |                 dev_err_console(port, "%s - usb_submit_urb(write bulk) failed
+         |                 ^~~~~~~~~~~~~~~
+>> drivers/usb/serial/mos7840.c:923:17: error: expected declaration or statement at end of input
+>> drivers/usb/serial/mos7840.c:887:25: error: label 'exit' used but not defined
+     887 |                         goto exit;
+         |                         ^~~~
+>> drivers/usb/serial/mos7840.c:856:13: warning: variable 'bytes_sent' set but not used [-Wunused-but-set-variable]
+     856 |         int bytes_sent = 0;
+         |             ^~~~~~~~~~
+   drivers/usb/serial/mos7840.c: At top level:
+>> drivers/usb/serial/mos7840.c:849:12: warning: 'mos7840_write' defined but not used [-Wunused-function]
+     849 | static int mos7840_write(struct tty_struct *tty, struct usb_serial_port *port,
+         |            ^~~~~~~~~~~~~
+>> drivers/usb/serial/mos7840.c:820:21: warning: 'mos7840_write_room' defined but not used [-Wunused-function]
+     820 | static unsigned int mos7840_write_room(struct tty_struct *tty)
+         |                     ^~~~~~~~~~~~~~~~~~
+>> drivers/usb/serial/mos7840.c:795:12: warning: 'mos7840_break' defined but not used [-Wunused-function]
+     795 | static int mos7840_break(struct tty_struct *tty, int break_state)
+         |            ^~~~~~~~~~~~~
+>> drivers/usb/serial/mos7840.c:764:13: warning: 'mos7840_close' defined but not used [-Wunused-function]
+     764 | static void mos7840_close(struct usb_serial_port *port)
+         |             ^~~~~~~~~~~~~
+>> drivers/usb/serial/mos7840.c:737:21: warning: 'mos7840_chars_in_buffer' defined but not used [-Wunused-function]
+     737 | static unsigned int mos7840_chars_in_buffer(struct tty_struct *tty)
+         |                     ^~~~~~~~~~~~~~~~~~~~~~~
+>> drivers/usb/serial/mos7840.c:516:12: warning: 'mos7840_open' defined but not used [-Wunused-function]
+     516 | static int mos7840_open(struct tty_struct *tty, struct usb_serial_port *port)
+         |            ^~~~~~~~~~~~
+>> drivers/usb/serial/mos7840.c:410:13: warning: 'mos7840_led_flag_off' defined but not used [-Wunused-function]
+     410 | static void mos7840_led_flag_off(struct timer_list *t)
+         |             ^~~~~~~~~~~~~~~~~~~~
+>> drivers/usb/serial/mos7840.c:400:13: warning: 'mos7840_led_off' defined but not used [-Wunused-function]
+     400 | static void mos7840_led_off(struct timer_list *t)
+         |             ^~~~~~~~~~~~~~~
+>> drivers/usb/serial/mos7840.c:391:13: warning: 'mos7840_set_led_sync' defined but not used [-Wunused-function]
+     391 | static void mos7840_set_led_sync(struct usb_serial_port *port, __u16 reg,
+         |             ^~~~~~~~~~~~~~~~~~~~
+>> drivers/usb/serial/mos7840.c:337:13: warning: 'mos7840_dump_serial_port' defined but not used [-Wunused-function]
+     337 | static void mos7840_dump_serial_port(struct usb_serial_port *port,
+         |             ^~~~~~~~~~~~~~~~~~~~~~~~
 
-Best regards,
+
+vim +/dev_err_console +1832 drivers/usb/serial/mos7840.c
+
+3f5429746d91f2 Paul B Schroeder 2006-08-31  1830  
+3f5429746d91f2 Paul B Schroeder 2006-08-31  1831  MODULE_DESCRIPTION(DRIVER_DESC);
+3f5429746d91f2 Paul B Schroeder 2006-08-31 @1832  MODULE_LICENSE("GPL");
+
 -- 
-Hsin-Te Yuan <yuanhsinte@chromium.org>
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
