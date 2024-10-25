@@ -1,226 +1,222 @@
-Return-Path: <linux-kernel+bounces-381367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B93749AFE24
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 11:26:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2BFC9AFE26
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 11:26:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78F552879C7
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 09:26:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 213991C2244C
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 09:26:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBCC31D5141;
-	Fri, 25 Oct 2024 09:26:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A3D91D4171;
+	Fri, 25 Oct 2024 09:26:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="myL1n4T3"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2080.outbound.protection.outlook.com [40.107.244.80])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CdpAvD1w"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 040E81D4610
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 09:26:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.80
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729848365; cv=fail; b=hXWUXBzPz8tgdH8l7ndnSz5ra5dR7KNGSjyCX6zunx2tZ5+7ZV30Ofq8jX5SCeWAhUqHPmOqmeJnVXyxeiPNT/47lLofFvLU3tBJWV4uhrKDKIp4fdug4hsXfgDSUQxNBDNP//Jpev5pS3QlGC5Aa1ATaH9q+ArM6MZnrrmPj6w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729848365; c=relaxed/simple;
-	bh=xW3Cnxm0AVInVOfknqdvMYT9VF8hon43ao77Vp/d3Z8=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=ZVBhHXlbvxRjwN+W4kE3r7QoI6lfZSIrlyvYna6veWPX4O0pMHbX/jVZWs2SYx3JJduYW1/TByyzuuyutyRVHCr3smaspoJDsEEMfmFl4qVTdPvuM7kSVtspQ2THPHCCdJW3Qpovh8uOsHr3R07CRRgpk+3pKjpxzc/QfhwDsBo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=myL1n4T3; arc=fail smtp.client-ip=40.107.244.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=xr1rac08Fr2c3XtqgmgR5GB09JkLZge5Y0CIaU72TbKge9W5fJtQcnj4K2/GcdZnR53KjaK6dALsF4RM50RWig5Pit3DWadnBJxQLxkNmgUGHyr1oMzVaBGEr7xfOxs9YKDC6uqUaUTvvwoxrr8eK1fP3vtcziomv4PwiyYKcLnUA5iYRakat4ReKY+jnJCf8xVzMDRc1XkgRR7bQ9+UXIunbeseu/+sfbKg3FPP3cG6q3O4Nr5VpjAYP58bU1xyZ8MUsz7Qr5cjVRdQ3EZFGLwV31unoheFH/zEn760q5AYz2sIc7/l2L1s6+mcAU4jKSKCni6DmuAPhGPVetX/BA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=veC3KObaMFSrjCnRxnJ5ou+bLKqx4NVwdJTj8a7NHlM=;
- b=gLXwpV25Hoq8C86qXusKC+ckHb9HSVMWQX5ojRHwozcmeO1fI5r8u701U6nVCGBBlVijZ6eiukmBbfx0v1eMmBkxFw/9GI9hkPkhAUfa90JKTnhERk+IjDR1d99yUW3+U+MUI7jYY7ZXpzhMfp9+OeSXkQUC+YWHyz99AGVUgC/X0pmJYOFXGfUdChIPtcrwers9sI9OHfuAPEkXQO7F6VWNLIvaGesXZgqZRP+iVVkiQOcGAKBReCQA8aeqD6WPPO6gAWN7XWIMW8EIee/F18b1CvmXwWhKYqp+mf7t15o1Z4PjTWIRSU/CV93pzGGVbeb0f2VjTs62Ls82FvRzcw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=veC3KObaMFSrjCnRxnJ5ou+bLKqx4NVwdJTj8a7NHlM=;
- b=myL1n4T3f1ezqwLLlDjzLit7Jmq2XCaeaKnPPABseYJKBfChGcLt/bgCk5qEfN/28gqfMM35ipvQnAi9WC0GXAoAZtnD8Uo8o79HlV1PuMtaNKPOxX19QPRPnNAuhREA7pQT17QDegP74XL5dEwZA9BQuopJJ2mOD8Df06oxpoA=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH7PR12MB9066.namprd12.prod.outlook.com (2603:10b6:510:1f6::5)
- by CY5PR12MB6273.namprd12.prod.outlook.com (2603:10b6:930:22::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.20; Fri, 25 Oct
- 2024 09:26:00 +0000
-Received: from PH7PR12MB9066.namprd12.prod.outlook.com
- ([fe80::954d:ca3a:4eac:213f]) by PH7PR12MB9066.namprd12.prod.outlook.com
- ([fe80::954d:ca3a:4eac:213f%4]) with mapi id 15.20.8093.018; Fri, 25 Oct 2024
- 09:26:00 +0000
-Message-ID: <28d98245-e6fc-4f04-876e-366a353ee6ce@amd.com>
-Date: Fri, 25 Oct 2024 04:25:50 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/8] x86/sev: Add support for the RMPREAD instruction
-Content-Language: en-US
-To: Tom Lendacky <thomas.lendacky@amd.com>, linux-kernel@vger.kernel.org,
- x86@kernel.org
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- Michael Roth <michael.roth@amd.com>, Nikunj A Dadhania <nikunj@amd.com>,
- Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-References: <cover.1729708922.git.thomas.lendacky@amd.com>
- <cacc1a3e63a790450e342d08457b52b2d471cca2.1729708922.git.thomas.lendacky@amd.com>
-From: "Kalra, Ashish" <ashish.kalra@amd.com>
-In-Reply-To: <cacc1a3e63a790450e342d08457b52b2d471cca2.1729708922.git.thomas.lendacky@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PN2PR01CA0243.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:21a::6) To PH7PR12MB9066.namprd12.prod.outlook.com
- (2603:10b6:510:1f6::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92C5B1D2793
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 09:26:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729848389; cv=none; b=X15f4Jrsfv71c5xEGKSEgpqbJ1KQZF88mKZkSdN0025Ejw0TruQ+fcque+5fhzd0Je5Po+Cq+PIf5Xe7T5zPcAC2pDNbHuyhvHFEJqpbvnvdLC7T2/7uEuLXZ2pnDkh0qSR0rBm8WJGB9KihGCYY4Pzjjj1cBqU2nfCkSnJe5vE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729848389; c=relaxed/simple;
+	bh=/yWsiDoSdlppm0K6tEYQdyTQtrffn9nxLRavWmNKpW4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=X43ceZPfT03nu/YgNgltXggwSCiDsZE9lHGBkYW9ifQT5W4wqXb6tlTK42864NlFzW/eFrtHi5SmljMEc+rpojNlS0Ix73iR945YFQrDwF/RXUN7ATLUEVmNmgg2aa71wKR7bBdIjrYopC7Q4hEjLyeAlcSBBjeKAj0qMS83oBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CdpAvD1w; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729848386;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vft52JmzTiczAkz0JTeV2gs/f2qmNtZvbi4AAtbyLkQ=;
+	b=CdpAvD1w/rzZADMSkSHzAuRP7QPLreN6+PrLavw/QIm04Y+g6/Ic7AeVtc7VpdsGBrac87
+	EYCXgXVsbmVFrlzUL6Mpd4jPOaeclCLbTBB7AkG4WrT+7Zk+FUf7GN+n1i+Wex1M5yDUBg
+	5zfEu0GgiwPPsCcG2fg/hl99Zy6Mvo8=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-182-3Ov_TIREMG2zpP_Ql7KPXQ-1; Fri, 25 Oct 2024 05:26:21 -0400
+X-MC-Unique: 3Ov_TIREMG2zpP_Ql7KPXQ-1
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-431518e6d8fso13426565e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 02:26:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729848380; x=1730453180;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=vft52JmzTiczAkz0JTeV2gs/f2qmNtZvbi4AAtbyLkQ=;
+        b=EL1rYJGZk+NhcQHpzmW5jBQ3JqDIlr8/ra0YOYuDEVh/Y0/2+LO5Zt2IDOfHFu5/U1
+         k/G3lY/0RBRdK/VdZcYr+JuMC3ovR1CL3Bpa1y6fxEEdzzXPMpz8bwUSwyhtZ5SyJdYH
+         7fyVZiWzGVHWNrtWfoVhyi0ZOz4QJybV4QsIvvU0hnUYTbOsDbpnVW5VG8IJvK0vm77A
+         qFAsT4N2wBDINQcAYu9PTUuEMaIZlDiFni/8brS3PYR74lQu3L60B9u4znobxd5Aa7+5
+         YAjcToAQw880Y8MlF6sOWcgzdJqE4Yx9H5+KiN9+wB7BSdGxJqwiV5iAgeisi+2Xz6VB
+         A8Qg==
+X-Forwarded-Encrypted: i=1; AJvYcCXRQie1U+37TPMtXNn4v6kOjK306RCNJ/Z3O/3JEhhXaJii9aaOVs6QD78i3N91Ts2Icu1FZD/pJYaEmkA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxnyr+leZL7p2tTHyC8qc2u9IX1TfjfOdUNAZ8/eZoVAgNKmBiw
+	cQgpe739ZQuPXJ9LKDud9pPkbHgJqb0jL/FrQS2F9RZ8MWR3Zmg1U9Us/MoTv50G/Dnt/+Nrm+k
+	kzUZoQ4D4APWYohZjvRnpQq+JecbCvrUI/aik04I2C9J+f+oBCUhmPm4PoL9+tw==
+X-Received: by 2002:a05:600c:3b05:b0:431:54f3:11b1 with SMTP id 5b1f17b1804b1-4318424d1f6mr77148445e9.34.1729848380310;
+        Fri, 25 Oct 2024 02:26:20 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IERugywjqAp5mpBy60KpzrMcSUOWGQ9K6FvvVevRSQRlDJcDbOEdtHW3IktibMs0Ql+3/BNCQ==
+X-Received: by 2002:a05:600c:3b05:b0:431:54f3:11b1 with SMTP id 5b1f17b1804b1-4318424d1f6mr77148205e9.34.1729848379884;
+        Fri, 25 Oct 2024 02:26:19 -0700 (PDT)
+Received: from ?IPv6:2001:16b8:2de5:ba00:738a:c8da:daac:7543? (200116b82de5ba00738ac8dadaac7543.dip.versatel-1u1.de. [2001:16b8:2de5:ba00:738a:c8da:daac:7543])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4318b56eda3sm42611775e9.31.2024.10.25.02.26.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Oct 2024 02:26:19 -0700 (PDT)
+Message-ID: <933083faa55109949cbb5a07dcec27f3e4bff9ec.camel@redhat.com>
+Subject: Re: [PATCH] PCI: Restore the original INTX_DISABLE bit by
+ pcim_intx()
+From: Philipp Stanner <pstanner@redhat.com>
+To: Takashi Iwai <tiwai@suse.de>, Bjorn Helgaas <bhelgaas@google.com>
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Fri, 25 Oct 2024 11:26:18 +0200
+In-Reply-To: <20241024155539.19416-1-tiwai@suse.de>
+References: <20241024155539.19416-1-tiwai@suse.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB9066:EE_|CY5PR12MB6273:EE_
-X-MS-Office365-Filtering-Correlation-Id: a4cd0499-2f09-477e-4863-08dcf4d709c3
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Nk9IUG9ac09PSDNmamtNSkg1SVg1K2thRmN0d1NhVFQ1WWcrV1hHeVpCcm91?=
- =?utf-8?B?NElyb0lVQVo1ekpEQy9wdjNTQk5TTFRaNU9ieTMyekRIZ0ZpcU45a2xhYzJR?=
- =?utf-8?B?ek9CV1RUYlVIZFBySGtNdjhzQVZrNXF5ODl3L3Q0MVVPWnZqdnZwWTlxMzlD?=
- =?utf-8?B?Y0U3Wml5YUxqanBvT2JjcVYzTUxzVUdXV2wwb2MvTW0wbmoyZnY3a2xsR3Ix?=
- =?utf-8?B?ZkFvaHpkZGVDdFhGOUpCYnA3bEF6V253NU16S1puNHZ1dWdmRDJVbmZhSnZF?=
- =?utf-8?B?V2dQc2NNUHg2NGF4eWV5UUFzS3dySTYzcEErSkY1dnJPbUhJTlVac1Rua20w?=
- =?utf-8?B?KzE4MklnRHFRd2hkRjN4UUNVK3BUNFdibUxZOGI3VitPQm1taW5DRlpSZDZL?=
- =?utf-8?B?dHJIaE1VdjZnZjdXc2NWUTRNZTBEY1dPNlpwK2tmb0hYVWF5Mlh0dzR0dFRN?=
- =?utf-8?B?YjFiNGtBZENpazFYc0NUVDFETXZHdXNaWHdZQnh4TUFDUmJNY09iaWVpSjYr?=
- =?utf-8?B?ZHFadXFhZDF1UGcwOHZhQzlRNGJUcXA2M2MvWWc0eUNRNml6R3ZqZ0dEblNW?=
- =?utf-8?B?SlByOXpXTHV1cmhiVDlUeUtWT1ZFUG8xd1lpRWtjWmRQZXdMMFdSckp3QzYx?=
- =?utf-8?B?WVdJcEFKTlhhR0lhVzB6VDBpVFQ4bkU2R2d5M0ZSOHNpck5zaXl1WDRQK3dZ?=
- =?utf-8?B?anNBNU41dlVYUU9ZUWJ3STAveVljcUVpTVpHUXE2YXpSVEEvSHRsRTlJYWo3?=
- =?utf-8?B?eS9KanJzWk9KaEhQUmdPZVlOdjZsOXBUZGZtTy9uN2lGZ3JMZUpaV1BEeGRz?=
- =?utf-8?B?UmYvcVBsWUJ3UENKVURwR1ViMHBvK1NabjE2VDYxYmw3bkpYZEFZY1VVZ09J?=
- =?utf-8?B?ekVLRmR0d2JtbHBUZE94bExBSVFBbHRJS3hqMC9FQXBTNjlyek1hbkVNbGRE?=
- =?utf-8?B?Y2dUY01tUGNoSnpvcGV3YUwrcEJHeU1kVUdqd2k5S3ZoTWxybCtGMUdRNkFR?=
- =?utf-8?B?Qi9XK0Q5V01OTkNPclpud0plUStwM1UwTmw2U28ySk1qQXNGTnp2c21YdkZF?=
- =?utf-8?B?N0YwSnVnM2J3L29URXYxUTZFblBsT0FvZTdDOHk4UkdwWjhyWno3NVlXU1Vi?=
- =?utf-8?B?bkpqNEd2QnBwVWlCeEZTL1ZUU0F3cldEbDhkU2NmUmRmWm9Tb083eGRwWUJC?=
- =?utf-8?B?YXVjQkludFBLVjY2V2xPY1hRVnlYK1kxNHJBQkVpWkV5bm9tbityTXRHWlRS?=
- =?utf-8?B?N0VQWVovU0VkWlg2dThyQnJOcERuOUx4bmwyVGFjVHlkMnVreVROZTAvbUcz?=
- =?utf-8?B?dDdCa0czdkh5YVROMEdpa29uNHBLVk52QnFOSXRHcnhRdW1ZenlEelNGY21O?=
- =?utf-8?B?SDJsdk1HSWxuWDQvaWU3eEpvWTFNeFkyMzRHWEVSWWpVbGh1b0Q3WVdGcVJP?=
- =?utf-8?B?NUxaU1VwT2Mxa0lPQTVuOEQrUHBtR1ZFcHh1RjRRamt5S2drTlNvemZ6Y2Nq?=
- =?utf-8?B?S0laSEJHeTlwd2huUGUyWVFBNXo1cEloamFDUy9ESDRWNlg0TFBHWGZYSG5q?=
- =?utf-8?B?VmlsNzVaQUNCYTUrNWNGeFUzcmtNNmxCK1JBYmNBOHlyY0lDR2dQOUNrckJs?=
- =?utf-8?B?ai9tODN0T1UycTEvS0IycnFwUi9MK290OFBBNnBELzVzaWRiTVY2NTZYQldF?=
- =?utf-8?B?QVZlRWMvR3RqNjZDUE1MbXNJN1EvLzkrRnFZUHZ3TUtFRWZRMDM1Q2xQSytU?=
- =?utf-8?Q?up7FC+ekDeiSDEe3uCUS/Tc4pDVQGuwnJhbiDXH?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB9066.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?VVhnTlY0TXFEVm0vT3cycHpOVkVCZUZheWE1YWxJaXc2S1dMcDdqZmN4K2J5?=
- =?utf-8?B?Z0ZiVjdVRnNJVWM3VUJmV0E0Sjdnall3ZnlkcktrcGJON0ZlWXg1SjZNeXpD?=
- =?utf-8?B?b0c3NzBXVWdaeWdIaGRGR20vZHdQWEprNXJNZC95QzJrdUhPQUNpaGdMTGhS?=
- =?utf-8?B?V0RrcnBtV3NMeE0rckIxK0Yxa1NEeDBhd0hrNGhQN2w3NFlxcEVoT29MNGc5?=
- =?utf-8?B?OEdjMHJqbGwxVlMwUHBpWENMRXNYeUtIemlkRFZueHNNeGlrQXBnUzJQMk1O?=
- =?utf-8?B?SXZUM05iVk1NckxqYjhpZjdVTTQ2MDljVENmbXFpenhVUXBCd2phbDlvY2RK?=
- =?utf-8?B?SFU1V2ErT0NHUXAyNURlU3pOUEJ4UDd5eFduSDRLV1o0bWFCWUJ2b0RiZXRj?=
- =?utf-8?B?OGxlTmxvYTc3V0MzM0kwYnZjQW1WK3pUanJGN2NjN0NPeWJiWEV2cHBGR2U3?=
- =?utf-8?B?bDFNemJ5RFV2VW5ZWW82UkNPMlVNSlU0T2tNRis5dVVLMEtTbU9sSEVzU29U?=
- =?utf-8?B?MldQUTBFMG1ORmdhRkVYYURua0FGeTNmWmlWYzJ6bDUweXlqQmMwQ1d3TGkv?=
- =?utf-8?B?bGdJMVFwOXpSUndRZXpDZVZQZGVWRUZYUFh0bmFESjF5eVR0WG9TWE0zRmRW?=
- =?utf-8?B?TW9KZ05NUXlmdnZmWW1aQ29zZ1B0bGgvazAwMDMyZ3pTM0h5NjFodUFJK3FU?=
- =?utf-8?B?L3lGUG4vUlMrYXBsbDJOSHdZL0YzV0J1UzhGODZ1Z0QwUEhmeEwwazlpVHdV?=
- =?utf-8?B?aFRQRFJXdG9TaUc2bEt6dTNpTVVQdXJtb0JQakdvNDFYTW9NejQxYmJPY2V5?=
- =?utf-8?B?RkVPKzZaL043Rk9aMGRhUWlNY0pUVlB5TzRhRXVMbkc1K0FZYll3Z0ZHd0ZP?=
- =?utf-8?B?d0lid1JLWExRY21KeXVzelJDV3VsTm9rS2dDdjBIVnJuOHN1THlCZ3NkUVFB?=
- =?utf-8?B?Tms3MnpiUmZNMTR6ZldNRTlTK1J5aVpvVHU3RUVvUWVWdWxMVmd4cmhCdnho?=
- =?utf-8?B?SWtVRjdvM1lyYTZyRFFOSEd3QU9wcGNZUnB3MnVGQ09TSXZlaVVLZ0t0Qzdz?=
- =?utf-8?B?VVBuTVF1WEEvcG1kSjFEbmJlQmhLb2c5MVJML0lXR2FOUnFPNzFVMGsvaGVs?=
- =?utf-8?B?NjB6Mzc4cmpvRFNVVmphZkYvcytBb280Rm5FVVdEUEo1SVI5aXY2Z3dsK3VY?=
- =?utf-8?B?eS9JQ1ZEZFEycytrK0tuai9kTGsyMDdZS0U2am1PTi8veHRJVVo4Vk1qb3pQ?=
- =?utf-8?B?ZCtJVkU4bXJKbCtCRFQxN3NJcENnZzAyK1BoeDArckFRaHlOZkFQbmJVbGM4?=
- =?utf-8?B?KzRMMzhFeUsvYlRqNkRPVlRBYmhqdkk1U0ZrNDlCTDFmbjBmSWtHcEZTSVNa?=
- =?utf-8?B?ZmhWdlJGS1NxVXl1SktCOWlONENkcGkyZ0h5MnJNUDRlcWs1Y3NQWmplL3hP?=
- =?utf-8?B?RmtlNWNPTmFacUZsSHdIRExCZk5pK3dIc2J4S1ordmJKdkphaTAzemNWT2NE?=
- =?utf-8?B?RUVQMFZjRjlNbnZmbnVNYVgvQks3aHdpR1JEbjBZWnE3b2VzRUJnMGVBZmdr?=
- =?utf-8?B?VkdxakN5SWs5UnRLdTBzKzRoeElqZFY5R2FQMHc1azV4RVFGYXdCNlc5KzQ0?=
- =?utf-8?B?c25BTEl3c09ndWo3czZQVDdZR2pFUzVScDJDMUcrRDd1MFdJWjRvT0RaUll2?=
- =?utf-8?B?SEtXaVgzc20yT3U3QnFFemNpVzM1RTBLSndHQjRDS3pDWnFmS1VMeEhuZ1F0?=
- =?utf-8?B?c3NHdGF0eWNYVW5jd2tNVFl6MXBYeTFQOFNEd3JTS1JPVUE3TVc4aThOUWNa?=
- =?utf-8?B?VFZENW1FUkRmbXRVK1o4bjl3Y01zNk12bVhKWTc5WmJxc2t3NjhTZFIvdnk5?=
- =?utf-8?B?eXBReGpnWS9FUlkxWW5Hd3FTK3E4Ynl2QlV3akczYUFsMkd0MHZtTHRqUVEy?=
- =?utf-8?B?SmNOTXRTZ1NHcklvY2FjVTdvcGlDcm4zTzlqa2ZWNDJzdWlHai9PY1djRlEy?=
- =?utf-8?B?emU4QXBoakQ2bVRhcnNBVFBFZVlqU0Y4eVREeVZXZHY3SFE1T1FBa0U4RVlL?=
- =?utf-8?B?OHdwMjh5b0g5TTVOS0l1dE9Rd2Q3Q0lrTFRObDdKV1U0RjVQMkJIUkk5R0V2?=
- =?utf-8?Q?IbObtMEA82rKyi5qMIPDnZeY9?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a4cd0499-2f09-477e-4863-08dcf4d709c3
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB9066.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Oct 2024 09:26:00.2215
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: HybUggCczQFpTmIECbw56FiCRR0vF1ieuFNViE94E78DJe28s1xg0s53S1Kog2tEUmTR6yc5LhfNNatHDhpC9A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6273
 
+Hi,
 
-On 10/23/2024 1:41 PM, Tom Lendacky wrote:
-> The RMPREAD instruction returns an architecture defined format of an
-> RMP table entry. This is the preferred method for examining RMP entries.
-> 
-> The instruction is advertised in CPUID 0x8000001f_EAX[21]. Use this
-> instruction when available.
-> 
-> Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
+On Thu, 2024-10-24 at 17:55 +0200, Takashi Iwai wrote:
+> pcim_intx() tries to restore the INTX_DISABLE bit at removal via
+> devres, but there is a chance that it restores a wrong value.
+> Because the value to be restored is blindly assumed to be the
+> negative
+> of the enable argument, when a driver calls pcim_intx() unnecessarily
+> for the already enabled state, it'll restore to the disabled state in
+> turn.
+
+It depends on how it is called, no?
+
+// INTx =3D=3D 1
+pcim_intx(pdev, 0); // old INTx value assumed to be 1 -> correct
+
+---
+
+// INTx =3D=3D 0
+pcim_intx(pdev, 0); // old INTx value assumed to be 1 -> wrong
+
+Maybe it makes sense to replace part of the commit text with something
+like the example above?
+
+> =C2=A0 Also, when a driver calls pcim_intx() multiple times with
+> different enable argument values, the last one will win no matter
+> what
+> value it is.
+
+Means
+
+// INTx =3D=3D 0
+pcim_intx(pdev, 0); // orig_INTx =3D=3D 1, INTx =3D=3D 0
+pcim_intx(pdev, 1); // orig_INTx =3D=3D 0, INTx =3D=3D 1
+pcim_intx(pdev, 0); // orig_INTx =3D=3D 1, INTx =3D=3D 0
+
+So in this example the first call would cause a wrong orig_INTx, but
+the last call =E2=80=93 the one "who will win" =E2=80=93 seems to do the ri=
+ght thing,
+dosen't it?
+
+>=20
+> This patch addresses those inconsistencies by saving the original
+> INTX_DISABLE state at the first devres_alloc(); this assures that the
+> original state is restored properly, and the later pcim_intx() calls
+> won't overwrite res->orig_intx any longer.
+>=20
+> Fixes: 25216afc9db5 ("PCI: Add managed pcim_intx()")
+
+That commit is also in 6.11, so we need:
+
+Cc: stable@vger.kernel.org # 6.11+
+
+> Link: https://lore.kernel.org/87v7xk2ps5.wl-tiwai@suse.de
+> Signed-off-by: Takashi Iwai <tiwai@suse.de>
 > ---
->  arch/x86/include/asm/cpufeatures.h |  1 +
->  arch/x86/virt/svm/sev.c            | 11 +++++++++++
->  2 files changed, 12 insertions(+)
-> 
-> diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
-> index 913fd3a7bac6..89c1308cdf54 10064
-> --- a/arch/x86/include/asm/cpufeatures.h
-> +++ b/arch/x86/include/asm/cpufeatures.h
-> @@ -448,6 +448,7 @@
->  #define X86_FEATURE_V_TSC_AUX		(19*32+ 9) /* Virtual TSC_AUX */
->  #define X86_FEATURE_SME_COHERENT	(19*32+10) /* AMD hardware-enforced cache coherency */
->  #define X86_FEATURE_DEBUG_SWAP		(19*32+14) /* "debug_swap" AMD SEV-ES full debug state swap support */
-> +#define X86_FEATURE_RMPREAD		(19*32+21) /* RMPREAD instruction */
->  #define X86_FEATURE_SVSM		(19*32+28) /* "svsm" SVSM present */
->  
->  /* AMD-defined Extended Feature 2 EAX, CPUID level 0x80000021 (EAX), word 20 */
-> diff --git a/arch/x86/virt/svm/sev.c b/arch/x86/virt/svm/sev.c
-> index 4d095affdb4d..e197610b4eed 100644
-> --- a/arch/x86/virt/svm/sev.c
-> +++ b/arch/x86/virt/svm/sev.c
-> @@ -301,6 +301,17 @@ static int get_rmpentry(u64 pfn, struct rmpread *entry)
->  {
->  	struct rmpentry *e;
->  
-> +	if (cpu_feature_enabled(X86_FEATURE_RMPREAD)) {
-> +		int ret;
+> =C2=A0drivers/pci/devres.c | 18 ++++++++++++++----
+> =C2=A01 file changed, 14 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/drivers/pci/devres.c b/drivers/pci/devres.c
+> index b133967faef8..aed3c9a355cb 100644
+> --- a/drivers/pci/devres.c
+> +++ b/drivers/pci/devres.c
+> @@ -438,8 +438,17 @@ static void pcim_intx_restore(struct device
+> *dev, void *data)
+> =C2=A0	__pcim_intx(pdev, res->orig_intx);
+> =C2=A0}
+> =C2=A0
+> -static struct pcim_intx_devres *get_or_create_intx_devres(struct
+> device *dev)
+> +static void save_orig_intx(struct pci_dev *pdev, struct
+> pcim_intx_devres *res)
+> =C2=A0{
+> +	u16 pci_command;
 > +
-> +		asm volatile(".byte 0xf2, 0x0f, 0x01, 0xfd"
-> +			     : "=a" (ret)
-> +			     : "a" (pfn << PAGE_SHIFT), "c" (entry)
-> +			     : "memory", "cc");
+> +	pci_read_config_word(pdev, PCI_COMMAND, &pci_command);
+> +	res->orig_intx =3D !(pci_command & PCI_COMMAND_INTX_DISABLE);
+> +}
 > +
-> +		return ret;
+> +static struct pcim_intx_devres *get_or_create_intx_devres(struct
+> pci_dev *pdev)
+> +{
+> +	struct device *dev =3D &pdev->dev;
+> =C2=A0	struct pcim_intx_devres *res;
+> =C2=A0
+> =C2=A0	res =3D devres_find(dev, pcim_intx_restore, NULL, NULL);
+> @@ -447,8 +456,10 @@ static struct pcim_intx_devres
+> *get_or_create_intx_devres(struct device *dev)
+> =C2=A0		return res;
+> =C2=A0
+> =C2=A0	res =3D devres_alloc(pcim_intx_restore, sizeof(*res),
+> GFP_KERNEL);
+> -	if (res)
+> +	if (res) {
+> +		save_orig_intx(pdev, res);
+
+This is not the correct place =E2=80=93 get_or_create_intx_devres() should =
+get
+the resource if it exists, or allocate it if it doesn't, but its
+purpose is not to modify the resource.
+
+> =C2=A0		devres_add(dev, res);
 > +	}
-> +
->  	e = __get_rmpentry(pfn);
->  	if (IS_ERR(e))
->  		return PTR_ERR(e);
+> =C2=A0
+> =C2=A0	return res;
+> =C2=A0}
+> @@ -467,11 +478,10 @@ int pcim_intx(struct pci_dev *pdev, int enable)
+> =C2=A0{
+> =C2=A0	struct pcim_intx_devres *res;
+> =C2=A0
+> -	res =3D get_or_create_intx_devres(&pdev->dev);
+> +	res =3D get_or_create_intx_devres(pdev);
+> =C2=A0	if (!res)
+> =C2=A0		return -ENOMEM;
+> =C2=A0
+> -	res->orig_intx =3D !enable;
 
-Reviewed-by: Ashish Kalra <ashish.kalra@amd.com>
+Here is the right place to call save_orig_intx(). That way you also
+won't need the new variable struct device *dev above :)
 
-Thanks,
-Ashish
+Thank you,
+P.
+
+
+> =C2=A0	__pcim_intx(pdev, enable);
+> =C2=A0
+> =C2=A0	return 0;
+
 
