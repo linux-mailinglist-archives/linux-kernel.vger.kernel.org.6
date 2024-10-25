@@ -1,95 +1,88 @@
-Return-Path: <linux-kernel+bounces-380893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D45B59AF75B
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 04:24:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AB8C9AF75D
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 04:24:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 114611C217C3
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 02:24:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03FD91C2192D
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 02:24:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A34E813A40C;
-	Fri, 25 Oct 2024 02:24:05 +0000 (UTC)
-Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D40913AD38;
+	Fri, 25 Oct 2024 02:24:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Deoy5qwP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6DA279C8;
-	Fri, 25 Oct 2024 02:24:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C242139D1B;
+	Fri, 25 Oct 2024 02:24:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729823045; cv=none; b=FZFd55kGtlaTbfMsOPseRTCLSkPyQXLziJ85HLVLwdXeeWriiT8+7vMMR7rJ0PgxN0NTAWFrGKiF3NaitvefewK24lI8eOubG1xvYhCGFX0/2v6LYsYqdGBzCzGF5Sx9Q5wWk2hHeRdv4h9ENowO0hjigebYDOiQ/pLMAMki/Q8=
+	t=1729823053; cv=none; b=Zb30CmMQvf4CeMmazeO7ac8kHm/ZFhKOrz+r/UVYu2GHmE2eAeEAvvkXeHV+W91jCfbqBSwKSbdjMeQ+Opn3RmlM/twF47/fym2FlJkuWSUPS6Ds2z8tO1z236QRDWckeMbgdMTWLjw4udbScUpXUkZRDiBA7MuiaXRTyg6cnxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729823045; c=relaxed/simple;
-	bh=l1qhUpsRfILc9gua6QCYo1/17WafQYRrt8hOzFiHIlk=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=D9/o2+dRzUFB6XBPqjbqE/24xa73b+DjxpH16ugR35Wvejud3TaY0XlA2E5gius2Ej9EDNJCxUtDZFlNqtCCiLMEEmO+tmM32CC4+OPH54kxQoMwpzQCz8sCq57Xhn2QX7Bqi8hZ0NrVbryJ3XMd0uWxkAIAVnuoO6j3xUSdoH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.178.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250811.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49P0sMo8023119;
-	Fri, 25 Oct 2024 02:23:52 GMT
-Received: from ala-exchng02.corp.ad.wrs.com (ala-exchng02.wrs.com [147.11.82.254])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 42f2g427y4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Fri, 25 Oct 2024 02:23:52 +0000 (GMT)
-Received: from ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) by
- ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 24 Oct 2024 19:23:51 -0700
-Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
- ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server id
- 15.1.2507.39 via Frontend Transport; Thu, 24 Oct 2024 19:23:49 -0700
-From: Lizhi Xu <lizhi.xu@windriver.com>
-To: <syzbot+3030e17bd57a73d39bd7@syzkaller.appspotmail.com>
-CC: <clm@fb.com>, <dsterba@suse.com>, <josef@toxicpanda.com>,
-        <linux-btrfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <syzkaller-bugs@googlegroups.com>
-Subject: Re: [syzbot] [btrfs?] general protection fault in btrfs_search_slot
-Date: Fri, 25 Oct 2024 10:23:48 +0800
-Message-ID: <20241025022348.1255662-1-lizhi.xu@windriver.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <6719c407.050a0220.10f4f4.01dc.GAE@google.com>
-References: <6719c407.050a0220.10f4f4.01dc.GAE@google.com>
+	s=arc-20240116; t=1729823053; c=relaxed/simple;
+	bh=5C5uFSBTr62E2WfrhFfYnrIEMMYUAv9JYb0KMQXuH/I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UM5qTmj/wq2AsaOXLZV0o5j+N57YqXJrPU8/4YM9HJK0+ZUlU+A9ox6P0zNZwOQhIX3eLDlZ3S+k/4sLltn7xTN9g57G9oKAnAUvxPbZ9UmDfldBJAcbH74QN9NlSsOeGL+fGpKPxHAt8jEo5KDowtyYnuJLdm4p/CwJihR8p2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Deoy5qwP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7752C4CEC7;
+	Fri, 25 Oct 2024 02:24:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729823053;
+	bh=5C5uFSBTr62E2WfrhFfYnrIEMMYUAv9JYb0KMQXuH/I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Deoy5qwPMWxzV+sAcpoC8vH1leyHr1gtikAWy4UFrbCriymkOmwl3fj7zCohoOsfo
+	 l+Q1wmC8+g45BCL8k4wVpk1X8T9mufz5N9PH0FaJz9S15CgsEzyuGqCmtMqBEMNiAw
+	 Xbk2Zr9XBlyQGwVM/CHCH3h/o8nsbpruo2bwwimZEeeRlunAnmjuMoOwIzaGsUDipw
+	 YjEPLY3EOlIsqLAxKrvv2SJqX07MBZ3toQSizhu8tJMJ2DRzx9GvHcXmX7FTWyG6mG
+	 eifWO3Qfmdox2rCLetNBq4uccp/1TlBVzOZXSSfizORPFTVzZQymnjE53mjjMNaR9l
+	 43pE6c67jdbPA==
+Date: Thu, 24 Oct 2024 19:24:11 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Conor Dooley <conor@kernel.org>
+Cc: linux-riscv@lists.infradead.org,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	=?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <cleger@rivosinc.com>,
+	Andy Chiu <andybnac@gmail.com>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v2 5/5] dt-bindings: riscv: document vector crypto
+ requirements
+Message-ID: <20241025022411.GB1781@sol.localdomain>
+References: <20241024-fanning-enrage-bcc39f8ed47d@spud>
+ <20241024-pungent-lasso-42dd3512a3c8@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: 0CSmBXtuyEYCu_yM1qlq9IXqmwVwLZaM
-X-Proofpoint-GUID: 0CSmBXtuyEYCu_yM1qlq9IXqmwVwLZaM
-X-Authority-Analysis: v=2.4 cv=eoKNzZpX c=1 sm=1 tr=0 ts=671b0138 cx=c_pps a=K4BcnWQioVPsTJd46EJO2w==:117 a=K4BcnWQioVPsTJd46EJO2w==:17 a=DAUX931o1VcA:10 a=g5S_A3WLY7ZMYIQGvTMA:9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-25_02,2024-10-24_02,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 suspectscore=0
- bulkscore=0 phishscore=0 malwarescore=0 adultscore=0 priorityscore=1501
- lowpriorityscore=0 mlxlogscore=721 spamscore=0 impostorscore=0 mlxscore=0
- classifier=spam authscore=0 adjust=0 reason=mlx scancount=1
- engine=8.21.0-2409260000 definitions=main-2410250017
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241024-pungent-lasso-42dd3512a3c8@spud>
 
-use the input logical can't find the extent root, so add sanity check for
-extent root before search slot.
+On Thu, Oct 24, 2024 at 01:34:33PM +0100, Conor Dooley wrote:
+> From: Conor Dooley <conor.dooley@microchip.com>
+> 
+> Section 35.2. Extensions Overview of [1] says:
+> | The Zvknhb and Zvbc Vector Crypto Extensions --and accordingly the composite extensions Zvkn and
+> | Zvks-- (sic) require a Zve64x base, or application ("V") base Vector Extension.
+> | All of the other Vector Crypto Extensions can be built on any embedded (Zve*) or application ("V") base
+> | Vector Extension
+> 
+> Apply these rules in the binding, so that invalid combinations can be
+> avoided.
 
-#syz test
+It looks like that part of the spec is wrong, though.  The Zvknhb and Zvbc are
+correct, but the list of the composite extensions that at least one of them is
+included in is: Zvkn, Zvknc, Zvkng, Zvksc.
 
-diff --git a/fs/btrfs/backref.c b/fs/btrfs/backref.c
-index f8e1d5b2c512..87eaf5dd2d5d 100644
---- a/fs/btrfs/backref.c
-+++ b/fs/btrfs/backref.c
-@@ -2213,6 +2213,9 @@ int extent_from_logical(struct btrfs_fs_info *fs_info, u64 logical,
- 	key.objectid = logical;
- 	key.offset = (u64)-1;
- 
-+	if (!extent_root)
-+		return -ENOENT;
-+
- 	ret = btrfs_search_slot(NULL, extent_root, &key, path, 0, 0);
- 	if (ret < 0)
- 		return ret;
+- Eric
 
