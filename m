@@ -1,81 +1,86 @@
-Return-Path: <linux-kernel+bounces-381782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A57F19B0467
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:45:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7283C9B0469
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:45:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 575A81F2404F
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 13:45:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A494F1C21BA7
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 13:45:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6B471D9A66;
-	Fri, 25 Oct 2024 13:44:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 971504204D;
+	Fri, 25 Oct 2024 13:45:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P/Xpa7fd"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kAItzX1P"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FF5270820;
-	Fri, 25 Oct 2024 13:44:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09842212177;
+	Fri, 25 Oct 2024 13:45:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729863892; cv=none; b=M6UQl3JGsBvKU2EIiI8xTvsZDgAct+KvbEQvd3jdGuxn5CQMkfMMZK1xcV5l+2TpqBUAUNvr4NdUGEUlvMS8B0NJOGdbDWyouW9Xmylu0fpiypw2C6hqGqTWJbT8X3gWIqOVuxpnte3c/2phGjAaBXiOpEUy+mxi7+RKxgd6hi4=
+	t=1729863911; cv=none; b=IL/hOagUXVgUKdG8KRxzMXIF45dofB8MxQkl6bIZI1V4xVl5mYMBWtciDM+05VJB03p16h7L9RjUxLmm+jVvXyNxD9dWJYcjCHBCjEUOKgOaHsuauT1dABAD2HYrB0F/q/8CGpYjPsplB7o3wL5/73S8C8bmZ5/iqvQcCCctqmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729863892; c=relaxed/simple;
-	bh=CAGdnmzdmoxehVcocaTIzbUj70Qf3mpqjSw3BlHYZLE=;
+	s=arc-20240116; t=1729863911; c=relaxed/simple;
+	bh=ELyLqafkWIdrlLlQ8YIqBwYFc0TeAp0pM4iGwvzkzsE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XzRX/lqpqtATmPdLAYGCWRFbFCM9GqzdbpsjshVjD4SPNNrWne/GYe1aPoE7oRbYNk0vwgPqQdDuiZZ4PxoosSDBSq4DQs1TSlK5TYJzgG385V89R7KOMeBKLYRmnpPOay5XBlkZoi6U31TVmOtgU1s0Qwrx11u4ra4TQiCfqlU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P/Xpa7fd; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2fb6110c8faso20019111fa.1;
-        Fri, 25 Oct 2024 06:44:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729863888; x=1730468688; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=4f0K/pz8OIuDj4u41V8cbDxkZ5f+rnJD0V2U71WHUqg=;
-        b=P/Xpa7fd+gUs4Kqzjp0CRtZRC67ACNMMKJtnuuT5GWv3z6b1mKtXkjyKO+PxHdfaYB
-         TAcc4wWAgFA4htd/vNmBLCOkv2rmHWU0svwUGF60/5H3RdPJNHCS/jsrLqyMBbaPEaZo
-         zSpt7PjLV2/6+zhca44BUmTyY11AEwyGQcqXNb9V11LoOZmdfAaVRX7ZsmIvZVXBdwV2
-         3uD2GQaIQ43HwIdpjyQDmCF5LBJTrCy48mP6FnL1VZjllIjWSvnPkijgPUL4FyeFGlxx
-         0mP5B9uhuS9mbVe1kMuJ2gSLnjBnAs6MeB+QlP+utc8a0949M09jxHCtQpaH/h//nUQ0
-         IH1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729863888; x=1730468688;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4f0K/pz8OIuDj4u41V8cbDxkZ5f+rnJD0V2U71WHUqg=;
-        b=LZsvpK5G0uySEEAaxnfgXv4MtqZhA3NP/0xFrhK6AQ4CsKW72p5HQ700VLy3iFqTmS
-         S0OWaKUkuh1CVy9Hy/bmP8+cWXj0+VBS7YB4OqP73KEgv9Oui3cTCAkB5+A9wBj/CYfc
-         +aKK7SPwvpNb3Klf/ron2/iWJAJidv3E3fAOlnuUkfLYPp49pcUqP3pna+7yMhCKVGHe
-         rNvoiE/zhCExLooff3cZIIJ7oC4dnPSm2KlTPB+ph96O1S+J9Zto9kZSRbCoQa/F/gQX
-         q7o5cYRKCOW0ysZyvj83LtB6EqGp8eEDSbmbe5tBg06ds1kP00n5b4SBm79ytI0HkA6G
-         SIJA==
-X-Forwarded-Encrypted: i=1; AJvYcCUoCL2Hjpz+px9edyvGLO2oajPZCc2uQ3EPqFrgYBWAwgEm3H8gX8/oqjLgBKLtVVsFt/GT1xc7JJBPlmaN@vger.kernel.org, AJvYcCXE3b/Im+LKAqHIDlzJgvo0vbjyzwThTMIuR/roIzenkoKjcVMsrAs9mvWz5tamLdamN8g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9CjnQzoWzxHVYlwOLR9yOscyO6h9CgYPchgGldzW4glNsnVXl
-	P6lMcwqGRHtrq/mKrRmBe0m/nMubSqTuBIaJOU0N0Lo05cfD+BJI
-X-Google-Smtp-Source: AGHT+IGoqZxgt4vnEFXeIWFdTuQwrFVFALq98fDR3NB0uwiegeoRX/yP0fQXW4Mkw5d0K3PQFPgCTA==
-X-Received: by 2002:a2e:4e12:0:b0:2fb:70a0:91e7 with SMTP id 38308e7fff4ca-2fca81d7213mr25486181fa.10.1729863887846;
-        Fri, 25 Oct 2024 06:44:47 -0700 (PDT)
-Received: from andrea ([2a01:5a8:300:22d3:a281:3d89:19cb:ed96])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cbb629f338sm638903a12.35.2024.10.25.06.44.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2024 06:44:47 -0700 (PDT)
-Date: Fri, 25 Oct 2024 16:44:44 +0300
-From: Andrea Parri <parri.andrea@gmail.com>
-To: Hernan Ponce de Leon <hernan.poncedeleon@huaweicloud.com>
-Cc: puranjay@kernel.org, paulmck@kernel.org, bpf@vger.kernel.org,
-	lkmm@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: Some observations (results) on BPF acquire and release
-Message-ID: <ZxugzP0yB3zeqKSn@andrea>
-References: <Zxk2wNs4sxEIg-4d@andrea>
- <daa60273-d01a-8fc5-5e26-e8fc9364c1d8@huaweicloud.com>
- <ZxuZ-wGccb3yhBAD@andrea>
- <d8aa61a8-e2fc-7668-9845-81664c9d181f@huaweicloud.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BXpIFi2btcGpd8QO4I+aeoPXA4i31UGQtOGaOILCKUB6gOgU37XKTTgh20IGRde5XYeHWMY1k6hlxU0B8RObVD3l3WqqBtQR3pg4ixAeggh70c/wBFC/G0XHbpS1IfHsX+tuGlRnod9HOpEAnCcnlp/hGStBlVR1ncWmIn/AeHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kAItzX1P; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729863910; x=1761399910;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ELyLqafkWIdrlLlQ8YIqBwYFc0TeAp0pM4iGwvzkzsE=;
+  b=kAItzX1PdybvmWaYFOlpu9N7IjGpLfCXfzq2vBoWG3oZUDi+qS74jT7m
+   5xa+ffCLE7AH+8zhFN8dO5TtiyRe6NjCqgaThr5J1ICglGVpu9n/bGvHx
+   CLJSfak8+ycuZ3RcboSY0JyS+i2VoE6jVYTYCqXoMx2C30Oy6uZCQMdUl
+   BXqzCSzRgTXV7yBI+y5GBaQ36gBZijzOnzMWR/kyYBkdnTvVnAhxnfCQt
+   aUXTOYdDzxYBmDzRBTNLPxEhqeJHQ3du0gqpV89lG2Zvkvwiqdz3AonRB
+   0/q8hebEi2XgbuOC2gp7xxoe/OMvNmIdn7VX+xVM59dW3B/F/8P9IxwBn
+   w==;
+X-CSE-ConnectionGUID: sO3IMkyCTjiAaQmVMqCpdA==
+X-CSE-MsgGUID: IQiT35UARTWdswGmoL6CSA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="29310730"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="29310730"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2024 06:45:09 -0700
+X-CSE-ConnectionGUID: nN09eVAJS4CN6rMUw9+LGQ==
+X-CSE-MsgGUID: Da6of3eSQTiIx3gO/YT4oA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,231,1725346800"; 
+   d="scan'208";a="80517919"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2024 06:45:07 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1t4Kcg-00000006vfl-32tB;
+	Fri, 25 Oct 2024 16:45:02 +0300
+Date: Fri, 25 Oct 2024 16:45:02 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: John Ogness <john.ogness@linutronix.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>, Petr Mladek <pmladek@suse.com>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Esben Haabendal <esben@geanix.com>, linux-serial@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Rengarajan S <rengarajan.s@microchip.com>,
+	Jeff Johnson <quic_jjohnson@quicinc.com>,
+	Serge Semin <fancer.lancer@gmail.com>,
+	Lino Sanfilippo <l.sanfilippo@kunbus.com>,
+	Wander Lairson Costa <wander@redhat.com>
+Subject: Re: [PATCH tty-next v3 1/6] serial: 8250: Adjust the timeout for
+ FIFO mode
+Message-ID: <Zxug3qF9KUOn4VaM@smile.fi.intel.com>
+References: <20241025105728.602310-1-john.ogness@linutronix.de>
+ <20241025105728.602310-2-john.ogness@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,51 +89,91 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <d8aa61a8-e2fc-7668-9845-81664c9d181f@huaweicloud.com>
+In-Reply-To: <20241025105728.602310-2-john.ogness@linutronix.de>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Fri, Oct 25, 2024 at 03:28:17PM +0200, Hernan Ponce de Leon wrote:
-> On 10/25/2024 3:15 PM, Andrea Parri wrote:
-> > > > BPF R+release+fence
-> > > > {
-> > > >    0:r2=x; 0:r4=y;
-> > > >    1:r2=y; 1:r4=x; 1:r6=l;
-> > > > }
-> > > >    P0                                 | P1                                         ;
-> > > >    r1 = 1                             | r1 = 2                                     ;
-> > > >    *(u32 *)(r2 + 0) = r1              | *(u32 *)(r2 + 0) = r1                      ;
-> > > >    r3 = 1                             | r5 = atomic_fetch_add((u32 *)(r6 + 0), r5) ;
-> > > >    store_release((u32 *)(r4 + 0), r3) | r3 = *(u32 *)(r4 + 0)                      ;
-> > > > exists ([y]=2 /\ 1:r3=0)
-> > > > 
-> > > > This "exists" condition is not satisfiable according to the BPF model;
-> > > > however, if we adopt the "natural"/intended(?) PowerPC implementations
-> > > > of the synchronization primitives above (aka, with store_release() -->
-> > > > LWSYNC and atomic_fetch_add() --> SYNC ; [...] ), then we see that the
-> > > > condition in question becomes (architecturally) satisfiable on PowerPC
-> > > > (although I'm not aware of actual observations on PowerPC hardware).
-> > > 
-> > > Are the resulting PPC tests available somewhere?
-> > 
-> > My data go back to the LKMM paper, cf. e.g. the R+pooncerelease+fencembonceonce
-> > entry at https://diy.inria.fr/linux/hard.html#unseen .
-> > 
-> >    Andrea
+On Fri, Oct 25, 2024 at 01:03:23PM +0206, John Ogness wrote:
+> After a console has fed a line into TX, it uses wait_for_xmitr()
+> to wait until the data has been sent out before returning to the
+> printk code. However, wait_for_xmitr() will timeout after 10ms,
+
+printk here is a function reference or module?
+For the latter I would use the filename to be sure it's clear,
+like printk.c. For the former (and it seems you know that)
+we may use printk().
+
+> regardless if the data has been transmitted or not.
 > 
-> I guess I understood you wrong. I thought you had manually "compiled" those
-> to PPC litmus format (i.e., doing exactly what the JIT compiler would do). I
-> can obviously write them manually myself, but I find this painful and error
-> prone (I am particularly bad at this task), so I wanted to avoid this if
-> someone else had already done it.
+> For single bytes, this timeout is sufficient even at very slow
+> baud rates, such as 1200bps. However, when FIFO mode is used,
+> there may be 64 bytes pushed into the FIFO at once. At a baud
+> rate of 115200bps, the 10ms timeout is still sufficient.
+> However, when using lower baud rates (such as 57600bps), the
+> timeout is _not_ sufficient. This causes longer lines to be cut
+> off, resulting in lost and horribly misformatted output on the
+> console.
+> 
+> When using FIFO mode, take the number of bytes into account to
+> determine an appropriate max timeout. Increasing the timeout
 
-FWIW, a comprehensive collection of PPC litmus tests could be found at
+maximum
+(in order not to mix with max() function)
 
-  https://www.cl.cam.ac.uk/~pes20/ppc-supplemental/ppc002.html
+> does not affect performance since ideally the timeout never
+> occurs.
 
-(just follow the link on the test pattern/variants to see the sources);
-be aware the results of those tables date back to the PPC paper though.
+...
 
-Alternatively, remind that PPC is well supported by the herdtools7 diy7
-generator; I see no reason for having to (re)write such tests manually.
+>  /*
+>   *	Wait for transmitter & holding register to empty
+> + *	with timeout
 
-  Andrea
+Can you fix the style while at it?
+
+>   */
+
+ /* Wait for transmitter & holding register to empty with timeout */
+
+...
+
+>  static void serial8250_console_fifo_write(struct uart_8250_port *up,
+>  					  const char *s, unsigned int count)
+>  {
+> -	int i;
+>  	const char *end = s + count;
+>  	unsigned int fifosize = up->tx_loadsz;
+> +	unsigned int tx_count = 0;
+>  	bool cr_sent = false;
+> +	unsigned int i;
+>  
+>  	while (s != end) {
+> -		wait_for_lsr(up, UART_LSR_THRE);
+> +		/* Allow timeout for each byte of a possibly full FIFO. */
+
+Does the one-line comment style in this file use periods? If not, drop,
+otherwise apply it to the above proposal.
+
+> +		for (i = 0; i < fifosize; i++) {
+> +			if (wait_for_lsr(up, UART_LSR_THRE))
+> +				break;
+> +		}
+
+> +	}
+> +
+> +	/* Allow timeout for each byte written. */
+> +	for (i = 0; i < tx_count; i++) {
+> +		if (wait_for_lsr(up, UART_LSR_THRE))
+> +			break;
+
+This effectively repeats the above. Even for the fix case I would still add
+a new helper to deduplicate.
+
+>  	}
+>  }
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
