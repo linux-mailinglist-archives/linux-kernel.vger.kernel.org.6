@@ -1,103 +1,131 @@
-Return-Path: <linux-kernel+bounces-382088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC4BB9B0903
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:59:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B1C49B0904
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:59:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDD731C22B5E
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:59:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C82A1C22570
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:59:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80082176AAE;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCD3618452E;
 	Fri, 25 Oct 2024 15:59:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="TopFVnXw"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NleGa/rK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 201D521A4AA;
-	Fri, 25 Oct 2024 15:59:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37B8C1741C6;
+	Fri, 25 Oct 2024 15:59:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729871947; cv=none; b=tmrguTD6StEAXgoFhZD/+amaBvROJz5sD/rq5IqPoTkxuUOzZtxRgE0nlLIPfIMVEeLtdJuPOUmhboTE1LJNB58NyoxtxIVBWydJRhxfYiqnRokEEywVYXFzAJhUJQyjUKFmUtrytOpeDsPC/dO9cb2AFyCW41LkNdnD55ZQj4A=
+	t=1729871948; cv=none; b=gxoxYU1x1Nuvp5jb9NAU4Y9eN4gA66Hl/NcCEwATCzzgxF47rDioQUE6OpqoVbrc8ckcI3wJt0vVTIGBrWZsNnZxF/y7O2mnK5+4KhXRLb0lE9LIXq3qsYXb8SdXJCWxcANJfUEXuaIrgO01MUf8/M/AyzaG4FRbtkw6WUsJpm8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729871947; c=relaxed/simple;
-	bh=AvkYH+hW9tresKrMteUdveA2LbEIBtWYSDRUa1vdvNY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KUp9AKK90QzCZ6aIrEIHFWlZnuMJCqjOaKhExlzg54sCryqF1hMKbUCV+QOCIcBkrI7EZmEfWr0hFKKgkWRodumshOUN2WdXRW6+ZWQtqcKNK1LCmOuTRMes62g6HzsusMiBYMKwu41aEU+qTCQ3R/n71RonZ0TyH6xH6PdWGX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=TopFVnXw; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id A60BE40E0191;
-	Fri, 25 Oct 2024 15:59:01 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id x1RYJmiQrgXh; Fri, 25 Oct 2024 15:58:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1729871937; bh=KgwsroPMB6szToFuiVCMidfCzRwZJN3VNHPp6aYpWP4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TopFVnXwRxunlnliPoYE9HEgcpvkZc+rGjOSm7SOSR9LswhO0BBck/2cvg7BiPmfL
-	 /TotwacduBzJRd7JCfhdSOwMcm+4oKCujmCtXJP37rmEWwsD9CS/ZZgBkvW6v67Ke0
-	 rKtl4UMDRimvcmFt6QffhwnvZ58f0zItGJXkSwGf6gfc694o+pedOqVtu+Bk7lrJuK
-	 5W9tNkb2KojGEBQ4/McRpI1o7VhfliGNR8Rvx7IQXaGReSrBCN8G5E+hriYjOFx1+7
-	 dBnSjb9nK2r6okA5M6mgWPAoG1ns8b6PlxDwqDG700jMT+IkvcTxDXiryzmDzAnII/
-	 jUvzhE9UdWCUpIQYpdbZJ4tNrtbkHE+3kFK5YP5WtCsnRSmA9+QrILhN+NoWwd3FJ0
-	 hMfic90UaUCtvFsXzGP6q1Sdjlv48gNNwTdyUqCyYSGS571EGFF85Te1vmz1fG7Xrg
-	 IOqoejar9Qi2ySf4GhqTqRf4KK23fMu0q9wQSfJQMiNZiDw4ClwdVHwTVNvWGxVsVp
-	 OpAAHvyycRqElJFVZHkqXh01FcjT4SjGrgreSTX4ATtKokEhrGUrBkkve70ryzOZ+P
-	 ygt01gNwhZzpR6AHospmDcTrog9UkrfBDldCRe6BcWsmVHRZOng1wKtabbyUGNAvFS
-	 C2W/gZt3nv+BDtsv7aKxEU2k=
-Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id E24A640E0284;
-	Fri, 25 Oct 2024 15:58:35 +0000 (UTC)
-Date: Fri, 25 Oct 2024 17:58:30 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Yazen Ghannam <yazen.ghannam@amd.com>
-Cc: linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
-	tony.luck@intel.com, x86@kernel.org, avadhut.naik@amd.com,
-	john.allen@amd.com, mario.limonciello@amd.com, bhelgaas@google.com,
-	Shyam-sundar.S-k@amd.com, richard.gong@amd.com, jdelvare@suse.com,
-	linux@roeck-us.net, clemens@ladisch.de, hdegoede@redhat.com,
-	ilpo.jarvinen@linux.intel.com, linux-pci@vger.kernel.org,
-	linux-hwmon@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-	naveenkrishna.chatradhi@amd.com, carlos.bilbao.osdev@gmail.com
-Subject: Re: [PATCH 03/16] x86/amd_nb: Clean up early_is_amd_nb()
-Message-ID: <20241025155830.GQZxvAJkJnfLfNpSRx@fat_crate.local>
-References: <20241023172150.659002-1-yazen.ghannam@amd.com>
- <20241023172150.659002-4-yazen.ghannam@amd.com>
+	s=arc-20240116; t=1729871948; c=relaxed/simple;
+	bh=0ljjiMfY8z+Bl5+mDZWNjMpu9/ix8vBxLQdaWGAkiNY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Zu66ATVzlhHpajAmVAStqi1Jy+pbQ51O9onHvdT2eUu01ZW9ojFQ+ew3Ee+fDq7Ub+72C6lDnPJb7yGOZmIyyW0xPyeooewIvqE3hbGA6aDyDEupGqYEQflUCRVgyKc6hYG440TYc54swxPxTx45poFvAOMpZ+mkBFI4zulcdw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NleGa/rK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C44A1C4AF0B;
+	Fri, 25 Oct 2024 15:59:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729871947;
+	bh=0ljjiMfY8z+Bl5+mDZWNjMpu9/ix8vBxLQdaWGAkiNY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=NleGa/rKKt6BULz8gusnuJ1dXN0KyU8ET6sl/GovJm/ewuQCofxEroGBmRsb5+Esx
+	 A6OYDPg/AHTfS14QbyI4JPGOe3emSwG9pe2lpKMZW+7izkI+3NbrC36WYRsfHpTq6m
+	 GFeXCKCmqK8GY1LjhYiQWJbqUJ7fYvBveUFpb41S83/FI+qiunDEhlqzs0+8MM6p+9
+	 V1BLFMoLOCD4L2v6icdLkHKr5SWj1D8YVlUzXk3y31ZITaW+A9XHw0ajLOUxWLvVwK
+	 5UJxFcSfJN4VC+PNj77xqIhI9HfE7tJ13D+8qbRgHz4MVauNs0kF/pzZEJwJqv6uvg
+	 c5KjXXXXxeEhQ==
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-539f6e1f756so2629167e87.0;
+        Fri, 25 Oct 2024 08:59:07 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVYDis/nIxD+N6XuFd7ssBGlAE2ZrKVUp/to+DpdlZuVEzJjUa1If7H2xNUY8asDrn1ZtsyM6ng6RPHc4A=@vger.kernel.org, AJvYcCVeZgFy4CFlwrlXvUIOXjsWv93MNHBNWHgA2dECNLrn4eFPfwUI/q6rOvZj1SxrqPmhtIxy4UebgRt8ZCPA@vger.kernel.org, AJvYcCWu4+FnWDCrXy6Qq7qwfLPTnpQSNX6T053kR/XFBJyhGpc4GywjzB5jqIMpM1kn8Qo5AL5x+A79J3w/@vger.kernel.org
+X-Gm-Message-State: AOJu0YygbfF5oty7975rJmsWw+YxXPjoLP+5CrZCNnNQVBMMrSwi6Wss
+	IocoqLFPSWCnm/RClU5ibnmqLkvu7zB8ro7ItmwvfOauBsWpjknu7uka4ukKvKxC+BBi9BeA/S4
+	+4LP47nxUoggYduuDcKm0TbE66Q==
+X-Google-Smtp-Source: AGHT+IGqfGBzoEoRPRIkEeREtu2dznxwKMzTFWNqYthKnWJMl+avTFRaLz8K5ozJ0DKucijr+bxNVflLKh2zQVRwy3w=
+X-Received: by 2002:a05:6512:3096:b0:539:f754:ae15 with SMTP id
+ 2adb3069b0e04-53b23e8ebabmr3741616e87.41.1729871946118; Fri, 25 Oct 2024
+ 08:59:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241023172150.659002-4-yazen.ghannam@amd.com>
+References: <20241025114642.40793-2-charles.goodix@gmail.com>
+ <3ypn62dsgarvmxkmdglugcinxmvpmhdqub2zvkygaonn54odf6@amfgijfcd3l3> <CAD=FV=X1F3QC=eSXcCn-78iQBzHMzT3z9Sis3yXKW_Bzun3+EA@mail.gmail.com>
+In-Reply-To: <CAD=FV=X1F3QC=eSXcCn-78iQBzHMzT3z9Sis3yXKW_Bzun3+EA@mail.gmail.com>
+From: Rob Herring <robh@kernel.org>
+Date: Fri, 25 Oct 2024 10:58:53 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqLwOekE1mz+3g8NTE3o4GhE9PWwR1Jfk_tL0RYKQmCg-A@mail.gmail.com>
+Message-ID: <CAL_JsqLwOekE1mz+3g8NTE3o4GhE9PWwR1Jfk_tL0RYKQmCg-A@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: input: Goodix SPI HID Touchscreen
+To: Doug Anderson <dianders@chromium.org>
+Cc: Charles Wang <charles.goodix@gmail.com>, dmitry.torokhov@gmail.com, 
+	hbarnor@chromium.org, conor.dooley@microchip.com, jikos@kernel.org, 
+	bentiss@kernel.org, linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 23, 2024 at 05:21:37PM +0000, Yazen Ghannam wrote:
-> @@ -393,11 +392,11 @@ bool __init early_is_amd_nb(u32 device)
->  	    boot_cpu_data.x86_vendor != X86_VENDOR_HYGON)
->  		return false;
->  
-> -	if (boot_cpu_data.x86_vendor == X86_VENDOR_HYGON)
-> -		misc_ids = hygon_nb_misc_ids;
-> +	if (boot_cpu_has(X86_FEATURE_ZEN))
+On Fri, Oct 25, 2024 at 10:29=E2=80=AFAM Doug Anderson <dianders@chromium.o=
+rg> wrote:
+>
+> Charles,
+>
+> On Fri, Oct 25, 2024 at 5:03=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.=
+org> wrote:
+> >
+> > > +properties:
+> > > +  compatible:
+> > > +    enum:
+> > > +      - goodix,gt7986u-spi
+> >
+> > Compatible is already documented and nothing here explains why we shoul=
+d
+> > spi variant.
+> >
+> > > +
+> > > +  reg:
+> > > +    maxItems: 1
+> > > +
+> > > +  interrupts:
+> > > +    maxItems: 1
+> > > +
+> > > +  reset-gpios:
+> > > +    maxItems: 1
+> > > +
+> > > +  goodix,hid-report-addr:
+> >
+> > I do not see this patch addressing previous review. Sending something
+> > like this as v1 after long discussions also does not help.
+>
+> Krzysztof is right that it's better to wait until we get consensus on
+> the previous discussion before sending a new patch. I know you were
+> just trying to help move things forward, but because of the way the
+> email workflow works, sending a new version tends to fork the
+> discussion into two threads and adds confusion.
+>
+> I know Krzysztof and Rob have been silent during our recent
+> discussion, but it's also a long discussion. I've been assuming that
+> they will take some time to digest and reply in a little bit. If they
+> didn't, IMO it would have been reasonable to explicitly ask them for
+> feedback in the other thread after giving a bit of time.
 
-check_for_deprecated_apis: WARNING: arch/x86/kernel/amd_nb.c:395: Do not use boot_cpu_has() - use cpu_feature_enabled() instead.
+If the firmware creates fundamentally different interfaces, then
+different compatibles makes sense. If the same driver handles both bus
+interfaces, then 1 compatible should be fine. The addition of '-spi'
+to the compatible doesn't give any indication of a different
+programming model. I wouldn't care except for folks who will see it
+and just copy it when their only difference is the bus interface and
+we get to have the same discussion all over again. So if appending
+'-spi' is the only thing you can come up with, make it abundantly
+clear so that others don't blindly copy it. The commit msg is useful
+for convincing us, but not for that purpose.
 
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Rob
 
