@@ -1,147 +1,111 @@
-Return-Path: <linux-kernel+bounces-381721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB7659B0355
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:04:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B228D9B0357
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:04:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EEA641C21753
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 13:04:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A3ECB228C6
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 13:04:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFFEC1632F0;
-	Fri, 25 Oct 2024 13:04:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A6371632CC;
+	Fri, 25 Oct 2024 13:04:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="CPhkT2Bf"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gZ97zT5r"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A120206500;
-	Fri, 25 Oct 2024 13:04:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E973870809;
+	Fri, 25 Oct 2024 13:04:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729861458; cv=none; b=Gy7MngGq8YzBrMPBc4Nr169U95xbPVS3G7IvaXh9fNWV81vTkorYOO0qWBtl2Wb9VIw0Y8m3onHSrQJe2722Cu+8ZiYQ21M+G6P/rOY3vfrDrnvQFarDXpjg62ScCxUWfFEelF3Zd9IhZDi2yI44dszCv9EWH3fWBMG6p+elk8o=
+	t=1729861465; cv=none; b=L7puKqkCft8IB8GO3pQWIqqlemZbmHDLrQ8FAxieezX7TJNlyhzglk4nu8BEkXLg03VoDGMfB3FpUgIL1HJO59eAvG5OXs8MllYt9Hyv/w9ypst0dvvoBN6CRoFfgyzYtmqvhph2fj3uyNcHDWdzb2im6U6pMYLQYyvyJI90JIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729861458; c=relaxed/simple;
-	bh=iYshkXVaZGa2CynAN1Q5OYZln1XMSwkpwWeQNPOXpkE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=SZezdo4vMoX4TJIjuEkncs4wtZ4BiYMx9Xh3LfPHY7EZTvZTOUNH1jJbHhT3B5QicSM68otDrOOX1qBwHCNy9AHTDqf04BrtT5Did1FFWmuHQ0U1ndx0emvjhsLXXaz6Dh9kIpbvZokqcjTl1XD/bOj+nMyJWHvOwV1bU8KmgF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=CPhkT2Bf; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49PAo6oT006746;
-	Fri, 25 Oct 2024 13:03:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	aPJOf0hH0aX6g4YEr+Wt//LZyubFLFor9QOprTwTcrE=; b=CPhkT2BfP2rInL2W
-	zEBNzqn561JPJygjvXy7mP0xg225SdbZCb2dO2gGvHh5FHtiqwJYK3kTnLZHZE3o
-	+5z6u1P++G9MYOGQESELuzvObAZwPbxtrsqFVj9OXkgAFZdFP88JyfRpzAnJutiQ
-	RDRWicgH3/PbPVQOuMFAfY783hwF2l9BsxOjjqU4a/Dmjdr5ZvsMOVmAtifovts8
-	qUePd42OcrGbO45B8R7bhEHuCiz0ddgmw3Ec4RZA7QUsJ1qA6BKWL1zLM61t1JUP
-	L2WSxE6h8cI/sodjBIzCRgdLY67pPOqWGjwFaRoJQULIoppSYIbFdiKSHMWNd9ha
-	eb/Z4g==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42g9x6gcpt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 25 Oct 2024 13:03:53 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49PD3qQe015081
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 25 Oct 2024 13:03:52 GMT
-Received: from [10.50.63.35] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 25 Oct
- 2024 06:03:44 -0700
-Message-ID: <6e764e04-acbd-4973-af59-f58203a556dd@quicinc.com>
-Date: Fri, 25 Oct 2024 18:33:41 +0530
+	s=arc-20240116; t=1729861465; c=relaxed/simple;
+	bh=NWGohbueqG/j+JmWmHB+4eKfOxe9FBjYi4BTTZEPboo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CSSH1UZYYNQuu1bWccMwaaIWf54bLdYZ2BJ/MMC7R/Wynw2miLF2Inw00N3tqgL5TqK+Uyj95qbhWBkZjTkHX1L8NkmVixXdAntHmaMghs58/wDEIdtbkhJOI1IkdVwlb5KmPwURGbXTFe9p3Ydz244vCJFbuXLMbvcYIhFvt3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gZ97zT5r; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729861464; x=1761397464;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=NWGohbueqG/j+JmWmHB+4eKfOxe9FBjYi4BTTZEPboo=;
+  b=gZ97zT5rMS++xnSMNRBElEQ4PWDdtxey3qAsQEu5yBXeYoLCtAacczlK
+   Sf8mLbjhMTv2vBSANP1+YV5X6E66QDmpGNV5yH0dVXyQfLDejxGObar6g
+   Gm92uFPbXyinJ8o4unYTcyqqDtppwamkBPOS0qkGLIMPxJNoT5nE2tFNi
+   KKP85xaOsITfDLN5Xo4tWpxp8mXTfdT+7Sn2l1Qa87qPT4X2BHukBHOZb
+   3hkRVoBm+iaIMl/gsLqHCP/8EJsMAp4qhoIMzK6CFUJ4sIizyX2ozWvmk
+   XDZLQ8ggqkP79kpeHtn6NsQWEKY0h9szYG+YOGjvK7n+D+sl1SuWzh2bS
+   Q==;
+X-CSE-ConnectionGUID: 8j0I6qu8SzCtCBge5NjIWQ==
+X-CSE-MsgGUID: YNF++SNEScSfF65ozTEUxQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="40082580"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="40082580"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2024 06:04:23 -0700
+X-CSE-ConnectionGUID: jN8yiODkSGO/vJ5TG0HtTA==
+X-CSE-MsgGUID: DvDijyO4SRqyAsH4NdwIjA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,231,1725346800"; 
+   d="scan'208";a="85488220"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2024 06:04:22 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1t4JzH-00000006v17-2UHo;
+	Fri, 25 Oct 2024 16:04:19 +0300
+Date: Fri, 25 Oct 2024 16:04:19 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>
+Cc: linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/1] pwm: core: use device_match_name() instead of
+ strcmp(dev_name(...
+Message-ID: <ZxuXU3nTuEwoTFiH@smile.fi.intel.com>
+References: <20241024151905.4038854-1-andriy.shevchenko@linux.intel.com>
+ <2r7ey7fkt4k3s3kpi2vmesqrfntyd6jt7uf5jmwwbzglgxcohf@lr5gfy3ce2yu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: RFC: Advice on adding support for Qualcomm IPQ9574 SoC Ethernet
-To: Andrew Lunn <andrew@lunn.ch>
-CC: "Russell King (Oracle)" <linux@armlinux.org.uk>, <netdev@vger.kernel.org>,
-        Andy Gross <agross@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        "David S. Miller"
-	<davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, Rob Herring
-	<robh+dt@kernel.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Jacob Keller
-	<jacob.e.keller@intel.com>,
-        Bhupesh Sharma <bhupesh.sharma@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <vsmuthu@qti.qualcomm.com>,
-        <arastogi@qti.qualcomm.com>, <linchen@qti.qualcomm.com>,
-        <john@phrozen.org>, Luo Jie <quic_luoj@quicinc.com>,
-        Pavithra R <quic_pavir@quicinc.com>,
-        "Suruchi Agarwal (QUIC)" <quic_suruchia@quicinc.com>,
-        "Lei Wei (QUIC)"
-	<quic_leiwei@quicinc.com>
-References: <f0f0c065-bf7c-4106-b5e2-bfafc6b52101@quicinc.com>
- <d2929bd2-bc9e-4733-a89f-2a187e8bf917@quicinc.com>
- <817a0d2d-e3a6-422c-86d2-4e4216468fe6@lunn.ch>
- <c7d8109d-8f88-4f4c-abb7-6ebfa1f1daa3@quicinc.com>
- <Zv_6mf3uYcqtHC2j@shell.armlinux.org.uk>
- <ba1bf2a6-76b7-4e82-b192-86de9a8b8012@quicinc.com>
- <7b5227fc-0114-40be-ba5d-7616cebb4bf9@lunn.ch>
- <641f830e-8d21-4bc0-abe2-59e2c4d29b92@quicinc.com>
- <28409cbc-09c8-4c88-b11e-2c46457c9e8e@lunn.ch>
-Content-Language: en-US
-From: Kiran Kumar C.S.K <quic_kkumarcs@quicinc.com>
-In-Reply-To: <28409cbc-09c8-4c88-b11e-2c46457c9e8e@lunn.ch>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: m577pJaq61SzaSRNdszhVEql3s5P4HeD
-X-Proofpoint-ORIG-GUID: m577pJaq61SzaSRNdszhVEql3s5P4HeD
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
- clxscore=1015 mlxscore=0 phishscore=0 spamscore=0 lowpriorityscore=0
- impostorscore=0 priorityscore=1501 mlxlogscore=999 suspectscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410250100
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2r7ey7fkt4k3s3kpi2vmesqrfntyd6jt7uf5jmwwbzglgxcohf@lr5gfy3ce2yu>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
+On Thu, Oct 24, 2024 at 10:55:36PM +0200, Uwe Kleine-König wrote:
+> On Thu, Oct 24, 2024 at 06:19:05PM +0300, Andy Shevchenko wrote:
 
+...
 
-On 10/24/2024 7:57 PM, Andrew Lunn wrote:
->>> I'm just wondering if you have circular dependencies at runtime?
->>>
->>> Where you will need to be careful is probe time vs runtime. Since you
->>> have circular phandles you need to first create all the clock
->>> providers, and only then start the clock consumers. Otherwise you
->>> might get into an endless EPROBE_DEFER loop.
->>>
->>
->> The Rx/Tx clocks sourced from the SERDES are registered as provider
->> clocks by the UNIPHY/PCS driver during probe time. There is no runtime
->> operation needed for these clocks after this.
+> >  	idr_for_each_entry_ul(&pwm_chips, chip, tmp, id) {
+> > -		const char *chip_name = dev_name(pwmchip_parent(chip));
+> > -
+> > -		if (chip_name && strcmp(chip_name, name) == 0)
+> > +		if (device_match_name(pwmchip_parent(chip), name))
 > 
-> So they are always ticking. You cannot turn them on/off? It is nice to
-> model them a fixed-clocks, since it describes the architecture, but i
-> have to question if it is worth the effort.
-> 
+> This theoretically changes behaviour in a few cases. For example if
+> dev_name(pwmchip_parent(chip)) is NULL the new code would crash. Can
+> this happen? 
 
-Yes, we cannot turn them off. However the rates of these clocks from
-SERDES to NSSCC, is not fixed. It will be either 312.5Mhz or 125Mhz,
-depending on the whether the SERDES mode is USXGMII or SGMII respectively.
+Please, tell me how
+(looking at the of device_add() and kobject_set_name_vargs() implementations)?
 
-> 	Andrew
+Btw, have you ever seen this check somewhere else? (I don't, but I haven't
+covered full kernel sources, of course.)
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
