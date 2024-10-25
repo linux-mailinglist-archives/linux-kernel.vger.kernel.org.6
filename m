@@ -1,137 +1,83 @@
-Return-Path: <linux-kernel+bounces-381879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 032BD9B05D8
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:30:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 630049B05DC
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:31:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 75904B2330E
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 14:30:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94E651C229BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 14:31:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE5F81FB8BE;
-	Fri, 25 Oct 2024 14:30:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="DV+qhtQY"
-Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com [209.85.167.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65A4F1F7547
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 14:29:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06BC0206513;
+	Fri, 25 Oct 2024 14:30:54 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD1FF4204D;
+	Fri, 25 Oct 2024 14:30:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729866600; cv=none; b=oA43dZn5C4XK8C7IF43MykohgxmJvXjuetD2nq4Je2YgNODrNGnlV5WrgbLjtUEMIXkVfeO0b0qf0byuE867hki+n1jo3W9FbuAp6jCmyx5oKR2b0f4mwi9jmGpGJA0/Zyu0PkOU1jlsnQQ4KFb2SMTWNtSEIu7pX3QCbLzaRy4=
+	t=1729866653; cv=none; b=KRfFMcLZLS1Hl2pJFvv2Fzptc6IYzlqmJk6iv12Q+4oTgtOEaUCiXwcc2tVjUyeQ1SEEJqMwlcIqp+7T1l68TS5OMgva3WmtVpOgQeSaxW7vALMgXfc82pKVPuf5y6XuTrQ97Pk3pTzzOSlL65Fl+e6xU0vNdc640+4LfrCInZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729866600; c=relaxed/simple;
-	bh=pTftS9bMzZrb3oqKTgBMUbVyt0Jac+cE/be9TqBysXU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WoDjqAk7m0T77t5tEzNr/ejxji2WACzfsHu1r6YcrBlu9/ygDnjBGvv1YYpFz2klkT6YGGI1Mr6dD1crIbXDnob402qYcgZN1CAwCgOUafPbXHeCttQ5Am1Fawl2MokwzzfdaKlFBC+cryHw6HYhYNFic10xwV2fHDw/HXli32M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=DV+qhtQY; arc=none smtp.client-ip=209.85.167.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oi1-f177.google.com with SMTP id 5614622812f47-3e600add5dcso1144932b6e.2
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 07:29:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729866597; x=1730471397; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+hgsH8M46R374DX96A094+C1Sk2ZSQRIVp+udp7ZiHw=;
-        b=DV+qhtQYObO3aA6Enr6n4R6mT6QUE2TIrIdD+JlUvYjSiZNBqbgTsxHxL6wFaf9PCL
-         t21vG9k0tNN/Ux9Dk96sI73ZZh+yVewDAevHGma3vUPIrFzRw5rKS3WfE2+BxNvKA5c4
-         RxN1/ePEInOzgovwwGqPhG70QzCv/guqhTAag1GL4vRROMKs5uDbqx6k0MKmI+pm6dT3
-         Wg/Z09WKup/ySfpYYjNChOstmjueK/KD91ZtxfKn6ZLX1epf+PBpGb+hnRIMSq1Vn2bq
-         lDdxZd0pOw1wu7YtcekMP61cx5Hadrm8LiOn5NZyVr/Co7zKJXVg39uYZWzPfua15Eyd
-         7NxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729866597; x=1730471397;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+hgsH8M46R374DX96A094+C1Sk2ZSQRIVp+udp7ZiHw=;
-        b=R55KYAu162e8t3VKtxpHxV02ku1bOMd6Fge3b27cYrgmv7zEtD7nr4rhhcwGCyy+k7
-         u/diiKZsOKfJ53m7R26yr0KIOGRHa9WwesoqgMAjT9ITebuYKdRw06vQrscmNMGPVF/0
-         4PLorTVhmk1BT0t2tvwtFHwrPf9rUyuEJIfFqy0RBo7uCtYaVKgf99c20Ntj86hZKznd
-         CBtMKHq9TqziP1HMg0wTVDb+GH9Kyy6dc2/rbzk8LKcEo3Ov6lNa2x2e5Ctj7h6Tm2EC
-         8bZgMgJV2lvuVSPt3lFmnOcVcFh0FqFPcaKqjS0d5zy7vR8mmzJFXeFSdS0LzJ2zqwbb
-         4EGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVx3UZPboCzueMjMUe61YbdfzUiUI5jQvoPbF8FWm8neMc46NCgTH1Oq9z2CBEDwt1xngkcrKVAGKGdeuA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyiCnSBy9MydEPhYC7XGqLz9+nNnuA+Uf1gepcAUlmkrWYNgbNS
-	xpMCYPFoLqmZdyKnpk3rZ6H/Tsw43hKxslLHapIvqn1pMlvH4xjKmivUo/zBMCE=
-X-Google-Smtp-Source: AGHT+IE7uXQFXMZnIIYfSrbQaV5eC3DgZSr8FIpbdhTtwMJtNpEwUy+GoBKmo71g+DIf/sQ7MtT9Tw==
-X-Received: by 2002:a05:6808:2dc4:b0:3e3:bd1c:d584 with SMTP id 5614622812f47-3e6244e40d3mr10131691b6e.9.1729866597497;
-        Fri, 25 Oct 2024 07:29:57 -0700 (PDT)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3e6325b0a95sm223353b6e.42.2024.10.25.07.29.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 25 Oct 2024 07:29:57 -0700 (PDT)
-Message-ID: <f3351a7f-318b-42d6-aa1a-e8279eb06b78@baylibre.com>
-Date: Fri, 25 Oct 2024 09:29:55 -0500
+	s=arc-20240116; t=1729866653; c=relaxed/simple;
+	bh=mPUPmKeL6ZXcb5ZSM0wWX/IhZGDoVeZn6LNpnUkFjho=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=feCElTW+3j3bZ5rhdvXvBkrXp09dd8EZyyNxUlMDAAEKcRfMmz9GBsPUilRVNOmuMN1GjVSC3cSrNU41dPuZKXoRU6GErj5O/nRJNEIpGHUAFcoHGq9+K/AHCHamEgtIwlkCDHrMPYylxF0TfX7y1NsjkRNp26hI2ekq+VhIFvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C30D1339;
+	Fri, 25 Oct 2024 07:31:20 -0700 (PDT)
+Received: from VDW30FN91H.arm.com (unknown [10.57.79.117])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id C32CF3F73B;
+	Fri, 25 Oct 2024 07:30:48 -0700 (PDT)
+From: Graham Woodward <graham.woodward@arm.com>
+To: acme@kernel.org,
+	namhyung@kernel.org,
+	mark.rutland@arm.com,
+	jolsa@kernel.org,
+	irogers@google.com,
+	james.clark@linaro.org,
+	mike.leach@linaro.org,
+	leo.yan@linux.dev,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: nd@arm.com,
+	Graham Woodward <graham.woodward@arm.com>
+Subject: [PATCH v1 0/4] perf arm-spe: Allow synthesizing of branch
+Date: Fri, 25 Oct 2024 15:30:05 +0100
+Message-Id: <20241025143009.25419-1-graham.woodward@arm.com>
+X-Mailer: git-send-email 2.39.3 (Apple Git-146)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 6/6] iio: adc: ad4851: add ad485x driver
-To: "Miclaus, Antoniu" <Antoniu.Miclaus@analog.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, "Sa, Nuno" <Nuno.Sa@analog.com>,
- "Bogdan, Dragos" <Dragos.Bogdan@analog.com>,
- "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>
-References: <20241014094154.9439-1-antoniu.miclaus@analog.com>
- <20241014094154.9439-6-antoniu.miclaus@analog.com>
- <60452f83-28a1-4a80-8e90-1f1ed32a594e@baylibre.com>
- <CY4PR03MB33996900AAB90A050375CBB39B4F2@CY4PR03MB3399.namprd03.prod.outlook.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <CY4PR03MB33996900AAB90A050375CBB39B4F2@CY4PR03MB3399.namprd03.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 10/25/24 6:35 AM, Miclaus, Antoniu wrote:
->>
-...
+Currently the --itrace=b will only show branch-misses but this change
+allows perf to synthesize branches as well.
 
->>
->> See the ad7380 driver as an example of how to impelemt this. [2]
->>
->> [2]: https://urldefense.com/v3/__https://lore.kernel.org/linux-
->> iio/20240530-iio-add-support-for-multiple-scan-types-v3-5-
->> cbc4acea2cfa@baylibre.com/__;!!A3Ni8CS0y2Y!4LS7UI11XqIHRgT3ckx76VYn
->> CyeikpTumyjO0qDTn7eF7Fd-
->> jFFL8yqpYcMAxP_u3VC09bfIAB7gW_rvGoM_sEA$
->>
->> Also, I would expect the .sign value to depend on how the
->> input is being used. If it is differential or single-ended
->> bipolar, then it is signed, but if it is signle-ended unipoloar
->> then it is unsiged.
->>
->> Typically, this is coming from the devicetree because it
->> depends on what is wired up to the input.
-> 
-> This topic is mentioned in the cover letter, maybe not argued enough there.
-> Yes, the go-to approach is to specify the unipolar/bipolar configuration in the devicetree.
-> But this is a request from the actual users of the driver: to have the softspan fully
-> controlled from userspace. That's why the offset and scale implementations were added.
-> Both these attributes are influencing the softspan.
-> 
->>> +	},								\
->>> +}
->>
+The change also incorporates the ability to display the target
+addresses when specifying the addr field if the instruction is a branch.
 
-The cover letter did not get sent, so we did not see this.
+Graham Woodward (4):
+  perf arm-spe: Set sample.addr to target address for instruction sample
+  perf arm-spe: Use ARM_SPE_OP_BRANCH_ERET when synthesizing branches
+  perf arm-spe: Correctly set sample flags
+  perf arm-spe: Update --itrace help text
 
-Still, I have doubts about using the offset attribute for
-this since a 0 raw value is always 0V for both unipolar
-and bipolar cases. There is never an offset to apply to
-the raw value.
+ tools/perf/Documentation/itrace.txt       |  2 +-
+ tools/perf/Documentation/perf-arm-spe.txt |  2 +-
+ tools/perf/builtin-script.c               |  1 +
+ tools/perf/util/arm-spe.c                 | 31 ++++++++++++++++++-----
+ tools/perf/util/auxtrace.h                |  3 +--
+ tools/perf/util/event.h                   |  1 +
+ 6 files changed, 29 insertions(+), 11 deletions(-)
 
-So I think we will need to find a different way to control
-this other than the offset attribute.
+-- 
+2.40.1
+
 
