@@ -1,214 +1,167 @@
-Return-Path: <linux-kernel+bounces-381013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7F269AF916
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 07:08:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E1B29AF91A
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 07:12:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 23D38B21ED6
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 05:08:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B1655B22226
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 05:12:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3591F18D626;
-	Fri, 25 Oct 2024 05:08:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E2CF18DF7F;
+	Fri, 25 Oct 2024 05:12:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AgCbSu0m"
-Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com [209.85.217.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UFXjaBdP"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A3CD22B641
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 05:08:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2F1F22B641;
+	Fri, 25 Oct 2024 05:12:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729832906; cv=none; b=Y8KbKp9VgfzYy7uiq/Spj9wjc2m5KYT7LGVumvjkudlbVkFTKVjs2z1AsTHwA2lcBKC9TuDOW5l6aMcGoQZju1ez/kLfROesn3thoV4Uo913roqav1MP84Rp3k0zyY50ACJrOHes9kaF5zOasJJwf810cHLoKRr3JL9BGedSjOQ=
+	t=1729833161; cv=none; b=LRGcVxEHtHffAWkj8cUYns90515Qe9CqKl/RIExmkRiPCip9QnaefNYDIPwrIO8hCfNwthAUiVRICAz0Cj8uFX1pQLtRFsjz8gXW/Vx+wChJepmWbUy0enaKYNi1MZri2TN3GD1ZG9ubsbd6QomuO6C/dz9is9dxMT8k3ShMxFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729832906; c=relaxed/simple;
-	bh=mPDnpBu/qqwMsnK2bfZ85Us5LBys/P+Z1F0gtRjDH6o=;
+	s=arc-20240116; t=1729833161; c=relaxed/simple;
+	bh=/Tpkj435EOyN50vCRF2Ax6BCjnil4B9JArHmpZ92C68=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Hve56r4pTBUMX7Vww9BjNM8srSqJk3j+XMzWKbKDiZOnOhw0zRi7CQyUOch50wiM05i7+/Muai9nk/yxWujQR5NiGbmwE1fm7/eMNnPNlibGPC1kpl4OJ+Bo/Gpaf0x99gPz1bui2e/Hz5v3C36SMv2DmlpTPmC6MJb1CiNhv4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=AgCbSu0m; arc=none smtp.client-ip=209.85.217.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-vs1-f51.google.com with SMTP id ada2fe7eead31-4a46d36c044so889438137.1
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 22:08:24 -0700 (PDT)
+	 To:Cc:Content-Type; b=DcvdcnNUtNIesWF/Ke7+LtQDlM/2vjtoRmZvnw531f+CHl2pOA3sykdR2HfZmH9HKJNBLYRS7nIBf/qVuLnRkcX3D+bNMeAHyuzLbV7ySRFq8oB6F47qINUR/hLgQ05Mc2UmbnNDEhp7dTBujO/+MOxhbLWJOYzjuTX7G3Qpgvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UFXjaBdP; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-71e67d12d04so1223609b3a.1;
+        Thu, 24 Oct 2024 22:12:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729832903; x=1730437703; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1729833159; x=1730437959; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=zfGHBHIoxV5kA8YjaOaHcL5pnxUwdfqiiPu15uVoLw0=;
-        b=AgCbSu0mMEV5SF72CtZx/zZ/MpieJZTwpcmNG0dka9kSlm24lEOei8xogFKQoNGtAF
-         wpjBTPP3/C//JPSjCV7YPhVdNe1gca4+Mn/qaerPzxPtrKmx2H0dRFw/EbGozDNeV+vK
-         6fVdnrf1925+8tAtJ+cZI/2N6g+tJi/WDw+H8F6fYz7hAweAk2It0WRyASOblcYiVCcz
-         c1D52XueOSBPknp8NqskuoUpspJlvByljqRX+U6u7aLYY+j7D8Uga+VgqQK16HmYfKVP
-         FvA80nwbrIib4voGrdAF3D23MuTFMttLFzl0JXwzB0lyWyCVuexGSoVob4h8trfUwC0q
-         RX3g==
+        bh=/Tpkj435EOyN50vCRF2Ax6BCjnil4B9JArHmpZ92C68=;
+        b=UFXjaBdPMuEsxjm/8PXonrsCCxbJEUrAzFZ7q7+5gHcGNh9Iq8OJDWkfs9f8kVYBEF
+         IC82IEVkF5mztYBjMqOIQiQEcClMhS15UjxrWkgMpCX0Li20xSh2l3YVOEyKHJtUBx/b
+         0pJSOBLUp+H+Ju2vK51fPmZdU69VVlilsLRFMdOakL4uovJ030YFQcDZRPcr3PToil9M
+         1xUDwK38BJtM4cMbAxiw0BuEVhknSYTc1teEbGh6fTJtDm4yZEV2+snWokAmZZDnl1Rg
+         0aKgC4sVrbMgTvvvYqzpdvTDbZINx0P7uzRtaOFskW7ru5lHp3GtYVB77AA5PQoE89MB
+         U8yg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729832903; x=1730437703;
+        d=1e100.net; s=20230601; t=1729833159; x=1730437959;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=zfGHBHIoxV5kA8YjaOaHcL5pnxUwdfqiiPu15uVoLw0=;
-        b=m4/UpK9MWCT6PIl/tFVFsv1ctdrSk7VtjkBVXLsBlkyAN1aQWl6cXIWzLz/JP+usIR
-         jAsg8Y6bVyJCDhWWlF2dEmiY+swGKGEX3LPhEcB15KSEhm396n62Cp3uuR8wGL1XXRZ4
-         Mx/Vcg+3rTfzUkSN3rM2eXYh0PmKSmxaw9sgv0oayXVg7lCyoiNoO7w4mMRQ3teHa3AU
-         NBfw949XO3wLn1nSJxxeTibMroHdtDvV0a6WfaDliX6ifVYkOvjCsIX0aUziIHve2V5V
-         TRpUKe0N18LfpjIET9HDPZEvC3xPHo9V+A80qN85hKA0KzApFVZjvO5CCLzT+UzPHM4G
-         Fg6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCX9l9STfVt9LPaQbvO2b9BZuhFHBX9kps7yoaG2WFoHg1sV9VVgGHfuEkXeg7sH95sps7YlTFZjAHsd8KE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzV6UCMtgRSF4R/A2j+F3T2AR6sUoakRYvRfhsIVoo4A6Y2lX9b
-	cMfwqQY/7GD0i8vLS80O7YpXnn2NU4iS+Tpn3kLM1J6AY2d9kwXlsz+3O2UciLcdjzIze30Yran
-	A+pG2EBifd66Se0CkykhUxRh4a33aeMYT60/3
-X-Google-Smtp-Source: AGHT+IHUDYUoU8LFUbZ4k2PKGpA+ThkXB1QD3CSnJUZbltuRAF2DUtPp005MRVWQoU3kazWygDbzQCvItjMIBV7xf3M=
-X-Received: by 2002:a05:6102:418a:b0:4a4:72f0:7937 with SMTP id
- ada2fe7eead31-4a870d306d7mr3512838137.8.1729832902928; Thu, 24 Oct 2024
- 22:08:22 -0700 (PDT)
+        bh=/Tpkj435EOyN50vCRF2Ax6BCjnil4B9JArHmpZ92C68=;
+        b=NLxXRMxBaDKMj0ABiViNW3B4UXO1n4flmccrjyH/9XnIt9tHuUO9BDXlZEuHK43H6n
+         7MPckXmenJ+WVkfIL6LZwssO1pC3kL9MmDygdygUIWUwhElhc/tVycyqh0/P0sabEs4y
+         4BruU8UkKjg56NV/KuaHxPLppQuLSgK4Ppbw2wXiM3JKoe5dWot/ohqj6Rl+hDEdfRUl
+         ijeUwqNIbV4glnxRJJ2PsORaHdWM9K11d/t+wTsMxHr2gnAQN50fvvrskGrCZ9yn0b7w
+         rdXxJbtWkmvWQOb16B8WiySzYLMvbDwcwj0/jUCP8dKf/O+KMsHOUDaeEpe0CTfj3wju
+         n4qA==
+X-Forwarded-Encrypted: i=1; AJvYcCWy9eJgpbQPCDVcHRm2xOcK+TNZjraiY/mU1LfRBjihAxRJMY9vpCZd8S2dOatl7smPfYG6Y+LXuq/V5r3Lro0AZCYF@vger.kernel.org, AJvYcCX2CplE+3tEnFs0mJ55nJEFuQBvxe+q1LIerxZn5GT1r9BNlgUGpEO8862QLgCwwUK1Lfs=@vger.kernel.org, AJvYcCXFiMYtDQ6roqPRClSZlCSnQjWmdd7fiV2KM4QXsmuvHoc30XlCPprL9PjO9WiL5iNkdqenjPzAhIVmA4xp@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx03yk765VvP9rfd71iz4VOzvE4K4mTZzZh/vvLWyMgdglE+1dh
+	l7CUYubhGlNOHU5NVh7HggdkDdJIPPb6AuVD4q3/kD6DjjoAw8FYAkWZjh46euSa7KohpNngPJ8
+	pv4ljZXvVuG0mRLd+KndAKnYiSig=
+X-Google-Smtp-Source: AGHT+IEAk9YojetBkRLJe53COqtiLGEYhreTaZK/7pHC6B7uYCYlMywQUqjE4kFyEuwzJ2rYrbPOLuLkU41RwAyyzlk=
+X-Received: by 2002:a05:6a21:168e:b0:1d9:2a0e:971e with SMTP id
+ adf61e73a8af0-1d978bb27c5mr8798561637.46.1729833159199; Thu, 24 Oct 2024
+ 22:12:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241021042218.746659-1-yuzhao@google.com> <20241021042218.746659-4-yuzhao@google.com>
- <86a5ew41tp.wl-maz@kernel.org>
-In-Reply-To: <86a5ew41tp.wl-maz@kernel.org>
-From: Yu Zhao <yuzhao@google.com>
-Date: Thu, 24 Oct 2024 23:07:45 -0600
-Message-ID: <CAOUHufanq2_nbNiU_=mCgWufoSGDOS3EpAz+4xB5kB=PV2ECVA@mail.gmail.com>
-Subject: Re: [PATCH v1 3/6] irqchip/gic-v3: support SGI broadcast
-To: Marc Zyngier <maz@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Muchun Song <muchun.song@linux.dev>, Thomas Gleixner <tglx@linutronix.de>, 
-	Will Deacon <will@kernel.org>, Douglas Anderson <dianders@chromium.org>, 
-	Mark Rutland <mark.rutland@arm.com>, Nanyong Sun <sunnanyong@huawei.com>, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org
+References: <20241010205644.3831427-1-andrii@kernel.org> <20241010205644.3831427-2-andrii@kernel.org>
+ <20241023201031.GF11151@noisy.programming.kicks-ass.net> <CAJuCfpFMhoCmqGJMU2uc4JHmk9zh88JzhZAeSz3DgvXEh+u+_g@mail.gmail.com>
+ <20241024095659.GD9767@noisy.programming.kicks-ass.net> <CAJuCfpGxu=z-2Wsf41-m4MQ6t7DjfiiWXD408BW8SjTfx0NGTg@mail.gmail.com>
+ <CAJuCfpGYzG+3aLjobsXcTSoo9Jo9MCYA_QcROPyLRKEeVHkLGA@mail.gmail.com>
+ <CAEf4Bzbf_2tJL1ogZegy2sD=WbNmdKHXuXCXtAALGYuWYgyEEw@mail.gmail.com> <CAJuCfpFJG8MS=LMC2saYYRPGv+xs+UXkrPWD9_Eo1VqY=7v1ow@mail.gmail.com>
+In-Reply-To: <CAJuCfpFJG8MS=LMC2saYYRPGv+xs+UXkrPWD9_Eo1VqY=7v1ow@mail.gmail.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Thu, 24 Oct 2024 22:12:26 -0700
+Message-ID: <CAEf4BzbHs+XQK9GZQ59VB27s9Jz6AR7fQmX2XTsyTdz050xkOw@mail.gmail.com>
+Subject: Re: [PATCH v3 tip/perf/core 1/4] mm: introduce mmap_lock_speculation_{start|end}
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Andrii Nakryiko <andrii@kernel.org>, 
+	linux-trace-kernel@vger.kernel.org, linux-mm@kvack.org, oleg@redhat.com, 
+	rostedt@goodmis.org, mhiramat@kernel.org, bpf@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, jolsa@kernel.org, paulmck@kernel.org, 
+	willy@infradead.org, akpm@linux-foundation.org, mjguzik@gmail.com, 
+	brauner@kernel.org, jannh@google.com, mhocko@kernel.org, vbabka@suse.cz, 
+	shakeel.butt@linux.dev, hannes@cmpxchg.org, Liam.Howlett@oracle.com, 
+	lorenzo.stoakes@oracle.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Marc,
-
-On Tue, Oct 22, 2024 at 9:03=E2=80=AFAM Marc Zyngier <maz@kernel.org> wrote=
-:
+On Thu, Oct 24, 2024 at 4:33=E2=80=AFPM Suren Baghdasaryan <surenb@google.c=
+om> wrote:
 >
-> On Mon, 21 Oct 2024 05:22:15 +0100,
-> Yu Zhao <yuzhao@google.com> wrote:
+> On Thu, Oct 24, 2024 at 4:20=E2=80=AFPM Andrii Nakryiko
+> <andrii.nakryiko@gmail.com> wrote:
 > >
-> > GIC v3 and later support SGI broadcast, i.e., the mode that routes
-> > interrupts to all PEs in the system excluding the local CPU.
+> > On Thu, Oct 24, 2024 at 2:04=E2=80=AFPM Suren Baghdasaryan <surenb@goog=
+le.com> wrote:
+> > >
+> > > On Thu, Oct 24, 2024 at 9:28=E2=80=AFAM Suren Baghdasaryan <surenb@go=
+ogle.com> wrote:
+> > > >
+> > > > On Thu, Oct 24, 2024 at 2:57=E2=80=AFAM Peter Zijlstra <peterz@infr=
+adead.org> wrote:
+> > > > >
+> > > > > On Wed, Oct 23, 2024 at 03:17:01PM -0700, Suren Baghdasaryan wrot=
+e:
+> > > > >
+> > > > > > > Or better yet, just use seqcount...
+> > > > > >
+> > > > > > Yeah, with these changes it does look a lot like seqcount now..=
+.
+> > > > > > I can take another stab at rewriting this using seqcount_t but =
+one
+> > > > > > issue that Jann was concerned about is the counter being int vs=
+ long.
+> > > > > > seqcount_t uses unsigned, so I'm not sure how to address that i=
+f I
+> > > > > > were to use seqcount_t. Any suggestions how to address that bef=
+ore I
+> > > > > > move forward with a rewrite?
+> > > > >
+> > > > > So if that issue is real, it is not specific to this case. Specif=
+ically
+> > > > > preemptible seqcount will be similarly affected. So we should pro=
+bably
+> > > > > address that in the seqcount implementation.
+> > > >
+> > > > Sounds good. Let me try rewriting this patch using seqcount_t and I=
+'ll
+> > > > work with Jann on a separate patch to change seqcount_t.
+> > > > Thanks for the feedback!
+> > >
+> > > I posted the patchset to convert mm_lock_seq into seqcount_t and to
+> > > add speculative functions at
+> > > https://lore.kernel.org/all/20241024205231.1944747-1-surenb@google.co=
+m/.
 > >
-> > Supporting this mode can avoid looping through all the remote CPUs
-> > when broadcasting SGIs, especially for systems with 200+ CPUs. The
-> > performance improvement can be measured with the rest of this series
-> > booted with "hugetlb_free_vmemmap=3Don irqchip.gicv3_pseudo_nmi=3D1":
-> >
-> >   cd /sys/kernel/mm/hugepages/
-> >   echo 600 >hugepages-1048576kB/nr_hugepages
-> >   echo 2048kB >hugepages-1048576kB/demote_size
-> >   perf record -g -- bash -c "echo 600 >hugepages-1048576kB/demote"
-> >
-> >          gic_ipi_send_mask()  bash sys time
-> > Before:  38.14%               0m10.513s
-> > After:    0.20%               0m5.132s
-> >
-> > Signed-off-by: Yu Zhao <yuzhao@google.com>
-> > ---
-> >  drivers/irqchip/irq-gic-v3.c | 20 +++++++++++++++++++-
-> >  1 file changed, 19 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.=
-c
-> > index ce87205e3e82..42c39385e1b9 100644
-> > --- a/drivers/irqchip/irq-gic-v3.c
-> > +++ b/drivers/irqchip/irq-gic-v3.c
-> > @@ -1394,9 +1394,20 @@ static void gic_send_sgi(u64 cluster_id, u16 tli=
-st, unsigned int irq)
-> >       gic_write_sgi1r(val);
-> >  }
-> >
-> > +static void gic_broadcast_sgi(unsigned int irq)
-> > +{
-> > +     u64 val;
-> > +
-> > +     val =3D BIT(ICC_SGI1R_IRQ_ROUTING_MODE_BIT) | (irq << ICC_SGI1R_S=
-GI_ID_SHIFT);
+> > Thanks, Suren! Hopefully it can land soon!
 >
-> As picked up by the test bot, please fix the 32bit build.
+> Would incorporating them into your patchset speed things up? If so,
+> feel free to include them into your series.
 
-Will do.
+I don't really think so. At this point the uprobe part is done (next
+revision has a comment style fix, that's all). So I'll just wait for
+your patches to be acked and applied, then I'll just do a trivial
+rebase. This will be easier for everyone at this point, IMO, to not
+couple them into a single patch set with two authors.
 
-> > +
-> > +     pr_devel("CPU %d: broadcasting SGI %u\n", smp_processor_id(), irq=
-);
-> > +     gic_write_sgi1r(val);
-> > +}
-> > +
-> >  static void gic_ipi_send_mask(struct irq_data *d, const struct cpumask=
- *mask)
-> >  {
-> >       int cpu;
-> > +     cpumask_t broadcast;
+Hopefully Peter will take those patches through tip/perf/core, though,
+so I don't have to wait for mm and tip trees to converge.
+
+> The only required change in your other patches is the renaming of
+> mmap_lock_speculation_start() to mmap_lock_speculation_begin().
+
+Yep, no problem.
+
+>
 > >
-> >       if (WARN_ON(d->hwirq >=3D 16))
-> >               return;
-> > @@ -1407,6 +1418,13 @@ static void gic_ipi_send_mask(struct irq_data *d=
-, const struct cpumask *mask)
-> >        */
-> >       dsb(ishst);
-> >
-> > +     cpumask_copy(&broadcast, cpu_present_mask);
->
-> Why cpu_present_mask? I'd expect that cpu_online_mask should be the
-> correct mask to use -- we don't IPI offline CPUs, in general.
-
-This is exactly because "we don't IPI offline CPUs, in general",
-assuming "we" means the kernel, not GIC.
-
-My interpretation of what the GIC spec says ("0b1: Interrupts routed
-to all PEs in the system, excluding self") is that it broadcasts IPIs to
-"cpu_present_mask" (minus the local one). So if the kernel uses
-"cpu_online_mask" here, GIC would send IPIs to offline CPUs
-(cpu_present_mask ^ cpu_online_mask), which I don't know whether it's
-a defined behavior.
-
-But if you actually meant GIC doesn't IPI offline CPUs, then yes, here
-the kernel should use "cpu_online_mask".
-
-> > +     cpumask_clear_cpu(smp_processor_id(), &broadcast);
-> > +     if (cpumask_equal(&broadcast, mask)) {
-> > +             gic_broadcast_sgi(d->hwirq);
-> > +             goto done;
-> > +     }
->
-> So the (valid) case where you would IPI *everyone* is not handled as a
-> fast path? That seems a missed opportunity.
-
-You are right: it should handle that case.
-
-> This also seem an like expensive way to do it. How about something
-> like:
->
->         int mcnt =3D cpumask_weight(mask);
->         int ocnt =3D cpumask_weight(cpu_online_mask);
->         if (mcnt =3D=3D ocnt)  {
->                 /* Broadcast to all CPUs including self */
-
-Does the comment mean the following two steps?
-1. Broadcasting to everyone else.
-2. Sending to self.
-
-My understanding of the "Interrupt Routing Mode" is that it can't
-broadcast to all CPUs including self, and therefore we need the above
-two steps, which still can be a lot faster. Is my understanding
-correct?
-
->         } else if (mcnt =3D=3D (ocnt - 1) &&
->                    !cpumask_test_cpu(smp_processor_id(), mask)) {
->                 /* Broadcast to all but self */
->         }
->
-> which avoids the copy+update_full compare.
-
-Thank you.
+> > >
+> > > >
+> > > > >
 
