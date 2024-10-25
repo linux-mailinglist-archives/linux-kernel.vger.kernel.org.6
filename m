@@ -1,366 +1,590 @@
-Return-Path: <linux-kernel+bounces-381877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A0429B05CF
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:28:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E23489B05D4
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:29:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 098EF284E84
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 14:28:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A22412836D4
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 14:29:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EA191FB8A7;
-	Fri, 25 Oct 2024 14:28:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9255B1FB8B2;
+	Fri, 25 Oct 2024 14:29:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TV77Co1H"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lXrzlKuf"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFCE11F754D
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 14:28:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1E50212168;
+	Fri, 25 Oct 2024 14:29:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729866530; cv=none; b=kHQsfTPEaQJwlar1oGw7/bUwm8wsWjYfBrbaBfcLUN9uPP6eUQ3LzK0N27uivTFyKh0XE5pXOXeC6lXqmTIZJ5HWbpZCXx7eLszTqi+6B/OTN6UFOP6Kwe2YCoim97D07v5VQEnvViWGvEKg6AL4wR0prSgdAJ5LL5n+xK08r7o=
+	t=1729866564; cv=none; b=gdbShh9TPrsdzVAhF3KVw8P484EC05rqYf+ggpBKr7/g14BpLcxrOaE/HzttIgILoVtt3LWmaBrnyyfvXxGtf2cSe6rl2wYzLDAL6+nYH935+1CqQNeGUmmx19yWgatFPVIbzX/29RZV7tzX4eVfWDh/TbK+g1DVj/yLboIRZ1c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729866530; c=relaxed/simple;
-	bh=L18gORBh2i/Z3uWUAvpYZ0YL7TP/x46gVDqDD4ZTXh4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Gt4MVWtLmyXP/RPhwTYUmFczKTgLXw/f9AMj3TtFp0oJvEJKqOZyMyVMJRu3UPyNFFSItbB1WWXDbAHGyxvyfayl3lR+EErVabY2hGPdaE4re5AkOxsPTTlvPZTs/cwCSsGjQ5LQ8Si4KI1cHGLOTMbnf3XBe9HjErvN2IkHt/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TV77Co1H; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729866526;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0StbpcZdDLw2CvXnUY6ZzybSwxnhe4639CDdIaFAzhQ=;
-	b=TV77Co1HzitpSvBAiCZcT6s1BRimy+zOGbIbCcogT9S5VTwRyTFHaw+XD9YyTvlWcGWCkX
-	NIdjYyiWTpICDqT5PXr1d+XkZlnIRVyShQM9tkdOQbN1kKOOmiouk04MTsvAeUGeb+kZNc
-	w/D4XY7EIzdGaHLrq1sGCJpz87/2oxE=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-451-JYVgPuEJPSyAy0s8ABYmjQ-1; Fri, 25 Oct 2024 10:28:45 -0400
-X-MC-Unique: JYVgPuEJPSyAy0s8ABYmjQ-1
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-37d537292d7so1420289f8f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 07:28:45 -0700 (PDT)
+	s=arc-20240116; t=1729866564; c=relaxed/simple;
+	bh=G/y22WwvdEw5pnp0K5Bjy9BBlV8tGH5GUeD3XhzMgcs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kbm5YjIp7An0YyRnPPAmUcgf3Md20aZ7MUgmERds00sUN5qL7xtX69tyn0UCgF1LYij1TpjqWLXEQZjULqq3kQRJj5XElb+wUjskBUBDq/7TdX3uXw54phWP7tZQtJ8Q+vujFQrs6WekVIkzSAlTdhoo6JuuTJgd2/Uci93NoBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lXrzlKuf; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-20caccadbeeso21082945ad.2;
+        Fri, 25 Oct 2024 07:29:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729866561; x=1730471361; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=IG6YaKsOWddbweavZZEc9qrTMYsOlaeipe8zCpQL3rg=;
+        b=lXrzlKufw5hk+4qWCEKUYL/zeUIUeDEXWNUiQ5nYAItFXUqp6xlSXVq0z0lc7pHZOl
+         FaNGLcS66Dn3dDVCuOOIuSouDUzU0JZ76Gi3PSKs5DczATYbZMPhpbzqWcI7zcirQewB
+         ktaIIcdQC5utLPCimPxQHTQpTPt0Wj3NGCjhjbVOhOt1NLt+pZXPicqWdRcbIMLDiHMb
+         bz6AUNNgqpp0VzYC4v6pXZMXCYjyuU34y+GHAqHPLrGEZ34ixetoOcGKa0nL6Orvkcsi
+         KhJnlusXAKkGr1ShdOlMaktk12uVYAJW3i8IrQHqo7KkjcWfzOXCKbhIdN7DJ44K63e8
+         1u8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729866524; x=1730471324;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0StbpcZdDLw2CvXnUY6ZzybSwxnhe4639CDdIaFAzhQ=;
-        b=LM0HULLjdUoVOAIvGBWIYXte/XHi3ndPohV74YoYYw8KhNCqttExEJuJvq8xzjh5ej
-         kD0LvGeWp5Mz/ML8OuB5SczOyZQw8gSfbzqUe5npqC1yoqD4GFKxS0k9ED/yQcAkbs1T
-         lxkCQdKXdJC86Rb+pelP5SDRnQqoIzjMItOgy9m5GaoRlm4lVFE+FrxWmgSJCh6AlS2b
-         av2Kcj3RIhtf60JYIuZeaGFEdP9bbTqiJHsV5ZaHWwQIyEFRy3lChEVHK7t3zAC14IxW
-         8Am2SDICniE7w+a6I+M8t75zQMg9oyy+Baw9BImSUC5uMoUnuQ7Hyw6TLp9sW3dTT1H+
-         mDwg==
-X-Forwarded-Encrypted: i=1; AJvYcCUBtyGRWGQyHQ9IlyRpy3I2DdRRkXTD+PD6veeNOerCfFBPTgiTqCHVwHIoAtF1AXPapiK9DQQfpXUyYoo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwopWxySMS+1OHAhiIMyrDL7NkS7qXaEhigLIejZqRHr1lkm+A
-	KqvC9Hno373plZcr1NW7cWnFmzOuBMS83Saq1EvXU1n1Zz/Hhe+OwbcRXEOGtuaiumBPoNAuBJT
-	Mh1J/OfxIFswn4VNaaMTS+SULdEhLaaxPYSw8zZ/TuBlahgFkPCiDTgIXa1xFeA==
-X-Received: by 2002:a5d:4e08:0:b0:37d:95a7:9e57 with SMTP id ffacd0b85a97d-37efcee8c28mr7958102f8f.2.1729866524108;
-        Fri, 25 Oct 2024 07:28:44 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFmATEHL9VYogz5tvLTS3ZQs7KOG7UheB1a2GyIWRModBPpjvq7QUlS3VkjCoq7++03wO1uug==
-X-Received: by 2002:a5d:4e08:0:b0:37d:95a7:9e57 with SMTP id ffacd0b85a97d-37efcee8c28mr7958086f8f.2.1729866523703;
-        Fri, 25 Oct 2024 07:28:43 -0700 (PDT)
-Received: from eisenberg.fritz.box (200116b82de5ba00738ac8dadaac7543.dip.versatel-1u1.de. [2001:16b8:2de5:ba00:738a:c8da:daac:7543])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4318b56742asm49398725e9.21.2024.10.25.07.28.42
+        d=1e100.net; s=20230601; t=1729866561; x=1730471361;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IG6YaKsOWddbweavZZEc9qrTMYsOlaeipe8zCpQL3rg=;
+        b=Tw7R0nwIH0mTLbfFaduVP05ESYc3QJgKO3d+eWov5fM1IAjHBON0I5Kfq28WV3v6RB
+         ZgcvUZlKKOea6ob5iJYpxiua69TuyjIMJCa/JMQUbUfuq11ZcPkp9QBODsNxMMVq9AJy
+         GhpeyRTTguuUo4Thmbo/i74Go7+xj8RwSFpTetzua7k5dSyUwJocUnrwh64/nc9e14dz
+         7pF+vLNRA2OPhXGW+15vV/2hUjxeOYUcySZrEsgFupKf3mCJUe93xkROsWtrNrEQq8rP
+         WRhXxj7UQas4pqqi8iuwnTcPq8awcBANr7hpGG9HHlRAIvHNsfE1EzyCEdramY6KGgDt
+         lc2A==
+X-Forwarded-Encrypted: i=1; AJvYcCV/ifPeUL4Oi4aWVxMpsn61zj1gQaJ9r3goyQh7XZiG5rhr+SV+i1pkdfUCYGCCV6ttpiaLnOonkEV5GoLVLJ5GLWW+hg==@vger.kernel.org, AJvYcCX7gLLUahe9wLb+dt4EDNRRDvI2evCu5ySv6nYqCEm3g3avbNkwGnx9A37brnNTlkJ4I5CxNLAdth5tXN8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzlW7H/PT6ED4QrRgUpvON5wfoyrSbkdtDEna2GWGfEf0XZHXhH
+	WW/imaIApm1CpPVHn1bQjXh4OumnUofiJISzjUvS00TdE5kffaElTXASRMmc
+X-Google-Smtp-Source: AGHT+IGobeDgPQ0KDcfyPKEW/rZJCbUzb2KkWWRMBeBVgFAZzK52SFcipoSGZj0XuDDkFbkpmthRsQ==
+X-Received: by 2002:a17:902:ec8d:b0:20c:dd71:c94f with SMTP id d9443c01a7336-20fa9ea09bdmr113944635ad.41.1729866560459;
+        Fri, 25 Oct 2024 07:29:20 -0700 (PDT)
+Received: from alphacentauri (host95.181-12-202.telecom.net.ar. [181.12.202.95])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bbf6d3ffsm9987465ad.73.2024.10.25.07.29.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2024 07:28:43 -0700 (PDT)
-Message-ID: <5b2911489844f6a970da053ebfc126eddf7c896c.camel@redhat.com>
-Subject: Re: [PATCH] PCI: Restore the original INTX_DISABLE bit by
- pcim_intx()
-From: Philipp Stanner <pstanner@redhat.com>
-To: Takashi Iwai <tiwai@suse.de>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Date: Fri, 25 Oct 2024 16:28:42 +0200
-In-Reply-To: <87y12csbqe.wl-tiwai@suse.de>
-References: <20241024155539.19416-1-tiwai@suse.de>
-	 <933083faa55109949cbb5a07dcec27f3e4bff9ec.camel@redhat.com>
-	 <87y12csbqe.wl-tiwai@suse.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+        Fri, 25 Oct 2024 07:29:20 -0700 (PDT)
+Date: Fri, 25 Oct 2024 11:29:17 -0300
+From: Kurt Borja <kuurtb@gmail.com>
+To: Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>
+Cc: W_Armin@gmx.de, Hans de Goede <hdegoede@redhat.com>, 
+	LKML <linux-kernel@vger.kernel.org>, platform-driver-x86@vger.kernel.org
+Subject: Re: [PATCH v8 3/4] alienware-wmi: added platform profile support
+Message-ID: <g6co2t65lvyjasj7rcdf6aae5mnictpyz6oz4vtcq2ea6uuhfu@367nxgfgyfxm>
+References: <20241025013856.4729-2-kuurtb@gmail.com>
+ <20241025014125.5290-2-kuurtb@gmail.com>
+ <79787689-0996-65a7-b32c-7a36177f1bbc@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <79787689-0996-65a7-b32c-7a36177f1bbc@linux.intel.com>
 
-On Fri, 2024-10-25 at 12:44 +0200, Takashi Iwai wrote:
-> On Fri, 25 Oct 2024 11:26:18 +0200,
-> Philipp Stanner wrote:
-> >=20
-> > Hi,
-> >=20
-> > On Thu, 2024-10-24 at 17:55 +0200, Takashi Iwai wrote:
-> > > pcim_intx() tries to restore the INTX_DISABLE bit at removal via
-> > > devres, but there is a chance that it restores a wrong value.
-> > > Because the value to be restored is blindly assumed to be the
-> > > negative
-> > > of the enable argument, when a driver calls pcim_intx()
-> > > unnecessarily
-> > > for the already enabled state, it'll restore to the disabled
-> > > state in
-> > > turn.
-> >=20
-> > It depends on how it is called, no?
-> >=20
-> > // INTx =3D=3D 1
-> > pcim_intx(pdev, 0); // old INTx value assumed to be 1 -> correct
-> >=20
+On Fri, Oct 25, 2024 at 05:09:59PM +0300, Ilpo Järvinen wrote:
+> On Thu, 24 Oct 2024, Kurt Borja wrote:
+> 
+> > Implements platform profile support for Dell laptops with new WMAX thermal
+> > interface, present on some Alienware X-Series, Alienware M-Series and
+> > Dell's G-Series laptops. This interface is suspected to be used by
+> > Alienware Command Center (AWCC), which is not available for linux
+> > systems, to manage thermal profiles.
+> > 
+> > This implementation makes use of three WMI methods, namely
+> > THERMAL_CONTROL, THERMAL_INFORMATION and GAME_SHIFT_STATUS, which take
+> > u32 as input and output arguments. Each method has a set of supported
+> > operations specified in their respective enums.
+> > 
+> > Wrappers written for these methods support multiple operations.
+> > 
+> > THERMAL_CONTROL switches thermal modes through operation
+> > ACTIVATE_PROFILE. Available thermal codes are auto-detected at runtime
+> > and matched against a list of known thermal codes:
+> > 
+> > Thermal Table "User Selectable Thermal Tables" (USTT):
+> > 	BALANCED			0xA0
+> > 	BALANCED_PERFORMANCE		0xA1
+> > 	COOL				0xA2
+> > 	QUIET				0xA3
+> > 	PERFORMANCE			0xA4
+> > 	LOW_POWER			0xA5
+> > 
+> > Thermal Table Basic:
+> > 	QUIET				0x96
+> > 	BALANCED			0x97
+> > 	BALANCED_PERFORMANCE		0x98
+> > 	PERFORMANCE			0x99
+> > 
+> > Devices are known to implement only one of these tables without mixing
+> > their thermal codes.
+> > 
+> > The fact that the least significant digit of every thermal code is
+> > consecutive of one another is exploited to efficiently match codes
+> > through arrays.
+> > 
+> > Autodetection of available codes is done through operation LIST_IDS of
+> > method THERMAL_INFORMATION. This operation lists fan IDs, CPU sensor ID,
+> > GPU sensor ID and available thermal profile codes, *in that order*. As
+> > number of fans and thermal codes is very model dependent, almost every
+> > ID is scanned and matched based on conditions found on
+> > is_wmax_thermal_code(). The known upper bound for the number of IDs is
+> > 13, corresponding to a device that have 4 fans, 2 sensors and 7 thermal
+> > codes.
+> > 
+> > Additionally G-Series laptops have a key called G-key, which (with AWCC
+> > proprietary driver) switches the thermal mode to an special mode named
+> > GMODE with code 0xAB and changes Game Shift Status to 1. Game Shift is a
+> > mode the manufacturer claims, increases gaming performance.
+> > 
+> > GAME_SHIFT_STATUS method is used to mimic this behavior when selecting
+> > PLATFORM_PROFILE_PERFORMANCE option.
+> > 
+> > All of these profiles are known to only change fan speed profiles,
+> > although there are untested claims that some of them also change power
+> > profiles.
+> > 
+> > Activating a thermal mode with method THERMAL_CONTROL may cause short
+> > hangs. This is a known problem present on every platform.
+> 
+> This is really good!
+> 
+> A few small things below.
+> 
+> > Signed-off-by: Kurt Borja <kuurtb@gmail.com>
 > > ---
-> >=20
-> > // INTx =3D=3D 0
-> > pcim_intx(pdev, 0); // old INTx value assumed to be 1 -> wrong
-> >=20
-> > Maybe it makes sense to replace part of the commit text with
-> > something
-> > like the example above?
->=20
-> If it helps better understanding, why not.
->=20
-> > > =C2=A0 Also, when a driver calls pcim_intx() multiple times with
-> > > different enable argument values, the last one will win no matter
-> > > what
-> > > value it is.
-> >=20
-> > Means
-> >=20
-> > // INTx =3D=3D 0
-> > pcim_intx(pdev, 0); // orig_INTx =3D=3D 1, INTx =3D=3D 0
-> > pcim_intx(pdev, 1); // orig_INTx =3D=3D 0, INTx =3D=3D 1
-> > pcim_intx(pdev, 0); // orig_INTx =3D=3D 1, INTx =3D=3D 0
-> >=20
-> > So in this example the first call would cause a wrong orig_INTx,
-> > but
-> > the last call =E2=80=93 the one "who will win" =E2=80=93 seems to do th=
-e right
-> > thing,
-> > dosen't it?
->=20
-> Yes and no.=C2=A0 The last call wins to write the current value, but
-> shouldn't win for setting the original value.=C2=A0 The original value
-> must
-> be recorded only from the first call.
+> > v8:
+> >  - Fixed alignment in wmax_mode_to_platform_profile[]
+> >  - Quirk thermal and gmode changed from u8 -> bool
+> >  - Autodetected quirk entries are not initialized
+> >  - is_wmax_thermal_code refactored to increase readibility
+> >  - is_wmax_thermal_code now covers all possibilities
+> >  - Better commit message
+> > v7:
+> >  - Method operations are now clearly listed as separate enums
+> >  - wmax_thermal_modes are now listed without codes in order to support
+> >    autodetection, as well as getting and setting thermal profiles
+> >    cleanly through arrays
+> >  - Added wmax_mode_to_platform_profile[]
+> >  - Added struct wmax_u32_args to replace bit mask approach of
+> >    constructing arguments for wmax methods
+> >  - create_thermal_profile now autodetects available thermal codes
+> >    through operation 0x03 of THERMAL_INFORMATION method. These are
+> >    codes are stored in supported_thermal_profiles[]
+> >  - thermal_profile_get now uses wmax_mode_to_platform_profile[] instead of
+> >    switch-case approach
+> >  - thermal_profile_set now uses supported_thermal_profiles[] instead of
+> >    switch-case approach
+> >  - When gmode is autodetected, thermal_profile_set also sets Game Shift
+> >    status accordingly
+> > v6:
+> >  - Fixed alignment on some function definitions
+> >  - Fixed braces on if statment
+> >  - Removed quirk thermal_ustt
+> >  - Now quirk thermal can take values defined in enum WMAX_THERMAL_TABLE.
+> >  - Proper removal of thermal_profile
+> > ---
+> >  drivers/platform/x86/dell/Kconfig         |   1 +
+> >  drivers/platform/x86/dell/alienware-wmi.c | 280 ++++++++++++++++++++++
+> >  2 files changed, 281 insertions(+)
+> > 
+> > diff --git a/drivers/platform/x86/dell/Kconfig b/drivers/platform/x86/dell/Kconfig
+> > index 68a49788a..b06d634cd 100644
+> > --- a/drivers/platform/x86/dell/Kconfig
+> > +++ b/drivers/platform/x86/dell/Kconfig
+> > @@ -21,6 +21,7 @@ config ALIENWARE_WMI
+> >  	depends on LEDS_CLASS
+> >  	depends on NEW_LEDS
+> >  	depends on ACPI_WMI
+> > +	select ACPI_PLATFORM_PROFILE
+> >  	help
+> >  	 This is a driver for controlling Alienware BIOS driven
+> >  	 features.  It exposes an interface for controlling the AlienFX
+> > diff --git a/drivers/platform/x86/dell/alienware-wmi.c b/drivers/platform/x86/dell/alienware-wmi.c
+> > index b27f3b64c..898b37be7 100644
+> > --- a/drivers/platform/x86/dell/alienware-wmi.c
+> > +++ b/drivers/platform/x86/dell/alienware-wmi.c
+> > @@ -8,8 +8,11 @@
+> >  #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+> >  
+> >  #include <linux/acpi.h>
+> > +#include <linux/bitfield.h>
+> > +#include <linux/bits.h>
+> >  #include <linux/module.h>
+> >  #include <linux/platform_device.h>
+> > +#include <linux/platform_profile.h>
+> >  #include <linux/dmi.h>
+> >  #include <linux/leds.h>
+> >  
+> > @@ -25,6 +28,13 @@
+> >  #define WMAX_METHOD_AMPLIFIER_CABLE	0x6
+> >  #define WMAX_METHOD_DEEP_SLEEP_CONTROL	0x0B
+> >  #define WMAX_METHOD_DEEP_SLEEP_STATUS	0x0C
+> > +#define WMAX_METHOD_THERMAL_INFORMATION	0x14
+> > +#define WMAX_METHOD_THERMAL_CONTROL	0x15
+> > +#define WMAX_METHOD_GAME_SHIFT_STATUS	0x25
+> > +
+> > +#define WMAX_THERMAL_MODE_GMODE		0xAB
+> > +
+> > +#define WMAX_FAILURE_CODE		0xFFFFFFFF
+> >  
+> >  MODULE_AUTHOR("Mario Limonciello <mario.limonciello@outlook.com>");
+> >  MODULE_DESCRIPTION("Alienware special feature control");
+> > @@ -49,11 +59,59 @@ enum WMAX_CONTROL_STATES {
+> >  	WMAX_SUSPEND = 3,
+> >  };
+> >  
+> > +enum WMAX_THERMAL_INFORMATION_OPERATIONS {
+> > +	WMAX_OPERATION_LIST_IDS			= 0x03,
+> > +	WMAX_OPERATION_CURRENT_PROFILE		= 0x0B,
+> > +};
+> > +
+> > +enum WMAX_THERMAL_CONTROL_OPERATIONS {
+> > +	WMAX_OPERATION_ACTIVATE_PROFILE		= 0x01,
+> > +};
+> > +
+> > +enum WMAX_GAME_SHIFT_STATUS_OPERATIONS {
+> > +	WMAX_OPERATION_TOGGLE_GAME_SHIFT	= 0x01,
+> > +	WMAX_OPERATION_GET_GAME_SHIFT_STATUS	= 0x02,
+> > +};
+> > +
+> > +enum WMAX_THERMAL_TABLES {
+> > +	WMAX_THERMAL_TABLE_BASIC		= 0x90,
+> > +	WMAX_THERMAL_TABLE_USTT			= 0xA0,
+> > +};
+> > +
+> > +enum wmax_thermal_mode {
+> > +	THERMAL_MODE_USTT_BALANCED,
+> > +	THERMAL_MODE_USTT_BALANCED_PERFORMANCE,
+> > +	THERMAL_MODE_USTT_COOL,
+> > +	THERMAL_MODE_USTT_QUIET,
+> > +	THERMAL_MODE_USTT_PERFORMANCE,
+> > +	THERMAL_MODE_USTT_LOW_POWER,
+> > +	THERMAL_MODE_BASIC_QUIET,
+> > +	THERMAL_MODE_BASIC_BALANCED,
+> > +	THERMAL_MODE_BASIC_BALANCED_PERFORMANCE,
+> > +	THERMAL_MODE_BASIC_PERFORMANCE,
+> > +	THERMAL_MODE_LAST,
+> > +};
+> > +
+> > +static const enum platform_profile_option wmax_mode_to_platform_profile[THERMAL_MODE_LAST] = {
+> > +	[THERMAL_MODE_USTT_BALANCED]			= PLATFORM_PROFILE_BALANCED,
+> > +	[THERMAL_MODE_USTT_BALANCED_PERFORMANCE]	= PLATFORM_PROFILE_BALANCED_PERFORMANCE,
+> > +	[THERMAL_MODE_USTT_COOL]			= PLATFORM_PROFILE_COOL,
+> > +	[THERMAL_MODE_USTT_QUIET]			= PLATFORM_PROFILE_QUIET,
+> > +	[THERMAL_MODE_USTT_PERFORMANCE]			= PLATFORM_PROFILE_PERFORMANCE,
+> > +	[THERMAL_MODE_USTT_LOW_POWER]			= PLATFORM_PROFILE_LOW_POWER,
+> > +	[THERMAL_MODE_BASIC_QUIET]			= PLATFORM_PROFILE_QUIET,
+> > +	[THERMAL_MODE_BASIC_BALANCED]			= PLATFORM_PROFILE_BALANCED,
+> > +	[THERMAL_MODE_BASIC_BALANCED_PERFORMANCE]	= PLATFORM_PROFILE_BALANCED_PERFORMANCE,
+> > +	[THERMAL_MODE_BASIC_PERFORMANCE]		= PLATFORM_PROFILE_PERFORMANCE,
+> > +};
+> > +
+> >  struct quirk_entry {
+> >  	u8 num_zones;
+> >  	u8 hdmi_mux;
+> >  	u8 amplifier;
+> >  	u8 deepslp;
+> > +	bool thermal;	/* Autodetected. Do not initialize explicitly. */
+> > +	bool gmode;	/* Autodetected. Do not initialize explicitly. */
+> >  };
+> >  
+> >  static struct quirk_entry *quirks;
+> > @@ -214,10 +272,19 @@ struct wmax_led_args {
+> >  	u8 state;
+> >  } __packed;
+> >  
+> > +struct wmax_u32_args {
+> > +	u8 operation;
+> > +	u8 arg1;
+> > +	u8 arg2;
+> > +	u8 arg3;
+> > +};
+> > +
+> >  static struct platform_device *platform_device;
+> >  static struct device_attribute *zone_dev_attrs;
+> >  static struct attribute **zone_attrs;
+> >  static struct platform_zone *zone_data;
+> > +static struct platform_profile_handler pp_handler;
+> > +static enum wmax_thermal_mode supported_thermal_profiles[PLATFORM_PROFILE_LAST];
+> >  
+> >  static struct platform_driver platform_driver = {
+> >  	.driver = {
+> > @@ -761,6 +828,210 @@ static int create_deepsleep(struct platform_device *dev)
+> >  	return ret;
+> >  }
+> >  
+> > +/*
+> > + * Thermal Profile control
+> > + *  - Provides thermal profile control through the Platform Profile API
+> > + */
+> > +#define WMAX_THERMAL_TABLE_MASK		GENMASK(7, 4)
+> > +#define WMAX_THERMAL_MODE_MASK		GENMASK(3, 0)
+> > +#define WMAX_SENSOR_ID_MASK		BIT(8)
+> > +
+> > +static bool is_wmax_thermal_code(u32 code)
+> > +{
+> > +	if (code & WMAX_SENSOR_ID_MASK)
+> > +		return false;
+> > +
+> > +	if ((code & WMAX_THERMAL_MODE_MASK) >= THERMAL_MODE_LAST)
+> > +		return false;
+> > +
+> > +	if ((code & WMAX_THERMAL_TABLE_MASK) == WMAX_THERMAL_TABLE_BASIC &&
+> > +	    (code & WMAX_THERMAL_MODE_MASK) >= THERMAL_MODE_BASIC_BALANCED)
+> > +		return true;
+> > +
+> > +	if ((code & WMAX_THERMAL_TABLE_MASK) == WMAX_THERMAL_TABLE_USTT &&
+> > +	    (code & WMAX_THERMAL_MODE_MASK) <= THERMAL_MODE_USTT_LOW_POWER)
+> > +		return true;
+> > +
+> > +	return false;
+> > +}
+> > +
+> > +static int wmax_thermal_information(u8 operation, u8 arg, u32 *out_data)
+> > +{
+> > +	acpi_status status;
+> > +	struct wmax_u32_args in_args = {
+> > +		.operation = operation,
+> > +		.arg1 = arg,
+> > +		.arg2 = 0,
+> > +		.arg3 = 0,
+> > +	};
+> > +
+> > +	status = alienware_wmax_command(&in_args, sizeof(in_args),
+> > +					WMAX_METHOD_THERMAL_INFORMATION,
+> > +					out_data);
+> > +
+> > +	if (ACPI_FAILURE(status))
+> > +		return -EIO;
+> > +
+> > +	if (*out_data == WMAX_FAILURE_CODE)
+> > +		return -EBADRQC;
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static int wmax_thermal_control(u8 profile)
+> > +{
+> > +	acpi_status status;
+> > +	struct wmax_u32_args in_args = {
+> > +		.operation = WMAX_OPERATION_ACTIVATE_PROFILE,
+> > +		.arg1 = profile,
+> > +		.arg2 = 0,
+> > +		.arg3 = 0,
+> > +	};
+> > +	u32 out_data;
+> > +
+> > +	status = alienware_wmax_command(&in_args, sizeof(in_args),
+> > +					WMAX_METHOD_THERMAL_CONTROL,
+> > +					&out_data);
+> > +
+> > +	if (ACPI_FAILURE(status))
+> > +		return -EIO;
+> > +
+> > +	if (out_data == WMAX_FAILURE_CODE)
+> > +		return -EBADRQC;
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static int wmax_game_shift_status(u8 operation, u32 *out_data)
+> > +{
+> > +	acpi_status status;
+> > +	struct wmax_u32_args in_args = {
+> > +		.operation = operation,
+> > +		.arg1 = 0,
+> > +		.arg2 = 0,
+> > +		.arg3 = 0,
+> > +	};
+> > +
+> > +	status = alienware_wmax_command(&in_args, sizeof(in_args),
+> > +					WMAX_METHOD_GAME_SHIFT_STATUS,
+> > +					out_data);
+> > +
+> > +	if (ACPI_FAILURE(status))
+> > +		return -EIO;
+> > +
+> > +	if (*out_data == WMAX_FAILURE_CODE)
+> > +		return -EOPNOTSUPP;
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static int thermal_profile_get(struct platform_profile_handler *pprof,
+> > +			       enum platform_profile_option *profile)
+> > +{
+> > +	u32 out_data;
+> > +	int ret;
+> > +
+> > +	ret = wmax_thermal_information(WMAX_OPERATION_CURRENT_PROFILE,
+> > +				       0, &out_data);
+> > +
+> > +	if (ret < 0)
+> > +		return ret;
+> > +
+> > +	if (!is_wmax_thermal_code(out_data))
+> > +		return -ENODATA;
+> > +
+> > +	out_data &= WMAX_THERMAL_MODE_MASK;
+> > +	*profile = wmax_mode_to_platform_profile[out_data];
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static int thermal_profile_set(struct platform_profile_handler *pprof,
+> > +			       enum platform_profile_option profile)
+> > +{
+> > +	if (quirks->gmode == 1) {
+> 
+> The variables are bool now so:
+> 
+> 	if (quirks->gmode) {
 
-Alright, so you think that pcim_intx() should always restore the INTx
-state that existed before the driver was loaded.
+I will fix those now.
 
-> > > This patch addresses those inconsistencies by saving the original
-> > > INTX_DISABLE state at the first devres_alloc(); this assures that
-> > > the
-> > > original state is restored properly, and the later pcim_intx()
-> > > calls
-> > > won't overwrite res->orig_intx any longer.
-> > >=20
-> > > Fixes: 25216afc9db5 ("PCI: Add managed pcim_intx()")
-> >=20
-> > That commit is also in 6.11, so we need:
-> >=20
-> > Cc: stable@vger.kernel.org=C2=A0# 6.11+
->=20
-> OK.
->=20
-> > > Link: https://lore.kernel.org/87v7xk2ps5.wl-tiwai@suse.de
-> > > Signed-off-by: Takashi Iwai <tiwai@suse.de>
-> > > ---
-> > > =C2=A0drivers/pci/devres.c | 18 ++++++++++++++----
-> > > =C2=A01 file changed, 14 insertions(+), 4 deletions(-)
-> > >=20
-> > > diff --git a/drivers/pci/devres.c b/drivers/pci/devres.c
-> > > index b133967faef8..aed3c9a355cb 100644
-> > > --- a/drivers/pci/devres.c
-> > > +++ b/drivers/pci/devres.c
-> > > @@ -438,8 +438,17 @@ static void pcim_intx_restore(struct device
-> > > *dev, void *data)
-> > > =C2=A0	__pcim_intx(pdev, res->orig_intx);
-> > > =C2=A0}
-> > > =C2=A0
-> > > -static struct pcim_intx_devres *get_or_create_intx_devres(struct
-> > > device *dev)
-> > > +static void save_orig_intx(struct pci_dev *pdev, struct
-> > > pcim_intx_devres *res)
-> > > =C2=A0{
-> > > +	u16 pci_command;
-> > > +
-> > > +	pci_read_config_word(pdev, PCI_COMMAND, &pci_command);
-> > > +	res->orig_intx =3D !(pci_command &
-> > > PCI_COMMAND_INTX_DISABLE);
-> > > +}
-> > > +
-> > > +static struct pcim_intx_devres *get_or_create_intx_devres(struct
-> > > pci_dev *pdev)
-> > > +{
-> > > +	struct device *dev =3D &pdev->dev;
-> > > =C2=A0	struct pcim_intx_devres *res;
-> > > =C2=A0
-> > > =C2=A0	res =3D devres_find(dev, pcim_intx_restore, NULL, NULL);
-> > > @@ -447,8 +456,10 @@ static struct pcim_intx_devres
-> > > *get_or_create_intx_devres(struct device *dev)
-> > > =C2=A0		return res;
-> > > =C2=A0
-> > > =C2=A0	res =3D devres_alloc(pcim_intx_restore, sizeof(*res),
-> > > GFP_KERNEL);
-> > > -	if (res)
-> > > +	if (res) {
-> > > +		save_orig_intx(pdev, res);
-> >=20
-> > This is not the correct place =E2=80=93 get_or_create_intx_devres() sho=
-uld
-> > get
-> > the resource if it exists, or allocate it if it doesn't, but its
-> > purpose is not to modify the resource.
->=20
-> The behavior of the function makes the implementation a bit harder,
-> because the initialization of res->orig_intx should be done only once
-> at the very first call.
->=20
-> > > =C2=A0		devres_add(dev, res);
-> > > +	}
-> > > =C2=A0
-> > > =C2=A0	return res;
-> > > =C2=A0}
-> > > @@ -467,11 +478,10 @@ int pcim_intx(struct pci_dev *pdev, int
-> > > enable)
-> > > =C2=A0{
-> > > =C2=A0	struct pcim_intx_devres *res;
-> > > =C2=A0
-> > > -	res =3D get_or_create_intx_devres(&pdev->dev);
-> > > +	res =3D get_or_create_intx_devres(pdev);
-> > > =C2=A0	if (!res)
-> > > =C2=A0		return -ENOMEM;
-> > > =C2=A0
-> > > -	res->orig_intx =3D !enable;
-> >=20
-> > Here is the right place to call save_orig_intx(). That way you also
-> > won't need the new variable struct device *dev above :)
->=20
-> The problem is that, at this place, we don't know whether it's a
-> freshly created devres or it's an inherited one.=C2=A0 So, we'd need to
-> modify get_or_create_intx_devres() to indicate that it's a new
-> creation.=C2=A0 Or, maybe simpler would be rather to flatten
-> get_or_create_intx_devres() into pcim_intx().=C2=A0 It's a small function=
-,
-> and it wouldn't be worsen the readability so much.
+> 
+> > +		u32 gmode_status;
+> > +		int ret;
+> > +
+> > +		ret = wmax_game_shift_status(WMAX_OPERATION_GET_GAME_SHIFT_STATUS,
+> > +					     &gmode_status);
+> > +
+> > +		if (ret < 0)
+> > +			return ret;
+> > +
+> > +		if ((profile == PLATFORM_PROFILE_PERFORMANCE && !gmode_status) ||
+> > +		    (profile != PLATFORM_PROFILE_PERFORMANCE && gmode_status)) {
+> > +			ret = wmax_game_shift_status(WMAX_OPERATION_TOGGLE_GAME_SHIFT,
+> > +						     &gmode_status);
+> > +
+> > +			if (ret < 0)
+> > +				return ret;
+> > +		}
+> > +	}
+> > +
+> > +	return wmax_thermal_control(supported_thermal_profiles[profile]);
+> > +}
+> > +
+> > +static int create_thermal_profile(void)
+> > +{
+> > +	u32 out_data;
+> > +	u32 gmode_status;
+> > +	enum wmax_thermal_mode mode;
+> > +	enum platform_profile_option profile;
+> > +	int ret;
+> > +
+> > +	for (u8 i = 0x2; i <= 0xD; i++) {
+> > +		ret = wmax_thermal_information(WMAX_OPERATION_LIST_IDS,
+> > +					       i, &out_data);
+> > +
+> > +		if (ret == -EIO)
+> > +			return 0;
+> > +
+> > +		if (ret == -EBADRQC)
+> > +			break;
+> > +
+> > +		if (!is_wmax_thermal_code(out_data))
+> > +			continue;
+> > +
+> > +		mode = out_data & WMAX_THERMAL_MODE_MASK;
+> > +		profile = wmax_mode_to_platform_profile[mode];
+> > +		supported_thermal_profiles[profile] = out_data;
+> > +
+> > +		set_bit(profile, pp_handler.choices);
+> > +	}
+> > +
+> > +	if (bitmap_empty(pp_handler.choices, PLATFORM_PROFILE_LAST))
+> > +		return 0;
+> > +
+> > +	ret = wmax_game_shift_status(WMAX_OPERATION_GET_GAME_SHIFT_STATUS,
+> > +				     &gmode_status);
+> > +
+> > +	if (!ret) {
+> > +		supported_thermal_profiles[PLATFORM_PROFILE_PERFORMANCE] =
+> > +			WMAX_THERMAL_MODE_GMODE;
+> > +
+> > +		set_bit(PLATFORM_PROFILE_PERFORMANCE, pp_handler.choices);
+> > +		quirks->gmode = 1;
+> 
+> = true;
+> 
+> > +	}
+> > +
+> > +	pp_handler.profile_get = thermal_profile_get;
+> > +	pp_handler.profile_set = thermal_profile_set;
+> > +
+> > +	ret = platform_profile_register(&pp_handler);
+> > +	if (ret < 0)
+> > +		return ret;
+> > +
+> > +	quirks->thermal = 1;
+> 
+> = true;
+> 
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static void remove_thermal_profile(void)
+> > +{
+> > +	if (quirks->thermal > 0)
+> 
+> if (quirks->thermal)
+> 
+> After changing those bool things, please add:
+> 
+> Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
 
-That might be the best solution. If it's done that way it should
-include a comment detailing the problem.
+Thank you so much for your reviews!
 
-Looking at the implementation of pci_intx() before
-25216afc9db53d85dc648aba8fb7f6d31f2c8731 probably indicates that you're
-right:
+Kurt
 
-	if (dr && !dr->restore_intx) {
-		dr->restore_intx =3D 1;
-		dr->orig_intx =3D !enable;
-	}
-
-
-So they used a boolean to only take the first state. Although that
-still wouldn't have necessarily been the pre-driver INTx state.
-
-
->=20
-> That is, something like below.
->=20
->=20
-> thanks,
->=20
-> Takashi
->=20
-> --- a/drivers/pci/devres.c
-> +++ b/drivers/pci/devres.c
-> @@ -438,21 +438,6 @@ static void pcim_intx_restore(struct device
-> *dev, void *data)
-> =C2=A0	__pcim_intx(pdev, res->orig_intx);
-> =C2=A0}
-> =C2=A0
-> -static struct pcim_intx_devres *get_or_create_intx_devres(struct
-> device *dev)
-> -{
-> -	struct pcim_intx_devres *res;
-> -
-> -	res =3D devres_find(dev, pcim_intx_restore, NULL, NULL);
-> -	if (res)
-> -		return res;
-> -
-> -	res =3D devres_alloc(pcim_intx_restore, sizeof(*res),
-> GFP_KERNEL);
-> -	if (res)
-> -		devres_add(dev, res);
-> -
-> -	return res;
-> -}
-> -
-> =C2=A0/**
-> =C2=A0 * pcim_intx - managed pci_intx()
-> =C2=A0 * @pdev: the PCI device to operate on
-> @@ -466,12 +451,21 @@ static struct pcim_intx_devres
-> *get_or_create_intx_devres(struct device *dev)
-> =C2=A0int pcim_intx(struct pci_dev *pdev, int enable)
-> =C2=A0{
-> =C2=A0	struct pcim_intx_devres *res;
-> +	struct device *dev =3D &pdev->dev;
-> +	u16 pci_command;
-> =C2=A0
-> -	res =3D get_or_create_intx_devres(&pdev->dev);
-> -	if (!res)
-> -		return -ENOMEM;
-> +	res =3D devres_find(dev, pcim_intx_restore, NULL, NULL);
-
-sth like:
-
-/*
- * pcim_intx() must only restore the INTx value that existed before the
- * driver was loaded, i.e., before it called pcim_intx() for the
- * first time.
- */
-
-> +	if (!res) {
-> +		res =3D devres_alloc(pcim_intx_restore, sizeof(*res),
-> GFP_KERNEL);
-> +		if (!res)
-> +			return -ENOMEM;
-> +
-> +		pci_read_config_word(pdev, PCI_COMMAND,
-> &pci_command);
-> +		res->orig_intx =3D !(pci_command &
-> PCI_COMMAND_INTX_DISABLE);
-> +
-> +		devres_add(dev, res);
-> +	}
-> =C2=A0
-> -	res->orig_intx =3D !enable;
-> =C2=A0	__pcim_intx(pdev, enable);
-
-Looks like a good idea to me
-
-The only thing I'm wondering about right now is the following: In the
-old days, there was only pci_intx(), which either did devres or didn't.
-
-Now you have two functions, pcim_intx() and pci_intx().
-
-The thing is that the driver could theoretically still intermingle them
-and for example call pci_intx() before pcim_intx(), which would lead
-the latter to still restore the wrong value.
-
-But that's very unlikely and I'm not sure whether we can do something
-about it.
-
-
-Regards,
-P.
-
-> =C2=A0
-> =C2=A0	return 0;
->=20
+> 
+> -- 
+>  i.
+> 
+> > +		platform_profile_remove();
+> > +}
+> > +
+> >  static int __init alienware_wmi_init(void)
+> >  {
+> >  	int ret;
+> > @@ -808,6 +1079,12 @@ static int __init alienware_wmi_init(void)
+> >  			goto fail_prep_deepsleep;
+> >  	}
+> >  
+> > +	if (interface == WMAX && quirks == &quirk_unknown) {
+> > +		ret = create_thermal_profile();
+> > +		if (ret)
+> > +			goto fail_prep_thermal_profile;
+> > +	}
+> > +
+> >  	ret = alienware_zone_init(platform_device);
+> >  	if (ret)
+> >  		goto fail_prep_zones;
+> > @@ -816,6 +1093,8 @@ static int __init alienware_wmi_init(void)
+> >  
+> >  fail_prep_zones:
+> >  	alienware_zone_exit(platform_device);
+> > +	remove_thermal_profile();
+> > +fail_prep_thermal_profile:
+> >  fail_prep_deepsleep:
+> >  fail_prep_amplifier:
+> >  fail_prep_hdmi:
+> > @@ -835,6 +1114,7 @@ static void __exit alienware_wmi_exit(void)
+> >  	if (platform_device) {
+> >  		alienware_zone_exit(platform_device);
+> >  		remove_hdmi(platform_device);
+> > +		remove_thermal_profile();
+> >  		platform_device_unregister(platform_device);
+> >  		platform_driver_unregister(&platform_driver);
+> >  	}
+> > 
 
 
