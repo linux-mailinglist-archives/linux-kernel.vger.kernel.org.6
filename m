@@ -1,90 +1,88 @@
-Return-Path: <linux-kernel+bounces-381769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F8B49B0409
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:29:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B8959B040B
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:30:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3B661C22790
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 13:29:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A303280DA1
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 13:30:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0AD4212189;
-	Fri, 25 Oct 2024 13:29:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9139C212191;
+	Fri, 25 Oct 2024 13:30:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="JeKfToFK"
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2059.outbound.protection.outlook.com [40.107.95.59])
+	dkim=pass (1024-bit key) header.d=supcom.onmicrosoft.com header.i=@supcom.onmicrosoft.com header.b="dMwZANMK"
+Received: from EUR02-VI1-obe.outbound.protection.outlook.com (mail-vi1eur02on2120.outbound.protection.outlook.com [40.107.241.120])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16EC2212182;
-	Fri, 25 Oct 2024 13:29:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.59
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 373FF21219F;
+	Fri, 25 Oct 2024 13:30:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.241.120
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729862963; cv=fail; b=H4EgsPxp6t4q+xw0l/q9CWwkphnAUnWxbr10cGXBTXq++rXZjLM3mxlNuhH17XRifvC/BXeeIMFA3I1Zel/tAx64p/9CMPCnFCCegzv4WavZOaKR28SPWEDK+maTOJswyfHZSKK791vw4FoeOIVsmOSaH3vHWscjinmeKp+GXkQ=
+	t=1729863036; cv=fail; b=mpYSuVmOuNUMkeXeSY6uqB+KbFixdk9815G/dVjH1InEeeUSSk0Bs7uhN5PDVThyI7mt7Ir/w+fvJ09cDzFE3MC7PLjVGw1BwfVuPq8MayHuc2s214UWCr0aZ+VcuFpSJeTycShpHjYcLoCMmlcd8GLDGC8LSsS4b0NWShdtZeU=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729862963; c=relaxed/simple;
-	bh=L/LIX0bhABW+Ao6KxwW5pcUfPx4e5T/PbnAbMCgWmb0=;
+	s=arc-20240116; t=1729863036; c=relaxed/simple;
+	bh=x1S19u6F4sFQaQeHCy8pq74aAYNaE6bXG2ApaZFVOos=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=nHAAkeo39adA3Dys2cQCbk03B+COX9/GBvhdTFB7qIEq53691xYlrUbSlfmJaLn77mzWwO5cOcchkYZZKrDyGinNwelYSVoJZENh9EaLWwvusyMswjKRYPvjndMZ0Cry3lpViN0ihKytwu1iGKFY+78/8CDSS5k1IVwJ5nEm8G4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=JeKfToFK; arc=fail smtp.client-ip=40.107.95.59
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	 Content-Disposition:In-Reply-To:MIME-Version; b=fC55vNfqCD9LmFzpNMyygxsiBW8SxTT7EuLU0BcI1/Rqic0NFfQmoaKzNOWgDGtl7TxeUhCLGTg2fqq8U1xtoNWlCEMB8J6tuA5WPIl6oq22AyAqs3MWjxaIUh887uvat18yp+oeRf1CqzKs1QwsHJzdiBel5VLmppWUagvKkxk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=supcom.tn; spf=pass smtp.mailfrom=supcom.tn; dkim=pass (1024-bit key) header.d=supcom.onmicrosoft.com header.i=@supcom.onmicrosoft.com header.b=dMwZANMK; arc=fail smtp.client-ip=40.107.241.120
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=supcom.tn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=supcom.tn
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=thJVvEPK1dCJiUIHEleC7DspZDREGUCEGKIDonbWrtDDS1JEg+Mbn3ODtXVUBuG/qRAI/KydFduJL78ne0jRU6Cy/TFR/35/ntF4A5IWi3FzW0pKiZpOgImUDXVMe0d6YMM9vRaqqCYQoGjr6lf5MTQ93WxB35ewPKid+7WfS2H8IzWc3kKAlH6K43VCRaNpmefLx79uMGx2meH+/l0IK/qJiPEkSgU4VuZ/uGJx3XcvaDcaA76QFs8dQZMxuJJlY1j44dRCZIL91OEz98MFUJCztZ6KBMcA4JHTOzhwwfPKnwQ1woXZk+JUaq948vCIvkCxBM9d2goIgdnKNclrzA==
+ b=H/64+Z7SdDcV+TqVmNv2bh6kP1MV56kAoW7iHUOpvsGYtgBB66T6s9tNgViPiugoSBivX1XC0M31iNqXk/R0tu0eWyBQWWDeNgGBQ7pswKgz8LKejlQVyzKW+NYBWYjm8Ov5jSxVT5EMiTUrDNffDsCOotod39PvFVx2N04HYfpstdUzPv0SzXCkfAuwP1WevhqVHPtu0taCLfMnnlFUJgsSTkxgKlPcITmIjzdSajeSxUzK7Rbsm2+EIrcvBY3e9kMhqeUTJ0X9Q5vJmet5uju3Ml46+jfEQXaNInvWE9nVci9YMlpMtOffqmTa2ZXueza1Yud8rwZR9eH85MEyhg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=exiL0L+NzLOl+byWnm22t6x3lknipDO8fZDtdQnnlp8=;
- b=GRw/Dk7VBTxsaeazwAg4sQvZmNU6PtC4Fy1JmIU0XaH6Yd7xU8vlz5RnpocRZyUbsRbL0MJdQev4fMBeLz40blNQ2Fy98ktvEvOB2wGQz+0i9i5D7++kzExctpjzvwOFq6TeFFnEhkvF1zlOa9EgdO7reOYx9mcpWLuMjJp2r85b4cK9BJ9l7Vq+6BAyW68A93FGS2O1LG4BfRJGlH0vzyiG/BWG72j6d97LplSd96vb2wcKajva+xFFAsXjQ0DEenDmH01V4O97lFKHTzVsb90Pfl0W7xDX63E8vdvi7uHACnIaRV1KmWdl7dYs2Nc0mWpz+eD+IB+gKosmKnFqCw==
+ bh=YvVKy+akeDx4oiwtt+vGK+o4ap2Fo0ZK5R46McfhxmE=;
+ b=ROzXep6hR5YPDrMA26L12sJP0cJOqs8T+my92R1LYz4Filjfv4EX9THbthre9kOB7AQWJQ29C3MCgXIUlMpVl4tIoaBWBntwUYyEK3+2co8feb/3kNcQf4XKRBfAMyjJ8hF0DGR1trMQHjl1CObWYqSzB2iiS7E11CgtXjoJyMPj1XcufF7E7U8gXNGg4EfnFtNcYcRyautT77KMa95Uhrfa3NWDPyT9PEG2ksdiQkcOnrsBHXQje9YvgEw+ikq5lhs+Wo594v5/XeMjM42+vzzQYOksvYemMbEN098uNJePF5sPxMm6unWg/x/dVJ/2cgDVR1Lwsp9erWdg31tnUA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
+ smtp.mailfrom=supcom.tn; dmarc=pass action=none header.from=supcom.tn;
+ dkim=pass header.d=supcom.tn; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=supcom.onmicrosoft.com; s=selector2-supcom-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=exiL0L+NzLOl+byWnm22t6x3lknipDO8fZDtdQnnlp8=;
- b=JeKfToFKNhhiVUIWy+hDFcKifgHbMUSNMqZhx9/3H1+JSrBndnYW3GbH3TPnTX4Ctqd/XXMhYHTY7pnu88sVPFpQ9nqqO1py8VFDzWLLB0eQaGvwRMm05S4rOyVMjXVLAUpNxz1KTi6xc3QvQcdh6sUV3BNq70xllhWJ02crKpL2Tp0NkNqKUPiSFoKwpKagWYIEGNFrYwEEYaz3CAuttKqOB8xIwt+ZHtqYOZyw7xDgtTcn5MvFb8NZ7HBjKOrmcK6FjvhOLmcAOuXh0xnMWivuiNAb4iZL6s+5vz/fQTtt6JopTJdPRlg+46X3otTz6qkfQShSugiuhza2m6xkqw==
+ bh=YvVKy+akeDx4oiwtt+vGK+o4ap2Fo0ZK5R46McfhxmE=;
+ b=dMwZANMKBSPUrDmAYiLaoqdnMzv+rIMRDyHQp5D5OVQHivRm3a20Z3UwP+a3GxBkltI4PYyZjB7P5gYcmlymmIOhY2R3vVZW9+IEpkGAVqsuSu10OS8vnY7+JfX8DIlHM7i4PWqRrmbLi1swQ+pX9PZsCQH0jNoLTQ4bGwuTzp8=
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
- by MN0PR12MB5881.namprd12.prod.outlook.com (2603:10b6:208:379::12) with
+ header.d=none;dmarc=none action=none header.from=supcom.tn;
+Received: from AS8PR04MB7910.eurprd04.prod.outlook.com (2603:10a6:20b:288::15)
+ by PA1PR04MB10365.eurprd04.prod.outlook.com (2603:10a6:102:442::19) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.33; Fri, 25 Oct
- 2024 13:29:17 +0000
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.8093.018; Fri, 25 Oct 2024
- 13:29:17 +0000
-Date: Fri, 25 Oct 2024 10:29:15 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: Alexey Kardashevskiy <aik@amd.com>, kevin.tian@intel.com,
-	will@kernel.org, joro@8bytes.org, suravee.suthikulpanit@amd.com,
-	robin.murphy@arm.com, dwmw2@infradead.org, baolu.lu@linux.intel.com,
-	shuah@kernel.org, linux-kernel@vger.kernel.org,
-	iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kselftest@vger.kernel.org, eric.auger@redhat.com,
-	jean-philippe@linaro.org, mdf@kernel.org, mshavit@google.com,
-	shameerali.kolothum.thodi@huawei.com, smostafa@google.com,
-	yi.l.liu@intel.com, zhangfei.gao@linaro.org,
-	patches@lists.linux.dev
-Subject: Re: [PATCH v4 00/14] iommufd: Add vIOMMU infrastructure (Part-2:
- vDEVICE)
-Message-ID: <20241025132915.GF6956@nvidia.com>
-References: <cover.1729555967.git.nicolinc@nvidia.com>
- <98a0e135-4f9b-4a2e-94b5-f1a830a49f19@amd.com>
- <ZxslrakslZbphayO@Asurada-Nvidia>
- <487ebe2c-718f-405c-8f20-213eab59ca0f@amd.com>
- <ZxsvofcC9xSSEMHi@Asurada-Nvidia>
- <607d019e-25b7-45b8-8c85-3829d4b53a82@amd.com>
- <Zxs3PYVLzmRfBf+/@Asurada-Nvidia>
-Content-Type: text/plain; charset=us-ascii
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.20; Fri, 25 Oct
+ 2024 13:30:22 +0000
+Received: from AS8PR04MB7910.eurprd04.prod.outlook.com
+ ([fe80::7acd:fca0:f5c0:4e99]) by AS8PR04MB7910.eurprd04.prod.outlook.com
+ ([fe80::7acd:fca0:f5c0:4e99%7]) with mapi id 15.20.8093.014; Fri, 25 Oct 2024
+ 13:30:22 +0000
+Date: Fri, 25 Oct 2024 14:30:16 +0100
+From: Mohamed Ghanmi <mohamed.ghanmi@supcom.tn>
+To: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
+Cc: Armin Wolf <W_Armin@gmx.de>, corentin.chary@gmail.com, luke@ljones.dev,
+	hdegoede@redhat.com, ilpo.jarvinen@linux.intel.com,
+	platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Michael Larabel <Michael@phoronix.com>,
+	Casey Bowman <casey.g.bowman@intel.com>
+Subject: Re: [PATCH] platform/x86: asus-wmi: Support setting AIPT modes
+Message-ID: <ZxudaA3pCoD4Qlls@laptop>
+References: <20241020065051.1724435-1-srinivas.pandruvada@linux.intel.com>
+ <911ce141-8f20-48fb-bc43-e6d4262dbc81@gmx.de>
+ <8d70bb6a-c6fd-49de-a494-e97c093827e9@gmx.de>
+ <ZxkLz6QBahA7WAyh@laptop>
+ <ab6cfea0-a091-4039-94ac-9a26f3df5da5@gmx.de>
+ <Zxk5ZwG-61iVP3Qm@laptop>
+ <8c4209a4-f6d4-4289-9c57-0ef0188149f3@gmx.de>
+ <e1a3a8d980f2c2ff9ffe4f43b91ddffc81d85265.camel@linux.intel.com>
+ <01b95adb-3ae9-4619-9652-12a5ddafeb82@gmx.de>
+ <73e2e4708cdafe42541eaf047727aa6cf3966248.camel@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <Zxs3PYVLzmRfBf+/@Asurada-Nvidia>
-X-ClientProxiedBy: BN9PR03CA0104.namprd03.prod.outlook.com
- (2603:10b6:408:fd::19) To CH3PR12MB8659.namprd12.prod.outlook.com
- (2603:10b6:610:17c::13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <73e2e4708cdafe42541eaf047727aa6cf3966248.camel@linux.intel.com>
+X-ClientProxiedBy: MR1P264CA0211.FRAP264.PROD.OUTLOOK.COM
+ (2603:10a6:501:56::13) To AS8PR04MB7910.eurprd04.prod.outlook.com
+ (2603:10a6:20b:288::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,119 +90,771 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|MN0PR12MB5881:EE_
-X-MS-Office365-Filtering-Correlation-Id: 59dfeacd-4a06-45ec-78ca-08dcf4f9063f
+X-MS-TrafficTypeDiagnostic: AS8PR04MB7910:EE_|PA1PR04MB10365:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8002d21f-408b-45df-c50b-08dcf4f92c80
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|41320700013|366016|376014|7416014|52116014|38350700014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?JQvAeciq5T70wNt+mLuKjKTlPRuRRsuS6d6tV84uWhdtEzbnq9P0qX6H4M9K?=
- =?us-ascii?Q?GBdcaCnJ3uPWg/IL4SrotKwA1rMM1jNK5UMWHXqIyZLgqTxkbrryhoMCnerm?=
- =?us-ascii?Q?tVtWy2CgBMwq6LSheeeM6pcGnthTwAUVbc5xd1n6yT2GJMHHPQN9WVK4/hGv?=
- =?us-ascii?Q?NV1MMPiZ8A5SovPyb1G9qaplofYOmZ0pTwVAS33zW2+jkyw0iHNM0vW1fNdl?=
- =?us-ascii?Q?ccWliEG1jvJYGMs7guYCTEE/w8Xc8rbiyI6fG5mItXh7E+kLm/AvgzignWom?=
- =?us-ascii?Q?nIV82mRUDZ44bFb9h5Pl/RGpioUQvFOFWtYzN0zYjW8PN+bd9T0DHIGPn+0/?=
- =?us-ascii?Q?oIWh9wjUmlEh6a+LBazNbhKdQSUpmTEXsmw/f22Ua8QZnqVD20Btndh4eoEb?=
- =?us-ascii?Q?7UZcprht0LftjNETXcqlvhPiFV7eg3tJVH80tQMERqDREfouIagRz7D5WIiQ?=
- =?us-ascii?Q?QG3GFHvQJA59fIG4wXG8M2ls+s2u7LHDA2Kbmvmkk+MND4ygwpwfJQawCpfy?=
- =?us-ascii?Q?mU02cod7Z54c8tYeO+AJ916rE61aGpa/mNWHismY1bUq4pmFrw37JUoS9/jm?=
- =?us-ascii?Q?X8Yz37JOMEmEJ9KFAimtn+PeQCRYcmFcLKiCKnaLGqiz9FUCZfBhP+YHo2jg?=
- =?us-ascii?Q?s31SaKgX/8vqSbWEZQVPNTN1CFTWv2rZs+KpdSZfkDWfgh7WkD+oull+GQbV?=
- =?us-ascii?Q?+BwBPvT98VznAue7xyx3rl4qlmEKMqbxQ+uoa46qj+wMkSkdpqdHCczwOlVj?=
- =?us-ascii?Q?pRSS+43uMedJ1O8AWacBFUgGnikJnTJIOyncDMyBsg+/UGC5oCHDok4wOgMA?=
- =?us-ascii?Q?v38AAd9xVxUJTwO2b36P2mbcSe/0NuMAMB9+PDjY05kqi9wN0H1l8QRoVTiZ?=
- =?us-ascii?Q?4D/z5AXFT1tW4FDaa4qJi9K4WTf4wKmzQ7bzuCCRLIp6lb7gIXo6458+SP1N?=
- =?us-ascii?Q?Wk4uwYmN6YCJaF6EH1TPbuv0bugTsexiQ95pNhq94djiywNExrAqWShb3RHY?=
- =?us-ascii?Q?S/q/4FVcy+V3eR7+dG2iuSDdg3Gs+s5Hx/okDGYFyoXsF2TbjpYPBPdt1Vws?=
- =?us-ascii?Q?Lm3hzl4c1/57lgPuIDzNV6I3Oko0ORJKVx6pe4Xb4ydfZYbx8CZuOMbBAzp0?=
- =?us-ascii?Q?4AiNAN1j5+6Zpgs3SlclMVHH1FzccMdBE2WRB/WpON5rWqHbVfpGqVQ34ZMi?=
- =?us-ascii?Q?RQjJy4EM/SacGUVNFrIARvBe+xVsQ69PIAulPOQiyPjQ8R0N8Ve70zQVCT9u?=
- =?us-ascii?Q?uxjr/bW7K16Nm4yo0iArL7RG8wNh77CxcoTL9IYFWNu6/0pCwSJa7CJjVoZg?=
- =?us-ascii?Q?8d/W2di54vSYj/J6tH4+wujh?=
+	=?utf-8?B?SUd6VHNUUURlVEptYk1wQnA1ams3OEtGRXlLRWsxazVITmE0b2pWVDc0MlNY?=
+ =?utf-8?B?cFMzd1huTTNuaThoek5lbEpyUytwa28yVnd1bDJDSGFvb29WK0Y2RGxmRk85?=
+ =?utf-8?B?ZzRHeDFhL1NzNmN2dnV5by96ZFR3aHNlbHpDR25palZnMG9naXZFUFhjbW5t?=
+ =?utf-8?B?TWxWWmUvM0ppODJzU21jeVpLVUJVMGVickpKTnJUWmxmN1JKb3pJVFY2bVIx?=
+ =?utf-8?B?b1RZNWhyUi93VTBwWHBUTXlJdWtMUGFTTE52bmJWSWgzQmpBUWxzdExTK0lS?=
+ =?utf-8?B?NUFVRU1uUHJwZlNzT0wyYng1b09DUFRxMS9abDBGNHBINkM0UG93UjczUTRq?=
+ =?utf-8?B?bEtWcUxMUXdxL0svZFdLRWlZV2hrRlBUbHUvWDIwakdiOW9yd3JId05OWnNv?=
+ =?utf-8?B?RXc0WXB0UWV0RWNyNG1xbGpIcHhjbUpBRERKY3lJL0tyUjZVWTFXVjBnM09Z?=
+ =?utf-8?B?eWdpSlVsaitnTFhVMmYwTEtGcFByVG8vVGdhL0FHWnpiVldiQUhodjFtbmhi?=
+ =?utf-8?B?ak9jSlRDTDRQdHBCK0haVFJkZFpZb2JSU2QzVjNxTnU3TkFYaU9HbHM4Tk9N?=
+ =?utf-8?B?TWFmTWdVNUtEZWxxb0tCU2pFdXRqWFdaM1N2MVAvY1FqWURGdnlMZll3Zzk2?=
+ =?utf-8?B?b2JlRlB4UGswTkl2a214VGRocmJMY0t0dDI3cExwUFAxSzZyUjRUaS9WWkxn?=
+ =?utf-8?B?QjRFbjl0c2V1eTJtNTlFQ0NZYk02VGNha1J3SGdpNDVmbWRyNW9tYWpQZ2hn?=
+ =?utf-8?B?QTd1SWpOdmwzeUFkNFA4dUgyN1YrMzBQVDNhWUN2alRiRzRKK1RyMlQxaDJp?=
+ =?utf-8?B?VHJNNWJCRjJBd21Mc04rL1hGalpSZmhrQVNaZ1pVbVVWOExsVGtOb1crQkc2?=
+ =?utf-8?B?d1B0RkVBZVcxZjVkZ2JoRDdDNlRPR29IUVJ3bWp2bWhQVDBpd0NSODg5SzU2?=
+ =?utf-8?B?MjJQckk2STcrMXRUbkRMY2J3U3YwSlNCYThDTlZ5YUFuVGZrUjRsamZzUDhn?=
+ =?utf-8?B?bnFFWlZTMGFDTytuV004NTRXdjY3QkJJTTUya3ZSYlVBWkllWlM2WEdTekxq?=
+ =?utf-8?B?MkdHa2pQYnNMem83TURrWlNoS3dBdXd3UWQ4OWtIeDVLOEQrSEp2cXhOYUpY?=
+ =?utf-8?B?MUxnTVlEd29HNFBRZ041Y1phejFFa2lCSkVLdlZCdE1VMTFxRlBhY3pUWi9O?=
+ =?utf-8?B?OTNleEtVemNiM1hKZWZZbTBDMFdnK1ZVZWxieXhGWVUvWmIraVZqVE52TER6?=
+ =?utf-8?B?RFJBT1BOdEYwY0xYSXhuSzZsQmc3TnlvcHZPcE5VQ0FRdzNGclZTYVJmQ2Jl?=
+ =?utf-8?B?TkhGTGQzQ2VpcUppSktVblQzT0pSdWRlY1MrRjRQSlpMWHRRUGJkYk5mOUEy?=
+ =?utf-8?B?MVBzRmxlN2lzZzN1dmZzbllOaGRtQkpiNEUzMzhOdEpTM1ZkRHNINWQwdlNE?=
+ =?utf-8?B?MnhHK0lPMnpBaGpnamJNbFJabW8zNlduRHl4V2t2UXdESnh5Y0RieVhycER0?=
+ =?utf-8?B?L0hsZGtNNmNqTXlZL21QKzZOcTFsNCtmT0dmcVg1MDlEckNRVFU1WEJVVnJ3?=
+ =?utf-8?B?Y0VOY29wS045NDdEeDRJRE15RVhXYW1Yc2I4UjNpZUpPSWt6V0EveHpJTnU0?=
+ =?utf-8?B?MS9lNUZWajc1V1YyMjdWYW4vTFNRQWlua3BWUTNjWFVob3VLalJwWktDZkdO?=
+ =?utf-8?B?aUpLbmhHRjZheXlpQjJRRGpJREduOHM1aEJDOGFCRjNzcDRSa3RHS1U0aW8y?=
+ =?utf-8?Q?CRcpPQpBMGe/T69vW8U7C4unNYLlwkrY6PCn05N?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB7910.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(41320700013)(366016)(376014)(7416014)(52116014)(38350700014);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?AxAZv221AiNf4dFCj9Dk0yQOY4pcCouHZyo7eqaz5YE2mrsxjwvn6gk5GVEj?=
- =?us-ascii?Q?Cu/D1CfjRCOinDsi/OsFYtReG52IUlF9hvrPN3PMAxCwnZX6kOQimxp+lhRf?=
- =?us-ascii?Q?WWSyCS+Yrf1GPL8Cr6j+o2H6cYWpQyOUbzCWzYG0eFSz+wyjKnLgOHGMG85A?=
- =?us-ascii?Q?gy2xhje0J8hUNv9O19Ni7eAZv4ya/RCmSGEPoyoCiZ3egYSFmljKpHMPUWb2?=
- =?us-ascii?Q?rXmvTFn+NTqgOeE9y2fh/MyDdj9RwrN8FgnR1czp7i0SGEwVDCiA1frqC58r?=
- =?us-ascii?Q?taG0JbfRO3+MpXv8bPBtTWFgzJsLHFG3fsdzpdDEifFDJ1jaI4KFer7fgO40?=
- =?us-ascii?Q?ddP3CkuvhhlVOeevhidYQvWjz7PYBMbfdwKlzAcaLnfy4FfZEGQNlX6KYDNV?=
- =?us-ascii?Q?ardDMkuCFDl3tetKB8ihc19msemjpJX7aKvtZKpS9c5g4ya6PFsLqPjjgdsx?=
- =?us-ascii?Q?Ymg6jViwBIgFngdZrBJqMGjaP7NNeVimQnrvb8LtlnMvnOUwPe1sUCS+oW6p?=
- =?us-ascii?Q?160x8O3wkwmVzpmNWI8I1Gv54QtyNjCnNgOr97CPNJ47kU7nn7yJ0eBrE0rf?=
- =?us-ascii?Q?7k0uopE5YVWnBWqTPuhBag8H83e3XN3ybo8kL9t5Ti3GKnhb0UnfzaiKJLu7?=
- =?us-ascii?Q?+c+j03SHYLS6FXNXYlemquH1d6slrNn+JC+pAWWRZUKgSr+qAzEqaIDv1Mbv?=
- =?us-ascii?Q?LOuxPkX9zsAGdDxQYLCLPxkisr1IK4rPhN1PYdF4Zu/ptKgDsQIsfGykcAGz?=
- =?us-ascii?Q?isYqiCtopASOyKaSxaR+JQ5tvPdJH5CpMEcYKyuCR87PqVphnDI1rIFJQasg?=
- =?us-ascii?Q?TR9PsrrIcWGHBmFxa6d7vz17cCWuoNxRgRXDgAhwFnaKClnx20xdEIOMozXv?=
- =?us-ascii?Q?ZuBAjITh1dhDkNkcP8bBDPzsLbx+m24hEeOVWto99b3PsXHnzS3gMJWVoR33?=
- =?us-ascii?Q?X3EWSex/HvDN6xQw0k0cYYI97nh7Sf+z17o9QIkY4QQalesz2fY/G7C9EtJK?=
- =?us-ascii?Q?HSBnHKXc/BM9KgUo8lyZvLjIOaEy9JQQAJJUVEAmoDze6UjISUaqlS6yFS8d?=
- =?us-ascii?Q?TpDdJe6MO5ueCW5IJD0Z05Tty+6f/VWiUQWKLLXlooQ+orTLTNjoea7A8NJw?=
- =?us-ascii?Q?IPsU58D4pysmi5qfoyZlPfi2nMYDdrirT54JcETfFdhRgHKLsu89HQ54ozos?=
- =?us-ascii?Q?dKef1dl/X9OtX6vF43fqSbKrIBsveXiXRzgZ/WAVPBibxiZ3iLUsjDBvlJrH?=
- =?us-ascii?Q?N5mtkGuFCH+IMrAkPS+MPdAbnUaZSFnPH97S/g5O6J3ZcPSck43sy8G5krDJ?=
- =?us-ascii?Q?vMOBqiG+tAORlva1uBAIssYD3WBZ/oV2UC4pl/60Fi+a9iCxblMjhi8c7s+a?=
- =?us-ascii?Q?OG3Br3SFlw7PJK98ryaGgoZ2jGlCdy9BJcWhOVj7hzpf3XuK1tYhQ0CEYEEM?=
- =?us-ascii?Q?ddHFio7uscsk8f2AoN8nDwhXrYlRZ9oHYw8+WJRRwYAIHhEf48e7iJWkBMye?=
- =?us-ascii?Q?V3sCwtJSjYgyaTEN/LkNnmHX9gi+0VI8ct4cuIQPkXubaXmFzUNM6FiPqmUE?=
- =?us-ascii?Q?Uz9nL7aH8rp8Ppa/cv0q3LMEv3hA4fizgQl8Lhzl?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 59dfeacd-4a06-45ec-78ca-08dcf4f9063f
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
+	=?utf-8?B?VDFvS0VVNGMwRE9ndDBhTTR4UEtKdzJwTkswRGRXNGt5K01PZEpudFQ2ejlN?=
+ =?utf-8?B?ZU1zOUhDK0VOSEJKd0VNc2xWNWtGU1F4Mm9VVytYMXQ0U21KRzY0NE9oQUlx?=
+ =?utf-8?B?L25JSTBtaU83NlY2aURrTUcyaDVHOGFvS2pCTUtwdTlLQmZrdWM4WFRyRDVT?=
+ =?utf-8?B?cHJORXp6N0xjK3ZZbzZKREdTOUVmRHQ3ODlwTVFzQWRmMFFZdDI4UnFrZThz?=
+ =?utf-8?B?elRDbVYrMEhwMHArYlkzNzNqQU1wZElWR0NsaDlwVXhFOHdHbzN2WmZRTndS?=
+ =?utf-8?B?RWw4bkJWV3dLNWtiZUxqOUFTY256b21Rd0hINDNvNEFGZ05nL21jd3BSYTdB?=
+ =?utf-8?B?azltM01Lbm5Va0RKZXZqVXM1L3IvNEo2dldtVGtyTmxUdjRLUWhLNDlaYWZ0?=
+ =?utf-8?B?d2REL21hSHV5c3ZQZGFYNE9QSnJUQ3FTaVBvVGF5cXphdzJHei9vSE54Q0I5?=
+ =?utf-8?B?TWsrRnJvYWZ2dnNobzZXS0ZpeFZTaXkybTFyZmNCM1BwY3ZPbUp2U3g3cjZT?=
+ =?utf-8?B?cytRZ0FSOG9mS1Y1TnhndUlyN0J3Qnd2dFk4dmxiQ0pGZlJxQ0Y1TWVqMnIy?=
+ =?utf-8?B?Skt4OHh3NlNQUVEvK2tDQWZlZkd0Q0w2MTFWYThWbzlpUkh1L2RFd2lRcGJ0?=
+ =?utf-8?B?VGVqdEVmaU15cld0RkUzRVB0T3NzZmV2SDFZNzhBUm5XQm1CQ2Z5UlhKUGFM?=
+ =?utf-8?B?RVZWTTNuSExvTW5YNVAvR3krV21jSHpYZnZsbEpib2p0aGFiZUk4S0lXNjRa?=
+ =?utf-8?B?cjAzclRjWXJIQ2gzK3k2Ky9sQmdhbm1zc2g0a0RjVzRldGc5RFR2YlJpZWk4?=
+ =?utf-8?B?SjBYYTVLTTNjc0s0ak44VlF2ZkppZVBDSWtBTFdXTlJsdEl1bFVGU3RGdEx0?=
+ =?utf-8?B?bUQ4M20wU2xZUXFQWFdzcEdtOTlaQmRCRHhaVkJOd2lnZmdKZEprdHZ5bWU0?=
+ =?utf-8?B?eCtad0lhZnBEUkZ5NHJ6UXBMYjNTRjhxeTR5Mmw2RkF0OHpPOXVZSlFCeHdv?=
+ =?utf-8?B?RVlURGZ3cC9yYWltRzhIYksxZXBaT081MnpaVGtqTDVnRzJCSjIxQmNGakcz?=
+ =?utf-8?B?bklRUzMvd3ZJVGdGVCtWNWtHNmhCU09Nc1V4ZHVtVTZSWUdEbFI4Ymd3S014?=
+ =?utf-8?B?dVFybUx2TXIwZ29BMkN4Y0N6UVF0NXgrUnQxZUgzdUxTZ2ZmWTZUZEI2a0Qr?=
+ =?utf-8?B?TjBxRnVIMmE5NU9zeGcrR1ZHRzR4T1h6OGcxZjBVVEZKUUh4a2FVOFNUVTlh?=
+ =?utf-8?B?eklnNmtSSWF4czd1OU1MR2IxNEdUQldFdS9pdVdYN0s2VGhFOVJaeEhBVWNo?=
+ =?utf-8?B?VmxMWVl1em1aTit4WUFVcThBdjIwYXBzYVMwMnl6S053YldHbUNSSDZoZ253?=
+ =?utf-8?B?N25PU2ZDclIvNWxMemNHQUZ4RUlzOVppU0FqT1drN1ZoNWV1YmlOVlRmMTlG?=
+ =?utf-8?B?WnBEamxkLzE2b0JCSm43QVFYazVoZ3FVeUdTTjdRQllLL29FYkorT004Z0FZ?=
+ =?utf-8?B?ejREN0RuTWZiL0haTllvTUZRV3VPSVpVTnB4VExIcXFLZklHWkFvdEhPTDFU?=
+ =?utf-8?B?R1FHeXZKaDh2cUxUSVUyNVFqWjhjMUJMaXlCdk40U3I4YWk0UXUvb1lPVlZm?=
+ =?utf-8?B?Mk5LY2NHT3k0ZnoweHY5b2pFamlaeE1peXp4dFlqV1JTRmhhTkRQSEZtbGpY?=
+ =?utf-8?B?Rkw3MjBMeFJoa2U4aG5wZ0srb05sNVh4b0YvSFNhVG1FY1pFcVhkVkZjbDRT?=
+ =?utf-8?B?cU9GeXNSaUNydGk2Ukwweko2dXZLNnN6S1pVZWQ2RTRpMXgydlZXdUVaRnNS?=
+ =?utf-8?B?a3ZhMFArdlk2N1ltdERKemF5S2pnd08zWXJSWlhWTWNLWGJEdjdzS0tFMjgr?=
+ =?utf-8?B?c3pXZy8xR0U5YW9CRVppSDBtRklhd05Ua1huNjBIRHlnWUJvV3N0U3FYTHdZ?=
+ =?utf-8?B?ZGdnQTFRdUc2dmM4VllrS3ExU1dsd0c1RVpiRUpuMDhQQkIyQTF2eFlPOHcr?=
+ =?utf-8?B?WXFETUsvYTlCREFtSE5BS21XcWZpOGJvbUVSbDdTSVdFa2xtN3cxYXM2NmNy?=
+ =?utf-8?B?dVlnL1N3b0MwclR0QlA5Z09qMmJhMGlkdnNCWGhyN1RNaTJaSE9GbS93WkFT?=
+ =?utf-8?B?UUMrbkF1dHVyUmwyMWlybjNNZUhqTS9oYXE1V0lXdS9OcHRySitMRkZVK3Q0?=
+ =?utf-8?B?TFE9PQ==?=
+X-OriginatorOrg: supcom.tn
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8002d21f-408b-45df-c50b-08dcf4f92c80
+X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB7910.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Oct 2024 13:29:17.2901
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Oct 2024 13:30:21.9652
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-Id: 8f85f528-6195-4e97-8e41-f5a9ad3bed4a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: cH7c+2kanbmyKaDkqb0y9+ClSbEIKJPz4JF50W++WEhx9rwR3aHLD1UspLo1EciK
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB5881
+X-MS-Exchange-CrossTenant-UserPrincipalName: bN0+lXYRn0EDIf9Rm04Q519hxwxvcrytlRbFemxWHz0AlwsTuk4xflzwbBad0EZZO3GpJx14+go4EScEYzZggBuSOQWsyaTTlehuphTnNpo=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA1PR04MB10365
 
-On Thu, Oct 24, 2024 at 11:14:21PM -0700, Nicolin Chen wrote:
-> On Fri, Oct 25, 2024 at 04:58:33PM +1100, Alexey Kardashevskiy wrote:
-> > > > > > Is there any real example of a .vdevice_alloc hook, besides the
-> > > > > > selftests? It is not in iommufd_viommu_p2-v4-with-rmr, hence the
-> > > > > > question. I am trying to sketch something with this new machinery and
-> > > > > > less guessing would be nice. Thanks,
-> > > > > 
-> > > > > No, I am actually dropping that one, and moving the vdevice struct
-> > > > > to the private header, as there seems to be no use case:
-> > > > 
-> > > > Why keep it then?
-> > > 
-> > > We need that structure to store per-vIOMMU virtual ID. Hiding it
-> > > in the core only means we need to provide another vIOMMU APIs for
-> > > drivers to look up the ID, v.s. exposing it for drivers to access
-> > > directly.
+On Thu, Oct 24, 2024 at 11:15:31AM -0700, srinivas pandruvada wrote:
+> On Wed, 2024-10-23 at 22:32 +0200, Armin Wolf wrote:
+> > Am 23.10.24 um 22:15 schrieb srinivas pandruvada:
 > > 
-> > Sorry I lost you here. If we need it, then there should be an example of
-> > .vdevice_alloc() somewhere but you say they is not one. How do you test
-> > this, with just selftests? :) Thanks,
+> > > On Wed, 2024-10-23 at 20:57 +0200, Armin Wolf wrote:
+> > > > Am 23.10.24 um 19:59 schrieb Mohamed Ghanmi:
+> > > > 
+> > > > > On Wed, Oct 23, 2024 at 06:31:17PM +0200, Armin Wolf wrote:
+> > > > > > Am 23.10.24 um 16:44 schrieb Mohamed Ghanmi:
+> > > > > > 
+> > > > > > > Hello !
+> > > > > > > On Sun, Oct 20, 2024 at 09:42:45PM +0200, Armin Wolf wrote:
+> > > > > > > > Am 20.10.24 um 21:05 schrieb Armin Wolf:
+> > > > > > > > 
+> > > > > > > > > Am 20.10.24 um 08:50 schrieb Srinivas Pandruvada:
+> > > > > > > > > 
+> > > > > > > > > > Some recent Asus laptops are supporting ASUS
+> > > > > > > > > > Intelligent
+> > > > > > > > > > Performance
+> > > > > > > > > > Technology (AIPT). This solution allows users to have
+> > > > > > > > > > maximized CPU
+> > > > > > > > > > performance in models with a chassis providing more
+> > > > > > > > > > thermal head room.
+> > > > > > > > > > Refer to [1].
+> > > > > > > > > > 
+> > > > > > > > > > There are major performance issues when Linux is
+> > > > > > > > > > installed on these
+> > > > > > > > > > laptops compared to Windows install. One such report
+> > > > > > > > > > is
+> > > > > > > > > > published for
+> > > > > > > > > > Graphics benchmarks on Asus ASUS Zenbook S 14 with
+> > > > > > > > > > Lunar
+> > > > > > > > > > Lake
+> > > > > > > > > > processors [2].
+> > > > > > > > > > 
+> > > > > > > > > > By default, these laptops are booting in "Whisper
+> > > > > > > > > > Mode"
+> > > > > > > > > > till OS power
+> > > > > > > > > > management or tools change this to other AIPT mode.
+> > > > > > > > > > This
+> > > > > > > > > > "Whisper" mode
+> > > > > > > > > > calls to set lower maximum and minimum RAPL (Running
+> > > > > > > > > > Average Power
+> > > > > > > > > > Limit)
+> > > > > > > > > > via thermal tables. On Linux this leads to lower
+> > > > > > > > > > performance even when
+> > > > > > > > > > platform power profile is "balanced". This "Whisper"
+> > > > > > > > > > mode
+> > > > > > > > > > should
+> > > > > > > > > > correspond to "quiet" mode.
+> > > > > > > > > > 
+> > > > > > > > > > So, when AIPT is present change the default mode to
+> > > > > > > > > > "Standard" during
+> > > > > > > > > > boot. Map the three platform power profile modes as
+> > > > > > > > > > follows:
+> > > > > > > > > > 
+> > > > > > > > > > Power Profile Mode      AIPT mode
+> > > > > > > > > > -----------------------------------
+> > > > > > > > > > quiet            Whisper
+> > > > > > > > > > balanced        Standard
+> > > > > > > > > > performance        Performance
+> > > > > > > > > > ------------------------------------
+> > > > > > > > > > 
+> > > > > > > > > > Here AIPT mode can be detected by checking presese of
+> > > > > > > > > > "FANL" method
+> > > > > > > > > > under
+> > > > > > > > > > PNP HID "PNP0C14" and UID "ATK". If AIPT mode is
+> > > > > > > > > > present,
+> > > > > > > > > > this takes
+> > > > > > > > > > precedence over the existing VIVO thermal policy.
+> > > > > > > > > > These
+> > > > > > > > > > modes are set
+> > > > > > > > > > using "FANL" method.
+> > > > > > > > > > 
+> > > > > > > > > > Although this “FANL” method is not used in the Asus
+> > > > > > > > > > WMI
+> > > > > > > > > > driver, users
+> > > > > > > > > > have used this method from user space [3] to set AIPT
+> > > > > > > > > > modes. Used this
+> > > > > > > > > > as a reference.
+> > > > > > > > > > 
+> > > > > > > > > > Link:
+> > > > > > > > > > https://www.asus.com/content/laptop-asus-intelligent-performance-technology-aipt/
+> > > > > > > > > > # [1]
+> > > > > > > > > > Reported-by: Michael Larabel <Michael@phoronix.com>
+> > > > > > > > > > Closes:
+> > > > > > > > > > https://www.phoronix.com/review/lunar-lake-xe2/5 #
+> > > > > > > > > > [2]
+> > > > > > > > > > Link:
+> > > > > > > > > > https://github.com/dominiksalvet/asus-fan-control/issues/151
+> > > > > > > > > >   # [3]
+> > > > > > > > > > Tested-by: Casey Bowman <casey.g.bowman@intel.com>
+> > > > > > > > > > Signed-off-by: Srinivas Pandruvada
+> > > > > > > > > > <srinivas.pandruvada@linux.intel.com>
+> > > > > > > > > > ---
+> > > > > > > > > >      drivers/platform/x86/asus-wmi.c | 93
+> > > > > > > > > > +++++++++++++++++++++++++++++++--
+> > > > > > > > > >      1 file changed, 89 insertions(+), 4 deletions(-)
+> > > > > > > > > > 
+> > > > > > > > > > diff --git a/drivers/platform/x86/asus-wmi.c
+> > > > > > > > > > b/drivers/platform/x86/asus-wmi.c
+> > > > > > > > > > index 7a48220b4f5a..06689d0f98c7 100644
+> > > > > > > > > > --- a/drivers/platform/x86/asus-wmi.c
+> > > > > > > > > > +++ b/drivers/platform/x86/asus-wmi.c
+> > > > > > > > > > @@ -100,6 +100,11 @@ module_param(fnlock_default,
+> > > > > > > > > > bool,
+> > > > > > > > > > 0444);
+> > > > > > > > > >      #define
+> > > > > > > > > > ASUS_THROTTLE_THERMAL_POLICY_SILENT_VIVO    1
+> > > > > > > > > >      #define
+> > > > > > > > > > ASUS_THROTTLE_THERMAL_POLICY_OVERBOOST_VIVO    2
+> > > > > > > > > > 
+> > > > > > > > > > +#define AIPT_STANDARD                0
+> > > > > > > > > > +#define AIPT_WHISPER                1
+> > > > > > > > > > +#define AIPT_PERFORMANCE            2
+> > > > > > > > > > +#define AIPT_FULL_SPEED                3
+> > > > > > > > > > +
+> > > > > > > > > >      #define PLATFORM_PROFILE_MAX 2
+> > > > > > > > > > 
+> > > > > > > > > >      #define USB_INTEL_XUSB2PR        0xD0
+> > > > > > > > > > @@ -333,6 +338,9 @@ struct asus_wmi {
+> > > > > > > > > >          struct asus_wmi_debug debug;
+> > > > > > > > > > 
+> > > > > > > > > >          struct asus_wmi_driver *driver;
+> > > > > > > > > > +    acpi_handle acpi_mgmt_handle;
+> > > > > > > > > > +    int asus_aipt_mode;
+> > > > > > > > > > +    bool asus_aipt_present;
+> > > > > > > > > >      };
+> > > > > > > > > > 
+> > > > > > > > > >      /* WMI
+> > > > > > > > > > *****************************************************
+> > > > > > > > > > ****
+> > > > > > > > > > ***************/
+> > > > > > > > > > @@ -3804,6 +3812,19 @@ static ssize_t
+> > > > > > > > > > throttle_thermal_policy_store(struct device *dev,
+> > > > > > > > > >      static DEVICE_ATTR_RW(throttle_thermal_policy);
+> > > > > > > > > > 
+> > > > > > > > > >      /* Platform profile
+> > > > > > > > > > *****************************************************
+> > > > > > > > > > ****
+> > > > > > > > > > **/
+> > > > > > > > > > +static int asus_wmi_write_aipt_mode(struct asus_wmi
+> > > > > > > > > > *asus, int
+> > > > > > > > > > aipt_mode)
+> > > > > > > > > > +{
+> > > > > > > > > > +    int status;
+> > > > > > > > > > +
+> > > > > > > > > > +    status = acpi_execute_simple_method(asus-
+> > > > > > > > > > > acpi_mgmt_handle,
+> > > > > > > > > > "FANL", aipt_mode);
+> > > > > > > > > > +    if (ACPI_FAILURE(status)) {
+> > > > > > > > > > +        acpi_handle_info(asus->acpi_mgmt_handle,
+> > > > > > > > > > "FANL
+> > > > > > > > > > execute
+> > > > > > > > > > failed\n");
+> > > > > > > > > > +        return -EIO;
+> > > > > > > > > > +    }
+> > > > > > > > > > +
+> > > > > > > > > > +    return 0;
+> > > > > > > > > > +}
+> > > > > > > > > > +
+> > > > > > > > > >      static int
+> > > > > > > > > > asus_wmi_platform_profile_to_vivo(struct
+> > > > > > > > > > asus_wmi *asus,
+> > > > > > > > > > int mode)
+> > > > > > > > > >      {
+> > > > > > > > > >          bool vivo;
+> > > > > > > > > > @@ -3844,6 +3865,26 @@ static int
+> > > > > > > > > > asus_wmi_platform_profile_mode_from_vivo(struct
+> > > > > > > > > > asus_wmi
+> > > > > > > > > > *asus, int m
+> > > > > > > > > >          return mode;
+> > > > > > > > > >      }
+> > > > > > > > > > 
+> > > > > > > > > > +static int asus_wmi_aipt_platform_profile_get(struct
+> > > > > > > > > > asus_wmi *asus,
+> > > > > > > > > > +                          enum
+> > > > > > > > > > platform_profile_option
+> > > > > > > > > > *profile)
+> > > > > > > > > > +{
+> > > > > > > > > > +    switch (asus->asus_aipt_mode) {
+> > > > > > > > > > +    case AIPT_STANDARD:
+> > > > > > > > > > +        *profile = PLATFORM_PROFILE_BALANCED;
+> > > > > > > > > > +        break;
+> > > > > > > > > > +    case AIPT_PERFORMANCE:
+> > > > > > > > > > +        *profile = PLATFORM_PROFILE_PERFORMANCE;
+> > > > > > > > > > +        break;
+> > > > > > > > > > +    case AIPT_WHISPER:
+> > > > > > > > > > +        *profile = PLATFORM_PROFILE_QUIET;
+> > > > > > > > > > +        break;
+> > > > > > > > > > +    default:
+> > > > > > > > > > +        return -EINVAL;
+> > > > > > > > > > +    }
+> > > > > > > > > > +
+> > > > > > > > > > +    return 0;
+> > > > > > > > > > +}
+> > > > > > > > > > +
+> > > > > > > > > >      static int asus_wmi_platform_profile_get(struct
+> > > > > > > > > > platform_profile_handler *pprof,
+> > > > > > > > > >                          enum platform_profile_option
+> > > > > > > > > > *profile)
+> > > > > > > > > >      {
+> > > > > > > > > > @@ -3851,6 +3892,10 @@ static int
+> > > > > > > > > > asus_wmi_platform_profile_get(struct
+> > > > > > > > > > platform_profile_handler *pprof,
+> > > > > > > > > >          int tp;
+> > > > > > > > > > 
+> > > > > > > > > >          asus = container_of(pprof, struct asus_wmi,
+> > > > > > > > > > platform_profile_handler);
+> > > > > > > > > > +
+> > > > > > > > > > +    if (asus->asus_aipt_present)
+> > > > > > > > > > +        return
+> > > > > > > > > > asus_wmi_aipt_platform_profile_get(asus,
+> > > > > > > > > > profile);
+> > > > > > > > > > +
+> > > > > > > > > >          tp = asus->throttle_thermal_policy_mode;
+> > > > > > > > > > 
+> > > > > > > > > >          switch
+> > > > > > > > > > (asus_wmi_platform_profile_mode_from_vivo(asus, tp))
+> > > > > > > > > > {
+> > > > > > > > > > @@ -3874,26 +3919,42 @@ static int
+> > > > > > > > > > asus_wmi_platform_profile_set(struct
+> > > > > > > > > > platform_profile_handler *pprof,
+> > > > > > > > > >                          enum platform_profile_option
+> > > > > > > > > > profile)
+> > > > > > > > > >      {
+> > > > > > > > > >          struct asus_wmi *asus;
+> > > > > > > > > > -    int tp;
+> > > > > > > > > > +    int ret = 0, tp, aipt_mode;
+> > > > > > > > > > 
+> > > > > > > > > >          asus = container_of(pprof, struct asus_wmi,
+> > > > > > > > > > platform_profile_handler);
+> > > > > > > > > > 
+> > > > > > > > > >          switch (profile) {
+> > > > > > > > > >          case PLATFORM_PROFILE_PERFORMANCE:
+> > > > > > > > > >              tp =
+> > > > > > > > > > ASUS_THROTTLE_THERMAL_POLICY_OVERBOOST;
+> > > > > > > > > > +        aipt_mode = AIPT_PERFORMANCE;
+> > > > > > > > > >              break;
+> > > > > > > > > >          case PLATFORM_PROFILE_BALANCED:
+> > > > > > > > > >              tp =
+> > > > > > > > > > ASUS_THROTTLE_THERMAL_POLICY_DEFAULT;
+> > > > > > > > > > +        aipt_mode = AIPT_STANDARD;
+> > > > > > > > > >              break;
+> > > > > > > > > >          case PLATFORM_PROFILE_QUIET:
+> > > > > > > > > >              tp =
+> > > > > > > > > > ASUS_THROTTLE_THERMAL_POLICY_SILENT;
+> > > > > > > > > > +        aipt_mode = AIPT_WHISPER;
+> > > > > > > > > >              break;
+> > > > > > > > > >          default:
+> > > > > > > > > >              return -EOPNOTSUPP;
+> > > > > > > > > >          }
+> > > > > > > > > > 
+> > > > > > > > > > -    asus->throttle_thermal_policy_mode =
+> > > > > > > > > > asus_wmi_platform_profile_to_vivo(asus, tp);
+> > > > > > > > > > -    return throttle_thermal_policy_write(asus);
+> > > > > > > > > > +    if (asus->asus_aipt_present) {
+> > > > > > > > > > +        ret = asus_wmi_write_aipt_mode(asus,
+> > > > > > > > > > aipt_mode);
+> > > > > > > > > > +        if (!ret) {
+> > > > > > > > > > +            asus->asus_aipt_mode = aipt_mode;
+> > > > > > > > > > +            goto skip_vivo;
+> > > > > > > > > > +        }
+> > > > > > > > > > +    }
+> > > > > > > > > > +
+> > > > > > > > > > +    if (asus->throttle_thermal_policy_dev) {
+> > > > > > > > > > +        asus->throttle_thermal_policy_mode =
+> > > > > > > > > > asus_wmi_platform_profile_to_vivo(asus, tp);
+> > > > > > > > > > +        ret = throttle_thermal_policy_write(asus);
+> > > > > > > > > > +    }
+> > > > > > > > > > +
+> > > > > > > > > > +skip_vivo:
+> > > > > > > > > > +    return ret;
+> > > > > > > > > >      }
+> > > > > > > > > > 
+> > > > > > > > > >      static int platform_profile_setup(struct
+> > > > > > > > > > asus_wmi
+> > > > > > > > > > *asus)
+> > > > > > > > > > @@ -3905,7 +3966,7 @@ static int
+> > > > > > > > > > platform_profile_setup(struct
+> > > > > > > > > > asus_wmi *asus)
+> > > > > > > > > >           * Not an error if a component
+> > > > > > > > > > platform_profile
+> > > > > > > > > > relies on is
+> > > > > > > > > > unavailable
+> > > > > > > > > >           * so early return, skipping the setup of
+> > > > > > > > > > platform_profile.
+> > > > > > > > > >           */
+> > > > > > > > > > -    if (!asus->throttle_thermal_policy_dev)
+> > > > > > > > > > +    if (!asus->throttle_thermal_policy_dev && !asus-
+> > > > > > > > > > > asus_aipt_present)
+> > > > > > > > > >              return 0;
+> > > > > > > > > > 
+> > > > > > > > > >          dev_info(dev, "Using throttle_thermal_policy
+> > > > > > > > > > for
+> > > > > > > > > > platform_profile support\n");
+> > > > > > > > > > @@ -4538,6 +4599,7 @@ static int
+> > > > > > > > > > asus_wmi_sysfs_init(struct
+> > > > > > > > > > platform_device *device)
+> > > > > > > > > >      static int asus_wmi_platform_init(struct
+> > > > > > > > > > asus_wmi
+> > > > > > > > > > *asus)
+> > > > > > > > > >      {
+> > > > > > > > > >          struct device *dev = &asus->platform_device-
+> > > > > > > > > > >dev;
+> > > > > > > > > > +    struct acpi_device *adev;
+> > > > > > > > > >          char *wmi_uid;
+> > > > > > > > > >          int rv;
+> > > > > > > > > > 
+> > > > > > > > > > @@ -4593,6 +4655,29 @@ static int
+> > > > > > > > > > asus_wmi_platform_init(struct
+> > > > > > > > > > asus_wmi *asus)
+> > > > > > > > > >             
+> > > > > > > > > > asus_wmi_set_devstate(ASUS_WMI_DEVID_CWAP,
+> > > > > > > > > >                            asus->driver->quirks-
+> > > > > > > > > > >wapf,
+> > > > > > > > > > NULL);
+> > > > > > > > > > 
+> > > > > > > > > > +    /*
+> > > > > > > > > > +     * Check presence of Intelligent Performance
+> > > > > > > > > > Technology (AIPT).
+> > > > > > > > > > +     * If present store acpi handle and set
+> > > > > > > > > > asus_aipt_present to true.
+> > > > > > > > > > +     */
+> > > > > > > > > > +    adev = acpi_dev_get_first_match_dev("PNP0C14",
+> > > > > > > > > > "ATK", -1);
+> > > > > > > > > Is there really no way of changing the AIPT mode
+> > > > > > > > > through
+> > > > > > > > > the WMI
+> > > > > > > > > interface?
+> > > > > > > > > I would prefer using the WMI interface if available,
+> > > > > > > > > since
+> > > > > > > > > the
+> > > > > > > > > firmware might
+> > > > > > > > > assume that FANL is only called through the WMI
+> > > > > > > > > interface.
+> > > > > > > > > 
+> > > > > > > > > Do you have a acpidump from a affected device?
+> > > > > > > > > 
+> > > > > > > > > Thanks,
+> > > > > > > > > Armin Wolf
+> > > > > > > > > 
+> > > > > > > > I found a acpidump from a ASUS device with a matching
+> > > > > > > > FANL
+> > > > > > > > method. It seems that this method
+> > > > > > > > can indeed be called using the WMI interface using the
+> > > > > > > > DEVS()
+> > > > > > > > WMI method:
+> > > > > > > > 
+> > > > > > > > [WmiMethodId(1398162756), Implemented] void DEVS([in]
+> > > > > > > > uint32
+> > > > > > > > Device_ID, [in] uint32 Control_status, [out] uint32
+> > > > > > > > result);
+> > > > > > > > 
+> > > > > > > > If Device_ID is 0x00110019, then Control_status is passed
+> > > > > > > > to
+> > > > > > > > the FANL ACPI method.
+> > > > > > > > 
+> > > > > > > > It also seems that support for AIPT can be queried using
+> > > > > > > > the
+> > > > > > > > DSTS() WMI method:
+> > > > > > > > 
+> > > > > > > > [WmiMethodId(1398035268), Implemented] void DSTS([in]
+> > > > > > > > uint32
+> > > > > > > > Device_ID, [out] uint32 device_status);
+> > > > > > > > 
+> > > > > > > > Using Device_ID 0x00110019, the returned device status
+> > > > > > > > seems
+> > > > > > > > to contain the following information:
+> > > > > > > > 
+> > > > > > > > - 16-bit current AIPT mode
+> > > > > > > > - 4-bit unknown value (possible values 2, 3 and 7, maybe
+> > > > > > > > number of supported modes or some kind of bitmap?)
+> > > > > > > > - 1-bit with is set when (GGIV (0x0907000C) == One) is
+> > > > > > > > true
+> > > > > > > I just saw this conversation and i think that the behaviour
+> > > > > > > this
+> > > > > > > patch will implement in the driver was already implemented
+> > > > > > > in
+> > > > > > > this patch
+> > > > > > > that got added to kernel v6.12-rc3:
+> > > > > > > https://lore.kernel.org/platform-driver-x86/20240609144849.2532-2-mohamed.ghanmi@supcom.tn/
+> > > > > > > 
+> > > > > > > this patch introduced
+> > > > > > > ASUS_WMI_DEVID_THROTTLE_THERMAL_POLICY_VIVO
+> > > > > > > 0x00110019 which is the device_id that changes the fan
+> > > > > > > profiles. the
+> > > > > > > naming is not clear because it was initially intended to
+> > > > > > > add
+> > > > > > > support for
+> > > > > > > fan profiles for vivobook laptops but it ended up adding
+> > > > > > > support
+> > > > > > > for a lot of modern laptops.
+> > > > > > Nice, you are absolutely right.
+> > > > > > 
+> > > > > > So this patch series is effectively already upstream, very
+> > > > > > good.
+> > > > > > I did some research and found out
+> > > > > > that the status of this device id contains the following
+> > > > > > data:
+> > > > > > 
+> > > > > > Status          Supported Modes
+> > > > > > -------------------------------
+> > > > > > 0x00[1]300[xx]  0 1 2
+> > > > > > 0x000700[xx]    0 1 2
+> > > > > > 0x000200[xx]    ??? (ODV0)
+> > > > > > 0x000700[xx]    0 1 2
+> > > > > > 0x0a0700[xx]    ??? (ODV0)
+> > > > > > 
+> > > > > > While i have no clue about the meaning of the remaining bits,
+> > > > > > i
+> > > > > > can report that the first 8 Bits
+> > > > > > contain the current thermal mode. Maybe adding support for
+> > > > > > this
+> > > > > > would be nice, so the current
+> > > > > > thermal mode can be read directly from the hardware.
+> > > > > > 
+> > > > > > I also found out that on some models the thermal mode
+> > > > > > actually
+> > > > > > modifies the ODV0 variable which
+> > > > > > is consumed by int3400_thermal and exposed to the Intel
+> > > > > > Thermal
+> > > > > > Daemon. So maybe the lackluster
+> > > > > > performance also has something to do with it.
+> > > > > > 
+> > > > > > > a point that Srinivas Pandruvada mentioned about RAPL
+> > > > > > > (Running
+> > > > > > > Average Power Limit)
+> > > > > > > is valid for a lot of modern vivobook and zenbook laptops
+> > > > > > > but i
+> > > > > > > think
+> > > > > > > it's unrelated to fan profiles.
+> > > > > > > 
+> > > > > > > a lot of asus laptops that have intel cpus suffer from
+> > > > > > > power
+> > > > > > > throttling.
+> > > > > > > for exemple in my case using windows, changing fan profiles
+> > > > > > > will lead to max power
+> > > > > > > changing to the values indicated in the table below (asus
+> > > > > > > vivobook 16x
+> > > > > > > pro k6604) which leads to higher performance than linux
+> > > > > > > 
+> > > > > > > fan Profile             power limit
+> > > > > > > -----------------------------------
+> > > > > > > Whisper                 50watts
+> > > > > > > Standard                120watts
+> > > > > > > Performance             149watts
+> > > > > > > ------------------------------------
+> > > > > > > 
+> > > > > > > However in linux, even after changing to the appropriate
+> > > > > > > fan
+> > > > > > > profile,
+> > > > > > > the power is still capped at 50watts and i found the reason
+> > > > > > > why
+> > > > > > > 
+> > > > > > > here is the results of using the powercap-info command:
+> > > > > > > 
+> > > > > > > intel-rapl-mmio
+> > > > > > >      enabled: 1
+> > > > > > >      Zone 0
+> > > > > > >        name: package-0
+> > > > > > >        enabled: 1
+> > > > > > >        max_energy_range_uj: 262143328850
+> > > > > > >        Constraint 0
+> > > > > > >          name: long_term
+> > > > > > >          power_limit_uw: 30000000
+> > > > > > >          time_window_us: 55967744
+> > > > > > >          max_power_uw: 55000000
+> > > > > > >        Constraint 1
+> > > > > > >          name: short_term
+> > > > > > >          power_limit_uw: 55000000
+> > > > > > >          time_window_us: 2440
+> > > > > > >          max_power_uw: 0
+> > > > > > > intel-rapl
+> > > > > > >      enabled: 1
+> > > > > > >      Zone 0
+> > > > > > >        name: package-0
+> > > > > > >        enabled: 1
+> > > > > > >        max_energy_range_uj: 262143328850
+> > > > > > >        Constraint 0
+> > > > > > >          name: long_term
+> > > > > > >          power_limit_uw: 157000000
+> > > > > > >          time_window_us: 55967744
+> > > > > > >          max_power_uw: 55000000
+> > > > > > >        Constraint 1
+> > > > > > >          name: short_term
+> > > > > > >          power_limit_uw: 157000000
+> > > > > > >          time_window_us: 2440
+> > > > > > >          max_power_uw: 0
+> > > > > > >        Constraint 2
+> > > > > > >          name: peak_power
+> > > > > > >          power_limit_uw: 200000000
+> > > > > > >          max_power_uw: 0
+> > > > > > >        Zone 0:0
+> > > > > > >          name: core
+> > > > > > >          enabled: 0
+> > > > > > >          max_energy_range_uj: 262143328850
+> > > > > > >          Constraint 0
+> > > > > > >            name: long_term
+> > > > > > >            power_limit_uw: 0
+> > > > > > >            time_window_us: 976
+> > > > > > >        Zone 0:1
+> > > > > > >          name: uncore
+> > > > > > >          enabled: 0
+> > > > > > >          max_energy_range_uj: 262143328850
+> > > > > > >          Constraint 0
+> > > > > > >            name: long_term
+> > > > > > >            power_limit_uw: 0
+> > > > > > >            time_window_us: 976
+> > > > > > >      Zone 1
+> > > > > > >        name: psys
+> > > > > > >        enabled: 0
+> > > > > > >        max_energy_range_uj: 262143328850
+> > > > > > >        Constraint 0
+> > > > > > >          name: long_term
+> > > > > > >          power_limit_uw: 0
+> > > > > > >          time_window_us: 27983872
+> > > > > > >        Constraint 1
+> > > > > > >          name: short_term
+> > > > > > >          power_limit_uw: 0
+> > > > > > >          time_window_us: 976
+> > > > > > > 
+> > > > > > > 
+> > > > > > > as seen by the output of the command, the intel-rapl-mmio
+> > > > > > > is
+> > > > > > > causing the
+> > > > > > > throttling as it sets power_limit_uw to 30 watts
+> > > > > > > (readonly). so
+> > > > > > > the current fix
+> > > > > > > that i'm currently using is disabling the intel-rapl-mmio
+> > > > > > > leaving only
+> > > > > > > the intel-rapl which sets power_limit_uw to 157watts using
+> > > > > > > this
+> > > > > > > command: powercap-set -p intel-rapl-mmio -z 0 -e 0
+> > > > > > > 
+> > > > > > > this will lead to the laptop being able to reach it's
+> > > > > > > maximum
+> > > > > > > power
+> > > > > > > limit.
+> > > > > > > 
+> > > > > > > after doing this, when i change the platform profile
+> > > > > > > through
+> > > > > > > sysfs the
+> > > > > > > laptop will start behaving as described in the table above
+> > > > > > > exactly like
+> > > > > > > windows.
+> > > > > > > 
+> > > > > > > in conclusion, the asus-wmi driver already has the platform
+> > > > > > > profiles
+> > > > > > > (a.k.a fan profiles)
+> > > > > > > implemented and I think that the power throttling is caused
+> > > > > > > by
+> > > > > > > either
+> > > > > > > intel Power Capping Framework or asus bios.
+> > > > > > Or the Intel Thermal Daemon somehow does not properly support
+> > > > > > intel-rapl-mmio
+> > > > > > or is not installed.
+> > > > > This was exactly it. the Intel Thermal Daemon wasn't installed.
+> > > > > now
+> > > > > everything is working as expected!
+> > > > > 
+> > > > > Best regards,
+> > > > > Mohamed G.
+> > > > Interesting.
+> > > > 
+> > > > Srinivas, can you verify that the Intel Thermal Daemon is
+> > > > installed
+> > > > on the affected
+> > > > Asus machines?
+> > > > 
+> > > > I begin to wonder why this thermal daemon is a userspace
+> > > > component,
+> > > > stuff like thermal
+> > > > management should use the thermal subsystem inside the kernel.
+> > > Thanks for detailed analysis here.
+> > > 
+> > > Here the problem is not thermal daemon or INT340x (I am author of
+> > > both).
+> > > 
+> > > The ODVP variable is input into thermal tables. These thermal
+> > > tables
+> > > are defined by Asus via DTT tables. This results in matching
+> > > certain
+> > > max and min power limits and also various temperature limits.
+> > > 
+> > > By default the laptop in question will boot with max limit of 17W,
+> > > which is limit for whisper mode match based on ODVP variables.
+> > > There is
+> > > a SEN1 limit of 50C, once the limit reaches to 50C, you need to
+> > > throttle upto 12W as per thermal table.
+> > > 
+> > > If you stop thermald, yes, you will stay in 17W, so you will not
+> > > see
+> > > throttle but your SEN1 (seems skin limit) limit will be violated.
+> > > Also if you remove the rapl_mmio driver, that will also work as no
+> > > means to set power limits.
+> > > 
+> > > Windows will do exactly same. Meeting thermal limit is a
+> > > requirement.
+> > > 
+> > > But on Windows this ODVP variable will be set to 0 to match
+> > > standard
+> > > mode. This will result in matching rules which will set the max
+> > > power
+> > > to 22W and min to 17W also increase thermal limit to 55C. So
+> > > essentially lost 5W of performance.
+> > > 
+> > > Here WMI method as you correctly found out matching VIVO thermal
+> > > policy. But it will not set ODVP variable unless you call a WMI
+> > > method
+> > > to set the mode via DEVS() on the same device ID. So although
+> > > platform
+> > > power policy will say "balanced" it is actually "Whisper" for
+> > > thermal
+> > > policy. On Windows when system boots the Asus service will set to
+> > > standard and will set the ODVP variable to 0 and will match the
+> > > correct
+> > > table.
+> > > 
+> > > After Luke's help, I can do a work around from user space to change
+> > > the
+> > > power policy to any other policy than balanced and then again set
+> > > to
+> > > balance. This will result in setting the policy to standard via
+> > > DEVS()
+> > > and also set the correct ODVP variable.
+> > > 
+> > > This driver on unload change the vivo thermal policy to default.
+> > > But
+> > > doesn't change that to default on load time to match the default
+> > > platform power policy. So rmmod and modprobe of driver should also
+> > > fix.
+
+Thank you Srinivas for the insights!
+
+> > > 
+> > > Thanks,
+> > > Srinivas
+> > > 
+> > Good point, so basically throttle_thermal_policy_set_default() need
+> > to be called during
+> > initialization of the thermal profile. Maybe you can send another
+> > patch which implements this?
 > 
-> A vDEVICE object will be core-allocated and core-managed, while the
-> vdevice_alloc is for driver-allocated purpose for which there is no
-> use case (at least with this series). You can check the vdev ioctl
-> in this version that has two pathways to allocate a vDEVICE object.
+> I have already tested this change. But this seems a regression, so want
+> to confirm first as it was intentional. The following commit removed
+> the call. If it was unintentional, Mohamed can try to submit a change.
 > 
-> A vdev_id is used to index viommu's xarray for a driver to convert
-> the id to a dev pointer via a vIOMMU API. Dropping .vdevice_alloc
-> just means the driver only lost its direct access.
+> 
+> commit bcbfcebda2cbc6a10a347d726e4a4f69e43a864e
+> Author: Mohamed Ghanmi <mohamed.ghanmi@supcom.tn>
+> Date:   Sun Jun 9 15:48:49 2024 +0100
+> 
+> Thanks,
+> Srinivas
 
-I think the point here is this has to go in stages at the present
-moment the iommu drivers don't need to hook the vdevice object, so
-Nicolin should take it out of this series.
+This was definitely not intentional. I'll write a patch asap
+I also want your opinion on adding naming changes to the commit to
+future proof the patch as it has been proven that it implements platform
+profiles for various modern laptops other than the vivobooks and to
+avoid any future confusion about the use of the patch
 
-I would expect CC to need to be in this path, so we should bring it
-back in the CC series.
+Best Regards,
+Mohamed G.
 
-For CC I'm broadly expecting that creating the CC type vIOMMU will
-call a CC implementation, and then creating a vdevice against the
-vIOMMU will also call the CC implementation. The two callbacks would
-ask the secure world to create the relevant VM visible objects.
-
-Jason
+> 
+> 
+> 
+> > 
+> > Thanks,
+> > Armin Wolf
+> > 
+> > > > Thanks,
+> > > > Armin Wolf
+> > > > 
+> > > 
+> 
 
