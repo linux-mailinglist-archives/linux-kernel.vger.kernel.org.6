@@ -1,128 +1,139 @@
-Return-Path: <linux-kernel+bounces-382535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8C709B0F7E
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 22:02:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FF649B0F83
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 22:05:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99CAD282822
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 20:02:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DC722841BD
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 20:05:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 770BD20D4FC;
-	Fri, 25 Oct 2024 20:02:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24ACA20F3F6;
+	Fri, 25 Oct 2024 20:05:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U3qy+E+B"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lR+0sxwu"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0A23524F
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 20:02:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75BE220D503;
+	Fri, 25 Oct 2024 20:05:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729886552; cv=none; b=Cv1AzrnKHwinJ6ktxqOuspysVZGeKiNbLZqmMyjRjWh/dIzjd4dJB2Dkb8tLZfahxD/cy5o/ZbpH/L6AeHqp1unHzjli1akU+qhguYUkgjeETTueFnKxNpmcuSVOP2fMtA5Jo2y13YsFGtYNDyVNrGaXj6W1aGKhSlvLnxRFMlQ=
+	t=1729886709; cv=none; b=GyfPpWe78WQN3waWDCvEP5fAZJIzzisMWprPObiKNugckVd68EjkjBdcNewgH5/TBkKJ0P2Fglk1E2GlBrJg5+Z8thA2byGvL7cIJYXdDk5zexb7Wy3B3PYaPF23UKLBNHVqVmLj81GGoUu6t5Pjbszqb83e1gQDAHG3AXwSnR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729886552; c=relaxed/simple;
-	bh=2F+91o0q2lmJmn3g1uSq5NWW9wIqZHZcjEOBdYEU4pU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NdWe3rOR5IPErBBrEcodpqv5wQIOdiEa/98rKrN25ltK8O40K17CPA8Yz5pVE8XC64ejKSeXVEXOQSNLU0pqRNgaMY+UkVvraRvqRMY2MkuNU23PmlydjUhr5tj2aZlDG7QrGfde3euDQiaqvPUwyqpVDB4GMSQa9yFgdusmotM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U3qy+E+B; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 087E3C4CEC3;
-	Fri, 25 Oct 2024 20:02:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729886552;
-	bh=2F+91o0q2lmJmn3g1uSq5NWW9wIqZHZcjEOBdYEU4pU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=U3qy+E+BYzg129FGRsgmLnWKJwk6r1dPEJTFvxcTtfdDHsHJgHAxPzyb5P2ZHBvmh
-	 zMWypDwIGbmvFk1BOlJa0a5yIoNoUL9P8MnKdO6CYta1AunFg7wa7AIHj+8m2zuEH+
-	 6geWOQiNJJ3mx/pUkJpEnrzCOycRqUhopZ/9oU3Ezq0xRFdaTu07mRMdpl9MzRiDYC
-	 z7/ogO7sUWZo33anCZj0bxLglG0hX1rnyYlsh9pz62AfBC5gme1snZNUhPeNyjpDSR
-	 VMjut6UsuLXL1s7XgaHVL6Dw5ZtkQu7UH9xbtcr/x3BXYceNwRsn5bruDOaP4+BlzY
-	 IiVAvATyrQx8g==
-Date: Fri, 25 Oct 2024 10:02:31 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Andrea Righi <arighi@nvidia.com>
-Cc: David Vernet <void@manifault.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] sched_ext: Introduce NUMA awareness to the default
- idle selection policy
-Message-ID: <Zxv5V5mwDAlGzpBb@slm.duckdns.org>
-References: <20241025162535.88059-1-arighi@nvidia.com>
+	s=arc-20240116; t=1729886709; c=relaxed/simple;
+	bh=WzU9HaaTHzzcvIqq8w5qqyymwZCtfHZ6qc+MaefFUyQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kM8SkySW0a7MzZBHGaWIILpioNcLXrdCfpfaMLCwt+ic+MUHfxxinRpHX7Lvh2sssZM9OrwT+/0ClzsAmHtj1d7xSSV6XIbAdeJm2V5c9+j1hQkAcfA6aUUJQmpapjguK/3zK/RJ/MYhAynsETcL1bAq4tF29Z4V8pbBoSJcVSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lR+0sxwu; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-37d4fd00574so1513430f8f.0;
+        Fri, 25 Oct 2024 13:05:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729886706; x=1730491506; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1X70Bk92OXSXgwxsbd/CkwTx9ilKB7Lhi3xm516EXcM=;
+        b=lR+0sxwutNRv6Un9xOUSWrEXGFKzTW09SUK9L8GRd9SsMPRK0ElRU6pOVRDTk2Ms/J
+         5Aw+bjDHStX6Qfe4HgrBXrTu1p8wWEGGtw+dk2ipLgA03MdvLnJxHrh+nBLwVMDsCwT4
+         YumuWcCTHTuoG1pxEV1flqaaeljJKatHE5u5gbv7ynt/+TuzKS1CCBwG6ZlpiaapC7rd
+         VLsjSC7uNPdZUNSojwMxGUX/QKqLih6em4fAxIYlMn7Y+xR233ovrjHcvou0sM9VxWb7
+         3zj5+slU7Df+w1ND6YaAoE+xo05pzfQem7ecjmBiTIvHSP/RLRq6pgN+3KqoH+RhicyI
+         6rPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729886706; x=1730491506;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1X70Bk92OXSXgwxsbd/CkwTx9ilKB7Lhi3xm516EXcM=;
+        b=MuQZrjgYeIQq9X+MWWcTMBnjFfRZylWtd/ydZU0XsGV/TlZF0ZuNINlfE+HRd5mRjz
+         JIAWYc4gcUVPQcphqBJ1qshgHTKeHIc39UiH2sfCQBl7wG9tSKMSvIfp2wTGQX0dSsWC
+         eNz4tw5zS7yP/eTDRv+BnutP5aRA8gOgvIVKWQb+4yEZ7bZptqwtldL07Qe3KjdV95J1
+         hAlgNYFRy78/z6r1rzyWbO6sgatp4YymW7YL1EsL5LSWvGLXMHa+8mmyJu08FiZA0fqX
+         A7SYHT9KamnSg15H0ttgvPMppQZSfujfm0BBiMQ6YcO7zoteXuu16Kp7spkJLEzc9Dy8
+         qhFg==
+X-Forwarded-Encrypted: i=1; AJvYcCVkTpJjhHE2wT3I3fjNqguG7mGaW5KM7E2xKH2A+4rXylmPGHgWZCheL+reGNvKG/OMb7e9PiQgP0IJDTHx@vger.kernel.org, AJvYcCWxlUfR8d+sB7seVT+rPdBfbRYmCmV78SrwFRiDIwNn6APK7ubdKQv+QDkZMg7ajX9xYTab9gEAId5dJK4c@vger.kernel.org, AJvYcCWzKSOGe/qf1pL9hmYmMynWiTgDtO+xO4FNm6/F1ALTgCWe0r8HyMxT+JiTJymxh8RYIx3JqRytZIl9@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0RyftKnWvvWBgf8ZC5I1E+WLiBRDmsyocmfGeVjIoVHfz8cbE
+	X//4rB3uAB8FmnIyCj2KfUs3g9D/jZH/WmkaDxZSKUieHu/V1YqF
+X-Google-Smtp-Source: AGHT+IH6RJxZpeVZS0q4kyHOwiyMCIxB5nEvNJcCqMGEpmSq2K9V0mihG8v6D7NKxdrNBRRTP9dgtQ==
+X-Received: by 2002:a5d:524d:0:b0:37d:47eb:b586 with SMTP id ffacd0b85a97d-3803abc5246mr5459182f8f.4.1729886705442;
+        Fri, 25 Oct 2024 13:05:05 -0700 (PDT)
+Received: from [192.168.20.170] (5D59A51C.catv.pool.telekom.hu. [93.89.165.28])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b71406sm2390341f8f.84.2024.10.25.13.05.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 25 Oct 2024 13:05:05 -0700 (PDT)
+Message-ID: <45461b57-cb5a-43a5-8b9c-09ae059805a9@gmail.com>
+Date: Fri, 25 Oct 2024 22:05:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241025162535.88059-1-arighi@nvidia.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/5] clk: qcom: apss-ipq-pll: drop 'alpha_en_mask' from
+ IPQ5018 PLL config
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241021-alpha-mode-cleanup-v1-0-55df8ed73645@gmail.com>
+ <20241021-alpha-mode-cleanup-v1-1-55df8ed73645@gmail.com>
+ <yplfg55afv4vucpcxbkqsxmn44mzwr3tepbuvgtswhupx7fzfi@mwofp7v3uarm>
+Content-Language: hu
+From: Gabor Juhos <j4g8y7@gmail.com>
+In-Reply-To: <yplfg55afv4vucpcxbkqsxmn44mzwr3tepbuvgtswhupx7fzfi@mwofp7v3uarm>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hello,
+2024. 10. 25. 8:24 keltezéssel, Dmitry Baryshkov írta:
+> On Mon, Oct 21, 2024 at 10:21:57PM +0200, Gabor Juhos wrote:
+>> Since neither 'alpha' nor 'alpha_hi' is defined in the configuration,
+>> those will be initialized with zero values  implicitly. By using zero
+>> alpha values, the output rate of the PLL will be the same whether
+>> alpha mode is enabled or not.
+>>
+>> Remove the superfluous initialization of the 'alpha_en_mask' member
+>> to make it clear that enabling alpha mode is not required to get the
+>> desired output rate.
+>>
+>> No functional changes, the initial rate of the PLL is the same both
+>> before and after the patch.
+> 
+> After going through DISPCC changes, I think the whole series is
+> incorrect: these PLL can change the rate (e.g. to facilitate CPU
+> frequency changes). Normally PLL ops do not check the alpha_en bit when
+> changing the rate, so the driver might try to set the PLL to the rate
+> which requires alpha value, while the alpha_en bit isn't set.
 
-On Fri, Oct 25, 2024 at 06:25:35PM +0200, Andrea Righi wrote:
-...
-> +static DEFINE_STATIC_KEY_FALSE(scx_topology_llc);
-> +static DEFINE_STATIC_KEY_FALSE(scx_topology_numa);
+Both clk_alpha_pll_stromer_set_rate() which is used for IPQ5018 (patch 1), and
+clk_alpha_pll_stromer_plus_set_rate() used for IPQ5332 (patch 2) sets the
+ALPHA_EN bit unconditionally.
 
-Maybe name them sth like scx_selcpu_topo_llc given that this is only used by
-selcpu?
+For the PLLs affected by the remaining patches, clk_alpha_pll_set_rate() is used
+which also unconditionally sets the ALPHA_EN bit via __clk_alpha_pll_set_rate().
 
-> +static void init_topology(void)
+I have created the patches after analysing the side effects of [1]. Due to the
+bug described in that change, the clk_alpha_pll_configure() function in the
+current kernel never sets the ALPHA_EN bit in the USER_CTL register. This means
+that setting 'alpha_en_mask' in the configurations has no effect actually.
 
-Ditto with naming.
+So, if we assume that the affected PLLs are working correctly now, it is not
+because the 'alpha_en_mask' is specifed in the configuration but due to the fact
+that the set_rate op sets the ALPHA_EN bit.
 
->  {
-> -	struct sched_domain *sd = rcu_dereference(per_cpu(sd_llc, cpu));
-> -	const struct cpumask *llc_cpus = sd ? sched_domain_span(sd) : NULL;
-> +	const struct cpumask *cpus;
-> +	int nid;
-> +	s32 cpu;
-> +
-> +	/*
-> +	 * Detect if the system has multiple NUMA nodes distributed across the
-> +	 * available CPUs and, in that case, enable NUMA-aware scheduling in
-> +	 * the default CPU idle selection policy.
-> +	 */
-> +	for_each_node(nid) {
-> +		cpus = cpumask_of_node(nid);
-> +		if (cpumask_weight(cpus) < nr_cpu_ids) {
+At least, I came to this after the analysis.
 
-Comparing number of cpus with nr_cpu_ids doesn't work. The above condition
-can trigger on single node machines with some CPUs offlines or unavailable
-for example. I think num_node_state(N_CPU) should work or if you want to
-keep with sched_domains, maybe highest_flag_domain(some_cpu,
-SD_NUMA)->groups->weight would work?
+[1]
+https://lore.kernel.org/r/20241021-fix-alpha-mode-config-v1-1-f32c254e02bc@gmail.com
 
-...
-> +	for_each_possible_cpu(cpu) {
-> +		struct sched_domain *sd = rcu_dereference(per_cpu(sd_llc, cpu));
-> +
-> +		if (!sd)
-> +			continue;
-> +		cpus = sched_domain_span(sd);
-> +		if (cpumask_weight(cpus) < nr_cpu_ids) {
+Regards,
+Gabor
 
-Ditto. 
 
-...
-> +	/*
-> +	 * Determine the scheduling domain only if the task is allowed to run
-> +	 * on all CPUs.
-> +	 *
-> +	 * This is done primarily for efficiency, as it avoids the overhead of
-> +	 * updating a cpumask every time we need to select an idle CPU (which
-> +	 * can be costly in large SMP systems), but it also aligns logically:
-> +	 * if a task's scheduling domain is restricted by user-space (through
-> +	 * CPU affinity), the task will simply use the flat scheduling domain
-> +	 * defined by user-space.
-> +	 */
-> +	if (p->nr_cpus_allowed == nr_cpu_ids) {
-
-Should compare against nr_possible_cpus.
-
-Thanks.
-
--- 
-tejun
 
