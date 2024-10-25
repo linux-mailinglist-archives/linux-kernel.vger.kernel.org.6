@@ -1,128 +1,184 @@
-Return-Path: <linux-kernel+bounces-380856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 840B69AF6FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 03:41:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A78919AF700
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 03:41:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 946771C219DF
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 01:41:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66C33282D58
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 01:41:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1AE015B97D;
-	Fri, 25 Oct 2024 01:39:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FF7B13D53E;
+	Fri, 25 Oct 2024 01:40:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gPN8LeH+"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="lwvq1DJm"
+Received: from esa10.hc1455-7.c3s2.iphmx.com (esa10.hc1455-7.c3s2.iphmx.com [139.138.36.225])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E97113A40C;
-	Fri, 25 Oct 2024 01:39:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E59AB13C807;
+	Fri, 25 Oct 2024 01:40:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=139.138.36.225
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729820397; cv=none; b=rHwKB099K96eJeVx/5jJcS6nFLw5UDz4c95U4x2lL+DGal0PYVwUV/981o/WBvr6T/miufzbgsaeUWMxHrc7PWQIn1NTrZLyCRyVON2slJD8zFdpWZ8hMI57QEMrVVU+fDQQ6Lj8LYtlOpedsV2+olNlBjgn457ZEN+s0PQ8nK0=
+	t=1729820409; cv=none; b=uuNYkRpj3kjtRKFh9kgc+l2X1lGa+DLIijfSYjVTWSbNw/g4iT/b4zN4S5KRHfITnJc1S0ldbqew/nFooS+zBIecMC4QR9PE1iJ4qeB60t6nBVUcZsEig41Q+8UFt00keLW72JkjHSpi3j2dwkIsaEOmPfuAS2allF8XxudgCnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729820397; c=relaxed/simple;
-	bh=d83gFXBRG3Nz4qESQ40kq/AfjnNIiQTlZXdmGplXDHQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZJt0kOijwdX29r9FG+YggqQs9gFDwyc5KEyQbCvuUtF+0QYRNkdKyXFFQIUvgQxklA2EvjkjgfkOaPWDQi/rSVbyJLMc/kBBuA6W5BJLTW9sejJPavg1mr30lbfasIIFmnvD/X7hIfrHxp0B82iXB8CRofqQ0X9Gl9AbtTkVVDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gPN8LeH+; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-20cd76c513cso13528395ad.3;
-        Thu, 24 Oct 2024 18:39:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729820395; x=1730425195; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=tFezwFo6gCZgxkhS3m0Bz40bL+vqBj5E53gWNhWxLYM=;
-        b=gPN8LeH+TklrH0WjUA2ci9yLx6gmvl1S9MkM7YYn0L8HbfIE/gFtSP5whOhToa/wAo
-         fMhpEdGCfsRFmKKg+zMwXW2GUJk/XQfZ8I80Bp8K07x3WvCtFn0CQf0p3qzY1DiOdgdf
-         46qm0Y7tplmaxVrBAUZIaA9qOhQqONPU4903SYZ7nUjo89ySl6LKeoTMq2AEqnJe8du3
-         natQA0lwLsAHOO80vdd9s4jueT/mK0D3tp39H+oTOT6SfVYqwuPAx9OHepN9t16IHUQ2
-         5EBHWuJ/zw+z8yts/IuHH5I7gKzf6UqWtfqyN4qyqJ+8oWCniTI+ElP4JWQhGUmPBzU2
-         i8RA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729820395; x=1730425195;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tFezwFo6gCZgxkhS3m0Bz40bL+vqBj5E53gWNhWxLYM=;
-        b=GZQRvoHn59dpaXr8TewXVpE2rPZCnloT61E5vd3MGHo4JMItllEiWNIP23OBDhlSll
-         icZRn4+J0r96TNGNtYtTExCJQKkQAezXlrk13X/FlkvdFyExxBFmTL2+QzCuWfUGcj6h
-         H9qluRLiYHTWrJlypFNuIbVZUssgGI+p7P1xPyyMz8FtFw4BNnytANoTg+70X7/Xar/a
-         ErwCIwHKF4H7B0ceybFpdlJXac7M2t4jztenmKv/BhzRsUFYxry7v8eNsb2R+Wv8Gqy/
-         ae4uvzulCiB/4Xio47AuwoMbTyEkrW5FYkHTtsrPVu5IjO7rvkElj/AUcgO3cN2flt7w
-         oDEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWg0Zu/A25fTUQqEoGj60se7gGh4hHEV9BnrYHJBeGwJIH35x/QqB3XhdSnKw2XtHZe/AeSVGhNtHah@vger.kernel.org, AJvYcCXEWLleCtZUD6gaXwFJ1BgezW/V9wApO+b+QPsm+GtZN8F7EvxOlikGTUOWAIVFGPP/SSi9GMi8@vger.kernel.org, AJvYcCXZg5C7jXAdGPqcvMlJm2X3RsFi913X7HEKN+WYTUgFmyqqCYxBBNcMcWDmDIOLBwugIFOOSxkU1twqNPhc@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxu1knGMhQkTnpSRtf2fdpYL4BngkgiGZ2HjNKJtDcbmKZjj48l
-	apcZ8xVIwG6blLIZOTrNf0xxlWIowkFU8R3NzI/yV+cowoHgMPPC
-X-Google-Smtp-Source: AGHT+IEHw2vnCcYrgnHOby/RDV1VCi/V1qVIt7cOTUZOAUPWFAmc5ivhTLTks2UseKSuzasudSeCxw==
-X-Received: by 2002:a17:902:ecd0:b0:20c:5cdd:a91 with SMTP id d9443c01a7336-20fa9e99bbdmr109987285ad.41.1729820394814;
-        Thu, 24 Oct 2024 18:39:54 -0700 (PDT)
-Received: from localhost ([2001:da8:7001:11::cb])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bc02e661sm761665ad.191.2024.10.24.18.39.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Oct 2024 18:39:54 -0700 (PDT)
-Date: Fri, 25 Oct 2024 09:39:16 +0800
-From: Inochi Amaoto <inochiama@gmail.com>
-To: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
-	Inochi Amaoto <inochiama@gmail.com>
-Cc: Chen Wang <unicorn_wang@outlook.com>, 
-	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Inochi Amaoto <inochiama@outlook.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Jose Abreu <joabreu@synopsys.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Richard Cochran <richardcochran@gmail.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Giuseppe Cavallaro <peppe.cavallaro@st.com>, Yixun Lan <dlan@gentoo.org>, netdev@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, 
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH 4/4] net: stmmac: Add glue layer for Sophgo SG2044 SoC
-Message-ID: <2emb7jimgg4utgecdfhc232qclp5yfiqvlw6gl53niwtgoeb7z@uvoy7kqedqst>
-References: <20241021103617.653386-1-inochiama@gmail.com>
- <20241021103617.653386-5-inochiama@gmail.com>
- <7lcmhspo5xq3numdbrfc44uqppbzigwq56vmqne5ldvg2uac6z@ivu4fmwbzajm>
+	s=arc-20240116; t=1729820409; c=relaxed/simple;
+	bh=654YXOvVil3Euww5pKDgv0JcyWBr1+LQI/p2Mq/PP/8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HA71vRAyif2208xHMQXBBmwm0KYs1bmSNWZUYuOTArZJB5wttlxjOCto9A9YkKnWb+BI12yWVn2D4RPN6ixJZlJUtfdmwQVGoC9rpLJULTPNwxwLXMYY3nnAlCMJFjJpWUUEALYqmVK+ldJiBXKi2BcJj4u/4CsmY7lM5SWGvIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com; spf=pass smtp.mailfrom=fujitsu.com; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=lwvq1DJm; arc=none smtp.client-ip=139.138.36.225
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fujitsu.com
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=fujitsu.com; i=@fujitsu.com; q=dns/txt; s=fj2;
+  t=1729820407; x=1761356407;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=654YXOvVil3Euww5pKDgv0JcyWBr1+LQI/p2Mq/PP/8=;
+  b=lwvq1DJmuXhPOT0HI9PAS7Pr0kBJmt3UkmRp2oeM5Vin4VVxKLeLiUpo
+   aAHTE5wYUR/fOjMpx53VN6Stayl17Utz9tF6MydOxoYDUxKaUToodns7f
+   xSCdCOjP3QRAyf8Ks5Jjs2yUj8ITxRG0d9fXUdBrxiUlGpPogBgAZRU66
+   nH7Sab53OFGXA1QPzJA5lrWP5QbzIfLriuK93/9ZdEQR+CEfgplS+HLJr
+   0S1FjXg/QF83PV+S10Lzs9PBxq05sbObrIk76DEzxZdmzpcGEhXiBg1Na
+   waG9rSg3X2nxKy3eNZVWsASQtqZEmlr8L7764x/ZD8xf7jy7DaUD06uoJ
+   w==;
+X-CSE-ConnectionGUID: GOyUv8r9SPi4NbADffMEoQ==
+X-CSE-MsgGUID: O1b4NVXJQZm6tFDhRfmDLg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11235"; a="165295778"
+X-IronPort-AV: E=Sophos;i="6.11,230,1725289200"; 
+   d="scan'208";a="165295778"
+Received: from unknown (HELO oym-r1.gw.nic.fujitsu.com) ([210.162.30.89])
+  by esa10.hc1455-7.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2024 10:38:55 +0900
+Received: from oym-m1.gw.nic.fujitsu.com (oym-nat-oym-m1.gw.nic.fujitsu.com [192.168.87.58])
+	by oym-r1.gw.nic.fujitsu.com (Postfix) with ESMTP id 3EE2FCC152;
+	Fri, 25 Oct 2024 10:38:53 +0900 (JST)
+Received: from kws-ab3.gw.nic.fujitsu.com (kws-ab3.gw.nic.fujitsu.com [192.51.206.21])
+	by oym-m1.gw.nic.fujitsu.com (Postfix) with ESMTP id 63905D5013;
+	Fri, 25 Oct 2024 10:38:52 +0900 (JST)
+Received: from edo.cn.fujitsu.com (edo.cn.fujitsu.com [10.167.33.5])
+	by kws-ab3.gw.nic.fujitsu.com (Postfix) with ESMTP id EBC3320071A06;
+	Fri, 25 Oct 2024 10:38:51 +0900 (JST)
+Received: from iaas-rdma.. (unknown [10.167.135.44])
+	by edo.cn.fujitsu.com (Postfix) with ESMTP id 5CF191A000B;
+	Fri, 25 Oct 2024 09:38:51 +0800 (CST)
+From: Li Zhijian <lizhijian@fujitsu.com>
+To: linux-kselftest@vger.kernel.org
+Cc: shuah@kernel.org,
+	linux-kernel@vger.kernel.org,
+	Li Zhijian <lizhijian@fujitsu.com>
+Subject: [PATCH for-next 1/3] selftests/watchdog: add count parameter for watchdog-test
+Date: Fri, 25 Oct 2024 09:39:31 +0800
+Message-ID: <20241025013933.6516-1-lizhijian@fujitsu.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <7lcmhspo5xq3numdbrfc44uqppbzigwq56vmqne5ldvg2uac6z@ivu4fmwbzajm>
+X-TM-AS-GCONF: 00
+X-TM-AS-Product-Ver: IMSS-9.1.0.1417-9.0.0.1002-28752.003
+X-TM-AS-User-Approved-Sender: Yes
+X-TMASE-Version: IMSS-9.1.0.1417-9.0.1002-28752.003
+X-TMASE-Result: 10-2.222800-10.000000
+X-TMASE-MatchedRID: Kkkx1MdXpTzySUS2aTJPt6qHmm/V4M/PNYERielKfYX+Aw16GgqpO4xj
+	ZK20axcml2GUABdhPswYdpOYDB3YU/t1xYHpY/PCZXF1SJUAUOAkPki1Yfh9IlQuGn5b9r2Zegt
+	0aF43NdcMI2dvwKu82tH/OWESXaHnrL+gHLQ9jwn0hv/rD7WVZHh8J8VFDfTIzAdJD7JeNMOLcY
+	4IaAaI5iJiCpji5j3MJsa2Z1JGRPDR6RKL7TRTbhF4zyLyne+ATJDl9FKHbrkwAYdq1VTXowzbM
+	QAfPhMUD/OFpcSAvwt2a8dgHy0BPpmXURexwsOZlXePXNM4FjOiNCtus+nPOsfASe7knCttB82G
+	yGpZHXu27qf8B6e0g4Ay6p60ZV62fJ5/bZ6npdjGVuWouVipcsEjzginPrvIy/G5i9qoEvVK3Zk
+	bMcfUPlORukGQ8Sf4QFRYfcbPnszysA5ID5qdCN0ImZe79YchhtKgqFgRxGM9KJnm0nW3ihFltG
+	xCTkwFQHVA+r1vGdZmQDEDCMiuswfP8fSSIvISoYC0cwOOST0=
+X-TMASE-SNAP-Result: 1.821001.0001-0-1-22:0,33:0,34:0-0
 
-On Thu, Oct 24, 2024 at 05:37:03PM +0200, Uwe Kleine-König wrote:
-> Hello,
-> 
-> On Mon, Oct 21, 2024 at 06:36:17PM +0800, Inochi Amaoto wrote:
-> > +static struct platform_driver sophgo_dwmac_driver = {
-> > +	.probe  = sophgo_dwmac_probe,
-> > +	.remove_new = stmmac_pltfr_remove,
-> > +	.driver = {
-> > +		.name = "sophgo-dwmac",
-> > +		.pm = &stmmac_pltfr_pm_ops,
-> > +		.of_match_table = sophgo_dwmac_match,
-> > +	},
-> > +};
-> 
-> After commit 0edb555a65d1 ("platform: Make platform_driver::remove()
-> return void") .remove() is (again) the right callback to implement for
-> platform drivers. Please just drop "_new".
-> 
-> Best regards
-> Uwe
+Currently, watchdog-test keep running until it gets a SIGINT. However,
+when watchdog-test is executed from the kselftests framework, where it
+launches test via timeout which will send SIGTERM in time up. This could
+lead to
+1. watchdog haven't stop, a watchdog reset is triggered to reboot the OS
+   in silent.
+2. kselftests gets an timeout exit code, and judge watchdog-test as
+  'not ok'
 
+This patch is prepare to fix above 2 issues
 
-Thanks, I will fix it.
+Signed-off-by: Li Zhijian <lizhijian@fujitsu.com>
+---
+Hey,
+Cover letter is here.
 
-Regards,
-Inochi
+It's notice that a OS reboot was triggerred after ran the watchdog-test
+in kselftests framwork 'make run_tests', that's because watchdog-test
+didn't stop feeding the watchdog after enable it.
+
+In addition, current watchdog-test didn't adapt to the kselftests
+framework which launchs the test with /usr/bin/timeout and no timeout
+is expected.
+---
+ tools/testing/selftests/watchdog/watchdog-test.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
+
+diff --git a/tools/testing/selftests/watchdog/watchdog-test.c b/tools/testing/selftests/watchdog/watchdog-test.c
+index bc71cbca0dde..2f8fd2670897 100644
+--- a/tools/testing/selftests/watchdog/watchdog-test.c
++++ b/tools/testing/selftests/watchdog/watchdog-test.c
+@@ -27,7 +27,7 @@
+ 
+ int fd;
+ const char v = 'V';
+-static const char sopts[] = "bdehp:st:Tn:NLf:i";
++static const char sopts[] = "bdehp:st:Tn:NLf:c:i";
+ static const struct option lopts[] = {
+ 	{"bootstatus",          no_argument, NULL, 'b'},
+ 	{"disable",             no_argument, NULL, 'd'},
+@@ -42,6 +42,7 @@ static const struct option lopts[] = {
+ 	{"gettimeleft",		no_argument, NULL, 'L'},
+ 	{"file",          required_argument, NULL, 'f'},
+ 	{"info",		no_argument, NULL, 'i'},
++	{"count",         required_argument, NULL, 'c'},
+ 	{NULL,                  no_argument, NULL, 0x0}
+ };
+ 
+@@ -95,6 +96,7 @@ static void usage(char *progname)
+ 	printf(" -n, --pretimeout=T\tSet the pretimeout to T seconds\n");
+ 	printf(" -N, --getpretimeout\tGet the pretimeout\n");
+ 	printf(" -L, --gettimeleft\tGet the time left until timer expires\n");
++	printf(" -c, --count\tStop after feeding the watchdog count times\n");
+ 	printf("\n");
+ 	printf("Parameters are parsed left-to-right in real-time.\n");
+ 	printf("Example: %s -d -t 10 -p 5 -e\n", progname);
+@@ -174,7 +176,7 @@ int main(int argc, char *argv[])
+ 	unsigned int ping_rate = DEFAULT_PING_RATE;
+ 	int ret;
+ 	int c;
+-	int oneshot = 0;
++	int oneshot = 0, stop = 1, count = 0;
+ 	char *file = "/dev/watchdog";
+ 	struct watchdog_info info;
+ 	int temperature;
+@@ -307,6 +309,9 @@ int main(int argc, char *argv[])
+ 			else
+ 				printf("WDIOC_GETTIMELEFT error '%s'\n", strerror(errno));
+ 			break;
++		case 'c':
++			stop = 0;
++			count = strtoul(optarg, NULL, 0);
+ 		case 'f':
+ 			/* Handled above */
+ 			break;
+@@ -336,8 +341,8 @@ int main(int argc, char *argv[])
+ 
+ 	signal(SIGINT, term);
+ 
+-	while (1) {
+-		keep_alive();
++	while (stop || count--) {
++		exit_code = keep_alive();
+ 		sleep(ping_rate);
+ 	}
+ end:
+-- 
+2.44.0
+
 
