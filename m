@@ -1,135 +1,97 @@
-Return-Path: <linux-kernel+bounces-382516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7B7B9B0F42
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 21:40:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF3549B0F3C
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 21:39:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80C27287A24
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 19:40:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61CA21F233C5
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 19:39:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFF0620EA5C;
-	Fri, 25 Oct 2024 19:40:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DA5A20EA4F;
+	Fri, 25 Oct 2024 19:39:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="S3dib0Xn"
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FhSLkAMj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C232D20EA3A;
-	Fri, 25 Oct 2024 19:40:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED0BB18F2C3
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 19:39:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729885235; cv=none; b=KjwKDrVXg4TxwyFrtA32Jh0bG5q640mf4xwk47b31JFTIYfgvu7lnzF+Ljt41PLxfL2Wvo6trmDikCbpGyv0CEs0bham2kmv0lV7Bz32at8i2QFy1atbx11LjH6wZBfBElIHbHJZJ2JQllSL4C7lMBZM8Q7FJmKqMqEjIKsGTvA=
+	t=1729885152; cv=none; b=NK2ncRUwaHD9cdAEUzgqEIEsbPhSrElI0ulBZTFBkb7aobWMoqbQIL/Bb78xzdBh4u6yyMDqysFsA8CLAMSlPt78c+kgWexTLskCX2bRW5FKOc8q/Rg0EMbcBqR7qyjQ1db5TPQXI7x6J02Vce2UjOd2rs0IAwXgwmen12IZgac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729885235; c=relaxed/simple;
-	bh=cuHsbF5BJeQhkqgZ1M5w1kdP5LOKhqOgmlBowlwA5mQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DPhUhSb04oSkt5IzvttzuWNiQy+HmET00sAF1VX6VVgy1Z7RodulRshjXZLG1tfNdcrGdHnwnpfPDqb9DAcI7NaQi4BS2wmc/qOhZnAwj+nE18k6BQoSEiMVrZ2ssBaVW6hbILA036/A7BpMEWKiJLHxcBgZhtrgQXzeB2yeKyM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=S3dib0Xn; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1729885230;
-	bh=cuHsbF5BJeQhkqgZ1M5w1kdP5LOKhqOgmlBowlwA5mQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=S3dib0XnYQ9G60uQO6weLae63DKdqb57tMmEdUbPEe6GYxjs/KpVnTzHxoVDx+1sG
-	 IthR7JVwVCgh+yLKTS1987qr466WskMQ0rfwft9rEXgIpsbh+js0lJBtQeh/hhUdh/
-	 BYH7FdidyE8fMa5PKR/61wIIhzsfGjEe7igiKMXPng1Pwp3X409ADDLQubdOQ3W46a
-	 GwL+eRUHYskfCp3mn2QEsT8tsvPRlWJfGlB5vVmOpQxZAsqxQ2nAL5Nnu0JlNRTq8R
-	 SbUKqdb8Smsn7btDIB031UWAfn+z6SmoLsLn/eJakuv65pwMwVyEXhKSwRr7Jkoe6S
-	 2iZzI+lz+800w==
-Received: from [172.16.0.134] (96-127-217-162.qc.cable.ebox.net [96.127.217.162])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XZtRd6Drhz19FS;
-	Fri, 25 Oct 2024 15:40:29 -0400 (EDT)
-Message-ID: <f31710d3-e4d8-43ad-9ccb-6d13201756a3@efficios.com>
-Date: Fri, 25 Oct 2024 15:38:48 -0400
+	s=arc-20240116; t=1729885152; c=relaxed/simple;
+	bh=5KKGz4yw9dGRnMnqC1INz+kjnWf0FBT1WE3Oy41SNes=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lsNue+ChGKM624TCAKu+L63wETVMljcmSv6bL1cqVkiWIcjHoM1UYufi6jBMxZXVulpvjs0i+m1O7BbtZCz1B+2xyW/DKZllQcSc8Q3rZlycXLbOy3oheufN2bohDF0oCjniLV3oOT0Q/uuigcRemqeHvd1KwgYm5QFiibwKL4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FhSLkAMj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71331C4CEC3;
+	Fri, 25 Oct 2024 19:39:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729885151;
+	bh=5KKGz4yw9dGRnMnqC1INz+kjnWf0FBT1WE3Oy41SNes=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FhSLkAMjnrWfazHyNvrpkdLRnlvAlNbCyO1spS4ZBlYEj6Ik4ZwXKekcmtmELFWYM
+	 iKUOHYjZMKG9wkZ6MI/jOeMibfPtopztpxSsVFUm+dok5ohHgZN95KcT23jjqebTKy
+	 7e3D1lNldAb+XRpFHeG9fifqbAt1EiRP9YIZ/fHUK8SO1rexWN+gNER+5uFEmgrIfX
+	 InZ9AKzuW8uBHQWXCsrqYSn2q2UID+FXxfDcBffRFRLpwgY1g0l6QRBCF2M5OtjmNy
+	 gK41mof2BFIpn6VHamHyZX95a+vl1lf7PpSkSv5TMetOWP/Kg1OO6YLmwoEbpVis1h
+	 +lLhDhBIFUnBQ==
+Date: Fri, 25 Oct 2024 09:39:10 -1000
+From: Tejun Heo <tj@kernel.org>
+To: David Vernet <void@manifault.com>
+Cc: sched-ext@meta.com, kernel-team@meta.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] scx: Fix raciness in scx_ops_bypass()
+Message-ID: <Zxvz3mlxRm-BxuJW@slm.duckdns.org>
+References: <20241025054014.66631-1-void@manifault.com>
+ <20241025054014.66631-2-void@manifault.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v1] tracing: Fix syscall tracepoint use-after-free
-To: Jordan Rife <jrife@google.com>
-Cc: acme@kernel.org, alexander.shishkin@linux.intel.com,
- andrii.nakryiko@gmail.com, ast@kernel.org, bpf@vger.kernel.org,
- joel@joelfernandes.org, linux-kernel@vger.kernel.org, mark.rutland@arm.com,
- mhiramat@kernel.org, mingo@redhat.com, mjeanson@efficios.com,
- namhyung@kernel.org, paulmck@kernel.org, peterz@infradead.org,
- rostedt@goodmis.org, syzbot+b390c8062d8387b6272a@syzkaller.appspotmail.com,
- yhs@fb.com
-References: <20241025182149.500274-1-mathieu.desnoyers@efficios.com>
- <20241025190854.3030636-1-jrife@google.com>
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Content-Language: en-US
-In-Reply-To: <20241025190854.3030636-1-jrife@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241025054014.66631-2-void@manifault.com>
 
-On 2024-10-25 15:08, Jordan Rife wrote:
->> diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
->> index 59de664e580d..1191dc1d4206 100644
->> --- a/kernel/bpf/syscall.c
->> +++ b/kernel/bpf/syscall.c
->> @@ -3006,14 +3006,21 @@ static void bpf_link_free(struct bpf_link *link)
->>                  bpf_prog_put(link->prog);
+On Fri, Oct 25, 2024 at 12:40:14AM -0500, David Vernet wrote:
+> scx_ops_bypass() can currently race on the ops enable / disable path as
+> follows:
 > 
-> I think we would need the same treatment with bpf_prog_put here.
-> Something like,
+> 1. scx_ops_bypass(true) called on enable path, bypass depth is set to 1
+> 2. An op on the init path exits, which schedules scx_ops_disable_workfn()
+> 3. scx_ops_bypass(false) is called on the disable path, and bypass depth
+>    is decremented to 0
+> 4. kthread is scheduled to execute scx_ops_disable_workfn()
+> 5. scx_ops_bypass(true) called, bypass depth set to 1
+> 6. scx_ops_bypass() races when iterating over CPUs
 > 
-> tracepoint_call_rcu(raw_tp->btp->tp, &link->prog->aux->rcu,
-> 		    bpf_link_defer_bpf_prog_put);
+> Fixing this is difficult because we can't take any locks when enabling
+> bypass due to us not being able to trust the BPF scheduler. This is
+
+We can't use mutexes but can definitely use raw_spinlocks.
+
+> problematic, because what we really need to do is coordinate between
+> possible concurrent calls of scx_ops_bypass(true) and
+> scx_ops_bypass(false), but the whole point of that code is that we can't
+> use any locks to coordinate. Instead of taking a lock, however, we can
+> instead just serialize the calls to enable and disable bypass by executing
+> the calls on the scx_ops_helper kthread that's currently responsible for
+> disabling a BPF scheduler.
 > 
-> static void bpf_link_defer_bpf_prog_put(struct rcu_head *rcu)
-> {
-> 	struct bpf_prog_aux *aux = container_of(rcu, struct bpf_prog_aux, rcu);
-> 	bpf_prog_put(aux->prox);
-> }
+> This patch therefore adds a new schedule_scx_bypass_delta() function which
+> schedules changes to scx_ops_bypass() to occur on the scx_ops_helper
+> kthread (where necessary).
 
-Sure, I'll add this in a v2.
+Can't we just add a static raw_spinlock to protect scx_ops_bypass() body and
+maybe turn scx_ops_bypass_depth into a regular int while at it?
 
-> 
-> Alternatively, some context would need to be passed down to
-> __bpf_prog_put_noref via the call to bpf_prog_put so it can choose
-> whether or not to use call_rcu or call_rcu_tasks_trace.
-
-Also possible, but more cumbersome.
-
-> 
->> -static inline void release_probes(struct tracepoint_func *old)
->> +static bool tracepoint_is_syscall(struct tracepoint *tp)
->> +{
->> +       return !strcmp(tp->name, "sys_enter") || !strcmp(tp->name, "sys_exit");
->> +}
-> 
-> I'm curious if it might be better to add some field to struct
-> tracepoint like "sleepable" rather than adding a special case here
-> based on the name? Of course, if it's only ever going to be these
-> two cases then maybe adding a new field doesn't make sense.
-
-I know Steven is reluctant to bloat the tracepoint struct because there
-are lots of tracepoint instances (thousands). So for now I thought that
-just comparing the name would be a good start.
-
-We can eventually go a different route as well: introduce a section just
-to put the syscall tracepoints, and compare the struct tracepoint
-pointers to the section begin/end range. But it's rather complex
-for what should remain a simple fix.
-
-Thanks,
-
-Mathieu
-
-
-> 
-> -Jordan
+Thanks.
 
 -- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
-
+tejun
 
