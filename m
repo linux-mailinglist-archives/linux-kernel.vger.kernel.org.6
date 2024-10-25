@@ -1,43 +1,43 @@
-Return-Path: <linux-kernel+bounces-381611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA4889B018E
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 13:46:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8ADF89B018F
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 13:46:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 55091B217BF
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 11:46:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4081F1F22E68
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 11:46:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1AF7201015;
-	Fri, 25 Oct 2024 11:46:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30EF92036EF;
+	Fri, 25 Oct 2024 11:46:34 +0000 (UTC)
 Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B84001B6D1E;
-	Fri, 25 Oct 2024 11:46:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A0E91D4358;
+	Fri, 25 Oct 2024 11:46:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729856792; cv=none; b=aEg2/lipQsCsNX02hMUV25sf3+rRqVgwJTZeKzwN0UEEMLZ73PKeW+TBWx+ELj8Y0EZiXcgft6E3h21SDwq/qflftwffTLwSYnCY6kLjbQycP2/U8NtWUd4P+gq0Yy1iJhwtT2ZdIrx9Df8AkoIRgcdJ29+C4pUWFHNGyuXfZbU=
+	t=1729856793; cv=none; b=q1TqtuxY25ctRrZsEtI+Is6seVY6Ja30aujFwnhQXm8v6r94xmDIakiZuQdjJnnrc7Aj3Qh5ahrjGFBNTkBwBzOMN7Bn/bMd6G+fu23BHZqvYiP+Qlt6X8F83e+dYbtQkdVLZhD5a3A7tKdKNYbFMx2CJnyuwB2nzNTY4ygFZmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729856792; c=relaxed/simple;
-	bh=77yUUqtS5qwAKpLQsFr8XruHvpn3wC9iSU2mQKXm8To=;
+	s=arc-20240116; t=1729856793; c=relaxed/simple;
+	bh=BOUh+NJK+ySgk1Djv6PMgGN4u+DPdnSGt6l2jKS84vs=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tkEvMGcMX50g7acV5a67NFOxyRUzdE2L/IuKpsnMt0vvpneu9raUuwfoNDZ/R4p1RTTQqjaS7fMXe5hgMP0GNIyNfnwyesDkD0Ry+PGLFJo4ZDrzho5BAt+6lbPmc92X+E/XqcVh4Q86oUvNZGy/oeieRQH4lbYRzF0tigSgqxg=
+	 MIME-Version:Content-Type; b=cBzjVCCvHDIM2CffjhN7mIdtsz6tcsWW0twpbhJnQiGwT0EIlQTVEykQqJYJTfx897WFczvLTFcHK13Gr6Dwh9dIQ6QLoXPyQ4vz9+vUbU0TvB4I7eWzuiSLNVYngEDjdPq3x9TVzzExDW7K6jCF8B1kZWqmvjuDeAjxSpVtWbg=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XZgtB1V75z6K6Kw;
-	Fri, 25 Oct 2024 19:44:18 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XZgvT04sjz6K5kt;
+	Fri, 25 Oct 2024 19:45:25 +0800 (CST)
 Received: from frapeml500007.china.huawei.com (unknown [7.182.85.172])
-	by mail.maildlp.com (Postfix) with ESMTPS id 90DF9140452;
-	Fri, 25 Oct 2024 19:46:27 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTPS id 910BC1408F9;
+	Fri, 25 Oct 2024 19:46:28 +0800 (CST)
 Received: from P_UKIT01-A7bmah.china.huawei.com (10.48.151.104) by
  frapeml500007.china.huawei.com (7.182.85.172) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 25 Oct 2024 13:46:26 +0200
+ 15.1.2507.39; Fri, 25 Oct 2024 13:46:27 +0200
 From: <shiju.jose@huawei.com>
 To: <dave.jiang@intel.com>, <dan.j.williams@intel.com>,
 	<jonathan.cameron@huawei.com>, <alison.schofield@intel.com>,
@@ -45,9 +45,9 @@ To: <dave.jiang@intel.com>, <dan.j.williams@intel.com>,
 	<linux-cxl@vger.kernel.org>
 CC: <linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
 	<tanxiaofei@huawei.com>, <prime.zeng@hisilicon.com>, <shiju.jose@huawei.com>
-Subject: [PATCH v3 1/6] cxl/events: Update Common Event Record to CXL spec rev 3.1
-Date: Fri, 25 Oct 2024 12:45:50 +0100
-Message-ID: <20241025114555.1363-2-shiju.jose@huawei.com>
+Subject: [PATCH v3 2/6] cxl/events: Add Component Identifier formatting for CXL spec rev 3.1
+Date: Fri, 25 Oct 2024 12:45:51 +0100
+Message-ID: <20241025114555.1363-3-shiju.jose@huawei.com>
 X-Mailer: git-send-email 2.43.0.windows.1
 In-Reply-To: <20241025114555.1363-1-shiju.jose@huawei.com>
 References: <20241025114555.1363-1-shiju.jose@huawei.com>
@@ -64,84 +64,63 @@ X-ClientProxiedBy: lhrpeml500004.china.huawei.com (7.191.163.9) To
 
 From: Shiju Jose <shiju.jose@huawei.com>
 
-CXL spec 3.1 section 8.2.9.2.1 Table 8-42, Common Event Record format has
-updated with Maintenance Operation Subclass information.
+Add Component Identifier formatting for CXL spec rev 3.1, Section
+8.2.9.2.1, Table 8-44.
 
-Add updates for the above spec change in the CXL events record and CXL
-common trace event implementations.
+Examples for Component Identifier format in trace log,
 
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+validity_flags='CHANNEL|RANK|DEVICE|COMPONENT|COMPONENT PLDM FORMAT' \
+comp_id=03 74 c5 08 9a 1a 0b fc d2 7e 2f 31 9b 3c 81 4d \
+comp_id_pldm_valid_flags='PLDM Entity ID | Resource ID' \
+pldm_entity_id=74 c5 08 9a 1a 0b pldm_resource_id=fc d2 7e 2f \
+
+validity_flags='COMPONENT|COMPONENT PLDM FORMAT' \
+comp_id=02 74 c5 08 9a 1a 0b fc d2 7e 2f 31 9b 3c 81 4d \
+comp_id_pldm_valid_flags='Resource ID' \
+pldm_entity_id=0x00 pldm_resource_id=fc d2 7e 2f
+
+If the validity flags for component ID/component ID format or PLDM ID or
+resource ID are not set, then pldm_entity_id=0x00 or pldm_resource_id=0x00
+would be printed.
+
 Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
 ---
- drivers/cxl/core/trace.h | 13 +++++++++----
- include/cxl/event.h      |  3 ++-
- 2 files changed, 11 insertions(+), 5 deletions(-)
+ drivers/cxl/core/trace.h | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
 diff --git a/drivers/cxl/core/trace.h b/drivers/cxl/core/trace.h
-index 8389a94adb1a..7305974e2301 100644
+index 7305974e2301..b508873ce426 100644
 --- a/drivers/cxl/core/trace.h
 +++ b/drivers/cxl/core/trace.h
-@@ -166,11 +166,13 @@ TRACE_EVENT(cxl_overflow,
- #define CXL_EVENT_RECORD_FLAG_MAINT_NEEDED	BIT(3)
- #define CXL_EVENT_RECORD_FLAG_PERF_DEGRADED	BIT(4)
- #define CXL_EVENT_RECORD_FLAG_HW_REPLACE	BIT(5)
-+#define CXL_EVENT_RECORD_FLAG_MAINT_OP_SUB_CLASS_VALID	BIT(6)
- #define show_hdr_flags(flags)	__print_flags(flags, " | ",			   \
- 	{ CXL_EVENT_RECORD_FLAG_PERMANENT,	"PERMANENT_CONDITION"		}, \
- 	{ CXL_EVENT_RECORD_FLAG_MAINT_NEEDED,	"MAINTENANCE_NEEDED"		}, \
- 	{ CXL_EVENT_RECORD_FLAG_PERF_DEGRADED,	"PERFORMANCE_DEGRADED"		}, \
--	{ CXL_EVENT_RECORD_FLAG_HW_REPLACE,	"HARDWARE_REPLACEMENT_NEEDED"	}  \
-+	{ CXL_EVENT_RECORD_FLAG_HW_REPLACE,	"HARDWARE_REPLACEMENT_NEEDED"	},  \
-+	{ CXL_EVENT_RECORD_FLAG_MAINT_OP_SUB_CLASS_VALID,	"MAINT_OP_SUB_CLASS_VALID" }	\
+@@ -268,6 +268,28 @@ TRACE_EVENT(cxl_generic_event,
+ 	{ CXL_DPA_NOT_REPAIRABLE,		"NOT_REPAIRABLE"	}  \
  )
  
++/*
++ * Component ID Format
++ * CXL 3.1 section 8.2.9.2.1; Table 8-44
++ */
++#define CXL_PLDM_COMPONENT_ID_ENTITY_VALID	BIT(0)
++#define CXL_PLDM_COMPONENT_ID_RES_VALID		BIT(1)
++
++#define show_comp_id_pldm_flags(flags)  __print_flags(flags, " | ",	\
++	{ CXL_PLDM_COMPONENT_ID_ENTITY_VALID,   "PLDM Entity ID" },	\
++	{ CXL_PLDM_COMPONENT_ID_RES_VALID,      "Resource ID" }		\
++)
++
++#define show_pldm_entity_id(flags, valid_comp_id, valid_id_format, comp_id)	\
++	(flags & valid_comp_id && flags & valid_id_format) ?			\
++	(comp_id[0] & CXL_PLDM_COMPONENT_ID_ENTITY_VALID) ?			\
++	__print_hex(&comp_id[1], 6) : "0x00" : "0x00"
++
++#define show_pldm_resource_id(flags, valid_comp_id, valid_id_format, comp_id)	\
++	(flags & valid_comp_id && flags & valid_id_format) ?			\
++	(comp_id[0] & CXL_PLDM_COMPONENT_ID_RES_VALID) ?			\
++	__print_hex(&comp_id[7], 4) : "0x00" : "0x00"
++
  /*
-@@ -197,7 +199,8 @@ TRACE_EVENT(cxl_overflow,
- 	__field(u16, hdr_related_handle)			\
- 	__field(u64, hdr_timestamp)				\
- 	__field(u8, hdr_length)					\
--	__field(u8, hdr_maint_op_class)
-+	__field(u8, hdr_maint_op_class)				\
-+	__field(u8, hdr_maint_op_sub_class)
- 
- #define CXL_EVT_TP_fast_assign(cxlmd, l, hdr)					\
- 	__assign_str(memdev);				\
-@@ -209,17 +212,19 @@ TRACE_EVENT(cxl_overflow,
- 	__entry->hdr_handle = le16_to_cpu((hdr).handle);			\
- 	__entry->hdr_related_handle = le16_to_cpu((hdr).related_handle);	\
- 	__entry->hdr_timestamp = le64_to_cpu((hdr).timestamp);			\
--	__entry->hdr_maint_op_class = (hdr).maint_op_class
-+	__entry->hdr_maint_op_class = (hdr).maint_op_class;			\
-+	__entry->hdr_maint_op_sub_class = (hdr).maint_op_sub_class
- 
- #define CXL_EVT_TP_printk(fmt, ...) \
- 	TP_printk("memdev=%s host=%s serial=%lld log=%s : time=%llu uuid=%pUb "	\
- 		"len=%d flags='%s' handle=%x related_handle=%x "		\
--		"maint_op_class=%u : " fmt,					\
-+		"maint_op_class=%u maint_op_sub_class=%u : " fmt,		\
- 		__get_str(memdev), __get_str(host), __entry->serial,		\
- 		cxl_event_log_type_str(__entry->log),				\
- 		__entry->hdr_timestamp, &__entry->hdr_uuid, __entry->hdr_length,\
- 		show_hdr_flags(__entry->hdr_flags), __entry->hdr_handle,	\
- 		__entry->hdr_related_handle, __entry->hdr_maint_op_class,	\
-+		__entry->hdr_maint_op_sub_class,	\
- 		##__VA_ARGS__)
- 
- TRACE_EVENT(cxl_generic_event,
-diff --git a/include/cxl/event.h b/include/cxl/event.h
-index 0bea1afbd747..e1d485ad376b 100644
---- a/include/cxl/event.h
-+++ b/include/cxl/event.h
-@@ -18,7 +18,8 @@ struct cxl_event_record_hdr {
- 	__le16 related_handle;
- 	__le64 timestamp;
- 	u8 maint_op_class;
--	u8 reserved[15];
-+	u8 maint_op_sub_class;
-+	u8 reserved[14];
- } __packed;
- 
- struct cxl_event_media_hdr {
+  * General Media Event Record - GMER
+  * CXL rev 3.0 Section 8.2.9.2.1.1; Table 8-43
 -- 
 2.34.1
 
