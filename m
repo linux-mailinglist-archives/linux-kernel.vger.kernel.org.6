@@ -1,76 +1,142 @@
-Return-Path: <linux-kernel+bounces-380976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 740C59AF875
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 05:49:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD8649AF84E
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 05:41:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5E3F1C21B11
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 03:49:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78A111F2293E
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 03:41:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14DC318DF69;
-	Fri, 25 Oct 2024 03:46:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79EF118C020;
+	Fri, 25 Oct 2024 03:41:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="p8dvhtoc"
-Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
+	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="shTyDLwQ";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="XJPQT9pf"
+Received: from fhigh-a5-smtp.messagingengine.com (fhigh-a5-smtp.messagingengine.com [103.168.172.156])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C30F518D64D
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 03:46:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0237A12CD88;
+	Fri, 25 Oct 2024 03:41:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729828018; cv=none; b=H5oQVDbDCIFfVmibAO+81TKVJ2q9Zq4r3+KLla81ZakJ7p00xReID/tx5WuBgiFsQ+M72pRG6n0bXL5/CfV3xRiVD+v0FLbRovpKbSp3T1g9L2BBYZU8QuD2V+BMRn0fxQoy6irFKGAr8jCirOABhpTeTudzkYqKRk5H7h9Ma0g=
+	t=1729827708; cv=none; b=snMwAN6pl02GjDGsz6hLm8v4M14iWhiFzSo4q4/N8t8L+YvI0wWbMfzogiFj6NvCT+NkpgX9ZQX8d82LYZE1T/g/WtZlOHXBsLzkuRcLfvBJo6uG59ujznx+lQznaHOA9PucjSNqK7aTxMs1cIGE+qaDHUnrjXYZa2uj4G1IDYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729828018; c=relaxed/simple;
-	bh=QJlh0cP76ZqZak+VHqIXFOO1KS98ORU8bZ4itrnwT30=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dzSmG5sic9GD0hP0BTS6LaQtMKDnr6QzlRdd2Aju//xD/ak1dEhz4CZkRAqP2Li01dTT06npVEXMY9qeCwqi+K8yhZ9DQpTiefS1ZBM9eeEQ6hHOBsDfBJ145s79SR7KHBILkyLTPaw+Oz2jz69dM9+z2AZ0YNSOwCyJDDOTifA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=p8dvhtoc; arc=none smtp.client-ip=115.124.30.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1729828006; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=zrU5pvf8Ccmt/8aWbf428dLHkAkvKhXVcjKOe29osiI=;
-	b=p8dvhtocz8QcbzRzRY49/NQZAP5VDVYkyv/c+JhtVv3jkk5kraEC/ArZgMfKNH23KVX+8NKgbSGBh17Ko+CU1IhwxeaJ5jR0R3jgi6+xlIq0gMvwwJxsTJ+0QiOcEEkd2JfX6FT+h/V1hzLuV+3OTLxxkrAAYCyDeQKWWVz4mTs=
-Received: from 30.74.144.130(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WHr0gmx_1729827688 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Fri, 25 Oct 2024 11:41:29 +0800
-Message-ID: <01423085-1622-41ed-a882-64291f3e97ab@linux.alibaba.com>
-Date: Fri, 25 Oct 2024 11:41:28 +0800
+	s=arc-20240116; t=1729827708; c=relaxed/simple;
+	bh=QFFtBJzAZAp2FrLiSmCcVMgaZP7MAdsUChE27fQNMBM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=vEbAHkRFSnjjJb/VIuP6dxem9AAb+Q4/XxCDGqt70+539YMbey/pSvt3NZABXaC0kXHV9LwyzaH4CFv/omRbRS34QHDK/NF1y2CvSMGu74aKe+4t9vmYeqTonw07p+f00B0CBm6UBwWhEI1PK0n9BKEAh+cIJCY2Linf6qyRxpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=shTyDLwQ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=XJPQT9pf; arc=none smtp.client-ip=103.168.172.156
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
+Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id D025E114018B;
+	Thu, 24 Oct 2024 23:41:43 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-01.internal (MEProxy); Thu, 24 Oct 2024 23:41:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
+	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
+	:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to; s=fm3; t=1729827703; x=1729914103; bh=hGbndDvPKU
+	T6KhzJcrOUEZbPMjMh5KNkkA/oX8Q0dNU=; b=shTyDLwQnYFZKH4sdHIYlvjwH4
+	ojGjW0FglhBwTRuaKDXosPwWrNqAjTTfKCL/do/Zwsctuco3082v5qr//iaLpU4k
+	ww6S39304W++AH1cTgt+lpKX4tKGDykbpWBdQVLjSW5jrqT7EdHvofMW2m7sLem8
+	YNGU+T/u+5vhswYOqHKKjlwgERNVlHoI4ezcdwcnrMDxfCbTlQsVvDEk0P8Kx0AU
+	9t/C8TNpG7zrhqtWaDkyJ5EkBE9KvDpFTZGkqPFr4GRw3FBytUFvZeOsj3y+IO9p
+	6MZRiGk0lqA79kY6ZiFYboHyJ/sQ0UjBRX73FZPLARbJLTyPtBF8rVdeECHA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm3; t=1729827703; x=1729914103; bh=hGbndDvPKUT6KhzJcrOUEZbPMjMh
+	5KNkkA/oX8Q0dNU=; b=XJPQT9pfH1uxMnbKR9Yi0/hufT1urt2HUSTjH1REm76Y
+	p0KB+2Zd0ckmVFBs3z9VY4iCD/hy9/nd/OgrdbQk4qXVeu568MiI4agJsGAnhmHe
+	0R/Q9bmH4EZC1OC/YLajU5ZHGRpioGsFq5UxenW/G1OHAjIIPB8rEU+Y9BzLYqnd
+	Gn5CYtYsan640bIxt17nSrhw41yEPH5fZzR0KuZ57ybXCsIvfSn1GOAqlCqS0T3G
+	XFWXMnMEutnZ2AMEZcXZibFHfoZYZevqgyN0muetAcYtvofmIWh3oeGB44n5K4vM
+	6e7ONhF7OKlJjopU8cqp18zoaSXxZ16WcAYULfFHAA==
+X-ME-Sender: <xms:dxMbZ7542-OO7h8ZeEqMEQxDiRe2hnJYXpsYgO9N7pukSDZWMKIDsw>
+    <xme:dxMbZw45C45E80GqudxFIOG0SuLgExxqSBxN-Llmx1egXJqMSwY8FAr5esuCPdHK7
+    ZfB8prmkBLD-6GIHUs>
+X-ME-Received: <xmr:dxMbZyc3UkSJpZYUqlJC1A5J_Y5rVVrWrGf4DVTnHxDTTsdd53TkTYs5WPokv7MYJ33ejTUvASvqko7IOdqP-2_pkLnzkzesgW4W0S2tLqxHAg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdejuddgjeegucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhephffvvefufffkofgggfestdekredtredttdenucfh
+    rhhomhepvfgrkhgrshhhihcuufgrkhgrmhhothhouceoohdqthgrkhgrshhhihesshgrkh
+    grmhhotggthhhirdhjpheqnecuggftrfgrthhtvghrnhepgefgheelheejieelheevfeek
+    hfdtfeeftdefgefhkeffteduveejgeekvefhvdeunecuffhomhgrihhnpehkvghrnhgvlh
+    drohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhm
+    pehoqdhtrghkrghshhhisehsrghkrghmohgttghhihdrjhhppdhnsggprhgtphhtthhope
+    egpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehlihhnuhigudefleegqdguvghv
+    vghlsehlihhsthhsrdhsohhurhgtvghfohhrghgvrdhnvghtpdhrtghpthhtoheplhhinh
+    hugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshht
+    rggslhgvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepvggumhhunhgurd
+    hrrghilhgvsehprhhothhonhdrmhgv
+X-ME-Proxy: <xmx:dxMbZ8LxZeNrmFsb-Lza1Jd4KcqiRx1W20RWBqCk0trVdTVyr7lt7g>
+    <xmx:dxMbZ_L_t8AZhhBtCH3ZU44Pf5ABWjisgfemKvufSkLJ19jRYPI8Ig>
+    <xmx:dxMbZ1wCSq7F8rj0K4vLrk3wVFio3M0GVrqocqFI7uaXVim24Y2g-g>
+    <xmx:dxMbZ7I6DxvypIxLRKc4mfk1SruYrq-c_v55vuklWJVumC-Dgl37rA>
+    <xmx:dxMbZ8GtFlHLjNkP5wRRrFyMh0kqWiRi-TxbZzmbCBJq8s5COXpLDEN8>
+Feedback-ID: ie8e14432:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 24 Oct 2024 23:41:42 -0400 (EDT)
+From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+To: linux1394-devel@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org,
+	Edmund Raile <edmund.raile@proton.me>
+Subject: [PATCH] firewire: core: fix invalid port index for parent device
+Date: Fri, 25 Oct 2024 12:41:37 +0900
+Message-ID: <20241025034137.99317-1-o-takashi@sakamocchi.jp>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm: shmem: fallback to page size splice if large folio
- has poisoned subpages
-To: Matthew Wilcox <willy@infradead.org>
-Cc: akpm@linux-foundation.org, hughd@google.com, david@redhat.com,
- wangkefeng.wang@huawei.com, shy828301@gmail.com, dhowells@redhat.com,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <fd3893f318493a3720dc1a4b1c33f0f692ddf125.1729825743.git.baolin.wang@linux.alibaba.com>
- <ZxsRCyBSO-C27Uzn@casper.infradead.org>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <ZxsRCyBSO-C27Uzn@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+In a commit 24b7f8e5cd65 ("firewire: core: use helper functions for self
+ID sequence"), the enumeration over self ID sequence was refactored with
+some helper functions with KUnit tests. These helper functions are
+guaranteed to work expectedly by the KUnit tests, however their application
+includes a mistake to assign invalid value to the index of port connected
+to parent device.
 
+This bug affects the case that any extra node devices which has three or
+more ports are connected to 1394 OHCI controller. In the case, the path
+to update the tree cache could hits WARN_ON(), and gets general protection
+fault due to the access to invalid address computed by the invalid value.
 
-On 2024/10/25 11:31, Matthew Wilcox wrote:
-> On Fri, Oct 25, 2024 at 11:26:39AM +0800, Baolin Wang wrote:
->> The tmpfs has already supported the PMD-sized large folios, and splice()
->> can not read any subpages if the large folio has a poisoned subpage,
->> which is not good as we discussed in previous mail[1].
-> 
-> folios do not have subpages.  folios have pages.  do not use the term
-> "subpage" anywhere.  ever.
+This commit fixes the bug to assign correct port index.
 
-OK. This is my previous habit of naming it. Will change 'subpages' to 
-'pages' for folios.
+Cc: stable@vger.kernel.org
+Reported-by: Edmund Raile <edmund.raile@proton.me>
+Closes: https://lore.kernel.org/lkml/8a9902a4ece9329af1e1e42f5fea76861f0bf0e8.camel@proton.me/
+Fixes: 24b7f8e5cd65 ("firewire: core: use helper functions for self ID sequence")
+Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+---
+ drivers/firewire/core-topology.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/firewire/core-topology.c b/drivers/firewire/core-topology.c
+index 6adadb11962e..892b94cfd626 100644
+--- a/drivers/firewire/core-topology.c
++++ b/drivers/firewire/core-topology.c
+@@ -204,7 +204,7 @@ static struct fw_node *build_tree(struct fw_card *card, const u32 *sid, int self
+ 				// the node->ports array where the parent node should be.  Later,
+ 				// when we handle the parent node, we fix up the reference.
+ 				++parent_count;
+-				node->color = i;
++				node->color = port_index;
+ 				break;
+ 
+ 			case PHY_PACKET_SELF_ID_PORT_STATUS_CHILD:
+-- 
+2.45.2
+
 
