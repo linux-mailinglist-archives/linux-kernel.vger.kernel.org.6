@@ -1,80 +1,60 @@
-Return-Path: <linux-kernel+bounces-380911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8846A9AF7B9
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 04:54:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C84E9AF7BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 04:56:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47840282BB7
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 02:54:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5DDC2834B2
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 02:56:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C96A518A937;
-	Fri, 25 Oct 2024 02:54:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3110718A951;
+	Fri, 25 Oct 2024 02:56:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XWh2hjDQ"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VpSG9TFf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0147A3D97A;
-	Fri, 25 Oct 2024 02:54:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F69C3D97A;
+	Fri, 25 Oct 2024 02:56:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729824846; cv=none; b=m5Np69NbEu1xVN+SOyZ+W+vfU+UaQiVFVhBbbEUnlADB1z7KGwwg6/APkbSAG2kQvB3AnLcQix3Wh8wjM7/b6nih4h4ucBWQH54pdpctgf5A7ezoBRcTrpBXpM3aDGZv+F34bVeSbHv7h+bsFcQQU8KBveciuNLH15Ye1gqMgaI=
+	t=1729824990; cv=none; b=q2GW0U6eCDoTeCtRKOnDLf/MpqyGVMzs9d4H4f4XqhgXEIa0mT1c88rDMeCxB6dfpI4F+IPcTP2UmUvPtrAQ10imBy7S/UqsPrgfHnfDTSTlXcSUgf8+HE3FeUaQnA+HfaMFQ+nsebn4Qf5vU9Dl6h/VSlualmai5PtICKJY1RY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729824846; c=relaxed/simple;
-	bh=NWZg2E3tAPAKNZYQB+RGcMHGg2l5rvdMFzLniGkXNQQ=;
+	s=arc-20240116; t=1729824990; c=relaxed/simple;
+	bh=XywWuK21Kqbi5ds/dzHJKlCriZgNB0AONCXAcdIrKmM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cZ9DCf6G/KELwgEB7RkDpjeMQb4tmRMWtQaV8K7AJUHdePeCnPFLnd2U0LxQYWhx8bNnW9cwdqZurKHRItpr/eNAsPUM3bVv03IrMe9KoNqIGzgk3C6p/Rbx7PNQmLlR6OU64ErddhBMvurJVn24VKsgAEbkRwx/32vaq6AvW58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XWh2hjDQ; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-71e3fce4a60so1088787b3a.0;
-        Thu, 24 Oct 2024 19:54:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729824843; x=1730429643; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=/iDoEcRLEifYJF4+8AHMpAqc96EixKFh8xtz5t7fpd4=;
-        b=XWh2hjDQTK3YRmkHLHbF+aC5fsCT34ZKAOjyrh1eCpo8cAG+0Xepf4VPU0XAKM+0+U
-         EoqqRBCbthsxy4URW9Aq853l+3Vj3x3yJLaFD1KmPrv5LJMNYXGH6QqPXRALESTXgfX5
-         DU/AxvOFKh+Qx4EPsotz3dqIHcEqDaYwKLipZEh9VtjSMWf2UnkGtQiI6rqeOosfBnOc
-         xaYFFdBK6lfXqmwh2vlyd/f2mozsXZhcCzF5Cp0AD/gXFW3b5BbNi4009nwPZfnd3hht
-         UUOSP6lrUM42Zt8nmMvX2VInayiVmMVRDcr0ww7ROvzUkYD4SLwBgczgHeM2n6ONpV5N
-         o6iQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729824843; x=1730429643;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/iDoEcRLEifYJF4+8AHMpAqc96EixKFh8xtz5t7fpd4=;
-        b=F/O5bCcUKxszd9dLTeC6TEqMMsywftuyKHAtu8EBz1e5GUEYCP2P8JqiqJc6p37HLj
-         wgTuUPC3Im8MtQfdQ/cPZWlvxJKa2wkMSGG3ScuhoU4syv2esGyOpZ5Czrv/F5Ct1mc2
-         FVJF+cQSVZsXlk3RSZOIXbgo4vtmKpVlqs0Hmj05s0TN6OgtSorcGX15WYmLFABsPu+g
-         aWwtvtXy8gvV8Y7eBx273O1w0j2wgnbFVeO5FPjSiLn662R/kvkDLAoggEwrc4vp34iV
-         aZmP3X2gieRqxHnoQvOKNLNW6q8WT+2oNbK6KMOi+gjUNrjTmk7X2UHfUcAEWjn7DvvC
-         BIPg==
-X-Forwarded-Encrypted: i=1; AJvYcCVRJDyvPnkFqsyomu6c9E0qsiRKsyNTOGbgJoH98akPKq70lWk1yZV6AKf4prJBQMHMQUFlYZn33FnFil5X@vger.kernel.org, AJvYcCXAy2l2dMMe45qRKfcgwhYgUaTvojBuOHgUfkBcYSWj/tRVrl7ZvzVdwh58t7nIwcd72zDuYKfwas6b@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywvjy5j0E4AWcI0iS85VSNbEz9L8x1aaK6F6RoAUfH3CPuf7dJX
-	sgkyVqjqb8o58hqsTYp4suqhIQgF40asPGPo/EtGNsyqu2q/nrc7RuGmlw==
-X-Google-Smtp-Source: AGHT+IHEYChedZIFdwjXaIvTk/Y4lRBsE5Q0qaWBvVF9OM/qk2nuBsYiNJHUHfAcnl8uXMZERrLGOg==
-X-Received: by 2002:a05:6a00:190b:b0:71e:77e6:ad89 with SMTP id d2e1a72fcca58-72045e758dcmr5819219b3a.13.1729824842930;
-        Thu, 24 Oct 2024 19:54:02 -0700 (PDT)
-Received: from rigel (60-240-10-139.tpgi.com.au. [60.240.10.139])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72057950068sm137455b3a.89.2024.10.24.19.54.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Oct 2024 19:54:02 -0700 (PDT)
-Date: Fri, 25 Oct 2024 10:53:58 +0800
-From: Kent Gibson <warthog618@gmail.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH 1/5] gpio: sysfs: use cleanup guards for gpiod_data::mutex
-Message-ID: <20241025025358.GA47379@rigel>
-References: <20241024-gpio-notify-sysfs-v1-0-981f2773e785@linaro.org>
- <20241024-gpio-notify-sysfs-v1-1-981f2773e785@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=N6NdG1AH91G27hQjA2ASO8Kr6yiTgv4EbHbNoi0gfyS9gXGrUfMmtUy2MGI2qwLowoARH45iIvF29Hr8vv49hNXwqIxS7wnNJoEMeAAEG/TvoPwXa9XDcZjU5Xkgakkj++s4fFKXBmwo55vsTSQlhSmFn6+B+Lr/XvyYvHR9SJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VpSG9TFf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3D04C4CEC7;
+	Fri, 25 Oct 2024 02:56:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729824990;
+	bh=XywWuK21Kqbi5ds/dzHJKlCriZgNB0AONCXAcdIrKmM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VpSG9TFfLeQ1GU3d6SZEE87VlYpl3kWJMH3RymPeAAMHt4uow+R8gOCoN6NrX1Dr5
+	 qcdgL2vUpZBa7KGeC3Ng/OWpbO7lpQ3yD7iirq8QPSVFv1cIb4Pa2lxfSJfjNap070
+	 Of9nHXiV3+yeuCPHsxtHnzQX4IYBAVXi2Hv7RrjJ+Ug4ouaUFxRP13Lr3hvFArB6/C
+	 tXwAyDwza/P0y+pilxwJbiX/ekCNhzR9unB5VPnQqB508eSAJDpXs8Z6Uh5hCveicx
+	 oBeSV3JWtqaRfEFsEYqYhZ40yh5nao7efP/SbOBvpbx9SONyo7axsfYcRSUiDkePrn
+	 DEZLKfBvgipBA==
+Date: Thu, 24 Oct 2024 19:56:28 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Seshu Madhavi Puppala <quic_spuppala@quicinc.com>,
+	Adrian Hunter <adrian.hunter@intel.com>, linux-mmc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	quic_rampraka@quicinc.com, quic_nitirawa@quicinc.com,
+	quic_sachgupt@quicinc.com, quic_bhaskarv@quicinc.com,
+	quic_neersoni@quicinc.com, quic_gaurkash@quicinc.com
+Subject: Re: [PATCH RFC 0/2] Avoid reprogram all keys to Inline Crypto Engine
+ for MMC runtime suspend resume
+Message-ID: <20241025025628.GD1781@sol.localdomain>
+References: <20241006135530.17363-1-quic_spuppala@quicinc.com>
+ <20241023213134.GC3736641@google.com>
+ <CAPDyKFo05Hyw9gdEBx7zQq_6P58ittHHsZQLuqmeR1AChyHSHw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,230 +63,54 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241024-gpio-notify-sysfs-v1-1-981f2773e785@linaro.org>
+In-Reply-To: <CAPDyKFo05Hyw9gdEBx7zQq_6P58ittHHsZQLuqmeR1AChyHSHw@mail.gmail.com>
 
-On Thu, Oct 24, 2024 at 01:32:44PM +0200, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->
-> Shrink the code and drop some goto labels by using lock guards around
-> gpiod_data::mutex.
->
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> ---
->  drivers/gpio/gpiolib-sysfs.c | 57 +++++++++++++-------------------------------
->  1 file changed, 17 insertions(+), 40 deletions(-)
->
-> diff --git a/drivers/gpio/gpiolib-sysfs.c b/drivers/gpio/gpiolib-sysfs.c
-> index 0c713baa7784..3ccb41a93ea7 100644
-> --- a/drivers/gpio/gpiolib-sysfs.c
-> +++ b/drivers/gpio/gpiolib-sysfs.c
-> @@ -77,12 +77,10 @@ static ssize_t direction_show(struct device *dev,
->  	struct gpio_desc *desc = data->desc;
->  	int value;
->
-> -	mutex_lock(&data->mutex);
-> -
-> -	gpiod_get_direction(desc);
-> -	value = !!test_bit(FLAG_IS_OUT, &desc->flags);
-> -
-> -	mutex_unlock(&data->mutex);
-> +	scoped_guard(mutex, &data->mutex) {
-> +		gpiod_get_direction(desc);
-> +		value = !!test_bit(FLAG_IS_OUT, &desc->flags);
-> +	}
->
->  	return sysfs_emit(buf, "%s\n", value ? "out" : "in");
->  }
-> @@ -94,7 +92,7 @@ static ssize_t direction_store(struct device *dev,
->  	struct gpio_desc *desc = data->desc;
->  	ssize_t			status;
->
-> -	mutex_lock(&data->mutex);
-> +	guard(mutex)(&data->mutex);
->
->  	if (sysfs_streq(buf, "high"))
->  		status = gpiod_direction_output_raw(desc, 1);
-> @@ -105,8 +103,6 @@ static ssize_t direction_store(struct device *dev,
->  	else
->  		status = -EINVAL;
->
-> -	mutex_unlock(&data->mutex);
-> -
->  	return status ? : size;
->  }
->  static DEVICE_ATTR_RW(direction);
-> @@ -118,11 +114,8 @@ static ssize_t value_show(struct device *dev,
->  	struct gpio_desc *desc = data->desc;
->  	ssize_t			status;
->
-> -	mutex_lock(&data->mutex);
-> -
-> -	status = gpiod_get_value_cansleep(desc);
-> -
-> -	mutex_unlock(&data->mutex);
-> +	scoped_guard(mutex, &data->mutex)
-> +		status = gpiod_get_value_cansleep(desc);
->
->  	if (status < 0)
->  		return status;
-> @@ -140,7 +133,7 @@ static ssize_t value_store(struct device *dev,
->
->  	status = kstrtol(buf, 0, &value);
->
-> -	mutex_lock(&data->mutex);
-> +	guard(mutex)(&data->mutex);
->
->  	if (!test_bit(FLAG_IS_OUT, &desc->flags)) {
->  		status = -EPERM;
-> @@ -149,8 +142,6 @@ static ssize_t value_store(struct device *dev,
->  		status = size;
->  	}
->
-> -	mutex_unlock(&data->mutex);
-> -
->  	return status;
->  }
+On Fri, Oct 25, 2024 at 01:07:18AM +0200, Ulf Hansson wrote:
+> On Wed, 23 Oct 2024 at 23:31, Eric Biggers <ebiggers@kernel.org> wrote:
+> >
+> > On Sun, Oct 06, 2024 at 07:25:28PM +0530, Seshu Madhavi Puppala wrote:
+> > > Crypto reprogram all keys is called for each MMC runtime
+> > > suspend/resume in current upstream design.
+> >
+> > Is that correct?  I thought that similar to what is done for UFS, the key
+> > reprogramming happens only after the MMC controller is reset.  I thought that is
+> > different from a runtime suspend.
+> 
+> Looks like Seshu is not really worried about the host's runtime
+> suspend, but the card's runtime suspend.
+> 
+> Perhaps there are some out of tree code involved here that makes use
+> of MMC_CAP_AGGRESSIVE_PM, which is what allows the card to be runtime
+> suspended?
+> 
+> >
+> > If it's in fact triggering more often, maybe that is what needs to be fixed?
+> 
+> We could extend the runtime PM autosusend timeout for the card, if
+> that makes sense.
+> 
+> Kind regards
+> Uffe
 
+The keyslots are being reprogrammed from mmc_set_initial_state(), which is
+documented as:
 
-With the guard, this can be further simplified by returning immediately
-and collapsing the if-else chain:
+    /*
+     * Set initial state after a power cycle or a hw_reset.
+     */
+    void mmc_set_initial_state(struct mmc_host *host)
 
-@@ -135,14 +135,14 @@ static ssize_t value_store(struct device *dev,
+It's called by: mmc_power_up(), mmc_power_off(), _mmc_hw_reset(), and
+mmc_sdio_sw_reset().
 
-        guard(mutex)(&data->mutex);
+Can that mean a power cycle of the card, not a power cycle of the host
+controller?  The keyslots are part of the host controller, so that may explain
+the problem.  The keyslots should be reprogrammed only when the host controller
+is reset, as that is when they are lost.  (And it should not be skipped entirely
+as this patchset does, as a host controller reset is possible.)
 
--       if (!test_bit(FLAG_IS_OUT, &desc->flags)) {
--               status = -EPERM;
--       } else if (status == 0) {
--               gpiod_set_value_cansleep(desc, value);
--               status = size;
--       }
-+       if (!test_bit(FLAG_IS_OUT, &desc->flags))
-+               return -EPERM;
+I am not an expert in MMC or in the details of how Qualcomm ICE is wired up to
+the system, so I might have this wrong.  But let me know if it sounds right.
 
--       return status;
-+       if (status)
-+               return status;
-+
-+       gpiod_set_value_cansleep(desc, value);
-+       return size;
- }
-
-That also removes the overloading of status, previously containing a status
-OR a size, which is no longer necessary.
-
->  static DEVICE_ATTR_PREALLOC(value, S_IWUSR | S_IRUGO, value_show, value_store);
-> @@ -253,11 +244,8 @@ static ssize_t edge_show(struct device *dev,
->  	struct gpiod_data *data = dev_get_drvdata(dev);
->  	int flags;
->
-> -	mutex_lock(&data->mutex);
-> -
-> -	flags = data->irq_flags;
-> -
-> -	mutex_unlock(&data->mutex);
-> +	scoped_guard(mutex, &data->mutex)
-> +		flags = data->irq_flags;
->
->  	if (flags >= ARRAY_SIZE(trigger_names))
->  		return 0;
-> @@ -276,12 +264,10 @@ static ssize_t edge_store(struct device *dev,
->  	if (flags < 0)
->  		return flags;
->
-> -	mutex_lock(&data->mutex);
-> +	guard(mutex)(&data->mutex);
->
-> -	if (flags == data->irq_flags) {
-> -		status = size;
-> -		goto out_unlock;
-> -	}
-> +	if (flags == data->irq_flags)
-> +		return size;
->
->  	if (data->irq_flags)
->  		gpio_sysfs_free_irq(dev);
-> @@ -292,9 +278,6 @@ static ssize_t edge_store(struct device *dev,
->  			status = size;
->  	}
->
-> -out_unlock:
-> -	mutex_unlock(&data->mutex);
-> -
->  	return status;
->  }
-
-
-Similarly drop the overloading of status:
-
-@@ -257,7 +257,7 @@ static ssize_t edge_store(struct device *dev,
-                struct device_attribute *attr, const char *buf, size_t size)
- {
-        struct gpiod_data *data = dev_get_drvdata(dev);
--       ssize_t status = size;
-+       ssize_t status;
-        int flags;
-
-        flags = sysfs_match_string(trigger_names, buf);
-@@ -274,11 +274,11 @@ static ssize_t edge_store(struct device *dev,
-
-        if (flags) {
-                status = gpio_sysfs_request_irq(dev, flags);
--               if (!status)
--                       status = size;
-+               if (status)
-+                       return status;
-        }
-
--       return status;
-+       return size;
- }
-
->  static DEVICE_ATTR_RW(edge);
-> @@ -330,11 +313,8 @@ static ssize_t active_low_show(struct device *dev,
->  	struct gpio_desc *desc = data->desc;
->  	int value;
->
-> -	mutex_lock(&data->mutex);
-> -
-> -	value = !!test_bit(FLAG_ACTIVE_LOW, &desc->flags);
-> -
-> -	mutex_unlock(&data->mutex);
-> +	scoped_guard(mutex, &data->mutex)
-> +		value = !!test_bit(FLAG_ACTIVE_LOW, &desc->flags);
->
->  	return sysfs_emit(buf, "%d\n", value);
->  }
-> @@ -350,11 +330,8 @@ static ssize_t active_low_store(struct device *dev,
->  	if (status)
->  		return status;
->
-> -	mutex_lock(&data->mutex);
-> -
-> -	status = gpio_sysfs_set_active_low(dev, value);
-> -
-> -	mutex_unlock(&data->mutex);
-> +	scoped_guard(mutex, &data->mutex)
-> +		status = gpio_sysfs_set_active_low(dev, value);
->
->  	return status ? : size;
->  }
->
-
-Doesn't need to be scoped:
-
--       scoped_guard(mutex, &data->mutex)
--               status = gpio_sysfs_set_active_low(dev, value);
-+       guard(mutex, &data->mutex);
-+
-+       status = gpio_sysfs_set_active_low(dev, value);
-
-        return status ? : size;
- }
-
-
-No issues with the other patches.
-
-Cheers,
-Kent.
+- Eric
 
