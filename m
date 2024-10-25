@@ -1,98 +1,99 @@
-Return-Path: <linux-kernel+bounces-381144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3276F9AFAF2
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 09:28:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E161C9AFB51
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 09:43:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBAB9282D76
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 07:28:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1EA5A1C21C23
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 07:43:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A486A1B393A;
-	Fri, 25 Oct 2024 07:28:30 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED8BA1B85CD;
+	Fri, 25 Oct 2024 07:43:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="V0NHcwcs"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FFAC67A0D
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 07:28:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B36C31B2185;
+	Fri, 25 Oct 2024 07:42:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729841310; cv=none; b=bDTdMNUy5oI0PRDFlXCpQWvi7ddvQ/iwic+WyMV3kpZHuhVnlD9KCJJ/7nksKdpaY7D87bxap5Or1+JH31BmrBR5Gz6Oi8lcV5zlgsZxoKyBBMzsNlRJvQIzFpfuiFnx6zYtG5YmQbIx5Ooku/9n/+JLKnr7hUXXPgZzsE/TEqs=
+	t=1729842181; cv=none; b=DUT7kpGKmFu8Eydc9V1oK1lAHvdP3o2U51Jtt59WtYXEVbGPEj7At8Nyh5sAjsZqRIVPnq3IN6OBdQIc6wG8S1XiXPbE67/neM+KKVcp4Az1xn+TsP76qC3rlTX7Uxv2stsz/B+QgsqMbQQ4xpAp6eAW9ZTPVxjqHLs/mDkxIQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729841310; c=relaxed/simple;
-	bh=IK1SYJDdVHXNB27XSsEUBnpChIyh4Z266Z25HUC1250=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WDGCPLwh7r4sjjkkO0DvA2t30ZR3BSG4+Q522r85mlGsBNAlXLQMYB/OjWZ2zeAQL9IQeBUAfkft9M7o9XkJSVkd0O3wm2H+XgNJDtGWHwugtBDDY2+sTA15cp5vhAc6VErNbAlySPxPvio1FY2ef0LvVyZhTPqVS/uvpsAsx88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4XZZ5r7216z1HKF2;
-	Fri, 25 Oct 2024 15:24:00 +0800 (CST)
-Received: from kwepemf100008.china.huawei.com (unknown [7.202.181.222])
-	by mail.maildlp.com (Postfix) with ESMTPS id E89E71A016C;
-	Fri, 25 Oct 2024 15:28:23 +0800 (CST)
-Received: from huawei.com (10.175.103.91) by kwepemf100008.china.huawei.com
- (7.202.181.222) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 25 Oct
- 2024 15:28:22 +0800
-From: Zeng Heng <zengheng4@huawei.com>
-To: <hpa@zytor.com>, <tglx@linutronix.de>, <mingo@redhat.com>,
-	<dave.hansen@linux.intel.com>, <pavel@ucw.cz>,
-	<sebastian.reichel@collabora.com>, <bp@alien8.de>, <lkundrak@v3.sk>
-CC: <bobo.shaobowang@huawei.com>, <linux-kernel@vger.kernel.org>,
-	<x86@kernel.org>
-Subject: [PATCH] x86/platform/olpc: Fix not used variable 'len'
-Date: Fri, 25 Oct 2024 15:42:03 +0800
-Message-ID: <20241025074203.1921344-1-zengheng4@huawei.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1729842181; c=relaxed/simple;
+	bh=VRcbP3OAbFoSwSqNqfosv/0smAfY8fDeq48XQuD940Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m3Yh/7Nisjbj7Lf68GoyMvvFdFCMnRAfRc0lA0aEe8qp6LPffwpCxvf1IwSnzXM+nXvHjiwmJpuvfiCdwknrHg8p4JRsNAQZdJqJ9x5siyDnGeg1aypmY9nOpVtC5zz3VyURw4xkkHi+VWqhfWHXQU+LiFRJ5Ozf41N/tVvD6PE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=V0NHcwcs; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Oyz3AH73jsvhVuXMvukfXv65WS9wp+HqrXkM26N9vJA=; b=V0NHcwcsuxdvKzX6wLX6w2QjPl
+	hwQ9HeHnsPa5m5iToxLcJVUcjwqRu15DO9EAUV0QQzHoW3FWDTkDPB146XOSRbDixULZZdd+sQoB/
+	h759sk759Vnxe5iEa6rXDG93SYvAR49+cFxWSPGN+ca9AneGxFt/XCATxAuW/SaGe9WgUvJm0qvTk
+	aMF0lxHntpStWCNittH0792WL+K3Ce5zCswq7V2gj2gEyAGSPIKR1sTiU66iCQWBs+4T8fXkJnG1a
+	oztq3Xiu24GdhNPG+DtUtRRQvh3z/QNC3n9ZAsVeO6XEVqTjzAFvaraslBH0Il5ZSY30n5Q4UjhSx
+	GFrYWFHg==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t4Ey4-00000008r2u-41M1;
+	Fri, 25 Oct 2024 07:42:45 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 96CFE30083E; Fri, 25 Oct 2024 09:42:44 +0200 (CEST)
+Date: Fri, 25 Oct 2024 09:42:44 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: "Christoph Lameter (Ampere)" <cl@gentwo.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Will Deacon <will@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Ingo Molnar <mingo@redhat.com>, Waiman Long <longman@redhat.com>,
+	Boqun Feng <boqun.feng@gmail.com>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-arch@vger.kernel.org
+Subject: Re: [PATCH v3] Avoid memory barrier in read_seqcount() through load
+ acquire
+Message-ID: <20241025074244.GB14555@noisy.programming.kicks-ass.net>
+References: <20240912-seq_optimize-v3-1-8ee25e04dffa@gentwo.org>
+ <20240917071246.GA27290@willie-the-truck>
+ <4b546151-d5e1-22a3-a6d5-167a82c5724d@gentwo.org>
+ <CAHk-=wgw3UErQuBuUOOfjzejGek6Cao1sSW4AosR9WPZ1dfyZg@mail.gmail.com>
+ <CAHk-=wjdOX0t45a7aHerVPv_WBM3AmMi3sEp8xb19jpLFnk0dA@mail.gmail.com>
+ <20241023194543.GD11151@noisy.programming.kicks-ass.net>
+ <e9fd5ba0-bd84-76a8-a96e-1378c66d0774@gentwo.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemf100008.china.huawei.com (7.202.181.222)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e9fd5ba0-bd84-76a8-a96e-1378c66d0774@gentwo.org>
 
-Fix the following compilation warning:
+On Wed, Oct 23, 2024 at 04:42:36PM -0700, Christoph Lameter (Ampere) wrote:
+> On Wed, 23 Oct 2024, Peter Zijlstra wrote:
+> 
+> > > I doubt anybody will notice, and smp_load_acquire() is the future. Any
+> > > architecture that does badly on it just doesn't matter (and, as
+> > > mentioned, I don't think they even exist - "smp_rmb()" is generally at
+> > > least as expensive).
+> >
+> > Do we want to do the complementing patch and make write_seqcount_end()
+> > use smp_store_release() ?
+> >
+> > I think at least ARM (the 32bit thing) has wmb but uses mb for
+> > store_release. But I also think I don't really care about that.
+> 
+> The proper instruction would be something like
+> 
+> atomic_inc_release(&seqcount)
 
-arch/x86/platform/olpc/olpc_dt.c: In function ‘olpc_dt_compatible_match’:
-arch/x86/platform/olpc/olpc_dt.c:222:12: warning: variable ‘len’ set but
-not used [-Wunused-but-set-variable]
-  222 |  int plen, len;
-
-The local variable len is set but never used, so remove it.
-
-Fixes: a7a9bacb9a32 ("x86/platform/olpc: Use a correct version when making up a battery node")
-Signed-off-by: Zeng Heng <zengheng4@huawei.com>
----
- arch/x86/platform/olpc/olpc_dt.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/arch/x86/platform/olpc/olpc_dt.c b/arch/x86/platform/olpc/olpc_dt.c
-index 74ebd6882690..1b91702e89a3 100644
---- a/arch/x86/platform/olpc/olpc_dt.c
-+++ b/arch/x86/platform/olpc/olpc_dt.c
-@@ -219,13 +219,12 @@ static u32 __init olpc_dt_get_board_revision(void)
- static int __init olpc_dt_compatible_match(phandle node, const char *compat)
- {
- 	char buf[64], *p;
--	int plen, len;
-+	int plen;
- 
- 	plen = olpc_dt_getproperty(node, "compatible", buf, sizeof(buf));
- 	if (plen <= 0)
- 		return 0;
- 
--	len = strlen(compat);
- 	for (p = buf; p < buf + plen; p += strlen(p) + 1) {
- 		if (strcmp(p, compat) == 0)
- 			return 1;
--- 
-2.25.1
-
+It would not be, making the increment itself atomic would make the whole
+thing far more expensive.
 
