@@ -1,133 +1,156 @@
-Return-Path: <linux-kernel+bounces-381539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D4B09B00A1
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 12:55:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA46B9B00B8
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 12:59:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDBD41F20FE6
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 10:55:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A8472817CB
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 10:59:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C99F1F81AF;
-	Fri, 25 Oct 2024 10:55:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84A081FC7D8;
+	Fri, 25 Oct 2024 10:58:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VROG6mkL"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SxDyj2U7"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC8AC1D9593
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 10:54:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A285D1F9EA1;
+	Fri, 25 Oct 2024 10:58:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729853699; cv=none; b=O+iIpwYqG/w5U0egNOhbHzWVLbYVNXU7PZBF2mktI7nssiZPaBIPCuWaw39rBIOak6Ms0z14cNfOHUH5e+sRjQBFlqYHJ08E0BLhhUwXGpDGuofsIkqFK7JmhSDBUBo4RxDdJO6aeuwQ862kIGg+jMEnpjLnVKokQaveZfPqCws=
+	t=1729853883; cv=none; b=eLG5EALffGeCmeJjAnY10XWJXegx/8Z0WgOziYAB2mcyPM0TXM33HE3Mt3B2x5wKKidujX3hkkhSMvZ0prk8yEaztjWXwrWxsO9Fw1LPgxQrSakfXJDlZE0tP5anHq+7FSv4ioLYxyQ2mr8Ep9LdSgN78zMNZJi4GXqB0Whq/ao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729853699; c=relaxed/simple;
-	bh=B6BnrCQ+m8WxHzFBv9zBDpv2ny1bdJMGY2pKixHiQ9g=;
+	s=arc-20240116; t=1729853883; c=relaxed/simple;
+	bh=xTif9zXtj8kg3yrLdzPkrKtdNWdx3OH4AUggyPOXCPg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jvMXZ0jhDkX+q+PxBTSguon+ZYCPscA7VOZBTDrub8ZmmnSXcXADkaj9wA02OOmASfRtp69/NcSFJURdSAj1jTMXfxX49U7pM1hYC0xMNC7r4lorvZJNQGtCYvUz0dkmOJh5Qz+RZdbA8jKVzvb+c2gYKnnIwNLM0DbjMZ34sfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VROG6mkL; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-539e59dadebso2493468e87.0
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 03:54:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729853695; x=1730458495; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=RRluDvgLstVsYFQpKWXOrvnW+AuzroV7iXmo5BY1EVc=;
-        b=VROG6mkL92gkZjL6ztcqaig5R+anta2dsVKPWQzIo8t3+DZjI9Vq69hmA6j4r6p9Lq
-         OW8iNRVD3kFcXvrAWvqrNohgqNozrGKEcduh8I8kOjjj5vMHZSM10z5GCFfKHNEwqM68
-         J+GjW7T5kfN7gus7Z/DkCSjyZgL+xyBgLILFGiU3ac69tdT5t9njtMMkWtelAj9xeMN4
-         IdP582wf6V4Fj6hk0t9U99wRtPnjNu9ma5URNsOlohC41XoXlpdpB20HisSPndczrTC4
-         6As/3wR1q06XJ9RPxwR+JyEy1CmpJbyE2FlFEGLvzo/pNnsRRGp8ShwH6HELeet2p4Xp
-         geRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729853695; x=1730458495;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RRluDvgLstVsYFQpKWXOrvnW+AuzroV7iXmo5BY1EVc=;
-        b=nOIWytUQxRQh3F2vTA5xroWdbuwRS9ULs2Yk1LyX9XVIuH5Ul1Izq9XRfS2YrN39AQ
-         aW8DvPPrhAC6CpWBJ22tQTvOLGUb2pfYmWgOqkVLBt8IH7omvS9Df7QaixoEysew6PHl
-         oJr3f60ORfI5hlddeS9mMaERDbK2zPU+sL1aQ6xoLxAyxI+pvkRzLirwO7Pr/NlchP5c
-         rAh1Minn1TbNjDhFmAz3kz0n0JxdFraLGAoIVb0s7oTe2efpNwuMZ5sjQHNHtBnqz/Au
-         6MQHNs8N7XTPRaBiiF2mZ4EGptBq8LnKVCvwYb2Zgn+GHBSa+Xd+AL1KG3i9zZ/RSzeY
-         cjIA==
-X-Forwarded-Encrypted: i=1; AJvYcCVLFzImy8O/gTK7ilIWdvvYEO0LzaAFy6QuWMeVNBYbQPyZmjr9wSOr2sp2eXWf7iMakTinsD6uPivzGqI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSq6p7s2VbG8BvtVNfPFjohwYK3hUJXIt4GlK2H18Y03/1au3j
-	DQZtoihUoUMjFRkplBt4/Tj4fea/SSSCzq0YtO0+G6AeK2l6fUldwZ2Auk7QOOk=
-X-Google-Smtp-Source: AGHT+IGjCzX6lZ+7mkst5UkS/WDy5l500ImsTTb7hvSmO+puUYbDtf/5cQU+H32FDsdSZFtA4Wb8zQ==
-X-Received: by 2002:a05:6512:3090:b0:52e:767a:ada3 with SMTP id 2adb3069b0e04-53b23e84b50mr3366445e87.47.1729853694754;
-        Fri, 25 Oct 2024 03:54:54 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53b2e1c8c78sm136810e87.201.2024.10.25.03.54.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2024 03:54:54 -0700 (PDT)
-Date: Fri, 25 Oct 2024 13:54:52 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-Cc: loic.poulain@linaro.org, rfoss@kernel.org, andi.shyti@kernel.org, 
-	linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Abaci Robot <abaci@linux.alibaba.com>
-Subject: Re: [PATCH -next] i2c: qcom-cci: Remove the unused variable
- cci_clk_rate
-Message-ID: <lddlzl7mnza7pc7btwn4rpsyijdrclihncudecujvwlb3sunvw@a5yzckvfdzwh>
-References: <20241025085728.113098-1-jiapeng.chong@linux.alibaba.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=M0bKFlofVx2f2CGjTfiIwxN0MxpleNcG5yqHfx3xhymnl1sx/H7pr5ggU0bCcHJsYAErKEPKoKM+AeAOTbnH1gCPvuonaHQq1dOvfqIlx8dRF9coets0HimfxAL/sLjeKSBJt1JjoDcF5KaWKLTJr9oALgNRKEBb/y2mYO3FqXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SxDyj2U7; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729853881; x=1761389881;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=xTif9zXtj8kg3yrLdzPkrKtdNWdx3OH4AUggyPOXCPg=;
+  b=SxDyj2U72fhyYOKef7llNvQzVLGIPgdJYm1l8+LtpGDVMPUeta14FATW
+   6wIl/Kf/ZDx+Lr8cpA9Dep1tMbIXIxReeAOrQJEM/O5d6rLorhf6t/79Y
+   ISuZWkdoCmA1j0SoVraa4DmHv4pLRO53AuI6CqlcA4uTp+WniEbA9F+hm
+   tnuaGqwPPR23FpycbKlrs4xzVOxz/yV9DwtdA5odg+uAPRUukPA1zsO5p
+   GQKmn9sCkeUEvd+4GQZNks8evSNq9N7A33VG/vV6dinDHkr7NL15bkCil
+   pPLC6dg341QisW+VsZjs+ZRROS9VXl754alSRIe3FjKNXJpKpo9DJPN53
+   g==;
+X-CSE-ConnectionGUID: CYBPRE5FTEOIhkf5/xIpCA==
+X-CSE-MsgGUID: mvBmlHLRREi2EdmXQ5tZug==
+X-IronPort-AV: E=McAfee;i="6700,10204,11235"; a="17150163"
+X-IronPort-AV: E=Sophos;i="6.11,231,1725346800"; 
+   d="scan'208";a="17150163"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2024 03:58:00 -0700
+X-CSE-ConnectionGUID: bZSMsShPRSiqtrdmRk1ajw==
+X-CSE-MsgGUID: bSO0aXD0SeypwIp4stBfkA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,231,1725346800"; 
+   d="scan'208";a="80805006"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa009.jf.intel.com with ESMTP; 25 Oct 2024 03:57:57 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t4I0x-000Y4q-1M;
+	Fri, 25 Oct 2024 10:57:55 +0000
+Date: Fri, 25 Oct 2024 18:57:19 +0800
+From: kernel test robot <lkp@intel.com>
+To: Mirsad Todorovac <mtodorovac69@gmail.com>, linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, Nilesh Javali <njavali@marvell.com>,
+	GR-QLogic-Storage-Upstream@marvell.com,
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Bart Van Assche <bvanassche@acm.org>
+Subject: Re: [PATCH v1 1/1] scsi: gla2xxx: use flexible array member at the
+ end of structures
+Message-ID: <202410251849.4PlXq31z-lkp@intel.com>
+References: <20241023221700.220063-2-mtodorovac69@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241025085728.113098-1-jiapeng.chong@linux.alibaba.com>
+In-Reply-To: <20241023221700.220063-2-mtodorovac69@gmail.com>
 
-On Fri, Oct 25, 2024 at 04:57:28PM +0800, Jiapeng Chong wrote:
-> Variable ret is not effectively used, so delete it.
-> 
-> drivers/i2c/busses/i2c-qcom-cci.c:526:16: warning: variable ‘cci_clk_rate’ set but not used.
-> 
-> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-> Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=11532
-> Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-> ---
->  drivers/i2c/busses/i2c-qcom-cci.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/i2c/busses/i2c-qcom-cci.c b/drivers/i2c/busses/i2c-qcom-cci.c
-> index 5cc791b3b57d..c7c4fbf73183 100644
-> --- a/drivers/i2c/busses/i2c-qcom-cci.c
-> +++ b/drivers/i2c/busses/i2c-qcom-cci.c
-> @@ -523,7 +523,6 @@ static const struct dev_pm_ops qcom_cci_pm = {
->  static int cci_probe(struct platform_device *pdev)
->  {
->  	struct device *dev = &pdev->dev;
-> -	unsigned long cci_clk_rate = 0;
->  	struct device_node *child;
->  	struct resource *r;
->  	struct cci *cci;
-> @@ -597,7 +596,7 @@ static int cci_probe(struct platform_device *pdev)
->  	/* Retrieve CCI clock rate */
->  	for (i = 0; i < cci->nclocks; i++) {
->  		if (!strcmp(cci->clocks[i].id, "cci")) {
-> -			cci_clk_rate = clk_get_rate(cci->clocks[i].clk);
-> +			clk_get_rate(cci->clocks[i].clk);
+Hi Mirsad,
 
-Why do you need this call if the result is unused?
+kernel test robot noticed the following build errors:
 
->  			break;
->  		}
->  	}
-> -- 
-> 2.32.0.3.g01195cf9f
-> 
+[auto build test ERROR on jejb-scsi/for-next]
+[also build test ERROR on mkp-scsi/for-next linus/master v6.12-rc4 next-20241025]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Mirsad-Todorovac/scsi-gla2xxx-use-flexible-array-member-at-the-end-of-structures/20241024-062120
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git for-next
+patch link:    https://lore.kernel.org/r/20241023221700.220063-2-mtodorovac69%40gmail.com
+patch subject: [PATCH v1 1/1] scsi: gla2xxx: use flexible array member at the end of structures
+config: loongarch-allmodconfig (https://download.01.org/0day-ci/archive/20241025/202410251849.4PlXq31z-lkp@intel.com/config)
+compiler: loongarch64-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241025/202410251849.4PlXq31z-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410251849.4PlXq31z-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from <command-line>:
+   drivers/scsi/qla2xxx/qla_os.c: In function 'qla2x00_module_init':
+>> include/linux/compiler_types.h:517:45: error: call to '__compiletime_assert_833' declared with attribute error: BUILD_BUG_ON failed: sizeof(struct qla2300_fw_dump) != 136100
+     517 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |                                             ^
+   include/linux/compiler_types.h:498:25: note: in definition of macro '__compiletime_assert'
+     498 |                         prefix ## suffix();                             \
+         |                         ^~~~~~
+   include/linux/compiler_types.h:517:9: note: in expansion of macro '_compiletime_assert'
+     517 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |         ^~~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:39:37: note: in expansion of macro 'compiletime_assert'
+      39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+         |                                     ^~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:50:9: note: in expansion of macro 'BUILD_BUG_ON_MSG'
+      50 |         BUILD_BUG_ON_MSG(condition, "BUILD_BUG_ON failed: " #condition)
+         |         ^~~~~~~~~~~~~~~~
+   drivers/scsi/qla2xxx/qla_os.c:8220:9: note: in expansion of macro 'BUILD_BUG_ON'
+    8220 |         BUILD_BUG_ON(sizeof(struct qla2300_fw_dump) != 136100);
+         |         ^~~~~~~~~~~~
+
+
+vim +/__compiletime_assert_833 +517 include/linux/compiler_types.h
+
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  503  
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  504  #define _compiletime_assert(condition, msg, prefix, suffix) \
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  505  	__compiletime_assert(condition, msg, prefix, suffix)
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  506  
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  507  /**
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  508   * compiletime_assert - break build and emit msg if condition is false
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  509   * @condition: a compile-time constant condition to check
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  510   * @msg:       a message to emit if condition is false
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  511   *
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  512   * In tradition of POSIX assert, this macro will break the build if the
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  513   * supplied condition is *false*, emitting the supplied error message if the
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  514   * compiler has support to do so.
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  515   */
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  516  #define compiletime_assert(condition, msg) \
+eb5c2d4b45e3d2 Will Deacon 2020-07-21 @517  	_compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  518  
 
 -- 
-With best wishes
-Dmitry
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
