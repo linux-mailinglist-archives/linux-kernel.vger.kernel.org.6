@@ -1,57 +1,117 @@
-Return-Path: <linux-kernel+bounces-382039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0070E9B082D
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:27:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4ECCE9B0831
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:27:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A14241F20FE8
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:27:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DDE528455A
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:27:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A919166310;
-	Fri, 25 Oct 2024 15:25:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3030A21A4CD;
+	Fri, 25 Oct 2024 15:27:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ftZ2d9jD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=jfarr.cc header.i=@jfarr.cc header.b="SYi+crlH";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="OEKGY1VR"
+Received: from fout-a8-smtp.messagingengine.com (fout-a8-smtp.messagingengine.com [103.168.172.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB78315D5CA;
-	Fri, 25 Oct 2024 15:25:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7125521A4A6;
+	Fri, 25 Oct 2024 15:27:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729869952; cv=none; b=OOa7FrjLUeJQ8h1r+Rt7Rhv3aGaFxMqvtBhIz+9pbuCcOhB5K6YISVLlXPiN826Z/wmSKsojzuPnfRDuSSFJSy7LYCPXIAg0+1s+eQ7SkWATJv4FQXYBIbg9OIJQ0CjGkihHvSaFj3ojx/c6FcQb09fbvk9iAwEXDrQ9RsO2nO8=
+	t=1729870034; cv=none; b=Us5wx6wJ2qWfht3GluhzNWd+7V2MVYjTe7HUI8KZkNzX5njxtDeWqU/6fTF2bfwLaVJYWJhaTbm6LjPFr0ljuE21Teg6+L/ZaEkGX0Rm3YN0Bf8s90eTDml9Gl+bGVfpvfIFMZzORGKYJbOKnvaROyI3bUPAhXMiMvSMq72t61A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729869952; c=relaxed/simple;
-	bh=MiwcC2uykYAEEHt7MzLsCsQ78r/dJlY3KdNH0P1orNc=;
+	s=arc-20240116; t=1729870034; c=relaxed/simple;
+	bh=RGW2QulLFv51uPgzrDVtdV/AJ/X8QIUglHvZM+LYZ7g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uVPBQolvZq/+nuzBbsJP9/FVO1v6bXidYfz0r+sjx0uXDwVAKUssTdtae5CAQlAXtU8S6vuBbHaxmogbSCYf/C4cMLDQS5pp0BSsr4o6SnjpqIKwaps349m2POlD/XiLjsg4bbkaXUQm9qmCoEv6FiAYeEbll+xe6vRqf68hXw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ftZ2d9jD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1B41C4CEC3;
-	Fri, 25 Oct 2024 15:25:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729869952;
-	bh=MiwcC2uykYAEEHt7MzLsCsQ78r/dJlY3KdNH0P1orNc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ftZ2d9jDn8xkP7JxhAdi21rljLTyp35KM5NYjLMq4WWCCDiHfXpLYgaK7D7bZ4BEK
-	 rv2KVe1cQq3ZjK10ceQd8F2x28IHEfyDESIsnstzJCrZt9YgeQXgK5UQvIa2EdWWPt
-	 ABHI9CBHKUeDPdfOabA1SP5c5i68maQoEsBfpVUMoywjtVXvM3UXgAVm6r78cRqYTB
-	 cmiwG0kEZojWY8sqyGbJXU9BDCtzgaaOd9Q0vsPLQtbvSbTr6BhTTEsH8UDE7eWwJG
-	 t/K2yc34Y/HdBhT3Dsol6but6K0rsX9JAtwoCBswKz/A/81tbdxQ3ijGKePD4ufxPR
-	 LdhAuTuf81NZw==
-Date: Fri, 25 Oct 2024 17:25:47 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Thorsten Leemhuis <regressions@leemhuis.info>
-Cc: Will Deacon <will@kernel.org>, ericvh@kernel.org, lucho@ionkov.net, 
-	asmadeus@codewreck.org, Alexander Viro <viro@zeniv.linux.org.uk>, oss@crudebyte.com, 
-	v9fs@lists.linux.dev, linux-kernel@vger.kernel.org, oleg@redhat.com, keirf@google.com, 
-	regressions@lists.linux.dev
-Subject: Re: VFS regression with 9pfs ("Lookup would have caused loop")
-Message-ID: <20241025-ungewiss-zersplittern-c124bc48be5c@brauner>
-References: <20240923100508.GA32066@willie-the-truck>
- <20241009153448.GA12532@willie-the-truck>
- <4966de3e-6900-481c-8f6b-00e37cebab7e@leemhuis.info>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rMWnz7nMY4AArj9Ky7lmMZ5W1gDZZUPf02Xmck7DTuVw6UAFy1BX4m9BG2gF+sIMIh0bJeI8kMLAj2dtK+lgIwBE8eKjPC7d7QHfJXfERIiKtuhCgekGQX07HY9fp05xDoiIDMHutyyiWQ1SMiMavY9bkIkknWLUZMiOdUB140s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jfarr.cc; spf=pass smtp.mailfrom=jfarr.cc; dkim=pass (2048-bit key) header.d=jfarr.cc header.i=@jfarr.cc header.b=SYi+crlH; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=OEKGY1VR; arc=none smtp.client-ip=103.168.172.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jfarr.cc
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jfarr.cc
+Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
+	by mailfout.phl.internal (Postfix) with ESMTP id A39D513801B5;
+	Fri, 25 Oct 2024 11:27:10 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-01.internal (MEProxy); Fri, 25 Oct 2024 11:27:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jfarr.cc; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1729870030;
+	 x=1729956430; bh=RLih69XQUoMnH4TqrYPUlmUCQn82s+sfVe9uNsKWg9Y=; b=
+	SYi+crlHq0VgyliAZsXMXZqdZI6hm99RwMlwTh11LZdATlBxGsdd7hFgqIsMo6/x
+	aChs69wZWPS15Dw7qGVPi/mbnRX/l218Zlvaj5pwfILR/g4UvfwZfDQWlSStzZTa
+	hoOkxxWygPBQgJK9J5cmFg0G4SOnXrSwx/H5LC5dKE385+KsuMqTRJWHWdT+1mpN
+	Jfzq7CBV1m0J3YJcbO034Pd510rw5Qpzk7Tz++SdOkbxcxv1RE4aCyK8oUxlxTJt
+	hydZckspYI4BYR8ziQIo5mWwQcAwlsy12gdvBIed6zj33XM59G4GkCeK1JQeFLmi
+	8E7K85v+sVxhJ+LF0xsHgQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1729870030; x=
+	1729956430; bh=RLih69XQUoMnH4TqrYPUlmUCQn82s+sfVe9uNsKWg9Y=; b=O
+	EKGY1VR8gNtmI+H7gZdnvrgQwf6nMMIledDZqlTcaxu+s3Ty0wPpfwMbQCz8Aqju
+	vIzPHmuo2GCdvpsr9g0NQDJfqMZCaQldl7xcoSL26HSS0nSax2UUCX+zrkhWyyg6
+	ueeaQBJwQG0phhaQ8bKC3yzW5hZDxK603V2iyUEXcDwzp5Kkd+UN2HHXqBUb9ODj
+	2DNVNYbNTZaUPMyMnrU0Cvux/2IcqqX5W0otmVbXMaJR6gEhmsP+IaTpZGXxnfl9
+	QBIOqPv3vf2yR2OBFGwTCkeHI4rdB+RTuci6AGWEAbQEmg0oEf6sTbjrQkYPI7zH
+	QlIhDbkg72XVQm3no932w==
+X-ME-Sender: <xms:zrgbZ-DHmg_6lLxypIE-pvNCjon6-33m49pNt969bqxKcumCTvZe3Q>
+    <xme:zrgbZ4h28H5FVX78YnNbdTKidBoFiCoaPYElP1OGlITyi738vHUDx4b7S4TadPojU
+    pH1SwHxGS_OYWSYiUY>
+X-ME-Received: <xmr:zrgbZxkAoUOwTebHgL8R8JvFjC_hBALkVTPR_-EOWnb8d6XOTP9EAWQQSOK-yEniOc2CvSBxmCmOCNOaNvsWe6i6ApD3>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdejvddgkeekucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnegfrhhlucfvnfffucdludehmdenucfjughrpeffhffvvefukfhf
+    gggtugfgjgesthekredttddtjeenucfhrhhomheplfgrnhcujfgvnhgurhhikhcuhfgrrh
+    hruceokhgvrhhnvghlsehjfhgrrhhrrdgttgeqnecuggftrfgrthhtvghrnhepudegheef
+    leeitdejheeludevtdfhgeeuiefgveffvedvjeevieeihfegteehkeeknecuffhomhgrih
+    hnpehgihhthhhusgdrtghomhenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhep
+    mhgrihhlfhhrohhmpehkvghrnhgvlhesjhhfrghrrhdrtggtpdhnsggprhgtphhtthhope
+    duvddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepmhhighhuvghlrdhojhgvuggr
+    rdhsrghnughonhhishesghhmrghilhdrtghomhdprhgtphhtthhopehnrghthhgrnheskh
+    gvrhhnvghlrdhorhhgpdhrtghpthhtohepmhhorhgsohesghhoohhglhgvrdgtohhmpdhr
+    tghpthhtohepkhgvvghssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehthhhorhhsth
+    gvnhdrsghluhhmsehtohgslhhugidrtghomhdprhgtphhtthhopehkvghnthdrohhvvghr
+    shhtrhgvvghtsehlihhnuhigrdguvghvpdhrtghpthhtoheprhgvghhrvghsshhiohhnsh
+    eslhhishhtshdrlhhinhhugidruggvvhdprhgtphhtthhopehlihhnuhigqdgstggrtghh
+    vghfshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhhrg
+    hruggvnhhinhhgsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:zrgbZ8zsknsztT8-uJX3OBuZRHbrD2c22d9643eLMRH66WoVe33Zdw>
+    <xmx:zrgbZzTfoQ76r9SNC_yno9ijZaPG6ZU1Lkzz-_AHqm8AMbDDv04BeQ>
+    <xmx:zrgbZ3ZdSwYXbD6vef1jFWAcqBURkrxD8UhZOUg5i1zk8J6Hry3pDQ>
+    <xmx:zrgbZ8RgdFNdsJa9FL3T2YKA9aSFwVWixCY2QV3NboOOGfF9sK4AJg>
+    <xmx:zrgbZyIayhj-rGy8tJYhnj4sdHb_s9os3AP-mHsdaCID68usDt2qxJFn>
+Feedback-ID: i01d149f8:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 25 Oct 2024 11:27:08 -0400 (EDT)
+Date: Fri, 25 Oct 2024 17:27:06 +0200
+From: Jan Hendrik Farr <kernel@jfarr.cc>
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Nathan Chancellor <nathan@kernel.org>, Bill Wendling <morbo@google.com>,
+	Kees Cook <kees@kernel.org>,
+	Thorsten Blum <thorsten.blum@toblux.com>, kent.overstreet@linux.dev,
+	regressions@lists.linux.dev, linux-bcachefs@vger.kernel.org,
+	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
+	ardb@kernel.org, ojeda@kernel.org
+Subject: Re: [REGRESSION][BISECTED] erroneous buffer overflow detected in
+ bch2_xattr_validate
+Message-ID: <Zxu4yhmxohKEJVSg@archlinux>
+References: <ZwNb-_UPL9BPSg9N@archlinux>
+ <CAGG=3QUatjhoDHdkDtZ+ftz7JvMhvaQ9XkFyyZSt_95V_nSN8A@mail.gmail.com>
+ <CAGG=3QVcsuN0Sk79oZWjY_nNTo_XfGYsDT3gc7vEmLyS8OK3rA@mail.gmail.com>
+ <ZxB-uh1KzfD4ww2a@archlinux>
+ <20241017165522.GA370674@thelio-3990X>
+ <ZxWvcAPHPaRxp9UE@archlinux>
+ <20241021192557.GA2041610@thelio-3990X>
+ <ZxpIwkfg9_mHO3lq@archlinux>
+ <20241025011527.GA740745@thelio-3990X>
+ <CANiq72nbyqrzGr3Uw_vx-+8DLiv6KbeULrxpyK8Lh4ma15cq8g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,62 +120,39 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <4966de3e-6900-481c-8f6b-00e37cebab7e@leemhuis.info>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANiq72nbyqrzGr3Uw_vx-+8DLiv6KbeULrxpyK8Lh4ma15cq8g@mail.gmail.com>
 
-On Tue, Oct 15, 2024 at 08:07:10PM +0200, Thorsten Leemhuis wrote:
-> Hi Will! Top-posting for once, to make this easily accessible to everyone.
+On 25 10:10:38, Miguel Ojeda wrote:
+> On Fri, Oct 25, 2024 at 3:15 AM Nathan Chancellor <nathan@kernel.org> wrote:
+> >
+> > on the official submission.
 > 
-> Thx for bringing this to my attention. I had hoped that Eric might reply
-> and waited a bit, but that did not happen. I kind of expected that, as
-> he seems to be  somewhat afk, as the last mail from him on lore is from
-> mid-September; and in the weeks before that he did not post much either.
-> Hmmm. :-/
+> Same -- please feel free to add:
 > 
-> CCed Christian and Al, maybe they might be able to help directly or
-> indirectly somehow. If not, we likely need to get Linus involved to
-> decide if we want to at least temporarily revert the changes you mentioned.
+> Reviewed-by: Miguel Ojeda <ojeda@kernel.org>
+> 
+> One nit below that is fine either way:
+> 
+> > > +# clang needs to be at least 19.1.3 to avoid __bdos miscalculations
+> > > +# https://github.com/llvm/llvm-project/pull/110497
+> > > +# https://github.com/llvm/llvm-project/pull/112636
+> > > +# TODO: when gcc 15 is released remove the build test and add gcc version check
+> 
+> I would perhaps move these closer to the respective lines they are
+> comment on (i.e. `depends on` and `def_bool`).
+> 
 
-Sorry, I'm just getting to this thread now as I'm still out with a
-fscking case of the flu.
-/me reads...
+Done, thanks!
 
-> 
-> Ciao, Thorsten
-> 
-> On 09.10.24 17:34, Will Deacon wrote:
-> > On Mon, Sep 23, 2024 at 11:05:08AM +0100, Will Deacon wrote:
-> >>
-> >> I'm trying to use kvmtool to run a simple guest under an Android host
-> >> but, for v6.9+ guest kernels, 'init' reliably fails to run from a 9pfs
-> >> mount because VFS emits this error:
-> >>
-> >>   | VFS: Lookup of 'com.android.runtime' in 9p 9p would have caused loop
-> >>
-> >> The host directory being shared is a little odd, as it has symlinks out
-> >> to other mount points. In the guest, /apex is a symlink to /host/apex.
-> >> On the host, /apex/com.android.runtime is a mounted loopback device:
-> >>
-> >> /dev/block/loop13 on /apex/com.android.runtime type ext4 (ro,dirsync,seclabel,nodev,noatime)
-> >>
-> >> This used to work prior to 724a08450f74 ("fs/9p: simplify iget to remove
-> >> unnecessary paths") and it looks like Oleg ran into something similar
-> >> before:
-> >>
-> >>   https://lore.kernel.org/all/20240408141436.GA17022@redhat.com/
-> >>
-> >> although he worked around it by driving QEMU with different options.
-> >>
-> >> I can confirm that reverting the following commits gets mainline guests
-> >> working again for me:
-> >>
-> >> 	724a08450f74 "fs/9p: simplify iget to remove unnecessary paths"
-> >> 	11763a8598f8 "fs/9p: fix uaf in in v9fs_stat2inode_dotl"
-> >> 	10211b4a23cf "fs/9p: remove redundant pointer v9ses"
-> >> 	d05dcfdf5e16 " fs/9p: mitigate inode collisions"
-> >>
-> >> Do you have any better ideas? I'm happy to test anything you might have,
-> >> since this is 100% reproducible on my setup.
-> > 
-> > Adding the regression tracker as I've not heard anything back on this :(
-> > #regzbot introduced: 724a08450f74
+config CC_HAS_COUNTED_BY
+	# TODO: when gcc 15 is released remove the build test and add
+	# a gcc version check
+	def_bool $(success,echo 'struct flex { int count; int array[] __attribute__((__counted_by__(count))); };' | $(CC) $(CLANG_FLAGS) -x c - -c -o /dev/null -Werror)
+	# clang needs to be at least 19.1.3 to avoid __bdos miscalculations
+	# https://github.com/llvm/llvm-project/pull/110497
+	# https://github.com/llvm/llvm-project/pull/112636
+	depends on !(CC_IS_CLANG && CLANG_VERSION < 190103)
+
+
 
