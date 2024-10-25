@@ -1,166 +1,331 @@
-Return-Path: <linux-kernel+bounces-382411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 189509B0D3D
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 20:29:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F16399B0D3E
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 20:29:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 867FB289D4D
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 18:29:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62F5828604F
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 18:29:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC55720EA5E;
-	Fri, 25 Oct 2024 18:26:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ED3F20A5D0;
+	Fri, 25 Oct 2024 18:26:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="sKKAL2ku"
-Received: from out-176.mta0.migadu.com (out-176.mta0.migadu.com [91.218.175.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="t8NwYaMV"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16F597E792
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 18:26:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E44E420BB24
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 18:26:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729880780; cv=none; b=OqGRzbbD5Scum0DLmQbWTLp4mRFNSBtmiqna2BSmjQCB58GbzMlu+nFbcX5oqNy7JZeGQtKdN+1osRHJaE9vlaeyyQra/uqZEBin/JYu01QnXU9Zro0BDXahEogevo2SkM/Ngp/BPqtdGhVkmut0GSJxkJBy0rMvZs8zhiulvRk=
+	t=1729880804; cv=none; b=FYnLli3isq/yR+fmbF/WGqKtNTTPxrOph1cMeKP7eNb82TVNsIfpqvo7tbYhTJnzmfpztFVfWz5ufzJcTVuQBDpfu+Kr0dlHOPOCzxxpEpdz5q1SDFIhYNMdRTeNwiNQNSfzsp45Fdv5krdwrt4AgHyTKaNWbwYwXJ7SMNoKRUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729880780; c=relaxed/simple;
-	bh=L3oGte36E8/WUy+2jcHza7W302Rv5g0bNl3hB7ChqGs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IkE1NzMycDRvYwAvRWl3NGOkPg3sRjjhFDxEgckBbo37ZT1YpobL621E2rsrJyL839cOffOZ/jIC8FVEXJf9ZnA9FrmHaPI2lYRiXYsU4nOy5BaTRWaFJZkcEDUo+W3bIrGCJlkzy5SlPVG0/VbvrSzSQTqUAwdPWGtx1JO0o/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=sKKAL2ku; arc=none smtp.client-ip=91.218.175.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1729880775;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LYhcSWnuETsKJCEEluaZaBpAtwyQ/oGuJY+fGvbLS3M=;
-	b=sKKAL2kuSWB2ST+WvVrSAu8UQYyNF6eTlL7xxdGWEFYBcw3OV/VgQBOvr8uupq5kztJWX4
-	DY4cNvMnRVw2JGcNDqmW+4aSYGXCGvw/FzxnBF/P/TyfjCgazgfT2llXkDp3QG1Ws4T6Bc
-	fQVLKswN7mMxlyPPKA4vnfbXTZiJGmw=
-From: Oliver Upton <oliver.upton@linux.dev>
-To: kvmarm@lists.linux.dev
-Cc: Marc Zyngier <maz@kernel.org>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Oliver Upton <oliver.upton@linux.dev>
-Subject: [PATCH v4 18/18] KVM: arm64: nv: Reprogram PMU events affected by nested transition
-Date: Fri, 25 Oct 2024 18:25:59 +0000
-Message-ID: <20241025182559.3364829-1-oliver.upton@linux.dev>
-In-Reply-To: <20241025182354.3364124-1-oliver.upton@linux.dev>
-References: <20241025182354.3364124-1-oliver.upton@linux.dev>
+	s=arc-20240116; t=1729880804; c=relaxed/simple;
+	bh=wXO8DVxWInf4/onGpZFKSnWuJtr5zd2yG/DNkZPuQVc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rWHSMT+7IzrvbmGGgltDOUY/GzZOKuH3TwPbmcvAQwmenk68P7sfMDYhNrUlpQIlZ1ucsz5GTBp5B2Sx79IDrZAyPiGX44eBvWmWWyx/u+5DzRX/I/hNspDrjnJ1AMEGSIi9nKcBPoictSGA0xGkKQfDVqmrjXXBQlP3bHgTVjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=t8NwYaMV; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-20ca03687fdso23695ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 11:26:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1729880800; x=1730485600; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Mxch2jceRGkVBlz336RsPUbQGRq3wTZKN+cS0JWNR44=;
+        b=t8NwYaMVhsSUUZRfED4B1iRt356+oNqqsOT9H0qELYprzg4Wfy0OHt2KRSc6noSAN2
+         8Od+gaRUWHwCGOTl5Y/OvCdL+qEkMWyfmH14YSK8E/WeKaU1OS6GIl0bb6OnmLHcT90Y
+         j2R8NBP3xhU3lR5fTzth52gRIJKJHetoddLXgoPLhS5tbyf+LKy9dQ7vb2W8qzjdTYvw
+         7DO9knrrh+PtWuuGDLWnRWPk6RHpOfqHkdV7s6rzP23XuH28y+8A5UVdMvf3gszjQDxi
+         7jWSvDx0yK3lnmAc/OMNoqu6WaTjhhnyHNONDg63Zmg9D9tsSCgMbDLf6MEgDWEX4Llf
+         wcEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729880800; x=1730485600;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Mxch2jceRGkVBlz336RsPUbQGRq3wTZKN+cS0JWNR44=;
+        b=Bt/NSnjuhwNXFcjVZafGxz2aczDSt0tqykvh7jHn5yL0WtUrkB4LJt/VYWIYkMWeso
+         nUttonOZ4xBnYZ8ChMf9VBuEhlwaulOgARivLeA5cV2cKbd7VSh2xxO0GM0jcc4t7/m+
+         mcgeewjBPIeKMVrUnfJ+hW0Z2aPSKHnGK/BzzbNlGOiIKIaTamS/BxSYDYWC8dNoASwL
+         UAQxBHSB53W5VByprlq3QHiNXlL/zHG16yI7rP7WLYeyJ+VuAzAO11mYV8sLHaqKRk2u
+         P/zqlusGSYAk8pGtwYLlf6ZxHylLzk3ziFwKmlfsdLyfJVxZy1oux4AxDcl0uvjHKNik
+         F0qA==
+X-Forwarded-Encrypted: i=1; AJvYcCWv1uM3Gh0yTcXNO5b7/K4fDaVzAuXcngJ0f3Kj+WlC7nCVHB6+xTy7MmZQfZ0Ed+DhJptllYrEQ2n1ss4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfX0whlN6IyyqlvBSlMamznIRvMXySfxjYHMcH7dIr/TRBaiFC
+	QgPsUGgJMTZ2k343AhBTlZpBKBGohP3GTiXq8HyoD9H8q9jeA17t2SArmd26iJ4mOKAMiyViCKD
+	fM2+baVtHakN+QKeagJLRpFGOH7soBDfdsspj
+X-Google-Smtp-Source: AGHT+IHwYwGjlevJvHONATg57+JHShC7/xzFisfkImzJkZ8YsYL/7bFVdjHlsBJ4foaYT43aPWsFy3/CgPH9Z66yHpk=
+X-Received: by 2002:a17:902:e749:b0:206:a87c:2873 with SMTP id
+ d9443c01a7336-210c67e67acmr124445ad.5.1729880799649; Fri, 25 Oct 2024
+ 11:26:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+References: <20241022180623.463131-1-irogers@google.com> <Zxm5w6wXLxpbERZx@google.com>
+ <CAP-5=fXfyd9b7Ns-SL5F+iffc7oy4NFHBsT3oj3CRMbBa1QCfg@mail.gmail.com>
+ <Zxp4mbzsFyO5nUh7@google.com> <CAP-5=fWP-T57-Bb60eixhgO3m7f_v3y-tWmV=ypuR52iNSAQvQ@mail.gmail.com>
+ <ZxvVuFqef2CLwtCs@google.com>
+In-Reply-To: <ZxvVuFqef2CLwtCs@google.com>
+From: Ian Rogers <irogers@google.com>
+Date: Fri, 25 Oct 2024 11:26:26 -0700
+Message-ID: <CAP-5=fVTU8nUfadXgpUd4my9emsY4c_7znMa9_RWD6VZbGYhZA@mail.gmail.com>
+Subject: Re: [PATCH v6 0/5] Hwmon PMUs
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	Ravi Bangoria <ravi.bangoria@amd.com>, Weilin Wang <weilin.wang@intel.com>, 
+	Yoshihiro Furudera <fj5100bi@fujitsu.com>, James Clark <james.clark@linaro.org>, 
+	Athira Jajeev <atrajeev@linux.vnet.ibm.com>, Howard Chu <howardchu95@gmail.com>, 
+	Oliver Upton <oliver.upton@linux.dev>, Changbin Du <changbin.du@huawei.com>, 
+	Ze Gao <zegao2021@gmail.com>, Junhao He <hejunhao3@huawei.com>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Start reprogramming PMU events at nested boundaries now that everything
-is in place to handle the EL2 event filter. Only repaint events where
-the filter differs between EL1 and EL2 as a slight optimization.
+On Fri, Oct 25, 2024 at 10:30=E2=80=AFAM Namhyung Kim <namhyung@kernel.org>=
+ wrote:
+>
+> On Thu, Oct 24, 2024 at 06:33:27PM -0700, Ian Rogers wrote:
+> > On Thu, Oct 24, 2024 at 9:41=E2=80=AFAM Namhyung Kim <namhyung@kernel.o=
+rg> wrote:
+> > >
+> > > On Thu, Oct 24, 2024 at 12:07:46AM -0700, Ian Rogers wrote:
+> > > > On Wed, Oct 23, 2024 at 8:06=E2=80=AFPM Namhyung Kim <namhyung@kern=
+el.org> wrote:
+> > > > >
+> > > > > Hi Ian,
+> > > > >
+> > > > > On Tue, Oct 22, 2024 at 11:06:18AM -0700, Ian Rogers wrote:
+> > > > > > Following the convention of the tool PMU, create a hwmon PMU th=
+at
+> > > > > > exposes hwmon data for reading. For example, the following show=
+s
+> > > > > > reading the CPU temperature and 2 fan speeds alongside the unco=
+re
+> > > > > > frequency:
+> > > > > > ```
+> > > > > > $ perf stat -e temp_cpu,fan1,hwmon_thinkpad/fan2/,tool/num_cpus=
+_online/ -M UNCORE_FREQ -I 1000
+> > > > > >      1.001153138              52.00 'C   temp_cpu
+> > > > > >      1.001153138              2,588 rpm  fan1
+> > > > > >      1.001153138              2,482 rpm  hwmon_thinkpad/fan2/
+> > > > > >      1.001153138                  8      tool/num_cpus_online/
+> > > > > >      1.001153138      1,077,101,397      UNC_CLOCK.SOCKET      =
+           #     1.08 UNCORE_FREQ
+> > > > > >      1.001153138      1,012,773,595      duration_time
+> > > > > > ...
+> > > > > > ```
+> > > > > >
+> > > > > > Additional data on the hwmon events is in perf list:
+> > > > > > ```
+> > > > > > $ perf list
+> > > > > > ...
+> > > > > > hwmon:
+> > > > > > ...
+> > > > > >   temp_core_0 OR temp2
+> > > > > >        [Temperature in unit coretemp named Core 0. crit=3D100'C=
+,max=3D100'C crit_alarm=3D0'C. Unit:
+> > > > > >         hwmon_coretemp]
+> > > > > > ...
+> > > > > > ```
+> > > > > >
+> > > > > > v6: Add string.h #include for issue reported by kernel test rob=
+ot.
+> > > > > > v5: Fix asan issue in parse_hwmon_filename caught by a TMA metr=
+ic.
+> > > > > > v4: Drop merged patches 1 to 10. Separate adding the hwmon_pmu =
+from
+> > > > > >     the update to perf_pmu to use it. Try to make source of lit=
+eral
+> > > > > >     strings clearer via named #defines. Fix a number of GCC war=
+nings.
+> > > > > > v3: Rebase, add Namhyung's acked-by to patches 1 to 10.
+> > > > > > v2: Address Namhyung's review feedback. Rebase dropping 4 patch=
+es
+> > > > > >     applied by Arnaldo, fix build breakage reported by Arnaldo.
+> > > > > >
+> > > > > > Ian Rogers (5):
+> > > > > >   tools api io: Ensure line_len_out is always initialized
+> > > > > >   perf hwmon_pmu: Add a tool PMU exposing events from hwmon in =
+sysfs
+> > > > > >   perf pmu: Add calls enabling the hwmon_pmu
+> > > > > >   perf test: Add hwmon "PMU" test
+> > > > > >   perf docs: Document tool and hwmon events
+> > > > >
+> > > > > I think the patch 2 can be easily splitted into core and other pa=
+rts
+> > > > > like dealing with aliases and units.  I believe it'd be helpful f=
+or
+> > > > > others (like me) to understand how it works.
+> > > > >
+> > > > > Please take a look at 'perf/hwmon-pmu' branch in:
+> > > > >
+> > > > >   https://git.kernel.org/pub/scm/linux/kernel/git/namhyung/linux-=
+perf.git
+> > > >
+> > > > Thanks Namhyung but I'm not really seeing this making anything simp=
+ler
+> > > > and I can see significant new bugs. Your new patch:
+> > > > https://git.kernel.org/pub/scm/linux/kernel/git/namhyung/linux-perf=
+.git/commit/?h=3Dperf/hwmon-pmu&id=3D85c78b5bf71fb3e67ae815f7b2d044648fa083=
+91
+> > > > Has taken about 40% out of patch 2, but done so by splitting functi=
+on
+> > > > declarations from their definitions, enum declarations from any use=
+,
+> > >
+> > > Yeah, it's just because I was lazy and you can split header files too
+> > > (and please do so).
+> > >
+> > > > etc. It also adds in code like:
+> > > >
+> > > > snprintf(buf, sizeof(buf), "%s_input", evsel->name);
+> > > >
+> > > > but this would be a strange thing to do. The evsel->name is rewritt=
+en
+> > > > by fallback logic, so cycles may become cycles:u if kernel profilin=
+g
+> > >
+> > > I know it doesn't work but just want to highlight how it's supposed t=
+o
+> > > work.  Eventually what we need is a correct file name.  In fact, I th=
+ink
+> > > it'd work if we can pass a correct event name probably like:
+> > >
+> > >   perf stat -e hwmon5/name=3Dfan1/ true
+> >
+> > But this isn't what the term name and evsel's name are for. They are
+> > to allow you to do:
+> > ```
+> > $ perf stat -e cycles/name=3Dfoobar/ true
+> >
+> > Performance counter stats for 'true':
+> >
+> >         1,126,942      foobar
+> >
+> >       0.001681805 seconds time elapsed
+> >
+> >       0.001757000 seconds user
+> >       0.000000000 seconds sys
+> > ```
+> > Why would you do this in code, change a fundamental of evsel behavior,
+> > then just to delete it in the next patch?
+>
+> Well, I didn't change the actual behavior and it doesn't work yet.
+> The deletion is just one line, and I think it reveals the intention of
+> the next patch very well.
+>
+> >
+> > > > is restricted. This is why we have metric-id in the evsel as we can=
+not
+> > > > rely on the evsel->name not mutating when looking up events for the
+> > > > sake of metrics. Using the name as part of a sysfs filename lookup
+> > > > doesn't make sense to me as now the evsel fallback logic can break =
+a
+> > > > hwmon event. In the original patch the code was:
+> > >
+> > > The fallback logic is used only if the kernel returns an error.  Thus
+> > > it'd be fine as long as it correctly finds the sysfs filename.  But i=
+t's
+> > > not used in the final code and the change is a simple one-liner.
+> >
+> > But it's not. It's changing what evsel->name means to be an event
+> > encoding. How does reverse config to name lookup work in this model?
+> > How does the normal use of the name term work?
+>
+> It's intermediate code that is not activated yet.  So I think it's about
+> to say how the code works.  If you really don't like to use evsel->name,
+> maybe you can put a dummy name with a comment saying it'll be updated in
+> next patch.
+>
+> >
+> > > >
+> > > > snprintf(buf, sizeof(buf), "%s%d_input", hwmon_type_strs[key.type],=
+ key.num);
+> > > >
+> > > > where those two values are constants and key.type and key.num both
+> > > > values embedded in the config value the evsel fallback logic won't
+> > > > change. But bringing in the code that does that basically brings in
+> > > > all of the rest of patch 2.
+> > >
+> > > Right, that's why I did that way.
+> > >
+> > > >
+> > > > So the patch is adding a PMU that looks broken, so rather than
+> > > > simplifying things it just creates a broken intermediate state and
+> > > > should that be fixed for the benefit of bisects?
+> > >
+> > > Actually it's not broken since it's not enabled yet. :)
+> > >
+> > >
+> > > > It also complicates understanding as the declarations of functions =
+and
+> > > > enums have kernel-doc, but now the definitions of enums and functio=
+ns
+> > > > are split apart. For me, to understand the code I'd want to squash =
+the
+> > > > patches back together again so I could see a declaration with its
+> > > > definition.
+> > >
+> > > Yep, please move the declarations to the patch 3.
+> >
+> > So I think moving the enum declarations into one patch is okay. But as
+> > the enum values have no bearing on hardware constants, or something
+> > outside of the code that uses them it smells strange to me. Ultimately
+> > this is going to do little to the lines of code count but damage
+> > readability. I'm not sure why we're doing this given the kernel model
+> > for adding a driver is to add it as a large chunk. For example, here
+> > is adding the intel PT driver:
+> > https://lore.kernel.org/all/1422614392-114498-1-git-send-email-alexande=
+r.shishkin@linux.intel.com/T/#u
+>
+> Maybe others can understand a big patch easily, but I'm not.
 
-PMU now 'works' for nested VMs, albeit slow.
+My understanding is that we make small patches so that the codebase is
+more bisectable. When there is something new, like a driver or here a
+hwmon PMU, the first patch is large and then we switch to the small
+patch model. I have seen patches adding constants ahead of them being
+used, but not normally as enums. I've already reduced the size of the
+patch by moving everything that isn't hwmon PMU out of the patch and
+most of that has already landed. Moving enums out of a header file
+okay, shouldn't break the build (a compiler may complain about unused
+enums) but then I end up copying comments into commit messages and
+doing something alien to what is done in the rest of the kernel. Not
+defining a function when you declare it, that is in many cases a
+compiler error and for good reason. Adding in changes that are what
+are or could be compiler errors goes against making things bisectable.
 
-Signed-off-by: Oliver Upton <oliver.upton@linux.dev>
----
- arch/arm64/kvm/emulate-nested.c |  4 ++++
- arch/arm64/kvm/pmu-emul.c       | 29 +++++++++++++++++++++++++++++
- include/kvm/arm_pmu.h           |  3 +++
- 3 files changed, 36 insertions(+)
+So breaking up this patch is bad as:
+1) it doesn't match existing kernel style,
+2) it makes the patch harder to understand (declarations split from
+definitions, etc.),
+3) with new compiler errors/warnings the code will be less bisectable
+as we're deliberately doing things we think wrong for the sake of a
+lines-of-code size,
+4) we increase the number of patches and commit messages, with commit
+messages duplicating comments for things like functions or enums being
+added,
+5) with your patches we create an intermediate PMU with different
+conventions than the rest of the code base and with bugs, impacting
+bisectability and the ability to understand the code base.
 
-diff --git a/arch/arm64/kvm/emulate-nested.c b/arch/arm64/kvm/emulate-nested.c
-index 162bddbfbe79..13f0be0911e8 100644
---- a/arch/arm64/kvm/emulate-nested.c
-+++ b/arch/arm64/kvm/emulate-nested.c
-@@ -2450,6 +2450,8 @@ void kvm_emulate_nested_eret(struct kvm_vcpu *vcpu)
- 
- 	kvm_arch_vcpu_load(vcpu, smp_processor_id());
- 	preempt_enable();
-+
-+	kvm_pmu_nested_transition(vcpu);
- }
- 
- static void kvm_inject_el2_exception(struct kvm_vcpu *vcpu, u64 esr_el2,
-@@ -2532,6 +2534,8 @@ static int kvm_inject_nested(struct kvm_vcpu *vcpu, u64 esr_el2,
- 	kvm_arch_vcpu_load(vcpu, smp_processor_id());
- 	preempt_enable();
- 
-+	kvm_pmu_nested_transition(vcpu);
-+
- 	return 1;
- }
- 
-diff --git a/arch/arm64/kvm/pmu-emul.c b/arch/arm64/kvm/pmu-emul.c
-index e2eb2ba903b6..8ad62284fa23 100644
---- a/arch/arm64/kvm/pmu-emul.c
-+++ b/arch/arm64/kvm/pmu-emul.c
-@@ -1215,3 +1215,32 @@ u64 kvm_vcpu_read_pmcr(struct kvm_vcpu *vcpu)
- 
- 	return u64_replace_bits(pmcr, vcpu->kvm->arch.pmcr_n, ARMV8_PMU_PMCR_N);
- }
-+
-+void kvm_pmu_nested_transition(struct kvm_vcpu *vcpu)
-+{
-+	bool reprogrammed = false;
-+	unsigned long mask;
-+	int i;
-+
-+	if (!kvm_vcpu_has_pmu(vcpu))
-+		return;
-+
-+	mask = __vcpu_sys_reg(vcpu, PMCNTENSET_EL0);
-+	for_each_set_bit(i, &mask, 32) {
-+		struct kvm_pmc *pmc = kvm_vcpu_idx_to_pmc(vcpu, i);
-+
-+		/*
-+		 * We only need to reconfigure events where the filter is
-+		 * different at EL1 vs. EL2, as we're multiplexing the true EL1
-+		 * event filter bit for nested.
-+		 */
-+		if (kvm_pmc_counts_at_el1(pmc) == kvm_pmc_counts_at_el2(pmc))
-+			continue;
-+
-+		kvm_pmu_create_perf_event(pmc);
-+		reprogrammed = true;
-+	}
-+
-+	if (reprogrammed)
-+		kvm_vcpu_pmu_restore_guest(vcpu);
-+}
-diff --git a/include/kvm/arm_pmu.h b/include/kvm/arm_pmu.h
-index b738ffb39bb0..3493e9d9f58e 100644
---- a/include/kvm/arm_pmu.h
-+++ b/include/kvm/arm_pmu.h
-@@ -98,6 +98,7 @@ u8 kvm_arm_pmu_get_max_counters(struct kvm *kvm);
- 
- u64 kvm_vcpu_read_pmcr(struct kvm_vcpu *vcpu);
- bool kvm_pmu_counter_is_hyp(struct kvm_vcpu *vcpu, unsigned int idx);
-+void kvm_pmu_nested_transition(struct kvm_vcpu *vcpu);
- #else
- struct kvm_pmu {
- };
-@@ -198,6 +199,8 @@ static inline bool kvm_pmu_counter_is_hyp(struct kvm_vcpu *vcpu)
- 	return false;
- }
- 
-+static inline void kvm_pmu_nested_transition(struct kvm_vcpu *vcpu) {}
-+
- #endif
- 
- #endif
--- 
-2.47.0.163.g1226f6d8fa-goog
+So I'm arguing against doing this as it is contrary to both our normal
+objectives and existing style. I have no real way of knowing when I've
+cut something up small enough and if we're not building the code then
+how do I build/test the intermediate states, I'm just out on a wild
+goose chase.
 
+Thanks,
+Ian
 
