@@ -1,65 +1,91 @@
-Return-Path: <linux-kernel+bounces-382563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43E5B9B0FE7
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 22:39:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7661A9B101E
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 22:43:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F703B21D8C
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 20:39:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE25C1F23372
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 20:43:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36C02215C4E;
-	Fri, 25 Oct 2024 20:39:43 +0000 (UTC)
-Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com [209.85.222.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFF10218927;
+	Fri, 25 Oct 2024 20:40:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NhBQQ+kq"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E240C1865FC
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 20:39:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D70D9217669
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 20:40:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729888782; cv=none; b=U/NneGG/6SE+b4qsT7uQSIb3tT1p/9TOpmzV5GAHo/07rpa2Z9S2v2sQsZMlhS5/WyxQ+ecBAG/ocujn4heaUW7PeQBQSpgcjnUha94dZnBZrjJeTB/46FBxtTMBi0FG3qbSK1e1dYEYL1a1o1+tiUckZN1p0trl1Z1AUSlQ0lI=
+	t=1729888853; cv=none; b=ToKcuFyOwTox+U/ID3B+RJOieEmfRejhjmZ2vCRTI2lapR8hu0an9Ty9s4i+Cevfv/0m8orsjVdP5ve+4QEy27i2G7DVREmmNf66jYuYQPXEbVbdmQk5/QUalDca+UlOYmN4AT+onzK5kvV5aFBd5E98yz5ea/3iWB9OOaZtvGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729888782; c=relaxed/simple;
-	bh=Xut5KuytrUvddzVGamLiiy9qRd+yCANnXjkrwlKkXhY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LrJO8x5ALx8uqkou6X9iyYnnvo1xOLZXwbL5ogxS/yr0txVyYCiMe8+H51xZzV1Fa+qyeQrYbv1XKo6vmHJtaxy+ub9K77HPrKiviwmpAVitiIhJQEr23HIkWoqu8onllHswugkSGWGJ2SLbgsi9U7pkDlJNf8uCDxqjg6UVKEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=manifault.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=manifault.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f46.google.com with SMTP id a1e0cc1a2514c-84ff43e87cbso717550241.1
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 13:39:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729888779; x=1730493579;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=d/DJHUYcQpCOSuSzbbERlzMOmm+qJF5o0ZdmXuDg43Y=;
-        b=FY7+E8jYZLONAk2HgmZx8WExgwFbYC6LbnwpLZ7qGcErK3w4TO30hcTqKxlBYldYRb
-         tVenCvsg785ZQEYH8RhPLcMJxTlMStxvr+P2Yy8/g+gzh/hkmAn4tZPPxweWEmTDN832
-         r8JTO737wpM1BDUHkypDxQAm+/srXDRH89e10t0drFmDeGEkrq4zlfBZMQlDQEDKcgvV
-         zRIxBun212yAHucfGalz0WtY+BpgiwIjWZ1ipjW6F/lv+iaFNuBKnYJATvHqHw0P/cgb
-         dMJyCdbvN+TP3PaAvV89iME1xttm4Owt4FYZdZHKORBTI8fS8KkYWwzx2Z9m+FkSu6nj
-         X7Rg==
-X-Forwarded-Encrypted: i=1; AJvYcCVPBsRuL4tCukrOFmUlyW+OqzRXiebiRnfbwrukKYhmlJZIPqnZHLbPCRK7CUEBNnRc3ktxk4aVKBPqotM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyptrHgpX1zRXGqL6KtbGQJJlVgFIvY2PxJS6w/FSbkgE7FWbaD
-	XCz6lBorPKNNfT7Nf51E+RuHxI9AW8DCD/zQIrW3Em3rNSfdNjx3
-X-Google-Smtp-Source: AGHT+IGA65NNSOeSTH2N8k1D39AaIGHxuStnoyLGBu8FXJ0ppMQGUBYPiRV0pbCdLGKBsLPWEYOWww==
-X-Received: by 2002:a05:6102:390f:b0:498:c11b:7a8b with SMTP id ada2fe7eead31-4a8cfd21da3mr884039137.21.1729888778707;
-        Fri, 25 Oct 2024 13:39:38 -0700 (PDT)
-Received: from localhost (c-76-141-129-107.hsd1.il.comcast.net. [76.141.129.107])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-46132134d3dsm9381811cf.27.2024.10.25.13.39.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2024 13:39:37 -0700 (PDT)
-From: David Vernet <void@manifault.com>
-To: tj@kernel.org
-Cc: sched-ext@meta.com,
-	kernel-team@meta.com,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] scx: Fix raciness in scx_ops_bypass()
-Date: Fri, 25 Oct 2024 15:39:29 -0500
-Message-ID: <20241025203929.22839-1-void@manifault.com>
-X-Mailer: git-send-email 2.46.1
+	s=arc-20240116; t=1729888853; c=relaxed/simple;
+	bh=2vC/IfGilItl9YoYzSLfac5oxJJtNnQtCMzGrNI6xUg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=BT15YiUGiGQ4At6IQdSt5fkOgLVGyWcBfr94tkyvmCCoG7b7gelgM4k/83CZwSbt2AdOyGUQ3fHZJrB1SKiEPJFSKNScKutlj4qbCze8IcAqyj1u2tX64eWT3+s3NtETyZkuHfskPNSRP3VdPoPztSQK5cGojLmgUZ1jx4Q43GA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NhBQQ+kq; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729888850;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2WJ3IwRH8RLBNIi0Kxo/o1E5+hUSf0Z9V2WPyhSRrlg=;
+	b=NhBQQ+kq1R6Wdh9UL2DvjIa4pCv7f/pKHh2EHZXvYqhtCYKsbdlsdiLALwP/I/AQylbjXe
+	a8WJhqAIIzuc5QFJ0XQ5kbgD1S34M+8lCRLg6er7jbaSCXkgp/VgOzgjiVN6feZbggoI0j
+	+2Bwh/HDGZrNiD6uihxw/tq+aFGmErg=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-364-YQ6BU2XqOJqtAGJuR0Eauw-1; Fri,
+ 25 Oct 2024 16:40:46 -0400
+X-MC-Unique: YQ6BU2XqOJqtAGJuR0Eauw-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E085D19560BF;
+	Fri, 25 Oct 2024 20:40:42 +0000 (UTC)
+Received: from warthog.procyon.org.uk.com (unknown [10.42.28.231])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 278B21956088;
+	Fri, 25 Oct 2024 20:40:36 +0000 (UTC)
+From: David Howells <dhowells@redhat.com>
+To: Christian Brauner <christian@brauner.io>,
+	Steve French <smfrench@gmail.com>,
+	Matthew Wilcox <willy@infradead.org>
+Cc: David Howells <dhowells@redhat.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	Gao Xiang <hsiangkao@linux.alibaba.com>,
+	Dominique Martinet <asmadeus@codewreck.org>,
+	Marc Dionne <marc.dionne@auristor.com>,
+	Paulo Alcantara <pc@manguebit.com>,
+	Shyam Prasad N <sprasad@microsoft.com>,
+	Tom Talpey <tom@talpey.com>,
+	Eric Van Hensbergen <ericvh@kernel.org>,
+	Ilya Dryomov <idryomov@gmail.com>,
+	netfs@lists.linux.dev,
+	linux-afs@lists.infradead.org,
+	linux-cifs@vger.kernel.org,
+	linux-nfs@vger.kernel.org,
+	ceph-devel@vger.kernel.org,
+	v9fs@lists.linux.dev,
+	linux-erofs@lists.ozlabs.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Christian Brauner <brauner@kernel.org>
+Subject: [PATCH v2 03/31] netfs: Remove unnecessary references to pages
+Date: Fri, 25 Oct 2024 21:39:30 +0100
+Message-ID: <20241025204008.4076565-4-dhowells@redhat.com>
+In-Reply-To: <20241025204008.4076565-1-dhowells@redhat.com>
+References: <20241025204008.4076565-1-dhowells@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,224 +93,104 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-scx_ops_bypass() can currently race on the ops enable / disable path as
-follows:
+From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 
-1. scx_ops_bypass(true) called on enable path, bypass depth is set to 1
-2. An op on the init path exits, which schedules scx_ops_disable_workfn()
-3. scx_ops_bypass(false) is called on the disable path, and bypass depth
-   is decremented to 0
-4. kthread is scheduled to execute scx_ops_disable_workfn()
-5. scx_ops_bypass(true) called, bypass depth set to 1
-6. scx_ops_bypass() races when iterating over CPUs
+These places should all use folios instead of pages.
 
-While it's not safe to take any blocking locks on the bypass path, it is
-safe to take a raw spinlock which cannot be preempted. This patch therefore
-updates scx_ops_bypass() to use a raw spinlock to synchronize, and changes
-scx_ops_bypass_depth to be a regular int.
-
-Without this change, we observe the following warnings when running the
-'exit' sched_ext selftest (sometimes requires a couple of runs):
-
-.[root@virtme-ng sched_ext]# ./runner -t exit
-===== START =====
-TEST: exit
-...
-[   14.935078] WARNING: CPU: 2 PID: 360 at kernel/sched/ext.c:4332 scx_ops_bypass+0x1ca/0x280
-[   14.935126] Modules linked in:
-[   14.935150] CPU: 2 UID: 0 PID: 360 Comm: sched_ext_ops_h Not tainted 6.11.0-virtme #24
-[   14.935192] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Arch Linux 1.16.3-1-1 04/01/2014
-[   14.935242] Sched_ext: exit (enabling+all)
-[   14.935244] RIP: 0010:scx_ops_bypass+0x1ca/0x280
-[   14.935300] Code: ff ff ff e8 48 96 10 00 fb e9 08 ff ff ff c6 05 7b 34 e8 01 01 90 48 c7 c7 89 86 88 87 e8 be 1d f8 ff 90 0f 0b 90 90 eb 95 90 <0f> 0b 90 41 8b 84 24 24 0a 00 00 eb 97 90 0f 0b 90 41 8b 84 24 24
-[   14.935394] RSP: 0018:ffffb706c0957ce0 EFLAGS: 00010002
-[   14.935424] RAX: 0000000000000009 RBX: 0000000000000001 RCX: 00000000e3fb8b2a
-[   14.935465] RDX: 0000000000000001 RSI: 0000000000000004 RDI: ffffffff88a4c080
-[   14.935512] RBP: 0000000000009b56 R08: 0000000000000004 R09: 00000003f12e520a
-[   14.935555] R10: ffffffff863a9795 R11: 0000000000000000 R12: ffff8fc5fec31300
-[   14.935598] R13: ffff8fc5fec31318 R14: 0000000000000286 R15: 0000000000000018
-[   14.935642] FS:  0000000000000000(0000) GS:ffff8fc5fe680000(0000) knlGS:0000000000000000
-[   14.935684] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   14.935721] CR2: 0000557d92890b88 CR3: 000000002464a000 CR4: 0000000000750ef0
-[   14.935765] PKRU: 55555554
-[   14.935782] Call Trace:
-[   14.935802]  <TASK>
-[   14.935823]  ? __warn+0xce/0x220
-[   14.935850]  ? scx_ops_bypass+0x1ca/0x280
-[   14.935881]  ? report_bug+0xc1/0x160
-[   14.935909]  ? handle_bug+0x61/0x90
-[   14.935934]  ? exc_invalid_op+0x1a/0x50
-[   14.935959]  ? asm_exc_invalid_op+0x1a/0x20
-[   14.935984]  ? raw_spin_rq_lock_nested+0x15/0x30
-[   14.936019]  ? scx_ops_bypass+0x1ca/0x280
-[   14.936046]  ? srso_alias_return_thunk+0x5/0xfbef5
-[   14.936081]  ? __pfx_scx_ops_disable_workfn+0x10/0x10
-[   14.936111]  scx_ops_disable_workfn+0x146/0xac0
-[   14.936142]  ? finish_task_switch+0xa9/0x2c0
-[   14.936172]  ? srso_alias_return_thunk+0x5/0xfbef5
-[   14.936211]  ? __pfx_scx_ops_disable_workfn+0x10/0x10
-[   14.936244]  kthread_worker_fn+0x101/0x2c0
-[   14.936268]  ? __pfx_kthread_worker_fn+0x10/0x10
-[   14.936299]  kthread+0xec/0x110
-[   14.936327]  ? __pfx_kthread+0x10/0x10
-[   14.936351]  ret_from_fork+0x37/0x50
-[   14.936374]  ? __pfx_kthread+0x10/0x10
-[   14.936400]  ret_from_fork_asm+0x1a/0x30
-[   14.936427]  </TASK>
-[   14.936443] irq event stamp: 21002
-[   14.936467] hardirqs last  enabled at (21001): [<ffffffff863aa35f>] resched_cpu+0x9f/0xd0
-[   14.936521] hardirqs last disabled at (21002): [<ffffffff863dd0ba>] scx_ops_bypass+0x11a/0x280
-[   14.936571] softirqs last  enabled at (20642): [<ffffffff863683d7>] __irq_exit_rcu+0x67/0xd0
-[   14.936622] softirqs last disabled at (20637): [<ffffffff863683d7>] __irq_exit_rcu+0x67/0xd0
-[   14.936672] ---[ end trace 0000000000000000 ]---
-[   14.953282] sched_ext: BPF scheduler "exit" disabled (unregistered from BPF)
-[   14.953352] ------------[ cut here ]------------
-[   14.953383] WARNING: CPU: 2 PID: 360 at kernel/sched/ext.c:4335 scx_ops_bypass+0x1d8/0x280
-[   14.953428] Modules linked in:
-[   14.953453] CPU: 2 UID: 0 PID: 360 Comm: sched_ext_ops_h Tainted: G        W          6.11.0-virtme #24
-[   14.953505] Tainted: [W]=WARN
-[   14.953527] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Arch Linux 1.16.3-1-1 04/01/2014
-[   14.953574] RIP: 0010:scx_ops_bypass+0x1d8/0x280
-[   14.953603] Code: c6 05 7b 34 e8 01 01 90 48 c7 c7 89 86 88 87 e8 be 1d f8 ff 90 0f 0b 90 90 eb 95 90 0f 0b 90 41 8b 84 24 24 0a 00 00 eb 97 90 <0f> 0b 90 41 8b 84 24 24 0a 00 00 eb 92 f3 0f 1e fa 49 8d 84 24 f0
-[   14.953693] RSP: 0018:ffffb706c0957ce0 EFLAGS: 00010046
-[   14.953722] RAX: 0000000000000001 RBX: 0000000000000000 RCX: 0000000000000001
-[   14.953763] RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff8fc5fec31318
-[   14.953804] RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000000
-[   14.953845] R10: ffffffff863a9795 R11: 0000000000000000 R12: ffff8fc5fec31300
-[   14.953888] R13: ffff8fc5fec31318 R14: 0000000000000286 R15: 0000000000000018
-[   14.953934] FS:  0000000000000000(0000) GS:ffff8fc5fe680000(0000) knlGS:0000000000000000
-[   14.953974] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   14.954009] CR2: 0000557d92890b88 CR3: 000000002464a000 CR4: 0000000000750ef0
-[   14.954052] PKRU: 55555554
-[   14.954068] Call Trace:
-[   14.954085]  <TASK>
-[   14.954102]  ? __warn+0xce/0x220
-[   14.954126]  ? scx_ops_bypass+0x1d8/0x280
-[   14.954150]  ? report_bug+0xc1/0x160
-[   14.954178]  ? handle_bug+0x61/0x90
-[   14.954203]  ? exc_invalid_op+0x1a/0x50
-[   14.954226]  ? asm_exc_invalid_op+0x1a/0x20
-[   14.954250]  ? raw_spin_rq_lock_nested+0x15/0x30
-[   14.954285]  ? scx_ops_bypass+0x1d8/0x280
-[   14.954311]  ? __mutex_unlock_slowpath+0x3a/0x260
-[   14.954343]  scx_ops_disable_workfn+0xa3e/0xac0
-[   14.954381]  ? __pfx_scx_ops_disable_workfn+0x10/0x10
-[   14.954413]  kthread_worker_fn+0x101/0x2c0
-[   14.954442]  ? __pfx_kthread_worker_fn+0x10/0x10
-[   14.954479]  kthread+0xec/0x110
-[   14.954507]  ? __pfx_kthread+0x10/0x10
-[   14.954530]  ret_from_fork+0x37/0x50
-[   14.954553]  ? __pfx_kthread+0x10/0x10
-[   14.954576]  ret_from_fork_asm+0x1a/0x30
-[   14.954603]  </TASK>
-[   14.954621] irq event stamp: 21002
-[   14.954644] hardirqs last  enabled at (21001): [<ffffffff863aa35f>] resched_cpu+0x9f/0xd0
-[   14.954686] hardirqs last disabled at (21002): [<ffffffff863dd0ba>] scx_ops_bypass+0x11a/0x280
-[   14.954735] softirqs last  enabled at (20642): [<ffffffff863683d7>] __irq_exit_rcu+0x67/0xd0
-[   14.954782] softirqs last disabled at (20637): [<ffffffff863683d7>] __irq_exit_rcu+0x67/0xd0
-[   14.954829] ---[ end trace 0000000000000000 ]---
-[   15.022283] sched_ext: BPF scheduler "exit" disabled (unregistered from BPF)
-[   15.092282] sched_ext: BPF scheduler "exit" disabled (unregistered from BPF)
-[   15.149282] sched_ext: BPF scheduler "exit" disabled (unregistered from BPF)
-ok 1 exit #
-=====  END  =====
-
-And with it, the test passes without issue after 1000s of runs:
-
-.[root@virtme-ng sched_ext]# ./runner -t exit
-===== START =====
-TEST: exit
-DESCRIPTION: Verify we can cleanly exit a scheduler in multiple places
-OUTPUT:
-[    7.412856] sched_ext: BPF scheduler "exit" enabled
-[    7.427924] sched_ext: BPF scheduler "exit" disabled (unregistered from BPF)
-[    7.466677] sched_ext: BPF scheduler "exit" enabled
-[    7.475923] sched_ext: BPF scheduler "exit" disabled (unregistered from BPF)
-[    7.512803] sched_ext: BPF scheduler "exit" enabled
-[    7.532924] sched_ext: BPF scheduler "exit" disabled (unregistered from BPF)
-[    7.586809] sched_ext: BPF scheduler "exit" enabled
-[    7.595926] sched_ext: BPF scheduler "exit" disabled (unregistered from BPF)
-[    7.661923] sched_ext: BPF scheduler "exit" disabled (unregistered from BPF)
-[    7.723923] sched_ext: BPF scheduler "exit" disabled (unregistered from BPF)
-ok 1 exit #
-=====  END  =====
-
-=============================
-
-RESULTS:
-
-PASSED:  1
-SKIPPED: 0
-FAILED:  0
-
-Fixes: f0e1a0643a59 ("sched_ext: Implement BPF extensible scheduler class")
-Signed-off-by: David Vernet <void@manifault.com>
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+Link: https://lore.kernel.org/r/20241005182307.3190401-4-willy@infradead.org
+Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
+ fs/netfs/buffered_read.c  |  8 ++++----
+ fs/netfs/buffered_write.c | 14 +++++++-------
+ 2 files changed, 11 insertions(+), 11 deletions(-)
 
-v1: https://lore.kernel.org/lkml/20241025054014.66631-2-void@manifault.com/
-
-Changes v1 -> v2:
-- Just use a raw spinlock instead of using scheduling contexts to
-  synchronize (Tejun)
-
- kernel/sched/ext.c | 25 +++++++++++++++----------
- 1 file changed, 15 insertions(+), 10 deletions(-)
-
-diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-index 6eae3b69bf6e..58d6a6a89ac6 100644
---- a/kernel/sched/ext.c
-+++ b/kernel/sched/ext.c
-@@ -862,7 +862,8 @@ static DEFINE_MUTEX(scx_ops_enable_mutex);
- DEFINE_STATIC_KEY_FALSE(__scx_ops_enabled);
- DEFINE_STATIC_PERCPU_RWSEM(scx_fork_rwsem);
- static atomic_t scx_ops_enable_state_var = ATOMIC_INIT(SCX_OPS_DISABLED);
--static atomic_t scx_ops_bypass_depth = ATOMIC_INIT(0);
-+static int scx_ops_bypass_depth;
-+static DEFINE_RAW_SPINLOCK(__scx_ops_bypass_lock);
- static bool scx_ops_init_task_enabled;
- static bool scx_switching_all;
- DEFINE_STATIC_KEY_FALSE(__scx_switched_all);
-@@ -4298,18 +4299,20 @@ bool task_should_scx(struct task_struct *p)
-  */
- static void scx_ops_bypass(bool bypass)
- {
--	int depth, cpu;
-+	int cpu;
-+	unsigned long flags;
- 
-+	raw_spin_lock_irqsave(&__scx_ops_bypass_lock, flags);
- 	if (bypass) {
--		depth = atomic_inc_return(&scx_ops_bypass_depth);
--		WARN_ON_ONCE(depth <= 0);
--		if (depth != 1)
--			return;
-+		scx_ops_bypass_depth++;
-+		WARN_ON_ONCE(scx_ops_bypass_depth <= 0);
-+		if (scx_ops_bypass_depth != 1)
-+			goto unlock;
- 	} else {
--		depth = atomic_dec_return(&scx_ops_bypass_depth);
--		WARN_ON_ONCE(depth < 0);
--		if (depth != 0)
--			return;
-+		scx_ops_bypass_depth--;
-+		WARN_ON_ONCE(scx_ops_bypass_depth < 0);
-+		if (scx_ops_bypass_depth != 0)
-+			goto unlock;
+diff --git a/fs/netfs/buffered_read.c b/fs/netfs/buffered_read.c
+index af46a598f4d7..7ac34550c403 100644
+--- a/fs/netfs/buffered_read.c
++++ b/fs/netfs/buffered_read.c
+@@ -627,7 +627,7 @@ static bool netfs_skip_folio_read(struct folio *folio, loff_t pos, size_t len,
+ 	if (unlikely(always_fill)) {
+ 		if (pos - offset + len <= i_size)
+ 			return false; /* Page entirely before EOF */
+-		zero_user_segment(&folio->page, 0, plen);
++		folio_zero_segment(folio, 0, plen);
+ 		folio_mark_uptodate(folio);
+ 		return true;
  	}
+@@ -646,7 +646,7 @@ static bool netfs_skip_folio_read(struct folio *folio, loff_t pos, size_t len,
  
- 	/*
-@@ -4367,6 +4370,8 @@ static void scx_ops_bypass(bool bypass)
- 		/* resched to restore ticks and idle state */
- 		resched_cpu(cpu);
- 	}
-+unlock:
-+	raw_spin_unlock_irqrestore(&__scx_ops_bypass_lock, flags);
+ 	return false;
+ zero_out:
+-	zero_user_segments(&folio->page, 0, offset, offset + len, plen);
++	folio_zero_segments(folio, 0, offset, offset + len, plen);
+ 	return true;
  }
  
- static void free_exit_info(struct scx_exit_info *ei)
--- 
-2.46.1
+@@ -713,7 +713,7 @@ int netfs_write_begin(struct netfs_inode *ctx,
+ 	if (folio_test_uptodate(folio))
+ 		goto have_folio;
+ 
+-	/* If the page is beyond the EOF, we want to clear it - unless it's
++	/* If the folio is beyond the EOF, we want to clear it - unless it's
+ 	 * within the cache granule containing the EOF, in which case we need
+ 	 * to preload the granule.
+ 	 */
+@@ -773,7 +773,7 @@ int netfs_write_begin(struct netfs_inode *ctx,
+ EXPORT_SYMBOL(netfs_write_begin);
+ 
+ /*
+- * Preload the data into a page we're proposing to write into.
++ * Preload the data into a folio we're proposing to write into.
+  */
+ int netfs_prefetch_for_write(struct file *file, struct folio *folio,
+ 			     size_t offset, size_t len)
+diff --git a/fs/netfs/buffered_write.c b/fs/netfs/buffered_write.c
+index ff2814da88b1..b4826360a411 100644
+--- a/fs/netfs/buffered_write.c
++++ b/fs/netfs/buffered_write.c
+@@ -83,13 +83,13 @@ static void netfs_update_i_size(struct netfs_inode *ctx, struct inode *inode,
+  * netfs_perform_write - Copy data into the pagecache.
+  * @iocb: The operation parameters
+  * @iter: The source buffer
+- * @netfs_group: Grouping for dirty pages (eg. ceph snaps).
++ * @netfs_group: Grouping for dirty folios (eg. ceph snaps).
+  *
+- * Copy data into pagecache pages attached to the inode specified by @iocb.
++ * Copy data into pagecache folios attached to the inode specified by @iocb.
+  * The caller must hold appropriate inode locks.
+  *
+- * Dirty pages are tagged with a netfs_folio struct if they're not up to date
+- * to indicate the range modified.  Dirty pages may also be tagged with a
++ * Dirty folios are tagged with a netfs_folio struct if they're not up to date
++ * to indicate the range modified.  Dirty folios may also be tagged with a
+  * netfs-specific grouping such that data from an old group gets flushed before
+  * a new one is started.
+  */
+@@ -223,11 +223,11 @@ ssize_t netfs_perform_write(struct kiocb *iocb, struct iov_iter *iter,
+ 		 * we try to read it.
+ 		 */
+ 		if (fpos >= ctx->zero_point) {
+-			zero_user_segment(&folio->page, 0, offset);
++			folio_zero_segment(folio, 0, offset);
+ 			copied = copy_folio_from_iter_atomic(folio, offset, part, iter);
+ 			if (unlikely(copied == 0))
+ 				goto copy_failed;
+-			zero_user_segment(&folio->page, offset + copied, flen);
++			folio_zero_segment(folio, offset + copied, flen);
+ 			__netfs_set_group(folio, netfs_group);
+ 			folio_mark_uptodate(folio);
+ 			trace_netfs_folio(folio, netfs_modify_and_clear);
+@@ -407,7 +407,7 @@ EXPORT_SYMBOL(netfs_perform_write);
+  * netfs_buffered_write_iter_locked - write data to a file
+  * @iocb:	IO state structure (file, offset, etc.)
+  * @from:	iov_iter with data to write
+- * @netfs_group: Grouping for dirty pages (eg. ceph snaps).
++ * @netfs_group: Grouping for dirty folios (eg. ceph snaps).
+  *
+  * This function does all the work needed for actually writing data to a
+  * file. It does all basic checks, removes SUID from the file, updates
 
 
