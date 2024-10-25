@@ -1,88 +1,127 @@
-Return-Path: <linux-kernel+bounces-381453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A35F9AFF71
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 12:03:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 880D09AFF76
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 12:04:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 05311B24E78
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 10:03:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FAF51F22B24
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 10:04:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB9181D967F;
-	Fri, 25 Oct 2024 10:03:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DBF01D8DF8;
+	Fri, 25 Oct 2024 10:04:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="KUtg/VWk";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="BvVK7662"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Hi9xEZ9o"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 979731D1F7B
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 10:03:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F260418A93F;
+	Fri, 25 Oct 2024 10:04:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729850622; cv=none; b=dc/3QyaSDpKffApZbXGHTgcx2NjL9AB4qtFkYU+GPoWGS/F8nwkkBd5/TN1VesjyaDSHUpkNaA9sJIXX8h8hu2Al+5q5/wcwhMGdUgRTaLXKyb9IETcawCOKbI+DZ0iH+OqV0qM9hPgJ00rUSiVikAut7gwtWJwx1kj+4g3LBjU=
+	t=1729850679; cv=none; b=sdFiqTj1bqzFAqX1DYhqJpzlbRGl+CxUjL2Y0xuWaln9CSKZao4JGd5c7Kqd5r8B2HONT5msQX5bFqQ8KLzAHp95YyNfldnSR+dznI8lwUL02Xw04jK0kSATDn674o+Ni0gsHiIfAdVORxQfc3vY5fwj9/6hvyMX994rdocPyfs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729850622; c=relaxed/simple;
-	bh=4+vxGsmysunGnnkYtxuUqQYhqM5WPXzjRHuVc3vPOcw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Wwj9kUnu1zHDk6nKH9uvoMLzSZXdLWNC4EAUv+Dc8cEnAlrPX4XHlGOXD0hEd/m0iz7wWqw7VWDiSf1LKPSM487USGKRsmgTAcn9g6SNcAWe0iOA06dHTVPs8D9Us5K7oTpxsanaNthMRCVpVepqOPIiFyHiEcfyEb+zV1eU5GA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=KUtg/VWk; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=BvVK7662; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 25 Oct 2024 12:03:35 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1729850618;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kXnLbWg/pSVZEV+IncuH+B91U7YDz+CkkQf4woAq2oc=;
-	b=KUtg/VWksfxTKNYEfbebvQq9LHsbSxBlgZTqlEttnmEZGDXPoGvPjI4BsoGaaJRq4W8H7N
-	Z8qSUrTa9pfLYQ99G12OkMM6d0Qa4Sbjlgm+XxG3ESp55CREK3/Ua9e8CiEwtzjPEPkgOU
-	i9+e3Bja3UJyKhY0JkL0M0kGMWAEaab660knJUTqIJF8ljTn2wnMlce/KgQhD+9zMMdgQ4
-	WzWcXMwwy7aZFEhKvJ5FYNk1+eslTBUjoC+yYDP+UE5PTLP7inIiMT9reRRK3kCDHewqjx
-	QH+Ig/zBuJslNP/D48fb1V9ppl66EoMDesLXo5SDtcBkMSSmxxZRRtuEJGuWHg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1729850618;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kXnLbWg/pSVZEV+IncuH+B91U7YDz+CkkQf4woAq2oc=;
-	b=BvVK7662tRG0VOyCtbqk+pt5DehBLwAy9i5Gdl4zat6sGEhphwnxoImTKFlm1EYnUYkCS8
-	obmmUC3kwqlT3kBg==
-From: Sebastian Siewior <bigeasy@linutronix.de>
-To: Christian Loehle <christian.loehle@arm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>, oe-kbuild-all@lists.linux.dev,
-	kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH] sched/uclamp: Fix unnused variable warning
-Message-ID: <20241025100335.urH9-GLU@linutronix.de>
-References: <b2ad1f31-21b9-42a5-a735-b9496470348a@arm.com>
- <087769c7-f8e7-4701-b6f1-4585570b8be8@arm.com>
+	s=arc-20240116; t=1729850679; c=relaxed/simple;
+	bh=8q/071ntyfrzcchcXwbAm8VK6WPqpovoLaLg6mDtWik=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=KDU8cFFF9w0TDwy0/xIZvMh4aHItERfpm16x5TILs9ttsDNDhs/98Rj6RM1/S0V2TFSIozbYZ41YGWSVpf5hImZnGrFoVsL/Xoxa6S8zZReDbXy5RNQrn+O7fh2ZcYknLZLNgbC1zhDkVKQChZdU4Td/O97Ro5Wp8BUsluXVYGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Hi9xEZ9o; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49OKhqhC031151;
+	Fri, 25 Oct 2024 10:04:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=3ltZHugAEqBbxalUKxyM6K
+	zlwXFTfZrxwFi88WAyiyg=; b=Hi9xEZ9oVC5wEtYBw/r+K3xc9DZvtuHBnz/eUM
+	OO3GgvJCSPa9+yfuu+mx6TnUQVSWrx4J1XMMqPS+KI379l4ioM5ykV7mnpsRNnBR
+	tOtjH9SxSOEfTXoKQ7VvjdUYfAVZbIU4D9pCozMvUhiGHdBJ2Ls95rfsFkQXWva6
+	neE3Tx5bXRwp/ZRAD1IyW1e8Y/3o8+GK/Ed/2uov8GoYvjn7thn4ciJAHkkFaOAN
+	qWypA7KevImUvWYsHULZhzNwh50cwmkhBuacJ8MCuVgyjuz6LzBpESbxdSw+s0g0
+	f5sv5VHiBUFtN/XiviD+pV6PocKX1ODPBHKNaIRsN+u3Gs9Q==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42em3w0jxx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Oct 2024 10:04:32 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49PA4VTP012916
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Oct 2024 10:04:31 GMT
+Received: from Z2-SFF-G9-MQ.ap.qualcomm.com (10.80.80.8) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Fri, 25 Oct 2024 03:04:28 -0700
+From: Miaoqing Pan <quic_miaoqing@quicinc.com>
+To: <kvalo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>
+CC: <quic_jjohnson@quicinc.com>, <ath11k@lists.infradead.org>,
+        <linux-wireless@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <dmitry.baryshkov@linaro.org>, <krzk@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Miaoqing Pan
+	<quic_miaoqing@quicinc.com>
+Subject: [PATCH v3 0/2] wifi: ath11k: support board-specific firmware overrides
+Date: Fri, 25 Oct 2024 18:04:17 +0800
+Message-ID: <20241025100419.2128604-1-quic_miaoqing@quicinc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <087769c7-f8e7-4701-b6f1-4585570b8be8@arm.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 8tIPFE70zo7rTw4H13i03b5Xc5XHuiOE
+X-Proofpoint-ORIG-GUID: 8tIPFE70zo7rTw4H13i03b5Xc5XHuiOE
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 adultscore=0
+ malwarescore=0 spamscore=0 clxscore=1015 lowpriorityscore=0
+ mlxlogscore=903 priorityscore=1501 mlxscore=0 suspectscore=0 phishscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410250077
 
-On 2024-10-25 11:01:08 [+0100], Christian Loehle wrote:
-> Gentle ping and adding CCs
+QCA6698AQ IP core is the same as WCN6855 hw2.1, but it has different RF,
+IPA, thermal, RAM size and etc, so new firmware files used. This change
+allows board DT files to override the subdir of the firmware directory
+used to lookup the amss.bin and m3.bin.
 
-Thank you.
+For example:
 
-I poked Christian since the bot send another report
-	202410250459.EJe6PJI5-lkp@intel.com
+- ath11k/WCN6855/hw2.1/amss.bin,
+  ath11k/WCN6855/hw2.1/m3.bin: main firmware files, used by default
 
-Sebastian
+- ath11k/WCN6855/hw2.1/qca6698aq/amss.bin,
+  ath11k/WCN6855/hw2.1/qca6698aq/m3.bin
+
+Signed-off-by: Miaoqing Pan <quic_miaoqing@quicinc.com>
+---
+v2: follow the approach that has been defined in the commit
+5abf259772df ("wifi: ath10k: support board-specific firmware
+overrides").
+v3: Use 'fw_name' instead of 'board_name', and rollback
+ath11k_core_create_firmware_path() to inline function.
+---
+
+Miaoqing Pan (2):
+  dt-bindings: net: wireless: ath11k-pci: add firmware-name property
+  wifi: ath11k: support board-specific firmware overrides
+
+ .../bindings/net/wireless/qcom,ath11k-pci.yaml      |  7 +++++++
+ drivers/net/wireless/ath/ath11k/core.h              | 13 +++++++++++--
+ 2 files changed, 18 insertions(+), 2 deletions(-)
+
+
+base-commit: cd4827fef2fd758a00012615f4529fd43a461dba
+-- 
+2.25.1
+
 
