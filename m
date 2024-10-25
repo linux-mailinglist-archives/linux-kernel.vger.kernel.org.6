@@ -1,149 +1,171 @@
-Return-Path: <linux-kernel+bounces-381817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73FE89B04D2
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:58:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F395D9B04D0
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:58:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 385512852A0
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 13:58:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23CF61C2229B
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 13:58:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 150AD2022EC;
-	Fri, 25 Oct 2024 13:58:01 +0000 (UTC)
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA4DB1FB89D;
+	Fri, 25 Oct 2024 13:57:55 +0000 (UTC)
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC33E1FB8B5;
-	Fri, 25 Oct 2024 13:57:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C02370817;
+	Fri, 25 Oct 2024 13:57:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729864680; cv=none; b=TCDvpoADqZYFJYrMyfYVyPtV/JjWr2nKlTOZiqDm+XIwYaMDDCedzVHA8H1pXjXmlEvzOm+4QNm7AZ/RqrSPb3qIZJ+5N+fGo71XuW7ylQUf77NyZeGifUbju/ccjh+/tegBojWxgKr/cmgLP68U+B4hDGtWroiQzIQCY3OMSKg=
+	t=1729864675; cv=none; b=L2FwWmpfwvQeqDV83LNKILZG3jmR74mVzvLMZNot1dPnFoEBmT3t6IwZ1xWrRUug70aY4j1Hl5JqozOXWN4DJd6vN4r2RaBSwL2aJOZfhPu3hCl6NbeGI/NZRLIY2KX1IETHs2J8ucDLnHu8pK0pX8iludtTVxZMyyqfyQ9Vcfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729864680; c=relaxed/simple;
-	bh=wjQPEd1fi5rVEdlc+56+MquhhXXQhQ4HeWzndbeDTnw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GwQbWG3Dq2HKAhEKbSq4dCCb2EF6abo7VCv42VHr7Cu4QrCGuBCmAGFQZIJ6wYNra7o+2QPyIDGEtFE3nnVDwhZ5GD98qytFVTWAz4oQKeSsFr1XcjOzeeoZRkDRqZpkoJ61EzX7nCSYEbhiGIUjpoka7LlaryPAwfrC1rMUyQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.29])
-	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4XZkNh3PZhz9v7Hp;
-	Fri, 25 Oct 2024 21:37:24 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id B7410140132;
-	Fri, 25 Oct 2024 21:57:42 +0800 (CST)
-Received: from [10.221.99.159] (unknown [10.221.99.159])
-	by APP1 (Coremail) with SMTP id LxC2BwDHhzjLoxtn5LVpAA--.14069S2;
-	Fri, 25 Oct 2024 14:57:41 +0100 (CET)
-Message-ID: <8360f999-0d64-3b4f-e4b8-8c84f7311af2@huaweicloud.com>
-Date: Fri, 25 Oct 2024 15:57:29 +0200
+	s=arc-20240116; t=1729864675; c=relaxed/simple;
+	bh=4bj2osbLKKawTTfWoZ1EPTAYQ0XvOXYe3se963/1blM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=q12+wDK2Jspuz/JYvEnvIVIxt0MwwrSKYcgf3pZDwZsrPwYzTEK1KPBRaIjwr0V0ktMaPj8yjaJwIHbgN8D5sQEKDyoN6dvRCOVOIdqMkNSZGKfTrajPwc9CnF6J2qgJZ9nTss1DHS5yitUQ+0dHx1VXTJ1zS4FLwpwZRNFlvOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-6e59a9496f9so24983257b3.0;
+        Fri, 25 Oct 2024 06:57:53 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729864671; x=1730469471;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IUx9mkzB7z8iaJH1DYALuYKXnCWuAd2L3YOKskqAexM=;
+        b=VCZNh25ZwFf+IjgphuV0oJWqKq85dsRkrZlfAj7qlZt0PwpAfeJuZ6oVrs8y9Q65ge
+         +4Q8o9COwipQAtuU9IgLh3DJavMJaKAlOBZLYntgKxlr575nDElYYMabesg2CldauEbF
+         8IA3+Zkwo+6LXSCpUgzLGIV06jwAroz7AnoHQ15pQvc3UTzVaPXsW7TeChdUvbJBbz1A
+         F3K3ivdH/YUZWptWQTFQbn+hNPcJagVyvrINrBJI7SUPefvvAY4c7KrnERPMAH9tYw8x
+         wpeNDicvN5bkvhFqxDV/TaMxMv38kka+zF7+CMyXzCp9RmG6Ikbyv7H+LPCdTuGWj4Pg
+         hnCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV6eUWUKD9JcLUwlrhVlSCJDxmwAL1fQfiiJCxOqS1F40UnwSm/MakvjYi+amqGsBk0f1eFnqGh0YXLKVfV@vger.kernel.org, AJvYcCX4SM9UMCYQAr9Xv6jCOitd6xq54mK+AF4QhrdpQkZli7qc2FfzIq1yhr7x1CWjRfbED2v/lXY1ncQ0@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFDAcJ14nvaB5NBtEF5FQkVuuVnE4DQe7+/d233wN65OUnPYhZ
+	xIrLRu5DwUeNxLiv4X5xyhdYOAm3SKnzOaOFsemSaJdE61QZ+6jLSWj/pPY4
+X-Google-Smtp-Source: AGHT+IG/U4NbN+xhKjoFzmrBI5MaI5/TttQLZAhRQ8kU/GEv9CTwSfSlztjevPP+NFT+Frzfis4MhQ==
+X-Received: by 2002:a05:690c:4d46:b0:6dd:bcce:7cd7 with SMTP id 00721157ae682-6e7f0fd20e7mr119707597b3.42.1729864671405;
+        Fri, 25 Oct 2024 06:57:51 -0700 (PDT)
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com. [209.85.128.176])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e9c6c19d42sm2864007b3.71.2024.10.25.06.57.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 25 Oct 2024 06:57:51 -0700 (PDT)
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-6e390d9ad1dso18265397b3.3;
+        Fri, 25 Oct 2024 06:57:51 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVzWYmpfH2Zk4ClJCiHI32+lfhMmhWDt7/zAS41pOFgnj90SHnZSypcWmBAtinVx+2f3IEo4INRTTLFG+6O@vger.kernel.org, AJvYcCXCrBWb8nZdzI5WkFT6BNFH6NNY9HaH3aToH6fi7DrqpXVId7gNO4y59r6noHHyQINa1U1HDi91VpOO@vger.kernel.org
+X-Received: by 2002:a05:690c:4249:b0:6e3:2be1:a2dc with SMTP id
+ 00721157ae682-6e7f0dee4fcmr84030847b3.11.1729864671059; Fri, 25 Oct 2024
+ 06:57:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: Some observations (results) on BPF acquire and release
-Content-Language: en-US
-To: Andrea Parri <parri.andrea@gmail.com>
-Cc: puranjay@kernel.org, paulmck@kernel.org, bpf@vger.kernel.org,
- lkmm@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <Zxk2wNs4sxEIg-4d@andrea>
- <daa60273-d01a-8fc5-5e26-e8fc9364c1d8@huaweicloud.com>
- <ZxuZ-wGccb3yhBAD@andrea>
- <d8aa61a8-e2fc-7668-9845-81664c9d181f@huaweicloud.com>
- <ZxugzP0yB3zeqKSn@andrea>
-From: Hernan Ponce de Leon <hernan.poncedeleon@huaweicloud.com>
-In-Reply-To: <ZxugzP0yB3zeqKSn@andrea>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:LxC2BwDHhzjLoxtn5LVpAA--.14069S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxGF15uF1rAr4UCr1fGFy7GFg_yoW5XF47pa
-	yvka90krs2gay5Wr4Iqr4UuFs2vFZ3JF45XF18JwsrZ3Z0kFnxKF4xtF4YgFy3Grs2yw40
-	vw1jkFZrWFyDAFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvvb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AK
-	xVWUAVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F4
-	0E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1l
-	Ixkvb40E47kJMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7
-	IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E
-	87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73Uj
-	IFyTuYvjxUyuHqUUUUU
-X-CM-SenderInfo: xkhu0tnqos00pfhgvzhhrqqx5xdzvxpfor3voofrz/
+References: <20240219-add-am64-som-v7-0-0e6e95b0a05d@solid-run.com> <20240219-add-am64-som-v7-4-0e6e95b0a05d@solid-run.com>
+In-Reply-To: <20240219-add-am64-som-v7-4-0e6e95b0a05d@solid-run.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 25 Oct 2024 15:57:38 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXTgpTnJ9U7egC2XjFXXNZ5uiY1O+WxNd6LPJW5Rs5KTw@mail.gmail.com>
+Message-ID: <CAMuHMdXTgpTnJ9U7egC2XjFXXNZ5uiY1O+WxNd6LPJW5Rs5KTw@mail.gmail.com>
+Subject: Re: [PATCH v7 4/4] arm64: dts: ti: hummingboard-t: add overlays for
+ m.2 pci-e and usb-3
+To: Josua Mayer <josua@solid-run.com>
+Cc: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>, 
+	Rob Herring <robh+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Yazan Shhady <yazan.shhady@solid-run.com>, linux-arm-kernel@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/25/2024 3:44 PM, Andrea Parri wrote:
-> On Fri, Oct 25, 2024 at 03:28:17PM +0200, Hernan Ponce de Leon wrote:
->> On 10/25/2024 3:15 PM, Andrea Parri wrote:
->>>>> BPF R+release+fence
->>>>> {
->>>>>     0:r2=x; 0:r4=y;
->>>>>     1:r2=y; 1:r4=x; 1:r6=l;
->>>>> }
->>>>>     P0                                 | P1                                         ;
->>>>>     r1 = 1                             | r1 = 2                                     ;
->>>>>     *(u32 *)(r2 + 0) = r1              | *(u32 *)(r2 + 0) = r1                      ;
->>>>>     r3 = 1                             | r5 = atomic_fetch_add((u32 *)(r6 + 0), r5) ;
->>>>>     store_release((u32 *)(r4 + 0), r3) | r3 = *(u32 *)(r4 + 0)                      ;
->>>>> exists ([y]=2 /\ 1:r3=0)
->>>>>
->>>>> This "exists" condition is not satisfiable according to the BPF model;
->>>>> however, if we adopt the "natural"/intended(?) PowerPC implementations
->>>>> of the synchronization primitives above (aka, with store_release() -->
->>>>> LWSYNC and atomic_fetch_add() --> SYNC ; [...] ), then we see that the
->>>>> condition in question becomes (architecturally) satisfiable on PowerPC
->>>>> (although I'm not aware of actual observations on PowerPC hardware).
->>>>
->>>> Are the resulting PPC tests available somewhere?
->>>
->>> My data go back to the LKMM paper, cf. e.g. the R+pooncerelease+fencembonceonce
->>> entry at https://diy.inria.fr/linux/hard.html#unseen .
->>>
->>>     Andrea
->>
->> I guess I understood you wrong. I thought you had manually "compiled" those
->> to PPC litmus format (i.e., doing exactly what the JIT compiler would do). I
->> can obviously write them manually myself, but I find this painful and error
->> prone (I am particularly bad at this task), so I wanted to avoid this if
->> someone else had already done it.
-> 
-> FWIW, a comprehensive collection of PPC litmus tests could be found at
-> 
->    https://www.cl.cam.ac.uk/~pes20/ppc-supplemental/ppc002.html
-> 
-> (just follow the link on the test pattern/variants to see the sources);
-> be aware the results of those tables date back to the PPC paper though.
-> 
-> Alternatively, remind that PPC is well supported by the herdtools7 diy7
-> generator; I see no reason for having to (re)write such tests manually.
-> 
->    Andrea
+Hi Josua,
 
-I am particularly interested in tests using lwarx and stwcx instructions 
-(this is what I understood would be used if one follows [1] to compile 
-the tests in this thread).
+On Mon, Feb 19, 2024 at 4:05=E2=80=AFPM Josua Mayer <josua@solid-run.com> w=
+rote:
+> HummingBoard-T features two M.2 connectors labeled "M1" and "M2".
+> The single SerDes lane of the SoC can be routed to either M1 pci-e
+> signals, or M2 usb-3 signals by a gpio-controlled mux.
+>
+> Add overlays for each configuration.
+>
+> Signed-off-by: Josua Mayer <josua@solid-run.com>
 
-I have not yet check the cambridge website, but due to the timeline, I 
-don't expect to find tests with those instructions. The same is true 
-with [2].
+Thanks for your patch, which is now commit bbef42084cc170cb ("arm64:
+dts: ti: hummingboard-t: add overlays for m.2 pci-e and usb-3") in v6.9.
 
-I have limited experience with diy7, but I remember that it had some 
-limitations to generate RMW instructions, at least for C [3].
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/ti/k3-am642-hummingboard-t-usb3.dtso
+> @@ -0,0 +1,44 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/*
+> + * Copyright (C) 2023 Josua Mayer <josua@solid-run.com>
+> + *
+> + * Overlay for SolidRun AM642 HummingBoard-T to enable USB-3.1.
+> + */
+> +
+> +/dts-v1/;
+> +/plugin/;
+> +
+> +#include <dt-bindings/phy/phy.h>
+> +
+> +#include "k3-serdes.h"
+> +
+> +&serdes0 {
+> +       #address-cells =3D <1>;
+> +       #size-cells =3D <0>;
+> +
+> +       serdes0_link: phy@0 {
+> +               reg =3D <0>;
+> +               cdns,num-lanes =3D <1>;
+> +               cdns,phy-type =3D <PHY_TYPE_USB3>;
+> +               #phy-cells =3D <0>;
+> +               resets =3D <&serdes_wiz0 1>;
+> +       };
+> +};
+> +
+> +&serdes_ln_ctrl {
+> +       idle-states =3D <AM64_SERDES0_LANE0_USB>;
+> +};
+> +
+> +&serdes_mux {
+> +       idle-state =3D <0>;
+> +};
+> +
+> +&usbss0 {
+> +       /delete-property/ ti,usb2-only;
 
-Hernan
+/delete-property/ (and /delete-node/) to delete something in the base DTS
+does not work.
 
-[1] 
-https://github.com/torvalds/linux/blob/master/arch/powerpc/net/bpf_jit_comp32.c
-[2] 
-https://github.com/herd/herdtools7/tree/master/catalogue/herding-cats/ppc/tests/campaign
-[3] https://github.com/herd/herdtools7/issues/905
+> +};
+> +
+> +&usb0 {
+> +       maximum-speed =3D "super-speed";
+> +       phys =3D <&serdes0_link>;
+> +       phy-names =3D "cdns3,usb3-phy";
+> +};
 
+You can run
+
+    dtx_diff --color arch/arm64/boot/dts/ti/k3-am642-hummingboard-t{,-usb3}=
+.dtb
+
+to verify.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
