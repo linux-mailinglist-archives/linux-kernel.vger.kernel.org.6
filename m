@@ -1,155 +1,88 @@
-Return-Path: <linux-kernel+bounces-382656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0C829B1181
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 23:12:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5424A9B1186
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 23:12:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1D846B22944
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 21:12:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DFFEEB24C8A
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 21:12:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AC261D2B04;
-	Fri, 25 Oct 2024 21:10:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F9B5217F59;
+	Fri, 25 Oct 2024 21:12:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="q2tRjDhc"
-Received: from omta038.useast.a.cloudfilter.net (omta038.useast.a.cloudfilter.net [44.202.169.37])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qG8OtYN/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 857BA16A94A
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 21:10:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C09D6217F20
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 21:12:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729890617; cv=none; b=iu/RSUtWkop8H52CB/FJGCfeTRhC6vWjDKd5KndUIyPrVWahj5M1VF7WFq0lN4odfBUwEVCznEPhqmL6wbJyr/Af8IT2lDazPp2gHrytzvk2cXRSpV5BGq3awy2O4BXmr5OH65Jrz20mOUqWvlIag6LlZhAcJVuZMKbdcsKPIlU=
+	t=1729890723; cv=none; b=ILEpCxYoNcuXAU43jkV/IQuQuaoxts26YsC7Gr3G8wDXC7doU2cmyuFFWJHdlxUVtWyxWdhMtNXO78989pzLjtURp2IcVkqdZmSoK1Ysz0HUpbHAMFv71AZUkScubDlNldR8eKwZHLq+K/spECBxD2DUQ6+th8Edxhvpz54Tx8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729890617; c=relaxed/simple;
-	bh=TPho4dkS6mrn6hTejdUWmg7ebeatab0pOXP++hksgOA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KzvZl9f6gYPwvPpxRGpEtacXYtOF0GX1kBUGA42Cvp1dOmn4gFIfZBPONnbwfCIWxIz5+nhHrRm6SdwIGj3T6lH5b8uwYKyD5C6Dn/1nHmkMliPHN3HNmvH1qtdlhmM5aleKhrkpO00V7Ln9qMnmtb4jRFa5aTiVkjugvMA7M5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=q2tRjDhc; arc=none smtp.client-ip=44.202.169.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
-Received: from eig-obgw-6001a.ext.cloudfilter.net ([10.0.30.140])
-	by cmsmtp with ESMTPS
-	id 421QtJKiNg2lz4RZWt5mVr; Fri, 25 Oct 2024 21:10:14 +0000
-Received: from gator4166.hostgator.com ([108.167.133.22])
-	by cmsmtp with ESMTPS
-	id 4RZVt9S1K2Zy04RZVtqhEa; Fri, 25 Oct 2024 21:10:14 +0000
-X-Authority-Analysis: v=2.4 cv=Q4EZ4J2a c=1 sm=1 tr=0 ts=671c0936
- a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=OKg9RQrQ6+Y1xAlsUndU0w==:17
- a=IkcTkHD0fZMA:10 a=DAUX931o1VcA:10 a=7T7KSl7uo7wA:10
- a=XVG_Zt8v1qosKg6nO_oA:9 a=QEXdDO2ut3YA:10 a=Xt_RvD8W3m28Mn_h3AK8:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=0isTUBLuyFlo6RiNDsF6WYPY4prLAUENxvha5GaK7rk=; b=q2tRjDhc517w0ph9oN1uUlCjaH
-	TeOsyJryyQAhkFGSo9+/WWq2mSMgP8bQAH+Ed7zRcnGHbrJMlLZslK0ylIJDiSgIWAwWZoKkhuCSB
-	gbXX5zIi1LvSzjPy2MwPaq7hSMAhO5DkR5n1M2FZOSXrlESrxyJ8CQk7KZtVBnB4hO/0D+V47FD1v
-	UG6fd/j/Y4MV2YANPn71ZMdHX4FoJVX4m8V5GapAMEX7AlZLBeX1YYDaCY1Egj1MCfMB2s2kku86a
-	6xawpK6Bi4m4birdVJY9oCGvL+RY/+L9Ryf2nev7z/3QBiAeO/Fxchm+wqhcvuG2y9wZw6WLkhg32
-	XuKh20Kg==;
-Received: from [201.172.173.7] (port=37432 helo=[192.168.15.6])
-	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <gustavo@embeddedor.com>)
-	id 1t4RZV-003ykj-07;
-	Fri, 25 Oct 2024 16:10:13 -0500
-Message-ID: <7e2745d9-f607-4b9b-87c6-0623708747ef@embeddedor.com>
-Date: Fri, 25 Oct 2024 15:10:11 -0600
+	s=arc-20240116; t=1729890723; c=relaxed/simple;
+	bh=ITkCa2nLRnfgf4FH1RrHbtuIRQzsTB17WU75UTJB76w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gBwgC2T4TS/MQiLc0aJirTpAnEIbe2SABfiECFKsSt9tI1SIBWNg7XyWizDEnLU34bhril0teL78DoF924PpfcqJLHUvSLKYfoJdnELbnU9c6Ed1YkRuafWFS/JFOYtf5K+a94S7yPdWQ7xx7ggjtGS3qz9gQoqAErbnuLeoKxI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qG8OtYN/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27617C4CEC3;
+	Fri, 25 Oct 2024 21:12:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729890723;
+	bh=ITkCa2nLRnfgf4FH1RrHbtuIRQzsTB17WU75UTJB76w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qG8OtYN/hx4NQbfUREySngSguCLpSkahFS3OjYg7gUzm0THdpLc3mRjcKQBci/tuT
+	 oOYJoHbatthr4EON4eOLKY3ocRLWkx0FId0rAjirsDfIl7BqMf77COxgQm97nqo+v7
+	 1hFHD0Q5WA1iULZ5rFi9cVehmk/E+qbOGeHfqBsEVDrsjx28BHwvOiRNDXJaB0RWlx
+	 4FVctYmAD97zXdIgRectQqljoibsoOL5dhqWLEJm6LjhsNvFc5Np2iLDJx3e+vy50Q
+	 +JDT2zQsW1ODu6tI/xV1SmKSEpTq4cAs2r6zTK5qLGTKmlVIY5GfprBGSIM2BdpfCt
+	 YGENzkYq7PnBQ==
+Date: Fri, 25 Oct 2024 11:12:02 -1000
+From: Tejun Heo <tj@kernel.org>
+To: David Vernet <void@manifault.com>
+Cc: sched-ext@meta.com, kernel-team@meta.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] scx: Fix raciness in scx_ops_bypass()
+Message-ID: <ZxwJovsaUSv8b_Zg@slm.duckdns.org>
+References: <ZxwDCUcyTABN8Exj@slm.duckdns.org>
+ <20241025205408.25166-1-void@manifault.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] wifi: mac80211: ieee80211_i: Avoid dozens of
- -Wflex-array-member-not-at-end warnings
-To: Johannes Berg <johannes@sipsolutions.net>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org, Aditya Kumar Singh <quic_adisi@quicinc.com>
-References: <Zxv7KtPEy1kvnTPM@kspp>
- <c90c3c9825e3837bf7c47979acd0075b102576ce.camel@sipsolutions.net>
- <3471e59f-a414-479f-8fb0-aa1a26aecf16@embeddedor.com>
- <5c48b4529bf552d5c16b4dcc951c653f37b6a68e.camel@sipsolutions.net>
- <8152a551-1813-4d44-a203-45d30f2ac671@embeddedor.com>
- <192eb05afffd37bd13ff9bc1fc9b044b347b5dc4.camel@sipsolutions.net>
-Content-Language: en-US
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-In-Reply-To: <192eb05afffd37bd13ff9bc1fc9b044b347b5dc4.camel@sipsolutions.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 201.172.173.7
-X-Source-L: No
-X-Exim-ID: 1t4RZV-003ykj-07
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.15.6]) [201.172.173.7]:37432
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 3
-X-Org: HG=hgshared;ORG=hostgator;
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfJusYsnaeWFbxxUapCWtGSvf5FZnxMZn8rvthFHMqzXmPC+zC2wddGyfffcoHRysO4nXWZgzLeoaMXI26F57nZ98wHi3xz5tTbAXidrK1TBU57meidiP
- 52kyrzenKlLxH2FyTDZ4GAVNDwIaYPVsGXCnpmLUOC3rSK+bBVwrLNAhtXUPgBzMiysqEsC5qiAlCjRLGBYaIvxlemXvdE/aRiC9oZj+qvEwSZ+PlpuEKzdb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241025205408.25166-1-void@manifault.com>
 
-
-
-On 25/10/24 14:48, Johannes Berg wrote:
-> On Fri, 2024-10-25 at 14:36 -0600, Gustavo A. R. Silva wrote:
->>>>
->>>> Yeah, I was actually going to mention this commit, as it's the one that introduced
->>>> that `bool radar_detected` to the flex struct. However, it wasn't obvious to me
->>>> how `struct ieee80211_chanctx_conf conf` could overwrite `radar_detected` as I didn't
->>>> see `conf->drv_priv` being accessed through `struct struct ieee80211_chanctx_conf`.
->>>
->>> You have to look at the drivers, see hwsim_clear_chanctx_magic() for
->>> example; I wonder why hwsim_check_chanctx_magic() never caught this.
->>
->> Sorry, I actually meant through `struct ieee80211_chanctx`. Something like:
->>
->> struct ieee80211_chanctx *foo;
->> ...
->>
->> foo->conf.drv_priv[i] = something;
->>
->> or
->>
->> struct bar *ptr = (void *)foo->conf->drv_priv;
->> then write something into *ptr...
->>
->> In the above cases the code will indeed overwrite `radar_detected`.
+On Fri, Oct 25, 2024 at 03:54:08PM -0500, David Vernet wrote:
+> scx_ops_bypass() can currently race on the ops enable / disable path as
+> follows:
 > 
-> Right, that's what it does though, no? Except it doesn't have, in the
-> driver, "foo->conf." because mac80211 only gives it a pointer to conf,
-> so it's only "conf->drv_priv" (and it's the "struct bar" example.)
-
-OK, so do you mean that pointer to `conf` is actually coming from
-`foo->conf`?
-
-This is probably a dumb question but, where is that pointer to `conf`
-coming from exactly?
-
-I'd really like to understand this better so I can determine whether
-I'm dealing with a bug when analyzing similar instances in the future. :)
-
+> 1. scx_ops_bypass(true) called on enable path, bypass depth is set to 1
+> 2. An op on the init path exits, which schedules scx_ops_disable_workfn()
+> 3. scx_ops_bypass(false) is called on the disable path, and bypass depth
+>    is decremented to 0
+> 4. kthread is scheduled to execute scx_ops_disable_workfn()
+> 5. scx_ops_bypass(true) called, bypass depth set to 1
+> 6. scx_ops_bypass() races when iterating over CPUs
 > 
-> So yeah, pretty sure it will overwrite that, and I do wonder why it
-> wasn't caught. I guess no radar detection tests with MLO yet.
+> While it's not safe to take any blocking locks on the bypass path, it is
+> safe to take a raw spinlock which cannot be preempted. This patch therefore
+> updates scx_ops_bypass() to use a raw spinlock to synchronize, and changes
+> scx_ops_bypass_depth to be a regular int.
 > 
+> Without this change, we observe the following warnings when running the
+> 'exit' sched_ext selftest (sometimes requires a couple of runs):
+...
+> Fixes: f0e1a0643a59 ("sched_ext: Implement BPF extensible scheduler class")
+> Signed-off-by: David Vernet <void@manifault.com>
 
---
-Gustavo
+Applied to sched_ext/for-6.12-fixes. Thanks!
+
+-- 
+tejun
 
