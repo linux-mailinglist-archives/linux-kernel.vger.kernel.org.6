@@ -1,236 +1,232 @@
-Return-Path: <linux-kernel+bounces-382494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A69979B0EF0
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 21:26:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D21AA9B0EF4
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 21:27:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E4239B2854A
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 19:26:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CF101F2746C
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 19:27:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00BEA20F3CB;
-	Fri, 25 Oct 2024 19:24:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C814620D512;
+	Fri, 25 Oct 2024 19:27:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="pilsUO3C"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FsYx+8AH"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33B2120F3CE
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 19:24:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD5B910A0E
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 19:27:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729884294; cv=none; b=SGZYJAmbysevGXiMnTpbvC+ZvK+bQZMkABax01R9NTMFgwi+iFvR5naVrRseddwAsBd21WQ7/VU1esjJlWR5aPMlL5gGLnpFCK7642ZENIw1A9S5rkxyo2z6Akk48OJ3OtJbdzo3UQyQ67BlpdRlalRAtNMcxVWO9O+6PhYOxNw=
+	t=1729884448; cv=none; b=mJS8M4fCEPYc8QO+o6BF7w3OWdfIBVQvST8O5J08ve4PYqAWG02I2ACJKlqGwROk1yM/N8N3e7u1AAE7jmbSmJiMMk3VR5i3FcGpZAGqHksNsbgQ7wkIo4dRm17Q0H7yZqosxuw3i9vdOdXyYNrn0cojSoSeD3e2Tk8fzIe1eS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729884294; c=relaxed/simple;
-	bh=QQpHCClhXrPyRs6UARwaoQsu3+yZD34Mn21hUGlrJGY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SRHOlIwgfGnGw2IUewg4OOSNy7E8ftLB2N5AhIaW5hMiVlLqIGSJ8oYHRA5b/2nYSAH0qpEWC0I87uK3OlN+yatO7t1V4UztvlOY1sVJ9MML6PFdH7jcg5UabgzBTC9BM2T3RUzoU3dP0ZkWH1qqRsAloTjYUClh+7eDJmBfztA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=pilsUO3C; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49PEtR17011403
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 19:24:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	MVK7yFV+LSKHjauEJCgphRRBdSUgRulvWMCx8A+MGTw=; b=pilsUO3CatOHV8oW
-	VU53v9FNxi70IZmBSiMwjHY4vFcl/0ngdFyqcE68VfhNIED8UbYaqZ5lXFRC7kMY
-	g/HFKibekvyeDXm7pvqNopylvpKpz71EWVbfcGF40RG1Q8Jx15bYDLhEc5uFEXkz
-	jplBfOFsd4SsuwdVo5TaNopXKcZigxACA8YilqmG7Pz3Zyf8LDQO5v/JpbgQQcFY
-	2cXIpSs7LZjIXJ9jB/VdPZJ/FWG3I3UiK3SEIFdm5tN2HkDj828cvAklz/DLjlNR
-	RUseSQ/rVv8RevAfLcIXC2UnsC2zey92nTyoCi9qIECUqFGpXKmV6JmrWIhaA+sI
-	wcbMqw==
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42g5q826qj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 19:24:51 +0000 (GMT)
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-6cbf5a3192aso4850296d6.1
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 12:24:51 -0700 (PDT)
+	s=arc-20240116; t=1729884448; c=relaxed/simple;
+	bh=JOSJ1m84HeGCMFspvLRHJwXEqwtSZwl+jf5K6cEB+KE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Zlk/4OnyyEZo8CzJkh0DzWMLPvgEOpJkztDQyVbop/tgPI/zTlc8TvY2lElCfXDUM/+pZ6T9z7i7o8nmRx8OWHrL1Kxfu1WHJZymqctD0Vf0XFAh87Dl/u68e1Q29NpkFIzc5PJ63YKujs+umTPbsZkMWEG3/7yVc2owAwOfeNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FsYx+8AH; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-539e3f35268so3163300e87.3
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 12:27:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729884444; x=1730489244; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5pwYpRZq9PPWTjqEmVLXgvWDDt4y6jIawQPnKi8Ky4g=;
+        b=FsYx+8AHDU/N1EmlJvmSTpo5C0OpQ0zhNFfzGkC+pLMwvra/GCA52t1zE758giVF4a
+         MhfpqLlFktzZTs/vIDzHKaU/qKraotaUo5eLyPgffUzpQllFHDyvEq6WMDborAB+a9GU
+         1ECqsumeL9B7zzkJXzfXgC3fE/EACJhU/uIjxzjHdrfvnkLOZrT1H76duqU6meiPdFA4
+         hwiPclpipoDKbjLDVjrVpMcbwl+tVG630Qh3TXkPV54JSmFPmNS0aaeVH/r+vA2IxN8s
+         rxO7jEjHOLjMul5PQcz5hFHFVP+2O4FVZycgSsDbMFDQEmGUonHRyJbaNv/9MPxZP5rx
+         SBag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729884290; x=1730489090;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MVK7yFV+LSKHjauEJCgphRRBdSUgRulvWMCx8A+MGTw=;
-        b=aNR9isHvkDMKXSqlRf4CvANN3yFphUrETdcOT9Nt7BR7rfWmuKVze1Tn7IPu4iAxPT
-         Fn9tnTZyXjWextRNBHZ//BTUk+5Gc8aRpX8foiY3bP87aKPzn70Nhhz0lsquStUfve4h
-         SMs8MNcpdIWBQp4SzxCu7NtbbnGQYOxFPcEthE06AVVDUXHcmgFwsAIAtBXNKqOwoL3p
-         5s59N9Uja4chZ/KWN0+JkIoaHyO73mm3RLT6nk1uUReYek7zjV8oiJFOGQDwh4pZRmCg
-         3js5klV/LHkTHcOlE/0jN5JXr/upaxi7r98Xp44T8vYH9MZ3p4uSZXWN/yo3MFNuphmQ
-         JKcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVx96xd39x+r43T5Zp5cbwIbdfiLkwbgtqy/gWi1LP6EXm2ipvYlAwP6iWB5/UvBj0qVupcAy3bjGA9SPM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhHfv+/v/DM05zWqM7J+j7WJvUGLBy6Sa28sS6G51/zoqa+nns
-	T4DepSyvCUi5zS4hlQV+9Rs01Dsj7447EmZJNJRz9WXnZwwr8bZwbAxujnCsQ73ibjhxMoLthdx
-	wHqU0hsSAqYLWqDkQvvPnJgX+nh83G9WC9yos0r5dmxrgUGcX7/1GHPKZ+zvDTRA=
-X-Received: by 2002:a05:6214:246a:b0:6cb:bc57:d840 with SMTP id 6a1803df08f44-6d1856b5615mr3813366d6.3.1729884290000;
-        Fri, 25 Oct 2024 12:24:50 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEFLFymaf4R41fHwjqkvWTwAkfwHaKv/afK0j85pTCGuheLL7dDzp+Y9LhFBEJGXlVq7rzUSA==
-X-Received: by 2002:a05:6214:246a:b0:6cb:bc57:d840 with SMTP id 6a1803df08f44-6d1856b5615mr3813166d6.3.1729884289641;
-        Fri, 25 Oct 2024 12:24:49 -0700 (PDT)
-Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b307b5375sm99385966b.155.2024.10.25.12.24.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 25 Oct 2024 12:24:49 -0700 (PDT)
-Message-ID: <5fe37609-ed58-4617-bd5f-90edc90f5d8b@oss.qualcomm.com>
-Date: Fri, 25 Oct 2024 21:24:46 +0200
+        d=1e100.net; s=20230601; t=1729884444; x=1730489244;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5pwYpRZq9PPWTjqEmVLXgvWDDt4y6jIawQPnKi8Ky4g=;
+        b=SeY/bxHillibKL6DbuDDV5wFLBI5lXM+ijBW3RbLf/h9WPBSqobLSZPouyv+sT+xp8
+         PfjQiUX+/hatfwGUL97EKxwuzheqjEA1Dq2ny0kVUoFFYJZSJDRQoxdTDahnpXHNVmwD
+         ++mbtU/uyVE9AHNTnk5VPgFJLzsRaFlzoALYImkDMbDGjIdBO8Y9cJj3vrGuyspFTIxZ
+         nvjTT4cPZNzePwrbUVIrilrF7/4kbCYs6UPLPIJQw2aBZQF2W2JPKVnz0Pf6O+4xQGrV
+         Ni3tIfwTrfNNX9LxWUb40SqXIwVJ3Qh7Gu+nvRNbEZeHNR5rXO2Wkqgk7HNiNhwAWGZv
+         tyaA==
+X-Forwarded-Encrypted: i=1; AJvYcCW1eKQUEf/9smaJHXxH2Lj2JwSDqQd+Fs8J/SvYzfaSaDpcQZSDIvcYSEV9RovcVq5/4Nq+6EzlcskOADA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyA3i6tdKO471F0tAI+DjSmf/DI3IghNCfmUNiBx4306B/R0PKk
+	oTB3vOYf5ARd1lm2nA6LKVasKWCJAKn7WYd/RICXJEfr4WvoAWsrA31gI5vSCFmAjg1B/kntg1o
+	56ASCsStHNq91K01OdHyrSH8zEL0/89Pz70FwDA==
+X-Google-Smtp-Source: AGHT+IEU/O6qCLZRAQIxMa9TAuHKrJb2KzdM54UvELz6OzL/NUpAjy4OtKxqFoLA2zXlLI9eK2wTMT28bKNPV/O7PFo=
+X-Received: by 2002:a05:6512:31c6:b0:53b:1fe4:3fb9 with SMTP id
+ 2adb3069b0e04-53b34a2d88emr154603e87.49.1729884443592; Fri, 25 Oct 2024
+ 12:27:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 3/4] arm64: dts: qcom: qcs615: add UFS node
-To: Xin Liu <quic_liuxin@quicinc.com>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I
- <kishon@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        Bart Van Assche <bvanassche@acm.org>, Andy Gross <agross@kernel.org>,
-        linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-scsi@vger.kernel.org, quic_jiegan@quicinc.com,
-        quic_aiquny@quicinc.com, quic_tingweiz@quicinc.com,
-        quic_sayalil@quicinc.com
-References: <20241017042300.872963-1-quic_liuxin@quicinc.com>
- <20241017042300.872963-4-quic_liuxin@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20241017042300.872963-4-quic_liuxin@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: TdhTSV3I2JK2uzugkzhpDXPrzcr-n0J1
-X-Proofpoint-GUID: TdhTSV3I2JK2uzugkzhpDXPrzcr-n0J1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 suspectscore=0
- impostorscore=0 priorityscore=1501 mlxlogscore=999 bulkscore=0
- lowpriorityscore=0 spamscore=0 phishscore=0 malwarescore=0 adultscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410250149
+References: <cover.1729738189.git.jahau@rocketmail.com> <594cc48e98b551cfeeba0fb475755a41b83283a0.1729738189.git.jahau@rocketmail.com>
+In-Reply-To: <594cc48e98b551cfeeba0fb475755a41b83283a0.1729738189.git.jahau@rocketmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 25 Oct 2024 21:27:11 +0200
+Message-ID: <CACRpkdYOgymfjOD3cAMXt7u8SH0vvVzwt75gamJvXuyyjdsMPw@mail.gmail.com>
+Subject: Re: [PATCH v3 4/5] drm/panel: samsung-s6e88a0-ams427ap24: Add
+ brightness control
+To: Jakob Hauser <jahau@rocketmail.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thierry Reding <thierry.reding@gmail.com>, 
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, dri-devel@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	~postmarketos/upstreaming@lists.sr.ht
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 17.10.2024 6:22 AM, Xin Liu wrote:
-> From: Sayali Lokhande <quic_sayalil@quicinc.com>	
-> 	
-> Add the UFS Host Controller node and its PHY for QCS615 SoC.
-> 
-> Signed-off-by: Sayali Lokhande <quic_sayalil@quicinc.com>
-> Co-developed-by: Xin Liu <quic_liuxin@quicinc.com>
-> Signed-off-by: Xin Liu <quic_liuxin@quicinc.com>
-> ---
+Hi Jakob,
 
-+ Taniya (see below)
+thanks for your patch!
 
->  arch/arm64/boot/dts/qcom/qcs615.dtsi | 74 ++++++++++++++++++++++++++++
->  1 file changed, 74 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/qcs615.dtsi b/arch/arm64/boot/dts/qcom/qcs615.dtsi
-> index fcba83fca7cf..689418466dc2 100644
-> --- a/arch/arm64/boot/dts/qcom/qcs615.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/qcs615.dtsi
-> @@ -458,6 +458,80 @@ mmss_noc: interconnect@1740000 {
->  			qcom,bcm-voters = <&apps_bcm_voter>;
->  		};
->  
-> +		ufs_mem_hc: ufs@1d84000 {
+On Thu, Oct 24, 2024 at 5:18=E2=80=AFAM Jakob Hauser <jahau@rocketmail.com>=
+ wrote:
+> +static const int s6e88a0_ams427ap24_br_to_cd[NUM_STEPS_CANDELA] =3D {
 
-ufshc@ would be consistent with other files in dts/qcom
+(...)
+> +       /* brightness till, candela */
 
+Brightness to candela conversion table? Edit comment?
 
-> +			compatible = "qcom,qcs615-ufshc", "qcom,ufshc", "jedec,ufs-2.0";
-> +			reg = <0x0 0x01d84000 0x0 0x3000>, <0x0 0x01d90000 0x0 0x8000>;
-> +			reg-names = "std", "ice";
+> +static const u8 s6e88a0_ams427ap24_aid[NUM_STEPS_AID][SEQ_LENGTH_AID] =
+=3D {
 
-One per line, please
+If you know that the sequence 0xb2, 0x40, 0x08, 0x20 means "set AID"
+(or is it AOR??) you can #define
 
-> +			interrupts = <GIC_SPI 265 IRQ_TYPE_LEVEL_HIGH>;
-> +			phys = <&ufs_mem_phy>;
-> +			phy-names = "ufsphy";
-> +			lanes-per-direction = <1>;
-> +			#reset-cells = <1>;
-> +			resets = <&gcc GCC_UFS_PHY_BCR>;
-> +			reset-names = "rst";
+#define S6E88A0_SET_AID 0xb2
+
+Then make a small buffer:
+
+u8 set_aid[5] =3D { S6E88A0_SET_AID, 0x40, 0x08, 0x20, 0x00, 0x00 };
+
+then you can strip the first three bytes from the entire table,
+just copy in the two relevant bytes into set_aor[]
+and send that.
+
+> +static const u8 s6e88a0_ams427ap24_elvss[NUM_STEPS_ELVSS][SEQ_LENGTH_ELV=
+SS] =3D {
+> +       { 0x28, 0x14 }, /* 10CD ~ 111CD */
+> +       { 0x28, 0x13 }, /* 119CD */
+
+Command 0xb6 is
+#define S6E88A0_SET_LVSS 0xb6
+
+Same comment: just define
+u8 set_lvss[2] =3D {S6E88A0_SET_LVSS, 0x28, 0x00};
+copy the second byte into the command, this becomes
+an array of single bytes.
+
+> +static const u8 s6e88a0_ams427ap24_gamma[NUM_STEPS_CANDELA][SEQ_LENGTH_G=
+AMMA] =3D {
+> +       /* 10CD */
+> +       { 0x00, 0xc8, 0x00, 0xc4, 0x00, 0xc5, 0x8c, 0x8a, 0x8a, 0x8c, 0x8=
+b,
+> +         0x8c, 0x87, 0x89, 0x89, 0x88, 0x87, 0x8c, 0x80, 0x82, 0x88, 0x7=
+b,
+> +         0x72, 0x8c, 0x60, 0x68, 0x8c, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0=
+0 },
+
+This array looks fine though, it seems to be all unique gamma calibration.
+
+> +static int s6e88a0_ams427ap24_set_brightness(struct backlight_device *bd=
+)
+> +{
+> +       struct s6e88a0_ams427ap24 *ctx =3D bl_get_data(bd);
+> +       struct mipi_dsi_device *dsi =3D ctx->dsi;
+> +       struct mipi_dsi_multi_context dsi_ctx =3D { .dsi =3D dsi };
+> +       struct device *dev =3D &dsi->dev;
+> +       int brightness =3D bd->props.brightness;
+> +       int candela_enum;
+> +       u8 b2[SEQ_LENGTH_AID + 1];
+> +       u8 b6[SEQ_LENGTH_ELVSS + 1];
+> +       u8 ca[SEQ_LENGTH_GAMMA + 1];
+
+Rename them to something like my suggestions so we understand what it is
+all about. It seems the infrastructure for what I suggested is mostly alrea=
+dy
+there.
+
+See comment above how to modify arrays to contain stuff that is always
+the same.
+
+> +       /* get aid */
+> +       b2[0] =3D 0xb2;
+
+Use a define per above.
+
+> +       switch (candela_enum) {
+> +       case CANDELA_10CD ... CANDELA_105CD:
+> +               memcpy(&b2[1], s6e88a0_ams427ap24_aid[candela_enum],
+> +                      SEQ_LENGTH_AID);
+> +               break;
+> +       case CANDELA_111CD ... CANDELA_172CD:
+> +               memcpy(&b2[1], s6e88a0_ams427ap24_aid[CANDELA_111CD],
+> +                      SEQ_LENGTH_AID);
+> +               break;
+> +       case CANDELA_183CD ... CANDELA_300CD:
+> +               memcpy(&b2[1], s6e88a0_ams427ap24_aid[CANDELA_111CD + 1],
+> +                      SEQ_LENGTH_AID);
+> +               break;
+> +       default:
+> +               dev_err(dev, "Failed to get aid data\n");
+> +               return -EINVAL;
+> +       }
 > +
-> +			power-domains = <&gcc UFS_PHY_GDSC>;
-> +			required-opps = <&rpmhpd_opp_nom>;
-> +
-> +			iommus = <&apps_smmu 0x300 0x0>;
-> +			dma-coherent;
-> +
-> +			interconnects = <&aggre1_noc MASTER_UFS_MEM QCOM_ICC_TAG_ALWAYS
-> +					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
-> +					<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-> +					 &config_noc SLAVE_UFS_MEM_CFG QCOM_ICC_TAG_ALWAYS>;
-> +			interconnect-names = "ufs-ddr",
-> +					     "cpu-ufs";
-> +
-> +			clocks = <&gcc GCC_UFS_PHY_AXI_CLK>,
-> +				 <&gcc GCC_AGGRE_UFS_PHY_AXI_CLK>,
-> +				 <&gcc GCC_UFS_PHY_AHB_CLK>,
-> +				 <&gcc GCC_UFS_PHY_UNIPRO_CORE_CLK>,
-> +				 <&rpmhcc RPMH_CXO_CLK>,
-> +				 <&gcc GCC_UFS_PHY_TX_SYMBOL_0_CLK>,
-> +				 <&gcc GCC_UFS_PHY_RX_SYMBOL_0_CLK>,
-> +				 <&gcc GCC_UFS_PHY_ICE_CORE_CLK>;
-> +			clock-names = "core_clk",
-> +				      "bus_aggr_clk",
-> +				      "iface_clk",
-> +				      "core_clk_unipro",
-> +				      "ref_clk",
-> +				      "tx_lane0_sync_clk",
-> +				      "rx_lane0_sync_clk",
-> +				      "ice_core_clk";
-> +			freq-table-hz = <50000000 200000000>,
-> +					<0 0>,
-> +					<0 0>,
-> +					<37500000 150000000>,
-> +					<0 0>,
-> +					<0 0>,
-> +					<0 0>,
-> +					<75000000 300000000>;
+> +       /* get elvss */
+> +       b6[0] =3D 0xb6;
 
-Please try to match the order of properties present in sm8650.dtsi
+Use a define per above.
 
-And please use an OPP table instead of freq-table-hz (see sm8*5*50.dtsi)
-
+> +       if (candela_enum <=3D CANDELA_111CD) {
+> +               memcpy(&b6[1], s6e88a0_ams427ap24_elvss[0], SEQ_LENGTH_EL=
+VSS);
+> +       } else {
+> +               memcpy(&b6[1], s6e88a0_ams427ap24_elvss[candela_enum - CA=
+NDELA_111CD],
+> +                      SEQ_LENGTH_ELVSS);
+> +       }
 > +
-> +			status = "disabled";
-> +		};
+> +       /* get gamma */
+> +       ca[0] =3D 0xca;
+
+#define S6E88A0_SET_GAMMA 0xca
+
+> +       memcpy(&ca[1], s6e88a0_ams427ap24_gamma[candela_enum], SEQ_LENGTH=
+_GAMMA);
 > +
-> +		ufs_mem_phy: phy@1d87000 {
-> +			compatible = "qcom,qcs615-qmp-ufs-phy", "qcom,sm6115-qmp-ufs-phy";
-> +			reg = <0x0 0x01d87000 0x0 0xe00>;
+> +       /* write: key on, aid, acl off, elvss, gamma, gamma update, key o=
+ff */
+> +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xf0, 0x5a, 0x5a);
 
-This register region is a bit longer
+0xf0 is clearly an unlocking key as per comment in the previous patch.
 
-> +			clocks = <&rpmhcc RPMH_CXO_CLK>,
-> +				 <&gcc GCC_UFS_PHY_PHY_AUX_CLK>,
-> +				 <&gcc GCC_UFS_MEM_CLKREF_CLK>;
-> +			clock-names = "ref",
-> +				      "ref_aux",
-> +				      "qref";
-> +
-> +			power-domains = <&gcc UFS_PHY_GDSC>;
-> +
-> +			resets = <&ufs_mem_hc 0>;
-> +			reset-names = "ufsphy";
-> +
-> +			#clock-cells = <1>;
+> +       mipi_dsi_dcs_write_buffer_multi(&dsi_ctx, b2, ARRAY_SIZE(b2));
+> +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x55, 0x00);
 
-The PHY is a clock provider. Normally, it's a parent of
-gcc_ufs_phy_[rt]x_symbol_n clocks.
+0x55 is MIPI_DCS_WRITE_POWER_SAVE in <video/mipi_display.h>
 
-Taniya, could you please wire that up in your patchset?
+> +       mipi_dsi_dcs_write_buffer_multi(&dsi_ctx, b6, ARRAY_SIZE(b6));
+> +       mipi_dsi_dcs_write_buffer_multi(&dsi_ctx, ca, ARRAY_SIZE(ca));
 
-Konrad
+> +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xf7, 0x03);
+> +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xf0, 0xa5, 0xa5);
+
+Clearly this locks the L2 access again.
+
+Yours,
+Linus Walleij
 
