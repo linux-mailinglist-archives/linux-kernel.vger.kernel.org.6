@@ -1,97 +1,77 @@
-Return-Path: <linux-kernel+bounces-382541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 374719B0F92
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 22:10:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A6C49B1043
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 22:44:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3968284706
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 20:10:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C6D41C21C72
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 20:44:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C41C20F3F6;
-	Fri, 25 Oct 2024 20:10:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B506721F4AA;
+	Fri, 25 Oct 2024 20:41:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DloZL5F+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b="tKnIU9yL"
+Received: from gentwo.org (gentwo.org [62.72.0.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F6EB20BB2E;
-	Fri, 25 Oct 2024 20:10:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9C9221E612;
+	Fri, 25 Oct 2024 20:41:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.72.0.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729887021; cv=none; b=i562an/IScnmrB9NBxk/EwwIupOFcwrIKMn+wStaNLyzwx2zAwnbaXar7t7YXhr9vwnv01aADdsaGLRpkMK8RBzqvGx+zHZstHKZ9+ywPsEnkTESP7vTet+8xtCXy1lK0UX8EyyWY675Xate/DrYdtgNpfSk8CYSEAZ0G5hvPpM=
+	t=1729888877; cv=none; b=LSWjhFvshjNVmGbgLCd5g6mX6FO746FwHseUleglt83qK6MXBy9dqdLZHlQM7GP0yLYfpy8OCt2U8U9bGjVyHU0AcTJMawmy/9aiyIYvd1lF9IB2ZAd5XTyxOUYFtL7QmNHUK4FnVDgqtVXU7itXQMNZOHENgt5KgRjBtc+p/AM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729887021; c=relaxed/simple;
-	bh=62nxMjq1P47AEcgko0Io2GSOu6idmh2E353oi9xM8K0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=qUQDtPDemPnnm9HizB2bbiSw/wWB/uDFGqyNUJkLwgnT3ecgsF3jFrbUd/trCWgIHUev73vbpZDFJWgQ5fcsbasdup/Vr8WWmqi1aZLnmj8FGB4U3X6JFX9c8xysjNwKgcg8afsZR+hPTERLaNiCXqSQ2TJYr3L/wZqmfjrwbuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DloZL5F+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 705BFC4CEC3;
-	Fri, 25 Oct 2024 20:10:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729887021;
-	bh=62nxMjq1P47AEcgko0Io2GSOu6idmh2E353oi9xM8K0=;
-	h=Date:From:To:Cc:Subject:From;
-	b=DloZL5F+Wicx/HZARaswPjKR2NkAx6q8XGPqivSS2h8wCng1XLqbRm1WssD+pZk+9
-	 q00UO9rrSvlCkX91Lcj3ZBO0cQRmXbejgg3V9DM1i+R3SaenSQlX4dd2EaHUba+RTP
-	 I5bb9f0luVuPxpbG0yw+43p8njcHAG8jaDwph+3Z24RQfwsIZKKAzIxw8FspMBg5jv
-	 JNjdU8Xinx6VTH1ldDPjdshN9sA98+ylNCvOzCdjfWkA72msypn83ZqNgJtLhwZSQ0
-	 2TV3GpaBU4ogtRVullOjZo962NgBXmi/WDAnapE1hUvVWbd6qmjBewWxTtklYIeEbd
-	 El38Rm1VhER0w==
-Date: Fri, 25 Oct 2024 14:10:18 -0600
-From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH][next] wifi: mac80211: ieee80211_i: Avoid dozens of
- -Wflex-array-member-not-at-end warnings
-Message-ID: <Zxv7KtPEy1kvnTPM@kspp>
+	s=arc-20240116; t=1729888877; c=relaxed/simple;
+	bh=ePBCrXDkYFx/2MDEBoHUpjfoxbGRLqNpKAELJMFiw1s=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=rYLpF3ERRjX5YOJYDVqjo8FjT4tkX6GG/vZV6LFDRRXBu7igRZ0KbDI13rPhDoELZByAqnTUA/ut5TMd+2bbQEqtrcGeoKDkr6uEcZiUp8Qgiwl060HKaCUGcBi41ZIWTyICa3eUScPdmUpRC2QWkmkcii9Y2hwWVI12ugSftos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org; spf=pass smtp.mailfrom=gentwo.org; dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b=tKnIU9yL; arc=none smtp.client-ip=62.72.0.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentwo.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gentwo.org;
+	s=default; t=1729884632;
+	bh=ePBCrXDkYFx/2MDEBoHUpjfoxbGRLqNpKAELJMFiw1s=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=tKnIU9yLNT99wXsnGjwNZKVelKMhdVUWjq8L2OltJ89liNws7uTd5XHNZ/dh7Rdtg
+	 +Zr9Z+y8LnEli7a/gbrQJZYA2kf7gb6EO0kEY37+chasBXZ/XiOFFk3TAxP8V6lETj
+	 dTN0G6HxplP2egvSeFaopp1BBhME+m3fnTR0OwS4=
+Received: by gentwo.org (Postfix, from userid 1003)
+	id 38560409C6; Fri, 25 Oct 2024 12:30:32 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+	by gentwo.org (Postfix) with ESMTP id 3716240681;
+	Fri, 25 Oct 2024 12:30:32 -0700 (PDT)
+Date: Fri, 25 Oct 2024 12:30:32 -0700 (PDT)
+From: "Christoph Lameter (Ampere)" <cl@gentwo.org>
+To: Peter Zijlstra <peterz@infradead.org>
+cc: Linus Torvalds <torvalds@linux-foundation.org>, 
+    Will Deacon <will@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
+    Catalin Marinas <catalin.marinas@arm.com>, Ingo Molnar <mingo@redhat.com>, 
+    Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>, 
+    linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+    linux-arm-kernel@lists.infradead.org, linux-arch@vger.kernel.org
+Subject: Re: [PATCH v3] Avoid memory barrier in read_seqcount() through load
+ acquire
+In-Reply-To: <20241025074244.GB14555@noisy.programming.kicks-ass.net>
+Message-ID: <797cf697-83b2-7f45-4865-2ee394887dc8@gentwo.org>
+References: <20240912-seq_optimize-v3-1-8ee25e04dffa@gentwo.org> <20240917071246.GA27290@willie-the-truck> <4b546151-d5e1-22a3-a6d5-167a82c5724d@gentwo.org> <CAHk-=wgw3UErQuBuUOOfjzejGek6Cao1sSW4AosR9WPZ1dfyZg@mail.gmail.com>
+ <CAHk-=wjdOX0t45a7aHerVPv_WBM3AmMi3sEp8xb19jpLFnk0dA@mail.gmail.com> <20241023194543.GD11151@noisy.programming.kicks-ass.net> <e9fd5ba0-bd84-76a8-a96e-1378c66d0774@gentwo.org> <20241025074244.GB14555@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset=US-ASCII
 
--Wflex-array-member-not-at-end was introduced in GCC-14, and we are
-getting ready to enable it, globally.
+On Fri, 25 Oct 2024, Peter Zijlstra wrote:
 
-Move the conflicting declaration to the end of the structure and add
-a code comment. Notice that `struct ieee80211_chanctx_conf` is a
-flexible structure --a structure that contains a flexible-array member.
+> > atomic_inc_release(&seqcount)
+>
+> It would not be, making the increment itself atomic would make the whole
+> thing far more expensive.
 
-Fix 50 of the following warnings:
-
-net/mac80211/ieee80211_i.h:895:39: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-
-Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
----
- net/mac80211/ieee80211_i.h | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/net/mac80211/ieee80211_i.h b/net/mac80211/ieee80211_i.h
-index e7815ffeaf30..c65adbdf2166 100644
---- a/net/mac80211/ieee80211_i.h
-+++ b/net/mac80211/ieee80211_i.h
-@@ -892,9 +892,10 @@ struct ieee80211_chanctx {
- 	/* temporary data for search algorithm etc. */
- 	struct ieee80211_chan_req req;
- 
--	struct ieee80211_chanctx_conf conf;
--
- 	bool radar_detected;
-+
-+	/* MUST be last - ends in a flexible-array member. */
-+	struct ieee80211_chanctx_conf conf;
- };
- 
- struct mac80211_qos_map {
--- 
-2.34.1
+True. I was too much taken by a cool hw feature on ARM.
 
 
