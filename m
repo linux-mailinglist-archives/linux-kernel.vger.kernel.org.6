@@ -1,162 +1,119 @@
-Return-Path: <linux-kernel+bounces-381283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEE939AFD1C
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 10:49:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97C759AFD23
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 10:50:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3899283C5C
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 08:49:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41F001F21A2A
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 08:50:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6E961D358E;
-	Fri, 25 Oct 2024 08:49:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD1C71D3629;
+	Fri, 25 Oct 2024 08:49:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="AUlhk/AF"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="Ijs4zHqN"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C49A1D2B13;
-	Fri, 25 Oct 2024 08:49:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40A191D2B22;
+	Fri, 25 Oct 2024 08:49:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729846171; cv=none; b=p3X4Q7J4ktT/TwNWex/pvfb1DMOlO80IPZTWpz2ljYco3m6sn6Icn/kNcR1SyTTcqfcxtHUA5w8c7CbHIZz/PvgzfJIodLxWAaA+K6/5343eKjsIH66uhhKfBKWRVN1WFcd9eKpOO/Mdjw4l7tFCUYxM0rtZREdzSh7dl+mcRIo=
+	t=1729846195; cv=none; b=LH1TvJLQEh4yl4t9fe0FJnKODeiWA3EHnytzTszBtWzmVO/2rzZXAMXzwHeFPvstLSEcewRb8tSs5ZaAClBxOuHAugMw+95vKmttzKkxf/bQPg5eF2L5MvujPTVqvdA3YOS1j+YxD+tEuPKgTogF9HSx7sdFFj3SkjyYkzrJz30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729846171; c=relaxed/simple;
-	bh=A5x7JbW8OzPHcJUDztnr4ni7vd+G7hChdtbwOnoDrDw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=fUDCqfL/fsb8LUkU6p0lUEKDgUQPr1eYnLMu1p/KtbFRs5LrxoXnr5u2Sq96cHrJUwgZf/k3MYqDQh7QLoSj3oZX6Zl6zBFz8V4e3NI8LR7zlojBlTVPv3675NCjS2WqfcAFpsVrg88Kg6DOmCaErgq670Uprzc0lbs+u3P7ON8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=AUlhk/AF; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49OJWZpQ007404;
-	Fri, 25 Oct 2024 08:49:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	RPNnpS0SrtTCNXFGOO26V132+UHssTnX0jhPMVaoVm4=; b=AUlhk/AFWF+lihbJ
-	QicO06tT89rWLlLFwOlCCZUoSCvavOlK5MUMEnwH11ITl/p9lebZQc29xNzHvjuq
-	IchKX0MgEB3mXlWug04bMZVCOipCVrcbL+aaI87ieD8h/klEO2ISnBrkWAiX3OVI
-	LY71E2qvSunI4Efjn0f1DRH7ViH3pcqIf++0GvoQrmjSAPDPWH1Exth2Qr6vdZog
-	3RlwfHso81goa1a5v6Ze0T/As19oHp7B4elwdWLll/le7s4eTTWJmmyBB/7miQV7
-	8POVfUGe3gQwwIUx/8yrRNoxsMZ2QukVG4/HHxXRAl5nujSvEZGe3TtNEAInp+oD
-	+9Qa8Q==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42fk52k7ny-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 25 Oct 2024 08:49:24 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49P8nNsK012368
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 25 Oct 2024 08:49:23 GMT
-Received: from [10.217.217.81] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 25 Oct
- 2024 01:49:19 -0700
-Message-ID: <c5743db2-36b3-423e-a1a4-174c17689e9b@quicinc.com>
-Date: Fri, 25 Oct 2024 14:19:16 +0530
+	s=arc-20240116; t=1729846195; c=relaxed/simple;
+	bh=omXfoihbkyRKq9YwHN4cjSROCIwkALzvsJjGLDTBlgc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZnoaBl4vATr8PzL4lQaHHVDyGZ6mXtTuMCSFld+lAyy1dpkGzQOQpT95VWf/+D0neKmr+NmfKAbGFwldS8uC77r2AIXbQZV4BQAOUO4IwOtgE70mo4NtU5zq8wik8TrKWxRhu0miUOwHsrngtd3aP7SN8nLxekpya4WLbC5rNJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=Ijs4zHqN; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=dCTo7/Paqcj1EVHb4+w12POrbZzZC7lWqiLNM5hDYKI=; b=Ijs4zHqNaVR7dlv1gXLpnhp09+
+	b6VLYRy2mZtaoHGHyJZIttynYfdS68bztttwgmOEyOc8O+buh1qm7gjMoXDWEDquIoLTbRukqwN8t
+	eoTZgzpqGSFtGi9Im9UwYsjy2nINm67DRvieKeJRLPAVdBZmIsE2xIW2YfMyhdJmJBbw1dkXlhZ+V
+	YYehv11NjALmjpaUjHDjdG0FLkj3QJ2T8PVcNQbH8O/IAOid88QOR4Mj2/g8qbhI0WMbyIdZuNqlX
+	Ia+mgPcZ91tYQKGC34/cKjZMs5ZmG5xVMdDLf+/nSysStHE4/Xqxn4H5qYIbjzN3aQH98Xxjd3PkY
+	M6ttTubQ==;
+Received: from i53875b34.versanet.de ([83.135.91.52] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1t4G0i-00078T-UX; Fri, 25 Oct 2024 10:49:32 +0200
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
+ Mark Brown <broonie@kernel.org>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>,
+ Elaine Zhang <zhangqing@rock-chips.com>,
+ =?ISO-8859-1?Q?Adri=E1n_Mart=EDnez?= Larumbe <adrian.larumbe@collabora.com>,
+ Boris Brezillon <boris.brezillon@collabora.com>,
+ Chen-Yu Tsai <wens@csie.org>, devicetree@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org,
+ Sebastian Reichel <sebastian.reichel@collabora.com>, kernel@collabora.com
+Subject:
+ Re: [PATCH v3 7/7] arm64: dts: rockchip: Add GPU power domain regulator
+ dependency for RK3588
+Date: Fri, 25 Oct 2024 10:49:31 +0200
+Message-ID: <39319975.10thIPus4b@diego>
+In-Reply-To: <20241022154508.63563-8-sebastian.reichel@collabora.com>
+References:
+ <20241022154508.63563-1-sebastian.reichel@collabora.com>
+ <20241022154508.63563-8-sebastian.reichel@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 7/8] arm64: dts: qcom: Update sleep_clk frequency to
- 32000 on SA8775P
-To: Bjorn Andersson <andersson@kernel.org>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>, <quic_imrashai@quicinc.com>,
-        <quic_jkona@quicinc.com>,
-        Bartosz Golaszewski
-	<bartosz.golaszewski@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20241011-sa8775p-mm-v4-resend-patches-v5-0-4a9f17dc683a@quicinc.com>
- <20241011-sa8775p-mm-v4-resend-patches-v5-7-4a9f17dc683a@quicinc.com>
- <amnapm4ig6ivhmle4tgywi2n7ah54cha3gpl5sowvf2rqvhg6s@7xg2afpus4ej>
-Content-Language: en-US
-From: Taniya Das <quic_tdas@quicinc.com>
-In-Reply-To: <amnapm4ig6ivhmle4tgywi2n7ah54cha3gpl5sowvf2rqvhg6s@7xg2afpus4ej>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 0JCPa7W6cHqzjB6bLuSNMMndBeks0FT2
-X-Proofpoint-ORIG-GUID: 0JCPa7W6cHqzjB6bLuSNMMndBeks0FT2
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 mlxscore=0
- lowpriorityscore=0 malwarescore=0 impostorscore=0 phishscore=0
- adultscore=0 mlxlogscore=999 priorityscore=1501 spamscore=0 bulkscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410250067
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
+
+Am Dienstag, 22. Oktober 2024, 17:41:52 CEST schrieb Sebastian Reichel:
+> Enabling the GPU power domain requires that the GPU regulator is
+> enabled. The regulator is enabled at boot time, but automatically
+> gets disabled when there are no users.
+>=20
+> If the GPU driver is not probed at boot time or rebound while
+> the system is running the system will try to enable the power
+> domain before the regulator is enabled resulting in a failure
+> hanging the whole system. Avoid this by adding an explicit
+> dependency.
+>=20
+> Reported-by: Adri=E1n Mart=EDnez Larumbe <adrian.larumbe@collabora.com>
+> Tested-by: Adrian Larumbe <adrian.larumbe@collabora.com> # On Rock 5B
+> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts b/arch/arm64=
+/boot/dts/rockchip/rk3588-rock-5b.dts
+> index 8f7a59918db7..717504383d46 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
+> +++ b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
+> @@ -465,6 +465,10 @@ &pcie3x4 {
+>  	status =3D "okay";
+>  };
+> =20
+> +&pd_gpu {
+> +	domain-supply =3D <&vdd_gpu_s0>;
+> +};
+> +
+>  &pinctrl {
+>  	hdmirx {
+>  		hdmirx_hpd: hdmirx-5v-detection {
+
+nit: this seems to have seen some spillover from the not-yet-merged
+hdmi-rx
+
+Heiko
 
 
-
-On 10/23/2024 4:01 AM, Bjorn Andersson wrote:
-> On Fri, Oct 11, 2024 at 12:28:37AM GMT, Taniya Das wrote:
->> The HW supported sleep_clk frequency on SA8775P is 32000, hence
->> update the sleep_clk frequency with the correct value on SA8775P.
->>
->> Fixes: 603f96d4c9d0 ("arm64: dts: qcom: add initial support for qcom sa8775p-ride")
->> Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
->> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
-> 
-> It's generally expected that bug fixes are sent first in patch series,
-> but perhaps it's fine as this is the first DT-patch in the series.
-> 
-> That said, the only relationship between this patch and the rest of this
-> series is...you. There's no reason for sending this together with the
-> multimedia clock drivers.
-> 
-> 
-> Further, the patch subject doesn't match the expected format. It's too
-> long (not a summary) and it doesn't have the expected subject prefix for
-> changes to this file.
-> 
-> Please correct this.
-> 
-
-Sure, Bjorn, will update in the next series of the patch.
-
-> Regards,
-> Bjorn
-> 
->> ---
->>   arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
->> index 0c1b21def4b62cc65a693552983ec0bc7eec697d..adb71aeff339b564eb3acc42a38bba2f03507508 100644
->> --- a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
->> +++ b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
->> @@ -517,7 +517,7 @@ &serdes1 {
->>   };
->>   
->>   &sleep_clk {
->> -	clock-frequency = <32764>;
->> +	clock-frequency = <32000>;
->>   };
->>   
->>   &spi16 {
->>
->> -- 
->> 2.45.2
->>
-
--- 
-Thanks & Regards,
-Taniya Das.
 
