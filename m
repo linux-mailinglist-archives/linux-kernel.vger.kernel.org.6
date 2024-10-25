@@ -1,121 +1,154 @@
-Return-Path: <linux-kernel+bounces-381576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D35E29B0105
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 13:19:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE7ED9B017A
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 13:40:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E31BC1C21633
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 11:19:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 808471F22657
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 11:40:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B9F11FBF51;
-	Fri, 25 Oct 2024 11:19:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C0DF20102B;
+	Fri, 25 Oct 2024 11:40:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O6NC1LKL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Iik2Qg6U"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75B101B0F38;
-	Fri, 25 Oct 2024 11:19:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7D161B2188;
+	Fri, 25 Oct 2024 11:40:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729855141; cv=none; b=Mpohzedzbr1z8bqxMzgrzeZlxvDqBwVEHKqXy4BeBWPwLQit978eZcK5oH//76v2llkx988adja6M9NwiNZWpfHDyV9XeiKhWpgu2a77mi59h1ygRRXD6ot87VPUBr6S6+P+Cjyw/cpAU2Z8Ta7KNRAng7QMEImkPMXvT+JK0G8=
+	t=1729856408; cv=none; b=NwPBG/fP1LRw1RzTR6D5wytSQ0lt9sVLuN5i9FS50EwZFOEZxMH8uwagzl3Oal27vcFlr64tf4D5gesn0l8IL0L4/d3hJQOsnvJ7ly86jza4tkY1nv/VyIknuzNMEIBaV+EwmnBBChzLf+cofdjc0Sh6mzDSg6HuKLFJusgLgMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729855141; c=relaxed/simple;
-	bh=P9pR+q5F91xYr7dOaIvmgSSPbgDYTgm85gUo3kHpsEs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rVtSoVc7BvZVdhE5aieJt8O6vwrx+/DMlIqRCRwamChXZ0DJTWbalOz9bc4r3231TWmoBdq0+jFidP1k9L95DZVG/yNGtM1BOupO4r57qarbWD7pxkSWVLRU86kgBNcO4oJDUZadkkPWGBhjBHsXos7ObNnYrZsAKn0KTHjAeY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O6NC1LKL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF55AC4CEC3;
-	Fri, 25 Oct 2024 11:18:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729855140;
-	bh=P9pR+q5F91xYr7dOaIvmgSSPbgDYTgm85gUo3kHpsEs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=O6NC1LKLmOHAu9E8o1L5ht3igVZd2x9mX+zPVeeU2Luh5irtDY/uaDOp41CsxfbI7
-	 JrFc/M1NwCrgNVOY2JnPXbDmRkc5VTKb7gzzuHlF7QkqqZc6ej0w0XKbibcjO8N6lh
-	 6G6Slnkei7OB9hKIImSJ+l/ug4AL7UW44KVkTXIhtXndtbNTVtTdW6/io3kXZSHot4
-	 Lge67qqhNlFrnQC4JoVNa8ArPkbNcEQwonnoQfndZOZ5J2MBiBIKivpC6/Pwrjvr4q
-	 x3R6/p3rWtQuTmFg8A+aMDkSnZp+3zjer/tIufzWprInK9514AFI/i6ZgzuLiOXHBa
-	 cOkJm2Ar6zPVA==
-Date: Fri, 25 Oct 2024 12:18:56 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Guenter Roeck <linux@roeck-us.net>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Christoph Hellwig <hch@infradead.org>, Kees Cook <kees@kernel.org>,
-	Sasha Levin <sashal@kernel.org>, torvalds@linux-foundation.org,
-	ksummit@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: linus-next: improving functional testing for to-be-merged pull
- requests
-Message-ID: <5f03685c-6805-49c5-a22d-4e602f5532f8@sirena.org.uk>
-References: <ZxiN3aINYI4u8pRx@infradead.org>
- <20241023042004.405056f5@rorschach.local.home>
- <CAMuHMdUxrULbo=A77DFDE4ySbii3jSMuh8xVvUXaqyCnwEAU-w@mail.gmail.com>
- <20241023051914.7f8cf758@rorschach.local.home>
- <8734km2lt7.fsf@mail.lhotse>
- <20241024010103.238ef40b@rorschach.local.home>
- <07422710-19b2-412b-b8d5-7ec51b708693@roeck-us.net>
- <20241024024928.6fb9d892@rorschach.local.home>
- <82eecf18-0a71-4c16-8511-bc52fb61f421@roeck-us.net>
- <20241024211149.4f0b6138@rorschach.local.home>
+	s=arc-20240116; t=1729856408; c=relaxed/simple;
+	bh=fur9jKAR9Lb/bZRjB6AmqRM0k4fPKhiKa1ITzOgw5AQ=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=SR7bmNHvTVolyuEMJBKKme4QmS6yPn2EZj+oVLvr0yWIWmAjwD7z7aSF7G9pefe4khFEhsoDgQ2ABEgfFoyoLbICmGdxR12+Z4/B8/kKywCfK9RIL368JeAZS/6RV4UPYC8XF7R5+rLHh8fsd/ByPKVt04c/eDLELTy6L/LRqVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Iik2Qg6U; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-20cdda5cfb6so16944445ad.3;
+        Fri, 25 Oct 2024 04:40:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729856405; x=1730461205; darn=vger.kernel.org;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=/odYXUmRFVxj1YAIb6jJQzkELhw4AM9pvz8h7Ed9TCQ=;
+        b=Iik2Qg6UtVnv+Y9ldfmQnppPpb3SQ428wnjrHekwWglOPX3v34dgXj/c9/t2C7JL9Z
+         mNaJDSfh1mQZPBBn5pEMszJDgk5z1qohA1Ty9IQSYEcREixzqCr9gLn/aeMwkKUB5lmE
+         PP6lEE7y3VXBiRe80aBsPvBKVfeAcRn9yGk+fRRK6Xl0Pu+72NFDsrGLOLneMmvS4mNu
+         qLJmRraEe3LkPOS5raYgGsns7ocz4uR5ywyJGW83WUTmOo1tpu4q4a/QrLgRJjiiUICk
+         kSWAnmSXAXsMtWNqa/TRxHLo8DkSnt0Z04ZYmpcIR40m/eW+6tHliXKowOXV/fJIcT8f
+         5Tag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729856405; x=1730461205;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/odYXUmRFVxj1YAIb6jJQzkELhw4AM9pvz8h7Ed9TCQ=;
+        b=bX9TKpO74HG4J5CywCav5WEy3rm4hPTKgOzrCajdeV8BY4w9wH35rhUq4AKyCFfVwV
+         zcf29IxUoAkGBtk+Bi3l9ecEIw0ip6cPiy6T2KmlJoRmwqpx1hIdYwr9x6Andi3S/Nmv
+         RkPTuCZprEoEUapdpIh2WaFs3Q+xpOu+3S9inJCUGbboWn5mHwaACJA5JbrZnMI3AjiH
+         fOJnf5NO2cbPhfuuCT3EZ80rCGduXUZyWm7yJKQh01Rid0DmSGYU7k8c15aezq93jPuv
+         Xk8pLUsF5peAxuY1NV0WrHDJxVD81q3BH2hodNZsX9iVtEihSNEuagDq3oF+HyXG6DNa
+         eb/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUFuU7s26NKqTj0VSiFCcx+R66Ak1BGbLUsD7mJvop4PSKSGLE8YP5BsYSxLQA4/qgjriRrzzGpSnYb@vger.kernel.org, AJvYcCUGPnwVdssH8GrM9eLNdDZVrdLmF6CIW0BVMuU4JrxNAocc09ZvLhJ9rel7ayISqS55pmKusuxRHQMYmRNx@vger.kernel.org, AJvYcCV0GO8dsI3L1+UiHuesYFJb1SPabEFAM0iqcibv6NU8ulhgehJVlI0m4NXxj08RqohZW1uRrM2Y4lTv@vger.kernel.org, AJvYcCWLSeyzcOwnwHDQxXxOdoQvLA72ZSrtXWwgKy2Y2l47k0gWVfj+WQM1S4otVD05hatAFcVOKwaDMIZMSDMw7A==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7yE3edynKnYN3qyOcjTT8wXha697k6QUqHTeAWM8W/C05OUnh
+	VZBoFooJiqC91AZZJZ1nmFg8NBftG1KePjp6+y9odhI+vRGG1sbzrVYEFA==
+X-Google-Smtp-Source: AGHT+IGZkHAl3P77GpfZG69NdPzPaI+hK8rshv9qxUxYrl3QrlbN3uIpkEUU1JzBvDjnKGwjWMfntw==
+X-Received: by 2002:a17:902:f68a:b0:20c:80d9:9982 with SMTP id d9443c01a7336-20fa9eb9761mr131474915ad.47.1729856405328;
+        Fri, 25 Oct 2024 04:40:05 -0700 (PDT)
+Received: from dw-tp ([171.76.85.20])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bc01784dsm7975255ad.177.2024.10.25.04.40.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Oct 2024 04:40:04 -0700 (PDT)
+From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+To: John Garry <john.g.garry@oracle.com>, linux-ext4@vger.kernel.org
+Cc: Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.cz>, "Darrick J . Wong" <djwong@kernel.org>, Christoph Hellwig <hch@infradead.org>, Ojaswin Mujoo <ojaswin@linux.ibm.com>, Dave Chinner <david@fromorbit.com>, linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 5/6] iomap: Lift blocksize restriction on atomic writes
+In-Reply-To: <7e322989-c6e0-424a-94bd-3ad6ce5ffee9@oracle.com>
+Date: Fri, 25 Oct 2024 16:49:27 +0530
+Message-ID: <87ttd0mnuo.fsf@gmail.com>
+References: <cover.1729825985.git.ritesh.list@gmail.com> <f5bd55d32031b49bdd9e2c6d073787d1ac4b6d78.1729825985.git.ritesh.list@gmail.com> <1efb8d6d-ba2e-499d-abc5-e4f9a1e54e89@oracle.com> <87zfmsmsvc.fsf@gmail.com> <fc6fddee-2707-4cca-b0b7-983c8dd17e16@oracle.com> <87v7xgmpwo.fsf@gmail.com> <7e322989-c6e0-424a-94bd-3ad6ce5ffee9@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="jrILLbVKO04Qanai"
-Content-Disposition: inline
-In-Reply-To: <20241024211149.4f0b6138@rorschach.local.home>
-X-Cookie: Often things ARE as bad as they seem!
 
+John Garry <john.g.garry@oracle.com> writes:
 
---jrILLbVKO04Qanai
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> On 25/10/2024 11:35, Ritesh Harjani (IBM) wrote:
+>>>> Same as mentioned above. We can't have atomic writes to get split.
+>>>> This patch is just lifting the restriction of iomap to allow more than
+>>>> blocksize but the mapped length should still meet iter->len, as
+>>>> otherwise the writes can get split.
+>>> Sure, I get this. But I wonder why would we be getting multiple
+>>> mappings? Why cannot the FS always provide a single mapping?
+>> FS can decide to split the mappings when it couldn't allocate a single
+>> large mapping of the requested length. Could be due to -
+>> - already allocated extent followed by EOF,
+>> - already allocated extent followed by a hole
+>> - already mapped extent followed by an extent of different type (e.g. written followed by unwritten or unwritten followed by written)
+>
+> This is the sort of scenario which I am concerned with. This issue has 
+> been discussed at length for XFS forcealign support for atomic writes.
 
-On Thu, Oct 24, 2024 at 09:11:49PM -0400, Steven Rostedt wrote:
+extsize and forcealign is being worked for ext4 as well where we can
+add such support, sure.
 
-> much more focused on code that is already in Linus's tree. Like adding
-> a missing mutex_unlock() from an error path. How is it helpful to push
-> something like that to linux-next?
+>
+> So far, the user can atomic write a single FS block regardless of 
+> whether the extent in which it would be part of is in written or 
+> unwritten state.
+>
+> Now the rule will be to write multiple FS blocks atomically, all blocks 
+> need to be in same written or unwritten state.
 
-How is it helpful to not push things to -next?  Pushing your unsent
-fixes to a branch that Stephen can pick up costs you approximately
-nothing so there's no meaningful downside but perhaps one of these days
-some test system will find some issue and it's setting a good example
-for those who don't (or can't) have the same detailed testing you have.
+FS needs to ensure that the writes does not get torned. So for whatever reason
+FS splits the mapping then we need to return an -EINVAL error to not
+allow such writes to get torned. This patch just does that.
 
-> > Note that I do collect known fixes in my 'fixes' and 'testing' branches,
-> > primarily to have something clean available to keep testing. Linus even
-> > pulled my fixes branch once directly because the responsible maintainers
-> > didn't send pull requests to him for weeks.
+But I get your point. More below.
 
-> Or are you saying that it's helpful to "fix" linux-next before fixing
-> Linus's tree? That way others will have the fixes too?
+>
+> This oddity at least needs to be documented.
 
-That's also true, it gets the fixes into the hands of people doing -next
-testing faster which is hopefully useful to them.
+Got it. Yes, we can do that.
 
---jrILLbVKO04Qanai
-Content-Type: application/pgp-signature; name="signature.asc"
+>
+> Better yet would be to not have this restriction.
+>
 
------BEGIN PGP SIGNATURE-----
+I haven't thought of a clever way where we don't have to zero out the
+rest of the unwritten mapping. With ext4 bigalloc since the entire
+cluster is anyway reserved - I was thinking if we can come up with a
+clever way for doing atomic writes to the entire user requested size w/o
+zeroing out.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcbfp8ACgkQJNaLcl1U
-h9BqIgf/eX68AlBxcKIgUZGYuP519F2FA70TnudPNI+LBmlem5vP/ipXbiMjI+93
-NreFFQD8EDxSMYuFFbyVFxq/jEO67Taskd/GuqLu1MfnIPAT0PTK54O63qW7xtXR
-5NTqbWvpsyypjiSTnMx4nBUpDEk/qxwyNcXWfmlvhkwli8pd5ckNxV+BZnNlZEZO
-MZ+SodvWOrSvCAE8YrKvVvpJzq150J8M/xXWEkb/NjHPzyHTGk5fOWef6E4O0uB0
-LUDunZHv8EexnoumFvMOwA0miQca36MzpAMJjhsRYXFTbmjp6LMKB2QxWZOCp5ep
-gDpqFiTL4BLyv3sCbRLeNgef/lXeFg==
-=Gw8D
------END PGP SIGNATURE-----
+Zeroing out the other unwritten extent is also a cost penalty to the
+user anyways. So user will anyway will have to be made aware of not to
+attempt writes of fashion which can cause them such penalties. 
 
---jrILLbVKO04Qanai--
+As patch-6 mentions this is a base support for bs = ps systems for
+enabling atomic writes using bigalloc. For now we return -EINVAL when we
+can't allocate a continuous user requested mapping which means it won't
+support operations of types 8k followed by 16k.
+
+We can document this behavior as other things are documented for atomic
+writes on ext4 with bigalloc e.g. pow_of_2 length writes, natural
+alignment w.r.t pos and length etc.
+
+Does that sound ok?
+
+>> - delalloc (not delalloc since we invalidate respective page cache pages before doing DIO).
+>> - fragmentation or ENOSPC - For ext4 bigalloc this will not happen since
+>> we reserve the entire cluster. So we know there should be space. But I
+>> am not sure how other filesystems might end up implementing this functionality.
+>
+> Thanks,
+> John
+
+-ritesh
 
