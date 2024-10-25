@@ -1,111 +1,200 @@
-Return-Path: <linux-kernel+bounces-382112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D7159B099A
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 18:16:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74F219B099C
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 18:17:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6D1ECB247C7
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:16:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E945C1F2155D
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:17:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E39D18595F;
-	Fri, 25 Oct 2024 16:16:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FD3A175D46;
+	Fri, 25 Oct 2024 16:17:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hXFAoCdo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="nMc6sihV"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8799D7080E;
-	Fri, 25 Oct 2024 16:16:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 377437082B;
+	Fri, 25 Oct 2024 16:17:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729872993; cv=none; b=qFKcX3wk+rZFiZAzkTuj+pVvOymjTrvqiJCGxXKRqQqkw9CYJ/EdPkYaVUqlt8KM47UJIbqbHNZnqo+KeFByR6zlcfUdJd8PRyPg4iIBwoSXGw4BK4jI6+hUu/gSEG1P0rpdILuYwTlJgZO4GQSfwg0rcVdJqay1509fIBJz/W8=
+	t=1729873029; cv=none; b=VHJtXMqmejBlUFg+FPJ90PMau4ThK+VXhbcOlGEkxgaIT6SfhOIXro5/gCMwF0k/BkrAexSojO1OQp87BxUMIrZD0LlW2qedInH4WunBZtEPeEea2iaPmlpAQhDOSi1YF1T1UmOCnzdgv3WaZ5xF8gerXnFFiKyL7MMfUf14+dI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729872993; c=relaxed/simple;
-	bh=nn618csCV0nfmdVUFNZxtbc9Np+SY9OMrfOoQa9JKs8=;
+	s=arc-20240116; t=1729873029; c=relaxed/simple;
+	bh=0L5xVhmjg5M5a4pa+/ZvHmwbAhngpCCSQCFhEC9nV7Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EgYYzJa/R4OkVoQwiY9EqIhE8tiQR7CHpXdbSBJBXNU39xRQ4NJzhfeEJsNlPawDdg1GBi+4tIDVgSuMCxCmI6/0UtAUiuQpYB1i/FHaD7nSrrcwvHNvALWjYkz9+IeI9aW3a6sg7yXK/vlEA8fn9lUzvhaxVkDBh0Afr59vaC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hXFAoCdo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC848C4CEC3;
-	Fri, 25 Oct 2024 16:16:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729872993;
-	bh=nn618csCV0nfmdVUFNZxtbc9Np+SY9OMrfOoQa9JKs8=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=q4AsHvWQcQ1yZ4TzAWq58QUresSYfiz7zA31RAbCOq1NLrmZ5rSqNwjy88EwmGUI0VrutI2WEtCHT2fOmjyRJPzRAYNIvpRmy0SV4+WWTR1MyXL7ogmkA17Y2S77X5R0EghiivrMmzDKOPE9vZPDk0v8kZkL7NfmTQQ8qWLkq08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=nMc6sihV; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 7235D74C;
+	Fri, 25 Oct 2024 18:15:16 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1729872916;
+	bh=0L5xVhmjg5M5a4pa+/ZvHmwbAhngpCCSQCFhEC9nV7Q=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hXFAoCdoFqZMXlOYigk6dnBpVkwU/b6eZlHDuo5rMt/0DTFnrcuuon7H+kF8A46Nk
-	 f6wBM0zhF/h/OTz6oBAZVGzbmjmIKVKRN/f4HAdyPvSWfyDLgSvdhE2Qf0GDMLv3FT
-	 ATF9Gyb8cM1ZANfYUxBndapkor4pEvK876BQUqmWh0hJ2dDzhIIH5AV+61+6kd0yo8
-	 ikozvmiCr2QWzHaxNXe/shjzgt62S1qcVwJuERUaPx1uPrsRIs62k1Ge5W6R83RG8U
-	 t2XGq7zmzYKBsacmP7UePlrb+qW74okNou3dIs41+tHIdaS9mk4vqc4Z8dWF6FAz5w
-	 RpIsuPWk55Zow==
-Date: Fri, 25 Oct 2024 09:16:32 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-Cc: linux-ext4@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
-	Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@infradead.org>,
-	John Garry <john.g.garry@oracle.com>,
-	Ojaswin Mujoo <ojaswin@linux.ibm.com>,
-	Dave Chinner <david@fromorbit.com>, linux-kernel@vger.kernel.org,
-	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 4/6] ext4: Warn if we ever fallback to buffered-io for
- DIO atomic writes
-Message-ID: <20241025161632.GL2386201@frogsfrogsfrogs>
-References: <cover.1729825985.git.ritesh.list@gmail.com>
- <7c4779f1f0c8ead30f660a2cfbdf4d7cc08e405a.1729825985.git.ritesh.list@gmail.com>
+	b=nMc6sihVKFveNBFTRA5eK1wFB1JwZO7N2zid3aUccMpVY8n3g4NhkStPx18psvpz6
+	 1PWi6lahcOkwGbabubuxwP2lZ9BuC7kvyO62Eu6hzzXgdTYh+PyCjhq82SlkcszjTo
+	 ar0gQtaxOYqX1ON/sv4+GghYlFybAyn7HzAbDP2U=
+Date: Fri, 25 Oct 2024 19:16:59 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Tarang Raval <tarang.raval@siliconsignals.io>
+Cc: sakari.ailus@linux.intel.com, mchehab@kernel.org,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] media: mt9p031: Refactor format handling for different
+ sensor models
+Message-ID: <20241025161659.GD6519@pendragon.ideasonboard.com>
+References: <20241025130442.17417-1-tarang.raval@siliconsignals.io>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <7c4779f1f0c8ead30f660a2cfbdf4d7cc08e405a.1729825985.git.ritesh.list@gmail.com>
+In-Reply-To: <20241025130442.17417-1-tarang.raval@siliconsignals.io>
 
-On Fri, Oct 25, 2024 at 09:15:53AM +0530, Ritesh Harjani (IBM) wrote:
-> iomap will not return -ENOTBLK in case of dio atomic writes. But let's
-> also add a WARN_ON_ONCE and return -EIO as a safety net.
+Hi Tarang,
+
+Thank you for the patch.
+
+On Fri, Oct 25, 2024 at 06:32:17PM +0530, Tarang Raval wrote:
+> Add new structure 'mt9p031_model_info' to encapsulate format codes for
+> the mt9p031 camera sensor family. This approach enhances code clarity
+> and maintainability.
 > 
-> Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+> Signed-off-by: Tarang Raval <tarang.raval@siliconsignals.io>
 > ---
->  fs/ext4/file.c | 10 +++++++++-
->  1 file changed, 9 insertions(+), 1 deletion(-)
+>  drivers/media/i2c/mt9p031.c | 28 +++++++++++++++++++---------
+>  1 file changed, 19 insertions(+), 9 deletions(-)
 > 
-> diff --git a/fs/ext4/file.c b/fs/ext4/file.c
-> index f9516121a036..af6ebd0ac0d6 100644
-> --- a/fs/ext4/file.c
-> +++ b/fs/ext4/file.c
-> @@ -576,8 +576,16 @@ static ssize_t ext4_dio_write_iter(struct kiocb *iocb, struct iov_iter *from)
->  		iomap_ops = &ext4_iomap_overwrite_ops;
->  	ret = iomap_dio_rw(iocb, from, iomap_ops, &ext4_dio_write_ops,
->  			   dio_flags, NULL, 0);
-> -	if (ret == -ENOTBLK)
-> +	if (ret == -ENOTBLK) {
->  		ret = 0;
-> +		/*
-> +		 * iomap will never return -ENOTBLK if write fails for atomic
-> +		 * write. But let's just add a safety net.
-
-I think it can if the pagecache invalidation fails, so you really do
-need the safety net.  I suspect that the xfs version of this series
-needs it too, though it may have fallen out?
-
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-
---D
-
-> +		 */
-> +		if (WARN_ON_ONCE(iocb->ki_flags & IOCB_ATOMIC))
-> +			ret = -EIO;
-> +	}
+> diff --git a/drivers/media/i2c/mt9p031.c b/drivers/media/i2c/mt9p031.c
+> index d8735c246e52..d4fcc692311c 100644
+> --- a/drivers/media/i2c/mt9p031.c
+> +++ b/drivers/media/i2c/mt9p031.c
+> @@ -113,6 +113,16 @@
+>  #define MT9P031_TEST_PATTERN_RED			0xa2
+>  #define MT9P031_TEST_PATTERN_BLUE			0xa3
+>  
+> +struct mt9p031_model_info {
+> +       u32 code;
+> +};
 > +
->  	if (extend) {
->  		/*
->  		 * We always perform extending DIO write synchronously so by
-> -- 
-> 2.46.0
-> 
-> 
+> +static const struct mt9p031_model_info mt9p031_models[] = {
+> +	{.code = MEDIA_BUS_FMT_SGRBG12_1X12}, /* mt9p006  */
+
+There should be spaces after { and before }
+
+> +	{.code = MEDIA_BUS_FMT_SGRBG12_1X12}, /* mt9p031  */
+
+You can use the same entry for both the MT9P006 and MT9P031 as they
+don't need to be deferentiated.
+
+> +	{.code = MEDIA_BUS_FMT_Y12_1X12},     /* mt9p031m */
+> +};
+> +
+>  struct mt9p031 {
+>  	struct v4l2_subdev subdev;
+>  	struct media_pad pad;
+> @@ -125,7 +135,7 @@ struct mt9p031 {
+>  	struct clk *clk;
+>  	struct regulator_bulk_data regulators[3];
+>  
+> -	u32 code;
+> +	const struct mt9p031_model_info *model;
+>  	struct aptina_pll pll;
+>  	unsigned int clk_div;
+>  	bool use_pll;
+> @@ -708,7 +718,7 @@ static int mt9p031_init_state(struct v4l2_subdev *subdev,
+>  	crop->height = MT9P031_WINDOW_HEIGHT_DEF;
+>  
+>  	format = __mt9p031_get_pad_format(mt9p031, sd_state, 0, which);
+> -	format->code = mt9p031->code;
+> +	format->code = mt9p031->model->code;
+>  	format->width = MT9P031_WINDOW_WIDTH_DEF;
+>  	format->height = MT9P031_WINDOW_HEIGHT_DEF;
+>  	format->field = V4L2_FIELD_NONE;
+> @@ -1117,7 +1127,7 @@ static int mt9p031_probe(struct i2c_client *client)
+>  	mt9p031->pdata = pdata;
+>  	mt9p031->output_control	= MT9P031_OUTPUT_CONTROL_DEF;
+>  	mt9p031->mode2 = MT9P031_READ_MODE_2_ROW_BLC;
+> -	mt9p031->code = (uintptr_t)i2c_get_match_data(client);
+> +	mt9p031->model = &mt9p031_models[(uintptr_t)i2c_get_match_data(client)];
+>  
+>  	mt9p031->regulators[0].supply = "vdd";
+>  	mt9p031->regulators[1].supply = "vdd_io";
+> @@ -1214,17 +1224,17 @@ static void mt9p031_remove(struct i2c_client *client)
+>  }
+>  
+>  static const struct i2c_device_id mt9p031_id[] = {
+> -	{ "mt9p006", MEDIA_BUS_FMT_SGRBG12_1X12 },
+> -	{ "mt9p031", MEDIA_BUS_FMT_SGRBG12_1X12 },
+> -	{ "mt9p031m", MEDIA_BUS_FMT_Y12_1X12 },
+> +	{ "mt9p006", 0 },
+> +	{ "mt9p031", 1 },
+> +	{ "mt9p031m", 2 },
+>  	{ /* sentinel */ }
+>  };
+>  MODULE_DEVICE_TABLE(i2c, mt9p031_id);
+
+I think we can drop mt9p031_id. I'll send a patch series to do so.
+
+>  
+>  static const struct of_device_id mt9p031_of_match[] = {
+> -	{ .compatible = "aptina,mt9p006", .data = (void *)MEDIA_BUS_FMT_SGRBG12_1X12 },
+> -	{ .compatible = "aptina,mt9p031", .data = (void *)MEDIA_BUS_FMT_SGRBG12_1X12 },
+> -	{ .compatible = "aptina,mt9p031m", .data = (void *)MEDIA_BUS_FMT_Y12_1X12 },
+> +	{ .compatible = "aptina,mt9p006", .data = (void *)0 },
+> +	{ .compatible = "aptina,mt9p031", .data = (void *)1 },
+> +	{ .compatible = "aptina,mt9p031m", .data = (void *)2 },
+
+Let's avoid magic values. You can write
+
+	{ .compatible = "aptina,mt9p006", .data = &mt9p031_models[0] },
+	{ .compatible = "aptina,mt9p031", .data = &mt9p031_models[0] },
+	{ .compatible = "aptina,mt9p031m", .data = &mt9p031_models[1] },
+
+but it may be even more readable to introduce a
+
+enum mt9p031_model {
+	MT9P031_MODEL_BAYER,
+	MT9P031_MODEL_MONO,
+};
+
+static const struct mt9p031_model_info mt9p031_models[] = {
+	[MT9P031_MODEL_BAYER] = {
+		.code = MEDIA_BUS_FMT_SGRBG12_1X12,
+	},
+	[MT9P031_MODEL_MONO] = {
+		.code = MEDIA_BUS_FMT_Y12_1X12,
+	},
+};
+
+static const struct of_device_id mt9p031_of_match[] = {
+	{
+		.compatible = "aptina,mt9p006",
+		.data = &mt9p031_models[MT9P031_MODEL_BAYER],
+	}, {
+		.compatible = "aptina,mt9p031",
+		.data = &mt9p031_models[MT9P031_MODEL_BAYER],
+	}, {
+		.compatible = "aptina,mt9p031m",
+		.data = &mt9p031_models[MEDIA_BUS_FMT_Y12_1X12],
+	},
+	{ /* sentinel */ }
+};
+
+>  	{ /* sentinel */ }
+>  };
+>  MODULE_DEVICE_TABLE(of, mt9p031_of_match);
+
+-- 
+Regards,
+
+Laurent Pinchart
 
