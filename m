@@ -1,95 +1,142 @@
-Return-Path: <linux-kernel+bounces-381451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A4709AFF6C
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 12:03:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63DF39AFF70
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 12:03:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D0A32832B9
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 10:03:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0E1B9B24E7D
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 10:03:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D22861DD0D0;
-	Fri, 25 Oct 2024 10:02:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="FleDxAXV"
-Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AAA11DD0C4;
-	Fri, 25 Oct 2024 10:02:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 300751D54EA;
+	Fri, 25 Oct 2024 10:03:42 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4FD51CFEB5
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 10:03:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729850553; cv=none; b=O8eAIqFsBm71TyeOTUuXtBaZWiIdcVUkkjt4PrlnHDS7NGq/9CK/dhPQdpmOaHK9VRFl7bdq3oQxvftff0P6Wcxq334/Q34EQhvpYsMEixR+1tnQHssDQurWeida8j1OhF1cmIrG999su1fXG1DFTqjv+NU/Gj2mak5lUuJBdfk=
+	t=1729850621; cv=none; b=gqSTaB3+ZRw1BRikThsj4PhJTIhGFl/4Z44fr87OhBE1YTWA/gi9nRNmH/PkmGUCmWTNYtaigt4DGE98ssyibzOOyD8nSzv80YoXJHQglldS45QFfNe7YHORNOdMhhlnay8Mms1gjbDX7ka3daGifMEFHoIqTR8KNMUNYZLfTfA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729850553; c=relaxed/simple;
-	bh=VA9wJnIriGtYqDsQsF1p+nJJ6hiivfGLmhtbHqf/IW4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y2/UW0PV+NyokZvbZvhJmoHhwsrkfoBaWwFflmm4LYgGviCfkuE1adUxidZ8Opc5vMuIrGLJM69vxi+6w5pnMXhLVwr5jcBsRSAtfsRZMaeC3rhrdxJ2VlaBSIgl/lNx14L/XzpAfPmXHcDlmXRZKoDE7LWXfeW2MtYm4EdYlRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=FleDxAXV; arc=none smtp.client-ip=95.215.58.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Fri, 25 Oct 2024 06:02:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1729850547;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aPeMmDy9NpxeAMEK1cYt2qu+mg0HpoHS8zlh/+R0WxA=;
-	b=FleDxAXVM3wfxxMySY0lxYtJsSd8Q4dNQzaHTrUevqd+ikp6th43pyrR+ws+jaCkVt5J5d
-	80uiZ6qF1BbMmu6TlMelhh80u/ZWcsw6525H1Uj8ZSe7FO3uDDDoT1r+AzPcMrEEDE6wfp
-	03AbWsHY0KlMee3xSs1J4LZrR5Berls=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: "Lai, Yi" <yi1.lai@linux.intel.com>, axboe@kernel.dk, 
-	linux-block@vger.kernel.org
-Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [Syzkaller & bisect] There is INFO: task hung in
- __rq_qos_throttle
-Message-ID: <66emkxxuzcge3kdd5iwiqexyeqzm3msradf5bhgnxc7zdy3qys@bm5luwh65lgo>
-References: <ZxYsjXDsvsIt4wcR@ly-workstation>
- <kuvbuekbzs6saggfxleiaqtl5mleozqozpamivz2zo6pd4istq@c6hfl6govn44>
- <ZxtqeYRHz3hQrR0f@ly-workstation>
+	s=arc-20240116; t=1729850621; c=relaxed/simple;
+	bh=YSbxiAs0eAo5BRKMP8aRR8LIZUnwjaQreDrvfYOtyQw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PvgQTQ7ntoI6aPD1EVoMFs8GC2Yh+VhF0EAA13h9gt0Zxde7FAgxzWpJC0prsPoEwawhCFa2Kptj2czxQPPsQAYVGflNX4INawR+aMiQ2HILtpW4crbXXtkO6FZoQlDluDbXIGVCL+1nV15Mw3fBbuS3Sl1jwZbP5/fAB6EQo6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E49B9339;
+	Fri, 25 Oct 2024 03:04:08 -0700 (PDT)
+Received: from [10.1.36.18] (e122027.cambridge.arm.com [10.1.36.18])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4D84D3F73B;
+	Fri, 25 Oct 2024 03:03:36 -0700 (PDT)
+Message-ID: <c3dbe4c4-c88b-4562-ad64-fac0a139dc52@arm.com>
+Date: Fri, 25 Oct 2024 11:03:34 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZxtqeYRHz3hQrR0f@ly-workstation>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] drm/panthor: Update memattr programing to align with
+ GPU spec
+To: Akash Goel <akash.goel@arm.com>, boris.brezillon@collabora.com,
+ liviu.dudau@arm.com
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ mihail.atanassov@arm.com, ketil.johnsen@arm.com, florent.tomasin@arm.com,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+ airlied@gmail.com, daniel@ffwll.ch, nd@arm.com
+References: <20241024145432.934086-1-akash.goel@arm.com>
+ <20241024145432.934086-2-akash.goel@arm.com>
+From: Steven Price <steven.price@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20241024145432.934086-2-akash.goel@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Oct 25, 2024 at 05:52:57PM +0800, Lai, Yi wrote:
-> On Wed, Oct 23, 2024 at 09:57:53PM -0400, Kent Overstreet wrote:
-> > On Mon, Oct 21, 2024 at 06:27:25PM +0800, Lai, Yi wrote:
-> > > Hi Kent Overstreet,
-> > > 
-> > > Greetings!
-> > > 
-> > > I used Syzkaller and found that there is INFO: task hung in __rq_qos_throttle in v6.12-rc2
-> > > 
-> > > After bisection and the first bad commit is:
-> > > "
-> > > 63332394c7e1 bcachefs: Move snapshot table size to struct snapshot_table
-> > 
-> > You sure...?
-> > 
-> > Look at the patch, that's a pretty unlikely culprit; we would've seen
-> > something from kasan, and anyways there's guards on the new memory
-> > accesses/array derefs.
-> > 
-> > I've been seeing that bug too, but it's very intermittent. How did you
-> > get it to trigger reliably enough for a bisect?
+On 24/10/2024 15:54, Akash Goel wrote:
+> Mali GPU Arch spec forbids the GPU PTEs to indicate Inner or Outer
+> shareability when no_coherency protocol is selected. Doing so results in
+> unexpected or undesired snooping of the CPU caches on some platforms,
+> such as Juno FPGA, causing functional issues. For example the boot of
+> MCU firmware fails as GPU ends up reading stale data for the FW memory
+> pages from the CPU's cache. The FW memory pages are initialized with
+> uncached mapping when the device is not reported to be dma-coherent.
+> The shareability bits are set to inner-shareable when IOMMU_CACHE flag
+> is passed to map_pages() callback and IOMMU_CACHE flag is passed by
+> Panthor driver when memory needs to be mapped as cached on the GPU side.
 > 
-> Look into my local bisection log. You are right, that the bug is intermittent
-> and takes a very long time to reproduce the issue.
+> IOMMU_CACHE seems to imply cache coherent and is probably not fit for
+> purpose for the memory that is mapped as cached on GPU side but doesn't
+> need to remain coherent with the CPU.
 > 
-> I didn't observe similar issues during following v6.12-rcx kernel
-> fuzzing. I will keep monitoring.
+> This commit updates the programming of MEMATTR register to use
+> MIDGARD_INNER instead of CPU_INNER when coherency is disabled. That way
+> the inner-shareability specified in the GPU PTEs would map to Mali's
+> internal-shareable mode, which is always supported by the GPU regardless
+> of the coherency protocal and is required by the Userspace driver to
+> ensure coherency between the shader cores.
+> 
+> Signed-off-by: Akash Goel <akash.goel@arm.com>
 
-yeah, this is one for Jens...
+Reviewed-by: Steven Price <steven.price@arm.com>
+
+> ---
+>  drivers/gpu/drm/panthor/panthor_mmu.c | 23 +++++++++++++++--------
+>  1 file changed, 15 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/panthor/panthor_mmu.c b/drivers/gpu/drm/panthor/panthor_mmu.c
+> index f3ee5d2753f1..f522a116c1b1 100644
+> --- a/drivers/gpu/drm/panthor/panthor_mmu.c
+> +++ b/drivers/gpu/drm/panthor/panthor_mmu.c
+> @@ -1927,7 +1927,7 @@ struct panthor_heap_pool *panthor_vm_get_heap_pool(struct panthor_vm *vm, bool c
+>  	return pool;
+>  }
+>  
+> -static u64 mair_to_memattr(u64 mair)
+> +static u64 mair_to_memattr(u64 mair, bool coherent)
+>  {
+>  	u64 memattr = 0;
+>  	u32 i;
+> @@ -1946,14 +1946,21 @@ static u64 mair_to_memattr(u64 mair)
+>  				   AS_MEMATTR_AARCH64_SH_MIDGARD_INNER |
+>  				   AS_MEMATTR_AARCH64_INNER_ALLOC_EXPL(false, false);
+>  		} else {
+> -			/* Use SH_CPU_INNER mode so SH_IS, which is used when
+> -			 * IOMMU_CACHE is set, actually maps to the standard
+> -			 * definition of inner-shareable and not Mali's
+> -			 * internal-shareable mode.
+> -			 */
+>  			out_attr = AS_MEMATTR_AARCH64_INNER_OUTER_WB |
+> -				   AS_MEMATTR_AARCH64_SH_CPU_INNER |
+>  				   AS_MEMATTR_AARCH64_INNER_ALLOC_EXPL(inner & 1, inner & 2);
+> +			/* Use SH_MIDGARD_INNER mode when device isn't coherent,
+> +			 * so SH_IS, which is used when IOMMU_CACHE is set, maps
+> +			 * to Mali's internal-shareable mode. As per the Mali
+> +			 * Spec, inner and outer-shareable modes aren't allowed
+> +			 * for WB memory when coherency is disabled.
+> +			 * Use SH_CPU_INNER mode when coherency is enabled, so
+> +			 * that SH_IS actually maps to the standard definition of
+> +			 * inner-shareable.
+> +			 */
+> +			if (!coherent)
+> +				out_attr |= AS_MEMATTR_AARCH64_SH_MIDGARD_INNER;
+> +			else
+> +				out_attr |= AS_MEMATTR_AARCH64_SH_CPU_INNER;
+>  		}
+>  
+>  		memattr |= (u64)out_attr << (8 * i);
+> @@ -2325,7 +2332,7 @@ panthor_vm_create(struct panthor_device *ptdev, bool for_mcu,
+>  		goto err_sched_fini;
+>  
+>  	mair = io_pgtable_ops_to_pgtable(vm->pgtbl_ops)->cfg.arm_lpae_s1_cfg.mair;
+> -	vm->memattr = mair_to_memattr(mair);
+> +	vm->memattr = mair_to_memattr(mair, ptdev->coherent);
+>  
+>  	mutex_lock(&ptdev->mmu->vm.lock);
+>  	list_add_tail(&vm->node, &ptdev->mmu->vm.list);
+
 
