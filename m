@@ -1,144 +1,166 @@
-Return-Path: <linux-kernel+bounces-381044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A69C19AF987
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 08:04:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F0B39AF98A
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 08:07:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BBB2282BA6
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 06:04:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F40C21F22DBA
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 06:07:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0E6F18F2F0;
-	Fri, 25 Oct 2024 06:04:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BBBD191F6E;
+	Fri, 25 Oct 2024 06:07:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Yhmfjkv+"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="LXO7b4yG"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90A071BF2B;
-	Fri, 25 Oct 2024 06:04:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6F38101F7;
+	Fri, 25 Oct 2024 06:07:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729836268; cv=none; b=JH59T6NZT28Y2YSs9c/rKA1z1VYsbdcj9SsdamwvKYQuHyYj+BVGYCz4XOvkKqfd++YqQwQjDQG3bQBXDNaVX2sX+Fxgyu37vaoo7iSFFg7r1VJ8wfv16lziQfc+n6xvziEBvnJOVdHafSyi9S+pU5K1lGSBjMt6nZCjIFPmCB0=
+	t=1729836454; cv=none; b=e1kB9XRd2hX3ewFPYE0T73zJa9t/73nOFCdm2Og4aaDVdTG19G7O+ngQRpbilsbzvpss1323M5pbtzFlUCxO7ajdQNGzX6K9ftTnn7tOTChQfz2U/gJiZY7T+sVC8DAlyCcbc44VBOoRQQCORxS0pq+p1gniYb6nldtOs40tgv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729836268; c=relaxed/simple;
-	bh=8o9W8zhApjPR6I1YoCkF8eddbfkiaDsXaRFyIgHuQ5k=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=f5NAmTZkcqQBgsEjOB0sHhy6S+F3Xc2DNwQuL0nGxliqa0ofrfHr4iqYG20t0BQfjCtVkhYJ3YxKrQ3kHBJCHzoZ25EVHXddyLD/z4oQZ5ZgmAj0L69llhgVjEdbqUvILU+5zSxFGEdQsOEL+L2LKIyC+t9TVNbCMP6WELdR/aU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Yhmfjkv+; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49OMn8Cq021958;
-	Fri, 25 Oct 2024 06:04:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=JagbP0hzDjaKwiHKO4fecR
-	mGpmxLAC3Y7SA7f/4dOhM=; b=Yhmfjkv+Zye7ieKE3FS1DgdMJCi9UkMOG1z8DX
-	ulvvBEMixlIcvasFEVUXOrTTA2PaOeq2EyTply23gLNcwO9Tn7oVQVWobQy2XgJy
-	dq2ukxk10Dg44voXFjz6ty2cWkKxfYIAh3k3xVC/pcHIQm/UJ/RICfcVm5Qj10Sg
-	nraCrP7jnhk2PrmwefSUciYH7pSLJvLW9beHo0+2vlQhPhdm7PBh3JjTk0wqzghn
-	syNyj3CLaDhf9kdbZ2SNqnZjEdo4VyHh9xqTgP0d15X1t8Wdw2NBGjK4X2/kPCwd
-	KEC4/X6saxCgIgaxjGQurb++IVruMm/1qEni2D3iIPwBNuag==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42fk52ju2v-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 25 Oct 2024 06:04:03 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49P641fe025391
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 25 Oct 2024 06:04:01 GMT
-Received: from shaojied-gv.ap.qualcomm.com (10.80.80.8) by
- nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+	s=arc-20240116; t=1729836454; c=relaxed/simple;
+	bh=ydHnqzELf7YkaHmqOFyQqCxgYJBXZiisPc/vhUuqwy4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=q3Ctv9sVcO9wCwB73U+teVlqWAtjTwbZlZqpBIckMBNj8v4q/vopEiA25de6bPnMXK1G++ecufB12MShrX9Lu2sv4KhQ/IIqneRxX7HGpeG+R04Pa9W2iOiok55gsY31EvW9Yu0/qhKQwLmrVUwBopqupdy3jmzdSbVuOxHsn+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=LXO7b4yG; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 67985972929711efb88477ffae1fc7a5-20241025
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=uebIGAECSA7kj5SFYs/XoyxqDb5gH9esbAFRRW37R7I=;
+	b=LXO7b4yGORpaMbkaoRNqXylJ2plSG1SJxo7DCKu6lZJBietrhkiTmhuwT5TcMl4FIHcEQtQ8w8P+nDzRNQ3t3tML2c6Z+Ngc+Q3NGzka8d67W06H7ZG54Hw8LkhCsRqNGfEN5Nv1TEaTH6ckm5/xtMzX6fWvosJnEfjWhz7PemU=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.42,REQID:147d1858-9d18-4d5f-a337-05e88ab7ca42,IP:0,U
+	RL:0,TC:0,Content:-20,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
+	N:release,TS:-20
+X-CID-META: VersionHash:b0fcdc3,CLOUDID:1b18d8cc-110e-4f79-849e-58237df93e70,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:1,EDM:-3,IP:nil,U
+	RL:1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
+	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_ULS,TF_CID_SPAM_SNR
+X-UUID: 67985972929711efb88477ffae1fc7a5-20241025
+Received: from mtkmbs09n2.mediatek.inc [(172.21.101.94)] by mailgw01.mediatek.com
+	(envelope-from <chris.lu@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 943782294; Fri, 25 Oct 2024 14:07:24 +0800
+Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
+ mtkmbs13n1.mediatek.inc (172.21.101.193) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 24 Oct 2024 23:03:59 -0700
-From: shaojiedong <quic_shaojied@quicinc.com>
-Date: Fri, 25 Oct 2024 14:03:32 +0800
-Subject: [PATCH v2] um: Remove double zero check
+ 15.2.1118.26; Fri, 25 Oct 2024 14:07:23 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Fri, 25 Oct 2024 14:07:23 +0800
+From: Chris Lu <chris.lu@mediatek.com>
+To: Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg
+	<johan.hedberg@gmail.com>, Luiz Von Dentz <luiz.dentz@gmail.com>
+CC: Sean Wang <sean.wang@mediatek.com>, Aaron Hou <aaron.hou@mediatek.com>,
+	Steve Lee <steve.lee@mediatek.com>, linux-bluetooth
+	<linux-bluetooth@vger.kernel.org>, linux-kernel
+	<linux-kernel@vger.kernel.org>, linux-mediatek
+	<linux-mediatek@lists.infradead.org>, Chris Lu <chris.lu@mediatek.com>
+Subject: [PATCH v2] Bluetooth: btmtk: adjust the position to init iso data anchor
+Date: Fri, 25 Oct 2024 14:07:17 +0800
+Message-ID: <20241025060717.24222-1-chris.lu@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20241025-upstream_branch-v2-1-072009bfa7d0@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIALM0G2cC/3WNQQ6CMBBFr0JmbU3bAFJX3sMQU6ajzIICLTQaw
- t2t7F2+l/z3N4gUmCJciw0CJY48+gz6VAD21r9IsMsMWupSSV2JdYpLIDs8umA99kLW1pA12pS
- Ng7yaAj35fRTvbeae4zKGz3GQ1M/+byUllCgbbSpZ4wVdd5tXRvZ4xnGAdt/3L6VhKIWwAAAA
-X-Change-ID: 20241025-upstream_branch-06a9ea92948d
-To: Richard Weinberger <richard@nod.at>,
-        Anton Ivanov
-	<anton.ivanov@cambridgegreys.com>,
-        Johannes Berg <johannes@sipsolutions.net>
-CC: <linux-um@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>,
-        shaojiedong <quic_shaojied@quicinc.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1729836239; l=1280;
- i=quic_shaojied@quicinc.com; s=20241025; h=from:subject:message-id;
- bh=8o9W8zhApjPR6I1YoCkF8eddbfkiaDsXaRFyIgHuQ5k=;
- b=ADX67u1LQn9dycjyPbyzdDKPmQZySgOseU8sJw+puI/rH2ziXdJTbe686cUA1QWIZGaUXt+pK
- 625iABGGRNKAZzGti+5EBKMgAblH7aZLNSf4v8E0JBHlP3qcLblkcbO
-X-Developer-Key: i=quic_shaojied@quicinc.com; a=ed25519;
- pk=33bgN72hchuZbXKwEWehpvql40CPvTfN8DSdi8JrU6E=
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: FQ1xxVqBiOPJY6chUcQlL2PqojzizjMo
-X-Proofpoint-ORIG-GUID: FQ1xxVqBiOPJY6chUcQlL2PqojzizjMo
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 mlxscore=0
- lowpriorityscore=0 malwarescore=0 impostorscore=0 phishscore=0
- adultscore=0 mlxlogscore=928 priorityscore=1501 spamscore=0 bulkscore=0
- clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410250045
+Content-Type: text/plain
 
-free_pages() performs a parameter null check inside
-previous code also does zero check as following
-    if (stack == 0)
-        goto out;
+MediaTek iso data anchor init should be moved to where MediaTek
+claims iso data interface.
+If there is an unexpected BT usb disconnect during setup flow,
+it will cause a NULL pointer crash issue when releasing iso
+anchor since the anchor wasn't been init yet. Adjust the position
+to do iso data anchor init.
 
-    to_mm->id.stack = stack;
+[   17.137991] pc : usb_kill_anchored_urbs+0x60/0x168
+[   17.137998] lr : usb_kill_anchored_urbs+0x44/0x168
+[   17.137999] sp : ffffffc0890cb5f0
+[   17.138000] x29: ffffffc0890cb5f0 x28: ffffff80bb6c2e80
+[   17.144081] gpio gpiochip0: registered chardev handle for 1 lines
+[   17.148421]  x27: 0000000000000000
+[   17.148422] x26: ffffffd301ff4298 x25: 0000000000000003 x24: 00000000000000f0
+[   17.148424] x23: 0000000000000000 x22: 00000000ffffffff x21: 0000000000000001
+[   17.148425] x20: ffffffffffffffd8 x19: ffffff80c0f25560 x18: 0000000000000000
+[   17.148427] x17: ffffffd33864e408 x16: ffffffd33808f7c8 x15: 0000000000200000
+[   17.232789] x14: e0cd73cf80ffffff x13: 50f2137c0a0338c9 x12: 0000000000000001
+[   17.239912] x11: 0000000080150011 x10: 0000000000000002 x9 : 0000000000000001
+[   17.247035] x8 : 0000000000000000 x7 : 0000000000008080 x6 : 8080000000000000
+[   17.254158] x5 : ffffffd33808ebc0 x4 : fffffffe033dcf20 x3 : 0000000080150011
+[   17.261281] x2 : ffffff8087a91400 x1 : 0000000000000000 x0 : ffffff80c0f25588
+[   17.268404] Call trace:
+[   17.270841]  usb_kill_anchored_urbs+0x60/0x168
+[   17.275274]  btusb_mtk_release_iso_intf+0x2c/0xd8 [btusb (HASH:5afe 6)]
+[   17.284226]  btusb_mtk_disconnect+0x14/0x28 [btusb (HASH:5afe 6)]
+[   17.292652]  btusb_disconnect+0x70/0x140 [btusb (HASH:5afe 6)]
+[   17.300818]  usb_unbind_interface+0xc4/0x240
+[   17.305079]  device_release_driver_internal+0x18c/0x258
+[   17.310296]  device_release_driver+0x1c/0x30
+[   17.314557]  bus_remove_device+0x140/0x160
+[   17.318643]  device_del+0x1c0/0x330
+[   17.322121]  usb_disable_device+0x80/0x180
+[   17.326207]  usb_disconnect+0xec/0x300
+[   17.329948]  hub_quiesce+0x80/0xd0
+[   17.333339]  hub_disconnect+0x44/0x190
+[   17.337078]  usb_unbind_interface+0xc4/0x240
+[   17.341337]  device_release_driver_internal+0x18c/0x258
+[   17.346551]  device_release_driver+0x1c/0x30
+[   17.350810]  usb_driver_release_interface+0x70/0x88
+[   17.355677]  proc_ioctl+0x13c/0x228
+[   17.359157]  proc_ioctl_default+0x50/0x80
+[   17.363155]  usbdev_ioctl+0x830/0xd08
+[   17.366808]  __arm64_sys_ioctl+0x94/0xd0
+[   17.370723]  invoke_syscall+0x6c/0xf8
+[   17.374377]  el0_svc_common+0x84/0xe0
+[   17.378030]  do_el0_svc+0x20/0x30
+[   17.381334]  el0_svc+0x34/0x60
+[   17.384382]  el0t_64_sync_handler+0x88/0xf0
+[   17.388554]  el0t_64_sync+0x180/0x188
+[   17.392208] Code: f9400677 f100a2f4 54fffea0 d503201f (b8350288)
+[   17.398289] ---[ end trace 0000000000000000 ]---
 
-therefore remove double zero check here.
-
-Signed-off-by: shaojiedong <quic_shaojied@quicinc.com>
+Fixes: ceac1cb0259d ("Bluetooth: btusb: mediatek: add ISO data transmission functions")
+Signed-off-by: Chris Lu <chris.lu@mediatek.com>
 ---
-Changes in v2:
-- EDITME: describe what is new in this series revision.
-- EDITME: use bulletpoints and terse descriptions.
-- Link to v1: https://lore.kernel.org/r/20241025-upstream_branch-v1-1-4829506c7cdb@quicinc.com
----
- arch/um/kernel/skas/mmu.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/bluetooth/btmtk.c | 1 -
+ drivers/bluetooth/btusb.c | 1 +
+ 2 files changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/um/kernel/skas/mmu.c b/arch/um/kernel/skas/mmu.c
-index d3fb506d5bd6084046cf5903c629432cd42b5ab3..0eb5a1d3ba70134f75d9b2af18544fca7248c6d6 100644
---- a/arch/um/kernel/skas/mmu.c
-+++ b/arch/um/kernel/skas/mmu.c
-@@ -46,8 +46,7 @@ int init_new_context(struct task_struct *task, struct mm_struct *mm)
- 	return 0;
+diff --git a/drivers/bluetooth/btmtk.c b/drivers/bluetooth/btmtk.c
+index b7fc14aafc74..8a3f7c3fcfec 100644
+--- a/drivers/bluetooth/btmtk.c
++++ b/drivers/bluetooth/btmtk.c
+@@ -1215,7 +1215,6 @@ static int btmtk_usb_isointf_init(struct hci_dev *hdev)
+ 	struct sk_buff *skb;
+ 	int err;
  
-  out_free:
--	if (new_id->stack != 0)
--		free_pages(new_id->stack, ilog2(STUB_DATA_PAGES));
-+	free_pages(new_id->stack, ilog2(STUB_DATA_PAGES));
-  out:
- 	return ret;
+-	init_usb_anchor(&btmtk_data->isopkt_anchor);
+ 	spin_lock_init(&btmtk_data->isorxlock);
+ 
+ 	__set_mtk_intr_interface(hdev);
+diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+index 9970470c9d15..514d593923ad 100644
+--- a/drivers/bluetooth/btusb.c
++++ b/drivers/bluetooth/btusb.c
+@@ -2637,6 +2637,7 @@ static void btusb_mtk_claim_iso_intf(struct btusb_data *data)
+ 	}
+ 
+ 	set_bit(BTMTK_ISOPKT_OVER_INTR, &btmtk_data->flags);
++	init_usb_anchor(&btmtk_data->isopkt_anchor);
  }
-
----
-base-commit: fd21fa4a912ebbf8a6a341c31d8456f61e7d4170
-change-id: 20241025-upstream_branch-06a9ea92948d
-
-Best regards,
+ 
+ static void btusb_mtk_release_iso_intf(struct hci_dev *hdev)
 -- 
-shaojiedong <quic_shaojied@quicinc.com>
+2.18.0
 
 
