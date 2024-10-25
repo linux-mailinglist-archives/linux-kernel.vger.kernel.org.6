@@ -1,232 +1,197 @@
-Return-Path: <linux-kernel+bounces-382158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97AC59B0A2F
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 18:43:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 679AC9B0A33
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 18:44:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1287F285492
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:43:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 904882854CB
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:44:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1117618C034;
-	Fri, 25 Oct 2024 16:43:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96DB01F754F;
+	Fri, 25 Oct 2024 16:44:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="Imyjs+VL";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="MdfgWDS8"
-Received: from fout-a1-smtp.messagingengine.com (fout-a1-smtp.messagingengine.com [103.168.172.144])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hswP2hz3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 421A16F099;
-	Fri, 25 Oct 2024 16:43:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9082170854;
+	Fri, 25 Oct 2024 16:44:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729874619; cv=none; b=VrQCUUFpbhTSWOEBXEnwFvJKKO3ybR8oTGZThzLTbxHWV9L+IMOptklRApS3uFm1n87JWG760RIf2nFvmVyt1QLYQMp6fthw4uMvQIiR+36OwYUegq3Dp03bW+UbLIx7dGNalwTBvFKmJKfZ9kk052yNMloyRswF+pXXYT9WIBA=
+	t=1729874686; cv=none; b=qbTP6NhlxO3gnDwJt1aGFIDrQdCSGdh8zZeAYuwU9fYLSODptOpaRGqqeKSrU2HCOYbGsbKyMwJKQmHJaq+T28Cnv+8DySbVHKQR2NXtpuiITc8k8sVGhGvV3lNK6Dsc0VFYvnT28c37fDEI/5617So5SCRQmNTvfiAncYjp+cM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729874619; c=relaxed/simple;
-	bh=nl8PTZHMs391Grc52/YR+m6vSD9wfaJRFqlM+dR9eDo=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=h4aqI00DWjnxh8u5XIkZb0NFsIKTFfa6VVpxRp3LhQpkwWJAx7jJRXHs2JudjIW15kdXYCKY8dhQYi4JOlkEmEc+4I34SZsr5Eg5cILfgrdvWfFmuIXpysB/IXRowmfkivkIy3kz9JDVpy0A42MFGt375uaRhGa86k4+a0Q5Z+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=Imyjs+VL; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=MdfgWDS8; arc=none smtp.client-ip=103.168.172.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
-Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
-	by mailfout.phl.internal (Postfix) with ESMTP id 3C2E7138044B;
-	Fri, 25 Oct 2024 12:43:35 -0400 (EDT)
-Received: from phl-imap-12 ([10.202.2.86])
-  by phl-compute-09.internal (MEProxy); Fri, 25 Oct 2024 12:43:35 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1729874615;
-	 x=1729961015; bh=wNOTdNAdu9C8WH20srhIE/t2GxUFmkNCF+jRglNEPIA=; b=
-	Imyjs+VLhOXHZLLTIBHx2xPWtFNQwFcF3Rwy5OzfJEMhOxLUlgtZygta6TIXeI8j
-	y+BerGlNvCU63WYgztjN15bBxbJPNJcHdCXhk2k0CQn/XQaKquKUFPOuPv8SQ5ZL
-	Dn8hpO7RHIp9iQr35VLDwCnuAwHUEf4jgFYjiOsmXsVNb5W+TRQdkMMEKRdfjo+G
-	f8XgGuaCw1+C2nnyR2iDNO5dScXv+B5c4k7ETa/mw2OFRxCTBWmqD1JLcpjk9vLe
-	nMirCld39wSzRMIoPw+te0IMNt0r+o/f1vG9uJjUWq49Q1gBNcHdKSIOH6ZUAxnZ
-	zETk7BhccLTQfwKu1/oQkA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1729874615; x=
-	1729961015; bh=wNOTdNAdu9C8WH20srhIE/t2GxUFmkNCF+jRglNEPIA=; b=M
-	dfgWDS8/MKR9Ka6tjNNLHJ99a2bZeBzGZnyjTPy5bQFFVT0GIz5CxUCkFbKtU0AI
-	e5wPiQBJab3jgK3pq7icrQrzxXEyJOTQfwJlwMGOQ4R8ydiNEylVM3vreHjLk0oS
-	TG3zPTT4JFKQ7S1KBbiTnmyTYHbE1iNiqw1mY34c5JVG5FhLyPDWyLHaVqeGGG9d
-	czvOMJf3BDY3UJNBpeSNJKDhF3ghbrL24vjjUCP5abXWStZiZLpZVwGJFGEISUNf
-	uFAmqrJ514OzSc5ruhnc+arOKw5ggdbFTbMjkPN6oehlX6GZJ1ggFnqAcAUIqViR
-	cJakqRqkMfnoBKfy3nXNw==
-X-ME-Sender: <xms:tsobZ0WqwX_LGuhSE4u248Q6kqNkIGVjkyL8jmzwC1OpgwaxMTD9pw>
-    <xme:tsobZ4mZAXpS5OA_qnY1oMJ_MtgUMWmzrCDmCPBj-fCDMKB2usJrrEVVTTW_8hmPg
-    mwX4OyeSfHLfyBw5zo>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdejvddguddtgecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthhqredtredt
-    jeenucfhrhhomhepfdflihgrgihunhcujggrnhhgfdcuoehjihgrgihunhdrhigrnhhgse
-    hflhihghhorghtrdgtohhmqeenucggtffrrghtthgvrhhnpeffkeevtedtueevfefhkefh
-    udfggeetjeffjeduueehueejgfeludevkedutdeuheenucffohhmrghinhepkhgvrhhnvg
-    hlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhho
-    mhepjhhirgiguhhnrdihrghnghesfhhlhihgohgrthdrtghomhdpnhgspghrtghpthhtoh
-    epuddtpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehtshgsohhgvghnugesrghl
-    phhhrgdrfhhrrghnkhgvnhdruggvpdhrtghpthhtohepghhrvghgohhrhidrtghlvghmvg
-    hnthessghoohhtlhhinhdrtghomhdprhgtphhtthhopehthhgvohdrlhgvsghruhhnsegs
-    ohhothhlihhnrdgtohhmpdhrtghpthhtohepthhhohhmrghsrdhpvghtrgiiiihonhhise
-    gsohhothhlihhnrdgtohhmpdhrtghpthhtoheprghrihhkrghlohesghhmrghilhdrtgho
-    mhdprhgtphhtthhopehtghhlgieslhhinhhuthhrohhnihigrdguvgdprhgtphhtthhope
-    htrgiffhhikhdrsggrhihouhhksehmohgsihhlvgihvgdrtghomhdprhgtphhtthhopehv
-    lhgrughimhhirhdrkhhonhgurhgrthhivghvsehmohgsihhlvgihvgdrtghomhdprhgtph
-    htthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:tsobZ4bNS7JVxw0oQT2NIYzZww5DOr9ka-BqpPbrb1fBV1iGfE5OIw>
-    <xmx:tsobZzVSWPXHDyBW4jC7MSTjs7Gd1K5mUulA6gToAtAiZqqBFe-K9Q>
-    <xmx:tsobZ-lilssynAJ_lTNWNWwEKrnaORdQmT9wGvbmIcgDbf9i3_4LMw>
-    <xmx:tsobZ4cPmImqseoQYerfHTOkoqwa4Mwdbd2xxriVMpX_R3XcEVitIg>
-    <xmx:t8obZzhqKjlkqQaX53GBuqvMecNYjtyBEoO835ZMmmpx1McLvcawsV0->
-Feedback-ID: ifd894703:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 4690F1C20066; Fri, 25 Oct 2024 12:43:34 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1729874686; c=relaxed/simple;
+	bh=dm33zfR58Grs1+44I7WoAOjuTC5WjP5JD5nKra0ImTg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g28SEwQeiZuT5lDEPbSWQ2GM6W7yMcUHduuCX/bPPbEvtq0DanEjOd+Sg3wfc55c1eRRNekzjMNF/mYtgtotKphBAheOctwN5Kwemhf60em9UM9R8emKY/tLe4dB2f7XuDfmP6IIYIoY7zj+jfq+dcLb/I0xLhxTMD0s58CMdk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hswP2hz3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4FE18C4CEC3;
+	Fri, 25 Oct 2024 16:44:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729874685;
+	bh=dm33zfR58Grs1+44I7WoAOjuTC5WjP5JD5nKra0ImTg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hswP2hz3gcvFBqPW2ufUXWTcuBYuRsf0Rufswq+PTDT5102qv6Lf5pV/fGycTf2kV
+	 7+CE6GtPcMzlKKvg5aln5gtp4IFryAaxDf4Y9T9/zfa9Iz8Wf86WmtPHkhj+PrkXWo
+	 yRhLEjU1ahlRgd4D8cBDk6mXHnVbrv6lvuD9wCQ0p6bs3S7oMXrCSCVNVeCEc99ZMZ
+	 9mYIQ+FaNRwkQEfFEu6YIUq5M/1umKginTtqd46n9XLpJIjg5WeLK7//HBhUh08Sdt
+	 hX2ne6DcsZfhpd9OmA5f4xDXI/P9egVNlFbs8yxlEPLJvBGHjMQK25hkASimts2i+F
+	 4GQ2+LFjUAEHw==
+Date: Fri, 25 Oct 2024 17:44:39 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Antoine Tenart <atenart@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>, linux-crypto@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev, upstream@airoha.com
+Subject: Re: [PATCH v4 2/3] dt-bindings: crypto: Add Inside Secure SafeXcel
+ EIP-93 crypto engine
+Message-ID: <20241025-marmalade-constant-1c733ef5f3e8@spud>
+References: <20241025094734.1614-1-ansuelsmth@gmail.com>
+ <20241025094734.1614-2-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Fri, 25 Oct 2024 17:43:14 +0100
-From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
-To: "Gregory CLEMENT" <gregory.clement@bootlin.com>,
- "Aleksandar Rikalo" <arikalo@gmail.com>,
- "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
- "Thomas Gleixner" <tglx@linutronix.de>
-Cc: "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
- linux-kernel@vger.kernel.org,
- "Vladimir Kondratiev" <vladimir.kondratiev@mobileye.com>,
- =?UTF-8?Q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>,
- "Tawfik Bayouk" <tawfik.bayouk@mobileye.com>,
- "Thomas Petazzoni" <thomas.petazzoni@bootlin.com>
-Message-Id: <70b28614-e40e-4022-818b-80711c05c7a4@app.fastmail.com>
-In-Reply-To: <20241025-no-cpu-cluster-support-v1-1-5e81fcf9f25c@bootlin.com>
-References: <20241025-no-cpu-cluster-support-v1-1-5e81fcf9f25c@bootlin.com>
-Subject: Re: [PATCH] irqchip: mips-gic: Handle case with cluster without CPU cores
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="QPZZZgLU1JrXIOAQ"
+Content-Disposition: inline
+In-Reply-To: <20241025094734.1614-2-ansuelsmth@gmail.com>
+
+
+--QPZZZgLU1JrXIOAQ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-
-
-=E5=9C=A82024=E5=B9=B410=E6=9C=8825=E6=97=A5=E5=8D=81=E6=9C=88 =E4=B8=8B=
-=E5=8D=884:46=EF=BC=8CGregory CLEMENT=E5=86=99=E9=81=93=EF=BC=9A
-> It is possible to have no CPU cores in a cluster; in such cases, it is
-> not possible to access the GIC, and any indirect access leads to an
-> exception. This patch dynamically skips the indirect access in such
-> situations.
-
-Hi Gregory,
-
-I'm a little bit confused here, as I have never seen such wired configur=
-ation.
-
-Is second cluster IOCU only?
-
-Thanks
-- Jiaxun
-
->
-> Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+On Fri, Oct 25, 2024 at 11:47:23AM +0200, Christian Marangi wrote:
+> Add bindings for the Inside Secure SafeXcel EIP-93 crypto engine.
+>=20
+> The IP is present on Airoha SoC and on various Mediatek devices and
+> other SoC under different names like mtk-eip93 or PKTE.
+>=20
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
 > ---
-> This patch is a follow-up of the series "MIPS: Support I6500
-> multi-cluster configuration"
-> https://lore.kernel.org/lkml/20241019071037.145314-1-arikalo@gmail.com=
-/#t
-> ---
->  drivers/irqchip/irq-mips-gic.c | 20 ++++++++++++++++----
->  1 file changed, 16 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/irqchip/irq-mips-gic.c b/drivers/irqchip/irq-mips=
--gic.c
-> index f42f69bbd6fb1..bca8053864b2c 100644
-> --- a/drivers/irqchip/irq-mips-gic.c
-> +++ b/drivers/irqchip/irq-mips-gic.c
-> @@ -141,7 +141,8 @@ static bool gic_irq_lock_cluster(struct irq_data *=
-d)
->  	cl =3D cpu_cluster(&cpu_data[cpu]);
->  	if (cl =3D=3D cpu_cluster(&current_cpu_data))
->  		return false;
-> -
-> +	if (mips_cps_numcores(cl) =3D=3D 0)
-> +		return false;
->  	mips_cm_lock_other(cl, 0, 0, CM_GCR_Cx_OTHER_BLOCK_GLOBAL);
->  	return true;
->  }
-> @@ -507,6 +508,9 @@ static void gic_mask_local_irq_all_vpes(struct irq=
-_data *d)
->  	struct gic_all_vpes_chip_data *cd;
->  	int intr, cpu;
+> Changes v4:
+> - Out of RFC
+
+I left comments on v3, that I do not see addressed here.
+
+> Changes v3:
+> - Add SoC compatible with generic one
+> Changes v2:
+> - Change to better compatible
+> - Add description for EIP93 models
 >=20
-> +	if (!mips_cps_multicluster_cpus())
-> +		return;
+>  .../crypto/inside-secure,safexcel-eip93.yaml  | 63 +++++++++++++++++++
+>  1 file changed, 63 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/crypto/inside-secur=
+e,safexcel-eip93.yaml
+>=20
+> diff --git a/Documentation/devicetree/bindings/crypto/inside-secure,safex=
+cel-eip93.yaml b/Documentation/devicetree/bindings/crypto/inside-secure,saf=
+excel-eip93.yaml
+> new file mode 100644
+> index 000000000000..13341710ee31
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/crypto/inside-secure,safexcel-eip=
+93.yaml
+> @@ -0,0 +1,63 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/crypto/inside-secure,safexcel-eip93.y=
+aml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
->  	intr =3D GIC_HWIRQ_TO_LOCAL(d->hwirq);
->  	cd =3D irq_data_get_irq_chip_data(d);
->  	cd->mask =3D false;
-> @@ -520,6 +524,9 @@ static void gic_unmask_local_irq_all_vpes(struct=20
-> irq_data *d)
->  	struct gic_all_vpes_chip_data *cd;
->  	int intr, cpu;
->=20
-> +	if (!mips_cps_multicluster_cpus())
-> +		return;
+> +title: Inside Secure SafeXcel EIP-93 cryptographic engine
 > +
->  	intr =3D GIC_HWIRQ_TO_LOCAL(d->hwirq);
->  	cd =3D irq_data_get_irq_chip_data(d);
->  	cd->mask =3D true;
-> @@ -687,8 +694,10 @@ static int gic_irq_domain_map(struct irq_domain=20
-> *d, unsigned int virq,
->  	if (!gic_local_irq_is_routable(intr))
->  		return -EPERM;
->=20
-> -	for_each_online_cpu_gic(cpu, &gic_lock)
-> -		write_gic_vo_map(mips_gic_vx_map_reg(intr), map);
-> +	if (mips_cps_multicluster_cpus()) {
-> +		for_each_online_cpu_gic(cpu, &gic_lock)
-> +			write_gic_vo_map(mips_gic_vx_map_reg(intr), map);
-> +	}
->=20
->  	return 0;
->  }
-> @@ -982,7 +991,7 @@ static int __init gic_of_init(struct device_node *=
-node,
->  				change_gic_trig(i, GIC_TRIG_LEVEL);
->  				write_gic_rmask(i);
->  			}
-> -		} else {
-> +		} else if (mips_cps_numcores(cl) !=3D 0) {
->  			mips_cm_lock_other(cl, 0, 0, CM_GCR_Cx_OTHER_BLOCK_GLOBAL);
->  			for (i =3D 0; i < gic_shared_intrs; i++) {
->  				change_gic_redir_pol(i, GIC_POL_ACTIVE_HIGH);
-> @@ -990,6 +999,9 @@ static int __init gic_of_init(struct device_node *=
-node,
->  				write_gic_redir_rmask(i);
->  			}
->  			mips_cm_unlock_other();
+> +maintainers:
+> +  - Christian Marangi <ansuelsmth@gmail.com>
 > +
-> +		} else {
-> +			pr_warn("No CPU cores on the cluster %d skip it\n", cl);
->  		}
->  	}
->=20
->
-> ---
-> base-commit: 10e44701486e25d630d714ace2b0c6d9a178b331
-> change-id: 20241025-no-cpu-cluster-support-1745e8abd7d1
->
-> Best regards,
+> +description: |
+> +  The Inside Secure SafeXcel EIP-93 is a cryptographic engine IP block
+> +  integrated in varios devices with very different and generic name from
+> +  PKTE to simply vendor+EIP93. The real IP under the hood is actually
+> +  developed by Inside Secure and given to license to vendors.
+> +
+> +  The IP block is sold with different model based on what feature are
+> +  needed and are identified with the final letter. Each letter correspond
+> +  to a specific set of feature and multiple letter reflect the sum of the
+> +  feature set.
+> +
+> +  EIP-93 models:
+> +    - EIP-93i: (basic) DES/Triple DES, AES, PRNG, IPsec ESP, SRTP, SHA1
+> +    - EIP-93ie: i + SHA224/256, AES-192/256
+> +    - EIP-93is: i + SSL/DTLS/DTLS, MD5, ARC4
+> +    - EIP-93ies: i + e + s
+> +    - EIP-93iw: i + AES-XCB-MAC, AES-CCM
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - const: airoha,crypto-eip93
+> +      - enum:
+> +          - inside-secure,safexcel-eip93i
+> +          - inside-secure,safexcel-eip93ie
+> +          - inside-secure,safexcel-eip93is
+> +          - inside-secure,safexcel-eip93ies
+> +          - inside-secure,safexcel-eip93iw
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +
+> +    crypto@1e004000 {
+> +      compatible =3D "airoha,crypto-eip93", "inside-secure,safexcel-eip9=
+3ies";
+> +      reg =3D <0x1fb70000 0x1000>;
+> +
+> +      interrupts =3D <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>;
+> +    };
 > --=20
-> Gregory CLEMENT <gregory.clement@bootlin.com>
+> 2.45.2
+>=20
 
---=20
-- Jiaxun
+--QPZZZgLU1JrXIOAQ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZxvK9wAKCRB4tDGHoIJi
+0mEJAQCgD/LVRzqypI/lSQC01t+ffVDixoJVQ2D32YNL/OTG7gD+NbRCXvRr+A28
+6r21JafKUgARYLDPKd0eohYPLM10Qg4=
+=TYuD
+-----END PGP SIGNATURE-----
+
+--QPZZZgLU1JrXIOAQ--
 
