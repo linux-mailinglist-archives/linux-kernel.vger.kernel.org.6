@@ -1,227 +1,132 @@
-Return-Path: <linux-kernel+bounces-381111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E88A9AFA81
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 08:59:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 885499AFA88
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 09:00:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 726A81C21380
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 06:59:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DEB42838F6
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 07:00:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CF221B392C;
-	Fri, 25 Oct 2024 06:59:29 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC13D1B0F24;
+	Fri, 25 Oct 2024 07:00:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K15Fe2EG"
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D46618D621
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 06:59:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DB5818C021;
+	Fri, 25 Oct 2024 07:00:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729839569; cv=none; b=SBa3nvrWB8SuYSncbwHaj7yNl7I+r/swSSEFAnLh4tJ039CWxGDaSXglv8NQU9cQLTC0OiGJKhDke76ewkIupwuZ35xpIm8bTxZ+BI2x6lpIu4ws+tlUTlpsRh4YmasEmZcfFv/bV0aZBB3yGj9xP5elTMn0n4yQQ39LoZTqTdE=
+	t=1729839628; cv=none; b=H4TI0u7Qy4WGg/dAiVTOK3jsJdK2jVmhBCZJUN6SGnRA4ZjfxmgLRqqinXldesvBTBfGaTOWPW9+IFmVLebOUg/0v+bIYItHIGR0MtlZRP+1YLSN/nkRtnrNhWaM3fd6DrHedGa5K5udQpEnyvpP/8CsUBMjuoTHh+o5eAdCheI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729839569; c=relaxed/simple;
-	bh=OKNFA53y304TaBpboHCjUhl5/b+sxzwLf5LK+pbVhdg=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=oTaAoEvaVhCAcCXOxxoRc+uAb4Y7DIKl4Yd7sOL6VWHBsyUwgTikr66UgkVVxynLzOExob0rlvfsfbXjbWBEsN2kT69SWzpZovMSy3T4yKwOev5FCn19oXUDUcfnSOFzdzav36Djiwm2nHN4cnr6EZ4XcqJjjZ69Fg4rY2UVLbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a3c70e58bfso16850485ab.3
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 23:59:26 -0700 (PDT)
+	s=arc-20240116; t=1729839628; c=relaxed/simple;
+	bh=tRqzSPxl//A8Xi9j/Uj7B60dNsxsbQ6BPI6dSwlP0sA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BEBhg2F2rXcDoxvtso9bSr9CzSiFZadrMxgw8mBgY8yG31NwU1IzA/yv7d16b1+/vRxzWyrDVMkXf7T9P6PNAx8uM7YECI1i0sjeUzi491YDvFxGY/QPpJKilPXuEvBZA9LChP7NRYs97wexxHIE6MhT+yM6DxEb06wgPZQZB/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K15Fe2EG; arc=none smtp.client-ip=209.85.219.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e29747b7532so209091276.3;
+        Fri, 25 Oct 2024 00:00:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729839625; x=1730444425; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tRqzSPxl//A8Xi9j/Uj7B60dNsxsbQ6BPI6dSwlP0sA=;
+        b=K15Fe2EGhowtOe1FPIw0Le51Vo8wd/RC5rqLMNVIxeMYMdkMFEIpkD4Dctjx1IerdG
+         dH0/nDhfXKnvZ/UD54OoverBpOURtdSF+upScWNVj9rBUzQXj5HNXAH5d+5fcnE8fjpQ
+         TWvXepiI6sgYUY0Gqkntc3dfpAI0UhjHnKTYP9tVXR0AdavXJLD/WtOevVZEi/iUD3xh
+         adQ1N1jom1W+k1CkdH+JbyeZEl4ax2FPKuZ4KkqQjMppIjP/5DaYYvZbrdNQ8+fV9WKC
+         cPNlPxIwhY8Bd64SJl25BLcvVaE+DvP4P0Mb/P30J7evZ8gVnFfU3OAg+56dBxwlnIKl
+         QMPQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729839565; x=1730444365;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=eoDNAi6C7qxqug0k80GtULK1opCXJvfRY6gUq2yax/o=;
-        b=ST2YybOpHHeKoB7mO4wKG88gqBXurZUMwpiHxMt/SQa1sjPjO2zytdiClD1i8v+Inw
-         rKJE0ezymu+FPeAZu0A5VuisHGDdrhOIHVDiH7q0RxdYAQWuE71g1c8/QnwungiYFYka
-         jPhlKKKBg7y2rYFPs+hNsL3vXMKdQRyjM4G6PxRsrQ/yl+GzK0zlWLgqtnzHSlGfmAJs
-         tm++ICJzQIZbnwmXMCv6xnC7TLFjYLYJA7m8RJFeCXfPAoYCi62u8kTg+L5QniEUqKxj
-         bg+b63cQP0yhigmQG7Z/KP0HsJ04SvlDuEQ8C3D+AB36TlnwjpcLIqWwHw7aKn5p9gy1
-         d5DQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUk1EY5ZqSpKvg1klxySawBVSnTDiEEP7LPGlTUErn0eNhycFDhem2zA6KMq7V62HZqldXJbv7Pzl+9Tkc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw94lWejFW1GpwanL0Q81jrmEyREQWDN8E3yYn7lLD/fWBZdPiF
-	zS9j/f3sqZHZOYJ54Ed6gGIeoNTFRtlP6PLYurg5WsMQZuQkzEb33lFvK87ca1T0MhOtVSq+yYO
-	PKQoGoiaOp1bwzafM5MIuCmbZmTBvwKKyCdrnqnlF/fwthSGDuU1ZU8o=
-X-Google-Smtp-Source: AGHT+IFlos7jlNaIGNjckhz5aGAH+ORi6wJ8NRamYJBVchPshOZ0YfP9fYPsJdRrqMWss/DWpstYVnXUDLrR3P5uFA6BNHgC+cY8
+        d=1e100.net; s=20230601; t=1729839625; x=1730444425;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tRqzSPxl//A8Xi9j/Uj7B60dNsxsbQ6BPI6dSwlP0sA=;
+        b=sv5g5sqZeQWkgV+AgWlrEElxqjKLSigfuApi1kii+bnIvxFZEWpZirZp9NE2Zg2yWH
+         WHl+VrI0WkKGHkUQ2UgKBDOWbkziRT1+ftEdOXtooFXiiwivcEVcugCs94iKkeoEf0uF
+         eFziUpgW1FQ6oqpvCuSaqUyJDVelxRSCLLXRpdONQKSgfQe6oAObFyX1gbdb3R0ueat4
+         RvdAT3FfnuMEw8Nj1GdaHHV0rm8+WgHpGLW/23cB9bBLZGdp6k6NR89OjzSeFTlJ7hm8
+         8CjZy0Um0fk8JCS2zLn1pfd1LKt2oWkHmUv9SQy5lVUJZfG8N8pPA5oub+5nuMBzlgnV
+         KKaA==
+X-Forwarded-Encrypted: i=1; AJvYcCVIQ0XS2QzGHXPN2S5lAGMKsRHuUUlbfwLhGa6DskX6LF52nol58rzEP7hc1yoUn30Apzyuow5YhA14@vger.kernel.org, AJvYcCW5qd0tjZpJl03CGH2zDecJgGghGA8ceK/CUV+OqkG6wDEYy98ttxD81M6+1PJhxsLcgO5qAiLHkP2yMpn8@vger.kernel.org
+X-Gm-Message-State: AOJu0Yybez80Vwdmw5HqLBkbK1bL+ktxQOdvzZptvTrqbgDJCec3emK1
+	Hg3yOEuGcIxR7EfWpERNoGbkKT4ixN9C03kKsOg1kT2A9uhEH/OvP2QhFIp3TYDN72wN1gm4dR8
+	xIPncxojbE8ABeshQTIHnNXAvzJQ=
+X-Google-Smtp-Source: AGHT+IEkT3x7HvFzL0vQRTHYvRqAckw95IbfIaqDhHXoKMBPeU3ICzKT6ovE0XBQjDT/IeSSpjZOXJxIka2JdKt61Y0=
+X-Received: by 2002:a05:690c:6b0b:b0:65e:684a:2d95 with SMTP id
+ 00721157ae682-6e9cab9c2e8mr1388927b3.7.1729839625052; Fri, 25 Oct 2024
+ 00:00:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1607:b0:3a0:8f99:5e00 with SMTP id
- e9e14a558f8ab-3a4d592cb2emr100325875ab.4.1729839565560; Thu, 24 Oct 2024
- 23:59:25 -0700 (PDT)
-Date: Thu, 24 Oct 2024 23:59:25 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <671b41cd.050a0220.381c35.0010.GAE@google.com>
-Subject: [syzbot] [wireless?] WARNING in on
-From: syzbot <syzbot+524a32a528b99d65b7fb@syzkaller.appspotmail.com>
-To: johannes@sipsolutions.net, linux-kernel@vger.kernel.org, 
-	linux-wireless@vger.kernel.org, netdev@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+References: <20241020194028.2272371-1-l.rubusch@gmail.com> <20241020194028.2272371-13-l.rubusch@gmail.com>
+ <v4gqnsyhqjccdac3kgmo7y2aunigqquqc3f7n7wgt5hiv3rnip@jfmoq3is4rjh>
+ <CAFXKEHZOPioES4guqjco+BE7i=Eqe2DdHiUxAksBCZm7nx1Rog@mail.gmail.com> <cdc7032b-4d09-40dc-86a7-16d244517d11@kernel.org>
+In-Reply-To: <cdc7032b-4d09-40dc-86a7-16d244517d11@kernel.org>
+From: Lothar Rubusch <l.rubusch@gmail.com>
+Date: Fri, 25 Oct 2024 08:59:49 +0200
+Message-ID: <CAFXKEHZhGEJhOxqX04fAR6qs-vee4+-DWC4_pNGaDCzEumMsiw@mail.gmail.com>
+Subject: Re: [PATCHv2 12/23] ARM: socfpga: dts: add a10 clock binding yaml
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	dinguyen@kernel.org, marex@denx.de, s.trumtrar@pengutronix.de, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Thu, Oct 24, 2024 at 8:24=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.or=
+g> wrote:
+>
+> On 24/10/2024 08:10, Lothar Rubusch wrote:
+> > On Mon, Oct 21, 2024 at 9:05=E2=80=AFAM Krzysztof Kozlowski <krzk@kerne=
+l.org> wrote:
+> >>
+[...]
+> >>> diff --git a/Documentation/devicetree/bindings/clock/altr,socfpga-a10=
+.yaml b/Documentation/devicetree/bindings/clock/altr,socfpga-a10.yaml
+> >>> new file mode 100644
+> >>> index 000000000..795826f53
+> >>> --- /dev/null
+> >>> +++ b/Documentation/devicetree/bindings/clock/altr,socfpga-a10.yaml
+> >>> @@ -0,0 +1,107 @@
+> >>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> >>> +%YAML 1.2
+[...]
+> What corresponding txt file? You are adding new binding. Are you saying
+> you duplicated bindings instead of doing conversion?
+>
+> git log -p -- Documentation/devicetree | grep -i convert
 
-syzbot found the following issue on:
+Please, try the following:
+$ find ./Documentation/devicetree/bindings -name socfpga-\*.txt
+./Documentation/devicetree/bindings/net/socfpga-dwmac.txt
+./Documentation/devicetree/bindings/edac/socfpga-eccmgr.txt
+./Documentation/devicetree/bindings/arm/altera/socfpga-sdram-edac.txt
+./Documentation/devicetree/bindings/arm/altera/socfpga-system.txt
 
-HEAD commit:    db87114dcf13 Merge tag 'x86_urgent_for_v6.12_rc4' of git:/..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=160ce0a7980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=32b00a87124c18b7
-dashboard link: https://syzkaller.appspot.com/bug?extid=524a32a528b99d65b7fb
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+Currently, bindings described in these .txt files are not covered by
+bindings check. Is it supposed to be like that, or is this just
+something "historical"?
 
-Unfortunately, I don't have any reproducer for this issue yet.
+I would appreciate to take the opportunity to learn more about
+bindings and bindings check, and may try to convert the files to
+.yaml. Is this ok or do you have plans with those files?
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-db87114d.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/2a1e6237c364/vmlinux-db87114d.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/6fc6ee2adb43/bzImage-db87114d.xz
+If noone speaks up, I'll put my name under the maintainers in the
+.yaml. Let's see what happens (I hope it's ok, due to the high demand
+in cyclone5 these days...).
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+524a32a528b99d65b7fb@syzkaller.appspotmail.com
-
-Oct 21 06:58:24 syzkaller daemon.err dhcpcd[5056]: libudev: received NULL device
-Oct 21 06:58:24 syzkaller daemon.err dhcpcd[5056]: libudev: received NULL device
-Oct 21 06:58:24 syzkaller daemon.err dhcpcd[5056]: libudev: received NULOct 21 06:58:24 [   69.594319][    C3] ------------[ cut here ]------------
-syzkaller daemon[   69.595934][    C3] WARNING: CPU: 3 PID: 1196 at net/mac80211/tx.c:5038 __ieee80211_beacon_update_cntdwn net/mac80211/tx.c:5038 [inline]
-syzkaller daemon[   69.595934][    C3] WARNING: CPU: 3 PID: 1196 at net/mac80211/tx.c:5038 __ieee80211_beacon_update_cntdwn net/mac80211/tx.c:5033 [inline]
-syzkaller daemon[   69.595934][    C3] WARNING: CPU: 3 PID: 1196 at net/mac80211/tx.c:5038 __ieee80211_beacon_get+0x14ac/0x16b0 net/mac80211/tx.c:5467
-.err dhcpcd[5056[   69.598652][    C3] Modules linked in:
-]: libudev: rece[   69.604315][    C3] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-ived NULL device[   69.607401][    C3] Workqueue: events_unbound toggle_allocation_gate
-
-Oct 21 06:58:2[   69.611283][    C3] Code: 00 89 df 44 89 e6 e8 63 18 f3 f6 44 38 e3 72 a1 e8 39 17 f3 f6 48 89 ef e8 61 db 49 f7 31 ed e9 9c fe ff ff e8 25 17 f3 f6 90 <0f> 0b 90 e9 86 f6 ff ff 48 89 c6 48 c7 c7 60 66 2d 90 48 89 04 24
-4 syzkaller daem[   69.611297][    C3] RSP: 0018:ffffc90000908b88 EFLAGS: 00010246
-on.err dhcpcd[50[   69.611322][    C3] RBP: ffffc90000908c38 R08: 0000000000000001 R09: 0000000000000000
-56]: libudev: re[   69.611329][    C3] R10: 0000000000000000 R11: 0000000000000000 R12: ffff888027b6f400
-ceived NULL devi[   69.630354][    C3] FS:  0000000000000000(0000) GS:ffff88806a900000(0000) knlGS:0000000000000000
-ce
-Oct 21 06:58[   69.633091][    C3] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-:24 syzkaller da[   69.637300][    C3] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-emon.err dhcpcd[[   69.639870][    C3] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-5056]: libudev: [   69.642360][    C3] Call Trace:
-received NULL de[   69.642367][    C3]  <IRQ>
-vice
-Oct 21 06:[   69.642372][    C3]  ? __warn+0xea/0x3d0 kernel/panic.c:746
-58:24 syzkaller [   69.642406][    C3]  ? __report_bug lib/bug.c:199 [inline]
-58:24 syzkaller [   69.642406][    C3]  ? report_bug+0x3c0/0x580 lib/bug.c:219
-daemon.err dhcpc[   69.649312][    C3]  ? handle_bug+0x54/0xa0 arch/x86/kernel/traps.c:285
-d[5056]: libudev[   69.650853][    C3]  ? exc_invalid_op+0x17/0x50 arch/x86/kernel/traps.c:309
-: received NULL [   69.650866][    C3]  ? asm_exc_invalid_op+0x1a/0x20 arch/x86/include/asm/idtentry.h:621
-device
-Oct 21 0[   69.650882][    C3]  ? __ieee80211_beacon_update_cntdwn net/mac80211/tx.c:5038 [inline]
-Oct 21 0[   69.650882][    C3]  ? __ieee80211_beacon_get+0xb32/0x16b0 net/mac80211/tx.c:5467
-6:58:24 syzkalle[   69.656059][    C3]  ? __ieee80211_beacon_update_cntdwn net/mac80211/tx.c:5038 [inline]
-6:58:24 syzkalle[   69.656059][    C3]  ? __ieee80211_beacon_update_cntdwn net/mac80211/tx.c:5033 [inline]
-6:58:24 syzkalle[   69.656059][    C3]  ? __ieee80211_beacon_get+0x14ab/0x16b0 net/mac80211/tx.c:5467
-r daemon.err dhc[   69.659451][    C3]  ? __ieee80211_beacon_update_cntdwn net/mac80211/tx.c:5038 [inline]
-r daemon.err dhc[   69.659451][    C3]  ? __ieee80211_beacon_update_cntdwn net/mac80211/tx.c:5033 [inline]
-r daemon.err dhc[   69.659451][    C3]  ? __ieee80211_beacon_get+0x14ab/0x16b0 net/mac80211/tx.c:5467
-pcd[5056]: libud[   69.659470][    C3]  ieee80211_beacon_get_tim+0xa7/0x280 net/mac80211/tx.c:5594
-ev: received NUL[   69.659484][    C3]  ? __pfx_ieee80211_beacon_get_tim+0x10/0x10 net/mac80211/tx.c:5585
-L device
-Oct 21[   69.665141][    C3]  ieee80211_beacon_get include/net/mac80211.h:5607 [inline]
-Oct 21[   69.665141][    C3]  mac80211_hwsim_beacon_tx+0x4ea/0xa00 drivers/net/wireless/virtual/mac80211_hwsim.c:2311
- 06:58:24 syzkal[   69.667026][    C3]  ? rcu_is_watching_curr_cpu include/linux/context_tracking.h:128 [inline]
- 06:58:24 syzkal[   69.667026][    C3]  ? rcu_is_watching+0x12/0xc0 kernel/rcu/tree.c:737
-ler daemon.err d[   69.667042][    C3]  ? trace_lock_acquire+0x14a/0x1d0 include/trace/events/lock.h:24
-hcpcd[5056]: lib[   69.667058][    C3]  __iterate_interfaces+0x2d0/0x5d0 net/mac80211/util.c:774
-udev: received N[   69.672136][    C3]  ? __pfx_mac80211_hwsim_beacon_tx+0x10/0x10 drivers/net/wireless/virtual/mac80211_hwsim.c:2254
-ULL device
-Oct [   69.674142][    C3]  ? __pfx_mac80211_hwsim_beacon_tx+0x10/0x10 drivers/net/wireless/virtual/mac80211_hwsim.c:2254
-21 06:58:24 syzk[   69.679503][    C3]  mac80211_hwsim_beacon+0x105/0x200 drivers/net/wireless/virtual/mac80211_hwsim.c:2345
-aller daemon.err[   69.679519][    C3]  __run_hrtimer kernel/time/hrtimer.c:1691 [inline]
-aller daemon.err[   69.679519][    C3]  __hrtimer_run_queues+0x20a/0xae0 kernel/time/hrtimer.c:1755
- dhcpcd[5056]: l[   69.679534][    C3]  ? __pfx___hrtimer_run_queues+0x10/0x10 kernel/time/hrtimer.c:650
-ibudev: received[   69.686553][    C3]  hrtimer_run_softirq+0x17d/0x350 kernel/time/hrtimer.c:1772
- NULL device
-Oc[   69.688256][    C3]  handle_softirqs+0x213/0x8f0 kernel/softirq.c:554
-t 21 06:58:24 sy[   69.691323][    C3]  __do_softirq kernel/softirq.c:588 [inline]
-t 21 06:58:24 sy[   69.691323][    C3]  invoke_softirq kernel/softirq.c:428 [inline]
-t 21 06:58:24 sy[   69.691323][    C3]  __irq_exit_rcu kernel/softirq.c:637 [inline]
-t 21 06:58:24 sy[   69.691323][    C3]  irq_exit_rcu+0xbb/0x120 kernel/softirq.c:649
-zkaller daemon.e[   69.691336][    C3]  instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1049 [inline]
-zkaller daemon.e[   69.691336][    C3]  sysvec_apic_timer_interrupt+0xa4/0xc0 arch/x86/kernel/apic/apic.c:1049
-rr dhcpcd[5056]:[   69.691361][    C3]  asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
- libudev: receiv[   69.698332][    C3] RIP: 0010:__sanitizer_cov_trace_pc+0x41/0x70 kernel/kcov.c:217
-ed NULL device
-Oct 21 06:58:24 [   69.709576][    C3] RDX: ffff888027810000 RSI: ffffffff81816396 RDI: 0000000000000005
-syzkaller daemon[   69.712049][    C3] RBP: 0000000000000003 R08: 0000000000000005 R09: 0000000000000000
-.err dhcpcd[5056[   69.714525][    C3] R10: 0000000000000001 R11: 0000000000000000 R12: ffffed100d4c8d49
-]: libudev: rece[   69.719057][    C3]  ? csd_lock_wait kernel/smp.c:340 [inline]
-]: libudev: rece[   69.719057][    C3]  ? smp_call_function_many_cond+0x47c/0x1300 kernel/smp.c:884
-Oct 21 06:58:24 [   69.721031][    C3]  ? rep_nop arch/x86/include/asm/vdso/processor.h:13 [inline]
-Oct 21 06:58:24 [   69.721031][    C3]  ? cpu_relax arch/x86/include/asm/vdso/processor.h:18 [inline]
-Oct 21 06:58:24 [   69.721031][    C3]  ? csd_lock_wait kernel/smp.c:340 [inline]
-Oct 21 06:58:24 [   69.721031][    C3]  ? smp_call_function_many_cond+0x456/0x1300 kernel/smp.c:884
-syzkaller daemon[   69.723074][    C3]  rep_nop arch/x86/include/asm/vdso/processor.h:13 [inline]
-syzkaller daemon[   69.723074][    C3]  cpu_relax arch/x86/include/asm/vdso/processor.h:18 [inline]
-syzkaller daemon[   69.723074][    C3]  csd_lock_wait kernel/smp.c:340 [inline]
-syzkaller daemon[   69.723074][    C3]  smp_call_function_many_cond+0x456/0x1300 kernel/smp.c:884
-.err dhcpcd[5056[   69.723089][    C3]  ? __pfx_do_sync_core+0x10/0x10 arch/x86/include/asm/pgtable_64.h:67
-]: libudev: rece[   69.728248][    C3]  on_each_cpu_cond_mask+0x40/0x90 kernel/smp.c:1051
-ived NULL device[   69.731304][    C3]  ? arch_static_branch arch/x86/include/asm/jump_label.h:27 [inline]
-ived NULL device[   69.731304][    C3]  ? kfence_alloc include/linux/kfence.h:121 [inline]
-ived NULL device[   69.731304][    C3]  ? slab_alloc_node mm/slub.c:4118 [inline]
-ived NULL device[   69.731304][    C3]  ? __do_kmalloc_node mm/slub.c:4263 [inline]
-ived NULL device[   69.731304][    C3]  ? __kmalloc_node_track_caller_noprof+0xe5/0x430 mm/slub.c:4283
-
-Oct 21 06:58:2[   69.733405][    C3]  ? __pfx_text_poke_bp_batch+0x10/0x10 arch/x86/include/asm/atomic.h:23
-4 syzkaller daem[   69.735201][    C3]  ? __jump_label_patch+0x1db/0x400 arch/x86/kernel/jump_label.c:79
-on.err dhcpcd[50[   69.736952][    C3]  ? arch_jump_label_transform_queue+0xc0/0x120 arch/x86/kernel/jump_label.c:140
-56]: libudev: re[   69.739139][    C3]  text_poke_flush arch/x86/kernel/alternative.c:2486 [inline]
-56]: libudev: re[   69.739139][    C3]  text_poke_flush arch/x86/kernel/alternative.c:2483 [inline]
-56]: libudev: re[   69.739139][    C3]  text_poke_finish+0x30/0x40 arch/x86/kernel/alternative.c:2493
-ceived NULL devi[   69.739156][    C3]  arch_jump_label_transform_apply+0x1c/0x30 arch/x86/kernel/jump_label.c:146
-ce
-Oct 21 06:58[   69.739171][    C3]  jump_label_update+0x1d7/0x400 kernel/jump_label.c:920
-:24 syzkaller da[   69.744441][    C3]  static_key_disable_cpuslocked+0x158/0x1c0 kernel/jump_label.c:240
-emon.err dhcpcd[[   69.747683][    C3]  toggle_allocation_gate mm/kfence/core.c:854 [inline]
-emon.err dhcpcd[[   69.747683][    C3]  toggle_allocation_gate+0x147/0x260 mm/kfence/core.c:841
-5056]: libudev: [   69.749452][    C3]  ? __pfx_toggle_allocation_gate+0x10/0x10 mm/kfence/core.c:825
-received NULL de[   69.751402][    C3]  ? trace_lock_acquire+0x14a/0x1d0 include/trace/events/lock.h:24
-vice
-Oct 21 06:[   69.751419][    C3]  ? process_one_work+0x921/0x1ba0 kernel/workqueue.c:3205
-58:24 syzkaller [   69.757416][    C3]  process_one_work+0x9c5/0x1ba0 kernel/workqueue.c:3229
-daemon.err dhcpc[   69.759072][    C3]  ? __pfx_nsim_dev_trap_report_work+0x10/0x10 drivers/net/netdevsim/dev.c:1250
-d[5056]: libudev[   69.762489][    C3]  ? assign_work+0x1a0/0x250 kernel/workqueue.c:1200
-: received NULL [   69.764121][    C3]  process_scheduled_works kernel/workqueue.c:3310 [inline]
-: received NULL [   69.764121][    C3]  worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
-device
-Oct 21 0[   69.765757][    C3]  ? __kthread_parkme+0x148/0x220 kernel/kthread.c:293
-6:58:24 syzkalle[   69.765783][    C3]  kthread+0x2c1/0x3a0 kernel/kthread.c:389
-r daemon.err dhc[   69.770228][    C3]  ? __raw_spin_unlock_irq include/linux/spinlock_api_smp.h:159 [inline]
-r daemon.err dhc[   69.770228][    C3]  ? _raw_spin_unlock_irq+0x23/0x50 kernel/locking/spinlock.c:202
-pcd[5056]: libud[   69.773274][    C3]  ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
-ev: received NUL[   69.773299][    C3]  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-L device
-Oct 21[   69.777769][    C3]  </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Best regards,
+Lothar
 
