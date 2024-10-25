@@ -1,117 +1,106 @@
-Return-Path: <linux-kernel+bounces-381302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D95C9AFD65
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 10:58:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 204F99AFD68
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 10:59:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19F271F23EDC
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 08:58:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8AC0DB23453
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 08:59:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63C291D4350;
-	Fri, 25 Oct 2024 08:58:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2D2E1D4352;
+	Fri, 25 Oct 2024 08:58:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="VfbUIXQ1"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LxbWFJ8e"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 948691D363F;
-	Fri, 25 Oct 2024 08:58:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57A6E1B0F03
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 08:58:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729846712; cv=none; b=mhVUGdOJ8snZlDkUQqyS5wospRzs0vH92sTXrjfmoWfPb+uOTx3xLRARL6gjisP1ZnMAMNB49Cd73Gtc7vHYaYGLDm6FFaHMp0RwlAE3OuKs9ob3sASOaxGgn2zD2LtTQcZIAtMgLXxWRk37G9YZmpBDEyuRmZAKRBGLMr8maxI=
+	t=1729846737; cv=none; b=gmiVe/1rvEJCjYW9Q6+gm4InzuGMc1RlRrX/GH04n+6TUSjpExttTE02o64GzA9xEAuMUc9k6/GtzCNL7n54uy0EaM9T0tWUhOkaG8LenSaFCC66jih3/69hkYJveFJdajJJ6K2mR9mL5iKbxTe6tyG6H35hTPIbAOeo3QCZxC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729846712; c=relaxed/simple;
-	bh=+uq/niLfEtYf/c6Xlkg9qgvnUOeY+Bos5cq4UWrEjjU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bTMxMQwUPX5q1e+PQTkwh2Cas4xPA7fh1ca5ohC+OLX6gdovFlyZ2uRyf6xWzafW3Xcy96SMq+jI248/FzU2eBTWmHUmBTyzu41E01bO1vmsZX4oYt8Xth4cWg/YMorQm4KS55ql+y02ySL8cjUqrXkMJdQnXqd1agLl3R16owQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=VfbUIXQ1; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=fM1f2YxrgQ2sEgdNsgOBt8r5ECNfwt7LRPGzmtJRH9U=; b=VfbUIXQ13vdAbkhGHISFVV7/6/
-	6xcxH5uE1V4/NNyqD1rm1AA0zKhmTceBIrcHgEkmBVPH+Uq7JqKGMCu4q+avhIP2fDg+5nZPI3RrQ
-	bqIPoKqOW5QhP5G4AH+/6JzhQ4LLlwjr93m0Fwi9upbNunph5ZAA4YWZn53KXsAEVLTldlRUFw94n
-	7EoH37g9NB4bod4Sa48l67V0LRohtd2g7U5om3/Bbw9FQIw69pbFwOnnyvrwBJ0v0qGmr7lZ+VG1F
-	mkcDhSW/s7VwgOeNIdfoKtRz7ieJnk/DWKB91nu86H6biJTsNZrFTwBigDHk8WQiwWeORnyoheue5
-	ueCM+3XA==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1t4G9A-00000008sII-3S1k;
-	Fri, 25 Oct 2024 08:58:17 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 0CE20300ABE; Fri, 25 Oct 2024 10:58:16 +0200 (CEST)
-Date: Fri, 25 Oct 2024 10:58:15 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: "Christoph Lameter (Ampere)" <cl@linux.com>
-Cc: tglx@linutronix.de, axboe@kernel.dk, linux-kernel@vger.kernel.org,
-	mingo@redhat.com, dvhart@infradead.org, dave@stgolabs.net,
-	andrealmeid@igalia.com, Andrew Morton <akpm@linux-foundation.org>,
-	urezki@gmail.com, hch@infradead.org, lstoakes@gmail.com,
-	Arnd Bergmann <arnd@arndb.de>, linux-api@vger.kernel.org,
-	linux-mm@kvack.org, linux-arch@vger.kernel.org,
-	malteskarupke@web.de
-Subject: Re: [PATCH v1 11/14] futex: Implement FUTEX2_NUMA
-Message-ID: <20241025085815.GG14555@noisy.programming.kicks-ass.net>
-References: <20230721102237.268073801@infradead.org>
- <20230721105744.434742902@infradead.org>
- <9dc04e4c-2adc-5084-4ea1-b200d82be29f@linux.com>
+	s=arc-20240116; t=1729846737; c=relaxed/simple;
+	bh=R2dEa6EmWh/Yg7c71jGQjYKMjCVjTYxrdQ5Vom/u8tg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mb86zEJ7yiBcUGRNIU4BcVVQF0ZoJZcJ6zF5Jg9Umqb/WnpMgq7fTxq8uzASlR7QVFnRgeu2UEWgzG/JxsutKEBueh5Ey1+dehNo93Sn6lsP4N7nQIb+lZ9tRfp/q7QEAtapIWfPfB6Pk3chkWEwTH7iMQZXgAQ6JFLHpXZgR6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LxbWFJ8e; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a9a2209bd7fso230206466b.2
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 01:58:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729846732; x=1730451532; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xT0AQUPQMRTs/7ousRoEZpcKGvcFZZKiJbtlxnilbyw=;
+        b=LxbWFJ8ei5TqfuRjViMKWVonk2eQhzgauvqm4mauBZZMnUMsrju5UCzBIT1JPfyxBG
+         IhiuKVxMBK1TNhCthG5WuM9qzBr0Xd11jhOlnrlYP3UNXr0PTWjwbKGKwArdl8QJOoWG
+         qtb1Ss7bEEG1tC3JV6UnlS9Cqby7VYfao6XrEGBBlBLE6ww05B0JCv9MabYPmllqAa9k
+         ZYWRahpbWC06xdWMfCxHfvQ9K9PHSgtjNh1dCM13UbIWWHNCw0dJuUc+cAdqtkD6BttI
+         rzFl0Y4RhjSlUG9Za3XqoTI3eP23OjfSerNB1hOOSOwaEEADVQVb1B2KB4JKg8I6/CIB
+         UIBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729846732; x=1730451532;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xT0AQUPQMRTs/7ousRoEZpcKGvcFZZKiJbtlxnilbyw=;
+        b=JsWcHB/QTW6s0tvaTjzSOSXu6MgTfMCv6ezkx4Shb5ZlJP3RhSTrQ9WVCk1tZaULqq
+         ANxprfBL6pLARuBR639UIKSBJd1ry8JMncYlYYzLZIl9vb7m5g7LuIbVcheD0DQF4KV+
+         c3ZcsX3Bz+IlSGCoYRDkEGs1vQg2Mbc146oBEEAgSPUhCvO/lkx2X8/v8kAw2V6DBVpH
+         Qvrcj7qRtkSksz5la2VK9z5hfHAjJZnkOTvS6Cno+wIMsrA4qRqZweE85E/7ZUj8YZiH
+         zE9Xlu8chhXfQ14msWr6ricRD0MLMbJxVT37UYJXXMwW2nz4ztjUT92joqLbeurd25MM
+         JgKA==
+X-Gm-Message-State: AOJu0YwZ4oC1CaH+s7zjKemTt9BuByCf7ooE4FeSSWeB4jqGJaP2oOPJ
+	+1c9RPVvIzAunLTmRajoo/zSk7caj7FY6A2y57AT+eBXAqVR00jPbsPxlDXwisg=
+X-Google-Smtp-Source: AGHT+IGpqTSkLkpSD3jFqth0AGuMpmBccHsHr83MteUP12eHoMJXdLBCXVBYezFj8rK3hldmFuOKQQ==
+X-Received: by 2002:a17:907:3e0a:b0:a9a:2523:b4ce with SMTP id a640c23a62f3a-a9ad2710931mr405963666b.6.1729846732569;
+        Fri, 25 Oct 2024 01:58:52 -0700 (PDT)
+Received: from eugen-station.. ([82.76.24.202])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b3a086fa1sm44847166b.212.2024.10.25.01.58.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Oct 2024 01:58:52 -0700 (PDT)
+From: Eugen Hristev <eugen.hristev@linaro.org>
+To: akpm@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org,
+	Eugen Hristev <eugen.hristev@linaro.org>
+Subject: [PATCH] .mailmap: update e-mail address for Eugen Hristev
+Date: Fri, 25 Oct 2024 11:58:48 +0300
+Message-ID: <20241025085848.483149-1-eugen.hristev@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9dc04e4c-2adc-5084-4ea1-b200d82be29f@linux.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jun 12, 2024 at 10:23:00AM -0700, Christoph Lameter (Ampere) wrote:
+Update e-mail address.
 
-> > When FUTEX2_NUMA is not set, the node is simply an extention of the
-> > hash, such that traditional futexes are still interleaved over the
-> > nodes.
-> 
-> Could we follow NUMA policies like with other metadata allocations during
-> systen call processing? 
+Signed-off-by: Eugen Hristev <eugen.hristev@linaro.org>
+---
+ .mailmap | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-I had a quick look at this, and since the mempolicy stuff is per vma,
-and we don't have the vma, this is going to be terribly expensive --
-mmap_lock and all that.
+diff --git a/.mailmap b/.mailmap
+index 442da8603cef..bccf924f59bb 100644
+--- a/.mailmap
++++ b/.mailmap
+@@ -199,7 +199,8 @@ Elliot Berman <quic_eberman@quicinc.com> <eberman@codeaurora.org>
+ Enric Balletbo i Serra <eballetbo@kernel.org> <enric.balletbo@collabora.com>
+ Enric Balletbo i Serra <eballetbo@kernel.org> <eballetbo@iseebcn.com>
+ Erik Kaneda <erik.kaneda@intel.com> <erik.schmauss@intel.com>
+-Eugen Hristev <eugen.hristev@collabora.com> <eugen.hristev@microchip.com>
++Eugen Hristev <eugen.hristev@linaro.org> <eugen.hristev@microchip.com>
++Eugen Hristev <eugen.hristev@linaro.org> <eugen.hristev@collabora.com>
+ Evgeniy Polyakov <johnpol@2ka.mipt.ru>
+ Ezequiel Garcia <ezequiel@vanguardiasur.com.ar> <ezequiel@collabora.com>
+ Faith Ekstrand <faith.ekstrand@collabora.com> <jason@jlekstrand.net>
+-- 
+2.43.0
 
-Once lockless vma lookups land (soonish, perhaps), this could be
-reconsidered. But for now there just isn't a sane way to do this.
-
-Using memory policies is probably okay -- but still risky, since you get
-the extra failure case where if you change the mempolicy between WAIT
-and WAKE things will not match and sadness happens, but that *SHOULD*
-hopefully not happen a lot. Mempolicies are typically fairly static.
-
-> If there is no NUMA task policy then the futex
-> should be placed on the local NUMA node.
-
-> That way the placement of the futex can be controlled by the tasks memory
-> policy. We could skip the FUTEX2_NUMA option.
-
-That doesn't work. If we don't have storage for the node across
-WAIT/WAKE, then the node must be deterministic per futex_hash().
-Otherwise wake has no chance of finding the entry.
-
-Consider our random unbound task with no policies etc. (default state)
-doing FUTEX_WAIT and going to sleep while on node-0, it's sibling
-thread, that happens to run on node-1 issues FUTEX_WAKE.
-
-If they disagree on determining 'node', then they will not find match
-and the wakeup doesn't happen and userspace gets really sad.
-
-
-The current scheme where we determine node based on hash bits is fully
-deterministic and WAIT/WAKE will agree on which node-hash to use. The
-interleave is no worse than the global hash today -- OTOH it also isn't
-better.
 
