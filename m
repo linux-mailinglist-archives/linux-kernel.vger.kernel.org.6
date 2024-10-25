@@ -1,147 +1,250 @@
-Return-Path: <linux-kernel+bounces-382421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E99A59B0D65
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 20:33:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F41069B0D58
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 20:31:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C9F1CB256AD
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 18:33:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69236289ED4
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 18:31:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F210206505;
-	Fri, 25 Oct 2024 18:33:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 607E120BB58;
+	Fri, 25 Oct 2024 18:31:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b="Vsk/NPxE"
-Received: from cornsilk.maple.relay.mailchannels.net (cornsilk.maple.relay.mailchannels.net [23.83.214.40])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="L4JBP6u5"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEBB61534E9;
-	Fri, 25 Oct 2024 18:33:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.214.40
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729881211; cv=pass; b=ljLMA9Gh5kBKPrs7IwiyTDswaeyplawVzo3aeeyQGP/9nBzMMPSDQDXZOvTEum7IgVN4qyl84oOKPDY+IJWufmXyi2XRUwat456nisabDnH7DvHBY6S5OalcLlUZuFOyE/U0icj3dMqIFFZY1yMA7VTsOssqwH4gebDzjp0uDaA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729881211; c=relaxed/simple;
-	bh=dwVze2IoN4lNX6/VE+wDa6/jdnBd4wpGu126gCkhqsA=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72AD21DFD8
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 18:31:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729881078; cv=none; b=MYxT4hOuSFRQTovFrt2F1OnCMgG2yByfMl3HreCIGHWT04hz6C74egO2qb64Sb69y/A9lDucmHERAwonHnXzq/RyNzahiyAF45sORwcs0QsXCT9FU1e/ElIEwq1ZrFwXOasgd5UiO9B/g9mb/2IOvyXuZbE494K3pErb7ZKcV44=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729881078; c=relaxed/simple;
+	bh=TVGg5nfJZWmGZG8YgIdZNS4AeglqAlSNrt1zZwvBpiI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fS/wR5jUXSEu3U2IpVXRlJH5XhW+w3CgJ+Msh+UcP1Dsc29kMChRwhU2yZVfoEgD/Sql/tk9Op7TBmUvVJoHAzjnu6ZLSDRKiSSjcNfRmSW/AlLxYfWBf1lRNlN9pl7jBqcwyuAGUaPhjYpx9wcSPf37m5gsgw0DwPC8KuDMu6g=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net; spf=pass smtp.mailfrom=stgolabs.net; dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b=Vsk/NPxE; arc=pass smtp.client-ip=23.83.214.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=stgolabs.net
-X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
-Received: from relay.mailchannels.net (localhost [127.0.0.1])
-	by relay.mailchannels.net (Postfix) with ESMTP id 0AFF32C1B84;
-	Fri, 25 Oct 2024 18:33:21 +0000 (UTC)
-Received: from pdx1-sub0-mail-a292.dreamhost.com (trex-13.trex.outbound.svc.cluster.local [100.102.223.228])
-	(Authenticated sender: dreamhost)
-	by relay.mailchannels.net (Postfix) with ESMTPA id 6B0102C37D4;
-	Fri, 25 Oct 2024 18:33:20 +0000 (UTC)
-ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1729881200; a=rsa-sha256;
-	cv=none;
-	b=j5P5Z6nwn7aUtQdqVV7veKxoLLw7vBdLodEdHWQdp1LHoWolNUAlXqqrctcTwvZhHFHXiw
-	TkgquVIsGBgDuKxUuiLvGKpl2XUuhUYnWi0YTTvFzMLOHucI/V/l4rCWtJbcha+BqRz6Z2
-	t0/uikYaCtc/CJFjIe8gi+8a6q5oJRpHVWbiWXnfQH+5njbFy9ajA0mPbgveqpc9+mJ5EY
-	v5Y3mxrChNoiplMMLt6uher97meKD+p5/ikXlchwz+yNezS/ciJT3UlmHr4neCMidepgNd
-	KY7dJotH7L+XHldYRchMPS9Snlq1WLwIc4iECQjS8zQV4lh+FKHFgZQccDF61g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mailchannels.net;
-	s=arc-2022; t=1729881200;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references:dkim-signature;
-	bh=CT4I2WNs8+lv4enGsXMLmXV5yqvMUhh47eXWE7/RKS4=;
-	b=6DCSBlT2DFrC8tksm9jKSdTODKtWHI374gECEVPYRRl+2wAQvL+SxplT4unaTdgZ1TXOBk
-	7R55ocCqK//NFlFWJECZAirZt3peZo0pB0gb2dB2TeubXw2oipuy+WFPZ9roOx6Qa1WyGm
-	ygvd7VsZlRaQwWh11lRjm5IksaEPjGMYbXqyR2nPRIoJHcr2OKkOdNLXX+N7NfA0Q/VK99
-	qOQ/8AdUNKKG2Mw7AGxkXygIJJ3yOfoBhfGSS2fM8y4hwVhcmQkX978x02DIO9raR4cUW/
-	8TY4zmTo7D+4LFUvqWX6KyB56Db81DUptNqKKfS+pB2wVqYa8S7aWDHIl5jM1Q==
-ARC-Authentication-Results: i=1;
-	rspamd-cdbbc7585-hgvf8;
-	auth=pass smtp.auth=dreamhost smtp.mailfrom=dave@stgolabs.net
-X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
-X-MC-Relay: Neutral
-X-MailChannels-SenderId: dreamhost|x-authsender|dave@stgolabs.net
-X-MailChannels-Auth-Id: dreamhost
-X-Industry-Reign: 7245a16350dd8199_1729881200793_2943900534
-X-MC-Loop-Signature: 1729881200793:2559233038
-X-MC-Ingress-Time: 1729881200792
-Received: from pdx1-sub0-mail-a292.dreamhost.com (pop.dreamhost.com
- [64.90.62.162])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
-	by 100.102.223.228 (trex/7.0.2);
-	Fri, 25 Oct 2024 18:33:20 +0000
-Received: from offworld (ip72-199-50-187.sd.sd.cox.net [72.199.50.187])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dave@stgolabs.net)
-	by pdx1-sub0-mail-a292.dreamhost.com (Postfix) with ESMTPSA id 4XZry72Y0xz9p;
-	Fri, 25 Oct 2024 11:33:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=stgolabs.net;
-	s=dreamhost; t=1729881200;
-	bh=CT4I2WNs8+lv4enGsXMLmXV5yqvMUhh47eXWE7/RKS4=;
-	h=Date:From:To:Cc:Subject:Content-Type;
-	b=Vsk/NPxEuhRtgVp5TlB3DwcWvnMqm9mythIDgEulakohCN5GOnlLxeEj2sBHVMjBf
-	 yG9Bu7FazgHrrluyfbxugoCb9rr3UvgdX4LlVPfGjXWTWHmNm6RefJ9mqv8bpA8tDc
-	 PqLrL7jRRiGN7Uqqujeyoq50jPKnOnq8TQLgodb1+fMrIEyojUzChIc9q4Eh2qC60Y
-	 Fh4a7snuTbazI0oXvixGNjBhKecifSz4wqaixS6K2FueL3Ycx6SZh4ISUbip8YsMzC
-	 vrJBA2HPdby+MLKD0onAqWL/uJRi9eMAIG/mT089ImWGi2y/gXVBdSjtOYwdjToBX8
-	 RWmnThY43TYow==
-Date: Fri, 25 Oct 2024 11:30:26 -0700
-From: Davidlohr Bueso <dave@stgolabs.net>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: tglx@linutronix.de, linux-kernel@vger.kernel.org, mingo@redhat.com, 
-	dvhart@infradead.org, andrealmeid@igalia.com, 
-	Andrew Morton <akpm@linux-foundation.org>, urezki@gmail.com, hch@infradead.org, lstoakes@gmail.com, 
-	Arnd Bergmann <arnd@arndb.de>, linux-api@vger.kernel.org, linux-mm@kvack.org, 
-	linux-arch@vger.kernel.org, malteskarupke@web.de, cl@linux.com, llong@redhat.com
-Subject: Re: [PATCH 2/6] futex: Implement FUTEX2_NUMA
-Message-ID: <i4ljhfndmqrdg5zevd4gf2chmzesfieflxvfj2io2qfhfj4vb7@nicvpjmcdtyu>
-Mail-Followup-To: Peter Zijlstra <peterz@infradead.org>, 
-	tglx@linutronix.de, linux-kernel@vger.kernel.org, mingo@redhat.com, 
-	dvhart@infradead.org, andrealmeid@igalia.com, 
-	Andrew Morton <akpm@linux-foundation.org>, urezki@gmail.com, hch@infradead.org, lstoakes@gmail.com, 
-	Arnd Bergmann <arnd@arndb.de>, linux-api@vger.kernel.org, linux-mm@kvack.org, 
-	linux-arch@vger.kernel.org, malteskarupke@web.de, cl@linux.com, llong@redhat.com
-References: <20241025090347.244183920@infradead.org>
- <20241025093944.485691531@infradead.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=dTjnCZzdK6TKrVWFR0aLMDdVmIzQvuwYnCfXfctf+yzOBHxxn/e1KJQHNWcE6iMasHrXAsiMCvmTBVLRbLPzGX2DfA2MAuUyIhiLxmkh83uBJkoixqvfAad7DdlwZIIuiFIAWyktO0U1hcoOuaqOWTb2muQda8b3LUtTZ9+V3NI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=L4JBP6u5; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49PEeSoi032573;
+	Fri, 25 Oct 2024 18:30:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=bCYg3WI36eTA+yA5LQzfw/1BaodCD9
+	Je+3uqP+670Ns=; b=L4JBP6u5Q6DXkamufc4+3XtZ1LIvxy7KA02HHWnMgLigt/
+	/1qWBo6o+qQAV5pkWUKkTjnMNLq5BwQR9zJJTw0HvD4lc37cPSqK0DaSymmYGIzf
+	Qmaxfl/bly8lNmJ2jumL1zxgEcKZ1nSRiAAjgrhy6jtJmxUylLwAmlgtNLB1uEYj
+	9VdlGAflHyXYQpGdwjD3SSEQBbW9DtBsKEF6JAMVVVZN7BZuluITJVG9GmA8KPu7
+	rzEy+lYmeYDpEgLsSfj/KrNZ15BrYOLKGm5MB6ySYTy2bB3k5CPlDBQOgaROibbv
+	BiR89l1QcwwsJF0/qaDMDUFkBR4sZClC0mpsKhkA==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42g246v9ex-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Oct 2024 18:30:42 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49PIUfrt004272;
+	Fri, 25 Oct 2024 18:30:41 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42g246v9et-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Oct 2024 18:30:41 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49PHpv67008754;
+	Fri, 25 Oct 2024 18:30:40 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 42emkay4pw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Oct 2024 18:30:40 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49PIUcJ918743588
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 25 Oct 2024 18:30:38 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 909152004B;
+	Fri, 25 Oct 2024 18:30:38 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2DD0220040;
+	Fri, 25 Oct 2024 18:30:38 +0000 (GMT)
+Received: from localhost (unknown [9.43.62.211])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 25 Oct 2024 18:30:37 +0000 (GMT)
+Date: Sat, 26 Oct 2024 00:00:37 +0530
+From: "Nysal Jan K.A." <nysal@linux.ibm.com>
+To: Michael Ellerman <mpe@ellerman.id.au>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: linuxppc-dev@lists.ozlabs.org, Nathan Chancellor <nathan@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Bill Wendling <morbo@google.com>,
+        Justin Stitt <justinstitt@google.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Kent Overstreet <kent.overstreet@linux.dev>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Roman Gushchin <roman.gushchin@linux.dev>,
+        linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: [PATCH] sched/membarrier: Fix redundant load of membarrier_state
+Message-ID: <nszn2c226bf6xslp7r5axmiov4fuhmwqqyzap7b2lysuch7fnl@uhgtmsaxttf3>
+References: <20241007053936.833392-1-nysal@linux.ibm.com>
+ <87frolja8d.fsf@mail.lhotse>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241025093944.485691531@infradead.org>
-User-Agent: NeoMutt/20240425
+In-Reply-To: <87frolja8d.fsf@mail.lhotse>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: gQkqUtvd0_hSqnkwwp8fiBBQGQjBbqR7
+X-Proofpoint-GUID: SMcGweBVNA9QTr_rEIeG2qZ-BNAshwUZ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
+ priorityscore=1501 malwarescore=0 suspectscore=0 adultscore=0
+ mlxlogscore=999 clxscore=1011 impostorscore=0 mlxscore=0 phishscore=0
+ bulkscore=0 lowpriorityscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2409260000 definitions=main-2410250140
 
-On Fri, 25 Oct 2024, Peter Zijlstra wrote:\n
+On Fri, Oct 25, 2024 at 11:29:38AM +1100, Michael Ellerman wrote:
+> [To += Mathieu]
+> 
+> "Nysal Jan K.A." <nysal@linux.ibm.com> writes:
+> > From: "Nysal Jan K.A" <nysal@linux.ibm.com>
+> >
+> > On architectures where ARCH_HAS_SYNC_CORE_BEFORE_USERMODE
+> > is not selected, sync_core_before_usermode() is a no-op.
+> > In membarrier_mm_sync_core_before_usermode() the compiler does not
+> > eliminate redundant branches and the load of mm->membarrier_state
+> > for this case as the atomic_read() cannot be optimized away.
+> 
+> I was wondering if this was caused by powerpc's arch_atomic_read() which
+> uses asm volatile.
+> 
 
-> static int __init futex_init(void)
-> {
->-	unsigned int futex_shift;
->-	unsigned long i;
->+	unsigned int order, n;
->+	unsigned long size, i;
+Yes, that's my understanding as well
+
+> But replacing arch_atomic_read() with READ_ONCE() makes no difference,
+> presumably because the compiler still can't see that the READ_ONCE() is
+> unnecessary (which is kind of by design).
+> 
+
+In READ_ONCE() we cast to a volatile pointer, I think the compiler cannot eliminate
+the code in that case.
+
+> > Here's a snippet of the code generated for finish_task_switch() on powerpc:
+> >
+> > 1b786c:   ld      r26,2624(r30)   # mm = rq->prev_mm;
+> > .......
+> > 1b78c8:   cmpdi   cr7,r26,0
+> > 1b78cc:   beq     cr7,1b78e4 <finish_task_switch+0xd0>
+> > 1b78d0:   ld      r9,2312(r13)    # current
+> > 1b78d4:   ld      r9,1888(r9)     # current->mm
+> > 1b78d8:   cmpd    cr7,r26,r9
+> > 1b78dc:   beq     cr7,1b7a70 <finish_task_switch+0x25c>
+> > 1b78e0:   hwsync
+> > 1b78e4:   cmplwi  cr7,r27,128
+> > .......
+> > 1b7a70:   lwz     r9,176(r26)     # atomic_read(&mm->membarrier_state)
+> > 1b7a74:   b       1b78e0 <finish_task_switch+0xcc>
+> >
+> > This was found while analyzing "perf c2c" reports on kernels prior
+> > to commit c1753fd02a00 ("mm: move mm_count into its own cache line")
+> > where mm_count was false sharing with membarrier_state.
+> 
+> So it was causing a noticable performance blip? But isn't anymore?
+> 
+
+It was noticeable in that it showed up amongst the top entries in perf c2c reports.
+There was similar false sharing with other fields that share the cache line with
+mm_count, so the gains were minimal with just this patch. c1753fd02a00 addresses
+these cases too.
+
+> > There is a minor improvement in the size of finish_task_switch().
+> > The following are results from bloat-o-meter:
+> >
+> > GCC 7.5.0:
+> > ----------
+> > add/remove: 0/0 grow/shrink: 0/1 up/down: 0/-32 (-32)
+> > Function                                     old     new   delta
+> > finish_task_switch                           884     852     -32
+> >
+> > GCC 12.2.1:
+> > -----------
+> > add/remove: 0/0 grow/shrink: 0/1 up/down: 0/-32 (-32)
+> > Function                                     old     new   delta
+> > finish_task_switch.isra                      852     820     -32
+> 
+> GCC 12 is a couple of years old, I assume GCC 14 behaves similarly?
+> 
+
+I cross compiled for aarch64 with gcc 14.1.1 and see similar results:
+
+add/remove: 0/2 grow/shrink: 1/1 up/down: 4/-60 (-56)
+Function                                     old     new   delta
+get_nohz_timer_target                        352     356      +4
+e843419@0b02_0000d7e7_408                      8       -      -8
+e843419@01bb_000021d2_868                      8       -      -8
+finish_task_switch.isra                      592     548     -44
+Total: Before=31013792, After=31013736, chg -0.00%
+
+> > LLVM 17.0.6:
+> > ------------
+> > add/remove: 0/0 grow/shrink: 0/2 up/down: 0/-36 (-36)
+> > Function                                     old     new   delta
+> > rt_mutex_schedule                            120     104     -16
+> > finish_task_switch                           792     772     -20
+> >
+> > Signed-off-by: Nysal Jan K.A <nysal@linux.ibm.com>
+> > ---
+> >  include/linux/sched/mm.h | 2 ++
+> >  1 file changed, 2 insertions(+)
+> >
+> > diff --git a/include/linux/sched/mm.h b/include/linux/sched/mm.h
+> > index 07bb8d4181d7..042e60ab853a 100644
+> > --- a/include/linux/sched/mm.h
+> > +++ b/include/linux/sched/mm.h
+> > @@ -540,6 +540,8 @@ enum {
+> >  
+> >  static inline void membarrier_mm_sync_core_before_usermode(struct mm_struct *mm)
+> >  {
+> > +	if (!IS_ENABLED(CONFIG_ARCH_HAS_SYNC_CORE_BEFORE_USERMODE))
+> > +		return;
+> >  	if (current->mm != mm)
+> >  		return;
+> >  	if (likely(!(atomic_read(&mm->membarrier_state) &
+> 
+> The other option would be to have a completely separate stub, eg:
+> 
+>   #ifdef CONFIG_ARCH_HAS_SYNC_CORE_BEFORE_USERMODE
+>   static inline void membarrier_mm_sync_core_before_usermode(struct mm_struct *mm)
+>   {
+>           if (current->mm != mm)
+>                   return;
+>           if (likely(!(atomic_read(&mm->membarrier_state) &
+>                        MEMBARRIER_STATE_PRIVATE_EXPEDITED_SYNC_CORE)))
+>                   return;
+>           sync_core_before_usermode();
+>   }
+>   #else
+>   static inline void membarrier_mm_sync_core_before_usermode(struct mm_struct *mm) { }
+>   #endif
+> 
+> Not sure what folks prefer.
+> 
+> In either case I think it's probably worth a short comment explaining
+> why it's worth the trouble (ie. that the atomic_read() prevents the
+> compiler from doing DCE).
 >
-> #ifdef CONFIG_BASE_SMALL
-> 	futex_hashsize = 16;
-> #else
->-	futex_hashsize = roundup_pow_of_two(256 * num_possible_cpus());
->+	futex_hashsize = 256 * num_possible_cpus();
->+	futex_hashsize /= num_possible_nodes();
->+	futex_hashsize = roundup_pow_of_two(futex_hashsize);
-> #endif
->+	futex_hashshift = ilog2(futex_hashsize);
->+	size = sizeof(struct futex_hash_bucket) * futex_hashsize;
->+	order = get_order(size);
->+
->+	for_each_node(n) {
 
-Probably want to skip nodes that don't have CPUs, those will never
-have the remote for .node value.
+I'll send a v2 with a comment added in there. Thanks for the review.
+
+--Nysal
 
 
