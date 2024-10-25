@@ -1,120 +1,135 @@
-Return-Path: <linux-kernel+bounces-381163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B602C9AFB74
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 09:48:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B4C09AFB77
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 09:48:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BDB0283ED8
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 07:48:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1108EB22F9F
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 07:48:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82CB41B85EC;
-	Fri, 25 Oct 2024 07:48:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF3891BAEDC;
+	Fri, 25 Oct 2024 07:48:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="VmxWyjqq"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="WwYk1HBL"
+Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F135318D64C
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 07:48:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 574AC18D64C
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 07:48:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729842520; cv=none; b=Ym+xszvYqefqekdQTAzttHTnYalNXdgr35ZXf6LRmHMuZDmQ8tcWe70DzhE+seCe8bIlMSS8Sya5SY1x+Z8ZIj+WYF7LmpesulD95gUf+LkUCVIuEwXpxrgB/cYhYAyrMipKy6Qr5aaap4uIpG8HMzzT2RcZB0rLiCQ/M2WQVis=
+	t=1729842533; cv=none; b=gHAfBAe50Z0jgniqUy5LzM1a9RFIvmHpS9vSZEQszdJXJDEIITnuEMu3T34qXMT3JIUvOa8A3ysj/Wkm5DiucV9/nWK8Mfj4yWkdgU4BOnZQIxS5xfsMp3DRwMUl8eoUf8JvxA8cOLyX6QpsYk6u8dvyx0uZc3AQPiLaDOWX7Kg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729842520; c=relaxed/simple;
-	bh=uxW9tCKkc895I3RZcBJ8ekW+g3mFs3PukiRhJv7f9HI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PwBYWga5x5lFBO3xmw6Y084R/KLRrm9e1zTAKvduhy8xc9ipxMcbLiaKAi8n2R+N7WO+PwXWFXULAdd20LIt58G2Hh32VyOiWaqEuJfZCbYBPuaSIlCwWV/NfUMb7/rVupZIDPt8MCgTW2WhzmT9A+5B9yPBTP8U69dYWki0aOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=VmxWyjqq; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 4C70EE000E;
-	Fri, 25 Oct 2024 07:48:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1729842509;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NAG+QMDqLiDHqQLqGLWIReQrBYnJu8pHDQ37wRmTSD8=;
-	b=VmxWyjqqZd9zicLKRBQDCQe2zDPTgl/CUce9nDNZvlVptE+lMZS8X7p75W8z74k3X3gCGi
-	3MhJ90CZxbxFFrSyx9V5pXREQs99eftLDCKxJAFA/da2RIrRM5+GI743mXxM5slw5W5cEv
-	vUbOPZb6BbuNxQvy8/2af7hxw3ERs3WjaLziz+fO3IZzC9ns5HIYB0WIuz+ECtOUFrAHrq
-	+5t2lgjN/eb75jzW+pp1DwS3kp7gsOYJQ1e7W/j4Htamta03MuXG/dAo6prR/BWKGWYxY8
-	zBca7LF6jQ5mJrUG2JkpPWtueaIhp03bAMKKN7tQjXwdnBcgKP5sz7ty7flRLw==
-Date: Fri, 25 Oct 2024 09:48:25 +0200
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Martin Kurbanov <mmkurbanov@salutedevices.com>
-Cc: Richard Weinberger <richard@nod.at>, Vignesh Raghavendra
- <vigneshr@ti.com>, Mika Westerberg <mika.westerberg@linux.intel.com>,
- "Michael Walle" <michael@walle.cc>, Mark Brown <broonie@kernel.org>,
- Chia-Lin Kao <acelan.kao@canonical.com>, Md Sadre Alam
- <quic_mdalam@quicinc.com>, "Ezra Buehler"
- <ezra.buehler@husqvarnagroup.com>, Sridharan S N <quic_sridsn@quicinc.com>,
- Frieder Schrempf <frieder.schrempf@kontron.de>, Alexey Romanov
- <avromanov@salutedevices.com>, <linux-kernel@vger.kernel.org>,
- <linux-mtd@lists.infradead.org>, <kernel@salutedevices.com>
-Subject: Re: [PATCH v2 2/5] mtd: spinand: add OTP support
-Message-ID: <20241025094825.767c84c7@xps-13>
-In-Reply-To: <4ddd0588-0ff5-4c31-94b0-c9f0e453d98f@salutedevices.com>
-References: <20240827174920.316756-1-mmkurbanov@salutedevices.com>
-	<20240827174920.316756-3-mmkurbanov@salutedevices.com>
-	<20241001111225.36cb9701@xps-13>
-	<4ddd0588-0ff5-4c31-94b0-c9f0e453d98f@salutedevices.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1729842533; c=relaxed/simple;
+	bh=AcKtayDA1l3B02uNLoEC1MG1LG4klFVt49WT24NvHCY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=b4LZblKhOJs37O3BUQHHdSzl26NCSIqVOlJrc/HH8/SPjhdjwrHDMauMz2KXBZprCHFd5QV0sV4GqjxXZM2Ud9hV9Q3QbNC08dCjyizBehmsylUqWBtLKtNLMnQrzAOWDB/v8MTuODPrmWs4JYdqF11MJIP1Cr2iW6RIpeiU3zM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=WwYk1HBL; arc=none smtp.client-ip=209.85.210.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-7180c7a4e02so1015789a34.0
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 00:48:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1729842530; x=1730447330; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=L/uGdh4k87UdLsVlqrkIfn4gIIwnutqsKO4ayJkibeU=;
+        b=WwYk1HBLeEN4hAMyOoNLvJeqPSD+JEEKToBcuhbQLAvoeRKvY6W3DXFDVaq1P0skO2
+         0uZ5jutFaH1T+O8ADF+Gb3tWJ1dAc9TMmhvIAhJywwHNV6aqeZpn2LKAv9teia0CZXQl
+         5iYw6aEZFpoQ5LqKhUk8RRDjJu/bujDzYaV6U=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729842530; x=1730447330;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=L/uGdh4k87UdLsVlqrkIfn4gIIwnutqsKO4ayJkibeU=;
+        b=GWl5Zom+595/MwHndC/Lrd0FFvgkkOHOB9PQ9SyI8NQkQUN2FYiRyA3PIJVJHRdnDL
+         l0j5v8ZKQdoenrxLOAbsIuLcP02pKkZsWyKTZgQfz20boqs5SWKyzxSue9fapGScC0wl
+         mJMjij9jYrOaTNW4J+Q739AtfuGHyci/xTVM0+P6yg3rWcO4Yg0wJx6M43/tqrt/ODYr
+         geOzNItg6q+fbokrcp7LNR5PplUAYiN4xucx8bpY5/ye6V1leUZkPWevzX8Qi5Xab97t
+         3oq43Xy10y3L4ZuO3GlCIftBP3g+wxpjOJYcfAPHhMDFf6juAuJiCZEuq7xegH5+F2se
+         tPmg==
+X-Forwarded-Encrypted: i=1; AJvYcCVH11IezwDOaub77iN6arlwxZcgUHCc/XPGZZxVYbo9Sc5EmbTYH66+bd9NhooqefHe8pNcdQlVrRD6Ehk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZEtcDbu9uIjicZ6mdDxA4pp3fO7uPdvJ9xNKPS8VygxrHNrkw
+	3nXou3AHiqpE902FTaXvkhH5Hp9pQcrozIMQAPIvoDRHclnpbG4puUqK0F+3YA==
+X-Google-Smtp-Source: AGHT+IGSIU/bFTwcE96kf/0wGJ0BJfJiuO8y8CrN5NyTUQ2vHijmdL2HboIEe85P5cA+/Hj/rUfY3A==
+X-Received: by 2002:a05:6830:25c2:b0:718:1606:c2df with SMTP id 46e09a7af769-7185940f8e5mr3286435a34.3.1729842530333;
+        Fri, 25 Oct 2024 00:48:50 -0700 (PDT)
+Received: from yuanhsinte-p620-1.tpe.corp.google.com ([2401:fa00:1:10:5a9f:16cc:8d5a:55e5])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7205793189esm535527b3a.58.2024.10.25.00.48.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Oct 2024 00:48:49 -0700 (PDT)
+From: Hsin-Te Yuan <yuanhsinte@chromium.org>
+Date: Fri, 25 Oct 2024 15:48:44 +0800
+Subject: [PATCH RESEND v4] arm64: dts: mt8183: set DMIC one-wire mode on
+ Damu
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: miquel.raynal@bootlin.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241025-damu-v4-1-241bd9366c20@chromium.org>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Hsin-Yi Wang <hsinyi@chromium.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+ Hsin-Te Yuan <yuanhsinte@chromium.org>
+X-Mailer: b4 0.15-dev-2a633
 
-Hi Martin,
+From: Hsin-Yi Wang <hsinyi@chromium.org>
 
-Sorry for the slow feedback.
+Sets DMIC one-wire mode on Damu.
 
-> >> +/**
-> >> + * spinand_set_mtd_otp_ops() - Set up OTP methods
-> >> + * @spinand: the spinand device
-> >> + *
-> >> + * Set up OTP methods.
-> >> + */
-> >> +void spinand_set_mtd_otp_ops(struct spinand_device *spinand)
-> >> +{
-> >> +	struct mtd_info *mtd =3D spinand_to_mtd(spinand);
-> >> +
-> >> +	if (!spinand->otp->ops) =20
-> >=20
-> > Could we use something else as check? It feels odd to check for otp ops
-> > and then just ignore the fact that they are here. Maybe check npages or
-> > otp_size() ? =20
->=20
-> A developer may not specify OTP callbacks:
-> SPINAND_OTP_INFO(otp_pages, NULL /* OTP ops */)
+Fixes: cabc71b08eb5 ("arm64: dts: mt8183: Add kukui-jacuzzi-damu board")
+Signed-off-by: Hsin-Yi Wang <hsinyi@chromium.org>
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Signed-off-by: Hsin-Te Yuan <yuanhsinte@chromium.org>
+---
+Changes in v4:
+- Add Reviewed-by tag back, which is dropped in v3
+- Link to v3: https://lore.kernel.org/r/20241009-damu-v3-1-1294c8e16829@chromium.org
 
-Is this really a valid situation?
+Changes in v3:
+- Add missing Sign-off-by tag
+- Link to v2: https://lore.kernel.org/r/20240910-one-wire-v2-1-2bb40d5a3cf8@chromium.org
 
-In set_mtd_otp_ops() you set spinand functions only if there are otp
-operations. First, is it relevant to consider the fact that a device
-would have an otp and not provide operations? Otherwise, my initial
-comment was about the fact that the check seems uncorrelated with the
-second part of the function.
+Changes in v2:
+- Add fixes tag
+- Link to v1: https://lore.kernel.org/r/20240910-one-wire-v1-1-d25486a6ba6d@chromium.org
+---
+ arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-damu.dts | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Maybe setting these functions only if relevant is the best choice, so
-you no longer have to make the checks after the init.
+diff --git a/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-damu.dts b/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-damu.dts
+index 0b45aee2e29953b6117b462034a00dff2596b9ff..06a689feff52945d141d196d439cba034f25fdf6 100644
+--- a/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-damu.dts
++++ b/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-damu.dts
+@@ -26,6 +26,10 @@ &touchscreen {
+ 	hid-descr-addr = <0x0001>;
+ };
+ 
++&mt6358codec {
++	mediatek,dmic-mode = <1>; /* one-wire */
++};
++
+ &qca_wifi {
+ 	qcom,ath10k-calibration-variant = "GO_DAMU";
+ };
 
-	if (ops && ops->erase)
-		mtd->_otp_erase =3D spinand_otp_erase;
-	...
+---
+base-commit: 75b607fab38d149f232f01eae5e6392b394dd659
+change-id: 20241009-damu-a3f2f3478409
 
-?
+Best regards,
+-- 
+Hsin-Te Yuan <yuanhsinte@chromium.org>
 
-Thanks,
-Miqu=C3=A8l
 
