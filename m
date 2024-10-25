@@ -1,275 +1,154 @@
-Return-Path: <linux-kernel+bounces-381301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F40F9AFD5F
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 10:58:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C78209AFD67
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 10:59:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 77F18B213AE
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 08:58:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58CA61F24117
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 08:59:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB4C21D3586;
-	Fri, 25 Oct 2024 08:58:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AF2B1D364B;
+	Fri, 25 Oct 2024 08:58:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="hqsrgJcM"
-Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="uKZ/SyOT"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39C9F1D2B2A;
-	Fri, 25 Oct 2024 08:58:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.152.168
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7275A1B0F03;
+	Fri, 25 Oct 2024 08:58:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729846700; cv=none; b=l4e/r5MfummAwNYfFpvYZyxvUihZlAakBiURTSvJNC/fIcC0ou0oP0eOfCLyb6h3TenVnUEzmCHS8b491YceX9PaDgHeUug26Ijv5PFyZhFIMhW2TsM+S2NIr6+yxB3vou4BMidNL1sZwQHg1nG1BiXU3viDHSbnOtZgO6wr3Jo=
+	t=1729846727; cv=none; b=h+9ESfTQCYpg6wYj/LN3XcXyYDgno3/bmfjoD1kYoaVh2FU4bbKd+uwk1v+nT/jYz9CwPkVvbUvwRmvdCOexeah7+Gk4ut+6KLxJuxiCZXixZ/H/dx33O8dP7F+oKOIct8qeXDVBpfCsc8q0fnPrCTswMzxlaG2s2OyXpdkzIfI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729846700; c=relaxed/simple;
-	bh=v/W+YknXo/T42S2dWJN85T5BzMNhpxIRXwhTm5D/liU=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ehIRzVgsdKuIkzC/k44rKFslJWVYyDMRx+J5AzcaAkOC9y/y2sdDDkZvlYDO8jibvCA3a5XQFmDcixUbtrNWz4IiFussKQQkfzykF/wzFs6gJ+thXjcyKYo26nP9Vgoi207Itli6Te5GBMzYzcoPmUT9RRpbMyZljXP9RgCP9/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=hqsrgJcM; arc=none smtp.client-ip=67.231.152.168
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
-Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-	by mx0b-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49P2dkrb030685;
-	Fri, 25 Oct 2024 03:58:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	PODMain02222019; bh=6grNDwF5Gp/yr9tznEQV4KlcT6PdAw9hA5hTHyKyfcc=; b=
-	hqsrgJcMzv30LVXJrVYqEHUAB5wmHEgk+I3sO9R5ryByxIQLA/MM/YY1TcbOwTSf
-	r+HAhvMUiXbBaONoEgOA5xAMwnzfFV/TYcnZsA4VX4uEp+FcRA1pRyuKq7lR9iVa
-	7dddKux/zbEPdTGZc0uUZgYp3ssenE7b4YkZ5gFZ+7a7zbpSxQPWqjjZCS64n5Ml
-	BdcF/l3QaBm3kEJBZu+c6gYgHJ0kelEwxPryuds8tL1gVifuJocsR4rjGjQVg/+T
-	N7nXcC0yFQetb/14jxaTOyY0VTdhQcHf3KlbmLSGh+F3RKTq6j4VfS6F6RT9yhAg
-	FBAjAv/40ZhQHIUKRafWjg==
-Received: from ediex02.ad.cirrus.com ([84.19.233.68])
-	by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 42c96jfpbb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 25 Oct 2024 03:58:06 -0500 (CDT)
-Received: from ediex01.ad.cirrus.com (198.61.84.80) by ediex02.ad.cirrus.com
- (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 25 Oct
- 2024 09:58:05 +0100
-Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
- anon-ediex01.ad.cirrus.com (198.61.84.80) with Microsoft SMTP Server id
- 15.2.1544.9 via Frontend Transport; Fri, 25 Oct 2024 09:58:05 +0100
-Received: from opensource.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTPS id E1249820241;
-	Fri, 25 Oct 2024 08:58:04 +0000 (UTC)
-Date: Fri, 25 Oct 2024 09:58:03 +0100
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-To: anish kumar <yesanishhere@gmail.com>
-CC: <perex@perex.cz>, <tiwai@suse.com>, <corbet@lwn.net>,
-        <linux-sound@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] Docs/sound: Update codec-to-codec documentation
-Message-ID: <Zxtdm9moPrV4Whp9@opensource.cirrus.com>
-References: <20241020163706.87123-1-yesanishhere@gmail.com>
- <ZxkgCL2/JtDDJ9N1@opensource.cirrus.com>
- <CABCoZhDQCYwReG2q9pGNPaLaOxd2OjjQ8j14QgujTFDNmG1Seg@mail.gmail.com>
+	s=arc-20240116; t=1729846727; c=relaxed/simple;
+	bh=JzCBSBixEk8dWmW4Rw6HdWeEaPbU8Qxx4T8HzBbayjE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ubedzs4e8r+GzoCEHe9tvaGJ4MkhI9uhFLxv1dSBFnGzamUAbTQ5Jk86RS07/iIogyYhWJesDrVMSu3pRdBhGeM7Rj5amThZdmbTNJjGy3/0y1Vkf09httNsMXsyYuKhFXDJa1Qgk/UW/8Q/W7z0hruZgf3DIIRFp5ChclXGbZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=uKZ/SyOT; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 5360d23292af11efbd192953cf12861f-20241025
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=2jONHGUQN65Wp/s13oZofhKzQ9O+ThI0+K9VkaZNt+A=;
+	b=uKZ/SyOT3Mm9rRM83JQ/Iw08q6PU9rhMrxEew2p+XiUtQqWkzv7kjE5TagpjzwiTuQBOBCdPTGIWGDCiODcIjjZ5egMadNpE3bDio0pOFLn4nsD+g58XQiuV+UJtBrVToHQU/DYNot9nRxn1wytfTkd0BpcrZhOpIIPTyw0ebJ8=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.42,REQID:c1f2afcb-eeb2-46bb-bcbb-6455a0acca7f,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:b0fcdc3,CLOUDID:f3c6dacc-110e-4f79-849e-58237df93e70,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:1,EDM:-3,IP:nil,U
+	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
+	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 5360d23292af11efbd192953cf12861f-20241025
+Received: from mtkmbs11n1.mediatek.inc [(172.21.101.185)] by mailgw02.mediatek.com
+	(envelope-from <qun-wei.lin@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1500008180; Fri, 25 Oct 2024 16:58:38 +0800
+Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
+ mtkmbs13n1.mediatek.inc (172.21.101.193) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Fri, 25 Oct 2024 16:58:37 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Fri, 25 Oct 2024 16:58:37 +0800
+From: Qun-Wei Lin <qun-wei.lin@mediatek.com>
+To: Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>, David
+ Rientjes <rientjes@google.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>, Andrew
+ Morton <akpm@linux-foundation.org>, Vlastimil Babka <vbabka@suse.cz>, Roman
+ Gushchin <roman.gushchin@linux.dev>, Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, Danilo Krummrich <dakr@kernel.org>
+CC: <catalin.marinas@arm.com>, <surenb@google.com>, <linux-mm@kvack.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-mediatek@lists.infradead.org>, <bpf@vger.kernel.org>, Casper Li
+	<casper.li@mediatek.com>, Chinwen Chang <chinwen.chang@mediatek.com>, Andrew
+ Yang <andrew.yang@mediatek.com>, John Hsu <john.hsu@mediatek.com>,
+	<wsd_upstream@mediatek.com>, Qun-Wei Lin <qun-wei.lin@mediatek.com>
+Subject: [PATCH] mm: krealloc: Fix MTE false alarm in __do_krealloc
+Date: Fri, 25 Oct 2024 16:58:11 +0800
+Message-ID: <20241025085811.31310-1-qun-wei.lin@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CABCoZhDQCYwReG2q9pGNPaLaOxd2OjjQ8j14QgujTFDNmG1Seg@mail.gmail.com>
-X-Proofpoint-GUID: DTHwN0AMcJ-a8hrowwlGPFtMNwP3MXLZ
-X-Proofpoint-ORIG-GUID: DTHwN0AMcJ-a8hrowwlGPFtMNwP3MXLZ
-X-Proofpoint-Spam-Reason: safe
+Content-Type: text/plain
+X-MTK: N
 
-On Thu, Oct 24, 2024 at 01:27:51PM -0700, anish kumar wrote:
-> On Wed, Oct 23, 2024 at 9:10 AM Charles Keepax
-> <ckeepax@opensource.cirrus.com> wrote:
-> > Bringing the "dummy" into this is quite misleading, that really
-> > relates to DPCM setups. DPCM lets one select any number of back
-> > ends to service a given front end PCM, and often are abused to
-> > achieve things that should really be implemented as C2C links.
-> 
-> Aha, understood. For C2C we need a thin dummy codec driver
-> which acts as a cpu driver in the ASoC code right?
-> 
+This patch addresses an issue introduced by commit 1a83a716ec233 ("mm:
+krealloc: consider spare memory for __GFP_ZERO") which causes MTE
+(Memory Tagging Extension) to falsely report a slab-out-of-bounds error.
 
-No there is no need for any dummies or thins anywhere, a codec to
-codec link is simply a mechanism for hooking two codec drivers
-together.
+The problem occurs when zeroing out spare memory in __do_krealloc. The
+original code only considered software-based KASAN and did not account
+for MTE. It does not reset the KASAN tag before calling memset, leading
+to a mismatch between the pointer tag and the memory tag, resulting
+in a false positive.
 
-> Based on the code from bells.c, below is the C2C and we do provide
-> a CPU driver, even though in actual it is a codec driver.
-> 
-> SND_SOC_DAILINK_DEFS(wm2200_dsp_codec,
-> DAILINK_COMP_ARRAY(COMP_CPU("wm0010-sdi2")),
-> DAILINK_COMP_ARRAY(COMP_CODEC("wm2200.1-003a", "wm2200")));
-> 
+Example of the error:
+==================================================================
+swapper/0: BUG: KASAN: slab-out-of-bounds in __memset+0x84/0x188
+swapper/0: Write at addr f4ffff8005f0fdf0 by task swapper/0/1
+swapper/0: Pointer tag: [f4], memory tag: [fe]
+swapper/0:
+swapper/0: CPU: 4 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.12.
+swapper/0: Hardware name: MT6991(ENG) (DT)
+swapper/0: Call trace:
+swapper/0:  dump_backtrace+0xfc/0x17c
+swapper/0:  show_stack+0x18/0x28
+swapper/0:  dump_stack_lvl+0x40/0xa0
+swapper/0:  print_report+0x1b8/0x71c
+swapper/0:  kasan_report+0xec/0x14c
+swapper/0:  __do_kernel_fault+0x60/0x29c
+swapper/0:  do_bad_area+0x30/0xdc
+swapper/0:  do_tag_check_fault+0x20/0x34
+swapper/0:  do_mem_abort+0x58/0x104
+swapper/0:  el1_abort+0x3c/0x5c
+swapper/0:  el1h_64_sync_handler+0x80/0xcc
+swapper/0:  el1h_64_sync+0x68/0x6c
+swapper/0:  __memset+0x84/0x188
+swapper/0:  btf_populate_kfunc_set+0x280/0x3d8
+swapper/0:  __register_btf_kfunc_id_set+0x43c/0x468
+swapper/0:  register_btf_kfunc_id_set+0x48/0x60
+swapper/0:  register_nf_nat_bpf+0x1c/0x40
+swapper/0:  nf_nat_init+0xc0/0x128
+swapper/0:  do_one_initcall+0x184/0x464
+swapper/0:  do_initcall_level+0xdc/0x1b0
+swapper/0:  do_initcalls+0x70/0xc0
+swapper/0:  do_basic_setup+0x1c/0x28
+swapper/0:  kernel_init_freeable+0x144/0x1b8
+swapper/0:  kernel_init+0x20/0x1a8
+swapper/0:  ret_from_fork+0x10/0x20
+==================================================================
 
-Yes you are providing a CPU side to the link, but as you say that
-is actually a CODEC driver. Although I guess really this is really
-more historical accident since links were originally defined between
-CPUs and CODECs.
+Fixes: 1a83a716ec233 ("mm: krealloc: consider spare memory for
+__GFP_ZERO")
+Signed-off-by: Qun-Wei Lin <qun-wei.lin@mediatek.com>
+---
+ mm/slab_common.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> Perhaps, I can just remove the "dummy" from the diagram above.
-> 
+diff --git a/mm/slab_common.c b/mm/slab_common.c
+index 3d26c257ed8b..3445f4500b54 100644
+--- a/mm/slab_common.c
++++ b/mm/slab_common.c
+@@ -1209,7 +1209,7 @@ __do_krealloc(const void *p, size_t new_size, gfp_t flags)
+ 		/* Zero out spare memory. */
+ 		if (want_init_on_alloc(flags)) {
+ 			kasan_disable_current();
+-			memset((void *)p + new_size, 0, ks - new_size);
++			memset(kasan_reset_tag((void *)p + new_size), 0, ks - new_size);
+ 			kasan_enable_current();
+ 		}
+ 
+-- 
+2.45.2
 
-Yeah it has no place in this document.
-
-> > > +single ``cpu_dai`` with both ``codec_dais``. Boot-up logs will
-> > > +display messages similar to:
-> >
-> > That is definitely not what should be happening with a C2C link.
-> > In the system you showed the diagram for above there should be a
-> > connection between the CPU and codec-2, then two separate links
-> > between codec-2 and codecs 1 and 3. No links should be present
-> > between the CPU and codecs 1 or 3.
-> 
-> Got it, I will try to convey the same in the diagram but ascii art is hard :)
-> 
-
-Apart from the dummy bit the diagram is fine here, it is the
-description in the text that is wrong.
-
-> Can you help clarify my understanding (based on the dapm code walkthrough),
-> when the mixer control is triggered, the CPU widgets gets triggered
-> thereby triggering codec2 widgets and as there is a static connection
-> between codec1 and codec2 it gets also triggered and the same thing
-> happens to codec3 as it is also linked to codec2?
-> 
-> Also, as the widgets are linked to dai ops, all the ops gets triggered as well.
-> 
-
-DAPM will power up anything that is between an active source and
-an active sync. I would imagine from the diagram shown above
-there would likely be two obvious use-cases:
-
-Host music playback:
-CPU -> CODEC2 -> CODEC3 -> Speaker
-
-When something on the host plays some audio this will inform DAPM
-that the main CPU DAI is now an active source. This will propogate
-through the graph until it finds the speaker sink. The act of
-playing music will power up the CPU -> CODEC2 dailink. Then DAPM
-will power the C2C link between CODEC2 and 3 since it is on the
-audio path.
-
-Cellular call:
-CODEC1 -> CODEC2 -> CODEC3 -> Speaker
-
-In this case the host is not involved at all. The modem is audio
-source and DAPM powers up everything between it and the sink ie.
-the speaker. That would involve the two C2C links between CODEC1
-and 2, and between CODEC2 and 3.
-
-> >
-> > > +
-> > > +.. code-block:: bash
-> > > +
-> > > +   ASoC: registered pcm #0 codec2codec(Playback Codec)
-> > > +   multicodec <-> cpu_dai mapping ok
-> > > +   connected DAI link Dummy-CPU:cpu_dai -> codec-1:dai_1
-> > > +   connected DAI link Dummy-CPU:cpu_dai -> codec-2:dai_2
-> > > +
-> >
-> > Yeah this is definitely mixing in a fair amount of DPCM stuff and
-> > does not match the rest of the description.
-> 
-> I guess what you meant is that C2C doesn't care about the above
-> connection as it uses DAPM widget connection to trigger the path
-> right? So, even if this connection doesn't exist C2C will still work.
-> 
-> Reason why I am asking is that I saw the above logs when I
-> added a C2C connection.
-> 
-
-That I can't really be sure it depends on how your system was put
-together.  There are two things that are reasonably likely:
-
-As I said it is quite likely your system is using Dynamic PCM (DPCM)
-this is a mechanism to attach multiple "Backend End" devices to a
-single "Front End" DAI link. It is often used by systems that have
-a DSP built into the host, which might select different places to
-send the audio to. In many ways this accomplishes the same thing as
-C2C links, such a system could equal well be represented with the
-DSP being a codec driver and each of the "backends" being C2C links.
-
-Alternatively, in the deep dark of history some people did implement
-a "dummy link" from the host to the cellular for the purposes
-of configuring the params on the modem, even though the audio
-technically when through some other route. But this was always a
-hack and we should probably not be detailing it in the documentation.
-
-> >
-> > > +To trigger this DAI link, a control interface is established by the
-> > > +DAPM core during internal DAI creation. This interface links to
-> > > +the ``snd_soc_dai_link_event`` function, which is invoked when a
-> > > +path connects in the DAPM core. A mixer must be created to trigger
-> > > +the connection, prompting the DAPM core to evaluate path
-> > > +connections and call the ``snd_soc_dai_link_event`` callback with
-> > > +relevant events.
-> > > +
-> > > +It is important to note that not all operations defined in
-> > > +``snd_soc_dai_ops`` are invoked as codec-to-codec connections offer
-> > > +limited control over DAI configuration. For greater control, a
-> > > +hostless configuration is recommended. The operations typically
-> >
-> > It is not clear to me what a "hostless configuration" is here.
-> 
-> What I meant to convey is, if the user wants all pcm ops to get called in
-> order then he can use "Hostless FE" and connect to backend use as a normal PCM.
-> 
-
-All the talk of front ends and back ends has nothing to do with
-codec to codec links and should not be relevant for this
-document.
-
-> > > +In a codec-to-codec scenario involving multiple codecs (above
-> > > +bootup logs are for multicodec scenario), it is not feasible to
-> > > +control individual codecs using dummy kcontrols or DAPM widgets.
-> >
-> > I really am not sure what this means. What are we controlling
-> > using dummy kcontrols? Why are we not using the real kcontrols
-> > from the codec to control the codec?
-> 
-> Our system includes a DSP that can generate audio(not audio to be
-> honest but can be considered as a audio channel) independently,
-> without CPU involvement. This audio needs to be sent to speakers
-> via codecs, even when playback isn't occurring.
-> 
-> We modeled all codecs as a C2C having one single snd_soc_dai_link
-> with multiple codecs. So, now we can control all codecs using mixer
-> control which we created as a part of C2C path completion.
-> 
-
-Have you by any chance tried to combine the usual DPCM
-implementation for host side DSPs with a bunch of C2C links? It's
-not necessarily wrong but it seems like an odd choice. Either
-represent the DSP using DPCM or C2C links.
-
-> However, we got a new usecase where we shouldn't turn on all the
-> codecs when mixer control is used for C2C, instead user should be able
-> to specify which codec should get turned on.
-> 
-> So, I attempted to add one more dummy mixer as part of C2C mixer
-> path, follishly thinking that if the dummy mixer is not enabled, C2C
-> won't allow the corresponding codec to get turned on. After reading
-> the code, I saw that in C2C implementation it doesn't check for
-> widget power status when turning on the path and nor check if the
-> path is complete or not before calling the pcm ops.
-> 
-
-This doesn't seem accurate either, DAPM will only turn on things
-between an active source and an active sink. So it should not be
-enabling links that are not on a complete path. Although that
-said the complete path might be one you didn't intent to exist
-it will take any available route between a source and sink.
-
-The more typical way to handle this would be to define a
-PIN_SWITCH for the sink on each CODEC then you can enable/disable
-those sinks and the CODECs in question should not get powered up
-if they have no valid sinks.
-
-Thanks,
-Charles
 
