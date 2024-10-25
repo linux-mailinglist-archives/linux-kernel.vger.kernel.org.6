@@ -1,47 +1,73 @@
-Return-Path: <linux-kernel+bounces-381608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CE229B0182
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 13:42:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBDA19B0184
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 13:43:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C30B1F2282F
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 11:42:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73A581F2299F
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 11:43:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B4A2201015;
-	Fri, 25 Oct 2024 11:42:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94879201012;
+	Fri, 25 Oct 2024 11:43:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sctp4mwF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PCrU+ewX"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C91321FAF17;
-	Fri, 25 Oct 2024 11:42:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1773E1B2188
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 11:43:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729856532; cv=none; b=cHQb21uPCV5YvYl0mv4O8YnnMTbG8dSPx/UwakKjezqj1ltKY5QcQcmZ+pRZnKrk8SQhbZClTLFnenu4Us7kw3d0XvcWb+EhuoURyYxQ1UW/57v2cwotUjvOwyOiEljFmOTEJVx+LRXjQD8Hhgi/AkvRPaAuJkGfNPgC7e38okw=
+	t=1729856592; cv=none; b=MTAKGIrzWB0tFmlDFOs+tGU7jE0Gq+k3GPJB9AK6Szn5ssBJYArtbpISu3oE6PTSrUjlqC/OoiF1Xx2AypqJw06/z541v8eiWVFVKl+3jnfx/cMvOd1Sk33NeU/6ZjwBd7nwE4neeBQaRDtLhjTuyv3qHNYopiWGY6FiG/erEzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729856532; c=relaxed/simple;
-	bh=b9j1zTmawGmrojfup/LOAlSwgn3LIFUdXbsokDQU9HM=;
+	s=arc-20240116; t=1729856592; c=relaxed/simple;
+	bh=dLL4ahqzUKxR6agX8+HFa6SShQuUowH/qJPqMkAE9A0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MBtGGoAih5HAwbf3/dZy4Irga3YJ+EGUzz0jlpUAo1MqifwXUWjUFi/XCY+DF48hKfblMZh+jA5gD/bH/G4n5/batbiKwyJOs+9mhUtX3Ow871INVBZtQeCjtU+ktOi7fC0bJYpckqNTO80WZnc2AMRVuqu4VEae1X2atFCxASQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sctp4mwF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40131C4CEC3;
-	Fri, 25 Oct 2024 11:42:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729856532;
-	bh=b9j1zTmawGmrojfup/LOAlSwgn3LIFUdXbsokDQU9HM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Sctp4mwFa4+O8XrmsAVrFJHhkt2Auby18cDvGukLTGJOhHUrAFvja7DHRbKJ2YXLV
-	 Nfdo5Y3KNscyjyNFNhf1tQk82WvVBiMdqk1KVO2A26stzSpAGVPFn8Rvi/r+YkWzss
-	 Er7RYSK9/EsEeYh8L3Epkk8t435lqrMOHkXH1U8bSv7giqglHN+6YONOim9bh2uDCf
-	 JtxXUOYPpM/qMxle9U6WU6pUJ1lHOD7ryhWt1ADUHowHXUr348C3A5tlrJt2JXVVt2
-	 Pky2OI6CdSBbhKRgCSUDA1ihJc/awsyEIQ1LCuMYd1pUWQ12N1BE5jHNQA7DL0Xjax
-	 UIGdxXKoy1eag==
-Message-ID: <ef407e89-950f-4874-9dca-474d107f6a52@kernel.org>
-Date: Fri, 25 Oct 2024 13:42:04 +0200
+	 In-Reply-To:Content-Type; b=VTod3EFmnlC6Frbla3aiLHCOh7zY63p1gpJsqYArQH4FOVoRZ3iY2td1yVmcAbySmCuAz/vHCvaQWJB6kJA/7vH2KeO0D51e4Z1yUajlAhz6HOcD5quoE1JQ/bRnTWtqe5lqmauSY4+dy5FoNvceOvl2kgAIB2hS2yeBf4OVAd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PCrU+ewX; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-539f4d8ef66so2771829e87.1
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 04:43:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729856588; x=1730461388; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Lkwa/uwgAWWaLzii09tP4AKS7OhoCI/F52eSmD068CA=;
+        b=PCrU+ewXo2X8n8QDZ0+oLrciI8Wf6w6WCavlKuF3RTQTd/pogNXJ2rBs9nY/SLxXcY
+         es+ye/qwl92exQnFDqr97s7RfqJCB2kee+/3M73SYOXRsv695IZ0MnENJxPCwD9+IbSq
+         D48xMeaWKv7SevISKNr+LA0smKNXmcKc9X6nvWGd+e9pwq9960doWGlCX9WJMhNGifUV
+         zlfA+700iJ6yNaxmsY1MAO2N2q6wmKWp01ckp0aKkJ8c+Dts7dCibXzIAlsRCEql0Wm4
+         A2wUsfR1arpcgc5yS/3An9BHMyPX55STD3P5syhE8HYYA6tNTcovEqUnCipm5BgnRIfy
+         T6bQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729856588; x=1730461388;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Lkwa/uwgAWWaLzii09tP4AKS7OhoCI/F52eSmD068CA=;
+        b=SNpxyicPMuhNLhTXTw4xDnX4pr9XI5eUKWU82MRhMjkfOAYsp++T+vzzikVEBtSxEs
+         /TUcxxB92muvdh9in36PHX2p8d8FGGXsKE5QTSefeolxQlUWJDubnPOOGg1X4ouNNFKx
+         wumeE8wh6G+WK864ADrp6RGRS0tsCIU+MR7UKyZhfHwnDz4+M8UBxF7p0kOWEyLYsQUV
+         TohnQuY4X1Ny+3FsppWq+mPWvLNQW9Evyj4TISotdWH7RYVRNJqYDrUWtJTxi31XlyW8
+         21NsyzDtQbyFBKagEZRvULXbGmIR6PdFE5z/xotJdLAvcJKGoswJqs4q664Tns/B45QM
+         CT7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXun+NPsQDs987NuDeXNt749qTQ09Wz69hZrOWHpfmQnRdxTa+zzdKzlN7DLZplcT9ebrnaKYTuETIFpkY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwyM2g4p0H7TaiHniAu2ku97xb1h1o/9lBqiZZ2AAlBvlgTKsQC
+	Gvnskl0dCIOOAgvI4whkTH7WhE0JWveKI126Qm9ngjvdyEoowKkZYoLX7Z+LUEw=
+X-Google-Smtp-Source: AGHT+IGO2B2RlrXi4ESPDHZX/+LkdhTMKvGo4OGC8L/poqoUjErvBRXR7tgvLlkobft4kOBMEr1vMw==
+X-Received: by 2002:a05:6512:689:b0:534:543e:1895 with SMTP id 2adb3069b0e04-53b23e85245mr3020933e87.39.1729856588217;
+        Fri, 25 Oct 2024 04:43:08 -0700 (PDT)
+Received: from [192.168.0.87] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4318b55f50csm45402555e9.17.2024.10.25.04.43.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 25 Oct 2024 04:43:07 -0700 (PDT)
+Message-ID: <f5a8c042-53f5-43e2-bf76-82243ec77ee2@linaro.org>
+Date: Fri, 25 Oct 2024 12:43:06 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,162 +75,26 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: input: Add Nuvoton MA35D1 keypad
-To: Ming-Jen Chen <mjchen0829@gmail.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-input@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- mjchen@nuvoton.com, peng.fan@nxp.com, sudeep.holla@arm.com, arnd@arndb.de,
- conor+dt@kernel.org, krzk+dt@kernel.org, robh@kernel.org,
- dmitry.torokhov@gmail.com
-References: <20241022063158.5910-1-mjchen0829@gmail.com>
- <20241022063158.5910-2-mjchen0829@gmail.com>
- <csbechg6iarxx52z2gqidszhvgjdvaraoumpfcsozelhuuhmtb@ec7es3txuzxc>
- <871e9a4c-7a3c-4a24-8829-a079983033da@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCHv4 3/3] media: venus: factor out inst destruction routine
+To: Sergey Senozhatsky <senozhatsky@chromium.org>,
+ Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
+ Vikash Garodia <quic_vgarodia@quicinc.com>
+Cc: Dikshita Agarwal <quic_dikshita@quicinc.com>,
+ linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241025105104.723764-1-senozhatsky@chromium.org>
+ <20241025105104.723764-4-senozhatsky@chromium.org>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <871e9a4c-7a3c-4a24-8829-a079983033da@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <20241025105104.723764-4-senozhatsky@chromium.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 25/10/2024 07:36, Ming-Jen Chen wrote:
->>
->>> +      0  = 0 clock
->>> +      1  = 0 clock
->>> +      2  = 0 clock
->> Heh? So this is just 0
->>
->>> +      3  = 8 clocks
->> This is 8
->>
->>> +      4  = 16 clocks
->> 16, not 4
->>
->>> +      5  = 32 clocks
->>> +      6  = 64 clocks
->>> +      7  = 128 clocks
->>> +      8  = 256 clocks
->>> +      9  = 512 clocks
->>> +      10 = 1024 clocks
->>> +      11 = 2048 clocks
->>> +      12 = 4096 clocks
->>> +      13 = 8192 clocks
->> Use proper enum
-> I will update the definition to specify the debounce period in terms of 
-> keypad IP clock cycles, as follow:
-> 
-> nuvoton,debounce-period:
->      type: integer
->      enum: [0, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
->      description: |
->          Key debounce period select, specified in terms of keypad IP 
-> clock cycles.
->          This value corresponds to the register setting for the keypad 
-> interface.
->          The following values indicate the debounce time:
->          - 0 = 0 clock cycles (no debounce)
->          - 3 = 8 clock cycles
->          - 4 = 16 clock cycles
->          - 5 = 32 clock cycles
->          - 6 = 64 clock cycles
->          - 7 = 128 clock cycles
->          - 8 = 256 clock cycles
->          - 9 = 512 clock cycles
->          - 10 = 1024 clock cycles
->          - 11 = 2048 clock cycles
->          - 12 = 4096 clock cycles
->          - 13 = 8192 clock cycles
+On 25/10/2024 11:50, Sergey Senozhatsky wrote:
+> -	venc_ctrl_deinit(inst);
 
-No. 0, 8, 16, 32 , 64 etc.
+Shouldn't you be dropping venc_ctrl_deinit as you have done with 
+vdec_ctrl_deinit ?
 
->>
->>
->>> +
->>> +  per-scale:
->>> +    $ref: /schemas/types.yaml#/definitions/uint32
->>> +    description: Row Scan Cycle Pre-scale Value (1 to 256).
->> Missing constraints
->>
->>> +
->>> +  per-scalediv:
->>> +    $ref: /schemas/types.yaml#/definitions/uint32
->>> +    description: Per-scale divider (1 to 256).
->> Missing constraints
->>
->> Both properties are unexpected... aren't you duplicating existing
->> properties?
-> pre-scale:
-> This value configures the IC register for the row scan cycle 
-> pre-scaling, with valid values ranging from 1 to 256
-> per-scalediv:(I will change pre-scalediv to pre-scale-div)
-
-Please look for matching existing properties first.
-
-> This will describe its role in setting the divisor for the row scan 
-> cycle pre-scaling, allowing for finer control over the keypad scanning 
-> frequency
-> 
-> I will change it to the following content:
-> nuvoton,pre-scale:
->      type: uint32
->      description: |
->          Row Scan Cycle Pre-scale Value, used to pre-scale the row scan 
-> cycle. The valid range is from 1 to 256.
->      minimum: 1
->      maximum: 256
-> 
-> nuvoton,pre-scale-div:
->      type: uint32
->      description: |
->          Divider for the pre-scale value, further adjusting the scan 
-> frequency for the keypad.
->      minimum: 1
->      maximum: 256
-
-
-Best regards,
-Krzysztof
-
+---
+bod
 
