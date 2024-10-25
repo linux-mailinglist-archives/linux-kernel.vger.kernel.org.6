@@ -1,155 +1,188 @@
-Return-Path: <linux-kernel+bounces-381969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F4079B070D
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:06:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DCBE9B0711
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:07:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3AD63B286DE
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:06:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E147B28404D
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:07:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26EF417DFE4;
-	Fri, 25 Oct 2024 15:02:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9A5C1B6CF8;
+	Fri, 25 Oct 2024 15:03:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="QlARgUcp"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HDMSEun7"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B1CB1547D4;
-	Fri, 25 Oct 2024 15:02:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6D82170A20
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 15:03:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729868570; cv=none; b=fyfaWff41ruzLVfukOtpenOu0NJ+6sRhTM+/9O+NdkefZ/jE7f9coE5lu0yg3Jg4ENWSeFTf1CJvpgggDVDHiFp7mvr7ILVmvz9zIRyLPMmydQzGpMYpuCcfCYYwRurmBzPGQLJsTNcsX/0Zcp2qaEocMSsl7WbKqrlYxWvQKcQ=
+	t=1729868637; cv=none; b=SvKkgem68NPkHe8RhiAWGCu6KJ4wOe9jAouj2+9Rlx6CI2ahxwG0Fqjr/tqWVL7vqtx60QrjgPBk+4vLDE0NeYXm4275365O9jFKUvueaoArx+dvPpr7E2vE/1IygUa5ttUNz4h+47qs1oYpGVy3bJKyMlzex2kESSM62VPRPec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729868570; c=relaxed/simple;
-	bh=dsgsar/lq9h68px2z+YopEnzb0lo//koWLJldh9k9Ck=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HRzuIInv+64MfEpc6WL3KWOnro1wA3zdPA2v7ZHExi3lfHwa8I9LhN6TKs63JOZWgZVDQQY6oQ8yTe+5DuUeWt55aBY2oJ/qWgR/ySwUAWUp+PDjSMdQ5kaVWmz5uVutBJTE8IYVhKlORtqLpzqcd1p00RQHdwZJId4DcVO4JqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=QlARgUcp; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:
-	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=heAl94HWGe1G6ctlNlL5CBOHnMpx7UyxiFprcL0faS8=; b=QlARgUcp0ANqFUiEPH5e4JbwbA
-	CKcecSxYu6l4YTpsNrZgC+ho/gR++Wo44671B9aeCvZKEBDZ4kGqGSoqaxgLBfk9MKAi1Kkk24HrN
-	1Jlcsd2+G8aJwWmEYRcISLWv21emo8ZiVy3MhHizg+fcL7ydx1GHnoF9EY3IllqcjvoWwsEAszztN
-	UNtbLE7ICCPeiZfxcdPOjgvW/TMKa/wgvXt1oAovX56RBZtaWRRJU7abWj0Y0AqkUfnO7KL9D/umi
-	M6gDMfHETjTACos/Sce2Ox2J5tY5zSSsTVruBGmzKKrCNTEDJni+rzLukkZXIlNw0YzBsH4H5Sdz/
-	InQVMl8Q==;
-Received: from [189.79.117.125] (helo=localhost)
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1t4Lpk-00F4Ps-VV; Fri, 25 Oct 2024 17:02:37 +0200
-From: "Guilherme G. Piccoli" <gpiccoli@igalia.com>
-To: pkshih@realtek.com,
-	linux-wireless@vger.kernel.org
-Cc: kvalo@kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel@gpiccoli.net,
-	kernel-dev@igalia.com,
-	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
-	stable@vger.kernel.org,
-	syzbot+edd9fe0d3a65b14588d5@syzkaller.appspotmail.com
-Subject: [PATCH] wifi: rtlwifi: Drastically reduce the attempts to read efuse bytes in case of failures
-Date: Fri, 25 Oct 2024 12:02:16 -0300
-Message-ID: <20241025150226.896613-1-gpiccoli@igalia.com>
-X-Mailer: git-send-email 2.46.2
+	s=arc-20240116; t=1729868637; c=relaxed/simple;
+	bh=2I/TB9e/qvZscYuIM5ZhAGgZHV87H1IH0MC1lBIDRwk=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=JOdkegZyyC+Ehd/z6YRO58xiKubDNMUFQdMrGkngPxsWGHSmhfoswvxkbXJzPTnjBkQYCLZDPmUdXLB7SyWVdXxWVgI0Chc4J5FOuBMeWlTdKUM0EelAV7lXmovd3cbQKAdq6EEfCntj2slYdpmtvoAEGwPbv8I5YsuZ9hDLUOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HDMSEun7; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-539e690479cso2257682e87.3
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 08:03:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729868633; x=1730473433; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=yJFbJaVmfKjDCzDIXM5j0dVs3u7mp+kaCik0adMD3es=;
+        b=HDMSEun77Bs3q5kl+3PAuXBV55stslqsRrVp5Ex7rWIa6+qsd2tcPbXtVeUb/dsvG+
+         NxZhFfj6MoSoyT6uqxTTRrgZsNIYjPZlevZDgDsq25HxMHRAT9TUcZuSgOZBzHB98J39
+         HeyFwRzUcWGgN8FudeQcfdXbHBJq1S15apHy1Pb+OXjJu5qBgBP26lfax8s2NnCdgENN
+         m6L9lfRP+kzOreG2R3lArqgkObwaYVAZ7UseW2SYlNCASprZPJtB11rh8VYOhMX0HEjP
+         GhhBY+AYcATIKR7ukBn0isNQCGczAyzSpgh3f1FNJRH/U1gqCCbd4WuMNEFnBXYCJWZv
+         wnrQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729868633; x=1730473433;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yJFbJaVmfKjDCzDIXM5j0dVs3u7mp+kaCik0adMD3es=;
+        b=qHhN1jmGehwADp9QKOgesN11tCxP36LfTg4D3SDOgxF4yJwJYNxWsHbliWRwzQzR5H
+         z11oEDT+qaWwYL50WK+WFTyHiMutu8wZ72ApajvAbeE4Xf47ECARS6P7dhTRqXu+Cwry
+         oCXMroBF9ySgK/1V/Znmr5pFnlMpnwydz6bG1/Vk29EnKy+bVWoGpwn5INhOquuXj+HJ
+         YnQCrvlKquH+6OFe9vGaUSKTR5/qkRKtAlHY0TOIgFc2LSEg6gwsX65BDwxFJv5gT+Fw
+         XqEeVGxCqwIq7ErgYYlbgMfESQP+khq5d2cTDGvUHPumYYqO1aOszG/zbmPTTgj+Ypau
+         USuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX0mo0pqtg7ttwBi5Uy+2CxqWmre32Y+bKrxc0ZsKe2dgT50zBPXoFBLJnzAkrjQgFDxTGjZy4RKqzbLto=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLMSAt9yFVRTyV7Y98/CtqSWB0f9HFVn50R6JtNRnOJTBRa/1D
+	4wGOfqCDS72XTdbOiBP5Q4ONPysQTYzuhjFTGWTva5Xs3pvlfDf+Q7Xrj+Z2prI=
+X-Google-Smtp-Source: AGHT+IEc1+LGIXXymPDrmIYeNix/JiUavCyvGz44DMoz7I4erNiOM5fsRMlgqHMSUe8uqhCXhnFs4w==
+X-Received: by 2002:a05:6512:3a82:b0:539:8b02:8f1d with SMTP id 2adb3069b0e04-53b1a3392bcmr5698242e87.30.1729868632666;
+        Fri, 25 Oct 2024 08:03:52 -0700 (PDT)
+Received: from [127.0.1.1] (2001-14ba-a0c3-3a00-70b-e6fc-b322-6a1b.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:70b:e6fc:b322:6a1b])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53b2e10a915sm209542e87.12.2024.10.25.08.03.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Oct 2024 08:03:52 -0700 (PDT)
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Subject: [PATCH v3 00/11] clk: qcom: add support for clock controllers on
+ the SAR2130P platform
+Date: Fri, 25 Oct 2024 18:03:34 +0300
+Message-Id: <20241025-sar2130p-clocks-v3-0-48f1842fd156@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEazG2cC/3XNQQ6CMBCF4auQrq3pTCGgK+9hXBQ6hUZCydQ0G
+ sLdLaw0xuX/kvlmEZHYUxTnYhFMyUcfphz6UIhuMFNP0tvcAhWWoKCW0TCCVrPsxtDdo6xca+2
+ pdaokEvlqZnL+uYvXW+7Bx0fg1/4gwbb+txJIJV1dUV0qp0xjL6OfDIdj4F5sWMIPAOEXwAzoR
+ lNFLaA2+AWs6/oGaOzjgfAAAAA=
+X-Change-ID: 20241017-sar2130p-clocks-5fbdd9bf04ee
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Taniya Das <quic_tdas@quicinc.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, 
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, 
+ Kalpak Kawadkar <quic_kkawadka@quicinc.com>, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3257;
+ i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
+ bh=2I/TB9e/qvZscYuIM5ZhAGgZHV87H1IH0MC1lBIDRwk=;
+ b=owEBbQKS/ZANAwAKARTbcu2+gGW4AcsmYgBnG7NROmc0Tq8cKYJkTawSQHz7Cbdd8N9iUrLXh
+ uGv8U4rhFaJAjMEAAEKAB0WIQRdB85SOKWMgfgVe+4U23LtvoBluAUCZxuzUQAKCRAU23LtvoBl
+ uL9AEAC7fv5yrRXvi55cS54GRqGAsE3aTSY3cikJ5AqZHku7O6pkUDx2CizI70JANmhdi4QAUJS
+ dox5p7vsy3q0Je2iS87Rd5xPcdT2sjC+NZ2yD2I3X22/QLNUyqXId/xHPZormvjgRpUfQKBao2z
+ 7HFhc8y9/Xy3YCWHwPWWKV0S8xONPHHxapl6FabSeSWy1wymL4QVuvZxbovFwVHnZ3tB2L6toka
+ gdfSi6aEmAZgPh/CyhxlGRFFMPQmHAgPDV9AjQXjPZvpOVkpKwNiTFwtl3Fzb0MOwxvSKaUynAj
+ MRNUXRsfUi0xFcot/3MmbPJG/MJTu5jH/BddW9UlIbsNmUehANJNyrgiM3zzKNDFCnNXrPsXRX4
+ S6SeA7mbga/rCkV6gqqqgaiQ6sf3+jzVjeSfQF5Wxl11sDaz+Pv4hlmCLLFZpd0fU4iKlVQGduW
+ r+dKkrsoQFwjnPpSBOUbhuenAGiromI5X5I+hmmy1Du6cHe8C2zD9IvaN1qfOBDfrbUXKzXp5s7
+ eP0xzLl5PTarxQcIn4zzXYmQMmhx/poQragNU3n1t2czMEFLuzmvzvPTGIpPt/LG5h4pUadkusk
+ p6qTFegnrQRXNdpL8nZ45IoaPwHzbmev2GCg+2WajQ0XV2YulptW850NEnks50KDou0oaWwAu5z
+ +UxXvzO6iSG3JNA==
+X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
+ fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-Syzkaller reported a hung task with uevent_show() on stack trace. That
-specific issue was addressed by another commit [0], but even with that
-fix applied (for example, running v6.12-rc4) we face another type of hung
-task that comes from the same reproducer [1]. By investigating that, we
-could narrow it to the following path:
+Add support for the RPMh, TCSR, Global, Display and GPU clock
+controllers as present on the Qualcomm SAR2130P platform.
 
-(a) Syzkaller emulates a Realtek USB WiFi adapter using raw-gadget and
-dummy_hcd infrastructure.
-
-(b) During the probe of rtl8192cu, the driver ends-up performing an efuse
-read procedure (which is related to EEPROM load IIUC), and here lies the
-issue: the function read_efuse() calls read_efuse_byte() many times, as
-loop iterations depending on the efuse size (in our example, 512 in total).
-
-This procedure for reading efuse bytes relies in a loop that performs an
-I/O read up to *10k* times in case of failures. We measured the time of
-the loop inside read_efuse_byte() alone, and in this reproducer (which
-involves the dummy_hcd emulation layer), it takes 15 seconds each. As a
-consequence, we have the driver stuck in its probe routine for big time,
-exposing a stack trace like below if we attempt to reboot the system, for
-example:
-
-task:kworker/0:3 state:D stack:0 pid:662 tgid:662 ppid:2 flags:0x00004000
-Workqueue: usb_hub_wq hub_event
-Call Trace:
- __schedule+0xe22/0xeb6
- schedule_timeout+0xe7/0x132
- __wait_for_common+0xb5/0x12e
- usb_start_wait_urb+0xc5/0x1ef
- ? usb_alloc_urb+0x95/0xa4
- usb_control_msg+0xff/0x184
- _usbctrl_vendorreq_sync+0xa0/0x161
- _usb_read_sync+0xb3/0xc5
- read_efuse_byte+0x13c/0x146
- read_efuse+0x351/0x5f0
- efuse_read_all_map+0x42/0x52
- rtl_efuse_shadow_map_update+0x60/0xef
- rtl_get_hwinfo+0x5d/0x1c2
- rtl92cu_read_eeprom_info+0x10a/0x8d5
- ? rtl92c_read_chip_version+0x14f/0x17e
- rtl_usb_probe+0x323/0x851
- usb_probe_interface+0x278/0x34b
- really_probe+0x202/0x4a4
- __driver_probe_device+0x166/0x1b2
- driver_probe_device+0x2f/0xd8
- [...]
-
-We propose hereby to drastically reduce the attempts of doing the I/O read
-in case of failures, from 10000 to 10. With that, we got reponsiveness in the
-reproducer, while seems reasonable to believe that there's no sane device
-implementation in the field requiring this amount of retries at every I/O
-read in order to properly work. Based on that assumption it'd be good to
-have it backported to stable but maybe not since driver implementation
-(the 10k number comes from day 0), perhaps up to 6.x series makes sense.
-
-[0] Commit 15fffc6a5624 ("driver core: Fix uevent_show() vs driver detach race").
-
-[1] A note about that: this syzkaller report presents multiple reproducers
-that differs by the type of emulated USB device. For this specific case,
-check the entry from 2024/08/08 06:23 in the list of crashes; the C repro
-is available at https://syzkaller.appspot.com/text?tag=ReproC&x=1521fc83980000.
-
-Cc: stable@vger.kernel.org # v6.1+
-Reported-by: syzbot+edd9fe0d3a65b14588d5@syzkaller.appspotmail.com
-Signed-off-by: Guilherme G. Piccoli <gpiccoli@igalia.com>
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- drivers/net/wireless/realtek/rtlwifi/efuse.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes in v3:
+- Added rfclka1 to RPMh clocks for SAR2140P (Taniya)
+- Added HLOS1_VOTE_MM_SNOC_MMU_TBU_HF0_GDSC,
+	HLOS1_VOTE_MM_SNOC_MMU_TBU_SF0_GDSC,
+	HLOS1_VOTE_TURING_MMU_TBU0_GDSC,
+	HLOS1_VOTE_TURING_MMU_TBU1_GDSC
+ (Taniya)
+- Removed extra debug print in gpucc probe (Konrad)
+- Link to v2: https://lore.kernel.org/r/20241021-sar2130p-clocks-v2-0-383e5eb123a2@linaro.org
 
-diff --git a/drivers/net/wireless/realtek/rtlwifi/efuse.c b/drivers/net/wireless/realtek/rtlwifi/efuse.c
-index 82cf5fb5175f..2f75e376c0f6 100644
---- a/drivers/net/wireless/realtek/rtlwifi/efuse.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/efuse.c
-@@ -178,7 +178,7 @@ void read_efuse_byte(struct ieee80211_hw *hw, u16 _offset, u8 *pbuf)
- 
- 	retry = 0;
- 	value32 = rtl_read_dword(rtlpriv, rtlpriv->cfg->maps[EFUSE_CTRL]);
--	while (!(((value32 >> 24) & 0xff) & 0x80) && (retry < 10000)) {
-+	while (!(((value32 >> 24) & 0xff) & 0x80) && (retry < 10)) {
- 		value32 = rtl_read_dword(rtlpriv,
- 					 rtlpriv->cfg->maps[EFUSE_CTRL]);
- 		retry++;
+Changes in v2:
+- Dropped gcc_camera_hf_axi_clk, gcc_camera_sf_axi_clk,
+  gcc_qmip_camera_nrt_ahb_clk, gcc_qmip_camera_rt_ahb_clk,
+  gcc_iris_ss_hf_axi1_sreg, gcc_iris_ss_spd_axi1_sreg,
+  gcc_video_axi0_sreg and gcc_video_axi1_sreg clocks until corresponding
+  subsytems bringup (Taniya)
+- Program GDSC_SLEEP_ENA_VOTE directly from the probe function (Taniya)
+- Dropped sreg, BRANCH_HALT_POLL and collapse_sleep_mask patches
+  (Taniya)
+- Dropped gcc_parent_data_4, gcc_parent_map_4, gcc_parent_data_5,
+  gcc_parent_map_5 (LKP)
+- Link to v1: https://lore.kernel.org/r/20241017-sar2130p-clocks-v1-0-f75e740f0a8d@linaro.org
+
+---
+Dmitry Baryshkov (9):
+      dt-bindings: clock: qcom,rpmhcc: Add SAR2130P compatible
+      dt-bindings: clock: qcom: document SAR2130P Global Clock Controller
+      dt-bindings: clock: qcom,sm8550-tcsr: Add SAR2130P compatible
+      dt-bindings: clock: qcom,sm8550-dispcc: Add SAR2130P compatible
+      clk: qcom: rcg2: add clk_rcg2_shared_floor_ops
+      clk: qcom: rpmh: add support for SAR2130P
+      clk: qcom: add support for GCC on SAR2130P
+      clk: qcom: tcsrcc-sm8550: add SAR2130P support
+      clk: qcom: dispcc-sm8550: enable support for SAR2130P
+
+Konrad Dybcio (2):
+      dt-bindings: clk: qcom,sm8450-gpucc: add SAR2130P compatibles
+      clk: qcom: add SAR2130P GPU Clock Controller support
+
+ .../devicetree/bindings/clock/qcom,rpmhcc.yaml     |    1 +
+ .../bindings/clock/qcom,sar2130p-gcc.yaml          |   65 +
+ .../bindings/clock/qcom,sm8450-gpucc.yaml          |    2 +
+ .../bindings/clock/qcom,sm8550-dispcc.yaml         |    1 +
+ .../bindings/clock/qcom,sm8550-tcsr.yaml           |    1 +
+ drivers/clk/qcom/Kconfig                           |   22 +-
+ drivers/clk/qcom/Makefile                          |    2 +
+ drivers/clk/qcom/clk-rcg.h                         |    1 +
+ drivers/clk/qcom/clk-rcg2.c                        |   48 +-
+ drivers/clk/qcom/clk-rpmh.c                        |   13 +
+ drivers/clk/qcom/dispcc-sm8550.c                   |   18 +-
+ drivers/clk/qcom/gcc-sar2130p.c                    | 2366 ++++++++++++++++++++
+ drivers/clk/qcom/gpucc-sar2130p.c                  |  503 +++++
+ drivers/clk/qcom/tcsrcc-sm8550.c                   |   18 +-
+ include/dt-bindings/clock/qcom,sar2130p-gcc.h      |  185 ++
+ include/dt-bindings/clock/qcom,sar2130p-gpucc.h    |   33 +
+ include/dt-bindings/reset/qcom,sar2130p-gpucc.h    |   14 +
+ 17 files changed, 3282 insertions(+), 11 deletions(-)
+---
+base-commit: f6202e7cb4762be30b01ca4e1666512171c16d2a
+change-id: 20241017-sar2130p-clocks-5fbdd9bf04ee
+
+Best regards,
 -- 
-2.46.2
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
 
