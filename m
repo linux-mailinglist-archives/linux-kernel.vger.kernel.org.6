@@ -1,166 +1,190 @@
-Return-Path: <linux-kernel+bounces-381047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F31B9AF98F
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 08:08:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6676B9AF97B
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 08:02:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9A2D1F231C1
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 06:08:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCF2F1F2329A
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 06:02:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77B6718E372;
-	Fri, 25 Oct 2024 06:08:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3226918DF9C;
+	Fri, 25 Oct 2024 06:02:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=o2.pl header.i=@o2.pl header.b="ADsETGi/"
-Received: from mx-out.tlen.pl (mx-out.tlen.pl [193.222.135.158])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B/GRkY7U"
+Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D455318C030
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 06:08:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.222.135.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 975FA23B0;
+	Fri, 25 Oct 2024 06:02:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729836504; cv=none; b=k+fkfBU0f8O1I/ZuZSAd9hKGqADGIWAoZsJiKCjZJXqs4/0qkBgQeVCNS5MCJw+LGw1udl8UkAYfzNXAK/n1VD659WIk2Y2owMzGtn8j7mTvliDu3SxIPDSBLWoDOIrDz3q0pgaSVjA7RuRODI9L+u7z9XbrQpPqYiZjbF0gVo8=
+	t=1729836140; cv=none; b=B+WwBZJzy3byegjHIyQiA/ED8CMAnrn0T5CHSZZGRkPmfrRiK0LbGJIcwMjt2p1zSbP/XWqfRH/xyDJQc1XkvUSud0VDd59DQ5k72/dnZlFLmjqwE9F5bUq6ns9Rbvo1nEtxTX0uCT3AbJS0XP35tbrbl4NTE+YMvdiXI8UCBqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729836504; c=relaxed/simple;
-	bh=lWY1cYjWDT0FuJ3rKkJUgyvPJglMPy9xp12xFCSV+dc=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=qaFoalnzk+E5cNwuzWuflIsXhInQySw6whk3Dk3+GX2pjE4TWxwM+4ABXyVBDELM88lO4hFJt8ur+vPmbazc8QItffu3RaH+RImIVxQ9UPp8WjpaW3J4c93OU2Kf7msKzX46ap3FbC+rXU9HWDioJ2ThN5/xS2omCZ4YX3NS+c8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=o2.pl; spf=pass smtp.mailfrom=o2.pl; dkim=pass (1024-bit key) header.d=o2.pl header.i=@o2.pl header.b=ADsETGi/; arc=none smtp.client-ip=193.222.135.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=o2.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=o2.pl
-Received: (wp-smtpd smtp.tlen.pl 15452 invoked from network); 25 Oct 2024 08:01:38 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=o2.pl; s=1024a;
-          t=1729836098; bh=NS9u9n+cTzjLwF5ONAS/jRv5numrk4hGVCqnQ6MLXjY=;
-          h=From:To:CC:Subject;
-          b=ADsETGi/PVztE9UrbE2ZbQ7ZRQ4jPPVd6oP8tmcExwnw8FRviz+zaNIKKg/AfCPkn
-           GEtV7De4iKF74ZJZOcP9HWoQf0NWNMH7cYFnrJ3drOFNCnr2/Sv7yK/+vMBrlvBVWE
-           3r1sMwc6y/QKkZ165EGzbZtmlFmWGf8o70XIXlFw=
-Received: from 188.146.252.129.mobile.internet.t-mobile.pl (HELO [127.0.0.1]) (mat.jonczyk@o2.pl@[188.146.252.129])
-          (envelope-sender <mat.jonczyk@o2.pl>)
-          by smtp.tlen.pl (WP-SMTPD) with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP
-          for <dmitry.torokhov@gmail.com>; 25 Oct 2024 08:01:38 +0200
-Date: Fri, 25 Oct 2024 08:01:37 +0200
-From: =?UTF-8?Q?Mateusz_Jo=C5=84czyk?= <mat.jonczyk@o2.pl>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>
-CC: Mario Limonciello <mario.limonciello@amd.com>,
- Dan Carpenter <dan.carpenter@linaro.org>,
- Joy Chakraborty <joychakr@google.com>, linux-rtc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH=5D_rtc=3A_cmos=3A_avoid_taking_?=
- =?US-ASCII?Q?rtc=5Flock_for_extended_period_of_time?=
-User-Agent: K-9 Mail for Android
-In-Reply-To: <Zxqv9KYnBdtnuqox@google.com>
-References: <Zxqv9KYnBdtnuqox@google.com>
-Message-ID: <B8A0CC86-7C24-4154-B8F3-69CD6B6C94BD@o2.pl>
+	s=arc-20240116; t=1729836140; c=relaxed/simple;
+	bh=pGlfs/87qW5cbPgrdBoGrYcf0Is6B0O5L6yHvRn1rAY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NEsDeBL13zY6oNTylURY4n+dYahsTX915uQDHQqQP48aBkJBHGqTTRbnm3ZT1wZO2BQHbunr/7g6eP2IzpjpZFf8Cfa31J2SYXF4Vyqn/7EsGx17gzduorgVKOBh20iU1a0VRHzCFJpRvLmMK/EWyhWhIZUftl9gc3QDBDpCG9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B/GRkY7U; arc=none smtp.client-ip=209.85.166.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-3a3b463e9b0so6409065ab.3;
+        Thu, 24 Oct 2024 23:02:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729836138; x=1730440938; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mDg+Vcaf01znu6tLfRn2IhIdAlHb4VMVWFTZr0BKPgA=;
+        b=B/GRkY7U8g3XneQzpt1adKNbK2j9EALwzEhysp9QJ8e2lZM+z8R+87X5IHYDPljomv
+         rbHfc7xe5tesotwGaNzFNWZGraIEPfkuX+r8yHU6ta45SKaTa3gzLIKxaKWs75xFyg6f
+         qKPIFjV6PRIRcfWz5ft0LB78ghZJTtC5/H1sCJ1lICjiE/5eHZlt9Th6ohdVNcBhYtdZ
+         AcV4WjtRql+js7DlBeqDhtP8TtoJppFEBVxraziKU6m3lVMiF4RoSSOUn+qkkpQEpQgW
+         JdFKx3+BTeHimm6tGxbOuEFuWENc+ilv2EMNEWbXquganOfi008ULB6p0sdtjOeyuI0Q
+         Xo8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729836138; x=1730440938;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mDg+Vcaf01znu6tLfRn2IhIdAlHb4VMVWFTZr0BKPgA=;
+        b=wW3pQ0reGTZy5d1uqDZvxehJCcQagNK6y/vZJx8hTxprrcsNoz+uUoK7ea1R2XWKlp
+         x3Khy4J8E5r6O1nlTG1YxpZ0uc+ncjpux5hn9AUbSiGyLEg0ZxJ5xH+fDKZEtzJSdY/8
+         v9V0eqSJz0HAS1V31KbH58NxbyM/ht+Wj0jsmRRumQvuTB+r5KLT0pWyz45ma6DYOvXG
+         wGBwAC1g84s5ORrNOHk6kKWyQOqVsVtLjX9Q7zPuOy1f7O3XRqRcZ4Lus6aNpvAWA0VN
+         shcV+rxkJclE4lVqjvJCc2/F808TsOrHVaRfl5wDMVvIq35HZOV97BR5Qz2xGU1ZlSB0
+         mAWw==
+X-Forwarded-Encrypted: i=1; AJvYcCUZX9xwd1Wfb2F775ODKQu6Wr+f+Jr9Bj8vAD4QAeKZ9Pp8wvK9nE+VX6e/cNeuAxqzWLNDgzDRNf0F5Q8=@vger.kernel.org, AJvYcCW5wfblKkSW3fgRtd2VtqZAX3ECuQndhLPhS817khyz7Ei0IAXJaw/BZGjWeWaaiuVs3l1CKUbxqwZ7xFY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yznjm/lN8/JfgMQoMFnz4C39AVd7zCZbtYLLcX5VlULOp7OvGA8
+	bqAAKq0RzWHstDco9Mwcp1gwvG/85YMUaQ3SADnUzJDjerfjdka5GbStCQL9+NlE8bk3ytQcLTL
+	JppohaB5E2Dg5+KRi6Z5ipPKYH+Q=
+X-Google-Smtp-Source: AGHT+IHI96rZzZ22LDvmBdQuWwH021STYYNGPQR+XjhKSil2TgSc4rDCozUvDSoqdcK4KvzLi4ZSRjHMWOc3Tbh0J84=
+X-Received: by 2002:a05:6e02:1c0e:b0:3a4:d9d0:55a6 with SMTP id
+ e9e14a558f8ab-3a4de80b425mr47871735ab.19.1729836137602; Thu, 24 Oct 2024
+ 23:02:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
+References: <1728712330-4389-1-git-send-email-shengjiu.wang@nxp.com>
+In-Reply-To: <1728712330-4389-1-git-send-email-shengjiu.wang@nxp.com>
+From: Shengjiu Wang <shengjiu.wang@gmail.com>
+Date: Fri, 25 Oct 2024 14:02:02 +0800
+Message-ID: <CAA+D8ANM9QYe3idfkp5XJOXwqQUQ-qc_FcpQSKFDzQVhuTWZKw@mail.gmail.com>
+Subject: Re: [PATCH] ASoC: fsl_mqs: Support accessing registers by scmi interface
+To: Shengjiu Wang <shengjiu.wang@nxp.com>
+Cc: Xiubo.Lee@gmail.com, festevam@gmail.com, nicoleotsuka@gmail.com, 
+	lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com, 
+	linuxppc-dev@lists.ozlabs.org, linux-sound@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-WP-MailID: ee1af7991353aaae12cf921c9846d82d
-X-WP-AV: skaner antywirusowy Poczty o2
-X-WP-SPAM: NO 0000000 [kQO0]                               
 
-Dnia 24 pa=C5=BAdziernika 2024 22:37:08 CEST, Dmitry Torokhov <dmitry=2Etor=
-okhov@gmail=2Ecom> napisa=C5=82/a:
->On my device reading entirety of /sys/devices/pnp0/00:03/cmos_nvram0/nvme=
-m
->takes about 9 msec during which time interrupts are off on the CPU that
->does the read and the thread that performs the read can not be migrated
->or preempted by another higher priority thread (RT or not)=2E
+On Sat, Oct 12, 2024 at 2:15=E2=80=AFPM Shengjiu Wang <shengjiu.wang@nxp.co=
+m> wrote:
 >
->Allow readers and writers be preempted by taking and releasing rtc_lock
->spinlock for each individual byte read or written rather than once per
->read/write request=2E
-
-Hello,=20
-A nice idea!=20
-(sorry for any formatting problems, I'm on a train right now)=20
-
+> On i.MX95, the MQS module in Always-on (AON) domain only can
+> be accessed by System Controller Management Interface (SCMI)
+> MISC Protocol. So define a specific regmap_config for the case.
 >
->Signed-off-by: Dmitry Torokhov <dmitry=2Etorokhov@gmail=2Ecom>
->---
-> drivers/rtc/rtc-cmos=2Ec | 31 +++++++++++++++----------------
-> 1 file changed, 15 insertions(+), 16 deletions(-)
+
+find an issue when IMX_SCMI_MISC_DRV=3Dm but SND_SOC_FSL_MQS=3Dy
+will send v2 to fix it.
+
+Best regards
+Shengjiu Wang
+
+> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+> ---
+>  sound/soc/fsl/fsl_mqs.c | 41 +++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 41 insertions(+)
 >
->diff --git a/drivers/rtc/rtc-cmos=2Ec b/drivers/rtc/rtc-cmos=2Ec
->index 35dca2accbb8=2E=2Ee8f2fe0d8560 100644
->--- a/drivers/rtc/rtc-cmos=2Ec
->+++ b/drivers/rtc/rtc-cmos=2Ec
->@@ -645,18 +645,17 @@ static int cmos_nvram_read(void *priv, unsigned int=
- off, void *val,
-> 	unsigned char *buf =3D val;
->=20
-> 	off +=3D NVRAM_OFFSET;
->-	spin_lock_irq(&rtc_lock);
->-	for (; count; count--, off++) {
->+	for (; count; count--, off++, buf++) {
->+		guard(spinlock_irq)(&rtc_lock);
-> 		if (off < 128)
->-			*buf++ =3D CMOS_READ(off);
->+			*buf =3D CMOS_READ(off);
-> 		else if (can_bank2)
->-			*buf++ =3D cmos_read_bank2(off);
->+			*buf =3D cmos_read_bank2(off);
-> 		else
->-			break;
->+			return -EIO;
-> 	}
->-	spin_unlock_irq(&rtc_lock);
->=20
->-	return count ? -EIO : 0;
->+	return count;
-
-return 0;
-
-when you are at it=2E=20
-
-> }
->=20
-> static int cmos_nvram_write(void *priv, unsigned int off, void *val,
->@@ -671,23 +670,23 @@ static int cmos_nvram_write(void *priv, unsigned in=
-t off, void *val,
-> 	 * NVRAM to update, updating checksums is also part of its job=2E
-> 	 */
-> 	off +=3D NVRAM_OFFSET;
->-	spin_lock_irq(&rtc_lock);
->-	for (; count; count--, off++) {
->+	for (; count; count--, off++, buf++) {
-> 		/* don't trash RTC registers */
-> 		if (off =3D=3D cmos->day_alrm
-> 				|| off =3D=3D cmos->mon_alrm
-> 				|| off =3D=3D cmos->century)
->-			buf++;
->-		else if (off < 128)
->-			CMOS_WRITE(*buf++, off);
->+			continue;
->+
->+		guard(spinlock_irq)(&rtc_lock);
->+		if (off < 128)
->+			CMOS_WRITE(*buf, off);
-> 		else if (can_bank2)
->-			cmos_write_bank2(*buf++, off);
->+			cmos_write_bank2(*buf, off);
-> 		else
->-			break;
->+			return -EIO;
-> 	}
->-	spin_unlock_irq(&rtc_lock);
->=20
->-	return count ? -EIO : 0;
->+	return count;
-
-return 0;
-
-> }
->=20
-> /*----------------------------------------------------------------*/
-
+> diff --git a/sound/soc/fsl/fsl_mqs.c b/sound/soc/fsl/fsl_mqs.c
+> index 145f9ca15e43..0513e9e8402e 100644
+> --- a/sound/soc/fsl/fsl_mqs.c
+> +++ b/sound/soc/fsl/fsl_mqs.c
+> @@ -6,6 +6,7 @@
+>  // Copyright 2019 NXP
+>
+>  #include <linux/clk.h>
+> +#include <linux/firmware/imx/sm.h>
+>  #include <linux/module.h>
+>  #include <linux/moduleparam.h>
+>  #include <linux/mfd/syscon.h>
+> @@ -74,6 +75,29 @@ struct fsl_mqs {
+>  #define FSL_MQS_RATES  (SNDRV_PCM_RATE_44100 | SNDRV_PCM_RATE_48000)
+>  #define FSL_MQS_FORMATS        SNDRV_PCM_FMTBIT_S16_LE
+>
+> +static int fsl_mqs_sm_read(void *context, unsigned int reg, unsigned int=
+ *val)
+> +{
+> +       struct fsl_mqs *mqs_priv =3D context;
+> +       int num =3D 1;
+> +
+> +       if (IS_ENABLED(CONFIG_IMX_SCMI_MISC_DRV) &&
+> +           mqs_priv->soc->ctrl_off =3D=3D reg)
+> +               return scmi_imx_misc_ctrl_get(SCMI_IMX_CTRL_MQS1_SETTINGS=
+, &num, val);
+> +
+> +       return -EINVAL;
+> +};
+> +
+> +static int fsl_mqs_sm_write(void *context, unsigned int reg, unsigned in=
+t val)
+> +{
+> +       struct fsl_mqs *mqs_priv =3D context;
+> +
+> +       if (IS_ENABLED(CONFIG_IMX_SCMI_MISC_DRV) &&
+> +           mqs_priv->soc->ctrl_off =3D=3D reg)
+> +               return scmi_imx_misc_ctrl_set(SCMI_IMX_CTRL_MQS1_SETTINGS=
+, val);
+> +
+> +       return -EINVAL;
+> +};
+> +
+>  static int fsl_mqs_hw_params(struct snd_pcm_substream *substream,
+>                              struct snd_pcm_hw_params *params,
+>                              struct snd_soc_dai *dai)
+> @@ -188,6 +212,13 @@ static const struct regmap_config fsl_mqs_regmap_con=
+fig =3D {
+>         .cache_type =3D REGCACHE_NONE,
+>  };
+>
+> +static const struct regmap_config fsl_mqs_sm_regmap =3D {
+> +       .reg_bits =3D 32,
+> +       .val_bits =3D 32,
+> +       .reg_read =3D fsl_mqs_sm_read,
+> +       .reg_write =3D fsl_mqs_sm_write,
+> +};
+> +
+>  static int fsl_mqs_probe(struct platform_device *pdev)
+>  {
+>         struct device_node *np =3D pdev->dev.of_node;
+> @@ -219,6 +250,16 @@ static int fsl_mqs_probe(struct platform_device *pde=
+v)
+>                         dev_err(&pdev->dev, "failed to get gpr regmap\n")=
+;
+>                         return PTR_ERR(mqs_priv->regmap);
+>                 }
+> +       } else if (mqs_priv->soc->type =3D=3D TYPE_REG_SM) {
+> +               mqs_priv->regmap =3D devm_regmap_init(&pdev->dev,
+> +                                                   NULL,
+> +                                                   mqs_priv,
+> +                                                   &fsl_mqs_sm_regmap);
+> +               if (IS_ERR(mqs_priv->regmap)) {
+> +                       dev_err(&pdev->dev, "failed to init regmap: %ld\n=
+",
+> +                               PTR_ERR(mqs_priv->regmap));
+> +                       return PTR_ERR(mqs_priv->regmap);
+> +               }
+>         } else {
+>                 regs =3D devm_platform_ioremap_resource(pdev, 0);
+>                 if (IS_ERR(regs))
+> --
+> 2.34.1
+>
 
