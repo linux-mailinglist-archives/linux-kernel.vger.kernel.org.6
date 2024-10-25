@@ -1,68 +1,78 @@
-Return-Path: <linux-kernel+bounces-381882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 276249B05DE
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:31:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F7349B05E3
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:32:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DEFBF282984
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 14:31:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64E1B281079
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 14:32:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95CC94204D;
-	Fri, 25 Oct 2024 14:30:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DC621FB8BF;
+	Fri, 25 Oct 2024 14:32:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="of9KxQSZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Bx1iNKwb"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E863720BB25;
-	Fri, 25 Oct 2024 14:30:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0D7E18E76C
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 14:32:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729866655; cv=none; b=tc02LViu5nHRL6AHtCOqsOa2FboGMX8V8azgt5mibV0kn9vbgGPbC/sZ7deSNZvV+oPFmfXOFIsabdMR2usD937KO9lu/lA3GaWafvyH6W6Zg8CB/QoYAbaytwxvdQv//iY1w/SUDhbgtuTwnp2DE9fxpafqwRYAOpAqC6r6LRY=
+	t=1729866742; cv=none; b=VQ+iKASchKEmIVgItrXcrDtN8FrAK5d1zVVK9Q3BkwD0rHaKMvXQF8ei1IQrlvRZi4b14DesYSTmDw5mcb2ff09pPRjmRKzrVWYamnbkZoXrwJrN0ULXMjV0RtalgcOi6LmoDNaNSuUpt/I3bP3uWLaARjLwKBtBFF2oYPCEPDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729866655; c=relaxed/simple;
-	bh=OF/70o8NlOOAbbvPS34QecnaUEGCvVzevoHviGTWZO8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=BTvzKC3/P1CbtbZggBiYQEQnngmR1mVQqwLlATObvH5lqzAcofQ5wuVbxg1WMOI6hgPsFW7CA3nY/dXw2Yc0stJYTYdTgYKK+SMXpncvbcpBCj57zxxVC/lfelveqZpy6kEMBTuw2gz42nBuwRFXHpxYBKWLVkm4uvIlvHEDDK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=of9KxQSZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5ADA7C4CEE9;
-	Fri, 25 Oct 2024 14:30:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729866654;
-	bh=OF/70o8NlOOAbbvPS34QecnaUEGCvVzevoHviGTWZO8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=of9KxQSZRl6hvInqEi5ITtFSy38Asc/iopeslC1Yl6LdQQyfnMOk5spZtwhIZgUE0
-	 Y06VQ0lw2gUWFK+TzjA0NugCOpDJhG8Wf9bF04gCKNSNamfic7xDZpYlYuOpwbnphp
-	 nHDrvZignvu1A13IoUA+sEK+SBZFkaM6hjSyDvX45MH2dmloHj1ZH5JdP/sbl0/w86
-	 0arzE5KY9GblP9BgMMOdmoqK9zKJHKkyePWkXSB5CywvKqqHC0Dh8prcks6IECRMcO
-	 rlvPTQQPw+DG6MT/FGNbzOMjpxgXEAhFzBY5rlqYzur/Zo527ZsBCQ9sAKaVhMpJUv
-	 zVmi9CDERBkNA==
-From: =?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Celeste Liu
- <coelacanthushex@gmail.com>, Celeste Liu via B4 Relay
- <devnull+CoelacanthusHex.gmail.com@kernel.org>, Paul Walmsley
- <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
- <aou@eecs.berkeley.edu>, =?utf-8?B?QmrDtnJuIFTDtnBlbA==?=
- <bjorn@rivosinc.com>
-Cc: Palmer Dabbelt <palmer@rivosinc.com>, Alexandre Ghiti <alex@ghiti.fr>,
- "Dmitry V. Levin" <ldv@strace.io>, Andrea Bolognani <abologna@redhat.com>,
- Felix Yan <felixonmars@archlinux.org>, Ruizhe Pan <c141028@gmail.com>,
- Shiqi Zhang <shiqi@isrc.iscas.ac.cn>, Guo Ren <guoren@kernel.org>, Yao Zi
- <ziyao@disroot.org>, Han Gao <gaohan@iscas.ac.cn>,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-Subject: Re: [PATCH] riscv/entry: get correct syscall number from
- syscall_get_nr()
-In-Reply-To: <871q045ntd.ffs@tglx>
-References: <20241017-fix-riscv-syscall-nr-v1-1-4edb4ca07f07@gmail.com>
- <87a5exy2rx.fsf@all.your.base.are.belong.to.us>
- <b72e3d2b-d540-47bf-adec-0ab6eda135d8@gmail.com>
- <8734kpqu8k.fsf@all.your.base.are.belong.to.us> <871q045ntd.ffs@tglx>
-Date: Fri, 25 Oct 2024 07:30:53 -0700
-Message-ID: <87ldycjluq.fsf@all.your.base.are.belong.to.us>
+	s=arc-20240116; t=1729866742; c=relaxed/simple;
+	bh=NMnuD8+TcvuqRl0IQNjXaABqUFwLI07jvfxxrO9Tq6Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sm65glZTqwF2DiSdMz1lqg71gRu73ra2tvHVHBJWl/d+O31CxfmxJe0JqhEYYaE8vrb0i4F1t/3sCJdF8Gt61QFZd2Ho4EQwMLxZruT7GrdJBX/cO5iZLKxi/nMBJrcr5RjHMfYAvSNzg/r8DajlwHUg6Mj+ytmBKvHsV2BXuAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Bx1iNKwb; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729866741; x=1761402741;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=NMnuD8+TcvuqRl0IQNjXaABqUFwLI07jvfxxrO9Tq6Q=;
+  b=Bx1iNKwbyCRWKWgiSBkbnN3OzOThoJQwysGZlctPzmrIpVl/7Ox4h7hy
+   VZhqq9/lCpTfbXVIjXfKsLtW8AnQVXHhker14tO2qx60QA4bcDc4gNTDl
+   NMqhI4nBoVeqB8iQ+07PWePeghtlo/+AE65Y5QqDT6ShccL9FeWLv3ex1
+   2XWQ+PGqXISk0W9YK4Jpg2u3hub+00wjzXpp2PVG2aES0zUcBrmWkEt2/
+   Hcs/armGtdEXv4hAvp/66zzVutf+d5VZlOTl/orjU4FdJBkP3iX5zYl9m
+   Vvm8cE4bJP79SimIYhSJ1FFa6aZmePyfC2OuhN6YenUN7kZXAh/iJOzlE
+   w==;
+X-CSE-ConnectionGUID: Me3PwGuiSJqXmasSIF7/+g==
+X-CSE-MsgGUID: 7JMhFy1IS26eRz92IuKqLg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11236"; a="40930995"
+X-IronPort-AV: E=Sophos;i="6.11,232,1725346800"; 
+   d="scan'208";a="40930995"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2024 07:32:20 -0700
+X-CSE-ConnectionGUID: icyJaGXHTjCdK8z8GlPH1A==
+X-CSE-MsgGUID: tonr6n63T+GEKQlqKlk8uw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,232,1725346800"; 
+   d="scan'208";a="81087623"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2024 07:32:17 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1t4LMM-00000006wS7-01um;
+	Fri, 25 Oct 2024 17:32:14 +0300
+Date: Fri, 25 Oct 2024 17:32:13 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>
+Cc: Zeng Heng <zengheng4@huawei.com>, jia-cheng.hu@intel.com,
+	gregkh@linuxfoundation.org, quic_jjohnson@quicinc.com,
+	jinqian@android.com, alan@linux.intel.com,
+	linux-kernel@vger.kernel.org, bobo.shaobowang@huawei.com
+Subject: Re: [PATCH] goldfish: Fix unused const variable
+ 'goldfish_pipe_acpi_match'
+Message-ID: <Zxur7RC-bBYX79WJ@smile.fi.intel.com>
+References: <20241025074129.1920707-1-zengheng4@huawei.com>
+ <ttlc5ppgljd3plbk6kw4ndi47pqafivtxk2sosdhlw3zeda273@dn74s3eluxqp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,80 +80,37 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ttlc5ppgljd3plbk6kw4ndi47pqafivtxk2sosdhlw3zeda273@dn74s3eluxqp>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Thomas Gleixner <tglx@linutronix.de> writes:
+On Fri, Oct 25, 2024 at 04:27:07PM +0200, Uwe Kleine-König wrote:
+> On Fri, Oct 25, 2024 at 03:41:29PM +0800, Zeng Heng wrote:
+> > Fix the following compilation warning:
+> > 
+> > drivers/platform/goldfish/goldfish_pipe.c:925:36: warning:
+> > ‘goldfish_pipe_acpi_match’ defined but not used
+> > [-Wunused-const-variable=]
+> >   925 | static const struct acpi_device_id goldfish_pipe_acpi_match[] = {
+> > 
+> > Only define the const variable when the CONFIG_ACPI is enabled.
 
-> On Mon, Oct 21 2024 at 09:46, Bj=C3=B6rn T=C3=B6pel wrote:
->> Celeste Liu <coelacanthushex@gmail.com> writes:
->>> 1. syscall_enter_from_user_mode() will do two things:
->>>    1) the return value is only to inform whether the syscall should be =
-skipped.
->>>    2) regs will be modified by filters (seccomp or ptrace and so on).
->>> 2. for common entry user, there is two informations: syscall number and
->>>    the return value of syscall_enter_from_user_mode() (called is_skippe=
-d below).
->>>    so there is three situations:
->>>    1) if syscall number is invalid, the syscall should not be performed=
-, and
->>>       we set a0 to -ENOSYS to inform userspace the syscall doesn't exis=
-t.
->>>    2) if syscall number is valid, is_skipped will be used:
->>>       a) if is_skipped is -1, which means there are some filters reject=
- this syscall,
->>>          so the syscall should not performed. (Of course, we can use bo=
-ol instead to
->>>          get better semantic)
->>>       b) if is_skipped !=3D -1, which means the filters approved this s=
-yscall,
->>>          so we invoke syscall handler with modified regs.
->>>
->>> In your design, the logical condition is not obvious. Why syscall_enter=
-_from_user_mode()
->>> informed the syscall will be skipped but the syscall handler will be ca=
-lled
->>> when syscall number is invalid? The users need to think two things to g=
-et result:
->>> a) -1 means skip
->>> b) -1 < 0 in signed integer, so the skip condition is always a invalid =
-syscall number.
->>>
->>> In may way, the users only need to think one thing: The syscall_enter_f=
-rom_user_mode()
->>> said -1 means the syscall should not be performed, so use it as a condi=
-tion of reject
->>> directly. They just need to combine the informations that they get from=
- API as the
->>> condition of control flow.
->>
->> I'm all-in for simpler API usage! Maybe massage the
->> syscall_enter_from_user_mode() (or a new one), so that additional
->> syscall_get_nr() call is not needed?
->
-> It's completely unclear to me what the actual problem is. The flow how
-> this works on all architectures is:
->
->        regs->orig_a0  =3D regs->a0
->        regs->a0 =3D -ENOSYS;
->
->        nr =3D syscall_enter_from_user_mode(....);
->
->        if (nr >=3D 0)
->           regs->a0 =3D nr < MAX_SYSCALL ? syscall(nr) : -ENOSYS;
->=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20
-> If syscall_trace_enter() returns -1 to skip the syscall, then regs->a0
-> is unmodified, unless one of the magic operations modified it.
->
-> If syscall_trace_enter() was not active (no tracer, no seccomp ...) then
-> regs->a0 already contains -ENOSYS.
->
-> So what's the exact problem?
+...
 
-It's a mix of calling convention, and UAPI:
-  * RISC-V uses a0 for arg0 *and* return value (like arm64).
-  * RISC-V does not expose orig_a0 to userland, and cannot easily start
-    doing that w/o breaking UAPI.
+> Looking at changes like
+> https://lore.kernel.org/all/20241024130424.3818291-11-andriy.shevchenko@linux.intel.com/
+> I suggest to drop the use of ACPI_PTR() instead.
 
-Now, when setting a0 to -ENOSYS, it's clobbering arg0, and the ptracer
-will have an incorrect arg0 (-ENOSYS).
+Right, please drop ACPI_PTR() and if needed, replace acpi.h with proper
+mod_devicetable.h. You may find tons of examples in IIO:
+`git log --grep ACPI_PTR -- drivers/iio`.
+
+P.S. Thanks for Cc'ing me!
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
