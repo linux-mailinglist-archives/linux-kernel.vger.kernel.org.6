@@ -1,140 +1,108 @@
-Return-Path: <linux-kernel+bounces-381823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 680E99B04F4
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:03:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5282D9B04F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 16:04:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 978DDB237B9
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 14:03:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03E0228241A
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 14:04:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2383613B787;
-	Fri, 25 Oct 2024 14:03:49 +0000 (UTC)
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E43C2745F2;
+	Fri, 25 Oct 2024 14:04:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="VmzAT6yg"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A429E212189;
-	Fri, 25 Oct 2024 14:03:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B3444204D
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 14:04:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729865028; cv=none; b=TeuYlzwnHKN0Xh63y48Y4bDHGJaGFSdMuRwMoL0EmP8RosvMxYYgHSDj1vo10F6zve/WB1x7oNwOnlj5aemrleqoRroZs6pCmtbUi8CrNScKq5KWeMVUBTtr+NhjgIPPeGaxQyCxsU9V1axGzy+aXNDePga3gxEN3OlQpbPTwKs=
+	t=1729865057; cv=none; b=QmsUS+U7iKvwDLIUl5nnhruManwpJKY2ieLtUFfmHkBjk7He2bz76/A4MbgpEqvNROD2y6v/Q0bVivEIUZ84lwmf68JL6nQNtSa0FH6ksMU9INIT4j2xzUM728wf/qKw3i4OvLUTckfi0QWu9BQPsPufvekflDN8cQwjeLAiCek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729865028; c=relaxed/simple;
-	bh=Nl+3bOnR2Unji8mkIuA4GaO14wA+JZUVRZbEaFWBh+k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=P+dE8tDfthtvwctbgVclnT/MEMTxE6g/Q3DtBFrGGklOCAxQJz49ldq5udeZdvQejAgx7NTBWMnDm78ai2eR7Un+kDzmPKIltLXfzV1HmaUAgVJZU746ik1HoXjQ2EzyZFgHqJ/oAbOKmOHodIvem751X9UeQouzce13+Tiw248=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.51])
-	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4XZkWY4ht0z9v7JC;
-	Fri, 25 Oct 2024 21:43:21 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id 9F98614035F;
-	Fri, 25 Oct 2024 22:03:37 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.204.63.22])
-	by APP1 (Coremail) with SMTP id LxC2BwCH+Tk0pRtnjsZpAA--.22140S2;
-	Fri, 25 Oct 2024 15:03:37 +0100 (CET)
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: trondmy@kernel.org,
-	anna@kernel.org
-Cc: linux-nfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Roberto Sassu <roberto.sassu@huawei.com>,
-	stable@vger.kernel.org
-Subject: [PATCH] nfs: Fix KMSAN warning in decode_getfattr_attrs()
-Date: Fri, 25 Oct 2024 16:03:27 +0200
-Message-ID: <20241025140327.2666623-1-roberto.sassu@huaweicloud.com>
-X-Mailer: git-send-email 2.47.0.118.gfd3785337b
+	s=arc-20240116; t=1729865057; c=relaxed/simple;
+	bh=jhkN4Q4MjooMbIyeXXRMiCXk0C9i/QJXQNhSVF+7SsI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OrXtUCgVAYphczcqSXJEoOFHeQjQpH6/LlBU9QjZFPL+9Su/7A8v+iIqAsw8snzYCfeZkoPZ830JrkZ+LtzvVIf8MAg0eLeF2x/XvAL3EbIYMrV4+IhJOM89Jwt4rlLOCpus293Ky8XFQP4/xrbfrraOjoOMBLa2FKUIvAKu314=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=VmzAT6yg; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 963DE40E028C;
+	Fri, 25 Oct 2024 14:04:13 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 065vySKJsjU1; Fri, 25 Oct 2024 14:04:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1729865049; bh=85rPkP8Egg53gZYF8kP9J7jpoFHGZSmykS0nh2ohL7A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VmzAT6ygT/CaJi7hGQahAS9VrNi83X4WWmyiasuIpJjnO5S506o6SanfGxLb+ZOim
+	 q2KpEmx0U6YpcDHmrchedQ+j+qscE6P4pBpExHwRq7pherVUAB4Dqwqu9dXKxiAPav
+	 0ddoNaykNCvbmDvTnqWnFCVndpQy7GnLsjj5YjDttBcjx9YsH2+S4Tjj5f75FFgtD0
+	 YnMgegY1gcphFCBZS67SLoO7B6irQ0zm2B0XscDhI8fgKVFjrKz/FgQSf0ZHQwRuBG
+	 3oSuB1QKaiP/Olwfrx9wHry6bPzJ6xY5J5+mrz7Gj76U20s/5oOG/E1ZyLCf5icXdT
+	 GJI92764Jy7raSYu26JemhsluAhFcg9SA2DiSEQn+O2WhQSaXoJzHG0NlJI++PtwML
+	 1wC96m2BpITQ+avm5zE53LSnrjpPPt4lp45o9j2/oXti0n0C/t8QcHQr2GE7wT+sSY
+	 aIq9nNiB8h0ie6+7HHVC6s/o3dG0rPTsY+EAebeFVfuhOskRfJP3pPoteN+5y7G7pH
+	 wpxRoXWWzwzyIKy7aX6GQB7p5fRrzsgFgcs+JCPy1W5moA4XyEXndR0mwez+2Dw8+h
+	 yz2XKkq62HAcX8bR/TFMXUQNavxxLEnGnXJnkQ4oawfb6A/F8f2hUeYm/CQA4YOXrP
+	 5pQVve3/08gnBrR4nXNzGOSM=
+Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 462FA40E0169;
+	Fri, 25 Oct 2024 14:03:59 +0000 (UTC)
+Date: Fri, 25 Oct 2024 16:03:58 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Michael Roth <michael.roth@amd.com>,
+	Ashish Kalra <ashish.kalra@amd.com>,
+	Nikunj A Dadhania <nikunj@amd.com>,
+	Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+Subject: Re: [PATCH v4 1/8] x86/sev: Prepare for using the RMPREAD
+ instruction to access the RMP
+Message-ID: <20241025140358.GDZxulTp3VnRtxaK3l@fat_crate.local>
+References: <cover.1729708922.git.thomas.lendacky@amd.com>
+ <5e8bbb786f0579b615a5b32bddbf552e0b2c29c8.1729708922.git.thomas.lendacky@amd.com>
+ <20241025120920.GNZxuKcBsMvYTd0ki-@fat_crate.local>
+ <2dcb1db1-fc1b-0fd0-f878-470cfd22e8e8@amd.com>
+ <528f1a15-221f-6419-3f6d-7bd45f75d48f@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:LxC2BwCH+Tk0pRtnjsZpAA--.22140S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7AF1xXw48Jw4DWw4fuw4xtFb_yoW8uw45pr
-	Wqk34fCr15Ary8JF4Fva13X34UXay8trW7Wrs7tr1xZ3WrJrnxKa48tr4agrnrCr4UAFyF
-	g3WUJr4rJ3yDAFDanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUyKb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lc7CjxVAaw2AFwI0_GFv_Wryl42xK82IYc2Ij
-	64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
-	8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE
-	2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
-	xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF
-	7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxU4NB_UUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAHBGcbAm8JvAABsk
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <528f1a15-221f-6419-3f6d-7bd45f75d48f@amd.com>
 
-From: Roberto Sassu <roberto.sassu@huawei.com>
+On Fri, Oct 25, 2024 at 08:56:09AM -0500, Tom Lendacky wrote:
+> And why am I not getting the replies you made to the v2 series but getting
+> replies to the v3 and v4 series...  very frustrating... can't find them in
+> quarantine or anywhere, dang email system.
 
-Fix the following KMSAN warning:
+You can always switch to an email system which works for kernel development
+and use the corporate thing for something else.
 
-CPU: 1 UID: 0 PID: 7651 Comm: cp Tainted: G    B
-Tainted: [B]=BAD_PAGE
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009)
-=====================================================
-=====================================================
-BUG: KMSAN: uninit-value in decode_getfattr_attrs+0x2d6d/0x2f90
- decode_getfattr_attrs+0x2d6d/0x2f90
- decode_getfattr_generic+0x806/0xb00
- nfs4_xdr_dec_getattr+0x1de/0x240
- rpcauth_unwrap_resp_decode+0xab/0x100
- rpcauth_unwrap_resp+0x95/0xc0
- call_decode+0x4ff/0xb50
- __rpc_execute+0x57b/0x19d0
- rpc_execute+0x368/0x5e0
- rpc_run_task+0xcfe/0xee0
- nfs4_proc_getattr+0x5b5/0x990
- __nfs_revalidate_inode+0x477/0xd00
- nfs_access_get_cached+0x1021/0x1cc0
- nfs_do_access+0x9f/0xae0
- nfs_permission+0x1e4/0x8c0
- inode_permission+0x356/0x6c0
- link_path_walk+0x958/0x1330
- path_lookupat+0xce/0x6b0
- filename_lookup+0x23e/0x770
- vfs_statx+0xe7/0x970
- vfs_fstatat+0x1f2/0x2c0
- __se_sys_newfstatat+0x67/0x880
- __x64_sys_newfstatat+0xbd/0x120
- x64_sys_call+0x1826/0x3cf0
- do_syscall_64+0xd0/0x1b0
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+Like I do.
 
-The KMSAN warning is triggered in decode_getfattr_attrs(), when calling
-decode_attr_mdsthreshold(). It appears that fattr->mdsthreshold is not
-initialized.
+:-)
 
-Fix the issue by initializing fattr->mdsthreshold to NULL in
-nfs_fattr_init().
-
-Cc: stable@vger.kernel.org # v3.5.x
-Fixes: 88034c3d88c2 ("NFSv4.1 mdsthreshold attribute xdr")
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
----
- fs/nfs/inode.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/fs/nfs/inode.c b/fs/nfs/inode.c
-index 542c7d97b235..1e71b029da58 100644
---- a/fs/nfs/inode.c
-+++ b/fs/nfs/inode.c
-@@ -1633,6 +1633,7 @@ void nfs_fattr_init(struct nfs_fattr *fattr)
- 	fattr->gencount = nfs_inc_attr_generation_counter();
- 	fattr->owner_name = NULL;
- 	fattr->group_name = NULL;
-+	fattr->mdsthreshold = NULL;
- }
- EXPORT_SYMBOL_GPL(nfs_fattr_init);
- 
 -- 
-2.47.0.118.gfd3785337b
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
