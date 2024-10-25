@@ -1,250 +1,219 @@
-Return-Path: <linux-kernel+bounces-381106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 375349AFA6A
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 08:56:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B51B9AFA6F
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 08:56:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A00C1C2104E
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 06:55:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20CD31F21F63
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 06:56:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ED2B1B3F3D;
-	Fri, 25 Oct 2024 06:55:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60F511B2193;
+	Fri, 25 Oct 2024 06:56:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hjr+5ps0"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="HGW+acVf"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 780841B395C;
-	Fri, 25 Oct 2024 06:55:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D246A1AF0BA
+	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 06:56:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729839325; cv=none; b=M6f9QHCSdPJfZN58nV3Jiox11ezTQqzRt1LTvqcyPsNABnAvVY1z71aD7IUjo7W0Dre1cZf6ZyiLCJSBDSv7OwsBC5dmaBODSlQi7euy+iwVYYyoYmAWcY/qFyQW+wCHYOz69IH6RMR9jWG0L3kjeYPJfu0Telh3UVNm6Sj05Uk=
+	t=1729839380; cv=none; b=sRVuOApWsmeR/K4jkUhIkqi1W9ja8FCw0JpsW6xA3KwFuSX7f9CxINFmx0uRqWZNwSNfgcO/BrFmOdi1OFUulmzuC5oVUNLGKuGS/rqcftLtvnPQYX3UWTN1r4cf9DeahmurhVxNZVaYm98RUvVK7bt5Vf328ACDGbUQXg3+OQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729839325; c=relaxed/simple;
-	bh=2MJXttdWv+uPBVxpl7mViWjKnohFQONagE8SjhImBJs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=k7oLIaaE888H4G4As5JGCmwegNJxmh+NQHPLN5BgWsX8fPiram6Mayq2KjbPIoAFecSSaiSAEn5YFOctlg0dduHWileqdNQDi57KCKyLC5jE6uGwbse6xkt+hXiixlZxsGKddOZ/fJZLA4vDjJtsfqDVx3JC4xsoRmY30txxq9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hjr+5ps0; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-71e681bc315so1175074b3a.0;
-        Thu, 24 Oct 2024 23:55:23 -0700 (PDT)
+	s=arc-20240116; t=1729839380; c=relaxed/simple;
+	bh=25Jvv1dRU/CqZfXqsQG04QoTrrK/hfjJxNA716kXjgM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=s8QBqDXYGI4Fc32W14dGRwuWIkCJrCBR5gTSHh1QORP+jrRGAf97l3j10gkhBVZdrJsKusT6zyMfeOza/LvKB/mFRYTQvt6vxxfJFw49gVlZACggv15gYDC1u7BBgX+hAY5V+OATjr6TUWPlILiaAo0jACVmPJsbTAsurHiqizc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=HGW+acVf; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-37d41894a32so1269779f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 23:56:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729839322; x=1730444122; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HpnAfrCWxCV4uziFj97/o8Q3QMblwAnXsQ6CAZtH3u8=;
-        b=hjr+5ps0zhiYA7qoguNDmC+oD3HdGAibpYuR0BPHhiRsMR3F5CwxvSp6aAiq8d1JER
-         nD9Q2aKjezzSu2Tvn1XEitNcM52ZKthCCCOdwm1SlPySPD1qC8pMTR2W75FnmlKni090
-         9ed2Hn1occFHWchCKBG7s2EpBRif79fg90HknOS/PICRfD1CJ+rOWGpW4VcY48hMFOAc
-         lpeTm0Az6ebqEc/KiVUyasJ/NPvAMQlee8P2xhlsPN/iHoewVpRcwKjoFdp1IhNlfiEb
-         5OHuGFXXNoKELcoDFaccmNXby5lCqHuGRMOuOSvf255SbExhfSLwzgnkoEXQctQFq0zw
-         3IgQ==
+        d=suse.com; s=google; t=1729839375; x=1730444175; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=sTe9mW5h/PuKAECzVf3PYOF2hJitcmVtXP47DBZfOlw=;
+        b=HGW+acVf4NFa0+p9uMryqVu/sVPuqdMP3+S1xRJCEue1OyVIJY37J5szSk11SOQ/Ul
+         Grpk6Ls27CjqmDMpPG2tKSDyiiwVbNUOOBXfd+WpoduFhVID0Qer6YYxtbxbOKBDlCvR
+         PyCLXQpM+pZW74QDDA41Gc7UBdrRx+q34MLqKJnCpPkC6OLbVIF9CwSgjAXRK+EDRE0Z
+         nJ/pne1d+18H+EfnWFqKqbK5Hr2kbtwNywyGG7q6oNEKRJdh73mFz2wEZqq0Tc19sMdL
+         qzzfmnd0tDo1/u1P+QNs5gXqlNweYZ5m/NM8uoBdrqXNvymO4CCpL7z2CVN84PCW18Yn
+         ZTxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729839322; x=1730444122;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HpnAfrCWxCV4uziFj97/o8Q3QMblwAnXsQ6CAZtH3u8=;
-        b=NNt47Jm63BrxgiydD+2s675qs31q0jbrWySs6+WGb4gckP5wph7L7Rzf44nJboxEa+
-         spUmEYNBsghC1WOu+NRTn/jBtsSF0gEmbHhfheG3QjdbaIU6SC93HQ4EhUcPilIwIACP
-         CZrvX7Za02YiSodGUzrtSY23H83HE18ZrMz4OowX9VbfsXXZ4Kwsv5Mv8eEUoayIt+lL
-         FYlXNUPlGW43YIQzaQI1J/Hb55kQC6j3JfNVH/9MHrunLz+jupoHSGIq4WJjEET0hP16
-         c5gikY0A+5A1dwnHlpFR0K/n/SUO+aqHrYlivZHVcyQNLWpvLVABZmSFGW7mGPxZ0oEF
-         LJ5w==
-X-Forwarded-Encrypted: i=1; AJvYcCUc57K+dXzEc1H62+ez3egQl6KNsv1O9agjqsir0N1dH2t+1YGnPg9qLKMbBUl64DsSwCl3+BAhyy18oIc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmCOdD4TrXsj+Vj+IEFndBiKebQalaeT3fYwMKSbdwffpJI7Km
-	qVBmyK25pbRlWcJTWLJfCt64aG7I+PHs0QIfbDVQo+pt5Tx19rWnHymW/TrHAsY=
-X-Google-Smtp-Source: AGHT+IHm+ZPWnAqyOGCAsX5H2I+TKHQoYPVEkKIKIoAT1rlEXFaAx9EjfhgvMwkMuXLkg8YXQkuMQw==
-X-Received: by 2002:a05:6a00:39a2:b0:71e:4dc5:259a with SMTP id d2e1a72fcca58-72045280660mr8128901b3a.7.1729839322140;
-        Thu, 24 Oct 2024 23:55:22 -0700 (PDT)
-Received: from VM-213-92-pri.localdomain ([14.116.239.34])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7edc8685729sm464011a12.37.2024.10.24.23.55.16
+        d=1e100.net; s=20230601; t=1729839375; x=1730444175;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sTe9mW5h/PuKAECzVf3PYOF2hJitcmVtXP47DBZfOlw=;
+        b=vFGjh0eG78N3DLZkvNAXU64vvqivT+dDgd0zR7DChK9/16sIf9eny0riE0vkMp8K10
+         Yfv34FBkGf734cbINO7edCY+5StgCc3WzhlkoFa1njv0LOY2x8g7KLrCS/mnERDvrNwV
+         PNRcGiUUT558zlT8RWkNv8qgDyBPkOzAXUaHDRufOMqoXoPVlDZCOqfbr+ubmzq6GHRG
+         mJzdmnFB8BWdBRvRlfgomoXnxJ25Ql9jL5hfzSUIC8Cv9vNctC0XnvdIjMjTTaUB+Uzt
+         J7LwmqJJqqyGpC+Vd8gzl7hkJGn/TVgPrO5JM810bhuVmuZI3AUrKe3L7atlEhLetD3C
+         CnhA==
+X-Forwarded-Encrypted: i=1; AJvYcCW/l79Diyj9XrpUztT07wJq++8Hu6LNGNsJQn1FmJ00YW0j4ChjFsjoEoOXhc88ysCRGg7sKa43O1EstNo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTrdhTRZ7DVpWdArMvZuMJQkxkfY+/3xvDeBTCE0PM4nlFckZA
+	wOnbKUKPa/JIP0gjJoLhEZKdQ5HqBS+KSsQYFvJ5qQx5qidRbL+aQTnrIYJQT8c=
+X-Google-Smtp-Source: AGHT+IE0m4dKzQ0gdgNM1YMMDkWjtRcILPbXQDIuhEVhrT0m4N3QefoLH4rvCAehNcVFfiNMs0Kh8Q==
+X-Received: by 2002:adf:ec42:0:b0:37c:ffdd:6d5a with SMTP id ffacd0b85a97d-3803ab6710amr3757362f8f.6.1729839375159;
+        Thu, 24 Oct 2024 23:56:15 -0700 (PDT)
+Received: from localhost (109-81-81-105.rct.o2.cz. [109.81.81.105])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b70e0fsm745692f8f.73.2024.10.24.23.56.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Oct 2024 23:55:21 -0700 (PDT)
-From: iamhswang@gmail.com
-X-Google-Original-From: haisuwang@tencent.com
-To: linux-btrfs@vger.kernel.org
-Cc: clm@fb.com,
-	josef@toxicpanda.com,
-	dsterba@suse.com,
-	wqu@suse.com,
-	boris@bur.io,
-	linux-kernel@vger.kernel.org,
-	iamhswang@gmail.com,
-	Haisu Wang <haisuwang@tencent.com>
-Subject: [PATCH 2/2] btrfs: simplify regions mark and keep start unchanged in err handling
-Date: Fri, 25 Oct 2024 14:54:41 +0800
-Message-ID: <20241025065448.3231672-3-haisuwang@tencent.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20241025065448.3231672-1-haisuwang@tencent.com>
-References: <20241025065448.3231672-1-haisuwang@tencent.com>
+        Thu, 24 Oct 2024 23:56:14 -0700 (PDT)
+Date: Fri, 25 Oct 2024 08:56:14 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Muchun Song <muchun.song@linux.dev>,
+	Hugh Dickins <hughd@google.com>,
+	Yosry Ahmed <yosryahmed@google.com>, linux-mm@kvack.org,
+	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
+	Meta kernel team <kernel-team@meta.com>
+Subject: Re: [PATCH v1 3/6] memcg-v1: no need for memcg locking for dirty
+ tracking
+Message-ID: <ZxtBDglHg0C8aRTT@tiehlicka>
+References: <20241025012304.2473312-1-shakeel.butt@linux.dev>
+ <20241025012304.2473312-4-shakeel.butt@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241025012304.2473312-4-shakeel.butt@linux.dev>
 
-From: Haisu Wang <haisuwang@tencent.com>
+On Thu 24-10-24 18:23:00, Shakeel Butt wrote:
+> During the era of memcg charge migration, the kernel has to be make sure
+> that the dirty stat updates do not race with the charge migration.
+> Otherwise it might update the dirty stats of the wrong memcg. Now with
+> the memcg charge migration deprecated, there is no more race for dirty
 
-Simplify the regions mark by using cur_alloc_size only to present
-the reserved but may failed to alloced extent. Remove the ram_size
-as well since it is always consistent to the cur_alloc_size in the
-context. Advanced the start mark in normal path until extent succeed
-alloced and keep the start unchanged in error handling path.
+s@deprecated@gone@
 
-PASSed the fstest generic/475 test for a hundred times with quota
-enabled. And a modified generic/475 test by removing the sleep time
-for a hundred times. About one tenth of the tests do enter the error
-handling path due to fail to reserve extent.
+> stat updates and the previous locking can be removed.
+> 
+> Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
 
-Suggested-by: Qu Wenruo <wqu@suse.com>
-Signed-off-by: Haisu Wang <haisuwang@tencent.com>
----
- fs/btrfs/inode.c | 32 ++++++++++++++------------------
- 1 file changed, 14 insertions(+), 18 deletions(-)
+LGTM otherwise
+Acked-by: Michal Hocko <mhocko@suse.com>
 
-diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index 3646734a7e59..7e67a6d50be2 100644
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -1359,7 +1359,6 @@ static noinline int cow_file_range(struct btrfs_inode *inode,
- 	u64 alloc_hint = 0;
- 	u64 orig_start = start;
- 	u64 num_bytes;
--	unsigned long ram_size;
- 	u64 cur_alloc_size = 0;
- 	u64 min_alloc_size;
- 	u64 blocksize = fs_info->sectorsize;
-@@ -1367,7 +1366,6 @@ static noinline int cow_file_range(struct btrfs_inode *inode,
- 	struct extent_map *em;
- 	unsigned clear_bits;
- 	unsigned long page_ops;
--	bool extent_reserved = false;
- 	int ret = 0;
- 
- 	if (btrfs_is_free_space_inode(inode)) {
-@@ -1421,8 +1419,7 @@ static noinline int cow_file_range(struct btrfs_inode *inode,
- 		struct btrfs_ordered_extent *ordered;
- 		struct btrfs_file_extent file_extent;
- 
--		cur_alloc_size = num_bytes;
--		ret = btrfs_reserve_extent(root, cur_alloc_size, cur_alloc_size,
-+		ret = btrfs_reserve_extent(root, num_bytes, num_bytes,
- 					   min_alloc_size, 0, alloc_hint,
- 					   &ins, 1, 1);
- 		if (ret == -EAGAIN) {
-@@ -1453,9 +1450,7 @@ static noinline int cow_file_range(struct btrfs_inode *inode,
- 		if (ret < 0)
- 			goto out_unlock;
- 		cur_alloc_size = ins.offset;
--		extent_reserved = true;
- 
--		ram_size = ins.offset;
- 		file_extent.disk_bytenr = ins.objectid;
- 		file_extent.disk_num_bytes = ins.offset;
- 		file_extent.num_bytes = ins.offset;
-@@ -1463,14 +1458,14 @@ static noinline int cow_file_range(struct btrfs_inode *inode,
- 		file_extent.offset = 0;
- 		file_extent.compression = BTRFS_COMPRESS_NONE;
- 
--		lock_extent(&inode->io_tree, start, start + ram_size - 1,
-+		lock_extent(&inode->io_tree, start, start + cur_alloc_size - 1,
- 			    &cached);
- 
- 		em = btrfs_create_io_em(inode, start, &file_extent,
- 					BTRFS_ORDERED_REGULAR);
- 		if (IS_ERR(em)) {
- 			unlock_extent(&inode->io_tree, start,
--				      start + ram_size - 1, &cached);
-+				      start + cur_alloc_size - 1, &cached);
- 			ret = PTR_ERR(em);
- 			goto out_reserve;
- 		}
-@@ -1480,7 +1475,7 @@ static noinline int cow_file_range(struct btrfs_inode *inode,
- 						     1 << BTRFS_ORDERED_REGULAR);
- 		if (IS_ERR(ordered)) {
- 			unlock_extent(&inode->io_tree, start,
--				      start + ram_size - 1, &cached);
-+				      start + cur_alloc_size - 1, &cached);
- 			ret = PTR_ERR(ordered);
- 			goto out_drop_extent_cache;
- 		}
-@@ -1501,7 +1496,7 @@ static noinline int cow_file_range(struct btrfs_inode *inode,
- 			 */
- 			if (ret)
- 				btrfs_drop_extent_map_range(inode, start,
--							    start + ram_size - 1,
-+							    start + cur_alloc_size - 1,
- 							    false);
- 		}
- 		btrfs_put_ordered_extent(ordered);
-@@ -1519,7 +1514,7 @@ static noinline int cow_file_range(struct btrfs_inode *inode,
- 		page_ops = (keep_locked ? 0 : PAGE_UNLOCK);
- 		page_ops |= PAGE_SET_ORDERED;
- 
--		extent_clear_unlock_delalloc(inode, start, start + ram_size - 1,
-+		extent_clear_unlock_delalloc(inode, start, start + cur_alloc_size - 1,
- 					     locked_folio, &cached,
- 					     EXTENT_LOCKED | EXTENT_DELALLOC,
- 					     page_ops);
-@@ -1529,7 +1524,7 @@ static noinline int cow_file_range(struct btrfs_inode *inode,
- 			num_bytes -= cur_alloc_size;
- 		alloc_hint = ins.objectid + ins.offset;
- 		start += cur_alloc_size;
--		extent_reserved = false;
-+		cur_alloc_size = 0;
- 
- 		/*
- 		 * btrfs_reloc_clone_csums() error, since start is increased
-@@ -1545,7 +1540,7 @@ static noinline int cow_file_range(struct btrfs_inode *inode,
- 	return ret;
- 
- out_drop_extent_cache:
--	btrfs_drop_extent_map_range(inode, start, start + ram_size - 1, false);
-+	btrfs_drop_extent_map_range(inode, start, start + cur_alloc_size - 1, false);
- out_reserve:
- 	btrfs_dec_block_group_reservations(fs_info, ins.objectid);
- 	btrfs_free_reserved_extent(fs_info, ins.objectid, ins.offset, 1);
-@@ -1599,13 +1594,12 @@ static noinline int cow_file_range(struct btrfs_inode *inode,
- 	 * to decrement again the data space_info's bytes_may_use counter,
- 	 * therefore we do not pass it the flag EXTENT_CLEAR_DATA_RESV.
- 	 */
--	if (extent_reserved) {
-+	if (cur_alloc_size) {
- 		extent_clear_unlock_delalloc(inode, start,
- 					     start + cur_alloc_size - 1,
- 					     locked_folio, &cached, clear_bits,
- 					     page_ops);
- 		btrfs_qgroup_free_data(inode, NULL, start, cur_alloc_size, NULL);
--		start += cur_alloc_size;
- 	}
- 
- 	/*
-@@ -1614,11 +1608,13 @@ static noinline int cow_file_range(struct btrfs_inode *inode,
- 	 * space_info's bytes_may_use counter, reserved in
- 	 * btrfs_check_data_free_space().
- 	 */
--	if (start < end) {
-+	if (start + cur_alloc_size < end) {
- 		clear_bits |= EXTENT_CLEAR_DATA_RESV;
--		extent_clear_unlock_delalloc(inode, start, end, locked_folio,
-+		extent_clear_unlock_delalloc(inode, start + cur_alloc_size,
-+					     end, locked_folio,
- 					     &cached, clear_bits, page_ops);
--		btrfs_qgroup_free_data(inode, NULL, start, end - start + 1, NULL);
-+		btrfs_qgroup_free_data(inode, NULL, start + cur_alloc_size,
-+				end - start - cur_alloc_size + 1, NULL);
- 	}
- 	return ret;
- }
+> ---
+>  fs/buffer.c         |  5 -----
+>  mm/page-writeback.c | 16 +++-------------
+>  2 files changed, 3 insertions(+), 18 deletions(-)
+> 
+> diff --git a/fs/buffer.c b/fs/buffer.c
+> index 1fc9a50def0b..88e765b0699f 100644
+> --- a/fs/buffer.c
+> +++ b/fs/buffer.c
+> @@ -736,15 +736,12 @@ bool block_dirty_folio(struct address_space *mapping, struct folio *folio)
+>  	 * Lock out page's memcg migration to keep PageDirty
+>  	 * synchronized with per-memcg dirty page counters.
+>  	 */
+> -	folio_memcg_lock(folio);
+>  	newly_dirty = !folio_test_set_dirty(folio);
+>  	spin_unlock(&mapping->i_private_lock);
+>  
+>  	if (newly_dirty)
+>  		__folio_mark_dirty(folio, mapping, 1);
+>  
+> -	folio_memcg_unlock(folio);
+> -
+>  	if (newly_dirty)
+>  		__mark_inode_dirty(mapping->host, I_DIRTY_PAGES);
+>  
+> @@ -1194,13 +1191,11 @@ void mark_buffer_dirty(struct buffer_head *bh)
+>  		struct folio *folio = bh->b_folio;
+>  		struct address_space *mapping = NULL;
+>  
+> -		folio_memcg_lock(folio);
+>  		if (!folio_test_set_dirty(folio)) {
+>  			mapping = folio->mapping;
+>  			if (mapping)
+>  				__folio_mark_dirty(folio, mapping, 0);
+>  		}
+> -		folio_memcg_unlock(folio);
+>  		if (mapping)
+>  			__mark_inode_dirty(mapping->host, I_DIRTY_PAGES);
+>  	}
+> diff --git a/mm/page-writeback.c b/mm/page-writeback.c
+> index 1d7179aba8e3..a76a73529fd9 100644
+> --- a/mm/page-writeback.c
+> +++ b/mm/page-writeback.c
+> @@ -2743,8 +2743,6 @@ EXPORT_SYMBOL(noop_dirty_folio);
+>  /*
+>   * Helper function for set_page_dirty family.
+>   *
+> - * Caller must hold folio_memcg_lock().
+> - *
+>   * NOTE: This relies on being atomic wrt interrupts.
+>   */
+>  static void folio_account_dirtied(struct folio *folio,
+> @@ -2777,7 +2775,6 @@ static void folio_account_dirtied(struct folio *folio,
+>  /*
+>   * Helper function for deaccounting dirty page without writeback.
+>   *
+> - * Caller must hold folio_memcg_lock().
+>   */
+>  void folio_account_cleaned(struct folio *folio, struct bdi_writeback *wb)
+>  {
+> @@ -2795,9 +2792,8 @@ void folio_account_cleaned(struct folio *folio, struct bdi_writeback *wb)
+>   * If warn is true, then emit a warning if the folio is not uptodate and has
+>   * not been truncated.
+>   *
+> - * The caller must hold folio_memcg_lock().  It is the caller's
+> - * responsibility to prevent the folio from being truncated while
+> - * this function is in progress, although it may have been truncated
+> + * It is the caller's responsibility to prevent the folio from being truncated
+> + * while this function is in progress, although it may have been truncated
+>   * before this function is called.  Most callers have the folio locked.
+>   * A few have the folio blocked from truncation through other means (e.g.
+>   * zap_vma_pages() has it mapped and is holding the page table lock).
+> @@ -2841,14 +2837,10 @@ void __folio_mark_dirty(struct folio *folio, struct address_space *mapping,
+>   */
+>  bool filemap_dirty_folio(struct address_space *mapping, struct folio *folio)
+>  {
+> -	folio_memcg_lock(folio);
+> -	if (folio_test_set_dirty(folio)) {
+> -		folio_memcg_unlock(folio);
+> +	if (folio_test_set_dirty(folio))
+>  		return false;
+> -	}
+>  
+>  	__folio_mark_dirty(folio, mapping, !folio_test_private(folio));
+> -	folio_memcg_unlock(folio);
+>  
+>  	if (mapping->host) {
+>  		/* !PageAnon && !swapper_space */
+> @@ -2975,14 +2967,12 @@ void __folio_cancel_dirty(struct folio *folio)
+>  		struct bdi_writeback *wb;
+>  		struct wb_lock_cookie cookie = {};
+>  
+> -		folio_memcg_lock(folio);
+>  		wb = unlocked_inode_to_wb_begin(inode, &cookie);
+>  
+>  		if (folio_test_clear_dirty(folio))
+>  			folio_account_cleaned(folio, wb);
+>  
+>  		unlocked_inode_to_wb_end(inode, &cookie);
+> -		folio_memcg_unlock(folio);
+>  	} else {
+>  		folio_clear_dirty(folio);
+>  	}
+> -- 
+> 2.43.5
+
 -- 
-2.43.5
-
+Michal Hocko
+SUSE Labs
 
