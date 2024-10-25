@@ -1,42 +1,43 @@
-Return-Path: <linux-kernel+bounces-381462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFC129AFF8E
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 12:08:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 090D19AFF8F
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 12:08:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F3251C21D89
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 10:08:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E4FE1F21C16
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 10:08:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41D011D9324;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90DC91D968F;
 	Fri, 25 Oct 2024 10:08:42 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B8B31D3584
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84F0F1D434D
 	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 10:08:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729850921; cv=none; b=nZZTEjs8UkHPuHZ2IK8fy+N+d5yMUbDkh2vY2By1B/31OuOwr2cMcWSSN/RdGO/4TtVdnPQr6YryvMuX3SIS0X4QPmqr2tXNnG31o9uTPLWm1Pu3Nlefql8BZw5wlwgd7naDr2GjainJc2FXV4m6Xt9XY6wHNKvaGmi9mfhOZ9w=
+	t=1729850922; cv=none; b=OGUP0PSXHkHz7aciYKzj9dg0ObcI+7KrQ4+Tzj5ZurlG7LJoEbBS6cSXhWVIryGN/fup2g3wZVFV27EG8pZfdS7ED57sjdVmS5WKpL6HqrUN70zkh3PbJootpBjmqDRiBEYdfVQaketLP1JvfqANVjsDg1Lyd4QyflNIxUQ9KG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729850921; c=relaxed/simple;
-	bh=8BcoPEGIiVagarnsuIlXGHjWJFkUH2S6a6boj2TeHq8=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nXHeEVb3ZFJWe+pS9W4zAYAxt3kIfuJNtpFslcTjdnqqZukuFN9gWJ0QwkreXzUk6ATNdNbrS8atCvDnUSxtn3HHpCbbeuZKzYNCAsvv5s4n+4Rcog2Y+hbkujvBUqFqZwTsld+xuqVW01jcZD4CbC4NZavR5Az/QsrI0q/jCN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
+	s=arc-20240116; t=1729850922; c=relaxed/simple;
+	bh=/yLmPEb7yRnxIcE4Q12URttu8V/4YxoSBKBsC91Sc94=;
+	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=HQvhGNOeSS6YXGEE3m/p5gV46qRg2bF6LHBjapHOQ6lDKb6EggSOTCsTWGRP2qyAJW+qVuPMGVy1iJetD4ZiZuEci4Kl2XZDzx748ImKTqv9SqJtPBeadUBosc2GD4aGorVT4LEH1aeuIxBH7VGrlzah/iClubpAKqvC5XWTL6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4XZdlr5qryz1yndH;
-	Fri, 25 Oct 2024 18:08:40 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4XZdjL03xBz10My6;
+	Fri, 25 Oct 2024 18:06:30 +0800 (CST)
 Received: from kwepemg200008.china.huawei.com (unknown [7.202.181.35])
-	by mail.maildlp.com (Postfix) with ESMTPS id 21B291402E1;
-	Fri, 25 Oct 2024 18:08:33 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTPS id 7AEEB1800A5;
+	Fri, 25 Oct 2024 18:08:34 +0800 (CST)
 Received: from huawei.com (10.90.53.73) by kwepemg200008.china.huawei.com
  (7.202.181.35) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 25 Oct
- 2024 18:08:31 +0800
+ 2024 18:08:32 +0800
 From: Jinjie Ruan <ruanjinjie@huawei.com>
 To: <oleg@redhat.com>, <linux@armlinux.org.uk>, <will@kernel.org>,
 	<mark.rutland@arm.com>, <catalin.marinas@arm.com>, <sstabellini@kernel.org>,
@@ -58,10 +59,12 @@ To: <oleg@redhat.com>, <linux@armlinux.org.uk>, <will@kernel.org>,
 	<liuyuntao12@huawei.com>, <leobras@redhat.com>,
 	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
 	<xen-devel@lists.xenproject.org>
-Subject: [PATCH -next v4 00/19] arm64: entry: Convert to generic entry
-Date: Fri, 25 Oct 2024 18:06:41 +0800
-Message-ID: <20241025100700.3714552-1-ruanjinjie@huawei.com>
+Subject: [PATCH -next v4 01/19] arm64: ptrace: Replace interrupts_enabled() with regs_irqs_disabled()
+Date: Fri, 25 Oct 2024 18:06:42 +0800
+Message-ID: <20241025100700.3714552-2-ruanjinjie@huawei.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20241025100700.3714552-1-ruanjinjie@huawei.com>
+References: <20241025100700.3714552-1-ruanjinjie@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,114 +76,211 @@ Content-Type: text/plain
 X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
  kwepemg200008.china.huawei.com (7.202.181.35)
 
-Currently, x86, Riscv, Loongarch use the generic entry. Convert arm64
-to use the generic entry infrastructure from kernel/entry/*. The generic
-entry makes maintainers' work easier and codes more elegant, which aslo
-removed a lot of duplicate code.
+Implement regs_irqs_disabled(), and replace interrupts_enabled() macro
+with regs_irqs_disabled() all over the place.
 
-The patch 1 ~ 5 try to make arm64 easier to use irqentry_enter/exit().
-The patch 6 ~ 13 and patch 15 try to make it closer to the PREEMPT_DYNAMIC
-code of generic entry. And the patch 16 split the generic entry into
-generic irq entry and generic syscall to make the single patch more
-concentrated in switching to one thing.
+No functional changes.
 
-Changes in v4:
-- Rework/cleanup split into a few patches as Mark suggested.
-- Replace interrupts_enabled() macro with regs_irqs_disabled(), instead
-  of left it here.
-- Remove rcu and lockdep state in pt_regs by using temporary
-  irqentry_state_t as Mark suggested.
-- Remove some unnecessary intermediate functions to make it clear.
-- Rework preempt irq and PREEMPT_DYNAMIC code
-  to make the switch more clear.
-- arch_prepare_*_entry/exit() -> arch_pre_*_entry/exit().
-- Expand the arch functions comment.
-- Make arch functions closer to its caller.
-- Declare saved_reg in for block.
-- Remove arch_exit_to_kernel_mode_prepare(), arch_enter_from_kernel_mode().
-- Adjust "Add few arch functions to use generic entry" patch to be
-  the penultimate.
-- Update the commit message.
-- Add suggested-by.
+Suggested-by: Mark Rutland <mark.rutland@arm.com>
+Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+---
+ arch/arm/include/asm/ptrace.h       | 4 ++--
+ arch/arm/kernel/hw_breakpoint.c     | 2 +-
+ arch/arm/kernel/process.c           | 2 +-
+ arch/arm/mm/alignment.c             | 2 +-
+ arch/arm/mm/fault.c                 | 2 +-
+ arch/arm64/include/asm/daifflags.h  | 2 +-
+ arch/arm64/include/asm/ptrace.h     | 4 ++--
+ arch/arm64/include/asm/xen/events.h | 2 +-
+ arch/arm64/kernel/acpi.c            | 2 +-
+ arch/arm64/kernel/debug-monitors.c  | 2 +-
+ arch/arm64/kernel/entry-common.c    | 4 ++--
+ arch/arm64/kernel/sdei.c            | 2 +-
+ drivers/irqchip/irq-gic-v3.c        | 2 +-
+ 13 files changed, 16 insertions(+), 16 deletions(-)
 
-Changes in v3:
-- Test the MTE test cases.
-- Handle forget_syscall() in arch_post_report_syscall_entry()
-- Make the arch funcs not use __weak as Thomas suggested, so move
-  the arch funcs to entry-common.h, and make arch_forget_syscall() folded
-  in arch_post_report_syscall_entry() as suggested.
-- Move report_single_step() to thread_info.h for arm64
-- Change __always_inline() to inline, add inline for the other arch funcs.
-- Remove unused signal.h for entry-common.h.
-- Add Suggested-by.
-- Update the commit message.
-
-Changes in v2:
-- Add tested-by.
-- Fix a bug that not call arch_post_report_syscall_entry() in
-  syscall_trace_enter() if ptrace_report_syscall_entry() return not zero.
-- Refactor report_syscall().
-- Add comment for arch_prepare_report_syscall_exit().
-- Adjust entry-common.h header file inclusion to alphabetical order.
-- Update the commit message.
-
-Jinjie Ruan (19):
-  arm64: ptrace: Replace interrupts_enabled() with regs_irqs_disabled()
-  arm64: entry: Refactor the entry and exit for exceptions from EL1
-  arm64: entry: Remove __enter_from_user_mode()
-  arm64: entry: Remove __enter_from_kernel_mode()
-  arm64: entry: Remove __exit_to_kernel_mode()
-  arm64: entry: Move arm64_preempt_schedule_irq() into
-    exit_to_kernel_mode()
-  arm64: entry: Call arm64_preempt_schedule_irq() only if irqs enabled
-  arm64: entry: Rework arm64_preempt_schedule_irq()
-  arm64: entry: Use preempt_count() and need_resched() helper
-  arm64: entry: preempt_schedule_irq() only if PREEMPTION enabled
-  arm64: entry: Extract raw_irqentry_exit_cond_resched() function
-  arm64: entry: Check dynamic key ahead
-  arm64: entry: Check dynamic resched when PREEMPT_DYNAMIC enabled
-  entry: Split into irq entry and syscall
-  entry: Add arch irqentry_exit_need_resched() for arm64
-  arm64: entry: Switch to generic IRQ entry
-  entry: Add syscall arch functions to use generic syscall for arm64
-  arm64/ptrace: Split report_syscall() into separate enter and exit
-    functions
-  arm64: entry: Convert to generic entry
-
- MAINTAINERS                           |   1 +
- arch/Kconfig                          |   8 +
- arch/arm/include/asm/ptrace.h         |   4 +-
- arch/arm/kernel/hw_breakpoint.c       |   2 +-
- arch/arm/kernel/process.c             |   2 +-
- arch/arm/mm/alignment.c               |   2 +-
- arch/arm/mm/fault.c                   |   2 +-
- arch/arm64/Kconfig                    |   1 +
- arch/arm64/include/asm/daifflags.h    |   2 +-
- arch/arm64/include/asm/entry-common.h | 149 ++++++++++
- arch/arm64/include/asm/preempt.h      |   2 -
- arch/arm64/include/asm/ptrace.h       |   8 +-
- arch/arm64/include/asm/syscall.h      |   6 +-
- arch/arm64/include/asm/thread_info.h  |  23 +-
- arch/arm64/include/asm/xen/events.h   |   2 +-
- arch/arm64/kernel/acpi.c              |   2 +-
- arch/arm64/kernel/debug-monitors.c    |   2 +-
- arch/arm64/kernel/entry-common.c      | 381 +++++++------------------
- arch/arm64/kernel/ptrace.c            |  90 ------
- arch/arm64/kernel/sdei.c              |   2 +-
- arch/arm64/kernel/signal.c            |   3 +-
- arch/arm64/kernel/syscall.c           |  18 +-
- drivers/irqchip/irq-gic-v3.c          |   2 +-
- include/linux/entry-common.h          | 377 +-----------------------
- include/linux/irq-entry-common.h      | 393 ++++++++++++++++++++++++++
- include/linux/thread_info.h           |  13 +
- kernel/entry/Makefile                 |   3 +-
- kernel/entry/common.c                 | 175 ++----------
- kernel/entry/syscall-common.c         | 237 ++++++++++++++++
- 29 files changed, 962 insertions(+), 950 deletions(-)
- create mode 100644 arch/arm64/include/asm/entry-common.h
- create mode 100644 include/linux/irq-entry-common.h
- create mode 100644 kernel/entry/syscall-common.c
-
+diff --git a/arch/arm/include/asm/ptrace.h b/arch/arm/include/asm/ptrace.h
+index 6eb311fb2da0..2054b17b3a69 100644
+--- a/arch/arm/include/asm/ptrace.h
++++ b/arch/arm/include/asm/ptrace.h
+@@ -46,8 +46,8 @@ struct svc_pt_regs {
+ #define processor_mode(regs) \
+ 	((regs)->ARM_cpsr & MODE_MASK)
+ 
+-#define interrupts_enabled(regs) \
+-	(!((regs)->ARM_cpsr & PSR_I_BIT))
++#define regs_irqs_disabled(regs) \
++	((regs)->ARM_cpsr & PSR_I_BIT)
+ 
+ #define fast_interrupts_enabled(regs) \
+ 	(!((regs)->ARM_cpsr & PSR_F_BIT))
+diff --git a/arch/arm/kernel/hw_breakpoint.c b/arch/arm/kernel/hw_breakpoint.c
+index a12efd0f43e8..bc7c9f5a2767 100644
+--- a/arch/arm/kernel/hw_breakpoint.c
++++ b/arch/arm/kernel/hw_breakpoint.c
+@@ -947,7 +947,7 @@ static int hw_breakpoint_pending(unsigned long addr, unsigned int fsr,
+ 
+ 	preempt_disable();
+ 
+-	if (interrupts_enabled(regs))
++	if (!regs_irqs_disabled(regs))
+ 		local_irq_enable();
+ 
+ 	/* We only handle watchpoints and hardware breakpoints. */
+diff --git a/arch/arm/kernel/process.c b/arch/arm/kernel/process.c
+index e16ed102960c..5979a5cec2d0 100644
+--- a/arch/arm/kernel/process.c
++++ b/arch/arm/kernel/process.c
+@@ -167,7 +167,7 @@ void __show_regs(struct pt_regs *regs)
+ 			segment = "user";
+ 
+ 		printk("Flags: %s  IRQs o%s  FIQs o%s  Mode %s  ISA %s  Segment %s\n",
+-			buf, interrupts_enabled(regs) ? "n" : "ff",
++			buf, !regs_irqs_disabled(regs) ? "n" : "ff",
+ 			fast_interrupts_enabled(regs) ? "n" : "ff",
+ 			processor_modes[processor_mode(regs)],
+ 			isa_modes[isa_mode(regs)], segment);
+diff --git a/arch/arm/mm/alignment.c b/arch/arm/mm/alignment.c
+index 3c6ddb1afdc4..642aae48a09e 100644
+--- a/arch/arm/mm/alignment.c
++++ b/arch/arm/mm/alignment.c
+@@ -809,7 +809,7 @@ do_alignment(unsigned long addr, unsigned int fsr, struct pt_regs *regs)
+ 	int thumb2_32b = 0;
+ 	int fault;
+ 
+-	if (interrupts_enabled(regs))
++	if (!regs_irqs_disabled(regs))
+ 		local_irq_enable();
+ 
+ 	instrptr = instruction_pointer(regs);
+diff --git a/arch/arm/mm/fault.c b/arch/arm/mm/fault.c
+index ab01b51de559..dd8e95fcce10 100644
+--- a/arch/arm/mm/fault.c
++++ b/arch/arm/mm/fault.c
+@@ -275,7 +275,7 @@ do_page_fault(unsigned long addr, unsigned int fsr, struct pt_regs *regs)
+ 
+ 
+ 	/* Enable interrupts if they were enabled in the parent context. */
+-	if (interrupts_enabled(regs))
++	if (!regs_irqs_disabled(regs))
+ 		local_irq_enable();
+ 
+ 	/*
+diff --git a/arch/arm64/include/asm/daifflags.h b/arch/arm64/include/asm/daifflags.h
+index fbb5c99eb2f9..5fca48009043 100644
+--- a/arch/arm64/include/asm/daifflags.h
++++ b/arch/arm64/include/asm/daifflags.h
+@@ -128,7 +128,7 @@ static inline void local_daif_inherit(struct pt_regs *regs)
+ {
+ 	unsigned long flags = regs->pstate & DAIF_MASK;
+ 
+-	if (interrupts_enabled(regs))
++	if (!regs_irqs_disabled(regs))
+ 		trace_hardirqs_on();
+ 
+ 	if (system_uses_irq_prio_masking())
+diff --git a/arch/arm64/include/asm/ptrace.h b/arch/arm64/include/asm/ptrace.h
+index 47ff8654c5ec..3e5372a98da4 100644
+--- a/arch/arm64/include/asm/ptrace.h
++++ b/arch/arm64/include/asm/ptrace.h
+@@ -214,8 +214,8 @@ static inline void forget_syscall(struct pt_regs *regs)
+ 		(regs)->pmr == GIC_PRIO_IRQON :				\
+ 		true)
+ 
+-#define interrupts_enabled(regs)			\
+-	(!((regs)->pstate & PSR_I_BIT) && irqs_priority_unmasked(regs))
++#define regs_irqs_disabled(regs)			\
++	(((regs)->pstate & PSR_I_BIT) || (!irqs_priority_unmasked(regs)))
+ 
+ #define fast_interrupts_enabled(regs) \
+ 	(!((regs)->pstate & PSR_F_BIT))
+diff --git a/arch/arm64/include/asm/xen/events.h b/arch/arm64/include/asm/xen/events.h
+index 2788e95d0ff0..2977b5fe068d 100644
+--- a/arch/arm64/include/asm/xen/events.h
++++ b/arch/arm64/include/asm/xen/events.h
+@@ -14,7 +14,7 @@ enum ipi_vector {
+ 
+ static inline int xen_irqs_disabled(struct pt_regs *regs)
+ {
+-	return !interrupts_enabled(regs);
++	return regs_irqs_disabled(regs);
+ }
+ 
+ #define xchg_xen_ulong(ptr, val) xchg((ptr), (val))
+diff --git a/arch/arm64/kernel/acpi.c b/arch/arm64/kernel/acpi.c
+index e6f66491fbe9..732f89daae23 100644
+--- a/arch/arm64/kernel/acpi.c
++++ b/arch/arm64/kernel/acpi.c
+@@ -403,7 +403,7 @@ int apei_claim_sea(struct pt_regs *regs)
+ 	return_to_irqs_enabled = !irqs_disabled_flags(arch_local_save_flags());
+ 
+ 	if (regs)
+-		return_to_irqs_enabled = interrupts_enabled(regs);
++		return_to_irqs_enabled = !regs_irqs_disabled(regs);
+ 
+ 	/*
+ 	 * SEA can interrupt SError, mask it and describe this as an NMI so
+diff --git a/arch/arm64/kernel/debug-monitors.c b/arch/arm64/kernel/debug-monitors.c
+index c60a4a90c6a5..5497df05dd1a 100644
+--- a/arch/arm64/kernel/debug-monitors.c
++++ b/arch/arm64/kernel/debug-monitors.c
+@@ -231,7 +231,7 @@ static void send_user_sigtrap(int si_code)
+ 	if (WARN_ON(!user_mode(regs)))
+ 		return;
+ 
+-	if (interrupts_enabled(regs))
++	if (!regs_irqs_disabled(regs))
+ 		local_irq_enable();
+ 
+ 	arm64_force_sig_fault(SIGTRAP, si_code, instruction_pointer(regs),
+diff --git a/arch/arm64/kernel/entry-common.c b/arch/arm64/kernel/entry-common.c
+index b260ddc4d3e9..c547e70428d3 100644
+--- a/arch/arm64/kernel/entry-common.c
++++ b/arch/arm64/kernel/entry-common.c
+@@ -73,7 +73,7 @@ static __always_inline void __exit_to_kernel_mode(struct pt_regs *regs)
+ {
+ 	lockdep_assert_irqs_disabled();
+ 
+-	if (interrupts_enabled(regs)) {
++	if (!regs_irqs_disabled(regs)) {
+ 		if (regs->exit_rcu) {
+ 			trace_hardirqs_on_prepare();
+ 			lockdep_hardirqs_on_prepare();
+@@ -569,7 +569,7 @@ static void noinstr el1_interrupt(struct pt_regs *regs,
+ {
+ 	write_sysreg(DAIF_PROCCTX_NOIRQ, daif);
+ 
+-	if (IS_ENABLED(CONFIG_ARM64_PSEUDO_NMI) && !interrupts_enabled(regs))
++	if (IS_ENABLED(CONFIG_ARM64_PSEUDO_NMI) && regs_irqs_disabled(regs))
+ 		__el1_pnmi(regs, handler);
+ 	else
+ 		__el1_irq(regs, handler);
+diff --git a/arch/arm64/kernel/sdei.c b/arch/arm64/kernel/sdei.c
+index 255d12f881c2..27a17da635d8 100644
+--- a/arch/arm64/kernel/sdei.c
++++ b/arch/arm64/kernel/sdei.c
+@@ -247,7 +247,7 @@ unsigned long __kprobes do_sdei_event(struct pt_regs *regs,
+ 	 * If we interrupted the kernel with interrupts masked, we always go
+ 	 * back to wherever we came from.
+ 	 */
+-	if (mode == kernel_mode && !interrupts_enabled(regs))
++	if (mode == kernel_mode && regs_irqs_disabled(regs))
+ 		return SDEI_EV_HANDLED;
+ 
+ 	/*
+diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
+index ce87205e3e82..5c832c436bd8 100644
+--- a/drivers/irqchip/irq-gic-v3.c
++++ b/drivers/irqchip/irq-gic-v3.c
+@@ -932,7 +932,7 @@ static void __gic_handle_irq_from_irqsoff(struct pt_regs *regs)
+ 
+ static void __exception_irq_entry gic_handle_irq(struct pt_regs *regs)
+ {
+-	if (unlikely(gic_supports_nmi() && !interrupts_enabled(regs)))
++	if (unlikely(gic_supports_nmi() && regs_irqs_disabled(regs)))
+ 		__gic_handle_irq_from_irqsoff(regs);
+ 	else
+ 		__gic_handle_irq_from_irqson(regs);
 -- 
 2.34.1
 
