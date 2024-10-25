@@ -1,245 +1,156 @@
-Return-Path: <linux-kernel+bounces-380920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C7C49AF7E3
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 05:05:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BEB1F9AF7EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 05:08:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C264283584
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 03:05:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 865BC283453
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 03:08:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52E6518BBB2;
-	Fri, 25 Oct 2024 03:05:25 +0000 (UTC)
-Received: from CHN02-BJS-obe.outbound.protection.partner.outlook.cn (mail-bjschn02on2130.outbound.protection.partner.outlook.cn [139.219.17.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8A3D18BC14;
+	Fri, 25 Oct 2024 03:08:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Wqm/aA8D"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3383F6F30C;
-	Fri, 25 Oct 2024 03:05:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.17.130
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729825524; cv=fail; b=HLbS23I0y9otD5VFF07re9cKKfkVL8qFVxQfNzfjyiba8DtrUR7uF7MrA2fVLrXSl4bIGMA4zcDTE5si/F50j3g0TUd8YRSdKLjr6fnNqAilBt3KG77z3E8SGTXnDV+dqydm48qCpwJIwPF7QRY8vj1wX8Sxwqiq+9+bd5JfIqY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729825524; c=relaxed/simple;
-	bh=MksFvwuEmUiIPX42iTiEFJf4yY5iIAibXaEIEjM4Lrg=;
-	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=BwuDaoG6IJSOGR9tK0CKENHONNWE0Mn/OQUTeIhSzxdogF4YlId/r8OLhy6SJy91HeF2s5cGc1WAFQZhBi9OvbLxMhnsJkjemK3DD95B7uKuOb0jrQP/7tn/fCjngHh+FbhHv+9h7Hx30jUwk45goADJCGCZfz5ySzIXd8ptp4I=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.17.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Rp4H9IpFXBykD67kRBY2iNjmuJRZWYagUXwZ5vYk8O5lTGniCCqj5GKs4cVOPF1ng2pSAyCLwrZ/EOBRcLRkSdyO1u9Ng06JCnp5wT9IqUysoax1i4KpjwlrSPG7p2BDY9TQAceNGT/TJiNErTbDhWvAlz5e4QpFFm3XmoFcfx7rW/0mwHMkKCMZUKbvaiJ8THEox4C1YO8fzHM4eKcIAePCY3EVKXjTQTr9gok9Ah2sKIxC0H93hf/ztZCZvDYF/R8DUzvQadDnhiGKPsHGBKakBNW5CL4ZNMhwoof+XdGL1ci/t1+GqzpofRCskfVYDAXex6diIvFS+TyPqmg3wg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=g/vEHRxD93rRF7qjE4b4pNIJ6Izn3vWf9kfsaFHcIwI=;
- b=gRotO5f9oZ00BgiD0eTJ7KrT6siglEQ3ge6vgnO4MHOBJrrHQE7ghnSMq5EO7stvZHpUFrlgC8KJRdS4m1yJRBn1WR8jtYdkm+7A7NKt9gT2AbXKMjx0BxfPAJPrP+9oOnDIGEHQmbMJzLpbiKnfaLa/33QyrSFi4/ZeeVlMAwuH0VwmSNheQKBHNfl0QtnAAEcYHI7zuGbXlTff+8mMJ8A1mMMRnhMAqyrjTQ5kEG8Xbjjx9z4QnH5ocABCN32U+jEhhPm93JNoc/o7gVUSTpTXOt5h50euHe5FW/4cRnIylN6nzPLVm9pCPs0XkzgBCD5SoX/gCYH1pb0C2EhhVA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=starfivetech.com; dmarc=pass action=none
- header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
-Received: from ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:7::14) by ZQ2PR01MB1290.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:11::8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.33; Fri, 25 Oct
- 2024 03:05:23 +0000
-Received: from ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn
- ([fe80::2595:ef4d:fae:37d7]) by ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn
- ([fe80::2595:ef4d:fae:37d7%4]) with mapi id 15.20.8069.031; Fri, 25 Oct 2024
- 03:05:23 +0000
-From: Hal Feng <hal.feng@starfivetech.com>
-To: Rob Herring <robh@kernel.org>
-CC: Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, Marc Kleine-Budde <mkl@pengutronix.de>, Vincent
- Mailhol <mailhol.vincent@wanadoo.fr>, "David S . Miller"
-	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Philipp Zabel
-	<p.zabel@pengutronix.de>, Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley
-	<paul.walmsley@sifive.com>, Albert Ou <aou@eecs.berkeley.edu>, Emil Renner
- Berthing <emil.renner.berthing@canonical.com>, William Qiu
-	<william.qiu@starfivetech.com>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-can@vger.kernel.org"
-	<linux-can@vger.kernel.org>, "netdev@vger.kernel.org"
-	<netdev@vger.kernel.org>, "linux-riscv@lists.infradead.org"
-	<linux-riscv@lists.infradead.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v2 2/4] dt-bindings: can: Add CAST CAN Bus Controller
-Thread-Index: AQHbDP77AOdoHkNgsEibhjh7mfCIQLJnX44AgC+YfWA=
-Date: Fri, 25 Oct 2024 03:05:23 +0000
-Message-ID:
- <ZQ2PR01MB1307FBED11492760312357D1E64F2@ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=starfivetech.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: ZQ2PR01MB1307:EE_|ZQ2PR01MB1290:EE_
-x-ms-office365-filtering-correlation-id: 6a7ec8ca-00b3-407f-833c-08dcf4a1de2e
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam:
- BCL:0;ARA:13230040|7416014|41320700013|366016|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- BiIDDLdqw3aEovNbsF+Fxj79ziYNy1MDudDSVegEFmgUKqy6tFXEJCdaGkbnvoTUwA/LIaJ4TGLednmW4hafO51p99MLup4WdjVaUzi0sT+tboawODrcSdMIjg5CxhOEHfwaFjqft9dPVXzUCSXhl915vh0chB0Pe6gy8h2LhIcskCClKwrQeAYij3TMs145l7OZyAlr6lqMhQNk+KChWuPz0QhDQ+QLu2qIQjn55/BHx9VlbRHlcNipZ0qAAsbQwbVN0XLvfqveMz1v5RNRXFQnG7T+hzgij9nK5oifLFAXJPwuK9hKywwZ6ZCQjQwPkiCYnAhztpNmMLQKUBNQC7pacfric6hJn0cRNg4BqaGIUaGLW/sbwG/BK02dJGHkK5E0RHuXK8GvUa9B/+AAi/tx93KrizCYPAfoGvcdQza+sKmBlshQlrjhwQk+2rhygiDxxN0/ZYN4iV2Q9tNZXFeVf5PsUNFoVzrABmf8q660GS2Ts0yOvqnWAonZFk68TyVYRHYnrgxNLjgDHP83RRtY1InPluBYtuxpTXM/vQHD8I0IAtedCvMD9+yi/hbCzdVIHKyHNbkKBwn+OrqhkjOhVhp40ElBK2Tq2n8GjFISSplM9e2E9BCdrilREO6T
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230040)(7416014)(41320700013)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?kwTu5pwUF3GWKoER9bfrJvJXKOYY0kfF5/E8qW8n/jnTn1zimBCSXvc3Xp8V?=
- =?us-ascii?Q?RgP9iO0hO7KX2hfTxQqfuIGeqI9HbFbgLU+w8ZG9q9zSgmp1OnMvWCNeBTyo?=
- =?us-ascii?Q?3ntloATSGi18RZKNJPPLF3mWOwauBzYykFuu6/u3o3M4U+DUnjVP3js6HkWO?=
- =?us-ascii?Q?YM6CJK5vhUufS5A4hTfJxpzQJ9ZAIfu/QCGSBtfD++wHeUKjYUiClY+v2jlK?=
- =?us-ascii?Q?G8E47ubLZvh+tmZiZAvIedKVyQCYp2FHVH8b51OFdRGeXoiaTDr4oajquNDT?=
- =?us-ascii?Q?LXBDQ2fsGJeXD/vq7ksS17wl8El4JNQElbHZhXyTRAz2EM0RtvR+xBlO5wWc?=
- =?us-ascii?Q?KsRgxISA4yjB3ERqQuW/h/v6AIjfFJ+dF70vrWVn1pBK2hv2D5BumW/k1I2W?=
- =?us-ascii?Q?Q2lyRfKA981yXspFdY/wyKpYYTMj4E81VxfXZIn1aUPWpLL/GU3KIeTh6A5m?=
- =?us-ascii?Q?nnR1UW+Yu34MFMAF4DYRqcPPLgZRCgxnOa/aCUPRBTW1Jgh2IrV1LsTJxJ5g?=
- =?us-ascii?Q?6xSTFX3V1lMXw8BNSFoqnBNu2Ftw1GiNjW0QtrNzLtHjooK/VGcLgJtkMzMG?=
- =?us-ascii?Q?ydYh/flZtyJzZesA8Se+ij7IqPyanMbsudwMUUcO3NpgGtx7kirbo1j1E3Uy?=
- =?us-ascii?Q?ovjLWZ80O/YuO3hdhTx5GDtsmPbG0C2Jc44dvKyyP+6N196616POiYM9tPRJ?=
- =?us-ascii?Q?zcXSurzURii6qOchiGaF8kBIg07HRrDSAqOHy747AICuArg0cGN/GfUEfUx2?=
- =?us-ascii?Q?mTUligki7LF2zZ18ZbTpPtNI1Q0jF71Fpp9Rxkj8B/4WQN9P4JKThk22UEl6?=
- =?us-ascii?Q?b4NPv5zXSORImKDfLysr/Sv1MUzjjHK0ILd0n7c/iI9fkLRM2WDFl2DTPUXa?=
- =?us-ascii?Q?DMuLrg8eVTmBcioJWnb9Q7kbbU5Xm0eSDlIKEkRySCZ9/WXQvfyCukwizmJr?=
- =?us-ascii?Q?Ea5VoRI6EZtelE+4oAL6KLldF5SjrRnwjvjLykwDp0ac67hsxT72luzolbqf?=
- =?us-ascii?Q?DmPsSb5gFK5WWYCGm7dPowgP6VqVU3U1txP+8yHzechLr/VuHWp1eumSuA3H?=
- =?us-ascii?Q?G9QeydLNVB7nC13eCgt8iK1HQDJ8BBrWUHoMjBUiUNlCohhLlBqQwJzD0dJa?=
- =?us-ascii?Q?GpDhi7+tvu3eQyBvg02OzDkqy+HuJyQxEZUrvyJjYvGJWJtCVwHh1LzIkn+Q?=
- =?us-ascii?Q?m1gzcmsqablpfHaTvPpeRpYCQ9W2P3CxeWSoalFHBQJMdkyxnEWmUv4RqVLc?=
- =?us-ascii?Q?SLJUAcLpgXyG18LnbfomAH838jkZTTIh7WfphhwisIhLTbPzQAeS41cg3eNf?=
- =?us-ascii?Q?b/V/j9ND8QpVJpDDDKPCeVyl6KlJnatYCGY6jxw10l/xagNU/pmFkVqjI39f?=
- =?us-ascii?Q?ophBvGOm2I1j8BmdtYEH8dM5vFXa/6+YYlMDZ0xtwKynWrUihYNJtbFbnCie?=
- =?us-ascii?Q?PDyt4bI0GyllMyZOgg/+WC8wqsmFw5O9M0jeJnoo1jQUwaSiaE2qM3/qjYPM?=
- =?us-ascii?Q?BTPOQ2uoCkU1V3n+I1cK5VdZCc34uXWQC4+Cw40ZrQjkcmaqv6hOWjnjRCGe?=
- =?us-ascii?Q?w2f4fefkEjPl6Ldg9gzjfHZN36+z0jp/RwbmiknJ?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B4F618A6AB;
+	Fri, 25 Oct 2024 03:08:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729825705; cv=none; b=XDsK3dvV0t8dJDrra0F9RMoXo4f5ALs9dqkdM80hB2nhpjPhZQqEUIVbEYWbrE2M+hdtFRvVWaJaQQlvcfT+RC81LGGHnZbscrPy3lHGaaYIFP/dzTGj3SC2vuQR90ijJ3wp/FxJi/goS8VvbCtlua71Oh+0g+TvglEdAT/+INw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729825705; c=relaxed/simple;
+	bh=PiCeQjw19I7twhe/HrEaA5kwu1gqzx/zpNYDwIx/6PM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NWgdov9X9eOBIMxpyt3gQWID+hG70IZhKjIKxr6YK7m7mLIiGiZOoLFaVvkGvSB7ET1dYj9HELvwqYJRBgNIRxdHHOLxit5fxLSFQedPA73LY7WhAD6lj3rYZzcQtG9aMus4QOJLlqwOty4JrOnLjX0W20fzrKABvvBc3F3Y1No=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Wqm/aA8D; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49ONeoSX032158;
+	Fri, 25 Oct 2024 03:08:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:message-id:mime-version:subject:to; s=
+	qcppdkim1; bh=MVUAuuvrnKAmF45OK7oL/BUmQXyD5eMpa3MUREdxnUI=; b=Wq
+	m/aA8Dh4xHFiKF8t5hicGQ6HPRQtZ7/73Vw1q7tb4O/0EKxRd2yRH/6lwdCCrO/+
+	jdvnsnTuh4VF4Aoc/0zYq5yUYTN9bvLsW6YUZM+b6B6WywopQ57RbeNA+Qty/ZCi
+	3Q2gQWrGeHiVovrB56iNgphnXPsGUmLQfa+68RXagVzmGVqgtRPGm5QSg4PgdnPE
+	u4RnMaLlou20JQGfmJBostiWyZ7EbXIQWkORoGkv2f/ioeHK0cPrDWWOP+/U2EdY
+	ECBjKscJa/BFFqS4Lm3fF6oQP/EiNdoPCunOs4X8SMYn6Y5NVK6Yiy+cQF37ats/
+	fjcnd9KNk0vLKcgSnLvA==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42em3vyky4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Oct 2024 03:08:09 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49P388G0032614
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Oct 2024 03:08:08 GMT
+Received: from hu-qqzhou-sha.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 24 Oct 2024 20:08:05 -0700
+From: Qingqing Zhou <quic_qqzhou@quicinc.com>
+To: <andersson@kernel.org>, <konradybcio@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <robimarko@gmail.com>,
+        <will@kernel.org>, <robin.murphy@arm.com>, <joro@8bytes.org>
+CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>,
+        Qingqing Zhou
+	<quic_qqzhou@quicinc.com>
+Subject: [PATCH v3 0/4] Add support for APPS SMMU on QCS615
+Date: Fri, 25 Oct 2024 08:37:28 +0530
+Message-ID: <20241025030732.29743-1-quic_qqzhou@quicinc.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: starfivetech.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6a7ec8ca-00b3-407f-833c-08dcf4a1de2e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Oct 2024 03:05:23.3789
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 3SdSh72naatA2Zhq911dXylsorjQYoBQEFtcR6k60qyJSMIZych13g3BTttz0B5zNWzXeU5myRpSRQHGVoGk0DM5g9XRX9BJoMibmL5L3K4=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: ZQ2PR01MB1290
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: AwAFxU2NAkGIpegGB_9Y9uYOpaGXEPLe
+X-Proofpoint-ORIG-GUID: AwAFxU2NAkGIpegGB_9Y9uYOpaGXEPLe
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 adultscore=0
+ malwarescore=0 spamscore=0 clxscore=1015 lowpriorityscore=0
+ mlxlogscore=999 priorityscore=1501 mlxscore=0 suspectscore=0 phishscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410250021
 
-> On 25.9.24 04:03, Rob Herring wrote:
-> On Sun, Sep 22, 2024 at 10:51:48PM +0800, Hal Feng wrote:
-> > From: William Qiu <william.qiu@starfivetech.com>
-> >
-> > Add bindings for CAST CAN Bus Controller.
-> >
-> > Signed-off-by: William Qiu <william.qiu@starfivetech.com>
-> > Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
-> > ---
-> >  .../bindings/net/can/cast,can-ctrl.yaml       | 106 ++++++++++++++++++
-> >  1 file changed, 106 insertions(+)
-> >  create mode 100644
-> > Documentation/devicetree/bindings/net/can/cast,can-ctrl.yaml
-> >
-> > diff --git
-> > a/Documentation/devicetree/bindings/net/can/cast,can-ctrl.yaml
-> > b/Documentation/devicetree/bindings/net/can/cast,can-ctrl.yaml
-> > new file mode 100644
-> > index 000000000000..2870cff80164
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/net/can/cast,can-ctrl.yaml
-> > @@ -0,0 +1,106 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) %YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/net/can/cast,can-ctrl.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: CAST CAN Bus Controller
-> > +
-> > +description:
-> > +  This CAN Bus Controller, also called CAN-CTRL, implements a highly
-> > +  featured and reliable CAN bus controller that performs serial
-> > +  communication according to the CAN protocol.
-> > +
-> > +  The CAN-CTRL comes in three variants, they are CC, FD, and XL.
-> > +  The CC variant supports only Classical CAN, the FD variant adds
-> > + support  for CAN FD, and the XL variant supports the Classical CAN,
-> > + CAN FD, and  CAN XL standards.
-> > +
-> > +maintainers:
-> > +  - William Qiu <william.qiu@starfivetech.com>
-> > +  - Hal Feng <hal.feng@starfivetech.com>
-> > +
-> > +properties:
-> > +  compatible:
-> > +    items:
-> > +      - enum:
-> > +        - starfive,jh7110-can
-> > +      - const: cast,can-ctrl-fd-7x10N00S00
->=20
-> What's the 7x10...? Perhaps some explanation on it.
+Enable APPS SMMU function on QCS615 platform. APPS SMMU is required
+for address translation in devices including Ethernet/UFS/USB and
+so on.
 
-7x10N00S00 is the CAN IP product version.
+Add the SCM node for SMMU probing normally. SMMU driver probe will
+check qcom_scm ready or not, without SCM node, SMMU driver probe will
+defer.
+The dmesg log without SCM node:
+platform 15000000.iommu: deferred probe pending: arm-smmu: qcom_scm not ready
 
->=20
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  interrupts:
-> > +    maxItems: 1
-> > +
-> > +  clocks:
-> > +    minItems: 3
-> > +
-> > +  clock-names:
-> > +    items:
-> > +      - const: apb
-> > +      - const: timer
-> > +      - const: core
-> > +
-> > +  resets:
-> > +    minItems: 3
-> > +
-> > +  reset-names:
-> > +    items:
-> > +      - const: apb
-> > +      - const: timer
-> > +      - const: core
-> > +
-> > +  starfive,syscon:
-> > +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> > +    items:
-> > +      - items:
-> > +          - description: phandle to System Register Controller syscon =
-node
-> > +          - description: offset of SYS_SYSCONSAIF__SYSCFG register for=
- CAN
-> controller
-> > +          - description: shift of SYS_SYSCONSAIF__SYSCFG register for =
-CAN
-> controller
-> > +          - description: mask of SYS_SYSCONSAIF__SYSCFG register for C=
-AN
-> controller
-> > +    description:
-> > +      Should be four parameters, the phandle to System Register Contro=
-ller
-> > +      syscon node and the offset/shift/mask of SYS_SYSCONSAIF__SYSCFG
-> register
-> > +      for CAN controller.
->=20
-> This just repeats what the schema says. More useful would be what you nee=
-d
-> to access/control in this register.
+With the SCM node, SMMU can probe normally, but SCM driver still fails
+to probe because of one SCM bug:
+qcom_scm firmware:scm: error (____ptrval____): Failed to enable the TrustZone memory allocator
+qcom_scm firmware:scm: probe with driver qcom_scm failed with error 4
+The above SCM bug has been fixed and applied:
+https://lore.kernel.org/all/172965696408.224417.2033308332604008573.b4-ty@kernel.org/#t
+But above patch doesn't impact building of current patch series which
+can build successfully without above patch.
 
-OK, will improve the description here. Thanks.
+This patch series depends on below patch series:
+https://lore.kernel.org/linux-arm-msm/20241022-add_initial_support_for_qcs615-v4-0-0a551c6dd342@quicinc.com/
 
-Best regards,
-Hal
+Changes in v3:
+- Align the interrupts of the APPS SMMU node suggested by Konrad.
+- Add the Acked-by tag in the commit message of SCM bindings patch.
+- Update the dependency link, SCM bug fix link and base-commit in
+  cover letter.
+- Link to v2: https://lore.kernel.org/linux-arm-msm/20241015081603.30643-1-quic_qqzhou@quicinc.com/
+
+Changes in v2:
+- Add the compatible "qcom,qcs615-smmu-500" into no-clocks list for
+  arm,smmu.yaml suggested by Krzysztof.
+- Improve the commit messages and cover letter.
+- Link to v1: https://lore.kernel.org/all/20241011063112.19087-1-quic_qqzhou@quicinc.com/
+
+Qingqing Zhou (4):
+  dt-bindings: firmware: qcom,scm: document QCS615 SCM
+  dt-bindings: arm-smmu: document QCS615 APPS SMMU
+  arm64: dts: qcom: qcs615: add the SCM node
+  arm64: dts: qcom: qcs615: add the APPS SMMU node
+
+ .../bindings/firmware/qcom,scm.yaml           |  1 +
+ .../devicetree/bindings/iommu/arm,smmu.yaml   |  2 +
+ arch/arm64/boot/dts/qcom/qcs615.dtsi          | 81 +++++++++++++++++++
+ 3 files changed, 84 insertions(+)
+
+
+base-commit: 7436324ebd147598f940dde1335b7979dbccc339
+prerequisite-patch-id: 3a76212d3a3e930d771312ff9349f87aee5c55d5
+prerequisite-patch-id: 8a2454d5e07e56a6dd03f762f498051065635d85
+prerequisite-patch-id: 46cdc5640598b60d2f5449af444d6d4e479c00b8
+prerequisite-patch-id: 050d1dd8cc9397618e570e6de2d81d0c32c10d7a
+prerequisite-patch-id: cd9fc0a399ab430e293764d0911a38109664ca91
+prerequisite-patch-id: 07f2c7378c7bbd560f26b61785b6814270647f1b
+prerequisite-patch-id: f9680e3c90d8f05babbcadd7b7f5174f484a8275
+prerequisite-patch-id: f78398623b7f08ae1183a4e637045a081bc93ec8
+prerequisite-patch-id: 54b4dd987711302b083f714c6f230726c7781042
+prerequisite-patch-id: 624720e543d7857e46d3ee49b8cea413772deb4c
+prerequisite-patch-id: 04ca722967256efddc402b7bab94136a5174b0b9
+prerequisite-patch-id: ab88a42ec69ad90e8509c9c5b7c6bdd595a7f783
+prerequisite-patch-id: 918724fafe43acaa4c4b980bfabe36e9c3212cd1
+prerequisite-patch-id: 203a45a2f2a8c636ad88b6c0d4868721dc34633d
+prerequisite-patch-id: fc1cfec4ecd56e669c161c4d2c3797fc0abff0ae
+-- 
+2.17.1
+
 
