@@ -1,166 +1,266 @@
-Return-Path: <linux-kernel+bounces-381659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-381666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC0489B0251
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 14:26:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E7849B025A
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 14:28:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 312F2B21263
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 12:26:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C88951F23633
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 12:28:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDF6C203708;
-	Fri, 25 Oct 2024 12:26:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bBKoHR0p"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32D041D54E1;
-	Fri, 25 Oct 2024 12:26:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E17D204026;
+	Fri, 25 Oct 2024 12:27:51 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 661E6203712;
+	Fri, 25 Oct 2024 12:27:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729859196; cv=none; b=bieCzQQTvfzV+yweSJo/VkHOWWbfdGkPTQIstRanoPZjt3sxVZlF7UWtUCPZ+wZtiQXY2urXo20PLOYJppbj2WL+aIDBDN4Zbq3zw9+ySaODEBzeRJS5Qculk18BOtiibRbUmx5OxNaAfp6dWJFkGrppKa5ESb6axkYbarULgJ8=
+	t=1729859270; cv=none; b=Rs7aIg80VZZkE4ADuHHt3novkd9r9MqwFcL4fpnKRsRgmaKztKfwEwvo0OzoV3k0SblAjmuXf/NzV2XBVU7pqzxBjtFF0bLrX48mudfVqoktPdjjv365CSGtcOlZJkEI+O/sFxntM48WuvsjegYG3LP99lzthA/nvfBD1u5YmAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729859196; c=relaxed/simple;
-	bh=D+VAgkI9BdNfweuLoz0KCd0YS+tPrLXCfc3QH8KX4b8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ChVMYjaTnguNXBx9pgOUuEJ8u3BpsmfIDU+d8BYMfCuhYb8hDBGGhtaYBrxSXf3R3ek1bo40j9enZV6MowoorVzvnxiqoMlfyRhaRHj8anQaXIUNkiSOsJg3UKe9Pczyk1/vSZ2FfYwNWvKCvUPiJBzm/hEKtjminJQyMhRKjTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bBKoHR0p; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-37d8901cb98so2038457f8f.0;
-        Fri, 25 Oct 2024 05:26:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729859192; x=1730463992; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=D+VAgkI9BdNfweuLoz0KCd0YS+tPrLXCfc3QH8KX4b8=;
-        b=bBKoHR0pRuDxt7hFJJElhzhOqJ/NpYoFArlNrD0h2ieuDWjtSDW0Ufd0UjAH2OR7wU
-         nYM/FicmDZz8p80T2TpBe+aMqyGFxzAGVS/vdNFQk0GsDCDx84VTifRmbEai/QCQ5vy1
-         gIf9a9BVevHB6tzWrnxQGpcVM+tdEkPblH6clwhh2bZxjrdVCflTCdKv3ZXgelGpP6gJ
-         dd6WxABmovLKNlvdzB6s47vq8/KLaV4rDR2iyKVLl3j/KrtcUG2DRUeeavtQBkE/YZwk
-         EWqpJyyerOhKcYXGHXV0YgdQxsIZe2chdrm54sRKp3dhIrIQTFGCGWh60OmRizr9RqBx
-         3Jpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729859192; x=1730463992;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=D+VAgkI9BdNfweuLoz0KCd0YS+tPrLXCfc3QH8KX4b8=;
-        b=KrPVTLaYPemn6Vf/FvrOz92ixvanQ2yxXhYaCMUO19kXyU7F1lDH1Fe5RxIwwREV4N
-         Ehj54A4sI2C2uMDJYvGzUTymlOSYMyAwOJ/dJXwSIoYN9h50zARx4Ja6MZZ5ubjKZUnd
-         KHbO2xfmUMHQHj1Wcb4ptIv4c7M5fiafIimhLgk7Fhp+J8Awo/TBEPzjseJqD4Bo6C2O
-         KU+UkqVPga2Fsg6IzMMmPIyL5CrJ9ZHKjrntvncyYSH/dW/D3Wfl1Fx2K4RoUorIfTYA
-         6HWQJeEtY8tZW/ROdgcsbd7Vl2OlEox2WQDxGWYemPPde4m87R6wO5mLalctNIAGvXU6
-         u4MQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUQIJw9NE8/0PWxLupnc53GYmDJMDd1mzY8z6QnDgQeJLpVUgvzwJv+OInlgc5k++KtQ4fSXWN8ryNO@vger.kernel.org, AJvYcCUZXMwITtbTXhrm9Qvbzq27u2sTboF+W8vw8ET4MdNzdQf5j3ZKJ/P8PUXJ9hdREQ2oU/l/5NXAJXde@vger.kernel.org, AJvYcCUbFXkX0M3ivyjdEgfcxtNWt61HkwppsHJz9ZFkLfUO8Ul7FU/dID+vbiYJmTQV8sVwQ/DYrtPpUm9U@vger.kernel.org, AJvYcCUsT9ZtQRhs4QqwrtqcHcG9eqtA3bH39a9lxP/cuj5OqBYVHRY8+UDipQemqFcXz0w/y4l26A3UM8id@vger.kernel.org, AJvYcCV4x3BvJg/FP6v/YfFVWCrp6+VwSH4SsFqpw27HkXOeWJ7f3bdUCLt9Vj+NJPi3yZ9BOBUsx5x2484YCI0y@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOE+wWRWw8FNtMW1XsMage68PWjN2eQfsLRkMZ7OrlHgS7bMkn
-	v9Y4kZzXkzM6inGXzTSQz5Hw6rgevF6jtMRsy5hnl2lKACz9tVDP
-X-Google-Smtp-Source: AGHT+IE4N4UzSveT9hme0zr2iZUIhTpdyHVDKtIylS7k/09bLcEA2xElCCUaKRYj5M9bCg0Mhc8khg==
-X-Received: by 2002:a5d:588a:0:b0:37c:bafd:5624 with SMTP id ffacd0b85a97d-38045883830mr5008361f8f.25.1729859192161;
-        Fri, 25 Oct 2024 05:26:32 -0700 (PDT)
-Received: from nsa.fritz.box ([2001:a61:34c9:ea01:14b4:7ed9:5135:9381])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b70bcdsm1394926f8f.82.2024.10.25.05.26.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2024 05:26:31 -0700 (PDT)
-Message-ID: <dbb7a66f236a3cde39acef59cb498b42a6fa9cdd.camel@gmail.com>
-Subject: Re: [PATCH RFC v4 08/15] spi: dt-bindings: axi-spi-engine: add SPI
- offload properties
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: David Lechner <dlechner@baylibre.com>, Mark Brown <broonie@kernel.org>, 
- Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Nuno =?ISO-8859-1?Q?S=E1?= <nuno.sa@analog.com>, Uwe
- =?ISO-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>
-Cc: Michael Hennerich <Michael.Hennerich@analog.com>, Lars-Peter Clausen
-	 <lars@metafoo.de>, David Jander <david@protonic.nl>, Martin Sperl
-	 <kernel@martin.sperl.org>, linux-spi@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-iio@vger.kernel.org, linux-pwm@vger.kernel.org
-Date: Fri, 25 Oct 2024 14:26:31 +0200
-In-Reply-To: <20241023-dlech-mainline-spi-engine-offload-2-v4-8-f8125b99f5a1@baylibre.com>
-References: 
-	<20241023-dlech-mainline-spi-engine-offload-2-v4-0-f8125b99f5a1@baylibre.com>
-	 <20241023-dlech-mainline-spi-engine-offload-2-v4-8-f8125b99f5a1@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+	s=arc-20240116; t=1729859270; c=relaxed/simple;
+	bh=hAhBOBQcAfSsqFw9V4igY225+CSJsKalgPicXLm49CA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=AAovWbmE4x90ZrW3UiuHVSz/htJq8n7CKC3cZ+SGcnWtVke2pjGQUHtZ9FVnrrMxfcIdjjMn3L0R+d6mHktGxGjGI/UddMM0/GMHQK7QgFPrJT4nkNOS6ogKO9PAyGmZ+vBBJJEAmT6jhvHEVAR3hu7vUxdzs+hW1TColaheK1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4AF6C339;
+	Fri, 25 Oct 2024 05:28:17 -0700 (PDT)
+Received: from donnerap.manchester.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id ADC9A3F71E;
+	Fri, 25 Oct 2024 05:27:42 -0700 (PDT)
+Date: Fri, 25 Oct 2024 13:27:39 +0100
+From: Andre Przywara <andre.przywara@arm.com>
+To: Cody Eksal <masterr3c0rd@epochal.quest>
+Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+ linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
+ linux-usb@vger.kernel.org, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Chen-Yu
+ Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel
+ Holland <samuel@sholland.org>, Parthiban <parthiban@linumiz.com>, Yangtao
+ Li <frank@allwinnertech.com>, Florian Fainelli
+ <florian.fainelli@broadcom.com>, Vinod Koul <vkoul@kernel.org>, Linus
+ Walleij <linus.walleij@linaro.org>, Thierry Reding <treding@nvidia.com>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Maxime Ripard
+ <mripard@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Yangtao Li <tiny.windzz@gmail.com>, Viresh Kumar <vireshk@kernel.org>,
+ Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, Kishon Vijay
+ Abraham I <kishon@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ Shuosheng Huang <huangshuosheng@allwinnertech.com>
+Subject: Re: [PATCH 13/13] arm64: dts: allwinner: a100: Add CPU Operating
+ Performance Points table
+Message-ID: <20241025132739.3d0f116d@donnerap.manchester.arm.com>
+In-Reply-To: <20241024170540.2721307-14-masterr3c0rd@epochal.quest>
+References: <20241024170540.2721307-1-masterr3c0rd@epochal.quest>
+	<20241024170540.2721307-14-masterr3c0rd@epochal.quest>
+Organization: ARM
+X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.32; aarch64-unknown-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, 2024-10-23 at 15:59 -0500, David Lechner wrote:
-> The AXI SPI Engine has support for hardware offloading capabilities.
-> This includes a connection to a DMA controller for streaming RX data
-> and a trigger input for starting execution of the SPI message programmed
-> in the offload.
->=20
-> Signed-off-by: David Lechner <dlechner@baylibre.com>
+On Thu, 24 Oct 2024 14:05:31 -0300
+Cody Eksal <masterr3c0rd@epochal.quest> wrote:
+
+> From: Shuosheng Huang <huangshuosheng@allwinnertech.com>
+> 
+> Add an Operating Performance Points table for the CPU cores to
+> enable Dynamic Voltage & Frequency Scaling on the A100.
+> 
+> Signed-off-by: Shuosheng Huang <huangshuosheng@allwinnertech.com>
+> [masterr3c0rd@epochal.quest: fix typos in -cpu-opp, use compatible]
+> Signed-off-by: Cody Eksal <masterr3c0rd@epochal.quest>
 > ---
-> v4 changes:
-> * Dropped #spi-offload-cells property.
-> * Changed subject line.
->=20
-> v3 changes:
-> * Added #spi-offload-cells property.
-> * Added properties for triggers and RX data stream connected to DMA.
->=20
-> v2 changes:
->=20
-> This is basically a new patch. It partially replaces "dt-bindings: iio:
-> offload: add binding for PWM/DMA triggered buffer".
->=20
-> The controller no longer has an offloads object node and the
-> spi-offloads property is now a standard SPI peripheral property.
-> ---
-> =C2=A0.../bindings/spi/adi,axi-spi-engine.yaml=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 22 ++++++++++++++++++++++
-> =C2=A01 file changed, 22 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/spi/adi,axi-spi-engine.yam=
-l
-> b/Documentation/devicetree/bindings/spi/adi,axi-spi-engine.yaml
-> index d48faa42d025..5281b4871209 100644
-> --- a/Documentation/devicetree/bindings/spi/adi,axi-spi-engine.yaml
-> +++ b/Documentation/devicetree/bindings/spi/adi,axi-spi-engine.yaml
-> @@ -41,6 +41,24 @@ properties:
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: s_axi_aclk
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: spi_clk
-> =C2=A0
-> +=C2=A0 trigger-sources:
-> +=C2=A0=C2=A0=C2=A0 description:
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 An array of trigger source phandles for o=
-ffload instances. The index in
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 the array corresponds to the offload inst=
-ance number.
-> +=C2=A0=C2=A0=C2=A0 $ref: /schemas/types.yaml#/definitions/phandle-array
+>  .../allwinner/sun50i-a100-allwinner-perf1.dts |  5 ++
+>  .../dts/allwinner/sun50i-a100-cpu-opp.dtsi    | 90 +++++++++++++++++++
+>  .../arm64/boot/dts/allwinner/sun50i-a100.dtsi |  8 ++
+>  3 files changed, 103 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-a100-cpu-opp.dtsi
+> 
+> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a100-allwinner-perf1.dts b/arch/arm64/boot/dts/allwinner/sun50i-a100-allwinner-perf1.dts
+> index 29e9d24da8b6..99b1b2f7b92a 100644
+> --- a/arch/arm64/boot/dts/allwinner/sun50i-a100-allwinner-perf1.dts
+> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a100-allwinner-perf1.dts
+> @@ -6,6 +6,7 @@
+>  /dts-v1/;
+>  
+>  #include "sun50i-a100.dtsi"
+> +#include "sun50i-a100-cpu-opp.dtsi"
+>  
+>  #include <dt-bindings/gpio/gpio.h>
+>  
+> @@ -67,6 +68,10 @@ &usb_otg {
+>  	status = "okay";
+>  };
+>  
+> +&cpu0 {
+> +	cpu-supply = <&reg_dcdc2>;
+> +};
 > +
-> +=C2=A0 dmas:
-> +=C2=A0=C2=A0=C2=A0 description:
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 DMA channels connected to the output stre=
-am interface of an offload
-> instance.
-> +=C2=A0=C2=A0=C2=A0 minItems: 1
-> +=C2=A0=C2=A0=C2=A0 maxItems: 32
+>  &pio {
+>  	vcc-pb-supply = <&reg_dcdc1>;
+>  	vcc-pc-supply = <&reg_eldo1>;
+> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a100-cpu-opp.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a100-cpu-opp.dtsi
+> new file mode 100644
+> index 000000000000..eeb8d20f3fb4
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a100-cpu-opp.dtsi
+> @@ -0,0 +1,90 @@
+> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> +// Copyright (c) 2020 Yangtao Li <frank@allwinnertech.com>
+> +// Copyright (c) 2020 ShuoSheng Huang <huangshuosheng@allwinnertech.com>
 > +
-> +=C2=A0 dma-names:
-> +=C2=A0=C2=A0=C2=A0 minItems: 1
-> +=C2=A0=C2=A0=C2=A0 maxItems: 32
-> +=C2=A0=C2=A0=C2=A0 items:
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pattern: "^offload(?:[12]?[0-9]|3[01])-rx=
-$"
+> +/ {
+> +	cpu_opp_table: cpu-opp-table {
+> +		compatible = "allwinner,sun50i-a100-operating-points";
+> +		nvmem-cells = <&cpu_speed_grade>;
+> +		opp-shared;
+> +
+> +		opp@408000000 {
+> +			clock-latency-ns = <244144>; /* 8 32k periods */
+> +			opp-hz = /bits/ 64 <408000000>;
+> +
+> +			opp-microvolt-speed0 = <900000 900000 1200000>;
+> +			opp-microvolt-speed1 = <900000 900000 1200000>;
+> +			opp-microvolt-speed2 = <900000 900000 1200000>;
 
-I think the core is already capable of tx offload? If so, we could already =
-have that
-in the bindings.
+Is there actually an advantage when using the three cells version?
+I wonder if we should go with just the target voltage (the first cell
+here), as done for the H616.
 
-- Nuno S=C3=A1
+Apart from that it looks fine to me.
 
+Cheers,
+Andre.
+
+> +		};
+> +
+> +		opp@600000000 {
+> +			clock-latency-ns = <244144>; /* 8 32k periods */
+> +			opp-hz = /bits/ 64 <600000000>;
+> +
+> +			opp-microvolt-speed0 = <900000 900000 1200000>;
+> +			opp-microvolt-speed1 = <900000 900000 1200000>;
+> +			opp-microvolt-speed2 = <900000 900000 1200000>;
+> +		};
+> +
+> +		opp@816000000 {
+> +			clock-latency-ns = <244144>; /* 8 32k periods */
+> +			opp-hz = /bits/ 64 <816000000>;
+> +
+> +			opp-microvolt-speed0 = <940000 940000 1200000>;
+> +			opp-microvolt-speed1 = <900000 900000 1200000>;
+> +			opp-microvolt-speed2 = <900000 900000 1200000>;
+> +		};
+> +
+> +		opp@1080000000 {
+> +			clock-latency-ns = <244144>; /* 8 32k periods */
+> +			opp-hz = /bits/ 64 <1080000000>;
+> +
+> +			opp-microvolt-speed0 = <1020000 1020000 1200000>;
+> +			opp-microvolt-speed1 = <980000 980000 1200000>;
+> +			opp-microvolt-speed2 = <950000 950000 1200000>;
+> +		};
+> +
+> +		opp@1200000000 {
+> +			clock-latency-ns = <244144>; /* 8 32k periods */
+> +			opp-hz = /bits/ 64 <1200000000>;
+> +
+> +			opp-microvolt-speed0 = <1100000 1100000 1200000>;
+> +			opp-microvolt-speed1 = <1020000 1020000 1200000>;
+> +			opp-microvolt-speed2 = <1000000 1000000 1200000>;
+> +		};
+> +
+> +		opp@1320000000 {
+> +			clock-latency-ns = <244144>; /* 8 32k periods */
+> +			opp-hz = /bits/ 64 <1320000000>;
+> +
+> +			opp-microvolt-speed0 = <1160000 1160000 1200000>;
+> +			opp-microvolt-speed1 = <1060000 1060000 1200000>;
+> +			opp-microvolt-speed2 = <1030000 1030000 1200000>;
+> +		};
+> +
+> +		opp@1464000000 {
+> +			clock-latency-ns = <244144>; /* 8 32k periods */
+> +			opp-hz = /bits/ 64 <1464000000>;
+> +
+> +			opp-microvolt-speed0 = <1180000 1180000 1200000>;
+> +			opp-microvolt-speed1 = <1180000 1180000 1200000>;
+> +			opp-microvolt-speed2 = <1130000 1130000 1200000>;
+> +		};
+> +	};
+> +};
+> +
+> +&cpu0 {
+> +	operating-points-v2 = <&cpu_opp_table>;
+> +};
+> +
+> +&cpu1 {
+> +	operating-points-v2 = <&cpu_opp_table>;
+> +};
+> +
+> +&cpu2 {
+> +	operating-points-v2 = <&cpu_opp_table>;
+> +};
+> +
+> +&cpu3 {
+> +	operating-points-v2 = <&cpu_opp_table>;
+> +};
+> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a100.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a100.dtsi
+> index 6dca766ea222..747a0292ef98 100644
+> --- a/arch/arm64/boot/dts/allwinner/sun50i-a100.dtsi
+> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a100.dtsi
+> @@ -23,6 +23,7 @@ cpu0: cpu@0 {
+>  			device_type = "cpu";
+>  			reg = <0x0>;
+>  			enable-method = "psci";
+> +			clocks = <&ccu CLK_CPUX>;
+>  		};
+>  
+>  		cpu1: cpu@1 {
+> @@ -30,6 +31,7 @@ cpu1: cpu@1 {
+>  			device_type = "cpu";
+>  			reg = <0x1>;
+>  			enable-method = "psci";
+> +			clocks = <&ccu CLK_CPUX>;
+>  		};
+>  
+>  		cpu2: cpu@2 {
+> @@ -37,6 +39,7 @@ cpu2: cpu@2 {
+>  			device_type = "cpu";
+>  			reg = <0x2>;
+>  			enable-method = "psci";
+> +			clocks = <&ccu CLK_CPUX>;
+>  		};
+>  
+>  		cpu3: cpu@3 {
+> @@ -44,6 +47,7 @@ cpu3: cpu@3 {
+>  			device_type = "cpu";
+>  			reg = <0x3>;
+>  			enable-method = "psci";
+> +			clocks = <&ccu CLK_CPUX>;
+>  		};
+>  	};
+>  
+> @@ -142,6 +146,10 @@ efuse@3006000 {
+>  			ths_calibration: calib@14 {
+>  				reg = <0x14 8>;
+>  			};
+> +
+> +			cpu_speed_grade: cpu-speed-grade@1c {
+> +				reg = <0x1c 0x2>;
+> +			};
+>  		};
+>  
+>  		watchdog@30090a0 {
 
 
