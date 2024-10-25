@@ -1,193 +1,112 @@
-Return-Path: <linux-kernel+bounces-382511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A22D19B0F2D
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 21:36:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9B7C9B0F2F
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 21:36:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DFA85B24AD5
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 19:36:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 256AD1C220C1
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 19:36:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0931D20EA20;
-	Fri, 25 Oct 2024 19:36:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84EC620EA3E;
+	Fri, 25 Oct 2024 19:36:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b="PV0jINXS"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
+	dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b="W4Jes7yt"
+Received: from gentwo.org (gentwo.org [62.72.0.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D5AD20C325;
-	Fri, 25 Oct 2024 19:36:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C91981925AB;
+	Fri, 25 Oct 2024 19:36:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.72.0.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729884973; cv=none; b=eIGvQvLZV3oMA/X0nQ16hTZtF50YtMuHcXJT5a4xihuhY9LtPuiPQkZTejuw4AMlVZdg3SiM7ZiIuVtLiu+RssLalSI33UgWM0V/TRzbeSS4INsCxMXT4E0dmFJ0Q+mCgvcc+18NkXfVKk3ePlWVRLeNbheccedIKYb1rnacTx4=
+	t=1729884997; cv=none; b=fSZLvYpG2jzq7vUYRyMTfpejh0Z73IARo+U1S593twYuFEx0Qv4RIdH4EZLJhsdDNjVgZ6lk6Ui4izUBdPKyUR8oK5VAmKzChI/Of5UprTVD/v5hUI6udEVcay8PGTowmL+NmqcK4RCAZKDEKL8nb5aHXGh3274FxJF1bVFL0xs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729884973; c=relaxed/simple;
-	bh=CvEd4BjvEcsGDhB00d/C010UbokeoWkjDXb+3VQ5SD0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oJG/hULBqz4J/w609Yp3jn15Xew5VlDwK5riNMewOgdfFThxkdqgEId2z094jcqylxUe30fEiwOriJPbGj8tfmJvOu3dfEskb2Ot3Y2CfAeU/Cn7ZfJQPJhkRBUO/wWqFIA3rBBBswHrG5uKXjOGYBiuSR23KW5kQ0l6JdlKESE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b=PV0jINXS; arc=none smtp.client-ip=212.227.17.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1729884959; x=1730489759; i=deller@gmx.de;
-	bh=CvEd4BjvEcsGDhB00d/C010UbokeoWkjDXb+3VQ5SD0=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=PV0jINXS3eCqz0UPYr52slRhDn5GE4xvhzLRvd6J/oLBDJCUbJygDpjtSzn2cjPJ
-	 rzeVWn+71g8nozgPuOX9UFVNQA6ElP6/JTXG+JdpsWhV2Q5pJsOg1vgfhOMkGhSJL
-	 /AYP3NXyAqKGWHweoNnbQnkDkN319WP60Nb83FR30raiAXQo3PvEdvdjyeA2zkEqb
-	 xK05K2UkxZ9ELhdy1c+FlyB9HraqjpemyHokldIeUvramECxHjDhOvgpPmnsEI2HV
-	 LyKhm5SiSK2jMv3yDbcPwHotP5SLAfLV/4b4M+4O2ELqqc6ZDKERj5Tt36CCw4ER6
-	 HS8gDONi9zTlIspq5g==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.20.55] ([109.250.63.79]) by mail.gmx.net (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MeU4y-1teaKZ1Ok8-00nzYF; Fri, 25
- Oct 2024 21:35:59 +0200
-Message-ID: <e3debf69-0507-41bd-999c-b3de79c809b5@gmx.de>
-Date: Fri, 25 Oct 2024 21:35:57 +0200
+	s=arc-20240116; t=1729884997; c=relaxed/simple;
+	bh=x+Qq9Vx8YNRoZQjfWSXB0H8Q/jg1IHxnyqzO1wQC2po=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=ZOwngII5weRQt1FkHVIJd/uLtIDBSdOezRquFmBk/XWOA4NKCzvkqFswJtP7dTuok6nTKH6UZYqcMlX37895AFFAHcQQRE9+BgonmYHlWwkiJZnIMicbTdvIVGWlyfIKasuLu3qDpP0bLDvHkP0kD/PtzQTx3fFUps6fidJJHfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org; spf=pass smtp.mailfrom=gentwo.org; dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b=W4Jes7yt; arc=none smtp.client-ip=62.72.0.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentwo.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gentwo.org;
+	s=default; t=1729884988;
+	bh=x+Qq9Vx8YNRoZQjfWSXB0H8Q/jg1IHxnyqzO1wQC2po=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=W4Jes7ytlXV9rXvyZdJydttKL5xA9UZzAfrBUrbnFvkgcQ3do4auyKL2SppmTQzLk
+	 4U/Oz2+zr97U7hbhOq9AXt0r5KitVEBSJKrRuCbP3LwYV2+6E5ueQhRzxscmpJZu2z
+	 zYDML7Iz7A1F9rWYQSf1xA3C8W5PPDdp7InrU9Kw=
+Received: by gentwo.org (Postfix, from userid 1003)
+	id A35C6409CC; Fri, 25 Oct 2024 12:36:28 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+	by gentwo.org (Postfix) with ESMTP id A1F8640681;
+	Fri, 25 Oct 2024 12:36:28 -0700 (PDT)
+Date: Fri, 25 Oct 2024 12:36:28 -0700 (PDT)
+From: "Christoph Lameter (Ampere)" <cl@gentwo.org>
+To: Peter Zijlstra <peterz@infradead.org>
+cc: tglx@linutronix.de, axboe@kernel.dk, linux-kernel@vger.kernel.org, 
+    mingo@redhat.com, dvhart@infradead.org, dave@stgolabs.net, 
+    andrealmeid@igalia.com, Andrew Morton <akpm@linux-foundation.org>, 
+    urezki@gmail.com, hch@infradead.org, lstoakes@gmail.com, 
+    Arnd Bergmann <arnd@arndb.de>, linux-api@vger.kernel.org, 
+    linux-mm@kvack.org, linux-arch@vger.kernel.org, malteskarupke@web.de
+Subject: Re: [PATCH v1 11/14] futex: Implement FUTEX2_NUMA
+In-Reply-To: <20241025085815.GG14555@noisy.programming.kicks-ass.net>
+Message-ID: <887eadb6-6142-3edf-0a25-d33b2219b90d@gentwo.org>
+References: <20230721102237.268073801@infradead.org> <20230721105744.434742902@infradead.org> <9dc04e4c-2adc-5084-4ea1-b200d82be29f@linux.com> <20241025085815.GG14555@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [GIT PULL] fbdev late fixes for v6.12-rc5
-To: Linus Torvalds <torvalds@linux-foundation.org>,
- Helge Deller <deller@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org,
- dri-devel@lists.freedesktop.org
-References: <ZxvBfDuqSC_TEM78@carbonx1>
- <CAHk-=wjKouRizUF97ZABtCmijjKR+sAOmWA4uiYhhSOwhxCT3w@mail.gmail.com>
-Content-Language: en-US
-From: Helge Deller <deller@gmx.de>
-Autocrypt: addr=deller@gmx.de; keydata=
- xsFNBF3Ia3MBEAD3nmWzMgQByYAWnb9cNqspnkb2GLVKzhoH2QD4eRpyDLA/3smlClbeKkWT
- HLnjgkbPFDmcmCz5V0Wv1mKYRClAHPCIBIJgyICqqUZo2qGmKstUx3pFAiztlXBANpRECgwJ
- r+8w6mkccOM9GhoPU0vMaD/UVJcJQzvrxVHO8EHS36aUkjKd6cOpdVbCt3qx8cEhCmaFEO6u
- CL+k5AZQoABbFQEBocZE1/lSYzaHkcHrjn4cQjc3CffXnUVYwlo8EYOtAHgMDC39s9a7S90L
- 69l6G73lYBD/Br5lnDPlG6dKfGFZZpQ1h8/x+Qz366Ojfq9MuuRJg7ZQpe6foiOtqwKym/zV
- dVvSdOOc5sHSpfwu5+BVAAyBd6hw4NddlAQUjHSRs3zJ9OfrEx2d3mIfXZ7+pMhZ7qX0Axlq
- Lq+B5cfLpzkPAgKn11tfXFxP+hcPHIts0bnDz4EEp+HraW+oRCH2m57Y9zhcJTOJaLw4YpTY
- GRUlF076vZ2Hz/xMEvIJddRGId7UXZgH9a32NDf+BUjWEZvFt1wFSW1r7zb7oGCwZMy2LI/G
- aHQv/N0NeFMd28z+deyxd0k1CGefHJuJcOJDVtcE1rGQ43aDhWSpXvXKDj42vFD2We6uIo9D
- 1VNre2+uAxFzqqf026H6cH8hin9Vnx7p3uq3Dka/Y/qmRFnKVQARAQABzRxIZWxnZSBEZWxs
- ZXIgPGRlbGxlckBnbXguZGU+wsGRBBMBCAA7AhsDBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheA
- FiEERUSCKCzZENvvPSX4Pl89BKeiRgMFAl3J1zsCGQEACgkQPl89BKeiRgNK7xAAg6kJTPje
- uBm9PJTUxXaoaLJFXbYdSPfXhqX/BI9Xi2VzhwC2nSmizdFbeobQBTtRIz5LPhjk95t11q0s
- uP5htzNISPpwxiYZGKrNnXfcPlziI2bUtlz4ke34cLK6MIl1kbS0/kJBxhiXyvyTWk2JmkMi
- REjR84lCMAoJd1OM9XGFOg94BT5aLlEKFcld9qj7B4UFpma8RbRUpUWdo0omAEgrnhaKJwV8
- qt0ULaF/kyP5qbI8iA2PAvIjq73dA4LNKdMFPG7Rw8yITQ1Vi0DlDgDT2RLvKxEQC0o3C6O4
- iQq7qamsThLK0JSDRdLDnq6Phv+Yahd7sDMYuk3gIdoyczRkXzncWAYq7XTWl7nZYBVXG1D8
- gkdclsnHzEKpTQIzn/rGyZshsjL4pxVUIpw/vdfx8oNRLKj7iduf11g2kFP71e9v2PP94ik3
- Xi9oszP+fP770J0B8QM8w745BrcQm41SsILjArK+5mMHrYhM4ZFN7aipK3UXDNs3vjN+t0zi
- qErzlrxXtsX4J6nqjs/mF9frVkpv7OTAzj7pjFHv0Bu8pRm4AyW6Y5/H6jOup6nkJdP/AFDu
- 5ImdlA0jhr3iLk9s9WnjBUHyMYu+HD7qR3yhX6uWxg2oB2FWVMRLXbPEt2hRGq09rVQS7DBy
- dbZgPwou7pD8MTfQhGmDJFKm2jvOwU0EXchrcwEQAOsDQjdtPeaRt8EP2pc8tG+g9eiiX9Sh
- rX87SLSeKF6uHpEJ3VbhafIU6A7hy7RcIJnQz0hEUdXjH774B8YD3JKnAtfAyuIU2/rOGa/v
- UN4BY6U6TVIOv9piVQByBthGQh4YHhePSKtPzK9Pv/6rd8H3IWnJK/dXiUDQllkedrENXrZp
- eLUjhyp94ooo9XqRl44YqlsrSUh+BzW7wqwfmu26UjmAzIZYVCPCq5IjD96QrhLf6naY6En3
- ++tqCAWPkqKvWfRdXPOz4GK08uhcBp3jZHTVkcbo5qahVpv8Y8mzOvSIAxnIjb+cklVxjyY9
- dVlrhfKiK5L+zA2fWUreVBqLs1SjfHm5OGuQ2qqzVcMYJGH/uisJn22VXB1c48yYyGv2HUN5
- lC1JHQUV9734I5cczA2Gfo27nTHy3zANj4hy+s/q1adzvn7hMokU7OehwKrNXafFfwWVK3OG
- 1dSjWtgIv5KJi1XZk5TV6JlPZSqj4D8pUwIx3KSp0cD7xTEZATRfc47Yc+cyKcXG034tNEAc
- xZNTR1kMi9njdxc1wzM9T6pspTtA0vuD3ee94Dg+nDrH1As24uwfFLguiILPzpl0kLaPYYgB
- wumlL2nGcB6RVRRFMiAS5uOTEk+sJ/tRiQwO3K8vmaECaNJRfJC7weH+jww1Dzo0f1TP6rUa
- fTBRABEBAAHCwXYEGAEIACAWIQRFRIIoLNkQ2+89Jfg+Xz0Ep6JGAwUCXchrcwIbDAAKCRA+
- Xz0Ep6JGAxtdEAC54NQMBwjUNqBNCMsh6WrwQwbg9tkJw718QHPw43gKFSxFIYzdBzD/YMPH
- l+2fFiefvmI4uNDjlyCITGSM+T6b8cA7YAKvZhzJyJSS7pRzsIKGjhk7zADL1+PJei9p9idy
- RbmFKo0dAL+ac0t/EZULHGPuIiavWLgwYLVoUEBwz86ZtEtVmDmEsj8ryWw75ZIarNDhV74s
- BdM2ffUJk3+vWe25BPcJiaZkTuFt+xt2CdbvpZv3IPrEkp9GAKof2hHdFCRKMtgxBo8Kao6p
- Ws/Vv68FusAi94ySuZT3fp1xGWWf5+1jX4ylC//w0Rj85QihTpA2MylORUNFvH0MRJx4mlFk
- XN6G+5jIIJhG46LUucQ28+VyEDNcGL3tarnkw8ngEhAbnvMJ2RTx8vGh7PssKaGzAUmNNZiG
- MB4mPKqvDZ02j1wp7vthQcOEg08z1+XHXb8ZZKST7yTVa5P89JymGE8CBGdQaAXnqYK3/yWf
- FwRDcGV6nxanxZGKEkSHHOm8jHwvQWvPP73pvuPBEPtKGLzbgd7OOcGZWtq2hNC6cRtsRdDx
- 4TAGMCz4j238m+2mdbdhRh3iBnWT5yPFfnv/2IjFAk+sdix1Mrr+LIDF++kiekeq0yUpDdc4
- ExBy2xf6dd+tuFFBp3/VDN4U0UfG4QJ2fg19zE5Z8dS4jGIbLg==
-In-Reply-To: <CAHk-=wjKouRizUF97ZABtCmijjKR+sAOmWA4uiYhhSOwhxCT3w@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:IHXV6sz3cX8PJiWpCG62UsbjB8J+3ctP9JsvXkb4nUoKixJn9/A
- imzFvn6wBnETZvivmIpDS37CTAZvNZX24hqdDpsyzd/zikIrJMKzGCAqh4pfshyckikHKWx
- /kJiFEWWNVKSa23ONc/hxSmWQTTZRbNMMqHZ1tScHzeoJeIOz/Oqap9yg4fSiIVS95Qu0CP
- 3TS5D6OhsvTwNXmIretRQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:Eq/JKMByQ5Y=;uzV5lNY7c+ib+PzRvvRRZJUSjky
- 7wdME/vQpxQCLXJQdhGru2aqaSxnO86nd3BCvWQPB0X3cdIFi9nhZjKoDfXKzUXcTmMqDoYTr
- gWxuvq3qCeelHwxEegS9Z40PPqtaugtRFeJL2ShmAP/WqDxc4NVAYsFXh4hlYXO3fGPMFU96T
- FEDNLCqEZ/96zJBlaTOVNuZDR2dawWdUaU0M1CzMpw0YpQQ3C+hxkBBSP/5+cMhkG/dI2ijqZ
- soqxi0CKYx8ELrPZnqBEBkoymcYu1VHi8STF3smabHmf426XAoR2HymYucqWnjj3qbDSvTXGc
- QCbSiRaiiZiXawlK6lIyvoKoXBGkgLIv8/s5mGDpE4X/FC3Wt5frRKoAjJNNaV3FlhSHj4f7s
- ZIJwASFcQvNe2vgOZwTgaVcpYkJnMNb/Af4Vk/SffMq4utxh7vNiftk4q6gw2C2uPw4tWenWx
- qzLZH5OTmWAdZdPmB/uS4Bwq4cQMivQMqNr3DAK9eB+laRzc7pmUAbHrs7fbj3yTdrpr5E7VV
- wwMTzwf8uP+rwd7yC9HJuV8luTG2YHMwaH8/MJar2fZkJ3HE5vpoHIY4hh5+Z8RIZoEigyHmT
- ktffzogGRP/SVItCIfdsxikq/xON9Sr5sfFPyQ5jYWFo/2zdSuB4uEH5IwDIdt7YRLfTDXMWj
- vYJ2n2UZn7QzuPzI0HmlIwVmvzYAvQdgsFYi7DY0siD2B3YYspt8l3Fnz93WiRUeyy4AtRiON
- ISx0t9jeb4bVuYbnqdv6fm67DM/p/WsCsKto8ZK2xxTU2nbSZRJAdMMBV5Bvs4pYJfSOM/ffi
- hbMJKE1XqxiDGfIPB/ng5Qew==
+Content-Type: text/plain; charset=US-ASCII
 
-Hi Linus,
 
-On 10/25/24 20:31, Linus Torvalds wrote:
-> On Fri, 25 Oct 2024 at 09:04, Helge Deller <deller@kernel.org> wrote:
->>
->> It's mostly about build warning fixes with cornercase CONFIG settings
->> and one big patch which removes the now unused da8xx fbdev driver.
+Sorry saw this after the other email.
+
+On Fri, 25 Oct 2024, Peter Zijlstra wrote:
+
+> > Could we follow NUMA policies like with other metadata allocations during
+> > systen call processing?
 >
-> So I pulled this, but only later noticed that some of the Kconfig
-> "fixes" are anything but.
+> I had a quick look at this, and since the mempolicy stuff is per vma,
+> and we don't have the vma, this is going to be terribly expensive --
+> mmap_lock and all that.
+
+There is a memory policy for the task as a whole that is used for slab
+allocations and allocations that are not vma bound in current->mempolicy.
+Use that.
+
+> Using memory policies is probably okay -- but still risky, since you get
+> the extra failure case where if you change the mempolicy between WAIT
+> and WAKE things will not match and sadness happens, but that *SHOULD*
+> hopefully not happen a lot. Mempolicies are typically fairly static.
+
+Right.
+
+> > That way the placement of the futex can be controlled by the tasks memory
+> > policy. We could skip the FUTEX2_NUMA option.
 >
-> At least commit 447794e44744 ("fbdev: sstfb: Make CONFIG_FB_DEVICE
-> optional") is not fixing anything, and very questionable.
->
-> For no reason at all does it seem to enable 30-year old hardware in a
-> new configuration.
->
-> There were no build issues before, the build issues that existed were
-> *introduced* by broken early versions of this patch.
+> That doesn't work. If we don't have storage for the node across
+> WAIT/WAKE, then the node must be deterministic per futex_hash().
+> Otherwise wake has no chance of finding the entry.
 
-That patch was the one I meant with "fixes [for] cornercase CONFIG setting=
-s".
-But you are right that there aren't any issues fixed by this patch.
+You can get a node number following the current task mempolicy by calling
+mempolicy_slab_node() and keep using that node for the future.
 
-> Does anybody even *have* that hardware?
+It is also possible to check if the policy is interleave and then follow
+the distributed hash scheme.
 
-I do have a few of those (Voodoo2). Actually one is built-into one of my p=
-arisc
-machines.
 
-> Why were those pointless changes made?
+> The current scheme where we determine node based on hash bits is fully
+> deterministic and WAIT/WAKE will agree on which node-hash to use. The
+> interleave is no worse than the global hash today -- OTOH it also isn't
+> better.
 
-When I accepted this patch I did not find it useless.
-Maybe there are people who really enables Voodoo driver although
-they prefer DRM. Maybe they don't even know the difference.
-I applied it because I don't want compilation to fail at all
-(which I see I was wrong in).
+This is unexpected strange behavior for those familiar with NUMA. We have
+tools to set memory policies for tasks and those policies should be used
+throughout.
 
-> Sure, the Voodoo1 was the bomb back in 1996 if you wanted to run
-> hw-accelerated Quake, but in 2024, this change should have had more
-> explanation for why anybody would care about the CONFIG_FB_DEVICE
-> dependency.
-
-Ok.
-
-Btw, you will be astonished if you check the prices of those cards
-on ebay nowadays.
-
-> And in no case should it have been marked as a "fix".
-
-Ok.
-Do you want me to send a revert for this specific patch?
-
-FWIW, just a few hours before I sent the pull request I did complain
-about a similar patch (which I did not apply):
-https://lore.kernel.org/linux-fbdev/7aabca78-dd34-4819-8a63-105d1a4cb4ba@g=
-mx.de/T/#m070c6ba1047d26b856b0d6ac43592fc7b6f95518
-
-Helge
 
