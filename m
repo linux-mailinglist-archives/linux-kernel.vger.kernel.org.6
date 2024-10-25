@@ -1,70 +1,75 @@
-Return-Path: <linux-kernel+bounces-382719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 069539B12A8
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 00:32:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1E479B12AA
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 00:32:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 298F21C20C75
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 22:32:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 147FE1C20D67
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 22:32:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 182D121312E;
-	Fri, 25 Oct 2024 22:32:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0066213147;
+	Fri, 25 Oct 2024 22:32:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bMqCwlt3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lmfodXba"
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64F9E20D4FC;
-	Fri, 25 Oct 2024 22:32:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19600217F4E;
+	Fri, 25 Oct 2024 22:32:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729895558; cv=none; b=XjTE8VHQM537vfK0wq6ISUyl/IASYUyUMqRjog/9GMY1DicS36e4eRDO+GTkWG5et3ouLeL/Fl1dv9/el0pwAWNW/vSq9GP4CC73C0zJ2m55k0K1VgM2lGMmOWK6DXJZyUjOj9LnHfycLh1sSwrNYAKClLdprD4yXE+bRoms16o=
+	t=1729895566; cv=none; b=MFE2q61z5qUtif9qmjLMvNQXT9rhKTJL6LkLpIW+KLm/b0OvhS53cw7XQP0ccvwWCQydDud6CTVWNGBuSuIFENq5JBumrHhVX2KI2KZJRWCC+Ed+mXPWcLl+0FE2BmSWhv+KbZEUDyxOsX148T+hOX7dpjPjGZZGhhRmxfsPy1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729895558; c=relaxed/simple;
-	bh=lvgqZKZL3hTSMXjWYkYB2dg3KyAAN40oIeI42dzGJls=;
+	s=arc-20240116; t=1729895566; c=relaxed/simple;
+	bh=3lwEj6BJprZSby+HR1saL69Egl7/bvOfE86F9yvSlNs=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=sDxGAwGisjA9+1TCWMWScdeY1pgjRLMEGmZ15F7g0vlBGubhNzqQxxDM41UQexRqHkDhCkvSffrGLV8NuR0NWEdOTqLTPNr83TU/zOZXX7rNJPDgwpsOSRj/lAG1W7Ska+z5L+qFKL4qfAble8YejgLTZDfZ8mquG789u0BCbZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bMqCwlt3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B7A4C4CEC3;
-	Fri, 25 Oct 2024 22:32:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729895558;
-	bh=lvgqZKZL3hTSMXjWYkYB2dg3KyAAN40oIeI42dzGJls=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=bMqCwlt3rfSKnmYXP3CO1qHyjKGshQkpsafQF2TFtPpe8OJLF2eHJv0QZVeGh+vbR
-	 mbzYexzaFGMPKNILD/JuyECnaOF+BCjy7vXA8rpIu+ArdNAIBFHXogFUA7gI78NmNw
-	 wOCRX2/ZwmipiTNEyEGV/F1wK5DWL6poIRULNFbfZmKBLUvU5H3rTni7OtT7niq9ka
-	 6DyqbPXG8uK7S+Rc1Pr712yHYZUiycuKhtO6fWFTbc5fYdkealO2joTF2KcJlqVq1C
-	 k9JPcaw/czcYbe+l2XGV0RtVOMjgzc35OBiIKlLVTsemNgsTlJayFIt4grrcdQFn/i
-	 K0gq2aNy4BUKQ==
-Date: Fri, 25 Oct 2024 17:32:36 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Abraham I <kishon@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-	Jesper Nilsson <jesper.nilsson@axis.com>,
-	Richard Zhu <hongxing.zhu@nxp.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@axis.com, linux-arm-kernel@lists.infradead.org,
-	imx@lists.linux.dev,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>
-Subject: Re: [PATCH v4 4/4] PCI: imx6: Add i.MX8Q PCIe Endpoint (EP) support
-Message-ID: <20241025223236.GA1030308@bhelgaas>
+	 Content-Disposition; b=rOutgsbjcPlVYKTiT502h/lqgIgt20Pku+xYjc+y9XDuGlqQ6zT0jw09uGTa1kVBiHNLqNYLwUZfztNCSDkvE0o7PX3OaiSLYForjP8JzTD0rbr75u6znulI0NKKsM/aRjBDAbiZvjvO72zTd8qzlrNBtga8x/AIr2rZOTZYlN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lmfodXba; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2e56df894d4so1922559a91.3;
+        Fri, 25 Oct 2024 15:32:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729895563; x=1730500363; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=YQ0Ls5ckSfkt3xLVPRBTrg5UuObdMQ3WxF8K6kuNUMM=;
+        b=lmfodXbaFg/QsbWf83sudMFqPYfjAwB8JhP9qHkUftTASo9+BWRvwTXeiBTB9bvyqh
+         llad2NsVS4B46i+fFelfNZ8tMqHCEJxn4AgYCv/u69EY/MeVvEd6CrPt/yEi1FxVFM5x
+         EWlC95VM7B5D6PMXuo6jqofxreKJoylsV5ujpDfOJl7/93FfJJXQP90a/4b1XDxvb6Hf
+         FXPtlW/U6HRPIwo7XLxKPWI3ecg9k95yf9SfLTvTFHeAWCRxfBEGsSxEsS/Vb5D8JpvR
+         zSTYiyqblq8wGBahwREqCGl1QaJH4Sd0yj5KTlE5UJmzB5t/HJiaxm1re06AXYxcbmaT
+         NOFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729895563; x=1730500363;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YQ0Ls5ckSfkt3xLVPRBTrg5UuObdMQ3WxF8K6kuNUMM=;
+        b=oxoYUF0x2mnYoaQSW8Z3YzsmgX/kClRyItv0FBr6BjGkT/rBGWgxq4gsxTffwGpHyL
+         SBDiWOPKuYBDR6oMqSqXzL6LUrh6YFrxEzYATU2FUlyxwUMrfo4mxt0ADoFDAJgm6A4m
+         9B3jnDaoku9WSsZQIb4AsQg8l1WrXY3wLJSOM63UZ9MHMwafDOzbTe6efQc4Va3v7x/V
+         pf4sZzWvKL6YQiL+82OH9Zr9iOyP7SAyK+jGLblOf1LsnfZVE88hQv+8mlsrCFTc0BRT
+         5cwoY40Pgnta0l2Z5jgxXMJq2aWdjuTPmDjYVnlmrwVmBwfx/QqI/Uy+h6woHMufrHad
+         YVAg==
+X-Forwarded-Encrypted: i=1; AJvYcCXw/8EAavAgSZWumsKYv6WPoHy4bTHUhn+Yddc9XW9EunFce+mvZkNr70hfuLSkp471F+S6S/apq0LMkqA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKye0ouiliGw6gCA4MaapU1Rk7zBz8U8bG9+AM+MDHLvTV8oz/
+	Bcf38M0dw08pSG0D7TkmZaHr04CHKqP5N+GmnqHDk+tvEq9K7mE1v7r4uw==
+X-Google-Smtp-Source: AGHT+IFrb8pm0Woj6DVTVyEjr48hi2oExt3XYaIJB/vssa0vuEyPZeKYn1FoInozVX8JXL0Lf3EqjA==
+X-Received: by 2002:a17:90b:1c0a:b0:2e2:cd80:4d44 with SMTP id 98e67ed59e1d1-2e8f11ac13fmr1051624a91.28.1729895563169;
+        Fri, 25 Oct 2024 15:32:43 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:1691:2dbd:7c00:4e03])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e8e3578b02sm2059448a91.23.2024.10.25.15.32.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Oct 2024 15:32:42 -0700 (PDT)
+Date: Fri, 25 Oct 2024 15:32:40 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] HID: multitouch: make mt_set_mode() less cryptic
+Message-ID: <ZxwciG6YeVFgfDRU@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,94 +78,133 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241024-pcie_ep_range-v4-4-08f8dcd4e481@nxp.com>
 
-On Thu, Oct 24, 2024 at 04:41:46PM -0400, Frank Li wrote:
-> Add support for i.MX8Q series (i.MX8QM, i.MX8QXP, and i.MX8DXL) PCIe
-> Endpoint (EP). On i.MX8Q platforms, the PCI bus addresses differ from the
-> CPU addresses. The DesignWare (DWC) driver already handles this in the
-> common code.
-> 
-> Reviewed-by: Richard Zhu <hongxing.zhu@nxp.com>
-> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
-> Chagne from v3 to v4
-> - none
-> change from v2 to v3
-> - add Mani's review tag
-> - Add pci->using_dtbus_info = true;
-> ---
->  drivers/pci/controller/dwc/pci-imx6.c | 22 ++++++++++++++++++++++
->  1 file changed, 22 insertions(+)
-> 
-> diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
-> index bdc2b372e6c13..5be9bac6206a7 100644
-> --- a/drivers/pci/controller/dwc/pci-imx6.c
-> +++ b/drivers/pci/controller/dwc/pci-imx6.c
-> @@ -70,6 +70,7 @@ enum imx_pcie_variants {
->  	IMX8MQ_EP,
->  	IMX8MM_EP,
->  	IMX8MP_EP,
-> +	IMX8Q_EP,
->  	IMX95_EP,
->  };
->  
-> @@ -1079,6 +1080,16 @@ static const struct pci_epc_features imx8m_pcie_epc_features = {
->  	.align = SZ_64K,
->  };
->  
-> +static const struct pci_epc_features imx8q_pcie_epc_features = {
-> +	.linkup_notifier = false,
-> +	.msi_capable = true,
-> +	.msix_capable = false,
-> +	.bar[BAR_1] = { .type = BAR_RESERVED, },
-> +	.bar[BAR_3] = { .type = BAR_RESERVED, },
-> +	.bar[BAR_5] = { .type = BAR_RESERVED, },
-> +	.align = SZ_64K,
-> +};
-> +
->  /*
->   * BAR#	| Default BAR enable	| Default BAR Type	| Default BAR Size	| BAR Sizing Scheme
->   * ================================================================================================
-> @@ -1448,6 +1459,8 @@ static int imx_pcie_probe(struct platform_device *pdev)
->  	if (ret)
->  		return ret;
->  
-> +	pci->using_dtbus_info = true;
+mt_set_mode() accepts 2 boolean switches indicating whether the device
+(if it follows Windows Precision Touchpad specification) should report
+hardware buttons and/or surface contacts. For a casual reader it is
+completely not clear, as they look at the call site, which exact mode
+is being requested.
 
-I mentioned this elsewhere, but I think the using_dtbus_info part
-should be part of a series that only deals with the address
-translation, and adding IMX8Q_EP should be in a separate series.
+Define report_mode enum and change mt_set_mode() to accept is as
+an argument instead. This allows to write:
 
->  	if (imx_pcie->drvdata->mode == DW_PCIE_EP_TYPE) {
->  		ret = imx_add_pcie_ep(imx_pcie, pdev);
->  		if (ret < 0)
-> @@ -1645,6 +1658,14 @@ static const struct imx_pcie_drvdata drvdata[] = {
->  		.epc_features = &imx8m_pcie_epc_features,
->  		.enable_ref_clk = imx8mm_pcie_enable_ref_clk,
->  	},
-> +	[IMX8Q_EP] = {
-> +		.variant = IMX8Q_EP,
-> +		.flags = IMX_PCIE_FLAG_HAS_PHYDRV,
-> +		.mode = DW_PCIE_EP_TYPE,
-> +		.epc_features = &imx8q_pcie_epc_features,
-> +		.clk_names = imx8q_clks,
-> +		.clks_cnt = ARRAY_SIZE(imx8q_clks),
-> +	},
->  	[IMX95_EP] = {
->  		.variant = IMX95_EP,
->  		.flags = IMX_PCIE_FLAG_HAS_SERDES |
-> @@ -1674,6 +1695,7 @@ static const struct of_device_id imx_pcie_of_match[] = {
->  	{ .compatible = "fsl,imx8mq-pcie-ep", .data = &drvdata[IMX8MQ_EP], },
->  	{ .compatible = "fsl,imx8mm-pcie-ep", .data = &drvdata[IMX8MM_EP], },
->  	{ .compatible = "fsl,imx8mp-pcie-ep", .data = &drvdata[IMX8MP_EP], },
-> +	{ .compatible = "fsl,imx8q-pcie-ep", .data = &drvdata[IMX8Q_EP], },
->  	{ .compatible = "fsl,imx95-pcie-ep", .data = &drvdata[IMX95_EP], },
->  	{},
->  };
-> 
-> -- 
-> 2.34.1
-> 
+	mt_set_modes(hdev, HID_LATENCY_NORMAL, TOUCHPAD_REPORT_ALL);
+
+or
+
+	mt_set_modes(hdev, HID_LATENCY_HIGH, TOUCHPAD_REPORT_BUTTONS);
+
+which makes intent much more clear.
+
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+---
+ drivers/hid/hid-multitouch.c | 29 +++++++++++++++++------------
+ 1 file changed, 17 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
+index 99812c0f830b..e4bb2fb5596d 100644
+--- a/drivers/hid/hid-multitouch.c
++++ b/drivers/hid/hid-multitouch.c
+@@ -83,6 +83,13 @@ enum latency_mode {
+ 	HID_LATENCY_HIGH = 1,
+ };
+ 
++enum report_mode {
++	TOUCHPAD_REPORT_NONE = 0,
++	TOUCHPAD_REPORT_BUTTONS = 1,
++	TOUCHPAD_REPORT_CONTACTS = 2,
++	TOUCHPAD_REPORT_ALL = TOUCHPAD_REPORT_BUTTONS | TOUCHPAD_REPORT_CONTACTS,
++};
++
+ #define MT_IO_FLAGS_RUNNING		0
+ #define MT_IO_FLAGS_ACTIVE_SLOTS	1
+ #define MT_IO_FLAGS_PENDING_SLOTS	2
+@@ -1486,8 +1493,7 @@ static bool mt_need_to_apply_feature(struct hid_device *hdev,
+ 				     struct hid_field *field,
+ 				     struct hid_usage *usage,
+ 				     enum latency_mode latency,
+-				     bool surface_switch,
+-				     bool button_switch,
++				     enum report_mode report_mode,
+ 				     bool *inputmode_found)
+ {
+ 	struct mt_device *td = hid_get_drvdata(hdev);
+@@ -1542,11 +1548,11 @@ static bool mt_need_to_apply_feature(struct hid_device *hdev,
+ 		return true;
+ 
+ 	case HID_DG_SURFACESWITCH:
+-		field->value[index] = surface_switch;
++		field->value[index] = report_mode & TOUCHPAD_REPORT_CONTACTS;
+ 		return true;
+ 
+ 	case HID_DG_BUTTONSWITCH:
+-		field->value[index] = button_switch;
++		field->value[index] = report_mode & TOUCHPAD_REPORT_BUTTONS;
+ 		return true;
+ 	}
+ 
+@@ -1554,7 +1560,7 @@ static bool mt_need_to_apply_feature(struct hid_device *hdev,
+ }
+ 
+ static void mt_set_modes(struct hid_device *hdev, enum latency_mode latency,
+-			 bool surface_switch, bool button_switch)
++			 enum report_mode report_mode)
+ {
+ 	struct hid_report_enum *rep_enum;
+ 	struct hid_report *rep;
+@@ -1579,8 +1585,7 @@ static void mt_set_modes(struct hid_device *hdev, enum latency_mode latency,
+ 							     rep->field[i],
+ 							     usage,
+ 							     latency,
+-							     surface_switch,
+-							     button_switch,
++							     report_mode,
+ 							     &inputmode_found))
+ 					update_report = true;
+ 			}
+@@ -1820,7 +1825,7 @@ static int mt_probe(struct hid_device *hdev, const struct hid_device_id *id)
+ 		dev_warn(&hdev->dev, "Cannot allocate sysfs group for %s\n",
+ 				hdev->name);
+ 
+-	mt_set_modes(hdev, HID_LATENCY_NORMAL, true, true);
++	mt_set_modes(hdev, HID_LATENCY_NORMAL, TOUCHPAD_REPORT_ALL);
+ 
+ 	return 0;
+ }
+@@ -1832,9 +1837,9 @@ static int mt_suspend(struct hid_device *hdev, pm_message_t state)
+ 	/* High latency is desirable for power savings during S3/S0ix */
+ 	if ((td->mtclass.quirks & MT_QUIRK_DISABLE_WAKEUP) ||
+ 	    !hid_hw_may_wakeup(hdev))
+-		mt_set_modes(hdev, HID_LATENCY_HIGH, false, false);
++		mt_set_modes(hdev, HID_LATENCY_HIGH, TOUCHPAD_REPORT_NONE);
+ 	else
+-		mt_set_modes(hdev, HID_LATENCY_HIGH, true, true);
++		mt_set_modes(hdev, HID_LATENCY_HIGH, TOUCHPAD_REPORT_ALL);
+ 
+ 	return 0;
+ }
+@@ -1842,7 +1847,7 @@ static int mt_suspend(struct hid_device *hdev, pm_message_t state)
+ static int mt_reset_resume(struct hid_device *hdev)
+ {
+ 	mt_release_contacts(hdev);
+-	mt_set_modes(hdev, HID_LATENCY_NORMAL, true, true);
++	mt_set_modes(hdev, HID_LATENCY_NORMAL, TOUCHPAD_REPORT_ALL);
+ 	return 0;
+ }
+ 
+@@ -1854,7 +1859,7 @@ static int mt_resume(struct hid_device *hdev)
+ 
+ 	hid_hw_idle(hdev, 0, 0, HID_REQ_SET_IDLE);
+ 
+-	mt_set_modes(hdev, HID_LATENCY_NORMAL, true, true);
++	mt_set_modes(hdev, HID_LATENCY_NORMAL, TOUCHPAD_REPORT_ALL);
+ 
+ 	return 0;
+ }
+-- 
+2.47.0.163.g1226f6d8fa-goog
+
+
+-- 
+Dmitry
 
