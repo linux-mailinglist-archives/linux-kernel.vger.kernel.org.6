@@ -1,141 +1,272 @@
-Return-Path: <linux-kernel+bounces-382060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CF6E9B088B
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:40:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94CA99B088D
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 17:40:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 152BA1F24B9D
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:40:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54CEE2836D6
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 15:40:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDCB217333D;
-	Fri, 25 Oct 2024 15:39:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07192176AB6;
+	Fri, 25 Oct 2024 15:39:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="TpvGSdcT"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="WieN2nag"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBF5C1531C8
-	for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 15:39:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90D4C171E6E;
+	Fri, 25 Oct 2024 15:39:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729870795; cv=none; b=OCzBMn22F8qD5z05LPxx3GRsp1aHg1emw46d5op/THFrjUfmKFf7lUu4ghrGnnPfTQW9uCqAJCOxfNKs6orLZ5rSP8W8ovsdNPGrmBUTklth0G/WijCK3T11BJkqTnTGt/Gcf+JIjUII0p7rIk5iL2kH0tk7s1kL7mVLt+wNEXY=
+	t=1729870797; cv=none; b=FcYkduw7PWxWKE5Dhgt53EGu8ao8onFgKHz96MSg9juoC5deJ77kST7SHO3v7asP37NlKNXr/yeCR6y6uMUI25AdxKkAfHauvJ76iv/TN+Tmv+ANa7ajzm8sVAR09x1lZkEDfMx5FPI2cKh0rOJ3L012PEMHlOobvUDKBXpn11k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729870795; c=relaxed/simple;
-	bh=rQlrpJeMlo0ujThTpOYvcpe79KLo/FclwrwMw4u04eY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=I0PG9Q+nsxiEc6iMGgzM5dXmI7C0NRWj5KelHn7elCUuwTvSItSPWItBrH6IDG/NoRuu03Lp0JDFZq0vQ6lqIdlDGEX98pYCW1ZXza5JNNGj6sTQcVhQISlUOvN6I3MkHAprtKWzIdtZLPcqPrQTl7v3lh5UbHwSburAepKNtxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=TpvGSdcT; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2fb51e00c05so34499391fa.0
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 08:39:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1729870791; x=1730475591; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xW4PWRSrVVHGdUnyVYJbesCr/e/f0yYNSHSjjDEYDZ0=;
-        b=TpvGSdcTsoSC+31gMfygNXolxGoEyz4eOFZPM8UF2POFA0xcjxvsMAKZBqvo6tNNRt
-         sh9la3jEZWCh/KNkZ8vUYY51TfbcAo1lERu50Rx9uR2loP1kS9cBbbUtgKWh886hjwkA
-         kotmD1XNpbZqUZNO0B8XxoBXa9n9ffXU13+dalMmPy+aKti5uvsVHWEm/H9ACenYmYVS
-         4oKMkgnu2Fd3U8/hYDDWwsoA/skEOt9+jrpvg5g6zbykAm7O0UYtKzAVGRbdDEnRId7e
-         PKclQRFU6/ieiqM3Nig8g30oPUpW6A/P3nqUkBIJ8xhdNJ0Ln3tos2w7doqNC2z23qgI
-         Hh9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729870791; x=1730475591;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xW4PWRSrVVHGdUnyVYJbesCr/e/f0yYNSHSjjDEYDZ0=;
-        b=uCLQuVVXUI8q7licHrmLetAmCQF4NIZiXdaI0YKd1NK8gQXqXqFLuvBuIOZzCOHok6
-         0ObeBAwZpV0IR/qUfI/wbfOXrol44LhJN++tSFJlF3NU9x6ZbIKiu4aQR5dbpK930Qao
-         d2DKZvk3yueh236Bnvh3/wg91XKKkx6g3UaKDymi1JiQKthlKo+ugMsCJlTL+hsv2EAy
-         8NS2okiRMDN6CtEW6MLImXFqdHs7RTEWwxeeFuJum5RFQHcq9bhNcQpA3NamGjSsFx8E
-         N8rRu6+FuRKbJMpzqA5/25JrMmB1NWzEQoF+qZBuGP7hCvVEBEpfYlRMUA718WEzGG9q
-         mMWA==
-X-Forwarded-Encrypted: i=1; AJvYcCXNDL2Al3rrK23GRpacmBBX8JJTnRNrslLqWQbq0cI4iUew1rWDNLvOZlv3vdnjv9EhY82CqEwQPeOCLs0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8dUmY88eyxl4Jr1U/yPRtXeB5xnLWAYhWKSnoN7f0L5esN2pC
-	xN/hbU3DXUTnHpiHsx36/9ryxUW5+mIDWFqEMSbKMJbXcfgSuxKjwg7JP6sNSh/YcrqinvY4xNF
-	4uzrim7bduQHszBhF1kxMYXHZHov192z+x/CJKg==
-X-Google-Smtp-Source: AGHT+IEVPJcpNaS8Dh7KXg2L847e2aERI9aZUfHLpTDrx377enJsjmc2WbeZ9cZnIv6gDlcIhu81wtKqRimneYbSjao=
-X-Received: by 2002:a2e:b2c7:0:b0:2fb:36df:3b4 with SMTP id
- 38308e7fff4ca-2fc9d37ff0emr67856561fa.34.1729870790725; Fri, 25 Oct 2024
- 08:39:50 -0700 (PDT)
+	s=arc-20240116; t=1729870797; c=relaxed/simple;
+	bh=LsJXTqLVkHQ9hAVjrw+K74ltuB9T9cJoYpfYxMcCr1A=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uaGugDp3ReIWkRziW78mM7rugKjggbEMFZteR3lbsZOhrpnRZBBZzbM/PSKDMrXOmHVJwU6HZtJ4PTuVxP+K2oRVrNASeOxMtnSND3rUg2uwbhdtH/NJx2EAOSIn0foACCOgYnxItg5DntovV9i7QWjC2Xvwnr47S7SssEuqR+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=WieN2nag; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49PAG8nt007791;
+	Fri, 25 Oct 2024 15:39:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=uLjNDzU6iRNhbMiyZv4Vn01G
+	ZCkWjxHmT62Xz6ZSK7g=; b=WieN2nagk897qPiojJHOVjwYAG05M1Y06GWydaKq
+	G5EKtPLC162PNeyRi+yY18jUpJc5P7Exrtsyr/38qMthD13xqZKBrOcvSnrkmqU5
+	QpVQjVigoQrv3FfwRqlt1fN/Q2ORTyUSeKj0vmNsgroGiAJcfaOTuCN57hHr+vYq
+	HSxel8F8mBRDMUWO1gCadEH2OKfehjPN9G0t6ODGlBsJFXJEctfD0lk38L5doSjt
+	IXTk4QsA1D1+cSEGOaa69hu9hb4pk/DJswVTCj5LhqNU/dX7ar8A5EFaJQPM1grO
+	z/0ItdVT9dEmsWk+iBM8oRXUqYp/N79Cab35bWccDLDWag==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42fk52mkjn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Oct 2024 15:39:50 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49PFdmRu017670
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 25 Oct 2024 15:39:48 GMT
+Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Fri, 25 Oct 2024 08:39:47 -0700
+Date: Fri, 25 Oct 2024 21:09:43 +0530
+From: Mukesh Ojha <quic_mojha@quicinc.com>
+To: Mathieu Poirier <mathieu.poirier@linaro.org>
+CC: Bjorn Andersson <andersson@kernel.org>, <linux-remoteproc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3] remoteproc: Add a new remoteproc state RPROC_DEFUNCT
+Message-ID: <Zxu7vysFurl6SItU@hu-mojha-hyd.qualcomm.com>
+References: <20241016045546.2613436-1-quic_mojha@quicinc.com>
+ <ZxZvbz9C/eHzosFN@p14s>
+ <ZxtShfshsuyVzGx3@hu-mojha-hyd.qualcomm.com>
+ <Zxu0U9U+BvTo20Zq@p14s>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241024192758.91748-1-brgl@bgdev.pl> <202410252227.4k7pn2o5-lkp@intel.com>
-In-Reply-To: <202410252227.4k7pn2o5-lkp@intel.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Fri, 25 Oct 2024 17:39:39 +0200
-Message-ID: <CAMRc=MfDKzKOT0Q2zGv2AnnoRDoTQhrDXKqyj1vqWx0jABa41g@mail.gmail.com>
-Subject: Re: [PATCH] gpio: relax the Kconfig dependency on OF_GPIO in drivers
-To: kernel test robot <lkp@intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Paul Gazzillo <paul@pgazz.com>, 
-	Necip Fazil Yildiran <fazilyildiran@gmail.com>, oe-kbuild-all@lists.linux.dev, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <Zxu0U9U+BvTo20Zq@p14s>
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: D0AtpYxhkBSluSmdJH_EBnnnP7c7meGU
+X-Proofpoint-ORIG-GUID: D0AtpYxhkBSluSmdJH_EBnnnP7c7meGU
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 mlxscore=0
+ lowpriorityscore=0 malwarescore=0 impostorscore=0 phishscore=0
+ adultscore=0 mlxlogscore=999 priorityscore=1501 spamscore=0 bulkscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410250122
 
-On Fri, Oct 25, 2024 at 5:08=E2=80=AFPM kernel test robot <lkp@intel.com> w=
-rote:
->
-> Hi Bartosz,
->
-> kernel test robot noticed the following build warnings:
->
-> [auto build test WARNING on brgl/gpio/for-next]
-> [also build test WARNING on linus/master v6.12-rc4 next-20241025]
-> [If your patch is applied to the wrong git tree, kindly drop us a note.
-> And when submitting patch, we suggest to use '--base' as documented in
-> https://git-scm.com/docs/git-format-patch#_base_tree_information]
->
-> url:    https://github.com/intel-lab-lkp/linux/commits/Bartosz-Golaszewsk=
-i/gpio-relax-the-Kconfig-dependency-on-OF_GPIO-in-drivers/20241025-032925
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git gp=
-io/for-next
-> patch link:    https://lore.kernel.org/r/20241024192758.91748-1-brgl%40bg=
-dev.pl
-> patch subject: [PATCH] gpio: relax the Kconfig dependency on OF_GPIO in d=
-rivers
-> config: i386-kismet-CONFIG_GPIO_SYSCON-CONFIG_GPIO_SAMA5D2_PIOBU-0-0 (htt=
-ps://download.01.org/0day-ci/archive/20241025/202410252227.4k7pn2o5-lkp@int=
-el.com/config)
-> reproduce: (https://download.01.org/0day-ci/archive/20241025/202410252227=
-.4k7pn2o5-lkp@intel.com/reproduce)
->
-> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
-ion of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202410252227.4k7pn2o5-lkp=
-@intel.com/
->
-> kismet warnings: (new ones prefixed by >>)
-> >> kismet: WARNING: unmet direct dependencies detected for GPIO_SYSCON wh=
-en selected by GPIO_SAMA5D2_PIOBU
->    WARNING: unmet direct dependencies detected for GPIO_SYSCON
->      Depends on [n]: GPIOLIB [=3Dy] && HAS_IOMEM [=3Dy] && MFD_SYSCON [=
-=3Dy] && OF [=3Dn]
->      Selected by [y]:
->      - GPIO_SAMA5D2_PIOBU [=3Dy] && GPIOLIB [=3Dy] && HAS_IOMEM [=3Dy] &&=
- MFD_SYSCON [=3Dy] && (ARCH_AT91 || COMPILE_TEST [=3Dy])
->
-> --
-> 0-DAY CI Kernel Test Service
-> https://github.com/intel/lkp-tests/wiki
+On Fri, Oct 25, 2024 at 09:08:03AM -0600, Mathieu Poirier wrote:
+> On Fri, Oct 25, 2024 at 01:40:45PM +0530, Mukesh Ojha wrote:
+> > On Mon, Oct 21, 2024 at 09:12:47AM -0600, Mathieu Poirier wrote:
+> > > Hi Mukesh,
+> > > 
+> > > On Wed, Oct 16, 2024 at 10:25:46AM +0530, Mukesh Ojha wrote:
+> > > > Multiple call to glink_subdev_stop() for the same remoteproc can happen
+> > > > if rproc_stop() fails from Process-A that leaves the rproc state to
+> > > > RPROC_CRASHED state later a call to recovery_store from user space in
+> > > > Process B triggers rproc_trigger_recovery() of the same remoteproc to
+> > > > recover it results in NULL pointer dereference issue in
+> > > > qcom_glink_smem_unregister().
+> > > > 
+> > > > There is other side to this issue if we want to fix this via adding a
+> > > > NULL check on glink->edge which does not guarantees that the remoteproc
+> > > > will recover in second call from Process B as it has failed in the first
+> > > > Process A during SMC shutdown call and may again fail at the same call
+> > > > and rproc can not recover for such case.
+> > > > 
+> > > > Add a new rproc state RPROC_DEFUNCT i.e., non recoverable state of
+> > > > remoteproc and the only way to recover from it via system restart.
+> > > > 
+> > > > 	Process-A                			Process-B
+> > > > 
+> > > >   fatal error interrupt happens
+> > > > 
+> > > >   rproc_crash_handler_work()
+> > > >     mutex_lock_interruptible(&rproc->lock);
+> > > >     ...
+> > > > 
+> > > >        rproc->state = RPROC_CRASHED;
+> > > >     ...
+> > > >     mutex_unlock(&rproc->lock);
+> > > > 
+> > > >     rproc_trigger_recovery()
+> > > >      mutex_lock_interruptible(&rproc->lock);
+> > > > 
+> > > >       adsp_stop()
+> > > >       qcom_q6v5_pas 20c00000.remoteproc: failed to shutdown: -22
+> > > >       remoteproc remoteproc3: can't stop rproc: -22
+> > > >      mutex_unlock(&rproc->lock);
+> > > 
+> > > Ok, that can happen.
+> > > 
+> > > > 
+> > > > 						echo enabled > /sys/class/remoteproc/remoteprocX/recovery
+> > > > 						recovery_store()
+> > > > 						 rproc_trigger_recovery()
+> > > > 						  mutex_lock_interruptible(&rproc->lock);
+> > > > 						   rproc_stop()
+> > > > 						    glink_subdev_stop()
+> > > > 						      qcom_glink_smem_unregister() ==|
+> > > >                                                                                      |
+> > > >                                                                                      V
+> > > 
+> > > I am missing some information here but I will _assume_ this is caused by
+> > > glink->edge being set to NULL [1] when glink_subdev_stop() is first called by
+> > > process A.  Instead of adding a new state to the core I think a better idea
+> > > would be to add a check for a NULL value on @smem in
+> > > qcom_glink_smem_unregister().  This is a problem that should be fixed in the
+> > > driver rather than the core.
+> > > 
+> > > [1]. https://elixir.bootlin.com/linux/v6.12-rc4/source/drivers/remoteproc/qcom_common.c#L213
+> > 
+> > 
+> > I did the same here [1] but after discussion with Bjorn, realized that
+> > remoteproc might not even recover and may fail in the second attempt as
+> > well and only way is reboot of the machine.
+> 
+> Whether in RPROC_CRASHED or RPROC_DEFUNCT state, the end result is the same -
+> manual intervention is needed.  I don't see why another state needs to be added.
 
-Eh, OF_GPIO pulls in the OF and HAS_IOMEM dependency so his must be
-done on a driver-by-driver basis.
+Is it really true ? As when recovery is disabled and any rproc crash
+will result in RPROC_CRASHED state, while recovery enablement can
+recover the rproc back to ONLINE while if rproc recovery is not
+successful it can be put into RPROC_DEFUNCT state.
 
-Let's drop this for now.
+-Mukesh
 
-Bartosz
+> 
+> > 
+> > [1]
+> > https://lore.kernel.org/lkml/20240925103351.1628788-1-quic_mojha@quicinc.com/
+> > 
+> > > 
+> > > > 						      Unable to handle kernel NULL pointer dereference
+> > > >                                                                 at virtual address 0000000000000358
+> > > > 
+> > > > Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
+> > > > ---
+> > > > Changes in v3:
+> > > >  - Fix kernel test reported error.
+> > > > 
+> > > > Changes in v2:
+> > > >  - Removed NULL pointer check instead added a new state to signify
+> > > >    non-recoverable state of remoteproc.
+> > > > 
+> > > >  drivers/remoteproc/remoteproc_core.c  | 3 ++-
+> > > >  drivers/remoteproc/remoteproc_sysfs.c | 1 +
+> > > >  include/linux/remoteproc.h            | 5 ++++-
+> > > >  3 files changed, 7 insertions(+), 2 deletions(-)
+> > > > 
+> > > > diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> > > > index f276956f2c5c..c4e14503b971 100644
+> > > > --- a/drivers/remoteproc/remoteproc_core.c
+> > > > +++ b/drivers/remoteproc/remoteproc_core.c
+> > > > @@ -1727,6 +1727,7 @@ static int rproc_stop(struct rproc *rproc, bool crashed)
+> > > >  	/* power off the remote processor */
+> > > >  	ret = rproc->ops->stop(rproc);
+> > > >  	if (ret) {
+> > > > +		rproc->state = RPROC_DEFUNCT;
+> > > >  		dev_err(dev, "can't stop rproc: %d\n", ret);
+> > > >  		return ret;
+> > > >  	}
+> > > > @@ -1839,7 +1840,7 @@ int rproc_trigger_recovery(struct rproc *rproc)
+> > > >  		return ret;
+> > > >  
+> > > >  	/* State could have changed before we got the mutex */
+> > > > -	if (rproc->state != RPROC_CRASHED)
+> > > > +	if (rproc->state == RPROC_DEFUNCT || rproc->state != RPROC_CRASHED)
+> > > >  		goto unlock_mutex;
+> > > 
+> > > The problem is that rproc_trigger_recovery() an only be called once for a
+> > > remoteproc, something that modifies the state machine and may introduce backward
+> > > compatibility issues for other remote processor implementations.
+> > > 
+> > 
+> > I missed one more point to add here which i tried to highlight in second
+> > version[2] that setting of RPROC_DEFUNCT should happen for this case
+> > from vendor remoteproc driver and not at the core and that should take
+> > care of the backward compatibility.
+> > 
+> > [2]
+> > https://lore.kernel.org/lkml/Zw2CAbMozI8vu4SL@hu-mojha-hyd.qualcomm.com/
+> > 
+> > -Mukesh
+> > 
+> > > Thanks,
+> > > Mathieu
+> > > 
+> > > >  
+> > > >  	dev_err(dev, "recovering %s\n", rproc->name);
+> > > > diff --git a/drivers/remoteproc/remoteproc_sysfs.c b/drivers/remoteproc/remoteproc_sysfs.c
+> > > > index 138e752c5e4e..5f722b4576b2 100644
+> > > > --- a/drivers/remoteproc/remoteproc_sysfs.c
+> > > > +++ b/drivers/remoteproc/remoteproc_sysfs.c
+> > > > @@ -171,6 +171,7 @@ static const char * const rproc_state_string[] = {
+> > > >  	[RPROC_DELETED]		= "deleted",
+> > > >  	[RPROC_ATTACHED]	= "attached",
+> > > >  	[RPROC_DETACHED]	= "detached",
+> > > > +	[RPROC_DEFUNCT]		= "defunct",
+> > > >  	[RPROC_LAST]		= "invalid",
+> > > >  };
+> > > >  
+> > > > diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+> > > > index b4795698d8c2..3e4ba06c6a9a 100644
+> > > > --- a/include/linux/remoteproc.h
+> > > > +++ b/include/linux/remoteproc.h
+> > > > @@ -417,6 +417,8 @@ struct rproc_ops {
+> > > >   *			has attached to it
+> > > >   * @RPROC_DETACHED:	device has been booted by another entity and waiting
+> > > >   *			for the core to attach to it
+> > > > + * @RPROC_DEFUNCT:	device neither crashed nor responding to any of the
+> > > > + * 			requests and can only recover on system restart.
+> > > >   * @RPROC_LAST:		just keep this one at the end
+> > > >   *
+> > > >   * Please note that the values of these states are used as indices
+> > > > @@ -433,7 +435,8 @@ enum rproc_state {
+> > > >  	RPROC_DELETED	= 4,
+> > > >  	RPROC_ATTACHED	= 5,
+> > > >  	RPROC_DETACHED	= 6,
+> > > > -	RPROC_LAST	= 7,
+> > > > +	RPROC_DEFUNCT	= 7,
+> > > > +	RPROC_LAST	= 8,
+> > > >  };
+> > > >  
+> > > >  /**
+> > > > -- 
+> > > > 2.34.1
+> > > > 
 
