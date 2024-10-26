@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-383317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 787BA9B1A00
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 19:15:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71E1E9B1A01
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 19:15:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38DD128307A
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 17:15:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91E071C21484
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 17:15:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55A961D88BF;
-	Sat, 26 Oct 2024 17:14:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3CD51D90A9;
+	Sat, 26 Oct 2024 17:14:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="DvCJA+lL"
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="Rzmbx2Hs"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 973DA1D6DB6
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 17:14:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3A721D79B8
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 17:14:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729962892; cv=none; b=AHV0R4w1m7jtysUs1J0PgxmG/YTCf/v6SsyWmeONkImLLutcSj/gLVtAZRIiNhAV5dHlWqpmpfXIeJo9mcwB7lzrcX3YE3WfkVXUOr0TI8WX6H0p/Zheb7KWlPG4FDZPngUCo7YkHeeXQxW26a1kz7guvwBQ6Sr1US4Ni+MqG4g=
+	t=1729962894; cv=none; b=bacqxQEpLz4fArbQmlISrrxA0UTVNWP4Lw/C2KB58NoTwxpUSTNnpW45DviOFK4CIG4BTNCVxB4g8YLHXz3E/g84thBfZdl5W1RWQEBqeEgV1cgrSROQEmplChiHwIu7/AmRnhOnwWfBpBAC6T0D9SJ9sRkGs6b5edEpmV9s+0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729962892; c=relaxed/simple;
-	bh=9n83+TFEs1sWuWurdveeddmsJrb/ReI1EWNzw3Tr+ww=;
+	s=arc-20240116; t=1729962894; c=relaxed/simple;
+	bh=6v/2B5pS1NQbKcx4Aq5/VZ8a+qebWC56UpnkfHq3Es8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KTkF5c6sBdAF9QJntXYpNfs3tFEOxX6svyIqtDGArikTug+n5WIS6HtdaYmnzvbn4SODExtLgDAou5Zg9JStyB/9KZtJokOeB2Cy4wIWaijwhkKghWhwEJI19GjaounEyIIKFuBCNbumDSmBsUXUIO5WUQYG2Wo9i99V7lZRVw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=DvCJA+lL; arc=none smtp.client-ip=209.85.215.181
+	 MIME-Version; b=cuwHJf+HhGM1ZDLljhZ3AoPyqTZqWb4zIDRY5R5/RADlvhu/qfRp1f3IUAOzAVa9k/OXtE7JB2jzPB72WDIt668HRTMhFVJQXi1FfINWppRCcaFjQtwMXRV3kVMdsB6mnW4zbiAqHolR87vsxTVQFRv+z0rEETUJS5XPEGFjc+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=Rzmbx2Hs; arc=none smtp.client-ip=209.85.216.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-7ea76a12c32so2261585a12.1
-        for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 10:14:50 -0700 (PDT)
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2e2fb304e7dso2429962a91.1
+        for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 10:14:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1729962890; x=1730567690; darn=vger.kernel.org;
+        d=sifive.com; s=google; t=1729962891; x=1730567691; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=32SXpWlDW0kkamANJs274cWuCXV1jWs6Ch/GFZy2syA=;
-        b=DvCJA+lLBQgbyFoAY3ZIgEVI1knNSbxFx+ef+DcawVxrwB0TPpNSZB+p76yMztJQes
-         Iq9CPaFTXLroN/qCG1319gspJkxo5K36Rbq0jPcRoZprf06iz22S1AeI6p6+S9qf7V3O
-         br1VfB9kYB31x63Yy9fZ6hdIoal/F3a57EaiCcLMlr4ryjl8Wbtt93VEhaP1tzDBUr4c
-         6aYqHBCb/hLvL7NJjtYtg3eqxgKneVgYnPnq5OpKVK1IyPIUgw7AQIJEKLU0RIf6Fvwg
-         u4d9ome82fmLsGq56mPhKmI8NkTDDtpWXqFfbmN6l/lnS/YVmtv2iusnnlYSXUpndBQk
-         AGnw==
+        bh=3iilPE9PRtO5dgnEVdYwMDgO0cR2NihKQ5GAqyVmi0I=;
+        b=Rzmbx2Hs+kYbN/koVQwfBMju+R1WhWRIswEM/1mAWdcNPP8bBcTwAAtCtR8lR1XZD9
+         oL21rAiDAGK3Bm0PC9Rr35EWIg9ckg7hTo2KzSJPY/w6iRGorYKXC+8UiO20ULTAnFrs
+         tSVqCvZ9ogvcD8IndvxuqxtrhwkT9BT4KFrcyzRxwH0+3HSNVS36L2AOdRHznLUJqxRF
+         i4lgmxToW8xCHEx/0bP+cvOSSvXdPeCeGERDC0HVWlWaELDwKnoqQ17pZzigFXMy/1lg
+         eW9XUH5A2MxaBQv7Va4dZwaBjz5ZtsjXJCdr84BtKF1wcsKRjJ13e5GS6CpQO6cpPB9r
+         h+iQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729962890; x=1730567690;
+        d=1e100.net; s=20230601; t=1729962891; x=1730567691;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=32SXpWlDW0kkamANJs274cWuCXV1jWs6Ch/GFZy2syA=;
-        b=Y1qL0nQNi6mle0UjgD7eEVYnyX91+v1XWRU13xATlNF44DSUlm9RH7TrwmrWjSUztB
-         mzuuZbTzYifDxc/TodqotzS1zRXfN0H7HMODkWn0uSnuuJiA+87MC0SE0K2Sy3+5df4M
-         /Aqu5Imgi/NlK/pmyGmPRY9O8LYUdqcGQy2Q2QxdwqJV/2595JJLIeCu/WFclxO2ASNy
-         OSqt7Cn8ZG/HDfrwqFxUvQPEM2OBjEbfFd8Yvc9THNaQZeWfa6z9pxcWaSyWT3PuqmnO
-         33oYKGg9PY5TIZI928Dpsa+KpqsenS2sCn8Eyay73s4zx2REYPscchRKOA7W31nhp9A8
-         BRzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWlfzMkE+PcuMqGehY3OnyG5+uTCQvGlkzhbRoU/dKF2r4Rq4o9WwLldAkzXsUi6ODh5zqYfcNWrDJEdc4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJ4SrNYtdnix279IpAA6eDzW0d8o+AdsTJXAaR/g9OH2EbqOf8
-	jjhLV1NMpsDVVjXPelZdxH5tk5x7znFIombsv2XHWrJegd+3gS9ZSxcQ08zAL6w=
-X-Google-Smtp-Source: AGHT+IHuE/xLTvkb+BU83DmMK1Bc6hhBs45MKVg/zLV/CvtM1d0wHjLI0sEZOu1+WLDNR8rdwiJXEw==
-X-Received: by 2002:a17:90a:5e07:b0:2e2:eacc:3227 with SMTP id 98e67ed59e1d1-2e8f107c664mr4417836a91.23.1729962889947;
-        Sat, 26 Oct 2024 10:14:49 -0700 (PDT)
+        bh=3iilPE9PRtO5dgnEVdYwMDgO0cR2NihKQ5GAqyVmi0I=;
+        b=Rjy6YPYh5aef6rIdS7C51shDnCGK8tAQJi+Pez+XEm1JBHC+CE6vDNdYKB/XHU87LQ
+         zEm2MCsF0apmW+n1LVyF6/Wkf/McP87YmRq7hvGVpdp9iu9WzmOoo97TbK9WAzHQnM3T
+         DRdctvZ61NSS3bc4pGYFbEu1aeVKjXaZIfheYt0V5Aap83RJi2BQwu8+Z/vYdRbM9IBO
+         EoAk2vZpuutOJ8BFmJcX8P14rbbQ2bl5GhphKwJ4tsUjj3r+A3gUwX7EWID3Wvu/NeXX
+         dtbu/KiqDjHQe6cS3K9KU6f0mZxJaNRYd4bAuOZ+2d0EjOlVIB1+TN+zI2zXs5OlT5yC
+         /26A==
+X-Forwarded-Encrypted: i=1; AJvYcCVPOIM2Od2wQd7PBVzgh6BwDKtAcUoajfzeOrLuHWoo5wMSBCnPmN+RN42m7lnLRT4WBI9lRHQU8kcYJ7o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCDHU8n56lERvOU47SBQ9JRaWxmtnn8bYCT8uKmfQlzvSAnc8G
+	Qr4+z7y75PXmyg1jQOy4SVJxe+7a52BjFhkqxAqITTKJ/XMfzdAdWycnJ3hejdE=
+X-Google-Smtp-Source: AGHT+IHKHWEssFZ3dU4bK/XFfhtDHlaKTxMDsGGVAwitWxfjevjp7X7a3fieuNlFSdnYzB2SDFDTOA==
+X-Received: by 2002:a17:90a:3d0a:b0:2e2:c252:f861 with SMTP id 98e67ed59e1d1-2e8f10a7298mr4016154a91.28.1729962891258;
+        Sat, 26 Oct 2024 10:14:51 -0700 (PDT)
 Received: from sw06.internal.sifive.com ([4.53.31.132])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e77e558114sm5663762a91.36.2024.10.26.10.14.49
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e77e558114sm5663762a91.36.2024.10.26.10.14.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 26 Oct 2024 10:14:49 -0700 (PDT)
+        Sat, 26 Oct 2024 10:14:50 -0700 (PDT)
 From: Samuel Holland <samuel.holland@sifive.com>
 To: Palmer Dabbelt <palmer@dabbelt.com>,
 	linux-kernel@vger.kernel.org,
@@ -74,9 +74,9 @@ Cc: Andrew Morton <akpm@linux-foundation.org>,
 	Arnd Bergmann <arnd@arndb.de>,
 	Alexandre Ghiti <alexghiti@rivosinc.com>,
 	Samuel Holland <samuel.holland@sifive.com>
-Subject: [PATCH 5/6] riscv: Support CONFIG_RELOCATABLE on riscv32
-Date: Sat, 26 Oct 2024 10:13:57 -0700
-Message-ID: <20241026171441.3047904-6-samuel.holland@sifive.com>
+Subject: [PATCH 6/6] riscv: Remove CONFIG_PAGE_OFFSET
+Date: Sat, 26 Oct 2024 10:13:58 -0700
+Message-ID: <20241026171441.3047904-7-samuel.holland@sifive.com>
 X-Mailer: git-send-email 2.45.1
 In-Reply-To: <20241026171441.3047904-1-samuel.holland@sifive.com>
 References: <20241026171441.3047904-1-samuel.holland@sifive.com>
@@ -88,94 +88,145 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-When adjusted to use the correctly-sized ELF types, relocate_kernel()
-works on riscv32 as well. The caveat about crossing an intermediate page
-table boundary does not apply to riscv32, since for Sv32 the early
-kernel mapping uses only PGD entries. Since KASLR is not yet supported
-on riscv32, this option is mostly useful for NOMMU.
+The current definition of CONFIG_PAGE_OFFSET is problematic for a couple
+of reasons:
+ 1) The value is misleading for normal 64-bit kernels, where it is
+    overridden at runtime if Sv48 or Sv39 is chosen. This is especially
+    the case for XIP kernels, which always use Sv39.
+ 2) The option is not user-visible, but for NOMMU kernels it must be a
+    valid RAM address, and for !RELOCATABLE it must additionally be the
+    exact address where the kernel is loaded.
+
+Fix both of these by removing the option.
+ 1) For MMU kernels, drop the indirection through Kconfig. Additionally,
+    for XIP, drop the indirection through kernel_map.
+ 2) For NOMMU kernels, use the user-visible physical RAM base if
+    provided. Otherwise, force the kernel to be relocatable.
 
 Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
 ---
 
- arch/riscv/Kconfig   |  2 +-
- arch/riscv/mm/init.c | 17 ++++++++---------
- 2 files changed, 9 insertions(+), 10 deletions(-)
+ arch/riscv/Kconfig               |  8 +-------
+ arch/riscv/include/asm/page.h    | 15 ++++++++-------
+ arch/riscv/include/asm/pgtable.h |  2 +-
+ arch/riscv/mm/init.c             |  8 ++------
+ 4 files changed, 12 insertions(+), 21 deletions(-)
 
 diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-index 4420419e7054..33aa79d84021 100644
+index 33aa79d84021..297ccbf4b5ce 100644
 --- a/arch/riscv/Kconfig
 +++ b/arch/riscv/Kconfig
-@@ -934,7 +934,7 @@ config PARAVIRT_TIME_ACCOUNTING
+@@ -195,6 +195,7 @@ config RISCV
+ 	select PCI_DOMAINS_GENERIC if PCI
+ 	select PCI_ECAM if (ACPI && PCI)
+ 	select PCI_MSI if PCI
++	select RELOCATABLE if !MMU && !PHYS_RAM_BASE_FIXED
+ 	select RISCV_ALTERNATIVE if !XIP_KERNEL
+ 	select RISCV_APLIC
+ 	select RISCV_IMSIC
+@@ -282,13 +283,6 @@ config MMU
+ 	  Select if you want MMU-based virtualised addressing space
+ 	  support by paged memory management. If unsure, say 'Y'.
  
- config RELOCATABLE
- 	bool "Build a relocatable kernel"
--	depends on 64BIT && !XIP_KERNEL
-+	depends on !XIP_KERNEL
- 	select MODULE_SECTIONS if MODULES
- 	help
-           This builds a kernel as a Position Independent Executable (PIE),
+-config PAGE_OFFSET
+-	hex
+-	default 0x80000000 if !MMU && RISCV_M_MODE
+-	default 0x80200000 if !MMU
+-	default 0xc0000000 if 32BIT
+-	default 0xff60000000000000 if 64BIT
+-
+ config KASAN_SHADOW_OFFSET
+ 	hex
+ 	depends on KASAN_GENERIC
+diff --git a/arch/riscv/include/asm/page.h b/arch/riscv/include/asm/page.h
+index 24d1ac052609..d1acd1efe0dc 100644
+--- a/arch/riscv/include/asm/page.h
++++ b/arch/riscv/include/asm/page.h
+@@ -28,15 +28,16 @@
+  */
+ #ifdef CONFIG_MMU
+ #ifdef CONFIG_64BIT
+-#define PAGE_OFFSET		kernel_map.page_offset
+-/*
+- * By default, CONFIG_PAGE_OFFSET value corresponds to SV57 address space so
+- * define the PAGE_OFFSET value for SV48 and SV39.
+- */
++#define PAGE_OFFSET_L5		_AC(0xff60000000000000, UL)
+ #define PAGE_OFFSET_L4		_AC(0xffffaf8000000000, UL)
+ #define PAGE_OFFSET_L3		_AC(0xffffffd600000000, UL)
++#ifdef CONFIG_XIP_KERNEL
++#define PAGE_OFFSET		PAGE_OFFSET_L3
+ #else
+-#define PAGE_OFFSET		_AC(CONFIG_PAGE_OFFSET, UL)
++#define PAGE_OFFSET		kernel_map.page_offset
++#endif /* CONFIG_XIP_KERNEL */
++#else
++#define PAGE_OFFSET		_AC(0xc0000000, UL)
+ #endif /* CONFIG_64BIT */
+ #else
+ #define PAGE_OFFSET		((unsigned long)phys_ram_base)
+@@ -100,7 +101,6 @@ typedef struct page *pgtable_t;
+ #define ARCH_PFN_OFFSET		(PFN_DOWN((unsigned long)phys_ram_base))
+ 
+ struct kernel_mapping {
+-	unsigned long page_offset;
+ 	unsigned long virt_addr;
+ 	unsigned long virt_offset;
+ 	uintptr_t phys_addr;
+@@ -114,6 +114,7 @@ struct kernel_mapping {
+ 	uintptr_t xiprom;
+ 	uintptr_t xiprom_sz;
+ #else
++	unsigned long page_offset;
+ 	unsigned long va_kernel_pa_offset;
+ #endif
+ };
+diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
+index d0190ee9b2e4..b8125c3aa85d 100644
+--- a/arch/riscv/include/asm/pgtable.h
++++ b/arch/riscv/include/asm/pgtable.h
+@@ -15,7 +15,7 @@
+ #ifdef CONFIG_RELOCATABLE
+ #define KERNEL_LINK_ADDR	UL(0)
+ #else
+-#define KERNEL_LINK_ADDR	_AC(CONFIG_PAGE_OFFSET, UL)
++#define KERNEL_LINK_ADDR	_AC(CONFIG_PHYS_RAM_BASE, UL)
+ #endif
+ #define KERN_VIRT_SIZE		(UL(-1))
+ #else
 diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
-index a74e28367f9f..0aad925848a4 100644
+index 0aad925848a4..a1a185e6faf0 100644
 --- a/arch/riscv/mm/init.c
 +++ b/arch/riscv/mm/init.c
-@@ -20,15 +20,13 @@
- #include <linux/dma-map-ops.h>
- #include <linux/crash_dump.h>
- #include <linux/hugetlb.h>
--#ifdef CONFIG_RELOCATABLE
--#include <linux/elf.h>
+@@ -843,6 +843,8 @@ static __init void set_satp_mode(uintptr_t dtb_pa)
+ 	uintptr_t set_satp_mode_pmd = ((unsigned long)set_satp_mode) & PMD_MASK;
+ 	u64 satp_mode_cmdline = __pi_set_satp_mode_from_cmdline(dtb_pa);
+ 
++	kernel_map.page_offset = PAGE_OFFSET_L5;
++
+ 	if (satp_mode_cmdline == SATP_MODE_57) {
+ 		disable_pgtable_l5();
+ 	} else if (satp_mode_cmdline == SATP_MODE_48) {
+@@ -1090,11 +1092,6 @@ asmlinkage void __init setup_vm(uintptr_t dtb_pa)
+ 	kernel_map.virt_addr = KERNEL_LINK_ADDR + kernel_map.virt_offset;
+ 
+ #ifdef CONFIG_XIP_KERNEL
+-#ifdef CONFIG_64BIT
+-	kernel_map.page_offset = PAGE_OFFSET_L3;
+-#else
+-	kernel_map.page_offset = _AC(CONFIG_PAGE_OFFSET, UL);
 -#endif
- #include <linux/kfence.h>
- #include <linux/execmem.h>
+ 	kernel_map.xiprom = (uintptr_t)CONFIG_XIP_PHYS_ADDR;
+ 	kernel_map.xiprom_sz = (uintptr_t)(&_exiprom) - (uintptr_t)(&_xiprom);
  
- #include <asm/fixmap.h>
- #include <asm/io.h>
- #include <asm/kasan.h>
-+#include <asm/module.h>
- #include <asm/numa.h>
- #include <asm/pgtable.h>
- #include <asm/sections.h>
-@@ -312,7 +310,7 @@ extern unsigned long __rela_dyn_start, __rela_dyn_end;
- 
- static void __init relocate_kernel(void)
- {
--	Elf64_Rela *rela = (Elf64_Rela *)&__rela_dyn_start;
-+	Elf_Rela *rela = (Elf_Rela *)&__rela_dyn_start;
- 	/*
- 	 * This holds the offset between the linked virtual address and the
- 	 * relocated virtual address.
-@@ -324,9 +322,9 @@ static void __init relocate_kernel(void)
- 	 */
- 	uintptr_t va_kernel_link_pa_offset = KERNEL_LINK_ADDR - kernel_map.phys_addr;
- 
--	for ( ; rela < (Elf64_Rela *)&__rela_dyn_end; rela++) {
--		Elf64_Addr addr = (rela->r_offset - va_kernel_link_pa_offset);
--		Elf64_Addr relocated_addr = rela->r_addend;
-+	for ( ; rela < (Elf_Rela *)&__rela_dyn_end; rela++) {
-+		Elf_Addr addr = (rela->r_offset - va_kernel_link_pa_offset);
-+		Elf_Addr relocated_addr = rela->r_addend;
- 
- 		if (rela->r_info != R_RISCV_RELATIVE)
- 			continue;
-@@ -340,7 +338,7 @@ static void __init relocate_kernel(void)
- 		if (relocated_addr >= KERNEL_LINK_ADDR)
- 			relocated_addr += reloc_offset;
- 
--		*(Elf64_Addr *)addr = relocated_addr;
-+		*(Elf_Addr *)addr = relocated_addr;
- 	}
- }
- #endif /* CONFIG_RELOCATABLE */
-@@ -1155,7 +1153,8 @@ asmlinkage void __init setup_vm(uintptr_t dtb_pa)
- 	 * makes the kernel cross over a PUD_SIZE boundary, raise a bug
- 	 * since a part of the kernel would not get mapped.
- 	 */
--	BUG_ON(PUD_SIZE - (kernel_map.virt_addr & (PUD_SIZE - 1)) < kernel_map.size);
-+	if (IS_ENABLED(CONFIG_64BIT))
-+		BUG_ON(PUD_SIZE - (kernel_map.virt_addr & (PUD_SIZE - 1)) < kernel_map.size);
- 	relocate_kernel();
- #endif
- 
+@@ -1106,7 +1103,6 @@ asmlinkage void __init setup_vm(uintptr_t dtb_pa)
+ 	kernel_map.va_kernel_xip_data_pa_offset = kernel_map.virt_addr - kernel_map.phys_addr
+ 						+ (uintptr_t)&_sdata - (uintptr_t)&_start;
+ #else
+-	kernel_map.page_offset = _AC(CONFIG_PAGE_OFFSET, UL);
+ 	kernel_map.phys_addr = (uintptr_t)(&_start);
+ 	kernel_map.size = (uintptr_t)(&_end) - kernel_map.phys_addr;
+ 	kernel_map.va_kernel_pa_offset = kernel_map.virt_addr - kernel_map.phys_addr;
 -- 
 2.45.1
 
