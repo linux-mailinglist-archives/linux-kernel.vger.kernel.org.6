@@ -1,153 +1,146 @@
-Return-Path: <linux-kernel+bounces-383331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BFBB9B1A27
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 19:48:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BD0689B1A49
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 20:04:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 155AAB2157C
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 17:48:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1A41EB21615
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 18:03:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 179501D3628;
-	Sat, 26 Oct 2024 17:48:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ijc6JI4z"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65E3623A6;
-	Sat, 26 Oct 2024 17:48:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5D6E19CCF4;
+	Sat, 26 Oct 2024 18:03:51 +0000 (UTC)
+Received: from 1wt.eu (ded1.1wt.eu [163.172.96.212])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68F1333F6;
+	Sat, 26 Oct 2024 18:03:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=163.172.96.212
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729964909; cv=none; b=ob8c3UvvD9enMBuB98GcYUuNZxpAfRn1EFFBIc+QGJD/F/lXaANDkzpIIY5JI5nL/+b59nDKp38+LQ1pdrWKQFHW5yyVGTBKdHG8ohKkR2yx3D7hLpOojwUMl97j+WeDoRGgRr78NgRBlks9VbU1m5yVtPtxQi/APIH2spsBK28=
+	t=1729965831; cv=none; b=IH/6LwHEUNKBi6/VkXO8XDGj7gfeyLoAzNQ5kijKMVNT9Ppz8JBxCm/Wn4bj9lEifehDNDgNOgwxFLM6oW8lEEzevL2rtH7vgmZVVtQXNR5x6j2J6kedoxaqeBTcE1LpT3aWFICQrb5T61Zket1tF0rXWlq5S8zckcjDxjXvUU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729964909; c=relaxed/simple;
-	bh=o9oZRErK9cr6PRplzWQmLO2V+yn8kM55lzCnsD5Fk0E=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uTu99J/CgILcy0I34Pir4TnA/mGuZgELpcgMArIFofdGCWfJ33iqdcIzddbGYMTVDDMZ4pJcA3P4S0A/L8Zv/u0432ai82XmQSwB/s/Kif5tnimmOwFtDm7s00eue7aKKDuDSUok0HvzNrYqUSuPOdNZh5UVrL+eZaz2+oq+dVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ijc6JI4z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 383C6C4CEC6;
-	Sat, 26 Oct 2024 17:48:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729964908;
-	bh=o9oZRErK9cr6PRplzWQmLO2V+yn8kM55lzCnsD5Fk0E=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ijc6JI4zkGVa43MOp9BBdSUvVfdlX4ZdOZZopH9vRslfri8ob6cuIzHv+5L0FY7fh
-	 XuR41e24VT7Y+AZYN6J9va7Pq8Tc0IaeaPvRh2HxhzQcPIxr0Ae8a56RZc3h/GZLtq
-	 Gwl4WEoW94Z/b2MBIj8BesS5dqslmfw3R4Vqgf+0zBgec48hi8S5d3tDTrtmJfs8vq
-	 gI9OFQwwPRBluIeax93DkHAQw6XwCgEeIn8fIMLoqXcoiNSLbyaUzkmo/vNJATi8U0
-	 uwL+ggHchdvxWEzm5hMmIt1z+UPMxpTXa3Fm4N/J1o6ZWxYS7sPb7zKq29LSgk9zSq
-	 UzLFQN68osAtw==
-Date: Sat, 26 Oct 2024 18:47:54 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Angelo Dureghello <adureghello@baylibre.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Olivier Moysan
- <olivier.moysan@foss.st.com>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Brown
- <broonie@kernel.org>, dlechner@baylibre.com
-Subject: Re: [PATCH v8 6/8] iio: dac: ad3552r: extract common code (no
- changes in behavior intended)
-Message-ID: <20241026184754.009ea6f7@jic23-huawei>
-In-Reply-To: <20241025-wip-bl-ad3552r-axi-v0-iio-testing-v8-6-74ca7dd60567@baylibre.com>
-References: <20241025-wip-bl-ad3552r-axi-v0-iio-testing-v8-0-74ca7dd60567@baylibre.com>
-	<20241025-wip-bl-ad3552r-axi-v0-iio-testing-v8-6-74ca7dd60567@baylibre.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1729965831; c=relaxed/simple;
+	bh=x0J2jXABQk0AfmWQJSvPjWMMy56gbFwY6CO7ZEFdsrs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=StL/f4JvJPknClmCD3I1juVVa7Qkq1tuo7es3QGPuhObAx+dPvQE95bw2wuu/rWR2BDKI2V8aroUY3Dn57eUPkCeyS2ySBEaSp4zcQoievy2mq0lnqg6IbPeS/uQc+Re6SVomsamEpoz/d1SGUwjhSlDN6rV23S1j5OY56tsDXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu; spf=pass smtp.mailfrom=1wt.eu; arc=none smtp.client-ip=163.172.96.212
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=1wt.eu
+Received: (from willy@localhost)
+	by pcw.home.local (8.15.2/8.15.2/Submit) id 49QHskX0009892;
+	Sat, 26 Oct 2024 19:54:46 +0200
+Date: Sat, 26 Oct 2024 19:54:46 +0200
+From: Willy Tarreau <w@1wt.eu>
+To: Jiaxun Yang <jiaxun.yang@flygoat.com>
+Cc: "Theodore Ts'o" <tytso@mit.edu>, linux-kernel@vger.kernel.org,
+        conduct@kernel.org, security@kernel.org, cve@kernel.org,
+        linux-doc@vger.kernel.org,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>, shuah@kernel.org,
+        lee@kernel.org, sashal@kernel.org, Jonathan Corbet <corbet@lwn.net>
+Subject: Re: Concerns over transparency of informal kernel groups
+Message-ID: <20241026175446.GA9630@1wt.eu>
+Reply-To: linux-kernel@vger.kernel.org
+References: <73b8017b-fce9-4cb1-be48-fc8085f1c276@app.fastmail.com>
+ <20241026145640.GA4029861@mit.edu>
+ <522bd817-339a-45b0-84c2-2b1a4a87980a@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <522bd817-339a-45b0-84c2-2b1a4a87980a@app.fastmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Fri, 25 Oct 2024 11:49:39 +0200
-Angelo Dureghello <adureghello@baylibre.com> wrote:
-
-> From: Angelo Dureghello <adureghello@baylibre.com>
+On Sat, Oct 26, 2024 at 05:33:16PM +0100, Jiaxun Yang wrote:
+> > There's quite a bit of information available in the Linux Kernel
+> > documentation.  For example:
+> >
+> > * https://www.kernel.org/doc/html/latest/process/security-bugs.html
+> > * https://www.kernel.org/doc/html/latest/process/code-of-conduct.html
+> > * https://www.kernel.org/code-of-conduct.html
 > 
-> Extracting common code, to share common code to be used later
-> by the AXI driver version (ad3552r-axi.c).
+> Thank you for the pointers. My concerns actually rooted from the first two
+> documents, and I was directed to the third link off-list following my
+> initial post.
 > 
-> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+> In process/security-bugs, the term "security officers" is consistently mentioned,
+> yet it's unclear who they are, what specific privileges they hold compared to
+> regular developers,
 
-Hi Angelo,
+The "security officers" is just a small group of trusted maintainers
+(~20) who devote some of their spare time (and possibly some work time
+as well) reviewing, triaging, and forwarding some security reports that
+arrive there. I think the term "security officers" is used essentially
+to remind that reporters are interacting with real people without the
+heavy weight of processes or whatever some could possibly imagine.
 
-A few trivial things but one bigger one that actually only becomes a problem
-in the next patch so I'll comment on that.
+I'm not aware of a public list of participants, though the list of
+participants is shared between the members from time to time when one
+arrives or leaves. I think discretion is key here because I'm not even
+sure that every participant's employer knows that they're on that list,
+and it's better this way, as some might try to exert pressure to try
+to get some early notifications, which is absolutely forbidden.
 
-> +
-> +MODULE_DESCRIPTION("ad3552r common functions");
-Ah. This rang alarm bells.  I'll comment in next patch but you can't link
-the same file twice.
+Participants are quite responsible people. Some have already left the
+list by lacking time to participate, some temporarily or definitely.
+New participants are sometimes asked to join because they're involved
+in many of the reports, and that way they can directly interact with
+the reporter without anyone having to review and forward them the
+messages first.
 
+So if you wonder who's there, just ask yourself who can speed up the
+process by participating when there are frequent reports in their area
+of expertise, and you'll guess by yourself a few of them :-)
 
-> +MODULE_LICENSE("GPL");
+> and how security fixes are expected to reach Linus's tree
+> during an embargo period.
 
+There's no hard-rule there. Some fixes are written by some of the team
+members because the bug is directly in the subsystem they maintain so
+for them the easiest path is to take the patch and add it to their
+pending queue. Most of the time the fixes are forwarded to maintainers
+not part of the list and they deal with them the way they're used to
+for other bugs reports. Most of the time bug reporters are told that
+their report is not critical and should be handled the regular way (as
+it's always better to have public discussions on fixes). It's super
+rare that fixes are merged directly by Linus himself. It could happen
+because there's a huge emergency, but history told us that bugs handled
+in emergency do not always result in the best fixes. Also if one is
+seeking discretion, the last thing to do is to merge the fix without
+sharing it on a public list, as that's what attracts suspecting eyes :-)
 
-> @@ -1072,3 +727,4 @@ module_spi_driver(ad3552r_driver);
->  MODULE_AUTHOR("Mihail Chindris <mihail.chindris@analog.com>");
->  MODULE_DESCRIPTION("Analog Device AD3552R DAC");
->  MODULE_LICENSE("GPL v2");
-> +MODULE_IMPORT_NS(IIO_AD3552R);
-> diff --git a/drivers/iio/dac/ad3552r.h b/drivers/iio/dac/ad3552r.h
-> new file mode 100644
-> index 000000000000..22bd9ad27c65
-> --- /dev/null
-> +++ b/drivers/iio/dac/ad3552r.h
-> @@ -0,0 +1,226 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +/*
-> + * AD3552R Digital <-> Analog converters common header
-> + *
-> + * Copyright 2021-2024 Analog Devices Inc.
-> + * Author: Angelo Dureghello <adureghello@baylibre.com>
-> + */
-> +
-> +#ifndef __DRIVERS_IIO_DAC_AD3552R_H__
-> +#define __DRIVERS_IIO_DAC_AD3552R_H__
-> +
-> +/* Register addresses */
-> +/* Primary address space */
+Also, for the vast majority of bug reports there's no embargo period
+requested by the reporter, as most of them just want bugs to be fixed.
+I think it might be less than 1-2% for which an embargo is requested,
+and that's fine because fixes don't wait. Most of the time once the
+fix is agreed upon by the different parties and passes the reporter's
+tests, it gets merged in the maintainer's tree.
 
-> +#define   AD3552R_MASK_MULTI_IO_MODE			GENMASK(7, 6)
-> +#define   AD3552R_MASK_STREAM_LENGTH_KEEP_VALUE		BIT(2)
-> +#define AD3552R_REG_ADDR_INTERFACE_CONFIG_C		0x10
-> +#define   AD3552R_MASK_CRC_ENABLE			(GENMASK(7, 6) |\
-> +							 GENMASK(1, 0))
-If for whatever reason we go around again, (otherwise I might tweak anyway)
-#define   AD3552R_MASK_CRC_ENABLE	\
-		(GENMASK(7, 6) | GENMASK(1, 0))
+I noticed many times that there are some fantasies around the security
+list because it's not public, so people in quest of amazing stories may
+imagine lots of stuff happening there. The reality is that it's exactly
+like any other topic list where bugs are discussed between maintainers
+and bug reporters, but the discussions are just not public since they
+would directly put many users around the world in trouble without even
+having a chance to protect themselves. Another benefit of not being
+public is that it's easier for reporters to share traces, captures etc.
+They don't need to waste their time anonymizing them (though most of the
+time there's absolutely nothing confidential shared anyway, but an IP or
+MAC address can remain without having to hide them as is often done on
+public reports).
 
+Really there's nothing special about that list, it simply helps to put
+bug reporter in relation with the appropriate maintainers and save them
+from trivial mistakes, because it's always frightening to report a
+security issue to a project, you always fear you're sending to the wrong
+people and will cause unexpected trouble. That list is there to address
+this specific point, and to make sure the report is not forgotten.
 
-> +#define   AD3552R_MASK_CH_OUTPUT_RANGE			GENMASK(7, 0)
-> +#define   AD3552R_MASK_CH_OUTPUT_RANGE_SEL(ch)		((ch) ? \
-> +							 GENMASK(7, 4) : \
-> +							 GENMASK(3, 0))
-I may tweak this whilst applying to be something like
-
-#define   AD3552R_MASK_CH_OUTPUT_RANGE_SEL(ch)	\
-		((ch) ? GENMASK(7, 4) : GENMASK(3, 0))
-
-
-> +/* Useful defines */
-Made me laugh.  I hope we don't ever have a comment that says "Useless defines" :)
-
-> +#define AD3552R_MAX_CH					2
-> +#define AD3552R_MASK_CH(ch)				BIT(ch)
-> +#define AD3552R_MASK_ALL_CH				GENMASK(1, 0)
-> +#define AD3552R_MAX_REG_SIZE				3
-> +#define AD3552R_READ_BIT				BIT(7)
-> +#define AD3552R_ADDR_MASK				GENMASK(6, 0)
-> +#define AD3552R_MASK_DAC_12B				GENMASK(15, 4)
-> +#define AD3552R_DEFAULT_CONFIG_B_VALUE			0x8
-> +#define AD3552R_SCRATCH_PAD_TEST_VAL1			0x34
-> +#define AD3552R_SCRATCH_PAD_TEST_VAL2			0xB2
-> +#define AD3552R_GAIN_SCALE				1000
-> +#define AD3552R_LDAC_PULSE_US				100
+I hope this clarifies its role a bit!
+Willy
 
