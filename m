@@ -1,336 +1,150 @@
-Return-Path: <linux-kernel+bounces-382935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 112259B1530
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 07:43:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E87E9B1536
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 07:46:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 866B41F21D9E
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 05:43:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12614282E1F
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 05:46:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D655F166F31;
-	Sat, 26 Oct 2024 05:43:29 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9405516C695;
+	Sat, 26 Oct 2024 05:46:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2cV0PeGM"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52A09217F3F
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 05:43:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35E9B2E40B
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 05:46:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729921409; cv=none; b=twugwnwOmULABKC+XHwU2s3BM1y6OWXc41MFQcYj+z/ntnHLTnN518Zgv7WniYzKlhRsjlaeyNpFDq6x4cOUWDeT0d7+ju7ZYIOvEmpl7S757ALD+xabeieziOGUuJRJyJvQEmPtj+lNYwfK5E2zaNskzh5EL5KeT1QRf4sgWBA=
+	t=1729921576; cv=none; b=p/HwrkV0se/iewz3BB2GPyJX6LRPLzh40ug6vqGb/LBVy43z/uy08GZ84tj0qgT3z6Fd7r9qAqAPlw1QBqlALQqu7JYCgUidzh9UDT57rrWkdiv9a7QLWXtoowT8P5tGfDPhSZLVEOfrXpHEipK9ZJ7X3xIIkZmvzIyuzoSDRH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729921409; c=relaxed/simple;
-	bh=iG3XM4IjDFg4pYlWN0BeyJZy1JumqfoCK7aKPqEZgIY=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=A3Uzbm2zdM21yT85i56n6NeM7Ey4XMJPzABESv+3BSndBO7kuiPcLnfnQyZg9Rk3EZ6RIr0Y85uJXcRKlHBwvKP4WtmX329KvClRM7M8p7GEysIHgwnOPc/sasOOKGKbIHmbDOfa2fQf6dhxiupa8FzbiAPI1FK+RZzrU++9IDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-83ab369a523so255275439f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 22:43:26 -0700 (PDT)
+	s=arc-20240116; t=1729921576; c=relaxed/simple;
+	bh=SRjwgqCN32DqjDXP1zoKrUZDPYz/yulcotM5Ou+dbgQ=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=i5g8rYSYYWwzRtSvTTfPbcItWfaEop3OqYMj7/swT7+OY3zbhcZSiajTgj10IJBP2rmezk6LZB9kicbBOrXkiaHbgCtGeuBj2AD94IthSxpR6fcAIatw2doF3H9gyzYdGKrXBQnj0dbZYviqFKha1EcA630Y0KPPi+mUzae2hlY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2cV0PeGM; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20c8ac50b79so45955ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 22:46:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1729921573; x=1730526373; darn=vger.kernel.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=eY8ZkEywyfjVgvKb0PE6wkcMqGE2Q4geJi7aoCgEDmQ=;
+        b=2cV0PeGM+50GMNWZNWeDtObecES1iiYyihgbLe1OuxASFlgvlkm90vD9peIKijnrwq
+         a2D1rChCTMyNdJLJkHyYQFkYpufjmMfVxLi6xQReJ07NrxI0pnr8pIFTJ+XEUkqGwoaP
+         PKbn5LkXkwdBjzUwW9C2PlKwpAUTumMotjd/tsiFwam0qaWiXEf6karjuZ4Aveo4caRL
+         46C1of0AsmQ2yq9bA4p6gvkKEwqheNvNluKc8zfFdS/VwZMCx/cpSQzSNMLHxUrP6f45
+         YFYaqO+XuLpIf0GSinNJ8eN0McKextoMytku0nBHkmctgwx/385T2kaecqqKYM1ZuKdT
+         V+aw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729921405; x=1730526205;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bIsQ0oVQ7TY0dQoBRb8Vhdd/HS1uhC5yoJiiqe6eazE=;
-        b=mU08DPv18t77oHDiN8ydqF//fDMbsrN/5SpXLFznu8BQ7KvzYA3KCVISU01Byvdnee
-         4P7v/hMyYqEYe9IMNoGqYm1Edzbu0hPmjalUdGHrFUR/xvLHSKv1cDHNbFZKAE4zJbvK
-         c9C5WcIOtXfduD79+tZ+TmrTRWYdL8iobatYlJpcXNAejtPMgVuqShlYic7QD/Hwq+IQ
-         AQvPjd9ewHKhAJ5Mi456ds1wg65fmlFwGPvn+1ByXMuNBxHwIeOjHWVJ5dWdrz1zFnvD
-         rNwfD8RM4VpeVm4nsEjwbOV6A5HbDtowjqDsdVEuxpIvlfWpz/VzN16jZXlc4ZwKrs+V
-         BZmg==
-X-Forwarded-Encrypted: i=1; AJvYcCWMWHnjBhvS5nxmAbw5w2bSRij61Spm3WboHIPpWnsRqpZintEO+pW8ct3SBLDBHMmIJJPxgyImveFVs4M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5HALIeW1jyCC+crglOfCsZ3JviMxFCfS4/HHz0Yru62AlaQee
-	NnavfUlxAcTiZDbyBf5LTr46Yc2LMehc2qsgQV578gSRY7dtO1VRoZT19cVfo9sl4lIt69wGUZQ
-	i7Jsuru/qBqz/qLAD6pUmmP9rGBj1Ymi1tYvh6BEwwnfJJROOdNhsdyY=
-X-Google-Smtp-Source: AGHT+IHo2UNmMOmAQCFHqtMd4HZslw8RTLN7XP0PkzzlCL5ERqvCAWpemMY5XygzX/mosEMUwK07VLc3qzjQuVuMKZfI8pBly85M
+        d=1e100.net; s=20230601; t=1729921573; x=1730526373;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=eY8ZkEywyfjVgvKb0PE6wkcMqGE2Q4geJi7aoCgEDmQ=;
+        b=D9bvAoyVmPgsQJ4pUdUySgaLOZPDmettp85HbbcOnVVMB0wjuVKevbrLlHoiTskdLU
+         8envlPHtY/HCk8CTfTa3samSl83elsisfwYfKvhl9hKSFV6CJHWqtLl0gbUtRhNRrLSe
+         En9baoSSOXYfY2GQWka68RgteUfH2OAoMBs7NKOE8lVJTUbcQKHu7XAwkBp6aZSDVC8V
+         OmPsQpfCoJjfpRb6nHqepS6GlgiszUHk78YiTVks6jyBgZ3MntBi/w5FdjJH+u3RIndx
+         ilVJy0ESA1a6T0N7U8pATEEFMVw3UhS8dlcf792BTaIXtsLPQbloBUGLLGghrr3UTj/i
+         E+rA==
+X-Forwarded-Encrypted: i=1; AJvYcCXO2DAqtu5QTMTEUefxUgMwfwjn2vKXynTBES+v2WiaAqM/PdyvTb18Ff8MaG0FD2cbNT+vap/xPXgEU9U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxnqBpPyDopjjGaDPGGeTOdNyWcs5VEIppxW6cA8FKOo7rpnyMe
+	hoZSAVIqiLsyvD3zogA2JbOom11fYjwu+aCvu1zIg/ZmpuP9j62/+ljuBQNODw==
+X-Google-Smtp-Source: AGHT+IHQJgLq26FeZB3qU743EYM2bPcmmi3fesK4osKTr3JrdwHB+K8I+X1vHhJIGYtKvNJXamqCdQ==
+X-Received: by 2002:a17:902:fb84:b0:200:97b5:dc2b with SMTP id d9443c01a7336-210c7b885b5mr803385ad.15.1729921573136;
+        Fri, 25 Oct 2024 22:46:13 -0700 (PDT)
+Received: from [2620:0:1008:15:a73a:2b46:3ef7:2150] ([2620:0:1008:15:a73a:2b46:3ef7:2150])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bc02ea63sm18221395ad.220.2024.10.25.22.46.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Oct 2024 22:46:09 -0700 (PDT)
+Date: Fri, 25 Oct 2024 22:46:09 -0700 (PDT)
+From: David Rientjes <rientjes@google.com>
+To: Qun-Wei Lin <qun-wei.lin@mediatek.com>
+cc: Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>, 
+    Joonsoo Kim <iamjoonsoo.kim@lge.com>, 
+    Andrew Morton <akpm@linux-foundation.org>, 
+    Vlastimil Babka <vbabka@suse.cz>, 
+    Roman Gushchin <roman.gushchin@linux.dev>, 
+    Hyeonggon Yoo <42.hyeyoo@gmail.com>, 
+    Matthias Brugger <matthias.bgg@gmail.com>, 
+    AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+    Danilo Krummrich <dakr@kernel.org>, catalin.marinas@arm.com, 
+    surenb@google.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+    linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+    bpf@vger.kernel.org, Casper Li <casper.li@mediatek.com>, 
+    Chinwen Chang <chinwen.chang@mediatek.com>, 
+    Andrew Yang <andrew.yang@mediatek.com>, John Hsu <john.hsu@mediatek.com>, 
+    wsd_upstream@mediatek.com
+Subject: Re: [PATCH] mm: krealloc: Fix MTE false alarm in __do_krealloc
+In-Reply-To: <20241025085811.31310-1-qun-wei.lin@mediatek.com>
+Message-ID: <3740cf07-594a-d484-29de-5d76e2e97be3@google.com>
+References: <20241025085811.31310-1-qun-wei.lin@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1aa2:b0:3a4:e62b:4dfd with SMTP id
- e9e14a558f8ab-3a4ed296312mr13767425ab.7.1729921405430; Fri, 25 Oct 2024
- 22:43:25 -0700 (PDT)
-Date: Fri, 25 Oct 2024 22:43:25 -0700
-In-Reply-To: <67142ff9.050a0220.1e4b4d.002f.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <671c817d.050a0220.2b8c0f.01ad.GAE@google.com>
-Subject: Re: [syzbot] [io-uring?] INFO: task hung in io_wq_put_and_exit (4)
-From: syzbot <syzbot+58928048fd1416f1457c@syzkaller.appspotmail.com>
-To: asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 
-syzbot has found a reproducer for the following issue on:
+On Fri, 25 Oct 2024, Qun-Wei Lin wrote:
 
-HEAD commit:    b423f5a9a61f Merge tag 'acpi-6.12-rc5' of git://git.kernel..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=1393565f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=fd919c0fc1af4272
-dashboard link: https://syzkaller.appspot.com/bug?extid=58928048fd1416f1457c
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=122f04a7980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=132cbe40580000
+> This patch addresses an issue introduced by commit 1a83a716ec233 ("mm:
+> krealloc: consider spare memory for __GFP_ZERO") which causes MTE
+> (Memory Tagging Extension) to falsely report a slab-out-of-bounds error.
+> 
+> The problem occurs when zeroing out spare memory in __do_krealloc. The
+> original code only considered software-based KASAN and did not account
+> for MTE. It does not reset the KASAN tag before calling memset, leading
+> to a mismatch between the pointer tag and the memory tag, resulting
+> in a false positive.
+> 
+> Example of the error:
+> ==================================================================
+> swapper/0: BUG: KASAN: slab-out-of-bounds in __memset+0x84/0x188
+> swapper/0: Write at addr f4ffff8005f0fdf0 by task swapper/0/1
+> swapper/0: Pointer tag: [f4], memory tag: [fe]
+> swapper/0:
+> swapper/0: CPU: 4 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.12.
+> swapper/0: Hardware name: MT6991(ENG) (DT)
+> swapper/0: Call trace:
+> swapper/0:  dump_backtrace+0xfc/0x17c
+> swapper/0:  show_stack+0x18/0x28
+> swapper/0:  dump_stack_lvl+0x40/0xa0
+> swapper/0:  print_report+0x1b8/0x71c
+> swapper/0:  kasan_report+0xec/0x14c
+> swapper/0:  __do_kernel_fault+0x60/0x29c
+> swapper/0:  do_bad_area+0x30/0xdc
+> swapper/0:  do_tag_check_fault+0x20/0x34
+> swapper/0:  do_mem_abort+0x58/0x104
+> swapper/0:  el1_abort+0x3c/0x5c
+> swapper/0:  el1h_64_sync_handler+0x80/0xcc
+> swapper/0:  el1h_64_sync+0x68/0x6c
+> swapper/0:  __memset+0x84/0x188
+> swapper/0:  btf_populate_kfunc_set+0x280/0x3d8
+> swapper/0:  __register_btf_kfunc_id_set+0x43c/0x468
+> swapper/0:  register_btf_kfunc_id_set+0x48/0x60
+> swapper/0:  register_nf_nat_bpf+0x1c/0x40
+> swapper/0:  nf_nat_init+0xc0/0x128
+> swapper/0:  do_one_initcall+0x184/0x464
+> swapper/0:  do_initcall_level+0xdc/0x1b0
+> swapper/0:  do_initcalls+0x70/0xc0
+> swapper/0:  do_basic_setup+0x1c/0x28
+> swapper/0:  kernel_init_freeable+0x144/0x1b8
+> swapper/0:  kernel_init+0x20/0x1a8
+> swapper/0:  ret_from_fork+0x10/0x20
+> ==================================================================
+> 
+> Fixes: 1a83a716ec233 ("mm: krealloc: consider spare memory for
+> __GFP_ZERO")
+> Signed-off-by: Qun-Wei Lin <qun-wei.lin@mediatek.com>
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/49d1d501eff9/disk-b423f5a9.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/f973ba06cb5d/vmlinux-b423f5a9.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/a97302c30f3f/bzImage-b423f5a9.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+58928048fd1416f1457c@syzkaller.appspotmail.com
-
-INFO: task syz-executor295:5876 blocked for more than 143 seconds.
-      Not tainted 6.12.0-rc4-syzkaller-00245-gb423f5a9a61f #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz-executor295 state:D stack:25360 pid:5876  tgid:5876  ppid:5861   flags:0x00024002
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5328 [inline]
- __schedule+0x185a/0x4b70 kernel/sched/core.c:6690
- __schedule_loop kernel/sched/core.c:6767 [inline]
- schedule+0x14b/0x320 kernel/sched/core.c:6782
- schedule_timeout+0xb0/0x310 kernel/time/timer.c:2591
- do_wait_for_common kernel/sched/completion.c:95 [inline]
- __wait_for_common kernel/sched/completion.c:116 [inline]
- wait_for_common kernel/sched/completion.c:127 [inline]
- wait_for_completion+0x355/0x620 kernel/sched/completion.c:148
- io_wq_exit_workers io_uring/io-wq.c:1249 [inline]
- io_wq_put_and_exit+0x344/0x720 io_uring/io-wq.c:1277
- io_uring_clean_tctx+0x168/0x1e0 io_uring/tctx.c:193
- io_uring_cancel_generic+0x76a/0x820 io_uring/io_uring.c:3219
- io_uring_files_cancel include/linux/io_uring.h:20 [inline]
- do_exit+0x6a8/0x28e0 kernel/exit.c:895
- do_group_exit+0x207/0x2c0 kernel/exit.c:1088
- __do_sys_exit_group kernel/exit.c:1099 [inline]
- __se_sys_exit_group kernel/exit.c:1097 [inline]
- __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1097
- x64_sys_call+0x2634/0x2640 arch/x86/include/generated/asm/syscalls_64.h:232
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fdf6e9370f9
-RSP: 002b:00007ffcae28c868 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fdf6e9370f9
-RDX: 000000000000003c RSI: 00000000000000e7 RDI: 0000000000000000
-RBP: 00007fdf6e9b22d0 R08: ffffffffffffffb8 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007fdf6e9b22d0
-R13: 0000000000000000 R14: 00007fdf6e9b2d40 R15: 00007fdf6e908280
- </TASK>
-INFO: task syz-executor295:5878 blocked for more than 145 seconds.
-      Not tainted 6.12.0-rc4-syzkaller-00245-gb423f5a9a61f #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz-executor295 state:D stack:25136 pid:5878  tgid:5878  ppid:5859   flags:0x00024002
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5328 [inline]
- __schedule+0x185a/0x4b70 kernel/sched/core.c:6690
- __schedule_loop kernel/sched/core.c:6767 [inline]
- schedule+0x14b/0x320 kernel/sched/core.c:6782
- schedule_timeout+0xb0/0x310 kernel/time/timer.c:2591
- do_wait_for_common kernel/sched/completion.c:95 [inline]
- __wait_for_common kernel/sched/completion.c:116 [inline]
- wait_for_common kernel/sched/completion.c:127 [inline]
- wait_for_completion+0x355/0x620 kernel/sched/completion.c:148
- io_wq_exit_workers io_uring/io-wq.c:1249 [inline]
- io_wq_put_and_exit+0x344/0x720 io_uring/io-wq.c:1277
- io_uring_clean_tctx+0x168/0x1e0 io_uring/tctx.c:193
- io_uring_cancel_generic+0x76a/0x820 io_uring/io_uring.c:3219
- io_uring_files_cancel include/linux/io_uring.h:20 [inline]
- do_exit+0x6a8/0x28e0 kernel/exit.c:895
- do_group_exit+0x207/0x2c0 kernel/exit.c:1088
- __do_sys_exit_group kernel/exit.c:1099 [inline]
- __se_sys_exit_group kernel/exit.c:1097 [inline]
- __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1097
- x64_sys_call+0x2634/0x2640 arch/x86/include/generated/asm/syscalls_64.h:232
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fdf6e9370f9
-RSP: 002b:00007ffcae28c868 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fdf6e9370f9
-RDX: 000000000000003c RSI: 00000000000000e7 RDI: 0000000000000000
-RBP: 00007fdf6e9b22d0 R08: ffffffffffffffb8 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007fdf6e9b22d0
-R13: 0000000000000000 R14: 00007fdf6e9b2d40 R15: 00007fdf6e908280
- </TASK>
-INFO: task syz-executor295:5880 blocked for more than 147 seconds.
-      Not tainted 6.12.0-rc4-syzkaller-00245-gb423f5a9a61f #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz-executor295 state:D stack:25744 pid:5880  tgid:5880  ppid:5855   flags:0x00024002
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5328 [inline]
- __schedule+0x185a/0x4b70 kernel/sched/core.c:6690
- __schedule_loop kernel/sched/core.c:6767 [inline]
- schedule+0x14b/0x320 kernel/sched/core.c:6782
- schedule_timeout+0xb0/0x310 kernel/time/timer.c:2591
- do_wait_for_common kernel/sched/completion.c:95 [inline]
- __wait_for_common kernel/sched/completion.c:116 [inline]
- wait_for_common kernel/sched/completion.c:127 [inline]
- wait_for_completion+0x355/0x620 kernel/sched/completion.c:148
- io_wq_exit_workers io_uring/io-wq.c:1249 [inline]
- io_wq_put_and_exit+0x344/0x720 io_uring/io-wq.c:1277
- io_uring_clean_tctx+0x168/0x1e0 io_uring/tctx.c:193
- io_uring_cancel_generic+0x76a/0x820 io_uring/io_uring.c:3219
- io_uring_files_cancel include/linux/io_uring.h:20 [inline]
- do_exit+0x6a8/0x28e0 kernel/exit.c:895
- do_group_exit+0x207/0x2c0 kernel/exit.c:1088
- __do_sys_exit_group kernel/exit.c:1099 [inline]
- __se_sys_exit_group kernel/exit.c:1097 [inline]
- __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1097
- x64_sys_call+0x2634/0x2640 arch/x86/include/generated/asm/syscalls_64.h:232
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fdf6e9370f9
-RSP: 002b:00007ffcae28c868 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fdf6e9370f9
-RDX: 000000000000003c RSI: 00000000000000e7 RDI: 0000000000000000
-RBP: 00007fdf6e9b22d0 R08: ffffffffffffffb8 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007fdf6e9b22d0
-R13: 0000000000000000 R14: 00007fdf6e9b2d40 R15: 00007fdf6e908280
- </TASK>
-INFO: task syz-executor295:5884 blocked for more than 148 seconds.
-      Not tainted 6.12.0-rc4-syzkaller-00245-gb423f5a9a61f #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz-executor295 state:D stack:25744 pid:5884  tgid:5884  ppid:5856   flags:0x00024002
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5328 [inline]
- __schedule+0x185a/0x4b70 kernel/sched/core.c:6690
- __schedule_loop kernel/sched/core.c:6767 [inline]
- schedule+0x14b/0x320 kernel/sched/core.c:6782
- schedule_timeout+0xb0/0x310 kernel/time/timer.c:2591
- do_wait_for_common kernel/sched/completion.c:95 [inline]
- __wait_for_common kernel/sched/completion.c:116 [inline]
- wait_for_common kernel/sched/completion.c:127 [inline]
- wait_for_completion+0x355/0x620 kernel/sched/completion.c:148
- io_wq_exit_workers io_uring/io-wq.c:1249 [inline]
- io_wq_put_and_exit+0x344/0x720 io_uring/io-wq.c:1277
- io_uring_clean_tctx+0x168/0x1e0 io_uring/tctx.c:193
- io_uring_cancel_generic+0x76a/0x820 io_uring/io_uring.c:3219
- io_uring_files_cancel include/linux/io_uring.h:20 [inline]
- do_exit+0x6a8/0x28e0 kernel/exit.c:895
- do_group_exit+0x207/0x2c0 kernel/exit.c:1088
- __do_sys_exit_group kernel/exit.c:1099 [inline]
- __se_sys_exit_group kernel/exit.c:1097 [inline]
- __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1097
- x64_sys_call+0x2634/0x2640 arch/x86/include/generated/asm/syscalls_64.h:232
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fdf6e9370f9
-RSP: 002b:00007ffcae28c868 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fdf6e9370f9
-RDX: 000000000000003c RSI: 00000000000000e7 RDI: 0000000000000000
-RBP: 00007fdf6e9b22d0 R08: ffffffffffffffb8 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007fdf6e9b22d0
-R13: 0000000000000000 R14: 00007fdf6e9b2d40 R15: 00007fdf6e908280
- </TASK>
-INFO: task syz-executor295:5887 blocked for more than 150 seconds.
-      Not tainted 6.12.0-rc4-syzkaller-00245-gb423f5a9a61f #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz-executor295 state:D stack:25360 pid:5887  tgid:5887  ppid:5862   flags:0x00024002
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5328 [inline]
- __schedule+0x185a/0x4b70 kernel/sched/core.c:6690
- __schedule_loop kernel/sched/core.c:6767 [inline]
- schedule+0x14b/0x320 kernel/sched/core.c:6782
- schedule_timeout+0xb0/0x310 kernel/time/timer.c:2591
- do_wait_for_common kernel/sched/completion.c:95 [inline]
- __wait_for_common kernel/sched/completion.c:116 [inline]
- wait_for_common kernel/sched/completion.c:127 [inline]
- wait_for_completion+0x355/0x620 kernel/sched/completion.c:148
- io_wq_exit_workers io_uring/io-wq.c:1249 [inline]
- io_wq_put_and_exit+0x344/0x720 io_uring/io-wq.c:1277
- io_uring_clean_tctx+0x168/0x1e0 io_uring/tctx.c:193
- io_uring_cancel_generic+0x76a/0x820 io_uring/io_uring.c:3219
- io_uring_files_cancel include/linux/io_uring.h:20 [inline]
- do_exit+0x6a8/0x28e0 kernel/exit.c:895
- do_group_exit+0x207/0x2c0 kernel/exit.c:1088
- __do_sys_exit_group kernel/exit.c:1099 [inline]
- __se_sys_exit_group kernel/exit.c:1097 [inline]
- __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1097
- x64_sys_call+0x2634/0x2640 arch/x86/include/generated/asm/syscalls_64.h:232
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fdf6e9370f9
-RSP: 002b:00007ffcae28c868 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fdf6e9370f9
-RDX: 000000000000003c RSI: 00000000000000e7 RDI: 0000000000000000
-RBP: 00007fdf6e9b22d0 R08: ffffffffffffffb8 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007fdf6e9b22d0
-R13: 0000000000000000 R14: 00007fdf6e9b2d40 R15: 00007fdf6e908280
- </TASK>
-
-Showing all locks held in the system:
-3 locks held by kworker/u8:0/11:
-1 lock held by khungtaskd/30:
- #0: ffffffff8e937e20 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
- #0: ffffffff8e937e20 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
- #0: ffffffff8e937e20 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x55/0x2a0 kernel/locking/lockdep.c:6720
-3 locks held by kworker/u8:2/35:
-3 locks held by kworker/u8:3/52:
-3 locks held by kworker/u8:5/148:
-2 locks held by getty/5585:
- #0: ffff88803153f0a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
- #1: ffffc90002f062f0 (&ldata->atomic_read_lock){+.+.}-{3:3}, at: n_tty_read+0x6a6/0x1e00 drivers/tty/n_tty.c:2211
-1 lock held by iou-wrk-5876/5877:
-1 lock held by iou-wrk-5878/5881:
-3 locks held by kworker/u8:1/5879:
-1 lock held by iou-wrk-5880/5882:
-1 lock held by iou-wrk-5884/5885:
-1 lock held by iou-wrk-5887/5888:
-
-=============================================
-
-NMI backtrace for cpu 1
-CPU: 1 UID: 0 PID: 30 Comm: khungtaskd Not tainted 6.12.0-rc4-syzkaller-00245-gb423f5a9a61f #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- nmi_cpu_backtrace+0x49c/0x4d0 lib/nmi_backtrace.c:113
- nmi_trigger_cpumask_backtrace+0x198/0x320 lib/nmi_backtrace.c:62
- trigger_all_cpu_backtrace include/linux/nmi.h:162 [inline]
- check_hung_uninterruptible_tasks kernel/hung_task.c:223 [inline]
- watchdog+0xff4/0x1040 kernel/hung_task.c:379
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-Sending NMI from CPU 1 to CPUs 0:
-NMI backtrace for cpu 0
-CPU: 0 UID: 0 PID: 5888 Comm: iou-wrk-5887 Not tainted 6.12.0-rc4-syzkaller-00245-gb423f5a9a61f #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-RIP: 0010:unwind_next_frame+0x17b5/0x22d0 arch/x86/kernel/unwind_orc.c:664
-Code: 01 c6 49 8d 55 40 4c 89 ef e8 37 0e 00 00 84 c0 0f 84 66 01 00 00 49 bc 00 00 00 00 00 fc ff df 48 8b 44 24 20 42 0f b6 04 20 <84> c0 0f 85 36 08 00 00 48 8b 6c 24 08 8b 84 24 84 00 00 00 39 45
-RSP: 0018:ffffc900041771d0 EFLAGS: 00000202
-RAX: 0000000000000000 RBX: ffffffff90add366 RCX: 0000000000000000
-RDX: dffffc0000000000 RSI: ffffc90004170000 RDI: ffffc90004177658
-RBP: dffffc0000000000 R08: ffffc90004177658 R09: 0000000000000000
-R10: ffffc900041772f0 R11: fffff5200082ee60 R12: dffffc0000000000
-R13: ffffc900041772a0 R14: ffffffff81fb4fe6 R15: ffffc900041772f0
-FS:  000055559112e380(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055a37bfd3600 CR3: 0000000032e0a000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <NMI>
-
-
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+Acked-by: David Rientjes <rientjes@google.com>
 
