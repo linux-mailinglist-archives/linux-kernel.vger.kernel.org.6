@@ -1,132 +1,126 @@
-Return-Path: <linux-kernel+bounces-382851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 566339B13FD
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 03:17:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A53DF9B1401
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 03:28:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2526F1C214C1
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 01:17:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 26C7FB21990
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 01:28:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ACAF7E107;
-	Sat, 26 Oct 2024 01:17:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="p+UoFXJb"
-Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D706135A69;
+	Sat, 26 Oct 2024 01:28:22 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A632A8488
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 01:17:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1FC57DA6C
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 01:28:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729905439; cv=none; b=OVf8FFRFu2qUk8LI/s/f5fs/G7fcrfHX+Jk6dQYZNeJvlstzPtXsELVZSB9dEDEku3CXdWjMTZIuukVpj8F6a/7w8H1WrSWglyD2/PmbVLVNBaMoD9DuBon+dwtEvF1ssm9C+psIHfbhKyrABkW1HmFJYKlcx5UzAYd8ix5bM58=
+	t=1729906102; cv=none; b=iXW7qrjGb+GDeIxki5tzG16jqBL7g8yKYVoHBdi/YfqMddrYsjLc1ql5bKbnKrYDuJxutow0KFC1pUdRU1UriKEzlHxQ+ERTeuORFuFicivyPhtD3eAVEbs7PlH1MJFu/uhF68hcXOLYt7STqtS3r9LakvATKzSuAH0ygOTzl/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729905439; c=relaxed/simple;
-	bh=yku16IpmXqKjfqlU/QIrNWCB6Pug1Po8pO4b0FoB29s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HOsH0EFAWU81NHo+mXUKOBAarBk9QvgNBUYPb534aJoQ05zqW/td8AK2qhXQy4AdqOcBuRssGJ1Qmu68aP3seWl+9NOrm846B6FtccrOExGkt6aoIqWb6wE9IzC4hy1G8AKomQLo3v2rl1111gyilTMuGUWHpgCFGqOUnqLgdbU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=p+UoFXJb; arc=none smtp.client-ip=91.218.175.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Fri, 25 Oct 2024 21:17:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1729905433;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XE+SMRKBuxgSK7mjawgqB0u1W5PNuYKDKH4Hgg1SwBs=;
-	b=p+UoFXJbgQ2GofArJetSUnnSe7aWCJvfCFPe3xOU7Q4HV+xUnyD7SoxCVcOYqT9uRDd56V
-	uFfNqXME6B/IZk8ZPC81TuzOyNAnPIbbsF/w/RYK2GLrqMOuTEzN2F1F+cmQI8HmXMq+Gz
-	qPVaxHS0M+7ZTcLBRSPbvAchbMSRUAo=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Lizhi Xu <lizhi.xu@windriver.com>
-Cc: bfoster@redhat.com, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzbot+9fc4dac4775d07bcfe34@syzkaller.appspotmail.com, 
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] bcachefs: Retrieve ext again after sb is reallocated
-Message-ID: <43c3r56uapoeyc33lt6tunn5x772ngflxq6lpntodoj3g32s6t@ohktx3g4pkis>
-References: <20241025100205.635960-1-lizhi.xu@windriver.com>
- <20241026010953.2380726-1-lizhi.xu@windriver.com>
+	s=arc-20240116; t=1729906102; c=relaxed/simple;
+	bh=6umi1eNi/TB8oXAflEPdCVfVLErE42WN5r7P5SCBpuw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=cx9YGG3YFY4u7GjJOxz8SyFZ2INF2SuYxaCdXUGS2hXObJiyDFFVbdJpD9JEh2FN9DBM4KSAbIKxUdidY4n45Be3DsoA/L6BPOo9rMLv9Eqxz+jJSVyNSpaV4DSEFbV8rQXvv+fVGXVSC/Z7PzGI5Vl9YytQKhxM7l2xIrYD/+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Xb2725YNlzyTkj;
+	Sat, 26 Oct 2024 09:26:38 +0800 (CST)
+Received: from kwepemf100008.china.huawei.com (unknown [7.202.181.222])
+	by mail.maildlp.com (Postfix) with ESMTPS id 20B801401F4;
+	Sat, 26 Oct 2024 09:28:13 +0800 (CST)
+Received: from [10.174.179.163] (10.174.179.163) by
+ kwepemf100008.china.huawei.com (7.202.181.222) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Sat, 26 Oct 2024 09:28:12 +0800
+Message-ID: <42b52500-9243-432e-1359-086012a60e81@huawei.com>
+Date: Sat, 26 Oct 2024 09:28:11 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241026010953.2380726-1-lizhi.xu@windriver.com>
-X-Migadu-Flow: FLOW_OUT
-
-On Sat, Oct 26, 2024 at 09:09:53AM +0800, Lizhi Xu wrote:
-> Syzbot reported a slab-use-after-free Read in bch2_reconstruct_alloc.
-> The sb counters resize will cause sb reallocation and release the old sb,
-> which leads to uaf in ext.
-> After disk_sb.sb is reallocated, ext should be retrieved again to avoid uaf.
-> 
-> Reported-and-tested-by: syzbot+9fc4dac4775d07bcfe34@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=9fc4dac4775d07bcfe34
-> Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
-> ---
->  fs/bcachefs/recovery.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/fs/bcachefs/recovery.c b/fs/bcachefs/recovery.c
-> index 55e1504a8130..9df0969c29ce 100644
-> --- a/fs/bcachefs/recovery.c
-> +++ b/fs/bcachefs/recovery.c
-> @@ -59,6 +59,7 @@ static void bch2_reconstruct_alloc(struct bch_fs *c)
->  
->  	mutex_lock(&c->sb_lock);
->  	struct bch_sb_field_ext *ext = bch2_sb_field_get(c->disk_sb.sb, ext);
-> +	void *sb;
->  
->  	__set_bit_le64(BCH_RECOVERY_PASS_STABLE_check_allocations, ext->recovery_passes_required);
->  	__set_bit_le64(BCH_RECOVERY_PASS_STABLE_check_alloc_info, ext->recovery_passes_required);
-> @@ -94,7 +95,10 @@ static void bch2_reconstruct_alloc(struct bch_fs *c)
->  	__set_bit_le64(BCH_FSCK_ERR_accounting_mismatch, ext->errors_silent);
->  	c->sb.compat &= ~(1ULL << BCH_COMPAT_alloc_info);
->  
-> +	sb = c->disk_sb.sb;
->  	bch2_write_super(c);
-> +	if (sb != c->disk_sb.sb)
-> +		ext = bch2_sb_field_get(c->disk_sb.sb, ext);
->  	mutex_unlock(&c->sb_lock);
->  
->  	c->opts.recovery_passes |= bch2_recovery_passes_from_stable(le64_to_cpu(ext->recovery_passes_required[0]));
-
-There's a simpler fix:
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH] goldfish: Fix unused const variable
+ 'goldfish_pipe_acpi_match'
+To: =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@baylibre.com>, Andy
+ Shevchenko <andriy.shevchenko@linux.intel.com>
+CC: <jia-cheng.hu@intel.com>, <gregkh@linuxfoundation.org>,
+	<quic_jjohnson@quicinc.com>, <jinqian@android.com>, <alan@linux.intel.com>,
+	<linux-kernel@vger.kernel.org>, <bobo.shaobowang@huawei.com>
+References: <20241025074129.1920707-1-zengheng4@huawei.com>
+ <ttlc5ppgljd3plbk6kw4ndi47pqafivtxk2sosdhlw3zeda273@dn74s3eluxqp>
+Content-Language: en-US
+From: Zeng Heng <zengheng4@huawei.com>
+In-Reply-To: <ttlc5ppgljd3plbk6kw4ndi47pqafivtxk2sosdhlw3zeda273@dn74s3eluxqp>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemf100008.china.huawei.com (7.202.181.222)
 
 
-From 8e910ca20e112d7f06ba3bf631a06ddb5ce14657 Mon Sep 17 00:00:00 2001
-From: Kent Overstreet <kent.overstreet@linux.dev>
-Date: Fri, 25 Oct 2024 13:13:05 -0400
-Subject: [PATCH] bcachefs: Fix UAF in bch2_reconstruct_alloc()
+On 2024/10/25 22:27, Uwe Kleine-König wrote:
+> Hello,
+>
+> [Cc += Andy]
 
-write_super() -> sb_counters_from_cpu() may reallocate the superblock
+I would loop in the next version.
 
-Reported-by: syzbot+9fc4dac4775d07bcfe34@syzkaller.appspotmail.com
-Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
 
-diff --git a/fs/bcachefs/recovery.c b/fs/bcachefs/recovery.c
-index 454b5a32dd7f..0ebc76dd7eb5 100644
---- a/fs/bcachefs/recovery.c
-+++ b/fs/bcachefs/recovery.c
-@@ -94,11 +94,10 @@ static void bch2_reconstruct_alloc(struct bch_fs *c)
- 	__set_bit_le64(BCH_FSCK_ERR_accounting_mismatch, ext->errors_silent);
- 	c->sb.compat &= ~(1ULL << BCH_COMPAT_alloc_info);
- 
--	bch2_write_super(c);
--	mutex_unlock(&c->sb_lock);
--
- 	c->opts.recovery_passes |= bch2_recovery_passes_from_stable(le64_to_cpu(ext->recovery_passes_required[0]));
- 
-+	bch2_write_super(c);
-+	mutex_unlock(&c->sb_lock);
- 
- 	bch2_shoot_down_journal_keys(c, BTREE_ID_alloc,
- 				     0, BTREE_MAX_DEPTH, POS_MIN, SPOS_MAX);
+>
+> On Fri, Oct 25, 2024 at 03:41:29PM +0800, Zeng Heng wrote:
+>> Fix the following compilation warning:
+>>
+>> drivers/platform/goldfish/goldfish_pipe.c:925:36: warning:
+>> ‘goldfish_pipe_acpi_match’ defined but not used
+>> [-Wunused-const-variable=]
+>>    925 | static const struct acpi_device_id goldfish_pipe_acpi_match[] = {
+>>
+>> Only define the const variable when the CONFIG_ACPI is enabled.
+> Note you also need CONFIG_MODULE=n to reproduce.
+>
+>> Fixes: d62f324b0ac8 ("goldfish: Enable ACPI-based enumeration for android pipe")
+>> Signed-off-by: Zeng Heng <zengheng4@huawei.com>
+>> ---
+>>   drivers/platform/goldfish/goldfish_pipe.c | 2 ++
+>>   1 file changed, 2 insertions(+)
+>>
+>> diff --git a/drivers/platform/goldfish/goldfish_pipe.c b/drivers/platform/goldfish/goldfish_pipe.c
+>> index c2aab0cfab33..aeabacba3760 100644
+>> --- a/drivers/platform/goldfish/goldfish_pipe.c
+>> +++ b/drivers/platform/goldfish/goldfish_pipe.c
+>> @@ -922,11 +922,13 @@ static void goldfish_pipe_remove(struct platform_device *pdev)
+>>   	goldfish_pipe_device_deinit(pdev, dev);
+>>   }
+>>   
+>> +#ifdef CONFIG_ACPI
+>>   static const struct acpi_device_id goldfish_pipe_acpi_match[] = {
+>>   	{ "GFSH0003", 0 },
+>>   	{ },
+>>   };
+>>   MODULE_DEVICE_TABLE(acpi, goldfish_pipe_acpi_match);
+>> +#endif
+>>   
+>>   static const struct of_device_id goldfish_pipe_of_match[] = {
+>>   	{ .compatible = "google,android-pipe", },
+> Looking at changes like
+> https://lore.kernel.org/all/20241024130424.3818291-11-andriy.shevchenko@linux.intel.com/
+> I suggest to drop the use of ACPI_PTR() instead.
+
+Right, got it.
+
+
+Best regards,
+
+Zeng Heng
+
+
+
 
