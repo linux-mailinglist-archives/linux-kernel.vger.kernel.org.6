@@ -1,76 +1,56 @@
-Return-Path: <linux-kernel+bounces-382933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0302D9B152A
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 07:35:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C33609B1527
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 07:34:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1B1F2831B8
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 05:34:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E3E72B21B22
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 05:34:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F43816C687;
-	Sat, 26 Oct 2024 05:34:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DEB613A41F;
+	Sat, 26 Oct 2024 05:34:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QLiCwIww"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="uRotzDxY"
+Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3216E6A009;
-	Sat, 26 Oct 2024 05:34:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28F126A009
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 05:34:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729920892; cv=none; b=hA2cZZ08qyT0FOUHQj7A4GZQ54ZZBcunmWkBqcsQkijzsrQ8EB/CM7V7TEcxFvFc8GvhcQ7UW/OHfRzORc+flHoybi80wUeVKM3Rflmlo8xvZUuyjRRLDh5Y7VTybeTWGhu/JquKP+rxRcY4vTdbpGOXB9WhDKiOWQNN/8eobDE=
+	t=1729920874; cv=none; b=LuY3BWnOJFQLp0EMc5wj08nXUz9orcu8J8R/SONIY21Zb9vwxtIHPhaK1Aa3VIJLB/AlNYzMgpWOELCZ8IHzoJsWwAgUW3rPY3XXlw4PsKsaOOgcw8pAGEVDLeRL+Ig/2ZwQ+Udbfx2I8aBkv/ivagKZ+PhWeJvGyV/ZdJd88Bc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729920892; c=relaxed/simple;
-	bh=ImACNOBLeo/IWPYy0OMBTrQMROC8/CrgLu5Bo02QvLs=;
+	s=arc-20240116; t=1729920874; c=relaxed/simple;
+	bh=+gqBjpDwjKYtNctvzOJOwSt/7mwGLDiB/t/GK/jcCAQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AOYEdWx3Ngg+MsnFc09EcMTjNDAr70TrKcu1U3op3cUOZ/u8yT0qIyanHaqke3M1in41WBELR6I+VSXHsyvpqRdUIZvpSww9YPrrSeAv4LQ1s5I0tl7vTAuKGz7cjMTAOlRUwfaveLUc9n8y6tsOTcwTT7TBPLESC86YCMy3QsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QLiCwIww; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729920889; x=1761456889;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ImACNOBLeo/IWPYy0OMBTrQMROC8/CrgLu5Bo02QvLs=;
-  b=QLiCwIwwRm6gwPH2mIkxCmD/n7W8R/eRKQl7rxxxmQsviEJTSVLp0d0y
-   i/MtcBfeR8RJA0HMOz73D1xgF+lD+j9NqLOR5vViqNlwlT1yBD/bKC4iU
-   qSo913m3BDoAHNj65LO02p5/hFG60Jb3t3E7ET4XMutMOC1Os5p5+dEPz
-   HNPPxQj7SNpUz/ejyxPFqAvYyMvsYuAUg1F+odbcFT20ipP36ZKyBx8Oh
-   sK7pOJvg7cLf9w0aXZwUm/ra6CKysrBlZThkOncATp9Z0SEnZIh3pkrV1
-   EMfWVn3srLAB63L8xj+CeGYUPnsv97GwQINOVaChBDcI/KzxbnWeEE0rb
-   A==;
-X-CSE-ConnectionGUID: g7hQRE5dR0ahmDcaZej2PA==
-X-CSE-MsgGUID: dHwgoWX9TGa0vBMUAdw4vg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11236"; a="47084276"
-X-IronPort-AV: E=Sophos;i="6.11,234,1725346800"; 
-   d="scan'208";a="47084276"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2024 22:34:49 -0700
-X-CSE-ConnectionGUID: ZYmrUNwbRYWxVAMBFTXiuQ==
-X-CSE-MsgGUID: 9kaklKcPQvys6MK7dmoCmQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,234,1725346800"; 
-   d="scan'208";a="81216530"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa008.fm.intel.com with ESMTP; 25 Oct 2024 22:34:47 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t4ZRl-000ZJI-0b;
-	Sat, 26 Oct 2024 05:34:45 +0000
-Date: Sat, 26 Oct 2024 13:34:02 +0800
-From: kernel test robot <lkp@intel.com>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-input@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, Erick Archer <erick.archer@outlook.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Input: maple_keyb - use guard notation when acquiring
- mutex
-Message-ID: <202410261312.femv4WzA-lkp@intel.com>
-References: <Zxr4TeGwDGIIyzwH@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=paVX7tAjn2GTVUHYHc++KYVffO1mAPmXzEzh/rIV/+dY0qOrItmRLxw1uiedCd58NqdnRSkF/aESLErze4U/ceVPsbKn7+pgD7Gw85cZ4uFeclNJL5JMS9bb0yXBYHnE17z2UpJgAL8IPT0FQCUACl99FM8+sngaARo3pBr61SA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=uRotzDxY; arc=none smtp.client-ip=95.215.58.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Fri, 25 Oct 2024 22:34:23 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1729920870;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1VqnAcW2Lr3Wy+fyPS6e7OxFPoaLSfYoH8W/e5CQq/w=;
+	b=uRotzDxY2ZOxA3MQsoJ6CvtuZFL9wN9G3BXCyfRTs1bHCvEDCGzBJDkL34TQiC8MIsw4AA
+	eoPYjoe5fjfZ+arMREjDW4ItPBv5y93EQ/aSrzqvZNAX6zbc4jHitDCuRCClFTcVGyGTbz
+	ev8wimyrZndrhZ0ewX0qLhBjjKA9jwQ=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Oliver Upton <oliver.upton@linux.dev>
+To: Raghavendra Rao Ananta <rananta@google.com>
+Cc: Marc Zyngier <maz@kernel.org>, linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org, stable@vger.kernel.org,
+	syzbot <syzkaller@googlegroups.com>
+Subject: Re: [PATCH] KVM: arm64: Mark the VM as dead for failed
+ initializations
+Message-ID: <Zxx_X9-MdmAFzHUO@linux.dev>
+References: <20241025221220.2985227-1-rananta@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,75 +59,109 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Zxr4TeGwDGIIyzwH@google.com>
+In-Reply-To: <20241025221220.2985227-1-rananta@google.com>
+X-Migadu-Flow: FLOW_OUT
 
-Hi Dmitry,
+Hi Raghu,
 
-kernel test robot noticed the following build errors:
+Thanks for posting this fix.
 
-[auto build test ERROR on dtor-input/next]
-[also build test ERROR on dtor-input/for-linus hid/for-next linus/master v6.12-rc4 next-20241025]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+On Fri, Oct 25, 2024 at 10:12:20PM +0000, Raghavendra Rao Ananta wrote:
+> Syzbot hit the following WARN_ON() in kvm_timer_update_irq():
+> 
+> WARNING: CPU: 0 PID: 3281 at arch/arm64/kvm/arch_timer.c:459
+> kvm_timer_update_irq+0x21c/0x394
+> Call trace:
+>   kvm_timer_update_irq+0x21c/0x394 arch/arm64/kvm/arch_timer.c:459
+>   kvm_timer_vcpu_reset+0x158/0x684 arch/arm64/kvm/arch_timer.c:968
+>   kvm_reset_vcpu+0x3b4/0x560 arch/arm64/kvm/reset.c:264
+>   kvm_vcpu_set_target arch/arm64/kvm/arm.c:1553 [inline]
+>   kvm_arch_vcpu_ioctl_vcpu_init arch/arm64/kvm/arm.c:1573 [inline]
+>   kvm_arch_vcpu_ioctl+0x112c/0x1b3c arch/arm64/kvm/arm.c:1695
+>   kvm_vcpu_ioctl+0x4ec/0xf74 virt/kvm/kvm_main.c:4658
+>   vfs_ioctl fs/ioctl.c:51 [inline]
+>   __do_sys_ioctl fs/ioctl.c:907 [inline]
+>   __se_sys_ioctl fs/ioctl.c:893 [inline]
+>   __arm64_sys_ioctl+0x108/0x184 fs/ioctl.c:893
+>   __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+>   invoke_syscall+0x78/0x1b8 arch/arm64/kernel/syscall.c:49
+>   el0_svc_common+0xe8/0x1b0 arch/arm64/kernel/syscall.c:132
+>   do_el0_svc+0x40/0x50 arch/arm64/kernel/syscall.c:151
+>   el0_svc+0x54/0x14c arch/arm64/kernel/entry-common.c:712
+>   el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
+>   el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
+> 
+> The sequence that led to the report is when KVM_ARM_VCPU_INIT ioctl is
+> invoked after a failed first KVM_RUN. In a general sense though, since
+> kvm_arch_vcpu_run_pid_change() doesn't tear down any of the past
+> initiatializations, it's possible that the VM's state could be left
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Dmitry-Torokhov/Input-maple_keyb-use-guard-notation-when-acquiring-mutex/20241025-094751
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git next
-patch link:    https://lore.kernel.org/r/Zxr4TeGwDGIIyzwH%40google.com
-patch subject: [PATCH] Input: maple_keyb - use guard notation when acquiring mutex
-config: sh-dreamcast_defconfig (https://download.01.org/0day-ci/archive/20241026/202410261312.femv4WzA-lkp@intel.com/config)
-compiler: sh4-linux-gcc (GCC) 13.3.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241026/202410261312.femv4WzA-lkp@intel.com/reproduce)
+typo: initializations
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410261312.femv4WzA-lkp@intel.com/
+> half-baked. Any upcoming ioctls could behave erroneously because of
+> this.
 
-All errors (new ones prefixed by >>):
+You may want to highlight a bit more strongly that, despite the name,
+we do a lot of late *VM* state initialization in kvm_arch_vcpu_run_pid_change().
 
-   drivers/input/keyboard/maple_keyb.c: In function 'remove_maple_kbd':
->> drivers/input/keyboard/maple_keyb.c:211:39: error: macro "guard" passed 2 arguments, but takes just 1
-     211 |         guard(mutex, &maple_keyb_mutex);
-         |                                       ^
-   In file included from include/linux/irqflags.h:17,
-                    from arch/sh/include/asm/cmpxchg-irq.h:5,
-                    from arch/sh/include/asm/cmpxchg.h:20,
-                    from arch/sh/include/asm/atomic.h:19,
-                    from include/linux/atomic.h:7,
-                    from include/asm-generic/bitops/atomic.h:5,
-                    from arch/sh/include/asm/bitops.h:23,
-                    from include/linux/bitops.h:68,
-                    from include/linux/kernel.h:23,
-                    from drivers/input/keyboard/maple_keyb.c:9:
-   include/linux/cleanup.h:166: note: macro "guard" defined here
-     166 | #define guard(_name) \
-         | 
->> drivers/input/keyboard/maple_keyb.c:211:9: error: 'guard' undeclared (first use in this function)
-     211 |         guard(mutex, &maple_keyb_mutex);
-         |         ^~~~~
-   drivers/input/keyboard/maple_keyb.c:211:9: note: each undeclared identifier is reported only once for each function it appears in
+When that goes sideways we're left with few choices besides bugging the
+VM or gracefully tearing down state, potentially w/ concurrent users.
 
+> Since these late vCPU initializations is past the point of attributing
+> the failures to any ioctl, instead of tearing down each of the previous
+> setups, simply mark the VM as dead, gving an opportunity for the
+> userspace to close and try again.
+> 
+> Cc: <stable@vger.kernel.org>
+> Reported-by: syzbot <syzkaller@googlegroups.com>
+> Suggested-by: Oliver Upton <oliver.upton@linux.dev>
 
-vim +/guard +211 drivers/input/keyboard/maple_keyb.c
+I definitely recommended this to you, so blame *me* for imposing some
+toil on you with the following.
 
-   205	
-   206	static int remove_maple_kbd(struct device *dev)
-   207	{
-   208		struct maple_device *mdev = to_maple_dev(dev);
-   209		struct dc_kbd *kbd = maple_get_drvdata(mdev);
-   210	
- > 211		guard(mutex, &maple_keyb_mutex);
-   212	
-   213		input_unregister_device(kbd->dev);
-   214		kfree(kbd);
-   215	
-   216		maple_set_drvdata(mdev, NULL);
-   217		return 0;
-   218	}
-   219	
+> @@ -836,16 +836,16 @@ int kvm_arch_vcpu_run_pid_change(struct kvm_vcpu *vcpu)
+>  
+>  	ret = kvm_timer_enable(vcpu);
+>  	if (ret)
+> -		return ret;
+> +		goto out_err;
+>  
+>  	ret = kvm_arm_pmu_v3_enable(vcpu);
+>  	if (ret)
+> -		return ret;
+> +		goto out_err;
+>  
+>  	if (is_protected_kvm_enabled()) {
+>  		ret = pkvm_create_hyp_vm(kvm);
+>  		if (ret)
+> -			return ret;
+> +			goto out_err;
+>  	}
+>  
+>  	if (!irqchip_in_kernel(kvm)) {
+> @@ -869,6 +869,10 @@ int kvm_arch_vcpu_run_pid_change(struct kvm_vcpu *vcpu)
+>  	mutex_unlock(&kvm->arch.config_lock);
+>  
+>  	return ret;
+> +
+> +out_err:
+> +	kvm_vm_dead(kvm);
+> +	return ret;
+>  }
+
+After rereading, I think we could benefit from a more distinct separation
+of late VM vs. vCPU state initialization.
+
+Bugging the VM is a big hammer, we should probably only resort to that
+when the VM state is screwed up badly.
+
+Otherwise, for screwed up vCPU state we could uninitialize the vCPU and
+let userspace try again. An example of this is how we deal with VMs that
+run 32 bit userspace when KVM tries to hide the feature.
+
+WDYT?
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks,
+Oliver
 
