@@ -1,105 +1,175 @@
-Return-Path: <linux-kernel+bounces-383237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10EB29B18D4
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 16:55:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8B859B18D7
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 16:57:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC0681F217C6
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 14:55:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C52461C20C98
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 14:57:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31E141F951;
-	Sat, 26 Oct 2024 14:55:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC7F820326;
+	Sat, 26 Oct 2024 14:57:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TYbUJSKv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="Tzw8Gs48"
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AF3AAD24;
-	Sat, 26 Oct 2024 14:55:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7E091C69D
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 14:57:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729954551; cv=none; b=XJoLZGkZl2q0bAs6KAkvTuQbx/YNqJnsXFUfopPaLkCyVue3L74WTM7Xk+3+J7EXBEdGRoFUjZTX3rbCn4zdPRLPw0ntrWxDVTgGphCmnHq+NXSX/GK1o3Jk3WHg6C/dqrU/8AQh4EYl97egVGEJ4+xyBnE4ad4W7jfXPrUCzkk=
+	t=1729954640; cv=none; b=MpxdyL5pKpK5z5vj/1YZKBWgH4vxOZTeFFw/+XK/ZqhVMCMQaSJgKJe5dkbAl1X7dU+Rp6J9IOKxHcz+rBLzBMmqHuOawxjeMQt12/8K3w5GjYyt/40L3kGgzUcVVXwgttjbJJNMxWi1RXS3Wr1p95MqOFla8y5JTOT46yRVtoA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729954551; c=relaxed/simple;
-	bh=KfL7pKpwOhrZ9vAmsvWyx1jEYgsRRAxi55xj8Lku6Vk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OWrgZGExkIs0koVKR09IBjhUV/XfxSL3bnOfnTmT8kyiVkpNzV6g9V0tM3sSBdL6kVwNm8cHadBtRZCeB2ZpPZLaNYvOo07+w5zFvlJC6kch6B/plUPr0cIR868Se+0q4nlopedwRRBCv2CtGqw2DbCzTSSC9nH++4Hbys5zQ5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TYbUJSKv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91160C4CEC6;
-	Sat, 26 Oct 2024 14:55:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729954551;
-	bh=KfL7pKpwOhrZ9vAmsvWyx1jEYgsRRAxi55xj8Lku6Vk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=TYbUJSKvQHeCKv3jY67RackhWNrEz2cKxkYkFnnb/s6AybCI6q1VzQYbkhc28Ftd5
-	 w/SJEIHkscTQ59LVNiV+9fbBna1aDj3r4MVsGFUFRyqOuuUwyJqqH4OXhUVVOWQdWK
-	 19lMRMkBC+oOO+UfEdvmR5YDZDZPR0XeqcbEICEYrJMNLNXHgG/Qmt0Td1SMdof3Z7
-	 JoNunm53m1/dHEi0vJYkOte6kz7BClfAG4XyxgYLCKBdNmYVMBHgt/9jIJBsPAvE/e
-	 UNJlYEhka3vCbSok1kXguucSL7WU69oDoEp4GmYs3ohf98R9qDymbVzf3t+rKP4cfZ
-	 Qsel/l2egLcNg==
-Date: Sat, 26 Oct 2024 15:55:23 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Michael Hennerich <Michael.Hennerich@analog.com>, Liam Girdwood
- <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 00/11] iio: use devm_regulator_get_enable_read_voltage
- round 5
-Message-ID: <20241026155523.57e299a0@jic23-huawei>
-In-Reply-To: <20241023-iio-regulator-refactor-round-5-v1-0-d0bd396b3f50@baylibre.com>
-References: <20241023-iio-regulator-refactor-round-5-v1-0-d0bd396b3f50@baylibre.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1729954640; c=relaxed/simple;
+	bh=CJs0VpoZhONc6COX1imNdpelZZQnQ6WOrBIepRXm34w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZA15cz1eDgTTFaCKY8QiQb8wrQRycfEtQvS0VSW/iMz7R3rnEUFQHJGgob6GBU+eegbK4ACGk3faKDJ5re/zuSyn5atm7/Pbh8Zs3IfDn8Jwt2bORMnbFwgad694hzDBOu+MQ5MxjD8FhgEZZ6gLh9eLXbpz3agXiIccHSxLLGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=Tzw8Gs48; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from cwcc.thunk.org (pool-173-48-123-201.bstnma.fios.verizon.net [173.48.123.201])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 49QEueZW028447
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 26 Oct 2024 10:56:41 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1729954603; bh=aULT5OMJ6smsVuK2cgh/H3JIovBDA9Azz9OyMHRcqaA=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=Tzw8Gs48LAwF45tatmSNWobz6VgBPrihP9EwNG7bIEEGCVvsky/lBI9xua7qdo9Pm
+	 N81QQdX40IHBtixe7waVbfo8zUTXPme/XEdo8UoQxU8+p5DQQbgGLc9jrbFALqdC2I
+	 odx3/RXBgLGum4PQgJZawxMyVtVi2W6YofKFKbrXf5ROvvpEWgvyt+F2v1Op+cY+3V
+	 W0kkcVK39CosbMH+9FxMRHK00q4mNKfcdI4D3yuiQqUhbun0cZrbt6C6XoJunc1ejX
+	 mgDcjv7kG6j2lqCzjzzMb9QMtntP+jMaGoci5t4WeQ1q6M6frglWCE1gnNPz4pQW/c
+	 FIXSWhYTo1nwA==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+	id 3C68815C032A; Sat, 26 Oct 2024 10:56:40 -0400 (EDT)
+Date: Sat, 26 Oct 2024 10:56:40 -0400
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: Jiaxun Yang <jiaxun.yang@flygoat.com>
+Cc: linux-kernel@vger.kernel.org, conduct@kernel.org, security@kernel.org,
+        cve@kernel.org, linux-doc@vger.kernel.org,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>, shuah@kernel.org,
+        lee@kernel.org, sashal@kernel.org, corbet@lwn.net
+Subject: Re: Concerns over transparency of informal kernel groups
+Message-ID: <20241026145640.GA4029861@mit.edu>
+References: <73b8017b-fce9-4cb1-be48-fc8085f1c276@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <73b8017b-fce9-4cb1-be48-fc8085f1c276@app.fastmail.com>
 
-On Wed, 23 Oct 2024 18:54:04 -0500
-David Lechner <dlechner@baylibre.com> wrote:
-
-> Here comes another round of reducing boilerplate code by simplifying
-> getting reference voltages and dropping more driver remove callbacks.
+On Fri, Oct 25, 2024 at 04:15:42PM +0100, Jiaxun Yang wrote:
 > 
-Nice series. Applied to the togreg branch of iio.git and pushed out as testing.
+> Over recent events, I've taken a closer look at how our community's governance
+> operates, only to find that there's remarkably little public information available
+> about those informal groups. 
 
-Thanks,
+There's quite a bit of information available in the Linux Kernel
+documentation.  For example:
 
-Jonathan
+* https://www.kernel.org/doc/html/latest/process/security-bugs.html
+* https://www.kernel.org/doc/html/latest/process/code-of-conduct.html
+* https://www.kernel.org/code-of-conduct.html
 
-> Signed-off-by: David Lechner <dlechner@baylibre.com>
-> ---
-> David Lechner (11):
->       iio: dac: ad5380: use devm_regulator_get_enable_read_voltage()
->       iio: dac: ad5380: drop driver remove callbacks
->       iio: dac: ad5446: use devm_regulator_get_enable_read_voltage()
->       iio: dac: ad5446: drop driver remove callbacks
->       iio: dac: ad5504: use devm_regulator_get_enable_read_voltage()
->       iio: dac: ad5504: drop driver remove callback
->       iio: dac: ad5624r: use devm_regulator_get_enable_read_voltage()
->       iio: dac: ad5624r: drop driver remove callback
->       iio: dac: ad5761: use devm_regulator_get_enable_read_voltage()
->       iio: dac: ad5761: drop driver remove callback
->       iio: dac: ad5770r: use devm_regulator_get_enable_read_voltage()
-> 
->  drivers/iio/dac/ad5380.c      |  85 +++++++-------------------------
->  drivers/iio/dac/ad5446.c      |  77 +++++++----------------------
->  drivers/iio/dac/ad5504.c      |  59 ++++++-----------------
->  drivers/iio/dac/ad5624r.h     |   1 -
->  drivers/iio/dac/ad5624r_spi.c |  71 +++++----------------------
->  drivers/iio/dac/ad5761.c      | 109 +++++++++---------------------------------
->  drivers/iio/dac/ad5770r.c     |  41 ++--------------
->  7 files changed, 88 insertions(+), 355 deletions(-)
-> ---
-> base-commit: 9090ececac9ff1e22fb7e042f3c886990a8fb090
-> change-id: 20240813-iio-regulator-refactor-round-5-3248993c93b0
-> 
-> Best regards,
+Ultimately, though, governance model that we've used since the
+founding of the Benevolent Dictator model.  For a description of this,
+see:
 
+* https://wiki.p2pfoundation.net/Benevolent_Dictator
+
+The reason why this model works for Open Source projects is that
+ultimately, the license allows the code to be forked, and someone
+could decide to take the Linux Kernel sources, and declare some new
+version, say: "Tedix".  However, if I was delusional enough to do
+this, it's very likely no one would pay attention to me, and consider
+me a random madman (of which there are many on the Internet).  
+
+Ultmately, though, the reason why Linus continues to serve as the
+leader of the Linux is that there is a very large number of people
+that respect his judgement and technical acumen.  And unlike in
+physical space where a dictator could (hypothetically) order tanks to
+fire on college-aged students, ultimately no one can force developers
+or companies to continue use or develop Linux.
+
+Everything else follows from this.  So for example, a maintainer or
+maintainer team can refuse to accept patches from a particular source.
+If someone disagrees with a decision, whether it is not accepting a
+patch, or request a patch that it be reverted, they can appeal to
+Linus.  Linus ask the Maintainer for their reasons, or can decide to
+override the decision by accepting the patch into his tree, or
+reverting a patch.  Ultimately, Linus can decide to relieve a
+maintainer of their duties by simply refusing to accept pull request
+from that maintainer, or by remoing the subsytem entirely from his
+sources.
+
+As another example, the Code of Conduct committee has no inherent
+power to sanction developers, other than to make recommendations to
+people who actually do the work --- namely, Linus Torvalds, other
+maintainers, the people who run the mailing lists, etc.  Like with
+Maintainers, their "power" comes from the respect that individuals on
+that body have with Linus and the other maintainers.
+
+Yet another body which you didn't mention is the Linux Foundation
+Technical Advisory board.  That body is elected, but the TAB has
+always made it clear that the primary power comes from the reputation
+and moral authority of the people who are elected to the TAB.  Sure,
+The TAB chair has an at-large seat on the Linux Foundation board, but
+any influence that the TAB through the TAB chair might have is more
+because of their work and the force of their arguments.
+
+
+More broadly, the model that I like to use is "servant leadership",
+and that's why I tell people who want to pursue taking up leadership
+roles in Linux.  Most of the senior leadership spend a huge amount of
+their personal time, and have often made career choices that have
+prioritized working on Linux and other Open Source projects over
+monetary renumeration.  Speaking for myself, I could have progressed
+farther in terms of position and salary.  I made choices that traded
+the freedom and ability to work on Linux because that was more
+important to me, and there is an awful lot of what I do as a leader is
+to serve those people in the ext4 development community.
+
+This is not true just in Linux; previously, I've served on the
+Security Area Advisory Group for the IETF, the standards body for the
+internet, and as working group chair for the ipsec working group when
+the IPSec protocols were first being standardied.  Sure, I was part of
+the "governance" of the IETF, but one of the things you learn very
+quickly is that as a volunteer leader, your primary power is to stop
+things from happening.  Hopefully, you're only stopping bad things
+from happening, and you can try to encourage and cajole volunteers
+spend time on what's necessary to make forward progress.  And of
+course, you can spend your own personal time smoothing the way to
+enable the members of the community to make forward progress.  And
+that takes us back to "servant leadership".
+
+Cheers,
+
+					- Ted
+
+P.S.  Note that when I say "volunteer', I'm using this in a fairly
+broad/informal fashion.  Yes, some members of the community have
+companies that pay our salaries to work on Linux.  But as the ext4
+maintainer, I don't have magement authority over the ext4 developer.
+I can refuse to take a patch; I can spend time creating testing
+infrastruture to make it easier for ext4 contributors to test their
+work; I can point out ways that some particular design might be good
+for ext4, and good for their company's business objectives, to the
+extent that I know their companies goals or they are willing to share
+those goals with me.  But I can't *force* someone at SuSE or Oracle or
+IBM or Huawei to work on some particular ext4 feature or bug.
+Ultimately, either individuals (who might be hobbists) or companies,
+voluntarily choose to contribute to ext4, or the IPSec standard.  And
+so that's why I call Linux and the IETF have much in common with a
+pure 100% volunteer organization, such as Doctors without Borders.
 
