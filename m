@@ -1,166 +1,94 @@
-Return-Path: <linux-kernel+bounces-383211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33BD09B1882
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 15:52:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF5AC9B1886
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 16:12:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E210E1C212B4
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 13:52:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF18A1C212D5
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 14:12:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C687B67E;
-	Sat, 26 Oct 2024 13:52:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="wo4Yz7Or"
-Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D30518651;
+	Sat, 26 Oct 2024 14:12:04 +0000 (UTC)
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCDD1217F47
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 13:52:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA0F46FB9;
+	Sat, 26 Oct 2024 14:12:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729950733; cv=none; b=nZ0pyjCTHpBLffehTLafgKU5nHGL0DdhsUcTlHRDWQem5m2u1NZj0NixH72WiJLtxhk52Ar71OEsaNMLSWAlK1UzTvLSxARzj+FcyhmnMdTJ3RE34k+yuAdJNQwJzVBCpCG53Je9N5+En5O73BuMJofyf36pEF2iKyzm4eGUfB4=
+	t=1729951923; cv=none; b=DIHHCquTklKDPdYJoFb+QryMnZlduA3gIdEFZJ763Q8KZgr7UeXK4HFhfWx77XLwJW5Sy74vLTuqjMN8DOng25Km4ZUv6YcErGXwjTB+6QWxNenq9wxiyCNMzZ2OoArjgcCB5CrzdnyN6cwZ7hZAWJoUj8dS6cTtm0SnGvAxKkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729950733; c=relaxed/simple;
-	bh=sp5pw2pfpJB1jUStzF9aKS9eRk6a3beLKNZ79tlo8D4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pTE+nRuU4pH8FgIcpsifKVeoDAKJGKlrnaZgvIZwBpLOT1rDYwPISlg1Cf8mtt5zG5D0g/Gx3K6AyJXj1tuRIcPYFeVF4VidJTUq5M4M0l07nXIiUpjQT9lwdF6504omfN/R1485/+kqomcQf2q+RAZNrWT+ft769HF3lV8YWWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=wo4Yz7Or; arc=none smtp.client-ip=115.124.30.111
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1729950722; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=Yn7IMviIZnvK7YYzvaA/aGBlTXmKShv9ycQ4bY+Uv/g=;
-	b=wo4Yz7Or6GVB0mUxk/iRP2n3XL2h8TLUvY5IJ6HDmxr86SxxfOT8ogyxs19X9OAuxmrZsQVp2nvie1PYVjSM71bV+Dz9Hy6LOeC6MqfzeaWBUerk/myEYTdMb7uroBuTWFPPeh1gj8tolULOUQo95neCd3n/J1zEV5msygO7ONU=
-Received: from localhost(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WHvS07n_1729950721 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Sat, 26 Oct 2024 21:52:02 +0800
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-To: akpm@linux-foundation.org,
-	hughd@google.com
-Cc: willy@infradead.org,
-	david@redhat.com,
-	wangkefeng.wang@huawei.com,
-	shy828301@gmail.com,
-	dhowells@redhat.com,
-	baolin.wang@linux.alibaba.com,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] mm: shmem: fallback to page size splice if large folio has poisoned pages
-Date: Sat, 26 Oct 2024 21:51:52 +0800
-Message-Id: <e3737fbd5366c4de4337bf5f2044817e77a5235b.1729915173.git.baolin.wang@linux.alibaba.com>
-X-Mailer: git-send-email 2.39.3
+	s=arc-20240116; t=1729951923; c=relaxed/simple;
+	bh=w0knoQaLFeZWXWkpbcSJP9KmKIV4ylWnIVSatU++e38=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=tXDkeRF9dZXtmuh0hbUZRoeoebBhRSrvfgIxz3q6XOJKtSRsGoeZKSUBuweYSHnLv3dtFYTop1wMdUskkQT6vPDYYQ+c2sl475imJ13Bzlzi0CLSJ0F0D0p2sUlP0+ziH3nBusaHPo2TVuzdw7aro5G2R1kgW0us345+1lKy2AA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.98)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1t4hDa-000000003qV-0Ibp;
+	Sat, 26 Oct 2024 13:52:38 +0000
+Date: Sat, 26 Oct 2024 14:52:25 +0100
+From: Daniel Golle <daniel@makrotopia.org>
+To: linux-mediatek@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, Sujuan Chen <sujuan.chen@mediatek.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Paolo Abeni <pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Mark Lee <Mark-MC.Lee@mediatek.com>,
+	Sean Wang <sean.wang@mediatek.com>, Felix Fietkau <nbd@nbd.name>,
+	John Crispin <john@phrozen.org>
+Subject: [PATCH net] net: ethernet: mtk_wed: fix path of MT7988 WO firmware
+Message-ID: <Zxz0GWTR5X5LdWPe@pidgin.makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-The tmpfs has already supported the PMD-sized large folios, and splice()
-can not read any pages if the large folio has a poisoned page, which is
-not good as Matthew pointed out in a previous email[1]:
-"
-so if we have hwpoison set on one page in a folio, we now can't read
-bytes from any page in the folio?  That seems like we've made a bad
-situation worse.
-"
+linux-firmware commit 808cba84 ("mtk_wed: add firmware for mt7988
+Wireless Ethernet Dispatcher") added mt7988_wo_{0,1}.bin in the
+'mediatek/mt7988' directory while driver current expects the files in
+the 'mediatek' directory.
 
-Thus adding a fallback to the PAGE_SIZE splice() still allows reading
-normal pages if the large folio has hwpoisoned pages.
+Change path in the driver header now that the firmware has been added.
 
-[1] https://lore.kernel.org/all/Zw_d0EVAJkpNJEbA@casper.infradead.org/
-Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+Fixes: e2f64db13aa1 ("net: ethernet: mtk_wed: introduce WED support for MT7988")
+Signed-off-by: Daniel Golle <daniel@makrotopia.org>
 ---
-Changes from v1:
- - Use 'pages' instead of 'subpages' in the commit message, per Matthew.
- - Include the relevant information from previous discussion,
- per Andrew.
----
- mm/shmem.c | 39 +++++++++++++++++++++++++++++++--------
- 1 file changed, 31 insertions(+), 8 deletions(-)
+ drivers/net/ethernet/mediatek/mtk_wed_wo.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 1bef6e32a1fa..44282a296c33 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -3291,11 +3291,16 @@ static ssize_t shmem_file_splice_read(struct file *in, loff_t *ppos,
- 	len = min_t(size_t, len, npages * PAGE_SIZE);
+diff --git a/drivers/net/ethernet/mediatek/mtk_wed_wo.h b/drivers/net/ethernet/mediatek/mtk_wed_wo.h
+index 87a67fa3868d..c01b1e8428f6 100644
+--- a/drivers/net/ethernet/mediatek/mtk_wed_wo.h
++++ b/drivers/net/ethernet/mediatek/mtk_wed_wo.h
+@@ -91,8 +91,8 @@ enum mtk_wed_dummy_cr_idx {
+ #define MT7981_FIRMWARE_WO	"mediatek/mt7981_wo.bin"
+ #define MT7986_FIRMWARE_WO0	"mediatek/mt7986_wo_0.bin"
+ #define MT7986_FIRMWARE_WO1	"mediatek/mt7986_wo_1.bin"
+-#define MT7988_FIRMWARE_WO0	"mediatek/mt7988_wo_0.bin"
+-#define MT7988_FIRMWARE_WO1	"mediatek/mt7988_wo_1.bin"
++#define MT7988_FIRMWARE_WO0	"mediatek/mt7988/mt7988_wo_0.bin"
++#define MT7988_FIRMWARE_WO1	"mediatek/mt7988/mt7988_wo_1.bin"
  
- 	do {
-+		bool fallback_page_splice = false;
-+		struct page *page = NULL;
-+		pgoff_t index;
-+		size_t size;
-+
- 		if (*ppos >= i_size_read(inode))
- 			break;
- 
--		error = shmem_get_folio(inode, *ppos / PAGE_SIZE, 0, &folio,
--					SGP_READ);
-+		index = *ppos >> PAGE_SHIFT;
-+		error = shmem_get_folio(inode, index, 0, &folio, SGP_READ);
- 		if (error) {
- 			if (error == -EINVAL)
- 				error = 0;
-@@ -3304,12 +3309,15 @@ static ssize_t shmem_file_splice_read(struct file *in, loff_t *ppos,
- 		if (folio) {
- 			folio_unlock(folio);
- 
--			if (folio_test_hwpoison(folio) ||
--			    (folio_test_large(folio) &&
--			     folio_test_has_hwpoisoned(folio))) {
-+			page = folio_file_page(folio, index);
-+			if (PageHWPoison(page)) {
- 				error = -EIO;
- 				break;
- 			}
-+
-+			if (folio_test_large(folio) &&
-+			    folio_test_has_hwpoisoned(folio))
-+				fallback_page_splice = true;
- 		}
- 
- 		/*
-@@ -3323,7 +3331,18 @@ static ssize_t shmem_file_splice_read(struct file *in, loff_t *ppos,
- 		isize = i_size_read(inode);
- 		if (unlikely(*ppos >= isize))
- 			break;
--		part = min_t(loff_t, isize - *ppos, len);
-+		/*
-+		 * Fallback to PAGE_SIZE splice if the large folio has hwpoisoned
-+		 * pages.
-+		 */
-+		if (likely(!fallback_page_splice)) {
-+			size = len;
-+		} else {
-+			size_t offset = *ppos & ~PAGE_MASK;
-+
-+			size = min_t(loff_t, PAGE_SIZE - offset, len);
-+		}
-+		part = min_t(loff_t, isize - *ppos, size);
- 
- 		if (folio) {
- 			/*
-@@ -3331,8 +3350,12 @@ static ssize_t shmem_file_splice_read(struct file *in, loff_t *ppos,
- 			 * virtual addresses, take care about potential aliasing
- 			 * before reading the page on the kernel side.
- 			 */
--			if (mapping_writably_mapped(mapping))
--				flush_dcache_folio(folio);
-+			if (mapping_writably_mapped(mapping)) {
-+				if (likely(!fallback_page_splice))
-+					flush_dcache_folio(folio);
-+				else
-+					flush_dcache_page(page);
-+			}
- 			folio_mark_accessed(folio);
- 			/*
- 			 * Ok, we have the page, and it's up-to-date, so we can
+ #define MTK_WO_MCU_CFG_LS_BASE				0
+ #define MTK_WO_MCU_CFG_LS_HW_VER_ADDR			(MTK_WO_MCU_CFG_LS_BASE + 0x000)
 -- 
-2.39.3
+2.47.0
 
 
