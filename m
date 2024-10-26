@@ -1,261 +1,200 @@
-Return-Path: <linux-kernel+bounces-383373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA6829B1AC2
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 22:31:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AD169B1AC6
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 22:33:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40BE9282494
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 20:31:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F367C282478
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 20:33:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D9601C3F27;
-	Sat, 26 Oct 2024 20:31:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42CD51D63E4;
+	Sat, 26 Oct 2024 20:32:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="T0/bn5Pm"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UV7izDDY"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F272920326
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 20:31:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 466C84C83;
+	Sat, 26 Oct 2024 20:32:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729974686; cv=none; b=qZ2fC7PXlsP8k2oW0VVJf5JJNHOBPCWnz8/m81NZx1Xft0cJfyNxLzyVy8KpzdI6B3FJWuin0BOdogdTpWCMQ9rHvbq/DDDQtBoUC2hZ6eNqiuvXbczKPRfjBgbUjqVkd1VC8/F0jwCh+NDV/HRuFx4D5i/HYstO7ixjg8oJDA4=
+	t=1729974775; cv=none; b=tiVwaJTT0vnb+r+g70FVrZ9bc3tIhmxoPy+UVnfwYOZMtbgkvFY6ylJ99Y5vpRBsc/8ZLwOufQhZ+5t0dD/QuL+CeuhZFlltp3YZugksItw1kSSnfPTpECAy7DLXPZkUO+6ePFVi90lqofdeBpzJ0tdg0LlGeP46wdOSMgmMVGk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729974686; c=relaxed/simple;
-	bh=98OCq10kJNhyF0o13HzeYlmiNHvVYUwrezSXHYPluDg=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=Hi7qfhtnhOy/OI3OfE3lrD3a6HjJcfy7NS1qeNiIckUhWss80nK8IMneAwtbCTxdzc3cDxsAiE5gWuGEsu+RNKeYH7bT+1UXscjyQsyluivBM4ZNACqqrMZmC1CNpfs14CnlrlLvXqUIwd9Ipp0C++jkR8Vu8KVkdhV+qYeU5T0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=T0/bn5Pm; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729974684; x=1761510684;
-  h=date:from:to:cc:subject:message-id;
-  bh=98OCq10kJNhyF0o13HzeYlmiNHvVYUwrezSXHYPluDg=;
-  b=T0/bn5PmabfUEV0dGH/nxf2vqh5tZWwZS5Jd2hf+2iMfUg3r++5W6gai
-   KbgqY//ihJQLF+jdZGBvliCq4XAp08ixkg0aoMeTZplZ4oZpSUF8PByYF
-   BWg2f8wPL3rx0P3q9ayCphgBb/M8G06AbaiQ9XYQoJVQLhnpR47Fm93mz
-   pSPVK6dOBObLaexhWs3leabpxxxzl0I1Rk2Acvhv4wEZuuD+mP7H82+EQ
-   NRsTiuFPzumZmhOlfio5AxfncXNl4Rs+D79l8FfFmtYcys2Tdm0BXcaBg
-   rKNa+gr7kKP0o7l2j9lbgwFld6rq2e35ALFDtFr8nebYtirZ8Su7xSX3H
-   g==;
-X-CSE-ConnectionGUID: utaZT/uIQm+PEY4WhWxSAQ==
-X-CSE-MsgGUID: dQ28n7NuRCWzU92DH/zGjg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11237"; a="40994312"
-X-IronPort-AV: E=Sophos;i="6.11,235,1725346800"; 
-   d="scan'208";a="40994312"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Oct 2024 13:31:23 -0700
-X-CSE-ConnectionGUID: JfMyVeqtT+2ruG85X7v89Q==
-X-CSE-MsgGUID: K2/Xhm5BSaKVHzE8fNBPvQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,235,1725346800"; 
-   d="scan'208";a="112081257"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa001.fm.intel.com with ESMTP; 26 Oct 2024 13:31:22 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t4nRP-000a1C-35;
-	Sat, 26 Oct 2024 20:31:19 +0000
-Date: Sun, 27 Oct 2024 04:30:50 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-Subject: [gustavoars:testing/wfamnae-next20241022] BUILD REGRESSION
- 365ba8224e1a899e9f619290b1e5b22c2badade0
-Message-ID: <202410270441.ecRpCkm6-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1729974775; c=relaxed/simple;
+	bh=BVUserAhlxXaLf5vKV75bAlUGlUoUuJDtgf69pVLDu0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=tBTlJzNmFVQGfdrZaG/Qo3JpAoFN5nA5hJ5TlYJFbSflVoG+brrrfF6dAskAAMFdwzc6ip5tqJYVauU8IrXbyoRewlaoasndN4S4domJnYlFhJwT0CGZVCggdkLg6Rq4SOFJU30aeNDoduSeH4J7iEAMjjSMmecr2KP+e2VoCA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UV7izDDY; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-539f6e1f756so3488336e87.0;
+        Sat, 26 Oct 2024 13:32:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729974771; x=1730579571; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=HF90UXs9kTQIF90liDg8fx2fiF+U0Tmt00BxqVTgios=;
+        b=UV7izDDYnqUMqtPb5FujdB/PbJGf/xcd8ckGe5NTCziCzbv+fY2cyz7KzcROZlxrtf
+         kzLhg4m3+Udzq5lTCp0fE7atg1pGet9C1dQTXRXv8Te59M1b8CU2izAKTM0mbTnxCmx3
+         fQtPkwVmg5sIcl82BXY8bILK/pPlNHf/bV8pbookWdZuXpnidNpkmoB3A/0WuFqIpmoy
+         6a8ziQZn0ZKu4dzRhYiV2hvd/RoviJ5q1BL4JpadQLgpxKsKcAPjvQtUdokP4Jzf91y0
+         wdml7g8fJ/v2bi2nBtIV02vcdDq/oJ5QVySaq32CK+1uTRwZ2x7r+XvTn4mLdG7SlY/L
+         BQdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729974771; x=1730579571;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HF90UXs9kTQIF90liDg8fx2fiF+U0Tmt00BxqVTgios=;
+        b=hGt2S+uNbs6iQzS/V5lE5zzqDz603LSvzoH67FhmQRcw6B2CfThdIqXM6v4tL+gqXc
+         DGOrWzfXfH4kfy1OkfyrPHjljkeJDmtFy3p4Gbi8kqqJ9Wp6iJrefLUB/KFXqo3/qc8M
+         9g97TeYI48L8QgGGVT3z1wkTg769qbGnXNZbYCr8592D0n7mzGLhLdALlD8kX3fLUnN4
+         NmY3dKpQk3/ZSNaVsCmsg8t0R8yp4H784/xIfJ9trKUQlKP/tiE6SPL1D/UIRXvCioWs
+         mSINUEJ8DZ5bBewPIGTjawvQlYCc622EoNp7bURw+yq1j/KAN7Xa2y2CA47z19K/GFIY
+         1M9A==
+X-Forwarded-Encrypted: i=1; AJvYcCWYlcXO8u1FaDa2qz65hSAAAiG92OJxEmi3m6DU2f5ZHo+kvYnajH9fn4qBu3GuoyKKpsnzmXHZCo/u4xXm04OQHaA=@vger.kernel.org, AJvYcCWarYtd/LshD3JlHnKd6jYxycof25BUgVtL/E7V0fNvx++vtRR8NvRMxKdB6uZKn4vtC57q5ZjKomGcDqRu@vger.kernel.org, AJvYcCWqECnXD+AahIGZ8mAIxTvKH1vIxuFjQ+cg9hZc4/wUtDkwddUIBQt+ynNzf7f7iyMRUUTUWHD7Xjic@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdZbn8XHKChfQjTjNVPO0RWU9tppZm9whczmRPiFTh2/NPbDwb
+	m1+bO/zKSLKlctno4kMXKeuoCTz3Wet2isHVEwDS0kUm90TQg1XM
+X-Google-Smtp-Source: AGHT+IE3SKNbeVLeGX39XHnr0blgOLm1GkrqEWdR6tFG0Rk+a7gOlPARd7s46wjLc1DdWevwB0ADtw==
+X-Received: by 2002:a05:6512:692:b0:539:ea0f:cc43 with SMTP id 2adb3069b0e04-53b348d31eemr1162557e87.19.1729974771087;
+        Sat, 26 Oct 2024 13:32:51 -0700 (PDT)
+Received: from [192.168.1.105] ([178.136.36.129])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53b2e1c9439sm595872e87.200.2024.10.26.13.32.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 26 Oct 2024 13:32:50 -0700 (PDT)
+From: Markuss Broks <markuss.broks@gmail.com>
+Subject: [PATCH v3 00/10] Add support for Exynos9810 SoC and Samsung Galaxy
+ S9 (SM-G960F)
+Date: Sat, 26 Oct 2024 23:32:31 +0300
+Message-Id: <20241026-exynos9810-v3-0-b89de9441ea8@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAN9RHWcC/22Qy27DIBBFf8ViXSoYHjJe9T+qLAwzdpBqk4JjJ
+ Yr878VJF67UBYsLOkf38mCFcqTCuubBMq2xxDTXoN4aFs79PBKPWDMDAVrWw+l2n1NxrRTcKyJ
+ 0znjhHavAJdMQb0/Z56nmcyxLyvene5X77b+aVXLBCaVGgVagaD/GqY9f7yFNbNescETNHxQq6
+ lzo1aCkJZBHdHtVyvR9rbOWVy/m+0K8vk9x6ZoBtFPWGARUaIJ1pt0XWS+0Ci3IAKqnFhU7fkf
+ X/FaxfErzmFIVXqYrNwBaECopAnZ172nbfgDWkkiJXwEAAA==
+X-Change-ID: 20241024-exynos9810-b3eed995b0b9
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Tomasz Figa <tomasz.figa@gmail.com>, Will Deacon <will@kernel.org>, 
+ Mark Rutland <mark.rutland@arm.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, 
+ Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>, 
+ Markuss Broks <markuss.broks@gmail.com>, 
+ Maksym Holovach <nergzd@nergzd723.xyz>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1729974770; l=4134;
+ i=markuss.broks@gmail.com; s=20241024; h=from:subject:message-id;
+ bh=BVUserAhlxXaLf5vKV75bAlUGlUoUuJDtgf69pVLDu0=;
+ b=v4bk8vzj3ycQNePCRW5lDbWTwIMLhmyNOm0YdSZdQ34sUyDINDF+20rcnknWCRbCrJP/wTPiG
+ H20CfUDFVtXAdep/nMEePOH0AeA9gbplUls27HUffU6b1dlOz/uoIlA
+X-Developer-Key: i=markuss.broks@gmail.com; a=ed25519;
+ pk=p3Bh4oPpeCrTpffJvGch5WsWNikteWHJ+4LBICPbZg0=
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git testing/wfamnae-next20241022
-branch HEAD: 365ba8224e1a899e9f619290b1e5b22c2badade0  jbd2: Avoid dozens of -Wflex-array-member-not-at-end warnings
+Hello,
 
-Error/Warning (recently discovered and may have been fixed):
+This series adds initial SoC support for the Samsung Exynos 9810
+SoC and initial board support for Samsung Galaxy S9 phone (SM-G960F),
+codenamed starlte.
 
-    include/rdma/uverbs_ioctl.h:643:15: error: static assertion failed due to requirement '__builtin_offsetof(struct uverbs_attr_bundle, attrs) == sizeof(struct uverbs_attr_bundle_hdr)': struct member likely outside of struct_group_tagged()
+The Exynos 9810 SoC is also used in S9 Plus (star2lte), Note 9 (crownlte),
+and perhaps more devices. Currently only Galaxy S9 DTS file is added but it
+should be fairly simple to add support for other devices based on this SoC,
+considering they're quite similar.
 
-Error/Warning ids grouped by kconfigs:
+The support added in this series includes:
+- cpus
+- pinctrl and gpio
+- simple-framebuffer
 
-recent_errors
-|-- hexagon-randconfig-002-20241026
-|   `-- include-rdma-uverbs_ioctl.h:error:static-assertion-failed-due-to-requirement-__builtin_offsetof(struct-uverbs_attr_bundle-attrs)-sizeof(struct-uverbs_attr_bundle_hdr):struct-member-likely-outside-of-s
-`-- powerpc-randconfig-003-20241026
-    `-- include-rdma-uverbs_ioctl.h:error:static-assertion-failed-due-to-requirement-__builtin_offsetof(struct-uverbs_attr_bundle-attrs)-sizeof(struct-uverbs_attr_bundle_hdr):struct-member-likely-outside-of-s
+This is enough to boot to a minimal initramfs shell.
 
-elapsed time: 1464m
+The preferred way to boot this device is by using a small shim bl called
+uniLoader [1], which packages the mainline kernel and DT and jumps to
+the kernel. This is done in order to work around some issues caused by
+the stock, and non-replacable Samsung S-Boot bootloader. For example,
+S-Boot leaves the decon trigger control unset, which causes the framebuffer
+to not refresh, so simple-framebuffer wouldn't work without a secondary loader.
+Ideally, there'll be a kernel driver for the display subsystem some day to
+resolve this issue.
 
-configs tested: 160
-configs skipped: 4
+[1] https://github.com/ivoszbg/uniLoader
 
-tested configs:
-alpha                             allnoconfig    gcc-14.1.0
-alpha                            allyesconfig    clang-20
-alpha                               defconfig    gcc-14.1.0
-arc                              allmodconfig    clang-20
-arc                               allnoconfig    gcc-14.1.0
-arc                              allyesconfig    clang-20
-arc                                 defconfig    gcc-14.1.0
-arc                            hsdk_defconfig    clang-20
-arc                   randconfig-001-20241026    gcc-13.2.0
-arc                   randconfig-001-20241026    gcc-14.1.0
-arc                   randconfig-002-20241026    gcc-13.2.0
-arc                   randconfig-002-20241026    gcc-14.1.0
-arm                              allmodconfig    clang-20
-arm                               allnoconfig    gcc-14.1.0
-arm                              allyesconfig    clang-20
-arm                        clps711x_defconfig    clang-20
-arm                                 defconfig    gcc-14.1.0
-arm                      integrator_defconfig    clang-20
-arm                        mvebu_v7_defconfig    clang-20
-arm                         nhk8815_defconfig    clang-20
-arm                   randconfig-001-20241026    gcc-14.1.0
-arm                   randconfig-002-20241026    clang-20
-arm                   randconfig-002-20241026    gcc-14.1.0
-arm                   randconfig-003-20241026    gcc-14.1.0
-arm                   randconfig-004-20241026    gcc-14.1.0
-arm                           sama7_defconfig    clang-20
-arm                           sunxi_defconfig    clang-20
-arm64                            allmodconfig    clang-20
-arm64                             allnoconfig    gcc-14.1.0
-arm64                               defconfig    gcc-14.1.0
-arm64                 randconfig-001-20241026    gcc-14.1.0
-arm64                 randconfig-002-20241026    clang-20
-arm64                 randconfig-002-20241026    gcc-14.1.0
-arm64                 randconfig-003-20241026    clang-20
-arm64                 randconfig-003-20241026    gcc-14.1.0
-arm64                 randconfig-004-20241026    gcc-14.1.0
-csky                              allnoconfig    gcc-14.1.0
-csky                                defconfig    gcc-14.1.0
-csky                  randconfig-001-20241026    gcc-14.1.0
-csky                  randconfig-002-20241026    gcc-14.1.0
-hexagon                          allmodconfig    clang-20
-hexagon                           allnoconfig    gcc-14.1.0
-hexagon                          allyesconfig    clang-20
-hexagon                             defconfig    gcc-14.1.0
-hexagon               randconfig-001-20241026    clang-20
-hexagon               randconfig-001-20241026    gcc-14.1.0
-hexagon               randconfig-002-20241026    clang-17
-hexagon               randconfig-002-20241026    gcc-14.1.0
-i386                             allmodconfig    clang-19
-i386                             allmodconfig    gcc-12
-i386                              allnoconfig    clang-19
-i386                              allnoconfig    gcc-12
-i386                             allyesconfig    clang-19
-i386                             allyesconfig    gcc-12
-i386        buildonly-randconfig-001-20241026    gcc-12
-i386        buildonly-randconfig-002-20241026    gcc-12
-i386        buildonly-randconfig-003-20241026    gcc-12
-i386        buildonly-randconfig-004-20241026    gcc-12
-i386        buildonly-randconfig-005-20241026    gcc-12
-i386        buildonly-randconfig-006-20241026    gcc-12
-i386                                defconfig    clang-19
-i386                  randconfig-001-20241026    gcc-12
-i386                  randconfig-002-20241026    gcc-12
-i386                  randconfig-003-20241026    gcc-12
-i386                  randconfig-004-20241026    gcc-12
-i386                  randconfig-005-20241026    gcc-12
-i386                  randconfig-006-20241026    gcc-12
-i386                  randconfig-011-20241026    gcc-12
-i386                  randconfig-012-20241026    gcc-12
-i386                  randconfig-013-20241026    gcc-12
-i386                  randconfig-014-20241026    gcc-12
-i386                  randconfig-015-20241026    gcc-12
-i386                  randconfig-016-20241026    gcc-12
-loongarch                        alldefconfig    clang-20
-loongarch                        allmodconfig    gcc-14.1.0
-loongarch                         allnoconfig    gcc-14.1.0
-loongarch                           defconfig    gcc-14.1.0
-loongarch             randconfig-001-20241026    gcc-14.1.0
-loongarch             randconfig-002-20241026    gcc-14.1.0
-m68k                             allmodconfig    gcc-14.1.0
-m68k                              allnoconfig    gcc-14.1.0
-m68k                             allyesconfig    gcc-14.1.0
-m68k                                defconfig    gcc-14.1.0
-microblaze                       allmodconfig    gcc-14.1.0
-microblaze                        allnoconfig    gcc-14.1.0
-microblaze                       allyesconfig    gcc-14.1.0
-microblaze                          defconfig    gcc-14.1.0
-mips                              allnoconfig    gcc-14.1.0
-nios2                             allnoconfig    gcc-14.1.0
-nios2                               defconfig    gcc-14.1.0
-nios2                 randconfig-001-20241026    gcc-14.1.0
-nios2                 randconfig-002-20241026    gcc-14.1.0
-openrisc                          allnoconfig    clang-20
-openrisc                          allnoconfig    gcc-14.1.0
-openrisc                            defconfig    gcc-12
-openrisc                       virt_defconfig    clang-20
-parisc                            allnoconfig    clang-20
-parisc                            allnoconfig    gcc-14.1.0
-parisc                              defconfig    gcc-12
-parisc                randconfig-001-20241026    gcc-14.1.0
-parisc                randconfig-002-20241026    gcc-14.1.0
-parisc64                            defconfig    gcc-14.1.0
-powerpc                           allnoconfig    clang-20
-powerpc                           allnoconfig    gcc-14.1.0
-powerpc                      arches_defconfig    clang-20
-powerpc                      ep88xc_defconfig    clang-20
-powerpc                       maple_defconfig    clang-20
-powerpc                      pasemi_defconfig    clang-20
-powerpc               randconfig-001-20241026    gcc-14.1.0
-powerpc               randconfig-002-20241026    gcc-14.1.0
-powerpc               randconfig-003-20241026    clang-20
-powerpc               randconfig-003-20241026    gcc-14.1.0
-powerpc64             randconfig-001-20241026    clang-20
-powerpc64             randconfig-001-20241026    gcc-14.1.0
-powerpc64             randconfig-002-20241026    clang-20
-powerpc64             randconfig-002-20241026    gcc-14.1.0
-powerpc64             randconfig-003-20241026    gcc-14.1.0
-riscv                             allnoconfig    clang-20
-riscv                             allnoconfig    gcc-14.1.0
-riscv                               defconfig    gcc-12
-riscv                 randconfig-001-20241026    gcc-14.1.0
-riscv                 randconfig-002-20241026    gcc-14.1.0
-s390                             allmodconfig    gcc-14.1.0
-s390                              allnoconfig    clang-20
-s390                             allyesconfig    gcc-14.1.0
-s390                                defconfig    gcc-12
-s390                  randconfig-001-20241026    gcc-14.1.0
-s390                  randconfig-002-20241026    gcc-14.1.0
-sh                               allmodconfig    gcc-14.1.0
-sh                                allnoconfig    gcc-14.1.0
-sh                               allyesconfig    gcc-14.1.0
-sh                                  defconfig    gcc-12
-sh                          r7780mp_defconfig    clang-20
-sh                    randconfig-001-20241026    gcc-14.1.0
-sh                    randconfig-002-20241026    gcc-14.1.0
-sh                           se7722_defconfig    clang-20
-sparc                            allmodconfig    gcc-14.1.0
-sparc                       sparc64_defconfig    clang-20
-sparc64                             defconfig    gcc-12
-sparc64               randconfig-001-20241026    gcc-14.1.0
-sparc64               randconfig-002-20241026    gcc-14.1.0
-um                               allmodconfig    clang-20
-um                                allnoconfig    clang-17
-um                                allnoconfig    clang-20
-um                               allyesconfig    clang-20
-um                                  defconfig    gcc-12
-um                             i386_defconfig    gcc-12
-um                    randconfig-001-20241026    gcc-14.1.0
-um                    randconfig-002-20241026    gcc-14.1.0
-um                           x86_64_defconfig    gcc-12
-x86_64                            allnoconfig    clang-19
-x86_64                           allyesconfig    clang-19
-x86_64                              defconfig    clang-19
-x86_64                              defconfig    gcc-11
-x86_64                                  kexec    clang-19
-x86_64                                  kexec    gcc-12
-x86_64                               rhel-8.3    gcc-12
-xtensa                            allnoconfig    gcc-14.1.0
-xtensa                randconfig-001-20241026    gcc-14.1.0
-xtensa                randconfig-002-20241026    gcc-14.1.0
+Signed-off-by: Markuss Broks <markuss.broks@gmail.com>
+---
+Changes in v3:
+- fix a blank line between tags (krzk)
+- align with the opening " in eint-controller (krzk)
+- sort the memory node (ivo)
+- drop the \n (ivo)
+- drop the perf patches into separate series (krzk)
+- elaborate a bit more on dt-bindings (krzk)
+- Link to v2: https://lore.kernel.org/r/20241025-exynos9810-v2-0-99ca3f316e21@gmail.com
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Changes in v2:
+- sort the pinctrl nodes alphabetically (ivo)
+- move the interrupts from pinctrl file to SoC dtsi (krzk)
+- move the wakeup-eint from pinctrl file to SoC dtsi (krzk)
+- sort gpio-keys pinctrl-0 and pinctrl-names (ivo)
+- rename the bixby key node to "wink" (ivo)
+- sort gpio-keys subnodes (ivo)
+- sort pinctrl_alive gpio-keys pin descriptions (ivo)
+- fix the Co-developed-by tags and add a signoff (krzk)
+
+- Link to v1: https://lore.kernel.org/r/20241024-exynos9810-v1-0-ed14d0d60d08@gmail.com
+
+---
+Markuss Broks (10):
+      dt-bindings: arm: cpus: Add Samsung Mongoose M3
+      dt-bindings: hwinfo: samsung,exynos-chipid: Add Samsung exynos9810 compatible
+      dt-bindings: pinctrl: samsung: Add compatible for Exynos9810 SoC
+      dt-bindings: pinctrl: samsung: Add compatible for exynos9810-wakeup-eint
+      dt-bindings: soc: samsung: exynos-pmu: Add exynos9810 compatible
+      dt-bindings: arm: samsung: Document Exynos9810 and starlte board binding
+      soc: samsung: exynos-chipid: Add support for Exynos9810 SoC
+      pinctrl: samsung: Add Exynos9810 SoC specific data
+      arm64: dts: exynos: Add Exynos9810 SoC support
+      arm64: dts: exynos: Add initial support for Samsung Galaxy S9 (SM-G960F)
+
+ Documentation/devicetree/bindings/arm/cpus.yaml    |   1 +
+ .../bindings/arm/samsung/samsung-boards.yaml       |   6 +
+ .../bindings/hwinfo/samsung,exynos-chipid.yaml     |   1 +
+ .../pinctrl/samsung,pinctrl-wakeup-interrupt.yaml  |   1 +
+ .../bindings/pinctrl/samsung,pinctrl.yaml          |   1 +
+ .../bindings/soc/samsung/exynos-pmu.yaml           |   1 +
+ arch/arm64/boot/dts/exynos/Makefile                |   1 +
+ arch/arm64/boot/dts/exynos/exynos9810-pinctrl.dtsi | 503 +++++++++++++++++++++
+ arch/arm64/boot/dts/exynos/exynos9810-starlte.dts  | 119 +++++
+ arch/arm64/boot/dts/exynos/exynos9810.dtsi         | 273 +++++++++++
+ drivers/pinctrl/samsung/pinctrl-exynos-arm64.c     | 154 +++++++
+ drivers/pinctrl/samsung/pinctrl-samsung.c          |   2 +
+ drivers/pinctrl/samsung/pinctrl-samsung.h          |   1 +
+ drivers/soc/samsung/exynos-chipid.c                |   1 +
+ 14 files changed, 1065 insertions(+)
+---
+base-commit: f2493655d2d3d5c6958ed996b043c821c23ae8d3
+change-id: 20241024-exynos9810-b3eed995b0b9
+prerequisite-change-id: 20241026-mongoose-pmu-52240ed310cd:v1
+prerequisite-patch-id: 41ddde9c262005eda3624e381b4a0892836187de
+prerequisite-patch-id: d1b80350c60949f7f2671895518ad4b1ceb51e4a
+
+Best regards,
+-- 
+Markuss Broks <markuss.broks@gmail.com>
+
 
