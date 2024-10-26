@@ -1,220 +1,202 @@
-Return-Path: <linux-kernel+bounces-383204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C5499B1876
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 15:18:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 822AB9B1873
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 15:18:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BB4B1C21552
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 13:18:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42D992839C3
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 13:18:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BA6A1D79BB;
-	Sat, 26 Oct 2024 13:18:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E1071D6DA4;
+	Sat, 26 Oct 2024 13:18:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="VO/Vx1aB";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="jKlnaP1F"
-Received: from fout-b2-smtp.messagingengine.com (fout-b2-smtp.messagingengine.com [202.12.124.145])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hQ4Ju955"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A7571D799D;
-	Sat, 26 Oct 2024 13:18:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFD0A1E50B;
+	Sat, 26 Oct 2024 13:18:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729948695; cv=none; b=f6SdgdDZto1RAYWHhCY+f8JEiWX3/6ef19xc66MkrDYeB1C20SFiTsuABVFHagdpVRQDxB9cOHw4mo3F/0U+ShT3rsReyiZVDZHibO7MeLvsx8E9KxvPBim4pAR9aCQUgjHWKLibd0p/eROMMwxZjF5hakKH+vLNARhudd7UeMk=
+	t=1729948690; cv=none; b=mvMJJUMME5+L7wTKhDdJfWLFavOwIkRGlu+ddmgna/uafdI7c7xWWWfiDqw+xMBZxnOdngi9GEf2Y8T8FaM+o5BN3vHB6OBnqByRhxb0moLorn0cRzcCecL1u5kLIRpNsOJmPsNgvlnB8uTPn5himP8Slm66wUggGeSqNDcnAfY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729948695; c=relaxed/simple;
-	bh=HJRwHJXbUEBjIDmmNwTu1z2WrrERb9aEwOG4fNinBg4=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=o6BTIIMmfV/n83L9OnMysMI8kI7orTIrK+ShvmU1m602p/KH/tGOSIEV9/TpMLi3pb7I76E7HMS8IMv17BVEKSs86wHsKChkjORfV7F9PCfO/1UoIb1anyI4Decls2qDSAJ927xjeoozAitgMjHoaZb9C9G+0s8YeJp8UAjTIjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=VO/Vx1aB; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=jKlnaP1F; arc=none smtp.client-ip=202.12.124.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
-Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
-	by mailfout.stl.internal (Postfix) with ESMTP id D078511400C4;
-	Sat, 26 Oct 2024 09:18:11 -0400 (EDT)
-Received: from phl-imap-12 ([10.202.2.86])
-  by phl-compute-09.internal (MEProxy); Sat, 26 Oct 2024 09:18:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1729948691;
-	 x=1730035091; bh=HJRwHJXbUEBjIDmmNwTu1z2WrrERb9aEwOG4fNinBg4=; b=
-	VO/Vx1aBfiT/v8bZD/g2X7xzvXLfv709PN/3DxozuX/d3oF6kz4iUFnlx3uRxTW5
-	WkoHiM5ZA9mlNRkGfFEQL+i7oSWBILpbmghYquwa8ZMaButIXSwWBJl2BZl0eOPw
-	vo2ndMEtgfIRkdUYvxBFPoSNga8ZQ8y++8NpO0ySpW5OwG7yK8i984fd2QMBYvE6
-	D0Rr2glty3He9xXihwqzVN2FKSABfsvDVmtnA4x3pnoNn3/amCuyToYFcbDQBS3c
-	2mv6uPcyGDmkEfkpFO7SiYU+UgVCypSPc26osEMMF6QRZ7I6OMEzc9M292EAXRMN
-	Or9xM8UKiJ146hR29Za8Zg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1729948691; x=
-	1730035091; bh=HJRwHJXbUEBjIDmmNwTu1z2WrrERb9aEwOG4fNinBg4=; b=j
-	KlnaP1FcCS3bxQUdFEsyV89OWm/CiUffBJ2Pj3Fx4JIzb8TH6JUlYxLEA9K1P5dH
-	K80oOMd1fwEl+u6rlpGXI0Ira2qUDMeTRCpgQ4Ha83Euco/tRadVCsXflbYkqqAq
-	DUQc5XOQ0n9T14Jj6raDXUmDeP0rBU8uQPWOeipMHmGvmVRBr6F4Ncn3uhd9UqSt
-	1aIVhMhf4Qo8y9ZpdUCCkazBsYtz8hwoRjixx+hVjjKIAHydelj2xpdqp6F2jI6W
-	+kAARXrlPjgovm3W9/cLo02AQo6JOrn8Jotqndk1EkMGPIy7rkq4za4TFPd9NPyk
-	KoT4VWxj0aVyYrUDH7dxg==
-X-ME-Sender: <xms:E-wcZ2ZtU8NeXVTVMYcDqHSuTwF6j8TsMu2fOscW4jPILv6kOFcKtQ>
-    <xme:E-wcZ5ZUzbS-nSYRGg0ejRz8wq37OBFtQ0sfAjwZLK0ycML3pKrucwPvXbdAKrdmd
-    Gh1Mo8k7uouDnZpYEM>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdejgedgieefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdej
-    necuhfhrohhmpedflfhirgiguhhnucgjrghnghdfuceojhhirgiguhhnrdihrghnghesfh
-    hlhihgohgrthdrtghomheqnecuggftrfgrthhtvghrnhepjeehfeduvddtgffgvdffkeet
-    hefhlefgvdevvdekuefffeekheehgeevhfevteejnecuvehluhhsthgvrhfuihiivgeptd
-    enucfrrghrrghmpehmrghilhhfrhhomhepjhhirgiguhhnrdihrghnghesfhhlhihgohgr
-    thdrtghomhdpnhgspghrtghpthhtohepudefpdhmohguvgepshhmthhpohhuthdprhgtph
-    htthhopegtohhnughutghtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegtvhgvsehk
-    vghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiikheskhgvrhhnvghlrdhorhhgpdhrtg
-    hpthhtoheplhgvvgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshgrshhhrghlsehk
-    vghrnhgvlhdrohhrghdprhgtphhtthhopehsvggtuhhrihhthieskhgvrhhnvghlrdhorh
-    hgpdhrtghpthhtohepshhhuhgrhheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthho
-    rhhvrghlughssehlihhnuhigqdhfohhunhgurghtihhonhdrohhrghdprhgtphhtthhope
-    hgrhgvghhkhheslhhinhhugihfohhunhgurghtihhonhdrohhrgh
-X-ME-Proxy: <xmx:E-wcZw8gFHuaJOudIcacyX5UBuB4WxQsfuRbYEPI0VHBvHRsXzq6_g>
-    <xmx:E-wcZ4qMFlHqGj5FJ2s4hfCS1jXCR9vdNF7ts0XwvcjnrYTeZ1CkNg>
-    <xmx:E-wcZxqXWUD6SWQQW_adqVMk6WBiUhlu4njT8Hio4ag59Lj2oZjS4w>
-    <xmx:E-wcZ2ROxTzSAnGao5pQgTqzDlkZIweJMYbWxL3CJjTTptugmwsKJw>
-    <xmx:E-wcZ_iEuNjRkA_AfJ4-WrMUnn3orcrcekqsc10tWrFf-z605xRxro0S>
-Feedback-ID: ifd894703:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 46CC81C20066; Sat, 26 Oct 2024 09:18:11 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1729948690; c=relaxed/simple;
+	bh=WjWsN0BbqZ+ckDcOfpUetYKweI82x5iGSxAhBNqAuDg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K3eQOvX3FKaIXqKrn7BAZOiDoGj2k/97SIATH5qQhrUZ9aiX/uoA3HQTJ9FSBrDVGzLnjvoh8hbj5RZh8HEwBsUhOsK8ac4RsYDkKSRylTufp2QgHbWcSrmwCVovryeLGzG4iA9YkkKpiJIbCriuZcmS6f2woMJz1TOivNn8YqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hQ4Ju955; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729948688; x=1761484688;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=WjWsN0BbqZ+ckDcOfpUetYKweI82x5iGSxAhBNqAuDg=;
+  b=hQ4Ju955V7LvNuc206+n31BmpmAZfR+51aqMm1BHK0x6suDBzPd7TDUw
+   3EJhfJ8sth7RybOPsI25hCoSbtEzu7J4jeSyN1xxBsxSCORuqd/fJLjp7
+   X3PYGuLg5iFZWthuLt4lLv18Dh9vjjjLad/6fWBkTmfxES+OKnIyngZRo
+   bYRbtVlhXvun43478BLH85lzMJL4ntBVCY5dngZ+IrIsk3mz/S/QZiWrZ
+   Q5RUwZQZMLWNGb1Jg7a3O6OYNdWh0bOTQEBbXTAW2kIdwwbV4jTNWHozN
+   IY9tTr3ipl8Livm9CTenHvMgUj1VSLbmJ18+QcGeTg0uA+EAgp2a0geD2
+   Q==;
+X-CSE-ConnectionGUID: EFYFuyXTTb6nqnc/hMYATg==
+X-CSE-MsgGUID: RUAGTXXiRo6pY9JkMEn5iA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="40150235"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="40150235"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Oct 2024 06:18:08 -0700
+X-CSE-ConnectionGUID: /OYILA24ToSvrqTwVHf5Wg==
+X-CSE-MsgGUID: hYG2gfQvT+Sl12TvfHhyzA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,235,1725346800"; 
+   d="scan'208";a="80813600"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa007.fm.intel.com with ESMTP; 26 Oct 2024 06:18:04 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t4gg5-000Zge-2G;
+	Sat, 26 Oct 2024 13:18:01 +0000
+Date: Sat, 26 Oct 2024 21:17:11 +0800
+From: kernel test robot <lkp@intel.com>
+To: Dzmitry Sankouski <dsankouski@gmail.com>,
+	Sebastian Reichel <sre@kernel.org>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>,
+	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Pavel Machek <pavel@ucw.cz>
+Cc: oe-kbuild-all@lists.linux.dev, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-input@vger.kernel.org, linux-leds@vger.kernel.org,
+	Dzmitry Sankouski <dsankouski@gmail.com>
+Subject: Re: [PATCH v7 3/7] mfd: Add new driver for MAX77705 PMIC
+Message-ID: <202410262035.of6zMB8v-lkp@intel.com>
+References: <20241023-starqltechn_integration_upstream-v7-3-9bfaa3f4a1a0@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Sat, 26 Oct 2024 14:16:47 +0100
-From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
-To: "Krzysztof Kozlowski" <krzk@kernel.org>, linux-kernel@vger.kernel.org,
- conduct@kernel.org, security@kernel.org, cve@kernel.org,
- linux-doc@vger.kernel.org, "stable@vger.kernel.org" <stable@vger.kernel.org>
-Cc: "Linus Torvalds" <torvalds@linux-foundation.org>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, shuah@kernel.org,
- lee@kernel.org, sashal@kernel.org, "Jonathan Corbet" <corbet@lwn.net>
-Message-Id: <9b9c034b-19b1-4f02-b7fc-3152526c82c4@app.fastmail.com>
-In-Reply-To: <fae122f1-5a8e-4f92-b468-aba3fcb8ac90@kernel.org>
-References: <73b8017b-fce9-4cb1-be48-fc8085f1c276@app.fastmail.com>
- <fae122f1-5a8e-4f92-b468-aba3fcb8ac90@kernel.org>
-Subject: Re: Concerns over transparency of informal kernel groups
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241023-starqltechn_integration_upstream-v7-3-9bfaa3f4a1a0@gmail.com>
+
+Hi Dzmitry,
+
+kernel test robot noticed the following build warnings:
+
+[auto build test WARNING on 63b3ff03d91ae8f875fe8747c781a521f78cde17]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Dzmitry-Sankouski/power-supply-add-undervoltage-health-status-property/20241024-034645
+base:   63b3ff03d91ae8f875fe8747c781a521f78cde17
+patch link:    https://lore.kernel.org/r/20241023-starqltechn_integration_upstream-v7-3-9bfaa3f4a1a0%40gmail.com
+patch subject: [PATCH v7 3/7] mfd: Add new driver for MAX77705 PMIC
+config: i386-allyesconfig (https://download.01.org/0day-ci/archive/20241026/202410262035.of6zMB8v-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241026/202410262035.of6zMB8v-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410262035.of6zMB8v-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   drivers/mfd/max77705.c: In function 'max77705_i2c_probe':
+>> drivers/mfd/max77705.c:107:12: warning: variable 'pmic_ver' set but not used [-Wunused-but-set-variable]
+     107 |         u8 pmic_ver, pmic_rev;
+         |            ^~~~~~~~
 
 
+vim +/pmic_ver +107 drivers/mfd/max77705.c
 
-=E5=9C=A82024=E5=B9=B410=E6=9C=8826=E6=97=A5=E5=8D=81=E6=9C=88 =E4=B8=8B=
-=E5=8D=8812:05=EF=BC=8CKrzysztof Kozlowski=E5=86=99=E9=81=93=EF=BC=9A
->
-> Oh, spread more FUD under the cloak of helping the community. Reminds =
-me
-> something, wait, how was it? zx?
+    99	
+   100	static int max77705_i2c_probe(struct i2c_client *i2c)
+   101	{
+   102		struct max77693_dev *max77705;
+   103		struct regmap_irq_chip_data *irq_data;
+   104		struct irq_domain *domain;
+   105		int ret;
+   106		unsigned int pmic_rev_value;
+ > 107		u8 pmic_ver, pmic_rev;
+   108	
+   109	
+   110		max77705 = devm_kzalloc(&i2c->dev, sizeof(*max77705), GFP_KERNEL);
+   111		if (!max77705)
+   112			return -ENOMEM;
+   113	
+   114		max77705->i2c = i2c;
+   115		max77705->dev = &i2c->dev;
+   116		max77705->irq = i2c->irq;
+   117		max77705->type = TYPE_MAX77705;
+   118		i2c_set_clientdata(i2c, max77705);
+   119	
+   120		max77705->regmap = devm_regmap_init_i2c(i2c, &max77705_regmap_config);
+   121	
+   122		if (IS_ERR(max77705->regmap))
+   123			return PTR_ERR(max77705->regmap);
+   124	
+   125		if (regmap_read(max77705->regmap, MAX77705_PMIC_REG_PMICREV, &pmic_rev_value) < 0)
+   126			return -ENODEV;
+   127	
+   128		pmic_rev = pmic_rev_value & MAX77705_REVISION_MASK;
+   129		pmic_ver = (pmic_rev_value & MAX77705_VERSION_MASK) >> MAX77705_VERSION_SHIFT;
+   130	
+   131		if (pmic_rev != MAX77705_PASS3) {
+   132			dev_err(max77705->dev, "rev.0x%x is not tested",
+   133				pmic_rev);
+   134			return -ENODEV;
+   135		}
+   136	
+   137		max77705->regmap_leds = devm_regmap_init_i2c(i2c, &max77705_leds_regmap_config);
+   138	
+   139		if (IS_ERR(max77705->regmap_leds))
+   140			return PTR_ERR(max77705->regmap_leds);
+   141	
+   142		ret = devm_regmap_add_irq_chip(max77705->dev, max77705->regmap,
+   143						max77705->irq,
+   144						IRQF_ONESHOT | IRQF_SHARED, 0,
+   145						&max77705_topsys_irq_chip,
+   146						&irq_data);
+   147	
+   148		if (ret)
+   149			dev_err(max77705->dev, "failed to add irq chip: %d\n", ret);
+   150	
+   151		/* Unmask interrupts from all blocks in interrupt source register */
+   152		ret = regmap_update_bits(max77705->regmap,
+   153					 MAX77705_PMIC_REG_INTSRC_MASK,
+   154					 MAX77705_SRC_IRQ_ALL, (unsigned int)~MAX77705_SRC_IRQ_ALL);
+   155	
+   156		if (ret < 0) {
+   157			dev_err(max77705->dev,
+   158				"Could not unmask interrupts in INTSRC: %d\n", ret);
+   159			return ret;
+   160		}
+   161	
+   162		domain = regmap_irq_get_domain(irq_data);
+   163	
+   164		ret = devm_mfd_add_devices(max77705->dev, PLATFORM_DEVID_NONE,
+   165					   max77705_devs, ARRAY_SIZE(max77705_devs),
+   166					   NULL, 0, domain);
+   167	
+   168		if (ret) {
+   169			dev_err(max77705->dev, "Failed to register child devices: %d\n", ret);
+   170			return ret;
+   171		}
+   172	
+   173		device_init_wakeup(max77705->dev, true);
+   174	
+   175		return 0;
+   176	}
+   177	
 
-I drafted this email with good will.
-
-While I appreciate any constructive comments, this kind of unfair accusa=
-tion
-is unacceptable.
-
-I'm not demanding anyone to take action, I'm just trying to be helpful.
-
->
->> about those informal groups. With the exception of the Linux kernel h=
-ardware security
->> team, it seems none of these groups maintain a public list of members=
- that I can
->> easily find.
->>=20
->> Upon digging into the details, I=E2=80=99d like to raise a few concer=
-ns and offer some thoughts
->> for further discussion:
->>=20
->> - Absence of a Membership Register
->> Our community is built on mutual trust. Without knowing who comprises=
- these groups,
->> it's understandably difficult for people to have full confidence in t=
-heir work.
->
-> No, you might have difficulty, not "all people" which you imply. Please
-> stop creating sentences like you are speaking for others. You do not
-> speak for others.
-
-I never said "all" here, and just to quote:
-
-"I am expressing the views of a number of people I talked to but it's no=
-t fair of me
-to name them."
-
-The same applies to this email as well. I actually did a private RFC bef=
-ore sending it.
-Many people are unable to speak up here due to company affiliation and o=
-ther concerns.
-
->
->> A publicly available membership list would not only foster trust but =
-also allow us to
->> address our recognition and appreciation.
->
-> Nope. For some of the groups it is very intentional to hide the
-> membership. It was explained already why and should be pretty obvious.
-
-I might be dumb in this case, do you mind giving me a pointer to the exp=
-lanation?
-I can draft patch to make it clear in documents.
-
->
-[...]
->
->>=20
->> - No Conflict of Interest Policy
->> Particularly in the case of the Code of Conduct Committee, there may =
-arise situations
->> where individuals face challenging decisions involving personal conne=
-ctions. A conflict
->> of interest policy would provide valuable guidance in such circumstan=
-ces.
->
-> Feel free to propose patches instead of claiming there is problem for
-> others. If you identify issue, propose a patch.
-
-Thanks, I will. I'm just aiming to gather some feedback before proposing=
- patches.
-I also welcome patches from those more qualified than myself.
-
->
-> Several other your replies earlier were in similar tone. I am not going
-> to engage in such discussions and probably neither other people, but
-> some think that silence is approval or agreement. Thus this reply. for
-> me this is just FUD.
-
-Again, I must decline to accept this sort of unfair accusation.
-
-It's indeed not the tone I'm usually speaking on the mailing list. It ou=
-ght
-to be more straightforward for technical communications. However, in the=
-se
-particularly challenging times, I'm striving to maintain a humble and re=
-spectful
-tone whilst ensuring my views are clearly spoken. I'd be grateful for co=
-mments
-expressing any dissatisfaction with my approach, but I feel that persona=
-l attack
-ultimately do nothing constructive.
-
-Thanks.
->
-> Best regards,
-> Krzysztof
-
---=20
-- Jiaxun
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
