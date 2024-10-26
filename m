@@ -1,144 +1,130 @@
-Return-Path: <linux-kernel+bounces-383011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A13E9B1626
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 09:58:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB48B9B162C
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 10:02:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D40C1B21547
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 07:57:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3BFE3282A62
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 08:02:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CEA318C91D;
-	Sat, 26 Oct 2024 07:57:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B98E17C22E;
+	Sat, 26 Oct 2024 08:02:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EBlqnCR3"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embedd.com header.i=@embedd.com header.b="JDFKoOkf";
+	dkim=pass (1024-bit key) header.d=embedd.com header.i=@embedd.com header.b="DofKhjsg"
+Received: from mail.as201155.net (mail.as201155.net [185.84.6.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69E5A217F3F;
-	Sat, 26 Oct 2024 07:57:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2EA21384B3
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 08:02:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.84.6.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729929468; cv=none; b=gj1DraVVQeVMhMPom69bzl7hcSFD7bn1/eOMxs3VakuAA0az4mWXbGw2uRmStmmbFG13iPMKnuQMdhbxz1XLQNfMi4f06g+iVDagUTPWK+C1JPPV5Qqz2WnsOZKMhFn7dQAM42B0vVrhdyb1CqeiLTyYi/5TVT3vnEVqtOyoPcU=
+	t=1729929726; cv=none; b=Z6pqFj+5eXTTajun9oVwweaWRLP7Zu/ZomFzqsy5Ekp8CDnjGynYR4FjuNKvUrZuKzIFnD5OQauS2bj/a/lYcpCF/+M5FxkBQYv0fHyrgWFaI1OWTNwe0A9VE86OfmvmNlDn2XJO2a5qaAe9b88wpsCYELyi4MBOFLuc0EtKYzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729929468; c=relaxed/simple;
-	bh=GSCEUNCl3ikG2gDX7hKFJGjkDrLIk3URLx+JFXXTOgU=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=W59QkEamqzBvLRM5MEuq+BbcUzWTB+0Z8hsBWW6XBqjkBaTsGjYiDEojLNEeTaXCCJihIPtkATUbFCQzJ3OHgrY3fQ+AOfn49IkYUUghzz9QeprL8PsOCLm0VvWD97W6WOIbwGUVallaokNPMeS/ybFJ08mvg9Mdq0XJFg6sXVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EBlqnCR3; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a9a3dc089d8so386736866b.3;
-        Sat, 26 Oct 2024 00:57:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729929465; x=1730534265; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=HXSjlWXPFn6q1hQBabLUA9NA5hUvl8xGGqoXnS/6wAk=;
-        b=EBlqnCR38sgNO+BARKlbLq17dcqAGTgS+rlHAvUtDJTyyie9C42tsZQEJ2xCQJFg75
-         bI6uwZEuRY+qDKmlGrx3Nv6GPGq9bHTdROoPc2+QjojueDcfL/N1FfSx+rZJ6pUuWzrp
-         i0CyvCM/Yk68aV07kZJbBSgdo2OCEW44su8nFv3b7so9J79a6QQtkLL7+vUCiAnSwtFo
-         3NKOQSwWNnk54e6YP1uEdVvCyh4zSyO0U1wc+nSGn6AEN1n57wZI63s21UG8bvlbrH5W
-         kN+6/6UOmkLvDiRj0jIGdsW6aqnW3eyDAoVJpY2sNw4EZpLGKpqIlORWYeN3BKi8asXG
-         R4ag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729929465; x=1730534265;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HXSjlWXPFn6q1hQBabLUA9NA5hUvl8xGGqoXnS/6wAk=;
-        b=dMyyBwo5LHh0oEMNA/Z/d9st5R4PlnAHT/LfIENcTlJJk2BTn0kcNS+Ad5I0ZQdm8s
-         wfcSjSAQWd37HgSn17Kn49ZCEMG0hxqmR02Lp1u5b2h7yMdmB6F2hQz7F2dIGToP32t5
-         7tE6n2T+I0ilDEb3DS934G2kLb+X1y9PWyfdEg/wnQJ4AuzQwwgAyyv/Kvupt9pvfF6y
-         e4Hx3Z73hA6isInZ2x9zElW22rrgfT0KE0QRsYGPDlsaCt6uZurbC5jdZ7GZFkeErG67
-         WkAMR+ldfDsMODiS6rrL9vC2/hyRZgO6UH/vfNkhPqsH4Hxvr7FvQsPCEgQIFJXQGpit
-         GhnA==
-X-Forwarded-Encrypted: i=1; AJvYcCVoeqctK4P+pKuC9AtUY0GECjLWwvMeG3D2iSBu1JQWKpiuZRHLU/LkGhyFJPu96NYtliXeF1n5Dc/7IA==@vger.kernel.org, AJvYcCWWTvSuh3SbDM87+aJee+9/hjlRNltHSTBypuG/w6nXYH7JnLwDU/89i86/jr0UOC4ToryO1RwhYvzM6j8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNDOGjCeR+G5lEh23Bi7yQ5Kzw5xLw5AfmMWjKxaW6ahKXqiJ3
-	XyAkgm4AF0XUz78Ecsi9ZT5LCnQUPutiVSDO5kX7awISiKrLmqN7
-X-Google-Smtp-Source: AGHT+IH/uwu4/QrWcNeGLgFNN8LcJKvTz2mWWMHiedJjIGRdyIthwFM+cjb+MyRrAKItu0m4fTZxNw==
-X-Received: by 2002:a17:907:1c85:b0:a99:e5d5:5654 with SMTP id a640c23a62f3a-a9de5d000b9mr118852966b.6.1729929464357;
-        Sat, 26 Oct 2024 00:57:44 -0700 (PDT)
-Received: from [192.168.178.20] (dh207-40-251.xnet.hr. [88.207.40.251])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b3a07f804sm147532266b.188.2024.10.26.00.57.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 26 Oct 2024 00:57:43 -0700 (PDT)
-Message-ID: <08cf23fc-a062-418b-aa90-59bc6077f281@gmail.com>
-Date: Sat, 26 Oct 2024 09:56:49 +0200
+	s=arc-20240116; t=1729929726; c=relaxed/simple;
+	bh=mU9HPii3MeI8FdAIbZqlCoAZM1IA+d3IDE5o3C7ZgKM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nKNaPNN8LZMGvg2zzwGZZg9ApKGpIpStv+xZY0nERaYQjuzhMmLChfdSc8we9hSFoEDZ9HDsxUlVvOPddsIeNHofIiLVhQgldGTqsR5MrcJWI7mqk2yLldP9n0urYxH3qBeh9kgPWoLjTygGkpW/KHMmvfFgVQLVavo4w6F2b7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embedd.com; spf=pass smtp.mailfrom=embedd.com; dkim=pass (2048-bit key) header.d=embedd.com header.i=@embedd.com header.b=JDFKoOkf; dkim=pass (1024-bit key) header.d=embedd.com header.i=@embedd.com header.b=DofKhjsg; arc=none smtp.client-ip=185.84.6.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embedd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embedd.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=embedd.com;
+	s=dkim1; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:
+	To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=WpI7H1Gvt9lgGH2ycMO9T2GTxR9m0Eby2eQfvWe+3oI=; b=JDFKoOkfQ+R52eY0DiLqT6650h
+	oG+YZXkaP1WiZp+bkmxbt0Qj+H9CE+/WiVN3Xs6hS+iPbx7VIIBkdr3I4mXv8xwhP8EJ95RqJelWF
+	E+6iuBcYhSqWAxvB46AojLcM+ZXU6o2yvkBlbLTMI5y6etfSRuYooUDFR4adx/ILNFWK/DeV1b/i/
+	7fnZyNvFNxnIqzDAeQbgiUDN5f/FjwU1/mwl5yY3sKN7Uz+P0iJHd1dH6qFd5zNb/BiAzJZNsq/h1
+	tuoM4JuMFt+lYjrfTihj5eZRVx1VbkswJzTQIpy4/r/1X8fVlezr0XeIyqyvzwFRufvGzj1BOd/J6
+	DavMR2Rg==;
+Received: from smtps.newmedia-net.de ([2a05:a1c0:0:de::167]:50302 helo=webmail.newmedia-net.de)
+	by mail.as201155.net with esmtps  (TLS1) tls TLS_RSA_WITH_AES_256_CBC_SHA
+	(Exim 4.97.1)
+	(envelope-from <dd@embedd.com>)
+	id 1t4bhr-0000000069f-1p8x;
+	Sat, 26 Oct 2024 09:59:32 +0200
+X-SASI-Hits: BODYTEXTP_SIZE_3000_LESS 0.000000, BODY_SIZE_1000_LESS 0.000000,
+	BODY_SIZE_2000_LESS 0.000000, BODY_SIZE_5000_LESS 0.000000,
+	BODY_SIZE_500_599 0.000000, BODY_SIZE_7000_LESS 0.000000, CTE_8BIT 0.000000,
+	DKIM_ALIGNS 0.000000, DKIM_SIGNATURE 0.000000, HTML_00_01 0.050000,
+	HTML_00_10 0.050000, LEGITIMATE_SIGNS 0.000000, MULTIPLE_RCPTS 0.100000,
+	MULTIPLE_REAL_RCPTS 0.000000, NO_CTA_URI_FOUND 0.000000,
+	NO_FUR_HEADER 0.000000, NO_URI_HTTPS 0.000000, OUTBOUND 0.000000,
+	OUTBOUND_SOPHOS 0.000000, SENDER_NO_AUTH 0.000000, SUSP_DH_NEG 0.000000,
+	__ANY_URI 0.000000, __BODY_NO_MAILTO 0.000000, __BULK_NEGATE 0.000000,
+	__CC_NAME 0.000000, __CC_NAME_DIFF_FROM_ACC 0.000000,
+	__CC_REAL_NAMES 0.000000, __CTE 0.000000, __DKIM_ALIGNS_1 0.000000,
+	__DKIM_ALIGNS_2 0.000000, __DQ_NEG_DOMAIN 0.000000, __DQ_NEG_HEUR 0.000000,
+	__DQ_NEG_IP 0.000000, __FROM_DOMAIN_IN_ANY_CC1 0.000000,
+	__FROM_DOMAIN_IN_RCPT 0.000000, __FROM_NAME_NOT_IN_ADDR 0.000000,
+	__FUR_RDNS_SOPHOS 0.000000, __HAS_CC_HDR 0.000000, __HAS_FROM 0.000000,
+	__HAS_MSGID 0.000000, __HAS_X_MAILER 0.000000, __MIME_TEXT_ONLY 0.000000,
+	__MIME_TEXT_P 0.000000, __MIME_TEXT_P1 0.000000, __MIME_VERSION 0.000000,
+	__MULTIPLE_RCPTS_CC_X2 0.000000, __NO_HTML_TAG_RAW 0.000000,
+	__OUTBOUND_SOPHOS_FUR 0.000000, __OUTBOUND_SOPHOS_FUR_IP 0.000000,
+	__OUTBOUND_SOPHOS_FUR_RDNS 0.000000, __RCVD_PASS 0.000000,
+	__SANE_MSGID 0.000000, __SUBJ_STARTS_S_BRACKETS 0.000000,
+	__TO_MALFORMED_2 0.000000, __TO_NO_NAME 0.000000, __URI_MAILTO 0.000000,
+	__URI_NO_WWW 0.000000, __URI_NS 0.000000, __X_MAILSCANNER 0.000000
+X-SASI-Probability: 8%
+X-SASI-RCODE: 200
+X-SASI-Version: Antispam-Engine: 5.1.4, AntispamData: 2024.10.26.71815
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=embedd.com; s=mikd;
+	h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From; bh=WpI7H1Gvt9lgGH2ycMO9T2GTxR9m0Eby2eQfvWe+3oI=;
+	b=DofKhjsgx1zwJZvom4+dn0dqRN5ChsXwq4xl0FrnfIz76Kp12+NQS1a24vUzqL7INMCH8M3QAKClprMB91N4tZAFbCerdgo/sFdPuYItQdw3RWpS9GQNhIWyDxtXvd2VdN5U2NMfFcDL6P5t1IsmbdxCQpmE2swbEA3/WC/elVg=;
+From: Daniel Danzberger <dd@embedd.com>
+To: johan@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Daniel Danzberger <dd@embedd.com>
+Subject: [PATCH] gnss/usb: Add U-blox 8/M8 device id
+Date: Sat, 26 Oct 2024 09:58:57 +0200
+Message-ID: <20241026075857.3651161-1-dd@embedd.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Mirsad Todorovac <mtodorovac69@gmail.com>
-Subject: Re: [PATCH v1 1/1] scsi: gla2xxx: use flexible array member at the
- end of structures
-To: Bart Van Assche <bvanassche@acm.org>, linux-scsi@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: Nilesh Javali <njavali@marvell.com>,
- GR-QLogic-Storage-Upstream@marvell.com,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>
-References: <20241023221700.220063-2-mtodorovac69@gmail.com>
- <9ca3fb4b-85d9-493c-8b90-5210f5530e7f@acm.org>
- <414ef7aa-a1a3-4c13-887b-25a51236f83e@gmail.com>
- <dfd36022-2397-486c-8499-454d31072a30@acm.org>
-Content-Language: en-US
-In-Reply-To: <dfd36022-2397-486c-8499-454d31072a30@acm.org>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Received-SPF: pass (webmail.newmedia-net.de: localhost is always allowed.) client-ip=127.0.0.1; envelope-from=dd@embedd.com; helo=webmail.newmedia-net.de;
+X-SA-Exim-Connect-IP: 127.0.0.1
+X-SA-Exim-Mail-From: dd@embedd.com
+X-SA-Exim-Scanned: No (on webmail.newmedia-net.de); SAEximRunCond expanded to false
+X-NMN-MailScanner-Information: Please contact the ISP for more information
+X-NMN-MailScanner-ID: 1t4bhY-0004tY-4i
+X-NMN-MailScanner: Found to be clean
+X-NMN-MailScanner-From: dd@embedd.com
+X-Received:  from localhost.localdomain ([127.0.0.1] helo=webmail.newmedia-net.de)
+	by webmail.newmedia-net.de with esmtp (Exim 4.72)
+	(envelope-from <dd@embedd.com>)
+	id 1t4bhY-0004tY-4i; Sat, 26 Oct 2024 09:59:12 +0200
 
-On 10/24/24 18:55, Bart Van Assche wrote:
-> On 10/23/24 9:22 PM, Mirsad Todorovac wrote:
->>  From next-20241023, it seems to have passed compilation:
->>
->>    INSTALL debian/linux-libc-dev/usr/include
->> dpkg-deb: building package 'linux-image-6.12.0-rc4-next-20241023-00001-gdcf82889780d' in '../linux-image-6.12.0-rc4-next-20241023-00001-gdcf82889780d_6.12.0-rc4-00001-gdcf82889780d-4_amd64.deb'.
->> dpkg-deb: building package 'linux-libc-dev' in '../linux-libc-dev_6.12.0-rc4-00001-gdcf82889780d-4_amd64.deb'.
->>   dpkg-genbuildinfo --build=binary -O../linux-upstream_6.12.0-rc4-00001-gdcf82889780d-4_amd64.buildinfo
->>   dpkg-genchanges --build=binary -O../linux-upstream_6.12.0-rc4-00001-gdcf82889780d-4_amd64.changes
->> dpkg-genchanges: info: binary-only upload (no source code included)
->>   dpkg-source --after-build .
->> dpkg-buildpackage: info: binary-only upload (no source included)
-> 
-> What kernel config is used during that kernel build? Is the qla2xxx
-> driver enabled in that kernel config?
-> 
-> BTW, there is a typo in the subject of your email: gla2xxx should be
-> qla2xxx.
+Adds support for U-Blox 8 GNSS devices
 
-You are correct. What a blunder.
+Signed-off-by: Daniel Danzberger <dd@embedd.com>
+---
+ drivers/gnss/usb.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-> Bart.
-
-Hi,
-
-You were right, of course. There is no config SCSI_QLA_FC nor TCM_QLA2XXX in my .config.
-
-$ grep config drivers/scsi/qla2xxx/Kconfig
-config SCSI_QLA_FC
-config TCM_QLA2XXX
-config TCM_QLA2XXX_DEBUG
-$ grep -E '(SCSI_QLA_FC|TCM_QLA2XXX)' .config
-$ 
-
-From what kernel robot produced, it is obvious that this should be done by something with deeper
-knowledge of the driver's implementation.
-
-Even when decreasing all those BUG_BUILD_ON() checks would be trivial, there are obviously more
-gotchas.
-
-Maybe "make allyesconfig" would spare me from such stupid errors.
-
-But they say that a fail that makes you humble is better than a success that makes you arrogant :-/
-
-Best regards,
-Mirsad
-
+diff --git a/drivers/gnss/usb.c b/drivers/gnss/usb.c
+index 028ce56b20ea..927f89a5b3f0 100644
+--- a/drivers/gnss/usb.c
++++ b/drivers/gnss/usb.c
+@@ -18,6 +18,7 @@
+ 
+ static const struct usb_device_id gnss_usb_id_table[] = {
+ 	{ USB_DEVICE(0x1199, 0xb000) },		/* Sierra Wireless XM1210 */
++	{ USB_DEVICE(0x1546, 0x01a8) },         /* U-blox 8/M8 GNSS Receiver */
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(usb, gnss_usb_id_table);
+-- 
+2.39.2
 
 
