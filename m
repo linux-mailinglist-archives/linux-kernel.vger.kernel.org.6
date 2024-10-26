@@ -1,231 +1,185 @@
-Return-Path: <linux-kernel+bounces-383173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BBF59B180F
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 14:28:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F5199B180E
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 14:27:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD26A284213
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 12:28:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A94CE1F2251D
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 12:27:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 951C01D5CD6;
-	Sat, 26 Oct 2024 12:27:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B3671D619F;
+	Sat, 26 Oct 2024 12:27:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W8uuspq6"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aKWLNq6V"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 763FA1D5ABE
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 12:27:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B0131D5CD6;
+	Sat, 26 Oct 2024 12:27:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729945658; cv=none; b=mg/zvS84x4A5CBwiQgF072iBuJ70Eh0HUNeiDE016eqUadhnvH6IMrtay1lZbxlkZ6+RO7IqzhdehfT0Atcqak6RCQyWfEjr/8byjY+pFQdbtELwL0iuyfzoJEcBvIODifEmMVbnXiWtWmBhh32X/doosPGxeMfPdcPP4lsNhTw=
+	t=1729945652; cv=none; b=RQyNL5cFGAlk84q6BZcVyOY0byDtuFQ2p6fqb66vy3+qOp62FFzziH8KgCabrxmfile8LmGx8AK/RF0+H1JSo9gzIHJAXip50XDNFNtaOEfU+oSXcTFuzLcAVL6iR759FlBBLPdXK/tUytBU1MOuviZHyKM0rQ3iizdNDN1bUEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729945658; c=relaxed/simple;
-	bh=DMxuc4FkxncyfoZmnLATdM1P+wBDtItNksGjIRWvADs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WKWM5XTpHyM/6o0OP8wiuupdrQ08ISJCZn691SBDBgllq/lauNaUChruNOH1dA7Ryz6Y4W1/4M4y2+sXxYFU4E+ytgN6eNkd/R7rBxJdpJaP9fCcIgQkixGrQ5YO+YhWQKE9twJWXbk0JoGid3hEnm+zGzI8vxCANfkmBIQjflw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W8uuspq6; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2fc96f9c41fso30004711fa.0
-        for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 05:27:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729945654; x=1730550454; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zTz7+mwaDjOBX3vLYUXOJxXMPA7UKCaRBLS71ajvXQA=;
-        b=W8uuspq6u37gpTVjkvBZS40LFPBF7ZI7P/5IL91rEp3HwRp5NOsFwHMVPOH1GEakQx
-         npyaMeZvw0DMTXH5bha94uKuyRCxl7veg6zoU+qW1UIU0G/1nSUv/EHDfmTB/FPnEDFR
-         EXkGwidk0uigjvShHxBJ95CzbnSTMHWmaVtOObwp1yr85PzMvzPeRICZbm9dyRE1hTyR
-         fR6X7eGXeI+TQudcQ0SSpH2UIE7XvOr2knptkh9VKEMJKnCLfOe3FOC12ui4pLML8ao2
-         /fPd//elBs9Pkc0s93ytLR9J0VsYvZWimX/XGK3B/UO2ANQH5utyFtKhj4J7VBwQeIHN
-         iaUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729945654; x=1730550454;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zTz7+mwaDjOBX3vLYUXOJxXMPA7UKCaRBLS71ajvXQA=;
-        b=GdmrAAfpyRmkvSmpfu2bbcbYdIKk8vru+mm+0AfwoI9E1wHyoLRITemGKeEdwOu1x6
-         JR8U0nX4pp2f5/BBY3y3N6b1d31MgynOYX/BRanDBzLFXbL2jDbPPldNgJwFjrHymM79
-         Wk68lnCf8w5ruVddsuVyj4iq1+RxJVNOlJ96k2GY+t6e4vyQ9SHAMNaq7LsmzG7jnFep
-         8fHJ9SbxVwONMG+CYHrQFks9KPSb6gn8Fj1Mq0ywgP5TR16U6JlJnkc6o4HzhEWHsrbz
-         QyntmoNn1yKUhuuyJ5AEy6VhqLGfp7ati62ka/ocOhl+DR8s4baVCsOhFJwjsrzowQ3M
-         hTfg==
-X-Forwarded-Encrypted: i=1; AJvYcCXpilMyqlS5hzTireve4BDEHSfXWoGe7ogfGgEmd2gbichMotK9I/wItnSSEPiFgoybItdV9xrp9HKxpLQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7KHc9QpZipPpmKGQAJQxHtH2k51dNLw3+oRopybHMi4hCCzVa
-	RFKxOaSPLjY9041RoBtRvLpmIPx8kXT1bkYjo1v5hwEir5on9A6paluw1xfO84hPjDmR58hML+A
-	NDopRYDmYzhxYQJkM6103GvXCMRo=
-X-Google-Smtp-Source: AGHT+IFmhb/AG+DRoAIBx7Exf3tqP9Gu1mCRk2RsdIULg+oS428vQDP/8WBg3u94U+XnjPIf7tmmQERKoS3KcFl7nRY=
-X-Received: by 2002:a05:651c:2126:b0:2fb:6243:321d with SMTP id
- 38308e7fff4ca-2fcbd8ee8f3mr8941881fa.5.1729945654131; Sat, 26 Oct 2024
- 05:27:34 -0700 (PDT)
+	s=arc-20240116; t=1729945652; c=relaxed/simple;
+	bh=aX6mtqMDDuRMLKNNH7o4YnE5my+zUXmBU6eo3tXrXwU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Ap9VXWPfqYgH81WiT2Atfq1ghP21R/nsf6Ydem/IJsC9aL0RdTJXluaaIXHoc1i5x1IMS+MCajPvqIc9xtStRRTN4lagHxxv9FYFtckcwa73Gx2qT+3VskCwkq4AbzWxLFvH4Xrr+jGERaFfst8S+2Z+DdE+WT91Ips6um7p9J4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aKWLNq6V; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C28CC4CEC6;
+	Sat, 26 Oct 2024 12:27:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729945651;
+	bh=aX6mtqMDDuRMLKNNH7o4YnE5my+zUXmBU6eo3tXrXwU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=aKWLNq6VAKMcnkpPXKonLpZM86l8AXsgOyZjporptckA2vVeWeXHDmDkAYJy3WPqH
+	 5Reo4m0CkJ4qcMV+e+cisDVhG1hqDsmS5SnBG7q92nAIH2ljcsHbEBMjLMiAUK1gFW
+	 5c2akkQrwi8hXc5tH0PvsDnSCLhqb5tYu8bzpRDjK0xhk+1I7v3Fz9Yzu9TN+yGRFP
+	 xiDQzuaQD/lqUR7VrCm0Oj2v6PzMMCJn80VOFeZtNSoD0k8eptS3KIyoi8l982TzR8
+	 3V/5vSnKNs+CqBsiQMLU9O0g35+Qv6o093gEvjzGVk0fLZeie1wdxQmlGfW1/GEWKu
+	 NDIfUA6Q940LQ==
+Date: Sat, 26 Oct 2024 13:27:00 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Jean-Baptiste Maneyrol <Jean-Baptiste.Maneyrol@tdk.com>
+Cc: Julien Stephan <jstephan@baylibre.com>, Mudit Sharma
+ <muditsharma.info@gmail.com>, Lars-Peter Clausen <lars@metafoo.de>, Anshul
+ Dalal <anshulusr@gmail.com>, Javier Carrasco
+ <javier.carrasco.cruz@gmail.com>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Cosmin Tanislav
+ <cosmin.tanislav@analog.com>, Ramona Gradinariu
+ <ramona.gradinariu@analog.com>, Antoniu Miclaus
+ <antoniu.miclaus@analog.com>, Dan Robertson <dan@dlrobertson.com>, Marcelo
+ Schmitt <marcelo.schmitt@analog.com>, Matteo Martelli
+ <matteomartelli3@gmail.com>, Anand Ashok Dumbre
+ <anand.ashok.dumbre@xilinx.com>, Michal Simek <michal.simek@amd.com>,
+ Mariel Tinaco <Mariel.Tinaco@analog.com>, Jagath Jog J
+ <jagathjog1996@gmail.com>, Lorenzo Bianconi <lorenzo@kernel.org>, Subhajit
+ Ghosh <subhajit.ghosh@tweaklogic.com>, Kevin Tsai <ktsai@capellamicro.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Benson Leung
+ <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>,
+ "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>, "chrome-platform@lists.linux.dev"
+ <chrome-platform@lists.linux.dev>
+Subject: Re: [PATCH 5/7] iio: imu: inv_mpu6050: simplify code in
+ write_event_config callback
+Message-ID: <20241026132638.4ff2c8a2@jic23-huawei>
+In-Reply-To: <FR3P281MB175799CC4895C8BC5B645236CE4E2@FR3P281MB1757.DEUP281.PROD.OUTLOOK.COM>
+References: <20241024-iio-fix-write-event-config-signature-v1-0-7d29e5a31b00@baylibre.com>
+	<20241024-iio-fix-write-event-config-signature-v1-5-7d29e5a31b00@baylibre.com>
+	<FR3P281MB175799CC4895C8BC5B645236CE4E2@FR3P281MB1757.DEUP281.PROD.OUTLOOK.COM>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241025-checkpatch-fixes-commit-v2-1-4bc4f06d37b3@gmail.com> <20241025174444.7536f7ad4c94fd02afc63077@linux-foundation.org>
-In-Reply-To: <20241025174444.7536f7ad4c94fd02afc63077@linux-foundation.org>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Sat, 26 Oct 2024 08:26:57 -0400
-Message-ID: <CAJ-ks9=AFHN_ZBGXcEk4HiJNpJUB4tBU6Kyrxng_hXC_yM0VAQ@mail.gmail.com>
-Subject: Re: [PATCH v2] checkpatch: always parse orig_commit in fixes tag
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>, 
-	Dwaipayan Ray <dwaipayanray1@gmail.com>, Lukas Bulwahn <lukas.bulwahn@gmail.com>, 
-	Simon Horman <horms@kernel.org>, 
-	=?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>, 
-	Philippe Schenker <philippe.schenker@toradex.com>, Louis Peens <louis.peens@corigine.com>, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 25, 2024 at 8:44=E2=80=AFPM Andrew Morton <akpm@linux-foundatio=
-n.org> wrote:
->
-> On Fri, 25 Oct 2024 19:43:19 -0400 Tamir Duberstein <tamird@gmail.com> wr=
-ote:
->
-> > Do not require the presence of `$balanced_parens` to get the commit SHA=
-;
-> > this allows a `Fixes: deadbeef` tag to get a correct suggestion rather
-> > than a suggestion containing a reference to HEAD.
->
-> Got it, thanks.  Below is what I ended up with:
->
->
-> From: Tamir Duberstein <tamird@gmail.com>
-> Subject: checkpatch: always parse orig_commit in fixes tag
-> Date: Fri, 25 Oct 2024 19:43:19 -0400
->
-> Do not require the presence of `$balanced_parens` to get the commit SHA;
-> this allows a `Fixes: deadbeef` tag to get a correct suggestion rather
-> than a suggestion containing a reference to HEAD.
->
-> Given this patch:
->
-> : From: Tamir Duberstein <tamird@gmail.com>
-> : Subject: Test patch
-> : Date: Fri, 25 Oct 2024 19:30:51 -0400
-> :
-> : This is a test patch.
-> :
-> : Fixes: bd17e036b495
-> : Signed-off-by: Tamir Duberstein <tamird@gmail.com>
-> : --- /dev/null
-> : +++ b/new-file
-> : @@ -0,0 +1 @@
-> : +Test.
->
->
-> Before:
->
-> WARNING: Please use correct Fixes: style 'Fixes: <12 chars of sha1> ("<ti=
-tle line>")' - ie: 'Fixes: c10a7d25e68f ("Test patch")'
->
-> After:
->
-> WARNING: Please use correct Fixes: style 'Fixes: <12 chars of sha1> ("<ti=
-tle line>")' - ie: 'Fixes: bd17e036b495 ("checkpatch: warn for non-standard=
- fixes tag style")'
->
->
->
-> The prior behavior incorrectly suggested the patch's own SHA and title
-> line rather than the referenced commit's.  This fixes that.
->
-> Ironically this:
->
-> Fixes: bd17e036b495 ("checkpatch: warn for non-standard fixes tag style")
-> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
-> Cc: Andy Whitcroft <apw@canonical.com>
-> Cc: Dwaipayan Ray <dwaipayanray1@gmail.com>
-> Cc: Joe Perches <joe@perches.com>
-> Cc: Louis Peens <louis.peens@corigine.com>
-> Cc: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-> Cc: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.se>
-> Cc: Philippe Schenker <philippe.schenker@toradex.com>
-> Cc: Simon Horman <horms@kernel.org>
-> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-> ---
->
->  scripts/checkpatch.pl |   37 ++++++++++++++++---------------------
->  1 file changed, 16 insertions(+), 21 deletions(-)
->
-> --- a/scripts/checkpatch.pl~checkpatch-always-parse-orig_commit-in-fixes-=
-tag
-> +++ a/scripts/checkpatch.pl
-> @@ -3209,36 +3209,31 @@ sub process {
->
->  # Check Fixes: styles is correct
->                 if (!$in_header_lines &&
-> -                   $line =3D~ /^\s*fixes:?\s*(?:commit\s*)?[0-9a-f]{5,}\=
-b/i) {
-> -                       my $orig_commit =3D "";
-> -                       my $id =3D "0123456789ab";
-> -                       my $title =3D "commit title";
-> -                       my $tag_case =3D 1;
-> -                       my $tag_space =3D 1;
-> -                       my $id_length =3D 1;
-> -                       my $id_case =3D 1;
-> +                   $line =3D~ /^\s*(fixes:?)\s*(?:commit\s*)?([0-9a-f]{5=
-,40})(?:\s*($balanced_parens))?/i) {
-> +                       my $tag =3D $1;
-> +                       my $orig_commit =3D $2;
-> +                       my $title;
->                         my $title_has_quotes =3D 0;
->                         $fixes_tag =3D 1;
-> -
-> -                       if ($line =3D~ /(\s*fixes:?)\s+([0-9a-f]{5,})\s+(=
-$balanced_parens)/i) {
-> -                               my $tag =3D $1;
-> -                               $orig_commit =3D $2;
-> -                               $title =3D $3;
-> -
-> -                               $tag_case =3D 0 if $tag eq "Fixes:";
-> -                               $tag_space =3D 0 if ($line =3D~ /^fixes:?=
- [0-9a-f]{5,} ($balanced_parens)/i);
-> -
-> -                               $id_length =3D 0 if ($orig_commit =3D~ /^=
-[0-9a-f]{12}$/i);
-> -                               $id_case =3D 0 if ($orig_commit !~ /[A-F]=
-/);
-> -
-> +                       if (defined $3) {
->                                 # Always strip leading/trailing parens th=
-en double quotes if existing
-> -                               $title =3D substr($title, 1, -1);
-> +                               $title =3D substr($3, 1, -1);
->                                 if ($title =3D~ /^".*"$/) {
->                                         $title =3D substr($title, 1, -1);
->                                         $title_has_quotes =3D 1;
->                                 }
-> +                       } else {
-> +                               $title =3D "commit title"
->                         }
->
-> +
-> +                       my $tag_case =3D not ($tag eq "Fixes:");
-> +                       my $tag_space =3D not ($line =3D~ /^fixes:? [0-9a=
--f]{5,40} ($balanced_parens)/i);
-> +
-> +                       my $id_length =3D not ($orig_commit =3D~ /^[0-9a-=
-f]{12}$/i);
-> +                       my $id_case =3D not ($orig_commit !~ /[A-F]/);
-> +
-> +                       my $id =3D "0123456789ab";
->                         my ($cid, $ctitle) =3D git_commit_info($orig_comm=
-it, $id,
->                                                              $title);
->
-> _
->
+On Thu, 24 Oct 2024 12:16:42 +0000
+Jean-Baptiste Maneyrol <Jean-Baptiste.Maneyrol@tdk.com> wrote:
 
-Thanks!
+> Hello Julien,
+>=20
+> good thing to know, thanks for the patch.
+>=20
+> Acked-by: Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>
+Applied.
+>=20
+> Best regards,
+> JB
+>=20
+> ________________________________________
+> From:=C2=A0Julien Stephan <jstephan@baylibre.com>
+> Sent:=C2=A0Thursday, October 24, 2024 11:11
+> To:=C2=A0Mudit Sharma <muditsharma.info@gmail.com>; Jonathan Cameron <jic=
+23@kernel.org>; Lars-Peter Clausen <lars@metafoo.de>; Anshul Dalal <anshulu=
+sr@gmail.com>; Javier Carrasco <javier.carrasco.cruz@gmail.com>; Jean-Bapti=
+ste Maneyrol <Jean-Baptiste.Maneyrol@tdk.com>; Michael Hennerich <Michael.H=
+ennerich@analog.com>; Cosmin Tanislav <cosmin.tanislav@analog.com>; Ramona =
+Gradinariu <ramona.gradinariu@analog.com>; Antoniu Miclaus <antoniu.miclaus=
+@analog.com>; Dan Robertson <dan@dlrobertson.com>; Marcelo Schmitt <marcelo=
+.schmitt@analog.com>; Matteo Martelli <matteomartelli3@gmail.com>; Anand As=
+hok Dumbre <anand.ashok.dumbre@xilinx.com>; Michal Simek <michal.simek@amd.=
+com>; Mariel Tinaco <Mariel.Tinaco@analog.com>; Jagath Jog J <jagathjog1996=
+@gmail.com>; Lorenzo Bianconi <lorenzo@kernel.org>; Subhajit Ghosh <subhaji=
+t.ghosh@tweaklogic.com>; Kevin Tsai <ktsai@capellamicro.com>; Linus Walleij=
+ <linus.walleij@linaro.org>; Benson Leung <bleung@chromium.org>; Guenter Ro=
+eck <groeck@chromium.org>
+> Cc:=C2=A0linux-iio@vger.kernel.org <linux-iio@vger.kernel.org>; linux-ker=
+nel@vger.kernel.org <linux-kernel@vger.kernel.org>; linux-arm-kernel@lists.=
+infradead.org <linux-arm-kernel@lists.infradead.org>; chrome-platform@lists=
+.linux.dev <chrome-platform@lists.linux.dev>; Julien Stephan <jstephan@bayl=
+ibre.com>
+> Subject:=C2=A0[PATCH 5/7] iio: imu: inv_mpu6050: simplify code in write_e=
+vent_config callback
+> =C2=A0
+> This Message Is From an External Sender
+> This message came from outside your organization.
+> =C2=A0
+> iio_ev_state_store is actually using kstrtobool to check user
+> input, then gives the converted boolean value to the write_event_config
+> callback.
+>=20
+> Remove useless code in write_event_config callback.
+>=20
+> Signed-off-by: Julien Stephan <jstephan@baylibre.com>
+> ---
+>  drivers/iio/imu/inv_mpu6050/inv_mpu_core.c | 7 ++-----
+>  drivers/iio/light/apds9960.c               | 2 --
+>  2 files changed, 2 insertions(+), 7 deletions(-)
+>=20
+> diff --git a/drivers/iio/imu/inv_mpu6050/inv_mpu_core.c b/drivers/iio/imu=
+/inv_mpu6050/inv_mpu_core.c
+> index 5680be153127711777b6074da18a7a0f86211d6c..21ebf0f7e28fec302cbf8ab89=
+0fc53a3de6f36cd 100644
+> --- a/drivers/iio/imu/inv_mpu6050/inv_mpu_core.c
+> +++ b/drivers/iio/imu/inv_mpu6050/inv_mpu_core.c
+> @@ -1176,21 +1176,18 @@ static int inv_mpu6050_write_event_config(struct =
+iio_dev *indio_dev,
+>  					  int state)
+>  {
+>  	struct inv_mpu6050_state *st =3D iio_priv(indio_dev);
+> -	int enable;
+> =20
+>  	/* support only WoM (accel roc rising) event */
+>  	if (chan->type !=3D IIO_ACCEL || type !=3D IIO_EV_TYPE_ROC ||
+>  	    dir !=3D IIO_EV_DIR_RISING)
+>  		return -EINVAL;
+> =20
+> -	enable =3D !!state;
+> -
+>  	guard(mutex)(&st->lock);
+> =20
+> -	if (st->chip_config.wom_en =3D=3D enable)
+> +	if (st->chip_config.wom_en =3D=3D state)
+>  		return 0;
+> =20
+> -	return inv_mpu6050_enable_wom(st, enable);
+> +	return inv_mpu6050_enable_wom(st, state);
+>  }
+> =20
+>  static int inv_mpu6050_read_event_value(struct iio_dev *indio_dev,
+> diff --git a/drivers/iio/light/apds9960.c b/drivers/iio/light/apds9960.c
+> index 3c14e4c30805e1b596ef2380f94e6aa3e92082b1..3a56eaae5a68f2891d061871c=
+7013f0b5447bb47 100644
+> --- a/drivers/iio/light/apds9960.c
+> +++ b/drivers/iio/light/apds9960.c
+> @@ -762,8 +762,6 @@ static int apds9960_write_event_config(struct iio_dev=
+ *indio_dev,
+>  	struct apds9960_data *data =3D iio_priv(indio_dev);
+>  	int ret;
+> =20
+> -	state =3D !!state;
+> -
+>  	switch (chan->type) {
+>  	case IIO_PROXIMITY:
+>  		if (data->pxs_int =3D=3D state)
+>=20
+
 
