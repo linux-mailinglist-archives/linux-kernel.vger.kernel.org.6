@@ -1,226 +1,183 @@
-Return-Path: <linux-kernel+bounces-383229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0E1F9B18BA
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 16:50:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDE239B18C4
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 16:50:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C20C2828E9
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 14:50:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4E761C2159A
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 14:50:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1C6F1CD15;
-	Sat, 26 Oct 2024 14:50:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A234E24B4A;
+	Sat, 26 Oct 2024 14:50:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=riseup.net header.i=@riseup.net header.b="OzCGMmVb"
-Received: from mx1.riseup.net (mx1.riseup.net [198.252.153.129])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jsPrMCqE"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 944D11C32;
-	Sat, 26 Oct 2024 14:50:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.252.153.129
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1CFB182C5;
+	Sat, 26 Oct 2024 14:50:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729954203; cv=none; b=YqNxGktd8nPRkqVK6444HX8+ACN5CDPA3eokkKkOHp0KTtlcmJBMXrf5P+oi0bFtyU3San/j57qtAPYMkCnbm/nOhAgL+8mixY18O6EzGj3qm7cUZ+GVs4etHTORIOTZmBjcFr8ltJ2JKDPm6KhUEMyhj7lpSdO/tzOp7ODY1kM=
+	t=1729954220; cv=none; b=r7Tb/hUULuUBIYMAx4hxDWTrFy7cHRIbhBB1SY5ynv6wloN1bORiJ2eRWcRfI24DtbdsZmAhcZ8aBu+j6NGbVQ6sOh/6XGEvtivpd2TG5SiaKqBdDNYfhiUqzLKQAqdvthV98jGRyxt/9r0mLE7e5Bcyvh5pqPUyrPHLPt9fH+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729954203; c=relaxed/simple;
-	bh=VtaHuXi4ew3TMRqGIhm7JXU8YthOTsqrhboQ29L60Lo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=auDT+BEeRcbGMBoBk6Zlt74rnSM5ny79BOxv1Me/RCUvmaesnLz8BdDXxXdKr8DiT5NerhGaxOmfAAcpL2+u3BD6lWqyD2N4AIwoP8Hpn82Vc5sT8KO65DKpo0ZSSjsvQEjSmvdR4laFb1NAJs0PLtEebzmeXoZYmdaFuM6E5aA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riseup.net; spf=pass smtp.mailfrom=riseup.net; dkim=pass (1024-bit key) header.d=riseup.net header.i=@riseup.net header.b=OzCGMmVb; arc=none smtp.client-ip=198.252.153.129
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riseup.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riseup.net
-Received: from fews01-sea.riseup.net (fews01-sea-pn.riseup.net [10.0.1.109])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx1.riseup.net (Postfix) with ESMTPS id 4XbMxy6vQNzDqJm;
-	Sat, 26 Oct 2024 14:49:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=riseup.net; s=squak;
-	t=1729954199; bh=VtaHuXi4ew3TMRqGIhm7JXU8YthOTsqrhboQ29L60Lo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=OzCGMmVbMZ3BxmreyvO1z7YjAEmX4tfYHj8ZOGqMOuUW6ImJ8hjozDMJMwFuJ2w2+
-	 T8FTra76WrBa8HmBiL3sNSlPct92zqGdgQ8jcDVGxvtGirq3clXQaMGKBGB6R3lFdo
-	 a5ZHtcRnU7YOI4N3q1om5a+cG8/QKTgR/Gnc9cYk=
-X-Riseup-User-ID: 722A6349C116B6809B884D36D25006E63B0DB3E558033A992A5C1E967AC8A5EA
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-	 by fews01-sea.riseup.net (Postfix) with ESMTPSA id 4XbMxp2YvJzJsFN;
-	Sat, 26 Oct 2024 14:49:50 +0000 (UTC)
-Message-ID: <d33f982f-f4ca-4bb2-9454-9d01a927d8b5@riseup.net>
-Date: Sat, 26 Oct 2024 11:49:48 -0300
+	s=arc-20240116; t=1729954220; c=relaxed/simple;
+	bh=5KhB5QIPJYmBMlCeam2xpt/6vptZLytx19QUApOgFYI=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=BT7tFMpns2/RuCgSYy3AZXPbRFGyPIQuOg2Cn0n9qqq1JaRapUh2scHeWu1HuTdU///+4Cm0EmXZBh+7njdOyAdgsxN7IphtV1i2d2Zki95sjcG6BDrUyfDNCNsfBInAnr3ffOb/4/nKAzSOOaBP/eTIPee9PvWTS/3HnNBocGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jsPrMCqE; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2e5a0177531so2255692a91.2;
+        Sat, 26 Oct 2024 07:50:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729954218; x=1730559018; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :references:cc:to:from:subject:user-agent:mime-version:date
+         :message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=+5ngh4M2Qe1tGC7eJcPhLzE+JV0l59Dh4+0Uc0XqMvI=;
+        b=jsPrMCqEm5l1K4+VxmG+IPEhnjaHckxrkHEdKEAqLwHq6Gm2jVJfMz6CUDkFKdRede
+         R5BNRoI0E/m9Ypj6WJMrNpVP825hBGX9BVNnDqlgXBlQhgxDHqHBA4CYYI6YkUtFDPtV
+         pS4NQP48+Ma+d+ivbCQ0a2xBShrm1NpW4qfAqOYwZZUnG+J5E3XcQKkw/qgWILyPDci5
+         MNZJOOxO6i2J7DX6S2giWHXAmRsH7/Je25jcbXyVizWDigKM7ATwmDy4bNj/yZy6g26K
+         dou/DXIMkuhyhJrbWQ9CCyijFPGpuAIpyhlEj10EvTuf3vrdHZTGX/EaHSwAbmh8+Ldf
+         SROA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729954218; x=1730559018;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :references:cc:to:from:subject:user-agent:mime-version:date
+         :message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+5ngh4M2Qe1tGC7eJcPhLzE+JV0l59Dh4+0Uc0XqMvI=;
+        b=XwrxqeSr7EP2ZYsE8deMqv76C4OCu7oQe/A6HkPhufn5KU5in3yuH76wtZ1/9npfW/
+         0YasE47MW5ufRXAfobev2TjAUTeG9CV5nGTArfuJuF2orqRzXx0snwWhGnWtA2bqmdJj
+         0nIFblfkByBcM0maURB5e1q5inzHna7fnytDGq8y8xAIvsGrNuqBgTOpepcUGobDdMBM
+         po1VrrwUw4RtAOBJ6IM0cPljWnT4s9uGAJdo+Z0EVBqNNV43U4w28X6qIYU/vv/3nlCJ
+         r01YmCtPtkdzlsKI0Ktzj0uNgBDdKIuARkEy5OH4DDSbH/dl4fSsLiYQI9KevTFhmkzy
+         0yWw==
+X-Forwarded-Encrypted: i=1; AJvYcCU4smmltobtxg7OgxH7VPO47eYNA0ZpOkWA/iyMkcjMJcI8sLA/4evbY1wR6MFRkhnjGcY5njgyM0W3@vger.kernel.org, AJvYcCUlcBcXcg7OGvblmgtwPU9z9+AID5yyCvkfHR6MyI4C8dkGGzvyw23IWLtAdoAesWfhnlFeMJbh34cGAXJoiro=@vger.kernel.org, AJvYcCV7bGGfO15thmLN7ewzs8U0Vv+Cr6AMeeQYrZrCF1tNcFYVHpe7da+CuWTtCArbFhxqt/HyD7oiAxdcJHN3@vger.kernel.org, AJvYcCW1z1yt/Pqr1oH7GvfR/BRKT+TJwMHqNuHBdX46E3VveXuebc+0etycWn3NoZ6UJ25xgVJ46ADt6XTd@vger.kernel.org, AJvYcCWCD3eVpCTdBW3w3uVMeU6zuCVRdn5jFCFvLfJHyZYHncR0g/64jdMT3/0+qJIQIb6aPsL1ViOiHaI6QQ==@vger.kernel.org, AJvYcCWD/+jOAxeMzWZvtdOD67kLNN4YY6opQTivY0yZ7fW7zrNLe0Rb/+pXac4mp2LAoj4iMzWveYgwIUw=@vger.kernel.org, AJvYcCWhmpYJCClbUp7/hYwkZWju/eOVccRHarZEYDel48un0lAXqAfhV27t7aiLBg8g4MtEIywUOggA@vger.kernel.org, AJvYcCXAoA8SkIU1eXOs83/5ordHnFoTrKSSNIZEU5KhdkMkudN0+p+WVuh0HoXfsSKc3qSdk1tVZY2gdabX@vger.kernel.org, AJvYcCXIUTFCWuiAN1GmxSRuDpeknfrlylGjLkJH4HxiH0KoP9Rdm40psrurumg46DoJB1yD60aLLtYx+CY+@vger.kernel.org, AJvYcCXRT7zq6WMX1iCVhXOjd/bb7NodxgAveTCO
+ 2mOEgV8zmChicsjoICowkscZ5de5wHG4/XWvXgStJz67x1M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7rHhHI54vRFMVakqr9sZ+Yc6kcG5vIeVo0lrz+W0D+wIIw71g
+	0+UsVBL/iF4hNBpkL7WKM68Yar1z7phBz51aD43yHkAnKthMo93y
+X-Google-Smtp-Source: AGHT+IFeGRrUx9En/q17tLcQC74ZYERPxzfculoVjeV6N6igxNHoISIFQdpeG8KZW0CXT3t7vL4Owg==
+X-Received: by 2002:a17:90a:e20d:b0:2d8:82a2:b093 with SMTP id 98e67ed59e1d1-2e8f106b0f3mr3933153a91.13.1729954218097;
+        Sat, 26 Oct 2024 07:50:18 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e77e56f3f8sm5547258a91.40.2024.10.26.07.50.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 26 Oct 2024 07:50:16 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <02f05807-77ae-4a3b-8170-93dd7520c719@roeck-us.net>
+Date: Sat, 26 Oct 2024 07:50:14 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v12 13/15] drm/vkms: Create KUnit tests for YUV
- conversions
-To: Louis Chauvet <louis.chauvet@bootlin.com>,
- Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
- Melissa Wen <melissa.srw@gmail.com>,
- Haneen Mohammed <hamohammed.sa@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
- Simona Vetter <simona@ffwll.ch>, rdunlap@infradead.org,
- arthurgrillo@riseup.net, pekka.paalanen@haloniitty.fi,
- Simona Vetter <simona.vetter@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, thomas.petazzoni@bootlin.com,
- jeremie.dautheribes@bootlin.com, miquel.raynal@bootlin.com,
- seanpaul@google.com, marcheu@google.com, nicolejadeyee@google.com,
- Pekka Paalanen <pekka.paalanen@collabora.com>
-References: <20241007-yuv-v12-0-01c1ada6fec8@bootlin.com>
- <20241007-yuv-v12-13-01c1ada6fec8@bootlin.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 6/9] hwmon: Add Nuvoton NCT6694 HWMON support
+From: Guenter Roeck <linux@roeck-us.net>
+To: Ming Yu <a0282524688@gmail.com>
+Cc: Kalesh Anakkur Purayil <kalesh-anakkur.purayil@broadcom.com>,
+ tmyu0@nuvoton.com, lee@kernel.org, linus.walleij@linaro.org, brgl@bgdev.pl,
+ andi.shyti@kernel.org, mkl@pengutronix.de, mailhol.vincent@wanadoo.fr,
+ andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, wim@linux-watchdog.org,
+ jdelvare@suse.com, jic23@kernel.org, lars@metafoo.de, ukleinek@kernel.org,
+ alexandre.belloni@bootlin.com, linux-kernel@vger.kernel.org,
+ linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org,
+ linux-can@vger.kernel.org, netdev@vger.kernel.org,
+ linux-watchdog@vger.kernel.org, linux-hwmon@vger.kernel.org,
+ linux-iio@vger.kernel.org, linux-pwm@vger.kernel.org,
+ linux-rtc@vger.kernel.org
+References: <20241024085922.133071-1-tmyu0@nuvoton.com>
+ <20241024085922.133071-7-tmyu0@nuvoton.com>
+ <CAH-L+nPGGhgDFge0Ov4rX_7vUyLN8uu51cks80=kt38h22N7zQ@mail.gmail.com>
+ <62ea5a91-816f-4600-bfec-8f70798051db@roeck-us.net>
+ <CAOoeyxX=A5o5PhxpniPwPgMCBv1VwMstt=wXCxHiGPF59gm5wQ@mail.gmail.com>
+ <817d24e1-6fdd-4ce2-9408-eccc94134559@roeck-us.net>
 Content-Language: en-US
-From: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mairacanal@riseup.net>
-In-Reply-To: <20241007-yuv-v12-13-01c1ada6fec8@bootlin.com>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <817d24e1-6fdd-4ce2-9408-eccc94134559@roeck-us.net>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Hi Louis,
-
-On 07/10/24 13:10, Louis Chauvet wrote:
-> From: Arthur Grillo <arthurgrillo@riseup.net>
+On 10/25/24 08:44, Guenter Roeck wrote:
+> On 10/25/24 08:22, Ming Yu wrote:
+> [ ... ]
 > 
-> Create KUnit tests to test the conversion between YUV and RGB. Test each
-> conversion and range combination with some common colors.
+>>>>> +static int nct6694_fan_write(struct device *dev, u32 attr, int channel,
+>>>>> +                            long val)
+>>>>> +{
+>>>>> +       struct nct6694_hwmon_data *data = dev_get_drvdata(dev);
+>>>>> +       unsigned char enable_buf[REQUEST_HWMON_CMD0_LEN] = {0};
+>>>> [Kalesh] Please try to maintain RCT order for variable declaration
+>>>
+>>> Ok, but that is already the case here ?
+>>
+>> [Ming] Is there anything that needs to be changed?
+>>
 > 
-> The code used to compute the expected result can be found in comment.
+> I don't think so, If two lines have the same length, the order is up
+> to the developer to decide.
 > 
-> [Louis Chauvet:
-> - fix minor formating issues (whitespace, double line)
-> - change expected alpha from 0x0000 to 0xffff
-> - adapt to the new get_conversion_matrix usage
-> - apply the changes from Arthur
-> - move struct pixel_yuv_u8 to the test itself]
-> 
-> Signed-off-by: Arthur Grillo <arthurgrillo@riseup.net>
-> Acked-by: Pekka Paalanen <pekka.paalanen@collabora.com>
-> Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
-> ---
->   drivers/gpu/drm/vkms/Kconfig                  |  15 ++
->   drivers/gpu/drm/vkms/Makefile                 |   1 +
->   drivers/gpu/drm/vkms/tests/.kunitconfig       |   4 +
->   drivers/gpu/drm/vkms/tests/Makefile           |   3 +
->   drivers/gpu/drm/vkms/tests/vkms_format_test.c | 232 ++++++++++++++++++++++++++
->   drivers/gpu/drm/vkms/vkms_formats.c           |   7 +-
->   drivers/gpu/drm/vkms/vkms_formats.h           |   5 +
->   7 files changed, 265 insertions(+), 2 deletions(-)
+> Question though is if the buffer needs to be initialized. You should drop
+> the initialization if it is not necessary. In that case the second line
+> would be shorter anyway, and the order question would not arise.
 > 
 
-[...]
+Actually, I just noticed that you also submitted an IIO driver which
+reports the same data again. If a chip has an IIO driver, there should
+be no HWMON driver since the IIO -> HWMON bridge can then be used if
+necessary. So please drop this driver.
 
-> +
-> +static void vkms_format_test_yuv_u8_to_argb_u16(struct kunit *test)
-> +{
-> +	const struct yuv_u8_to_argb_u16_case *param = test->param_value;
-> +	struct pixel_argb_u16 argb;
-> +
-> +	for (size_t i = 0; i < param->n_colors; i++) {
-> +		const struct format_pair *color = &param->colors[i];
-> +		struct conversion_matrix matrix;
-> +
-> +		get_conversion_matrix_to_argb_u16
-> +			(DRM_FORMAT_NV12, param->encoding, param->range, &matrix);
-> +
-> +		argb = argb_u16_from_yuv888(color->yuv.y, color->yuv.u, color->yuv.v, &matrix);
+Thanks,
+Guenter
 
-This should be `argb_u16_from_yuv161616` as you fixed in [1].
 
-[1] 
-https://lore.kernel.org/all/20241007-b4-new-color-formats-v2-5-d47da50d4674@bootlin.com/
-
-Best Regards,
-- Maíra
-
-> +
-> +		KUNIT_EXPECT_LE_MSG(test, abs_diff(argb.a, color->argb.a), 257,
-> +				    "On the A channel of the color %s expected 0x%04x, got 0x%04x",
-> +				    color->name, color->argb.a, argb.a);
-> +		KUNIT_EXPECT_LE_MSG(test, abs_diff(argb.r, color->argb.r), 257,
-> +				    "On the R channel of the color %s expected 0x%04x, got 0x%04x",
-> +				    color->name, color->argb.r, argb.r);
-> +		KUNIT_EXPECT_LE_MSG(test, abs_diff(argb.g, color->argb.g), 257,
-> +				    "On the G channel of the color %s expected 0x%04x, got 0x%04x",
-> +				    color->name, color->argb.g, argb.g);
-> +		KUNIT_EXPECT_LE_MSG(test, abs_diff(argb.b, color->argb.b), 257,
-> +				    "On the B channel of the color %s expected 0x%04x, got 0x%04x",
-> +				    color->name, color->argb.b, argb.b);
-> +	}
-> +}
-> +
-> +static void vkms_format_test_yuv_u8_to_argb_u16_case_desc(struct yuv_u8_to_argb_u16_case *t,
-> +							  char *desc)
-> +{
-> +	snprintf(desc, KUNIT_PARAM_DESC_SIZE, "%s - %s",
-> +		 drm_get_color_encoding_name(t->encoding), drm_get_color_range_name(t->range));
-> +}
-> +
-> +KUNIT_ARRAY_PARAM(yuv_u8_to_argb_u16, yuv_u8_to_argb_u16_cases,
-> +		  vkms_format_test_yuv_u8_to_argb_u16_case_desc
-> +);
-> +
-> +static struct kunit_case vkms_format_test_cases[] = {
-> +	KUNIT_CASE_PARAM(vkms_format_test_yuv_u8_to_argb_u16, yuv_u8_to_argb_u16_gen_params),
-> +	{}
-> +};
-> +
-> +static struct kunit_suite vkms_format_test_suite = {
-> +	.name = "vkms-format",
-> +	.test_cases = vkms_format_test_cases,
-> +};
-> +
-> +kunit_test_suite(vkms_format_test_suite);
-> +
-> +MODULE_LICENSE("GPL");
-> +MODULE_DESCRIPTION("Kunit test for vkms format conversion");
-> diff --git a/drivers/gpu/drm/vkms/vkms_formats.c b/drivers/gpu/drm/vkms/vkms_formats.c
-> index adb1228e5201..0b201185eae7 100644
-> --- a/drivers/gpu/drm/vkms/vkms_formats.c
-> +++ b/drivers/gpu/drm/vkms/vkms_formats.c
-> @@ -7,6 +7,8 @@
->   #include <drm/drm_rect.h>
->   #include <drm/drm_fixed.h>
->   
-> +#include <kunit/visibility.h>
-> +
->   #include "vkms_formats.h"
->   
->   /**
-> @@ -247,8 +249,8 @@ static struct pixel_argb_u16 argb_u16_from_RGB565(const __le16 *pixel)
->   	return out_pixel;
->   }
->   
-> -static struct pixel_argb_u16 argb_u16_from_yuv888(u8 y, u8 channel_1, u8 channel_2,
-> -						  const struct conversion_matrix *matrix)
-> +VISIBLE_IF_KUNIT struct pixel_argb_u16 argb_u16_from_yuv888(u8 y, u8 channel_1, u8 channel_2,
-> +							    const struct conversion_matrix *matrix)
->   {
->   	u16 r, g, b;
->   	s64 fp_y, fp_channel_1, fp_channel_2;
-> @@ -278,6 +280,7 @@ static struct pixel_argb_u16 argb_u16_from_yuv888(u8 y, u8 channel_1, u8 channel
->   
->   	return argb_u16_from_u16161616(0xffff, r, g, b);
->   }
-> +EXPORT_SYMBOL_IF_KUNIT(argb_u16_from_yuv888);
->   
->   /*
->    * The following functions are read_line function for each pixel format supported by VKMS.
-> diff --git a/drivers/gpu/drm/vkms/vkms_formats.h b/drivers/gpu/drm/vkms/vkms_formats.h
-> index d583855cb320..b4fe62ab9c65 100644
-> --- a/drivers/gpu/drm/vkms/vkms_formats.h
-> +++ b/drivers/gpu/drm/vkms/vkms_formats.h
-> @@ -13,4 +13,9 @@ void get_conversion_matrix_to_argb_u16(u32 format, enum drm_color_encoding encod
->   				       enum drm_color_range range,
->   				       struct conversion_matrix *matrix);
->   
-> +#if IS_ENABLED(CONFIG_KUNIT)
-> +struct pixel_argb_u16 argb_u16_from_yuv888(u8 y, u8 channel_1, u8 channel_2,
-> +					   const struct conversion_matrix *matrix);
-> +#endif
-> +
->   #endif /* _VKMS_FORMATS_H_ */
-> 
 
