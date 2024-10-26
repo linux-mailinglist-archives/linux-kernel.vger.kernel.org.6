@@ -1,234 +1,254 @@
-Return-Path: <linux-kernel+bounces-383388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DA269B1AF7
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 22:48:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38BAA9B1AB9
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 22:21:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11FF31F21AC6
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 20:48:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2FD42822B3
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 20:21:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E51AF1D7E2F;
-	Sat, 26 Oct 2024 20:48:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 105B51D2B1A;
+	Sat, 26 Oct 2024 20:21:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KqkaXmTS"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="yuTgQOiV";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Sa6ZCPHI"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4683B1D54C2;
-	Sat, 26 Oct 2024 20:48:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F315DF9CF;
+	Sat, 26 Oct 2024 20:21:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729975702; cv=none; b=p7mFw4mcp27o9JjJCQpcAWHB1MY/MZ5K0ivQ9PRwW3z+Ja1hh0xcfueqOyKzzkj3ixbVycE8zx4m/S0uGvEp1fwIZ+3EniywWktXWMAxDrq5TercNLOZjJJRWItiYd7mEJR65XMOPqENRO8ZMrrKXMkskzXYI/wdUiwOoqb9JG4=
+	t=1729974078; cv=none; b=QOVKCa7DWhq726SAH/SHh4PWmMql5uUtS7p8zrnjgYmIxbkv3/sTiQISyAesYKgfjVfdxWxkz5LeIAwrLDSO/kksQKZ6U5cd0Ev8wXUynIedXbua3+RQpAJ7+ST3Ee6+0YkKhdXyDuywNk6v3DG41Zj1jcFDbp+mKyouX/Agd0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729975702; c=relaxed/simple;
-	bh=LBHA8axdDgptLK0Z/drDDMkxSR3k9NMloOsHzw0RFbI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=dLThqckyedrK3a7X6uQdyh+nKD1TNfbaqjmZqJ7/INsEo/GZj0aqrP2HX+CaZdSEXEWqGSZufYBJbDjUL2b3C3wjJLujgpN7vJhjsH/pKLHj7wjzGKUJcYg9x0gJlceT05gKFx9ElByXb1+EE70ZDspJ5VQWWSxaxonKpVZSTb4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KqkaXmTS; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-20cb7139d9dso27039185ad.1;
-        Sat, 26 Oct 2024 13:48:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729975699; x=1730580499; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=fIA9fyOJQl8Gu0sByK4pSmQgiops8sit5rWYrUHittM=;
-        b=KqkaXmTSLpa4o7sdV5k7apdjJdq7/1/bs9Zx58c+Dt+8/5XjlV8rtygaDnr45M8zfO
-         JEM2Vfz/UwFjQrXZh8yZ9SINnV9tJsp4mg462EPS7wa9TG3mtnKBF+GDo7NkesSdqMJK
-         TaDkrdjzAksBRGs0B7xG7VRxx7QmOvUxev7cKIDItxhBHA5nFQ09oRuJ96C84AIHfCDZ
-         dsRfPD67qsmcRLelyplfA65K3bjGZQiVo4FiqFcnjG5ZAhrNsvms1wimK+6kdyXHkR2H
-         raRvyTb6pc/Gl0NW2G6+BHL3yE/Iw/PZEN4M+JDImzv03REFLmMvdCOVcrAV8aZAlvc6
-         O4PA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729975699; x=1730580499;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fIA9fyOJQl8Gu0sByK4pSmQgiops8sit5rWYrUHittM=;
-        b=scvbWDyskQwml6j1F4QF8tZcEnQOaWtNHz9XRhOnVyJ5TFMFiPibE0VV3di3pJfppK
-         ffRucktlXs6ypjkv8VvkaHVAlmDyet0uuHCFwugNy/ambAWHCyc7JJyXIkz/eniqBP4o
-         aEesaUsOdl/F1P7vD2JqFYMZOFF2Dcgs2wd9VVc33u47r1v3W4KJZNA4r+i+vDmDefz1
-         s+3jz/he0lAGekBIK2v+tN2zSfQ8M0VVqfJfwerrgUAoE1zOMRlcVSNb0FqBogBsksO6
-         /jKrJlglbfWEKMI2+WBiDFZrE/w8tWkUzMWBziG7U7J8yobNhCqjdaDvQ1Qf8+XMkuv4
-         a6WQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWiMs/lkEoJvPJva4H0DJ4NYIsWlcNqzxPMXCbK9QZ1EXThm9KYx/HsWeT+sgbmbl7UViKjKTmssnPFpe4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQsDTBj4z6L/3NQ0U3qVD40aK+sNleQtQ58mo/KVZyRbExnh5q
-	zCrGfCp5GIxY6azYmkeYOXDb3EfeRLmA7Y9HiD0tYiPl2OptAZ+K
-X-Google-Smtp-Source: AGHT+IE333gdRW0oUHBCkmGDWZSQHfGYaDKn0tETw4Z0mGu0t3ZLNT8/4M/o2OAIEjGXwv5NgOXKVw==
-X-Received: by 2002:a17:903:2b08:b0:20b:bad4:5b6e with SMTP id d9443c01a7336-210c6c3ec62mr43945645ad.38.1729975699387;
-        Sat, 26 Oct 2024 13:48:19 -0700 (PDT)
-Received: from Emma ([2401:4900:1c96:f151:5054:ff:fe53:2787])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bbf4499esm27634295ad.8.2024.10.26.13.48.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 26 Oct 2024 13:48:18 -0700 (PDT)
-From: Karan Sanghavi <karansanghvi98@gmail.com>
-Date: Sat, 26 Oct 2024 13:59:13 +0000
-Subject: [PATCH v3] dt-bindings: power: Convert raspberrypi,bcm2835-power
- to Dt schema
+	s=arc-20240116; t=1729974078; c=relaxed/simple;
+	bh=4RO+I45ZMTd84+0w9a/hMQQ8nCEPZF58XMe7CBLRXWA=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:MIME-Version:
+	 Content-Type; b=NwDYiZ0Dk82WkQ0AszRWVkBnci0hCLchOy+29PAGI53YylT9aZYqeOtK/S7VsUrLkz8UOnV9A3NgHyQqmByjw+E6uLYCUA/6ZgZLUZR1srDeVvmvORdSIqfxXfSDxI9sjNggwfXzQ9hWmYQSHP8U68il/MRe3SSoIsYo24T9U+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=yuTgQOiV; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Sa6ZCPHI; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1729974068;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:  in-reply-to:in-reply-to;
+	bh=UVBjNciPaT9E3/C35g4TcCJ4q9NvcZt7yT82yg5lifo=;
+	b=yuTgQOiVrC6YqmdaazV/76roMK9/6pPIX11AwxpNcefs6yBRJrT40Kz/ph35Fs/0rlDXfS
+	HLx+afW3lXBxobzfZrLsT/D1wZZ7UPBL5GYzAIAaT2Fx8GLPs3W4Lq+wbnCgMX1dN7OPRF
+	bJxeArvFOkcagJXOOI5XsPdIQ24hE4kgbzRNprnMUCJmG8TyylfgZSN7tlrk3ffDLE/ziT
+	DccGekjNYS5xeqlHz2mN+PZ5YhjhJsBOLwN0mb1B7hgtjNRfrD+tD4yaVYLe1XFzL8rgcO
+	TNWzgNSRAnv6HqiCLHXzO9uvKlIH6eQVj9cvqY7H139nEFCnP4k9my6BLdbpJg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1729974068;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:  in-reply-to:in-reply-to;
+	bh=UVBjNciPaT9E3/C35g4TcCJ4q9NvcZt7yT82yg5lifo=;
+	b=Sa6ZCPHIASFMTbZNN3AyFVpS+Y/Kgi9RYHbv8Afr5k+F8gwTtD6/kb8Ju/Yds4Py8n8Lmt
+	qdf1h93fBB9ukSCA==
+To: =?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>, Celeste Liu
+ <coelacanthushex@gmail.com>, Celeste Liu via B4 Relay
+ <devnull+CoelacanthusHex.gmail.com@kernel.org>, Paul Walmsley
+ <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
+ <aou@eecs.berkeley.edu>, =?utf-8?B?QmrDtnJuIFTDtnBlbA==?=
+ <bjorn@rivosinc.com>
+Cc: Palmer Dabbelt <palmer@rivosinc.com>, Alexandre Ghiti <alex@ghiti.fr>,
+ "Dmitry V. Levin" <ldv@strace.io>, Andrea Bolognani <abologna@redhat.com>,
+ Felix Yan <felixonmars@archlinux.org>, Ruizhe Pan <c141028@gmail.com>,
+ Shiqi Zhang <shiqi@isrc.iscas.ac.cn>, Guo Ren <guoren@kernel.org>, Yao Zi
+ <ziyao@disroot.org>, Han Gao <gaohan@iscas.ac.cn>,
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+Subject: Re: [PATCH] riscv/entry: get correct syscall number from
+ syscall_get_nr()
+In-Reply-To: <87ldycjluq.fsf@all.your.base.are.belong.to.us>
+Date: Sat, 26 Oct 2024 22:21:07 +0200
+Message-ID: <87ldya4nv0.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241026-raspberrypi-bcm2835-power-v3-1-6621e075d33f@gmail.com>
-X-B4-Tracking: v=1; b=H4sIALD1HGcC/43NwQ6DIAyA4VcxnMciBYLstPdYdkDslGQKgYXNG
- N996MnTsvT0N+nXhSSMDhO5VAuJmF1yfirBTxWxg5l6pK4rTaAGwWqmaTQptBjjHBxt7QgNlzT
- 4N0YqjQDOWmy01KTch4gP99nt27304NLLx3l/ldm2/UfNjDKqJGoQneVKyGs/Gvc8Wz+STc1wk
- AB+SVAkZoRpykjF1VFa1/UL011ntwwBAAA=
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Florian Fainelli <florian.fainelli@broadcom.com>, 
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
- Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>
-Cc: devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Shuah Khan <skhan@linuxfoundation.org>, 
- Alexander Aring <alex.aring@gmail.com>, Eric Anholt <eric@anholt.net>, 
- Karan Sanghavi <karansanghvi98@gmail.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1729951167; l=3906;
- i=karansanghvi98@gmail.com; s=20241017; h=from:subject:message-id;
- bh=LBHA8axdDgptLK0Z/drDDMkxSR3k9NMloOsHzw0RFbI=;
- b=QNVj74pVLjwDeuupmFKqLDUzJPtmv+LaSfOiza5lgdVnLkNwuzLzZs5U6tBlWbzEBHHFh8p/w
- EpBzzhM2MhNAkO3dYdYfkZh0qkrSS6QFZK2rCIZcxRGqCt0XKL6+gUC
-X-Developer-Key: i=karansanghvi98@gmail.com; a=ed25519;
- pk=UAcbefT1C06npNVDJHdgpPqTm4WE9IhaA1fmJb3A37Y=
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Convert the raspberrypi,bcm2835-power binding to Dt schema
+On Fri, Oct 25 2024 at 07:30, Bj=C3=B6rn T=C3=B6pel wrote:
+> Thomas Gleixner <tglx@linutronix.de> writes:
+>> It's completely unclear to me what the actual problem is. The flow how
+>> this works on all architectures is:
+>>
+>>        regs->orig_a0  =3D regs->a0
+>>        regs->a0 =3D -ENOSYS;
+>>
+>>        nr =3D syscall_enter_from_user_mode(....);
+>>
+>>        if (nr >=3D 0)
+>>           regs->a0 =3D nr < MAX_SYSCALL ? syscall(nr) : -ENOSYS;
+>>=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20
+>> If syscall_trace_enter() returns -1 to skip the syscall, then regs->a0
+>> is unmodified, unless one of the magic operations modified it.
+>>
+>> If syscall_trace_enter() was not active (no tracer, no seccomp ...) then
+>> regs->a0 already contains -ENOSYS.
+>>
+>> So what's the exact problem?
+>
+> It's a mix of calling convention, and UAPI:
+>   * RISC-V uses a0 for arg0 *and* return value (like arm64).
+>   * RISC-V does not expose orig_a0 to userland, and cannot easily start
+>     doing that w/o breaking UAPI.
+>
+> Now, when setting a0 to -ENOSYS, it's clobbering arg0, and the ptracer
+> will have an incorrect arg0 (-ENOSYS).
 
-Signed-off-by: Karan Sanghavi <karansanghvi98@gmail.com>
----
-Changes in v3:
-- Applied changes as per the feedback received for title and description
-- Removed power label and renamed node to power-controller	
-- Moved the file from bindings/soc/bcm to bindings/power
-- Link to v2: https://lore.kernel.org/r/20241022-raspberrypi-bcm2835-power-v2-1-1a4a8a8a5737@gmail.com
+Oh I see. I was looking at it from the x86 POV...=20
 
-Changes in v2:
-- Added original file maintainers
-- Removed unnecessary headers from example and formating from description 
-- Link to v1: https://lore.kernel.org/r/20241019-raspberrypi-bcm2835-power-v1-1-75e924dc3745@gmail.com
----
- .../bindings/power/raspberrypi,bcm2835-power.yaml  | 44 ++++++++++++++++++++
- .../bindings/soc/bcm/raspberrypi,bcm2835-power.txt | 47 ----------------------
- 2 files changed, 44 insertions(+), 47 deletions(-)
+Looking deeper into this, this is all completely inconsistent across
+architectures. All of them copied either from x86 or from some other
+close enough existing copy and changed stuff on top.
 
-diff --git a/Documentation/devicetree/bindings/power/raspberrypi,bcm2835-power.yaml b/Documentation/devicetree/bindings/power/raspberrypi,bcm2835-power.yaml
-new file mode 100644
-index 000000000000..71b3fa41c495
---- /dev/null
-+++ b/Documentation/devicetree/bindings/power/raspberrypi,bcm2835-power.yaml
-@@ -0,0 +1,44 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+
-+---
-+
-+$id: http://devicetree.org/schemas/power/raspberrypi,bcm2835-power.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Broadcom BCM2835 power domain
-+
-+maintainers:
-+  - Alexander Aring <alex.aring@gmail.com>
-+  - Eric Anholt <eric@anholt.net>
-+
-+description:
-+  The Raspberry Pi power domain manages power for various subsystems
-+  in the Raspberry Pi BCM2835 SoC.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - raspberrypi,bcm2835-power
-+
-+  firmware:
-+    $ref: /schemas/types.yaml#/definitions/phandle
-+    description: Reference to the RPi firmware device node
-+
-+  "#power-domain-cells":
-+    const: 1
-+
-+required:
-+  - compatible
-+  - firmware
-+  - "#power-domain-cells"
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    power-controller {
-+      compatible = "raspberrypi,bcm2835-power";
-+      firmware = <&firmware>;
-+      #power-domain-cells = <1>;
-+      };
-diff --git a/Documentation/devicetree/bindings/soc/bcm/raspberrypi,bcm2835-power.txt b/Documentation/devicetree/bindings/soc/bcm/raspberrypi,bcm2835-power.txt
-deleted file mode 100644
-index 30942cf7992b..000000000000
---- a/Documentation/devicetree/bindings/soc/bcm/raspberrypi,bcm2835-power.txt
-+++ /dev/null
-@@ -1,47 +0,0 @@
--Raspberry Pi power domain driver
--
--Required properties:
--
--- compatible:		Should be "raspberrypi,bcm2835-power".
--- firmware:		Reference to the RPi firmware device node.
--- #power-domain-cells:	Should be <1>, we providing multiple power domains.
--
--The valid defines for power domain are:
--
-- RPI_POWER_DOMAIN_I2C0
-- RPI_POWER_DOMAIN_I2C1
-- RPI_POWER_DOMAIN_I2C2
-- RPI_POWER_DOMAIN_VIDEO_SCALER
-- RPI_POWER_DOMAIN_VPU1
-- RPI_POWER_DOMAIN_HDMI
-- RPI_POWER_DOMAIN_USB
-- RPI_POWER_DOMAIN_VEC
-- RPI_POWER_DOMAIN_JPEG
-- RPI_POWER_DOMAIN_H264
-- RPI_POWER_DOMAIN_V3D
-- RPI_POWER_DOMAIN_ISP
-- RPI_POWER_DOMAIN_UNICAM0
-- RPI_POWER_DOMAIN_UNICAM1
-- RPI_POWER_DOMAIN_CCP2RX
-- RPI_POWER_DOMAIN_CSI2
-- RPI_POWER_DOMAIN_CPI
-- RPI_POWER_DOMAIN_DSI0
-- RPI_POWER_DOMAIN_DSI1
-- RPI_POWER_DOMAIN_TRANSPOSER
-- RPI_POWER_DOMAIN_CCP2TX
-- RPI_POWER_DOMAIN_CDP
-- RPI_POWER_DOMAIN_ARM
--
--Example:
--
--power: power {
--	compatible = "raspberrypi,bcm2835-power";
--	firmware = <&firmware>;
--	#power-domain-cells = <1>;
--};
--
--Example for using power domain:
--
--&usb {
--       power-domains = <&power RPI_POWER_DOMAIN_USB>;
--};
+So we have two different scenarios AFAICT (I did not look really
+deeply):
 
----
-base-commit: 8e929cb546ee42c9a61d24fae60605e9e3192354
-change-id: 20241019-raspberrypi-bcm2835-power-5a4231be8959
+   1) The register which holds the syscall number is used for the
+      return value
 
-Best regards,
--- 
-Karan Sanghavi <karansanghvi98@gmail.com>
+   2) An argument register is used for the return value
 
+#1 is the easy case and just "works"
+
+   because orig_$REG holds the original syscall number and everything
+   falls into place.
+
+#2 needs some thought, but we are not going to add this:
+
+>	 if (work & SYSCALL_WORK_ENTER)
+>		 syscall =3D syscall_trace_enter(regs, syscall, work);
+> +	else if (syscall =3D=3D -1L)
+> +		syscall_set_return_value(current, regs, -ENOSYS, 0);
+>
+
+into the syscall path just to make #2 work. That's hotpath and affects
+all other architectures too.
+
+So the problem for the #2 case is that there is no distinction between a
+user space issued syscall(@nr =3D -1) and the return value of (-1) of
+various functions involved in the syscall 'tracer' processing.
+
+So what the issue with Celeste's change is:
+
+	res =3D syscall_enter_from_user_mode(regs, syscall);
+	syscall =3D syscall_get_nr(current, regs);
+
+	add_random_kstack_offset();
+
+	if (syscall < 0 || syscall >=3D NR_syscalls)
+        	regs->a0 =3D -ENOSYS;
+
+As the tracer can invalidate the syscall number along with regs->a0,
+this overwrites the error code set by the tracer. Your solution has a
+similar problem.
+
+There is another issue vs. regs->a0. Assume a ptracer modified regs->a0
+(arg0) and lets the task continue (no fatal signal pending).
+
+Then the following seccomp() invocation will get regs->orig_a0 from
+syscall_get_arguments(), which is not what the ptracer set, right?
+
+Let me look at your failure analysis from your first reply:
+
+>  1. strace "tracing": Requires that regs->a0 is not tampered with prior
+>     ptrace notification
+>=20
+>     E.g.:
+>     | # ./strace /
+>     | execve("/", ["/"], 0x7ffffaac3890 /* 21 vars */) =3D -1 EACCES (Per=
+mission denied)
+>     | ./strace: exec: Permission denied
+>     | +++ exited with 1 +++
+>     | # ./disable_ptrace_get_syscall_info ./strace /
+>     | execve(0xffffffffffffffda, ["/"], 0x7fffd893ce10 /* 21 vars */) =3D=
+ -1 EACCES (Permission denied)
+>     | ./strace: exec: Permission denied
+>     | +++ exited with 1 +++
+>=20
+>     In the second case, arg0 is prematurely set to -ENOSYS
+>     (0xffffffffffffffda).
+
+That's expected if ptrace_get_syscall_info() is not used. Plain dumping
+registers will give you the current value on all architectures.
+ptrace_get_syscall_info() exist exactly for that reason.
+
+>  2. strace "syscall tampering": Requires that ENOSYS is returned for
+>     syscall(-1), and not skipped w/o a proper return value.
+>=20
+>     E.g.:
+>     | ./strace -a0 -ewrite -einject=3Dwrite:error=3Denospc echo helloject=
+=3Dwrite:error=3Denospc echo hello=20=20=20
+>=20
+>     Here, strace expects that injecting -1, would result in a ENOSYS.
+
+No. It expects ENOSPC with the above command line. man strace:
+
+       If :error=3Derrno option is specified, a fault is injected into a
+       syscall invocation: the syscall number is replaced by -1 which
+       corresponds to an invalid syscall (unless a syscall is specified
+       with :syscall=3D option), and the error code is specified using a
+       symbolic errno value like ENOSYS or a numeric value within
+       1..4095 range.
+
+Similar for -einject:retval=3D$N
+
+So you cannot overwrite a0 with ENOSYS if the syscall needs to be
+skipped.
+
+>  3. seccomp filtering: Requires that the a0 is not tampered to
+
+No. seccomp uses syscall_get_arguments() which sets a0 to orig_a0 for
+inspection. As I said before that fails when the ptracer changed
+argument 0 before the seccomp invocation. seccomp will see the original
+argument and waves it through.
+
+Looking at Celeste's analysis again:
+
+> We can't know whether syscall_nr is -1 when we get -1
+> from syscall_enter_from_user_mode(). And the old syscall variable is
+> unusable because syscall_enter_from_user_mode() may change a7 register.
+
+You obviously can save the user space supplied value away
+in do_trap_ecall_u() by simply doing
+
+       long orig_nr =3D regs->a7;
+
+No? But I'm not sure that it solves all problems. It cannot solve the
+ptrace/seccomp interaction.
+
+The rest of the changelog is simply bogus. Just because riscv made a
+mistake with the UABI design does not mean that it's useless for
+everyone else.
+
+And no, I'm not going to change x86 for that just to have a pointless
+load in the syscall hotpath, when the normal operation just keeps the
+syscall number in the same register.
+
+The real problem is that orig_a0 is not exposed in the user view of the
+registers. Changing that struct breaks the existing applications
+obviously.
+
+But you can expose it without changing the struct by exposing a regset
+for orig_a0 which allows you to read and write it similar to what ARM64
+does for the syscall number.
+
+That of course requires updated user space, but existing user space will
+continue to work with the current limitations.
+
+Thanks,
+
+        tglx
 
