@@ -1,178 +1,115 @@
-Return-Path: <linux-kernel+bounces-382862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5679F9B141E
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 03:57:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6F229B1427
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 04:03:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B9D79B21C09
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 01:56:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C570DB21D26
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 02:03:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73E4F13B2A5;
-	Sat, 26 Oct 2024 01:56:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ezMSSXF+"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1B4113BAE7;
+	Sat, 26 Oct 2024 02:02:58 +0000 (UTC)
+Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A52770813
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 01:56:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC227217F33
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 02:02:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729907808; cv=none; b=I/oCfN3iHrd76JtCEM85IANO/5YUSeJMnEp1dAPHLTXZLg455mgitdZ0aHN45pBjEkLK7xSt91UOh+HJuv2V3OH1sWMe2+5dfzj8aiKP5nmGiN/FAE0YxyWOviAthc0EudO4kJOBL7yGDz/wGFppVkNAuWL2To/i4ec4zBKIIHY=
+	t=1729908178; cv=none; b=WRGTanHpxhN0PqvfhK67n5//5zeQMQRfbuxbuJjRPFeEWX6J5OG08PL8H9PCD8hgBXK1+Md0onCQG95qTlDv8VFDVCJuKnLnqRqSLc5CJaNqkEBxzBde6DY5P4l5yUbAxtokgUzovs4eBDjaofNJrTXhUXTDuBk1CBrNBb6p274=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729907808; c=relaxed/simple;
-	bh=tG3+xLbFSNbeMcSeH7xbGduUdqBK6M8d1HeoYJLKAug=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=oPZCe6a+zFoNv77NVTjC1xP7G97MKHys5FWXHyo27LDQffIqOv907kwkhSJjLaRxilaAW4F9NbUXHOjSgfc7QfF0HiuzHLoL5DLYzlAUuGPZhQwxDX1aSM95ICDH5oqNeTH7sQEV2h/iIkAOrOrKayMu/7cLH+1OGaN0qyrcUZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ezMSSXF+; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729907807; x=1761443807;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=tG3+xLbFSNbeMcSeH7xbGduUdqBK6M8d1HeoYJLKAug=;
-  b=ezMSSXF+OUAUaSgUKrmdzs/ZCVIG49GlkjSSXvtVUTTrWuBd+tTS1LWL
-   GFvzdVguVp95d4Wy616WQQ1CCiQ5JBEI/8AxuR5MBOYYwNn2QrieDIeME
-   RALUkT766pyOgeW3HwuHGRA4zPatKwBB5fRgptEz7xXPMPhhWO0qEHU9a
-   FxSjd7M6Q5FvcL93PS4XNRvCUjHqL5KW3sdkw18gF3EK1fofcA1sgw+Jr
-   Ji2lryeTdPOFXJ+wQlP023Nt7HCa1KCjGu6Wdq3GoaWDA+BRnzK4ZSe7Z
-   Ow417uVdyoMoYdTbOqlnBQNUhy65FGol4Xdb2qWbIhfbuoNec5/kTlwnC
-   g==;
-X-CSE-ConnectionGUID: IKY4EgXgSmunrZccSKOR5w==
-X-CSE-MsgGUID: sqkpL1LvSKmF1Q63mSmwtA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="29452096"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="29452096"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2024 18:56:44 -0700
-X-CSE-ConnectionGUID: UZJ+KsxHTlaTKTDj0RpQzg==
-X-CSE-MsgGUID: PzNk6H1LRkKldWnysYR89Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,233,1725346800"; 
-   d="scan'208";a="85050157"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa003.fm.intel.com with ESMTP; 25 Oct 2024 18:56:41 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t4W2h-000Z9O-1m;
-	Sat, 26 Oct 2024 01:56:39 +0000
-Date: Sat, 26 Oct 2024 09:55:53 +0800
-From: kernel test robot <lkp@intel.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>, Alex Shi <alexs@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>
-Subject: drivers/mtd/maps/solutionengine.c:52:39: error: assignment to 'void
- *' from 'int' makes pointer from integer without a cast
-Message-ID: <202410260957.rI7wuDpF-lkp@intel.com>
+	s=arc-20240116; t=1729908178; c=relaxed/simple;
+	bh=PgxZnjR327q1pL506DhqumL4gQfsKQzWUNCwv/jcVhE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=YjgweyV/FXOQNc3sZFUdwRrI/I2P/dmKu1Bqlf6rMwpd/zDFVEOmjIBe29I5qx2ND6ksY93ZUU+R2oeJsRUXE+/6yvxtLl0HHoOLZJwTO8ZcQIOpKkX51e1+9RW1zkUj9KfP7SckPX7mOk/Nim6CI4KdKZoEkDmugiuDogtdjys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4Xb2v96mq3z1SD5g;
+	Sat, 26 Oct 2024 10:01:25 +0800 (CST)
+Received: from kwepemg200008.china.huawei.com (unknown [7.202.181.35])
+	by mail.maildlp.com (Postfix) with ESMTPS id 13F3C180041;
+	Sat, 26 Oct 2024 10:02:53 +0800 (CST)
+Received: from [10.67.109.254] (10.67.109.254) by
+ kwepemg200008.china.huawei.com (7.202.181.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Sat, 26 Oct 2024 10:02:52 +0800
+Message-ID: <fb6c6e6d-18ad-344d-c8ad-a9b90c6c2f28@huawei.com>
+Date: Sat, 26 Oct 2024 10:02:51 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-Hi Arnd,
-
-FYI, the error/warning still remains.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   850925a8133c73c4a2453c360b2c3beb3bab67c9
-commit: e8c07082a810fbb9db303a2b66b66b8d7e588b53 Kbuild: move to -std=gnu11
-date:   2 years, 7 months ago
-config: sh-randconfig-001-20241026 (https://download.01.org/0day-ci/archive/20241026/202410260957.rI7wuDpF-lkp@intel.com/config)
-compiler: sh4-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241026/202410260957.rI7wuDpF-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410260957.rI7wuDpF-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from include/linux/gfp.h:6,
-                    from include/linux/umh.h:4,
-                    from include/linux/kmod.h:9,
-                    from include/linux/module.h:17,
-                    from drivers/mtd/maps/solutionengine.c:9:
-   include/linux/mmzone.h: In function '__nr_to_section':
-   include/linux/mmzone.h:1396:13: warning: the comparison will always evaluate as 'true' for the address of 'mem_section' will never be NULL [-Waddress]
-    1396 |         if (!mem_section[SECTION_NR_TO_ROOT(nr)])
-         |             ^
-   include/linux/mmzone.h:1382:27: note: 'mem_section' declared here
-    1382 | extern struct mem_section mem_section[NR_SECTION_ROOTS][SECTIONS_PER_ROOT];
-         |                           ^~~~~~~~~~~
-   drivers/mtd/maps/solutionengine.c: In function 'init_soleng_maps':
->> drivers/mtd/maps/solutionengine.c:52:39: error: assignment to 'void *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
-      52 |                 soleng_flash_map.virt = P2SEGADDR(0x01000000);
-         |                                       ^
-   drivers/mtd/maps/solutionengine.c:54:39: error: assignment to 'void *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
-      54 |                 soleng_eprom_map.virt = P1SEGADDR(0);
-         |                                       ^
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
+Subject: Re: [PATCH v3 0/4] drm/tests: Fix some memory leaks
+Content-Language: en-US
+To: Maxime Ripard <mripard@kernel.org>
+CC: <maarten.lankhorst@linux.intel.com>, <tzimmermann@suse.de>,
+	<airlied@gmail.com>, <simona@ffwll.ch>, <christian.koenig@amd.com>,
+	<ray.huang@amd.com>, <dmitry.baryshkov@linaro.org>,
+	<dave.stevenson@raspberrypi.com>, <quic_jjohnson@quicinc.com>,
+	<mcanal@igalia.com>, <davidgow@google.com>, <skhan@linuxfoundation.org>,
+	<karolina.stolarek@intel.com>, <Arunpravin.PaneerSelvam@amd.com>,
+	<thomas.hellstrom@linux.intel.com>, <asomalap@amd.com>,
+	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+References: <20241017063125.3080347-1-ruanjinjie@huawei.com>
+ <20241018-gigantic-meticulous-pug-06ec1b@houat>
+ <f7519595-8080-44c5-0477-e1281266b80b@huawei.com>
+ <80114de7-19c0-d860-c888-35e535915f78@huawei.com>
+ <20241025-bold-light-vicugna-c30ecf@houat>
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+In-Reply-To: <20241025-bold-light-vicugna-c30ecf@houat>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemg200008.china.huawei.com (7.202.181.35)
 
 
-vim +52 drivers/mtd/maps/solutionengine.c
 
-^1da177e4c3f41 Linus Torvalds 2005-04-16  35  
-^1da177e4c3f41 Linus Torvalds 2005-04-16  36  static int __init init_soleng_maps(void)
-^1da177e4c3f41 Linus Torvalds 2005-04-16  37  {
-^1da177e4c3f41 Linus Torvalds 2005-04-16  38  	/* First probe at offset 0 */
-^1da177e4c3f41 Linus Torvalds 2005-04-16  39  	soleng_flash_map.phys = 0;
-^1da177e4c3f41 Linus Torvalds 2005-04-16  40  	soleng_flash_map.virt = (void __iomem *)P2SEGADDR(0);
-^1da177e4c3f41 Linus Torvalds 2005-04-16  41  	soleng_eprom_map.phys = 0x01000000;
-^1da177e4c3f41 Linus Torvalds 2005-04-16  42  	soleng_eprom_map.virt = (void __iomem *)P1SEGADDR(0x01000000);
-^1da177e4c3f41 Linus Torvalds 2005-04-16  43  	simple_map_init(&soleng_eprom_map);
-^1da177e4c3f41 Linus Torvalds 2005-04-16  44  	simple_map_init(&soleng_flash_map);
-^1da177e4c3f41 Linus Torvalds 2005-04-16  45  
-^1da177e4c3f41 Linus Torvalds 2005-04-16  46  	printk(KERN_NOTICE "Probing for flash chips at 0x00000000:\n");
-^1da177e4c3f41 Linus Torvalds 2005-04-16  47  	flash_mtd = do_map_probe("cfi_probe", &soleng_flash_map);
-^1da177e4c3f41 Linus Torvalds 2005-04-16  48  	if (!flash_mtd) {
-^1da177e4c3f41 Linus Torvalds 2005-04-16  49  		/* Not there. Try swapping */
-^1da177e4c3f41 Linus Torvalds 2005-04-16  50  		printk(KERN_NOTICE "Probing for flash chips at 0x01000000:\n");
-^1da177e4c3f41 Linus Torvalds 2005-04-16  51  		soleng_flash_map.phys = 0x01000000;
-^1da177e4c3f41 Linus Torvalds 2005-04-16 @52  		soleng_flash_map.virt = P2SEGADDR(0x01000000);
-^1da177e4c3f41 Linus Torvalds 2005-04-16  53  		soleng_eprom_map.phys = 0;
-^1da177e4c3f41 Linus Torvalds 2005-04-16  54  		soleng_eprom_map.virt = P1SEGADDR(0);
-^1da177e4c3f41 Linus Torvalds 2005-04-16  55  		flash_mtd = do_map_probe("cfi_probe", &soleng_flash_map);
-^1da177e4c3f41 Linus Torvalds 2005-04-16  56  		if (!flash_mtd) {
-^1da177e4c3f41 Linus Torvalds 2005-04-16  57  			/* Eep. */
-^1da177e4c3f41 Linus Torvalds 2005-04-16  58  			printk(KERN_NOTICE "Flash chips not detected at either possible location.\n");
-^1da177e4c3f41 Linus Torvalds 2005-04-16  59  			return -ENXIO;
-^1da177e4c3f41 Linus Torvalds 2005-04-16  60  		}
-^1da177e4c3f41 Linus Torvalds 2005-04-16  61  	}
-1d25e3eeed1d98 Randy Dunlap   2018-07-24  62  	printk(KERN_NOTICE "Solution Engine: Flash at 0x%pap, EPROM at 0x%pap\n",
-1d25e3eeed1d98 Randy Dunlap   2018-07-24  63  	       &soleng_flash_map.phys,
-1d25e3eeed1d98 Randy Dunlap   2018-07-24  64  	       &soleng_eprom_map.phys);
-^1da177e4c3f41 Linus Torvalds 2005-04-16  65  	flash_mtd->owner = THIS_MODULE;
-^1da177e4c3f41 Linus Torvalds 2005-04-16  66  
-^1da177e4c3f41 Linus Torvalds 2005-04-16  67  	eprom_mtd = do_map_probe("map_rom", &soleng_eprom_map);
-^1da177e4c3f41 Linus Torvalds 2005-04-16  68  	if (eprom_mtd) {
-^1da177e4c3f41 Linus Torvalds 2005-04-16  69  		eprom_mtd->owner = THIS_MODULE;
-ee0e87b174bb41 Jamie Iles     2011-05-23  70  		mtd_device_register(eprom_mtd, NULL, 0);
-^1da177e4c3f41 Linus Torvalds 2005-04-16  71  	}
-^1da177e4c3f41 Linus Torvalds 2005-04-16  72  
-390e9eacf1dcec Paul Bolle     2014-05-23  73  	mtd_device_parse_register(flash_mtd, probes, NULL, NULL, 0);
-^1da177e4c3f41 Linus Torvalds 2005-04-16  74  
-^1da177e4c3f41 Linus Torvalds 2005-04-16  75  	return 0;
-^1da177e4c3f41 Linus Torvalds 2005-04-16  76  }
-^1da177e4c3f41 Linus Torvalds 2005-04-16  77  
+On 2024/10/25 22:33, Maxime Ripard wrote:
+> On Wed, Oct 23, 2024 at 09:35:59AM +0800, Jinjie Ruan wrote:
+>>
+>>
+>> On 2024/10/18 16:12, Jinjie Ruan wrote:
+>>>
+>>>
+>>> On 2024/10/18 15:55, Maxime Ripard wrote:
+>>>> Hi,
+>>>>
+>>>> On Thu, Oct 17, 2024 at 02:31:21PM GMT, Jinjie Ruan wrote:
+>>>>> Fix some memory leaks in drm tests.
+>>>>>
+>>>>> Changes in v3:
+>>>>> - Adjust drm/drm_edid.h header to drm_kunit_helpers.c.
+>>>>> - Drop the "helper" in the helper name.
+>>>>> - s/fllowing/following/
+>>>>> - Add Acked-by.
+>>>>
+>>>> This creates build failures since drm_display_mode were const before,
+>>>> and can't anymore.
+>>>
+>>> It seems it came from bellowing v1, and this v3 has not reported the
+>>> issue yet.
+>>>
+>>> https://lore.kernel.org/all/202410180830.oitxTsOv-lkp@intel.com/
+>>
+>> Hi, Maxime,
+>>
+>> Should this series send again? The issue seems not related to this version.
+> 
+> As far as I know, the issues reported still apply there, so yes
 
-:::::: The code at line 52 was first introduced by commit
-:::::: 1da177e4c3f41524e886b7f1b8a0c1fc7321cac2 Linux-2.6.12-rc2
+Hi, Maxime,
 
-:::::: TO: Linus Torvalds <torvalds@ppc970.osdl.org>
-:::::: CC: Linus Torvalds <torvalds@ppc970.osdl.org>
+I make this version code with "C=2", there is no these build failures.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> 
+> Maxime
 
