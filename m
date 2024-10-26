@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-383109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A70C9B176D
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 13:27:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B51BF9B1771
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 13:28:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDCFA1F226B6
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 11:27:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F6731F225DF
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 11:28:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2526A1D363D;
-	Sat, 26 Oct 2024 11:26:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7E001D414E;
+	Sat, 26 Oct 2024 11:28:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B55TDTMI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="agQ7DoRU"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 703FC1D3566;
-	Sat, 26 Oct 2024 11:26:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F031B1B78F3;
+	Sat, 26 Oct 2024 11:28:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729942017; cv=none; b=f9gdK9eHeg3rK5aLfHZnGvHofz959GGLbHNADaMUwL6ly4U4gn3EtfGD/YLJu7WmaTMnNuFfNZn562D5BcE7KDrdFzfGdKI7jLKPuosbacEDGxj96SJtucTB1yRZvVQgcI3B7oPdvlSWtaEiaqE+8C1a0iOGZ/qjZqryXpWXy3c=
+	t=1729942120; cv=none; b=PSfNxjKrEIkbrFAgHs9OdTs6/55pjfBEyfLpbmtqxAnptBMZfUyl+LeonisIgxH1G5LlA2WAw6mYMzf1p7xEAtIxREO94tYTkzmaDdOR4y+D/e3WM52LUPVl7nXn+yg1VIeV6eTluSLkdLekK7NAAdFddTtULhhqBhFXm0s/+wg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729942017; c=relaxed/simple;
-	bh=1aijchob2546XDzQr/sSoRHna2pm5upAiZBnO2Eq28k=;
+	s=arc-20240116; t=1729942120; c=relaxed/simple;
+	bh=z56vanRfvPIkr/unET5JU6DPUCV4uByDh95So4Ihz14=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GLJRIfYfKsyEER7oO+lBYPzfQrCjlBogF9tNd8qfcUmqlhtB2XsDHDeauFWakU6B43X8as7kvMP3OyMydcNGWgF9ezfAbAzKUwDTtbvGjz2lXOQIW1ybgge5ePMG6TfdThvnvYicxBt6CTnohkmHwua/HIkypcNVF1Z4A43sSXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B55TDTMI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6BB6C4CEC7;
-	Sat, 26 Oct 2024 11:26:50 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=cPFvZMu1bP7Zg8eYgXpsngPgmxlRyi4GFo1uM/+kj2uBnYttM6AdiVl6hs9yQV+snarlt+yvxnJUfdBljFDW8Y4P3nOyYJVsGi08Yxg//zuRnSu9PwcFo6rnOP62XlF1BXFNu2dc9aJTqq7rsamuyOFyy6OKbICYYSSbADaBfQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=agQ7DoRU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83C9EC4CEC6;
+	Sat, 26 Oct 2024 11:28:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729942017;
-	bh=1aijchob2546XDzQr/sSoRHna2pm5upAiZBnO2Eq28k=;
+	s=k20201202; t=1729942119;
+	bh=z56vanRfvPIkr/unET5JU6DPUCV4uByDh95So4Ihz14=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=B55TDTMI/fKu5yUYgMltxk7cjFbChSOaSGJG45SZTU2N/Y0KccuxjFlPUdpFZsV20
-	 /LjZ4pHdYznMgq/jx8M5/miAiKRooGWC514laJKhbXHzxIgjEBZpXlClDR3nIFzJZA
-	 D82noSdJkzUTvCiX2N3WRAVguFaHrXhgIqiGq2wYxMvuZvV/XDuqcWjwcD0LR018gC
-	 aB0QzSe34yg5jnSZP+2UyZPTlRQosjwAc/CNGjsduv4nMaXbv9pnDvEuM3QlYvOv9t
-	 ZTMut3xdeY8bdyLcpvCOfZ2PKbyWA+ixXzFjDX/c8ukKn47llO2RuwyeNpFI6p1Kvu
-	 DVjJyhbsvFQeQ==
-Message-ID: <2d5f9959-17c9-4e61-a6df-ebd187f422e6@kernel.org>
-Date: Sat, 26 Oct 2024 13:26:48 +0200
+	b=agQ7DoRUTO7mZmG36HDXPsQTLTy43nEvH3aYOQhgkBpmoH+obuhWSFB5hN4CHFFBV
+	 ilA4PDK+Dd5veHGEnI2qGd+HUpbJfcUQM69x58q/ksp+VnnFpn4VkTx7igdKQlpA6w
+	 IsFwECPOS7Yqj0/iNyG6OU6EuYMdTqpjhSy7//TQxj3t9CvAOG3XghDd4ePgPsnEof
+	 byOncU69LJdgfD5iksA0PFYUGc8CUAepDOuE7HhssfRMEJsd0VNPr4LdnMBEkR1tbS
+	 sF/OobF1aDo9GXGnF5D+JHP1z6m9mcU3eknGY9XkxZs1IuOq9KSFiC7bVaHcil4KRm
+	 CxvTlYCyEo65Q==
+Message-ID: <e7ce51a1-97a1-4d54-a1d4-0f6d279a9055@kernel.org>
+Date: Sat, 26 Oct 2024 13:28:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,21 +49,23 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] dt-bindings: soc: bcm: Convert
- raspberrypi,bcm2835-power to Dt schema
-To: Karan Sanghavi <karansanghvi98@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Ray Jui <rjui@broadcom.com>,
- Scott Branden <sbranden@broadcom.com>, devicetree@vger.kernel.org,
- linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>,
- Alexander Aring <alex.aring@gmail.com>, Eric Anholt <eric@anholt.net>
-References: <20241022-raspberrypi-bcm2835-power-v2-1-1a4a8a8a5737@gmail.com>
- <lfzxcilud65ype66frb7eihq2hvranzxp6fomjvjyxvciiixlj@2efv5266wt5r>
- <zaqykppssizdpd2mynpoatp4smbzkr7atuurxkkegbegk5dw6s@a2daqovt2aod>
+Subject: Re: [PATCH 3/3] interconnect: qcom: Add EPSS L3 support on SA8775P
+To: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>,
+ Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Sibi Sankar <quic_sibis@quicinc.com>, linux-arm-msm@vger.kernel.org,
+ linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, quic_okukatla@quicinc.com,
+ quic_mdtipton@quicinc.com
+References: <20240904171209.29120-1-quic_rlaggysh@quicinc.com>
+ <20240904171209.29120-4-quic_rlaggysh@quicinc.com>
+ <c3efb01d-2138-4b79-97a1-653b7bd531d0@kernel.org>
+ <bfcc65b2-97a4-4353-a2fd-dce927c53428@quicinc.com>
+ <49aa8205-6324-412d-b03d-c2b3f738cc98@kernel.org>
+ <6b89de85-58c0-4808-9a33-6ee7dc26611d@quicinc.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -109,63 +111,40 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <zaqykppssizdpd2mynpoatp4smbzkr7atuurxkkegbegk5dw6s@a2daqovt2aod>
+In-Reply-To: <6b89de85-58c0-4808-9a33-6ee7dc26611d@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 25/10/2024 20:22, Karan Sanghavi wrote:
->>> +
->>> +examples:
->>> +  - |
->>> +    power: power {
+On 25/10/2024 17:38, Raviteja Laggyshetty wrote:
+> 
+> 
+> On 9/6/2024 10:00 PM, Krzysztof Kozlowski wrote:
+>> On 06/09/2024 17:32, Raviteja Laggyshetty wrote:
+>>>
+>>> On 9/4/2024 11:52 PM, Krzysztof Kozlowski wrote:
+>>>> On 04/09/2024 19:12, Raviteja Laggyshetty wrote:
+>>>>> +
+>>>>>  static const struct qcom_osm_l3_desc epss_l3_l3_vote = {
+>>>>>  	.nodes = epss_l3_nodes,
+>>>>>  	.num_nodes = ARRAY_SIZE(epss_l3_nodes),
+>>>>> @@ -284,6 +307,10 @@ static const struct of_device_id osm_l3_of_match[] = {
+>>>>>  	{ .compatible = "qcom,sm8150-osm-l3", .data = &osm_l3 },
+>>>>>  	{ .compatible = "qcom,sc8180x-osm-l3", .data = &osm_l3 },
+>>>>>  	{ .compatible = "qcom,sm8250-epss-l3", .data = &epss_l3_perf_state },
+>>>>> +	{ .compatible = "qcom,sa8775p-epss-l3-cl0",
+>>>>> +	  .data = &epss_l3_perf_state },
+>>>> Don't grow it but express compatibility.
+>>> ok. Will rename compatible from "qcom,sa8775p-epss-l3-cl0" to "qcom,sa8775p-epss-l3".
 >>
->> Drop label. Node name: power-controller
->>
->> I don't think this passes tests because of this. See power-domain.yaml
->> schema.
->>
+>> This won't solve the problem. You still grow the table, right?
 > 
-> Below code is from bcm2711-rpi-4-b.dts decompiled from the dtb file.
+> Falling back to "qcom,epss-l3" won't work because we need to vote into perf state register.
+> I am introducing a new fallback compatible "qcom,epss-l3-perf" for perf voting, which can be used for upcoming qcs8300.
 
-Uh? Why would we ever care about decompiling some DTBs?
+Maybe, no clue, this was 1.5 months ago. I don't have original patches
+in the inbox anymore.
 
-
-> 
-> firmware {
->          compatible = "raspberrypi,bcm2835-firmware\0simple-mfd";
->          mboxes = <0x1d>;
->          phandle = <0x1e>;
->         ...
-> };
-> 
-> power {
->          compatible = "raspberrypi,bcm2835-power";
->          firmware = <0x1e>;
->          #power-domain-cells = <0x01>;
->          phandle = <0x0b>;
-> };
-> 
-> I had a doubt that as above the raspberrypi,bcm2835-power compatible node
-> is defined with power keyword, so should I still rename the node as
-> power-controll or keep it has power?
-
-I don't understand your arguments. Schema expects this to have proper
-name (see bindings). DT spec as well.
-
-> 
-> Also it does passes the dt_binding_check and CHECK_DTBS=y broadcom/bcm2711-rpi-4-b.dtb
-> but does gives the message as
-> soc: power: 'ranges' is a required property
-> so do I need to add the range property here?
-
-I have no clue what you are testing here. We do not care about some out
-of tree DTB. And if you ask about upstream, then take conversions tasks
-after reading this:
-
-https://social.kernel.org/notice/Ai9hYRUKo8suzX3zNY
-
-BTW, your patch has patch errors which *have to be fixed* as well. Apply
-your patch to see them. Run checkpatch.
+Just choose something sensible following writing bindings guideline.
 
 Best regards,
 Krzysztof
