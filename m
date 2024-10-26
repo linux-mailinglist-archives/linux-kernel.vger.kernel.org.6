@@ -1,130 +1,122 @@
-Return-Path: <linux-kernel+bounces-383320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D28D99B1A08
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 19:17:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACE949B1A09
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 19:21:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DEFB1F21D6D
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 17:17:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EA85284A1F
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 17:21:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2384D13AA3E;
-	Sat, 26 Oct 2024 17:17:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE34E146A69;
+	Sat, 26 Oct 2024 17:21:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Kjl0Krxz"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ij+mOZt9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58D7F3BBD8;
-	Sat, 26 Oct 2024 17:17:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 539953BBD8;
+	Sat, 26 Oct 2024 17:21:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729963070; cv=none; b=rmgK5R/I++3ePb6yAe+n5EHV2DdBolTdWNWwYs4nNXI0SnqWeG9u3I/rj48x7iisHsvEJcFvbi5VieYbtmWngz8Vx714EnZ2jUJdMlcVXK9Qys3D9d707IPBHjqKrP169o5/yHyMbIijgrC+9hNvhGBgciGcbXU6ED8mgDZTgqU=
+	t=1729963303; cv=none; b=qd3EPyXTj0y1U0aDVpQWJS22xl8AuzbuBoRsuoxl39odrC7z2CFZL7RHzdD3JaNB7sjXTz9lI+gbmNh2hkNBr1VM48hhwfES4ZiTw44Ys3RvKVd+YMMM/F4WHCC2IT4blB0FqOokXJIegF6zQh8x0I3neQq7ucgn4ssAlT/5wBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729963070; c=relaxed/simple;
-	bh=UmBE9vHOfIOTS7rcqqGq9NZVUSg9LyFR7vFT1/hVmR0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=UMbekdLhBRLPfaZR9Ru3Y0YybRSDOWa+zGIJoXZ8nN87a9v6vzhF7xg9A2KhW4rpIL7FmU5jH4uA27h09F03JlKX9XQIBgxnRbhNZlfXiC4YGm254BozxENOGF0eLCf9M+Tx8zPo/a3NMJRhM2kuDf4lEBqYnabKz6uDWz/RLVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Kjl0Krxz; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
-	:In-Reply-To:From:References:To:Subject:MIME-Version:Date:Message-ID:Sender:
-	Reply-To:Cc:Content-ID:Content-Description;
-	bh=xRRxzHXcG6ByeGhUqK+NNCEcYuk1Uf6B9ch89Ph+eL0=; b=Kjl0KrxzE3EP9jgIEIUrAgV3MF
-	k9Ffno18+ejTyi8laHQ/KWFx/TREke0bS7atgVumJ3CGgvGkHomk/kFb993lhu2ASWEIjYUgx/UQF
-	aAwIE3hWTSUxoG3p9rT/fjUDx+DVOJ16aiwyRjllPXvIDou4GqkyX2UDGrMODRB77WHmYdq/2w711
-	9LPa3xH8+K8rVd2IXl4huBef9r3dHxOICc14qAt3ddoV38EImRUb0j5ZfUb664Auaf4B39onmx92Z
-	SPvJ+J6hEeukg10LTMbdkZ39mnoqzM5E3K+6/SOfDhdt0u1zM3dzDJTu2tghPnu/CBF5YRRlC8iSD
-	uomNRjJA==;
-Received: from [50.53.2.24] (helo=[192.168.254.17])
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1t4kQ1-00000009Grr-0CSL;
-	Sat, 26 Oct 2024 17:17:41 +0000
-Message-ID: <0ae13ad4-342a-48ca-bd7a-8f15f6d99504@infradead.org>
-Date: Sat, 26 Oct 2024 10:17:35 -0700
+	s=arc-20240116; t=1729963303; c=relaxed/simple;
+	bh=WK1VLVpGK8zbKx9v6ZjvFchh32hBkFjWGCosFKSMLyc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DI2M2fc6v8zDWHYPfi4TdTVw7QX618stZoYIzD6iOCV43ZMVt3mqbDS4ygccRbTJbcwyluNlHsHkrfYKA/EukX1OGJIEl50tQfpeiF1Kf74AUIAmxWbnM0sCSqoKODtKrijNpdFGUJLkxYM0Oaa0loKmND7cm57UUx0s+j12FzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ij+mOZt9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18663C4CEC6;
+	Sat, 26 Oct 2024 17:21:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729963302;
+	bh=WK1VLVpGK8zbKx9v6ZjvFchh32hBkFjWGCosFKSMLyc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ij+mOZt9nmJtaLrL9fyEYRQAt5roZsH3fRMvxg/vQBh2nolY/hJzasBYy/tcPqZJ4
+	 +s1gZ/wyqIvbWty6XZghLFwR9+HBDcXlV7SKK6eEnmBEjejQlvoWybOLEV2/SP83r/
+	 nOqgdwEs4P1yzPEt4dxA/wMz9BbGC49Ty96EldvAChgH/mPNeYF2K+YNJjS+qrIUHe
+	 yvrd17g3DWpf1NT6JpQ5FomPL+DX1owu6kpL+htUQOXqQkUEj3V70k2Tlia+1X+z6Q
+	 Pqdl+hFVRebl4v6Dq4ol/HZ1E7JTH21foU7ZWv1Xuy9aAVS4g9f6+Jc2GPiLzBtjsf
+	 XVj2vd2RX8rFw==
+Date: Sat, 26 Oct 2024 18:21:04 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Rayyan Ansari <rayyan@ansari.sh>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Jonathan Cameron
+ <Jonathan.Cameron@huawei.com>, Marius Cristea
+ <marius.cristea@microchip.com>, Trevor Gamblin <tgamblin@baylibre.com>,
+ Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>, Hans de Goede
+ <hdegoede@redhat.com>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>
+Subject: Re: [PATCH v3 07/24] iio: accel: kxcjk-1013: Revert "Add support
+ for KX022-1020"
+Message-ID: <20241026182104.01086e41@jic23-huawei>
+In-Reply-To: <fc87c8d8-db22-41f8-9594-4687f89881f9@ansari.sh>
+References: <20241024191200.229894-1-andriy.shevchenko@linux.intel.com>
+	<20241024191200.229894-8-andriy.shevchenko@linux.intel.com>
+	<20241026121619.668d07d7@jic23-huawei>
+	<fc87c8d8-db22-41f8-9594-4687f89881f9@ansari.sh>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 3/3] Documentation:leds: Add leds-st1202.rst
-To: Vicentiu Galanopulo <vicentiu.galanopulo@remote-tech.co.uk>,
- pavel@ucw.cz, lee@kernel.org, corbet@lwn.net, linux-leds@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <Zx0BKtXo55D_pCGk@admins-Air>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <Zx0BKtXo55D_pCGk@admins-Air>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-Hi,
+On Sat, 26 Oct 2024 15:58:52 +0100
+Rayyan Ansari <rayyan@ansari.sh> wrote:
 
-On 10/26/24 7:48 AM, Vicentiu Galanopulo wrote:
-> Add usage for sysfs hw_pattern entry for leds-st1202 
+> On 26/10/2024 12:16, Jonathan Cameron wrote:
+> > On Thu, 24 Oct 2024 22:04:56 +0300
+> > Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+> >   
+> >> The mentioned change effectively broke the ODR startup timeouts
+> >> settungs for KX023-1025 case. Let's revert it for now and see
+> >> how we can handle it with the better approach after switching
+> >> the driver to use data structure instead of enum.
+> >>
+> >> This reverts commit d5cbe1502043124ff8af8136b80f93758c4a61e0.
+> >>
+> >> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>  
+> > I'll take this the slow way as I don't think there is time to chase the revert
+> > through the various trees and still get the dependent patches in.
+> > Hopefully we will fairly quickly get the missing table data and can
+> > bring this back again.
+> > 
+> > For now, applied to the togreg branch of iio.git.
+> > I have tagged it as a fix though. and +CC Rayyan
+> > (I'm guessing maybe that will bounce as you rarely miss people you should
+> > CC!)  
+> Hi,
+> Sorry for not replying earlier, I've just caught up with the discussion.
 > 
-> Signed-off-by: Vicentiu Galanopulo <vicentiu.galanopulo@remote-tech.co.uk>
-> ---
->  Documentation/leds/leds-st1202.rst | 36 ++++++++++++++++++++++++++++++
->  1 file changed, 36 insertions(+)
->  create mode 100644 Documentation/leds/leds-st1202.rst
+> I don't fully understand why this is breaking KX023-1025, but you know 
+> more than I do here.
+> Does this not mean that the use of KX022-1020 in the 3 devices (Lumia 
+> 640, 640 XL, 735) using this from qcom-msm8226-microsoft-common.dtsi 
+> will now be broken?
 > 
-> diff --git a/Documentation/leds/leds-st1202.rst b/Documentation/leds/leds-st1202.rst
-> new file mode 100644
-> index 000000000000..72286a512c69
-> --- /dev/null
-> +++ b/Documentation/leds/leds-st1202.rst
-> @@ -0,0 +1,36 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +============================================
-> +Kernel driver for STMicroelectronics LED1202
-> +============================================
-> +
-> +/sys/class/leds/<led>/hw_pattern
-> +--------------------------------
-> +
-> +Specify a hardware pattern for the ST1202 LED. The LED
-> +controller, implements 12 low-side current generators
+Yes.  The issues in the currently driver is here
+https://elixir.bootlin.com/linux/v6.12-rc4/source/drivers/iio/accel/kxcjk-1013.c#L321
 
-no comma     ^
+This array is indexed using the enum
+https://elixir.bootlin.com/linux/v6.12-rc4/source/drivers/iio/accel/kxcjk-1013.c#L176
+and the new entry for the KX022-1020 mean we are one short of those startup
+time definitions.
 
-> +with independent dimming control. Internal volatile memory
-> +allows the user to store up to 8 different patterns.
-> +Each pattern is a particular output configuration in terms
-> +of PWM duty-cycle and duration (ms).
-> +
-> +To be compatible with the hardware pattern
-> +format, maximum 8 tuples of brightness (PWM) and duration must
-> +be written to hw_pattern.
-> +
-> +- Min pattern duration: 22 ms
-> +- Max pattern duration: 5660 ms
-> +
-> +The format of the hardware pattern values should be:
-> +"brightness duration brightness duration ..."
-> +
-> +/sys/class/leds/<led>/repeat
-> +----------------------------
-> +
-> +Specify a pattern repeat number, which is common for all channels.
-> +Default is 1, other negative numbers and number 0 are invalid.
+Without that the values retrieved for the KX022-1025 are all 0.
 
-   Default is 1; negative numbers and 0 are invalid.
+It should be a relatively easy fix if we have those times.
+One side effect of this series of Andy's is that it makes it much harder to have
+similar bugs in future. 
 
-> +
-> +This file will always return the originally written repeat number.
-> +
-> +When the 255 value is written to it, all patterns will repeat
-> +indefinitely.
+Jonathan
 
--- 
-~Randy
+> Thanks,
+> Rayyan
 
 
