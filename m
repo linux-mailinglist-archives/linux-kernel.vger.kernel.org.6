@@ -1,198 +1,299 @@
-Return-Path: <linux-kernel+bounces-383303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 161C59B19C7
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 18:27:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C993F9B19D2
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 18:35:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD87C282656
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 16:27:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A84628273D
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 16:35:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1142813D24C;
-	Sat, 26 Oct 2024 16:27:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 750B81D3639;
+	Sat, 26 Oct 2024 16:34:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aBW7SAzG"
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="gseaGux2";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="LD/whaHh"
+Received: from fhigh-b8-smtp.messagingengine.com (fhigh-b8-smtp.messagingengine.com [202.12.124.159])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 859FF5473C
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 16:27:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 074F97EEFD;
+	Sat, 26 Oct 2024 16:34:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729960028; cv=none; b=OPbTtcISCDGxAGJaY9l7jJKvHC6ExMREKUTmmwJVBrhMfbEfsz88LJ0I3dhpF6awjOf46SzaPhEPKdh3kqbp0tFKUOcvUbvGkF3t/tbU4koz38dWfLK2H5LTPhDvvBTV36JcwXeI51EUAoYuEjHZDlcMMXagcc8xKdAaFcKus/4=
+	t=1729960487; cv=none; b=OFYhl7KFXmz4ZnmA5pPJpfcyWSzYPkZY2OUQon2WzlHbDaDcYcHscC3EjVWTnwCwSjMxfr8dA+HOiQCp7kLV6fWCCTky6xQfcIfGTN9o/ZNkWA8EeAkbVNFhD6bReGMn0xplneQZ2JtDm5f2OumaygM1Sfk0Xv4i8eXP4xkpbRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729960028; c=relaxed/simple;
-	bh=A2d4RnFX3pil5tSgYj3ITKZrgzZRv1eCgaJoYuXQWxA=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:Cc:Subject:To:
-	 In-Reply-To; b=p6lh1GsPJZSk6bMTC6XXWA/ZeyIC1EMcIOf6wTXJ7KQW9Y/sgHF+wnYIdPdAiGBfccytcuKJeGU0YClUZRM8CFqvvOaX9k/pFAVY8nyD/ca+iIdU7CVEx3Fqiwcf3Oc7oc7J1g4u6fScq+BCuobiS5XPqOYWNquV0R5yGIVp+cY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aBW7SAzG; arc=none smtp.client-ip=209.85.128.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-6e59a9496f9so34194307b3.0
-        for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 09:27:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729960025; x=1730564825; darn=vger.kernel.org;
-        h=in-reply-to:to:subject:cc:from:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uTtKtWKs11bD7iRvVxgQuCeRIcQVhURI1g77rkuqqLQ=;
-        b=aBW7SAzGRfvAfoii0QgVoC1OVLvdQoJkT37KiK5HjbK62l0sG27+n3Va8pFAOhfnPk
-         U5zVv+NQBuMA/SZD9Tv+BIekzMoWonIzmNoyIizbTs8+yiGkTc1ccLzYw/BkTi7KM665
-         fPb403fC6ZFbbeStuo+Ccn/ONQM+moWfLhjPaOIAJUJFem3ktS94d3dSetcotfT1WXx+
-         HCsjxTL1dB81GPZSfzQEEEp554MzsNKQL5o3eBvbqU8gXkE1sNW8CaPnB4fEkeriPYcv
-         JGjazC6MdUHobD45OMCJlZRKKVnEyJRiyhGxVN/Rc0TD69bLMNYSFVzqcCoAFNlLxiV8
-         Jigw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729960025; x=1730564825;
-        h=in-reply-to:to:subject:cc:from:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=uTtKtWKs11bD7iRvVxgQuCeRIcQVhURI1g77rkuqqLQ=;
-        b=G0VS4Z6OxWImTYBzowT4CNA4/8GLfyJ9aeKbT83O9QrkuwJI43xT1KPNqlGsbOMkFV
-         fgIVhZErVSE6ZudCxBCWeHxg7kSy40WyOVPTwhvn43b9L+qj+ddoAAoi31XRWSjjScWT
-         TcxE14sN/tyIygob/fG8DNdyp4hgOiuxCZUSpCpQns/F7xjIvP0AcSMXyMTsCjk53eER
-         5WqQl50Ku8Dxlr/3MFA9DfD6NTHzO3vgET4zjcODNlPaiv4zu7HL5CKs0i516cCk/iB8
-         fS4AXZbl0LI5tbKnJ83SQYzSaY9lvz4JhkTSKTEnv5+S/e4MvyDJRrwMuETPY1SLQQCl
-         +vlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUmfukwC9WHZBm1I3HhOaB8GEl5d2o6suDQYHG77oYHQvlf+cfXYru0RD89joBtsBQ4m5LEwuLxBoU4lyU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxkMZvbI+NjJJ5e4dXYBHRO2KDGzIza2eGXgYcVBgpbezbzTlj
-	r3LUcgUQAS1niTHnBSXv9PClQnR17+rHkbmuQEgS/FCabhDl+GtD
-X-Google-Smtp-Source: AGHT+IE0YLoWHP2mh/IBpJGKorWV3NwLz/xAUhPhboCkZTbimCpM5+rlYVLpVXcObR5/104mAOOHUw==
-X-Received: by 2002:a05:690c:6f8b:b0:6e0:447:f257 with SMTP id 00721157ae682-6e9d89b85f5mr33296407b3.22.1729960025509;
-        Sat, 26 Oct 2024 09:27:05 -0700 (PDT)
-Received: from localhost ([174.128.181.101])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e9c6c96991sm7082527b3.123.2024.10.26.09.27.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 26 Oct 2024 09:27:05 -0700 (PDT)
+	s=arc-20240116; t=1729960487; c=relaxed/simple;
+	bh=vNgrceLT7NyiegyWFou2xCkb89Ohp0fn6ptOXdHV188=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=J1xoSLytquOKJxson4V39mk6Bi0ZoiNmex9XTeMmbhN6hq+KTHgk/t+qeOSJwUbCvhuIHvVwRdwjHiXDvr/wu/IcnbqL/7KfeLlaZVkAxN0kCgpdLXsCA+Z6TJZ/2sEm1IF0NJYov0rMobY6fIxy7xzRdetgVEr8M+vXEOcVVOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=gseaGux2; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=LD/whaHh; arc=none smtp.client-ip=202.12.124.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
+Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id B5A2225400BA;
+	Sat, 26 Oct 2024 12:34:42 -0400 (EDT)
+Received: from phl-imap-12 ([10.202.2.86])
+  by phl-compute-09.internal (MEProxy); Sat, 26 Oct 2024 12:34:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1729960482;
+	 x=1730046882; bh=vMY0TEX+Z8SplMb7XevFs7EDbNhUuKW7KWJ2IJ9ktLA=; b=
+	gseaGux2m/Da+IlBEiwRi6fdmNPnhv5pa/P6gRK4SUref32RPv0hEFmYQr46qc7e
+	poTLICJGUgqUNKqOKenImMqIo0RIojBHpp+J56C9YELhhzInva4sgACcbp7FfeJQ
+	6xK9DzgVGBceJuUdiYNdOQm3906r+wDgAHYUEeT1pZzRSlURsGybXTTzO/L78EWI
+	mmRr0VK1rV4MkByZcnAOIhMT6v/MC4aawUHQkihb6/xrJHV8cJ1DXQzMP6ztSmH6
+	gxShOeJ/SQBNLTdlHbe12Rl1N8bOnf0UG6ao6d49WfD17xMCAem7Nd0deydtr9QQ
+	+z4FsI7LjxS2SOPhPkSJkQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1729960482; x=
+	1730046882; bh=vMY0TEX+Z8SplMb7XevFs7EDbNhUuKW7KWJ2IJ9ktLA=; b=L
+	D/whaHhhHwgsDEfG+JBXvL0X2CO7LBgRBSIoUyGZ5PgvZU5nUcuqZIQdPQXcZJXI
+	W0A9xVL7+WajGrIQ4mMDDcbpwRA6JfUVpWDt6t/woI0iMNSFfWWPQbpY5GDIaB9r
+	fVtAqAn3/2X7AB3darCiMd+aKz8SqjEa9ppaD43ImWb2ijckzbI+e9Xcdc97KGOH
+	YVIk+E8XqyT//hDuItGxgIXErdIbhkOXhgAs8J3x2hV9W3hcLUcgBVkGt+4u29PQ
+	xacOtXHpW8lcicKfqLhtOURQ3yKNrPaZKzrD5pVMyQv5jc1pj4kakfvU6iFArA9Z
+	DNqCqBEqgGXxg2mq9WpjQ==
+X-ME-Sender: <xms:IRodZ2iNbMyZ0wzp2KVz-p3cFDOHBbQm8CYZez_sKJJaN-Xp-6q07w>
+    <xme:IRodZ3DBGWVkQPeTx7dHQR2-7M1KVOx2RYPD2HsgNEn_r_ad3WUJT7366eRB8L90w
+    QNLQ--SHmyjyqRs8-0>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdejgedguddtudcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthhqredtredt
+    jeenucfhrhhomhepfdflihgrgihunhcujggrnhhgfdcuoehjihgrgihunhdrhigrnhhgse
+    hflhihghhorghtrdgtohhmqeenucggtffrrghtthgvrhhnpedvleefveetudejueelueeg
+    ieeihfefheekffefjeelleduleehuddtjeeiieelhfenucffohhmrghinhepkhgvrhhnvg
+    hlrdhorhhgpdhpvdhpfhhouhhnuggrthhiohhnrdhnvghtnecuvehluhhsthgvrhfuihii
+    vgeptdenucfrrghrrghmpehmrghilhhfrhhomhepjhhirgiguhhnrdihrghnghesfhhlhi
+    hgohgrthdrtghomhdpnhgspghrtghpthhtohepudefpdhmohguvgepshhmthhpohhuthdp
+    rhgtphhtthhopegtohhnughutghtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegtvh
+    gvsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlvggvsehkvghrnhgvlhdrohhrghdp
+    rhgtphhtthhopehsrghshhgrlheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshgvtg
+    hurhhithihsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehshhhurghhsehkvghrnhgv
+    lhdrohhrghdprhgtphhtthhopehtohhrvhgrlhgusheslhhinhhugidqfhhouhhnuggrth
+    hiohhnrdhorhhgpdhrtghpthhtohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhi
+    ohhnrdhorhhgpdhrtghpthhtoheptghorhgsvghtsehlfihnrdhnvght
+X-ME-Proxy: <xmx:IRodZ-FUYpro75N4_7nkvUu4MhL474va1SaGNI9CUa8tHFf50ztPjg>
+    <xmx:IhodZ_S1b7YK-xhJMDftyGtq5qcBftMDmB_3m3uV_Wv-hA_uB7zZFw>
+    <xmx:IhodZzx1PZwZ-MyeHi8C8BHS1pVG3yYJLgHfgI_PlSxC9JqWMahSZA>
+    <xmx:IhodZ95utVkVt_-w-9dnWqqJOmYwdfeUaEBKSYYjokKjZ0NjZXSdBA>
+    <xmx:IhodZ2rV_920bN5F5yxrJujA2guPfAsAsVU4PzKz-GABiyYIN9FMixsS>
+Feedback-ID: ifd894703:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id D16D21C20066; Sat, 26 Oct 2024 12:34:41 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+Date: Sat, 26 Oct 2024 17:33:16 +0100
+From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
+To: "Theodore Ts'o" <tytso@mit.edu>
+Cc: linux-kernel@vger.kernel.org, conduct@kernel.org, security@kernel.org,
+ cve@kernel.org, linux-doc@vger.kernel.org,
+ "stable@vger.kernel.org" <stable@vger.kernel.org>,
+ "Linus Torvalds" <torvalds@linux-foundation.org>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, shuah@kernel.org,
+ lee@kernel.org, sashal@kernel.org, "Jonathan Corbet" <corbet@lwn.net>
+Message-Id: <522bd817-339a-45b0-84c2-2b1a4a87980a@app.fastmail.com>
+In-Reply-To: <20241026145640.GA4029861@mit.edu>
+References: <73b8017b-fce9-4cb1-be48-fc8085f1c276@app.fastmail.com>
+ <20241026145640.GA4029861@mit.edu>
+Subject: Re: Concerns over transparency of informal kernel groups
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sat, 26 Oct 2024 19:27:02 +0300
-Message-Id: <D55VNB4366Q6.16EY7DUK2891U@gmail.com>
-From: "John Mcenroy" <johnmcenroystudios@gmail.com>
-Cc: <geert@linux-m68k.org>, <gregkh@linuxfoundation.org>,
- <linux-kernel@vger.kernel.org>, <patches@lists.linux.dev>
-Subject: Re: [PATCH] MAINTAINERS: Remove some entries due to various
- compliance requirements.
-To: <james.bottomley@hansenpartnership.com>
-X-Mailer: aerc 0.18.2.r87.gd0484b15
-In-Reply-To: <7ee74c1b5b589619a13c6318c9fbd0d6ac7c334a.camel@HansenPartnership.com>
-
-Hello Linux Community
-
-
-Alfred Tennyson
-Freedom
-
-Of old sat Freedom on the heights,
-    The thunders breaking at her feet;
-Above her shook the starry lights;
-    She heard the torrent meet.
-
-There in her place she did rejoice,
-    Self-gather=E2=80=99d in her prophet-mind,
-But fragments of her mighty voice
-    Came rolling on the wind.
-
-Then stepped she down thro=E2=80=99 town and field
-    To mingle with the human race,
-And part by part to men reveal=E2=80=99d
-    The fullness of her face =E2=80=93
-
-Grave mother of majestic works,
-    From her isle-altar gazing down,
-Who, Godlike, grasps the triple forks,
-    And, king-like, wears the crown,
-
-Her open eyes desire the truth.
-    The wisdom of a thousand years
-Is in them. May perpetual youth
-    Keep dry their light from tears;
-
-That her fair form may stand and shine,
-    Make bright our days and light our dreams,
-Turning to scorn with lips divine
-    To falsehood of extremes.
-
-
-=D0=90=D0=BB=D1=8C=D1=84=D1=80=D0=B5=D0=B4 =D0=A2=D0=B5=D0=BD=D0=BD=D0=B8=
-=D1=81=D0=BE=D0=BD
-=D0=A1=D0=B2=D0=BE=D0=B1=D0=BE=D0=B4=D0=B0
-
-=D0=A1=D0=B2=D0=BE=D0=B1=D0=BE=D0=B4=D0=B0 =D0=B4=D1=80=D0=B5=D0=B2=D0=BB=
-=D0=B5 =D0=BE=D0=B1=D0=B8=D1=82=D0=B0=D0=BB=D0=B0
-=D0=9D=D0=B0 =D0=B2=D1=8B=D1=81=D1=8F=D1=85 =D0=B3=D0=BE=D1=80; =D0=B2 =D1=
-=81=D0=B8=D1=8F=D0=BD=D1=8C=D0=B8 =D0=B7=D0=B2=D0=B5=D0=B7=D0=B4
-=D0=9D=D0=B0=D0=B4 =D0=BD=D0=B5=D1=8E =D0=BD=D0=B5=D0=B1=D0=BE =D1=82=D1=80=
-=D0=B5=D0=BF=D0=B5=D1=82=D0=B0=D0=BB=D0=BE,
-=D0=9F=D0=BE=D0=B4 =D0=BD=D0=B5=D0=B9 =D0=B4=D1=80=D0=BE=D0=B1=D0=B8=D0=BB=
-=D1=81=D1=8F =D0=B3=D1=80=D0=BE=D0=BC =D0=BE=D0=BA=D1=80=D0=B5=D1=81=D1=82.
-
-=D0=9E=D0=B3=D0=BD=D0=B5=D0=BC =D0=BF=D1=80=D0=BE=D1=80=D0=BE=D1=87=D0=B5=
-=D1=81=D0=BA=D0=BE=D0=B3=D0=BE =D0=B4=D1=83=D1=85=D0=B0
-=D0=A2=D0=B0=D0=BC =D0=B4=D0=B8=D0=B2=D0=BD=D1=8B=D0=B9 =D0=BB=D0=B8=D0=BA =
-=D0=B5=D1=91 =D0=B1=D0=BB=D0=B8=D1=81=D1=82=D0=B0=D0=BB;
-=D0=9D=D0=BE =D0=BC=D0=BE=D1=89=D0=BD=D1=8B=D0=B9 =D0=B3=D0=BB=D0=B0=D1=81 =
-=D0=B5=D1=91 =D0=B4=D0=BE =D1=81=D0=BB=D1=83=D1=85=D0=B0
-=D0=9F=D0=BE=D1=80=D0=BE=D1=8E =D0=BA =D0=BB=D1=8E=D0=B4=D1=8F=D0=BC =D0=B4=
-=D0=BE=D0=BB=D0=B5=D1=82=D0=B0=D0=BB.
-
-=D0=97=D0=B0=D1=82=D0=B5=D0=BC =D0=BD=D0=B8=D0=B7=D1=88=D0=B5=D0=B4 =D0=BA =
-=D0=BF=D0=BE=D0=BB=D1=8F=D0=BC =D0=B8 =D0=B3=D1=80=D0=B0=D0=B4=D0=B0=D0=BC,
-=D0=A1=D0=BC=D0=B5=D1=88=D0=B0=D0=BB=D0=B0=D1=81=D1=8C =D1=81 =D1=81=D0=BC=
-=D0=B5=D1=80=D1=82=D0=BD=D0=BE=D1=8E =D1=82=D0=BE=D0=BB=D0=BF=D0=BE=D0=B9
-=D0=98 =D0=BF=D0=BE=D0=BD=D0=B5=D0=BC=D0=BD=D0=BE=D0=B3=D1=83 =D0=BD=D0=B0=
-=D1=88=D0=B8=D0=BC =D0=B2=D0=B7=D0=B3=D0=BB=D1=8F=D0=B4=D0=B0=D0=BC
-=D0=A0=D0=B0=D0=B7=D0=BE=D0=B1=D0=BB=D0=B0=D1=87=D0=B8=D0=BB=D0=B0 =D0=BE=
-=D0=B1=D1=80=D0=B0=D0=B7 =D1=81=D0=B2=D0=BE=D0=B9.
-
-=D0=A2=D0=B0=D0=BA, =D0=B2 =D0=BC=D0=B8=D1=80 =D1=8F=D0=B2=D0=B8=D0=B2=D1=
-=88=D0=B8=D1=81=D1=8C =D0=BC=D0=B8=D1=80=D0=BE=D0=BB=D1=8E=D0=B1=D1=86=D0=
-=B5=D0=BC,
-=D0=9C=D0=B5=D0=B6 =D0=BD=D0=B0=D1=81 =D0=B2=D0=BE=D0=B7=D0=B4=D0=B2=D0=B8=
-=D0=B3=D0=BB=D0=B0 =D1=81=D0=B2=D0=BE=D0=B9 =D0=B0=D0=BB=D1=82=D0=B0=D1=80=
-=D1=8C,
-=D0=92=D0=BE=D0=BE=D1=80=D1=83=D0=B6=D0=B0=D1=81=D1=8C, =D0=BA=D0=B0=D0=BA =
-=D0=B1=D0=BE=D0=B3 =D1=82=D1=80=D0=B5=D0=B7=D1=83=D0=B1=D1=86=D0=B5=D0=BC,
-=D0=91=D0=BB=D0=B5=D1=81=D1=82=D1=8F =D0=BA=D0=BE=D1=80=D0=BE=D0=BD=D0=BE=
-=D1=8E, =D0=BA=D0=B0=D0=BA =D1=86=D0=B0=D1=80=D1=8C.
-
-=D0=95=D1=91 =D0=BE=D1=82=D0=B2=D0=B5=D1=80=D0=B7=D1=82=D1=8B=D0=B9 =D0=B2=
-=D0=B7=D0=BE=D1=80 =D1=81=D1=82=D1=80=D0=B5=D0=BC=D0=B8=D1=82=D1=81=D1=8F
-=D0=9B=D0=B8=D1=88=D1=8C =D0=BA =D0=BF=D1=80=D0=B0=D0=B2=D0=B4=D0=B5, =D0=
-=BA =D0=BC=D1=83=D0=B4=D1=80=D0=BE=D1=81=D1=82=D0=B8 =D0=BE=D1=82=D1=86=D0=
-=BE=D0=B2.
-=D0=9E, =D0=BF=D1=83=D1=81=D1=82=D1=8C =D0=B6=D0=B5 =D0=B2=D0=B5=D1=87=D0=
-=BD=D0=BE =D0=BE=D0=BD =D0=BD=D0=B5 =D1=82=D0=BC=D0=B8=D1=82=D1=81=D1=8F
-=D0=A1=D0=BB=D0=B5=D0=B7=D0=BE=D0=B9 =D0=BD=D0=B0=D0=B4 =D1=82=D1=83=D0=BF=
-=D0=BE=D1=81=D1=82=D1=8C=D1=8E =D1=81=D0=BB=D0=B5=D0=BF=D1=86=D0=BE=D0=B2!
-
-=D0=9E, =D0=BF=D1=83=D1=81=D1=82=D1=8C, =D0=B2=D0=BE=D1=81=D1=81=D0=B5=D0=
-=B2 =D0=BD=D0=B0 =D1=82=D1=80=D0=BE=D0=BD =D0=BD=D0=B5 =D0=B7=D1=8B=D0=B1=
-=D0=BA=D0=B8=D0=B9,
-=D0=9D=D0=B0=D0=BC =D1=81=D0=B2=D0=B5=D1=82=D0=B8=D1=82 =D0=BF=D1=80=D0=B0=
-=D0=B2=D0=B4=D0=BE=D0=B9 =D1=81=D0=BA=D0=B2=D0=BE=D0=B7=D1=8C =D1=82=D1=83=
-=D0=BC=D0=B0=D0=BD
-=D0=98 =D1=83=D1=81=D1=82 =D0=B1=D0=BE=D0=B6=D0=B5=D1=81=D1=82=D0=B2=D0=B5=
-=D0=BD=D0=BD=D0=BE=D0=B9 =D1=83=D0=BB=D1=8B=D0=B1=D0=BA=D0=BE=D0=B9
-=D0=A0=D0=B0=D1=81=D1=81=D0=B5=D0=B5=D1=82 =D0=BA=D1=80=D0=B0=D0=B9=D0=BD=
-=D0=BE=D1=81=D1=82=D0=B5=D0=B9 =D0=BE=D0=B1=D0=BC=D0=B0=D0=BD!
-
-
-Linux user
-John Mcenroy
----
-johnmcenroystudios@gmail.com
 
 
 
+=E5=9C=A82024=E5=B9=B410=E6=9C=8826=E6=97=A5=E5=8D=81=E6=9C=88 =E4=B8=8B=
+=E5=8D=883:56=EF=BC=8CTheodore Ts'o=E5=86=99=E9=81=93=EF=BC=9A
+> On Fri, Oct 25, 2024 at 04:15:42PM +0100, Jiaxun Yang wrote:
+>>=20
+>> Over recent events, I've taken a closer look at how our community's g=
+overnance
+>> operates, only to find that there's remarkably little public informat=
+ion available
+>> about those informal groups.=20
+>
 
+Hi Theodore,
 
+Thanks for detailed comments! This kind of constructive discussions
+is what I'm always looking for.
+
+> There's quite a bit of information available in the Linux Kernel
+> documentation.  For example:
+>
+> * https://www.kernel.org/doc/html/latest/process/security-bugs.html
+> * https://www.kernel.org/doc/html/latest/process/code-of-conduct.html
+> * https://www.kernel.org/code-of-conduct.html
+
+Thank you for the pointers. My concerns actually rooted from the first t=
+wo
+documents, and I was directed to the third link off-list following my
+initial post.
+
+In process/security-bugs, the term "security officers" is consistently m=
+entioned,
+yet it's unclear who they are, what specific privileges they hold compar=
+ed to
+regular developers, and how security fixes are expected to reach Linus's=
+ tree
+during an embargo period.
+
+After reviewing the third link, I now have a clearer understanding of the
+CoC Committee, though it's unfortunate that this webpage is not directly
+referenced in the kernel documentation.
+
+That being said, I'll try to improve the documentation on these things
+based on my observations. My background perhaps makes me particularly
+sensitive to some ambiguous language, especially where "constructive
+ambiguity" might be involved. Recent events make me started to look
+into those aspects in border community.
+
+>
+> Ultimately, though, governance model that we've used since the
+> founding of the Benevolent Dictator model.  For a description of this,
+> see:
+>
+> * https://wiki.p2pfoundation.net/Benevolent_Dictator
+>
+> The reason why this model works for Open Source projects is that
+> ultimately, the license allows the code to be forked, and someone
+> could decide to take the Linux Kernel sources, and declare some new
+> version, say: "Tedix".  However, if I was delusional enough to do
+> this, it's very likely no one would pay attention to me, and consider
+> me a random madman (of which there are many on the Internet). =20
+>
+> Ultmately, though, the reason why Linus continues to serve as the
+> leader of the Linux is that there is a very large number of people
+> that respect his judgement and technical acumen.  And unlike in
+> physical space where a dictator could (hypothetically) order tanks to
+> fire on college-aged students, ultimately no one can force developers
+> or companies to continue use or develop Linux.
+>
+> Everything else follows from this.  So for example, a maintainer or
+> maintainer team can refuse to accept patches from a particular source.
+> If someone disagrees with a decision, whether it is not accepting a
+> patch, or request a patch that it be reverted, they can appeal to
+> Linus.  Linus ask the Maintainer for their reasons, or can decide to
+> override the decision by accepting the patch into his tree, or
+> reverting a patch.  Ultimately, Linus can decide to relieve a
+> maintainer of their duties by simply refusing to accept pull request
+> from that maintainer, or by remoing the subsytem entirely from his
+> sources.
+
+That aligns well with my understanding. I've witnessed many "escalations=
+ to
+Linus" and have been involved a few times myself. I'd say we (maybe not =
+all)
+benefit from having a respected individual to make those difficult final
+decisions.
+
+I have no intention of criticizing the system here.
+
+>
+> As another example, the Code of Conduct committee has no inherent
+> power to sanction developers, other than to make recommendations to
+> people who actually do the work --- namely, Linus Torvalds, other
+> maintainers, the people who run the mailing lists, etc.  Like with
+> Maintainers, their "power" comes from the respect that individuals on
+> that body have with Linus and the other maintainers.
+
+That's new to me. The `Enforcement` section in the CoC document initially
+gave me the impression that all participants were obligated to follow th=
+eir
+decisions, but it turns out that's not the case.
+
+I appreciate the clarification.
+
+>
+> Yet another body which you didn't mention is the Linux Foundation
+> Technical Advisory board.  That body is elected, but the TAB has
+> always made it clear that the primary power comes from the reputation
+> and moral authority of the people who are elected to the TAB.  Sure,
+> The TAB chair has an at-large seat on the Linux Foundation board, but
+> any influence that the TAB through the TAB chair might have is more
+> because of their work and the force of their arguments.
+
+I reviewed the TAB information pages before making that post and saw
+a clear membership list and guidelines for TAB, so I didn't view it as
+an "informal group". I even suggested that this could be a topic for
+TAB discussion at the end of my original post.
+
+>
+>
+> More broadly, the model that I like to use is "servant leadership",
+> and that's why I tell people who want to pursue taking up leadership
+> roles in Linux.  Most of the senior leadership spend a huge amount of
+> their personal time, and have often made career choices that have
+> prioritized working on Linux and other Open Source projects over
+> monetary renumeration.  Speaking for myself, I could have progressed
+> farther in terms of position and salary.  I made choices that traded
+> the freedom and ability to work on Linux because that was more
+> important to me, and there is an awful lot of what I do as a leader is
+> to serve those people in the ext4 development community.
+
+Thank you for sharing this insight on servant leadership, it genuinely
+resonates. I deeply appreciate the personal sacrifices and commitment
+that you, other leaders and everyone involved, have made to prioritise
+the advancement of Linux and open-source projects over conventional care=
+er
+progression. It's truly inspiring to witness such dedication.
+
+>
+> This is not true just in Linux; previously, I've served on the
+> Security Area Advisory Group for the IETF, the standards body for the
+> internet, and as working group chair for the ipsec working group when
+> the IPSec protocols were first being standardied.  Sure, I was part of
+> the "governance" of the IETF, but one of the things you learn very
+> quickly is that as a volunteer leader, your primary power is to stop
+> things from happening.  Hopefully, you're only stopping bad things
+> from happening, and you can try to encourage and cajole volunteers
+> spend time on what's necessary to make forward progress.  And of
+> course, you can spend your own personal time smoothing the way to
+> enable the members of the community to make forward progress.  And
+> that takes us back to "servant leadership".
+
+It's fortunate that people like you tirelessly contribute to driving
+the world forward. I think we can all agree that, despite the disputes
+all over the world, we're each striving to make the world a better place
+in our own ways.
+
+I'm sorry this matter has taken up your attention, I'll see what I can do
+on my end.
+
+Thanks
+>
+> Cheers,
+>
+> 					- Ted
+>
+> P.S.  Note that when I say "volunteer', I'm using this in a fairly
+> broad/informal fashion.  Yes, some members of the community have
+> companies that pay our salaries to work on Linux.  But as the ext4
+> maintainer, I don't have magement authority over the ext4 developer.
+> I can refuse to take a patch; I can spend time creating testing
+> infrastruture to make it easier for ext4 contributors to test their
+> work; I can point out ways that some particular design might be good
+> for ext4, and good for their company's business objectives, to the
+> extent that I know their companies goals or they are willing to share
+> those goals with me.  But I can't *force* someone at SuSE or Oracle or
+> IBM or Huawei to work on some particular ext4 feature or bug.
+> Ultimately, either individuals (who might be hobbists) or companies,
+> voluntarily choose to contribute to ext4, or the IPSec standard.  And
+> so that's why I call Linux and the IETF have much in common with a
+> pure 100% volunteer organization, such as Doctors without Borders.
+
+--=20
+- Jiaxun
 
