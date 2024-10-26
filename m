@@ -1,94 +1,98 @@
-Return-Path: <linux-kernel+bounces-383199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8CD29B1861
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 15:02:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB85F9B1865
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 15:03:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 766A7B23370
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 13:02:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 082101C21778
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 13:03:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63A821D54DA;
-	Sat, 26 Oct 2024 13:02:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5A931D63C2;
+	Sat, 26 Oct 2024 13:03:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sugXLD8a"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HE4/y/9x"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C001AB641;
-	Sat, 26 Oct 2024 13:02:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2CDCB641;
+	Sat, 26 Oct 2024 13:03:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729947760; cv=none; b=XSsTWiL/TG9qWMglIoWp3AoUFdOT8srk6FQLugzF4C7ec2/P1fs3NBEy/jZEGkri0sEzQJ6zeul/4EFFvBy4bYTOfLeekSehijqFYixcw8EApP6jqLkYILfp6b1+wURf5cq3a5WXm1NC6X+5hmIoE0zRWNW5jY5NtwoTEORJ3Eg=
+	t=1729947819; cv=none; b=p5NrxNRBgQ1AUVsdEPVQiRajYvdsXZ5xNYvu8H9mAeBryyN/2adykiK8kXRzQifAUsIUloZA37z5aYAcdXkhOhPnlBm8kiTo+/ItS4s0hy8/wEeb7wOR0MQg/JF4QYLiI0gn5rvdaI261wEygFC7mYauOq09ZkzK6qqSuu0AXfA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729947760; c=relaxed/simple;
-	bh=hSLRs/NeqhqcDbsXjlXESVgnbwx92MSxD/rnmFcmeXw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qu2Gl4nvLvzipB8WOOLQyj2V4ZZpYqafqO7ym5SXYk4Rm7XbeJkzz5KJw2SWkhyIiEsmzp/35mPh2AFTGmTMM8BtTdrzkk3hMEOiQMz/69zfP4Dh87RYMGWBSIqpLTJQMg+cqyD7OQ1m6tVbA60QH6WwrybfQ1cVPmAKrr6MFRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sugXLD8a; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F4C1C4CEC6;
-	Sat, 26 Oct 2024 13:02:30 +0000 (UTC)
+	s=arc-20240116; t=1729947819; c=relaxed/simple;
+	bh=XPuYmo0zgd43DSQ6TT9jekdqtTwIJ6eJ4YPPUSxLX6A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nnVHKhIIaXD4meeYhzUMULIgG0XTbRLlfASFMXv8oM3Ty1gq7emytYVFWLM+h46+7kHBEK4+SkQLrgn0+myMNryWUWSigTfeqdeA6UNHWTAig1Vfzsj/qaFm5UvfXgSUL417cRCWikI3a1QTDZSPlPssCecm3tES0Y6Fo9sBIYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HE4/y/9x; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13768C4CEC6;
+	Sat, 26 Oct 2024 13:03:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729947760;
-	bh=hSLRs/NeqhqcDbsXjlXESVgnbwx92MSxD/rnmFcmeXw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=sugXLD8aXvmYkZ3vakl64jPSmTQiAGwdOVsmLQUGQtJGq/fumi8monfQwXo8ZL5dl
-	 +RRpN3x+OkWSQfa/RXtIYKSyJo2NC5TLDv2X0/9YFrECf6npjgUCUwFSADiP19v+Li
-	 jvquRjOTC+apuUy+fmAYpaw8PXs+4z1IESsWhRLn4AE2nr0TB83Y0JYiDAJqzgVr0/
-	 MERsTK553q1zDDRT8PaLDkuUbDACurUaQY6JtV4jMBhpma023NBqX0dKOUL8krFPN0
-	 xSuw8eMshXKq2ENbUwhJFRJCttUqCO9A4+pG0j+k5kfenuTgFN858YnpALTFOiaIqc
-	 vXlP4+moKQCkA==
-Date: Sat, 26 Oct 2024 14:02:17 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Julien Stephan <jstephan@baylibre.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iio: gyro: bmg160_core: remove trailing tab
-Message-ID: <20241026140217.620a8d21@jic23-huawei>
-In-Reply-To: <20241023-iio-gyro-bmg160_core-remove-trailing-tab-v1-1-9343c7dc4110@baylibre.com>
-References: <20241023-iio-gyro-bmg160_core-remove-trailing-tab-v1-1-9343c7dc4110@baylibre.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=k20201202; t=1729947817;
+	bh=XPuYmo0zgd43DSQ6TT9jekdqtTwIJ6eJ4YPPUSxLX6A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HE4/y/9xJo3SY0e3w9bf+orKhAGA+RAP3UZKJNacRfemypcPRwie0VXLQ+F5xDu0k
+	 FTfXM09UDdfDRpmHfVGiHU+iX1ccEAZ1mpHYC6AFYq349wQ0uVP0/5MPtDet3n+nut
+	 t+Wwbreh80ijzupPC3KP0CU9bPg7AJUvUQ2Tcs8SVIcuodSIgRuRAiNKbow85sN9QJ
+	 6G/H+2oTcROwsvPK9Pl+x6gfjuaYGnVVcN2+7tT6JJzINO9uXM2D04QJZWK9WN51wq
+	 4Bw6DQFX2xohwDZ+eR18gNbZIebM+b/YIORJait7Ja8H7pwrv8IiWAZCwI/U2QUEtt
+	 4CAHKdsjA0cWA==
+Date: Sat, 26 Oct 2024 14:03:31 +0100
+From: Simon Horman <horms@kernel.org>
+To: Gerd Bayer <gbayer@linux.ibm.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	Sabrina Dubroca <sd@queasysnail.net>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Coco Li <lixiaoyan@google.com>, netdev@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org, Donald Hunter <donald.hunter@gmail.com>
+Subject: Re: [PATCH net] Documentation: networking: net_cachelines: Fix
+ formatting
+Message-ID: <20241026130331.GE1507976@kernel.org>
+References: <20241025-fix_netdev_doc-v1-1-e76e3bc227fc@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241025-fix_netdev_doc-v1-1-e76e3bc227fc@linux.ibm.com>
 
-On Wed, 23 Oct 2024 15:39:40 +0200
-Julien Stephan <jstephan@baylibre.com> wrote:
++ Donald
 
-> Remove trailing tab
+On Fri, Oct 25, 2024 at 05:38:35PM +0200, Gerd Bayer wrote:
+> I stumbled over [0] being completely garbled.
 > 
-> Signed-off-by: Julien Stephan <jstephan@baylibre.com>
-Applied.
-Thanks.
-> ---
->  drivers/iio/gyro/bmg160_core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Fix formatting by adding the required rst annotation for a Simple Table
+> and remove unnecessary trailing whitespace. While at it, do the same for
+> all the documents in the net_cachelines directory.
 > 
-> diff --git a/drivers/iio/gyro/bmg160_core.c b/drivers/iio/gyro/bmg160_core.c
-> index 10728d5ccae398d15c1d51e0380306042675d5c0..9ae03631090a4ac68ffab92726ee8b8e9c1bb401 100644
-> --- a/drivers/iio/gyro/bmg160_core.c
-> +++ b/drivers/iio/gyro/bmg160_core.c
-> @@ -444,7 +444,7 @@ static int bmg160_setup_new_data_interrupt(struct bmg160_data *data,
->  
->  static int bmg160_get_bw(struct bmg160_data *data, int *val)
->  {
-> -	struct device *dev = regmap_get_device(data->regmap);	
-> +	struct device *dev = regmap_get_device(data->regmap);
->  	int i;
->  	unsigned int bw_bits;
->  	int ret;
+> I have not checked the contents for correctness or completeness.
 > 
-> ---
-> base-commit: 9090ececac9ff1e22fb7e042f3c886990a8fb090
-> change-id: 20241023-iio-gyro-bmg160_core-remove-trailing-tab-19904deebd9e
-> 
-> Best regards,
+> Links: [0] https://www.kernel.org/doc/html/latest/networking/net_cachelines/net_device.html
+> Fixes: 14006f1d8fa2 ("Documentations: Analyze heavily used Networking related structs")
+> Signed-off-by: Gerd Bayer <gbayer@linux.ibm.com>
 
+Thanks Gerd,
+
+I believe that there is already a patch in net-next that addresses this.
+
+- 54b771e6c675 ("doc: net: Fix .rst rendering of net_cachelines pages")
+  https://git.kernel.org/netdev/net-next/c/54b771e6c675
+
+-- 
+pw-bot: not-applicable
 
