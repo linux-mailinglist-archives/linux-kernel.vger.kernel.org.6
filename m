@@ -1,213 +1,128 @@
-Return-Path: <linux-kernel+bounces-383116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F94B9B177C
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 13:38:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 889AD9B1781
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 13:38:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0543B225D9
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 11:38:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C231E1C2131A
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 11:38:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B648E1D4142;
-	Sat, 26 Oct 2024 11:38:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1A331D4339;
+	Sat, 26 Oct 2024 11:38:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CMusbsVm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="MDz3mP/Z"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12BE81FC3;
-	Sat, 26 Oct 2024 11:38:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A74B1D363D
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 11:38:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729942698; cv=none; b=eGkE4Ty0UT5VzTEszp1WG7FKhEFV1tSFdidNu4qYecTu6x7Sl5Eqfh5mp3eVHBcb7PG5N7K4TrgtJ0wK388dlqis080VrqpwdV0dUZHqC+B1iZU7AnwZLjcQHPG6xir00667ZHIY3MR6dJeDgaqrCRnl8k95M3S3sdU3lG/gxls=
+	t=1729942726; cv=none; b=OHiee8mb3YJs9nSUELtFvGq2BucM1Az5uosdwHzC2TR5TcXuVB0Jh9E9wPB603H/FOB22XFrKKOWV6bFm2qFotlAabGpaGlOybLMSsIN+5BzNLDf9H0gbEZz8yys2YXa3r+W7TE6PMvCwLYWfWLvUxhzowx85SmvJ/Gu9X+EeZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729942698; c=relaxed/simple;
-	bh=6YCfCTqzCqc4f+nIBzd0GlvTLXYbFWt8C/4e1kUAtwk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Onm57jMG+RS21d6xEQMWTGaKFpL60zmenxpji2zOZRWWnbO0/hfAwV/endNw/Ut/dJ2+uIGrzIcuhO6hsDb5ln2I5mwOqKXtj1qzwS2iiN5D0ZjzZJWY/enmZSlaiV6dlqaNoRiJ0swvRlz5pLsEXe8wowXRLJfLpPZIRNgYnGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CMusbsVm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E844C4CEE4;
-	Sat, 26 Oct 2024 11:37:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729942697;
-	bh=6YCfCTqzCqc4f+nIBzd0GlvTLXYbFWt8C/4e1kUAtwk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=CMusbsVmw8VM2jrgUh4qoq7qXLx70ZZ7AZhtIW+Z8ymOr4pfiYKSYE/Jikl623JiV
-	 WA1ecTbKUKJgO4KWKUNlwheKNrHmPDPYisSBmyghqZy++7NhDhk2VFeLx3uBCSjKq/
-	 ESJhiBciBe2+OY9/l3ZSFq91bBB2VI+zEsa6LH18eSb1LmPGDn4vfDUZfBGEjg1rOq
-	 5+Od8o68v7ScIHhbyodRHzgbnXzibzenySKoRCkL2KyOrNDNTyX+73L6PeQzrx6uK2
-	 w/F5WHSoWO0ukZ2g+lSH9x8rdM9ePrkl5aA/EXNZ7V06fX2nbTKl24BRleveRV55K0
-	 J4SztYKKychTw==
-Date: Sat, 26 Oct 2024 12:37:36 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, Marius Cristea
- <marius.cristea@microchip.com>, Trevor Gamblin <tgamblin@baylibre.com>,
- Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>, Hans de Goede
- <hdegoede@redhat.com>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>
-Subject: Re: [PATCH v3 14/24] iio: accel: kxcjk-1013: Get rid of enum
- kx_chipset
-Message-ID: <20241026123736.5714fadd@jic23-huawei>
-In-Reply-To: <20241024191200.229894-15-andriy.shevchenko@linux.intel.com>
-References: <20241024191200.229894-1-andriy.shevchenko@linux.intel.com>
-	<20241024191200.229894-15-andriy.shevchenko@linux.intel.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1729942726; c=relaxed/simple;
+	bh=wxc+dIWaFDqYXJ2UOmZG5MwkG5ZYvvsWMsSRYr4sCqo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ni1XnuUQAkYlL4KMaJgWjEQEyC8dYHHNdritPFAzJQEMrxdbMQEP74UfcHyyzzQ4VnMtIjkegmoPY3366rjSVVtVWDUbp3hJy/x0KMfBeTZid5Ap4Mek470I/1MCYT7/2oYxx1wFaf49leHaaX8l1tYHWd42Yaog8nKkrZF/gj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=MDz3mP/Z; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49Q4qweW028358
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 11:38:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	wxc+dIWaFDqYXJ2UOmZG5MwkG5ZYvvsWMsSRYr4sCqo=; b=MDz3mP/ZMt8WB/wA
+	IcAO7pwBza5WgovDX3dJprlxB1WBXOdlPTAQL+bugHUXQHO1DzJOx3plmqFgF2/Q
+	s4nN4CF6YY8HZIB60+OXGDQ11A+MGYSt/PWsAmJpye2ZZ2tS85KWDsda2TxRuBiZ
+	J6zLWeF9baxcRvmA8kMnn7BbcgxG1lL9vHH5zlQ6L+9SpExDDt4R4EwFg08JcEJu
+	oe0jv4nXQFZ3i1JGYJEDBbp+sBXu9r/eS8L03Pj7u4q/txn/yX+IPtKowVUnbAtK
+	Lx59EVD2BQykqmceCas40qwhdXfaalHByj5wjrcea1NCz8jR+whdjXkIfMHTcQJv
+	WRYixg==
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42gs6e0snd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 11:38:43 +0000 (GMT)
+Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-6cbe40565feso7967936d6.1
+        for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 04:38:43 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729942722; x=1730547522;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wxc+dIWaFDqYXJ2UOmZG5MwkG5ZYvvsWMsSRYr4sCqo=;
+        b=VpLYc/Ny0GgXumSv0beVqjrQ9qCz3DptfUTisdQDvGPfP+yBrzRmG0APawruSvd1sz
+         dvDfjCUTb8ZjsFG2YKKE7+sihtyzBed5X2cgZ+SqFktSrNtFXcDkeIjd5p3Mfpj2DYkg
+         e+2ZnnePFvJSdEds197kmLoYBuaiDrWBb/1Jg+nVw1Py75T99qYcUzXwVZL3cZVX/hFO
+         VgW9pi8pNxqGqCn5syvdvgo0kSj6abJ5hlAadEdsva5PUlDYIhnB6CuRD3l3NjqBPadK
+         me7QYvC8K2IH+bliVlYFz0n17NI+RMnSxWT6uMnFm3dPIB/VH5HIjSo0vlhtJfpqiSXP
+         GZEg==
+X-Forwarded-Encrypted: i=1; AJvYcCVD5r45NJZUUfnAWflfYpmklrGvhTFgZpAKnq5p1eTEegm7SUh1Wf37JvE7FzxkSOEUXZVSfHES8KXJ7f8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSlY58nW10RccoyKPPzCCQhhogOZtK0jY8IXpk8ol2cdOxVZ97
+	xKxJr51YPrtGxH7yImGh0X6LhzEhZju7ZA/7FZlGdycos02ThSrUa1UyDTSqyH+n4ZGqCbGAQZq
+	9ql1ZBmTic+B+FJ75xyOkXr2EokQAxM7MP8IzJIel0umQN/BCD5r3FKay9vtjHu4=
+X-Received: by 2002:a05:6214:492:b0:6cb:1fad:82b2 with SMTP id 6a1803df08f44-6d18566505bmr16966026d6.3.1729942722381;
+        Sat, 26 Oct 2024 04:38:42 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHjV61HARupu7W70JLeA+UqwYOAVuXyIFMiS4jRVtOulAOXFcqwYl1WNINTuzhv44XyFwqZCg==
+X-Received: by 2002:a05:6214:492:b0:6cb:1fad:82b2 with SMTP id 6a1803df08f44-6d18566505bmr16965886d6.3.1729942721904;
+        Sat, 26 Oct 2024 04:38:41 -0700 (PDT)
+Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b1f2994ddsm164820666b.110.2024.10.26.04.38.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 26 Oct 2024 04:38:41 -0700 (PDT)
+Message-ID: <768a1c92-6e1d-4d6c-90f6-efe66f68dd0e@oss.qualcomm.com>
+Date: Sat, 26 Oct 2024 13:38:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 5/5] arm: dts: qcom-ipq5018-linksys-jamaica: Include
+ dts from arm64
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Karl Chan <exxxxkc@getgoogleoff.me>,
+        Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>,
+        Sricharan R <quic_srichara@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, andersson@kernel.org,
+        konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+        conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+        linus.walleij@linaro.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org
+References: <20241002232804.3867-1-exxxxkc@getgoogleoff.me>
+ <20241002232804.3867-6-exxxxkc@getgoogleoff.me>
+ <f2eck3tudqoqyylcknfvz77wj52fornxevp6po3y7sov7swikt@asez6wepyl6h>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <f2eck3tudqoqyylcknfvz77wj52fornxevp6po3y7sov7swikt@asez6wepyl6h>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: _uP1GQKeNrhxNYIzAl7-vMQxsYbceXuG
+X-Proofpoint-GUID: _uP1GQKeNrhxNYIzAl7-vMQxsYbceXuG
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxscore=0
+ priorityscore=1501 lowpriorityscore=0 mlxlogscore=682 phishscore=0
+ malwarescore=0 impostorscore=0 adultscore=0 spamscore=0 suspectscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410260097
 
-On Thu, 24 Oct 2024 22:05:03 +0300
-Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+On 6.10.2024 10:14 PM, Dmitry Baryshkov wrote:
+> On Thu, Oct 03, 2024 at 07:28:04AM GMT, Karl Chan wrote:
+>> Build the Linksys EA9350 V3 device trees from the arm64 tree together with the ARM32 include to allow booting this device on ARM32.
 
-> Instead of using enum, out of which only a couple of values
-> are being actully used, make a comparisons against pointer
-> to the respective chip_info structures.
-> 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Hmm. Maybe worth a revisit longer term to use callbacks for the
-decisions instead of matching at all as this stuff tends not to end
-up being specific to one version of a chip as more parts are added.
++ Kathiravan, Sricharan
 
-Anyhow, this is still an improvement so applied.
+Would you folks know anything about it? Do we have an open source
+U-Boot release that could be sideloaded as a secondary bootloader to
+kick it into 64-bit mode?
 
-Jonathan
-
-> ---
->  drivers/iio/accel/kxcjk-1013.c | 28 +++++-----------------------
->  1 file changed, 5 insertions(+), 23 deletions(-)
-> 
-> diff --git a/drivers/iio/accel/kxcjk-1013.c b/drivers/iio/accel/kxcjk-1013.c
-> index 91f890275a18..a8c73e401f95 100644
-> --- a/drivers/iio/accel/kxcjk-1013.c
-> +++ b/drivers/iio/accel/kxcjk-1013.c
-> @@ -169,15 +169,6 @@
->  
->  #define KXCJK1013_DEFAULT_WAKE_THRES	1
->  
-> -enum kx_chipset {
-> -	KXCJK1013,
-> -	KXCJ91008,
-> -	KXTJ21009,
-> -	KXTF9,
-> -	KX0231025,
-> -	KX_MAX_CHIPS /* this must be last */
-> -};
-> -
->  /* Refer to section 4 of the specification */
->  struct kx_odr_start_up_time {
->  	int odr_bits;
-> @@ -318,59 +309,50 @@ static const struct kx_chipset_regs kx0231025_regs = {
->  struct kx_chipset_info {
->  	const struct kx_chipset_regs *regs;
->  	const struct kx_odr_start_up_time *times;
-> -	enum kx_chipset chipset;
->  	enum kx_acpi_type acpi_type;
->  };
->  
->  static const struct kx_chipset_info kxcjk1013_info = {
->  	.regs = &kxcjk1013_regs,
->  	.times = pm_ptr(kxcjk1013_odr_start_up_times),
-> -	.chipset = KXCJK1013,
->  };
->  
->  static const struct kx_chipset_info kxcj91008_info = {
->  	.regs = &kxcjk1013_regs,
->  	.times = pm_ptr(kxcj91008_odr_start_up_times),
-> -	.chipset = KXCJ91008,
->  };
->  
->  static const struct kx_chipset_info kxcj91008_kiox010a_info = {
->  	.regs = &kxcjk1013_regs,
->  	.times = pm_ptr(kxcj91008_odr_start_up_times),
-> -	.chipset = KXCJ91008,
->  	.acpi_type = ACPI_KIOX010A,
->  };
->  
->  static const struct kx_chipset_info kxcj91008_kiox020a_info = {
->  	.regs = &kxcjk1013_regs,
->  	.times = pm_ptr(kxcj91008_odr_start_up_times),
-> -	.chipset = KXCJ91008,
->  	.acpi_type = ACPI_GENERIC,
->  };
->  
->  static const struct kx_chipset_info kxcj91008_smo8500_info = {
->  	.regs = &kxcjk1013_regs,
->  	.times = pm_ptr(kxcj91008_odr_start_up_times),
-> -	.chipset = KXCJ91008,
->  	.acpi_type = ACPI_SMO8500,
->  };
->  
->  static const struct kx_chipset_info kxtj21009_info = {
->  	.regs = &kxcjk1013_regs,
->  	.times = pm_ptr(kxtj21009_odr_start_up_times),
-> -	.chipset = KXTJ21009,
->  };
->  
->  static const struct kx_chipset_info kxtf9_info = {
->  	.regs = &kxtf9_regs,
->  	.times = pm_ptr(kxtf9_odr_start_up_times),
-> -	.chipset = KXTF9,
->  };
->  
->  static const struct kx_chipset_info kx0231025_info = {
->  	.regs = &kx0231025_regs,
->  	.times = pm_ptr(kx0231025_odr_start_up_times),
-> -	.chipset = KX0231025,
->  };
->  
->  enum kxcjk1013_axis {
-> @@ -647,7 +629,7 @@ static int kxcjk1013_chip_init(struct kxcjk1013_data *data)
->  	}
->  
->  	/* On KX023, route all used interrupts to INT1 for now */
-> -	if (data->info->chipset == KX0231025 && data->client->irq > 0) {
-> +	if (data->info == &kx0231025_info && data->client->irq > 0) {
->  		ret = i2c_smbus_write_byte_data(data->client, KX023_REG_INC4,
->  						KX023_REG_INC4_DRDY1 |
->  						KX023_REG_INC4_WUFI1);
-> @@ -883,7 +865,7 @@ static int kxcjk1013_set_odr(struct kxcjk1013_data *data, int val, int val2)
->  	if (ret < 0)
->  		return ret;
->  
-> -	if (data->info->chipset == KXTF9)
-> +	if (data->info == &kxtf9_info)
->  		odr_setting = kxcjk1013_find_odr_value(kxtf9_samp_freq_table,
->  						       ARRAY_SIZE(kxtf9_samp_freq_table),
->  						       val, val2);
-> @@ -927,7 +909,7 @@ static int kxcjk1013_set_odr(struct kxcjk1013_data *data, int val, int val2)
->  
->  static int kxcjk1013_get_odr(struct kxcjk1013_data *data, int *val, int *val2)
->  {
-> -	if (data->info->chipset == KXTF9)
-> +	if (data->info == &kxtf9_info)
->  		return kxcjk1013_convert_odr_value(kxtf9_samp_freq_table,
->  						   ARRAY_SIZE(kxtf9_samp_freq_table),
->  						   data->odr_bits, val, val2);
-> @@ -1194,7 +1176,7 @@ static ssize_t kxcjk1013_get_samp_freq_avail(struct device *dev,
->  	struct kxcjk1013_data *data = iio_priv(indio_dev);
->  	const char *str;
->  
-> -	if (data->info->chipset == KXTF9)
-> +	if (data->info == &kxtf9_info)
->  		str = kxtf9_samp_freq_avail;
->  	else
->  		str = kxcjk1013_samp_freq_avail;
-> @@ -1443,7 +1425,7 @@ static irqreturn_t kxcjk1013_event_handler(int irq, void *private)
->  	}
->  
->  	if (ret & KXCJK1013_REG_INT_SRC1_BIT_WUFS) {
-> -		if (data->info->chipset == KXTF9)
-> +		if (data->info == &kxtf9_info)
->  			iio_push_event(indio_dev,
->  				       IIO_MOD_EVENT_CODE(IIO_ACCEL,
->  				       0,
-
+Konrad
 
