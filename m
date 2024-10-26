@@ -1,122 +1,171 @@
-Return-Path: <linux-kernel+bounces-382853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07C619B1402
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 03:29:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13E4B9B1409
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 03:35:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1AE31F23294
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 01:29:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBF482838DF
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 01:34:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D3B71369B6;
-	Sat, 26 Oct 2024 01:29:41 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35D10139CF2;
+	Sat, 26 Oct 2024 01:34:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Wq7WzRrR"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3621320F;
-	Sat, 26 Oct 2024 01:29:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32944B665;
+	Sat, 26 Oct 2024 01:34:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729906180; cv=none; b=fneLhAgtEE9jhaU7goRlaFN5hb+6a5Ge9YSd9Q+mAUVYEBN3XcDZUqTlHejM9dZvcn4NcHMbK8mjZXKPyAWExABhoyMra3p4iFq0M746bT6i6LxJh9B0ij5ipyKFVDFLR60zVZB03Pan3sbL5d+bO9RyHZU46tWSyd9mtwOxk9k=
+	t=1729906489; cv=none; b=h3NViOV2PfXhRuwlkSNRyd8R/ACDrRDVN5QKgCnqE8XX9ZpflVE6X0HrBUYKWORZIg+0b5Ik7P567nEhWKtybYOrwrO5LK9KXsR0GtLSCOmU8hWpkZJpLaL3pbYunZAtUd3Zj9/BnE2vAn3utgSyfJ5WWtr7pWudz1GLNP5G13g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729906180; c=relaxed/simple;
-	bh=XFNQYAFUMwHr9v6sRAZkdFO7vl60vW6VXkSAxfeHd/k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=WuXqj+eML37O4rzb3ExoXgN+4CQkGv2MAKkJv4/KRMm1Yw8qJ+ETlq/8s1ZkQhiqFvl0kmdt1xBAjBfA5ijjCpbdGz5jULS0FzMkS3Rh8VrEdTlajM/rrcLyqodRkFtOeZ4NRMYtU8cvo2NGc7hpjHRDy6QCa5vQid5pDDKxuXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Xb27W4Rd4zdk7G;
-	Sat, 26 Oct 2024 09:27:03 +0800 (CST)
-Received: from kwepemm600001.china.huawei.com (unknown [7.193.23.3])
-	by mail.maildlp.com (Postfix) with ESMTPS id 2D21D1400DC;
-	Sat, 26 Oct 2024 09:29:35 +0800 (CST)
-Received: from [10.174.176.245] (10.174.176.245) by
- kwepemm600001.china.huawei.com (7.193.23.3) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Sat, 26 Oct 2024 09:29:34 +0800
-Message-ID: <79b64eae-a00d-43d2-a537-b5ca4c84ec69@huawei.com>
-Date: Sat, 26 Oct 2024 09:29:33 +0800
+	s=arc-20240116; t=1729906489; c=relaxed/simple;
+	bh=AvdnhwNRiXKf7G4bRAt5xJWxJrdRaqp5+mhlW0iRbJo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hNbIf4HP2RchtvP6YmDJn1SVKYYRVZcTCNaP1bcXenvpEgJYZFEi+vzmP4VHurnQ9b9hxOu7iT39DkuC7wde5HmNMTD/SlXs2ixwFh1hTbLSJxKhaemezKJnvjBSA/pMO9XeRpa5qVAX5vyVwL4oBmUQFcOMP0yVfaV/1h1Etjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Wq7WzRrR; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729906487; x=1761442487;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=AvdnhwNRiXKf7G4bRAt5xJWxJrdRaqp5+mhlW0iRbJo=;
+  b=Wq7WzRrRZOXME271vy48jIpUUW/IrhcI+rjbnGTGmnm4NnBJhZYkZCum
+   1RZlAGvZRCFn3MeLh9wjPWFXPQjSp9sQQXLHMmLOaxSGSkoBd/qyAD08a
+   fNnuwq0UTbDwimFLlCvk/16xXnbjd9ZLu6/BeARopus98t53DuBd6rO0R
+   TKAakvo319Hl6i6Qnvx5Mj8bcDEuk+LHaseyXhsoBcWaQq1do9rTe1AI6
+   AZtG0NjtbACdFlA84UVhq36pq7r2Mv67cs8UGsNWalUaNJekNEWmEt6OC
+   d0nnNRJZGbdynOAx9+auYYA0ID7sou98NZIhW/cqtj/RF0l80WJcnWVmd
+   Q==;
+X-CSE-ConnectionGUID: FaefWCtwROqymHOsvIrMDQ==
+X-CSE-MsgGUID: OjnkeOHSShGIQxvQ0UYmHA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="29536586"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="29536586"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2024 18:34:46 -0700
+X-CSE-ConnectionGUID: 70ikL1t/Sde4q68jIS/rvg==
+X-CSE-MsgGUID: SbfZrTSgSn69iYeE81rvuA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,233,1725346800"; 
+   d="scan'208";a="111925452"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa002.jf.intel.com with ESMTP; 25 Oct 2024 18:34:41 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t4VhO-000Z8C-1i;
+	Sat, 26 Oct 2024 01:34:38 +0000
+Date: Sat, 26 Oct 2024 09:34:36 +0800
+From: kernel test robot <lkp@intel.com>
+To: Wei Fang <wei.fang@nxp.com>, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, vladimir.oltean@nxp.com,
+	claudiu.manoil@nxp.com, xiaoning.wang@nxp.com, Frank.Li@nxp.com,
+	christophe.leroy@csgroup.eu, linux@armlinux.org.uk,
+	bhelgaas@google.com, horms@kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	imx@lists.linux.dev, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, alexander.stein@ew.tq-group.com
+Subject: Re: [PATCH v5 net-next 05/13] net: enetc: extract common ENETC PF
+ parts for LS1028A and i.MX95 platforms
+Message-ID: <202410260911.fvWnX8cx-lkp@intel.com>
+References: <20241024065328.521518-6-wei.fang@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] crypto: qat - Fix missing destroy_workqueue in
- adf_init_aer()
-To: "Cabiddu, Giovanni" <giovanni.cabiddu@intel.com>
-CC: <herbert@gondor.apana.org.au>, <davem@davemloft.net>,
-	<ahsan.atta@intel.com>, <mun.chun.yep@intel.com>,
-	<markas.rapoportas@intel.com>, <damian.muszynski@intel.com>,
-	<furong.zhou@intel.com>, <adam.guerin@intel.com>, <zhangxiaoxu5@huawei.com>,
-	<qat-linux@intel.com>, <linux-crypto@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20241024140057.18548-1-wanghai38@huawei.com>
- <ZxpeVD/D9Y7sfL7H@gcabiddu-mobl.ger.corp.intel.com>
- <1094e5d9-208c-4c41-83cd-5a77081aa5c1@huawei.com>
- <ZxtXqkbPUJPvpiW2@gcabiddu-mobl.ger.corp.intel.com>
-Content-Language: en-US
-From: Wang Hai <wanghai38@huawei.com>
-In-Reply-To: <ZxtXqkbPUJPvpiW2@gcabiddu-mobl.ger.corp.intel.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemm600001.china.huawei.com (7.193.23.3)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241024065328.521518-6-wei.fang@nxp.com>
+
+Hi Wei,
+
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on net-next/main]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Wei-Fang/dt-bindings-net-add-compatible-string-for-i-MX95-EMDIO/20241024-151502
+base:   net-next/main
+patch link:    https://lore.kernel.org/r/20241024065328.521518-6-wei.fang%40nxp.com
+patch subject: [PATCH v5 net-next 05/13] net: enetc: extract common ENETC PF parts for LS1028A and i.MX95 platforms
+config: x86_64-buildonly-randconfig-001-20241026 (https://download.01.org/0day-ci/archive/20241026/202410260911.fvWnX8cx-lkp@intel.com/config)
+compiler: clang version 19.1.2 (https://github.com/llvm/llvm-project 7ba7d8e2f7b6445b60679da826210cdde29eaf8b)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241026/202410260911.fvWnX8cx-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410260911.fvWnX8cx-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from drivers/net/ethernet/freescale/enetc/enetc_pf.c:7:
+   In file included from include/linux/of_net.h:9:
+   In file included from include/linux/phy.h:16:
+   In file included from include/linux/ethtool.h:18:
+   In file included from include/linux/if_ether.h:19:
+   In file included from include/linux/skbuff.h:17:
+   In file included from include/linux/bvec.h:10:
+   In file included from include/linux/highmem.h:8:
+   In file included from include/linux/cacheflush.h:5:
+   In file included from arch/x86/include/asm/cacheflush.h:5:
+   In file included from include/linux/mm.h:2213:
+   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+>> drivers/net/ethernet/freescale/enetc/enetc_pf.c:906:14: error: call to undeclared function 'of_find_compatible_node'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     906 |         ierb_node = of_find_compatible_node(NULL, NULL,
+         |                     ^
+>> drivers/net/ethernet/freescale/enetc/enetc_pf.c:906:12: error: incompatible integer to pointer conversion assigning to 'struct device_node *' from 'int' [-Wint-conversion]
+     906 |         ierb_node = of_find_compatible_node(NULL, NULL,
+         |                   ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     907 |                                             "fsl,ls1028a-enetc-ierb");
+         |                                             ~~~~~~~~~~~~~~~~~~~~~~~~~
+>> drivers/net/ethernet/freescale/enetc/enetc_pf.c:908:21: error: call to undeclared function 'of_device_is_available'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     908 |         if (!ierb_node || !of_device_is_available(ierb_node))
+         |                            ^
+>> drivers/net/ethernet/freescale/enetc/enetc_pf.c:912:2: error: call to undeclared function 'of_node_put'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     912 |         of_node_put(ierb_node);
+         |         ^
+   drivers/net/ethernet/freescale/enetc/enetc_pf.c:1115:14: error: call to undeclared function 'of_device_is_available'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+    1115 |         if (node && of_device_is_available(node))
+         |                     ^
+   1 warning and 5 errors generated.
 
 
+vim +/of_find_compatible_node +906 drivers/net/ethernet/freescale/enetc/enetc_pf.c
 
-On 2024/10/25 16:32, Cabiddu, Giovanni wrote:
-> On Fri, Oct 25, 2024 at 09:24:52AM +0800, Wang Hai wrote:
->>
->>
->> On 2024/10/24 23:04, Cabiddu, Giovanni wrote:
->>> On Thu, Oct 24, 2024 at 10:00:57PM +0800, Wang Hai wrote:
->>>> The adf_init_aer() won't destroy device_reset_wq when alloc_workqueue()
->>>> for device_sriov_wq failed. Add destroy_workqueue for device_reset_wq to
->>>> fix this issue.
->>>>
->>>> Fixes: 4469f9b23468 ("crypto: qat - re-enable sriov after pf reset")
->>>> Signed-off-by: Wang Hai <wanghai38@huawei.com>
->>>> ---
->>>>    drivers/crypto/intel/qat/qat_common/adf_aer.c | 4 +++-
->>>>    1 file changed, 3 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/drivers/crypto/intel/qat/qat_common/adf_aer.c b/drivers/crypto/intel/qat/qat_common/adf_aer.c
->>>> index ec7913ab00a2..907144ec7e65 100644
->>>> --- a/drivers/crypto/intel/qat/qat_common/adf_aer.c
->>>> +++ b/drivers/crypto/intel/qat/qat_common/adf_aer.c
->>>> @@ -281,8 +281,10 @@ int adf_init_aer(void)
->>>>    		return -EFAULT;
->>>>    	device_sriov_wq = alloc_workqueue("qat_device_sriov_wq", 0, 0);
->>>> -	if (!device_sriov_wq)
->>>> +	if (!device_sriov_wq) {
->>>> +		destroy_workqueue(device_reset_wq);
->>> The missing destroy_workqueue() here is intentional as the device_reset_wq
->>> is destroyed in adf_exit_aer() which is called if adf_init_aer() fails,
->>> see [1].
->>>
->> Hi, Giovanni.
->>
->> Thanks for the review.
->>
->> If adf_init_aer() fails, it will goto err_aer and then call
->> adf_exit_misc_wq() instead of goto err_pf_wq and then call
->> adf_exit_aer(). So this patch is needed.
-> Sorry, I overlooked it. You are right.
-> On the error path I would also set device_reset_wq to NULL.
-> 	if (!device_sriov_wq) {
-> 		destroy_workqueue(device_reset_wq);
-> 		device_reset_wq = NULL;
-> 		return -EFAULT;
-> 	}
-> 
-Thanks for the suggestion, I will send a v2 patch
-> Regards,
-> 
+07bf34a50e3279 Vladimir Oltean 2021-02-04  900  
+e7d48e5fbf30f8 Vladimir Oltean 2021-04-17  901  static int enetc_pf_register_with_ierb(struct pci_dev *pdev)
+e7d48e5fbf30f8 Vladimir Oltean 2021-04-17  902  {
+e7d48e5fbf30f8 Vladimir Oltean 2021-04-17  903  	struct platform_device *ierb_pdev;
+e7d48e5fbf30f8 Vladimir Oltean 2021-04-17  904  	struct device_node *ierb_node;
+e7d48e5fbf30f8 Vladimir Oltean 2021-04-17  905  
+e7d48e5fbf30f8 Vladimir Oltean 2021-04-17 @906  	ierb_node = of_find_compatible_node(NULL, NULL,
+e7d48e5fbf30f8 Vladimir Oltean 2021-04-17  907  					    "fsl,ls1028a-enetc-ierb");
+e7d48e5fbf30f8 Vladimir Oltean 2021-04-17 @908  	if (!ierb_node || !of_device_is_available(ierb_node))
+e7d48e5fbf30f8 Vladimir Oltean 2021-04-17  909  		return -ENODEV;
+e7d48e5fbf30f8 Vladimir Oltean 2021-04-17  910  
+e7d48e5fbf30f8 Vladimir Oltean 2021-04-17  911  	ierb_pdev = of_find_device_by_node(ierb_node);
+e7d48e5fbf30f8 Vladimir Oltean 2021-04-17 @912  	of_node_put(ierb_node);
+e7d48e5fbf30f8 Vladimir Oltean 2021-04-17  913  
+e7d48e5fbf30f8 Vladimir Oltean 2021-04-17  914  	if (!ierb_pdev)
+e7d48e5fbf30f8 Vladimir Oltean 2021-04-17  915  		return -EPROBE_DEFER;
+e7d48e5fbf30f8 Vladimir Oltean 2021-04-17  916  
+e7d48e5fbf30f8 Vladimir Oltean 2021-04-17  917  	return enetc_ierb_register_pf(ierb_pdev, pdev);
+e7d48e5fbf30f8 Vladimir Oltean 2021-04-17  918  }
+e7d48e5fbf30f8 Vladimir Oltean 2021-04-17  919  
 
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
