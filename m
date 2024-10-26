@@ -1,233 +1,301 @@
-Return-Path: <linux-kernel+bounces-383318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71E1E9B1A01
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 19:15:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B4F499B1A04
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 19:16:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91E071C21484
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 17:15:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BAD331C2168F
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 17:16:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3CD51D90A9;
-	Sat, 26 Oct 2024 17:14:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 824FC172BB9;
+	Sat, 26 Oct 2024 17:16:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="Rzmbx2Hs"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lm11r5ni"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3A721D79B8
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 17:14:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B9272F36;
+	Sat, 26 Oct 2024 17:16:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729962894; cv=none; b=bacqxQEpLz4fArbQmlISrrxA0UTVNWP4Lw/C2KB58NoTwxpUSTNnpW45DviOFK4CIG4BTNCVxB4g8YLHXz3E/g84thBfZdl5W1RWQEBqeEgV1cgrSROQEmplChiHwIu7/AmRnhOnwWfBpBAC6T0D9SJ9sRkGs6b5edEpmV9s+0w=
+	t=1729962992; cv=none; b=HfK4afPhRBdHUJUgE1lVokm9gCk0q0Bm9nxNTsjKOgy/fYz8cOtwWqMFipkJY5pmtC1Ph7pFFTrN2WkJYEcgS4mlO7zjQzY0tiJibWyrVdJmdg0+3YXdUSMOFF2gfMj/wo4yUwKa+pYZWyCx5DGYPLsK+D1dJ4bFIsBw8vgP5kA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729962894; c=relaxed/simple;
-	bh=6v/2B5pS1NQbKcx4Aq5/VZ8a+qebWC56UpnkfHq3Es8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cuwHJf+HhGM1ZDLljhZ3AoPyqTZqWb4zIDRY5R5/RADlvhu/qfRp1f3IUAOzAVa9k/OXtE7JB2jzPB72WDIt668HRTMhFVJQXi1FfINWppRCcaFjQtwMXRV3kVMdsB6mnW4zbiAqHolR87vsxTVQFRv+z0rEETUJS5XPEGFjc+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=Rzmbx2Hs; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2e2fb304e7dso2429962a91.1
-        for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 10:14:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1729962891; x=1730567691; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3iilPE9PRtO5dgnEVdYwMDgO0cR2NihKQ5GAqyVmi0I=;
-        b=Rzmbx2Hs+kYbN/koVQwfBMju+R1WhWRIswEM/1mAWdcNPP8bBcTwAAtCtR8lR1XZD9
-         oL21rAiDAGK3Bm0PC9Rr35EWIg9ckg7hTo2KzSJPY/w6iRGorYKXC+8UiO20ULTAnFrs
-         tSVqCvZ9ogvcD8IndvxuqxtrhwkT9BT4KFrcyzRxwH0+3HSNVS36L2AOdRHznLUJqxRF
-         i4lgmxToW8xCHEx/0bP+cvOSSvXdPeCeGERDC0HVWlWaELDwKnoqQ17pZzigFXMy/1lg
-         eW9XUH5A2MxaBQv7Va4dZwaBjz5ZtsjXJCdr84BtKF1wcsKRjJ13e5GS6CpQO6cpPB9r
-         h+iQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729962891; x=1730567691;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3iilPE9PRtO5dgnEVdYwMDgO0cR2NihKQ5GAqyVmi0I=;
-        b=Rjy6YPYh5aef6rIdS7C51shDnCGK8tAQJi+Pez+XEm1JBHC+CE6vDNdYKB/XHU87LQ
-         zEm2MCsF0apmW+n1LVyF6/Wkf/McP87YmRq7hvGVpdp9iu9WzmOoo97TbK9WAzHQnM3T
-         DRdctvZ61NSS3bc4pGYFbEu1aeVKjXaZIfheYt0V5Aap83RJi2BQwu8+Z/vYdRbM9IBO
-         EoAk2vZpuutOJ8BFmJcX8P14rbbQ2bl5GhphKwJ4tsUjj3r+A3gUwX7EWID3Wvu/NeXX
-         dtbu/KiqDjHQe6cS3K9KU6f0mZxJaNRYd4bAuOZ+2d0EjOlVIB1+TN+zI2zXs5OlT5yC
-         /26A==
-X-Forwarded-Encrypted: i=1; AJvYcCVPOIM2Od2wQd7PBVzgh6BwDKtAcUoajfzeOrLuHWoo5wMSBCnPmN+RN42m7lnLRT4WBI9lRHQU8kcYJ7o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCDHU8n56lERvOU47SBQ9JRaWxmtnn8bYCT8uKmfQlzvSAnc8G
-	Qr4+z7y75PXmyg1jQOy4SVJxe+7a52BjFhkqxAqITTKJ/XMfzdAdWycnJ3hejdE=
-X-Google-Smtp-Source: AGHT+IHKHWEssFZ3dU4bK/XFfhtDHlaKTxMDsGGVAwitWxfjevjp7X7a3fieuNlFSdnYzB2SDFDTOA==
-X-Received: by 2002:a17:90a:3d0a:b0:2e2:c252:f861 with SMTP id 98e67ed59e1d1-2e8f10a7298mr4016154a91.28.1729962891258;
-        Sat, 26 Oct 2024 10:14:51 -0700 (PDT)
-Received: from sw06.internal.sifive.com ([4.53.31.132])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e77e558114sm5663762a91.36.2024.10.26.10.14.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 26 Oct 2024 10:14:50 -0700 (PDT)
-From: Samuel Holland <samuel.holland@sifive.com>
-To: Palmer Dabbelt <palmer@dabbelt.com>,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Alexandre Ghiti <alexghiti@rivosinc.com>,
-	Samuel Holland <samuel.holland@sifive.com>
-Subject: [PATCH 6/6] riscv: Remove CONFIG_PAGE_OFFSET
-Date: Sat, 26 Oct 2024 10:13:58 -0700
-Message-ID: <20241026171441.3047904-7-samuel.holland@sifive.com>
-X-Mailer: git-send-email 2.45.1
-In-Reply-To: <20241026171441.3047904-1-samuel.holland@sifive.com>
-References: <20241026171441.3047904-1-samuel.holland@sifive.com>
+	s=arc-20240116; t=1729962992; c=relaxed/simple;
+	bh=8txkN2m2sqsivt14SB6UYV4uqJtOyu6Sm0vklh4XQvE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gMyg7sB2O+/ATJXCGdzXh0BOnVzrvWYRPGsXgDDYTVGegeo5F/lOBA9GDlON9PGNHC7JporAc/B8gEM+eUplSFiEtwVCcbG2cV9jUX9xAKbplGrQIouR/rzhSX8yk5ekRQtwRuj26FmyRj2thz2BGhIEFWN6/Dqam9UKei3Ee+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lm11r5ni; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64523C4CEC6;
+	Sat, 26 Oct 2024 17:16:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729962992;
+	bh=8txkN2m2sqsivt14SB6UYV4uqJtOyu6Sm0vklh4XQvE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Lm11r5niSSleCUXRb+0LhOYVZn/2+Q7wl+cv7wmG7xnMclBJzMyZN/gEsADFp8FHJ
+	 pRL8wlBguAQzVg1/iqQFddE617XXZg1H3kgMoe09kNHErrxR18KCrGwWf3Y/s+6IgB
+	 0LED5TS4XDV4r50tMM+b/H1sscEats6IlzkuQLlgLNT7UgLRA4n+frvMkYCXY8C01y
+	 H5es9A3EwEvDXk82rS3+dbIGiPR4JLC3b/b8woReAb8ZbRXzOuRfxRy5quFHGx40WO
+	 3skUyG4+RyIgVEloVqhc1pBfSHesuth6YtIvinbkDhc0YH/RsWBD3iBME4oitwP8jC
+	 ceyIwQEKKvzoQ==
+Date: Sat, 26 Oct 2024 10:16:30 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Ravi Bangoria <ravi.bangoria@amd.com>,
+	Weilin Wang <weilin.wang@intel.com>,
+	Yoshihiro Furudera <fj5100bi@fujitsu.com>,
+	James Clark <james.clark@linaro.org>,
+	Athira Jajeev <atrajeev@linux.vnet.ibm.com>,
+	Howard Chu <howardchu95@gmail.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Changbin Du <changbin.du@huawei.com>, Ze Gao <zegao2021@gmail.com>,
+	Junhao He <hejunhao3@huawei.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v6 0/5] Hwmon PMUs
+Message-ID: <Zx0j7tIsDB6Ao44c@google.com>
+References: <20241022180623.463131-1-irogers@google.com>
+ <Zxm5w6wXLxpbERZx@google.com>
+ <CAP-5=fXfyd9b7Ns-SL5F+iffc7oy4NFHBsT3oj3CRMbBa1QCfg@mail.gmail.com>
+ <Zxp4mbzsFyO5nUh7@google.com>
+ <CAP-5=fWP-T57-Bb60eixhgO3m7f_v3y-tWmV=ypuR52iNSAQvQ@mail.gmail.com>
+ <ZxvVuFqef2CLwtCs@google.com>
+ <CAP-5=fVTU8nUfadXgpUd4my9emsY4c_7znMa9_RWD6VZbGYhZA@mail.gmail.com>
+ <ZxwHHWbjIbGh1RU8@x1>
+ <CAP-5=fX+m3KOR_c8v5=tzSbrsfE-C7_5B83ORjRoH2SQuJNA-g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAP-5=fX+m3KOR_c8v5=tzSbrsfE-C7_5B83ORjRoH2SQuJNA-g@mail.gmail.com>
 
-The current definition of CONFIG_PAGE_OFFSET is problematic for a couple
-of reasons:
- 1) The value is misleading for normal 64-bit kernels, where it is
-    overridden at runtime if Sv48 or Sv39 is chosen. This is especially
-    the case for XIP kernels, which always use Sv39.
- 2) The option is not user-visible, but for NOMMU kernels it must be a
-    valid RAM address, and for !RELOCATABLE it must additionally be the
-    exact address where the kernel is loaded.
+Hello Ian,
 
-Fix both of these by removing the option.
- 1) For MMU kernels, drop the indirection through Kconfig. Additionally,
-    for XIP, drop the indirection through kernel_map.
- 2) For NOMMU kernels, use the user-visible physical RAM base if
-    provided. Otherwise, force the kernel to be relocatable.
+Thanks for your email explaining the concerns.
 
-Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
----
+On Fri, Oct 25, 2024 at 04:07:47PM -0700, Ian Rogers wrote:
+> On Fri, Oct 25, 2024 at 2:01 PM Arnaldo Carvalho de Melo
+> <acme@kernel.org> wrote:
+> >
+> > On Fri, Oct 25, 2024 at 11:26:26AM -0700, Ian Rogers wrote:
+> > > On Fri, Oct 25, 2024 at 10:30 AM Namhyung Kim <namhyung@kernel.org> wrote:
+> > > > On Thu, Oct 24, 2024 at 06:33:27PM -0700, Ian Rogers wrote:
+> > > > > So I think moving the enum declarations into one patch is okay. But as
+> > > > > the enum values have no bearing on hardware constants, or something
+> > > > > outside of the code that uses them it smells strange to me. Ultimately
+> > > > > this is going to do little to the lines of code count but damage
+> > > > > readability. I'm not sure why we're doing this given the kernel model
+> > > > > for adding a driver is to add it as a large chunk. For example, here
+> > > > > is adding the intel PT driver:
+> > > > > https://lore.kernel.org/all/1422614392-114498-1-git-send-email-alexander.shishkin@linux.intel.com/T/#u
+> >
+> > > > Maybe others can understand a big patch easily, but I'm not.
+> >
+> > > My understanding is that we make small patches so that the codebase is
+> > > more bisectable. When there is something new, like a driver or here a
+> >
+> > That is super important, having patches being super small and doing just
+> > one thing helps in bisecting problems.
+> >
+> > If two things are done in one patch, and one of them causes a problem,
+> > then bisection is a very effective way of finding out what exactly
+> > caused a problem.
+> >
+> > But bisection is not the only benefit from breaking down larger patches
+> > into smaller ones.
+> >
+> > We want to have more people joining our ranks, doing low level tooling
+> > and kernel work.
+> >
+> > Writing new functionality in a series of patches, growing in complexity
+> > is a way to reduce the cognitive load on understantind how something
+> > works.
+> >
+> > As much as trying to emulate how the kernel community works is a good
+> > model as that community has been producing a lot of good code in a
+> > frantic, athletic pace, and as much as I can agree with you that adding
+> > a new piece of code will not affect bisectability as its new code, I
+> > think having it broken down in multiple patches benefits revieweing.
+> 
+> Can you explain how, as asked, can separating the declaration of a
+> function from its definition aid in reviewing? As a reviewer, I want
+> to know the scope of a function and its documentation. Placing them in
+> 2 separate patches doesn't benefit my reviewing.
 
- arch/riscv/Kconfig               |  8 +-------
- arch/riscv/include/asm/page.h    | 15 ++++++++-------
- arch/riscv/include/asm/pgtable.h |  2 +-
- arch/riscv/mm/init.c             |  8 ++------
- 4 files changed, 12 insertions(+), 21 deletions(-)
+No, it's my fault.  Please move the declaration into the same patch.
 
-diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-index 33aa79d84021..297ccbf4b5ce 100644
---- a/arch/riscv/Kconfig
-+++ b/arch/riscv/Kconfig
-@@ -195,6 +195,7 @@ config RISCV
- 	select PCI_DOMAINS_GENERIC if PCI
- 	select PCI_ECAM if (ACPI && PCI)
- 	select PCI_MSI if PCI
-+	select RELOCATABLE if !MMU && !PHYS_RAM_BASE_FIXED
- 	select RISCV_ALTERNATIVE if !XIP_KERNEL
- 	select RISCV_APLIC
- 	select RISCV_IMSIC
-@@ -282,13 +283,6 @@ config MMU
- 	  Select if you want MMU-based virtualised addressing space
- 	  support by paged memory management. If unsure, say 'Y'.
- 
--config PAGE_OFFSET
--	hex
--	default 0x80000000 if !MMU && RISCV_M_MODE
--	default 0x80200000 if !MMU
--	default 0xc0000000 if 32BIT
--	default 0xff60000000000000 if 64BIT
--
- config KASAN_SHADOW_OFFSET
- 	hex
- 	depends on KASAN_GENERIC
-diff --git a/arch/riscv/include/asm/page.h b/arch/riscv/include/asm/page.h
-index 24d1ac052609..d1acd1efe0dc 100644
---- a/arch/riscv/include/asm/page.h
-+++ b/arch/riscv/include/asm/page.h
-@@ -28,15 +28,16 @@
-  */
- #ifdef CONFIG_MMU
- #ifdef CONFIG_64BIT
--#define PAGE_OFFSET		kernel_map.page_offset
--/*
-- * By default, CONFIG_PAGE_OFFSET value corresponds to SV57 address space so
-- * define the PAGE_OFFSET value for SV48 and SV39.
-- */
-+#define PAGE_OFFSET_L5		_AC(0xff60000000000000, UL)
- #define PAGE_OFFSET_L4		_AC(0xffffaf8000000000, UL)
- #define PAGE_OFFSET_L3		_AC(0xffffffd600000000, UL)
-+#ifdef CONFIG_XIP_KERNEL
-+#define PAGE_OFFSET		PAGE_OFFSET_L3
- #else
--#define PAGE_OFFSET		_AC(CONFIG_PAGE_OFFSET, UL)
-+#define PAGE_OFFSET		kernel_map.page_offset
-+#endif /* CONFIG_XIP_KERNEL */
-+#else
-+#define PAGE_OFFSET		_AC(0xc0000000, UL)
- #endif /* CONFIG_64BIT */
- #else
- #define PAGE_OFFSET		((unsigned long)phys_ram_base)
-@@ -100,7 +101,6 @@ typedef struct page *pgtable_t;
- #define ARCH_PFN_OFFSET		(PFN_DOWN((unsigned long)phys_ram_base))
- 
- struct kernel_mapping {
--	unsigned long page_offset;
- 	unsigned long virt_addr;
- 	unsigned long virt_offset;
- 	uintptr_t phys_addr;
-@@ -114,6 +114,7 @@ struct kernel_mapping {
- 	uintptr_t xiprom;
- 	uintptr_t xiprom_sz;
- #else
-+	unsigned long page_offset;
- 	unsigned long va_kernel_pa_offset;
- #endif
- };
-diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
-index d0190ee9b2e4..b8125c3aa85d 100644
---- a/arch/riscv/include/asm/pgtable.h
-+++ b/arch/riscv/include/asm/pgtable.h
-@@ -15,7 +15,7 @@
- #ifdef CONFIG_RELOCATABLE
- #define KERNEL_LINK_ADDR	UL(0)
- #else
--#define KERNEL_LINK_ADDR	_AC(CONFIG_PAGE_OFFSET, UL)
-+#define KERNEL_LINK_ADDR	_AC(CONFIG_PHYS_RAM_BASE, UL)
- #endif
- #define KERN_VIRT_SIZE		(UL(-1))
- #else
-diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
-index 0aad925848a4..a1a185e6faf0 100644
---- a/arch/riscv/mm/init.c
-+++ b/arch/riscv/mm/init.c
-@@ -843,6 +843,8 @@ static __init void set_satp_mode(uintptr_t dtb_pa)
- 	uintptr_t set_satp_mode_pmd = ((unsigned long)set_satp_mode) & PMD_MASK;
- 	u64 satp_mode_cmdline = __pi_set_satp_mode_from_cmdline(dtb_pa);
- 
-+	kernel_map.page_offset = PAGE_OFFSET_L5;
-+
- 	if (satp_mode_cmdline == SATP_MODE_57) {
- 		disable_pgtable_l5();
- 	} else if (satp_mode_cmdline == SATP_MODE_48) {
-@@ -1090,11 +1092,6 @@ asmlinkage void __init setup_vm(uintptr_t dtb_pa)
- 	kernel_map.virt_addr = KERNEL_LINK_ADDR + kernel_map.virt_offset;
- 
- #ifdef CONFIG_XIP_KERNEL
--#ifdef CONFIG_64BIT
--	kernel_map.page_offset = PAGE_OFFSET_L3;
--#else
--	kernel_map.page_offset = _AC(CONFIG_PAGE_OFFSET, UL);
--#endif
- 	kernel_map.xiprom = (uintptr_t)CONFIG_XIP_PHYS_ADDR;
- 	kernel_map.xiprom_sz = (uintptr_t)(&_exiprom) - (uintptr_t)(&_xiprom);
- 
-@@ -1106,7 +1103,6 @@ asmlinkage void __init setup_vm(uintptr_t dtb_pa)
- 	kernel_map.va_kernel_xip_data_pa_offset = kernel_map.virt_addr - kernel_map.phys_addr
- 						+ (uintptr_t)&_sdata - (uintptr_t)&_start;
- #else
--	kernel_map.page_offset = _AC(CONFIG_PAGE_OFFSET, UL);
- 	kernel_map.phys_addr = (uintptr_t)(&_start);
- 	kernel_map.size = (uintptr_t)(&_end) - kernel_map.phys_addr;
- 	kernel_map.va_kernel_pa_offset = kernel_map.virt_addr - kernel_map.phys_addr;
--- 
-2.45.1
+> 
+> > Reviewing is something we should do more, but its very taxing.
+> >
+> > One would rather try to write as much code as possible, leaving to
+> > others the reviewing part.
+> >
+> > But its a balancing act.
+> >
+> > Whatever we can do to help reviewers, like taking into account what they
+> > say they would prefer as a way to submit our work, even if it isn't
+> > exactly of our liking, is one such thing.
+> >
+> > So if Namhyung says that it would be best for you to try to break down
+> > your patches into smaller ones, like I did say to you in the past, even
+> > taking the trouble to do it myself, in the process introducing problems,
+> > later fixed, I think you should try to do what he says.
+> >
+> > He is the maintainer, try to address his comments.
+> 
+> I think I've written long emails addressing the comments. Just saying
+> too big (1) doesn't match how existing drivers are added (although
+> I've split the code many times so the addition is the smallest it can
+
+I think it's different than drivers which can be separated by a config
+option easily and highly hardware dependent.  Or maybe it's just a
+maintainers' preference.
+
+
+> be) (2) as I've pointed out makes the code harder to bisect, work with
+> compilers and understand.
+
+I don't agree.  The intention is to help other's understanding of the
+code.  Well I agree it will require more effort for the author, but I
+believe that having the code more digestible size would benefit in the
+long run.
+
+I feel like the whole perf code base is getting bigger, harder to know
+all the details.  So I'm asking contributors to do more work to reduce
+the burden in some way.
+
+> 
+> I think there is far too much developer push back going on, it feels
+> capricious, I'm lucky as I'll just go push into Google's tree. I'm
+> only persisting here for upstream's benefit and ultimately my benefit
+> when I pull from upstream. Perfect shouldn't be the enemy of good, but
+> frequently (more often than not for me) reviewer comments aren't
+> improving the code they are significantly stalling it:
+
+I'm sorry that you felt that way.  I was trying to improve the code and
+keep the code simple and concise.  But it's sometimes hard to draw the
+line where it's acceptable.  Probably my previous decisions were bad,
+but I tried to be reasonable as much as possible.
+
+> 
+> 1) parallel testing
+> https://lore.kernel.org/lkml/20241025192109.132482-1-irogers@google.com/
+> 1.1) pushed back because it used an #ifdef __linux__ to maintain some
+> posix library code (a now dropped complaint)
+
+I don't know we have that in other place.  So I was curious if we care
+about other platforms.  Probably we can just delete the unused code, but
+as I said, I can live with this.
+
+
+> 1.2) pushed back for improvements in test numbering, addressed in:
+> https://lore.kernel.org/lkml/20241025192109.132482-11-irogers@google.com/
+> not an unreasonable thing to do but feature creep. Hey we'll only take
+> your work helping us if you also add feature xyz
+
+Well I think you changed the numbering in the parallel testing and I
+asked to keep it continuous as of now.
+
+> 
+> 2) libdw clean up
+> https://lore.kernel.org/lkml/20241017002520.59124-1-irogers@google.com/
+> Pushed back as more cross architecture output would make the commit
+> messages better. Doesn't sound crazily unreasonable until you realize
+> the function that is being called and needing cross platform testing
+> is 6 lines long and only applies when you do analysis of x86 perf.data
+> files on non-x86 platforms. We heavily test the code on x86 and the
+> chance that cross platform testing will show anything is very small.
+
+I think we're fine except for the register naming.  I haven't reviewed
+that part yet and I'll do that next week.
+
+> 
+> On the other hand I can point at unreviewed maintainer code going into
+> the tree and code where I've pointed out it is broken, from a
+> fundamental CS perspective, it is also taken into the tree.
+> 
+> RISC-V has been damaged and now in the driver they are trying to
+> workaround the perf tool. There were already comments to this effect
+> in ARM breakpoint driver's code.
+
+It's sad we broke some arch.  But it should be easy to fix the tool
+than the kernel driver.  Let's find a way to fix the problems in a
+better way.  Sorry if I missed some previous discussion.
+
+> 
+> On Intel we now have TPEBS (which took far far too long to land)
+> behind a flag which means we've made accurate top-down analysis
+> require an additional flag on all newer Intel models, something I
+> pushed against.
+
+This is a new code that requires complex and non-intuitive operations
+like mixing perf record and perf stat together.  I remember some people
+doubt about the approach so it may deserve stricter and longer reviews.
+
+Even then, I tried to review quickly and accepted some minor
+disasgreements.  It's unfortunate it took too long but it happens.
+
+> 
+> So the reviewing is inconsistent, damages the code (a maintainer may
+> disagree with the reviewer and developers saying otherwise but the
+> maintainer has to be followed to land) and is constantly stalling
+> development. Fixing reference counting took years to land because of
+> endless stalling, any reasonable developer would have just given up.
+> It is hard to imagine the state the code base would be in without it.
+
+Right it works great, thanks for your effort.
+
+But I think any collaborating work needs some kind of burden (or
+stalling) for coordination.  If said patches touch a lot of area, there
+is a high chance of rebase, more arguments on the interface, etc.
+
+> 
+> Of the patches I've mentioned how many are code health and how many
+> are a feature I can say working on is part of my day job? I see a
+> deliberate lack of understanding of what a developer needs. To say
+> I've not tried to address comments, I'd say 90% of the noise on
+> linux-perf-users is me resending patches, mine and others, to address
+
+Thanks for your hard work.  Maybe I'm the bottleneck of your
+productivity.  But I cannot take patches without review, and reviewing
+patches take time.  Having more active reviewers would help.
+
+
+> comments. Here I've made the patches a size that makes sense. I can
+> move the enums, which feels like a compiler error along the lines of
+> "static function defined but not used" but beside this, changing
+> evsel's name meaning to make it part of the event encoding is imo
+> wrong, having separate patches for a function declaration and then 1
+> for its definition, can you imagine taking this to its extreme and
+> what the patches would look like if you did this? In making things
+> smaller, as has happened already in this series, it is never clear you
+> will hit a magical maintainer happy threshold. Knowing how to make a
+> "right" patch is even harder when it is inconsistent with the rest of
+> Linux development.
+
+At least for this case, I don't think moving the declaration would cause
+you a lot of trouble.  Please take a look at my updated 'perf/hwmon-pmu'
+branch again.
+
+For the magical maintainer threshold, I admit it can be different to
+each maintainer.  But I think it's the review process to find a point of
+agreement.  I don't know where it is even by myself but we can argue
+each other.
+
+Thanks,
+Namhyung
 
 
