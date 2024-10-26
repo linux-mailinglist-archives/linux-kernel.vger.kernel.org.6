@@ -1,377 +1,178 @@
-Return-Path: <linux-kernel+bounces-383245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 889A79B18EC
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 17:05:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 851909B18F0
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 17:06:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A7D271C20D5E
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 15:05:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3047E1F2217A
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 15:06:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E27C91EA85;
-	Sat, 26 Oct 2024 15:05:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24424224FA;
+	Sat, 26 Oct 2024 15:06:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=riseup.net header.i=@riseup.net header.b="j1pZB425"
-Received: from mx0.riseup.net (mx0.riseup.net [198.252.153.6])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ol1vw3xI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BD35125A9
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 15:05:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.252.153.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6901B125A9;
+	Sat, 26 Oct 2024 15:06:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729955131; cv=none; b=ABcy9stJhwpKw5ZmtQ3cQrGi1pfPkjpXodQWQ9yffCTpMhjt3+T/GhSRh0HrY5HgOiJ/wYfalPzKo4sEZQLIVnEbhBGweyNCm7I5gYMkTVhffj5+zW2ompazfOZOx3pLcVE6RrzB5NdTKfDFEhBoQn6ESROq3lWEr41ZBUzO//o=
+	t=1729955180; cv=none; b=JckEwg9LkJwrVbYd6p4/5/4UeJtVeqIkimt0iu104Rj92kXAU1E3pNbXYtGEUuON43h+TfG11EYxK2hnsq8u7u31K8RwTDqmYD0J+ZCORaXRrbdiuSQeUHOh+8GSheO6CX1GvDMwlfBvHmmpoKO3Lv4aUo+mBjDirBvWy8TVdpk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729955131; c=relaxed/simple;
-	bh=IypF3NOPiKhQ1YuxtYCPA4MMD41cNf0A1OJufEY4B2Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dG/fioUonpUntWs9nJbl3jxmhOY+ZO2AaqVrcP65j0gvWf5eQKCM3eqsNvvOiEBg+DUrnjkdzOsKWxO/H5C+bXfDdBpSSPsxq4hN2zj59K22G+uggPj6+HFDV6AyWV1wX7y49QXcCx9f6oUXEpnMyBI3MrAL0nYEuP+QopNgU/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riseup.net; spf=pass smtp.mailfrom=riseup.net; dkim=pass (1024-bit key) header.d=riseup.net header.i=@riseup.net header.b=j1pZB425; arc=none smtp.client-ip=198.252.153.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riseup.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riseup.net
-Received: from fews02-sea.riseup.net (fews02-sea-pn.riseup.net [10.0.1.112])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx0.riseup.net (Postfix) with ESMTPS id 4XbNHp1cTCz9vwF;
-	Sat, 26 Oct 2024 15:05:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=riseup.net; s=squak;
-	t=1729955126; bh=IypF3NOPiKhQ1YuxtYCPA4MMD41cNf0A1OJufEY4B2Y=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=j1pZB425CfSQM7+IWNctiJP4gTyXK89Ngopp9EuPoFiMSS54ASnQqTJ6rDebsiLuc
-	 OQRj5f5o9DYGYv4O5injV1Cbh4gJqGEWkI34z2hJpNq8I9cIHVOrJ+PUzhPjJ66XXj
-	 +ihl26VNmyebiu105KWkyTy/8xhSvX0hw7/bopZY=
-X-Riseup-User-ID: B06695D6E0EC1F560E2AC7B8C8A38E197645929805C9F4A71653C6F3CBA49945
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-	 by fews02-sea.riseup.net (Postfix) with ESMTPSA id 4XbNHT4D42zFv6B;
-	Sat, 26 Oct 2024 15:05:09 +0000 (UTC)
-Message-ID: <107a8f2b-9bdc-435c-a6f0-c427a4b79579@riseup.net>
-Date: Sat, 26 Oct 2024 12:05:06 -0300
+	s=arc-20240116; t=1729955180; c=relaxed/simple;
+	bh=AjFU2n0mS+GoL062AAzmBcSlZNEuG+C9Nk0pMIZQcUY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=r9525ru4hBQzC2IIkMMWrGspZL0z0g0CQLmAY61P9yyhHPO7aB8OsixOqiuWgWF4NPefY9xhfVeywtaVZoO8qeOMoWC3/udq0Sryy1oW9AcCLlRhcEvj2H0ZIMBthn3NbPybn1OpdDPM6hYmJL2QFLyFFEwSfyHYKmOKIyu1ohQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ol1vw3xI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C6A6C4CEC6;
+	Sat, 26 Oct 2024 15:05:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729955179;
+	bh=AjFU2n0mS+GoL062AAzmBcSlZNEuG+C9Nk0pMIZQcUY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ol1vw3xIRHJfwiLPHH9C3+12qYx0Eo8/LKiNWfPufsB83cRBMf7XeNmpdZrV4IMp7
+	 G424Bu6R4aqB7aK43uGM9yfY++f3rMIT/Y8fqPLd+aeIcUwI6jGItc9LCvN1xe/lI6
+	 Reu7C8UXeatj0SAx1Z+MWs5pQDxyP0e+hr3FMP7fH+Ajdlyq6bjC0F2DMy0WdooJ7O
+	 egIPC10pL2GdKmW98Xxq8CAwCrt76DCU8Mdn41DeqiiUkTeEKr812fwe28OUOIcykK
+	 73/PBjAO5XOr8Rr3VFCxNHWWf8Bj40yPt32uGZmkdmJIAkxB63KikLgxJKo2DiGtgC
+	 TB2tc2WXSsMsg==
+Date: Sat, 26 Oct 2024 16:05:21 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Uwe
+ =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <ukleinek@kernel.org>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Lars-Peter Clausen <lars@metafoo.de>, David
+ Jander <david@protonic.nl>, Martin Sperl <kernel@martin.sperl.org>,
+ linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+ linux-pwm@vger.kernel.org
+Subject: Re: [PATCH RFC v4 02/15] spi: add basic support for SPI offloading
+Message-ID: <20241026160521.52205cb0@jic23-huawei>
+In-Reply-To: <20241023-dlech-mainline-spi-engine-offload-2-v4-2-f8125b99f5a1@baylibre.com>
+References: <20241023-dlech-mainline-spi-engine-offload-2-v4-0-f8125b99f5a1@baylibre.com>
+	<20241023-dlech-mainline-spi-engine-offload-2-v4-2-f8125b99f5a1@baylibre.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v2 1/3] drm/vkms: Re-introduce line-by-line algorithm for
- writeback
-To: Louis Chauvet <louis.chauvet@bootlin.com>,
- Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
- Melissa Wen <melissa.srw@gmail.com>,
- Haneen Mohammed <hamohammed.sa@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, arthurgrillo@riseup.net,
- linux-kernel@vger.kernel.org, jeremie.dautheribes@bootlin.com,
- miquel.raynal@bootlin.com, thomas.petazzoni@bootlin.com,
- seanpaul@google.com, nicolejadeyee@google.com
-References: <20240814-writeback_line_by_line-v2-0-36541c717569@bootlin.com>
- <20240814-writeback_line_by_line-v2-1-36541c717569@bootlin.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mairacanal@riseup.net>
-In-Reply-To: <20240814-writeback_line_by_line-v2-1-36541c717569@bootlin.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Louis,
+On Wed, 23 Oct 2024 15:59:09 -0500
+David Lechner <dlechner@baylibre.com> wrote:
 
-On 14/08/24 05:42, Louis Chauvet wrote:
-> Re-introduce a line-by-line writeback algorithm for each pixel format.
-> This allows more performance by not requiring an indirection per pixel
-> write.
+> Add the basic infrastructure to support SPI offload providers and
+> consumers.
 > 
-> Line-by-line writeback was introduced by [1] but rewritten back to
-> pixel-by-pixel algorithm in [2]. At this time, nobody noticed the impact
-> on performance, and it was merged.
+> SPI offloading is a feature that allows the SPI controller to perform
+> transfers without any CPU intervention. This is useful, e.g. for
+> high-speed data acquisition.
 > 
-> This patch is almost a revert of [2], but with some effort to avoid code
-> duplication. Now only the loop is repeated, but it is required to have
-> good performances.
+> SPI controllers with offload support need to implement the get_offload
+> callback and can use the devm_spi_offload_alloc() to allocate offload
+> instances.
 > 
-> The performance gain is around 5 to 10%.
+> SPI peripheral drivers will call devm_spi_offload_get() to get a
+> reference to the matching offload instance. This offload instance can
+> then be attached to a SPI message to request offloading that message.
 > 
-> [1]: https://lore.kernel.org/all/20211005201637.58563-7-igormtorrente@gmail.com/
-> [2]: https://lore.kernel.org/all/20230515135204.115393-4-mcanal@igalia.com/
+> It is expected that SPI controllers with offload support will check for
+> the offload instance in the SPI message in the optimize_message()
+> callback and handle it accordingly.
 > 
-> Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
-> ---
->   drivers/gpu/drm/vkms/vkms_composer.c  |  17 +++++
->   drivers/gpu/drm/vkms/vkms_drv.h       |  20 +++---
->   drivers/gpu/drm/vkms/vkms_formats.c   | 117 +++++++++++++++++++++++++++-------
->   drivers/gpu/drm/vkms/vkms_formats.h   |   2 +-
->   drivers/gpu/drm/vkms/vkms_writeback.c |   2 +-
->   5 files changed, 124 insertions(+), 34 deletions(-)
+> CONFIG_SPI_OFFLOAD is intended to be a select-only option. Both
+> consumer and provider drivers should `select SPI_OFFLOAD` in their
+> Kconfig to ensure that the SPI core is built with offload support.
 > 
-> diff --git a/drivers/gpu/drm/vkms/vkms_composer.c b/drivers/gpu/drm/vkms/vkms_composer.c
-> index 76d4aa8a0ef6..f0cae142ac22 100644
-> --- a/drivers/gpu/drm/vkms/vkms_composer.c
-> +++ b/drivers/gpu/drm/vkms/vkms_composer.c
-> @@ -176,6 +176,23 @@ static enum pixel_read_direction direction_for_rotation(unsigned int rotation)
->   	return READ_LEFT_TO_RIGHT;
->   }
->   
-> +/**
-> + * Write a line to the writeback buffer > + *
-> + * @wb: Job where to insert the final image
-> + * @src_buffer: Line to write
-> + * @y: Row to write in the writeback buffer
-> + */
+> Signed-off-by: David Lechner <dlechner@baylibre.com>
+A few minor additions to what has already been raised.
 
-Please, review the documentation using the kernel-doc format.
+Jonathan
 
-> +static void vkms_writeback_row(struct vkms_writeback_job *wb,
-> +			       const struct line_buffer *src_buffer, size_t y_start)
-> +{
-> +	struct vkms_frame_info *frame_info = &wb->wb_frame_info;
-> +	int x_start = frame_info->dst.x1;
-> +	int count = min_t(size_t, drm_rect_width(&frame_info->dst), src_buffer->n_pixels);
-> +
-> +	wb->pixel_write(wb, src_buffer->pixels, count, x_start, y_start);
-> +}
-> +
->   /**
->    * clamp_line_coordinates() - Compute and clamp the coordinate to read and write during the blend
->    * process.
-> diff --git a/drivers/gpu/drm/vkms/vkms_drv.h b/drivers/gpu/drm/vkms/vkms_drv.h
-> index 3870e825da81..526bf5207524 100644
-> --- a/drivers/gpu/drm/vkms/vkms_drv.h
-> +++ b/drivers/gpu/drm/vkms/vkms_drv.h
-> @@ -52,20 +52,25 @@ struct line_buffer {
->   	struct pixel_argb_u16 *pixels;
->   };
->   
-> +struct vkms_writeback_job;
->   /**
-> - * typedef pixel_write_t - These functions are used to read a pixel from a
-> - * &struct pixel_argb_u16, convert it in a specific format and write it in the @dst_pixels
-> - * buffer.
-> + * typedef pixel_write_line_t - These functions are used to read a pixel line from a
-> + * struct pixel_argb_u16 buffer, convert it and write it in the @wb job.
->    *
-> - * @out_pixel: destination address to write the pixel
-> - * @in_pixel: pixel to write
-> + * @wb: the writeback job to write the output of the conversion
-> + * @in_pixels: Source buffer containing the line to convert
-> + * @count: The width of a line
-> + * @x_start: The x (width) coordinate in the destination plane
-> + * @y_start: The y (height) coordinate in the destination plane
->    */
-> -typedef void (*pixel_write_t)(u8 *out_pixel, const struct pixel_argb_u16 *in_pixel);
-> +typedef void (*pixel_write_line_t)(struct vkms_writeback_job *wb,
-> +			      struct pixel_argb_u16 *in_pixels, int count, int x_start,
-> +			      int y_start);
->   
->   struct vkms_writeback_job {
->   	struct iosys_map data[DRM_FORMAT_MAX_PLANES];
->   	struct vkms_frame_info wb_frame_info;
-> -	pixel_write_t pixel_write;
-> +	pixel_write_line_t pixel_write;
->   };
->   
->   /**
-> @@ -232,7 +237,6 @@ int vkms_verify_crc_source(struct drm_crtc *crtc, const char *source_name,
->   /* Composer Support */
->   void vkms_composer_worker(struct work_struct *work);
->   void vkms_set_composer(struct vkms_output *out, bool enabled);
-> -void vkms_writeback_row(struct vkms_writeback_job *wb, const struct line_buffer *src_buffer, int y);
->   
->   /* Writeback */
->   int vkms_enable_writeback_connector(struct vkms_device *vkmsdev);
-> diff --git a/drivers/gpu/drm/vkms/vkms_formats.c b/drivers/gpu/drm/vkms/vkms_formats.c
-> index d1abfb1c3e3c..d1309f6d307f 100644
-> --- a/drivers/gpu/drm/vkms/vkms_formats.c
-> +++ b/drivers/gpu/drm/vkms/vkms_formats.c
-> @@ -587,7 +587,7 @@ static void planar_yuv_read_line(const struct vkms_plane_state *plane, int x_sta
->    * The following functions take one &struct pixel_argb_u16 and convert it to a specific format.
->    * The result is stored in @out_pixel.
->    *
-> - * They are used in vkms_writeback_row() to convert and store a pixel from the src_buffer to
-> + * They are used in the `write_line` functions to convert and store a pixel from the src_buffer to
->    * the writeback buffer.
->    */
->   static void argb_u16_to_ARGB8888(u8 *out_pixel, const struct pixel_argb_u16 *in_pixel)
-> @@ -654,28 +654,97 @@ static void argb_u16_to_RGB565(u8 *out_pixel, const struct pixel_argb_u16 *in_pi
->   	*pixel = cpu_to_le16(r << 11 | g << 5 | b);
->   }
->   
-> -/**
-> - * vkms_writeback_row() - Generic loop for all supported writeback format. It is executed just
-> - * after the blending to write a line in the writeback buffer.
+> diff --git a/drivers/spi/spi-offload.c b/drivers/spi/spi-offload.c
+> new file mode 100644
+> index 000000000000..c344cbf50bdb
+> --- /dev/null
+> +++ b/drivers/spi/spi-offload.c
+> @@ -0,0 +1,104 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
 > +/*
-> + * The following functions are write_line function for each pixel format supported by VKMS.
+> + * Copyright (C) 2024 Analog Devices Inc.
+> + * Copyright (C) 2024 BayLibre, SAS
+> + */
+> +
+> +#define DEFAULT_SYMBOL_NAMESPACE SPI_OFFLOAD
+> +
+> +#include <linux/cleanup.h>
+> +#include <linux/device.h>
+> +#include <linux/export.h>
+> +#include <linux/mutex.h>
+> +#include <linux/property.h>
+?  If it is needed for later patch bring it in then.
+
+
+> +#include <linux/spi/spi-offload.h>
+> +#include <linux/spi/spi.h>
+> +#include <linux/types.h>
+>
+> +
+> +/**
+> + * devm_spi_offload_get() - Get an offload instance
+> + * @dev: Device for devm purposes
+> + * @spi: SPI device to use for the transfers
+> + * @config: Offload configuration
 > + *
-> + * They write a full line at index y. They must read data from the line src_pixels.
+> + * Peripheral drivers call this function to get an offload instance that meets
+> + * the requirements specified in @config. If no suitable offload instance is
+> + * available, -ENODEV is returned.
 > + *
-> + * The caller must ensure that count is not larger than the framebuffer and the src_pixels.
-> + *
-> + * Those function are very similar, but it is required for performance reason. In the past, some
-> + * experiment were done, and with a generic loop the performance are very reduced [1].
->    *
-> - * @wb: Job where to insert the final image
-> - * @src_buffer: Line to write
-> - * @y: Row to write in the writeback buffer
-> + * [1]: https://lore.kernel.org/dri-devel/d258c8dc-78e9-4509-9037-a98f7f33b3a3@riseup.net/
-
-I'm not sure if a link is approriate here.
-
->    */
-> -void vkms_writeback_row(struct vkms_writeback_job *wb,
-> -			const struct line_buffer *src_buffer, int y)
-> +
-> +static void ARGB8888_write_line(struct vkms_writeback_job *wb,
-> +				struct pixel_argb_u16 *src_pixels, int count, int x_start,
-> +				int y_start)
->   {
-> -	struct vkms_frame_info *frame_info = &wb->wb_frame_info;
-> -	int x_dst = frame_info->dst.x1;
->   	u8 *dst_pixels;
-> -	int rem_x, rem_y;
->   
-> -	packed_pixels_addr(frame_info, x_dst, y, 0, &dst_pixels, &rem_x, &rem_y);
-> -	struct pixel_argb_u16 *in_pixels = src_buffer->pixels;
-> -	int x_limit = min_t(size_t, drm_rect_width(&frame_info->dst), src_buffer->n_pixels);
-> +	packed_pixels_addr_1x1(&wb->wb_frame_info, x_start, y_start, 0, &dst_pixels);
->   
-> -	for (size_t x = 0; x < x_limit; x++, dst_pixels += frame_info->fb->format->cpp[0])
-> -		wb->pixel_write(dst_pixels, &in_pixels[x]);
-> +	while (count) {
-> +		argb_u16_to_ARGB8888(dst_pixels, src_pixels);
-> +		dst_pixels += wb->wb_frame_info.fb->format->char_per_block[0];
-> +		src_pixels += 1;
-> +		count--;
-> +	}
-> +}
-> +
-> +static void XRGB8888_write_line(struct vkms_writeback_job *wb,
-> +				struct pixel_argb_u16 *src_pixels, int count, int x_start,
-> +				int y_start)
+> + * Return: Offload instance or error on failure.
+> + */
+> +struct spi_offload *devm_spi_offload_get(struct device *dev,
+> +					 struct spi_device *spi,
+> +					 const struct spi_offload_config *config)
 > +{
-> +	u8 *dst_pixels;
+> +	struct spi_offload *offload;
+> +	int ret;
 > +
-> +	packed_pixels_addr_1x1(&wb->wb_frame_info, x_start, y_start, 0, &dst_pixels);
+> +	if (!spi || !config)
+> +		return ERR_PTR(-EINVAL);
 > +
-> +	while (count) {
-> +		argb_u16_to_XRGB8888(dst_pixels, src_pixels);
-> +		dst_pixels += wb->wb_frame_info.fb->format->char_per_block[0];
-> +		src_pixels += 1;
-> +		count--;
-> +	}
-> +}
+> +	if (!spi->controller->get_offload)
+> +		return ERR_PTR(-ENODEV);
 > +
-> +static void ARGB16161616_write_line(struct vkms_writeback_job *wb,
-> +				    struct pixel_argb_u16 *src_pixels, int count, int x_start,
-> +				    int y_start)
-> +{
-> +	u8 *dst_pixels;
-> +
-> +	packed_pixels_addr_1x1(&wb->wb_frame_info, x_start, y_start, 0, &dst_pixels);
-> +
-> +	while (count) {
-> +		argb_u16_to_ARGB16161616(dst_pixels, src_pixels);
-> +		dst_pixels += wb->wb_frame_info.fb->format->char_per_block[0];
-> +		src_pixels += 1;
-> +		count--;
-> +	}
-> +}
-> +
-> +static void XRGB16161616_write_line(struct vkms_writeback_job *wb,
-> +				    struct pixel_argb_u16 *src_pixels, int count, int x_start,
-> +				    int y_start)
-> +{
-> +	u8 *dst_pixels;
-> +
-> +	packed_pixels_addr_1x1(&wb->wb_frame_info, x_start, y_start, 0, &dst_pixels);
-> +
-> +	while (count) {
-> +		argb_u16_to_XRGB16161616(dst_pixels, src_pixels);
-> +		dst_pixels += wb->wb_frame_info.fb->format->char_per_block[0];
-> +		src_pixels += 1;
-> +		count--;
-> +	}
-> +}
-> +
-> +static void RGB565_write_line(struct vkms_writeback_job *wb,
-> +			      struct pixel_argb_u16 *src_pixels, int count, int x_start,
-> +			      int y_start)
-> +{
-> +	u8 *dst_pixels;
-> +
-> +	packed_pixels_addr_1x1(&wb->wb_frame_info, x_start, y_start, 0, &dst_pixels);
-> +
-> +	while (count) {
-> +		argb_u16_to_RGB565(dst_pixels, src_pixels);
-> +		dst_pixels += wb->wb_frame_info.fb->format->char_per_block[0];
-> +		src_pixels += 1;
-> +		count--;
-> +	}
->   }
->   
->   /**
-> @@ -936,25 +1005,25 @@ void get_conversion_matrix_to_argb_u16(u32 format,
->   }
->   
->   /**
-> - * get_pixel_write_function() - Retrieve the correct write_pixel function for a specific format.
-> + * get_pixel_write_function() - Retrieve the correct write_line function for a specific format.
+> +	offload = spi->controller->get_offload(spi, config);
 
-Correct the docs.
+Why let this return an offload that is already in use?
+Maybe make that a problem for the spi controller
+Seems odd to pass it spi then set it later.
 
-Best Regards,
-- Maíra
+I.e. have this return ERR_PTR(-EBUSY);
 
->    * The returned pointer is NULL for unsupported pixel formats. The caller must ensure that the
->    * pointer is valid before using it in a vkms_writeback_job.
->    *
->    * @format: DRM_FORMAT_* value for which to obtain a conversion function (see [drm_fourcc.h])
->    */
-> -pixel_write_t get_pixel_write_function(u32 format)
-> +pixel_write_line_t get_pixel_write_line_function(u32 format) >   {
->   	switch (format) {
->   	case DRM_FORMAT_ARGB8888:
-> -		return &argb_u16_to_ARGB8888;
-> +		return &ARGB8888_write_line;
->   	case DRM_FORMAT_XRGB8888:
-> -		return &argb_u16_to_XRGB8888;
-> +		return &XRGB8888_write_line;
->   	case DRM_FORMAT_ARGB16161616:
-> -		return &argb_u16_to_ARGB16161616;
-> +		return &ARGB16161616_write_line;
->   	case DRM_FORMAT_XRGB16161616:
-> -		return &argb_u16_to_XRGB16161616;
-> +		return &XRGB16161616_write_line;
->   	case DRM_FORMAT_RGB565:
-> -		return &argb_u16_to_RGB565;
-> +		return &RGB565_write_line;
->   	default:
->   		/*
->   		 * This is a bug in vkms_writeback_atomic_check. All the supported
-> diff --git a/drivers/gpu/drm/vkms/vkms_formats.h b/drivers/gpu/drm/vkms/vkms_formats.h
-> index eeb208cdd6b1..852ab9a4cee5 100644
-> --- a/drivers/gpu/drm/vkms/vkms_formats.h
-> +++ b/drivers/gpu/drm/vkms/vkms_formats.h
-> @@ -7,7 +7,7 @@
->   
->   pixel_read_line_t get_pixel_read_line_function(u32 format);
->   
-> -pixel_write_t get_pixel_write_function(u32 format);
-> +pixel_write_line_t get_pixel_write_line_function(u32 format);
->   
->   void get_conversion_matrix_to_argb_u16(u32 format, enum drm_color_encoding encoding,
->   				       enum drm_color_range range,
-> diff --git a/drivers/gpu/drm/vkms/vkms_writeback.c b/drivers/gpu/drm/vkms/vkms_writeback.c
-> index c8582df1f739..f6ed3aa69af8 100644
-> --- a/drivers/gpu/drm/vkms/vkms_writeback.c
-> +++ b/drivers/gpu/drm/vkms/vkms_writeback.c
-> @@ -150,7 +150,7 @@ static void vkms_wb_atomic_commit(struct drm_connector *conn,
->   	crtc_state->wb_pending = true;
->   	spin_unlock_irq(&output->composer_lock);
->   	drm_writeback_queue_job(wb_conn, connector_state);
-> -	active_wb->pixel_write = get_pixel_write_function(wb_format);
-> +	active_wb->pixel_write = get_pixel_write_line_function(wb_format);
->   	drm_rect_init(&wb_frame_info->src, 0, 0, crtc_width, crtc_height);
->   	drm_rect_init(&wb_frame_info->dst, 0, 0, crtc_width, crtc_height);
->   }
-> 
+
+> +	if (IS_ERR(offload))
+> +		return offload;
+> +
+> +	if (offload->spi)
+> +		return ERR_PTR(-EBUSY);
+> +
+> +	offload->spi = spi;
+> +	get_device(offload->provider_dev);
+> +
+> +	ret = devm_add_action_or_reset(dev, spi_offload_put, offload);
+> +	if (ret)
+> +		return ERR_PTR(ret);
+> +
+> +	return offload;
+> +}
+> +EXPORT_SYMBOL_GPL(devm_spi_offload_get);
 
