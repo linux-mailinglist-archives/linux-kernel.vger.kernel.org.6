@@ -1,111 +1,211 @@
-Return-Path: <linux-kernel+bounces-383266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A463B9B1936
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 17:37:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43DE19B193E
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 17:38:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BC331F2207F
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 15:37:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 044802828FD
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 15:38:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1A667346F;
-	Sat, 26 Oct 2024 15:36:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03DDC224CC;
+	Sat, 26 Oct 2024 15:37:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WZar5dy4"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rxAG5WYL"
+Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com [209.85.217.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1978533997
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 15:36:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3426069959
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 15:37:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729957016; cv=none; b=tBo2XIpwKozucr6h69beO2+sI88VO0zFG3jfKTdMpQ1PEPEHCRn0qrWtjAxLUS8PVAroGTenEtG7UuGRrvZAV1ZogQp4edD1sddRNOsD4om/Fdj+xAaO4MYm4RZZcPfqPCYwcIN/pG3WG5AcjDoxgTn85blJcv7CgjnYKFFKymM=
+	t=1729957061; cv=none; b=kiQ1UH0ny95ULE/c6oiA5JoNV1KR1UMcFtJId+/R9zfnHZC19zGCsSrngNZJMFviGokbD+nf9N97xekDwGbgkkjwUp0GcSV5rTgLWIPGBzZ8zycZrdDGgprV9u9eYzXVOKQ3v23DgyVvgosU4ZgxLPsMvwYQCHPvW0fFY5T3TVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729957016; c=relaxed/simple;
-	bh=c/zRoaoDocjTotnoTNri6+oKTvHdwtFowxI0mIXpM/0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QvUp5vxLRotxtpz1nyAvEHq+j/V9M3GvqNHcU+ZZSL6L9UoinkXkMtYrkf2UIG4e4/i3/vlqYd4/Cg1gwg530Zthp/rjIdnVkgJQIn0X+WT1gq/LIHMvd/SAPSAkLEQm31ZDkBHaknIrp/U4R9FE4n6bvq0HAUkqomDbpIdosbU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WZar5dy4; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-539f1292a9bso3651312e87.2
-        for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 08:36:53 -0700 (PDT)
+	s=arc-20240116; t=1729957061; c=relaxed/simple;
+	bh=Yz8u2ESFooN7cEwtwgwhL4iRFPtOhKxkIhiEheuqmbU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gLcdBosiMadyIZHCBSswO+1Q1P39eHaWjfH2C6rAITJlHaVJadH3DOQcsmd0nJbGYvCIhTWcb4CFHKP8gDt6P6Ri7eBOPQEsesf48IT7NIigKtdUdLv2NRZeU4icgzT37hkc2XyLmQNjNk20iv0VKFisc0V/kjvbph8mYaUBPSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rxAG5WYL; arc=none smtp.client-ip=209.85.217.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-vs1-f41.google.com with SMTP id ada2fe7eead31-4a487a7519fso1031257137.0
+        for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 08:37:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729957012; x=1730561812; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=KWck6eIL58uZzSAub6tD78hTuIVPy9/y+aNlZR8moG0=;
-        b=WZar5dy43bhokuJDavK/vPJbNWjExzLdBmArbZ2z6SwWTpMtXkxu4zB+iBOo3mPPNI
-         /j97xDsHdkdmPbhUuwGvXCK3pZfFi8/mHhTo59opZlfxkruTljWhk0OdubEE/eBA12Ep
-         dLbLFEc5fC7EG5njW1uTiv1aRyW9yfboT2M/1IyPOf0OTOkPHebk8wzfCtls4RixW0rC
-         udhqg3VpRSeis0ptnRavUsOcIWN3o7q4XCsE4FLpx74WPLLljIdBck0EOT4OhOJpI7Ev
-         PhOjoo+c/qlDL/+vWBtukilaM1MmumIjS4hUCFS/nCndvPFBKtUhXJm29SyDXCRbKWfQ
-         qqKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729957012; x=1730561812;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1729957058; x=1730561858; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=KWck6eIL58uZzSAub6tD78hTuIVPy9/y+aNlZR8moG0=;
-        b=C/7XOVrxIIqMdc49K53cjPPMLQm7aGSLTFBhcaw89UMzcxmvZDnuKsod/D/sWu69d7
-         UHbUmoeU0MZB844eUkX19PYgN+ix33dnno613bzxBmjOo2Hp35L4Fv9sRfvc/OqF6PUh
-         UCE1X4PMLtND0bzIfdioi7IpbUXb7Ub9ojK5ph5EgckT2GJFJtJr1hctN5XPOHOJJdGW
-         etitTN4KBumCxGvUzIRYz1jN+mR2+zx0v0zodTmwokY6XPJzkaMMmumNB+ey2oQbiasu
-         gNXfVAKxCuMHoGb64zokWgAeLQSSL3PTPcZeENc2IwU7veR3R2iskcKMglNpxKanwC/1
-         SnGA==
-X-Forwarded-Encrypted: i=1; AJvYcCVquH+jzCaSOHitrhQaP5fCxEHQpxjrTdJoj11+IK/7Ar906ySYixHEnF9IbAXYEEUhuGdu25BaBSbw+jk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOj2LOadLZpht/FdZNJsDeUPS0agqk2qf1GmWbesMVKyk5b7/t
-	o+ih0URWcCBi8d9AY5aTnezZWUdsbX9mUNPOAcj+ESE6Vy/N5Jm9yfFuOnbAfPQ=
-X-Google-Smtp-Source: AGHT+IEYw0zyqkyjhXmQoZPWSefeN4g3iItCWqhnrUze/+8BNQVvNaHa9jvcY6diKY38/iJBVJWP0A==
-X-Received: by 2002:a05:6512:ba2:b0:539:968a:9196 with SMTP id 2adb3069b0e04-53b34a2d6e3mr1048350e87.48.1729957012345;
-        Sat, 26 Oct 2024 08:36:52 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53b2e1de0b2sm538020e87.246.2024.10.26.08.36.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 26 Oct 2024 08:36:51 -0700 (PDT)
-Date: Sat, 26 Oct 2024 18:36:49 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: robdclark@gmail.com, sean@poorly.run, konradybcio@kernel.org, 
-	quic_abhinavk@quicinc.com, marijn.suijten@somainline.org, airlied@gmail.com, 
-	simona@ffwll.ch, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/msm/gpu: Fix missing error check for
- dev_pm_qos_add_request()
-Message-ID: <mq5tggw4x6gsiidxzllay55wlqfvtdvdgwsirty5uqjfuzw3ym@j2vuy22ixffi>
-References: <20241026093738.523882-1-ruanjinjie@huawei.com>
+        bh=GanVEa8cxLQoFBTsvQcEmQf1/zCR9K0WFuLJ4NsXrxc=;
+        b=rxAG5WYLcuA50d5UZwnEjqtEzKoN+FJk+cM3vBywEI4v8Qyfr6Ah2c35zDjT3hlIDi
+         IqigO6OL82dWE7oqCkgeYeTZVtY0n0In8i3v/jbOpZf8YofsLT7JR0mSOBdrmJDXdntl
+         nrVQ4vLlNL531JYSH+2ioAaWLzXjGiix4gSFHzObuPPc8UPGxmUfuvNXY+X7wHR7lShi
+         jon45Nj/LyooOkB5rCTk9j2kNK1PUk7QFuiystLzX6xi8pipZWrF58M0b965+MZcJ6Q4
+         3VBGTqBVYH/+07Zxm/VVxj4WuyhLT5QmBcwisKYVApRve3kQK7tnhA/uxbiaQ59Q+N89
+         kbdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729957058; x=1730561858;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GanVEa8cxLQoFBTsvQcEmQf1/zCR9K0WFuLJ4NsXrxc=;
+        b=v818F/j/YgW4ZrqTKmaZf3npkHqxt6EA8grZp9GiwdPwH9lkEo31UXInm/4RjcgVju
+         1k895Ng1RCACZa0KVr0Pv0J3k7WGhvENohcZxfrYlAEd8bqSrjXkK9LzCbL/gJ6U10ul
+         0nP3CWkDu4mmj6cv5pwg2VOeUBtupJ/dZHv0gTSIIOngNxCToMdN0g6kGS/LLxsDFKbq
+         ubFpyVMeFyw+p9OlwuO4aCvJVhP/p1ozNO4p6ayhcB35wkUJIZ04gtL2G5PyYSJIHSnD
+         4q/lV6CbVBjL0oDA/qzK0ZWLEhvM6ukb9q3Wlykn9HAJJMpwVLPjEd3OTiMZ4hLeLwuG
+         G4aQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWjI7omycJ/puBjSrWPQZT3bIEtY4B4t9P/G/eK6uGgsiAVp5n6icUMI4AAwkiPn4CYhkpA69cjEfQ4JXU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjP/9FzGkdpxhOmjTOu9gBXhtGHWGsYuih7oENp8sHy+bydy+7
+	tCZfCjfY4XpR2iI/ZZFz1qAwp4D5Tk60Wfy/kO6A79Y7TpbKrz2f2V3tT0H/7DWYB8owf3l8kSu
+	q8HfOEGyeKfpPObDYDRLFT28d8IWkimEEqiSk
+X-Google-Smtp-Source: AGHT+IG2RGgBmdZacmDvK+ZXfc1orwt5wJxlOHkWOH534qXUZnG23pX4f5qZaNSJZCpJ6+484snWzRlS7OBe2bIA/4c=
+X-Received: by 2002:a05:6102:2ad2:b0:4a3:b506:56ac with SMTP id
+ ada2fe7eead31-4a8cfb44d52mr1991537137.7.1729957057835; Sat, 26 Oct 2024
+ 08:37:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241026093738.523882-1-ruanjinjie@huawei.com>
+References: <20241026071145.3287517-1-shakeel.butt@linux.dev>
+In-Reply-To: <20241026071145.3287517-1-shakeel.butt@linux.dev>
+From: Yu Zhao <yuzhao@google.com>
+Date: Sat, 26 Oct 2024 09:37:00 -0600
+Message-ID: <CAOUHufYjLWJ6WgHjmRrBTNLFyFSaMG8tSV4JExqMTKADnd=sDg@mail.gmail.com>
+Subject: Re: [PATCH] memcg: workingset: remove folio_memcg_rcu usage
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Michal Hocko <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
+	Muchun Song <muchun.song@linux.dev>, Hugh Dickins <hughd@google.com>, 
+	Yosry Ahmed <yosryahmed@google.com>, linux-mm@kvack.org, cgroups@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Meta kernel team <kernel-team@meta.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Oct 26, 2024 at 05:37:38PM +0800, Jinjie Ruan wrote:
-> dev_pm_qos_add_request() can fail, and it returns -EINVAL in case of
-> wrong parameters, return -ENOMEM if there's not enough memory to allocate
-> for data structures, and return -ENODEV if the device has just been
-> removed from the system. If it fails in msm_devfreq_init(), there is
-> no point in going on, also call dev_pm_qos_remove_request() in the next
-> error path is also meaningless
-> 
-> Fixes: 7c0ffcd40b16 ("drm/msm/gpu: Respect PM QoS constraints")
-> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+On Sat, Oct 26, 2024 at 1:12=E2=80=AFAM Shakeel Butt <shakeel.butt@linux.de=
+v> wrote:
+>
+> The function workingset_activation() is called from
+> folio_mark_accessed() with the guarantee that the given folio can not be
+> freed under us in workingset_activation(). In addition, the association
+> of the folio and its memcg can not be broken here because charge
+> migration is no more. There is no need to use folio_memcg_rcu. Simply
+> use folio_memcg_charged() because that is what this function cares
+> about.
+>
+> Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
+> Suggested-by: Yu Zhao <yuzhao@google.com>
 > ---
->  drivers/gpu/drm/msm/msm_gpu_devfreq.c | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
-> 
+>
+> Andrew, please put this patch after the charge migration deprecation
+> series.
+>
+>  include/linux/memcontrol.h | 35 -----------------------------------
+>  mm/workingset.c            | 10 ++--------
+>  2 files changed, 2 insertions(+), 43 deletions(-)
+>
+> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+> index 932534291ca2..89a1e9f10e1b 100644
+> --- a/include/linux/memcontrol.h
+> +++ b/include/linux/memcontrol.h
+> @@ -443,35 +443,6 @@ static inline bool folio_memcg_charged(struct folio =
+*folio)
+>         return __folio_memcg(folio) !=3D NULL;
+>  }
+>
+> -/**
+> - * folio_memcg_rcu - Locklessly get the memory cgroup associated with a =
+folio.
+> - * @folio: Pointer to the folio.
+> - *
+> - * This function assumes that the folio is known to have a
+> - * proper memory cgroup pointer. It's not safe to call this function
+> - * against some type of folios, e.g. slab folios or ex-slab folios.
+> - *
+> - * Return: A pointer to the memory cgroup associated with the folio,
+> - * or NULL.
+> - */
+> -static inline struct mem_cgroup *folio_memcg_rcu(struct folio *folio)
+> -{
+> -       unsigned long memcg_data =3D READ_ONCE(folio->memcg_data);
+> -
+> -       VM_BUG_ON_FOLIO(folio_test_slab(folio), folio);
+> -
+> -       if (memcg_data & MEMCG_DATA_KMEM) {
+> -               struct obj_cgroup *objcg;
+> -
+> -               objcg =3D (void *)(memcg_data & ~OBJEXTS_FLAGS_MASK);
+> -               return obj_cgroup_memcg(objcg);
+> -       }
+> -
+> -       WARN_ON_ONCE(!rcu_read_lock_held());
+> -
+> -       return (struct mem_cgroup *)(memcg_data & ~OBJEXTS_FLAGS_MASK);
+> -}
+> -
+>  /*
+>   * folio_memcg_check - Get the memory cgroup associated with a folio.
+>   * @folio: Pointer to the folio.
+> @@ -1084,12 +1055,6 @@ static inline struct mem_cgroup *folio_memcg(struc=
+t folio *folio)
+>         return NULL;
+>  }
+>
+> -static inline struct mem_cgroup *folio_memcg_rcu(struct folio *folio)
+> -{
+> -       WARN_ON_ONCE(!rcu_read_lock_held());
+> -       return NULL;
+> -}
+> -
+>  static inline struct mem_cgroup *folio_memcg_check(struct folio *folio)
+>  {
+>         return NULL;
+> diff --git a/mm/workingset.c b/mm/workingset.c
+> index 4b58ef535a17..c47aa482fad5 100644
+> --- a/mm/workingset.c
+> +++ b/mm/workingset.c
+> @@ -591,9 +591,6 @@ void workingset_refault(struct folio *folio, void *sh=
+adow)
+>   */
+>  void workingset_activation(struct folio *folio)
+>  {
+> -       struct mem_cgroup *memcg;
+> -
+> -       rcu_read_lock();
+>         /*
+>          * Filter non-memcg pages here, e.g. unmap can call
+>          * mark_page_accessed() on VDSO pages.
+> @@ -601,12 +598,9 @@ void workingset_activation(struct folio *folio)
+>          * XXX: See workingset_refault() - this should return
+>          * root_mem_cgroup even for !CONFIG_MEMCG.
 
-I'm sorry, a similar patch has already been sent:
+The "XXX" part of the comments doesn't apply anymore.
 
-https://patchwork.freedesktop.org/series/140162/
+>          */
+> -       memcg =3D folio_memcg_rcu(folio);
+> -       if (!mem_cgroup_disabled() && !memcg)
+> -               goto out;
+> +       if (mem_cgroup_disabled() || !folio_memcg_charged(folio))
+> +               return;
+>         workingset_age_nonresident(folio_lruvec(folio), folio_nr_pages(fo=
+lio));
 
--- 
-With best wishes
-Dmitry
+ if (mem_cgroup_disabled() || folio_memcg_charged(folio))
+    workingset_age_nonresident()
+
+We still want to call workingset_age_nonresident() when memcg is
+disabled. (We just want to "Filter non-memcg pages here" when memcg is
+enabled, as the comment above says, which I assume still applies?)
+
+> -out:
+> -       rcu_read_unlock();
+>  }
+>
+>  /*
+> --
+> 2.43.5
+>
 
