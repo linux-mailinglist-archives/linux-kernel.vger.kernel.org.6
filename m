@@ -1,218 +1,178 @@
-Return-Path: <linux-kernel+bounces-383307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 066DB9B19EB
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 18:56:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BACC99B19F1
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 18:58:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 40F02B21865
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 16:56:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8EAB1C2106B
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 16:58:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B59241D2B2C;
-	Sat, 26 Oct 2024 16:56:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25C311D2F6F;
+	Sat, 26 Oct 2024 16:58:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="lnuZKIMK"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MoLks4qh"
+Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8680168BE;
-	Sat, 26 Oct 2024 16:56:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A117C13B2A8;
+	Sat, 26 Oct 2024 16:58:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729961786; cv=none; b=vDVBdU5fQZlyJAM+QJ2F8s2Sdn9YbcLap5I+hGZuExFBk+rIGPuJI0ftyGx2CeN8cF/yErih2Z7/TEQzUbr6RZBDXxKUq7z6vbRM8n5b8lniPESerY9er5FZde4JDYRFsMn5ZpZ1c3AD78mAGeiMxn4g/QhCSaaOlbD8to5lpVA=
+	t=1729961897; cv=none; b=UVJVFNfhEWYfqw9aJeTErAcJNpcBShcqQY8BkaULKtdio6kbDrgT0VtWXEXsZMEyUczNEag8rrrJKlLq8RULnLrLOQkwLJqURbW32t18aEfd3I0fN7IlYfClGd2yEgAg8a/wMMSE8Blj03mlZG+8DHcZSD7nCEVG/XSMHaRDKAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729961786; c=relaxed/simple;
-	bh=QWX9Al1eRR+lMqa5aPqbsyfWiys6rAg2lSJQhS4Mq9I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=nWL79fHYmCJ+cNW3DNNxRd4hEbzHwhuVFYOMUQncBvEsxIZCuGIEE5fajiHSdV9ExoZWkOFaGN3Lb3AgmFj3IsVuLvEHq6Lz3WgsHXv7JPsUNdkUPGzm43kC9RiAfSUn0Ogl7CRi9DvrawaVi+dqbIAIXOXkfxOIVvront8BTPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=lnuZKIMK; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49QB4I0l010720;
-	Sat, 26 Oct 2024 16:56:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	A+W4fH0PAlH4u00A+szfB8MvrLS0lorLwzsBYBKhTWQ=; b=lnuZKIMKWa1GyRc7
-	7RTBiIdVV8fx1jwIfg2a1xy9cmj4f5bwj51nHNkk8E6YvzTcYM/I2136T5PrmQY1
-	jIkVxhmTYGBdDxLFEeuYhrYg8qEuftYF/aaGz6CtlAXclbzj918GUD93mBm/HPcU
-	kF57HEbcHaqMVpDMNUU1UOzrQjsWlakJ9QE2TwkYX/3h/kMvScx0rDAwMJDVZGl8
-	FdZTaNfte1afxXJuX6kU9uXfiT/e3IIPujHwNKA7RMXdonSaDOdueI6wzS3KcA7+
-	mx/Bf2a/p8MNjtmc3c03zUGWBViTICro13fMrTdJnRQoBc9hFTjh9zlRJye2GeLo
-	lss/5Q==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42gs6e188h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 26 Oct 2024 16:56:18 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49QGuHaZ009860
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 26 Oct 2024 16:56:17 GMT
-Received: from [10.216.11.201] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sat, 26 Oct
- 2024 09:56:13 -0700
-Message-ID: <2da5e869-ae44-45b1-a751-8b5edfcdbd30@quicinc.com>
-Date: Sat, 26 Oct 2024 22:26:08 +0530
+	s=arc-20240116; t=1729961897; c=relaxed/simple;
+	bh=Uoa1yBXZoSBbrjrl4LS4sVenPiHdm/MZ5en50telem8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=n0qASipxfIQTUsFyBoWfvnUXeaZJwPSFp3La7Ys1XqwsZ1HCXI74y1ocX1lHnGEqBz63ugtKeFMfV2HJe4B110gPHjBYgliPJCu4N55IxE9UVi6sP0GFzhH/J42Lr5Vfrb4DhA24r0RllP8V+yh7j4xqLDrfJAWSv9SBZL8yeVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MoLks4qh; arc=none smtp.client-ip=209.85.219.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6cbd092f7f0so21421706d6.0;
+        Sat, 26 Oct 2024 09:58:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729961893; x=1730566693; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TMZfwdkUBwCJp9Vo4PM2HvHKSsl3blcRgdTaXW2AdMY=;
+        b=MoLks4qhGf+NBD/fkWvK8DjE3hTZfdv8lar4hy5fhkD6pJSx5xoHhAicd/dCVHwk1E
+         VvYeiBAQffXjFzdFRQ9shYoXLdg8waXk7gnPScXSJN0C4cQPsvwxd2l6CfgDWLa4rgK1
+         ERiyb9ginLcJOQ5khV/iwrANxdKP/WmS8xZevr+essU42ikS3LHMA4TYx+LPTCBtrp46
+         L/LXPq/7qJxpbFAL78jC5IJidPdcTI0f/rkh1iuBYUqfFxh24qROuQ0i8TbHNQK5rgpv
+         RX58HFi/4psMbIM2lLLu+5f7GfbE7E/vUGhGvpFSB9ATOgdngSxzM6OIJ5aKXgHBwYUy
+         KYzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729961893; x=1730566693;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TMZfwdkUBwCJp9Vo4PM2HvHKSsl3blcRgdTaXW2AdMY=;
+        b=YsqsFKFFuRTI5e5bktUeAQ57n8B1gB1nDqFSdb2HfC1HIBFEqqFUTe8EBmOt4fughm
+         wiefNG/33LYyGkntTHkSgd085Mw/neqXDFfykuhicJIMfMFIxw3j08FdcMn2AsL4Kx1F
+         NXNqgyGBgqQr10+LEStQ8IYmQe40amfUuIvux75AxnIYEMlv9hrKik04MuarYhfsxgd9
+         t7gVWpGKGQL2B+h+0LvtNUYVmyMTR4dWLHpKePAmGNq3J5LQsYYQJQopU35O3RQQ5PB9
+         Yg0j3+jMWG/a7vi2ukIDsItbUYn0HSE4p5+GIOqynIPZVDFaElwQusrW5x09/G0qUzi7
+         AtVw==
+X-Forwarded-Encrypted: i=1; AJvYcCUlh1dKezfB4urdALsXmetakyAyElDZFAmIdPmOnG3L5L+eB4KzsETfJIcP9U8sDsW7XAMIRUsBRZQ=@vger.kernel.org, AJvYcCXnd5HIRUIX2VU0/AQ3KvGJsaAo8rRO+VjgZFOTKboUMf1MjGhBjdxsMEZxtrtJL2xp0+o6qVWELBXZ34AD@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNSnmoRXKv2KGX8FVHuG8+bzunkFkk9DyiBQ1QctnPNoIs9rKQ
+	ertkLsqhwofpFTuYRwsXGEd0vDs1dJaFKmJFWNbbcdjG5v729gdtPtIiXZCy
+X-Google-Smtp-Source: AGHT+IHOH/bFeW7nkVd2FEp2N/8fGFbMjeSSle63Y9gXrm4MeG5/hsNrHgBg/he+YH3KD/TYpXrRmQ==
+X-Received: by 2002:a05:6214:3186:b0:6cc:8705:b5cf with SMTP id 6a1803df08f44-6d1858194f9mr52933426d6.22.1729961892607;
+        Sat, 26 Oct 2024 09:58:12 -0700 (PDT)
+Received: from 156.1.168.192.in-addr.arpa (pool-100-37-170-231.nycmny.fios.verizon.net. [100.37.170.231])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d179a02608sm17002436d6.78.2024.10.26.09.58.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 26 Oct 2024 09:58:11 -0700 (PDT)
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Sat, 26 Oct 2024 12:58:08 -0400
+Subject: [PATCH v5] XArray: minor documentation improvements
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] arm64: dts: qcom: Add support for usb nodes on
- QCS8300
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        "Bjorn
- Andersson" <andersson@kernel.org>,
-        Rob Herring <robh@kernel.org>, <devicetree@vger.kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>,
-        <quic_ppratap@quicinc.com>, <quic_jackp@quicinc.com>
-References: <20241011074619.796580-1-quic_kriskura@quicinc.com>
- <20241011074619.796580-2-quic_kriskura@quicinc.com>
- <297dbc48-4c34-4bac-822c-be3ae2d00d32@oss.qualcomm.com>
-Content-Language: en-US
-From: Krishna Kurapati <quic_kriskura@quicinc.com>
-In-Reply-To: <297dbc48-4c34-4bac-822c-be3ae2d00d32@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: Yh_QLpL1yVgwpAoe8WKbMB-S8h_42FxX
-X-Proofpoint-GUID: Yh_QLpL1yVgwpAoe8WKbMB-S8h_42FxX
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxscore=0
- priorityscore=1501 lowpriorityscore=0 mlxlogscore=999 phishscore=0
- malwarescore=0 impostorscore=0 adultscore=0 spamscore=0 suspectscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410260143
+Message-Id: <20241026-xarray-documentation-v5-1-0fd4c4e3ce35@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAJ8fHWcC/03MQQ6CMBBA0auQWTukbSiiK+9hXIx0gEksNUM1G
+ MLdbVy5fIv/N1hYhRc4Vxsov2WRNBf4QwX9RPPIKKEYnHGNNa7FlVTpgyH1r8hzplwC7Fq2gwu
+ mOYY7lPSpPMj6215vxYOmiHlSpr9Z2dnGelN71508OswURcNljCSPuk8R9v0LWDCeNaAAAAA=
+X-Change-ID: 20241026-xarray-documentation-86e1f2d047db
+To: Matthew Wilcox <willy@infradead.org>, Jonathan Corbet <corbet@lwn.net>
+Cc: linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>, 
+ Bagas Sanjaya <bagasdotme@gmail.com>, Tamir Duberstein <tamird@gmail.com>
+X-Mailer: b4 0.15-dev
 
+- Replace "they" with "you" where "you" is used in the preceding
+  sentence fragment.
+- Mention `xa_erase` in discussion of multi-index entries.  Split this
+  into a separate sentence.
+- Add "call" parentheses on "xa_store" for consistency and
+  linkification.
+- Add caveat that `xa_store` and `xa_erase` are not equivalent in the
+  presence of `XA_FLAGS_ALLOC`.
 
+Acked-by: Randy Dunlap <rdunlap@infradead.org>
+Reviewed-by: Bagas Sanjaya <bagasdotme@gmail.com>
+Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+---
+Changes in v5:
+- Add trailers; otherwise resend of v4. Sent as v5 due to tooling issue.
+- Link to v4: https://lore.kernel.org/r/20241010214150.52895-2-tamird@gmail.com/
 
-On 10/25/2024 11:58 PM, Konrad Dybcio wrote:
-> On 11.10.2024 9:46 AM, Krishna Kurapati wrote:
-> 
-> The commit title should include a `qcs8300: ` part, like others in
-> the directory (see git log --oneline arch/arm64/boot/dts/qcom).
-> 
->> Add support for USB controllers on QCS8300. The second
->> controller is only High Speed capable.
->>
->> Signed-off-by: Krishna Kurapati <quic_kriskura@quicinc.com>
->> ---
->>   arch/arm64/boot/dts/qcom/qcs8300.dtsi | 168 ++++++++++++++++++++++++++
->>   1 file changed, 168 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/qcom/qcs8300.dtsi b/arch/arm64/boot/dts/qcom/qcs8300.dtsi
->> index 2c35f96c3f28..4e6ba9f49b95 100644
->> --- a/arch/arm64/boot/dts/qcom/qcs8300.dtsi
->> +++ b/arch/arm64/boot/dts/qcom/qcs8300.dtsi
->> @@ -1363,6 +1363,174 @@ IPCC_MPROC_SIGNAL_GLINK_QMP
->>   				qcom,remote-pid = <5>;
->>   			};
->>   		};
->> +
->> +		usb_1_hsphy: phy@8904000 {
->> +			compatible = "qcom,qcs8300-usb-hs-phy",
->> +				     "qcom,usb-snps-hs-7nm-phy";
->> +			reg = <0x0 0x8904000 0x0 0x400>;
-> 
-> Please pad the address parts to 8 hex digits with leading zeroes.
-> 
->> +
->> +			clocks = <&rpmhcc RPMH_CXO_CLK>;
->> +			clock-names = "ref";
->> +
->> +			resets = <&gcc GCC_USB2_PHY_PRIM_BCR>;
->> +
->> +			#phy-cells = <0>;
->> +
->> +			status = "disabled";
->> +		};
->> +
->> +		usb_2_hsphy: phy@8906000 {
->> +			compatible = "qcom,qcs8300-usb-hs-phy",
->> +				     "qcom,usb-snps-hs-7nm-phy";
->> +			reg = <0x0 0x08906000 0x0 0x400>;
->> +
->> +			clocks = <&rpmhcc RPMH_CXO_CLK>;
->> +			clock-names = "ref";
->> +
->> +			resets = <&gcc GCC_USB2_PHY_SEC_BCR>;
->> +
->> +			#phy-cells = <0>;
->> +
->> +			status = "disabled";
->> +		};
->> +
->> +		usb_qmpphy: phy@8907000 {
->> +			compatible = "qcom,qcs8300-qmp-usb3-uni-phy";
->> +			reg = <0x0 0x8907000 0x0 0x2000>;
->> +
->> +			clocks = <&gcc GCC_USB3_PRIM_PHY_AUX_CLK>,
->> +				 <&gcc GCC_USB_CLKREF_EN>,
->> +				 <&gcc GCC_USB3_PRIM_PHY_COM_AUX_CLK>,
->> +				 <&gcc GCC_USB3_PRIM_PHY_PIPE_CLK>;
->> +			clock-names = "aux", "ref", "com_aux", "pipe";
-> 
-> Please make this a vertical list like in the node below.
-> 
-> [...]
-> 
->> +			interconnects = <&aggre1_noc MASTER_USB3_0 0 &mc_virt SLAVE_EBI1 0>,
-> 
-> QCOM_ICC_TAG_ALWAYS, see x1e80100.dtsi
-> 
->> +					<&gem_noc MASTER_APPSS_PROC 0 &config_noc SLAVE_USB3_0 0>;
->> +			interconnect-names = "usb-ddr", "apps-usb";
->> +
->> +			wakeup-source;
->> +
->> +			status = "disabled";
->> +
->> +			usb_1_dwc3: usb@a600000 {
->> +				compatible = "snps,dwc3";
->> +				reg = <0x0 0x0a600000 0x0 0xe000>;
->> +				interrupts = <GIC_SPI 292 IRQ_TYPE_LEVEL_HIGH>;
->> +				iommus = <&apps_smmu 0x80 0x0>;
->> +				phys = <&usb_1_hsphy>, <&usb_qmpphy>;
->> +				phy-names = "usb2-phy", "usb3-phy";
->> +				snps,dis_u2_susphy_quirk;
->> +				snps,dis_enblslpm_quirk;
-> 
-> That's a very low number of quirks.. Should we have some more?
-> 
+Changes in v4:
+- Remove latent sentence fragment.
 
-snps,dis-u1-entry-quirk;
-snps,dis-u2-entry-quirk;
-snps,dis_u2_susphy_quirk;
-snps,ssp-u3-u0-quirk;
+Changes in v3:
+- metion `xa_erase`/`xa_store(NULL)` in multi-index entry discussion.
+- mention non-equivalent of `xa_erase`/`xa_store(NULL)` in the presence
+  of `XA_FLAGS_ALLOC`.
 
-I would actually like to add these as well, but there is no precedent in 
-upstream as to what quirks to add for usb nodes, so I kept only a couple 
-of them. Ideally downstream we disable u1u2 for almost all targets 
-because of some issues in the past. (atleast during tethering use cases, 
-but I need to double check though).
+Changes in v2:
+- s/use/you/ (Darrick J. Wong)
+---
+ Documentation/core-api/xarray.rst | 24 +++++++++++++-----------
+ 1 file changed, 13 insertions(+), 11 deletions(-)
 
-> Should it also be marked dma-coherent?
-> 
+diff --git a/Documentation/core-api/xarray.rst b/Documentation/core-api/xarray.rst
+index 77e0ece2b1d6f8e632e7d28d17fd1c60fcf0b5c4..f6a3eef4fe7f0a84068048175cb857d566f63516 100644
+--- a/Documentation/core-api/xarray.rst
++++ b/Documentation/core-api/xarray.rst
+@@ -42,8 +42,8 @@ call xa_tag_pointer() to create an entry with a tag, xa_untag_pointer()
+ to turn a tagged entry back into an untagged pointer and xa_pointer_tag()
+ to retrieve the tag of an entry.  Tagged pointers use the same bits that
+ are used to distinguish value entries from normal pointers, so you must
+-decide whether they want to store value entries or tagged pointers in
+-any particular XArray.
++decide whether you want to store value entries or tagged pointers in any
++particular XArray.
+ 
+ The XArray does not support storing IS_ERR() pointers as some
+ conflict with value entries or internal entries.
+@@ -52,8 +52,9 @@ An unusual feature of the XArray is the ability to create entries which
+ occupy a range of indices.  Once stored to, looking up any index in
+ the range will return the same entry as looking up any other index in
+ the range.  Storing to any index will store to all of them.  Multi-index
+-entries can be explicitly split into smaller entries, or storing ``NULL``
+-into any entry will cause the XArray to forget about the range.
++entries can be explicitly split into smaller entries. Unsetting (using
++xa_erase() or xa_store() with ``NULL``) any entry will cause the XArray
++to forget about the range.
+ 
+ Normal API
+ ==========
+@@ -63,13 +64,14 @@ for statically allocated XArrays or xa_init() for dynamically
+ allocated ones.  A freshly-initialised XArray contains a ``NULL``
+ pointer at every index.
+ 
+-You can then set entries using xa_store() and get entries
+-using xa_load().  xa_store will overwrite any entry with the
+-new entry and return the previous entry stored at that index.  You can
+-use xa_erase() instead of calling xa_store() with a
+-``NULL`` entry.  There is no difference between an entry that has never
+-been stored to, one that has been erased and one that has most recently
+-had ``NULL`` stored to it.
++You can then set entries using xa_store() and get entries using
++xa_load().  xa_store() will overwrite any entry with the new entry and
++return the previous entry stored at that index.  You can unset entries
++using xa_erase() or by setting the entry to ``NULL`` using xa_store().
++There is no difference between an entry that has never been stored to
++and one that has been erased with xa_erase(); an entry that has most
++recently had ``NULL`` stored to it is also equivalent except if the
++XArray was initialized with ``XA_FLAGS_ALLOC``.
+ 
+ You can conditionally replace an entry at an index by using
+ xa_cmpxchg().  Like cmpxchg(), it will only succeed if
 
-ACK.
+---
+base-commit: 850925a8133c73c4a2453c360b2c3beb3bab67c9
+change-id: 20241026-xarray-documentation-86e1f2d047db
 
-Regards,
-Krishna,
+Best regards,
+-- 
+Tamir Duberstein <tamird@gmail.com>
+
 
