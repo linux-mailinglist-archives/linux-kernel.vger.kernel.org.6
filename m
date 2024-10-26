@@ -1,143 +1,388 @@
-Return-Path: <linux-kernel+bounces-383120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C69219B1786
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 13:42:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84DB49B178B
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 13:44:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A58A1F22813
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 11:42:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4419D2837C8
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 11:44:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED2181D4141;
-	Sat, 26 Oct 2024 11:42:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hSH9TFfK"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE09C1D4173;
+	Sat, 26 Oct 2024 11:44:49 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B84038DD3
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 11:42:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B2931D0F44;
+	Sat, 26 Oct 2024 11:44:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729942965; cv=none; b=jh0AzQbGBfgEE5CC7nbcsCuAsmBdSIo70De66dLzXfg6Jz59r6fq9Gjd7+SzJDfGfqbZ0qJjhwPOlhkrwRg14/gLe3xS0V5Wq/yhpPEdf+iNVGR+L0R6OoNC7chaNHbGCwHSsjEoF8EYFIfZzlsIH/gY1wZx2zt8l3KdMr3ytUg=
+	t=1729943089; cv=none; b=i9DuUH0G1mbu1Dcia+XDk6lCQfVjoPhRTxv7HnXshHDK7c3A5Z8ov/8VM0RLbH1Wv4j45y9nZdBeqsGKAgVRycdAy25XfqpvyQHxjae9XGmDCcIcMpxu44VrKiZU0ydTX2IrmiaDcQsuY/BkUI0qpZsbNgCR0YMkN1RIwbpYlvE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729942965; c=relaxed/simple;
-	bh=UXnwYNqnbA2f/5vBTTn3W2mCdqeP+9kY67aQu8EF9+c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JTNBSqUscM5ZFZlBnhSrDxiFNwiyyPO/fdIVL7BsKZGONv5WehiRztaKf/9j9sT8IsCv0KODCIbnSLWwHiC6KIb24Rvn2iWhZahMYiA0uQg/Ru0rwrpq8kzX5ACEgDcAhm+6rK07jmzMmRbZ1I4+niQmnxBGc3rlVBCltgzJwQg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hSH9TFfK; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729942962;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YdLF7tRRqZiO64kQMK0GUfuU+omwTP3Miq5HRef8bJQ=;
-	b=hSH9TFfKJzWYCbE0Yvq/trxUHlhuExsGfjAXqpPKsZiXqguGxri1+YWAG2TgnceSqoOb8a
-	Knw+t7KbgOLIArejLKKzI2/R+n9UYd0EPzMj94O6cFVegFz+btC9tgnVwurW7imxw8Qlwd
-	my2+E9RqYD7cRJULxoE5P1Ygk0/eNkQ=
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
- [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-591-lmbLgYkcOSaYxLFj2qUVdQ-1; Sat, 26 Oct 2024 07:42:40 -0400
-X-MC-Unique: lmbLgYkcOSaYxLFj2qUVdQ-1
-Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-a9a1b8d4563so96375466b.3
-        for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 04:42:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729942959; x=1730547759;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YdLF7tRRqZiO64kQMK0GUfuU+omwTP3Miq5HRef8bJQ=;
-        b=v9mrK+AS8P+iciJxP9jv+ucYMaQvYmjskcOeJI+TQYpGXRrRmKrXP4yK+R6olRZr8R
-         2pvyjM02hhfOyesgIA1chNjx9BdZZahQ/PDKAeGp0N2jpNlvMEH1T39UlUymwl6iWEGw
-         bA85wO7LZd0g1brBaU7/b/rmtXTR/1pQaP4rNrLoUU9XEpb4P+6L4G86RMacLxn/FfAX
-         YmS1gDNyMgPbMhAA7a3J9R/dQOF2S5Ll1t61x3oIP/znQiEyHFKFP/1Q7gXKoFcYZai5
-         UbLaSTMU17TMa+uWbjOvd8eydloWJEQwSxVbS5b8POASimwrCg6FL5eQYriIfWqpxvbw
-         bvWA==
-X-Forwarded-Encrypted: i=1; AJvYcCX65cS3UdsJHfPk6xLK2aSJq0DD2WYhLyuzOzCYEQB+UCTkRDfkqJf+WE2wqHhgluiBokN7JrQSDGaFpX0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzfRkFlNIujnOS8EzymiOvDNkdjPOQKBSOG7a9O5nuuHB+XEgYs
-	jYDEnOoQKJbDMT7DAMamdgzuAQ9XgtSQOFzOrGvIjqatm5ckb4VWM+fhhZdNx0Ds5GYHkREs7KH
-	D1w+xESuNSvD+3Gi57GjdirhhYiCJKCoxhJ+Mwz7DTP0+h3caAUGbZqCkSVOODA==
-X-Received: by 2002:a05:6402:234b:b0:5c9:4b8c:b92e with SMTP id 4fb4d7f45d1cf-5cbbfa72dc0mr2726501a12.26.1729942958788;
-        Sat, 26 Oct 2024 04:42:38 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFZmhEgesWlCkWYclOufnmQ0f+NWGqpydoGczFg74wbrI9DsaXLnORpdpOq7ITJyaZ2BtinVQ==
-X-Received: by 2002:a05:6402:234b:b0:5c9:4b8c:b92e with SMTP id 4fb4d7f45d1cf-5cbbfa72dc0mr2726476a12.26.1729942958287;
-        Sat, 26 Oct 2024 04:42:38 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cbb631a1d1sm1454796a12.64.2024.10.26.04.42.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 26 Oct 2024 04:42:37 -0700 (PDT)
-Message-ID: <56c4e49a-b729-4332-b7d2-d8d51edcbd2e@redhat.com>
-Date: Sat, 26 Oct 2024 13:42:36 +0200
+	s=arc-20240116; t=1729943089; c=relaxed/simple;
+	bh=/O1tFky8fUiRfdLY53ZNMM7BmBaQMWx+CynXTfViA2s=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Xqv4FIfMF4gxAw9jhsXZSe8QyRyQALFbAOJGMIQtiNBXaD7YLewf67iCCAU5vuIiOCsSgmfK8rGi1Nqq1lCnhOk9+hU2z3hX8txEWf0ztEmPCmGLcCDwyIDMLe3H6mahVf4UMTaCjUrpzMvpzlPHs1dYbhTA3uc3nAWrSabzGzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4XbHnl59sHz1T8xX;
+	Sat, 26 Oct 2024 19:42:35 +0800 (CST)
+Received: from kwepemk500010.china.huawei.com (unknown [7.202.194.95])
+	by mail.maildlp.com (Postfix) with ESMTPS id 5A2B41400E3;
+	Sat, 26 Oct 2024 19:44:41 +0800 (CST)
+Received: from ubuntu.huawei.com (10.69.192.56) by
+ kwepemk500010.china.huawei.com (7.202.194.95) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Sat, 26 Oct 2024 19:44:40 +0800
+From: Weili Qian <qianweili@huawei.com>
+To: <herbert@gondor.apana.org.au>
+CC: <linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<liulongfang@huawei.com>, <shenyang39@huawei.com>
+Subject: [PATCH] crypto: hisilicon/qm - disable same error report before resetting
+Date: Sat, 26 Oct 2024 19:44:29 +0800
+Message-ID: <20241026114429.54090-1-qianweili@huawei.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mfd: intel_soc_pmic_crc: Add support for non ACPI
- instantiated i2c_client
-To: Andy Shevchenko <andy@kernel.org>
-Cc: Lee Jones <lee@kernel.org>, linux-kernel@vger.kernel.org
-References: <20241025083712.15070-1-hdegoede@redhat.com>
- <Zxuc1HWTIiUJ3Rwo@smile.fi.intel.com>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <Zxuc1HWTIiUJ3Rwo@smile.fi.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemk500010.china.huawei.com (7.202.194.95)
 
-Hi Andy,
+If an error indicating that the device needs to be reset is reported,
+disable the error reporting before device reset is complete,
+enable the error reporting after the reset is complete to prevent
+the same error from being reported repeatedly.
 
-On 25-Oct-24 3:27 PM, Andy Shevchenko wrote:
-> On Fri, Oct 25, 2024 at 10:37:12AM +0200, Hans de Goede wrote:
->> On some x86 Bay Trail tablets which shipped with Android as factory OS,
->> the DSDT is so broken that the PMIC needs to be manually instantiated by
->> the special x86-android-tablets.ko "fixup" driver for cases like this.
->>
->> Add an i2c_device_id table so that the driver can match on manually
->> instantiated i2c_client-s (which lack an ACPI fwnode to match on).
-> 
-> ...
-> 
->> +static const struct i2c_device_id crystal_cove_i2c_match[] = {
->> +	{ "intel-crystal-cove" },
-> 
-> Why this can't be "crystal_cove_i2c"?
+Fixes: eaebf4c3b103 ("crypto: hisilicon - Unify hardware error init/uninit into QM")
+Signed-off-by: Weili Qian <qianweili@huawei.com>
+---
+ drivers/crypto/hisilicon/hpre/hpre_main.c | 35 ++++++++++++++---
+ drivers/crypto/hisilicon/qm.c             | 47 +++++++----------------
+ drivers/crypto/hisilicon/sec2/sec_main.c  | 35 ++++++++++++++---
+ drivers/crypto/hisilicon/zip/zip_main.c   | 35 ++++++++++++++---
+ include/linux/hisi_acc_qm.h               |  8 +++-
+ 5 files changed, 110 insertions(+), 50 deletions(-)
 
-It can be any string as long as it is unique. Typically this will
-be vendor-model-name though and having i2c in there is a bit weird
-since this is used for the modalias, which gets prefixed with
-"i2c:" already.
-
-Therefor I would prefer to keep this as is. But if you have
-a strong preference I can change this for v2.
-
-Please let me know how you want to proceed with this patch.
-
-Regards,
-
-Hans
-
-
-
-> 
->> +	{ }
->> +};
-> 
-> ...
-> 
->>  	.driver = {
->>  		.name = "crystal_cove_i2c",
->>  		.pm = pm_sleep_ptr(&crystal_cove_pm_ops),
->>  		.acpi_match_table = crystal_cove_acpi_match,
->>  	},
-> 
+diff --git a/drivers/crypto/hisilicon/hpre/hpre_main.c b/drivers/crypto/hisilicon/hpre/hpre_main.c
+index f129878559c8..3132f08d5e7d 100644
+--- a/drivers/crypto/hisilicon/hpre/hpre_main.c
++++ b/drivers/crypto/hisilicon/hpre/hpre_main.c
+@@ -1292,11 +1292,15 @@ static u32 hpre_get_hw_err_status(struct hisi_qm *qm)
+ 
+ static void hpre_clear_hw_err_status(struct hisi_qm *qm, u32 err_sts)
+ {
+-	u32 nfe;
+-
+ 	writel(err_sts, qm->io_base + HPRE_HAC_SOURCE_INT);
+-	nfe = hisi_qm_get_hw_info(qm, hpre_basic_info, HPRE_NFE_MASK_CAP, qm->cap_ver);
+-	writel(nfe, qm->io_base + HPRE_RAS_NFE_ENB);
++}
++
++static void hpre_disable_error_report(struct hisi_qm *qm, u32 err_type)
++{
++	u32 nfe_mask;
++
++	nfe_mask = hisi_qm_get_hw_info(qm, hpre_basic_info, HPRE_NFE_MASK_CAP, qm->cap_ver);
++	writel(nfe_mask & (~err_type), qm->io_base + HPRE_RAS_NFE_ENB);
+ }
+ 
+ static void hpre_open_axi_master_ooo(struct hisi_qm *qm)
+@@ -1310,6 +1314,27 @@ static void hpre_open_axi_master_ooo(struct hisi_qm *qm)
+ 	       qm->io_base + HPRE_AM_OOO_SHUTDOWN_ENB);
+ }
+ 
++static enum acc_err_result hpre_get_err_result(struct hisi_qm *qm)
++{
++	u32 err_status;
++
++	err_status = hpre_get_hw_err_status(qm);
++	if (err_status) {
++		if (err_status & qm->err_info.ecc_2bits_mask)
++			qm->err_status.is_dev_ecc_mbit = true;
++		hpre_log_hw_error(qm, err_status);
++
++		if (err_status & qm->err_info.dev_reset_mask) {
++			/* Disable the same error reporting until device is recovered. */
++			hpre_disable_error_report(qm, err_status);
++			return ACC_ERR_NEED_RESET;
++		}
++		hpre_clear_hw_err_status(qm, err_status);
++	}
++
++	return ACC_ERR_RECOVERED;
++}
++
+ static void hpre_err_info_init(struct hisi_qm *qm)
+ {
+ 	struct hisi_qm_err_info *err_info = &qm->err_info;
+@@ -1336,12 +1361,12 @@ static const struct hisi_qm_err_ini hpre_err_ini = {
+ 	.hw_err_disable		= hpre_hw_error_disable,
+ 	.get_dev_hw_err_status	= hpre_get_hw_err_status,
+ 	.clear_dev_hw_err_status = hpre_clear_hw_err_status,
+-	.log_dev_hw_err		= hpre_log_hw_error,
+ 	.open_axi_master_ooo	= hpre_open_axi_master_ooo,
+ 	.open_sva_prefetch	= hpre_open_sva_prefetch,
+ 	.close_sva_prefetch	= hpre_close_sva_prefetch,
+ 	.show_last_dfx_regs	= hpre_show_last_dfx_regs,
+ 	.err_info_init		= hpre_err_info_init,
++	.get_err_result		= hpre_get_err_result,
+ };
+ 
+ static int hpre_pf_probe_init(struct hpre *hpre)
+diff --git a/drivers/crypto/hisilicon/qm.c b/drivers/crypto/hisilicon/qm.c
+index f7e8237e3a93..eebc5557a088 100644
+--- a/drivers/crypto/hisilicon/qm.c
++++ b/drivers/crypto/hisilicon/qm.c
+@@ -271,12 +271,6 @@ enum vft_type {
+ 	SHAPER_VFT,
+ };
+ 
+-enum acc_err_result {
+-	ACC_ERR_NONE,
+-	ACC_ERR_NEED_RESET,
+-	ACC_ERR_RECOVERED,
+-};
+-
+ enum qm_alg_type {
+ 	ALG_TYPE_0,
+ 	ALG_TYPE_1,
+@@ -1456,22 +1450,25 @@ static void qm_log_hw_error(struct hisi_qm *qm, u32 error_status)
+ 
+ static enum acc_err_result qm_hw_error_handle_v2(struct hisi_qm *qm)
+ {
+-	u32 error_status, tmp;
+-
+-	/* read err sts */
+-	tmp = readl(qm->io_base + QM_ABNORMAL_INT_STATUS);
+-	error_status = qm->error_mask & tmp;
++	u32 error_status;
+ 
+-	if (error_status) {
++	error_status = qm_get_hw_error_status(qm);
++	if (error_status & qm->error_mask) {
+ 		if (error_status & QM_ECC_MBIT)
+ 			qm->err_status.is_qm_ecc_mbit = true;
+ 
+ 		qm_log_hw_error(qm, error_status);
+-		if (error_status & qm->err_info.qm_reset_mask)
++		if (error_status & qm->err_info.qm_reset_mask) {
++			/* Disable the same error reporting until device is recovered. */
++			writel(qm->err_info.nfe & (~error_status),
++			       qm->io_base + QM_RAS_NFE_ENABLE);
+ 			return ACC_ERR_NEED_RESET;
++		}
+ 
++		/* Clear error source if not need reset. */
+ 		writel(error_status, qm->io_base + QM_ABNORMAL_INT_SOURCE);
+ 		writel(qm->err_info.nfe, qm->io_base + QM_RAS_NFE_ENABLE);
++		writel(qm->err_info.ce, qm->io_base + QM_RAS_CE_ENABLE);
+ 	}
+ 
+ 	return ACC_ERR_RECOVERED;
+@@ -3892,30 +3889,12 @@ EXPORT_SYMBOL_GPL(hisi_qm_sriov_configure);
+ 
+ static enum acc_err_result qm_dev_err_handle(struct hisi_qm *qm)
+ {
+-	u32 err_sts;
+-
+-	if (!qm->err_ini->get_dev_hw_err_status) {
+-		dev_err(&qm->pdev->dev, "Device doesn't support get hw error status!\n");
++	if (!qm->err_ini->get_err_result) {
++		dev_err(&qm->pdev->dev, "Device doesn't support reset!\n");
+ 		return ACC_ERR_NONE;
+ 	}
+ 
+-	/* get device hardware error status */
+-	err_sts = qm->err_ini->get_dev_hw_err_status(qm);
+-	if (err_sts) {
+-		if (err_sts & qm->err_info.ecc_2bits_mask)
+-			qm->err_status.is_dev_ecc_mbit = true;
+-
+-		if (qm->err_ini->log_dev_hw_err)
+-			qm->err_ini->log_dev_hw_err(qm, err_sts);
+-
+-		if (err_sts & qm->err_info.dev_reset_mask)
+-			return ACC_ERR_NEED_RESET;
+-
+-		if (qm->err_ini->clear_dev_hw_err_status)
+-			qm->err_ini->clear_dev_hw_err_status(qm, err_sts);
+-	}
+-
+-	return ACC_ERR_RECOVERED;
++	return qm->err_ini->get_err_result(qm);
+ }
+ 
+ static enum acc_err_result qm_process_dev_error(struct hisi_qm *qm)
+diff --git a/drivers/crypto/hisilicon/sec2/sec_main.c b/drivers/crypto/hisilicon/sec2/sec_main.c
+index 3abd12017250..9300776dd191 100644
+--- a/drivers/crypto/hisilicon/sec2/sec_main.c
++++ b/drivers/crypto/hisilicon/sec2/sec_main.c
+@@ -1010,11 +1010,15 @@ static u32 sec_get_hw_err_status(struct hisi_qm *qm)
+ 
+ static void sec_clear_hw_err_status(struct hisi_qm *qm, u32 err_sts)
+ {
+-	u32 nfe;
+-
+ 	writel(err_sts, qm->io_base + SEC_CORE_INT_SOURCE);
+-	nfe = hisi_qm_get_hw_info(qm, sec_basic_info, SEC_NFE_MASK_CAP, qm->cap_ver);
+-	writel(nfe, qm->io_base + SEC_RAS_NFE_REG);
++}
++
++static void sec_disable_error_report(struct hisi_qm *qm, u32 err_type)
++{
++	u32 nfe_mask;
++
++	nfe_mask = hisi_qm_get_hw_info(qm, sec_basic_info, SEC_NFE_MASK_CAP, qm->cap_ver);
++	writel(nfe_mask & (~err_type), qm->io_base + SEC_RAS_NFE_REG);
+ }
+ 
+ static void sec_open_axi_master_ooo(struct hisi_qm *qm)
+@@ -1026,6 +1030,27 @@ static void sec_open_axi_master_ooo(struct hisi_qm *qm)
+ 	writel(val | SEC_AXI_SHUTDOWN_ENABLE, qm->io_base + SEC_CONTROL_REG);
+ }
+ 
++static enum acc_err_result sec_get_err_result(struct hisi_qm *qm)
++{
++	u32 err_status;
++
++	err_status = sec_get_hw_err_status(qm);
++	if (err_status) {
++		if (err_status & qm->err_info.ecc_2bits_mask)
++			qm->err_status.is_dev_ecc_mbit = true;
++		sec_log_hw_error(qm, err_status);
++
++		if (err_status & qm->err_info.dev_reset_mask) {
++			/* Disable the same error reporting until device is recovered. */
++			sec_disable_error_report(qm, err_status);
++			return ACC_ERR_NEED_RESET;
++		}
++		sec_clear_hw_err_status(qm, err_status);
++	}
++
++	return ACC_ERR_RECOVERED;
++}
++
+ static void sec_err_info_init(struct hisi_qm *qm)
+ {
+ 	struct hisi_qm_err_info *err_info = &qm->err_info;
+@@ -1052,12 +1077,12 @@ static const struct hisi_qm_err_ini sec_err_ini = {
+ 	.hw_err_disable		= sec_hw_error_disable,
+ 	.get_dev_hw_err_status	= sec_get_hw_err_status,
+ 	.clear_dev_hw_err_status = sec_clear_hw_err_status,
+-	.log_dev_hw_err		= sec_log_hw_error,
+ 	.open_axi_master_ooo	= sec_open_axi_master_ooo,
+ 	.open_sva_prefetch	= sec_open_sva_prefetch,
+ 	.close_sva_prefetch	= sec_close_sva_prefetch,
+ 	.show_last_dfx_regs	= sec_show_last_dfx_regs,
+ 	.err_info_init		= sec_err_info_init,
++	.get_err_result		= sec_get_err_result,
+ };
+ 
+ static int sec_pf_probe_init(struct sec_dev *sec)
+diff --git a/drivers/crypto/hisilicon/zip/zip_main.c b/drivers/crypto/hisilicon/zip/zip_main.c
+index f547e6732bf5..bb77edd772c2 100644
+--- a/drivers/crypto/hisilicon/zip/zip_main.c
++++ b/drivers/crypto/hisilicon/zip/zip_main.c
+@@ -1059,11 +1059,15 @@ static u32 hisi_zip_get_hw_err_status(struct hisi_qm *qm)
+ 
+ static void hisi_zip_clear_hw_err_status(struct hisi_qm *qm, u32 err_sts)
+ {
+-	u32 nfe;
+-
+ 	writel(err_sts, qm->io_base + HZIP_CORE_INT_SOURCE);
+-	nfe = hisi_qm_get_hw_info(qm, zip_basic_cap_info, ZIP_NFE_MASK_CAP, qm->cap_ver);
+-	writel(nfe, qm->io_base + HZIP_CORE_INT_RAS_NFE_ENB);
++}
++
++static void hisi_zip_disable_error_report(struct hisi_qm *qm, u32 err_type)
++{
++	u32 nfe_mask;
++
++	nfe_mask = hisi_qm_get_hw_info(qm, zip_basic_cap_info, ZIP_NFE_MASK_CAP, qm->cap_ver);
++	writel(nfe_mask & (~err_type), qm->io_base + HZIP_CORE_INT_RAS_NFE_ENB);
+ }
+ 
+ static void hisi_zip_open_axi_master_ooo(struct hisi_qm *qm)
+@@ -1093,6 +1097,27 @@ static void hisi_zip_close_axi_master_ooo(struct hisi_qm *qm)
+ 	       qm->io_base + HZIP_CORE_INT_SET);
+ }
+ 
++static enum acc_err_result hisi_zip_get_err_result(struct hisi_qm *qm)
++{
++	u32 err_status;
++
++	err_status = hisi_zip_get_hw_err_status(qm);
++	if (err_status) {
++		if (err_status & qm->err_info.ecc_2bits_mask)
++			qm->err_status.is_dev_ecc_mbit = true;
++		hisi_zip_log_hw_error(qm, err_status);
++
++		if (err_status & qm->err_info.dev_reset_mask) {
++			/* Disable the same error reporting until device is recovered. */
++			hisi_zip_disable_error_report(qm, err_status);
++			return ACC_ERR_NEED_RESET;
++		}
++		hisi_zip_clear_hw_err_status(qm, err_status);
++	}
++
++	return ACC_ERR_RECOVERED;
++}
++
+ static void hisi_zip_err_info_init(struct hisi_qm *qm)
+ {
+ 	struct hisi_qm_err_info *err_info = &qm->err_info;
+@@ -1120,13 +1145,13 @@ static const struct hisi_qm_err_ini hisi_zip_err_ini = {
+ 	.hw_err_disable		= hisi_zip_hw_error_disable,
+ 	.get_dev_hw_err_status	= hisi_zip_get_hw_err_status,
+ 	.clear_dev_hw_err_status = hisi_zip_clear_hw_err_status,
+-	.log_dev_hw_err		= hisi_zip_log_hw_error,
+ 	.open_axi_master_ooo	= hisi_zip_open_axi_master_ooo,
+ 	.close_axi_master_ooo	= hisi_zip_close_axi_master_ooo,
+ 	.open_sva_prefetch	= hisi_zip_open_sva_prefetch,
+ 	.close_sva_prefetch	= hisi_zip_close_sva_prefetch,
+ 	.show_last_dfx_regs	= hisi_zip_show_last_dfx_regs,
+ 	.err_info_init		= hisi_zip_err_info_init,
++	.get_err_result		= hisi_zip_get_err_result,
+ };
+ 
+ static int hisi_zip_pf_probe_init(struct hisi_zip *hisi_zip)
+diff --git a/include/linux/hisi_acc_qm.h b/include/linux/hisi_acc_qm.h
+index 389e95754776..ad8dbc063a75 100644
+--- a/include/linux/hisi_acc_qm.h
++++ b/include/linux/hisi_acc_qm.h
+@@ -229,6 +229,12 @@ struct hisi_qm_status {
+ 
+ struct hisi_qm;
+ 
++enum acc_err_result {
++	ACC_ERR_NONE,
++	ACC_ERR_NEED_RESET,
++	ACC_ERR_RECOVERED,
++};
++
+ struct hisi_qm_err_info {
+ 	char *acpi_rst;
+ 	u32 msi_wr_port;
+@@ -257,9 +263,9 @@ struct hisi_qm_err_ini {
+ 	void (*close_axi_master_ooo)(struct hisi_qm *qm);
+ 	void (*open_sva_prefetch)(struct hisi_qm *qm);
+ 	void (*close_sva_prefetch)(struct hisi_qm *qm);
+-	void (*log_dev_hw_err)(struct hisi_qm *qm, u32 err_sts);
+ 	void (*show_last_dfx_regs)(struct hisi_qm *qm);
+ 	void (*err_info_init)(struct hisi_qm *qm);
++	enum acc_err_result (*get_err_result)(struct hisi_qm *qm);
+ };
+ 
+ struct hisi_qm_cap_info {
+-- 
+2.33.0
 
 
