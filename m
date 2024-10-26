@@ -1,78 +1,189 @@
-Return-Path: <linux-kernel+bounces-383090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 709BF9B1741
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 13:05:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17D639B1744
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 13:06:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0A00AB2266F
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 11:05:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBFDF282812
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 11:06:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CC941D2F4F;
-	Sat, 26 Oct 2024 11:05:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 146951D2F7E;
+	Sat, 26 Oct 2024 11:06:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ucBECbsV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bRhPHdMV"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4D4542056;
-	Sat, 26 Oct 2024 11:05:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 552DD1D1F5B;
+	Sat, 26 Oct 2024 11:06:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729940727; cv=none; b=mtrws/mXKmK57SpXmixo7cvGmlOhsTA9Rb72rudGOZLIp6pSDC8ru6XnIsSi2SkY/66JG24SfF+PEXeoqZOOwrqU9JjUwxfUKq+upbK+hEJ68y1biNFxNVUOHlL4LYkW8g6/l02kGM9uXWERVmGGMTtdfM2K8biHko0vzQWkCRc=
+	t=1729940764; cv=none; b=h6fKLEv78IIElBwZnJpUZbdmyLol4FXg+7rYqKJUPxmVYKK742EcSgsKN/Dd/uXNhqMy3Gq6sXlGCTxQ4MU0TMWYbo+nvtG1Z65pxKeBv1i838xmg1sPAyJ+TtOnavQAs7srDq7walCTwMpGPkrLb2AeWQkErFkyqnneZxppomM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729940727; c=relaxed/simple;
-	bh=+HLuQHjz/+cQWkY3quaTgNg6b5ST0nih76e+lPVgFFw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UmKHTVKVFb0UUlnwmkhxJJmyZdnoBL/gJNJdy3KoaJYjiKGraPJbOlOAJbSsj43gFong+FSWPJSh6L7z0Re+caEuVPJCKqMYlYxhwoaq/2/SNdZrb3O6CIicA8ZaCTm8LpphygsrUE+CccuqbEtMDh/zpj+0j95Rtb/UwOLWEwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ucBECbsV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F91DC4CEC6;
-	Sat, 26 Oct 2024 11:05:08 +0000 (UTC)
+	s=arc-20240116; t=1729940764; c=relaxed/simple;
+	bh=Zh3zuybgEofOZaCAcGFonRQz+iSFD09SNvGu7O6LYq8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ani34HCurYYX1mynHgv1ZY1cniLqioRxg+eSY87CSyD5Dnbig4+wl50ceYMYNZdULR/7ZziiQOAurdz09IrS1pyVvubLMZG3sAg0ZfbPBXk1IJlNGfCL72MJlv7LDeCua2TFDo/Qqvnu00gqqJtpTDzGhzgM7gdc0DK8kmXxgO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bRhPHdMV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72370C4CEC6;
+	Sat, 26 Oct 2024 11:05:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729940727;
-	bh=+HLuQHjz/+cQWkY3quaTgNg6b5ST0nih76e+lPVgFFw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ucBECbsVNfYTRqZsUH8WGGjf6t5931AjTw8U/y4fkSy5D170SQkwPjQFjlO3FIuXj
-	 N3ogBU4nel4po9IzoRK6x5RtZhVGjqmhM44xU1u7Yni4dINAXGqNfUOPigMg3UmM23
-	 h8rB0KpD5DNMGaVVphztKtp9/O1+bQItF6fGFoNy1fwPeCGISur/Y76hD1nBpkvHVS
-	 pH2ngeZ0sDK17U1wYBmYwzhWU6JHvWJ1E3ypm+52EnGFtXpe3tEayYPoiEGXRymBh7
-	 23Jux6Db4Eb41vykruRrIn4MYkoEiGhx+FIh2jNvwkdX8DUbBpT1uk22laXU8THysJ
-	 tEFNiG5PI6+2A==
-Date: Sat, 26 Oct 2024 12:04:50 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, Marius Cristea
- <marius.cristea@microchip.com>, Trevor Gamblin <tgamblin@baylibre.com>,
- Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>, Hans de Goede
- <hdegoede@redhat.com>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>
-Subject: Re: [PATCH v3 03/24] iio: imu: inv_mpu6050: Replace strange way of
- checking type of enumeration
-Message-ID: <20241026120450.4e58ecbb@jic23-huawei>
-In-Reply-To: <20241024191200.229894-4-andriy.shevchenko@linux.intel.com>
-References: <20241024191200.229894-1-andriy.shevchenko@linux.intel.com>
-	<20241024191200.229894-4-andriy.shevchenko@linux.intel.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=k20201202; t=1729940764;
+	bh=Zh3zuybgEofOZaCAcGFonRQz+iSFD09SNvGu7O6LYq8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=bRhPHdMVnsnYmmf8azqlFC62K1Qi2aD1m3wm7FIkkhFZqaUpvwv4owY71WpPN1Tab
+	 UevitB2BtcNGrAunNKRkvn+zIM+H9BHjWNGVxj5/7QliKglRc1CO2ZSm+8U2vkHyeq
+	 L5GCr6CB6Mtc0ghY6NjDV5WWbrlN8DhUnp1RNlGdzxfVfhnvQoWcauenF8BK8MG+z6
+	 FOuV3MNwNSt0iV+G8M76pD8PLbWl9R5qJwxEJy0+QWVPsE5B+Cv4VxDK/4yHszjPUB
+	 GyhaqjAdiNzuFejGYskojc0piA5Xf8aWgJmA0Yyzs0A9zq9VGisbUhvmKHG5DdFPfN
+	 Kr6i+wbGdlFbw==
+Message-ID: <fae122f1-5a8e-4f92-b468-aba3fcb8ac90@kernel.org>
+Date: Sat, 26 Oct 2024 13:05:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: Concerns over transparency of informal kernel groups
+To: Jiaxun Yang <jiaxun.yang@flygoat.com>, linux-kernel@vger.kernel.org,
+ conduct@kernel.org, security@kernel.org, cve@kernel.org,
+ linux-doc@vger.kernel.org, "stable@vger.kernel.org" <stable@vger.kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, shuah@kernel.org,
+ lee@kernel.org, sashal@kernel.org, corbet@lwn.net
+References: <73b8017b-fce9-4cb1-be48-fc8085f1c276@app.fastmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <73b8017b-fce9-4cb1-be48-fc8085f1c276@app.fastmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, 24 Oct 2024 22:04:52 +0300
-Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
-
-> When device is enumerated via ACPI the respective device node is of
-> ACPI device type. Use that to check for ACPI enumeration, rather than
-> calling for full match which is O(n) vs. O(1) for the regular check.
+On 25/10/2024 17:15, Jiaxun Yang wrote:
+> Dear Linux Community Members,
 > 
-> Acked-by: Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>
-> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Applied.
+> Over the years, various informal groups have formed within our community,
+> serving purposes such as maintaining connections with companies and external
+> bodies, handling sensitive information, making challenging decisions, and,
+> at times, representing the community as a whole. These groups contribute significantly
+> to our community's development and deserve our recognition and appreciation.
+> 
+> I'll name a few below that I identified from  `Documentation/`:
+> - Code of Conduct Committee <conduct@kernel.org>
+> - Linux kernel security team <security@kernel.org>
+> - Linux kernel hardware security team <hardware-security@kernel.org>
+> - Kernel CVE assignment team <cve@kernel.org>
+> - Stable Team for unpublished vulnerabilities <stable@kernel.org>
+>   (I suspect it's just an alias to regular stable team, but I found no evidence).
+> 
+> Over recent events, I've taken a closer look at how our community's governance
+> operates, only to find that there's remarkably little public information available
+
+Oh, spread more FUD under the cloak of helping the community. Reminds me
+something, wait, how was it? zx?
+
+> about those informal groups. With the exception of the Linux kernel hardware security
+> team, it seems none of these groups maintain a public list of members that I can
+> easily find.
+> 
+> Upon digging into the details, I’d like to raise a few concerns and offer some thoughts
+> for further discussion:
+> 
+> - Absence of a Membership Register
+> Our community is built on mutual trust. Without knowing who comprises these groups,
+> it's understandably difficult for people to have full confidence in their work.
+
+No, you might have difficulty, not "all people" which you imply. Please
+stop creating sentences like you are speaking for others. You do not
+speak for others.
+
+> A publicly available membership list would not only foster trust but also allow us to
+> address our recognition and appreciation.
+
+Nope. For some of the groups it is very intentional to hide the
+membership. It was explained already why and should be pretty obvious.
+
+> 
+> - Lack of Guidelines for Actions
+> Many of these groups appear to operate without documented guidelines. While I trust each
+> respectful individual's integrity, documented guidelines would enable the wider community
+> to better understand and appreciate the roles and responsibilities involved.
+
+Guidelines are well documented, although I understand something might be
+missing. Feel free to extend the existing documentation, as usual,
+patches are welcomed.
+
+> 
+> - Insufficient Transparency in Decision-Making
+> I fully respect the need for confidentiality in handling security matters, yet some
+> degree of openness around decision-making processes is essential in my opinion.
+> Releasing communications post-embargo, for instance, could promote understanding and
+> prevent potential abuse of confidential procedures.
+
+Again, unspecified FUD.
+
+> 
+> - No Conflict of Interest Policy
+> Particularly in the case of the Code of Conduct Committee, there may arise situations
+> where individuals face challenging decisions involving personal connections. A conflict
+> of interest policy would provide valuable guidance in such circumstances.
+
+Feel free to propose patches instead of claiming there is problem for
+others. If you identify issue, propose a patch.
+
+Several other your replies earlier were in similar tone. I am not going
+to engage in such discussions and probably neither other people, but
+some think that silence is approval or agreement. Thus this reply. for
+me this is just FUD.
+
+Best regards,
+Krzysztof
+
 
