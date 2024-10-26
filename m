@@ -1,51 +1,52 @@
-Return-Path: <linux-kernel+bounces-383363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E311B9B1A9C
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 21:38:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD0229B1A99
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 21:38:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 38A2BB21765
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 19:38:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD1781C21597
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 19:38:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 682511D88AD;
-	Sat, 26 Oct 2024 19:38:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 091E31D6DB9;
+	Sat, 26 Oct 2024 19:38:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="QqSWk7fc"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="YbFGbmzn"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8FA51D5CD6;
-	Sat, 26 Oct 2024 19:38:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E61CBE4E;
+	Sat, 26 Oct 2024 19:38:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729971507; cv=none; b=glp4jPNayPR/gdpBVcvgpdhXO1oHcFT4vRw31SPQS1fIMVtBMuPuPxpYSwxGPRJEift7jk/NdnPW0r8yN2n7exE6lyD7YUjK1T8YBbHa9F87rIVRNnMNwfqDxIQq44J50MoTF8XAxBtgSVOCtoqv9ho2eSjvLc5YtOklzdrkEaE=
+	t=1729971504; cv=none; b=IpRn6AB4iX7Mb//BXaYnUCGiB0RnJ8ZdLVZurI9j/yfTjgLAOV/d8cmj0kvqiDuJGdYIFJ9GwuMjcbnUynJIWhY+Hlg7klEI0/j1JGZfv8cJoL7FAz/Fj3M02u3qvG2JnAosNVKAR1RJTQ/czUnD9MkUPCGyApdEa9L072wa2Sc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729971507; c=relaxed/simple;
-	bh=d1V/dguyMdkQ894qaTrU0VIKewUzrG583siX1uYRUuk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OBiEA8OTYC3T6aa1SBv5Vx/WA/VgjfniSGZJRTizTExDcXIH17QLZxYNEjWNPLYe8wf9G30FEFbukatDwT5qtj4viWeMISNKVH1o7ePnR2ndMeVd3hjj3jjEXUahu13RyYFsM2CM70zi2KpTpEmKspxxYVx+4bqFB532N9Hkcxs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=QqSWk7fc; arc=none smtp.client-ip=212.227.17.21
+	s=arc-20240116; t=1729971504; c=relaxed/simple;
+	bh=5RRWiQmsC5FKUz3XyvJ7/XFVMP24+NnJLtShimQI7fY=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=u4NJFbzyfbOuPfteKJmeuqWR1J2WGup1riMEmC/v+vRMi1BiNQkaoeIMopPg3RNZJlg/PCE1Y8TpIDHdGYcN1daZj9rfuhY/u18K/YboENOdItu/juqe0MH8zRhkY/7F4gvbqu4cfmx5MOcXIxNHDZPsDtSniQz6y/Yo3srLR9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=YbFGbmzn; arc=none smtp.client-ip=212.227.15.18
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1729971487; x=1730576287; i=w_armin@gmx.de;
-	bh=Gf9Rm3uYqtLsaxiRDrxMARdgLCzi8xnbixUi1ilrFmg=;
-	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-Id:
-	 MIME-Version:Content-Transfer-Encoding:cc:
+	s=s31663417; t=1729971491; x=1730576291; i=w_armin@gmx.de;
+	bh=6GN27BLIp3KciUHEE+3grnjPhepIK6d4LaQSPpqOLms=;
+	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-Id:In-Reply-To:
+	 References:MIME-Version:Content-Transfer-Encoding:cc:
 	 content-transfer-encoding:content-type:date:from:message-id:
 	 mime-version:reply-to:subject:to;
-	b=QqSWk7fcd0sb3b6lpx1yidaJyy2nQ/4a56xvHLt1jE0XLa50W/MBwMruYZyAFe3k
-	 CVaLh8V/o7N2OLRPcYmVKIZ3RMWz7pemdryKKSn4qVETzCv7iP+ljknmAEZovvuV0
-	 k2fdprSSyl7ukQ4WY+GYmXiLYBBLgVhkrzcPtPby3RpOXDGpT2yrChZYuIcgZjuPk
-	 54KcC2SDmH9+qSx2xNSL56SN+Ev9uBXjaNSON/QIKtxxPJplQSqDLKXeLJ8bRAc/1
-	 DDIDczVc6/SZk/0plekT9um5TP/CF/osEJSF8XFD63krdcDsbQYuV5xsyLHyEJdXL
-	 /y7K00/s0gy+EsOZ9Q==
+	b=YbFGbmznwJZYoCKEcOeYJD343p5KXGu+R+/OAY63wLAIiTOwboIAsIbclZdbnCMU
+	 wXZ24BKiNOXxkpONz94hQh7swP/ZfNGY1+ZdPftcztSfPWgjZNQB0CKJ/ZsT0UVNV
+	 t6YfRQxnin1Pg/MHnXL39JQiyXgw3tISJ0r/oumSOPcq/ln01BY1fw/PqH8s2USJj
+	 TcAfQ79Hce5WPBgXNJdLo4TtHfbPKxqEQH3Qk+QZRRgKDj7W02Y+UI4z7vGtmZ3aE
+	 B4UBaswW2LWAU0yUYkOIB/nEMRal2BufutxZTpyjdWhsFKjyqIQeFWbHTKi/Th5Sm
+	 bgwb9pSOUFfVrVQLPg==
 X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
 Received: from mx-amd-b650.users.agdsn.de ([141.30.226.129]) by mail.gmx.net
- (mrgmx105 [212.227.17.168]) with ESMTPSA (Nemesis) id
- 1MvsEx-1tuoxs2HEl-015nSX; Sat, 26 Oct 2024 21:38:07 +0200
+ (mrgmx004 [212.227.17.190]) with ESMTPSA (Nemesis) id
+ 1MK3Rs-1tJZPR0nR0-00P955; Sat, 26 Oct 2024 21:38:11 +0200
 From: Armin Wolf <W_Armin@gmx.de>
 To: hdegoede@redhat.com,
 	ilpo.jarvinen@linux.intel.com,
@@ -53,10 +54,12 @@ To: hdegoede@redhat.com,
 Cc: platform-driver-x86@vger.kernel.org,
 	linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/3] platform/x86: wmi: Remove wmi_block_list
-Date: Sat, 26 Oct 2024 21:38:01 +0200
-Message-Id: <20241026193803.8802-1-W_Armin@gmx.de>
+Subject: [PATCH 2/3] platform/x86: wmi: Replace dev_to_wdev() with to_wmi_device()
+Date: Sat, 26 Oct 2024 21:38:02 +0200
+Message-Id: <20241026193803.8802-2-W_Armin@gmx.de>
 X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20241026193803.8802-1-W_Armin@gmx.de>
+References: <20241026193803.8802-1-W_Armin@gmx.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,167 +67,105 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:kZJhtkoclHRproBQXZZet/ATUoqs3c+/9DMHHFpC39RiWdUuA2y
- jZbyFccFYjKB3NwKarpL4kevuAg6zIyANBG18bTCK0JGWighPXHTKLG2KM2rtV37ypXvkQU
- Dy6Ew/pZfy2llSbCsmw7OS6zfb+P/JV/Ha1WWJ16PS7TlQQUN1LAlvcLgPUgHmC9S3YOAvt
- 9Nmn2A/tASxe37qpwUmew==
+X-Provags-ID: V03:K1:iL45+0jZjvfGTJDg4ehBeGTA53P63hBb4KVnBE8k/yJh3FCnDKa
+ uEeMsxmaLPuHekqLP8EeHpfkMkHnOAdlAj5kiMwp6BQPV5zyPDSiqjY8vu/PryOd/pPsFfO
+ ZB6/jkli75y0rdR6S5k7taSG0n6eLHbK8jX+4BV+dmYEX4mNAPPxWKSRVUuMBukHFdJRLC3
+ Bu+6h52G3y3D1/oxmuy3w==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:2p/BzGKeGUs=;q/CARAxDSmw5TpR4a5JsaF3rEt7
- nxnD/vcPlb1lbxzS6jO367m7vs7GOQqEUk4YuYhMbPV7VwsNri3tk2+Q8ylByrkR26aw5GeCY
- bEPESbC3fDMVFeSWw0jn4u391I2HEl1Sb9gMAvEUyzs0yGTD6EASY40sA9077nHMUnUglVazJ
- O7kXLjgC3/izmC8H+nDIuT9FcD0QJJLgqxCO3groo+17BDCQ28eK0d2ResntZA2zJiDEkj2FH
- NrJyfRuMV4APDtAJLUHrQ1pTPa0E3O4RWaxkk8T7a3GrY4lgBINyek3GZwa8e3wA3p8iTmnXN
- +uodMD44loQIzq3nndqxCSVZ6TDaALZg7op2ybudBKdQOqTkU8FMbnDTNEYYXsVnm7WnhbHUD
- ht+HczaEYCmLg0saUwmlw0PZKTCnORgQ0NmmrqH2y4p85b3zKACPu67GVKwu0A8C/buvvSkeQ
- TBAGsSZlnO2UYDOm1SILCgHfmQoIxxZdiYJu95nV084HjrXxObX/IgpBb4vK53lCkPvHCY2zZ
- UC4fWHZctU+gStLJUWLmRp/VkIo6OTmbffFsdbVnTO58LDyOi4faIC8vkEFr9vVoFHHfu/RAd
- dhYExKREU+9KddG7bl8q2xw8lBxK/YZtIozBV466NpLFoC4IVeYxWdw6n5Opqw8BoOyaSPkxz
- /YWrIPbfTO2gtwYPITTVzGa3TDH7efOlU7P8/OcslUgq2WCkNP1MX1yi1a3iE4rJNRpnLEZvH
- u6Ih0ruhdkA8MAO2UErKTd3bgb3emj+N6l78TcNunqVo7EEYQrBnzWfQEcFPbJQMctJk7BDO2
- W/UffGmvUTX6cl+2sIvlDlQQ==
+UI-OutboundReport: notjunk:1;M01:P0:tDixci3RelY=;8qhZ2iBKfT2c3OTwZrkrQLhC8An
+ 6h20oixrkVKHJZRhkpbJBe/YR4K4QCGHdTNGw0wYyhMy8CBRAUDBeziHu3PdnOYJm/khCk8wW
+ dAy6kS89l25j01VyOi1JtEpVsXhBj687cMZMn+G0m45hB4HPO3WIAIauwoichbpZVwRiaKGQY
+ K5hTW561GdOjBaj6slffoRkk5EXIvkEn+2srnvX7plXwgLqxM96RVKbLRF2ospmj9d+kVbH97
+ aIxwke3UgMkM5UszZn43CJ3AA8vqMGOnPiw/l2fMQxEdw75as8xm0rDxHorsWidN6+9bFHdNP
+ Eu7dUB4Tvi2eR09pIfPJ3UQbg2ntXvJCX7QmQCYk61Clyp/EEiIQfgq1KKqIjnpcyaOc4/7dy
+ /EAFs3gyZFFr9xFgktjtfYXx1FDkGvHhnCfTJfL7YDAJ2oX0a/A8OYQahzZBlKTVExU6Xj41z
+ ICFbRXO8l+MVNr1iWWfFlKAZDKyZAXeYKGOEilsT5PSvPzaxfz54Ry4t/E+i5i98N7Suxibp/
+ b5OaJ1S4Gw6NabSJOxdAciABpqgi+LVjjC29qkumu6wVRkRwX/68AIV2unJh70ugx/3JE0lCC
+ 6eHxEMyLCQj7bZvqiV2nACAB7kAzDFIDrmdzx6Bkn8pW6uJw5PObKAGXLYiL3LtA0PoGt+hSo
+ bnuN3vWpZfHMidSRklr83vefjzf1et4MyxEpAdNW6B+omVsVbBA3ttVlDSZtFVsKa9NoPukxu
+ 8Iyu8kcX9RF0P5MgWfuZLBoAu4UklPOWYX6gHoH20+zQzCAO/ouL2jl4OJL76OJeKlUUlCUIb
+ auxSWODhffKEr2/UwSD3No0w==
 
-The wmi_block_list is only used by guid_count() and without proper
-protection. It also duplicates some of the WMI bus functionality.
+Replace dev_to_wdev() with to_wmi_device() to stop duplicating
+functionality.
 
-Remove the wmi_block_list and use bus_for_each_dev() instead.
+Also switch to_wmi_device() to use container_of_const() so const
+values are handled correctly.
 
 Signed-off-by: Armin Wolf <W_Armin@gmx.de>
 =2D--
- drivers/platform/x86/wmi.c | 50 +++++++++++++++++++++-----------------
- 1 file changed, 28 insertions(+), 22 deletions(-)
+ drivers/platform/x86/wmi.c | 9 ++++-----
+ include/linux/wmi.h        | 2 +-
+ 2 files changed, 5 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/platform/x86/wmi.c b/drivers/platform/x86/wmi.c
-index 2d6885c67ac0..4704e79197f6 100644
+index 4704e79197f6..b2576d5189ed 100644
 =2D-- a/drivers/platform/x86/wmi.c
 +++ b/drivers/platform/x86/wmi.c
-@@ -22,7 +22,6 @@
- #include <linux/device.h>
- #include <linux/init.h>
- #include <linux/kernel.h>
--#include <linux/list.h>
- #include <linux/module.h>
- #include <linux/platform_device.h>
- #include <linux/rwsem.h>
-@@ -37,8 +36,6 @@ MODULE_AUTHOR("Carlos Corbacho");
- MODULE_DESCRIPTION("ACPI-WMI Mapping Driver");
- MODULE_LICENSE("GPL");
+@@ -91,7 +91,6 @@ static const struct acpi_device_id wmi_device_ids[] =3D =
+{
+ MODULE_DEVICE_TABLE(acpi, wmi_device_ids);
 
--static LIST_HEAD(wmi_block_list);
--
- struct guid_block {
- 	guid_t guid;
- 	union {
-@@ -63,7 +60,6 @@ enum {	/* wmi_block flags */
-
- struct wmi_block {
- 	struct wmi_device dev;
--	struct list_head list;
- 	struct guid_block gblock;
- 	struct acpi_device *acpi_device;
- 	struct rw_semaphore notify_lock;	/* Protects notify callback add/remove =
-*/
-@@ -73,6 +69,10 @@ struct wmi_block {
- 	unsigned long flags;
- };
-
-+struct wmi_guid_count_context {
-+	const guid_t *guid;
-+	int count;
-+};
+ #define dev_to_wblock(__dev)	container_of_const(__dev, struct wmi_block, =
+dev.dev)
+-#define dev_to_wdev(__dev)	container_of_const(__dev, struct wmi_device, d=
+ev)
 
  /*
-  * If the GUID data block is marked as expensive, we must enable and
-@@ -942,21 +942,30 @@ static const struct device_type wmi_type_data =3D {
- 	.release =3D wmi_dev_release,
- };
+  * GUID parsing functions
+@@ -199,7 +198,7 @@ static struct wmi_device *wmi_find_device_by_guid(cons=
+t char *guid_string)
+ 	if (!dev)
+ 		return ERR_PTR(-ENODEV);
 
--/*
-- * _WDG is a static list that is only parsed at startup,
-- * so it's safe to count entries without extra protection.
-- */
-+static int wmi_count_guids(struct device *dev, void *data)
-+{
-+	struct wmi_guid_count_context *context =3D data;
-+	struct wmi_block *wblock =3D dev_to_wblock(dev);
-+
-+	if (guid_equal(&wblock->gblock.guid, context->guid))
-+		context->count++;
-+
-+	return 0;
-+}
-+
- static int guid_count(const guid_t *guid)
- {
--	struct wmi_block *wblock;
--	int count =3D 0;
-+	struct wmi_guid_count_context context =3D {
-+		.guid =3D guid,
-+		.count =3D 0,
-+	};
-+	int ret;
-
--	list_for_each_entry(wblock, &wmi_block_list, list) {
--		if (guid_equal(&wblock->gblock.guid, guid))
--			count++;
--	}
-+	ret =3D bus_for_each_dev(&wmi_bus_type, NULL, &context, wmi_count_guids)=
-;
-+	if (ret < 0)
-+		return ret;
-
--	return count;
-+	return context.count;
+-	return dev_to_wdev(dev);
++	return to_wmi_device(dev);
  }
 
- static int wmi_create_device(struct device *wmi_bus_dev,
-@@ -967,7 +976,7 @@ static int wmi_create_device(struct device *wmi_bus_de=
-v,
- 	struct acpi_device_info *info;
- 	acpi_handle method_handle;
- 	acpi_status status;
--	uint count;
-+	int count;
-
- 	if (wblock->gblock.flags & ACPI_WMI_EVENT) {
- 		wblock->dev.dev.type =3D &wmi_type_event;
-@@ -1035,6 +1044,9 @@ static int wmi_create_device(struct device *wmi_bus_=
-dev,
- 	wblock->dev.dev.parent =3D wmi_bus_dev;
-
- 	count =3D guid_count(&wblock->gblock.guid);
-+	if (count < 0)
-+		return count;
-+
- 	if (count) {
- 		dev_set_name(&wblock->dev.dev, "%pUL-%d", &wblock->gblock.guid, count);
- 		set_bit(WMI_GUID_DUPLICATED, &wblock->flags);
-@@ -1120,14 +1132,11 @@ static int parse_wdg(struct device *wmi_bus_dev, s=
-truct platform_device *pdev)
- 			continue;
- 		}
-
--		list_add_tail(&wblock->list, &wmi_block_list);
--
- 		retval =3D wmi_add_device(pdev, &wblock->dev);
- 		if (retval) {
- 			dev_err(wmi_bus_dev, "failed to register %pUL\n",
- 				&wblock->gblock.guid);
-
--			list_del(&wblock->list);
- 			put_device(&wblock->dev.dev);
- 		}
- 	}
-@@ -1227,9 +1236,6 @@ static void acpi_wmi_notify_handler(acpi_handle hand=
-le, u32 event, void *context
-
- static int wmi_remove_device(struct device *dev, void *data)
+ static void wmi_device_put(struct wmi_device *wdev)
+@@ -761,7 +760,7 @@ static DEVICE_ATTR_RO(object_id);
+ static ssize_t setable_show(struct device *dev, struct device_attribute *=
+attr,
+ 			    char *buf)
  {
--	struct wmi_block *wblock =3D dev_to_wblock(dev);
--
--	list_del(&wblock->list);
- 	device_unregister(dev);
+-	struct wmi_device *wdev =3D dev_to_wdev(dev);
++	struct wmi_device *wdev =3D to_wmi_device(dev);
 
- 	return 0;
+ 	return sysfs_emit(buf, "%d\n", (int)wdev->setable);
+ }
+@@ -851,7 +850,7 @@ static int wmi_dev_probe(struct device *dev)
+ 		dev_warn(dev, "failed to enable device -- probing anyway\n");
+
+ 	if (wdriver->probe) {
+-		ret =3D wdriver->probe(dev_to_wdev(dev),
++		ret =3D wdriver->probe(to_wmi_device(dev),
+ 				find_guid_context(wblock, wdriver));
+ 		if (ret) {
+ 			if (ACPI_FAILURE(wmi_method_enable(wblock, false)))
+@@ -878,7 +877,7 @@ static void wmi_dev_remove(struct device *dev)
+ 	up_write(&wblock->notify_lock);
+
+ 	if (wdriver->remove)
+-		wdriver->remove(dev_to_wdev(dev));
++		wdriver->remove(to_wmi_device(dev));
+
+ 	if (ACPI_FAILURE(wmi_method_enable(wblock, false)))
+ 		dev_warn(dev, "failed to disable device\n");
+diff --git a/include/linux/wmi.h b/include/linux/wmi.h
+index 120019677fc6..fca5fd43c707 100644
+=2D-- a/include/linux/wmi.h
++++ b/include/linux/wmi.h
+@@ -34,7 +34,7 @@ struct wmi_device {
+  *
+  * Cast a struct device to a struct wmi_device.
+  */
+-#define to_wmi_device(device)	container_of(device, struct wmi_device, dev=
+)
++#define to_wmi_device(device)	container_of_const(device, struct wmi_devic=
+e, dev)
+
+ extern acpi_status wmidev_evaluate_method(struct wmi_device *wdev,
+ 					  u8 instance, u32 method_id,
 =2D-
 2.39.5
 
