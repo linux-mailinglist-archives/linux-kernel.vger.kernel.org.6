@@ -1,191 +1,149 @@
-Return-Path: <linux-kernel+bounces-382837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3E7A9B13DC
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 02:44:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70B399B13E4
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 02:47:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEB9A28331E
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 00:44:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B5411F22806
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 00:47:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5E068BE7;
-	Sat, 26 Oct 2024 00:44:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D060FAD51;
+	Sat, 26 Oct 2024 00:47:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="tHvk4J7u"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="W9Gb/C1Z"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17F591388
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 00:44:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC6902566;
+	Sat, 26 Oct 2024 00:46:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729903486; cv=none; b=LJzpDeY938tGw0lBLVf+Qdrk7DoCUfW2AGmgRjiXfRmw8q1GXhYleeEKFcZTU8tRuZJrXYX1sXto/SuPI+9/g/es+ghifNxqVEwFFcULlE/YztXAVZrQGao7tRYwduqPyO1Oc97SKUiPV6sUJBt44G8icqUsIrLWXvN0jrB1B20=
+	t=1729903620; cv=none; b=L+ZnDaoENU6h/NGE32xEifzYXarC4tFhIvH6ZtgB9tJK41qOU+17JN8ewMppAj4nfidbvH5+Qpkha5Wm89OiGcSitQcFM6YMiLrJ8r4mOP4cxKnxkxwrdR7PQooQtcmh2zxgjao88cmUZsNB5DgNk9bKj9UPwoylhB0MIQ0d9ss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729903486; c=relaxed/simple;
-	bh=OnyIvgg+0m07TpOJfn2WxKRf7YBafQzs+QMyiNCJcJc=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=HcIgnHYtBAaxE8A3o5HGqvaOJ0eQ8wjyGdj6ZTLihvO0KK1adFD62wCHH4dE6EJaTxjhONOupOMZlSe3+9q1AQADfVlrrN9dtHCV/ukzb2vmZ3GvSuMEDWfjaJVHKFz1vd9or1LtPoLri5PyabjYvWJrfgyDuBqnsf267QPTp2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=tHvk4J7u; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33F4FC4CEC3;
-	Sat, 26 Oct 2024 00:44:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1729903485;
-	bh=OnyIvgg+0m07TpOJfn2WxKRf7YBafQzs+QMyiNCJcJc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=tHvk4J7uTeNa4aO65BXNHAmLXWc5xxuOqUQM3fjIIchFoKM5mXiV1O/PwoF0lX8yB
-	 Eu7hbeUaGb5CHt2wM4srz6Gt/+TFV5m2jiyB2N67vpVuAL/klVrH/d2PSd23b5Q2g7
-	 tdHblkgCU4g4MV18iLtOL3lzNlOskSHuOFuo6owo=
-Date: Fri, 25 Oct 2024 17:44:44 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Tamir Duberstein <tamird@gmail.com>
-Cc: Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>,
- Dwaipayan Ray <dwaipayanray1@gmail.com>, Lukas Bulwahn
- <lukas.bulwahn@gmail.com>, Simon Horman <horms@kernel.org>, Niklas
- =?ISO-8859-1?Q?S=F6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
- Philippe Schenker <philippe.schenker@toradex.com>, Louis Peens
- <louis.peens@corigine.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] checkpatch: always parse orig_commit in fixes tag
-Message-Id: <20241025174444.7536f7ad4c94fd02afc63077@linux-foundation.org>
-In-Reply-To: <20241025-checkpatch-fixes-commit-v2-1-4bc4f06d37b3@gmail.com>
-References: <20241025-checkpatch-fixes-commit-v2-1-4bc4f06d37b3@gmail.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1729903620; c=relaxed/simple;
+	bh=47b2/WJ6vDXFTAeNa837xT+uK7Z6vlyEMJasVeR7icY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=cbjTLwGve+eF6wFLeF+C8LyKs1hK/zIe5fX+6f2DE9pYcGvIJagBi44cVP1jj4MqzkRZViG1uiXGGv6+3QjCjN18CDseYirLHXnyxoEB+GQctl7JaM8hz7DGqXaJwQ/T7juJmH+yCrS0yY1db5nyPcMXEBqeM1v5AMF1LnxJXcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=W9Gb/C1Z; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729903618; x=1761439618;
+  h=from:subject:date:message-id:mime-version:
+   content-transfer-encoding:to:cc;
+  bh=47b2/WJ6vDXFTAeNa837xT+uK7Z6vlyEMJasVeR7icY=;
+  b=W9Gb/C1ZYR1TEunt9bJOxHozeyJ8veY3MUqnRCgnmEvFY1Oa6hAQA1oS
+   /mSo73hpnZ8faIyEHZHczNAhXXWYIPUHIUQUmWClNBP/YqYtvfY79mQe+
+   va+CRoi8TS9AFhkLTzaB2bq5HgEqn1CuMNZ2F1MeSoEoKP1TVC5zdz2R+
+   lZjqpAa5mZK8Hc9kFJaEHXRAbjfUyH3VYZIvArYE4HRyiEGIkMZY7sk8G
+   1IkLMrVRKBfkGuXCVUI5+IaS5mEtH/3y81k0xON8MuGZspNxpVOFCsYbB
+   /n6JEeBHaBjjAwsa4WVmxVCUsoV7vbwAIpzM0GLp3fWhuHLPHoOxGGudd
+   g==;
+X-CSE-ConnectionGUID: AugCS7GNT6G/KItIW/JQxw==
+X-CSE-MsgGUID: 79PALpJkRDiXC6hYmeStWg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11236"; a="40974426"
+X-IronPort-AV: E=Sophos;i="6.11,233,1725346800"; 
+   d="scan'208";a="40974426"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2024 17:46:58 -0700
+X-CSE-ConnectionGUID: tjcj/06fTVyhIkLuPaQQOw==
+X-CSE-MsgGUID: ejX7LmZVRvm2DAP3MVvPrA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,233,1725346800"; 
+   d="scan'208";a="85851627"
+Received: from kinlongk-mobl1.amr.corp.intel.com (HELO localhost) ([10.125.111.138])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2024 17:46:55 -0700
+From: Ira Weiny <ira.weiny@intel.com>
+Subject: [PATCH v2 0/4] printf: Add struct range print specifier
+Date: Fri, 25 Oct 2024 19:46:52 -0500
+Message-Id: <20241025-cxl-pra-v2-0-123a825daba2@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPw7HGcC/z3MQQ6CMBCF4auQWTumLVTBlfcwLEqdyiRISUsaD
+ OndrSxc/i8v3w6RAlOEW7VDoMSR/VxCnSqwo5lfhPwsDUqoRnS1QLtNuASDuu70xVjtrCQo7yW
+ Q4+2QHn3pkePqw+eAk/ythyGFbP9Gkijw6ppuMLpVoh3uPK80na1/Q59z/gJwzgZ5ngAAAA==
+To: Andrew Morton <akpm@linux-foundation.org>, 
+ Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>, 
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+ Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
+ Sergey Senozhatsky <senozhatsky@chromium.org>, 
+ Jonathan Corbet <corbet@lwn.net>, Davidlohr Bueso <dave@stgolabs.net>, 
+ Jonathan Cameron <jonathan.cameron@huawei.com>, 
+ Dave Jiang <dave.jiang@intel.com>, 
+ Alison Schofield <alison.schofield@intel.com>, 
+ Vishal Verma <vishal.l.verma@intel.com>, 
+ Dan Williams <dan.j.williams@intel.com>
+Cc: Fan Ni <fan.ni@samsung.com>, Bagas Sanjaya <bagasdotme@gmail.com>, 
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+ linux-cxl@vger.kernel.org, Ira Weiny <ira.weiny@intel.com>, 
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>
+X-Mailer: b4 0.15-dev-37811
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1729903614; l=2159;
+ i=ira.weiny@intel.com; s=20221211; h=from:subject:message-id;
+ bh=47b2/WJ6vDXFTAeNa837xT+uK7Z6vlyEMJasVeR7icY=;
+ b=UPV64GngUdXvSVAcPEVcC4WJBK+YwVVpCoF1yHP/3ESET/Y0CLNpUnaD5ZmCPcyJdpDPSYX1h
+ JuC1/tolKiQCromOWtN6e2V60tGcgpOS1yHUZgokUuF0te1L+q5Dig6
+X-Developer-Key: i=ira.weiny@intel.com; a=ed25519;
+ pk=noldbkG+Wp1qXRrrkfY1QJpDf7QsOEthbOT7vm0PqsE=
 
-On Fri, 25 Oct 2024 19:43:19 -0400 Tamir Duberstein <tamird@gmail.com> wrot=
-e:
+Support for the Compute Express Link (CXL) Dynamic Capacity Devices
+(DCD) have grown a number of uses to print struct range.[1]  Support for
+a printf specifier '%pra' was being worked within a large series and has
+garnered a number of comments and discussion.
 
-> Do not require the presence of `$balanced_parens` to get the commit SHA;
-> this allows a `Fixes: deadbeef` tag to get a correct suggestion rather
-> than a suggestion containing a reference to HEAD.
+To better accelerate both features introduce a separate series to settle
+the struct range print enhancement divorced from the CXL DCD feature.
 
-Got it, thanks.  Below is what I ended up with:
+Struct range is used to store a number range similar to struct resource.
+Printing struct range becomes cumbersome having to specify 2 specifiers
+and the members of the struct.  Furthermore, print output benefits from
+using a standardized format.
 
+Add to the pointer specifier support for struct range.  Share code with
+struct resource for more standardization.  Add tests for struct resource
+to help prevent regressions.
 
-From: Tamir Duberstein <tamird@gmail.com>
-Subject: checkpatch: always parse orig_commit in fixes tag
-Date: Fri, 25 Oct 2024 19:43:19 -0400
+%pra was settled on as the most reasonable format in previous
+discussions.[2]
 
-Do not require the presence of `$balanced_parens` to get the commit SHA;
-this allows a `Fixes: deadbeef` tag to get a correct suggestion rather
-than a suggestion containing a reference to HEAD.
+Link: https://lore.kernel.org/all/20241007-dcd-type2-upstream-v4-2-c261ee6eeded@intel.com/ [1]
+Link: https://lore.kernel.org/all/66cea3bf3332f_f937b29424@iweiny-mobl.notmuch/ [2]
 
-Given this patch:
-
-: From: Tamir Duberstein <tamird@gmail.com>
-: Subject: Test patch
-: Date: Fri, 25 Oct 2024 19:30:51 -0400
-:=20
-: This is a test patch.
-:=20
-: Fixes: bd17e036b495
-: Signed-off-by: Tamir Duberstein <tamird@gmail.com>
-: --- /dev/null
-: +++ b/new-file
-: @@ -0,0 +1 @@
-: +Test.
-
-
-Before:
-
-WARNING: Please use correct Fixes: style 'Fixes: <12 chars of sha1> ("<titl=
-e line>")' - ie: 'Fixes: c10a7d25e68f ("Test patch")'
-
-After:
-
-WARNING: Please use correct Fixes: style 'Fixes: <12 chars of sha1> ("<titl=
-e line>")' - ie: 'Fixes: bd17e036b495 ("checkpatch: warn for non-standard f=
-ixes tag style")'
-
-
-
-The prior behavior incorrectly suggested the patch's own SHA and title
-line rather than the referenced commit's.  This fixes that.
-
-Ironically this:
-
-Fixes: bd17e036b495 ("checkpatch: warn for non-standard fixes tag style")
-Signed-off-by: Tamir Duberstein <tamird@gmail.com>
-Cc: Andy Whitcroft <apw@canonical.com>
-Cc: Dwaipayan Ray <dwaipayanray1@gmail.com>
-Cc: Joe Perches <joe@perches.com>
-Cc: Louis Peens <louis.peens@corigine.com>
-Cc: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc: Niklas S=F6derlund <niklas.soderlund+renesas@ragnatech.se>
-Cc: Philippe Schenker <philippe.schenker@toradex.com>
-Cc: Simon Horman <horms@kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Ira Weiny <ira.weiny@intel.com>
 ---
+Changes in v2:
+- Andy: s/resource_and_range/resource_or_range/
+- djbw/Petr: Address comments on documentation
+- Link to v1: https://patch.msgid.link/20241018-cxl-pra-v1-0-7f49ba58208b@intel.com
 
- scripts/checkpatch.pl |   37 ++++++++++++++++---------------------
- 1 file changed, 16 insertions(+), 21 deletions(-)
+---
+Ira Weiny (4):
+      test printf: Add very basic struct resource tests
+      Documentation/printf: struct resource add start == end special case
+      printf: Add print format (%pra) for struct range
+      cxl/cdat: Use %pra for dpa range outputs
 
---- a/scripts/checkpatch.pl~checkpatch-always-parse-orig_commit-in-fixes-tag
-+++ a/scripts/checkpatch.pl
-@@ -3209,36 +3209,31 @@ sub process {
-=20
- # Check Fixes: styles is correct
- 		if (!$in_header_lines &&
--		    $line =3D~ /^\s*fixes:?\s*(?:commit\s*)?[0-9a-f]{5,}\b/i) {
--			my $orig_commit =3D "";
--			my $id =3D "0123456789ab";
--			my $title =3D "commit title";
--			my $tag_case =3D 1;
--			my $tag_space =3D 1;
--			my $id_length =3D 1;
--			my $id_case =3D 1;
-+		    $line =3D~ /^\s*(fixes:?)\s*(?:commit\s*)?([0-9a-f]{5,40})(?:\s*($ba=
-lanced_parens))?/i) {
-+			my $tag =3D $1;
-+			my $orig_commit =3D $2;
-+			my $title;
- 			my $title_has_quotes =3D 0;
- 			$fixes_tag =3D 1;
--
--			if ($line =3D~ /(\s*fixes:?)\s+([0-9a-f]{5,})\s+($balanced_parens)/i) {
--				my $tag =3D $1;
--				$orig_commit =3D $2;
--				$title =3D $3;
--
--				$tag_case =3D 0 if $tag eq "Fixes:";
--				$tag_space =3D 0 if ($line =3D~ /^fixes:? [0-9a-f]{5,} ($balanced_pare=
-ns)/i);
--
--				$id_length =3D 0 if ($orig_commit =3D~ /^[0-9a-f]{12}$/i);
--				$id_case =3D 0 if ($orig_commit !~ /[A-F]/);
--
-+			if (defined $3) {
- 				# Always strip leading/trailing parens then double quotes if existing
--				$title =3D substr($title, 1, -1);
-+				$title =3D substr($3, 1, -1);
- 				if ($title =3D~ /^".*"$/) {
- 					$title =3D substr($title, 1, -1);
- 					$title_has_quotes =3D 1;
- 				}
-+			} else {
-+				$title =3D "commit title"
- 			}
-=20
-+
-+			my $tag_case =3D not ($tag eq "Fixes:");
-+			my $tag_space =3D not ($line =3D~ /^fixes:? [0-9a-f]{5,40} ($balanced_p=
-arens)/i);
-+
-+			my $id_length =3D not ($orig_commit =3D~ /^[0-9a-f]{12}$/i);
-+			my $id_case =3D not ($orig_commit !~ /[A-F]/);
-+
-+			my $id =3D "0123456789ab";
- 			my ($cid, $ctitle) =3D git_commit_info($orig_commit, $id,
- 							     $title);
-=20
-_
+ Documentation/core-api/printk-formats.rst | 20 +++++++++-
+ drivers/cxl/core/cdat.c                   |  8 ++--
+ include/linux/range.h                     |  6 +++
+ lib/test_printf.c                         | 61 +++++++++++++++++++++++++++++++
+ lib/vsprintf.c                            | 57 ++++++++++++++++++++++++++---
+ 5 files changed, 141 insertions(+), 11 deletions(-)
+---
+base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
+change-id: 20240930-cxl-pra-53956ac5fc1e
+
+Best regards,
+-- 
+Ira Weiny <ira.weiny@intel.com>
 
 
