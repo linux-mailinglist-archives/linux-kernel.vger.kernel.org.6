@@ -1,118 +1,131 @@
-Return-Path: <linux-kernel+bounces-382888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 373EE9B1481
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 06:09:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1615E9B148A
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 06:10:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C3DB1C21129
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 04:09:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3BC32835D8
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 04:10:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E21A1146A69;
-	Sat, 26 Oct 2024 04:09:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C828B1632DC;
+	Sat, 26 Oct 2024 04:10:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Z9q8dWw+"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dKuSS0eB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 609037083C;
-	Sat, 26 Oct 2024 04:09:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0E191442F2;
+	Sat, 26 Oct 2024 04:10:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729915758; cv=none; b=r4d+CDaBhfLaYJOSdNNkaHj9B5+IQsUD4jK0g9ed6EQPuEVR8jaLRjphHf6SetVupdHbWhb0ixhPcmpGg9h2ybiqW4iblGybpzssq6vA/LPAFfgnbLMPOx5tpvQaHxh2526Apf/U+KpjZIzdPPlERKAyn4kUPhv++GOL0SrZwRA=
+	t=1729915801; cv=none; b=rugHHi5OGOHtq8DrpxNpJD5J0KjHV1T/jU+KO6rWG5BxV5iz72pRiDxHKq4TTB+H91JYnmMSmKIJHttVw89EO7ZpWfq174mkNojHX1K4+o9Eh01es4+59t2fRUEdF+SU50Lhqy4Snt/DXi+QJG7OTbrmKfaUTKMKYxyRsBgzLXI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729915758; c=relaxed/simple;
-	bh=OcJZ4t8bkvTfIRQWAzAWyVuCVa1SI0mRw18Uk36+UTg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=KFqcQFTOQkf5MqNwdLlYGR0ID/lSbg3HMM9HkBEDOSCclVhnKRc64DTvfAJxvKJbd05clxbwvpaa1zgNd2bpbs55vemcwaMoVJ0F28QWNWkzrvg093qOTLNPJwrsQe/mLq6ZKz8VbvsGGmY8TDK8bJWLSYn2wRWwoKELZ26GH1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Z9q8dWw+; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729915756; x=1761451756;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=OcJZ4t8bkvTfIRQWAzAWyVuCVa1SI0mRw18Uk36+UTg=;
-  b=Z9q8dWw+5fqi3ptkLPaLHrYC69ryZufz21BfVyA/jjUB/2R32oQ6PcLy
-   3EoPorPRAqDbZfUWJiiCLPNEHehZPx/jJbK3twR7p5TrAuHka6/8hThrg
-   CMvc5okJ3WB/g2DT+Vm1YZdJoc4Ma0ilcO9+uLf+fw5nOzeqhnUwcIm0Z
-   z8PmHDvT30D5r6PLh6xQm/x2jWwiSvZeme5JvaxqUiCrimUsMF8hl613B
-   PTV9UZwaro3pjplYFn+NBeimZ2CEx+gRHz1C0Lb+oFsNoV6jHey8dhCUx
-   V1aJb0b/6gdoa2q5pxRS0Vdunh1/7ffTtXq81nzJGDtLCF2HCC7UFUj3J
-   Q==;
-X-CSE-ConnectionGUID: Qn9K54aTSEG1SBcmEmNN1g==
-X-CSE-MsgGUID: pO2BcAugT6WknPhJhEjdyA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="33288453"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="33288453"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2024 21:09:16 -0700
-X-CSE-ConnectionGUID: w1gW9/ghSIG8/Hdg0+ZMMA==
-X-CSE-MsgGUID: ZiE3Z8VKTrC7QIBLdJulBw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,233,1725346800"; 
-   d="scan'208";a="81207404"
-Received: from spandruv-desk.jf.intel.com ([10.54.75.21])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2024 21:09:15 -0700
-Message-ID: <583d58620eb3a26251c109470030d46d96677cad.camel@linux.intel.com>
-Subject: Re: [PATCH 0/2] platform/x86: asus-wmi: Fix thermal profile handling
-From: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
-To: Armin Wolf <W_Armin@gmx.de>, corentin.chary@gmail.com, luke@ljones.dev, 
-	mohamed.ghanmi@supcom.tn, Casey G Bowman <casey.g.bowman@intel.com>
-Cc: hdegoede@redhat.com, ilpo.jarvinen@linux.intel.com,
- Michael@phoronix.com,  casey.g.bowman@intel.com,
- platform-driver-x86@vger.kernel.org,  linux-kernel@vger.kernel.org
-Date: Fri, 25 Oct 2024 21:09:15 -0700
-In-Reply-To: <20241025191514.15032-1-W_Armin@gmx.de>
-References: <20241025191514.15032-1-W_Armin@gmx.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
+	s=arc-20240116; t=1729915801; c=relaxed/simple;
+	bh=lF+GZ34WavKbRCh+8SpENUkvMTOj0nNu/+wtL6EWAuc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IAyOD96zmrcWj4f13aGJkYLeIUlKnYKqUuAPfjJltgKdvQb/UO0sCMTMgSR+6ZvShtbnwYkSClXIqmODrjtt8j03fgmIZmTIjnhewyCyNysDIrTVBWGF/LN1FGiPLJaSfy1nha6SuxtwbXzJmheFJFQiLl/zpgANEXgHMJ1s3fM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dKuSS0eB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16197C4CEC6;
+	Sat, 26 Oct 2024 04:10:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729915800;
+	bh=lF+GZ34WavKbRCh+8SpENUkvMTOj0nNu/+wtL6EWAuc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dKuSS0eBaRI/CXii2QB5Wp13VN5M0EyqE+pRWQ0FIrWhJKg/vIHpdl8T4W8QxNuij
+	 T0CG7+FxcgukLYYess7ilgKdACYxJyTQbvNYi5tggRwq+/XFBRGniANM7V3triPr8F
+	 UUsS6muPo9iWYwGQFgwiv9w4YPPRVc28KYUlaAdjilM3SQfI6maVNNNlOFU9fEDXsq
+	 Gk3BBORntTohGffZpXt1Y890883/3runspv9c8/UKZctcqZ0RsPobpG7rjK4cA5CnO
+	 8NZmDph5HkYR8xfmcMREDDHLdj4UGjCSN4dQNMDqTidBJmggOvZ+kQyIdFd4kqd50G
+	 JFBNHlz+eaPyA==
+Date: Fri, 25 Oct 2024 21:09:58 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
+	linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+	linux-mips@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev,
+	sparclinux@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCH v2 04/18] crypto: crc32 - don't unnecessarily register
+ arch algorithms
+Message-ID: <20241026040958.GA34351@sol.localdomain>
+References: <20241025191454.72616-1-ebiggers@kernel.org>
+ <20241025191454.72616-5-ebiggers@kernel.org>
+ <CAMj1kXEsq7iJThqZ7WA00ei4m59vpC23wPM+Mrj9W+HXfk-aSg@mail.gmail.com>
+ <20241025220239.GB2637569@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241025220239.GB2637569@google.com>
 
-+Casey
+On Fri, Oct 25, 2024 at 10:02:39PM +0000, Eric Biggers wrote:
+> On Fri, Oct 25, 2024 at 10:47:15PM +0200, Ard Biesheuvel wrote:
+> > On Fri, 25 Oct 2024 at 21:15, Eric Biggers <ebiggers@kernel.org> wrote:
+> > >
+> > > From: Eric Biggers <ebiggers@google.com>
+> > >
+> > > Instead of registering the crc32-$arch and crc32c-$arch algorithms if
+> > > the arch-specific code was built, only register them when that code was
+> > > built *and* is not falling back to the base implementation at runtime.
+> > >
+> > > This avoids confusing users like btrfs which checks the shash driver
+> > > name to determine whether it is crc32c-generic.
+> > >
+> > 
+> > I think we agree that 'generic' specifically means a C implementation
+> > that is identical across all architectures, which is why I updated my
+> > patch to export -arch instead of wrapping the C code in yet another
+> > driver just for the fuzzing tests.
+> > 
+> > So why is this a problem? If no optimizations are available at
+> > runtime, crc32-arch and crc32-generic are interchangeable, and so it
+> > shouldn't matter whether you use one or the other.
+> > 
+> > You can infer from the driver name whether the C code is being used,
+> > not whether or not the implementation is 'fast', and the btrfs hack is
+> > already broken on arm64.
+> > 
+> > > (It would also make sense to change btrfs to test the crc32_optimization
+> > > flags itself, so that it doesn't have to use the weird hack of parsing
+> > > the driver name.  This change still makes sense either way though.)
+> > >
+> > 
+> > Indeed. That hack is very dubious and I'd be inclined just to ignore
+> > this. On x86 and arm64, it shouldn't make a difference, given that
+> > crc32-arch will be 'fast' in the vast majority of cases. On other
+> > architectures, btrfs may use the C implementation while assuming it is
+> > something faster, and if anyone actually notices the difference, we
+> > can work with the btrfs devs to do something more sensible here.
+> 
+> Yes, we probably could get away without this.  It's never really been
+> appropriate to use the crypto driver names for anything important.  And btrfs
+> probably should just assume CRC32C == fast unconditionally, like what it does
+> with xxHash64, or even do a quick benchmark to measure the actual speed of its
+> hash algorithm (which can also be sha256 or blake2b which can be very fast too).
+> 
+> Besides the btrfs case, my concern was there may be advice floating around about
+> checking /proc/crypto to check what optimized code is being used.  Having
+> crc32-$arch potentially be running the generic code would make that misleading.
+> It might make sense to keep it working similar to how it did before.
+> 
+> But I do agree that we could probably get away without this.
 
-On Fri, 2024-10-25 at 21:15 +0200, Armin Wolf wrote:
-> When support for Vivobook fan profiles was added, two mistakes where
-> made:
->=20
-> 1. throttle_thermal_policy_set_default() was not called anymore
-> during
-> probe.
->=20
-> 2. The new thermal profiles where used inconsistently.
->=20
-> This patch series aims to fix both issues. Compile-tested only.
->=20
-Thanks for these patches. The first one I already tested with the same
-change, for the second one added Casey to check if he can give a quick
-test for both on the new Asus Lunar Lake laptop.
+While testing this patchset I notice that none of the crypto API drivers for
+crc32 or crc32c even need to be loaded on my system anymore, as everything on my
+system that uses those algorithms (such as ext4) just uses the library APIs now.
+That makes the "check /proc/crypto" trick stop working anyway.
 
-Thanks,
-Srinivas
+I think you're right that we shouldn't bother with patches 3-4, and I'll plan to
+go back to leaving them out in the next version, unless someone yells.
 
-
-
-
-> Armin Wolf (2):
-> =C2=A0 platform/x86: asus-wmi: Fix thermal profile initialization
-> =C2=A0 platform/x86: asus-wmi: Fix inconsistent use of thermal policies
->=20
-> =C2=A0drivers/platform/x86/asus-wmi.c | 74 ++++++++++++++----------------=
--
-> --
-> =C2=A01 file changed, 31 insertions(+), 43 deletions(-)
->=20
-> --
-> 2.39.5
->=20
-
+- Eric
 
