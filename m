@@ -1,121 +1,204 @@
-Return-Path: <linux-kernel+bounces-383037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 043919B166B
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 11:09:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A2D2C9B166F
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 11:10:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 974511F2312D
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 09:09:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 296211F2230B
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 09:10:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58A451D2223;
-	Sat, 26 Oct 2024 09:08:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E21C1D043A;
+	Sat, 26 Oct 2024 09:09:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I7qMGoFg"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=fibocomcorp.onmicrosoft.com header.i=@fibocomcorp.onmicrosoft.com header.b="uoY8lkYQ"
+Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sg2apc01on2129.outbound.protection.outlook.com [40.107.215.129])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C604E1D0E28;
-	Sat, 26 Oct 2024 09:08:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729933737; cv=none; b=goocHch7RV7y0/jpEI0h8loPTYMOwJsKZuB9BHNaKTxOBYSyVBN0oS1jGfU5VitR5oP1zMXJJPbl2qLbDzMaUPicUOWN45oebAx6RprkrglAY+1O6/hK60Tkftd2gLsP4eyikGnVStY9mubiX5lDvV+HWs9Fag05tl3n45Odo48=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729933737; c=relaxed/simple;
-	bh=siH1oVdbLXkLgmnymW3nRJNjsOpI21J5yjja1M4RzDg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=C8aqJwZX7+BWx7uvqpN2jF/dmLOedh+bN9niiiRegrOJq1eQzKX8onrNj3EWKHEtR4MLJWoPH2OKHEAxTa1nNswlL1VrpQB1dxfZK+K7E4kDnLyLkJMcH6tAoa9GPRO/uCA7cE/7xwn3Se/bcr75r8Q38pmnQef4C8Bfrr4c0N4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I7qMGoFg; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5c94a7239cfso1522141a12.3;
-        Sat, 26 Oct 2024 02:08:55 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 702B91C2309;
+	Sat, 26 Oct 2024 09:09:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.129
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729933793; cv=fail; b=Xt23fduCWyuH71lbkfbJHnCtPbhqIQpgWD0az/yh7F/dGMBRjIhGYVxpg46xjy5NW1dLUqJmq2uqaphHP9c1tlcGlGlqSZ3bb0u0gNU1wMHGlq4NfNXsCH10JvleBE2Ae2iL9ZAso/RWqkcGYbMNkTzA6+QkuVPNl5mdpUjnDHc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729933793; c=relaxed/simple;
+	bh=WcwIZGiM3sZTIBd5QeH+u5XtDhrnFximja7csjqJaMg=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=dgWGAXvhn1p9OewK47T7ragHqhDYuI+zZfLwMZ93Jka6wbn3xsykFODEvDKZPMHF0iklMw3vC9Km2xpmCbGvuZ1A81hI0sbImqpw+4j81VJo8UY1FRcPzOvnM8upUraelB2pg+M6G28h9KlX3XuD+/gGxsyBt33ZswWCIHCzLiY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fibocom.com; spf=pass smtp.mailfrom=fibocom.com; dkim=pass (1024-bit key) header.d=fibocomcorp.onmicrosoft.com header.i=@fibocomcorp.onmicrosoft.com header.b=uoY8lkYQ; arc=fail smtp.client-ip=40.107.215.129
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fibocom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fibocom.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=jF7kd59iZKLFlkPVt1VWmk2x1pxKlsQ6is2GizSQLRTlvF6yfQYz/aGllfHtpcySz9H8YtS9C+is0PeQoeLGLy+q7c+yaLdaaRDIWA9ElCSsNS6t+neGYiYo0EXMn/Xo4wErFFJC43tpV867yBjXTXDZXtnO7tDxZiLN+n2TgdA/TOQJ2Yn/MeZ0qUkvGJZp6rUTuH7r5XLLfJ6UOgMxy9BovaEbdg0tMBDueh9vJay76vAA+Kd/YV1KptWUBjh+1RAZyjRH/xkV24yxXmiGLxBf+8bCG6F3R2F9Dfrw1i+cgYgceSp5SLGi530pqeyxs7e+RyWIz3Cn+lQM0LLUjQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=lC3Prtefwqu3GALnMyzAl6bT9nFE4z17kD9iHSr/b7U=;
+ b=BmGI8oJFCuz2Sj9DGr70njwd5Yyji6AsLoSuey40WisBYD1QqDy5W19bv6eySgW/SZj30xDB52Z0v0hE2ORSQM3fxP0ieDNM4cDHOEC1Z6O2QCcMRqRUv0KTIsQqTOPsC2POPrzvuIx5o1exda9BD8wNQcmEa8S8DrUxKrTpDO9EDrx9Ee0GYEuz8UCbuWnIE0U+9uZ6Skiy4GBRgguddB+raqqpF+tmp0zu6PBLlLVnqCjQtnYaN/eCb3bwqzvktRLqooNWgGAC/4fbEzoQIZ9fLE2A8VEzh3n80HFCVUaEKbeR6WkUKZaZFnCu7qnAn3R8kN1GLMgcYmy1MDOo1w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=fibocom.com; dmarc=pass action=none header.from=fibocom.com;
+ dkim=pass header.d=fibocom.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729933734; x=1730538534; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jB7vnCcNMaJNbXRa9I5NK9mJ1CVmQDLVMtOS2h9/iKc=;
-        b=I7qMGoFgSze9KtBpSJM2V4Zn+BiLTIu2OWNx+Ybxiy7Y3rEpnkDRjSleZpKZP224cr
-         w/tQ/7Yf0u+m1xZqxC9ankaC9g/EQnUvCx3O7h1xo7lS0y/ZXFdEJmfvXsNwt7Y1WJX4
-         h0OO7gOcl8vUU1h5u6SjFEwIR4xM5euiJl7w6NhnAYX4BgYZ245lnZh+tU7o8YWgCUys
-         RM2Dl7fzoWh2oZbA7fUjFNYzaR6ZkzIRbLBRfsAEvXPvq+DFX/s7fOFBCO2o9R48BEfk
-         E3xuJosuJTMFgsJs0jSMnrCXn3xUUpAEVwfHN8Qb1jHDJCf07UxQget5IQ+6Fk2RNkqc
-         020g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729933734; x=1730538534;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jB7vnCcNMaJNbXRa9I5NK9mJ1CVmQDLVMtOS2h9/iKc=;
-        b=gTxlpiGDIiJUF0Ih4jLqInszYgrEyJd+ViK0xFiHcaX/CKU5GkOz4S5R4xpqTQCNbq
-         6ymuWURTMpH9daNEEmQ57YJkn+BtH0GdVFPsRFKskTloh5lqsY2HHkz4xJm/Qw9J2T4C
-         HE2hCagFsKzuZKN4dhTFbIw9/mzDRpS3l0k5eq2RW1DThVFuGQALK8jKGobG50KZaCfo
-         M96HSz7BctXZlxOcyxWOMsCd5qt2h+7BKN0dfxrZL6uIv/AOJaj4GskrZGMHiuZujNz8
-         gwj4YvGzf4bud58UQCt59mbNY6ioDR3F2vLB80Pt6PQahzXfM4fkoLG4KGDGdzb3HlpH
-         xpvw==
-X-Forwarded-Encrypted: i=1; AJvYcCVaCwz8cSkmTAM/fBaDLaYYPhQrnRJm3+aIS5os000myp0YddS6JSM55bVyOhPHldfp9xOQm2Ea7TbQ@vger.kernel.org, AJvYcCWnc2W8sKp3ZOydeSbreXkTwNGoPbWHvsoGzkhl5sdJmbckQlY895epMSZ7/3eQDodJfudQDWFci9WYRPCn@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLX76I6443jcplSC+waxgzVFzXOFPvJTtY9fra/rjvHrMwCCO7
-	UHEKz4iS/QB14FGm/k3TvjmuQIMAuMRcH3oWPldbat0RQB5gDIqZ
-X-Google-Smtp-Source: AGHT+IFWVU8c+fv5gqRDDfXq8/nib0Ts9tpQk7jPjW2VInM+Vb2Ynkzlp9BPxGOyNu1o7twLach4Fw==
-X-Received: by 2002:a05:6402:3214:b0:5cb:ad98:7ad8 with SMTP id 4fb4d7f45d1cf-5cbbf8dcfc8mr2190124a12.19.1729933733657;
-        Sat, 26 Oct 2024 02:08:53 -0700 (PDT)
-Received: from localhost (89-73-120-30.dynamic.chello.pl. [89.73.120.30])
-        by smtp.gmail.com with UTF8SMTPSA id 4fb4d7f45d1cf-5cbb62bf52fsm1342351a12.40.2024.10.26.02.08.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 26 Oct 2024 02:08:53 -0700 (PDT)
-From: Patryk Biel <pbiel7@gmail.com>
-Date: Sat, 26 Oct 2024 11:08:45 +0200
-Subject: [PATCH 2/2] dt-bindings: hwmon: Add ltc2971 bindings
+ d=fibocomcorp.onmicrosoft.com; s=selector1-fibocomcorp-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=lC3Prtefwqu3GALnMyzAl6bT9nFE4z17kD9iHSr/b7U=;
+ b=uoY8lkYQVK6rCkznLj4pZPX5X9BnFnUMQISMJuWNOlO+lggbqpWieXDaLx9mbVXW5stIxTUvYkBCOunr8mnc6Arj+nNgNdnvpTDrCMHS+mGASnEXdn2+Si76jDufXeGS2AegQJHPivBu/Pswp0vaZ81dNrz3Aep8AXHMMg7woPw=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=fibocom.com;
+Received: from TY0PR02MB5766.apcprd02.prod.outlook.com (2603:1096:400:1b5::6)
+ by SEZPR02MB5864.apcprd02.prod.outlook.com (2603:1096:101:73::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.16; Sat, 26 Oct
+ 2024 09:09:42 +0000
+Received: from TY0PR02MB5766.apcprd02.prod.outlook.com
+ ([fe80::f53d:47b:3b04:9a8b]) by TY0PR02MB5766.apcprd02.prod.outlook.com
+ ([fe80::f53d:47b:3b04:9a8b%4]) with mapi id 15.20.8093.018; Sat, 26 Oct 2024
+ 09:09:42 +0000
+From: Jinjian Song <jinjian.song@fibocom.com>
+To: chandrashekar.devegowda@intel.com,
+	chiranjeevi.rapolu@linux.intel.com,
+	haijun.liu@mediatek.com,
+	m.chetan.kumar@linux.intel.com,
+	ricardo.martinez@linux.intel.com,
+	loic.poulain@linaro.org,
+	ryazanov.s.a@gmail.com,
+	johannes@sipsolutions.net,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	angelogioacchino.delregno@collabora.com,
+	linux-arm-kernel@lists.infradead.org,
+	matthias.bgg@gmail.com,
+	corbet@lwn.net,
+	linux-mediatek@lists.infradead.org,
+	helgaas@kernel.org,
+	danielwinkler@google.com,
+	korneld@google.com,
+	andrew+netdev@lunn.ch,
+	horms@kernel.org,
+	Jinjian Song <jinjian.song@fibocom.com>
+Subject: [net-next v7 0/2] net: wwan: t7xx: Add t7xx debug port
+Date: Sat, 26 Oct 2024 17:09:19 +0800
+Message-Id: <20241026090921.8008-1-jinjian.song@fibocom.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG2PR04CA0186.apcprd04.prod.outlook.com
+ (2603:1096:4:14::24) To TY0PR02MB5766.apcprd02.prod.outlook.com
+ (2603:1096:400:1b5::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241026-add-ltc2971-v1-2-109ec21687bc@gmail.com>
-References: <20241026-add-ltc2971-v1-0-109ec21687bc@gmail.com>
-In-Reply-To: <20241026-add-ltc2971-v1-0-109ec21687bc@gmail.com>
-To: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Frank Li <Frank.Li@nxp.com>
-Cc: linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, Patryk Biel <pbiel7@gmail.com>
-X-Mailer: b4 0.14.2
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TY0PR02MB5766:EE_|SEZPR02MB5864:EE_
+X-MS-Office365-Filtering-Correlation-Id: bcbf2b85-6f80-4753-9975-08dcf59ded2d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|376014|7416014|52116014|38350700014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?EfusXeaHVghQQw6S2YIx1cZwnS94B4txKqThuGmZpv9f+1PmpdKQG04d+s+z?=
+ =?us-ascii?Q?VO3KM5xE4eH6LPxcMCMPpodNTvxdf5k1ZC6Fz17kX2LhR1qGF6phhdQ9kLTG?=
+ =?us-ascii?Q?z6kP/urRzkVhpCcuRiupglZwfQ3ncF2NfQ1P4P9V/eNrqdhynkC2+ckZOHZP?=
+ =?us-ascii?Q?aCqFQiohAhQYZs7kW+/r1lzlz/O3a73ofsexZEEvgkU59lV/q6WZukFGXJmc?=
+ =?us-ascii?Q?N2eKnttKdFHZOi/DGhxUf8DDypIZP2sYpwgd2G65Jdc3yOmrLxGHV3pbfUjq?=
+ =?us-ascii?Q?uUxtQUJ1A6vBWgwAfIKcNjXnlALKRgSkromhEJwSZKwTRZ1LSiT8zrKuNFTV?=
+ =?us-ascii?Q?7cmfkf+hIJ2NcMbV596LPZCineNU4jrxyWdpHDgdBtN5Ore3mPTLWYRqUB3A?=
+ =?us-ascii?Q?CNgzsIrUWzl3c/A6Da24Mgexzn5vGdCb+q0dGsV8SepNZ5foNolYBAjz8fxC?=
+ =?us-ascii?Q?OY7JzdTvJ9l+BKggsISEOotyFMxRhBN/VZKkcb019bs6szwt9SF3l8Iztk0n?=
+ =?us-ascii?Q?VgLAmOA8OP+FyCW2dqVMpYFaGwIjw0wXnxTZNAbVAdJDAKTqP0q5nF9jGhVH?=
+ =?us-ascii?Q?qTyay3eJTnGixCwPPsHlW8DtjMlSFtOHoqPeyoDsoi6HEGFLARE2oxMaQsOm?=
+ =?us-ascii?Q?vc6x6WONZ9ia9Tgo2Er9uGNzBgOAaqQOSDBsam2xCzrtEG9IuRZw/o7KhuEX?=
+ =?us-ascii?Q?az0THLxrhJRlHo5AlMMAlj7PjCZCmGhhfMj9xD5Zh9b3HyPFgRdZor0NlFQD?=
+ =?us-ascii?Q?lUaIjfqAJrfjwhbl4cgqiR8BDyFzN3depTWyvRccjE+7Qgeu527Qx/IUHbjh?=
+ =?us-ascii?Q?Bhtb0os8cCnBwDaUJDkJiyjSOauVEooL1d3SYtphKKJ7cv20Me9QMALw//jM?=
+ =?us-ascii?Q?dWfv/eBdRl+q3YGiyUhdy48ADeXJHQgIPjfqMadE7bnhQwmjCPa6BTxlzqAF?=
+ =?us-ascii?Q?tZE7mvm3PwUX9o/rAS/t4xOx0v7y3V9l3beUIENjItjxP4Y22u23MTDcKElR?=
+ =?us-ascii?Q?JlDl4TktEhGV5bVrLg3qNEEwRq0E11le3PsX9jU/1OYOT3xcBTU1ZCRE3j0C?=
+ =?us-ascii?Q?vgUFJHWOBygdM99JtNXj3i+nhfN8a1YLqgl4JI4iQRtE17Mp5GgXOLJbPO4s?=
+ =?us-ascii?Q?wDQFePvlRrqIjI5Z6Qm5W6BlZVFB8ODLmkI3pZ4KEBmg+CT1PHnjnpM5C6Sg?=
+ =?us-ascii?Q?Sb+PisrM3z7gR6r9eiiJ+KsUhLxM2OKCoeZ5Y4ZknnBDeRPMjXeoygwyy9Es?=
+ =?us-ascii?Q?ZUt2vnIklv3fP8ZoYGFeS4Ce45NSkMqajLA8QshVILOy+snV8PAYDDnJCXQm?=
+ =?us-ascii?Q?X27/PGJaMZAYF5JixO9XcQwH/5/jyuByj1iJtg28fnpONpW5TbDuYpTWxlXt?=
+ =?us-ascii?Q?l9Nycj35eAQgu5KEz/l8bSKoiTRT?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY0PR02MB5766.apcprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(52116014)(38350700014)(921020);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?BbUDO8WDyzWQ7dlc5O3EgMo3xH4GoqtoeyyU1u603SBbY1VCoQMD8UNgrf4j?=
+ =?us-ascii?Q?1bwOJR7uoDaQJ1DivCs8iHstUfcEPCIZttYhQR1HqWi/MBDw09G+qDCJmDiq?=
+ =?us-ascii?Q?ptkzuMElwm9HHk2zdJk3jO6ICzrxfpNZAEBplAjGrkT4jhK02QUkWPDvykq1?=
+ =?us-ascii?Q?umie8kiAwtwyEG3RxTdli7zMSbqv4qH/Ng4Tls2Z/cz6wdNLZwNGHRcjcpiF?=
+ =?us-ascii?Q?10ob6kMEDVej+RVFPjCsWDukLVdDHOIWVzz5oW4U2p7ZkGnxpPsPokf/ere1?=
+ =?us-ascii?Q?9wGJnWC7vS4JAsoIuiZHcZgvDzAlmFKb2Go9w0SzeaOcpaG7QgzTDlHb81K4?=
+ =?us-ascii?Q?LIVY3pDvxMRM8cXRvaP4W4PCEsJGns4zFbWkVDdPbh2wAKmHqu0K8CUqzaDD?=
+ =?us-ascii?Q?Ufat31Wg6LM5PkIK8WaVzQu0UYmiS1aEvMUmoDJideS0FcpNBLKoaz6Ay7b+?=
+ =?us-ascii?Q?LBInMPdmDrUwMkeRmXjMEn9URGwCu6srsJz394FVbZ3poFZRORyKX/GlnFyQ?=
+ =?us-ascii?Q?lcmOH7iYa+4njqdVxu1P4N/UAH/G0iS1r9H4Eu0xr72wWoOI06PuQgx9JLqw?=
+ =?us-ascii?Q?H+89P5Xo1OgfG9qXhegtzwylqJBTaBXQLHDj6eADpqcZ+CtWBJWkEFKDjll0?=
+ =?us-ascii?Q?XhgkvuiULW0zGlMZf2F1OGo3ddsib7KdA1afJSIT+k6tXNKohOjSXQ977p7J?=
+ =?us-ascii?Q?l+jkRQ+CuGg17eneifrJjkq7aomxZmMRYYHgds9OKBZ9At+QETvGbGpR5r3q?=
+ =?us-ascii?Q?zL98GO2pv3e4pVGTEfeaFEJ9ICG9xf4sIVHGU/qWtwO5mr6E8R8qPwVA3uPI?=
+ =?us-ascii?Q?jkTc3ojJQIIsZu6xN0pYxU4PhtNhGDWZjRUiPCDGfm+SXhN9yheftgn1vEec?=
+ =?us-ascii?Q?Q98z7N3oolya8nbWeCv4vL6QTG6EmyzAKpZ8/GORetYT6V7wGJRqv+xgTiap?=
+ =?us-ascii?Q?DMETnv2iHpuKG2N3xHCr6Fx8nkqScd25vAKfeS/K/4E072b+zdKRHBOZKcIX?=
+ =?us-ascii?Q?fVsBj6T8yVbsV2c0rxmSjU6jXMx/XrzrEpwzAcYdNyvBL1FJ9ij/Ti0GQyN/?=
+ =?us-ascii?Q?JX1qqjL4wj6vGe5x0FILGcwDRnFBZ0yq6em3PkSVigpr7+WsAace4issmxwP?=
+ =?us-ascii?Q?wxIExWIqtIaWP/dKdCKNdaOyQPpoE3XRaK8ec9B+O0g7o+P8oT2xAfwG4pNt?=
+ =?us-ascii?Q?QXGu5J7GlC+Ywxvwi5ijtVb8ixuXdxoAvomkwyjh7TGJNzet2V+pf10Psqgs?=
+ =?us-ascii?Q?5wvvZPNOxdx96wN4EKRJ8sBxI+93h9kgaypdKOuMhltigHXitc7td+/it1JU?=
+ =?us-ascii?Q?PjldHyfAbb4+KjRWa5CMQjkghTJtKOWsqGWYxlIKwoOS/nTXx9VMf8PGT5xE?=
+ =?us-ascii?Q?ATU7Y2u+8YCqcmOBmAnTK+A+yKTeVToXhUxJlHZ6peItNaq6saSkFji1yPYG?=
+ =?us-ascii?Q?jYUxkHHrBmYqkPCMQbtpW0nyHPZtAWLq4PWwH5lnhwpCSeMWBuRJcCgryWvJ?=
+ =?us-ascii?Q?yUyKgJ2ytzJ5DzCggzzokDt9Fc+fz/kfDawlQZnXhd/bYtLRziTh1Loh34JG?=
+ =?us-ascii?Q?dHrz5tikbKqDqB/cvaptcg1EoQdrpQChBUhw/vHMREo8Wvzc/vCNlk61Op/B?=
+ =?us-ascii?Q?5A=3D=3D?=
+X-OriginatorOrg: fibocom.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bcbf2b85-6f80-4753-9975-08dcf59ded2d
+X-MS-Exchange-CrossTenant-AuthSource: TY0PR02MB5766.apcprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Oct 2024 09:09:42.1947
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 889bfe61-8c21-436b-bc07-3908050c8236
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 7EP5ZlgWDoFWX2vWMmWVjjblGLTFn5qy6ZOyWgyOj1IcBEo+giJdmlhTzrotOysYJCgfaxB9otYjmGM+Sf10FPURW3b3gmhcF5Du7XXc9Wk=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR02MB5864
 
-Add device-tree bindings and documentation for LTC2971.
+Add support for t7xx WWAN device to debug by ADB (Android Debug Bridge)
+port and MTK MIPCi (Modem Information Process Center) port.
 
-Signed-off-by: Patryk Biel <pbiel7@gmail.com>
----
- Documentation/devicetree/bindings/hwmon/lltc,ltc2978.yaml | 2 ++
- 1 file changed, 2 insertions(+)
+Application can use ADB (Android Debug Bridge) port to implement
+functions (shell, pull, push ...) by ADB protocol commands.
 
-diff --git a/Documentation/devicetree/bindings/hwmon/lltc,ltc2978.yaml b/Documentation/devicetree/bindings/hwmon/lltc,ltc2978.yaml
-index 1f98da32f3feb9899ccdcc15e70ce275a74c63c3..dc3d19a383e8098516d6d2e6ff50f52883c4b8cf 100644
---- a/Documentation/devicetree/bindings/hwmon/lltc,ltc2978.yaml
-+++ b/Documentation/devicetree/bindings/hwmon/lltc,ltc2978.yaml
-@@ -12,6 +12,7 @@ maintainers:
- properties:
-   compatible:
-     enum:
-+      - lltc,ltc2971
-       - lltc,ltc2972
-       - lltc,ltc2974
-       - lltc,ltc2975
-@@ -45,6 +46,7 @@ properties:
-     description: |
-       list of regulators provided by this controller.
-       Valid names of regulators depend on number of supplies supported per device:
-+      * ltc2971 vout0 - vout1
-       * ltc2972 vout0 - vout1
-       * ltc2974, ltc2975 : vout0 - vout3
-       * ltc2977, ltc2979, ltc2980, ltm2987 : vout0 - vout7
+Application can use MIPC (Modem Information Process Center) port
+to debug antenna tuner or noise profiling through this MTK modem
+diagnostic interface.
+
+Jinjian Song (2):
+  wwan: core: Add WWAN ADB and MIPC port type
+  net: wwan: t7xx: Add debug port
+
+ .../networking/device_drivers/wwan/t7xx.rst   | 64 +++++++++++++++---
+ drivers/net/wwan/t7xx/t7xx_pci.c              | 67 +++++++++++++++++--
+ drivers/net/wwan/t7xx/t7xx_pci.h              |  7 ++
+ drivers/net/wwan/t7xx/t7xx_port.h             |  3 +
+ drivers/net/wwan/t7xx/t7xx_port_proxy.c       | 44 +++++++++++-
+ drivers/net/wwan/t7xx/t7xx_port_proxy.h       |  1 +
+ drivers/net/wwan/t7xx/t7xx_port_wwan.c        |  8 ++-
+ drivers/net/wwan/wwan_core.c                  |  8 +++
+ include/linux/wwan.h                          |  4 ++
+ 9 files changed, 188 insertions(+), 18 deletions(-)
 
 -- 
-2.43.0
+2.34.1
 
 
