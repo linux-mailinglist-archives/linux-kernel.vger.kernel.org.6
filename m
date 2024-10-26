@@ -1,238 +1,179 @@
-Return-Path: <linux-kernel+bounces-383185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6F559B1834
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 14:46:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B7B79B1838
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 14:54:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABBF728428A
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 12:46:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 869D4B22010
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 12:54:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 882A91D618E;
-	Sat, 26 Oct 2024 12:46:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56BE81D63EF;
+	Sat, 26 Oct 2024 12:54:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HlMHtpqF"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VJzMvpUw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B13218800D;
-	Sat, 26 Oct 2024 12:46:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95CF718800D;
+	Sat, 26 Oct 2024 12:54:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729946769; cv=none; b=sDhZd+k2UZgtf0BSZlignx9VI5/2CEmF5ckKrYEayJ/CyyxPLCYdXSVO65L5h9+BRuctRt6VirxhzeFM7tE+zjFVBI2pVGUdstsibdAFDRKkxGUf41+VlU6vulWOr3DeX7b0IWzZyfa5s9Fni1hqiYUpx15r0W/7creGYqZCidA=
+	t=1729947244; cv=none; b=M+WYCKdvXd5L+fHAZ9tebllKTmyfX5O9scMqVja8sL+kO7Y9nhiFA8J27FBBzToHS9h3QKn7uj1lxPjdkZYQg14FzwDswYqjzMP/yHoIw+Y7loc9bpyNZx8hjASB0ox+ontHr2F5AGZCaof41InqPUZv2OniRSbQMeZ1dBIyFWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729946769; c=relaxed/simple;
-	bh=Ir8FkLHslMuuyZwduZxcZ09RxlFF0QcVt/0ML1tcSSw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q0KkJcnjHa+Mbax50tUUS2eyHHmHImsR0wZkgwsTVtySNrLegwausd8wxzhmktWKmPYn1uLpJOjiNekKc1F9p+kMdIlwe8N+2OxAU0rLjcWpus64WCAI/heofJYqmwkIEUlzQ+y+99FXncfbedA6UCftkyxPQkQKTWxNhk/fyqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HlMHtpqF; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729946767; x=1761482767;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Ir8FkLHslMuuyZwduZxcZ09RxlFF0QcVt/0ML1tcSSw=;
-  b=HlMHtpqFLwt6e5ZWfxn+QH2WpFirYi1P+0Li3exf9j1tPdLKveE4SPov
-   suSbMcLKZHddzSar+rpXQGYXkw7pdmJRsZf5Pk9WYioSLWQrsAa3+0oo9
-   1iBFH39G8n7v3M2d8z/UzLgbIXJhAsyN19CtQhNqkvFLXaPEUPLlmsWvV
-   NoBLBFb64nGO88eKOtp3lIiyeG7VakZ4EbQC2etTxRraERbZ/BtmZg1e4
-   ZNdl46pg5ppVoDsFcBCTm98cSiLQGgUdLmbzFdeeEEYv7JyVyriaRn8Sd
-   PcMFQHkRSb6TgmP1tR58ePZfJaOoWLgsBPUBif5u7NneZn2VOlbSjb5u/
-   Q==;
-X-CSE-ConnectionGUID: BYK1S73LR4mIYGxs8GHGLg==
-X-CSE-MsgGUID: VhOJIHZhSrOQEfOljF0zbg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="40707432"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="40707432"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Oct 2024 05:46:07 -0700
-X-CSE-ConnectionGUID: 9HSKHftfRgSHktAkkf+4bQ==
-X-CSE-MsgGUID: ThDfStWoSiOeAgXlh2HKYg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,235,1725346800"; 
-   d="scan'208";a="82011344"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa008.jf.intel.com with ESMTP; 26 Oct 2024 05:46:02 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t4gB6-000Zem-1Y;
-	Sat, 26 Oct 2024 12:46:00 +0000
-Date: Sat, 26 Oct 2024 20:45:42 +0800
-From: kernel test robot <lkp@intel.com>
-To: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Jens Wiklander <jens.wiklander@linaro.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	op-tee@lists.trustedfirmware.org, devicetree@vger.kernel.org,
-	Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-Subject: Re: [PATCH v12 7/7] remoteproc: stm32: Add support of an OP-TEE TA
- to load the firmware
-Message-ID: <202410262040.PWNrKv2Q-lkp@intel.com>
-References: <20241025205924.2087768-8-arnaud.pouliquen@foss.st.com>
+	s=arc-20240116; t=1729947244; c=relaxed/simple;
+	bh=EXe3LG6/pgVGkYVneepsqC/jPnGrbyEGJMRy6FLBnrg=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Hjhtv+q1UKZ4ZuJ1m7vX/Ey1mfcZ1xqz8OBVUFGDkWG6FcNVUhapGQN1LMkaPBGQa5E7zu0ztn5qv4Ph/JMZLvdVnQs6LZ3s5hipiJfqDInA0PDqP9idkR5sK2KkOdNgfEekvnNaLot/L88X1+9qouDUckZrFuvCASX/avV69uk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VJzMvpUw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF472C4CEC7;
+	Sat, 26 Oct 2024 12:54:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729947244;
+	bh=EXe3LG6/pgVGkYVneepsqC/jPnGrbyEGJMRy6FLBnrg=;
+	h=From:To:Subject:Date:From;
+	b=VJzMvpUw5p+Pfk6FZTcwH4s21IH3U/tn2NwTHKD57f3knaSyZJgDLe5xebknPFpkr
+	 iDECD+oLZSfgLJfqFeIVo2z5K7czic1golEJ9JxidaHdZT9Awn6rLPMzwccR2QFgcK
+	 d26Ml5B5b+389Tuff1BQwDSw9tMZi2iJ2O8jegeNrl8P5Gd/0GYCVs/ngPcLpKW6sH
+	 xjrUB+F2KhjFdeR8rDGQgi882G4NIrlIrAe17WDwtHVc7vLlL3digfoQxAfNKc2dee
+	 kIOI2WqnuNS+Mzxe1T5/geKKG1oq3XfefVNjw3dp8Cn8+IZz1EhCLfz7YwJV96ND50
+	 /oj6385dkkz3w==
+From: Puranjay Mohan <puranjay@kernel.org>
+To: Albert Ou <aou@eecs.berkeley.edu>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	bpf@vger.kernel.org,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Hao Luo <haoluo@google.com>,
+	Helge Deller <deller@gmx.de>,
+	Jakub Kicinski <kuba@kernel.org>,
+	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	linux-parisc@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Mykola Lysenko <mykolal@fb.com>,
+	netdev@vger.kernel.org,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Puranjay Mohan <puranjay12@gmail.com>,
+	Puranjay Mohan <puranjay@kernel.org>,
+	Shuah Khan <shuah@kernel.org>,
+	Song Liu <song@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Yonghong Song <yonghong.song@linux.dev>
+Subject: [PATCH bpf-next v3 0/4] Optimize bpf_csum_diff() and homogenize for all archs
+Date: Sat, 26 Oct 2024 12:53:35 +0000
+Message-Id: <20241026125339.26459-1-puranjay@kernel.org>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241025205924.2087768-8-arnaud.pouliquen@foss.st.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Arnaud,
+Changes in v3:
+v2: https://lore.kernel.org/all/20241023153922.86909-1-puranjay@kernel.org/
+- Fix sparse warning in patch 2
 
-kernel test robot noticed the following build warnings:
+Changes in v2:
+v1: https://lore.kernel.org/all/20241021122112.101513-1-puranjay@kernel.org/
+- Remove the patch that adds the benchmark as it is not useful enough to be
+  added to the tree.
+- Fixed a sparse warning in patch 1.
+- Add reviewed-by and acked-by tags.
 
-[auto build test WARNING on 42f7652d3eb527d03665b09edac47f85fb600924]
+NOTE: There are some sparse warning in net/core/filter.c but those are not
+worth fixing because bpf helpers take and return u64 values and using them
+in csum related functions that take and return __sum16 / __wsum would need
+a lot of casts everywhere.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Arnaud-Pouliquen/remoteproc-core-Introduce-rproc_pa_to_va-helper/20241026-050443
-base:   42f7652d3eb527d03665b09edac47f85fb600924
-patch link:    https://lore.kernel.org/r/20241025205924.2087768-8-arnaud.pouliquen%40foss.st.com
-patch subject: [PATCH v12 7/7] remoteproc: stm32: Add support of an OP-TEE TA to load the firmware
-config: alpha-allyesconfig (https://download.01.org/0day-ci/archive/20241026/202410262040.PWNrKv2Q-lkp@intel.com/config)
-compiler: alpha-linux-gcc (GCC) 13.3.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241026/202410262040.PWNrKv2Q-lkp@intel.com/reproduce)
+The bpf_csum_diff() helper currently returns different values on different
+architectures because it calls csum_partial() that is either implemented by
+the architecture like x86_64, arm, etc or uses the generic implementation
+in lib/checksum.c like arm64, riscv, etc.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410262040.PWNrKv2Q-lkp@intel.com/
+The implementation in lib/checksum.c returns the folded result that is
+16-bit long, but the architecture specific implementation can return an
+unfolded value that is larger than 16-bits.
 
-All warnings (new ones prefixed by >>):
+The helper uses a per-cpu scratchpad buffer for copying the data and then
+computing the csum on this buffer. This can be optimised by utilising some
+mathematical properties of csum.
 
-   drivers/remoteproc/stm32_rproc.c: In function 'stm32_rproc_probe':
->> drivers/remoteproc/stm32_rproc.c:904:21: warning: assignment to 'int' from 'struct rproc_tee *' makes integer from pointer without a cast [-Wint-conversion]
-     904 |                 ret = rproc_tee_register(dev, rproc, proc_id);
-         |                     ^
-   drivers/remoteproc/stm32_rproc.c:963:30: error: passing argument 1 of 'rproc_tee_unregister' from incompatible pointer type [-Werror=incompatible-pointer-types]
-     963 |         rproc_tee_unregister(rproc);
-         |                              ^~~~~
-         |                              |
-         |                              struct rproc *
-   In file included from drivers/remoteproc/stm32_rproc.c:21:
-   include/linux/remoteproc_tee.h:59:58: note: expected 'struct rproc_tee *' but argument is of type 'struct rproc *'
-      59 | static inline int rproc_tee_unregister(struct rproc_tee *trproc)
-         |                                        ~~~~~~~~~~~~~~~~~~^~~~~~
-   drivers/remoteproc/stm32_rproc.c: In function 'stm32_rproc_remove':
-   drivers/remoteproc/stm32_rproc.c:986:30: error: passing argument 1 of 'rproc_tee_unregister' from incompatible pointer type [-Werror=incompatible-pointer-types]
-     986 |         rproc_tee_unregister(rproc);
-         |                              ^~~~~
-         |                              |
-         |                              struct rproc *
-   include/linux/remoteproc_tee.h:59:58: note: expected 'struct rproc_tee *' but argument is of type 'struct rproc *'
-      59 | static inline int rproc_tee_unregister(struct rproc_tee *trproc)
-         |                                        ~~~~~~~~~~~~~~~~~~^~~~~~
-   cc1: some warnings being treated as errors
+The patch 1 in this series does preparatory work for homogenizing the
+helper. patch 2 does the changes to the helper itself. The performance gain
+can be seen in the tables below that are generated using the benchmark
+built in patch 4 of v1 of this series:
 
+  x86-64:
+  +-------------+------------------+------------------+-------------+
+  | Buffer Size |      Before      |      After       | Improvement |
+  +-------------+------------------+------------------+-------------+
+  |      4      | 2.296 ± 0.066M/s | 3.415 ± 0.001M/s |   48.73  %  |
+  |      8      | 2.320 ± 0.003M/s | 3.409 ± 0.003M/s |   46.93  %  |
+  |      16     | 2.315 ± 0.001M/s | 3.414 ± 0.003M/s |   47.47  %  |
+  |      20     | 2.318 ± 0.001M/s | 3.416 ± 0.001M/s |   47.36  %  |
+  |      32     | 2.308 ± 0.003M/s | 3.413 ± 0.003M/s |   47.87  %  |
+  |      40     | 2.300 ± 0.029M/s | 3.413 ± 0.003M/s |   48.39  %  |
+  |      64     | 2.286 ± 0.001M/s | 3.410 ± 0.001M/s |   49.16  %  |
+  |      128    | 2.250 ± 0.001M/s | 3.404 ± 0.001M/s |   51.28  %  |
+  |      256    | 2.173 ± 0.001M/s | 3.383 ± 0.001M/s |   55.68  %  |
+  |      512    | 2.023 ± 0.055M/s | 3.340 ± 0.001M/s |   65.10  %  |
+  +-------------+------------------+------------------+-------------+
 
-vim +904 drivers/remoteproc/stm32_rproc.c
+  ARM64:
+  +-------------+------------------+------------------+-------------+
+  | Buffer Size |      Before      |      After       | Improvement |
+  +-------------+------------------+------------------+-------------+
+  |      4      | 1.397 ± 0.005M/s | 1.493 ± 0.005M/s |    6.87  %  |
+  |      8      | 1.402 ± 0.002M/s | 1.489 ± 0.002M/s |    6.20  %  |
+  |      16     | 1.391 ± 0.001M/s | 1.481 ± 0.001M/s |    6.47  %  |
+  |      20     | 1.379 ± 0.001M/s | 1.477 ± 0.001M/s |    7.10  %  |
+  |      32     | 1.358 ± 0.001M/s | 1.469 ± 0.002M/s |    8.17  %  |
+  |      40     | 1.339 ± 0.001M/s | 1.462 ± 0.002M/s |    9.18  %  |
+  |      64     | 1.302 ± 0.002M/s | 1.449 ± 0.003M/s |    11.29 %  |
+  |      128    | 1.214 ± 0.001M/s | 1.443 ± 0.003M/s |    18.86 %  |
+  |      256    | 1.080 ± 0.001M/s | 1.423 ± 0.001M/s |    31.75 %  |
+  |      512    | 0.887 ± 0.001M/s | 1.411 ± 0.002M/s |    59.07 %  |
+  +-------------+------------------+------------------+-------------+
 
-   874	
-   875	static int stm32_rproc_probe(struct platform_device *pdev)
-   876	{
-   877		struct device *dev = &pdev->dev;
-   878		struct stm32_rproc *ddata;
-   879		struct device_node *np = dev->of_node;
-   880		struct rproc *rproc;
-   881		unsigned int state;
-   882		u32 proc_id;
-   883		int ret;
-   884	
-   885		ret = dma_coerce_mask_and_coherent(dev, DMA_BIT_MASK(32));
-   886		if (ret)
-   887			return ret;
-   888	
-   889		if (of_device_is_compatible(np, "st,stm32mp1-m4-tee")) {
-   890			/*
-   891			 * Delegate the firmware management to the secure context.
-   892			 * The firmware loaded has to be signed.
-   893			 */
-   894			ret = of_property_read_u32(np, "st,proc-id", &proc_id);
-   895			if (ret) {
-   896				dev_err(dev, "failed to read st,rproc-id property\n");
-   897				return ret;
-   898			}
-   899	
-   900			rproc = devm_rproc_alloc(dev, np->name, &st_rproc_tee_ops, NULL, sizeof(*ddata));
-   901			if (!rproc)
-   902				return -ENOMEM;
-   903	
- > 904			ret = rproc_tee_register(dev, rproc, proc_id);
-   905			if (ret)
-   906				return dev_err_probe(dev, ret,  "signed firmware not supported by TEE\n");
-   907		} else {
-   908			rproc = devm_rproc_alloc(dev, np->name, &st_rproc_ops, NULL, sizeof(*ddata));
-   909			if (!rproc)
-   910				return -ENOMEM;
-   911		}
-   912	
-   913		ddata = rproc->priv;
-   914	
-   915		rproc_coredump_set_elf_info(rproc, ELFCLASS32, EM_NONE);
-   916	
-   917		ret = stm32_rproc_parse_dt(pdev, ddata, &rproc->auto_boot);
-   918		if (ret)
-   919			goto free_rproc;
-   920	
-   921		ret = stm32_rproc_of_memory_translations(pdev, ddata);
-   922		if (ret)
-   923			goto free_rproc;
-   924	
-   925		ret = stm32_rproc_get_m4_status(ddata, &state);
-   926		if (ret)
-   927			goto free_rproc;
-   928	
-   929		if (state == M4_STATE_CRUN)
-   930			rproc->state = RPROC_DETACHED;
-   931	
-   932		rproc->has_iommu = false;
-   933		ddata->workqueue = create_workqueue(dev_name(dev));
-   934		if (!ddata->workqueue) {
-   935			dev_err(dev, "cannot create workqueue\n");
-   936			ret = -ENOMEM;
-   937			goto free_resources;
-   938		}
-   939	
-   940		platform_set_drvdata(pdev, rproc);
-   941	
-   942		ret = stm32_rproc_request_mbox(rproc);
-   943		if (ret)
-   944			goto free_wkq;
-   945	
-   946		ret = rproc_add(rproc);
-   947		if (ret)
-   948			goto free_mb;
-   949	
-   950		return 0;
-   951	
-   952	free_mb:
-   953		stm32_rproc_free_mbox(rproc);
-   954	free_wkq:
-   955		destroy_workqueue(ddata->workqueue);
-   956	free_resources:
-   957		rproc_resource_cleanup(rproc);
-   958	free_rproc:
-   959		if (device_may_wakeup(dev)) {
-   960			dev_pm_clear_wake_irq(dev);
-   961			device_init_wakeup(dev, false);
-   962		}
-   963		rproc_tee_unregister(rproc);
-   964	
-   965		return ret;
-   966	}
-   967	
+Patch 3 reverts a hack that was done to make the selftest pass on all
+architectures.
+
+Patch 4 adds a selftest for this helper to verify the results produced by
+this helper in multiple modes and edge cases.
+
+Puranjay Mohan (4):
+  net: checksum: move from32to16() to generic header
+  bpf: bpf_csum_diff: optimize and homogenize for all archs
+  selftests/bpf: don't mask result of bpf_csum_diff() in test_verifier
+  selftests/bpf: Add a selftest for bpf_csum_diff()
+
+ arch/parisc/lib/checksum.c                    |  13 +-
+ include/net/checksum.h                        |   6 +
+ lib/checksum.c                                |  11 +-
+ net/core/filter.c                             |  39 +-
+ .../selftests/bpf/prog_tests/test_csum_diff.c | 408 ++++++++++++++++++
+ .../selftests/bpf/progs/csum_diff_test.c      |  42 ++
+ .../bpf/progs/verifier_array_access.c         |   3 +-
+ 7 files changed, 471 insertions(+), 51 deletions(-)
+ create mode 100644 tools/testing/selftests/bpf/prog_tests/test_csum_diff.c
+ create mode 100644 tools/testing/selftests/bpf/progs/csum_diff_test.c
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.40.1
+
 
