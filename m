@@ -1,325 +1,197 @@
-Return-Path: <linux-kernel+bounces-383349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A8169B1A6D
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 20:49:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7850F9B1A6F
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 20:51:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 200811F21E7A
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 18:49:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBD4D28287E
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 18:51:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 556161D6DB5;
-	Sat, 26 Oct 2024 18:49:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D38651D6DB6;
+	Sat, 26 Oct 2024 18:51:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DstOY00J"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=landley.net header.i=@landley.net header.b="jw2jl0pw"
+Received: from zebra.cherry.relay.mailchannels.net (zebra.cherry.relay.mailchannels.net [23.83.223.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F5A742AB1;
-	Sat, 26 Oct 2024 18:49:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729968565; cv=none; b=IWW2LaQcpcrQKufLs5++hggeTmphS1737+mCW8WzUdf8xwiYoXJ9+L/R4WvCRkXAihUnoVPfKmEvRU8RR7grgzb37Q/k+tGVQ4EuQgqsRyFgcQugPixHW1mZ9WeLePuE/e07wgzVCQ/zxIvl2hstpY6FsTIASwazKqyb+fR/y9U=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729968565; c=relaxed/simple;
-	bh=f227XmjmFRp2rdRZxT4QQtBDRnYffqNL5/dd1t92FFE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p3LFCykvjnG4HVB0bctMChpGkk8OwicR+EfPZX1yz+dTCsIdvlwUUzJXrJtmz9G8fvSwv1eyBGrt8YAPq39cZNvV7mORpjK/XZFIvFvTUTuwvq9CC8p9XFEl6EIQZnG5iNYgBH4Oe+EUV9my29jgoVgYgL7OymPHw7bq/mpTH7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DstOY00J; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729968561; x=1761504561;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=f227XmjmFRp2rdRZxT4QQtBDRnYffqNL5/dd1t92FFE=;
-  b=DstOY00Ju/dQfsxhwajzhAE3wf5QwAsvkzDqauRb1c/pgRjaA/tN/k6j
-   Iv+CGjwMvIvkBf/thQEchvyQP+Y9gy0E3nQXCNAB0ACil5hrAYTOW7jKy
-   +j/Y4exBR+g9V55CkcM8SE3xLcLpp+kmriVOSeuD5CzijPn5xIstwAzYg
-   zxNNuyEoYQms/ua1/fSzY1o3tOB/eJ/PJgVkHle9qEYn4pigHsaK8ydDe
-   y3jWyidmPOMwT1nnYb8jV+a8UvxVFZqijgvCPjS6YZZBJ8GkMLgk6mSMo
-   D+q71rxBsXVhaEmYLut8yKShm23HW1qtD6xYx3DWSvx9K7eitHJWKLhOD
-   A==;
-X-CSE-ConnectionGUID: 0qhbn8IJRcWDwLD5U5yRXw==
-X-CSE-MsgGUID: AP+rUEYtQPSsTad4ORB9IQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="29479230"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="29479230"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Oct 2024 11:49:21 -0700
-X-CSE-ConnectionGUID: lq2g8Zf2SIydrU+Rx2uB1g==
-X-CSE-MsgGUID: R/XJUF5yQeOKtMAlUYlplA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,235,1725346800"; 
-   d="scan'208";a="104545167"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa002.fm.intel.com with ESMTP; 26 Oct 2024 11:49:17 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t4lqd-000Zwg-0T;
-	Sat, 26 Oct 2024 18:49:15 +0000
-Date: Sun, 27 Oct 2024 02:49:08 +0800
-From: kernel test robot <lkp@intel.com>
-To: Antonio Quartulli <antonio@openvpn.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Shuah Khan <skhan@linuxfoundation.org>, sd@queasysnail.net,
-	ryazanov.s.a@gmail.com, Andrew Lunn <andrew@lunn.ch>
-Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH net-next v10 09/23] ovpn: implement basic RX path (UDP)
-Message-ID: <202410270433.eQTW7j8W-lkp@intel.com>
-References: <20241025-b4-ovpn-v10-9-b87530777be7@openvpn.net>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83A7213A86C;
+	Sat, 26 Oct 2024 18:51:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.223.195
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729968663; cv=pass; b=DxGn/AYAR4gUZ1PKXx//2MzoOp77KEaPdGbNMXCZlgzAektnbgUEQ7Z3pCTTsCIrXEta0oY05p2lks9uYWC8CfR8bubpKQm86qkQPAKSS0IoJZ45OMk6ZcEIFWuHdOkMg2r4QnQoH5hjv9pY70HhmjlFdbfedOW/WnCVt7rinFI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729968663; c=relaxed/simple;
+	bh=r2Kgzwh40ALEs5pjId9K+CrMliI1JPnSVZ0hm3hjH2U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aaRoUhTXvNYRdZpyK0uevM5dGm3O9d+Ir0osJhdGZK9jQo2x9VxfK5fgc+6RWGPqLIyQCtaFszYqzP2siYzUYe0Z2rmp8FYRLThcwxskuktmxF7JJ0ZuEOOYVH8aRRg6H29Gartvl6WvTBK4ya2eg+ApMyz5boZAjswnnQgOPg8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=landley.net; spf=pass smtp.mailfrom=landley.net; dkim=pass (2048-bit key) header.d=landley.net header.i=@landley.net header.b=jw2jl0pw; arc=pass smtp.client-ip=23.83.223.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=landley.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=landley.net
+X-Sender-Id: dreamhost|x-authsender|rob@landley.net
+Received: from relay.mailchannels.net (localhost [127.0.0.1])
+	by relay.mailchannels.net (Postfix) with ESMTP id C5F6682099B;
+	Sat, 26 Oct 2024 18:50:54 +0000 (UTC)
+Received: from pdx1-sub0-mail-a207.dreamhost.com (trex-9.trex.outbound.svc.cluster.local [100.103.140.206])
+	(Authenticated sender: dreamhost)
+	by relay.mailchannels.net (Postfix) with ESMTPA id 661748213C8;
+	Sat, 26 Oct 2024 18:50:54 +0000 (UTC)
+ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1729968654; a=rsa-sha256;
+	cv=none;
+	b=CmIDo8pKBo/bTqqW5EZ14qCWDJEwGDlDo73lyX73IM4H3vdFgmRzIv0BJ8jH3l0gDYpSbu
+	+v6FArOs8IPYScGGjNilqx8wT5k6IfKQ82COGGzNSf+Rg6b4dBF35KqY8anv2FY3L56qde
+	gdgDa68con58YVrAuFh/7+TbTlShM2hBHxW8yvQ4ThmaY40o1YA5y3Yo4wn4kWZBbH30cf
+	i3vYg3SzuEL8fDwqGvFB3mNQdtfopTv6oPJ3eu4L54oi/aqvk/L69cCIcqt67xkzVry86I
+	784bsrp/NZeLLdo85OXiHAyhOIrFRmub2mA45rtio1h5a9p6/B/DDfFN2NQHxw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=mailchannels.net;
+	s=arc-2022; t=1729968654;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:dkim-signature;
+	bh=ml8iaVUgncA8nQYmmhVgiYsM1Ph8DMykG1CIWh1XX0U=;
+	b=PINrw4soogQvE7v9EPA2Y1UEMHH5DvHljfASIpGG6AeLLN4dtKWNyfcoy1Ahf5l9UsDQzJ
+	EnPAOFzQmiamuyGAQLwTaZX0fhczlsX+omj+TFBX2y08nPqfrAcaNq5Dy4vy628TPLh+HX
+	hNwtNV3wwmfQa8mAEoVMJgvzTd63Xars2gykAaaHZ007JX+D0iZz6AiwGmX9AIH92b2xil
+	BJhPqX9yIo1o0X5UEhhnsh6dePPdsqMPJnm38h2lqS17XWm0ngkN3Y9Xm9Hww3Bkhb6QBP
+	37kJqI/AzsDx0C32giSFC/lhOMq3pfzasofNTm/AcPos1lWIhIZ0APrOpvlRuw==
+ARC-Authentication-Results: i=1;
+	rspamd-7fb5679c85-f69n9;
+	auth=pass smtp.auth=dreamhost smtp.mailfrom=rob@landley.net
+X-Sender-Id: dreamhost|x-authsender|rob@landley.net
+X-MC-Relay: Neutral
+X-MailChannels-SenderId: dreamhost|x-authsender|rob@landley.net
+X-MailChannels-Auth-Id: dreamhost
+X-White-Chief: 2416300111b17c2a_1729968654658_3139018223
+X-MC-Loop-Signature: 1729968654658:470921833
+X-MC-Ingress-Time: 1729968654658
+Received: from pdx1-sub0-mail-a207.dreamhost.com (pop.dreamhost.com
+ [64.90.62.162])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
+	by 100.103.140.206 (trex/7.0.2);
+	Sat, 26 Oct 2024 18:50:54 +0000
+Received: from [172.22.7.54] (unknown [198.232.126.195])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: rob@landley.net)
+	by pdx1-sub0-mail-a207.dreamhost.com (Postfix) with ESMTPSA id 4XbTHx6GQcz67;
+	Sat, 26 Oct 2024 11:50:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=landley.net;
+	s=dreamhost; t=1729968654;
+	bh=ml8iaVUgncA8nQYmmhVgiYsM1Ph8DMykG1CIWh1XX0U=;
+	h=Date:Subject:To:Cc:From:Content-Type:Content-Transfer-Encoding;
+	b=jw2jl0pwMsmtQJID69u/+XI6jj+L597xj17MzfxWONUvKeJQJNzPLBRVC8cSHzHZ2
+	 suZ3e9jigqapSjJqcKMA+wt8RbhQSG6AJE0vJBphmQ43G5bmwKf9QLISqKTYAF4EA9
+	 Vi86Lj4LcR1FkMdE88ocqPIxaCJY13AzVO4h+B+4qPVcBmwecpzlCXjWvKYtCefd1K
+	 ++k02l/gp0dm/ATchJoSqnO74hDjwZKt6QzlQvSkxUxcKpLQF0BpPsd5JV7a1cbTyv
+	 GyRSteq+KlerijSQQNs+mdpxkPwb8LloXJoauT+Uv9eFKOco072vH1HWUQvWutq3Io
+	 j7qjZTLriSQuw==
+Message-ID: <932f1203-ec01-4a58-9281-ef83e537d62c@landley.net>
+Date: Sat, 26 Oct 2024 13:50:52 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241025-b4-ovpn-v10-9-b87530777be7@openvpn.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: Boot-time initiative (SIG) thoughts and next steps
+To: Saravana Kannan <saravanak@google.com>, "Bird, Tim" <Tim.Bird@sony.com>
+Cc: "linux-embedded@vger.kernel.org" <linux-embedded@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <MW5PR13MB5632321E93B031C0E107DB38FD4F2@MW5PR13MB5632.namprd13.prod.outlook.com>
+ <CAGETcx_c2nfFQ++-FcsdUdLUo3e-oe07MkLgbuyrnq2FPrcsXQ@mail.gmail.com>
+Content-Language: en-US
+From: Rob Landley <rob@landley.net>
+In-Reply-To: <CAGETcx_c2nfFQ++-FcsdUdLUo3e-oe07MkLgbuyrnq2FPrcsXQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Antonio,
+On 10/26/24 02:36, Saravana Kannan wrote:
+> On Fri, Oct 25, 2024 at 11:18 AM Bird, Tim <Tim.Bird@sony.com> wrote:
+>>
+>> Hey Linux developers,
+>>
+>> The response to my request to form a Special Interest Group for boot-time reduction
+>> for Linux has been really great.  Many people contacted me by e-mail and on LinkedIn.
+> 
+> Hi Tim,
+> 
+> Thanks for organizing this and moving it forward! I'd be interested in
+> contributing to this effort as a lot of work I have done aligns with
+> the goals of this effort and boot time is of obvious value to Android.
 
-kernel test robot noticed the following build errors:
+I'm kind of an edge case for this project because my mkroot images at 
+https://landley.net/bin/mkroot/latest mostly boot up in a couple 
+seconds. (And faster if you feed in KARGS=quiet so the kernel boot 
+messages don't take time emitting and scrolling before interrupts have 
+been enabled. Although "quiet" doesn't seem to work in current vanilla 
+kernels...?)
 
-[auto build test ERROR on 03fc07a24735e0be8646563913abf5f5cb71ad19]
+The ones that _don't_ are generally because qemu's bios for that 
+platform twiddles its thumbs for a long time before launching the 
+kernel, although there are some slow drivers in there:
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Antonio-Quartulli/netlink-add-NLA_POLICY_MAX_LEN-macro/20241025-173611
-base:   03fc07a24735e0be8646563913abf5f5cb71ad19
-patch link:    https://lore.kernel.org/r/20241025-b4-ovpn-v10-9-b87530777be7%40openvpn.net
-patch subject: [PATCH net-next v10 09/23] ovpn: implement basic RX path (UDP)
-config: m68k-randconfig-r072-20241027 (https://download.01.org/0day-ci/archive/20241027/202410270433.eQTW7j8W-lkp@intel.com/config)
-compiler: m68k-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241027/202410270433.eQTW7j8W-lkp@intel.com/reproduce)
+$ for i in powerpc m68k i686 s390x; do (cd $i && echo $i && KARGS='quiet 
+HANDOFF=echo' bash -c 'time ./run-qemu.sh > /dev/null'); done
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410270433.eQTW7j8W-lkp@intel.com/
+powerpc
+real	0m6.154s
+user	0m3.689s
+sys	0m0.341s
 
-All errors (new ones prefixed by >>):
+m68k
+real	0m4.220s
+user	0m1.142s
+sys	0m0.212s
 
-   In file included from include/asm-generic/bug.h:5,
-                    from arch/m68k/include/asm/bug.h:32,
-                    from include/linux/bug.h:5,
-                    from include/linux/random.h:6,
-                    from include/linux/net.h:18,
-                    from drivers/net/ovpn/socket.c:10:
-   drivers/net/ovpn/socket.c: In function 'ovpn_from_udp_sock':
->> drivers/net/ovpn/socket.c:84:32: error: implicit declaration of function 'udp_sk' [-Wimplicit-function-declaration]
-      84 |         if (unlikely(READ_ONCE(udp_sk(sk)->encap_type) != UDP_ENCAP_OVPNINUDP))
-         |                                ^~~~~~
-   include/linux/compiler.h:77:45: note: in definition of macro 'unlikely'
-      77 | # define unlikely(x)    __builtin_expect(!!(x), 0)
-         |                                             ^
-   include/linux/compiler_types.h:505:9: note: in expansion of macro '__compiletime_assert'
-     505 |         __compiletime_assert(condition, msg, prefix, suffix)
-         |         ^~~~~~~~~~~~~~~~~~~~
-   include/linux/compiler_types.h:517:9: note: in expansion of macro '_compiletime_assert'
-     517 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
-         |         ^~~~~~~~~~~~~~~~~~~
-   include/asm-generic/rwonce.h:36:9: note: in expansion of macro 'compiletime_assert'
-      36 |         compiletime_assert(__native_word(t) || sizeof(t) == sizeof(long long),  \
-         |         ^~~~~~~~~~~~~~~~~~
-   include/asm-generic/rwonce.h:36:28: note: in expansion of macro '__native_word'
-      36 |         compiletime_assert(__native_word(t) || sizeof(t) == sizeof(long long),  \
-         |                            ^~~~~~~~~~~~~
-   include/asm-generic/rwonce.h:49:9: note: in expansion of macro 'compiletime_assert_rwonce_type'
-      49 |         compiletime_assert_rwonce_type(x);                              \
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/net/ovpn/socket.c:84:22: note: in expansion of macro 'READ_ONCE'
-      84 |         if (unlikely(READ_ONCE(udp_sk(sk)->encap_type) != UDP_ENCAP_OVPNINUDP))
-         |                      ^~~~~~~~~
->> drivers/net/ovpn/socket.c:84:42: error: invalid type argument of '->' (have 'int')
-      84 |         if (unlikely(READ_ONCE(udp_sk(sk)->encap_type) != UDP_ENCAP_OVPNINUDP))
-         |                                          ^~
-   include/linux/compiler.h:77:45: note: in definition of macro 'unlikely'
-      77 | # define unlikely(x)    __builtin_expect(!!(x), 0)
-         |                                             ^
-   include/linux/compiler_types.h:505:9: note: in expansion of macro '__compiletime_assert'
-     505 |         __compiletime_assert(condition, msg, prefix, suffix)
-         |         ^~~~~~~~~~~~~~~~~~~~
-   include/linux/compiler_types.h:517:9: note: in expansion of macro '_compiletime_assert'
-     517 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
-         |         ^~~~~~~~~~~~~~~~~~~
-   include/asm-generic/rwonce.h:36:9: note: in expansion of macro 'compiletime_assert'
-      36 |         compiletime_assert(__native_word(t) || sizeof(t) == sizeof(long long),  \
-         |         ^~~~~~~~~~~~~~~~~~
-   include/asm-generic/rwonce.h:36:28: note: in expansion of macro '__native_word'
-      36 |         compiletime_assert(__native_word(t) || sizeof(t) == sizeof(long long),  \
-         |                            ^~~~~~~~~~~~~
-   include/asm-generic/rwonce.h:49:9: note: in expansion of macro 'compiletime_assert_rwonce_type'
-      49 |         compiletime_assert_rwonce_type(x);                              \
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/net/ovpn/socket.c:84:22: note: in expansion of macro 'READ_ONCE'
-      84 |         if (unlikely(READ_ONCE(udp_sk(sk)->encap_type) != UDP_ENCAP_OVPNINUDP))
-         |                      ^~~~~~~~~
->> drivers/net/ovpn/socket.c:84:42: error: invalid type argument of '->' (have 'int')
-      84 |         if (unlikely(READ_ONCE(udp_sk(sk)->encap_type) != UDP_ENCAP_OVPNINUDP))
-         |                                          ^~
-   include/linux/compiler.h:77:45: note: in definition of macro 'unlikely'
-      77 | # define unlikely(x)    __builtin_expect(!!(x), 0)
-         |                                             ^
-   include/linux/compiler_types.h:505:9: note: in expansion of macro '__compiletime_assert'
-     505 |         __compiletime_assert(condition, msg, prefix, suffix)
-         |         ^~~~~~~~~~~~~~~~~~~~
-   include/linux/compiler_types.h:517:9: note: in expansion of macro '_compiletime_assert'
-     517 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
-         |         ^~~~~~~~~~~~~~~~~~~
-   include/asm-generic/rwonce.h:36:9: note: in expansion of macro 'compiletime_assert'
-      36 |         compiletime_assert(__native_word(t) || sizeof(t) == sizeof(long long),  \
-         |         ^~~~~~~~~~~~~~~~~~
-   include/asm-generic/rwonce.h:36:28: note: in expansion of macro '__native_word'
-      36 |         compiletime_assert(__native_word(t) || sizeof(t) == sizeof(long long),  \
-         |                            ^~~~~~~~~~~~~
-   include/asm-generic/rwonce.h:49:9: note: in expansion of macro 'compiletime_assert_rwonce_type'
-      49 |         compiletime_assert_rwonce_type(x);                              \
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/net/ovpn/socket.c:84:22: note: in expansion of macro 'READ_ONCE'
-      84 |         if (unlikely(READ_ONCE(udp_sk(sk)->encap_type) != UDP_ENCAP_OVPNINUDP))
-         |                      ^~~~~~~~~
->> drivers/net/ovpn/socket.c:84:42: error: invalid type argument of '->' (have 'int')
-      84 |         if (unlikely(READ_ONCE(udp_sk(sk)->encap_type) != UDP_ENCAP_OVPNINUDP))
-         |                                          ^~
-   include/linux/compiler.h:77:45: note: in definition of macro 'unlikely'
-      77 | # define unlikely(x)    __builtin_expect(!!(x), 0)
-         |                                             ^
-   include/linux/compiler_types.h:505:9: note: in expansion of macro '__compiletime_assert'
-     505 |         __compiletime_assert(condition, msg, prefix, suffix)
-         |         ^~~~~~~~~~~~~~~~~~~~
-   include/linux/compiler_types.h:517:9: note: in expansion of macro '_compiletime_assert'
-     517 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
-         |         ^~~~~~~~~~~~~~~~~~~
-   include/asm-generic/rwonce.h:36:9: note: in expansion of macro 'compiletime_assert'
-      36 |         compiletime_assert(__native_word(t) || sizeof(t) == sizeof(long long),  \
-         |         ^~~~~~~~~~~~~~~~~~
-   include/asm-generic/rwonce.h:36:28: note: in expansion of macro '__native_word'
-      36 |         compiletime_assert(__native_word(t) || sizeof(t) == sizeof(long long),  \
-         |                            ^~~~~~~~~~~~~
-   include/asm-generic/rwonce.h:49:9: note: in expansion of macro 'compiletime_assert_rwonce_type'
-      49 |         compiletime_assert_rwonce_type(x);                              \
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/net/ovpn/socket.c:84:22: note: in expansion of macro 'READ_ONCE'
-      84 |         if (unlikely(READ_ONCE(udp_sk(sk)->encap_type) != UDP_ENCAP_OVPNINUDP))
-         |                      ^~~~~~~~~
->> drivers/net/ovpn/socket.c:84:42: error: invalid type argument of '->' (have 'int')
-      84 |         if (unlikely(READ_ONCE(udp_sk(sk)->encap_type) != UDP_ENCAP_OVPNINUDP))
-         |                                          ^~
-   include/linux/compiler.h:77:45: note: in definition of macro 'unlikely'
-      77 | # define unlikely(x)    __builtin_expect(!!(x), 0)
-         |                                             ^
-   include/linux/compiler_types.h:505:9: note: in expansion of macro '__compiletime_assert'
-     505 |         __compiletime_assert(condition, msg, prefix, suffix)
-         |         ^~~~~~~~~~~~~~~~~~~~
-   include/linux/compiler_types.h:517:9: note: in expansion of macro '_compiletime_assert'
-     517 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
-         |         ^~~~~~~~~~~~~~~~~~~
-   include/asm-generic/rwonce.h:36:9: note: in expansion of macro 'compiletime_assert'
-      36 |         compiletime_assert(__native_word(t) || sizeof(t) == sizeof(long long),  \
-         |         ^~~~~~~~~~~~~~~~~~
-   include/asm-generic/rwonce.h:36:28: note: in expansion of macro '__native_word'
-      36 |         compiletime_assert(__native_word(t) || sizeof(t) == sizeof(long long),  \
-         |                            ^~~~~~~~~~~~~
-   include/asm-generic/rwonce.h:49:9: note: in expansion of macro 'compiletime_assert_rwonce_type'
-      49 |         compiletime_assert_rwonce_type(x);                              \
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/net/ovpn/socket.c:84:22: note: in expansion of macro 'READ_ONCE'
-      84 |         if (unlikely(READ_ONCE(udp_sk(sk)->encap_type) != UDP_ENCAP_OVPNINUDP))
-         |                      ^~~~~~~~~
->> drivers/net/ovpn/socket.c:84:42: error: invalid type argument of '->' (have 'int')
-      84 |         if (unlikely(READ_ONCE(udp_sk(sk)->encap_type) != UDP_ENCAP_OVPNINUDP))
-         |                                          ^~
-   include/linux/compiler.h:77:45: note: in definition of macro 'unlikely'
-      77 | # define unlikely(x)    __builtin_expect(!!(x), 0)
-         |                                             ^
-   include/linux/compiler_types.h:505:9: note: in expansion of macro '__compiletime_assert'
-     505 |         __compiletime_assert(condition, msg, prefix, suffix)
-         |         ^~~~~~~~~~~~~~~~~~~~
-   include/linux/compiler_types.h:517:9: note: in expansion of macro '_compiletime_assert'
-     517 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
-         |         ^~~~~~~~~~~~~~~~~~~
-   include/asm-generic/rwonce.h:36:9: note: in expansion of macro 'compiletime_assert'
-      36 |         compiletime_assert(__native_word(t) || sizeof(t) == sizeof(long long),  \
-         |         ^~~~~~~~~~~~~~~~~~
-   include/asm-generic/rwonce.h:49:9: note: in expansion of macro 'compiletime_assert_rwonce_type'
-      49 |         compiletime_assert_rwonce_type(x);                              \
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/net/ovpn/socket.c:84:22: note: in expansion of macro 'READ_ONCE'
-      84 |         if (unlikely(READ_ONCE(udp_sk(sk)->encap_type) != UDP_ENCAP_OVPNINUDP))
-         |                      ^~~~~~~~~
->> drivers/net/ovpn/socket.c:84:42: error: invalid type argument of '->' (have 'int')
-      84 |         if (unlikely(READ_ONCE(udp_sk(sk)->encap_type) != UDP_ENCAP_OVPNINUDP))
-         |                                          ^~
-   include/linux/compiler.h:77:45: note: in definition of macro 'unlikely'
-      77 | # define unlikely(x)    __builtin_expect(!!(x), 0)
-         |                                             ^
-   include/asm-generic/rwonce.h:44:43: note: in expansion of macro '__unqual_scalar_typeof'
-      44 | #define __READ_ONCE(x)  (*(const volatile __unqual_scalar_typeof(x) *)&(x))
-         |                                           ^~~~~~~~~~~~~~~~~~~~~~
-   include/asm-generic/rwonce.h:50:9: note: in expansion of macro '__READ_ONCE'
-      50 |         __READ_ONCE(x);                                                 \
-         |         ^~~~~~~~~~~
-   drivers/net/ovpn/socket.c:84:22: note: in expansion of macro 'READ_ONCE'
-      84 |         if (unlikely(READ_ONCE(udp_sk(sk)->encap_type) != UDP_ENCAP_OVPNINUDP))
-         |                      ^~~~~~~~~
->> drivers/net/ovpn/socket.c:84:42: error: invalid type argument of '->' (have 'int')
-      84 |         if (unlikely(READ_ONCE(udp_sk(sk)->encap_type) != UDP_ENCAP_OVPNINUDP))
-         |                                          ^~
-   include/linux/compiler.h:77:45: note: in definition of macro 'unlikely'
-      77 | # define unlikely(x)    __builtin_expect(!!(x), 0)
-         |                                             ^
-   include/asm-generic/rwonce.h:50:9: note: in expansion of macro '__READ_ONCE'
-      50 |         __READ_ONCE(x);                                                 \
-         |         ^~~~~~~~~~~
-   drivers/net/ovpn/socket.c:84:22: note: in expansion of macro 'READ_ONCE'
-      84 |         if (unlikely(READ_ONCE(udp_sk(sk)->encap_type) != UDP_ENCAP_OVPNINUDP))
-         |                      ^~~~~~~~~
->> drivers/net/ovpn/socket.c:84:59: error: 'UDP_ENCAP_OVPNINUDP' undeclared (first use in this function)
-      84 |         if (unlikely(READ_ONCE(udp_sk(sk)->encap_type) != UDP_ENCAP_OVPNINUDP))
-         |                                                           ^~~~~~~~~~~~~~~~~~~
-   include/linux/compiler.h:77:45: note: in definition of macro 'unlikely'
-      77 | # define unlikely(x)    __builtin_expect(!!(x), 0)
-         |                                             ^
-   drivers/net/ovpn/socket.c:84:59: note: each undeclared identifier is reported only once for each function it appears in
-      84 |         if (unlikely(READ_ONCE(udp_sk(sk)->encap_type) != UDP_ENCAP_OVPNINUDP))
-         |                                                           ^~~~~~~~~~~~~~~~~~~
-   include/linux/compiler.h:77:45: note: in definition of macro 'unlikely'
-      77 | # define unlikely(x)    __builtin_expect(!!(x), 0)
-         |                                             ^
+i686
+real	0m1.986s
+user	0m1.709s
+sys	0m0.209s
 
+s390x
+real	0m1.644s
+user	0m1.378s
+sys	0m0.228s
 
-vim +/udp_sk +84 drivers/net/ovpn/socket.c
+And that's with qemu running on a 10 year old laptop that I'll have to 
+switch off of when debian drops x86-64-v2 support. (Even that i686 test 
+isn't kvm.) It's running a recent-ish kernel (binaries I had lying 
+around)...
 
-    76	
-    77	/* Retrieve the corresponding ovpn object from a UDP socket
-    78	 * rcu_read_lock must be held on entry
-    79	 */
-    80	struct ovpn_struct *ovpn_from_udp_sock(struct sock *sk)
-    81	{
-    82		struct ovpn_socket *ovpn_sock;
-    83	
-  > 84		if (unlikely(READ_ONCE(udp_sk(sk)->encap_type) != UDP_ENCAP_OVPNINUDP))
-    85			return NULL;
-    86	
-    87		ovpn_sock = rcu_dereference_sk_user_data(sk);
-    88		if (unlikely(!ovpn_sock))
-    89			return NULL;
-    90	
-    91		/* make sure that sk matches our stored transport socket */
-    92		if (unlikely(!ovpn_sock->sock || sk != ovpn_sock->sock->sk))
-    93			return NULL;
-    94	
-    95		return ovpn_sock->ovpn;
-    96	}
-    97	
+# cat /proc/version
+Linux version 6.11.0-rc7 (landley@driftwood) (s390x-linux-musl-gcc (GCC) 
+11.4.0, GNU ld (GNU Binutils) 2.33.1) #1 SMP Sat Sep 14 01:36:19 CDT 2024
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Built using the kernel config files in the "doc" directory of those 
+tarballs.
+
+Are you trying to optimize the kernel boot, or more trying to optimize 
+userspace? Because my userspace init is just a small shell script:
+
+https://github.com/landley/toybox/blob/master/mkroot/mkroot.sh#L102
+
+And the above simple test loop just told that to run "echo" instead of 
+/bin/sh so I could easily collect boot-and-exit timing for the qemu 
+process...
+
+>> I had hoped to push out a script today to start to gather data on boot-time on different
+>> platforms, for people to run who had expressed interest in helping with this effort. But
+>> I got overwhelmed with other tasks, and I may not get it done today.  I'll be in Tokyo next
+>> week for Open Source Summit Japan.  If you are there, please try to catch me and say hi.
+>> Given that, I'll see how soon I can provide the script I'm talking about, and we can
+>> discuss the goals and design of the script.
+
+I regression test under qemu because it gives reproducibly scriptable 
+results. I've even got plumbing to run canned tests on multiple 
+architectures in parallel (part of my release testing):
+
+https://github.com/landley/toybox/blob/master/mkroot/testroot.sh
+
+Rob
 
