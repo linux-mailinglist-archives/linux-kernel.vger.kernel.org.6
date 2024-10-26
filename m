@@ -1,218 +1,144 @@
-Return-Path: <linux-kernel+bounces-383208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E22D9B187E
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 15:25:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E38639B187F
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 15:41:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D231283AB8
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 13:25:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C1BB282E2D
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 13:41:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AA8C1D6DCC;
-	Sat, 26 Oct 2024 13:25:35 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 442CCC148;
+	Sat, 26 Oct 2024 13:41:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="CfG29EH1"
+Received: from mail-40131.protonmail.ch (mail-40131.protonmail.ch [185.70.40.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E2571E4A6
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 13:25:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B48D079FD
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 13:41:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729949134; cv=none; b=LRjY+9t9vOineFx2zo+hvhbGD7eHXcGQeLBZzQV0A1Mv7dWZbJSIzI6l0suQ6YjeWz4lZKmlFaVWr1qcbpb1gTyDz4kpdtMD2cehzmfAN9mEhH0X43EhP4grEU+dEqPvE1uoYCwqq9X48uKbi07iK9AfAQe8CXRNR2tb4DkFuMw=
+	t=1729950066; cv=none; b=P3nDYM/OOCLv28bFIumobBCpQ+j4Tk21sF8QpHuYkgL+8ixh5PqsDuoMHx+U30h/h+vdRt2NSD2kqWy7+GYmusydq8kbJXbc87HVFrP3SbcL/Y0w4bNXoq4QmiD3RnzJPGm4bTn1hIRma7gGfhX/5ER99jgRxHvxr6G0PjAIybc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729949134; c=relaxed/simple;
-	bh=GhmHdJ+4pNLy7iWgN9j7zY+dW5m1eVU+K6+zPu/Z2uM=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=r6RR6pujK2a3T+Nu9IYyz323tADCU8On9ap8cg1ypsMIOUeKG0OHZEJaZjVZSx2Pwh3jotXecqXUJ4guCFtyn0JGpgybtgxaVQvLApal6BVl7QJxIsxeGd0o7YcUcgU/0q06BsRRj8dPOf5h+7tTWwDokADUYYiNvsZiTn9A6EI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a3c4554d29so27145065ab.1
-        for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 06:25:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729949131; x=1730553931;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=mfkXRKLJ4HbA5RgynTiFyTurAHiLPqLUDl0xh+O0VSM=;
-        b=tcEltwWBz0M+DvGVNnofk7h7JT+uoSU9qZNCXc3adFWpjK04DTcn8ubLvoyNfJOx3/
-         Qj8Ev2N1SwrS4TGnKzpyEkqMBgYObv5Js/kh1N+NCKFFTPyn8gRPrFAkvFXW/OtQVaE4
-         kzxHg9ftqBok2tjWPp6S9HMskROLXYHK06e3nNdePQqKORpf1pxpx0Uem29+1ZFTg6WG
-         7dUnh3oVILQPd1k+Q6pgRh7EsmPXVzNOuDGKihGoY+MwM7eR6Iehx6MKNnZ/tm1X7bXf
-         A7FUOty85nXjBgKcLnyxk7bXObRco/sCCaPOihfqgT++Gd2xKkCxfPt1JTsjPjkgxf6n
-         ChFw==
-X-Forwarded-Encrypted: i=1; AJvYcCXxXOhWByXleXKGXSENuwVzZqvsxnoM4VrEuo/dbrgXKMvJS542MMOCgc41MEPTa9zuw3riXicEV0+Zkv8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyq4YRQpOoCl4ZK3DGujfzs58rC2vqppF9rDe0kwOJozzBUv8rm
-	5KeoFF0LInVCyluTIsUndSmQdkHFkGbIXUXRa7LoYyMPjbnOII8TEVvTFDzBh08udDRTa6QlVX1
-	uCvmUx9I48H47uZHW+acL+6CmBD+ewtJbVQ7BXMCzJXA4C1W669HK2ds=
-X-Google-Smtp-Source: AGHT+IF+RKtdQ7niw+Z1kmuGVHe2opA1h0sf+5gDW54roTrFeMk3ovms8Gb0nKg3yXg9Ihx/atUsyiHaTrvJ6t/NDBFfXeX3Kd17
+	s=arc-20240116; t=1729950066; c=relaxed/simple;
+	bh=DEpLeEzPHyHeDAGXiY/8eO94ocEp1xG5C8vc1GWSa7E=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WYn4LjuW+05Jbw9sSdygsodU0XuhCRCFwLQvJwxWk2OjZlt0qnyJiMXSSJZdZTHjYrZFO96wdSO84poxPsvjX+BOksNAhpQ7wlw3cgF701MR9pDjKX5ax78TpuAVSoeC0/uRNz0j3J9tiPtgFwHS701aD1iFiZcg/OEG/SeXelg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=CfG29EH1; arc=none smtp.client-ip=185.70.40.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1729950052; x=1730209252;
+	bh=DEpLeEzPHyHeDAGXiY/8eO94ocEp1xG5C8vc1GWSa7E=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=CfG29EH1wMduHeX/tKdntSH8o9wmfLufImiiCNWj4y3Gmg62yrwe3nXpdQ19Om3XX
+	 111Gl+bl/BuBN5zTee7ksKCx60y55mhp7fh9corCO7EdUzU8lSrMAkfW6JaA/QDfVV
+	 GAapEm6VyD3wJL476vnr84lPiIQpNEm+0RWUJ/Xw/bMjKLptrMW46yw4uiKuWY22u8
+	 VBh2TKvlCOMvFBkCq0c9mQ37juym5Zyuc8CthLkHmI9c33fcrpYaxqs/SVik496oKd
+	 RR7LFTPvTwJPmGmqtlVoTQwf1dhn+E6tPZ8zc/trkRBH8LsjSyNu4PqvGJjdK7JCrG
+	 F2skoRMt+1Pxg==
+Date: Sat, 26 Oct 2024 13:40:47 +0000
+To: Kent Overstreet <kent.overstreet@linux.dev>
+From: Piotr Zalewski <pZ010001011111@proton.me>
+Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, skhan@linuxfoundation.org, syzbot+2b6a17991a6af64f9489@syzkaller.appspotmail.com
+Subject: Re: [PATCH v3] bcachefs: init freespace inited bits to 0 in bch2_fs_initialize
+Message-ID: <ZE-D4gWuaHm-NpPnk8yUxXY4ouYy492LCPmnEgWG3fiIleDRGZU9SjbSbYiVWPa2_OYirT-Jx_E7b5NsSh9s6Txvnkc0KRsGHNKHH1umkDE=@proton.me>
+In-Reply-To: <zks5hk34if64nu4t7tsnjc2om4cdyo7fs62fgyxjzetr6njo72@ajmllmpmex45>
+References: <20241026001004.10470-2-pZ010001011111@proton.me> <zks5hk34if64nu4t7tsnjc2om4cdyo7fs62fgyxjzetr6njo72@ajmllmpmex45>
+Feedback-ID: 53478694:user:proton
+X-Pm-Message-ID: 8f935a0f5fc82f7c3c0c04a47e6eb2e2798f5fcf
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d9a:b0:3a3:b527:e809 with SMTP id
- e9e14a558f8ab-3a4ed2b380emr19494565ab.14.1729949131445; Sat, 26 Oct 2024
- 06:25:31 -0700 (PDT)
-Date: Sat, 26 Oct 2024 06:25:31 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <671cedcb.050a0220.2b8c0f.01b1.GAE@google.com>
-Subject: [syzbot] [wireless?] WARNING in __rate_control_send_low (3)
-From: syzbot <syzbot+34463a129786910405dd@syzkaller.appspotmail.com>
-To: johannes@sipsolutions.net, linux-kernel@vger.kernel.org, 
-	linux-wireless@vger.kernel.org, netdev@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Saturday, October 26th, 2024 at 2:30 AM, Kent Overstreet <kent.overstree=
+t@linux.dev> wrote:
 
-syzbot found the following issue on:
+> On Sat, Oct 26, 2024 at 12:15:49AM +0000, Piotr Zalewski wrote:
+>=20
+> > Initialize freespace_initialized bits to 0 in member's flags and update
+> > member's cached version for each device in bch2_fs_initialize.
+> >=20
+> > It's possible for the bits to be set to 1 before fs is initialized and =
+if
+> > call to bch2_trans_mark_dev_sbs (just before bch2_fs_freespace_init) fa=
+ils
+> > bits remain to be 1 which can later indirectly trigger BUG condition in
+> > bch2_bucket_alloc_freelist during shutdown.
+> >=20
+> > Reported-by: syzbot+2b6a17991a6af64f9489@syzkaller.appspotmail.com
+> > Closes: https://syzkaller.appspot.com/bug?extid=3D2b6a17991a6af64f9489
+> > Fixes: bbe682c76789 ("bcachefs: Ensure devices are always correctly ini=
+tialized")
+> > Suggested-by: Kent Overstreet kent.overstreet@linux.dev
+> > Signed-off-by: Piotr Zalewski pZ010001011111@proton.me
+> > ---
+> >=20
+> > Notes:
+> > changes in v3:
+> > - v2 rebased
+> >=20
+> > changes in v2:
+> > - unconditionally set freespace initialized bits to false at
+> > the top of bch2_fs_initialized instead of only if
+> > bch2_trans_mark_dev_sbs fails
+> >=20
+> > Link to v2: https://lore.kernel.org/linux-bcachefs/20241021174151.37692=
+-2-pZ010001011111@proton.me/
+> > Link to v1: https://lore.kernel.org/linux-bcachefs/20241020170708.67044=
+-2-pZ010001011111@proton.me/
+> >=20
+> > fs/bcachefs/recovery.c | 8 ++++++++
+> > 1 file changed, 8 insertions(+)
+> >=20
+> > diff --git a/fs/bcachefs/recovery.c b/fs/bcachefs/recovery.c
+> > index fdf2aa2ffc13..8d4c93a1f5aa 100644
+> > --- a/fs/bcachefs/recovery.c
+> > +++ b/fs/bcachefs/recovery.c
+> > @@ -1029,6 +1029,7 @@ int bch2_fs_initialize(struct bch_fs *c)
+> > struct bch_inode_unpacked root_inode, lostfound_inode;
+> > struct bkey_inode_buf packed_inode;
+> > struct qstr lostfound =3D QSTR("lost+found");
+> > + struct bch_member *m;
+> > int ret;
+> >=20
+> > bch_notice(c, "initializing new filesystem");
+> > @@ -1045,6 +1046,13 @@ int bch2_fs_initialize(struct bch_fs *c)
+> > SET_BCH_SB_VERSION_UPGRADE_COMPLETE(c->disk_sb.sb, bcachefs_metadata_ve=
+rsion_current);
+> > bch2_write_super(c);
+> > }
+> > +
+> > + for_each_member_device(c, ca) {
+> > + m =3D bch2_members_v2_get_mut(c->disk_sb.sb, ca->dev_idx);
+> > + SET_BCH_MEMBER_FREESPACE_INITIALIZED(m, false);
+> > + ca->mi =3D bch2_mi_to_cpu(m);
+> > + }
+> > +
+>=20
+>=20
+> I'm also adding a write_super() call here: that's what updates
+> ca->mi.freespace_initialized which the freespace init path will later
+>=20
+> check.
 
-HEAD commit:    b423f5a9a61f Merge tag 'acpi-6.12-rc5' of git://git.kernel..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=13307287980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=fd919c0fc1af4272
-dashboard link: https://syzkaller.appspot.com/bug?extid=34463a129786910405dd
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+Do you want me to send v4? Or you will add it with separate patch?
 
-Unfortunately, I don't have any reproducer for this issue yet.
+Best regards, Piotr Zalewski
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/49d1d501eff9/disk-b423f5a9.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/f973ba06cb5d/vmlinux-b423f5a9.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/a97302c30f3f/bzImage-b423f5a9.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+34463a129786910405dd@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-no supported rates for sta (null) (0xffffffff, band 0) in rate_mask 0xfff with flags 0x40
-WARNING: CPU: 1 PID: 8687 at net/mac80211/rate.c:385 __rate_control_send_low+0x659/0x890 net/mac80211/rate.c:380
-Modules linked in:
-CPU: 1 UID: 0 PID: 8687 Comm: syz-executor Not tainted 6.12.0-rc4-syzkaller-00245-gb423f5a9a61f #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-RIP: 0010:__rate_control_send_low+0x659/0x890 net/mac80211/rate.c:380
-Code: 8b 14 24 0f 85 de 01 00 00 8b 0a 48 c7 c7 60 a2 29 8d 48 8b 74 24 10 44 89 f2 44 8b 44 24 1c 44 8b 4c 24 0c e8 08 3a 27 f6 90 <0f> 0b 90 90 e9 71 fe ff ff 89 d9 80 e1 07 80 c1 03 38 c1 0f 8c db
-RSP: 0018:ffffc90000a18760 EFLAGS: 00010246
-RAX: aaade33c9e18e500 RBX: 000000000000000c RCX: ffff88802e721e00
-RDX: 0000000000000100 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffff88807ff708e8 R08: ffffffff8155e372 R09: fffffbfff1cf9fe0
-R10: dffffc0000000000 R11: fffffbfff1cf9fe0 R12: 0000000000000800
-R13: 000000000000000c R14: 00000000ffffffff R15: dffffc0000000000
-FS:  000055556cf87500(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fda1a8656c0 CR3: 000000004651a000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <IRQ>
- rate_control_send_low+0x1a8/0x770 net/mac80211/rate.c:405
- rate_control_get_rate+0x20e/0x5e0 net/mac80211/rate.c:921
- ieee80211_beacon_get_finish+0x49e/0x870 net/mac80211/tx.c:5253
- __ieee80211_beacon_get+0xf7e/0x15c0
- ieee80211_beacon_get_tim+0xb4/0x320 net/mac80211/tx.c:5594
- ieee80211_beacon_get include/net/mac80211.h:5607 [inline]
- mac80211_hwsim_beacon_tx+0x39d/0x850 drivers/net/wireless/virtual/mac80211_hwsim.c:2311
- __iterate_interfaces+0x222/0x510 net/mac80211/util.c:774
- ieee80211_iterate_active_interfaces_atomic+0xd8/0x170 net/mac80211/util.c:810
- mac80211_hwsim_beacon+0xd4/0x1f0 drivers/net/wireless/virtual/mac80211_hwsim.c:2345
- __run_hrtimer kernel/time/hrtimer.c:1691 [inline]
- __hrtimer_run_queues+0x59b/0xd50 kernel/time/hrtimer.c:1755
- hrtimer_run_softirq+0x19a/0x2c0 kernel/time/hrtimer.c:1772
- handle_softirqs+0x2c5/0x980 kernel/softirq.c:554
- __do_softirq kernel/softirq.c:588 [inline]
- invoke_softirq kernel/softirq.c:428 [inline]
- __irq_exit_rcu+0xf4/0x1c0 kernel/softirq.c:637
- irq_exit_rcu+0x9/0x30 kernel/softirq.c:649
- instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1049 [inline]
- sysvec_apic_timer_interrupt+0xa6/0xc0 arch/x86/kernel/apic/apic.c:1049
- </IRQ>
- <TASK>
- asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
-RIP: 0010:lock_acquire+0x264/0x550 kernel/locking/lockdep.c:5829
-Code: 2b 00 74 08 4c 89 f7 e8 da 2a 8b 00 f6 44 24 61 02 0f 85 85 01 00 00 41 f7 c7 00 02 00 00 74 01 fb 48 c7 44 24 40 0e 36 e0 45 <4b> c7 44 25 00 00 00 00 00 43 c7 44 25 09 00 00 00 00 43 c7 44 25
-RSP: 0018:ffffc90003a97060 EFLAGS: 00000206
-RAX: 0000000000000001 RBX: 1ffff92000752e18 RCX: aaade33c9e18e500
-RDX: dffffc0000000000 RSI: ffffffff8c0adcc0 RDI: ffffffff8c602f60
-RBP: ffffc90003a971b0 R08: ffffffff94297807 R09: 1ffffffff2852f00
-R10: dffffc0000000000 R11: fffffbfff2852f01 R12: 1ffff92000752e14
-R13: dffffc0000000000 R14: ffffc90003a970c0 R15: 0000000000000246
- rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
- rcu_read_lock_sched include/linux/rcupdate.h:941 [inline]
- pfn_valid+0x113/0x450 include/linux/mmzone.h:2043
- page_table_check_set+0x22/0x540 mm/page_table_check.c:110
- __page_table_check_ptes_set+0x30f/0x410 mm/page_table_check.c:225
- page_table_check_ptes_set include/linux/page_table_check.h:74 [inline]
- set_ptes include/linux/pgtable.h:267 [inline]
- __copy_present_ptes mm/memory.c:969 [inline]
- copy_present_ptes mm/memory.c:1052 [inline]
- copy_pte_range mm/memory.c:1167 [inline]
- copy_pmd_range+0x4773/0x85f0 mm/memory.c:1255
- copy_pud_range mm/memory.c:1292 [inline]
- copy_p4d_range mm/memory.c:1316 [inline]
- copy_page_range+0x99f/0xe90 mm/memory.c:1414
- dup_mmap kernel/fork.c:750 [inline]
- dup_mm kernel/fork.c:1674 [inline]
- copy_mm+0x11fb/0x1f40 kernel/fork.c:1723
- copy_process+0x1845/0x3d50 kernel/fork.c:2372
- kernel_clone+0x223/0x880 kernel/fork.c:2784
- __do_sys_clone kernel/fork.c:2927 [inline]
- __se_sys_clone kernel/fork.c:2911 [inline]
- __x64_sys_clone+0x258/0x2a0 kernel/fork.c:2911
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fda19b74f93
-Code: 1f 84 00 00 00 00 00 64 48 8b 04 25 10 00 00 00 45 31 c0 31 d2 31 f6 bf 11 00 20 01 4c 8d 90 d0 02 00 00 b8 38 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 35 89 c2 85 c0 75 2c 64 48 8b 04 25 10 00 00
-RSP: 002b:00007ffd5c989de8 EFLAGS: 00000246 ORIG_RAX: 0000000000000038
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fda19b74f93
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000001200011
-RBP: 0000000000000001 R08: 0000000000000000 R09: 0000000000000000
-R10: 000055556cf877d0 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000074fbe R14: 0000000000074f90 R15: 00007ffd5c989f70
- </TASK>
-----------------
-Code disassembly (best guess):
-   0:	2b 00                	sub    (%rax),%eax
-   2:	74 08                	je     0xc
-   4:	4c 89 f7             	mov    %r14,%rdi
-   7:	e8 da 2a 8b 00       	call   0x8b2ae6
-   c:	f6 44 24 61 02       	testb  $0x2,0x61(%rsp)
-  11:	0f 85 85 01 00 00    	jne    0x19c
-  17:	41 f7 c7 00 02 00 00 	test   $0x200,%r15d
-  1e:	74 01                	je     0x21
-  20:	fb                   	sti
-  21:	48 c7 44 24 40 0e 36 	movq   $0x45e0360e,0x40(%rsp)
-  28:	e0 45
-* 2a:	4b c7 44 25 00 00 00 	movq   $0x0,0x0(%r13,%r12,1) <-- trapping instruction
-  31:	00 00
-  33:	43 c7 44 25 09 00 00 	movl   $0x0,0x9(%r13,%r12,1)
-  3a:	00 00
-  3c:	43                   	rex.XB
-  3d:	c7                   	.byte 0xc7
-  3e:	44                   	rex.R
-  3f:	25                   	.byte 0x25
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+> > mutex_unlock(&c->sb_lock);
+> >=20
+> > c->curr_recovery_pass =3D BCH_RECOVERY_PASS_NR;
+> > --
+> > 2.47.0
 
