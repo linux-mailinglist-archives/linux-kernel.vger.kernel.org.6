@@ -1,120 +1,199 @@
-Return-Path: <linux-kernel+bounces-382876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E1E79B1455
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 05:47:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A84319B145B
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 05:48:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 602511C21166
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 03:47:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A8502834CE
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 03:48:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C1AE13A268;
-	Sat, 26 Oct 2024 03:47:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F415814BF8B;
+	Sat, 26 Oct 2024 03:48:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YK+wq1F2"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ZulFvfGk"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCCD3335BA
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 03:47:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D6EC8460;
+	Sat, 26 Oct 2024 03:48:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729914424; cv=none; b=qdvyeKvoN7yaDWN6C3l/i4UC4INytXjTIPquS3pKmZFtEmw2JjLIaZiKkNkCKbriUlXhXHsvjWin1CZlWtMtYGyrh0FA2L1UEs1EFwOjuMUhhx4OZBekI8+GwoOo2bN4T56rkkWljS15VKEvMF6K1f8NP8jdazWjTdeiFK/HnhY=
+	t=1729914523; cv=none; b=GwkdATRcHLlQad1AXYTAf6qqDhunJ5ZLWAsIoDpkiayd/8/q7xR9uKCMZzVuAOVdmeFCXkaWpQcRW/UfRLUUkZmRLYYu2Rf5FU95KIaBEhRsn3ctTuqKrzFU79ooU6J2TDqRf5KN+wzpQjhUHj1I6rXgLId+5DNgjeWha9VPH3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729914424; c=relaxed/simple;
-	bh=hfGei/JPKrPwA4ZjxsgmiCF2HWq1KxADsMnofdZvtTI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=IxkdH6cU4SVoXq+WcrbjE4+T5MSHhWoPZghFVCXyG/VfOu+Gk+9zbecv9WXRjgeUaL6JjCIma74vV/PXX+p5RqLKGbsZqjCFnh8LyO7stJC0qUSGgAtx7PozyPNRyBpG2/2Qvy2Yr6eqh/pLEkOa2y0nF3jqiqApI6kDY0KNMCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YK+wq1F2; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-20e6981ca77so28725145ad.2
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 20:47:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729914422; x=1730519222; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=o2sEsK68CwMXxf8toSl3kI0xQbvN8/oETGeq4Wqiy/0=;
-        b=YK+wq1F2Zm+LqE2eHF5UM0McRExFi1p/DPY1K4wiryhwD1kkfKCdp/TQQAV708b/mU
-         U1Sk3wMeS76JWq4dC8KFJfAfiOTQn8BIRTBa4IK7KQDM6Xf/oPc/gucgDr6QfuCQwM07
-         wYdnqylZa1WnmdsCWDFHo43qwVZSwlz2yFiPTOwklQCxa3oND33F0BxWWOtVtXom0EOV
-         PveMC/2/ftFody/cGwH7iZLpUEbpSxb/bcB8E0UNKk5vdTDqK8R3Q0VG76VwbwkJFK5h
-         2ktwxZ6ByUKtQPRT+0B0nGd4xkOl37JTXXf6Ai3NTA/5I1nlXqHOAg5DUpPki+HDTj7n
-         t42w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729914422; x=1730519222;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=o2sEsK68CwMXxf8toSl3kI0xQbvN8/oETGeq4Wqiy/0=;
-        b=mj/bQBE+CpZgougTG+hXlxF23Iopd74J9Odrj0NnV12so3rSzCpKI/WlSavImzbvLw
-         S3tHKN9Gs2ZC6ZGHYVcJx1uMIqD6fXJ5faojcQisvNfPKVbvWUCgCdzbhc+u/bflJDKf
-         6OoGCcF4pVplCQVbuObHWWsss4/rGIbifyhQJi7Y9nbWe3kyLKyFPYMUVtCaQzRefXqR
-         RgSjL/+vNhZwVW9eteCOdojhxHtKOmMf+3D5hFFlMWghlrEHphmORJ9gcvlZFD/MjDAU
-         LRTqp1nNh7maWhL/dB2KnyLuxaFGFeOSpkABT+bp557uL0zH/nRpjTcO+OgeITCdCMxK
-         1ZlA==
-X-Forwarded-Encrypted: i=1; AJvYcCXW9koxsgdHqbnJ2S6rDzNBvyIztbZPGHO15gblAbOcEFErrZ+RpUGSKbpIzjZIknaHFWJHwWhctqcadto=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbvAvf+tQAJ3kBlpdrX9fPxvBvDysT8ztsepy2CUMMA3IG6MiX
-	iY0BidKlBS5PvyN3Il8ZnwICaIg6v/ouvRUbZ0+tqggTGBAdJ5oU
-X-Google-Smtp-Source: AGHT+IE6vFRIGposdfIGkKNHgDwb4FYyCPbH3HhoBg041NpIXzhhDVZxW88o+VKXZVUXEUFPDPjUlA==
-X-Received: by 2002:a17:902:d54c:b0:205:3e6d:9949 with SMTP id d9443c01a7336-210c6ca8b6cmr16558935ad.52.1729914421977;
-        Fri, 25 Oct 2024 20:47:01 -0700 (PDT)
-Received: from mail.google.com (125-239-144-11-fibre.sparkbb.co.nz. [125.239.144.11])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bbf46ceesm16939235ad.44.2024.10.25.20.46.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2024 20:47:01 -0700 (PDT)
-Date: Sat, 26 Oct 2024 16:46:54 +1300
-From: Paulo Miguel Almeida <paulo.miguel.almeida.rodenas@gmail.com>
-To: richard@nod.at, anton.ivanov@cambridgegreys.com,
-	johannes@sipsolutions.net, kees@kernel.org, tiwei.btw@antgroup.com,
-	linux-um@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: paulo.miguel.almeida.rodenas@gmail.com
-Subject: [PATCH][next] um: Malloc just enough space for fitting pid file
-Message-ID: <ZxxmLngMg3iNjOfK@mail.google.com>
+	s=arc-20240116; t=1729914523; c=relaxed/simple;
+	bh=pwRBc0cQcBxMnTMQHjKmi88UjScQ014h2MWNBESaX18=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=iAxknfSwdC+ziYb3/+ehCdQvWo6hkXtnOqktuQIDgilVhBCQkvHcohl9Eu4FXtbhEYETMaH5vCPnvUcb9FIj5sp/D3p6kVSAGmdntIIeRfEg9F6Ljl48G81urX/88ONgnUEF7j1G1EwPnYpLUR5KqIInwVWFqcP32jVrQOUOAWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ZulFvfGk; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49Q2B2CX024778;
+	Sat, 26 Oct 2024 03:48:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	6QsftRtGDzmoJq4o3UAdGB6dmDX3MTYPtWoEsqFu+Us=; b=ZulFvfGkPHOn2dP/
+	N8cZxdukk+ASo/wwihUPnMlVdKmmkOXaNZU/3Zu21gWGo1PS8QDrdrbpkOVqlU5Z
+	MO3pubSW3pCH+/3Eo6vFNaX4fda0HBIZ9xjSy/Vj3q/+rXgTrukohXTznWgXE4Bk
+	G2zUKnmQt99DblHCOUuYT49U/QGU/o4zNSnkrKZF7Iu9kcK3S0npURh/kcvSKdCF
+	9GJJZp95wOAsqJxP4dM9jCcSnmtrvaiBxR/VUzZo4ir8WYFoTeea4MdaoJnwkBkf
+	5CwEFAMEcxAtUb7yYlO64N7gmU6YHcTLu2pZG3BoOvrANP89HZz3thx3x43bJ0sZ
+	3BBWVw==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42gqcqg3sr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 26 Oct 2024 03:48:27 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49Q3mQ5Y024830
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 26 Oct 2024 03:48:26 GMT
+Received: from [10.253.35.162] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 25 Oct
+ 2024 20:48:23 -0700
+Message-ID: <76ce5d6d-a468-4f49-bc56-da6db2a4c9ba@quicinc.com>
+Date: Sat, 26 Oct 2024 11:48:20 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/4] dt-bindings: arm:
+ qcom,coresight-static-replicator: Add property for source filtering
+To: Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Mike Leach
+	<mike.leach@linaro.org>, James Clark <james.clark@arm.com>,
+        Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Leo Yan
+	<leo.yan@linux.dev>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>
+CC: <coresight@lists.linaro.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>
+References: <20241024065306.14647-1-quic_taozha@quicinc.com>
+ <20241024065306.14647-2-quic_taozha@quicinc.com>
+ <b848ae69-aca4-43d1-aa38-2f424045ee6f@arm.com>
+ <30301f0b-5b04-4150-8159-5b8721486d6c@arm.com>
+Content-Language: en-US
+From: Tao Zhang <quic_taozha@quicinc.com>
+In-Reply-To: <30301f0b-5b04-4150-8159-5b8721486d6c@arm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: vJdy44AY_x8dID1qu4iAge19vJWyB4Ai
+X-Proofpoint-GUID: vJdy44AY_x8dID1qu4iAge19vJWyB4Ai
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ malwarescore=0 suspectscore=0 bulkscore=0 adultscore=0 spamscore=0
+ phishscore=0 impostorscore=0 clxscore=1015 priorityscore=1501 mlxscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410260030
 
-umid is already generated during make_umid_init __initcall so there is
-no need to allocate UMID_LEN bytes to accommodate the max possible name
-for the umid segment of the filepath
 
-This patch replaces UMID_LEN occurences in which it's redundant
+On 10/24/2024 6:36 PM, Suzuki K Poulose wrote:
+> On 24/10/2024 10:14, Suzuki K Poulose wrote:
+>> On 24/10/2024 07:53, Tao Zhang wrote:
+>>> The is some "magic" hard coded filtering in the replicators,
+>>> which only passes through trace from a particular "source". Add
+>>> a new property "filter-src" to label a phandle to the coresight
+>>> trace source device matching the hard coded filtering for the port.
+>>
+>> As mentioned in here in v3 review :
+>>
+>> https://lkml.org/lkml/2024/8/21/597
+>>
+>> Please do not use "src", expand it to "source"
+>
+> Just to confirm, this is only for the "bindings" string, not for the 
+> variables used in the patches.
 
-Signed-off-by: Paulo Miguel Almeida <paulo.miguel.almeida.rodenas@gmail.com>
----
- arch/um/os-Linux/umid.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Yes, it is only used as the "bindings" string.
 
-diff --git a/arch/um/os-Linux/umid.c b/arch/um/os-Linux/umid.c
-index eb523ab1e218..513a2cce38db 100644
---- a/arch/um/os-Linux/umid.c
-+++ b/arch/um/os-Linux/umid.c
-@@ -212,7 +212,7 @@ static void __init create_pid_file(void)
- 	char pid[sizeof("nnnnnnnnn")], *file;
- 	int fd, n;
- 
--	n = strlen(uml_dir) + UMID_LEN + sizeof("/pid");
-+	n = strlen(uml_dir) + strlen(umid) + sizeof("/pid");
- 	file = malloc(n);
- 	if (!file)
- 		return;
-@@ -394,7 +394,7 @@ static void remove_umid_dir(void)
- {
- 	char *dir, err;
- 
--	dir = malloc(strlen(uml_dir) + UMID_LEN + 1);
-+	dir = malloc(strlen(uml_dir) + strlen(umid) + 1);
- 	if (!dir)
- 		return;
- 
--- 
-2.47.0
 
+Best,
+
+Tao
+
+>
+> Suzuki
+>
+>
+>>
+>> Rest looks fine.
+>>
+>> Suzuki
+>>
+>>>
+>>> Signed-off-by: Tao Zhang <quic_taozha@quicinc.com>
+>>> ---
+>>>   .../arm/arm,coresight-static-replicator.yaml  | 19 
+>>> ++++++++++++++++++-
+>>>   1 file changed, 18 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git 
+>>> a/Documentation/devicetree/bindings/arm/arm,coresight-static-replicator.yaml 
+>>> b/Documentation/devicetree/bindings/arm/arm,coresight-static-replicator.yaml 
+>>>
+>>> index 1892a091ac35..0d258c79eb94 100644
+>>> --- 
+>>> a/Documentation/devicetree/bindings/arm/arm,coresight-static-replicator.yaml
+>>> +++ 
+>>> b/Documentation/devicetree/bindings/arm/arm,coresight-static-replicator.yaml
+>>> @@ -45,7 +45,22 @@ properties:
+>>>       patternProperties:
+>>>         '^port@[01]$':
+>>>           description: Output connections to CoreSight Trace bus
+>>> -        $ref: /schemas/graph.yaml#/properties/port
+>>> +        $ref: /schemas/graph.yaml#/$defs/port-base
+>>> +        unevaluatedProperties: false
+>>> +
+>>> +        properties:
+>>> +          endpoint:
+>>> +            $ref: /schemas/graph.yaml#/$defs/endpoint-base
+>>> +            unevaluatedProperties: false
+>>> +
+>>> +            properties:
+>>> +              filter-src:
+>>> +                $ref: /schemas/types.yaml#/definitions/phandle
+>>> +                description:
+>>> +                  phandle to the coresight trace source device 
+>>> matching the
+>>> +                  hard coded filtering for this port
+>>> +
+>>> +              remote-endpoint: true
+>>>   required:
+>>>     - compatible
+>>> @@ -72,6 +87,7 @@ examples:
+>>>                   reg = <0>;
+>>>                   replicator_out_port0: endpoint {
+>>>                       remote-endpoint = <&etb_in_port>;
+>>> +                    filter-src = <&tpdm_video>;
+>>>                   };
+>>>               };
+>>> @@ -79,6 +95,7 @@ examples:
+>>>                   reg = <1>;
+>>>                   replicator_out_port1: endpoint {
+>>>                       remote-endpoint = <&tpiu_in_port>;
+>>> +                    filter-src = <&tpdm_mdss>;
+>>>                   };
+>>>               };
+>>>           };
+>>
+>
 
