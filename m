@@ -1,87 +1,83 @@
-Return-Path: <linux-kernel+bounces-383309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB1089B19F3
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 19:03:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB9FA9B19F5
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 19:04:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E35E1F21E92
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 17:03:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D0B2B217F7
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 17:04:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 351F61CC15F;
-	Sat, 26 Oct 2024 17:03:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1909E1D1F57;
+	Sat, 26 Oct 2024 17:04:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TBH3I5+g"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MNXbCJ/8"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F315D2F5A;
-	Sat, 26 Oct 2024 17:03:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2C0E13B286;
+	Sat, 26 Oct 2024 17:04:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729962202; cv=none; b=rD8WHg+DdBlttcUxjPZhV47XB49r+aT4+fnEpeVjQqIs916TODIP2o+adu6tXFuCLQrZ5e4SS9z0Q8BKa3mokkVwCMDSx6TFV1lDju5YeDLnZipnppLyXjSGsaXxck9EFqaCztmmMf9Gif85RUMwmNbH7gyV4/6byTNJaUpbAMg=
+	t=1729962262; cv=none; b=SGTmWtA0Kbw3F5SbGMZ4YaqhGYxDeNoQ/uPp2lnP4wCZ6cnxrnq0N3pwiHqlvXKQN/qITEkz6cSoFBXu9grqF2Rp5jhw4rhB2GIBIDNIp6KNGhUKp2LmUXvoB3PMCTXSrLRW4Cf8mtj3Q5lvjOfKucMyLRbVMk7s3lKH9uOQ+co=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729962202; c=relaxed/simple;
-	bh=NFyh5lXFmEb1gJIH1gRhPMpzkMHAFFi7nAu+Elf4Mjs=;
+	s=arc-20240116; t=1729962262; c=relaxed/simple;
+	bh=wnSkEhmUEgW3X1vsBPM9gY4j2B1BaolcQuzXoGqR2B4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TpbxylKazpRuPBGc9pg8RfCixHxv/xz/6gwHdgFyK9uhe17IR3EOSi+L9VpDp6/FQWqw55HXy2nXXjchNFpt6tT0lWBvqh1TP/KbeKSMi2q8w9IuRk36UVD7SWzPeLONbB4hh11hxD6qWpeHATdxBLEdzdKRzvRGu3PbprJnc0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TBH3I5+g; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-20cceb8d8b4so16793165ad.1;
-        Sat, 26 Oct 2024 10:03:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729962200; x=1730567000; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Y9bYNUVNG//bj2DNBTD7X7A5iI9b0SfpO4hVFpFgvGM=;
-        b=TBH3I5+gH+3yZ4AwxAO3oBSJx6wq7yixQ443Qmd2tdToUFveUTq+DeubCyFLAeKj0U
-         U7klXfaF2936B25zlhES/6AFb40urrCpbTLPD6hV9PsBzt8ZlOat18m5XQsRLC0fHlnv
-         45NtED0R5LukCXp0Jzj/S+9d2N1pikEq/ZYIvuhe8NOKgcYUpRFWDYmRB/KZprBdkV1+
-         u485MKH06YMtHtp6WhP1Jicq3q7y/pTbA7p3CavlwHhraGqxsUXBIgzQ4bNTJn71U/5g
-         jBiodBNlBjOCemuCpKAwjxxydgy7eztZKx90hI0Ig0L9JTo6XRvglYVrCmICCYImpTCU
-         zKqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729962200; x=1730567000;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Y9bYNUVNG//bj2DNBTD7X7A5iI9b0SfpO4hVFpFgvGM=;
-        b=l+ICc6B/Brybu79wVDMdQCCvAqdtnwZ9RpF7TXzZHqsGx/pTCelbLGLE/0T6bMo/vA
-         Y+hw2zAaNUw3G7pXXtQ3mcTxY4PZPB2wwgiZ7kwCORCfFbq6LmONSIazFokudMZv5Ilm
-         bmEhy4Ed2GHyqMxS+VykRitxisUaE1jbBLRhypqWgJzkTJDYPZSbdpK125Ky3ge68U1F
-         YbhRcC2JikTwvaoaQRkGs15rbn25H7hk16Xa0kA8vs5+8OloiAC8P/wb+KuFynwv0guv
-         KQfqWAXgV+9JU9j8HyoRn4iaNDb+vkVahGbrNoEhBLrwMoH7H8+W4ulczF6qQeWNweLG
-         SljA==
-X-Forwarded-Encrypted: i=1; AJvYcCW9kYf07RVCtf/9tAAF6RPj380Lgtx8FdXT2wnwTrnpnV0juu8PQ9agmQISGIKUVfZsU2FRmXfWU1MIGIg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzhjuE2p84oEjxEnnegRpOVACtev4o/A/2nq7BTX2gGkvHb9s2w
-	U/gwJo2T1NZa72Hnip3JCCZ8Ig3EH06rvltHYRcmYkmTbRrf+w0f
-X-Google-Smtp-Source: AGHT+IH3PEp7hiKcb2sV42rZyT+yd8LMY/u6y1CDGPQs/kKHF2YNCyYY2UI4ZeILImh6kWnwFhbExQ==
-X-Received: by 2002:a17:902:ecc8:b0:20c:cb6b:3631 with SMTP id d9443c01a7336-210c5a76dabmr46214925ad.27.1729962200153;
-        Sat, 26 Oct 2024 10:03:20 -0700 (PDT)
-Received: from localhost ([2601:647:6881:9060:6a46:a288:5839:361d])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bc044bdcsm26056795ad.241.2024.10.26.10.03.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 26 Oct 2024 10:03:19 -0700 (PDT)
-Date: Sat, 26 Oct 2024 10:03:18 -0700
-From: Cong Wang <xiyou.wangcong@gmail.com>
-To: Vladimir Oltean <vladimir.oltean@nxp.com>
-Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Andrew Lunn <andrew@lunn.ch>, Petr Machata <petrm@nvidia.com>,
-	Ido Schimmel <idosch@nvidia.com>, Vlad Buslov <vladbu@nvidia.com>,
-	Jamal Hadi Salim <jhs@mojatatu.com>, Jiri Pirko <jiri@resnulli.us>,
-	Baowen Zheng <baowen.zheng@corigine.com>,
-	Simon Horman <horms@kernel.org>,
-	Pedro Tammela <pctammela@mojatatu.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net] net/sched: act_api: deny mismatched skip_sw/skip_hw
- flags for actions created by classifiers
-Message-ID: <Zx0g1uQ6LTDycCKq@pop-os.localdomain>
-References: <20241017161049.3570037-1-vladimir.oltean@nxp.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=VAYz9u3JU+0R3hSBn//T5LSHY5j4XUoFc7xk+Skq3UtHKPRiicOi4aYeAV6fifrc+BrjIvangnm0U//wMtZGgTA+qq1Abyv4mnS5M4wuCW8dHacgeFXklU8/xHvl2w5rRsvwwxslRAjCF7tHsdbIynnvgGa6U9Dtm6y2u4LvGms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MNXbCJ/8; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729962260; x=1761498260;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=wnSkEhmUEgW3X1vsBPM9gY4j2B1BaolcQuzXoGqR2B4=;
+  b=MNXbCJ/8xxDaRobf+SN1LzAna7pp0RmuDGIE9SQQPxwcWjBsGwB/zhzX
+   vDGt9qbOLKQHK30PcJCAxnIfUdepu5reD+w294Eccm/k0fz+l6re/dDp+
+   0kYJ+ZjU6m4DAUSnJPM9JilNIm205ks0MoZbnLjzrAfy4AK1hbH6omQ0S
+   Bn1OCnv73yPtuZROP4lnuTFMP+WmuXVIQfaVQynYuMsDvOoE2CtrCo8NA
+   jqYr4V1OhrM+/15E5QDA7DA9VFU/i9hEZhGdmlMW1DKhdOr1Ril6hawRQ
+   u49HuW/AxzX7vAbfpsmeAs84jh54HLaSNMawtCR8uUIoYlMLaJYYo3GnZ
+   w==;
+X-CSE-ConnectionGUID: J4TDE6y7SHiarcYTWsX67Q==
+X-CSE-MsgGUID: wkuMxyvRQpi//Q7ojtPKXA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11237"; a="29717500"
+X-IronPort-AV: E=Sophos;i="6.11,235,1725346800"; 
+   d="scan'208";a="29717500"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Oct 2024 10:04:20 -0700
+X-CSE-ConnectionGUID: v2KZdODNSbaxkJyy4S/XOA==
+X-CSE-MsgGUID: hB856hY6RmSThGOH82GxXA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,235,1725346800"; 
+   d="scan'208";a="81369676"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa006.jf.intel.com with ESMTP; 26 Oct 2024 10:04:14 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t4kCx-000ZsF-2D;
+	Sat, 26 Oct 2024 17:04:11 +0000
+Date: Sun, 27 Oct 2024 01:03:20 +0800
+From: kernel test robot <lkp@intel.com>
+To: Huan Tang <tanghuan@vivo.com>, alim.akhtar@samsung.com,
+	avri.altman@wdc.com, bvanassche@acm.org,
+	James.Bottomley@hansenpartnership.com, martin.petersen@oracle.com,
+	beanhuo@micron.com, luhongfei@vivo.com, quic_cang@quicinc.com,
+	keosung.park@samsung.com, viro@zeniv.linux.org.uk,
+	quic_mnaresh@quicinc.com, peter.wang@mediatek.com,
+	manivannan.sadhasivam@linaro.org, ahalaney@redhat.com,
+	quic_nguyenb@quicinc.com, linux@weissschuh.net, ebiggers@google.com,
+	minwoo.im@samsung.com, linux-kernel@vger.kernel.org,
+	linux-scsi@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, opensource.kernel@vivo.com,
+	Huan Tang <tanghuan@vivo.com>
+Subject: Re: [PATCH v2] ufs: core: Add WB buffer resize support
+Message-ID: <202410270024.rwb7xAgC-lkp@intel.com>
+References: <20241026004423.135-1-tanghuan@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,38 +86,88 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241017161049.3570037-1-vladimir.oltean@nxp.com>
+In-Reply-To: <20241026004423.135-1-tanghuan@vivo.com>
 
-On Thu, Oct 17, 2024 at 07:10:48PM +0300, Vladimir Oltean wrote:
-> There are 3 more important cases to discuss. First there is this command:
-> 
-> $ tc qdisc add dev eth0 clasct
-> $ tc filter add dev eth0 ingress matchall skip_sw \
-> 	action mirred ingress mirror dev eth1
-> 
-> which should be allowed, because prior to the concept of dedicated
-> action flags, it used to work and it used to mean the action inherited
-> the skip_sw/skip_hw flags from the classifier. It's not a mismatch.
-> 
-> Then we have this command:
-> 
-> $ tc qdisc add dev eth0 clasct
-> $ tc filter add dev eth0 ingress matchall skip_sw \
-> 	action mirred ingress mirror dev eth1 skip_hw
-> 
-> where there is a mismatch and it should be rejected.
-> 
-> Finally, we have:
-> 
-> $ tc qdisc add dev eth0 clasct
-> $ tc filter add dev eth0 ingress matchall skip_sw \
-> 	action mirred ingress mirror dev eth1 skip_sw
-> 
-> where the offload flags coincide, and this should be treated the same as
-> the first command based on inheritance, and accepted.
-> 
+Hi Huan,
 
-Can we add some selftests to cover the above cases?
+kernel test robot noticed the following build errors:
 
-Thanks.
+[auto build test ERROR on jejb-scsi/for-next]
+[also build test ERROR on mkp-scsi/for-next linus/master v6.12-rc4 next-20241025]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Huan-Tang/ufs-core-Add-WB-buffer-resize-support/20241026-084545
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git for-next
+patch link:    https://lore.kernel.org/r/20241026004423.135-1-tanghuan%40vivo.com
+patch subject: [PATCH v2] ufs: core: Add WB buffer resize support
+config: i386-randconfig-141-20241026 (https://download.01.org/0day-ci/archive/20241027/202410270024.rwb7xAgC-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241027/202410270024.rwb7xAgC-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410270024.rwb7xAgC-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   drivers/ufs/core/ufs-sysfs.c: In function 'wb_toggle_buf_resize_store':
+>> drivers/ufs/core/ufs-sysfs.c:441:9: error: 'index' undeclared (first use in this function)
+     441 |         index = ufshcd_wb_get_query_index(hba);
+         |         ^~~~~
+   drivers/ufs/core/ufs-sysfs.c:441:9: note: each undeclared identifier is reported only once for each function it appears in
+
+Kconfig warnings: (for reference only)
+   WARNING: unmet direct dependencies detected for GET_FREE_REGION
+   Depends on [n]: SPARSEMEM [=n]
+   Selected by [m]:
+   - RESOURCE_KUNIT_TEST [=m] && RUNTIME_TESTING_MENU [=y] && KUNIT [=y]
+
+
+vim +/index +441 drivers/ufs/core/ufs-sysfs.c
+
+   413	
+   414	static ssize_t wb_toggle_buf_resize_store(struct device *dev,
+   415			struct device_attribute *attr, const char *buf, size_t count)
+   416	{
+   417		struct ufs_hba *hba = dev_get_drvdata(dev);
+   418		unsigned int wb_buf_resize_op;
+   419		ssize_t res;
+   420	
+   421		if (!ufshcd_is_wb_allowed(hba) || !hba->dev_info.wb_enabled ||
+   422			!hba->dev_info.b_presrv_uspc_en) {
+   423			dev_err(dev, "The WB buf resize is not allowed!\n");
+   424			return -EOPNOTSUPP;
+   425		}
+   426	
+   427		if (kstrtouint(buf, 0, &wb_buf_resize_op))
+   428			return -EINVAL;
+   429	
+   430		if (wb_buf_resize_op != 0x01 && wb_buf_resize_op != 0x02) {
+   431			dev_err(dev, "The operation %u is invalid!\n", wb_buf_resize_op);
+   432			return -EINVAL;
+   433		}
+   434	
+   435		down(&hba->host_sem);
+   436		if (!ufshcd_is_user_access_allowed(hba)) {
+   437			res = -EBUSY;
+   438			goto out;
+   439		}
+   440	
+ > 441		index = ufshcd_wb_get_query_index(hba);
+   442		ufshcd_rpm_get_sync(hba);
+   443		res = ufshcd_wb_toggle_buf_resize(hba, wb_buf_resize_op);
+   444		ufshcd_rpm_put_sync(hba);
+   445	
+   446	out:
+   447		up(&hba->host_sem);
+   448		return res < 0 ? res : count;
+   449	}
+   450	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
