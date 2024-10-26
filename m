@@ -1,140 +1,102 @@
-Return-Path: <linux-kernel+bounces-383131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B41F29B17A2
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 13:54:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19DAA9B17A6
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 13:54:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C669283BFA
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 11:54:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49E9F1C2166B
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 11:54:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46AC01D47A0;
-	Sat, 26 Oct 2024 11:53:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64C231D47A6;
+	Sat, 26 Oct 2024 11:54:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EfW6YS9P"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LQy4NLhi"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C7221D2B37;
-	Sat, 26 Oct 2024 11:53:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3E4D1CACDB;
+	Sat, 26 Oct 2024 11:54:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729943635; cv=none; b=PWY5pdT9Fy5YL/EWKY0RA5VcOh1koIAUoEu1EiZ5ZF5sK7hY0m9ZtS9mzIW00KSbDKdHfj1bEqWoXWeaY5MrBq8tdRa6Zg/sVlR+qrhan652BIwZ33V1olaYBldAlZz+xj48wZ1TlotdBarN3IO0P/4ZJzCyqsbuWw3NBd499wo=
+	t=1729943671; cv=none; b=HdBl3WBmJstEMYDIMrAlu7ILJ0yWgmo7f3OAnqakugSOZbc4KGmNKVNbl3+/lIv5s9Kz2un+1r3tZbw86Q+KujcuulqFmpL/lHqQiGF3XEjnKDYXEenZx7eey+NH6cqxdVqB7xaylrmiQf05vF4zICaXmp+7/yIL6aw/+V7vais=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729943635; c=relaxed/simple;
-	bh=2GUZBYAEYNqmLrUqB4Ttn5DIg8qbFosS8tsj7i2afWg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kzIjK+n/ReJvPxGZ/8WEEin0TntQ4wD0LS1s+ifefHMXm7oICF+Iz1u6E7NZ461o8SYS3WN+RgtqdNTir0dzooUcGbMwhVa2H0HuiAsyXorg2GPx10P8B+0O85HT/EFF1wvZLVpRg8YNNbEv5u61vQqsj8IJW7bLjjU+bYsm/q8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EfW6YS9P; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E43CC4CEC6;
-	Sat, 26 Oct 2024 11:53:50 +0000 (UTC)
+	s=arc-20240116; t=1729943671; c=relaxed/simple;
+	bh=WOjSA1awcKay0Xb405c+Eg4piWCa5OaVqKiO9AYrNLA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=RVKzaUDwTwzvYCWDlcJECNrdfYfGaxHq87YA7nbiajF0p6sPA9gsEjAL0iEheenSuYIZOs8E6eV5JKRziENiE1mYfE0u/tjpMccQ0G15CZbRfmAKwd5z00KV6aQCSRpXCLkdxnVAQ7EuNCl5wycQq0rjF8uKGINToalVmSJRpXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LQy4NLhi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DB08C4CEC6;
+	Sat, 26 Oct 2024 11:54:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729943635;
-	bh=2GUZBYAEYNqmLrUqB4Ttn5DIg8qbFosS8tsj7i2afWg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=EfW6YS9PW4m4o4CBUQtIctdPvOew1TXy0eboFfLIbPc4WPeoVantKBzpmihKxBgKn
-	 gxEBVGKu8kk7Fxxe6ejRdeh+qidENhNwy9f8hfl9AUqCwnCp4JRBNBJCvr+UgBzKU8
-	 D+axoNMWqd8a0CWrjZzU4qQSaJwi3HNKiYHToT4meYIW6jo7nJbInOrN9DrJ73lyOa
-	 pHViK1I0jeY1jEIv1hAy4YgiQZqQ/OalZ/JIv1ieUcCD8nsD6g2pj/TWHpDGUAFSMv
-	 LHj4JzQunS5YJwUlEKuBnp4SsFtMLdg9J0aJhy7VWONbv0h0vPNUl2PYzAw9UXIUY9
-	 L30q88qYezqGA==
-Message-ID: <8240d3b4-3367-4f13-a42f-0f40da08e371@kernel.org>
-Date: Sat, 26 Oct 2024 13:53:47 +0200
+	s=k20201202; t=1729943671;
+	bh=WOjSA1awcKay0Xb405c+Eg4piWCa5OaVqKiO9AYrNLA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=LQy4NLhiD6rEmnndBAz+ie0fyNBqWAZxrsYp5UVDlKBzdu5PiRpgOjLatxuIVfxBB
+	 FaUZv78XZxfcJWeQ8mY110pzm4eb4T8+SziVNw8nbHajq5IcgoXIRM8+CXP7C2fj/L
+	 xY9jJEtJpjPFOe/ffQozEKpnR2clMmLJ2TTaJyeip8ENLPb8pYIFoalrwZLY7DdDJa
+	 WLA8I2bvYdJ8gseYMOEJB+rpnsosJTAzHLt6uX+J+oy6uiuR19dPA5x/hQFHtCqA1v
+	 xgyM35F69xLXIG941maLgnVtGOzW7mGvDaUvnpWJOvyHt7uQEJEDbiY6fiPjhHG/TV
+	 U91F/fp7b8TKA==
+Date: Sat, 26 Oct 2024 12:54:08 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, Marius Cristea
+ <marius.cristea@microchip.com>, Trevor Gamblin <tgamblin@baylibre.com>,
+ Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>, Hans de Goede
+ <hdegoede@redhat.com>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>
+Subject: Re: [PATCH v3 22/24] iio: light: ltr501: Drop most likely fake ACPI
+ IDs
+Message-ID: <20241026125408.32d72326@jic23-huawei>
+In-Reply-To: <20241024191200.229894-23-andriy.shevchenko@linux.intel.com>
+References: <20241024191200.229894-1-andriy.shevchenko@linux.intel.com>
+	<20241024191200.229894-23-andriy.shevchenko@linux.intel.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/5] arm64: dts: exynos8895: Add cmu, mct, serial_0/1
- and spi_0/1
-To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
- Andi Shyti <andi.shyti@kernel.org>, Mark Brown <broonie@kernel.org>,
- Alim Akhtar <alim.akhtar@samsung.com>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20241023091734.538682-1-ivo.ivanov.ivanov1@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241023091734.538682-1-ivo.ivanov.ivanov1@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 23/10/2024 11:17, Ivaylo Ivanov wrote:
-> Hey folks,
+On Thu, 24 Oct 2024 22:05:11 +0300
+Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+
+> The commits in question do not proove that ACPI IDs exist.
+> Quite likely it was a cargo cult addition while doing that
+> for DT-based enumeration. Drop most likely fake ACPI IDs.
 > 
-> This patchset adds device tree nodes for multiple clock management unit
-> blocks, MCT, SPI and UART for Exynos8895.
+> The to be removed IDs has been checked against the following resources:
+> 1) DuckDuckGo
+> 2) Google
+> 3) MS catalog: https://www.catalog.update.microsoft.com/Search.aspx
+> This gives no useful results in regard to DSDT, moreover, the official
+> vendor ID in the registry for Lite-On is LCI.
 > 
-> Exynos8895 uses USIv1 for most of its serial buses, except a few that
-> have been implemented in this series. Support for USIv1 and HSI2C will
-> be added in the future.
+> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Applied.
+> ---
+>  drivers/iio/light/ltr501.c | 2 --
+>  1 file changed, 2 deletions(-)
 > 
-> This patchset is dependent on [1] and [2], which add driver support for
-> CMU and UART.
-> 
-> [1] https://lore.kernel.org/all/20241023090136.537395-1-ivo.ivanov.ivanov1@gmail.com/
-
-I cannot merge driver changes into DTS. Are you sure you have driver
-dependency?
-
-> [2] https://lore.kernel.org/all/20241023090902.538040-1-ivo.ivanov.ivanov1@gmail.com/
-
-I cannot merge this either. This is serial tree.
-
-Maybe you these are not really dependencies? What is here depending on
-what, specifically? What prevents me from applying it?
-
-Best regards,
-Krzysztof
+> diff --git a/drivers/iio/light/ltr501.c b/drivers/iio/light/ltr501.c
+> index 8c516ede9116..3fff5d58ba3c 100644
+> --- a/drivers/iio/light/ltr501.c
+> +++ b/drivers/iio/light/ltr501.c
+> @@ -1610,8 +1610,6 @@ static int ltr501_resume(struct device *dev)
+>  static DEFINE_SIMPLE_DEV_PM_OPS(ltr501_pm_ops, ltr501_suspend, ltr501_resume);
+>  
+>  static const struct acpi_device_id ltr_acpi_match[] = {
+> -	{ "LTER0501", ltr501 },
+> -	{ "LTER0559", ltr559 },
+>  	{ "LTER0301", ltr301 },
+>  	{ },
+>  };
 
 
