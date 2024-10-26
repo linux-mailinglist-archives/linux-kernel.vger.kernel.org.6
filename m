@@ -1,400 +1,546 @@
-Return-Path: <linux-kernel+bounces-382885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 354AC9B147B
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 05:59:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E610A9B147E
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 06:00:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD1661F22835
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 03:59:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14DC11C22FA3
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 04:00:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9465B1632D3;
-	Sat, 26 Oct 2024 03:59:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45F62146A69;
+	Sat, 26 Oct 2024 04:00:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="INVc7CQQ"
-Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com [209.85.217.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PvksDc8b"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B953413D2B2
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 03:59:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2032C42A82
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 04:00:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729915167; cv=none; b=fU3tSNv4kIl5Q7VeiYmONuAr7lMuP2CsJwco4RXlEiduFDtwX7gox2Zzz+5t/cEEs7NlfwjeQD29dV3/FBvNisayxSOIX+Wmt8HFbdnl+PjXudcK3GLjbomTDFR3TG4UTpLMttKjmk5BQB1AP2eMIboGxTMcEupbxU1A38rakkg=
+	t=1729915215; cv=none; b=Pgr7AJOVryr8EmfmyFZoe0aT9HZZYvs/s5lssdsWbQUQDfOL26Os6P5bCm/tNPRdc0LZcHDAqNBrf3oSp7zoc3YavB58khdVCyqKNKJfGcK9MQLjiDhCA9V9z4cdjal6LdP9m7f6GtND9xfWXQaEVUo+2OCS0MYRYYr1CeWg1b8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729915167; c=relaxed/simple;
-	bh=pspOPZrWDcFcuQrVcV1mOQqaC17rfkv8K8cBaeNGar4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lUUFlZMzxLgP/eiUb6dmulSt90lZBLVncFOKsBXJdlW7clX3BU5tVjVm+4HmQPNHNm4AagsiUHtAu4d7SizHOASZ0et6KdczXaetoG3Tx4QHNu+tK7ytC1mF46Wzp/A3u3m/21/OBt9NsUzigb2jWYijdj3L0gcNoYssjEY6wlk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=INVc7CQQ; arc=none smtp.client-ip=209.85.217.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-vs1-f47.google.com with SMTP id ada2fe7eead31-4a4861a689eso784200137.2
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 20:59:23 -0700 (PDT)
+	s=arc-20240116; t=1729915215; c=relaxed/simple;
+	bh=+Dogc35czSriDvrgFRktCvRBXGd3u4hwxUEd9qdeKuw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hsKjgipDmIO0BUVaMpKMdCi5YuTNdP4snouVpfqe3B92i4DjRwlg5w+yeoadym+RcDq9dwTrV0nQQfoZEp1HoeaCeGufyzKigezfyWDuI93bt0Kboig5qZCSPxTuSClbj+rZMsHSKVZ20hwJqB+htr0AeBzIcl2ztx59Ew14CNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PvksDc8b; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-20c714cd9c8so25933595ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 21:00:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729915162; x=1730519962; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3KB/LcqBhsdnYUzdTisxph+TSCmdRKdSymSSUMenIBw=;
-        b=INVc7CQQOGtMnxOKNGrs1OaO4lDV1Dt1T6zcOdU2yShpEKJ2gHjMjFzh6UdRkSgTCl
-         VUmSaXiOfbP+pKXIuf2xiqxzFlUPF1Fgs59pwIKkoagp4CIg3nq9SV2q0hSn8p/4Wsbp
-         yBUscL5QfiPD0hFdP5ZMjZPOo7Q4u+ejnKPr0LJjHR9g/73CjE2z9KMt9SjHzCt4aNpS
-         mWwI11BoSgrEvg7JiBBw5rucUl+oMyP0sP2Y+WNCc3AWthdo8vz9s8wlktN0lZf2Makz
-         g7Suv86wXZCM9gyDZFbSI0Th34wE0qszkcyq46aFq7UL2GFR7lic/XKBDWzN/gK5iLCk
-         G6jQ==
+        d=gmail.com; s=20230601; t=1729915211; x=1730520011; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FrZVDoCH6k+llBeMt5cmmnNwxFx08wp1hQlvS6a4Mh0=;
+        b=PvksDc8bJoC3eMleF8K7YVD4MIPYTogsS47j6YAG0UYgMjSpBY2GXVBKPOyX8/7+hY
+         AoEfMhPTSEXGjzvrEwB2Ut7sLhcbFRkcbM9PZHhTYJpkIFD2ypkq9yKwVryRwe3aJ8nT
+         5+h3AZaNsep21rojfqTBsw5xFDpHjqab+MtHHUi/osM90cOB8P+7Jf49RaXivun2SSTe
+         nQpP6k6+w8PNJU6nviBMwgM0jxlHaL/WzgS8l0qmf8J58WZ2Wdl1XhK7VTITNvZS7mzC
+         sfJXueudSc8I3Nr77szgQQMJA57kG7Ea2C4UttPTZCTzg7x3oW31bABh75HYjg9Nt1Iw
+         qZow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729915162; x=1730519962;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3KB/LcqBhsdnYUzdTisxph+TSCmdRKdSymSSUMenIBw=;
-        b=TBC0+TUQbhk9s/+23GHpRauY0vBIKSYbKeEvECwFv4kchD15HZueF9QnIf31G+pTlT
-         uhMksZ4tnqOUT0Gx7SOFxAW3y4WlfSYAR15UsvUp4qWuJZUbeXZOPrBbxZupCRcRlFdh
-         owK6uWGZWd/w6mGsX4DHeCgoPqAnQbOLS8AJ6Xe6gQpKyea+r8GLVdyrO63qXvW/WLcp
-         VqC42GB+x09l8AS1jhj09Puo3D3AB5H1QBgRUoT/2rTgA+FTnMQuaHaH3cJsR6ggwyej
-         5wYKK2C8ZDTrRr1WbH3xXwzZjjkIeAsIVhKyeeSCWMzfy5ilwbMBTzZqXCoCz18Iylhg
-         IjOw==
-X-Forwarded-Encrypted: i=1; AJvYcCWNjDUmj1JLBZ8LgP4LHRaMmwHcswlGvmMt0yKNvAC7Ceddjud9fuHW4AcYWRlwl91O7uK0DqFrEE60rJg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYVfFPxtebJ0pSo8PxkVGc6TrsY9jvGBFEdpeCwH48Ogbkt/h6
-	saYXWUfGITOwTO7iOvTJqHlE4giOfdGZUXC+Lb/Ly1rxg+6MIqePkcCUDD1HhfSMXqr/90rvPvS
-	JdB4wben12TfQixulMG2Dj9vpOs5/GOD4eyyp
-X-Google-Smtp-Source: AGHT+IGAOdbwDufxdTWY1PatysXL3lH/4WN/WWRD5cb5neztcqlyDvKK0fc7DMPGOOKjO4i7Nn22hw0cAdo0dtH19WM=
-X-Received: by 2002:a05:6102:160a:b0:4a4:8756:d899 with SMTP id
- ada2fe7eead31-4a8cfd723demr1233728137.29.1729915162377; Fri, 25 Oct 2024
- 20:59:22 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729915211; x=1730520011;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FrZVDoCH6k+llBeMt5cmmnNwxFx08wp1hQlvS6a4Mh0=;
+        b=X/FKBxXxdyNxMju1OdqWk7ecL/pTlAPndBecsU7Z4tbgSFp2U1iYxQ9zTSw/HxHZ35
+         DHEC4nYfyJO46n5lYtDVfXsUuoKRUT+S+LkgzIRlg97iIschl6ze3pMBEaaa4Y8gKPO7
+         v5dJDmR+/NpZ861RtWj7VywMGWT/r9uBrrrsw75EEJGtdCYlEciS5pdJpASjSFANPCtS
+         RkAatfmd/lky2nKQ1ox/6ObQxUbJSMeMr1R+Erm+zGG1cWm6U7ECxUXK5vnGctuqdPKv
+         pb4cneyN8RNjZAns+wW+7Nn0PD3wfPqDfyDBMPI0upJLUrx0gIlxCn+p84b4OYlv4MiV
+         yuWg==
+X-Forwarded-Encrypted: i=1; AJvYcCURvl89RcyFwje/ioHTbdQavIR3k2Uuh4ogenGJDlXjor3sL2zPX8z7jQbsAwwjWaywwbpCMM7QDGGv75o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsTZVqxVSn148A8hxnyw8RJreZLdeV6fVEx6cJO4SDWVBx+VfY
+	suo80fgGZzXmDtkfMJPax8fJKRxcxWuLfXddB6PG0+4zRILW0yKq
+X-Google-Smtp-Source: AGHT+IFQqdCN/ilGyJhTACggtkwbjYpRNDCKOlBJ8YIVtTgt8ovRFEZIF1ZYleZs0gttbJK5ZgBzzQ==
+X-Received: by 2002:a17:902:e74d:b0:20c:637e:b28 with SMTP id d9443c01a7336-210c6c3e224mr22026365ad.39.1729915211207;
+        Fri, 25 Oct 2024 21:00:11 -0700 (PDT)
+Received: from distilledx.srmu.edu.in ([103.4.221.252])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bbf4432esm16897485ad.26.2024.10.25.21.00.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Oct 2024 21:00:10 -0700 (PDT)
+From: Tejas Vipin <tejasvipin76@gmail.com>
+To: neil.armstrong@linaro.org,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	simona@ffwll.ch
+Cc: quic_jesszhan@quicinc.com,
+	dianders@chromium.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Tejas Vipin <tejasvipin76@gmail.com>
+Subject: [PATCH] drm/panel: leadtek-ltk050h3146w: transition to mipi_dsi wrapped functions
+Date: Sat, 26 Oct 2024 09:29:28 +0530
+Message-ID: <20241026035928.183454-1-tejasvipin76@gmail.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241025012304.2473312-1-shakeel.butt@linux.dev> <20241025012304.2473312-7-shakeel.butt@linux.dev>
-In-Reply-To: <20241025012304.2473312-7-shakeel.butt@linux.dev>
-From: Yu Zhao <yuzhao@google.com>
-Date: Fri, 25 Oct 2024 21:58:45 -0600
-Message-ID: <CAOUHufYgvcAvbGv_3rDhj_NX-ND-TMX_nyF7ZHQRW8ZxniObOQ@mail.gmail.com>
-Subject: Re: [PATCH v1 6/6] memcg-v1: remove memcg move locking code
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Michal Hocko <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	Muchun Song <muchun.song@linux.dev>, Hugh Dickins <hughd@google.com>, 
-	Yosry Ahmed <yosryahmed@google.com>, linux-mm@kvack.org, cgroups@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, Meta kernel team <kernel-team@meta.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 24, 2024 at 7:23=E2=80=AFPM Shakeel Butt <shakeel.butt@linux.de=
-v> wrote:
->
-> The memcg v1's charge move feature has been deprecated. All the places
-> using the memcg move lock, have stopped using it as they don't need the
-> protection any more. Let's proceed to remove all the locking code
-> related to charge moving.
->
-> Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
-> ---
->
-> Changes since RFC:
-> - Remove the memcg move locking in separate patches.
->
->  include/linux/memcontrol.h | 54 -------------------------
->  mm/filemap.c               |  1 -
->  mm/memcontrol-v1.c         | 82 --------------------------------------
->  mm/memcontrol.c            |  5 ---
->  mm/rmap.c                  |  1 -
->  5 files changed, 143 deletions(-)
->
-> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-> index 798db70b0a30..932534291ca2 100644
-> --- a/include/linux/memcontrol.h
-> +++ b/include/linux/memcontrol.h
-> @@ -299,20 +299,10 @@ struct mem_cgroup {
->         /* For oom notifier event fd */
->         struct list_head oom_notify;
->
-> -       /* taken only while moving_account > 0 */
-> -       spinlock_t move_lock;
-> -       unsigned long move_lock_flags;
-> -
->         /* Legacy tcp memory accounting */
->         bool tcpmem_active;
->         int tcpmem_pressure;
->
-> -       /*
-> -        * set > 0 if pages under this cgroup are moving to other cgroup.
-> -        */
-> -       atomic_t moving_account;
-> -       struct task_struct *move_lock_task;
-> -
->         /* List of events which userspace want to receive */
->         struct list_head event_list;
->         spinlock_t event_list_lock;
-> @@ -428,9 +418,7 @@ static inline struct obj_cgroup *__folio_objcg(struct=
- folio *folio)
->   *
->   * - the folio lock
->   * - LRU isolation
-> - * - folio_memcg_lock()
->   * - exclusive reference
-> - * - mem_cgroup_trylock_pages()
->   *
->   * For a kmem folio a caller should hold an rcu read lock to protect mem=
-cg
->   * associated with a kmem folio from being released.
-> @@ -499,9 +487,7 @@ static inline struct mem_cgroup *folio_memcg_rcu(stru=
-ct folio *folio)
+Changes the leadtek-ltk050h3146w panel to use multi style functions for
+improved error handling.
 
-I think you missed folio_memcg_rcu().
+Signed-off-by: Tejas Vipin <tejasvipin76@gmail.com>
+---
+ .../drm/panel/panel-leadtek-ltk050h3146w.c    | 345 +++++++-----------
+ 1 file changed, 134 insertions(+), 211 deletions(-)
 
-(I don't think workingset_activation() needs it, since its only caller
-must hold a refcnt on the folio.)
+diff --git a/drivers/gpu/drm/panel/panel-leadtek-ltk050h3146w.c b/drivers/gpu/drm/panel/panel-leadtek-ltk050h3146w.c
+index 292aa26a456d..77f74e6c467e 100644
+--- a/drivers/gpu/drm/panel/panel-leadtek-ltk050h3146w.c
++++ b/drivers/gpu/drm/panel/panel-leadtek-ltk050h3146w.c
+@@ -26,7 +26,7 @@ struct ltk050h3146w;
+ struct ltk050h3146w_desc {
+ 	const unsigned long mode_flags;
+ 	const struct drm_display_mode *mode;
+-	int (*init)(struct ltk050h3146w *ctx);
++	void (*init)(struct mipi_dsi_multi_context *dsi_ctx);
+ };
+ 
+ struct ltk050h3146w {
+@@ -243,67 +243,57 @@ struct ltk050h3146w *panel_to_ltk050h3146w(struct drm_panel *panel)
+ 	return container_of(panel, struct ltk050h3146w, panel);
+ }
+ 
+-static int ltk050h3148w_init_sequence(struct ltk050h3146w *ctx)
++static void ltk050h3148w_init_sequence(struct mipi_dsi_multi_context *dsi_ctx)
+ {
+-	struct mipi_dsi_device *dsi = to_mipi_dsi_device(ctx->dev);
+-	int ret;
+-
+ 	/*
+ 	 * Init sequence was supplied by the panel vendor without much
+ 	 * documentation.
+ 	 */
+-	mipi_dsi_dcs_write_seq(dsi, 0xb9, 0xff, 0x83, 0x94);
+-	mipi_dsi_dcs_write_seq(dsi, 0xb1, 0x50, 0x15, 0x75, 0x09, 0x32, 0x44,
+-			       0x71, 0x31, 0x55, 0x2f);
+-	mipi_dsi_dcs_write_seq(dsi, 0xba, 0x63, 0x03, 0x68, 0x6b, 0xb2, 0xc0);
+-	mipi_dsi_dcs_write_seq(dsi, 0xd2, 0x88);
+-	mipi_dsi_dcs_write_seq(dsi, 0xb2, 0x00, 0x80, 0x64, 0x10, 0x07);
+-	mipi_dsi_dcs_write_seq(dsi, 0xb4, 0x05, 0x70, 0x05, 0x70, 0x01, 0x70,
+-			       0x01, 0x0c, 0x86, 0x75, 0x00, 0x3f, 0x01, 0x74,
+-			       0x01, 0x74, 0x01, 0x74, 0x01, 0x0c, 0x86);
+-	mipi_dsi_dcs_write_seq(dsi, 0xd3, 0x00, 0x00, 0x07, 0x07, 0x40, 0x1e,
+-			       0x08, 0x00, 0x32, 0x10, 0x08, 0x00, 0x08, 0x54,
+-			       0x15, 0x10, 0x05, 0x04, 0x02, 0x12, 0x10, 0x05,
+-			       0x07, 0x33, 0x34, 0x0c, 0x0c, 0x37, 0x10, 0x07,
+-			       0x17, 0x11, 0x40);
+-	mipi_dsi_dcs_write_seq(dsi, 0xd5, 0x19, 0x19, 0x18, 0x18, 0x1b, 0x1b,
+-			       0x1a, 0x1a, 0x04, 0x05, 0x06, 0x07, 0x00, 0x01,
+-			       0x02, 0x03, 0x20, 0x21, 0x18, 0x18, 0x22, 0x23,
+-			       0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18,
+-			       0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18,
+-			       0x18, 0x18, 0x18, 0x18, 0x18, 0x18);
+-	mipi_dsi_dcs_write_seq(dsi, 0xd6, 0x18, 0x18, 0x19, 0x19, 0x1b, 0x1b,
+-			       0x1a, 0x1a, 0x03, 0x02, 0x01, 0x00, 0x07, 0x06,
+-			       0x05, 0x04, 0x23, 0x22, 0x18, 0x18, 0x21, 0x20,
+-			       0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18,
+-			       0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18,
+-			       0x18, 0x18, 0x18, 0x18, 0x18, 0x18);
+-	mipi_dsi_dcs_write_seq(dsi, 0xe0, 0x00, 0x03, 0x09, 0x11, 0x11, 0x14,
+-			       0x18, 0x16, 0x2e, 0x3d, 0x4d, 0x4d, 0x58, 0x6c,
+-			       0x72, 0x78, 0x88, 0x8b, 0x86, 0xa4, 0xb2, 0x58,
+-			       0x55, 0x59, 0x5b, 0x5d, 0x60, 0x64, 0x7f, 0x00,
+-			       0x03, 0x09, 0x0f, 0x11, 0x14, 0x18, 0x16, 0x2e,
+-			       0x3d, 0x4d, 0x4d, 0x58, 0x6d, 0x73, 0x78, 0x88,
+-			       0x8b, 0x87, 0xa5, 0xb2, 0x58, 0x55, 0x58, 0x5b,
+-			       0x5d, 0x61, 0x65, 0x7f);
+-	mipi_dsi_dcs_write_seq(dsi, 0xcc, 0x0b);
+-	mipi_dsi_dcs_write_seq(dsi, 0xc0, 0x1f, 0x31);
+-	mipi_dsi_dcs_write_seq(dsi, 0xb6, 0xc4, 0xc4);
+-	mipi_dsi_dcs_write_seq(dsi, 0xbd, 0x01);
+-	mipi_dsi_dcs_write_seq(dsi, 0xb1, 0x00);
+-	mipi_dsi_dcs_write_seq(dsi, 0xbd, 0x00);
+-	mipi_dsi_dcs_write_seq(dsi, 0xc6, 0xef);
+-	mipi_dsi_dcs_write_seq(dsi, 0xd4, 0x02);
+-
+-	ret = mipi_dsi_dcs_set_tear_on(dsi, 1);
+-	if (ret < 0) {
+-		dev_err(ctx->dev, "failed to set tear on: %d\n", ret);
+-		return ret;
+-	}
+-
+-	msleep(60);
+-
+-	return 0;
++	mipi_dsi_dcs_write_seq_multi(dsi_ctx, 0xb9, 0xff, 0x83, 0x94);
++	mipi_dsi_dcs_write_seq_multi(dsi_ctx, 0xb1, 0x50, 0x15, 0x75, 0x09, 0x32, 0x44,
++				     0x71, 0x31, 0x55, 0x2f);
++	mipi_dsi_dcs_write_seq_multi(dsi_ctx, 0xba, 0x63, 0x03, 0x68, 0x6b, 0xb2, 0xc0);
++	mipi_dsi_dcs_write_seq_multi(dsi_ctx, 0xd2, 0x88);
++	mipi_dsi_dcs_write_seq_multi(dsi_ctx, 0xb2, 0x00, 0x80, 0x64, 0x10, 0x07);
++	mipi_dsi_dcs_write_seq_multi(dsi_ctx, 0xb4, 0x05, 0x70, 0x05, 0x70, 0x01, 0x70,
++				     0x01, 0x0c, 0x86, 0x75, 0x00, 0x3f, 0x01, 0x74,
++				     0x01, 0x74, 0x01, 0x74, 0x01, 0x0c, 0x86);
++	mipi_dsi_dcs_write_seq_multi(dsi_ctx, 0xd3, 0x00, 0x00, 0x07, 0x07, 0x40, 0x1e,
++				     0x08, 0x00, 0x32, 0x10, 0x08, 0x00, 0x08, 0x54,
++				     0x15, 0x10, 0x05, 0x04, 0x02, 0x12, 0x10, 0x05,
++				     0x07, 0x33, 0x34, 0x0c, 0x0c, 0x37, 0x10, 0x07,
++				     0x17, 0x11, 0x40);
++	mipi_dsi_dcs_write_seq_multi(dsi_ctx, 0xd5, 0x19, 0x19, 0x18, 0x18, 0x1b, 0x1b,
++				     0x1a, 0x1a, 0x04, 0x05, 0x06, 0x07, 0x00, 0x01,
++				     0x02, 0x03, 0x20, 0x21, 0x18, 0x18, 0x22, 0x23,
++				     0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18,
++				     0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18,
++				     0x18, 0x18, 0x18, 0x18, 0x18, 0x18);
++	mipi_dsi_dcs_write_seq_multi(dsi_ctx, 0xd6, 0x18, 0x18, 0x19, 0x19, 0x1b, 0x1b,
++				     0x1a, 0x1a, 0x03, 0x02, 0x01, 0x00, 0x07, 0x06,
++				     0x05, 0x04, 0x23, 0x22, 0x18, 0x18, 0x21, 0x20,
++				     0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18,
++				     0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18,
++				     0x18, 0x18, 0x18, 0x18, 0x18, 0x18);
++	mipi_dsi_dcs_write_seq_multi(dsi_ctx, 0xe0, 0x00, 0x03, 0x09, 0x11, 0x11, 0x14,
++				     0x18, 0x16, 0x2e, 0x3d, 0x4d, 0x4d, 0x58, 0x6c,
++				     0x72, 0x78, 0x88, 0x8b, 0x86, 0xa4, 0xb2, 0x58,
++				     0x55, 0x59, 0x5b, 0x5d, 0x60, 0x64, 0x7f, 0x00,
++				     0x03, 0x09, 0x0f, 0x11, 0x14, 0x18, 0x16, 0x2e,
++				     0x3d, 0x4d, 0x4d, 0x58, 0x6d, 0x73, 0x78, 0x88,
++				     0x8b, 0x87, 0xa5, 0xb2, 0x58, 0x55, 0x58, 0x5b,
++				     0x5d, 0x61, 0x65, 0x7f);
++	mipi_dsi_dcs_write_seq_multi(dsi_ctx, 0xcc, 0x0b);
++	mipi_dsi_dcs_write_seq_multi(dsi_ctx, 0xc0, 0x1f, 0x31);
++	mipi_dsi_dcs_write_seq_multi(dsi_ctx, 0xb6, 0xc4, 0xc4);
++	mipi_dsi_dcs_write_seq_multi(dsi_ctx, 0xbd, 0x01);
++	mipi_dsi_dcs_write_seq_multi(dsi_ctx, 0xb1, 0x00);
++	mipi_dsi_dcs_write_seq_multi(dsi_ctx, 0xbd, 0x00);
++	mipi_dsi_dcs_write_seq_multi(dsi_ctx, 0xc6, 0xef);
++	mipi_dsi_dcs_write_seq_multi(dsi_ctx, 0xd4, 0x02);
++
++	mipi_dsi_dcs_set_tear_on_multi(dsi_ctx, 1);
++	mipi_dsi_msleep(dsi_ctx, 60);
+ }
+ 
+ static const struct drm_display_mode ltk050h3148w_mode = {
+@@ -327,74 +317,64 @@ static const struct ltk050h3146w_desc ltk050h3148w_data = {
+ 		      MIPI_DSI_MODE_VIDEO_BURST,
+ };
+ 
+-static int ltk050h3146w_init_sequence(struct ltk050h3146w *ctx)
++static void ltk050h3146w_init_sequence(struct mipi_dsi_multi_context *dsi_ctx)
+ {
+-	struct mipi_dsi_device *dsi = to_mipi_dsi_device(ctx->dev);
+-	int ret;
+-
+ 	/*
+ 	 * Init sequence was supplied by the panel vendor without much
+ 	 * documentation.
+ 	 */
+-	mipi_dsi_dcs_write_seq(dsi, 0xdf, 0x93, 0x65, 0xf8);
+-	mipi_dsi_dcs_write_seq(dsi, 0xb0, 0x01, 0x03, 0x02, 0x00, 0x64, 0x06,
+-			       0x01);
+-	mipi_dsi_dcs_write_seq(dsi, 0xb2, 0x00, 0xb5);
+-	mipi_dsi_dcs_write_seq(dsi, 0xb3, 0x00, 0xb5);
+-	mipi_dsi_dcs_write_seq(dsi, 0xb7, 0x00, 0xbf, 0x00, 0x00, 0xbf, 0x00);
+-
+-	mipi_dsi_dcs_write_seq(dsi, 0xb9, 0x00, 0xc4, 0x23, 0x07);
+-	mipi_dsi_dcs_write_seq(dsi, 0xbb, 0x02, 0x01, 0x24, 0x00, 0x28, 0x0f,
+-			       0x28, 0x04, 0xcc, 0xcc, 0xcc);
+-	mipi_dsi_dcs_write_seq(dsi, 0xbc, 0x0f, 0x04);
+-	mipi_dsi_dcs_write_seq(dsi, 0xbe, 0x1e, 0xf2);
+-	mipi_dsi_dcs_write_seq(dsi, 0xc0, 0x26, 0x03);
+-	mipi_dsi_dcs_write_seq(dsi, 0xc1, 0x00, 0x12);
+-	mipi_dsi_dcs_write_seq(dsi, 0xc3, 0x04, 0x02, 0x02, 0x76, 0x01, 0x80,
+-			       0x80);
+-	mipi_dsi_dcs_write_seq(dsi, 0xc4, 0x24, 0x80, 0xb4, 0x81, 0x12, 0x0f,
+-			       0x16, 0x00, 0x00);
+-	mipi_dsi_dcs_write_seq(dsi, 0xc8, 0x7f, 0x72, 0x67, 0x5d, 0x5d, 0x50,
+-			       0x56, 0x41, 0x59, 0x57, 0x55, 0x70, 0x5b, 0x5f,
+-			       0x4f, 0x47, 0x38, 0x23, 0x08, 0x7f, 0x72, 0x67,
+-			       0x5d, 0x5d, 0x50, 0x56, 0x41, 0x59, 0x57, 0x55,
+-			       0x70, 0x5b, 0x5f, 0x4f, 0x47, 0x38, 0x23, 0x08);
+-	mipi_dsi_dcs_write_seq(dsi, 0xd0, 0x1e, 0x1f, 0x57, 0x58, 0x48, 0x4a,
+-			       0x44, 0x46, 0x40, 0x1f, 0x42, 0x1f, 0x1f, 0x1f,
+-			       0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f);
+-	mipi_dsi_dcs_write_seq(dsi, 0xd1, 0x1e, 0x1f, 0x57, 0x58, 0x49, 0x4b,
+-			       0x45, 0x47, 0x41, 0x1f, 0x43, 0x1f, 0x1f, 0x1f,
+-			       0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f);
+-	mipi_dsi_dcs_write_seq(dsi, 0xd2, 0x1f, 0x1e, 0x17, 0x18, 0x07, 0x05,
+-			       0x0b, 0x09, 0x03, 0x1f, 0x01, 0x1f, 0x1f, 0x1f,
+-			       0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f);
+-	mipi_dsi_dcs_write_seq(dsi, 0xd3, 0x1f, 0x1e, 0x17, 0x18, 0x06, 0x04,
+-			       0x0a, 0x08, 0x02, 0x1f, 0x00, 0x1f, 0x1f, 0x1f,
+-			       0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f);
+-	mipi_dsi_dcs_write_seq(dsi, 0xd4, 0x00, 0x00, 0x00, 0x0c, 0x06, 0x20,
+-			       0x01, 0x02, 0x00, 0x60, 0x15, 0xb0, 0x30, 0x03,
+-			       0x04, 0x00, 0x60, 0x72, 0x0a, 0x00, 0x60, 0x08);
+-	mipi_dsi_dcs_write_seq(dsi, 0xd5, 0x00, 0x06, 0x06, 0x00, 0x30, 0x00,
+-			       0x00, 0x00, 0x00, 0x00, 0xbc, 0x50, 0x00, 0x05,
+-			       0x21, 0x00, 0x60);
+-	mipi_dsi_dcs_write_seq(dsi, 0xdd, 0x2c, 0xa3, 0x00);
+-	mipi_dsi_dcs_write_seq(dsi, 0xde, 0x02);
+-	mipi_dsi_dcs_write_seq(dsi, 0xb2, 0x32, 0x1c);
+-	mipi_dsi_dcs_write_seq(dsi, 0xb7, 0x3b, 0x70, 0x00, 0x04);
+-	mipi_dsi_dcs_write_seq(dsi, 0xc1, 0x11);
+-	mipi_dsi_dcs_write_seq(dsi, 0xbb, 0x21, 0x22, 0x23, 0x24, 0x36, 0x37);
+-	mipi_dsi_dcs_write_seq(dsi, 0xc2, 0x20, 0x38, 0x1e, 0x84);
+-	mipi_dsi_dcs_write_seq(dsi, 0xde, 0x00);
+-
+-	ret = mipi_dsi_dcs_set_tear_on(dsi, 1);
+-	if (ret < 0) {
+-		dev_err(ctx->dev, "failed to set tear on: %d\n", ret);
+-		return ret;
+-	}
+-
+-	msleep(60);
+-
+-	return 0;
++	mipi_dsi_dcs_write_seq_multi(dsi_ctx, 0xdf, 0x93, 0x65, 0xf8);
++	mipi_dsi_dcs_write_seq_multi(dsi_ctx, 0xb0, 0x01, 0x03, 0x02, 0x00, 0x64, 0x06,
++				     0x01);
++	mipi_dsi_dcs_write_seq_multi(dsi_ctx, 0xb2, 0x00, 0xb5);
++	mipi_dsi_dcs_write_seq_multi(dsi_ctx, 0xb3, 0x00, 0xb5);
++	mipi_dsi_dcs_write_seq_multi(dsi_ctx, 0xb7, 0x00, 0xbf, 0x00, 0x00, 0xbf, 0x00);
++
++	mipi_dsi_dcs_write_seq_multi(dsi_ctx, 0xb9, 0x00, 0xc4, 0x23, 0x07);
++	mipi_dsi_dcs_write_seq_multi(dsi_ctx, 0xbb, 0x02, 0x01, 0x24, 0x00, 0x28, 0x0f,
++				     0x28, 0x04, 0xcc, 0xcc, 0xcc);
++	mipi_dsi_dcs_write_seq_multi(dsi_ctx, 0xbc, 0x0f, 0x04);
++	mipi_dsi_dcs_write_seq_multi(dsi_ctx, 0xbe, 0x1e, 0xf2);
++	mipi_dsi_dcs_write_seq_multi(dsi_ctx, 0xc0, 0x26, 0x03);
++	mipi_dsi_dcs_write_seq_multi(dsi_ctx, 0xc1, 0x00, 0x12);
++	mipi_dsi_dcs_write_seq_multi(dsi_ctx, 0xc3, 0x04, 0x02, 0x02, 0x76, 0x01, 0x80,
++				     0x80);
++	mipi_dsi_dcs_write_seq_multi(dsi_ctx, 0xc4, 0x24, 0x80, 0xb4, 0x81, 0x12, 0x0f,
++				     0x16, 0x00, 0x00);
++	mipi_dsi_dcs_write_seq_multi(dsi_ctx, 0xc8, 0x7f, 0x72, 0x67, 0x5d, 0x5d, 0x50,
++				     0x56, 0x41, 0x59, 0x57, 0x55, 0x70, 0x5b, 0x5f,
++				     0x4f, 0x47, 0x38, 0x23, 0x08, 0x7f, 0x72, 0x67,
++				     0x5d, 0x5d, 0x50, 0x56, 0x41, 0x59, 0x57, 0x55,
++				     0x70, 0x5b, 0x5f, 0x4f, 0x47, 0x38, 0x23, 0x08);
++	mipi_dsi_dcs_write_seq_multi(dsi_ctx, 0xd0, 0x1e, 0x1f, 0x57, 0x58, 0x48, 0x4a,
++				     0x44, 0x46, 0x40, 0x1f, 0x42, 0x1f, 0x1f, 0x1f,
++				     0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f);
++	mipi_dsi_dcs_write_seq_multi(dsi_ctx, 0xd1, 0x1e, 0x1f, 0x57, 0x58, 0x49, 0x4b,
++				     0x45, 0x47, 0x41, 0x1f, 0x43, 0x1f, 0x1f, 0x1f,
++				     0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f);
++	mipi_dsi_dcs_write_seq_multi(dsi_ctx, 0xd2, 0x1f, 0x1e, 0x17, 0x18, 0x07, 0x05,
++				     0x0b, 0x09, 0x03, 0x1f, 0x01, 0x1f, 0x1f, 0x1f,
++				     0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f);
++	mipi_dsi_dcs_write_seq_multi(dsi_ctx, 0xd3, 0x1f, 0x1e, 0x17, 0x18, 0x06, 0x04,
++				     0x0a, 0x08, 0x02, 0x1f, 0x00, 0x1f, 0x1f, 0x1f,
++				     0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f);
++	mipi_dsi_dcs_write_seq_multi(dsi_ctx, 0xd4, 0x00, 0x00, 0x00, 0x0c, 0x06, 0x20,
++				     0x01, 0x02, 0x00, 0x60, 0x15, 0xb0, 0x30, 0x03,
++				     0x04, 0x00, 0x60, 0x72, 0x0a, 0x00, 0x60, 0x08);
++	mipi_dsi_dcs_write_seq_multi(dsi_ctx, 0xd5, 0x00, 0x06, 0x06, 0x00, 0x30, 0x00,
++				     0x00, 0x00, 0x00, 0x00, 0xbc, 0x50, 0x00, 0x05,
++				     0x21, 0x00, 0x60);
++	mipi_dsi_dcs_write_seq_multi(dsi_ctx, 0xdd, 0x2c, 0xa3, 0x00);
++	mipi_dsi_dcs_write_seq_multi(dsi_ctx, 0xde, 0x02);
++	mipi_dsi_dcs_write_seq_multi(dsi_ctx, 0xb2, 0x32, 0x1c);
++	mipi_dsi_dcs_write_seq_multi(dsi_ctx, 0xb7, 0x3b, 0x70, 0x00, 0x04);
++	mipi_dsi_dcs_write_seq_multi(dsi_ctx, 0xc1, 0x11);
++	mipi_dsi_dcs_write_seq_multi(dsi_ctx, 0xbb, 0x21, 0x22, 0x23, 0x24, 0x36, 0x37);
++	mipi_dsi_dcs_write_seq_multi(dsi_ctx, 0xc2, 0x20, 0x38, 0x1e, 0x84);
++	mipi_dsi_dcs_write_seq_multi(dsi_ctx, 0xde, 0x00);
++
++	mipi_dsi_dcs_set_tear_on_multi(dsi_ctx, 1);
++	mipi_dsi_msleep(dsi_ctx, 60);
+ }
+ 
+ static const struct drm_display_mode ltk050h3146w_mode = {
+@@ -418,79 +398,42 @@ static const struct ltk050h3146w_desc ltk050h3146w_data = {
+ 		MIPI_DSI_MODE_LPM | MIPI_DSI_MODE_NO_EOT_PACKET,
+ };
+ 
+-static int ltk050h3146w_a2_select_page(struct ltk050h3146w *ctx, int page)
++static void ltk050h3146w_a2_select_page(struct mipi_dsi_multi_context *dsi_ctx, int page)
+ {
+-	struct mipi_dsi_device *dsi = to_mipi_dsi_device(ctx->dev);
+-	u8 d[3] = { 0x98, 0x81, page };
++	u8 d[4] = { 0xff, 0x98, 0x81, page };
+ 
+-	return mipi_dsi_dcs_write(dsi, 0xff, d, ARRAY_SIZE(d));
++	mipi_dsi_dcs_write_buffer_multi(dsi_ctx, d, ARRAY_SIZE(d));
+ }
+ 
+-static int ltk050h3146w_a2_write_page(struct ltk050h3146w *ctx, int page,
++static void ltk050h3146w_a2_write_page(struct mipi_dsi_multi_context *dsi_ctx, int page,
+ 				      const struct ltk050h3146w_cmd *cmds,
+ 				      int num)
+ {
+-	struct mipi_dsi_device *dsi = to_mipi_dsi_device(ctx->dev);
+-	int i, ret;
++	ltk050h3146w_a2_select_page(dsi_ctx, page);
+ 
+-	ret = ltk050h3146w_a2_select_page(ctx, page);
+-	if (ret < 0) {
+-		dev_err(ctx->dev, "failed to select page %d: %d\n", page, ret);
+-		return ret;
+-	}
+-
+-	for (i = 0; i < num; i++) {
+-		ret = mipi_dsi_generic_write(dsi, &cmds[i],
++	for (int i = 0; i < num; i++)
++		mipi_dsi_generic_write_multi(dsi_ctx, &cmds[i],
+ 					     sizeof(struct ltk050h3146w_cmd));
+-		if (ret < 0) {
+-			dev_err(ctx->dev, "failed to write page %d init cmds: %d\n", page, ret);
+-			return ret;
+-		}
+-	}
+-
+-	return 0;
+ }
+ 
+-static int ltk050h3146w_a2_init_sequence(struct ltk050h3146w *ctx)
++static void ltk050h3146w_a2_init_sequence(struct mipi_dsi_multi_context *dsi_ctx)
+ {
+-	struct mipi_dsi_device *dsi = to_mipi_dsi_device(ctx->dev);
+-	int ret;
+-
+ 	/*
+ 	 * Init sequence was supplied by the panel vendor without much
+ 	 * documentation.
+ 	 */
+-	ret = ltk050h3146w_a2_write_page(ctx, 3, page3_cmds,
++	ltk050h3146w_a2_write_page(dsi_ctx, 3, page3_cmds,
+ 					 ARRAY_SIZE(page3_cmds));
+-	if (ret < 0)
+-		return ret;
+-
+-	ret = ltk050h3146w_a2_write_page(ctx, 4, page4_cmds,
++	ltk050h3146w_a2_write_page(dsi_ctx, 4, page4_cmds,
+ 					 ARRAY_SIZE(page4_cmds));
+-	if (ret < 0)
+-		return ret;
+-
+-	ret = ltk050h3146w_a2_write_page(ctx, 1, page1_cmds,
++	ltk050h3146w_a2_write_page(dsi_ctx, 1, page1_cmds,
+ 					 ARRAY_SIZE(page1_cmds));
+-	if (ret < 0)
+-		return ret;
+-
+-	ret = ltk050h3146w_a2_select_page(ctx, 0);
+-	if (ret < 0) {
+-		dev_err(ctx->dev, "failed to select page 0: %d\n", ret);
+-		return ret;
+-	}
++	ltk050h3146w_a2_select_page(dsi_ctx, 0);
+ 
+ 	/* vendor code called this without param, where there should be one */
+-	ret = mipi_dsi_dcs_set_tear_on(dsi, 0);
+-	if (ret < 0) {
+-		dev_err(ctx->dev, "failed to set tear on: %d\n", ret);
+-		return ret;
+-	}
+-
+-	msleep(60);
++	mipi_dsi_dcs_set_tear_on_multi(dsi_ctx, 0);
+ 
+-	return 0;
++	mipi_dsi_msleep(dsi_ctx, 60);
+ }
+ 
+ static const struct drm_display_mode ltk050h3146w_a2_mode = {
+@@ -518,19 +461,12 @@ static int ltk050h3146w_unprepare(struct drm_panel *panel)
+ {
+ 	struct ltk050h3146w *ctx = panel_to_ltk050h3146w(panel);
+ 	struct mipi_dsi_device *dsi = to_mipi_dsi_device(ctx->dev);
+-	int ret;
++	struct mipi_dsi_multi_context dsi_ctx = { .dsi = dsi };
+ 
+-	ret = mipi_dsi_dcs_set_display_off(dsi);
+-	if (ret < 0) {
+-		dev_err(ctx->dev, "failed to set display off: %d\n", ret);
+-		return ret;
+-	}
+-
+-	mipi_dsi_dcs_enter_sleep_mode(dsi);
+-	if (ret < 0) {
+-		dev_err(ctx->dev, "failed to enter sleep mode: %d\n", ret);
+-		return ret;
+-	}
++	mipi_dsi_dcs_set_display_off_multi(&dsi_ctx);
++	mipi_dsi_dcs_enter_sleep_mode_multi(&dsi_ctx);
++	if (dsi_ctx.accum_err)
++		return dsi_ctx.accum_err;
+ 
+ 	regulator_disable(ctx->iovcc);
+ 	regulator_disable(ctx->vci);
+@@ -542,17 +478,17 @@ static int ltk050h3146w_prepare(struct drm_panel *panel)
+ {
+ 	struct ltk050h3146w *ctx = panel_to_ltk050h3146w(panel);
+ 	struct mipi_dsi_device *dsi = to_mipi_dsi_device(ctx->dev);
+-	int ret;
++	struct mipi_dsi_multi_context dsi_ctx = { .dsi = dsi };
+ 
+ 	dev_dbg(ctx->dev, "Resetting the panel\n");
+-	ret = regulator_enable(ctx->vci);
+-	if (ret < 0) {
+-		dev_err(ctx->dev, "Failed to enable vci supply: %d\n", ret);
+-		return ret;
++	dsi_ctx.accum_err = regulator_enable(ctx->vci);
++	if (dsi_ctx.accum_err) {
++		dev_err(ctx->dev, "Failed to enable vci supply: %d\n", dsi_ctx.accum_err);
++		return dsi_ctx.accum_err;
+ 	}
+-	ret = regulator_enable(ctx->iovcc);
+-	if (ret < 0) {
+-		dev_err(ctx->dev, "Failed to enable iovcc supply: %d\n", ret);
++	dsi_ctx.accum_err = regulator_enable(ctx->iovcc);
++	if (dsi_ctx.accum_err) {
++		dev_err(ctx->dev, "Failed to enable iovcc supply: %d\n", dsi_ctx.accum_err);
+ 		goto disable_vci;
+ 	}
+ 
+@@ -561,28 +497,15 @@ static int ltk050h3146w_prepare(struct drm_panel *panel)
+ 	gpiod_set_value_cansleep(ctx->reset_gpio, 0);
+ 	msleep(20);
+ 
+-	ret = ctx->panel_desc->init(ctx);
+-	if (ret < 0) {
+-		dev_err(ctx->dev, "Panel init sequence failed: %d\n", ret);
+-		goto disable_iovcc;
+-	}
+-
+-	ret = mipi_dsi_dcs_exit_sleep_mode(dsi);
+-	if (ret < 0) {
+-		dev_err(ctx->dev, "Failed to exit sleep mode: %d\n", ret);
+-		goto disable_iovcc;
+-	}
+-
++	ctx->panel_desc->init(&dsi_ctx);
++	mipi_dsi_dcs_exit_sleep_mode_multi(&dsi_ctx);
+ 	/* T9: 120ms */
+-	msleep(120);
++	mipi_dsi_msleep(&dsi_ctx, 120);
++	mipi_dsi_dcs_set_display_on_multi(&dsi_ctx);
++	mipi_dsi_msleep(&dsi_ctx, 50);
+ 
+-	ret = mipi_dsi_dcs_set_display_on(dsi);
+-	if (ret < 0) {
+-		dev_err(ctx->dev, "Failed to set display on: %d\n", ret);
++	if (dsi_ctx.accum_err)
+ 		goto disable_iovcc;
+-	}
+-
+-	msleep(50);
+ 
+ 	return 0;
+ 
+@@ -590,7 +513,7 @@ static int ltk050h3146w_prepare(struct drm_panel *panel)
+ 	regulator_disable(ctx->iovcc);
+ disable_vci:
+ 	regulator_disable(ctx->vci);
+-	return ret;
++	return dsi_ctx.accum_err;
+ }
+ 
+ static int ltk050h3146w_get_modes(struct drm_panel *panel,
+-- 
+2.47.0
 
->   *
->   * - the folio lock
->   * - LRU isolation
-> - * - lock_folio_memcg()
->   * - exclusive reference
-> - * - mem_cgroup_trylock_pages()
->   *
->   * For a kmem folio a caller should hold an rcu read lock to protect mem=
-cg
->   * associated with a kmem folio from being released.
-> @@ -1873,26 +1859,6 @@ static inline bool task_in_memcg_oom(struct task_s=
-truct *p)
->         return p->memcg_in_oom;
->  }
->
-> -void folio_memcg_lock(struct folio *folio);
-> -void folio_memcg_unlock(struct folio *folio);
-> -
-> -/* try to stablize folio_memcg() for all the pages in a memcg */
-> -static inline bool mem_cgroup_trylock_pages(struct mem_cgroup *memcg)
-> -{
-> -       rcu_read_lock();
-> -
-> -       if (mem_cgroup_disabled() || !atomic_read(&memcg->moving_account)=
-)
-> -               return true;
-> -
-> -       rcu_read_unlock();
-> -       return false;
-> -}
-> -
-> -static inline void mem_cgroup_unlock_pages(void)
-> -{
-> -       rcu_read_unlock();
-> -}
-> -
->  static inline void mem_cgroup_enter_user_fault(void)
->  {
->         WARN_ON(current->in_user_fault);
-> @@ -1914,26 +1880,6 @@ unsigned long memcg1_soft_limit_reclaim(pg_data_t =
-*pgdat, int order,
->         return 0;
->  }
->
-> -static inline void folio_memcg_lock(struct folio *folio)
-> -{
-> -}
-> -
-> -static inline void folio_memcg_unlock(struct folio *folio)
-> -{
-> -}
-> -
-> -static inline bool mem_cgroup_trylock_pages(struct mem_cgroup *memcg)
-> -{
-> -       /* to match folio_memcg_rcu() */
-> -       rcu_read_lock();
-> -       return true;
-> -}
-> -
-> -static inline void mem_cgroup_unlock_pages(void)
-> -{
-> -       rcu_read_unlock();
-> -}
-> -
->  static inline bool task_in_memcg_oom(struct task_struct *p)
->  {
->         return false;
-> diff --git a/mm/filemap.c b/mm/filemap.c
-> index 630a1c431ea1..e582a1545d2a 100644
-> --- a/mm/filemap.c
-> +++ b/mm/filemap.c
-> @@ -119,7 +119,6 @@
->   *    ->i_pages lock           (folio_remove_rmap_pte->set_page_dirty)
->   *    bdi.wb->list_lock                (folio_remove_rmap_pte->set_page_=
-dirty)
->   *    ->inode->i_lock          (folio_remove_rmap_pte->set_page_dirty)
-> - *    ->memcg->move_lock       (folio_remove_rmap_pte->folio_memcg_lock)
->   *    bdi.wb->list_lock                (zap_pte_range->set_page_dirty)
->   *    ->inode->i_lock          (zap_pte_range->set_page_dirty)
->   *    ->private_lock           (zap_pte_range->block_dirty_folio)
-> diff --git a/mm/memcontrol-v1.c b/mm/memcontrol-v1.c
-> index 9c0fba8c8a83..539ceefa9d2d 100644
-> --- a/mm/memcontrol-v1.c
-> +++ b/mm/memcontrol-v1.c
-> @@ -401,87 +401,6 @@ unsigned long memcg1_soft_limit_reclaim(pg_data_t *p=
-gdat, int order,
->         return nr_reclaimed;
->  }
->
-> -/**
-> - * folio_memcg_lock - Bind a folio to its memcg.
-> - * @folio: The folio.
-> - *
-> - * This function prevents unlocked LRU folios from being moved to
-> - * another cgroup.
-> - *
-> - * It ensures lifetime of the bound memcg.  The caller is responsible
-> - * for the lifetime of the folio.
-> - */
-> -void folio_memcg_lock(struct folio *folio)
-> -{
-> -       struct mem_cgroup *memcg;
-> -       unsigned long flags;
-> -
-> -       /*
-> -        * The RCU lock is held throughout the transaction.  The fast
-> -        * path can get away without acquiring the memcg->move_lock
-> -        * because page moving starts with an RCU grace period.
-> -         */
-> -       rcu_read_lock();
-> -
-> -       if (mem_cgroup_disabled())
-> -               return;
-> -again:
-> -       memcg =3D folio_memcg(folio);
-> -       if (unlikely(!memcg))
-> -               return;
-> -
-> -#ifdef CONFIG_PROVE_LOCKING
-> -       local_irq_save(flags);
-> -       might_lock(&memcg->move_lock);
-> -       local_irq_restore(flags);
-> -#endif
-> -
-> -       if (atomic_read(&memcg->moving_account) <=3D 0)
-> -               return;
-> -
-> -       spin_lock_irqsave(&memcg->move_lock, flags);
-> -       if (memcg !=3D folio_memcg(folio)) {
-> -               spin_unlock_irqrestore(&memcg->move_lock, flags);
-> -               goto again;
-> -       }
-> -
-> -       /*
-> -        * When charge migration first begins, we can have multiple
-> -        * critical sections holding the fast-path RCU lock and one
-> -        * holding the slowpath move_lock. Track the task who has the
-> -        * move_lock for folio_memcg_unlock().
-> -        */
-> -       memcg->move_lock_task =3D current;
-> -       memcg->move_lock_flags =3D flags;
-> -}
-> -
-> -static void __folio_memcg_unlock(struct mem_cgroup *memcg)
-> -{
-> -       if (memcg && memcg->move_lock_task =3D=3D current) {
-> -               unsigned long flags =3D memcg->move_lock_flags;
-> -
-> -               memcg->move_lock_task =3D NULL;
-> -               memcg->move_lock_flags =3D 0;
-> -
-> -               spin_unlock_irqrestore(&memcg->move_lock, flags);
-> -       }
-> -
-> -       rcu_read_unlock();
-> -}
-> -
-> -/**
-> - * folio_memcg_unlock - Release the binding between a folio and its memc=
-g.
-> - * @folio: The folio.
-> - *
-> - * This releases the binding created by folio_memcg_lock().  This does
-> - * not change the accounting of this folio to its memcg, but it does
-> - * permit others to change it.
-> - */
-> -void folio_memcg_unlock(struct folio *folio)
-> -{
-> -       __folio_memcg_unlock(folio_memcg(folio));
-> -}
-> -
->  static u64 mem_cgroup_move_charge_read(struct cgroup_subsys_state *css,
->                                 struct cftype *cft)
->  {
-> @@ -1189,7 +1108,6 @@ void memcg1_memcg_init(struct mem_cgroup *memcg)
->  {
->         INIT_LIST_HEAD(&memcg->oom_notify);
->         mutex_init(&memcg->thresholds_lock);
-> -       spin_lock_init(&memcg->move_lock);
->         INIT_LIST_HEAD(&memcg->event_list);
->         spin_lock_init(&memcg->event_list_lock);
->  }
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index 94279b9c766a..3c223aaeb6af 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -1189,7 +1189,6 @@ void lruvec_memcg_debug(struct lruvec *lruvec, stru=
-ct folio *folio)
->   * These functions are safe to use under any of the following conditions=
-:
->   * - folio locked
->   * - folio_test_lru false
-> - * - folio_memcg_lock()
->   * - folio frozen (refcount of 0)
->   *
->   * Return: The lruvec this folio is on with its lock held.
-> @@ -1211,7 +1210,6 @@ struct lruvec *folio_lruvec_lock(struct folio *foli=
-o)
->   * These functions are safe to use under any of the following conditions=
-:
->   * - folio locked
->   * - folio_test_lru false
-> - * - folio_memcg_lock()
->   * - folio frozen (refcount of 0)
->   *
->   * Return: The lruvec this folio is on with its lock held and interrupts
-> @@ -1235,7 +1233,6 @@ struct lruvec *folio_lruvec_lock_irq(struct folio *=
-folio)
->   * These functions are safe to use under any of the following conditions=
-:
->   * - folio locked
->   * - folio_test_lru false
-> - * - folio_memcg_lock()
->   * - folio frozen (refcount of 0)
->   *
->   * Return: The lruvec this folio is on with its lock held and interrupts
-> @@ -2375,9 +2372,7 @@ static void commit_charge(struct folio *folio, stru=
-ct mem_cgroup *memcg)
->          *
->          * - the page lock
->          * - LRU isolation
-> -        * - folio_memcg_lock()
->          * - exclusive reference
-> -        * - mem_cgroup_trylock_pages()
->          */
->         folio->memcg_data =3D (unsigned long)memcg;
->  }
-> diff --git a/mm/rmap.c b/mm/rmap.c
-> index 4785a693857a..c6c4d4ea29a7 100644
-> --- a/mm/rmap.c
-> +++ b/mm/rmap.c
-> @@ -32,7 +32,6 @@
->   *                   swap_lock (in swap_duplicate, swap_info_get)
->   *                     mmlist_lock (in mmput, drain_mmlist and others)
->   *                     mapping->private_lock (in block_dirty_folio)
-> - *                       folio_lock_memcg move_lock (in block_dirty_foli=
-o)
->   *                         i_pages lock (widely used)
->   *                           lruvec->lru_lock (in folio_lruvec_lock_irq)
->   *                     inode->i_lock (in set_page_dirty's __mark_inode_d=
-irty)
-> --
-> 2.43.5
->
->
 
