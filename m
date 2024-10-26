@@ -1,199 +1,158 @@
-Return-Path: <linux-kernel+bounces-382878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A84319B145B
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 05:48:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3738A9B1461
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 05:56:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A8502834CE
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 03:48:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 695A71C21333
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 03:56:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F415814BF8B;
-	Sat, 26 Oct 2024 03:48:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBD87155A24;
+	Sat, 26 Oct 2024 03:56:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ZulFvfGk"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aj7zOPKk"
+Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com [209.85.217.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D6EC8460;
-	Sat, 26 Oct 2024 03:48:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEFCC33986
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 03:56:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729914523; cv=none; b=GwkdATRcHLlQad1AXYTAf6qqDhunJ5ZLWAsIoDpkiayd/8/q7xR9uKCMZzVuAOVdmeFCXkaWpQcRW/UfRLUUkZmRLYYu2Rf5FU95KIaBEhRsn3ctTuqKrzFU79ooU6J2TDqRf5KN+wzpQjhUHj1I6rXgLId+5DNgjeWha9VPH3c=
+	t=1729914979; cv=none; b=E/zfCiWuyWD5KFxg5MPb6K9sIghZOLDCyfobB9ZNBUC/ZVQGR372YQi+Uvto/yqmeWS7Odezj9YaS0roS73vjUQYH6WbYvogK2qPxmTc1o+ADp6dWZVzoQFVpA0yLdLby31TGcSsRs/BCicXDRbOz9TNI2AlGHlu26fzRhD8yMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729914523; c=relaxed/simple;
-	bh=pwRBc0cQcBxMnTMQHjKmi88UjScQ014h2MWNBESaX18=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=iAxknfSwdC+ziYb3/+ehCdQvWo6hkXtnOqktuQIDgilVhBCQkvHcohl9Eu4FXtbhEYETMaH5vCPnvUcb9FIj5sp/D3p6kVSAGmdntIIeRfEg9F6Ljl48G81urX/88ONgnUEF7j1G1EwPnYpLUR5KqIInwVWFqcP32jVrQOUOAWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ZulFvfGk; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49Q2B2CX024778;
-	Sat, 26 Oct 2024 03:48:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	6QsftRtGDzmoJq4o3UAdGB6dmDX3MTYPtWoEsqFu+Us=; b=ZulFvfGkPHOn2dP/
-	N8cZxdukk+ASo/wwihUPnMlVdKmmkOXaNZU/3Zu21gWGo1PS8QDrdrbpkOVqlU5Z
-	MO3pubSW3pCH+/3Eo6vFNaX4fda0HBIZ9xjSy/Vj3q/+rXgTrukohXTznWgXE4Bk
-	G2zUKnmQt99DblHCOUuYT49U/QGU/o4zNSnkrKZF7Iu9kcK3S0npURh/kcvSKdCF
-	9GJJZp95wOAsqJxP4dM9jCcSnmtrvaiBxR/VUzZo4ir8WYFoTeea4MdaoJnwkBkf
-	5CwEFAMEcxAtUb7yYlO64N7gmU6YHcTLu2pZG3BoOvrANP89HZz3thx3x43bJ0sZ
-	3BBWVw==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42gqcqg3sr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 26 Oct 2024 03:48:27 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49Q3mQ5Y024830
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 26 Oct 2024 03:48:26 GMT
-Received: from [10.253.35.162] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 25 Oct
- 2024 20:48:23 -0700
-Message-ID: <76ce5d6d-a468-4f49-bc56-da6db2a4c9ba@quicinc.com>
-Date: Sat, 26 Oct 2024 11:48:20 +0800
+	s=arc-20240116; t=1729914979; c=relaxed/simple;
+	bh=3oM9WEdtQNIO693hFjB/zmcwWdvOBl5ifNMyfJw9/PE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Y3ekhOMaqGyszSi/p8UzE899Yd3EOOVP/5jvhJMY+Fxr+S2cZpeLsv2y6gato+Ha3IMBq472tANvXvhtmGVlKhzxneo11kXZk2h+ygl9gTybV5a1pTVXF7t5x1tuoxijPYdH2/ttsQkcG7IHppeQM+oqGjZ4KCfq0zsmsbQrj4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aj7zOPKk; arc=none smtp.client-ip=209.85.217.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-vs1-f47.google.com with SMTP id ada2fe7eead31-4a49505ba64so892120137.1
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 20:56:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1729914975; x=1730519775; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0WKjNsNyT0ruYn6UVMVJ1RKIZyXTRYpCy6zMhmlf4JA=;
+        b=aj7zOPKkgQn0mO3ApOxP99muVIOVBXhDjDjRPpbaF/I0axfRacn+npZNNkRs4SEdG4
+         3+tqU3XspleGZtVhpuzHrFxyMTmzeR++WFu0tD666dB0cHGhU5SaXG0k37dUTfdp0gjQ
+         whDoKCJHisoplt6JN5HiMIEKPkEJ4si8B/NlzkyTCUN7f7EQ1rDe+5tdw8LZjQ7vMlV5
+         /ukv9yf1odGDGJup++SpOs1A8rG87PYFqZVYXVOj6mh10Fju1dkgObA79JKAfzwsGDrr
+         fjL8VecpGCbfg4Mcur9ihlnr/qKLLrVkGxtgcqzIlkH7niINDZSGBRZFkNLn8c6KpNXh
+         QJ5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729914975; x=1730519775;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0WKjNsNyT0ruYn6UVMVJ1RKIZyXTRYpCy6zMhmlf4JA=;
+        b=CmAjCDZ/jYTHBuq8n4SBudE/ghlZiena4AEdX0y+vQlxtiAVGlSA5ybBk8zZGNXPgi
+         jLsbzkaNnyZKEJl1TVyOQQ2Ehmxt1p7nsDXgbMjSUhImGs/RDICQ+wpd/PpwTneTPI1V
+         m3JymNfjmaFh3cYTpGMC3ElyPM3XIsllV/ogUlI9NxzlzWO8s2XX2Pck+TyAxMT0kuRr
+         F1QwLfYSXryULdtZFLa7ZJpbMZTFdirrB0GtJfSBb2fJcdEJtgUZ1uPp9Wk5Rnw+wL8m
+         zAud235PW8kG9o4NFa4NPLlatnGk4X4VbjNHJy4h4aAIjF1QLwBc1zvDlqWzVwxgYvNh
+         XuHw==
+X-Forwarded-Encrypted: i=1; AJvYcCXbqW8APA7jGK1tpNW5d9li1HtW/3Z3+IY6Au1p2tUy9vFUNTjaFH4tsUKHtaJXOKCO2Zr3lxPXJGhCrj8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwAbjYM6LjPKgWfwgrfblFwLzrC7Ey3eKqiFebC/gSq9oObPlJ1
+	dpfB0ly0z3fLrgxPcar6wB8j3mR2qxOkeKwSliEfklMLpkXUvb9To3fGhHjXV5ZRlCGRv95g4BV
+	qfuQS5be0J5We9kffTNCeg8Y/naFh32YhPBkk
+X-Google-Smtp-Source: AGHT+IGHNioCV05B550z2HqdgbUh0S/Q4eiZK4coivQy8ntPYu+GO8YLiwCo3H1KXVMRJGwT6JD11juuGsuy611LTeQ=
+X-Received: by 2002:a05:6102:32d2:b0:4a4:7980:b9c7 with SMTP id
+ ada2fe7eead31-4a8cfb83109mr1334887137.14.1729914975276; Fri, 25 Oct 2024
+ 20:56:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/4] dt-bindings: arm:
- qcom,coresight-static-replicator: Add property for source filtering
-To: Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Mike Leach
-	<mike.leach@linaro.org>, James Clark <james.clark@arm.com>,
-        Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Leo Yan
-	<leo.yan@linux.dev>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>
-CC: <coresight@lists.linaro.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>
-References: <20241024065306.14647-1-quic_taozha@quicinc.com>
- <20241024065306.14647-2-quic_taozha@quicinc.com>
- <b848ae69-aca4-43d1-aa38-2f424045ee6f@arm.com>
- <30301f0b-5b04-4150-8159-5b8721486d6c@arm.com>
-Content-Language: en-US
-From: Tao Zhang <quic_taozha@quicinc.com>
-In-Reply-To: <30301f0b-5b04-4150-8159-5b8721486d6c@arm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: vJdy44AY_x8dID1qu4iAge19vJWyB4Ai
-X-Proofpoint-GUID: vJdy44AY_x8dID1qu4iAge19vJWyB4Ai
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- malwarescore=0 suspectscore=0 bulkscore=0 adultscore=0 spamscore=0
- phishscore=0 impostorscore=0 clxscore=1015 priorityscore=1501 mlxscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410260030
+References: <20241025012304.2473312-1-shakeel.butt@linux.dev> <20241025012304.2473312-6-shakeel.butt@linux.dev>
+In-Reply-To: <20241025012304.2473312-6-shakeel.butt@linux.dev>
+From: Yu Zhao <yuzhao@google.com>
+Date: Fri, 25 Oct 2024 21:55:38 -0600
+Message-ID: <CAOUHufYCPkUH0ysujoXZaw3PSrPvaw356-Pb97=LPGVRu_7FNQ@mail.gmail.com>
+Subject: Re: [PATCH v1 5/6] memcg-v1: no need for memcg locking for MGLRU
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Michal Hocko <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
+	Muchun Song <muchun.song@linux.dev>, Hugh Dickins <hughd@google.com>, 
+	Yosry Ahmed <yosryahmed@google.com>, linux-mm@kvack.org, cgroups@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, Meta kernel team <kernel-team@meta.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-On 10/24/2024 6:36 PM, Suzuki K Poulose wrote:
-> On 24/10/2024 10:14, Suzuki K Poulose wrote:
->> On 24/10/2024 07:53, Tao Zhang wrote:
->>> The is some "magic" hard coded filtering in the replicators,
->>> which only passes through trace from a particular "source". Add
->>> a new property "filter-src" to label a phandle to the coresight
->>> trace source device matching the hard coded filtering for the port.
->>
->> As mentioned in here in v3 review :
->>
->> https://lkml.org/lkml/2024/8/21/597
->>
->> Please do not use "src", expand it to "source"
+On Thu, Oct 24, 2024 at 7:23=E2=80=AFPM Shakeel Butt <shakeel.butt@linux.de=
+v> wrote:
 >
-> Just to confirm, this is only for the "bindings" string, not for the 
-> variables used in the patches.
-
-Yes, it is only used as the "bindings" string.
-
-
-Best,
-
-Tao
-
+> While updating the generation of the folios, MGLRU requires that the
+> folio's memcg association remains stable. With the charge migration
+> deprecated, there is no need for MGLRU to acquire locks to keep the
+> folio and memcg association stable.
 >
-> Suzuki
+> Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
+> ---
+>  mm/vmscan.c | 11 -----------
+>  1 file changed, 11 deletions(-)
 >
+> diff --git a/mm/vmscan.c b/mm/vmscan.c
+> index 29c098790b01..fd7171658b63 100644
+> --- a/mm/vmscan.c
+> +++ b/mm/vmscan.c
+> @@ -3662,10 +3662,6 @@ static void walk_mm(struct mm_struct *mm, struct l=
+ru_gen_mm_walk *walk)
+>                 if (walk->seq !=3D max_seq)
+>                         break;
+
+Please remove the lingering `struct mem_cgroup *memcg` as well as
+folio_memcg_rcu(). Otherwise it causes both build and lockdep
+warnings.
+
+> -               /* folio_update_gen() requires stable folio_memcg() */
+> -               if (!mem_cgroup_trylock_pages(memcg))
+> -                       break;
+> -
+>                 /* the caller might be holding the lock for write */
+>                 if (mmap_read_trylock(mm)) {
+>                         err =3D walk_page_range(mm, walk->next_addr, ULON=
+G_MAX, &mm_walk_ops, walk);
+> @@ -3673,8 +3669,6 @@ static void walk_mm(struct mm_struct *mm, struct lr=
+u_gen_mm_walk *walk)
+>                         mmap_read_unlock(mm);
+>                 }
 >
->>
->> Rest looks fine.
->>
->> Suzuki
->>
->>>
->>> Signed-off-by: Tao Zhang <quic_taozha@quicinc.com>
->>> ---
->>>   .../arm/arm,coresight-static-replicator.yaml  | 19 
->>> ++++++++++++++++++-
->>>   1 file changed, 18 insertions(+), 1 deletion(-)
->>>
->>> diff --git 
->>> a/Documentation/devicetree/bindings/arm/arm,coresight-static-replicator.yaml 
->>> b/Documentation/devicetree/bindings/arm/arm,coresight-static-replicator.yaml 
->>>
->>> index 1892a091ac35..0d258c79eb94 100644
->>> --- 
->>> a/Documentation/devicetree/bindings/arm/arm,coresight-static-replicator.yaml
->>> +++ 
->>> b/Documentation/devicetree/bindings/arm/arm,coresight-static-replicator.yaml
->>> @@ -45,7 +45,22 @@ properties:
->>>       patternProperties:
->>>         '^port@[01]$':
->>>           description: Output connections to CoreSight Trace bus
->>> -        $ref: /schemas/graph.yaml#/properties/port
->>> +        $ref: /schemas/graph.yaml#/$defs/port-base
->>> +        unevaluatedProperties: false
->>> +
->>> +        properties:
->>> +          endpoint:
->>> +            $ref: /schemas/graph.yaml#/$defs/endpoint-base
->>> +            unevaluatedProperties: false
->>> +
->>> +            properties:
->>> +              filter-src:
->>> +                $ref: /schemas/types.yaml#/definitions/phandle
->>> +                description:
->>> +                  phandle to the coresight trace source device 
->>> matching the
->>> +                  hard coded filtering for this port
->>> +
->>> +              remote-endpoint: true
->>>   required:
->>>     - compatible
->>> @@ -72,6 +87,7 @@ examples:
->>>                   reg = <0>;
->>>                   replicator_out_port0: endpoint {
->>>                       remote-endpoint = <&etb_in_port>;
->>> +                    filter-src = <&tpdm_video>;
->>>                   };
->>>               };
->>> @@ -79,6 +95,7 @@ examples:
->>>                   reg = <1>;
->>>                   replicator_out_port1: endpoint {
->>>                       remote-endpoint = <&tpiu_in_port>;
->>> +                    filter-src = <&tpdm_mdss>;
->>>                   };
->>>               };
->>>           };
->>
+> -               mem_cgroup_unlock_pages();
+> -
+>                 if (walk->batched) {
+>                         spin_lock_irq(&lruvec->lru_lock);
+>                         reset_batch_size(walk);
+> @@ -4096,10 +4090,6 @@ bool lru_gen_look_around(struct page_vma_mapped_wa=
+lk *pvmw)
+>                 }
+>         }
+>
+> -       /* folio_update_gen() requires stable folio_memcg() */
+> -       if (!mem_cgroup_trylock_pages(memcg))
+> -               return true;
+> -
+>         arch_enter_lazy_mmu_mode();
+>
+>         pte -=3D (addr - start) / PAGE_SIZE;
+> @@ -4144,7 +4134,6 @@ bool lru_gen_look_around(struct page_vma_mapped_wal=
+k *pvmw)
+>         }
+>
+>         arch_leave_lazy_mmu_mode();
+> -       mem_cgroup_unlock_pages();
+>
+>         /* feedback from rmap walkers to page table walkers */
+>         if (mm_state && suitable_to_scan(i, young))
+> --
+> 2.43.5
+>
 >
 
