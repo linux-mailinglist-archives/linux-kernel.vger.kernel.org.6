@@ -1,136 +1,149 @@
-Return-Path: <linux-kernel+bounces-382990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 112BA9B15F2
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 09:33:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE7D79B15F6
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 09:35:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5134283127
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 07:33:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4FF5282D25
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 07:35:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AA5F18E741;
-	Sat, 26 Oct 2024 07:33:34 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D2B018DF6A;
+	Sat, 26 Oct 2024 07:35:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="MYpgy0ks";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3JXSkfQI"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C17C517CA02;
-	Sat, 26 Oct 2024 07:33:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD3CD4436A;
+	Sat, 26 Oct 2024 07:35:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729928014; cv=none; b=YdHxXv45GyRAGE0hPlDF9zUk5K3FulqUlhwF1JUct9pBYQyGS3DvCwaL2xizTqzuSNg6VSJWCs4e1MHNGQHG4NXru6q76/403GwWfZVztSMytQCl6q7J5n8LYogF/b54NeBb7UNPs3RnTUPdpKEBQbWGGaWrofJ5Espj0LRB3sc=
+	t=1729928131; cv=none; b=rCgZWck5vDQpSHxNZY1Pdhigbe9/PL5X7ACdhnU2lWHL1I5d6MdWzGwqJSli/Pm2tJsiN1+21bWuKrZccL0y/1uuLerJuTaZql3obFS3KbKpOlON/8cVjwIaNNT12wrHZpkodKQ7HM3nV0Vu4gwI4chtHzTeBwHLVM6o+0j/XtY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729928014; c=relaxed/simple;
-	bh=n7utlUV9n5HtpAE/g/JIp5AtQo76IlU43lAwxB4lQC0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ieKMNNKMEqOcMbiWIrXiMwrzszpHLvehNrVJqE5ViGWMhMhHB5A2uRtYSdwHUlgT1dTKBPYmjAaA//AWRdwKOZtqI70xy+GUD6qDTGAf7bohReiyOeiZ/jvwS8Vuxik0onMZuYINAHrB9iFbJCTbMznEOpGTbBPShEBY4RS88tY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4XbBGT00Zsz1ynN1;
-	Sat, 26 Oct 2024 15:33:36 +0800 (CST)
-Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id 286BE1A016C;
-	Sat, 26 Oct 2024 15:33:29 +0800 (CST)
-Received: from [10.67.120.129] (10.67.120.129) by
- dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Sat, 26 Oct 2024 15:33:28 +0800
-Message-ID: <204272e7-82c3-4437-bb0d-2c3237275d1f@huawei.com>
-Date: Sat, 26 Oct 2024 15:33:28 +0800
+	s=arc-20240116; t=1729928131; c=relaxed/simple;
+	bh=ka9wlBmfnv8X1yLKeW/MCvgXOTRWqDz9XGAof1xAPJA=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=CKu69AF0JUm8cbDexDdMcWCq7IdlfvVhcDoLgAx5LMyKTpYw/9GjPHcme4pON6h7LukEIb09LMhGF2Hk90NxJsEA4dyYpGYm7yfmiG1Wt9g+n1zMoJNjZu5rMzkAB4rHjVaztyvSMbRWTAGiefA7+SDOEPhkyly9D8Iooi5RfZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=MYpgy0ks; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3JXSkfQI; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Sat, 26 Oct 2024 07:35:26 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1729928127;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dKky5Eshfe80vFQH1wZ+S3IpsrtWkSdIdzkRo0P1SyI=;
+	b=MYpgy0ksSC1ho+uiewtuRn/x5SVZYjHCSwKngybBwb1Jpibx/0AQvmb9yjqAHSWGk4WcZv
+	VRfwLL5Hsk+kfeosVOczebaHqXSR5c1B1uN9Wo5bsujQcxPOUljkcZZg4zEe5plX3sN24N
+	TDvOOY/wYHaCYzfGi92btoOUrgcNvjO02LKsBQgAIKMmsUDFnJG1IsWIiOgyFwya88LHsk
+	t9OSefbqmQFZ1M1AnwrH9ESVnMUsezKeGHFkueN5YHS6d8Ar+7Bc8pe3DNQR87aWt81Ej+
+	Y4TicuxfgORVWyzeSq2l0P6zUQVfhndHwFIS4coSWkzzzs22kGBPtbTGH8SRrA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1729928127;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dKky5Eshfe80vFQH1wZ+S3IpsrtWkSdIdzkRo0P1SyI=;
+	b=3JXSkfQIAknrfZQ8VdA2PXxkKbWjqkkZs5wEs+VZvL3dF+0VL4zMo6b297BcLByysxJQpm
+	LW8nymaEdbseugCg==
+From: "tip-bot2 for David Lechner" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: locking/core] cleanup: Add conditional guard helper
+Cc: David Lechner <dlechner@baylibre.com>,
+ "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+ Dan Williams <dan.j.williams@intel.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To:
+ <20241001-cleanup-if_not_cond_guard-v1-1-7753810b0f7a@baylibre.com>
+References:
+ <20241001-cleanup-if_not_cond_guard-v1-1-7753810b0f7a@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v3 3/3] page_pool: fix IOMMU crash when driver
- has already unbound
-To: Jesper Dangaard Brouer <hawk@kernel.org>,
-	=?UTF-8?Q?Toke_H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>,
-	<davem@davemloft.net>, <kuba@kernel.org>, <pabeni@redhat.com>
-CC: <zhangkun09@huawei.com>, <fanghaiqing@huawei.com>,
-	<liuyonglong@huawei.com>, Robin Murphy <robin.murphy@arm.com>, Alexander
- Duyck <alexander.duyck@gmail.com>, IOMMU <iommu@lists.linux.dev>, Andrew
- Morton <akpm@linux-foundation.org>, Eric Dumazet <edumazet@google.com>, Ilias
- Apalodimas <ilias.apalodimas@linaro.org>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>, kernel-team
-	<kernel-team@cloudflare.com>
-References: <20241022032214.3915232-1-linyunsheng@huawei.com>
- <20241022032214.3915232-4-linyunsheng@huawei.com>
- <dbd7dca7-d144-4a0f-9261-e8373be6f8a1@kernel.org>
- <113c9835-f170-46cf-92ba-df4ca5dfab3d@huawei.com> <878qudftsn.fsf@toke.dk>
- <d8e0895b-dd37-44bf-ba19-75c93605fc5e@huawei.com> <87r084e8lc.fsf@toke.dk>
- <0c146fb8-4c95-4832-941f-dfc3a465cf91@kernel.org>
-Content-Language: en-US
-From: Yunsheng Lin <linyunsheng@huawei.com>
-In-Reply-To: <0c146fb8-4c95-4832-941f-dfc3a465cf91@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- dggpemf200006.china.huawei.com (7.185.36.61)
+Message-ID: <172992812675.1442.16190431929459104566.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On 2024/10/25 22:07, Jesper Dangaard Brouer wrote:
+The following commit has been merged into the locking/core branch of tip:
 
-...
+Commit-ID:     36c2cf88808d47e926d11b98734f154fe4a9f50f
+Gitweb:        https://git.kernel.org/tip/36c2cf88808d47e926d11b98734f154fe4a9f50f
+Author:        David Lechner <dlechner@baylibre.com>
+AuthorDate:    Tue, 01 Oct 2024 17:30:18 -05:00
+Committer:     Peter Zijlstra <peterz@infradead.org>
+CommitterDate: Fri, 25 Oct 2024 10:01:51 +02:00
 
-> 
->>> You and Jesper seems to be mentioning a possible fact that there might
->>> be 'hundreds of gigs of memory' needed for inflight pages, it would be nice
->>> to provide more info or reasoning above why 'hundreds of gigs of memory' is
->>> needed here so that we don't do a over-designed thing to support recording
->>> unlimited in-flight pages if the driver unbound stalling turns out impossible
->>> and the inflight pages do need to be recorded.
->>
->> I don't have a concrete example of a use that will blow the limit you
->> are setting (but maybe Jesper does), I am simply objecting to the
->> arbitrary imposing of any limit at all. It smells a lot of "640k ought
->> to be enough for anyone".
->>
-> 
-> As I wrote before. In *production* I'm seeing TCP memory reach 24 GiB
-> (on machines with 384GiB memory). I have attached a grafana screenshot
-> to prove what I'm saying.
-> 
-> As my co-worker Mike Freemon, have explain to me (and more details in
-> blogposts[1]). It is no coincident that graph have a strange "sealing"
-> close to 24 GiB (on machines with 384GiB total memory).  This is because
-> TCP network stack goes into a memory "under pressure" state when 6.25%
-> of total memory is used by TCP-stack. (Detail: The system will stay in
-> that mode until allocated TCP memory falls below 4.68% of total memory).
-> 
->  [1] https://blog.cloudflare.com/unbounded-memory-usage-by-tcp-for-receive-buffers-and-how-we-fixed-it/
+cleanup: Add conditional guard helper
 
-Thanks for the info.
+Add a new if_not_guard() macro to cleanup.h for handling
+conditional guards such as mutext_trylock().
 
-> 
-> 
->>> I guess it is common sense to start with easy one until someone complains
->>> with some testcase and detailed reasoning if we need to go the hard way as
->>> you and Jesper are also prefering waiting over having to record the inflight
->>> pages.
->>
->> AFAIU Jakub's comment on his RFC patch for waiting, he was suggesting
->> exactly this: Add the wait, and see if the cases where it can stall turn
->> out to be problems in practice.
-> 
-> +1
-> 
-> I like Jakub's approach.
+This is more ergonomic than scoped_guard() for most use cases.
+Instead of hiding the error handling statement in the macro args, it
+works like a normal if statement and allow the error path to be indented
+while the normal code flow path is not indented. And it avoid unwanted
+side-effect from hidden for loop in scoped_guard().
 
-As mentioned in Toke's comment, I am still not convinced that there is some
-easy way of waiting here, doing the kick in the kernel space is hard enough,
-I am not even sure if kick need to be done or how it can be done in the user
-space if some page_pool owned page is held from user space for the cases of zero
-rx copy, io_uring and devmem tcp? killing the userspace app?
+Signed-off-by: David Lechner <dlechner@baylibre.com>
+Co-developed-by: Fabio M. De Francesco <fabio.m.de.francesco@linux.intel.com>
+Signed-off-by: Fabio M. De Francesco <fabio.m.de.francesco@linux.intel.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+Link: https://lkml.kernel.org/r/20241001-cleanup-if_not_cond_guard-v1-1-7753810b0f7a@baylibre.com
+---
+ include/linux/cleanup.h | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-If you and Toke still think the waiting is the way out for the problem here, maybe
-we should wait for jakub's opinion and let him decide if he want to proceed with
-his waiting patch.
-
-> 
-> --Jesper
+diff --git a/include/linux/cleanup.h b/include/linux/cleanup.h
+index 0cc66f8..e859f79 100644
+--- a/include/linux/cleanup.h
++++ b/include/linux/cleanup.h
+@@ -273,6 +273,12 @@ static inline class_##_name##_t class_##_name##ext##_constructor(_init_args) \
+  *	an anonymous instance of the (guard) class, not recommended for
+  *	conditional locks.
+  *
++ * if_not_guard(name, args...) { <error handling> }:
++ *	convenience macro for conditional guards that calls the statement that
++ *	follows only if the lock was not acquired (typically an error return).
++ *
++ *	Only for conditional locks.
++ *
+  * scoped_guard (name, args...) { }:
+  *	similar to CLASS(name, scope)(args), except the variable (with the
+  *	explicit name 'scope') is declard in a for-loop such that its scope is
+@@ -343,6 +349,15 @@ _label:									\
+ 
+ #define scoped_cond_guard(_name, _fail, args...)	\
+ 	__scoped_cond_guard(_name, _fail, __UNIQUE_ID(label), args)
++
++#define __if_not_guard(_name, _id, args...)		\
++	BUILD_BUG_ON(!__is_cond_ptr(_name));		\
++	CLASS(_name, _id)(args);			\
++	if (!__guard_ptr(_name)(&_id))
++
++#define if_not_guard(_name, args...) \
++	__if_not_guard(_name, __UNIQUE_ID(guard), args)
++
+ /*
+  * Additional helper macros for generating lock guards with types, either for
+  * locks that don't have a native type (eg. RCU, preempt) or those that need a
 
