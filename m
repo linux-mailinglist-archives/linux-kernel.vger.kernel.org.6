@@ -1,109 +1,157 @@
-Return-Path: <linux-kernel+bounces-383216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D96889B188F
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 16:18:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F6349B1898
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 16:27:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E971282441
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 14:18:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01952282DFF
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 14:27:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CFF118641;
-	Sat, 26 Oct 2024 14:18:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2426A18641;
+	Sat, 26 Oct 2024 14:27:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="dsVoWrTd"
-Received: from msa.smtpout.orange.fr (smtp-80.smtpout.orange.fr [80.12.242.80])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="ZPJhX+Ac"
+Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 547911CD02;
-	Sat, 26 Oct 2024 14:18:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1101134A8;
+	Sat, 26 Oct 2024 14:27:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729952285; cv=none; b=JG+ACACrCL3IV+478/n/E7cgYzTS2KkOLC8O+s171HbSNFcCpDePsPxbf951Ws0jTLu8v0GyoChZMmIzJbso88rbA4Q/VZVA7+w/LenpW2gxeRPbHUOxQlzN1Y+WVwvcjREwsT/NV2DjqAuCsnV24VZYiuNFvjR0q3Yj5J05hbo=
+	t=1729952838; cv=none; b=inx6Go84fK21nJ9KblwhyMLWl35uT+Wp2QMtsOdfg9ZZHkE/k93230+IQB05fZqag00zJQnEzGz0jEr7heszumn//hkjFMDAkBC16v09yE8ug24O3tBU8/UOXVS4u/O2Aa1rJmRwUb8UfpfhT/MbVM7ZCjSmR515d23CLJGExHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729952285; c=relaxed/simple;
-	bh=jtWRxub02rdof1ec5Ogg81M3zByqJ57Q0EX9sND/TsQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rH88QZUuyhzpgTkzWXe2NjcR34Lap0Ho7pPuFm8PEXHUx4/Hv357JZh+pDN5SspR1bh4VgmSiddIlIYV1kMVf4j0e7ujEDF58HsX+/c0s1gF8lm0WSET6u72/V0RznCe91dbOajrPz1tIuOlPVKIDniDvzBR0DaeWFwK0nCY87c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=dsVoWrTd; arc=none smtp.client-ip=80.12.242.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from localhost.localdomain ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id 4hc0tVIwCjP4T4hc1tRohz; Sat, 26 Oct 2024 16:17:54 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1729952274;
-	bh=FfHm9nyVFxciJ4tCIjF7CcDaV35P+oGeXqN4ax4+YEs=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=dsVoWrTdpJFaKRccvNFr4mvq07bOikx2VohX5J2zEGwa8IdsGn8HOhyDBHh9r4oGK
-	 4cTwhm/xkqS9LxmdTYDn3axB8UXT9gjcNHNqF6OyeG81vMytHenm5W22fwBbmLa5N+
-	 SOX2YQMuWJI9U0h6O7w4e0s0T6T69VDvqw46Pp1HxmlDDXByx/0vy24fr25fPMtPgZ
-	 QecGK7SDAa3dm07DqLAamBrx0TDnJ+I2KP7i4T5IScGPbhJ7wb9WPik6kXPvwom6AW
-	 y6hd5baehF6dJnb86qRK2+/uuvETBGY6c5ujg1ToCshT5e6zdCxlVobDerD1Zn5UOh
-	 bfFRU1inqJ7Ew==
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 26 Oct 2024 16:17:54 +0200
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Kuniyuki Iwashima <kuniyu@amazon.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	netdev@vger.kernel.org
-Subject: [PATCH] rtnetlink: Fix an error handling path in rtnl_newlink()
-Date: Sat, 26 Oct 2024 16:17:44 +0200
-Message-ID: <eca90eeb4d9e9a0545772b68aeaab883d9fe2279.1729952228.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1729952838; c=relaxed/simple;
+	bh=NLMj2ql9El1zMEdwP3hmb38W/b9GUansJFnQZhwcuwY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=R4XZzCyGNMD7TB6Zxre5OEoxXkfsUf9cGUsefnC8LAYUrTZa0jSUmnbcPFzF1D/jindYFdHlUBUQSDCKOfGlYharIrTN7eaYQTVETWlAyS4S0MURThbI5gkEeQ5iHdkBeb+fPJQtETumfkte2I2aQuq8TLW7C2+1KC2x37pg+c4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=ZPJhX+Ac; arc=none smtp.client-ip=167.114.26.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
+	s=smtpout1; t=1729952834;
+	bh=NLMj2ql9El1zMEdwP3hmb38W/b9GUansJFnQZhwcuwY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ZPJhX+AceO0hKomerRFndhtcV6ciWnjMeGTGzYfYFQUQG0afSFnLff5Urz1PKMay3
+	 1x/YvgEgSE0uPmGN9pNTyVaXfjjQB29svoZik7HFKpP0KHrlEbqcl1v+hOYGu2HnES
+	 us7G2WbVrqgusmpDyy3/frLcrsjjTdDzcA8DPtkED2gd5/A4G6QTNvyHfHMNoOXjvT
+	 IiJDKVWYDg7pny0XvlMvR9Q6dPOtD9afo00hF9aHLQHQH6IPCsEsQU6sefNZvOYqoU
+	 dQP031p9HUpCaJURvWwE/8uBAmES/9bwalfM4LeRJi2L5q3Ty8HVxIPnjPlPj1E86E
+	 6q2EKDtfF4GAw==
+Received: from [IPV6:2606:6d00:100:4000:cacb:9855:de1f:ded2] (unknown [IPv6:2606:6d00:100:4000:cacb:9855:de1f:ded2])
+	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XbMRk0SXMzN2j;
+	Sat, 26 Oct 2024 10:27:14 -0400 (EDT)
+Message-ID: <b961bc6b-331c-4315-b424-60d514cc112e@efficios.com>
+Date: Sat, 26 Oct 2024 10:25:31 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v1] tracing: Fix syscall tracepoint use-after-free
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Jordan Rife <jrife@google.com>, acme@kernel.org,
+ alexander.shishkin@linux.intel.com, andrii.nakryiko@gmail.com,
+ ast@kernel.org, bpf@vger.kernel.org, joel@joelfernandes.org,
+ linux-kernel@vger.kernel.org, mark.rutland@arm.com, mhiramat@kernel.org,
+ mingo@redhat.com, mjeanson@efficios.com, namhyung@kernel.org,
+ paulmck@kernel.org, peterz@infradead.org,
+ syzbot+b390c8062d8387b6272a@syzkaller.appspotmail.com, yhs@fb.com
+References: <20241025182149.500274-1-mathieu.desnoyers@efficios.com>
+ <20241025190854.3030636-1-jrife@google.com>
+ <f31710d3-e4d8-43ad-9ccb-6d13201756a3@efficios.com>
+ <20241026031314.0f53e7fa@rorschach.local.home>
+Content-Language: en-US
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+In-Reply-To: <20241026031314.0f53e7fa@rorschach.local.home>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-When some code has been moved in the commit in Fixes, some "return err;"
-have correctly been changed in goto <some_where_in_the_error_handling_path>
-but this one was missed.
+On 2024-10-26 03:13, Steven Rostedt wrote:
+> On Fri, 25 Oct 2024 15:38:48 -0400
+> Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
+> 
+>>> I'm curious if it might be better to add some field to struct
+>>> tracepoint like "sleepable" rather than adding a special case here
+>>> based on the name? Of course, if it's only ever going to be these
+>>> two cases then maybe adding a new field doesn't make sense.
+>>
+>> I know Steven is reluctant to bloat the tracepoint struct because there
+>> are lots of tracepoint instances (thousands). So for now I thought that
+>> just comparing the name would be a good start.
+> 
+> You are correct. I really trying to keep the footprint of
+> tracepoints/events down.
+> 
+>>
+>> We can eventually go a different route as well: introduce a section just
+>> to put the syscall tracepoints, and compare the struct tracepoint
+>> pointers to the section begin/end range. But it's rather complex
+>> for what should remain a simple fix.
+> 
+> A separate section could work.
 
-Should "ops->maxtype > RTNL_MAX_TYPE" happen, then some resources would
-leak.
+I have another approach to suggest: it shrinks the
+size of struct tracepoint from 80 bytes down to 72 bytes
+on x86-64, we don't have to do any section/linker
+script trickery, and it's extensible for future flags:
 
-Go through the error handling path to fix these leaks.
+struct static_key {
+         int enabled;
+         void *p;
+};
 
-Fixes: 0d3008d1a9ae ("rtnetlink: Move ops->validate to rtnl_newlink().")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested only
----
- net/core/rtnetlink.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+struct static_key_false {
+         struct static_key key;
+};
 
-diff --git a/net/core/rtnetlink.c b/net/core/rtnetlink.c
-index 194a81e5f608..e269fae2b579 100644
---- a/net/core/rtnetlink.c
-+++ b/net/core/rtnetlink.c
-@@ -3829,8 +3829,10 @@ static int rtnl_newlink(struct sk_buff *skb, struct nlmsghdr *nlh,
- 	}
- 
- 	if (ops) {
--		if (ops->maxtype > RTNL_MAX_TYPE)
--			return -EINVAL;
-+		if (ops->maxtype > RTNL_MAX_TYPE) {
-+			ret = -EINVAL;
-+			goto put_ops;
-+		}
- 
- 		if (ops->maxtype && linkinfo[IFLA_INFO_DATA]) {
- 			ret = nla_parse_nested_deprecated(tbs->attr, ops->maxtype,
+struct static_call_key {
+         void *func;
+         void *p;
+};
+
+struct tracepoint {
+         const char *name;               /* Tracepoint name */
+         struct static_key_false key;
+         struct static_call_key *static_call_key;
+         void *static_call_tramp;
+         void *iterator;
+         void *probestub;
+         void *funcs;
+         /* Flags. */
+         unsigned int regfunc:1,
+                      syscall:1;
+};
+
+struct tracepoint_regfunc {
+         struct tracepoint tp;
+         int (*regfunc)(void);
+         void (*unregfunc)(void);
+};
+
+Basically, a tracepoint with regfunc would define a
+struct tracepoint_regfunc rather than a struct tracepoint.
+So we remove both regfunc and unregfunc NULL pointers in
+the common case, which gives us plenty of room for flags.
+
+When we want to access the regfunc/unregfunc from
+a struct tracepoint, we check the regfunc flag, and
+if set, we can use container_of() to get the struct
+tracepoint_regfunc.
+
+Thoughts ?
+
+Thanks,
+
+Mathieu
+
 -- 
-2.47.0
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
 
 
