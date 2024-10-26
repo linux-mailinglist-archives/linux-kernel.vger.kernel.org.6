@@ -1,163 +1,231 @@
-Return-Path: <linux-kernel+bounces-383169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0421E9B1807
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 14:26:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BBF59B180F
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 14:28:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 242291C20A9A
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 12:26:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD26A284213
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 12:28:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29DC11D5CD6;
-	Sat, 26 Oct 2024 12:26:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 951C01D5CD6;
+	Sat, 26 Oct 2024 12:27:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hGAXZT6D"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W8uuspq6"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69C78217F54;
-	Sat, 26 Oct 2024 12:26:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 763FA1D5ABE
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 12:27:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729945584; cv=none; b=JjWyXDpgcIEYCDlysscwJA6jX0Otwi2+MvBEbfA4ofM+gfl2oMMTHqZnBZetnPfX0ZemjvbGMqt1IY9KF6Zdy1hL1kmi7Hyo8c38ZchnR9j3tBYfbV4LgYc3g+gSZejoQM3vSajyFU5M1NO24hX0kQE66+ZS9BTPfS+FnKTeaws=
+	t=1729945658; cv=none; b=mg/zvS84x4A5CBwiQgF072iBuJ70Eh0HUNeiDE016eqUadhnvH6IMrtay1lZbxlkZ6+RO7IqzhdehfT0Atcqak6RCQyWfEjr/8byjY+pFQdbtELwL0iuyfzoJEcBvIODifEmMVbnXiWtWmBhh32X/doosPGxeMfPdcPP4lsNhTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729945584; c=relaxed/simple;
-	bh=W57meclX8lAWf+c8MubzAdivjO+6JkigLOBqPzEu78Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=S5sfT6uhU9Y45itjIHGAXd8LdfRN04tsDrK+P9yyiqCkmPTvufwZDqILpS0HYjPzRWwHzCimfypxaT/pM4qhA03LCKbrFY58/PYBUjYZ8tQxZJIvzmcB+eFJrtTRkKTci/71Qp8Lpf2tVk0Lo+1XbA7I1O67lmdrpJtPJw7vvk0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hGAXZT6D; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEE71C4CEC7;
-	Sat, 26 Oct 2024 12:26:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729945584;
-	bh=W57meclX8lAWf+c8MubzAdivjO+6JkigLOBqPzEu78Y=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=hGAXZT6DeCcy8Zr9HDpnuBCIyRM3C11gAPzerAJc2LiqJT7epIgBPpPBVRnwUeKPU
-	 EQbegMoX5LTva0zakF0lScrctHCAEieYlfps0nBjJfkh/6E27dwcs5LPjrNtDtmF2F
-	 Q1GqR0BX09IqD5gOis6eUgL1dHeEBtpfLzFTVQFxoutzOZ0qrdwPX9LNjNCR7oW7fU
-	 H9Uz4++fiDEAqciNTtoC9fiAqRF4AXF6ZjBnQsjPMZZw+xNck3jRex+s8RX5odIrEf
-	 Y3Ls3LRQQxgcEJGf0WHVRUspvrmkeLrJFk+bSaY6sj5wYkEHOIDdRjALJlU8Cxeplc
-	 IUTNB9Vjr9MwQ==
-Message-ID: <c47aa9fc-fae5-440f-b7a3-c350cacf4023@kernel.org>
-Date: Sat, 26 Oct 2024 14:26:15 +0200
+	s=arc-20240116; t=1729945658; c=relaxed/simple;
+	bh=DMxuc4FkxncyfoZmnLATdM1P+wBDtItNksGjIRWvADs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WKWM5XTpHyM/6o0OP8wiuupdrQ08ISJCZn691SBDBgllq/lauNaUChruNOH1dA7Ryz6Y4W1/4M4y2+sXxYFU4E+ytgN6eNkd/R7rBxJdpJaP9fCcIgQkixGrQ5YO+YhWQKE9twJWXbk0JoGid3hEnm+zGzI8vxCANfkmBIQjflw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W8uuspq6; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2fc96f9c41fso30004711fa.0
+        for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 05:27:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729945654; x=1730550454; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zTz7+mwaDjOBX3vLYUXOJxXMPA7UKCaRBLS71ajvXQA=;
+        b=W8uuspq6u37gpTVjkvBZS40LFPBF7ZI7P/5IL91rEp3HwRp5NOsFwHMVPOH1GEakQx
+         npyaMeZvw0DMTXH5bha94uKuyRCxl7veg6zoU+qW1UIU0G/1nSUv/EHDfmTB/FPnEDFR
+         EXkGwidk0uigjvShHxBJ95CzbnSTMHWmaVtOObwp1yr85PzMvzPeRICZbm9dyRE1hTyR
+         fR6X7eGXeI+TQudcQ0SSpH2UIE7XvOr2knptkh9VKEMJKnCLfOe3FOC12ui4pLML8ao2
+         /fPd//elBs9Pkc0s93ytLR9J0VsYvZWimX/XGK3B/UO2ANQH5utyFtKhj4J7VBwQeIHN
+         iaUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729945654; x=1730550454;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zTz7+mwaDjOBX3vLYUXOJxXMPA7UKCaRBLS71ajvXQA=;
+        b=GdmrAAfpyRmkvSmpfu2bbcbYdIKk8vru+mm+0AfwoI9E1wHyoLRITemGKeEdwOu1x6
+         JR8U0nX4pp2f5/BBY3y3N6b1d31MgynOYX/BRanDBzLFXbL2jDbPPldNgJwFjrHymM79
+         Wk68lnCf8w5ruVddsuVyj4iq1+RxJVNOlJ96k2GY+t6e4vyQ9SHAMNaq7LsmzG7jnFep
+         8fHJ9SbxVwONMG+CYHrQFks9KPSb6gn8Fj1Mq0ywgP5TR16U6JlJnkc6o4HzhEWHsrbz
+         QyntmoNn1yKUhuuyJ5AEy6VhqLGfp7ati62ka/ocOhl+DR8s4baVCsOhFJwjsrzowQ3M
+         hTfg==
+X-Forwarded-Encrypted: i=1; AJvYcCXpilMyqlS5hzTireve4BDEHSfXWoGe7ogfGgEmd2gbichMotK9I/wItnSSEPiFgoybItdV9xrp9HKxpLQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7KHc9QpZipPpmKGQAJQxHtH2k51dNLw3+oRopybHMi4hCCzVa
+	RFKxOaSPLjY9041RoBtRvLpmIPx8kXT1bkYjo1v5hwEir5on9A6paluw1xfO84hPjDmR58hML+A
+	NDopRYDmYzhxYQJkM6103GvXCMRo=
+X-Google-Smtp-Source: AGHT+IFmhb/AG+DRoAIBx7Exf3tqP9Gu1mCRk2RsdIULg+oS428vQDP/8WBg3u94U+XnjPIf7tmmQERKoS3KcFl7nRY=
+X-Received: by 2002:a05:651c:2126:b0:2fb:6243:321d with SMTP id
+ 38308e7fff4ca-2fcbd8ee8f3mr8941881fa.5.1729945654131; Sat, 26 Oct 2024
+ 05:27:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] interconnect: qcom: Add EPSS L3 support on SA8775P
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>,
- Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Sibi Sankar <quic_sibis@quicinc.com>, linux-arm-msm@vger.kernel.org,
- linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, quic_okukatla@quicinc.com,
- quic_mdtipton@quicinc.com
-References: <20240904171209.29120-1-quic_rlaggysh@quicinc.com>
- <20240904171209.29120-4-quic_rlaggysh@quicinc.com>
- <c3efb01d-2138-4b79-97a1-653b7bd531d0@kernel.org>
- <bfcc65b2-97a4-4353-a2fd-dce927c53428@quicinc.com>
- <49aa8205-6324-412d-b03d-c2b3f738cc98@kernel.org>
- <6b89de85-58c0-4808-9a33-6ee7dc26611d@quicinc.com>
- <e7ce51a1-97a1-4d54-a1d4-0f6d279a9055@kernel.org>
- <8a8df92d-a8f1-456c-92cb-d0d485f03345@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <8a8df92d-a8f1-456c-92cb-d0d485f03345@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241025-checkpatch-fixes-commit-v2-1-4bc4f06d37b3@gmail.com> <20241025174444.7536f7ad4c94fd02afc63077@linux-foundation.org>
+In-Reply-To: <20241025174444.7536f7ad4c94fd02afc63077@linux-foundation.org>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Sat, 26 Oct 2024 08:26:57 -0400
+Message-ID: <CAJ-ks9=AFHN_ZBGXcEk4HiJNpJUB4tBU6Kyrxng_hXC_yM0VAQ@mail.gmail.com>
+Subject: Re: [PATCH v2] checkpatch: always parse orig_commit in fixes tag
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>, 
+	Dwaipayan Ray <dwaipayanray1@gmail.com>, Lukas Bulwahn <lukas.bulwahn@gmail.com>, 
+	Simon Horman <horms@kernel.org>, 
+	=?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>, 
+	Philippe Schenker <philippe.schenker@toradex.com>, Louis Peens <louis.peens@corigine.com>, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 26/10/2024 14:24, Konrad Dybcio wrote:
-> On 26.10.2024 1:28 PM, Krzysztof Kozlowski wrote:
->> On 25/10/2024 17:38, Raviteja Laggyshetty wrote:
->>>
->>>
->>> On 9/6/2024 10:00 PM, Krzysztof Kozlowski wrote:
->>>> On 06/09/2024 17:32, Raviteja Laggyshetty wrote:
->>>>>
->>>>> On 9/4/2024 11:52 PM, Krzysztof Kozlowski wrote:
->>>>>> On 04/09/2024 19:12, Raviteja Laggyshetty wrote:
->>>>>>> +
->>>>>>>  static const struct qcom_osm_l3_desc epss_l3_l3_vote = {
->>>>>>>  	.nodes = epss_l3_nodes,
->>>>>>>  	.num_nodes = ARRAY_SIZE(epss_l3_nodes),
->>>>>>> @@ -284,6 +307,10 @@ static const struct of_device_id osm_l3_of_match[] = {
->>>>>>>  	{ .compatible = "qcom,sm8150-osm-l3", .data = &osm_l3 },
->>>>>>>  	{ .compatible = "qcom,sc8180x-osm-l3", .data = &osm_l3 },
->>>>>>>  	{ .compatible = "qcom,sm8250-epss-l3", .data = &epss_l3_perf_state },
->>>>>>> +	{ .compatible = "qcom,sa8775p-epss-l3-cl0",
->>>>>>> +	  .data = &epss_l3_perf_state },
->>>>>> Don't grow it but express compatibility.
->>>>> ok. Will rename compatible from "qcom,sa8775p-epss-l3-cl0" to "qcom,sa8775p-epss-l3".
->>>>
->>>> This won't solve the problem. You still grow the table, right?
->>>
->>> Falling back to "qcom,epss-l3" won't work because we need to vote into perf state register.
->>> I am introducing a new fallback compatible "qcom,epss-l3-perf" for perf voting, which can be used for upcoming qcs8300.
->>
->> Maybe, no clue, this was 1.5 months ago. I don't have original patches
->> in the inbox anymore.
->>
->> Just choose something sensible following writing bindings guideline.
-> 
-> You can see that qcom,sm8250-epss-l3 uses the same match data, so that
-> sounds like a good fit
+On Fri, Oct 25, 2024 at 8:44=E2=80=AFPM Andrew Morton <akpm@linux-foundatio=
+n.org> wrote:
+>
+> On Fri, 25 Oct 2024 19:43:19 -0400 Tamir Duberstein <tamird@gmail.com> wr=
+ote:
+>
+> > Do not require the presence of `$balanced_parens` to get the commit SHA=
+;
+> > this allows a `Fixes: deadbeef` tag to get a correct suggestion rather
+> > than a suggestion containing a reference to HEAD.
+>
+> Got it, thanks.  Below is what I ended up with:
+>
+>
+> From: Tamir Duberstein <tamird@gmail.com>
+> Subject: checkpatch: always parse orig_commit in fixes tag
+> Date: Fri, 25 Oct 2024 19:43:19 -0400
+>
+> Do not require the presence of `$balanced_parens` to get the commit SHA;
+> this allows a `Fixes: deadbeef` tag to get a correct suggestion rather
+> than a suggestion containing a reference to HEAD.
+>
+> Given this patch:
+>
+> : From: Tamir Duberstein <tamird@gmail.com>
+> : Subject: Test patch
+> : Date: Fri, 25 Oct 2024 19:30:51 -0400
+> :
+> : This is a test patch.
+> :
+> : Fixes: bd17e036b495
+> : Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+> : --- /dev/null
+> : +++ b/new-file
+> : @@ -0,0 +1 @@
+> : +Test.
+>
+>
+> Before:
+>
+> WARNING: Please use correct Fixes: style 'Fixes: <12 chars of sha1> ("<ti=
+tle line>")' - ie: 'Fixes: c10a7d25e68f ("Test patch")'
+>
+> After:
+>
+> WARNING: Please use correct Fixes: style 'Fixes: <12 chars of sha1> ("<ti=
+tle line>")' - ie: 'Fixes: bd17e036b495 ("checkpatch: warn for non-standard=
+ fixes tag style")'
+>
+>
+>
+> The prior behavior incorrectly suggested the patch's own SHA and title
+> line rather than the referenced commit's.  This fixes that.
+>
+> Ironically this:
+>
+> Fixes: bd17e036b495 ("checkpatch: warn for non-standard fixes tag style")
+> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+> Cc: Andy Whitcroft <apw@canonical.com>
+> Cc: Dwaipayan Ray <dwaipayanray1@gmail.com>
+> Cc: Joe Perches <joe@perches.com>
+> Cc: Louis Peens <louis.peens@corigine.com>
+> Cc: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> Cc: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.se>
+> Cc: Philippe Schenker <philippe.schenker@toradex.com>
+> Cc: Simon Horman <horms@kernel.org>
+> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+> ---
+>
+>  scripts/checkpatch.pl |   37 ++++++++++++++++---------------------
+>  1 file changed, 16 insertions(+), 21 deletions(-)
+>
+> --- a/scripts/checkpatch.pl~checkpatch-always-parse-orig_commit-in-fixes-=
+tag
+> +++ a/scripts/checkpatch.pl
+> @@ -3209,36 +3209,31 @@ sub process {
+>
+>  # Check Fixes: styles is correct
+>                 if (!$in_header_lines &&
+> -                   $line =3D~ /^\s*fixes:?\s*(?:commit\s*)?[0-9a-f]{5,}\=
+b/i) {
+> -                       my $orig_commit =3D "";
+> -                       my $id =3D "0123456789ab";
+> -                       my $title =3D "commit title";
+> -                       my $tag_case =3D 1;
+> -                       my $tag_space =3D 1;
+> -                       my $id_length =3D 1;
+> -                       my $id_case =3D 1;
+> +                   $line =3D~ /^\s*(fixes:?)\s*(?:commit\s*)?([0-9a-f]{5=
+,40})(?:\s*($balanced_parens))?/i) {
+> +                       my $tag =3D $1;
+> +                       my $orig_commit =3D $2;
+> +                       my $title;
+>                         my $title_has_quotes =3D 0;
+>                         $fixes_tag =3D 1;
+> -
+> -                       if ($line =3D~ /(\s*fixes:?)\s+([0-9a-f]{5,})\s+(=
+$balanced_parens)/i) {
+> -                               my $tag =3D $1;
+> -                               $orig_commit =3D $2;
+> -                               $title =3D $3;
+> -
+> -                               $tag_case =3D 0 if $tag eq "Fixes:";
+> -                               $tag_space =3D 0 if ($line =3D~ /^fixes:?=
+ [0-9a-f]{5,} ($balanced_parens)/i);
+> -
+> -                               $id_length =3D 0 if ($orig_commit =3D~ /^=
+[0-9a-f]{12}$/i);
+> -                               $id_case =3D 0 if ($orig_commit !~ /[A-F]=
+/);
+> -
+> +                       if (defined $3) {
+>                                 # Always strip leading/trailing parens th=
+en double quotes if existing
+> -                               $title =3D substr($title, 1, -1);
+> +                               $title =3D substr($3, 1, -1);
+>                                 if ($title =3D~ /^".*"$/) {
+>                                         $title =3D substr($title, 1, -1);
+>                                         $title_has_quotes =3D 1;
+>                                 }
+> +                       } else {
+> +                               $title =3D "commit title"
+>                         }
+>
+> +
+> +                       my $tag_case =3D not ($tag eq "Fixes:");
+> +                       my $tag_space =3D not ($line =3D~ /^fixes:? [0-9a=
+-f]{5,40} ($balanced_parens)/i);
+> +
+> +                       my $id_length =3D not ($orig_commit =3D~ /^[0-9a-=
+f]{12}$/i);
+> +                       my $id_case =3D not ($orig_commit !~ /[A-F]/);
+> +
+> +                       my $id =3D "0123456789ab";
+>                         my ($cid, $ctitle) =3D git_commit_info($orig_comm=
+it, $id,
+>                                                              $title);
+>
+> _
+>
 
-Yep, so probably this was obvious to me when I wrote above comment and I
-just don't get why fallbacking to qcom,sa8775p-epss-l3...
-
-Best regards,
-Krzysztof
-
+Thanks!
 
