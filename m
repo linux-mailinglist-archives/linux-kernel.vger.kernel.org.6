@@ -1,167 +1,124 @@
-Return-Path: <linux-kernel+bounces-382932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C33609B1527
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 07:34:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 876979B152B
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 07:35:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E3E72B21B22
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 05:34:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37C7C1F2168A
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 05:35:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DEB613A41F;
-	Sat, 26 Oct 2024 05:34:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DEF614EC47;
+	Sat, 26 Oct 2024 05:35:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="uRotzDxY"
-Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hSQRyF4s"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28F126A009
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 05:34:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B98F86A009
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 05:35:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729920874; cv=none; b=LuY3BWnOJFQLp0EMc5wj08nXUz9orcu8J8R/SONIY21Zb9vwxtIHPhaK1Aa3VIJLB/AlNYzMgpWOELCZ8IHzoJsWwAgUW3rPY3XXlw4PsKsaOOgcw8pAGEVDLeRL+Ig/2ZwQ+Udbfx2I8aBkv/ivagKZ+PhWeJvGyV/ZdJd88Bc=
+	t=1729920945; cv=none; b=MTrpQZgtWs+9P4xuivggVLWJLorUpATKZLZp5I6NvQEN+4rTK+PZLEc0qeRPrEEo3u67hPyHLR+3EvR2rB6+iNE+0GMYCSgNtuKsVXEroPqNf658TNal6GC6TcWp2bDTaVhB90r5OJRjy6PqhFUSN2TDTDImeyaf7b1ofEA90TU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729920874; c=relaxed/simple;
-	bh=+gqBjpDwjKYtNctvzOJOwSt/7mwGLDiB/t/GK/jcCAQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=paVX7tAjn2GTVUHYHc++KYVffO1mAPmXzEzh/rIV/+dY0qOrItmRLxw1uiedCd58NqdnRSkF/aESLErze4U/ceVPsbKn7+pgD7Gw85cZ4uFeclNJL5JMS9bb0yXBYHnE17z2UpJgAL8IPT0FQCUACl99FM8+sngaARo3pBr61SA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=uRotzDxY; arc=none smtp.client-ip=95.215.58.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Fri, 25 Oct 2024 22:34:23 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1729920870;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1VqnAcW2Lr3Wy+fyPS6e7OxFPoaLSfYoH8W/e5CQq/w=;
-	b=uRotzDxY2ZOxA3MQsoJ6CvtuZFL9wN9G3BXCyfRTs1bHCvEDCGzBJDkL34TQiC8MIsw4AA
-	eoPYjoe5fjfZ+arMREjDW4ItPBv5y93EQ/aSrzqvZNAX6zbc4jHitDCuRCClFTcVGyGTbz
-	ev8wimyrZndrhZ0ewX0qLhBjjKA9jwQ=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Oliver Upton <oliver.upton@linux.dev>
-To: Raghavendra Rao Ananta <rananta@google.com>
-Cc: Marc Zyngier <maz@kernel.org>, linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org, stable@vger.kernel.org,
-	syzbot <syzkaller@googlegroups.com>
-Subject: Re: [PATCH] KVM: arm64: Mark the VM as dead for failed
- initializations
-Message-ID: <Zxx_X9-MdmAFzHUO@linux.dev>
-References: <20241025221220.2985227-1-rananta@google.com>
+	s=arc-20240116; t=1729920945; c=relaxed/simple;
+	bh=usAzsghngYuQwiNyWCZJNau2Hf3WPP04SV2qw79Hq10=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=F4gFNrfYN/PIj5EFaRu5d4dpg8vl3/1xeEZYYDn0ChTNAWl3soPkSA4FB4IEExiSfqkd/Z/CfSBbu5DDcpRHjTl1dLmhYPHU9HOcB6gakwef97cTfbJRGjqjT+eHUQpDV8t0FOGxhVC9DlRAEZcHMMhob5ZWa6150DUcZCsH6p0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hSQRyF4s; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20ca03687fdso55715ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 22:35:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1729920943; x=1730525743; darn=vger.kernel.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=zAEivNXk9T6Y1/iQJj7zUHpciM/prWWnjcYMP1R7sik=;
+        b=hSQRyF4sV71MuBh8tqskCYg0e4XPV7sg/KORmxwaQifozSqE3UrgJ8NyPIW96oiSpm
+         K4vFuZ+iHBPGslPPdUa7mkaNvVCpHiMgk2aZ8sbbAGCoTM8NZ5PX6JNGp3G1h0R24AYO
+         uGffl3P56eZppgvUCGGTkFWOjST+K0V8R9lz0nmKmMGQHZe70q82EQfR0NEddldqW2tZ
+         wofUHY+mwCzlPdBugFIq+pzflyTUn+Y/EOD9156GOR/7O5nszphMrSDTrFkJJCklaTV8
+         1hGXV8CfBjp2B/bLMRSyAYAdOt1Nw2rWBVgSEUnStIF0km4UeFtld0v4/xdQH4e0N2KA
+         VDbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729920943; x=1730525743;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zAEivNXk9T6Y1/iQJj7zUHpciM/prWWnjcYMP1R7sik=;
+        b=M7zLmq3iP39oJtxny2IFq05UpOgt/VXfXgfc5dhun6+CVvKTX7r5YeTKrwK6GGfjII
+         ZD62fB96DPf9sSQY24PaoxF4f0Oi5/G8GzvdACxMwqEtQCGgZXPWH/t23KpMmSRpEhv+
+         Cdo3dfSO4M69O6rcHkKg3R1ISdrRZvhinRvM4TkAtgxZoAGI10bTRrlNM+rea102U/Mk
+         q8TLS+SSsLMGkRx9NGT2K4u26d2CG2jUmN+icgnaizdeeTN1ypeP1P83m4te6bArJl4K
+         +6uPtVk5xiwpfyVYNSiNRKttwwas80JG2GIEIG+QDnE6T+R6WdvvxpMx6KMGhbwZcxfY
+         dm5g==
+X-Forwarded-Encrypted: i=1; AJvYcCWzmh3qxixXNT48m46iU9vDwuCjuwzvaUD29OKhFL+2K0YOvV5f4Vsig1/ogCfiZ2/3b/CCkLGH1g9cNog=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyx0bfgBTwu41vvPyW3X7UE+/6zY36kvhzTouAvtzl6wHoca7Iu
+	wLiD8+zJXYbuYXIgybHtghfRH/w3gKzLgSTDvJzZhiCY0rO2od6PdgiS5qdmdEEkhslg1393s3s
+	DjQ==
+X-Google-Smtp-Source: AGHT+IF3/5gd/9ow/KXULsF4GA6z8DPDcI/7jJhdYqT/oBsP3+4SDFUpQdjd92McUYwWON6IfKML1w==
+X-Received: by 2002:a17:903:1c3:b0:20c:675d:920f with SMTP id d9443c01a7336-210c7bd6333mr827035ad.25.1729920942674;
+        Fri, 25 Oct 2024 22:35:42 -0700 (PDT)
+Received: from [2620:0:1008:15:a73a:2b46:3ef7:2150] ([2620:0:1008:15:a73a:2b46:3ef7:2150])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e8e36a3114sm2562794a91.29.2024.10.25.22.35.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Oct 2024 22:35:42 -0700 (PDT)
+Date: Fri, 25 Oct 2024 22:35:41 -0700 (PDT)
+From: David Rientjes <rientjes@google.com>
+To: Yu Zhao <yuzhao@google.com>
+cc: Andrew Morton <akpm@linux-foundation.org>, 
+    Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org, 
+    linux-kernel@vger.kernel.org, Link Lin <linkl@google.com>
+Subject: Re: [PATCH mm-unstable v2] mm/page_alloc: keep track of free
+ highatomic
+In-Reply-To: <20241026033625.2237102-1-yuzhao@google.com>
+Message-ID: <4abac91f-bb15-b6d3-4c9c-fd66fae39243@google.com>
+References: <20241026033625.2237102-1-yuzhao@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241025221220.2985227-1-rananta@google.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=US-ASCII
 
-Hi Raghu,
+On Fri, 25 Oct 2024, Yu Zhao wrote:
 
-Thanks for posting this fix.
-
-On Fri, Oct 25, 2024 at 10:12:20PM +0000, Raghavendra Rao Ananta wrote:
-> Syzbot hit the following WARN_ON() in kvm_timer_update_irq():
+> OOM kills due to vastly overestimated free highatomic reserves were
+> observed:
 > 
-> WARNING: CPU: 0 PID: 3281 at arch/arm64/kvm/arch_timer.c:459
-> kvm_timer_update_irq+0x21c/0x394
-> Call trace:
->   kvm_timer_update_irq+0x21c/0x394 arch/arm64/kvm/arch_timer.c:459
->   kvm_timer_vcpu_reset+0x158/0x684 arch/arm64/kvm/arch_timer.c:968
->   kvm_reset_vcpu+0x3b4/0x560 arch/arm64/kvm/reset.c:264
->   kvm_vcpu_set_target arch/arm64/kvm/arm.c:1553 [inline]
->   kvm_arch_vcpu_ioctl_vcpu_init arch/arm64/kvm/arm.c:1573 [inline]
->   kvm_arch_vcpu_ioctl+0x112c/0x1b3c arch/arm64/kvm/arm.c:1695
->   kvm_vcpu_ioctl+0x4ec/0xf74 virt/kvm/kvm_main.c:4658
->   vfs_ioctl fs/ioctl.c:51 [inline]
->   __do_sys_ioctl fs/ioctl.c:907 [inline]
->   __se_sys_ioctl fs/ioctl.c:893 [inline]
->   __arm64_sys_ioctl+0x108/0x184 fs/ioctl.c:893
->   __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
->   invoke_syscall+0x78/0x1b8 arch/arm64/kernel/syscall.c:49
->   el0_svc_common+0xe8/0x1b0 arch/arm64/kernel/syscall.c:132
->   do_el0_svc+0x40/0x50 arch/arm64/kernel/syscall.c:151
->   el0_svc+0x54/0x14c arch/arm64/kernel/entry-common.c:712
->   el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
->   el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
+>   ... invoked oom-killer: gfp_mask=0x100cca(GFP_HIGHUSER_MOVABLE), order=0 ...
+>   Node 0 Normal free:1482936kB boost:0kB min:410416kB low:739404kB high:1068392kB reserved_highatomic:1073152KB ...
+>   Node 0 Normal: 1292*4kB (ME) 1920*8kB (E) 383*16kB (UE) 220*32kB (ME) 340*64kB (E) 2155*128kB (UE) 3243*256kB (UE) 615*512kB (U) 1*1024kB (M) 0*2048kB 0*4096kB = 1477408kB
 > 
-> The sequence that led to the report is when KVM_ARM_VCPU_INIT ioctl is
-> invoked after a failed first KVM_RUN. In a general sense though, since
-> kvm_arch_vcpu_run_pid_change() doesn't tear down any of the past
-> initiatializations, it's possible that the VM's state could be left
-
-typo: initializations
-
-> half-baked. Any upcoming ioctls could behave erroneously because of
-> this.
-
-You may want to highlight a bit more strongly that, despite the name,
-we do a lot of late *VM* state initialization in kvm_arch_vcpu_run_pid_change().
-
-When that goes sideways we're left with few choices besides bugging the
-VM or gracefully tearing down state, potentially w/ concurrent users.
-
-> Since these late vCPU initializations is past the point of attributing
-> the failures to any ioctl, instead of tearing down each of the previous
-> setups, simply mark the VM as dead, gving an opportunity for the
-> userspace to close and try again.
+> The second line above shows that the OOM kill was due to the following
+> condition:
 > 
-> Cc: <stable@vger.kernel.org>
-> Reported-by: syzbot <syzkaller@googlegroups.com>
-> Suggested-by: Oliver Upton <oliver.upton@linux.dev>
+>   free (1482936kB) - reserved_highatomic (1073152kB) = 409784KB < min (410416kB)
+> 
+> And the third line shows there were no free pages in any
+> MIGRATE_HIGHATOMIC pageblocks, which otherwise would show up as type
+> 'H'. Therefore __zone_watermark_unusable_free() underestimated the
+> usable free memory by over 1GB, which resulted in the unnecessary OOM
+> kill above.
+> 
+> The comments in __zone_watermark_unusable_free() warns about the
+> potential risk, i.e.,
+> 
+>   If the caller does not have rights to reserves below the min
+>   watermark then subtract the high-atomic reserves. This will
+>   over-estimate the size of the atomic reserve but it avoids a search.
+> 
+> However, it is possible to keep track of free pages in reserved
+> highatomic pageblocks with a new per-zone counter nr_free_highatomic
+> protected by the zone lock, to avoid a search when calculating the
+> usable free memory. And the cost would be minimal, i.e., simple
+> arithmetics in the highatomic alloc/free/move paths.
+> 
+> Reported-by: Link Lin <linkl@google.com>
+> Signed-off-by: Yu Zhao <yuzhao@google.com>
 
-I definitely recommended this to you, so blame *me* for imposing some
-toil on you with the following.
-
-> @@ -836,16 +836,16 @@ int kvm_arch_vcpu_run_pid_change(struct kvm_vcpu *vcpu)
->  
->  	ret = kvm_timer_enable(vcpu);
->  	if (ret)
-> -		return ret;
-> +		goto out_err;
->  
->  	ret = kvm_arm_pmu_v3_enable(vcpu);
->  	if (ret)
-> -		return ret;
-> +		goto out_err;
->  
->  	if (is_protected_kvm_enabled()) {
->  		ret = pkvm_create_hyp_vm(kvm);
->  		if (ret)
-> -			return ret;
-> +			goto out_err;
->  	}
->  
->  	if (!irqchip_in_kernel(kvm)) {
-> @@ -869,6 +869,10 @@ int kvm_arch_vcpu_run_pid_change(struct kvm_vcpu *vcpu)
->  	mutex_unlock(&kvm->arch.config_lock);
->  
->  	return ret;
-> +
-> +out_err:
-> +	kvm_vm_dead(kvm);
-> +	return ret;
->  }
-
-After rereading, I think we could benefit from a more distinct separation
-of late VM vs. vCPU state initialization.
-
-Bugging the VM is a big hammer, we should probably only resort to that
-when the VM state is screwed up badly.
-
-Otherwise, for screwed up vCPU state we could uninitialize the vCPU and
-let userspace try again. An example of this is how we deal with VMs that
-run 32 bit userspace when KVM tries to hide the feature.
-
-WDYT?
-
--- 
-Thanks,
-Oliver
+Acked-by: David Rientjes <rientjes@google.com>
 
