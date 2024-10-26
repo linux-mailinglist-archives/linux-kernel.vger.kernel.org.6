@@ -1,139 +1,131 @@
-Return-Path: <linux-kernel+bounces-383327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04EEA9B1A1D
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 19:36:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 091D59B1A20
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 19:39:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72609282A12
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 17:36:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CCF11C21205
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 17:39:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 469101D2B1A;
-	Sat, 26 Oct 2024 17:36:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AC491D2F67;
+	Sat, 26 Oct 2024 17:39:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="gAfeGJ3I"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=revi.email header.i=@revi.email header.b="UQhV9nj7";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="aqm1Zm5/"
+Received: from fout-a8-smtp.messagingengine.com (fout-a8-smtp.messagingengine.com [103.168.172.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69C00172BB9;
-	Sat, 26 Oct 2024 17:36:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37D576FB9;
+	Sat, 26 Oct 2024 17:39:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729964190; cv=none; b=mAaqXmklP4BA1L8g1qthXe8ad0KogUB7o4FjRmNJaM7vGhGsMzKm+NFj3GOStem5u7z6qh6c7VooAE5E1jQTru3QAkYJClk3Ffc0AiJxmusdH7tj2QxQlw6eDC2gcXR5WCWl9tc6b4cskvh4o8Ss+KRw2q4tkBQfALb+t6U8epI=
+	t=1729964355; cv=none; b=Df+5DzE9n8kanmJhFMQWSMG+llcofkojrGP475zS9KZJz93hnf1Mzp8zs4iQcnNUccFq19iPifR/qsRYpaFjHh1IXp5sH4SFPVWJ0SSEXXi8JtVsmYoKW/Th4LIIkKE6PNKDf+2ZC1YlxHvzsUC0eC/YAmWZICpF3UZEwx6B48w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729964190; c=relaxed/simple;
-	bh=EHV/HGIA+QGjb++JlT7svf9CLMcLw9Cpyx+M53ppHb0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nd58+pvk5lDYVD5jx+4rbQAdT2k0shU0beU0qQdcftgHIH+kR+H2zfprbppUBgZIc9UsBHR1T7yCO7l6plPbc7E6WElk6wIlVX2z8uqC/Et83y7NIc6i3F1jfv9xPQyfY5+m7AYURAXEnv4sG4mwWEBq1UExW3gYAnIn49wjSkU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=gAfeGJ3I; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id BEA4B4C9;
-	Sat, 26 Oct 2024 19:36:17 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1729964177;
-	bh=EHV/HGIA+QGjb++JlT7svf9CLMcLw9Cpyx+M53ppHb0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gAfeGJ3Ik9qNecjU+DDFuJE1V2uJx24QJ8eRVmLOBI/bGY6H35y+XFiVL3edaNY+D
-	 wCosrGhu+G038lKAd8IEFihfJPqDsiArWvpkRa4Wy6sP9mnBbtkNUg1gcv570wB2h5
-	 wiLRqUoySDKgXf8dBeCTEnEsb4Ssr9ODaAXn0Fo8=
-Date: Sat, 26 Oct 2024 20:36:10 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Tarang Raval <tarang.raval@siliconsignals.io>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] media: mt9p031: Refactor format handling for
- different sensor models
-Message-ID: <20241026173610.GF6519@pendragon.ideasonboard.com>
-References: <20241025221638.127457-1-tarang.raval@siliconsignals.io>
+	s=arc-20240116; t=1729964355; c=relaxed/simple;
+	bh=D3RmwI4bu3/8BxSAVeLi4RAOLqlxj/oLNWo2qcTdduo=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:Subject:
+	 Content-Type; b=NLFxu67elgqx1JW2C0IZSYYdoIqZBc4pjC12Gzu1Z7OSqw179DXd9DHUb9AeNdttdnafP5j2YmP65HNjRhhseYkxT3S058eRPPKUMobiiUBIuQaoeo4u3VF8DtfmKqwAfPkTRhDWsRcfsOIWr05ftZTUxbGrXahuqp/RYA2vzwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=revi.email; spf=pass smtp.mailfrom=revi.email; dkim=pass (2048-bit key) header.d=revi.email header.i=@revi.email header.b=UQhV9nj7; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=aqm1Zm5/; arc=none smtp.client-ip=103.168.172.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=revi.email
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=revi.email
+Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
+	by mailfout.phl.internal (Postfix) with ESMTP id 261621380223;
+	Sat, 26 Oct 2024 13:39:11 -0400 (EDT)
+Received: from phl-imap-09 ([10.202.2.99])
+  by phl-compute-01.internal (MEProxy); Sat, 26 Oct 2024 13:39:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=revi.email; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:reply-to:subject:subject:to:to; s=fm1; t=1729964351; x=
+	1730050751; bh=o3IeO3jQIb1Qjuj3w22aq9LgOdGupsxgBB3CjNvb0n8=; b=U
+	QhV9nj7SiWR90hvVN+St8X3/V3Ewu53YNYFmj1fZebZqSiay89B7NWeV0lZ5bwRF
+	/9Hp4iQJR69nCLnX+qoXAlTI0Bskg4dKKg471kNJToxp5g7Hv4yMHJK3ViacvnBO
+	YMjRHcC2S9a/R+dC/RstCe+CxyjIu9yI2BcFzBN1nMtjapOweQZj997fUpBYSOzz
+	IUxDuDKRRe0kN4LpPx/WCLEVPu5jJaw1egVSK3TNbe7LBxCAHDZShvmVlr3PfRUM
+	b2Ug+0jMGRX8JzqatPIbSQEWB3gLn8g2KG4qC6z0KHXdTwbEoNlJBoZ51BWt92zQ
+	bGhHPi27nozcbViuTlujA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1729964351; x=
+	1730050751; bh=o3IeO3jQIb1Qjuj3w22aq9LgOdGupsxgBB3CjNvb0n8=; b=a
+	qm1Zm5/KxNSuq2Zgrkch09OvXwGuyPrtf/gmMx8UVNUryVB/xF7f7Ng6Fnduhkoy
+	n8nxjgKBMhc8Y5JRi+6L/trievSDkyjCCrm7nN2HBay4KmhC5JkEAwxxrr9t6QI2
+	2iUTZ29VVHdPpSBwXJlxavPLE34/cjHPUCChYJgAlkpe0dUcibn6Oij30fS75vqd
+	egwD9RGYITFAKRAhVV37snjWmcIG2fP/E6VZruT8aRxSONnXVUh+0Cq3c6WwFn/Q
+	OQN+3G0rry7Zu13SmdPjbwNaSxXKuQRN4PjfiagS9rKOGTrpnQMBGWQFmaVEEWlp
+	qQDSSOjsLbUn0NeKYWWpw==
+X-ME-Sender: <xms:PikdZ_GOgoKqi4didu-Nr54oT8dRdr_YTrdJklM-bflPUKPPYw5mxw>
+    <xme:PikdZ8V-JeqA4mBh49Aey1Qp16K-KOECikEqfTbZe6zAXvo1rEKmQjsdA5ZshHqMU
+    yMaqgKCV_NzlcEhzOc>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdejgedguddugecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecufghrlhcuvffnffculd
+    dujedmnecujfgurhepofggfffhvfevkfgjufgtgfesthhqredtredtjeenucfhrhhomhep
+    jghonhhgmhhinhcuoeihvgifohhnsehrvghvihdrvghmrghilheqnecuggftrfgrthhtvg
+    hrnhepffetjeejleevfeelgfelteevheelgfekheevuefgleetlefhtdetveetfeegkeeh
+    necuffhomhgrihhnpeifihhkthhiohhnrghrhidrohhrghdprhgvvhhirdighiiipdifih
+    hkihhpvgguihgrrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehm
+    rghilhhfrhhomhephigvfihonhesrhgvvhhirdgvmhgrihhlpdhnsggprhgtphhtthhope
+    dufedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepjhhirgiguhhnrdihrghnghes
+    fhhlhihgohgrthdrtghomhdprhgtphhtthhopegtohhnughutghtsehkvghrnhgvlhdroh
+    hrghdprhgtphhtthhopegtvhgvsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlvggv
+    sehkvghrnhgvlhdrohhrghdprhgtphhtthhopehsrghshhgrlheskhgvrhhnvghlrdhorh
+    hgpdhrtghpthhtohepshgvtghurhhithihsehkvghrnhgvlhdrohhrghdprhgtphhtthho
+    pehshhhurghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehtohhrvhgrlhgusheslh
+    hinhhugidqfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtohepghhrvghgkhhhsehl
+    ihhnuhigfhhouhhnuggrthhiohhnrdhorhhg
+X-ME-Proxy: <xmx:PikdZxJQ2AwbB4WTvMzRyJkzHoDhlQFqdOyXE9vTJ-Ki-q0A5ikoig>
+    <xmx:PikdZ9GvhYESnUnKlTmZMQjZvAMQGnQWo5ef64YIChqPvL2G5SBroQ>
+    <xmx:PikdZ1Vm0dAKN2lGlcmUu7uRoFOU6FYt5-g7xe0qr3yTQSaSdMUjJg>
+    <xmx:PikdZ4OMW5gal6-FPlfBllDEnJLG-1zDG_p4cYPMteEsJBNXWVhCww>
+    <xmx:PykdZ-uE3iRqM96VVUE4ptaulJnazS5PFyV6NQiRdM283OjcL0_3Go0X>
+Feedback-ID: ie2a949ef:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 170D6780068; Sat, 26 Oct 2024 13:39:10 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Date: Sun, 27 Oct 2024 02:38:49 +0900
+From: Yongmin <yewon@revi.email>
+To: jiaxun.yang@flygoat.com
+Cc: conduct@kernel.org, corbet@lwn.net, cve@kernel.org,
+ gregkh@linuxfoundation.org, lee@kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, sashal@kernel.org, security@kernel.org,
+ shuah@kernel.org, stable@vger.kernel.org, torvalds@linux-foundation.org
+Message-Id: <166cb904-efb6-4dad-b30c-0dcbc600db5e@app.fastmail.com>
+In-Reply-To: <73b8017b-fce9-4cb1-be48-fc8085f1c276@app.fastmail.com>
+Subject: Re: Concerns over transparency of informal kernel groups
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241025221638.127457-1-tarang.raval@siliconsignals.io>
+Content-Transfer-Encoding: quoted-printable
 
-Hi Tarang,
+Hello from random bystander watching all this,
 
-Thank you for the patch.
+You probably should have used the term 'in camera' [1] instead of inform=
+al groups.
 
-On Sat, Oct 26, 2024 at 03:45:40AM +0530, Tarang Raval wrote:
-> Add new structure 'mt9p031_model_info' to encapsulate format codes for
-> the mt9p031 camera sensor family. This approach enhances code clarity
-> and maintainability.
-> 
-> Signed-off-by: Tarang Raval <tarang.raval@siliconsignals.io>
+[1]: https://en.wiktionary.org/wiki/in_camera : "1. In secret or in priv=
+ate (in an enclosed room, behind closed doors)."
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Bye,
 
-Sakari, this applies on top of "[PATCH 0/2] media: mt9p031: Drop legacy
-platform data" (https://lore.kernel.org/r/20241025181708.20648-1-laurent.pinchart@ideasonboard.com).
-Tarang, feel free to review that series to accelerate integration of the
-patches upstream :-)
-
-> ---
->  drivers/media/i2c/mt9p031.c | 31 ++++++++++++++++++++++++++++---
->  1 file changed, 28 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/media/i2c/mt9p031.c b/drivers/media/i2c/mt9p031.c
-> index f2f52f484044..3576d3066738 100644
-> --- a/drivers/media/i2c/mt9p031.c
-> +++ b/drivers/media/i2c/mt9p031.c
-> @@ -112,6 +112,24 @@
->  #define MT9P031_TEST_PATTERN_RED			0xa2
->  #define MT9P031_TEST_PATTERN_BLUE			0xa3
->  
-> +struct mt9p031_model_info {
-> +	u32 code;
-> +};
-> +
-> +enum mt9p031_model {
-> +	MT9P031_MODEL_BAYER,
-> +	MT9P031_MODEL_MONO,
-> +};
-> +
-> +static const struct mt9p031_model_info mt9p031_models[] = {
-> +	[MT9P031_MODEL_BAYER] = {
-> +		.code = MEDIA_BUS_FMT_SGRBG12_1X12,
-> +	},
-> +	[MT9P031_MODEL_MONO] = {
-> +		.code = MEDIA_BUS_FMT_Y12_1X12,
-> +	},
-> +};
-> +
->  struct mt9p031 {
->  	struct v4l2_subdev subdev;
->  	struct media_pad pad;
-> @@ -1209,9 +1227,16 @@ static void mt9p031_remove(struct i2c_client *client)
->  }
->  
->  static const struct of_device_id mt9p031_of_match[] = {
-> -	{ .compatible = "aptina,mt9p006", .data = (void *)MEDIA_BUS_FMT_SGRBG12_1X12 },
-> -	{ .compatible = "aptina,mt9p031", .data = (void *)MEDIA_BUS_FMT_SGRBG12_1X12 },
-> -	{ .compatible = "aptina,mt9p031m", .data = (void *)MEDIA_BUS_FMT_Y12_1X12 },
-> +	{
-> +		.compatible = "aptina,mt9p006",
-> +		.data = &mt9p031_models[MT9P031_MODEL_BAYER]
-> +	}, {
-> +		.compatible = "aptina,mt9p031",
-> +		.data = &mt9p031_models[MT9P031_MODEL_BAYER]
-> +	}, {
-> +		.compatible = "aptina,mt9p031m",
-> +		.data = &mt9p031_models[MT9P031_MODEL_MONO]
-> +	},
->  	{ /* sentinel */ }
->  };
->  MODULE_DEVICE_TABLE(of, mt9p031_of_match);
-
--- 
-Regards,
-
-Laurent Pinchart
+----
+revi | =EB=A0=88=EB=B9=84 (IPA: l=C9=9Bbi)
+- https://revi.xyz
+- he/him <https://revi.xyz/pronoun-is/>
+- What time is it in my timezone? <https://issuetracker.revi.xyz/u/time>
+- In this Korean name <https://en.wikipedia.org/wiki/Korean_name>, the f=
+amily name is Hong <https://en.wikipedia.org/wiki/Hong_(Korean_surname)>=
+, which makes my name HONG Yongmin.
+- I reply when my time permits. Don't feel pressured to reply ASAP;
+   take your time and respond at your schedule.
 
