@@ -1,152 +1,136 @@
-Return-Path: <linux-kernel+bounces-383020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FEBC9B1645
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 10:10:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4ADDE9B1647
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 10:13:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFEEF1F22749
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 08:10:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3C2D283137
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 08:13:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBC2F1D07B0;
-	Sat, 26 Oct 2024 08:10:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 596C91C6F73;
+	Sat, 26 Oct 2024 08:13:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="rCAyjCqT"
-Received: from msa.smtpout.orange.fr (smtp-83.smtpout.orange.fr [80.12.242.83])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jSci9EO/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 888741632D3;
-	Sat, 26 Oct 2024 08:10:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.83
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B53C417D896;
+	Sat, 26 Oct 2024 08:13:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729930213; cv=none; b=WiWNDZIK04zr/uVEQANILzhLb0fIjCmpMRlV52pIL2pqRi/mLcAHlj6DLmQlrg0suhsLvtQFdE617Sgcqsv0lnqXpuBdZDVGt+Zw3ms0GUv1u9m2fUnnLcDivorgA6XsguZeSHZ9hq/m9iydukiIIppIAAzVcUR6Lqpu70S46Bs=
+	t=1729930400; cv=none; b=u3eDS3fFim+UcNYdWDlg9bvpm/eMlM8SAqwHjNvejrUno72r7DWCNCmz1dLYbe7MbT2MDcNVHKXVZ/aAZp7VzcaqZdQ2f5KPUX8T92JfMLd2YdiHRQeYmf5ypLe7QttqbijZx5dTWS3OMhyEX7l+nZwfoWnm+cKw7UjYtnbfpbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729930213; c=relaxed/simple;
-	bh=eXezoRSGEJgqkLw+eS7eu6iiVu4G2376j5oOa6lRMIM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TmJtX6BmJVPTjCtRZa/P8Sq/sJpkXKtvNG8Ics1PV4Lqnhz3KMoHTzjSiemf+oOFOrJJkKC8PTYSwlEKvVTSJKoETYRGmT+AmHRa2jxQChxaP05QsInAT5xp/0ziDeLH8CSbNUDUYFVaUl212c6WNrtUfMbPchtqP+nvGXYJ1eA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=rCAyjCqT; arc=none smtp.client-ip=80.12.242.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from localhost.localdomain ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id 4brttJTpvLmOL4bs2tUbsE; Sat, 26 Oct 2024 10:10:03 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1729930203;
-	bh=jwyVolGT/MuttDEEvCVVvrLh3Bzx6w8Pcg5EguUcACM=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=rCAyjCqToG4VITQW0xko/5scReyi0PVS3BGi6S+V77YCZI5oTsan8o+iV3MQ4NykU
-	 vCX3Tdod7dR1t+0qo4GWd9sQcj+qW4apYzhQ+0bc3LYfN6m5eDdtdhmvRPFUWTXShE
-	 GJ8AaepmzuDYImDTdtyUGfdPCjr5dKQdhlk/Sgvv0SgYTDrXajiBNJSxqh60lyKnCV
-	 oR6nhPHZX1S0wpTlc8Bzm6zWiEALsJvxUrL6EHcQdAWX6qNv8gduG5ayIRLafrQEE9
-	 LN47dBRm7e1kc13fpDn6yLwgunlVQnvOY2MQ8LWkBki6Jw50oEIuEvAz1cyFbLG4lq
-	 0BPkz1JVUSDbw==
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 26 Oct 2024 10:10:03 +0200
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Selvin Xavier <selvin.xavier@broadcom.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Leon Romanovsky <leon@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-rdma@vger.kernel.org
-Subject: [PATCH 2/2] RDMA/bnxt_re: Remove some dead code
-Date: Sat, 26 Oct 2024 10:09:43 +0200
-Message-ID: <bc1135dc297ed2c6f3ca9446a2747b0c89102e61.1729930153.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <580de136ad9b85b0d70709e912cfddd21b7e3f6f.1729930153.git.christophe.jaillet@wanadoo.fr>
-References: <580de136ad9b85b0d70709e912cfddd21b7e3f6f.1729930153.git.christophe.jaillet@wanadoo.fr>
+	s=arc-20240116; t=1729930400; c=relaxed/simple;
+	bh=iUZr6BDcVRGSUW29ErBwFNHY3AC1kCqFEh1SFFtq9jM=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Z2R7XdyE9cvT1/QMOmtguf7O4YEwG0B7PcKv6ntiKNB0FhoS39wBaHcovGTkgqI4mQxQLoHldgZyLsG9uUu2k0Pz+wzjdjtg1gt9URyZz701M3motbK1/QugIKhouSQB3/ecH+EYZ3m+VcXG3XKxl75ICYlhdRshcN4MMziIMHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jSci9EO/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 819AFC4CEC6;
+	Sat, 26 Oct 2024 08:13:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729930400;
+	bh=iUZr6BDcVRGSUW29ErBwFNHY3AC1kCqFEh1SFFtq9jM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=jSci9EO/b+wxEhWKDntRJ2jWIDHRMgt3lazq084TshS2r05DjpHShIgJMwZ1YcWgm
+	 T0w/jahRVgXu6RG0eEDA9L0/yBSzRPU+/6Xsgw+mDeB+PmMZ3IlBnoWXHvDRAwGXqF
+	 IeUrNNSZkRngDWWPL2XTd+86W5pRfY5r/w4j7kMy0rjKxirvFWn6Fu14TaofPxhBMM
+	 NrWh7cmE3B4wXhPqa6dlw8IaMATwbahfSU+On00W5yR8aLOi05MOjO7B23qb+5Sv7e
+	 gXZuIZ3FG5ROtXDldAsuB1QSSwZ3YZD90ioOvCRP6S0POSMLp8+yaSn88KpjOXtoYF
+	 //YewaP2IDaDw==
+Received: from [81.145.206.43] (helo=wait-a-minute.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1t4bvC-0076Ee-7z;
+	Sat, 26 Oct 2024 09:13:18 +0100
+Date: Sat, 26 Oct 2024 09:13:17 +0100
+Message-ID: <87r083th7m.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Oliver Upton <oliver.upton@linux.dev>
+Cc: kvmarm@lists.linux.dev,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 08/18] KVM: arm64: nv: Reinject traps that take effect in Host EL0
+In-Reply-To: <20241025182354.3364124-9-oliver.upton@linux.dev>
+References: <20241025182354.3364124-1-oliver.upton@linux.dev>
+	<20241025182354.3364124-9-oliver.upton@linux.dev>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 81.145.206.43
+X-SA-Exim-Rcpt-To: oliver.upton@linux.dev, kvmarm@lists.linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, anshuman.khandual@arm.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-If the probe succeeds, then auxiliary_get_drvdata() can't return a NULL
-pointer.
+On Fri, 25 Oct 2024 19:23:43 +0100,
+Oliver Upton <oliver.upton@linux.dev> wrote:
+> 
+> Wire up the other end of traps that affect host EL0 by actually
+> injecting them into the guest hypervisor. Skip over FGT entirely, as a
+> cursory glance suggests no FGT is effective in host EL0.
 
-So several NULL checks can be removed to simplify code.
+Yes, and this (thankfully) is by design! :-)
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested only
----
- drivers/infiniband/hw/bnxt_re/main.c | 19 -------------------
- 1 file changed, 19 deletions(-)
+> 
+> Note that kvm_inject_nested() is already equipped for handling
+> exceptions while the VM is already in a host context.
+> 
+> Signed-off-by: Oliver Upton <oliver.upton@linux.dev>
+> ---
+>  arch/arm64/include/asm/kvm_emulate.h |  5 +++++
+>  arch/arm64/kvm/emulate-nested.c      | 29 ++++++++++++++++++++++++----
+>  2 files changed, 30 insertions(+), 4 deletions(-)
+> 
+> diff --git a/arch/arm64/include/asm/kvm_emulate.h b/arch/arm64/include/asm/kvm_emulate.h
+> index a601a9305b10..bf0c48403f59 100644
+> --- a/arch/arm64/include/asm/kvm_emulate.h
+> +++ b/arch/arm64/include/asm/kvm_emulate.h
+> @@ -225,6 +225,11 @@ static inline bool is_hyp_ctxt(const struct kvm_vcpu *vcpu)
+>  	return vcpu_has_nv(vcpu) && __is_hyp_ctxt(&vcpu->arch.ctxt);
+>  }
+>  
+> +static inline bool vcpu_is_host_el0(const struct kvm_vcpu *vcpu)
+> +{
+> +	return is_hyp_ctxt(vcpu) && !vcpu_is_el2(vcpu);
+> +}
+> +
+>  /*
+>   * The layout of SPSR for an AArch32 state is different when observed from an
+>   * AArch64 SPSR_ELx or an AArch32 SPSR_*. This function generates the AArch32
+> diff --git a/arch/arm64/kvm/emulate-nested.c b/arch/arm64/kvm/emulate-nested.c
+> index e1a30d1bcd06..db3149379a4d 100644
+> --- a/arch/arm64/kvm/emulate-nested.c
+> +++ b/arch/arm64/kvm/emulate-nested.c
+> @@ -20,6 +20,9 @@ enum trap_behaviour {
+>  	BEHAVE_FORWARD_READ	= BIT(0),
+>  	BEHAVE_FORWARD_WRITE	= BIT(1),
+>  	BEHAVE_FORWARD_RW	= BEHAVE_FORWARD_READ | BEHAVE_FORWARD_WRITE,
+> +
+> +	/* Traps that take effect in Host EL0, this is rare! */
+> +	BEHAVE_IN_HOST_EL0	= BIT(2),
 
-diff --git a/drivers/infiniband/hw/bnxt_re/main.c b/drivers/infiniband/hw/bnxt_re/main.c
-index d183e293ec96..e510ffe91de3 100644
---- a/drivers/infiniband/hw/bnxt_re/main.c
-+++ b/drivers/infiniband/hw/bnxt_re/main.c
-@@ -300,9 +300,6 @@ static void bnxt_re_shutdown(struct auxiliary_device *adev)
- 	struct bnxt_re_en_dev_info *en_info = auxiliary_get_drvdata(adev);
- 	struct bnxt_re_dev *rdev;
- 
--	if (!en_info)
--		return;
--
- 	rdev = en_info->rdev;
- 	ib_unregister_device(&rdev->ibdev);
- 	bnxt_re_dev_uninit(rdev, BNXT_RE_COMPLETE_REMOVE);
-@@ -316,9 +313,6 @@ static void bnxt_re_stop_irq(void *handle)
- 	struct bnxt_qplib_nq *nq;
- 	int indx;
- 
--	if (!en_info)
--		return;
--
- 	rdev = en_info->rdev;
- 	rcfw = &rdev->rcfw;
- 
-@@ -339,9 +333,6 @@ static void bnxt_re_start_irq(void *handle, struct bnxt_msix_entry *ent)
- 	struct bnxt_qplib_nq *nq;
- 	int indx, rc;
- 
--	if (!en_info)
--		return;
--
- 	rdev = en_info->rdev;
- 	msix_ent = rdev->en_dev->msix_entries;
- 	rcfw = &rdev->rcfw;
-@@ -1991,10 +1982,6 @@ static void bnxt_re_remove(struct auxiliary_device *adev)
- 	struct bnxt_re_dev *rdev;
- 
- 	mutex_lock(&bnxt_re_mutex);
--	if (!en_info) {
--		mutex_unlock(&bnxt_re_mutex);
--		return;
--	}
- 	rdev = en_info->rdev;
- 
- 	if (rdev)
-@@ -2043,9 +2030,6 @@ static int bnxt_re_suspend(struct auxiliary_device *adev, pm_message_t state)
- 	struct bnxt_en_dev *en_dev;
- 	struct bnxt_re_dev *rdev;
- 
--	if (!en_info)
--		return 0;
--
- 	rdev = en_info->rdev;
- 	en_dev = en_info->en_dev;
- 	mutex_lock(&bnxt_re_mutex);
-@@ -2090,9 +2074,6 @@ static int bnxt_re_resume(struct auxiliary_device *adev)
- 	struct bnxt_re_en_dev_info *en_info = auxiliary_get_drvdata(adev);
- 	struct bnxt_re_dev *rdev;
- 
--	if (!en_info)
--		return 0;
--
- 	mutex_lock(&bnxt_re_mutex);
- 	/* L2 driver may invoke this callback during device recovery, resume.
- 	 * reset. Current RoCE driver doesn't recover the device in case of
+nit: BEHAVE_IN_HOST_EL0 lacks an action verb (forward?).
+
+Thanks,
+
+	M.
+
 -- 
-2.47.0
-
+Without deviation from the norm, progress is not possible.
 
