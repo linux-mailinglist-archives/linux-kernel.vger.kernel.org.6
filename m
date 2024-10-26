@@ -1,90 +1,110 @@
-Return-Path: <linux-kernel+bounces-382975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F7129B15BD
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 09:04:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 093659B15C3
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 09:10:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A631283E80
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 07:04:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD8481F23E53
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 07:10:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97F7C18562F;
-	Sat, 26 Oct 2024 07:04:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="WIcWAaJw"
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72989183CD4;
+	Sat, 26 Oct 2024 07:10:40 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2D94178CDE;
-	Sat, 26 Oct 2024 07:04:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFA3ECA5A;
+	Sat, 26 Oct 2024 07:10:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729926282; cv=none; b=o0BNxtrMg+KTkgQsY6dTcMAd425cE1wKHPvHwdjFKxfnYzfLcgkoVxEAQWIH4uFvLqgpxrEuM9HHvzZicGPNHBJH8hf3GNW4H2M5aOYQslYgaNu7E3NGYZNoFvkbMsu24lRepI3OLKzk+uwOMr+YvRe0iJKASs8v4BwyIodCgg4=
+	t=1729926640; cv=none; b=HORpkyy1pCOU8UyG/xYE7gTcXOl/MY3RoKWAeEs0umVeZVKegnYqO9K+CUHYSB9Zz14rw70smudMEgnO2Yy7s/TwIOUd9MRp9IjfMQVc9Vr+Kz0azsvseQQVaAtmECJIQX96CTqHYCOV4ThZNb/5Ts4esytrpFwu3qY8Jv3oCLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729926282; c=relaxed/simple;
-	bh=4AHEfbkYfSjiISLyOMEeSwKW27HAv+1y0xWqfm6mGP0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DrlpmASLtYo/nJCEYgTnmJpxtuqUduosgp/6/rEd1CCJGqH1Dfg6KQl6V+i0RojlxyGFC0NLGxv9fiqoNcWKx72Zf97ABTi0g+AquZHI9RMejHLq4wzmqqqoS4O7F4167ZWLzyDpf7dX1UmjGT5qqkKOHHMNVHEf0BzEX7PltFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=WIcWAaJw; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=GyAPHbdRNpjTRD8bi2oQ4iGgZ9FyuuVKHeAWYMjPTL4=; b=WIcWAaJwG4ISeaZUWgfw77Y6pv
-	6lvQlojSDr8PjS7bjoNOhTnzMM9TtUqr6zbxZKk2xvJMKouSrO/ocYJrp5AQifhCu2aAUiN/iqMTi
-	1o4MBQg7Z5ThKV9GXm4P35u3fIfXT4BSwU1ARmW9bMQ5jUC0enUX0PvGp21G8RqCbFFM5VPHYk5mX
-	s2x870BflmoJx1d8oiaVaXD0uC7JrPgXz5Q77PNUW05mcEug1/IffmVRZ0mWc65vBpvpkXQ8/Td6I
-	ZGOZvyPYJx/Pu5SEiK4zmqT8WozlS6JyimgKKnrKx+8hb4BU05UH4fdj/dk5LDOb3m5hvY0GKJoRP
-	mLNXAqJQ==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1t4aqf-00CG2H-1M;
-	Sat, 26 Oct 2024 15:04:34 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sat, 26 Oct 2024 15:04:33 +0800
-Date: Sat, 26 Oct 2024 15:04:33 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Ovidiu Panait <ovidiu.panait.oss@gmail.com>
-Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-	davem@davemloft.net, Akhil R <akhilrajeev@nvidia.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 1/2] crypto: tegra - remove unneeded crypto_engine_stop()
- call
-Message-ID: <ZxyUgfp7SzOM0xr4@gondor.apana.org.au>
-References: <20241020192532.4008-1-ovidiu.panait.oss@gmail.com>
+	s=arc-20240116; t=1729926640; c=relaxed/simple;
+	bh=cM5safPaFgnLIsJYfrA1bFDUIVJtmhMNPSwryLqM/5s=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=FgmOk+E4l5IqXvtv1TIcY/i7/JXQoi/q3mCcX4rZMGaJWm8IFP0Yd44RG45dXkTIHg1L5B1cACbw4dUSfS5DRapCwEaGxGjYHopzO6P4FznhUSFq07Ve6fIul5BKyQXeeJAM/6mexAUc4UdyO6UZFoSIQ/Gmd/Nb9lnwM2SR1To=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Xb9k347mgzyTkq;
+	Sat, 26 Oct 2024 15:08:59 +0800 (CST)
+Received: from kwepemg200008.china.huawei.com (unknown [7.202.181.35])
+	by mail.maildlp.com (Postfix) with ESMTPS id 29439140258;
+	Sat, 26 Oct 2024 15:10:34 +0800 (CST)
+Received: from huawei.com (10.90.53.73) by kwepemg200008.china.huawei.com
+ (7.202.181.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 26 Oct
+ 2024 15:10:33 +0800
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+To: <linkinjeon@kernel.org>, <sfrench@samba.org>, <senozhatsky@chromium.org>,
+	<tom@talpey.com>, <set_pte_at@outlook.com>, <linux-cifs@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: <ruanjinjie@huawei.com>
+Subject: [PATCH] ksmbd: Fix the missing xa_store error check
+Date: Sat, 26 Oct 2024 15:10:02 +0800
+Message-ID: <20241026071002.118260-1-ruanjinjie@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241020192532.4008-1-ovidiu.panait.oss@gmail.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemg200008.china.huawei.com (7.202.181.35)
 
-On Sun, Oct 20, 2024 at 10:25:31PM +0300, Ovidiu Panait wrote:
-> The explicit crypto_engine_stop() call is not needed, as it is already
-> called internally by crypto_engine_exit().
-> 
-> Signed-off-by: Ovidiu Panait <ovidiu.panait.oss@gmail.com>
-> ---
-> Cc: Akhil R <akhilrajeev@nvidia.com>
-> Cc: Thierry Reding <thierry.reding@gmail.com>
-> Cc: Jonathan Hunter <jonathanh@nvidia.com>
-> Cc: linux-tegra@vger.kernel.org
-> 
->  drivers/crypto/tegra/tegra-se-main.c | 2 --
->  1 file changed, 2 deletions(-)
+xa_store() can fail, it return xa_err(-EINVAL) if the entry cannot
+be stored in an XArray, or xa_err(-ENOMEM) if memory allocation failed,
+so check error for xa_store() to fix it.
 
-All applied.  Thanks.
+Cc: stable@vger.kernel.org
+Fixes: b685757c7b08 ("ksmbd: Implements sess->rpc_handle_list as xarray")
+Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+---
+ fs/smb/server/mgmt/user_session.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
+
+diff --git a/fs/smb/server/mgmt/user_session.c b/fs/smb/server/mgmt/user_session.c
+index 1e4624e9d434..9756a4bbfe54 100644
+--- a/fs/smb/server/mgmt/user_session.c
++++ b/fs/smb/server/mgmt/user_session.c
+@@ -90,7 +90,7 @@ static int __rpc_method(char *rpc_name)
+ 
+ int ksmbd_session_rpc_open(struct ksmbd_session *sess, char *rpc_name)
+ {
+-	struct ksmbd_session_rpc *entry;
++	struct ksmbd_session_rpc *entry, *old;
+ 	struct ksmbd_rpc_command *resp;
+ 	int method;
+ 
+@@ -106,16 +106,19 @@ int ksmbd_session_rpc_open(struct ksmbd_session *sess, char *rpc_name)
+ 	entry->id = ksmbd_ipc_id_alloc();
+ 	if (entry->id < 0)
+ 		goto free_entry;
+-	xa_store(&sess->rpc_handle_list, entry->id, entry, GFP_KERNEL);
++	old = xa_store(&sess->rpc_handle_list, entry->id, entry, GFP_KERNEL);
++	if (xa_is_err(old))
++		goto free_id;
+ 
+ 	resp = ksmbd_rpc_open(sess, entry->id);
+ 	if (!resp)
+-		goto free_id;
++		goto erase_xa;
+ 
+ 	kvfree(resp);
+ 	return entry->id;
+-free_id:
++erase_xa:
+ 	xa_erase(&sess->rpc_handle_list, entry->id);
++free_id:
+ 	ksmbd_rpc_id_free(entry->id);
+ free_entry:
+ 	kfree(entry);
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.34.1
+
 
