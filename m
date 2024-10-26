@@ -1,359 +1,560 @@
-Return-Path: <linux-kernel+bounces-383153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D275A9B17DF
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 14:15:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D3FC9B17E3
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 14:18:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95B91282385
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 12:15:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB2AF1F21E2C
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 12:18:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2CA71D54CD;
-	Sat, 26 Oct 2024 12:15:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 960CA1D5146;
+	Sat, 26 Oct 2024 12:17:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BNORLFOn"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="J17BAxU7"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 645FC1D5175;
-	Sat, 26 Oct 2024 12:15:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9B19217F3B;
+	Sat, 26 Oct 2024 12:17:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729944910; cv=none; b=hu96x0S1+mwor2XrGZ11bWGzLbk4ALIL0CVcMWVih/flPm9J+ioFDypo50W8mVKgWmhFDPrLrBmTF1shWaFGgM131v5bepa3LBaIahNV+Uov7tBZlIaZItNqzgOUfG+T1H7jWzh3/nzcvprnIdUvDVnarWO5exoMjqdswb9yiGs=
+	t=1729945073; cv=none; b=lsmNg3940R+FctIKRJL/ugu+eLiF5QawmQ7fqCtFQJVgRe8qWEkpaeRBqiGW/tNmDIHIMuXBCQ2yTNvHLUNoclj5W3kWqgDFxDkMBwFq4f9NmBXYeAXqcNxdkn/0nPYm8u1RB7/0DAabpewNTGHj4Gw0+8hEEvuVmvI5s3Az3ks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729944910; c=relaxed/simple;
-	bh=2nTmWXBaxd8HmKSp49DDYnZi3FLIHlutHgR4SdKYiVQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lQXFQ5e7bxixTFh7704EF5mXGU3Jeo4ebsaj1hkWLKLPmHEl7m4oTnmaw5k1hUEg91hHpeh6Fib12VlNGlrg5Muv7NeWPN2Pk4eO9HwwZKuEC/IlLpUqkSJztWaUC2AfT2D/Uta7OYai8jg8FagT9RWtquCjMkwe2BQP1TPOqnI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BNORLFOn; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729944908; x=1761480908;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=2nTmWXBaxd8HmKSp49DDYnZi3FLIHlutHgR4SdKYiVQ=;
-  b=BNORLFOnoexFmANlnbmIvTHFjfpg91MZEYk3RBW8fCE97NvvhRY5mL6/
-   eZXGhUyyofckwaods0h+JEG4kQhzZF1FmAQqvmI08lbl3IuiqVi/uM9fL
-   fPw95IwZyw8Q0B15s14PvZAKmkHDu+XWaZUwtlGK//gBGdtKa8j1FGSZA
-   7VQ0W8JHPVj/60eQRXwbchfioyaTODcOHanonsh8/Txfm4lS/M26VhLR7
-   gRPFCno6w/Y8S2LyOVP764CyCqFNHjgvo2BdycS1rMvPENVThuu+5YAnY
-   lnJ0GcaumfeLfNPHF+Lw018BiFmdA0Sj9esczijeYCpcsBhOebRv1zNly
-   Q==;
-X-CSE-ConnectionGUID: Mm0IjClPRGeL2qCjcHZUMg==
-X-CSE-MsgGUID: EFTtaXw0S3m+CKpsSg+Dhw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11237"; a="29819673"
-X-IronPort-AV: E=Sophos;i="6.11,235,1725346800"; 
-   d="scan'208";a="29819673"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Oct 2024 05:15:07 -0700
-X-CSE-ConnectionGUID: Q7BgeC7sR4ytrV0kbV/ZPA==
-X-CSE-MsgGUID: ElFcr9VUQkqa/OyvaweKTg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,235,1725346800"; 
-   d="scan'208";a="81206440"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa009.fm.intel.com with ESMTP; 26 Oct 2024 05:15:01 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t4fh4-000Zcc-2C;
-	Sat, 26 Oct 2024 12:14:58 +0000
-Date: Sat, 26 Oct 2024 20:14:42 +0800
-From: kernel test robot <lkp@intel.com>
-To: Christian Marangi <ansuelsmth@gmail.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Antoine Tenart <atenart@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>, linux-crypto@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev, upstream@airoha.com
-Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
-	Richard van Schagen <vschagen@icloud.com>
-Subject: Re: [PATCH v4 3/3] crypto: Add Mediatek EIP-93 crypto engine support
-Message-ID: <202410261900.DyTk6FZW-lkp@intel.com>
-References: <20241025094734.1614-3-ansuelsmth@gmail.com>
+	s=arc-20240116; t=1729945073; c=relaxed/simple;
+	bh=Ab2Xiose1NAtovMdfL6OU+552L9KDsgru/6OovBq8H4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FXbNgr7c5KtchKZRLH65lfws0JFvlykIF08oTti4AYGENefhWZ6HCL381XdDmGNX5guaKz8fqdirLf0TiOx1YPdPLv2d1pZwdtBvhvMOYz7rqNYl4Pnm7eEx7P6zux2Z1wGORPxYXj0UR5G3iiV73XO5Rf0YUCZL83BLsfDWPHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=J17BAxU7; arc=none smtp.client-ip=212.227.17.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1729944995; x=1730549795; i=w_armin@gmx.de;
+	bh=OhBnA6UBWYUUTh2D7d0QXDqNx+XR7XGGT5oet3kUs3g=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=J17BAxU7YuwG0VXJLXWAp12f43QI+lUCYqCJTpKayykM8D0Zwt6FGlMNOhlyuwab
+	 /qcBefneJkMooXWUZUfe5MAH5DYrhO6wioEL6wzo1XYTKkO4+uNZ2QPUCFufpBxYm
+	 5WryGCRS0/FjbM5HDTSsHgY0JWjLhIaB7z3an91e83NGEgr5tvCUt+k5ywdY2EbaP
+	 gNeGfLSI3oAPVgh7oV/1VCSLwfCThY5Hjr+7A1GAYLB2jWu5+U0LHbVhNa1K5yEC3
+	 kCREYGaZaBq1mnEXPe70VlN+fsx4gQP+4NTuttMBW2QJZaScW/XE4InQGhE0plJ0y
+	 QYWWsDdmOC5Tn353oQ==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [141.30.226.129] ([141.30.226.129]) by mail.gmx.net (mrgmx104
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1M6Udt-1syJw336Gv-00FzgP; Sat, 26
+ Oct 2024 14:16:34 +0200
+Message-ID: <d33aaae0-8707-44e8-a6f5-e3144b9360e2@gmx.de>
+Date: Sat, 26 Oct 2024 14:16:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241025094734.1614-3-ansuelsmth@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 7/8] ACPI: platform_profile: Add support for multiple
+ handlers
+To: Hans de Goede <hdegoede@redhat.com>,
+ Mario Limonciello <mario.limonciello@amd.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>,
+ Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+ Corentin Chary <corentin.chary@gmail.com>, "Luke D . Jones"
+ <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>,
+ Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
+ Alexis Belmonte <alexbelm48@gmail.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+ Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>,
+ open list <linux-kernel@vger.kernel.org>,
+ "open list:ACPI" <linux-acpi@vger.kernel.org>,
+ "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER"
+ <platform-driver-x86@vger.kernel.org>,
+ "open list:THINKPAD ACPI EXTRAS DRIVER"
+ <ibm-acpi-devel@lists.sourceforge.net>,
+ Mark Pearson <mpearson-lenovo@squebb.ca>,
+ Matthew Schwartz <matthew.schwartz@linux.dev>
+References: <20241025193055.2235-1-mario.limonciello@amd.com>
+ <20241025193055.2235-8-mario.limonciello@amd.com>
+ <bcf83d6a-2e8d-4829-9c38-17459a2687ed@redhat.com>
+Content-Language: en-US
+From: Armin Wolf <W_Armin@gmx.de>
+In-Reply-To: <bcf83d6a-2e8d-4829-9c38-17459a2687ed@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:DauJxE9Dd2sr551ci4stCKotjhJcwm/sK/DFskGJkktw7d+yPEc
+ DRrfVYHR6UO5rkZNZkl4qF61EO9WOXBE186cVXwtdQd1cVlgFNGXH60nhmHvYMbIDLf8WHV
+ cT3qnc8CGwlG+FNUQB5nuxv7NcXh/JBcOb5M37sUXIg+U9YJnlkBFQOg8ATe8uck0QJ2tUi
+ rVSS8w89k/WqTaBQC2lSA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:YdDSgKxFFMk=;gGnIe6SnaJtVcWZj0Xi/CZm4UmK
+ zeRamJ/viYIoBMUp+0IguHZ7HdNE9yxDNDS5LYCdtIVCaqMPro7ilTnneUUYHuSxyew0SnO3y
+ HyIiiodQumyh1whz9kcj2Bbrds0JfGALiCPFLhBcPnJS2+92BFPKKhWRz7g3+1KkU+srPXrDX
+ rO8kZQdXu7QF9dV3Ajwn9wEzwI9BZestYSd2JMFtwHOnWFqaVS4x4ya1465xF+68GGLEPhWr7
+ 4F3fQIXTblabXKrgwAbG8laUWBhlnhK8+vi7ZnwQ5FYFQgjQnCSu2TafbTgQx5UKVqGHttqZ1
+ z2zRiFTEWIhfOBVEYSlxNmL5OHQdQZ9+ohfSZNs6nfJ6091+TduFzGZLUKgrsjHLJwKnEeSQI
+ Iwvy7NeNUz5b+HKvHZ6zjWDk2HCxn3KJSD/50u/ToWaMUmWKcCRUktqsKBdey6zmZ7KRVbaXh
+ ECrmKFsCSbviDgWLScT3AoiYf9L5d53G451mLNl4L24MNk2v1liOd5609JShP0+I2WN6CWJ9N
+ EVA0dhQT9LqJZOtLyo//+ggZs/LjuJHrHzmSnrT9TUw7qr+wn2jFb9580oe6qwO86yVRdNC8s
+ wOP1HSqOYBH83EqCfp1CY/pb7j0zte9rVR7laboQo2LYBmekcrChQf1+Xc/WUobiqgb8DQvUV
+ VIV7n05NOurHXVD5i83VKW9p1MLNxI+zlS2gK9ODoMfpd10GdaImoRSuVWXOjgApgoiAyYa0w
+ 10EJqiOYKxVFK4ThoqaDtEiS+MPgAfEdRZsPkmcD5YDD3qVJko/fFEd4338OvVwBazRMGFZaj
+ mekXIPjnbcRP4HqEAgdq4Jnw==
 
-Hi Christian,
+Am 26.10.24 um 12:30 schrieb Hans de Goede:
 
-kernel test robot noticed the following build warnings:
+> Hi Mario,
+>
+> On 25-Oct-24 9:30 PM, Mario Limonciello wrote:
+>> Multiple drivers may attempt to register platform profile handlers,
+>> but only one may be registered and the behavior is non-deterministic
+>> for which one wins.  It's mostly controlled by probing order.
+>>
+>> This can be problematic if one driver changes CPU settings and another
+>> driver notifies the EC for changing fan curves.
+>>
+>> Modify the ACPI platform profile handler to let multiple drivers
+>> register platform profile handlers and abstract this detail from usersp=
+ace.
+>>
+>>  From userspace perspective the user will see profiles available across
+>> both drivers.  However to avoid chaos only allow changing to profiles
+>> that are common in both drivers.
+>>
+>> If any problems occur when changing profiles for any driver, then rever=
+t
+>> back to the previous profile.
+>>
+>> Tested-by: Matthew Schwartz <matthew.schwartz@linux.dev>
+>> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+>> ---
+>>   drivers/acpi/platform_profile.c | 203 ++++++++++++++++++-------------=
+-
+>>   1 file changed, 117 insertions(+), 86 deletions(-)
+>>
+>> diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/platform_pr=
+ofile.c
+>> index 091ca6941a925..915e3c49f0b5f 100644
+>> --- a/drivers/acpi/platform_profile.c
+>> +++ b/drivers/acpi/platform_profile.c
+>> @@ -9,7 +9,6 @@
+>>   #include <linux/platform_profile.h>
+>>   #include <linux/sysfs.h>
+>>
+>> -static struct platform_profile_handler *cur_profile;
+>>   static LIST_HEAD(platform_profile_handler_list);
+>>   static DEFINE_MUTEX(profile_lock);
+>>
+>> @@ -36,26 +35,26 @@ static ssize_t platform_profile_choices_show(struct=
+ device *dev,
+>>   					struct device_attribute *attr,
+>>   					char *buf)
+>>   {
+>> +	struct platform_profile_handler *handler;
+>> +	unsigned long seen =3D 0;
+>>   	int len =3D 0;
+>> -	int err, i;
+>> -
+>> -	err =3D mutex_lock_interruptible(&profile_lock);
+>> -	if (err)
+>> -		return err;
+>> -
+>> -	if (!cur_profile) {
+>> -		mutex_unlock(&profile_lock);
+>> -		return -ENODEV;
+>> +	int i;
+>> +
+>> +	scoped_cond_guard(mutex_intr, return -ERESTARTSYS, &profile_lock) {
+>> +		list_for_each_entry(handler, &platform_profile_handler_list, list) {
+>> +			for_each_set_bit(i, handler->choices, PLATFORM_PROFILE_LAST) {
+>> +				if (seen & BIT(i))
+>> +					continue;
+>> +				if (len =3D=3D 0)
+>> +					len +=3D sysfs_emit_at(buf, len, "%s", profile_names[i]);
+>> +				else
+>> +					len +=3D sysfs_emit_at(buf, len, " %s", profile_names[i]);
+>> +				seen |=3D BIT(i);
+>> +			}
+>> +		}
+>>   	}
+> Since only choices that are available in all registered handlers will be=
+ accepted,
+> should the output not be limited to only those choices ?
+>
+> E.g.:
+>
+> 	unsigned long choices =3D 0;
+> 	bool first =3D true;
+>
+> 	scoped_cond_guard(mutex_intr, return -ERESTARTSYS, &profile_lock) {
+> 		list_for_each_entry(handler, &platform_profile_handler_list, list) {
+> 			if (first) {
+> 				choices =3D handler->choices;
+> 				first =3D false;
+> 			} else {
+> 				choices &=3D handler->choices;
+> 			}
+> 		}
+> 	}
+>
+> 	for_each_set_bit(i, choices, PLATFORM_PROFILE_LAST) {
+> 		if (len =3D=3D 0)
+> 			len +=3D sysfs_emit_at(buf, len, "%s", profile_names[i]);
+> 		else
+> 			len +=3D sysfs_emit_at(buf, len, " %s", profile_names[i]);
+> 	}
+>    	len +=3D sysfs_emit_at(buf, len, "\n");
+>    	return len;
+> }
+>
+> ?
+>
+> Also this means that choices can change now as drivers get loaded /
+> removed. I believe that power-profiles-daemon matches has some hotplug
+> handling for the sysfs files showing up? How would that work with choice=
+s
+> changing ?
+>
+> Or am I misremembering and does p-p-d simply assume all drivers are load=
+ed
+> when it starts ?
 
-[auto build test WARNING on herbert-cryptodev-2.6/master]
-[also build test WARNING on herbert-crypto-2.6/master tip/locking/core linus/master v6.12-rc4 next-20241025]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+After a quick glance at the source code i think it basically assumes that =
+the
+sysfs file is present during startup if platform profiles are supported. I=
+f the
+sysfs file disappears afterwards, the code will simply return an error.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Christian-Marangi/dt-bindings-crypto-Add-Inside-Secure-SafeXcel-EIP-93-crypto-engine/20241025-175032
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/herbert/cryptodev-2.6.git master
-patch link:    https://lore.kernel.org/r/20241025094734.1614-3-ansuelsmth%40gmail.com
-patch subject: [PATCH v4 3/3] crypto: Add Mediatek EIP-93 crypto engine support
-config: powerpc64-randconfig-r123-20241026 (https://download.01.org/0day-ci/archive/20241026/202410261900.DyTk6FZW-lkp@intel.com/config)
-compiler: powerpc64-linux-gcc (GCC) 14.1.0
-reproduce: (https://download.01.org/0day-ci/archive/20241026/202410261900.DyTk6FZW-lkp@intel.com/reproduce)
+For handling changing choices, sending a poll notification using sysfs_not=
+ify()
+to the choices file will be the easiest solution.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410261900.DyTk6FZW-lkp@intel.com/
+>> @@ -64,22 +63,20 @@ static ssize_t platform_profile_show(struct device =
+*dev,
+>>   					char *buf)
+>>   {
+>>   	enum platform_profile_option profile =3D PLATFORM_PROFILE_BALANCED;
+>> +	struct platform_profile_handler *handler;
+>>   	int err;
+>>
+>> -	err =3D mutex_lock_interruptible(&profile_lock);
+>> -	if (err)
+>> -		return err;
+>>
+>> -	if (!cur_profile) {
+>> -		mutex_unlock(&profile_lock);
+>> -		return -ENODEV;
+>> +	scoped_cond_guard(mutex_intr, return -ERESTARTSYS, &profile_lock) {
+>> +		if (!platform_profile_is_registered())
+>> +			return -ENODEV;
+>> +		list_for_each_entry(handler, &platform_profile_handler_list, list) {
+>> +			err =3D handler->profile_get(handler, &profile);
+>> +			if (err)
+>> +				return err;
+>> +		}
+>>   	}
+> Hmm this just goes with the platform returned by the last handler
+> called ?
+>
+> Maybe compare results and log some warning if there are different
+> results between handlers ?
+>
+> And maybe also:
+>
+> 1. New patch enforcing that all handlers must support plain balanced
+> at registration time.
+>
+> 2. Check that all handlers agree when a new handler gets registered
+> and if not then force all handlers to balanced, together with
+> a sysfs_notify() ?
 
-sparse warnings: (new ones prefixed by >>)
->> drivers/crypto/inside-secure/eip93/eip93-hash.c:423:37: sparse: sparse: cast to restricted __be32
->> drivers/crypto/inside-secure/eip93/eip93-hash.c:596:38: sparse: sparse: incorrect type in assignment (different base types) @@     expected unsigned int [usertype] @@     got restricted __be32 [usertype] @@
-   drivers/crypto/inside-secure/eip93/eip93-hash.c:596:38: sparse:     expected unsigned int [usertype]
-   drivers/crypto/inside-secure/eip93/eip93-hash.c:596:38: sparse:     got restricted __be32 [usertype]
---
->> drivers/crypto/inside-secure/eip93/eip93-common.c:542:39: sparse: sparse: incorrect type in assignment (different base types) @@     expected unsigned int @@     got restricted __be32 [usertype] @@
-   drivers/crypto/inside-secure/eip93/eip93-common.c:542:39: sparse:     expected unsigned int
-   drivers/crypto/inside-secure/eip93/eip93-common.c:542:39: sparse:     got restricted __be32 [usertype]
->> drivers/crypto/inside-secure/eip93/eip93-common.c:546:23: sparse: sparse: cast to restricted __be32
-   drivers/crypto/inside-secure/eip93/eip93-common.c:668:43: sparse: sparse: cast to restricted __be32
->> drivers/crypto/inside-secure/eip93/eip93-common.c:811:38: sparse: sparse: incorrect type in assignment (different base types) @@     expected unsigned int [usertype] @@     got restricted __be32 [usertype] @@
-   drivers/crypto/inside-secure/eip93/eip93-common.c:811:38: sparse:     expected unsigned int [usertype]
-   drivers/crypto/inside-secure/eip93/eip93-common.c:811:38: sparse:     got restricted __be32 [usertype]
-   drivers/crypto/inside-secure/eip93/eip93-common.c:812:38: sparse: sparse: incorrect type in assignment (different base types) @@     expected unsigned int [usertype] @@     got restricted __be32 [usertype] @@
-   drivers/crypto/inside-secure/eip93/eip93-common.c:812:38: sparse:     expected unsigned int [usertype]
-   drivers/crypto/inside-secure/eip93/eip93-common.c:812:38: sparse:     got restricted __be32 [usertype]
-   drivers/crypto/inside-secure/eip93/eip93-common.c:101:5: sparse: sparse: context imbalance in 'eip93_put_descriptor' - wrong count at exit
-   drivers/crypto/inside-secure/eip93/eip93-common.c:127:6: sparse: sparse: context imbalance in 'eip93_get_descriptor' - wrong count at exit
+I begin to wonder why we even need the profile_get callback anyway. The dr=
+ivers
+are already required to:
 
-vim +423 drivers/crypto/inside-secure/eip93/eip93-hash.c
+	"NOT ... let userspace know about any sub-optimal conditions which are im=
+peding
+	 reaching the requested performance level."
 
-   396	
-   397	void eip93_hash_handle_result(struct crypto_async_request *async, int err)
-   398	{
-   399		struct ahash_request *req = ahash_request_cast(async);
-   400		struct eip93_hash_reqctx *rctx = ahash_request_ctx(req);
-   401		struct crypto_ahash *ahash = crypto_ahash_reqtfm(req);
-   402		struct eip93_hash_ctx *ctx = crypto_ahash_ctx(ahash);
-   403		int digestsize = crypto_ahash_digestsize(ahash);
-   404		struct sa_state *sa_state = rctx->sa_state;
-   405		int i;
-   406	
-   407		/* Unmap and sync sa_state for host */
-   408		dma_unmap_single(rctx->mtk->dev, rctx->sa_state_base,
-   409				 sizeof(*sa_state), DMA_FROM_DEVICE);
-   410	
-   411		/*
-   412		 * With no_finalize assume SHA256_DIGEST_SIZE buffer is passed.
-   413		 * This is to handle SHA224 that have a 32 byte intermediate digest.
-   414		 */
-   415		if (rctx->no_finalize)
-   416			digestsize = SHA256_DIGEST_SIZE;
-   417	
-   418		/* bytes needs to be swapped for req->result */
-   419		if (!IS_HASH_MD5(ctx->flags)) {
-   420			for (i = 0; i < digestsize / sizeof(u32); i++) {
-   421				u32 *digest = (u32 *)sa_state->state_i_digest;
-   422	
- > 423				digest[i] = be32_to_cpu(digest[i]);
-   424			}
-   425		}
-   426	
-   427		memcpy(req->result, sa_state->state_i_digest, digestsize);
-   428	
-   429		kfree(sa_state);
-   430		eip93_hash_free_data_blocks(req);
-   431		eip93_hash_free_sa_record(req);
-   432	
-   433		ahash_request_complete(req, err);
-   434	}
-   435	
-   436	static int eip93_hash_final(struct ahash_request *req)
-   437	{
-   438		struct eip93_hash_reqctx *rctx = ahash_request_ctx(req);
-   439		struct crypto_ahash *ahash = crypto_ahash_reqtfm(req);
-   440		struct eip93_hash_ctx *ctx = crypto_ahash_ctx(ahash);
-   441		struct crypto_async_request *async = &req->base;
-   442		struct eip93_device *mtk = rctx->mtk;
-   443		struct mkt_hash_block *block;
-   444		int ret;
-   445	
-   446		/* EIP93 can't handle zero bytes hash */
-   447		if (!rctx->len && !IS_HMAC(ctx->flags)) {
-   448			switch ((ctx->flags & EIP93_HASH_MASK)) {
-   449			case EIP93_HASH_SHA256:
-   450				memcpy(req->result, sha256_zero_message_hash,
-   451				       SHA256_DIGEST_SIZE);
-   452				break;
-   453			case EIP93_HASH_SHA224:
-   454				memcpy(req->result, sha224_zero_message_hash,
-   455				       SHA224_DIGEST_SIZE);
-   456				break;
-   457			case EIP93_HASH_SHA1:
-   458				memcpy(req->result, sha1_zero_message_hash,
-   459				       SHA1_DIGEST_SIZE);
-   460				break;
-   461			case EIP93_HASH_MD5:
-   462				memcpy(req->result, md5_zero_message_hash,
-   463				       MD5_DIGEST_SIZE);
-   464				break;
-   465			default: /* Impossible */
-   466				return -EINVAL;
-   467			}
-   468	
-   469			eip93_hash_free_sa_state(req);
-   470			eip93_hash_free_sa_record(req);
-   471	
-   472			return 0;
-   473		}
-   474	
-   475		/* Send last block */
-   476		block = list_first_entry(&rctx->blocks, struct mkt_hash_block, list);
-   477	
-   478		block->data_dma = dma_map_single(mtk->dev, block->data,
-   479						 SHA256_BLOCK_SIZE, DMA_TO_DEVICE);
-   480		ret = dma_mapping_error(mtk->dev, block->data_dma);
-   481		if (ret)
-   482			return ret;
-   483	
-   484		eip93_send_hash_req(async, block->data_dma,
-   485				    SHA256_BLOCK_SIZE - rctx->left_last,
-   486				    true);
-   487	
-   488		return -EINPROGRESS;
-   489	}
-   490	
-   491	static int eip93_hash_finup(struct ahash_request *req)
-   492	{
-   493		int ret;
-   494	
-   495		ret = eip93_hash_update(req);
-   496		if (ret)
-   497			return ret;
-   498	
-   499		return eip93_hash_final(req);
-   500	}
-   501	
-   502	static int eip93_hash_hmac_setkey(struct crypto_ahash *ahash, const u8 *key,
-   503					  u32 keylen)
-   504	{
-   505		unsigned int digestsize = crypto_ahash_digestsize(ahash);
-   506		struct crypto_tfm *tfm = crypto_ahash_tfm(ahash);
-   507		struct eip93_hash_ctx *ctx = crypto_tfm_ctx(tfm);
-   508		struct crypto_ahash *ahash_tfm;
-   509		struct eip93_hash_reqctx *rctx;
-   510		struct scatterlist sg[1];
-   511		struct ahash_request *req;
-   512		DECLARE_CRYPTO_WAIT(wait);
-   513		const char *alg_name;
-   514		int i, ret = 0;
-   515		u8 *opad;
-   516	
-   517		switch ((ctx->flags & EIP93_HASH_MASK)) {
-   518		case EIP93_HASH_SHA256:
-   519			alg_name = "sha256-eip93";
-   520			break;
-   521		case EIP93_HASH_SHA224:
-   522			alg_name = "sha224-eip93";
-   523			break;
-   524		case EIP93_HASH_SHA1:
-   525			alg_name = "sha1-eip93";
-   526			break;
-   527		case EIP93_HASH_MD5:
-   528			alg_name = "md5-eip93";
-   529			break;
-   530		default: /* Impossible */
-   531			return -EINVAL;
-   532		}
-   533	
-   534		ahash_tfm = crypto_alloc_ahash(alg_name, 0, 0);
-   535		if (IS_ERR(ahash_tfm))
-   536			return PTR_ERR(ahash_tfm);
-   537	
-   538		req = ahash_request_alloc(ahash_tfm, GFP_KERNEL);
-   539		if (!req) {
-   540			ret = -ENOMEM;
-   541			goto err_ahash;
-   542		}
-   543	
-   544		opad = kzalloc(SHA256_BLOCK_SIZE, GFP_KERNEL);
-   545		if (!opad) {
-   546			ret = -ENOMEM;
-   547			goto err_req;
-   548		}
-   549	
-   550		rctx = ahash_request_ctx(req);
-   551		crypto_init_wait(&wait);
-   552		ahash_request_set_callback(req, CRYPTO_TFM_REQ_MAY_BACKLOG,
-   553					   crypto_req_done, &wait);
-   554	
-   555		/* Hash the key if > SHA256_BLOCK_SIZE */
-   556		if (keylen > SHA256_BLOCK_SIZE) {
-   557			sg_init_one(&sg[0], key, keylen);
-   558	
-   559			ahash_request_set_crypt(req, sg, ctx->ipad, keylen);
-   560			ret = crypto_wait_req(crypto_ahash_digest(req), &wait);
-   561	
-   562			keylen = digestsize;
-   563		} else {
-   564			memcpy(ctx->ipad, key, keylen);
-   565		}
-   566	
-   567		/* Copy to opad */
-   568		memset(ctx->ipad + keylen, 0, SHA256_BLOCK_SIZE - keylen);
-   569		memcpy(opad, ctx->ipad, SHA256_BLOCK_SIZE);
-   570	
-   571		/* Pad with HMAC constants */
-   572		for (i = 0; i < SHA256_BLOCK_SIZE; i++) {
-   573			ctx->ipad[i] ^= HMAC_IPAD_VALUE;
-   574			opad[i] ^= HMAC_OPAD_VALUE;
-   575		}
-   576	
-   577		sg_init_one(&sg[0], opad, SHA256_BLOCK_SIZE);
-   578	
-   579		/* Hash opad */
-   580		ahash_request_set_crypt(req, sg, ctx->opad, SHA256_BLOCK_SIZE);
-   581		ret = crypto_ahash_init(req);
-   582		if (ret)
-   583			goto exit;
-   584	
-   585		/* Disable HASH_FINALIZE for opad hash */
-   586		rctx->no_finalize = true;
-   587	
-   588		ret = crypto_wait_req(crypto_ahash_finup(req), &wait);
-   589		if (ret)
-   590			goto exit;
-   591	
-   592		if (!IS_HASH_MD5(ctx->flags)) {
-   593			u32 *opad_hash = (u32 *)ctx->opad;
-   594	
-   595			for (i = 0; i < SHA256_DIGEST_SIZE / sizeof(u32); i++)
- > 596				opad_hash[i] = cpu_to_be32(opad_hash[i]);
-   597		}
-   598	
-   599	exit:
-   600		kfree(opad);
-   601	err_req:
-   602		ahash_request_free(req);
-   603	err_ahash:
-   604		crypto_free_ahash(ahash_tfm);
-   605	
-   606		return ret;
-   607	}
-   608	
+So what exactly is the reason to read the platform profile from hardware?
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+>>
+>> -	err =3D cur_profile->profile_get(cur_profile, &profile);
+>> -	mutex_unlock(&profile_lock);
+>> -	if (err)
+>> -		return err;
+>> -
+>>   	/* Check that profile is valid index */
+>>   	if (WARN_ON((profile < 0) || (profile >=3D ARRAY_SIZE(profile_names)=
+)))
+>>   		return -EIO;
+>> @@ -91,37 +88,48 @@ static ssize_t platform_profile_store(struct device=
+ *dev,
+>>   			    struct device_attribute *attr,
+>>   			    const char *buf, size_t count)
+>>   {
+>> +	struct platform_profile_handler *handler;
+>> +	enum platform_profile_option profile;
+>>   	int err, i;
+>>
+>> -	err =3D mutex_lock_interruptible(&profile_lock);
+>> -	if (err)
+>> -		return err;
+>> -
+>> -	if (!cur_profile) {
+>> -		mutex_unlock(&profile_lock);
+>> -		return -ENODEV;
+>> -	}
+>> -
+>>   	/* Scan for a matching profile */
+>>   	i =3D sysfs_match_string(profile_names, buf);
+>>   	if (i < 0) {
+>> -		mutex_unlock(&profile_lock);
+>>   		return -EINVAL;
+>>   	}
+>>
+>> -	/* Check that platform supports this profile choice */
+>> -	if (!test_bit(i, cur_profile->choices)) {
+>> -		mutex_unlock(&profile_lock);
+>> -		return -EOPNOTSUPP;
+>> +	scoped_cond_guard(mutex_intr, return -ERESTARTSYS, &profile_lock) {
+>> +		if (!platform_profile_is_registered())
+>> +			return -ENODEV;
+>> +
+>> +		/* Check that all handlers support this profile choice */
+>> +		list_for_each_entry(handler, &platform_profile_handler_list, list) {
+>> +			if (!test_bit(i, handler->choices))
+>> +				return -EOPNOTSUPP;
+>> +
+>> +			/* save the profile so that it can be reverted if necessary */
+>> +			err =3D handler->profile_get(handler, &profile);
+>> +			if (err)
+>> +				return err;
+>> +		}
+> Same issue as before, you are only saving the profile of the last handle=
+r called here,
+> which might even be a profile not supported by all handlers...
+>
+> Might be easiest to just enforce all handlers support plain balanced
+> as I suggested above and then on errors revert all handlers to balanced.
+>
+> This may seem like it is not nice to do, but errors should not happen
+> so I think this is ok. And if errors do happen then we need to fix
+> the errors :)
+>
+>> +
+>> +		list_for_each_entry(handler, &platform_profile_handler_list, list) {
+>> +			err =3D handler->profile_set(handler, i);
+>> +			if (err) {
+>> +				pr_err("Failed to set profile for handler %s\n", handler->name);
+>> +				break;
+>> +			}
+>> +		}
+>> +		if (err) {
+>> +			list_for_each_entry_continue_reverse(handler, &platform_profile_han=
+dler_list, list) {
+>> +				if (handler->profile_set(handler, profile))
+>> +					pr_err("Failed to revert profile for handler %s\n", handler->name=
+);
+>> +			}
+>> +			return err;
+>> +		}
+>>   	}
+>>
+>> -	err =3D cur_profile->profile_set(cur_profile, i);
+>> -	if (!err)
+>> -		sysfs_notify(acpi_kobj, NULL, "platform_profile");
+>> -
+>> -	mutex_unlock(&profile_lock);
+>> -	if (err)
+>> -		return err;
+>> +	sysfs_notify(acpi_kobj, NULL, "platform_profile");
+>>   	return count;
+>>   }
+>>
+>> @@ -140,7 +148,8 @@ static const struct attribute_group platform_profil=
+e_group =3D {
+>>
+>>   void platform_profile_notify(void)
+>>   {
+>> -	if (!cur_profile)
+>> +	guard(mutex)(&profile_lock);
+>> +	if (!platform_profile_is_registered())
+>>   		return;
+>>   	sysfs_notify(acpi_kobj, NULL, "platform_profile");
+>>   }
+>> @@ -148,40 +157,65 @@ EXPORT_SYMBOL_GPL(platform_profile_notify);
+>>
+>>   int platform_profile_cycle(void)
+>>   {
+>> +	struct platform_profile_handler *handler;
+>>   	enum platform_profile_option profile;
+>> -	enum platform_profile_option next;
+>> +	enum platform_profile_option next =3D PLATFORM_PROFILE_LAST;
+>> +	enum platform_profile_option next2 =3D PLATFORM_PROFILE_LAST;
+>>   	int err;
+>>
+>> -	err =3D mutex_lock_interruptible(&profile_lock);
+>> -	if (err)
+>> -		return err;
+>> -
+>> -	if (!cur_profile) {
+>> -		mutex_unlock(&profile_lock);
+>> -		return -ENODEV;
+>> -	}
+>> -
+>> -	err =3D cur_profile->profile_get(cur_profile, &profile);
+>> -	if (err) {
+>> -		mutex_unlock(&profile_lock);
+>> -		return err;
+>> -	}
+>> -
+>> -	next =3D find_next_bit_wrap(cur_profile->choices, PLATFORM_PROFILE_LA=
+ST,
+>> -				  profile + 1);
+>> -
+>> -	if (WARN_ON(next =3D=3D PLATFORM_PROFILE_LAST)) {
+>> -		mutex_unlock(&profile_lock);
+>> -		return -EINVAL;
+>> +	scoped_cond_guard(mutex_intr, return -ERESTARTSYS, &profile_lock) {
+>> +		/* first pass, make sure all handlers agree on the definition of "ne=
+xt" profile */
+>> +		list_for_each_entry(handler, &platform_profile_handler_list, list) {
+>> +
+>> +			err =3D handler->profile_get(handler, &profile);
+>> +			if (err)
+>> +				return err;
+>> +
+>> +			if (next =3D=3D PLATFORM_PROFILE_LAST)
+>> +				next =3D find_next_bit_wrap(handler->choices,
+>> +							  PLATFORM_PROFILE_LAST,
+>> +							  profile + 1);
+>> +			else
+>> +				next2 =3D find_next_bit_wrap(handler->choices,
+>> +							   PLATFORM_PROFILE_LAST,
+>> +							   profile + 1);
+>> +
+>> +			if (WARN_ON(next =3D=3D PLATFORM_PROFILE_LAST))
+>> +				return -EINVAL;
+>> +
+>> +			if (next2 =3D=3D PLATFORM_PROFILE_LAST)
+>> +				continue;
+>> +
+>> +			if (next !=3D next2) {
+>> +				pr_warn("Next profile to cycle to is ambiguous between platform_pr=
+ofile handlers\n");
+>> +				return -EINVAL;
+>> +			}
+>> +			next =3D next2;
+>> +		}
+> Hmm, this seems complicated, I would suggest to factor out the code
+> to "and" together all the handler's choices which I suggested above
+> for platform_profile_choices_show() into a helper (with the locking
+> to be done by the caller) and then call that helper here to get
+> a choices which is the result if all the choices and-ed together and
+> simply call find_next_bit_wrap() on the resulting and-ed value ?
+>
+> Ah I guess another issue is that the handlers may also differ on
+> which profile they return from handler->profile_get(), so same
+> issue as in platform_profile_show(). I think this requires
+> another factored out helper to get a single consistent profile
+> value for all handlers. Then this helper can be used both in
+> platform_profile_show() and here to get a "truth" value for the
+> current active profile and show that / use that as base to pick
+> the next value.
+>
+> Note the above approach definitely is going to have issues
+> if handlers mismatch on which profiles are supported since
+> you do not skip choices which are only available in one of
+> the handlers.
+>
+>> +
+>> +		/*
+>> +		 * Second pass: apply "next" to each handler
+>> +		 * If any failures occur unwind and revert all back to the original =
+profile
+>> +		 */
+>> +		list_for_each_entry(handler, &platform_profile_handler_list, list) {
+>> +			err =3D handler->profile_set(handler, next);
+>> +			if (err) {
+>> +				pr_err("Failed to set profile for handler %s\n", handler->name);
+>> +				break;
+>> +			}
+>> +		}
+>> +		if (err) {
+>> +			list_for_each_entry_continue_reverse(handler, &platform_profile_han=
+dler_list, list) {
+>> +				err =3D handler->profile_set(handler, profile);
+> Same issue as before, profile contains the profile of the last handler
+> in the list only.
+>
+>
+>> +				if (err)
+>> +					pr_err("Failed to revert profile for handler %s\n", handler->name=
+);
+>> +			}
+>> +		}
+>>   	}
+>>
+>> -	err =3D cur_profile->profile_set(cur_profile, next);
+>> -	mutex_unlock(&profile_lock);
+>> -
+>> -	if (!err)
+>> -		sysfs_notify(acpi_kobj, NULL, "platform_profile");
+>> +	sysfs_notify(acpi_kobj, NULL, "platform_profile");
+>>
+>> -	return err;
+>> +	return 0;
+>>   }
+>>   EXPORT_SYMBOL_GPL(platform_profile_cycle);
+>>
+>> @@ -190,21 +224,19 @@ int platform_profile_register(struct platform_pro=
+file_handler *pprof)
+>>   	int err;
+>>
+>>   	guard(mutex)(&profile_lock);
+>> -	/* We can only have one active profile */
+>> -	if (cur_profile)
+>> -		return -EEXIST;
+>>
+>>   	/* Sanity check the profile handler field are set */
+>>   	if (!pprof || bitmap_empty(pprof->choices, PLATFORM_PROFILE_LAST) ||
+>>   		!pprof->profile_set || !pprof->profile_get)
+>>   		return -EINVAL;
+>>
+>> -	err =3D sysfs_create_group(acpi_kobj, &platform_profile_group);
+>> -	if (err)
+>> -		return err;
+>> +	if (!platform_profile_is_registered()) {
+>> +		err =3D sysfs_create_group(acpi_kobj, &platform_profile_group);
+>> +		if (err)
+>> +			return err;
+>> +	}
+>>   	list_add_tail(&pprof->list, &platform_profile_handler_list);
+>>
+>> -	cur_profile =3D pprof;
+>>   	return 0;
+>>   }
+>>   EXPORT_SYMBOL_GPL(platform_profile_register);
+>> @@ -215,7 +247,6 @@ int platform_profile_remove(struct platform_profile=
+_handler *pprof)
+>>
+>>   	list_del(&pprof->list);
+>>
+>> -	cur_profile =3D NULL;
+>>   	if (!platform_profile_is_registered())
+>>   		sysfs_remove_group(acpi_kobj, &platform_profile_group);
+>>
+>
+> Regards,
+>
+> Hans
+>
+>
+>
 
