@@ -1,169 +1,199 @@
-Return-Path: <linux-kernel+bounces-382874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B827D9B1453
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 05:31:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAC7D9B1454
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 05:36:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6B419B21C74
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 03:31:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E255283426
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 03:36:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D8AF146013;
-	Sat, 26 Oct 2024 03:31:36 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 878C213D2B2;
+	Sat, 26 Oct 2024 03:36:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lF+bKFUD"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A568E217F27
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 03:31:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDE2B320F
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 03:36:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729913495; cv=none; b=NopFP59l6wDOZKeskxBSei6sD3MgYNeaIwKmtaXkhADNxFOCZgccaRopv+XzDXQSwgIszIwpd+YaajfKp/1uBiHbuHbn8rLrT9Z4/uO5Wt6vbXwF01DQ6Hx4mphdmwbpLCMYvdRkGMxUUdSmHB4ct1W7lax/ilUkA4/lxXA3UCE=
+	t=1729913792; cv=none; b=C8fpBwk9XmjnlPG5XIlxFiILPWQ2eriaHZIO2zVgkKk1Pe86EZ8qLlOBxn0gQF/dWkQ3rZiaQ5h7OvIYqnTV2M3Q2Ivogrh/uR4Iu4+4U1gRzFmczPFAm5MFRPOhnPmXBKUFAkju9Qjfp0fETPEsGNHZJwNGU+CojSqr8pXiSKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729913495; c=relaxed/simple;
-	bh=qlQfPFPo+vePr/b0TKDW2EhZ1fVTwb288l9jgggBAQQ=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=mSjzCbbrliaASJFxCoXJsv9nwTVYp3fK/VBgnduVKhapIpywm/eI1VO8WJFssYXUPcSTvMYNf1S+RkgpMjVfpgehvXqYhdCFhJ6CF0xSV45dLX1DgahYfV1avldb5D895rFY7cTmdJOWfGtf1IPrvr7+h4KeySS1uJDDfF34cgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a4ed20b313so3848365ab.1
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 20:31:33 -0700 (PDT)
+	s=arc-20240116; t=1729913792; c=relaxed/simple;
+	bh=EWx6NdqB/KNaEbwzWBBuJAmpa6v3YZnvTzumDswBMHo=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=JWEXvR5fTlUVBRM5DotHNtB2cKRK7GnK67Vid9qQ7mTmUuk6SV3TgqBl+dtzk+1zlxNQwOGrQh22lhRL0KjXp6leJowURiVMmIXKMcgvjVa1frcXQ34iTMW8JaZ3U+K1dHzAYctqjTxZVNWvJgW894oyEjHMyRcPP4nIfEaIh48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--yuzhao.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lF+bKFUD; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--yuzhao.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e32b43e053so41368677b3.1
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 20:36:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1729913790; x=1730518590; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=zJvo8rQelVugAeNPiMO8n98xYiD6Va85kwZA/R+E8fA=;
+        b=lF+bKFUDBrxzSH/0UpqoQoDf2mbmTNcLiBLbNfSQNXizBjtoxl/zKuXtWtSAK7/ibK
+         gMlWOX5zBWpC/wz55/+Or4Oz0uG+tnZVKnyEqpBlFnAV5W80pUQCwOnKKnepkPndXMvL
+         5uE2JUImzGbEi6pAN51b6z9r3yhWHXwSww6ZfIn77+7kiXxgUly4V+AdarMOz7SxzF83
+         J8W3an6NIyIDldZOZZsc3ygI9ulPjKR3C3S3qQ7aoyXpVM4k1sPkfBvD4abKTCjSQghl
+         NhIZdlD0j+yuTydprxUDP/ZGPmfR0M+EfykMG1Yfc4WpETdjBlw5dy6Iu53lsevfvXII
+         5QlQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729913493; x=1730518293;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+        d=1e100.net; s=20230601; t=1729913790; x=1730518590;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=jyx73Im/Ju5KcZDknso5u3jMErO6uN8xFHQNFeiAjyM=;
-        b=b+c4zb7sPrZviYO8nHgsbobeOPDDjyJQpmUOyE4AwrQH4u1nvNWHnrkgPLEDD+t037
-         aMvhuhnk+fh1yomVwHIJcgesXUM7s2QeWUx4urjZKkEBY8nfresuN8WAwQGG7tfXzP1L
-         IcFu4sp/Zg1HapsPb0IkpZiNIa5SBeUkIBN9lrPFY8q4Zm4iqsIFZ3WC9/uLuAtEpfuM
-         jGU+jFVYMKUQITfA/k9kJUaQq3KqlLp/sGYIUmBfUk4K+ly06E11oLGYn1107blhTHVy
-         bkR81El+mCrnAwRy9trJCy6iC3hsp+zbWk9umitNXS9joM7ShhRCYPhXh7ll8vRo6GTR
-         rgLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWcKz6cPKIeFlV4sa4PBLzxqZ6F+5Zv4Uij/9mqkWDfJyfhVR3z8EhEb9cejIhjZ+GG3r9j4TuzViRuQf8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzeV+seW+7N9VZqJqr2jXPjnRHF8QxNXZC4Tzn06Bu8c/FeE3YE
-	um47PLMYyxnwaGmG+4vrVmBBgJmsrmoRG2w7qiUdeulRaIrxoUjwtBMVASYLO1DdYL5bomDFOiA
-	qHD9G36t2ntLEYjejhGm5XAZKN4bZHpwOPGjYnqaSfj6weH7QqsoczF4=
-X-Google-Smtp-Source: AGHT+IH8k/c4UTt/oxLgEFb8uW4wHRxI/DRYUMnRBFsCIrc513LNbm4B7mU2gNKqF4npcs/nSxDT9F1o7qVLE+0oO9f9E9BgVn8B
+        bh=zJvo8rQelVugAeNPiMO8n98xYiD6Va85kwZA/R+E8fA=;
+        b=YIDAkFp2B973jZ69ZO9u8/oN+S9swL7O9AWZ0y7yTfsTIU6FbzpoKv7Zuz27oKh/YN
+         C0SvP/hBJaNegoXLi5TciU3c0AXzsiYYasEcOTK2ehczyTQrj1kPPPAdw/VPdIV+DDcy
+         O5i5CKUFGKejRipJfLDtM2FIB00ym/7DMG8FCFi989/sqorWd0Vp+t1O2s/le/aFRQ4V
+         O3342w8IorzjKSl0yj/sUALHUS9YAG0Pm+RsZuxQ6XuNsFxrwhtCowcA74I8wlt1Kh8p
+         ygAlWZ+F2IKRtT5h5H+Gt03jVV8jhcHhXFLSMFUvQ+rbqIxkUGnpNamPgiFbusPmXOhd
+         fZEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX/nnB55gxXXv3IvP0JfnFueeUjqHHzvKgiHOgs9hew7wg5af+fChJJFimoVNcDkzzLcfDT4dpda2YUEec=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3HR7XYRJEPyx2mCGDSUtdpmbAT49iEXmgKT+vBEM2SjESC1jw
+	llqKRT5cm2gfeInJrjIulbcMoiI1IJMMLdDV4+4+QRxYk3aOFWQ9YA3hhm0PNXWrUK6xNJkwFS1
+	dkg==
+X-Google-Smtp-Source: AGHT+IFjF2xbY+QdTNq0yXUWw8dhcTHCSRZ/2q1qhW0aC06XSt+a7yPkzdJRVZQVGegp4OdYmAxx4N97DDE=
+X-Received: from yuzhao2.bld.corp.google.com ([2a00:79e0:2e28:6:94d3:b09:4b32:5539])
+ (user=yuzhao job=sendgmr) by 2002:a05:6902:1822:b0:e1c:ed3d:7bb7 with SMTP id
+ 3f1490d57ef6-e308784a6eamr1084276.1.1729913789367; Fri, 25 Oct 2024 20:36:29
+ -0700 (PDT)
+Date: Fri, 25 Oct 2024 21:36:25 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2188:b0:3a4:ea4f:ac9e with SMTP id
- e9e14a558f8ab-3a4ed30fef7mr11494935ab.26.1729913492796; Fri, 25 Oct 2024
- 20:31:32 -0700 (PDT)
-Date: Fri, 25 Oct 2024 20:31:32 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <671c6294.050a0220.2fdf0c.021f.GAE@google.com>
-Subject: [syzbot] [btrfs?] WARNING in btrfs_create_uuid_tree
-From: syzbot <syzbot+26d3fefc62ec33837e93@syzkaller.appspotmail.com>
-To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.163.g1226f6d8fa-goog
+Message-ID: <20241026033625.2237102-1-yuzhao@google.com>
+Subject: [PATCH mm-unstable v2] mm/page_alloc: keep track of free highatomic
+From: Yu Zhao <yuzhao@google.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: David Rientjes <rientjes@google.com>, Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Yu Zhao <yuzhao@google.com>, 
+	Link Lin <linkl@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+OOM kills due to vastly overestimated free highatomic reserves were
+observed:
 
-syzbot found the following issue on:
+  ... invoked oom-killer: gfp_mask=0x100cca(GFP_HIGHUSER_MOVABLE), order=0 ...
+  Node 0 Normal free:1482936kB boost:0kB min:410416kB low:739404kB high:1068392kB reserved_highatomic:1073152KB ...
+  Node 0 Normal: 1292*4kB (ME) 1920*8kB (E) 383*16kB (UE) 220*32kB (ME) 340*64kB (E) 2155*128kB (UE) 3243*256kB (UE) 615*512kB (U) 1*1024kB (M) 0*2048kB 0*4096kB = 1477408kB
 
-HEAD commit:    c2ee9f594da8 KVM: selftests: Fix build on on non-x86 archi..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=17a290a7980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=fc6f8ce8c5369043
-dashboard link: https://syzkaller.appspot.com/bug?extid=26d3fefc62ec33837e93
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+The second line above shows that the OOM kill was due to the following
+condition:
 
-Unfortunately, I don't have any reproducer for this issue yet.
+  free (1482936kB) - reserved_highatomic (1073152kB) = 409784KB < min (410416kB)
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-c2ee9f59.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/8a3541902b13/vmlinux-c2ee9f59.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/a00efacc2604/bzImage-c2ee9f59.xz
+And the third line shows there were no free pages in any
+MIGRATE_HIGHATOMIC pageblocks, which otherwise would show up as type
+'H'. Therefore __zone_watermark_unusable_free() underestimated the
+usable free memory by over 1GB, which resulted in the unnecessary OOM
+kill above.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+26d3fefc62ec33837e93@syzkaller.appspotmail.com
+The comments in __zone_watermark_unusable_free() warns about the
+potential risk, i.e.,
 
-loop0: detected capacity change from 0 to 32768
-BTRFS: device fsid a6a605fc-d5f1-4e66-8595-3726e2b761d6 devid 1 transid 8 /dev/loop0 (7:0) scanned by syz.0.0 (5105)
-BTRFS info (device loop0 state S): first mount of filesystem a6a605fc-d5f1-4e66-8595-3726e2b761d6
-BTRFS info (device loop0 state S): using blake2b (blake2b-256-generic) checksum algorithm
-BTRFS info (device loop0 state S): using free-space-tree
-workqueue: max_active 32767 requested for btrfs-worker is out of range, clamping between 1 and 512
-workqueue: max_active 32767 requested for btrfs-delalloc is out of range, clamping between 1 and 512
-workqueue: max_active 32767 requested for btrfs-endio is out of range, clamping between 1 and 512
-workqueue: max_active 32767 requested for btrfs-endio-meta is out of range, clamping between 1 and 512
-workqueue: max_active 32767 requested for btrfs-rmw is out of range, clamping between 1 and 512
-workqueue: max_active 32767 requested for btrfs-endio-write is out of range, clamping between 1 and 512
-workqueue: max_active 32767 requested for btrfs-compressed-write is out of range, clamping between 1 and 512
-BTRFS info (device loop0 state MCS): resize thread pool 32767 -> 3
-BTRFS info (device loop0 state MCS): creating UUID tree
-------------[ cut here ]------------
-BTRFS: Transaction aborted (error -17)
-WARNING: CPU: 0 PID: 5105 at fs/btrfs/uuid-tree.c:550 btrfs_create_uuid_tree+0x21b/0x230 fs/btrfs/uuid-tree.c:550
-Modules linked in:
-CPU: 0 UID: 0 PID: 5105 Comm: syz.0.0 Not tainted 6.12.0-rc4-syzkaller-00047-gc2ee9f594da8 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:btrfs_create_uuid_tree+0x21b/0x230 fs/btrfs/uuid-tree.c:550
-Code: 5b 4e 8c e8 d7 87 eb 07 48 89 ef e8 3f b1 f6 07 e9 fa fe ff ff e8 55 53 bc fd 90 48 c7 c7 a0 5a 4e 8c 89 de e8 d6 4c 7d fd 90 <0f> 0b 90 90 eb 97 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 90
-RSP: 0018:ffffc9000af47800 EFLAGS: 00010246
-RAX: aa1d53389ee6ee00 RBX: ffffffffffffffef RCX: ffff8880002ba440
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
-RBP: ffff88801fc55060 R08: ffffffff8155d402 R09: 1ffff11003f8519a
-R10: dffffc0000000000 R11: ffffed1003f8519b R12: dffffc0000000000
-R13: ffff88804c5e8001 R14: ffff88801fc55000 R15: 0000000000000000
-FS:  00007fc0dfa126c0(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055a0b3b24338 CR3: 0000000040ab4000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- btrfs_start_pre_rw_mount+0x116c/0x1300 fs/btrfs/disk-io.c:3085
- btrfs_remount_rw fs/btrfs/super.c:1309 [inline]
- btrfs_reconfigure+0xae6/0x2d40 fs/btrfs/super.c:1534
- btrfs_reconfigure_for_mount fs/btrfs/super.c:2020 [inline]
- btrfs_get_tree_subvol fs/btrfs/super.c:2079 [inline]
- btrfs_get_tree+0x918/0x1920 fs/btrfs/super.c:2115
- vfs_get_tree+0x90/0x2b0 fs/super.c:1800
- do_new_mount+0x2be/0xb40 fs/namespace.c:3507
- do_mount fs/namespace.c:3847 [inline]
- __do_sys_mount fs/namespace.c:4057 [inline]
- __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4034
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fc0deb7dff9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fc0dfa12038 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007fc0ded36058 RCX: 00007fc0deb7dff9
-RDX: 0000000020000280 RSI: 0000000020000180 RDI: 0000000020000100
-RBP: 00007fc0debf0296 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007fc0ded36058 R15: 00007ffe42d6cb28
- </TASK>
+  If the caller does not have rights to reserves below the min
+  watermark then subtract the high-atomic reserves. This will
+  over-estimate the size of the atomic reserve but it avoids a search.
 
+However, it is possible to keep track of free pages in reserved
+highatomic pageblocks with a new per-zone counter nr_free_highatomic
+protected by the zone lock, to avoid a search when calculating the
+usable free memory. And the cost would be minimal, i.e., simple
+arithmetics in the highatomic alloc/free/move paths.
 
+Reported-by: Link Lin <linkl@google.com>
+Signed-off-by: Yu Zhao <yuzhao@google.com>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ include/linux/mmzone.h |  1 +
+ mm/page_alloc.c        | 23 ++++++++++++++++++++---
+ 2 files changed, 21 insertions(+), 3 deletions(-)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+index 2e8c4307c728..5e8f567753bd 100644
+--- a/include/linux/mmzone.h
++++ b/include/linux/mmzone.h
+@@ -825,6 +825,7 @@ struct zone {
+ 	unsigned long watermark_boost;
+ 
+ 	unsigned long nr_reserved_highatomic;
++	unsigned long nr_free_highatomic;
+ 
+ 	/*
+ 	 * We don't know if the memory that we're going to allocate will be
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index c81762c49b00..43ecc7d75a2a 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -644,6 +644,18 @@ static inline void account_freepages(struct zone *zone, int nr_pages,
+ 		__mod_zone_page_state(zone, NR_FREE_CMA_PAGES, nr_pages);
+ }
+ 
++static void account_highatomic_freepages(struct zone *zone, unsigned int order,
++					 int old_mt, int new_mt)
++{
++	int delta = 1 << order;
++
++	if (is_migrate_highatomic(old_mt))
++		WRITE_ONCE(zone->nr_free_highatomic, zone->nr_free_highatomic - delta);
++
++	if (is_migrate_highatomic(new_mt))
++		WRITE_ONCE(zone->nr_free_highatomic, zone->nr_free_highatomic + delta);
++}
++
+ /* Used for pages not on another list */
+ static inline void __add_to_free_list(struct page *page, struct zone *zone,
+ 				      unsigned int order, int migratetype,
+@@ -660,6 +672,8 @@ static inline void __add_to_free_list(struct page *page, struct zone *zone,
+ 	else
+ 		list_add(&page->buddy_list, &area->free_list[migratetype]);
+ 	area->nr_free++;
++
++	account_highatomic_freepages(zone, order, -1, migratetype);
+ }
+ 
+ /*
+@@ -681,6 +695,8 @@ static inline void move_to_free_list(struct page *page, struct zone *zone,
+ 
+ 	account_freepages(zone, -(1 << order), old_mt);
+ 	account_freepages(zone, 1 << order, new_mt);
++
++	account_highatomic_freepages(zone, order, old_mt, new_mt);
+ }
+ 
+ static inline void __del_page_from_free_list(struct page *page, struct zone *zone,
+@@ -698,6 +714,8 @@ static inline void __del_page_from_free_list(struct page *page, struct zone *zon
+ 	__ClearPageBuddy(page);
+ 	set_page_private(page, 0);
+ 	zone->free_area[order].nr_free--;
++
++	account_highatomic_freepages(zone, order, migratetype, -1);
+ }
+ 
+ static inline void del_page_from_free_list(struct page *page, struct zone *zone,
+@@ -3119,11 +3137,10 @@ static inline long __zone_watermark_unusable_free(struct zone *z,
+ 
+ 	/*
+ 	 * If the caller does not have rights to reserves below the min
+-	 * watermark then subtract the high-atomic reserves. This will
+-	 * over-estimate the size of the atomic reserve but it avoids a search.
++	 * watermark then subtract the free pages reserved for highatomic.
+ 	 */
+ 	if (likely(!(alloc_flags & ALLOC_RESERVES)))
+-		unusable_free += z->nr_reserved_highatomic;
++		unusable_free += READ_ONCE(z->nr_free_highatomic);
+ 
+ #ifdef CONFIG_CMA
+ 	/* If allocation can't use CMA areas don't use free CMA pages */
+-- 
+2.47.0.163.g1226f6d8fa-goog
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
