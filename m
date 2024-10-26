@@ -1,157 +1,124 @@
-Return-Path: <linux-kernel+bounces-383219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F6349B1898
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 16:27:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A29C09B1893
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 16:25:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01952282DFF
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 14:27:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1F0D1C21199
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 14:25:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2426A18641;
-	Sat, 26 Oct 2024 14:27:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18A8117C68;
+	Sat, 26 Oct 2024 14:25:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="ZPJhX+Ac"
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ksq6w1Bj";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cw0hQG0m"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1101134A8;
-	Sat, 26 Oct 2024 14:27:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CFD779FD;
+	Sat, 26 Oct 2024 14:25:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729952838; cv=none; b=inx6Go84fK21nJ9KblwhyMLWl35uT+Wp2QMtsOdfg9ZZHkE/k93230+IQB05fZqag00zJQnEzGz0jEr7heszumn//hkjFMDAkBC16v09yE8ug24O3tBU8/UOXVS4u/O2Aa1rJmRwUb8UfpfhT/MbVM7ZCjSmR515d23CLJGExHg=
+	t=1729952747; cv=none; b=alW3BoZbOP70dsePqJ3UnzknVHMBq5X8oP8IehC6rYwufFQjMbPOxlQcUzJz7Gysk7x/+Gzu3sfvtQYlQynCoxyjD1IGIEnAgWibtUKzW6z0Cqh+2EwcXzCkuvmJrdSIf/g99tDaGXQw3mMVoaYb/vZGMBHJdAvBBxvQn9pblIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729952838; c=relaxed/simple;
-	bh=NLMj2ql9El1zMEdwP3hmb38W/b9GUansJFnQZhwcuwY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=R4XZzCyGNMD7TB6Zxre5OEoxXkfsUf9cGUsefnC8LAYUrTZa0jSUmnbcPFzF1D/jindYFdHlUBUQSDCKOfGlYharIrTN7eaYQTVETWlAyS4S0MURThbI5gkEeQ5iHdkBeb+fPJQtETumfkte2I2aQuq8TLW7C2+1KC2x37pg+c4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=ZPJhX+Ac; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1729952834;
-	bh=NLMj2ql9El1zMEdwP3hmb38W/b9GUansJFnQZhwcuwY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ZPJhX+AceO0hKomerRFndhtcV6ciWnjMeGTGzYfYFQUQG0afSFnLff5Urz1PKMay3
-	 1x/YvgEgSE0uPmGN9pNTyVaXfjjQB29svoZik7HFKpP0KHrlEbqcl1v+hOYGu2HnES
-	 us7G2WbVrqgusmpDyy3/frLcrsjjTdDzcA8DPtkED2gd5/A4G6QTNvyHfHMNoOXjvT
-	 IiJDKVWYDg7pny0XvlMvR9Q6dPOtD9afo00hF9aHLQHQH6IPCsEsQU6sefNZvOYqoU
-	 dQP031p9HUpCaJURvWwE/8uBAmES/9bwalfM4LeRJi2L5q3Ty8HVxIPnjPlPj1E86E
-	 6q2EKDtfF4GAw==
-Received: from [IPV6:2606:6d00:100:4000:cacb:9855:de1f:ded2] (unknown [IPv6:2606:6d00:100:4000:cacb:9855:de1f:ded2])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XbMRk0SXMzN2j;
-	Sat, 26 Oct 2024 10:27:14 -0400 (EDT)
-Message-ID: <b961bc6b-331c-4315-b424-60d514cc112e@efficios.com>
-Date: Sat, 26 Oct 2024 10:25:31 -0400
+	s=arc-20240116; t=1729952747; c=relaxed/simple;
+	bh=hHIRHChLjyWtBJ/5S9pXJQp00MwjxbgDuQj5UmOmdzM=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=WROgAZsZMRdy9EIWWLAuOgkFKu6dlIGLtEJVe827MKymgx32BrtxA8YD++22DZ91XZNNyPAckCCciFk7eaOTFXsU7AzITtxRKl3gAjG1pxmw56H7qy8HkuI9yn6ZM9cadFP02Ifa9199eHI8q1Q4tO1QRFaasSgD3EFZd94cNIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ksq6w1Bj; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cw0hQG0m; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Sat, 26 Oct 2024 14:25:41 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1729952742;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wzYhVbYdJeuvqWa1aHDzu9DZQBFoDFW1wr82aVvp7eg=;
+	b=ksq6w1BjFNTbvw1QU7BbYpXquALeIqyAKrE7yveUt9UoZ/fhVhghOU2qsfHFcKzbrvOGiO
+	pM1yjqV0OPcVox4EkvbNIIgog2SuagA+6SzfbHibW9avapbNaXM2m1XIVeO03dWvx0ew8B
+	667myGpdboFW5faSLqJffHSq6/+e8BnHCng64w6jrAu7NDlzdOURgZp9dVfnJBH8bJRKMN
+	pzWgqBmVrRY/f96Y+bIAkHTJUNR1AbESMBLqJPdgthN+W5fpgyt24v69HV6yR6c89/SDO4
+	zavYmbOnUIEQxy2myoDI+Iu0pKzBqa2A+wguJofISEmOwSuH9+SLXE2Aj4gVCg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1729952742;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wzYhVbYdJeuvqWa1aHDzu9DZQBFoDFW1wr82aVvp7eg=;
+	b=cw0hQG0mCa38BxioSxkP2FH4RYXMSwzN8YkfPYw3PG7rTWFWijCh/I/W+kIAfWa6OszkUI
+	BiXsIPqe2uLmUSAA==
+From: "tip-bot2 for Thorsten Blum" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: x86/cleanups] x86/cpu: Use str_yes_no() helper in show_cpuinfo_misc()
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+ "Borislav Petkov (AMD)" <bp@alien8.de>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20241026110808.78074-1-thorsten.blum@linux.dev>
+References: <20241026110808.78074-1-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v1] tracing: Fix syscall tracepoint use-after-free
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Jordan Rife <jrife@google.com>, acme@kernel.org,
- alexander.shishkin@linux.intel.com, andrii.nakryiko@gmail.com,
- ast@kernel.org, bpf@vger.kernel.org, joel@joelfernandes.org,
- linux-kernel@vger.kernel.org, mark.rutland@arm.com, mhiramat@kernel.org,
- mingo@redhat.com, mjeanson@efficios.com, namhyung@kernel.org,
- paulmck@kernel.org, peterz@infradead.org,
- syzbot+b390c8062d8387b6272a@syzkaller.appspotmail.com, yhs@fb.com
-References: <20241025182149.500274-1-mathieu.desnoyers@efficios.com>
- <20241025190854.3030636-1-jrife@google.com>
- <f31710d3-e4d8-43ad-9ccb-6d13201756a3@efficios.com>
- <20241026031314.0f53e7fa@rorschach.local.home>
-Content-Language: en-US
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-In-Reply-To: <20241026031314.0f53e7fa@rorschach.local.home>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Message-ID: <172995274114.1442.11782241347849393320.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 
-On 2024-10-26 03:13, Steven Rostedt wrote:
-> On Fri, 25 Oct 2024 15:38:48 -0400
-> Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
-> 
->>> I'm curious if it might be better to add some field to struct
->>> tracepoint like "sleepable" rather than adding a special case here
->>> based on the name? Of course, if it's only ever going to be these
->>> two cases then maybe adding a new field doesn't make sense.
->>
->> I know Steven is reluctant to bloat the tracepoint struct because there
->> are lots of tracepoint instances (thousands). So for now I thought that
->> just comparing the name would be a good start.
-> 
-> You are correct. I really trying to keep the footprint of
-> tracepoints/events down.
-> 
->>
->> We can eventually go a different route as well: introduce a section just
->> to put the syscall tracepoints, and compare the struct tracepoint
->> pointers to the section begin/end range. But it's rather complex
->> for what should remain a simple fix.
-> 
-> A separate section could work.
+The following commit has been merged into the x86/cleanups branch of tip:
 
-I have another approach to suggest: it shrinks the
-size of struct tracepoint from 80 bytes down to 72 bytes
-on x86-64, we don't have to do any section/linker
-script trickery, and it's extensible for future flags:
+Commit-ID:     7565caab47e89e9681a2c4439100e78f520833fa
+Gitweb:        https://git.kernel.org/tip/7565caab47e89e9681a2c4439100e78f520833fa
+Author:        Thorsten Blum <thorsten.blum@linux.dev>
+AuthorDate:    Sat, 26 Oct 2024 13:08:06 +02:00
+Committer:     Borislav Petkov (AMD) <bp@alien8.de>
+CommitterDate: Sat, 26 Oct 2024 15:37:15 +02:00
 
-struct static_key {
-         int enabled;
-         void *p;
-};
+x86/cpu: Use str_yes_no() helper in show_cpuinfo_misc()
 
-struct static_key_false {
-         struct static_key key;
-};
+Remove hard-coded strings by using the str_yes_no() helper function.
 
-struct static_call_key {
-         void *func;
-         void *p;
-};
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Link: https://lore.kernel.org/r/20241026110808.78074-1-thorsten.blum@linux.dev
+---
+ arch/x86/kernel/cpu/proc.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-struct tracepoint {
-         const char *name;               /* Tracepoint name */
-         struct static_key_false key;
-         struct static_call_key *static_call_key;
-         void *static_call_tramp;
-         void *iterator;
-         void *probestub;
-         void *funcs;
-         /* Flags. */
-         unsigned int regfunc:1,
-                      syscall:1;
-};
-
-struct tracepoint_regfunc {
-         struct tracepoint tp;
-         int (*regfunc)(void);
-         void (*unregfunc)(void);
-};
-
-Basically, a tracepoint with regfunc would define a
-struct tracepoint_regfunc rather than a struct tracepoint.
-So we remove both regfunc and unregfunc NULL pointers in
-the common case, which gives us plenty of room for flags.
-
-When we want to access the regfunc/unregfunc from
-a struct tracepoint, we check the regfunc flag, and
-if set, we can use container_of() to get the struct
-tracepoint_regfunc.
-
-Thoughts ?
-
-Thanks,
-
-Mathieu
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
-
+diff --git a/arch/x86/kernel/cpu/proc.c b/arch/x86/kernel/cpu/proc.c
+index e65fae6..41ed01f 100644
+--- a/arch/x86/kernel/cpu/proc.c
++++ b/arch/x86/kernel/cpu/proc.c
+@@ -41,11 +41,11 @@ static void show_cpuinfo_misc(struct seq_file *m, struct cpuinfo_x86 *c)
+ 		   "fpu_exception\t: %s\n"
+ 		   "cpuid level\t: %d\n"
+ 		   "wp\t\t: yes\n",
+-		   boot_cpu_has_bug(X86_BUG_FDIV) ? "yes" : "no",
+-		   boot_cpu_has_bug(X86_BUG_F00F) ? "yes" : "no",
+-		   boot_cpu_has_bug(X86_BUG_COMA) ? "yes" : "no",
+-		   boot_cpu_has(X86_FEATURE_FPU) ? "yes" : "no",
+-		   boot_cpu_has(X86_FEATURE_FPU) ? "yes" : "no",
++		   str_yes_no(boot_cpu_has_bug(X86_BUG_FDIV)),
++		   str_yes_no(boot_cpu_has_bug(X86_BUG_F00F)),
++		   str_yes_no(boot_cpu_has_bug(X86_BUG_COMA)),
++		   str_yes_no(boot_cpu_has(X86_FEATURE_FPU)),
++		   str_yes_no(boot_cpu_has(X86_FEATURE_FPU)),
+ 		   c->cpuid_level);
+ }
+ #else
 
