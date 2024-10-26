@@ -1,560 +1,138 @@
-Return-Path: <linux-kernel+bounces-383154-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383155-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D3FC9B17E3
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 14:18:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62CAA9B17E4
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 14:18:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB2AF1F21E2C
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 12:18:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F41B6B21885
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 12:18:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 960CA1D5146;
-	Sat, 26 Oct 2024 12:17:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 884A61D5164;
+	Sat, 26 Oct 2024 12:18:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="J17BAxU7"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Deg58Wpx"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9B19217F3B;
-	Sat, 26 Oct 2024 12:17:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDAC81D2F50
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 12:18:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729945073; cv=none; b=lsmNg3940R+FctIKRJL/ugu+eLiF5QawmQ7fqCtFQJVgRe8qWEkpaeRBqiGW/tNmDIHIMuXBCQ2yTNvHLUNoclj5W3kWqgDFxDkMBwFq4f9NmBXYeAXqcNxdkn/0nPYm8u1RB7/0DAabpewNTGHj4Gw0+8hEEvuVmvI5s3Az3ks=
+	t=1729945086; cv=none; b=RsVoAvDYD640b7vhlsJt6ETd1Zd+eOVHuuNrodjS7sup6sf1DPCcPCqKTJ+WXlTOQ0K4w9ExvKjxuQt/7NlpHvLdiJwUFw887BZJuZ/zmF82lNpmyTZsdTHgX1RDMv4AZ+jjjD+3AgvnSenz/eCDbtDn7VYo546HVx6SqkhoW/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729945073; c=relaxed/simple;
-	bh=Ab2Xiose1NAtovMdfL6OU+552L9KDsgru/6OovBq8H4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FXbNgr7c5KtchKZRLH65lfws0JFvlykIF08oTti4AYGENefhWZ6HCL381XdDmGNX5guaKz8fqdirLf0TiOx1YPdPLv2d1pZwdtBvhvMOYz7rqNYl4Pnm7eEx7P6zux2Z1wGORPxYXj0UR5G3iiV73XO5Rf0YUCZL83BLsfDWPHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=J17BAxU7; arc=none smtp.client-ip=212.227.17.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1729944995; x=1730549795; i=w_armin@gmx.de;
-	bh=OhBnA6UBWYUUTh2D7d0QXDqNx+XR7XGGT5oet3kUs3g=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=J17BAxU7YuwG0VXJLXWAp12f43QI+lUCYqCJTpKayykM8D0Zwt6FGlMNOhlyuwab
-	 /qcBefneJkMooXWUZUfe5MAH5DYrhO6wioEL6wzo1XYTKkO4+uNZ2QPUCFufpBxYm
-	 5WryGCRS0/FjbM5HDTSsHgY0JWjLhIaB7z3an91e83NGEgr5tvCUt+k5ywdY2EbaP
-	 gNeGfLSI3oAPVgh7oV/1VCSLwfCThY5Hjr+7A1GAYLB2jWu5+U0LHbVhNa1K5yEC3
-	 kCREYGaZaBq1mnEXPe70VlN+fsx4gQP+4NTuttMBW2QJZaScW/XE4InQGhE0plJ0y
-	 QYWWsDdmOC5Tn353oQ==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [141.30.226.129] ([141.30.226.129]) by mail.gmx.net (mrgmx104
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1M6Udt-1syJw336Gv-00FzgP; Sat, 26
- Oct 2024 14:16:34 +0200
-Message-ID: <d33aaae0-8707-44e8-a6f5-e3144b9360e2@gmx.de>
-Date: Sat, 26 Oct 2024 14:16:28 +0200
+	s=arc-20240116; t=1729945086; c=relaxed/simple;
+	bh=f+Yk5CtSNdB/1Lmu/zKBb9xb884EAaFAdkWSJ9+l47A=;
+	h=Date:Message-Id:Mime-Version:Subject:From:To:Content-Type; b=Psf2ckEbMXqJOeX8cJN6VAebko5SS5KfO07VHavdDPsEmZyB8t016Ba/e7L/2p6rI4U7jVIXaQvdsrxOFg1kAWzEqsDvMvZ1LJiDCguyDFP2FGsWIaRPlL8mcWKzueHmsEeokhRTicyuCUkWh8NptG82EXpZ1YBkJgKF2xOLLt4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Deg58Wpx; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e2954ada861so5419645276.3
+        for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 05:18:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1729945084; x=1730549884; darn=vger.kernel.org;
+        h=to:from:subject:mime-version:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=fBcJl01TtjB1sQ+coZ3yEQeNcjr8kffC1BqiKyM+Ja4=;
+        b=Deg58WpxuUdeldjva0WZ2Qi6mnOYfCjCqMrOeEpyh4hGln4wyn2LlpVI0xVdGVaHw0
+         HoKTCa0oORN1xR0yB890uag0h7AKpP5q+BUCuJ7SQkT9tAlGbeG56QDvkoNM6tpaK+dx
+         mye8VYen+7tyQ/s61zeTIYrcfDVGt8oto+/l4W5Wf+QaQDBvAJ5DjDWUe14rmY9AeXSW
+         hGM+ILPhaxBZVFWu3sci7epCegS0ff6JnpbKxu4IpxpL5IxP7rsM21TP7D4K5c11MJ+R
+         onUCyzRLlNxQbKKmmBLCT2nnUa3inTLSSV0slXgMGJamqO1Qcv1VVIhSaDtK2Xm00+X/
+         ojww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729945084; x=1730549884;
+        h=to:from:subject:mime-version:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fBcJl01TtjB1sQ+coZ3yEQeNcjr8kffC1BqiKyM+Ja4=;
+        b=cjn/p9MAFVTFIqwW3A6SKNrTOWH9lNb0Xt6Jf1n2zYiBz7P7yprivHLn4oWgCUY5Nh
+         WmdmhAh5yxMbXEWbhk6gSFF/MCSnI2W0IomYr+g7Thc2s7VQ+WC2uaV8Hz1qgwX5gfYo
+         0SbcC0xsYPifYjOFbm3P6vIOz3+65L4Km8TpM+SlzNjDwuCxThrPUQ0xs9vquyDiGBST
+         hnRWkNPQS9Dmlb7ywfxub8DoNKV5HzVtx1Ei1ZbANPgGLQCU36akoVUTZkXknIg/tsyQ
+         tXo9YY4QIefMyGoasWVrkdBYlZLx910lDqxGY76cDrDEUo0OnPRrT03Y/D1UU2vgFU0Y
+         v4uA==
+X-Forwarded-Encrypted: i=1; AJvYcCXJaGJqPgMLeVcq7TuPDiAV4bZwJchp4SnaBnjutp/6G2efb5fK+3m/MM7AQIoeXkIw7GUoSMHlGPrAqAQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxh7vp8YwocooL6AJvU/h7gSbJoFym96ZhsMsrA6pPVwL9yO5RW
+	jYsrIqAQmePWpzb7ewiq/pnfqV8TYcr2okDinat1kSvOe3JZkxCyWy6AsegPMEy4EEXs1B/q9cc
+	jqFX5gA==
+X-Google-Smtp-Source: AGHT+IE9zYMgTwSHLGYlj300YfFrmvke8frEqe5oUqwbyU39/+jljEJ0ran0v7PIwH2GumKW+rj4eS6UlTFR
+X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:4bc4:f7cc:83b4:dece])
+ (user=irogers job=sendgmr) by 2002:a25:a207:0:b0:e25:6701:410b with SMTP id
+ 3f1490d57ef6-e3087b792abmr5358276.5.1729945083545; Sat, 26 Oct 2024 05:18:03
+ -0700 (PDT)
+Date: Sat, 26 Oct 2024 05:17:54 -0700
+Message-Id: <20241026121758.143259-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 7/8] ACPI: platform_profile: Add support for multiple
- handlers
-To: Hans de Goede <hdegoede@redhat.com>,
- Mario Limonciello <mario.limonciello@amd.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>,
- Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
- Corentin Chary <corentin.chary@gmail.com>, "Luke D . Jones"
- <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>,
- Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
- Alexis Belmonte <alexbelm48@gmail.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>,
- open list <linux-kernel@vger.kernel.org>,
- "open list:ACPI" <linux-acpi@vger.kernel.org>,
- "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER"
- <platform-driver-x86@vger.kernel.org>,
- "open list:THINKPAD ACPI EXTRAS DRIVER"
- <ibm-acpi-devel@lists.sourceforge.net>,
- Mark Pearson <mpearson-lenovo@squebb.ca>,
- Matthew Schwartz <matthew.schwartz@linux.dev>
-References: <20241025193055.2235-1-mario.limonciello@amd.com>
- <20241025193055.2235-8-mario.limonciello@amd.com>
- <bcf83d6a-2e8d-4829-9c38-17459a2687ed@redhat.com>
-Content-Language: en-US
-From: Armin Wolf <W_Armin@gmx.de>
-In-Reply-To: <bcf83d6a-2e8d-4829-9c38-17459a2687ed@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:DauJxE9Dd2sr551ci4stCKotjhJcwm/sK/DFskGJkktw7d+yPEc
- DRrfVYHR6UO5rkZNZkl4qF61EO9WOXBE186cVXwtdQd1cVlgFNGXH60nhmHvYMbIDLf8WHV
- cT3qnc8CGwlG+FNUQB5nuxv7NcXh/JBcOb5M37sUXIg+U9YJnlkBFQOg8ATe8uck0QJ2tUi
- rVSS8w89k/WqTaBQC2lSA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:YdDSgKxFFMk=;gGnIe6SnaJtVcWZj0Xi/CZm4UmK
- zeRamJ/viYIoBMUp+0IguHZ7HdNE9yxDNDS5LYCdtIVCaqMPro7ilTnneUUYHuSxyew0SnO3y
- HyIiiodQumyh1whz9kcj2Bbrds0JfGALiCPFLhBcPnJS2+92BFPKKhWRz7g3+1KkU+srPXrDX
- rO8kZQdXu7QF9dV3Ajwn9wEzwI9BZestYSd2JMFtwHOnWFqaVS4x4ya1465xF+68GGLEPhWr7
- 4F3fQIXTblabXKrgwAbG8laUWBhlnhK8+vi7ZnwQ5FYFQgjQnCSu2TafbTgQx5UKVqGHttqZ1
- z2zRiFTEWIhfOBVEYSlxNmL5OHQdQZ9+ohfSZNs6nfJ6091+TduFzGZLUKgrsjHLJwKnEeSQI
- Iwvy7NeNUz5b+HKvHZ6zjWDk2HCxn3KJSD/50u/ToWaMUmWKcCRUktqsKBdey6zmZ7KRVbaXh
- ECrmKFsCSbviDgWLScT3AoiYf9L5d53G451mLNl4L24MNk2v1liOd5609JShP0+I2WN6CWJ9N
- EVA0dhQT9LqJZOtLyo//+ggZs/LjuJHrHzmSnrT9TUw7qr+wn2jFb9580oe6qwO86yVRdNC8s
- wOP1HSqOYBH83EqCfp1CY/pb7j0zte9rVR7laboQo2LYBmekcrChQf1+Xc/WUobiqgb8DQvUV
- VIV7n05NOurHXVD5i83VKW9p1MLNxI+zlS2gK9ODoMfpd10GdaImoRSuVWXOjgApgoiAyYa0w
- 10EJqiOYKxVFK4ThoqaDtEiS+MPgAfEdRZsPkmcD5YDD3qVJko/fFEd4338OvVwBazRMGFZaj
- mekXIPjnbcRP4HqEAgdq4Jnw==
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.163.g1226f6d8fa-goog
+Subject: [PATCH v1 0/4] Prefer sysfs/JSON events also when no PMU is provided
+From: Ian Rogers <irogers@google.com>
+To: Atish Patra <atishp@rivosinc.com>, linux-riscv@lists.infradead.org, 
+	beeman@rivosinc.com, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@linaro.org>, 
+	Ze Gao <zegao2021@gmail.com>, Weilin Wang <weilin.wang@intel.com>, 
+	Ben Gainey <ben.gainey@arm.com>, Dominique Martinet <asmadeus@codewreck.org>, 
+	Junhao He <hejunhao3@huawei.com>, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Am 26.10.24 um 12:30 schrieb Hans de Goede:
+At the RISC-V summit the topic of avoiding event data being in the
+RISC-V PMU kernel driver came up. There is a preference for sysfs/JSON
+events being the priority when no PMU is provided so that legacy
+events maybe supported via json. Originally Mark Rutland also
+expressed at LPC 2023 that doing this would resolve bugs on ARM Apple
+M? processors, but James Clark more recently tested this and believes
+the driver issues there may not have existed or have been resolved. In
+any case, it is inconsistent that with a PMU event names avoid legacy
+encodings, but when wildcarding PMUs (ie without a PMU with the event
+name) the legacy encodings have priority.
 
-> Hi Mario,
->
-> On 25-Oct-24 9:30 PM, Mario Limonciello wrote:
->> Multiple drivers may attempt to register platform profile handlers,
->> but only one may be registered and the behavior is non-deterministic
->> for which one wins.  It's mostly controlled by probing order.
->>
->> This can be problematic if one driver changes CPU settings and another
->> driver notifies the EC for changing fan curves.
->>
->> Modify the ACPI platform profile handler to let multiple drivers
->> register platform profile handlers and abstract this detail from usersp=
-ace.
->>
->>  From userspace perspective the user will see profiles available across
->> both drivers.  However to avoid chaos only allow changing to profiles
->> that are common in both drivers.
->>
->> If any problems occur when changing profiles for any driver, then rever=
-t
->> back to the previous profile.
->>
->> Tested-by: Matthew Schwartz <matthew.schwartz@linux.dev>
->> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
->> ---
->>   drivers/acpi/platform_profile.c | 203 ++++++++++++++++++-------------=
--
->>   1 file changed, 117 insertions(+), 86 deletions(-)
->>
->> diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/platform_pr=
-ofile.c
->> index 091ca6941a925..915e3c49f0b5f 100644
->> --- a/drivers/acpi/platform_profile.c
->> +++ b/drivers/acpi/platform_profile.c
->> @@ -9,7 +9,6 @@
->>   #include <linux/platform_profile.h>
->>   #include <linux/sysfs.h>
->>
->> -static struct platform_profile_handler *cur_profile;
->>   static LIST_HEAD(platform_profile_handler_list);
->>   static DEFINE_MUTEX(profile_lock);
->>
->> @@ -36,26 +35,26 @@ static ssize_t platform_profile_choices_show(struct=
- device *dev,
->>   					struct device_attribute *attr,
->>   					char *buf)
->>   {
->> +	struct platform_profile_handler *handler;
->> +	unsigned long seen =3D 0;
->>   	int len =3D 0;
->> -	int err, i;
->> -
->> -	err =3D mutex_lock_interruptible(&profile_lock);
->> -	if (err)
->> -		return err;
->> -
->> -	if (!cur_profile) {
->> -		mutex_unlock(&profile_lock);
->> -		return -ENODEV;
->> +	int i;
->> +
->> +	scoped_cond_guard(mutex_intr, return -ERESTARTSYS, &profile_lock) {
->> +		list_for_each_entry(handler, &platform_profile_handler_list, list) {
->> +			for_each_set_bit(i, handler->choices, PLATFORM_PROFILE_LAST) {
->> +				if (seen & BIT(i))
->> +					continue;
->> +				if (len =3D=3D 0)
->> +					len +=3D sysfs_emit_at(buf, len, "%s", profile_names[i]);
->> +				else
->> +					len +=3D sysfs_emit_at(buf, len, " %s", profile_names[i]);
->> +				seen |=3D BIT(i);
->> +			}
->> +		}
->>   	}
-> Since only choices that are available in all registered handlers will be=
- accepted,
-> should the output not be limited to only those choices ?
->
-> E.g.:
->
-> 	unsigned long choices =3D 0;
-> 	bool first =3D true;
->
-> 	scoped_cond_guard(mutex_intr, return -ERESTARTSYS, &profile_lock) {
-> 		list_for_each_entry(handler, &platform_profile_handler_list, list) {
-> 			if (first) {
-> 				choices =3D handler->choices;
-> 				first =3D false;
-> 			} else {
-> 				choices &=3D handler->choices;
-> 			}
-> 		}
-> 	}
->
-> 	for_each_set_bit(i, choices, PLATFORM_PROFILE_LAST) {
-> 		if (len =3D=3D 0)
-> 			len +=3D sysfs_emit_at(buf, len, "%s", profile_names[i]);
-> 		else
-> 			len +=3D sysfs_emit_at(buf, len, " %s", profile_names[i]);
-> 	}
->    	len +=3D sysfs_emit_at(buf, len, "\n");
->    	return len;
-> }
->
-> ?
->
-> Also this means that choices can change now as drivers get loaded /
-> removed. I believe that power-profiles-daemon matches has some hotplug
-> handling for the sysfs files showing up? How would that work with choice=
-s
-> changing ?
->
-> Or am I misremembering and does p-p-d simply assume all drivers are load=
-ed
-> when it starts ?
+The patch doing this work was reverted in a v6.10 release candidate
+as, even though the patch was posted for weeks and had been on
+linux-next for weeks without issue, Linus was in the habit of using
+explicit legacy events with unsupported precision options on his
+Neoverse-N1. This machine has SLC PMU events for bus and CPU cycles
+where ARM decided to call the events bus_cycles and cycles, the latter
+being also a legacy event name. ARM haven't renamed the cycles event
+to a more consistent cpu_cycles and avoided the problem. With these
+changes the problematic event will now be skipped, a large warning
+produced, and perf record will continue for the other PMU events. This
+solution was proposed by Arnaldo.
 
-After a quick glance at the source code i think it basically assumes that =
-the
-sysfs file is present during startup if platform profiles are supported. I=
-f the
-sysfs file disappears afterwards, the code will simply return an error.
+Two minor changes have been added to help with the error message and
+to work around issues occurring with "perf stat metrics (shadow stat)
+test".
 
-For handling changing choices, sending a poll notification using sysfs_not=
-ify()
-to the choices file will be the easiest solution.
+The patches have only been tested on my x86 non-hybrid laptop.
 
->> @@ -64,22 +63,20 @@ static ssize_t platform_profile_show(struct device =
-*dev,
->>   					char *buf)
->>   {
->>   	enum platform_profile_option profile =3D PLATFORM_PROFILE_BALANCED;
->> +	struct platform_profile_handler *handler;
->>   	int err;
->>
->> -	err =3D mutex_lock_interruptible(&profile_lock);
->> -	if (err)
->> -		return err;
->>
->> -	if (!cur_profile) {
->> -		mutex_unlock(&profile_lock);
->> -		return -ENODEV;
->> +	scoped_cond_guard(mutex_intr, return -ERESTARTSYS, &profile_lock) {
->> +		if (!platform_profile_is_registered())
->> +			return -ENODEV;
->> +		list_for_each_entry(handler, &platform_profile_handler_list, list) {
->> +			err =3D handler->profile_get(handler, &profile);
->> +			if (err)
->> +				return err;
->> +		}
->>   	}
-> Hmm this just goes with the platform returned by the last handler
-> called ?
->
-> Maybe compare results and log some warning if there are different
-> results between handlers ?
->
-> And maybe also:
->
-> 1. New patch enforcing that all handlers must support plain balanced
-> at registration time.
->
-> 2. Check that all handlers agree when a new handler gets registered
-> and if not then force all handlers to balanced, together with
-> a sysfs_notify() ?
+Ian Rogers (4):
+  perf evsel: Add pmu_name helper
+  perf stat: Fix find_stat for mixed legacy/non-legacy events
+  perf record: Skip don't fail for events that don't open
+  perf parse-events: Reapply "Prefer sysfs/JSON hardware events over
+    legacy"
 
-I begin to wonder why we even need the profile_get callback anyway. The dr=
-ivers
-are already required to:
+ tools/perf/builtin-record.c    | 22 +++++++---
+ tools/perf/util/evsel.c        | 10 +++++
+ tools/perf/util/evsel.h        |  1 +
+ tools/perf/util/parse-events.c | 26 +++++++++---
+ tools/perf/util/parse-events.l | 76 +++++++++++++++++-----------------
+ tools/perf/util/parse-events.y | 60 ++++++++++++++++++---------
+ tools/perf/util/pmus.c         | 20 +++++++--
+ tools/perf/util/stat-shadow.c  |  3 +-
+ 8 files changed, 145 insertions(+), 73 deletions(-)
 
-	"NOT ... let userspace know about any sub-optimal conditions which are im=
-peding
-	 reaching the requested performance level."
+-- 
+2.47.0.163.g1226f6d8fa-goog
 
-So what exactly is the reason to read the platform profile from hardware?
-
->>
->> -	err =3D cur_profile->profile_get(cur_profile, &profile);
->> -	mutex_unlock(&profile_lock);
->> -	if (err)
->> -		return err;
->> -
->>   	/* Check that profile is valid index */
->>   	if (WARN_ON((profile < 0) || (profile >=3D ARRAY_SIZE(profile_names)=
-)))
->>   		return -EIO;
->> @@ -91,37 +88,48 @@ static ssize_t platform_profile_store(struct device=
- *dev,
->>   			    struct device_attribute *attr,
->>   			    const char *buf, size_t count)
->>   {
->> +	struct platform_profile_handler *handler;
->> +	enum platform_profile_option profile;
->>   	int err, i;
->>
->> -	err =3D mutex_lock_interruptible(&profile_lock);
->> -	if (err)
->> -		return err;
->> -
->> -	if (!cur_profile) {
->> -		mutex_unlock(&profile_lock);
->> -		return -ENODEV;
->> -	}
->> -
->>   	/* Scan for a matching profile */
->>   	i =3D sysfs_match_string(profile_names, buf);
->>   	if (i < 0) {
->> -		mutex_unlock(&profile_lock);
->>   		return -EINVAL;
->>   	}
->>
->> -	/* Check that platform supports this profile choice */
->> -	if (!test_bit(i, cur_profile->choices)) {
->> -		mutex_unlock(&profile_lock);
->> -		return -EOPNOTSUPP;
->> +	scoped_cond_guard(mutex_intr, return -ERESTARTSYS, &profile_lock) {
->> +		if (!platform_profile_is_registered())
->> +			return -ENODEV;
->> +
->> +		/* Check that all handlers support this profile choice */
->> +		list_for_each_entry(handler, &platform_profile_handler_list, list) {
->> +			if (!test_bit(i, handler->choices))
->> +				return -EOPNOTSUPP;
->> +
->> +			/* save the profile so that it can be reverted if necessary */
->> +			err =3D handler->profile_get(handler, &profile);
->> +			if (err)
->> +				return err;
->> +		}
-> Same issue as before, you are only saving the profile of the last handle=
-r called here,
-> which might even be a profile not supported by all handlers...
->
-> Might be easiest to just enforce all handlers support plain balanced
-> as I suggested above and then on errors revert all handlers to balanced.
->
-> This may seem like it is not nice to do, but errors should not happen
-> so I think this is ok. And if errors do happen then we need to fix
-> the errors :)
->
->> +
->> +		list_for_each_entry(handler, &platform_profile_handler_list, list) {
->> +			err =3D handler->profile_set(handler, i);
->> +			if (err) {
->> +				pr_err("Failed to set profile for handler %s\n", handler->name);
->> +				break;
->> +			}
->> +		}
->> +		if (err) {
->> +			list_for_each_entry_continue_reverse(handler, &platform_profile_han=
-dler_list, list) {
->> +				if (handler->profile_set(handler, profile))
->> +					pr_err("Failed to revert profile for handler %s\n", handler->name=
-);
->> +			}
->> +			return err;
->> +		}
->>   	}
->>
->> -	err =3D cur_profile->profile_set(cur_profile, i);
->> -	if (!err)
->> -		sysfs_notify(acpi_kobj, NULL, "platform_profile");
->> -
->> -	mutex_unlock(&profile_lock);
->> -	if (err)
->> -		return err;
->> +	sysfs_notify(acpi_kobj, NULL, "platform_profile");
->>   	return count;
->>   }
->>
->> @@ -140,7 +148,8 @@ static const struct attribute_group platform_profil=
-e_group =3D {
->>
->>   void platform_profile_notify(void)
->>   {
->> -	if (!cur_profile)
->> +	guard(mutex)(&profile_lock);
->> +	if (!platform_profile_is_registered())
->>   		return;
->>   	sysfs_notify(acpi_kobj, NULL, "platform_profile");
->>   }
->> @@ -148,40 +157,65 @@ EXPORT_SYMBOL_GPL(platform_profile_notify);
->>
->>   int platform_profile_cycle(void)
->>   {
->> +	struct platform_profile_handler *handler;
->>   	enum platform_profile_option profile;
->> -	enum platform_profile_option next;
->> +	enum platform_profile_option next =3D PLATFORM_PROFILE_LAST;
->> +	enum platform_profile_option next2 =3D PLATFORM_PROFILE_LAST;
->>   	int err;
->>
->> -	err =3D mutex_lock_interruptible(&profile_lock);
->> -	if (err)
->> -		return err;
->> -
->> -	if (!cur_profile) {
->> -		mutex_unlock(&profile_lock);
->> -		return -ENODEV;
->> -	}
->> -
->> -	err =3D cur_profile->profile_get(cur_profile, &profile);
->> -	if (err) {
->> -		mutex_unlock(&profile_lock);
->> -		return err;
->> -	}
->> -
->> -	next =3D find_next_bit_wrap(cur_profile->choices, PLATFORM_PROFILE_LA=
-ST,
->> -				  profile + 1);
->> -
->> -	if (WARN_ON(next =3D=3D PLATFORM_PROFILE_LAST)) {
->> -		mutex_unlock(&profile_lock);
->> -		return -EINVAL;
->> +	scoped_cond_guard(mutex_intr, return -ERESTARTSYS, &profile_lock) {
->> +		/* first pass, make sure all handlers agree on the definition of "ne=
-xt" profile */
->> +		list_for_each_entry(handler, &platform_profile_handler_list, list) {
->> +
->> +			err =3D handler->profile_get(handler, &profile);
->> +			if (err)
->> +				return err;
->> +
->> +			if (next =3D=3D PLATFORM_PROFILE_LAST)
->> +				next =3D find_next_bit_wrap(handler->choices,
->> +							  PLATFORM_PROFILE_LAST,
->> +							  profile + 1);
->> +			else
->> +				next2 =3D find_next_bit_wrap(handler->choices,
->> +							   PLATFORM_PROFILE_LAST,
->> +							   profile + 1);
->> +
->> +			if (WARN_ON(next =3D=3D PLATFORM_PROFILE_LAST))
->> +				return -EINVAL;
->> +
->> +			if (next2 =3D=3D PLATFORM_PROFILE_LAST)
->> +				continue;
->> +
->> +			if (next !=3D next2) {
->> +				pr_warn("Next profile to cycle to is ambiguous between platform_pr=
-ofile handlers\n");
->> +				return -EINVAL;
->> +			}
->> +			next =3D next2;
->> +		}
-> Hmm, this seems complicated, I would suggest to factor out the code
-> to "and" together all the handler's choices which I suggested above
-> for platform_profile_choices_show() into a helper (with the locking
-> to be done by the caller) and then call that helper here to get
-> a choices which is the result if all the choices and-ed together and
-> simply call find_next_bit_wrap() on the resulting and-ed value ?
->
-> Ah I guess another issue is that the handlers may also differ on
-> which profile they return from handler->profile_get(), so same
-> issue as in platform_profile_show(). I think this requires
-> another factored out helper to get a single consistent profile
-> value for all handlers. Then this helper can be used both in
-> platform_profile_show() and here to get a "truth" value for the
-> current active profile and show that / use that as base to pick
-> the next value.
->
-> Note the above approach definitely is going to have issues
-> if handlers mismatch on which profiles are supported since
-> you do not skip choices which are only available in one of
-> the handlers.
->
->> +
->> +		/*
->> +		 * Second pass: apply "next" to each handler
->> +		 * If any failures occur unwind and revert all back to the original =
-profile
->> +		 */
->> +		list_for_each_entry(handler, &platform_profile_handler_list, list) {
->> +			err =3D handler->profile_set(handler, next);
->> +			if (err) {
->> +				pr_err("Failed to set profile for handler %s\n", handler->name);
->> +				break;
->> +			}
->> +		}
->> +		if (err) {
->> +			list_for_each_entry_continue_reverse(handler, &platform_profile_han=
-dler_list, list) {
->> +				err =3D handler->profile_set(handler, profile);
-> Same issue as before, profile contains the profile of the last handler
-> in the list only.
->
->
->> +				if (err)
->> +					pr_err("Failed to revert profile for handler %s\n", handler->name=
-);
->> +			}
->> +		}
->>   	}
->>
->> -	err =3D cur_profile->profile_set(cur_profile, next);
->> -	mutex_unlock(&profile_lock);
->> -
->> -	if (!err)
->> -		sysfs_notify(acpi_kobj, NULL, "platform_profile");
->> +	sysfs_notify(acpi_kobj, NULL, "platform_profile");
->>
->> -	return err;
->> +	return 0;
->>   }
->>   EXPORT_SYMBOL_GPL(platform_profile_cycle);
->>
->> @@ -190,21 +224,19 @@ int platform_profile_register(struct platform_pro=
-file_handler *pprof)
->>   	int err;
->>
->>   	guard(mutex)(&profile_lock);
->> -	/* We can only have one active profile */
->> -	if (cur_profile)
->> -		return -EEXIST;
->>
->>   	/* Sanity check the profile handler field are set */
->>   	if (!pprof || bitmap_empty(pprof->choices, PLATFORM_PROFILE_LAST) ||
->>   		!pprof->profile_set || !pprof->profile_get)
->>   		return -EINVAL;
->>
->> -	err =3D sysfs_create_group(acpi_kobj, &platform_profile_group);
->> -	if (err)
->> -		return err;
->> +	if (!platform_profile_is_registered()) {
->> +		err =3D sysfs_create_group(acpi_kobj, &platform_profile_group);
->> +		if (err)
->> +			return err;
->> +	}
->>   	list_add_tail(&pprof->list, &platform_profile_handler_list);
->>
->> -	cur_profile =3D pprof;
->>   	return 0;
->>   }
->>   EXPORT_SYMBOL_GPL(platform_profile_register);
->> @@ -215,7 +247,6 @@ int platform_profile_remove(struct platform_profile=
-_handler *pprof)
->>
->>   	list_del(&pprof->list);
->>
->> -	cur_profile =3D NULL;
->>   	if (!platform_profile_is_registered())
->>   		sysfs_remove_group(acpi_kobj, &platform_profile_group);
->>
->
-> Regards,
->
-> Hans
->
->
->
 
