@@ -1,199 +1,188 @@
-Return-Path: <linux-kernel+bounces-382875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAC7D9B1454
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 05:36:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3DCA9B1458
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 05:47:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E255283426
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 03:36:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A863F283542
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 03:47:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 878C213D2B2;
-	Sat, 26 Oct 2024 03:36:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C08414BF8B;
+	Sat, 26 Oct 2024 03:47:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lF+bKFUD"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="L/oc8TBG"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDE2B320F
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 03:36:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6481D3C30;
+	Sat, 26 Oct 2024 03:47:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729913792; cv=none; b=C8fpBwk9XmjnlPG5XIlxFiILPWQ2eriaHZIO2zVgkKk1Pe86EZ8qLlOBxn0gQF/dWkQ3rZiaQ5h7OvIYqnTV2M3Q2Ivogrh/uR4Iu4+4U1gRzFmczPFAm5MFRPOhnPmXBKUFAkju9Qjfp0fETPEsGNHZJwNGU+CojSqr8pXiSKM=
+	t=1729914443; cv=none; b=XpW2F9uu82lZyQD/fxSgAj3WWERcjDl2w555XEYddvdcMLbMymhTJOegCWn6CdmfX4YitLTmp3nsroxrB3ck3A3HjrYnjxDbdWAu3UClnPF0LIVCIuqauc0oBCGgJRu4aVlLPielRIOen4Dhw90gxTPEroR79rql1GdzsB9I8Oc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729913792; c=relaxed/simple;
-	bh=EWx6NdqB/KNaEbwzWBBuJAmpa6v3YZnvTzumDswBMHo=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=JWEXvR5fTlUVBRM5DotHNtB2cKRK7GnK67Vid9qQ7mTmUuk6SV3TgqBl+dtzk+1zlxNQwOGrQh22lhRL0KjXp6leJowURiVMmIXKMcgvjVa1frcXQ34iTMW8JaZ3U+K1dHzAYctqjTxZVNWvJgW894oyEjHMyRcPP4nIfEaIh48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--yuzhao.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lF+bKFUD; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--yuzhao.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e32b43e053so41368677b3.1
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 20:36:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729913790; x=1730518590; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=zJvo8rQelVugAeNPiMO8n98xYiD6Va85kwZA/R+E8fA=;
-        b=lF+bKFUDBrxzSH/0UpqoQoDf2mbmTNcLiBLbNfSQNXizBjtoxl/zKuXtWtSAK7/ibK
-         gMlWOX5zBWpC/wz55/+Or4Oz0uG+tnZVKnyEqpBlFnAV5W80pUQCwOnKKnepkPndXMvL
-         5uE2JUImzGbEi6pAN51b6z9r3yhWHXwSww6ZfIn77+7kiXxgUly4V+AdarMOz7SxzF83
-         J8W3an6NIyIDldZOZZsc3ygI9ulPjKR3C3S3qQ7aoyXpVM4k1sPkfBvD4abKTCjSQghl
-         NhIZdlD0j+yuTydprxUDP/ZGPmfR0M+EfykMG1Yfc4WpETdjBlw5dy6Iu53lsevfvXII
-         5QlQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729913790; x=1730518590;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=zJvo8rQelVugAeNPiMO8n98xYiD6Va85kwZA/R+E8fA=;
-        b=YIDAkFp2B973jZ69ZO9u8/oN+S9swL7O9AWZ0y7yTfsTIU6FbzpoKv7Zuz27oKh/YN
-         C0SvP/hBJaNegoXLi5TciU3c0AXzsiYYasEcOTK2ehczyTQrj1kPPPAdw/VPdIV+DDcy
-         O5i5CKUFGKejRipJfLDtM2FIB00ym/7DMG8FCFi989/sqorWd0Vp+t1O2s/le/aFRQ4V
-         O3342w8IorzjKSl0yj/sUALHUS9YAG0Pm+RsZuxQ6XuNsFxrwhtCowcA74I8wlt1Kh8p
-         ygAlWZ+F2IKRtT5h5H+Gt03jVV8jhcHhXFLSMFUvQ+rbqIxkUGnpNamPgiFbusPmXOhd
-         fZEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX/nnB55gxXXv3IvP0JfnFueeUjqHHzvKgiHOgs9hew7wg5af+fChJJFimoVNcDkzzLcfDT4dpda2YUEec=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3HR7XYRJEPyx2mCGDSUtdpmbAT49iEXmgKT+vBEM2SjESC1jw
-	llqKRT5cm2gfeInJrjIulbcMoiI1IJMMLdDV4+4+QRxYk3aOFWQ9YA3hhm0PNXWrUK6xNJkwFS1
-	dkg==
-X-Google-Smtp-Source: AGHT+IFjF2xbY+QdTNq0yXUWw8dhcTHCSRZ/2q1qhW0aC06XSt+a7yPkzdJRVZQVGegp4OdYmAxx4N97DDE=
-X-Received: from yuzhao2.bld.corp.google.com ([2a00:79e0:2e28:6:94d3:b09:4b32:5539])
- (user=yuzhao job=sendgmr) by 2002:a05:6902:1822:b0:e1c:ed3d:7bb7 with SMTP id
- 3f1490d57ef6-e308784a6eamr1084276.1.1729913789367; Fri, 25 Oct 2024 20:36:29
- -0700 (PDT)
-Date: Fri, 25 Oct 2024 21:36:25 -0600
+	s=arc-20240116; t=1729914443; c=relaxed/simple;
+	bh=0XuHRsycYrbUno0339TVdspUaKcZillIUcJgkqgRsB4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=AiwymSAhPhSHSrxlP8HRpnxQJBuxOnmx+n5LSNi4yWPKJkhx3MOFnxFYqwmZFZahJzHetXQj69ESUulJDqR3J85Vp18kIdcl9BdFb5udWqym5XTZ6rRzanKL2hE9n8hYeZpdpKtvRDNkbW3R4KOPSVzZChCo73M8TLxpkldJVhg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=L/oc8TBG; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49Q2LEck021332;
+	Sat, 26 Oct 2024 03:46:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	9sX7m1pkhQut4ZgyrblU/FwRILwa2N6FGHFItgEFvlE=; b=L/oc8TBGX0uLRTDd
+	uZ93NXtaxI0vl6nxV4X6tlmW7Bh06W9wxtP6ALPvNVY8vPv5S008RzkS8bXiGoyl
+	4OtUzX8spjNI+RrqRLMTIOg/a8wB9jNSnzy7laJJhYxSzI8UPx0MaK20vAT5wt4T
+	02qup0dsg1f8fEk+sbU4TwBeaSnv4ygXupAsEDZKbY10TknQRlYOiwbRCSG4pY2x
+	Jgv+v2spBrJJkopbesvZCWZrExdAR+oyjbe8M0vposiKUaclOAmi8GxpozG0qJ2J
+	JyFzEt3q46AQnWxIxouhII/zrWA64vfzOSy9mUv72rajvANd4QAmAAGhOeXI2bCS
+	XourSQ==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42gnsmg7yc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 26 Oct 2024 03:46:56 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49Q3kqfn023284
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 26 Oct 2024 03:46:52 GMT
+Received: from [10.253.35.162] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 25 Oct
+ 2024 20:46:49 -0700
+Message-ID: <727d71aa-eb9e-4efe-a966-23552b782bca@quicinc.com>
+Date: Sat, 26 Oct 2024 11:45:45 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.47.0.163.g1226f6d8fa-goog
-Message-ID: <20241026033625.2237102-1-yuzhao@google.com>
-Subject: [PATCH mm-unstable v2] mm/page_alloc: keep track of free highatomic
-From: Yu Zhao <yuzhao@google.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: David Rientjes <rientjes@google.com>, Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Yu Zhao <yuzhao@google.com>, 
-	Link Lin <linkl@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/4] dt-bindings: arm:
+ qcom,coresight-static-replicator: Add property for source filtering
+To: Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Mike Leach
+	<mike.leach@linaro.org>, James Clark <james.clark@arm.com>,
+        Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Leo Yan
+	<leo.yan@linux.dev>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>
+CC: <coresight@lists.linaro.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>
+References: <20241024065306.14647-1-quic_taozha@quicinc.com>
+ <20241024065306.14647-2-quic_taozha@quicinc.com>
+ <b848ae69-aca4-43d1-aa38-2f424045ee6f@arm.com>
+Content-Language: en-US
+From: Tao Zhang <quic_taozha@quicinc.com>
+In-Reply-To: <b848ae69-aca4-43d1-aa38-2f424045ee6f@arm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: iEwDS_ALBrUxSrIQVIvjr0ck9dWn2NGV
+X-Proofpoint-GUID: iEwDS_ALBrUxSrIQVIvjr0ck9dWn2NGV
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=0
+ malwarescore=0 lowpriorityscore=0 impostorscore=0 clxscore=1015
+ adultscore=0 priorityscore=1501 bulkscore=0 phishscore=0 spamscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410260030
 
-OOM kills due to vastly overestimated free highatomic reserves were
-observed:
 
-  ... invoked oom-killer: gfp_mask=0x100cca(GFP_HIGHUSER_MOVABLE), order=0 ...
-  Node 0 Normal free:1482936kB boost:0kB min:410416kB low:739404kB high:1068392kB reserved_highatomic:1073152KB ...
-  Node 0 Normal: 1292*4kB (ME) 1920*8kB (E) 383*16kB (UE) 220*32kB (ME) 340*64kB (E) 2155*128kB (UE) 3243*256kB (UE) 615*512kB (U) 1*1024kB (M) 0*2048kB 0*4096kB = 1477408kB
+On 10/24/2024 5:14 PM, Suzuki K Poulose wrote:
+> On 24/10/2024 07:53, Tao Zhang wrote:
+>> The is some "magic" hard coded filtering in the replicators,
+>> which only passes through trace from a particular "source". Add
+>> a new property "filter-src" to label a phandle to the coresight
+>> trace source device matching the hard coded filtering for the port.
+>
+> As mentioned in here in v3 review :
+>
+> https://lkml.org/lkml/2024/8/21/597
+>
+> Please do not use "src", expand it to "source"
 
-The second line above shows that the OOM kill was due to the following
-condition:
+Sure, I will update in the next patch series.
 
-  free (1482936kB) - reserved_highatomic (1073152kB) = 409784KB < min (410416kB)
 
-And the third line shows there were no free pages in any
-MIGRATE_HIGHATOMIC pageblocks, which otherwise would show up as type
-'H'. Therefore __zone_watermark_unusable_free() underestimated the
-usable free memory by over 1GB, which resulted in the unnecessary OOM
-kill above.
+Best,
 
-The comments in __zone_watermark_unusable_free() warns about the
-potential risk, i.e.,
+Tao
 
-  If the caller does not have rights to reserves below the min
-  watermark then subtract the high-atomic reserves. This will
-  over-estimate the size of the atomic reserve but it avoids a search.
-
-However, it is possible to keep track of free pages in reserved
-highatomic pageblocks with a new per-zone counter nr_free_highatomic
-protected by the zone lock, to avoid a search when calculating the
-usable free memory. And the cost would be minimal, i.e., simple
-arithmetics in the highatomic alloc/free/move paths.
-
-Reported-by: Link Lin <linkl@google.com>
-Signed-off-by: Yu Zhao <yuzhao@google.com>
----
- include/linux/mmzone.h |  1 +
- mm/page_alloc.c        | 23 ++++++++++++++++++++---
- 2 files changed, 21 insertions(+), 3 deletions(-)
-
-diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-index 2e8c4307c728..5e8f567753bd 100644
---- a/include/linux/mmzone.h
-+++ b/include/linux/mmzone.h
-@@ -825,6 +825,7 @@ struct zone {
- 	unsigned long watermark_boost;
- 
- 	unsigned long nr_reserved_highatomic;
-+	unsigned long nr_free_highatomic;
- 
- 	/*
- 	 * We don't know if the memory that we're going to allocate will be
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index c81762c49b00..43ecc7d75a2a 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -644,6 +644,18 @@ static inline void account_freepages(struct zone *zone, int nr_pages,
- 		__mod_zone_page_state(zone, NR_FREE_CMA_PAGES, nr_pages);
- }
- 
-+static void account_highatomic_freepages(struct zone *zone, unsigned int order,
-+					 int old_mt, int new_mt)
-+{
-+	int delta = 1 << order;
-+
-+	if (is_migrate_highatomic(old_mt))
-+		WRITE_ONCE(zone->nr_free_highatomic, zone->nr_free_highatomic - delta);
-+
-+	if (is_migrate_highatomic(new_mt))
-+		WRITE_ONCE(zone->nr_free_highatomic, zone->nr_free_highatomic + delta);
-+}
-+
- /* Used for pages not on another list */
- static inline void __add_to_free_list(struct page *page, struct zone *zone,
- 				      unsigned int order, int migratetype,
-@@ -660,6 +672,8 @@ static inline void __add_to_free_list(struct page *page, struct zone *zone,
- 	else
- 		list_add(&page->buddy_list, &area->free_list[migratetype]);
- 	area->nr_free++;
-+
-+	account_highatomic_freepages(zone, order, -1, migratetype);
- }
- 
- /*
-@@ -681,6 +695,8 @@ static inline void move_to_free_list(struct page *page, struct zone *zone,
- 
- 	account_freepages(zone, -(1 << order), old_mt);
- 	account_freepages(zone, 1 << order, new_mt);
-+
-+	account_highatomic_freepages(zone, order, old_mt, new_mt);
- }
- 
- static inline void __del_page_from_free_list(struct page *page, struct zone *zone,
-@@ -698,6 +714,8 @@ static inline void __del_page_from_free_list(struct page *page, struct zone *zon
- 	__ClearPageBuddy(page);
- 	set_page_private(page, 0);
- 	zone->free_area[order].nr_free--;
-+
-+	account_highatomic_freepages(zone, order, migratetype, -1);
- }
- 
- static inline void del_page_from_free_list(struct page *page, struct zone *zone,
-@@ -3119,11 +3137,10 @@ static inline long __zone_watermark_unusable_free(struct zone *z,
- 
- 	/*
- 	 * If the caller does not have rights to reserves below the min
--	 * watermark then subtract the high-atomic reserves. This will
--	 * over-estimate the size of the atomic reserve but it avoids a search.
-+	 * watermark then subtract the free pages reserved for highatomic.
- 	 */
- 	if (likely(!(alloc_flags & ALLOC_RESERVES)))
--		unusable_free += z->nr_reserved_highatomic;
-+		unusable_free += READ_ONCE(z->nr_free_highatomic);
- 
- #ifdef CONFIG_CMA
- 	/* If allocation can't use CMA areas don't use free CMA pages */
--- 
-2.47.0.163.g1226f6d8fa-goog
-
+>
+> Rest looks fine.
+>
+> Suzuki
+>
+>>
+>> Signed-off-by: Tao Zhang <quic_taozha@quicinc.com>
+>> ---
+>>   .../arm/arm,coresight-static-replicator.yaml  | 19 ++++++++++++++++++-
+>>   1 file changed, 18 insertions(+), 1 deletion(-)
+>>
+>> diff --git 
+>> a/Documentation/devicetree/bindings/arm/arm,coresight-static-replicator.yaml 
+>> b/Documentation/devicetree/bindings/arm/arm,coresight-static-replicator.yaml 
+>>
+>> index 1892a091ac35..0d258c79eb94 100644
+>> --- 
+>> a/Documentation/devicetree/bindings/arm/arm,coresight-static-replicator.yaml
+>> +++ 
+>> b/Documentation/devicetree/bindings/arm/arm,coresight-static-replicator.yaml
+>> @@ -45,7 +45,22 @@ properties:
+>>       patternProperties:
+>>         '^port@[01]$':
+>>           description: Output connections to CoreSight Trace bus
+>> -        $ref: /schemas/graph.yaml#/properties/port
+>> +        $ref: /schemas/graph.yaml#/$defs/port-base
+>> +        unevaluatedProperties: false
+>> +
+>> +        properties:
+>> +          endpoint:
+>> +            $ref: /schemas/graph.yaml#/$defs/endpoint-base
+>> +            unevaluatedProperties: false
+>> +
+>> +            properties:
+>> +              filter-src:
+>> +                $ref: /schemas/types.yaml#/definitions/phandle
+>> +                description:
+>> +                  phandle to the coresight trace source device 
+>> matching the
+>> +                  hard coded filtering for this port
+>> +
+>> +              remote-endpoint: true
+>>     required:
+>>     - compatible
+>> @@ -72,6 +87,7 @@ examples:
+>>                   reg = <0>;
+>>                   replicator_out_port0: endpoint {
+>>                       remote-endpoint = <&etb_in_port>;
+>> +                    filter-src = <&tpdm_video>;
+>>                   };
+>>               };
+>>   @@ -79,6 +95,7 @@ examples:
+>>                   reg = <1>;
+>>                   replicator_out_port1: endpoint {
+>>                       remote-endpoint = <&tpiu_in_port>;
+>> +                    filter-src = <&tpdm_mdss>;
+>>                   };
+>>               };
+>>           };
+>
 
