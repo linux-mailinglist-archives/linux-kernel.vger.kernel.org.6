@@ -1,89 +1,108 @@
-Return-Path: <linux-kernel+bounces-383031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 932B59B1659
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 10:59:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0566A9B165B
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 11:00:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EEB7281D67
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 08:59:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA3032810FD
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 09:00:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD2581D097C;
-	Sat, 26 Oct 2024 08:59:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DED321CCEC9;
+	Sat, 26 Oct 2024 09:00:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="i0LFbYBe"
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b="ZodOO/jd"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5CC11384B3;
-	Sat, 26 Oct 2024 08:59:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729933147; cv=none; b=mwert96RFfHdKDxKqIn/R7cofLQhAYmhkhoJQpIoOqXPzirWUiPjbHBhYUviT9TQJQCXjZyHW5fk5v4ugkG9826I04jHOWwLZS9MsW2Q6Q90FXOBzOIRqhXSCoMfNFi4zjZ76+bqWwmpfmz1ex9NiJGQS0yQ/R51djZLkWg1nak=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729933147; c=relaxed/simple;
-	bh=XpDACfcW5wf85mSvv95qq9HtbfUhovyLv+qjcN4pleI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Eo/OmSi52gft+DWUOAhJ/EeyoKY22omA19bT0Lv5xdb/Nzv+YShOG5eI4t9rQ1Vi6ykOeypgnJlWjYop6YV+EfiK4xtbWxmYtoqq8mJxCAbMB0HJ+nBaZW218c1ebfjeNR9SW4PWICgtQgwCEL5Ry+/3mZtukS/vghOSJid+DwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=i0LFbYBe; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=XbcrZjmVmh6VmKyR0gWsU21atBSf0oon2QYMuJoAF+c=; b=i0LFbYBeOYU56L9Ocy+q5sAMUO
-	5r711VuCA/eoxoj27o3WABBl/WD+BfiTd5dQU/olzNrTZh4rXPE3pO7b4+PS2If3fqluaE5BPodmJ
-	HIiE9BubwXzfZE50sytj1gKLpxcftcb2EcrAb9sAluF321G176CmJzNsOUvZ2ihetgdNS3zMtR3UY
-	iRZWjBpTX8y64u8TwvAO8y0G9cUtpwHszTxWbv7eLAB0GO0Y4HeciK1mMOdqoFf0YJlb60X+lJkbx
-	u7DF+JGCkeMOSL4zL81Ni6fKy8G53AkjlUpYcm0kfotZKBrOMzG+OAWzKyaVW0nTDZHgPr7hU/7B/
-	8E4ERcVQ==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1t4cdL-00CGnq-10;
-	Sat, 26 Oct 2024 16:58:56 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sat, 26 Oct 2024 16:58:55 +0800
-Date: Sat, 26 Oct 2024 16:58:55 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: "linwenkai (C)" <linwenkai6@hisilicon.com>
-Cc: Chenghai Huang <huangchenghai2@huawei.com>, davem@davemloft.net,
-	linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
-	liulongfang@huawei.com, shenyang39@huawei.com, qianweili@huawei.com,
-	wangzhou1@hisilicon.com
-Subject: Re: [PATCH v2 1/2] crypto: hisilicon/sec2 - fix for aead icv error
-Message-ID: <ZxyvT1PnY83Ilvyb@gondor.apana.org.au>
-References: <20241018105830.169212-1-huangchenghai2@huawei.com>
- <20241018105830.169212-2-huangchenghai2@huawei.com>
- <ZxyMnWbTkf7JEnT7@gondor.apana.org.au>
- <02e70357-1a3a-44f4-b25d-0e8e7f430cb6@hisilicon.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 319DE217F5E;
+	Sat, 26 Oct 2024 09:00:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729933214; cv=pass; b=r1aSDhAgaEv4RiVDOZhdAb/c4Mqaugq5gTCpMCUa+nYXcc7LNz/USzHWPi8ga8Phle88V9pDdBIGFfW7kTX/XP4kbI8wg/b9LO4mUxwKwNYaqzcpZcHG+rnJ9Uu8nTVV5VOckT5PsX0nGdTe2GaggL7uxFazmR3laAJTvT0ni+c=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729933214; c=relaxed/simple;
+	bh=VlIBS+nNAy0HorlynnDWvaRjFKVn1RwXN1X51HKYC0Q=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=hx91+s0f+5W8JCS39uneK5aH+RLsrG1cecwSnLp4wEm9hrGtK7ZveXgIsTmi6xr3hBWMGyLV4Pm1IlbJvfAPJXHbTeRYmGqkc8aaHAoYghbdjkZMNcdtp8dY6ehz1gJl0QDEFdQthNUK25UBW5jzsLOYGSkLtKOucZJULAEDYrQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b=ZodOO/jd; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1729933195; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=kKnaKO2JxRgMWsIUB10et49z4DbpraBF+I0s36LBaGtGH0Xx9hG+tlynPQKB7lkqQ/q/k73CbW5vPgax7JVCSU3Z539eiBg2SLAeUcLI3JAjLOxvv2FQHMx5mSt9Y0vCm5wxYgZQhUvtsPcyKPTRm3gp2cS/npt3TWYeze9ZSOo=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1729933195; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=/ofsZ/KUtINNBgsOkZZ//zyk0Cpy+AIeNIQvPQNbkfU=; 
+	b=j7AnVH8OBogh7HZqM0cK32zsGNk8AMqaJCBo2GY7ifFGPoIvSUAcFTHGHtLKTqJ7TOgxiusBpPIDhid+J/yR2lT78oVRauIYiABP9f4I2uHNpQfFVKFMpBgD7rOjXjoJJPY4/GA7Sb0aqJiDCmM+ZxyrnooaFTZqYLHdh6cbO7w=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=Usama.Anjum@collabora.com;
+	dmarc=pass header.from=<Usama.Anjum@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1729933195;
+	s=zohomail; d=collabora.com; i=Usama.Anjum@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Cc:Cc:Subject:Subject:To:To:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=/ofsZ/KUtINNBgsOkZZ//zyk0Cpy+AIeNIQvPQNbkfU=;
+	b=ZodOO/jdQr/4X0ZpnwTcDD5thEcVtKpklIEZruRBbfRjFF6e4in1JNNNtlsszDSv
+	c8FOAE/XjXTXjgtwhNkrEKUoo/+yYImp/9oCKeMshfhNZ5QwWgYNiuvooXw2bEMROu3
+	Sv7mFcdN44dkoJUHG5ptVSB1EBgTQCzltNRu/qPU=
+Received: by mx.zohomail.com with SMTPS id 1729933192542671.2786862049763;
+	Sat, 26 Oct 2024 01:59:52 -0700 (PDT)
+Message-ID: <491968e4-ced7-4ee1-a09e-477e30759d10@collabora.com>
+Date: Sat, 26 Oct 2024 13:59:43 +0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <02e70357-1a3a-44f4-b25d-0e8e7f430cb6@hisilicon.com>
+User-Agent: Mozilla Thunderbird
+Cc: Usama.Anjum@collabora.com, chao.p.peng@linux.intel.com,
+ ackerleytng@google.com, seanjc@google.com, graf@amazon.com,
+ jgowans@amazon.com
+Subject: Re: [PATCH] kvm: selftest: fix noop test in guest_memfd_test.c
+To: Patrick Roy <roypat@amazon.co.uk>, pbonzini@redhat.com, shuah@kernel.org,
+ kvm@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241024095956.3668818-1-roypat@amazon.co.uk>
+Content-Language: en-US
+From: Muhammad Usama Anjum <Usama.Anjum@collabora.com>
+In-Reply-To: <20241024095956.3668818-1-roypat@amazon.co.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
 
-On Sat, Oct 26, 2024 at 03:50:58PM +0800, linwenkai (C) wrote:
->
-> Hi, do you want me to remove this variable and use the old way to get the
-> authsize?
+On 10/24/24 2:59 PM, Patrick Roy wrote:
+> The loop in test_create_guest_memfd_invalid that is supposed to test
+> that nothing is accepted as a valid flag to KVM_CREATE_GUEST_MEMFD was
+> initializing `flag` as 0 instead of BIT(0). This caused the loop to
+> immediately exit instead of iterating over BIT(0), BIT(1), ... .
+> 
+> Fixes: 8a89efd43423 ("KVM: selftests: Add basic selftest for guest_memfd()")
+> Signed-off-by: Patrick Roy <roypat@amazon.co.uk>
+> ---
+>  tools/testing/selftests/kvm/guest_memfd_test.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/tools/testing/selftests/kvm/guest_memfd_test.c b/tools/testing/selftests/kvm/guest_memfd_test.c
+> index ba0c8e9960358..ce687f8d248fc 100644
+> --- a/tools/testing/selftests/kvm/guest_memfd_test.c
+> +++ b/tools/testing/selftests/kvm/guest_memfd_test.c
+> @@ -134,7 +134,7 @@ static void test_create_guest_memfd_invalid(struct kvm_vm *vm)
+>  			    size);
+>  	}
+>  
+> -	for (flag = 0; flag; flag <<= 1) {
+> +	for (flag = BIT(0); flag; flag <<= 1) {
+>  		fd = __vm_create_guest_memfd(vm, page_size, flag);
+>  		TEST_ASSERT(fd == -1 && errno == EINVAL,
+>  			    "guest_memfd() with flag '0x%lx' should fail with EINVAL",
+Reviewed-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
 
-The authsize parameter is meant to be constant throughout a single
-encryption/decryption operation.  So saving a copy of it for the
-duration of that operation makes no sense.
-
-What is the actual problem that you're trying to fix?
-
-Cheers,
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+BR,
+Muhammad Usama Anjum
+
 
