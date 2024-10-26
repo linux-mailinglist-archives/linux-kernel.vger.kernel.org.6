@@ -1,183 +1,89 @@
-Return-Path: <linux-kernel+bounces-382894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89EC29B149A
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 06:20:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7E779B149B
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 06:21:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 46F45B22160
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 04:20:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91B401F21264
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 04:21:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49FA41779AE;
-	Sat, 26 Oct 2024 04:19:35 +0000 (UTC)
-Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9676B15C139;
+	Sat, 26 Oct 2024 04:21:05 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1781D1632ED;
-	Sat, 26 Oct 2024 04:19:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80F7213C80C
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 04:21:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729916374; cv=none; b=YA3JiQCx7hgllysDgFPsch7XJSaFmcinKSmj2xtVAqHC/C4yCqQT1o9L85bagjZk9LAyNhuRHikzHmEK17xUQAEsd+jI8yGNheC8LXYpXbzuMyUW5RS/LBlFXo72+aDc6lTGQG7aaGKO4oDIeh9P+eLMStV7MQ004uhmhoeCFjc=
+	t=1729916465; cv=none; b=oiHsk+G0G2BVLuQiPQM99sGgvzAC6OziMcd16O7RttpcTSVYV7xTymqhBvK+Q46ZSEIl5cGwpeVTSyDVL8DAaJ1T6zHSfOhbhhcvMwZweYp1kKBT5vBJcUFeFnLZ96dvn842MJ0aXe4N6dV5YkKKFgm04y+G7eMIlzk5At8gPGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729916374; c=relaxed/simple;
-	bh=tT7oOs94GFXNS3vZEgJoUyI6YLrituu01LE1dAuibT0=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Yy93mEGi6Pb/3yj0NufMuRpOOJiGbhsn2L8t4te/RuBWwqfNXwisSfAPFrmTU4ZytElp3vJpujzLZ+BT0RGRbRvgD3ABDngIxAgwUwlZ6Nzz3jdeGmhK4oClxxWeBxJckDV//hoxyZhwDSoFEZfZJC1lwMLxMXxMaAcsiNRldlc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.178.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250811.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49Q4Bnub016958;
-	Sat, 26 Oct 2024 04:19:12 GMT
-Received: from ala-exchng01.corp.ad.wrs.com (ala-exchng01.wrs.com [147.11.82.252])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 42gnn0r5v2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Sat, 26 Oct 2024 04:19:12 +0000 (GMT)
-Received: from ala-exchng01.corp.ad.wrs.com (147.11.82.252) by
- ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Fri, 25 Oct 2024 21:19:11 -0700
-Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
- ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server id
- 15.1.2507.39 via Frontend Transport; Fri, 25 Oct 2024 21:19:09 -0700
-From: Lizhi Xu <lizhi.xu@windriver.com>
-To: <kent.overstreet@linux.dev>
-CC: <bfoster@redhat.com>, <linux-bcachefs@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <lizhi.xu@windriver.com>,
-        <syzbot+9fc4dac4775d07bcfe34@syzkaller.appspotmail.com>,
-        <syzkaller-bugs@googlegroups.com>
-Subject: Re: [PATCH] bcachefs: Retrieve ext again after sb is reallocated
-Date: Sat, 26 Oct 2024 12:19:08 +0800
-Message-ID: <20241026041908.2739593-1-lizhi.xu@windriver.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <43c3r56uapoeyc33lt6tunn5x772ngflxq6lpntodoj3g32s6t@ohktx3g4pkis>
-References: <43c3r56uapoeyc33lt6tunn5x772ngflxq6lpntodoj3g32s6t@ohktx3g4pkis>
+	s=arc-20240116; t=1729916465; c=relaxed/simple;
+	bh=Pbyg2SCdQ2qqUtv04NFHNcaqxZ5kEH/SxyJuQT5T7SA=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=V0PEBuZzycvq6nha+jR030y/w8+I04AMS1POrTrUu8EhvpeINtXEWtnBeLknQ3pc4UAnzTgERxtrTN6ZDV2rqrsXiGZq0ZaGPqyNxFWMtPorvGqCuTbRTcxbvFksUyilgm3clUcys+57qTB/I8dEspzOuVLpb2WBye4k7JuXBH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a3c4554d29so25230895ab.1
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 21:21:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729916462; x=1730521262;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=U3gcCkXBQQlWgRggAy8vJNsOKnItlW6M0FPDFncLohY=;
+        b=rlrjEb/s9bZgbtdyaXrDvcHXr2OWlnO47BsDSn6vBp2FQKLa6IUGvqR9eJottwCnTl
+         m70gq5zRDQ0yWJCTjloC2WkvDx6nQVSrZeitpivjYZ0tQbpcTiAX2/3D0DkZuJ8wMQXO
+         lfLJ1oEPMAVbHsCzWWKkd4okEwzvXgQsfyNRe8BwaMFTmcOEhcRoEKMeD+mpVMXOW1Rn
+         7e5Isls1AdOjPgY+gmDABVKVIKOe+0Ybi12/S2XONHIg5jvE0ElYU9ni4Zc1CtcKsvJM
+         AB/e2GuwQigqyeQlvo9rFb6yUskpzHwwAAD7jNTnZRBZHart82D7KnOub5mN6Rz1ZYpo
+         uQow==
+X-Forwarded-Encrypted: i=1; AJvYcCXDFMeTz7jCxCSC0BxhAL/rbjMcjeROGStMzHMve4WQngBSpbsFDssZI0gM51aodJkNypWGyLjc5eoGe+M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx99+rtNtNrS+hD2xDZ3c1KX5TJLaCDSXSp6TvWlCiR1mKE7WrO
+	aHWhpidNZapKT9cBdP1oJh8ZMkvvIo9akhfF7bV0v1Dz3GHgSOzznoeOZby9Y46CRMoG9q7okGE
+	GJUzlbrHhpjWNdEI1e/WY89Z1LesK0IR2nPaTgy3e1SivAD5C6SGsTzo=
+X-Google-Smtp-Source: AGHT+IHNfk2Nkjjm8rK+t3UBrtBFHBbltaO6zrD43WQec1lExqtVuuFaRsw26OcSKwJNVSBrsXxO336iGvHoeskbdS6BcB+V2TA8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Authority-Analysis: v=2.4 cv=ZIuFmm7b c=1 sm=1 tr=0 ts=671c6dc0 cx=c_pps a=/ZJR302f846pc/tyiSlYyQ==:117 a=/ZJR302f846pc/tyiSlYyQ==:17 a=DAUX931o1VcA:10 a=hSkVLCK3AAAA:8 a=edf1wS77AAAA:8 a=t7CeM3EgAAAA:8 a=VwQbUJbxAAAA:8 a=1XWaLZrsAAAA:8
- a=tUeG7FvVIi3DSfVR994A:9 a=cQPPKAXgyycSBL8etih5:22 a=DcSpbTIhAlouE1Uv7lRv:22 a=FdTzh2GWekK77mhwV6Dw:22
-X-Proofpoint-GUID: sDrdc5-nCGP5fM8Ivs6NjWuhAYxCC3Qc
-X-Proofpoint-ORIG-GUID: sDrdc5-nCGP5fM8Ivs6NjWuhAYxCC3Qc
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-25_14,2024-10-25_02,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=999
- lowpriorityscore=0 spamscore=0 mlxscore=0 priorityscore=1501
- malwarescore=0 impostorscore=0 adultscore=0 suspectscore=0 bulkscore=0
- clxscore=1015 classifier=spam authscore=0 adjust=0 reason=mlx scancount=1
- engine=8.21.0-2409260000 definitions=main-2410260033
-
-On Fri, 25 Oct 2024 21:17:09 -0400, Kent Overstreet wrote:
-> On Sat, Oct 26, 2024 at 09:09:53AM +0800, Lizhi Xu wrote:
-> > Syzbot reported a slab-use-after-free Read in bch2_reconstruct_alloc.
-> > The sb counters resize will cause sb reallocation and release the old sb,
-> > which leads to uaf in ext.
-> > After disk_sb.sb is reallocated, ext should be retrieved again to avoid uaf.
-> >
-> > Reported-and-tested-by: syzbot+9fc4dac4775d07bcfe34@syzkaller.appspotmail.com
-> > Closes: https://syzkaller.appspot.com/bug?extid=9fc4dac4775d07bcfe34
-> > Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
-> > ---
-> >  fs/bcachefs/recovery.c | 4 ++++
-> >  1 file changed, 4 insertions(+)
-> >
-> > diff --git a/fs/bcachefs/recovery.c b/fs/bcachefs/recovery.c
-> > index 55e1504a8130..9df0969c29ce 100644
-> > --- a/fs/bcachefs/recovery.c
-> > +++ b/fs/bcachefs/recovery.c
-> > @@ -59,6 +59,7 @@ static void bch2_reconstruct_alloc(struct bch_fs *c)
-> >
-> >  	mutex_lock(&c->sb_lock);
-> >  	struct bch_sb_field_ext *ext = bch2_sb_field_get(c->disk_sb.sb, ext);
-> > +	void *sb;
-> >
-> >  	__set_bit_le64(BCH_RECOVERY_PASS_STABLE_check_allocations, ext->recovery_passes_required);
-> >  	__set_bit_le64(BCH_RECOVERY_PASS_STABLE_check_alloc_info, ext->recovery_passes_required);
-> > @@ -94,7 +95,10 @@ static void bch2_reconstruct_alloc(struct bch_fs *c)
-> >  	__set_bit_le64(BCH_FSCK_ERR_accounting_mismatch, ext->errors_silent);
-> >  	c->sb.compat &= ~(1ULL << BCH_COMPAT_alloc_info);
-> >
-> > +	sb = c->disk_sb.sb;
-> >  	bch2_write_super(c);
-> > +	if (sb != c->disk_sb.sb)
-> > +		ext = bch2_sb_field_get(c->disk_sb.sb, ext);
-> >  	mutex_unlock(&c->sb_lock);
-> >
-> >  	c->opts.recovery_passes |= bch2_recovery_passes_from_stable(le64_to_cpu(ext->recovery_passes_required[0]));
-> 
-> There's a simpler fix:
-> 
-> 
-> From 8e910ca20e112d7f06ba3bf631a06ddb5ce14657 Mon Sep 17 00:00:00 2001
-> From: Kent Overstreet <kent.overstreet@linux.dev>
-> Date: Fri, 25 Oct 2024 13:13:05 -0400
-> Subject: [PATCH] bcachefs: Fix UAF in bch2_reconstruct_alloc()
-> 
-> write_super() -> sb_counters_from_cpu() may reallocate the superblock
-> 
-> Reported-by: syzbot+9fc4dac4775d07bcfe34@syzkaller.appspotmail.com
-> Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
-> 
-> diff --git a/fs/bcachefs/recovery.c b/fs/bcachefs/recovery.c
-> index 454b5a32dd7f..0ebc76dd7eb5 100644
-> --- a/fs/bcachefs/recovery.c
-> +++ b/fs/bcachefs/recovery.c
-> @@ -94,11 +94,10 @@ static void bch2_reconstruct_alloc(struct bch_fs *c)
->  	__set_bit_le64(BCH_FSCK_ERR_accounting_mismatch, ext->errors_silent);
->  	c->sb.compat &= ~(1ULL << BCH_COMPAT_alloc_info);
-> 
-> -	bch2_write_super(c);
-> -	mutex_unlock(&c->sb_lock);
-> -
->  	c->opts.recovery_passes |= bch2_recovery_passes_from_stable(le64_to_cpu(ext->recovery_passes_required[0]));
-> 
-> +	bch2_write_super(c);
-> +	mutex_unlock(&c->sb_lock);
-> 
->  	bch2_shoot_down_journal_keys(c, BTREE_ID_alloc,
->  				     0, BTREE_MAX_DEPTH, POS_MIN, SPOS_MAX);
-Oh, Yes, it can fix, but my first fix is before your patch,
-
-https://lore.kernel.org/all/20241025100205.635960-1-lizhi.xu@windriver.com/
-
+X-Received: by 2002:a05:6e02:1886:b0:3a0:9f85:d74e with SMTP id
+ e9e14a558f8ab-3a4ed2f6098mr12546265ab.16.1729916462673; Fri, 25 Oct 2024
+ 21:21:02 -0700 (PDT)
+Date: Fri, 25 Oct 2024 21:21:02 -0700
+In-Reply-To: <20241026041908.2739593-1-lizhi.xu@windriver.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <671c6e2e.050a0220.2fdf0c.0220.GAE@google.com>
 Subject: Re: [syzbot] [bcachefs?] KASAN: slab-use-after-free Read in bch2_reconstruct_alloc
-Date: Fri, 25 Oct 2024 18:02:05 +0800	[thread overview]
-Message-ID: <20241025100205.635960-1-lizhi.xu@windriver.com> (raw)
-In-Reply-To: <671907d4.050a0220.1e4b4d.008f.GAE@google.com>
+From: syzbot <syzbot+9fc4dac4775d07bcfe34@syzkaller.appspotmail.com>
+To: bfoster@redhat.com, kent.overstreet@linux.dev, 
+	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	lizhi.xu@windriver.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-The counters will cause sb to be realloc and release the old sb, which leads to uaf in ext
+Hello,
 
-#syz test: upstream master
+syzbot tried to test the proposed patch but the build/boot failed:
 
-diff --git a/fs/bcachefs/recovery.c b/fs/bcachefs/recovery.c
-index 55e1504a8130..9df0969c29ce 100644
---- a/fs/bcachefs/recovery.c
-+++ b/fs/bcachefs/recovery.c
-@@ -59,6 +59,7 @@ static void bch2_reconstruct_alloc(struct bch_fs *c)
+failed to apply patch:
+checking file fs/bcachefs/recovery.c
+patch: **** unexpected end of file in patch
 
- 	mutex_lock(&c->sb_lock);
- 	struct bch_sb_field_ext *ext = bch2_sb_field_get(c->disk_sb.sb, ext);
-+	void *sb;
 
- 	__set_bit_le64(BCH_RECOVERY_PASS_STABLE_check_allocations, ext->recovery_passes_required);
- 	__set_bit_le64(BCH_RECOVERY_PASS_STABLE_check_alloc_info, ext->recovery_passes_required);
-@@ -94,7 +95,10 @@ static void bch2_reconstruct_alloc(struct bch_fs *c)
- 	__set_bit_le64(BCH_FSCK_ERR_accounting_mismatch, ext->errors_silent);
- 	c->sb.compat &= ~(1ULL << BCH_COMPAT_alloc_info);
 
-+	sb = c->disk_sb.sb;
- 	bch2_write_super(c);
-+	if (sb != c->disk_sb.sb)
-+		ext = bch2_sb_field_get(c->disk_sb.sb, ext);
- 	mutex_unlock(&c->sb_lock);
+Tested on:
 
- 	c->opts.recovery_passes |= bch2_recovery_passes_from_stable(le64_to_cpu(ext->recovery_passes_required[0]));
+commit:         850925a8 Merge tag '9p-for-6.12-rc5' of https://github..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c36416f1c54640c0
+dashboard link: https://syzkaller.appspot.com/bug?extid=9fc4dac4775d07bcfe34
+compiler:       
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=11c57287980000
+
 
