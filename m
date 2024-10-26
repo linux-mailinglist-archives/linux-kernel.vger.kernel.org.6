@@ -1,135 +1,106 @@
-Return-Path: <linux-kernel+bounces-382944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F358F9B1553
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 08:26:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9ABC39B1561
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 08:31:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99DBC283497
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 06:26:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE5281F22322
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 06:31:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACB3F174EFA;
-	Sat, 26 Oct 2024 06:26:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4C371791EB;
+	Sat, 26 Oct 2024 06:31:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="XNR1Svtn"
-Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="FUcE4GQl"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE58C217F43
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 06:26:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71CDC17C;
+	Sat, 26 Oct 2024 06:31:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729923973; cv=none; b=rqIY8LmFxsvnemvg12t1la5tDU1U++hZzWoG045XLcwfMxjdXgqXPThNMShpvyrU4EFt8/+Xdc2K3KpGNuYeaEq6lrhnRVEarlO2dlVFPFmkrchCcarhcGefMXCawe7zgvoyHsC/o2TdAd6Z8Zsb/rtoTC0xzj9w7ly7wVAi3+c=
+	t=1729924271; cv=none; b=OlxwM1Xjw4CQx+D6lp1raYtOpinfWGZef7seXB8ALg59PpXe9mErXlpDj/j2MHVszk0G0OeeoeP+IZX2KaWi91viaWutHfC/+ClVsSJT9LLR40R/7Rhd70jaggl2UtGcf5u6foegRed+/c2Z0yoxiMeXptEglg6mOO+V8pjR6ys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729923973; c=relaxed/simple;
-	bh=lbWlF7R1HWUKgXdHmjenASs4uIgstpF1+TEZM/hHnUo=;
+	s=arc-20240116; t=1729924271; c=relaxed/simple;
+	bh=lBfMn1B5bivKwkhJa5oIr62Gy1KJXNDR/JQWVKMfAdg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R96qGsuBt7WJuACG63S8X3Vz7Mv3muRFhcwg/mr0ggfGZsivdTCiWSWZsYpIhRltfZQgaoRpZNIkKPo5owctzaP4Qiy0V9LnWnqJUHSQsHiftAVWXAISUCHap3Q7X1CABjbCwJbDoXOQhlnFLNzE1NlfJCMoR7MfW6pt1PeZ2Gs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=XNR1Svtn; arc=none smtp.client-ip=95.215.58.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Fri, 25 Oct 2024 23:26:03 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1729923969;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jhwJgu8R8B7Mg/n0iWKRDn2WDz29p+DH76mo78CE+bY=;
-	b=XNR1Svtnwv+r6wljuv2HEudirb6FZVKbWV+4TDptG7TU0XZF+VshdJgNqeZdCQCm97m4K8
-	FXm50sKfNEEffjEpL7sdf7kwgX/gNGXwaN+K0DV91H9HrJhUSamBXRQQ/xotuhREY8oVFU
-	qj293ojC4vlQJDrj5sVXdQh0dww+fs8=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Yu Zhao <yuzhao@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Muchun Song <muchun.song@linux.dev>, 
-	Hugh Dickins <hughd@google.com>, Yosry Ahmed <yosryahmed@google.com>, linux-mm@kvack.org, 
-	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, Meta kernel team <kernel-team@meta.com>
-Subject: Re: [PATCH v1 6/6] memcg-v1: remove memcg move locking code
-Message-ID: <f2xyyzlzmlcuuhjawwmq7fdzeg43q2ot54jgqwkbc22fxptgky@2ytv5uehhqfj>
-References: <20241025012304.2473312-1-shakeel.butt@linux.dev>
- <20241025012304.2473312-7-shakeel.butt@linux.dev>
- <CAOUHufYgvcAvbGv_3rDhj_NX-ND-TMX_nyF7ZHQRW8ZxniObOQ@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=VdOprDNqztubY2xuiDf5+iuGsTt++dX+MzMzLZ8NqQ0i3KSfkqGMcjg2w6VYffKhnh7aRZjgJKdfxLdnmzTsXIERyziKI2Enmf5KgDGVd2F/bSeaJIGLU3jku49nQF75M/Z8Zx7SsdkhFPEdxvqTXWkJ1suCWy/wMcSSv4MoaIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=FUcE4GQl; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=UeETOkMVFm2TFJxstCe99mVtoDs6lMro4XEgzTXc0Pk=; b=FUcE4GQl4uwYV/u/M2l89P86K2
+	BCJ+6ISuk5C6l3q/Bq8LCYkXLOMHrBUXgUM6W7skDsAeQlMEvSajyF0YH+4numwPieTPAGRPIzJwX
+	xtG1idBjn/cK4xyyOsFBcFr6biMODPX9NjWjSp7uFiFXavxPvJ46iwji7r/qk1K/f/Jwx7OE+/bRS
+	PYy6gRx/g8wiiGhjbYnuuhPeiFj8cO+grEI0wjFGx9rYdf7uZglHG5PAHrJ4U1uUVPkoA9AhsuTCe
+	r+rFr2VnjHgXuCAx57ZU54+4pC6jopYLBwtR+aFCAeuDhY6vY6J63J+yEVDvJO0AUG82wTAHqnZRo
+	vclNR4bg==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1t4aK5-00CFgm-19;
+	Sat, 26 Oct 2024 14:30:54 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sat, 26 Oct 2024 14:30:53 +0800
+Date: Sat, 26 Oct 2024 14:30:53 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Chenghai Huang <huangchenghai2@huawei.com>
+Cc: davem@davemloft.net, linux-kernel@vger.kernel.org,
+	linux-crypto@vger.kernel.org, liulongfang@huawei.com,
+	shenyang39@huawei.com, qianweili@huawei.com,
+	linwenkai6@hisilicon.com, wangzhou1@hisilicon.com
+Subject: Re: [PATCH v2 1/2] crypto: hisilicon/sec2 - fix for aead icv error
+Message-ID: <ZxyMnWbTkf7JEnT7@gondor.apana.org.au>
+References: <20241018105830.169212-1-huangchenghai2@huawei.com>
+ <20241018105830.169212-2-huangchenghai2@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOUHufYgvcAvbGv_3rDhj_NX-ND-TMX_nyF7ZHQRW8ZxniObOQ@mail.gmail.com>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20241018105830.169212-2-huangchenghai2@huawei.com>
 
-On Fri, Oct 25, 2024 at 09:58:45PM GMT, Yu Zhao wrote:
-> On Thu, Oct 24, 2024 at 7:23 PM Shakeel Butt <shakeel.butt@linux.dev> wrote:
-> >
-> > The memcg v1's charge move feature has been deprecated. All the places
-> > using the memcg move lock, have stopped using it as they don't need the
-> > protection any more. Let's proceed to remove all the locking code
-> > related to charge moving.
-> >
-> > Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
-> > ---
-> >
-> > Changes since RFC:
-> > - Remove the memcg move locking in separate patches.
-> >
-> >  include/linux/memcontrol.h | 54 -------------------------
-> >  mm/filemap.c               |  1 -
-> >  mm/memcontrol-v1.c         | 82 --------------------------------------
-> >  mm/memcontrol.c            |  5 ---
-> >  mm/rmap.c                  |  1 -
-> >  5 files changed, 143 deletions(-)
-> >
-> > diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-> > index 798db70b0a30..932534291ca2 100644
-> > --- a/include/linux/memcontrol.h
-> > +++ b/include/linux/memcontrol.h
-> > @@ -299,20 +299,10 @@ struct mem_cgroup {
-> >         /* For oom notifier event fd */
-> >         struct list_head oom_notify;
-> >
-> > -       /* taken only while moving_account > 0 */
-> > -       spinlock_t move_lock;
-> > -       unsigned long move_lock_flags;
-> > -
-> >         /* Legacy tcp memory accounting */
-> >         bool tcpmem_active;
-> >         int tcpmem_pressure;
-> >
-> > -       /*
-> > -        * set > 0 if pages under this cgroup are moving to other cgroup.
-> > -        */
-> > -       atomic_t moving_account;
-> > -       struct task_struct *move_lock_task;
-> > -
-> >         /* List of events which userspace want to receive */
-> >         struct list_head event_list;
-> >         spinlock_t event_list_lock;
-> > @@ -428,9 +418,7 @@ static inline struct obj_cgroup *__folio_objcg(struct folio *folio)
-> >   *
-> >   * - the folio lock
-> >   * - LRU isolation
-> > - * - folio_memcg_lock()
-> >   * - exclusive reference
-> > - * - mem_cgroup_trylock_pages()
-> >   *
-> >   * For a kmem folio a caller should hold an rcu read lock to protect memcg
-> >   * associated with a kmem folio from being released.
-> > @@ -499,9 +487,7 @@ static inline struct mem_cgroup *folio_memcg_rcu(struct folio *folio)
-> 
-> I think you missed folio_memcg_rcu().
-> 
-> (I don't think workingset_activation() needs it, since its only caller
-> must hold a refcnt on the folio.)
-> 
+On Fri, Oct 18, 2024 at 06:58:29PM +0800, Chenghai Huang wrote:
+>
+> @@ -911,10 +910,8 @@ static int sec_cipher_pbuf_map(struct sec_ctx *ctx, struct sec_req *req,
+>  		return -EINVAL;
+>  	}
+>  	if (!c_req->encrypt && ctx->alg_type == SEC_AEAD) {
+> -		tfm = crypto_aead_reqtfm(aead_req);
+> -		authsize = crypto_aead_authsize(tfm);
+> -		mac_offset = qp_ctx->res[req_id].pbuf + copy_size - authsize;
+> -		memcpy(a_req->out_mac, mac_offset, authsize);
+> +		mac_offset = qp_ctx->res[req_id].pbuf + copy_size - a_ctx->authsize;
+> +		memcpy(a_req->out_mac, mac_offset, a_ctx->authsize);
 
-Yes I think so too but I will send a separate followup patch for that.
+You've lost me.  a_ctx->authsize is set to the value of
+crypto_aead_authsize(tfm).  In other words nothing has changed.
+What am I missing?
+
+> @@ -2356,10 +2331,12 @@ static int sec_aead_crypto(struct aead_request *a_req, bool encrypt)
+>  	struct crypto_aead *tfm = crypto_aead_reqtfm(a_req);
+>  	struct sec_req *req = aead_request_ctx(a_req);
+>  	struct sec_ctx *ctx = crypto_aead_ctx(tfm);
+> +	struct sec_auth_ctx *a_ctx = &ctx->a_ctx;
+>  	int ret;
+>  
+>  	req->flag = a_req->base.flags;
+>  	req->aead_req.aead_req = a_req;
+> +	a_ctx->authsize = crypto_aead_authsize(tfm);
+>  	req->c_req.encrypt = encrypt;
+>  	req->ctx = ctx;
+
+Cheers,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
