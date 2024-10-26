@@ -1,89 +1,94 @@
-Return-Path: <linux-kernel+bounces-382893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D71D79B1498
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 06:19:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 083329B1433
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 04:36:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73F771F22C01
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 04:19:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5501283511
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 02:36:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57FD513CA99;
-	Sat, 26 Oct 2024 04:19:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="okGGH3U9"
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D668470839;
-	Sat, 26 Oct 2024 04:19:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3074613A878;
+	Sat, 26 Oct 2024 02:36:02 +0000 (UTC)
+Received: from gate.crashing.org (gate.crashing.org [63.228.1.57])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 253B38BEE;
+	Sat, 26 Oct 2024 02:35:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.228.1.57
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729916371; cv=none; b=W7uaLdNsxxCon85fV0jV6GqhqIy0Qt70hA7gnLespl8XOdPUAufe5tC3HMyklpwDxs6pN7EYTGtOypj2zlYzUkFCXzZfexMUV+oYFTqNogo1PsrMuneaguQ5IgLel7R5BiGiMdoc4wJfgEfok1WUEDDGEyG/prcuGFPoVmMsvAY=
+	t=1729910161; cv=none; b=PkEjNf37uW6otQMpSIHRH5Gc8iwg84RjlbcS/Ynz0F5qzPHAcFouZO2zMAgLQgPKVkezfMrXYmoEdng3koN1WDDkS9ZzUf5Pd650Keq6JEY4PnNCBaSOc2zSVfIg3LPtXrKFAR5VHUoBaOBBLQl0oojOghmK7n0i1LJu1ifSjAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729916371; c=relaxed/simple;
-	bh=QF+b64E6Z64yLZtb0mdNWAFz1DlSht3AZjbESiYcnjQ=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=DpKt6NWxKkmEWtWtPv8NmptPf0vyHWEP7mBdU3NKNxhUAtDLEdi77HY+/yw7vIGmAP1wLaRyBhpJCczVwWgsYt7mk6K5VUuLoLKsGanKUxmAt9FpHADyCrGzmKvEo/kFiYOfvkURH2MMPKzixaxXAkx6zOaNrcL1S1N9ODFEyio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=okGGH3U9; arc=none smtp.client-ip=85.214.62.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (ip-86-49-120-218.bb.vodafone.cz [86.49.120.218])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-	(No client certificate requested)
-	(Authenticated sender: marex@denx.de)
-	by phobos.denx.de (Postfix) with ESMTPSA id CEB7788FC7;
-	Sat, 26 Oct 2024 06:19:27 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-	s=phobos-20191101; t=1729916368;
-	bh=rUgz+85ZCTleGup+KKsBwhgV3yR7VpBnRn+6UGMEBo4=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=okGGH3U9b6lgdW63Qe2C1VuQJGP0hP6Pvjb2/RmIvKvTnujBg23XwysLSgrsvXeGr
-	 5jOFOCVOato2SHq55DdQ3DsU9NSvhSoEcHU3VYEVKBv/xNUGWiMUPJeTjKlFP8cI6F
-	 9SCt35S/QOq371ARytR3j49mH8kj6xnAg+YpKKjrnsO0ip6O1QVhPMXMragX+l6xc2
-	 81oHHvu5GJ0OpM+PKJB0BSRuXxBXHsMo63InX8ocGnmY3k0yZup4JXybXtcBgfNlP9
-	 YSDZG8IZlzLA84ZrhH1FHWMyI22IzCDsPcwm9JTvXbYvlBjVcmQcway+daph/vbbCh
-	 N/AO5OVfhTdpQ==
-Message-ID: <d2b8f767-c5c9-409d-a6fa-1c101b90c9fc@denx.de>
-Date: Sat, 26 Oct 2024 01:15:50 +0200
+	s=arc-20240116; t=1729910161; c=relaxed/simple;
+	bh=5VzqQYiFTqWdVR/BEz9nBahuRpJ2t95mYX1tQTP1yZI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=h5KTcx+mB683y+38/dsTuBNwOtA2VU+hZu0gHD67l+fV+rtWhXVkiLXm/ROF9EUCoWRxG2eT1ac75oVVhNEcW8YPusn0z7uI/LTCUvRtckjSKEqIbhvNT0KSat2etvz8QEAmRS9WOF9hwlB097ZFvakpaaDZV3d/35MXiAlUK2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org; spf=pass smtp.mailfrom=kernel.crashing.org; arc=none smtp.client-ip=63.228.1.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.crashing.org
+Received: from [IPv6:::1] (localhost.localdomain [127.0.0.1])
+	by gate.crashing.org (8.14.1/8.14.1) with ESMTP id 49Q2XVCU030871;
+	Fri, 25 Oct 2024 21:33:32 -0500
+Message-ID: <7080ee37ce53d5559ba85f72a0ff59b4bc5a083d.camel@kernel.crashing.org>
+Subject: Re: WARNING in lmce_supported() during reboot.
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To: Dave Hansen <dave.hansen@intel.com>,
+        Kuniyuki Iwashima
+ <kuniyu@amazon.com>, x86@kernel.org,
+        linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Tony Luck <tony.luck@intel.com>, Borislav Petkov <bp@alien8.de>,
+        Thomas
+ Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Dave Hansen
+	 <dave.hansen@linux.intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Alex Graf
+	 <graf@amazon.de>
+Date: Sat, 26 Oct 2024 13:33:30 +1100
+In-Reply-To: <e1c50570-1b5b-40d2-bab3-05e9ead51a57@intel.com>
+References: <20241025231320.45417-1-kuniyu@amazon.com>
+	 <e1c50570-1b5b-40d2-bab3-05e9ead51a57@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3-0ubuntu1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] nvmem: core: Check read_only flag for force_ro in
- bin_attr_nvmem_write()
-From: Marek Vasut <marex@denx.de>
-To: linux-i2c@vger.kernel.org
-Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
- linux-kernel@vger.kernel.org, Thorsten Leemhuis <regressions@leemhuis.info>
-References: <20240713154001.107439-1-marex@denx.de>
- <c181a856-164b-41cf-b512-b8dba3247ae3@denx.de>
-Content-Language: en-US
-In-Reply-To: <c181a856-164b-41cf-b512-b8dba3247ae3@denx.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
-X-Virus-Status: Clean
 
-On 9/25/24 12:42 AM, Marek Vasut wrote:
-> On 7/13/24 5:39 PM, Marek Vasut wrote:
->> The bin_attr_nvmem_write() must check the read_only flag and block
->> writes on read-only devices, now that a nvmem device can be switched
->> between read-write and read-only mode at runtime using the force_ro
->> attribute. Add the missing check.
->>
->> Fixes: 9d7eb234ac7a ("nvmem: core: Implement force_ro sysfs attribute")
->> Signed-off-by: Marek Vasut <marex@denx.de>
->> ---
->> Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
->> Cc: linux-kernel@vger.kernel.org
-> It seems this bugfix is not even in next, any news ?
+On Fri, 2024-10-25 at 16:58 -0700, Dave Hansen wrote:
+>=20
+> Hi Folks,
+>=20
+> We really do need it to be reproduced on mainline.=C2=A0 At the very leas=
+t,
+> it would be greatly appreciated if you could summarize what your fork is
+> doing and why you don't think it is responsible.
+>=20
+> But I don't see how this could be timing related.=C2=A0 That MSR gets loc=
+ked
+> early from what I can tell, long before the system would be rebooting.
+>=20
+> Your best bet is going to be getting a handle on what
+> MSR_IA32_FEAT_CTL's value was after the CPU was brought up and when this
+> reboot was attempted.=C2=A0 If those values differ, when it got changed.
+>=20
+> I'd _suspect_ some kind of BIOS sleep/wakeup wonkiness where something
+> forgot to re-lock the MSR.
 
-This is still broken, bugfix is available for three months now, but not 
-picked up. Any news?
+So far we just happened to notice it in the serial console while doing
+other things, I told Kuniyuki to forward it to you in case it rings a
+bell. We can definitely do some more systematic attempts at reproducing
+but that might take a while.
+
+For me it happened once while rebooting a c5d.4xlarge instance, and not
+since (I tried a few reboots), so it could well be something BIOS related
+(CC'ing Alex).
+
+This is a KVM/Nitro guest, so the CPU is somewhat virtualized, but
+/proc/cpuinfo says: Intel(R) Xeon(R) Platinum 8124M CPU @ 3.00GHz
+
+Cheers,
+Ben.
 
