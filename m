@@ -1,74 +1,75 @@
-Return-Path: <linux-kernel+bounces-383193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A50599B1853
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 14:58:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14CC89B1852
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 14:58:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 18F60B22222
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 12:58:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C21A1F21EBC
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 12:58:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30DCF1D6DA4;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03DDC1D63EF;
 	Sat, 26 Oct 2024 12:58:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="LgdARNLy"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="znc1qCEv"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7880C17C7C6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 034271D47DC
 	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 12:58:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729947521; cv=none; b=GHvnLGqyFpzj92jISP61yx2gDPlvuXt7/4R/4tPxU9n+KPdHqe2SoGnuuf0nIE6I0bAtI8G0AoyKeCKtmQ0qGiI7ZizRd63jSkaTiPNbREUQ7qugDsH3NaKOCJ7I4Fd9/PdjegG2fbXhgsD/oukKhyFI0/TBjqhLAhydYOK1Ee0=
+	t=1729947521; cv=none; b=kIGs9m5zk+k6PF/4Z+QT8Z0KNSKfbtpFXYV77bJMGGRa8pfvkTaTraTNPapCA7aD2+ltLtDfGfoWr8VEOFQv9LNTgrFqwbGmD6JcHH2/qPTwoCZ9MINPWgYkrQWZN0ETEirGwJVIPa7hkEepCstDuyacQy3R/xiV/pCE8QQ5INY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1729947521; c=relaxed/simple;
-	bh=LN3ztd1AdBfZmL5Es/y83++2ekRYr42bJFDWQaySwmU=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=VInj411QJRy+SjAWEm7Z2TH+TALCVRFLgiycbH+/pWIGBfVxNpuOukeZkSR0m2P3qxFxIHXe54yD2PRqBu3DUBTFVAV/NasrqVQ8bXm0VAYeB37qI8Cgvj5Tfxd2JPURWqMjtZTWlATBVBUEDj9T7PWIgFk/C4G81GRCUCgAbKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=LgdARNLy; arc=none smtp.client-ip=209.85.128.49
+	bh=3eGsWj3tldB6ErshJTowvNjw6P+DOV6RwonJQjhOJvE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=Eool+65Pl/0Cxf0vlxeD+/haHyDjDozkgckYl2dpZAfPg0FWln0ihbaON4L9WlfY/nMGA0H0/iljeyLLVqpg2E7V4ZXXIbp338quCL3jfI8f571yP4V3vwByxWqsspSkreEYiGqYc+dTH92gM6Bz4OC1q6O03/RMDej5ujUyh8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=znc1qCEv; arc=none smtp.client-ip=209.85.128.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43155afca99so26583265e9.1
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-431695fa98bso27740425e9.3
         for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 05:58:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1729947517; x=1730552317; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=fV7GHtiMbguKbqgTn7VM6KISPuTz2G39nKTBY6jvHcA=;
-        b=LgdARNLyKhgzLm4mH1suNE6VU6vetj/kj51KNcDxXXXs/XMuAxu/mf7QIHjhaCkNDB
-         wU9Ca9uDys1DTko9RWCxRDTwBPKtfe/j1iBQlRvVKSVFtOcDx3C2kdqP8cGypIRjepCW
-         vrs6yJGPS1h9TfIBG5Ixcza66HC4WHv6z/q300g1/LiIMFPBL3euh9ULPCjUV8glElug
-         6u0L2+O4RLyuZLLPyy/IecarU8P1MjmgTKRfNeLNiWB1Xh2ErJXEUV6k+oZoFKjJXXAm
-         txkpYjIpdQiA9Fm8nwzMfcyxY/zMZRjqk7ccSnSXjKehmyKHv6N0FmriCNj6+NgMcvFa
-         C1gQ==
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Y6mBZytrDKEzQaEmUgMpFJx27tSq4OYxz5Qwnw3leeA=;
+        b=znc1qCEvoqvZ4X0OUcIqNH1SYNHH/QAzD1uOJn+qGTjUd1AVzqHsdWqhm+RkokxVup
+         3gp1HoYs/MmlkIH1yPpFGDeLHRAYMytS69xtynz474SI8y5ZR+isjEnBZVnSLHJSYMjz
+         oL8FLCecxHie26xL7YOWktne53FUiyXaulXXNms1YMJqNF/dqmCsjJXWf3Defg0LF6iI
+         2m4m58dQLdQBha0WPk3oSulOuDkkWJ5RLsuQNpi5V2HRkK0H6w73rZTcawYwpAAhvTVo
+         FkiSnQCJ+z/UaU7RJSq+tLgVx5wcmDiHFOMY+/IQQuWUPJNufzSE51vDMg25mwtV2+Ve
+         ld1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1729947517; x=1730552317;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fV7GHtiMbguKbqgTn7VM6KISPuTz2G39nKTBY6jvHcA=;
-        b=GRx65ok0GT8Ir+VDM2AuRPwrcNMGMsJk7o7LPySi7r63bw3lJ1UqLu7V/Rf+Za5CzU
-         vDmsp17Cr8pz4aJ4wVQslM7oanvXiAvGoeKZtqXto99oqNsGq3sJHL9FYc1yHxCVSRuL
-         NfABzv5PCqu+E5qE4lcO9uNbhFApi+vON1UEDrwT9J75VyhUVRz/F27l82nHbRkrbytU
-         OMekk3JZWdXxIkaa/ULiwaxzwx622xgMankVA1ErEYJfcvLO3HE/qEjWBB06X6XUkHkn
-         3vHpfdxJh4t0tw8TCdp5UL+8QiPTOnBJryfj0T/pb/mC1wo/YUMyXW2QnogZL1MWP9LD
-         x96w==
-X-Forwarded-Encrypted: i=1; AJvYcCVnUFcuzlRTr8tDmrqQHOqVzSej329JJCr1jj+AGVaAihv0kT1TWccM+2u3CqCc0qkdYnHNI3gFc3fWZlE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZxa42ADZqQUBvc2r0dHLNFUKxvswUX+DmS5qmq9CwzhxR0woE
-	zeJSKOToC1eY4ldmc6VnmLXxffINdAjpwTh80T815EbzGeXLUurNzQ/MdbOWTdM=
-X-Google-Smtp-Source: AGHT+IFiz4g50uD4V/P8EpBdgSxIHN3P97CCyHae2ZCzG5QWxTHtDQqU019ZcLz9N4L/3LZYy5kD7A==
-X-Received: by 2002:a05:600c:45c3:b0:431:55af:a220 with SMTP id 5b1f17b1804b1-4319a5bbffemr20887505e9.12.1729947516483;
-        Sat, 26 Oct 2024 05:58:36 -0700 (PDT)
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Y6mBZytrDKEzQaEmUgMpFJx27tSq4OYxz5Qwnw3leeA=;
+        b=KmBHv8256RsGorjMTaVWBp9oR17PZIqP/m+O/QKyFsztadusQUIF9xPfXwwzGnEBPF
+         Jgn+6wl6vIRDj/VhteDPaLr9330heC4UuEG9cUWSN9Z9bVxrABdpAUvzjbo/z76jSAUj
+         KBkTvV5Qwa7kfbpPIz8CZFVWBk8uZGCKdWnLgXUNxZwqiMVt5gWppRC/tyTX7HhtE+Ym
+         iMyuwcioBCd4iTBYiGF/PJSdUPgMMPhkxRXtAEhuZUZXg7EA4uFWBeg531V+5kFwViv2
+         hLdbVKjL0NNQWum7PZmMbigMs3sSJnPboP5wc5d9bA2LupadNVjAFGsO3ruPCW/wl2E1
+         QWng==
+X-Forwarded-Encrypted: i=1; AJvYcCVGricigoLD6B0d/qfJnf5X0MRIBEl83NpLKKj4gyE84BUrUtLJbbR2R03SoSKZmWMASkQwqayj9DTe0WI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzEJ3ZPDB4m/wO6Fjn8iiLbj2+94IvBIOXvfqW38a5oTmEhSNs+
+	fx/LGwLPGt/sEzmoV3ntKEo47KY8ijtEYADDlyccNm4iNigfAWiwZEFjyFYlSgo=
+X-Google-Smtp-Source: AGHT+IETMsEh1wTvqS8LLJnAJwH28gfAqDThFKMHmYJMNVRiZwJXW2BEj+wAiY4AGsS1xAu5l287OQ==
+X-Received: by 2002:adf:b345:0:b0:37d:2d27:cd93 with SMTP id ffacd0b85a97d-380612008dbmr2013077f8f.43.1729947517114;
+        Sat, 26 Oct 2024 05:58:37 -0700 (PDT)
 Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:617b:5770:df34:27])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431935a3edasm47498535e9.22.2024.10.26.05.58.35
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431935a3edasm47498535e9.22.2024.10.26.05.58.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Sat, 26 Oct 2024 05:58:36 -0700 (PDT)
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v3 0/5] gpio: sysfs: send character device notifications
- for sysfs class events
-Date: Sat, 26 Oct 2024 14:58:28 +0200
-Message-Id: <20241026-gpio-notify-sysfs-v3-0-ad8f127d12f5@linaro.org>
+Date: Sat, 26 Oct 2024 14:58:29 +0200
+Subject: [PATCH v3 1/5] gpio: sysfs: use cleanup guards for
+ gpiod_data::mutex
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,75 +78,204 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAHTnHGcC/23NTQqDMBCG4auUrJuSH63aVe9RujBmogMlkYyEi
- nj3RqHQgsv3g3lmYQQRgdjttLAICQmDz6HPJ9YNre+Bo83NlFCFFErxfsTAfZjQzZxmcsS1sdY
- 10HVt41i+GyM4fO/m45l7QJpCnPcXSW7rVysOtCS54E0tnaoqDVVd3l/o2xguIfZs45L6JcojQ
- mWiNFYaaYTRcP0j1nX9AOq4JA72AAAA
+Message-Id: <20241026-gpio-notify-sysfs-v3-1-ad8f127d12f5@linaro.org>
+References: <20241026-gpio-notify-sysfs-v3-0-ad8f127d12f5@linaro.org>
+In-Reply-To: <20241026-gpio-notify-sysfs-v3-0-ad8f127d12f5@linaro.org>
 To: Linus Walleij <linus.walleij@linaro.org>, 
  Bartosz Golaszewski <brgl@bgdev.pl>, Kent Gibson <warthog618@gmail.com>
 Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
  Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1868;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4303;
  i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
- bh=LN3ztd1AdBfZmL5Es/y83++2ekRYr42bJFDWQaySwmU=;
- b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBnHOd5Nb2Tua7BbUnN339ltfzLoBCRAhEm0aUTJ
- XoWfWCCYNWJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZxzneQAKCRARpy6gFHHX
- cl7aD/91DzZ9+M9BQxV3SJknF9bSeZuDhP7jhA4RvVZsHYbWT2Q+RChubU2L3UFWNFQ9XiqW97A
- TnDc2sudmZB4n+0GdMgIczyyz+0mViW4aqwZWGDJTWALcOUId5yhbyDe0Ks+Rv+kQGxFWtQY8/d
- 7PuWzkPrU5EdfMDepuYNlUXhVUPHR2GIcI0z20HGllrEPEHTcCfXe8g2jfyK2AYmi7D6miwjVfz
- fa8qUvQ8Q1CoMog6hifWLtjrtpLy3crDbcvI1noHHhiEVNx+qNmDVjWXuYhABBt/wzUdJXlmjBR
- 7ANLcB89RcIjMOIUlfuKhFEgiEvC3p8RLfMRIbLWQaTk1MkmyEIpNvglk87oZYFuGAqENstr6CV
- +kTgoW1sbPfbFdBWBnunTZnf1ZDDYVU9ep3Q4EV7qKKO2YzFPzEfHU9lFW4WLiA8d50U4KqbVW6
- y+3Ed6rKXshAmVnzDxarW6lYPmM70ZKTfsQZ6tHPgJMF8BulUpgjw2Bli7BIdhDodP9BnOZInHK
- 2QkkSmHnNO+z0SHvj1nFbvBFrttDbeDtlghkUGTSeGAY5G8qCFBW9eAGXbfoM5hotZOBd5bJWH+
- XvPQuwq/5z4sbBNZTlfpVdiNTxHnCOEVTAZf8po73/TwpNvX8MARuZ9+kSEyETl10SDYSuTGQn+
- ca62xa9k1ZQGDEA==
+ bh=JtNYy2XqnFeY+eoUoR6vsJSZlTSzQbTj5jXZS6NTCW8=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBnHOd5bjJcj+GPd1FZ33MueHhu6xmJ7V4uOy77a
+ sc4MtpPwFuJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZxzneQAKCRARpy6gFHHX
+ csWnD/sGuWJUMMr8NI/gqHr4VJ7U32k6j6MffItGRvD1/2nQneCDDv/LUQcTUDVgFUOGSviWPj/
+ /Ykk2Ow2uEbGUaT0tWTMCZctE3eyU96jtN+G+LBCYJBRPMkIn1cW5fnw0A9hKiHMAI7IeTkP/wH
+ 7mFCKUCJhmrnOQE7XeGXFA7a6iSSBu4jUq95YhNbBHt1vMjcntd0prHXF9VhWpZ7cehzWDvPSIw
+ naC1Tj+So/1x9JMcS2S37IK+jZhTd1UHw1ticAjjaNUs8FRd5CexH1MZBXqzaQKBPRBPaXzEbmI
+ 8r6whB8QWwgkgG38ziXL/hqe8xgzbgfpqxueEnWtQaD56qFSy9BFY5dML/CdgIXA51rskgiDD8H
+ kzJr3tyIJ1liXScGqaACA4B7JPWQ/UQ0K5SHJYqBI5MG+1nasQ7hrcV4vBgqpm/H4TM+2jpQFka
+ 4isjaCwFVqK4Mn9/fPCfzxpiQCVYNn8VWARDCmIxV6B8Og7ZTQ+dL7vtmfT6/8MlglSDslxdCxI
+ iWR7DGAKUhIkDr7IaRE/HT75eE3hW+eIYfWQErgVK9z+8AbjrpEfr653wQY6KIbyQTBPh/qO9bH
+ I52rPaA5owg4jOEFeaWnQdjDYEIUHbKa4iVn41+pah8y2uxi+CbFgijGERE8DGJW+qqnkaosVkf
+ 72HM+/n6Gc2K4Yg==
 X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
  fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
-This may be a total corner-case but for consistency and completeness I
-think it makes sense to also send out line state change events on actions
-triggered from the GPIO sysfs class.
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-The first two patches use cleanup helpers in sysfs code. The next three
-change the code to emit notifications on line export (unexport is
-already handled) and active_low & edge changes.
-
-One last thing I considered was also notifying user-space whenever
-gpiochip_un/lock_as_irq() is called but that doesn't make much sense as
-it's largely independent from the GPIO core and can be called for both
-requested and available lines whenever someone requests an interrupt
-from a GPIO controller.
+Shrink the code and drop some goto labels by using lock guards around
+gpiod_data::mutex.
 
 Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
-Changes in v3:
-- Keep the unusual order of operations in value_store()
-- Link to v2: https://lore.kernel.org/r/20241025-gpio-notify-sysfs-v2-0-5bd1b1b0b3e6@linaro.org
+ drivers/gpio/gpiolib-sysfs.c | 82 ++++++++++++++++----------------------------
+ 1 file changed, 30 insertions(+), 52 deletions(-)
 
-Changes in v2:
-- Streamline the code even more by dropping unnecessary return code
-  assignments
-- use normal guards where scoped ones are overkill
-- Link to v1: https://lore.kernel.org/r/20241024-gpio-notify-sysfs-v1-0-981f2773e785@linaro.org
+diff --git a/drivers/gpio/gpiolib-sysfs.c b/drivers/gpio/gpiolib-sysfs.c
+index 0c713baa7784..a0926a1061ae 100644
+--- a/drivers/gpio/gpiolib-sysfs.c
++++ b/drivers/gpio/gpiolib-sysfs.c
+@@ -77,12 +77,10 @@ static ssize_t direction_show(struct device *dev,
+ 	struct gpio_desc *desc = data->desc;
+ 	int value;
+ 
+-	mutex_lock(&data->mutex);
+-
+-	gpiod_get_direction(desc);
+-	value = !!test_bit(FLAG_IS_OUT, &desc->flags);
+-
+-	mutex_unlock(&data->mutex);
++	scoped_guard(mutex, &data->mutex) {
++		gpiod_get_direction(desc);
++		value = !!test_bit(FLAG_IS_OUT, &desc->flags);
++	}
+ 
+ 	return sysfs_emit(buf, "%s\n", value ? "out" : "in");
+ }
+@@ -94,7 +92,7 @@ static ssize_t direction_store(struct device *dev,
+ 	struct gpio_desc *desc = data->desc;
+ 	ssize_t			status;
+ 
+-	mutex_lock(&data->mutex);
++	guard(mutex)(&data->mutex);
+ 
+ 	if (sysfs_streq(buf, "high"))
+ 		status = gpiod_direction_output_raw(desc, 1);
+@@ -105,8 +103,6 @@ static ssize_t direction_store(struct device *dev,
+ 	else
+ 		status = -EINVAL;
+ 
+-	mutex_unlock(&data->mutex);
+-
+ 	return status ? : size;
+ }
+ static DEVICE_ATTR_RW(direction);
+@@ -118,11 +114,8 @@ static ssize_t value_show(struct device *dev,
+ 	struct gpio_desc *desc = data->desc;
+ 	ssize_t			status;
+ 
+-	mutex_lock(&data->mutex);
+-
+-	status = gpiod_get_value_cansleep(desc);
+-
+-	mutex_unlock(&data->mutex);
++	scoped_guard(mutex, &data->mutex)
++		status = gpiod_get_value_cansleep(desc);
+ 
+ 	if (status < 0)
+ 		return status;
+@@ -140,18 +133,17 @@ static ssize_t value_store(struct device *dev,
+ 
+ 	status = kstrtol(buf, 0, &value);
+ 
+-	mutex_lock(&data->mutex);
++	guard(mutex)(&data->mutex);
+ 
+-	if (!test_bit(FLAG_IS_OUT, &desc->flags)) {
+-		status = -EPERM;
+-	} else if (status == 0) {
+-		gpiod_set_value_cansleep(desc, value);
+-		status = size;
+-	}
++	if (!test_bit(FLAG_IS_OUT, &desc->flags))
++		return -EPERM;
+ 
+-	mutex_unlock(&data->mutex);
++	if (status)
++		return status;
+ 
+-	return status;
++	gpiod_set_value_cansleep(desc, value);
++
++	return size;
+ }
+ static DEVICE_ATTR_PREALLOC(value, S_IWUSR | S_IRUGO, value_show, value_store);
+ 
+@@ -253,11 +245,8 @@ static ssize_t edge_show(struct device *dev,
+ 	struct gpiod_data *data = dev_get_drvdata(dev);
+ 	int flags;
+ 
+-	mutex_lock(&data->mutex);
+-
+-	flags = data->irq_flags;
+-
+-	mutex_unlock(&data->mutex);
++	scoped_guard(mutex, &data->mutex)
++		flags = data->irq_flags;
+ 
+ 	if (flags >= ARRAY_SIZE(trigger_names))
+ 		return 0;
+@@ -276,26 +265,22 @@ static ssize_t edge_store(struct device *dev,
+ 	if (flags < 0)
+ 		return flags;
+ 
+-	mutex_lock(&data->mutex);
++	guard(mutex)(&data->mutex);
+ 
+-	if (flags == data->irq_flags) {
+-		status = size;
+-		goto out_unlock;
+-	}
++	if (flags == data->irq_flags)
++		return size;
+ 
+ 	if (data->irq_flags)
+ 		gpio_sysfs_free_irq(dev);
+ 
+-	if (flags) {
+-		status = gpio_sysfs_request_irq(dev, flags);
+-		if (!status)
+-			status = size;
+-	}
++	if (!flags)
++		return size;
+ 
+-out_unlock:
+-	mutex_unlock(&data->mutex);
++	status = gpio_sysfs_request_irq(dev, flags);
++	if (status)
++		return status;
+ 
+-	return status;
++	return size;
+ }
+ static DEVICE_ATTR_RW(edge);
+ 
+@@ -330,11 +315,8 @@ static ssize_t active_low_show(struct device *dev,
+ 	struct gpio_desc *desc = data->desc;
+ 	int value;
+ 
+-	mutex_lock(&data->mutex);
+-
+-	value = !!test_bit(FLAG_ACTIVE_LOW, &desc->flags);
+-
+-	mutex_unlock(&data->mutex);
++	scoped_guard(mutex, &data->mutex)
++		value = !!test_bit(FLAG_ACTIVE_LOW, &desc->flags);
+ 
+ 	return sysfs_emit(buf, "%d\n", value);
+ }
+@@ -350,13 +332,9 @@ static ssize_t active_low_store(struct device *dev,
+ 	if (status)
+ 		return status;
+ 
+-	mutex_lock(&data->mutex);
++	guard(mutex)(&data->mutex);
+ 
+-	status = gpio_sysfs_set_active_low(dev, value);
+-
+-	mutex_unlock(&data->mutex);
+-
+-	return status ? : size;
++	return gpio_sysfs_set_active_low(dev, value) ?: size;
+ }
+ static DEVICE_ATTR_RW(active_low);
+ 
 
----
-Bartosz Golaszewski (5):
-      gpio: sysfs: use cleanup guards for gpiod_data::mutex
-      gpio: sysfs: use cleanup guards for the sysfs_lock mutex
-      gpio: sysfs: emit chardev line-state events on GPIO export
-      gpio: sysfs: emit chardev line-state events on active-low changes
-      gpio: sysfs: emit chardev line-state events on edge store
-
- drivers/gpio/gpiolib-sysfs.c | 170 +++++++++++++++++++------------------------
- 1 file changed, 76 insertions(+), 94 deletions(-)
----
-base-commit: a39230ecf6b3057f5897bc4744a790070cfbe7a8
-change-id: 20241022-gpio-notify-sysfs-3bddf9ecca9f
-
-Best regards,
 -- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+2.45.2
 
 
