@@ -1,136 +1,78 @@
-Return-Path: <linux-kernel+bounces-383021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4ADDE9B1647
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 10:13:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42EBD9B164C
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 10:20:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3C2D283137
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 08:13:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDCC71F229BA
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 08:20:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 596C91C6F73;
-	Sat, 26 Oct 2024 08:13:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51A991CEE8E;
+	Sat, 26 Oct 2024 08:20:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jSci9EO/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B53C417D896;
-	Sat, 26 Oct 2024 08:13:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="ZeOSmZy4"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 178791C7B7F
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 08:20:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729930400; cv=none; b=u3eDS3fFim+UcNYdWDlg9bvpm/eMlM8SAqwHjNvejrUno72r7DWCNCmz1dLYbe7MbT2MDcNVHKXVZ/aAZp7VzcaqZdQ2f5KPUX8T92JfMLd2YdiHRQeYmf5ypLe7QttqbijZx5dTWS3OMhyEX7l+nZwfoWnm+cKw7UjYtnbfpbw=
+	t=1729930810; cv=none; b=JZ7hwgR8CQw0DEFyNYAzbqIr9iO0EkXqsum0+4cVrrc+MY8Ujuj/6CSCEMaQm2k0dHoGhXQVH2QGOZpKSGzI/Ogobg7o9x3aLlnFkfW0LMm2qO0SMz1j8iCPcwzvutkntMlSNXA11NihnSU0GVOiH1u+EnnDF20ivsQXxKJwWCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729930400; c=relaxed/simple;
-	bh=iUZr6BDcVRGSUW29ErBwFNHY3AC1kCqFEh1SFFtq9jM=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Z2R7XdyE9cvT1/QMOmtguf7O4YEwG0B7PcKv6ntiKNB0FhoS39wBaHcovGTkgqI4mQxQLoHldgZyLsG9uUu2k0Pz+wzjdjtg1gt9URyZz701M3motbK1/QugIKhouSQB3/ecH+EYZ3m+VcXG3XKxl75ICYlhdRshcN4MMziIMHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jSci9EO/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 819AFC4CEC6;
-	Sat, 26 Oct 2024 08:13:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729930400;
-	bh=iUZr6BDcVRGSUW29ErBwFNHY3AC1kCqFEh1SFFtq9jM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=jSci9EO/b+wxEhWKDntRJ2jWIDHRMgt3lazq084TshS2r05DjpHShIgJMwZ1YcWgm
-	 T0w/jahRVgXu6RG0eEDA9L0/yBSzRPU+/6Xsgw+mDeB+PmMZ3IlBnoWXHvDRAwGXqF
-	 IeUrNNSZkRngDWWPL2XTd+86W5pRfY5r/w4j7kMy0rjKxirvFWn6Fu14TaofPxhBMM
-	 NrWh7cmE3B4wXhPqa6dlw8IaMATwbahfSU+On00W5yR8aLOi05MOjO7B23qb+5Sv7e
-	 gXZuIZ3FG5ROtXDldAsuB1QSSwZ3YZD90ioOvCRP6S0POSMLp8+yaSn88KpjOXtoYF
-	 //YewaP2IDaDw==
-Received: from [81.145.206.43] (helo=wait-a-minute.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1t4bvC-0076Ee-7z;
-	Sat, 26 Oct 2024 09:13:18 +0100
-Date: Sat, 26 Oct 2024 09:13:17 +0100
-Message-ID: <87r083th7m.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Oliver Upton <oliver.upton@linux.dev>
-Cc: kvmarm@lists.linux.dev,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 08/18] KVM: arm64: nv: Reinject traps that take effect in Host EL0
-In-Reply-To: <20241025182354.3364124-9-oliver.upton@linux.dev>
-References: <20241025182354.3364124-1-oliver.upton@linux.dev>
-	<20241025182354.3364124-9-oliver.upton@linux.dev>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1729930810; c=relaxed/simple;
+	bh=/BKXCQiu5+9T5D+Nnc173YgEHb5heI47VdS/5F60+bw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YGi41h8KUUEyHwJ8deCYP49rerp5S7BuFaV0Xgcg+1BguJoY5WYTxtyEHj+0HrOJ6bxPFP+7OUCYw1JXppQQUq4URTzvszXFRrZCZB4sX62CS/XoP0neAeEUjKcyEOgFGpOfbYXZmy3uzSm2fw8Hw7xcrb8WJlo/3vRkxsICSbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=ZeOSmZy4; arc=none smtp.client-ip=220.197.31.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=PbnFu
+	oI9Q3MVTHlFsPg0C991ZYtgsER8pJ/y4bB0BEw=; b=ZeOSmZy4yG9DeS4uqgJk5
+	NvFF1Kr3dEVSMF2xBP9R2dRuCAZNsexjyoffVWYOrn2QzDtG4GPNia0cRvxaFWtU
+	bJHXrir6cpGsGJuxu5Nr3tqTmjQY0FWugTWlYa3x8lSQ3lOMjg352t4con0/1/5T
+	5PPsahzPoUaM6qSREiox8o=
+Received: from ProDesk.. (unknown [103.29.142.67])
+	by gzga-smtp-mtada-g1-0 (Coremail) with SMTP id _____wD3v9wkphxnW2U0Dg--.30094S2;
+	Sat, 26 Oct 2024 16:19:52 +0800 (CST)
+From: Andy Yan <andyshrk@163.com>
+To: heiko@sntech.de
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	Andy Yan <andyshrk@163.com>
+Subject: [PATCH 0/3] Enable hdmi for rk3588 based Cool Pi
+Date: Sat, 26 Oct 2024 16:19:25 +0800
+Message-ID: <20241026081942.348459-1-andyshrk@163.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 81.145.206.43
-X-SA-Exim-Rcpt-To: oliver.upton@linux.dev, kvmarm@lists.linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, anshuman.khandual@arm.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD3v9wkphxnW2U0Dg--.30094S2
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjTRnmiuUUUUU
+X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/1tbiMxuEXmccoZRKCAAAs+
 
-On Fri, 25 Oct 2024 19:23:43 +0100,
-Oliver Upton <oliver.upton@linux.dev> wrote:
-> 
-> Wire up the other end of traps that affect host EL0 by actually
-> injecting them into the guest hypervisor. Skip over FGT entirely, as a
-> cursory glance suggests no FGT is effective in host EL0.
+As the hdmi-qp controller recently get merged, we can enable hdmi
+display out on these boards now.
 
-Yes, and this (thankfully) is by design! :-)
 
-> 
-> Note that kvm_inject_nested() is already equipped for handling
-> exceptions while the VM is already in a host context.
-> 
-> Signed-off-by: Oliver Upton <oliver.upton@linux.dev>
-> ---
->  arch/arm64/include/asm/kvm_emulate.h |  5 +++++
->  arch/arm64/kvm/emulate-nested.c      | 29 ++++++++++++++++++++++++----
->  2 files changed, 30 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/arm64/include/asm/kvm_emulate.h b/arch/arm64/include/asm/kvm_emulate.h
-> index a601a9305b10..bf0c48403f59 100644
-> --- a/arch/arm64/include/asm/kvm_emulate.h
-> +++ b/arch/arm64/include/asm/kvm_emulate.h
-> @@ -225,6 +225,11 @@ static inline bool is_hyp_ctxt(const struct kvm_vcpu *vcpu)
->  	return vcpu_has_nv(vcpu) && __is_hyp_ctxt(&vcpu->arch.ctxt);
->  }
->  
-> +static inline bool vcpu_is_host_el0(const struct kvm_vcpu *vcpu)
-> +{
-> +	return is_hyp_ctxt(vcpu) && !vcpu_is_el2(vcpu);
-> +}
-> +
->  /*
->   * The layout of SPSR for an AArch32 state is different when observed from an
->   * AArch64 SPSR_ELx or an AArch32 SPSR_*. This function generates the AArch32
-> diff --git a/arch/arm64/kvm/emulate-nested.c b/arch/arm64/kvm/emulate-nested.c
-> index e1a30d1bcd06..db3149379a4d 100644
-> --- a/arch/arm64/kvm/emulate-nested.c
-> +++ b/arch/arm64/kvm/emulate-nested.c
-> @@ -20,6 +20,9 @@ enum trap_behaviour {
->  	BEHAVE_FORWARD_READ	= BIT(0),
->  	BEHAVE_FORWARD_WRITE	= BIT(1),
->  	BEHAVE_FORWARD_RW	= BEHAVE_FORWARD_READ | BEHAVE_FORWARD_WRITE,
-> +
-> +	/* Traps that take effect in Host EL0, this is rare! */
-> +	BEHAVE_IN_HOST_EL0	= BIT(2),
+Andy Yan (3):
+  arm64: dts: rockchip: Enable HDMI0 for rk3588 Cool Pi CM5 EVB
+  arm64: dts: rockchip: Enable HDMI display for rk3588 Cool Pi 4B
+  arm64: dts: rockchip: Enable HDMI display for rk3588 Cool Pi GenBook
 
-nit: BEHAVE_IN_HOST_EL0 lacks an action verb (forward?).
-
-Thanks,
-
-	M.
+ .../dts/rockchip/rk3588-coolpi-cm5-evb.dts    | 49 ++++++++++++++++++
+ .../rockchip/rk3588-coolpi-cm5-genbook.dts    | 51 +++++++++++++++++++
+ .../boot/dts/rockchip/rk3588s-coolpi-4b.dts   | 49 ++++++++++++++++++
+ 3 files changed, 149 insertions(+)
 
 -- 
-Without deviation from the norm, progress is not possible.
+2.43.0
+
 
