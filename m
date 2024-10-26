@@ -1,152 +1,101 @@
-Return-Path: <linux-kernel+bounces-383110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B51BF9B1771
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 13:28:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C0579B1775
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 13:31:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F6731F225DF
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 11:28:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20B4C2845FF
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 11:31:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7E001D414E;
-	Sat, 26 Oct 2024 11:28:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3AA31D435F;
+	Sat, 26 Oct 2024 11:31:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="agQ7DoRU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="PksaT4l0"
+Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F031B1B78F3;
-	Sat, 26 Oct 2024 11:28:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B82B61C32
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 11:30:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729942120; cv=none; b=PSfNxjKrEIkbrFAgHs9OdTs6/55pjfBEyfLpbmtqxAnptBMZfUyl+LeonisIgxH1G5LlA2WAw6mYMzf1p7xEAtIxREO94tYTkzmaDdOR4y+D/e3WM52LUPVl7nXn+yg1VIeV6eTluSLkdLekK7NAAdFddTtULhhqBhFXm0s/+wg=
+	t=1729942261; cv=none; b=fqZiQdmvuIBGTC6+2xvCdZBxAxOakm13Cp/VrM6sJRtWkVgFrvB64or6/wAHmPjzXqO4GIiBeQeqr/0Bg/JROTB6JHdyVTA+pEtUfedveG9ayGBUydv9pb/4fxm7OHrIFVhv49KybrwvwM0CCYFoBUx3VLkaAt/lz4DrTSH+CFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729942120; c=relaxed/simple;
-	bh=z56vanRfvPIkr/unET5JU6DPUCV4uByDh95So4Ihz14=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cPFvZMu1bP7Zg8eYgXpsngPgmxlRyi4GFo1uM/+kj2uBnYttM6AdiVl6hs9yQV+snarlt+yvxnJUfdBljFDW8Y4P3nOyYJVsGi08Yxg//zuRnSu9PwcFo6rnOP62XlF1BXFNu2dc9aJTqq7rsamuyOFyy6OKbICYYSSbADaBfQg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=agQ7DoRU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83C9EC4CEC6;
-	Sat, 26 Oct 2024 11:28:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729942119;
-	bh=z56vanRfvPIkr/unET5JU6DPUCV4uByDh95So4Ihz14=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=agQ7DoRUTO7mZmG36HDXPsQTLTy43nEvH3aYOQhgkBpmoH+obuhWSFB5hN4CHFFBV
-	 ilA4PDK+Dd5veHGEnI2qGd+HUpbJfcUQM69x58q/ksp+VnnFpn4VkTx7igdKQlpA6w
-	 IsFwECPOS7Yqj0/iNyG6OU6EuYMdTqpjhSy7//TQxj3t9CvAOG3XghDd4ePgPsnEof
-	 byOncU69LJdgfD5iksA0PFYUGc8CUAepDOuE7HhssfRMEJsd0VNPr4LdnMBEkR1tbS
-	 sF/OobF1aDo9GXGnF5D+JHP1z6m9mcU3eknGY9XkxZs1IuOq9KSFiC7bVaHcil4KRm
-	 CxvTlYCyEo65Q==
-Message-ID: <e7ce51a1-97a1-4d54-a1d4-0f6d279a9055@kernel.org>
-Date: Sat, 26 Oct 2024 13:28:30 +0200
+	s=arc-20240116; t=1729942261; c=relaxed/simple;
+	bh=xC6PrGtrgAKzLltvzDON86jMvYcR5du8ycWNRS54Zak=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ldfDqhxJGYOXuFSV/EKrH+Kg6+m2iFRw09+BwejdLaU+OU0JVuMtaxZKuys6hZViVqJdXdJs5oZmH8vO2BWjNccMGz0DEfriYZulvimhM1oFKb7v2Qt3A/xIGaunjRuv3kC7z9hsMdS+vf7yIzV9BpnssiL60cNjiOEB/viRcAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=PksaT4l0; arc=none smtp.client-ip=95.215.58.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1729942256;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=wR/ncGcZhqyqZFMMVHrG36CI8RFvjBeFNxRle9Z3euw=;
+	b=PksaT4l0C6oKCLz60vl8hyhpnI6Qq1UPZGyog+hQgmvX6u2rx761hwAt5DfKqLlCmv/xbb
+	Bjz5lqUr9XM8cqOJ1McbnTWgOfRTElOSNJgaf/QnVdW5b9v4Q1JX6IOKG0QL00SMn68WzG
+	rJZGFkhmNTw5OIybb1JYnkEm7raeadI=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Willem de Bruijn <willemb@google.com>,
+	Gou Hao <gouhao@uniontech.com>,
+	Mina Almasry <almasrymina@google.com>,
+	Abhishek Chauhan <quic_abchauha@quicinc.com>,
+	Kuniyuki Iwashima <kuniyu@amazon.com>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next] net: Use str_yes_no() and str_no_yes() helper functions
+Date: Sat, 26 Oct 2024 13:29:44 +0200
+Message-ID: <20241026112946.129310-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] interconnect: qcom: Add EPSS L3 support on SA8775P
-To: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>,
- Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Sibi Sankar <quic_sibis@quicinc.com>, linux-arm-msm@vger.kernel.org,
- linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, quic_okukatla@quicinc.com,
- quic_mdtipton@quicinc.com
-References: <20240904171209.29120-1-quic_rlaggysh@quicinc.com>
- <20240904171209.29120-4-quic_rlaggysh@quicinc.com>
- <c3efb01d-2138-4b79-97a1-653b7bd531d0@kernel.org>
- <bfcc65b2-97a4-4353-a2fd-dce927c53428@quicinc.com>
- <49aa8205-6324-412d-b03d-c2b3f738cc98@kernel.org>
- <6b89de85-58c0-4808-9a33-6ee7dc26611d@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <6b89de85-58c0-4808-9a33-6ee7dc26611d@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On 25/10/2024 17:38, Raviteja Laggyshetty wrote:
-> 
-> 
-> On 9/6/2024 10:00 PM, Krzysztof Kozlowski wrote:
->> On 06/09/2024 17:32, Raviteja Laggyshetty wrote:
->>>
->>> On 9/4/2024 11:52 PM, Krzysztof Kozlowski wrote:
->>>> On 04/09/2024 19:12, Raviteja Laggyshetty wrote:
->>>>> +
->>>>>  static const struct qcom_osm_l3_desc epss_l3_l3_vote = {
->>>>>  	.nodes = epss_l3_nodes,
->>>>>  	.num_nodes = ARRAY_SIZE(epss_l3_nodes),
->>>>> @@ -284,6 +307,10 @@ static const struct of_device_id osm_l3_of_match[] = {
->>>>>  	{ .compatible = "qcom,sm8150-osm-l3", .data = &osm_l3 },
->>>>>  	{ .compatible = "qcom,sc8180x-osm-l3", .data = &osm_l3 },
->>>>>  	{ .compatible = "qcom,sm8250-epss-l3", .data = &epss_l3_perf_state },
->>>>> +	{ .compatible = "qcom,sa8775p-epss-l3-cl0",
->>>>> +	  .data = &epss_l3_perf_state },
->>>> Don't grow it but express compatibility.
->>> ok. Will rename compatible from "qcom,sa8775p-epss-l3-cl0" to "qcom,sa8775p-epss-l3".
->>
->> This won't solve the problem. You still grow the table, right?
-> 
-> Falling back to "qcom,epss-l3" won't work because we need to vote into perf state register.
-> I am introducing a new fallback compatible "qcom,epss-l3-perf" for perf voting, which can be used for upcoming qcs8300.
+Remove hard-coded strings by using the str_yes_no() and str_no_yes()
+helper functions.
 
-Maybe, no clue, this was 1.5 months ago. I don't have original patches
-in the inbox anymore.
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ net/core/sock.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Just choose something sensible following writing bindings guideline.
-
-Best regards,
-Krzysztof
+diff --git a/net/core/sock.c b/net/core/sock.c
+index 039be95c40cf..132c8d2cda26 100644
+--- a/net/core/sock.c
++++ b/net/core/sock.c
+@@ -4140,7 +4140,7 @@ static long sock_prot_memory_allocated(struct proto *proto)
+ static const char *sock_prot_memory_pressure(struct proto *proto)
+ {
+ 	return proto->memory_pressure != NULL ?
+-	proto_memory_pressure(proto) ? "yes" : "no" : "NI";
++		str_yes_no(proto_memory_pressure(proto)) : "NI";
+ }
+ 
+ static void proto_seq_printf(struct seq_file *seq, struct proto *proto)
+@@ -4154,7 +4154,7 @@ static void proto_seq_printf(struct seq_file *seq, struct proto *proto)
+ 		   sock_prot_memory_allocated(proto),
+ 		   sock_prot_memory_pressure(proto),
+ 		   proto->max_header,
+-		   proto->slab == NULL ? "no" : "yes",
++		   str_no_yes(proto->slab == NULL),
+ 		   module_name(proto->owner),
+ 		   proto_method_implemented(proto->close),
+ 		   proto_method_implemented(proto->connect),
+-- 
+2.47.0
 
 
