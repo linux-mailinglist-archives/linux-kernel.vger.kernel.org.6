@@ -1,213 +1,191 @@
-Return-Path: <linux-kernel+bounces-382839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 898EB9B13E2
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 02:45:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3E7A9B13DC
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 02:44:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D220CB21D72
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 00:45:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEB9A28331E
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 00:44:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3110B17BD9;
-	Sat, 26 Oct 2024 00:45:00 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 415978BEE;
-	Sat, 26 Oct 2024 00:44:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5E068BE7;
+	Sat, 26 Oct 2024 00:44:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="tHvk4J7u"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17F591388
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 00:44:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729903499; cv=none; b=TIAW3Ie+7IglHKnxPSgUTndtouoZJePg9mg6e2HsRJZ03xX7M5d2o3ARrOFYXLWCd7RaqDo4U+ARjffXNFz1NLErbkgDY5EBVRuTjA+Uzvq0j7t1fetlS6UyEZgbdnkJLTt/A6JPL3TV0kkRmTwca70EGr3ddLBBERO2z7NW+l0=
+	t=1729903486; cv=none; b=LJzpDeY938tGw0lBLVf+Qdrk7DoCUfW2AGmgRjiXfRmw8q1GXhYleeEKFcZTU8tRuZJrXYX1sXto/SuPI+9/g/es+ghifNxqVEwFFcULlE/YztXAVZrQGao7tRYwduqPyO1Oc97SKUiPV6sUJBt44G8icqUsIrLWXvN0jrB1B20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729903499; c=relaxed/simple;
-	bh=PvsKtMEN26afGMoOiM7mmGVJBslFCCC8LZaXAnbH2JI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=S6PXBJtBlhzdUrYtEmM8Mp1F3OXuDpDhvmYwCM/TdPPVyQRvxG74pMf79S7kY8PyStSmxRkE3JedAcO0uwXbJd7OxC0IxS7aEwO4D3QYAakE5yspC/Mjh2ET/KpCmbNfyECflPoNw2CEWD6+9V5/BQ6Wh2g9hB5+AaBjpgvh/pc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 19F9A339;
-	Fri, 25 Oct 2024 17:45:25 -0700 (PDT)
-Received: from minigeek.lan (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C8BFB3F71E;
-	Fri, 25 Oct 2024 17:44:50 -0700 (PDT)
-Date: Sat, 26 Oct 2024 01:44:44 +0100
-From: Andre Przywara <andre.przywara@arm.com>
-To: Cody Eksal <masterr3c0rd@epochal.quest>
-Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
- linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
- linux-usb@vger.kernel.org, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Chen-Yu
- Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel
- Holland <samuel@sholland.org>, Parthiban <parthiban@linumiz.com>, Florian
- Fainelli <florian.fainelli@broadcom.com>, Vinod Koul <vkoul@kernel.org>,
- Linus Walleij <linus.walleij@linaro.org>, Thierry Reding
- <treding@nvidia.com>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Maxime Ripard <mripard@kernel.org>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, Yangtao Li <tiny.windzz@gmail.com>, Viresh
- Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd
- <sboyd@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, "Rafael J.
- Wysocki" <rafael@kernel.org>
-Subject: Re: [PATCH 07/13] arm64: dts: allwinner: a100: add usb related
- nodes
-Message-ID: <20241026014444.12c8c99b@minigeek.lan>
-In-Reply-To: <20241024170540.2721307-8-masterr3c0rd@epochal.quest>
-References: <20241024170540.2721307-1-masterr3c0rd@epochal.quest>
-	<20241024170540.2721307-8-masterr3c0rd@epochal.quest>
-Organization: Arm Ltd.
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.31; x86_64-slackware-linux-gnu)
+	s=arc-20240116; t=1729903486; c=relaxed/simple;
+	bh=OnyIvgg+0m07TpOJfn2WxKRf7YBafQzs+QMyiNCJcJc=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=HcIgnHYtBAaxE8A3o5HGqvaOJ0eQ8wjyGdj6ZTLihvO0KK1adFD62wCHH4dE6EJaTxjhONOupOMZlSe3+9q1AQADfVlrrN9dtHCV/ukzb2vmZ3GvSuMEDWfjaJVHKFz1vd9or1LtPoLri5PyabjYvWJrfgyDuBqnsf267QPTp2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=tHvk4J7u; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33F4FC4CEC3;
+	Sat, 26 Oct 2024 00:44:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1729903485;
+	bh=OnyIvgg+0m07TpOJfn2WxKRf7YBafQzs+QMyiNCJcJc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=tHvk4J7uTeNa4aO65BXNHAmLXWc5xxuOqUQM3fjIIchFoKM5mXiV1O/PwoF0lX8yB
+	 Eu7hbeUaGb5CHt2wM4srz6Gt/+TFV5m2jiyB2N67vpVuAL/klVrH/d2PSd23b5Q2g7
+	 tdHblkgCU4g4MV18iLtOL3lzNlOskSHuOFuo6owo=
+Date: Fri, 25 Oct 2024 17:44:44 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Tamir Duberstein <tamird@gmail.com>
+Cc: Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>,
+ Dwaipayan Ray <dwaipayanray1@gmail.com>, Lukas Bulwahn
+ <lukas.bulwahn@gmail.com>, Simon Horman <horms@kernel.org>, Niklas
+ =?ISO-8859-1?Q?S=F6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
+ Philippe Schenker <philippe.schenker@toradex.com>, Louis Peens
+ <louis.peens@corigine.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] checkpatch: always parse orig_commit in fixes tag
+Message-Id: <20241025174444.7536f7ad4c94fd02afc63077@linux-foundation.org>
+In-Reply-To: <20241025-checkpatch-fixes-commit-v2-1-4bc4f06d37b3@gmail.com>
+References: <20241025-checkpatch-fixes-commit-v2-1-4bc4f06d37b3@gmail.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 24 Oct 2024 14:05:25 -0300
-Cody Eksal <masterr3c0rd@epochal.quest> wrote:
+On Fri, 25 Oct 2024 19:43:19 -0400 Tamir Duberstein <tamird@gmail.com> wrot=
+e:
 
-Hi,
+> Do not require the presence of `$balanced_parens` to get the commit SHA;
+> this allows a `Fixes: deadbeef` tag to get a correct suggestion rather
+> than a suggestion containing a reference to HEAD.
 
-> From: Yangtao Li <frank@allwinnertech.com>
-> 
-> Allwinner A64 have two HCI USB controllers, a OTG controller and a USB
-> PHY device, let's add nodes on dts.
-> 
-> Signed-off-by: Yangtao Li <frank@allwinnertech.com>
-> [masterr3c0rd@epochal.quest: fallback to a33-musb instead of h3-musb]
-> Signed-off-by: Cody Eksal <masterr3c0rd@epochal.quest>
-> ---
->  .../arm64/boot/dts/allwinner/sun50i-a100.dtsi | 91 +++++++++++++++++++
->  1 file changed, 91 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a100.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a100.dtsi
-> index adb11b26045f..0aee1b578661 100644
-> --- a/arch/arm64/boot/dts/allwinner/sun50i-a100.dtsi
-> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a100.dtsi
-> @@ -302,6 +302,97 @@ ths: thermal-sensor@5070400 {
->  			#thermal-sensor-cells = <1>;
->  		};
->  
-> +		usbphy: phy@5100400 {
-> +			#phy-cells = <1>;
+Got it, thanks.  Below is what I ended up with:
 
-Please keep the compatible string first, and move #phy-cells to the end.
 
-> +			compatible = "allwinner,sun50i-a100-usb-phy";
-> +			reg = <0x05100400 0x14>,
-> +			      <0x05101800 0x4>,
-> +			      <0x05200800 0x4>;
+From: Tamir Duberstein <tamird@gmail.com>
+Subject: checkpatch: always parse orig_commit in fixes tag
+Date: Fri, 25 Oct 2024 19:43:19 -0400
 
-We need at least 0x24 for the phy_ctrl and 0x14 for the PMUs. But I
-wonder if we should use 0x100 for all of them, like for the D1, as there
-are more registers. The fact that the Linux driver doesn't use more
-shouldn't prevent the DT from describing them.
+Do not require the presence of `$balanced_parens` to get the commit SHA;
+this allows a `Fixes: deadbeef` tag to get a correct suggestion rather
+than a suggestion containing a reference to HEAD.
 
-> +			reg-names = "phy_ctrl",
-> +				    "pmu0",
-> +				    "pmu1";
-> +			clocks = <&ccu CLK_USB_PHY0>,
-> +				 <&ccu CLK_USB_PHY1>;
-> +			clock-names = "usb0_phy",
-> +				      "usb1_phy";
-> +			resets = <&ccu RST_USB_PHY0>,
-> +				 <&ccu RST_USB_PHY1>;
-> +			reset-names = "usb0_reset",
-> +				      "usb1_reset";
-> +			status = "disabled";
-> +		};
-> +
-> +		ehci0: usb@5101000 {
+Given this patch:
 
-The nodes are ordered by their MMIO base address, so please move them
-around accordingly.
+: From: Tamir Duberstein <tamird@gmail.com>
+: Subject: Test patch
+: Date: Fri, 25 Oct 2024 19:30:51 -0400
+:=20
+: This is a test patch.
+:=20
+: Fixes: bd17e036b495
+: Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+: --- /dev/null
+: +++ b/new-file
+: @@ -0,0 +1 @@
+: +Test.
 
-> +			compatible = "allwinner,sun50i-a100-ehci",
-> +				     "generic-ehci";
-> +			reg = <0x05101000 0x100>;
-> +			interrupts = <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&ccu CLK_BUS_OHCI0>,
-> +				 <&ccu CLK_BUS_EHCI0>,
-> +				 <&ccu CLK_USB_OHCI0>;
-> +			resets = <&ccu RST_BUS_OHCI0>,
-> +				 <&ccu RST_BUS_EHCI0>;
-> +			phys = <&usbphy 0>;
-> +			phy-names = "usb";
-> +			status = "disabled";
-> +		};
-> +
-> +		ohci0: usb@5101400 {
-> +			compatible = "allwinner,sun50i-a100-ohci",
-> +				     "generic-ohci";
-> +			reg = <0x05101400 0x100>;
-> +			interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&ccu CLK_BUS_OHCI0>,
-> +				 <&ccu CLK_USB_OHCI0>;
-> +			resets = <&ccu RST_BUS_OHCI0>;
-> +			phys = <&usbphy 0>;
-> +			phy-names = "usb";
-> +			status = "disabled";
-> +		};
-> +
-> +		usb_otg: usb@5100000 {
-> +			compatible = "allwinner,sun50i-a100-musb",
-> +				     "allwinner,sun8i-a33-musb";
-> +			reg = <0x05100000 0x0400>;
-> +			clocks = <&ccu CLK_BUS_OTG>;
-> +			resets = <&ccu RST_BUS_OTG>;
-> +			interrupts = <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupt-names = "mc";
-> +			phys = <&usbphy 0>;
-> +			phy-names = "usb";
-> +			extcon = <&usbphy 0>;
-> +			dr_mode = "otg";
 
-dr_mode should be set in the board .dts, so please remove that line
-from here.
+Before:
 
-For the records: I checked the MMIO base addresses, clock and reset
-names and the IRQs against the manual: they all match.
+WARNING: Please use correct Fixes: style 'Fixes: <12 chars of sha1> ("<titl=
+e line>")' - ie: 'Fixes: c10a7d25e68f ("Test patch")'
 
-Cheers,
-Andre
+After:
 
-> +			status = "disabled";
-> +		};
-> +
-> +		ehci1: usb@5200000 {
-> +			compatible = "allwinner,sun50i-a100-ehci",
-> +				     "generic-ehci";
-> +			reg = <0x05200000 0x100>;
-> +			interrupts = <GIC_SPI 33 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&ccu CLK_BUS_OHCI1>,
-> +				 <&ccu CLK_BUS_EHCI1>,
-> +				 <&ccu CLK_USB_OHCI1>;
-> +			resets = <&ccu RST_BUS_OHCI1>,
-> +				 <&ccu RST_BUS_EHCI1>;
-> +			phys = <&usbphy 1>;
-> +			phy-names = "usb";
-> +			status = "disabled";
-> +		};
-> +
-> +		ohci1: usb@5200400 {
-> +			compatible = "allwinner,sun50i-a100-ohci",
-> +				     "generic-ohci";
-> +			reg = <0x05200400 0x100>;
-> +			interrupts = <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&ccu CLK_BUS_OHCI1>,
-> +				 <&ccu CLK_USB_OHCI1>;
-> +			resets = <&ccu RST_BUS_OHCI1>;
-> +			phys = <&usbphy 1>;
-> +			phy-names = "usb";
-> +			status = "disabled";
-> +		};
-> +
->  		r_ccu: clock@7010000 {
->  			compatible = "allwinner,sun50i-a100-r-ccu";
->  			reg = <0x07010000 0x300>;
+WARNING: Please use correct Fixes: style 'Fixes: <12 chars of sha1> ("<titl=
+e line>")' - ie: 'Fixes: bd17e036b495 ("checkpatch: warn for non-standard f=
+ixes tag style")'
+
+
+
+The prior behavior incorrectly suggested the patch's own SHA and title
+line rather than the referenced commit's.  This fixes that.
+
+Ironically this:
+
+Fixes: bd17e036b495 ("checkpatch: warn for non-standard fixes tag style")
+Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+Cc: Andy Whitcroft <apw@canonical.com>
+Cc: Dwaipayan Ray <dwaipayanray1@gmail.com>
+Cc: Joe Perches <joe@perches.com>
+Cc: Louis Peens <louis.peens@corigine.com>
+Cc: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc: Niklas S=F6derlund <niklas.soderlund+renesas@ragnatech.se>
+Cc: Philippe Schenker <philippe.schenker@toradex.com>
+Cc: Simon Horman <horms@kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+---
+
+ scripts/checkpatch.pl |   37 ++++++++++++++++---------------------
+ 1 file changed, 16 insertions(+), 21 deletions(-)
+
+--- a/scripts/checkpatch.pl~checkpatch-always-parse-orig_commit-in-fixes-tag
++++ a/scripts/checkpatch.pl
+@@ -3209,36 +3209,31 @@ sub process {
+=20
+ # Check Fixes: styles is correct
+ 		if (!$in_header_lines &&
+-		    $line =3D~ /^\s*fixes:?\s*(?:commit\s*)?[0-9a-f]{5,}\b/i) {
+-			my $orig_commit =3D "";
+-			my $id =3D "0123456789ab";
+-			my $title =3D "commit title";
+-			my $tag_case =3D 1;
+-			my $tag_space =3D 1;
+-			my $id_length =3D 1;
+-			my $id_case =3D 1;
++		    $line =3D~ /^\s*(fixes:?)\s*(?:commit\s*)?([0-9a-f]{5,40})(?:\s*($ba=
+lanced_parens))?/i) {
++			my $tag =3D $1;
++			my $orig_commit =3D $2;
++			my $title;
+ 			my $title_has_quotes =3D 0;
+ 			$fixes_tag =3D 1;
+-
+-			if ($line =3D~ /(\s*fixes:?)\s+([0-9a-f]{5,})\s+($balanced_parens)/i) {
+-				my $tag =3D $1;
+-				$orig_commit =3D $2;
+-				$title =3D $3;
+-
+-				$tag_case =3D 0 if $tag eq "Fixes:";
+-				$tag_space =3D 0 if ($line =3D~ /^fixes:? [0-9a-f]{5,} ($balanced_pare=
+ns)/i);
+-
+-				$id_length =3D 0 if ($orig_commit =3D~ /^[0-9a-f]{12}$/i);
+-				$id_case =3D 0 if ($orig_commit !~ /[A-F]/);
+-
++			if (defined $3) {
+ 				# Always strip leading/trailing parens then double quotes if existing
+-				$title =3D substr($title, 1, -1);
++				$title =3D substr($3, 1, -1);
+ 				if ($title =3D~ /^".*"$/) {
+ 					$title =3D substr($title, 1, -1);
+ 					$title_has_quotes =3D 1;
+ 				}
++			} else {
++				$title =3D "commit title"
+ 			}
+=20
++
++			my $tag_case =3D not ($tag eq "Fixes:");
++			my $tag_space =3D not ($line =3D~ /^fixes:? [0-9a-f]{5,40} ($balanced_p=
+arens)/i);
++
++			my $id_length =3D not ($orig_commit =3D~ /^[0-9a-f]{12}$/i);
++			my $id_case =3D not ($orig_commit !~ /[A-F]/);
++
++			my $id =3D "0123456789ab";
+ 			my ($cid, $ctitle) =3D git_commit_info($orig_commit, $id,
+ 							     $title);
+=20
+_
 
 
