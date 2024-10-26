@@ -1,83 +1,122 @@
-Return-Path: <linux-kernel+bounces-383088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE7CE9B173D
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 13:02:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E9229B174F
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 13:12:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A4241F223FA
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 11:02:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96632B22355
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 11:12:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 168A81D27A6;
-	Sat, 26 Oct 2024 11:02:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61C361D3198;
+	Sat, 26 Oct 2024 11:12:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YjCKoBnj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="h3EaZv8S"
+Received: from smtp.smtpout.orange.fr (smtp-30.smtpout.orange.fr [80.12.242.30])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E41A217F22;
-	Sat, 26 Oct 2024 11:02:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5AC9217F22;
+	Sat, 26 Oct 2024 11:12:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729940562; cv=none; b=Ik7Ur/FsDM9oWCVbFZFG8VVdlizIpItp8bPGQTPV4cgQH0x3YkNTaO4rrL9/sjzEHMOQpjBIVL7rFF65yK8hgXF0jcWChSlQhxDveJO3a94Ku5Bbhd3b1qARBgCPXGl9cdHQVbeYNmmCZsIQ8+pQvEFr+H4jNRQ56N11YZTKr5A=
+	t=1729941166; cv=none; b=e/Kneh1O6adaSLFEPGFefVJtDrGee0YzFTEoMQvSZBT7B4YnRDQmqS1K9QVQ13LC3WHpQ80rPvsaWnhY+Tlut5BYSfiECNglmPFTmOXtySjP2uJco+UowZT9KK22sc/RM9fFRm8x6oftru6lQcX6BFnniui7OZVX9rOdO1NQImE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729940562; c=relaxed/simple;
-	bh=2+e2mkXeYY/1Bbeta2CvQuMBxUdG6325UmJ8QQzA0KY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZyzN++YbuLRyuwxWjtNMDf5Yun1IW2E4iBFOJovJNrMBer9JwuM2X5Zcf88hdY4EGpwsIuCHWAYnMdwT+c4sch+Hz9f8P5Y0hT7ccjJj8eX1Lr2Ajn+CgubRWd01qOhZ/x1qQH6Q3W/4JEbMYfVhO4jKDddHH3pQc00n2H/HESA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YjCKoBnj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B24D0C4CEC6;
-	Sat, 26 Oct 2024 11:02:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729940562;
-	bh=2+e2mkXeYY/1Bbeta2CvQuMBxUdG6325UmJ8QQzA0KY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=YjCKoBnjxrXWTBahClag5j3YE1tq8dvrSAJjXnT2e34DgGQKSotgwxTBwz4uMWxvY
-	 O1ZjKlNcavNFQAGrmXAVlnRletm9yAPxrQEPihvuQLlU1gxI6VQ0PWk6jP9n3j/JVQ
-	 FxLv+4q+68bMeNNTbsbvpjFssXIDaRVI+LcZOdMbe1eoeEOpnLxH9QeyU85wz5jaND
-	 OYgImW93/fnG1XUkkkR2NeGcJpEJoXQTZNND44CjyZAXO/MpDH+1LH+6Dv8jHiA6ZP
-	 7+kn94GiKvUAwy/dG/NCxzDYQCzukiy4lZ3Ff0iRzgn35w2aPcsR+kUSWuWrqO6g/f
-	 rCO0JJUnYDqBA==
-Date: Sat, 26 Oct 2024 12:02:36 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, Marius Cristea
- <marius.cristea@microchip.com>, Trevor Gamblin <tgamblin@baylibre.com>,
- Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>, Hans de Goede
- <hdegoede@redhat.com>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>
-Subject: Re: [PATCH v3 01/24] iio: magnetometer: bmc150: Drop dead code from
- the driver
-Message-ID: <20241026120236.743c6f70@jic23-huawei>
-In-Reply-To: <20241024191200.229894-2-andriy.shevchenko@linux.intel.com>
-References: <20241024191200.229894-1-andriy.shevchenko@linux.intel.com>
-	<20241024191200.229894-2-andriy.shevchenko@linux.intel.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1729941166; c=relaxed/simple;
+	bh=G84evT0B+lKjUGpRq56h5jxxOl4TYHxpYmAc92bQ8oA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VCh2LwAz38wJCmRgzqWsXHuqpsbdPwQ/1fg+CN/7+YFBP1JtU3lJgaC2QHUyztTY19I3Dp2giSPq5T8D0teL+98sE+W4dnBuStbV2i5W11f+1eTyJ7QqE0pK3ddtyUepbfL7Jy02c5A00XVxTeb6kUBPo87ZDQ6hzSgq2HqBNwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=h3EaZv8S; arc=none smtp.client-ip=80.12.242.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from localhost.localdomain ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id 4ea3tEjBah54N4ea4tPuht; Sat, 26 Oct 2024 13:03:40 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1729940620;
+	bh=G5GY2rPQRKm/v2JYqMqWO5YhIzdqawHoojEX7tDA53g=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=h3EaZv8SCmDWRQWQmRUXi1k/LikSzIZB8nBI6Hs8poRBs07+XCQ4+jqw+619awLEN
+	 lJxHw9tO+aii6QxY3TZr5aRrTTYRiI0ba/DvR9lpzhiP7TogdW9d9N9c0MusKa2oDU
+	 +TA5rYy8oTtyUuWRuhmu+6jo/IhAL4BnI8AMW1cUHEKYVSeROg49C2fP8hjRj3m39J
+	 Hd9NYj68W9hzYMtgHUKu0i7R64iFRf19FYxRU/wg7FJHSKUGpjN19WtAkNs14uuizu
+	 x42ejo/bc25726NiuqOr1ZRUqXHpz4FpOQkUc8ww6QOK/QCdeoYodcJJxXM9x/VBrP
+	 Y5JAAK2UIHU4Q==
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 26 Oct 2024 13:03:40 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Dave Penkler <dpenkler@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Lee Jones <lee@kernel.org>,
+	Thomas Richard <thomas.richard@bootlin.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-staging@lists.linux.dev
+Subject: [PATCH] staging: gpib: Fix error handling paths in cb_gpib_probe()
+Date: Sat, 26 Oct 2024 13:03:30 +0200
+Message-ID: <459c267de8c9bf48fcb555364930ae7e3cdc798b.1729940596.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Thu, 24 Oct 2024 22:04:50 +0300
-Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+If cb_gpib_config() fails, 'info' needs to be freed, as already done in the
+remove function.
 
-> Since there is no ACPI IDs for this driver to be served for,
-> drop dead ACPI bits from it completely.
-> 
-> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Given lots of somewhat independent stuff in this series, I'm going to review
-an pick them up one by one.
+While at it, remove a pointless comment related to gpib_attach().
 
-Applied this one.
+Fixes: 6f1067cfbee7 ("mfd: Add Congatec Board Controller driver")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+*NOT* compile tested, so provided as-is
 
-Thanks,
+It does not compile on x86_64 because of some missing includes. I've not
+seen if it was dedicated to a specific arch, so couldn't cross-compile
+---
+ drivers/staging/gpib/cb7210/cb7210.c | 15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
 
-Jonathan
+diff --git a/drivers/staging/gpib/cb7210/cb7210.c b/drivers/staging/gpib/cb7210/cb7210.c
+index c827d03dacf5..98f20dab320a 100644
+--- a/drivers/staging/gpib/cb7210/cb7210.c
++++ b/drivers/staging/gpib/cb7210/cb7210.c
+@@ -1194,8 +1194,7 @@ struct local_info {
+ static int cb_gpib_probe(struct pcmcia_device *link)
+ {
+ 	struct local_info *info;
+-
+-//	int ret, i;
++	int ret;
+ 
+ 	DEBUG(0, "%s(0x%p)\n", __func__, link);
+ 
+@@ -1223,8 +1222,16 @@ static int cb_gpib_probe(struct pcmcia_device *link)
+ 
+ 	/* Register with Card Services */
+ 	curr_dev = link;
+-	return cb_gpib_config(link);
+-} /* gpib_attach */
++	ret = cb_gpib_config(link);
++	if (ret)
++		goto free_info;
++
++	return 0;
++
++free_info:
++	kfree(info);
++	return ret;
++}
+ 
+ /*
+  *   This deletes a driver "instance".  The device is de-registered
+-- 
+2.47.0
+
 
