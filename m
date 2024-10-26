@@ -1,127 +1,324 @@
-Return-Path: <linux-kernel+bounces-383114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B01A9B1778
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 13:35:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C6219B1779
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 13:35:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A59CAB226F7
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 11:35:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4932C1C21023
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 11:35:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90EC71D1F7E;
-	Sat, 26 Oct 2024 11:35:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44BED1D4150;
+	Sat, 26 Oct 2024 11:35:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="YxJvbwCz"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CzNnDyxn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E231A1FC3;
-	Sat, 26 Oct 2024 11:34:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D6AD1FC3;
+	Sat, 26 Oct 2024 11:35:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729942501; cv=none; b=TcLL28ZKeBq8j05rX4OwCAy5jAjyOZHScQl6d4FBqbcIooP21ZcaFHZX1caE3TU3QJ2FPankBYhFqnO7AC0HKQggshtwAgnWkv05CbKSM409GCR0y4aww/bk0z89Fc2Amgn92GQ4w+UetJteCD6+CofUOtdFDkP6G/nMYleIh+c=
+	t=1729942533; cv=none; b=Mu/IytQttZnOvtSMEROyEW3BSMtUEOvl5RgvnBWxWKPPPCfJdQaox87qb4D5fziomEnP8IjNSzchEyRy3PA1oMyNJ9602rKgAVUjAOyTXhk6dNc4IojzdU9jDlXhY/ocqHlqRjqK5GHhtYnExL95WPTBOAZIhat6pM0ud7gsjxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729942501; c=relaxed/simple;
-	bh=gc2nX1FenozmlIeCX6Hna+IrfirzZd4vy02ZiBYdTQA=;
+	s=arc-20240116; t=1729942533; c=relaxed/simple;
+	bh=zVh+3anI9MBJR0dPj+be+KfT4tO4kN/P6zdXTj9c0uk=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kHx1lcdSsIk2yGWujngAxmA89pK+LUC0qO18L2d8IpIcOQiRNaJXOKQ2ghZxdY1Jx4Am3Upw8okd7LH2JX8mrA/LrRV1MACbLAC5TxhxcMPFzHbUVa8opGXXL4Rm6WM6lKpPeNkCxA1A8OMbkG3412rzMZaaHLgBFbWp+E5OubU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=YxJvbwCz; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 18C511BF205;
-	Sat, 26 Oct 2024 11:34:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1729942490;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9boJFCngh87o2N5te23vwSNEi1J2uQEAd3yS/VJtkLo=;
-	b=YxJvbwCzow7HO0SQ/ESpa4hUM0VuIPuQkR7yU/SA+DjP8UeXObGS3vfVfU1QuiRYSzfk/y
-	Hai+72edhsUchvrCbuaOFLv4O5SMzfwxRJmVcC0VQ0hcUAa2aX2UdC1sWiGDOf7xSdxjxP
-	xCaxqoiLiUGIG5biMiYLGcIkFF3DOHy7Np+irHcb1QhwGNTOBIwWISY+kZrZSbXvqU1y63
-	OaAECc0oGAqemLkU09MZZf3CDbo0THltF6mKYsdwZz96urOvId3T4nevLc3xUrCm4DAB84
-	ykd89iP05F0QzObHixHScpLxp3wqrYOiTgGQEM2jSEMibvdjUv3jbj40VDyPqA==
-Date: Sat, 26 Oct 2024 13:34:47 +0200
-From: Herve Codina <herve.codina@bootlin.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Rob Herring <robh@kernel.org>,
- linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Arnd Bergmann 
- <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH v2] misc: Silence warning when building the LAN966x
- device tree overlay
-Message-ID: <20241026133447.26df7466@bootlin.com>
-In-Reply-To: <20241025192117.0cf20075@bootlin.com>
-References: <20241025161739.3643796-1-p.zabel@pengutronix.de>
-	<57793bb01e02f03e215dfa6f8783df18034ae2ea.camel@pengutronix.de>
-	<20241025192117.0cf20075@bootlin.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	 MIME-Version:Content-Type; b=bqyTb8z3KtKpPK8IOxOm99Hmi8Ss1lW8qS3zsrjvCbEjV8N5vw4TtG/+F8ZMcR8RmNkVEeXwDJ/kem8wWKR4XCySTaq/bgyVFgCdGGpoy2ut02FJuogghMxeFwBqbFWMAsuYRdfTpdsev9iaP16PUUJQMDWMn68diTVIVqW0HgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CzNnDyxn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8200C4CEC6;
+	Sat, 26 Oct 2024 11:35:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729942533;
+	bh=zVh+3anI9MBJR0dPj+be+KfT4tO4kN/P6zdXTj9c0uk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=CzNnDyxn1uydYtjtrDUzKH4M/p3Kt6jyuKJtXrVQcJyDLYUqkFe7XiFFWPBxOaFX3
+	 gU9CADtBlXHuYQthliM5oAo47cknBQk6iqCqk0Nan3CQ6vjWiG4s+eHCvDxdOAUz++
+	 G4nYFuGB/eCMW2N2IHDNCmqvxG6sPR1cLUz6GMbBNNL5gL996y8JnmMtZaYOVoYrv9
+	 Zh+6V8f5sAus0xgBXBe/6BS8t5kht8q1/esKN7tVwEH0KUHT3PMUniLbKqbs+LR0pJ
+	 lCjkXVSyVjN2hJP4fLjP6/sksmvKe+Cckz6MKJsyY3OIxnCt6F98FBErwjZrvIOiOD
+	 EOVuQ00rQiePg==
+Date: Sat, 26 Oct 2024 12:34:50 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, Marius Cristea
+ <marius.cristea@microchip.com>, Trevor Gamblin <tgamblin@baylibre.com>,
+ Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>, Hans de Goede
+ <hdegoede@redhat.com>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>
+Subject: Re: [PATCH v3 13/24] iio: accel: kxcjk-1013: Convert ODR times
+ array to variable in chip_info
+Message-ID: <20241026123450.4164f348@jic23-huawei>
+In-Reply-To: <20241024191200.229894-14-andriy.shevchenko@linux.intel.com>
+References: <20241024191200.229894-1-andriy.shevchenko@linux.intel.com>
+	<20241024191200.229894-14-andriy.shevchenko@linux.intel.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: herve.codina@bootlin.com
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Philipp,
+On Thu, 24 Oct 2024 22:05:02 +0300
+Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
 
-On Fri, 25 Oct 2024 19:21:17 +0200
-Herve Codina <herve.codina@bootlin.com> wrote:
-
-> On Fri, 25 Oct 2024 18:53:46 +0200
-> Philipp Zabel <p.zabel@pengutronix.de> wrote:
+> Convert odr_start_up_times array to the variable in chip_info.
 > 
-> > On Fr, 2024-10-25 at 18:17 +0200, Philipp Zabel wrote:  
-> > > Silence the following warning when building the LAN966x device tree overlay:
-> > > 
-> > > drivers/misc/lan966x_pci.dtso:34.23-40.7: Warning (interrupts_property): /fragment@0/__overlay__/pci-ep-bus@0/oic@e00c0120: Missing interrupt-parent
-> > > 
-> > > Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> > > Link: https://lore.kernel.org/all/20241025110919.64b1cffb@canb.auug.org.au/
-> > > Fixes: 185686beb464 ("misc: Add support for LAN966x PCI device")
-> > > Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
-> > > ---
-> > > The referenced commit is in the reset tree.
-> > > Changes in v2:
-> > > - Do not handle W=1 warnings.
-> > > - Link to v1: https://lore.kernel.org/all/20241025145353.1620806-1-p.zabel@pengutronix.de/
-> > > ---
-> > >  drivers/misc/Makefile | 1 +
-> > >  1 file changed, 1 insertion(+)
-> > > 
-> > > diff --git a/drivers/misc/Makefile b/drivers/misc/Makefile
-> > > index 885b22989580..196fb730817e 100644
-> > > --- a/drivers/misc/Makefile
-> > > +++ b/drivers/misc/Makefile
-> > > @@ -72,6 +72,7 @@ obj-$(CONFIG_TPS6594_PFSM)	+= tps6594-pfsm.o
-> > >  obj-$(CONFIG_NSM)		+= nsm.o
-> > >  obj-$(CONFIG_MARVELL_CN10K_DPI)	+= mrvl_cn10k_dpi.o
-> > >  lan966x-pci-objs		:= lan966x_pci.o
-> > > +DTC_FLAGS_lan966x_pci		:= -Wno-interrupts_property
-> > >  lan966x-pci-objs		+= lan966x_pci.dtbo.o
-> > >  obj-$(CONFIG_MCHP_LAN966X_PCI)	+= lan966x-pci.o
-> > >  obj-y				+= keba/    
-> > 
-> > Applied to reset/next to silence the warning until lan966x_pci.dtso is
-> > fixed:  
-> 
-> This warning 'Missing interrupt-parent' cannot be solved in dtso.
-> I cannot reference the interrupt controller (PCI device node itself) which
-> is outside the dtso. This PCI device node is the node on which the dtso
-> is applied.
-> 
-> I think the patch you did is the correct one for this warning.
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Thought about a way to remove the 'Missing interrupt-parent' warning
-modifying the dtso. I will propose a patch on Monday.
-If accepted, it will replace your patch.
+Actually scratch the white space changes in previous. I'll do them here
+instead and avoid the merge fun the earlier change would make.
 
-Best regards,
-Hervé
+Applied with 0x00 instead of 0 and spaces after { and before }.
+
+Jonathan
+
+> ---
+>  drivers/iio/accel/kxcjk-1013.c | 166 ++++++++++++++++++---------------
+>  1 file changed, 89 insertions(+), 77 deletions(-)
+> 
+> diff --git a/drivers/iio/accel/kxcjk-1013.c b/drivers/iio/accel/kxcjk-1013.c
+> index f384969a922d..91f890275a18 100644
+> --- a/drivers/iio/accel/kxcjk-1013.c
+> +++ b/drivers/iio/accel/kxcjk-1013.c
+> @@ -179,80 +179,84 @@ enum kx_chipset {
+>  };
+>  
+>  /* Refer to section 4 of the specification */
+> -static const struct {
+> +struct kx_odr_start_up_time {
+>  	int odr_bits;
+>  	int usec;
+> -} odr_start_up_times[KX_MAX_CHIPS][12] = {
+> -	/* KXCJK-1013 */
+> -	[KXCJK1013] = {
+> -		{0x08, 100000},
+> -		{0x09, 100000},
+> -		{0x0A, 100000},
+> -		{0x0B, 100000},
+> -		{0, 80000},
+> -		{0x01, 41000},
+> -		{0x02, 21000},
+> -		{0x03, 11000},
+> -		{0x04, 6400},
+> -		{0x05, 3900},
+> -		{0x06, 2700},
+> -		{0x07, 2100},
+> -	},
+> -	/* KXCJ9-1008 */
+> -	[KXCJ91008] = {
+> -		{0x08, 100000},
+> -		{0x09, 100000},
+> -		{0x0A, 100000},
+> -		{0x0B, 100000},
+> -		{0, 80000},
+> -		{0x01, 41000},
+> -		{0x02, 21000},
+> -		{0x03, 11000},
+> -		{0x04, 6400},
+> -		{0x05, 3900},
+> -		{0x06, 2700},
+> -		{0x07, 2100},
+> -	},
+> -	/* KXCTJ2-1009 */
+> -	[KXTJ21009] = {
+> -		{0x08, 1240000},
+> -		{0x09, 621000},
+> -		{0x0A, 309000},
+> -		{0x0B, 151000},
+> -		{0, 80000},
+> -		{0x01, 41000},
+> -		{0x02, 21000},
+> -		{0x03, 11000},
+> -		{0x04, 6000},
+> -		{0x05, 4000},
+> -		{0x06, 3000},
+> -		{0x07, 2000},
+> -	},
+> -	/* KXTF9 */
+> -	[KXTF9] = {
+> -		{0x01, 81000},
+> -		{0x02, 41000},
+> -		{0x03, 21000},
+> -		{0x04, 11000},
+> -		{0x05, 5100},
+> -		{0x06, 2700},
+> -	},
+> -	/* KX023-1025 */
+> -	[KX0231025] = {
+> -		/* First 4 are not in datasheet, taken from KXCTJ2-1009 */
+> -		{0x08, 1240000},
+> -		{0x09, 621000},
+> -		{0x0A, 309000},
+> -		{0x0B, 151000},
+> -		{0, 81000},
+> -		{0x01, 40000},
+> -		{0x02, 22000},
+> -		{0x03, 12000},
+> -		{0x04, 7000},
+> -		{0x05, 4400},
+> -		{0x06, 3000},
+> -		{0x07, 3000},
+> -	},
+> +};
+> +
+> +/* KXCJK-1013 */
+> +static const struct kx_odr_start_up_time kxcjk1013_odr_start_up_times[] = {
+> +	{0x08, 100000},
+> +	{0x09, 100000},
+> +	{0x0A, 100000},
+> +	{0x0B, 100000},
+> +	{0, 80000},
+> +	{0x01, 41000},
+> +	{0x02, 21000},
+> +	{0x03, 11000},
+> +	{0x04, 6400},
+> +	{0x05, 3900},
+> +	{0x06, 2700},
+> +	{0x07, 2100},
+> +};
+> +
+> +/* KXCJ9-1008 */
+> +static const struct kx_odr_start_up_time kxcj91008_odr_start_up_times[] = {
+> +	{0x08, 100000},
+> +	{0x09, 100000},
+> +	{0x0A, 100000},
+> +	{0x0B, 100000},
+> +	{0, 80000},
+> +	{0x01, 41000},
+> +	{0x02, 21000},
+> +	{0x03, 11000},
+> +	{0x04, 6400},
+> +	{0x05, 3900},
+> +	{0x06, 2700},
+> +	{0x07, 2100},
+> +};
+> +
+> +/* KXCTJ2-1009 */
+> +static const struct kx_odr_start_up_time kxtj21009_odr_start_up_times[] = {
+> +	{0x08, 1240000},
+> +	{0x09, 621000},
+> +	{0x0A, 309000},
+> +	{0x0B, 151000},
+> +	{0, 80000},
+> +	{0x01, 41000},
+> +	{0x02, 21000},
+> +	{0x03, 11000},
+> +	{0x04, 6000},
+> +	{0x05, 4000},
+> +	{0x06, 3000},
+> +	{0x07, 2000},
+> +};
+> +
+> +/* KXTF9 */
+> +static const struct kx_odr_start_up_time kxtf9_odr_start_up_times[] = {
+> +	{0x01, 81000},
+> +	{0x02, 41000},
+> +	{0x03, 21000},
+> +	{0x04, 11000},
+> +	{0x05, 5100},
+> +	{0x06, 2700},
+> +};
+> +
+> +/* KX023-1025 */
+> +static const struct kx_odr_start_up_time kx0231025_odr_start_up_times[] = {
+> +	/* First 4 are not in datasheet, taken from KXCTJ2-1009 */
+> +	{0x08, 1240000},
+> +	{0x09, 621000},
+> +	{0x0A, 309000},
+> +	{0x0B, 151000},
+> +	{0, 81000},
+> +	{0x01, 40000},
+> +	{0x02, 22000},
+> +	{0x03, 12000},
+> +	{0x04, 7000},
+> +	{0x05, 4400},
+> +	{0x06, 3000},
+> +	{0x07, 3000},
+>  };
+>  
+>  enum kx_acpi_type {
+> @@ -313,50 +317,59 @@ static const struct kx_chipset_regs kx0231025_regs = {
+>  
+>  struct kx_chipset_info {
+>  	const struct kx_chipset_regs *regs;
+> +	const struct kx_odr_start_up_time *times;
+>  	enum kx_chipset chipset;
+>  	enum kx_acpi_type acpi_type;
+>  };
+>  
+>  static const struct kx_chipset_info kxcjk1013_info = {
+>  	.regs = &kxcjk1013_regs,
+> +	.times = pm_ptr(kxcjk1013_odr_start_up_times),
+>  	.chipset = KXCJK1013,
+>  };
+>  
+>  static const struct kx_chipset_info kxcj91008_info = {
+>  	.regs = &kxcjk1013_regs,
+> +	.times = pm_ptr(kxcj91008_odr_start_up_times),
+>  	.chipset = KXCJ91008,
+>  };
+>  
+>  static const struct kx_chipset_info kxcj91008_kiox010a_info = {
+>  	.regs = &kxcjk1013_regs,
+> +	.times = pm_ptr(kxcj91008_odr_start_up_times),
+>  	.chipset = KXCJ91008,
+>  	.acpi_type = ACPI_KIOX010A,
+>  };
+>  
+>  static const struct kx_chipset_info kxcj91008_kiox020a_info = {
+>  	.regs = &kxcjk1013_regs,
+> +	.times = pm_ptr(kxcj91008_odr_start_up_times),
+>  	.chipset = KXCJ91008,
+>  	.acpi_type = ACPI_GENERIC,
+>  };
+>  
+>  static const struct kx_chipset_info kxcj91008_smo8500_info = {
+>  	.regs = &kxcjk1013_regs,
+> +	.times = pm_ptr(kxcj91008_odr_start_up_times),
+>  	.chipset = KXCJ91008,
+>  	.acpi_type = ACPI_SMO8500,
+>  };
+>  
+>  static const struct kx_chipset_info kxtj21009_info = {
+>  	.regs = &kxcjk1013_regs,
+> +	.times = pm_ptr(kxtj21009_odr_start_up_times),
+>  	.chipset = KXTJ21009,
+>  };
+>  
+>  static const struct kx_chipset_info kxtf9_info = {
+>  	.regs = &kxtf9_regs,
+> +	.times = pm_ptr(kxtf9_odr_start_up_times),
+>  	.chipset = KXTF9,
+>  };
+>  
+>  static const struct kx_chipset_info kx0231025_info = {
+>  	.regs = &kx0231025_regs,
+> +	.times = pm_ptr(kx0231025_odr_start_up_times),
+>  	.chipset = KX0231025,
+>  };
+>  
+> @@ -655,12 +668,11 @@ static int kxcjk1013_chip_init(struct kxcjk1013_data *data)
+>  
+>  static int kxcjk1013_get_startup_times(struct kxcjk1013_data *data)
+>  {
+> -	int idx = data->info->chipset;
+> -	int i;
+> +	const struct kx_odr_start_up_time *times;
+>  
+> -	for (i = 0; i < ARRAY_SIZE(odr_start_up_times[idx]); ++i) {
+> -		if (odr_start_up_times[idx][i].odr_bits == data->odr_bits)
+> -			return odr_start_up_times[idx][i].usec;
+> +	for (times = data->info->times; times->usec; times++) {
+> +		if (times->odr_bits == data->odr_bits)
+> +			return times->usec;
+>  	}
+>  
+>  	return KXCJK1013_MAX_STARTUP_TIME_US;
+
 
