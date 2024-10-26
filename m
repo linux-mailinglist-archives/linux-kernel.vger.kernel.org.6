@@ -1,118 +1,155 @@
-Return-Path: <linux-kernel+bounces-383100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E89AE9B1755
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 13:14:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 83A729B1753
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 13:13:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74FC3B212FB
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 11:14:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 04CCAB21DA0
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 11:13:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13A641D31A8;
-	Sat, 26 Oct 2024 11:14:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 572471D3198;
+	Sat, 26 Oct 2024 11:13:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HzXmhDOB"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cuohDEER"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DEDE1D2F66;
-	Sat, 26 Oct 2024 11:14:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8C97217F22;
+	Sat, 26 Oct 2024 11:13:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729941242; cv=none; b=hxKyr8t2P4z6lt7JfUVRzOx7q/I+NOBOYqA58caCd8pfmT0sB/NThQh2r2KpFp1E5SAZosvnFcwDSWVF06UOUyRiy9dm7ireSA57iLMookXZO9hVb+UO7jCveMETzIWzI4FKz/ZGhFp3L6vA1s861qgRp+QIEl6Td5pDDGXyt4U=
+	t=1729941222; cv=none; b=nabyEVuWbsN47491cZXIBk0RVYRucs6K0xP8Am6CvyM8roHORoarqOv/RymcUUIAjT8MXPvwmWhZ/mDUprLccHYSUdmTC+jdFD8ZGtinHI6rnBUVL2M7OGLH7VMCTOcjAgq0yfaGbRLE2wes91QIE76HJlSy/tHa1PpkB5uOrLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729941242; c=relaxed/simple;
-	bh=Kx8R7i0es2J18t3j6ytFBgg4KrumRNAM3QSsRjkTUME=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ASmE1oVjdhE82HJ4Lo0Cmq5YtzGHNIlijB9IHm1cl68L0ceG7uzdTE2SPkIO9XCUOa9ecxbM7YMyx14GrXtlxO3jvhjq4Ed4Cu8hTiAgARga1LKQAw6S6EDwx292W1zboLlzjAeYsZnQn6c5zTqFCxBCa6/ZZDUxx8DeddWAf+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HzXmhDOB; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729941240; x=1761477240;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Kx8R7i0es2J18t3j6ytFBgg4KrumRNAM3QSsRjkTUME=;
-  b=HzXmhDOBDXMkqB+0ovYu1bCJQbLaUUf7DWmkl9QIe0YnvsnfY7y4ioqO
-   No5D/pEiBBVC7uSBhYreYtGetEdlkxeWsIFGc7A5skHUK7U39pFCOC718
-   94qNYTPZSelUvuQySZa5Z+zoLjonWL6VhNwshzST9c0e6TNTeLcqnXe4X
-   zN1GBP8mHig/99bv4mVTbhU7Aro51+uNZeYwbnXwXzxKDOxXN5oEdiTOe
-   FJMSiHAkkeKtkMj/6MY0kwVno8xk/goHbhmRGp3TCQeidFMQ9DBm42yIa
-   9UrYcWH4sqlflGlOtUv0b1PANk2+RfuKT9lttA7nNFjnn4xhY/qzoiSid
-   Q==;
-X-CSE-ConnectionGUID: dvKzRpM+Sp+he0VK6G3L/w==
-X-CSE-MsgGUID: njXxP5OqSpu4NRlqCBOVjg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11236"; a="32466170"
-X-IronPort-AV: E=Sophos;i="6.11,234,1725346800"; 
-   d="scan'208";a="32466170"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Oct 2024 04:13:59 -0700
-X-CSE-ConnectionGUID: 6EqCKnueSDqDH3Bx3XlKnw==
-X-CSE-MsgGUID: /lQfrYWPTYqbyKwR/jyfIA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,234,1725346800"; 
-   d="scan'208";a="80800321"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa007.fm.intel.com with ESMTP; 26 Oct 2024 04:13:59 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t4ek0-000ZYf-09;
-	Sat, 26 Oct 2024 11:13:56 +0000
-Date: Sat, 26 Oct 2024 19:13:05 +0800
-From: kernel test robot <lkp@intel.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>,
-	Linus Walleij <linus.walleij@linaro.org>
-Cc: Paul Gazzillo <paul@pgazz.com>,
-	Necip Fazil Yildiran <fazilyildiran@gmail.com>,
-	oe-kbuild-all@lists.linux.dev, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH] gpio: of: drop dependency on HAS_IOMEM
-Message-ID: <202410261912.IFxHoNb2-lkp@intel.com>
-References: <20241025163651.54566-1-brgl@bgdev.pl>
+	s=arc-20240116; t=1729941222; c=relaxed/simple;
+	bh=uepjXSsNqFucMSnwMjNTgUmu9t3lyLfDvlOZx3AMk2g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qwm/wpVC+GQmUkzSoSoGRxKC62DADWo1IveuE23B4jKIofEDzx2xP/K/AB5x12uwv6/pKjhmAk+S4eGxj490MeLTeR7LSwwXRdx3KiXh+RN2S7u3r+whG19HMXan6w7EZMn3muEtT9xXxuWj5zFqeX492SBS4hprKDYr/bdzyZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cuohDEER; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D172C4CEC6;
+	Sat, 26 Oct 2024 11:13:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729941222;
+	bh=uepjXSsNqFucMSnwMjNTgUmu9t3lyLfDvlOZx3AMk2g=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=cuohDEERw1KIj6Kqx7iWme4k35V7pDvSZE8UghmobXDCKmvMenxWhQf8J+9VY5EOx
+	 6m9ACNbhPoh0cgfWIFWoeYwhPMmsMbZkBtJIYXc6j4ekwX0n4QMCQIEsYB9WBoTC4o
+	 uOK+Ser5vhmC/gCWqmGJQ3SCn06MoHJ/Vd1H+tii8GbXBkws1RmSNk7bqIJXAXdCIk
+	 Nh2EQP0x9Zhy8S1+R4pne900hSFbMSMSzC617eitYgksuU7zTuXVXk1guXZcY9/aE+
+	 LlFuLZ28kfojcIQh/fToRIiO2OuQGm8YdO+UI4o9guiNH4UPwC453BDWSz0yuq2+Ef
+	 bG6xmiephFAuA==
+Message-ID: <ba6d1274-08ab-4754-9d5a-92f0ebab88d3@kernel.org>
+Date: Sat, 26 Oct 2024 13:13:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241025163651.54566-1-brgl@bgdev.pl>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 1/2] dt-bindings: mtd: Add bindings for describing
+ concatinated MTD devices
+To: Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>,
+ tudor.ambarus@linaro.org, michael@walle.cc, broonie@kernel.org,
+ pratyush@kernel.org, richard@nod.at, vigneshr@ti.com,
+ miquel.raynal@bootlin.com, robh@kernel.org, conor+dt@kernel.org,
+ krzk+dt@kernel.org
+Cc: venkatesh.abbarapu@amd.com, linux-spi@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
+ nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
+ claudiu.beznea@tuxon.dev, michal.simek@amd.com,
+ linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org,
+ patches@opensource.cirrus.com, git@amd.com, amitrkcian2002@gmail.com,
+ beanhuo@micron.com
+References: <20241026075347.580858-1-amit.kumar-mahapatra@amd.com>
+ <20241026075347.580858-2-amit.kumar-mahapatra@amd.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241026075347.580858-2-amit.kumar-mahapatra@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Bartosz,
+On 26/10/2024 09:53, Amit Kumar Mahapatra wrote:
+> This approach was suggested by Rob [1] during a discussion on Miquel's
+> initial approach [2] to extend the MTD-CONCAT driver to support stacked
+> memories.
+> Define each flash node separately with its respective partitions, and add
+> a 'concat-parts' binding to link the partitions of the two flash nodes that
+> need to be concatenated.
 
-kernel test robot noticed the following build warnings:
+I understand this was not sent to proper addresses for review because it
+is a RFC. It's fine then.
 
-[auto build test WARNING on brgl/gpio/for-next]
-[also build test WARNING on linus/master v6.12-rc4 next-20241025]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+If this was not the intention and this should be reviewed (and tested,
+although I assume you tested these patches first), then please read the
+standard form bellow:
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Bartosz-Golaszewski/gpio-of-drop-dependency-on-HAS_IOMEM/20241026-003750
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git gpio/for-next
-patch link:    https://lore.kernel.org/r/20241025163651.54566-1-brgl%40bgdev.pl
-patch subject: [PATCH] gpio: of: drop dependency on HAS_IOMEM
-config: s390-kismet-CONFIG_MFD_STMFX-CONFIG_PINCTRL_STMFX-0-0 (https://download.01.org/0day-ci/archive/20241026/202410261912.IFxHoNb2-lkp@intel.com/config)
-reproduce: (https://download.01.org/0day-ci/archive/20241026/202410261912.IFxHoNb2-lkp@intel.com/reproduce)
+<form letter>
+Please use scripts/get_maintainers.pl to get a list of necessary people
+and lists to CC. It might happen, that command when run on an older
+kernel, gives you outdated entries. Therefore please be sure you base
+your patches on recent Linux kernel.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410261912.IFxHoNb2-lkp@intel.com/
+Tools like b4 or scripts/get_maintainer.pl provide you proper list of
+people, so fix your workflow. Tools might also fail if you work on some
+ancient tree (don't, instead use mainline) or work on fork of kernel
+(don't, instead use mainline). Just use b4 and everything should be
+fine, although remember about `b4 prep --auto-to-cc` if you added new
+patches to the patchset.
 
-kismet warnings: (new ones prefixed by >>)
->> kismet: WARNING: unmet direct dependencies detected for MFD_STMFX when selected by PINCTRL_STMFX
-   WARNING: unmet direct dependencies detected for MFD_STMFX
-     Depends on [n]: HAS_IOMEM [=n] && I2C [=y] && OF [=y]
-     Selected by [y]:
-     - PINCTRL_STMFX [=y] && PINCTRL [=y] && I2C [=y] && OF_GPIO [=y]
+You missed at least devicetree list (maybe more), so this won't be
+tested by automated tooling. Performing review on untested code might be
+a waste of time.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Please kindly resend and include all necessary To/Cc entries.
+</form letter>
+
+Best regards,
+Krzysztof
+
 
