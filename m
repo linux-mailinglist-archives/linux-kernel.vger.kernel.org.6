@@ -1,61 +1,59 @@
-Return-Path: <linux-kernel+bounces-382882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BECC9B1471
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 05:58:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89EC29B149A
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 06:20:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6DD9F1C2170D
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 03:58:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 46F45B22160
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 04:20:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1468A17BB03;
-	Sat, 26 Oct 2024 03:57:52 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49FA41779AE;
+	Sat, 26 Oct 2024 04:19:35 +0000 (UTC)
+Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 294341DFD8;
-	Sat, 26 Oct 2024 03:57:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1781D1632ED;
+	Sat, 26 Oct 2024 04:19:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729915071; cv=none; b=QRE/Qt1oMTKgBGh7l/Vwt2Ec2g/VuOB/jqevnxg6+rgZ4VhnkCildoM5e5DjBQ3IY1XU0vOFbDrx5oy4DrzGKirBX5H8vNkgw28o7Ujx1hPkebj3ar/Y6ooQbODoI/iB/rD3Ob8CSnAOiLHXe94ARaf4LA676p88jvOyIYVkgpM=
+	t=1729916374; cv=none; b=YA3JiQCx7hgllysDgFPsch7XJSaFmcinKSmj2xtVAqHC/C4yCqQT1o9L85bagjZk9LAyNhuRHikzHmEK17xUQAEsd+jI8yGNheC8LXYpXbzuMyUW5RS/LBlFXo72+aDc6lTGQG7aaGKO4oDIeh9P+eLMStV7MQ004uhmhoeCFjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729915071; c=relaxed/simple;
-	bh=hUSRMfyu9RY2XLrAWKOMXbLeFv+ti9pDxOGiJ/kd2CI=;
+	s=arc-20240116; t=1729916374; c=relaxed/simple;
+	bh=tT7oOs94GFXNS3vZEgJoUyI6YLrituu01LE1dAuibT0=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hk0czgEnpnQfldhaMEMHwAC+HpEGkFsSbGb77StaYyUQ7KISmFq2+0NhZEa1N+enMazttBTNwNXupu1pa83g1NzBSQziW9ZFZPkJytur4sD4D5FkyZCCro6AHvbh5trzlqGpALlfJKCwtblSxf4TAsZ73PPLXw0P7ZnzMmJaFyM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Xb5R92507zlXH0;
-	Sat, 26 Oct 2024 11:55:49 +0800 (CST)
-Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id B3FD01401F4;
-	Sat, 26 Oct 2024 11:57:45 +0800 (CST)
-Received: from huawei.com (10.175.101.6) by dggpemf500002.china.huawei.com
- (7.185.36.57) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 26 Oct
- 2024 11:57:44 +0800
-From: Yue Haibing <yuehaibing@huawei.com>
-To: <anthony.l.nguyen@intel.com>, <przemyslaw.kitszel@intel.com>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <ast@kernel.org>, <daniel@iogearbox.net>,
-	<hawk@kernel.org>, <john.fastabend@gmail.com>,
-	<maciej.fijalkowski@intel.com>, <vedang.patel@intel.com>,
-	<jithu.joseph@intel.com>, <andre.guedes@intel.com>, <horms@kernel.org>,
-	<jacob.e.keller@intel.com>, <sven.auhagen@voleatech.de>,
-	<alexander.h.duyck@intel.com>
-CC: <intel-wired-lan@lists.osuosl.org>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <bpf@vger.kernel.org>,
-	<yuehaibing@huawei.com>
-Subject: [PATCH v4 net-next 4/4] ixgbevf: Fix passing 0 to ERR_PTR in ixgbevf_run_xdp()
-Date: Sat, 26 Oct 2024 12:12:49 +0800
-Message-ID: <20241026041249.1267664-5-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241026041249.1267664-1-yuehaibing@huawei.com>
-References: <20241026041249.1267664-1-yuehaibing@huawei.com>
+	 MIME-Version:Content-Type; b=Yy93mEGi6Pb/3yj0NufMuRpOOJiGbhsn2L8t4te/RuBWwqfNXwisSfAPFrmTU4ZytElp3vJpujzLZ+BT0RGRbRvgD3ABDngIxAgwUwlZ6Nzz3jdeGmhK4oClxxWeBxJckDV//hoxyZhwDSoFEZfZJC1lwMLxMXxMaAcsiNRldlc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.178.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250811.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49Q4Bnub016958;
+	Sat, 26 Oct 2024 04:19:12 GMT
+Received: from ala-exchng01.corp.ad.wrs.com (ala-exchng01.wrs.com [147.11.82.252])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 42gnn0r5v2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Sat, 26 Oct 2024 04:19:12 +0000 (GMT)
+Received: from ala-exchng01.corp.ad.wrs.com (147.11.82.252) by
+ ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 25 Oct 2024 21:19:11 -0700
+Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
+ ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server id
+ 15.1.2507.39 via Frontend Transport; Fri, 25 Oct 2024 21:19:09 -0700
+From: Lizhi Xu <lizhi.xu@windriver.com>
+To: <kent.overstreet@linux.dev>
+CC: <bfoster@redhat.com>, <linux-bcachefs@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <lizhi.xu@windriver.com>,
+        <syzbot+9fc4dac4775d07bcfe34@syzkaller.appspotmail.com>,
+        <syzkaller-bugs@googlegroups.com>
+Subject: Re: [PATCH] bcachefs: Retrieve ext again after sb is reallocated
+Date: Sat, 26 Oct 2024 12:19:08 +0800
+Message-ID: <20241026041908.2739593-1-lizhi.xu@windriver.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <43c3r56uapoeyc33lt6tunn5x772ngflxq6lpntodoj3g32s6t@ohktx3g4pkis>
+References: <43c3r56uapoeyc33lt6tunn5x772ngflxq6lpntodoj3g32s6t@ohktx3g4pkis>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,101 +62,122 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- dggpemf500002.china.huawei.com (7.185.36.57)
+X-Authority-Analysis: v=2.4 cv=ZIuFmm7b c=1 sm=1 tr=0 ts=671c6dc0 cx=c_pps a=/ZJR302f846pc/tyiSlYyQ==:117 a=/ZJR302f846pc/tyiSlYyQ==:17 a=DAUX931o1VcA:10 a=hSkVLCK3AAAA:8 a=edf1wS77AAAA:8 a=t7CeM3EgAAAA:8 a=VwQbUJbxAAAA:8 a=1XWaLZrsAAAA:8
+ a=tUeG7FvVIi3DSfVR994A:9 a=cQPPKAXgyycSBL8etih5:22 a=DcSpbTIhAlouE1Uv7lRv:22 a=FdTzh2GWekK77mhwV6Dw:22
+X-Proofpoint-GUID: sDrdc5-nCGP5fM8Ivs6NjWuhAYxCC3Qc
+X-Proofpoint-ORIG-GUID: sDrdc5-nCGP5fM8Ivs6NjWuhAYxCC3Qc
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-25_14,2024-10-25_02,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=999
+ lowpriorityscore=0 spamscore=0 mlxscore=0 priorityscore=1501
+ malwarescore=0 impostorscore=0 adultscore=0 suspectscore=0 bulkscore=0
+ clxscore=1015 classifier=spam authscore=0 adjust=0 reason=mlx scancount=1
+ engine=8.21.0-2409260000 definitions=main-2410260033
 
-ixgbevf_run_xdp() converts customed xdp action to a negative error code
-with the sk_buff pointer type which be checked with IS_ERR in
-ixgbevf_clean_rx_irq(). Remove this error pointer handing instead use
-plain int return value.
+On Fri, 25 Oct 2024 21:17:09 -0400, Kent Overstreet wrote:
+> On Sat, Oct 26, 2024 at 09:09:53AM +0800, Lizhi Xu wrote:
+> > Syzbot reported a slab-use-after-free Read in bch2_reconstruct_alloc.
+> > The sb counters resize will cause sb reallocation and release the old sb,
+> > which leads to uaf in ext.
+> > After disk_sb.sb is reallocated, ext should be retrieved again to avoid uaf.
+> >
+> > Reported-and-tested-by: syzbot+9fc4dac4775d07bcfe34@syzkaller.appspotmail.com
+> > Closes: https://syzkaller.appspot.com/bug?extid=9fc4dac4775d07bcfe34
+> > Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
+> > ---
+> >  fs/bcachefs/recovery.c | 4 ++++
+> >  1 file changed, 4 insertions(+)
+> >
+> > diff --git a/fs/bcachefs/recovery.c b/fs/bcachefs/recovery.c
+> > index 55e1504a8130..9df0969c29ce 100644
+> > --- a/fs/bcachefs/recovery.c
+> > +++ b/fs/bcachefs/recovery.c
+> > @@ -59,6 +59,7 @@ static void bch2_reconstruct_alloc(struct bch_fs *c)
+> >
+> >  	mutex_lock(&c->sb_lock);
+> >  	struct bch_sb_field_ext *ext = bch2_sb_field_get(c->disk_sb.sb, ext);
+> > +	void *sb;
+> >
+> >  	__set_bit_le64(BCH_RECOVERY_PASS_STABLE_check_allocations, ext->recovery_passes_required);
+> >  	__set_bit_le64(BCH_RECOVERY_PASS_STABLE_check_alloc_info, ext->recovery_passes_required);
+> > @@ -94,7 +95,10 @@ static void bch2_reconstruct_alloc(struct bch_fs *c)
+> >  	__set_bit_le64(BCH_FSCK_ERR_accounting_mismatch, ext->errors_silent);
+> >  	c->sb.compat &= ~(1ULL << BCH_COMPAT_alloc_info);
+> >
+> > +	sb = c->disk_sb.sb;
+> >  	bch2_write_super(c);
+> > +	if (sb != c->disk_sb.sb)
+> > +		ext = bch2_sb_field_get(c->disk_sb.sb, ext);
+> >  	mutex_unlock(&c->sb_lock);
+> >
+> >  	c->opts.recovery_passes |= bch2_recovery_passes_from_stable(le64_to_cpu(ext->recovery_passes_required[0]));
+> 
+> There's a simpler fix:
+> 
+> 
+> From 8e910ca20e112d7f06ba3bf631a06ddb5ce14657 Mon Sep 17 00:00:00 2001
+> From: Kent Overstreet <kent.overstreet@linux.dev>
+> Date: Fri, 25 Oct 2024 13:13:05 -0400
+> Subject: [PATCH] bcachefs: Fix UAF in bch2_reconstruct_alloc()
+> 
+> write_super() -> sb_counters_from_cpu() may reallocate the superblock
+> 
+> Reported-by: syzbot+9fc4dac4775d07bcfe34@syzkaller.appspotmail.com
+> Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
+> 
+> diff --git a/fs/bcachefs/recovery.c b/fs/bcachefs/recovery.c
+> index 454b5a32dd7f..0ebc76dd7eb5 100644
+> --- a/fs/bcachefs/recovery.c
+> +++ b/fs/bcachefs/recovery.c
+> @@ -94,11 +94,10 @@ static void bch2_reconstruct_alloc(struct bch_fs *c)
+>  	__set_bit_le64(BCH_FSCK_ERR_accounting_mismatch, ext->errors_silent);
+>  	c->sb.compat &= ~(1ULL << BCH_COMPAT_alloc_info);
+> 
+> -	bch2_write_super(c);
+> -	mutex_unlock(&c->sb_lock);
+> -
+>  	c->opts.recovery_passes |= bch2_recovery_passes_from_stable(le64_to_cpu(ext->recovery_passes_required[0]));
+> 
+> +	bch2_write_super(c);
+> +	mutex_unlock(&c->sb_lock);
+> 
+>  	bch2_shoot_down_journal_keys(c, BTREE_ID_alloc,
+>  				     0, BTREE_MAX_DEPTH, POS_MIN, SPOS_MAX);
+Oh, Yes, it can fix, but my first fix is before your patch,
 
-Fixes: c7aec59657b6 ("ixgbevf: Add XDP support for pass and drop actions")
-Reviewed-by: Jacob Keller <jacob.e.keller@intel.com>
-Reviewed-by: Maciej Fijalkowski <maciej.fijalkowski@intel.com>
-Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
----
- .../net/ethernet/intel/ixgbevf/ixgbevf_main.c | 23 ++++++++-----------
- 1 file changed, 10 insertions(+), 13 deletions(-)
+https://lore.kernel.org/all/20241025100205.635960-1-lizhi.xu@windriver.com/
 
-diff --git a/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c b/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
-index 149911e3002a..183d2305d058 100644
---- a/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
-+++ b/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
-@@ -732,10 +732,6 @@ static bool ixgbevf_cleanup_headers(struct ixgbevf_ring *rx_ring,
- 				    union ixgbe_adv_rx_desc *rx_desc,
- 				    struct sk_buff *skb)
- {
--	/* XDP packets use error pointer so abort at this point */
--	if (IS_ERR(skb))
--		return true;
--
- 	/* verify that the packet does not have any known errors */
- 	if (unlikely(ixgbevf_test_staterr(rx_desc,
- 					  IXGBE_RXDADV_ERR_FRAME_ERR_MASK))) {
-@@ -1044,9 +1040,9 @@ static int ixgbevf_xmit_xdp_ring(struct ixgbevf_ring *ring,
- 	return IXGBEVF_XDP_TX;
- }
- 
--static struct sk_buff *ixgbevf_run_xdp(struct ixgbevf_adapter *adapter,
--				       struct ixgbevf_ring  *rx_ring,
--				       struct xdp_buff *xdp)
-+static int ixgbevf_run_xdp(struct ixgbevf_adapter *adapter,
-+			   struct ixgbevf_ring *rx_ring,
-+			   struct xdp_buff *xdp)
- {
- 	int result = IXGBEVF_XDP_PASS;
- 	struct ixgbevf_ring *xdp_ring;
-@@ -1080,7 +1076,7 @@ static struct sk_buff *ixgbevf_run_xdp(struct ixgbevf_adapter *adapter,
- 		break;
- 	}
- xdp_out:
--	return ERR_PTR(-result);
-+	return result;
- }
- 
- static unsigned int ixgbevf_rx_frame_truesize(struct ixgbevf_ring *rx_ring,
-@@ -1122,6 +1118,7 @@ static int ixgbevf_clean_rx_irq(struct ixgbevf_q_vector *q_vector,
- 	struct sk_buff *skb = rx_ring->skb;
- 	bool xdp_xmit = false;
- 	struct xdp_buff xdp;
-+	int xdp_res = 0;
- 
- 	/* Frame size depend on rx_ring setup when PAGE_SIZE=4K */
- #if (PAGE_SIZE < 8192)
-@@ -1165,11 +1162,11 @@ static int ixgbevf_clean_rx_irq(struct ixgbevf_q_vector *q_vector,
- 			/* At larger PAGE_SIZE, frame_sz depend on len size */
- 			xdp.frame_sz = ixgbevf_rx_frame_truesize(rx_ring, size);
- #endif
--			skb = ixgbevf_run_xdp(adapter, rx_ring, &xdp);
-+			xdp_res = ixgbevf_run_xdp(adapter, rx_ring, &xdp);
- 		}
- 
--		if (IS_ERR(skb)) {
--			if (PTR_ERR(skb) == -IXGBEVF_XDP_TX) {
-+		if (xdp_res) {
-+			if (xdp_res == IXGBEVF_XDP_TX) {
- 				xdp_xmit = true;
- 				ixgbevf_rx_buffer_flip(rx_ring, rx_buffer,
- 						       size);
-@@ -1189,7 +1186,7 @@ static int ixgbevf_clean_rx_irq(struct ixgbevf_q_vector *q_vector,
- 		}
- 
- 		/* exit if we failed to retrieve a buffer */
--		if (!skb) {
-+		if (!xdp_res && !skb) {
- 			rx_ring->rx_stats.alloc_rx_buff_failed++;
- 			rx_buffer->pagecnt_bias++;
- 			break;
-@@ -1203,7 +1200,7 @@ static int ixgbevf_clean_rx_irq(struct ixgbevf_q_vector *q_vector,
- 			continue;
- 
- 		/* verify the packet layout is correct */
--		if (ixgbevf_cleanup_headers(rx_ring, rx_desc, skb)) {
-+		if (xdp_res || ixgbevf_cleanup_headers(rx_ring, rx_desc, skb)) {
- 			skb = NULL;
- 			continue;
- 		}
--- 
-2.34.1
+Subject: Re: [syzbot] [bcachefs?] KASAN: slab-use-after-free Read in bch2_reconstruct_alloc
+Date: Fri, 25 Oct 2024 18:02:05 +0800	[thread overview]
+Message-ID: <20241025100205.635960-1-lizhi.xu@windriver.com> (raw)
+In-Reply-To: <671907d4.050a0220.1e4b4d.008f.GAE@google.com>
 
+The counters will cause sb to be realloc and release the old sb, which leads to uaf in ext
+
+#syz test: upstream master
+
+diff --git a/fs/bcachefs/recovery.c b/fs/bcachefs/recovery.c
+index 55e1504a8130..9df0969c29ce 100644
+--- a/fs/bcachefs/recovery.c
++++ b/fs/bcachefs/recovery.c
+@@ -59,6 +59,7 @@ static void bch2_reconstruct_alloc(struct bch_fs *c)
+
+ 	mutex_lock(&c->sb_lock);
+ 	struct bch_sb_field_ext *ext = bch2_sb_field_get(c->disk_sb.sb, ext);
++	void *sb;
+
+ 	__set_bit_le64(BCH_RECOVERY_PASS_STABLE_check_allocations, ext->recovery_passes_required);
+ 	__set_bit_le64(BCH_RECOVERY_PASS_STABLE_check_alloc_info, ext->recovery_passes_required);
+@@ -94,7 +95,10 @@ static void bch2_reconstruct_alloc(struct bch_fs *c)
+ 	__set_bit_le64(BCH_FSCK_ERR_accounting_mismatch, ext->errors_silent);
+ 	c->sb.compat &= ~(1ULL << BCH_COMPAT_alloc_info);
+
++	sb = c->disk_sb.sb;
+ 	bch2_write_super(c);
++	if (sb != c->disk_sb.sb)
++		ext = bch2_sb_field_get(c->disk_sb.sb, ext);
+ 	mutex_unlock(&c->sb_lock);
+
+ 	c->opts.recovery_passes |= bch2_recovery_passes_from_stable(le64_to_cpu(ext->recovery_passes_required[0]));
 
