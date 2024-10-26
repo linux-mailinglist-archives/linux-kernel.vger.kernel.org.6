@@ -1,94 +1,169 @@
-Return-Path: <linux-kernel+bounces-383094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D9429B1748
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 13:08:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 060D19B174A
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 13:10:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 195121F2279F
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 11:08:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3964282BA7
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 11:10:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91AF81D2F6F;
-	Sat, 26 Oct 2024 11:08:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89CEC1D2F6F;
+	Sat, 26 Oct 2024 11:10:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Z8u7GMtJ"
-Received: from out-176.mta0.migadu.com (out-176.mta0.migadu.com [91.218.175.176])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VJSyAxzx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 095B41D1F5B
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 11:08:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7A4B217F22;
+	Sat, 26 Oct 2024 11:10:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729940905; cv=none; b=bWR/sZ4ghJIQoB9s0hw5PErepNSN3WDo+j78Ecs0VDD3itnKtpOsci2CdJDE0OZK7qeL2pxOmqiXANACgcRDK/jEcSwu3zMEEFanByTQrIODFPVhK2ozmHMIaHyg/QLzUziZ2NOh5aUYeUQijcqCVseW1Hyw90qDN4tgDs0SuRA=
+	t=1729941016; cv=none; b=LbJohCBkg+vrjXt+eiT2lBTvUKTgIINkm+bvNgnj4hCIiaREzw06AKl2PfyuLLIP+qJkciE/iqqKkfKR+1PedwBsGVLVjEnsbdQilCpzcbHQqnRnHmVQgnmWnDXd8HY6/F/OEhgZwNo35u6dVA47eBk+gDCf4z/U2Fv7jQB/TeY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729940905; c=relaxed/simple;
-	bh=Z1EgtH3POWpxTMufaRQ0P0zytPAxexCEVz0Y5BREvA4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VwSgZv9lMBTQdUWB7JniQjN2BEYptK+cqRWJccNlamYfHF444sHLmb47eL1sKH6VKWR680U3JoOhNWvp1sj6Cj4bn3MxwKGq9YOsxgN84TKOISezCf+3h6IglyB1JOv4k4UISLW6y3c9pk38TAQI3M3a5wVw6NmOE7vW8lxtBmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Z8u7GMtJ; arc=none smtp.client-ip=91.218.175.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1729940900;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=D6WmR0Vrvsk0z1xRaZASUwGnn+vKUqUmpNkKJpeL+EQ=;
-	b=Z8u7GMtJD5epajEEwoWWPxCuPq6zv3pnCTxgZrmaczz2ydW7yaUzc09VmX1qpDT0AoOLu0
-	gqYxmUihHfWmmYq89IR4M2jcbXVqrv6UmXZVtL6dKf8Ocgfq1+Y9RKIPUwUp3RgSk1Qp2u
-	NbW66glUtTlyP8jwK8eZ8Q02pp2LucA=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] x86/cpu: Use str_yes_no() helper in show_cpuinfo_misc()
-Date: Sat, 26 Oct 2024 13:08:06 +0200
-Message-ID: <20241026110808.78074-1-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1729941016; c=relaxed/simple;
+	bh=D1zMmPozLxAVw1VGTlTrfMf5aOGrrGagHHpZWqLDsMw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ca1BSXUm4P+6ml4aiWnPBMw+HYKwMwB207VPSARpS+K0ylSfTCkv1MkQFYoEj/mU0hDZag3GGGHLZApkgIoDzY/TkqW7NrUA/Ct7Z6kR2eMykdWCxf+8GAutQlaRHt8mrluult1//lb39s0JfvZzxsvhwqlVY4S0h23dH7ImpIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VJSyAxzx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3EE7C4CEC6;
+	Sat, 26 Oct 2024 11:09:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729941015;
+	bh=D1zMmPozLxAVw1VGTlTrfMf5aOGrrGagHHpZWqLDsMw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=VJSyAxzxD2jy6H7hrkmMPyirYvduX9fvXkMFHuMrBoslu1IpNGkBxXm7dYm0xCgX0
+	 fO4X8Z+Iieuv/k2wNykQe59DH1C4Ny8MYhZLWiD0fxQMi4LRkSMZEg0PH1eIxiXdlQ
+	 mTuOeatUyY4QWWitsNAQlrnf0p/b25/inRCbHEX8AvURWLGtWBw6UfDSTNfEAwxi6H
+	 G7Qb8NC0Cv2GQL77CAaBCP5jobp2H4lYU/0yRas9kX2dcv8RcTXB5eQjZbAe6Sgwer
+	 fgW727v24Qnyq0qvU91JWtYZTeGRB8JrdzgdAWSWEI0i/3E0G9cGcbm+PmjFnDJvAY
+	 yHTQzZ97/6jmA==
+Date: Sat, 26 Oct 2024 12:09:43 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, Marius Cristea
+ <marius.cristea@microchip.com>, Trevor Gamblin <tgamblin@baylibre.com>,
+ Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>, Hans de Goede
+ <hdegoede@redhat.com>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>
+Subject: Re: [PATCH v3 05/24] iio: acpi: Add
+ iio_get_acpi_device_name_and_data() helper function
+Message-ID: <20241026120943.55bb9671@jic23-huawei>
+In-Reply-To: <20241024191200.229894-6-andriy.shevchenko@linux.intel.com>
+References: <20241024191200.229894-1-andriy.shevchenko@linux.intel.com>
+	<20241024191200.229894-6-andriy.shevchenko@linux.intel.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Remove hard-coded strings by using the str_yes_no() helper function.
+On Thu, 24 Oct 2024 22:04:54 +0300
+Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
 
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- arch/x86/kernel/cpu/proc.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+> A few drivers duplicate the code to retrieve ACPI device instance name.
+> Some of them want an associated driver data as well.
+> 
+> In order of deduplication introduce the common helper functions.
+It's a weird function, but clearly useful to reduce duplication of
+weird code.  So fair enough.  Thanks for adding the do not use message.
+Applied.
 
-diff --git a/arch/x86/kernel/cpu/proc.c b/arch/x86/kernel/cpu/proc.c
-index e65fae63660e..41ed01f46bd9 100644
---- a/arch/x86/kernel/cpu/proc.c
-+++ b/arch/x86/kernel/cpu/proc.c
-@@ -41,11 +41,11 @@ static void show_cpuinfo_misc(struct seq_file *m, struct cpuinfo_x86 *c)
- 		   "fpu_exception\t: %s\n"
- 		   "cpuid level\t: %d\n"
- 		   "wp\t\t: yes\n",
--		   boot_cpu_has_bug(X86_BUG_FDIV) ? "yes" : "no",
--		   boot_cpu_has_bug(X86_BUG_F00F) ? "yes" : "no",
--		   boot_cpu_has_bug(X86_BUG_COMA) ? "yes" : "no",
--		   boot_cpu_has(X86_FEATURE_FPU) ? "yes" : "no",
--		   boot_cpu_has(X86_FEATURE_FPU) ? "yes" : "no",
-+		   str_yes_no(boot_cpu_has_bug(X86_BUG_FDIV)),
-+		   str_yes_no(boot_cpu_has_bug(X86_BUG_F00F)),
-+		   str_yes_no(boot_cpu_has_bug(X86_BUG_COMA)),
-+		   str_yes_no(boot_cpu_has(X86_FEATURE_FPU)),
-+		   str_yes_no(boot_cpu_has(X86_FEATURE_FPU)),
- 		   c->cpuid_level);
- }
- #else
--- 
-2.47.0
+> 
+> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+>  drivers/iio/industrialio-acpi.c | 38 ++++++++++++++++++++++++++++++++-
+>  include/linux/iio/iio.h         | 10 +++++++++
+>  2 files changed, 47 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/iio/industrialio-acpi.c b/drivers/iio/industrialio-acpi.c
+> index 1e46908f9534..d67a43843799 100644
+> --- a/drivers/iio/industrialio-acpi.c
+> +++ b/drivers/iio/industrialio-acpi.c
+> @@ -2,7 +2,8 @@
+>  /* IIO ACPI helper functions */
+>  
+>  #include <linux/acpi.h>
+> -#include <linux/dev_printk.h>
+> +#include <linux/device.h>
+> +#include <linux/export.h>
+>  #include <linux/iio/iio.h>
+>  #include <linux/sprintf.h>
+>  
+> @@ -87,3 +88,38 @@ bool iio_read_acpi_mount_matrix(struct device *dev,
+>  	return ret;
+>  }
+>  EXPORT_SYMBOL_GPL(iio_read_acpi_mount_matrix);
+> +
+> +/**
+> + * iio_get_acpi_device_name_and_data() - Return ACPI device instance name and driver data
+> + * @dev:		Device structure
+> + * @data:		Optional pointer to return driver data
+> + *
+> + * When device was enumerated by ACPI ID matching, the user might
+> + * want to set description for the physical chip. In such cases
+> + * the ACPI device instance name might be used. This call may be
+> + * performed to retrieve this information.
+> + *
+> + * NOTE: This helper function exists only for backward compatibility,
+> + * do not use in a new code!
+> + *
+> + * Returns: ACPI device instance name or %NULL.
+> + */
+> +const char *iio_get_acpi_device_name_and_data(struct device *dev, const void **data)
+> +{
+> +	const struct acpi_device_id *id;
+> +	acpi_handle handle;
+> +
+> +	handle = ACPI_HANDLE(dev);
+> +	if (!handle)
+> +		return NULL;
+> +
+> +	id = acpi_match_device(dev->driver->acpi_match_table, dev);
+> +	if (!id)
+> +		return NULL;
+> +
+> +	if (data)
+> +		*data = (const void *)id->driver_data;
+> +
+> +	return dev_name(dev);
+> +}
+> +EXPORT_SYMBOL_GPL(iio_get_acpi_device_name_and_data);
+> diff --git a/include/linux/iio/iio.h b/include/linux/iio/iio.h
+> index 3a9b57187a95..445d6666a291 100644
+> --- a/include/linux/iio/iio.h
+> +++ b/include/linux/iio/iio.h
+> @@ -831,6 +831,7 @@ int iio_device_resume_triggering(struct iio_dev *indio_dev);
+>  bool iio_read_acpi_mount_matrix(struct device *dev,
+>  				struct iio_mount_matrix *orientation,
+>  				char *acpi_method);
+> +const char *iio_get_acpi_device_name_and_data(struct device *dev, const void **data);
+>  #else
+>  static inline bool iio_read_acpi_mount_matrix(struct device *dev,
+>  					      struct iio_mount_matrix *orientation,
+> @@ -838,7 +839,16 @@ static inline bool iio_read_acpi_mount_matrix(struct device *dev,
+>  {
+>  	return false;
+>  }
+> +static inline const char *
+> +iio_get_acpi_device_name_and_data(struct device *dev, const void **data)
+> +{
+> +	return NULL;
+> +}
+>  #endif
+> +static inline const char *iio_get_acpi_device_name(struct device *dev)
+> +{
+> +	return iio_get_acpi_device_name_and_data(dev, NULL);
+> +}
+>  
+>  /**
+>   * iio_get_current_scan_type - Get the current scan type for a channel
 
 
