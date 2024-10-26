@@ -1,218 +1,534 @@
-Return-Path: <linux-kernel+bounces-383359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88FE39B1A93
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 21:25:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 050A99B1A95
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 21:27:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B6411F21B7A
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 19:25:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 810A51F21DD4
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 19:27:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78CB21D61AC;
-	Sat, 26 Oct 2024 19:25:40 +0000 (UTC)
-Received: from IND01-BMX-obe.outbound.protection.outlook.com (mail-bmxind01on2122.outbound.protection.outlook.com [40.107.239.122])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E700E1D6DB7;
+	Sat, 26 Oct 2024 19:27:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gaodhs1W"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC386BE4E;
-	Sat, 26 Oct 2024 19:25:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.239.122
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729970739; cv=fail; b=gbIkSZ7bgOajzSpLL7+Jj84PDIQu36d8SZsgbPNY4wINxbQPtfhoJt4Z32ktZKdb3mxgj9Dq5n9PxmZzLX0NQ536WUgWmUAwWmdrdZvrtTBzeBHR0W+zbNZmmkqI9FR4f9KVocu8CyU5Kyx2BpsXWPt5CUkIlWncEzvb/pQkNOg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729970739; c=relaxed/simple;
-	bh=869h5b2Yhom3WSyx0wY94cPsJl4Tlj0yAZ41PCXrUPs=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=V+nmrOCmAxXyWAz/xCSAyiFmfE4F5ow6rzPI696OhNCR9nDMF3IUrJWB5MnEenYIU70X9C/F0Y/ioSp4zjOP78m7owWefbUNkQsgp6OnIIfwGGqej1Mc3A6CAR6oXrdUNb8WJbHj7bTZQEpR5cIwPtLewb7st7+MKsUJySmOG+I=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siliconsignals.io; spf=pass smtp.mailfrom=siliconsignals.io; arc=fail smtp.client-ip=40.107.239.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siliconsignals.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=siliconsignals.io
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=gGhBINTOW6E/bZgI9GMXwzJARgnBiQbEdmvg18Q6gRjunuDrDPaWpId8QSUpffBxglq6LCxcvB82cNCvh6+iKCfNmy6/G+MR3aF7uoxudNYlFo2YkGnc3U1eZjQ+EeEX8q05GFbtMsd5gvR/k4clUFnb09NVFFP5nJzGXFqoJ0NAFvW8qAOUKYkUB+0BO4TMorq6LlzbfPkOBxKfHDC+07ED7R7DlyPdQC8wFDCHqTHWt1Yd9GmAwJZIMIQlGM3fA54YLoM4vrWXUbL+LTBeCtyJzoM+Ih4zYkyq7kER3biBkimo5zKIeAeR+JbiHWU263snmybll7kJu99cF9BZIw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=869h5b2Yhom3WSyx0wY94cPsJl4Tlj0yAZ41PCXrUPs=;
- b=W2zo73/rEGOwoZgtZlQHRY3HXqOG1GGAegi/RDS/hIXIh1/U3dpo9bTj7gKl0tTPxIA+VHae8I7DUixrE2BCTwzX03HPtXFW/fvlq5ZudPvJygoz9ycZRvfYXlO4XBubG38OUJwnS47L2nLy7YLoKUiBDMbLCJlH3q5OFsF5UBJgW4tXKv2GYqXbRisWXvtJyxhBSLxnW5wPXnaQ8olwG+5Wm6jd8b2pNFkDx4uFdzaPfC3hZpgPhzt1N3oiJ2Qmh3B3DzGd6Kgq0I8sWwF3rSKHEUKnNBB2a4PsLKJquzGJII/1BFLr+vBKq/rfUZ+/MvEvN8/6RHd8fHyIVMzLfQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siliconsignals.io; dmarc=pass action=none
- header.from=siliconsignals.io; dkim=pass header.d=siliconsignals.io; arc=none
-Received: from PN3P287MB1829.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:199::7)
- by MAYP287MB3597.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:149::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.25; Sat, 26 Oct
- 2024 19:25:32 +0000
-Received: from PN3P287MB1829.INDP287.PROD.OUTLOOK.COM
- ([fe80::58ec:81a0:9454:689f]) by PN3P287MB1829.INDP287.PROD.OUTLOOK.COM
- ([fe80::58ec:81a0:9454:689f%5]) with mapi id 15.20.8093.014; Sat, 26 Oct 2024
- 19:25:32 +0000
-From: Tarang Raval <tarang.raval@siliconsignals.io>
-To: Krzysztof Kozlowski <krzk@kernel.org>, Himanshu Bhavani
-	<himanshu.bhavani@siliconsignals.io>
-CC: "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "robh@kernel.org"
-	<robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, "linux-gpio@vger.kernel.org"
-	<linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] dt-bindings: pinctrl: convert pinctrl-mcp23s08.txt to
- yaml format
-Thread-Topic: [PATCH v2] dt-bindings: pinctrl: convert pinctrl-mcp23s08.txt to
- yaml format
-Thread-Index: AQHbJhLcvG4Vz0BOQ0uMGPkY6V1e9LKY9kcAgAAOtQCAABTl3IAAPZKAgAANxCo=
-Date: Sat, 26 Oct 2024 19:25:32 +0000
-Message-ID:
- <PN3P287MB1829A71905108200B68353A68B482@PN3P287MB1829.INDP287.PROD.OUTLOOK.COM>
-References: <20241024124654.26775-1-himanshu.bhavani@siliconsignals.io>
- <usqmeunejf44l6wjw67ocv4idyxfpw5ivt5v4hqkputd7d7xsk@3ies2iwutzsz>
- <PN0P287MB20195CAFA249448F66D13B659A482@PN0P287MB2019.INDP287.PROD.OUTLOOK.COM>
- <PN3P287MB1829C2FCE4C56325CD1DC8988B482@PN3P287MB1829.INDP287.PROD.OUTLOOK.COM>
- <91a8d0ab-a6a6-4dfa-8613-8d4dbafeda40@kernel.org>
-In-Reply-To: <91a8d0ab-a6a6-4dfa-8613-8d4dbafeda40@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siliconsignals.io;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PN3P287MB1829:EE_|MAYP287MB3597:EE_
-x-ms-office365-filtering-correlation-id: fbccf0cf-124f-4ec5-ec2d-08dcf5f3f580
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|376014|10070799003|366016|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- =?Windows-1252?Q?iRvAubnMpCSPWCA7FXj0nirj2pzAXzV8TXXmmoi/zFNcM7KY0mRoTXgs?=
- =?Windows-1252?Q?BUZQXAbcyukx8C5iaM+Y0+GJ5zsSXQdjugNqHqGkU+ni3mPCCkH2tJdW?=
- =?Windows-1252?Q?szPKNcCm4mQ7gXS2pmJxBUsug5pDmaFfA/v8KjeXTfqn6YruvPs5CH6x?=
- =?Windows-1252?Q?8VE+YjiltCAcXXWxUtK/Kyn4cKGqLU4+AKRkaJfH/zDKH4BSiV5MulUq?=
- =?Windows-1252?Q?dgSif3BFgZkPWmmqsRsWXLVFeC9PTlaYZgPUBtsu0AVoGmAATAbvjJhk?=
- =?Windows-1252?Q?Z6ejlTOoL66CaB7an8esqdSQf9NDPZWf61qcGN5QamRW97BtISt9YEfz?=
- =?Windows-1252?Q?qGYac+2h5PxVuewt1rxwOQaa7UmmA3YdQWAHSJ/jPpKyb8+fJCEfIESb?=
- =?Windows-1252?Q?5inlQHYqZ9K2cOqdMkTkuFwkYpA9p/LofsmZmnxp5uzRv+Ivww+iaTzD?=
- =?Windows-1252?Q?TkLw41j/wSwQs5WF0zpTp17nClhntTzz7/AFGatVRE+j7O9f3VQ17ej7?=
- =?Windows-1252?Q?4u4+iWDth58WEHe9Ip8pGIe+LakPkkxybj4XF1JoA2IbjViud/CfKOP1?=
- =?Windows-1252?Q?yDQr+2Sabh43bb2/Ux6bOo1h9D5lDgpYoqmhBZsrMR6Z35KmIFZ8XXOA?=
- =?Windows-1252?Q?x7RsNsgtf3+7a1pZZWSQrGLmC7cmcgxnX9wajSWOS1wV9exKwspF6Fb4?=
- =?Windows-1252?Q?ejwd5kuVtss5Q0YN43RU4ORlyN5d0uArxLvmn/r0si+c6tyaZdx5bql2?=
- =?Windows-1252?Q?yoBl9rICCw14Qpc9+HR31AHt+wmxifW9vHYk0uwkdnydeWd7iIhohT4T?=
- =?Windows-1252?Q?EXH9/HeuSkKVetdEUecUHkf7Az7SyiNaul3iXC3XW2JXGDgEtOcXr9XB?=
- =?Windows-1252?Q?Jrm2lwhHkSkFGa07R0o/LJtBJnlRqlDw+zufAYhnE9vWp+Hdj6eO0ZWo?=
- =?Windows-1252?Q?iknzYqYljI+pwjV3Os22NmnQEDZEnHThDid6abZAY/lHd0iaU7PSTneq?=
- =?Windows-1252?Q?9/W3aXT4XlVZW761y7ZbGgNW71G0ogjJUJCkQacWGgoWHC8Mgt/+y7n7?=
- =?Windows-1252?Q?mGJFVDfesZIRdR+TwD2Frcq+gbjk01nlE3zpQFCd2giNFUDsXDrqmHGr?=
- =?Windows-1252?Q?9tO/2AYw5Fde1UvFyaWKvXre5c9Un3Zdw8g01fQjsFZasHQq98zl9+wn?=
- =?Windows-1252?Q?DF6BcBD8lwslEOGE9QyETRqJ2VpJcrFij+eNn/LWawIamiyVgn1XaUJD?=
- =?Windows-1252?Q?0oNn+dGBe3SJNF4tEk1k9NKFwGfLxwdTnITixv5LkuZMUjbcEqHB0cgz?=
- =?Windows-1252?Q?VR7GDNeh/WfklzBvV/LJ/m+g3e021EsRS7PMxcE2X8O0b7pybth1XfZT?=
- =?Windows-1252?Q?VJUHuZM7Gl1DeDeoQ1x2oIMtqJE2U3ZY5pjbEVX91hJMpjwJIV059/M0?=
- =?Windows-1252?Q?XRcpSv71VmwgzqpkCrLOa2PsR8dGDAEItBWCFDahS5E=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PN3P287MB1829.INDP287.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(10070799003)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?Windows-1252?Q?9uNtXo7ZfvSHlW8NCTxAfEdU1A3V6Da4J6IW3K3vh8wqZ5F0LhcoxDSr?=
- =?Windows-1252?Q?oEArtYhk2sOfi9Sd4YjkRc1H07PcZMTCUQoivt6dSuMST2SwyrTmz2CL?=
- =?Windows-1252?Q?gHtbUhHVISdyRV498AlVnVMsqM03WIX6Ghawx54cdufvuwzubIPKiTN4?=
- =?Windows-1252?Q?vbOlPVl5LmUXC0wjczjdlWuFwpBcm25RtHC31z9WWJA6vIq02AJ96gSH?=
- =?Windows-1252?Q?qKjBXSdbTintzfER4kYvUwuhxto4OtO1LqtKbogwxVOp/BqD57F+bnnv?=
- =?Windows-1252?Q?Ufm/pex+yeW/C8DjYyUVzKLpugdOQ01Ynj35RPeGKjyi2cb07nY906TA?=
- =?Windows-1252?Q?n+7c1lNkFEu2U5RYvTkgytdIUkj8agQVmCl+i7sD2jsaRUhgX62xSd7l?=
- =?Windows-1252?Q?S70yGmYTbMbnTZACEJD5VGFG9RTRT7dp7syVvXM4hdTz/qWEHdb+SCrv?=
- =?Windows-1252?Q?FVi7WUdnW3nrODxagWDVmWc3u6UeRWW1Q8GRiCbUXPWKoTYyiM6eQX7a?=
- =?Windows-1252?Q?rwaYAYcvI1DI3M/RPJSk48Ex5AX9l1xhLt/Oupv130l8Dxw4nbMlay5g?=
- =?Windows-1252?Q?kY5SYsBDgPiQKURbkDhqMCXBD56Mm/SSLeVnmjOyez+JhKDStKTtJz5/?=
- =?Windows-1252?Q?F+cBAeyfTGzrgbgGK21grQ648Mefbu5e9kEWy5563NqUknvLNoJ9hc2Y?=
- =?Windows-1252?Q?bg3YaGqEL1ASqBL7AeluwL5LDRkOzC5b6YBUbELpUfwNXUjSp/uRlEwI?=
- =?Windows-1252?Q?Ga4zZTepGojOS8wy5eBnI4QosB/I/hMCTQ29NYLaJGF6yE1WJa7kI8jZ?=
- =?Windows-1252?Q?3qiZF05bRm3wHt/NBbYLb6eald6c/J9WUbICwI/biTdVzwvS++h4/MhP?=
- =?Windows-1252?Q?DKr/m4812KST9DpXhMGMVOGyHlBQQrWtvmTbP4fhtVbS+WGkm9YSMS4f?=
- =?Windows-1252?Q?O512zpUM3PfMP2MH3xV3qD8KQ/765IDDUhMmPkRFPXSsLePQV1hEY3xz?=
- =?Windows-1252?Q?YRmFCTkM9P7Mzl3MlgKcWHAtf/DBw4Wxf9m+A2K3sG7XElM6iXK4I4n8?=
- =?Windows-1252?Q?k1xsNIEUL5fh4Lff0RFrhUIOHwfys9jnyccnqtthgaAnzq8y98KwU90i?=
- =?Windows-1252?Q?cPzJBJUqCvnxYi9Nim8nvxMlGTnY9Trt0MCymQTK5u5MRLO/qj7Mr75Q?=
- =?Windows-1252?Q?IZO1QxnhP5nlWSKUguY9Ayy6EpHgngTB21ghqWnv+tcgPbJnu70LZUxU?=
- =?Windows-1252?Q?vuQEpv1fVnpBBQQX4CFFFK5/oCyusFkVD4VtmKGQVTx+4nneXvBOibeW?=
- =?Windows-1252?Q?dD7T7JVWNtd/Q+3ggnfBa8UEOew/NSv2PNFup8Q1pu6VQuA5+lf7u/mY?=
- =?Windows-1252?Q?PMYRozHGZLrmkQw3YvWHgTICQo1L9tptNiXKf2yW+RZUZzd9JzOSwdxp?=
- =?Windows-1252?Q?ro+yDOLNT6ML4kY4T5OVhXJadp51h14QxoqXLEtjxlQtSikvKhu3Mutv?=
- =?Windows-1252?Q?739KwPr8B+rcazUI7EC+VLSe0kV1uINmKQmLQ2+5Qv8RGaAz54L0FMv2?=
- =?Windows-1252?Q?CgJ3+jSAT3jQ5w83q4VEeDtek0ciVdTYq2GYfq+RStr0ubw93yk7e/Ci?=
- =?Windows-1252?Q?L2xmjRGh/C7WrLHYxg24gv/TH3xhaqzrcEF1LS/BxuAASHfFhAM/YkTR?=
- =?Windows-1252?Q?sAlsy68MQk2ekZDPp8vMiURUWfBVTNdRIcI/MsRObl5Nf+XDgcdXxlVg?=
- =?Windows-1252?Q?6mi9WbZ6yRBaCMyO+kpxiZsXQjp913iQOrwbwDQg/WEKyOkimCKmSjF3?=
- =?Windows-1252?Q?44mJjw=3D=3D?=
-Content-Type: text/plain; charset="Windows-1252"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B5F7146013;
+	Sat, 26 Oct 2024 19:27:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729970865; cv=none; b=uTDcLyAXdJanhxPpN60Tc3wOWZV1R0e8ue8RZ5FFFgMHJum7vzSlyzMrnfQXKbeDMlDwpXZUS/+P9ncOPV0sxZWtCyOzdEfc2lTiHUSeJ4iYLFuRBLJAxkkwnnNPQ0ACNewf8KoVzyjRutt7sw20kG3r9pc4zO8Ekoz4yWMO7aA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729970865; c=relaxed/simple;
+	bh=S502IpnDIcET17mBNY89B3iht7n3JKQGTscHzyynvs4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Fx6wfdXLHTo6vuso3chvuyJWu4vcQhvHao9ldsfGdhbJiPSPKHp3c4rCztVu915+BhmezDJYZju7YTLqN0Y7viL3EeVUgsnNyYiGzLrZkAl1lAnat7uGunwyQf1B6quNfqZAVlpAGuZV6LNG9pXpWp7PeTEJqOCHjtS5BXJYmFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gaodhs1W; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-71e74900866so2315464b3a.1;
+        Sat, 26 Oct 2024 12:27:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729970862; x=1730575662; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=fA40FaT5RXWCXZ0+bUq5D/w3OprknqZD3KhJcCeMLjw=;
+        b=gaodhs1WcfFnJEDEWvT8IyxXA8+dDkMDS2Gh5hWgZ9PfQfytFRY+i/OMEgNNooNmR9
+         In4/ztnEckOh86aZjAi6+I5b5OSraBnRGO+x7xhST8WB7IiDJJimQo9IVgb+YMk/YaQq
+         d6FuteVkAQMIZZm/sSTycNsuXdNYaAJ9WDAj/Z/e9QihiGAF3NfvZu8iQAXtGlJPTApL
+         9cbXPQwM+2926cdoXpVTcuT0qDkT6ienK++9RWmQrandSKs0oxQGfjMLYbS4FTL3dq6Y
+         2w2BbrYXdBHyHMuyKtyk96iA2C9tNwZiPtbV/5WYNALCv6Yr5RJFZ+JKGFyQeT6xX5by
+         uhPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729970862; x=1730575662;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fA40FaT5RXWCXZ0+bUq5D/w3OprknqZD3KhJcCeMLjw=;
+        b=un6iye6p9JwZDPiu0JvjuOvAlcUokAEpAhFoknyadLrBKrsHxfWLlQX7sJb8wFY0Kg
+         EABQbV42lUI/N/AZE7LSU8gpNfzV8l1+t675xWIVmruZYht93li7OymH0QRs+42yr1Rk
+         yG0GVsDS1QO1hl6iNceuk0usU3nTxnREMf5Ret0ZndnqaXHG2zFJAVpdL41KQrIxhNZT
+         0n6KxnkmMu3Oj0K9fLsoY1KtbERaxjStMnC7+8//9zOnIGMNXM8JRgwY+3BY31NJCRnv
+         cg6+3iM67wzmVJb/gGXqZTLiZIuPPxTcRPCnF8fjK60CPNF0JIaSJRpemnEl3n148pMh
+         n6Hg==
+X-Forwarded-Encrypted: i=1; AJvYcCW5o7UJSvMykPPue1vV3lCGpEaTbN31f6d0luCY0khzIP61V7YybGoh8y/JSjlZUT76PrCXlhkQWA7iUcg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4YOH3Wg68XCxbWPhRhu0Xfhvx/FMh4c4vx5vp2XfwXsnEhEhZ
+	f3ZvCsg4zuQJkJnJc28yuYfRhswsimONbvGQ9kALgJSpVeU6AxmO
+X-Google-Smtp-Source: AGHT+IGNDiLO935y/mSqxNk0WbmrAKYAtaGFIXAmXYtebP/zB1ADiCMEKVsZcAfWqdk736Da59ze9Q==
+X-Received: by 2002:a05:6a00:10c7:b0:717:9154:b5d6 with SMTP id d2e1a72fcca58-72063028d41mr5680707b3a.22.1729970861558;
+        Sat, 26 Oct 2024 12:27:41 -0700 (PDT)
+Received: from mythos-cloud.. ([121.185.170.145])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72057a3c2d4sm3045922b3a.202.2024.10.26.12.27.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 26 Oct 2024 12:27:41 -0700 (PDT)
+From: Moon Yeounsu <yyyynoom@gmail.com>
+To: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Moon Yeounsu <yyyynoom@gmail.com>
+Subject: [PATCH net-next] net: dlink: add get_ethtool_stats in ethtool
+Date: Sun, 27 Oct 2024 04:26:53 +0900
+Message-ID: <20241026192651.22169-3-yyyynoom@gmail.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: siliconsignals.io
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PN3P287MB1829.INDP287.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: fbccf0cf-124f-4ec5-ec2d-08dcf5f3f580
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Oct 2024 19:25:32.4465
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 7ec5089e-a433-4bd1-a638-82ee62e21d37
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: zczs2O4WRTn0mZCcBf+FxHs7PHOEAXORdgVCDpk2FXlIG9bP0tF51SR6cxGdxKG6sVmz7M167pDyXVRE0pyoNBZzp7eEl8WpKn7N3mQCghQ=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MAYP287MB3597
+Content-Transfer-Encoding: 8bit
 
-Hi Krzysztof ,=0A=
-=0A=
->On 26/10/2024 17:02, Tarang Raval wrote:=0A=
->> Hi Krzysztof , Himanshu=0A=
->>=0A=
->>>>> +=0A=
->>>>> +=A0=A0=A0 i2c {=0A=
->>>>=0A=
->>>> Keep one complete example for i2c and one for spi. This was not in=0A=
->>>> previous patch and change log does not explain why you need three=0A=
->>>> examples.=0A=
->>>=0A=
->>> Okay, I will drop one example of I2C=0A=
->>=0A=
->> In ex1: use when you only need basic GPIO and interrupt capabilities=0A=
->> without additional pin control and in ex2: use when you need pull-up=0A=
->> resistors on specific GPIO pins or a reset line.=0A=
->>=0A=
->> Original bindings state that this node can be implemented in two=0A=
->> different ways, so we should maintain both examples for reference.=0A=
->=0A=
->Example is not the binding. If you claim conversion is incomplete, it=0A=
->must be done through the binding, not example.=0A=
-=0A=
-Understood, thanks for the clarification=0A=
-=0A=
->> But it's up to you, I trust your expertise on this, Krzysztof=0A=
->>=0A=
->>>>> +=A0=A0=A0=A0=A0=A0=A0 #address-cells =3D <1>;=0A=
->>>>> +=A0=A0=A0=A0=A0=A0=A0 #size-cells =3D <0>;=0A=
->>>>> +=0A=
->>>>> +=A0=A0=A0=A0=A0=A0=A0 mcp23017: gpio@21 {=0A=
->>>>=0A=
->>>> Drop unused label=0A=
->>>=0A=
->>> May I know how its unused, AFAIK, Since it's an I/O expanded, it=92s re=
-ferenced elsewhere, so keeping it is necessary for >functionality.=0A=
->>=0A=
->> I agree with Himanshu.=0A=
->> It's definitely used for reset GPIOs, LED pins, or something similar.=0A=
->=0A=
->So point to the specific line in this file. Really, it's no different=0A=
->than every other binding. If it is different, provide some arguments why=
-=0A=
->this is different.=0A=
-=0A=
-okay, I get your point=A0=0A=
-=0A=
-Best Regards,=0A=
-Tarang=0A=
+This patch implement `get_ethtool_stats` to support `ethtool -S`.
+
+Before applying the patch:
+$ ethtool -S enp36s0
+> no stats available
+
+After applying the patch:
+$ ethtool -S enp36s0
+> NIC statistics:
+	tx_jumbo_frames: 0
+	rx_jumbo_frames: 0
+	tcp_checksum_errors: 0
+	udp_checksum_errors: 0
+	ip_checksum_errors: 0
+	tx_packets: 0
+	rx_packets: 74
+	tx_bytes: 0
+	rx_bytes: 14212
+	single_collisions: 0
+	multi_collisions: 0
+	late_collisions: 0
+	rx_frames_too_long_errors: 0
+	rx_in_range_length_errors: 776
+	rx_frames_check_seq_errors: 0
+	rx_frames_lost_errors: 0
+	tx_frames_abort: 0
+	tx_carrier_sense_errors: 0
+	tx_multicast_bytes: 0
+	rx_multicast_bytes: 360
+	tx_multicast_frames: 0
+	rx_multicast_frames: 6
+	tx_broadcast_frames: 0
+	rx_broadcast_frames: 68
+	tx_mac_control_frames: 0
+	rx_mac_control_frames: 0
+	tx_frames_deferred: 0
+	tx_frames_excessive_deferral: 0
+
+Tested-on: D-Link DGE-550T Rev-A3
+Signed-off-by: Moon Yeounsu <yyyynoom@gmail.com>
+---
+ drivers/net/ethernet/dlink/dl2k.c | 229 ++++++++++++++++++------------
+ drivers/net/ethernet/dlink/dl2k.h |  87 ++++++++++++
+ 2 files changed, 229 insertions(+), 87 deletions(-)
+
+diff --git a/drivers/net/ethernet/dlink/dl2k.c b/drivers/net/ethernet/dlink/dl2k.c
+index d0ea92607870..08a1e896bc77 100644
+--- a/drivers/net/ethernet/dlink/dl2k.c
++++ b/drivers/net/ethernet/dlink/dl2k.c
+@@ -99,6 +99,88 @@ static const struct net_device_ops netdev_ops = {
+ 	.ndo_tx_timeout		= rio_tx_timeout,
+ };
+ 
++#define DEFINE_STATS(FIELD, REGS, SIZE) {				\
++	.string = #FIELD,						\
++	.offset = offsetof(struct netdev_private, FIELD),		\
++	.regs = (REGS),							\
++	.size = sizeof(SIZE)						\
++}
++
++#define STATS_SIZE		ARRAY_SIZE(stats)
++
++struct dlink_stats stats[] = {
++	DEFINE_STATS(tx_jumbo_frames, TxJumboFrames, u16),
++	DEFINE_STATS(rx_jumbo_frames, RxJumboFrames, u16),
++
++	DEFINE_STATS(tcp_checksum_errors, TCPCheckSumErrors, u16),
++	DEFINE_STATS(udp_checksum_errors, UDPCheckSumErrors, u16),
++	DEFINE_STATS(ip_checksum_errors, IPCheckSumErrors, u16),
++
++	DEFINE_STATS(tx_packets, FramesXmtOk, u32),
++	DEFINE_STATS(rx_packets, FramesRcvOk, u32),
++	DEFINE_STATS(tx_bytes, OctetXmtOk, u32),
++	DEFINE_STATS(rx_bytes, OctetRcvOk, u32),
++
++	DEFINE_STATS(single_collisions, SingleColFrames, u32),
++	DEFINE_STATS(multi_collisions, MultiColFrames, u32),
++	DEFINE_STATS(late_collisions, LateCollisions, u32),
++
++	DEFINE_STATS(rx_frames_too_long_errors, FrameTooLongErrors, u16),
++	DEFINE_STATS(rx_in_range_length_errors, InRangeLengthErrors, u16),
++	DEFINE_STATS(rx_frames_check_seq_errors, FramesCheckSeqErrors, u16),
++	DEFINE_STATS(rx_frames_lost_errors, FramesLostRxErrors, u16),
++
++	DEFINE_STATS(tx_frames_abort, FramesAbortXSColls, u16),
++	DEFINE_STATS(tx_carrier_sense_errors, CarrierSenseErrors, u16),
++
++	DEFINE_STATS(tx_multicast_bytes, McstOctetXmtOk, u32),
++	DEFINE_STATS(rx_multicast_bytes, McstOctetRcvOk, u32),
++
++	DEFINE_STATS(tx_multicast_frames, McstFramesXmtdOk, u32),
++	DEFINE_STATS(rx_multicast_frames, McstFramesRcvdOk, u32),
++
++	DEFINE_STATS(tx_broadcast_frames, BcstFramesXmtdOk, u16),
++	DEFINE_STATS(rx_broadcast_frames, BcstFramesRcvdOk, u16),
++
++	DEFINE_STATS(tx_mac_control_frames, MacControlFramesXmtd, u16),
++	DEFINE_STATS(rx_mac_control_frames, MacControlFramesRcvd, u16),
++
++	DEFINE_STATS(tx_frames_deferred, FramesWDeferredXmt, u32),
++	DEFINE_STATS(tx_frames_excessive_deferral, FramesWEXDeferal, u16),
++
++#ifdef MEM_MAPPING
++	DEFINE_STATS(rmon_collisions, EtherStatsCollisions, u32),
++	DEFINE_STATS(rmon_crc_align_errors, EtherStatsCRCAlignErrors, u32),
++	DEFINE_STATS(rmon_under_size_packets, EtherStatsUndersizePkts, u32),
++	DEFINE_STATS(rmon_fragments, EtherStatsFragments, u32),
++	DEFINE_STATS(rmon_jabbers, EtherStatsJabbers, u32),
++
++	DEFINE_STATS(rmon_tx_bytes, EtherStatsOctetsTransmit, u32),
++	DEFINE_STATS(rmon_rx_bytes, EtherStatsOctets, u32),
++
++	DEFINE_STATS(rmon_tx_packets, EtherStatsPktsTransmit, u32),
++	DEFINE_STATS(rmon_rx_packets, EtherStatsPkts, u32),
++
++	DEFINE_STATS(rmon_tx_byte_64, EtherStatsPkts64OctetTransmit, u32),
++	DEFINE_STATS(rmon_rx_byte_64, EtherStats64Octets, u32),
++
++	DEFINE_STATS(rmon_tx_byte_65to127, EtherStatsPkts64OctetTransmit, u32),
++	DEFINE_STATS(rmon_rx_byte_64to127, EtherStats64Octets, u32),
++
++	DEFINE_STATS(rmon_tx_byte_128to255, EtherStatsPkts128to255OctetsTransmit, u32),
++	DEFINE_STATS(rmon_rx_byte_128to255, EtherStatsPkts128to255Octets, u32),
++
++	DEFINE_STATS(rmon_tx_byte_256to511, EtherStatsPkts256to511OctetsTransmit, u32),
++	DEFINE_STATS(rmon_rx_byte_256to511, EtherStatsPkts256to511Octets, u32),
++
++	DEFINE_STATS(rmon_tx_byte_512to1023, EtherStatsPkts512to1023OctetsTransmit, u32),
++	DEFINE_STATS(rmon_rx_byte_512to1203, EtherStatsPkts512to1023Octets, u32),
++
++	DEFINE_STATS(rmon_tx_byte_1204to1518, EtherStatsPkts1024to1518OctetsTransmit, u32),
++	DEFINE_STATS(rmon_rx_byte_1204to1518, EtherStatsPkts1024to1518Octets, u32)
++#endif
++};
++
+ static int
+ rio_probe1 (struct pci_dev *pdev, const struct pci_device_id *ent)
+ {
+@@ -148,6 +230,7 @@ rio_probe1 (struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	np->pdev = pdev;
+ 	spin_lock_init (&np->tx_lock);
+ 	spin_lock_init (&np->rx_lock);
++	spin_lock_init(&np->stats_lock);
+ 
+ 	/* Parse manual configuration */
+ 	np->an_enable = 1;
+@@ -1069,60 +1152,30 @@ get_stats (struct net_device *dev)
+ {
+ 	struct netdev_private *np = netdev_priv(dev);
+ 	void __iomem *ioaddr = np->ioaddr;
+-#ifdef MEM_MAPPING
++	unsigned long flags;
+ 	int i;
+-#endif
+-	unsigned int stat_reg;
++
++	spin_lock_irqsave(&np->stats_lock, flags);
+ 
+ 	/* All statistics registers need to be acknowledged,
+ 	   else statistic overflow could cause problems */
+ 
+-	dev->stats.rx_packets += dr32(FramesRcvOk);
+-	dev->stats.tx_packets += dr32(FramesXmtOk);
+-	dev->stats.rx_bytes += dr32(OctetRcvOk);
+-	dev->stats.tx_bytes += dr32(OctetXmtOk);
+-
+-	dev->stats.multicast = dr32(McstFramesRcvdOk);
+-	dev->stats.collisions += dr32(SingleColFrames)
+-			     +  dr32(MultiColFrames);
+-
+-	/* detailed tx errors */
+-	stat_reg = dr16(FramesAbortXSColls);
+-	dev->stats.tx_aborted_errors += stat_reg;
+-	dev->stats.tx_errors += stat_reg;
+-
+-	stat_reg = dr16(CarrierSenseErrors);
+-	dev->stats.tx_carrier_errors += stat_reg;
+-	dev->stats.tx_errors += stat_reg;
+-
+-	/* Clear all other statistic register. */
+-	dr32(McstOctetXmtOk);
+-	dr16(BcstFramesXmtdOk);
+-	dr32(McstFramesXmtdOk);
+-	dr16(BcstFramesRcvdOk);
+-	dr16(MacControlFramesRcvd);
+-	dr16(FrameTooLongErrors);
+-	dr16(InRangeLengthErrors);
+-	dr16(FramesCheckSeqErrors);
+-	dr16(FramesLostRxErrors);
+-	dr32(McstOctetXmtOk);
+-	dr32(BcstOctetXmtOk);
+-	dr32(McstFramesXmtdOk);
+-	dr32(FramesWDeferredXmt);
+-	dr32(LateCollisions);
+-	dr16(BcstFramesXmtdOk);
+-	dr16(MacControlFramesXmtd);
+-	dr16(FramesWEXDeferal);
++	for (i = 0; i < STATS_SIZE; i++) {
++		u64 *data = ((void *) np) + stats[i].offset;
++
++		if (stats[i].size == sizeof(u32))
++			*data += dr32(stats[i].regs);
++		else
++			*data += dr16(stats[i].regs);
++	}
+ 
+ #ifdef MEM_MAPPING
+ 	for (i = 0x100; i <= 0x150; i += 4)
+ 		dr32(i);
+ #endif
+-	dr16(TxJumboFrames);
+-	dr16(RxJumboFrames);
+-	dr16(TCPCheckSumErrors);
+-	dr16(UDPCheckSumErrors);
+-	dr16(IPCheckSumErrors);
++
++	spin_unlock_irqrestore(&np->stats_lock, flags);
++
+ 	return &dev->stats;
+ }
+ 
+@@ -1131,53 +1184,18 @@ clear_stats (struct net_device *dev)
+ {
+ 	struct netdev_private *np = netdev_priv(dev);
+ 	void __iomem *ioaddr = np->ioaddr;
+-#ifdef MEM_MAPPING
+ 	int i;
+-#endif
+ 
+ 	/* All statistics registers need to be acknowledged,
+ 	   else statistic overflow could cause problems */
+-	dr32(FramesRcvOk);
+-	dr32(FramesXmtOk);
+-	dr32(OctetRcvOk);
+-	dr32(OctetXmtOk);
+-
+-	dr32(McstFramesRcvdOk);
+-	dr32(SingleColFrames);
+-	dr32(MultiColFrames);
+-	dr32(LateCollisions);
+-	/* detailed rx errors */
+-	dr16(FrameTooLongErrors);
+-	dr16(InRangeLengthErrors);
+-	dr16(FramesCheckSeqErrors);
+-	dr16(FramesLostRxErrors);
+-
+-	/* detailed tx errors */
+-	dr16(FramesAbortXSColls);
+-	dr16(CarrierSenseErrors);
+-
+-	/* Clear all other statistic register. */
+-	dr32(McstOctetXmtOk);
+-	dr16(BcstFramesXmtdOk);
+-	dr32(McstFramesXmtdOk);
+-	dr16(BcstFramesRcvdOk);
+-	dr16(MacControlFramesRcvd);
+-	dr32(McstOctetXmtOk);
+-	dr32(BcstOctetXmtOk);
+-	dr32(McstFramesXmtdOk);
+-	dr32(FramesWDeferredXmt);
+-	dr16(BcstFramesXmtdOk);
+-	dr16(MacControlFramesXmtd);
+-	dr16(FramesWEXDeferal);
+-#ifdef MEM_MAPPING
+-	for (i = 0x100; i <= 0x150; i += 4)
+-		dr32(i);
+-#endif
+-	dr16(TxJumboFrames);
+-	dr16(RxJumboFrames);
+-	dr16(TCPCheckSumErrors);
+-	dr16(UDPCheckSumErrors);
+-	dr16(IPCheckSumErrors);
++
++	for (i = 0; i < STATS_SIZE; i++) {
++		if (stats[i].size == sizeof(u32))
++			dr32(stats[i].regs);
++		else
++			dr16(stats[i].regs);
++	}
++
+ 	return 0;
+ }
+ 
+@@ -1328,11 +1346,48 @@ static u32 rio_get_link(struct net_device *dev)
+ 	return np->link_status;
+ }
+ 
++static void get_ethtool_stats(struct net_device *dev,
++			      struct ethtool_stats __always_unused *__,
++			      u64 *data)
++{
++	struct netdev_private *np = netdev_priv(dev);
++
++	get_stats(dev);
++
++	for (int i = 0; i < STATS_SIZE; i++)
++		data[i] = *(u64 *) (((void *) np) + stats[i].offset);
++}
++
++static void get_strings(struct net_device *dev, u32 stringset, u8 *data)
++{
++	switch (stringset) {
++	case ETH_SS_STATS:
++		for (int i = 0; i < STATS_SIZE; i++) {
++			memcpy(data, stats[i].string, STATS_STRING_LEN);
++			data += STATS_STRING_LEN;
++		}
++		break;
++	}
++}
++
++static int get_sset_count(struct net_device *dev, int sset)
++{
++	switch (sset) {
++	case ETH_SS_STATS:
++		return STATS_SIZE;
++	}
++
++	return 0;
++}
++
+ static const struct ethtool_ops ethtool_ops = {
+ 	.get_drvinfo = rio_get_drvinfo,
+ 	.get_link = rio_get_link,
+ 	.get_link_ksettings = rio_get_link_ksettings,
+ 	.set_link_ksettings = rio_set_link_ksettings,
++	.get_ethtool_stats = get_ethtool_stats,
++	.get_strings = get_strings,
++	.get_sset_count = get_sset_count
+ };
+ 
+ static int
+diff --git a/drivers/net/ethernet/dlink/dl2k.h b/drivers/net/ethernet/dlink/dl2k.h
+index 195dc6cfd895..fde6596e0ee4 100644
+--- a/drivers/net/ethernet/dlink/dl2k.h
++++ b/drivers/net/ethernet/dlink/dl2k.h
+@@ -38,6 +38,8 @@
+ #define TX_TOTAL_SIZE	TX_RING_SIZE*sizeof(struct netdev_desc)
+ #define RX_TOTAL_SIZE	RX_RING_SIZE*sizeof(struct netdev_desc)
+ 
++#define STATS_STRING_LEN	32
++
+ /* Offsets to the device registers.
+    Unlike software-only systems, device drivers interact with complex hardware.
+    It's not useful to define symbolic names for every register bit in the
+@@ -146,6 +148,13 @@ enum dl2x_offsets {
+ 	EtherStatsPkts1024to1518Octets = 0x150,
+ };
+ 
++struct dlink_stats {
++	char string[STATS_STRING_LEN];
++	size_t offset;
++	enum dl2x_offsets regs;
++	size_t size;
++};
++
+ /* Bits in the interrupt status/mask registers. */
+ enum IntStatus_bits {
+ 	InterruptStatus = 0x0001,
+@@ -374,6 +383,84 @@ struct netdev_private {
+ 	void __iomem *eeprom_addr;
+ 	spinlock_t tx_lock;
+ 	spinlock_t rx_lock;
++
++	spinlock_t stats_lock;
++	struct {
++		u64 tx_jumbo_frames;
++		u64 rx_jumbo_frames;
++
++		u64 tcp_checksum_errors;
++		u64 udp_checksum_errors;
++		u64 ip_checksum_errors;
++		u64 tx_packets;
++		u64 rx_packets;
++
++		u64 tx_bytes;
++		u64 rx_bytes;
++
++		u64 single_collisions;
++		u64 multi_collisions;
++		u64 late_collisions;
++
++		u64 rx_frames_too_long_errors;
++		u64 rx_in_range_length_errors;
++		u64 rx_frames_check_seq_errors;
++		u64 rx_frames_lost_errors;
++
++		u64 tx_frames_abort;
++		u64 tx_carrier_sense_errors;
++
++		u64 tx_multicast_bytes;
++		u64 rx_multicast_bytes;
++
++		u64 tx_multicast_frames;
++		u64 rx_multicast_frames;
++
++		u64 tx_broadcast_frames;
++		u64 rx_broadcast_frames;
++
++		u64 tx_broadcast_bytes;
++		u64 rx_broadcast_bytes;
++
++		u64 tx_mac_control_frames;
++		u64 rx_mac_control_frames;
++
++		u64 tx_frames_deferred;
++		u64 tx_frames_excessive_deferral;
++
++#ifdef MEM_MAPPING
++		u64 rmon_collisions;
++		u64 rmon_crc_align_errors;
++		u64 rmon_under_size_packets;
++		u64 rmon_fragments;
++		u64 rmon_jabbers;
++
++		u64 rmon_tx_bytes;
++		u64 rmon_rx_bytes;
++
++		u64 rmon_tx_packets;
++		u64 rmon_rx_packets;
++
++		u64 rmon_tx_byte_64;
++		u64 rmon_rx_byte_64;
++
++		u64 rmon_tx_byte_65to127;
++		u64 rmon_rx_byte_64to127;
++
++		u64 rmon_tx_byte_128to255;
++		u64 rmon_rx_byte_128to255;
++
++		u64 rmon_tx_byte_256to511;
++		u64 rmon_rx_byte_256to511;
++
++		u64 rmon_tx_byte_512to1023;
++		u64 rmon_rx_byte_512to1203;
++
++		u64 rmon_tx_byte_1204to1518;
++		u64 rmon_rx_byte_1204to1518;
++#endif
++	};
++
+ 	unsigned int rx_buf_sz;		/* Based on MTU+slack. */
+ 	unsigned int speed;		/* Operating speed */
+ 	unsigned int vlan;		/* VLAN Id */
+-- 
+2.47.0
+
 
