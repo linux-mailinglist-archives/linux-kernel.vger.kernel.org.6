@@ -1,279 +1,172 @@
-Return-Path: <linux-kernel+bounces-382815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 357D79B13A9
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 02:04:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 334DE9B13AC
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 02:06:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A6261C21827
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 00:04:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56D8F1C21D31
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 00:06:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F83910F1;
-	Sat, 26 Oct 2024 00:04:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E21E259C;
+	Sat, 26 Oct 2024 00:05:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TmAaGIUF"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Dxa3N23y"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05062EC4
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 00:04:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9D0D161;
+	Sat, 26 Oct 2024 00:05:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729901063; cv=none; b=XX/0BdtdZCc/e+WHgdVAY+Iv/GwNJCJzsvmTNrWyn5eigMc8UtLa1dpfl7PTSjiTLdXfvX5hydViT3GLpOITSvV7FBbBTqvWMkA/wUuEpzzuPc6oiKmgudOERebKuGEYk2W8e0E1mLVO4bKIzrs5Djrhz7opBPwt3rsyIQlsPMY=
+	t=1729901155; cv=none; b=srb66OLpjBqb5ywJXWxSSebB7d20aaudLegkssydeuH5T2kKNbImO8B1YUcA5ve3iaQLeqYQZI+jllC5EaPi9oSIx0SvqxTYtE3N703s2d30iUJ7B1yCxJM5O4vwWFA0UQgcElD1Abl0cG4k5kOGl1K8TGskklFlM/gbu1lnwrc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729901063; c=relaxed/simple;
-	bh=cW9unEGNYEJweYtkOUGe/Tf0DcZOaDwHojevMTU2SjM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ir3ZjRrEjY6lcP/5s94WGtZ7wjrLKDcVL8OMzswa8l9IezNM4oM2dVzerSVGAF1i52muFl30qunfhUxoy4wZRpL2SpVqygI1q6/sxK3mrMu+LOf/LHQLQFW55dNu6Y+kw+TsRF3WYgHsZ3sAh0I/Ba2MVX4J7RT6vmCR6SQizW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TmAaGIUF; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2fb5638dd57so25955591fa.0
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 17:04:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729901059; x=1730505859; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+DwCeRCUXHM/LRQtCCTZFz6gg2/PPbwyNY2fCzshOz0=;
-        b=TmAaGIUFkM3olFD3M9nL+MGTxj8mZu4BoJ/V8rf2cE07UimCO1HC/KV6Pbmu36vPxE
-         AsW9cIgdj0x0MwIgZt6UrG0cbuN/zVm0ArDwUHVN/oNK+qtvXJz53Qa7FOCIYnl5jEN2
-         y8WN0nNpb+1c8zYF9lqwPdxjgmMlo8BQHs/9MxA8q3LT487qQi/vXDwmw+TB9KRCUL3p
-         UlgCok4KEW1o8JdWPJZZkU0j/VqJOyFEYUil8pQN5fkqEJzNt1nDbrJN4kZCD43g5Wre
-         QbSWL3splRwTPsq0jvOBLwr8u7rYvp7tDo86VTAD1fobRaB9mQvhYsE5uGp0y1p7OjXQ
-         Om3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729901059; x=1730505859;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+DwCeRCUXHM/LRQtCCTZFz6gg2/PPbwyNY2fCzshOz0=;
-        b=CJ5m9NFuB0RVSoSz1glWyCpV5VCBse4qvgcxXLKFaExdeGyPsrA/S9PNRZRcNB+PAy
-         p0iBZ4LsfxDYgiLyg5Lrz2l5ki6QAwTEprdNuFk7wfh1XWWa24SIMeAAHLUuzNlV59I2
-         jXU9m+3tpoVa5frLBjM/l9Ul6nFUBtR03PufE0/FZSTnPCL1brH2S2Q3LMSaltMmbo5+
-         XdygQivz1tT8UJEzCN6phTFr2q+6CnkZjOfdxDOjEXalFwOBjRijarCq+n6QGsuVPIIs
-         F+VRMiSkcnbzPXKsfzS9CVlDwnGV8jgkQatNtqTKfv6u/2yspHK7kWuFbG0L4nxG78rN
-         ZoXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWfkpKvEKgQx3uqWMRM0z7t493q7qVGm4sbz5cqgnwYYcl142hkk7VT1DlpuJ5oFY+LvyzIQIW+nkg4nGQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyO9NO4ZpmYrgahy9Nqfg+tyazIzGLnl8gpE/4eC1otuvP3rJUt
-	mdx2NjZxdL2HG5Ed6yOP4u5Ff2XZlzBiTRQkBdA447d48P6H2G3Lh/qplo0mFDpQ2xdhSaued1M
-	uS76BjtVl9OWon9ZEBVeUcVji9CQ=
-X-Google-Smtp-Source: AGHT+IERA4aBrz3+hUDNDk7Zp1Z16qh14aDW0h39JeE6hJohbjFh3kukh4sXPY5841UjAvfBLLjkg22FmHlHnFVzrFU=
-X-Received: by 2002:a05:651c:b09:b0:2fb:591d:3db8 with SMTP id
- 38308e7fff4ca-2fcbe078814mr4140211fa.35.1729901058732; Fri, 25 Oct 2024
- 17:04:18 -0700 (PDT)
+	s=arc-20240116; t=1729901155; c=relaxed/simple;
+	bh=/HiG+Q3c6VTFdPoIdpOgxiFl60WG0eeqXHpFPKtP0HI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=U77VhxaevuXmpdTzeoA8JANdoQxbtbXirdVO5KJwzW3UvPyUPATLITRZJmIIpaZZXUxFwfxdxOueaciTQNjZC8XMLNY4aowkREAdwp5ew8zKMJJL34C3ky6oraSaxPtLwui/Izk7eV5yYo9XfpAcfa00mBF55u6nmfLxiXiKCSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Dxa3N23y; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729901153; x=1761437153;
+  h=from:subject:date:message-id:mime-version:
+   content-transfer-encoding:to:cc;
+  bh=/HiG+Q3c6VTFdPoIdpOgxiFl60WG0eeqXHpFPKtP0HI=;
+  b=Dxa3N23y+MUbsDW38KjN2SVycO/U/iOaRrqVzkiJpUTwiahw6N/jmcH6
+   aApbqfwlapUqeguzx78Fzc+xNcC4T4d5i1ko/n2HO0PYFPbKzH9S67ulD
+   5BukEDCdtfGR2eaXBR6l6tLtzd2q8yXYySYPxf10nVrou3JE/MNb7GpSE
+   PeRklO+qM2F6EMEilL2XBUTcuzvdEGPgRfGpFDFluxr9QuhRQWSYO7q3B
+   tBVRyUHT8AU+JmhXVsRF/3hiZbzEiTkRUniyk17//LAL3apyvGy/WIP2M
+   a8ALPoPwpk1/pxe7UnXZCSw4blrOGmVsWgIIuJ/rLQYQpHU29aA9FgVZW
+   Q==;
+X-CSE-ConnectionGUID: SOpVOP8rRpSrUE1WDIyJsA==
+X-CSE-MsgGUID: Sv6HXLolTMq4v2nEyb5UIg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11236"; a="40959108"
+X-IronPort-AV: E=Sophos;i="6.11,233,1725346800"; 
+   d="scan'208";a="40959108"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2024 17:05:53 -0700
+X-CSE-ConnectionGUID: /Wdg6TRzQ9GmGvtdBb6S3Q==
+X-CSE-MsgGUID: OHLBx9OZTeOG8fnQhcyNkA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,233,1725346800"; 
+   d="scan'208";a="104386835"
+Received: from jekeller-desk.jf.intel.com ([10.166.241.20])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2024 17:05:52 -0700
+From: Jacob Keller <jacob.e.keller@intel.com>
+Subject: [PATCH net-next v2 0/9] lib: packing: introduce and use
+ (un)pack_fields
+Date: Fri, 25 Oct 2024 17:04:52 -0700
+Message-Id: <20241025-packing-pack-fields-and-ice-implementation-v2-0-734776c88e40@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241025-checkpatch-fixes-commit-v2-1-4bc4f06d37b3@gmail.com>
-In-Reply-To: <20241025-checkpatch-fixes-commit-v2-1-4bc4f06d37b3@gmail.com>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Fri, 25 Oct 2024 20:03:42 -0400
-Message-ID: <CAJ-ks9nrTjWC2mF4GXQMMi+1QirbnSXDt19n6+15go4=kxeKSg@mail.gmail.com>
-Subject: Re: [PATCH v2] checkpatch: always parse orig_commit in fixes tag
-To: Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>, 
-	Dwaipayan Ray <dwaipayanray1@gmail.com>, Lukas Bulwahn <lukas.bulwahn@gmail.com>, 
-	Simon Horman <horms@kernel.org>, 
-	=?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>, 
-	Andrew Morton <akpm@linux-foundation.org>, 
-	Philippe Schenker <philippe.schenker@toradex.com>
-Cc: Louis Peens <louis.peens@corigine.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIACUyHGcC/5WOwQqDMBBEf6XsuVsStaTtqf9RPGiy6lJdJQliE
+ f+9If2CnoZhhnmzQyDPFOBx2sHTyoFnSaY4n8AOjfSE7JKHQhWVVqrCpbFvlj4rdkyjC9iIQ7a
+ pOi0jTSSxiWkGW22ssXSj0pSQBhdPHW8Z9gKhiEJbhDolA4c4+09+seqc/4Ba/wNcNSp091Z35
+ qqUqdSTJdJ4sfME9XEcX/9HdcLuAAAA
+To: Vladimir Oltean <olteanv@gmail.com>, 
+ Andrew Morton <akpm@linux-foundation.org>, 
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, Tony Nguyen <anthony.l.nguyen@intel.com>, 
+ Przemek Kitszel <przemyslaw.kitszel@intel.com>, 
+ Masahiro Yamada <masahiroy@kernel.org>
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+ Jacob Keller <jacob.e.keller@intel.com>, 
+ Vladimir Oltean <vladimir.oltean@nxp.com>
+X-Mailer: b4 0.14.1
 
-On Fri, Oct 25, 2024 at 7:43=E2=80=AFPM Tamir Duberstein <tamird@gmail.com>=
- wrote:
->
-> Do not require the presence of `$balanced_parens` to get the commit SHA;
-> this allows a `Fixes: deadbeef` tag to get a correct suggestion rather
-> than a suggestion containing a reference to HEAD.
->
-> Given this patch:
-> ```
-> From c10a7d25e68ffd6222db2b63d86efa2fba04008b Mon Sep 17 00:00:00 2001
-> From: Tamir Duberstein <tamird@gmail.com>
-> Date: Fri, 25 Oct 2024 19:30:51 -0400
-> Subject: [PATCH] Test patch
->
-> This is a test patch.
->
-> Fixes: bd17e036b495
-> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
-> ---
-> Changes in v2:
-> - Added sample input and before and after output to patch description.
-> - Link to v1: https://lore.kernel.org/r/20241019-checkpatch-fixes-commit-=
-v1-1-0d0cde18ce69@gmail.com
-> ---
+This series improves the packing library with a new API for packing or
+unpacking a large number of fields at once with minimal code footprint. The
+API is then used to replace bespoke packing logic in the ice driver,
+preparing it to handle unpacking in the future. Finally, the ice driver has
+a few other cleanups related to the packing logic.
 
-Apologies, b4 got confused and put this in the wrong place. If there's
-a better way to format the patch, please let me know.
+The pack_fields and unpack_fields functions have the following improvements
+over the existing pack() and unpack() API:
 
->  new-file | 1 +
->  1 file changed, 1 insertion(+)
->  create mode 100644 new-file
->
-> diff --git a/new-file b/new-file
-> new file mode 100644
-> index 000000000000..90b67dda6d59
-> --- /dev/null
-> +++ b/new-file
-> @@ -0,0 +1 @@
-> +Test.
-> --
-> 2.47.0
-> ```
->
-> Before:
-> ```
-> WARNING: Please use correct Fixes: style 'Fixes: <12 chars of sha1> ("<ti=
-tle line>")' - ie: 'Fixes: c10a7d25e68f ("Test patch")'
-> Fixes: bd17e036b495
->
-> WARNING: added, moved or deleted file(s), does MAINTAINERS need updating?
-> new file mode 100644
->
-> total: 0 errors, 2 warnings, 1 lines checked
->
-> NOTE: For some of the reported defects, checkpatch may be able to
->       mechanically convert to the typical style using --fix or --fix-inpl=
-ace.
->
-> "[PATCH] Test patch" has style problems, please review.
->
-> NOTE: If any of the errors are false positives, please report
->       them to the maintainer, see CHECKPATCH in MAINTAINERS.
-> ```
->
-> After:
-> ```
-> WARNING: Please use correct Fixes: style 'Fixes: <12 chars of sha1> ("<ti=
-tle line>")' - ie: 'Fixes: bd17e036b495 ("checkpatch: warn for non-standard=
- fixes tag style")'
-> Fixes: bd17e036b495
->
-> WARNING: added, moved or deleted file(s), does MAINTAINERS need updating?
-> new file mode 100644
->
-> total: 0 errors, 2 warnings, 1 lines checked
->
-> NOTE: For some of the reported defects, checkpatch may be able to
->       mechanically convert to the typical style using --fix or --fix-inpl=
-ace.
->
-> "[PATCH] Test patch" has style problems, please review.
->
-> NOTE: If any of the errors are false positives, please report
->       them to the maintainer, see CHECKPATCH in MAINTAINERS.
-> ```
->
-> The diff between the outputs:
-> ```
-> diff --git a/before b/after
-> index d0cfdb243a1f..6f97b4c53080 100644
-> --- a/before
-> +++ b/after
-> @@ -1,4 +1,4 @@
-> -WARNING: Please use correct Fixes: style 'Fixes: <12 chars of sha1> ("<t=
-itle line>")' - ie: 'Fixes: c10a7d25e68f ("Test patch")'
-> +WARNING: Please use correct Fixes: style 'Fixes: <12 chars of sha1> ("<t=
-itle line>")' - ie: 'Fixes: bd17e036b495 ("checkpatch: warn for non-standar=
-d fixes tag style")'
->  #8:
->  Fixes: bd17e036b495
-> ```
->
-> The prior behavior incorrectly suggested the patch's own SHA and title
-> line rather than the referenced commit's. This fixes that.
->
-> Ironically this:
->
-> Fixes: bd17e036b495 ("checkpatch: warn for non-standard fixes tag style")
-> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
-> ---
->  scripts/checkpatch.pl | 37 ++++++++++++++++---------------------
->  1 file changed, 16 insertions(+), 21 deletions(-)
->
-> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-> index 4427572b24771ddb1f2bf3de3176f9437f643951..b03d526e4c454af7a42624155=
-175e109d499762f 100755
-> --- a/scripts/checkpatch.pl
-> +++ b/scripts/checkpatch.pl
-> @@ -3209,36 +3209,31 @@ sub process {
->
->  # Check Fixes: styles is correct
->                 if (!$in_header_lines &&
-> -                   $line =3D~ /^\s*fixes:?\s*(?:commit\s*)?[0-9a-f]{5,}\=
-b/i) {
-> -                       my $orig_commit =3D "";
-> -                       my $id =3D "0123456789ab";
-> -                       my $title =3D "commit title";
-> -                       my $tag_case =3D 1;
-> -                       my $tag_space =3D 1;
-> -                       my $id_length =3D 1;
-> -                       my $id_case =3D 1;
-> +                   $line =3D~ /^\s*(fixes:?)\s*(?:commit\s*)?([0-9a-f]{5=
-,40})(?:\s*($balanced_parens))?/i) {
-> +                       my $tag =3D $1;
-> +                       my $orig_commit =3D $2;
-> +                       my $title;
->                         my $title_has_quotes =3D 0;
->                         $fixes_tag =3D 1;
-> -
-> -                       if ($line =3D~ /(\s*fixes:?)\s+([0-9a-f]{5,})\s+(=
-$balanced_parens)/i) {
-> -                               my $tag =3D $1;
-> -                               $orig_commit =3D $2;
-> -                               $title =3D $3;
-> -
-> -                               $tag_case =3D 0 if $tag eq "Fixes:";
-> -                               $tag_space =3D 0 if ($line =3D~ /^fixes:?=
- [0-9a-f]{5,} ($balanced_parens)/i);
-> -
-> -                               $id_length =3D 0 if ($orig_commit =3D~ /^=
-[0-9a-f]{12}$/i);
-> -                               $id_case =3D 0 if ($orig_commit !~ /[A-F]=
-/);
-> -
-> +                       if (defined $3) {
->                                 # Always strip leading/trailing parens th=
-en double quotes if existing
-> -                               $title =3D substr($title, 1, -1);
-> +                               $title =3D substr($3, 1, -1);
->                                 if ($title =3D~ /^".*"$/) {
->                                         $title =3D substr($title, 1, -1);
->                                         $title_has_quotes =3D 1;
->                                 }
-> +                       } else {
-> +                               $title =3D "commit title"
->                         }
->
-> +
-> +                       my $tag_case =3D not ($tag eq "Fixes:");
-> +                       my $tag_space =3D not ($line =3D~ /^fixes:? [0-9a=
--f]{5,40} ($balanced_parens)/i);
-> +
-> +                       my $id_length =3D not ($orig_commit =3D~ /^[0-9a-=
-f]{12}$/i);
-> +                       my $id_case =3D not ($orig_commit !~ /[A-F]/);
-> +
-> +                       my $id =3D "0123456789ab";
->                         my ($cid, $ctitle) =3D git_commit_info($orig_comm=
-it, $id,
->                                                              $title);
->
->
-> ---
-> base-commit: c71f8fb4dc911022748a378b16aad1cc9b43aad8
-> change-id: 20241019-checkpatch-fixes-commit-aa014fe6d0b3
->
-> Best regards,
-> --
-> Tamir Duberstein <tamird@gmail.com>
->
+ 1. Packing or unpacking a large number of fields takes significantly less
+    code. This significantly reduces the .text size for an increase in the
+    .data size which is much smaller.
+
+ 2. The unpacked data can be stored in sizes smaller than u64 variables.
+    This reduces the storage requirement both for runtime data structures,
+    and for the rodata defining the fields. This scales with the number of
+    fields used.
+
+ 3. Most of the error checking is done at compile time, rather than
+    runtime via CHECK_PACKED_FIELD_* macros. This saves wasted computation
+    time, *and* catches errors in the field definitions immediately instead
+    of only after the offending code executes.
+
+The actual packing and unpacking code still uses the u64 size
+variables. However, these are converted to the appropriate field sizes when
+storing or reading the data from the buffer.
+
+One complexity is that the CHECK_PACKED_FIELD_* macros need to be defined
+one per size of the packed_fields array. This is because we don't have a
+good way to handle the ordering checks otherwise. The C pre-processor is
+unable to generate and run variable length loops at compile time.
+
+This is a significant amount of macro code, ~22,000 lines of code. To
+ensure it is correct and to avoid needing to store this directly in the
+kernel history, this file is generated as <generated/packing-checks.h> via
+a small C program, gen_packing_checks. To generate this, we need to update
+the top level Kbuild process to include the compilation of
+gen_packing_checks and execution to generate the packing-checks.h file.
+
+Signed-off-by: Jacob Keller <jacob.e.keller@intel.com>
+---
+Changes in v2:
+- Add my missing sign-off to the first patch
+- Update the descriptions for a few patches
+- Only generate CHECK_PACKED_FIELDS_N when another module selects it
+- Add a new patch introducing wrapper structures for the packed Tx and Rx
+  queue context, suggested by Vladimir.
+- Drop the now unnecessary macros in ice, thanks to the new types
+- Link to v1: https://lore.kernel.org/r/20241011-packing-pack-fields-and-ice-implementation-v1-0-d9b1f7500740@intel.com
+
+---
+Jacob Keller (6):
+      ice: remove int_q_state from ice_tlan_ctx
+      ice: use structures to keep track of queue context size
+      ice: use <linux/packing.h> for Tx and Rx queue context data
+      ice: reduce size of queue context fields
+      ice: move prefetch enable to ice_setup_rx_ctx
+      ice: cleanup Rx queue context programming functions
+
+Vladimir Oltean (3):
+      lib: packing: create __pack() and __unpack() variants without error checking
+      lib: packing: demote truncation error in pack() to a warning in __pack()
+      lib: packing: add pack_fields() and unpack_fields()
+
+ drivers/net/ethernet/intel/ice/ice_adminq_cmd.h |  11 +-
+ drivers/net/ethernet/intel/ice/ice_common.h     |   5 +-
+ drivers/net/ethernet/intel/ice/ice_lan_tx_rx.h  |  49 +---
+ include/linux/packing.h                         |  73 +++++
+ drivers/net/dsa/sja1105/sja1105_static_config.c |   8 +-
+ drivers/net/ethernet/intel/ice/ice_base.c       |   6 +-
+ drivers/net/ethernet/intel/ice/ice_common.c     | 299 +++++---------------
+ lib/gen_packing_checks.c                        | 193 +++++++++++++
+ lib/packing.c                                   | 285 ++++++++++++++-----
+ Kbuild                                          | 168 ++++++++++-
+ drivers/net/ethernet/intel/Kconfig              |   3 +
+ lib/Kconfig                                     | 361 +++++++++++++++++++++++-
+ 12 files changed, 1105 insertions(+), 356 deletions(-)
+---
+base-commit: 03fc07a24735e0be8646563913abf5f5cb71ad19
+change-id: 20241004-packing-pack-fields-and-ice-implementation-b17c7ce8e373
+
+Best regards,
+-- 
+Jacob Keller <jacob.e.keller@intel.com>
+
 
