@@ -1,74 +1,75 @@
-Return-Path: <linux-kernel+bounces-383396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15F5F9B1B32
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 00:10:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A355E9B1B36
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 00:10:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0AAC1F21790
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 22:10:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C48A51C20D54
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 22:10:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9010E1D433F;
-	Sat, 26 Oct 2024 22:09:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A3F81D90A1;
+	Sat, 26 Oct 2024 22:09:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ci8lfH6P"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="u3cOHmCr"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9FA117E017
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 22:09:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74E7A1D5CCF
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 22:09:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729980592; cv=none; b=aTn5goOSD8yJTJ75Cibeqihx3qawD/x9y9pFzHJp31B7vlkiAatDyXqoZIUPo4Tr98u038FsKZOsgNinjoNCLllr/q3xppQ+NGArw74kq4QseqheTOHwTIchoUj5Ze4gWQPF9bOwrFsc1xC+LfnDDKOoj7gaW8sYk0r+KeZYBjc=
+	t=1729980593; cv=none; b=qHjRDnwq/Sv7mcgnkO+e5l1Yx865wFcLQlVapvyA1yfmJcawZsA21Gnjc04sQspJj0PaeU8oha4Bhz7NK1C5EXVT0BHt00Hh1ZgQtts+2zcZceKfPiv7yusJLa0ov7fwxV9t9PwBhG/Ge6LHT/yNMVf1AHNjBqcoMIkdQF7bwkc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729980592; c=relaxed/simple;
-	bh=QR9Sf4duGn5kUTRjQj0DoCOM1Cu5LUmqXIRVsuYLTD8=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=RYHnkD8T4YyVS4ESq4mvYY1IEt5XnXgDHKkzdOkcT9SWE1g2fc20hVTY5DoZ1Lkq/tXoKpp9tIfSqziZWyk9TP1UtJaytqBz0yLPiNfdgy684Cde3DGZOBuy90mv/vQc2gNIsDwuktS+hb1yTdBVDJ0n6AZFPr77cjVTiZk1JmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ci8lfH6P; arc=none smtp.client-ip=209.85.167.43
+	s=arc-20240116; t=1729980593; c=relaxed/simple;
+	bh=IXdYIFvb4CLFwuLtuorpIh7GQ1P5GeeZYXjFvVeVjgY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=AuEml6rKLWYwtI3hWWhtDfMmQzihVV2fgIRwtkoWL5ajr/6ZheQNsezarQwtfFztByQmE24BC0yOGZlvi/Cp9HEgF83JwlPfLzFdBnClPrJAGa+4jzRdPH4gqZqsBCdJsQFbeeAlV8QI9zCZVgcvcvdUXWx4UHpVyuhtr4HJJhg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=u3cOHmCr; arc=none smtp.client-ip=209.85.167.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-539e4b7409fso3137294e87.0
-        for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 15:09:49 -0700 (PDT)
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-539fe76e802so3858217e87.1
+        for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 15:09:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729980588; x=1730585388; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=TZKRlP21Si7JMkCDul1UDnNBfncEM42FXq7PL35Q2JY=;
-        b=ci8lfH6PjQrYBhf0r7RXaw20MFKtRrk6Ki1POUd8iYQasU8LEq+l4+tfIHj4CD2p0a
-         4GqF/C+Xx5GEpnhYEaKyq7hoUILsQVNm0GTPEFOJ9o5LCmcJdgr8waisGaIiaQTm9nQm
-         jtrrdwQfaCCzNFNTXJyXAyMvPW7R3J+nen8MpzANQ04jUaBSzXtCYSWRh8tLcF+7/lml
-         BRDKNn8J7haEKGhCF8INT6iEo1t256KG6tDd2bqm/Xwqd9mqZm1c0l4lFTm4r4hqS0/c
-         nqosQxofu694+/GjiXvEu2nHe/jUUa3q3/vw1aNROBxYAEyBAd1j6pDKUj9yQyORFiFW
-         gbnA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729980588; x=1730585388;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1729980590; x=1730585390; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=TZKRlP21Si7JMkCDul1UDnNBfncEM42FXq7PL35Q2JY=;
-        b=UjWSb+cvb7nqYfKPOFnKeg5gadxOvmXjErr2ThtMmWDR7RcMMhJG/cguFMnEXOywCZ
-         awTn0zvs5GHp8OYCwl8f/Kv0YcVw3OGtlmLt8tiWrLreBAP7OLZt0i6ZF5dyeRoyaL4f
-         qFufrXIT6QfdxYJ2RvC11+OZKCGBq9Copy1xwKBjwx8S1fVxfhUaUXGNCnP5i5XDHkz+
-         mO+oPA2VrfuHvenUo4zYR6PtLWeioNpadXlHhfEIVML/XVTfnw6sdLTLUc2dArPpDTrZ
-         DX40Iu/z+NkkGctRsGDtauZjOefU2j176D+BhXJkATXktc3Y6JjH1KboSpto6TR7Yxns
-         ea2w==
-X-Forwarded-Encrypted: i=1; AJvYcCVsCiGnLQ5GWcvBAMwltM/DgukQ4sVqTe4pkz2eF8V6ynH5afjGn+caO9WnyfvQ0SDOXZDNrd5S9UwNAD0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWw+HxVeGll3eq5Y1toAy5R+9g0hZ+0e6um507qSyFk+oMBzwY
-	6VFqNEs04Ph8Sayia+JPoze5+yJH/FL5e+s/hljK1EtxGgAA6FCNeZSPoqSimMo=
-X-Google-Smtp-Source: AGHT+IF9/83r38yJgqSRjcoU8fimpF0Ui1SbSqgsTOHb91Vny+3ozXYue35+V0u1j/atBWkIljyeZQ==
-X-Received: by 2002:a05:6512:687:b0:539:f6e1:f28 with SMTP id 2adb3069b0e04-53b2375d2c9mr3326659e87.30.1729980588048;
-        Sat, 26 Oct 2024 15:09:48 -0700 (PDT)
+        bh=SyMy/5nnMlmNFZ7NGqkZ7ovp4h+qtyfXwTStvXfcChQ=;
+        b=u3cOHmCr094X6x2BuK3KePTfvH3FeqgdWCYQ+o1zt6qXT5FKecDs2epSFMWLAr7IFz
+         NbLzz/Zikz9mb7XkMahoVuMWW47MBidjdBJCyEmqh+4vpvCgIf80bybBiMPBsgjRWAh8
+         SK6nHZEc8ArVPmuK5Cz2p0GvPH/NCyJeZLwD29Q424WFbBiekf8u8gAaNrJF3ZGieCZG
+         sVndApp7jb+TniPrfsfAcsewrV+MskcuWWnI5TksaLVVtxdcUF87QMCweJf4KeBgz+BY
+         OJ3L0MPg/+8w2Xg3Iso2kkklFnI1owRk081IQ7LnzGhgH3KoJGRjpDVhztDF4AxkZfaB
+         rxAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729980590; x=1730585390;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SyMy/5nnMlmNFZ7NGqkZ7ovp4h+qtyfXwTStvXfcChQ=;
+        b=aTPOFFU4lRvUwm8vVMJYYBpcTq564JDT6XHLghVrQRRYGphDZ+wrfzh18S2yKFI91E
+         dE9Gsve5aVI48a97WNZ5qZ8E2vXOR7pCYILd0PAaW0IR3IDxDD3NBxslxiN+OUxqjDcI
+         J9FnprZDuPNWyVCOoKpqtyadGxk9dYJHSSzkfRE9bQ6izkNiKZXFa5VGnKFXNB2fxfJt
+         99343bFLiBHV9zqVAbjEdKg+fEQ2aX4h4QakrJE2LJ9s7SlFO+oFwGdekGMmArU5mkvN
+         /95r7HuqXuMoIwKJ5fPIg8Qwc0shGvTRhj9SVBzk9EWlZkatN/oFP+xmxdDfWQE0PFdM
+         Y3zw==
+X-Forwarded-Encrypted: i=1; AJvYcCUzbcpPd6hyIKa3U2+eg1Yqupj7EuZ0AAEuY+O8a5iwgcOoWdVsOKpvgctvh36eiPwKpn+M7qgl9eN12b0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyixSGEqvfQRdVAzimNpQT0eT2KSxETR3YtLhzfSt43d2NmNV9/
+	RBg0VSU3rpkaB5Ca1OtQ7Ysd9l6iy7pDIHUoEpvfKBiE5c5519xf9phGkJ7G5TY=
+X-Google-Smtp-Source: AGHT+IFkeUOSTKMKJcMOa2boFtvFqLQgbx68HWehsIEPmISP2sz/5R6BuzB2QCoHxidHy9X9BtXdrw==
+X-Received: by 2002:a05:6512:23a4:b0:539:e214:20e5 with SMTP id 2adb3069b0e04-53b34c3fe07mr1438019e87.59.1729980589649;
+        Sat, 26 Oct 2024 15:09:49 -0700 (PDT)
 Received: from [127.0.1.1] (2001-14ba-a0c3-3a00-70b-e6fc-b322-6a1b.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:70b:e6fc:b322:6a1b])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53b2e1adf35sm615934e87.130.2024.10.26.15.09.45
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53b2e1adf35sm615934e87.130.2024.10.26.15.09.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 26 Oct 2024 15:09:46 -0700 (PDT)
+        Sat, 26 Oct 2024 15:09:48 -0700 (PDT)
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Subject: [PATCH 0/3] remoteproc: qcom: pas: enable ADSP support on Qualcomm
- SAR2130P
-Date: Sun, 27 Oct 2024 01:09:42 +0300
-Message-Id: <20241027-sar2130p-adsp-v1-0-bd204e39d24e@linaro.org>
+Date: Sun, 27 Oct 2024 01:09:43 +0300
+Subject: [PATCH 1/3] dt-bindings: remoteproc: qcom,sm8350-pas: add SAR2130P
+ aDSP compatible
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,10 +78,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAKZoHWcC/x3MTQqAIBBA4avIrBP8i6CrRAtxxpqNiQMRSHdPW
- n6L9zoINSaBVXVodLPwVQbspCCdsRykGYfBGRescYuW2Jz1puqIUnVOPkecAxJ6GE1tlPn5f9v
- +vh87ZcZZXwAAAA==
-X-Change-ID: 20241027-sar2130p-adsp-fc3fad54ded3
+Message-Id: <20241027-sar2130p-adsp-v1-1-bd204e39d24e@linaro.org>
+References: <20241027-sar2130p-adsp-v1-0-bd204e39d24e@linaro.org>
+In-Reply-To: <20241027-sar2130p-adsp-v1-0-bd204e39d24e@linaro.org>
 To: Bjorn Andersson <andersson@kernel.org>, 
  Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -90,44 +90,61 @@ To: Bjorn Andersson <andersson@kernel.org>,
 Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=840;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1328;
  i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=QR9Sf4duGn5kUTRjQj0DoCOM1Cu5LUmqXIRVsuYLTD8=;
- b=owEBbQKS/ZANAwAKARTbcu2+gGW4AcsmYgBnHWiofZOtK1MUO7lejnnUfFjYK0Ypro05p6XuL
- BzJqVWrXVGJAjMEAAEKAB0WIQRdB85SOKWMgfgVe+4U23LtvoBluAUCZx1oqAAKCRAU23LtvoBl
- uIRfD/9W8e4NZiDLL9F3mpniv7n6bMzeTk9qa4EgrThqaRHMPJP3fiZklPdh4JNTV0ZScWuIvWz
- KiMGt0F87t1SN2XW0jNtjlc421K48maJJPfAU9otAtYSvlt0+o5B1zcijwedJZJntCZOD/5XCJK
- V8wlJKZSnIMd8/LR5rRFqgHWHbLnu3rbcVc5ylLLkhG/LahDoqENBJxwteO5p6ZN8kfNbKqt1OD
- kzQXOCePVhXaM7vXRYsuu7Djugrvhxogu2nC5Y/YXy1eeI6mwr460sh99ji/USiHg1xtEhHppAM
- rlEhPlCPAt0NrnbY6MqlSRs2HDk5UR224LxvjltTM+RysJ4mJ9SgnAowbzgorfme6K2vBWkGDJx
- nXP0kdqlzfJaoXHVSpw1x9RDbQk5WTHQMnlwmp8wHVgDtbfS65oJvuObawYUg0xcEo93oyFi4PC
- 13rDBe7BvifVus/j+hE/n7qAKBm4VTphieUnvainHybpIGWSbe6d8cW7NQcvvNm3qIVVnWsC9Kq
- gExzUPzrspjyLRVN2dFcwRN7wWSVtT/Df4542E0MRLZEKplBlt1pQt4KNl1lsDyqlmGpjjBczRx
- H/9Wa3WaJc4tfY10e/fLwmr6r1jYVhywCPthe7q6jm66TcWan+kaZWPT3267vRhZoUEZuFcm2dI
- KwoOP+w9wZMOOtg==
+ bh=IXdYIFvb4CLFwuLtuorpIh7GQ1P5GeeZYXjFvVeVjgY=;
+ b=owEBbQKS/ZANAwAKARTbcu2+gGW4AcsmYgBnHWio7ItlNO692U/qGQUr2TOoWibzwifTjTbZh
+ Kq8bKbD6UOJAjMEAAEKAB0WIQRdB85SOKWMgfgVe+4U23LtvoBluAUCZx1oqAAKCRAU23LtvoBl
+ uFWgD/wL8laUFiZZc1L4EPhQd+PNcpd+T7WlfxCTOoOiEA4JYln2GTlqb57shpRarhBf559drkU
+ PWn2ZSnVMcO/fUQhb+2uWm9paTtNUv7tCLBvfB+fA4ER0anJJ7rXRPG6j3ehVSwiwegMi3JBdHZ
+ haqFHnCkdkCiNszj//TanpPwkHoS1NA7H/VzW3iyM+iR68N9BnrScOtKleGVGQx0OGxSrM3edMR
+ /Z6TOeSvoapIXtlgTppDLaqphW0ZEsEXsPzhJCfYDZJHhrJTdN/s0gm1TSsSrDzx0Czn+U+uP0b
+ U29Kl7hUeARZh+P/rfaycEyXrUBMh2/ctU607ZWxMVwlxhmkgTJttYGE5Q/BreqHfJ1kNgGu4vz
+ +pkohknvOBv22Ut0RXEYCRJZw60lzmIOa/xV++gUNr9vGVjZsMzER9GwgXJsfbhYm/b7Kodi+K1
+ M9iYiA1LBTN+W5oqszua7WmqD4T+wg35eujsG0idXTLmeHiS2PibsaTjgp0VAN4qoMPJDElF9xk
+ S25qd1nosdEsLXhSFddEw2kvQY6q+MCT0CHR8/Atd3s496kFZEBiDOaO12lJMsA33Sxovnj+MLV
+ rPAl1KO2fQzCX9PRFafQj9jD1/9DTtDLjMiPI42aTjLVV7cjtSCcI5URY1NWTcf/WlqTO9SZHvr
+ mSL1fHpLPswZlFg==
 X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
  fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-Enable Audio DSP support on the Qualcomm SAR2130P platform. The CDSP,
-also present on this SoC, crashes the device during the start and is
-thus omitted from the series.
+Document compatible for audio DSP on Qualcomm SAR2130P platform.
 
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
-Dmitry Baryshkov (3):
-      dt-bindings: remoteproc: qcom,sm8350-pas: add SAR2130P aDSP compatible
-      remoteproc: qcom: pas: add minidump_id to SM8350 resources
-      remoteproc: qcom: pas: enable SAR2130P audio DSP support
-
  Documentation/devicetree/bindings/remoteproc/qcom,sm8350-pas.yaml | 3 +++
- drivers/remoteproc/qcom_q6v5_pas.c                                | 3 +++
- 2 files changed, 6 insertions(+)
----
-base-commit: a39230ecf6b3057f5897bc4744a790070cfbe7a8
-change-id: 20241027-sar2130p-adsp-fc3fad54ded3
+ 1 file changed, 3 insertions(+)
 
-Best regards,
+diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sm8350-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sm8350-pas.yaml
+index 4b9fb74fb9e966b61d51fe578b636f967e4c6af8..fd3423e6051bc8bb0e783479360a7b38e5fa1358 100644
+--- a/Documentation/devicetree/bindings/remoteproc/qcom,sm8350-pas.yaml
++++ b/Documentation/devicetree/bindings/remoteproc/qcom,sm8350-pas.yaml
+@@ -16,6 +16,7 @@ description:
+ properties:
+   compatible:
+     enum:
++      - qcom,sar2130p-adsp-pas
+       - qcom,sm8350-adsp-pas
+       - qcom,sm8350-cdsp-pas
+       - qcom,sm8350-slpi-pas
+@@ -61,6 +62,7 @@ allOf:
+       properties:
+         compatible:
+           enum:
++            - qcom,sar2130p-adsp-pas
+             - qcom,sm8350-adsp-pas
+             - qcom,sm8350-cdsp-pas
+             - qcom,sm8350-slpi-pas
+@@ -101,6 +103,7 @@ allOf:
+       properties:
+         compatible:
+           enum:
++            - qcom,sar2130p-adsp-pas
+             - qcom,sm8350-adsp-pas
+             - qcom,sm8350-slpi-pas
+             - qcom,sm8450-adsp-pas
+
 -- 
-Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+2.39.5
 
 
