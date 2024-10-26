@@ -1,89 +1,82 @@
-Return-Path: <linux-kernel+bounces-383147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6ECD9B17C6
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 14:05:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AB7E9B17AF
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 13:58:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CE0C1F21B7A
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 12:05:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CCF671C20DB3
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 11:58:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 036371D86E4;
-	Sat, 26 Oct 2024 12:04:23 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B556E1D47D4;
+	Sat, 26 Oct 2024 11:58:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YPlT+o1f"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 496841D5ADC;
-	Sat, 26 Oct 2024 12:04:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DA321D47AC;
+	Sat, 26 Oct 2024 11:58:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729944262; cv=none; b=XvD/6tEo9I0lgBjwkLA4PTnKZQCVzKwEOQyMXUCEDdU/0QIITH/BHNeQHp/cXWgkc1bA5i+R4pLPfzo31y23YqEtXhUii8Vy/pkB1jmBN6bC1E3HfpExHMM9/8/QNtrP1ImbMGH90+9wqXK2WnY8lpExc5CtOhAFEkG93RcXCH4=
+	t=1729943925; cv=none; b=t6XfYPy0FV175cPP7XmkNKz1t7iXI30L4AYpIEYzRDgpybZsZ+RiebfJjUzV15t0J3Uur/hf0PsT4P88XC4MY2H6GOG3dt7YRk3rOYg2/X4LcKqnJFg1KBIdZnLeZWrRiqxkpmM6ip5z1sbuseG+SvYK+saQgu/eVs08lNQ2s7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729944262; c=relaxed/simple;
-	bh=EryfUx44YSHCjk2CGmgieyfaODXEZWcTx0OaYYIAm90=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HNh0AB70lFofFee10f8kLBHxtWA1XStkt9cFiOUSPkq4Ha49uSMaK/wrXVq6U51Aw1oLXexefYmR8Q0GR+0r7WTWaeqJbX3UPAE5XmDLzDcWADrPSeDkp+kPUoyhx6Ovq+LqgcBk4pwCGuGdwIYgR1LfLBrmeWk9VL/Ns8ibPYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4XbJF65CXWz2DdZj;
-	Sat, 26 Oct 2024 20:02:50 +0800 (CST)
-Received: from kwepemm000007.china.huawei.com (unknown [7.193.23.189])
-	by mail.maildlp.com (Postfix) with ESMTPS id C6B541A0188;
-	Sat, 26 Oct 2024 20:04:17 +0800 (CST)
-Received: from localhost.localdomain (10.90.30.45) by
- kwepemm000007.china.huawei.com (7.193.23.189) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Sat, 26 Oct 2024 20:04:16 +0800
-From: Jijie Shao <shaojijie@huawei.com>
-To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <andrew+netdev@lunn.ch>, <horms@kernel.org>
-CC: <shenjian15@huawei.com>, <wangpeiyang1@huawei.com>,
-	<liuyonglong@huawei.com>, <chenhao418@huawei.com>, <sudongming1@huawei.com>,
-	<xujunsheng@huawei.com>, <shiyongbang@huawei.com>, <libaihan@huawei.com>,
-	<jonathan.cameron@huawei.com>, <shameerali.kolothum.thodi@huawei.com>,
-	<salil.mehta@huawei.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <shaojijie@huawei.com>
-Subject: [PATCH V2 net-next 8/8] net: hibmcge: Add nway_reset supported in this module
-Date: Sat, 26 Oct 2024 19:57:40 +0800
-Message-ID: <20241026115740.633503-9-shaojijie@huawei.com>
-X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20241026115740.633503-1-shaojijie@huawei.com>
-References: <20241026115740.633503-1-shaojijie@huawei.com>
+	s=arc-20240116; t=1729943925; c=relaxed/simple;
+	bh=MOiYzwTEwSA4p8Bc44UsWegiODiMDMLUcKod2tq5B/4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XtByqigP6ib/54Gzj0nLLOZLWemdyX+cNuk3JBOTqNENsVQ8Jau0BpzRpeIT4zEJjwKMwnX8xNvSJ/lU011zGB9B3F+XszuQp+AvV0VcfFP+Dov2WVdtpSMt3AVQget2L8wJS8eBvd8hu0Hxg1GDwwi474cndhIBDfZ/NLcqpSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YPlT+o1f; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67BBBC4CEC7;
+	Sat, 26 Oct 2024 11:58:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729943924;
+	bh=MOiYzwTEwSA4p8Bc44UsWegiODiMDMLUcKod2tq5B/4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=YPlT+o1f2Kx0bjZCMrlYmyWUTGiQRPz1pAD+2dMeqFGx0G15eq5h/jtL+D7RIYFmq
+	 B8CkiEZp7ChrxpMgOUsokmUbfsUdntNdrwQfFDP2/cqi6bTbX1IkYHOMurhEB02rC5
+	 39HGLieuic57q2xFI5s09BV4HJy1i6i5LcFe4fk/5mNMuh0KQonccSYwWzfxCZiVHl
+	 j0+Vsc2fh7KxeaN11miEPB3naMhct5ieFvn9vqSJZP4ZuLO+KZF5O1o9OnPpEgj9Fv
+	 UkypjdhB3Fltxng9ckBQ/ibu7ibWsTSA4I/RYydAM1N02lXFwZi/tCoi50ZNAeSKXi
+	 Ds7aWldborbBQ==
+Date: Sat, 26 Oct 2024 12:58:14 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, Marius Cristea
+ <marius.cristea@microchip.com>, Trevor Gamblin <tgamblin@baylibre.com>,
+ Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>, Hans de Goede
+ <hdegoede@redhat.com>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>
+Subject: Re: [PATCH v3 24/24] iio: light: ltr501: Replace a variant of
+ iio_get_acpi_device_name_and_data()
+Message-ID: <20241026125814.60660253@jic23-huawei>
+In-Reply-To: <20241024191200.229894-25-andriy.shevchenko@linux.intel.com>
+References: <20241024191200.229894-1-andriy.shevchenko@linux.intel.com>
+	<20241024191200.229894-25-andriy.shevchenko@linux.intel.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemm000007.china.huawei.com (7.193.23.189)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Add nway_reset supported in this module
+On Thu, 24 Oct 2024 22:05:13 +0300
+Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
 
-Signed-off-by: Jijie Shao <shaojijie@huawei.com>
----
- drivers/net/ethernet/hisilicon/hibmcge/hbg_ethtool.c | 1 +
- 1 file changed, 1 insertion(+)
+> IIO core (ACPI part) provides a generic helper that may be used in
+> the driver. Replace a variant of iio_get_acpi_device_name_and_data().
+> 
+> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Applied.
 
-diff --git a/drivers/net/ethernet/hisilicon/hibmcge/hbg_ethtool.c b/drivers/net/ethernet/hisilicon/hibmcge/hbg_ethtool.c
-index 18377377bf4d..4013fe925de7 100644
---- a/drivers/net/ethernet/hisilicon/hibmcge/hbg_ethtool.c
-+++ b/drivers/net/ethernet/hisilicon/hibmcge/hbg_ethtool.c
-@@ -357,6 +357,7 @@ static const struct ethtool_ops hbg_ethtool_ops = {
- 	.get_link		= ethtool_op_get_link,
- 	.get_link_ksettings	= phy_ethtool_get_link_ksettings,
- 	.set_link_ksettings	= phy_ethtool_set_link_ksettings,
-+	.nway_reset		= phy_ethtool_nway_reset,
- 	.get_sset_count		= hbg_ethtool_get_sset_count,
- 	.get_strings		= hbg_ethtool_get_strings,
- 	.get_ethtool_stats	= hbg_ethtool_get_stats,
--- 
-2.33.0
+So I ended up picking up all 24, with just white space tweaks.
 
+Thanks for you hard work cleaning this stuff up.
+
+Jonathan
 
