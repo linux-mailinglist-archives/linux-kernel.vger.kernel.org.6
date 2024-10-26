@@ -1,113 +1,92 @@
-Return-Path: <linux-kernel+bounces-382957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE4AC9B1585
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 08:49:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DA839B15B2
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 09:02:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E3761F22885
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 06:49:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC17F284E6C
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 07:02:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AC6D179954;
-	Sat, 26 Oct 2024 06:48:56 +0000 (UTC)
-Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E97F5187555;
+	Sat, 26 Oct 2024 07:02:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="ojOkrDs0"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB98429CE5;
-	Sat, 26 Oct 2024 06:48:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B71C13A41F;
+	Sat, 26 Oct 2024 07:02:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729925336; cv=none; b=i7ux70FxOeIAI3z8chXGFc/izZgQni6fjg0btilFskRjAWquhhRhag9Nvpa/pEWTDgrLw9NfGTdjNKe26Y7xR6imt0TlID3czxqj6RiDZO8QWsHC3JB0op9JykuoGwmvM/QwoAEzINcFXtwZJcglAEyPqeISnUkO4i1J0dUCEFo=
+	t=1729926167; cv=none; b=XKuaUNb5o+wuD3DGHAiCLhh/7Qa5PvYMIj4qeoJm9/aJFy/yQ5Hhkuy5vt44enDudjQUfEBl9N2vUMxhX7D9CDy7uv2b8pyqUbFXA1HvJbPPpYo/1abagRgVySuD7qKYlqKEV+oRLkQzHvXAqDNXfOQ9Bpi3goxRTCZ6mrkLayE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729925336; c=relaxed/simple;
-	bh=cvqGneQGGub8/U4EpGyH4uuPlIxfrPXBqsIovPe5Hoc=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GryBUbi/z3TrXQrNLCEI1UvAXQB37X4rsUbUBsp0m6JRoFqMHmJqpSjbe04UcPM00brdK3ARsFXT6UqTsErnfZJl4bTdzkNqDqAdPhxfvTFFqExC8wQ4EOsFjheOGLQx592FsXWbon21xf7eBlWFAo6lNeEGcpqlZtlIPPvdPt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.163])
-	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4Xb9F66h4jz1SD2V;
-	Sat, 26 Oct 2024 14:47:22 +0800 (CST)
-Received: from kwepemf100008.china.huawei.com (unknown [7.202.181.222])
-	by mail.maildlp.com (Postfix) with ESMTPS id 4FCE1180041;
-	Sat, 26 Oct 2024 14:48:50 +0800 (CST)
-Received: from huawei.com (10.175.103.91) by kwepemf100008.china.huawei.com
- (7.202.181.222) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 26 Oct
- 2024 14:48:49 +0800
-From: Zeng Heng <zengheng4@huawei.com>
-To: <tzimmermann@suse.de>, <javierm@redhat.com>,
-	<andriy.shevchenko@intel.com>, <ardb@kernel.org>, <bp@suse.de>,
-	<simona.vetter@ffwll.ch>
-CC: <bobo.shaobowang@huawei.com>, <linux-kernel@vger.kernel.org>,
-	<linux-efi@vger.kernel.org>
-Subject: [PATCH v2] efi: sysfb_efi: Fix unused const variable 'efifb_fwnode_ops'
-Date: Sat, 26 Oct 2024 15:02:28 +0800
-Message-ID: <20241026070228.3240177-1-zengheng4@huawei.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1729926167; c=relaxed/simple;
+	bh=WFxpYvbXvofAc6CPg9TSth3RYh/dsSg/t9m5lpnjNow=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FH1wKuoi2ZB7bglwP8BveRwSXJpyCRpnzv0sUAyGbLnzfk3PYUdHqva4YD78kgCcL+N4FKsxKpVZ2JarXO/mi+F5FO4tRy+q2uN8swyJ6XkjyLr2KCAOQHf126Q5JMgfPQYl+lkfO3iK19e1dsymkK2nWEUqfZE8+pSmmDlXIog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=ojOkrDs0; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=vOfR5nxbvz17I1jUUGbrnOm7gw72534O1iNYxZy8D0w=; b=ojOkrDs0dWMJCcav3D1n9Q3vtR
+	YcimPw3KwbUWy8e5jPz29yTuShPNe9ySPrO5RMCoAa/q6fJ2sCQ/WAvdrRpcH1jD0Epd155DqU+Uu
+	tCYdj9ZUIixYZt7czJi+ld9J0+2V5MkA7X1yCsVIJjDu8zr6GF6kCC7C0Y7NNfsId/MuKn1PAbKyv
+	U0vaYJTMHgZzrE+3+NTk4edxikHzdF4UNEKJ4X2/tcYfrNmyJQklAhAUkk3VZi6FUJyXB8b9wWvDb
+	0y+9hfXJMU6DqeqedVHdvfNgrAoIQwW3dzInvwUwemYKgP2owLXGYZgr9Aj9eBtQNUgEa8I0VkRIh
+	1YVzA4gw==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1t4aol-00CFzy-2w;
+	Sat, 26 Oct 2024 15:02:36 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sat, 26 Oct 2024 15:02:35 +0800
+Date: Sat, 26 Oct 2024 15:02:35 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Yuvaraj Ranganathan <quic_yrangana@quicinc.com>
+Cc: Thara Gopinath <thara.gopinath@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Bhupesh Sharma <bhupesh.sharma@linaro.org>,
+	linux-arm-msm@vger.kernel.org, linux-crypto@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	quic_sravank@quicinc.com
+Subject: Re: [PATCH V1 1/2] dt-bindings: crypto: qcom-qce: document the
+ SA8775P crypto engine
+Message-ID: <ZxyUC3j_H3TDZxGT@gondor.apana.org.au>
+References: <20241017144500.3968797-1-quic_yrangana@quicinc.com>
+ <20241017144500.3968797-2-quic_yrangana@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemf100008.china.huawei.com (7.202.181.222)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241017144500.3968797-2-quic_yrangana@quicinc.com>
 
-Fix the following compilation warning:
+On Thu, Oct 17, 2024 at 08:14:59PM +0530, Yuvaraj Ranganathan wrote:
+> Document the crypto engine on the SA8775P Platform.
+> 
+> Signed-off-by: Yuvaraj Ranganathan <quic_yrangana@quicinc.com>
+> ---
+>  Documentation/devicetree/bindings/crypto/qcom-qce.yaml | 1 +
+>  1 file changed, 1 insertion(+)
 
-drivers/firmware/efi/sysfb_efi.c:345:39: warning:
-‘efifb_fwnode_ops’ defined but not used [-Wunused-const-variable=]
-  345 | static const struct fwnode_operations efifb_fwnode_ops = {
-
-drivers/firmware/efi/sysfb_efi.c:238:35: warning:
-‘efifb_dmi_swap_width_height’ defined but not used
-[-Wunused-const-variable=]
-  238 | static const struct dmi_system_id
-	efifb_dmi_swap_width_height[] __initconst = {
-
-drivers/firmware/efi/sysfb_efi.c:188:35: warning:
-‘efifb_dmi_system_table’ defined but not used
-[-Wunused-const-variable=]
-  188 | static const struct dmi_system_id
-	efifb_dmi_system_table[] __initconst = {
-
-In addition to the above warning messages, a series of unused warnings
-because of cascading dependencies were found. The variables and functions
-related to warnings are only used after CONFIG_EFI enabled. Therefore,
-these warnings are addressed and fixed in this commit.
-
-Fixes: 8633ef82f101 ("drivers/firmware: consolidate EFI framebuffer setup for all arches")
-Signed-off-by: Zeng Heng <zengheng4@huawei.com>
----
- drivers/firmware/efi/sysfb_efi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/firmware/efi/sysfb_efi.c b/drivers/firmware/efi/sysfb_efi.c
-index cc807ed35aed..0cfc11ecc98b 100644
---- a/drivers/firmware/efi/sysfb_efi.c
-+++ b/drivers/firmware/efi/sysfb_efi.c
-@@ -82,6 +82,7 @@ void efifb_setup_from_dmi(struct screen_info *si, const char *opt)
- 	}
- }
- 
-+#ifdef CONFIG_EFI
- #define choose_value(dmivalue, fwvalue, field, flags) ({	\
- 		typeof(fwvalue) _ret_ = fwvalue;		\
- 		if ((flags) & (field))				\
-@@ -346,7 +347,6 @@ static const struct fwnode_operations efifb_fwnode_ops = {
- 	.add_links = efifb_add_links,
- };
- 
--#ifdef CONFIG_EFI
- static struct fwnode_handle efifb_fwnode;
- 
- __init void sysfb_apply_efi_quirks(void)
+Patch applied.  Thanks.
 -- 
-2.25.1
-
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
