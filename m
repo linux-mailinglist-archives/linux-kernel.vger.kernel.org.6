@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-382963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6C379B1595
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 08:55:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BA089B1599
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 08:56:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B111C282C93
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 06:55:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52F011F22D0B
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 06:56:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC06B18C023;
-	Sat, 26 Oct 2024 06:55:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6766717D36A;
+	Sat, 26 Oct 2024 06:56:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="MYLtSLMx"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="qx3meZGc"
 Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4247318800D;
-	Sat, 26 Oct 2024 06:55:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE04E29CE5;
+	Sat, 26 Oct 2024 06:56:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729925710; cv=none; b=QegljmO3UiWDIMFEBHsc9B+wDc7RNu2pZRypMQqBE3D2/wsry7IumjwyZf+flTB2hfiF5sm6TW96jH88ArezBm0Jy62uS6zCGzzz8me0r1h4fD28vlfzGbzMVL7XhXabPpJ/w3rnMN6JoVTfZXpNMynN0daISmhpkrL9gn2Q1x4=
+	t=1729925762; cv=none; b=gvuJJ/V1JlX/cSMU395j6V7Fz4hhkE2pA0ljLQLkQoRyRnta3jBLqbGOKttFABy3YIwMexY/b8T7uJsSeuTgr+bsVrykgYGKdjnTyoESXZv1H4tlA26ceYc698FmKq/XBh8C95ZVsjCE60iwbLvSZqk+V0ZFwk7VEtYvQzA0XZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729925710; c=relaxed/simple;
-	bh=sog3k5Lhl5pyOz3cArvlD5PjIXy1WjyRNuz1al8Mb04=;
+	s=arc-20240116; t=1729925762; c=relaxed/simple;
+	bh=TQQwS07gTVqhEJcJmiW/Yb1DL2TzJ+oDWR3IT5RoJkI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NWfMApsugwylezLeLXtffXnEzlrV23yx4gQOywPgd6v2jka24UssHmk6cSm+JG6te81AWga5z6TvKowglqWftzxorjgYRmio7FnIQO+JxtJRsjjrGF8CDz5DOPXv1rm1/8gQeR4lC0dxpJ+xNiUdKBbItgNqNsyh60E3+n7LQ4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=MYLtSLMx; arc=none smtp.client-ip=144.6.53.87
+	 Content-Type:Content-Disposition:In-Reply-To; b=saA87wPmom0yNtEbNt4LdugLxi+GMCQeI0lDh5BN92CMbut7iKcxgAFF1Ers0NrhTukaYlP+X9wft/qXM3ShHrO8/0Gflv3i7PoW5sDsMjiDGYm5P+j5f9UqeY0xHvYwZyt/Tm5jcSsqsjiwgAuJ9UXrg2Fcw15b0Dmdr6rf5Bs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=qx3meZGc; arc=none smtp.client-ip=144.6.53.87
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
@@ -36,27 +36,28 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
 	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
 	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
 	List-Post:List-Owner:List-Archive;
-	bh=VkOTa/SWZM6+ykiaX+uPabQnkaL7VX7jx8dc4rKJQ4g=; b=MYLtSLMxk42fwya38Fj9XbuCm6
-	QZF1msDDanUjgQiUrhTU7lmiRrcteWrpgBPCrg4QKEigj+oY62iwj2keG4Pe0IaPXMuJQoFf7Tcs9
-	fcjSxoHP4paPZbVFRNT7c0WSi0kWiOI3XInd3r5gkxcCGDi4RfPTJ7SaKiJCaL2f37Gsy/veMj0JV
-	kOVEMs24aqlJzb3AYjk+9BoEwOE9OQLy4+49RaUHYlekP3hNHs/w6gb9mSojUuQZAeR+UsGJ4w01O
-	J2r7GgldmctKla1Q+GjyYDUVTg22QO5/YQL7Nu6Fc+MaoCjca0hoMGH745NIsgiaYQ2vFSOXBi8pv
-	OxJyMA7g==;
+	bh=/Mq3fud90KAWp1yqh9QXH/sTcs1XrXUsNMckN2BVMGw=; b=qx3meZGcBwRoHwOlHVMgHrrgvN
+	AJPbYh9meTvbVeR5qDNMcePSFbWG87dwcx9b3y2Ra/H7kiy5xQwmCUzqI5BY2zZanyYSjU76g7jpJ
+	6f3LxhSd7o+LthEj2doAk7D5FfkNMP85y5CB8cbk2MVDHSIzTVzLBYlUijopFwo/4oRyTgXQ1PESa
+	N2ffY+FLh4FzjgwlvDN02hpGXrwTXFehNZtkNPtN74VGkyzR3VNwZ1a7gcgXIn2t8yo2iMpE9Y6I+
+	MEHR09FVSXPs0jPU1SyB6OTJiCCEXUm2TI+akR4abQ78x8Ll2KUwX9glwKXRUIu09e3RDBLBLv1me
+	O3EAZxig==;
 Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
 	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1t4ahM-00CFtf-2m;
-	Sat, 26 Oct 2024 14:54:57 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sat, 26 Oct 2024 14:54:56 +0800
-Date: Sat, 26 Oct 2024 14:54:56 +0800
+	id 1t4ai9-00CFur-1c;
+	Sat, 26 Oct 2024 14:55:46 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sat, 26 Oct 2024 14:55:45 +0800
+Date: Sat, 26 Oct 2024 14:55:45 +0800
 From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	qat-linux@intel.com, linux-crypto@vger.kernel.org
-Subject: Re: [PATCH] crypto: qat - Constify struct pm_status_row
-Message-ID: <ZxySQPLhRbjP2P9-@gondor.apana.org.au>
-References: <ab26d264baec1f3233e832c0c2fa723e3be21a04.1728935687.git.christophe.jaillet@wanadoo.fr>
+To: Vishal Chourasia <vishalc@linux.ibm.com>
+Cc: linuxppc-dev@lists.ozlabs.org, davem@davemloft.net, mpe@ellerman.id.au,
+	npiggin@gmail.com, christophe.leroy@csgroup.eu, naveen@kernel.org,
+	maddy@linux.ibm.com, linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [v2 PATCH 1/2] crypto/nx: Rename devdata_mutex to
+ devdata_spinlock
+Message-ID: <ZxyScR5z4uvJ0g6r@gondor.apana.org.au>
+References: <20241015105551.1817348-2-vishalc@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,35 +66,20 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ab26d264baec1f3233e832c0c2fa723e3be21a04.1728935687.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20241015105551.1817348-2-vishalc@linux.ibm.com>
 
-On Mon, Oct 14, 2024 at 09:55:17PM +0200, Christophe JAILLET wrote:
-> 'struct pm_status_row' are not modified in this driver.
+On Tue, Oct 15, 2024 at 04:25:51PM +0530, Vishal Chourasia wrote:
+> Rename devdata_mutex to devdata_spinlock to accurately reflect its
+> implementation as a spinlock.
 > 
-> Constifying this structure moves some data to a read-only section, so
-> increases overall security.
+> [1] v1 https://lore.kernel.org/all/ZwyqD-w5hEhrnqTB@linux.ibm.com
 > 
-> Update the prototype of some functions accordingly.
-> 
-> On a x86_64, with allmodconfig, as an example:
-> Before:
-> ======
->    text	   data	    bss	    dec	    hex	filename
->    4400	   1059	      0	   5459	   1553	drivers/crypto/intel/qat/qat_common/adf_gen4_pm_debugfs.o
-> 
-> After:
-> =====
->    text	   data	    bss	    dec	    hex	filename
->    5216	    243	      0	   5459	   1553	drivers/crypto/intel/qat/qat_common/adf_gen4_pm_debugfs.o
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> Signed-off-by: Vishal Chourasia <vishalc@linux.ibm.com>
 > ---
-> Compile tested only.
-> ---
->  .../intel/qat/qat_common/adf_gen4_pm_debugfs.c | 18 +++++++++---------
->  1 file changed, 9 insertions(+), 9 deletions(-)
+>  drivers/crypto/nx/nx-common-pseries.c | 34 +++++++++++++--------------
+>  1 file changed, 17 insertions(+), 17 deletions(-)
 
-Patch applied.  Thanks.
+All applied.  Thanks.
 -- 
 Email: Herbert Xu <herbert@gondor.apana.org.au>
 Home Page: http://gondor.apana.org.au/~herbert/
