@@ -1,84 +1,90 @@
-Return-Path: <linux-kernel+bounces-383271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D23A19B1949
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 17:39:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FBAE9B1950
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 17:40:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97ABA282A7C
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 15:39:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7275B1C20C13
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 15:40:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D533C1D0BAE;
-	Sat, 26 Oct 2024 15:38:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD29F7346F;
+	Sat, 26 Oct 2024 15:40:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kZialk5I"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="cHWbps+i"
+Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3517B25776;
-	Sat, 26 Oct 2024 15:38:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C429812E4A
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 15:40:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729957096; cv=none; b=gDpcp7LjFh2b7AOjM6PfZQBWXF8AGMQB8fdupwelwTvNo5uokdYHtGEsSEq1ou9IPa5H9OILyQEX+hMDHAe3EZGsE/k4rRopI5geFl2RqjLQ83JzCNe0RCTnA9xiZ/cweNxNVm0rix6c9CufIexlZZfYISMTtj2gLmO3tPKoktM=
+	t=1729957250; cv=none; b=DrxI7MB1CNWMwwZP2ElxH865FkGpT+Bi/VeyQAm0EP0Xy8/blDgY4FRrEijJyCHcutGzgTVOmT4Yglu/HPONqXLrZqu4YWdCbeT+WB6n9EfxbmXi4puZBID+5WXheJvzj6XJC4/uyZbjcs80hYAcO24oGDZZGHiRW1cybx+nck8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729957096; c=relaxed/simple;
-	bh=WoFOQrFDbt2BycOyxn0Rx5XH/N5keHBSRn4+P/slL3w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MTxeIl797snPKNEkM0/vB7bEABzWOfinF0qcyx0uSjrozh5VkOe9gamMjtwGT/Fd4RLpIzBTmviEUMbGckqg7yX/R25FsZF6/XfxmtqDEjK1hpSN4StZGRMURZhRwd+tR8ny5EAFsBZREE0KIWLTSMmxnrLWp12slqSCiZE1Atc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kZialk5I; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24343C4CEC6;
-	Sat, 26 Oct 2024 15:38:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729957096;
-	bh=WoFOQrFDbt2BycOyxn0Rx5XH/N5keHBSRn4+P/slL3w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kZialk5IA7F8jwSiHW3amfsbfcZQEOLS3YLnu3MDowfEfxUfJYvx4ybNKAOJAgNkp
-	 StTtJ7ELKCJlvZxR+7fzw1/UMbAOEGoEtDPOtJbSnGfH+X7J3/tAFUkDp+XuMPgmIK
-	 Dw20FZCCTOG0b/yUqmA10j/RHIZr3qj5Ig529JpVChUtrhmVT4Q+Hs+/hxwGSX1nYc
-	 NrdAc6L1y6LI9nn/UFAQsfteG9zM+hZ854RQo/OiI65c1C5kd6JkN8I04gC9JItjJp
-	 ZRAI6DiKkQ3XffMQTakCBtsW8eyjwVSnXoODEVH8WQkb+0d9SsHCmFqcpOxSebqi0R
-	 FfaWzy5qtYUig==
-Date: Sat, 26 Oct 2024 16:38:10 +0100
-From: Simon Horman <horms@kernel.org>
-To: Yue Haibing <yuehaibing@huawei.com>
-Cc: anthony.l.nguyen@intel.com, przemyslaw.kitszel@intel.com,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, ast@kernel.org, daniel@iogearbox.net,
-	hawk@kernel.org, john.fastabend@gmail.com,
-	maciej.fijalkowski@intel.com, vedang.patel@intel.com,
-	jithu.joseph@intel.com, andre.guedes@intel.com,
-	jacob.e.keller@intel.com, sven.auhagen@voleatech.de,
-	alexander.h.duyck@intel.com, intel-wired-lan@lists.osuosl.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org
-Subject: Re: [PATCH v4 net-next 4/4] ixgbevf: Fix passing 0 to ERR_PTR in
- ixgbevf_run_xdp()
-Message-ID: <20241026153810.GN1507976@kernel.org>
-References: <20241026041249.1267664-1-yuehaibing@huawei.com>
- <20241026041249.1267664-5-yuehaibing@huawei.com>
+	s=arc-20240116; t=1729957250; c=relaxed/simple;
+	bh=GNe4ye1OQX4/Qxf85U1tzqSg08WRHucFzaUMbYTBExo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jHJsvctdHKn04qCWpIZBLM89iqfzolwNzhmkQfmv3xHjJ1gmuwiFzWfMKuqT5ka2uZEWJLcH4C24q/m4TLKWQSr+ks8mGYp9qXZZFfcx+MEmp8TW6a85/w0EXsKUXYh0e6zenq3rBwbPsij7a8XpUxnmv37VBIW5pX3a3IM9CoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=cHWbps+i; arc=none smtp.client-ip=91.218.175.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1729957245;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=FUIkWdRccPpqO/GUqcg5hwSzpVQR8KrcEnsH22oLSTc=;
+	b=cHWbps+ieajT1HObjNWhT2exO6iDprPy3L6G4qC5qUehnyqrPE6smFGUuY180HGnyHS0YW
+	BS2CIPTiseFC6squaAIYHTqJRCQUB2KKWbHs/XCsutbVvV9oWBB/lHp5SYvA+FLb/1SKkC
+	OBUv0vgHC5lYKIA/o8xuKk2l6LI2FwA=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] genirq/irqdesc: Use str_enabled_disabled() helper in wakeup_show()
+Date: Sat, 26 Oct 2024 17:40:29 +0200
+Message-ID: <20241026154029.158977-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241026041249.1267664-5-yuehaibing@huawei.com>
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Sat, Oct 26, 2024 at 12:12:49PM +0800, Yue Haibing wrote:
-> ixgbevf_run_xdp() converts customed xdp action to a negative error code
-> with the sk_buff pointer type which be checked with IS_ERR in
-> ixgbevf_clean_rx_irq(). Remove this error pointer handing instead use
-> plain int return value.
-> 
-> Fixes: c7aec59657b6 ("ixgbevf: Add XDP support for pass and drop actions")
-> Reviewed-by: Jacob Keller <jacob.e.keller@intel.com>
-> Reviewed-by: Maciej Fijalkowski <maciej.fijalkowski@intel.com>
-> Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+Remove hard-coded strings by using the str_enabled_disabled() helper
+function.
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ kernel/irq/irqdesc.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/kernel/irq/irqdesc.c b/kernel/irq/irqdesc.c
+index 1dee88ba0ae4..a135b2ce886f 100644
+--- a/kernel/irq/irqdesc.c
++++ b/kernel/irq/irqdesc.c
+@@ -15,6 +15,7 @@
+ #include <linux/maple_tree.h>
+ #include <linux/irqdomain.h>
+ #include <linux/sysfs.h>
++#include <linux/string_choices.h>
+ 
+ #include "internals.h"
+ 
+@@ -299,7 +300,7 @@ static ssize_t wakeup_show(struct kobject *kobj,
+ 
+ 	raw_spin_lock_irq(&desc->lock);
+ 	ret = sprintf(buf, "%s\n",
+-		      irqd_is_wakeup_set(&desc->irq_data) ? "enabled" : "disabled");
++		      str_enabled_disabled(irqd_is_wakeup_set(&desc->irq_data)));
+ 	raw_spin_unlock_irq(&desc->lock);
+ 
+ 	return ret;
+-- 
+2.47.0
 
 
