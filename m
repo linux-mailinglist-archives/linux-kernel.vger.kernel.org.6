@@ -1,232 +1,131 @@
-Return-Path: <linux-kernel+bounces-383248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4C549B18F6
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 17:09:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 053D09B18F9
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 17:12:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4EF171F22045
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 15:09:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 24DA61C20DD0
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 15:12:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B2D220314;
-	Sat, 26 Oct 2024 15:08:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A46D9224FA;
+	Sat, 26 Oct 2024 15:12:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=riseup.net header.i=@riseup.net header.b="PsLNUCgL"
-Received: from mx1.riseup.net (mx1.riseup.net [198.252.153.129])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LNsNsQYu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EC3A18C3E
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 15:08:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.252.153.129
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED5AD171D2;
+	Sat, 26 Oct 2024 15:12:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729955335; cv=none; b=tWtDF7BVyxVWogJOuW9E5kmERRSfAUaqFQXlqjqoSq1GBcHYx/KcpIKeLJ+yV4q6qC9nHiMKWPGkmS0vreIfejf3ZkfRqNV4brGwKtAvOJSFtFXaRIP+IfQpJB8zsxtw5ypcMzxa49UdBwnwL7SVsDwZp/K4vmwmye8hKc/zWZw=
+	t=1729955557; cv=none; b=L7RtKVX/XxI74ZYyMScj637VGord8cDqHaZuIOODrqw7s3zMl8p6P5ru58miLNwzQbSdReWBcPAJYegLGSL6fzEBjAzciuaqG+PdkypkPHnaWxMRJm/25XXp5q4LRHNm5KKQ+IyLQsk/CWSiDH34iyuC/cq20nFzQFob+L9+l/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729955335; c=relaxed/simple;
-	bh=37ymUSLy/WZsWp4KgcCO90jZ08a6qeob/RoGfxbDwWg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GZsbJ0V4VnHzHbXa6CE+d2tPtGmFriY99cilcAW/BqG90KCNtPX8JmzRiUhlF7n2vQb5de7zqpWhc3aeT4jy2PgtFa9Xh3BUBAf1WCx3k8SGzpnxPU8+0he47kzYvHlCmDf/G2z4YEPH5/307qJBqwWwQ/egP6Fl0z1064Sg1mI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riseup.net; spf=pass smtp.mailfrom=riseup.net; dkim=pass (1024-bit key) header.d=riseup.net header.i=@riseup.net header.b=PsLNUCgL; arc=none smtp.client-ip=198.252.153.129
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riseup.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riseup.net
-Received: from fews02-sea.riseup.net (fews02-sea-pn.riseup.net [10.0.1.112])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx1.riseup.net (Postfix) with ESMTPS id 4XbNMm0xWMzDqFC;
-	Sat, 26 Oct 2024 15:08:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=riseup.net; s=squak;
-	t=1729955332; bh=37ymUSLy/WZsWp4KgcCO90jZ08a6qeob/RoGfxbDwWg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=PsLNUCgLjQW7+GiM1tn6xeXt3kbmo51SnYXqWTHL9FOyW2CpRFL7ii04uS3rx5A/y
-	 FlvrNkeZIHMFmLY6Y1oGRGtLcJg05fySw6ttt2d6OoznwMnngj90unVMDNkYF/DcvL
-	 KLLO9htx1lYPEdhtq+/5sFKDyOZkFgdKGiFOZ+io=
-X-Riseup-User-ID: 32B0ED6C68EDD35F28DFBFFDC01B9FA8D5CD208960BF2E7AB0B435EE1D4F2A46
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-	 by fews02-sea.riseup.net (Postfix) with ESMTPSA id 4XbNMf214TzFqLF;
-	Sat, 26 Oct 2024 15:08:45 +0000 (UTC)
-Message-ID: <2af1f9b4-0bc8-4585-ba13-d3b97e25845f@riseup.net>
-Date: Sat, 26 Oct 2024 12:08:44 -0300
+	s=arc-20240116; t=1729955557; c=relaxed/simple;
+	bh=h1t/ImbmIC+Mm2/yutzWZ8n1ugWCvOYNxjLpHTrPdMk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IpqPMaxR6VrMTU8Ol9NmBIUmj+AjEb1tpf8cg5Z3upxc0P0MmpkWkXD3p1yZTkhh7mAgSe6Cxdzq6e8GgZRKK+jCRiQYXZDM41uT5uKSWEOTACFFxm685nz+u0J+j4xqHJC/f4CnA1lJGj355QKlXMfe4HQ3+/3fpvMOff+UO/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LNsNsQYu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D507C4CEC6;
+	Sat, 26 Oct 2024 15:12:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729955554;
+	bh=h1t/ImbmIC+Mm2/yutzWZ8n1ugWCvOYNxjLpHTrPdMk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LNsNsQYue2vlBt/vf3DIQQy0mN7RxRGx+zSliHV5RSvG4Eq40m5Yd1+54HFxZnEml
+	 1O1EXRfk5W80Y5w6t3/EDZ6oiNkR7Ll3EBgJ0wA5teikZuSUPuL4yx9BzMlDBTsdKj
+	 wC85QQqdfqc2lrAT27eCUEeYbVUqj6plnAJfRDTbQrUwbqxQmhioN6F48wYxcHz4MK
+	 TJBJwp+iC8Bf+p7gZTCg221CSF3FAPp4mZnK/hIxc/tsoDoiLruy1dIfHP3DDSSkhr
+	 TJi/EzT1XuCxd1y7IXvRt/kWw5Tb+p5J/zpsrwD5fbD+Q1N5Mswk4qfXEgv6rrYx5Z
+	 dnpbT9uV8U6Ew==
+Date: Sat, 26 Oct 2024 16:12:29 +0100
+From: Simon Horman <horms@kernel.org>
+To: Lee Trager <lee@trager.us>
+Cc: Alexander Duyck <alexanderduyck@fb.com>,
+	Jakub Kicinski <kuba@kernel.org>, kernel-team@meta.com,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	Sanman Pradhan <sanmanpradhan@meta.com>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Mohsin Bashir <mohsin.bashr@gmail.com>, netdev@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v2 2/2] eth: fbnic: Add devlink dev flash support
+Message-ID: <20241026151229.GG1507976@kernel.org>
+References: <20241012023646.3124717-1-lee@trager.us>
+ <20241022014319.3791797-1-lee@trager.us>
+ <20241024091032.GI402847@kernel.org>
+ <13229808-dde5-4805-b908-ce65c8b342b4@trager.us>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v2 2/3] drm/vkms: Add a macro for write_line functions
-To: Louis Chauvet <louis.chauvet@bootlin.com>,
- Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
- Melissa Wen <melissa.srw@gmail.com>,
- Haneen Mohammed <hamohammed.sa@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, arthurgrillo@riseup.net,
- linux-kernel@vger.kernel.org, jeremie.dautheribes@bootlin.com,
- miquel.raynal@bootlin.com, thomas.petazzoni@bootlin.com,
- seanpaul@google.com, nicolejadeyee@google.com
-References: <20240814-writeback_line_by_line-v2-0-36541c717569@bootlin.com>
- <20240814-writeback_line_by_line-v2-2-36541c717569@bootlin.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mairacanal@riseup.net>
-In-Reply-To: <20240814-writeback_line_by_line-v2-2-36541c717569@bootlin.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <13229808-dde5-4805-b908-ce65c8b342b4@trager.us>
 
-Hi Louis,
-
-On 14/08/24 05:42, Louis Chauvet wrote:
-> As stated in [2], the write_line functions are very similar and force code
-
-Where is [2]?
-
-> duplication. This patch add a macro to avoid code repetition.
+On Fri, Oct 25, 2024 at 03:32:32PM -0700, Lee Trager wrote:
 > 
-> Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
-> ---
->   drivers/gpu/drm/vkms/vkms_formats.c | 107 ++++++++++--------------------------
->   1 file changed, 30 insertions(+), 77 deletions(-)
+> On 10/24/24 2:10 AM, Simon Horman wrote:
+> > On Mon, Oct 21, 2024 at 06:42:24PM -0700, Lee Trager wrote:
+> > > fbnic supports updating firmware using a PLDM image signed and distributed
+> > > by Meta. PLDM images are written into stored flashed. Flashing does not
+> > > interrupt operation.
+> > > 
+> > > On host reboot the newly flashed UEFI driver will be used. To run new
+> > > control or cmrt firmware the NIC must be power cycled.
+> > > 
+> > > Signed-off-by: Lee Trager <lee@trager.us>
+> > ...
+> > 
+> > > diff --git a/drivers/net/ethernet/meta/fbnic/fbnic_devlink.c b/drivers/net/ethernet/meta/fbnic/fbnic_devlink.c
+> > ...
+> > 
+> > > @@ -109,8 +110,274 @@ static int fbnic_devlink_info_get(struct devlink *devlink,
+> > >   	return 0;
+> > >   }
+> > > 
+> > > +/**
+> > > + * fbnic_send_package_data - Send record package data to firmware
+> > > + * @context: PLDM FW update structure
+> > > + * @data: pointer to the package data
+> > > + * @length: length of the package data
+> > > + *
+> > > + * Send a copy of the package data associated with the PLDM record matching
+> > > + * this device to the firmware.
+> > > + *
+> > > + * Return: zero on success
+> > > + *	    negative error code on failure
+> > > + */
+> > > +static int fbnic_send_package_data(struct pldmfw *context, const u8 *data,
+> > > +				   u16 length)
+> > > +{
+> > > +	struct device *dev = context->dev;
+> > > +
+> > > +	/* Temp placeholder required by devlink */
+> > > +	dev_info(dev,
+> > > +		 "Sending %u bytes of PLDM record package data to firmware\n",
+> > > +		 length);
+> > Could you clarify what is meant by "Temp placeholder" here and in
+> > fbnic_send_component_table(). And what plans there might be for
+> > a non-temporary solution.
 > 
-> diff --git a/drivers/gpu/drm/vkms/vkms_formats.c b/drivers/gpu/drm/vkms/vkms_formats.c
-> index d1309f6d307f..a25cdf656d8a 100644
-> --- a/drivers/gpu/drm/vkms/vkms_formats.c
-> +++ b/drivers/gpu/drm/vkms/vkms_formats.c
-> @@ -654,6 +654,31 @@ static void argb_u16_to_RGB565(u8 *out_pixel, const struct pixel_argb_u16 *in_pi
->   	*pixel = cpu_to_le16(r << 11 | g << 5 | b);
->   }
->   
-> +/**
-> + * WRITE_LINE() - Generic generator for write_line functions
-> + *
-> + * This generator can only be used for format with only one plane and block_w == block_h == 1
-> + *
-> + * @function_name: Name to use for the generated function
-> + * @conversion_function: Fonction to use for the conversion from argb_u16 to the required format.
-
-s/Fonction/Function
-
-> + */
-> +#define WRITE_LINE(function_name, conversion_function)					\
-> +static void function_name(struct vkms_writeback_job *wb,				\
-> +			  struct pixel_argb_u16 *src_pixels, int count, int x_start,	\
-> +			  int y_start)							\
-> +{											\
-> +	u8 *dst_pixels;									\
-> +											\
-> +	packed_pixels_addr_1x1(&wb->wb_frame_info, x_start, y_start, 0, &dst_pixels);	\
-> +											\
-> +	while (count) {									\
-> +		(conversion_function)(dst_pixels, src_pixels);				\
-> +		dst_pixels += wb->wb_frame_info.fb->format->char_per_block[0];		\
-> +		src_pixels += 1;							\
-> +		count--;								\
-
-Just a nit: What do you think about this loop?
-
-for (; count > 0; src_pixels++, count--)
-
-It doesn't really matter what option you pick.
-
-Best Regards,
-- Maíra
-
-> +	}										\
-> +}
-> +
->   /*
->    * The following functions are write_line function for each pixel format supported by VKMS.
->    *
-> @@ -667,85 +692,13 @@ static void argb_u16_to_RGB565(u8 *out_pixel, const struct pixel_argb_u16 *in_pi
->    * [1]: https://lore.kernel.org/dri-devel/d258c8dc-78e9-4509-9037-a98f7f33b3a3@riseup.net/
->    */
->   
-> -static void ARGB8888_write_line(struct vkms_writeback_job *wb,
-> -				struct pixel_argb_u16 *src_pixels, int count, int x_start,
-> -				int y_start)
-> -{
-> -	u8 *dst_pixels;
-> +WRITE_LINE(ARGB8888_write_line, argb_u16_to_ARGB8888)
-> +WRITE_LINE(XRGB8888_write_line, argb_u16_to_XRGB8888)
->   
-> -	packed_pixels_addr_1x1(&wb->wb_frame_info, x_start, y_start, 0, &dst_pixels);
-> +WRITE_LINE(ARGB16161616_write_line, argb_u16_to_ARGB16161616)
-> +WRITE_LINE(XRGB16161616_write_line, argb_u16_to_XRGB16161616)
->   
-> -	while (count) {
-> -		argb_u16_to_ARGB8888(dst_pixels, src_pixels);
-> -		dst_pixels += wb->wb_frame_info.fb->format->char_per_block[0];
-> -		src_pixels += 1;
-> -		count--;
-> -	}
-> -}
-> -
-> -static void XRGB8888_write_line(struct vkms_writeback_job *wb,
-> -				struct pixel_argb_u16 *src_pixels, int count, int x_start,
-> -				int y_start)
-> -{
-> -	u8 *dst_pixels;
-> -
-> -	packed_pixels_addr_1x1(&wb->wb_frame_info, x_start, y_start, 0, &dst_pixels);
-> -
-> -	while (count) {
-> -		argb_u16_to_XRGB8888(dst_pixels, src_pixels);
-> -		dst_pixels += wb->wb_frame_info.fb->format->char_per_block[0];
-> -		src_pixels += 1;
-> -		count--;
-> -	}
-> -}
-> -
-> -static void ARGB16161616_write_line(struct vkms_writeback_job *wb,
-> -				    struct pixel_argb_u16 *src_pixels, int count, int x_start,
-> -				    int y_start)
-> -{
-> -	u8 *dst_pixels;
-> -
-> -	packed_pixels_addr_1x1(&wb->wb_frame_info, x_start, y_start, 0, &dst_pixels);
-> -
-> -	while (count) {
-> -		argb_u16_to_ARGB16161616(dst_pixels, src_pixels);
-> -		dst_pixels += wb->wb_frame_info.fb->format->char_per_block[0];
-> -		src_pixels += 1;
-> -		count--;
-> -	}
-> -}
-> -
-> -static void XRGB16161616_write_line(struct vkms_writeback_job *wb,
-> -				    struct pixel_argb_u16 *src_pixels, int count, int x_start,
-> -				    int y_start)
-> -{
-> -	u8 *dst_pixels;
-> -
-> -	packed_pixels_addr_1x1(&wb->wb_frame_info, x_start, y_start, 0, &dst_pixels);
-> -
-> -	while (count) {
-> -		argb_u16_to_XRGB16161616(dst_pixels, src_pixels);
-> -		dst_pixels += wb->wb_frame_info.fb->format->char_per_block[0];
-> -		src_pixels += 1;
-> -		count--;
-> -	}
-> -}
-> -
-> -static void RGB565_write_line(struct vkms_writeback_job *wb,
-> -			      struct pixel_argb_u16 *src_pixels, int count, int x_start,
-> -			      int y_start)
-> -{
-> -	u8 *dst_pixels;
-> -
-> -	packed_pixels_addr_1x1(&wb->wb_frame_info, x_start, y_start, 0, &dst_pixels);
-> -
-> -	while (count) {
-> -		argb_u16_to_RGB565(dst_pixels, src_pixels);
-> -		dst_pixels += wb->wb_frame_info.fb->format->char_per_block[0];
-> -		src_pixels += 1;
-> -		count--;
-> -	}
-> -}
-> +WRITE_LINE(RGB565_write_line, argb_u16_to_RGB565)
->   
->   /**
->    * get_pixel_read_function() - Retrieve the correct read_line function for a specific
+> Temp placeholder may not have been the best wording here. pldmfw requires
+> all ops to be defined as they are always called[1] when updating. fbnic has
+> an info message here so its doing something but we have no current plans to
+> expand on fbnic_send_package_data nor fbnic_finalize_update.
 > 
+> [1]
+> https://elixir.bootlin.com/linux/v6.12-rc4/source/lib/pldmfw/pldmfw.c#L723
+
+Thanks for the clarification. Perhaps the wording could be improved,
+but I don't think that needs to block progress.
+
+Reviewed-by: Simon Horman <horms@kernel.org>
+
 
