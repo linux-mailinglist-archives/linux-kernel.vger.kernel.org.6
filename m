@@ -1,77 +1,80 @@
-Return-Path: <linux-kernel+bounces-383155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62CAA9B17E4
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 14:18:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB2C29B17E5
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 14:18:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F41B6B21885
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 12:18:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D9C21F21E51
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 12:18:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 884A61D5164;
-	Sat, 26 Oct 2024 12:18:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A052F1D5CFB;
+	Sat, 26 Oct 2024 12:18:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Deg58Wpx"
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pTbgIa5h"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDAC81D2F50
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 12:18:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FC211D5146
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 12:18:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729945086; cv=none; b=RsVoAvDYD640b7vhlsJt6ETd1Zd+eOVHuuNrodjS7sup6sf1DPCcPCqKTJ+WXlTOQ0K4w9ExvKjxuQt/7NlpHvLdiJwUFw887BZJuZ/zmF82lNpmyTZsdTHgX1RDMv4AZ+jjjD+3AgvnSenz/eCDbtDn7VYo546HVx6SqkhoW/A=
+	t=1729945089; cv=none; b=fiyWhCoSy+QPy+/lIkMvF9VAyaSLnN4NuZKtQ3ghlYzHQp9U8+YMBBsqA8IHd9n9DSr0kaN/C1RbW5MOA2H+EkbojBp+IzEX9RM5boisPQsZ2RovZnD3yIW7EmX9fJo7VsZHKKEqfeyncQVNOegf19MHZm5lWsmzXhPEp0rObpY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729945086; c=relaxed/simple;
-	bh=f+Yk5CtSNdB/1Lmu/zKBb9xb884EAaFAdkWSJ9+l47A=;
-	h=Date:Message-Id:Mime-Version:Subject:From:To:Content-Type; b=Psf2ckEbMXqJOeX8cJN6VAebko5SS5KfO07VHavdDPsEmZyB8t016Ba/e7L/2p6rI4U7jVIXaQvdsrxOFg1kAWzEqsDvMvZ1LJiDCguyDFP2FGsWIaRPlL8mcWKzueHmsEeokhRTicyuCUkWh8NptG82EXpZ1YBkJgKF2xOLLt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Deg58Wpx; arc=none smtp.client-ip=209.85.219.202
+	s=arc-20240116; t=1729945089; c=relaxed/simple;
+	bh=vZB35SPaUV/ecna2U9vXm56Rzj4+ti0U2yyXIsnH7v4=;
+	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
+	 To:Content-Type; b=sdDT80PgEuuqt9GFUYxOr7KaLugkkx0qwOjRnTMduT8yyCNrDJy9K/mrPNMffwmr9y56/UVHEH/U5cFMrrPESuyijHYd3qlj4FvBzbI/hGEnubOPWabs+/3D7wvoC0hWltRJdlcxbzEyKrFCl58NlTCLtVUp2d9MmwDeAj34XFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pTbgIa5h; arc=none smtp.client-ip=209.85.128.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e2954ada861so5419645276.3
-        for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 05:18:04 -0700 (PDT)
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e3d6713619so42448087b3.2
+        for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 05:18:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729945084; x=1730549884; darn=vger.kernel.org;
-        h=to:from:subject:mime-version:message-id:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=fBcJl01TtjB1sQ+coZ3yEQeNcjr8kffC1BqiKyM+Ja4=;
-        b=Deg58WpxuUdeldjva0WZ2Qi6mnOYfCjCqMrOeEpyh4hGln4wyn2LlpVI0xVdGVaHw0
-         HoKTCa0oORN1xR0yB890uag0h7AKpP5q+BUCuJ7SQkT9tAlGbeG56QDvkoNM6tpaK+dx
-         mye8VYen+7tyQ/s61zeTIYrcfDVGt8oto+/l4W5Wf+QaQDBvAJ5DjDWUe14rmY9AeXSW
-         hGM+ILPhaxBZVFWu3sci7epCegS0ff6JnpbKxu4IpxpL5IxP7rsM21TP7D4K5c11MJ+R
-         onUCyzRLlNxQbKKmmBLCT2nnUa3inTLSSV0slXgMGJamqO1Qcv1VVIhSaDtK2Xm00+X/
-         ojww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729945084; x=1730549884;
-        h=to:from:subject:mime-version:message-id:date:x-gm-message-state
+        d=google.com; s=20230601; t=1729945086; x=1730549886; darn=vger.kernel.org;
+        h=to:from:subject:references:mime-version:message-id:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=fBcJl01TtjB1sQ+coZ3yEQeNcjr8kffC1BqiKyM+Ja4=;
-        b=cjn/p9MAFVTFIqwW3A6SKNrTOWH9lNb0Xt6Jf1n2zYiBz7P7yprivHLn4oWgCUY5Nh
-         WmdmhAh5yxMbXEWbhk6gSFF/MCSnI2W0IomYr+g7Thc2s7VQ+WC2uaV8Hz1qgwX5gfYo
-         0SbcC0xsYPifYjOFbm3P6vIOz3+65L4Km8TpM+SlzNjDwuCxThrPUQ0xs9vquyDiGBST
-         hnRWkNPQS9Dmlb7ywfxub8DoNKV5HzVtx1Ei1ZbANPgGLQCU36akoVUTZkXknIg/tsyQ
-         tXo9YY4QIefMyGoasWVrkdBYlZLx910lDqxGY76cDrDEUo0OnPRrT03Y/D1UU2vgFU0Y
-         v4uA==
-X-Forwarded-Encrypted: i=1; AJvYcCXJaGJqPgMLeVcq7TuPDiAV4bZwJchp4SnaBnjutp/6G2efb5fK+3m/MM7AQIoeXkIw7GUoSMHlGPrAqAQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxh7vp8YwocooL6AJvU/h7gSbJoFym96ZhsMsrA6pPVwL9yO5RW
-	jYsrIqAQmePWpzb7ewiq/pnfqV8TYcr2okDinat1kSvOe3JZkxCyWy6AsegPMEy4EEXs1B/q9cc
-	jqFX5gA==
-X-Google-Smtp-Source: AGHT+IE9zYMgTwSHLGYlj300YfFrmvke8frEqe5oUqwbyU39/+jljEJ0ran0v7PIwH2GumKW+rj4eS6UlTFR
+        bh=WdNDvzlbuJZcRwH/3AdtbsrZFMtP+MFgk5KWwVeQrN0=;
+        b=pTbgIa5hI2IAgriHGqHyJlxkOz0rUChEhig5H0wFI+JpUKXabEfmJ+5zk8C12Sh1pi
+         Rg7las5fOC8LkWvEttwDIQ2iFQUFieExDNSsi9W9aPMnoTy23zTgNFvguPkmP5a+uYWL
+         BiyXpltetJeuXW7hyZb8S5Jqp6srD7xQIxPWFzosmJGKAd72IWHvX6PJteDPEpyLXu9l
+         dlrUAAbR2doiFK2tGrcfhtetpTesBUuG9gQ4YHPYMh4EwDcOk4sMJyXY5MW2AOT+8If9
+         uzoLTuinaZGMNd8NjBoCDrfCcQYND3Z8M+P8BfFij2ioA+0/rqtHxSlykL9A+mejQPnY
+         w+rg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729945086; x=1730549886;
+        h=to:from:subject:references:mime-version:message-id:in-reply-to:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WdNDvzlbuJZcRwH/3AdtbsrZFMtP+MFgk5KWwVeQrN0=;
+        b=Y1IJYS+LaxoCYta5eTl/tcH9VmaHHgEIjHD5VIK1c7NsrYfz7KChTjrf7wAILb9mSS
+         hjBREOB1ObDjJbr3ZtEAWf3Lskux8d34jYbnFse1BBCyCAZ6evR7v1q/oTv3pBJh9USg
+         mT9Gt1fZGUkFLlnODhVl7FGJPu7BYb+Vjae9Ww/iss6v/G60raS1NJSpySNgQnycAS2O
+         fXEjXEWTzhHxlqa1sbDFVrmlx/TMJawY+mZwXEh4fb71bLT1Nl6q4eLe/0IOJ42noEkm
+         KyKURCSgv0G/Ww2Io7HmFZ8ox3DZiLSnn5HieRHD/c0ZwI+Afz8xCGeq3ckzOhiUosva
+         sROg==
+X-Forwarded-Encrypted: i=1; AJvYcCXOOaPylY3NakKFqqrsVuURndBeaN9jkOfHIfKzRGrAUBgKiIphqb+EtqLCJQxqpj87SiC5iVfkI6Dwpho=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJl6sOD/5EiJ60N7SEJCUCLybGFKMu4lkFLJWWGoYQnBw0AdxT
+	O4R1jhDYG9Wa2dpSmnSiYMx8shvWKthiFKwtDfuMY7Dp0MtQzJex8R6Sj29Y6/CzWCV7esNRX8J
+	RQEK/6w==
+X-Google-Smtp-Source: AGHT+IFOl40mvdVs5SQR71bN1+vwfDx/yPB8F4Q/dtZHVs4/wMyo+J/RvfVAtx7pjhDNaEO8viHyeAKpEpqm
 X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:4bc4:f7cc:83b4:dece])
- (user=irogers job=sendgmr) by 2002:a25:a207:0:b0:e25:6701:410b with SMTP id
- 3f1490d57ef6-e3087b792abmr5358276.5.1729945083545; Sat, 26 Oct 2024 05:18:03
- -0700 (PDT)
-Date: Sat, 26 Oct 2024 05:17:54 -0700
-Message-Id: <20241026121758.143259-1-irogers@google.com>
+ (user=irogers job=sendgmr) by 2002:a05:690c:6ac6:b0:6e3:2f0b:b595 with SMTP
+ id 00721157ae682-6e9d8b171afmr600867b3.5.1729945086125; Sat, 26 Oct 2024
+ 05:18:06 -0700 (PDT)
+Date: Sat, 26 Oct 2024 05:17:55 -0700
+In-Reply-To: <20241026121758.143259-1-irogers@google.com>
+Message-Id: <20241026121758.143259-2-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+References: <20241026121758.143259-1-irogers@google.com>
 X-Mailer: git-send-email 2.47.0.163.g1226f6d8fa-goog
-Subject: [PATCH v1 0/4] Prefer sysfs/JSON events also when no PMU is provided
+Subject: [PATCH v1 1/4] perf evsel: Add pmu_name helper
 From: Ian Rogers <irogers@google.com>
 To: Atish Patra <atishp@rivosinc.com>, linux-riscv@lists.infradead.org, 
 	beeman@rivosinc.com, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
@@ -86,52 +89,48 @@ To: Atish Patra <atishp@rivosinc.com>, linux-riscv@lists.infradead.org,
 	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-At the RISC-V summit the topic of avoiding event data being in the
-RISC-V PMU kernel driver came up. There is a preference for sysfs/JSON
-events being the priority when no PMU is provided so that legacy
-events maybe supported via json. Originally Mark Rutland also
-expressed at LPC 2023 that doing this would resolve bugs on ARM Apple
-M? processors, but James Clark more recently tested this and believes
-the driver issues there may not have existed or have been resolved. In
-any case, it is inconsistent that with a PMU event names avoid legacy
-encodings, but when wildcarding PMUs (ie without a PMU with the event
-name) the legacy encodings have priority.
+Add helper to get the name of the evsel's PMU. This handles the case
+where there's no sysfs PMU via parse_events event_type helper.
 
-The patch doing this work was reverted in a v6.10 release candidate
-as, even though the patch was posted for weeks and had been on
-linux-next for weeks without issue, Linus was in the habit of using
-explicit legacy events with unsupported precision options on his
-Neoverse-N1. This machine has SLC PMU events for bus and CPU cycles
-where ARM decided to call the events bus_cycles and cycles, the latter
-being also a legacy event name. ARM haven't renamed the cycles event
-to a more consistent cpu_cycles and avoided the problem. With these
-changes the problematic event will now be skipped, a large warning
-produced, and perf record will continue for the other PMU events. This
-solution was proposed by Arnaldo.
+Signed-off-by: Ian Rogers <irogers@google.com>
+---
+ tools/perf/util/evsel.c | 10 ++++++++++
+ tools/perf/util/evsel.h |  1 +
+ 2 files changed, 11 insertions(+)
 
-Two minor changes have been added to help with the error message and
-to work around issues occurring with "perf stat metrics (shadow stat)
-test".
-
-The patches have only been tested on my x86 non-hybrid laptop.
-
-Ian Rogers (4):
-  perf evsel: Add pmu_name helper
-  perf stat: Fix find_stat for mixed legacy/non-legacy events
-  perf record: Skip don't fail for events that don't open
-  perf parse-events: Reapply "Prefer sysfs/JSON hardware events over
-    legacy"
-
- tools/perf/builtin-record.c    | 22 +++++++---
- tools/perf/util/evsel.c        | 10 +++++
- tools/perf/util/evsel.h        |  1 +
- tools/perf/util/parse-events.c | 26 +++++++++---
- tools/perf/util/parse-events.l | 76 +++++++++++++++++-----------------
- tools/perf/util/parse-events.y | 60 ++++++++++++++++++---------
- tools/perf/util/pmus.c         | 20 +++++++--
- tools/perf/util/stat-shadow.c  |  3 +-
- 8 files changed, 145 insertions(+), 73 deletions(-)
-
+diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+index f780e30aa259..87ed417df133 100644
+--- a/tools/perf/util/evsel.c
++++ b/tools/perf/util/evsel.c
+@@ -236,6 +236,16 @@ int evsel__object_config(size_t object_size, int (*init)(struct evsel *evsel),
+ 	return 0;
+ }
+ 
++const char *evsel__pmu_name(const struct evsel *evsel)
++{
++	struct perf_pmu *pmu = evsel__find_pmu(evsel);
++
++	if (pmu)
++		return pmu->name;
++
++	return event_type(evsel->core.attr.type);
++}
++
+ #define FD(e, x, y) (*(int *)xyarray__entry(e->core.fd, x, y))
+ 
+ int __evsel__sample_size(u64 sample_type)
+diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
+index 04934a7af174..5774a9d4d725 100644
+--- a/tools/perf/util/evsel.h
++++ b/tools/perf/util/evsel.h
+@@ -232,6 +232,7 @@ int evsel__object_config(size_t object_size,
+ 			 void (*fini)(struct evsel *evsel));
+ 
+ struct perf_pmu *evsel__find_pmu(const struct evsel *evsel);
++const char *evsel__pmu_name(const struct evsel *evsel);
+ bool evsel__is_aux_event(const struct evsel *evsel);
+ 
+ struct evsel *evsel__new_idx(struct perf_event_attr *attr, int idx);
 -- 
 2.47.0.163.g1226f6d8fa-goog
 
