@@ -1,60 +1,61 @@
-Return-Path: <linux-kernel+bounces-383221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89D669B189B
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 16:32:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41DD79B189E
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 16:35:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2426D1F21EE1
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 14:32:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C709282FAD
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 14:35:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4453E1804A;
-	Sat, 26 Oct 2024 14:32:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEAA51804A;
+	Sat, 26 Oct 2024 14:35:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ioWmhbjo"
-Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="F2IYVKt9"
+Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 579BBEAD0
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 14:32:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 154DDEAD0
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 14:35:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729953137; cv=none; b=WyUrPemHQtcHoVRumuu2WgDyN9NELnDuC2S1pqD/80IedqOXLWa0vz/OzilPZWitnoj46iq2YuQIybRWBYwEGA0JFNNSwNg8GGs4LuHZSNt1zG/4bJVW2dBUxH3+O9PrzJOY3Wgi0jtXC3ROAOshKFPqI3EGedePmzLNEUw+ovg=
+	t=1729953338; cv=none; b=Ah/Q9IXom7qeoH69HSyqhIAJHPwhNPmM52iE12+Bj4/sQjkkJVYX741eqgRdq6YVY0fNxD0zf4Mix/tnWxgA0dLuU5dEn4rEBUDOx309DmbYswUHZnmtjyg8j8UOoUXyAwuZXSnERsVNBuGQi9WjtUjuZiWkLqeUB+dwQxADzO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729953137; c=relaxed/simple;
-	bh=FahuXXaMZ/9ZscVkGyo9Tba+JPZAuKkH0qtbhjVacd8=;
+	s=arc-20240116; t=1729953338; c=relaxed/simple;
+	bh=deGo36gnajoWP+DowAn/iMIyx/awPKKXNmEJ26vjqmw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sBnNGt1vgYC6k0U+w2Z4ieqpOqRw5OvF+fx8Qha9Bf329DmyugBjmqaQ/eoWsv/9bTqR3+sBW+bD5SRGfPWqMfLeMriQyQ30Kxdz8vFvuo5AA+ZHHBcqnhSyAdduI92y8TI9MgV+lAS1Qb7ClE8QUH5xGb3baNBIqHulHQPh0F4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ioWmhbjo; arc=none smtp.client-ip=91.218.175.182
+	 Content-Type:Content-Disposition:In-Reply-To; b=l2GLA0v0LwzxGZvixmMfOkBVGZducBcG/ECvSjQehgwoo6J3MgcYA2f4fG/NAe6FygpsgcLkMtnL1ImjVXrQMoLGJUTxmlO4EzNEZG0bsuwXpuFwGBV4xUXUcldvNYU7bPLgQQYA6popbSFcvDb8SWmw0n7zuYc6eAo4jI4T+lc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=F2IYVKt9; arc=none smtp.client-ip=95.215.58.187
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Sat, 26 Oct 2024 14:32:02 +0000
+Date: Sat, 26 Oct 2024 14:35:26 +0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1729953131;
+	t=1729953332;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=iDrJjoXe96jtaGbZQ/F1djq7fODfGCzzGpz/Lz+dRHI=;
-	b=ioWmhbjoTUdaVLhZ52kRWU0xlN3PhCoOaVqbYJ1QwtWk9i+7sKbCODYdWiHuaS8SvmvvLG
-	mLcIR2vs+88bjLX1DXct357tkBvxcVx/gE3JS71Xy7auPw5s310Oeaejlnw4hNv7WB1c2Y
-	kJUV5jdnqxzbmT6ll9OwVtNpEXRhnoM=
+	bh=zFmQ3g+4IAepm2mpZZIQvyrjJDFwDM0PVhWAGARzdh0=;
+	b=F2IYVKt9wwTeWiNFOGahnxdxOpcgp+X0rGKqdi4PqbQICyB4SfSARm0Xpljy1aYEwkn6Bl
+	oCYeG0DFz7Z93sbK5WE3peOEVOaWehi7dBCwiLLjomlOxzNveqUYWzWEeMmxcdIij2coZi
+	ETkOmQtFcMi1girOaHrfX7jRS2MkEhs=
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 From: Oliver Upton <oliver.upton@linux.dev>
-To: kvmarm@lists.linux.dev
-Cc: Marc Zyngier <maz@kernel.org>, Joey Gouly <joey.gouly@arm.com>,
+To: Marc Zyngier <maz@kernel.org>
+Cc: kvmarm@lists.linux.dev, Joey Gouly <joey.gouly@arm.com>,
 	Suzuki K Poulose <suzuki.poulose@arm.com>,
 	Zenghui Yu <yuzenghui@huawei.com>,
 	Catalin Marinas <catalin.marinas@arm.com>,
 	Will Deacon <will@kernel.org>,
 	Anshuman Khandual <anshuman.khandual@arm.com>,
 	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 10/18] KVM: arm64: nv: Describe trap behaviour of
- MDCR_EL2.HPMN
-Message-ID: <Zxz9YonLVsaLuMEJ@linux.dev>
+Subject: Re: [PATCH v4 08/18] KVM: arm64: nv: Reinject traps that take effect
+ in Host EL0
+Message-ID: <Zxz-LocgUKuzE3t0@linux.dev>
 References: <20241025182354.3364124-1-oliver.upton@linux.dev>
- <20241025182354.3364124-11-oliver.upton@linux.dev>
+ <20241025182354.3364124-9-oliver.upton@linux.dev>
+ <87r083th7m.wl-maz@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,44 +64,85 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241025182354.3364124-11-oliver.upton@linux.dev>
+In-Reply-To: <87r083th7m.wl-maz@kernel.org>
 X-Migadu-Flow: FLOW_OUT
 
-On Fri, Oct 25, 2024 at 06:23:45PM +0000, Oliver Upton wrote:
-> MDCR_EL2.HPMN splits the PMU event counters into two ranges: the first
-> range is accessible from all ELs, and the second range is accessible
-> only to EL2/3. Supposing the guest hypervisor allows direct access to
-> the PMU counters from the L2, KVM needs to locally handle those
-> accesses.
-> 
-> Add a new complex trap configuration for HPMN that checks if the counter
-> index is accessible to the current context. As written, the architecture
-> suggests HPMN only causes PMEVCNTR<n>_EL0 to trap, though intuition (and
-> the pseudocode) suggest that the trap applies to PMEVTYPER<n>_EL0 as
-> well.
-> 
-> Signed-off-by: Oliver Upton <oliver.upton@linux.dev>
-> ---
->  arch/arm64/kvm/emulate-nested.c | 160 +++++++++++++++++++-------------
->  arch/arm64/kvm/pmu-emul.c       |  18 ++++
->  include/kvm/arm_pmu.h           |   6 ++
->  3 files changed, 120 insertions(+), 64 deletions(-)
+Hey,
 
-Gonna squash in the following to fix !CONFIG_HW_PERF_EVENTS builds.
+On Sat, Oct 26, 2024 at 09:13:17AM +0100, Marc Zyngier wrote:
+> On Fri, 25 Oct 2024 19:23:43 +0100,
+> Oliver Upton <oliver.upton@linux.dev> wrote:
+> > 
+> > Wire up the other end of traps that affect host EL0 by actually
+> > injecting them into the guest hypervisor. Skip over FGT entirely, as a
+> > cursory glance suggests no FGT is effective in host EL0.
+> 
+> Yes, and this (thankfully) is by design! :-)
+> 
+> > 
+> > Note that kvm_inject_nested() is already equipped for handling
+> > exceptions while the VM is already in a host context.
+> > 
+> > Signed-off-by: Oliver Upton <oliver.upton@linux.dev>
+> > ---
+> >  arch/arm64/include/asm/kvm_emulate.h |  5 +++++
+> >  arch/arm64/kvm/emulate-nested.c      | 29 ++++++++++++++++++++++++----
+> >  2 files changed, 30 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/arch/arm64/include/asm/kvm_emulate.h b/arch/arm64/include/asm/kvm_emulate.h
+> > index a601a9305b10..bf0c48403f59 100644
+> > --- a/arch/arm64/include/asm/kvm_emulate.h
+> > +++ b/arch/arm64/include/asm/kvm_emulate.h
+> > @@ -225,6 +225,11 @@ static inline bool is_hyp_ctxt(const struct kvm_vcpu *vcpu)
+> >  	return vcpu_has_nv(vcpu) && __is_hyp_ctxt(&vcpu->arch.ctxt);
+> >  }
+> >  
+> > +static inline bool vcpu_is_host_el0(const struct kvm_vcpu *vcpu)
+> > +{
+> > +	return is_hyp_ctxt(vcpu) && !vcpu_is_el2(vcpu);
+> > +}
+> > +
+> >  /*
+> >   * The layout of SPSR for an AArch32 state is different when observed from an
+> >   * AArch64 SPSR_ELx or an AArch32 SPSR_*. This function generates the AArch32
+> > diff --git a/arch/arm64/kvm/emulate-nested.c b/arch/arm64/kvm/emulate-nested.c
+> > index e1a30d1bcd06..db3149379a4d 100644
+> > --- a/arch/arm64/kvm/emulate-nested.c
+> > +++ b/arch/arm64/kvm/emulate-nested.c
+> > @@ -20,6 +20,9 @@ enum trap_behaviour {
+> >  	BEHAVE_FORWARD_READ	= BIT(0),
+> >  	BEHAVE_FORWARD_WRITE	= BIT(1),
+> >  	BEHAVE_FORWARD_RW	= BEHAVE_FORWARD_READ | BEHAVE_FORWARD_WRITE,
+> > +
+> > +	/* Traps that take effect in Host EL0, this is rare! */
+> > +	BEHAVE_IN_HOST_EL0	= BIT(2),
+> 
+> nit: BEHAVE_IN_HOST_EL0 lacks an action verb (forward?).
 
-diff --git a/include/kvm/arm_pmu.h b/include/kvm/arm_pmu.h
-index e6103df9ef5d..feb5d1d35f0f 100644
---- a/include/kvm/arm_pmu.h
-+++ b/include/kvm/arm_pmu.h
-@@ -188,7 +188,7 @@ static inline u64 kvm_vcpu_read_pmcr(struct kvm_vcpu *vcpu)
- 	return 0;
- }
+Thinking I'll squash this in (plus renaming in later patches):
+
+diff --git a/arch/arm64/kvm/emulate-nested.c b/arch/arm64/kvm/emulate-nested.c
+index db3149379a4d..b072098ee44e 100644
+--- a/arch/arm64/kvm/emulate-nested.c
++++ b/arch/arm64/kvm/emulate-nested.c
+@@ -22,7 +22,7 @@ enum trap_behaviour {
+ 	BEHAVE_FORWARD_RW	= BEHAVE_FORWARD_READ | BEHAVE_FORWARD_WRITE,
  
--static inline bool kvm_pmu_counter_is_hyp(struct kvm_vcpu *vcpu)
-+static inline bool kvm_pmu_counter_is_hyp(struct kvm_vcpu *vcpu, unsigned int idx)
- {
- 	return false;
- }
+ 	/* Traps that take effect in Host EL0, this is rare! */
+-	BEHAVE_IN_HOST_EL0	= BIT(2),
++	BEHAVE_FORWARD_IN_HOST_EL0	= BIT(2),
+ };
+ 
+ struct trap_bits {
+@@ -2279,7 +2279,7 @@ bool triage_sysreg_trap(struct kvm_vcpu *vcpu, int *sr_index)
+ 
+ 	b = compute_trap_behaviour(vcpu, tc);
+ 
+-	if (!(b & BEHAVE_IN_HOST_EL0) && vcpu_is_host_el0(vcpu))
++	if (!(b & BEHAVE_FORWARD_IN_HOST_EL0) && vcpu_is_host_el0(vcpu))
+ 		goto local;
+ 
+ 	if (((b & BEHAVE_FORWARD_READ) && is_read) ||
 
 -- 
 Thanks,
