@@ -1,63 +1,61 @@
-Return-Path: <linux-kernel+bounces-382958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83D639B1587
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 08:53:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 23AD49B1589
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 08:53:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EAB18B21D8F
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 06:53:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A36DAB21E77
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 06:53:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7C7E178CDE;
-	Sat, 26 Oct 2024 06:53:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B92FF17BB07;
+	Sat, 26 Oct 2024 06:53:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RzZ6/Zkd"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="Wxuqpdj5"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 591F429CE5
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 06:53:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3889F29CE5;
+	Sat, 26 Oct 2024 06:53:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729925586; cv=none; b=aUckPNlzxeEmWstg4ejLjCafk/5f4nnm7HAy8kRdwQGMfqtlP1vzX5cBhLuj3cxZmU/W5Sl20mK0Acp9XBGs2Q5eu9Af8AxyGBJgy/SpVzWt0dUpTVI+ffgLoUjSJ+yh1ZNj7wtfyjUVwyVimOXuef0+2hPvpovs+A/l3FaQchM=
+	t=1729925595; cv=none; b=o321WkqET5xjbQbvfjGCtlnynBF8FuLlspxLGSnUtofBrseVwifhugqIvcvVaMEY/5DuVA0iP/zW47GPlLU2q+vZrARygHIVrVlABzypsOdxTGKDx22RvwbbA0XhYrIDxSWXsNgNya4FrU3fkyaEkuIOzw4BmaTFmYyvWjNC7h8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729925586; c=relaxed/simple;
-	bh=ZTIzSM+dpOCFgf5amgskOkbDlN9zAVYKRWXpObWLjno=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qqPGXA3Eldi9a7etaNwJkJn3y4F3Pvt5LnkCpZgG/UkEW1o4ZGOvywuAb6zigKsY3MVFVrSyj6OgZ8fH0tFYxf43Qi5/QDiyno5qo6QaEzKOEcUM7rPg49xEpsStTiQOpx4g2x0i5uR4pABjPpN0buzrea/6aKwB2pO4NvVdH0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=RzZ6/Zkd; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=/OW7JKV1HD4IXGnfim+MowZqGhPTWggQ3xAZ0PJl0Pg=; b=RzZ6/ZkdhnoQqZwBxmKQkGtTar
-	ARiL/gs2XopXjq+au47U9+lqp47g+RtMxD/sryR/xHEsxBauktSPPDo8IYS8xjLEaLiSrPhmKbkG6
-	HHPCuUrZO6Am8A1y8j6YSHsjb8H7EnACz+oWZZdEsoim9IlorkDInzkTGqC0HlYGySKc1HmpqzzUo
-	KV8mNJUJxu2fQ4ODTqDxNwHyiHI8w/QXSAgqmsp9c8a5Qpb5KZFr+r/umNYJ7XBzKENTIcd3DL05C
-	TK5flVpyPP9XgcJLIchAmoNjLsaNMtgk5W2CSU3ExpEPinEWrifd2uu7eaGIvxZJhiOfmt+hyBzAj
-	9uxM6rlQ==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1t4afI-00000009CQf-3mHX;
-	Sat, 26 Oct 2024 06:52:49 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 12EE6300777; Sat, 26 Oct 2024 08:52:48 +0200 (CEST)
-Date: Sat, 26 Oct 2024 08:52:47 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: Aboorva Devarajan <aboorvad@linux.ibm.com>, void@manifault.com,
-	vincent.guittot@linaro.org, juri.lelli@redhat.com, mingo@redhat.com,
-	bsegall@google.com, rostedt@goodmis.org, dietmar.eggemann@arm.com,
-	vschneid@redhat.com, mgorman@suse.de, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] sched: Pass correct scheduling policy to
- __setscheduler_class
-Message-ID: <20241026065247.GG9767@noisy.programming.kicks-ass.net>
-References: <20241025185020.277143-1-aboorvad@linux.ibm.com>
- <ZxvxR32TQ1UIVLtS@slm.duckdns.org>
+	s=arc-20240116; t=1729925595; c=relaxed/simple;
+	bh=QJvLdK+wCiwLhbO975C0bPfNczVQWVsevuNn9U2giBc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=owPiR/Nho4R9pnOWiObWFzeotHeAN2qsZDsAOJARIU2swzjw/L4boUzjAqszTDeZa1XuUM90ARAsHlV63twDo1fea8xS/PwmN2R2fJg86VbWWCImVj4ct9PuqxJqLj+3WwTBI499kNbRypS5cSRQVqjj28Ca5xd5FWD228+1MNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=Wxuqpdj5; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:Message-ID:Subject:Cc:To:
+	From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=rayIZPLvmg1WK0WKZTmexEEmG6O6yNDBVCWaCdAgmm8=; b=Wxuqpdj5eDh4sPFl0XTn2PPFh/
+	cCOFVG3xtZjMf8dDceXoCbYn66tyOrbq2xsQlJze/lv6rEhPaUCCZfTpZhJTna1acpOeIN/yODuDK
+	NQ+51SKdCUJGHnb+ps1a/QN8Q5Cr8hmcxoU3mT7EglAcoGik8T1Xr3QKjr9nQr88+MznROCDr7NiN
+	6XalRm9RULzVw5wMe3KqEzVyS1UMU6fPuAGS9ZZkvl6qJZWeD9xGWET/oaP/Rjw5asocq5PxoGG5a
+	YxYJo60lDA8pL6ICacRLw+ZstWe+K8Vc68bQnoIAAoFQ7fXdfcgDZKSdqc4otJ4rJxmfK5Ghv7EyY
+	bh30I0cQ==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1t4afY-00CFrf-2L;
+	Sat, 26 Oct 2024 14:53:05 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sat, 26 Oct 2024 14:53:04 +0800
+Date: Sat, 26 Oct 2024 14:53:04 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: linux-crypto@vger.kernel.org, x86@kernel.org,
+	linux-kernel@vger.kernel.org, ardb@kernel.org, jpoimboe@kernel.org,
+	peterz@infradead.org
+Subject: Re: [PATCH 0/3] crypto: x86/crc32c - jump table elimination and
+ other cleanups
+Message-ID: <ZxyR0JR37_uuZ5f2@gondor.apana.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,79 +64,29 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZxvxR32TQ1UIVLtS@slm.duckdns.org>
+In-Reply-To: <20241014042447.50197-1-ebiggers@kernel.org>
+X-Newsgroups: apana.lists.os.linux.cryptoapi,apana.lists.os.linux.kernel
 
-On Fri, Oct 25, 2024 at 09:28:07AM -1000, Tejun Heo wrote:
-> On Sat, Oct 26, 2024 at 12:20:20AM +0530, Aboorva Devarajan wrote:
-> > The function __setscheduler_class determines the appropriate
-> > sched_class based on the scheduling policy and priority. Previously,
-> > the function used the task's pointer to retrieve the scheduling policy,
-> > which could lead to incorrect decisions if the task's struct had an
-> > outdated policy. This behaviour where the task pointer may reference an
-> > outdated policy when __setscheduler_class is called, was introduced in
-> > commit 98442f0ccd82 ("sched: Fix delayed_dequeue vs switched_from_fair()")
-> > 
-> > To resolve this, corresponding scheduling policy is passed directly
-> > to __setscheduler_class instead of relying on the task pointer's cached
-> > policy. This ensures that the correct policy is always used when
-> > determining the scheduling class.
-> > 
-> > -------------------------------------------------------
-> > Before Patch:
-> > -------------------------------------------------------
-> > 
-> > ```
-> > sched_ext # ./runner -t init_enable_count
-> > ===== START =====
-> > TEST: init_enable_count
-> > DESCRIPTION: Verify we do the correct amount of counting of init,
-> >              enable, etc callbacks.
-> > OUTPUT:
-> > ERR: init_enable_count.c:132
-> > Expected skel->bss->enable_cnt == num_children (3 == 5)
-> > not ok 1 init_enable_count #
-> > =====  END  =====
-> > 
-> > =============================
-> > 
-> > RESULTS:
-> > 
-> > PASSED:  0
-> > SKIPPED: 0
-> > FAILED:  1
-> > ```
-> > -------------------------------------------------------
-> > After Patch:
-> > -------------------------------------------------------
-> > 
-> > ```
-> > sched-ext # ./runner -t init_enable_count
-> > ===== START =====
-> > TEST: init_enable_count
-> > DESCRIPTION: Verify we do the correct amount of counting of init,
-> >              enable, etc callbacks.
-> > OUTPUT:
-> > ok 1 init_enable_count #
-> > =====  END  =====
-> > 
-> > =============================
-> > 
-> > RESULTS:
-> > 
-> > PASSED:  1
-> > SKIPPED: 0
-> > FAILED:  0
-> > ```
-> > 
-> > Fixes: 98442f0ccd82 ("sched: Fix delayed_dequeue vs switched_from_fair()")
-> > Signed-off-by: Aboorva Devarajan <aboorvad@linux.ibm.com>
+Eric Biggers <ebiggers@kernel.org> wrote:
+> This series cleans up the x86_64 assembly implementation of CRC32C to
+> reduce code size, improve performance, and eliminate the use of the
+> outdated and problematic jump table idiom.
 > 
-> Acked-by: Tejun Heo <tj@kernel.org>
+> Eric Biggers (3):
+>  crypto: x86/crc32c - simplify code for handling fewer than 200 bytes
+>  crypto: x86/crc32c - access 32-bit arguments as 32-bit
+>  crypto: x86/crc32c - eliminate jump table and excessive unrolling
 > 
-> Peter, do you want me to route this patch or would tip be better?
+> arch/x86/crypto/crc32c-intel_glue.c       |   2 +-
+> arch/x86/crypto/crc32c-pcl-intel-asm_64.S | 354 ++++++++--------------
+> 2 files changed, 126 insertions(+), 230 deletions(-)
+> 
+> 
+> base-commit: cfea70e835b9180029257d8b772c9e99c3305a9a
 
-Once I've figured out what the word soup means and reverse engineerd
-what it actually does I'll probably take it :/
-
-That Changelog is horrible
+All applied.  Thanks.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
