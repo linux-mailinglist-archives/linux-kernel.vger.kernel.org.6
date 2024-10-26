@@ -1,131 +1,161 @@
-Return-Path: <linux-kernel+bounces-383158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C66559B17E9
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 14:18:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 192279B17EE
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 14:19:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3CB75B21C28
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 12:18:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D618E281FE4
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 12:19:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76B381D6DC4;
-	Sat, 26 Oct 2024 12:18:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E2251D5CEB;
+	Sat, 26 Oct 2024 12:18:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B0jQrECm"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WhCwQ+Wv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B11181D5ABE;
-	Sat, 26 Oct 2024 12:18:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE7AA1D2F50;
+	Sat, 26 Oct 2024 12:18:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729945092; cv=none; b=U2Z/1HlDPqKgQvCMv00WeKS9HPZMojemyWtMwFd1UJM4nZaSy8YGbF84DDaHNVMkvwukbWaBBvYui9GIOLdBuljmARtD/WVdoSAw1lXtNpRe3INnt+rwnormMoP9ohJ6YJILkRe6YH5Gtykbn8tKcZfwdm/4nNYMQJPKMxSpAZQ=
+	t=1729945134; cv=none; b=RBSP6HcY7fUS+DmZGOkoLEXZjGgrckCUwUmTEewSOLvXzHo5vq2AbDHY5pZ9NwryJoTF2Xyr+DLyhjcIy/iZr+6+PXSClUj8bGlHFh93z7tEXvx6tdSfsqME7adTYFR8Tk+mVX0Ncoo/m6Q1XpA5zE4H2d2dvFqJ47bgdd/YaPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729945092; c=relaxed/simple;
-	bh=McFyV9hd0zvF83FfWgRWq6Igkamoo1JqCEDwrJwkG3g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jmM0iSV3ypUlQO2jvb3j8c7ovr3hlYjGcRkLHSsnsb8cvYV/EX+GzyIn/04YkIsnS6fjn1STWNt/62C/f/3HrilzXe5X57fglzB0okyvsfHdpxDz6A0YoVm1PKQw7dM6uHejG8l6JgPezusW20TOeKzpTk9JCuXtGblv4z06NM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B0jQrECm; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5c97c7852e8so3994634a12.1;
-        Sat, 26 Oct 2024 05:18:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729945089; x=1730549889; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=yH+o/HY3JXmwHdmBgupIEIWVJlcQTGn4DbO6wqm5C4I=;
-        b=B0jQrECmznv6TLc+9N1y+g5fZoZh1U11tg+/XVWO2p27MFNUINJkUdLe4NuEznJtmC
-         DPnaS/xS9htXAUn7kHgYkgnio95L1rdSMSJREYffnIeCGNXWIapZHUi0VOB5Et6Sg3ju
-         YTS1nWXe6yxtWe6T2uzD8pVYYdVkkGCg75mj+/fyw/JNfOGkNY/QCG8J2u2K/SAOLe5S
-         ng/7u8eArbfJK5Yu2uo1ir2nSYtDGOFQb0qiO6YbyZseYQDZYs5l3st2WtYY/R6f8ZGW
-         rq0/RfpdN2pza+AcTC+zy7izzmAl3FIt10SWv8G19XYOKmWJNLs4KkNMscXYpZekTrRT
-         LBtQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729945089; x=1730549889;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yH+o/HY3JXmwHdmBgupIEIWVJlcQTGn4DbO6wqm5C4I=;
-        b=cQWbE7zbPvkg3bwDh/WH3PiD9BULhE8eTaWo+3/8hldkzdoV/Ty8mZkeZLuu55k+Mk
-         eIj+tZzPcWBOA9nX/K2YFsY46TJkMHTzl9wvfz4k9oiy09ulP8aaIqVeFGUY+Terye2Z
-         aXK4NuFm7t2p29zQ9tYxN2kpgK7DKZ2dfr5L/UIBsIhuvFjOZfA8EocT3Qh3L8mSMyV4
-         ljS1prdDOA+xLYZQolrG5w/KGe1v/mw2fnvwbgTz+Q6v061dvmyeHEIevPpITI8lLvyT
-         M2BYskfyG+1HyzZ6MdnTVDkNlOFWqSOSlgsRA6qLBd1whkYExw2oaMhIVcQZ7wN8ln2y
-         2+CA==
-X-Forwarded-Encrypted: i=1; AJvYcCWYf3jdDw6cLTlpoLxO98wcsskraR2cfrjf3j2AMN3E0kfUgF6iznddkZvz5M4ZbqDBxE5ora2OuKWrZcQF@vger.kernel.org, AJvYcCWlJb0gauYfdhCYCnUYq+F5qmtzBNTOfNKj58BWvhokg3eN7LFOs1DRTzn7axhF6DBA1fHjcCRLKWgg@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9DtH2Gqhrnck8fikO1YZskqNzSFS8zTgZkbGHVbm60pobaKNk
-	T8sXrdZb3CQKZJr2+/+86vjDkuRHKcsTiNR/rD1G+qhRntd62qpo
-X-Google-Smtp-Source: AGHT+IFYyYwgZquxy67wBugI4PFcafIe8a40Si0QwupoEmiT4JdDegPMKfAYvoQS+vjZC9maXdtMqw==
-X-Received: by 2002:a17:907:7ea0:b0:a9a:17fb:4c40 with SMTP id a640c23a62f3a-a9de5d6e1e7mr178998366b.26.1729945088794;
-        Sat, 26 Oct 2024 05:18:08 -0700 (PDT)
-Received: from [192.168.1.102] ([94.131.202.55])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b3a089278sm168124866b.220.2024.10.26.05.18.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 26 Oct 2024 05:18:08 -0700 (PDT)
-Message-ID: <f232dbb0-9036-46d6-83f9-27363813930d@gmail.com>
-Date: Sat, 26 Oct 2024 15:18:07 +0300
+	s=arc-20240116; t=1729945134; c=relaxed/simple;
+	bh=Puqn0sjtF8hvWJ7T+g8tK0oVrEl1m4uPOE9f4EjtbLw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JWuduaH3XuluvNqRn9MyxhmpmvgY+8E/p8wnfnx+w9tg7lUgf8ocptYbBBEciL9d1fQlCe1YpJL2zFkG9/RWzNnb/LHFTk2K0jFsYVMYzUcUTJiFGRAlb2hvt+Scb7yuhuMQpezAlBWPI3sPl6WktjzZcsfm4SBdD1VQwxTIZyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WhCwQ+Wv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 672EFC4CEC6;
+	Sat, 26 Oct 2024 12:18:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729945134;
+	bh=Puqn0sjtF8hvWJ7T+g8tK0oVrEl1m4uPOE9f4EjtbLw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WhCwQ+WvFquoYJL0klaU4J3OlIAd5bzL9tSbKNAWDdMcQ7NHBkjD10907P9So1G5b
+	 lmsDWX6mmCF+BhshpAgg4xBTQXUN7sIn2PDQMTltwWSCSDCUfZR3ITf0tsovFndmSG
+	 IGtt9BA+ViW1UjnORx3Zu0t7wTSaIPy8Qe6nN33kaxI0bS+WEJU88l+yfoQoPDkS9K
+	 klr5vkWgG4aJXeA//BxWhDkMxPUj3Qr5p4IjwlqNuSzTSy7NhFjn+kJemWUjWzq/Vn
+	 3k3RunD1idt2kNSnw/OmFUc9tnQFNOUIQmj9pTSR4VjQ9YAU1AvIA/v7Ng2o+zAVHe
+	 rIKnVmtZ/OP5A==
+Date: Sat, 26 Oct 2024 14:18:50 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Himanshu Bhavani <himanshu.bhavani@siliconsignals.io>
+Cc: linus.walleij@linaro.org, robh@kernel.org, krzk+dt@kernel.org, 
+	tarang.raval@siliconsignals.io, Conor Dooley <conor+dt@kernel.org>, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] dt-bindings: pinctrl: convert pinctrl-mcp23s08.txt to
+ yaml format
+Message-ID: <usqmeunejf44l6wjw67ocv4idyxfpw5ivt5v4hqkputd7d7xsk@3ies2iwutzsz>
+References: <20241024124654.26775-1-himanshu.bhavani@siliconsignals.io>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/5] arm64: dts: exynos8895: Add cmu, mct, serial_0/1
- and spi_0/1
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Krzysztof Kozlowski <krzk@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
- Mark Brown <broonie@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20241023091734.538682-1-ivo.ivanov.ivanov1@gmail.com>
- <172994467264.24870.11860096857422265131.b4-ty@linaro.org>
-Content-Language: en-US
-From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-In-Reply-To: <172994467264.24870.11860096857422265131.b4-ty@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241024124654.26775-1-himanshu.bhavani@siliconsignals.io>
 
+On Thu, Oct 24, 2024 at 06:16:18PM +0530, Himanshu Bhavani wrote:
+> +  pinmux:
+> +    type: object
+> +    properties:
+> +      pins:
+> +        description:
+> +          The list of GPIO pins controlled by this node. Each pin name
+> +          corresponds to a physical pin on the GPIO expander.
+> +        items:
+> +          pattern: "^gpio([0-9]|[1][0-5])$"
 
+Since I expect resend, correct also quotes - use consistently either '
+or ".
 
+> +        maxItems: 16
+> +
+> +      bias-pull-up:
+> +        type: boolean
+> +        description:
+> +          Configures pull-up resistors for the GPIO pins. Absence of this
+> +          property will leave the configuration in its default state.
+> +
+> +    required:
+> +      - pins
+> +
+> +    additionalProperties: false
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - gpio-controller
+> +  - '#gpio-cells'
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +
+> +    i2c {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        mcp23018: gpio@20 {
+> +            compatible = "microchip,mcp23018";
+> +            reg = <0x20>;
+> +            gpio-controller;
+> +            #gpio-cells = <2>;
+> +
+> +            interrupt-parent = <&gpio1>;
+> +            interrupts = <17 IRQ_TYPE_LEVEL_LOW>;
+> +            interrupt-controller;
+> +            #interrupt-cells = <2>;
+> +            microchip,irq-mirror;
+> +        };
+> +    };
 
-On 10/26/24 15:12, Krzysztof Kozlowski wrote:
-> On Wed, 23 Oct 2024 12:17:29 +0300, Ivaylo Ivanov wrote:
->> Hey folks,
->>
->> This patchset adds device tree nodes for multiple clock management unit
->> blocks, MCT, SPI and UART for Exynos8895.
->>
->> Exynos8895 uses USIv1 for most of its serial buses, except a few that
->> have been implemented in this series. Support for USIv1 and HSI2C will
->> be added in the future.
->>
->> [...]
-> NOT applied patch 4/5 - I wait for bindings to be accepted by Greg.
+Drop this example.
 
-Alright, thanks for applying the rest!
+> +
+> +  - |
+> +    spi {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        mcp23s17: gpio@0 {
 
-Best regards, Ivo.
+Drop unused label
 
->
-> Applied, thanks!
->
-> [1/5] dt-bindings: timer: exynos4210-mct: Add samsung,exynos8895-mct compatible
->       https://git.kernel.org/krzk/linux/c/e54eb0465e548a7c6115e336ec5cfec04bbe8747
-> [2/5] arm64: dts: exynos8895: Add clock management unit nodes
->       https://git.kernel.org/krzk/linux/c/fa986d1073805154888a788eda38d46a796346e8
-> [3/5] arm64: dts: exynos8895: Add Multi Core Timer (MCT) node
->       https://git.kernel.org/krzk/linux/c/9ad6c3bd1bcbb73e2a5723e13b9d06e2296b07e4
-> [5/5] arm64: dts: exynos8895: Add spi_0/1 nodes
->       https://git.kernel.org/krzk/linux/c/a5541d737c8de71948bcdaee912bcb6b0781af7e
->
-> Best regards,
+> +            compatible = "microchip,mcp23s17";
+> +            reg = <0>;
+> +            gpio-controller;
+> +            #gpio-cells = <2>;
+> +            spi-max-frequency = <1000000>;
+> +            microchip,spi-present-mask = /bits/ 8 <0x01>;
+> +        };
+> +    };
+> +
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +    #include <dt-bindings/gpio/gpio.h>
+> +
+> +    i2c {
+
+Keep one complete example for i2c and one for spi. This was not in
+previous patch and changelog does not explain why you need three
+examples.
+
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        mcp23017: gpio@21 {
+
+Drop unused label
+
+Best regards,
+Krzysztof
 
 
