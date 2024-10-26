@@ -1,131 +1,186 @@
-Return-Path: <linux-kernel+bounces-383328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 091D59B1A20
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 19:39:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7469C9B1A23
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 19:45:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CCF11C21205
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 17:39:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EED091F21EB6
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 17:45:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AC491D2F67;
-	Sat, 26 Oct 2024 17:39:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45ED61D319C;
+	Sat, 26 Oct 2024 17:45:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=revi.email header.i=@revi.email header.b="UQhV9nj7";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="aqm1Zm5/"
-Received: from fout-a8-smtp.messagingengine.com (fout-a8-smtp.messagingengine.com [103.168.172.151])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jLRIoxno"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37D576FB9;
-	Sat, 26 Oct 2024 17:39:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25D183FB9F;
+	Sat, 26 Oct 2024 17:45:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729964355; cv=none; b=Df+5DzE9n8kanmJhFMQWSMG+llcofkojrGP475zS9KZJz93hnf1Mzp8zs4iQcnNUccFq19iPifR/qsRYpaFjHh1IXp5sH4SFPVWJ0SSEXXi8JtVsmYoKW/Th4LIIkKE6PNKDf+2ZC1YlxHvzsUC0eC/YAmWZICpF3UZEwx6B48w=
+	t=1729964723; cv=none; b=CAOcnLROLpzOb+dVEsglq+6i3pAYKkASBo/B0RBCGAkJPheXi24y5aBsnwLyRCwTrlOpfQfT6lWrXSWziL53erw8L/I4Onlcu9Q4JQlcL3xtmrmC6oA8cwXQ3lioyh4RldgFwvvPgyZnMXB2sBhubTuefwMzLBdGVJjtEYy30Hw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729964355; c=relaxed/simple;
-	bh=D3RmwI4bu3/8BxSAVeLi4RAOLqlxj/oLNWo2qcTdduo=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:Subject:
-	 Content-Type; b=NLFxu67elgqx1JW2C0IZSYYdoIqZBc4pjC12Gzu1Z7OSqw179DXd9DHUb9AeNdttdnafP5j2YmP65HNjRhhseYkxT3S058eRPPKUMobiiUBIuQaoeo4u3VF8DtfmKqwAfPkTRhDWsRcfsOIWr05ftZTUxbGrXahuqp/RYA2vzwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=revi.email; spf=pass smtp.mailfrom=revi.email; dkim=pass (2048-bit key) header.d=revi.email header.i=@revi.email header.b=UQhV9nj7; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=aqm1Zm5/; arc=none smtp.client-ip=103.168.172.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=revi.email
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=revi.email
-Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
-	by mailfout.phl.internal (Postfix) with ESMTP id 261621380223;
-	Sat, 26 Oct 2024 13:39:11 -0400 (EDT)
-Received: from phl-imap-09 ([10.202.2.99])
-  by phl-compute-01.internal (MEProxy); Sat, 26 Oct 2024 13:39:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=revi.email; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:reply-to:subject:subject:to:to; s=fm1; t=1729964351; x=
-	1730050751; bh=o3IeO3jQIb1Qjuj3w22aq9LgOdGupsxgBB3CjNvb0n8=; b=U
-	QhV9nj7SiWR90hvVN+St8X3/V3Ewu53YNYFmj1fZebZqSiay89B7NWeV0lZ5bwRF
-	/9Hp4iQJR69nCLnX+qoXAlTI0Bskg4dKKg471kNJToxp5g7Hv4yMHJK3ViacvnBO
-	YMjRHcC2S9a/R+dC/RstCe+CxyjIu9yI2BcFzBN1nMtjapOweQZj997fUpBYSOzz
-	IUxDuDKRRe0kN4LpPx/WCLEVPu5jJaw1egVSK3TNbe7LBxCAHDZShvmVlr3PfRUM
-	b2Ug+0jMGRX8JzqatPIbSQEWB3gLn8g2KG4qC6z0KHXdTwbEoNlJBoZ51BWt92zQ
-	bGhHPi27nozcbViuTlujA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1729964351; x=
-	1730050751; bh=o3IeO3jQIb1Qjuj3w22aq9LgOdGupsxgBB3CjNvb0n8=; b=a
-	qm1Zm5/KxNSuq2Zgrkch09OvXwGuyPrtf/gmMx8UVNUryVB/xF7f7Ng6Fnduhkoy
-	n8nxjgKBMhc8Y5JRi+6L/trievSDkyjCCrm7nN2HBay4KmhC5JkEAwxxrr9t6QI2
-	2iUTZ29VVHdPpSBwXJlxavPLE34/cjHPUCChYJgAlkpe0dUcibn6Oij30fS75vqd
-	egwD9RGYITFAKRAhVV37snjWmcIG2fP/E6VZruT8aRxSONnXVUh+0Cq3c6WwFn/Q
-	OQN+3G0rry7Zu13SmdPjbwNaSxXKuQRN4PjfiagS9rKOGTrpnQMBGWQFmaVEEWlp
-	qQDSSOjsLbUn0NeKYWWpw==
-X-ME-Sender: <xms:PikdZ_GOgoKqi4didu-Nr54oT8dRdr_YTrdJklM-bflPUKPPYw5mxw>
-    <xme:PikdZ8V-JeqA4mBh49Aey1Qp16K-KOECikEqfTbZe6zAXvo1rEKmQjsdA5ZshHqMU
-    yMaqgKCV_NzlcEhzOc>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdejgedguddugecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecufghrlhcuvffnffculd
-    dujedmnecujfgurhepofggfffhvfevkfgjufgtgfesthhqredtredtjeenucfhrhhomhep
-    jghonhhgmhhinhcuoeihvgifohhnsehrvghvihdrvghmrghilheqnecuggftrfgrthhtvg
-    hrnhepffetjeejleevfeelgfelteevheelgfekheevuefgleetlefhtdetveetfeegkeeh
-    necuffhomhgrihhnpeifihhkthhiohhnrghrhidrohhrghdprhgvvhhirdighiiipdifih
-    hkihhpvgguihgrrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehm
-    rghilhhfrhhomhephigvfihonhesrhgvvhhirdgvmhgrihhlpdhnsggprhgtphhtthhope
-    dufedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepjhhirgiguhhnrdihrghnghes
-    fhhlhihgohgrthdrtghomhdprhgtphhtthhopegtohhnughutghtsehkvghrnhgvlhdroh
-    hrghdprhgtphhtthhopegtvhgvsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlvggv
-    sehkvghrnhgvlhdrohhrghdprhgtphhtthhopehsrghshhgrlheskhgvrhhnvghlrdhorh
-    hgpdhrtghpthhtohepshgvtghurhhithihsehkvghrnhgvlhdrohhrghdprhgtphhtthho
-    pehshhhurghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehtohhrvhgrlhgusheslh
-    hinhhugidqfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtohepghhrvghgkhhhsehl
-    ihhnuhigfhhouhhnuggrthhiohhnrdhorhhg
-X-ME-Proxy: <xmx:PikdZxJQ2AwbB4WTvMzRyJkzHoDhlQFqdOyXE9vTJ-Ki-q0A5ikoig>
-    <xmx:PikdZ9GvhYESnUnKlTmZMQjZvAMQGnQWo5ef64YIChqPvL2G5SBroQ>
-    <xmx:PikdZ1Vm0dAKN2lGlcmUu7uRoFOU6FYt5-g7xe0qr3yTQSaSdMUjJg>
-    <xmx:PikdZ4OMW5gal6-FPlfBllDEnJLG-1zDG_p4cYPMteEsJBNXWVhCww>
-    <xmx:PykdZ-uE3iRqM96VVUE4ptaulJnazS5PFyV6NQiRdM283OjcL0_3Go0X>
-Feedback-ID: ie2a949ef:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 170D6780068; Sat, 26 Oct 2024 13:39:10 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1729964723; c=relaxed/simple;
+	bh=+xOr9a7QBmgzvXt4K8ogW7y/X97Fm+JIp1HzB4NWPHM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bMFpb7B+xKScjkzkaTgBSpg6sdFp8HUnseodvvuWbpj7XSQI9GzwNnb2ihI/wl/40/siYmKCLWhuz7sJwHc6z+2hrXxV7ZmfnFvqM1k8BeGQPKPVU3pc0UmOdq14g+SXSXkVHfTh1wsI6gFYhQ7glaDC6n28MUv+ugbetsniFEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jLRIoxno; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729964721; x=1761500721;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=+xOr9a7QBmgzvXt4K8ogW7y/X97Fm+JIp1HzB4NWPHM=;
+  b=jLRIoxnomumwx3vNugVLyedLWTuV0pXCO0daKtIQY8tkewVAeWkUbBS0
+   gDbgoSWuBDiH67sUwhD/ALHSCYZg5YYBKG4u6xfJ/SUxWZx7k1nDHpbYi
+   bEFiDf+sGsjucu0rWwTtgJtoE2nhVqSMhAt72YA2kIVu+rAGAxxbEg71B
+   0LHxTSXdlkskjvgU9hEx7dSEKE5enBbZ1qUdCfM1OVkXM6VE+4YVVewVc
+   vAlqlY7XRLQmxJuwgS4rfjYILOC1iVxk9NaFlWwCPiCHQHub5RBIJhN+E
+   PZtvuN3hiE3bwdlpwsxqvtesuC/Krd4CmTkHxq7YD7LdmikryPlnxPBj2
+   A==;
+X-CSE-ConnectionGUID: hLSFfTcIRliMxHvpi+WMsg==
+X-CSE-MsgGUID: ottWsg4aTUa0fpCiaL/kbQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11237"; a="33524846"
+X-IronPort-AV: E=Sophos;i="6.11,235,1725346800"; 
+   d="scan'208";a="33524846"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Oct 2024 10:45:20 -0700
+X-CSE-ConnectionGUID: ta/ZbhOLQbufXi2FTdmBvg==
+X-CSE-MsgGUID: RgVkr9u8Ty6IAyzF3hBiyQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="85974141"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa003.jf.intel.com with ESMTP; 26 Oct 2024 10:45:15 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t4kqe-000Ztk-2L;
+	Sat, 26 Oct 2024 17:45:12 +0000
+Date: Sun, 27 Oct 2024 01:44:55 +0800
+From: kernel test robot <lkp@intel.com>
+To: Huan Tang <tanghuan@vivo.com>, alim.akhtar@samsung.com,
+	avri.altman@wdc.com, bvanassche@acm.org,
+	James.Bottomley@hansenpartnership.com, martin.petersen@oracle.com,
+	beanhuo@micron.com, luhongfei@vivo.com, quic_cang@quicinc.com,
+	keosung.park@samsung.com, viro@zeniv.linux.org.uk,
+	quic_mnaresh@quicinc.com, peter.wang@mediatek.com,
+	manivannan.sadhasivam@linaro.org, ahalaney@redhat.com,
+	quic_nguyenb@quicinc.com, linux@weissschuh.net, ebiggers@google.com,
+	minwoo.im@samsung.com, linux-kernel@vger.kernel.org,
+	linux-scsi@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	opensource.kernel@vivo.com, Huan Tang <tanghuan@vivo.com>
+Subject: Re: [PATCH v2] ufs: core: Add WB buffer resize support
+Message-ID: <202410270108.zrM5GjRx-lkp@intel.com>
+References: <20241026004423.135-1-tanghuan@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Sun, 27 Oct 2024 02:38:49 +0900
-From: Yongmin <yewon@revi.email>
-To: jiaxun.yang@flygoat.com
-Cc: conduct@kernel.org, corbet@lwn.net, cve@kernel.org,
- gregkh@linuxfoundation.org, lee@kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, sashal@kernel.org, security@kernel.org,
- shuah@kernel.org, stable@vger.kernel.org, torvalds@linux-foundation.org
-Message-Id: <166cb904-efb6-4dad-b30c-0dcbc600db5e@app.fastmail.com>
-In-Reply-To: <73b8017b-fce9-4cb1-be48-fc8085f1c276@app.fastmail.com>
-Subject: Re: Concerns over transparency of informal kernel groups
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241026004423.135-1-tanghuan@vivo.com>
 
-Hello from random bystander watching all this,
+Hi Huan,
 
-You probably should have used the term 'in camera' [1] instead of inform=
-al groups.
+kernel test robot noticed the following build errors:
 
-[1]: https://en.wiktionary.org/wiki/in_camera : "1. In secret or in priv=
-ate (in an enclosed room, behind closed doors)."
+[auto build test ERROR on jejb-scsi/for-next]
+[also build test ERROR on mkp-scsi/for-next linus/master v6.12-rc4 next-20241025]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Bye,
+url:    https://github.com/intel-lab-lkp/linux/commits/Huan-Tang/ufs-core-Add-WB-buffer-resize-support/20241026-084545
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git for-next
+patch link:    https://lore.kernel.org/r/20241026004423.135-1-tanghuan%40vivo.com
+patch subject: [PATCH v2] ufs: core: Add WB buffer resize support
+config: i386-buildonly-randconfig-001-20241026 (https://download.01.org/0day-ci/archive/20241027/202410270108.zrM5GjRx-lkp@intel.com/config)
+compiler: clang version 19.1.2 (https://github.com/llvm/llvm-project 7ba7d8e2f7b6445b60679da826210cdde29eaf8b)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241027/202410270108.zrM5GjRx-lkp@intel.com/reproduce)
 
-----
-revi | =EB=A0=88=EB=B9=84 (IPA: l=C9=9Bbi)
-- https://revi.xyz
-- he/him <https://revi.xyz/pronoun-is/>
-- What time is it in my timezone? <https://issuetracker.revi.xyz/u/time>
-- In this Korean name <https://en.wikipedia.org/wiki/Korean_name>, the f=
-amily name is Hong <https://en.wikipedia.org/wiki/Hong_(Korean_surname)>=
-, which makes my name HONG Yongmin.
-- I reply when my time permits. Don't feel pressured to reply ASAP;
-   take your time and respond at your schedule.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410270108.zrM5GjRx-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from drivers/ufs/core/ufs-sysfs.c:12:
+   In file included from drivers/ufs/core/ufshcd-priv.h:7:
+   In file included from include/ufs/ufshcd.h:16:
+   In file included from include/linux/blk-crypto-profile.h:9:
+   In file included from include/linux/bio.h:10:
+   In file included from include/linux/blk_types.h:10:
+   In file included from include/linux/bvec.h:10:
+   In file included from include/linux/highmem.h:8:
+   In file included from include/linux/cacheflush.h:5:
+   In file included from arch/x86/include/asm/cacheflush.h:5:
+   In file included from include/linux/mm.h:2213:
+   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+>> drivers/ufs/core/ufs-sysfs.c:441:2: error: use of undeclared identifier 'index'
+     441 |         index = ufshcd_wb_get_query_index(hba);
+         |         ^
+   1 warning and 1 error generated.
+
+Kconfig warnings: (for reference only)
+   WARNING: unmet direct dependencies detected for GET_FREE_REGION
+   Depends on [n]: SPARSEMEM [=n]
+   Selected by [y]:
+   - RESOURCE_KUNIT_TEST [=y] && RUNTIME_TESTING_MENU [=y] && KUNIT [=y]
+
+
+vim +/index +441 drivers/ufs/core/ufs-sysfs.c
+
+   413	
+   414	static ssize_t wb_toggle_buf_resize_store(struct device *dev,
+   415			struct device_attribute *attr, const char *buf, size_t count)
+   416	{
+   417		struct ufs_hba *hba = dev_get_drvdata(dev);
+   418		unsigned int wb_buf_resize_op;
+   419		ssize_t res;
+   420	
+   421		if (!ufshcd_is_wb_allowed(hba) || !hba->dev_info.wb_enabled ||
+   422			!hba->dev_info.b_presrv_uspc_en) {
+   423			dev_err(dev, "The WB buf resize is not allowed!\n");
+   424			return -EOPNOTSUPP;
+   425		}
+   426	
+   427		if (kstrtouint(buf, 0, &wb_buf_resize_op))
+   428			return -EINVAL;
+   429	
+   430		if (wb_buf_resize_op != 0x01 && wb_buf_resize_op != 0x02) {
+   431			dev_err(dev, "The operation %u is invalid!\n", wb_buf_resize_op);
+   432			return -EINVAL;
+   433		}
+   434	
+   435		down(&hba->host_sem);
+   436		if (!ufshcd_is_user_access_allowed(hba)) {
+   437			res = -EBUSY;
+   438			goto out;
+   439		}
+   440	
+ > 441		index = ufshcd_wb_get_query_index(hba);
+   442		ufshcd_rpm_get_sync(hba);
+   443		res = ufshcd_wb_toggle_buf_resize(hba, wb_buf_resize_op);
+   444		ufshcd_rpm_put_sync(hba);
+   445	
+   446	out:
+   447		up(&hba->host_sem);
+   448		return res < 0 ? res : count;
+   449	}
+   450	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
