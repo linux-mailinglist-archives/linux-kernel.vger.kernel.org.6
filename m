@@ -1,58 +1,59 @@
-Return-Path: <linux-kernel+bounces-383234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0CB69B18CD
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 16:53:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74DB69B18D0
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 16:54:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B031C28271F
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 14:53:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED9ED1F2223F
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 14:54:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0F0E1CA9C;
-	Sat, 26 Oct 2024 14:53:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBEB41CD0C;
+	Sat, 26 Oct 2024 14:54:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="IDXAYO04"
-Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
+	dkim=pass (2048-bit key) header.d=lichtman.org header.i=@lichtman.org header.b="S1NcvznR"
+Received: from lichtman.org (lichtman.org [149.28.33.109])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72A5D273F9
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 14:53:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDF4B1C32;
+	Sat, 26 Oct 2024 14:54:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.33.109
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729954395; cv=none; b=YETYTMMYXTd1cWTVsRLTdwh92uQlTVnZ5JFoNAYK2TG/8H3sXykkeGDSsRIhHyqAWHc3qYYJyklrS2o1BLJNj8MoOtU5btM8LXfofq7+bsCndSdltdsWBawkrkVMp6NUhADvtTWgEB9tjXn9CaLhqMF0R6rgYBCgKEeF5shxq7w=
+	t=1729954460; cv=none; b=FZWPe4IqKsk8oXtzdMLQqu0ke2EKroyNi0T+VBzwpNIEx6PPP4KUHk0aH+vmSPKZztraxCuMML1D1uhT68y4pByw2qdxGwhp/yOlLE17Uk8E3pRPK1S6O8/zWdaU9kfzzvcGtEjiRtOiN7w89DDmgGCZV7ylFVoDceYnbEVK6Vc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729954395; c=relaxed/simple;
-	bh=0ZAutvhhGaFlmj1XmFap9brpWl2bniA/D2BddoTQ/jM=;
+	s=arc-20240116; t=1729954460; c=relaxed/simple;
+	bh=Xk81TdcWRQDfnCEIxCLdBc+GxIdRbjVtmK13yxQqWvU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qDXza2SnrtAWUUdULlYlLWZJhflvsAzsmH+NXHHahqGOJExtb2KdQQFsonM29Z2OlVJUVCdo7ni1X8xIqWPMgfhvvjfCm6I5NrN/ojnxarpdylJtepzfr/PMEOypCihIiuZqNpFkyC38JIUOwurPyS1DNyogIZgp1HyvdXFmG0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=IDXAYO04; arc=none smtp.client-ip=91.218.175.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Sat, 26 Oct 2024 07:53:03 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1729954390;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=f6oEY5I2mn6JavjYEYeWI4XafhLDooXmCGvLmqMJIxw=;
-	b=IDXAYO04odV2PC/0FFjwWPsKKHzqtlkfTZw+5+KuPl8w5Mo++yXHzLsZTEF+ZR0DNjAfqL
-	zSWPUbrqLaREWWiScSQsS5jxMFGdimkChYtRQ3L6M0S4/mZk4JHQiWuyT1ybNlLbsQlnI0
-	vAy0Oz+0NMusUx+JOGzqoh6uH80Rnlw=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Oliver Upton <oliver.upton@linux.dev>
-To: Marc Zyngier <maz@kernel.org>
-Cc: Raghavendra Rao Ananta <rananta@google.com>,
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-	stable@vger.kernel.org, syzbot <syzkaller@googlegroups.com>
-Subject: Re: [PATCH] KVM: arm64: Mark the VM as dead for failed
- initializations
-Message-ID: <Zx0CT1gdSWVyKLuD@linux.dev>
-References: <20241025221220.2985227-1-rananta@google.com>
- <Zxx_X9-MdmAFzHUO@linux.dev>
- <87ttcztili.wl-maz@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=B57tPUVvwUQUY/M9fuezR2dh9nKbYIr6YZ/8Ut8Qp/PR9ig1T6Y5idzZueC2Krv1WIzFYh/RmSGQb7VWM/LP/fsK2Nm67rFpqWj/Wp7vJJMXyR7DqF6iTrLoRcajKtUjSTQuGNo8H/5Lk3TuDpsGj5NnbKo12+BrPgDs4y941Gw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lichtman.org; spf=pass smtp.mailfrom=lichtman.org; dkim=pass (2048-bit key) header.d=lichtman.org header.i=@lichtman.org header.b=S1NcvznR; arc=none smtp.client-ip=149.28.33.109
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lichtman.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lichtman.org
+Received: by lichtman.org (Postfix, from userid 1000)
+	id 09918177103; Sat, 26 Oct 2024 14:54:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=lichtman.org; s=mail;
+	t=1729954457; bh=Xk81TdcWRQDfnCEIxCLdBc+GxIdRbjVtmK13yxQqWvU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=S1NcvznRHNFl9e7NrJuivc+m1pyoWxu4+8ew/sIeH0eooA48WTXl5U5uQk2s1Xi+O
+	 39UpYBy0iITxZcwJZIX6wfd7B7PmptLCYCDUvUBiKkxO3ZgU6/mXLYGm9dZ3fJNqpK
+	 Yz3AAy85qSlAoQ1g1+emYASZ6Mc31Mtk4cwa5GgwV6pS1X95xYR74NjQwcrccqk887
+	 s1bKs9GyIYlOdkzB8nXbiGBzHpbxsS55aVrml22+zeqYVprumOwmIWH3UHQWbDmuo7
+	 iqI3MrKPRvllvi8HfBYlMrjHIvIDPdWVqvfOeOU9QPsuOZ9Hd2pJG6AaSATt+B5f/g
+	 +U2ol/GMmju5A==
+Date: Sat, 26 Oct 2024 14:54:17 +0000
+From: Nir Lichtman <nir@lichtman.org>
+To: kgdb-bugreport@lists.sourceforge.net,
+	linux-trace-kernel@vger.kernel.org
+Cc: yuran.pereira@hotmail.com, jason.wessel@windriver.com,
+	daniel.thompson@linaro.org, dianders@chromium.org,
+	rostedt@goodmis.org, mhiramat@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-kernel-mentees@lists.linuxfoundation.org
+Subject: [PATCH v3 1/3] kdb: Replace the use of simple_strto with safer
+ kstrto in kdb_main
+Message-ID: <20241026145417.GA892629@lichtman.org>
+References: <20241026144724.GA892311@lichtman.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,117 +62,185 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87ttcztili.wl-maz@kernel.org>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20241026144724.GA892311@lichtman.org>
 
-On Sat, Oct 26, 2024 at 08:43:21AM +0100, Marc Zyngier wrote:
-> diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
-> index bf64fed9820e..c315bc1a4e9a 100644
-> --- a/arch/arm64/include/asm/kvm_host.h
-> +++ b/arch/arm64/include/asm/kvm_host.h
-> @@ -74,8 +74,6 @@ enum kvm_mode kvm_get_mode(void);
->  static inline enum kvm_mode kvm_get_mode(void) { return KVM_MODE_NONE; };
->  #endif
->  
-> -DECLARE_STATIC_KEY_FALSE(userspace_irqchip_in_use);
-> -
->  extern unsigned int __ro_after_init kvm_sve_max_vl;
->  extern unsigned int __ro_after_init kvm_host_sve_max_vl;
->  int __init kvm_arm_init_sve(void);
-> diff --git a/arch/arm64/kvm/arch_timer.c b/arch/arm64/kvm/arch_timer.c
-> index 879982b1cc73..1215df590418 100644
-> --- a/arch/arm64/kvm/arch_timer.c
-> +++ b/arch/arm64/kvm/arch_timer.c
-> @@ -206,8 +206,7 @@ void get_timer_map(struct kvm_vcpu *vcpu, struct timer_map *map)
->  
->  static inline bool userspace_irqchip(struct kvm *kvm)
->  {
-> -	return static_branch_unlikely(&userspace_irqchip_in_use) &&
-> -		unlikely(!irqchip_in_kernel(kvm));
-> +	return unlikely(!irqchip_in_kernel(kvm));
->  }
->  
->  static void soft_timer_start(struct hrtimer *hrt, u64 ns)
-> diff --git a/arch/arm64/kvm/arm.c b/arch/arm64/kvm/arm.c
-> index 48cafb65d6ac..70ff9a20ef3a 100644
-> --- a/arch/arm64/kvm/arm.c
-> +++ b/arch/arm64/kvm/arm.c
-> @@ -69,7 +69,6 @@ DECLARE_KVM_NVHE_PER_CPU(struct kvm_cpu_context, kvm_hyp_ctxt);
->  static bool vgic_present, kvm_arm_initialised;
->  
->  static DEFINE_PER_CPU(unsigned char, kvm_hyp_initialized);
-> -DEFINE_STATIC_KEY_FALSE(userspace_irqchip_in_use);
->  
->  bool is_kvm_arm_initialised(void)
->  {
-> @@ -503,9 +502,6 @@ void kvm_arch_vcpu_postcreate(struct kvm_vcpu *vcpu)
->  
->  void kvm_arch_vcpu_destroy(struct kvm_vcpu *vcpu)
->  {
-> -	if (vcpu_has_run_once(vcpu) && unlikely(!irqchip_in_kernel(vcpu->kvm)))
-> -		static_branch_dec(&userspace_irqchip_in_use);
-> -
->  	kvm_mmu_free_memory_cache(&vcpu->arch.mmu_page_cache);
->  	kvm_timer_vcpu_terminate(vcpu);
->  	kvm_pmu_vcpu_destroy(vcpu);
-> @@ -848,14 +844,6 @@ int kvm_arch_vcpu_run_pid_change(struct kvm_vcpu *vcpu)
->  			return ret;
->  	}
->  
-> -	if (!irqchip_in_kernel(kvm)) {
-> -		/*
-> -		 * Tell the rest of the code that there are userspace irqchip
-> -		 * VMs in the wild.
-> -		 */
-> -		static_branch_inc(&userspace_irqchip_in_use);
-> -	}
-> -
->  	/*
->  	 * Initialize traps for protected VMs.
->  	 * NOTE: Move to run in EL2 directly, rather than via a hypercall, once
-> @@ -1077,7 +1065,7 @@ static bool kvm_vcpu_exit_request(struct kvm_vcpu *vcpu, int *ret)
->  	 * state gets updated in kvm_timer_update_run and
->  	 * kvm_pmu_update_run below).
->  	 */
-> -	if (static_branch_unlikely(&userspace_irqchip_in_use)) {
-> +	if (unlikely(!irqchip_in_kernel(vcpu->kvm))) {
->  		if (kvm_timer_should_notify_user(vcpu) ||
->  		    kvm_pmu_should_notify_user(vcpu)) {
->  			*ret = -EINTR;
-> @@ -1199,7 +1187,7 @@ int kvm_arch_vcpu_ioctl_run(struct kvm_vcpu *vcpu)
->  			vcpu->mode = OUTSIDE_GUEST_MODE;
->  			isb(); /* Ensure work in x_flush_hwstate is committed */
->  			kvm_pmu_sync_hwstate(vcpu);
-> -			if (static_branch_unlikely(&userspace_irqchip_in_use))
-> +			if (unlikely(!irqchip_in_kernel(vcpu->kvm)))
->  				kvm_timer_sync_user(vcpu);
->  			kvm_vgic_sync_hwstate(vcpu);
->  			local_irq_enable();
-> @@ -1245,7 +1233,7 @@ int kvm_arch_vcpu_ioctl_run(struct kvm_vcpu *vcpu)
->  		 * we don't want vtimer interrupts to race with syncing the
->  		 * timer virtual interrupt state.
->  		 */
-> -		if (static_branch_unlikely(&userspace_irqchip_in_use))
-> +		if (unlikely(!irqchip_in_kernel(vcpu->kvm)))
->  			kvm_timer_sync_user(vcpu);
->  
->  		kvm_arch_vcpu_ctxsync_fp(vcpu);
-> 
-> I think this would fix the problem you're seeing without changing the
-> userspace view of an erroneous configuration. It would also pave the
-> way for the complete removal of the interrupt notification to
-> userspace, which I claim has no user and is just a shit idea.
+From: Yuran Pereira <yuran.pereira@hotmail.com>
 
-Yeah, looks like this ought to get it done.
+The simple_str* family of functions perform no error checking in
+scenarios where the input value overflows the intended output variable.
+This results in these functions successfully returning even when the
+output does not match the input string.
 
-Even with a fix for this particular issue I do wonder if we should
-categorically harden against late initialization failures and un-init
-the vCPU (or bug VM, where necessary) to avoid dealing with half-baked
-vCPUs/VMs across our UAPI surfaces.
+Or as it was mentioned [1], "...simple_strtol(), simple_strtoll(),
+simple_strtoul(), and simple_strtoull() functions explicitly ignore
+overflows, which may lead to unexpected results in callers."
+Hence, the use of those functions is discouraged.
 
-A sane userspace will probably crash when KVM_RUN returns EINVAL anyway.
+This patch replaces all uses of the simple_strto* series of functions
+with their safer kstrto* alternatives.
 
+Side effects of this patch:
+- Every string to long or long long conversion using kstrto* is now
+  checked for failure.
+- kstrto* errors are handled with appropriate `KDB_BADINT` wherever
+  applicable.
+- A good side effect is that we end up saving a few lines of code
+  since unlike in simple_strto* functions, kstrto functions do not
+  need an additional "end pointer" variable, and the return values
+  of the latter can be directly checked in an "if" statement without
+  the need to define additional `ret` or `err` variables.
+  This, of course, results in cleaner, yet still easy to understand
+  code.
+
+[1] https://www.kernel.org/doc/html/latest/process/deprecated.html#simple-strtol-simple-strtoll-simple-strtoul-simple-strtoull
+
+Signed-off-by: Yuran Pereira <yuran.pereira@hotmail.com>
+[nir: addressed review comments by fixing styling, invalid conversion and a missing error return]
+Signed-off-by: Nir Lichtman <nir@lichtman.org>
+---
+ kernel/debug/kdb/kdb_main.c | 69 +++++++++++--------------------------
+ 1 file changed, 21 insertions(+), 48 deletions(-)
+
+diff --git a/kernel/debug/kdb/kdb_main.c b/kernel/debug/kdb/kdb_main.c
+index f5f7d7fb5936..930de4fdc708 100644
+--- a/kernel/debug/kdb/kdb_main.c
++++ b/kernel/debug/kdb/kdb_main.c
+@@ -306,8 +306,8 @@ static int kdbgetulenv(const char *match, unsigned long *value)
+ 		return KDB_NOTENV;
+ 	if (strlen(ep) == 0)
+ 		return KDB_NOENVVALUE;
+-
+-	*value = simple_strtoul(ep, NULL, 0);
++	if (kstrtoul(ep, 0, value))
++		return KDB_BADINT;
+ 
+ 	return 0;
+ }
+@@ -402,42 +402,23 @@ static void kdb_printenv(void)
+  */
+ int kdbgetularg(const char *arg, unsigned long *value)
+ {
+-	char *endp;
+-	unsigned long val;
+-
+-	val = simple_strtoul(arg, &endp, 0);
+-
+-	if (endp == arg) {
+-		/*
+-		 * Also try base 16, for us folks too lazy to type the
+-		 * leading 0x...
+-		 */
+-		val = simple_strtoul(arg, &endp, 16);
+-		if (endp == arg)
++	/*
++	 * If the first fails, also try base 16, for us
++	 * folks too lazy to type the leading 0x...
++	 */
++	if (kstrtoul(arg, 0, value)) {
++		if (kstrtoul(arg, 16, value))
+ 			return KDB_BADINT;
+ 	}
+-
+-	*value = val;
+-
+ 	return 0;
+ }
+ 
+ int kdbgetu64arg(const char *arg, u64 *value)
+ {
+-	char *endp;
+-	u64 val;
+-
+-	val = simple_strtoull(arg, &endp, 0);
+-
+-	if (endp == arg) {
+-
+-		val = simple_strtoull(arg, &endp, 16);
+-		if (endp == arg)
++	if (kstrtou64(arg, 0, value)) {
++		if (kstrtou64(arg, 16, value))
+ 			return KDB_BADINT;
+ 	}
+-
+-	*value = val;
+-
+ 	return 0;
+ }
+ 
+@@ -473,10 +454,10 @@ int kdb_set(int argc, const char **argv)
+ 	 */
+ 	if (strcmp(argv[1], "KDBDEBUG") == 0) {
+ 		unsigned int debugflags;
+-		char *cp;
++		int ret;
+ 
+-		debugflags = simple_strtoul(argv[2], &cp, 0);
+-		if (cp == argv[2] || debugflags & ~KDB_DEBUG_FLAG_MASK) {
++		ret = kstrtouint(argv[2], 0, &debugflags);
++		if (ret || debugflags & ~KDB_DEBUG_FLAG_MASK) {
+ 			kdb_printf("kdb: illegal debug flags '%s'\n",
+ 				    argv[2]);
+ 			return 0;
+@@ -1619,10 +1600,10 @@ static int kdb_md(int argc, const char **argv)
+ 		if (!argv[0][3])
+ 			valid = 1;
+ 		else if (argv[0][3] == 'c' && argv[0][4]) {
+-			char *p;
+-			repeat = simple_strtoul(argv[0] + 4, &p, 10);
++			if (kstrtouint(argv[0] + 4, 10, &repeat))
++				return KDB_BADINT;
+ 			mdcount = ((repeat * bytesperword) + 15) / 16;
+-			valid = !*p;
++			valid = 1;
+ 		}
+ 		last_repeat = repeat;
+ 	} else if (strcmp(argv[0], "md") == 0)
+@@ -2083,15 +2064,10 @@ static int kdb_dmesg(int argc, const char **argv)
+ 	if (argc > 2)
+ 		return KDB_ARGCOUNT;
+ 	if (argc) {
+-		char *cp;
+-		lines = simple_strtol(argv[1], &cp, 0);
+-		if (*cp)
++		if (kstrtoint(argv[1], 0, &lines))
+ 			lines = 0;
+-		if (argc > 1) {
+-			adjust = simple_strtoul(argv[2], &cp, 0);
+-			if (*cp || adjust < 0)
+-				adjust = 0;
+-		}
++		if (argc > 1 && (kstrtouint(argv[2], 0, &adjust) || adjust < 0))
++			adjust = 0;
+ 	}
+ 
+ 	/* disable LOGGING if set */
+@@ -2428,14 +2404,12 @@ static int kdb_help(int argc, const char **argv)
+ static int kdb_kill(int argc, const char **argv)
+ {
+ 	long sig, pid;
+-	char *endp;
+ 	struct task_struct *p;
+ 
+ 	if (argc != 2)
+ 		return KDB_ARGCOUNT;
+ 
+-	sig = simple_strtol(argv[1], &endp, 0);
+-	if (*endp)
++	if (kstrtol(argv[1], 0, &sig))
+ 		return KDB_BADINT;
+ 	if ((sig >= 0) || !valid_signal(-sig)) {
+ 		kdb_printf("Invalid signal parameter.<-signal>\n");
+@@ -2443,8 +2417,7 @@ static int kdb_kill(int argc, const char **argv)
+ 	}
+ 	sig = -sig;
+ 
+-	pid = simple_strtol(argv[2], &endp, 0);
+-	if (*endp)
++	if (kstrtol(argv[2], 0, &pid))
+ 		return KDB_BADINT;
+ 	if (pid <= 0) {
+ 		kdb_printf("Process ID must be large than 0.\n");
 -- 
-Thanks,
-Oliver
+2.39.2
+
 
