@@ -1,53 +1,53 @@
-Return-Path: <linux-kernel+bounces-382849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5A769B13F8
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 03:12:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43B5A9B13C9
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 02:16:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 791BD1F2335D
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 01:12:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD86C284162
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 00:16:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D0922AEF5;
-	Sat, 26 Oct 2024 01:12:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6488B8488;
+	Sat, 26 Oct 2024 00:15:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="qicdpxs3"
-Received: from mail-40132.protonmail.ch (mail-40132.protonmail.ch [185.70.40.132])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="M+Ty4Hr7"
+Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A57D8101C8
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 01:12:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0638620ED
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 00:15:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729905160; cv=none; b=sBuadYoWmbEltsIisXZBQ9yH7Hq+4w1zzDDBQ9Jhkdo4O9SfF1uk6gWylf2Cdz/GVlJAps8neYkn2S2puMYEA/GVU9LnCd1WeGkP/cUTgKfqjvCHlTkJYOPOSrFVw1Nsgbf/KWDvya7CMSDj2ZttmDmTYoODVl4rD6F5p7YE1Ms=
+	t=1729901757; cv=none; b=o22MchZdUBnbRcXUV6BwbKrQS3lhpxbnYnLJtyR/I4/WomqVv59W1scZ1NaOQuxTWvq/kT0RxhRMJUBtDYOCIapQeo8fg0iX/g0VGDO3GzFE7p/udYOmfpl5XwnRv+n2YISk+eXFUVtpr6/zTmNmSFWqkjLUlGOOKZUiBf5GWio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729905160; c=relaxed/simple;
-	bh=l0J++z5bUxW/lfru5HcGgHaNpRXgshd5/6b0H4mjGT4=;
-	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=jE7E4ionrluZB4cBHZ+GEEvHnij7LUodbB2i+036uqFIrYb38iRw5auWcsKCAvXBhOlMZI5gDlyXrm3KEDPCLzkK+iE747abp/PwUhd8LcqMbjj0RXmDtLurRFUYNeZs1/vRETFnHOSFQ/5h9Ktebf7DJLN0PwIdibo6ihwCZLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=qicdpxs3; arc=none smtp.client-ip=185.70.40.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-	s=protonmail3; t=1729905156; x=1730164356;
-	bh=l0J++z5bUxW/lfru5HcGgHaNpRXgshd5/6b0H4mjGT4=;
+	s=arc-20240116; t=1729901757; c=relaxed/simple;
+	bh=o7z60KoWEzBzdpVzhAbRtjBBP4aR9tdYwaLHfi1p3Zs=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=NG7Be0y3uAwYFYOsnuRJeLzwXYaC1r5yLhiA7xLuWCPUBrv6yZ1H1LQNJFkSS9NveZFH/oSiJB0+ClZzwnBami3gfmpThlI6zXAcdyCkU675IcCJ29cXU4Fzvi3LkTH7rNbP+mNrz/Zl+lAe/kJZ4ig92XMI3ss8e0oFdL5dUYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=M+Ty4Hr7; arc=none smtp.client-ip=185.70.43.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=catzjnttkncclck67brcaxy4su.protonmail; t=1729901753; x=1730160953;
+	bh=bCY/7nfKalELDK27O8uDtuXrp0POY7fKzNjIeGp8G8s=;
 	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
 	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
-	b=qicdpxs3a3jLRG1JQ2kIKEtucj/lq+w0iTFbj+MPQuTLOTvUgSgvP61nGKi12pKaM
-	 CTfscSTMtUnlU2gBjoDv1IhuIIEugS8gqWHEVlokhf7NSWzEGv8z+8Bjk4uQNlA4JT
-	 Iwm05ltiXqzbv/WrhUWClhH16l3hC6y0+UvnA/BwQCpQTf9R/D7vtkiSPd9wYQjn85
-	 Sfvhj1Bxfthh2/FLx1aGjqaOPHRpZ9a4s1zlTt4A/OORxrwR/fCRclUb/p+ULRvXac
-	 EA8J2URSV0Yhx5Tlwfah8CqMf0u/gxU4ta89HHkERDl4Z8dxhH38UMROupCyLLhOGv
-	 4QBlqrWg0QD8A==
-Date: Fri, 25 Oct 2024 21:12:27 +0000
-To: "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>, "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-From: Joe Putin <joeputinx86@protonmail.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] MAINTAINERS: Remove some entries due to various compliance requirements
-Message-ID: <sVXB8QIhDTUMzW_7mfch_sRnN9KHnRjYjCac4zBmCay7qJkJyPEztYv1Na05J1Hrt8ibulFnMgVz5GLDUIWV5o3qY_FmX-EjeYRlMK3uols=@protonmail.com>
-Feedback-ID: 123953413:user:proton
-X-Pm-Message-ID: dc9ebaba03bb2563a86090e6fc9a1541fa8424d0
+	b=M+Ty4Hr7BmZSwFZ7rk35RSIBIPeLJ3YMUcmuU2rlFAVOSKoTNBmdGGhsHKsQDaefF
+	 ErZ4kj0W8Rs0LitWulnwtOOcDmSxzs5q7aodg3vpF/vbibao9v1/+uHo0JTnIn4MoH
+	 ky9J+kfO3sIuZu6GenlNZMvId+xFT69lr5LGJiiMoAU5SyGdebUVZZQrNEf9vMflK1
+	 S/DFGH+p+NmQvnUQL/KjYXnrSYT8ivCpx5KTTPfTK3tNpo1rzmUc/oFt61EP3dOVen
+	 BUeME5Fe1zdFDrXdephvZj7Dor6cShWzkjmGMmTjDxLsQ8N2K8JC/xljWqKL32FL3A
+	 cv7iSxV+H53Pg==
+Date: Sat, 26 Oct 2024 00:15:49 +0000
+To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Piotr Zalewski <pZ010001011111@proton.me>
+Cc: skhan@linuxfoundation.org, Piotr Zalewski <pZ010001011111@proton.me>, syzbot+2b6a17991a6af64f9489@syzkaller.appspotmail.com
+Subject: [PATCH v3] bcachefs: init freespace inited bits to 0 in bch2_fs_initialize
+Message-ID: <20241026001004.10470-2-pZ010001011111@proton.me>
+Feedback-ID: 53478694:user:proton
+X-Pm-Message-ID: b1acd7e01ca8ad9d9db03a98c49374d95f4fcaf3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,36 +57,68 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-This is certainly a positive development, since for the first time, we=20
-realize that the code we write could be used in missiles/weapons that
-bomb people like you and me. Our families, and our children.
+Initialize freespace_initialized bits to 0 in member's flags and update
+member's cached version for each device in bch2_fs_initialize.
 
-But it's important to discern "the people" and "the army". Since, people
-all around the world are just like you and me who are trying to survive
-this world.
+It's possible for the bits to be set to 1 before fs is initialized and if
+call to bch2_trans_mark_dev_sbs (just before bch2_fs_freespace_init) fails
+bits remain to be 1 which can later indirectly trigger BUG condition in
+bch2_bucket_alloc_freelist during shutdown.
 
-The best way out here is that we ask these rouge militaries to publicly
-release the code they use to massacre civilians. So, we can put them to
-shame for the algorithms they use to decide who gets to live and who
-not.
+Reported-by: syzbot+2b6a17991a6af64f9489@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=3D2b6a17991a6af64f9489
+Fixes: bbe682c76789 ("bcachefs: Ensure devices are always correctly initial=
+ized")
+Suggested-by: Kent Overstreet <kent.overstreet@linux.dev>
+Signed-off-by: Piotr Zalewski <pZ010001011111@proton.me>
+---
 
-Linux is GPL license which requires derived works to be publicly
-released. Hence, not complying would put them in a morally and legally
-wrong position.
+Notes:
+    changes in v3:
+        - v2 rebased
 
-For the militaries that are conducting brutal Genocides, bombing
-hospitals, schools, refugee camps, homes. We must speak for the
-innocent civilians.
+    changes in v2:
+        - unconditionally set freespace initialized bits to false at
+          the top of bch2_fs_initialized instead of only if
+          bch2_trans_mark_dev_sbs fails
 
-But we should not side with those, whose objective is ambitious pursuit of
-wealth and power, At cost of the commons.
+    Link to v2: https://lore.kernel.org/linux-bcachefs/20241021174151.37692=
+-2-pZ010001011111@proton.me/
+    Link to v1: https://lore.kernel.org/linux-bcachefs/20241020170708.67044=
+-2-pZ010001011111@proton.me/
 
-Linux kernel is the epitome of what collective human effort can achieve.
-The internet has enabled us to communicate, otherwise we would all be
-brainwashed by our respective government's propaganda. Let's make use of=
-=C2=A0
-this for good.
+ fs/bcachefs/recovery.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-This world is already a terrible place, let's not make it worse. =C2=A0We
-"the people" stand together.
+diff --git a/fs/bcachefs/recovery.c b/fs/bcachefs/recovery.c
+index fdf2aa2ffc13..8d4c93a1f5aa 100644
+--- a/fs/bcachefs/recovery.c
++++ b/fs/bcachefs/recovery.c
+@@ -1029,6 +1029,7 @@ int bch2_fs_initialize(struct bch_fs *c)
+ =09struct bch_inode_unpacked root_inode, lostfound_inode;
+ =09struct bkey_inode_buf packed_inode;
+ =09struct qstr lostfound =3D QSTR("lost+found");
++=09struct bch_member *m;
+ =09int ret;
+=20
+ =09bch_notice(c, "initializing new filesystem");
+@@ -1045,6 +1046,13 @@ int bch2_fs_initialize(struct bch_fs *c)
+ =09=09SET_BCH_SB_VERSION_UPGRADE_COMPLETE(c->disk_sb.sb, bcachefs_metadata=
+_version_current);
+ =09=09bch2_write_super(c);
+ =09}
++
++=09for_each_member_device(c, ca) {
++=09=09m =3D bch2_members_v2_get_mut(c->disk_sb.sb, ca->dev_idx);
++=09=09SET_BCH_MEMBER_FREESPACE_INITIALIZED(m, false);
++=09=09ca->mi =3D bch2_mi_to_cpu(m);
++=09}
++
+ =09mutex_unlock(&c->sb_lock);
+=20
+ =09c->curr_recovery_pass =3D BCH_RECOVERY_PASS_NR;
+--=20
+2.47.0
+
+
 
