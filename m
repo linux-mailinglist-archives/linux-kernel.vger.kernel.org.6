@@ -1,128 +1,153 @@
-Return-Path: <linux-kernel+bounces-383330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3BB49B1A24
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 19:46:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BFBB9B1A27
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 19:48:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B90DF282A54
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 17:46:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 155AAB2157C
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 17:48:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E8711D0BAE;
-	Sat, 26 Oct 2024 17:46:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 179501D3628;
+	Sat, 26 Oct 2024 17:48:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="jHtLJdbU"
-Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ijc6JI4z"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACF2214A91
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 17:46:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65E3623A6;
+	Sat, 26 Oct 2024 17:48:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729964804; cv=none; b=PWbmDCSS1E79pOnXbrBcrL9a3E5A73AdPlC/7cbS81FDCZlIHJ/DfNe5Ys2op7DIyd1E/w8VpgQca3DuM3c9t+38fgEZ4Ml79p1ZTbGvnvcfHxm6/r+7dh2f8FIWh7NuRXgxS4IT8mxTe/SzfoYDhfukawecigbWAtpfsj3Y7MU=
+	t=1729964909; cv=none; b=ob8c3UvvD9enMBuB98GcYUuNZxpAfRn1EFFBIc+QGJD/F/lXaANDkzpIIY5JI5nL/+b59nDKp38+LQ1pdrWKQFHW5yyVGTBKdHG8ohKkR2yx3D7hLpOojwUMl97j+WeDoRGgRr78NgRBlks9VbU1m5yVtPtxQi/APIH2spsBK28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729964804; c=relaxed/simple;
-	bh=iK2ETm0wcmmrbAj8oW9oXQLntNSb0wUcwLYcXgB2wUk=;
-	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=EkasDhVzS1w8UhSecx4KCOhQFqCC143OnYSpVd7nDbkayK1tDHaCCU3gtE7f60XLLRJOyrAiMYdG+Z7bOZXW80M6AjCEjNtM5NVrMNa6wmqO3HcD5Zr45lzsBEYZp5/i5686BuJyeMszd5PRCHFWLn1gUXXErEUlNcMtVOdu4rc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=jHtLJdbU; arc=none smtp.client-ip=185.70.43.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1729964800; x=1730224000;
-	bh=tuQGb8EqIUx378UeCmNYLD8fdTFIKGwhhmJKBCspH2Y=;
-	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
-	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
-	b=jHtLJdbUDhNhbIr561dZPJHTluZl4ltVJRW7dj3SLqz4Fwi5cEEegbsmiOkswuzAV
-	 psew9W7S7zGw/0CYhkm8uenkqQH+2kVedZW9TzeH+Bwg1NYVXHepRi8eAD9D+X+7if
-	 p+orZf1ZlZPuSqLztB+3Ya616wNSJk7OyJXSfvFjC8bWYh/EbtiU9dQ4DCn0LNpOOY
-	 xgXPX+pvAYMZ9of0ts/FzeZrH+U5JJwP9SugSJ+iet1sEJCX3/ANBu9sw7fSg+TUt1
-	 D+GqHCxTWAWGBJy+w1dT8gVzn5Jxq3PP7f5AarvDvAmj2Bn3IVz5Ti4/dbADinaR0T
-	 10BojcRuVGt6Q==
-Date: Sat, 26 Oct 2024 17:46:33 +0000
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org
-From: Piotr Zalewski <pZ010001011111@proton.me>
-Cc: skhan@linuxfoundation.org, Piotr Zalewski <pZ010001011111@proton.me>, syzbot+005ef9aa519f30d97657@syzkaller.appspotmail.com, Alan Huang <mmpgouride@gmail.com>
-Subject: [PATCH v2] bcachefs: Fix NULL ptr dereference in btree_node_iter_and_journal_peek
-Message-ID: <20241026174155.233430-3-pZ010001011111@proton.me>
-Feedback-ID: 53478694:user:proton
-X-Pm-Message-ID: 43d449c52e690306e9d7c82fde7a628aa1b10356
+	s=arc-20240116; t=1729964909; c=relaxed/simple;
+	bh=o9oZRErK9cr6PRplzWQmLO2V+yn8kM55lzCnsD5Fk0E=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=uTu99J/CgILcy0I34Pir4TnA/mGuZgELpcgMArIFofdGCWfJ33iqdcIzddbGYMTVDDMZ4pJcA3P4S0A/L8Zv/u0432ai82XmQSwB/s/Kif5tnimmOwFtDm7s00eue7aKKDuDSUok0HvzNrYqUSuPOdNZh5UVrL+eZaz2+oq+dVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ijc6JI4z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 383C6C4CEC6;
+	Sat, 26 Oct 2024 17:48:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729964908;
+	bh=o9oZRErK9cr6PRplzWQmLO2V+yn8kM55lzCnsD5Fk0E=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ijc6JI4zkGVa43MOp9BBdSUvVfdlX4ZdOZZopH9vRslfri8ob6cuIzHv+5L0FY7fh
+	 XuR41e24VT7Y+AZYN6J9va7Pq8Tc0IaeaPvRh2HxhzQcPIxr0Ae8a56RZc3h/GZLtq
+	 Gwl4WEoW94Z/b2MBIj8BesS5dqslmfw3R4Vqgf+0zBgec48hi8S5d3tDTrtmJfs8vq
+	 gI9OFQwwPRBluIeax93DkHAQw6XwCgEeIn8fIMLoqXcoiNSLbyaUzkmo/vNJATi8U0
+	 uwL+ggHchdvxWEzm5hMmIt1z+UPMxpTXa3Fm4N/J1o6ZWxYS7sPb7zKq29LSgk9zSq
+	 UzLFQN68osAtw==
+Date: Sat, 26 Oct 2024 18:47:54 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Angelo Dureghello <adureghello@baylibre.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Olivier Moysan
+ <olivier.moysan@foss.st.com>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Brown
+ <broonie@kernel.org>, dlechner@baylibre.com
+Subject: Re: [PATCH v8 6/8] iio: dac: ad3552r: extract common code (no
+ changes in behavior intended)
+Message-ID: <20241026184754.009ea6f7@jic23-huawei>
+In-Reply-To: <20241025-wip-bl-ad3552r-axi-v0-iio-testing-v8-6-74ca7dd60567@baylibre.com>
+References: <20241025-wip-bl-ad3552r-axi-v0-iio-testing-v8-0-74ca7dd60567@baylibre.com>
+	<20241025-wip-bl-ad3552r-axi-v0-iio-testing-v8-6-74ca7dd60567@baylibre.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Add NULL check for key returned from bch2_btree_and_journal_iter_peek in
-btree_node_iter_and_journal_peek to avoid NULL ptr dereference in
-bch2_bkey_buf_reassemble.
+On Fri, 25 Oct 2024 11:49:39 +0200
+Angelo Dureghello <adureghello@baylibre.com> wrote:
 
-When key returned from bch2_btree_and_journal_iter_peek is NULL it means
-that btree topology needs repair. Print error message with position at
-which node wasn't found and its parent node information. Call
-bch2_topology_error and return error code returned by it to ensure that
-topology error is handled properly.
+> From: Angelo Dureghello <adureghello@baylibre.com>
+> 
+> Extracting common code, to share common code to be used later
+> by the AXI driver version (ad3552r-axi.c).
+> 
+> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
 
-Reported-by: syzbot+005ef9aa519f30d97657@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=3D005ef9aa519f30d97657
-Fixes: 5222a4607cd8 ("bcachefs: BTREE_ITER_WITH_JOURNAL")
-Suggested-by: Alan Huang <mmpgouride@gmail.com>
-Suggested-by: Kent Overstreet <kent.overstreet@linux.dev>
-Signed-off-by: Piotr Zalewski <pZ010001011111@proton.me>
----
+Hi Angelo,
 
-Notes:
-    changes in v2:
-        - make commit message more verbose.
-        - set topology error, print error message and return
-          appropriate error code.
+A few trivial things but one bigger one that actually only becomes a problem
+in the next patch so I'll comment on that.
 
-    link to v1: https://lore.kernel.org/linux-bcachefs/20241023072024.98915=
--3-pZ010001011111@proton.me/
-
- fs/bcachefs/btree_iter.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
-
-diff --git a/fs/bcachefs/btree_iter.c b/fs/bcachefs/btree_iter.c
-index 15ac72b1af51..40c824779b15 100644
---- a/fs/bcachefs/btree_iter.c
-+++ b/fs/bcachefs/btree_iter.c
-@@ -880,6 +880,18 @@ static noinline int btree_node_iter_and_journal_peek(s=
-truct btree_trans *trans,
- =09__bch2_btree_and_journal_iter_init_node_iter(trans, &jiter, l->b, l->it=
-er, path->pos);
-=20
- =09k =3D bch2_btree_and_journal_iter_peek(&jiter);
-+=09if (!k.k) {
-+=09=09struct printbuf buf =3D PRINTBUF;
-+
-+=09=09prt_str(&buf, "node not found at pos ");
-+=09=09bch2_bpos_to_text(&buf, path->pos);
-+=09=09prt_str(&buf, " within parent node ");
-+=09=09bch2_bkey_val_to_text(&buf, c, bkey_i_to_s_c(&l->b->key));
-+
-+=09=09ret =3D bch2_fs_topology_error(c, "%s", buf.buf);
-+=09=09printbuf_exit(&buf);
-+=09=09goto err;
-+=09}
-=20
- =09bch2_bkey_buf_reassemble(out, c, k);
-=20
-@@ -887,6 +899,7 @@ static noinline int btree_node_iter_and_journal_peek(st=
-ruct btree_trans *trans,
- =09    c->opts.btree_node_prefetch)
- =09=09ret =3D btree_path_prefetch_j(trans, path, &jiter);
-=20
-+err:
- =09bch2_btree_and_journal_iter_exit(&jiter);
- =09return ret;
- }
---=20
-2.47.0
+> +
+> +MODULE_DESCRIPTION("ad3552r common functions");
+Ah. This rang alarm bells.  I'll comment in next patch but you can't link
+the same file twice.
 
 
+> +MODULE_LICENSE("GPL");
+
+
+> @@ -1072,3 +727,4 @@ module_spi_driver(ad3552r_driver);
+>  MODULE_AUTHOR("Mihail Chindris <mihail.chindris@analog.com>");
+>  MODULE_DESCRIPTION("Analog Device AD3552R DAC");
+>  MODULE_LICENSE("GPL v2");
+> +MODULE_IMPORT_NS(IIO_AD3552R);
+> diff --git a/drivers/iio/dac/ad3552r.h b/drivers/iio/dac/ad3552r.h
+> new file mode 100644
+> index 000000000000..22bd9ad27c65
+> --- /dev/null
+> +++ b/drivers/iio/dac/ad3552r.h
+> @@ -0,0 +1,226 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +/*
+> + * AD3552R Digital <-> Analog converters common header
+> + *
+> + * Copyright 2021-2024 Analog Devices Inc.
+> + * Author: Angelo Dureghello <adureghello@baylibre.com>
+> + */
+> +
+> +#ifndef __DRIVERS_IIO_DAC_AD3552R_H__
+> +#define __DRIVERS_IIO_DAC_AD3552R_H__
+> +
+> +/* Register addresses */
+> +/* Primary address space */
+
+> +#define   AD3552R_MASK_MULTI_IO_MODE			GENMASK(7, 6)
+> +#define   AD3552R_MASK_STREAM_LENGTH_KEEP_VALUE		BIT(2)
+> +#define AD3552R_REG_ADDR_INTERFACE_CONFIG_C		0x10
+> +#define   AD3552R_MASK_CRC_ENABLE			(GENMASK(7, 6) |\
+> +							 GENMASK(1, 0))
+If for whatever reason we go around again, (otherwise I might tweak anyway)
+#define   AD3552R_MASK_CRC_ENABLE	\
+		(GENMASK(7, 6) | GENMASK(1, 0))
+
+
+> +#define   AD3552R_MASK_CH_OUTPUT_RANGE			GENMASK(7, 0)
+> +#define   AD3552R_MASK_CH_OUTPUT_RANGE_SEL(ch)		((ch) ? \
+> +							 GENMASK(7, 4) : \
+> +							 GENMASK(3, 0))
+I may tweak this whilst applying to be something like
+
+#define   AD3552R_MASK_CH_OUTPUT_RANGE_SEL(ch)	\
+		((ch) ? GENMASK(7, 4) : GENMASK(3, 0))
+
+
+> +/* Useful defines */
+Made me laugh.  I hope we don't ever have a comment that says "Useless defines" :)
+
+> +#define AD3552R_MAX_CH					2
+> +#define AD3552R_MASK_CH(ch)				BIT(ch)
+> +#define AD3552R_MASK_ALL_CH				GENMASK(1, 0)
+> +#define AD3552R_MAX_REG_SIZE				3
+> +#define AD3552R_READ_BIT				BIT(7)
+> +#define AD3552R_ADDR_MASK				GENMASK(6, 0)
+> +#define AD3552R_MASK_DAC_12B				GENMASK(15, 4)
+> +#define AD3552R_DEFAULT_CONFIG_B_VALUE			0x8
+> +#define AD3552R_SCRATCH_PAD_TEST_VAL1			0x34
+> +#define AD3552R_SCRATCH_PAD_TEST_VAL2			0xB2
+> +#define AD3552R_GAIN_SCALE				1000
+> +#define AD3552R_LDAC_PULSE_US				100
 
