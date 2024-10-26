@@ -1,86 +1,84 @@
-Return-Path: <linux-kernel+bounces-383184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F1349B1830
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 14:44:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E6F559B1834
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 14:46:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F8B0283554
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 12:44:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABBF728428A
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 12:46:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C3761D63C2;
-	Sat, 26 Oct 2024 12:44:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 882A91D618E;
+	Sat, 26 Oct 2024 12:46:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h9U2TMv9"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HlMHtpqF"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56BFB1D2F67;
-	Sat, 26 Oct 2024 12:44:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B13218800D;
+	Sat, 26 Oct 2024 12:46:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729946678; cv=none; b=cNRN+fIZMQ5pTjYdvvicz6fCJToKWMGRKvMeMd+PXDo17zpf9C3pCgnL7E26UjQ6afnqCl1j+1j8qtvJPPTwevHChb3lcch8B5XGVIkMUcKhTeLYhcuAUc2W1USWCwp++y2VdKCrfoyYG7jhfjvX8t8f56AkKH/GZpPKZhB9br8=
+	t=1729946769; cv=none; b=sDhZd+k2UZgtf0BSZlignx9VI5/2CEmF5ckKrYEayJ/CyyxPLCYdXSVO65L5h9+BRuctRt6VirxhzeFM7tE+zjFVBI2pVGUdstsibdAFDRKkxGUf41+VlU6vulWOr3DeX7b0IWzZyfa5s9Fni1hqiYUpx15r0W/7creGYqZCidA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729946678; c=relaxed/simple;
-	bh=hlYMxGuvPb703Lut6KKMmkeksJOnNiX3d4CG1prtUWA=;
+	s=arc-20240116; t=1729946769; c=relaxed/simple;
+	bh=Ir8FkLHslMuuyZwduZxcZ09RxlFF0QcVt/0ML1tcSSw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lsGeenDXmwzcdCTgBncf9Y61mLoNrdsZc5kUdfSUXjyQcv6rVRZ5moOnp1MqJY5i20ZNf2y3a/VAlSztUHuedSZuME7qulAowGiGLadMVp3LZCeEzmj+hJb4ozd7wnTGKc58k3mTExCfII87SxWNkFnlgRB6/8mkP9Yjaf7UDZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h9U2TMv9; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2e2bd0e2c4fso2292414a91.3;
-        Sat, 26 Oct 2024 05:44:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729946674; x=1730551474; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hlYMxGuvPb703Lut6KKMmkeksJOnNiX3d4CG1prtUWA=;
-        b=h9U2TMv9QVHvOUOwiCtzmMA1nB3eS6vE3exOH6Boer6qZx5D+TT0XxZ9Wr0h1Hpkru
-         49hoRzxstQsvlrJ4oTRPc8ajLactezSNuL3wkHLRvWn41eV37DE1ZN/u+W+Sji6esKqM
-         JLEk86pNrqX5JVNEz6kQ9v8aNyPJR4c3WVmDy4jxDMLNTCY16sT/u5Bq/mnIFGT+wtek
-         cUgulqHXVQpXgRsNGpOKLT3SOB86JyW+9ArNCRRdM0H1ml2vw0ymLwDmC+3c7TkmONEJ
-         DnMMavFOmHs7gcUMvjUGbLU9I7vANa2hnj1ksrT+P0kdjY1VAr2R+29XWO12+pvjX8ka
-         zeZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729946674; x=1730551474;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hlYMxGuvPb703Lut6KKMmkeksJOnNiX3d4CG1prtUWA=;
-        b=ggK012TCOeAMYwRTiAGN2ptEB4fprWcHiRl3YztMK3gf4Yur2MWN6LjJcqfjk6MIWq
-         J5S3XVdFXxnbKxUyRnbtVAr+9u/yAz5Zs0JuUi/Xx+1RUhtbMchXndeZxMYmAdArBG5z
-         +xkOG6444I7rywAd31We5sJ5iUvMMrpPRlqi8RmSR4DlzT8X9RL0Jt8DsydBNQeZajB+
-         /yxH8qD9gPENxapmbiuLMUq6JxNSfSlFtAdfrj/Ofgi74Y/t8xWXz/VsZfuCrMxcGs8K
-         VDVag1UfsVITO0LB/ZX7SDalmE8YxwL/Vv62GSyr76Hl7bx4+tH/tVylKX+mQOSJXoJ1
-         QoyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUYzfkNf7+yy3HyvTyySRiyRChN/UhMKzKKM1EkPPiLLvkMac7d9mqDTDtlx2NnDMSjEAXrk6ZrbgPKa5k5@vger.kernel.org, AJvYcCWgoGGBJd/z+8vXxvWH5F9W+7afq7yG/ZBXuBm0yfJrWJAHEVrHihmZRCtrGO/1bzSShFsgCF9+MyLo@vger.kernel.org, AJvYcCX/VovJ/WTTJnjsHVG5nuhs2lu8dRQgGjv0x8QKe5Co9HVc01V8Hu+RZLMDh3Z4Ga9HfrLO5g6A1tGs1PPitYzcEw==@vger.kernel.org, AJvYcCXA78WdN4yi9i8FplitnsC1YPqBNgbx2q1/xqcsiiXey7X+n8CDS7Dpfp4KtPcbbU3HVdSxLyDCRPFM68Ny2QI=@vger.kernel.org, AJvYcCXWjiZaWbDbtMBFT/v8WoQKwYLI0509NmUcVBJJ2eTSSqUstAyoCPF9HR+n/LzOIsDnqVPmAKqz7xAGkmo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YytYc7wORegP32vxcr41pTF2JNeZ/KjuMQYEYKkg6iyQAxkJraL
-	Sdt/kfdcEbzsEXtH7trHwe05yG7vLI/Xhiz73vTVOAjDIp+w8kmY
-X-Google-Smtp-Source: AGHT+IG5ZhDGETx6o3Y/ScrrP5AVxts1TmCd+x6OU8AF59dnaIuGpNAB6tw4k+6hqYITHYo+ZCSzTA==
-X-Received: by 2002:a17:90b:1c07:b0:2e7:89df:858c with SMTP id 98e67ed59e1d1-2e8f0f52f70mr2797590a91.6.1729946674353;
-        Sat, 26 Oct 2024 05:44:34 -0700 (PDT)
-Received: from visitorckw-System-Product-Name ([140.113.216.168])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e77e5a4ec4sm5396093a91.54.2024.10.26.05.44.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 26 Oct 2024 05:44:33 -0700 (PDT)
-Date: Sat, 26 Oct 2024 20:44:28 +0800
-From: Kuan-Wei Chiu <visitorckw@gmail.com>
-To: kent.overstreet@linux.dev
-Cc: mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, willy@infradead.org,
-	jserv@ccns.ncku.edu.tw, linux-kernel@vger.kernel.org,
-	linux-bcache@vger.kernel.org, dm-devel@lists.linux.dev,
-	linux-bcachefs@vger.kernel.org, linux-perf-users@vger.kernel.org,
-	linux-doc@vger.kernel.org, colyli@suse.de, msakai@redhat.com,
-	corbet@lwn.net, peterz@infradead.org, mingo@redhat.com,
-	acme@kernel.org, namhyung@kernel.org, akpm@linux-foundation.org
-Subject: Re: [PATCH v2 00/10] Enhance min heap API with non-inline functions
- and optimizations
-Message-ID: <ZxzkLJmhn3a/1ALQ@visitorckw-System-Product-Name>
-References: <20241020040200.939973-1-visitorckw@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=q0KkJcnjHa+Mbax50tUUS2eyHHmHImsR0wZkgwsTVtySNrLegwausd8wxzhmktWKmPYn1uLpJOjiNekKc1F9p+kMdIlwe8N+2OxAU0rLjcWpus64WCAI/heofJYqmwkIEUlzQ+y+99FXncfbedA6UCftkyxPQkQKTWxNhk/fyqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HlMHtpqF; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729946767; x=1761482767;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Ir8FkLHslMuuyZwduZxcZ09RxlFF0QcVt/0ML1tcSSw=;
+  b=HlMHtpqFLwt6e5ZWfxn+QH2WpFirYi1P+0Li3exf9j1tPdLKveE4SPov
+   suSbMcLKZHddzSar+rpXQGYXkw7pdmJRsZf5Pk9WYioSLWQrsAa3+0oo9
+   1iBFH39G8n7v3M2d8z/UzLgbIXJhAsyN19CtQhNqkvFLXaPEUPLlmsWvV
+   NoBLBFb64nGO88eKOtp3lIiyeG7VakZ4EbQC2etTxRraERbZ/BtmZg1e4
+   ZNdl46pg5ppVoDsFcBCTm98cSiLQGgUdLmbzFdeeEEYv7JyVyriaRn8Sd
+   PcMFQHkRSb6TgmP1tR58ePZfJaOoWLgsBPUBif5u7NneZn2VOlbSjb5u/
+   Q==;
+X-CSE-ConnectionGUID: BYK1S73LR4mIYGxs8GHGLg==
+X-CSE-MsgGUID: VhOJIHZhSrOQEfOljF0zbg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="40707432"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="40707432"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Oct 2024 05:46:07 -0700
+X-CSE-ConnectionGUID: 9HSKHftfRgSHktAkkf+4bQ==
+X-CSE-MsgGUID: ThDfStWoSiOeAgXlh2HKYg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,235,1725346800"; 
+   d="scan'208";a="82011344"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa008.jf.intel.com with ESMTP; 26 Oct 2024 05:46:02 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t4gB6-000Zem-1Y;
+	Sat, 26 Oct 2024 12:46:00 +0000
+Date: Sat, 26 Oct 2024 20:45:42 +0800
+From: kernel test robot <lkp@intel.com>
+To: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Jens Wiklander <jens.wiklander@linaro.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	op-tee@lists.trustedfirmware.org, devicetree@vger.kernel.org,
+	Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+Subject: Re: [PATCH v12 7/7] remoteproc: stm32: Add support of an OP-TEE TA
+ to load the firmware
+Message-ID: <202410262040.PWNrKv2Q-lkp@intel.com>
+References: <20241025205924.2087768-8-arnaud.pouliquen@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,24 +87,152 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241020040200.939973-1-visitorckw@gmail.com>
+In-Reply-To: <20241025205924.2087768-8-arnaud.pouliquen@foss.st.com>
 
-On Sun, Oct 20, 2024 at 12:01:50PM +0800, Kuan-Wei Chiu wrote:
-> Add non-inline versions of the min heap API functions in lib/min_heap.c
-> and updates all users outside of kernel/events/core.c to use these
-> non-inline versions. To mitigate the performance impact of indirect
-> function calls caused by the non-inline versions of the swap and
-> compare functions, a builtin swap has been introduced that swaps
-> elements based on their size. Additionally, it micro-optimizes the
-> efficiency of the min heap by pre-scaling the counter, following the
-> same approach as in lib/sort.c. Documentation for the min heap API has
-> also been added to the core-api section.
->
-Hi Kent,
+Hi Arnaud,
 
-FWIW, here are the bcachefs CI test results for this patch series:
-https://evilpiepirate.org/~testdashboard/ci?user=visitorckw&branch=min-heap-update
+kernel test robot noticed the following build warnings:
 
-Regards,
-Kuan-Wei
+[auto build test WARNING on 42f7652d3eb527d03665b09edac47f85fb600924]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Arnaud-Pouliquen/remoteproc-core-Introduce-rproc_pa_to_va-helper/20241026-050443
+base:   42f7652d3eb527d03665b09edac47f85fb600924
+patch link:    https://lore.kernel.org/r/20241025205924.2087768-8-arnaud.pouliquen%40foss.st.com
+patch subject: [PATCH v12 7/7] remoteproc: stm32: Add support of an OP-TEE TA to load the firmware
+config: alpha-allyesconfig (https://download.01.org/0day-ci/archive/20241026/202410262040.PWNrKv2Q-lkp@intel.com/config)
+compiler: alpha-linux-gcc (GCC) 13.3.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241026/202410262040.PWNrKv2Q-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410262040.PWNrKv2Q-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   drivers/remoteproc/stm32_rproc.c: In function 'stm32_rproc_probe':
+>> drivers/remoteproc/stm32_rproc.c:904:21: warning: assignment to 'int' from 'struct rproc_tee *' makes integer from pointer without a cast [-Wint-conversion]
+     904 |                 ret = rproc_tee_register(dev, rproc, proc_id);
+         |                     ^
+   drivers/remoteproc/stm32_rproc.c:963:30: error: passing argument 1 of 'rproc_tee_unregister' from incompatible pointer type [-Werror=incompatible-pointer-types]
+     963 |         rproc_tee_unregister(rproc);
+         |                              ^~~~~
+         |                              |
+         |                              struct rproc *
+   In file included from drivers/remoteproc/stm32_rproc.c:21:
+   include/linux/remoteproc_tee.h:59:58: note: expected 'struct rproc_tee *' but argument is of type 'struct rproc *'
+      59 | static inline int rproc_tee_unregister(struct rproc_tee *trproc)
+         |                                        ~~~~~~~~~~~~~~~~~~^~~~~~
+   drivers/remoteproc/stm32_rproc.c: In function 'stm32_rproc_remove':
+   drivers/remoteproc/stm32_rproc.c:986:30: error: passing argument 1 of 'rproc_tee_unregister' from incompatible pointer type [-Werror=incompatible-pointer-types]
+     986 |         rproc_tee_unregister(rproc);
+         |                              ^~~~~
+         |                              |
+         |                              struct rproc *
+   include/linux/remoteproc_tee.h:59:58: note: expected 'struct rproc_tee *' but argument is of type 'struct rproc *'
+      59 | static inline int rproc_tee_unregister(struct rproc_tee *trproc)
+         |                                        ~~~~~~~~~~~~~~~~~~^~~~~~
+   cc1: some warnings being treated as errors
+
+
+vim +904 drivers/remoteproc/stm32_rproc.c
+
+   874	
+   875	static int stm32_rproc_probe(struct platform_device *pdev)
+   876	{
+   877		struct device *dev = &pdev->dev;
+   878		struct stm32_rproc *ddata;
+   879		struct device_node *np = dev->of_node;
+   880		struct rproc *rproc;
+   881		unsigned int state;
+   882		u32 proc_id;
+   883		int ret;
+   884	
+   885		ret = dma_coerce_mask_and_coherent(dev, DMA_BIT_MASK(32));
+   886		if (ret)
+   887			return ret;
+   888	
+   889		if (of_device_is_compatible(np, "st,stm32mp1-m4-tee")) {
+   890			/*
+   891			 * Delegate the firmware management to the secure context.
+   892			 * The firmware loaded has to be signed.
+   893			 */
+   894			ret = of_property_read_u32(np, "st,proc-id", &proc_id);
+   895			if (ret) {
+   896				dev_err(dev, "failed to read st,rproc-id property\n");
+   897				return ret;
+   898			}
+   899	
+   900			rproc = devm_rproc_alloc(dev, np->name, &st_rproc_tee_ops, NULL, sizeof(*ddata));
+   901			if (!rproc)
+   902				return -ENOMEM;
+   903	
+ > 904			ret = rproc_tee_register(dev, rproc, proc_id);
+   905			if (ret)
+   906				return dev_err_probe(dev, ret,  "signed firmware not supported by TEE\n");
+   907		} else {
+   908			rproc = devm_rproc_alloc(dev, np->name, &st_rproc_ops, NULL, sizeof(*ddata));
+   909			if (!rproc)
+   910				return -ENOMEM;
+   911		}
+   912	
+   913		ddata = rproc->priv;
+   914	
+   915		rproc_coredump_set_elf_info(rproc, ELFCLASS32, EM_NONE);
+   916	
+   917		ret = stm32_rproc_parse_dt(pdev, ddata, &rproc->auto_boot);
+   918		if (ret)
+   919			goto free_rproc;
+   920	
+   921		ret = stm32_rproc_of_memory_translations(pdev, ddata);
+   922		if (ret)
+   923			goto free_rproc;
+   924	
+   925		ret = stm32_rproc_get_m4_status(ddata, &state);
+   926		if (ret)
+   927			goto free_rproc;
+   928	
+   929		if (state == M4_STATE_CRUN)
+   930			rproc->state = RPROC_DETACHED;
+   931	
+   932		rproc->has_iommu = false;
+   933		ddata->workqueue = create_workqueue(dev_name(dev));
+   934		if (!ddata->workqueue) {
+   935			dev_err(dev, "cannot create workqueue\n");
+   936			ret = -ENOMEM;
+   937			goto free_resources;
+   938		}
+   939	
+   940		platform_set_drvdata(pdev, rproc);
+   941	
+   942		ret = stm32_rproc_request_mbox(rproc);
+   943		if (ret)
+   944			goto free_wkq;
+   945	
+   946		ret = rproc_add(rproc);
+   947		if (ret)
+   948			goto free_mb;
+   949	
+   950		return 0;
+   951	
+   952	free_mb:
+   953		stm32_rproc_free_mbox(rproc);
+   954	free_wkq:
+   955		destroy_workqueue(ddata->workqueue);
+   956	free_resources:
+   957		rproc_resource_cleanup(rproc);
+   958	free_rproc:
+   959		if (device_may_wakeup(dev)) {
+   960			dev_pm_clear_wake_irq(dev);
+   961			device_init_wakeup(dev, false);
+   962		}
+   963		rproc_tee_unregister(rproc);
+   964	
+   965		return ret;
+   966	}
+   967	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
