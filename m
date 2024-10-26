@@ -1,88 +1,64 @@
-Return-Path: <linux-kernel+bounces-383018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 386FC9B163D
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 10:06:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F5449B1642
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 10:10:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BA331C21447
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 08:06:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 451571C21248
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 08:10:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 892C71D0E3A;
-	Sat, 26 Oct 2024 08:05:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E1AE1CCB2D;
+	Sat, 26 Oct 2024 08:10:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z3Ss08Ix"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="QMbOoEkH"
+Received: from smtp.smtpout.orange.fr (smtp-27.smtpout.orange.fr [80.12.242.27])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 308731D017C;
-	Sat, 26 Oct 2024 08:05:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F8CE1632D3;
+	Sat, 26 Oct 2024 08:10:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.27
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729929957; cv=none; b=EAeSIDNxGtRat4ftSTwVi89ebgbhJ6XtzAAGI4ae1fbJ8WRGtZEdOfkBRDl5yrb2tUhpc4o98IQrV0YRLJS15wRdrooufQ1tYDZEGKtdlFXtbw6ic2GQ9/pwaJhn+8gedJ/z2/M+Dn/uxcWwu3ZbAk5QxUNl/FwoL+1lVhhjxW0=
+	t=1729930205; cv=none; b=g4AUOUA4PpVp5Y5maqFD+Ijltrv5X2LQl6XAaJkmdGkgtVi1VO0RyDRnHp79wrvczsVfS3cWnJsQiEQBUjULRWYwR8NKYgBLpAl+oDJIFTvt8lwnkGgqbjzRMURGpzNtdm2fpfq+dXPIp7/dmHUKPtOePqs60Q6MFC0eZuA3hEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729929957; c=relaxed/simple;
-	bh=NxdHChZpaxMvrQZp5izJA5Wszc6rJQNIcts2Lnowl1Q=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=QYVnzSXo7A0CUrZIiccaLgfyVg0bveHQeZSL56YV0zitdtbD32zzUmvl21sYVNstWeISAE2NsKAeCDbUGtscqncXHALIwMIo2c35jCO5coURaTcNRkCmX7l8Jxb8IDAUqC8S7EbihH8I270aagA+j/lYvVx67nofM0f+UvxsLys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z3Ss08Ix; arc=none smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7cd8803fe0aso1952550a12.0;
-        Sat, 26 Oct 2024 01:05:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729929954; x=1730534754; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sS++5JF7RgkdCtoajXZbGFhvxGfG+eo22CWm24y1teY=;
-        b=Z3Ss08IxynpevHj6kZDbU6SGbOcG9K3GPMLIP/kx5dLBexaUrA/UgLU9M4x1qhC9hH
-         +SngUgTogyGElZngv+1GiUHtihn6zYuekGA26MqDkAN95nhq/mowdvxp8TMFnApWsVt/
-         ChBWl3T5uTxJ6rW0zfWduDje6xgFVb2xYQf4Rf0yagBkkZeSngBSqz+UCKYTVj21pj9I
-         ydlkPFYD6Q8nyKHN4QhJgERfTKZg2YFutEmK+fpvS5s+231OwrdUbLDslkQQaQYJMQav
-         ehH0CzgbGmAZMcXMBjGsLmA/rvVlc4yZyln+I31XTQQGcVA7PqLOAIQ1iB/hL2SM43f/
-         ccLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729929954; x=1730534754;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sS++5JF7RgkdCtoajXZbGFhvxGfG+eo22CWm24y1teY=;
-        b=WRzNepYRPAmetJN+aYIh2nsuwNlnAR1pq6VvLqcvw0VPKTmL0BmajKi9esHMTUSqi2
-         UhK6B53jEJyiMl4nxJrhhorlrOIntU4O5yfwX7bALIgwN/5n8Av5KPK0mh5Q1AEYHyCa
-         dzp4Gm8tnheyl3V9/981D2xtfArpcl6qX5M94Vxc83xn+yg43DDIHmEFSPhGu3+BsBiH
-         AwbxJJEz5DldEsQC/arwXIRWe2ExHq4WjkZE5vRA+weaK3vYPHYA/iVpv5Hem6wtWpni
-         L1wwB8ks+wJMc/PIkZi0YUd0mY2QEdq0ftXzN03xl+7YVHArgH9RFxk3CoPOg3yNNS9Z
-         tYJA==
-X-Forwarded-Encrypted: i=1; AJvYcCUmRr1+mvQCWc/NVax4iKIN3hhWIyte21evuI8cfkLONLFqG3CIkkri0EpH4/7KQmxkX2iPLioZPVDU@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0L2y/eIu6O9sHxJ7lu2IMs/hpGjo3tLQ5i0OMDYtVOsis9qv5
-	0UH2RUGSr+L8R7FRrd/qvOFjQa5mkKSbG+ma55FFrhuoaXg+Ojk926rO1g==
-X-Google-Smtp-Source: AGHT+IGQrl20bh5ZTQUueT1jvS2kpWHro/MS438xRanv0t6t5Uvlt6KaxCmDrL1AcSJXudxgZbRo7A==
-X-Received: by 2002:a05:6a21:394a:b0:1d8:b060:37c6 with SMTP id adf61e73a8af0-1d9a81db7edmr3148071637.0.1729929954211;
-        Sat, 26 Oct 2024 01:05:54 -0700 (PDT)
-Received: from localhost.localdomain ([240f:34:212d:1:4618:4c6a:7feb:e53b])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7edc8a46f68sm2288666a12.89.2024.10.26.01.05.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 26 Oct 2024 01:05:53 -0700 (PDT)
-From: Akinobu Mita <akinobu.mita@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-hwmon@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	akinobu.mita@gmail.com,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Billy Tsai <billy_tsai@aspeedtech.com>
-Subject: [PATCH v2 2/2] dt-bindings: hwmon: pwm-fan: add retain-state-shutdown property
-Date: Sat, 26 Oct 2024 17:05:35 +0900
-Message-Id: <20241026080535.444903-3-akinobu.mita@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241026080535.444903-1-akinobu.mita@gmail.com>
-References: <20241026080535.444903-1-akinobu.mita@gmail.com>
+	s=arc-20240116; t=1729930205; c=relaxed/simple;
+	bh=roMrdDhWbQ7oiH7wmvK8cHSGZYmjLemzi0RKbT3G3RI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fXfX5zLCprokplpY+m7vbWbPFTEDtfUg2TAvuL6kT+yOksWDtWoIyzf1puG2e+bXxApp6VYk5DKcstInkcSiIPxZjHYGfkxjUlKvXlkyZ7gUPDyBJtQPUL65cVIpk8DChOmzJAWiXrX7zebyDHcKcqo9qaGx1uVjV+uiFMb/JsU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=QMbOoEkH; arc=none smtp.client-ip=80.12.242.27
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from localhost.localdomain ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id 4brttJTpvLmOL4brttUbV9; Sat, 26 Oct 2024 10:09:54 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1729930194;
+	bh=UszODcSUisBsMEcSbF3Qc7T3xxScluRVwcisiRg5FVs=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=QMbOoEkHHFvEPGDvhGNYyCK4U5d3MFkzNZm25BE1w0bhTKLz8a1L2eRVCQd9CJRYK
+	 Yz/DPQKoynVxk/4U+72ZjuVoSZ2dTMd4VtsPAZf6hDPuphY3QpFd78Av79XPpZPk14
+	 Vcwnc3iZKT/ajES6D6F/GbDXhkBpOTYjOU++VO5hjxH9Bt7boM626KvXQSagi48/SH
+	 w6IzjeLVb/xrsRqvj4+52XW30H0mpgpQL1nM2PHvNw0IHzR5b84Fb5kNWaud4CrR1F
+	 JYcnRPnH22QMkyD50C8fybE7CczlcfB0nfURw2VYzJ7E2u9MCrVpTN392GjyrhLvRc
+	 cqnX8g2uFnq3w==
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 26 Oct 2024 10:09:54 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Selvin Xavier <selvin.xavier@broadcom.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Leon Romanovsky <leon@kernel.org>,
+	Kalesh AP <kalesh-anakkur.purayil@broadcom.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-rdma@vger.kernel.org
+Subject: [PATCH 1/2] RDMA/bnxt_re: Fix some error handling paths in bnxt_re_probe()
+Date: Sat, 26 Oct 2024 10:09:42 +0200
+Message-ID: <580de136ad9b85b0d70709e912cfddd21b7e3f6f.1729930153.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,35 +67,50 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Document new retain-state-shutdown property.
+If bnxt_re_add_device() fails, 'en_info' still needs to be freed. This is
+done in bnxt_re_remove() with the needed locking.
 
-Cc: Jean Delvare <jdelvare@suse.com>
-Cc: Guenter Roeck <linux@roeck-us.net>
-Cc: Rob Herring <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
-Cc: Conor Dooley <conor+dt@kernel.org>
-Cc: Billy Tsai <billy_tsai@aspeedtech.com>
-Signed-off-by: Akinobu Mita <akinobu.mita@gmail.com>
+The commit in Fixes: in-correctly removed this call, certainly because it
+was expecting the .remove() function was called anyway. But if the probe
+fails, the remove function is not called.
+
+To fix this memory leak, partly revert this patch and restore the explicit
+call to the remove function in the error handling path of the probe.
+
+Fixes: a5e099e0c464 ("RDMA/bnxt_re: Fix an error path in bnxt_re_add_device")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- Documentation/devicetree/bindings/hwmon/pwm-fan.yaml | 4 ++++
- 1 file changed, 4 insertions(+)
+Compile tested only
 
-diff --git a/Documentation/devicetree/bindings/hwmon/pwm-fan.yaml b/Documentation/devicetree/bindings/hwmon/pwm-fan.yaml
-index 4e5abf7580cc..86a069969e29 100644
---- a/Documentation/devicetree/bindings/hwmon/pwm-fan.yaml
-+++ b/Documentation/devicetree/bindings/hwmon/pwm-fan.yaml
-@@ -40,6 +40,10 @@ properties:
-     maximum: 4
-     default: 2
+
+Another solution, maybe more elegant, would be only call kfree() in the
+error handling path. In fact locking and the other stuff in the remove
+look useless in this specific case.
+---
+ drivers/infiniband/hw/bnxt_re/main.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/drivers/infiniband/hw/bnxt_re/main.c b/drivers/infiniband/hw/bnxt_re/main.c
+index 6715c96a3eee..d183e293ec96 100644
+--- a/drivers/infiniband/hw/bnxt_re/main.c
++++ b/drivers/infiniband/hw/bnxt_re/main.c
+@@ -2025,7 +2025,15 @@ static int bnxt_re_probe(struct auxiliary_device *adev,
+ 	auxiliary_set_drvdata(adev, en_info);
  
-+  retain-state-shutdown:
-+    description: Retain the state of the PWM on shutdown.
-+    $ref: /schemas/types.yaml#/definitions/flag
+ 	rc = bnxt_re_add_device(adev, BNXT_RE_COMPLETE_INIT);
++	if (rc)
++		goto err;
+ 	mutex_unlock(&bnxt_re_mutex);
++	return 0;
 +
-   pwms:
-     description: The PWM that is used to control the fan.
-     maxItems: 1
++err:
++	mutex_unlock(&bnxt_re_mutex);
++	bnxt_re_remove(adev);
++
+ 	return rc;
+ }
+ 
 -- 
-2.34.1
+2.47.0
 
 
