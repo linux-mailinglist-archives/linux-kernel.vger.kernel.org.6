@@ -1,129 +1,112 @@
-Return-Path: <linux-kernel+bounces-383034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0B2C9B165F
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 11:07:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23CA19B1665
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 11:09:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D0271F228C3
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 09:07:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87DF0B21B3C
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 09:08:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B88E1C2309;
-	Sat, 26 Oct 2024 09:06:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 279B61CCB2D;
+	Sat, 26 Oct 2024 09:08:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OEnrXjO7"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I7b/THSr"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D613217F5E;
-	Sat, 26 Oct 2024 09:06:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FD7B217F5E;
+	Sat, 26 Oct 2024 09:08:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729933614; cv=none; b=DxKTjtF+aeTjr7zwptrbfAqNl1Jt+FQ97VXdSVV7k7tHzy7CEjPx5LIZmOcr+mJ565ZVyP2MZcSs4CBRuwRfQVgWd2iy2oZphmV/y/a4r90SOujEiJv/5OHuI4/zEzP5rCOLApD7mNbZWvtU3Y6MNL12wqnxOJrjUSglcpDJcgA=
+	t=1729933731; cv=none; b=dNrQBQAIWT2AHbIKdZN9XpR87VacaPM7u1UBYkd2D16pS8CbDxcTeX+vUXerVBx29QVfLTGsKX0L7ScXZARwg/UBeXyDR9PNrYWVPryBvRUfftJlyYQipwLd22xkc/8g8mWIVm3TcZ7+422Y/vQfB3sliKfgnM1NVLm+Hq+NZ6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729933614; c=relaxed/simple;
-	bh=+NdJghvBQWb+m4k98LeeMaXO0uTXKxNT9LDUfdciUW0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=RFuRt8Ak5shkwf9S7Lf6KKGVMfWthdwMp26jZRRa644Xj7X2ffShb8dtRvNJgSzt+F1B3DmDAQGMr2sedhkHDyawxZ4TwWLuQ2fQZFPzyzWoqYwn0jbvMf8xVuHut92KGcg6Sc7j+Bvc5DLO6KLec5tIE8G8QpmWGYLLuUTtcaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OEnrXjO7; arc=none smtp.client-ip=209.85.210.172
+	s=arc-20240116; t=1729933731; c=relaxed/simple;
+	bh=RSN9ic9K/Ut+YDWJ2FWRiKaKIHsNfnpXRZOz7BrfrY8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=LsD1OhggC5S0OAl81NOoXZae/0Zh/EkVkn7g+srGZymqyTvll1p6QAJtM+f9YCtV0/s/2GfmzTiD/KvufUIoKWLnc0mgZkcGmagln8kmaHyOI8un4ZQXrLCFQ4hYfs/Zmqk0MxBWsFE3IVLy9m5bFZd+iE1IvvFKzvlfuyIiIxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I7b/THSr; arc=none smtp.client-ip=209.85.218.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-71e4c2e36daso2667228b3a.0;
-        Sat, 26 Oct 2024 02:06:52 -0700 (PDT)
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a9a4031f69fso376494366b.0;
+        Sat, 26 Oct 2024 02:08:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729933612; x=1730538412; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NrjhOjkgV4XOW6GCyrUwLgtOZKdpB85rZRvRDFwdJnE=;
-        b=OEnrXjO7Rhihuj+VwONVUW9ZViG/sG5b3VpykIKWX+D+FjH0LS3vZeRN27bNbmjzFW
-         ywelK0jmOrWiRCmSgB8ck8Ff5L3hYKxbAM3tqFUhCaPS2EDSOmJMw6S3S9UCUwxR1jIr
-         be8fy37cGdgdlNALxL2ToK5MQXJgjQcgtMEQwuXHM+uThdWofK/O0MT6BQjxbMWGjty0
-         4E5ALNKi4l/wARd1oetPGW2TnEgltKkGrnngmjS0560F+32MzZyUhHUGGoAOzsypNNx8
-         Z4JDhj6z2FUjhFdjI5cM3dOVp377i+wPE6zTOWljHetrlaw7HWSwBvaXwGfr6ryteRZB
-         3OEg==
+        d=gmail.com; s=20230601; t=1729933728; x=1730538528; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=uCIJLuA6muWOiLwe3bt6iFWGsmI+thbuxm3D0I6OTuk=;
+        b=I7b/THSr1q5gvTH89kLRygzMwfFuhpiVqUKwCxAmOekWDz6jCXU0NloMeUXKa8Y50j
+         1Gf7qWBBzWSIPDVh9W7wjhcizhbhFMLwEzm6UfnxnWLugBlyfkZPFVRVUqrRJ0Ff9M4T
+         vYTUobxL6ZEAQFDt930HTwxL7ib+jMpqLx7192EOIf2YgxUwXHoiqeD0G+NQZyQAOqZq
+         3Mt2JYOPk+gtqXpTvpe1hwE/asAkgBybKqiQSRbgzqbIyut24LBnLmVAoiFOK2WvEiKS
+         4HnpAflBuNrkr/bUVlwXkx7ztFer40dX6OS8kzUAIrJ7LPs+wfP+QGg8wuI4YJYaHt7m
+         q0Ew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729933612; x=1730538412;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NrjhOjkgV4XOW6GCyrUwLgtOZKdpB85rZRvRDFwdJnE=;
-        b=L1/pVqkJAV0GdGZdyDYIjtLotmZWzcujIyEh4bbbSpwq/0qzIIel6X5+yFNEPsFYrw
-         RDn/59aXszym1GRbJK8bZGmKNUEdeAJPjEtrQhC48YknYK3rXkim+lEiZm0Ig2X+QV42
-         sxqbocYWmxtdlwA9+YvvrBWlvYUVMsjBW2pOkulgSBXCfWWWcGwOsd8BS1rsLcDRSMms
-         wISFPcbqbUuZN1jJYavlUIVx31sjDreZvU9KD/xLMRmsyBBUeaP2fWkj73ekn7IP/BAd
-         WCXsM/fBSNhM6S6vzov9OglbGKGCeCelM/rJJwonBW+S8CrVyrwtWivlfy/Gel1Kppi0
-         tGaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUcuylHEftxCQ7ewyqUdHjAZaNABGNSumeXP34HxpxJYPXY9EcNmyX9/J3bGn1YttHXcNacHXArF8vc@vger.kernel.org, AJvYcCVwgpcCETg89gWYvmZd1fsrfQuV/Ur6fiVXf3Xw2CEmbXZ5w7Xx5iqU0a7dEgrTUiIKSWTqBI9W0EUSbVlW@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4M5/e63OYRjIf1ww7Oay4SySbU8Ie5e5LyvXFGGqnPFkBNRGZ
-	AKkaQtRMIdm9gyKR6Cy70bSMPkkdIPpuHi+Y+xib0Zw0VcHsSi2LWjg/6g==
-X-Google-Smtp-Source: AGHT+IFArO6Odcmdeq09iGp9ru/4OlQOeUXfOAR0+yIX2GE5juvf5MFAC6sTiHgevAG2BZt3G5LgVQ==
-X-Received: by 2002:a05:6a00:1892:b0:71e:60d9:910d with SMTP id d2e1a72fcca58-72062f8f9a7mr3517237b3a.6.1729933612115;
-        Sat, 26 Oct 2024 02:06:52 -0700 (PDT)
-Received: from purva-IdeaPad-Gaming-3-15IHU6.lan ([2409:40c0:233:2700:4dc8:1441:1668:ab33])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72057a1fc16sm2361686b3a.161.2024.10.26.02.06.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 26 Oct 2024 02:06:51 -0700 (PDT)
-From: Suraj Sonawane <surajsonawane0215@gmail.com>
-To: surajsonawane0215@gmail.com
-Cc: brgl@bgdev.pl,
-	linus.walleij@linaro.org,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3] gpio: fix uninit-value in swnode_find_gpio
-Date: Sat, 26 Oct 2024 14:36:42 +0530
-Message-Id: <20241026090642.28633-1-surajsonawane0215@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241022194624.34223-1-surajsonawane0215@gmail.com>
-References: <20241022194624.34223-1-surajsonawane0215@gmail.com>
+        d=1e100.net; s=20230601; t=1729933728; x=1730538528;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uCIJLuA6muWOiLwe3bt6iFWGsmI+thbuxm3D0I6OTuk=;
+        b=dorJ6CYZUmofa0kjRqrNjHarhIxwpRR92hxwRebMxpzisbmTLgfaap6/ZEwmuKvKCZ
+         2BiKvPoXKwf++S3WyNqDBDjBfRtadusMIjzNepSeEHlP2CMpkeBSwn+QDuLaKHOTzdfY
+         jK91BkYF72qQmLlANyWb4w6tYcBCzTnkedUyf5LYkkO1Jlokc64br3oxZwpCmd/H82hG
+         wIrWYOLHqeJVplaw+NlAC3gita7+InJ/Qg2qAqgz7ldPxGfx2CZco02gtsreO6p397SH
+         v5DjEGCH6mHY0od8Fzr0a092bzcSuMh5uw8QaBfkdwnXvuP/1FkukHjXQ6fziU+ptjpQ
+         bASg==
+X-Forwarded-Encrypted: i=1; AJvYcCUoUifriEjAYyoh7bMg9E3mbT1atIR6V8hPAFXeIwQFYQ6RNBcNOMtBlDIfig1UUqkHwFxmv+xDDDv/ZpT/@vger.kernel.org, AJvYcCVgBCDvtyQbF2rOqMeTZdWZAF1m7Lkl1odngItOy8G8Z8gCDRLh9KewQf69FmCJigHvOiVrn2Qr9UHy@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmKVSKm+xJnfyTscxRrAYbqTTWJm7Ex4J98BLOvh/tpIGhWPat
+	R/WxlFyMPSJ+/QBYcbt2glR5vhfbZuqyVZNpB+h5Eh3V6TaG4L3k
+X-Google-Smtp-Source: AGHT+IFiTArWsZ7bqEuvvcec5QUqM9skKob+qZCDa0gSJUMRL9sVcXzYmbvYEFPqlUdOJSgY16dNKQ==
+X-Received: by 2002:a17:907:94c1:b0:a99:ffef:aec5 with SMTP id a640c23a62f3a-a9de5d774d0mr139759266b.23.1729933727678;
+        Sat, 26 Oct 2024 02:08:47 -0700 (PDT)
+Received: from localhost (89-73-120-30.dynamic.chello.pl. [89.73.120.30])
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-a9b30c7ae0bsm154063666b.156.2024.10.26.02.08.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 26 Oct 2024 02:08:47 -0700 (PDT)
+From: Patryk Biel <pbiel7@gmail.com>
+Subject: [PATCH 0/2] Add support for LTC2971 power manager
+Date: Sat, 26 Oct 2024 11:08:43 +0200
+Message-Id: <20241026-add-ltc2971-v1-0-109ec21687bc@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJuxHGcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDS2MD3cSUFN2ckmQjS3NDXcMkE0vjtBQjwyQzEyWgjoKi1LTMCrBp0bG
+ 1tQAo1tbdXQAAAA==
+X-Change-ID: 20240930-add-ltc2971-1b493fd21b64
+To: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Frank Li <Frank.Li@nxp.com>
+Cc: linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, Patryk Biel <pbiel7@gmail.com>
+X-Mailer: b4 0.14.2
 
-Fix an issue detected by the Smatch tool:
+This series introduces support for LTC2971 power manager.
+The LTC2971 is similiar to already supported LTC2972 in terms of the
+number of channels and the register set, it differs however in
+the supported voltage range.
 
-drivers/gpio/gpiolib-swnode.c:78 swnode_find_gpio() error:
-uninitialized symbol 'ret'.
-
-The issue occurs because the 'ret' variable may be used without
-initialization if the for_each_gpio_property_name loop does not run.
-This could lead to returning an undefined value, causing unpredictable
-behavior.
-
-Initialize 'ret' to 0 before the loop to ensure the function
-returns an error code if no properties are parsed, maintaining proper
-error handling.
-
-Fixes: 9e4c6c1ad ("Merge tag 'io_uring-6.12-20241011' of git://git.kernel.dk/linux")
-Signed-off-by: Suraj Sonawane <surajsonawane0215@gmail.com>
+Signed-off-by: Patryk Biel <pbiel7@gmail.com>
 ---
-V1: https://lore.kernel.org/lkml/20241022194624.34223-1-surajsonawane0215@gmail.com/T/#u 
-V2: Improved commit message.
-V3: Add fixes tag.
+Patryk Biel (2):
+      hwmon: pmbus: Add support for ltc2971
+      dt-bindings: hwmon: Add ltc2971 bindings
 
- drivers/gpio/gpiolib-swnode.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../devicetree/bindings/hwmon/lltc,ltc2978.yaml    |  2 ++
+ drivers/hwmon/pmbus/ltc2978.c                      | 34 ++++++++++++++++++++--
+ 2 files changed, 33 insertions(+), 3 deletions(-)
+---
+base-commit: c2ee9f594da826bea183ed14f2cc029c719bf4da
+change-id: 20240930-add-ltc2971-1b493fd21b64
 
-diff --git a/drivers/gpio/gpiolib-swnode.c b/drivers/gpio/gpiolib-swnode.c
-index 2b2dd7e92..51d2475c0 100644
---- a/drivers/gpio/gpiolib-swnode.c
-+++ b/drivers/gpio/gpiolib-swnode.c
-@@ -64,7 +64,7 @@ struct gpio_desc *swnode_find_gpio(struct fwnode_handle *fwnode,
- 	struct fwnode_reference_args args;
- 	struct gpio_desc *desc;
- 	char propname[32]; /* 32 is max size of property name */
--	int ret;
-+	int ret = 0;
- 
- 	swnode = to_software_node(fwnode);
- 	if (!swnode)
+Best regards,
 -- 
-2.34.1
+Patryk Biel <pbiel7@gmail.com>
 
 
