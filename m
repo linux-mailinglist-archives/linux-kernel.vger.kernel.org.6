@@ -1,94 +1,237 @@
-Return-Path: <linux-kernel+bounces-382919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 268079B14E9
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 06:55:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CAF29B14E7
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 06:52:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E25C028306A
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 04:55:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2240E1C21086
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 04:52:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B5BC13C80C;
-	Sat, 26 Oct 2024 04:55:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EF8F13C80C;
+	Sat, 26 Oct 2024 04:52:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="GKbDnKTE"
-Received: from out162-62-58-211.mail.qq.com (out162-62-58-211.mail.qq.com [162.62.58.211])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TiYXEiR3"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D1C28460
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 04:55:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9852C8460
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 04:52:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729918541; cv=none; b=iTyAmCZnIZ67q91Y8mAc7IuBnj9hFpfhlfsflzrKVX76sdCSQJvMaUuOq2ltoCHvcEijedSsJPG2pyF2zXf1/wUJ1xiiD3rK34SIkSaCrht+PJZV+q5Xjg5qVUGGx9Oa5Hr6bz3Un1MOUyR263b1XmmwtXUWrrDO0Bs+NTYQjPE=
+	t=1729918369; cv=none; b=n/au+KFt53BbT/xFamRzoS79NYCl4/MZgP+bWr7V+5jBi4Ov2Pn5Wlb631sXYZblBPUkwfyaJcZQ7+NswCdnvH2Hw9W3tEfmgREw1xILx7CekCNXLsb8J7DJmhaxVuuLtrguy19gInIYIe4AhwMHjbK1lnyH9DL6JJCnTpPU9QA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729918541; c=relaxed/simple;
-	bh=SH1PmUFkRextgM0k0nAEUaq1710c+wtNPrZe0xbcC0Q=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=K75alTk2pcJLRGnApfhk3mB/6g8RmZpjFNU1nBUNcLNN0Mdu7s0Q66sxtSbl9dvykzK7FrKK8pkmmFvShZlbw0WuidlRj91J/55+qnqqeCc5JXEUyGmqwIZbFW/vcoW8BP4MCnT/VoZnELHHbMA0wtX8bsDqmpgd3qpjmsnCsOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=GKbDnKTE; arc=none smtp.client-ip=162.62.58.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1729918233; bh=+kB3580t4aZtzCZjTlSDMOGN+I6kbMUGLo+4PwsopvU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=GKbDnKTEMkKpKPc2Dom+n/phf1ipGhijz+421fzzZaDCvugOIkf+WKbDhq8aNDz4V
-	 40TBW2vAab+uKJu2w/PFbM6h6S5XdDXutXf4Al6JI/b4NuKWWFSQkwlP0+wBi//GSl
-	 YA1afYJcPNtlqc2FaOhI7bTHSfx931zyJR7qCACQ=
-Received: from pek-lxu-l1.wrs.com ([111.198.227.254])
-	by newxmesmtplogicsvrszc25-0.qq.com (NewEsmtp) with SMTP
-	id C9E8040D; Sat, 26 Oct 2024 12:50:30 +0800
-X-QQ-mid: xmsmtpt1729918230tp1h395gf
-Message-ID: <tencent_8AD1777367243C273694968636624A487409@qq.com>
-X-QQ-XMAILINFO: NhpLzBn2I3XwSHfcxv1kEwRu/UT4x+7N89FajUh2Mx00fOxXfylVeBuGh2MqN6
-	 YA3dL0COioYkmFGAbrRlacmoNp++gjc8mwB2EOjvdqQ6naaZx4zOBBipwtLD1tbVzBBXpoZ2XTBL
-	 D5Bk/HjomGybTL6f2b5S883/nGvDVptXeLqlb/ONOSuMj+zyoCv6mv+6UXQzmq5yQfiGEJp1+Z+9
-	 gZWuGvyqy8ZaQN64Ahk7hVLno/m47+ru8qVSeMpjMq5HHTXy9K2yGD5/qg0Uy021IJ3QwdenAl5W
-	 +UxVkXOi+0f2laZsTiKm9PAI5KwMF/2blSxKxOXpMf+CeNkJVVbjQHH2pISxJyHhS5PheaenOF6h
-	 4YfkhuW+MrsLzi29O2fOahZfmviWittq0SnuoiUW/yuLlYa8kqwJssv8JRKMS16G9+t4VGQsLARm
-	 j6px/DM1KwoCeznnSoMPlyvMDsQevCROD0j87CXfPQeLjNzR1vidgqxtVcaZNgoBK7fBUK8jqOfS
-	 WNPMch28Tx2u27rhhFkwNOMFQvsLtybE5bcVPse+yJVX1swTdpFVCSVHhPCm00PhOCwQQBKxNPoC
-	 E2XPHq2AF2ebnmGVluFNl/ez2VDUsfqNVFKkMrdC6F/iy75bX1TBPrfFMiwiGvRN6Y8XQ5ny0XCx
-	 lXoP985Xf+kZ8F9cyUTreo2CCmfwWjSVbko3pFzWADqS48FyrVPyci8KWdhB8daRQ51KzP7jGLoH
-	 YlZm3jthbjvLKgmFGE1JM56rK7OTan6+SQyZdonZX7bauEJfAv1CP/caex5/kFkeZamnuTsDhJYo
-	 pdjg9oFDowAQE6TzrMi6vGAomQ8OPKGSWr8aKDSGjn3D19MAERWvmpPgih2lZGjL7H6hRygtsHIx
-	 Aexs4W3LMdhgycOzGWjOWX6mygTSLHob5JRSp7wBkLcYjTvXymExa6Fkgg4/h5JQ==
-X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+820dc3b465c69f766a57@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [bcachefs?] INFO: task hung in bch2_journal_reclaim_thread (2)
-Date: Sat, 26 Oct 2024 12:50:31 +0800
-X-OQ-MSGID: <20241026045030.790461-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <66f872a0.050a0220.4a974.000f.GAE@google.com>
-References: <66f872a0.050a0220.4a974.000f.GAE@google.com>
+	s=arc-20240116; t=1729918369; c=relaxed/simple;
+	bh=stVd2FFf+iYA36BChgCxWbjicm60rrkSJAYmXsn/JhM=;
+	h=Date:Message-Id:Mime-Version:Subject:From:To:Cc:Content-Type; b=YUYkiENmrVggAwnJNG88ltX+gI1qM3VQi36hd9BgEF9dTVutyECLZn9aChbMaeqENqtGztLCod7y+PSW1ALEyvuoSdt6Z6bg2VFaIhruqNUthLjdiXt5hKCBtFlvwUNK4ET8ZA1esCHcDr/cAynlvKOcjbTXd55ThDXE3qoVNr8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--saravanak.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TiYXEiR3; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--saravanak.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e0082c1dd0so56625317b3.3
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 21:52:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1729918366; x=1730523166; darn=vger.kernel.org;
+        h=cc:to:from:subject:mime-version:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=/xM391IR48qrcB5QAxis1fqgvS9fSdsN/EpuN4x9UQ0=;
+        b=TiYXEiR33SZtuVGi9qkCVqOCdn72q/uEr4PrU+fwXENHVTE5ocyhysfcGECZkyYBoz
+         MzmJ1C2J1qTnXrrzJ8KVkuBbNWZa2NYlyas85Vv9gU88YHk9ullGMfe0UAOQopQ6qMf7
+         AR8Q0Ck7sLCwJ8vTNwHRtht3UrgN2xkZr/IaD2nw0tCe8bLrPc++wURh/gdaLCuL/WS/
+         1XWwZy3OEqwAm5sVOgdTV4aWjW5bnDmAFr3RHljwK2f+qo+E8BZEx47yXVTnAf28ZuUV
+         TFAIosqVV5xQeg5NxTot+iy5v36Hi5CIoyKdxyjkMR82XrevlDjrOBjjM/F6SPYKTcse
+         QeIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729918366; x=1730523166;
+        h=cc:to:from:subject:mime-version:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/xM391IR48qrcB5QAxis1fqgvS9fSdsN/EpuN4x9UQ0=;
+        b=umrsmcuVAyJh3p71oJ21ixU0lA+s7WBVE4WaOQvrZDFnsIPuWWCnsN9HqlfwXrLfkJ
+         31RI0yoJ6PZUvhjZiMajGGpRhQhdjy321Ub7w+GdR08h0TXe/P+w6RrxqiLHWSKWKtpV
+         PGOgKXXOvk0dxCL15tzXDiMhWmpkTngUaWgsNS5v/gyIgj3exfE/YFc/gUOK+chQgVka
+         IGWUeoCxMG+YFo+1LdnJoFQDO9EFbd6iyNGYWun2YOBrXd18w604pUXumsJBFgz7Wplp
+         0LJu4lgp9Nljlt6PseHCoKWEVzurZZoL3gOrt0WlRguTcH87IDV0Vh/j0IeMNfgZbK+2
+         Tnpw==
+X-Forwarded-Encrypted: i=1; AJvYcCVNJdSwfTmbR9/krtm1JsiEBt0LH9TH3Q+emCkdxtAYXxN4cP9U9clzqfzBe3N6bikoZy34n4bkupVblvg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxL4/W5hARvYL5EYVmZWXVeCc/SF7kOB3b9+vTJsiaztRpqS73X
+	oVyEOgjBgQ/tz3FlbZ20hZyoBaY1lKlzQMm94+908KTewbKa96nqiRhfNC1vfr4kNzPy0FgSBvz
+	7Qe+jH6W5f1OU3g==
+X-Google-Smtp-Source: AGHT+IGRhPGhaOAsmtwnVFsCBSjW9h81zlh5LCF4eegHPpzOMNumbplBd6lmfCGpHlNLVd/xKdy0TFipMv4YWoE=
+X-Received: from saravanak.san.corp.google.com ([2620:15c:2d:3:999e:1eb9:2ed2:327])
+ (user=saravanak job=sendgmr) by 2002:a25:838d:0:b0:e28:e97f:538d with SMTP id
+ 3f1490d57ef6-e3087c19387mr979276.6.1729918366217; Fri, 25 Oct 2024 21:52:46
+ -0700 (PDT)
+Date: Fri, 25 Oct 2024 21:52:41 -0700
+Message-Id: <20241026045243.452957-1-saravanak@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.163.g1226f6d8fa-goog
+Subject: [PATCH v2] driver core: fw_devlink: Stop trying to optimize cycle
+ detection logic
+From: Saravana Kannan <saravanak@google.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Saravana Kannan <saravanak@google.com>
+Cc: Aradhya Bhatia <aradhya.bhatia@linux.dev>, 
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Devarsh Thakkar <devarsht@ti.com>, 
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, kernel-team@android.com, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-avoid race conditions when journal's reclaim and flush acquire reclaim_lock
+In attempting to optimize fw_devlink runtime, I introduced numerous cycle
+detection bugs by foregoing cycle detection logic under specific
+conditions. Each fix has further narrowed the conditions for optimization.
 
-#syz test
+It's time to give up on these optimization attempts and just run the cycle
+detection logic every time fw_devlink tries to create a device link.
 
-diff --git a/fs/bcachefs/journal_reclaim.c b/fs/bcachefs/journal_reclaim.c
-index ace291f175dd..58a745c72aac 100644
---- a/fs/bcachefs/journal_reclaim.c
-+++ b/fs/bcachefs/journal_reclaim.c
-@@ -731,7 +731,7 @@ static int bch2_journal_reclaim_thread(void *arg)
+The specific bug report that triggered this fix involved a supplier fwnode
+that never gets a device created for it. Instead, the supplier fwnode is
+represented by the device that corresponds to an ancestor fwnode.
+
+In this case, fw_devlink didn't do any cycle detection because the cycle
+detection logic is only run when a device link is created between the
+devices that correspond to the actual consumer and supplier fwnodes.
+
+With this change, fw_devlink will run cycle detection logic even when
+creating SYNC_STATE_ONLY proxy device links from a device that is an
+ancestor of a consumer fwnode.
+
+Reported-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Closes: https://lore.kernel.org/all/1a1ab663-d068-40fb-8c94-f0715403d276@ideasonboard.com/
+Fixes: 6442d79d880c ("driver core: fw_devlink: Improve detection of overlapping cycles")
+Signed-off-by: Saravana Kannan <saravanak@google.com>
+---
+Greg,
+
+I've tested this on my end and it looks ok and nothing fishy is going
+on. You can pick this up once Tomi gives a Tested-by.
+
+Thanks,
+Saravana
+
+v1 -> v2:
+- Removed the RFC tag
+- Remaned the subject. v1 is https://lore.kernel.org/all/20241025223721.184998-1-saravanak@google.com/T/#u
+- Added a NULL check to avoid NULL pointer deref
+
+ drivers/base/core.c | 46 ++++++++++++++++++++-------------------------
+ 1 file changed, 20 insertions(+), 26 deletions(-)
+
+diff --git a/drivers/base/core.c b/drivers/base/core.c
+index 3b13fed1c3e3..f96f2e4c76b4 100644
+--- a/drivers/base/core.c
++++ b/drivers/base/core.c
+@@ -1990,10 +1990,10 @@ static struct device *fwnode_get_next_parent_dev(const struct fwnode_handle *fwn
+  *
+  * Return true if one or more cycles were found. Otherwise, return false.
+  */
+-static bool __fw_devlink_relax_cycles(struct device *con,
++static bool __fw_devlink_relax_cycles(struct fwnode_handle *con_handle,
+ 				 struct fwnode_handle *sup_handle)
+ {
+-	struct device *sup_dev = NULL, *par_dev = NULL;
++	struct device *sup_dev = NULL, *par_dev = NULL, *con_dev = NULL;
+ 	struct fwnode_link *link;
+ 	struct device_link *dev_link;
+ 	bool ret = false;
+@@ -2010,22 +2010,22 @@ static bool __fw_devlink_relax_cycles(struct device *con,
  
- 	j->last_flushed = jiffies;
+ 	sup_handle->flags |= FWNODE_FLAG_VISITED;
  
--	while (!ret && !kthread_should_stop()) {
-+	while (!j->flush_in_progress && !ret && !kthread_should_stop()) {
- 		bool kicked = j->reclaim_kicked;
+-	sup_dev = get_dev_from_fwnode(sup_handle);
+-
+ 	/* Termination condition. */
+-	if (sup_dev == con) {
++	if (sup_handle == con_handle) {
+ 		pr_debug("----- cycle: start -----\n");
+ 		ret = true;
+ 		goto out;
+ 	}
  
- 		j->reclaim_kicked = false;
++	sup_dev = get_dev_from_fwnode(sup_handle);
++	con_dev = get_dev_from_fwnode(con_handle);
+ 	/*
+ 	 * If sup_dev is bound to a driver and @con hasn't started binding to a
+ 	 * driver, sup_dev can't be a consumer of @con. So, no need to check
+ 	 * further.
+ 	 */
+ 	if (sup_dev && sup_dev->links.status ==  DL_DEV_DRIVER_BOUND &&
+-	    con->links.status == DL_DEV_NO_DRIVER) {
++	    con_dev && con_dev->links.status == DL_DEV_NO_DRIVER) {
+ 		ret = false;
+ 		goto out;
+ 	}
+@@ -2034,7 +2034,7 @@ static bool __fw_devlink_relax_cycles(struct device *con,
+ 		if (link->flags & FWLINK_FLAG_IGNORE)
+ 			continue;
+ 
+-		if (__fw_devlink_relax_cycles(con, link->supplier)) {
++		if (__fw_devlink_relax_cycles(con_handle, link->supplier)) {
+ 			__fwnode_link_cycle(link);
+ 			ret = true;
+ 		}
+@@ -2049,7 +2049,7 @@ static bool __fw_devlink_relax_cycles(struct device *con,
+ 	else
+ 		par_dev = fwnode_get_next_parent_dev(sup_handle);
+ 
+-	if (par_dev && __fw_devlink_relax_cycles(con, par_dev->fwnode)) {
++	if (par_dev && __fw_devlink_relax_cycles(con_handle, par_dev->fwnode)) {
+ 		pr_debug("%pfwf: cycle: child of %pfwf\n", sup_handle,
+ 			 par_dev->fwnode);
+ 		ret = true;
+@@ -2067,7 +2067,7 @@ static bool __fw_devlink_relax_cycles(struct device *con,
+ 		    !(dev_link->flags & DL_FLAG_CYCLE))
+ 			continue;
+ 
+-		if (__fw_devlink_relax_cycles(con,
++		if (__fw_devlink_relax_cycles(con_handle,
+ 					      dev_link->supplier->fwnode)) {
+ 			pr_debug("%pfwf: cycle: depends on %pfwf\n", sup_handle,
+ 				 dev_link->supplier->fwnode);
+@@ -2140,25 +2140,19 @@ static int fw_devlink_create_devlink(struct device *con,
+ 		return -EINVAL;
+ 
+ 	/*
+-	 * SYNC_STATE_ONLY device links don't block probing and supports cycles.
+-	 * So, one might expect that cycle detection isn't necessary for them.
+-	 * However, if the device link was marked as SYNC_STATE_ONLY because
+-	 * it's part of a cycle, then we still need to do cycle detection. This
+-	 * is because the consumer and supplier might be part of multiple cycles
+-	 * and we need to detect all those cycles.
++	 * Don't try to optimize by not calling the cycle detection logic under
++	 * certain conditions. There's always some corner case that won't get
++	 * detected.
+ 	 */
+-	if (!device_link_flag_is_sync_state_only(flags) ||
+-	    flags & DL_FLAG_CYCLE) {
+-		device_links_write_lock();
+-		if (__fw_devlink_relax_cycles(con, sup_handle)) {
+-			__fwnode_link_cycle(link);
+-			flags = fw_devlink_get_flags(link->flags);
+-			pr_debug("----- cycle: end -----\n");
+-			dev_info(con, "Fixed dependency cycle(s) with %pfwf\n",
+-				 sup_handle);
+-		}
+-		device_links_write_unlock();
++	device_links_write_lock();
++	if (__fw_devlink_relax_cycles(link->consumer, sup_handle)) {
++		__fwnode_link_cycle(link);
++		flags = fw_devlink_get_flags(link->flags);
++		pr_debug("----- cycle: end -----\n");
++		pr_info("%pfwf: Fixed dependency cycle(s) with %pfwf\n",
++			link->consumer, sup_handle);
+ 	}
++	device_links_write_unlock();
+ 
+ 	if (sup_handle->flags & FWNODE_FLAG_NOT_DEVICE)
+ 		sup_dev = fwnode_get_next_parent_dev(sup_handle);
+-- 
+2.47.0.163.g1226f6d8fa-goog
 
 
