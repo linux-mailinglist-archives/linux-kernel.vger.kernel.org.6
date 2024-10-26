@@ -1,246 +1,140 @@
-Return-Path: <linux-kernel+bounces-383235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74DB69B18D0
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 16:54:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97D1A9B18D2
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 16:55:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED9ED1F2223F
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 14:54:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C66841C2154E
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 14:55:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBEB41CD0C;
-	Sat, 26 Oct 2024 14:54:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EC9B1F94D;
+	Sat, 26 Oct 2024 14:54:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lichtman.org header.i=@lichtman.org header.b="S1NcvznR"
-Received: from lichtman.org (lichtman.org [149.28.33.109])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iZqQFtMI"
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDF4B1C32;
-	Sat, 26 Oct 2024 14:54:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.33.109
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0A54208B8;
+	Sat, 26 Oct 2024 14:54:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729954460; cv=none; b=FZWPe4IqKsk8oXtzdMLQqu0ke2EKroyNi0T+VBzwpNIEx6PPP4KUHk0aH+vmSPKZztraxCuMML1D1uhT68y4pByw2qdxGwhp/yOlLE17Uk8E3pRPK1S6O8/zWdaU9kfzzvcGtEjiRtOiN7w89DDmgGCZV7ylFVoDceYnbEVK6Vc=
+	t=1729954493; cv=none; b=BD7cDm9YZFewXI9LxMTJUMTr9Y15ZApV3+rGSCx0bXy7ML97hOF/0xSxPcREG57nz2zaZrQA2BUmu3QStrlBAB4is4d3QwI4kgKLgCg9kztXl/HpxVGgOhElt9cy7sY9vCLeGqT/Lqy3i+3CCAIQMWdupq6nkGeH4269jd8i0mA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729954460; c=relaxed/simple;
-	bh=Xk81TdcWRQDfnCEIxCLdBc+GxIdRbjVtmK13yxQqWvU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B57tPUVvwUQUY/M9fuezR2dh9nKbYIr6YZ/8Ut8Qp/PR9ig1T6Y5idzZueC2Krv1WIzFYh/RmSGQb7VWM/LP/fsK2Nm67rFpqWj/Wp7vJJMXyR7DqF6iTrLoRcajKtUjSTQuGNo8H/5Lk3TuDpsGj5NnbKo12+BrPgDs4y941Gw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lichtman.org; spf=pass smtp.mailfrom=lichtman.org; dkim=pass (2048-bit key) header.d=lichtman.org header.i=@lichtman.org header.b=S1NcvznR; arc=none smtp.client-ip=149.28.33.109
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lichtman.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lichtman.org
-Received: by lichtman.org (Postfix, from userid 1000)
-	id 09918177103; Sat, 26 Oct 2024 14:54:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=lichtman.org; s=mail;
-	t=1729954457; bh=Xk81TdcWRQDfnCEIxCLdBc+GxIdRbjVtmK13yxQqWvU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=S1NcvznRHNFl9e7NrJuivc+m1pyoWxu4+8ew/sIeH0eooA48WTXl5U5uQk2s1Xi+O
-	 39UpYBy0iITxZcwJZIX6wfd7B7PmptLCYCDUvUBiKkxO3ZgU6/mXLYGm9dZ3fJNqpK
-	 Yz3AAy85qSlAoQ1g1+emYASZ6Mc31Mtk4cwa5GgwV6pS1X95xYR74NjQwcrccqk887
-	 s1bKs9GyIYlOdkzB8nXbiGBzHpbxsS55aVrml22+zeqYVprumOwmIWH3UHQWbDmuo7
-	 iqI3MrKPRvllvi8HfBYlMrjHIvIDPdWVqvfOeOU9QPsuOZ9Hd2pJG6AaSATt+B5f/g
-	 +U2ol/GMmju5A==
-Date: Sat, 26 Oct 2024 14:54:17 +0000
-From: Nir Lichtman <nir@lichtman.org>
-To: kgdb-bugreport@lists.sourceforge.net,
-	linux-trace-kernel@vger.kernel.org
-Cc: yuran.pereira@hotmail.com, jason.wessel@windriver.com,
-	daniel.thompson@linaro.org, dianders@chromium.org,
-	rostedt@goodmis.org, mhiramat@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-kernel-mentees@lists.linuxfoundation.org
-Subject: [PATCH v3 1/3] kdb: Replace the use of simple_strto with safer
- kstrto in kdb_main
-Message-ID: <20241026145417.GA892629@lichtman.org>
-References: <20241026144724.GA892311@lichtman.org>
+	s=arc-20240116; t=1729954493; c=relaxed/simple;
+	bh=viih1m8/p5TRLElx/VBw+mf8cOACAUXWUvv18KkGO88=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=nDvxQdYGB7iJXyTS5DqNrVXns3wnrZGtYGcf6B1zIV5hk4xFsg6s99e9U6r7h9BnH2CVwqjWjsVSscJHKF8S1mz5B5rcK6s62GQuPZxW2wv7VD/Hcf5hMZzy6YIW9BkFj6uDgFJOtJV5GNSYNK5q4pgEQtwoO9F6EDuJdzPqSoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iZqQFtMI; arc=none smtp.client-ip=209.85.222.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7b14077ec5aso370549285a.1;
+        Sat, 26 Oct 2024 07:54:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729954491; x=1730559291; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZcgF/aUxNbbjw4zD8BNREKYWrP04wlH7Vc8wRsAS2tU=;
+        b=iZqQFtMISG/NSKgYdo2rvIYtD7W2rLPI3yfwD6rDQO6JUv+sDfnFt6dzqYBQU1dSkr
+         6mZ3kx8Ep3jciY2QxKd0JHQkvtJDpPxAxY/X0ITzGNAeCcXOyLD2iScI4y/p1DsGDncS
+         uJvLjsxt3uOy626gqaoE9FP3u3AD7ZXntYDheuLCct2nttb2Y1CtLrZs25vzEN0tNyXn
+         pqZW+cVI/YxBmKScN7A3NSyVd/zzQkiLU3CmL/g2mbQYkrImzXkoftAuCCkzSMLaQd5B
+         TW3MQXTAkRicNt03gVJdREnGbmNKWK1NxFV/FEHO1kn5ZwdecPu2p77VYSiUcfsrLgr+
+         a1UQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729954491; x=1730559291;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=ZcgF/aUxNbbjw4zD8BNREKYWrP04wlH7Vc8wRsAS2tU=;
+        b=nFp7hLYpG4dteFgEIKc1P1zgcmY3xeLl5J9QKKnLTlhoJLWHOvIz5Mep4bCtQTT3Ta
+         xXldZu/F1KnY47gySe6VZryO2OBx8UpIawXd+ybFVKwlv8DiO2MEsGMvHa3OWktRFaiR
+         J4pCc0Jkk4RnrVFwJlwR7Ngd2RTwYi4a7maUvnMjwmmDyGVH9WOpBKZoxbiHZ3l/wHa5
+         XiTxNXDJoKyaQaxhrm9w6aA9TadCz2fMxmvIoHPs3ANzWfH6SOgU5UPLVfyAkjTf+ttM
+         OdbmiBaXA4XefT2KK/SgWSqafhdf9HUt2cLHLdx8n+wQgyI4Vh71y8pdF6Zw5AykvGsK
+         nl2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCW+6PDr0HzmWgFgGNd3K1CsLLT94Jq5UPW8cXewsWBQNyB2b8GSSkvgjyx+37jjox8XO5p1KHFY@vger.kernel.org, AJvYcCXbYRDXtARKioaH7vIKhK2OUP0idLTE1qkggTGfUB77na8O34Jkl7DfRPBD3rVUgPhoyvkX/u2S3ZqqNEk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzP9yOOlfyvXHT1sxcBWGT6XRQDQJtrlbTB/jRMjowu8Jsff5sS
+	yij7QovjgOvESws0FHt1qmEe8HQewZQeLimpPK368adqikHs5n/w
+X-Google-Smtp-Source: AGHT+IEszTqZyo3lypN6VMlQcfaiGzTXehBaGJCZqxevexYNTNti8lDnp0U+uk0YKAVRdrhq1kJ9uA==
+X-Received: by 2002:a05:620a:4410:b0:7ac:dd88:cc80 with SMTP id af79cd13be357-7b1865d33c2mr1636903685a.8.1729954490735;
+        Sat, 26 Oct 2024 07:54:50 -0700 (PDT)
+Received: from localhost (250.4.48.34.bc.googleusercontent.com. [34.48.4.250])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b18d2aac53sm156065985a.59.2024.10.26.07.54.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 26 Oct 2024 07:54:50 -0700 (PDT)
+Date: Sat, 26 Oct 2024 10:54:49 -0400
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+To: Thorsten Blum <thorsten.blum@linux.dev>, 
+ "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, 
+ Simon Horman <horms@kernel.org>, 
+ Willem de Bruijn <willemb@google.com>, 
+ Gou Hao <gouhao@uniontech.com>, 
+ Mina Almasry <almasrymina@google.com>, 
+ Abhishek Chauhan <quic_abchauha@quicinc.com>, 
+ Kuniyuki Iwashima <kuniyu@amazon.com>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>, 
+ netdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+Message-ID: <671d02b9a3601_ac9fd2942c@willemb.c.googlers.com.notmuch>
+In-Reply-To: <20241026112946.129310-2-thorsten.blum@linux.dev>
+References: <20241026112946.129310-2-thorsten.blum@linux.dev>
+Subject: Re: [PATCH net-next] net: Use str_yes_no() and str_no_yes() helper
+ functions
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241026144724.GA892311@lichtman.org>
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 7bit
 
-From: Yuran Pereira <yuran.pereira@hotmail.com>
+Thorsten Blum wrote:
+> Remove hard-coded strings by using the str_yes_no() and str_no_yes()
+> helper functions.
+> 
+> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+> ---
+>  net/core/sock.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/net/core/sock.c b/net/core/sock.c
+> index 039be95c40cf..132c8d2cda26 100644
+> --- a/net/core/sock.c
+> +++ b/net/core/sock.c
+> @@ -4140,7 +4140,7 @@ static long sock_prot_memory_allocated(struct proto *proto)
+>  static const char *sock_prot_memory_pressure(struct proto *proto)
+>  {
+>  	return proto->memory_pressure != NULL ?
+> -	proto_memory_pressure(proto) ? "yes" : "no" : "NI";
+> +		str_yes_no(proto_memory_pressure(proto)) : "NI";
+>  }
+>  
+>  static void proto_seq_printf(struct seq_file *seq, struct proto *proto)
+> @@ -4154,7 +4154,7 @@ static void proto_seq_printf(struct seq_file *seq, struct proto *proto)
+>  		   sock_prot_memory_allocated(proto),
+>  		   sock_prot_memory_pressure(proto),
+>  		   proto->max_header,
+> -		   proto->slab == NULL ? "no" : "yes",
+> +		   str_no_yes(proto->slab == NULL),
 
-The simple_str* family of functions perform no error checking in
-scenarios where the input value overflows the intended output variable.
-This results in these functions successfully returning even when the
-output does not match the input string.
+Just one opinion, but to reiterate from a previous similar patch:
 
-Or as it was mentioned [1], "...simple_strtol(), simple_strtoll(),
-simple_strtoul(), and simple_strtoull() functions explicitly ignore
-overflows, which may lead to unexpected results in callers."
-Hence, the use of those functions is discouraged.
+I find this less readable than the original open code variant.
 
-This patch replaces all uses of the simple_strto* series of functions
-with their safer kstrto* alternatives.
+include/linux/string_choices.h mentions three goals: elegance,
+consistency and binary size. The third goal could be an argument for
+this change perhaps.
 
-Side effects of this patch:
-- Every string to long or long long conversion using kstrto* is now
-  checked for failure.
-- kstrto* errors are handled with appropriate `KDB_BADINT` wherever
-  applicable.
-- A good side effect is that we end up saving a few lines of code
-  since unlike in simple_strto* functions, kstrto functions do not
-  need an additional "end pointer" variable, and the return values
-  of the latter can be directly checked in an "if" statement without
-  the need to define additional `ret` or `err` variables.
-  This, of course, results in cleaner, yet still easy to understand
-  code.
-
-[1] https://www.kernel.org/doc/html/latest/process/deprecated.html#simple-strtol-simple-strtoll-simple-strtoul-simple-strtoull
-
-Signed-off-by: Yuran Pereira <yuran.pereira@hotmail.com>
-[nir: addressed review comments by fixing styling, invalid conversion and a missing error return]
-Signed-off-by: Nir Lichtman <nir@lichtman.org>
----
- kernel/debug/kdb/kdb_main.c | 69 +++++++++++--------------------------
- 1 file changed, 21 insertions(+), 48 deletions(-)
-
-diff --git a/kernel/debug/kdb/kdb_main.c b/kernel/debug/kdb/kdb_main.c
-index f5f7d7fb5936..930de4fdc708 100644
---- a/kernel/debug/kdb/kdb_main.c
-+++ b/kernel/debug/kdb/kdb_main.c
-@@ -306,8 +306,8 @@ static int kdbgetulenv(const char *match, unsigned long *value)
- 		return KDB_NOTENV;
- 	if (strlen(ep) == 0)
- 		return KDB_NOENVVALUE;
--
--	*value = simple_strtoul(ep, NULL, 0);
-+	if (kstrtoul(ep, 0, value))
-+		return KDB_BADINT;
- 
- 	return 0;
- }
-@@ -402,42 +402,23 @@ static void kdb_printenv(void)
-  */
- int kdbgetularg(const char *arg, unsigned long *value)
- {
--	char *endp;
--	unsigned long val;
--
--	val = simple_strtoul(arg, &endp, 0);
--
--	if (endp == arg) {
--		/*
--		 * Also try base 16, for us folks too lazy to type the
--		 * leading 0x...
--		 */
--		val = simple_strtoul(arg, &endp, 16);
--		if (endp == arg)
-+	/*
-+	 * If the first fails, also try base 16, for us
-+	 * folks too lazy to type the leading 0x...
-+	 */
-+	if (kstrtoul(arg, 0, value)) {
-+		if (kstrtoul(arg, 16, value))
- 			return KDB_BADINT;
- 	}
--
--	*value = val;
--
- 	return 0;
- }
- 
- int kdbgetu64arg(const char *arg, u64 *value)
- {
--	char *endp;
--	u64 val;
--
--	val = simple_strtoull(arg, &endp, 0);
--
--	if (endp == arg) {
--
--		val = simple_strtoull(arg, &endp, 16);
--		if (endp == arg)
-+	if (kstrtou64(arg, 0, value)) {
-+		if (kstrtou64(arg, 16, value))
- 			return KDB_BADINT;
- 	}
--
--	*value = val;
--
- 	return 0;
- }
- 
-@@ -473,10 +454,10 @@ int kdb_set(int argc, const char **argv)
- 	 */
- 	if (strcmp(argv[1], "KDBDEBUG") == 0) {
- 		unsigned int debugflags;
--		char *cp;
-+		int ret;
- 
--		debugflags = simple_strtoul(argv[2], &cp, 0);
--		if (cp == argv[2] || debugflags & ~KDB_DEBUG_FLAG_MASK) {
-+		ret = kstrtouint(argv[2], 0, &debugflags);
-+		if (ret || debugflags & ~KDB_DEBUG_FLAG_MASK) {
- 			kdb_printf("kdb: illegal debug flags '%s'\n",
- 				    argv[2]);
- 			return 0;
-@@ -1619,10 +1600,10 @@ static int kdb_md(int argc, const char **argv)
- 		if (!argv[0][3])
- 			valid = 1;
- 		else if (argv[0][3] == 'c' && argv[0][4]) {
--			char *p;
--			repeat = simple_strtoul(argv[0] + 4, &p, 10);
-+			if (kstrtouint(argv[0] + 4, 10, &repeat))
-+				return KDB_BADINT;
- 			mdcount = ((repeat * bytesperword) + 15) / 16;
--			valid = !*p;
-+			valid = 1;
- 		}
- 		last_repeat = repeat;
- 	} else if (strcmp(argv[0], "md") == 0)
-@@ -2083,15 +2064,10 @@ static int kdb_dmesg(int argc, const char **argv)
- 	if (argc > 2)
- 		return KDB_ARGCOUNT;
- 	if (argc) {
--		char *cp;
--		lines = simple_strtol(argv[1], &cp, 0);
--		if (*cp)
-+		if (kstrtoint(argv[1], 0, &lines))
- 			lines = 0;
--		if (argc > 1) {
--			adjust = simple_strtoul(argv[2], &cp, 0);
--			if (*cp || adjust < 0)
--				adjust = 0;
--		}
-+		if (argc > 1 && (kstrtouint(argv[2], 0, &adjust) || adjust < 0))
-+			adjust = 0;
- 	}
- 
- 	/* disable LOGGING if set */
-@@ -2428,14 +2404,12 @@ static int kdb_help(int argc, const char **argv)
- static int kdb_kill(int argc, const char **argv)
- {
- 	long sig, pid;
--	char *endp;
- 	struct task_struct *p;
- 
- 	if (argc != 2)
- 		return KDB_ARGCOUNT;
- 
--	sig = simple_strtol(argv[1], &endp, 0);
--	if (*endp)
-+	if (kstrtol(argv[1], 0, &sig))
- 		return KDB_BADINT;
- 	if ((sig >= 0) || !valid_signal(-sig)) {
- 		kdb_printf("Invalid signal parameter.<-signal>\n");
-@@ -2443,8 +2417,7 @@ static int kdb_kill(int argc, const char **argv)
- 	}
- 	sig = -sig;
- 
--	pid = simple_strtol(argv[2], &endp, 0);
--	if (*endp)
-+	if (kstrtol(argv[2], 0, &pid))
- 		return KDB_BADINT;
- 	if (pid <= 0) {
- 		kdb_printf("Process ID must be large than 0.\n");
--- 
-2.39.2
+proto->slab : "yes" : "no" would arguably be even easier than the
+current form, and a conversion could similarly use str_yes_no.
 
 
