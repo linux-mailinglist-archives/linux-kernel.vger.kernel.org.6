@@ -1,117 +1,220 @@
-Return-Path: <linux-kernel+bounces-383202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBE5E9B186C
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 15:16:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C5499B1876
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 15:18:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 33ECAB22FDB
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 13:16:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BB4B1C21552
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 13:18:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B31201D040B;
-	Sat, 26 Oct 2024 13:16:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BA6A1D79BB;
+	Sat, 26 Oct 2024 13:18:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="pYMlH1pv"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="VO/Vx1aB";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="jKlnaP1F"
+Received: from fout-b2-smtp.messagingengine.com (fout-b2-smtp.messagingengine.com [202.12.124.145])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D7D21E50B
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 13:15:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A7571D799D;
+	Sat, 26 Oct 2024 13:18:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729948564; cv=none; b=tcfrDDx196Mpz30koGMvRiRaCPYO+rHvQT+QxmjTJPCtaVG5vpBKYQUD2cWPBVeizeglMJxqDJZNt3Ff4eahT1ewz+/7UYY+fSuR1RTo3wSphUXGJecf24H3pMjjddc9jkeTHI2U6LopajFIc4taY7f9N2KYnwVjN+76VxdJ8gE=
+	t=1729948695; cv=none; b=f6SdgdDZto1RAYWHhCY+f8JEiWX3/6ef19xc66MkrDYeB1C20SFiTsuABVFHagdpVRQDxB9cOHw4mo3F/0U+ShT3rsReyiZVDZHibO7MeLvsx8E9KxvPBim4pAR9aCQUgjHWKLibd0p/eROMMwxZjF5hakKH+vLNARhudd7UeMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729948564; c=relaxed/simple;
-	bh=HshIz0FZMYgPscW+buo1EmSjueZZzXnsSSSo8Gei6xo=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=hxKvIKfSMULy/mOd0RsVIOddHeTvmO1Zy2vkW7iP7fJIp9rh4NXGfOREBpKNOowHbMlEcpI4eMvN2ZKy/AjFzPLx7Litc1H9ZRJCW50nBqhaT70tza7sCO4ghOtHsPmFFX3l6ChDL88kb3Gl6LZRd4HgkcVvy4bcyzc9bzrDKFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=pYMlH1pv; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2e2d1858cdfso2047080a91.1
-        for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 06:15:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1729948559; x=1730553359; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=80w7ki3isYWdjzg7EiyQZPHIggrfFyzyhk6ks2u2wSo=;
-        b=pYMlH1pvGDTiMYQg5QVWHVziiS2G+yHHvIHo9tJSuLtSsdTuHa7767vcsAc12AvtYv
-         myOM9d95lCKCe7pJqoKgykrGSehmPkSa3WVDTRIo8QkvvJIIdkgtQl5ud5G27yNiDOx4
-         eJ8+QU9btov7PJADxxRItTUoFxHzd4K3p05TcJx8dpYsWZ26E/uaIzfFd9b+awQV4OEo
-         0P3fHvb00BYD2jd5+5L+M0yeUukkKyn0lxGRX1JGZ8F7qSeSFVVIt4ezxPqbJFwqPnu9
-         4+Dj9Qa7vZDpnbGYUzCBEZiLvWQeUU70C/m2FojDTBIaxFZj7a5w/ISCvE5hmEo6VLrM
-         XXCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729948559; x=1730553359;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=80w7ki3isYWdjzg7EiyQZPHIggrfFyzyhk6ks2u2wSo=;
-        b=InBXlj/pqnSIdMZBypGUmsJS/M3+px21RKKXP+UK8469hTKhm3jPcndDbz6cFv6rDH
-         8qgYKi1MgjxP2LskfbiPHp0SKeNY2R4F4xFpSG6DpxwIUVVuBVOzpPQUQ729SQ/XbI2h
-         EwdSjEtWH2yqwnT/GwDu/6Jzk7vmWkXqtJk0IzPdtld4cEYUhdRRNgSBcBfExUycemQl
-         5mWQZL3ORis3HTYPJAOtavYua3E/TSXr1MStvhjeH+mrN1EiX/gEbRGwa5iovw5/vK9K
-         WhbGmiFqdQ5D78s3Ng1Z5ati/WN7BFZrOxMQ7W96eZXwjYyNBDUFoBHXhENREu6tzMzi
-         3Vng==
-X-Forwarded-Encrypted: i=1; AJvYcCVmK7qb5g6387jE6dVfm85s0Wi8VEl+3xZtm3YIE5PuC6pzL5vGhv0cjJgyIpqw+aQOqASpHxNue04gJac=@vger.kernel.org
-X-Gm-Message-State: AOJu0YygBiRcwGycqsEJKTStBiunWQzzoXjC9ZM+P0ceQJDBixTRdesb
-	d1vsGUoPGwMa3V0erLIznTLo6eUL11SdjGuNzPpCkkjv4ObQia2OLQYbUNVfbng=
-X-Google-Smtp-Source: AGHT+IGIojFAlrWbyH2cBN+QkXvxnbPvE+zW7RdFIF93JSqkE4mSH354gFB5/R4rbfMcwSDcAMffrA==
-X-Received: by 2002:a17:90a:9312:b0:2e2:a8e0:85fa with SMTP id 98e67ed59e1d1-2e8f1057e59mr3253112a91.8.1729948559098;
-        Sat, 26 Oct 2024 06:15:59 -0700 (PDT)
-Received: from [127.0.0.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e8e3555adesm3422731a91.2.2024.10.26.06.15.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 26 Oct 2024 06:15:58 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: linux-block@vger.kernel.org, Ming Lei <ming.lei@redhat.com>
-Cc: Christoph Hellwig <hch@lst.de>, Peter Zijlstra <peterz@infradead.org>, 
- Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>, 
- Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, 
- linux-kernel@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20241025003722.3630252-1-ming.lei@redhat.com>
-References: <20241025003722.3630252-1-ming.lei@redhat.com>
-Subject: Re: [PATCH V2 0/3] block: model freeze/enter queue as lock for
- lockdep
-Message-Id: <172994855784.317773.15027485410465627721.b4-ty@kernel.dk>
-Date: Sat, 26 Oct 2024 07:15:57 -0600
+	s=arc-20240116; t=1729948695; c=relaxed/simple;
+	bh=HJRwHJXbUEBjIDmmNwTu1z2WrrERb9aEwOG4fNinBg4=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=o6BTIIMmfV/n83L9OnMysMI8kI7orTIrK+ShvmU1m602p/KH/tGOSIEV9/TpMLi3pb7I76E7HMS8IMv17BVEKSs86wHsKChkjORfV7F9PCfO/1UoIb1anyI4Decls2qDSAJ927xjeoozAitgMjHoaZb9C9G+0s8YeJp8UAjTIjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=VO/Vx1aB; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=jKlnaP1F; arc=none smtp.client-ip=202.12.124.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
+Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
+	by mailfout.stl.internal (Postfix) with ESMTP id D078511400C4;
+	Sat, 26 Oct 2024 09:18:11 -0400 (EDT)
+Received: from phl-imap-12 ([10.202.2.86])
+  by phl-compute-09.internal (MEProxy); Sat, 26 Oct 2024 09:18:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1729948691;
+	 x=1730035091; bh=HJRwHJXbUEBjIDmmNwTu1z2WrrERb9aEwOG4fNinBg4=; b=
+	VO/Vx1aBfiT/v8bZD/g2X7xzvXLfv709PN/3DxozuX/d3oF6kz4iUFnlx3uRxTW5
+	WkoHiM5ZA9mlNRkGfFEQL+i7oSWBILpbmghYquwa8ZMaButIXSwWBJl2BZl0eOPw
+	vo2ndMEtgfIRkdUYvxBFPoSNga8ZQ8y++8NpO0ySpW5OwG7yK8i984fd2QMBYvE6
+	D0Rr2glty3He9xXihwqzVN2FKSABfsvDVmtnA4x3pnoNn3/amCuyToYFcbDQBS3c
+	2mv6uPcyGDmkEfkpFO7SiYU+UgVCypSPc26osEMMF6QRZ7I6OMEzc9M292EAXRMN
+	Or9xM8UKiJ146hR29Za8Zg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1729948691; x=
+	1730035091; bh=HJRwHJXbUEBjIDmmNwTu1z2WrrERb9aEwOG4fNinBg4=; b=j
+	KlnaP1FcCS3bxQUdFEsyV89OWm/CiUffBJ2Pj3Fx4JIzb8TH6JUlYxLEA9K1P5dH
+	K80oOMd1fwEl+u6rlpGXI0Ira2qUDMeTRCpgQ4Ha83Euco/tRadVCsXflbYkqqAq
+	DUQc5XOQ0n9T14Jj6raDXUmDeP0rBU8uQPWOeipMHmGvmVRBr6F4Ncn3uhd9UqSt
+	1aIVhMhf4Qo8y9ZpdUCCkazBsYtz8hwoRjixx+hVjjKIAHydelj2xpdqp6F2jI6W
+	+kAARXrlPjgovm3W9/cLo02AQo6JOrn8Jotqndk1EkMGPIy7rkq4za4TFPd9NPyk
+	KoT4VWxj0aVyYrUDH7dxg==
+X-ME-Sender: <xms:E-wcZ2ZtU8NeXVTVMYcDqHSuTwF6j8TsMu2fOscW4jPILv6kOFcKtQ>
+    <xme:E-wcZ5ZUzbS-nSYRGg0ejRz8wq37OBFtQ0sfAjwZLK0ycML3pKrucwPvXbdAKrdmd
+    Gh1Mo8k7uouDnZpYEM>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdejgedgieefucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdej
+    necuhfhrohhmpedflfhirgiguhhnucgjrghnghdfuceojhhirgiguhhnrdihrghnghesfh
+    hlhihgohgrthdrtghomheqnecuggftrfgrthhtvghrnhepjeehfeduvddtgffgvdffkeet
+    hefhlefgvdevvdekuefffeekheehgeevhfevteejnecuvehluhhsthgvrhfuihiivgeptd
+    enucfrrghrrghmpehmrghilhhfrhhomhepjhhirgiguhhnrdihrghnghesfhhlhihgohgr
+    thdrtghomhdpnhgspghrtghpthhtohepudefpdhmohguvgepshhmthhpohhuthdprhgtph
+    htthhopegtohhnughutghtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegtvhgvsehk
+    vghrnhgvlhdrohhrghdprhgtphhtthhopehkrhiikheskhgvrhhnvghlrdhorhhgpdhrtg
+    hpthhtoheplhgvvgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshgrshhhrghlsehk
+    vghrnhgvlhdrohhrghdprhgtphhtthhopehsvggtuhhrihhthieskhgvrhhnvghlrdhorh
+    hgpdhrtghpthhtohepshhhuhgrhheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthho
+    rhhvrghlughssehlihhnuhigqdhfohhunhgurghtihhonhdrohhrghdprhgtphhtthhope
+    hgrhgvghhkhheslhhinhhugihfohhunhgurghtihhonhdrohhrgh
+X-ME-Proxy: <xmx:E-wcZw8gFHuaJOudIcacyX5UBuB4WxQsfuRbYEPI0VHBvHRsXzq6_g>
+    <xmx:E-wcZ4qMFlHqGj5FJ2s4hfCS1jXCR9vdNF7ts0XwvcjnrYTeZ1CkNg>
+    <xmx:E-wcZxqXWUD6SWQQW_adqVMk6WBiUhlu4njT8Hio4ag59Lj2oZjS4w>
+    <xmx:E-wcZ2ROxTzSAnGao5pQgTqzDlkZIweJMYbWxL3CJjTTptugmwsKJw>
+    <xmx:E-wcZ_iEuNjRkA_AfJ4-WrMUnn3orcrcekqsc10tWrFf-z605xRxro0S>
+Feedback-ID: ifd894703:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 46CC81C20066; Sat, 26 Oct 2024 09:18:11 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
-
-
-On Fri, 25 Oct 2024 08:37:17 +0800, Ming Lei wrote:
-> The 1st patch adds non_owner variants of start_freeze/unfreeze queue
-> API.
-> 
-> The 2nd patch applies the non_owner variants on nvme_freeze() & nvme_unfreeze().
-> 
-> The 3rd patch models freeze/enter queue as lock for lockdep support.
-> 
-> [...]
-
-Applied, thanks!
-
-[1/3] blk-mq: add non_owner variant of start_freeze/unfreeze queue APIs
-      commit: 8acdd0e7bfadda6b5103f2960d293581954454ed
-[2/3] nvme: core: switch to non_owner variant of start_freeze/unfreeze queue
-      commit: 6b6f6c41c8ac9b5ef758f16b793e1fd998cd25b4
-[3/3] block: model freeze & enter queue as lock for supporting lockdep
-      commit: f1be1788a32e8fa63416ad4518bbd1a85a825c9d
-
-Best regards,
--- 
-Jens Axboe
+Date: Sat, 26 Oct 2024 14:16:47 +0100
+From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
+To: "Krzysztof Kozlowski" <krzk@kernel.org>, linux-kernel@vger.kernel.org,
+ conduct@kernel.org, security@kernel.org, cve@kernel.org,
+ linux-doc@vger.kernel.org, "stable@vger.kernel.org" <stable@vger.kernel.org>
+Cc: "Linus Torvalds" <torvalds@linux-foundation.org>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, shuah@kernel.org,
+ lee@kernel.org, sashal@kernel.org, "Jonathan Corbet" <corbet@lwn.net>
+Message-Id: <9b9c034b-19b1-4f02-b7fc-3152526c82c4@app.fastmail.com>
+In-Reply-To: <fae122f1-5a8e-4f92-b468-aba3fcb8ac90@kernel.org>
+References: <73b8017b-fce9-4cb1-be48-fc8085f1c276@app.fastmail.com>
+ <fae122f1-5a8e-4f92-b468-aba3fcb8ac90@kernel.org>
+Subject: Re: Concerns over transparency of informal kernel groups
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
 
 
+=E5=9C=A82024=E5=B9=B410=E6=9C=8826=E6=97=A5=E5=8D=81=E6=9C=88 =E4=B8=8B=
+=E5=8D=8812:05=EF=BC=8CKrzysztof Kozlowski=E5=86=99=E9=81=93=EF=BC=9A
+>
+> Oh, spread more FUD under the cloak of helping the community. Reminds =
+me
+> something, wait, how was it? zx?
+
+I drafted this email with good will.
+
+While I appreciate any constructive comments, this kind of unfair accusa=
+tion
+is unacceptable.
+
+I'm not demanding anyone to take action, I'm just trying to be helpful.
+
+>
+>> about those informal groups. With the exception of the Linux kernel h=
+ardware security
+>> team, it seems none of these groups maintain a public list of members=
+ that I can
+>> easily find.
+>>=20
+>> Upon digging into the details, I=E2=80=99d like to raise a few concer=
+ns and offer some thoughts
+>> for further discussion:
+>>=20
+>> - Absence of a Membership Register
+>> Our community is built on mutual trust. Without knowing who comprises=
+ these groups,
+>> it's understandably difficult for people to have full confidence in t=
+heir work.
+>
+> No, you might have difficulty, not "all people" which you imply. Please
+> stop creating sentences like you are speaking for others. You do not
+> speak for others.
+
+I never said "all" here, and just to quote:
+
+"I am expressing the views of a number of people I talked to but it's no=
+t fair of me
+to name them."
+
+The same applies to this email as well. I actually did a private RFC bef=
+ore sending it.
+Many people are unable to speak up here due to company affiliation and o=
+ther concerns.
+
+>
+>> A publicly available membership list would not only foster trust but =
+also allow us to
+>> address our recognition and appreciation.
+>
+> Nope. For some of the groups it is very intentional to hide the
+> membership. It was explained already why and should be pretty obvious.
+
+I might be dumb in this case, do you mind giving me a pointer to the exp=
+lanation?
+I can draft patch to make it clear in documents.
+
+>
+[...]
+>
+>>=20
+>> - No Conflict of Interest Policy
+>> Particularly in the case of the Code of Conduct Committee, there may =
+arise situations
+>> where individuals face challenging decisions involving personal conne=
+ctions. A conflict
+>> of interest policy would provide valuable guidance in such circumstan=
+ces.
+>
+> Feel free to propose patches instead of claiming there is problem for
+> others. If you identify issue, propose a patch.
+
+Thanks, I will. I'm just aiming to gather some feedback before proposing=
+ patches.
+I also welcome patches from those more qualified than myself.
+
+>
+> Several other your replies earlier were in similar tone. I am not going
+> to engage in such discussions and probably neither other people, but
+> some think that silence is approval or agreement. Thus this reply. for
+> me this is just FUD.
+
+Again, I must decline to accept this sort of unfair accusation.
+
+It's indeed not the tone I'm usually speaking on the mailing list. It ou=
+ght
+to be more straightforward for technical communications. However, in the=
+se
+particularly challenging times, I'm striving to maintain a humble and re=
+spectful
+tone whilst ensuring my views are clearly spoken. I'd be grateful for co=
+mments
+expressing any dissatisfaction with my approach, but I feel that persona=
+l attack
+ultimately do nothing constructive.
+
+Thanks.
+>
+> Best regards,
+> Krzysztof
+
+--=20
+- Jiaxun
 
