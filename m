@@ -1,140 +1,83 @@
-Return-Path: <linux-kernel+bounces-383232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72B6A9B18C9
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 16:51:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B2629B18CC
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 16:53:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37A8828286B
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 14:51:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4CEF282925
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 14:53:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 508071DFF8;
-	Sat, 26 Oct 2024 14:51:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4826C1CD0C;
+	Sat, 26 Oct 2024 14:53:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=riseup.net header.i=@riseup.net header.b="tC7adDZq"
-Received: from mx1.riseup.net (mx1.riseup.net [198.252.153.129])
+	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="YCuf0tI3"
+Received: from mail-4319.protonmail.ch (mail-4319.protonmail.ch [185.70.43.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD840A947
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 14:51:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.252.153.129
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D863C8BE7;
+	Sat, 26 Oct 2024 14:52:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729954282; cv=none; b=aETMbS8FOWcKPSASPbEWj8ondYGvDDH8Aa6/2WnzGmiiNRiaVDcUi3FwKDtVYKef5II1OJ1Y8FU91tx2g6+HepTWE00xPX5etANe4QTYJaIV5TAqC1/h50eD7xkd6HFzTdY+pKZ7J3eUP2g7YjEYsOyOp2D1XE9PptGJ7Zu/VJ0=
+	t=1729954381; cv=none; b=k7qvFi5eGQ7ezJymHTRhvbGtZH6ucbZ54pZodNCa0DpNQx9kKW+4zEqCYcMmX17eHDD0jszeSUnRVBDxuzEwIW66FKfgygtHrrMx5C1uSZfLs61JdoemcJbyY6Ycv9yeg2yu0EZXI0DQyshmaELY/MuL2MK5ljQdmC6UHBWYjtg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729954282; c=relaxed/simple;
-	bh=AB0X7XPmyec16ojEbTL0j6BejCpTFT7VkqJyU93TSiY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=an0dxwUHlaEQxonEXH3uDllbU331kqBUfn158UtxSas4+x3p5jiIIF8yoxICSBb8qsV2fDFXu333IZ/1l0jqVqIAyVmU2SWv0iF513kGD45hEhtZRfvOnwcL9ZcXPiDj1wAoUmfn2AYPljaBTTN74UZmM6YPL6dygqDe3ifwdU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riseup.net; spf=pass smtp.mailfrom=riseup.net; dkim=pass (1024-bit key) header.d=riseup.net header.i=@riseup.net header.b=tC7adDZq; arc=none smtp.client-ip=198.252.153.129
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riseup.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riseup.net
-Received: from fews01-sea.riseup.net (fews01-sea-pn.riseup.net [10.0.1.109])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx1.riseup.net (Postfix) with ESMTPS id 4XbMzJ6ZDkzDrQc;
-	Sat, 26 Oct 2024 14:51:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=riseup.net; s=squak;
-	t=1729954280; bh=AB0X7XPmyec16ojEbTL0j6BejCpTFT7VkqJyU93TSiY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=tC7adDZq77mHJSvAaZ9bVyVbbhJeXy5fYIiHj5+zVu7Ta+B6mwSr9Sn1s1QnRnd8g
-	 OjjDDN4Ece9M0r7IUinlHC45exwnhdbFmjHg5vAzAa8dK7VnZdjC/fYjy1u+6XYMES
-	 0plNh9oCjdlSowH9iyXLDVARvxDi/jwwqJg7RWO8=
-X-Riseup-User-ID: 511F6C9D05B4BD43076242EBAF7E37819723CB799D561371F011EDECEA1C1194
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-	 by fews01-sea.riseup.net (Postfix) with ESMTPSA id 4XbMzC2JMkzJsFN;
-	Sat, 26 Oct 2024 14:51:03 +0000 (UTC)
-Message-ID: <53d04022-7199-4880-9b41-1ee7abdad997@riseup.net>
-Date: Sat, 26 Oct 2024 11:51:01 -0300
+	s=arc-20240116; t=1729954381; c=relaxed/simple;
+	bh=RS8IrHOaqKxd3t6mKEtbkri6IpsmfydK9PDReOKODZQ=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=clh6ESYvtzv/FaWNu1B/WPzCAQi39gsG88qtmqTA9sIWG26ivNTQiq2jDVDt8gldjFFK9BofT98l+yAQBMepCz6GFvGh2bdeTAbNr0HfZFZ9c8aG7JKQC0PWELkrOFBRDh/Z0UmSZRRJrdBpHACfqPFJ+DYMRP3xC2UvSO8zvGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=YCuf0tI3; arc=none smtp.client-ip=185.70.43.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+	s=protonmail3; t=1729954377; x=1730213577;
+	bh=RS8IrHOaqKxd3t6mKEtbkri6IpsmfydK9PDReOKODZQ=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=YCuf0tI3wz82xbLuPiWm88bDP1dc9NrlUGH7igQhWJQwcqOSsDg85Cx9WkQJ/Qel1
+	 1oqTk7ImyuBInm/8Qkpyd4FGMZD1AF6NISIhKMHu+eGTj46oDEN6oAy6+y0hqzCMh8
+	 p1dzr2vpjf/D/mVvcSRi28neBU5jE6RoXN5zf4lwmTYLpjCFu4y78uIrOQAHywyfr8
+	 l6NyVEFhDWkozYHdwL6iNLc4v9fkSIbegsvWmdTBJmWas09nauNeKdzVG8pabJ61Mr
+	 8kdkju7DQ2G8FvNoubZxKbasaCJBnBTjEDg7iREMqOq1tE0Ycfgi/g38t8DtEzebc4
+	 zO/T67nGtWgQw==
+Date: Sat, 26 Oct 2024 14:52:52 +0000
+To: Nathan Chancellor <nathan@kernel.org>
+From: Koakuma <koachan@protonmail.com>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, Andreas Larsson <andreas@gaisler.com>, Andrew Morton <akpm@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, glaubitz@physik.fu-berlin.de, Nicolas Schier <nicolas@fjasle.eu>, sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org, llvm@lists.linux.dev, linux-kbuild@vger.kernel.org
+Subject: Re: [PATCH v2 0/2] sparc/build: Rework CFLAGS for clang compatibility
+Message-ID: <InqlMfqWWeNw8Mh6y1y5oNb3EotVpA26gkX70xcVxt9ygCtb7DYfTB3Amg3SzZfs78q3osSW2BIEpgyhmOjSqBW7neH0Se2sQEpmdClVV3M=@protonmail.com>
+In-Reply-To: <20241023164535.GB4081497@thelio-3990X>
+References: <20240717-sparc-cflags-v2-0-259407e6eb5f@protonmail.com> <20241021201657.GA898643@thelio-3990X> <CAK7LNASTkUTK8JZCzySNh3BVKxauusVKRhjnchy6iZz4qLbq8w@mail.gmail.com> <20241022200732.GA487584@thelio-3990X> <etezvjy_HnDpgOTBrzap29if1ChFBhl1RawcNJK3UAsFk6i_g_cyHoz7hlqfYqASgJZ97W4HxnGA-nbCXL73pIRN9tUKUttAp1JefMRp8rs=@protonmail.com> <CAK7LNASbFeJc9Y=BFY85SwESUKNNDTRDunyLGveDusC--NVkCw@mail.gmail.com> <20241023164535.GB4081497@thelio-3990X>
+Feedback-ID: 6608610:user:proton
+X-Pm-Message-ID: 5461d90c73e394b15b2b073b85e3c9776ac98e91
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH RESEND v2 5/8] drm/vkms: Add support for RGB888 formats
-To: Louis Chauvet <louis.chauvet@bootlin.com>,
- Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
- Melissa Wen <melissa.srw@gmail.com>,
- Haneen Mohammed <hamohammed.sa@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Simona Vetter <simona.vetter@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, arthurgrillo@riseup.net,
- linux-kernel@vger.kernel.org, jeremie.dautheribes@bootlin.com,
- miquel.raynal@bootlin.com, thomas.petazzoni@bootlin.com,
- seanpaul@google.com, marcheu@google.com, nicolejadeyee@google.com,
- 20241007-yuv-v12-0-01c1ada6fec8@bootlin.com
-References: <20241007-b4-new-color-formats-v2-0-d47da50d4674@bootlin.com>
- <20241007-b4-new-color-formats-v2-5-d47da50d4674@bootlin.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mairacanal@riseup.net>
-In-Reply-To: <20241007-b4-new-color-formats-v2-5-d47da50d4674@bootlin.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi Louis,
+Masahiro Yamada <masahiroy@kernel.org> wrote:
+> I think this should be documented (required LLVM version and
+> the supported build command),
+> otherwise people cannot test this patch.
 
-On 07/10/24 13:46, Louis Chauvet wrote:
-> Add the support for:
-> - RGB888
-> - BGR888
-> 
-> Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
-> ---
->   drivers/gpu/drm/vkms/vkms_formats.c | 7 +++++++
->   drivers/gpu/drm/vkms/vkms_plane.c   | 2 ++
->   2 files changed, 9 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/vkms/vkms_formats.c b/drivers/gpu/drm/vkms/vkms_formats.c
-> index e34bea5da752..2376ea8661ac 100644
-> --- a/drivers/gpu/drm/vkms/vkms_formats.c
-> +++ b/drivers/gpu/drm/vkms/vkms_formats.c
-> @@ -461,6 +461,9 @@ READ_LINE_ARGB8888(ABGR8888_read_line, px, px[3], px[0], px[1], px[2])
->   READ_LINE_ARGB8888(RGBA8888_read_line, px, px[0], px[3], px[2], px[1])
->   READ_LINE_ARGB8888(BGRA8888_read_line, px, px[0], px[1], px[2], px[3])
->   
-> +READ_LINE_ARGB8888(RGB888_read_line, px, 255, px[2], px[1], px[0])
-> +READ_LINE_ARGB8888(BGR888_read_line, px, 255, px[0], px[1], px[2])
-> +
->   READ_LINE_16161616(ARGB16161616_read_line, px, px[3], px[2], px[1], px[0])
->   READ_LINE_16161616(ABGR16161616_read_line, px, px[3], px[0], px[1], px[2])
->   READ_LINE_16161616(XRGB16161616_read_line, px, 0xFFFF, px[2], px[1], px[0])
-> @@ -679,6 +682,10 @@ pixel_read_line_t get_pixel_read_line_function(u32 format)
->   		return &RGBX8888_read_line;
->   	case DRM_FORMAT_BGRX8888:
->   		return &BGRX8888_read_line;
-> +	case DRM_FORMAT_RGB888:
-> +		return RGB888_read_line;
+Nathan Chancellor <nathan@kernel.org> wrote:
+> I am not sure that there is a super concise way to describe for
+> Documentation/kbuild/llvm.rst that sparc currently requires 'CC=3Dclang
+> LLVM_IAS=3D0' along with a build of clang from the main branch of
+> llvm-project to work properly.
 
-Shouldn't it be &RGB888_read_line?
+So about this, as a middle ground, would it be okay if I put
 
-> +	case DRM_FORMAT_BGR888:
-> +		return BGR888_read_line;
+``CC=3Dclang LLVM_IAS=3D0`` (LLVM >=3D 20)
 
-Same.
-
-Best Regards,
-- Maíra
-
->   	case DRM_FORMAT_ARGB16161616:
->   		return &ARGB16161616_read_line;
->   	case DRM_FORMAT_ABGR16161616:
-> diff --git a/drivers/gpu/drm/vkms/vkms_plane.c b/drivers/gpu/drm/vkms/vkms_plane.c
-> index a243a706459f..0fa589abc53a 100644
-> --- a/drivers/gpu/drm/vkms/vkms_plane.c
-> +++ b/drivers/gpu/drm/vkms/vkms_plane.c
-> @@ -21,6 +21,8 @@ static const u32 vkms_formats[] = {
->   	DRM_FORMAT_XBGR8888,
->   	DRM_FORMAT_RGBX8888,
->   	DRM_FORMAT_BGRX8888,
-> +	DRM_FORMAT_RGB888,
-> +	DRM_FORMAT_BGR888,
->   	DRM_FORMAT_XRGB16161616,
->   	DRM_FORMAT_XBGR16161616,
->   	DRM_FORMAT_ARGB16161616,
-> 
+In the documentation, in a similar manner to the s390x entry?
+I know that LLVM 20 is still a couple months away but those commits will
+likely be released with that version, and since it also tells people
+to not use a version that is too old, I think it should be okay (?)
 
