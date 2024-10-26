@@ -1,140 +1,139 @@
-Return-Path: <linux-kernel+bounces-383326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8BA69B1A1B
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 19:36:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04EEA9B1A1D
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 19:36:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 54DDFB217E0
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 17:36:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72609282A12
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 17:36:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB72E1D2B04;
-	Sat, 26 Oct 2024 17:36:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 469101D2B1A;
+	Sat, 26 Oct 2024 17:36:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LPYIdG7A"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="gAfeGJ3I"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FC91179958
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 17:36:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69C00172BB9;
+	Sat, 26 Oct 2024 17:36:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729964176; cv=none; b=gmgXoGGM7AD/4IoR7YQHPibQQ/y9RENXeBIvX/dgumSv4AWJA98wSM68Qg4Tk5P9RU0ep0VHJaKmhgIEFxcfW2eIOCf4hMGcCd8N/Xp6JQ7aLn0ieoGSbGPZE5AUF609diGmTYbQ1qhs9dzgJ3nXBjlZSbEM1UKMx2Z0KRhPPT0=
+	t=1729964190; cv=none; b=mAaqXmklP4BA1L8g1qthXe8ad0KogUB7o4FjRmNJaM7vGhGsMzKm+NFj3GOStem5u7z6qh6c7VooAE5E1jQTru3QAkYJClk3Ffc0AiJxmusdH7tj2QxQlw6eDC2gcXR5WCWl9tc6b4cskvh4o8Ss+KRw2q4tkBQfALb+t6U8epI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729964176; c=relaxed/simple;
-	bh=phUfAcDTOItD03YWDpnRE3vQIi5vjTKDUM3kCtTifo0=;
+	s=arc-20240116; t=1729964190; c=relaxed/simple;
+	bh=EHV/HGIA+QGjb++JlT7svf9CLMcLw9Cpyx+M53ppHb0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DKI+j9JOuO36v3mAR1y0IYuBoH25wSMG2aJ7ssKArsgC6Waq8uTR4eNGWusLhYehVHrNCadwum7PtiPLnudYz+tlIx6Ixg8eXgNaBDktHrEpuXUd/7fnFhRBsXxdwy9gjZTRZNxdJCrJhrw1SEH0R0QYpI/HuSh+F6iNLSRDsCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LPYIdG7A; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-539fbe22ac0so3298102e87.2
-        for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 10:36:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729964172; x=1730568972; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=fmS+fK2Pn+5Ry5DbVr2l2yafLL4Tr2a4G4QgAKiqolA=;
-        b=LPYIdG7AjLiSOOGoneJH7LnOpt+n8GNyRswqWdsDcZe51jALyG6eQ4kBbewMmregNa
-         JxHjW/dGH88x2O//AKObWRfFhjY0IqHV1WrJfJBVs9X0YUIjf2c918b9kLaU0gGyiMNU
-         SiTc3ux3n/pKBpn5eCrGjgT5hm/1E4I6QPjqZqjj7k/WPJ++9VpjopCXleEyyWYzObwM
-         L+Ms27Pgdg7oAoT3jNLWRl2AxRFXnKcjMdwH+Y67mSojFrIK3J6lXoAjWT4Y7+++JgBy
-         Z1F+7nYNI58oHZN8ZEU2QRB/mq6R1gZR7OQdQEMuqGonzYNNT24cuutYbov9cCQeWqST
-         UOJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729964172; x=1730568972;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fmS+fK2Pn+5Ry5DbVr2l2yafLL4Tr2a4G4QgAKiqolA=;
-        b=OR8fzRTKlRQc5UCihk0GHRBYstGDUL940SvqJUTvaFINDp+cpSmX58ZjhtfZhzJIsT
-         7F6o9cw8+uS07u+PPBbDkoT7kzZpKRsoxPkWSStvErbvDHOAvSUJfVmcoGCyTHWI8b9p
-         M9KOq06CBAXnNuw01FehIvS4xc3nRdnRsi+I7T34Mw3LB39QB9IrVqzY92iOf0gpHXgd
-         PgoxMHfDZjpTEeKHJ3fFUt5VNnqOx5K2WIc4aYWRuoOzN6KOtKxEgKAjWBn2Cd3B76xr
-         80sSjkRilu6VEHu6LGKUL9HHVidzhSG3Fy+ZKy5LIv7YkNPyzIWgfz8a8GnkZzGSMHUV
-         BVqA==
-X-Forwarded-Encrypted: i=1; AJvYcCVLccAKNTSpYO/g3Bxo35hFgnMx3AogW1kS1SyfEZzpVnpXOCS6XToxDMXr/xQWNkwuX3PUq26NqFeckhc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6TauQuJIxgkblVoSpPRFnVeIx64Na5cEfK0v3ZWLjwb+Y1lRv
-	sYfODbIdG+WnglknHYgfkRn7Z77sAV7TBzCvFNWTxWKjqxK2klrUIr2wjuxC4UFrMnRK6dVdIjh
-	y
-X-Google-Smtp-Source: AGHT+IHxFtbh3mAC/q2yje7AqlBTOhREdJh9MYZEaNaVgKdJdZ09vcBo/Q+Pw/1GR6+WaFWYyICbXg==
-X-Received: by 2002:a05:6512:39cd:b0:539:f51e:17d3 with SMTP id 2adb3069b0e04-53b348d0ccamr1172908e87.14.1729964172292;
-        Sat, 26 Oct 2024 10:36:12 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53b2e12452fsm566762e87.73.2024.10.26.10.36.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 26 Oct 2024 10:36:10 -0700 (PDT)
-Date: Sat, 26 Oct 2024 20:36:08 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Krishna Kurapati <quic_kriskura@quicinc.com>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, quic_ppratap@quicinc.com, 
-	quic_jackp@quicinc.com
-Subject: Re: [PATCH v2 2/2] arm64: dts: qcom: Enable USB controllers for
- QCS8300
-Message-ID: <xijjs445fzeuzbj2bg3ziwlzenrk4wo5zlyze4j5mldb444oj7@73ynic4xqfdj>
-References: <20241011074619.796580-1-quic_kriskura@quicinc.com>
- <20241011074619.796580-3-quic_kriskura@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nd58+pvk5lDYVD5jx+4rbQAdT2k0shU0beU0qQdcftgHIH+kR+H2zfprbppUBgZIc9UsBHR1T7yCO7l6plPbc7E6WElk6wIlVX2z8uqC/Et83y7NIc6i3F1jfv9xPQyfY5+m7AYURAXEnv4sG4mwWEBq1UExW3gYAnIn49wjSkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=gAfeGJ3I; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id BEA4B4C9;
+	Sat, 26 Oct 2024 19:36:17 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1729964177;
+	bh=EHV/HGIA+QGjb++JlT7svf9CLMcLw9Cpyx+M53ppHb0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gAfeGJ3Ik9qNecjU+DDFuJE1V2uJx24QJ8eRVmLOBI/bGY6H35y+XFiVL3edaNY+D
+	 wCosrGhu+G038lKAd8IEFihfJPqDsiArWvpkRa4Wy6sP9mnBbtkNUg1gcv570wB2h5
+	 wiLRqUoySDKgXf8dBeCTEnEsb4Ssr9ODaAXn0Fo8=
+Date: Sat, 26 Oct 2024 20:36:10 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Tarang Raval <tarang.raval@siliconsignals.io>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] media: mt9p031: Refactor format handling for
+ different sensor models
+Message-ID: <20241026173610.GF6519@pendragon.ideasonboard.com>
+References: <20241025221638.127457-1-tarang.raval@siliconsignals.io>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241011074619.796580-3-quic_kriskura@quicinc.com>
+In-Reply-To: <20241025221638.127457-1-tarang.raval@siliconsignals.io>
 
-On Fri, Oct 11, 2024 at 01:16:19PM +0530, Krishna Kurapati wrote:
-> Enable primary USB controller on QCS8300 Ride platform. The primary USB
-> controller is made "peripheral", as this is intended to be connected to
-> a host for debugging use cases.
+Hi Tarang,
+
+Thank you for the patch.
+
+On Sat, Oct 26, 2024 at 03:45:40AM +0530, Tarang Raval wrote:
+> Add new structure 'mt9p031_model_info' to encapsulate format codes for
+> the mt9p031 camera sensor family. This approach enhances code clarity
+> and maintainability.
 > 
-> Signed-off-by: Krishna Kurapati <quic_kriskura@quicinc.com>
+> Signed-off-by: Tarang Raval <tarang.raval@siliconsignals.io>
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+Sakari, this applies on top of "[PATCH 0/2] media: mt9p031: Drop legacy
+platform data" (https://lore.kernel.org/r/20241025181708.20648-1-laurent.pinchart@ideasonboard.com).
+Tarang, feel free to review that series to accelerate integration of the
+patches upstream :-)
+
 > ---
->  arch/arm64/boot/dts/qcom/qcs8300-ride.dts | 23 +++++++++++++++++++++++
->  1 file changed, 23 insertions(+)
+>  drivers/media/i2c/mt9p031.c | 31 ++++++++++++++++++++++++++++---
+>  1 file changed, 28 insertions(+), 3 deletions(-)
 > 
-> diff --git a/arch/arm64/boot/dts/qcom/qcs8300-ride.dts b/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
-> index 7eed19a694c3..3e925228379c 100644
-> --- a/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
-> +++ b/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
-> @@ -265,3 +265,26 @@ &ufs_mem_phy {
->  	vdda-pll-supply = <&vreg_l5a>;
->  	status = "okay";
+> diff --git a/drivers/media/i2c/mt9p031.c b/drivers/media/i2c/mt9p031.c
+> index f2f52f484044..3576d3066738 100644
+> --- a/drivers/media/i2c/mt9p031.c
+> +++ b/drivers/media/i2c/mt9p031.c
+> @@ -112,6 +112,24 @@
+>  #define MT9P031_TEST_PATTERN_RED			0xa2
+>  #define MT9P031_TEST_PATTERN_BLUE			0xa3
+>  
+> +struct mt9p031_model_info {
+> +	u32 code;
+> +};
+> +
+> +enum mt9p031_model {
+> +	MT9P031_MODEL_BAYER,
+> +	MT9P031_MODEL_MONO,
+> +};
+> +
+> +static const struct mt9p031_model_info mt9p031_models[] = {
+> +	[MT9P031_MODEL_BAYER] = {
+> +		.code = MEDIA_BUS_FMT_SGRBG12_1X12,
+> +	},
+> +	[MT9P031_MODEL_MONO] = {
+> +		.code = MEDIA_BUS_FMT_Y12_1X12,
+> +	},
+> +};
+> +
+>  struct mt9p031 {
+>  	struct v4l2_subdev subdev;
+>  	struct media_pad pad;
+> @@ -1209,9 +1227,16 @@ static void mt9p031_remove(struct i2c_client *client)
+>  }
+>  
+>  static const struct of_device_id mt9p031_of_match[] = {
+> -	{ .compatible = "aptina,mt9p006", .data = (void *)MEDIA_BUS_FMT_SGRBG12_1X12 },
+> -	{ .compatible = "aptina,mt9p031", .data = (void *)MEDIA_BUS_FMT_SGRBG12_1X12 },
+> -	{ .compatible = "aptina,mt9p031m", .data = (void *)MEDIA_BUS_FMT_Y12_1X12 },
+> +	{
+> +		.compatible = "aptina,mt9p006",
+> +		.data = &mt9p031_models[MT9P031_MODEL_BAYER]
+> +	}, {
+> +		.compatible = "aptina,mt9p031",
+> +		.data = &mt9p031_models[MT9P031_MODEL_BAYER]
+> +	}, {
+> +		.compatible = "aptina,mt9p031m",
+> +		.data = &mt9p031_models[MT9P031_MODEL_MONO]
+> +	},
+>  	{ /* sentinel */ }
 >  };
-> +
-> +&usb_1_hsphy {
-> +	vdda-pll-supply = <&vreg_l7a>;
-> +	vdda18-supply = <&vreg_l7c>;
-> +	vdda33-supply = <&vreg_l9a>;
-> +
-> +	status = "okay";
-> +};
-> +
-> +&usb_qmpphy {
-> +	vdda-phy-supply = <&vreg_l7a>;
-> +	vdda-pll-supply = <&vreg_l5a>;
-> +
-> +	status = "okay";
-> +};
-> +
-> +&usb_1 {
-> +	status = "okay";
-> +};
-> +
-> +&usb_1_dwc3 {
-> +	dr_mode = "peripheral";
-> +};
-
-So, can it be used as a USB host controller / connector? What needs to
-be done in such a case?
+>  MODULE_DEVICE_TABLE(of, mt9p031_of_match);
 
 -- 
-With best wishes
-Dmitry
+Regards,
+
+Laurent Pinchart
 
