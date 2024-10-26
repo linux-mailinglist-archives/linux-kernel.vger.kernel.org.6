@@ -1,147 +1,153 @@
-Return-Path: <linux-kernel+bounces-382931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A2B59B1524
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 07:29:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0302D9B152A
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 07:35:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C72DC1F226D8
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 05:29:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1B1F2831B8
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 05:34:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D843A16E87D;
-	Sat, 26 Oct 2024 05:29:32 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F43816C687;
+	Sat, 26 Oct 2024 05:34:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QLiCwIww"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63FEA6A009
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 05:29:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3216E6A009;
+	Sat, 26 Oct 2024 05:34:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729920572; cv=none; b=G5TgwPMPsWfg/NhHcUtLZLn/yu5feO0ndMmLftJCys2jju53gCs4MkuGGa/JjzRp3GS/NrJgHmTWQlEcfiUKQezDbFQppshGhwDxztOyxvH8pp+9tshNYBwhkyQJMhIivlAXb7cmv05oa1A9jACUy7q/2tjyy+vlgwXyqxeRmaI=
+	t=1729920892; cv=none; b=hA2cZZ08qyT0FOUHQj7A4GZQ54ZZBcunmWkBqcsQkijzsrQ8EB/CM7V7TEcxFvFc8GvhcQ7UW/OHfRzORc+flHoybi80wUeVKM3Rflmlo8xvZUuyjRRLDh5Y7VTybeTWGhu/JquKP+rxRcY4vTdbpGOXB9WhDKiOWQNN/8eobDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729920572; c=relaxed/simple;
-	bh=ExpI5H7qpl/7akmGXG2H673MdQwvxqQ4zKOTDwHEE2g=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=chfhN0B57u6eZnQ8n7W7Tn9THbk7j+4DFwAuLbOpD6bkGOOTDQ2/hsE+//Ki7t1jq0cGHbbLmlSopiexOjAMSuxqaqdODv8WrdlsRtNqC+CX+vWdcwN0XcBQ1TKgpYVhtGvjxZM6laH07v+d4UUdaj9lkOBntj4OzrH3dZqftik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a3a6afd01eso24341545ab.3
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 22:29:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729920569; x=1730525369;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=o8Sje68ti6khqDF2RafWzMOuEveUK+HD4XzCLqUDH3E=;
-        b=ipOlvmknl0r1p7T/kfBZonRIwP2h27pjCjs9YP4bpmmj25x7RRK9ivQ0GTmCsacQqO
-         w9keUaJ7j9cM82DBcrGtyREbHF18/D6yrmpRNZ02vINbg2YO3SeJZPyHqINNgG0rmc/e
-         fMUjSVd+ppMPuUtg5eZqHcmMqrN6GeG+zmm+CYH8/Q0Rre+k7nq7bjyB3rK2eof/+jxe
-         nJk4DTbtQSojpu1+Uh8L7pcPU4H9WRK1dhHBCAKLzuNbNGVGxIYBHpTbeV0dGFULizKk
-         NT1nKQSfSt/3E+EPEWAqGP2z0NOIXQydTw96uO0K8hgSFLwNrHYycx+OS+Yf0Y0YCvMa
-         QS5w==
-X-Forwarded-Encrypted: i=1; AJvYcCU/s4WA9DK3tMAqmM+Cu137N1YZWm9hJGJ7wyv3tXRi6qftzBLnhkWh8sJARAXo0mt6ljjJXcNMaSzwCaI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhNwO6z1/7GK9PUDUQGNb2uHahuhySBrPz6YrOeO1x1HeTuIlk
-	V/jZGkIVlKw+ks65ecf7glikFeMe+30Ex0h+OzZobICSHY8/Ud7zJDsBku90l+qorfHtv0jkK1A
-	we2ojth176rp+HSOk7BS5uEXlwdfsUT75KiHc1xgQ1TcADlKJCZTy+BU=
-X-Google-Smtp-Source: AGHT+IFgZq3hlaklTm4R8KyUayNK5t0pCS1JkjN42CyFSrfBaRwoVRPBpv5jLuLVuAoDJ2tiF2E+TOJdazPXbJcZfrlh1F7sobHg
+	s=arc-20240116; t=1729920892; c=relaxed/simple;
+	bh=ImACNOBLeo/IWPYy0OMBTrQMROC8/CrgLu5Bo02QvLs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AOYEdWx3Ngg+MsnFc09EcMTjNDAr70TrKcu1U3op3cUOZ/u8yT0qIyanHaqke3M1in41WBELR6I+VSXHsyvpqRdUIZvpSww9YPrrSeAv4LQ1s5I0tl7vTAuKGz7cjMTAOlRUwfaveLUc9n8y6tsOTcwTT7TBPLESC86YCMy3QsI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QLiCwIww; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729920889; x=1761456889;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ImACNOBLeo/IWPYy0OMBTrQMROC8/CrgLu5Bo02QvLs=;
+  b=QLiCwIwwRm6gwPH2mIkxCmD/n7W8R/eRKQl7rxxxmQsviEJTSVLp0d0y
+   i/MtcBfeR8RJA0HMOz73D1xgF+lD+j9NqLOR5vViqNlwlT1yBD/bKC4iU
+   qSo913m3BDoAHNj65LO02p5/hFG60Jb3t3E7ET4XMutMOC1Os5p5+dEPz
+   HNPPxQj7SNpUz/ejyxPFqAvYyMvsYuAUg1F+odbcFT20ipP36ZKyBx8Oh
+   sK7pOJvg7cLf9w0aXZwUm/ra6CKysrBlZThkOncATp9Z0SEnZIh3pkrV1
+   EMfWVn3srLAB63L8xj+CeGYUPnsv97GwQINOVaChBDcI/KzxbnWeEE0rb
+   A==;
+X-CSE-ConnectionGUID: g7hQRE5dR0ahmDcaZej2PA==
+X-CSE-MsgGUID: dHwgoWX9TGa0vBMUAdw4vg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11236"; a="47084276"
+X-IronPort-AV: E=Sophos;i="6.11,234,1725346800"; 
+   d="scan'208";a="47084276"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2024 22:34:49 -0700
+X-CSE-ConnectionGUID: ZYmrUNwbRYWxVAMBFTXiuQ==
+X-CSE-MsgGUID: 9kaklKcPQvys6MK7dmoCmQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,234,1725346800"; 
+   d="scan'208";a="81216530"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa008.fm.intel.com with ESMTP; 25 Oct 2024 22:34:47 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t4ZRl-000ZJI-0b;
+	Sat, 26 Oct 2024 05:34:45 +0000
+Date: Sat, 26 Oct 2024 13:34:02 +0800
+From: kernel test robot <lkp@intel.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	linux-input@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, Erick Archer <erick.archer@outlook.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Input: maple_keyb - use guard notation when acquiring
+ mutex
+Message-ID: <202410261312.femv4WzA-lkp@intel.com>
+References: <Zxr4TeGwDGIIyzwH@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d89:b0:3a0:9244:191d with SMTP id
- e9e14a558f8ab-3a4ed2de146mr15091405ab.16.1729920569483; Fri, 25 Oct 2024
- 22:29:29 -0700 (PDT)
-Date: Fri, 25 Oct 2024 22:29:29 -0700
-In-Reply-To: <6717b381.050a0220.1e4b4d.0076.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <671c7e39.050a0220.2fdf0c.0223.GAE@google.com>
-Subject: Re: [syzbot] [btrfs?] WARNING in btrfs_free_reserved_data_space_noquota
- (3)
-From: syzbot <syzbot+9064acebb06685edb243@syzkaller.appspotmail.com>
-To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zxr4TeGwDGIIyzwH@google.com>
 
-syzbot has found a reproducer for the following issue on:
+Hi Dmitry,
 
-HEAD commit:    c71f8fb4dc91 Merge tag 'v6.12-rc4-smb3-client-fixes' of gi..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12b4be40580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=309bb816d40abc28
-dashboard link: https://syzkaller.appspot.com/bug?extid=9064acebb06685edb243
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1583565f980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14364230580000
+kernel test robot noticed the following build errors:
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-c71f8fb4.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/a47500c947a2/vmlinux-c71f8fb4.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/d8ce30ea9c33/bzImage-c71f8fb4.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/e4295a6e8b13/mount_0.gz
+[auto build test ERROR on dtor-input/next]
+[also build test ERROR on dtor-input/for-linus hid/for-next linus/master v6.12-rc4 next-20241025]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+9064acebb06685edb243@syzkaller.appspotmail.com
+url:    https://github.com/intel-lab-lkp/linux/commits/Dmitry-Torokhov/Input-maple_keyb-use-guard-notation-when-acquiring-mutex/20241025-094751
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git next
+patch link:    https://lore.kernel.org/r/Zxr4TeGwDGIIyzwH%40google.com
+patch subject: [PATCH] Input: maple_keyb - use guard notation when acquiring mutex
+config: sh-dreamcast_defconfig (https://download.01.org/0day-ci/archive/20241026/202410261312.femv4WzA-lkp@intel.com/config)
+compiler: sh4-linux-gcc (GCC) 13.3.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241026/202410261312.femv4WzA-lkp@intel.com/reproduce)
 
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007faed37be5ad
-R13: 0000000000000048 R14: 0000000000050012 R15: 0000000000000003
- </TASK>
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 5313 at fs/btrfs/space-info.h:250 btrfs_space_info_update_bytes_may_use fs/btrfs/space-info.h:250 [inline]
-WARNING: CPU: 0 PID: 5313 at fs/btrfs/space-info.h:250 btrfs_space_info_free_bytes_may_use fs/btrfs/space-info.h:283 [inline]
-WARNING: CPU: 0 PID: 5313 at fs/btrfs/space-info.h:250 btrfs_free_reserved_data_space_noquota+0x287/0x4f0 fs/btrfs/delalloc-space.c:179
-Modules linked in:
-CPU: 0 UID: 0 PID: 5313 Comm: syz-executor192 Not tainted 6.12.0-rc4-syzkaller-00256-gc71f8fb4dc91 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:btrfs_space_info_update_bytes_may_use fs/btrfs/space-info.h:250 [inline]
-RIP: 0010:btrfs_space_info_free_bytes_may_use fs/btrfs/space-info.h:283 [inline]
-RIP: 0010:btrfs_free_reserved_data_space_noquota+0x287/0x4f0 fs/btrfs/delalloc-space.c:179
-Code: 00 74 08 4c 89 e7 e8 d8 d8 23 fe 4d 8b 2c 24 4c 89 ef 48 8b 5c 24 20 48 89 de e8 54 1d ba fd 49 39 dd 73 19 e8 ea 1a ba fd 90 <0f> 0b 90 31 db 4c 8b 6c 24 10 41 80 3c 2f 00 75 2b eb 31 e8 d1 1a
-RSP: 0018:ffffc9000cf87200 EFLAGS: 00010293
-RAX: ffffffff83dacf86 RBX: 0000000000800000 RCX: ffff88801f67c880
-RDX: 0000000000000000 RSI: 0000000000800000 RDI: 000000000064d000
-RBP: dffffc0000000000 R08: ffffffff83dacf7c R09: 1ffffffff203a055
-R10: dffffc0000000000 R11: fffffbfff203a056 R12: ffff888039a35868
-R13: 000000000064d000 R14: ffff888043280000 R15: 1ffff11007346b0d
-FS:  0000555570aa2480(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000564b95a54fa0 CR3: 0000000042d7c000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- btrfs_free_reserved_data_space+0xa2/0xe0 fs/btrfs/delalloc-space.c:199
- btrfs_dio_iomap_begin+0x7c6/0x1180 fs/btrfs/direct-io.c:598
- iomap_iter+0x691/0xf60 fs/iomap/iter.c:91
- __iomap_dio_rw+0xdea/0x2370 fs/iomap/direct-io.c:677
- btrfs_dio_write fs/btrfs/direct-io.c:775 [inline]
- btrfs_direct_write+0x61b/0xa70 fs/btrfs/direct-io.c:880
- btrfs_do_write_iter+0x2a0/0x760 fs/btrfs/file.c:1505
- aio_write+0x56b/0x7c0 fs/aio.c:1633
- io_submit_one+0x8a7/0x18a0 fs/aio.c:2052
- __do_sys_io_submit fs/aio.c:2111 [inline]
- __se_sys_io_submit+0x179/0x2f0 fs/aio.c:2081
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7faed37710f9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 51 1f 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffec7fd94e8 EFLAGS: 00000246 ORIG_RAX: 00000000000000d1
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007faed37710f9
-RDX: 0000000020000540 RSI: 000000000000003b RDI: 00007faed3712000
-RBP: 0000000000000002 R08: 00007ffec7fd9286 R09: 00007faed3003632
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007faed37be5ad
-R13: 0000000000000048 R14: 0000000000050012 R15: 0000000000000003
- </TASK>
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410261312.femv4WzA-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   drivers/input/keyboard/maple_keyb.c: In function 'remove_maple_kbd':
+>> drivers/input/keyboard/maple_keyb.c:211:39: error: macro "guard" passed 2 arguments, but takes just 1
+     211 |         guard(mutex, &maple_keyb_mutex);
+         |                                       ^
+   In file included from include/linux/irqflags.h:17,
+                    from arch/sh/include/asm/cmpxchg-irq.h:5,
+                    from arch/sh/include/asm/cmpxchg.h:20,
+                    from arch/sh/include/asm/atomic.h:19,
+                    from include/linux/atomic.h:7,
+                    from include/asm-generic/bitops/atomic.h:5,
+                    from arch/sh/include/asm/bitops.h:23,
+                    from include/linux/bitops.h:68,
+                    from include/linux/kernel.h:23,
+                    from drivers/input/keyboard/maple_keyb.c:9:
+   include/linux/cleanup.h:166: note: macro "guard" defined here
+     166 | #define guard(_name) \
+         | 
+>> drivers/input/keyboard/maple_keyb.c:211:9: error: 'guard' undeclared (first use in this function)
+     211 |         guard(mutex, &maple_keyb_mutex);
+         |         ^~~~~
+   drivers/input/keyboard/maple_keyb.c:211:9: note: each undeclared identifier is reported only once for each function it appears in
 
 
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+vim +/guard +211 drivers/input/keyboard/maple_keyb.c
+
+   205	
+   206	static int remove_maple_kbd(struct device *dev)
+   207	{
+   208		struct maple_device *mdev = to_maple_dev(dev);
+   209		struct dc_kbd *kbd = maple_get_drvdata(mdev);
+   210	
+ > 211		guard(mutex, &maple_keyb_mutex);
+   212	
+   213		input_unregister_device(kbd->dev);
+   214		kfree(kbd);
+   215	
+   216		maple_set_drvdata(mdev, NULL);
+   217		return 0;
+   218	}
+   219	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
