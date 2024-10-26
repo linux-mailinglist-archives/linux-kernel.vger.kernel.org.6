@@ -1,171 +1,177 @@
-Return-Path: <linux-kernel+bounces-382854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13E4B9B1409
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 03:35:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A69A9B140A
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 03:35:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBF482838DF
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 01:34:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C753F2837FB
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 01:35:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35D10139CF2;
-	Sat, 26 Oct 2024 01:34:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5833728E0F;
+	Sat, 26 Oct 2024 01:35:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Wq7WzRrR"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jCsPUJO+"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32944B665;
-	Sat, 26 Oct 2024 01:34:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA645217F39
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 01:35:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729906489; cv=none; b=h3NViOV2PfXhRuwlkSNRyd8R/ACDrRDVN5QKgCnqE8XX9ZpflVE6X0HrBUYKWORZIg+0b5Ik7P567nEhWKtybYOrwrO5LK9KXsR0GtLSCOmU8hWpkZJpLaL3pbYunZAtUd3Zj9/BnE2vAn3utgSyfJ5WWtr7pWudz1GLNP5G13g=
+	t=1729906539; cv=none; b=HsHBLgZ2Mq/hLTN8Z4CRjZcs5O21taZ1+EWr5ea+fCIp17rAbySeSbwEqXO2R8nt+TevuDRc1CX6BIx90RdaQN5O87tOp23BLK+z7q7+F/IPgnHIqkzC9stIRFMgEsHgvROWi5nJ3laMX/fe1Gk8+YYJ545ZSdGOZ/rkMXBeu80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729906489; c=relaxed/simple;
-	bh=AvdnhwNRiXKf7G4bRAt5xJWxJrdRaqp5+mhlW0iRbJo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hNbIf4HP2RchtvP6YmDJn1SVKYYRVZcTCNaP1bcXenvpEgJYZFEi+vzmP4VHurnQ9b9hxOu7iT39DkuC7wde5HmNMTD/SlXs2ixwFh1hTbLSJxKhaemezKJnvjBSA/pMO9XeRpa5qVAX5vyVwL4oBmUQFcOMP0yVfaV/1h1Etjg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Wq7WzRrR; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729906487; x=1761442487;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=AvdnhwNRiXKf7G4bRAt5xJWxJrdRaqp5+mhlW0iRbJo=;
-  b=Wq7WzRrRZOXME271vy48jIpUUW/IrhcI+rjbnGTGmnm4NnBJhZYkZCum
-   1RZlAGvZRCFn3MeLh9wjPWFXPQjSp9sQQXLHMmLOaxSGSkoBd/qyAD08a
-   fNnuwq0UTbDwimFLlCvk/16xXnbjd9ZLu6/BeARopus98t53DuBd6rO0R
-   TKAakvo319Hl6i6Qnvx5Mj8bcDEuk+LHaseyXhsoBcWaQq1do9rTe1AI6
-   AZtG0NjtbACdFlA84UVhq36pq7r2Mv67cs8UGsNWalUaNJekNEWmEt6OC
-   d0nnNRJZGbdynOAx9+auYYA0ID7sou98NZIhW/cqtj/RF0l80WJcnWVmd
-   Q==;
-X-CSE-ConnectionGUID: FaefWCtwROqymHOsvIrMDQ==
-X-CSE-MsgGUID: OjnkeOHSShGIQxvQ0UYmHA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="29536586"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="29536586"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2024 18:34:46 -0700
-X-CSE-ConnectionGUID: 70ikL1t/Sde4q68jIS/rvg==
-X-CSE-MsgGUID: SbfZrTSgSn69iYeE81rvuA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,233,1725346800"; 
-   d="scan'208";a="111925452"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa002.jf.intel.com with ESMTP; 25 Oct 2024 18:34:41 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t4VhO-000Z8C-1i;
-	Sat, 26 Oct 2024 01:34:38 +0000
-Date: Sat, 26 Oct 2024 09:34:36 +0800
-From: kernel test robot <lkp@intel.com>
-To: Wei Fang <wei.fang@nxp.com>, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, vladimir.oltean@nxp.com,
-	claudiu.manoil@nxp.com, xiaoning.wang@nxp.com, Frank.Li@nxp.com,
-	christophe.leroy@csgroup.eu, linux@armlinux.org.uk,
-	bhelgaas@google.com, horms@kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	imx@lists.linux.dev, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, alexander.stein@ew.tq-group.com
-Subject: Re: [PATCH v5 net-next 05/13] net: enetc: extract common ENETC PF
- parts for LS1028A and i.MX95 platforms
-Message-ID: <202410260911.fvWnX8cx-lkp@intel.com>
-References: <20241024065328.521518-6-wei.fang@nxp.com>
+	s=arc-20240116; t=1729906539; c=relaxed/simple;
+	bh=xocFEQBxBOy9K2gs85UTaSYi9kuba4ROcwcIloxLqu0=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jndFOSIxgqLtadSK6PuMtlQY8DZBp5kM52MbBRiO3vX/82gaMFP087LX54iB0FVvy+LH66wENYW57n22hXB7mMCCPEGOa/rOIW8RQMdIHOP6Zt/fAFVF8ZE7Fmxh932sBFV0cQ+/OAUOeBbm1eVQ9Ao9h8ydft6Q2tgzK0KzAZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jCsPUJO+; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-20ca1b6a80aso25695605ad.2
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 18:35:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1729906537; x=1730511337; darn=vger.kernel.org;
+        h=mime-version:user-agent:message-id:date:subject:to:from:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ph0Qp4+hJJI5w+kl9XPpLPZDbDTlG33ihuKYvhG6JM0=;
+        b=jCsPUJO+DZ0pybCmLByERiOd5Nc6jJbb9fT9FjmQvgBT6zpPc6H9r3Y7HbKxrJQEce
+         UeRn32mffw4cN6xviXVIRbnRKr3q5NZ9xEUblKPvu8Pk9DKfHJAmCYgMRsm6oRP5CsUI
+         Z5N3oF4A6aLXxRKK2OWE/p4xgLdxQ5XWWpfLMmuO+p/pHwAZTEDJyRgjlZ8yvvnNDJ/N
+         RAJELAMs08R+BFtOdBBD48q0IBxR+Stvvbodejd0FoOneSIU8zJtH4tJ4S3dVafbVFGK
+         CqWKgsZifXkr9gzQd5IQHQM6mb8sN7rG8zpjpkoG6FAVTjVLJP501SN1gxSzjF6V1CIk
+         v14Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729906537; x=1730511337;
+        h=mime-version:user-agent:message-id:date:subject:to:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ph0Qp4+hJJI5w+kl9XPpLPZDbDTlG33ihuKYvhG6JM0=;
+        b=kKp+oFmkBBzYxfWrYuYpBXpGCzw6LWErcHt0fEILZJgBWSLU4gwZATVzZco33AIDjV
+         JwGc7x4FmMIW00Bj0guc15kk1xB9cD7CkaOl3o/uXeNFBR1adHJ4F3Tepurm1BkcpsDY
+         XQEv0B/tCqM0ap3LMKdXNrz4lEVc2zk9O+uKan+YosqI8/fQrBh4rTWkVGCzWNUau3Ia
+         dgbT2LEmgzGjDhwP1O/8e1dISgnRzJWgDJUIu5bMar3E01cvbMDj0xS6BBIpBuUde9s1
+         T1HRQ7bAqnU8UqoS7RV6vp9W7fsM6yHSM2V4m8ubyoRHW7Jd3yq2IGgW3ueNrEekZ5sE
+         odBg==
+X-Gm-Message-State: AOJu0YzLQSJl9JZjoTsB+ZxBvhNtnwFrONksmHg4GCGBH0QBE4h696L7
+	Sz4QoeTDGKzo5P20n+kzUVte5Z+E7V8PbbKjsigXswpWP0nrcHr7x24DJ5ys/182q30Nyg7QcY5
+	quA==
+X-Google-Smtp-Source: AGHT+IEBdPA7jcGvDdsvn0Xw6K9P4Ot+cl3XKLiDsOcLlPuR922EQNI8kvwextj/+KoWl71ZTfvkJQ==
+X-Received: by 2002:a17:90a:e94e:b0:2e2:d1a3:faf9 with SMTP id 98e67ed59e1d1-2e8f11bbc20mr1259347a91.40.1729906536726;
+        Fri, 25 Oct 2024 18:35:36 -0700 (PDT)
+Received: from bsegall-glaptop.localhost (c-73-202-176-14.hsd1.ca.comcast.net. [73.202.176.14])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e8e3749149sm2220664a91.35.2024.10.25.18.35.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Oct 2024 18:35:36 -0700 (PDT)
+From: Benjamin Segall <bsegall@google.com>
+To: linux-kernel@vger.kernel.org, Anna-Maria Behnsen
+ <anna-maria@linutronix.de>, Thomas Gleixner <tglx@linutronix.de>, Frederic
+ Weisbecker <frederic@kernel.org>
+Subject: [PATCH v3] posix-cpu-timers: clear TICK_DEP_BIT_POSIX_TIMER on clone
+Date: Fri, 25 Oct 2024 18:35:35 -0700
+Message-ID: <xm26o737bq8o.fsf@google.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241024065328.521518-6-wei.fang@nxp.com>
+Content-Type: text/plain
 
-Hi Wei,
+When cloning a new thread, its posix_cputimers are not inherited, and
+are cleared by posix_cputimers_init(). However, this does not clear the
+tick dependency it creates in tsk->tick_dep_mask, and the handler does
+not reach the code to clear the dependency if there were no timers to
+begin with.
 
-kernel test robot noticed the following build errors:
+Thus if a thread has a cputimer running before clone/fork, all
+descendants will prevent nohz_full unless they create a cputimer of
+their own.
 
-[auto build test ERROR on net-next/main]
+Fix this by entirely clearing the tick_dep_mask in copy_process().
+(There is currently no inherited state that needs a tick dependency)
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Wei-Fang/dt-bindings-net-add-compatible-string-for-i-MX95-EMDIO/20241024-151502
-base:   net-next/main
-patch link:    https://lore.kernel.org/r/20241024065328.521518-6-wei.fang%40nxp.com
-patch subject: [PATCH v5 net-next 05/13] net: enetc: extract common ENETC PF parts for LS1028A and i.MX95 platforms
-config: x86_64-buildonly-randconfig-001-20241026 (https://download.01.org/0day-ci/archive/20241026/202410260911.fvWnX8cx-lkp@intel.com/config)
-compiler: clang version 19.1.2 (https://github.com/llvm/llvm-project 7ba7d8e2f7b6445b60679da826210cdde29eaf8b)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241026/202410260911.fvWnX8cx-lkp@intel.com/reproduce)
+Process-wide timers do not have this problem because fork does not copy
+signal_struct as a baseline, it creates one from scratch.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410260911.fvWnX8cx-lkp@intel.com/
+Fixes: b78783000d5c ("posix-cpu-timers: Migrate to use new tick dependency mask model")
+Signed-off-by: Ben Segall <bsegall@google.com>
+Cc: stable@vger.kernel.org
+---
+ include/linux/tick.h | 8 ++++++++
+ kernel/fork.c        | 2 ++
+ 2 files changed, 10 insertions(+)
 
-All errors (new ones prefixed by >>):
-
-   In file included from drivers/net/ethernet/freescale/enetc/enetc_pf.c:7:
-   In file included from include/linux/of_net.h:9:
-   In file included from include/linux/phy.h:16:
-   In file included from include/linux/ethtool.h:18:
-   In file included from include/linux/if_ether.h:19:
-   In file included from include/linux/skbuff.h:17:
-   In file included from include/linux/bvec.h:10:
-   In file included from include/linux/highmem.h:8:
-   In file included from include/linux/cacheflush.h:5:
-   In file included from arch/x86/include/asm/cacheflush.h:5:
-   In file included from include/linux/mm.h:2213:
-   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
->> drivers/net/ethernet/freescale/enetc/enetc_pf.c:906:14: error: call to undeclared function 'of_find_compatible_node'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-     906 |         ierb_node = of_find_compatible_node(NULL, NULL,
-         |                     ^
->> drivers/net/ethernet/freescale/enetc/enetc_pf.c:906:12: error: incompatible integer to pointer conversion assigning to 'struct device_node *' from 'int' [-Wint-conversion]
-     906 |         ierb_node = of_find_compatible_node(NULL, NULL,
-         |                   ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     907 |                                             "fsl,ls1028a-enetc-ierb");
-         |                                             ~~~~~~~~~~~~~~~~~~~~~~~~~
->> drivers/net/ethernet/freescale/enetc/enetc_pf.c:908:21: error: call to undeclared function 'of_device_is_available'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-     908 |         if (!ierb_node || !of_device_is_available(ierb_node))
-         |                            ^
->> drivers/net/ethernet/freescale/enetc/enetc_pf.c:912:2: error: call to undeclared function 'of_node_put'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-     912 |         of_node_put(ierb_node);
-         |         ^
-   drivers/net/ethernet/freescale/enetc/enetc_pf.c:1115:14: error: call to undeclared function 'of_device_is_available'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-    1115 |         if (node && of_device_is_available(node))
-         |                     ^
-   1 warning and 5 errors generated.
-
-
-vim +/of_find_compatible_node +906 drivers/net/ethernet/freescale/enetc/enetc_pf.c
-
-07bf34a50e3279 Vladimir Oltean 2021-02-04  900  
-e7d48e5fbf30f8 Vladimir Oltean 2021-04-17  901  static int enetc_pf_register_with_ierb(struct pci_dev *pdev)
-e7d48e5fbf30f8 Vladimir Oltean 2021-04-17  902  {
-e7d48e5fbf30f8 Vladimir Oltean 2021-04-17  903  	struct platform_device *ierb_pdev;
-e7d48e5fbf30f8 Vladimir Oltean 2021-04-17  904  	struct device_node *ierb_node;
-e7d48e5fbf30f8 Vladimir Oltean 2021-04-17  905  
-e7d48e5fbf30f8 Vladimir Oltean 2021-04-17 @906  	ierb_node = of_find_compatible_node(NULL, NULL,
-e7d48e5fbf30f8 Vladimir Oltean 2021-04-17  907  					    "fsl,ls1028a-enetc-ierb");
-e7d48e5fbf30f8 Vladimir Oltean 2021-04-17 @908  	if (!ierb_node || !of_device_is_available(ierb_node))
-e7d48e5fbf30f8 Vladimir Oltean 2021-04-17  909  		return -ENODEV;
-e7d48e5fbf30f8 Vladimir Oltean 2021-04-17  910  
-e7d48e5fbf30f8 Vladimir Oltean 2021-04-17  911  	ierb_pdev = of_find_device_by_node(ierb_node);
-e7d48e5fbf30f8 Vladimir Oltean 2021-04-17 @912  	of_node_put(ierb_node);
-e7d48e5fbf30f8 Vladimir Oltean 2021-04-17  913  
-e7d48e5fbf30f8 Vladimir Oltean 2021-04-17  914  	if (!ierb_pdev)
-e7d48e5fbf30f8 Vladimir Oltean 2021-04-17  915  		return -EPROBE_DEFER;
-e7d48e5fbf30f8 Vladimir Oltean 2021-04-17  916  
-e7d48e5fbf30f8 Vladimir Oltean 2021-04-17  917  	return enetc_ierb_register_pf(ierb_pdev, pdev);
-e7d48e5fbf30f8 Vladimir Oltean 2021-04-17  918  }
-e7d48e5fbf30f8 Vladimir Oltean 2021-04-17  919  
-
+diff --git a/include/linux/tick.h b/include/linux/tick.h
+index 72744638c5b0..99c9c5a7252a 100644
+--- a/include/linux/tick.h
++++ b/include/linux/tick.h
+@@ -249,16 +249,23 @@ static inline void tick_dep_set_task(struct task_struct *tsk,
+ 				     enum tick_dep_bits bit)
+ {
+ 	if (tick_nohz_full_enabled())
+ 		tick_nohz_dep_set_task(tsk, bit);
+ }
++
+ static inline void tick_dep_clear_task(struct task_struct *tsk,
+ 				       enum tick_dep_bits bit)
+ {
+ 	if (tick_nohz_full_enabled())
+ 		tick_nohz_dep_clear_task(tsk, bit);
+ }
++
++static inline void tick_dep_init_task(struct task_struct *tsk)
++{
++	atomic_set(&tsk->tick_dep_mask, 0);
++}
++
+ static inline void tick_dep_set_signal(struct task_struct *tsk,
+ 				       enum tick_dep_bits bit)
+ {
+ 	if (tick_nohz_full_enabled())
+ 		tick_nohz_dep_set_signal(tsk, bit);
+@@ -288,10 +295,11 @@ static inline void tick_dep_set_cpu(int cpu, enum tick_dep_bits bit) { }
+ static inline void tick_dep_clear_cpu(int cpu, enum tick_dep_bits bit) { }
+ static inline void tick_dep_set_task(struct task_struct *tsk,
+ 				     enum tick_dep_bits bit) { }
+ static inline void tick_dep_clear_task(struct task_struct *tsk,
+ 				       enum tick_dep_bits bit) { }
++static inline void tick_dep_init_task(struct task_struct *tsk) { }
+ static inline void tick_dep_set_signal(struct task_struct *tsk,
+ 				       enum tick_dep_bits bit) { }
+ static inline void tick_dep_clear_signal(struct signal_struct *signal,
+ 					 enum tick_dep_bits bit) { }
+ 
+diff --git a/kernel/fork.c b/kernel/fork.c
+index df8e4575ff01..9adad1ad202e 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -103,10 +103,11 @@
+ #include <linux/user_events.h>
+ #include <linux/iommu.h>
+ #include <linux/rseq.h>
+ #include <uapi/linux/pidfd.h>
+ #include <linux/pidfs.h>
++#include <linux/tick.h>
+ 
+ #include <asm/pgalloc.h>
+ #include <linux/uaccess.h>
+ #include <asm/mmu_context.h>
+ #include <asm/cacheflush.h>
+@@ -2290,10 +2291,11 @@ __latent_entropy struct task_struct *copy_process(
+ 
+ 	task_io_accounting_init(&p->ioac);
+ 	acct_clear_integrals(p);
+ 
+ 	posix_cputimers_init(&p->posix_cputimers);
++	tick_dep_init_task(p);
+ 
+ 	p->io_context = NULL;
+ 	audit_set_context(p, NULL);
+ 	cgroup_fork(p);
+ 	if (args->kthread) {
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.47.0.163.g1226f6d8fa-goog
+
 
