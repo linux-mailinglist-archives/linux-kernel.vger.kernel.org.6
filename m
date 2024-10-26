@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-383342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBC869B1A58
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 20:11:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF1B09B1A5B
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 20:16:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FF9528279A
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 18:11:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1AAC81C20E0B
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 18:16:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 977A81D5CC6;
-	Sat, 26 Oct 2024 18:11:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F2CC1D54FA;
+	Sat, 26 Oct 2024 18:16:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TO30O1cH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f33mSFm/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAB2B1CACF7;
-	Sat, 26 Oct 2024 18:11:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 572064C62E;
+	Sat, 26 Oct 2024 18:16:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729966263; cv=none; b=LIgqWeCue8945DeczBqVmraTmtJC71wxn4DjrpA4VZdBEihFkeEcW4JQ3UkddpVot/cPmnnykkhCJU3gWac/ogFCmCNm5za4HpfbnuInv860qF5Tl33B4Ugfmd6IZI+hghzZktkUc8tC5ljcXozbJ74bFL7upQ/1qiDMzwWQhDU=
+	t=1729966596; cv=none; b=UaWCWewvgucsW0krRFp08fcuxr0tTQfIQLs6orbCLY8OKCQ+j1VwmKTgnDain9HNgXUv2/qmPxLPasMNnp5PkCxUBNf7z4mCKVhIL1LlPTJkGDFgEFJQq+K5iegMslIu13WbxEf2cIIOme7c4GVgnT1eJ8HRksL4HznHEXCuLSk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729966263; c=relaxed/simple;
-	bh=1cNvlV3IlLgdQqfBn3f5yVFlctd0IC4+Ag4gDrD9SkU=;
+	s=arc-20240116; t=1729966596; c=relaxed/simple;
+	bh=3yqYGd///ushBtzSlGq/whw7X1GKbItU+IrCmH+NyMI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nMMOuE0Wqft8sh5hMpoUyvmIHHCHSpBKi/ubTD8+kXj2IhEXOXrdxjSxw6qnY3rIILcooi2jd6vU+7fUC53I0TS5gObjZy8vPB0Sqh/iJLiHSh/HnBKN/bWRhnT1pNOyfcvxkmBD2QU6KjfSaqTm8zhdHMrEqA6DM1LgllnGjdQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TO30O1cH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77C1EC4CEC6;
-	Sat, 26 Oct 2024 18:10:57 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=MCo2fLyUra0gtaZrHfU1zae+d9QvzRPMqmep3ajdSWuyhyrf5rMOeryI8bi6COypx6O8/mo3oBtzVk7O86mlC9XPzi5pLW3R8uFjz17s7ejJnJKLK+3Z2I9xPw+j7gBSeS1Kdkca8gi/5yj01h2e5cw6zxBPlp0qdjVKMwYxxag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f33mSFm/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91D99C4CEC6;
+	Sat, 26 Oct 2024 18:16:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729966262;
-	bh=1cNvlV3IlLgdQqfBn3f5yVFlctd0IC4+Ag4gDrD9SkU=;
+	s=k20201202; t=1729966594;
+	bh=3yqYGd///ushBtzSlGq/whw7X1GKbItU+IrCmH+NyMI=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=TO30O1cHh39Y+bIttbmtIY/W78iQIzguiISV3LYTEJ3RFsLHQOpktqaeQ4CGQuOAJ
-	 XPIzuzsNAmSI2ANqYZwRdqjwKZWhYD07DZZq1d9dYgyrMcbLHVRziaNVm9d+9BCyc9
-	 hye+RAxzuOp/5PkKFGJqeXpuZJai6uvcsGpTbyxBog/C4hEUUhFqi6yFSggNJlMRk9
-	 5HuKIKXDNj3XEdgty+z/X43vOnMbXE4XAO/Y/1z0efR/eGJBYbfCRxUKnrWa6wxpO4
-	 y0g0A1KxQd47qIZOZXSHcQfeZ6Mw4/PhWMBEqdXvOkzDLDwAywh29MMe6eJczb4IsR
-	 cZlFXhB6jn3cw==
-Message-ID: <520c4ac3-a826-4504-9aff-6c2126a85793@kernel.org>
-Date: Sat, 26 Oct 2024 20:10:55 +0200
+	b=f33mSFm/fUK1556F89OXJEW80dTSZcg069G7Q13AQda2v1Y2k1gw0z9DQFRsUw+iM
+	 KAmb4o+aS2JrrPnyY4csgq3jQRRidWadZZ0S9QH3p3rJe+D4Q60RQ8YWi01I//sZyQ
+	 PwJtRfIrYVf/ne1wM4kUwmO1w3KvOeWIKGwK+2IyBLJGKrQPCVirqcahZiTqWxRy2J
+	 RY060vKPN+wY5aJwifmzKLdYe32Lol3+NfeLLsVHXs7AI3FZRjkrJNrNNBv2VCRi1t
+	 0HUgG9gcIKX/6S3eX523XcCLzaYgpthZka/H/09wOMd2tYUfKVhnYgN9h3NZrgdLIc
+	 /2DBEh/1+BKHQ==
+Message-ID: <2b89379a-4d21-450e-b273-b6986dcf5b7a@kernel.org>
+Date: Sat, 26 Oct 2024 20:16:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,19 +49,19 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 2/6] dt-bindings: net: wireless: ath12k: describe WSI
- property for QCN9274
-To: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>, ath12k@lists.infradead.org
-Cc: linux-wireless@vger.kernel.org, Kalle Valo <kvalo@kernel.org>,
+Subject: Re: [PATCH v5 2/2] dt-bindings: mtd: davinci: convert to yaml
+To: Marcus Folkesson <marcus.folkesson@gmail.com>
+Cc: Miquel Raynal <miquel.raynal@bootlin.com>,
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Jeff Johnson <jjohnson@kernel.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-References: <20241023060352.605019-1-quic_rajkbhag@quicinc.com>
- <20241023060352.605019-3-quic_rajkbhag@quicinc.com>
- <c7c6bf7e-0f79-44b1-aed4-db1fdbedc9a8@kernel.org>
- <db0a6797-0e51-45b2-bf8a-58d53d8cf959@quicinc.com>
+ Conor Dooley <conor+dt@kernel.org>, linux-mtd@lists.infradead.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <20241008-ondie-v5-0-041ca4ccc5ee@gmail.com>
+ <20241008-ondie-v5-2-041ca4ccc5ee@gmail.com>
+ <4u5iv24enpz46funfvbo2aggx6yiqxy7beaa3ldt5ai5wf65kl@bnlm4eyuwkui>
+ <Zw0Ixx9Qu9tgGXGP@gmail.com>
+ <10a0efab-83a8-4168-993a-c4482a568c96@kernel.org>
+ <ZxImhhPhOWuYqSfK@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -107,41 +107,45 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <db0a6797-0e51-45b2-bf8a-58d53d8cf959@quicinc.com>
+In-Reply-To: <ZxImhhPhOWuYqSfK@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 25/10/2024 12:08, Raj Kumar Bhagat wrote:
->>> Signed-off-by: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
->>> ---
->>>  .../bindings/net/wireless/qcom,ath12k.yaml    | 61 +++++++++++++++++++
->>>  1 file changed, 61 insertions(+)
+On 18/10/2024 11:12, Marcus Folkesson wrote:
+>>> ```
+>>>         
 >>>
->>> diff --git a/Documentation/devicetree/bindings/net/wireless/qcom,ath12k.yaml b/Documentation/devicetree/bindings/net/wireless/qcom,ath12k.yaml
->>> index ecf38af747f7..6c8f97865075 100644
->>> --- a/Documentation/devicetree/bindings/net/wireless/qcom,ath12k.yaml
->>> +++ b/Documentation/devicetree/bindings/net/wireless/qcom,ath12k.yaml
->>> @@ -19,6 +19,7 @@ properties:
->>>    compatible:
->>>      enum:
->>>        - pci17cb,1107  # WCN7850
->>> +      - pci17cb,1109  # QCN9274
+>>> How do I set #address-cells in example-0 to 2?
+>>> I guess that is the problem.
 >>
->> Missing supplies. How does the device take power? Everything through
->> standard PCI pins? Are you sure? Please submit complete binding, so with
->> all required properties.
 >>
+>>
+>> You just set it... There are dozens/hundreds of schemas doing it, what
+>> is exactly a problem here?
 > 
-> QCN9274 gets powered from the standard Pcie (3.3 V) supply. No additional
-> regulators are required.
+> I think I will solve the problem by including the parent nodes.
 
-OK, just keep in mind that if you come later with PMU approach to solve
-your sequencing problem, we can just NAK it based on above explanation
-that PMU approach is not required.
+Just like everyone else or some other way?
 
-Existing binding lists required supplies on purpose, that's not
-coincidence. But of course I don't know if it applies to your case, so
-above confirms that it does not apply.
+> What do you think about this?
+> 
+> examples:
+>   - |
+>     aemif: aemif@68000000 {
+>       compatible = "ti,da850-aemif";
+>       #address-cells = <2>;
+>       #size-cells = <1>;
+> 
+>       reg = <0x68000000 0x00008000>;
+>       ranges = <0 0 0x60000000 0x08000000
+>       1 0 0x68000000 0x00008000>;
+>       clocks = <&psc0 3>;
+>       clock-names = "aemif";
+>       clock-ranges;
+
+That's some other way, so no, drop unrelated properties. Look how all
+other bindings are doing it - you need some wrapper node.
+
 
 Best regards,
 Krzysztof
