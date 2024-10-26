@@ -1,110 +1,352 @@
-Return-Path: <linux-kernel+bounces-383297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EE749B19AB
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 17:58:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1148E9B19B2
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 18:01:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B282C282B47
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 15:58:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5ECAAB21067
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 16:01:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27A9614A91;
-	Sat, 26 Oct 2024 15:58:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2C0B13B7AE;
+	Sat, 26 Oct 2024 16:01:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XXkSypwb"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uI0LLzHT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7500B433D0
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 15:58:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3C896FB9;
+	Sat, 26 Oct 2024 16:01:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729958293; cv=none; b=K+DKlV+cP+z9fvV5SpG2hOqhM/XOw0KHQf0znheXHICkBEVb5MqX1I8JZxZA6YBx6auSNaS1C5blJaTp7JSpnfP9EpvFdsGdn7ETOLwZu7AgCZA4SGYfzyuinJL+TkKZdcWiX0t7QsZbo7pDVWm6T8GJ4Y7WvOwivzq+1y98A+w=
+	t=1729958466; cv=none; b=K7cHPbOWkXRWOkOyk8zDTOJrzWMxHsxPCYX/q9i4UnD30csMMkRoMdz7LkDUOGl+l/QCg4DsyfQC/qLMkdbJQGbjEQ/+8Jq0xSJpSrcyqpbRpNraM5yyKLpv55RgSEFAZGs2LcwhqiUPCroiuxaQbDqJW66DpdgrLzlH1MkcxXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729958293; c=relaxed/simple;
-	bh=0Yy5KhAotvtG1MeuOHu2YrvJdVMziOmFkmayVc04OFY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U1kcW5aLdd0LsUqPsCZipm9pkc2fIHp+KRwsL09ToMvAOnPMD0XLPKGtyI1T7GPSvtholJLRdsBwwVlTu/+VQK8vCHZLfVCrroj+3fO3EiYroKMyh1S3AyuKZtJOH42iHwyjfAWc0bZUgrCLXlis8zX14v52uoz2XYWFCyEFM9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XXkSypwb; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-53b13ea6b78so4775242e87.2
-        for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 08:58:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729958290; x=1730563090; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=nObd6q39hTr2YQsRyrzp9HSXK/DdhwTjCY0y0mR1PXE=;
-        b=XXkSypwbefLI1ucXwsxkBoLbHfLkpdSjUDOFrggHOoOw8a4brYtrZv4J0JQeCT61B4
-         kNvx33ZGiz930P+c8KF9CHWnpFKK0jBSg7Nu8Dfg4gxchu1gSZnCvlBh5M6RUPJGj3r9
-         qCr1O8fXNbD3NKP2cJx9rs3MQWAUdulJ/zVk0Tp0PLFDuz6Pjo6OOOA5L4ZURDZsMkgH
-         Geqo9KO5un+VWAONwsx63NOgykBuBL4o3nVGoy8HKnlaFr9n8W0GUYOaE0sMOZ/+NflY
-         5tgmuvpKEiquy5Sk2LZAJoKNURoFpDgNWei1VwOpS0OHR9VIrdqqX8aCoIJoIE1seXga
-         /nIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729958290; x=1730563090;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nObd6q39hTr2YQsRyrzp9HSXK/DdhwTjCY0y0mR1PXE=;
-        b=shfEz55Rev2Q2GthdqjOnuefk2o4EvJrMamW6+zVvgelSDpHBDJGS4tyiBAa98sI+C
-         ZZnOP0D8bU9lwzyE/+/qs8sBeUI9zGVxTGHF7qQwoE1GqtshEMFS/Gz+/nYzun5t0lld
-         5SB7zv0sGuEMVjZkuXZAkbnMTw9nO2traKH09lhc+VqBmUMM6fRwrHflOEnhEEmOsr7s
-         zYTrhVtec7vXT9fLDnviEp4WVrZEByT4+8AppTM01t8o+8i01z+fu1gwmSyfVPktSZZw
-         VlIr8/Or39KwpD1jHf3V/tnEQI2+sXLSNOS7weIYq4A5Ifep3yXRlcUc4KVCXFHD8oYJ
-         fexg==
-X-Forwarded-Encrypted: i=1; AJvYcCUzzIG0hclvyWr9Sr0PAekfQP25f84nmo79zhgn4ELpz6BUdSIXhOgdpzmc1lYi0pX7Vo8VGmR7vdINPfs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlJNuUiQ1wUmh2RwJfDtZCAMnXcTsZWqSyZpwxMirc043Wmb+U
-	94QzBpaB04h/QVW1/G6j/93JzmSxYnB9E8XZtrLQoHaYNTMfGH3FrILYyMXkWl8=
-X-Google-Smtp-Source: AGHT+IEx8yd6r3JxxjdHBLUNhzq0EwSMwjb+YKGZtWbWQxHCWYkq8/n17PU3q4sZPj03cet79QZFJA==
-X-Received: by 2002:a05:6512:3e18:b0:536:55cc:963e with SMTP id 2adb3069b0e04-53b3491e254mr1810034e87.44.1729958289546;
-        Sat, 26 Oct 2024 08:58:09 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53b2e1d5a62sm543900e87.233.2024.10.26.08.58.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 26 Oct 2024 08:58:09 -0700 (PDT)
-Date: Sat, 26 Oct 2024 18:58:07 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: interrupt-controller: qcom,pdc: Add
- SAR2130P compatible
-Message-ID: <6p6uxa7ym5nqieenwcyt5ozqxdxojksh3ws25w2tmeinmxk3ga@lasczijp4iho>
-References: <20241017-sar2130p-pdc-v1-1-cf9ccd9c37da@linaro.org>
- <offdcgni7pr433jozldgvzkubr6gvb635odlopgrweitiynaky@kvbgg4xd7g5k>
+	s=arc-20240116; t=1729958466; c=relaxed/simple;
+	bh=BomqkcsBY/gWdQiYzfOWUtH9H6UxLFsjkpObWSvn0c0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UH7Sna/Tttz1ZweDbtBHJDg80JRHPpBKutxqauU/w3ZdTlv8cRXpVfnzXqDkqI5fGKHWa0UpPGUrihvLATn7Ns3JWNfj00JeTSZZ41agQ9pZ+B/W/A2Nt0Yjj/gtRZiG17kbPPeyurwK5PUvlBoSkpP0CBH/Qv9W+FV3MOY0ZdQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uI0LLzHT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81A37C4CEC6;
+	Sat, 26 Oct 2024 16:00:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729958465;
+	bh=BomqkcsBY/gWdQiYzfOWUtH9H6UxLFsjkpObWSvn0c0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=uI0LLzHT+PAwpJkrVAKsaCkD4PBfSVZApKC9ddETDahHgt66Dhpc+5Vjcp7iEhPgd
+	 0eIhRQ8iegrpd6H9x9OQlmnAgtJ3P6j1VV+oH1///HDRmrnimBlj1U4POLxfVr1w5g
+	 LqxGMTIY2KeXQVGzY1VW+JfbQufFdenXBw40kxQCBa5+005vYI0s2vpqEoYMyLSKz9
+	 ZLYCFO7djETVI2L/krsIye8B5PkduN1lhGoBDssArE7UVC75Jq7C4zyAokYxlXkX8o
+	 Pq0lIaIzfH4tB6VceXBRi4TwRHXr2xul2nntjjRUdYtynL2E0BaHrtd9N3NvLmcxRs
+	 x1SLiamW6YHQg==
+Date: Sat, 26 Oct 2024 17:00:38 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Uwe
+ =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <ukleinek@kernel.org>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Lars-Peter Clausen <lars@metafoo.de>, David
+ Jander <david@protonic.nl>, Martin Sperl <kernel@martin.sperl.org>,
+ linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+ linux-pwm@vger.kernel.org
+Subject: Re: [PATCH RFC v4 15/15] iio: adc: ad4695: Add support for SPI
+ offload
+Message-ID: <20241026170038.4b629cff@jic23-huawei>
+In-Reply-To: <20241023-dlech-mainline-spi-engine-offload-2-v4-15-f8125b99f5a1@baylibre.com>
+References: <20241023-dlech-mainline-spi-engine-offload-2-v4-0-f8125b99f5a1@baylibre.com>
+	<20241023-dlech-mainline-spi-engine-offload-2-v4-15-f8125b99f5a1@baylibre.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <offdcgni7pr433jozldgvzkubr6gvb635odlopgrweitiynaky@kvbgg4xd7g5k>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Oct 18, 2024 at 09:19:41AM +0200, Krzysztof Kozlowski wrote:
-> On Thu, Oct 17, 2024 at 09:13:01PM +0300, Dmitry Baryshkov wrote:
-> > Document compatible for PDC interrupt controller on SAR2130P platform.
-> > 
-> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > ---
-> >  Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.yaml | 1 +
-> >  1 file changed, 1 insertion(+)
-> > 
+On Wed, 23 Oct 2024 15:59:22 -0500
+David Lechner <dlechner@baylibre.com> wrote:
+
+> Add support for SPI offload to the ad4695 driver. SPI offload allows
+> sampling data at the max sample rate (500kSPS or 1MSPS).
 > 
-> This will be picked up by Bjorn, so should be part of patchset
-> targetting SoC (just like few others, e.g. firmware). Please target same
-> maintainer tree/subsystem within one patchset.
+> This is developed and tested against the ADI example FPGA design for
+> this family of ADCs [1].
+> 
+> [1]: http://analogdevicesinc.github.io/hdl/projects/ad469x_fmc/index.html
+> 
+> Signed-off-by: David Lechner <dlechner@baylibre.com>
+A few questions inline. In general looks ok, but it's complex code and I'm
+too snowed under for a very close look at the whole thing for a least a few weeks.
 
-For the reference. Git history of this file shows that all patches for
-this file were comitted by Rob Herring.
+Jonathan
 
--- 
-With best wishes
-Dmitry
+> ---
+>  drivers/iio/adc/Kconfig  |   1 +
+>  drivers/iio/adc/ad4695.c | 470 +++++++++++++++++++++++++++++++++++++++++++----
+>  2 files changed, 440 insertions(+), 31 deletions(-)
+> 
+> diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
+> index 92dfb495a8ce..f76a3f62a9ad 100644
+> --- a/drivers/iio/adc/Kconfig
+> +++ b/drivers/iio/adc/Kconfig
+> @@ -53,6 +53,7 @@ config AD4695
+>  	depends on SPI
+>  	select REGMAP_SPI
+>  	select IIO_BUFFER
+> +	select IIO_BUFFER_DMAENGINE
+>  	select IIO_TRIGGERED_BUFFER
+>  	help
+>  	  Say yes here to build support for Analog Devices AD4695 and similar
+
+> +static int ad4695_offload_buffer_postenable(struct iio_dev *indio_dev)
+> +{
+> +	struct ad4695_state *st = iio_priv(indio_dev);
+> +	struct spi_offload_trigger_config config = {
+> +		.type = SPI_OFFLOAD_TRIGGER_DATA_READY,
+> +	};
+> +	struct spi_transfer *xfer = &st->buf_read_xfer[0];
+> +	struct pwm_state state;
+> +	u8 temp_chan_bit = st->chip_info->num_voltage_inputs;
+> +	u8 num_slots = 0;
+> +	u8 temp_en = 0;
+> +	unsigned int bit;
+> +	int ret;
+> +
+> +	iio_for_each_active_channel(indio_dev, bit) {
+> +		if (bit == temp_chan_bit) {
+> +			temp_en = 1;
+> +			continue;
+> +		}
+> +
+> +		ret = regmap_write(st->regmap, AD4695_REG_AS_SLOT(num_slots),
+> +				   FIELD_PREP(AD4695_REG_AS_SLOT_INX, bit));
+> +		if (ret)
+> +			return ret;
+> +
+> +		num_slots++;
+> +	}
+> +
+> +	/*
+> +	 * For non-offload, we could discard data to work around this
+> +	 * restriction, but with offload, that is not possible.
+> +	 */
+> +	if (num_slots < 2) {
+> +		dev_err(&st->spi->dev,
+> +			"At least two voltage channels must be enabled.\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	ret = regmap_update_bits(st->regmap, AD4695_REG_TEMP_CTRL,
+> +				 AD4695_REG_TEMP_CTRL_TEMP_EN,
+> +				 FIELD_PREP(AD4695_REG_TEMP_CTRL_TEMP_EN,
+> +					    temp_en));
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* Each BUSY event means just one sample for one channel is ready. */
+> +	memset(xfer, 0, sizeof(*xfer));
+> +	xfer->offload_flags = SPI_OFFLOAD_XFER_RX_STREAM;
+> +	xfer->bits_per_word = 16;
+> +	xfer->len = 2;
+> +
+> +	spi_message_init_with_transfers(&st->buf_read_msg, xfer, 1);
+> +	st->buf_read_msg.offload = st->offload;
+> +
+> +	st->spi->max_speed_hz = st->spi_max_speed_hz;
+> +	ret = spi_optimize_message(st->spi, &st->buf_read_msg);
+> +	st->spi->max_speed_hz = AD4695_REG_ACCESS_SCLK_HZ;
+> +	if (ret)
+> +		return ret;
+> +
+> +	/*
+> +	 * NB: technically, this is part the SPI offload trigger enable, but it
+> +	 * doesn't work to call it from the offload trigger enable callback
+> +	 * due to issues with ordering with respect to entering/exiting
+> +	 * conversion mode.
+Give some detail on the operations order.
+
+> +	 */
+> +	ret = regmap_set_bits(st->regmap, AD4695_REG_GP_MODE,
+> +			      AD4695_REG_GP_MODE_BUSY_GP_EN);
+> +	if (ret)
+> +		goto err_unoptimize_message;
+> +
+> +	ret = spi_offload_trigger_enable(st->offload, st->offload_trigger,
+> +					 &config);
+> +	if (ret)
+> +		goto err_disable_busy_output;
+> +
+> +	ret = ad4695_enter_advanced_sequencer_mode(st, num_slots);
+> +	if (ret)
+> +		goto err_offload_trigger_disable;
+> +
+> +	guard(mutex)(&st->cnv_pwm_lock);
+> +	pwm_get_state(st->cnv_pwm, &state);
+> +	/*
+> +	 * PWM subsystem generally rounds down, so requesting 2x minimum high
+> +	 * time ensures that we meet the minimum high time in any case.
+> +	 */
+> +	state.duty_cycle = AD4695_T_CNVH_NS * 2;
+> +	ret = pwm_apply_might_sleep(st->cnv_pwm, &state);
+> +	if (ret)
+> +		goto err_offload_exit_conversion_mode;
+> +
+> +	return 0;
+> +
+> +err_offload_exit_conversion_mode:
+> +	/* have to unwind in a different order to avoid triggering offload */
+
+Needs more details here.
+
+> +	spi_offload_trigger_disable(st->offload, st->offload_trigger);
+> +	ad4695_cnv_manual_trigger(st);
+> +	ad4695_exit_conversion_mode(st);
+> +	goto err_disable_busy_output;
+> +
+> +err_offload_trigger_disable:
+> +	spi_offload_trigger_disable(st->offload, st->offload_trigger);
+> +
+> +err_disable_busy_output:
+> +	regmap_clear_bits(st->regmap, AD4695_REG_GP_MODE,
+> +			  AD4695_REG_GP_MODE_BUSY_GP_EN);
+> +
+> +err_unoptimize_message:
+> +	spi_unoptimize_message(&st->buf_read_msg);
+> +
+> +	return ret;
+> +}
+
+> +
+>  static int ad4695_write_raw(struct iio_dev *indio_dev,
+>  			    struct iio_chan_spec const *chan,
+>  			    int val, int val2, long mask)
+> @@ -779,6 +992,17 @@ static int ad4695_write_raw(struct iio_dev *indio_dev,
+>  			default:
+>  				return -EINVAL;
+>  			}
+> +		case IIO_CHAN_INFO_SAMP_FREQ: {
+> +			struct pwm_state state;
+> +
+> +			if (val <= 0)
+> +				return -EINVAL;
+> +
+> +			guard(mutex)(&st->cnv_pwm_lock);
+> +			pwm_get_state(st->cnv_pwm, &state);
+
+What limits this to rates the ADC can cope with?
+
+> +			state.period = DIV_ROUND_UP_ULL(NSEC_PER_SEC, val);
+> +			return pwm_apply_might_sleep(st->cnv_pwm, &state);
+> +		}
+>  		default:
+>  			return -EINVAL;
+>  		}
+
+>  static int ad4695_probe(struct spi_device *spi)
+>  {
+>  	struct device *dev = &spi->dev;
+>  	struct ad4695_state *st;
+>  	struct iio_dev *indio_dev;
+> -	struct gpio_desc *cnv_gpio;
+>  	bool use_internal_ldo_supply;
+>  	bool use_internal_ref_buffer;
+>  	int ret;
+>  
+> -	cnv_gpio = devm_gpiod_get_optional(dev, "cnv", GPIOD_OUT_LOW);
+> -	if (IS_ERR(cnv_gpio))
+> -		return dev_err_probe(dev, PTR_ERR(cnv_gpio),
+> -				     "Failed to get CNV GPIO\n");
+> -
+> -	/* Driver currently requires CNV pin to be connected to SPI CS */
+> -	if (cnv_gpio)
+> -		return dev_err_probe(dev, -ENODEV,
+> -				     "CNV GPIO is not supported\n");
+> -
+>  	indio_dev = devm_iio_device_alloc(dev, sizeof(*st));
+>  	if (!indio_dev)
+>  		return -ENOMEM;
+> @@ -1002,8 +1374,13 @@ static int ad4695_probe(struct spi_device *spi)
+>  		return -EINVAL;
+>  
+>  	/* Registers cannot be read at the max allowable speed */
+> +	st->spi_max_speed_hz = spi->max_speed_hz;
+>  	spi->max_speed_hz = AD4695_REG_ACCESS_SCLK_HZ;
+>  
+> +	ret = devm_add_action_or_reset(dev, ad4695_restore_spi_max_speed_hz, st);
+
+Why do you need to put it back in devm? What happens after this but without
+a driver restart that uses that faster rate?
+
+> +	if (ret)
+> +		return ret;
+> +
+>  	st->regmap = devm_regmap_init_spi(spi, &ad4695_regmap_config);
+>  	if (IS_ERR(st->regmap))
+>  		return dev_err_probe(dev, PTR_ERR(st->regmap),
+> @@ -1014,6 +1391,11 @@ static int ad4695_probe(struct spi_device *spi)
+>  		return dev_err_probe(dev, PTR_ERR(st->regmap16),
+>  				     "Failed to initialize regmap16\n");
+>  
+> +	st->cnv_gpio = devm_gpiod_get_optional(dev, "cnv", GPIOD_OUT_LOW);
+> +	if (IS_ERR(st->cnv_gpio))
+> +		return dev_err_probe(dev, PTR_ERR(st->cnv_gpio),
+> +				     "Failed to get CNV GPIO\n");
+> +
+>  	ret = devm_regulator_bulk_get_enable(dev,
+>  					     ARRAY_SIZE(ad4695_power_supplies),
+>  					     ad4695_power_supplies);
+> @@ -1139,14 +1521,39 @@ static int ad4695_probe(struct spi_device *spi)
+>  	indio_dev->info = &ad4695_info;
+>  	indio_dev->modes = INDIO_DIRECT_MODE;
+>  	indio_dev->channels = st->iio_chan;
+> -	indio_dev->num_channels = st->chip_info->num_voltage_inputs + 2;
+>  
+> -	ret = devm_iio_triggered_buffer_setup(dev, indio_dev,
+> -					      iio_pollfunc_store_time,
+> -					      ad4695_trigger_handler,
+> -					      &ad4695_buffer_setup_ops);
+> -	if (ret)
+> -		return ret;
+> +	static const struct spi_offload_config ad4695_offload_config = {
+> +		.capability_flags = SPI_OFFLOAD_CAP_TRIGGER
+> +				  | SPI_OFFLOAD_CAP_RX_STREAM_DMA,
+> +	};
+> +
+> +	st->offload = devm_spi_offload_get(dev, spi, &ad4695_offload_config);
+> +	ret = PTR_ERR_OR_ZERO(st->offload);
+> +	if (ret && ret != -ENODEV)
+> +		return dev_err_probe(dev, ret, "failed to get SPI offload\n");
+> +
+> +	if (ret == -ENODEV) {
+> +		/* If no SPI offload, fall back to low speed usage. */
+> +		dev_info(dev, "SPI offload not available\n");
+
+As previous. Too noisy for a normal thing that might happen.
+Maybe if we can't figure it out from anything userspace an see we could add
+a print on the 'offload is enabled' side of things.
+
+> +
+> +		/* Driver currently requires CNV pin to be connected to SPI CS */
+> +		if (st->cnv_gpio)
+> +			return dev_err_probe(dev, -EINVAL,
+> +					     "CNV GPIO is not supported\n");
+> +
+> +		indio_dev->num_channels = st->chip_info->num_voltage_inputs + 2;
+> +
+> +		ret = devm_iio_triggered_buffer_setup(dev, indio_dev,
+> +						      iio_pollfunc_store_time,
+> +						      ad4695_trigger_handler,
+> +						      &ad4695_buffer_setup_ops);
+> +		if (ret)
+> +			return ret;
+> +	} else {
+> +		ret = ad4695_probe_spi_offload(indio_dev, st);
+> +		if (ret)
+> +			return ret;
+> +	}
 
