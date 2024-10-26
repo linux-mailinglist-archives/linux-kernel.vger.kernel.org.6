@@ -1,200 +1,377 @@
-Return-Path: <linux-kernel+bounces-383244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 901DE9B18EA
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 17:02:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 889A79B18EC
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 17:05:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CBAA1B21241
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 15:02:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A7D271C20D5E
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 15:05:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E989208A7;
-	Sat, 26 Oct 2024 15:02:31 +0000 (UTC)
-Received: from IND01-BMX-obe.outbound.protection.outlook.com (mail-bmxind01on2094.outbound.protection.outlook.com [40.107.239.94])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E27C91EA85;
+	Sat, 26 Oct 2024 15:05:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=riseup.net header.i=@riseup.net header.b="j1pZB425"
+Received: from mx0.riseup.net (mx0.riseup.net [198.252.153.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D16AA947;
-	Sat, 26 Oct 2024 15:02:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.239.94
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729954950; cv=fail; b=Gj5y1388kLQD+Vi641JzYSKE5PFMK/cNn8uCFcqAuagU5ALXUp4JayJUJd7CxmliMH6UG7/j+OmL4FlpmTEAlaFliolh6eAHwPWGYy4kQ22xaJ4HQhRbchBLnuOMQaXaRpnDK0CKgzfFW1MK7KLuVptk1X+IqfWD1SlyuTCsxeQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729954950; c=relaxed/simple;
-	bh=kiPOGk6gjBJGRQifEuziIlVJRsa4LnoTj8Ab3kKRjrA=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=OGcDNiaq83LRv6XwW8qJd/81SBjm49FhYzfy+aFNmydHx/509sDN+QEyJq3Ax0pq1NU7H2oeVG0t4OCUiKEh/HohZP8VQCm2Z9hoQxvH8OucJe7N4g4D6STVmBOdcqiD40x3r31mkkqEm9D/zYjIYGI9UP/xClx7BF2j7lkiZKQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siliconsignals.io; spf=pass smtp.mailfrom=siliconsignals.io; arc=fail smtp.client-ip=40.107.239.94
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siliconsignals.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=siliconsignals.io
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=q5NZzZ4sDaQhIrXMTgJclbkLvh3b2aIT7Wz1TavRzgf7vsQbVpkEFm6w5SICQ1B9ilzfXzdZ3AhnV4LnOR7VNDdgxpas8E/bLad1qNL+r8AbTqb0/c2/bQe4LC56E8J0ovXJD/Mb8yZ/5IpdmJN4AsK1wTZwrmw8Jjkg5qh1jOJXDEc69KPBFI3HQ6NWXCKGrbI8ACLUAzBU7FInTiEUfqsXAfaRSFlaMwzKf2gvWSKAyaFddXC5KGRXm2keBWSKTr3q80oDu3OUYvolYXdenUVEHwIrRNKRmuR6riQoTAyzZZvd1ab2GX+oVdNDFSaqbeYZkc4mYFW3Sww8NLsqkw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=kiPOGk6gjBJGRQifEuziIlVJRsa4LnoTj8Ab3kKRjrA=;
- b=lnfpwOpdif3bR2Z744qKSMUPZZTSvMcbtaSowjobzsbCYtg2AxBG5vZs57Qq6wW0n2HgResAR35hataipeRvKpOB+c5rb+Dh0L6NMubV3aGy4HakNH7Q92ltzmE3HClTKZsLJa01wR/bDRcQeOagsQ/p9IKUwOwpbbn8bvhKZpGwyoCT8r7Teit+j2GNXS1pov+FpvSnmpxEjXg7KskAyw5Zr2MMJQnetyEOntZjGIum6FS5aHYNFIs8VcTe8Ul6dsqi8K+h8b7E5khk+GSHeHRrI/HTy/DixZaMPByARBWGjTeLyLJzmRVK4jcYHqh2X+rzFtLOJIUuV/QxcfnvjQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siliconsignals.io; dmarc=pass action=none
- header.from=siliconsignals.io; dkim=pass header.d=siliconsignals.io; arc=none
-Received: from PN3P287MB1829.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:199::7)
- by MA0P287MB1834.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:d8::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.23; Sat, 26 Oct
- 2024 15:02:23 +0000
-Received: from PN3P287MB1829.INDP287.PROD.OUTLOOK.COM
- ([fe80::58ec:81a0:9454:689f]) by PN3P287MB1829.INDP287.PROD.OUTLOOK.COM
- ([fe80::58ec:81a0:9454:689f%5]) with mapi id 15.20.8093.014; Sat, 26 Oct 2024
- 15:02:23 +0000
-From: Tarang Raval <tarang.raval@siliconsignals.io>
-To: Krzysztof Kozlowski <krzk@kernel.org>, Himanshu Bhavani
-	<himanshu.bhavani@siliconsignals.io>
-CC: "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "robh@kernel.org"
-	<robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, "linux-gpio@vger.kernel.org"
-	<linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] dt-bindings: pinctrl: convert pinctrl-mcp23s08.txt to
- yaml format
-Thread-Topic: [PATCH v2] dt-bindings: pinctrl: convert pinctrl-mcp23s08.txt to
- yaml format
-Thread-Index: AQHbJhLcvG4Vz0BOQ0uMGPkY6V1e9LKY9kcAgAAOtQCAABTl3A==
-Date: Sat, 26 Oct 2024 15:02:23 +0000
-Message-ID:
- <PN3P287MB1829C2FCE4C56325CD1DC8988B482@PN3P287MB1829.INDP287.PROD.OUTLOOK.COM>
-References: <20241024124654.26775-1-himanshu.bhavani@siliconsignals.io>
- <usqmeunejf44l6wjw67ocv4idyxfpw5ivt5v4hqkputd7d7xsk@3ies2iwutzsz>
- <PN0P287MB20195CAFA249448F66D13B659A482@PN0P287MB2019.INDP287.PROD.OUTLOOK.COM>
-In-Reply-To:
- <PN0P287MB20195CAFA249448F66D13B659A482@PN0P287MB2019.INDP287.PROD.OUTLOOK.COM>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siliconsignals.io;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PN3P287MB1829:EE_|MA0P287MB1834:EE_
-x-ms-office365-filtering-correlation-id: 0c6ba55f-cfe4-4d0c-9305-08dcf5cf32ba
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|376014|366016|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- =?Windows-1252?Q?SKLNhEeG5ZKVcr3gSIgG0p+fGq8OjE6+G/8esmr07yfHJFOO0vymdUau?=
- =?Windows-1252?Q?lZx+KhqpaVYbz4/qFeFnyVGxYG5+tRcL2aVGXGCR+FmWjgpMVyAl0TAV?=
- =?Windows-1252?Q?QsaJ9cVdbLboDIap/C+2LSWx07qInPqoH2FWpd8a514kvWr6NovyZ43O?=
- =?Windows-1252?Q?CJggXdm5jS+VS3/YoiIWqSryxIgng2f6x/OxgguqXfK1NKwMizmm3/IU?=
- =?Windows-1252?Q?QoISmJzRnT8dt3OTDwgeZ7QYVgl82tZ6hUDmmYfaONK9xvF0J2Xt8D1L?=
- =?Windows-1252?Q?4aNKY5iLStK7CHJSRAiixxWXftotl7H9AgAXWTcgJ6w5Eqyvh/B21e99?=
- =?Windows-1252?Q?Z+LakHZElyhcfKkNDlO4D2mMx1PUV2x/gwVeQ/IgJGAsw3FlDjqpiWdC?=
- =?Windows-1252?Q?szp7DWb9V6oYBERuHQR8ikRFHgx2149svo6fTprrMyRjIwgizTAy/ZTv?=
- =?Windows-1252?Q?xZAnRLqbG6RghrmpMEvFEy1m6Fkx82ahPRIgFabXYcNsqwxoxfdogA7b?=
- =?Windows-1252?Q?plqdOobsB0RZqzovxgli90vKrQ8MeH05gNNZwQJx5NtuuuTEwBtFORit?=
- =?Windows-1252?Q?6PMgll1WSoyKRctzYh/zBo5oK0lhccpwYy3V+GeLGCIBP1ZtpW9wQpEP?=
- =?Windows-1252?Q?lGaQRLr5gqaSyvZX1JWx2BCrjvPZ+pa3bPkFS0B9xmiGEUYcIWHYwg7N?=
- =?Windows-1252?Q?NDZTDEk4zDbyc9j76ApBoSdHfNxT0Icfo0ZFpZeH4a6skzm1dZasxubX?=
- =?Windows-1252?Q?PwEZ9OJJPNMyzSBC+FVZW217wKja54fc8JnBjMGe3/ZP8RY9QGh3jk38?=
- =?Windows-1252?Q?QkRtmyARaMEIOrAxNFIdE8SqvzwDb9OtCra43SzGyWQ6JdUorzqalNs0?=
- =?Windows-1252?Q?T8a+8MlRk2xdMTvCesTuzsqZ/s/BUg749VQBmgZNR9sWR2OGC9ZMJOfy?=
- =?Windows-1252?Q?3KV31hrqiz17YGbbYlXo4LUPh09psyOST13JbQTpVKHgSVlMIycrxO7j?=
- =?Windows-1252?Q?PepDLk6XWtZOcFSnBmAf/Ntm4KJHJmrN4QDoXISGXnNK1WXNHcIdYDSt?=
- =?Windows-1252?Q?iskIKIYMPqMJkG9jH7oYZE3e8h8nEXta2DTUQtu7MPpy409CG588Jwx9?=
- =?Windows-1252?Q?EGzbHN0ZzRb3GndIiduFtGPFrMFxu5hyIDaVpYnguyPTPBTkl6fE0CRt?=
- =?Windows-1252?Q?5jb2JzJpsslmGXlUX0wItKdaEbod6lDBLungEzklilnoP4tehestDpkO?=
- =?Windows-1252?Q?hLDyMqOYh27Ilmt0q9WxOL5lShVB0QFwGSwS0tM1XByFgFoQBG5Uf3X4?=
- =?Windows-1252?Q?1QGRyEkoWgzIFquybNzYh0xXKvQzzCNac0W3ClDzjfpTvRVY6uwe/vn5?=
- =?Windows-1252?Q?y8L0f4NMpOuIDne+pPm9S07KCN+RUk3CyZEFXW+4kVoKtuTeFviu9FoW?=
- =?Windows-1252?Q?8NXfJogDX1441Ea8wiNZyYYVJmr504SCaJYz3gd3mj4=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PN3P287MB1829.INDP287.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?Windows-1252?Q?6xS6ILVIZgmcpoeXnAHQ3pqwOp/8EL3OVShn/A8CqXQAf5DBITs4/Fac?=
- =?Windows-1252?Q?50gTj2SWFev1M2bEjq5zd7i9603hmE3C2FZUmDU31oDn6o3MMnFcEWkN?=
- =?Windows-1252?Q?UTcrHKN2Q8ocDlQjEImi3Q9Hs9C9nUSKrtvFZwVLTRAXlGWTGPgyG2iW?=
- =?Windows-1252?Q?RyiXJAqxKY2qpPMyzXkpPNceKQJdURlxiskkYjaD7qBMkhRoVyDjlj0C?=
- =?Windows-1252?Q?0gm+GfbV8yGenSa8dgQxT++RSO6gob7cgyN9q9+IzR9RjSqRc3kdf6f3?=
- =?Windows-1252?Q?2t5XYzzQBEEL9F7Vzpy5FyJ7oXVUA8CawNe22nh/Z/Qsd013f928SQ2o?=
- =?Windows-1252?Q?lqL7vVjsmAeOtbKFM+zUpqd8yeS9H0osi1E4F8dVedWwjmiCTK40TI4L?=
- =?Windows-1252?Q?+Xiyj1tQ+BP3v22rx8awe6HnOOrRDWp55CKF2eeFe2ElaD8MkvmtqT1n?=
- =?Windows-1252?Q?9t0NmVn+oR9d06zsm2cdUnn8N8JayyRI8NUYuhLNwi6HqVAVVCnhTuqu?=
- =?Windows-1252?Q?X4/qMU5bP3fzgUcQzmvSZ0ZAO/hU0z5uVdZFjZBGYTDETs1sYxWOpW0c?=
- =?Windows-1252?Q?m9Ptr0lB2ldQoyyzeieknf+guarK5RomJfGPnbCh87im0Bqbc0kiqE8V?=
- =?Windows-1252?Q?7U0Nf7rueXKNRZW5UQ5U61Cx+DIjj0xqpz7hkchj3KPNNQ2b/ozsKjns?=
- =?Windows-1252?Q?E6dfhCuROeLTTDsZ+RVhubeDIi94tke6LXQQK4Lr+OKAO7bW7lpQjSzz?=
- =?Windows-1252?Q?31cjNWx20U4Lz1V9kLYCcZl/pbvieYIaO33EvLqKu9J3U7qoxnfYE2xy?=
- =?Windows-1252?Q?vfJ3VJOqLWHcqZeFjyWwzZVkKQwJ4eSOqXpuFd7nDEIzyDyHX/BGGVmA?=
- =?Windows-1252?Q?we/kjUA0qmn1ZJVWJjXf6AsqwY2c7Hh+K4G7A+1W9QgYb+S/bod6sclF?=
- =?Windows-1252?Q?RhoHrhW4UOSjmjZtpBNiStPeTYPnblKs31gER5M9z4P/EOkP1SeKDYIO?=
- =?Windows-1252?Q?dmVOYNxY6P/xn/zsm7pHykmWmLlLUX/gXOZJqf4U0Em2BlO6MAGptqUZ?=
- =?Windows-1252?Q?Dvv7j64+BX33Jy3Vp07ZYz9L35/1yxxehMHEEv6zQ4+k+Scw6UfShnVS?=
- =?Windows-1252?Q?bH6HVDT1EOsuVOKW2hzzdo3kUnOYrLychxx1OWlIJ0zsIJ4nxMQRn1xV?=
- =?Windows-1252?Q?stBP3yqFxH5wSvZX8WxkDttJ2w2JQ/gyjgY/cUUVpttN0rV/cvbfQ0Fe?=
- =?Windows-1252?Q?51iMdmHuyKSDMW1xDiOk6mV0+FQOvBnj0JT60fNiCK43p0XrMiQOy24X?=
- =?Windows-1252?Q?icVnm8/gE4LESbqi2Vl151sZebuyN/TLIxEUDDaHTIcuAgj+k/ZLW44b?=
- =?Windows-1252?Q?I4/PlvlV4YQ1+Jtt12NPGaoFnJLko3YbrOljJ4L/dA7sSPcRNugKT8Se?=
- =?Windows-1252?Q?EGxFL9WpCCvBDzeKE2MfnZvTilXmWU7Gq7ODdC3aXw22z/aCYqf4DSHO?=
- =?Windows-1252?Q?hTKH1QBBxK0Cp3wNwOI/YKtA2EDQO/mh3kZhfapSwMqcS+DRwZfPl7LW?=
- =?Windows-1252?Q?91F5jGRsA2HuVI+rOYFcPx9sklbKs5Xa8sc4VcRnHgE2+U41xgvROiAy?=
- =?Windows-1252?Q?AaK3vEpkjhBYRjjstJUBbPnzQJb7RksqO9RSgCVn5g49V9lLbPdwZE5C?=
- =?Windows-1252?Q?Jw0xfpJnxHaxpqu3DybMPkahxG6t4DMBBfM1oONNlEyuvBZSHSgD3Q?=
- =?Windows-1252?Q?=3D=3D?=
-Content-Type: text/plain; charset="Windows-1252"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BD35125A9
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 15:05:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.252.153.6
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729955131; cv=none; b=ABcy9stJhwpKw5ZmtQ3cQrGi1pfPkjpXodQWQ9yffCTpMhjt3+T/GhSRh0HrY5HgOiJ/wYfalPzKo4sEZQLIVnEbhBGweyNCm7I5gYMkTVhffj5+zW2ompazfOZOx3pLcVE6RrzB5NdTKfDFEhBoQn6ESROq3lWEr41ZBUzO//o=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729955131; c=relaxed/simple;
+	bh=IypF3NOPiKhQ1YuxtYCPA4MMD41cNf0A1OJufEY4B2Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dG/fioUonpUntWs9nJbl3jxmhOY+ZO2AaqVrcP65j0gvWf5eQKCM3eqsNvvOiEBg+DUrnjkdzOsKWxO/H5C+bXfDdBpSSPsxq4hN2zj59K22G+uggPj6+HFDV6AyWV1wX7y49QXcCx9f6oUXEpnMyBI3MrAL0nYEuP+QopNgU/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riseup.net; spf=pass smtp.mailfrom=riseup.net; dkim=pass (1024-bit key) header.d=riseup.net header.i=@riseup.net header.b=j1pZB425; arc=none smtp.client-ip=198.252.153.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riseup.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riseup.net
+Received: from fews02-sea.riseup.net (fews02-sea-pn.riseup.net [10.0.1.112])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx0.riseup.net (Postfix) with ESMTPS id 4XbNHp1cTCz9vwF;
+	Sat, 26 Oct 2024 15:05:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=riseup.net; s=squak;
+	t=1729955126; bh=IypF3NOPiKhQ1YuxtYCPA4MMD41cNf0A1OJufEY4B2Y=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=j1pZB425CfSQM7+IWNctiJP4gTyXK89Ngopp9EuPoFiMSS54ASnQqTJ6rDebsiLuc
+	 OQRj5f5o9DYGYv4O5injV1Cbh4gJqGEWkI34z2hJpNq8I9cIHVOrJ+PUzhPjJ66XXj
+	 +ihl26VNmyebiu105KWkyTy/8xhSvX0hw7/bopZY=
+X-Riseup-User-ID: B06695D6E0EC1F560E2AC7B8C8A38E197645929805C9F4A71653C6F3CBA49945
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+	 by fews02-sea.riseup.net (Postfix) with ESMTPSA id 4XbNHT4D42zFv6B;
+	Sat, 26 Oct 2024 15:05:09 +0000 (UTC)
+Message-ID: <107a8f2b-9bdc-435c-a6f0-c427a4b79579@riseup.net>
+Date: Sat, 26 Oct 2024 12:05:06 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: siliconsignals.io
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PN3P287MB1829.INDP287.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0c6ba55f-cfe4-4d0c-9305-08dcf5cf32ba
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Oct 2024 15:02:23.7723
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 7ec5089e-a433-4bd1-a638-82ee62e21d37
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: qWIH0sWwof/mLpRZvDofuXRKOBeV3Mm0KyWHWoul+0SK+l2Sn1R7OsAR7TgxCJxbNgH2NiPoWSiAlddZD8LZkfE+lhkRIi99clS8FlBWfcA=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MA0P287MB1834
+Subject: Re: [PATCH v2 1/3] drm/vkms: Re-introduce line-by-line algorithm for
+ writeback
+To: Louis Chauvet <louis.chauvet@bootlin.com>,
+ Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
+ Melissa Wen <melissa.srw@gmail.com>,
+ Haneen Mohammed <hamohammed.sa@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, arthurgrillo@riseup.net,
+ linux-kernel@vger.kernel.org, jeremie.dautheribes@bootlin.com,
+ miquel.raynal@bootlin.com, thomas.petazzoni@bootlin.com,
+ seanpaul@google.com, nicolejadeyee@google.com
+References: <20240814-writeback_line_by_line-v2-0-36541c717569@bootlin.com>
+ <20240814-writeback_line_by_line-v2-1-36541c717569@bootlin.com>
+Content-Language: en-US
+From: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mairacanal@riseup.net>
+In-Reply-To: <20240814-writeback_line_by_line-v2-1-36541c717569@bootlin.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Krzysztof , Himanshu=0A=
-=0A=
->>> +=0A=
->>> +=A0=A0=A0 i2c {=0A=
->>=0A=
->>Keep one complete example for i2c and one for spi. This was not in=0A=
->>previous patch and change log does not explain why you need three=0A=
->>examples.=0A=
->=0A=
->Okay, I will drop one example of I2C=0A=
-=0A=
-In ex1: use when you only need basic GPIO and interrupt capabilities =0A=
-without additional pin control and in ex2: use when you need pull-up =0A=
-resistors on specific GPIO pins or a reset line.=0A=
-=0A=
-Original bindings state that this node can be implemented in two =0A=
-different ways, so we should maintain both examples for reference.=0A=
-=0A=
-But it's up to you, I trust your expertise on this, Krzysztof=0A=
-=0A=
->>> +=A0=A0=A0=A0=A0=A0=A0 #address-cells =3D <1>;=0A=
->>> +=A0=A0=A0=A0=A0=A0=A0 #size-cells =3D <0>;=0A=
->>> +=0A=
->>> +=A0=A0=A0=A0=A0=A0=A0 mcp23017: gpio@21 {=0A=
->>=0A=
->>Drop unused label=0A=
->=A0=0A=
->May I know how its unused, AFAIK, Since it's an I/O expanded, it=92s refer=
-enced elsewhere, so keeping it is necessary for >functionality.=0A=
-=0A=
-I agree with Himanshu. =0A=
-It's definitely used for reset GPIOs, LED pins, or something similar.=0A=
-=0A=
-Best Regards,=0A=
-Tarang=
+Hi Louis,
+
+On 14/08/24 05:42, Louis Chauvet wrote:
+> Re-introduce a line-by-line writeback algorithm for each pixel format.
+> This allows more performance by not requiring an indirection per pixel
+> write.
+> 
+> Line-by-line writeback was introduced by [1] but rewritten back to
+> pixel-by-pixel algorithm in [2]. At this time, nobody noticed the impact
+> on performance, and it was merged.
+> 
+> This patch is almost a revert of [2], but with some effort to avoid code
+> duplication. Now only the loop is repeated, but it is required to have
+> good performances.
+> 
+> The performance gain is around 5 to 10%.
+> 
+> [1]: https://lore.kernel.org/all/20211005201637.58563-7-igormtorrente@gmail.com/
+> [2]: https://lore.kernel.org/all/20230515135204.115393-4-mcanal@igalia.com/
+> 
+> Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+> ---
+>   drivers/gpu/drm/vkms/vkms_composer.c  |  17 +++++
+>   drivers/gpu/drm/vkms/vkms_drv.h       |  20 +++---
+>   drivers/gpu/drm/vkms/vkms_formats.c   | 117 +++++++++++++++++++++++++++-------
+>   drivers/gpu/drm/vkms/vkms_formats.h   |   2 +-
+>   drivers/gpu/drm/vkms/vkms_writeback.c |   2 +-
+>   5 files changed, 124 insertions(+), 34 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/vkms/vkms_composer.c b/drivers/gpu/drm/vkms/vkms_composer.c
+> index 76d4aa8a0ef6..f0cae142ac22 100644
+> --- a/drivers/gpu/drm/vkms/vkms_composer.c
+> +++ b/drivers/gpu/drm/vkms/vkms_composer.c
+> @@ -176,6 +176,23 @@ static enum pixel_read_direction direction_for_rotation(unsigned int rotation)
+>   	return READ_LEFT_TO_RIGHT;
+>   }
+>   
+> +/**
+> + * Write a line to the writeback buffer > + *
+> + * @wb: Job where to insert the final image
+> + * @src_buffer: Line to write
+> + * @y: Row to write in the writeback buffer
+> + */
+
+Please, review the documentation using the kernel-doc format.
+
+> +static void vkms_writeback_row(struct vkms_writeback_job *wb,
+> +			       const struct line_buffer *src_buffer, size_t y_start)
+> +{
+> +	struct vkms_frame_info *frame_info = &wb->wb_frame_info;
+> +	int x_start = frame_info->dst.x1;
+> +	int count = min_t(size_t, drm_rect_width(&frame_info->dst), src_buffer->n_pixels);
+> +
+> +	wb->pixel_write(wb, src_buffer->pixels, count, x_start, y_start);
+> +}
+> +
+>   /**
+>    * clamp_line_coordinates() - Compute and clamp the coordinate to read and write during the blend
+>    * process.
+> diff --git a/drivers/gpu/drm/vkms/vkms_drv.h b/drivers/gpu/drm/vkms/vkms_drv.h
+> index 3870e825da81..526bf5207524 100644
+> --- a/drivers/gpu/drm/vkms/vkms_drv.h
+> +++ b/drivers/gpu/drm/vkms/vkms_drv.h
+> @@ -52,20 +52,25 @@ struct line_buffer {
+>   	struct pixel_argb_u16 *pixels;
+>   };
+>   
+> +struct vkms_writeback_job;
+>   /**
+> - * typedef pixel_write_t - These functions are used to read a pixel from a
+> - * &struct pixel_argb_u16, convert it in a specific format and write it in the @dst_pixels
+> - * buffer.
+> + * typedef pixel_write_line_t - These functions are used to read a pixel line from a
+> + * struct pixel_argb_u16 buffer, convert it and write it in the @wb job.
+>    *
+> - * @out_pixel: destination address to write the pixel
+> - * @in_pixel: pixel to write
+> + * @wb: the writeback job to write the output of the conversion
+> + * @in_pixels: Source buffer containing the line to convert
+> + * @count: The width of a line
+> + * @x_start: The x (width) coordinate in the destination plane
+> + * @y_start: The y (height) coordinate in the destination plane
+>    */
+> -typedef void (*pixel_write_t)(u8 *out_pixel, const struct pixel_argb_u16 *in_pixel);
+> +typedef void (*pixel_write_line_t)(struct vkms_writeback_job *wb,
+> +			      struct pixel_argb_u16 *in_pixels, int count, int x_start,
+> +			      int y_start);
+>   
+>   struct vkms_writeback_job {
+>   	struct iosys_map data[DRM_FORMAT_MAX_PLANES];
+>   	struct vkms_frame_info wb_frame_info;
+> -	pixel_write_t pixel_write;
+> +	pixel_write_line_t pixel_write;
+>   };
+>   
+>   /**
+> @@ -232,7 +237,6 @@ int vkms_verify_crc_source(struct drm_crtc *crtc, const char *source_name,
+>   /* Composer Support */
+>   void vkms_composer_worker(struct work_struct *work);
+>   void vkms_set_composer(struct vkms_output *out, bool enabled);
+> -void vkms_writeback_row(struct vkms_writeback_job *wb, const struct line_buffer *src_buffer, int y);
+>   
+>   /* Writeback */
+>   int vkms_enable_writeback_connector(struct vkms_device *vkmsdev);
+> diff --git a/drivers/gpu/drm/vkms/vkms_formats.c b/drivers/gpu/drm/vkms/vkms_formats.c
+> index d1abfb1c3e3c..d1309f6d307f 100644
+> --- a/drivers/gpu/drm/vkms/vkms_formats.c
+> +++ b/drivers/gpu/drm/vkms/vkms_formats.c
+> @@ -587,7 +587,7 @@ static void planar_yuv_read_line(const struct vkms_plane_state *plane, int x_sta
+>    * The following functions take one &struct pixel_argb_u16 and convert it to a specific format.
+>    * The result is stored in @out_pixel.
+>    *
+> - * They are used in vkms_writeback_row() to convert and store a pixel from the src_buffer to
+> + * They are used in the `write_line` functions to convert and store a pixel from the src_buffer to
+>    * the writeback buffer.
+>    */
+>   static void argb_u16_to_ARGB8888(u8 *out_pixel, const struct pixel_argb_u16 *in_pixel)
+> @@ -654,28 +654,97 @@ static void argb_u16_to_RGB565(u8 *out_pixel, const struct pixel_argb_u16 *in_pi
+>   	*pixel = cpu_to_le16(r << 11 | g << 5 | b);
+>   }
+>   
+> -/**
+> - * vkms_writeback_row() - Generic loop for all supported writeback format. It is executed just
+> - * after the blending to write a line in the writeback buffer.
+> +/*
+> + * The following functions are write_line function for each pixel format supported by VKMS.
+> + *
+> + * They write a full line at index y. They must read data from the line src_pixels.
+> + *
+> + * The caller must ensure that count is not larger than the framebuffer and the src_pixels.
+> + *
+> + * Those function are very similar, but it is required for performance reason. In the past, some
+> + * experiment were done, and with a generic loop the performance are very reduced [1].
+>    *
+> - * @wb: Job where to insert the final image
+> - * @src_buffer: Line to write
+> - * @y: Row to write in the writeback buffer
+> + * [1]: https://lore.kernel.org/dri-devel/d258c8dc-78e9-4509-9037-a98f7f33b3a3@riseup.net/
+
+I'm not sure if a link is approriate here.
+
+>    */
+> -void vkms_writeback_row(struct vkms_writeback_job *wb,
+> -			const struct line_buffer *src_buffer, int y)
+> +
+> +static void ARGB8888_write_line(struct vkms_writeback_job *wb,
+> +				struct pixel_argb_u16 *src_pixels, int count, int x_start,
+> +				int y_start)
+>   {
+> -	struct vkms_frame_info *frame_info = &wb->wb_frame_info;
+> -	int x_dst = frame_info->dst.x1;
+>   	u8 *dst_pixels;
+> -	int rem_x, rem_y;
+>   
+> -	packed_pixels_addr(frame_info, x_dst, y, 0, &dst_pixels, &rem_x, &rem_y);
+> -	struct pixel_argb_u16 *in_pixels = src_buffer->pixels;
+> -	int x_limit = min_t(size_t, drm_rect_width(&frame_info->dst), src_buffer->n_pixels);
+> +	packed_pixels_addr_1x1(&wb->wb_frame_info, x_start, y_start, 0, &dst_pixels);
+>   
+> -	for (size_t x = 0; x < x_limit; x++, dst_pixels += frame_info->fb->format->cpp[0])
+> -		wb->pixel_write(dst_pixels, &in_pixels[x]);
+> +	while (count) {
+> +		argb_u16_to_ARGB8888(dst_pixels, src_pixels);
+> +		dst_pixels += wb->wb_frame_info.fb->format->char_per_block[0];
+> +		src_pixels += 1;
+> +		count--;
+> +	}
+> +}
+> +
+> +static void XRGB8888_write_line(struct vkms_writeback_job *wb,
+> +				struct pixel_argb_u16 *src_pixels, int count, int x_start,
+> +				int y_start)
+> +{
+> +	u8 *dst_pixels;
+> +
+> +	packed_pixels_addr_1x1(&wb->wb_frame_info, x_start, y_start, 0, &dst_pixels);
+> +
+> +	while (count) {
+> +		argb_u16_to_XRGB8888(dst_pixels, src_pixels);
+> +		dst_pixels += wb->wb_frame_info.fb->format->char_per_block[0];
+> +		src_pixels += 1;
+> +		count--;
+> +	}
+> +}
+> +
+> +static void ARGB16161616_write_line(struct vkms_writeback_job *wb,
+> +				    struct pixel_argb_u16 *src_pixels, int count, int x_start,
+> +				    int y_start)
+> +{
+> +	u8 *dst_pixels;
+> +
+> +	packed_pixels_addr_1x1(&wb->wb_frame_info, x_start, y_start, 0, &dst_pixels);
+> +
+> +	while (count) {
+> +		argb_u16_to_ARGB16161616(dst_pixels, src_pixels);
+> +		dst_pixels += wb->wb_frame_info.fb->format->char_per_block[0];
+> +		src_pixels += 1;
+> +		count--;
+> +	}
+> +}
+> +
+> +static void XRGB16161616_write_line(struct vkms_writeback_job *wb,
+> +				    struct pixel_argb_u16 *src_pixels, int count, int x_start,
+> +				    int y_start)
+> +{
+> +	u8 *dst_pixels;
+> +
+> +	packed_pixels_addr_1x1(&wb->wb_frame_info, x_start, y_start, 0, &dst_pixels);
+> +
+> +	while (count) {
+> +		argb_u16_to_XRGB16161616(dst_pixels, src_pixels);
+> +		dst_pixels += wb->wb_frame_info.fb->format->char_per_block[0];
+> +		src_pixels += 1;
+> +		count--;
+> +	}
+> +}
+> +
+> +static void RGB565_write_line(struct vkms_writeback_job *wb,
+> +			      struct pixel_argb_u16 *src_pixels, int count, int x_start,
+> +			      int y_start)
+> +{
+> +	u8 *dst_pixels;
+> +
+> +	packed_pixels_addr_1x1(&wb->wb_frame_info, x_start, y_start, 0, &dst_pixels);
+> +
+> +	while (count) {
+> +		argb_u16_to_RGB565(dst_pixels, src_pixels);
+> +		dst_pixels += wb->wb_frame_info.fb->format->char_per_block[0];
+> +		src_pixels += 1;
+> +		count--;
+> +	}
+>   }
+>   
+>   /**
+> @@ -936,25 +1005,25 @@ void get_conversion_matrix_to_argb_u16(u32 format,
+>   }
+>   
+>   /**
+> - * get_pixel_write_function() - Retrieve the correct write_pixel function for a specific format.
+> + * get_pixel_write_function() - Retrieve the correct write_line function for a specific format.
+
+Correct the docs.
+
+Best Regards,
+- Maíra
+
+>    * The returned pointer is NULL for unsupported pixel formats. The caller must ensure that the
+>    * pointer is valid before using it in a vkms_writeback_job.
+>    *
+>    * @format: DRM_FORMAT_* value for which to obtain a conversion function (see [drm_fourcc.h])
+>    */
+> -pixel_write_t get_pixel_write_function(u32 format)
+> +pixel_write_line_t get_pixel_write_line_function(u32 format) >   {
+>   	switch (format) {
+>   	case DRM_FORMAT_ARGB8888:
+> -		return &argb_u16_to_ARGB8888;
+> +		return &ARGB8888_write_line;
+>   	case DRM_FORMAT_XRGB8888:
+> -		return &argb_u16_to_XRGB8888;
+> +		return &XRGB8888_write_line;
+>   	case DRM_FORMAT_ARGB16161616:
+> -		return &argb_u16_to_ARGB16161616;
+> +		return &ARGB16161616_write_line;
+>   	case DRM_FORMAT_XRGB16161616:
+> -		return &argb_u16_to_XRGB16161616;
+> +		return &XRGB16161616_write_line;
+>   	case DRM_FORMAT_RGB565:
+> -		return &argb_u16_to_RGB565;
+> +		return &RGB565_write_line;
+>   	default:
+>   		/*
+>   		 * This is a bug in vkms_writeback_atomic_check. All the supported
+> diff --git a/drivers/gpu/drm/vkms/vkms_formats.h b/drivers/gpu/drm/vkms/vkms_formats.h
+> index eeb208cdd6b1..852ab9a4cee5 100644
+> --- a/drivers/gpu/drm/vkms/vkms_formats.h
+> +++ b/drivers/gpu/drm/vkms/vkms_formats.h
+> @@ -7,7 +7,7 @@
+>   
+>   pixel_read_line_t get_pixel_read_line_function(u32 format);
+>   
+> -pixel_write_t get_pixel_write_function(u32 format);
+> +pixel_write_line_t get_pixel_write_line_function(u32 format);
+>   
+>   void get_conversion_matrix_to_argb_u16(u32 format, enum drm_color_encoding encoding,
+>   				       enum drm_color_range range,
+> diff --git a/drivers/gpu/drm/vkms/vkms_writeback.c b/drivers/gpu/drm/vkms/vkms_writeback.c
+> index c8582df1f739..f6ed3aa69af8 100644
+> --- a/drivers/gpu/drm/vkms/vkms_writeback.c
+> +++ b/drivers/gpu/drm/vkms/vkms_writeback.c
+> @@ -150,7 +150,7 @@ static void vkms_wb_atomic_commit(struct drm_connector *conn,
+>   	crtc_state->wb_pending = true;
+>   	spin_unlock_irq(&output->composer_lock);
+>   	drm_writeback_queue_job(wb_conn, connector_state);
+> -	active_wb->pixel_write = get_pixel_write_function(wb_format);
+> +	active_wb->pixel_write = get_pixel_write_line_function(wb_format);
+>   	drm_rect_init(&wb_frame_info->src, 0, 0, crtc_width, crtc_height);
+>   	drm_rect_init(&wb_frame_info->dst, 0, 0, crtc_width, crtc_height);
+>   }
+> 
 
