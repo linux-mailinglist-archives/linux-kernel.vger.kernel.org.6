@@ -1,118 +1,115 @@
-Return-Path: <linux-kernel+bounces-383177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D7BA9B1818
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 14:31:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24E569B181C
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 14:31:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E9941C21F73
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 12:31:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD86F283A6D
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 12:31:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE2E71D5178;
-	Sat, 26 Oct 2024 12:31:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C45CE1D6DB3;
+	Sat, 26 Oct 2024 12:31:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lUJk+S/M"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="i76+XeSt"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30B791E4B0;
-	Sat, 26 Oct 2024 12:31:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F2901D61A2;
+	Sat, 26 Oct 2024 12:31:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729945879; cv=none; b=qsbNfulHLO7+VGFEYZDFSdLtR4e18Od/yHPvlBU22f5J9kHmRBs6dhIv023VDMSwVggKgcESO0L19/uSoLMJBY0YSJ97XjSYgovNHpo2k4gq8Elp0Kn6XPF6Qf4c/RQNE9aPpp+0xcDjKteaCDB9l/guseZS3ij4z3uPkEg8NDo=
+	t=1729945883; cv=none; b=OBo6YRTmH3UMUf4xyh63jwUM8ChfwJK1Mi6PMhQtOyOoRWH/GOXRqvUKdqzZTXyi9m/Ka/p+NlkIl+kcQyszvCm7MkpcNX6qn3P7yCqEqW75tP6A+Ig21kHZ/G4vgBObTxrGGais85qFaxV76wU1qxHQLsgvG10jqkFdI4dJaA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729945879; c=relaxed/simple;
-	bh=R/H1PsXY01GRskZLD70K/F7ZGE40dFF0NFTDLydVC68=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eqBnWBr/B32UDTHp81xSRI1t6bAGO53sEPMBn8SJLoHm/NltT29CcWT1UFlAiPrZEI/GmywSUfTYoXZyRNc0tgh6B4dCsUqFgbN4tjKUbWIf7v1Qp0hhqWJHLfGCKCO5rffiM2YaT6C2uEUzu3FuwZjOJurMfm8h7PY3Xnr9jT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lUJk+S/M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 964B1C4CEC6;
-	Sat, 26 Oct 2024 12:30:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729945879;
-	bh=R/H1PsXY01GRskZLD70K/F7ZGE40dFF0NFTDLydVC68=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=lUJk+S/MQmFzr4RKHIxhUiy2zUnLAqzIEuKoF4/RJ1b6grii7PG0WGE0zSq56hwXz
-	 bWZO93/MhN9t4cymKBLENf365sT7y+crOFNauUI5/RvZ3zaOv7kt5bcPrMwphM1Pw8
-	 amChXnPLlCREf8Gn5pnVGKp7lsB5xQZr6JDdOJQ2fEdjoocIN92Gqff0Bwznd49FIY
-	 69LG+TEsmW4gnqlk6xBMe+DvUZapZFvbil1wxVhwR7RrGECOGpNnnqj3SuXEakYgDB
-	 bZvuR5tsKw6XrN+EsFA0ekPrkTsn+jMQMjRU+7inIPiCc4odTMEFBnRjomwwpsRkF6
-	 NsgwNdAKhGcug==
-Date: Sat, 26 Oct 2024 13:30:39 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Julien Stephan <jstephan@baylibre.com>
-Cc: Mudit Sharma <muditsharma.info@gmail.com>, Lars-Peter Clausen
- <lars@metafoo.de>, Anshul Dalal <anshulusr@gmail.com>, Javier Carrasco
- <javier.carrasco.cruz@gmail.com>, Jean-Baptiste Maneyrol
- <jean-baptiste.maneyrol@tdk.com>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Cosmin Tanislav
- <cosmin.tanislav@analog.com>, Ramona Gradinariu
- <ramona.gradinariu@analog.com>, Antoniu Miclaus
- <antoniu.miclaus@analog.com>, Dan Robertson <dan@dlrobertson.com>, Marcelo
- Schmitt <marcelo.schmitt@analog.com>, Matteo Martelli
- <matteomartelli3@gmail.com>, Anand Ashok Dumbre
- <anand.ashok.dumbre@xilinx.com>, Michal Simek <michal.simek@amd.com>,
- Mariel Tinaco <Mariel.Tinaco@analog.com>, Jagath Jog J
- <jagathjog1996@gmail.com>, Lorenzo Bianconi <lorenzo@kernel.org>, Subhajit
- Ghosh <subhajit.ghosh@tweaklogic.com>, Kevin Tsai <ktsai@capellamicro.com>,
- Linus Walleij <linus.walleij@linaro.org>, Benson Leung
- <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, chrome-platform@lists.linux.dev
-Subject: Re: [PATCH 6/7] iio: light: stk3310: simplify code in
- write_event_config callback
-Message-ID: <20241026133039.10742c75@jic23-huawei>
-In-Reply-To: <20241024-iio-fix-write-event-config-signature-v1-6-7d29e5a31b00@baylibre.com>
-References: <20241024-iio-fix-write-event-config-signature-v1-0-7d29e5a31b00@baylibre.com>
-	<20241024-iio-fix-write-event-config-signature-v1-6-7d29e5a31b00@baylibre.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1729945883; c=relaxed/simple;
+	bh=S7HLmAAu8p0XUqTIKqRpICjoCy4W3zPLaoniMAtpTSU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BHeSiA0nD7exl4gqx70GjuVXc3nfQ1Sa84KDsuOcATCSIFf+hARPXXjt4cVIn2arP4Ip86sJdtExPoKUqeQWHTaYerA/giYsfeSyT6wCAp67iro2rOJ4reMVPtBQ9H4msL15eTnJ7dkPYXl2XOf+Cc1MwXN90+vBgdP5uaNwGkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=i76+XeSt; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49Q4Fp8w029417;
+	Sat, 26 Oct 2024 12:31:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=otm6w+EPp6iLl+M3Oq4s0e
+	Od2RpRt4rcgDL94HhHkpI=; b=i76+XeSt9h37qp7SfvGz86QzJww4EW2VS3+MXw
+	8FMRsT7woGfYE8Cfq/cnOLstD8ZNASso2P+EqEtP491pFVlNimwnFllaToLbTJ/a
+	SH2pl724LreSDYEVrTpjYkY/j63yWIUfi5jh233QwicYBcpKxU/NL70/ZlPkxwjb
+	hmFmavMEnj0LoPjQxANRqKrvgoDDYThYApBffQTlPn7wTct03s0dAqmt9/HEXA3I
+	1owkZ3BtIDBEyyBufDBOeVknvtUXrW1nzRRYHhYbp5JuCq5MmM5aaKUuJkyj1XhL
+	MVtxuw59AzCdv23M6pZGIM+gnhHrq1Ewd3+TWRT6ctph7lJQ==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42gqe5ryf2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 26 Oct 2024 12:31:17 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49QCVG7c001318
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 26 Oct 2024 12:31:16 GMT
+Received: from 55f3af46090c.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Sat, 26 Oct 2024 05:31:12 -0700
+From: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
+To: Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>
+CC: Sibi Sankar <quic_sibis@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH V2 0/3] Add EPSS L3 provider support on SA8775P SoC
+Date: Sat, 26 Oct 2024 12:30:55 +0000
+Message-ID: <20241026123058.28258-1-quic_rlaggysh@quicinc.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 6wZNPTUNQIUiXPlQHaWDasBTKJHEQbyL
+X-Proofpoint-ORIG-GUID: 6wZNPTUNQIUiXPlQHaWDasBTKJHEQbyL
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 spamscore=0
+ phishscore=0 bulkscore=0 mlxlogscore=999 malwarescore=0 adultscore=0
+ priorityscore=1501 impostorscore=0 mlxscore=0 clxscore=1015
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410260106
 
-On Thu, 24 Oct 2024 11:11:28 +0200
-Julien Stephan <jstephan@baylibre.com> wrote:
+Add Epoch Subsystem (EPSS) L3 provider support on SA8775P SoCs.
 
-> iio_ev_state_store is actually using kstrtobool to check user
-> input, then gives the converted boolean value to the write_event_config
-> callback.
-> 
-> Remove useless code in write_event_config callback.
-> 
-> Signed-off-by: Julien Stephan <jstephan@baylibre.com>
-This one is odd.  The field is 1 bit so I've no idea why checking against 7
-would ever have made sense.
+Changes since v1:
+ - Avoided the usage of static IDs and implemented dynamic ID assignment
+   for icc nodes using IDA.
+ - Withdrew separate compatibles for cluster0 and cluster1.
+ - Added new generic compatible "qcom,epss-l3-perf" which can be
+   used as fallback for all chipsets which support perf voting.
 
-Applied, but if anyone is familiar with this part I would like more
-eyes on that code to see if there is a bug hiding there.
+Raviteja Laggyshetty (3):
+  dt-bindings: interconnect: Add EPSS L3 compatible for SA8775P
+  arm64: dts: qcom: sa8775p: add EPSS l3 interconnect provider
+  interconnect: qcom: Add EPSS L3 support on SA8775P
 
-Jonathan
+ .../bindings/interconnect/qcom,osm-l3.yaml    |  4 +
+ arch/arm64/boot/dts/qcom/sa8775p.dtsi         | 19 ++++
+ drivers/interconnect/qcom/osm-l3.c            | 86 ++++++++++++++-----
+ 3 files changed, 87 insertions(+), 22 deletions(-)
 
-> ---
->  drivers/iio/light/stk3310.c | 3 ---
->  1 file changed, 3 deletions(-)
-> 
-> diff --git a/drivers/iio/light/stk3310.c b/drivers/iio/light/stk3310.c
-> index ed20b67145463d253a0dff28a4c1c3e02e710319..c6f950af5afa0f77a617bd2baf0a08eef5ec26f0 100644
-> --- a/drivers/iio/light/stk3310.c
-> +++ b/drivers/iio/light/stk3310.c
-> @@ -330,9 +330,6 @@ static int stk3310_write_event_config(struct iio_dev *indio_dev,
->  	struct stk3310_data *data = iio_priv(indio_dev);
->  	struct i2c_client *client = data->client;
->  
-> -	if (state < 0 || state > 7)
-> -		return -EINVAL;
-> -
->  	/* Set INT_PS value */
->  	mutex_lock(&data->lock);
->  	ret = regmap_field_write(data->reg_int_ps, state);
-> 
+-- 
+2.39.2
 
 
