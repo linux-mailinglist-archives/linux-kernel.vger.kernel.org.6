@@ -1,258 +1,218 @@
-Return-Path: <linux-kernel+bounces-383358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58AA19B1A8F
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 21:16:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88FE39B1A93
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 21:25:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 120E5282644
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 19:16:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B6411F21B7A
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 19:25:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0027417DFEF;
-	Sat, 26 Oct 2024 19:16:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W4Z2vMcE"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78CB21D61AC;
+	Sat, 26 Oct 2024 19:25:40 +0000 (UTC)
+Received: from IND01-BMX-obe.outbound.protection.outlook.com (mail-bmxind01on2122.outbound.protection.outlook.com [40.107.239.122])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39C032F36;
-	Sat, 26 Oct 2024 19:16:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729970194; cv=none; b=JI0hFmtVZkkob7dErsKwrRVbsTwoRo/seqjR88pFLNPf5uHNawM6b1CsECeHuQklqMsWpMm4EDdJqih/CmqmtSdgKR0aUuDoJC70LJtqp0sdfrK9JbXGYNisb2VouNZRPcrhk9iPllw5LdZvYXEaNHgc4b5AoL/IfaWazdwtd7o=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729970194; c=relaxed/simple;
-	bh=5mJgG8FZELFrxdEtu73Y69omdia1hdCOMqZtpQA29lU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Ct2h0vsM9BImeoRlh4LDezo3ni/Z8LSj0JEEnmZ+hwrRkP0CJ7KfHRqt25eXZkOQZ6R/nViOXr7kWTPGj8rSd1oD6P3OoOoopJWLlsnZn4NWRSYohJXKpeQG8Xqk7hEr4SbQAKXp3pQDsKMCWJ8z4ThcYM1F88HX5C7bbbyRXS4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W4Z2vMcE; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2e2e88cb0bbso2336637a91.3;
-        Sat, 26 Oct 2024 12:16:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729970191; x=1730574991; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=YpvaN5KPcpwOwyPkqoJSqwKRhVGT/3QKcsfz4Jmu9NM=;
-        b=W4Z2vMcENqTmn5foO3Us3AlgHQAIh4tT14x0IHM+ELoUNXGUMkx0giOUx/wnOo/zV1
-         p6XkoQzytNigT+Vf+L+amxu1vffHuooS0P2wQoHy12Mk8XbrBNm6zDcYaGvm9jGQzw+C
-         hbkwzc/djo3qevE595PUuJTy212kQfYBTTA+B/0exrOsUF+S+0j9voHf45QvSUdGwi4D
-         xLWDNE6TIOs3QPTkt//dtDsjhowZ9pamayAlyyfh9bJyKqFtXSsfpC1ca//ekDFdzSDG
-         4uO5rbCKTm3U/DSrBijpsf+OrBP2VjHRkwigkc38OKO307g0pzZCL3l7gbaudlVSDTgZ
-         GXbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729970191; x=1730574991;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YpvaN5KPcpwOwyPkqoJSqwKRhVGT/3QKcsfz4Jmu9NM=;
-        b=fBuauL/JW1hA2IaoIWkaX9jSJqXwSZA6JA3HG0uonRc/RmsWRbZFiwXEbf8rZEa7wd
-         BvgB2D5LRy9hln/iWEQDvOJyjnN/EW135HZQD3mH6ch0PutDKaWUNIutWqAj3BsjGgtl
-         W+84yJQ52KMIQF8a+ILx8b36pKx9OihLfPnefy5xTa6N/OUy2FF7tJjSRcyHCTzBnBgm
-         0uU9sbE6a3SS7ruGED0GGC0mLsXEQwynBp6+gfw7G58QFRxGLJixu8MWfBQUror7md4T
-         C4bbJ7E5C2roF+LSX8awwEsYzS5zzE0cKpQaEwpeUsYYB3r/tM1eFORsZXOiLO8fZto+
-         S0Hw==
-X-Forwarded-Encrypted: i=1; AJvYcCXdQHLxQoHxQBoFRSU3LPNq6IwjFJ8q/DJhvc8VNV3kn97oMf7Ms4l6rxDutjCXvcaj+09/LHQR71Eisis=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzF1Td/SrMLDVz94pqDXFjagf8MY+75Pof/pr3EGD12AY7AYKkK
-	c51t4vUUhP8MbRAQh8kbo8gh5wNklJqte4+A1sYCysJJap+KkZXs
-X-Google-Smtp-Source: AGHT+IGVk6qNtK2x37b+RYV876g9E0RDjd+xb/Uw69AsHLaeZc4+Y8g6H8yPuy7qm/tr+fNpO0WxlQ==
-X-Received: by 2002:a17:90a:c70e:b0:2e5:5ab5:ba4b with SMTP id 98e67ed59e1d1-2e8f107b5b4mr4383666a91.22.1729970191290;
-        Sat, 26 Oct 2024 12:16:31 -0700 (PDT)
-Received: from 2abb50c-lcedt.nvidia.com ([203.200.25.7])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e8e3572e69sm3880915a91.16.2024.10.26.12.16.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 26 Oct 2024 12:16:31 -0700 (PDT)
-From: Shivam Chaudhary <cvam0000@gmail.com>
-To: shuah@kernel.org
-Cc: linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Shivam Chaudhary <cvam0000@gmail.com>
-Subject: [PATCH v2] selftests: tmpfs: Add kselftest support to tmpfs
-Date: Sun, 27 Oct 2024 00:46:21 +0530
-Message-Id: <20241026191621.2860376-1-cvam0000@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC386BE4E;
+	Sat, 26 Oct 2024 19:25:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.239.122
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729970739; cv=fail; b=gbIkSZ7bgOajzSpLL7+Jj84PDIQu36d8SZsgbPNY4wINxbQPtfhoJt4Z32ktZKdb3mxgj9Dq5n9PxmZzLX0NQ536WUgWmUAwWmdrdZvrtTBzeBHR0W+zbNZmmkqI9FR4f9KVocu8CyU5Kyx2BpsXWPt5CUkIlWncEzvb/pQkNOg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729970739; c=relaxed/simple;
+	bh=869h5b2Yhom3WSyx0wY94cPsJl4Tlj0yAZ41PCXrUPs=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=V+nmrOCmAxXyWAz/xCSAyiFmfE4F5ow6rzPI696OhNCR9nDMF3IUrJWB5MnEenYIU70X9C/F0Y/ioSp4zjOP78m7owWefbUNkQsgp6OnIIfwGGqej1Mc3A6CAR6oXrdUNb8WJbHj7bTZQEpR5cIwPtLewb7st7+MKsUJySmOG+I=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siliconsignals.io; spf=pass smtp.mailfrom=siliconsignals.io; arc=fail smtp.client-ip=40.107.239.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siliconsignals.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=siliconsignals.io
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=gGhBINTOW6E/bZgI9GMXwzJARgnBiQbEdmvg18Q6gRjunuDrDPaWpId8QSUpffBxglq6LCxcvB82cNCvh6+iKCfNmy6/G+MR3aF7uoxudNYlFo2YkGnc3U1eZjQ+EeEX8q05GFbtMsd5gvR/k4clUFnb09NVFFP5nJzGXFqoJ0NAFvW8qAOUKYkUB+0BO4TMorq6LlzbfPkOBxKfHDC+07ED7R7DlyPdQC8wFDCHqTHWt1Yd9GmAwJZIMIQlGM3fA54YLoM4vrWXUbL+LTBeCtyJzoM+Ih4zYkyq7kER3biBkimo5zKIeAeR+JbiHWU263snmybll7kJu99cF9BZIw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=869h5b2Yhom3WSyx0wY94cPsJl4Tlj0yAZ41PCXrUPs=;
+ b=W2zo73/rEGOwoZgtZlQHRY3HXqOG1GGAegi/RDS/hIXIh1/U3dpo9bTj7gKl0tTPxIA+VHae8I7DUixrE2BCTwzX03HPtXFW/fvlq5ZudPvJygoz9ycZRvfYXlO4XBubG38OUJwnS47L2nLy7YLoKUiBDMbLCJlH3q5OFsF5UBJgW4tXKv2GYqXbRisWXvtJyxhBSLxnW5wPXnaQ8olwG+5Wm6jd8b2pNFkDx4uFdzaPfC3hZpgPhzt1N3oiJ2Qmh3B3DzGd6Kgq0I8sWwF3rSKHEUKnNBB2a4PsLKJquzGJII/1BFLr+vBKq/rfUZ+/MvEvN8/6RHd8fHyIVMzLfQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=siliconsignals.io; dmarc=pass action=none
+ header.from=siliconsignals.io; dkim=pass header.d=siliconsignals.io; arc=none
+Received: from PN3P287MB1829.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:199::7)
+ by MAYP287MB3597.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:149::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.25; Sat, 26 Oct
+ 2024 19:25:32 +0000
+Received: from PN3P287MB1829.INDP287.PROD.OUTLOOK.COM
+ ([fe80::58ec:81a0:9454:689f]) by PN3P287MB1829.INDP287.PROD.OUTLOOK.COM
+ ([fe80::58ec:81a0:9454:689f%5]) with mapi id 15.20.8093.014; Sat, 26 Oct 2024
+ 19:25:32 +0000
+From: Tarang Raval <tarang.raval@siliconsignals.io>
+To: Krzysztof Kozlowski <krzk@kernel.org>, Himanshu Bhavani
+	<himanshu.bhavani@siliconsignals.io>
+CC: "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "robh@kernel.org"
+	<robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, "linux-gpio@vger.kernel.org"
+	<linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] dt-bindings: pinctrl: convert pinctrl-mcp23s08.txt to
+ yaml format
+Thread-Topic: [PATCH v2] dt-bindings: pinctrl: convert pinctrl-mcp23s08.txt to
+ yaml format
+Thread-Index: AQHbJhLcvG4Vz0BOQ0uMGPkY6V1e9LKY9kcAgAAOtQCAABTl3IAAPZKAgAANxCo=
+Date: Sat, 26 Oct 2024 19:25:32 +0000
+Message-ID:
+ <PN3P287MB1829A71905108200B68353A68B482@PN3P287MB1829.INDP287.PROD.OUTLOOK.COM>
+References: <20241024124654.26775-1-himanshu.bhavani@siliconsignals.io>
+ <usqmeunejf44l6wjw67ocv4idyxfpw5ivt5v4hqkputd7d7xsk@3ies2iwutzsz>
+ <PN0P287MB20195CAFA249448F66D13B659A482@PN0P287MB2019.INDP287.PROD.OUTLOOK.COM>
+ <PN3P287MB1829C2FCE4C56325CD1DC8988B482@PN3P287MB1829.INDP287.PROD.OUTLOOK.COM>
+ <91a8d0ab-a6a6-4dfa-8613-8d4dbafeda40@kernel.org>
+In-Reply-To: <91a8d0ab-a6a6-4dfa-8613-8d4dbafeda40@kernel.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=siliconsignals.io;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PN3P287MB1829:EE_|MAYP287MB3597:EE_
+x-ms-office365-filtering-correlation-id: fbccf0cf-124f-4ec5-ec2d-08dcf5f3f580
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|376014|10070799003|366016|1800799024|38070700018;
+x-microsoft-antispam-message-info:
+ =?Windows-1252?Q?iRvAubnMpCSPWCA7FXj0nirj2pzAXzV8TXXmmoi/zFNcM7KY0mRoTXgs?=
+ =?Windows-1252?Q?BUZQXAbcyukx8C5iaM+Y0+GJ5zsSXQdjugNqHqGkU+ni3mPCCkH2tJdW?=
+ =?Windows-1252?Q?szPKNcCm4mQ7gXS2pmJxBUsug5pDmaFfA/v8KjeXTfqn6YruvPs5CH6x?=
+ =?Windows-1252?Q?8VE+YjiltCAcXXWxUtK/Kyn4cKGqLU4+AKRkaJfH/zDKH4BSiV5MulUq?=
+ =?Windows-1252?Q?dgSif3BFgZkPWmmqsRsWXLVFeC9PTlaYZgPUBtsu0AVoGmAATAbvjJhk?=
+ =?Windows-1252?Q?Z6ejlTOoL66CaB7an8esqdSQf9NDPZWf61qcGN5QamRW97BtISt9YEfz?=
+ =?Windows-1252?Q?qGYac+2h5PxVuewt1rxwOQaa7UmmA3YdQWAHSJ/jPpKyb8+fJCEfIESb?=
+ =?Windows-1252?Q?5inlQHYqZ9K2cOqdMkTkuFwkYpA9p/LofsmZmnxp5uzRv+Ivww+iaTzD?=
+ =?Windows-1252?Q?TkLw41j/wSwQs5WF0zpTp17nClhntTzz7/AFGatVRE+j7O9f3VQ17ej7?=
+ =?Windows-1252?Q?4u4+iWDth58WEHe9Ip8pGIe+LakPkkxybj4XF1JoA2IbjViud/CfKOP1?=
+ =?Windows-1252?Q?yDQr+2Sabh43bb2/Ux6bOo1h9D5lDgpYoqmhBZsrMR6Z35KmIFZ8XXOA?=
+ =?Windows-1252?Q?x7RsNsgtf3+7a1pZZWSQrGLmC7cmcgxnX9wajSWOS1wV9exKwspF6Fb4?=
+ =?Windows-1252?Q?ejwd5kuVtss5Q0YN43RU4ORlyN5d0uArxLvmn/r0si+c6tyaZdx5bql2?=
+ =?Windows-1252?Q?yoBl9rICCw14Qpc9+HR31AHt+wmxifW9vHYk0uwkdnydeWd7iIhohT4T?=
+ =?Windows-1252?Q?EXH9/HeuSkKVetdEUecUHkf7Az7SyiNaul3iXC3XW2JXGDgEtOcXr9XB?=
+ =?Windows-1252?Q?Jrm2lwhHkSkFGa07R0o/LJtBJnlRqlDw+zufAYhnE9vWp+Hdj6eO0ZWo?=
+ =?Windows-1252?Q?iknzYqYljI+pwjV3Os22NmnQEDZEnHThDid6abZAY/lHd0iaU7PSTneq?=
+ =?Windows-1252?Q?9/W3aXT4XlVZW761y7ZbGgNW71G0ogjJUJCkQacWGgoWHC8Mgt/+y7n7?=
+ =?Windows-1252?Q?mGJFVDfesZIRdR+TwD2Frcq+gbjk01nlE3zpQFCd2giNFUDsXDrqmHGr?=
+ =?Windows-1252?Q?9tO/2AYw5Fde1UvFyaWKvXre5c9Un3Zdw8g01fQjsFZasHQq98zl9+wn?=
+ =?Windows-1252?Q?DF6BcBD8lwslEOGE9QyETRqJ2VpJcrFij+eNn/LWawIamiyVgn1XaUJD?=
+ =?Windows-1252?Q?0oNn+dGBe3SJNF4tEk1k9NKFwGfLxwdTnITixv5LkuZMUjbcEqHB0cgz?=
+ =?Windows-1252?Q?VR7GDNeh/WfklzBvV/LJ/m+g3e021EsRS7PMxcE2X8O0b7pybth1XfZT?=
+ =?Windows-1252?Q?VJUHuZM7Gl1DeDeoQ1x2oIMtqJE2U3ZY5pjbEVX91hJMpjwJIV059/M0?=
+ =?Windows-1252?Q?XRcpSv71VmwgzqpkCrLOa2PsR8dGDAEItBWCFDahS5E=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PN3P287MB1829.INDP287.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(10070799003)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?Windows-1252?Q?9uNtXo7ZfvSHlW8NCTxAfEdU1A3V6Da4J6IW3K3vh8wqZ5F0LhcoxDSr?=
+ =?Windows-1252?Q?oEArtYhk2sOfi9Sd4YjkRc1H07PcZMTCUQoivt6dSuMST2SwyrTmz2CL?=
+ =?Windows-1252?Q?gHtbUhHVISdyRV498AlVnVMsqM03WIX6Ghawx54cdufvuwzubIPKiTN4?=
+ =?Windows-1252?Q?vbOlPVl5LmUXC0wjczjdlWuFwpBcm25RtHC31z9WWJA6vIq02AJ96gSH?=
+ =?Windows-1252?Q?qKjBXSdbTintzfER4kYvUwuhxto4OtO1LqtKbogwxVOp/BqD57F+bnnv?=
+ =?Windows-1252?Q?Ufm/pex+yeW/C8DjYyUVzKLpugdOQ01Ynj35RPeGKjyi2cb07nY906TA?=
+ =?Windows-1252?Q?n+7c1lNkFEu2U5RYvTkgytdIUkj8agQVmCl+i7sD2jsaRUhgX62xSd7l?=
+ =?Windows-1252?Q?S70yGmYTbMbnTZACEJD5VGFG9RTRT7dp7syVvXM4hdTz/qWEHdb+SCrv?=
+ =?Windows-1252?Q?FVi7WUdnW3nrODxagWDVmWc3u6UeRWW1Q8GRiCbUXPWKoTYyiM6eQX7a?=
+ =?Windows-1252?Q?rwaYAYcvI1DI3M/RPJSk48Ex5AX9l1xhLt/Oupv130l8Dxw4nbMlay5g?=
+ =?Windows-1252?Q?kY5SYsBDgPiQKURbkDhqMCXBD56Mm/SSLeVnmjOyez+JhKDStKTtJz5/?=
+ =?Windows-1252?Q?F+cBAeyfTGzrgbgGK21grQ648Mefbu5e9kEWy5563NqUknvLNoJ9hc2Y?=
+ =?Windows-1252?Q?bg3YaGqEL1ASqBL7AeluwL5LDRkOzC5b6YBUbELpUfwNXUjSp/uRlEwI?=
+ =?Windows-1252?Q?Ga4zZTepGojOS8wy5eBnI4QosB/I/hMCTQ29NYLaJGF6yE1WJa7kI8jZ?=
+ =?Windows-1252?Q?3qiZF05bRm3wHt/NBbYLb6eald6c/J9WUbICwI/biTdVzwvS++h4/MhP?=
+ =?Windows-1252?Q?DKr/m4812KST9DpXhMGMVOGyHlBQQrWtvmTbP4fhtVbS+WGkm9YSMS4f?=
+ =?Windows-1252?Q?O512zpUM3PfMP2MH3xV3qD8KQ/765IDDUhMmPkRFPXSsLePQV1hEY3xz?=
+ =?Windows-1252?Q?YRmFCTkM9P7Mzl3MlgKcWHAtf/DBw4Wxf9m+A2K3sG7XElM6iXK4I4n8?=
+ =?Windows-1252?Q?k1xsNIEUL5fh4Lff0RFrhUIOHwfys9jnyccnqtthgaAnzq8y98KwU90i?=
+ =?Windows-1252?Q?cPzJBJUqCvnxYi9Nim8nvxMlGTnY9Trt0MCymQTK5u5MRLO/qj7Mr75Q?=
+ =?Windows-1252?Q?IZO1QxnhP5nlWSKUguY9Ayy6EpHgngTB21ghqWnv+tcgPbJnu70LZUxU?=
+ =?Windows-1252?Q?vuQEpv1fVnpBBQQX4CFFFK5/oCyusFkVD4VtmKGQVTx+4nneXvBOibeW?=
+ =?Windows-1252?Q?dD7T7JVWNtd/Q+3ggnfBa8UEOew/NSv2PNFup8Q1pu6VQuA5+lf7u/mY?=
+ =?Windows-1252?Q?PMYRozHGZLrmkQw3YvWHgTICQo1L9tptNiXKf2yW+RZUZzd9JzOSwdxp?=
+ =?Windows-1252?Q?ro+yDOLNT6ML4kY4T5OVhXJadp51h14QxoqXLEtjxlQtSikvKhu3Mutv?=
+ =?Windows-1252?Q?739KwPr8B+rcazUI7EC+VLSe0kV1uINmKQmLQ2+5Qv8RGaAz54L0FMv2?=
+ =?Windows-1252?Q?CgJ3+jSAT3jQ5w83q4VEeDtek0ciVdTYq2GYfq+RStr0ubw93yk7e/Ci?=
+ =?Windows-1252?Q?L2xmjRGh/C7WrLHYxg24gv/TH3xhaqzrcEF1LS/BxuAASHfFhAM/YkTR?=
+ =?Windows-1252?Q?sAlsy68MQk2ekZDPp8vMiURUWfBVTNdRIcI/MsRObl5Nf+XDgcdXxlVg?=
+ =?Windows-1252?Q?6mi9WbZ6yRBaCMyO+kpxiZsXQjp913iQOrwbwDQg/WEKyOkimCKmSjF3?=
+ =?Windows-1252?Q?44mJjw=3D=3D?=
+Content-Type: text/plain; charset="Windows-1252"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: siliconsignals.io
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PN3P287MB1829.INDP287.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: fbccf0cf-124f-4ec5-ec2d-08dcf5f3f580
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Oct 2024 19:25:32.4465
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 7ec5089e-a433-4bd1-a638-82ee62e21d37
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: zczs2O4WRTn0mZCcBf+FxHs7PHOEAXORdgVCDpk2FXlIG9bP0tF51SR6cxGdxKG6sVmz7M167pDyXVRE0pyoNBZzp7eEl8WpKn7N3mQCghQ=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MAYP287MB3597
 
-Add kselftest support for open, linkat, unshare, mount tests
-
-- Replace direct error handling with
- `ksft_test_result_*` macros for better reporting
-  of test outcomes.
-
-- Add `ksft_print_header()` and `ksft_set_plan()`
- to structure test outputs more effectively.
-
-- Introduce the helper function `is_unshare()` to
-  handle unshare() related checks.
-
-- Improve the test flow by adding more detailed pass/fail
-  reporting for unshare, mounting, file opening, and linking
-  operations.
-
-- Skip the test if it's not run as root, providing an
-  appropriate Warning.
-
-Test logs:
-
-Before change:
-
-- Without root
- error: unshare, errno 1
-
-- With root
- No, output
-
-After change:
-
-- Without root
- TAP version 13
- 1..1
- ok 1 # SKIP This test needs root to run
-
-- With root
- TAP version 13
- 1..1
- ok 1 unshare(): we have a new mount namespace.
- 1..2
- ok 2 mount(): Root filesystem private mount: Success
- 1..3
- ok 3 mount(): Mounting tmpfs on /tmp: Success
- 1..4
- ok 4 openat(): Open first temporary file: Success
- 1..5
- ok 5 linkat(): Linking the temporary file: Success
- 1..6
- ok 6 openat(): Opening the second temporary file: Success
- # Totals: pass:6 fail:0 xfail:0 xpass:0 skip:0 error:0
-
-Signed-off-by: Shivam Chaudhary <cvam0000@gmail.com>
----
-Notes:
-	Changes in v2:
-  		- Make the commit message more clear.
-    
-	link to v1: https://lore.kernel.org/all/20241024200228.1075840-1-cvam0000@gmail.com/T/#u
-
- .../selftests/tmpfs/bug-link-o-tmpfile.c      | 72 +++++++++++++++----
- 1 file changed, 58 insertions(+), 14 deletions(-)
-
-diff --git a/tools/testing/selftests/tmpfs/bug-link-o-tmpfile.c b/tools/testing/selftests/tmpfs/bug-link-o-tmpfile.c
-index b5c3ddb90942..26dea19c1614 100644
---- a/tools/testing/selftests/tmpfs/bug-link-o-tmpfile.c
-+++ b/tools/testing/selftests/tmpfs/bug-link-o-tmpfile.c
-@@ -23,45 +23,89 @@
- #include <sys/mount.h>
- #include <unistd.h>
- 
--int main(void)
--{
--	int fd;
-+#include "../kselftest.h"
- 
--	if (unshare(CLONE_NEWNS) == -1) {
-+static int is_unshare(int flag)
-+{
-+	if (unshare(flag) == -1) {
- 		if (errno == ENOSYS || errno == EPERM) {
--			fprintf(stderr, "error: unshare, errno %d\n", errno);
--			return 4;
-+			ksft_test_result_fail("error: unshare, errno %d\n", errno);
-+			return -1; // Return -1 for failure
- 		}
- 		fprintf(stderr, "error: unshare, errno %d\n", errno);
-+		return -1;
-+	}
-+
-+	return 0; // Return 0 for success
-+}
-+
-+int main(void)
-+{
-+	int fd;
-+
-+	// Setting up kselftest framework
-+	ksft_print_header();
-+	ksft_set_plan(1);
-+
-+	// Check if test is run as root
-+	if (geteuid()) {
-+		ksft_test_result_skip("This test needs root to run!\n");
- 		return 1;
- 	}
--	if (mount(NULL, "/", NULL, MS_PRIVATE|MS_REC, NULL) == -1) {
--		fprintf(stderr, "error: mount '/', errno %d\n", errno);
-+
-+	if (is_unshare(CLONE_NEWNS) == 0) {
-+		ksft_test_result_pass("unshare(): we have a new mount namespace.\n");
-+	} else {
-+		ksft_test_result_fail("unshare(): failed\n");
- 		return 1;
- 	}
- 
-+	ksft_set_plan(2);
-+
-+	if (mount(NULL, "/", NULL, MS_PRIVATE | MS_REC, NULL) == -1) {
-+		ksft_test_result_fail("mount(): Root filesystem private mount: Fail %d\n", errno);
-+		return 1;
-+	} else {
-+		ksft_test_result_pass("mount(): Root filesystem private mount: Success\n");
-+	}
-+
-+	ksft_set_plan(3);
- 	/* Our heroes: 1 root inode, 1 O_TMPFILE inode, 1 permanent inode. */
- 	if (mount(NULL, "/tmp", "tmpfs", 0, "nr_inodes=3") == -1) {
--		fprintf(stderr, "error: mount tmpfs, errno %d\n", errno);
-+		ksft_test_result_fail("mount(): Mounting tmpfs on /tmp: Fail %d\n", errno);
- 		return 1;
-+	} else {
-+		ksft_test_result_pass("mount(): Mounting tmpfs on /tmp: Success\n");
- 	}
- 
--	fd = openat(AT_FDCWD, "/tmp", O_WRONLY|O_TMPFILE, 0600);
-+	ksft_set_plan(4);
-+	fd = openat(AT_FDCWD, "/tmp", O_WRONLY | O_TMPFILE, 0600);
- 	if (fd == -1) {
--		fprintf(stderr, "error: open 1, errno %d\n", errno);
-+		ksft_test_result_fail("openat(): Open first temporary file: Fail %d\n", errno);
- 		return 1;
-+	} else {
-+		ksft_test_result_pass("openat(): Open first temporary file: Success\n");
- 	}
-+
-+	ksft_set_plan(5);
- 	if (linkat(fd, "", AT_FDCWD, "/tmp/1", AT_EMPTY_PATH) == -1) {
--		fprintf(stderr, "error: linkat, errno %d\n", errno);
-+		ksft_test_result_fail("linkat(): Linking the temporary file: Fail %d\n", errno);
-+		close(fd); // Ensure fd is closed on failure
- 		return 1;
-+	} else {
-+		ksft_test_result_pass("linkat(): Linking the temporary file: Success\n");
- 	}
- 	close(fd);
- 
--	fd = openat(AT_FDCWD, "/tmp", O_WRONLY|O_TMPFILE, 0600);
-+	ksft_set_plan(6);
-+	fd = openat(AT_FDCWD, "/tmp", O_WRONLY | O_TMPFILE, 0600);
- 	if (fd == -1) {
--		fprintf(stderr, "error: open 2, errno %d\n", errno);
-+		ksft_test_result_fail("openat(): Opening the second temporary file: Fail %d\n", errno);
- 		return 1;
-+	} else {
-+		ksft_test_result_pass("openat(): Opening the second temporary file: Success\n");
- 	}
- 
-+	ksft_exit_pass();
- 	return 0;
- }
--- 
-2.34.1
-
+Hi Krzysztof ,=0A=
+=0A=
+>On 26/10/2024 17:02, Tarang Raval wrote:=0A=
+>> Hi Krzysztof , Himanshu=0A=
+>>=0A=
+>>>>> +=0A=
+>>>>> +=A0=A0=A0 i2c {=0A=
+>>>>=0A=
+>>>> Keep one complete example for i2c and one for spi. This was not in=0A=
+>>>> previous patch and change log does not explain why you need three=0A=
+>>>> examples.=0A=
+>>>=0A=
+>>> Okay, I will drop one example of I2C=0A=
+>>=0A=
+>> In ex1: use when you only need basic GPIO and interrupt capabilities=0A=
+>> without additional pin control and in ex2: use when you need pull-up=0A=
+>> resistors on specific GPIO pins or a reset line.=0A=
+>>=0A=
+>> Original bindings state that this node can be implemented in two=0A=
+>> different ways, so we should maintain both examples for reference.=0A=
+>=0A=
+>Example is not the binding. If you claim conversion is incomplete, it=0A=
+>must be done through the binding, not example.=0A=
+=0A=
+Understood, thanks for the clarification=0A=
+=0A=
+>> But it's up to you, I trust your expertise on this, Krzysztof=0A=
+>>=0A=
+>>>>> +=A0=A0=A0=A0=A0=A0=A0 #address-cells =3D <1>;=0A=
+>>>>> +=A0=A0=A0=A0=A0=A0=A0 #size-cells =3D <0>;=0A=
+>>>>> +=0A=
+>>>>> +=A0=A0=A0=A0=A0=A0=A0 mcp23017: gpio@21 {=0A=
+>>>>=0A=
+>>>> Drop unused label=0A=
+>>>=0A=
+>>> May I know how its unused, AFAIK, Since it's an I/O expanded, it=92s re=
+ferenced elsewhere, so keeping it is necessary for >functionality.=0A=
+>>=0A=
+>> I agree with Himanshu.=0A=
+>> It's definitely used for reset GPIOs, LED pins, or something similar.=0A=
+>=0A=
+>So point to the specific line in this file. Really, it's no different=0A=
+>than every other binding. If it is different, provide some arguments why=
+=0A=
+>this is different.=0A=
+=0A=
+okay, I get your point=A0=0A=
+=0A=
+Best Regards,=0A=
+Tarang=0A=
 
