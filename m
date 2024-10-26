@@ -1,234 +1,123 @@
-Return-Path: <linux-kernel+bounces-383029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CED09B1656
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 10:52:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 006799B1657
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 10:59:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1D6A282D11
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 08:51:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 139541C20F12
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 08:59:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A1821C9DDF;
-	Sat, 26 Oct 2024 08:51:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4E291CCB2D;
+	Sat, 26 Oct 2024 08:59:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rocketmail.com header.i=@rocketmail.com header.b="ql9mQGp2"
-Received: from sonic302-19.consmr.mail.ir2.yahoo.com (sonic302-19.consmr.mail.ir2.yahoo.com [87.248.110.82])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="G2PAcNQv"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98D152CA8
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 08:51:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=87.248.110.82
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 068F01384B3
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 08:58:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729932711; cv=none; b=t6DFWYWmtwVYB0cchzeA3EAElxnpWaoPQz+p0tPNNWXinr88Ijn2tum1kRU7qrk9FPemC+EIpPlsIt7pS/Qg+EnVQvp/dwbsuDUQKfWHEb3b9qVxyd0eBFb6Hez1MPq55QcO6HHI3Ev2ZEUvvHRf9TRoPBeaD9BLVKmW6oqLEsQ=
+	t=1729933140; cv=none; b=VNRyfp4kIWlvOW44o2SC/Ha/msyeSEawtC0eqhOSvGr2Q/b6N5yVCKqoCS798mJg0I87tOv78JuOFycQ+ToMQ2gYcBv4Vyn0dceEFiv/hLaAK/pBhCQrOmPUqhT39RWEB6lhMpo+OTn4Vw24FF9ViJ9CA3JM0pvBVfsTNEf/cio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729932711; c=relaxed/simple;
-	bh=5OHLtilnLVD3otsf4fzMNmlzELdcGhvFOolz4pDWpvo=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=IQgLzNkViywoP8wY212mZdTlQB3Vh5L8Tw51q9D/tIWyXb3/B5I6Vvb/eMuSaLGPg1A1/DFULuCpS8c8AGHfW5oVbaMvThMldMDrzYWai1+J/RbqTiy8mbDRNkGKe8qCl8JZ7kCn+eCjexsnfds1pVQPL2vAmE9CjoGWOoSE4sI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=rocketmail.com; spf=pass smtp.mailfrom=rocketmail.com; dkim=pass (2048-bit key) header.d=rocketmail.com header.i=@rocketmail.com header.b=ql9mQGp2; arc=none smtp.client-ip=87.248.110.82
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=rocketmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rocketmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rocketmail.com; s=s2048; t=1729932700; bh=5OHLtilnLVD3otsf4fzMNmlzELdcGhvFOolz4pDWpvo=; h=Date:From:Subject:To:Cc:References:In-Reply-To:From:Subject:Reply-To; b=ql9mQGp25D0nz65FeGCtPqpiyxov3QbrGoOddOsVnJGwo1wcVTmtLno47GqSN5Jz2Ttv5vOjo1vt13LLxCbHQfdJQ31CftBU9QwvsCnPfWaEYArFIDdqQ7sujuh7dITd6QjKKdz3s/KqhngJw3M1xRfagvjbSHjAMDHNmbrIjbNWJeYtmngzzqgwI0F1lPLfUlRspH1I5XLyVBWvntevipLICTYdVqEHILYWk+JmE47J/8PyE92EjTryMao/VvjCpIzERFYR7ReqFswMa4kHxPzVvPnBh6db755RF4vswmp2/PqFvI/iI49MRQffWnxe+24YfeuB0V3fpqXoHOH1kw==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1729932700; bh=yYJBcIEIgubLHB4+cEA5W3WgdlO/8BvIfa47Clx3h/0=; h=X-Sonic-MF:Date:From:Subject:To:From:Subject; b=HH9xf9LpZvP3pJVkwLufGihF829dMcf3c8zx+bJWYbfibMdalZhcCG3vOVxBYwWfyJcGJLtfpQlkrpPhFhV6rhpz2zvhUfcRfK3JRJAHvwshRc6dlRUZjyOqmePlNxmb/VNPJoODXa/7kThQZJjq3siJGWRdEW6uCjhdhbCbuD7vC81pxcPRcpDf64fC4s9bqWGfONXqax43UXm6V1M1kVJMLb3CnnH2mANNQuHc9aoW0OBwf4M3nbZUbaiFimJ3iFqJ6fnniDXH+P8JgWCqPZ2cA2SYX/+yiflph9lT3qbv+c1yw3jPKNUA+4CwhO2Vd/zPBxpC2lE4ZkMNPZLDng==
-X-YMail-OSG: 2Wg2GQcVM1lTreuCAz.7PBpxVfI3sirO.0PqO_qNd8qQza29e4zb5j1dH1bsqaH
- 0xTJUorraMvLD6doJiAbHtSQAyqKHECWbLLjsbeWptMmVDUz4IRRRlg7Qfw1aBctc4vYB2llR_Xx
- b0OO_zRLyzT1kFV..ma8HcFCR9QO7MefAkb88VtZkXaqKzg.CDb7Mi.3jg3CTyFehYWKGZntfRci
- tpYCpjlckA2fPqKYOJMyhGPKHgrHiqUFHpTTxwkZTyhdihlVJMb5CrMmE0P4vCc516Ff2zkMtGFI
- KyapQ_P3Gmyo3nUHS3_MLWbIEBuhhzoaoHyG24GXf.e74qk3CaYX6Z_qbJV5.YowYM_TLmG4SUYK
- ZWyKa3p6MiayOr6vxrswscAuvoaFLwEa1IhNrDCl8bWA7Tzz2UOD1JjLIiBRBp3aINGi5YFY5Hew
- dZwUg1Uzv2sZ.0cflxSJED9S2z61xYSPHo1bVsOOF64KdSwiUmhgjOa7ufzmILfGBDYcfSvx9nHl
- zhXljHa_mDcVyUyfj76CQa3UN6oCDSglr8Rc63v0UR4h2QoHgJweUiDRBccSS2q1CKMWkD9y043V
- 4eLk1k4y74witQR2uAETpdKg7xDaZ.BaG1xHeeQO2mQdZWwgNyIaFJ3VI5oGeu06TfUp964nvwGZ
- 5HxDhnRVmmzlGURsl0U6EVQRAVtbt4QXVMZD8YxDhMJh.9g5FaYXA0JfyLBNEO4yO5U4brH_D2bp
- CNVpaa7TSqJekzdQfHR0Ucjded8XFRR46.oKeQIL7X_WjyTeo8wefzxg83hfWG4woqG6dvqttqBX
- yeELxtjXZNdenmPPvpCQDcAOrtpq9PDkO_ldJtgvBPgQ9jlD_Hzb.ccw7lPFd3RtW1h1fq7hdn6e
- _i0QuRI25yEB8eYZCfJfrRSFBJ5ldbkXsV9kSavOiQYfIziVEavCkqu26E5E_yW9aLChAXUlXwBM
- MfhWFIlw22RlsYth59LYD6B6PEeWkM.fU3x8jQkrLdoXI67k1Df1hdpy.1oYvj2hYgYUzsRT35kP
- VE5GyNqsFgyJQPW8YUFLQVCCUyMzcMYef27cX13uJY1aRjXMWfJA.1EiV.nFaadjVa7Syb0bcDJt
- 5IfGCe3aykJWGIGQUaCaloeaFgEXEMB2oBbeLNoJ3mxaxioA4ouyQFUZQ8u79LLWqpNjY8.t7Sxc
- 4ryLJmBIYnba53iYWueLCyMgVw20L1yi2Nf7VifZ4DugTxRVU_Eay7vBHP00eoUjk6.aC1BEGpbP
- gguv2YD0mYw.nfOnSKEGW7wWJ._Aa5tkRumE5j5R7GWSWU9f5YnEfJCGVQumsugyFM1rL21rVJ.n
- u0Zw5PVLgp7PZNCDexcKTMGwxmjn_mjE105kgKetoin58IHtT.0V8RSM7zQRchGaYs_0pOH2T_4r
- rM4etakUDSDGZG2JzdcjKxwwvJTbp65D3CKMXQkXt3mUg_2a2pOUjSFqcdoG3JKRfy2.PA8CMBNI
- WO.DBymfqhrZ5QlHYoW6NtExs4yf_q4cEEa3XHgko20KzajvliW9Nr_i6XWeX4zx6vUvyq8JPqvb
- YCUdCL522YClSMU.OZ9mC9sMGTG7ijHLHzqHbT7Th5raXG.0_rraIBbqOCFw.YEq52xOlH3wK3oL
- Uv8iniM2rAcndPWHgnZGlT5a1_3LbU.wsleVWzk0Zt2plYiXm1NNQmy0NvoWtk4l7wJiNwZmxSpv
- w6JCyaYV3GHencK560qTcpjyOd82crLHWHLBxKfbI6S85bvvPvmspzDgBEQyQnMvNHDKXIJZmsvx
- QAbjVh05dfLUXYZaBmpaCxHeRNoAY3ggVWCzppjUZWTXF_y9XKEobHV7Zlmx0K2S4cGVI8s_YhE3
- hVcVYXL1HYYBYYUnCCsTvcW8vp4mtali8RYsV9boRWoWQ2fGOXJAB1_4ady8wkXAtX5OS5zUfzYg
- hEzopaXxeOKdb4UZhtTgE5mD5Xw.u3XWpZ0qYt.trcsSti1R6I1smWn1Au8qDtsFU2Umd0feQ.iI
- zfNf.ckJ6n_CeUidWsMfdoRpAk9YZfsd0bCB1UMP605v6v6gn1x4soOVv4lxur6ZDetF9frHLhUA
- ewz1DbA4AcGAa_yxOHI9v_J.lAJknBsoZAHWv9leih7K4A.8NrvPqvZ.jxyIkwtRIN9zKK2fuUGI
- XLpGOjCNsbFQNrvZIPDThkQctFATbo.VdLH7buXopljO4jWfXWhTR46qELJpYdUtYRZFnsc3D9BE
- SNhYsAA6UmE.tmODtHuVd1ATgiekwFmlEyYYP6uL5.IAz5E2YhEFFYvrqUBknV7Hzyj5OOOE55Oc
- 8tGLGByysBYo4A4FAQXWMSc.5Spxges5VoMhlqnu.9Z4-
-X-Sonic-MF: <jahau@rocketmail.com>
-X-Sonic-ID: 492e4d6f-7791-4328-87ae-e05a891271c6
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic302.consmr.mail.ir2.yahoo.com with HTTP; Sat, 26 Oct 2024 08:51:40 +0000
-Received: by hermes--production-ir2-c694d79d9-qdvzb (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 572d990a3341a016679888fcdb21215d;
-          Sat, 26 Oct 2024 08:51:37 +0000 (UTC)
-Message-ID: <431e2e98-7c0b-47e6-8949-aa5e0a6ac8f1@rocketmail.com>
-Date: Sat, 26 Oct 2024 10:51:35 +0200
+	s=arc-20240116; t=1729933140; c=relaxed/simple;
+	bh=J+ELgtFmzSshLRV2f9HM0tnB/bx/8I6tiy7m+oqGKfc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=O3C+imes8fWPpKybiDvEcm2EJAg1/C2aq66XJ1m0ipdaTIe+BZrBUGgUJmBOnjoGkipt/WmsioYN43XG9NqrBt+ulUtoa/hzsangfULglTJIaeJdGZcKqFIhTSEuzfJ83iMARPkDE1Nh/OzEqYl0TeMimi6/BvLAzKtY0cbgS9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=G2PAcNQv; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729933137; x=1761469137;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=J+ELgtFmzSshLRV2f9HM0tnB/bx/8I6tiy7m+oqGKfc=;
+  b=G2PAcNQvGkRnUwPhpMhZ7ky4cFIJUeMSAJP5Ux/WZu31pMyHPhnHKuU6
+   I93xZ1MYy+TEHqKmp/M9QY+xaXlQuJ2qJ+S2H/1A6X006oPFEwaT+y6gr
+   Oc5K/dBjJomdrNTIHMP3YMNa3lMXPd/o0M03FoAVyP5TJi0flhg5tUoGR
+   zuPSWcpdGknOswv/G5R29UmWu98GDj4wfz+0qI507IrH1wF4rKUzzzfJz
+   aSKojBKgY1KQXNY6U0UUbEQbYR5znsI7HQymuJNdapFK0yGvOCShyBl8/
+   2marJK15qoJ4/DqT6MoTc7Wfka+f2Ky7hl3uoREpd/j5HfeeMNCpAeV/r
+   A==;
+X-CSE-ConnectionGUID: mmZ32YIQTmWskffYxMhJNw==
+X-CSE-MsgGUID: lNDv4b6ZSleISsRIHXwTdA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="29788352"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="29788352"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Oct 2024 01:58:57 -0700
+X-CSE-ConnectionGUID: eZgeNzm5SUKJCnzFYA0sdQ==
+X-CSE-MsgGUID: sFu8TJmdRgWXHmvQdOyp7A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,234,1725346800"; 
+   d="scan'208";a="81295909"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa006.jf.intel.com with ESMTP; 26 Oct 2024 01:58:54 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t4cdI-000ZS4-0d;
+	Sat, 26 Oct 2024 08:58:52 +0000
+Date: Sat, 26 Oct 2024 16:58:45 +0800
+From: kernel test robot <lkp@intel.com>
+To: Wende Tan <twd2.me@gmail.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org, Palmer Dabbelt <palmer@rivosinc.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Conor Dooley <conor.dooley@microchip.com>
+Subject: ld.lld: error: Function Import: link error: linking module flags
+ 'Code Model': IDs have conflicting values in 'vmlinux.a(init.o at 1376452)'
+ and 'vmlinux.a(trace.o at 1385932)'
+Message-ID: <202410261627.2m4hohFx-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Jakob Hauser <jahau@rocketmail.com>
-Subject: Re: [PATCH v3 3/5] drm/panel: samsung-s6e88a0-ams427ap24: Add initial
- driver
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>,
- Jessica Zhang <quic_jesszhan@quicinc.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>,
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
- Andrzej Hajda <andrzej.hajda@intel.com>, dri-devel@lists.freedesktop.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- ~postmarketos/upstreaming@lists.sr.ht
-References: <cover.1729738189.git.jahau@rocketmail.com>
- <bef462116190c26e6339cd58240773f035efcca9.1729738189.git.jahau@rocketmail.com>
- <CACRpkdY6w1LmKP+69TDRLJCszPpz_XAM_uoe8oC07MH-9ALAig@mail.gmail.com>
-Content-Language: en-US
-In-Reply-To: <CACRpkdY6w1LmKP+69TDRLJCszPpz_XAM_uoe8oC07MH-9ALAig@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
-X-Mailer: WebService/1.1.22806 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-SGkgTGludXMsDQoNCk9uIDI1LjEwLjI0IDE4OjM2LCBMaW51cyBXYWxsZWlqIHdyb3RlOg0K
-Li4uDQo+IE9uIFRodSwgT2N0IDI0LCAyMDI0IGF0IDU6MTjigK9BTSBKYWtvYiBIYXVzZXIg
-PGphaGF1QHJvY2tldG1haWwuY29tPiB3cm90ZToNCi4uLg0KPiANCj4+ICsjaW5jbHVkZSA8
-bGludXgvZGVsYXkuaD4NCj4+ICsjaW5jbHVkZSA8bGludXgvZ3Bpby9jb25zdW1lci5oPg0K
-Pj4gKyNpbmNsdWRlIDxsaW51eC9tb2R1bGUuaD4NCj4+ICsjaW5jbHVkZSA8bGludXgvb2Yu
-aD4NCj4gDQo+IFdoeSBkbyB5b3UgbmVlZCB0aGlzIGluY2x1ZGU/IC5vZl9tYXRjaF90YWJs
-ZSBpcyBwYXJ0IG9mDQo+IDxsaW51eC9kcml2ZXIuaD4NCg0KWW91J3JlIHJpZ2h0LCBJJ2xs
-IHJlbW92ZSBpdC4NCg0KPj4gK3N0YXRpYyBpbnQgczZlODhhMF9hbXM0MjdhcDI0X29uKHN0
-cnVjdCBzNmU4OGEwX2FtczQyN2FwMjQgKmN0eCkNCj4+ICt7DQo+PiArICAgICAgIHN0cnVj
-dCBtaXBpX2RzaV9kZXZpY2UgKmRzaSA9IGN0eC0+ZHNpOw0KPj4gKyAgICAgICBzdHJ1Y3Qg
-bWlwaV9kc2lfbXVsdGlfY29udGV4dCBkc2lfY3R4ID0geyAuZHNpID0gZHNpIH07DQo+PiAr
-DQo+PiArICAgICAgIGRzaS0+bW9kZV9mbGFncyB8PSBNSVBJX0RTSV9NT0RFX0xQTTsNCj4+
-ICsNCj4+ICsgICAgICAgbWlwaV9kc2lfZGNzX3dyaXRlX3NlcV9tdWx0aSgmZHNpX2N0eCwg
-MHhmMCwgMHg1YSwgMHg1YSk7DQo+IA0KPiBDYW4gd2UgcHJvdmlkZSAjZGVmaW5lcyBmb3Ig
-YXQgbGVhc3Qgc29tZSBvZiB0aGlzIG1hZ2ljPw0KPiBTZWUgb3RoZXIgZHJpdmVycyBmb3Ig
-YSB2ZXJ5IGdvb2QgaWRlYSBvZiB3aGF0IHNvbWUgb2YgdGhlbSBtZWFuLg0KPiBwYW5lbC1z
-YW1zdW5nLXM2ZDI3YTEuYzojZGVmaW5lIFM2RDI3QTFfUEFTU1dEX0wyICAgICAgIDB4RjAg
-ICAgLyoNCj4gUGFzc3dvcmQgQ29tbWFuZCBmb3IgTGV2ZWwgMiBDb250cm9sICovDQo+IHBh
-bmVsLXNhbXN1bmctczZkN2FhMC5jOiNkZWZpbmUgTUNTX1BBU1NXRDEgICAgICAgICAgICAg
-MHhmMA0KPiANCj4+ICsgICAgICAgbWlwaV9kc2lfZGNzX3dyaXRlX3NlcV9tdWx0aSgmZHNp
-X2N0eCwgMHhmYywgMHg1YSwgMHg1YSk7DQo+IA0KPiBwYW5lbC1zYW1zdW5nLXM2ZDdhYTAu
-YzojZGVmaW5lIE1DU19QQVNTV0QzICAgICAgICAgICAgIDB4ZmMNCj4gDQo+PiArICAgICAg
-IG1pcGlfZHNpX2Rjc193cml0ZV9zZXFfbXVsdGkoJmRzaV9jdHgsIDB4YjAsIDB4MTEpOw0K
-Pj4gKyAgICAgICBtaXBpX2RzaV9kY3Nfd3JpdGVfc2VxX211bHRpKCZkc2lfY3R4LCAweGZk
-LCAweDExKTsNCj4+ICsgICAgICAgbWlwaV9kc2lfZGNzX3dyaXRlX3NlcV9tdWx0aSgmZHNp
-X2N0eCwgMHhiMCwgMHgxMyk7DQo+PiArICAgICAgIG1pcGlfZHNpX2Rjc193cml0ZV9zZXFf
-bXVsdGkoJmRzaV9jdHgsIDB4ZmQsIDB4MTgpOw0KPj4gKyAgICAgICBtaXBpX2RzaV9kY3Nf
-d3JpdGVfc2VxX211bHRpKCZkc2lfY3R4LCAweGIwLCAweDAyKTsNCj4+ICsgICAgICAgbWlw
-aV9kc2lfZGNzX3dyaXRlX3NlcV9tdWx0aSgmZHNpX2N0eCwgMHhiOCwgMHgzMCk7DQo+ICgu
-Li4pDQo+PiArICAgICAgIG1pcGlfZHNpX2Rjc19leGl0X3NsZWVwX21vZGVfbXVsdGkoJmRz
-aV9jdHgpOw0KPj4gKyAgICAgICBtaXBpX2RzaV9tc2xlZXAoJmRzaV9jdHgsIDIwKTsNCj4+
-ICsNCj4+ICsgICAgICAgbWlwaV9kc2lfZGNzX3dyaXRlX3NlcV9tdWx0aSgmZHNpX2N0eCwg
-MHhmMSwgMHg1YSwgMHg1YSk7DQo+IA0KPiBwYW5lbC1zYW1zdW5nLXM2ZDdhYTAuYzojZGVm
-aW5lIE1DU19QQVNTV0QyICAgICAgICAgICAgIDB4ZjENCj4gDQo+PiArICAgICAgIG1pcGlf
-ZHNpX2Rjc193cml0ZV9zZXFfbXVsdGkoJmRzaV9jdHgsIDB4Y2MsIDB4NGMpOw0KPj4gKyAg
-ICAgICBtaXBpX2RzaV9kY3Nfd3JpdGVfc2VxX211bHRpKCZkc2lfY3R4LCAweGYyLCAweDAz
-LCAweDBkKTsNCj4+ICsgICAgICAgbWlwaV9kc2lfZGNzX3dyaXRlX3NlcV9tdWx0aSgmZHNp
-X2N0eCwgMHhmMSwgMHhhNSwgMHhhNSk7DQo+IA0KPiBwYW5lbC1zYW1zdW5nLXM2ZDdhYTAu
-YzojZGVmaW5lIE1DU19QQVNTV0QyICAgICAgICAgICAgIDB4ZjENCj4gU2VuZCBpbiB0aGUg
-cmV2ZXJzZSBwYXNzd29yZDogZGlzYWJsZSBhY2Nlc3MuDQo+IA0KPj4gKyAgICAgICBtaXBp
-X2RzaV9kY3Nfd3JpdGVfc2VxX211bHRpKCZkc2lfY3R4LCAweGNhLA0KPj4gKyAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgIDB4MDEsIDB4MDAsIDB4MDEsIDB4MDAsIDB4
-MDEsIDB4MDAsIDB4ODAsDQo+PiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgMHg4MCwgMHg4MCwgMHg4MCwgMHg4MCwgMHg4MCwgMHg4MCwgMHg4MCwNCj4+ICsgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAweDgwLCAweDgwLCAweDgwLCAweDgw
-LCAweDgwLCAweDgwLCAweDgwLA0KPj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgIDB4ODAsIDB4ODAsIDB4ODAsIDB4ODAsIDB4ODAsIDB4ODAsIDB4ODAsDQo+PiAr
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgMHg4MCwgMHg4MCwgMHgwMCwg
-MHgwMCwgMHgwMCk7DQo+PiArICAgICAgIG1pcGlfZHNpX2Rjc193cml0ZV9zZXFfbXVsdGko
-JmRzaV9jdHgsIDB4YjIsDQo+PiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgMHg0MCwgMHgwOCwgMHgyMCwgMHgwMCwgMHgwOCk7DQo+PiArICAgICAgIG1pcGlfZHNp
-X2Rjc193cml0ZV9zZXFfbXVsdGkoJmRzaV9jdHgsIDB4YjYsIDB4MjgsIDB4MGIpOw0KPj4g
-KyAgICAgICBtaXBpX2RzaV9kY3Nfd3JpdGVfc2VxX211bHRpKCZkc2lfY3R4LCAweGY3LCAw
-eDAzKTsNCj4+ICsgICAgICAgbWlwaV9kc2lfZGNzX3dyaXRlX3NlcV9tdWx0aSgmZHNpX2N0
-eCwgMHg1NSwgMHgwMCk7DQo+PiArICAgICAgIG1pcGlfZHNpX2Rjc193cml0ZV9zZXFfbXVs
-dGkoJmRzaV9jdHgsIDB4ZjAsIDB4YTUsIDB4YTUpOw0KPj4gKyAgICAgICBtaXBpX2RzaV9k
-Y3Nfd3JpdGVfc2VxX211bHRpKCZkc2lfY3R4LCAweGZjLCAweGE1LCAweGE1KTsNCj4gDQo+
-IFNlbmQgaW4gdGhlIHJldmVyc2UgcGFzc3dvcmQ6IGRpc2FibGUgYWNjZXNzLg0KPiANCj4g
-QSBiaXQgb2YgI2RlZmluZXMgYW5kIGNvbW1lbnRzIHdvdWxkIG1ha2UgaXQgbXVjaCBtb3Jl
-IGNsZWFyIHdoYXQNCj4gaXMgZ29pbmcgb24uDQoNClRoZSBkaWZmaWN1bHR5IEknbSBpbiBp
-cyB0aGF0IEkgZG9uJ3QgaGF2ZSBhIGRhdGFzaGVldC4NCg0KIEZyb20gdGhlIEFuZHJvaWQg
-a2VybmVsIGRvd25zdHJlYW0gZHJpdmVyIGRhdGEgYW1zNDI3YXAyNCBbMV0sIGZyb20gdGhl
-IHNpbWlsYXIgDQpidXQgb2xkZXIgcGFuZWwgYW1zNDI3YXAwMSBkb3duc3RyZWFtIGRyaXZl
-ciBbMl0gYW5kIHRoZSBzaW1pbGFyIHBhbmVsIA0KYW1zNDUyZWYwMSB1cHN0cmVhbSBkcml2
-ZXIgWzNdIEkgY2FuIGd1ZXNzIHdoYXQgdGhlIGNvbW1hbmRzIGRvLi4uIGV4Y2VwdCBJIA0K
-Y291bGRuJ3QgZmluZCBvdXQgd2hhdCAiMHhmMiwgMHgwMywgMHgwZCIgZG9lcyBhbmQgZm9y
-ICIweGYxLCAweDVhLCAweDVhIiBJIHdhcyANCmd1ZXNzaW5nIGxldmVsIDMga2V5IG9uIGJl
-Y2F1c2UgbGV2ZWwgMSBhbmQgMiB3YXMgYWxyZWFkeSB0aGVyZS4NCg0KWzFdIA0KaHR0cHM6
-Ly9naXRodWIuY29tL21zbTg5MTYtbWFpbmxpbmUvbGludXgtZG93bnN0cmVhbS9ibG9iL0dU
-LUk5MTk1SS9kcml2ZXJzL3ZpZGVvL21zbS9tZHNzL3NhbXN1bmcvUzZFODhBMF9BTVM0MjdB
-UDI0L2RzaV9wYW5lbF9TNkU4OEEwX0FNUzQyN0FQMjRfcWhkX29jdGFfdmlkZW8uZHRzaQ0K
-WzJdIA0KaHR0cHM6Ly9naXRodWIuY29tL0xpbmVhZ2VPUy9hbmRyb2lkX2tlcm5lbF9zYW1z
-dW5nX21zbTg5MzAtY29tbW9uL2Jsb2IvbGluZWFnZS0xNS4xL2RyaXZlcnMvdmlkZW8vbXNt
-L21pcGlfc2Ftc3VuZ19vbGVkX3ZpZGVvX3FoZF9wdC04OTMwLmMNClszXSANCmh0dHBzOi8v
-Z2l0aHViLmNvbS90b3J2YWxkcy9saW51eC9ibG9iL3Y2LjExL2RyaXZlcnMvZ3B1L2RybS9w
-YW5lbC9wYW5lbC1zYW1zdW5nLXM2ZTg4YTAtYW1zNDUyZWYwMS5jDQoNClRoYXQgc2FpZCwg
-SSBjYW4gb2ZmZXIgdG8gY29tbWVudCB0aGUgc2luZ2xlIGNvbW1hbmQgbGluZXMgbGlrZSB0
-aGlzOg0KDQptaXBpX2RzaV9kY3Nfd3JpdGVfc2VxX211bHRpKCZkc2lfY3R4LCAweGYwLCAw
-eDVhLCAweDVhKTsgLy8gbGV2ZWwgMSBrZXkgb24NCm1pcGlfZHNpX2Rjc193cml0ZV9zZXFf
-bXVsdGkoJmRzaV9jdHgsIDB4ZmMsIDB4NWEsIDB4NWEpOyAvLyBsZXZlbCAyIGtleSBvbg0K
-bWlwaV9kc2lfZGNzX3dyaXRlX3NlcV9tdWx0aSgmZHNpX2N0eCwgMHhiMCwgMHgxMSk7IC8v
-IHNyYyBsYXRjaCBzZXQgZ2xvYmFsIDENCm1pcGlfZHNpX2Rjc193cml0ZV9zZXFfbXVsdGko
-JmRzaV9jdHgsIDB4ZmQsIDB4MTEpOyAvLyBzcmMgbGF0Y2ggc2V0IDENCm1pcGlfZHNpX2Rj
-c193cml0ZV9zZXFfbXVsdGkoJmRzaV9jdHgsIDB4YjAsIDB4MTMpOyAvLyBzcmMgbGF0Y2gg
-c2V0IGdsb2JhbCAyDQptaXBpX2RzaV9kY3Nfd3JpdGVfc2VxX211bHRpKCZkc2lfY3R4LCAw
-eGZkLCAweDE4KTsgLy8gc3JjIGxhdGNoIHNldCAyDQptaXBpX2RzaV9kY3Nfd3JpdGVfc2Vx
-X211bHRpKCZkc2lfY3R4LCAweGIwLCAweDAyKTsgLy8gYXZkZCBzZXQgMQ0KbWlwaV9kc2lf
-ZGNzX3dyaXRlX3NlcV9tdWx0aSgmZHNpX2N0eCwgMHhiOCwgMHgzMCk7IC8vIGF2ZGQgc2V0
-IDINCg0KbWlwaV9kc2lfZGNzX2V4aXRfc2xlZXBfbW9kZV9tdWx0aSgmZHNpX2N0eCk7DQpt
-aXBpX2RzaV9tc2xlZXAoJmRzaV9jdHgsIDIwKTsNCg0KbWlwaV9kc2lfZGNzX3dyaXRlX3Nl
-cV9tdWx0aSgmZHNpX2N0eCwgMHhmMSwgMHg1YSwgMHg1YSk7IC8vIGxldmVsIDMga2V5IG9u
-DQptaXBpX2RzaV9kY3Nfd3JpdGVfc2VxX211bHRpKCZkc2lfY3R4LCAweGNjLCAweDRjKTsg
-Ly8gcGl4ZWwgY2xvY2sgZGl2aWRlciBwb2wuDQptaXBpX2RzaV9kY3Nfd3JpdGVfc2VxX211
-bHRpKCZkc2lfY3R4LCAweGYyLCAweDAzLCAweDBkKTsgLy8gdW5rbm93bg0KbWlwaV9kc2lf
-ZGNzX3dyaXRlX3NlcV9tdWx0aSgmZHNpX2N0eCwgMHhmMSwgMHhhNSwgMHhhNSk7IC8vIGxl
-dmVsIDMga2V5IG9mZg0KbWlwaV9kc2lfZGNzX3dyaXRlX3NlcV9tdWx0aSgmZHNpX2N0eCwg
-MHhjYSwNCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDB4MDEsIDB4MDAsIDB4MDEs
-IDB4MDAsIDB4MDEsIDB4MDAsIDB4ODAsDQogICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAweDgwLCAweDgwLCAweDgwLCAweDgwLCAweDgwLCAweDgwLCAweDgwLA0KICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgMHg4MCwgMHg4MCwgMHg4MCwgMHg4MCwgMHg4MCwgMHg4
-MCwgMHg4MCwNCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDB4ODAsIDB4ODAsIDB4
-ODAsIDB4ODAsIDB4ODAsIDB4ODAsIDB4ODAsDQogICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAweDgwLCAweDgwLCAweDAwLCAweDAwLCAweDAwKTsgLy8gc2V0IGdhbW1hDQptaXBp
-X2RzaV9kY3Nfd3JpdGVfc2VxX211bHRpKCZkc2lfY3R4LCAweGIyLA0KICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgMHg0MCwgMHgwOCwgMHgyMCwgMHgwMCwgMHgwOCk7IC8vIHNl
-dCBhaWQNCm1pcGlfZHNpX2Rjc193cml0ZV9zZXFfbXVsdGkoJmRzaV9jdHgsIDB4YjYsIDB4
-MjgsIDB4MGIpOyAvLyBzZXQgZWx2c3MNCm1pcGlfZHNpX2Rjc193cml0ZV9zZXFfbXVsdGko
-JmRzaV9jdHgsIDB4ZjcsIDB4MDMpOyAvLyBnYW1tYSB1cGRhdGUNCm1pcGlfZHNpX2Rjc193
-cml0ZV9zZXFfbXVsdGkoJmRzaV9jdHgsIDB4NTUsIDB4MDApOyAvLyBhY2wgb2ZmDQptaXBp
-X2RzaV9kY3Nfd3JpdGVfc2VxX211bHRpKCZkc2lfY3R4LCAweGYwLCAweGE1LCAweGE1KTsg
-Ly8gbGV2ZWwgMSBrZXkgb2ZmDQptaXBpX2RzaV9kY3Nfd3JpdGVfc2VxX211bHRpKCZkc2lf
-Y3R4LCAweGZjLCAweGE1LCAweGE1KTsgLy8gbGV2ZWwgMiBrZXkgb2ZmDQoNClNvbWUgb2Yg
-dGhvc2UgbGluZXMgZXhjZWVkIHRoZSA4MCBjaGFyYWN0ZXJzIGxpbWl0LiBJIHdvdWxkIHN0
-aWxsIHByZWZlciBub3QgdG8gDQpicmVhayB0aG9zZSBsaW5lcyB0byBrZWVwIHJlYWRhYmls
-aXR5Lg0KDQpOb3cgY29tbWVudGluZyB0aGUgc2luZ2xlIGNvbW1hbmQgbGluZXMgaXMgb25l
-IHRoaW5nLiBCdXQgZ2l2aW5nIG5hbWVzIHRvIHRoZSANCmNvbW1hbmQgcmVnaXN0ZXJzIGlz
-IHNvbWV0aGluZyBkaWZmZXJlbnQuIEUuZy4gaW4gMHhiMCB0aGVyZSBpcyAic3JjIGxhdGNo
-IHNldCANCmdsb2JhbCIgYnV0IGFsc28gb25lIG9mIHRoZSAiYXZkZCIuIEkgd291bGRuJ3Qg
-a25vdyB3aGF0IG5hbWUgdGhhdCBjb21tYW5kIA0KcmVnaXN0ZXIgc2hvdWxkIGhhdmUuIEZv
-ciAweGNjIGFuZCAweGYyIGluIHRoZSBkb3duc3RyZWFtIGFtczQyN2FwMjQgdGhleSdyZSAN
-CmJvdGggaW4gYSBibG9jayBsYWJlbGxlZCAiUENEIiBhbmQgaW4gdXBzdHJlYW0gYW1zNDUy
-ZWYwMSB0aGUgMHhjYyBsaW5lIGlzIA0KY29tbWVudGVkIGFzICJzZXQgUGl4ZWwgQ2xvY2sg
-RGl2aWRlciBwb2xhcml0eSIgYnV0IHRoZSAweGYyIHJlZ2lzdGVyIHNlZW1zIHRvIA0KYmUg
-bW9yZSBnZW5lcmFsIGJlY2F1c2UgaW4gZG93bnN0cmVhbSBhbXM0MjdhcDI0IGl0IGFsc28g
-c2hvd3MgdXAgaW4gYSBibG9jayANCmNhbGxlZCAiQVZDIiBhbmQgaW4gZG93bnN0cmVhbSBh
-bXM0MjdhcDAxIGluIGEgY29tbWFuZCBsYWJlbGxlZCAidnBvcmNoIi4gDQpHdWVzc2luZyBu
-YW1lcyBmb3IgdGhlIGNvbW1hbmQgcmVnaXN0ZXJzIHdpbGwgYmVjb21lIHRvbyBhcmJpdHJh
-cnkuDQoNCkFkZGl0aW9uYWxseSwgSSBhY3R1YWxseSB3b3VsZCBsaWtlIHRvIGF2b2lkIHRo
-ZSAjZGVmaW5lcyBmb3IgdGhlIGNvbW1hbmQgDQpyZWdpc3RlcnMgYmVjYXVzZSB0aGlzIHdp
-bGwgZGVmaW5pdGl2ZWx5IGJyZWFrIHRoZSA4MCBjaGFyYWN0ZXIgbGluZXMgbGltaXRzIA0K
-c3Ryb25nIGVub3VnaCwgc3BsaW50ZXJpbmcgdGhlIGFib3ZlIGNvbW1hbmQgYmxvY2tzIGlu
-dG8gcXVpdGUgc29tZSBtZXNzLg0KDQpLaW5kIHJlZ2FyZHMsDQpKYWtvYg0K
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   850925a8133c73c4a2453c360b2c3beb3bab67c9
+commit: 021d23428bdbae032294e8f4a29cb53cb50ae71c RISC-V: build: Allow LTO to be selected
+date:   9 months ago
+config: riscv-randconfig-002-20241026 (https://download.01.org/0day-ci/archive/20241026/202410261627.2m4hohFx-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 5886454669c3c9026f7f27eab13509dd0241f2d6)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241026/202410261627.2m4hohFx-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410261627.2m4hohFx-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values in 'vmlinux.a(init.o at 1376452)' and 'vmlinux.a(trace.o at 1385932)'
+>> ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values in 'vmlinux.a(init.o at 1376452)' and 'vmlinux.a(mballoc.o at 1403092)'
+>> ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values in 'vmlinux.a(init.o at 1376452)' and 'vmlinux.a(skbuff.o at 1611352)'
+>> ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values in 'vmlinux.a(init.o at 1376452)' and 'vmlinux.a(tcp.o at 1616452)'
+>> ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values in 'vmlinux.a(init.o at 1376452)' and 'vmlinux.a(ipr.o at 1522612)'
+>> ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values in 'vmlinux.a(init.o at 1376452)' and 'vmlinux.a(raid5.o at 1566652)'
+>> ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values in 'vmlinux.a(init.o at 1376452)' and 'vmlinux.a(filter.o at 1612432)'
+   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values in 'vmlinux.a(init.o at 1376452)' and 'vmlinux.a(io_uring.o at 1460452)'
+>> ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values in 'vmlinux.a(init.o at 1376452)' and 'vmlinux.a(segment.o at 1441492)'
+>> ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values in 'vmlinux.a(init.o at 1376452)' and 'vmlinux.a(super.o at 1441132)'
+>> ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values in 'vmlinux.a(init.o at 1376452)' and 'vmlinux.a(advansys.o at 1519012)'
+   ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values in 'vmlinux.a(init.o at 1376452)' and 'vmlinux.a(super.o at 1435732)'
+>> ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values in 'vmlinux.a(init.o at 1376452)' and 'vmlinux.a(md.o at 1567792)'
+>> ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values in 'vmlinux.a(init.o at 1376452)' and 'vmlinux.a(file.o at 1440892)'
+>> ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values in 'vmlinux.a(init.o at 1376452)' and 'vmlinux.a(e1000_main.o at 1530892)'
+>> ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values in 'vmlinux.a(init.o at 1376452)' and 'vmlinux.a(inode.o at 1436332)'
+>> ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values in 'vmlinux.a(init.o at 1376452)' and 'vmlinux.a(mpt3sas_base.o at 1521592)'
+>> ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values in 'vmlinux.a(init.o at 1376452)' and 'vmlinux.a(volumes.o at 1436872)'
+>> ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values in 'vmlinux.a(init.o at 1376452)' and 'vmlinux.a(slub.o at 1390792)'
+>> ld.lld: error: Function Import: link error: linking module flags 'Code Model': IDs have conflicting values in 'vmlinux.a(init.o at 1376452)' and 'vmlinux.a(data.o at 1441372)'
+   ld.lld: error: too many errors emitted, stopping now (use --error-limit=0 to see all errors)
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
