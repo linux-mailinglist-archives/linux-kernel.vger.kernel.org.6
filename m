@@ -1,144 +1,88 @@
-Return-Path: <linux-kernel+bounces-383260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8AE79B191F
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 17:30:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E46F9B1918
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 17:29:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 711661F2214B
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 15:30:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21BB61F21666
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 15:29:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BA00339A1;
-	Sat, 26 Oct 2024 15:30:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F53C249E5;
+	Sat, 26 Oct 2024 15:29:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pi50FkTA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MDT9zJvG"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2DC412E4A;
-	Sat, 26 Oct 2024 15:30:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DED681C32
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 15:29:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729956619; cv=none; b=PnVJnMu3XuOExf+x4tSJ0XrQpjhqnzVih+kKeNeSWYPvNSeM96sPR+Ao4KizFCSAuAoS0wPS1Yfo7sD6EEaFi8QPaDiqdFDLPnDWQ/ERfpzQaFwxH7H5NP2t16YcV4cf2S+paeYBf7eWL62qYWeeWyFbGIIi9p+uSFCW94HLIx8=
+	t=1729956569; cv=none; b=fprEXqspiJPwcfssTDfPGqTRvCHG3Qy3wUlMuZ80tsnebMToA02CLVkXoBRJOImNBoZG1gV8eCvf2U+joHMoaOkcy2153OQFREbF8FrHf5TiHRHGRlFRppPyn1Ft6SW2bVTKfgDMzq0Cb7w/tl/ObnLmVp02k9VmDpLwYXSeUCo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729956619; c=relaxed/simple;
-	bh=JTyEKqZtPPx4SJlBOyY6fc+rEPd0RkxMnqkabI0F+5Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tQ3CuSpJmJTC5k9wm2Gt/zU/+ugvqQkIMkGY4Up7X4ket5OVW+ZI2WECyGNrq1W/DWdUg3kI8mU0Wmj3Qc2KTVeWWWgDT2RWyvWP+TTXSsD9q+s8096B3AXQrC+/SlOAG7zFiktlrUsNneDPHn3Z81h6/SfPw0NlT4NgRI/cqTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pi50FkTA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50550C4CECC;
-	Sat, 26 Oct 2024 15:29:49 +0000 (UTC)
+	s=arc-20240116; t=1729956569; c=relaxed/simple;
+	bh=h5AbvWB4yZLbIxNWZAGMl5QZQ3802eWn+fljamkLPEc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZmD2xa5S+xOnw9+As5arECe1DY+inuRN42pleGOo52kE9Ka0DdQJCyyVzUG1xqJI+FuGHvsY1Y5jxtQ/Hp23V5Oq0fzDy9aDpultBqfvazTwajwL5k/kiCzuwiPaCpa0/0dmqAnHoIhUlXZvMa0JnDaaRkF0QOTez8uWcL052qg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MDT9zJvG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 306B8C4CEC6;
+	Sat, 26 Oct 2024 15:29:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729956619;
-	bh=JTyEKqZtPPx4SJlBOyY6fc+rEPd0RkxMnqkabI0F+5Y=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Pi50FkTA3YDR302HawnJpraGdtgzRbWH+yPvbzZGr0PktKdBwqG3eek67mOVWs6D8
-	 JUaQVVlPS8/dUPG4OG9T28JGWL6IWJeqTcsUgboAeK6Eca66ywq5ane31w7kHHUu9j
-	 pb3hpA3UqEMIck2QR4NJK8ooJcgeXYGft4/CcWYNM06FmUamK6cgIchNNbc07s/l4A
-	 Dksw1ieA+9E31ASxgs4wGYHQRE+OwhtharUyKbxPWaOuU1N1kOrPyM/5UJxseiqLcp
-	 M6qvVsMx8y4PhWlXfwITnOFfgLWoW3lfFKYneBoDFBh+dwD6m2vUdkgoeIEK8Bw+N1
-	 5+EFvr8dCmOxg==
-Date: Sat, 26 Oct 2024 16:29:24 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Uwe
- =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <ukleinek@kernel.org>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Lars-Peter Clausen <lars@metafoo.de>, David
- Jander <david@protonic.nl>, Martin Sperl <kernel@martin.sperl.org>,
- linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
- linux-pwm@vger.kernel.org
-Subject: Re: [PATCH RFC v4 10/15] iio: buffer-dmaengine: document
- iio_dmaengine_buffer_setup_ext
-Message-ID: <20241026162924.2d7c8edc@jic23-huawei>
-In-Reply-To: <20241023-dlech-mainline-spi-engine-offload-2-v4-10-f8125b99f5a1@baylibre.com>
-References: <20241023-dlech-mainline-spi-engine-offload-2-v4-0-f8125b99f5a1@baylibre.com>
-	<20241023-dlech-mainline-spi-engine-offload-2-v4-10-f8125b99f5a1@baylibre.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=k20201202; t=1729956568;
+	bh=h5AbvWB4yZLbIxNWZAGMl5QZQ3802eWn+fljamkLPEc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MDT9zJvG9ZNPnJUl4AgotDaRMqRm5Z1cV+iG3o9eiF45qU6PimTES9EsLkBH8dSAW
+	 kNWfdtKNcTSw08DjBCxlOgFFgVtu2RH43ulwtxa9men95YzEbHQOAfSI0AbQMB7uFI
+	 AEOJJ5ZYq7xWak2VD6yOxVnWVzEtSe2/qbfRfBh2vLvlSj46mor/hJ5U98jdmS0hnN
+	 KyOIPb2TJLJFn5ZZoLdSaOGVy0VRa6NPU3wni5M/BhLyJfW5Ii83QdqYFNfCuzvjuJ
+	 uLwmDfHxl6yVZEzx4KyWgVCdhRxxB/DkVQ8ouH3bBjCG+aIuYNFxU60LEjFRXM42P3
+	 qQl2ZUxmUwNwA==
+Date: Sat, 26 Oct 2024 17:29:25 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Benjamin Segall <bsegall@google.com>
+Cc: linux-kernel@vger.kernel.org,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH v3] posix-cpu-timers: clear TICK_DEP_BIT_POSIX_TIMER on
+ clone
+Message-ID: <Zx0K1VI8bd1D3AYm@pavilion.home>
+References: <xm26o737bq8o.fsf@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <xm26o737bq8o.fsf@google.com>
 
-On Wed, 23 Oct 2024 15:59:17 -0500
-David Lechner <dlechner@baylibre.com> wrote:
-
-> The iio_dmaengine_buffer_setup_ext() function is public and should be
-> documented. Also, while touching this, fix the description of @dev in
-> related functions. @dev does not strictly have to be the parent of the
-> IIO device. It is only passed to dma_request_chan() so strictly
-> speaking, it can be any device that is a valid DMA channel consumer.
+Le Fri, Oct 25, 2024 at 06:35:35PM -0700, Benjamin Segall a écrit :
+> When cloning a new thread, its posix_cputimers are not inherited, and
+> are cleared by posix_cputimers_init(). However, this does not clear the
+> tick dependency it creates in tsk->tick_dep_mask, and the handler does
+> not reach the code to clear the dependency if there were no timers to
+> begin with.
 > 
-> Signed-off-by: David Lechner <dlechner@baylibre.com>
-> ---
+> Thus if a thread has a cputimer running before clone/fork, all
+> descendants will prevent nohz_full unless they create a cputimer of
+> their own.
 > 
-> v4 changes:
-> * This patch is new in v4.
+> Fix this by entirely clearing the tick_dep_mask in copy_process().
+> (There is currently no inherited state that needs a tick dependency)
 > 
-> Jonathan, I think this patch stands on its own if you want to take it
-> earlier than the rest of this series.
-I may do at some point, but want a few more eyes on it first so let's leave
-it here for now.
-
-Seems fine to me.
-
-
-> ---
->  drivers/iio/buffer/industrialio-buffer-dmaengine.c | 19 +++++++++++++++++--
->  1 file changed, 17 insertions(+), 2 deletions(-)
+> Process-wide timers do not have this problem because fork does not copy
+> signal_struct as a baseline, it creates one from scratch.
 > 
-> diff --git a/drivers/iio/buffer/industrialio-buffer-dmaengine.c b/drivers/iio/buffer/industrialio-buffer-dmaengine.c
-> index 19af1caf14cd..054af21dfa65 100644
-> --- a/drivers/iio/buffer/industrialio-buffer-dmaengine.c
-> +++ b/drivers/iio/buffer/industrialio-buffer-dmaengine.c
-> @@ -206,7 +206,7 @@ static const struct iio_dev_attr *iio_dmaengine_buffer_attrs[] = {
->  
->  /**
->   * iio_dmaengine_buffer_alloc() - Allocate new buffer which uses DMAengine
-> - * @dev: Parent device for the buffer
-> + * @dev: DMA channel consumer device
->   * @channel: DMA channel name, typically "rx".
->   *
->   * This allocates a new IIO buffer which internally uses the DMAengine framework
-> @@ -288,6 +288,21 @@ void iio_dmaengine_buffer_free(struct iio_buffer *buffer)
->  }
->  EXPORT_SYMBOL_NS_GPL(iio_dmaengine_buffer_free, IIO_DMAENGINE_BUFFER);
->  
-> +/**
-> + * iio_dmaengine_buffer_setup_ext() - Setup a DMA buffer for an IIO device
-> + * @dev: DMA channel consumer device
-> + * @indio_dev: IIO device to which to attach this buffer.
-> + * @channel: DMA channel name, typically "rx".
-> + * @dir: Direction of buffer (in or out)
-> + *
-> + * This allocates a new IIO buffer with devm_iio_dmaengine_buffer_alloc()
-> + * and attaches it to an IIO device with iio_device_attach_buffer().
-> + * It also appends the INDIO_BUFFER_HARDWARE mode to the supported modes of the
-> + * IIO device.
-> + *
-> + * Once done using the buffer iio_dmaengine_buffer_free() should be used to
-> + * release it.
-> + */
->  struct iio_buffer *iio_dmaengine_buffer_setup_ext(struct device *dev,
->  						  struct iio_dev *indio_dev,
->  						  const char *channel,
-> @@ -321,7 +336,7 @@ static void __devm_iio_dmaengine_buffer_free(void *buffer)
->  
->  /**
->   * devm_iio_dmaengine_buffer_setup_ext() - Setup a DMA buffer for an IIO device
-> - * @dev: Parent device for the buffer
-> + * @dev: Device for devm ownership and DMA channel consumer device
->   * @indio_dev: IIO device to which to attach this buffer.
->   * @channel: DMA channel name, typically "rx".
->   * @dir: Direction of buffer (in or out)
-> 
+> Fixes: b78783000d5c ("posix-cpu-timers: Migrate to use new tick dependency mask model")
+> Signed-off-by: Ben Segall <bsegall@google.com>
+> Cc: stable@vger.kernel.org
 
+Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
+
+Thanks!
 
