@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-383313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEA879B19FC
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 19:14:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65DEB9B19FD
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 19:15:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A9FFFB21788
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 17:14:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95E1A1C212D5
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 17:15:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 594891D47AC;
-	Sat, 26 Oct 2024 17:14:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C72871D61A4;
+	Sat, 26 Oct 2024 17:14:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="FuRA2eZe"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="MBD0bBv4"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04AE91C1ABC
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 17:14:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CE7C1D040B
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 17:14:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729962887; cv=none; b=m7ztWFcaykSTFX6L58kxuSkBOqAk7RggOnE8DUEUyaY0zUVLDjQ0+8UWXS3UQqnPBPUF/OBRjyPDh7tEm3qRf4JwMUd4TegeOjAOLYPCF6DoQXyf26FdF6hla81qwLyQ5UC35GcTePXB0wiajvyGAhe/gT7QtDxHrz/JmaUKhn8=
+	t=1729962889; cv=none; b=sZtR9faDKmzpKXpdVrj8M56vgQXa3sTwrCtodDgRutdTZ7FIw+Js6hHtLJwKgLZLNn/D1Jv6aQEPxhE7AZpBWn15i9D9A+iJz8grg3IBNkulx/dpCgWACsUyK/tZqi8Hzw0DpJgNS6nt4uwhE4VH3gBfYrkZ+66eQ1npaREdPkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729962887; c=relaxed/simple;
-	bh=jGEgimkaom91Z9EgZ4/3h2i1m/uy4fd9MoLfYA5LE4M=;
+	s=arc-20240116; t=1729962889; c=relaxed/simple;
+	bh=iUX1BixGjkb0dNnZh+RA4SlDagbvHXtMA0l5ZKdixJo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ukajBiND3yZRzIBDfJOZ3L0ppo2qY61GqUFHfUqltfRB1cxb2ySbP2C21OHutzOOoQJzAAJgO/zcbUuPC+37KAfxSb6HcEXc5CCtzTl2Lf65wugSKLA40LqKFUvbkCgN/rid+dW4Puogf/683ftCB5jpru3RTJD5T8l/StC7tDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=FuRA2eZe; arc=none smtp.client-ip=209.85.216.42
+	 MIME-Version; b=GZvt7q+TJ67MSSMWWORVL8rmtlwT9Rj6Rf6RfnNcO0cHqi42j30KArXCdavQWnchw8d+isVZ1tBffBtvjZV/tSWnFIS6FVPzfYINK8mXrJdmzd/U+yXlEl8p2tAQQDd+tsJWf/X/f5FMH4kArSXGaQMiX3KnmhLP5f7qWoRVeag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=MBD0bBv4; arc=none smtp.client-ip=209.85.216.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2e2e88cb0bbso2301609a91.3
-        for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 10:14:45 -0700 (PDT)
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2e2ed59a35eso2444765a91.0
+        for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 10:14:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1729962885; x=1730567685; darn=vger.kernel.org;
+        d=sifive.com; s=google; t=1729962886; x=1730567686; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=IgTekunG0cQy0vjVyXRBRATW95KVtugkqgihcshjjxQ=;
-        b=FuRA2eZeAuxYCOhxIu6YjUtoCcYLVXiIposMh6pl83WW5vUdkTL/+i8yHAKiXpWnzq
-         EhYzoYRge/Fz35kGdcVeiUnCs4nECTZKV8gX9NKhPRiHWe+Ro6oPQL0RE3AenfZWpODS
-         MEFBGt6zgI69PTRe+I+zU7PIKNjwwqfa6SqAcJEJM76MrLyWSM+gkKmugFfD4SY5XWHw
-         RtxL+DIjN8pHeeMBc8U0SUZOsUiREEnfy4gAoC9Mvw572R2ObXiU0m9MzxQmIGVmiPd6
-         YE7k/6cdi4D6LPzxhfgvMqUl5NOPUonnBIuBzSIww5tWStUJ7btdoLRMbyMRRKe2ok/z
-         LoKA==
+        bh=qyKlYhyoQTsAn4L5ymM1gqMGEqmqMMy28NtniO4HhLo=;
+        b=MBD0bBv4gGLLKX6iF4wGtqmfrJcTBQRh+RKIurUDC7BylmTLXJk5mEeudno4Ox/X9z
+         VhVgaAjDt3R1KxQ+NBfhvmBU/qkhuyBU1MtTmKQ+hva0vJk1j+nEqMCWtI0KsoytHR2n
+         cNnUye+uFStonojRwY+4MK1vKiFR7BKZVwozqR9YXR6LAUK0mGOaiDiU8V88JRzqtfxh
+         4lvgZ5SEdIQcr2WGPn6X7PhLiys0anP7pT/5IF6jlslKyf5KIM+ZgqcMQaTYPfrwKwdC
+         fUtfpjPSe2bqAhF3nsykXkA1qKaC8PbCD2+XNOO3fH5+z5kfRykBmMbzYrvWHJbFmy6G
+         XRcg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729962885; x=1730567685;
+        d=1e100.net; s=20230601; t=1729962886; x=1730567686;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=IgTekunG0cQy0vjVyXRBRATW95KVtugkqgihcshjjxQ=;
-        b=TivL0GSeWJcghNdfNBdSYHxXBMArnSd5KtMqcPiXNxYVJxWGzbjSyI4ahpP9evywqL
-         p0JNMJfB1gVYuPxJUXBoA0xcmMv6x8qQC2W2sj3ENDrphFFT5KvicgBEsFQagIBxJriD
-         8Ty88aE1SqsuyGWIU5yxtKrREl0+gPM/Esh/qYhVFXPoyqjb2vXxtC87I7m+WlUfLfXR
-         Eh17pDVn69IzwhfZnoqKKsToTQDVDgZ12j2ItBMWZeXv8TPYrcrT0KB3fWOX3IDewyCm
-         XZ5SYiLGzxrT8kP9hZnrJikW9Am6h14MyIlydVhAc9uYUgDelhUnCvGr/fXRlGZo6E+s
-         yR+w==
-X-Forwarded-Encrypted: i=1; AJvYcCVNk+JrmnOShJPTRteqp6zUG63gTw1QXeMrwvi4u4WgamDtztUYrV3JLYjGbrPPBb4cMvHj0T2qqlrsezI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwfixDCBm0jQetF/l53o9Bfgds5afNFq8z01IiQLoLElj7iofaJ
-	XdvMrx1irXDqWl8cd4Howund30lxMk/Z/91pz79nSlzYvBjpyseAMn2YWfeYKpQ=
-X-Google-Smtp-Source: AGHT+IHMFAwANT/EZuDl4La1BmNjmSNtM9o3wF8CMwHklFBsWwrPxYwZlipAsFiUTL+gnWOt/QYKpg==
-X-Received: by 2002:a17:90a:b111:b0:2e2:d16e:8769 with SMTP id 98e67ed59e1d1-2e8f106926emr4001679a91.15.1729962885304;
-        Sat, 26 Oct 2024 10:14:45 -0700 (PDT)
+        bh=qyKlYhyoQTsAn4L5ymM1gqMGEqmqMMy28NtniO4HhLo=;
+        b=STzmIuqUXaqYUXy6rwctNwAGYnp5ufpjJ/+WYDNQ6FPEE4o966EgSSaPnaYdGmnFWl
+         QJ3MS+l2u93Rdv367ddz88kw/j+Gz6sfHm043HZqGWtloMCKE+/YaUYtyaWmG+cIeGns
+         4V97xbkIZHKj/Ns5qofY1T3VL7RucunfWx0/jSlvuQsv1M2eiqgrao6NWETvsZt7pdMq
+         +P9fVzhfTXr1IQcB2N0uQrXGHR1I/JjwOoU8W5boB3Yn0IQppgvYUonxtFrmeMi2kpoL
+         E/l1AiBg+bNlyRe9qUSiqx/xYaZ16nDN9/z/MECAHMJwYQgvBtRelbSuCDAJhF/5R4q7
+         y0lw==
+X-Forwarded-Encrypted: i=1; AJvYcCUcZWNRUiAld4oFN5FboQdm8shU3qzxrfUbcZ0RHyxKHUMALkTUGGrBB6nKMFWXimPB3y7i+rhbual+XCk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/Djy/dNYQnb7yvXgsn6AZP3VPQWHFvUCQT7ReNdokzRiAHwbX
+	UszykXLiN18lm6Wg5bEQ1fcE3AyvhwYkbRhUF6GdvgsWrkfb7AI5mGjnvhwMTjs=
+X-Google-Smtp-Source: AGHT+IGjNDukwViDngFMKYKbWwFFp9ljp4jqD+5ryDjxC8VoVYiX7cXbg3yZQRK0W4GSuzVMjeVSBQ==
+X-Received: by 2002:a17:90a:7847:b0:2e2:c69b:669 with SMTP id 98e67ed59e1d1-2e8f10a6f5bmr4102476a91.27.1729962886541;
+        Sat, 26 Oct 2024 10:14:46 -0700 (PDT)
 Received: from sw06.internal.sifive.com ([4.53.31.132])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e77e558114sm5663762a91.36.2024.10.26.10.14.44
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e77e558114sm5663762a91.36.2024.10.26.10.14.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 26 Oct 2024 10:14:44 -0700 (PDT)
+        Sat, 26 Oct 2024 10:14:46 -0700 (PDT)
 From: Samuel Holland <samuel.holland@sifive.com>
 To: Palmer Dabbelt <palmer@dabbelt.com>,
 	linux-kernel@vger.kernel.org,
@@ -74,9 +74,9 @@ Cc: Andrew Morton <akpm@linux-foundation.org>,
 	Arnd Bergmann <arnd@arndb.de>,
 	Alexandre Ghiti <alexghiti@rivosinc.com>,
 	Samuel Holland <samuel.holland@sifive.com>
-Subject: [PATCH 1/6] riscv: Remove duplicate CONFIG_PAGE_OFFSET definition
-Date: Sat, 26 Oct 2024 10:13:53 -0700
-Message-ID: <20241026171441.3047904-2-samuel.holland@sifive.com>
+Subject: [PATCH 2/6] riscv: Allow NOMMU kernels to access all of RAM
+Date: Sat, 26 Oct 2024 10:13:54 -0700
+Message-ID: <20241026171441.3047904-3-samuel.holland@sifive.com>
 X-Mailer: git-send-email 2.45.1
 In-Reply-To: <20241026171441.3047904-1-samuel.holland@sifive.com>
 References: <20241026171441.3047904-1-samuel.holland@sifive.com>
@@ -88,27 +88,71 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This definition is already provided by include/generated/autoconf.h,
-so it does not need to be provided on the command line.
+NOMMU kernels currently cannot access memory below the kernel link
+address. Remove this restriction by setting PAGE_OFFSET to the actual
+start of RAM, as determined from the devicetree. The kernel link address
+must be a constant, so keep using CONFIG_PAGE_OFFSET for that purpose.
 
 Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
 ---
 
- arch/riscv/Makefile | 1 -
- 1 file changed, 1 deletion(-)
+ arch/riscv/include/asm/page.h    | 12 ++++--------
+ arch/riscv/include/asm/pgtable.h |  2 +-
+ 2 files changed, 5 insertions(+), 9 deletions(-)
 
-diff --git a/arch/riscv/Makefile b/arch/riscv/Makefile
-index d469db9f46f4..6ff2cbde5296 100644
---- a/arch/riscv/Makefile
-+++ b/arch/riscv/Makefile
-@@ -92,7 +92,6 @@ KBUILD_AFLAGS += -march=$(riscv-march-y)
- CC_FLAGS_FPU  := -march=$(shell echo $(riscv-march-y) | sed -E 's/(rv32ima|rv64ima)([^v_]*)v?/\1\2/')
+diff --git a/arch/riscv/include/asm/page.h b/arch/riscv/include/asm/page.h
+index 32d308a3355f..24d1ac052609 100644
+--- a/arch/riscv/include/asm/page.h
++++ b/arch/riscv/include/asm/page.h
+@@ -26,12 +26,9 @@
+  * When not using MMU this corresponds to the first free page in
+  * physical memory (aligned on a page boundary).
+  */
+-#ifdef CONFIG_64BIT
+ #ifdef CONFIG_MMU
++#ifdef CONFIG_64BIT
+ #define PAGE_OFFSET		kernel_map.page_offset
+-#else
+-#define PAGE_OFFSET		_AC(CONFIG_PAGE_OFFSET, UL)
+-#endif
+ /*
+  * By default, CONFIG_PAGE_OFFSET value corresponds to SV57 address space so
+  * define the PAGE_OFFSET value for SV48 and SV39.
+@@ -41,6 +38,9 @@
+ #else
+ #define PAGE_OFFSET		_AC(CONFIG_PAGE_OFFSET, UL)
+ #endif /* CONFIG_64BIT */
++#else
++#define PAGE_OFFSET		((unsigned long)phys_ram_base)
++#endif /* CONFIG_MMU */
  
- KBUILD_CFLAGS += -mno-save-restore
--KBUILD_CFLAGS += -DCONFIG_PAGE_OFFSET=$(CONFIG_PAGE_OFFSET)
+ #ifndef __ASSEMBLY__
  
- ifeq ($(CONFIG_CMODEL_MEDLOW),y)
- 	KBUILD_CFLAGS += -mcmodel=medlow
+@@ -97,11 +97,7 @@ typedef struct page *pgtable_t;
+ #define MIN_MEMBLOCK_ADDR      0
+ #endif
+ 
+-#ifdef CONFIG_MMU
+ #define ARCH_PFN_OFFSET		(PFN_DOWN((unsigned long)phys_ram_base))
+-#else
+-#define ARCH_PFN_OFFSET		(PAGE_OFFSET >> PAGE_SHIFT)
+-#endif /* CONFIG_MMU */
+ 
+ struct kernel_mapping {
+ 	unsigned long page_offset;
+diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
+index e79f15293492..e224ac66e635 100644
+--- a/arch/riscv/include/asm/pgtable.h
++++ b/arch/riscv/include/asm/pgtable.h
+@@ -12,7 +12,7 @@
+ #include <asm/pgtable-bits.h>
+ 
+ #ifndef CONFIG_MMU
+-#define KERNEL_LINK_ADDR	PAGE_OFFSET
++#define KERNEL_LINK_ADDR	_AC(CONFIG_PAGE_OFFSET, UL)
+ #define KERN_VIRT_SIZE		(UL(-1))
+ #else
+ 
 -- 
 2.45.1
 
