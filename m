@@ -1,58 +1,78 @@
-Return-Path: <linux-kernel+bounces-383227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B81909B18B2
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 16:47:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1FD29B18B5
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 16:48:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7C531C20B60
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 14:47:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A0D81F21DA4
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 14:48:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21F111CF8B;
-	Sat, 26 Oct 2024 14:47:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B041F1CF9B;
+	Sat, 26 Oct 2024 14:48:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lichtman.org header.i=@lichtman.org header.b="mbxLIxyo"
-Received: from lichtman.org (lichtman.org [149.28.33.109])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=remote-tech-co-uk.20230601.gappssmtp.com header.i=@remote-tech-co-uk.20230601.gappssmtp.com header.b="Bgr+Ftoq"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D2E51C69D;
-	Sat, 26 Oct 2024 14:47:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.33.109
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12DB9AD24
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 14:48:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729954052; cv=none; b=FPw6ysZ7U87wa1dfTb70yDkzxIP/UxirNto8If/Ly1d6fH/DE2+QBrRljilzcYJJjjkv2Kj22GCZZPSegX2HCqIdK+U8Gh9Euq0X+4GkPIaGWuD42k3xohdYYdTAlYKGa22OHQ8U/97eLc9xMsRFr4WvIeK97vOMPHUhBgX+hEo=
+	t=1729954097; cv=none; b=ud+53rTZ2eDN6A/UgIcdjC8gMg3XMJyohUZ+6lIPUnEkxoRaknO2susFLbdVjotnb1g/njjlgz+Biy5U9mOV8PmcvMAOP90D1jewk/admvRvuLwX8NcwyH08/TqWOmOl1ByxZH2p3M+XIKB8V1GLAQamFiRmqOvWRWRoHyt910k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729954052; c=relaxed/simple;
-	bh=j+zxkjt/Kb9ZF1jAWfGzqPmaDqTM2RiQ22KLaeHRslQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=N+KXSxbSgk/Z418HduIs8zwbcr3yeSJr9VdCWfA6nfQXoVlM9IwiCcPMD2fQsMsih8KibOnWmr+fA6tuEqbdgByq4mlxjE9zAMM7hVrJvNo6MSzlqtwJj0wSit0U6xt1QsFpCKEojmB/a0WgCUKKDKvwPsbZZrlisGMi+6wOlOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lichtman.org; spf=pass smtp.mailfrom=lichtman.org; dkim=pass (2048-bit key) header.d=lichtman.org header.i=@lichtman.org header.b=mbxLIxyo; arc=none smtp.client-ip=149.28.33.109
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lichtman.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lichtman.org
-Received: by lichtman.org (Postfix, from userid 1000)
-	id 90D25177103; Sat, 26 Oct 2024 14:47:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=lichtman.org; s=mail;
-	t=1729954044; bh=j+zxkjt/Kb9ZF1jAWfGzqPmaDqTM2RiQ22KLaeHRslQ=;
-	h=Date:From:To:Cc:Subject:From;
-	b=mbxLIxyoPJjSgjZSh+W916g6DJSQdBE1FmCERgWyFWCx4d0ljEmnc8QCzzGMWXWua
-	 px4OPssGIc98PD7NatN5drTQm5+VaHmO7FY9pCuS3svpNNWFKhU1FCvruP6krBokcS
-	 P6dmzVLYtAt0GTOIKZ3HopigNTsJ+beXZ/pABzRRgoZmjyzE/iPbtK35OiC+lkwjOO
-	 KE7C4Ui1NUaa2lYB+27Wk+GCSABZnGd9q/unCQAYM26Nmmvt/1BnYnfhixy8UhpfJQ
-	 dqhb6JbOnA+bqP99/gFAs6AggFdxF+3HfSQ+8w8vLUGMxDBd8yAteF8QWDnph0tApQ
-	 j/r66CBCb1fXg==
-Date: Sat, 26 Oct 2024 14:47:24 +0000
-From: Nir Lichtman <nir@lichtman.org>
-To: kgdb-bugreport@lists.sourceforge.net,
-	linux-trace-kernel@vger.kernel.org
-Cc: yuran.pereira@hotmail.com, jason.wessel@windriver.com,
-	daniel.thompson@linaro.org, dianders@chromium.org,
-	rostedt@goodmis.org, mhiramat@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-kernel-mentees@lists.linuxfoundation.org
-Subject: [PATCH v3 0/2] Replace the use of simple_strtol/ul functions with
- kstrto
-Message-ID: <20241026144724.GA892311@lichtman.org>
+	s=arc-20240116; t=1729954097; c=relaxed/simple;
+	bh=MWxPZ0rd0vQSSGb1OYfWrjEcHEmLMZBNRKOr3PUqu1U=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=el5umYNOnRC9bJ4I/SMNqY+Z2E1Yzs/KlIJpz7UhYGV3wb4BhGCrJZel/ir/cj9KJjAsxGi6LdUCwM3LTWx/DIkXhCffPJH1C8y51nC4DlTmvee70b7QctZGuFFu1t05tcr3JRFf2+eH3YrhZDr2agKMATak1p1F3T/XfIVxGmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=remote-tech.co.uk; spf=pass smtp.mailfrom=remote-tech.co.uk; dkim=pass (2048-bit key) header.d=remote-tech-co-uk.20230601.gappssmtp.com header.i=@remote-tech-co-uk.20230601.gappssmtp.com header.b=Bgr+Ftoq; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=remote-tech.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=remote-tech.co.uk
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5cacb76e924so3757419a12.0
+        for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 07:48:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=remote-tech-co-uk.20230601.gappssmtp.com; s=20230601; t=1729954093; x=1730558893; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=qC024lRJVAEmIHLuN+s83Hm+ef/1j+PPbHp473apDbA=;
+        b=Bgr+FtoqNJnerTcO0wKkFHUGafd7/GJWb5Llvrz6rxduM3NbqZeqp/1Ln/YB/D7kSo
+         76MWFU9Qf40cfaT0Ge1wbbjUpLYViTrkdXERKh2BfnTp00umUlarme+RZFiIOXLkJ2Ya
+         9sjNiHBwqgQ+o4AFIDnvM37XpLeB+G/outCvghWxrS3wSwY9HZzkhBBkBpMXHvgGe1Rc
+         oHGa38A+csgmP381YPbk76LwCBsQ4mHGeWjtkSYBiYPVcLu3IupjNEfziKDxV186n6/Q
+         6PwQoVEwrSSyBf6JyRMecu4K7M2G8dWYwhgt+IpHp7oaXTPCBvB1AxrjWiPimLx4fnTl
+         kkkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729954093; x=1730558893;
+        h=content-disposition:mime-version:message-id:subject:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qC024lRJVAEmIHLuN+s83Hm+ef/1j+PPbHp473apDbA=;
+        b=ZbhXePPKljiRBQJ9l8Qa+NkVvbadSJlGqMbRMcsWfB+oslTbqXu7CsXzGMAIRmjU0q
+         8tsNSdFFLHN0MoiC/QAkOdOcZuEq9JG3HOUrWCifR9zo+JlH4s1JhKN/0uatId6kSUkO
+         ff45fC/X2P2uHHAH685evaBGQOLNwHFI8LyypojNRqcCWA+WBpMkGHansfTIP6sRPmEl
+         dsCg7TfqOQZ41zLAASN7xu+w4//7vb2YqMc26r67eEB8piZr2ZwSueW94gFS38HgmcVx
+         +qJndzzijicW78FghHBbbymKsgtPRjjrKUZKR7BEdRJIyJD6BsK9cG/VXCdHyyFrTct0
+         rlag==
+X-Forwarded-Encrypted: i=1; AJvYcCUNBCsK4M1ZHTjMvFPf8OT29NKBsbPvYCr1nrxfd21KAvbOgmbGC81+X8a5YHdE90FYKWqG+vTjEvY2cEQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyn+Kf2EITjLVlOeMoHi4TUufyHnQhrPDcl/5hmnWa/HbRoyY5D
+	eyRb6npOnq08JBWpXsbyjmk840R+DaizkHkPtbaucFJzstz06PaG+Atd+gM/8aAZDJMu8wHHlm4
+	6UtRK7n8IitaTYpShfdZO5rNz3gNmElLzXOLv+Hf+Avh+CM6gWzi3jJC+psacE3XPCP0MTLbfaR
+	9ec4l4WUWfFIbymFMrZbglHOxDvG4=
+X-Google-Smtp-Source: AGHT+IG4PpxrQduHWvKVj7/srrfd0iKQ4sb0Q12T19VO7aaWAAlCMAAaNmGu/B9Jn4rtQnFNhOISWA==
+X-Received: by 2002:a05:6402:1d50:b0:5c8:9548:f28b with SMTP id 4fb4d7f45d1cf-5cbbf8a6813mr2154556a12.11.1729954093244;
+        Sat, 26 Oct 2024 07:48:13 -0700 (PDT)
+Received: from admins-Air ([2a02:810d:aec0:2a54:158c:1efa:f963:7401])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cbb62c42c7sm1586799a12.51.2024.10.26.07.48.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 26 Oct 2024 07:48:12 -0700 (PDT)
+Date: Sat, 26 Oct 2024 16:48:10 +0200
+From: Vicentiu Galanopulo <vicentiu.galanopulo@remote-tech.co.uk>
+To: pavel@ucw.cz, lee@kernel.org, corbet@lwn.net,
+	linux-leds@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1 3/3] Documentation:leds: Add leds-st1202.rst
+Message-ID: <Zx0BKtXo55D_pCGk@admins-Air>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,47 +82,57 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-The simple_str* family of functions perform no error checking in
-scenarios where the input value overflows the intended output variable.
-This results in these function successfully returning even when the
-output does not match the input string.
+Add usage for sysfs hw_pattern entry for leds-st1202 
 
-Or as it was mentioned [1], "...simple_strtol(), simple_strtoll(),
-simple_strtoul(), and simple_strtoull() functions explicitly ignore
-overflows, which may lead to unexpected results in callers."
-Hence, the use of those functions is discouraged.
+Signed-off-by: Vicentiu Galanopulo <vicentiu.galanopulo@remote-tech.co.uk>
+---
+ Documentation/leds/leds-st1202.rst | 36 ++++++++++++++++++++++++++++++
+ 1 file changed, 36 insertions(+)
+ create mode 100644 Documentation/leds/leds-st1202.rst
 
-This patch series replaces uses of the simple_strto* series of function
-with the safer  kstrto* alternatives.
+diff --git a/Documentation/leds/leds-st1202.rst b/Documentation/leds/leds-st1202.rst
+new file mode 100644
+index 000000000000..72286a512c69
+--- /dev/null
++++ b/Documentation/leds/leds-st1202.rst
+@@ -0,0 +1,36 @@
++.. SPDX-License-Identifier: GPL-2.0
++
++============================================
++Kernel driver for STMicroelectronics LED1202
++============================================
++
++/sys/class/leds/<led>/hw_pattern
++--------------------------------
++
++Specify a hardware pattern for the ST1202 LED. The LED
++controller, implements 12 low-side current generators
++with independent dimming control. Internal volatile memory
++allows the user to store up to 8 different patterns.
++Each pattern is a particular output configuration in terms
++of PWM duty-cycle and duration (ms).
++
++To be compatible with the hardware pattern
++format, maximum 8 tuples of brightness (PWM) and duration must
++be written to hw_pattern.
++
++- Min pattern duration: 22 ms
++- Max pattern duration: 5660 ms
++
++The format of the hardware pattern values should be:
++"brightness duration brightness duration ..."
++
++/sys/class/leds/<led>/repeat
++----------------------------
++
++Specify a pattern repeat number, which is common for all channels.
++Default is 1, other negative numbers and number 0 are invalid.
++
++This file will always return the originally written repeat number.
++
++When the 255 value is written to it, all patterns will repeat
++indefinitely.
+-- 
+2.39.3 (Apple Git-145)
 
-  
-[1] https://www.kernel.org/doc/html/latest/process/deprecated.html#simple-strtol-simple-strtoll-simple-strtoul-simple-strtoull
-
-Yuran Pereira (2):
-  kdb: Replace the use of simple_strto with safer kstrto in kdb_main
-  trace: kdb: Replace simple_strtoul with kstrtoul in kdb_ftdump
-Nir Lichtman (1):
-  kdb: Remove fallback interpretation of arbitrary numbers as hex
-
-This patch is originally based upon
-https://lore.kernel.org/all/GV1PR10MB65635561FB160078C3744B5FE8B4A@GV1PR10MB6563.EURPRD10.PROD.OUTLOOK.COM/
-
-Since the original thread was left with a review and the comments have not been addressed,
-decided to continue the minor work left to move this patch forward.
-
-v2:
-- Styling fixes
-- Fix an invalid conversion to unsigned int instead of signed as it was supposed to be
-- Fix one of the conversions to return an error in case of failure, instead of silently falling back to a default value
-- Add Douglas's suggestion for removing the hex interpretation fallback
-v3: 
-- Split to 3 parts instead of 2 (in which the 3rd part now contains the hex interpretation fix)
-- Fix the patch series to properly reference the cover
-- Fix credit tags
-
- kernel/debug/kdb/kdb_main.c | 69 +++++++++--------------------------
- kernel/trace/trace_kdb.c    | 15 +++-----
- 2 files changed, 23 insertions(+), 61 deletions(-)
---
-2.39.2
 
