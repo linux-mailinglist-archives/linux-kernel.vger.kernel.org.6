@@ -1,178 +1,157 @@
-Return-Path: <linux-kernel+bounces-383246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 851909B18F0
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 17:06:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88D4F9B18F4
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 17:07:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3047E1F2217A
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 15:06:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0E2EEB21244
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 15:07:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24424224FA;
-	Sat, 26 Oct 2024 15:06:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71C4F249E5;
+	Sat, 26 Oct 2024 15:07:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ol1vw3xI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bo63wzwn"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6901B125A9;
-	Sat, 26 Oct 2024 15:06:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C696122075;
+	Sat, 26 Oct 2024 15:07:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729955180; cv=none; b=JckEwg9LkJwrVbYd6p4/5/4UeJtVeqIkimt0iu104Rj92kXAU1E3pNbXYtGEUuON43h+TfG11EYxK2hnsq8u7u31K8RwTDqmYD0J+ZCORaXRrbdiuSQeUHOh+8GSheO6CX1GvDMwlfBvHmmpoKO3Lv4aUo+mBjDirBvWy8TVdpk=
+	t=1729955225; cv=none; b=dB5Mgby0q6RoFqXnYi0rRfcNRzRccLu9tzCR5seS1UHV6FOW16QHtaRAi7H9dRLhwue7LBkDtC6HAmp0YvQG4soJSmdIFNM/aoNHnLlYngFUksRrk30WKGeFgyD3bdHWYs1ffPZA8MxShJjkXN8sEtfylbOSuv9wJaIofOaL7YM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729955180; c=relaxed/simple;
-	bh=AjFU2n0mS+GoL062AAzmBcSlZNEuG+C9Nk0pMIZQcUY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=r9525ru4hBQzC2IIkMMWrGspZL0z0g0CQLmAY61P9yyhHPO7aB8OsixOqiuWgWF4NPefY9xhfVeywtaVZoO8qeOMoWC3/udq0Sryy1oW9AcCLlRhcEvj2H0ZIMBthn3NbPybn1OpdDPM6hYmJL2QFLyFFEwSfyHYKmOKIyu1ohQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ol1vw3xI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C6A6C4CEC6;
-	Sat, 26 Oct 2024 15:05:47 +0000 (UTC)
+	s=arc-20240116; t=1729955225; c=relaxed/simple;
+	bh=nyrEPnPVL6CfiOximMToOwsXo5hX9hDKi37RpbH3KDI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S76fiuD17Vy18g/0FBCGYOUKK26La4HaNjoi9Jc4SngMHlDqHS9yxc1YVebUtqltehYUBh9fSauRYy3v0YZMfjVz8JXL0qOQGzVlKkOQutCZxIGGeE9sfeAp3F2MV5L/wukqd8SNHU5ChhnEodi/E3PzJXhgS/qoZJNhDR4v8Vk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bo63wzwn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB8BEC4CEC6;
+	Sat, 26 Oct 2024 15:07:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729955179;
-	bh=AjFU2n0mS+GoL062AAzmBcSlZNEuG+C9Nk0pMIZQcUY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ol1vw3xIRHJfwiLPHH9C3+12qYx0Eo8/LKiNWfPufsB83cRBMf7XeNmpdZrV4IMp7
-	 G424Bu6R4aqB7aK43uGM9yfY++f3rMIT/Y8fqPLd+aeIcUwI6jGItc9LCvN1xe/lI6
-	 Reu7C8UXeatj0SAx1Z+MWs5pQDxyP0e+hr3FMP7fH+Ajdlyq6bjC0F2DMy0WdooJ7O
-	 egIPC10pL2GdKmW98Xxq8CAwCrt76DCU8Mdn41DeqiiUkTeEKr812fwe28OUOIcykK
-	 73/PBjAO5XOr8Rr3VFCxNHWWf8Bj40yPt32uGZmkdmJIAkxB63KikLgxJKo2DiGtgC
-	 TB2tc2WXSsMsg==
-Date: Sat, 26 Oct 2024 16:05:21 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Uwe
- =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <ukleinek@kernel.org>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Lars-Peter Clausen <lars@metafoo.de>, David
- Jander <david@protonic.nl>, Martin Sperl <kernel@martin.sperl.org>,
- linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
- linux-pwm@vger.kernel.org
-Subject: Re: [PATCH RFC v4 02/15] spi: add basic support for SPI offloading
-Message-ID: <20241026160521.52205cb0@jic23-huawei>
-In-Reply-To: <20241023-dlech-mainline-spi-engine-offload-2-v4-2-f8125b99f5a1@baylibre.com>
-References: <20241023-dlech-mainline-spi-engine-offload-2-v4-0-f8125b99f5a1@baylibre.com>
-	<20241023-dlech-mainline-spi-engine-offload-2-v4-2-f8125b99f5a1@baylibre.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=k20201202; t=1729955225;
+	bh=nyrEPnPVL6CfiOximMToOwsXo5hX9hDKi37RpbH3KDI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Bo63wzwn4LbzEfNYwEJKtpL/2DlkYa9XTRF9HYO32eIMsd879HBZ3n7oyvJJam347
+	 hc1cfPOK+FmOUk88Pcs+RTXwLFTi8hB2tdUewbI6QVGYFWugr8e9lsDf+voB27VlK/
+	 2kZyT2Ue+khHEDfdL7L2oKl+ZIpZLwHtxiM0LC6PvUOA06pi/blWSlD1lvO5rspohf
+	 ZPqDVBNrcB5p4bNf8pIwTQAXItXhWp15oBTIXbdv7Zg66vOwhNRAYX3R2ocixb5s5r
+	 1znwOcMjeeufsfWcnbyYWjwLeue4+yIZxxtPzFHPlWLfCY+MXhQsCQkdrVccG/ZhdH
+	 DAWEuI8VF+kQA==
+Date: Sat, 26 Oct 2024 16:07:00 +0100
+From: Simon Horman <horms@kernel.org>
+To: Rosen Penev <rosenp@gmail.com>
+Cc: netdev@vger.kernel.org, Madalin Bucur <madalin.bucur@nxp.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Ioana Ciornei <ioana.ciornei@nxp.com>,
+	Claudiu Manoil <claudiu.manoil@nxp.com>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:FREESCALE QUICC ENGINE UCC ETHERNET DRIVER" <linuxppc-dev@lists.ozlabs.org>
+Subject: Re: [PATCH net-next] net: freescale: use ethtool string helpers
+Message-ID: <20241026150700.GF1507976@kernel.org>
+References: <20241024205257.574836-1-rosenp@gmail.com>
+ <20241025125704.GT1202098@kernel.org>
+ <CAKxU2N98hnVAE9WF72HhxzVEfhnRAgMykVgBErL9b3gupqqrxQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAKxU2N98hnVAE9WF72HhxzVEfhnRAgMykVgBErL9b3gupqqrxQ@mail.gmail.com>
 
-On Wed, 23 Oct 2024 15:59:09 -0500
-David Lechner <dlechner@baylibre.com> wrote:
+On Fri, Oct 25, 2024 at 12:32:27PM -0700, Rosen Penev wrote:
+> On Fri, Oct 25, 2024 at 5:57 AM Simon Horman <horms@kernel.org> wrote:
+> >
+> > On Thu, Oct 24, 2024 at 01:52:57PM -0700, Rosen Penev wrote:
+> > > The latter is the preferred way to copy ethtool strings.
+> > >
+> > > Avoids manually incrementing the pointer. Cleans up the code quite well.
+> > >
+> > > Signed-off-by: Rosen Penev <rosenp@gmail.com>
+> >
+> > ...
+> >
+> > > diff --git a/drivers/net/ethernet/freescale/dpaa/dpaa_ethtool.c b/drivers/net/ethernet/freescale/dpaa/dpaa_ethtool.c
+> > > index b0060cf96090..10c5fa4d23d2 100644
+> > > --- a/drivers/net/ethernet/freescale/dpaa/dpaa_ethtool.c
+> > > +++ b/drivers/net/ethernet/freescale/dpaa/dpaa_ethtool.c
+> > > @@ -243,38 +243,24 @@ static void dpaa_get_ethtool_stats(struct net_device *net_dev,
+> > >  static void dpaa_get_strings(struct net_device *net_dev, u32 stringset,
+> > >                            u8 *data)
+> > >  {
+> > > -     unsigned int i, j, num_cpus, size;
+> > > -     char string_cpu[ETH_GSTRING_LEN];
+> > > -     u8 *strings;
+> > > +     unsigned int i, j, num_cpus;
+> > >
+> > > -     memset(string_cpu, 0, sizeof(string_cpu));
+> > > -     strings   = data;
+> > > -     num_cpus  = num_online_cpus();
+> > > -     size      = DPAA_STATS_GLOBAL_LEN * ETH_GSTRING_LEN;
+> > > +     num_cpus = num_online_cpus();
+> > >
+> > >       for (i = 0; i < DPAA_STATS_PERCPU_LEN; i++) {
+> > > -             for (j = 0; j < num_cpus; j++) {
+> > > -                     snprintf(string_cpu, ETH_GSTRING_LEN, "%s [CPU %d]",
+> > > -                              dpaa_stats_percpu[i], j);
+> > > -                     memcpy(strings, string_cpu, ETH_GSTRING_LEN);
+> > > -                     strings += ETH_GSTRING_LEN;
+> > > -             }
+> > > -             snprintf(string_cpu, ETH_GSTRING_LEN, "%s [TOTAL]",
+> > > -                      dpaa_stats_percpu[i]);
+> > > -             memcpy(strings, string_cpu, ETH_GSTRING_LEN);
+> > > -             strings += ETH_GSTRING_LEN;
+> > > -     }
+> > > -     for (j = 0; j < num_cpus; j++) {
+> > > -             snprintf(string_cpu, ETH_GSTRING_LEN,
+> > > -                      "bpool [CPU %d]", j);
+> > > -             memcpy(strings, string_cpu, ETH_GSTRING_LEN);
+> > > -             strings += ETH_GSTRING_LEN;
+> > > +             for (j = 0; j < num_cpus; j++)
+> > > +                     ethtool_sprintf(&data, "%s [CPU %d]",
+> > > +                                     dpaa_stats_percpu[i], j);
+> > > +
+> > > +             ethtool_sprintf(&data, "%s [TOTAL]", dpaa_stats_percpu[i]);
+> > >       }
+> > > -     snprintf(string_cpu, ETH_GSTRING_LEN, "bpool [TOTAL]");
+> > > -     memcpy(strings, string_cpu, ETH_GSTRING_LEN);
+> > > -     strings += ETH_GSTRING_LEN;
+> > > +     for (i = 0; j < num_cpus; i++)
+> >
+> > Perhaps this should consistently use i, rather than i and j:
+> >
+> >         for (i = 0; i < num_cpus; i++)
+> >
+> > Flagged by W=1 builds with clang-18.
+> I really need to compile test this on a PPC system.
 
-> Add the basic infrastructure to support SPI offload providers and
-> consumers.
+Depending on your aims and hardware availability,
+cross compiling may be easier.
+
+But in any case, I don't think this problem relates to PPC.
+
+> >
+> > > +             ethtool_sprintf(&data, "bpool [CPU %d]", i);
+> > > +
+> > > +     ethtool_puts(&data, "bpool [TOTAL]");
+> > >
+> > > -     memcpy(strings, dpaa_stats_global, size);
+> > > +     for (i = 0; i < DPAA_STATS_GLOBAL_LEN; i++)
+> > > +             ethtool_puts(&data, dpaa_stats_global[i]);
+> > >  }
+> > >
+> > >  static int dpaa_get_hash_opts(struct net_device *dev,
+> >
+> > ...
 > 
-> SPI offloading is a feature that allows the SPI controller to perform
-> transfers without any CPU intervention. This is useful, e.g. for
-> high-speed data acquisition.
-> 
-> SPI controllers with offload support need to implement the get_offload
-> callback and can use the devm_spi_offload_alloc() to allocate offload
-> instances.
-> 
-> SPI peripheral drivers will call devm_spi_offload_get() to get a
-> reference to the matching offload instance. This offload instance can
-> then be attached to a SPI message to request offloading that message.
-> 
-> It is expected that SPI controllers with offload support will check for
-> the offload instance in the SPI message in the optimize_message()
-> callback and handle it accordingly.
-> 
-> CONFIG_SPI_OFFLOAD is intended to be a select-only option. Both
-> consumer and provider drivers should `select SPI_OFFLOAD` in their
-> Kconfig to ensure that the SPI core is built with offload support.
-> 
-> Signed-off-by: David Lechner <dlechner@baylibre.com>
-A few minor additions to what has already been raised.
-
-Jonathan
-
-> diff --git a/drivers/spi/spi-offload.c b/drivers/spi/spi-offload.c
-> new file mode 100644
-> index 000000000000..c344cbf50bdb
-> --- /dev/null
-> +++ b/drivers/spi/spi-offload.c
-> @@ -0,0 +1,104 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (C) 2024 Analog Devices Inc.
-> + * Copyright (C) 2024 BayLibre, SAS
-> + */
-> +
-> +#define DEFAULT_SYMBOL_NAMESPACE SPI_OFFLOAD
-> +
-> +#include <linux/cleanup.h>
-> +#include <linux/device.h>
-> +#include <linux/export.h>
-> +#include <linux/mutex.h>
-> +#include <linux/property.h>
-?  If it is needed for later patch bring it in then.
-
-
-> +#include <linux/spi/spi-offload.h>
-> +#include <linux/spi/spi.h>
-> +#include <linux/types.h>
->
-> +
-> +/**
-> + * devm_spi_offload_get() - Get an offload instance
-> + * @dev: Device for devm purposes
-> + * @spi: SPI device to use for the transfers
-> + * @config: Offload configuration
-> + *
-> + * Peripheral drivers call this function to get an offload instance that meets
-> + * the requirements specified in @config. If no suitable offload instance is
-> + * available, -ENODEV is returned.
-> + *
-> + * Return: Offload instance or error on failure.
-> + */
-> +struct spi_offload *devm_spi_offload_get(struct device *dev,
-> +					 struct spi_device *spi,
-> +					 const struct spi_offload_config *config)
-> +{
-> +	struct spi_offload *offload;
-> +	int ret;
-> +
-> +	if (!spi || !config)
-> +		return ERR_PTR(-EINVAL);
-> +
-> +	if (!spi->controller->get_offload)
-> +		return ERR_PTR(-ENODEV);
-> +
-> +	offload = spi->controller->get_offload(spi, config);
-
-Why let this return an offload that is already in use?
-Maybe make that a problem for the spi controller
-Seems odd to pass it spi then set it later.
-
-I.e. have this return ERR_PTR(-EBUSY);
-
-
-> +	if (IS_ERR(offload))
-> +		return offload;
-> +
-> +	if (offload->spi)
-> +		return ERR_PTR(-EBUSY);
-> +
-> +	offload->spi = spi;
-> +	get_device(offload->provider_dev);
-> +
-> +	ret = devm_add_action_or_reset(dev, spi_offload_put, offload);
-> +	if (ret)
-> +		return ERR_PTR(ret);
-> +
-> +	return offload;
-> +}
-> +EXPORT_SYMBOL_GPL(devm_spi_offload_get);
 
