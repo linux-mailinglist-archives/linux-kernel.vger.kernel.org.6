@@ -1,191 +1,128 @@
-Return-Path: <linux-kernel+bounces-383151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BFEF9B17D5
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 14:11:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27C979B17D9
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 14:12:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E516D284AC0
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 12:11:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C2841C20B12
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 12:12:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D8C11D4609;
-	Sat, 26 Oct 2024 12:11:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE3F11D47B4;
+	Sat, 26 Oct 2024 12:12:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=riseup.net header.i=@riseup.net header.b="hq7wgWu+"
-Received: from mx1.riseup.net (mx1.riseup.net [198.252.153.129])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Jw8cbXC7"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49975217F3B;
-	Sat, 26 Oct 2024 12:11:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.252.153.129
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A901217F3B
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 12:12:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729944680; cv=none; b=gPO4ypmRdiPOYsdaDJpYlOc7sgVhqOL7pzDBTgJeY8Vb1d3AUr2VMfxO8GiAh/BjpdfBlhQWW+xsQJY+mwa3TTfycNzmeD0znX15tOFnSMBfpVmXJCh7Wmc9sAgUmuhM6POfQXOGB1fKqJ2kTAqFC1D2m20TjqugS+en8AILoq8=
+	t=1729944730; cv=none; b=H8Rsfutzts+9jv7vvsXU4awjW6/GvkeF5hVxUswIGV8H/jnbWR0/v9HM17Bsax0DAimotVOuu0Jp0ucsMqq0zs0Z5XOOeHMdCS8hETcssh7zdYvC+LDHVg5ZlZMJ/XnTw/ZwRcXEnOmYuxI/IHXpLjedDAfQ2uIaPYgKjHCY1TY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729944680; c=relaxed/simple;
-	bh=AQ3/+Vqj28trLqi817dZc3+Hj8cF9me0bw3ppsI5GUI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Za8veJV2huVHPw0oQspD3SKZEH5Z4A7iCf/r5bBvFcF4T91cMzcZIEcLALsrkTtithLoYHBlGHRstR4Ve3YtzFdDJ/6cHT4wChLX+xOEHAg8avmLn11HmEVq3nW5wmPmt2W08GqoF3FZ+TGWG1+5urSOdeVxlnOcBx+H9lXpJrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riseup.net; spf=pass smtp.mailfrom=riseup.net; dkim=pass (1024-bit key) header.d=riseup.net header.i=@riseup.net header.b=hq7wgWu+; arc=none smtp.client-ip=198.252.153.129
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riseup.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riseup.net
-Received: from fews02-sea.riseup.net (fews02-sea-pn.riseup.net [10.0.1.112])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx1.riseup.net (Postfix) with ESMTPS id 4XbJQj153jzDrNy;
-	Sat, 26 Oct 2024 12:11:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=riseup.net; s=squak;
-	t=1729944669; bh=AQ3/+Vqj28trLqi817dZc3+Hj8cF9me0bw3ppsI5GUI=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=hq7wgWu+2qofBRiHTL5ltlClTVxhevCV7k6HdBvld3J/IHAA4xk/j8C9T2ICpYHkt
-	 HU65Qsd2YBD27JXG95bxNztTxtrzowLdfhO9Z0JBSa7HsTg3RtCblFIpcwtG8RcqHm
-	 Y2iTL8e7pYqyssEu8QfbD3Tn544hILkh1h/7b1rQ=
-X-Riseup-User-ID: F93AA77ED5E886C2F4EB654852C2ACF3900CB5B9FF30773A7B45C08DCC7C3760
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-	 by fews02-sea.riseup.net (Postfix) with ESMTPSA id 4XbJQY0lZszFtZ6;
-	Sat, 26 Oct 2024 12:11:00 +0000 (UTC)
-Message-ID: <d3e8bb5a-6053-4a2b-a445-0cf4e610f112@riseup.net>
-Date: Sat, 26 Oct 2024 09:10:57 -0300
+	s=arc-20240116; t=1729944730; c=relaxed/simple;
+	bh=I5Ne/vvklkREjVmexRxHU/F8r004cv6BA6FFj89lMo0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TY0F2HYhbLYqIdon0lXorDt3xBNNvKN4UZkIEDvbvFjrcs4dK990qgNI5RZ//xhxattwtnn+oYwwA2wGaqLbaaBZ++ZzJ9TZ91EJtaSNcgcsFCNiIF4Z6fqoTOkX+AuY1LVaB9wQGaiWa8D83XvfOOnlPQeCApyKp47AHaF+vT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Jw8cbXC7; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5c9589ba577so469966a12.1
+        for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 05:12:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729944726; x=1730549526; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=L/M8UQSVOYdwgbj5CZajVmfuAcuFVgOKdwDSIzZcGcQ=;
+        b=Jw8cbXC7zISiZe8XnWueV4ahMccb3LNIZiAQxHK8gSMEiWqzYbQt6RU5zck2vzZkNQ
+         Rb5XccItZ/q5odUKh7wnC+SJWI5P3uimVGFhp6iw3mcrV+U/px1737TYXK+sDdEaYlYq
+         Iq60d18qprcDdvTi3Hj4d+haOSfPIude8A8u3dUph5WV5U0kW4NZVfdhpYPqjkF7Mmr+
+         0wl2VPx9dCGLUmFe0gbVWNFq+8VAwQHWm3omlKiTBnNQqEPeKLPEJX9mA3YMQB0JGThG
+         A8FkfjiYtGD8Sng6Hvn7zsfENtvpBbGEOvZVEH2gKWjrMUrOLWWjypUB3subgTjd3T6w
+         N8lQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729944726; x=1730549526;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=L/M8UQSVOYdwgbj5CZajVmfuAcuFVgOKdwDSIzZcGcQ=;
+        b=LSvM7qzURw1ztcbjRWUusZiVOc889seWLPPFIWVTkE8ivtKyS4SGzKifh4hFIlXlm7
+         dp2Wjl+vXQw8nHnKrN2nBBe3MaS6R/Ihxb63E67iPXf/DPSRCEozKmZ4MytrWWqBs8RT
+         T2S0ZiHHGcwA2ZhGJKjtO+A0+aSwhGjeNkkIC9b6FrvWTFTaw7x9q6Krc5PB6DwgqLPH
+         RhkrmFhSyk8XT2E7NyZ2NLgE63FlkBMDl1vOS8FRvyobAc0QOGRzTshE6uimozPCiNqg
+         dSlfWBD/UbMqxV5xxQxSQqHejmFd4354d2exqGLJ+yRpDRcKAhldcC1ECp1c3pH5kKnw
+         Pe3g==
+X-Forwarded-Encrypted: i=1; AJvYcCVoXYpjgMTpJSePcdxEb7wHs3vF1EOYl/JNndTITw9i8Hhy2SmTYbVGIxbL5ggTD1F0MQ89D01L/WRttS4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3Z+h/c6zrH4On9DoNhRat3/sdJP/8pU5EZNxoiPc4dV0zGiqo
+	lldrECkVUKrCD0UizYoDrnSLRXhELYmh3mcO4xUDThzMy/fX9mnq6ZRsr5bFILI=
+X-Google-Smtp-Source: AGHT+IEUleyfh0n6tWnMCBjtlyAZ3mGKhEds91T7wra0PT/A5QLxjmifUACEHGa/AYzNQ3vXhOB/7w==
+X-Received: by 2002:a17:907:86a0:b0:a9a:2a56:139a with SMTP id a640c23a62f3a-a9de5d2a83emr74680166b.4.1729944726111;
+        Sat, 26 Oct 2024 05:12:06 -0700 (PDT)
+Received: from krzk-bin.. ([178.197.211.167])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b3a089168sm166821066b.208.2024.10.26.05.12.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 26 Oct 2024 05:12:05 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Mark Brown <broonie@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/5] arm64: dts: exynos8895: Add cmu, mct, serial_0/1 and spi_0/1
+Date: Sat, 26 Oct 2024 14:12:02 +0200
+Message-ID: <172994467264.24870.11860096857422265131.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241023091734.538682-1-ivo.ivanov.ivanov1@gmail.com>
+References: <20241023091734.538682-1-ivo.ivanov.ivanov1@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v12 09/15] drm/vkms: Remove useless drm_rotation_simplify
-To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
- Melissa Wen <melissa.srw@gmail.com>,
- Haneen Mohammed <hamohammed.sa@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
- Simona Vetter <simona@ffwll.ch>, rdunlap@infradead.org,
- arthurgrillo@riseup.net, pekka.paalanen@haloniitty.fi,
- Simona Vetter <simona.vetter@ffwll.ch>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- thomas.petazzoni@bootlin.com, jeremie.dautheribes@bootlin.com,
- miquel.raynal@bootlin.com, seanpaul@google.com, marcheu@google.com,
- nicolejadeyee@google.com
-References: <ZwzYqihbReaLFn-c@louis-chauvet-laptop>
-Content-Language: en-US
-From: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mairacanal@riseup.net>
-In-Reply-To: <ZwzYqihbReaLFn-c@louis-chauvet-laptop>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-Hi Louis,
 
-On 14/10/24 05:39, Louis Chauvet wrote:
-> On 11/10/24 - 10:53, Maira Canal wrote:
->> Hi Louis,
->>
->> On 10/11/24 06:36, Louis Chauvet wrote:
->>>
->>> Hi all,
->>>
->>> Until this point, this series has not received any major comments since
->>> v9. I will commit patches 1-9 next week if there are no further comments.
->>>
->>
->> Although we are maintainers of VKMS, it isn't recommended that we push
->> our own changes without even the Ack of another person. Please, read the
->> "drm-misc Committer Guidelines" [1].
+On Wed, 23 Oct 2024 12:17:29 +0300, Ivaylo Ivanov wrote:
+> Hey folks,
 > 
-> Hi Maíra, Maxime,
+> This patchset adds device tree nodes for multiple clock management unit
+> blocks, MCT, SPI and UART for Exynos8895.
 > 
-> I apologize for this rushed commit request. I sent the initial email with
-> a delay before the commit action because I was not sure about the
-> procedure and wanted to give others a chance to raise any concerns.
-> Unfortunately, I overlooked the need to collect an Ack/Review for each
-> patch, even when there hadn't been any responses for several months. I'm
-> sorry for this oversight.
+> Exynos8895 uses USIv1 for most of its serial buses, except a few that
+> have been implemented in this series. Support for USIv1 and HSI2C will
+> be added in the future.
 > 
->> I can ack patches 05/15, 07/15, and 09/15, but it would be more
->> beneficial for the community if you ask for an ack (from me or from the
->> DRM maintainers, which are always around), instead of saying that you
->> are going to commit the patches without any review.
-> 
-> I will be happy to ask for acknowledgments if needed, but as you mentioned
-> multiple times: nobody is paid to maintain VKMS. Since you did not comment
-> these series since July, when you told me you would review my patches, I
-> assumed it was either okay or you no longer had the time to maintain
-> (which I completely understand).
+> [...]
 
-Yeah, I'm a volunteer and no longer have time to maintain VKMS. A couple
-of weeks ago I sent a patch removing myself as VKMS maintainer. This
-doesn't imply that patches can be pushed without review.
+NOT applied patch 4/5 - I wait for bindings to be accepted by Greg.
 
-We are a community with several active developers. Although I don't have
-time to properly review your patches, you can try to gather other
-developers to review your patches. You can try to use #dri-devel to get
-reviewers.
+Applied, thanks!
 
-That said, you can add my ACK to patches 05/15, 07/15, and 09/15 and
-push the patches. I won't ack the YUV patches as I don't feel
-comfortable reviewing/acking those.
+[1/5] dt-bindings: timer: exynos4210-mct: Add samsung,exynos8895-mct compatible
+      https://git.kernel.org/krzk/linux/c/e54eb0465e548a7c6115e336ec5cfec04bbe8747
+[2/5] arm64: dts: exynos8895: Add clock management unit nodes
+      https://git.kernel.org/krzk/linux/c/fa986d1073805154888a788eda38d46a796346e8
+[3/5] arm64: dts: exynos8895: Add Multi Core Timer (MCT) node
+      https://git.kernel.org/krzk/linux/c/9ad6c3bd1bcbb73e2a5723e13b9d06e2296b07e4
+[5/5] arm64: dts: exynos8895: Add spi_0/1 nodes
+      https://git.kernel.org/krzk/linux/c/a5541d737c8de71948bcdaee912bcb6b0781af7e
 
-Acked-by: Maíra Canal <mairacanal@riseup.net>
-
-BTW if the patches are fixing IGT tests, please update the list of fails
-and skips on DRM CI.
-
-Best Regards,
-- Maíra
-
-> 
-> So, I hereby formally request reviews/ACKs for the following series:
-> 
-> [this series]:https://lore.kernel.org/all/20241007-yuv-v12-0-01c1ada6fec8@bootlin.com/
-> [2]:https://lore.kernel.org/all/20241007-b4-new-color-formats-v2-0-d47da50d4674@bootlin.com/
-> [3]:https://lore.kernel.org/all/20240516-writeback_line_by_line-v1-0-7b2e3bf9f1c9@bootlin.com/
-> 
-> (I have to send a v2 for [3] because of rebase conflict, but nothing else
-> changed)
-> 
-> Thanks a lot,
-> Louis Chauvet
->   
->> [1] https://drm.pages.freedesktop.org/maintainer-tools/committer/committer-drm-misc.html
->>
->> Best Regards,
->> - Maíra
->>
->>> For patches 10-15, I am currently waiting for feedback from Maxime to
->>> send the next iteration with a fix for kunit tests.
->>>
->>> Thanks,
->>> Louis Chauvet
->>>
->>> On 07/10/24 - 18:10, Louis Chauvet wrote:
->>>> As all the rotation are now supported by VKMS, this simplification does
->>>> not make sense anymore, so remove it.
->>>>
->>>> Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
->>>> ---
->>>>    drivers/gpu/drm/vkms/vkms_plane.c | 7 +------
->>>>    1 file changed, 1 insertion(+), 6 deletions(-)
->>>>
->>>> diff --git a/drivers/gpu/drm/vkms/vkms_plane.c b/drivers/gpu/drm/vkms/vkms_plane.c
->>>> index 8875bed76410..5a028ee96c91 100644
->>>> --- a/drivers/gpu/drm/vkms/vkms_plane.c
->>>> +++ b/drivers/gpu/drm/vkms/vkms_plane.c
->>>> @@ -115,12 +115,7 @@ static void vkms_plane_atomic_update(struct drm_plane *plane,
->>>>    	frame_info->fb = fb;
->>>>    	memcpy(&frame_info->map, &shadow_plane_state->data, sizeof(frame_info->map));
->>>>    	drm_framebuffer_get(frame_info->fb);
->>>> -	frame_info->rotation = drm_rotation_simplify(new_state->rotation, DRM_MODE_ROTATE_0 |
->>>> -									  DRM_MODE_ROTATE_90 |
->>>> -									  DRM_MODE_ROTATE_270 |
->>>> -									  DRM_MODE_REFLECT_X |
->>>> -									  DRM_MODE_REFLECT_Y);
->>>> -
->>>> +	frame_info->rotation = new_state->rotation;
->>>>    	vkms_plane_state->pixel_read_line = get_pixel_read_line_function(fmt);
->>>>    }
->>>>
->>>> -- 
->>>> 2.46.2
->>>>
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
