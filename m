@@ -1,105 +1,122 @@
-Return-Path: <linux-kernel+bounces-382961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A44F9B158F
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 08:54:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 211179B158D
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 08:54:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ACCE5B21A58
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 06:54:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE72A283056
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 06:54:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7F751898E8;
-	Sat, 26 Oct 2024 06:54:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACF4F17C7C6;
+	Sat, 26 Oct 2024 06:54:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="J663dotr"
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S1PVDEBH"
+Received: from mail-pf1-f194.google.com (mail-pf1-f194.google.com [209.85.210.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04EF814A0B8;
-	Sat, 26 Oct 2024 06:54:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92F0329CE5;
+	Sat, 26 Oct 2024 06:54:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729925679; cv=none; b=PKlXjH849yyDzDtyCT8/OLZfgb7xTUoMQZQoUcb1oycVK3Pxz69+X2l/zIjh591Qk68ZtS03tpZeANwgpvzTUmBFo+V7yedONsWQ5f5IfIxvjQfEwQ9jYGcJJaf6VVfuD7x4EABr5P2Dy6Mx9n40dtjkE6sOyTHJlOuJaBtWoZk=
+	t=1729925678; cv=none; b=Yd8Cwv8gy4+xz9nDc4PT6vxUd6GrtoI0/zCk0QZtm1nf6/R3NUe/oEKxrlTsyy8zhFKsqF/Gz2NPdMtcqCvkEfiP0vGVP5elUA+wqMXU/tkAQ5D8dISRQApLQZq2I7v9M8/EfLdkqBdxCHLQK7dF8DFzXdZI1RFLx5ju3YC3GlM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729925679; c=relaxed/simple;
-	bh=gOMlkacdNMk2lVv/Nv7KkYd2BJCDDRftJTmzbQD7kik=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P7V0IlVzrNle97jCTJnYtf2t4MWDeKHMc9dIunhFRNabuFjLGIXHaD8ZQlO7lxBaF9+HnngUjYHewmfIEu0KQfQtkNiV+M8TMe3DfSJRN9rbIb9JMNB7dCNGMu5RgM8gcR8N5hnr3b/SQgEkR/vUrh1n9CuxzgpnfvMrnZ7Ffxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=J663dotr; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=dMbiS79IRWkAjW+tIrkhW4M9vtmrftvVQ8uN7qrKRsg=; b=J663dotrqKoH+Ubl5Kih8StJn4
-	ZDlkJ63soehxCJgpW74JjsMXip25dUteBV+Onjt4DKJj/S8HTzRZ8ByywvcQIOa9JL/SwugxnEtYz
-	aV4PE6/zWDPp/7rxH/CKTiNvUXtxwndEPxycbjZCzmUfcn+FBYaFvZDUHzHBHqRLwyxQaYh4cR4fa
-	E8hUw4TNNZFzZ0yVgU8tI8UMV5C23F4tmvVge/QNFcDyoxlzBzkE2cHpijm1gC6+spb7hQzkSX6wU
-	lBBVleqreIWdGdgbOGp5I2Ka55Wmw9h6bYOwxNGYkILVvzn4jnHopoWMAdzIMb5rDrp8wJsn5wZ17
-	HCY2B99Q==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1t4agd-00CFso-2F;
-	Sat, 26 Oct 2024 14:54:12 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sat, 26 Oct 2024 14:54:11 +0800
-Date: Sat, 26 Oct 2024 14:54:11 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Ryan Roberts <ryan.roberts@arm.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	David Hildenbrand <david@redhat.com>,
-	Greg Marsden <greg.marsden@oracle.com>,
-	Ivan Ivanov <ivan.ivanov@suse.com>,
-	Kalesh Singh <kaleshsingh@google.com>,
-	Marc Zyngier <maz@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Matthias Brugger <mbrugger@suse.com>,
-	Miroslav Benes <mbenes@suse.cz>, Will Deacon <will@kernel.org>,
-	linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [RFC PATCH v1 20/57] crypto: Remove PAGE_SIZE compile-time
- constant assumption
-Message-ID: <ZxySE1gdlTxV3OXO@gondor.apana.org.au>
-References: <20241014105514.3206191-1-ryan.roberts@arm.com>
- <20241014105912.3207374-1-ryan.roberts@arm.com>
- <20241014105912.3207374-20-ryan.roberts@arm.com>
+	s=arc-20240116; t=1729925678; c=relaxed/simple;
+	bh=TuQA7dPpS8bAGcKBW+pbPNP714DcJshUvyM1zp01fAk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hQVVG+wyFSrHUcGkKKweiD6L4s0ZDgeKtf0oUWoAu4LSdK2QuvaCx+jkor0ECixC3S9NhGIqJ3TDHOdOnfn8Gqigiya0MMINyOlz2zzJyHMOqCeHM1BMJH5RFPMMj3fxKQlxJluNUOtb9trNkgDNE28RDmEOInAGwdEi+nsAtbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S1PVDEBH; arc=none smtp.client-ip=209.85.210.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f194.google.com with SMTP id d2e1a72fcca58-71e5ae69880so1965156b3a.2;
+        Fri, 25 Oct 2024 23:54:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729925675; x=1730530475; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=I2pAE1nQgw4jbrmDxYeWEQDTLjgIt/Rez86CyuKC0C0=;
+        b=S1PVDEBH6UP4XisgmL+4/E16WGkP3D7bLFsRG/Ge9lP54uMcDc+zIdq54lKmHXTJja
+         iI4WX2f2WatX5IJYJTd8VIiZ9W5U85SYQ1Fjm67opD9cA8/eLJROuwcdqlx3EHKIJ+yI
+         AVOVDltFwEwnF7/DMrEH/Bn2LzpYvbiHB6JE4i39hwPrQ6KZewvPlKDxov2RY9dJtuKO
+         sQshNXcJtt+XGqXDkfLUGnGFhvAOatlycWVEqaOHz+z2MhRv8+6fGVl/QckWQOSnu2tS
+         D3/mO/LxAhQZSobExIQem31mfwjk8kLQqMvtDvT0T3y2E2/Im26U+xYXQk22nCCeFm6G
+         7TIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729925675; x=1730530475;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=I2pAE1nQgw4jbrmDxYeWEQDTLjgIt/Rez86CyuKC0C0=;
+        b=TxvDw8TEeXDAGt7E8oaJR8pu+yQ6nXg1yk3W6cds9xY0wJpE9sAUWJgKkao+MWrsu8
+         O6GhAAX12icIzGSc9vaF37ZQ0OdIXDTm6YQ1mOdW3WKLM/3Xio+/otUqBUdh3FN5pbcP
+         p6HIY8B/eEJ0CDas0v8hWQLWMmB2MoftRTiW6cEJ+83EFj6AHoKRA5tNZaKfWVMchxAf
+         gtdA8xE1riaM6LdheINbqJUyawP6ycg6UrRLFokX3uxl28Ajhb1xQIQFeMUEEc2C3w0H
+         uNaUkauYySm+knwm12kBx1j33sY/zDO36OLW6qXa6peFenQuWIKRnv1/KkBwWK3A0Ei6
+         1AcA==
+X-Forwarded-Encrypted: i=1; AJvYcCUidP1XKFPKuXoNRBwtxE6m7MK9sEIegCPagCOdgp0xJYg9WNYqRKPsxifFblIeUT/NRvVzvp4S@vger.kernel.org, AJvYcCXjLDHWM26WUz602QxODYPEDpPGnxYLCF3vGThe6d2iZyrXqOlWsrW+SUt2Erom9HWUhtgN5ritUC4BRAs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzxW7ZRYlRwnChW1heLrUF4An/VvF33nn1Li7fyJWK9d3ZGLSQz
+	HCCjb6SOXFnzTIhPjLeJAnLa/sRNjP+vzR3eOZU7lII0TRQR+J+J
+X-Google-Smtp-Source: AGHT+IEl5l0jSV5gXZw1tFhxSHW7frVVE5nruCu12o7EQzDV3Eq4x2GY8dcedHW06478MetBe/k4wA==
+X-Received: by 2002:a05:6a00:80c:b0:71e:5b0e:a5e4 with SMTP id d2e1a72fcca58-72063098020mr3311582b3a.27.1729925674664;
+        Fri, 25 Oct 2024 23:54:34 -0700 (PDT)
+Received: from localhost.localdomain ([43.129.25.208])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72057931785sm2142139b3a.50.2024.10.25.23.54.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Oct 2024 23:54:34 -0700 (PDT)
+From: Menglong Dong <menglong8.dong@gmail.com>
+X-Google-Original-From: Menglong Dong <dongml2@chinatelecom.cn>
+To: edumazet@google.com,
+	lixiaoyan@google.com
+Cc: dsahern@kernel.org,
+	kuba@kernel.org,
+	weiwan@google.com,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Menglong Dong <dongml2@chinatelecom.cn>
+Subject: [PATCH bpf-next] net: tcp: replace the document for "lsndtime" in tcp_sock
+Date: Sat, 26 Oct 2024 14:54:22 +0800
+Message-Id: <20241026065422.2820134-1-dongml2@chinatelecom.cn>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241014105912.3207374-20-ryan.roberts@arm.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 14, 2024 at 11:58:27AM +0100, Ryan Roberts wrote:
-> To prepare for supporting boot-time page size selection, refactor code
-> to remove assumptions about PAGE_SIZE being compile-time constant. Code
-> intended to be equivalent when compile-time page size is active.
-> 
-> Updated BUILD_BUG_ON() to test against limit.
-> 
-> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
-> ---
-> 
-> ***NOTE***
-> Any confused maintainers may want to read the cover note here for context:
-> https://lore.kernel.org/all/20241014105514.3206191-1-ryan.roberts@arm.com/
-> 
->  crypto/lskcipher.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+The document for "lsndtime" in struct tcp_sock is placed in the wrong
+place, so let's replace it in the proper place.
 
-Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
+Fixes: d5fed5addb2b ("tcp: reorganize tcp_sock fast path variables")
+Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
+---
+ include/linux/tcp.h | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/include/linux/tcp.h b/include/linux/tcp.h
+index 6a5e08b937b3..f88daaa76d83 100644
+--- a/include/linux/tcp.h
++++ b/include/linux/tcp.h
+@@ -200,7 +200,6 @@ struct tcp_sock {
+ 
+ 	/* TX read-mostly hotpath cache lines */
+ 	__cacheline_group_begin(tcp_sock_read_tx);
+-	/* timestamp of last sent data packet (for restart window) */
+ 	u32	max_window;	/* Maximal window ever seen from peer	*/
+ 	u32	rcv_ssthresh;	/* Current window clamp			*/
+ 	u32	reordering;	/* Packet reordering metric.		*/
+@@ -263,7 +262,7 @@ struct tcp_sock {
+ 	u32	chrono_stat[3];	/* Time in jiffies for chrono_stat stats */
+ 	u32	write_seq;	/* Tail(+1) of data held in tcp send buffer */
+ 	u32	pushed_seq;	/* Last pushed seq, required to talk to windows */
+-	u32	lsndtime;
++	u32	lsndtime;	/* timestamp of last sent data packet (for restart window) */
+ 	u32	mdev_us;	/* medium deviation			*/
+ 	u32	rtt_seq;	/* sequence number to update rttvar	*/
+ 	u64	tcp_wstamp_ns;	/* departure time for next sent data packet */
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.39.5
+
 
