@@ -1,167 +1,109 @@
-Return-Path: <linux-kernel+bounces-383215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9C6F9B188C
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 16:18:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D96889B188F
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 16:18:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89714282D7A
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 14:17:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E971282441
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 14:18:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED32BB676;
-	Sat, 26 Oct 2024 14:17:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CFF118641;
+	Sat, 26 Oct 2024 14:18:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=riseup.net header.i=@riseup.net header.b="KUEV9YZj"
-Received: from mx0.riseup.net (mx0.riseup.net [198.252.153.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="dsVoWrTd"
+Received: from msa.smtpout.orange.fr (smtp-80.smtpout.orange.fr [80.12.242.80])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67E19125A9
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 14:17:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.252.153.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 547911CD02;
+	Sat, 26 Oct 2024 14:18:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729952274; cv=none; b=QV137oZ0V+GzCTrATfBxJDDvOzF5XHulIYl9ew+bLaSdVH9QAq7j5Ie446bUQkthXSw1o1/1F9Pg7xw/1UrieJ/qPGU2YbMkZjY09tjilr4AY8E07T2VfnzmwOhTvMRVdEg3St59kQoORwCPtDIdmxTiBMr7SAQ4NL9dRCoLJZM=
+	t=1729952285; cv=none; b=JG+ACACrCL3IV+478/n/E7cgYzTS2KkOLC8O+s171HbSNFcCpDePsPxbf951Ws0jTLu8v0GyoChZMmIzJbso88rbA4Q/VZVA7+w/LenpW2gxeRPbHUOxQlzN1Y+WVwvcjREwsT/NV2DjqAuCsnV24VZYiuNFvjR0q3Yj5J05hbo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729952274; c=relaxed/simple;
-	bh=ojQyuL54P/Axrba4i4MZJ3xejZFVPA2UUIAJ3CEhRLA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=b4NicnJeetuaOwi6DYs7VgxCFIoOkLy9Yl2M68vYaPariN/lxhY25zp0cxwd2aqOvn0Lu6U7SzSrN1q/1YrIMpSkfJL+8RVFY8b10F3a+ZnTGnXfkt/86UgiRuLMzaZh7V2VQ7djzCJARrdCmWeLVSoiwnBB8/Q8B5IicqU1Qik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riseup.net; spf=pass smtp.mailfrom=riseup.net; dkim=pass (1024-bit key) header.d=riseup.net header.i=@riseup.net header.b=KUEV9YZj; arc=none smtp.client-ip=198.252.153.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riseup.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riseup.net
-Received: from fews01-sea.riseup.net (fews01-sea-pn.riseup.net [10.0.1.109])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx0.riseup.net (Postfix) with ESMTPS id 4XbMDp0b8Xz9vjC;
-	Sat, 26 Oct 2024 14:17:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=riseup.net; s=squak;
-	t=1729952266; bh=ojQyuL54P/Axrba4i4MZJ3xejZFVPA2UUIAJ3CEhRLA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=KUEV9YZjC3iVkITj732zZLrZ4L1bKH1LMzi3paIh3ExBJ2bjk9Mo5iXOzrJqC3MxF
-	 yzz/inKffEBoKoERX4VY3BGsys/aUdlt90nbkBvkHXrjcBKN2aPELEK5vvZE6RPeLW
-	 vKY/ggvz2GH7eujICf1qPbpGzU7dFJaQWzwycHK0=
-X-Riseup-User-ID: 9BB3AEDD323DC9B7A54997FEF095999AC26B4FDDCA584D7972737B3AD7B532D7
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-	 by fews01-sea.riseup.net (Postfix) with ESMTPSA id 4XbMDg0P27zJn4t;
-	Sat, 26 Oct 2024 14:17:38 +0000 (UTC)
-Message-ID: <63f0bf12-4df8-48d1-b8c8-2ed27a860937@riseup.net>
-Date: Sat, 26 Oct 2024 11:17:36 -0300
+	s=arc-20240116; t=1729952285; c=relaxed/simple;
+	bh=jtWRxub02rdof1ec5Ogg81M3zByqJ57Q0EX9sND/TsQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rH88QZUuyhzpgTkzWXe2NjcR34Lap0Ho7pPuFm8PEXHUx4/Hv357JZh+pDN5SspR1bh4VgmSiddIlIYV1kMVf4j0e7ujEDF58HsX+/c0s1gF8lm0WSET6u72/V0RznCe91dbOajrPz1tIuOlPVKIDniDvzBR0DaeWFwK0nCY87c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=dsVoWrTd; arc=none smtp.client-ip=80.12.242.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from localhost.localdomain ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id 4hc0tVIwCjP4T4hc1tRohz; Sat, 26 Oct 2024 16:17:54 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1729952274;
+	bh=FfHm9nyVFxciJ4tCIjF7CcDaV35P+oGeXqN4ax4+YEs=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=dsVoWrTdpJFaKRccvNFr4mvq07bOikx2VohX5J2zEGwa8IdsGn8HOhyDBHh9r4oGK
+	 4cTwhm/xkqS9LxmdTYDn3axB8UXT9gjcNHNqF6OyeG81vMytHenm5W22fwBbmLa5N+
+	 SOX2YQMuWJI9U0h6O7w4e0s0T6T69VDvqw46Pp1HxmlDDXByx/0vy24fr25fPMtPgZ
+	 QecGK7SDAa3dm07DqLAamBrx0TDnJ+I2KP7i4T5IScGPbhJ7wb9WPik6kXPvwom6AW
+	 y6hd5baehF6dJnb86qRK2+/uuvETBGY6c5ujg1ToCshT5e6zdCxlVobDerD1Zn5UOh
+	 bfFRU1inqJ7Ew==
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 26 Oct 2024 16:17:54 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Kuniyuki Iwashima <kuniyu@amazon.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	netdev@vger.kernel.org
+Subject: [PATCH] rtnetlink: Fix an error handling path in rtnl_newlink()
+Date: Sat, 26 Oct 2024 16:17:44 +0200
+Message-ID: <eca90eeb4d9e9a0545772b68aeaab883d9fe2279.1729952228.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH RESEND v2 4/8] drm/vkms: Add support for RGB565 formats
-To: Louis Chauvet <louis.chauvet@bootlin.com>,
- Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
- Melissa Wen <melissa.srw@gmail.com>,
- Haneen Mohammed <hamohammed.sa@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Simona Vetter <simona.vetter@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, arthurgrillo@riseup.net,
- linux-kernel@vger.kernel.org, jeremie.dautheribes@bootlin.com,
- miquel.raynal@bootlin.com, thomas.petazzoni@bootlin.com,
- seanpaul@google.com, marcheu@google.com, nicolejadeyee@google.com,
- 20241007-yuv-v12-0-01c1ada6fec8@bootlin.com
-References: <20241007-b4-new-color-formats-v2-0-d47da50d4674@bootlin.com>
- <20241007-b4-new-color-formats-v2-4-d47da50d4674@bootlin.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mairacanal@riseup.net>
-In-Reply-To: <20241007-b4-new-color-formats-v2-4-d47da50d4674@bootlin.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Hi Louis,
+When some code has been moved in the commit in Fixes, some "return err;"
+have correctly been changed in goto <some_where_in_the_error_handling_path>
+but this one was missed.
 
-On 07/10/24 13:46, Louis Chauvet wrote:
-> The format RGB565 was already supported. Add the support for:
-> - BGR565
-> 
-> Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
-> ---
->   drivers/gpu/drm/vkms/vkms_formats.c | 25 ++++++++++++++++++++++++-
->   drivers/gpu/drm/vkms/vkms_plane.c   |  1 +
->   2 files changed, 25 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/vkms/vkms_formats.c b/drivers/gpu/drm/vkms/vkms_formats.c
-> index c03a481f5005..e34bea5da752 100644
-> --- a/drivers/gpu/drm/vkms/vkms_formats.c
-> +++ b/drivers/gpu/drm/vkms/vkms_formats.c
-> @@ -249,7 +249,7 @@ static struct pixel_argb_u16 argb_u16_from_RGB565(const __le16 *pixel)
->   	return out_pixel;
->   }
->   
-> -static struct pixel_argb_u16 argb_u16_from_gray8(u16 gray)
-> +static struct pixel_argb_u16 argb_u16_from_gray8(u8 gray)
+Should "ops->maxtype > RTNL_MAX_TYPE" happen, then some resources would
+leak.
 
-Again, fix the issue in the patch that introduce it.
+Go through the error handling path to fix these leaks.
 
-Best Regards,
-- Maíra
+Fixes: 0d3008d1a9ae ("rtnetlink: Move ops->validate to rtnl_newlink().")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested only
+---
+ net/core/rtnetlink.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
->   {
->   	return argb_u16_from_u8888(255, gray, gray, gray);
->   }
-> @@ -259,6 +259,26 @@ static struct pixel_argb_u16 argb_u16_from_grayu16(u16 gray)
->   	return argb_u16_from_u16161616(0xFFFF, gray, gray, gray);
->   }
->   
-> +static struct pixel_argb_u16 argb_u16_from_BGR565(const __le16 *pixel)
-> +{
-> +	struct pixel_argb_u16 out_pixel;
-> +
-> +	s64 fp_rb_ratio = drm_fixp_div(drm_int2fixp(65535), drm_int2fixp(31));
-> +	s64 fp_g_ratio = drm_fixp_div(drm_int2fixp(65535), drm_int2fixp(63));
-> +
-> +	u16 rgb_565 = le16_to_cpu(*pixel);
-> +	s64 fp_b = drm_int2fixp((rgb_565 >> 11) & 0x1f);
-> +	s64 fp_g = drm_int2fixp((rgb_565 >> 5) & 0x3f);
-> +	s64 fp_r = drm_int2fixp(rgb_565 & 0x1f);
-> +
-> +	out_pixel.a = (u16)0xffff;
-> +	out_pixel.b = drm_fixp2int_round(drm_fixp_mul(fp_b, fp_rb_ratio));
-> +	out_pixel.g = drm_fixp2int_round(drm_fixp_mul(fp_g, fp_g_ratio));
-> +	out_pixel.r = drm_fixp2int_round(drm_fixp_mul(fp_r, fp_rb_ratio));
-> +
-> +	return out_pixel;
-> +}
-> +
->   VISIBLE_IF_KUNIT struct pixel_argb_u16 argb_u16_from_yuv888(u8 y, u8 channel_1, u8 channel_2,
->   							    const struct conversion_matrix *matrix)
->   {
-> @@ -447,6 +467,7 @@ READ_LINE_16161616(XRGB16161616_read_line, px, 0xFFFF, px[2], px[1], px[0])
->   READ_LINE_16161616(XBGR16161616_read_line, px, 0xFFFF, px[0], px[1], px[2])
->   
->   READ_LINE(RGB565_read_line, px, __le16, argb_u16_from_RGB565, px)
-> +READ_LINE(BGR565_read_line, px, __le16, argb_u16_from_BGR565, px)
->   
->   READ_LINE(R8_read_line, px, u8, argb_u16_from_gray8, *px)
->   
-> @@ -668,6 +689,8 @@ pixel_read_line_t get_pixel_read_line_function(u32 format)
->   		return &XBGR16161616_read_line;
->   	case DRM_FORMAT_RGB565:
->   		return &RGB565_read_line;
-> +	case DRM_FORMAT_BGR565:
-> +		return &BGR565_read_line;
->   	case DRM_FORMAT_NV12:
->   	case DRM_FORMAT_NV16:
->   	case DRM_FORMAT_NV24:
-> diff --git a/drivers/gpu/drm/vkms/vkms_plane.c b/drivers/gpu/drm/vkms/vkms_plane.c
-> index 1e971c7760d9..a243a706459f 100644
-> --- a/drivers/gpu/drm/vkms/vkms_plane.c
-> +++ b/drivers/gpu/drm/vkms/vkms_plane.c
-> @@ -26,6 +26,7 @@ static const u32 vkms_formats[] = {
->   	DRM_FORMAT_ARGB16161616,
->   	DRM_FORMAT_ABGR16161616,
->   	DRM_FORMAT_RGB565,
-> +	DRM_FORMAT_BGR565,
->   	DRM_FORMAT_NV12,
->   	DRM_FORMAT_NV16,
->   	DRM_FORMAT_NV24,
-> 
+diff --git a/net/core/rtnetlink.c b/net/core/rtnetlink.c
+index 194a81e5f608..e269fae2b579 100644
+--- a/net/core/rtnetlink.c
++++ b/net/core/rtnetlink.c
+@@ -3829,8 +3829,10 @@ static int rtnl_newlink(struct sk_buff *skb, struct nlmsghdr *nlh,
+ 	}
+ 
+ 	if (ops) {
+-		if (ops->maxtype > RTNL_MAX_TYPE)
+-			return -EINVAL;
++		if (ops->maxtype > RTNL_MAX_TYPE) {
++			ret = -EINVAL;
++			goto put_ops;
++		}
+ 
+ 		if (ops->maxtype && linkinfo[IFLA_INFO_DATA]) {
+ 			ret = nla_parse_nested_deprecated(tbs->attr, ops->maxtype,
+-- 
+2.47.0
+
 
