@@ -1,68 +1,68 @@
-Return-Path: <linux-kernel+bounces-382926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-382927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A11949B1510
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 07:15:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E2349B1515
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 07:15:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 372A21F21E8D
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 05:15:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5B8A1F21E76
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 05:15:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0450F193408;
-	Sat, 26 Oct 2024 05:14:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C1D11AFB3E;
+	Sat, 26 Oct 2024 05:14:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tV8Tmlu+"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yjb1BEm5"
 Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A02317DFEF
-	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 05:14:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53E6818800D
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 05:14:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729919666; cv=none; b=DxT/XlkjCwwSKouIYb1ql4ifnAx1QHsZalN28iQ2PjS/EaROQEKkCdklURqGtmVoATzute4JWao7KKJiU+XxVG7ejWb4Zr3C1zAOa+zUQtqLnvJuJFnNVMtaM6CfN/y56tOaID0DxYhhrYREIuJug9WfJQ1hLZwgx/5SxivdZ2Y=
+	t=1729919667; cv=none; b=fV5zVTDaQancRrgdF7lg2wbRFuMiF1vdG1he9LEt5umWXY3oNzf66b8aSW+pv2fKKOxecpp/Eigdfea0/+ZJuKlKUBKB6VYcEVgXa2zL1eXXrBk402EW0cSZr+mmRkBOMNCnPEdOSm47iVQmFX4Q2+xPDI6gEEFp7uL96SH2Kkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729919666; c=relaxed/simple;
-	bh=tzMXMzN/wgMUOmEGyjDqmLEvBh2AhaCjj6RzEgw1Vr0=;
+	s=arc-20240116; t=1729919667; c=relaxed/simple;
+	bh=gX6C+xmPZI4vviIG2gcRmXQgQ4QuSRea9Xum6Y8PdvA=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=bOi50Mb5YGGLbipM82JXAQaKooKPESYT7CWVtbpgTdRS44FaAudVpRqJljp+N3aOjolLhveEqO+VcQ4K0KZPDn8RUjTUICuSkBl8rndrhbz/T+VZQ3ZFjyHJ2Zi9NI8SkCX3Zai87u+IO9qXpgQuvxrktBsa3P4GtLozIiwgFZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--xur.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tV8Tmlu+; arc=none smtp.client-ip=209.85.128.202
+	 To:Cc:Content-Type; b=Sw8vibsHkNfYVKR2vkA1KwhxBaMPAPjsixh/R6LUrwyoeTAvk6Q/17cJJ2gRg6e9iJM30EflQweaQLdpvS9ABAODn20VMUOBlKLy/TsP0ZdPrR3yo0b75ZvHlQ9HlZqkS3ZYUYhWi1S+aUmtOLXubnrxyE62PiccRd4PG/huld4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--xur.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yjb1BEm5; arc=none smtp.client-ip=209.85.128.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--xur.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e3497c8eb0so33689967b3.0
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 22:14:22 -0700 (PDT)
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e7fb84f99cso58721987b3.1
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Oct 2024 22:14:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729919661; x=1730524461; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1729919663; x=1730524463; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=u2CNgeIiMQMsQ3BQwy/JhDpCL0QGG7OlUJ2Ao2DLrpQ=;
-        b=tV8Tmlu++RiNzMQDeOZFi1Hl/KAkGycV8oaWMAKribDkXYXF95YLFFjmvCRxxYj0c7
-         /AfBeD8rL3Ka125fCGaVFI+RTc1hJ6tqpWtNtk4tnPZogwtnRqch9cIc8x3UORE+gxS8
-         ceki0B53vmE6b3wDv7GklO3oRM/UlN3xdpXwfm9xAEIUikhnsCoud9CYM1tk4pTrcdgU
-         tO8luHCp+D0+8OfaQWGzgs4YZOvN58C+YDbBpSdwE9w4XvJ+CrD6wRdfk4SJ3TnHP0MH
-         U23T80G1BzFimn8qyVP6K7JrJUH2lV1OZtVyiDtkZbxepI6RvliFsOBsZ5BhaUX7OjyM
-         BAxA==
+        bh=wHmgx0WMT0WJm/0bRZiTBO3ZfS/7yoeScA7PHXz66a0=;
+        b=yjb1BEm52l9vEo993Pr9ASeOKs91j9kbETemKEKs8yLmkWf5NBKxhGqvwGXprjX1zd
+         mpvj2bvbDNdPCubRXJPRVCWZskpmL5yu8kcmXSkz3w//LSFxfuT5toRGefI87FcLOXg0
+         r7DJqS45tcyHLN1auEr22Rh2+pBCG1JJbc8DpQkwf1jRLzwDQvR/MgYTzbdQuhPAbihV
+         pef/g/oKoqFzqANf1Dhwv0eOMDgzUKXKaztymBnpF/EXDkW549xgGfPn7ZXsCQguAiyF
+         NtpOwG1cFiUQ5J2g/UQqWLPMnk16jGg9htwq3Eiu0fq+oQnjUGdPubAUeQ5APCNa5ifb
+         PZxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729919661; x=1730524461;
+        d=1e100.net; s=20230601; t=1729919663; x=1730524463;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=u2CNgeIiMQMsQ3BQwy/JhDpCL0QGG7OlUJ2Ao2DLrpQ=;
-        b=PROZBZgLlvshaFBPFISXYCco3pqsa1JMabTSKXiWUZEd21yfU++++mrbdBsShQQ4Hu
-         L0KeiNDj7d+8oda6V/7nxfIH/D42cQFEZFQC+H2etw+RaCI4BHdBBm+ApZ94Rb2hvlyp
-         BLBgy6n4YJ+l6k8RiZE3SoU4WrBbPSFqLppp6nlWKpPW9qztblfxmnWZqiR7+gE3a/om
-         j9rZ2r5pn5tB+9TXWUV+81kavvZCfY5KD3aD+LBI2ANiPqhGNG0aI2MNxw7WbUfUu5T/
-         ZhU56h5FYcIGUmKFWVVPaZIx+CgDhjMUgs2cFI/vzClVIuuEF2X6beiqqiG3VSHcCe5f
-         qXKw==
-X-Forwarded-Encrypted: i=1; AJvYcCVQ+wm+R4DVuUOoe+rsFBOZpxSF8hGirWHNwai11leqLq3OMVVWM6PDap9cZK1LNWCbKXGDxxofdc9B9Ds=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrBYtjM/o1roEUaqa2gwIsx3rdCeZxYEamkDbWdUq74b8rJGik
-	dzTqTB88lnLVRL4Y3qMlIJgsSzg0J0qWt65lBJj3qkiSgQcK8yKoSCFbcuYLkpKuDA==
-X-Google-Smtp-Source: AGHT+IG4wzkxOGVXqJpc/NqCJl7J1Bo+g7i9iACOlnzSbC72EPPc9/I9m6FoCmV9xT7sOQL/GxBtQGI=
+        bh=wHmgx0WMT0WJm/0bRZiTBO3ZfS/7yoeScA7PHXz66a0=;
+        b=bbG1rjy8/uLMFi+DPd6io19zGY/JuA5J7DFP38B1wqGs1HiltQt2Y7EgoqfO7/GvKP
+         6usWfqtIioho+6HoylorMDgXApGu90tSDImy7KM/8g/Kb0L+f0Q0BLCCFiOc0x4Tf7yG
+         vz0fl0M3hw4/ChXOWS97OtXqsY1VOLXPWcHBXi05CDOp5CjA1LA+WimpKoohQi69t3IA
+         49b9fm3ZeXfbyI1fPYZ9XqiKd8Op+NrWEuwZyO+Wp+jJIz5OcpplMPeg7jfKAS5D6764
+         PLCHeU8xBye38HVvQrgSXl/EUCJRJtQrp1SpLF+Hevjs6KJZgN37+qBTsAo0/yUqVJvw
+         Ms7g==
+X-Forwarded-Encrypted: i=1; AJvYcCVcZVVWZxHsh3Brp95PAXeQa9EpHK1cgfpe7/PS9PR6yQFBi89ZKX16UrBz8j3vYzMlWv1dK2Ua//z1AXw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YycI6TwnQFXAQ3jZoOgjSbHD1niB+PoYgL47l1Wgy4FK1iqZTWN
+	B7jG5EjIolfqmLdq3Pw4061Fb0+sVueKk04tdCqcUUKHK7UbuBIO4cwQofBCxitrcg==
+X-Google-Smtp-Source: AGHT+IFwdCF0m/L8cOwxhS25nb8LXGI1xFUxVkPvvMAds6km/RMLSYmvagpwqP7CwRbJFodaTTB7c0k=
 X-Received: from xur.c.googlers.com ([fda3:e722:ac3:cc00:20:ed76:c0a8:2330])
- (user=xur job=sendgmr) by 2002:a05:690c:82c:b0:620:32ea:e1d4 with SMTP id
- 00721157ae682-6e9d870c0e4mr333647b3.0.1729919661525; Fri, 25 Oct 2024
- 22:14:21 -0700 (PDT)
-Date: Fri, 25 Oct 2024 22:14:06 -0700
+ (user=xur job=sendgmr) by 2002:a25:9704:0:b0:e2b:d404:7acb with SMTP id
+ 3f1490d57ef6-e3087c0c240mr5801276.9.1729919663197; Fri, 25 Oct 2024 22:14:23
+ -0700 (PDT)
+Date: Fri, 25 Oct 2024 22:14:07 -0700
 In-Reply-To: <20241026051410.2819338-1-xur@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -72,8 +72,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241026051410.2819338-1-xur@google.com>
 X-Mailer: git-send-email 2.47.0.163.g1226f6d8fa-goog
-Message-ID: <20241026051410.2819338-5-xur@google.com>
-Subject: [PATCH v6 4/7] Add markers for text_unlikely and text_hot sections
+Message-ID: <20241026051410.2819338-6-xur@google.com>
+Subject: [PATCH v6 5/7] AutoFDO: Enable -ffunction-sections for the AutoFDO build
 From: Rong Xu <xur@google.com>
 To: Alice Ryhl <aliceryhl@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
 	Arnd Bergmann <arnd@arndb.de>, Bill Wendling <morbo@google.com>, Borislav Petkov <bp@alien8.de>, 
@@ -99,10 +99,13 @@ Cc: x86@kernel.org, linux-arch@vger.kernel.org, sparclinux@vger.kernel.org,
 	linux-kernel@vger.kernel.org, llvm@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
 
-Add markers like __hot_text_start, __hot_text_end, __unlikely_text_start,
-and __unlikely_text_end which will be included in System.map. These markers
-indicate how the compiler groups functions, providing valuable information
-to developers about the layout and optimization of the code.
+Enable -ffunction-sections by default for the AutoFDO build.
+
+With -ffunction-sections, the compiler places each function in its own
+section named .text.function_name instead of placing all functions in
+the .text section. In the AutoFDO build, this allows the linker to
+utilize profile information to reorganize functions for improved
+utilization of iCache and iTLB.
 
 Co-developed-by: Han Shen <shenhan@google.com>
 Signed-off-by: Han Shen <shenhan@google.com>
@@ -110,44 +113,57 @@ Signed-off-by: Rong Xu <xur@google.com>
 Suggested-by: Sriraman Tallam <tmsriram@google.com>
 Tested-by: Yonghong Song <yonghong.song@linux.dev>
 Tested-by: Yabin Cui <yabinc@google.com>
-Change-Id: Ie7688587adf89a14661ceca108680903b546d5d9
+Change-Id: I6dc9150c46983a576f4d4f1415dbdcab78a48021
 ---
- include/asm-generic/vmlinux.lds.h | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+ include/asm-generic/vmlinux.lds.h | 11 +++++++++--
+ scripts/Makefile.autofdo          |  2 +-
+ 2 files changed, 10 insertions(+), 3 deletions(-)
 
 diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
-index fd901951549c0..e02973f3b4189 100644
+index e02973f3b4189..bd64fdedabd2f 100644
 --- a/include/asm-generic/vmlinux.lds.h
 +++ b/include/asm-generic/vmlinux.lds.h
-@@ -549,6 +549,16 @@
- 		__cpuidle_text_end = .;					\
- 		__noinstr_text_end = .;
+@@ -95,18 +95,25 @@
+  * With LTO_CLANG, the linker also splits sections by default, so we need
+  * these macros to combine the sections during the final link.
+  *
++ * With AUTOFDO_CLANG, by default, the linker splits text sections and
++ * regroups functions into subsections.
++ *
+  * RODATA_MAIN is not used because existing code already defines .rodata.x
+  * sections to be brought in with rodata.
+  */
+-#if defined(CONFIG_LD_DEAD_CODE_DATA_ELIMINATION) || defined(CONFIG_LTO_CLANG)
++#if defined(CONFIG_LD_DEAD_CODE_DATA_ELIMINATION) || defined(CONFIG_LTO_CLANG) || \
++defined(CONFIG_AUTOFDO_CLANG)
+ #define TEXT_MAIN .text .text.[0-9a-zA-Z_]*
++#else
++#define TEXT_MAIN .text
++#endif
++#if defined(CONFIG_LD_DEAD_CODE_DATA_ELIMINATION) || defined(CONFIG_LTO_CLANG)
+ #define DATA_MAIN .data .data.[0-9a-zA-Z_]* .data..L* .data..compoundliteral* .data.$__unnamed_* .data.$L*
+ #define SDATA_MAIN .sdata .sdata.[0-9a-zA-Z_]*
+ #define RODATA_MAIN .rodata .rodata.[0-9a-zA-Z_]* .rodata..L*
+ #define BSS_MAIN .bss .bss.[0-9a-zA-Z_]* .bss..L* .bss..compoundliteral*
+ #define SBSS_MAIN .sbss .sbss.[0-9a-zA-Z_]*
+ #else
+-#define TEXT_MAIN .text
+ #define DATA_MAIN .data
+ #define SDATA_MAIN .sdata
+ #define RODATA_MAIN .rodata
+diff --git a/scripts/Makefile.autofdo b/scripts/Makefile.autofdo
+index ff96a63fea7cd..6155d6fc4ca7f 100644
+--- a/scripts/Makefile.autofdo
++++ b/scripts/Makefile.autofdo
+@@ -9,7 +9,7 @@ ifndef CONFIG_DEBUG_INFO
+ endif
  
-+#define TEXT_UNLIKELY							\
-+		__unlikely_text_start = .;				\
-+		*(.text.unlikely .text.unlikely.*)			\
-+		__unlikely_text_end = .;
-+
-+#define TEXT_HOT							\
-+		__hot_text_start = .;					\
-+		*(.text.hot .text.hot.*)				\
-+		__hot_text_end = .;
-+
- /*
-  * .text section. Map to function alignment to avoid address changes
-  * during second ld run in second ld pass when generating System.map
-@@ -565,9 +575,9 @@
- 		ALIGN_FUNCTION();					\
- 		*(.text.asan.* .text.tsan.*)				\
- 		*(.text.unknown .text.unknown.*)			\
--		*(.text.unlikely .text.unlikely.*)			\
-+		TEXT_UNLIKELY						\
- 		. = ALIGN(PAGE_SIZE);					\
--		*(.text.hot .text.hot.*)				\
-+		TEXT_HOT						\
- 		*(TEXT_MAIN .text.fixup)				\
- 		NOINSTR_TEXT						\
- 		*(.ref.text)
+ ifdef CLANG_AUTOFDO_PROFILE
+-  CFLAGS_AUTOFDO_CLANG += -fprofile-sample-use=$(CLANG_AUTOFDO_PROFILE)
++  CFLAGS_AUTOFDO_CLANG += -fprofile-sample-use=$(CLANG_AUTOFDO_PROFILE) -ffunction-sections
+ endif
+ 
+ ifdef CONFIG_LTO_CLANG_THIN
 -- 
 2.47.0.163.g1226f6d8fa-goog
 
