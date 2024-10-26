@@ -1,118 +1,140 @@
-Return-Path: <linux-kernel+bounces-383325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66A249B1A19
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 19:36:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8BA69B1A1B
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 19:36:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F320F1F21036
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 17:36:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 54DDFB217E0
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 17:36:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F8B51D2B04;
-	Sat, 26 Oct 2024 17:35:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB72E1D2B04;
+	Sat, 26 Oct 2024 17:36:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MWvh3vkw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LPYIdG7A"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E85B41531EA;
-	Sat, 26 Oct 2024 17:35:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FC91179958
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 17:36:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729964159; cv=none; b=UQfQgV12TQRiHioWMYbg3AV+Q31WzvMOhjaBLcb0dugLBNMT3NnwDuZuIerxefr8fYJXUZj9RGyr3CWl4wc3Xm8TZcvFWvRcMq6g987BGXFOO+hk3yy0yU2aRBXXnAPhqtm33HTTPeiso37nNLy9cVtpijsefwPYabDLGhP+93o=
+	t=1729964176; cv=none; b=gmgXoGGM7AD/4IoR7YQHPibQQ/y9RENXeBIvX/dgumSv4AWJA98wSM68Qg4Tk5P9RU0ep0VHJaKmhgIEFxcfW2eIOCf4hMGcCd8N/Xp6JQ7aLn0ieoGSbGPZE5AUF609diGmTYbQ1qhs9dzgJ3nXBjlZSbEM1UKMx2Z0KRhPPT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729964159; c=relaxed/simple;
-	bh=vzweB+jXCTcI1HfN4bxxv3ww/Ee1lK0HAib7kJZ/DEo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lLdHkRNb2EVnLg8hrXCl2lC7L2H9YxnrnS749o9f6L4Vs8adnvn7bjf3xDMaan/GXr0vStArvPAZKfhX06XSGpIbU7vUi07Y8YLzejSLVjqkhDztDqWuaIbdx/0Sp2RZclyPcJWtU8W2AdLSlwXiRE4ozIVaFnSfUo760L1w8OI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MWvh3vkw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96F11C4CEC6;
-	Sat, 26 Oct 2024 17:35:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729964158;
-	bh=vzweB+jXCTcI1HfN4bxxv3ww/Ee1lK0HAib7kJZ/DEo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=MWvh3vkwuX9588RqTxWNuSGRR0FgnuH1WIgMuL4Phhn4ll119pJUD12z2S6lVhUuH
-	 ozMbuINnGQ2lAVyxAY1QS31c5iC/aKhaf+lf8sbyTFiLdAGKhJwpqbhk0tqAYsUdCO
-	 WTolR+ZnyLUPrv99cBL/qNQp1hg5rKFtEoDTz/riMN1dW2o7gMzPrDZzQbcfPAvPRM
-	 +a2ezplXProrQ0+4iUiyYUCY7xGqQ4u+Thjmfw2ARYEx4jazKFduhc/6azP8GxOmyy
-	 /ZCXtLoqrrWecWOnlfF3l4ylMACdNS7Z3GHMm1YhGJlHrtMObmb9PNGj3TvqsmVLRN
-	 /ofzTAoq4S+QQ==
-Date: Sat, 26 Oct 2024 18:35:02 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Angelo Dureghello <adureghello@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
- <noname.nuno@gmail.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
- Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Olivier
- Moysan <olivier.moysan@foss.st.com>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Brown
- <broonie@kernel.org>
-Subject: Re: [PATCH v7 7/8] iio: dac: ad3552r: add high-speed platform
- driver
-Message-ID: <20241026183502.40662850@jic23-huawei>
-In-Reply-To: <f70854c2-8006-4278-b149-6d8c3e76b30d@baylibre.com>
-References: <20241021-wip-bl-ad3552r-axi-v0-iio-testing-v7-0-969694f53c5d@baylibre.com>
-	<20241021-wip-bl-ad3552r-axi-v0-iio-testing-v7-7-969694f53c5d@baylibre.com>
-	<9f00e86e8a7d8f821cdb79d5b083235daec481a9.camel@gmail.com>
-	<exprb7zhsr5qbpjdhbxisodmm4pf74hwl7ijql5o6zyuc3assg@sf53j42lzurf>
-	<14d0f5fb4240a7e0c3665d4ffc128117c5515ac6.camel@gmail.com>
-	<wvnyqgng5h2trpjlrwuvxryvy2i7sftnribnkjp5uh5ogrxdoc@wbh5do3rmqqe>
-	<f70854c2-8006-4278-b149-6d8c3e76b30d@baylibre.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1729964176; c=relaxed/simple;
+	bh=phUfAcDTOItD03YWDpnRE3vQIi5vjTKDUM3kCtTifo0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DKI+j9JOuO36v3mAR1y0IYuBoH25wSMG2aJ7ssKArsgC6Waq8uTR4eNGWusLhYehVHrNCadwum7PtiPLnudYz+tlIx6Ixg8eXgNaBDktHrEpuXUd/7fnFhRBsXxdwy9gjZTRZNxdJCrJhrw1SEH0R0QYpI/HuSh+F6iNLSRDsCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LPYIdG7A; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-539fbe22ac0so3298102e87.2
+        for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 10:36:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729964172; x=1730568972; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=fmS+fK2Pn+5Ry5DbVr2l2yafLL4Tr2a4G4QgAKiqolA=;
+        b=LPYIdG7AjLiSOOGoneJH7LnOpt+n8GNyRswqWdsDcZe51jALyG6eQ4kBbewMmregNa
+         JxHjW/dGH88x2O//AKObWRfFhjY0IqHV1WrJfJBVs9X0YUIjf2c918b9kLaU0gGyiMNU
+         SiTc3ux3n/pKBpn5eCrGjgT5hm/1E4I6QPjqZqjj7k/WPJ++9VpjopCXleEyyWYzObwM
+         L+Ms27Pgdg7oAoT3jNLWRl2AxRFXnKcjMdwH+Y67mSojFrIK3J6lXoAjWT4Y7+++JgBy
+         Z1F+7nYNI58oHZN8ZEU2QRB/mq6R1gZR7OQdQEMuqGonzYNNT24cuutYbov9cCQeWqST
+         UOJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729964172; x=1730568972;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fmS+fK2Pn+5Ry5DbVr2l2yafLL4Tr2a4G4QgAKiqolA=;
+        b=OR8fzRTKlRQc5UCihk0GHRBYstGDUL940SvqJUTvaFINDp+cpSmX58ZjhtfZhzJIsT
+         7F6o9cw8+uS07u+PPBbDkoT7kzZpKRsoxPkWSStvErbvDHOAvSUJfVmcoGCyTHWI8b9p
+         M9KOq06CBAXnNuw01FehIvS4xc3nRdnRsi+I7T34Mw3LB39QB9IrVqzY92iOf0gpHXgd
+         PgoxMHfDZjpTEeKHJ3fFUt5VNnqOx5K2WIc4aYWRuoOzN6KOtKxEgKAjWBn2Cd3B76xr
+         80sSjkRilu6VEHu6LGKUL9HHVidzhSG3Fy+ZKy5LIv7YkNPyzIWgfz8a8GnkZzGSMHUV
+         BVqA==
+X-Forwarded-Encrypted: i=1; AJvYcCVLccAKNTSpYO/g3Bxo35hFgnMx3AogW1kS1SyfEZzpVnpXOCS6XToxDMXr/xQWNkwuX3PUq26NqFeckhc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6TauQuJIxgkblVoSpPRFnVeIx64Na5cEfK0v3ZWLjwb+Y1lRv
+	sYfODbIdG+WnglknHYgfkRn7Z77sAV7TBzCvFNWTxWKjqxK2klrUIr2wjuxC4UFrMnRK6dVdIjh
+	y
+X-Google-Smtp-Source: AGHT+IHxFtbh3mAC/q2yje7AqlBTOhREdJh9MYZEaNaVgKdJdZ09vcBo/Q+Pw/1GR6+WaFWYyICbXg==
+X-Received: by 2002:a05:6512:39cd:b0:539:f51e:17d3 with SMTP id 2adb3069b0e04-53b348d0ccamr1172908e87.14.1729964172292;
+        Sat, 26 Oct 2024 10:36:12 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53b2e12452fsm566762e87.73.2024.10.26.10.36.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 26 Oct 2024 10:36:10 -0700 (PDT)
+Date: Sat, 26 Oct 2024 20:36:08 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Krishna Kurapati <quic_kriskura@quicinc.com>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, quic_ppratap@quicinc.com, 
+	quic_jackp@quicinc.com
+Subject: Re: [PATCH v2 2/2] arm64: dts: qcom: Enable USB controllers for
+ QCS8300
+Message-ID: <xijjs445fzeuzbj2bg3ziwlzenrk4wo5zlyze4j5mldb444oj7@73ynic4xqfdj>
+References: <20241011074619.796580-1-quic_kriskura@quicinc.com>
+ <20241011074619.796580-3-quic_kriskura@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241011074619.796580-3-quic_kriskura@quicinc.com>
 
-On Thu, 24 Oct 2024 10:13:25 -0500
-David Lechner <dlechner@baylibre.com> wrote:
+On Fri, Oct 11, 2024 at 01:16:19PM +0530, Krishna Kurapati wrote:
+> Enable primary USB controller on QCS8300 Ride platform. The primary USB
+> controller is made "peripheral", as this is intended to be connected to
+> a host for debugging use cases.
+> 
+> Signed-off-by: Krishna Kurapati <quic_kriskura@quicinc.com>
+> ---
+>  arch/arm64/boot/dts/qcom/qcs8300-ride.dts | 23 +++++++++++++++++++++++
+>  1 file changed, 23 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/qcs8300-ride.dts b/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
+> index 7eed19a694c3..3e925228379c 100644
+> --- a/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
+> +++ b/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
+> @@ -265,3 +265,26 @@ &ufs_mem_phy {
+>  	vdda-pll-supply = <&vreg_l5a>;
+>  	status = "okay";
+>  };
+> +
+> +&usb_1_hsphy {
+> +	vdda-pll-supply = <&vreg_l7a>;
+> +	vdda18-supply = <&vreg_l7c>;
+> +	vdda33-supply = <&vreg_l9a>;
+> +
+> +	status = "okay";
+> +};
+> +
+> +&usb_qmpphy {
+> +	vdda-phy-supply = <&vreg_l7a>;
+> +	vdda-pll-supply = <&vreg_l5a>;
+> +
+> +	status = "okay";
+> +};
+> +
+> +&usb_1 {
+> +	status = "okay";
+> +};
+> +
+> +&usb_1_dwc3 {
+> +	dr_mode = "peripheral";
+> +};
 
-> On 10/24/24 10:02 AM, Angelo Dureghello wrote:
-> > Hi Nuno,
-> >=20
-> > On 24.10.2024 15:05, Nuno S=C3=A1 wrote: =20
-> >> On Tue, 2024-10-22 at 18:40 +0200, Angelo Dureghello wrote: =20
-> >>> Hi Nuno,
-> >>>
-> >>> On 22.10.2024 14:28, Nuno S=C3=A1 wrote: =20
-> >>>> On Mon, 2024-10-21 at 14:40 +0200, Angelo Dureghello wrote: =20
-> >>>>> From: Angelo Dureghello <adureghello@baylibre.com>
-> >>>>>
-> >>>>> Add High Speed ad3552r platform driver. =20
->=20
-> ...
->=20
-> >>>>> +	switch (mask) {
-> >>>>> +	case IIO_CHAN_INFO_RAW:
-> >>>>> +		iio_device_claim_direct_scoped(return -EBUSY, indio_dev) {
-> >>>>> +			return st->data->bus_reg_write(st->back,
-> >>>>> +				=C2=A0=C2=A0=C2=A0 AD3552R_REG_ADDR_CH_DAC_16B(chan- =20
-> >>>>>> channel), =20
-> >>>>> +				=C2=A0=C2=A0=C2=A0 val, 2);
-> >>>>> +		} =20
-> >>>>
-> >>>> Maybe we'll get the new stuff in time for this :)
-> >>>> =20
-> > This is not clear, sorry.
-> >  =20
->=20
-> Probably this :-)
->=20
-> https://lore.kernel.org/all/20241023105757.GA9767@noisy.programming.kicks=
--ass.net/
->=20
-> But it hasn't reached the stable tree yet.
+So, can it be used as a USB host controller / connector? What needs to
+be done in such a case?
 
-Agreed. It is going to be nice to get rid of so much ugly code.
-I guess mostly next cycle however.
-
-Jonathan
+-- 
+With best wishes
+Dmitry
 
