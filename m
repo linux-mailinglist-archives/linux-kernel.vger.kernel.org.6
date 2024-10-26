@@ -1,197 +1,147 @@
-Return-Path: <linux-kernel+bounces-383350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7850F9B1A6F
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 20:51:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 840BA9B1A74
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 20:56:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBD4D28287E
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 18:51:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BEFD1F21D6F
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 18:56:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D38651D6DB6;
-	Sat, 26 Oct 2024 18:51:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 471592231C;
+	Sat, 26 Oct 2024 18:56:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=landley.net header.i=@landley.net header.b="jw2jl0pw"
-Received: from zebra.cherry.relay.mailchannels.net (zebra.cherry.relay.mailchannels.net [23.83.223.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yrMr/o/B"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83A7213A86C;
-	Sat, 26 Oct 2024 18:51:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.223.195
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729968663; cv=pass; b=DxGn/AYAR4gUZ1PKXx//2MzoOp77KEaPdGbNMXCZlgzAektnbgUEQ7Z3pCTTsCIrXEta0oY05p2lks9uYWC8CfR8bubpKQm86qkQPAKSS0IoJZ45OMk6ZcEIFWuHdOkMg2r4QnQoH5hjv9pY70HhmjlFdbfedOW/WnCVt7rinFI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729968663; c=relaxed/simple;
-	bh=r2Kgzwh40ALEs5pjId9K+CrMliI1JPnSVZ0hm3hjH2U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aaRoUhTXvNYRdZpyK0uevM5dGm3O9d+Ir0osJhdGZK9jQo2x9VxfK5fgc+6RWGPqLIyQCtaFszYqzP2siYzUYe0Z2rmp8FYRLThcwxskuktmxF7JJ0ZuEOOYVH8aRRg6H29Gartvl6WvTBK4ya2eg+ApMyz5boZAjswnnQgOPg8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=landley.net; spf=pass smtp.mailfrom=landley.net; dkim=pass (2048-bit key) header.d=landley.net header.i=@landley.net header.b=jw2jl0pw; arc=pass smtp.client-ip=23.83.223.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=landley.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=landley.net
-X-Sender-Id: dreamhost|x-authsender|rob@landley.net
-Received: from relay.mailchannels.net (localhost [127.0.0.1])
-	by relay.mailchannels.net (Postfix) with ESMTP id C5F6682099B;
-	Sat, 26 Oct 2024 18:50:54 +0000 (UTC)
-Received: from pdx1-sub0-mail-a207.dreamhost.com (trex-9.trex.outbound.svc.cluster.local [100.103.140.206])
-	(Authenticated sender: dreamhost)
-	by relay.mailchannels.net (Postfix) with ESMTPA id 661748213C8;
-	Sat, 26 Oct 2024 18:50:54 +0000 (UTC)
-ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1729968654; a=rsa-sha256;
-	cv=none;
-	b=CmIDo8pKBo/bTqqW5EZ14qCWDJEwGDlDo73lyX73IM4H3vdFgmRzIv0BJ8jH3l0gDYpSbu
-	+v6FArOs8IPYScGGjNilqx8wT5k6IfKQ82COGGzNSf+Rg6b4dBF35KqY8anv2FY3L56qde
-	gdgDa68con58YVrAuFh/7+TbTlShM2hBHxW8yvQ4ThmaY40o1YA5y3Yo4wn4kWZBbH30cf
-	i3vYg3SzuEL8fDwqGvFB3mNQdtfopTv6oPJ3eu4L54oi/aqvk/L69cCIcqt67xkzVry86I
-	784bsrp/NZeLLdo85OXiHAyhOIrFRmub2mA45rtio1h5a9p6/B/DDfFN2NQHxw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mailchannels.net;
-	s=arc-2022; t=1729968654;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:dkim-signature;
-	bh=ml8iaVUgncA8nQYmmhVgiYsM1Ph8DMykG1CIWh1XX0U=;
-	b=PINrw4soogQvE7v9EPA2Y1UEMHH5DvHljfASIpGG6AeLLN4dtKWNyfcoy1Ahf5l9UsDQzJ
-	EnPAOFzQmiamuyGAQLwTaZX0fhczlsX+omj+TFBX2y08nPqfrAcaNq5Dy4vy628TPLh+HX
-	hNwtNV3wwmfQa8mAEoVMJgvzTd63Xars2gykAaaHZ007JX+D0iZz6AiwGmX9AIH92b2xil
-	BJhPqX9yIo1o0X5UEhhnsh6dePPdsqMPJnm38h2lqS17XWm0ngkN3Y9Xm9Hww3Bkhb6QBP
-	37kJqI/AzsDx0C32giSFC/lhOMq3pfzasofNTm/AcPos1lWIhIZ0APrOpvlRuw==
-ARC-Authentication-Results: i=1;
-	rspamd-7fb5679c85-f69n9;
-	auth=pass smtp.auth=dreamhost smtp.mailfrom=rob@landley.net
-X-Sender-Id: dreamhost|x-authsender|rob@landley.net
-X-MC-Relay: Neutral
-X-MailChannels-SenderId: dreamhost|x-authsender|rob@landley.net
-X-MailChannels-Auth-Id: dreamhost
-X-White-Chief: 2416300111b17c2a_1729968654658_3139018223
-X-MC-Loop-Signature: 1729968654658:470921833
-X-MC-Ingress-Time: 1729968654658
-Received: from pdx1-sub0-mail-a207.dreamhost.com (pop.dreamhost.com
- [64.90.62.162])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
-	by 100.103.140.206 (trex/7.0.2);
-	Sat, 26 Oct 2024 18:50:54 +0000
-Received: from [172.22.7.54] (unknown [198.232.126.195])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: rob@landley.net)
-	by pdx1-sub0-mail-a207.dreamhost.com (Postfix) with ESMTPSA id 4XbTHx6GQcz67;
-	Sat, 26 Oct 2024 11:50:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=landley.net;
-	s=dreamhost; t=1729968654;
-	bh=ml8iaVUgncA8nQYmmhVgiYsM1Ph8DMykG1CIWh1XX0U=;
-	h=Date:Subject:To:Cc:From:Content-Type:Content-Transfer-Encoding;
-	b=jw2jl0pwMsmtQJID69u/+XI6jj+L597xj17MzfxWONUvKeJQJNzPLBRVC8cSHzHZ2
-	 suZ3e9jigqapSjJqcKMA+wt8RbhQSG6AJE0vJBphmQ43G5bmwKf9QLISqKTYAF4EA9
-	 Vi86Lj4LcR1FkMdE88ocqPIxaCJY13AzVO4h+B+4qPVcBmwecpzlCXjWvKYtCefd1K
-	 ++k02l/gp0dm/ATchJoSqnO74hDjwZKt6QzlQvSkxUxcKpLQF0BpPsd5JV7a1cbTyv
-	 GyRSteq+KlerijSQQNs+mdpxkPwb8LloXJoauT+Uv9eFKOco072vH1HWUQvWutq3Io
-	 j7qjZTLriSQuw==
-Message-ID: <932f1203-ec01-4a58-9281-ef83e537d62c@landley.net>
-Date: Sat, 26 Oct 2024 13:50:52 -0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68B2A1D54FA
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 18:56:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729968966; cv=none; b=Py0+P2VQfOuRmaDtB2S4RehK0Jc5XJEefhW0zdxtlse2vBGuYbMkoOgDor/lknYOJR27YykLG91fhbuAhG7ydDIBfFMSf45G5qyelqwtRMAEaS3usVyBXfFqlEturoCFz87NxxJsRbfySvKfDi/gzdVulRl9FJvwAuBqoGyECks=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729968966; c=relaxed/simple;
+	bh=QpC8YVpB40Z6U1Lv/iZ2wuaqETufaSWOZ9EgEu4KImk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=atbHJMKMXlt015qPN19Og1QCW9yVBJZRiBGCApC0SxRbpdAZ6jC7Vd8QnPAf869bLtjcTD6gNSsspYFw1sxJo1Pf+hfM0AUMNn0ltWanxHlS7ajM+0z86IvwR69NT7m2V1bKig/9R5KMKRg9shBa8UrRzwKdasjo9EiAnv/tK6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yrMr/o/B; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2fc968b3545so30008481fa.2
+        for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 11:56:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729968962; x=1730573762; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=l7NYgtXYY+/uZDllEcjAHtzUzuPVhJCmDywI+NC6CaQ=;
+        b=yrMr/o/Bo+Vdn9kgEXF1m0A7JBHWA6+DQqw0tbZ1uCF2qzfkumdMM5hNkUQysA2vvB
+         BcmMTjrpVexzM4iJimMsV6TTsLZDCkG7hbDpwj49D0x8AXYsBHQsRuiDhv2VRO+ADBv7
+         dnNFbQxrrbPhsK1CZG5qdO7V9kbFH2pnpfaF5zYMkvoVn5uUHSdVkdBsB43mdwx7pn9q
+         Zhp5ktEul1UtIr+NAum11XE3KUOsPx2ApvC5g1UEfZfGvcYhI7rx3EWDZfYwK+c2asZt
+         IyVhNr4eyk1q+pa4LSFZg6WT/HWfiFT6QvDQrAw7p7gGzm2CyISRw9iWGKAJN/QFFt0S
+         4u2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729968962; x=1730573762;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=l7NYgtXYY+/uZDllEcjAHtzUzuPVhJCmDywI+NC6CaQ=;
+        b=JnZ1kfk+Oe31f1q4hDu6k+BlkWuj32yXl8KSFmgRirK9IQMwrMU0Ppz9+kFoekhRoq
+         dWet0F9vTUEgGiXJTxvEgA4j8l+WD0ny+ROxdAJTy2fzWwoSnRl43RZOyvr/VxHf46ot
+         hEbXIuZPmJro37Rr1Lkw8yzdmQLEOqyFWe14UiIt2eN3aTTw2IvaaMxaLHgBav6XRorA
+         ijqQc5LBk1LEgCKvDUMzdpsetrCmuuIJRqFoWld8J1ImkTieXtpRKZ2nzRnQ/gTrOc+S
+         J1YQ8BHlMDNPNqu1sAOG3mLl7RYj/P9y52MnMloDGO2ry+EdV0r2co6Eg14D0cI2j87+
+         1exQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVXfq2BNeWJLACS1UdFf3cyv5+vmQbmjdqcXd539hWGU7kUdkz+s+glfJyv55mPACMkKXGCiqipoMMimG8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLqmGoRcHbd5JJTSZHNYMQEj3JMsVgCRnuvgtCjEQZx67LTxdb
+	sm8uwpEszWpv3zbaCw+plnQ/COGGrzzxfP/Bb6Jxxfcmxzw201a+ZAcYoLVUl+A=
+X-Google-Smtp-Source: AGHT+IG9dImdPHGpADDEloy0+Zfu4O/+8WjoU10sz+7Yl6LFvGYaZ/pBLY7FwvHZ34Io4qq6Tv5k8w==
+X-Received: by 2002:a2e:515a:0:b0:2fa:be1a:a4b0 with SMTP id 38308e7fff4ca-2fcbdfd8152mr10741631fa.21.1729968962346;
+        Sat, 26 Oct 2024 11:56:02 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fcb4507b9csm6110761fa.28.2024.10.26.11.55.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 26 Oct 2024 11:56:00 -0700 (PDT)
+Date: Sat, 26 Oct 2024 21:55:58 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Gabor Juhos <j4g8y7@gmail.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/5] clk: qcom: apss-ipq-pll: drop 'alpha_en_mask' from
+ IPQ5018 PLL config
+Message-ID: <64vqb56a5gvpy5mut47n34nlqmbtfctvyljgylwuapgp53un5y@mj7k4awd3fay>
+References: <20241021-alpha-mode-cleanup-v1-0-55df8ed73645@gmail.com>
+ <20241021-alpha-mode-cleanup-v1-1-55df8ed73645@gmail.com>
+ <yplfg55afv4vucpcxbkqsxmn44mzwr3tepbuvgtswhupx7fzfi@mwofp7v3uarm>
+ <45461b57-cb5a-43a5-8b9c-09ae059805a9@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Boot-time initiative (SIG) thoughts and next steps
-To: Saravana Kannan <saravanak@google.com>, "Bird, Tim" <Tim.Bird@sony.com>
-Cc: "linux-embedded@vger.kernel.org" <linux-embedded@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <MW5PR13MB5632321E93B031C0E107DB38FD4F2@MW5PR13MB5632.namprd13.prod.outlook.com>
- <CAGETcx_c2nfFQ++-FcsdUdLUo3e-oe07MkLgbuyrnq2FPrcsXQ@mail.gmail.com>
-Content-Language: en-US
-From: Rob Landley <rob@landley.net>
-In-Reply-To: <CAGETcx_c2nfFQ++-FcsdUdLUo3e-oe07MkLgbuyrnq2FPrcsXQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <45461b57-cb5a-43a5-8b9c-09ae059805a9@gmail.com>
 
-On 10/26/24 02:36, Saravana Kannan wrote:
-> On Fri, Oct 25, 2024 at 11:18â€¯AM Bird, Tim <Tim.Bird@sony.com> wrote:
->>
->> Hey Linux developers,
->>
->> The response to my request to form a Special Interest Group for boot-time reduction
->> for Linux has been really great.  Many people contacted me by e-mail and on LinkedIn.
+On Fri, Oct 25, 2024 at 10:05:04PM +0200, Gabor Juhos wrote:
+> 2024. 10. 25. 8:24 keltezéssel, Dmitry Baryshkov írta:
+> > On Mon, Oct 21, 2024 at 10:21:57PM +0200, Gabor Juhos wrote:
+> >> Since neither 'alpha' nor 'alpha_hi' is defined in the configuration,
+> >> those will be initialized with zero values  implicitly. By using zero
+> >> alpha values, the output rate of the PLL will be the same whether
+> >> alpha mode is enabled or not.
+> >>
+> >> Remove the superfluous initialization of the 'alpha_en_mask' member
+> >> to make it clear that enabling alpha mode is not required to get the
+> >> desired output rate.
+> >>
+> >> No functional changes, the initial rate of the PLL is the same both
+> >> before and after the patch.
+> > 
+> > After going through DISPCC changes, I think the whole series is
+> > incorrect: these PLL can change the rate (e.g. to facilitate CPU
+> > frequency changes). Normally PLL ops do not check the alpha_en bit when
+> > changing the rate, so the driver might try to set the PLL to the rate
+> > which requires alpha value, while the alpha_en bit isn't set.
 > 
-> Hi Tim,
+> Both clk_alpha_pll_stromer_set_rate() which is used for IPQ5018 (patch 1), and
+> clk_alpha_pll_stromer_plus_set_rate() used for IPQ5332 (patch 2) sets the
+> ALPHA_EN bit unconditionally.
 > 
-> Thanks for organizing this and moving it forward! I'd be interested in
-> contributing to this effort as a lot of work I have done aligns with
-> the goals of this effort and boot time is of obvious value to Android.
+> For the PLLs affected by the remaining patches, clk_alpha_pll_set_rate() is used
+> which also unconditionally sets the ALPHA_EN bit via __clk_alpha_pll_set_rate().
+> 
+> I have created the patches after analysing the side effects of [1]. Due to the
+> bug described in that change, the clk_alpha_pll_configure() function in the
+> current kernel never sets the ALPHA_EN bit in the USER_CTL register. This means
+> that setting 'alpha_en_mask' in the configurations has no effect actually.
+> 
+> So, if we assume that the affected PLLs are working correctly now, it is not
+> because the 'alpha_en_mask' is specifed in the configuration but due to the fact
+> that the set_rate op sets the ALPHA_EN bit.
+> 
+> At least, I came to this after the analysis.
 
-I'm kind of an edge case for this project because my mkroot images at 
-https://landley.net/bin/mkroot/latest mostly boot up in a couple 
-seconds. (And faster if you feed in KARGS=quiet so the kernel boot 
-messages don't take time emitting and scrolling before interrupts have 
-been enabled. Although "quiet" doesn't seem to work in current vanilla 
-kernels...?)
+Ack. Please mention in the commit message that it's safe to drop the
+alpha_en bit, because it will get reset by the set_rate function.
 
-The ones that _don't_ are generally because qemu's bios for that 
-platform twiddles its thumbs for a long time before launching the 
-kernel, although there are some slow drivers in there:
+> 
+> [1]
+> https://lore.kernel.org/r/20241021-fix-alpha-mode-config-v1-1-f32c254e02bc@gmail.com
+> 
+> Regards,
+> Gabor
+> 
+> 
 
-$ for i in powerpc m68k i686 s390x; do (cd $i && echo $i && KARGS='quiet 
-HANDOFF=echo' bash -c 'time ./run-qemu.sh > /dev/null'); done
-
-powerpc
-real	0m6.154s
-user	0m3.689s
-sys	0m0.341s
-
-m68k
-real	0m4.220s
-user	0m1.142s
-sys	0m0.212s
-
-i686
-real	0m1.986s
-user	0m1.709s
-sys	0m0.209s
-
-s390x
-real	0m1.644s
-user	0m1.378s
-sys	0m0.228s
-
-And that's with qemu running on a 10 year old laptop that I'll have to 
-switch off of when debian drops x86-64-v2 support. (Even that i686 test 
-isn't kvm.) It's running a recent-ish kernel (binaries I had lying 
-around)...
-
-# cat /proc/version
-Linux version 6.11.0-rc7 (landley@driftwood) (s390x-linux-musl-gcc (GCC) 
-11.4.0, GNU ld (GNU Binutils) 2.33.1) #1 SMP Sat Sep 14 01:36:19 CDT 2024
-
-Built using the kernel config files in the "doc" directory of those 
-tarballs.
-
-Are you trying to optimize the kernel boot, or more trying to optimize 
-userspace? Because my userspace init is just a small shell script:
-
-https://github.com/landley/toybox/blob/master/mkroot/mkroot.sh#L102
-
-And the above simple test loop just told that to run "echo" instead of 
-/bin/sh so I could easily collect boot-and-exit timing for the qemu 
-process...
-
->> I had hoped to push out a script today to start to gather data on boot-time on different
->> platforms, for people to run who had expressed interest in helping with this effort. But
->> I got overwhelmed with other tasks, and I may not get it done today.  I'll be in Tokyo next
->> week for Open Source Summit Japan.  If you are there, please try to catch me and say hi.
->> Given that, I'll see how soon I can provide the script I'm talking about, and we can
->> discuss the goals and design of the script.
-
-I regression test under qemu because it gives reproducibly scriptable 
-results. I've even got plumbing to run canned tests on multiple 
-architectures in parallel (part of my release testing):
-
-https://github.com/landley/toybox/blob/master/mkroot/testroot.sh
-
-Rob
+-- 
+With best wishes
+Dmitry
 
