@@ -1,72 +1,140 @@
-Return-Path: <linux-kernel+bounces-383231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 670A99B18C7
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 16:51:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72B6A9B18C9
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 16:51:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 960741C214E0
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 14:51:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37A8828286B
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 14:51:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93BF11C69D;
-	Sat, 26 Oct 2024 14:50:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 508071DFF8;
+	Sat, 26 Oct 2024 14:51:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="l+Ya5fTj"
-Received: from mail-40140.protonmail.ch (mail-40140.protonmail.ch [185.70.40.140])
+	dkim=pass (1024-bit key) header.d=riseup.net header.i=@riseup.net header.b="tC7adDZq"
+Received: from mx1.riseup.net (mx1.riseup.net [198.252.153.129])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CE9620326;
-	Sat, 26 Oct 2024 14:50:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.140
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD840A947
+	for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 14:51:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.252.153.129
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729954255; cv=none; b=VMgDk55oDJkCGlgKCNUFmCZpvWs0Qs4lFyvy7h5JxC/KZ7GsKiujDejCDP5dOdfOYXF1/P0P0Ji5PMA+tzVZjK3pakxwkkwsu0BPyWn5zr2/OJEebHlRY8UvhF5rAVPBbdcm9xot7WUb4MFQjVCH3kvfq6+/Wv5X3vSJU5e3uFw=
+	t=1729954282; cv=none; b=aETMbS8FOWcKPSASPbEWj8ondYGvDDH8Aa6/2WnzGmiiNRiaVDcUi3FwKDtVYKef5II1OJ1Y8FU91tx2g6+HepTWE00xPX5etANe4QTYJaIV5TAqC1/h50eD7xkd6HFzTdY+pKZ7J3eUP2g7YjEYsOyOp2D1XE9PptGJ7Zu/VJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729954255; c=relaxed/simple;
-	bh=/s2RP+BM1xGQVat361nWRiCVu5P0PD3Yqcl3IL7AO3A=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NagmFTxfvEFBVTbb90BT4AMTroZ0TywpUq9x7okyxfZMoyqdRC0xyh4WbOBiRjVT0bVO0n3fVN22bjFa6SJ6IOF3s0yZCb1m3ueerh8ShP0GVu6l+gTttTNRuJel1GhmPTFmhucmFb3sjJmJfwE19SXn7+aye1MGhKjjRCwioeo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=l+Ya5fTj; arc=none smtp.client-ip=185.70.40.140
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-	s=protonmail3; t=1729954245; x=1730213445;
-	bh=/s2RP+BM1xGQVat361nWRiCVu5P0PD3Yqcl3IL7AO3A=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=l+Ya5fTjVWNHVVKxsF4AfbgQuZ+0hsUlhyaz8UzBQgOw/7iaFq/E3vCplxhScqcIm
-	 pfCBOX8vyVEk/42ChAjFTPkGhj7ElSAZhQ4vm3O83Knv6lBTfKkfVK4G4AJfH0Nwzp
-	 5YL2E2gsPOwWjMxFm0CXXh2muNB+hzl7clq9G5+1rWbhgLzycROcBqJMi52siGYGBe
-	 MPn7ltBu099OoBSs7eaTlqriob4q5N5RaO0jY3l34aThTCxKVXARFqvNcO/EiFvy3p
-	 t1O7kW/lIfLGwwvFeOZkKs7nPHN6tGzf+7IVDMyujlrzK/HkLf3VKc7Ua4a4MP1cvw
-	 oVrj/CCBaxoBg==
-Date: Sat, 26 Oct 2024 14:50:41 +0000
-To: Andreas Larsson <andreas@gaisler.com>
-From: Koakuma <koachan@protonmail.com>
-Cc: "David S. Miller" <davem@davemloft.net>, Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, glaubitz@physik.fu-berlin.de, Masahiro Yamada <masahiroy@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org, llvm@lists.linux.dev, linux-kbuild@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] sparc/build: Remove all usage of -fcall-used* flags
-Message-ID: <9ospa4bgpJsgr1ACc_GNsvDxFH-ErKkGTq8iUFDVUrvL2nRxDhZAzXReo33X8VEystz97nbjEq0GJIKISPURMHRYAxJaFXLzVXxqPnjGYes=@protonmail.com>
-In-Reply-To: <93d038de-3ba8-4d1e-9660-4c5e26ac055c@gaisler.com>
-References: <20240717-sparc-cflags-v2-0-259407e6eb5f@protonmail.com> <20240717-sparc-cflags-v2-1-259407e6eb5f@protonmail.com> <93d038de-3ba8-4d1e-9660-4c5e26ac055c@gaisler.com>
-Feedback-ID: 6608610:user:proton
-X-Pm-Message-ID: 010d36611b283debe17a6a9b2b52d3a37400f8c3
+	s=arc-20240116; t=1729954282; c=relaxed/simple;
+	bh=AB0X7XPmyec16ojEbTL0j6BejCpTFT7VkqJyU93TSiY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=an0dxwUHlaEQxonEXH3uDllbU331kqBUfn158UtxSas4+x3p5jiIIF8yoxICSBb8qsV2fDFXu333IZ/1l0jqVqIAyVmU2SWv0iF513kGD45hEhtZRfvOnwcL9ZcXPiDj1wAoUmfn2AYPljaBTTN74UZmM6YPL6dygqDe3ifwdU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riseup.net; spf=pass smtp.mailfrom=riseup.net; dkim=pass (1024-bit key) header.d=riseup.net header.i=@riseup.net header.b=tC7adDZq; arc=none smtp.client-ip=198.252.153.129
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riseup.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riseup.net
+Received: from fews01-sea.riseup.net (fews01-sea-pn.riseup.net [10.0.1.109])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx1.riseup.net (Postfix) with ESMTPS id 4XbMzJ6ZDkzDrQc;
+	Sat, 26 Oct 2024 14:51:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=riseup.net; s=squak;
+	t=1729954280; bh=AB0X7XPmyec16ojEbTL0j6BejCpTFT7VkqJyU93TSiY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=tC7adDZq77mHJSvAaZ9bVyVbbhJeXy5fYIiHj5+zVu7Ta+B6mwSr9Sn1s1QnRnd8g
+	 OjjDDN4Ece9M0r7IUinlHC45exwnhdbFmjHg5vAzAa8dK7VnZdjC/fYjy1u+6XYMES
+	 0plNh9oCjdlSowH9iyXLDVARvxDi/jwwqJg7RWO8=
+X-Riseup-User-ID: 511F6C9D05B4BD43076242EBAF7E37819723CB799D561371F011EDECEA1C1194
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+	 by fews01-sea.riseup.net (Postfix) with ESMTPSA id 4XbMzC2JMkzJsFN;
+	Sat, 26 Oct 2024 14:51:03 +0000 (UTC)
+Message-ID: <53d04022-7199-4880-9b41-1ee7abdad997@riseup.net>
+Date: Sat, 26 Oct 2024 11:51:01 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH RESEND v2 5/8] drm/vkms: Add support for RGB888 formats
+To: Louis Chauvet <louis.chauvet@bootlin.com>,
+ Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
+ Melissa Wen <melissa.srw@gmail.com>,
+ Haneen Mohammed <hamohammed.sa@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Simona Vetter <simona.vetter@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, arthurgrillo@riseup.net,
+ linux-kernel@vger.kernel.org, jeremie.dautheribes@bootlin.com,
+ miquel.raynal@bootlin.com, thomas.petazzoni@bootlin.com,
+ seanpaul@google.com, marcheu@google.com, nicolejadeyee@google.com,
+ 20241007-yuv-v12-0-01c1ada6fec8@bootlin.com
+References: <20241007-b4-new-color-formats-v2-0-d47da50d4674@bootlin.com>
+ <20241007-b4-new-color-formats-v2-5-d47da50d4674@bootlin.com>
+Content-Language: en-US
+From: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mairacanal@riseup.net>
+In-Reply-To: <20241007-b4-new-color-formats-v2-5-d47da50d4674@bootlin.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Andreas Larsson <andreas@gaisler.com> wrote:
-> Couldn't you use ifndef CONFIG_CC_IS_CLANG or perhaps better, use
-> $(call cc-option,-fcall-used-g5) and $(call cc-option,-fcall-used-g7) to
-> not remove the possibility for gcc to make use of these registers?
+Hi Louis,
 
-Sure sure! It works okay that way too.
-But before I send a v3, let me wait for clarification for the docs issue
-for the other patch.
+On 07/10/24 13:46, Louis Chauvet wrote:
+> Add the support for:
+> - RGB888
+> - BGR888
+> 
+> Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+> ---
+>   drivers/gpu/drm/vkms/vkms_formats.c | 7 +++++++
+>   drivers/gpu/drm/vkms/vkms_plane.c   | 2 ++
+>   2 files changed, 9 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/vkms/vkms_formats.c b/drivers/gpu/drm/vkms/vkms_formats.c
+> index e34bea5da752..2376ea8661ac 100644
+> --- a/drivers/gpu/drm/vkms/vkms_formats.c
+> +++ b/drivers/gpu/drm/vkms/vkms_formats.c
+> @@ -461,6 +461,9 @@ READ_LINE_ARGB8888(ABGR8888_read_line, px, px[3], px[0], px[1], px[2])
+>   READ_LINE_ARGB8888(RGBA8888_read_line, px, px[0], px[3], px[2], px[1])
+>   READ_LINE_ARGB8888(BGRA8888_read_line, px, px[0], px[1], px[2], px[3])
+>   
+> +READ_LINE_ARGB8888(RGB888_read_line, px, 255, px[2], px[1], px[0])
+> +READ_LINE_ARGB8888(BGR888_read_line, px, 255, px[0], px[1], px[2])
+> +
+>   READ_LINE_16161616(ARGB16161616_read_line, px, px[3], px[2], px[1], px[0])
+>   READ_LINE_16161616(ABGR16161616_read_line, px, px[3], px[0], px[1], px[2])
+>   READ_LINE_16161616(XRGB16161616_read_line, px, 0xFFFF, px[2], px[1], px[0])
+> @@ -679,6 +682,10 @@ pixel_read_line_t get_pixel_read_line_function(u32 format)
+>   		return &RGBX8888_read_line;
+>   	case DRM_FORMAT_BGRX8888:
+>   		return &BGRX8888_read_line;
+> +	case DRM_FORMAT_RGB888:
+> +		return RGB888_read_line;
+
+Shouldn't it be &RGB888_read_line?
+
+> +	case DRM_FORMAT_BGR888:
+> +		return BGR888_read_line;
+
+Same.
+
+Best Regards,
+- Maíra
+
+>   	case DRM_FORMAT_ARGB16161616:
+>   		return &ARGB16161616_read_line;
+>   	case DRM_FORMAT_ABGR16161616:
+> diff --git a/drivers/gpu/drm/vkms/vkms_plane.c b/drivers/gpu/drm/vkms/vkms_plane.c
+> index a243a706459f..0fa589abc53a 100644
+> --- a/drivers/gpu/drm/vkms/vkms_plane.c
+> +++ b/drivers/gpu/drm/vkms/vkms_plane.c
+> @@ -21,6 +21,8 @@ static const u32 vkms_formats[] = {
+>   	DRM_FORMAT_XBGR8888,
+>   	DRM_FORMAT_RGBX8888,
+>   	DRM_FORMAT_BGRX8888,
+> +	DRM_FORMAT_RGB888,
+> +	DRM_FORMAT_BGR888,
+>   	DRM_FORMAT_XRGB16161616,
+>   	DRM_FORMAT_XBGR16161616,
+>   	DRM_FORMAT_ARGB16161616,
+> 
 
