@@ -1,78 +1,88 @@
-Return-Path: <linux-kernel+bounces-383016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C3BA9B1637
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 10:05:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2E3B9B163A
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 10:06:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A70DC1F22760
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 08:05:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A747F282CDE
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 08:06:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 911231C6F73;
-	Sat, 26 Oct 2024 08:05:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2558F1D0178;
+	Sat, 26 Oct 2024 08:05:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tlgg9d8M"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yns03NL4"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 591CE217F3D;
-	Sat, 26 Oct 2024 08:05:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B388E1C9DDF;
+	Sat, 26 Oct 2024 08:05:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729929952; cv=none; b=p89f4vKEw+K479ONtSm5tj3+WTRjFBRGgx4EtUSqQ6QxjZZDJ/uVTWAS/BMpyAACEW9Z3Nl0MMFvd6VYEGWiBvNfTIXR/Vk88HRkAireEtHvDN/hH84F0t3kszqi7MZIbgbWAh9E5ZZl9L4GP+3e5KnGTQI8wPRidk1UHYY1gq0=
+	t=1729929954; cv=none; b=C5QmRCGM0uE5kINFR4cBm/0B3qxHZXyWf68G4yaoYkRD4idLyEt3+8Muyc1fyHtVZFzwerlPgfcSTj4S8hq7bGaF6e0M323QLi2rCHEmUWPpxfkV+unVEyroDmB8qxStdEUas6XP/mPIYz6eEYWPd8JfuHkzWCb7kvFHWsm5zfA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729929952; c=relaxed/simple;
-	bh=Sh4OlSUSOinU9Gcmy1Jjef4XWIvja88x5RH9Cl7atfE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nmplLQvzlx6B0FS+a08U1m2fCyyuwUPVdskfndAOFMnqQz7CKK8l1MT7ZZQ6UvcgaKi+vmyGIgwUihCLRkS0Le0jQJsjNwLX4baDhboIGq+cciujjrb4Dc9Gl4gbeyrO7Cy5/ZQXoNMtD3hY7fZenR7ysM1sA8WIfQBkAAWFjeo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Tlgg9d8M; arc=none smtp.client-ip=209.85.210.169
+	s=arc-20240116; t=1729929954; c=relaxed/simple;
+	bh=BwxrL1qfKFawU3QJ6xoJQZmqclg6Oux2yN1BAtabzBI=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=aGe5/zWAFvucTxRjhZLlMBcnoPXeKTIqysClgNPDCx8DI1MAiofUJVerbDt4rEHA5Uq+THBBMuUj5xQ1mDKsVySJtDbZ/pj+ZUZrx320vcodZ942eXqjYx9qh4IpLrQT97IWVKaHQ3npLp8GQqYjbOSk9feYjwlxCQ4p4hs1ijE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yns03NL4; arc=none smtp.client-ip=209.85.210.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-71ec997ad06so1994645b3a.3;
-        Sat, 26 Oct 2024 01:05:50 -0700 (PDT)
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-72061bfec2dso539422b3a.2;
+        Sat, 26 Oct 2024 01:05:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729929949; x=1730534749; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=2aFdd7lTNXY2oBADHotB5RImOsGkW4h5/amm8EYmlsM=;
-        b=Tlgg9d8M+ZLlqyvxRdAw4+y+EjVzuGWW8L2Zz7x48L0/SnK4X4iwJHVdbC12aSJ9n7
-         Hm7vuBC4rNX72xkV6JCinGPmE64ELimJv9vmrwv5AxrQDIn8VHYKaOeRTVuSwg6HZfkN
-         rAn5fiBa7BpgwOd6osROosseOJCRf6IXGdB7HMheaxYbmrHTb1jcQ34URd2CeyKDXCFD
-         QJtEWdeOaulT5FXp32GYrDsVMm2g5d5uPLqXsCisK+Rp2wmjLZNovw5EI6u0laU4ttIq
-         50SvVsIJEbrwCdUxIcRkQGr3Mtd0W+6mrKFhGp27yZwM2IO3NRoznvO+1bP2riAWqPOY
-         TxuA==
+        d=gmail.com; s=20230601; t=1729929952; x=1730534752; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rGyXhyZ0qhgMndAEha3zA28oK1WkxjpxLLEx25ZN/D0=;
+        b=Yns03NL4EYprQc4b0ReKzhbPU4Mb1dgU3lYegwK+gySmTvCiNJLd9yx3798Iaq9+5w
+         IaKCdTHm5NIxW4vaIN0R4c28dXA45ecK//ZH7lKOuzbkKidWqcJsFfT52ZzH+mK38C+z
+         d6+1a9w5GIAsQpqXjHgP+T/a/Msd+q/UcaQavdDsltUAqm6ZO09bFG6Y3Fvthi4Wpj0E
+         PZuHPmmZZCrOMO20SXd7Vzxq9bv87dpOIRxie67m5GS8I2zkXLhg3igSV4aBqTHQ/kXO
+         +yATPo9ELaiEGCpmMP/VWA8jIP4OdmEgY0G8ajfQoj4uEBqRbIPdQj2c/h5oNqAX1W4c
+         zvOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729929949; x=1730534749;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2aFdd7lTNXY2oBADHotB5RImOsGkW4h5/amm8EYmlsM=;
-        b=CebGY1bPt1/CnLTwew5K+9NBCheUZmuyoO3shl+UsFQIxi3z3HUOl1iqj35020rm3k
-         IaFTvgZZRJe9apTPlMPz+JYkQGteHzBU5G5VolnIIDTPDE9pyG+evBg2Lqp3iEs75MyD
-         9yMKJbJK1BOsGO1arCW9pfuKqDsfA3fVyKfND6qz+qcS01786ZP/vKhtfQSL6p8n0Nfi
-         QXGjzoZB8q1Fb+/q6ihgyRoV6yr0GSGHcr81Ix/RWTzeWBLPamY0tu6/v5ryWq6kVYqO
-         5RysH2lapwMP1y/k7dX6xCbydqf0dMqznXaHP099l9xkH6w4o9SIRGrJ7vjwZHQAimqW
-         GYQw==
-X-Forwarded-Encrypted: i=1; AJvYcCWsdHXnAgjKQ6/mxyoez1afACdxKCQcpnvKGOINjao2FmduvRB1L2bX1G6WgTOkGjPu0JVdM30g4qr9@vger.kernel.org
-X-Gm-Message-State: AOJu0YytqW3I1mfEeyTXP2jLzXwVNQkoXaXygp7PLG+W/loPONQ8nKGn
-	8xdRz6L7ZO7WvDZoezWpVF7W4amto/TAU195sh4hZHVLozzuiqKyo6CXOw==
-X-Google-Smtp-Source: AGHT+IEobrp6c16eCTSQLSlp+5xfLaJ92nM09kQGa8uE5YlpoT0Cly4Sh06grJPzEFb3sZV1Pl4a2Q==
-X-Received: by 2002:a05:6a00:985:b0:71e:55e2:2c58 with SMTP id d2e1a72fcca58-72062fb3d24mr3470459b3a.15.1729929949153;
-        Sat, 26 Oct 2024 01:05:49 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729929952; x=1730534752;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rGyXhyZ0qhgMndAEha3zA28oK1WkxjpxLLEx25ZN/D0=;
+        b=munU24tCa0iZCVKYLa5PJ2iPJIrMWM7lSTaFAd8qKTzm5r0/9r0qJrY5jAbdHiDRE3
+         +Nlv5SrTqCMj0jqtr5yVgnGsm4Zk6kRyxx/v5vI/9+iq72q3Wme98cGMqX0kuCanN/Vs
+         lgvbQFPBRSzzfDXLIfA8Q6BsD+TVGAQw9wgb7Fj8Zr5eg8VWZygN1jC0eaL5OpeON/vs
+         t1er/0vfG1VSjbKG34gDRH69za7wEpeoQQ81cwfbDFNOzalMfiUJwqT6UrZBWbWVdlSb
+         +MBNCXbL6u8vXLeJrYn+H0SgeRAkuN4j+AKFINKZLk6Fcktbo9v2AuFqgIl/1E5dqIvL
+         qfXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVNpu9UvWoGhK3N3XP4RCTkXLc/5E8Mu7J5OE7jRcX0po19Eipmb1aDGw4e3RRR8pIhPE+7zydbrvZQ@vger.kernel.org
+X-Gm-Message-State: AOJu0Yysv3jxiFRyS8jeOVT0NINTryOosjzg2dgY+n9bJaVzQuGLg2QZ
+	We/ixrInAWTi8zXgvpGgYtDogsQFVPvrkyCadrqdONOUvnaa1kFyU0DXxA==
+X-Google-Smtp-Source: AGHT+IH4Y18dVro4HB0ZiZ0y+2hlRite79QbXRhH0Zg8MHFtOU5ePf9sKvvqmtLEvTMu+9sL3T2+iQ==
+X-Received: by 2002:a05:6a00:188e:b0:71d:eb7d:20e4 with SMTP id d2e1a72fcca58-72062f860f6mr3201598b3a.8.1729929951653;
+        Sat, 26 Oct 2024 01:05:51 -0700 (PDT)
 Received: from localhost.localdomain ([240f:34:212d:1:4618:4c6a:7feb:e53b])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7edc8a46f68sm2288666a12.89.2024.10.26.01.05.47
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7edc8a46f68sm2288666a12.89.2024.10.26.01.05.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 26 Oct 2024 01:05:48 -0700 (PDT)
+        Sat, 26 Oct 2024 01:05:51 -0700 (PDT)
 From: Akinobu Mita <akinobu.mita@gmail.com>
 To: linux-kernel@vger.kernel.org
 Cc: linux-hwmon@vger.kernel.org,
 	devicetree@vger.kernel.org,
-	akinobu.mita@gmail.com
-Subject: [PATCH v2 0/2] hwmon: (pwm-fan) add option to leave fan on shutdown
-Date: Sat, 26 Oct 2024 17:05:33 +0900
-Message-Id: <20241026080535.444903-1-akinobu.mita@gmail.com>
+	akinobu.mita@gmail.com,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Billy Tsai <billy_tsai@aspeedtech.com>
+Subject: [PATCH v2 1/2] hwmon: (pwm-fan) add option to leave fan on shutdown
+Date: Sat, 26 Oct 2024 17:05:34 +0900
+Message-Id: <20241026080535.444903-2-akinobu.mita@gmail.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20241026080535.444903-1-akinobu.mita@gmail.com>
+References: <20241026080535.444903-1-akinobu.mita@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,20 +91,57 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-I sent these patches a long time ago, but I didn't cc them to the DT list,
-so the DT bindings changes weren't reviewed.
+This adds an optional property "retain-state-shutdown" as requested by
+Billy Tsai.
 
-There have been a lot of changes to pwm-fan since then, and I've updated
-the patch, so please review again.
+Billy said:
+ "Our platform is BMC that will use a PWM-FAN driver to control the fan
+ on the managed host. In our case, we do not want to stop the fan when
+ the BMC is reboot, which may cause the temperature of the managed host
+ not to be lowered."
 
-Akinobu Mita (2):
-  hwmon: (pwm-fan) add option to leave fan on shutdown
-  dt-bindings: hwmon: pwm-fan: add retain-state-shutdown property
+Cc: Jean Delvare <jdelvare@suse.com>
+Cc: Guenter Roeck <linux@roeck-us.net>
+Cc: Rob Herring <robh@kernel.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
+Cc: Conor Dooley <conor+dt@kernel.org>
+Cc: Billy Tsai <billy_tsai@aspeedtech.com>
+Signed-off-by: Akinobu Mita <akinobu.mita@gmail.com>
+---
+ drivers/hwmon/pwm-fan.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
- Documentation/devicetree/bindings/hwmon/pwm-fan.yaml | 4 ++++
- drivers/hwmon/pwm-fan.c                              | 6 +++++-
- 2 files changed, 9 insertions(+), 1 deletion(-)
-
+diff --git a/drivers/hwmon/pwm-fan.c b/drivers/hwmon/pwm-fan.c
+index c434db4656e7..dcb48a41f9f0 100644
+--- a/drivers/hwmon/pwm-fan.c
++++ b/drivers/hwmon/pwm-fan.c
+@@ -51,6 +51,7 @@ struct pwm_fan_ctx {
+ 	u32 *pulses_per_revolution;
+ 	ktime_t sample_start;
+ 	struct timer_list rpm_timer;
++	bool retain_state_shutdown;
+ 
+ 	unsigned int pwm_value;
+ 	unsigned int pwm_fan_state;
+@@ -490,6 +491,8 @@ static int pwm_fan_probe(struct platform_device *pdev)
+ 
+ 	mutex_init(&ctx->lock);
+ 
++	ctx->retain_state_shutdown = device_property_read_bool(dev, "retain-state-shutdown");
++
+ 	ctx->dev = &pdev->dev;
+ 	ctx->pwm = devm_pwm_get(dev, NULL);
+ 	if (IS_ERR(ctx->pwm))
+@@ -655,7 +658,8 @@ static void pwm_fan_shutdown(struct platform_device *pdev)
+ {
+ 	struct pwm_fan_ctx *ctx = platform_get_drvdata(pdev);
+ 
+-	pwm_fan_cleanup(ctx);
++	if (!ctx->retain_state_shutdown)
++		pwm_fan_cleanup(ctx);
+ }
+ 
+ static int pwm_fan_suspend(struct device *dev)
 -- 
 2.34.1
 
