@@ -1,83 +1,115 @@
-Return-Path: <linux-kernel+bounces-383163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BA7D9B17F6
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 14:21:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 238249B17F9
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 14:22:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C66E71F21EC3
-	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 12:21:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 268F31F22021
+	for <lists+linux-kernel@lfdr.de>; Sat, 26 Oct 2024 12:22:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8FEB1CEABB;
-	Sat, 26 Oct 2024 12:21:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A1AE1D54E9;
+	Sat, 26 Oct 2024 12:22:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VQlkc/6o"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hEOeoPES"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08B3A1D3654;
-	Sat, 26 Oct 2024 12:21:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD8C31CEABB;
+	Sat, 26 Oct 2024 12:22:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729945285; cv=none; b=aOcmmQSDN1WN3kcIBdYoC0j9+uTZUOk026Ceg10dJCsvqDRBUN7YZNOfgXxkdNcnNfndWneyRyW+m+5wA08ce2Z0Xck7xPQV48yIynho4O3D3W45gqnWbg5eqM3LDZYvDK17E+EGBfmNMg4XuK2A9toSyDuyrJfmj8FSN8r1sls=
+	t=1729945351; cv=none; b=k462nABPd3Rb6EHivEq0EIgPoMf50QfKxV/Joz9CcYEW7S34Ory6qFUfJKaYOfijF7ekd13LqAOt7ptY0HyrzliKg4QC+IO7ZPnOli8FMYd7LFt99flLzcpmE+8cdBMKMXt40lpg487A8T0fx1uyWGchXowFF3UG2m0pNt5J0ZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729945285; c=relaxed/simple;
-	bh=fOyfRRPgF2Ic+5lt8K6HV27A4ZFByQ740oGu+uFgUUI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YuctcyrWPqxns5TEyQJ1ca/n1kavtxy6hF+FXNqKHgbj2HkmDd4WLrGSyLj40lHGayU1c77IDMrr1O/F8LoEcC2FX5hosefjP1zuKIb+Z9odHWfR+1/t6ZdcTr/2k7oLs/MSx1VPuYc/SMB7DjuTM0Gr2F9o+hOh57EHO+kpK1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VQlkc/6o; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 686AEC4CEC6;
-	Sat, 26 Oct 2024 12:21:23 +0000 (UTC)
+	s=arc-20240116; t=1729945351; c=relaxed/simple;
+	bh=nN9ySBQFhI6eChKsKY01UO/86r/vMQHDkXXeMgpaQuM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=E2mtuHZ0/hdmOLIJn8eJF8V8jbq4OVYb8Hjzv/nDnRsPJdpCnmo9dB4NB2ZMW8WWSTk4Kz7yC91IuDcPYf4CsRDETZuKS1+POdCa4HOARx/D70BTYHLTc3hGg+FbEEMO9/9frqdjRS9MgmSCKJzomQROb0kH7AaBcg5o5vpuP2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hEOeoPES; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 873FAC4CEC6;
+	Sat, 26 Oct 2024 12:22:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729945284;
-	bh=fOyfRRPgF2Ic+5lt8K6HV27A4ZFByQ740oGu+uFgUUI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VQlkc/6oAIHTwqYLVMokVBVvy5+iW0JeJoT4xWzccisvdoc0v1+X8H8ZN13Kyt34Q
-	 5FzEg/sgg4HBaOEXPPkOQzn0FCoGIUtA5BIo4Ed9735kvlfAYWKF/i0vG9NXGDjXQy
-	 OBmWM077WkDn3IEuGnV2MTa/6OfS4Ct2nBt3Laekz8qTxuTnAirCskLnRWQblxf7Uc
-	 uUbGitk7DJYOTX3kULjPKlwG1lKiZ1CMCDj/hAxliHPqQ0xtXzQaYpWDN6GtR3bd0S
-	 /XxqTbDqUajeoAgZN1uvPmL60wt/8gMHrL6i8L8ZlsQ0fmPggzpuWC6WZHwgLSu/GF
-	 60FsP5dkhInkQ==
-Date: Sat, 26 Oct 2024 14:21:20 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Imran Shaik <quic_imrashai@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Ajit Pandey <quic_ajipan@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>, 
-	Jagadeesh Kona <quic_jkona@quicinc.com>, Satya Priya Kakitapalli <quic_skakitap@quicinc.com>, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 5/6] dt-bindings: clock: qcom: Add QCS8300 video clock
- controller
-Message-ID: <a6vlracyxhhtrl2q6rrbifjcc7s6j6au433w4ib6baqrtcuaa5@jl274rudcenr>
-References: <20241024-qcs8300-mm-patches-v2-0-76c905060d0a@quicinc.com>
- <20241024-qcs8300-mm-patches-v2-5-76c905060d0a@quicinc.com>
+	s=k20201202; t=1729945350;
+	bh=nN9ySBQFhI6eChKsKY01UO/86r/vMQHDkXXeMgpaQuM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=hEOeoPESHoSNQTqbqubJnp5p1c4P0R4aVFF9XaRXSalTHz/vjsXFMwWmCjCkMIVqK
+	 DrptHqyoqXrMwF5gMZibAYCrs3Laqsh2YAlynRDlADU/NFYpHWb6uJfUHhiu4SZreu
+	 5E7yKePUlRwgCfK7Xbi6T0tu5VqnlHze9AK5fVNlSpbUQIVDbHT+DkU8ejkNSpwEjV
+	 IB1T0YGgx8ZZlR8ymYbJ6U8+xDDEpz/+5qlmHsWXVh/akxFMmkialIOfzHWSo5Og52
+	 Iy8apVUzzUfCPnU1CsVyViSRphyyd9kNho4hWA003vwp7TTzgBMGxfkqtOrLI0ZirY
+	 cc9/Z6q4wXjnA==
+Date: Sat, 26 Oct 2024 13:22:04 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Julien Stephan <jstephan@baylibre.com>
+Cc: Mudit Sharma <muditsharma.info@gmail.com>, Lars-Peter Clausen
+ <lars@metafoo.de>, Anshul Dalal <anshulusr@gmail.com>, Javier Carrasco
+ <javier.carrasco.cruz@gmail.com>, Jean-Baptiste Maneyrol
+ <jean-baptiste.maneyrol@tdk.com>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Cosmin Tanislav
+ <cosmin.tanislav@analog.com>, Ramona Gradinariu
+ <ramona.gradinariu@analog.com>, Antoniu Miclaus
+ <antoniu.miclaus@analog.com>, Dan Robertson <dan@dlrobertson.com>, Marcelo
+ Schmitt <marcelo.schmitt@analog.com>, Matteo Martelli
+ <matteomartelli3@gmail.com>, Anand Ashok Dumbre
+ <anand.ashok.dumbre@xilinx.com>, Michal Simek <michal.simek@amd.com>,
+ Mariel Tinaco <Mariel.Tinaco@analog.com>, Jagath Jog J
+ <jagathjog1996@gmail.com>, Lorenzo Bianconi <lorenzo@kernel.org>, Subhajit
+ Ghosh <subhajit.ghosh@tweaklogic.com>, Kevin Tsai <ktsai@capellamicro.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Benson Leung
+ <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, chrome-platform@lists.linux.dev
+Subject: Re: [PATCH 2/7] iio: light: ltr390: simplify code in
+ write_event_config callback
+Message-ID: <20241026132204.4466fb54@jic23-huawei>
+In-Reply-To: <20241024-iio-fix-write-event-config-signature-v1-2-7d29e5a31b00@baylibre.com>
+References: <20241024-iio-fix-write-event-config-signature-v1-0-7d29e5a31b00@baylibre.com>
+	<20241024-iio-fix-write-event-config-signature-v1-2-7d29e5a31b00@baylibre.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241024-qcs8300-mm-patches-v2-5-76c905060d0a@quicinc.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 24, 2024 at 07:01:18PM +0530, Imran Shaik wrote:
-> The QCS8300 video clock controller is mostly identical to SA8775P, but
-> QCS8300 has minor difference. Hence, reuse the SA8775P videocc bindings
-> for QCS8300 platform.
+On Thu, 24 Oct 2024 11:11:24 +0200
+Julien Stephan <jstephan@baylibre.com> wrote:
+
+> iio_ev_state_store is actually using kstrtobool to check user
+> input, then gives the converted boolean value to the write_event_config
+> callback.
 > 
-> Signed-off-by: Imran Shaik <quic_imrashai@quicinc.com>
+> Remove useless code in write_event_config callback.
+> 
+> Signed-off-by: Julien Stephan <jstephan@baylibre.com>
 > ---
->  Documentation/devicetree/bindings/clock/qcom,sa8775p-videocc.yaml | 1 +
->  1 file changed, 1 insertion(+)
+>  drivers/iio/light/ltr390.c | 3 ---
+>  1 file changed, 3 deletions(-)
+> 
+> diff --git a/drivers/iio/light/ltr390.c b/drivers/iio/light/ltr390.c
+> index 8e0a3fc3d923a6f65d2a629c87e7bfd35d82a507..ff6b5d8b582b33eba60b769dff529caa00fb7244 100644
+> --- a/drivers/iio/light/ltr390.c
+> +++ b/drivers/iio/light/ltr390.c
+> @@ -558,9 +558,6 @@ static int ltr390_write_event_config(struct iio_dev *indio_dev,
+>  	struct ltr390_data *data = iio_priv(indio_dev);
+>  	int ret;
+>  
+> -	if (state != 1  && state != 0)
+> -		return -EINVAL;
+> -
+>  	if (state == 0)
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Once you apply the final patch, the == 0 here will make less sense.
+Can tidy that up here or in that final patch by just making this
+if (!state) etc
 
-Best regards,
-Krzysztof
+>  		return regmap_clear_bits(data->regmap, LTR390_INT_CFG, LTR390_LS_INT_EN);
+>  
+> 
 
 
