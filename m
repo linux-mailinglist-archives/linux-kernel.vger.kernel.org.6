@@ -1,157 +1,107 @@
-Return-Path: <linux-kernel+bounces-383878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24B089B2155
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 00:10:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3ECC99B2158
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 00:13:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 47AF61C20A80
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 23:10:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDEB71F2132B
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 23:13:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65E71189B8D;
-	Sun, 27 Oct 2024 23:10:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1BC6189BA2;
+	Sun, 27 Oct 2024 23:13:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KIhHuoX3"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ILViyzp7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A57C1161;
-	Sun, 27 Oct 2024 23:10:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43A66161;
+	Sun, 27 Oct 2024 23:13:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730070637; cv=none; b=fjH+cJCoFcrcsDlFSVtw0bp0xeEyuP/NrVmZKZGhNQg8KsNkUaJx0t23q1gDoEtxrcyuSuDdZ8Z6dSifOr4pCEZEahIT3sFs3CGDUoYG7JSaEX6nyCeoj7pZh1iEmu5PjA/XsehNq9yvU50t8x+BV5X/1LIlNUmZKf1xQwHlzFY=
+	t=1730070802; cv=none; b=hPK4dL72x7Z5Jg3tnAdbyCYztsMGrty+D7CCuyDFWWNEaoRxRPu/8S9gl2MI8Xn2XYnpUDslCaShvmK1U55vdHYx+QpjBZKFVq6i8CslOsqcHizfEq8LWmLE7Xxql34DBpJhhS12QQBwtbxhdvIUd8lDIyijaCuLCXUH+DdQ9Rw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730070637; c=relaxed/simple;
-	bh=useqysxUEcLQ2aMXTgKfsuhB1B/otftxIG5Fs/y2k3Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MS1MMfcOej+sP7k//nt7+kUadMFNM35Mz1KCcniuDGHg9xgy0nv2SLyhOH7LRuV1C/BRrUkPCHFDUfau0Mln7IEb36dSzm7u7HY6MgU3YazS2DZJhzg0EjU0bhTMP/ylPdeF/10tt/hSYlgN23qTBZxSgo9WBHKTuqucVUNHhsk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KIhHuoX3; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43155abaf0bso38538575e9.0;
-        Sun, 27 Oct 2024 16:10:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730070634; x=1730675434; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=gFeZ965nAQAUdBsdbWiwD7ivDZutozPpLb7/lBQkTLY=;
-        b=KIhHuoX3UoFER1dXIYgVASuGaozJponHR7Q5XovQRb/h7Rw4URbd3R8ojNybos8cKK
-         DsGmu9JZFPA0HqgrDAuf3RtAsKCnIhwecOqxlFywQydQI/JJl8r4l1Z6wiaZNMVu1e5k
-         v7HVkVFtBvosXl+/XUP9LF8qiClkslvH62phSjw2DtGCQoqLt3UmVjwO7v7k8E0EvYXu
-         48T6CwAPax8YqguDeYgJNMnGSO2ZuiMCW5y4kBo54ntTjkbE5zblfeimeuWksJ2vsIUR
-         TlaHWbnAu+5/wvEOcEb3RVePN7KUfdnEBg5LhoTwRyS2he1MavD1xxYLWk5qhEkf3uC+
-         xaJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730070634; x=1730675434;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gFeZ965nAQAUdBsdbWiwD7ivDZutozPpLb7/lBQkTLY=;
-        b=qWkQ0IP9hl3ZJ0x8PQraIZ/rJb6EwPlHyhnaA1aNbbow6iIzE6OTc9fCPvUcKB91u5
-         maGZDcDg6MEw3N3KTXrqT6TNSPKbhZ42SaMAmvgribqNKIBbX0hsGQP8z0bWkNkNdo22
-         3SRp177qsTrBGs6GRFnkMLcmbmvBqsNIPl2hkbMGnCSzVvt56ApXVXoFijpZaIwwBNb5
-         ilB7HiBU9I2SZfLF1lgHNe1xlPX7Cvfgj78lHJKxTnxJovVTa3XWjHo0yjiEUD1uaddV
-         lvAV5DvXO9BvNnG3Q1822oRySGjiDjuXZgn90e64PZ7KVeqRhII8KPVaYKpuMm8PAXtu
-         QtZA==
-X-Forwarded-Encrypted: i=1; AJvYcCUtfxFfXbhAfn2dm7PMIHVHWs6Ggd6n8Xv2cS1jCP7B0HnE2LUS5iAfsx9Hw4D9fnKOVi8UR8oGLbHQHCd44J3kaA6X0g==@vger.kernel.org, AJvYcCVZDyjxhcIMTXi5AoZFtcpHSP7adeOx9v3NUVQg+jjgyUhdI99J27tVhuL5/h9Ee6qBtGvyxy54zr6c@vger.kernel.org, AJvYcCWCcpM18i1tFbQQTeY3MZawLwEJYjno93K/H2S9Gi4+XLtTRjUhyKsYmg07MIMCxZyT0gH3y8ukqgHk+Lqu@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXvx44sr0pYE6N9KAkm859iz7iTJBMCSNjIb8N9Jt0CjgobtbW
-	h+wKrQrxSfBAFmOtKp7i8P4/p7tCxPZmXyXbNUaS0WvgD2ge1MvyIf6ujQ==
-X-Google-Smtp-Source: AGHT+IF9C2sepihkCo09FcSIB2MaX2p26yqSY+v+9+AQuuAMZdKvr4i/LMnsTh7IFenX+G1hoozDAA==
-X-Received: by 2002:a05:600c:1d8c:b0:431:5e3c:2ff0 with SMTP id 5b1f17b1804b1-4319ac94a2emr53822605e9.8.1730070633657;
-        Sun, 27 Oct 2024 16:10:33 -0700 (PDT)
-Received: from ?IPV6:2a02:8071:b783:140:927c:82ba:d32d:99c1? ([2a02:8071:b783:140:927c:82ba:d32d:99c1])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4318b579613sm119223815e9.38.2024.10.27.16.10.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 27 Oct 2024 16:10:32 -0700 (PDT)
-Message-ID: <14053a51-3101-4d76-8947-2f74e1ee6c58@gmail.com>
-Date: Mon, 28 Oct 2024 00:10:28 +0100
+	s=arc-20240116; t=1730070802; c=relaxed/simple;
+	bh=/XC0fCHixgr2EOVeP3XO7qlWEpFr8F+vd5s3Nqrv5Rg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KXeKzN9i2CBw7FYJ3p43vAJ650hsHGNoRVZDR8pNdI4ZslJgWFkyNnvG4+6hTaQz/lx7tD8QcPfLIKKg6wNvf2+USaTf71MdbjjU4pIqnOBQIi6oRtvoQfaYvbqCUC0KBJcR5Jnc9JXmSFFFLigPHeMLRizy4BRaiy/qHV813uA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ILViyzp7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A640C4CEC3;
+	Sun, 27 Oct 2024 23:13:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730070801;
+	bh=/XC0fCHixgr2EOVeP3XO7qlWEpFr8F+vd5s3Nqrv5Rg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ILViyzp7e2kW1Y6O/KR0gJyw6avHfFbOeEjYt4z+RdgspP+7kOLyWlBmdSGpCllkR
+	 n8+CbGhxkPPA/OCGOdi1hKK9N+g6gJ9jCLCNyNpywHnpHNk8jTQ4a/malXgpOvRtA7
+	 eZZ4DWBmHv+akXLezfq4J3Y9yMGqT8geOnOTeiT2QM+dvNWGfBXNFOIo26ii3FnxlX
+	 SNHbHYVxSrMVyv5YdwX59a2Ip8bpJQmyWqtkXeTvcEMN5nvNaIAq3NcrBe/ZOLbdip
+	 e4ZKn5g2T/pHZaVfxSgfl5YO/ZhA/fDADiECSId/wO+DgWwb0WraBzbY1qz2qlxJx1
+	 R8tvmigQATdBw==
+Date: Sun, 27 Oct 2024 18:13:20 -0500
+From: Rob Herring <robh@kernel.org>
+To: Kim Seer Paller <kimseer.paller@analog.com>
+Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Sebastian Reichel <sre@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Mike Looijmans <mike.looijmans@topic.nl>
+Subject: Re: [PATCH 1/2] dt-bindings: power/supply: Add ltc4162-f/s and
+ ltc4015
+Message-ID: <20241027231320.GA217360-robh@kernel.org>
+References: <20241027071852.56240-1-kimseer.paller@analog.com>
+ <20241027071852.56240-2-kimseer.paller@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/8] platform/surface: aggregator: Add platform handler
- pointer to device
-To: Mario Limonciello <mario.limonciello@amd.com>,
- Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Lee Chun-Yi <jlee@suse.com>, Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
- Corentin Chary <corentin.chary@gmail.com>, "Luke D . Jones"
- <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>,
- Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
- Alexis Belmonte <alexbelm48@gmail.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>,
- open list <linux-kernel@vger.kernel.org>,
- "open list:ACPI" <linux-acpi@vger.kernel.org>,
- "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER"
- <platform-driver-x86@vger.kernel.org>,
- "open list:THINKPAD ACPI EXTRAS DRIVER"
- <ibm-acpi-devel@lists.sourceforge.net>,
- Mark Pearson <mpearson-lenovo@squebb.ca>,
- Matthew Schwartz <matthew.schwartz@linux.dev>
-References: <20241025193055.2235-1-mario.limonciello@amd.com>
- <20241025193055.2235-3-mario.limonciello@amd.com>
-Content-Language: en-US
-From: Maximilian Luz <luzmaximilian@gmail.com>
-In-Reply-To: <20241025193055.2235-3-mario.limonciello@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241027071852.56240-2-kimseer.paller@analog.com>
 
-On 10/25/24 9:30 PM, Mario Limonciello wrote:
-> To be able to reference the platform handler in remove, add
-> a pointer to `struct ssam_device`.
+On Sun, Oct 27, 2024 at 03:18:51PM +0800, Kim Seer Paller wrote:
+> Add support for ltc4162-f/s and ltc4015
 > 
-> Tested-by: Matthew Schwartz <matthew.schwartz@linux.dev>
-> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+> - Add compatible entries for ltc4162-f/s and ltc4015
+> - Include datasheets for new devices
+
+What's the difference between the l, f, and s variants? Please make the 
+commit msg describe that rather than what I can read in the diff.
+
+> 
+> Signed-off-by: Kim Seer Paller <kimseer.paller@analog.com>
 > ---
->   drivers/platform/surface/surface_platform_profile.c | 1 +
->   include/linux/surface_aggregator/device.h           | 2 ++
->   2 files changed, 3 insertions(+)
+>  .../devicetree/bindings/power/supply/ltc4162-l.yaml         | 6 ++++++
+>  1 file changed, 6 insertions(+)
 > 
-> diff --git a/drivers/platform/surface/surface_platform_profile.c b/drivers/platform/surface/surface_platform_profile.c
-> index 61aa488a80eb5..958afd7bce223 100644
-> --- a/drivers/platform/surface/surface_platform_profile.c
-> +++ b/drivers/platform/surface/surface_platform_profile.c
-> @@ -210,6 +210,7 @@ static int surface_platform_profile_probe(struct ssam_device *sdev)
->   		return -ENOMEM;
->   
->   	tpd->sdev = sdev;
-> +	sdev->tpd = tpd;
->   
->   	tpd->handler.name = "Surface Platform Profile";
->   	tpd->handler.profile_get = ssam_platform_profile_get;
-> diff --git a/include/linux/surface_aggregator/device.h b/include/linux/surface_aggregator/device.h
-> index 8cd8c38cf3f30..6a72b5bdc8782 100644
-> --- a/include/linux/surface_aggregator/device.h
-> +++ b/include/linux/surface_aggregator/device.h
-> @@ -164,6 +164,7 @@ enum ssam_device_flags {
->    * @dev:   Driver model representation of the device.
->    * @ctrl:  SSAM controller managing this device.
->    * @uid:   UID identifying the device.
-> + * @tpd:   Platform profile device data.
->    * @flags: Device state flags, see &enum ssam_device_flags.
->    */
->   struct ssam_device {
-> @@ -171,6 +172,7 @@ struct ssam_device {
->   	struct ssam_controller *ctrl;
->   
->   	struct ssam_device_uid uid;
-> +	struct ssam_platform_profile_device *tpd;
-
-Do we really need to introduce a new field in the main SSAM device struct? I
-only had time for a brief look, but IIUC you could just use ssam_device_set_drvdata()
-and ssam_device_get_drvdata().
-
->   	unsigned long flags;
->   };
-
-Best regards,
-Max
+> diff --git a/Documentation/devicetree/bindings/power/supply/ltc4162-l.yaml b/Documentation/devicetree/bindings/power/supply/ltc4162-l.yaml
+> index 29d536541..9b546150d 100644
+> --- a/Documentation/devicetree/bindings/power/supply/ltc4162-l.yaml
+> +++ b/Documentation/devicetree/bindings/power/supply/ltc4162-l.yaml
+> @@ -17,12 +17,18 @@ description: |
+>    panels, etc., and a rechargeable Lithium-Ion/Polymer battery.
+>  
+>    Specifications about the charger can be found at:
+> +    https://www.analog.com/en/products/ltc4162-l.html
+> +    https://www.analog.com/en/products/ltc4162-f.html
+>      https://www.analog.com/en/products/ltc4162-s.html
+> +    https://www.analog.com/en/products/ltc4015.html
+>  
+>  properties:
+>    compatible:
+>      enum:
+>        - lltc,ltc4162-l
+> +      - lltc,ltc4162-f
+> +      - lltc,ltc4162-s
+> +      - lltc,ltc4015
+>  
+>    reg:
+>      maxItems: 1
+> -- 
+> 2.34.1
+> 
 
