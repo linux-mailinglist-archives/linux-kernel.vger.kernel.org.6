@@ -1,149 +1,301 @@
-Return-Path: <linux-kernel+bounces-383868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 801519B2122
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 23:48:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A59C69B2128
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 23:53:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D82E1B20EB1
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 22:48:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EC822814C6
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 22:53:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D77D188591;
-	Sun, 27 Oct 2024 22:48:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 818B4189F20;
+	Sun, 27 Oct 2024 22:52:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=themaw.net header.i=@themaw.net header.b="Z5amQny2";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Y3SZoRA9"
-Received: from fout-a2-smtp.messagingengine.com (fout-a2-smtp.messagingengine.com [103.168.172.145])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=xff.cz header.i=@xff.cz header.b="PcYLK+ty"
+Received: from vps.xff.cz (vps.xff.cz [195.181.215.36])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA337286A1;
-	Sun, 27 Oct 2024 22:48:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB4C318871A;
+	Sun, 27 Oct 2024 22:52:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.181.215.36
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730069293; cv=none; b=uetT16QmdiLp4/k2/qzNgBZE8lGAQEsG0y/tj7FRY2arKJVQihJzbaqvi2z/9pgEuHzzCcE9Al/LRX+Ar2boc7qdt6FPop8znK0mgp0BNXyOAGN2pcVNxUdTID586Wz9eufKHU+Ajv+lErpA2iX+S+zuqBKb3eoCi/3B1K6b8go=
+	t=1730069569; cv=none; b=i31MFMgZLUqwbRkVNSjYffMtIxvRf2cic2IMBurYy7U3HyQqx3BF+4l6xi52XIAQD7qiOTM3Yy81S2UgBOQVMuUCe2VjY913/nL75jUkrGTybecoOPRSAlShrKb3vZGcKCuY8Jt76HXKUy5/fg0CAY8OKX12WQnscnBhLOCRvTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730069293; c=relaxed/simple;
-	bh=mNwCDYHaewSTiQZC6F8XtuBW3oExxbRrggmg6HesAN4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MM0XtmCca6hWl6F/I4ISfhc/rW4BbsngGuryov+rBpe98nn7z++J6OtuLLNZ9+tYhBpjT43g1eUvB8dCc1l2wHzDoShcSA8vCbTkQnOr51hVnKalug3AfJoHXL6EJg2NGo3f0Yg2Mf9ytP9BwXtcqqE8qcGMaXS/QzRqb+vm9h0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=themaw.net; spf=pass smtp.mailfrom=themaw.net; dkim=pass (2048-bit key) header.d=themaw.net header.i=@themaw.net header.b=Z5amQny2; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Y3SZoRA9; arc=none smtp.client-ip=103.168.172.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=themaw.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=themaw.net
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfout.phl.internal (Postfix) with ESMTP id DDE821380174;
-	Sun, 27 Oct 2024 18:48:09 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-10.internal (MEProxy); Sun, 27 Oct 2024 18:48:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=cc
-	:cc:content-transfer-encoding:content-type:date:date:from:from
-	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
-	:to; s=fm2; t=1730069289; x=1730155689; bh=ovpSW08eRQWRSpckMlBzd
-	TJs6o+8zDMYbK3U5gGCDho=; b=Z5amQny2a0z7rN/Q/E40o+6idE/O/tW743VsL
-	rsusfhOs5wS8OiPTVrnLKBjNG315kSkq0ueWvMlaKF40+n/1bh20lgqJHOGqrJDz
-	g/eeleneftMg5rjJ+WwqxK/6BaL+WcKOQigZ25eREPPxUrJ7+SpkBvFq0wxjJ1JY
-	bmh4n9atQ+Q03W0ku3GycA5pZBs2ye8/W+8MEATfpqFIHIqxBJr9virp5B37ZVtt
-	9WsFfWxunuK4NjVlcEJ6ZpkY6qK9Cjl9q9pJzSJY4oa0GBDdlfqLnzGVJD/EZMi0
-	c2f02xuzsUqeBMLygDGnW8jIcNjkITMAJ/Y5625HuaPHwmyvQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm3; t=1730069289; x=1730155689; bh=ovpSW08eRQWRSpckMlBzdTJs6o+8
-	zDMYbK3U5gGCDho=; b=Y3SZoRA9f4uscKyiBfLaHEp8BcaHWSKu81zhsrwAeugw
-	TP+6SkyWjidStAMCzFKo1iX+NRBLSQu7QYGJKgZtn8h5T7BZmNnLkW/1+k2Nxcc5
-	d5tUV1cKPEfp0L6iOQFqEc0QV374c/7FV08OS9jdw6UoPi9haLO0KixPUwTnwxvU
-	LV14uNLzjI/6em6xFSdPyGseD4I5Zda7MGw5qKjferqURPuKeqTYP26VqVFa73nk
-	WLNqMbPLXXe4h18JNAltj5zFuttL2iwSXfbMocch/0SQqR7IJgLAep3LvQq0JfX7
-	0jB6Ppna35OYRWfsHjYVqLVeC2qLV40TSQu40PaTjQ==
-X-ME-Sender: <xms:KcMeZ3_tqvVxSx0K6Iz_SzEoVL2FErWUMmApL-uZBaLATMnhQSjIFg>
-    <xme:KcMeZztVMYZlpK4nZdexcHVuvXvhfwlQsfrmymWC9TVcdZ3mrgUc_t-yFg_shRBad
-    PwCBo4_-8cn>
-X-ME-Received: <xmr:KcMeZ1CkWCnj1mENtV0u9d5iOk2VtZRBvNj9LBlGQyizXfAlIBsLP3IRm5XoRI9M7T9GU_j312nAAgia7RVBqmdC4Ae7D0MuESiC8RD1Fgx37xAjkvxXVOPG8A>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdejjedgtdefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhephffvvefufffkofgggfestdekredtredttdenucfh
-    rhhomhepkfgrnhcumfgvnhhtuceorhgrvhgvnhesthhhvghmrgifrdhnvghtqeenucggtf
-    frrghtthgvrhhnpedutdfhveehuefhjefgffegieduhefhtdejkefhvdekteeihfehtddt
-    gffgheduleenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
-    hmpehrrghvvghnsehthhgvmhgrfidrnhgvthdpnhgspghrtghpthhtohepiedpmhhouggv
-    pehsmhhtphhouhhtpdhrtghpthhtohepsghrrghunhgvrheskhgvrhhnvghlrdhorhhgpd
-    hrtghpthhtoheprhgrvhgvnhesthhhvghmrgifrdhnvghtpdhrtghpthhtohepvhhirhho
-    seiivghnihhvrdhlihhnuhigrdhorhhgrdhukhdprhgtphhtthhopegruhhtohhfshesvh
-    hgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhes
-    vhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhfshguvghvvg
-    hlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:KcMeZzdCAV1YzSwxzgetXf9xvVNJcthcDsgMynmDDfDby5Pgh0ZmvA>
-    <xmx:KcMeZ8Nf_rPKE9eYOW8JoQlOBNe86a1UXBPC2BGjeOnUqLOQA6DhnQ>
-    <xmx:KcMeZ1mUAhD3jvpnXqTd0t_Pmow9sUlrIsdEg5oXPYB6lCe0cjQMqA>
-    <xmx:KcMeZ2uxCoWqAxR4zHG-_12J_8eKLkyY2ajX98DjlvOZtI6tfTR30g>
-    <xmx:KcMeZ4CwOp8wGzCnd_HapAsFzhgmXD2i4brtg2gpngdylC_FJ2mFkg1X>
-Feedback-ID: i31e841b0:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 27 Oct 2024 18:48:07 -0400 (EDT)
-From: Ian Kent <raven@themaw.net>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Ian Kent <raven@themaw.net>,
-	Al Viro <viro@ZenIV.linux.org.uk>,
-	autofs mailing list <autofs@vger.kernel.org>,
-	Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: [PATCH] autofs: fix thinko in validate_dev_ioctl()
-Date: Mon, 28 Oct 2024 06:47:17 +0800
-Message-ID: <20241027224732.5507-1-raven@themaw.net>
-X-Mailer: git-send-email 2.46.2
+	s=arc-20240116; t=1730069569; c=relaxed/simple;
+	bh=8Zm5MjZ8zaSPXSP0fhK2I0ghqIIU2RPotYegaZLnZUw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZR3xTeqZwuvxF96BVCxWVa5WGLCajnJugHbu9aONpV3PHs3h5xIuPKa8GZNh4QPxD5yQ8B2FKKFKUeGSn1cyo/pczv8nusmxd9dqirw87QhjaCJ0qNk6aQsAVqD4z3nwYaYmCPYMYum6TZK1CHJgaTJ0grCy8psgDq+dH8NvQ2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xff.cz; spf=pass smtp.mailfrom=xff.cz; dkim=pass (1024-bit key) header.d=xff.cz header.i=@xff.cz header.b=PcYLK+ty; arc=none smtp.client-ip=195.181.215.36
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xff.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xff.cz
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xff.cz; s=mail;
+	t=1730069239; bh=8Zm5MjZ8zaSPXSP0fhK2I0ghqIIU2RPotYegaZLnZUw=;
+	h=Date:From:To:Cc:Subject:X-My-GPG-KeyId:References:From;
+	b=PcYLK+tykd5DXK6UAW1uAKNzSwdgN0bb20OIhaDMlm6umHy1gO0DAdPGBEV+dCbki
+	 noVA/7EVjEXZkcOeJ38sCieKfrfUb/Nkg+RMKo0SacO7c4bgGcEcEP7c2GdsL/G/Eu
+	 gXG+kdMN3iv0RW1ROMmu281Z3/iXv5Af/d3Obe7k=
+Date: Sun, 27 Oct 2024 23:47:19 +0100
+From: =?utf-8?Q?Ond=C5=99ej?= Jirman <megi@xff.cz>
+To: Chen-Yu Tsai <wens@kernel.org>
+Cc: Heiko Stuebner <heiko@sntech.de>, Chen-Yu Tsai <wens@csie.org>, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: rockchip: orangepi-5-plus: Enable USB 3.0
+ ports
+Message-ID: <pe2ornjaqn24i7e3x64rfdtqbp2c347mc5okgj5y6bfvkwnv6z@jux5yei3vxxa>
+Mail-Followup-To: =?utf-8?Q?Ond=C5=99ej?= Jirman <megi@xff.cz>, 
+	Chen-Yu Tsai <wens@kernel.org>, Heiko Stuebner <heiko@sntech.de>, Chen-Yu Tsai <wens@csie.org>, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+X-My-GPG-KeyId: EBFBDDE11FB918D44D1F56C1F9F0A873BE9777ED
+ <https://xff.cz/key.txt>
+References: <20241025175415.887368-1-wens@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241025175415.887368-1-wens@kernel.org>
 
-I was so sure the per-dentry expire timeout patch worked ok but my
-testing was flawed.
+Hello Chen-Yu,
 
-In validate_dev_ioctl() the check for ioctl AUTOFS_DEV_IOCTL_TIMEOUT_CMD
-should use the ioctl number not the passed in ioctl command.
+On Sat, Oct 26, 2024 at 01:54:15AM GMT, Chen-Yu Tsai wrote:
+> From: Chen-Yu Tsai <wens@csie.org>
+> 
+> The Orange Pi 5 Plus has its first USB 3.0 interface on the SoC wired
+> directly to the USB type C port next to the MASKROM button, and the
+> second interface wired to a USB 3.0 hub which in turn is connected to
+> the USB 3.0 host ports on the board, as well as the USB 2.0 connection
+> on the M.2 E-key slot.
+> 
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 
-Signed-off-by: Ian Kent <raven@themaw.net>
----
- fs/autofs/dev-ioctl.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+CCing the DTS author would be nice. :)
 
-diff --git a/fs/autofs/dev-ioctl.c b/fs/autofs/dev-ioctl.c
-index f011e026358e..6d57efbb8110 100644
---- a/fs/autofs/dev-ioctl.c
-+++ b/fs/autofs/dev-ioctl.c
-@@ -110,6 +110,7 @@ static inline void free_dev_ioctl(struct autofs_dev_ioctl *param)
-  */
- static int validate_dev_ioctl(int cmd, struct autofs_dev_ioctl *param)
- {
-+	unsigned int inr = _IOC_NR(cmd);
- 	int err;
- 
- 	err = check_dev_ioctl_version(cmd, param);
-@@ -133,7 +134,7 @@ static int validate_dev_ioctl(int cmd, struct autofs_dev_ioctl *param)
- 		 * check_name() return for AUTOFS_DEV_IOCTL_TIMEOUT_CMD.
- 		 */
- 		err = check_name(param->path);
--		if (cmd == AUTOFS_DEV_IOCTL_TIMEOUT_CMD)
-+		if (inr == AUTOFS_DEV_IOCTL_TIMEOUT_CMD)
- 			err = err ? 0 : -EINVAL;
- 		if (err) {
- 			pr_warn("invalid path supplied for cmd(0x%08x)\n",
-@@ -141,8 +142,6 @@ static int validate_dev_ioctl(int cmd, struct autofs_dev_ioctl *param)
- 			goto out;
- 		}
- 	} else {
--		unsigned int inr = _IOC_NR(cmd);
--
- 		if (inr == AUTOFS_DEV_IOCTL_OPENMOUNT_CMD ||
- 		    inr == AUTOFS_DEV_IOCTL_REQUESTER_CMD ||
- 		    inr == AUTOFS_DEV_IOCTL_ISMOUNTPOINT_CMD) {
--- 
-2.46.2
+Thanks for submitting this. I found a few issues. See below:
 
+> ---
+>  .../dts/rockchip/rk3588-orangepi-5-plus.dts   | 132 ++++++++++++++++++
+>  1 file changed, 132 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts b/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts
+> index dd03c9db6953..b826c5e368aa 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts
+> +++ b/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts
+> @@ -177,6 +177,18 @@ daicodec: simple-audio-card,codec {
+>  		};
+>  	};
+>  
+> +	vbus_typec: vbus-typec-regulator {
+> +		compatible = "regulator-fixed";
+> +		enable-active-high;
+> +		gpio = <&gpio4 RK_PB0 GPIO_ACTIVE_HIGH>;
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&typec5v_pwren>;
+> +		regulator-name = "vbus_typec";
+
+This is named vbus5v0_typec in the schematic.
+
+> +		regulator-min-microvolt = <5000000>;
+> +		regulator-max-microvolt = <5000000>;
+> +		vin-supply = <&vcc5v0_sys>;
+> +	};
+> +
+>  	vcc3v3_pcie30: vcc3v3-pcie30-regulator {
+>  		compatible = "regulator-fixed";
+>  		enable-active-high;
+> @@ -339,6 +351,56 @@ &i2c6 {
+>  	clock-frequency = <400000>;
+>  	status = "okay";
+>  
+> +	usbc0: usb-typec@22 {
+> +		compatible = "fcs,fusb302";
+> +		reg = <0x22>;
+> +		interrupt-parent = <&gpio0>;
+> +		interrupts = <RK_PD3 IRQ_TYPE_LEVEL_LOW>;
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&usbc0_int>;
+> +		vbus-supply = <&vbus_typec>;
+> +		status = "okay";
+> +
+> +		usb_con: connector {
+> +			compatible = "usb-c-connector";
+> +			label = "USB-C";
+> +			data-role = "dual";
+> +			op-sink-microwatt = <1000000>;
+> +			power-role = "dual";
+> +			sink-pdos =
+> +				<PDO_FIXED(5000, 1000, PDO_FIXED_USB_COMM)>;
+
+The board can't sink power from this port. It's a source only port. So sink-pdos
+can be lower, so that if you plug this into type-c hub as a peripheral, the hub
+doesn't need to reserve 5W for this port.
+
+op-sink-microwat can also be lower. The port will not sink any power when
+connected to 5V VBUS externally.
+
+Otherwise you can probably keep power-role = "dual";
+
+> +			source-pdos =
+> +				<PDO_FIXED(5000, 3000, PDO_FIXED_USB_COMM)>;
+
+This port can't source 3A. U22 (SY6280AAC) is configured via Rset for 1.44A
+limit. So let's say 1.5A.
+
+> +			try-power-role = "source";
+> +
+> +			ports {
+> +				#address-cells = <1>;
+> +				#size-cells = <0>;
+> +
+> +				port@0 {
+> +					reg = <0>;
+> +					usbc0_hs: endpoint {
+> +						remote-endpoint = <&usb_host0_xhci_drd_sw>;
+> +					};
+> +				};
+> +
+> +				port@1 {
+> +					reg = <1>;
+> +					usbc0_ss: endpoint {
+> +						remote-endpoint = <&usbdp_phy0_typec_ss>;
+> +					};
+> +				};
+> +
+> +				port@2 {
+> +					reg = <2>;
+> +					usbc0_sbu: endpoint {
+> +						remote-endpoint = <&usbdp_phy0_typec_sbu>;
+> +					};
+> +				};
+> +			};
+> +		};
+> +	};
+> +
+>  	hym8563: rtc@51 {
+>  		compatible = "haoyu,hym8563";
+>  		reg = <0x51>;
+> @@ -480,6 +542,16 @@ vcc5v0_usb20_en: vcc5v0-usb20-en {
+>  			rockchip,pins = <3 RK_PB7 RK_FUNC_GPIO &pcfg_pull_none>;
+>  		};
+>  	};
+> +
+> +	usb-typec {
+> +		usbc0_int: usbc0-int {
+> +			rockchip,pins = <0 RK_PD3 RK_FUNC_GPIO &pcfg_pull_up>;
+> +		};
+> +
+> +		typec5v_pwren: typec5v-pwren {
+> +			rockchip,pins = <4 RK_PB0 RK_FUNC_GPIO &pcfg_pull_none>;
+> +		};
+> +	};
+>  };
+>  
+>  &pwm2 {
+> @@ -871,6 +943,22 @@ &tsadc {
+>  	status = "okay";
+>  };
+>  
+> +&u2phy0 {
+> +	status = "okay";
+> +};
+> +
+> +&u2phy0_otg {
+> +	status = "okay";
+> +};
+> +
+> +&u2phy1 {
+> +	status = "okay";
+> +};
+> +
+> +&u2phy1_otg {
+
+Needs:
+	phy-supply = <&vcc5v0_host>;
+
+> +	status = "okay";
+> +};
+> +
+>  &u2phy2 {
+>  	status = "okay";
+>  };
+> @@ -899,6 +987,33 @@ &uart9 {
+>  	status = "okay";
+>  };
+>  
+> +&usbdp_phy0 {
+> +	mode-switch;
+> +	orientation-switch;
+> +	sbu1-dc-gpios = <&gpio4 RK_PA6 GPIO_ACTIVE_HIGH>;
+> +	sbu2-dc-gpios = <&gpio4 RK_PA7 GPIO_ACTIVE_HIGH>;
+> +	status = "okay";
+> +
+> +	port {
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		usbdp_phy0_typec_ss: endpoint@0 {
+> +			reg = <0>;
+> +			remote-endpoint = <&usbc0_ss>;
+> +		};
+> +
+> +		usbdp_phy0_typec_sbu: endpoint@1 {
+> +			reg = <1>;
+> +			remote-endpoint = <&usbc0_sbu>;
+> +		};
+> +	};
+> +};
+> +
+> +&usbdp_phy1 {
+> +	status = "okay";
+> +};
+> +
+>  &usb_host0_ehci {
+>  	status = "okay";
+>  };
+> @@ -907,6 +1022,18 @@ &usb_host0_ohci {
+>  	status = "okay";
+>  };
+>  
+> +&usb_host0_xhci {
+> +	dr_mode = "otg";
+
+This is the default. No need to have it here.
+
+Kind regards,
+	o.
+
+> +	usb-role-switch;
+> +	status = "okay";
+> +
+> +	port {
+> +		usb_host0_xhci_drd_sw: endpoint {
+> +			remote-endpoint = <&usbc0_hs>;
+> +		};
+> +	};
+> +};
+> +
+>  &usb_host1_ehci {
+>  	status = "okay";
+>  };
+> @@ -915,6 +1042,11 @@ &usb_host1_ohci {
+>  	status = "okay";
+>  };
+>  
+> +&usb_host1_xhci {
+> +	dr_mode = "host";
+> +	status = "okay";
+> +};
+> +
+>  &vop_mmu {
+>  	status = "okay";
+>  };
+> -- 
+> 2.39.5
+> 
 
