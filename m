@@ -1,70 +1,86 @@
-Return-Path: <linux-kernel+bounces-383468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 794FA9B1C31
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 05:58:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98ADC9B1C32
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 05:58:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E98451F21C20
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 04:58:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E9D52822D7
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 04:58:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60A612D613;
-	Sun, 27 Oct 2024 04:58:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FDAC3C466;
+	Sun, 27 Oct 2024 04:58:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="NB3JcIhj"
-Received: from out162-62-58-216.mail.qq.com (out162-62-58-216.mail.qq.com [162.62.58.216])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DkrpQwlf"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AF532A1C9
-	for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 04:58:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.216
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 518552A1CA
+	for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 04:58:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730005120; cv=none; b=ujjK8nCf8Yl8sjkQV6nomd4iOFX0JZjGcHoYcD0IuwaOqxXjVXy7FCzYN27GqWzbMGRDwuVLHLrrNrHtzW3s36S51fVF6RkTYlHH+kPh3MMOR5oKk9ltN/ZDqJt9yD+4O3qFw0PAWfFfSXfjXrh+z2u4tE3zU2fG2ZXoV7PIaRo=
+	t=1730005123; cv=none; b=IVtc19GEjQAcEzXVzamT9gmKgQ+0OtKyoUu26ZbbPWzS65seKbKqzYZUJiGbn9PfxHWBLriCIwDTMRO7GG6qpQlwn1dVHYkZCYPrZO/yqxhgR1YY7+TWkTXpjUHrE1SqDDMlgCiD1XtRzIMgjNky8KW9FpAM/Y6RmTh5qZx9rQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730005120; c=relaxed/simple;
-	bh=k1X7LpehhpLqwf5OdMdjLof0hvvSka2PXlbmZI4zA4o=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=HwyO1gM+wphFLvoRywN8SIZQMsQ19NKmzIg6BWawVCP1WWBcSx11IqbuJe74ASOc+a4nuUK8sh8FcJYiHwUxYlZtbZ7U5gMYT58CtfiQOxzGAu2Z2JrQtX7oF/VFfOsXb45eZxYNywhbjb3eKyFrP5Tnf4xsiGBvPD0AqdNZk48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=NB3JcIhj; arc=none smtp.client-ip=162.62.58.216
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1730004805; bh=G6PRrk2cyMafR4ldr+/5vM6D6twssbbZjjrt+CQzkt0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=NB3JcIhjDRgHTHJozbrLQKLsk8tdoNx/qhUb9tc2VGa8tezdFvevX+JMku+9eU8Lh
-	 73oXGOEvqndsJtdezdw8zmm9Khw9fn82wmsHSd9LFLWqsitYaxEoJmMn4+Th++Orek
-	 waRUc9XYbifOQnLyEFM9SGZskrpowGMklcueIuls=
-Received: from pek-lxu-l1.wrs.com ([111.198.227.254])
-	by newxmesmtplogicsvrsza36-0.qq.com (NewEsmtp) with SMTP
-	id D579E2EF; Sun, 27 Oct 2024 12:53:23 +0800
-X-QQ-mid: xmsmtpt1730004803t5mrbkije
-Message-ID: <tencent_6858E836EFAACEC478A26E8C2E216DE0950A@qq.com>
-X-QQ-XMAILINFO: Naw3xMhTNeIu3YZH5sNcDZSJOLhmdJ2kkeYkY9pFwodvc7VWhS0g1QG0qRmkWo
-	 c3aco2XzpVzIsF4qyWyYvKIJLzL5y4H/0nWxHgXel4N9zAyI+92UAPRSLkHVW+s4+hSIWcgxjNjE
-	 7gsqByGqpxjVuOG+f4KkloSMFncrr6xS6ZqYovj/n6JQByXVtB07Y/e6h2l92/uPY5173hh0JYaW
-	 i4fPXvD3DpMHEai/oVPOLxHPsP2u8Pj3k+UXv1pENH3LWDsj64ZOjwgONJgbF0vzVxVjJMEheNpN
-	 8J8Z808i1sdelFKYbiUP/JAL2fHiJs8qnQgJHR3WnjmE1z3VEEHS16imiLVmFVgeILGCz6kl9Y30
-	 Q9JAJ0BkTc64YLfPHlbYjmwfJi6rhl4+FvR1EjMPF/c89N37uxpsDf0/9eaq0aVuwOh3PLGnkmj3
-	 D5l1adsxIG60RTMw4eb3ee4zvXObeQXi7yDOD6oIPAaZ4T0CpHTQ77A29l/GMcIrVoQwGKxoWYCf
-	 mEGPGvYx1OiMijr0abUTmRA1NusiQGOMjlK1FV0KCYnRN1AL1cxdiCBKVToRlZKw0PvwYBpbu4lU
-	 i+r2O/6ErJRaJ4+hifHZcKRunw6Dkouw2ZW67f0UPNZyJhDQMpt28d4DFcHFIVZcmtBfVn2mL1oa
-	 SwbOALBOY1qZyaltiH1G756bnfgM1rgCXSUu3eOVPjHblqFFfPQK+KFzLnZy89Qh5gNnaVUC+S8K
-	 eUMCyzj1XuVsrPw3I3zjaS+c7yAJqygufRDk0zCb5GD6iGUDOHmSOl1BN+3VNTIDAy+Gb6906DMI
-	 r+G4JEXjuJ3T/j6uQ9wuZMunCUv/h+5kuRDxfLe+p2kfB2Pl1V1kqoYrz4aOp3cUOrnRlLwErqYl
-	 hT4c7lyXvNxgzS+Q14O9G6qLIoVQGq5PFr2fPAnT8SGoZGb/oN6RhXrE88/4v/Iw==
-X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+0c99c3f90699936c1e77@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [ext4?] KASAN: use-after-free Write in ext4_insert_dentry
-Date: Sun, 27 Oct 2024 12:53:24 +0800
-X-OQ-MSGID: <20241027045323.1537753-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <671c2223.050a0220.2fdf0c.021c.GAE@google.com>
-References: <671c2223.050a0220.2fdf0c.021c.GAE@google.com>
+	s=arc-20240116; t=1730005123; c=relaxed/simple;
+	bh=R4Wn7j49THnd7wwv7+nnTb2izUldriB3Glf7u+IXx2Q=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tNen0rxDoUzYdHO3zk9Ivk8YYMc/CT+E5y4OWc4JLJNdgXBnzuX6x3LH26myH1sKioSUBJJQC0QGChxgxzrxTlCnhgHyk21pkhgOCR4jUSIJbLJzWoaH2wIz2Ha0olcxJZ22dzlXhrqT/vSS3vdy5GpkzD5p8iUexIbAGTr9Xgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DkrpQwlf; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2e2dc61bc41so2333245a91.1
+        for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 21:58:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730005118; x=1730609918; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rGcsHrcwLS5rbJAr8cWgtD+JmSxKpAfNabdsn2Sm574=;
+        b=DkrpQwlfN79i70f9sIZGZAAlYjaLbGkWK6kfx7t1JjeAkPxDFDCFEiyciWAA7uIw1t
+         XXO5BK/HOXVsQVarrbMzvi2VGW7lJiXV7ujNHlc+qhwqD98XREvHzO+x9eda9y3C+Nio
+         XP8/oRqgbqGAtan03ctG9BCs+p5K6eh2vwFEF/ywyXVkVRjaNTvEvOfon0sCQfb4OF9t
+         /k+0kfsHnH2rFchQHjt/jiMP95SUZM6cXYYP5O41kWM38qeAsuQAQuKsCDPh3GEjSEna
+         ipb1bJi5q8XTBqEP+9N6DMUA+s9TupixrDo+0X0jrFZ97d6KML8Y+vexDZ2WzDs2oyxd
+         fmuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730005118; x=1730609918;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rGcsHrcwLS5rbJAr8cWgtD+JmSxKpAfNabdsn2Sm574=;
+        b=re4HS7+6LGBy0RwZmHxxNl5AYn8ewcRcqdrNCsgOykVwtOA1XXawTD80MhOw7uz9BK
+         yS+0fK2Lm0AqFAAVdYQFfCxw9LtxKtQL4EYtLaZSCCdXl84V+h55JR4HTe8o/ilZWmw/
+         ArEH3DTzBFndfqbvv92f1I0p1PQwV/UrYeyrCiTDijwlB5YtYWKYucr9J/nO70pV7MRN
+         8sIwkWHxwu764KLhE57ufYsPkTPgRPg9gFtcrKbA0C0Phvn305MUZLouslOVqI/10EMA
+         OLIs165II+2k+ZrkKaWWjwrNS6b+TUo1mhVMAHPEDVc85iZDLZEZgul3lN/w/R752Oja
+         qWWg==
+X-Forwarded-Encrypted: i=1; AJvYcCUiOJAikqQcM4PQPxGQpfG2dYvAjByfQeLjlU2uyeAVr6L84VlJqrzTwPnqJswx+WgXHi2SeYuEV+5E6Ho=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCyrVwEtZjPChWN1VRTcV//GPNc3JGZT53DaiLtH7M50+Ccm5e
+	YLlIOz0OHJIVYjuXbt5tci3CW8kujWIBTM4leQ6127HH8gbMt5LO
+X-Google-Smtp-Source: AGHT+IHseJFxwF1uwMouwoVCFWM1YHzALcbP58rShHb5pBCj+o0tfLLl2KH1C/uR4GdJ9JZhP1kl9g==
+X-Received: by 2002:a17:90a:ca0f:b0:2e2:cd22:b083 with SMTP id 98e67ed59e1d1-2e8f0d4dfbcmr5359887a91.0.1730005118430;
+        Sat, 26 Oct 2024 21:58:38 -0700 (PDT)
+Received: from gye-ThinkPad-T590.. ([39.120.225.141])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e8e3771e64sm4338817a91.50.2024.10.26.21.58.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 26 Oct 2024 21:58:38 -0700 (PDT)
+From: Gyeyoung Baek <gye976@gmail.com>
+To: Lucas De Marchi <lucas.demarchi@intel.com>,
+	Oded Gabbay <ogabbay@kernel.org>,
+	=?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>
+Cc: Gyeyoung Baek <gye976@gmail.com>,
+	intel-xe@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/xe: Fix build error for XE_IOCTL_DBG macro
+Date: Sun, 27 Oct 2024 13:57:52 +0900
+Message-Id: <20241027045752.10530-1-gye976@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,25 +89,39 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-directory entry space is too smaller than file name?
+In the previous code, there is build error.
+if CONFIG_DRM_USE_DYNAMIC_DEBUG is set,
+'drm_dbg' function is replaced with '__dynamic_func_call_cls',
+which is replaced with a do while statement.
 
-#syz test
+The problem is that,
+XE_IOCTL_DBG uses this function for conditional expression.
 
-diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
-index 790db7eac6c2..cf11dcffe4bf 100644
---- a/fs/ext4/namei.c
-+++ b/fs/ext4/namei.c
-@@ -2105,8 +2105,9 @@ void ext4_insert_dentry(struct inode *dir,
- 	de->file_type = EXT4_FT_UNKNOWN;
- 	de->inode = cpu_to_le32(inode->i_ino);
- 	ext4_set_de_type(inode->i_sb, de, inode->i_mode);
--	de->name_len = fname_len(fname);
--	memcpy(de->name, fname_name(fname), fname_len(fname));
-+	de->name_len = min_t(int, fname_len(fname), rlen - 8);
-+	printk("rec length: %d, buf_size: %d, name length:%d, %s\n", rlen, buf_size, fname_len(fname), __func__);
-+	memcpy(de->name, fname_name(fname), de->name_len);
- 	if (ext4_hash_in_dirent(dir)) {
- 		struct dx_hash_info *hinfo = &fname->hinfo;
+so I fix the expression to be compatible with the do while statement,
+by referring to "https://gcc.gnu.org/onlinedocs/gcc/Statement-Exprs.html".
+
+Signed-off-by: Gyeyoung Baek <gye976@gmail.com>
+---
+ drivers/gpu/drm/xe/xe_macros.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/gpu/drm/xe/xe_macros.h b/drivers/gpu/drm/xe/xe_macros.h
+index daf56c846d03..58a9d1e33502 100644
+--- a/drivers/gpu/drm/xe/xe_macros.h
++++ b/drivers/gpu/drm/xe/xe_macros.h
+@@ -11,8 +11,8 @@
+ #define XE_WARN_ON WARN_ON
  
+ #define XE_IOCTL_DBG(xe, cond) \
+-	((cond) && (drm_dbg(&(xe)->drm, \
+-			    "Ioctl argument check failed at %s:%d: %s", \
+-			    __FILE__, __LINE__, #cond), 1))
++	({drm_dbg(&(xe)->drm, \
++		"Ioctl argument check failed at %s:%d: %s", \
++		__FILE__, __LINE__, #cond); (cond); })
+ 
+ #endif
+-- 
+2.34.1
 
 
