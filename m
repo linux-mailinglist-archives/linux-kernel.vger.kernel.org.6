@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-383444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D9D69B1BC3
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 02:26:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 90EF89B1BC7
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 02:26:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F23D31F21572
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 01:26:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14EE51F21BE0
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 01:26:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 666AE77102;
-	Sun, 27 Oct 2024 01:25:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BEFC1459EA;
+	Sun, 27 Oct 2024 01:25:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DVhEOFR+"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LN5mAk3J"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C78A770FE
-	for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 01:25:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9700C126C0F
+	for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 01:25:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729992305; cv=none; b=RsJEbKWnwe1sj4SL7z/Q8AmtTU7rB7+gcckjQR8MOeEjGZoH1a1YmuLJsFL2W/g+YYb6DU2EAqw4x+DFFvom4XXkhbcPJaxYnEJpU4jHSkcDTB6F4HLdpZWEVJ9wn/RtF/e2TZNsGSKs+USLHeI0Brtn8ttFePhT9e1CG22JK+s=
+	t=1729992306; cv=none; b=aF9iZ2miTwFRrUfRihlR6CCxdtHShPZVCIwMdmxjXU0AI2osi7zvHCBJmKJe0/Z5owUdvrc2OxEt53yr8lJATiZjS5tlhsIDlO7jA3qztVhv8NiTBSvzsEaEsT/k9QSkzvkQ3QhcYIiHy45FJ7NkxQqoC6ogpzuYZA+NwWmAr9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729992305; c=relaxed/simple;
-	bh=DWgkCUleQv61cF52XKRC6NW3EAFyFKJ2O9J1+CznBwg=;
+	s=arc-20240116; t=1729992306; c=relaxed/simple;
+	bh=cusbsCXcCRICgVtoFfcST5RUPxhuJU5/xKi/V+i68TA=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=O5VSlFiSC45m5SANGi1CbFYKQayzqYrNdUZClBbRqlOne9jRFAv7SuNUeXYNZyhqSGYSIpondJ4w5bK4jcHYOgn+YNqcJF8zOhMQU8ksgdYnmTo6bJW6ESnpsUOyLef+w1fVzGo9g/IohmyFq0AzPhoMnHbmjNEtBXYgK68UGNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DVhEOFR+; arc=none smtp.client-ip=209.85.167.41
+	 In-Reply-To:To:Cc; b=HVq+AN2DBurDcJ6V47VScjzxokm29tDJzJTviyRcXCWMUZoquMNvmnHEkg/st1qvj10JbLujXZwhNcFUJE5PrXTqh45+RZ9FYRIHBJuG8lWqnXUFBwSbadrvyXnLBNzO7R42iRQiTV0CKLSJy3iTdcI4AUk/9v3xX2FHXjuvDQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LN5mAk3J; arc=none smtp.client-ip=209.85.167.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-539e13375d3so3727120e87.3
-        for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 18:25:02 -0700 (PDT)
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-539f4d8ef84so3774374e87.0
+        for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 18:25:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729992301; x=1730597101; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1729992303; x=1730597103; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=gWbqeFeatJwTSwfIbMsvs+JYctmC6KE3I7fU3fJLjdw=;
-        b=DVhEOFR+/rpz8ej7WB5YeAmPm479hKUMEusfDasQxJNNfW7MPiFfDWStw8+7xh0Zax
-         41YbShpNZSAk8e5Hwj8w7WiMag8Lv6tIt3rp1JRalk7RmL839yeKZFdvepvZODKOrV4b
-         sqfpwM33bxzszEnI1yHkg+BRdkwcMu03M8iZIKjpS9kIpme7DsXChMVsEEiN8QrWRjJ7
-         tW8/skIZejwFr7EcExYFIW8eGnnNhm2oOOd1yxqYwdGBQaDO1r1e95n59+4Ws6uPEKma
-         B2c9+IqIgn37Ix0zbQBolFaBux7hCrgkNIJUgS3CqydQQvy3ZBx511LBVGI1fQZo2wmt
-         ZVnQ==
+        bh=t3AXSQsePizUA8LIscchHebVQbgFWw+Kxco+4DEcCkc=;
+        b=LN5mAk3JmTjVt1JVRnDC1RIpqP8lWBXcNR61jnsjeJJjrXkRYy3SDCyhfJtDWotzMm
+         srd1opvMPOfBwG7ESDWYXEt9hAD85NOW6urGW9p6IW0LWG3DCXRQG2fC3BVCD/OiDKct
+         E/VmUDB96OgCGTcd5p1b1uCTsO5fvoo0LH5fP9nh4mxLCs6JHaiwQiKoiJQ19I59ynii
+         IhwzQZFViP8n4HHpRYiCqMMjPtqyq0Ojpo+gEJOXY1J6wawVPodIpsha86lG0HvAcq9v
+         bJCx3d6POiBGqUfeD+apeECk/yXdbYz2zoyy3Q/LhqAtpBFpqna3TKdRd1HTGBCeJhYp
+         8s2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729992301; x=1730597101;
+        d=1e100.net; s=20230601; t=1729992303; x=1730597103;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=gWbqeFeatJwTSwfIbMsvs+JYctmC6KE3I7fU3fJLjdw=;
-        b=Ls+ovr0g0JIv1vgSfR6JNkBIetU2SxTcZKElclZWn80UePZnIMpYN62Gp9D1CH/5GF
-         AYCJWdjwF3m9f1HLqq8V06U5+v9IYRggwaJjYaPRWfaUCzmIsRj4BgT1sQgQM3OQ+bXf
-         eWUgH99WQJU1UVZUY6GJSP+NrHF4YWAvjkHXzOw18sHegyQZ9dYLZTI1F8mrlUoYBnaG
-         ZKj34Qn7J7DXvyRfPHDVveLFK5/ZC3gGfV3HhCo2GLgFfVOvyjDkWVWOXGr1pjEILOgZ
-         twTZFQdmZOsDpUaL2VH98rHVzBnlrbOe2M4bmOqOTKp5ZzidcMqE17D8CbTntNnxN16t
-         3W3A==
-X-Forwarded-Encrypted: i=1; AJvYcCURYB644Oz7cGJYZX6ENus44AWPfrkFGai6CDlkrdKQaU5hS5TXMNOJtQtxyHuvL+OXKqNK2M7SRBiWloQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw03ISH7CiuRPkxSZN2Gx5fCTAsR0wCaNSOVvRz8AcypLIbsrMd
-	Que6OE/YF9int1qyIWjJcbx5gbjDr47YECORSSQKQTJ1O5dj65zKTbd18sYEjg4=
-X-Google-Smtp-Source: AGHT+IFXnE+E5lgyH76XL41dcobF7qPWzP4mMHlo1WdN4Nj/8E5GnV4Ll42tM/rfRPqAMNyqzWPM1A==
-X-Received: by 2002:a05:6512:318c:b0:536:53e3:fe9d with SMTP id 2adb3069b0e04-53b348d62e0mr1420881e87.18.1729992301063;
-        Sat, 26 Oct 2024 18:25:01 -0700 (PDT)
+        bh=t3AXSQsePizUA8LIscchHebVQbgFWw+Kxco+4DEcCkc=;
+        b=bbMUQXl6cfyVExabZAnBVvXdmHiTfNpJA8QDlcR1Rgt8mDoRIZ69eksaVjcYvC4fFE
+         xF6v0nGUN4zsumoSYvMB4FFQ7S/CDVTo9fInOLLxIa5k1jCHqN01ATHCmDvSq2rCk+qA
+         LEnnxefHVMI6oIaMV3sQppETWrv0govbpnWIRMxiOdFiOx6A3YrfupswG2YaFohiTvWX
+         UBaGPdHLrJnAx+OUDcjudlezl9qHYGgF3ecFbvgO3fDkX7MGMogVyI+QAs+J2LdVFtL7
+         PH/YQXL9ehy6i+ZzCPO98YLM4IzLhdjftMu8OQxrQWzUb3RBd3oIIa79oIHByDSyBix/
+         KU/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWmiN49WoPlYhucpMMAH1ejXiflTeX6UhNjWOJFg/SxMv38nr+VEQYR6nwQWZsqZTQTFPAhddCfKAMe6nI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFvIIlzF5CQpTemhFEUiyNDYF44ImKyCG7GEhP5Q7OWxDc0Xn8
+	OuW/6v03r6xWw1V2cGbgFdyO2/o5USR6w9Lu+zDNcIv65Vvsk4B4Mm+UXkv5zbg=
+X-Google-Smtp-Source: AGHT+IElBSD4I3dXEGlc1jmOwlFmw33CuIPXif06ZQcCejXnCg1fZ/yvrX7RJUuVmCvtMgBETlfLUA==
+X-Received: by 2002:a05:6512:3409:b0:53a:7e:bcc6 with SMTP id 2adb3069b0e04-53b34b3730fmr1358657e87.53.1729992302696;
+        Sat, 26 Oct 2024 18:25:02 -0700 (PDT)
 Received: from [127.0.1.1] (2001-14ba-a0c3-3a00-70b-e6fc-b322-6a1b.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:70b:e6fc:b322:6a1b])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53b2e1c901esm642356e87.219.2024.10.26.18.24.59
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53b2e1c901esm642356e87.219.2024.10.26.18.25.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 26 Oct 2024 18:25:00 -0700 (PDT)
+        Sat, 26 Oct 2024 18:25:02 -0700 (PDT)
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Sun, 27 Oct 2024 03:24:45 +0200
-Subject: [PATCH v5 06/11] clk: qcom: rcg2: add clk_rcg2_shared_floor_ops
+Date: Sun, 27 Oct 2024 03:24:46 +0200
+Subject: [PATCH v5 07/11] clk: qcom: rpmh: add support for SAR2130P
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,7 +77,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241027-sar2130p-clocks-v5-6-ecad2a1432ba@linaro.org>
+Message-Id: <20241027-sar2130p-clocks-v5-7-ecad2a1432ba@linaro.org>
 References: <20241027-sar2130p-clocks-v5-0-ecad2a1432ba@linaro.org>
 In-Reply-To: <20241027-sar2130p-clocks-v5-0-ecad2a1432ba@linaro.org>
 To: Bjorn Andersson <andersson@kernel.org>, 
@@ -91,128 +91,64 @@ To: Bjorn Andersson <andersson@kernel.org>,
 Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3985;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1854;
  i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=DWgkCUleQv61cF52XKRC6NW3EAFyFKJ2O9J1+CznBwg=;
- b=owEBbQKS/ZANAwAKARTbcu2+gGW4AcsmYgBnHZZhERxLygQ/vrejVccLqboHsQl3cHt3oe39X
- vd3x4wO1p6JAjMEAAEKAB0WIQRdB85SOKWMgfgVe+4U23LtvoBluAUCZx2WYQAKCRAU23LtvoBl
- uKFVD/4zYKFtC+DzoYzXjRg1KDrKsCrvhKRPAACAiu4wEsd3FccfRU1msaAy76yoBKCkxRuOb8G
- GN6ig60n1ODWjI+G8R09U0llTEpHXbtJqQnxKzR1lH58JxHkuiODVshTtjebR+cMLe5Fnrk51sO
- x6MBhli9I4lz9qodxsPQaDsOzkyHszyD8r2MCCS7o6rOhs1KKZzrwu7KTNNNp4Andeqe9M/rJ0n
- TGog6cjvrdPur2yDEsgoPTV7lxV/XdPeXwP/bFzoQCYgyscHauY4Pa9x/Y6huzyq3u8Dh58ZfwT
- QieZh6MFvkOk+hEHo6PKObVM3wXcUrMYFSZqy12+fxXjkV0pVaKO1Xs7R6OGp3/r+bkIXpL+7Z2
- e3z4g02CRTIhLaLIMndlE59AocVq6BICX3kbVt2P/XWARaYFHbIKlHgsCUgOk7sXQc2Qezu5rpp
- VNpfH/hW7mxdEb2xxD9lCjGQ3MDyrjlb7nKPyd9YUowZQz8394hnO6zZiaAHprWmbzK/is6Gcuj
- mYrh58HOLGk/828Rx00Uwjx67SnJiYNbqNo837XgjJIa/nkrBUWxA5yZwVfK6EepZ1LIxL/PTV7
- ScQ44dgizcuz0TLB1b+mmFA5jxXXYfAXAVxZFVTAGo46cXfy4xyDaU86sBA4Kx8MOdbxyj3Oygn
- L25sEMKqtNGxcdA==
+ bh=cusbsCXcCRICgVtoFfcST5RUPxhuJU5/xKi/V+i68TA=;
+ b=owEBbQKS/ZANAwAKARTbcu2+gGW4AcsmYgBnHZZhKZngsB6N7Ls+WS90KYp16lLGCsoZISuMu
+ JXdDKdotp2JAjMEAAEKAB0WIQRdB85SOKWMgfgVe+4U23LtvoBluAUCZx2WYQAKCRAU23LtvoBl
+ uJYYD/49rt7ADfwCMeugWzpK5Ns3NMaOJ2X5IbxP7FniagYkyOinMK3OULzSGcG1B7DFbDTkKjR
+ lTfEMhnIfb3ufmSLMOAK+h0TIT2TjfHVWLLdEtYtAHxcZHcAtHY5iSbcFJU+iUnRlyXmoUbYuH8
+ pOwXGtvk3PHDE7YYvpBXtqBUwaRERf06TNk9biiYAzvnHjD5OzrcktakUzXfEUe5HgyZla0fxuC
+ K9UpChDP3wk2h4IjnaAeMDIbrWmKQXISloGBVuP95yEs3+UFYSPmJ3Pjza7zTDzm5YflFvKiKIM
+ pfspQspBPuA8V/W/JoZqxFlYtTxIIEhNfhybnsHM2NYpTvbuVHcdjxw3DFn6LQKeibGo/r0Dnr0
+ jnhtEhQ7juuq1eUb0HZY4SKyw781JuHnWNOWPO2tfN6JNPpXeV8J+TAonmreRrPO9i2D4xMH8cI
+ dTSVFYp+zJjs1bK7FKCcxtVFGJB6NjbSOillMxpeentDk75mdRRwhwC5fluZd1FWsghlXFIAke5
+ WRkR+pTKj9uHx7/ZXYVtdxm4pmFSbg3squ/qxdflYd9y1EHOYUz8BCA/cKhOWp/Ada6GjS0dQiK
+ eKYCms267FlOirX+wtHp4FaX6IDq6/8eOmK0uyWxJ8hVXECLPzlnxS6QvFO1qws+/v1yCHOI6bT
+ oku7+L4y9zaghqA==
 X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
  fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-Generally SDCC clocks use clk_rcg2_floor_ops, however on SAR2130P
-platform it's recommended to use rcg2_shared_ops for all Root Clock
-Generators to park them instead of disabling. Implement a mix of those,
-clk_rcg2_shared_floor_ops.
+Define clocks as supported by the RPMh on the SAR2130P platform. The
+msm-5.10 kernel declares just the CXO clock, the RF_CLK1 clock was added
+following recommendation from Taniya Das.
 
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- drivers/clk/qcom/clk-rcg.h  |  1 +
- drivers/clk/qcom/clk-rcg2.c | 48 ++++++++++++++++++++++++++++++++++++++++-----
- 2 files changed, 44 insertions(+), 5 deletions(-)
+ drivers/clk/qcom/clk-rpmh.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
-index 8e0f3372dc7a8373d405ef38e3d5c747a6d51383..80f1f4fcd52a68d8da15e3e1405703b6ddc23421 100644
---- a/drivers/clk/qcom/clk-rcg.h
-+++ b/drivers/clk/qcom/clk-rcg.h
-@@ -198,6 +198,7 @@ extern const struct clk_ops clk_byte2_ops;
- extern const struct clk_ops clk_pixel_ops;
- extern const struct clk_ops clk_gfx3d_ops;
- extern const struct clk_ops clk_rcg2_shared_ops;
-+extern const struct clk_ops clk_rcg2_shared_floor_ops;
- extern const struct clk_ops clk_rcg2_shared_no_init_park_ops;
- extern const struct clk_ops clk_dp_ops;
+diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
+index 4acde937114af3d7fdc15f3d125a72d42d0fde21..eefc322ce367989f625f1285dcccddbdd8341a12 100644
+--- a/drivers/clk/qcom/clk-rpmh.c
++++ b/drivers/clk/qcom/clk-rpmh.c
+@@ -389,6 +389,18 @@ DEFINE_CLK_RPMH_BCM(ipa, "IP0");
+ DEFINE_CLK_RPMH_BCM(pka, "PKA0");
+ DEFINE_CLK_RPMH_BCM(qpic_clk, "QP0");
  
-diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-index bf26c5448f006724b447bb0d9b11889d316cb6d0..bf6406f5279a4c75c0a42534c15e9884e4965c00 100644
---- a/drivers/clk/qcom/clk-rcg2.c
-+++ b/drivers/clk/qcom/clk-rcg2.c
-@@ -1186,15 +1186,23 @@ clk_rcg2_shared_force_enable_clear(struct clk_hw *hw, const struct freq_tbl *f)
- 	return clk_rcg2_clear_force_enable(hw);
- }
- 
--static int clk_rcg2_shared_set_rate(struct clk_hw *hw, unsigned long rate,
--				    unsigned long parent_rate)
-+static int __clk_rcg2_shared_set_rate(struct clk_hw *hw, unsigned long rate,
-+				      unsigned long parent_rate,
-+				      enum freq_policy policy)
- {
- 	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
- 	const struct freq_tbl *f;
- 
--	f = qcom_find_freq(rcg->freq_tbl, rate);
--	if (!f)
-+	switch (policy) {
-+	case FLOOR:
-+		f = qcom_find_freq_floor(rcg->freq_tbl, rate);
-+		break;
-+	case CEIL:
-+		f = qcom_find_freq(rcg->freq_tbl, rate);
-+		break;
-+	default:
- 		return -EINVAL;
-+	}
- 
- 	/*
- 	 * In case clock is disabled, update the M, N and D registers, cache
-@@ -1207,10 +1215,28 @@ static int clk_rcg2_shared_set_rate(struct clk_hw *hw, unsigned long rate,
- 	return clk_rcg2_shared_force_enable_clear(hw, f);
- }
- 
-+static int clk_rcg2_shared_set_rate(struct clk_hw *hw, unsigned long rate,
-+				    unsigned long parent_rate)
-+{
-+	return __clk_rcg2_shared_set_rate(hw, rate, parent_rate, CEIL);
-+}
-+
- static int clk_rcg2_shared_set_rate_and_parent(struct clk_hw *hw,
- 		unsigned long rate, unsigned long parent_rate, u8 index)
- {
--	return clk_rcg2_shared_set_rate(hw, rate, parent_rate);
-+	return __clk_rcg2_shared_set_rate(hw, rate, parent_rate, CEIL);
-+}
-+
-+static int clk_rcg2_shared_set_floor_rate(struct clk_hw *hw, unsigned long rate,
-+					  unsigned long parent_rate)
-+{
-+	return __clk_rcg2_shared_set_rate(hw, rate, parent_rate, FLOOR);
-+}
-+
-+static int clk_rcg2_shared_set_floor_rate_and_parent(struct clk_hw *hw,
-+		unsigned long rate, unsigned long parent_rate, u8 index)
-+{
-+	return __clk_rcg2_shared_set_rate(hw, rate, parent_rate, FLOOR);
- }
- 
- static int clk_rcg2_shared_enable(struct clk_hw *hw)
-@@ -1348,6 +1374,18 @@ const struct clk_ops clk_rcg2_shared_ops = {
- };
- EXPORT_SYMBOL_GPL(clk_rcg2_shared_ops);
- 
-+const struct clk_ops clk_rcg2_shared_floor_ops = {
-+	.enable = clk_rcg2_shared_enable,
-+	.disable = clk_rcg2_shared_disable,
-+	.get_parent = clk_rcg2_shared_get_parent,
-+	.set_parent = clk_rcg2_shared_set_parent,
-+	.recalc_rate = clk_rcg2_shared_recalc_rate,
-+	.determine_rate = clk_rcg2_determine_floor_rate,
-+	.set_rate = clk_rcg2_shared_set_floor_rate,
-+	.set_rate_and_parent = clk_rcg2_shared_set_floor_rate_and_parent,
++static struct clk_hw *sar2130p_rpmh_clocks[] = {
++	[RPMH_CXO_CLK]		= &clk_rpmh_bi_tcxo_div1.hw,
++	[RPMH_CXO_CLK_A]	= &clk_rpmh_bi_tcxo_div1_ao.hw,
++	[RPMH_RF_CLK1]		= &clk_rpmh_rf_clk1_a.hw,
++	[RPMH_RF_CLK1_A]	= &clk_rpmh_rf_clk1_a_ao.hw,
 +};
-+EXPORT_SYMBOL_GPL(clk_rcg2_shared_floor_ops);
 +
- static int clk_rcg2_shared_no_init_park(struct clk_hw *hw)
- {
- 	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
++static const struct clk_rpmh_desc clk_rpmh_sar2130p = {
++	.clks = sar2130p_rpmh_clocks,
++	.num_clks = ARRAY_SIZE(sar2130p_rpmh_clocks),
++};
++
+ static struct clk_hw *sdm845_rpmh_clocks[] = {
+ 	[RPMH_CXO_CLK]		= &clk_rpmh_bi_tcxo_div2.hw,
+ 	[RPMH_CXO_CLK_A]	= &clk_rpmh_bi_tcxo_div2_ao.hw,
+@@ -880,6 +892,7 @@ static int clk_rpmh_probe(struct platform_device *pdev)
+ static const struct of_device_id clk_rpmh_match_table[] = {
+ 	{ .compatible = "qcom,qdu1000-rpmh-clk", .data = &clk_rpmh_qdu1000},
+ 	{ .compatible = "qcom,sa8775p-rpmh-clk", .data = &clk_rpmh_sa8775p},
++	{ .compatible = "qcom,sar2130p-rpmh-clk", .data = &clk_rpmh_sar2130p},
+ 	{ .compatible = "qcom,sc7180-rpmh-clk", .data = &clk_rpmh_sc7180},
+ 	{ .compatible = "qcom,sc8180x-rpmh-clk", .data = &clk_rpmh_sc8180x},
+ 	{ .compatible = "qcom,sc8280xp-rpmh-clk", .data = &clk_rpmh_sc8280xp},
 
 -- 
 2.39.5
