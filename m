@@ -1,322 +1,137 @@
-Return-Path: <linux-kernel+bounces-383504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44BE19B1C99
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 10:13:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D84AA9B1C9E
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 10:15:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0423A281C46
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 09:13:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87F511F21602
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 09:15:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ED976F2FE;
-	Sun, 27 Oct 2024 09:12:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F7CB126C0F;
+	Sun, 27 Oct 2024 09:15:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ib8qUhc3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XVestXT0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A44B145948;
-	Sun, 27 Oct 2024 09:12:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF40178C9D;
+	Sun, 27 Oct 2024 09:15:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730020373; cv=none; b=YQ1OwpPTijpMaoficIOKSw2D79ZgKaylJ0ADTBa2xO/Jhvsio5qghvJvGo49qgkjaoUC/MtUm8uKJm0ZVJFw+VYse0G5VFMNPcTQcsms8WEovGSmyxNqT4peKq8P/YqSPByBPMNLDrl8YEOWRcViPOdBhqLidTI+yFDw0rzD/Yk=
+	t=1730020506; cv=none; b=MNrzISs4zFhH3yBMIpCvlnDJZdGiwDKpMlQ82lKoIcKFQyFXurYCi4xRUSWERXYUEZbLu4+gmDnUgQTW4s+Ggk4LKe8Y0svhkm9v9hPZVlsiAUyF5Kbgk3r9f9j35Q9BykzwA9yguiFxe4YJdKQY1nI3An2qYkjSO8zS3dTwb84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730020373; c=relaxed/simple;
-	bh=vYmaaCF0O9kxNZGZuSUUPa9U+zrGwPci9G+GBw7A13U=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gy27p9Jm77mUQZssiXlFirBQVuXr+MfHwsARPanT/MUW0eVri9uc6r9QhAlk3Ufk+QCjUSXgdrt8fxA+28D6NnX9YFi/FL/KaC1ad0IJFFtB2F8bBXWEkCucR/QtMZDJmB4gMXUCdsX+8aixLGLTeycXPhTm6Ew1oxMxJ5JL+z8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ib8qUhc3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 156BDC4CEC3;
-	Sun, 27 Oct 2024 09:12:47 +0000 (UTC)
+	s=arc-20240116; t=1730020506; c=relaxed/simple;
+	bh=k1KsRcgzwFXdAtNAW7/FLWTNb3Q1hSDQbTFJH/oZzh0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=I4IvosVkhSCuKwTiRowMvLmuIBxDPu3EgealNPbvMG6fPc9iVDSXOZsZyDvS+jkyPZG2h7bG08VMXI0JNfTEmnLjzJHCQDeg4RsFY/QRcj75oPNQLESZOIWJcq3XXb5hAZVTCmHQVgmC5EsA9cTTpJ9Z21kJ2+JRQz5ilogwj+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XVestXT0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58A03C4CEE9;
+	Sun, 27 Oct 2024 09:15:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730020373;
-	bh=vYmaaCF0O9kxNZGZuSUUPa9U+zrGwPci9G+GBw7A13U=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Ib8qUhc3gZ6m2kQ9mBHGW3P9PZeAETEToShpTwEJ4itJhDvOYHqyc13Doz3bYA1g7
-	 F0kd2HV/eVj3keu+DBtr/Wrxs7b2GiRNHV3HI+RL+GEu8Dl27u3JDPcOWuqg1M7DSM
-	 qKVeM/5xIRIYS22Gh9gpogurtjGBq78jG+S9mxxoJwl5+MFSK+g3h1SFsgFaEeRLDZ
-	 SkI/WuLlhAQF54l7Dq5V7vMDUGFtxDxDARTH1UtxOX1uQUgUgVyoVujCesZS7PZ35C
-	 deU1SmTANrMTcbAMsSjo3TWdLkKiWfNw6prD+7KoaPV2WPRcXe40wMyvSsPdonHqA1
-	 dFMA2Zdh4g2Ww==
-Date: Sun, 27 Oct 2024 09:12:44 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Uwe
- =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <ukleinek@kernel.org>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Lars-Peter Clausen <lars@metafoo.de>, David
- Jander <david@protonic.nl>, Martin Sperl <kernel@martin.sperl.org>,
- linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
- linux-pwm@vger.kernel.org
-Subject: Re: [PATCH RFC v4 15/15] iio: adc: ad4695: Add support for SPI
- offload
-Message-ID: <20241027091244.2fe3c0ad@jic23-huawei>
-In-Reply-To: <5a090847-ee53-41be-ad28-b7604cf9020a@baylibre.com>
-References: <20241023-dlech-mainline-spi-engine-offload-2-v4-0-f8125b99f5a1@baylibre.com>
-	<20241023-dlech-mainline-spi-engine-offload-2-v4-15-f8125b99f5a1@baylibre.com>
-	<20241026170038.4b629cff@jic23-huawei>
-	<5a090847-ee53-41be-ad28-b7604cf9020a@baylibre.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=k20201202; t=1730020506;
+	bh=k1KsRcgzwFXdAtNAW7/FLWTNb3Q1hSDQbTFJH/oZzh0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=XVestXT0+yhJZgVrcJijfqIAW/B+3ykzbo/hyKArqkTlFYaU6ZbPehpw6Xj2KiVti
+	 fHfIfnV5I8PxLAe5DLQSCH4gNM1JKWkC0w+iA+NaU+0ducvrvVegTzFsQFcqnhX9qp
+	 3zzwj0ebYagGoW4eUHd8J6h8ZnXnpTVVMtP/nOOMQaYhZazxsmBOLxbPYoEUkj6w7v
+	 C2NDvqU3PfYyyVqL2mnreCn/cQRF7smkMkLmF7ZTJKw2g2YyknhTViMNK1nTG5/Qej
+	 Diyrsvtuu7PThhvWA4EqCHS0YCLRen4Q4IcK7W+6s9rxVjZQVbmTn0jWxhUE0WbF8T
+	 HBGDrNlZL5KyQ==
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-539e5c15fd3so2992472e87.3;
+        Sun, 27 Oct 2024 02:15:06 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU4ctrcAJT88JCGtqapTiJJ5KWp1PLQw6Q3EkQfnn185fSqmxDe7XEezzUVJbP2lASob/VqCuUPGVnNgtvmZmXOphgi@vger.kernel.org, AJvYcCVZlNVihg78+KwUdAU1tyHecaBMPQEWH9pLedCZotSGrq4rnhC5kdqb36jaV7q+UqqJmsYaHjir8VKduwGB@vger.kernel.org, AJvYcCWwZh7s0naQ0mFZzbzdURbxCYZq2pUFE5GdlYFtD2F7k996h4dl2IFViOXy6SXRpf121qc=@vger.kernel.org, AJvYcCXO5FlG3b5R0Sn3OdZZqdPAuSSKn6n19wL7qZ2yz7r/VfRwryAauGvVYNZDDO4rVoyDzRIZ+UvTVvjVHQWA@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFA0gnMi0MFSN8atGBJciHv4tRh1DuP3vxWY02jI82iz7nuosE
+	tnJs1+je8kiyhM13oFGT7AlwIRarGBci/Ibqec/LUiW+L3C4eHGTMG53d7KUFvxnk+vAD7X+7lp
+	QNB8XdEH3Xw2bB+4vS4btAjKAe3o=
+X-Google-Smtp-Source: AGHT+IGJls0rHOV2LU5nnq3z6pVUca+erZrQxZ96fYuXcWPbiROC4rRHM9ZevPYab7r1XRwF1Pk0540wsseF9JTljFE=
+X-Received: by 2002:a05:6512:10c7:b0:539:fcb2:2ff4 with SMTP id
+ 2adb3069b0e04-53b34b373dcmr1403081e87.53.1730020504955; Sun, 27 Oct 2024
+ 02:15:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20241018173632.277333-1-hbathini@linux.ibm.com> <20241018173632.277333-12-hbathini@linux.ibm.com>
+In-Reply-To: <20241018173632.277333-12-hbathini@linux.ibm.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Sun, 27 Oct 2024 18:14:28 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQOPgcPsHJVy7vxfRBX0fowMzOhnZ0RLcoerGMUCGdSGQ@mail.gmail.com>
+Message-ID: <CAK7LNAQOPgcPsHJVy7vxfRBX0fowMzOhnZ0RLcoerGMUCGdSGQ@mail.gmail.com>
+Subject: Re: [PATCH v6 11/17] kbuild: Add generic hook for architectures to
+ use before the final vmlinux link
+To: Hari Bathini <hbathini@linux.ibm.com>
+Cc: linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, bpf@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>, 
+	"Naveen N. Rao" <naveen@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Nicholas Piggin <npiggin@gmail.com>, 
+	Alexei Starovoitov <ast@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, Vishal Chourasia <vishalc@linux.ibm.com>, 
+	Mahesh J Salgaonkar <mahesh@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, 26 Oct 2024 19:01:53 -0500
-David Lechner <dlechner@baylibre.com> wrote:
+On Sat, Oct 19, 2024 at 2:37=E2=80=AFAM Hari Bathini <hbathini@linux.ibm.co=
+m> wrote:
+>
+> From: Naveen N Rao <naveen@kernel.org>
+>
+> On powerpc, we would like to be able to make a pass on vmlinux.o and
+> generate a new object file to be linked into vmlinux. Add a generic pass
+> in Makefile.vmlinux that architectures can use for this purpose.
+>
+> Architectures need to select CONFIG_ARCH_WANTS_PRE_LINK_VMLINUX and must
+> provide arch/<arch>/tools/Makefile with .arch.vmlinux.o target, which
+> will be invoked prior to the final vmlinux link step.
+>
+> Signed-off-by: Naveen N Rao <naveen@kernel.org>
+> Signed-off-by: Hari Bathini <hbathini@linux.ibm.com>
 
-> On 10/26/24 11:00 AM, Jonathan Cameron wrote:
-> > On Wed, 23 Oct 2024 15:59:22 -0500
-> > David Lechner <dlechner@baylibre.com> wrote:
-> >   
-> >> Add support for SPI offload to the ad4695 driver. SPI offload allows
-> >> sampling data at the max sample rate (500kSPS or 1MSPS).
-> >>
-> >> This is developed and tested against the ADI example FPGA design for
-> >> this family of ADCs [1].
-> >>
-> >> [1]: http://analogdevicesinc.github.io/hdl/projects/ad469x_fmc/index.html
-> >>
-> >> Signed-off-by: David Lechner <dlechner@baylibre.com>  
-> > A few questions inline. In general looks ok, but it's complex code and I'm
-> > too snowed under for a very close look at the whole thing for a least a few weeks.
-> > 
-> > Jonathan
-> >   
-> >> ---
-> >>  drivers/iio/adc/Kconfig  |   1 +
-> >>  drivers/iio/adc/ad4695.c | 470 +++++++++++++++++++++++++++++++++++++++++++----
-> >>  2 files changed, 440 insertions(+), 31 deletions(-)
-> >>
-> >> diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
-> >> index 92dfb495a8ce..f76a3f62a9ad 100644
-> >> --- a/drivers/iio/adc/Kconfig
-> >> +++ b/drivers/iio/adc/Kconfig
-> >> @@ -53,6 +53,7 @@ config AD4695
-> >>  	depends on SPI
-> >>  	select REGMAP_SPI
-> >>  	select IIO_BUFFER
-> >> +	select IIO_BUFFER_DMAENGINE
-> >>  	select IIO_TRIGGERED_BUFFER
-> >>  	help
-> >>  	  Say yes here to build support for Analog Devices AD4695 and similar  
-> >   
-> >> +static int ad4695_offload_buffer_postenable(struct iio_dev *indio_dev)
-> >> +{
-> >> +	struct ad4695_state *st = iio_priv(indio_dev);
-> >> +	struct spi_offload_trigger_config config = {
-> >> +		.type = SPI_OFFLOAD_TRIGGER_DATA_READY,
-> >> +	};
-> >> +	struct spi_transfer *xfer = &st->buf_read_xfer[0];
-> >> +	struct pwm_state state;
-> >> +	u8 temp_chan_bit = st->chip_info->num_voltage_inputs;
-> >> +	u8 num_slots = 0;
-> >> +	u8 temp_en = 0;
-> >> +	unsigned int bit;
-> >> +	int ret;
-> >> +
-> >> +	iio_for_each_active_channel(indio_dev, bit) {
-> >> +		if (bit == temp_chan_bit) {
-> >> +			temp_en = 1;
-> >> +			continue;
-> >> +		}
-> >> +
-> >> +		ret = regmap_write(st->regmap, AD4695_REG_AS_SLOT(num_slots),
-> >> +				   FIELD_PREP(AD4695_REG_AS_SLOT_INX, bit));
-> >> +		if (ret)
-> >> +			return ret;
-> >> +
-> >> +		num_slots++;
-> >> +	}
-> >> +
-> >> +	/*
-> >> +	 * For non-offload, we could discard data to work around this
-> >> +	 * restriction, but with offload, that is not possible.
-> >> +	 */
-> >> +	if (num_slots < 2) {
-> >> +		dev_err(&st->spi->dev,
-> >> +			"At least two voltage channels must be enabled.\n");
-> >> +		return -EINVAL;
-> >> +	}
-> >> +
-> >> +	ret = regmap_update_bits(st->regmap, AD4695_REG_TEMP_CTRL,
-> >> +				 AD4695_REG_TEMP_CTRL_TEMP_EN,
-> >> +				 FIELD_PREP(AD4695_REG_TEMP_CTRL_TEMP_EN,
-> >> +					    temp_en));
-> >> +	if (ret)
-> >> +		return ret;
-> >> +
-> >> +	/* Each BUSY event means just one sample for one channel is ready. */
-> >> +	memset(xfer, 0, sizeof(*xfer));
-> >> +	xfer->offload_flags = SPI_OFFLOAD_XFER_RX_STREAM;
-> >> +	xfer->bits_per_word = 16;
-> >> +	xfer->len = 2;
-> >> +
-> >> +	spi_message_init_with_transfers(&st->buf_read_msg, xfer, 1);
-> >> +	st->buf_read_msg.offload = st->offload;
-> >> +
-> >> +	st->spi->max_speed_hz = st->spi_max_speed_hz;
-> >> +	ret = spi_optimize_message(st->spi, &st->buf_read_msg);
-> >> +	st->spi->max_speed_hz = AD4695_REG_ACCESS_SCLK_HZ;
-> >> +	if (ret)
-> >> +		return ret;
-> >> +
-> >> +	/*
-> >> +	 * NB: technically, this is part the SPI offload trigger enable, but it
-> >> +	 * doesn't work to call it from the offload trigger enable callback
-> >> +	 * due to issues with ordering with respect to entering/exiting
-> >> +	 * conversion mode.  
-> > Give some detail on the operations order.
-> >   
-> >> +	 */
-> >> +	ret = regmap_set_bits(st->regmap, AD4695_REG_GP_MODE,
-> >> +			      AD4695_REG_GP_MODE_BUSY_GP_EN);
-> >> +	if (ret)
-> >> +		goto err_unoptimize_message;
-> >> +
-> >> +	ret = spi_offload_trigger_enable(st->offload, st->offload_trigger,
-> >> +					 &config);
-> >> +	if (ret)
-> >> +		goto err_disable_busy_output;
-> >> +
-> >> +	ret = ad4695_enter_advanced_sequencer_mode(st, num_slots);
-> >> +	if (ret)
-> >> +		goto err_offload_trigger_disable;
-> >> +
-> >> +	guard(mutex)(&st->cnv_pwm_lock);
-> >> +	pwm_get_state(st->cnv_pwm, &state);
-> >> +	/*
-> >> +	 * PWM subsystem generally rounds down, so requesting 2x minimum high
-> >> +	 * time ensures that we meet the minimum high time in any case.
-> >> +	 */
-> >> +	state.duty_cycle = AD4695_T_CNVH_NS * 2;
-> >> +	ret = pwm_apply_might_sleep(st->cnv_pwm, &state);
-> >> +	if (ret)
-> >> +		goto err_offload_exit_conversion_mode;
-> >> +
-> >> +	return 0;
-> >> +
-> >> +err_offload_exit_conversion_mode:
-> >> +	/* have to unwind in a different order to avoid triggering offload */  
-> > 
-> > Needs more details here.
-> >   
-> >> +	spi_offload_trigger_disable(st->offload, st->offload_trigger);
-> >> +	ad4695_cnv_manual_trigger(st);
-> >> +	ad4695_exit_conversion_mode(st);
-> >> +	goto err_disable_busy_output;
-> >> +
-> >> +err_offload_trigger_disable:
-> >> +	spi_offload_trigger_disable(st->offload, st->offload_trigger);
-> >> +
-> >> +err_disable_busy_output:
-> >> +	regmap_clear_bits(st->regmap, AD4695_REG_GP_MODE,
-> >> +			  AD4695_REG_GP_MODE_BUSY_GP_EN);
-> >> +
-> >> +err_unoptimize_message:
-> >> +	spi_unoptimize_message(&st->buf_read_msg);
-> >> +
-> >> +	return ret;
-> >> +}  
-> >   
-> >> +
-> >>  static int ad4695_write_raw(struct iio_dev *indio_dev,
-> >>  			    struct iio_chan_spec const *chan,
-> >>  			    int val, int val2, long mask)
-> >> @@ -779,6 +992,17 @@ static int ad4695_write_raw(struct iio_dev *indio_dev,
-> >>  			default:
-> >>  				return -EINVAL;
-> >>  			}
-> >> +		case IIO_CHAN_INFO_SAMP_FREQ: {
-> >> +			struct pwm_state state;
-> >> +
-> >> +			if (val <= 0)
-> >> +				return -EINVAL;
-> >> +
-> >> +			guard(mutex)(&st->cnv_pwm_lock);
-> >> +			pwm_get_state(st->cnv_pwm, &state);  
-> > 
-> > What limits this to rates the ADC can cope with?
-> >   
-> >> +			state.period = DIV_ROUND_UP_ULL(NSEC_PER_SEC, val);
-> >> +			return pwm_apply_might_sleep(st->cnv_pwm, &state);
-> >> +		}
-> >>  		default:
-> >>  			return -EINVAL;
-> >>  		}  
-> >   
-> >>  static int ad4695_probe(struct spi_device *spi)
-> >>  {
-> >>  	struct device *dev = &spi->dev;
-> >>  	struct ad4695_state *st;
-> >>  	struct iio_dev *indio_dev;
-> >> -	struct gpio_desc *cnv_gpio;
-> >>  	bool use_internal_ldo_supply;
-> >>  	bool use_internal_ref_buffer;
-> >>  	int ret;
-> >>  
-> >> -	cnv_gpio = devm_gpiod_get_optional(dev, "cnv", GPIOD_OUT_LOW);
-> >> -	if (IS_ERR(cnv_gpio))
-> >> -		return dev_err_probe(dev, PTR_ERR(cnv_gpio),
-> >> -				     "Failed to get CNV GPIO\n");
-> >> -
-> >> -	/* Driver currently requires CNV pin to be connected to SPI CS */
-> >> -	if (cnv_gpio)
-> >> -		return dev_err_probe(dev, -ENODEV,
-> >> -				     "CNV GPIO is not supported\n");
-> >> -
-> >>  	indio_dev = devm_iio_device_alloc(dev, sizeof(*st));
-> >>  	if (!indio_dev)
-> >>  		return -ENOMEM;
-> >> @@ -1002,8 +1374,13 @@ static int ad4695_probe(struct spi_device *spi)
-> >>  		return -EINVAL;
-> >>  
-> >>  	/* Registers cannot be read at the max allowable speed */
-> >> +	st->spi_max_speed_hz = spi->max_speed_hz;
-> >>  	spi->max_speed_hz = AD4695_REG_ACCESS_SCLK_HZ;
-> >>  
-> >> +	ret = devm_add_action_or_reset(dev, ad4695_restore_spi_max_speed_hz, st);  
-> > 
-> > Why do you need to put it back in devm? What happens after this but without
-> > a driver restart that uses that faster rate?
-> >   
-> I should have added a comment here as this was a weird bug to trace.
-> 
-> The core SPI framework sets the initial value of spi->max_speed_hz
-> to the minimum of the controller max rate and the max rate specified
-> by the devicetree.
-> 
-> The SPI device lives beyond this driver, so if we bind the driver
-> and set spi->max_speed_hz to something other than what the SPI core
-> set it, then the next time we bind the driver, we don't get the
-> the max rate from the SPI core, but rather we changed it to when
-> the driver unbound.
-> 
-> So on the second bind, the max rate would be the slow register
-> read rate instead of the actual max allowable rate.
-> 
-> So we need to reset spi->max_speed_hz to what it was originally
-> on driver unbind so that everything works as expected on the
-> next bind.
-> 
-> (Or we call this a SPI core bug and fix it there instead).
-Definitely a question to ask.  Directly accessing spi_max_speed_hz may
-be the fundamental issue as I don't think the driver is generally
-expected to touch that in a dynamic fashion.  Should we be instead setting it
-per transfer for the ones that need it controlled?
 
-Jonathan
+> --- a/scripts/link-vmlinux.sh
+> +++ b/scripts/link-vmlinux.sh
+> @@ -100,7 +100,7 @@ vmlinux_link()
+>         ${ld} ${ldflags} -o ${output}                                   \
+>                 ${wl}--whole-archive ${objs} ${wl}--no-whole-archive    \
+>                 ${wl}--start-group ${libs} ${wl}--end-group             \
+> -               ${kallsymso} ${btf_vmlinux_bin_o} ${ldlibs}
+> +               ${kallsymso} ${btf_vmlinux_bin_o} ${arch_vmlinux_o} ${ldl=
+ibs}
+>  }
+>
+>  # generate .BTF typeinfo from DWARF debuginfo
+> @@ -198,6 +198,11 @@ fi
+>
+>  ${MAKE} -f "${srctree}/scripts/Makefile.build" obj=3Dinit init/version-t=
+imestamp.o
+>
+> +arch_vmlinux_o=3D""
+
+Nit:  unnecessary double quotes.
+
+arch_vmlinux_o=3D
+
+is enough.
+
+
+Other than that,
+
+Acked-by: Masahiro Yamada <masahiroy@kernel.org>
 
 
 
-> 
 
+
+
+
+
+--
+Best Regards
+Masahiro Yamada
 
