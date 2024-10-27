@@ -1,105 +1,119 @@
-Return-Path: <linux-kernel+bounces-383882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 003999B215E
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 00:28:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F79A9B215F
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 00:31:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8ADF72813B4
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 23:28:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B577E2814D7
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 23:31:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6F46189903;
-	Sun, 27 Oct 2024 23:28:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DN7TMRxO"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67CD11865F6;
+	Sun, 27 Oct 2024 23:31:45 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6329B17C219;
-	Sun, 27 Oct 2024 23:28:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFCD243AAE
+	for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 23:31:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730071723; cv=none; b=LRuLkOdkDnAtCTIT6kYHYRYeVl7hj/kyef9cVs2Pn5fxkY1ptikpC+3Yr+apnIawGgswQ8jcc6Zx8hUTO2e1FRLBbHnKXPLGohJhbUElYrmS5G3AoLOpv4PL6xftpLaZ0PryDW7vL+dcSbRWErd3hMieRllLGWRVefnyCOv1AiU=
+	t=1730071905; cv=none; b=pPQWlITSNbXW+H4ID+fXMgrBRG7Apalw9mkDB+VqIOiT7kU9AD87tWr/mlO5dgz7dvL9Vg0nsLdg/FcctTCpcbLq7iSMiBFHyXl43UIprZonxT+hK5lfvmv7ypva0t9t8L0iW/iaAwcYvPfZEEQ+QLiGrcOG1S5f7G4n42cCfr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730071723; c=relaxed/simple;
-	bh=CYK5sksRp+HHK6ke3ltM89SdmUKYCjXGNd/ci7rSmkI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LrQvM+qzHnX6QG/ObXO+ijuNRSeHm5AgAq8TTT9EQ8w6O/S2ObpQKg3kZi6Wm2PxhHnnKhs7+HZlbZgMTgBYkTQ9SpDYBVzakE5vrJwuwCTYXRTQON//MVcKPOWUoVtUcEa5dH9ncHwkPsj0VED70pxHHnpvPoziar/oEAzsqM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DN7TMRxO; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2e31977c653so588256a91.0;
-        Sun, 27 Oct 2024 16:28:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730071721; x=1730676521; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CYK5sksRp+HHK6ke3ltM89SdmUKYCjXGNd/ci7rSmkI=;
-        b=DN7TMRxOkfiU/Rt5+9UyIAWcW2QimeXJtztz97csRUA3PyTKNfUmAuB3YZCbN+/etB
-         k4OHdmnFC8kwz3kSn/ZATzeypYNMehipj9iV7vRGyS9Ztk9hUbLiRwHRO/Cz4VqJyUBN
-         v6PnLyrhhD21ZGiWmTIAYqXn6IphKoxU/xMkhiEpNW+REZvF5WOadfI2IDzbvAGm4o50
-         0IsXOj50l1l0XURAe+JGXEUKKfQWglVYSS5iak40OlAXE8c5uljqz6vynpiVKi8WByBs
-         Ev+LjOp9ciGjZFF44JZ6SgP83onb3Z9c13lkEiWQSSHRZt/91iXNhdVgKSrfEikGlpKp
-         BwGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730071721; x=1730676521;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CYK5sksRp+HHK6ke3ltM89SdmUKYCjXGNd/ci7rSmkI=;
-        b=Fx7XibrQa5VknO0pzObVlbtLPadnHUSql1GyB9nnjr6UEcxstztgxOivws6mf71cuC
-         LbsevgwXBDzjCZAL2m4SY+8Qtz4lXELP9TFISCA7mOr+CFNmZ+DBPnpopa/mnK+YEMs7
-         FHC13ulbXWwrllMQWL2l3ZzxEPuA18kM7yVNo9LxKQH1tEReTtjE96wZQFYILVSdEX8T
-         tN9WqJaOV6ngjNEc2Qn1tFwGmujGvvn9vBpGk/ZntPM9B52mWH/s901ttppfokr13AeY
-         RwNDxqCRPJuMmzr8WeF4Vc7UeTJ0wpR9mY947oRodZ0wvAJICFrwSy4ES0Z6trLR0mwc
-         k2ug==
-X-Forwarded-Encrypted: i=1; AJvYcCURPvHzDO9I9j3ecMT0tiYkhIPcZQ/FoKX6tbg75Ca07F2ohbdsiXhFquvs0705JhcLcU8VV3xJIXqLyp8=@vger.kernel.org, AJvYcCV8D30umIiubxuoz9u5Dp/kFYO7tbzj5qp+S5tATc9YLAofj52pqn107XxlTzSzyMA5iRp0yiR7cTNHL+6AZ9g=@vger.kernel.org, AJvYcCXXc3of2SHBWw7/sBpaLmSLZ5gceKAdsuxTrcmLx9VzPlEG3KdF6WIEq9P4nYNVB6La/qEGcfvpn+H0bLTg@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQkXxzvam/uEJzON4NNaHMzNfw4itQciLYTiDytwENL2qkO85c
-	TrPIpixpy7FX9OFfFdIxTKrEQfqLuSSTSbMg9qTRu0BSUa60vlZWpzMm9X2ZnmwYte8LXO1MrMV
-	zznoK6Qkxy27cR5W1h/oh3evaOGQ=
-X-Google-Smtp-Source: AGHT+IHq8rw6W8p4S0W/aeuhnIgrpHXtsRtdd+z1XCCrOBHUp853lIr5u8gfY2RgCHl2JwvNYEokrNqMnwuiiLIT1kU=
-X-Received: by 2002:a17:90a:718c:b0:2e2:abab:c456 with SMTP id
- 98e67ed59e1d1-2e8f1051e49mr3244664a91.1.1730071720605; Sun, 27 Oct 2024
- 16:28:40 -0700 (PDT)
+	s=arc-20240116; t=1730071905; c=relaxed/simple;
+	bh=jwjn/61q6vzgnaw8czf9Nb8oMQOKAjZP50jDFJAI1UM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YlJsVEw9w17Ul/Cklb/NgftWvqg4OdZQOF8ZnJRMbscBoFVdBGRlOjb4/5w6xrPoyPzbngec0fR3qXLf6YrQZgtwjNrjkop5Whd+7ezxOEEqxvm/yyuGy1o7xe8nTOmnWmmc+TdxdB/Vatx9F7nRxYv5ju2hEBfkcrv3+jizzQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Date: Mon, 28 Oct 2024 07:31:39 +0800
+From: Yixun Lan <dlan@gentoo.org>
+To: Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>
+Cc: Yangyu Chen <cyy@cyyself.name>, Jisheng Zhang <jszhang@kernel.org>,
+	Jesse Taube <mr.bossman075@gmail.com>,
+	Inochi Amaoto <inochiama@outlook.com>,
+	Icenowy Zheng <uwu@icenowy.me>,
+	Meng Zhang <zhangmeng.kevin@spacemit.com>,
+	Meng Zhang <kevin.z.m@hotmail.com>, soc@kernel.org,
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v2] MAINTAINERS: setup support for SpacemiT SoC tree
+Message-ID: <20241027233139-GYA86372@gentoo>
+References: <20241028-00-k1-maintainer-v2-1-272c9834220d@gentoo.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241027145636.416030-1-ojeda@kernel.org> <20241027222505.GA2882707@thelio-3990X>
-In-Reply-To: <20241027222505.GA2882707@thelio-3990X>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Mon, 28 Oct 2024 00:28:28 +0100
-Message-ID: <CANiq72my=xgeu=TZZAZKEvRq_wKm=tr=Juv1Mxdf50MEVxi53Q@mail.gmail.com>
-Subject: Re: [PATCH] kbuild: rust: avoid errors with old `rustc`s without LLVM
- patch version
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Masahiro Yamada <masahiroy@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
-	Nicolas Schier <nicolas@fjasle.eu>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev, 
-	Thorsten Leemhuis <regressions@leemhuis.info>, 
-	Cameron MacPherson <cameron.macpherson@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241028-00-k1-maintainer-v2-1-272c9834220d@gentoo.org>
 
-On Sun, Oct 27, 2024 at 11:25=E2=80=AFPM Nathan Chancellor <nathan@kernel.o=
-rg> wrote:
->
-> and it still works for me with rustc 1.82.0:
->
-> Reviewed-by: Nathan Chancellor <nathan@kernel.org>
-> Tested-by: Nathan Chancellor <nathan@kernel.org>
+HI
+On 07:04 Mon 28 Oct     , Yixun Lan wrote:
+> Add myself as maintainer of SpacemiT's SoC tree, which
+> suggested by Conor [1].
+> 
+> Link: https://lore.kernel.org/all/20241018234615-GYA2124001@gentoo/ [1]
+> Signed-off-by: Yixun Lan <dlan@gentoo.org>
+> ---
+> This will setup proper maintainer info about Spacemit's kernel tree,
+> which should help to take soc and device tree patches, and send the
+> pull request up to Arnd's soc tree.
+> 
+> I asked Kevin to host the kernel tree under SpacemiT's account
+> on github, which should help people to get access more easily,
+> and promote the tree a little bit.
+> 
+> I could take this patch through this spacemit's soc tree if no objection,
+> of cource, after got ACK.
+> ---
+> Changes in v2:
+> - drop RISC-V exclude dts
+> - add mailinglist info
+> - Link to v1: https://lore.kernel.org/r/20241023-00-k1-maintainer-v1-1-c06b791cc2ee@gentoo.org
+> ---
+>  MAINTAINERS | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index e9659a5a7fb3347d649855992a559e3526d18443..88fe4ca801537eff7eb5001406a611ef80632b5d 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -19814,6 +19814,15 @@ F:	arch/riscv/boot/dts/thead/
+>  F:	drivers/clk/thead/clk-th1520-ap.c
+>  F:	include/dt-bindings/clock/thead,th1520-clk-ap.h
+>  
+> +RISC-V SPACEMIT SoC Support
+> +M:	Yixun Lan <dlan@gentoo.org>
+> +L:	linux-riscv@lists.infradead.org
+> +S:	Maintained
+> +T:	git https://github.com/spacemit-com/linux
+> +F:	arch/riscv/boot/dts/spacemit/
+> +N:	spacemit
+> +K:	spacemit
+> +
+strictly, I should put these before THEAD section, to keep it sorted
+I will fix this while applying the patch if no other comments received..
 
-Thanks for checking! I took the tags.
+>  RNBD BLOCK DRIVERS
+>  M:	Md. Haris Iqbal <haris.iqbal@ionos.com>
+>  M:	Jack Wang <jinpu.wang@ionos.com>
+> 
+> ---
+> base-commit: 42f7652d3eb527d03665b09edac47f85fb600924
+> change-id: 20241023-00-k1-maintainer-46eb3f31e6f2
+> 
+> Best regards,
+> -- 
+> Yixun Lan <dlan@gentoo.org>
 
-Cheers,
-Miguel
+-- 
+Yixun Lan (dlan)
+Gentoo Linux Developer
+GPG Key ID AABEFD55
 
