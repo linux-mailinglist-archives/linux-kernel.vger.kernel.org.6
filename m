@@ -1,122 +1,116 @@
-Return-Path: <linux-kernel+bounces-383713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DEA69B1F6B
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 18:36:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55BDE9B1F7F
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 18:59:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BD741F21317
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 17:36:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A781281323
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 17:59:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6780161328;
-	Sun, 27 Oct 2024 17:36:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2019E17AE1C;
+	Sun, 27 Oct 2024 17:58:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T1trphlU"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="MDBz/DCN"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5341417C61
-	for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 17:36:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E0A213E04B;
+	Sun, 27 Oct 2024 17:58:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730050612; cv=none; b=ixkYg66yBzXC/X6DRsEi6WmaxhRBozU6veV4w1UY/jRwMpIUb0SY1zfXgBkHCZJ1YODkuBZppQ3WeLcc2mBsTgQs3TJ4uBk3HvgvBB9NwPcV5mSd3+S6sF2L8I6PHv190nKmvz3UkePpOsxLZ3ZW9+btCC98XN+6WfLS6ca9iuU=
+	t=1730051934; cv=none; b=IJkHQkFOtJYI2vP+ULUNsefVnAE3GDZQ2i0LBlo2NiYnaUdQ8I4gxkue4gGT5G7q5Wz4yu9qKxJLIyC5w5s9Q5lQjcj78i1813lqLdWnf5KazzHL0DyPwMndQ54LfbZOjSj8mtbSOSe/xTceYwK1zanWhMJFpr2ZY5A0S5V3uEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730050612; c=relaxed/simple;
-	bh=nk3BoHr6WXxdBYL/OI3ipfxfR97iTF5ysl/ZtbrO7fY=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=QPCiO0/Tf38t3Eyr8wAvhM7QiC7eJYvafzfO2fkVeNzRn0quzziJN1WvJdwfAjc//kalIQPiz6X2YCOOGGBaelF8dFy72IyWJ8zBX+yfnWPyYiQmQfvkXgxd8Yx9Sf8EZ0gD4CsjXKGR9ClhenHhtEt0B391wHZsnscic1iRPQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T1trphlU; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5c9634c9160so4050823a12.2
-        for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 10:36:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730050609; x=1730655409; darn=vger.kernel.org;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nk3BoHr6WXxdBYL/OI3ipfxfR97iTF5ysl/ZtbrO7fY=;
-        b=T1trphlU1v+CgKKSKuFkxtRXccnozfFYoPTdtWlVOdTDeFGYZtVmT9Y2huEYnSrv4M
-         WmXB1jVvoFUEFtLB+DKtlMmlSNId6DXWKeZvwmQjOK0cEvZWNprabmE9AsRwfUSpbeTy
-         s+o0MAbw8sudp3Ja/C/UdMn6LwEbpooJD06aHzHpIR7Rpj8Szg9/qP/z2/wR0aJo3kp6
-         BENR2o8bR/6AVr3s90/EuN0Er2aXVN/aj29Bri5Ed3irphEDgmy6gFooWpe9olQWhiwq
-         fZOtB2TpN8zFWRVV+4SOOVt5Ph/HrXVHCTw3T2ry4c05GIkJrt9rpIZ80MLE8u0ZeUZ5
-         +PKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730050609; x=1730655409;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=nk3BoHr6WXxdBYL/OI3ipfxfR97iTF5ysl/ZtbrO7fY=;
-        b=pU/SWvQGgJ1Bvw8C7ZUASO7Lv/5JeZVsWKyElltm/dD2bAnNx4uDQutOXMm/07W4oc
-         V3TW5hviNeeJ8fdRpuDvd16izDkZnxmUY0ptuOXPtEpuQQuAbntjiZyp3vfNQLdYmrvp
-         cRuCOQ1J/xxaKR2Of9W435MWOHkr4qB619X03i+qyuj4r1PBzyroqjg/mOCxBRGUhaIc
-         TEUZOj0ibjtaaqAtV/uEtgxjaW4o0CVKBeVBZMY6jCP8sc2aR+UBEK1RWsM7rDIJ96Xa
-         PtsrQyhKrPebJJ0dYxFhxY2Z9WvsPlomSHJ3oFuqeXkNuEdUifD2Ao13oYp44aLM12Af
-         +IFA==
-X-Gm-Message-State: AOJu0YzBB/gbpzSXCuXXykhD029te/ag5a//KJmxWk8umA1/an9xc5SL
-	V3WMkLOUDZWwfYj4+cg0Uc9rv98MRIgwN8fLLUak1lXV5k5LUyS4u/o9KQ==
-X-Google-Smtp-Source: AGHT+IHyhQy6s5Y3DetU7drvV/Jt6k2a/JVer8nkxIngCqwQXB60t9pxijU4d6PDGT+1+4hgJoJM7w==
-X-Received: by 2002:a17:907:96ac:b0:a9a:1796:30d0 with SMTP id a640c23a62f3a-a9de63327c3mr537037866b.62.1730050608560;
-        Sun, 27 Oct 2024 10:36:48 -0700 (PDT)
-Received: from [192.168.178.20] (dh207-40-251.xnet.hr. [88.207.40.251])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b3a0887a2sm295713766b.215.2024.10.27.10.36.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 27 Oct 2024 10:36:47 -0700 (PDT)
-Message-ID: <896a538c-1509-4e88-818e-80c2fc0b83da@gmail.com>
-Date: Sun, 27 Oct 2024 18:35:44 +0100
+	s=arc-20240116; t=1730051934; c=relaxed/simple;
+	bh=ZjTQBjIK+/Z1d5oluhWNj+jzL3Z4Ffog4uiVmcdc/jo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=VwvxOcw0/OgDq47Zgnb9K5j1xgqzsGV6uxkGz/j4Z4KxqIA8zT2VebdzCU1H4zoqEmj9AjouRNpxt5+tdCTrWS0+jXXMR0/9Qd7Adhn0BtudDfUtk5eVtnDW+i8pCDM1iswSAv/wKPXHKJuoj01AD3fKW8agMZcTqIhMr26IBgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=MDBz/DCN; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
+	Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=+EYxh3PAF2StjbS6XQUuDIepM4pqjcsAUbbLfrUfkKo=; b=MDBz/DCNOUZvjCqX1ePpLaGvlS
+	aE4Q0gy6ii59jGv7tPRgl4QRR5ZrucmSM6lqdxPNXUEOrWYzqZ3FR2MD/t5CX4oxKWyD+s45KU57c
+	uLRygNdqehYhmO+H5RFCwGs1d4nbKcaT8fe7mqTcqfYU76Car+hrszGUCHAdy1PbzmeNGrHfJdFMA
+	YIW5dU870nlb+iXKIVS8dGfRfIUUpBqDRoZW46aLrx4Dr920YkVPgDcJXWSN7uBaq5iZGvwKADtOT
+	pd5Av7XNj6lyHVpYgekoPvxTasM2mIHEfcVm7/IWBa30e3zxrCEmOKLnaoq57GEzpWi29U8khPHeY
+	4HoveHyw==;
+Received: from [187.36.213.55] (helo=morissey..)
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1t57Wu-00Fn6f-Fb; Sun, 27 Oct 2024 18:58:21 +0100
+From: =?UTF-8?q?Ma=C3=ADra=20Canal?= <mcanal@igalia.com>
+To: Jonathan Corbet <corbet@lwn.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Hugh Dickins <hughd@google.com>,
+	Barry Song <baohua@kernel.org>,
+	David Hildenbrand <david@redhat.com>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Lance Yang <ioworker0@gmail.com>
+Cc: linux-mm@kvack.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-dev@igalia.com,
+	=?UTF-8?q?Ma=C3=ADra=20Canal?= <mcanal@igalia.com>
+Subject: [PATCH 0/3] mm: add more kernel parameters to control mTHP
+Date: Sun, 27 Oct 2024 14:36:36 -0300
+Message-ID: <20241027175743.1056710-1-mcanal@igalia.com>
+X-Mailer: git-send-email 2.46.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: Jan Kara <jack@suse.cz>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-From: Mirsad Todorovac <mtodorovac69@gmail.com>
-Subject: ReiserFS and Mr. Hans Reiser
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Dear all,
+This series introduces three patches related to the kernel parameters
+controlling mTHP. The first patch is a straightforward documentation update,
+correcting the format of the kernel parameter ``thp_anon=``.
 
-Not knowing from which spirit, I am moved to speak with you openly about the ReiserFS.
+The second and third patches focus on controlling THP support for shmem
+via the kernel command line. The second patch introduces a parameter to
+control the global default huge page allocation policy for the internal
+shmem mount. The third patch implements a parameter similar to ``thp_anon=``,
+but for shmem.
 
-I have read the "dancing trees" article on the web by the incriminated programmer. Now,
-what I can say is that it is a work of genius. If it could have improved ext4 speed by
-factor of 8x to 15x, then it is certainly not to be disregarded.
+The goal of these changes is to simplify the configuration of systems that
+rely on mTHP support for shmem. For instance, a platform with a GPU that
+benefits from huge pages may want to enable huge pages for shmem. Having
+these kernel parameters streamlines the configuration process and ensures
+consistency across setups.
 
-A mind is a terrible thing to waste.
+Regarding the third patch, I’m open to suggestions on how to reduce code
+duplication between ``thp_anon=`` and ``thp_shmem=``. While I duplicated
+the ``get_order_from_str()`` function, I realize this isn’t ideal and
+would appreciate advice on where best to place the function.
 
-From the sources I will keep confidential, "to protect the guilty", killing the file
-system could be equivalent of killing Mr. Hans Reiser.
+Let me know your thoughts.
 
-Now, I would instead recommend that he is given the means and the tools to continue his
-work and development, as his rehab activity, as we are meant to be a correction facility,
-not a destruction (Abaddon) facility.
+[1] https://lore.kernel.org/linux-mm/20240820105244.62703-1-21cnbao@gmail.com/
 
-The letter of last Fall year ago shows that Mr. Reiser had kept his talent, which gives
-me the impression that his crime was not willful or was even staged and programmed,
-as the communist secret services admit have often done.
+Best Regards,
+- Maíra
 
-We know that God doens't give His talent to murderers, unless He has purpose preordained
-in His Providence.
+Maíra Canal (3):
+  mm: fix the format of the kernel parameter ``thp_anon=``
+  mm: shmem: control THP support through the kernel command line
+  mm: shmem: override mTHP shmem default with a kernel parameter
 
-Please reconsider this request, which by no means demeans the value the life of Nina
-Reiser neé Sharanova.
+ .../admin-guide/kernel-parameters.txt         |  19 ++-
+ Documentation/admin-guide/mm/transhuge.rst    |  25 ++-
+ mm/shmem.c                                    | 147 +++++++++++++++++-
+ 3 files changed, 186 insertions(+), 5 deletions(-)
 
-This is a dark spot on the Linux kernel community which I am participating for slightly
-longer than two years, so I am a rookie, but remember that the chain is as strong as its
-weakest link, and that Mr. Reiser is still a part of our community, more than I, I suppose,
-so if I owe him one, it will be paid in full.
+-- 
+2.46.2
 
-If not in this world, then in the next.
-
-in Xhris Jesus
-Amen
-
-Mirsad Todorovac
 
