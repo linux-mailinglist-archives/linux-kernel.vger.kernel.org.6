@@ -1,53 +1,95 @@
-Return-Path: <linux-kernel+bounces-383807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B6E09B206B
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 21:36:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF6169B206C
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 21:37:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32E581F2162D
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 20:36:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 906342813B7
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 20:37:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E516A17DFEB;
-	Sun, 27 Oct 2024 20:36:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C7E6183CA9;
+	Sun, 27 Oct 2024 20:36:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="KIbiAX9f"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="UahyYWKu";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="xRiQRviC";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="UahyYWKu";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="xRiQRviC"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C38B538A;
-	Sun, 27 Oct 2024 20:36:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F4E2B640
+	for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 20:36:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730061409; cv=none; b=m6DwQ2QZSgzjEGTrnlN60g5gteffV4+YyOsij+UBz6x815x8UhKagFg+sGh6magQu+9+pjmAH/pfeZJyOM9GnPTcehZVjJ7KrAruabxFUpoxGaSLu3zegauidupCOTbayxFdYfoIImE7vK3a4GavFAeqF/QZds+h7f7XGjtdw88=
+	t=1730061410; cv=none; b=imU1OI25mDtT4XilywZtQMBiEHs8DuLxtNMKvr2hg1h7uFyaLcTe1ZYji9vbAtADpB2JTP1ofLnxj1zm7rYO1PE1GblLCjTJvS2o1nDSKAbKpGUV8qodAa5tk9dbCtP4UHfP7ZHcvLdFveCANVctybJ0xM0/hiW27EiYvoPFUjs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730061409; c=relaxed/simple;
-	bh=Fv3t6WtdreydPQC2HvlJ+b/VMr25i1rzEb8oZDgJwSY=;
+	s=arc-20240116; t=1730061410; c=relaxed/simple;
+	bh=8lGSxMiu7kTs+MDRLuhqwD6ffRpR2SeA+bwLWWRGmbg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TgcZtHs+a010H+ye1M2hzQXNecG8b91JyFecUTIrW1eXIWwJGcpt24aKucYX+kUl+ujYAPxRknw8kVCjcTpqFsQB1RA+Rrp9r1Km5cmvsYpnWB5BboK/DDHaY7If6tj87DWVRtYAce4siozQTVbsFR+xUlMkcg1eKERbIF3aidA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=KIbiAX9f; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=rFAltSKG1m2oenqtoIabRWHZoL/IV/CzYGCkbW9DGGU=; b=KIbiAX9fAQ/YFzvM8+wTx/P3b4
-	Ft5w5WMfk+Cr2xtrmibLZ0c84Ans8HICq0Aut6t9EQiBXAE3uMO4u9rSh1mCYoBCwa1/uIZHxQgJT
-	4GIkGcNTmXxe7N4dr54dCqTjZVj+aUTvO82LxeZT/rT3CWMJdJD7ygzgnFRUOCkwZSl4SvoWY9+6n
-	WWdEX+Kmw7bxcB1WXftoCCKCvAiLDB6LqjfNL+3DE6802oEstsLX/Emq46J48Iyl43u5zeq6I5Ceq
-	vKTrn3CHYOE+7bjBfzEfie7LM9riVe+0W00gMRmxbLWz+MWispVbngD9PE4Z5GvWXH5V9LVJt98qy
-	jXkNabUg==;
-Received: from [187.36.213.55] (helo=[192.168.1.103])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1t59zt-00Fprx-DZ; Sun, 27 Oct 2024 21:36:25 +0100
-Message-ID: <9126583d-5865-4dcb-afe5-e846cccbea4c@igalia.com>
-Date: Sun, 27 Oct 2024 17:36:19 -0300
+	 In-Reply-To:Content-Type; b=HYv16Ki9R6CxmTMrqDZXkVgoc7wabyaf5V3xh1wAwgyDZo4Q2ZupKftFmWLmsEGNXS8De/sYiJce/V2SgdRPNxhNqRY7yegyO6GUpxbSzHo9MHeQ7fLNI9JmZVJWXiqNPaZD0Rxr0BJH8U7ASvwWku+HLG0Ze2CFtQuCBr26NOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=UahyYWKu; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=xRiQRviC; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=UahyYWKu; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=xRiQRviC; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 163251FD3B;
+	Sun, 27 Oct 2024 20:36:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1730061400; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Xo3fK6jK7RwawaknQmBqXDY5LmaOT9YX2utZxxEQwCM=;
+	b=UahyYWKulnKW3Zu2Vw9TrFgdLtCtUiliDk6/8bHvn2XKvOHjpCVl+V0eDoIJTIK50i2j3s
+	eGv/aH2hcs5uxmSy+b2GIN+f0p0DfBfjE3ZFDf3Ud920ZRCgrns1cuVXkDPl8VUygXxnbI
+	bV41d+M8yGkNvJysOgOagmX+RAlYdZw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1730061400;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Xo3fK6jK7RwawaknQmBqXDY5LmaOT9YX2utZxxEQwCM=;
+	b=xRiQRviCTxPM6FhwQDPI+213yFEpZ3QxusZfA0Nkb6ZXNPSww+gkcC0X4wDlbRWdCPgnHx
+	kFAZqgw+1HT1fjCg==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=UahyYWKu;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=xRiQRviC
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1730061400; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Xo3fK6jK7RwawaknQmBqXDY5LmaOT9YX2utZxxEQwCM=;
+	b=UahyYWKulnKW3Zu2Vw9TrFgdLtCtUiliDk6/8bHvn2XKvOHjpCVl+V0eDoIJTIK50i2j3s
+	eGv/aH2hcs5uxmSy+b2GIN+f0p0DfBfjE3ZFDf3Ud920ZRCgrns1cuVXkDPl8VUygXxnbI
+	bV41d+M8yGkNvJysOgOagmX+RAlYdZw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1730061400;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Xo3fK6jK7RwawaknQmBqXDY5LmaOT9YX2utZxxEQwCM=;
+	b=xRiQRviCTxPM6FhwQDPI+213yFEpZ3QxusZfA0Nkb6ZXNPSww+gkcC0X4wDlbRWdCPgnHx
+	kFAZqgw+1HT1fjCg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id EF5D7137D4;
+	Sun, 27 Oct 2024 20:36:39 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id wu/MOVekHmc3cQAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Sun, 27 Oct 2024 20:36:39 +0000
+Message-ID: <8459b884-5877-41bd-a882-546e046b9dad@suse.cz>
+Date: Sun, 27 Oct 2024 21:36:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,95 +97,144 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] mm: fix the format of the kernel parameter
- ``thp_anon=``
-To: Barry Song <baohua@kernel.org>
-Cc: Jonathan Corbet <corbet@lwn.net>,
- Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins <hughd@google.com>,
- David Hildenbrand <david@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>, Lance Yang
- <ioworker0@gmail.com>, linux-mm@kvack.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel-dev@igalia.com
-References: <20241027175743.1056710-1-mcanal@igalia.com>
- <20241027175743.1056710-2-mcanal@igalia.com>
- <CAGsJ_4xPr3X_EXh73c4gN-cUSxaXZ-XR=_VNE750zNH61nyR-Q@mail.gmail.com>
+Subject: Re: [PATCH mm-unstable v2] mm/page_alloc: keep track of free
+ highatomic
 Content-Language: en-US
-From: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>
-In-Reply-To: <CAGsJ_4xPr3X_EXh73c4gN-cUSxaXZ-XR=_VNE750zNH61nyR-Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To: Yu Zhao <yuzhao@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Johannes Weiner <hannes@cmpxchg.org>, Zi Yan <ziy@nvidia.com>,
+ Mel Gorman <mgorman@techsingularity.net>,
+ Matt Fleming <mfleming@cloudflare.com>, David Rientjes
+ <rientjes@google.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ Link Lin <linkl@google.com>
+References: <20241026033625.2237102-1-yuzhao@google.com>
+ <37a28ef7-e477-40b0-a8e4-3d74b747e323@suse.cz>
+ <CAOUHufaS-dGAPGs1Y1=imW_nusaTDeysN3qfJc9-76DBVEHScQ@mail.gmail.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ EP+ylKVEKb0Q2A==
+In-Reply-To: <CAOUHufaS-dGAPGs1Y1=imW_nusaTDeysN3qfJc9-76DBVEHScQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 163251FD3B
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.cz:dkim,suse.cz:mid]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.51
+X-Spam-Flag: NO
 
-Hi Barry,
-
-On 27/10/24 16:52, Barry Song wrote:
-> On Mon, Oct 28, 2024 at 1:58 AM Maíra Canal <mcanal@igalia.com> wrote:
+On 10/27/24 21:17, Yu Zhao wrote:
+> On Sun, Oct 27, 2024 at 1:53 PM Vlastimil Babka <vbabka@suse.cz> wrote:
 >>
->> If we add ``thp_anon=32,64KB:always`` to the kernel command line, we
->> will see the following error:
+>> On 10/26/24 05:36, Yu Zhao wrote:
+>> > OOM kills due to vastly overestimated free highatomic reserves were
+>> > observed:
+>> >
+>> >   ... invoked oom-killer: gfp_mask=0x100cca(GFP_HIGHUSER_MOVABLE), order=0 ...
+>> >   Node 0 Normal free:1482936kB boost:0kB min:410416kB low:739404kB high:1068392kB reserved_highatomic:1073152KB ...
+>> >   Node 0 Normal: 1292*4kB (ME) 1920*8kB (E) 383*16kB (UE) 220*32kB (ME) 340*64kB (E) 2155*128kB (UE) 3243*256kB (UE) 615*512kB (U) 1*1024kB (M) 0*2048kB 0*4096kB = 1477408kB
+>> >
+>> > The second line above shows that the OOM kill was due to the following
+>> > condition:
+>> >
+>> >   free (1482936kB) - reserved_highatomic (1073152kB) = 409784KB < min (410416kB)
+>> >
+>> > And the third line shows there were no free pages in any
+>> > MIGRATE_HIGHATOMIC pageblocks, which otherwise would show up as type
+>> > 'H'. Therefore __zone_watermark_unusable_free() underestimated the
+>> > usable free memory by over 1GB, which resulted in the unnecessary OOM
+>> > kill above.
+>> >
+>> > The comments in __zone_watermark_unusable_free() warns about the
+>> > potential risk, i.e.,
+>> >
+>> >   If the caller does not have rights to reserves below the min
+>> >   watermark then subtract the high-atomic reserves. This will
+>> >   over-estimate the size of the atomic reserve but it avoids a search.
+>> >
+>> > However, it is possible to keep track of free pages in reserved
+>> > highatomic pageblocks with a new per-zone counter nr_free_highatomic
+>> > protected by the zone lock, to avoid a search when calculating the
 >>
->> [    0.000000] huge_memory: thp_anon=32,64K:always: error parsing string, ignoring setting
->>
->> This happens because the correct format isn't ``thp_anon=<size>,<size>[KMG]:<state>```,
->> as [KMG] must follow each number to especify its unit. So, the correct
->> format is ``thp_anon=<size>[KMG],<size>[KMG]:<state>```.
+>> It's only possible to track this reliably since the "mm: page_alloc:
+>> freelist migratetype hygiene" patchset was merged, which explains why
+>> nr_reserved_highatomic was used until now, even if it's imprecise.
 > 
-> what if 32768,64K: always?
+> I just refreshed my memory by quickly going through the discussion
+> around that series and didn't find anything that helps me understand
+> the above. More pointers please?
 
-``32768,64K:always`` works. From the kernel parameters documentation, I
-see that:
+For example:
 
-"Finally, the [KMG] suffix is commonly described after a number of
-kernel parameter values. These ‘K’, ‘M’, and ‘G’ letters represent the
-_binary_ multipliers ‘Kilo’, ‘Mega’, and ‘Giga’, equaling 2^10, 2^20,
-and 2^30 bytes respectively. Such letter suffixes can also be entirely
-omitted"
+- a page is on pcplist in MIGRATE_MOVABLE list
+- we reserve its pageblock as highatomic, which does nothing to the page on
+the pcplist
+- page above is flushed from pcplist to zone freelist, but it remembers it
+was MIGRATE_MOVABLE, merges with another buddy/buddies from the
+now-highatomic list, the resulting order-X page ends up on the movable
+freelist despite being in highatomic pageblock. The counter of free
+highatomic is now wrong wrt the freelist reality
 
-AFAIU this means that [KMG] can be omitted if we use bytes. But if we
-don't use bytes, it cannot be omitted.
-
-Best Regards,
-- Maíra
-
-> 
->>
->> Therefore, adjust the documentation to reflect the correct format of the
->> parameter ``thp_anon=``.
->>
->> Fixes: dd4d30d1cdbe ("mm: override mTHP "enabled" defaults at kernel cmdline")
->> Signed-off-by: Maíra Canal <mcanal@igalia.com>
->> ---
->>   Documentation/admin-guide/kernel-parameters.txt | 2 +-
->>   Documentation/admin-guide/mm/transhuge.rst      | 2 +-
->>   2 files changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
->> index 1518343bbe22..1666576acc0e 100644
->> --- a/Documentation/admin-guide/kernel-parameters.txt
->> +++ b/Documentation/admin-guide/kernel-parameters.txt
->> @@ -6688,7 +6688,7 @@
->>                          0: no polling (default)
->>
->>          thp_anon=       [KNL]
->> -                       Format: <size>,<size>[KMG]:<state>;<size>-<size>[KMG]:<state>
->> +                       Format: <size>[KMG],<size>[KMG]:<state>;<size>[KMG]-<size>[KMG]:<state>
->>                          state is one of "always", "madvise", "never" or "inherit".
->>                          Control the default behavior of the system with respect
->>                          to anonymous transparent hugepages.
->> diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
->> index 203ba7aaf5fc..745055c3dc09 100644
->> --- a/Documentation/admin-guide/mm/transhuge.rst
->> +++ b/Documentation/admin-guide/mm/transhuge.rst
->> @@ -303,7 +303,7 @@ control by passing the parameter ``transparent_hugepage=always`` or
->>   kernel command line.
->>
->>   Alternatively, each supported anonymous THP size can be controlled by
->> -passing ``thp_anon=<size>,<size>[KMG]:<state>;<size>-<size>[KMG]:<state>``,
->> +passing ``thp_anon=<size>[KMG],<size>[KMG]:<state>;<size>[KMG]-<size>[KMG]:<state>``,
->>   where ``<size>`` is the THP size (must be a power of 2 of PAGE_SIZE and
->>   supported anonymous THP)  and ``<state>`` is one of ``always``, ``madvise``,
->>   ``never`` or ``inherit``.
->> --
->> 2.46.2
->>
-
+The series has addressed various scenarios like that, where page can end up
+on the wrong freelist.
 
