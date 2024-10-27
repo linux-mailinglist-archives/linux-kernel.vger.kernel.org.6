@@ -1,151 +1,116 @@
-Return-Path: <linux-kernel+bounces-383715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4ADDD9B1F72
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 18:44:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21C469B1F75
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 18:48:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E068C28140D
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 17:44:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49ADD1C208B2
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 17:48:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41C3B1E517;
-	Sun, 27 Oct 2024 17:44:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 081871714A4;
+	Sun, 27 Oct 2024 17:48:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ru1BjncU"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YTs+46ne"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C2DF152E1C
-	for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 17:44:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF3684C83;
+	Sun, 27 Oct 2024 17:48:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730051058; cv=none; b=fytdH6hSzjzfXTUNEPwI1MTZ5U2Xiff+6TA9HozUqAPktTSMiflkTEz3LDNyjZoK7vsNI66f1ltwIzmrRSXCf4LFsn/0UsEdoH/WqIlmec1duxe4rP/BIYnlw557wI8zLg9UQAAK9FTegAtNrqvMgFHh3Luyc/BI083Gs3WB5pc=
+	t=1730051321; cv=none; b=pilehPF+2/tOT0LKEftA7jO6ebrEbpqsXh6V5jmgYSXQqtqa1BHq+h9y2rDMnzxQxqKbALELdq5GL5UdrVoWUShgwK1H8NRS8t0Ric4OwFHSqRoBvcRLS8JDSr3XQdUAozYTaB4RexcmSIQf/H2/mQL0V9izQEmlQra4PQjODYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730051058; c=relaxed/simple;
-	bh=MdunEshAHQ53TVlHzQQbbg3QFVE1V08Xf4kR7qvr/rg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DHPy9stVKHqJIGuXH6c0/ke5mwCiFE632atjzbYlULknQxVLlfVGxuPCA3vtZUkjAcSglEPcKwtn0Zd8rPxcN6B7DTR4RJGDrhYAbdjF4anS3ifDtMt5PVIhwPc8J7rm5iwbAUAx8hBgnd0u+7lm71osFtt+i9Hr2n1m6XhhRnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ru1BjncU; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-539f72c8fc1so4236086e87.1
-        for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 10:44:16 -0700 (PDT)
+	s=arc-20240116; t=1730051321; c=relaxed/simple;
+	bh=0vUHzi67pMzq1RGaGQjqttjoI06vRvun+pQ7lZ+m81Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DolcNjFQYt5FZ9m9deooz8EzxpG9yvn6Jhw+isa2xNHSBitH62fR3mWQymsMc6N9mmAPxro4uL/yzD4GfYj2ydQcfjnfgSF7etPgZ0PHH22Q2IkRJPALHe/va1NoFPWqEGlKkWtkTNSS4F2RRgilOd0xMNH73geN/xqMFdcJnII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YTs+46ne; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2e2cc469c62so2534610a91.2;
+        Sun, 27 Oct 2024 10:48:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730051055; x=1730655855; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=N63/GxDEd0wfP94caNCMDYpxPCrMq7BQqlGivmRDQpI=;
-        b=ru1BjncU7A48bGD0XCZS05ySvFPHgowOYhwlbBI4LKwI+jOLvfD8RuknPyxzsxFl38
-         xP1VQD+JxI+vRj5/pk4Lr6PCj3j7ISNWtcMLFnHO3DcNRm7zZknKLi9OcZOaneRVPiDQ
-         iLRbAIf3CmV4T5RJxP71NKMiO6cVhZmiuy8wz5IiflfmfoTQvn8mj6ohGzkO1IsGGFJX
-         Td2CEWmYKJpMKfKEx+Ri1OEuJdgWhgtCbHdhZsHW6s4tlnQczLZv9Qgv+W+wY+QcV3EC
-         05zLCpVGeUOfjRznntef7e+27z/yf6kV0dYrV2dn85R9lZmDaaGUDZqlaDhmVzvSxcHY
-         QG6A==
+        d=gmail.com; s=20230601; t=1730051319; x=1730656119; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=fW7cYVNATA0lggd3viDmK/yYwUGBKvU/eStDk3KNt3Y=;
+        b=YTs+46neSL09qHdUfA4Rt/hn7ze9+yIRbDrhjgPGdGUE4wCx4U8nQu8vtOiBF677PK
+         aBE3kSMN7FKwljAHd0IHlWcKDRIvC2J/SnIJmIS+yV+RIN/QMTk6U2yQJf2WaCxKb2mS
+         L+92RbvM9T6qNBxP+9KuYnTIDkooCNSWYCCb0nJ3GnHXJLpdXViWtK9MPt7L9Q8GHdwy
+         fNfSnLiPZt6Lt3ezT/nQT+fPnuk8QK2l9iObXMZ1xic0P3NeXqQc57EMCohtDc8Qwwf6
+         X73goeuCxjgWc6Lv9FwAvJKjv2kBNdqSEYT2OYemnFceKtBxrP+Yt1NrTH9USG/tM6oY
+         LliA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730051055; x=1730655855;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=N63/GxDEd0wfP94caNCMDYpxPCrMq7BQqlGivmRDQpI=;
-        b=oxFDpGmkE8UTHqwSR4ntr0hPME9EBBl7pQujPiI2SRMkHDist1g5VldqXUD59HydEz
-         GaaU6AqlYaWxJG+Wp5JXgDz7dLSNqOPD2OngW8VkBNGxX6ZtgRE751pr1T5EVDTbJ5Ve
-         46L31RzBuAAZ+l/gGch6DHv3y3ATlYArqJbHmM3578CmYqNGEeHNYOPXXv+fNYJiSLH0
-         U3yLQw+h7qZBZjorhYLWjMTakS/IeszeQAyLAbvN3AJW68UIKEoLrLzIQ+kmXtbjoXc3
-         DIoUobtzOReZlBogNdH490OELoxEIyHVj51wM+STHBnY21bRdXC8S8/RHhdpMTHvq2TP
-         m4yg==
-X-Forwarded-Encrypted: i=1; AJvYcCXtwYkm76bxjqxyE8zwjOh9QhrGe20/0rLjPPKR6edAIFqesiSL9nAhPrDVjKVXFPYFBd1gOOFbB0mOo+k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFNlLA6iVGPJqlMs+wF9kpfTONDNX0NNNx/MeTVilbO0AMBBwO
-	wFT1uiL+IXAGUOxn1FBL3kUBzzCEHCNBcATRz+0CM1KQ1Meze/eyTQBOPis0/dM=
-X-Google-Smtp-Source: AGHT+IEi/BxS5gMf/iVtcnfxqJkFsy//exVzbziM/ENyiYlUaB6IIu+67ZYUw4eK0ffqLydC7BaiXQ==
-X-Received: by 2002:a05:6512:3404:b0:53b:27ba:2d11 with SMTP id 2adb3069b0e04-53b348cb2cbmr2582585e87.16.1730051054730;
-        Sun, 27 Oct 2024 10:44:14 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53b2e1f4322sm825710e87.297.2024.10.27.10.44.13
+        d=1e100.net; s=20230601; t=1730051319; x=1730656119;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fW7cYVNATA0lggd3viDmK/yYwUGBKvU/eStDk3KNt3Y=;
+        b=EjtVp6mAwi2PyGs7Iqx/bWStU9wxDMexzaV/KZ6SOa8Ordx9D6U6X4a5qhm6IpCrxO
+         ZEG1Rnr8L4M6gxHgIAIXBn25Tg2aUc5T5r0/OVnuviXZHW8f4qB2g8sn5NY37zHDxn+x
+         mHdkVfdM0udWHNUt2d73IxSZg1iwomlSeoVMGKyT7P6fGRPoBJl8f7sT0Vm1nmf3JLkG
+         0rs5RGYvlMTNTebpgLPIcBH04I/Ny/sdY17aTKJiJLyepXiFQv2Ttnuure1KzohlDQBT
+         9YImh6lGt7Vs85zq48Ri/oAQIk/kB9XN2u+D5JiRs05EQrqcQXWdwHofZZZmAAloypmG
+         MKMw==
+X-Forwarded-Encrypted: i=1; AJvYcCUogD2H1BT2/giXn05r8yi9TYX8v4Pc9/l1DBdzXe9vIPF1eIV1qz3KOcHTkhE78s0TnhZ/102b4VWQNg==@vger.kernel.org, AJvYcCWEZc0nitx0w+QGLixQE8D4gBzYrL8VP0n1X3n+TKJhV8dN9Vnax6+hkdj4SjsOb9xaEyuIz7RRpHCS4KY7@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/fHdhsnBxU7JI2qxCYAyAqypsZ6e0DG7DwkGUuBSFiLk7CuNG
+	vGZNRTEbpssWoXfh8erXVTq1j72UjX+dWYVwxt4RnsuotGEp5ccL
+X-Google-Smtp-Source: AGHT+IG7B+tHpeFxE3xZho5H08dMcpxyv6wmeiyetl8XMdItUQ43e7sRvJB0hxPiiRQlttWz7cYwcA==
+X-Received: by 2002:a17:90a:3985:b0:2e2:991c:d7a6 with SMTP id 98e67ed59e1d1-2e8f1073411mr7098926a91.19.1730051318889;
+        Sun, 27 Oct 2024 10:48:38 -0700 (PDT)
+Received: from localhost.localdomain (108-228-232-20.lightspeed.sndgca.sbcglobal.net. [108.228.232.20])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7edc867a2ffsm4251913a12.28.2024.10.27.10.48.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 27 Oct 2024 10:44:13 -0700 (PDT)
-Date: Sun, 27 Oct 2024 19:44:11 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Krishna Kurapati <quic_kriskura@quicinc.com>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, quic_ppratap@quicinc.com, 
-	quic_jackp@quicinc.com
-Subject: Re: [PATCH v2 2/2] arm64: dts: qcom: Enable USB controllers for
- QCS8300
-Message-ID: <fhgw2re45vn63lqox7vikg3hcak3wjf4wududebw7ow2enrqiq@inajq4l5qqir>
-References: <20241011074619.796580-1-quic_kriskura@quicinc.com>
- <20241011074619.796580-3-quic_kriskura@quicinc.com>
- <xijjs445fzeuzbj2bg3ziwlzenrk4wo5zlyze4j5mldb444oj7@73ynic4xqfdj>
- <720aa372-a04b-4b0f-b2da-3be37a319ec9@quicinc.com>
+        Sun, 27 Oct 2024 10:48:38 -0700 (PDT)
+From: "Derek J. Clark" <derekjohn.clark@gmail.com>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Jean Delvare <jdelvare@suse.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Cryolita PukNgae <cryolitia@gmail.com>,
+	"Derek J . Clark" <derekjohn.clark@gmail.com>,
+	linux-hwmon@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [RFC] hwmon: pwm_enable clarification
+Date: Sun, 27 Oct 2024 10:48:14 -0700
+Message-ID: <20241027174836.8588-1-derekjohn.clark@gmail.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <720aa372-a04b-4b0f-b2da-3be37a319ec9@quicinc.com>
+Content-Transfer-Encoding: 8bit
 
-On Sun, Oct 27, 2024 at 11:59:44AM +0530, Krishna Kurapati wrote:
-> 
-> 
-> On 10/26/2024 11:06 PM, Dmitry Baryshkov wrote:
-> > On Fri, Oct 11, 2024 at 01:16:19PM +0530, Krishna Kurapati wrote:
-> > > Enable primary USB controller on QCS8300 Ride platform. The primary USB
-> > > controller is made "peripheral", as this is intended to be connected to
-> > > a host for debugging use cases.
-> > > 
-> > > Signed-off-by: Krishna Kurapati <quic_kriskura@quicinc.com>
-> > > ---
-> > >   arch/arm64/boot/dts/qcom/qcs8300-ride.dts | 23 +++++++++++++++++++++++
-> > >   1 file changed, 23 insertions(+)
-> > > 
-> > > diff --git a/arch/arm64/boot/dts/qcom/qcs8300-ride.dts b/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
-> > > index 7eed19a694c3..3e925228379c 100644
-> > > --- a/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
-> > > +++ b/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
-> > > @@ -265,3 +265,26 @@ &ufs_mem_phy {
-> > >   	vdda-pll-supply = <&vreg_l5a>;
-> > >   	status = "okay";
-> > >   };
-> > > +
-> > > +&usb_1_hsphy {
-> > > +	vdda-pll-supply = <&vreg_l7a>;
-> > > +	vdda18-supply = <&vreg_l7c>;
-> > > +	vdda33-supply = <&vreg_l9a>;
-> > > +
-> > > +	status = "okay";
-> > > +};
-> > > +
-> > > +&usb_qmpphy {
-> > > +	vdda-phy-supply = <&vreg_l7a>;
-> > > +	vdda-pll-supply = <&vreg_l5a>;
-> > > +
-> > > +	status = "okay";
-> > > +};
-> > > +
-> > > +&usb_1 {
-> > > +	status = "okay";
-> > > +};
-> > > +
-> > > +&usb_1_dwc3 {
-> > > +	dr_mode = "peripheral";
-> > > +};
-> > 
-> > So, can it be used as a USB host controller / connector? What needs to
-> > be done in such a case?
-> > 
-> Adding vbus boost pinctrl and changing dr_mode to host must be enough for
-> this case.
+Greetings all,
 
-Could you please mention those either in the commie message or in the
-comment before the board DT file?
+I am working with Cryolita to fix up the GPD driver she submitted recently:
+https://lore.kernel.org/all/20240718-gpd_fan-v4-0-116e5431a9fe@gmail.com/
 
--- 
-With best wishes
-Dmitry
+We are currently having a discussion about the meaning of this part of the
+documentation and are seeking some guidance from upstream.
+
+> pwm[1-*]_enable
+>     	Fan speed control method:
+>     	0: no fan speed control (i.e. fan at full speed)
+>     	1: manual fan speed control enabled (using pwm[1-*])
+>     	2+: automatic fan speed control enabled
+>     	Check individual chip documentation files for automatic mode
+>     	details.
+>     	RW
+
+In oxp-sensors we took 0 to mean "no kernel control" so a setting of 0 is
+technically "automatic" but fully controlled by the hardware with no
+interaction from the driver. In her original driver draft she had taken this
+literally to have the driver set the fan speed to 100% on this setting rather
+then give back control to the hardware. My question is simply what is the
+correct interpretation here? Ideally I would like to see this interface match
+as existing userspace software is expecting 0 as hardware controlled and 1 as
+manually controlled, but we also want to ensure this is correct before we
+submit a v5.
+
+Thank you for your time,
+Derek
 
