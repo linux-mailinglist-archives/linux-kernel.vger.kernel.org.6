@@ -1,238 +1,303 @@
-Return-Path: <linux-kernel+bounces-383694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FB2A9B1F2D
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 17:09:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E64F9B1F31
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 17:24:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56B452817DF
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 16:09:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 026611F21197
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 16:24:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A72A917279E;
-	Sun, 27 Oct 2024 16:09:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0000317557C;
+	Sun, 27 Oct 2024 16:24:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="KTXw6Vqo"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="SjjU2v0D"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D35F2570;
-	Sun, 27 Oct 2024 16:09:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A5C12570;
+	Sun, 27 Oct 2024 16:23:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730045385; cv=none; b=DCLsjPCG1BsXQSTMLn+4XfYET1d9IID8qu1FSRBkPWNvXae1POZtAPl4fYGScsseFp1JklN6NvFARKDiL7i4AoQs3+WsIjc6eKQTS2iT0T0Y2H/T05gzAO2IgCZohUL3pKLY3iskfBpch++c/ySyR2Db+Vx3xzGT+9GwXKyJqZQ=
+	t=1730046241; cv=none; b=rXLK8fWnNYTJK8FTvUcZpiPwwDR5tSMwaj8AVLylbG9E30obKOCjaIbJ4kqSMCMHXDSW7gkQpE1vpZWgLKMagoRYNS0jGPuMVNdA8oJqf01fT0PJLl/RRgGMZmT21i8wHNQM+2+Qm5F10D09TXg+X+EJ2dtGCzIiDev41SDXIyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730045385; c=relaxed/simple;
-	bh=AaPU9tcS+fBbu8IfyYbDwrKXzQUMCDGYYgyCYWt7ZRE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gC2lpKHdRDLM5wTVCyVNBH6lFx7nFIvilPqzwaD4e+FtJy5G7a4ORd0bebNTO/DSWr0aWg/sQt0TOl+1R+Hq3h1pKQdaT0zfoPeLx8IHAY+sW44HRMqzIhjoABDvBam2GPHdoFjKTB8Z93NO9I5OL1YRfUeFlIXriO/Pms+8zeI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=KTXw6Vqo; arc=none smtp.client-ip=212.227.15.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
-	s=s31663417; t=1730045366; x=1730650166; i=wahrenst@gmx.net;
-	bh=P4sc1ZKQ0Pwmu3U7pr1eqvwAGQj//URq6GmindE1cA0=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=KTXw6Vqoml5RYS1IDDO9sUQlSbtD2O2UcBj4f+v3w/9IoNWvJY+FwSbLCc5Vd3X+
-	 zk/xHxZD16rnEGIh7IcHBBz/28gmdkApv7CtaXupKozzngUKZiga2R/M0wqLxDSVB
-	 UZFMrdWOA5VikFlzsJ83ZVOSdla54+Sg8gpDKnoFrTJb6eUIey7SJZCZm0TvdzssE
-	 uszFJdyn4OOL2JofmQsHOkDOmQ5Euz6PN3EVnxZK83t93TiiT6JEC79wDJFZZuUKM
-	 5Qo7N28wGV/z0O1NnZd7YU+WLfWygvguToGfzs4ZOntPbsLzLUqzloo/my9xNBKRY
-	 3M80fDP/lQaRXPQv1A==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.1.105] ([37.4.248.43]) by mail.gmx.net (mrgmx005
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1N9Mta-1tzEhu12Oa-011pHo; Sun, 27
- Oct 2024 17:09:26 +0100
-Message-ID: <492d5691-661d-4dc7-891c-b515ecdd35da@gmx.net>
-Date: Sun, 27 Oct 2024 17:09:25 +0100
+	s=arc-20240116; t=1730046241; c=relaxed/simple;
+	bh=rqba3ZcyIxIxvJgGj6KmTFTTJcmfH8yh6pSVgGLT9PE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CIK1RPp1d4E1yC9rK+yAjIRc0SJzxGdyj7YQ+tCvpnyd4kQZQCskq9jzikUzbxclEZyz2+mE2Iv9SnE2eBfN8znTSBiy8zSytt7xifhaabbE24+BcvtuR1i3OvI+EP1/czaXxLr+MqEGCv4qyS5pL/2ORqRo1Tp0eWwRQO2/M1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=SjjU2v0D; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 0D1EC7E4;
+	Sun, 27 Oct 2024 17:23:54 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1730046235;
+	bh=rqba3ZcyIxIxvJgGj6KmTFTTJcmfH8yh6pSVgGLT9PE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SjjU2v0DqbyGrmmxM1z+oHBRn617efLq/5Tb7yR6cLhc+eNk+JZNTT7mqmNsrvmUT
+	 9Y5GmWjHPYmwXvFAh87lA5hiqBei3wPOCfpBvZol85Ehmp+e6OVTCO/HqgTrMsSa8F
+	 NGwuKlXR76Qy3orTAeowq++F60LRfZO7bo4HrOes=
+Date: Sun, 27 Oct 2024 18:23:50 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Herve Codina <herve.codina@bootlin.com>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Marek Vasut <marex@denx.de>,
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH 2/2] drm: bridge: ti-sn65dsi83: Add error recovery
+ mechanism
+Message-ID: <20241027162350.GA15853@pendragon.ideasonboard.com>
+References: <20241024095539.1637280-1-herve.codina@bootlin.com>
+ <20241024095539.1637280-3-herve.codina@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] soc: imx: Add SoC device register for i.MX9
-To: alice.guo@oss.nxp.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
- kernel@pengutronix.de, festevam@gmail.com
-Cc: imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, "alice.guo" <alice.guo@nxp.com>
-References: <20241027112557.3866257-1-alice.guo@oss.nxp.com>
-Content-Language: en-US
-From: Stefan Wahren <wahrenst@gmx.net>
-In-Reply-To: <20241027112557.3866257-1-alice.guo@oss.nxp.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:MD+CMwNShX6wVY/fNeDX7wyp+/clf3CDQ6bfYt7gLl6AMMg2E8r
- C9Id/du/M99gWadJ0P97HZGnP87MiUttXqLTIkJWX4Wd0A8WBAHqoWJP6Uyn8jJEJ5OnRTJ
- Qsp6oIxKe9TfZzNbXtaVR7fep63RbJjnGKnuoKamPksKVaAwpoXrQjK1OBi4jhBCW5La4Lx
- F9G3YPB+/cowL+7fHg49w==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:+aIhF67vFyk=;8xUBFUp4Ykxl5GRrk9Ms2WiFYpT
- ApsEwg+iWw8mjvyOglb5laNvVQFD0jWbTYvyJ9AmkGcXyFVWXf3Sxva+ZV0bWSQNyhIXNVAbT
- 7vhHID2Srr5LA7LvBqcxtusByptIMfV3fwQkHqXdrkQ7E+uLj3K7/T4yYCRzABZDqa2Vc6+La
- NCBbhiaw1nE3otPruVnBZDeDwfzF3FXO1JXHujcm5kz3gJ9gqNtQSqqDY1yTXPPrM283PCsRS
- E6xf8kK6Vjr/iHsMWtN0xZl1TMp4PF1+Nj77HmHbbE1A2TbYnPABBmpEYKrR4Meojuw1vbOvM
- 2Sq1IgjUHG0dghIKDX8zHXNbuWMoDOAqXcLDLqMZEbj4Vz/990w6wvpjavcyXcHXCMqaFWayp
- o9utVKKF5d9Y3d+2HD52tsnXmK1R8aF8Dvg4bM8rn/VeZDojoFxhAazGnd6MCLjFvJOj5iz2u
- 2hlwGiN2NiUjURpA2uyfy4yYafGvC4T2vzHkAhVW9UKxDGN5slcQ6HZBH2MLcKgeNbmY0KnuA
- NVW5uDRsFTPDtrFD6nJhqSSMNZ59lAv0lzW1ASk0b+3hE+moARLGpo4q3Xm8bfgGZMVeeYRyj
- o/TYJJG3n/Hpq2q0er3AfeGdFU5HidrVWnaAZEwel4Dq25/D4G6HYYUiNZUiWWZ9H7C4dTh4J
- xIkw7QhIfrhrtL2VA5ll6cOPlkdCTXfVaHZDo+wqPUBxRpP8jTn3cs+h5FDhNW3jag3nzQeq+
- vOJxG3o2dXpjldfGjJLPKvtREucnCMe/taX04THiZGD74NsEucAGmA+Kn3/6bQdO50CuQfnkk
- GxPvmFM0BfJ8hpSjDziIoVWA==
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241024095539.1637280-3-herve.codina@bootlin.com>
 
-Hi Alice,
-
-Am 27.10.24 um 12:25 schrieb alice.guo@oss.nxp.com:
-> From: "alice.guo" <alice.guo@nxp.com>
->
-> i.MX9 SoCs have SoC ID, SoC revision number and chip unique identifier
-> which are provided by the corresponding ARM trusted firmware API. This
-> patch intends to use SMC call to obtain these information and then
-> register i.MX9 SoC as a device.
->
-> Signed-off-by: alice.guo <alice.guo@nxp.com>
+On Thu, Oct 24, 2024 at 11:55:38AM +0200, Herve Codina wrote:
+> In some cases observed during ESD tests, the TI SN65DSI83 cannot recover
+> from errors by itself. A full restart of the bridge is needed in those
+> cases to have the bridge output LVDS signals again.
+> 
+> The TI SN65DSI83 has some error detection capabilities. Introduce an
+> error recovery mechanism based on this detection.
+> 
+> The errors detected are signaled through an interrupt. On system where
+> this interrupt is not available, the driver uses a polling monitoring
+> fallback to check for errors. When an error is present, the recovery
+> process is launched.
+> 
+> Restarting the bridge needs to redo the initialization sequence. This
+> initialization sequence has to be done with the DSI data lanes driven in
+> LP11 state. In order to do that, the recovery process resets the entire
+> pipeline.
+> 
+> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
 > ---
->   drivers/soc/imx/Makefile   |   2 +-
->   drivers/soc/imx/soc-imx9.c | 102 +++++++++++++++++++++++++++++++++++++
->   2 files changed, 103 insertions(+), 1 deletion(-)
->   create mode 100644 drivers/soc/imx/soc-imx9.c
->
-> diff --git a/drivers/soc/imx/Makefile b/drivers/soc/imx/Makefile
-> index 3ad321ca608a..ca6a5fa1618f 100644
-> --- a/drivers/soc/imx/Makefile
-> +++ b/drivers/soc/imx/Makefile
-> @@ -3,4 +3,4 @@ ifeq ($(CONFIG_ARM),y)
->   obj-$(CONFIG_ARCH_MXC) +=3D soc-imx.o
->   endif
->   obj-$(CONFIG_SOC_IMX8M) +=3D soc-imx8m.o
-> -obj-$(CONFIG_SOC_IMX9) +=3D imx93-src.o
-> +obj-$(CONFIG_SOC_IMX9) +=3D imx93-src.o soc-imx9.o
-> diff --git a/drivers/soc/imx/soc-imx9.c b/drivers/soc/imx/soc-imx9.c
-> new file mode 100644
-> index 000000000000..7e8a8b2efa61
-> --- /dev/null
-> +++ b/drivers/soc/imx/soc-imx9.c
-> @@ -0,0 +1,102 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +/*
-> + * Copyright 2024 NXP
-> + */
-> +
-> +#include <linux/arm-smccc.h>
-> +#include <linux/init.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/slab.h>
-> +#include <linux/sys_soc.h>
-> +
-> +#define IMX_SIP_GET_SOC_INFO	0xc2000006
-> +#define SOC_ID(x)		(((x) & 0xFFFF) >> 8)
-> +#define SOC_REV_MAJOR(x)	((((x) >> 28) & 0xF) - 0x9)
-> +#define SOC_REV_MINOR(x)	(((x) >> 24) & 0xF)
-> +
-> +static int imx9_soc_device_register(void)
+>  drivers/gpu/drm/bridge/ti-sn65dsi83.c | 128 ++++++++++++++++++++++++++
+>  1 file changed, 128 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/bridge/ti-sn65dsi83.c b/drivers/gpu/drm/bridge/ti-sn65dsi83.c
+> index 96e829163d87..22975b60e80f 100644
+> --- a/drivers/gpu/drm/bridge/ti-sn65dsi83.c
+> +++ b/drivers/gpu/drm/bridge/ti-sn65dsi83.c
+> @@ -35,9 +35,12 @@
+>  #include <linux/of_graph.h>
+>  #include <linux/regmap.h>
+>  #include <linux/regulator/consumer.h>
+> +#include <linux/timer.h>
+> +#include <linux/workqueue.h>
+>  
+>  #include <drm/drm_atomic_helper.h>
+>  #include <drm/drm_bridge.h>
+> +#include <drm/drm_drv.h> /* DRM_MODESET_LOCK_ALL_BEGIN() need drm_drv_uses_atomic_modeset() */
+>  #include <drm/drm_mipi_dsi.h>
+>  #include <drm/drm_of.h>
+>  #include <drm/drm_panel.h>
+> @@ -147,6 +150,9 @@ struct sn65dsi83 {
+>  	struct regulator		*vcc;
+>  	bool				lvds_dual_link;
+>  	bool				lvds_dual_link_even_odd_swap;
+> +	bool				use_irq;
+> +	struct delayed_work		monitor_work;
+> +	struct work_struct		reset_work;
+>  };
+>  
+>  static const struct regmap_range sn65dsi83_readable_ranges[] = {
+> @@ -321,6 +327,92 @@ static u8 sn65dsi83_get_dsi_div(struct sn65dsi83 *ctx)
+>  	return dsi_div - 1;
+>  }
+>  
+> +static int sn65dsi83_reset_pipeline(struct sn65dsi83 *sn65dsi83)
 > +{
-> +	struct soc_device_attribute *attr;
-> +	struct arm_smccc_res res;
-> +	struct soc_device *sdev;
-> +	u32 soc_id, rev_major, rev_minor;
-> +	u64 uid127_64, uid63_0;
+> +	struct drm_device *dev = sn65dsi83->bridge.dev;
+> +	struct drm_modeset_acquire_ctx ctx;
+> +	struct drm_atomic_state *state;
 > +	int err;
 > +
-> +	attr =3D kzalloc(sizeof(*attr), GFP_KERNEL);
-> +	if (!attr)
-> +		return -ENOMEM;
-> +
-> +	err =3D of_property_read_string(of_root, "model", &attr->machine);
-> +	if (err) {
-> +		err =3D -EINVAL;
-> +		goto attr;
-> +	}
-> +
-> +	attr->family =3D kasprintf(GFP_KERNEL, "Freescale i.MX");
-> +
-> +	/*
-> +	 * Retrieve the soc id, rev & uid info:
-> +	 * res.a1[31:16]: soc revision;
-> +	 * res.a1[15:0]: soc id;
-> +	 * res.a2: uid[127:64];
-> +	 * res.a3: uid[63:0];
+> +	/* Use operation done in drm_atomic_helper_suspend() followed by
+> +	 * operation done in drm_atomic_helper_resume() but without releasing
+> +	 * the lock between suspend()/resume()
 > +	 */
-> +	arm_smccc_smc(IMX_SIP_GET_SOC_INFO, 0, 0, 0, 0, 0, 0, 0, &res);
-> +	if (res.a0 !=3D SMCCC_RET_SUCCESS) {
-> +		err =3D -EINVAL;
-> +		goto family;
-Please see my comment below. Does it make sense to print the value of
-res.a0?
+> +
+> +	DRM_MODESET_LOCK_ALL_BEGIN(dev, ctx, 0, err);
+> +
+> +	state = drm_atomic_helper_duplicate_state(dev, &ctx);
+> +	if (IS_ERR(state)) {
+> +		err = PTR_ERR(state);
+> +		goto unlock;
+> +	}
+> +
+> +	err = drm_atomic_helper_disable_all(dev, &ctx);
+> +	if (err < 0)
+> +		goto unlock;
+> +
+> +	drm_mode_config_reset(dev);
+> +
+> +	err = drm_atomic_helper_commit_duplicated_state(state, &ctx);
 
-I stumbled above this recently on a i.MX93 board with a vendor kernel
-6.6.23 and the firmware hadn't it implemented.
-> +	}
+Committing a full atomic state from a bridge driver in an asynchronous
+way seems quite uncharted territory, and it worries me. It's also a very
+heavyweight, you disable all outputs here, instead of focussing on the
+output connected to the bridge. Can you either implement something more
+local, resetting the bridge only, or create a core helper to handle this
+kind of situation, on a per-output basis ?
+
 > +
-> +	soc_id =3D SOC_ID(res.a1);
-> +	rev_major =3D SOC_REV_MAJOR(res.a1);
-> +	rev_minor =3D SOC_REV_MINOR(res.a1);
-> +
-> +	attr->soc_id =3D kasprintf(GFP_KERNEL, "i.MX%2x", soc_id);
-> +	attr->revision =3D kasprintf(GFP_KERNEL, "%d.%d", rev_major, rev_minor=
-);
-> +
-> +	uid127_64 =3D res.a2;
-> +	uid63_0 =3D res.a3;
-> +	attr->serial_number =3D kasprintf(GFP_KERNEL, "%016llx%016llx", uid127=
-_64, uid63_0);
-> +
-> +	sdev =3D soc_device_register(attr);
-> +	if (IS_ERR(sdev)) {
-> +		err =3D -ENODEV;
-> +		goto soc_id;
-> +	}
-> +
-> +	return 0;
-> +
-> +soc_id:
-> +	kfree(attr->soc_id);
-> +	kfree(attr->serial_number);
-> +	kfree(attr->revision);
-> +family:
-> +	kfree(attr->family);
-> +attr:
-> +	kfree(attr);
+> +unlock:
+> +	DRM_MODESET_LOCK_ALL_END(dev, ctx, err);
+> +	if (!IS_ERR(state))
+> +		drm_atomic_state_put(state);
 > +	return err;
 > +}
 > +
-> +static int __init imx9_soc_init(void)
+> +static void sn65dsi83_reset_work(struct work_struct *ws)
 > +{
-> +	int ret =3D 0;
+> +	struct sn65dsi83 *ctx = container_of(ws, struct sn65dsi83, reset_work);
+> +	int ret;
 > +
-> +	if (of_machine_is_compatible("fsl,imx91") ||
-> +		of_machine_is_compatible("fsl,imx93") ||
-> +		of_machine_is_compatible("fsl,imx95")) {
-> +		ret =3D imx9_soc_device_register();
-> +		if (ret) {
-> +			pr_err("%s: imx9_soc_device_register returned %d\n", __func__, ret);
-Can we please have these kernel logs within imx9_soc_device_register()?
-
-Btw we could print the real return code of the function which failed.
-
-Thanks
-> +			return ret;
-> +		}
+> +	dev_warn(ctx->dev, "reset pipeline\n");
+> +
+> +	/* Reset the pipeline */
+> +	ret = sn65dsi83_reset_pipeline(ctx);
+> +	if (ret) {
+> +		dev_err(ctx->dev, "reset pipeline failed %pe\n", ERR_PTR(ret));
+> +		return;
+> +	}
+> +}
+> +
+> +static void sn65dsi83_handle_errors(struct sn65dsi83 *ctx)
+> +{
+> +	unsigned int irq_stat;
+> +	int ret;
+> +
+> +	/*
+> +	 * Schedule a reset in case of:
+> +	 *  - the bridge doesn't answer
+> +	 *  - the bridge signals an error
+> +	 */
+> +
+> +	ret = regmap_read(ctx->regmap, REG_IRQ_STAT, &irq_stat);
+> +	if (ret || irq_stat)
+> +		schedule_work(&ctx->reset_work);
+> +}
+> +
+> +static void sn65dsi83_monitor_work(struct work_struct *work)
+> +{
+> +	struct sn65dsi83 *ctx = container_of(to_delayed_work(work),
+> +					     struct sn65dsi83, monitor_work);
+> +
+> +	sn65dsi83_handle_errors(ctx);
+> +
+> +	schedule_delayed_work(&ctx->monitor_work, msecs_to_jiffies(1000));
+> +}
+> +
+> +static void sn65dsi83_monitor_start(struct sn65dsi83 *ctx)
+> +{
+> +	schedule_delayed_work(&ctx->monitor_work, msecs_to_jiffies(1000));
+> +}
+> +
+> +static void sn65dsi83_monitor_stop(struct sn65dsi83 *ctx)
+> +{
+> +	cancel_delayed_work_sync(&ctx->monitor_work);
+> +}
+> +
+>  static void sn65dsi83_atomic_pre_enable(struct drm_bridge *bridge,
+>  					struct drm_bridge_state *old_bridge_state)
+>  {
+> @@ -509,6 +601,15 @@ static void sn65dsi83_atomic_enable(struct drm_bridge *bridge,
+>  	regmap_read(ctx->regmap, REG_IRQ_STAT, &pval);
+>  	if (pval)
+>  		dev_err(ctx->dev, "Unexpected link status 0x%02x\n", pval);
+> +
+> +	if (ctx->use_irq) {
+> +		/* Enable irq to detect errors */
+> +		regmap_write(ctx->regmap, REG_IRQ_GLOBAL, REG_IRQ_GLOBAL_IRQ_EN);
+> +		regmap_write(ctx->regmap, REG_IRQ_EN, 0xff);
+> +	} else {
+> +		/* Use the polling task */
+> +		sn65dsi83_monitor_start(ctx);
+> +	}
+>  }
+>  
+>  static void sn65dsi83_atomic_disable(struct drm_bridge *bridge,
+> @@ -517,6 +618,15 @@ static void sn65dsi83_atomic_disable(struct drm_bridge *bridge,
+>  	struct sn65dsi83 *ctx = bridge_to_sn65dsi83(bridge);
+>  	int ret;
+>  
+> +	if (ctx->use_irq) {
+> +		/* Disable irq */
+> +		regmap_write(ctx->regmap, REG_IRQ_EN, 0x0);
+> +		regmap_write(ctx->regmap, REG_IRQ_GLOBAL, 0x0);
+> +	} else {
+> +		/* Stop the polling task */
+> +		sn65dsi83_monitor_stop(ctx);
 > +	}
 > +
-> +	return ret;
-> +}
-> +device_initcall(imx9_soc_init);
+>  	/* Put the chip in reset, pull EN line low, and assure 10ms reset low timing. */
+>  	gpiod_set_value_cansleep(ctx->enable_gpio, 0);
+>  	usleep_range(10000, 11000);
+> @@ -673,6 +783,14 @@ static int sn65dsi83_host_attach(struct sn65dsi83 *ctx)
+>  	return 0;
+>  }
+>  
+> +static irqreturn_t sn65dsi83_irq(int irq, void *data)
+> +{
+> +	struct sn65dsi83 *ctx = data;
 > +
-> +MODULE_AUTHOR("NXP");
-> +MODULE_DESCRIPTION("NXP i.MX9 SoC");
-> +MODULE_LICENSE("GPL");
+> +	sn65dsi83_handle_errors(ctx);
+> +	return IRQ_HANDLED;
+> +}
+> +
+>  static int sn65dsi83_probe(struct i2c_client *client)
+>  {
+>  	const struct i2c_device_id *id = i2c_client_get_device_id(client);
+> @@ -686,6 +804,8 @@ static int sn65dsi83_probe(struct i2c_client *client)
+>  		return -ENOMEM;
+>  
+>  	ctx->dev = dev;
+> +	INIT_WORK(&ctx->reset_work, sn65dsi83_reset_work);
+> +	INIT_DELAYED_WORK(&ctx->monitor_work, sn65dsi83_monitor_work);
+>  
+>  	if (dev->of_node) {
+>  		model = (enum sn65dsi83_model)(uintptr_t)
+> @@ -710,6 +830,14 @@ static int sn65dsi83_probe(struct i2c_client *client)
+>  	if (IS_ERR(ctx->regmap))
+>  		return dev_err_probe(dev, PTR_ERR(ctx->regmap), "failed to get regmap\n");
+>  
+> +	if (client->irq) {
+> +		ret = devm_request_threaded_irq(ctx->dev, client->irq, NULL, sn65dsi83_irq,
+> +						IRQF_ONESHOT, dev_name(ctx->dev), ctx);
+> +		if (ret)
+> +			return dev_err_probe(dev, ret, "failed to request irq\n");
+> +		ctx->use_irq = true;
+> +	}
+> +
+>  	dev_set_drvdata(dev, ctx);
+>  	i2c_set_clientdata(client, ctx);
+>  
 
+-- 
+Regards,
+
+Laurent Pinchart
 
