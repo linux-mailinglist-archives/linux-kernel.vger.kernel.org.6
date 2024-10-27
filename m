@@ -1,234 +1,174 @@
-Return-Path: <linux-kernel+bounces-383738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27B349B1FB2
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 19:21:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F14669B1FB5
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 19:30:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F99C1F214F3
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 18:21:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B03A12817F7
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 18:30:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B37C117B50A;
-	Sun, 27 Oct 2024 18:21:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DF1217BB35;
+	Sun, 27 Oct 2024 18:29:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HRhhExUd"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G3L3sDLE"
+Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83DCA175D4A;
-	Sun, 27 Oct 2024 18:21:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AB4416ABC6;
+	Sun, 27 Oct 2024 18:29:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730053285; cv=none; b=L5v57tbRXp6OhD27xY8QV+BEWikdWPlTnO0TdHpWUYb8FOttWp6s24cvbJIedDyjVj3Czq5PWPfwqgYAS/tOubMy6dHsY8/GOtR12POKXVOIX5HwzcAgcY7N/zng8gPTPUxCZtfxHvNLc77V/K6Sk7HI/yDXCLTMd0u8G+NV5nY=
+	t=1730053798; cv=none; b=OIP4LsvzmU28PLASXnsOP3Qvyq+UgxOIGW7qNZ8lzdFCfek/3wQilJ9bn0O5liztafSSOaUweZ1r2mu8PZw88IcXsZfvCv13Y1AmeX/AcQjnZk+V7i1tho1uwtcLRUJge0FsOes9mGSWiXJPcocUV54qu/GvNlIfNsaRdAKjqJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730053285; c=relaxed/simple;
-	bh=M0foY50M4HsUnWQT73wNT19qOzDjY/3ojUHdpCR2Au0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZUPbv67LgJuG8Gjfy8nDNQxg907s1RE0T388T0Kjq+CAHNSBHKMxaSpeeH1iOfIfbemL8jBKegs96KeSsojkt32BUjIO7uMrAJ9l3EXA+x4vIK6mF2oe3aAQqWrQPnGEBrC9sWKJ9gn6gKP4SjAyY0DObI6kBQUqOhiOSfkCBvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HRhhExUd; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730053283; x=1761589283;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=M0foY50M4HsUnWQT73wNT19qOzDjY/3ojUHdpCR2Au0=;
-  b=HRhhExUdsQfWGThFvWPqGLDaBd4wU4nkbA6go/r6kVqGMV4uEtJltQzi
-   8zvc52N8b/VzN7NIIzwnM24cPVvV360YxTM5rxwPS5hZ0wRcuX46RKdEq
-   xDKVOHYQrGl83vsBGjv9CAaJ2Tyh7W1vs/Ay+dvHjXqtl2f7E6toIDnzS
-   I59P/GpCVqem5tYOVW802jzDAG9lfLqRlXtllpKGa6W8hG9/Highe1oIW
-   jBfzILvOS8UfDrXy2kuIq3hSjGVc9ZYpfddgtMGD0gfgnB7/F5xnHoRuB
-   ixiStx3BVZ5jKA3zZZSaMc5W2J19W4i6MDM7ntgOnRgen/vo86dlQawoM
-   g==;
-X-CSE-ConnectionGUID: KJ23nCIHTYOKZac1+/+X3A==
-X-CSE-MsgGUID: /DMjZh6cQvGx/3pCDbIcsw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11238"; a="33564717"
-X-IronPort-AV: E=Sophos;i="6.11,237,1725346800"; 
-   d="scan'208";a="33564717"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2024 11:21:23 -0700
-X-CSE-ConnectionGUID: H1QstXZTRRS7jy5jDhNBEg==
-X-CSE-MsgGUID: IpKzxFHhSB6Dxzeg+K+IdA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,237,1725346800"; 
-   d="scan'208";a="81353158"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa009.jf.intel.com with ESMTP; 27 Oct 2024 11:21:20 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t57t7-000au5-2t;
-	Sun, 27 Oct 2024 18:21:17 +0000
-Date: Mon, 28 Oct 2024 02:20:29 +0800
-From: kernel test robot <lkp@intel.com>
-To: chang hao <ot_chhao.chang@mediatek.com>, matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com, sean.wang@kernel.org,
-	linus.walleij@linaro.org
-Cc: oe-kbuild-all@lists.linux.dev, linux-mediatek@lists.infradead.org,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Chhao Chang <ot_chhao.chang@mediatek.com>
-Subject: Re: [PATCH] pinctrl: mediatek: add eint new design for mt8196
-Message-ID: <202410280230.KAMZK7aZ-lkp@intel.com>
-References: <20241025031814.21442-1-ot_chhao.chang@mediatek.com>
+	s=arc-20240116; t=1730053798; c=relaxed/simple;
+	bh=RWPvgK6oqORIrZGEDDkmHoNUXpJG2FxwoWGO0fiGPR4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cnKds8Qshk9RV5EEa0UaV8pGGfOb2jq8KulSjEk3tE8OCrdslChOLB2aQIq67RKAnXFhRn/3TLULXNDASjZjRenTsknqv7wJUXnwbT/k+g6THSkDA7GKNIQJcAm3Ec191VW3Tmn3DBwbrqmp2sISFIuJPE9F31cHyaynZus6lIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G3L3sDLE; arc=none smtp.client-ip=209.85.219.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6cbf0e6414aso18075066d6.1;
+        Sun, 27 Oct 2024 11:29:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730053795; x=1730658595; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ylECE2zEuNqtiXNvplMAJctSOQtfxMBeffxsBMJW/LE=;
+        b=G3L3sDLEsy8W1XITqeiDcIYt6KdtrpzC/3yYKyWWYpEHy4p5wAXLku53NRK13zjM+1
+         CwP/TNMyvEr9LdLdKnu50JmxXRBD5xqCeS72ilho9xWwdbJCytUwSZdU7Dv5buqjHEIZ
+         oeZOSzMsviROnmoNOuMZKGXUd+4MjE7B1WKuH78eM0fjbIc5MwbvHJq04+McyS0PYLIn
+         JwQ2XNQC0o4gAigAz6lgIV1tloBGeWp5ZUs4LWJcjFFPxrckWlrtXQ6BPPpZvVHo2RVs
+         BqGoRlHcatqZODhOoKvq/4ba9QfJduF92D7mnSQHkLD4GIIdS0Fni2ob1OgqSn7PJ1iZ
+         8w1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730053795; x=1730658595;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ylECE2zEuNqtiXNvplMAJctSOQtfxMBeffxsBMJW/LE=;
+        b=sHDermCgbruk9XXUv0/vsTJblCncrl2KhfXvu6yGmAKR6nf7icdLpznEz49K+BAD76
+         FLKsGe6tkJcSlZ1GzWx94GGMHQ94u+E8VMvH06woltd2dUaEbSzqMjuoImVIuLUMV92C
+         KKSc99e75N+QEoF7S1Xbb795muJuEZDmaro5gOKvjHDEgbLoXdnyQB368iPgEhIQvgYC
+         hPq8DSSw9teodEP1He9Ai8UuQ9UUKaetbzezqWJ9IuygcxlCaPRR7rS4Bip0FrXThNGL
+         J3EJvVnK6spzu5tz+gwO0jYxo1TbHSToFRep+I3Vh0Q9CU6QZOuOWvuhVzHCxeYd6yR3
+         rGjA==
+X-Forwarded-Encrypted: i=1; AJvYcCUzOY5u70SL2AJwAfXCtJoUCDQVaxSpWks7sn1yDqy/kI57Zu2M3JDr6I8QZ3cSLAa4MedXe0p10Oiy0g==@vger.kernel.org, AJvYcCWflKefv1I5nU/BpvYtrxAnwwC4N7rSHJWBCe4najfnkrEaG9Apy/9oqYXQXHOyjGjJNKtiXoVIhY7N3eEz@vger.kernel.org
+X-Gm-Message-State: AOJu0YxciPSG+LdtCVI3I9QOX9OdW6B2ONOPAlxwCUY0k77zJqARM7J2
+	zpa5tAlc+SGh5Nj5tYYrQztfpeVTp0ZIRTT60qGsuNgSQFSjhSvLJKNsHYrMlIXqL6qqX1Iupfc
+	cryCfqpF6mSfl9Rcal5h4UXNPs9dEXPSP1hY=
+X-Google-Smtp-Source: AGHT+IFLaSlEeUs3VzjQt9tbbFlo4sUAXdSeMbM5hLfsCWvUNXkYs4aURay4tubeXysw/BKUsLHhB+xCgDye14JL5PQ=
+X-Received: by 2002:a05:6214:3186:b0:6cc:3a:a7f0 with SMTP id
+ 6a1803df08f44-6d185857230mr118923196d6.44.1730053794188; Sun, 27 Oct 2024
+ 11:29:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241025031814.21442-1-ot_chhao.chang@mediatek.com>
+References: <20241027174836.8588-1-derekjohn.clark@gmail.com> <24dc65c2-b6c9-4909-a784-fb81d9299f1c@roeck-us.net>
+In-Reply-To: <24dc65c2-b6c9-4909-a784-fb81d9299f1c@roeck-us.net>
+From: Derek John Clark <derekjohn.clark@gmail.com>
+Date: Sun, 27 Oct 2024 11:29:43 -0700
+Message-ID: <CAFqHKTmEauJ4RQUrn6pjX-hgLGZLNE8gaD5S41Uy0L0cNB4+mA@mail.gmail.com>
+Subject: Re: [RFC] hwmon: pwm_enable clarification
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Jean Delvare <jdelvare@suse.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Cryolita PukNgae <cryolitia@gmail.com>, linux-hwmon@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi chang,
+On Sun, Oct 27, 2024 at 11:16=E2=80=AFAM Guenter Roeck <linux@roeck-us.net>=
+ wrote:
+>
+> On 10/27/24 10:48, Derek J. Clark wrote:
+> > Greetings all,
+> >
+> > I am working with Cryolita to fix up the GPD driver she submitted recen=
+tly:
+> > https://lore.kernel.org/all/20240718-gpd_fan-v4-0-116e5431a9fe@gmail.co=
+m/
+> >
+> > We are currently having a discussion about the meaning of this part of =
+the
+> > documentation and are seeking some guidance from upstream.
+> >  >> pwm[1-*]_enable
+> >>              Fan speed control method:
+> >>              0: no fan speed control (i.e. fan at full speed)
+> >>              1: manual fan speed control enabled (using pwm[1-*])
+> >>              2+: automatic fan speed control enabled
+> >>              Check individual chip documentation files for automatic m=
+ode
+> >>              details.
+> >>              RW
+> >
+> > In oxp-sensors we took 0 to mean "no kernel control" so a setting of 0 =
+is
+> > technically "automatic" but fully controlled by the hardware with no
+> > interaction from the driver. In her original driver draft she had taken=
+ this
+>
+> That is wrong. It should be (or have been) 2 or higher. Ah yes, I can see=
+ that
+> the code sets fan control to automatic when oxp_pwm_disable() is called.
+> Again, that is wrong. Congratulations to the submitters, you sneaked that=
+ by
+> my review. That doesn't make it better. It is still wrong, and I call it =
+"sneaky"
+> because the function is not called "oxp_pwm_automatic()" or similar, it i=
+s
+> called "oxp_pwm_disable(). Setting fan control to automatic does not disa=
+ble
+> fan control.
+>
+> My bad, I should have paid closer attention, and/or maybe not have truste=
+d
+> the submitters as much as I did. I guess I'll have to pay closer attentio=
+n
+> in the future.
+>
+> > literally to have the driver set the fan speed to 100% on this setting =
+rather
+> > then give back control to the hardware. My question is simply what is t=
+he
+> > correct interpretation here? Ideally I would like to see this interface=
+ match
+>
+> It seems to me that the above text is well defined.
+>
+> > as existing userspace software is expecting 0 as hardware controlled an=
+d 1 as
+> > manually controlled, but we also want to ensure this is correct before =
+we
+> > submit a v5.
+> >
+>
+> Any such userspace expectations are simply wrong. The ABI definition is a=
+bove
+> and, again, it is well defined.
+>
+>         0: no fan speed control (i.e. fan at full speed)
+>
+> I don't really see any ambiguity in this text. This isn't about kernel co=
+ntrol,
+> it is an absolute statement. There is no "kernel" in "no fan speed contro=
+l".
+> "fan at full speed" should make this even more obvious.
+>
+> Guenter
 
-kernel test robot noticed the following build errors:
+Guenter,
 
-[auto build test ERROR on linusw-pinctrl/devel]
-[also build test ERROR on linusw-pinctrl/for-next linus/master v6.12-rc4 next-20241025]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+I'll keep this in mind in the future, and I will send a patch soon to fix t=
+he
+oxp_sensors driver. One final question, is a "0" setting mandatory?
 
-url:    https://github.com/intel-lab-lkp/linux/commits/chang-hao/pinctrl-mediatek-add-eint-new-design-for-mt8196/20241025-111952
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git devel
-patch link:    https://lore.kernel.org/r/20241025031814.21442-1-ot_chhao.chang%40mediatek.com
-patch subject: [PATCH] pinctrl: mediatek: add eint new design for mt8196
-config: s390-randconfig-r131-20241027 (https://download.01.org/0day-ci/archive/20241028/202410280230.KAMZK7aZ-lkp@intel.com/config)
-compiler: clang version 15.0.7 (https://github.com/llvm/llvm-project 8dfdcc7b7bf66834a761bd8de445840ef68e4d1a)
-reproduce: (https://download.01.org/0day-ci/archive/20241028/202410280230.KAMZK7aZ-lkp@intel.com/reproduce)
+Thanks for the quick reply.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410280230.KAMZK7aZ-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from drivers/pinctrl/mediatek/mtk-eint.c:14:
-   In file included from include/linux/gpio/driver.h:8:
-   In file included from include/linux/irqchip/chained_irq.h:10:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:14:
-   In file included from arch/s390/include/asm/io.h:93:
-   include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           val = __raw_readb(PCI_IOBASE + addr);
-                             ~~~~~~~~~~ ^
-   include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
-                                                           ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/big_endian.h:37:59: note: expanded from macro '__le16_to_cpu'
-   #define __le16_to_cpu(x) __swab16((__force __u16)(__le16)(x))
-                                                             ^
-   include/uapi/linux/swab.h:102:54: note: expanded from macro '__swab16'
-   #define __swab16(x) (__u16)__builtin_bswap16((__u16)(x))
-                                                        ^
-   In file included from drivers/pinctrl/mediatek/mtk-eint.c:14:
-   In file included from include/linux/gpio/driver.h:8:
-   In file included from include/linux/irqchip/chained_irq.h:10:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:14:
-   In file included from arch/s390/include/asm/io.h:93:
-   include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
-                                                           ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/big_endian.h:35:59: note: expanded from macro '__le32_to_cpu'
-   #define __le32_to_cpu(x) __swab32((__force __u32)(__le32)(x))
-                                                             ^
-   include/uapi/linux/swab.h:115:54: note: expanded from macro '__swab32'
-   #define __swab32(x) (__u32)__builtin_bswap32((__u32)(x))
-                                                        ^
-   In file included from drivers/pinctrl/mediatek/mtk-eint.c:14:
-   In file included from include/linux/gpio/driver.h:8:
-   In file included from include/linux/irqchip/chained_irq.h:10:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:14:
-   In file included from arch/s390/include/asm/io.h:93:
-   include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           __raw_writeb(value, PCI_IOBASE + addr);
-                               ~~~~~~~~~~ ^
-   include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
-                                                         ~~~~~~~~~~ ^
-   include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
-                                                         ~~~~~~~~~~ ^
-   include/asm-generic/io.h:693:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           readsb(PCI_IOBASE + addr, buffer, count);
-                  ~~~~~~~~~~ ^
-   include/asm-generic/io.h:701:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           readsw(PCI_IOBASE + addr, buffer, count);
-                  ~~~~~~~~~~ ^
-   include/asm-generic/io.h:709:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           readsl(PCI_IOBASE + addr, buffer, count);
-                  ~~~~~~~~~~ ^
-   include/asm-generic/io.h:718:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           writesb(PCI_IOBASE + addr, buffer, count);
-                   ~~~~~~~~~~ ^
-   include/asm-generic/io.h:727:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           writesw(PCI_IOBASE + addr, buffer, count);
-                   ~~~~~~~~~~ ^
-   include/asm-generic/io.h:736:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-           writesl(PCI_IOBASE + addr, buffer, count);
-                   ~~~~~~~~~~ ^
->> drivers/pinctrl/mediatek/mtk-eint.c:588:2: error: call to undeclared function 'dsb'; ISO C99 and later do not support implicit function declarations [-Werror,-Wimplicit-function-declaration]
-           dsb(sy);
-           ^
-   drivers/pinctrl/mediatek/mtk-eint.c:588:6: error: use of undeclared identifier 'sy'
-           dsb(sy);
-               ^
-   drivers/pinctrl/mediatek/mtk-eint.c:609:2: error: call to undeclared function 'dsb'; ISO C99 and later do not support implicit function declarations [-Werror,-Wimplicit-function-declaration]
-           dsb(sy);
-           ^
-   drivers/pinctrl/mediatek/mtk-eint.c:609:6: error: use of undeclared identifier 'sy'
-           dsb(sy);
-               ^
-   drivers/pinctrl/mediatek/mtk-eint.c:686:14: warning: no previous prototype for function 'mtk_eint_get_debounce_en' [-Wmissing-prototypes]
-   unsigned int mtk_eint_get_debounce_en(struct mtk_eint *eint,
-                ^
-   drivers/pinctrl/mediatek/mtk-eint.c:686:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
-   unsigned int mtk_eint_get_debounce_en(struct mtk_eint *eint,
-   ^
-   static 
-   drivers/pinctrl/mediatek/mtk-eint.c:709:14: warning: no previous prototype for function 'mtk_eint_get_debounce_value' [-Wmissing-prototypes]
-   unsigned int mtk_eint_get_debounce_value(struct mtk_eint *eint,
-                ^
-   drivers/pinctrl/mediatek/mtk-eint.c:709:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
-   unsigned int mtk_eint_get_debounce_value(struct mtk_eint *eint,
-   ^
-   static 
-   14 warnings and 4 errors generated.
-
-
-vim +/dsb +588 drivers/pinctrl/mediatek/mtk-eint.c
-
-   572	
-   573	int mtk_eint_do_suspend(struct mtk_eint *eint)
-   574	{
-   575		unsigned int i, j, port;
-   576	
-   577		for (i = 0; i < eint->instance_number; i++) {
-   578			struct mtk_eint_instance inst = eint->instances[i];
-   579	
-   580			for (j = 0; j < inst.number; j += MAX_BIT) {
-   581				port = j >> REG_GROUP;
-   582				writel_relaxed(~inst.wake_mask[port],
-   583					       inst.base + port*REG_OFSET + eint->comp->regs->mask_set);
-   584				writel_relaxed(inst.wake_mask[port],
-   585					       inst.base + port*REG_OFSET + eint->comp->regs->mask_clr);
-   586			}
-   587		}
- > 588		dsb(sy);
-   589	
-   590		return 0;
-   591	}
-   592	EXPORT_SYMBOL_GPL(mtk_eint_do_suspend);
-   593	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Derek
 
