@@ -1,146 +1,238 @@
-Return-Path: <linux-kernel+bounces-383648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E9669B1EBA
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 15:32:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 806149B1EBF
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 15:33:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52D14281FEA
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 14:32:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4006728202C
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 14:33:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02E88175D4F;
-	Sun, 27 Oct 2024 14:26:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC537170A23;
+	Sun, 27 Oct 2024 14:31:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ftDe3q0m"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kxnAzRD/"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FD6316DEA9
-	for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 14:26:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3C3E15573A;
+	Sun, 27 Oct 2024 14:31:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730039171; cv=none; b=mg5Aa0bVTUPhyMI0p+2tVlKglmcdyOh8WhmtNyKS53OJKmYpWAhIdbq+M3Sn/r5HsElVDtQjC4OsFOzfHr1OnF2b4Ghw5NDoDsyMGc8l0EngJ/F/zi3WIMTCXkbfL7KpAeGg/JmUNw3BignEuB8ipCBXZHIXVFvGNEnuv2l89YU=
+	t=1730039506; cv=none; b=G2HVjqWhGsqcmicjBPmjLZ3o1v/8ckDZlgd1tmZENnh+GoLzXmWZLqzbL6rbMW19hG4cfXA3CeuQjmYRCQHPQEU89KWEmYgWl01d7XQBcYN6a79vAI0EHy1QZdC8loIYu8hbLw7MgVSBopP+uSOfPmElROXIUl70ZKHefirsFvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730039171; c=relaxed/simple;
-	bh=F3T/AAYdoHuTTV/VVVzRbtlg/svgZJGhDsfrjIIQP8E=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=uzHGyDh8uF3J0EWzqZ9+joiFdW0S+8AXB6LvsYnImEc4L8S6QupEXhl79qE8BF0cIIVsb5OfO0dSqURv9U7pa7uxyFvPnFTHgSLoiAL8pW/WwYQC5ooWeSYC0K/0c5TqfYdXWcjCGpg28u1mx3trvOmHnlzYkA5qqg5FqHfcsNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ftDe3q0m; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730039169; x=1761575169;
-  h=message-id:date:mime-version:cc:subject:to:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=F3T/AAYdoHuTTV/VVVzRbtlg/svgZJGhDsfrjIIQP8E=;
-  b=ftDe3q0mGFjhmLT7JA0NYBiAVxSjl6N97HxYfeeaYh8TPpvsDwiakAio
-   BHrB+hvzHQ6Pr1d7GZBDHGW+NEnR30x1k9lLUBvYm8EUulxJSRpKe42Ju
-   XgJtth/Omnb7v/zyffsrlOAhVbeWh5Y5NmUaOpEDpBjALtM626igrMSqG
-   uRz0pUDzCxQZD0mLZp0ihZPfCF3zoi3rpBBKrrb0V8koN+M5g/bp/mg/S
-   AXxxw0e9QA7kovJz4u+El4eAxVwn6QpZlH7gEa7FD7/2I6u+PzulxPwrH
-   kmRCd8PJLz29o1exRktWgnliqSOQZKa7McRi6433ui4p/OpN29tLJb+Ha
-   A==;
-X-CSE-ConnectionGUID: BeeRorzIRNaR03YtWru+zA==
-X-CSE-MsgGUID: 8uvXX93XR36ztapTibROig==
-X-IronPort-AV: E=McAfee;i="6700,10204,11238"; a="41019060"
-X-IronPort-AV: E=Sophos;i="6.11,237,1725346800"; 
-   d="scan'208";a="41019060"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2024 07:26:08 -0700
-X-CSE-ConnectionGUID: DfJI0M8vRpu4hdIaqKiwRQ==
-X-CSE-MsgGUID: 8Jp4mR4jSKighrximlALbw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,237,1725346800"; 
-   d="scan'208";a="81002937"
-Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.124.240.228]) ([10.124.240.228])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2024 07:26:05 -0700
-Message-ID: <e030bf31-330c-4734-be13-634174c7b099@linux.intel.com>
-Date: Sun, 27 Oct 2024 22:26:03 +0800
+	s=arc-20240116; t=1730039506; c=relaxed/simple;
+	bh=camzmMf5Fi5UPFDqxtb+tbNiz4IvdOTVNzJTLFevpcs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=cwMx4aBwVPoWG92ZkN5p4k18z0jJTo+zUJo4JGcTLg0bVZQJ2QlRDCtPGmcn93AIuHpOpLNJBV0VS16L3q9VnlKeF+Q6kAJiJhoKNb1HU1LRRDbSJ1JC2i+ut48MnTBUPKbLGfB1VnKqlAL2P07OG/uPl7MgXrySvlCmxW6HHGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kxnAzRD/; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5cb15b84544so4393128a12.2;
+        Sun, 27 Oct 2024 07:31:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730039502; x=1730644302; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ViqwTp0n7slxj0+sutWl11crfN2XQoRXTaxSzJ6qT4c=;
+        b=kxnAzRD/PcV8JQzn1xgStsM46e6obxDv3rN36byz5qQ6TeM9yPpJ/wFlQ4uyGbBsSc
+         YfRVqOyVEYERUobPgxVVlOtTsK+tLP3fVl3M+JE0ACKQ0zs9xg0u7KuYBM6ThMym8UQZ
+         2ep42vWGteA/N4ARFUgn2RPpTPw1Lt9tvrwOlMTIe5WB7MW90vGVHFkQ+wLIN5VcPVmG
+         qvjzN/HLEeFXLu5eAqDoGIzjbdqaLb5TXiPqfAQDpMwj1MluIn9cBOaPcBSQVzA2PDa2
+         bObvNRB6r2wi/7lxMMT3WlDgikSLmD5tIu7ftInwBI/aJ/HJsS1Po99fFHZK718aQ89W
+         Hy4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730039502; x=1730644302;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ViqwTp0n7slxj0+sutWl11crfN2XQoRXTaxSzJ6qT4c=;
+        b=oCsEZoRvsoNwavjEUQiT32MlRb/0sM6Xjorq3uqXTlm8rf2u71gqUTImMVH8OzEzMw
+         4w4/+1Zm0Zjb5yXCKhSXAIj88nFvTgIepqUMrZjYCArm1h2H0EDwWg4L++lRuelhyInh
+         ep6ZMWDQ5Uf2ZpY4TL/CBG7kPOxqh3EuOQzsoiZA+Xo/YQF+a4qxiPq8KMmwj8r7ns3Y
+         7sCfSHxPKDShKKTj2pcohPF2WZf3QdWUDnp7g83gmsDxGxCeQMPWN+dX/8kmftlSuYGb
+         3ckwgS9mhjZzHmuw7YoG2EZP3pEhI4buy26yh1vb2r1UX2m4riNfa5bSZXdUTa/oDo1X
+         toHA==
+X-Forwarded-Encrypted: i=1; AJvYcCUQrXdlZ33LA237u7Zwb+3DUy6nMOrIovERPp+SJeHMJFW+8tYRLsWOKMrTSTyCQTcsDWKfr9eD7UOxtg==@vger.kernel.org, AJvYcCUgzKgfagxJcKIjWOtQFWr1olG8Tilhl906heQEhNqhRE12j58TTAehV0lRa0SqS95A1Ioe0+ZgbTatL8I5@vger.kernel.org, AJvYcCVSm5gaGDbiImi0CqWolp2zkXFoUrveUCI4XljkqrBo8oJQ6uaw5s0meqCbUXyJe6qxsdWVeFD9Q76H@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbmOsNops8QxaAHsnOSKqobrSDepaFqL4Q3T5o/0kSHqllFVmo
+	nIe7bpDn/MHr1H6Gm2epqoKW9bKEvIyNyAV3ALlZN/4as/XDE5eJ
+X-Google-Smtp-Source: AGHT+IGThw74/e04YOIKvgL3EKIEnqOHiGdb2Vg4qxOeUo9n0KY+sTpx4a7nBMxnPOu52UWqi2WM5Q==
+X-Received: by 2002:a17:907:9727:b0:a9a:230b:ff2c with SMTP id a640c23a62f3a-a9de5f2226dmr540944766b.30.1730039501952;
+        Sun, 27 Oct 2024 07:31:41 -0700 (PDT)
+Received: from [192.168.0.131] ([194.183.54.57])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cbb634737fsm2407562a12.82.2024.10.27.07.31.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 27 Oct 2024 07:31:40 -0700 (PDT)
+Message-ID: <84dcf231-df5d-7503-f61c-10a30d092287@gmail.com>
+Date: Sun, 27 Oct 2024 15:31:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: baolu.lu@linux.intel.com, Jason Gunthorpe <jgg@ziepe.ca>,
- Kevin Tian <kevin.tian@intel.com>, Joerg Roedel <joro@8bytes.org>,
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
- Jean-Philippe Brucker <jean-philippe@linaro.org>,
- Nicolin Chen <nicolinc@nvidia.com>, Yi Liu <yi.l.liu@intel.com>,
- Jacob Pan <jacob.jun.pan@linux.intel.com>,
- Joel Granados <j.granados@samsung.com>, iommu@lists.linux.dev,
- virtualization@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
- Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
-Subject: Re: [PATCH v8 07/10] iommufd: Fault-capable hwpt
- attach/detach/replace
-To: Zhangfei Gao <zhangfei.gao@linaro.org>
-References: <20240702063444.105814-1-baolu.lu@linux.intel.com>
- <20240702063444.105814-8-baolu.lu@linux.intel.com>
- <CABQgh9EeKtYuu+vTTM0fwaKrLxdyC355MQxN8o8_OL9Y1NkE8A@mail.gmail.com>
- <20241015125420.GK1825128@ziepe.ca>
- <CABQgh9E+AnuyJgcM9tf1gEOUqcC_QSrA__Xha9sKYZp=NVRwhQ@mail.gmail.com>
- <20241016152503.GB4020792@ziepe.ca>
- <CABQgh9FCJcOa0G0Kj__NUm-Q8C9uH4ud04XcHv+3c48T2qEnug@mail.gmail.com>
- <20241017120518.GI4020792@ziepe.ca>
- <CABQgh9EnEqDKkxg3VUgjSqBzz27h8B3Ct4w=A0vR6JK=d7fXHQ@mail.gmail.com>
- <20241017130805.GA926121@ziepe.ca>
- <f218230c-ae01-4168-b36e-5e502de6b3db@linux.intel.com>
- <CABQgh9GU4xp=7Svs_Ni=bvNKECKKUjHgq4d-FjT5Y_4wu44kDA@mail.gmail.com>
- <CABQgh9HYDRVOYtL=jgc4CqX0XhNmCtBDOCm8S6_mgBzBtZVk7Q@mail.gmail.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH v3 1/3] dt-bindings: leds: Add LED1202 LED Controller
 Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <CABQgh9HYDRVOYtL=jgc4CqX0XhNmCtBDOCm8S6_mgBzBtZVk7Q@mail.gmail.com>
+To: Vicentiu Galanopulo <vicentiu.galanopulo@remote-tech.co.uk>,
+ pavel@ucw.cz, lee@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <Zx0AqwUUchl4M6po@admins-Air>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+In-Reply-To: <Zx0AqwUUchl4M6po@admins-Air>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 2024/10/27 22:12, Zhangfei Gao wrote:
-> On Fri, 18 Oct 2024 at 10:45, Zhangfei Gao<zhangfei.gao@linaro.org> wrote:
->> Hi, Baolu
->>
->> On Fri, 18 Oct 2024 at 09:58, Baolu Lu<baolu.lu@linux.intel.com> wrote:
->>> On 2024/10/17 21:08, Jason Gunthorpe wrote:
->>>> On Thu, Oct 17, 2024 at 08:35:24PM +0800, Zhangfei Gao wrote:
->>>>
->>>>> Yes, you are right
->>>>>    I am using SRIOV vf and stall feature, so is_virtfn == true
->>>>>
->>>>> Our ACC devices are fake pci endpoint devices which supports stall,
->>>>> And they also supports sriov
->>>>>
->>>>> So I have to ignore the limitation.
->>>> I see, so that is more complicated.
->>>>
->>>> Lu, what do you think about also checking if the PCI function has PRI
->>>> ? If not PRI assume the fault is special and doesn't follow PRI rules?
->>>>
->>>> Or maybe we can have the iommu driver tag the event as a PRI/not-PRI
->>>> fault?
->>> This limitation applies to PRI on PCI/SRIOV VFs because the PRI might be
->>> a shared resource and current iommu subsystem is not ready to support
->>> enabling/disabling PRI on a VF without any impact on others.
->>>
->>> In my understanding, it's fine to remove this limitation from the use
->>> case of non-PRI on SRIOV VFs. Perhaps something like below?
->>>
->> #include <linux/pci-ats.h>
->>>          if (dev_is_pci(dev)) {
->>>                  struct pci_dev *pdev = to_pci_dev(dev);
->>>                  if (pdev->is_virtfn && pci_pri_supported(pdev))
->>>                          return -EINVAL;
->>>          }
->> Yes, this works on our platform.
-> Will you send this patch?
+Hi Vicentiu,
+
+On 10/26/24 16:46, Vicentiu Galanopulo wrote:
+> The LED1202 is a 12-channel low quiescent current LED driver with:
+>    * Supply range from 2.6 V to 5 V
+>    * 20 mA current capability per channel
+>    * 1.8 V compatible I2C control interface
+>    * 8-bit analog dimming individual control
+>    * 12-bit local PWM resolution
+>    * 8 programmable patterns
 > 
-> Tested-by: Zhangfei Gao<zhangfei.gao@linaro.org>
+> If the led node is present in the controller then the channel is
+> set to active.
+> 
+> Signed-off-by: Vicentiu Galanopulo <vicentiu.galanopulo@remote-tech.co.uk>
+> ---
+> 
+> Changes in v3:
+>    - remove active property
+> Changes in v2:
+>    - renamed label to remove color from it
+>    - add color property for each node
+>    - add function and function-enumerator property for each node
+> 
+>   .../devicetree/bindings/leds/st,led1202.yml   | 103 ++++++++++++++++++
+>   1 file changed, 103 insertions(+)
+>   create mode 100644 Documentation/devicetree/bindings/leds/st,led1202.yml
+> 
+> diff --git a/Documentation/devicetree/bindings/leds/st,led1202.yml b/Documentation/devicetree/bindings/leds/st,led1202.yml
+> new file mode 100644
+> index 000000000000..f64273599181
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/leds/st,led1202.yml
+> @@ -0,0 +1,103 @@
+> +patternProperties:
+> +    "^led@[0-9a-f]+$":
+> +    type: object
+> +    $ref: common.yaml#
+> +    unevaluatedProperties: false
+> +
+> +    properties:
+> +        reg:
+> +        minimum: 0
+> +        maximum: 11
+> +
+> +    required:
+> +        - reg
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +    - |
+> +        #include <dt-bindings/leds/common.h>
+> +
+> +    i2c {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        led-controller@58 {
+> +            compatible = "st,led1202";
+> +            reg = <0x58>;
+> +            address-cells = <1>;
+> +            size-cells = <0>;
+> +
+> +            led@0 {
+> +                reg = <0>;
+> +                label = "led1";
+> +                function = LED_FUNCTION_STATUS;
+> +                color = <LED_COLOR_ID_RED>;
+> +                function-enumerator = <1>;
 
-Can you please make this change a formal patch by yourself? As I don't
-have hardware in hand, I'm not confident to accurately describe the
-requirement or verify the new version during the upstream process.
+You should use devm_led_classdev_register_ext() to let LED core create
+LED class device name basing on the above three properties.
+'label' property will be useless in that case, so please drop it and
+avoid constructing LED name in the driver.
 
-Thanks,
-baolu
+> +            };
+> +
+> +            led@1 {
+> +                reg = <1>;
+> +                label = "led2";
+> +                function = LED_FUNCTION_STATUS;
+> +                color = <LED_COLOR_ID_GREEN>;
+> +                function-enumerator = <2>;
+> +            };
+> +
+> +            led@2 {
+> +                reg = <2>;
+> +                label = "led3";
+> +                function = LED_FUNCTION_STATUS;
+> +                color = <LED_COLOR_ID_BLUE>;
+> +                function-enumerator = <3>;
+> +            };
+> +
+> +            led@3 {
+> +                reg = <3>;
+> +                label = "led4";
+> +                function = LED_FUNCTION_STATUS;
+> +                color = <LED_COLOR_ID_RED>;
+> +                function-enumerator = <4>;
+> +            };
+> +
+> +            led@4 {
+> +                reg = <4>;
+> +                label = "led5";
+> +                function = LED_FUNCTION_STATUS;
+> +                color = <LED_COLOR_ID_GREEN>;
+> +                function-enumerator = <5>;
+> +            };
+> +
+> +            led@5 {
+> +                reg = <5>;
+> +                label = "led6";
+> +                function = LED_FUNCTION_STATUS;
+> +                color = <LED_COLOR_ID_BLUE>;
+> +                function-enumerator = <6>;
+> +            };
+> +
+> +            led@6 {
+> +                reg = <6>;
+> +                label = "led7";
+> +                function = LED_FUNCTION_STATUS;
+> +                color = <LED_COLOR_ID_RED>;
+> +                function-enumerator = <7>;
+> +            };
+> +
+> +            led@7 {
+> +                reg = <7>;
+> +                label = "led8";
+> +                function = LED_FUNCTION_STATUS;
+> +                color = <LED_COLOR_ID_GREEN>;
+> +                function-enumerator = <8>;
+> +            };
+> +
+> +            led@8 {
+> +                reg = <8>;
+> +                label = "led9";
+> +                function = LED_FUNCTION_STATUS;
+> +                color = <LED_COLOR_ID_BLUE>;
+> +                function-enumerator = <9>;
+> +            };
+> +        };
+> +    };
+
+-- 
+Best regards,
+Jacek Anaszewski
 
