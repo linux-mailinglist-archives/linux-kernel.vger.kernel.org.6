@@ -1,78 +1,77 @@
-Return-Path: <linux-kernel+bounces-383604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62AF59B1DE3
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 14:46:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCA429B1DF2
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 14:50:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F8201C20BBF
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 13:46:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91A8B2818EF
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 13:50:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 669DB1547F0;
-	Sun, 27 Oct 2024 13:46:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B84CF1547F0;
+	Sun, 27 Oct 2024 13:50:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zenbv5+S"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RP1SSjc3"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E612A1D6AA;
-	Sun, 27 Oct 2024 13:46:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 367D98489;
+	Sun, 27 Oct 2024 13:50:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730036782; cv=none; b=jZeT6JN1iA+rRo90pda0h5IO8XkOBZw03R7RCEJ57Na7ChQIqrQZLagWUl/6E1pE+ePjDtJ1zF4pibzTmPRv8M5nEzDebdwLWbh4TADciudVLxwwbfI822M49FK3YZn/85sjEFCPnEc2rXdVYlA7sIMuV7MtNKtWzCr/SXn7V38=
+	t=1730037051; cv=none; b=CMoPdTyvCPLnCj77Yxya6T0oAEGFtSHHCEweykhiLrEaZ+OdryZOrU8qGmtI+Kw9MjH84jEXNvCGWJr8gFYaSoHzRW8TKKtv0sb8OhK4j8gDk1iCPCz+TWU6XeiZmZSdFWBwz1HJBrcrm1dXQ8U10vdvXYz2LYiwsfv06qlNoj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730036782; c=relaxed/simple;
-	bh=1wAsLqM/9YxIYVWDGTUmZxhjUhZh3V6gZDRoFAyHJe4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=F/fUkX5iXRkM9RLqzbnMFW+hFYWHmS629VFn3OCzvUOZYk/1DeGqW6fV8XPtU4tsuf7FM282v9J2BfuHJUZlwL/3lcHSGBjHBvB13NyyK9PxCqiT5XILxBlw91Dt9Q27Lq0Zify+k+gf9muoosN5X2V4u1B0oG3as3vwnUd7vig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zenbv5+S; arc=none smtp.client-ip=209.85.128.47
+	s=arc-20240116; t=1730037051; c=relaxed/simple;
+	bh=rntz41aukF0GgOif9N9M6U96FYbkXK0Me9t+AAat9vo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pzvQhACI6A15/ur4RI+Zw6nsNivWpUXTN3TaBr04c1KXsA17JoAjQl+vwqbhLBTPJ/iMg5rwY6ddXStKwWp8NYKngiR869nJbBNtoY5dBOmDrr7fKM7J3hKzV5+9usXQ3y5SY+8Ju8/6fVXLuyPzJ69yURWDvIhBG4/rYYOEvZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RP1SSjc3; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4316f3d3c21so33751775e9.3;
-        Sun, 27 Oct 2024 06:46:19 -0700 (PDT)
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43159c9f617so34392175e9.2;
+        Sun, 27 Oct 2024 06:50:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730036778; x=1730641578; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1730037047; x=1730641847; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=FBF2xCVjDBXY36r9f8qZDqWQaqa6k7kywBRKHfiq8Cg=;
-        b=Zenbv5+SWN6PD6cudq8+g5ANNi9nbdcbVsJIjbdSqXA5JCb8IxwOpmDJgsU7iT0T7X
-         /9HlrH3L8ibnUNskddlZIF3Uhg02BHIt7k9m6bB7uIlcdO2y7GT5eFEqFFP+Pj3BFxWr
-         RtYUwZ6g8Dn2PGoyd8q+/ChTaRL4n27EPDn7kebJ+ss8wqvHpvSdlJhS+m7vAM8/BKzM
-         6akk8efa8tIBlmkr8zIw82UWWpLLe2AuImjzLXcTPwUczwSxLZR7o8AGbROydbQ2BHJg
-         KwciMhVyikvU6Mou4WpGup+lyXWjwRAJ9mSSyfiAOZETVMWAxIgexz6BN9xSj8Lje+9Y
-         51eA==
+        bh=IjLV1bEDo/MtMx6gk/KnUwVzXIaCsBTVYT7dT2Z8X0U=;
+        b=RP1SSjc3h2805fgMIMPMvHg7FdkuDn8bTfy++C3lXnr4qeSbN0lbmm3L0Z3WLNZv5/
+         i+lXrvkOssOpwxCg1ustsMNN/qjyKV7iPYkmcOv1/ZnNR91lCq3VWx8uTvU8+uvoXlQR
+         AUl2FWAlwlBBPWB58xJhA6VARkx4Qwe6KJUNKNb/8fu+bLGrwAr0Be3YE5TR+rmrL8qT
+         XuZShwRkzrroEP2lUbuxnNPgkOBbuiIWEAQdaI+/EpvaVLVaqbOswbpNhuGoWCVPgf2/
+         NanHxIy9Mj60i9EPloiEklKfwcE05rwHiWAxqQ+ODj77YoRhHh/59F2xZRE77AOqSJlU
+         Y+Bg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730036778; x=1730641578;
+        d=1e100.net; s=20230601; t=1730037047; x=1730641847;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=FBF2xCVjDBXY36r9f8qZDqWQaqa6k7kywBRKHfiq8Cg=;
-        b=GSrJNZO9f3QlkdM3cdBROrEbyDvqU8hMTb7qmNmnOIg/1KNFcscrsC/JsSH5f3BgAa
-         V6fo499UuY3tFQXSV2OEoHkpdjgdXy6q9XSBRlN7bB9+UU0qQaAmAF+ri7Ck4r5Y3RV0
-         P5yODjVvorhZ0SglOAczXJmwrpoJzjVeru9zawdrXxcgGWrTNeHy6iywyzMjLRxPaLUz
-         UhDwQkyeCxLkHolMgEFOwoyyahMKG+4XlXCqEa9RPyUGFcxpwhuxYUceEug+LSetxwSK
-         27xiXN7yXlkT0yV/mTalIzsQIBogdoHh8EpI//b2ea41p131TXLd0+D8rkuqJS2coXCu
-         1t0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCURRlWQgkkzKzVEGhie8VshksDnnAUHZkgvh0GAxYthlbCLbXKy882tE82IzpfnVFIN+SGqCD/aq5Sx2gsPsBo=@vger.kernel.org, AJvYcCWc1yn3LpFivLrsb5RNVw6UT4SoRUI50TmxasSFzAY7mCIccEvgaNeCXmRfnZxFbnqfqNolv/ygkWUxgMwr@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxb4HZVraxD6KjFEtQSLVmQTedvR8651A3/x2nMoX8Cfhu1DUHf
-	n1A8BdG2BUKgk3NEixHxhy89wuR8T4LA9JCq620CViop/wICHsRZ
-X-Google-Smtp-Source: AGHT+IEMlm41NAVGO68RrktYRtrNXvoOnHit95Vmz7cUlneN2UZAJxzmsEtHxE25ytVoHyo3sCHmvg==
-X-Received: by 2002:a05:600c:3b14:b0:431:60ec:7a91 with SMTP id 5b1f17b1804b1-4319ac6f895mr48516405e9.2.1730036778049;
-        Sun, 27 Oct 2024 06:46:18 -0700 (PDT)
+        bh=IjLV1bEDo/MtMx6gk/KnUwVzXIaCsBTVYT7dT2Z8X0U=;
+        b=MIeY6Gy95idxw/OdqTv5UnXKE29LSAx7gX/0B78OWoK1U+gW5LZc9kWindGCBGn3wa
+         lv9wz0bABgZN9PvMvjcsjjTi8HFl3smn34aU23vKqGwxm9dFuUxVgKjxDBGKXgzznlAn
+         KCTCrS8Hug7BPb4sT5UgGBtxGNABczSk/8w4NMrPY5v/UjsVX4JJXyP0VB97emDmNSLS
+         MuPj8Wn0e4ERyCKc2UhMfEThYWggOp20SY7k9jjYNXjNuoi1ZMKdqkEDGI+A+/JG6zNc
+         rmm8EZjOXNFvjzqGbGrAgvj8r/ozNBuY9uJ37KId/uPgyaLZSQvIOSSGvY371zEaT8nw
+         j7Pw==
+X-Forwarded-Encrypted: i=1; AJvYcCXm4ZGsFw0I49uvAr9zfctPYojSSXEncaAD3UHv5xpKpwjdujnreMf9TjPBoT0UUIQ/G91I/6K9N/P1Wo+E/U8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywa9S8U5iN5I5U7f2hiwIUgSsC+42zx5mowtlZcNtPOcf8aehRN
+	ZYQ0sxREd0Rx1M7CTSEP716UoauA7d7roQMjGK2nF52vL2yqGg7q
+X-Google-Smtp-Source: AGHT+IFZSdsgh8pvcncgHwHZRd8w844yRAmKPjSvmnyw+tgZwytUA1t/mD3WcP4RP6lpmD54tce6IA==
+X-Received: by 2002:a05:600c:458f:b0:431:3bf9:3ebb with SMTP id 5b1f17b1804b1-4319ad047a7mr46439315e9.24.1730037047280;
+        Sun, 27 Oct 2024 06:50:47 -0700 (PDT)
 Received: from void.void ([141.226.10.223])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431935f7789sm76393165e9.36.2024.10.27.06.46.17
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4318b57b5d9sm105627565e9.44.2024.10.27.06.50.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 27 Oct 2024 06:46:17 -0700 (PDT)
+        Sun, 27 Oct 2024 06:50:47 -0700 (PDT)
 From: Andrew Kreimer <algonell@gmail.com>
-To: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Cc: ntfs3@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
+To: Christoph Hellwig <hch@infradead.org>
+Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Andrew Kreimer <algonell@gmail.com>
-Subject: [PATCH] fs/ntfs3: Fix a typo
-Date: Sun, 27 Oct 2024 15:45:30 +0200
-Message-ID: <20241027134613.23188-1-algonell@gmail.com>
+Subject: [PATCH] freevxfs: fix a typo
+Date: Sun, 27 Oct 2024 15:50:27 +0200
+Message-ID: <20241027135042.23693-1-algonell@gmail.com>
 X-Mailer: git-send-email 2.47.0.149.g3e3ac46130
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -82,28 +81,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Fix a typo: recommened -> recommended.
+Fix a typo: ivalid -> invalid.
 
 Via codespell.
 
 Signed-off-by: Andrew Kreimer <algonell@gmail.com>
 ---
- fs/ntfs3/super.c | 2 +-
+ fs/freevxfs/vxfs_olt.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/ntfs3/super.c b/fs/ntfs3/super.c
-index 6a0f6b0a3ab2..3d7693a55321 100644
---- a/fs/ntfs3/super.c
-+++ b/fs/ntfs3/super.c
-@@ -1252,7 +1252,7 @@ static int ntfs_fill_super(struct super_block *sb, struct fs_context *fc)
- 	sbi->volume.ni = ni;
- 	if (info->flags & VOLUME_FLAG_DIRTY) {
- 		sbi->volume.real_dirty = true;
--		ntfs_info(sb, "It is recommened to use chkdsk.");
-+		ntfs_info(sb, "It is recommended to use chkdsk.");
+diff --git a/fs/freevxfs/vxfs_olt.c b/fs/freevxfs/vxfs_olt.c
+index 23f35187c289..48027a421fa3 100644
+--- a/fs/freevxfs/vxfs_olt.c
++++ b/fs/freevxfs/vxfs_olt.c
+@@ -63,7 +63,7 @@ vxfs_read_olt(struct super_block *sbp, u_long bsize)
+ 
+ 	op = (struct vxfs_olt *)bp->b_data;
+ 	if (fs32_to_cpu(infp, op->olt_magic) != VXFS_OLT_MAGIC) {
+-		printk(KERN_NOTICE "vxfs: ivalid olt magic number\n");
++		printk(KERN_NOTICE "vxfs: invalid olt magic number\n");
+ 		goto fail;
  	}
  
- 	/* Load $MFTMirr to estimate recs_mirr. */
 -- 
 2.47.0.149.g3e3ac46130
 
