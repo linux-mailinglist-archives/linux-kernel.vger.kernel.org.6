@@ -1,116 +1,187 @@
-Return-Path: <linux-kernel+bounces-383716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21C469B1F75
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 18:48:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19FC49B1F77
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 18:49:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49ADD1C208B2
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 17:48:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD777281084
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 17:49:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 081871714A4;
-	Sun, 27 Oct 2024 17:48:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFC3716CD35;
+	Sun, 27 Oct 2024 17:49:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YTs+46ne"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="T1ufwHJC"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF3684C83;
-	Sun, 27 Oct 2024 17:48:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32A5915EFA1
+	for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 17:49:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730051321; cv=none; b=pilehPF+2/tOT0LKEftA7jO6ebrEbpqsXh6V5jmgYSXQqtqa1BHq+h9y2rDMnzxQxqKbALELdq5GL5UdrVoWUShgwK1H8NRS8t0Ric4OwFHSqRoBvcRLS8JDSr3XQdUAozYTaB4RexcmSIQf/H2/mQL0V9izQEmlQra4PQjODYs=
+	t=1730051373; cv=none; b=WyCoWPhp6hm1HUxZG4FZf175LlT1R3OgMEQm4285uDEEM4WMvKH0T8wpr0sL67nfx4E2DKwJdjXo4hNkK6xWIlxeZzKJFB/UQ5a7cCXngQw493omascO81w0NOwNmwf1C18tHVEWvJX15aJcn1s3Oi9g7xzBcH6b6RF16iV99Qo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730051321; c=relaxed/simple;
-	bh=0vUHzi67pMzq1RGaGQjqttjoI06vRvun+pQ7lZ+m81Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DolcNjFQYt5FZ9m9deooz8EzxpG9yvn6Jhw+isa2xNHSBitH62fR3mWQymsMc6N9mmAPxro4uL/yzD4GfYj2ydQcfjnfgSF7etPgZ0PHH22Q2IkRJPALHe/va1NoFPWqEGlKkWtkTNSS4F2RRgilOd0xMNH73geN/xqMFdcJnII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YTs+46ne; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2e2cc469c62so2534610a91.2;
-        Sun, 27 Oct 2024 10:48:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730051319; x=1730656119; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=fW7cYVNATA0lggd3viDmK/yYwUGBKvU/eStDk3KNt3Y=;
-        b=YTs+46neSL09qHdUfA4Rt/hn7ze9+yIRbDrhjgPGdGUE4wCx4U8nQu8vtOiBF677PK
-         aBE3kSMN7FKwljAHd0IHlWcKDRIvC2J/SnIJmIS+yV+RIN/QMTk6U2yQJf2WaCxKb2mS
-         L+92RbvM9T6qNBxP+9KuYnTIDkooCNSWYCCb0nJ3GnHXJLpdXViWtK9MPt7L9Q8GHdwy
-         fNfSnLiPZt6Lt3ezT/nQT+fPnuk8QK2l9iObXMZ1xic0P3NeXqQc57EMCohtDc8Qwwf6
-         X73goeuCxjgWc6Lv9FwAvJKjv2kBNdqSEYT2OYemnFceKtBxrP+Yt1NrTH9USG/tM6oY
-         LliA==
+	s=arc-20240116; t=1730051373; c=relaxed/simple;
+	bh=ukgW3/cSOhgMOsJ6/qtTV4LpXANuPx6LanujyhVT0mE=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JreJTivaUky/2Zlsi4VzpjWpEc8MgG6pyjiJV8jzynzp4gOyWptKNVqbjQ/f55DOvsSj2pw+X1E/rxt4+bXhzpDTVojcPNromzVSkbeO0YzwaQPDBkDLsvkEaSa+6SkW/eAosZE311gxUR0+c7AodsAKH69xEzh/kYZotaYBmLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=T1ufwHJC; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730051370;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dGyedni/Q8cZq63gutTOp/jBzBAQP+LtDb0Ng1itTDU=;
+	b=T1ufwHJCH+WkDUMpVZT3O4znRMp7Q4wNm4ziWOkhm3zWjPQk91I1rszv3he7GLtF6lKSRv
+	Bb6UzCXni90riZ2w73HK/R6L2F6Rq5sQck3GwAVnykqyaIRRbCrV4Peqs5cPUAg5XzvMgE
+	mI09IlNo6hyIAxQUa3c3KOq5nD/BALU=
+Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com
+ [209.85.210.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-164-cLEyriD7PVGUfjMIMJJ5Aw-1; Sun, 27 Oct 2024 13:49:28 -0400
+X-MC-Unique: cLEyriD7PVGUfjMIMJJ5Aw-1
+Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-71e467c39a4so4040812b3a.3
+        for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 10:49:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730051319; x=1730656119;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fW7cYVNATA0lggd3viDmK/yYwUGBKvU/eStDk3KNt3Y=;
-        b=EjtVp6mAwi2PyGs7Iqx/bWStU9wxDMexzaV/KZ6SOa8Ordx9D6U6X4a5qhm6IpCrxO
-         ZEG1Rnr8L4M6gxHgIAIXBn25Tg2aUc5T5r0/OVnuviXZHW8f4qB2g8sn5NY37zHDxn+x
-         mHdkVfdM0udWHNUt2d73IxSZg1iwomlSeoVMGKyT7P6fGRPoBJl8f7sT0Vm1nmf3JLkG
-         0rs5RGYvlMTNTebpgLPIcBH04I/Ny/sdY17aTKJiJLyepXiFQv2Ttnuure1KzohlDQBT
-         9YImh6lGt7Vs85zq48Ri/oAQIk/kB9XN2u+D5JiRs05EQrqcQXWdwHofZZZmAAloypmG
-         MKMw==
-X-Forwarded-Encrypted: i=1; AJvYcCUogD2H1BT2/giXn05r8yi9TYX8v4Pc9/l1DBdzXe9vIPF1eIV1qz3KOcHTkhE78s0TnhZ/102b4VWQNg==@vger.kernel.org, AJvYcCWEZc0nitx0w+QGLixQE8D4gBzYrL8VP0n1X3n+TKJhV8dN9Vnax6+hkdj4SjsOb9xaEyuIz7RRpHCS4KY7@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/fHdhsnBxU7JI2qxCYAyAqypsZ6e0DG7DwkGUuBSFiLk7CuNG
-	vGZNRTEbpssWoXfh8erXVTq1j72UjX+dWYVwxt4RnsuotGEp5ccL
-X-Google-Smtp-Source: AGHT+IG7B+tHpeFxE3xZho5H08dMcpxyv6wmeiyetl8XMdItUQ43e7sRvJB0hxPiiRQlttWz7cYwcA==
-X-Received: by 2002:a17:90a:3985:b0:2e2:991c:d7a6 with SMTP id 98e67ed59e1d1-2e8f1073411mr7098926a91.19.1730051318889;
-        Sun, 27 Oct 2024 10:48:38 -0700 (PDT)
-Received: from localhost.localdomain (108-228-232-20.lightspeed.sndgca.sbcglobal.net. [108.228.232.20])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7edc867a2ffsm4251913a12.28.2024.10.27.10.48.37
+        d=1e100.net; s=20230601; t=1730051367; x=1730656167;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dGyedni/Q8cZq63gutTOp/jBzBAQP+LtDb0Ng1itTDU=;
+        b=mqKUK0fphXhi/2XlKSLYKuA6IrMAr38wCFnVPVoWYpErZVarXah+3i1JDEnwvH9C5g
+         /4h825JcM7pe0Xzk7/oU41mPEU+PcgVTJPcwXYwPM/YWTTlAwOtaPEXLcTM0N7PITCCN
+         6vxzwtuJV51p6tEYppz6oCwdNKcu8nlpM2trLA20sPXCjkZny42d2xRMI3i+wA3Asph+
+         5/ko0EdUTQThXlZ9yCudCvV/DfzYIOL2KpvOwqp5p/unNYEq0nYHJdOpXQjkPwwpdItf
+         xcqC355mxN2FZDiCzwqSN99OmElnXijpXql3a3Pe3w+lvmiUsw2I+7EtYwC1YhW2cH3s
+         Habg==
+X-Forwarded-Encrypted: i=1; AJvYcCXph6gxPJSewu7HuQKxs7MrKOTLtOksZDF1VZBEUGXxpLgFnTEybWvqonJefitvXEbzRnoJQnbk/24Oeos=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3O2tMQ7tYH5jOKbJKytoxEd634zoGfOToc3OW877/7U1pdt4w
+	XRzUA7J8asq2bqsbA/C0ZHYds/bb2a+HwPHh/eGGUlCvy4jv0aVn4xHe9hfG0cBGqu/1AfI9S8F
+	fQEFPC2BHhemQk33zFCPr1Dg1JyEwSNAvJkAf7h1c5NZZ/IjfNpBQvr3nYYJMiA56czsxhw==
+X-Received: by 2002:a05:6a20:2d27:b0:1d9:d0e:34a4 with SMTP id adf61e73a8af0-1d9a83a96a6mr9858973637.7.1730051367251;
+        Sun, 27 Oct 2024 10:49:27 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHliNezDqPtcffB/0XVsiezr7eb7M3feYcKepm25uR+TB4U3H3PzOWlR5Q1tD1Eu1+kbBgifg==
+X-Received: by 2002:a05:6a20:2d27:b0:1d9:d0e:34a4 with SMTP id adf61e73a8af0-1d9a83a96a6mr9858945637.7.1730051366906;
+        Sun, 27 Oct 2024 10:49:26 -0700 (PDT)
+Received: from treble.attlocal.net ([2600:1700:6e32:6c00::3e])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7edc8696a86sm4369893a12.47.2024.10.27.10.49.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 27 Oct 2024 10:48:38 -0700 (PDT)
-From: "Derek J. Clark" <derekjohn.clark@gmail.com>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Jean Delvare <jdelvare@suse.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Cryolita PukNgae <cryolitia@gmail.com>,
-	"Derek J . Clark" <derekjohn.clark@gmail.com>,
-	linux-hwmon@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [RFC] hwmon: pwm_enable clarification
-Date: Sun, 27 Oct 2024 10:48:14 -0700
-Message-ID: <20241027174836.8588-1-derekjohn.clark@gmail.com>
-X-Mailer: git-send-email 2.46.1
+        Sun, 27 Oct 2024 10:49:26 -0700 (PDT)
+From: Josh Poimboeuf <jpoimboe@redhat.com>
+X-Google-Original-From: Josh Poimboeuf <jpoimboe@kernel.org>
+Date: Sun, 27 Oct 2024 10:49:22 -0700
+To: Jens Remus <jremus@linux.ibm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	linux-kernel@vger.kernel.org, Indu Bhagat <indu.bhagat@oracle.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	linux-perf-users@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+	linux-toolchains@vger.kernel.org, Jordan Rome <jordalgo@meta.com>,
+	Sam James <sam@gentoo.org>, x86@kernel.org,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Ilya Leoshkevich <iii@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>
+Subject: Re: [PATCH v2 03/11] unwind: Introduce SFrame user space unwinding
+Message-ID: <20241027174922.cdlkeidvciwlv5an@treble.attlocal.net>
+References: <cover.1726268190.git.jpoimboe@kernel.org>
+ <ca2e603ae3dcfa3e836162ed8c301fd4d9fd4058.1726268190.git.jpoimboe@kernel.org>
+ <c967505c-fbdc-4a46-a5b6-d164fe79e2e3@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <c967505c-fbdc-4a46-a5b6-d164fe79e2e3@linux.ibm.com>
 
-Greetings all,
+On Wed, Oct 23, 2024 at 03:59:53PM +0200, Jens Remus wrote:
+> > +++ b/arch/Kconfig
+> > @@ -428,6 +428,9 @@ config HAVE_HARDLOCKUP_DETECTOR_ARCH
+> >   config HAVE_USER_UNWIND
+> >   	bool
+> > +config HAVE_USER_UNWIND_SFRAME
+> > +	bool
+> 
+> I found this unwinder of userspace using SFrame to depend on your generic
+> unwinder of userspace framework. Does this warrant to add:
 
-I am working with Cryolita to fix up the GPD driver she submitted recently:
-https://lore.kernel.org/all/20240718-gpd_fan-v4-0-116e5431a9fe@gmail.com/
+Based on your other suggestion I now have:
 
-We are currently having a discussion about the meaning of this part of the
-documentation and are seeking some guidance from upstream.
+config UNWIND_USER
+	bool
 
-> pwm[1-*]_enable
->     	Fan speed control method:
->     	0: no fan speed control (i.e. fan at full speed)
->     	1: manual fan speed control enabled (using pwm[1-*])
->     	2+: automatic fan speed control enabled
->     	Check individual chip documentation files for automatic mode
->     	details.
->     	RW
+config HAVE_UNWIND_USER_FP
+	bool
+	select UNWIND_USER
 
-In oxp-sensors we took 0 to mean "no kernel control" so a setting of 0 is
-technically "automatic" but fully controlled by the hardware with no
-interaction from the driver. In her original driver draft she had taken this
-literally to have the driver set the fan speed to 100% on this setting rather
-then give back control to the hardware. My question is simply what is the
-correct interpretation here? Ideally I would like to see this interface match
-as existing userspace software is expecting 0 as hardware controlled and 1 as
-manually controlled, but we also want to ensure this is correct before we
-submit a v5.
+config HAVE_UNWIND_USER_SFRAME
+	bool
+	select UNWIND_USER
 
-Thank you for your time,
-Derek
+The arches set HAVE_*, which in turn sets UNWIND_USER.
+
+> > +static int find_fre(struct sframe_section *sec, struct sframe_fde *fde,
+> > +		    unsigned long ip, struct user_unwind_frame *frame)
+> > +{
+> > +	unsigned char fde_type = SFRAME_FUNC_FDE_TYPE(fde->info);
+> > +	unsigned char fre_type = SFRAME_FUNC_FRE_TYPE(fde->info);
+> > +	s32 fre_ip_off, cfa_off, ra_off, fp_off, ip_off;
+> 
+> Doesn't fre_ip_off need to be u32 (see also below)? The SFrame format
+> specification states the FRE sfre_start_address is either u8, u16, or u32:
+> https://sourceware.org/binutils/docs/sframe-spec.html#The-SFrame-FRE-Types
+
+Indeed, I also noticed that.
+
+> > +	SFRAME_GET_USER_UNSIGNED(cfa_off, f, offset_size);
+> 
+> As far as I know the CFA offset from CFA base register is signed in the
+> SFrame file format. See Binutils include/sframe-api.h,
+> sframe_fre_get_cfa_offset(). Therefore use SFRAME_GET_USER_SIGNED(). Both
+> cfa_off and struct user_unwind_frame cfa_off are already defined as s32.
+
+Good catch.  There's no need to have separate SIGNED/UNSIGNED variants
+anyway, I'll simplify that into SFRAME_GET_USER().
+
+> > +++ b/mm/init-mm.c
+> > @@ -11,6 +11,7 @@
+> >   #include <linux/atomic.h>
+> >   #include <linux/user_namespace.h>
+> >   #include <linux/iommu.h>
+> > +#include <linux/sframe.h>
+> >   #include <asm/mmu.h>
+> >   #ifndef INIT_MM_CONTEXT
+> > @@ -44,7 +45,8 @@ struct mm_struct init_mm = {
+> >   #endif
+> >   	.user_ns	= &init_user_ns,
+> >   	.cpu_bitmap	= CPU_BITS_NONE,
+> > -	INIT_MM_CONTEXT(init_mm)
+> > +	INIT_MM_CONTEXT(init_mm),
+> > +	INIT_MM_SFRAME,
+> 
+> This does not compile on s390, as INIT_MM_CONTEXT() is defined with a
+> trailing comma, leading to two consecutive commas. Already reported by the
+> kernel test robot for other architectures.
+> Same if INIT_MM_SFRAME expands into nothing there would be two consecutive
+> commas.
+
+Yeah, I saw those build errors and I've got that fixed now.
+
+Thanks for the review!
+
+-- 
+Josh
+
 
