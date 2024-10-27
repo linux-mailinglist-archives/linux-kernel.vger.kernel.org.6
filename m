@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-383659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 477679B1ED3
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 15:38:48 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8369E9B1ED5
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 15:39:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 001AB1F21731
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 14:38:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 197B5B22139
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 14:38:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B05B166307;
-	Sun, 27 Oct 2024 14:37:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09D5D188006;
+	Sun, 27 Oct 2024 14:37:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NmGmZcDn"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kI5LFX5n"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 954B016BE2A;
-	Sun, 27 Oct 2024 14:37:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B40118454E;
+	Sun, 27 Oct 2024 14:37:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730039832; cv=none; b=Lq62rJrLGR7jgCTk08SO8PicDnfVLfPv4bYT7pkiVw3u/7QXCO14ZkOe6Dxzi22vLMMi/lipMcmwKEfkKGhxmmFajzJxxeQGoeWDP4KTBbkT9KJEA0Oe//DWFqwx7F1tJe385BrbGHBG2V23bQ83zA52EGrA/k3M6nD46Ai1IAs=
+	t=1730039833; cv=none; b=R+xiBF3tVf5sEdPvT9CCsffrp9wXX0qdVVUrs056T4yZGENpifZCIyySCi2a+1285bS3A0WridXVI9Cpo8HxgvyOhfhHlKS14vSF0i5MRioODWn1b2A93vGTP4CiwCgDHIIBPmk/yB0dVEpV2CauMoNiJR5IJYm35IYPDb/SbA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730039832; c=relaxed/simple;
-	bh=Ek3f9IntqkTVZaMM5+9uMLvwBlmFC1g5tii851ibiMQ=;
+	s=arc-20240116; t=1730039833; c=relaxed/simple;
+	bh=GRIprTk55YoxyAtAqBSmeVlFwn+FJRp9HdXHznTSR8s=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=REjDBgo32GVp5SwdzwL1eQsLufKfRtqREhUWV7NsIomMoIJv2oCLlgNyl7xJ83u2z8GZFA9QVkrziy4zL6jn7PPOdBR2XLxquJEjAnXbx580/eS17QvdJZnoClycTP64iVm0QzwGg2+AEm0umUNczJWTGaG4Bb47dmzffnFFOdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NmGmZcDn; arc=none smtp.client-ip=209.85.208.47
+	 MIME-Version; b=WEfCGH8YCb7UFb22IcHNVVf5z1PPvlpmkf0YCj4N92i2/huXRdzjVa+ThmONYHxbTZfjOSuIuZMGtpogqQIoOYp+a5i/Z2f2m58mMlZFjQSUD1JboPAYdNIoH2xGEYNylh9jcVk8Lebz56Duw8ldBBjHkfj0KYHsFlemcRcMikk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kI5LFX5n; arc=none smtp.client-ip=209.85.218.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5c93346dfc8so439944a12.3;
-        Sun, 27 Oct 2024 07:37:10 -0700 (PDT)
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a9a139be16dso60552466b.3;
+        Sun, 27 Oct 2024 07:37:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730039829; x=1730644629; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1730039830; x=1730644630; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=JxrWAGvbebnl7bShJIljz1Nm6dGXiAY6T1E3WWpWzg0=;
-        b=NmGmZcDnBPW6RlFD9QZd+ngfTQfXty53NxwB4i5mTE+yaZqhppHwPmHc4B7wXcgFEt
-         /kWi095bvHrMQadWm6Y0z9ghFhMAPaSFcLUqF/CFmPmQULgLvM/dx5YtzeZyULUURfDK
-         7o3/q2oxdTnaKZdpiODcSV6q8GFEtirL3K9TFx2usfT/b1eeUluDXl0iU2HumYt/8HPu
-         TngEYvEPD/4VLiEWpE5uzjFlScv3d4SeudT78gCPv2R3GkXdqoFTYNZ5H5IyHNY9RQn0
-         ZkOnrePdnODUAjviUnFLQo+0bjkNFB//aa6H3lEbMVknijzSmIaJELb6OP6sTZFEIqQX
-         BPvw==
+        bh=vySvn0PrZ5KmWWRcUjB0f7ffbO3G5ojONpptbAIcwaU=;
+        b=kI5LFX5nrR/utQGl7IKTN6qzeG4/rqE16+rTVa5apZswBLBTDLujyqsvnqmiU4qhG9
+         5yzlAEor000FIrQ/4WlA+Bi2f8UYJHtXQbwPLhXBcfvNcVziUadgozSFcH/077WqgDkw
+         Q944eyhO3D+OgfuQB6Ye9AaDQx1LU8tZvnSQPqrG6bwjD8TQlUbn8chO9QblzHR9KTQH
+         pUAk3UYjNdhfq7Ug067ieySFrl+jYRCWQid7+22z35EqVDfMbanuPKMkeC1phmgWWevx
+         diXpFbBli9ooGB502FTOfzkT0bIzDqmfN6n5aUPUON8ywQFaLAdsNNvxMPKdjEKcPmh0
+         Mlsg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730039829; x=1730644629;
+        d=1e100.net; s=20230601; t=1730039830; x=1730644630;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=JxrWAGvbebnl7bShJIljz1Nm6dGXiAY6T1E3WWpWzg0=;
-        b=JDREZylQuiymfeiHYYeCOPfJK+PD7gr8M6scv5F0Jze/koKA2qR7UusGtI6H31ItZt
-         bq2baPGtWHsK2QfqaZzSntZG05DIhbThGL1KRjip65maA+TlnjLu9Wi7y2MsPGjXDxr0
-         zyN3+CJZPUXGnB0QTTkYLS6kU00xqp+RbgRvd5WUhZU6s2woLxNn0RgyKXgT6dm1S1LS
-         LXLr/d6j8sBcLiFRDvztpFPFk1x2a301Pnm4q9jTjF8RUCZSLrchKhZ07wfkgZbhkAz4
-         KoiDju1g275GDM83Ig+1Uh2wHWlIMgSIPROxlad/pPIRL2U2D0zBGj4RlzNvdDdtv37q
-         JIqA==
-X-Forwarded-Encrypted: i=1; AJvYcCUW025So2cPYxB7ufN9LqTE214/btFxILzV+fwpTmuzB5nqoo2lG3katOWwUvKq3Fa7Z/YBuafatcUv@vger.kernel.org, AJvYcCVggSe8U9oIq/oT/G7rdbCHX59JbYY9nEgRIWINFVWPIoWsO17k1pWhYSvyETtluSTwZSlo9kqWyshlMlXi@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsN5o/kt1z3M1soHUUgj8wx55oGPakCIQpiBmMw4N2Y8daa0R1
-	x4D8S2eROIIJH5wUBddkdeY82VQPK/BS3NnYe9cTLTXD9CTogFvQ
-X-Google-Smtp-Source: AGHT+IETuQshlPZqNCPXWVTwiqOC89FiAISLisVuq0sLvAjg6bOHaNi5XZVV7rgtSNaIEig0IX+2mw==
-X-Received: by 2002:a17:907:7d92:b0:a99:5f45:cb66 with SMTP id a640c23a62f3a-a9de6175f4cmr239115166b.11.1730039828475;
-        Sun, 27 Oct 2024 07:37:08 -0700 (PDT)
+        bh=vySvn0PrZ5KmWWRcUjB0f7ffbO3G5ojONpptbAIcwaU=;
+        b=Z5WxsROoBtMH6E9Sahi0tHYfNL/vohqg41tLHHTRigYu41rvlx8jCAFZ4xEQGnLiSg
+         CG1fW4SZZR+c2FCtL/z+RPQTxZOW5VigyqTuXQuyduSPqLwQaRJG81H9hv83XMc5TTDZ
+         xyJzrrqY29emXvmTJCsYNE77D+bKgjLOPqRBzlkzdZGqfol50dGkSE3gA59s+cEyJQT1
+         7i8hAuT4iBMeDcdovFxll6adYJUxtxENzXpov1J64Fjnh6qTMfNtIM7gAUXFOQDIpEZw
+         I/9kJqksqxyecpNjQFRnGwUELdU4zqb1N1Jeoo8QPiXc7cdqgJfFT023a3t1Oi7R5s7g
+         UI0g==
+X-Forwarded-Encrypted: i=1; AJvYcCW1I/eTU3FtqqF3hcm5B2+yxqDpnYKDA9QwfUipdQLohH9rJBw1XljS4B8OxDMDxuilHBibcN7iS5VfbSzi@vger.kernel.org, AJvYcCWWJjQ6iCG4lzESUIdV4sEb7TD5S6aRCUndE6yOFGnYaV2LPWduTgNP6jB6nyUD62xPiZftJlD8vTc6@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBT0/mzUVZkDUOzD7bdfBdq4cjlIP4/ONKjYKnRp91iPcJgHo4
+	hm4c5FEDPzn5EZVRBNxgglRb0ot4Pcx+xUsFS+6WuHFa+MXqE6zC
+X-Google-Smtp-Source: AGHT+IFAXiONUp26yPFBIGRc7AqsUWO14Tji/EirrGd9LrhYWQZ2CsNCNbqO9lsi2MZlqdRDu6d/5w==
+X-Received: by 2002:a17:907:7f1b:b0:a9a:762a:e5b with SMTP id a640c23a62f3a-a9de61abe21mr188707966b.13.1730039829537;
+        Sun, 27 Oct 2024 07:37:09 -0700 (PDT)
 Received: from 6c1d2e1f4cf4.v.cablecom.net (84-72-156-211.dclient.hispeed.ch. [84.72.156.211])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b331b0d44sm281127966b.187.2024.10.27.07.37.07
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b331b0d44sm281127966b.187.2024.10.27.07.37.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 27 Oct 2024 07:37:08 -0700 (PDT)
+        Sun, 27 Oct 2024 07:37:09 -0700 (PDT)
 From: Lothar Rubusch <l.rubusch@gmail.com>
 To: robh@kernel.org,
 	krzk+dt@kernel.org,
@@ -77,9 +77,9 @@ Cc: conor+dt@kernel.org,
 	l.rubusch@gmail.com,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCHv3 09/22] ARM: dts: socfpga: add ranges property to sram
-Date: Sun, 27 Oct 2024 14:36:41 +0000
-Message-Id: <20241027143654.28474-10-l.rubusch@gmail.com>
+Subject: [PATCHv3 10/22] ARM: dts: socfpga: remove arria10 reset-names
+Date: Sun, 27 Oct 2024 14:36:42 +0000
+Message-Id: <20241027143654.28474-11-l.rubusch@gmail.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20241027143654.28474-1-l.rubusch@gmail.com>
 References: <20241027143654.28474-1-l.rubusch@gmail.com>
@@ -91,26 +91,50 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add 'ranges' to the SRAM node as it is a required property by the
-dtschema.
+Remove the reset-names since the binding does not mention them, and they
+seem not to be used in arria10 (similarily to agilex).
 
 Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
 ---
- arch/arm/boot/dts/intel/socfpga/socfpga_arria10.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/boot/dts/intel/socfpga/socfpga_arria10.dtsi | 4 ----
+ 1 file changed, 4 deletions(-)
 
 diff --git a/arch/arm/boot/dts/intel/socfpga/socfpga_arria10.dtsi b/arch/arm/boot/dts/intel/socfpga/socfpga_arria10.dtsi
-index 5f4bed187..6a2ecc7ed 100644
+index 6a2ecc7ed..005c57843 100644
 --- a/arch/arm/boot/dts/intel/socfpga/socfpga_arria10.dtsi
 +++ b/arch/arm/boot/dts/intel/socfpga/socfpga_arria10.dtsi
-@@ -691,6 +691,7 @@ ocram: sram@ffe00000 {
- 			#address-cells = <1>;
- 			#size-cells = <1>;
- 			reg = <0xffe00000 0x40000>;
-+			ranges;
+@@ -818,7 +818,6 @@ timer0: timer0@ffc02700 {
+ 			clocks = <&l4_sp_clk>;
+ 			clock-names = "timer";
+ 			resets = <&rst SPTIMER0_RESET>;
+-			reset-names = "timer";
  		};
  
- 		eccmgr: eccmgr {
+ 		timer1: timer1@ffc02800 {
+@@ -828,7 +827,6 @@ timer1: timer1@ffc02800 {
+ 			clocks = <&l4_sp_clk>;
+ 			clock-names = "timer";
+ 			resets = <&rst SPTIMER1_RESET>;
+-			reset-names = "timer";
+ 		};
+ 
+ 		timer2: timer2@ffd00000 {
+@@ -838,7 +836,6 @@ timer2: timer2@ffd00000 {
+ 			clocks = <&l4_sys_free_clk>;
+ 			clock-names = "timer";
+ 			resets = <&rst L4SYSTIMER0_RESET>;
+-			reset-names = "timer";
+ 		};
+ 
+ 		timer3: timer3@ffd00100 {
+@@ -848,7 +845,6 @@ timer3: timer3@ffd00100 {
+ 			clocks = <&l4_sys_free_clk>;
+ 			clock-names = "timer";
+ 			resets = <&rst L4SYSTIMER1_RESET>;
+-			reset-names = "timer";
+ 		};
+ 
+ 		uart0: serial@ffc02000 {
 -- 
 2.25.1
 
