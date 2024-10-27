@@ -1,96 +1,108 @@
-Return-Path: <linux-kernel+bounces-383838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C25A89B20BD
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 22:12:41 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E1039B20C5
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 22:14:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85F592814F6
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 21:12:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F3652B20C72
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 21:14:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4465186E26;
-	Sun, 27 Oct 2024 21:12:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBC4C1865FA;
+	Sun, 27 Oct 2024 21:14:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FtTDTfaD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="n/2DeL6c"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D2F25684;
-	Sun, 27 Oct 2024 21:12:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1C4D5684;
+	Sun, 27 Oct 2024 21:14:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730063551; cv=none; b=drqPZ8E0gPQbhSdAuuBd56CULnO1gkXxHBNv/W2X7iPzffvq6Vcy9NIDDYsHKk+i6t6pqzr19uWSGYBMvEX2PKs2RK1SBzhqE5Sa54+uIxKfM4CfBxeZ6z2C+lbIc0OzV8gZ3eqh4GQatUTu7XGtVqkkwxB8JOx+/eQngFhzdS0=
+	t=1730063649; cv=none; b=rQnaKaJuHaSYop1gPOnBM4H3Nd6+artWigtlOStqNNhJxecImbVUG+Y3pULn/j3ZmXTWHqltBqRTwaYjPKpJbU2RbNh17r5HY2zHoa2efBdJ1wuQ3mZfgslc7c0ZGjCf91jAZT1RmLQpsSOdfcvq/95//sOibNUHD+P61pjlwJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730063551; c=relaxed/simple;
-	bh=uar3ycx7EeVIytO9GydYomj6oWgdHWiXSLPywFoGwjo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ladbn0L12tLnPj+hG5TJVzOBFNq7MBZJ5BA344ozlERfeHQJ7LsNWUylbm7JFcQoMOjE9MBu1slDecgjLFtSLy9dSQRcm3sUytvHs08QNMOeuhSS5rv/cGaV8dudk4KD++SR2Pwuut7ehOlASGdTD/Ea9mZ+03oS051wk3+fxZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FtTDTfaD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48295C4CEC3;
-	Sun, 27 Oct 2024 21:12:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730063550;
-	bh=uar3ycx7EeVIytO9GydYomj6oWgdHWiXSLPywFoGwjo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FtTDTfaDp+Zl8zoQbHTadKyITDcn5Ytr2y5R2jG6MBWu02ckpwWMg4YK945vmrjRN
-	 Uz4UKcboBHsLUosvB5XIjJrIR2qdYKNCM+WWcaqnW1YNuQvKAY2X/HHserRTaq+PHR
-	 QCVXFIPufguNxNR8DLABEfOI4UvrSGBcC/PumrIMlIUfl0DfjlRBReSXoFj69x4m9C
-	 EnDmaTxPgJZsw1J7+gt1CR9lCMHzQEKCXorpDLot9VdzY1jf1P8x1R799PXen3+76I
-	 SDuMAo6I7+ptd66g8H+AO/vCHqMvuQ/lipqQeNa5NxFeVtDK0SXXwMaM6jBT+ljV9V
-	 Ghq1jQGh6Ej9Q==
-Date: Sun, 27 Oct 2024 16:12:29 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Cody Eksal <masterr3c0rd@epochal.quest>
-Cc: Vinod Koul <vkoul@kernel.org>, devicetree@vger.kernel.org,
-	Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-sunxi@lists.linux.dev, Yangtao Li <tiny.windzz@gmail.com>,
-	Viresh Kumar <vireshk@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	linux-pm@vger.kernel.org, Andre Przywara <andre.przywara@arm.com>,
-	Yangtao Li <frank@allwinnertech.com>, linux-phy@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Parthiban <parthiban@linumiz.com>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maxime Ripard <mripard@kernel.org>, linux-usb@vger.kernel.org,
-	Samuel Holland <samuel@sholland.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	linux-kernel@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Thierry Reding <treding@nvidia.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH 04/13] dt-bindings: usb: Add A100 compatible string
-Message-ID: <173006354857.88418.13246529686874362124.robh@kernel.org>
-References: <20241024170540.2721307-1-masterr3c0rd@epochal.quest>
- <20241024170540.2721307-5-masterr3c0rd@epochal.quest>
+	s=arc-20240116; t=1730063649; c=relaxed/simple;
+	bh=so+AoySYcBM12c77z/LnWClqHDFKcepvmE8+98poeKE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=QKSomf0NLa2UfLQrwVWBUhcCaI0e6WvElZ2rhA3aSmuKbpqcysNXPEs1MvOvF+3u1eOTwEnTyM8Rz8ZFEOcum0/FRbfY+iXpZb0fSSf0gCkbqNToBGfIZ/V3IZcjGGx8WWK0p1Gw2jE1tL3GPFVzZm1aa+A9twTDNXfsTIs7+qE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=n/2DeL6c; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1730063632;
+	bh=mIWK1Jsn/3SU028ik+J4ZKdihUKmSuKh5p9duoSc4bc=;
+	h=Date:From:To:Cc:Subject:From;
+	b=n/2DeL6c4ZN6p1AsQFlt6JGrSYJU6hjGYcHuTwIFKHAqaNBH992Z3jzZ/iyWc97XJ
+	 3ktGEAthHJxO2L540VuoIICiD6JtiY9eojxWrZW3hLI9Rt1eLWt7JVsThCtFyjVp8V
+	 IIFKLAGNS9LjVkmwMPRma+2bz0e3xzbb0DsU2cnr6u7DaLRAnpe/imZgI28D19kDDi
+	 xw63UDevA7tzswg0vgV1gTmkuWo/4bL3TdXB0v8U2EaGFxheXXnkg9CVtGx9hexP21
+	 2jSg1G3yOaqP7qqIcZVHg1J1qVhjYYiGpVqrVv19AAVbqSKd3TJJUlYNYcMjk7pxQg
+	 03G5xz0zVhjmw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Xc8QR3Prvz4x3J;
+	Mon, 28 Oct 2024 08:13:51 +1100 (AEDT)
+Date: Mon, 28 Oct 2024 08:13:32 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Herbert Xu <herbert@gondor.apana.org.au>, Linux Crypto List
+ <linux-crypto@vger.kernel.org>
+Cc: Lukas Wunner <lukas@wunner.de>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: Fixes tag needs some work in the crypto tree
+Message-ID: <20241028081332.70264ab0@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241024170540.2721307-5-masterr3c0rd@epochal.quest>
+Content-Type: multipart/signed; boundary="Sig_/BMIWo6+TNJ9OhoHAfSUg6Xt";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
+--Sig_/BMIWo6+TNJ9OhoHAfSUg6Xt
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 24 Oct 2024 14:05:22 -0300, Cody Eksal wrote:
-> The Allwinner A100 contains two fully OHCI/EHCI compatible USB host
-> controllers. Add their compatible strings to the list of
-> generic OHCI/EHCI controllers.
-> 
-> Signed-off-by: Cody Eksal <masterr3c0rd@epochal.quest>
-> ---
->  Documentation/devicetree/bindings/usb/generic-ehci.yaml | 1 +
->  Documentation/devicetree/bindings/usb/generic-ohci.yaml | 1 +
->  2 files changed, 2 insertions(+)
-> 
+Hi all,
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+In commit
 
+  6835b816d02d ("crypto: ecdsa - Update Kconfig help text for NIST P521")
+
+Fixes tag
+
+  Fixes: a7d45ba77d3d ("crypto: ecdsa - Register NIST P521 and extend test
+
+has these problem(s):
+
+  - Subject has leading but no trailing parentheses
+  - Subject has leading but no trailing quotes
+
+Please do not split fixes tags over more than one line.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/BMIWo6+TNJ9OhoHAfSUg6Xt
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcerPwACgkQAVBC80lX
+0GzVOQf/b65KoYpfb/QG5k6StU5qf+mxNJUVX7QO6obpWotGuyzdCH3VmB3RL5W+
+M2xAms21r6QmZsohUdDIzvVcMonwiV9alf0pbScEyN16rYLeafEzkkvWZIbTy9Zp
+wVXiu2IqpQ9mfRQv6YDulVaXltIR5FGR3ppOoKAwYHhuHD3EsluGZFOuuciqylZd
+MtTbdmml+7fBGGOB7FZvBNt3gRKx+vJ9o9FtStf2/wKoCA1c9ON3GV70Maxo8aTU
+teIb6CVGl2IelBW5uF8GPxWHfzrxa2W8gPKJf4+UUNLBgGstQAAGi54AqXgPsgQy
+3KxNEs+lM5aG+3/qO3ZsVYLoWBBgbA==
+=CxKY
+-----END PGP SIGNATURE-----
+
+--Sig_/BMIWo6+TNJ9OhoHAfSUg6Xt--
 
