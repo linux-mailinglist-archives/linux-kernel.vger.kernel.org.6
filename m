@@ -1,155 +1,136 @@
-Return-Path: <linux-kernel+bounces-383758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3213C9B1FE2
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 20:41:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EF419B1FE6
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 20:47:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 55B091C208FE
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 19:41:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A28F71F213A2
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 19:47:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE7FE17C220;
-	Sun, 27 Oct 2024 19:41:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A821126C18;
+	Sun, 27 Oct 2024 19:47:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="eoW56xCr"
-Received: from mail-oo1-f48.google.com (mail-oo1-f48.google.com [209.85.161.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="hpQ68OKH"
+Received: from mail-40133.protonmail.ch (mail-40133.protonmail.ch [185.70.40.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD56F17B402
-	for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 19:41:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72F7B17332C
+	for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 19:47:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730058089; cv=none; b=iN9jZJtC0bi1BEqKJxLWrtSBvMtgFk1RH9mSMFwP25ZpsWq9SMi98hVfOPCSfP+lAZRkTELWFUA/AAfpxcucj9XyCNA7ULGTgfGxbYwhUSwiMTz/fb040pYoOAxtIsa/iGoIro6vj3MTlof+fch6VF/yXbDOuSuJCCnt9FxcK+k=
+	t=1730058426; cv=none; b=PXal3niFF0+J/q7xmwbZyNNi6G1vNbXLG5P570MdWYGC4NSrNZy40eao2kSGutdpaakhCGuvwJeS28oLbctNoEZlDDGOW15Z7GsQglZzESCp2g97+f+dvMN3oIXin5Xp2Y/277QkaK/HZXqp/zQrJ/efKqpg6DRxUVrprrguQoQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730058089; c=relaxed/simple;
-	bh=v+vz7OIIFECPzMyfYUR86ehGfecvzTQY7cT6KQHCzi4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mpylZeVP+AzdicASao8HcnoJhbAn6KReFHoQza6lRaeyLW/6mFzbwFmxOQlPTwJ3AenK2PoDtqOZRtBg8WUri7k3R/zu5hz2k7dMQEGNZH/4xnMXkWw/kV0QEB5xR5Tqyc4ABkagjKB7rF8hKzlYRupOhJPmMR1qh4axNm9PXwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=eoW56xCr; arc=none smtp.client-ip=209.85.161.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-5ebab72da05so1883080eaf.0
-        for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 12:41:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1730058085; x=1730662885; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=DS49mL6mh3qfyGHT1zyM0qeylEka6PaSbeWVh4VtAn4=;
-        b=eoW56xCrKC0eCdUB+TOfPm+jOxMWzEvMD7IvLIrwfd6VgdYerfpY4lrubbzfk+XVH1
-         NSjTetAcsP3kiHGH90h3tAvtyDzdVgRHiriQJzKiCBwFQJRvywvvSJvA5qDcCXj965Zd
-         eEs9VVLLAKvb9GqAkL8wxvIhcTJAlIUvEwWWp70RZJudPDZJ41rFtj5hHdLXi+cbLSKX
-         k+8tVWDCVtntFv/bGzSvL/4r9WFWsgDaFj1c0aBPMrmzz2nxKNdBHIvYAMeg8ZJ95vAV
-         5J0OGAQZTjsyFg15m/dKpCp0yTkuFskuEyCrkpwpW3sSObXhm+AHEnAsndo9gbrkwbLz
-         gM6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730058085; x=1730662885;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DS49mL6mh3qfyGHT1zyM0qeylEka6PaSbeWVh4VtAn4=;
-        b=T3epycqpGp0Fzp8zeHdlyfNJeFLlf0x9GduuW8indzz3OHkKKQnFmKqdLTh5w7DaK0
-         kdam7EZ5iINscJZWCSxz4aU8mxvt9FER3qbBg/QEHdgtTPRCeSZW30RzPsvH//iybdDM
-         b38UVp4NiVKErRYGPTNwe7VsBUvMGnKWDl8PMWJD/dWVlQaOQtVWZtfrtG7VDCXTDD/I
-         DiTEzqcxNmV0YX9DrQhiU2byuUsTueF619A0v6jLuIx2THpAnFIPohnpvASQ0jLD2DcC
-         8UDfbEyeOtvgIcH0KKCWQ3r/ts9MyGRLUtAW4C1efRKcZc2K2/RzBzIB2wwYGo0cRv1Z
-         nExw==
-X-Forwarded-Encrypted: i=1; AJvYcCXPcZ42MUrLHYZVig+qj5fzuW10dfsLaZK11HAXgd7FL6kBqoSOZABFSl0ydIAANCFK2Xldgs59msJdhfI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0/fvd8FHgVIYswWnFAjLJ0ouMVS2GoJWVOZO8+//z/LTtSF/W
-	D87khjaKsOP5AXPjjwXvdFXJBslBd3mcg4OiaKYyDHxQE8wesH5DWCXAg2DY/XA=
-X-Google-Smtp-Source: AGHT+IEN4f17W5Pxyu0a3Sg3sLpksasKzlX7/jnfpEUhNEtj1KFkavvwEUUQrUhY89AcYkgtdZMp9A==
-X-Received: by 2002:a05:6870:170f:b0:288:18a0:e169 with SMTP id 586e51a60fabf-29051b4d49dmr4184676fac.19.1730058085605;
-        Sun, 27 Oct 2024 12:41:25 -0700 (PDT)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-29035da4b9bsm1589189fac.15.2024.10.27.12.41.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 27 Oct 2024 12:41:24 -0700 (PDT)
-Message-ID: <776b38c3-1bca-4416-a855-d45b759ec2c2@baylibre.com>
-Date: Sun, 27 Oct 2024 14:41:22 -0500
+	s=arc-20240116; t=1730058426; c=relaxed/simple;
+	bh=yx7OKnMmxkaItU6s2bHO2Y8kAkumLtwqxfzQ1PKIJsk=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=V2NS6+5wkfK60G7LEVh0pP6laEYzxW4md19ky1gJ8sI5iicGMeVACyOa1WjAMfDjv59wJTwjh3z3BfvPga/lRNaykVpYBsqFelIKzMA21+JuklcIxdIpVt8BMdHwW+wzeL6sY1bFLTIbUEm2nLhMiM0qEo3Vqa6ruFh0eXzgMjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=hpQ68OKH; arc=none smtp.client-ip=185.70.40.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1730058415; x=1730317615;
+	bh=rBYrbCgFaMolyV5f9SMDe1X9M83MQXaQsQ9KhjScgm8=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=hpQ68OKH1Gr44wXmFZstKys8hQ2dYMfEYJ1tF8ZrZ63IkixSPIzi+4RbDIgAhfJtu
+	 sbhR6xOuClADk8Cur6YrIGtms84MoO7gBxe4wbilaUCTVFstIOiX0Hz8QMC6NnubJ6
+	 JhMb4EWgn4Wf8TSyVvz6bM/VRw98gK+62inxSttHQdAEQWAkkzOcfIY1tPlYGvC9S0
+	 1A6zON80wj0HuC0BRoMYWgorP2cg/xq55CjAz6HCXJlZpUOGPyHoaLgjIIekD3K1zH
+	 XUNWmZbyE/u1FgoEuWiItTLsNFA+y5oxy50OG81UuZkCIR2Dam7R44ba83T7C/56q0
+	 jXiWR2859DK0Q==
+Date: Sun, 27 Oct 2024 19:46:52 +0000
+To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Piotr Zalewski <pZ010001011111@proton.me>
+Cc: skhan@linuxfoundation.org, Piotr Zalewski <pZ010001011111@proton.me>, syzbot+005ef9aa519f30d97657@syzkaller.appspotmail.com, Alan Huang <mmpgouride@gmail.com>
+Subject: [PATCH v3] bcachefs: Fix NULL ptr dereference in btree_node_iter_and_journal_peek
+Message-ID: <20241027193842.154220-2-pZ010001011111@proton.me>
+Feedback-ID: 53478694:user:proton
+X-Pm-Message-ID: 1b0b1b9852f05303eac84019b51a819f66b46bad
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/4] docs: iio: ad7380: add adaq4370-4 and adaq4380-4
-To: Julien Stephan <jstephan@baylibre.com>,
- Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>
-Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-References: <20241024-ad7380-add-adaq4380-4-support-v3-0-6a29bd0f79da@baylibre.com>
- <20241024-ad7380-add-adaq4380-4-support-v3-4-6a29bd0f79da@baylibre.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20241024-ad7380-add-adaq4380-4-support-v3-4-6a29bd0f79da@baylibre.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 10/24/24 3:16 AM, Julien Stephan wrote:
-> Adding documentation for adaq4370-4 and adaq4380-4 supported devices. In
-> particular, document the reference voltage mechanism and the gain
-> parameter that are specific to adaq devices.
-> 
-> Signed-off-by: Julien Stephan <jstephan@baylibre.com>
-> ---
->  Documentation/iio/ad7380.rst | 18 ++++++++++++++++++
->  1 file changed, 18 insertions(+)
-> 
-> diff --git a/Documentation/iio/ad7380.rst b/Documentation/iio/ad7380.rst
-> index 6f70b49b9ef27c1ac32acaefecd1146e5c8bd6cc..ae408ff2fa9c97427a9fef57020fb54203d2d33e 100644
-> --- a/Documentation/iio/ad7380.rst
-> +++ b/Documentation/iio/ad7380.rst
-> @@ -27,6 +27,8 @@ The following chips are supported by this driver:
->  * `AD7386-4 <https://www.analog.com/en/products/ad7386-4.html>`_
->  * `AD7387-4 <https://www.analog.com/en/products/ad7387-4.html>`_
->  * `AD7388-4 <https://www.analog.com/en/products/ad7388-4.html>`_
-> +* `ADAQ4370-4 <https://www.analog.com/en/products/adaq4370-4.html>`_
-> +* `ADAQ4380-4 <https://www.analog.com/en/products/adaq4380-4.html>`_
->  
->  
->  Supported features
-> @@ -47,6 +49,12 @@ ad7380-4
->  ad7380-4 supports only an external reference voltage (2.5V to 3.3V). It must be
->  declared in the device tree as ``refin-supply``.
->  
-> +adaq devices
-> +~~~~~~~~~~~~
-> +
-> +adaq4370-4 and adaq4380-4 don't have an external reference, but use a 3V
-> +internal reference derived from one of its supplies (``refin-supply``)
-> +
->  All other devices from ad738x family
->  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->  
-> @@ -121,6 +129,16 @@ Example for AD7386/7/8 (2 channels parts):
->  
->  When enabling sequencer mode, the effective sampling rate is divided by two.
->  
-> +
-> +Gain (adaq devices only)
-> +~~~~~~~~~~~~~~~~~~~~~~~~
-> +
-> +adaq devices have a pin selectable gain in front of each adc. The appropriate
+Add NULL check for key returned from bch2_btree_and_journal_iter_peek in
+btree_node_iter_and_journal_peek to avoid NULL ptr dereference in
+bch2_bkey_buf_reassemble.
 
-If we are doing a v4 anyway, it would be nice to use caps for acronyms
-like ADAQ and ADC here and elsewhere.
+When key returned from bch2_btree_and_journal_iter_peek is NULL it means
+that btree topology needs repair. Print topology error message with
+position at which node wasn't found, its parent node information and
+btree_id with level.
 
-> +gain is selectable from device tree using the ``adi,gain-milli`` property.
-> +Refer to the typical connection diagrams section of the datasheet for pin
-> +wiring.
-> +
-> +
->  Unimplemented features
->  ----------------------
->  
-> 
+Return error code returned by bch2_topology_error to ensure that topology
+error is handled properly by recovery.
+
+Reported-by: syzbot+005ef9aa519f30d97657@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=3D005ef9aa519f30d97657
+Fixes: 5222a4607cd8 ("bcachefs: BTREE_ITER_WITH_JOURNAL")
+Suggested-by: Alan Huang <mmpgouride@gmail.com>
+Suggested-by: Kent Overstreet <kent.overstreet@linux.dev>
+Signed-off-by: Piotr Zalewski <pZ010001011111@proton.me>
+---
+
+Notes:
+    changes in v3:
+        - add btree_id and level info to the error message.
+        - use bch2_btree_pos_to_text.
+
+    changes in v2:
+        - make commit message more verbose.
+        - set topology error, print error message and return
+          appropriate error code.
+
+    link to v1: https://lore.kernel.org/linux-bcachefs/20241023072024.98915=
+-3-pZ010001011111@proton.me/
+    link to v2: https://lore.kernel.org/linux-bcachefs/20241026174155.23343=
+0-3-pZ010001011111@proton.me/
+
+ fs/bcachefs/btree_iter.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/fs/bcachefs/btree_iter.c b/fs/bcachefs/btree_iter.c
+index 15ac72b1af51..acf70aaf2fd2 100644
+--- a/fs/bcachefs/btree_iter.c
++++ b/fs/bcachefs/btree_iter.c
+@@ -880,6 +880,18 @@ static noinline int btree_node_iter_and_journal_peek(s=
+truct btree_trans *trans,
+ =09__bch2_btree_and_journal_iter_init_node_iter(trans, &jiter, l->b, l->it=
+er, path->pos);
+=20
+ =09k =3D bch2_btree_and_journal_iter_peek(&jiter);
++=09if (!k.k) {
++=09=09struct printbuf buf =3D PRINTBUF;
++
++=09=09prt_str(&buf, "node not found at pos ");
++=09=09bch2_bpos_to_text(&buf, path->pos);
++=09=09prt_str(&buf, " at btree ");
++=09=09bch2_btree_pos_to_text(&buf, c, l->b);
++
++=09=09ret =3D bch2_fs_topology_error(c, "%s", buf.buf);
++=09=09printbuf_exit(&buf);
++=09=09goto err;
++=09}
+=20
+ =09bch2_bkey_buf_reassemble(out, c, k);
+=20
+@@ -887,6 +899,7 @@ static noinline int btree_node_iter_and_journal_peek(st=
+ruct btree_trans *trans,
+ =09    c->opts.btree_node_prefetch)
+ =09=09ret =3D btree_path_prefetch_j(trans, path, &jiter);
+=20
++err:
+ =09bch2_btree_and_journal_iter_exit(&jiter);
+ =09return ret;
+ }
+--=20
+2.47.0
+
 
 
