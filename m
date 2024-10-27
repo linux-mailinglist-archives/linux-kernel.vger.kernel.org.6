@@ -1,160 +1,190 @@
-Return-Path: <linux-kernel+bounces-383608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 653479B1DF8
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 15:00:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1620C9B1DFC
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 15:03:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14B84281ACF
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 14:00:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE55C1F2161D
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 14:03:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF74E15CD78;
-	Sun, 27 Oct 2024 14:00:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B57A415EFA1;
+	Sun, 27 Oct 2024 14:03:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ieee.org header.i=@ieee.org header.b="F4cmpKCq"
-Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GIrAL571"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71E961D540
-	for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 14:00:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07A1C1D540;
+	Sun, 27 Oct 2024 14:03:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730037649; cv=none; b=gFVqDQgjf9pdL7HarohW/ZMTQPFutq3yAIrfR/t5VZuuELMM5NduJCgBBi3cPswXaiP3mHfd/waRzHs+aEDrIyfvcUdZkN8Oe/CdgMqNytIxYME2bqlLd52sWKJ5UO2mo/f9MJ+Shzm7yIzaogo+8NgOTkQPGH1ERwS977sP+FQ=
+	t=1730037784; cv=none; b=uCZzzCOafdLfNdFC8DBIt3hdX/GEeyrtcXf1sFBW3dg9A4RYPm8ozazlLAiojpgX0g/VMtpNurd5nvmkzpEkA/bAJiYmt72KBjQziZ2HdyaYyKBSp9zbf2QuPbeQSDBXPcw58PJjY4emE1YyEdyESDU7qGVVy2lEDbJydJQ1rYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730037649; c=relaxed/simple;
-	bh=uq9Um7mpIVkVjnfKAB2drVKLUqxpKFJaQ+x22tx0kTM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IDsWdIGFRcLOxLejt6QdFu1KYdAx0srDmJ5Y8rJPdBusoFVw2LO9yoZqxsEs7yDh5r+erfXb9bYmB6JIAW+RRG6eWXEiZK7K5Jzzh2963XOTNw5MJZ0ykU+t2iqI3m2AVajYzTsvvUFRz+ihsFJvqXq36rjlKBpcHpU/d8pxLhM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ieee.org; spf=pass smtp.mailfrom=ieee.org; dkim=pass (1024-bit key) header.d=ieee.org header.i=@ieee.org header.b=F4cmpKCq; arc=none smtp.client-ip=209.85.166.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ieee.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ieee.org
-Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-83abc039b25so134987539f.0
-        for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 07:00:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ieee.org; s=google; t=1730037645; x=1730642445; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=gDtIO9biG3LuVSVqi5dhsp4ov2sWS6eGJBXEdghply0=;
-        b=F4cmpKCqydZsD6symmHEUVjCqRAfvgNCWiZRMB4Yh5EYdoEPcrrl82T1Jo1yssn3SZ
-         EqeNMj4sgzgPl7l/P5FrpFUT8TaMFb3YResVr3P+QJFaWgF9RON97qkfq6M5/1xaa9Zv
-         t99A03v/yLQse5pC/Frs63vqZ9+H4jYNJK4Ok=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730037645; x=1730642445;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gDtIO9biG3LuVSVqi5dhsp4ov2sWS6eGJBXEdghply0=;
-        b=KDkbTnMGLUdAIJpiAt8mgjeDNcaaXiucPCtnvtCSqdZdNwCb1kYqSt9/IwNqkGqOFw
-         bRjylT5TMnj9l5HHycaSRX+a4VCxmh3/BhH8lQBeTbBy1i6583ygqvEHK/hswraK8KmD
-         EsKjffdV34FXAXXrxungu0WT+2/opSmGPvzEyi+4iy4iQyxmWeFbUDGjCBFW+SDuGuDT
-         BXkEzi+iJslMIOdgVxOjyBZxaslhuupgWqPQd13H4s4h7QR3/laLKPIgtUoEcO6+FO+5
-         52n7aGIDTkn6O9Smxik/FOWpXj/MGglzK74yAcmln4EXxkaPEsC96lNbRIjhjzbBUnud
-         74VQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX5nm2K7iAMk4k4fpPOqIDXSqsiiFO7896fYNT57el2fTxutBExh3EWPF0ZHWvMkzPagzOD+6tT/Gn6jRQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsqryWeNDNeeKYVJI8RMEp+pZi8YZEmzFTtHxoOTzmld9kilJD
-	Mveo6cR1PXKKmHw/zXIq0oOtkvkcBDOtccwfe2VNzEIruvUUzM5pFkAtN//43hk26ch0teLEDDk
-	=
-X-Google-Smtp-Source: AGHT+IF9RJ+pjofmPm2SqDUnt4GShxn01jUlKEdZotXvqANIPexEfcBxmSfD4FbqCLjoIoJ+M8Z6uA==
-X-Received: by 2002:a05:6602:2d81:b0:83a:a82b:f856 with SMTP id ca18e2360f4ac-83b1c3f4053mr425316239f.3.1730037644863;
-        Sun, 27 Oct 2024 07:00:44 -0700 (PDT)
-Received: from [10.211.55.3] (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
-        by smtp.googlemail.com with ESMTPSA id 8926c6da1cb9f-4dc72610be1sm1190339173.42.2024.10.27.07.00.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 27 Oct 2024 07:00:44 -0700 (PDT)
-Message-ID: <106ff2db-befc-4899-8f28-6f8b6276cdd3@ieee.org>
-Date: Sun, 27 Oct 2024 09:00:42 -0500
+	s=arc-20240116; t=1730037784; c=relaxed/simple;
+	bh=LhoYjWPnw5QWHt7GC9qloa0rQmmKlS9JcCkIHsCUrXI=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=R2VoXWvLBkbLn+shfQdxguMYs2KynOyd+4HC7Z6996LveKcuDzigligSWiGsqcAvtToBlOkHDWjBeqA46h5WRu26eMSgmaacKVJzam+UOH8pzYU4/mzJ1b/YGsTH+azh0UnlXuwQgDc4SZUZKvrAY3CB7GmUMoEu2YYXqr3sn8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GIrAL571; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA151C4CEC3;
+	Sun, 27 Oct 2024 14:03:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730037783;
+	bh=LhoYjWPnw5QWHt7GC9qloa0rQmmKlS9JcCkIHsCUrXI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=GIrAL57198rDy9Hctkx4eClyY3UHQPHYQz9cTB+qHBOzRkl9kmSFaAJqiZPxKAYlg
+	 FKQhNaYEalQNtMb+ry+p84SaVhaQbZ70JOtvxAHUpBYbloCMpQ9aksHPojUmq0eZvX
+	 qYqR+Bqzdsj9p5NTDjH1zgYsGpv+J9RgDtV3YhxyF1uG613b/ym83iwn604Cr6SxeI
+	 16HYYSs/MKNtobg3fOI4Mvci5QanT16cBxWn0MULPP0t8pqPDPmkM8CeTOxqPgEz3b
+	 m9NFYpBE7QvW4yBZkOKLip+Uu0kVwnCDSmUHEMSU7hq6KqyskJtof42F3n7NChulon
+	 jz5Eqckc+L6gg==
+Date: Sun, 27 Oct 2024 23:02:59 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linux trace kernel
+ <linux-trace-kernel@vger.kernel.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Mathieu
+ Desnoyers <mathieu.desnoyers@efficios.com>, Ryan Roberts
+ <ryan.roberts@arm.com>
+Subject: Re: [PATCH v2] fgraph: Give ret_stack its own kmem cache
+Message-Id: <20241027230259.d908b43b5d41833cebb9ff2c@kernel.org>
+In-Reply-To: <20241026063210.7d4910a7@rorschach.local.home>
+References: <20241026063210.7d4910a7@rorschach.local.home>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] greybus: Fix null pointer dereference in
- gb_operation_response_send()
-Content-Language: en-US
-To: Suraj Sonawane <surajsonawane0215@gmail.com>, johan@kernel.org,
- elder@kernel.org, gregkh@linuxfoundation.org
-Cc: greybus-dev@lists.linaro.org, linux-kernel@vger.kernel.org
-References: <20241027075304.7301-1-surajsonawane0215@gmail.com>
-From: Alex Elder <elder@ieee.org>
-In-Reply-To: <20241027075304.7301-1-surajsonawane0215@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 10/27/24 2:53 AM, Suraj Sonawane wrote:
-> Fix an issue detected by the Smatch static tool:
-> drivers/greybus/operation.c:852 gb_operation_response_send() error:
-> we previously assumed 'operation->response' could be null (see line 829)
+On Sat, 26 Oct 2024 06:32:10 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-There is no need for this.  This is a case where the code is
-doing something that is too involved for "smatch" to know
-things are OK.
-
-A unidirectional operation includes only a request message, but
-no response message.
-
-There are two cases:
-- Unidirectional
-   - There is no response buffer
-   - There will be no call to gb_operation_response_alloc(),
-     because the operation is unidirectional.
-   - The result gets set with the errno value.  If there's
-     an error (there shouldn't be), -EIO is returned.
-   - We return 0 early, because it's a unidirectional operation.
-- Not unidirectional
-   - If there is a response, we attempt to allocate one.  If that
-     fails, we return -ENOMEM early.
-   - Otherwise there *is* a response (it was successfully allocated)
-   - The result is set
-   - It is not unidirectional, so we get a reference to the operation,
-     add it to the active list (or skip to the end if not connected)
-   - We record the result in the response header.  This is the line in
-     question, but we know the response pointer is good.
-   - We send the response.
-   - On error, we drop or references and return the error code.
-
-					-Alex
-
-
-
-> The issue occurs because 'operation->response' may be null if the
-> response allocation fails at line 829. However, the code tries to
-> access 'operation->response->header' at line 852 without checking if
-> it was successfully allocated. This can cause a crash if 'response'
-> is null.
+> From: Steven Rostedt <rostedt@goodmis.org>
 > 
-> To fix this, add a check to ensure 'operation->response' is not null
-> before accessing its header. If the response is null, log an error
-> message and return -ENOMEM to stop further processing, preventing
-> any crashes or undefined behavior.
+> The ret_stack (shadow stack used by function graph infrastructure) is
+> created for every task on the system when function graph is enabled. Give
+> it its own kmem_cache. This will make it easier to see how much memory is
+> being used specifically for function graph shadow stacks.
 > 
-> Signed-off-by: Suraj Sonawane <surajsonawane0215@gmail.com>
+> In the future, this size may change and may not be a power of two. Having
+> its own cache can also keep it from fragmenting memory.
+> 
+
+Looks good to me.
+
+Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+
+Thank youm
+
+> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 > ---
->   drivers/greybus/operation.c | 8 +++++++-
->   1 file changed, 7 insertions(+), 1 deletion(-)
+> Changes since v1: https://lore.kernel.org/20241019152719.321772eb@rorschach.local.home
 > 
-> diff --git a/drivers/greybus/operation.c b/drivers/greybus/operation.c
-> index 8459e9bc0..521899fbc 100644
-> --- a/drivers/greybus/operation.c
-> +++ b/drivers/greybus/operation.c
-> @@ -849,7 +849,13 @@ static int gb_operation_response_send(struct gb_operation *operation,
->   		goto err_put;
->   
->   	/* Fill in the response header and send it */
-> -	operation->response->header->result = gb_operation_errno_map(errno);
-> +	if (operation->response) {
-> +		operation->response->header->result = gb_operation_errno_map(errno);
-> +	} else {
-> +		dev_err(&connection->hd->dev, "failed to allocate response\n");
-> +		ret = -ENOMEM;
-> +		goto err_put_active;
+> - Rebased on top of urgent merged into for-next (uses guard(mutex) now)
+> 
+>  kernel/trace/fgraph.c | 33 ++++++++++++++++++++++++++++-----
+>  1 file changed, 28 insertions(+), 5 deletions(-)
+> 
+> diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
+> index 4ce87982966a..001abf376c0c 100644
+> --- a/kernel/trace/fgraph.c
+> +++ b/kernel/trace/fgraph.c
+> @@ -172,6 +172,8 @@ enum {
+>  DEFINE_STATIC_KEY_FALSE(kill_ftrace_graph);
+>  int ftrace_graph_active;
+>  
+> +static struct kmem_cache *fgraph_stack_cachep;
+> +
+>  static struct fgraph_ops *fgraph_array[FGRAPH_ARRAY_SIZE];
+>  static unsigned long fgraph_array_bitmask;
+>  
+> @@ -1022,8 +1024,11 @@ static int alloc_retstack_tasklist(unsigned long **ret_stack_list)
+>  	int start = 0, end = FTRACE_RETSTACK_ALLOC_SIZE;
+>  	struct task_struct *g, *t;
+>  
+> +	if (WARN_ON_ONCE(!fgraph_stack_cachep))
+> +		return -ENOMEM;
+> +
+>  	for (i = 0; i < FTRACE_RETSTACK_ALLOC_SIZE; i++) {
+> -		ret_stack_list[i] = kmalloc(SHADOW_STACK_SIZE, GFP_KERNEL);
+> +		ret_stack_list[i] = kmem_cache_alloc(fgraph_stack_cachep, GFP_KERNEL);
+>  		if (!ret_stack_list[i]) {
+>  			start = 0;
+>  			end = i;
+> @@ -1054,7 +1059,7 @@ static int alloc_retstack_tasklist(unsigned long **ret_stack_list)
+>  	rcu_read_unlock();
+>  free:
+>  	for (i = start; i < end; i++)
+> -		kfree(ret_stack_list[i]);
+> +		kmem_cache_free(fgraph_stack_cachep, ret_stack_list[i]);
+>  	return ret;
+>  }
+>  
+> @@ -1117,9 +1122,12 @@ void ftrace_graph_init_idle_task(struct task_struct *t, int cpu)
+>  	if (ftrace_graph_active) {
+>  		unsigned long *ret_stack;
+>  
+> +		if (WARN_ON_ONCE(!fgraph_stack_cachep))
+> +			return;
+> +
+>  		ret_stack = per_cpu(idle_ret_stack, cpu);
+>  		if (!ret_stack) {
+> -			ret_stack = kmalloc(SHADOW_STACK_SIZE, GFP_KERNEL);
+> +			ret_stack = kmem_cache_alloc(fgraph_stack_cachep, GFP_KERNEL);
+>  			if (!ret_stack)
+>  				return;
+>  			per_cpu(idle_ret_stack, cpu) = ret_stack;
+> @@ -1139,7 +1147,10 @@ void ftrace_graph_init_task(struct task_struct *t)
+>  	if (ftrace_graph_active) {
+>  		unsigned long *ret_stack;
+>  
+> -		ret_stack = kmalloc(SHADOW_STACK_SIZE, GFP_KERNEL);
+> +		if (WARN_ON_ONCE(!fgraph_stack_cachep))
+> +			return;
+> +
+> +		ret_stack = kmem_cache_alloc(fgraph_stack_cachep, GFP_KERNEL);
+>  		if (!ret_stack)
+>  			return;
+>  		graph_init_task(t, ret_stack);
+> @@ -1154,7 +1165,11 @@ void ftrace_graph_exit_task(struct task_struct *t)
+>  	/* NULL must become visible to IRQs before we free it: */
+>  	barrier();
+>  
+> -	kfree(ret_stack);
+> +	if (ret_stack) {
+> +		if (WARN_ON_ONCE(!fgraph_stack_cachep))
+> +			return;
+> +		kmem_cache_free(fgraph_stack_cachep, ret_stack);
 > +	}
->   
->   	ret = gb_message_send(operation->response, GFP_KERNEL);
->   	if (ret)
+>  }
+>  
+>  #ifdef CONFIG_DYNAMIC_FTRACE
+> @@ -1294,6 +1309,14 @@ int register_ftrace_graph(struct fgraph_ops *gops)
+>  
+>  	guard(mutex)(&ftrace_lock);
+>  
+> +	if (!fgraph_stack_cachep) {
+> +		fgraph_stack_cachep = kmem_cache_create("fgraph_stack",
+> +							SHADOW_STACK_SIZE,
+> +							SHADOW_STACK_SIZE, 0, NULL);
+> +		if (!fgraph_stack_cachep)
+> +			return -ENOMEM;
+> +	}
+> +
+>  	if (!fgraph_initialized) {
+>  		ret = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "fgraph:online",
+>  					fgraph_cpu_init, NULL);
+> -- 
+> 2.45.2
+> 
 
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
