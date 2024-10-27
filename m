@@ -1,154 +1,139 @@
-Return-Path: <linux-kernel+bounces-383422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F0459B1B85
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 02:25:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6713D9B1B88
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 02:28:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A6FE1C20D62
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 00:25:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E5E48B2154C
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 00:28:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D747291E;
-	Sun, 27 Oct 2024 00:25:47 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E6D5801;
+	Sun, 27 Oct 2024 00:28:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="altVUNfl"
+Received: from out-176.mta0.migadu.com (out-176.mta0.migadu.com [91.218.175.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBDEF195
-	for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 00:25:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E9131362
+	for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 00:28:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729988746; cv=none; b=CV0UholHx08O4hfcqCiuYzWBBnqwzvOpw4EZzQ12j0YLqCBHCd/1dggKWEPbktqPGQtBcoKz2FfqoLBMYhi3UgJCnQSkvrXCuaGSwnUOAUQkoSQDtigzyio6xa8r0vDs0jTKlsgiKvRmBdwr4d1/danLWwTubmDz8+gWFL3cwGA=
+	t=1729988922; cv=none; b=OtzAVsnxySZQiL6MOzMTyZteUowJ3rpuh9HoZyR0AggCB0VzpZScxThZ0gXxJgisuvJpAiuL4lc80jOzkCHAD7puRlIrX7J07n+tHmoqqIJ/doBB+IsMmEwO/Z/5JrUQxSHPnwC1+Wam6z/57Z3wOtfFfegjitNp+Ec241FX9sE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729988746; c=relaxed/simple;
-	bh=/Dz0/d5w67CSdo3+dmDTCiDWI/7BiZScEDMO4L/XjYg=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=glS2tYBPTbdksBSwtC3ReHI9zVanGxkcu1heXKrXwirp/4PFoaKnn9ljewEj1IO1Axvy0z31aRwzN0TrrdwEmBFDAzRahigXsF+zccUYgqbrd3vhEJ22Taky7BnDufXJNYKnfx01pgIga7sz6WNQwpp16eRM4pxLvka6z9pnFFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a3c90919a2so31090755ab.0
-        for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 17:25:44 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729988744; x=1730593544;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/wPn9P5b5vRdI9Ux1xI18zAb0ubyp9U/n0ZDH/tkeYQ=;
-        b=D3cgKMU51YPkT/pJgbtgdYae8CipEWI8Itkyh45GScSsMutf2QU6FhflZgKeWf8DZ5
-         dHbC9mG5givfMwcQ2qAc0DfB8lgxirJbrG9fF798yBoIvvCTCcOOMoGW04nVS+aZzogz
-         SItOs/b0wLRNAQzMP60shOhV5pePzsdvrnqtTSj5BZ7ph6bIeeD4MCCDqeTuHUWsglYX
-         refyehFrbGVJdesGaugj6YIr7wkw4q4Wy4fMMUeeoRkD/y0bNaDsRzBsA3xaFMPDeYDz
-         8XLdkKeSJxbclOlBbkZjbEznsaHXkNp4C02HAwB2JqjHJLXcsv567+0V5HwyEXfGGEQ1
-         P6RQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWKMJoq7Upuq3CGoJr1HQsOrgBz6t2CRF80oQ8QUgHixk09flr/EmjCu/hgNplRQUzYlWOFq06XDgoeU4A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlBJ3GgCo9mzg0kW2NL4d9zYKrr/nvLsFENCBIlrucGvAqrHv/
-	t/DYaGbEQkTf0fxehfMlWk3Gh8vkeRonwuWw+i4lIMM90R4hygbPtkABQaDCykjmTpJKzYz+wX3
-	G/Ft5Ve23YoI6xDGfxSd6awy/hT0nIe7oaMd/d67PNmoJuTGMhygat70=
-X-Google-Smtp-Source: AGHT+IFKz3qq5JWqjtEfBzq7Yotyr0psAF60CECWfQOLXUndQt09QTmYffuM9gK/Jslc3fAXndx4+oF32trZS5T/ODSraA1sWCel
+	s=arc-20240116; t=1729988922; c=relaxed/simple;
+	bh=9y72LuXV5Hi0GojIzO0cwS/Umb97djz1Ndsr8dJFL7w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UgvwgxqJiBRyfU99JZLseWZC2aCEpfBbH5H+AszaCo7c+yqHC6rA2J5rsuBp2wZyLGAL7HvcfStnStxWQ9VW7HB1FH+YvnMqV9AEcjQNHKDPGPldmtUw20PNjoxsWu9fVU4Yiv+4dlZDEtNXJsYW4MN9aVtD1B4J8/osWpE1SwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=altVUNfl; arc=none smtp.client-ip=91.218.175.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Sat, 26 Oct 2024 20:28:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1729988916;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QAc3bO5AF1gjwZ0MxsZnJQetoPvQQq9XvHRS1GyOAW8=;
+	b=altVUNfl+xiJnIdznLR+x6ObXsfOLmtfoFUHY5eeYfan4eEfkiN8oVZHRP8SJDiLi1vzRd
+	nsk6aCTZ0uXSpxgbvuSczlK5wwyY2FcFg9tiLJ4Ihfe0xqih5O/TgCzr+cH7+gNvFd2IAc
+	hP+Q5RRTHo9XBFuDZdkNKZ3byE/7Aqc=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Piotr Zalewski <pZ010001011111@proton.me>
+Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	skhan@linuxfoundation.org, syzbot+005ef9aa519f30d97657@syzkaller.appspotmail.com, 
+	Alan Huang <mmpgouride@gmail.com>
+Subject: Re: [PATCH v2] bcachefs: Fix NULL ptr dereference in
+ btree_node_iter_and_journal_peek
+Message-ID: <j3aypufmcezitilxlgkfyetnonkzlkst3hx4zxr4zspfonh5pm@mwngtgo4h4vb>
+References: <20241026174155.233430-3-pZ010001011111@proton.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1606:b0:39b:3894:9298 with SMTP id
- e9e14a558f8ab-3a4ed1bd7demr37436595ab.0.1729988743946; Sat, 26 Oct 2024
- 17:25:43 -0700 (PDT)
-Date: Sat, 26 Oct 2024 17:25:43 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <671d8887.050a0220.2fdf0c.0230.GAE@google.com>
-Subject: [syzbot] [ocfs2?] UBSAN: shift-out-of-bounds in ocfs2_fill_super (2)
-From: syzbot <syzbot+56f7cd1abe4b8e475180@syzkaller.appspotmail.com>
-To: jlbec@evilplan.org, joseph.qi@linux.alibaba.com, 
-	linux-kernel@vger.kernel.org, mark@fasheh.com, ocfs2-devel@lists.linux.dev, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241026174155.233430-3-pZ010001011111@proton.me>
+X-Migadu-Flow: FLOW_OUT
 
-Hello,
+On Sat, Oct 26, 2024 at 05:46:33PM +0000, Piotr Zalewski wrote:
+> Add NULL check for key returned from bch2_btree_and_journal_iter_peek in
+> btree_node_iter_and_journal_peek to avoid NULL ptr dereference in
+> bch2_bkey_buf_reassemble.
+> 
+> When key returned from bch2_btree_and_journal_iter_peek is NULL it means
+> that btree topology needs repair. Print error message with position at
+> which node wasn't found and its parent node information. Call
+> bch2_topology_error and return error code returned by it to ensure that
+> topology error is handled properly.
+> 
+> Reported-by: syzbot+005ef9aa519f30d97657@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=005ef9aa519f30d97657
+> Fixes: 5222a4607cd8 ("bcachefs: BTREE_ITER_WITH_JOURNAL")
+> Suggested-by: Alan Huang <mmpgouride@gmail.com>
+> Suggested-by: Kent Overstreet <kent.overstreet@linux.dev>
+> Signed-off-by: Piotr Zalewski <pZ010001011111@proton.me>
+> ---
+> 
+> Notes:
+>     changes in v2:
+>         - make commit message more verbose.
+>         - set topology error, print error message and return
+>           appropriate error code.
+> 
+>     link to v1: https://lore.kernel.org/linux-bcachefs/20241023072024.98915-3-pZ010001011111@proton.me/
+> 
+>  fs/bcachefs/btree_iter.c | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
+> 
+> diff --git a/fs/bcachefs/btree_iter.c b/fs/bcachefs/btree_iter.c
+> index 15ac72b1af51..40c824779b15 100644
+> --- a/fs/bcachefs/btree_iter.c
+> +++ b/fs/bcachefs/btree_iter.c
+> @@ -880,6 +880,18 @@ static noinline int btree_node_iter_and_journal_peek(struct btree_trans *trans,
+>  	__bch2_btree_and_journal_iter_init_node_iter(trans, &jiter, l->b, l->iter, path->pos);
+>  
+>  	k = bch2_btree_and_journal_iter_peek(&jiter);
+> +	if (!k.k) {
+> +		struct printbuf buf = PRINTBUF;
+> +
+> +		prt_str(&buf, "node not found at pos ");
+> +		bch2_bpos_to_text(&buf, path->pos);
+> +		prt_str(&buf, " within parent node ");
+> +		bch2_bkey_val_to_text(&buf, c, bkey_i_to_s_c(&l->b->key));
+> +
+> +		ret = bch2_fs_topology_error(c, "%s", buf.buf);
+> +		printbuf_exit(&buf);
+> +		goto err;
+> +	}
 
-syzbot found the following issue on:
+We'll want to add at least the btree ID and level to that.
 
-HEAD commit:    c2ee9f594da8 KVM: selftests: Fix build on on non-x86 archi..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14008c30580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=fc6f8ce8c5369043
-dashboard link: https://syzkaller.appspot.com/bug?extid=56f7cd1abe4b8e475180
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16ced0a7980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12008c30580000
+Could you also look over the other places we report topology errors and
+inconstencies for any commonality? btree_cache.c has some stuff, and I
+think there's a helper in there that might give you the error message
+you want (instead of just the btree node key), and I'd have a glance at
+the topology error reporting in btree_update_interior.c and btree_gc.c
+as well.
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-c2ee9f59.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/8a3541902b13/vmlinux-c2ee9f59.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/a00efacc2604/bzImage-c2ee9f59.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/4065d12afe1f/mount_0.gz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+56f7cd1abe4b8e475180@syzkaller.appspotmail.com
-
-WARNING: The mand mount option has been deprecated and
-         and is ignored by this kernel. Remove the mand
-         option from the mount to silence this warning.
-=======================================================
-------------[ cut here ]------------
-UBSAN: shift-out-of-bounds in fs/ocfs2/super.c:2336:10
-shift exponent 32768 is too large for 32-bit type 'int'
-CPU: 0 UID: 0 PID: 5093 Comm: syz-executor204 Not tainted 6.12.0-rc4-syzkaller-00047-gc2ee9f594da8 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- ubsan_epilogue lib/ubsan.c:231 [inline]
- __ubsan_handle_shift_out_of_bounds+0x3c8/0x420 lib/ubsan.c:468
- ocfs2_verify_volume fs/ocfs2/super.c:2336 [inline]
- ocfs2_sb_probe fs/ocfs2/super.c:792 [inline]
- ocfs2_fill_super+0xf9c/0x5750 fs/ocfs2/super.c:988
- mount_bdev+0x20a/0x2d0 fs/super.c:1679
- legacy_get_tree+0xee/0x190 fs/fs_context.c:662
- vfs_get_tree+0x90/0x2b0 fs/super.c:1800
- do_new_mount+0x2be/0xb40 fs/namespace.c:3507
- do_mount fs/namespace.c:3847 [inline]
- __do_sys_mount fs/namespace.c:4057 [inline]
- __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4034
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f8c48e89c7a
-Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 5e 04 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffd10baf0f8 EFLAGS: 00000282 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007ffd10baf110 RCX: 00007f8c48e89c7a
-RDX: 00000000200002c0 RSI: 0000000020000040 RDI: 00007ffd10baf110
-RBP: 0000000000000004 R08: 00007ffd10baf150 R09: 0000000000004434
-R10: 00000000000008c0 R11: 0000000000000282 R12: 00000000000008c0
-R13: 00007ffd10baf150 R14: 0000000000000003 R15: 0000000001000000
- </TASK>
----[ end trace ]---
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+>  
+>  	bch2_bkey_buf_reassemble(out, c, k);
+>  
+> @@ -887,6 +899,7 @@ static noinline int btree_node_iter_and_journal_peek(struct btree_trans *trans,
+>  	    c->opts.btree_node_prefetch)
+>  		ret = btree_path_prefetch_j(trans, path, &jiter);
+>  
+> +err:
+>  	bch2_btree_and_journal_iter_exit(&jiter);
+>  	return ret;
+>  }
+> -- 
+> 2.47.0
+> 
+> 
 
