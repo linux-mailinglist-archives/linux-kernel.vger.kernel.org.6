@@ -1,85 +1,115 @@
-Return-Path: <linux-kernel+bounces-383885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02A1E9B2164
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 00:33:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 876129B2167
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 00:36:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33AE51C2098C
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 23:33:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B910F1C20D1F
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 23:36:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DAE41898FC;
-	Sun, 27 Oct 2024 23:33:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD615189BA2;
+	Sun, 27 Oct 2024 23:36:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LGyFhEIV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="AVHBpwse"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E65901865F6;
-	Sun, 27 Oct 2024 23:33:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08D29188A0E;
+	Sun, 27 Oct 2024 23:36:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730072008; cv=none; b=eEZ0xELCfpn9oYr17V+fxuGMGmCFMwmKbhFusZxUNSlwZS9fW2nbjhD2SkEBeWlC/zfo6UfV9Tmj9tufyy02Rn61SDmT7C1jC5soBWQBbopzKJv/1YcU7GJGGGcmcDmJeQSiCUJ6WQdqExvxTtFSSf4aR4ITjhbkMj8qhLvsonY=
+	t=1730072208; cv=none; b=TMfRU8KJsn+3hjDNaF/OBhpb4xuRSqZqy/pqG4j6dadDddKo+w3fFKfCrGAF8lxq7Y+19zuOrVAK6pO0SQjo8cSm6QvnvgMXows/VfQkgwGtWbwmtsW7iVDtgDe6EopqqzhN9vLTjMX0D6ulWK+iMbgMYaUDhXiCvdWVidU0Efc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730072008; c=relaxed/simple;
-	bh=beKxMlT5b66BGo5NTosJeYD+LSXSmOMabs8Am/ym11I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VB+hP4VsKLwCUhMJMaZ2o1/W9OnlT014Y27v5cHzlWhqWPtCdBxeneOa7g/xwtQdXRZJzBEmTQjYYRFzdJ+H7X439fnSnj4COOjhLLfnoOF8zsDMyvx1mp6CV59NSIqdAFCbLHCr0c7mzEIKFS3tT68a217bKv3zF9+uzeCbAMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LGyFhEIV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B7B8C4CEE5;
-	Sun, 27 Oct 2024 23:33:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730072007;
-	bh=beKxMlT5b66BGo5NTosJeYD+LSXSmOMabs8Am/ym11I=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=LGyFhEIVQA9m9x0QViPi/qZubVOdZhHb71v7jDqY0rybkTcuMbAeAATQE8d1MO0yG
-	 +i5vYtdLQ7QxV2+F2BmYtAmRm9agxrdV2k3/BbIpL0F51xHLTGQQlJhrmwMyVUflso
-	 vQQzQbBO7xDY1ipBlhb7ql0sXrZvxd2+4NMg0RdTFLqhbymLdSQB6tF3KJWqPy2bFx
-	 4Fgh2DY2QdbnFsj/0nRfiI4iPDjnSxsI9YDkwBM/L+yeCqG6mfiIWHy0o+JfHj+ZuK
-	 IVNe/5zNloUJK0mK5eENtx8GCiOHK5djp2I0ERIphdqS+3qNVlSw84T9kHGPmjEWDp
-	 a0uNEaAc1niLA==
-Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-2884a6b897cso1905720fac.3;
-        Sun, 27 Oct 2024 16:33:27 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVTel4/w0LxVUbZ75K/FxWLsefLJ90ilpu41eqP3ru8NSTx2zQTzY6FhTSMrj/78Zg4wgngeAp5VSFY4x4J@vger.kernel.org, AJvYcCXgZjr2WXgVXMR4UzsUyDj7xTt7rvoeBazVr4sbfzOYoacaCaP5xkGGBM4fjh/3fo8E4C2wpAM5++s5@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQuUoD9dHZQMK5YERGkmpiRhaL5xSKTeTlyeZUpRWkLtx8xMw3
-	i1ect3YpA+Oq7TfmgiumCT3FnjRgt+lm7gmPhu4Rlby3SEav/hpDy+Q7E+miWma2g0tTH15rmFa
-	2RThQ4wEgMtbQpyVy/5rR77sgoJs=
-X-Google-Smtp-Source: AGHT+IEgFLkXtmx1f1u2oOtwtHGuyeH7nU8FZQrfUAeDT3tRajH+Npn5/YmKew//beG04HCrDPZW/qGiRyUSkqT+73s=
-X-Received: by 2002:a05:6870:568b:b0:277:ecd2:7b7 with SMTP id
- 586e51a60fabf-29051af11a9mr4083851fac.7.1730072006843; Sun, 27 Oct 2024
- 16:33:26 -0700 (PDT)
+	s=arc-20240116; t=1730072208; c=relaxed/simple;
+	bh=NI/0NjJRoSMFb/rVMn3gS2S+ywVIq3W+7xx2YIHD+Vg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=ac2vLTarVUJgl1aJgjBDJd7BXGdI77ILeON6L/knfWV3b/PHAnAITQFMEi/OA8zJF88YiJCFXh6b7h8ynqwQWnJyWVWcxBnsK8JYypcHncYmNZN/rlzDoZ5tvz05pvCoBRceBPhSrJE6wObrAZOlJq4txVJyxjW4cEEvX2i7RHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=AVHBpwse; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1730072198;
+	bh=Oe4Qquk5IkTM08N/SEpAtTh93r0yCVzE4swwv+GL6zo=;
+	h=Date:From:To:Cc:Subject:From;
+	b=AVHBpwseRufHsyI3esE8IVklXSA40kksZpixnCdyNuS5t5OpVzeOKI+dx9L5la1rb
+	 ABwYm/X3sqA05fcRYdOJEF3A/LHP3gy/HYuZDMeA/spDF1XUBGhi+Gj9JujUPtq8U/
+	 gD9tTBW8jkQtDlgWDnZksP45D6O5GdU/kL6Ua8sBdbfXospCOQa+OrvUZ55m+UxuaN
+	 pJxd0DNhRBfRicGUYusQ8zHnexJTdbUTXT1NQ//nukQUvPDyMq+/7u/GImc7RFoGBC
+	 8uQFmFiHI4H8mYHDtpuxZQ5dp3NiowTkXrkooXuQk6BXsbpsVf4VIq8/zHb2rCToX6
+	 NxP4fKhbc9A0Q==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XcCbB3r4sz4x33;
+	Mon, 28 Oct 2024 10:36:38 +1100 (AEDT)
+Date: Mon, 28 Oct 2024 10:36:38 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Shakeel Butt <shakeel.butt@linux.dev>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the mm tree
+Message-ID: <20241028103638.70996727@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241026071002.118260-1-ruanjinjie@huawei.com>
-In-Reply-To: <20241026071002.118260-1-ruanjinjie@huawei.com>
-From: Namjae Jeon <linkinjeon@kernel.org>
-Date: Mon, 28 Oct 2024 08:33:16 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd-wvsibuLMw+nkLX6vD+u_yYsnv+YE3ikMFGXBquU5t-w@mail.gmail.com>
-Message-ID: <CAKYAXd-wvsibuLMw+nkLX6vD+u_yYsnv+YE3ikMFGXBquU5t-w@mail.gmail.com>
-Subject: Re: [PATCH] ksmbd: Fix the missing xa_store error check
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: sfrench@samba.org, senozhatsky@chromium.org, tom@talpey.com, 
-	set_pte_at@outlook.com, linux-cifs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/bX.JHr=sY9ePnok.=fz6L5g";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/bX.JHr=sY9ePnok.=fz6L5g
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Oct 26, 2024 at 4:10=E2=80=AFPM Jinjie Ruan <ruanjinjie@huawei.com>=
- wrote:
->
-> xa_store() can fail, it return xa_err(-EINVAL) if the entry cannot
-> be stored in an XArray, or xa_err(-ENOMEM) if memory allocation failed,
-> so check error for xa_store() to fix it.
->
-> Cc: stable@vger.kernel.org
-> Fixes: b685757c7b08 ("ksmbd: Implements sess->rpc_handle_list as xarray")
-> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
-Applied it to #ksmbd-for-next-next.
-Thanks!
+Hi all,
+
+After merging the mm tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
+
+mm/workingset.c: In function 'workingset_activation':
+mm/workingset.c:598:38: error: implicit declaration of function 'folio_memc=
+g_charged'; did you mean 'folio_memcg_check'? [-Wimplicit-function-declarat=
+ion]
+  598 |         if (mem_cgroup_disabled() || folio_memcg_charged(folio))
+      |                                      ^~~~~~~~~~~~~~~~~~~
+      |                                      folio_memcg_check
+
+Caused by commit
+
+  b4fa93fbd1dc ("memcg: workingset: remove folio_memcg_rcu usage")
+
+from the mm-unstable branch of the mm tree.
+
+this build has
+
+# CONFIG_MEMCG is not set
+
+I have reverted that commit for today.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/bX.JHr=sY9ePnok.=fz6L5g
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcezoYACgkQAVBC80lX
+0Gw6bwf5AbaTm4+x/7IZMnxRrNXx5XxnfmJShvMuFy578u1heN7qMrIf++yWk+z6
+zO0zo3+bjmKf7rnDnkzijo/xlbqVTbWsjQMoDYXUSoXpnkWXwgvcaK/mHtQ/bJqt
+sv2QFLr8kVIG/Stvupkq80P5apsH2AVhOWfkvKWWL/PXXA4rFIe3MExWeZLj+z96
+djOGb1Dqptd9X/mIO6PdN3wnSv1w6/D3yViUZ1WQwMp88RPM/UhOp3fq3IDzSF0F
+RzfXMZTxSghegMuMshTFuIYY5FAxKJyxNrjzfL7zb1TY6sc+v7PEQuDiVGY7rUUI
+QcrLz+slznm6I+Slb6PyODshfI+cxQ==
+=+D56
+-----END PGP SIGNATURE-----
+
+--Sig_/bX.JHr=sY9ePnok.=fz6L5g--
 
