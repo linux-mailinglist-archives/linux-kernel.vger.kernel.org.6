@@ -1,109 +1,57 @@
-Return-Path: <linux-kernel+bounces-383566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 043469B1D6F
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 12:32:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 943C99B1D70
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 12:34:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 353881C203A4
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 11:32:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 367BB1F21778
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 11:34:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F3F01531F8;
-	Sun, 27 Oct 2024 11:32:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6B0314E2D8;
+	Sun, 27 Oct 2024 11:34:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="gm9iBTrl"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="bUfjgUtA"
+Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BC7913A271
-	for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 11:32:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A5BE136341;
+	Sun, 27 Oct 2024 11:34:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730028752; cv=none; b=iWDw7p0Duy6wdi4i4pQxhCc2oaPG0WfNZt3sIVX4iYR0FdqDzUM23zNBz5DMsgelOP1Wf20lWIR3Mvx/Svm+7DRQQo0qKZ866keqb66ZN1F6ygdn5izss87keof3s2kSv2ZoRV/4q53P0TbYE3hJqJuVXneiQ5fUPy8uH2anqY8=
+	t=1730028859; cv=none; b=nxPFnHce/JZTIRu94LWTJgHZdIsByHmF9xuFzjYBHRrE4JTvX7s8qQafAUzU92LE2VMilsIhLH1Qp8QNuDjNajTZd4hy9XhNlA9ForiQJ6cWZTzR3xA5Ijuo8iPe7Gf4k1PunukCuYhf534VDpntD3b0gQ4GPCcsrgR2S0HI4nk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730028752; c=relaxed/simple;
-	bh=kTHkP+pw95v9Q9sC8dmhm0Y1Njg3SQZdvxggj1A8yUM=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iRIv6+InnmveBp0mo/3RskTWyO4osCpCMz1yXY1a/vwYHU60fG9gfnh8wTOIz4tu5kW6hz8C1d1k9H8a8VCOYdzrkKidFkn5Nh9wCRfKd1nqaJ8+cC0dtkSF8t2GVuT7ucXuZDosZ3yQbhScu0AT2qWNYIz4P9I95WEOvETTI9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=gm9iBTrl; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5c941623a5aso7253127a12.0
-        for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 04:32:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1730028747; x=1730633547; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=kU0MCV0TeQuQC16GsgNJVVDz80GIbnmau4vhLNXnG6c=;
-        b=gm9iBTrlAdFDgy6nGIsU9gmysckxtx356qDlT7/Kzgt2lKJzc1bhT8X0vvyxuBWed2
-         tVB2zce4+tAi3zdCsoZ50YVE6pRXNs3j5eDl4QtJneyHvU1CeC9k333Lcb793rbYK3T4
-         4NtigsNVAtzgNeRxhyzsybcnQRH/VZSwVwH1skjThuu/x8C2qbNZHnhETImDVk7fdoF9
-         StA593+iCtSXNtM6zpCA/OGDQ/4oTdrK6PzS3DDMYJwOGgzWIQ5iYwLr02XS330/J+J/
-         nc2F+WFb23uALjJkB4HBg/rxmNNRZV7W/qjusuQiFKLkXsoMLBT8iVirjCHfCIh+3CYa
-         FSKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730028747; x=1730633547;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kU0MCV0TeQuQC16GsgNJVVDz80GIbnmau4vhLNXnG6c=;
-        b=xMv0DXpKbM+A/rR7Yg4QuG7/306ChoKoaX3yuTC5QTeTCCuVrfRNRguS+odGt4T3LX
-         IF5Y/Yre6KbWRv7vL1YkeJpI+qbjtmDQEFWj0wHAlPMa7idOjhaelb6WwNCLp5Zyuh9o
-         nTCbSGSDEK9dzIqWaJvESpLX64tjmsG0cvY/V2FkOScVqIBNZyScxRePtnizprqnfvyL
-         Djp9MsjixnLNEFoHm7Fvyqd0q25wioXtarFAtSUFFM6JCzmU+8fLgfDZRGvGZWjzwSko
-         JHMKLB8L5t6RluLa4AD+eXdZV9BOV9m9+45hX7D0GS23GzyF6K8hH6hjtsSsO8pRaWNu
-         hPBw==
-X-Forwarded-Encrypted: i=1; AJvYcCUqk61JUK2LWQR4sOk/vaR2y78sMlmDm1vaPyZ7IbbkLsL9vSBvm8oiuLyu4oECX/Ltqo0+4e/7f/MY27g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWaSEfxDinn5dhTQweSQiF6FkeBNUebWtGzM0lGdnBhAJHGsRU
-	JHwDT4/OMOQWz9nwpoP+mqkEqOhgJpxCyIjogephPIFDxxI3yqVOu1d36zKqLBU=
-X-Google-Smtp-Source: AGHT+IGFhxYKhcZGmct80kmOogS47m5N8se2XFqf8zdUkxnrd0dqlLKBimSbOYXFuOLdT6TQJTi2mw==
-X-Received: by 2002:a17:906:f592:b0:a9a:babb:b916 with SMTP id a640c23a62f3a-a9de3612eccmr487030466b.15.1730028747291;
-        Sun, 27 Oct 2024 04:32:27 -0700 (PDT)
-Received: from localhost (host-79-35-211-193.retail.telecomitalia.it. [79.35.211.193])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b1f0292c2sm269235466b.69.2024.10.27.04.32.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 27 Oct 2024 04:32:26 -0700 (PDT)
-From: Andrea della Porta <andrea.porta@suse.com>
-X-Google-Original-From: Andrea della Porta <aporta@suse.de>
-Date: Sun, 27 Oct 2024 12:32:50 +0100
-To: Stefan Wahren <wahrenst@gmx.net>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Andrea della Porta <andrea.porta@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [PATCH v2 09/14] pinctrl: rp1: Implement RaspberryPi RP1 gpio
- support
-Message-ID: <Zx4k4giM86vW7g0c@apocalypse>
-References: <cover.1728300189.git.andrea.porta@suse.com>
- <199a4994312b120c73c95fa368954ad5a2a8aee6.1728300190.git.andrea.porta@suse.com>
- <CACRpkdb1muovPmKoUw=Q5sNXj3bsCt84LcKVDSLY09_5_1rXZQ@mail.gmail.com>
- <a1b72875-6224-47b9-bc68-bcc66343bf46@gmx.net>
+	s=arc-20240116; t=1730028859; c=relaxed/simple;
+	bh=78MIXJvqsJKNYdM8h6v7qXpSCE+jirw0EjvKfXwrgTk=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=AIXL4Nc4edN7a99emrwNm97Gh79Qth3bquqJ8BV5z53/DVVAg9Fc9BPQ3KChLvyLVA5wm+1Gy/LzMNNwBUlyap6nPIpHrY3UgIyvuRIFqrYnIwjnwfR/Xws1MeHxw2cjjhkxuoXguhwC3R9WPgSLdF8VA/mAoPep+mvUsL0by+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=bUfjgUtA; arc=none smtp.client-ip=185.70.43.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1730028847; x=1730288047;
+	bh=bp6yKTLVrGgMMzbBVeGIBaajjOi243EDgC03o0jsoV8=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=bUfjgUtAB4HpAXaHZcr2MXQ3Tdi1FzuHjNQpiQ/JoyCXmQA3vI2FBxhpHCuyYVQxk
+	 iM4lTBDC6Gc8gQ5SZYEvtydKgFTYW/luqzBseo0SXg2c3D9xBXO23kgVF6F5OQyfY0
+	 l+rn6jgOstOgLebon+YcA1cbqdTGCpMl0CTSnlw+fi99BWGUDzBOPDlz9HpmGXIKW9
+	 BNyUbLrH6B0pejgfamL9MFSA0mX27tsP9jEuzToIzJV9Yjk0TFSbi6VdZ2gmGxb5LP
+	 FEL/sOHWwDe0o0oAyyFkfsiiwcbT0alqCQhD07mgzUJee7viO1qckYdrARsTuHE2Ui
+	 N2LG7MHMQSEng==
+Date: Sun, 27 Oct 2024 11:34:02 +0000
+To: Kent Overstreet <kent.overstreet@linux.dev>
+From: Piotr Zalewski <pZ010001011111@proton.me>
+Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, skhan@linuxfoundation.org, syzbot+005ef9aa519f30d97657@syzkaller.appspotmail.com, Alan Huang <mmpgouride@gmail.com>
+Subject: Re: [PATCH v2] bcachefs: Fix NULL ptr dereference in btree_node_iter_and_journal_peek
+Message-ID: <BdSD2g3SGfWQrsTULTjViyG_t0llBh4NeIVbIE_3pvf1bWxk52ErCdP5yOErBZO3NkhyOv9Mgq2xc6CsGFliqDQrTgTwoquYKJKEUY5OE9g=@proton.me>
+In-Reply-To: <j3aypufmcezitilxlgkfyetnonkzlkst3hx4zxr4zspfonh5pm@mwngtgo4h4vb>
+References: <20241026174155.233430-3-pZ010001011111@proton.me> <j3aypufmcezitilxlgkfyetnonkzlkst3hx4zxr4zspfonh5pm@mwngtgo4h4vb>
+Feedback-ID: 53478694:user:proton
+X-Pm-Message-ID: 6da5b59290d5712c3fdcd7360d119869e3236f8d
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -111,42 +59,109 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <a1b72875-6224-47b9-bc68-bcc66343bf46@gmx.net>
+Content-Transfer-Encoding: quoted-printable
 
-Hi Stefan,
+On Sunday, October 27th, 2024 at 2:28 AM, Kent Overstreet <kent.overstreet@=
+linux.dev> wrote:
 
-On 12:08 Fri 11 Oct     , Stefan Wahren wrote:
-> Am 11.10.24 um 11:03 schrieb Linus Walleij:
-> > On Mon, Oct 7, 2024 at 2:39 PM Andrea della Porta <andrea.porta@suse.com> wrote:
-> > 
-> > > The RP1 is an MFD supporting a gpio controller and /pinmux/pinctrl.
-> > > Add minimum support for the gpio only portion. The driver is in
-> > > pinctrl folder since upcoming patches will add the pinmux/pinctrl
-> > > support where the gpio part can be seen as an addition.
-> > > 
-> > > Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
-> > This is a nice driver and I find no issues with it, what causes
-> > an issue is gpiochip_set_names() as pointed out by Bartosz.
-> > If you can live without the names you can remove that part for
-> > now and we can merge the driver, then you can add the names
-> > later when we sorted out how to share that function.
-> I raised the concerns about missing gpio line names in the first version
-> of patch, without knowing the real efforts.
-> 
-> So I'm fine with Linus' suggestion, because I don't want to delay the
-> upstreaming effort unnecessarily.
+> On Sat, Oct 26, 2024 at 05:46:33PM +0000, Piotr Zalewski wrote:
+>=20
+> > Add NULL check for key returned from bch2_btree_and_journal_iter_peek i=
+n
+> > btree_node_iter_and_journal_peek to avoid NULL ptr dereference in
+> > bch2_bkey_buf_reassemble.
+> >=20
+> > When key returned from bch2_btree_and_journal_iter_peek is NULL it mean=
+s
+> > that btree topology needs repair. Print error message with position at
+> > which node wasn't found and its parent node information. Call
+> > bch2_topology_error and return error code returned by it to ensure that
+> > topology error is handled properly.
+> >=20
+> > Reported-by: syzbot+005ef9aa519f30d97657@syzkaller.appspotmail.com
+> > Closes: https://syzkaller.appspot.com/bug?extid=3D005ef9aa519f30d97657
+> > Fixes: 5222a4607cd8 ("bcachefs: BTREE_ITER_WITH_JOURNAL")
+> > Suggested-by: Alan Huang mmpgouride@gmail.com
+> > Suggested-by: Kent Overstreet kent.overstreet@linux.dev
+> > Signed-off-by: Piotr Zalewski pZ010001011111@proton.me
+> > ---
+> >=20
+> > Notes:
+> > changes in v2:
+> > - make commit message more verbose.
+> > - set topology error, print error message and return
+> > appropriate error code.
+> >=20
+> > link to v1: https://lore.kernel.org/linux-bcachefs/20241023072024.98915=
+-3-pZ010001011111@proton.me/
+> >=20
+> > fs/bcachefs/btree_iter.c | 13 +++++++++++++
+> > 1 file changed, 13 insertions(+)
+> >=20
+> > diff --git a/fs/bcachefs/btree_iter.c b/fs/bcachefs/btree_iter.c
+> > index 15ac72b1af51..40c824779b15 100644
+> > --- a/fs/bcachefs/btree_iter.c
+> > +++ b/fs/bcachefs/btree_iter.c
+> > @@ -880,6 +880,18 @@ static noinline int btree_node_iter_and_journal_pe=
+ek(struct btree_trans *trans,
+> > __bch2_btree_and_journal_iter_init_node_iter(trans, &jiter, l->b, l->it=
+er, path->pos);
+> >=20
+> > k =3D bch2_btree_and_journal_iter_peek(&jiter);
+> > + if (!k.k) {
+> > + struct printbuf buf =3D PRINTBUF;
+> > +
+> > + prt_str(&buf, "node not found at pos ");
+> > + bch2_bpos_to_text(&buf, path->pos);
+> > + prt_str(&buf, " within parent node ");
+> > + bch2_bkey_val_to_text(&buf, c, bkey_i_to_s_c(&l->b->key));
+> > +
+> > + ret =3D bch2_fs_topology_error(c, "%s", buf.buf);
+> > + printbuf_exit(&buf);
+> > + goto err;
+> > + }
+>=20
+>=20
+> We'll want to add at least the btree ID and level to that.
+>=20
+> Could you also look over the other places we report topology errors and
+> inconstencies for any commonality? btree_cache.c has some stuff, and I
+> think there's a helper in there that might give you the error message
+> you want (instead of just the btree node key), and I'd have a glance at
+> the topology error reporting in btree_update_interior.c and btree_gc.c
+> as well.
 
-Perfect, thanks.
+I scanned through mentioned files and some others. There are commonalities
+but every error message seem to be different in some way so that there is=
+=20
+no truly common part.
 
-Regards,
-Andrea
+Information contained is usually a mixture of:
+  - btree id and level.
+  - position at which node wasn't found or if it was found but something=20
+    else is wrong its key info.
+  - parent node key information.
+  - prev/next node key info.
+  - min/max key pos info.
 
-> 
-> Regards
-> > 
-> > Yours,
-> > Linus Walleij
-> 
+Only appropriate helpers I found were (what I already used) -=20
+bch2_fs_topology_error and, in btree_iter.c, bch2_btree_path_to_text_short
+but there it doesn't print full parent key info just min_key pos and parent
+key pos so I'm not sure.
+
+To what you already said I could also add min pos info.
+
+> > bch2_bkey_buf_reassemble(out, c, k);
+> >=20
+> > @@ -887,6 +899,7 @@ static noinline int btree_node_iter_and_journal_pee=
+k(struct btree_trans *trans,
+> > c->opts.btree_node_prefetch)
+> > ret =3D btree_path_prefetch_j(trans, path, &jiter);
+> >=20
+> > +err:
+> > bch2_btree_and_journal_iter_exit(&jiter);
+> > return ret;
+> > }
+> > --
+> > 2.47.0
 
