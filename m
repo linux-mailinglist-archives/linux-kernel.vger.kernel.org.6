@@ -1,94 +1,85 @@
-Return-Path: <linux-kernel+bounces-383542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28BFC9B1D0C
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 11:01:57 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D81ED9B1D0D
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 11:02:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40F4A1C20BAE
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 10:01:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 478D3B210B8
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 10:02:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 885BE136327;
-	Sun, 27 Oct 2024 10:01:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="HvTiRPjD";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="avM1gUEr"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 663AC4CB36;
+	Sun, 27 Oct 2024 10:02:08 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4020613D531
-	for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 10:01:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2333578C9D
+	for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 10:02:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730023299; cv=none; b=fP4wew9R7tXgpBbDE7SZKTiNc4msOrq0NvvxXYrv7ieYVF0ZLJJ8HSb+dA3Lqi0wkDTjOI6Gv+ckuTOCOBSrtbpSoJ6cW0rEwL3TQ7gy+gLgxmsHsfOPiVipriP5snkyw8U0mut9HLR5DuN6+sgGXMy7DcVkAIPdkvZF+vNWg/Q=
+	t=1730023328; cv=none; b=ro7BK1nFsqcxAlq+OUj1/UTtBCdo1HzeHP5b/5hfshvN7AWIu6VezFKnYu5JPxZJlXbhcburzSfehBfx7uRVScTDrH7fBNwZajIDH6a8owsa+180My+lKZ32xl69wXKWqUlD8CKg9pFaRR4L+Vig7V8nzt7hYBDHOvcvxSz73m8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730023299; c=relaxed/simple;
-	bh=VwOS3aKEnjqgGuo1ahQYpJ7O1V3XSOZ6/1d2ffvlL58=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=SleThFprXEKeKPa2iNn7uSLK5nTzJ50t+norzdAwiaaNHzN/U2lREmMwCF1qTgnY+yENSutFf3NLzHj8on3AwyRhSZ+jHwNbUefUu5uif2SV09s8zP7MfffVsHj+Be6haFeK5AYaszxsF6mNqsh6egerptxY57/Lr+6sGRA7jII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=HvTiRPjD; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=avM1gUEr; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1730023294;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=S7NVNIvB0/48et90ayphb0tBlaktmdq0J+1e4kqcntM=;
-	b=HvTiRPjD0DsmxxZz0EJk4LcYAzavFTllAtV40WN20cvToaVPBio7LIoWjlXAHHsFA4dsvw
-	S7LDkMmho+ZmQCoy6ijcj53Pcw+7Z7HWfsHFDvG86/4oGxlBHYY2vc3qCw7vUyn/ua0bLg
-	JWDBYAeSQU1YMykUANXKLV1ppzJ+HPlUHfCdew4tftpqcEVv2e3TgoXfvGY3ZNjra9i+Tx
-	SxvMA7EH4kLh1+wUtz0Lfe9XCRZFG8e5Sngr61sIwfYzVC5IjQD4S8aIOIgDxQmR953OUh
-	/1kqT8zJrrSWBGESpGZVbDIgxc7l5rWlf66zla9sKb4wHAdV9iFk7t/lTq7dGQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1730023294;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=S7NVNIvB0/48et90ayphb0tBlaktmdq0J+1e4kqcntM=;
-	b=avM1gUErfQH+EH37JscZN0xPbvFFawrmqGdB81/GTVvOO1MTwD4tGQ8VSmhFybkv5Isu1W
-	7KdG+xyrzJ2ucDDw==
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- linux-kernel@vger.kernel.org
-Cc: =?utf-8?Q?Andr=C3=A9?= Almeida <andrealmeid@igalia.com>, Darren Hart
- <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar
- <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, Peter Zijlstra
- <peterz@infradead.org>, Valentin Schneider <vschneid@redhat.com>, Waiman
- Long <longman@redhat.com>
-Subject: Re: [RFC PATCH 0/3] futex: Add support task local hash maps.
-In-Reply-To: <20241026224306.982896-1-bigeasy@linutronix.de>
-References: <20241026224306.982896-1-bigeasy@linutronix.de>
-Date: Sun, 27 Oct 2024 11:01:33 +0100
-Message-ID: <87froh50g2.ffs@tglx>
+	s=arc-20240116; t=1730023328; c=relaxed/simple;
+	bh=0OpUnzKZRZobOtMrjLxgnYSB4ThIvYdxgODUjs4m/l8=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=ZhP6zs/mT3mW3QQqKldxc2K3hlE+ZLD+7U0dIaXrydz9i07SgW2fMj7B53cWZsQCgybxQaiZ9k5oRwvKRhqv6urzzxzcgpaetpXJVksGUuOwwNNPyPlbt1gOMj6KBjVoVGvWnQbEKZHQ+f/AMNVPUwZ4untbbeFf8QD8aZKyRGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a4eb49864dso14938805ab.3
+        for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 03:02:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730023325; x=1730628125;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YoARu2CBO+0MqUaLvRk4fAdTO79s9BPMC/TOwXf6Qko=;
+        b=PwNhZ7oYUs80T1PHg7XJLIR+CQtpo089GNqLH+BR+E+FOkBjaavvDJhR8wGN6fBbGw
+         gfe+xlJ7pSobbGyI69J0PosUEVwxMRgWBoQStSBoiwVS81PkHVgCx1RFRbomshB1RwYQ
+         uHBQVnW31ms9rGjYcaTr/dgEyiqVQLJ+Y/Pu3lPS5nlWi8uIpL3jLv2S9Aa+W+BDXCmy
+         TlgENhYCziywzcVd9CPUJEntxrtaMOwX1Bqmy9UXzC6kU/bPIGu04JOY9uS/Rx9zrjRw
+         GT6XcAWav/16MaQ5ibBQix0knBwyGYK7JIuybaVIvn/yGOtC6vqQXFhD+q98TjyzBmHm
+         XpMg==
+X-Forwarded-Encrypted: i=1; AJvYcCVpK5HrldhgxOAWxZLO9GQr8XTuCv3I8qGOy6tnP1SXuzTVZKpQgrIKemyOwLZVVHC+CXfKiQhrCJjq5Qc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0ii/M0UipVgljoQH9n2S2rZsP4jLqth9NDAwcBbRp64beq46z
+	waJK9bBBcH8BQtaUyae3Eo+i14qge+MOyM7Vb3uBF8ebNT2+e5riwX4ATL7aCKEHgdyJDf2XB29
+	uZ5Vn+zxkBRaWnefqH5vOAyknnubgNzeGuWgM8Ns4igzeRDRyp/gXzHk=
+X-Google-Smtp-Source: AGHT+IFYoA9kWVCxMPGJha0Clvw9ynpnK48ljvQTgmAsZmE3BctYhDC58wLmPPkxWR8QTELxXM/yinmOM3FIjK47Y2xzvPGuuHfI
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+X-Received: by 2002:a05:6e02:20c5:b0:3a4:e99a:bd41 with SMTP id
+ e9e14a558f8ab-3a4ed2f3861mr39888345ab.12.1730023325277; Sun, 27 Oct 2024
+ 03:02:05 -0700 (PDT)
+Date: Sun, 27 Oct 2024 03:02:05 -0700
+In-Reply-To: <tencent_A56F5096F0E83AEC6ACE9478866F602D150A@qq.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <671e0f9d.050a0220.2b8c0f.01ce.GAE@google.com>
+Subject: Re: [syzbot] [ext4?] KASAN: use-after-free Write in ext4_insert_dentry
+From: syzbot <syzbot+0c99c3f90699936c1e77@syzkaller.appspotmail.com>
+To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Sun, Oct 27 2024 at 00:34, Sebastian Andrzej Siewior wrote:
-> and adds support for task local futex_hash_bucket. It can be created via
-> prctl() and each thread has to enable it via another prctl() interface.
+Hello,
 
-That's a quick way to evaluate it.
+syzbot tried to test the proposed patch but the build/boot failed:
 
-> Individual threads may enable it but I guess this gets more complicated
-> because the libc internal locks (or another lib) maybe be shared by
-> multiple threads. So maybe it would be best to enable the local hash by
-> the group leader and automatically enable for each thread on fork().
+fs/ext4/inline.c:1025: undefined reference to `ext4_insert_dentry'
 
-At the end we want to let the kernel automatically create the hash table
-on first use of a private futex with a default size. That's a one off
-latency. The prctl should only be there for preallocation and sizing.
 
-And yes, you want to inherit when a new thread is created.
+Tested on:
 
-Thanks,
+commit:         850925a8 Merge tag '9p-for-6.12-rc5' of https://github..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=fc6f8ce8c5369043
+dashboard link: https://syzkaller.appspot.com/bug?extid=0c99c3f90699936c1e77
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=106a24a7980000
 
-        tglx
 
