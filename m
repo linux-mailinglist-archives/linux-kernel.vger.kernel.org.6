@@ -1,87 +1,80 @@
-Return-Path: <linux-kernel+bounces-383488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 846119B1C68
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 08:52:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B2DC9B1C69
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 08:54:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 105BC1F21895
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 07:52:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C8141C20B60
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 07:54:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34372137C37;
-	Sun, 27 Oct 2024 07:51:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29DDA3BBC5;
+	Sun, 27 Oct 2024 07:54:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dlis9No5"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="knimQV7u"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1B03126C16
-	for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 07:51:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D802C217F3B
+	for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 07:54:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730015497; cv=none; b=ITdWDol9bUK4HeuDCkIClVzNjrBhzPmRrQietxEsB9yxohLS7/Zxszl+gqdCxXqTj2pPq8be5dJGd/gCZOc0L1Pw2skAjSyYSJsAGL3KrAPMe6qq3kmbSpzk4D++QcmMkuVbDmQernPIb2SU/vJAzgCggO/9LgH7RchWXPqVn3M=
+	t=1730015651; cv=none; b=Rf9odi4WRzS8M+sDZ34Ys0jG94BUUtErIyU5fLi2LdBPGnMoGHxdXY+dcN0W6nSsYaLVawUodyUpwVCS9DoeQ4EGtVQLqkolG6iRSBHMiiCYmRq1zOqUq8oet7Um6gPQsMZfkFCkYKYyNnhB/trWni8pvFKjPBq654CxmAUAr4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730015497; c=relaxed/simple;
-	bh=0tz+h/hAgKYZROcBZNAAejjPVBrffdAhZK9wYZf9Vxc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=M/ay0NYAdiLJFI8JfRvk4tCN/1wGgcQ/9LWKoTyRrQAyIzOPw1kztxfCGijlKG72fOmwfz0Gmkt8wzKNGGvMUW0jGErVVawOp8c844kqBkSoFPAPPOojALyeBgkIyznvLSpDyLtha15FL8glMoucOKLaUb+11HrDWyopZPK1tmc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dlis9No5; arc=none smtp.client-ip=209.85.210.182
+	s=arc-20240116; t=1730015651; c=relaxed/simple;
+	bh=j4vkh6HZA0+rPQ7VID1SOK98y2la8NwZsrhmQT25mOA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=oynxXK0XDfZZqksCBGn9nUKvwZqcou/StB5QSaCIES+CTMyjOnj2QdHKJ7x72zxSskg5SZPqY9ZDLX5Rs/LXE0sbxMpr2JdKzzOX/Gqs5gAqbx0Y7nm8YTNQONUXfLcnyWwfjFMrzkrgRLEYjfL6N5K8ABp9hz0aVFtAQ8zjgG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=knimQV7u; arc=none smtp.client-ip=209.85.214.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-71e6cec7227so2736461b3a.0
-        for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 00:51:35 -0700 (PDT)
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-20c714cd9c8so31748395ad.0
+        for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 00:54:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730015495; x=1730620295; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zOn93d9tLichC+5tHiWOkakuU/3lAA1dF93RrhXoO/E=;
-        b=Dlis9No5cbrosCCWIXuQkSyWv3CCAbfGBmOzgwBF2ek6RU6O6IpzWyLr5swrJ7YmQE
-         1eO+YNbGbYweJ6iD987Jr4+2AB8LvsKRUZ2e2qeNJ+WQzZjxQ+QKEfZRvc+o9XuG0UD6
-         r+aIWzfsyyx1u3p5LhNmk0aTAQ+P1SeS+u8lddfyyeSOkPfQSgyN7B4GIax5/CQW9F4g
-         WhDX53KkezMTx3p0XMjYnh0StbKOF2l7Hn+NrahPoRpWQn0FSXsFTTW0O3ON4o39kZtt
-         ackdJlXDTYbri0EGSsrggVW37KdBzlE4SX28gy1hZDBNaQ0qM1pCTi7n3t5MUvIUnAeS
-         fkdA==
+        d=gmail.com; s=20230601; t=1730015649; x=1730620449; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=KWickdyVmCsECTe9uWE+5e70fKgYSzHKZqcNgghgJWE=;
+        b=knimQV7u7SJYOax4OgYlKk6cygXARYjwsKwqZd64hI8wIiZLpekEDO4U2eB5XSTdnQ
+         iUWtvugrfGyM1u5Wb3s3J1vGpDvvWMdAxfxhypdR1leDF8XqxvH/fF5fa+5JbN3CIo8x
+         f5fapcYLGbSCPuTDomM1A5xrxphAj2X2MUN6TOPNyZnhun78yRhDe3zGcz+sQiGDw+Kc
+         SXcOVu3Txhf+n5VcGg58Ote2zLjS79X9SDqKPWAcErKRPloNHQvgAa59cICDhzlnTzAO
+         CXVR3VKO/CSPIj07keG7h2fGpVtNfa+8elWsRa19etSvSwNJaBJST+nOQus2Yp23UImE
+         lIZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730015495; x=1730620295;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zOn93d9tLichC+5tHiWOkakuU/3lAA1dF93RrhXoO/E=;
-        b=Rk/xbjGH1OlW04JQRmXOlPXtb+5K7vqF9RC0U3Kf9ggOy4oo5YPLBmGzJX63VR8Aok
-         vwg/+IFqBZlCU3AaoLzWLxXngrS+HzX7M8cS8qBU6yw3m7BoyO73wqvI54rZrZJqJpmy
-         ZMCbiXqHkjuHTgwXrjALCzL8/kTwLuWkEqmFqV7n0+ZiuVJdVxm4Eymwmh+0mUAadgRs
-         2lQ/Xh9ccPpoYcDdo8hA/sMIXfH7yL1rE1J4OXfeysp2yYPDquO3OBpXsYB8CRDNGZJY
-         NKAx1PNLIh2XK+BuN++z4seHeL8jVXR7fe3yqqBl3uTPdBgvdyAVpoKGB1jdbMkV07Iy
-         mncA==
-X-Forwarded-Encrypted: i=1; AJvYcCVUHZQ9BYKel3csO42uo8++mphsLd6i3s7cUU2iWPACZ3YHFW/wvFM5rM+9qOtfBZYyU0Zg0pYjjHonlyU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRsEYxWW+qeqva8JXQnwHC94RI+4wHrYi2pFH7W+Yf/2GSpP6h
-	NybM/Wgq0fENBaKM+t3Frqgkq0BetRilQk2wLtbqFXBfVEL+9y/l
-X-Google-Smtp-Source: AGHT+IHuwf5v8s7V3KbWx323aO0dVtPL/Va9rCXnkmlyIBRqfcRtNaZ7kC0WQpGCrrX/ks4HwY371A==
-X-Received: by 2002:a05:6a00:b55:b0:71e:744a:3fbd with SMTP id d2e1a72fcca58-7206306df29mr7284417b3a.20.1730015494847;
-        Sun, 27 Oct 2024 00:51:34 -0700 (PDT)
-Received: from fedora.. ([2405:201:d007:50c2:b7e7:6df3:9958:a45d])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7205794f9a1sm3785551b3a.90.2024.10.27.00.51.31
+        d=1e100.net; s=20230601; t=1730015649; x=1730620449;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KWickdyVmCsECTe9uWE+5e70fKgYSzHKZqcNgghgJWE=;
+        b=tru9dIxVFZ08wxZKa7Uf2QB3qG/HeHLTpgEMJNPecbeidg0CLfK+eVQEmgHD8tdoeR
+         PZivJrD1dDCJm5Mpxqk3xu+GpC9NHrORZSnb2uOFzv3aVZKf+WYWD04gZ81olBkIZHSU
+         oTb8YHx4e86QU8cQSO9iFJ4ggQAAR0FS5hdbVG095xjfDBFwZdPevh+ay+b3SHeta+b/
+         tozHdcvWZiwTAOOZCbg5cavcU8fQySeJvCcRmPUTsNXue1VzB+f6AgKgOUdfz3YykfIl
+         B/Gec7kA/5P80z1a8ZZBvz/+/0LS7Zsi5dRdPurMzFFsa93bqmvb86UnZe7m4XDZoe12
+         nl6A==
+X-Forwarded-Encrypted: i=1; AJvYcCWKEhxAGc6paXzZt+TWRXYhHCTEX/iDPl630JU1TWc7qPg2n7NURZ7p6eyvNU1Wd14fmskpd7VnZRbRTN4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzwuuWTX9u4FTbyxo32/oinw26BPaZFItslhjXWQKFGyp8q4PlU
+	7+3wOHvjtPBJLeXXA6iyGnE13Cv4BbzHFRXeiczFJ1CH6w0c4wuX
+X-Google-Smtp-Source: AGHT+IFx3Mxj2UYdS6rcKUmhPqMKikjEiuq8NHR0Aq8wItg1uU6BpL7wNNtVlEM1eRsgtZFqMDZwlA==
+X-Received: by 2002:a17:902:f790:b0:20f:b54f:400e with SMTP id d9443c01a7336-210c6cde236mr55853975ad.61.1730015648938;
+        Sun, 27 Oct 2024 00:54:08 -0700 (PDT)
+Received: from purva-IdeaPad-Gaming-3-15IHU6.lan ([2409:40c0:233:2700:b026:7bd0:77f6:16a6])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bbf6d311sm32282135ad.81.2024.10.27.00.54.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 27 Oct 2024 00:51:34 -0700 (PDT)
-From: Vamsi Krishna Brahmajosyula <vamsikrishna.brahmajosyula@gmail.com>
-To: maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	jani.nikula@linux.intel.com
-Cc: skhan@linuxfoundation.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 5/5] drm/edid: convert drm_parse_hdr_metadata_block to use struct cea_db *
-Date: Sun, 27 Oct 2024 13:21:08 +0530
-Message-ID: <20241027075108.14273-6-vamsikrishna.brahmajosyula@gmail.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241027075108.14273-1-vamsikrishna.brahmajosyula@gmail.com>
-References: <20241027075108.14273-1-vamsikrishna.brahmajosyula@gmail.com>
+        Sun, 27 Oct 2024 00:54:08 -0700 (PDT)
+From: Suraj Sonawane <surajsonawane0215@gmail.com>
+To: johan@kernel.org,
+	elder@kernel.org,
+	gregkh@linuxfoundation.org
+Cc: greybus-dev@lists.linaro.org,
+	linux-kernel@vger.kernel.org,
+	Suraj Sonawane <surajsonawane0215@gmail.com>
+Subject: [PATCH] greybus: Fix null pointer dereference in gb_operation_response_send()
+Date: Sun, 27 Oct 2024 13:23:04 +0530
+Message-Id: <20241027075304.7301-1-surajsonawane0215@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,88 +83,46 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Address the following
-	FIXME: convert parsers to use struct cea_db
-in the parser drm_parse_hdr_metadata_block
+Fix an issue detected by the Smatch static tool:
+drivers/greybus/operation.c:852 gb_operation_response_send() error:
+we previously assumed 'operation->response' could be null (see line 829)
 
-cea_db contains len and then data. Appropriately change the indices
-when referring to individual elements (db[n] becomes data[n-1]).
+The issue occurs because 'operation->response' may be null if the
+response allocation fails at line 829. However, the code tries to
+access 'operation->response->header' at line 852 without checking if
+it was successfully allocated. This can cause a crash if 'response'
+is null.
 
-Signed-off-by: Vamsi Krishna Brahmajosyula <vamsikrishna.brahmajosyula@gmail.com>
+To fix this, add a check to ensure 'operation->response' is not null
+before accessing its header. If the response is null, log an error
+message and return -ENOMEM to stop further processing, preventing
+any crashes or undefined behavior.
+
+Signed-off-by: Suraj Sonawane <surajsonawane0215@gmail.com>
 ---
- drivers/gpu/drm/drm_edid.c | 22 ++++++++++------------
- 1 file changed, 10 insertions(+), 12 deletions(-)
+ drivers/greybus/operation.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/drm_edid.c b/drivers/gpu/drm/drm_edid.c
-index d9fa994a3acc..8b2b75885027 100644
---- a/drivers/gpu/drm/drm_edid.c
-+++ b/drivers/gpu/drm/drm_edid.c
-@@ -5418,7 +5418,7 @@ static void drm_calculate_luminance_range(struct drm_connector *connector)
+diff --git a/drivers/greybus/operation.c b/drivers/greybus/operation.c
+index 8459e9bc0..521899fbc 100644
+--- a/drivers/greybus/operation.c
++++ b/drivers/greybus/operation.c
+@@ -849,7 +849,13 @@ static int gb_operation_response_send(struct gb_operation *operation,
+ 		goto err_put;
  
- static uint8_t eotf_supported(const u8 *edid_ext)
- {
--	return edid_ext[2] &
-+	return edid_ext[1] &
- 		(BIT(HDMI_EOTF_TRADITIONAL_GAMMA_SDR) |
- 		 BIT(HDMI_EOTF_TRADITIONAL_GAMMA_HDR) |
- 		 BIT(HDMI_EOTF_SMPTE_ST2084) |
-@@ -5427,28 +5427,29 @@ static uint8_t eotf_supported(const u8 *edid_ext)
+ 	/* Fill in the response header and send it */
+-	operation->response->header->result = gb_operation_errno_map(errno);
++	if (operation->response) {
++		operation->response->header->result = gb_operation_errno_map(errno);
++	} else {
++		dev_err(&connection->hd->dev, "failed to allocate response\n");
++		ret = -ENOMEM;
++		goto err_put_active;
++	}
  
- static uint8_t hdr_metadata_type(const u8 *edid_ext)
- {
--	return edid_ext[3] &
-+	return edid_ext[2] &
- 		BIT(HDMI_STATIC_METADATA_TYPE1);
- }
- 
- static void
--drm_parse_hdr_metadata_block(struct drm_connector *connector, const u8 *db)
-+drm_parse_hdr_metadata_block(struct drm_connector *connector, const struct cea_db *db)
- {
- 	u16 len;
- 
- 	len = cea_db_payload_len(db);
-+	const u8 *data = cea_db_data(db);
- 
- 	connector->hdr_sink_metadata.hdmi_type1.eotf =
--						eotf_supported(db);
-+						eotf_supported(data);
- 	connector->hdr_sink_metadata.hdmi_type1.metadata_type =
--						hdr_metadata_type(db);
-+						hdr_metadata_type(data);
- 
- 	if (len >= 4)
--		connector->hdr_sink_metadata.hdmi_type1.max_cll = db[4];
-+		connector->hdr_sink_metadata.hdmi_type1.max_cll = data[3];
- 	if (len >= 5)
--		connector->hdr_sink_metadata.hdmi_type1.max_fall = db[5];
-+		connector->hdr_sink_metadata.hdmi_type1.max_fall = data[4];
- 	if (len >= 6) {
--		connector->hdr_sink_metadata.hdmi_type1.min_cll = db[6];
-+		connector->hdr_sink_metadata.hdmi_type1.min_cll = data[5];
- 
- 		/* Calculate only when all values are available */
- 		drm_calculate_luminance_range(connector);
-@@ -6416,9 +6417,6 @@ static void drm_parse_cea_ext(struct drm_connector *connector,
- 
- 	cea_db_iter_edid_begin(drm_edid, &iter);
- 	cea_db_iter_for_each(db, &iter) {
--		/* FIXME: convert parsers to use struct cea_db */
--		const u8 *data = (const u8 *)db;
--
- 		if (cea_db_is_hdmi_vsdb(db))
- 			drm_parse_hdmi_vsdb_video(connector, db);
- 		else if (cea_db_is_hdmi_forum_vsdb(db) ||
-@@ -6433,7 +6431,7 @@ static void drm_parse_cea_ext(struct drm_connector *connector,
- 		else if (cea_db_is_vcdb(db))
- 			drm_parse_vcdb(connector, db);
- 		else if (cea_db_is_hdmi_hdr_metadata_block(db))
--			drm_parse_hdr_metadata_block(connector, data);
-+			drm_parse_hdr_metadata_block(connector, db);
- 		else if (cea_db_tag(db) == CTA_DB_VIDEO)
- 			parse_cta_vdb(connector, db);
- 		else if (cea_db_tag(db) == CTA_DB_AUDIO)
+ 	ret = gb_message_send(operation->response, GFP_KERNEL);
+ 	if (ret)
 -- 
-2.47.0
+2.34.1
 
 
