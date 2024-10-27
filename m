@@ -1,143 +1,221 @@
-Return-Path: <linux-kernel+bounces-383466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88C2B9B1C2D
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 05:43:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49C319B1C30
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 05:48:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87D981C20DBC
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 04:43:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98E411F21BFD
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 04:48:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 716132BAEF;
-	Sun, 27 Oct 2024 04:43:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AE202AEF1;
+	Sun, 27 Oct 2024 04:48:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZlQBDDHy"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="SJssK9NX"
+Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 064C822F1C
-	for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 04:43:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1C18217F3B
+	for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 04:48:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730004203; cv=none; b=oLdFbSkKf9FJtSzWY23x+bd6w7ZdiyXLJFKvPEQCR1FF+X8LsVFq2cQakUZO//d5cB/4dwPk6SBnnKD8DEscfCj14T+rX5iHOm3k+8TMgxDF18AleVm9GkRV/fadSLsdeXNjRowUy45XZDP25PWAVX7Sulqy3Eph/RgikPA1fEo=
+	t=1730004526; cv=none; b=Lcc3CTQDsVzeoC1FEcCkRs/VEKhQ6xA9schsoNKrBexB88O6ZtJ0LSE45lcla6X9TdcATFq/on3gZ2k9pDTliR1zXCy85PFtt3fEPVor1QKEf5xg01//ychtumCvRUbw3jc+5C2rDFMLqRJMq6/06OWMXTTwd8gsoSrzYlimhjA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730004203; c=relaxed/simple;
-	bh=1pm4DpTKXFFG1e38UC1ev5/Q43kxORvmneZ5l2b57Kw=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=E3BI7pJryKsB64vor1gL1u7tzmsoQshq8pfVrPwN3/2MGL7QpY7/xbkp3S4Uf6P8f0Z0Buu63IZz2QaEAKxF5vYepzs4b+1g0i9tYBEBW2EVtpi09IuiwNBrs/Xo3p9zbjWOS+EDklk5F3Ett5+8qJajquNLku4PiqEroLFxuto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZlQBDDHy; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-20caccadbeeso34295655ad.2
-        for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 21:43:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730004201; x=1730609001; darn=vger.kernel.org;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=MxJ7jTPYF7MJ+n+x+vALmSMEUZ0wIVJqL5CFxRxgP8A=;
-        b=ZlQBDDHyJ6qSSHS1sZKOZIZN1rx2qzaJCxhfRDzpqFzs5/HYiVQAfCoxpBN/1ZgObj
-         WL1R/FE+KYlXCkoyGCn6ybg8DESCR1iz2/pkb90n66WLlqUCBWxDnzMem96zsnRPvwQX
-         i+O9NeL9L5lzoo3RfueWyP7N6Y4XqlH4gAWaSHokgARj5LuvrU28hwrh3y+BGiWbueAR
-         mdzlVie3qOVNW9VmuNh49aacHtWjaKOFd2ZpT0ta9YXkd33LJfUBzHmLtXCtcKyuhike
-         3YL0uaWa0K0shio/6q9E85jQYw5GgYi+8EFLDQzWU8vRJ8WLOv518btQkxWu3CnxcIjD
-         rLFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730004201; x=1730609001;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MxJ7jTPYF7MJ+n+x+vALmSMEUZ0wIVJqL5CFxRxgP8A=;
-        b=mLtEso1KLt5eTdMTr0HlAtcczkwBfcsTeflU/F5yWs/A0eleVlP4fza+ZABL6MgnWy
-         lpnR2IsoaeefIhRETBNI+iUG/Ys4P7WVCiISBxRUHgchoOZxD+US/jETJos5E8N1w0cc
-         FUSqFVq/Mhqkg/Q+GuMgstVV093Z1sxol+7kQB2Ldoco0XFjMOZGscFlb1cCHnC1Vn3Y
-         /Y2kQSH7QIM/1Qby3sQp7xCO7aGD3j0tyR/AnAgpwju6gd1uoui51qexb2AbDN80FAAc
-         hPPXYppA1ggVQvE1KwEl52unBkN9RzecZBte1adRgUqTd1LPm4RAKbB5DnT/R3oDPx5W
-         nNFg==
-X-Forwarded-Encrypted: i=1; AJvYcCVELqJXj66PkP5+uWwTn51px7ue4qeQVkD+CFsw6fkQ9ncEFsD9p5hu5Aiv3VheI8JdbL3lann8CKqCkog=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyg3K78xuvoqVsjPwoW+rWqi1o9sd5BVw8YfuK216RUmqBj5bPe
-	tLjcm6tBwM5weW48UIibUnMKTB6tS0Exv/MiaGddXubOaBLfUaketGxWWlcSkg==
-X-Google-Smtp-Source: AGHT+IFoimWn5iWOVL+r7Tuqqyu0INnrIinhsFyVKabz7kFPstUFS6IMfI3GNvN+lNKp/poVnkhlRw==
-X-Received: by 2002:a17:902:d4d0:b0:20c:a44b:3221 with SMTP id d9443c01a7336-210c6c08b12mr52868115ad.15.1730004201071;
-        Sat, 26 Oct 2024 21:43:21 -0700 (PDT)
-Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bc04b8bbsm30616895ad.244.2024.10.26.21.43.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 26 Oct 2024 21:43:19 -0700 (PDT)
-Date: Sat, 26 Oct 2024 21:43:09 -0700 (PDT)
-From: Hugh Dickins <hughd@google.com>
-To: Zi Yan <ziy@nvidia.com>
-cc: Hugh Dickins <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
-    Usama Arif <usamaarif642@gmail.com>, Yang Shi <shy828301@gmail.com>, 
-    Wei Yang <richard.weiyang@gmail.com>, 
-    "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, 
-    Matthew Wilcox <willy@infradead.org>, David Hildenbrand <david@redhat.com>, 
-    Johannes Weiner <hannes@cmpxchg.org>, 
-    Baolin Wang <baolin.wang@linux.alibaba.com>, 
-    Barry Song <baohua@kernel.org>, Kefeng Wang <wangkefeng.wang@huawei.com>, 
-    Ryan Roberts <ryan.roberts@arm.com>, Nhat Pham <nphamcs@gmail.com>, 
-    Chris Li <chrisl@kernel.org>, linux-kernel@vger.kernel.org, 
-    linux-mm@kvack.org
-Subject: Re: [PATCH hotfix 1/2] mm/thp: fix deferred split queue not
- partially_mapped
-In-Reply-To: <E5A75697-55C7-4335-8D86-EE5CB6A99C4F@nvidia.com>
-Message-ID: <947f23e2-c817-b714-57d7-c893aad5002f@google.com>
-References: <760237a3-69d6-9197-432d-0306d52c048a@google.com> <3A1E5353-D8C5-4D38-A3FF-BFC671FC25CE@nvidia.com> <966a4aff-f587-c4bb-1e10-2673734c2aa0@google.com> <E5A75697-55C7-4335-8D86-EE5CB6A99C4F@nvidia.com>
+	s=arc-20240116; t=1730004526; c=relaxed/simple;
+	bh=fDki5Wc0yOakngK0W6QXLIrERFLaO2I3WibCoccF7tk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=D/UcJviqKp98N7TK2WigOu55LnpSJ0Pkbp9i91Kdyo1DDH6ehqeGVPqbxFrxJiyevW9q4zkoz9rC0qX9/rvyV+JCxEnp3lKaESqF2wfY9TP8uRm8kbAJ4l+PBLeK4pR2cRUQCLkU9XIprE2xf5WSLHhRb1bJA+BCd72c0TB6wZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=SJssK9NX; arc=none smtp.client-ip=91.218.175.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <c86f224d-fdd3-4b91-a0d1-0a34e38236f0@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1730004519;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/LSorqQbck8YB4T0NmsqrtoTk57hv8mFuEl/XEJMvTs=;
+	b=SJssK9NXel3SGm4jK3DxYAZvL9fP6n6z7iZY+8ah2HX8aDgsP/XlVPECPFMGeqsiiJ1R1x
+	sc7Tz1xQGhfdSoG84+NYX4HPSWEi67IBuNinN0yrSyfn4qxcQwB+c/i9xwxaMTTv+KhjYY
+	NcULPT/HRZXfAHQIhkIFlj/Pk7GXtos=
+Date: Sun, 27 Oct 2024 12:48:29 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Subject: Re: [PATCH 1/3] drm/etnaviv: Track GPU VA size separately
+To: Lucas Stach <l.stach@pengutronix.de>,
+ Russell King <linux+etnaviv@armlinux.org.uk>,
+ Christian Gmeiner <christian.gmeiner@gmail.com>
+Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+References: <20241004194207.1013744-1-sui.jingfeng@linux.dev>
+ <20241004194207.1013744-2-sui.jingfeng@linux.dev>
+ <b93c08b0bab16c86190ca186f20d2cb036a4b8d0.camel@pengutronix.de>
+Content-Language: en-US, en-AU
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Sui Jingfeng <sui.jingfeng@linux.dev>
+In-Reply-To: <b93c08b0bab16c86190ca186f20d2cb036a4b8d0.camel@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, 25 Oct 2024, Zi Yan wrote:
+Hi,
+
+On 10/7/24 18:12, Lucas Stach wrote:
+> Am Samstag, dem 05.10.2024 um 03:42 +0800 schrieb Sui Jingfeng:
+>> Etnaviv assumes that GPU page size is 4KiB, yet on some systems, the CPU
+>> page size is 16KiB. The size of etnaviv buffer objects will be aligned
+>> to CPU page size on kernel side, however, userspace still assumes the
+>> page size is 4KiB and doing allocation with 4KiB page as unit. This
+>> results in userspace allocated GPU virtual address range collision and
+>> therefore unable to be inserted to the specified hole exactly.
+>>
+>> The root cause is that kernel side BO takes up bigger address space than
+>> userspace assumes when the size of it is not CPU page size aligned. To
+>> Preserve GPU VA continuous as much as possible, track the size that
+>> userspace/GPU think of it is.
+>>
+>> Yes, we still need to overallocate to suit the CPU, but there is no need
+>> to waste GPU VA space anymore.
+>>
+>> Signed-off-by: Sui Jingfeng <sui.jingfeng@linux.dev>
+>> ---
+>>   drivers/gpu/drm/etnaviv/etnaviv_gem.c | 8 +++++---
+>>   drivers/gpu/drm/etnaviv/etnaviv_gem.h | 1 +
+>>   drivers/gpu/drm/etnaviv/etnaviv_mmu.c | 8 ++++----
+>>   3 files changed, 10 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gem.c b/drivers/gpu/drm/etnaviv/etnaviv_gem.c
+>> index 5c0c9d4e3be1..943fc20093e6 100644
+>> --- a/drivers/gpu/drm/etnaviv/etnaviv_gem.c
+>> +++ b/drivers/gpu/drm/etnaviv/etnaviv_gem.c
+>> @@ -543,7 +543,7 @@ static const struct drm_gem_object_funcs etnaviv_gem_object_funcs = {
+>>   	.vm_ops = &vm_ops,
+>>   };
+>>   
+>> -static int etnaviv_gem_new_impl(struct drm_device *dev, u32 flags,
+>> +static int etnaviv_gem_new_impl(struct drm_device *dev, u32 size, u32 flags,
+>>   	const struct etnaviv_gem_ops *ops, struct drm_gem_object **obj)
+>>   {
+>>   	struct etnaviv_gem_object *etnaviv_obj;
+>> @@ -570,6 +570,7 @@ static int etnaviv_gem_new_impl(struct drm_device *dev, u32 flags,
+>>   	if (!etnaviv_obj)
+>>   		return -ENOMEM;
+>>   
+>> +	etnaviv_obj->user_size = size;
+>>   	etnaviv_obj->flags = flags;
+>>   	etnaviv_obj->ops = ops;
+>>   
+>> @@ -588,11 +589,12 @@ int etnaviv_gem_new_handle(struct drm_device *dev, struct drm_file *file,
+>>   {
+>>   	struct etnaviv_drm_private *priv = dev->dev_private;
+>>   	struct drm_gem_object *obj = NULL;
+>> +	unsigned int user_size = size;
 > 
-> Thank you a lot for taking the time to check the locked version. Looking
-> forward to the result.
+> This still needs to be be aligned to 4K. 
 
-The locked version worked fine (I did see some unusual filesystem on loop
-errors on this laptop, but very much doubt that was related to the extra
-deferred split queue locking).  But I do still prefer the original version.
+Yes, extremely correct here, for the perspective of concept.
 
-> BTW, I am not going to block this patch since it fixes the bug.
+Have to be GPU page size aligned, because the GPU map 4KiB once a time.
+GPU will access full range of a 4KiB page, and this is out of CPU's
+control.
 
-Thanks!  I'll put out the same as v2 1/2.
+> Userspace may request unaligned buffer sizes 
 
+User-space shall *NOT* request unaligned buffer, since user-space
+*already* made the assumption GPU page is 4KiB. Then it's the user
+space's responsibility that keeping requested buffer aligned.
+
+- The kernel space actually can and *should* return aligned size
+   to user-space though.
+
+- Since softpin feature is landed, it becomes evident that kernel
+   space need user-space *report* a correct length of GPUVA.
+
+But I'm fine with the kernel pay some extra price for safe reasons.
+
+Best regards,
+Sui
+
+> and we don't want to risk any confusion about
+> which part is visible to the GPU, so better make sure this size is
+> aligned to the GPU page size.
+> Also, that more personal preference, but I would call this gpu_size or
+> something like that, to avoid any confusion with the user_size in> etnaviv_cmdbuf, where user_size doesn't denote the GPU visible size.
+>
+> Regards,
+> Lucas
 > 
-> The tricky part in deferred_list_scan() is always the use of
-> folio->_deferred_list without taking split_queue_lock. I am thinking about
-> use folio_batch to store the out-of-split_queue folios, so that _deferred_list
-> will not be touched when these folios are tried to be split. Basically,
+>>   	int ret;
+>>   
+>>   	size = PAGE_ALIGN(size);
+>>   
+>> -	ret = etnaviv_gem_new_impl(dev, flags, &etnaviv_gem_shmem_ops, &obj);
+>> +	ret = etnaviv_gem_new_impl(dev, user_size, flags, &etnaviv_gem_shmem_ops, &obj);
+>>   	if (ret)
+>>   		goto fail;
+>>   
+>> @@ -627,7 +629,7 @@ int etnaviv_gem_new_private(struct drm_device *dev, size_t size, u32 flags,
+>>   	struct drm_gem_object *obj;
+>>   	int ret;
+>>   
+>> -	ret = etnaviv_gem_new_impl(dev, flags, ops, &obj);
+>> +	ret = etnaviv_gem_new_impl(dev, size, flags, ops, &obj);
+>>   	if (ret)
+>>   		return ret;
+>>   
+>> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gem.h b/drivers/gpu/drm/etnaviv/etnaviv_gem.h
+>> index a42d260cac2c..c6e27b9abb0c 100644
+>> --- a/drivers/gpu/drm/etnaviv/etnaviv_gem.h
+>> +++ b/drivers/gpu/drm/etnaviv/etnaviv_gem.h
+>> @@ -36,6 +36,7 @@ struct etnaviv_gem_object {
+>>   	const struct etnaviv_gem_ops *ops;
+>>   	struct mutex lock;
+>>   
+>> +	u32 user_size;
+>>   	u32 flags;
+>>   
+>>   	struct list_head gem_node;
+>> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_mmu.c b/drivers/gpu/drm/etnaviv/etnaviv_mmu.c
+>> index 1661d589bf3e..6fbc62772d85 100644
+>> --- a/drivers/gpu/drm/etnaviv/etnaviv_mmu.c
+>> +++ b/drivers/gpu/drm/etnaviv/etnaviv_mmu.c
+>> @@ -281,6 +281,7 @@ int etnaviv_iommu_map_gem(struct etnaviv_iommu_context *context,
+>>   {
+>>   	struct sg_table *sgt = etnaviv_obj->sgt;
+>>   	struct drm_mm_node *node;
+>> +	unsigned int user_size;
+>>   	int ret;
+>>   
+>>   	lockdep_assert_held(&etnaviv_obj->lock);
+>> @@ -303,13 +304,12 @@ int etnaviv_iommu_map_gem(struct etnaviv_iommu_context *context,
+>>   	}
+>>   
+>>   	node = &mapping->vram_node;
+>> +	user_size = etnaviv_obj->user_size;
+>>   
+>>   	if (va)
+>> -		ret = etnaviv_iommu_insert_exact(context, node,
+>> -						 etnaviv_obj->base.size, va);
+>> +		ret = etnaviv_iommu_insert_exact(context, node, user_size, va);
+>>   	else
+>> -		ret = etnaviv_iommu_find_iova(context, node,
+>> -					      etnaviv_obj->base.size);
+>> +		ret = etnaviv_iommu_find_iova(context, node, user_size);
+>>   	if (ret < 0)
+>>   		goto unlock;
+>>   
 > 
-> 1. loop through split_queue and move folios to a folio_batch until the
->    folio_batch is full;
-> 2. loop through the folio_batch to try to split each folio;
-> 3. move the remaining folios back to split_queue.
-> 
-> With this approach, split_queue_lock might be taken more if there are
-> more than 31 (folio_batch max size) folios on split_queue and split_queue_lock
-> will be held longer in step 3, since the remaining folios need to be
-> added back to split_queue one by one instead of a single list splice.
-> 
-> Let me know your thoughts. I can look into this if this approach sounds
-> promising. Thanks.
 
-TBH, I just don't see the point: we have a working mechanism, and
-complicating it to rely on more infrastructure, just to reach the
-same endpoint, seems a waste of developer time to me.  It's not as
-if a folio_batch there would make the split handling more efficient.
+-- 
+Best regards
+Sui
 
-It would disambiguate the list_empty(), sure; but as it stands,
-there's nothing in the handling which needs that disambiguated.
-
-I can half-imagine that a folio_batch might become a better technique,
-if we go on to need less restricted use of the deferred split queue:
-if for some reason we grow to want to unqueue a THP while it's still
-in use (as memcg move wanted in 2/2, but was not worth recoding for).
-
-But I'm not sure whether a folio_batch would actually help there,
-and I wouldn't worry about it unless there's a need.
-
-Hugh
 
