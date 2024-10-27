@@ -1,92 +1,105 @@
-Return-Path: <linux-kernel+bounces-383803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16AC29B2060
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 21:31:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C3549B2062
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 21:32:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B669E1F2180C
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 20:31:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DEF11C211C4
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 20:32:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A21C17C9A3;
-	Sun, 27 Oct 2024 20:31:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09E3B17D346;
+	Sun, 27 Oct 2024 20:32:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="LpOh5+xe"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="armyY3y9"
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7709B762E0;
-	Sun, 27 Oct 2024 20:31:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8203762E0;
+	Sun, 27 Oct 2024 20:32:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730061077; cv=none; b=W74gi51SyQ76x6TxtYpuEOJ4pxrx0QAzH89M42uPQWmYc3cr60wKYnrimhLIj15t1RyJKImF9m1G97StwPm3m7e/Rrt5NHqC/MTcNpVe84mn/X9siWv51HmAlcwbsE6f/VQ4FoG7qkzJEkfWO9ZQDQMvSdyh7FKBVdygVpv40ME=
+	t=1730061164; cv=none; b=criz3df/NrNTGJaC3qzIJsVyzTUSV2fND4CbxHZqE4J7L34OFELX73YXlDud0f+Wk/x/JOnQt6qOy+CPPvWWcU+AVbKONH6uJvg4/skW1Xg/AOD3NZUTjIksdN8RIkPyJd5MnW33iWM2zsnZCrfl5RVCtqnBAhnBTJ/hlY9k7lM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730061077; c=relaxed/simple;
-	bh=+9/tsT20xhxLnrdJdyttijaVQbIMOZmgoyqru7Wo9/c=;
+	s=arc-20240116; t=1730061164; c=relaxed/simple;
+	bh=MBLg/OHsvkXmNnHMU5vm8OYpQy434w+URxhW3T+UyhI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Vixn5z7vmXvDsEBUJqC8sagVd1yjAs2qlGDU0mTX4CGODS2zcXzZ5QsWVIRl6hb1sglyjrG3WV4DYlnIDKR62rlocMI1kvQLBIl6tifsEchkSWRbaTj7/6jGZgxHfIwGQlXpefJArDvHJpJtFxZlO9bxgbY1yQAyH/RgtVznPXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=LpOh5+xe; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=YhE6OJbE4zVQRfI6WKab0cFThX0KUKxVPvY6gL/TaCQ=; b=LpOh5+xeN/inEL/dPQJp4tRodC
-	na18rzgLHD4nM95QO7Z2L2Of7swBgX1hQAurCzrKqdY1Sibvl+M+9GRZxIcWIo3Gs2rwXSiYPYimN
-	v5YhLFFkSKAxZpyePrbZdvq7vzFrm1cCVjIo+1LbwvgJevfOHV1f04Q3lQKrPRpU8O5zfz4wW15Q7
-	9n+W7hMh8Vw+TnpGv4vnqbGWNfYiCo9hjZiZmSBjJOYPQt5A19vpGkY5CFsW5kceWM7EEe0cY5sIe
-	+CYygv1SM5J+3rffbOjfsvPpvcMeMWgDZOO93sWQCTj/FPURSJJNxnj7AkvYV0O9itGmobBU/kg1I
-	/MAgZ0qg==;
-Received: from i53875b34.versanet.de ([83.135.91.52] helo=phil.sntech)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1t59ue-00068h-3G; Sun, 27 Oct 2024 21:31:00 +0100
-From: Heiko Stuebner <heiko@sntech.de>
-To: conor+dt@kernel.org,
-	krzk+dt@kernel.org,
-	Heiko Stuebner <heiko@sntech.de>,
-	robh@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	quentin.schulz@cherry.de,
-	Heiko Stuebner <heiko.stuebner@cherry.de>,
-	andy.yan@rock-chips.com,
-	linux-rockchip@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: soc: rockchip: add rk3588 mipi dcphy syscon
-Date: Sun, 27 Oct 2024 21:30:56 +0100
-Message-ID: <173006096669.97564.15899385543058068813.b4-ty@sntech.de>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240506124632.3621378-1-heiko@sntech.de>
-References: <20240506124632.3621378-1-heiko@sntech.de>
+	 MIME-Version; b=diInD/5uVO+sFjzVfGO9Up2qnBJj8LCN69cvdxn6KwSPoom9KNlctQqJEpmxHtxKkBC24bAYFcHtWNy4VVFlm4XObD0tM37897RAnIQGqQeFJY+Bzn9DpzqvJpTnYw1SNDqyF23pQKpCI7UCJpr6PK3BU/r9783HKDXsTHzFa5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=armyY3y9; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2e2da8529e1so473056a91.1;
+        Sun, 27 Oct 2024 13:32:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730061162; x=1730665962; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JO6Wn/W7DXpFOgOHg2+qI7JkUohymRKs3+L+zv+wF38=;
+        b=armyY3y9qUL5Y5GA636IRzQ7n6emVaOFCwgyVX57J1oWwZED073lcNKUZi0/vZ6+RI
+         EEk28Pyzs87hLBpCzA7f1rEirYm7FNnEEGSczp9affMR4xhUyKbEiekYY9ZbULdRIrIF
+         jfom9RI/vAaYWq7Pl+/YBHCLFwOPTXrsliwtbwox5FI1hfjjiNfQBKniqfa8ieZ7lnNx
+         fytPxWXIfdVMzLuRn/xelKjnVmPnVMeT4Wth655LzfaHTKy19EErFXX1ARbphEaHlK6f
+         O8BhFu6lqg5gZXiVYJCY2D67rxHepcyw6iQVi8G9AtwJqTSUxkjS+7NA6CmwgjGAm07l
+         6miA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730061162; x=1730665962;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JO6Wn/W7DXpFOgOHg2+qI7JkUohymRKs3+L+zv+wF38=;
+        b=GZxQmpIXc5hJNl5X2WAqaS4k6XEKVCaLfaVlG/PB3dGMmE8KrT73DAz1h3IW7F/dpL
+         mfhrAVyTe70t8JuRIRqUdr4svoy69RgJ25ZKv8/oKH4VIiCSAjfPCi78N15NwIDW9qJc
+         +OtV89rWC/Ht65Qyks/O4LyTnAgOuryCakJhHVFpfFlOCXTBTop5RKtEw3Djhz6v17CP
+         b+aRCoRch5S9vauHthneQOFs2ym5VcM/Ubbno79UAyjpdB3TGoozvNAgDPleB0Y4utw0
+         IINPomzxl0+8v6+132uYQMq8PNa/qPBMh5QxPFeXRsNWzKXxTNlzbGL7PcNKI4wIvtB+
+         EZ3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVVLyjsoRH+U1SUYDFsqQBTpFK76S79/NTc2Nv5vcfPgyJIQ/HJ1wJ9Ai6nEnS9r5DGVyAMpDbl5sMrpvE=@vger.kernel.org, AJvYcCWerhe6tkcEtPVOMSNkvqV86ZxZUUJ6Y5/VInp5RoVw360wuHpSpbinjDxKJIU/YgM5VOG/6fWUrUut@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzl/uftLebbii/KWflwwEPUn0uSTGP+VaH55R+GR33Us8eP4h9k
+	JDRteZ0A8ZKi6u1L8hBnVTrv+tu2/AiTXbt1WitswijSJhIjlgfh
+X-Google-Smtp-Source: AGHT+IE41L74XWGTVeMUakZ4CX5VZvMo59R24MX1T61Km8jGghKlk6rov9vGRiRc9gnRwWI7mCR7Cg==
+X-Received: by 2002:a17:90a:780b:b0:2e2:b20b:59de with SMTP id 98e67ed59e1d1-2e8f1068be8mr3059152a91.3.1730061162098;
+        Sun, 27 Oct 2024 13:32:42 -0700 (PDT)
+Received: from motti-test.. ([2409:40f4:300a:9618:92ca:3f55:718b:1cab])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e77e48bebasm7721636a91.7.2024.10.27.13.32.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 27 Oct 2024 13:32:41 -0700 (PDT)
+From: MottiKumar Babu <mottikumarbabu@gmail.com>
+To: cem@kernel.org
+Cc: djwong@kernel.org,
+	chandanbabu@kernel.org,
+	dchinner@redhat.com,
+	zhangjiachen.jaycee@bytedance.com,
+	linux-xfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-kernel-mentees@lists.linux.dev,
+	anupnewsmail@gmail.com,
+	skhan@linuxfoundation.org
+Subject: [PATCH] Follow-up on Submitted Patch: Fix out-of-bounds access in xfs_bmapi_allocate
+Date: Mon, 28 Oct 2024 02:02:28 +0530
+Message-ID: <20241027203231.20251-1-mottikumarbabu@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241027193541.14212-1-mottikumarbabu@gmail.com>
+References: <20241027193541.14212-1-mottikumarbabu@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-On Mon, 6 May 2024 14:46:32 +0200, Heiko Stuebner wrote:
-> From: Heiko Stuebner <heiko.stuebner@cherry.de>
-> 
-> RK3588 CSI and DSI support requires the GRF for DC-PHY.
-> 
-> 
+Hi everyone,
 
-Applied, thanks!
+I hope this message finds you well. I wanted to follow up on my previously submitted patch titled "[PATCH] Fix out-of-bounds access in xfs_bmapi_allocate by validating whichfork."
 
-[1/1] dt-bindings: soc: rockchip: add rk3588 mipi dcphy syscon
-      commit: 22e027cc74488dba49f19f943c2da02726261f08
+As a reminder, this patch addresses an issue reported by Coverity Scan (CID 1633175), where the variable `whichfork` can take invalid values, specifically `2`, leading to an out-of-bounds access in `xfs_bmbt_init_cursor`. The added validation check ensures that `whichfork` remains within the valid range of 0 or 1. If it falls outside this range, the function will return `-EINVAL`, enhancing the code's robustness and preventing potential crashes or undefined behavior.
 
-Best regards,
--- 
-Heiko Stuebner <heiko@sntech.de>
+I appreciate any feedback or suggestions you might have.
+
+Best,  
+MottiKumar Babu  
+mottikumarbabu@gmail.com
 
