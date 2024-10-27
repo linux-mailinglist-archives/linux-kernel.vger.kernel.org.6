@@ -1,104 +1,75 @@
-Return-Path: <linux-kernel+bounces-383760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 911E69B1FE8
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 20:47:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF5A99B1FEB
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 20:48:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A86951C208F6
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 19:47:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D0401C2099D
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 19:48:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE8A317BEBF;
-	Sun, 27 Oct 2024 19:47:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1299417C22B;
+	Sun, 27 Oct 2024 19:48:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fiz7hLPh"
-Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uJIsJTIO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9904B286A1;
-	Sun, 27 Oct 2024 19:47:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6742E286A1;
+	Sun, 27 Oct 2024 19:48:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730058470; cv=none; b=K8NiN7FcrEPcF8AMI/bGPN6PhDrc+2Of5hvJMfRCFCSzrQMUHuFZm0iQwRPN9XZkC+islJBXjWPFZ+RXcBFl+5dr6DKCNQ+mqyzkzzcjHZG4jyzDTYV1RfqEYvE0WCPFJrVz9fkLYoPAs9DNpBWXG+i3uYy9HWLgrTlMxvI+BeM=
+	t=1730058517; cv=none; b=d4vYolarqhSruu38VUKywM4ZKiVOr7vkfShg33BX1d1FFTlxhpENZDIsePcjkiOxQuQvSFXmTN2TqEb47q+4Nm9Fcm/pBvg48rz+AYbYAH0UjkYR3M92vIPQz+oLw2WQs5mnWpMzkVqRqSj1m6a7eAKb3nTF2qs3iC+OxYNU1R0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730058470; c=relaxed/simple;
-	bh=gExQvMPbAjbTN1DrtN0YgCuBiyCwkZbz6UrpFd1T4mk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SOT3iAtZ55cqK3jj/DX5P2JbL7KhFXJewf3gbTx4hpCDX28PSwzKrJjk2wPt2ZyoLNK123GDc1BvYs0dDjAUcI3CconsIC2MTjcweo47mNNmEZzsgP2kBMz4GBdYU+eYSI1lErWLZN+BsK5qatyWWX+I9nQIhtrC39U8bBs5pZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fiz7hLPh; arc=none smtp.client-ip=209.85.167.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-3e5fb8a4e53so1899632b6e.1;
-        Sun, 27 Oct 2024 12:47:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730058467; x=1730663267; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GLHfzF7Vu+uG1bFL3de93K0nfmzXaKnCeT4VFxwzIuw=;
-        b=fiz7hLPhM/vXzq9v5VibgPWkQVKQk6RU/aQsgi1hyl3Gx9BxgNJTJQLb7BtEkfiXK8
-         dSkmB3jLY6l11HUA5zGMe2N4nX5K6vFbG7kQgEFbdRYGIn2Xmc65UEroXDJMxmGK7OFP
-         uTjjoFfcY/Jd06YSv5NCL96+q0fXfZArbvVJlsx9nYmOCDVGfuN00voJC7DnHzedh0f2
-         9qz2FHG0DDC/FjknHZV/BKKiSJOgSIfJXVC59fIII4vePcdHlK/BIXontaI5G2chXkAN
-         D2J4sE1avyAo2C0R0Nwi9W0wQ/8X53f9Ltx51DBRlHWBG5Ttc52KRFR+TamJphCGEW4D
-         xF1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730058467; x=1730663267;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GLHfzF7Vu+uG1bFL3de93K0nfmzXaKnCeT4VFxwzIuw=;
-        b=emeDysM0aN+mXhWDqbyzkCRQmWeZqln1nBkSnLcAvkoFXBx4MY5RBsj31obxf1+FGF
-         rVCVskMTwhT8GVCdQO0so4ClpFWfjldAbava3CtXu9bg3hlisq1BAU3lrGn+CpGB/Tpq
-         +W3P7wUE9xRvgHXrgPYZjsZtDx+TKWY2cGS2szpezIlysLK6RSlYW5ZWg1EZiN8Y+Uhe
-         YMd9007LLcIkQONFmFuBqchvPrU7aIIghyyHpS49HrFszC3pM0itxT+951ODlQG+WdIN
-         ToPTDy+i2mnVQJS+XM/0+PGC7rLKhLNpZHzB/B7/hNDiXsPwFBKaHYo9e7gkohl2Rn9U
-         QZ5g==
-X-Forwarded-Encrypted: i=1; AJvYcCXKh6ulcKOr3WsbLm5GiFN6rD38+3nx0dHX4NN4J/d46O1pTyDB+NPB2Djbc1q3o+48XMUHk+3ZLDj13FIn@vger.kernel.org, AJvYcCXmFuX3sJ4a6qZJeD6OUCJ0dGncCSjtymUFoZFemmHGkZ1oymd5geM+55Iqlz4e0gr7HqqPrrGtrIOb@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGh/eTBaN+2PCXflg8R0CNQetr92QgKEk0OXXCtJzU0qol5z3C
-	sgLiYJ2/SWiEdzriKYPZB5EKiQhabW4x4GiQeJBP+vh9yDsFTu/9GPvnuYbe9hNNUBwOkI7aZWf
-	Udvl7erjflXrkWt5VlY1zaPZTFAM=
-X-Google-Smtp-Source: AGHT+IFvNqQtA2qCnvFgInL4k2FnnkyZ/+9lFFs4WtoDc5wn+xO0yla6E0XsnoYZRJjDYauPJAM0Y4iv7sBOCRGeqM0=
-X-Received: by 2002:a05:6808:3097:b0:3e5:fbdc:ba03 with SMTP id
- 5614622812f47-3e63848a0d3mr3889116b6e.30.1730058467549; Sun, 27 Oct 2024
- 12:47:47 -0700 (PDT)
+	s=arc-20240116; t=1730058517; c=relaxed/simple;
+	bh=w3vKUjdSX9tc/J4Pkj3p4KIlJyBMlEnLHrC4g+m5zqI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MnWT4K/xbY+yh7uL2xMF3MoYKfrXWwtFtX3t3qhixVdayhlH8HH6//ISLgO/YOhophOZ7ocXagg0kKrI/oTg9t+oGV/3JS+/yym5DVTCBa6l5ATmfcmL1W3Xp8iO+A+XPbYJb4QXk7216iZGSqb/7rjf5ny70odboYDj8qjxBsc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uJIsJTIO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41947C4CEC3;
+	Sun, 27 Oct 2024 19:48:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730058515;
+	bh=w3vKUjdSX9tc/J4Pkj3p4KIlJyBMlEnLHrC4g+m5zqI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uJIsJTIOl0Ry+IYC4ZugtnKEh9+8moghp6sy73CRyQwYDWIiMxtMtmvCg21f1EE8y
+	 bAc+I2oa5N4Khec5mtmIPcqZvqNsyBGW0rQgYN8e2cICEVZTB1PYUmUufA2gJ6nkmc
+	 IjHZ8w1yghUCwKrbK74LpcIK82Lo5j2o9blWHVoJCRToq1JHDYL2z6JjeOhL0y4ggQ
+	 X3qH83157R/ZQEp7yAI6/LQk+GXTDmzt9BMM48FsOYYsxjxvZvNeizmXdRMQWJlBuG
+	 dZCDCqL0QfxaAYqQInHGLoaB09WjNe4FzJoocbbP5gYOJx+n3uN3BxrYGMXc1Xyzoy
+	 FJaJ23dDFXTbA==
+Date: Sun, 27 Oct 2024 20:48:32 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] dt-bindings: nvmem: qcom,qfprom: Add SAR2130P
+ compatible
+Message-ID: <pm3f6guakzyn7xujcqrwv4xkcoq3zsigl3qvry7dzirxcoojjs@zrkvlupw3vyg>
+References: <20241027-sar2130p-nvmem-v2-0-743c1271bf2d@linaro.org>
+ <20241027-sar2130p-nvmem-v2-2-743c1271bf2d@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241014110304.60746-1-qianqiang.liu@163.com>
-In-Reply-To: <20241014110304.60746-1-qianqiang.liu@163.com>
-From: Ilya Dryomov <idryomov@gmail.com>
-Date: Sun, 27 Oct 2024 20:47:35 +0100
-Message-ID: <CAOi1vP9hTZTEu7YsV=+J-_TncwKU2paBmFfCjUyB2G52o4qYyg@mail.gmail.com>
-Subject: Re: [PATCH] ceph: return result directly from wait_for_completion_killable()
-To: Qianqiang Liu <qianqiang.liu@163.com>
-Cc: brauner@kernel.org, ceph-devel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241027-sar2130p-nvmem-v2-2-743c1271bf2d@linaro.org>
 
-On Mon, Oct 14, 2024 at 1:40=E2=80=AFPM Qianqiang Liu <qianqiang.liu@163.co=
-m> wrote:
->
-> Simplify the code by returning the result of
-> wait_for_completion_killable() directly, instead of calling it
-> separately and then returning 0.
->
-> No functional changes are introduced, this is a simple refactor
+On Sun, Oct 27, 2024 at 01:42:34AM +0300, Dmitry Baryshkov wrote:
+> Document compatible for the QFPROM on SAR2130P platform.
+> 
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-Hi Qianqiang,
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-I don't think this statement is true.  If the wait is interrupted,
-wait_for_completion_killable() returns -ERESTARTSYS and currently
-ceph_lock_wait_for_completion() swallows it, similar to how -ERESTARTSYS
-coming from ceph_mdsc_do_request() is ignored a few lines above.
+Best regards,
+Krzysztof
 
-Thanks,
-
-                Ilya
 
