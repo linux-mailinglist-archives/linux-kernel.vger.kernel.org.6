@@ -1,180 +1,217 @@
-Return-Path: <linux-kernel+bounces-383555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5AF59B1D40
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 11:34:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 96BAE9B1D3F
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 11:30:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5EFF1C20B98
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 10:34:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C67AD1C20AD4
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 10:30:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4758413AA2A;
-	Sun, 27 Oct 2024 10:34:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E45A13D8A4;
+	Sun, 27 Oct 2024 10:30:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="TbLNQk6c"
-Received: from out162-62-58-211.mail.qq.com (out162-62-58-211.mail.qq.com [162.62.58.211])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ezBeS0EN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36DA440849
-	for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 10:34:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5442340849;
+	Sun, 27 Oct 2024 10:30:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730025262; cv=none; b=KduUSQ/mcxYqggWm1vO6OeKIB4XC/oVLnAysReOn6oxt0Ktf4AGbxePVwUxOAadhUlOf6mdKvIKlv19s01XNimNPEZlOI4M20TkiObkgIT3rayFRr7PqQ9LFI7nFFtp36kXwChrjDleae/Y+nUqnEUPWyqsCowhDXLWViESFfcE=
+	t=1730025022; cv=none; b=Fg6TZ4AfAkl1ApdJQ6q2TWuMZkBpc+s4Jy8HnA/bCIor8KqFHxBpowosQlRSJWzKYVIrniqVMNhuuwb3ek1YjHlP4hRrjbW+6Uhm0OYPRL1M32wfJFRYaxRicqnfQ7U9Ra6+sQGFUnKd5Qr6a+73+2V2yHytfQueKZwdQuG/3YI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730025262; c=relaxed/simple;
-	bh=U0vfj/fwewTx0ExeELi3naIzm3Hi1n3wU/yakDeXY2I=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=jClkr4aDtJFXBl5hsFjMltbOIHFkuQtCulAsPSZJSvKA3eceR1ww0/4gUuW7vLgqyQEo1z4UHkO1JUgSdMfxC0RKtqEorDOwSqqI7AuFZYVM1nxoMpt4dzkSGkmfwX8BcmvK2K7dFt+R5LGDJ+K5jFkCDDAimWy9dzRtE4aTd4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=TbLNQk6c; arc=none smtp.client-ip=162.62.58.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1730025248; bh=OrpPFq18HK2qa08dC8eIQcGtK5Q4KDtY8NgS9AsiREM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=TbLNQk6cK0cOONf9MTXS65NA2/2RpmtXlyphW1/PRIR7nFZLkIokN2Jbqdq4g8WYM
-	 ZbeiZ8uE3M3nySDukyKqDj7Qg0YZyj3n0IZ6JHB4rfCUDLs5J8S3u7DNXsJu89WWnX
-	 FPH6Eu8/m9VLqJ3d97jxLyrrdCZ+0DdhkVpGLJ+0=
-Received: from pek-lxu-l1.wrs.com ([111.198.227.254])
-	by newxmesmtplogicsvrszc13-0.qq.com (NewEsmtp) with SMTP
-	id 6B61EA36; Sun, 27 Oct 2024 18:26:54 +0800
-X-QQ-mid: xmsmtpt1730024814tk9f89o9v
-Message-ID: <tencent_982EDE6ECA0C9127E346D612C6866189AC06@qq.com>
-X-QQ-XMAILINFO: OZ7HbAk7YCRi/z1HqGAjuVhQk92IL8gc80BRxjv0jpEyzR7+jlPVCT5ScxYFqd
-	 Nco9zdZUOhxSvKEFwYTSz1WuTWYYtQfnZZBcUZ8aqwd1UgC/ZOLqcydqUh8Ft3+Q6+XowvUZ5QJu
-	 29Tqgl2I07XkYX6EDBGYSp6QXcnr9GOFYfG/rUDiV9iitB6mN18mI5pGZ1VEfr0+xQb8K7TfoPkA
-	 3mYfHoNynttZJXyb+YSrGEhZFiX5EItYXO9DjyEWesDN19eX8SHTBd+qw6u4MZLeLZiSGuJzPKHk
-	 Cr+u6CDVEZeZ8HPtpYduIzsjjOn2jA+TaEpnRWjb/N95PiI0gaopJzXSAFeJU0aTtDspNYK0gB9k
-	 //4VxBNich3D/EoB0DwmqPlxc+m425zgpim58T/sLliiyLbzDAIS8DcaQJ0NmlQSKmeT202lr8hO
-	 n468TFUelmbirQZMSrIwZfy6mlb1rSwtfMtXY56BnB7h4mKCmbZ1zzIqeL2KwTIafVgb/1cXWDLh
-	 593kMBIbXNNMfznmlcDom/N8ttG/6bGrj9drtb7FY1CQb2UmKkjhnjPu3uIGWurhU+2IDvR4oQ8a
-	 Dd2BaCglc9HjcD+Jby1/mO3q/xhna0yFD44Jp9nxEMaqYxLa6Qj4l90QJnJNyzOiLAksK801xSUB
-	 J3BMidgBZDVrH0jsUdAV/NpKxeXCAxxbAxnoytNM2SemJjOqyzZmzcfpd5Ly7Lt8sTOc+ZS3AAEB
-	 WpIcsf03koEQr8G1rR6PlCcrTABgBIvGdfP8TDh0MQzd3OJR/t1PtmE7ZxvDYObyWwNELqUX4z32
-	 ovdbkaeuS/Q0gOPmSLJC3zcPrLqbQur5u6DNyP+zBWbmyM+TQW149LXx7F1sXmIlnTsjOu5lvEnD
-	 okFbB1oJxAXYTmNJ8ggqCfl5IgVE1YKflcHrtAS8a16XPjZMz8rV0Wvd7XTUwkH2h5xVCJUandgb
-	 0HgMMpA/+mCjhgTpyRCOgwz1w19FX+S5aBqjohKA7FVL5fd5Fp0vSl51fl9K+uMkysI5Lip6o=
-X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+0c99c3f90699936c1e77@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [ext4?] KASAN: use-after-free Write in ext4_insert_dentry
-Date: Sun, 27 Oct 2024 18:26:54 +0800
-X-OQ-MSGID: <20241027102653.1835908-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <671c2223.050a0220.2fdf0c.021c.GAE@google.com>
-References: <671c2223.050a0220.2fdf0c.021c.GAE@google.com>
+	s=arc-20240116; t=1730025022; c=relaxed/simple;
+	bh=7n96grImI12MhhgoEFSYkUuA3tu9WoinnlFhwCWD814=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bkpwsuSX3rw4GK9TgR1mLZaya/GOoaoGTPkABJESS93vPRyPZXqR9kE/bmAqgVeq70bjltQyD4vk49oN4fqDiuogsxTDuON6VVWw9+XWN3wbdqGtvJjHZ0CnePaAFOl6YMlAnu4ENrWarfNm7Atr+F68oAMz2yOJohSSvlzVByY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ezBeS0EN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EF52C4CEC3;
+	Sun, 27 Oct 2024 10:30:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730025021;
+	bh=7n96grImI12MhhgoEFSYkUuA3tu9WoinnlFhwCWD814=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ezBeS0ENO2Wtvy1MXJFehF8YVqzl+90F/wAAVEe0ESn1Zd2kihMFdj2WSteTYNSkd
+	 8VEmARpo5zWqqdmQvLH94X+0yUvyWWX1Np2cmc/2m0twEG+IBhlyE2EYRAZxPMi83v
+	 BQ8vp0BnzwRYEil71gVYtrPHafrLh7Xqqa4KTs5udlqmFsj1F7ctAH8vOrTZpw2Z6s
+	 r3BC3SyJeSDKHb5SBoY/7nX7CFzb1s3KTpiuYq5almrJw/CDN8NIdN0Pl7+z2lwdSl
+	 AHkv7nN2OVCHVWtTuVRW48k+MlDn54CD/dw6RfO7PikmI3EhYOLKDgBCiNyH4uDZad
+	 hY9BHItFP1AXw==
+Date: Sun, 27 Oct 2024 10:30:13 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Vasileios Amoiridis <vassilisamir@gmail.com>
+Cc: lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, andriy.shevchenko@linux.intel.com,
+ anshulusr@gmail.com, gustavograzs@gmail.com, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 13/13] iio: chemical: bme680: add power management
+Message-ID: <20241027103013.06daac42@jic23-huawei>
+In-Reply-To: <20241021195316.58911-14-vassilisamir@gmail.com>
+References: <20241021195316.58911-1-vassilisamir@gmail.com>
+	<20241021195316.58911-14-vassilisamir@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-check next directory entry space if it is too smaller than file name exit dentry insert and return -EINVAL 
+On Mon, 21 Oct 2024 21:53:16 +0200
+Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
 
-#syz test
+> Add runtime power management to the device. To facilitate this, add also
+> a struct dev* inside the bme680_data structure to have the device
+> accesible from the data structure.
 
-diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-index 44b0d418143c..dbd062f80c22 100644
---- a/fs/ext4/ext4.h
-+++ b/fs/ext4/ext4.h
-@@ -2834,7 +2834,7 @@ extern int ext4_find_dest_de(struct inode *dir, struct inode *inode,
- 			     void *buf, int buf_size,
- 			     struct ext4_filename *fname,
- 			     struct ext4_dir_entry_2 **dest_de);
--void ext4_insert_dentry(struct inode *dir, struct inode *inode,
-+int ext4_insert_dentry(struct inode *dir, struct inode *inode,
- 			struct ext4_dir_entry_2 *de,
- 			int buf_size,
- 			struct ext4_filename *fname);
-diff --git a/fs/ext4/inline.c b/fs/ext4/inline.c
-index 3536ca7e4fcc..e318b13459d1 100644
---- a/fs/ext4/inline.c
-+++ b/fs/ext4/inline.c
-@@ -1022,7 +1022,9 @@ static int ext4_add_dirent_to_inline(handle_t *handle,
- 					    EXT4_JTR_NONE);
- 	if (err)
- 		return err;
--	ext4_insert_dentry(dir, inode, de, inline_size, fname);
-+	err = ext4_insert_dentry(dir, inode, de, inline_size, fname);
-+	if (err)
-+		return err;
- 
- 	ext4_show_inline_dir(dir, iloc->bh, inline_start, inline_size);
- 
-diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
-index 790db7eac6c2..4ce1b207a4c0 100644
---- a/fs/ext4/namei.c
-+++ b/fs/ext4/namei.c
-@@ -2084,24 +2084,38 @@ int ext4_find_dest_de(struct inode *dir, struct inode *inode,
- 	return 0;
- }
- 
--void ext4_insert_dentry(struct inode *dir,
-+int ext4_check_next_dentry(struct inode *dir,
- 			struct inode *inode,
- 			struct ext4_dir_entry_2 *de,
- 			int buf_size,
- 			struct ext4_filename *fname)
- {
--
- 	int nlen, rlen;
- 
- 	nlen = ext4_dir_rec_len(de->name_len, dir);
- 	rlen = ext4_rec_len_from_disk(de->rec_len, buf_size);
- 	if (de->inode) {
--		struct ext4_dir_entry_2 *de1 =
-+		struct ext4_dir_entry_2 *nde =
- 			(struct ext4_dir_entry_2 *)((char *)de + nlen);
--		de1->rec_len = ext4_rec_len_to_disk(rlen - nlen, buf_size);
-+		nde->rec_len = ext4_rec_len_to_disk(rlen - nlen, buf_size);
- 		de->rec_len = ext4_rec_len_to_disk(nlen, buf_size);
--		de = de1;
-+		de = nde;
-+		rlen = ext4_rec_len_from_disk(de->rec_len, buf_size);
-+		return fname_len(fname) > rlen - EXT4_BASE_DIR_LEN;
- 	}
-+
-+	return 0;
-+}
-+
-+int ext4_insert_dentry(struct inode *dir,
-+			struct inode *inode,
-+			struct ext4_dir_entry_2 *de,
-+			int buf_size,
-+			struct ext4_filename *fname)
-+{
-+	if (ext4_check_next_dentry(dir, inode, de, buf_size, fname))
-+		return -EINVAL;
-+
- 	de->file_type = EXT4_FT_UNKNOWN;
- 	de->inode = cpu_to_le32(inode->i_ino);
- 	ext4_set_de_type(inode->i_sb, de, inode->i_mode);
-@@ -2114,6 +2128,8 @@ void ext4_insert_dentry(struct inode *dir,
- 		EXT4_DIRENT_HASHES(de)->minor_hash =
- 						cpu_to_le32(hinfo->minor_hash);
- 	}
-+
-+	return 0;
- }
- 
- /*
-@@ -2151,7 +2167,11 @@ static int add_dirent_to_buf(handle_t *handle, struct ext4_filename *fname,
- 	}
- 
- 	/* By now the buffer is marked for journaling */
--	ext4_insert_dentry(dir, inode, de, blocksize, fname);
-+	err = ext4_insert_dentry(dir, inode, de, blocksize, fname);
-+	if (err) {
-+		ext4_std_error(dir->i_sb, err);
-+		return err;
-+	}
- 
- 	/*
- 	 * XXX shouldn't update any times until successful
+Needs an update as you are now getting that from the regmap.
+
+
+> 
+> Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
+> ---
+>  drivers/iio/chemical/bme680.h      |   2 +
+>  drivers/iio/chemical/bme680_core.c | 126 +++++++++++++++++++++++++++--
+>  2 files changed, 121 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/iio/chemical/bme680.h b/drivers/iio/chemical/bme680.h
+> index e5d82a6d5b59..74e97e35e35a 100644
+> --- a/drivers/iio/chemical/bme680.h
+> +++ b/drivers/iio/chemical/bme680.h
+> @@ -2,6 +2,7 @@
+>  #ifndef BME680_H_
+>  #define BME680_H_
+>  
+> +#include <linux/pm.h>
+>  #include <linux/regmap.h>
+>  
+>  #define BME680_REG_CHIP_ID			0xD0
+> @@ -82,6 +83,7 @@
+>  #define BME680_CALIB_RANGE_3_LEN               5
+>  
+>  extern const struct regmap_config bme680_regmap_config;
+> +extern const struct dev_pm_ops bme680_dev_pm_ops;
+
+You seem to have missed the changes that use this in the i2c and spi drivers.
+
+
+>  static const char bme680_oversampling_ratio_show[] = "1 2 4 8 16";
+>  
+>  static IIO_CONST_ATTR(oversampling_ratio_available,
+> @@ -1091,6 +1125,39 @@ static irqreturn_t bme680_trigger_handler(int irq, void *p)
+>  	return IRQ_HANDLED;
+>  }
+>  
+> +static int bme680_buffer_preenable(struct iio_dev *indio_dev)
+> +{
+> +	struct bme680_data *data = iio_priv(indio_dev);
+> +	struct device *dev = regmap_get_device(data->regmap);
+> +
+> +	pm_runtime_get_sync(dev);
+> +	return 0;
+> +}
+> +
+> +static int bme680_buffer_postdisable(struct iio_dev *indio_dev)
+> +{
+> +	struct bme680_data *data = iio_priv(indio_dev);
+> +	struct device *dev = regmap_get_device(data->regmap);
+> +
+> +	pm_runtime_mark_last_busy(dev);
+> +	pm_runtime_put_autosuspend(dev);
+> +	return 0;
+> +}
+> +
+> +static const struct iio_buffer_setup_ops bme680_buffer_setup_ops = {
+> +	.preenable = bme680_buffer_preenable,
+> +	.postdisable = bme680_buffer_postdisable,
+> +};
+> +
+> +static void bme680_pm_disable(void *data)
+> +{
+> +	struct device *dev = data;
+> +
+> +	pm_runtime_get_sync(dev);
+> +	pm_runtime_put_noidle(dev);
+This dance is to get the device powered up on runtime pm tear down
+I think?  Whilst we sometimes do this, why is it needed in this particular driver?
+
+> +	pm_runtime_disable(dev);
+> +}
+> +
+>  int bme680_core_probe(struct device *dev, struct regmap *regmap,
+>  		      const char *name)
+>  {
+> @@ -1164,15 +1231,60 @@ int bme680_core_probe(struct device *dev, struct regmap *regmap,
+>  	ret = devm_iio_triggered_buffer_setup(dev, indio_dev,
+>  					      iio_pollfunc_store_time,
+>  					      bme680_trigger_handler,
+> -					      NULL);
+> +					      &bme680_buffer_setup_ops);
+>  	if (ret)
+>  		return dev_err_probe(dev, ret,
+>  				     "iio triggered buffer setup failed\n");
+>  
+> +	/* Enable runtime PM */
+> +	pm_runtime_get_noresume(dev);
+> +	pm_runtime_set_autosuspend_delay(dev, BME680_STARTUP_TIME_US * 100);
+> +	pm_runtime_use_autosuspend(dev);
+> +	pm_runtime_set_active(dev);
+> +	ret = devm_pm_runtime_enable(dev);
+
+Take a look at what this unwinds in the devm handler. You don't need to do
+as much (or possibly anything) yourself.
+
+
+> +	if (ret)
+> +		return ret;
+> +
+> +	pm_runtime_put(dev);
+> +
+> +	ret = devm_add_action_or_reset(dev, bme680_pm_disable, dev);
+> +	if (ret)
+> +		return ret;
+> +
+>  	return devm_iio_device_register(dev, indio_dev);
+>  }
+>  EXPORT_SYMBOL_NS_GPL(bme680_core_probe, IIO_BME680);
+>  
+> +static int bme680_runtime_suspend(struct device *dev)
+> +{
+> +	struct iio_dev *indio_dev = dev_get_drvdata(dev);
+> +	struct bme680_data *data = iio_priv(indio_dev);
+> +
+> +	return regulator_bulk_disable(BME680_NUM_SUPPLIES, data->supplies);
+> +}
+> +
+> +static int bme680_runtime_resume(struct device *dev)
+> +{
+> +	struct iio_dev *indio_dev = dev_get_drvdata(dev);
+> +	struct bme680_data *data = iio_priv(indio_dev);
+> +	int ret;
+> +
+> +	ret = regulator_bulk_enable(BME680_NUM_SUPPLIES, data->supplies);
+> +	if (ret)
+> +		return ret;
+> +
+> +	fsleep(BME680_STARTUP_TIME_US);
+> +
+> +	ret = bme680_chip_config(data);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return bme680_gas_config(data);
+> +}
+> +
+> +EXPORT_RUNTIME_DEV_PM_OPS(bme680_dev_pm_ops, bme680_runtime_suspend,
+> +			  bme680_runtime_resume, NULL);
+> +
+>  MODULE_AUTHOR("Himanshu Jha <himanshujha199640@gmail.com>");
+>  MODULE_DESCRIPTION("Bosch BME680 Driver");
+>  MODULE_LICENSE("GPL v2");
 
 
