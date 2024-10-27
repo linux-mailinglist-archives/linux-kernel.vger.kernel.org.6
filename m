@@ -1,73 +1,71 @@
-Return-Path: <linux-kernel+bounces-383419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99E179B1B7C
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 02:20:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C3B269B1B81
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 02:22:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 597032823B0
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 00:20:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A98F2823AC
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 00:22:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0C1A566A;
-	Sun, 27 Oct 2024 00:20:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B76879EA;
+	Sun, 27 Oct 2024 00:22:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="kMPQ7/4v"
-Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="f708o2Nu"
+Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAB56A2D
-	for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 00:20:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1B8E195
+	for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 00:21:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729988431; cv=none; b=mmnmptszFuv/Ko8mxJd6yPgI3yXr8iQ4WDIyOSdHkkcJ3eXtOd9P457n8cCgPodqEJePvdHBiPj97wtr2t5zSgYn2d7l9JYM/EKL8JOSCV6kdfdTocPwPfd9Ax6qCPBMZ1FUn7Yn3W6F9Bukx5RK/kQIBcI8xFLSTgN72DEKUuw=
+	t=1729988520; cv=none; b=fbaICjBgTXAicslwrXGcRzvJlvTET4CEKlJh99e1rkOe9njijJz1f8IpUBCDCyqeyXPla49srPUfzGgOg352zE5De6FHo/db/ArBfUR/GvtngGvbeMYUAU4IOkFiZNGMFM76HXkHZ6IlTxWerIowhtepoLkLTVv1aWwkkBd3BpM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729988431; c=relaxed/simple;
-	bh=2m7qUxHWEfN8Q+t3kuiUvZE7GGoJLejjm+XHtfVBQVo=;
+	s=arc-20240116; t=1729988520; c=relaxed/simple;
+	bh=t8dX82U9cPs+9T3asew1xbFQNPZRnIXsevD+EoDBlE4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VfO/CZ4BCr3LMsbhZ9op6jdKsL532fUvQlanp+/uNpqt6vAQ5lNkueUXXhItOQ3i2QFArGdCTE8s9tnr0QYjcJGXjkfZCUFEPA027A90fWwr2ljQ61GnxSicSsAOtJBTU1Dv8CinrSErGD1C+oOQcMpCNHVld7h0nxRGgOA9qsc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=kMPQ7/4v; arc=none smtp.client-ip=209.85.167.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-3e60966297fso1872839b6e.1
-        for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 17:20:28 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=hEWXttTheB9X/qLuHFNZ20bsW4Y/0wKZUbaEY0fsfnyvsAe+X2bNuAskYre7FdDpcd+0KpO3ePTqAKlTicyzT5e1jDA8GPAj52MdCXmVkQO2nckSjkoXYPyJpJgcULUotayDt8tHj3Pyq/KSqroMCAXptjQmd+VW9rfDkuV1Exo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=f708o2Nu; arc=none smtp.client-ip=209.85.222.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7b13fe8f4d0so240986385a.0
+        for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 17:21:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729988428; x=1730593228; darn=vger.kernel.org;
+        d=linuxfoundation.org; s=google; t=1729988517; x=1730593317; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=gC/B3ePh173CzPyAaHugirfX1pGB4UZuGgWIDFmLpTo=;
-        b=kMPQ7/4vkKP2irw4SPMbkIyqHURlf3C3aG0fN5AlDTuopVf15rTDA0AZzsBrwzjA+S
-         cuDBybYckuBogPpHjUbbDuxIO5Ex5wBWl8hNso4dnz9I1pl9Kyo0TYi/cORnB1+d54x6
-         9El/fbsvddlCwgP5v6RIVPWxAK57nWI3NZZGZq+VryETQORzVs65El9Ze8INNedf9oCc
-         dOfnRv6O93rtaxUZAn2njALZyeadUSUhSp/Q4Px56cGLUq20B9no7YGf6G1vApxv/WLL
-         HN2W/al/mr350xgLB6g0SF2RgqbMzcPKhgZuBHzAAFlJgSdtmn9ZkTVE2JusrQUuLn96
-         OHOQ==
+        bh=c7j4FNV95378DUAv0aYV4P+N+y6PbmVTLk3giCbV25E=;
+        b=f708o2Nueodczn1bzE5t5T5BPqcgUJAgx0gQP1+cSkoERlpnTP+ocXvn8oU6JYbQlE
+         qJsCd5dveLZPYAutJCeXRkusMtOKEZpJRk9VoMnMRzrslmpi1eMZdBVbt5lv3qCjSG77
+         HdIaw2ciNyGhHwMmsAIz87fg7Ekg7X5QAOlRU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729988428; x=1730593228;
+        d=1e100.net; s=20230601; t=1729988517; x=1730593317;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gC/B3ePh173CzPyAaHugirfX1pGB4UZuGgWIDFmLpTo=;
-        b=neI+Izxvxhp5OOoTte5O+QpEj8bJMcE6a5tkO9HZB9nZwzqw5F+3qrmHDiiP1lcPzi
-         /3rGRRbGConKMx56HxvQ4QtwJW22JBXju0SPogmdVBq8n6yE2788PQ2dRFBh9A78VKcv
-         Om9XaKhpJxGrYHOPhS3GfjU2l8c2SUSYeTufXBt6LS07576ftdPZJYTxB6sPHaIVwO4i
-         +rFyPZD+qvOR38pAP4N2/mH8StnvGuQZsdElH6/e0EYSPpMtzkNc/ZIlW9XMyBWnzJSB
-         FpeHir/SQ2pDZFNwlGIcNA4Fo2b9x6V/YBCNSEkPBy1ZZFDWcHwfNyuc1b3nDymyc4Go
-         XtnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU+5xxgkvGfxPXQpuFb5z8giPvz8RDgVL17I9/fYdyw44qk+RSTZXOlmIvjifxbhpUkSdaplS34t00G/SM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEY2NdS0aDxyoPj7tTMGiqAS+JJmbkvCYuuPFod6qR+23HQ4o1
-	qF91B+MKOGcwK2FaKT3PXSk84MwgCtLEXgPKhHNtKoymGn89sPVOOXz4NHKPFBw=
-X-Google-Smtp-Source: AGHT+IG68kaonmbkL5dJ3DQuXHXhIQkLnDUW/ccB5u22eusFKceb3+B9YIC2/XLBHEhZz5NOUlJRMg==
-X-Received: by 2002:a05:6808:3384:b0:3e6:b46:4f76 with SMTP id 5614622812f47-3e63823e06cmr2500343b6e.1.1729988427879;
-        Sat, 26 Oct 2024 17:20:27 -0700 (PDT)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3e6325b8623sm915906b6e.49.2024.10.26.17.20.25
+        bh=c7j4FNV95378DUAv0aYV4P+N+y6PbmVTLk3giCbV25E=;
+        b=VlBPrhh+LlIKayOttg6vzdXDGAQp+sqgVG73S6fLN33u7a5LZ6okL4zPGQRDIeGDXt
+         yJNrcK7doErIDLplFLFvi+7J46uRUdTueV+GpH/kUGB4FHgX1b++C26vy2gcphd3mDkN
+         klWR50OULKfVfp4sGbOcxI4F25HZ6usEtxZzQJtBE7YHfiZyhxsJLylqJpeorCtdMsK2
+         cMdb/Z8PvR/qfuadm3S/yfMunEKiFFbxZ7Pa9F4M5/GR6JECM5IzUtg49S814gTJZlmA
+         UK1DKuXftdhnx4iHX4b+ow/0dXIdECRMHi6ILK91OONywNL2xAWzKqOfAf0h3t1JOcX+
+         jjoA==
+X-Forwarded-Encrypted: i=1; AJvYcCUsxeLpiE1tNDfyun5bx7BVbMihxr5prAxTDdeNKGp8YvmfII5qd9vMKQ9OlWzhx27UTCdBmEKOOVRmsb0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWPl1ms7TuBQw1a0QOk0XvJx+4u7BpJrBK5HghghRZr3Mfy8lq
+	BFSc4ueJsttpFA/YXduo4XdhE5ucu1UvQfJeelwcO4D2Vt5GOJY48m/tjkLBocc8PyPAKHe6WXo
+	i
+X-Google-Smtp-Source: AGHT+IH4ih+zoFcvyA0nzJ0+mHZTbxAhnb2QWdXil4a3idBcvVSG0Y0NAMhmh9poRPTm9oecTcb8dA==
+X-Received: by 2002:a05:6214:4a93:b0:6cb:d1ae:27a6 with SMTP id 6a1803df08f44-6d1856b4ee5mr61667976d6.24.1729988516543;
+        Sat, 26 Oct 2024 17:21:56 -0700 (PDT)
+Received: from [172.19.248.149] ([205.220.129.21])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4613228efd9sm20866281cf.51.2024.10.26.17.21.32
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 26 Oct 2024 17:20:26 -0700 (PDT)
-Message-ID: <9669117f-667e-4a2b-b815-c49bf0731eec@baylibre.com>
-Date: Sat, 26 Oct 2024 19:20:24 -0500
+        Sat, 26 Oct 2024 17:21:55 -0700 (PDT)
+Message-ID: <f8dbd839-9072-4159-970d-bb87fe2ebf04@linuxfoundation.org>
+Date: Sat, 26 Oct 2024 18:21:23 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,110 +73,89 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v4 05/15] spi: dt-bindings: add PWM SPI offload
- trigger
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Lars-Peter Clausen <lars@metafoo.de>, David Jander <david@protonic.nl>,
- Martin Sperl <kernel@martin.sperl.org>, linux-spi@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-iio@vger.kernel.org, linux-pwm@vger.kernel.org
-References: <20241023-dlech-mainline-spi-engine-offload-2-v4-0-f8125b99f5a1@baylibre.com>
- <20241023-dlech-mainline-spi-engine-offload-2-v4-5-f8125b99f5a1@baylibre.com>
- <20241026161837.30a56ae1@jic23-huawei>
+Subject: Re: [PATCH] selftests/mount_setattr: fix idmap_mount_tree_invalid
+ failed to run
+To: zhouyuhang <zhouyuhang1010@163.com>, brauner@kernel.org,
+ sforshee@kernel.org, shuah@kernel.org
+Cc: linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org, zhouyuhang <zhouyuhang@kylinos.cn>,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20241024095013.1213852-1-zhouyuhang1010@163.com>
+ <1c8674a0-d220-4349-88ea-780f0fed8545@linuxfoundation.org>
+ <afe66b04-3990-457c-ad43-9b5370a815d6@163.com>
 Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20241026161837.30a56ae1@jic23-huawei>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <afe66b04-3990-457c-ad43-9b5370a815d6@163.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 10/26/24 10:18 AM, Jonathan Cameron wrote:
-> On Wed, 23 Oct 2024 15:59:12 -0500
-> David Lechner <dlechner@baylibre.com> wrote:
+On 10/25/24 02:08, zhouyuhang wrote:
 > 
->> Add a new binding for using a PWM signal as a trigger for SPI offloads.
 > 
-> I don't have a better suggestion for this, but it does smell rather like
-> other bridge binding (iio-hwmon for example) where we have had push back on
-> representing something that doesn't really exist but is just a way to
-> tie two bits of hardware together. Those kind of exist because we snuck
-> them in a long time back when no one was paying attention.
-> 
-> So this one may need more explanation and justification and I'd definitely
-> like some DT maintainer review on this at a fairly early stage!
-> (might have happened in earlier reviews but it has been a while so I've
-> forgotten if it did)
-> 
-> Jonathan
-> 
-We could probably make it work like the leds version of this
-binding where the trigger-sources property can have phandles
-to anything, not just a dedicated class of device. It just
-gets messy to implement because every subsystem needs to have
-core code modified to be able to handle using a device or
-one channel/gpio/etc. of a device as a trigger instead of
-whatever it normally is.
-
-> 
+> 在 2024/10/24 22:26, Shuah Khan 写道:
+>> On 10/24/24 03:50, zhouyuhang wrote:
+>>> From: zhouyuhang <zhouyuhang@kylinos.cn>
+>>>
+>>> Test case idmap_mount_tree_invalid failed to run on the newer kernel
+>>> with the following output:
+>>>
+>>>   #  RUN mount_setattr_idmapped.idmap_mount_tree_invalid ...
+>>>   # mount_setattr_test.c:1428:idmap_mount_tree_invalid:Expected sys_mount_setattr(open_tree_fd, "", AT_EMPTY_PATH, &attr, sizeof(attr)) (0) ! = 0 (0)
+>>>   # idmap_mount_tree_invalid: Test terminated by assertion
+>>>
+>>> This is because tmpfs is mounted at "/mnt/A", and tmpfs already
+>>> contains the flag FS_ALLOW_IDMAP after the commit 7a80e5b8c6fa ("shmem:
+>>> support idmapped mounts for tmpfs"). So calling sys_mount_setattr here
+>>> returns 0 instead of -EINVAL as expected.
+>>>
+>>> Ramfs is mounted at "/mnt/B" and does not support idmap mounts.
+>>> So we can use "/mnt/B" instead of "/mnt/A" to make the test run
+>>> successfully with the following output:
+>>>
+>>>   # Starting 1 tests from 1 test cases.
+>>>   #  RUN mount_setattr_idmapped.idmap_mount_tree_invalid ...
+>>>   #            OK mount_setattr_idmapped.idmap_mount_tree_invalid
+>>>   ok 1 mount_setattr_idmapped.idmap_mount_tree_invalid
+>>>   # PASSED: 1 / 1 tests passed.
+>>>
 >>
->> Signed-off-by: David Lechner <dlechner@baylibre.com>
->> ---
+>> Sounds like this code is testing this very condition passing
+>> in invalid mount to see what happens. If that is the intent
+>> this patch is incorrect.
 >>
->> v4 changes: new patch in v4
->> ---
->>  .../devicetree/bindings/spi/trigger-pwm.yaml       | 39 ++++++++++++++++++++++
->>  1 file changed, 39 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/spi/trigger-pwm.yaml b/Documentation/devicetree/bindings/spi/trigger-pwm.yaml
->> new file mode 100644
->> index 000000000000..987638aa4732
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/spi/trigger-pwm.yaml
->> @@ -0,0 +1,39 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/spi/trigger-pwm.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Generic SPI offload trigger using PWM
->> +
->> +description: Remaps a PWM channel as a trigger source.
->> +
->> +maintainers:
->> +  - David Lechner <dlechner@baylibre.com>
->> +
->> +$ref: /schemas/spi/trigger-source.yaml#
->> +
->> +properties:
->> +  compatible:
->> +    const: trigger-pwm
->> +
->> +  '#trigger-source-cells':
->> +    const: 0
->> +
->> +  pwms:
->> +    maxItems: 1
->> +
->> +required:
->> +  - compatible
->> +  - '#trigger-source-cells'
->> +  - pwms
->> +
->> +additionalProperties: false
->> +
->> +examples:
->> +  - |
->> +    trigger {
->> +        compatible = "trigger-pwm";
->> +        #trigger-source-cells = <0>;
->> +        pwms = <&pwm 0 1000000 0>;
->> +    };
->>
+> 
+> I think I probably understand what you mean, what you're saying is that the output of this line of errors is the condition,
+> and the main purpose of the test case is to see what happens when it invalid mount. But it's valid now, isn't it?
+> So we need to fix it. I don't think that constructing this error with ramfs will have any impact on the code that follows.
+> If you feel that using "/mnt/B" is unreliable, I think we can temporarily mount ramfs to "/mnt/A" here and continue using "/mnt/A".
+> Do you think this is feasible? Looking forward to your reply, thank you.
 > 
 
+What I am saying is if this test is intended to test invalid mounts, passing
+"/mnt/A" makes perfect sense.
+
+>>> Signed-off-by: zhouyuhang <zhouyuhang@kylinos.cn>
+>>> ---
+>>>   tools/testing/selftests/mount_setattr/mount_setattr_test.c | 2 +-
+>>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/tools/testing/selftests/mount_setattr/mount_setattr_test.c b/tools/testing/selftests/mount_setattr/mount_setattr_test.c
+>>> index c6a8c732b802..54552c19bc24 100644
+>>> --- a/tools/testing/selftests/mount_setattr/mount_setattr_test.c
+>>> +++ b/tools/testing/selftests/mount_setattr/mount_setattr_test.c
+>>> @@ -1414,7 +1414,7 @@ TEST_F(mount_setattr_idmapped, idmap_mount_tree_invalid)
+>>>       ASSERT_EQ(expected_uid_gid(-EBADF, "/tmp/B/b", 0, 0, 0), 0);
+>>>       ASSERT_EQ(expected_uid_gid(-EBADF, "/tmp/B/BB/b", 0, 0, 0), 0);
+>>>   -    open_tree_fd = sys_open_tree(-EBADF, "/mnt/A",
+>>> +    open_tree_fd = sys_open_tree(-EBADF, "/mnt/B",
+>>>                        AT_RECURSIVE |
+>>>                        AT_EMPTY_PATH |
+>>>                        AT_NO_AUTOMOUNT |
+>>
+>> thanks,
+>> -- Shuah
+> 
+
+thanks,
+-- Shuah
 
