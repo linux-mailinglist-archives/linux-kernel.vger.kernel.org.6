@@ -1,127 +1,102 @@
-Return-Path: <linux-kernel+bounces-383535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0404B9B1CF9
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 10:53:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43F849B1CFC
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 10:53:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 57FD0B20EED
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 09:53:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68C3D1C20AB4
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 09:53:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CE317DA93;
-	Sun, 27 Oct 2024 09:53:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFEBF1384B3;
+	Sun, 27 Oct 2024 09:53:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bX6xB3uj";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="yOPPPMnt"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nhOsz2rN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2942AD51;
-	Sun, 27 Oct 2024 09:53:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21103AD51;
+	Sun, 27 Oct 2024 09:53:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730022784; cv=none; b=EvI85Qq6VyWNmtvrQWPvUr38lNDNa1kzg1KM+EBoQAMVmcOwogQGCLrlWfMm5/2LYS7zeAJgOIqq1xBdv/Ezu/JWFsEdweX0ZLq8rxpMy8KSZopviCapk8nwLJXxPcRLFjlE9IjwJD7yK05XVzZgxB46Fiw4EIcijc9gGcOnMI8=
+	t=1730022823; cv=none; b=dQgvoH6POl7ok3hcKES0IZuQefvGJhZ4hpkqixbIgB7lzidyIaaZ7XZjHlVnS3mraiM3wX3L8wEbPEAoyzAdjbC/oTw3FKPMbtTSQTI6SU1TIdBSXbSjRHmuCH6vB6SVYKJsFd1ArJI4o15Hiet7KIpL6Nded5xuyr6G74LL858=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730022784; c=relaxed/simple;
-	bh=PVd2b9X971H9wOAIUTeHGLFUo9jgiZxOjh6/Ar0HAS8=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=URAt3mBtgcQZZo3TK0TASc7Yq8bVHWO3+VFL0kXl4BOArk+z2AcOyTELS7HVFkjoRCqu8cTCJCUk7LkbmUX3/+XezVLoq2ZWqjxtDIk3I5YzeTh4GPKPYMc4PH4sMNdKAR6vuRTOi78YhcZqYnK1u4+B30FO3YNGTSmWRapD7rA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bX6xB3uj; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=yOPPPMnt; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Sun, 27 Oct 2024 09:53:00 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1730022781;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/TCkHgVkQvoB7JgBdb0MQBVMrXRKjInn3DPtOG9KBLo=;
-	b=bX6xB3uj1T77TK8U/E6gw+tEA28G7+GGsvuax6HIJgh/VB0DmqA415ANy6x3Kb+SMrmTni
-	f8RGHb7m+Bk0NMER7vsQTXzgl2VMouItmcC8k2pwDLI866jRcTUyGO3+z1zQO5yJqxXhnK
-	XzCRR7TpyIYLZ6QJ37YJkDTNP6aSwgvvn0EYcb4kTS3ztgUx1KEIZaxil090ISTvprO5dN
-	LfRcEO7DESr3efl7EmKv2BTgtXffYkyHS4nKkK0ngWLhy8p90KK3+vPSiiGeCQkNfo0nG2
-	nu/iNQd2lenYfqGqo4Vnh0o7W9vrOUR8oxVElG/6tTLeSS6/x8uUuXFewB2JAg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1730022781;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/TCkHgVkQvoB7JgBdb0MQBVMrXRKjInn3DPtOG9KBLo=;
-	b=yOPPPMnt+pzS+T5hNIA2Ld7nk2rHc8tgrqE0z4P/rE7EQsQFVe6Yhzz3NEaRc3/4DGeXEN
-	BRaWTfz/zjL5tXAw==
-From: "tip-bot2 for Thorsten Blum" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/core] genirq/irqdesc: Use str_enabled_disabled() helper in
- wakeup_show()
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
- Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
- linux-kernel@vger.kernel.org, maz@kernel.org
-In-Reply-To: <20241026154029.158977-2-thorsten.blum@linux.dev>
-References: <20241026154029.158977-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1730022823; c=relaxed/simple;
+	bh=GaoOS/yew5+t+aedZ47Jm1YV/Hg6vI1S1LmM1zMo3As=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XqtCFDRat/c/wMmdQpQc93s0gHa/h9oV35+OG0EwNQ8xDnPOj/bDNqng41V9N0hUwSFtDVheiiXSHHsXTGiV1ps0OSvzPu6aZ/aqihp5bA7RcnSfV68fTST7m15h/6HzE7CyADkraFQQDrIy5OHGa5zEmfTagCkIrM1cf8vR3hA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nhOsz2rN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1EA76C4CEE4;
+	Sun, 27 Oct 2024 09:53:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730022822;
+	bh=GaoOS/yew5+t+aedZ47Jm1YV/Hg6vI1S1LmM1zMo3As=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=nhOsz2rNog3QYCgGn/ME1PIWq5AwrQxQHt2SWP/IY7Xd+QKwUhXNYs9O1xp9SDHiz
+	 M7mhV8csmYfHziNCP0jDbIEmprl91Ki3jMbaYLvSNDuKuyI6NPIv12G3mnxNfoG/eR
+	 3qdgnpfa8FUQo7ffgqt41WdIHJiFAL08VfT5L9NWHIe0XhIRRCva+mkpda+djqOtdK
+	 w8YHmFfxtHPxIZ4tb7D+FGivDLZSSdLAW5cG5QD9U8FsoBl9t+zYHh1Y6LgNNHnwls
+	 NOPRyTl/ti27VW/vHoYKwGRwlKOTTf+IGUKUDM9aT6bJffZC1g7BXQNWgBmEQ0djo8
+	 s+cwZX0x81YDw==
+Date: Sun, 27 Oct 2024 09:53:35 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Vasileios Amoiridis <vassilisamir@gmail.com>
+Cc: lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, andriy.shevchenko@linux.intel.com,
+ anshulusr@gmail.com, gustavograzs@gmail.com, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 02/13] iio: chemical: bme680: optimize startup time
+Message-ID: <20241027095335.1fdd4cdf@jic23-huawei>
+In-Reply-To: <20241021195316.58911-3-vassilisamir@gmail.com>
+References: <20241021195316.58911-1-vassilisamir@gmail.com>
+	<20241021195316.58911-3-vassilisamir@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <173002278026.1442.15301826353081104665.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-The following commit has been merged into the irq/core branch of tip:
+On Mon, 21 Oct 2024 21:53:05 +0200
+Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
 
-Commit-ID:     d1a128bc3057a090b97ab5a9f938874df3d3f124
-Gitweb:        https://git.kernel.org/tip/d1a128bc3057a090b97ab5a9f938874df3d3f124
-Author:        Thorsten Blum <thorsten.blum@linux.dev>
-AuthorDate:    Sat, 26 Oct 2024 17:40:29 +02:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Sun, 27 Oct 2024 10:42:09 +01:00
+> According to datasheet's Section 1.1, Table 1, the startup time for the
+> device is 2ms and not 5ms.
+Ok.  If this were just in the probe path  (which it is today)
+I would not bother with the risk for a 3msec potential saving.
+However, you are going to reuse it in runtime resume where the effects
+will be more obvious. 
 
-genirq/irqdesc: Use str_enabled_disabled() helper in wakeup_show()
+Hence applied to the togreg branch of iio.git and pushed out as testing.
+*fingers crossed* no one has out of spec wiring that needs a little longer
+than the spec says.
 
-Remove hard-coded strings by using the str_enabled_disabled() helper
-function.
+Jonathan
 
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/20241026154029.158977-2-thorsten.blum@linux.dev
+> 
+> Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
+> ---
+>  drivers/iio/chemical/bme680.h | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/iio/chemical/bme680.h b/drivers/iio/chemical/bme680.h
+> index dc9ff477da34..f5be4516dde7 100644
+> --- a/drivers/iio/chemical/bme680.h
+> +++ b/drivers/iio/chemical/bme680.h
+> @@ -65,7 +65,8 @@
+>  
+>  #define BME680_MEAS_TRIM_MASK			GENMASK(24, 4)
+>  
+> -#define BME680_STARTUP_TIME_US			5000
+> +/* Datasheet Section 1.1, Table 1 */
+> +#define BME680_STARTUP_TIME_US			2000
+>  
+>  /* Calibration Parameters */
+>  #define BME680_T2_LSB_REG	0x8A
 
----
- kernel/irq/irqdesc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/irq/irqdesc.c b/kernel/irq/irqdesc.c
-index 479cf1c..0253e77 100644
---- a/kernel/irq/irqdesc.c
-+++ b/kernel/irq/irqdesc.c
-@@ -15,6 +15,7 @@
- #include <linux/maple_tree.h>
- #include <linux/irqdomain.h>
- #include <linux/sysfs.h>
-+#include <linux/string_choices.h>
- 
- #include "internals.h"
- 
-@@ -320,8 +321,7 @@ static ssize_t wakeup_show(struct kobject *kobj,
- 	ssize_t ret = 0;
- 
- 	raw_spin_lock_irq(&desc->lock);
--	ret = sprintf(buf, "%s\n",
--		      irqd_is_wakeup_set(&desc->irq_data) ? "enabled" : "disabled");
-+	ret = sprintf(buf, "%s\n", str_enabled_disabled(irqd_is_wakeup_set(&desc->irq_data)));
- 	raw_spin_unlock_irq(&desc->lock);
- 
- 	return ret;
 
