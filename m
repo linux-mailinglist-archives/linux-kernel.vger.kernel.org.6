@@ -1,69 +1,71 @@
-Return-Path: <linux-kernel+bounces-383584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B3349B1D9B
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 13:08:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A466A9B1D9C
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 13:08:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CBA21C20ADF
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 12:08:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C80AC1C20B8E
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 12:08:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39B29153803;
-	Sun, 27 Oct 2024 12:08:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60439153803;
+	Sun, 27 Oct 2024 12:08:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Llv92SaQ"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HXeuQDD4"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA9EB2FE33
-	for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 12:08:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA17A2FE33
+	for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 12:08:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730030897; cv=none; b=idXC6SgBMqqDmPJY5C8+YhtfHYD92mx4kqRQgvOyic4OMAhUT6m7IJEtmKMtOK8keBr9JMVg/eZzKFuUfBg75Pb8kbsWIrbDwXtjXtbWBq33iyy81lZE3ZPJ2ZliDRqAHAnKS/tQeX/dMpDDZSbxTsa22pCbB1A0td1au5KUQB8=
+	t=1730030903; cv=none; b=nRAH72cjdTUkfMLdiz47uvg1ycqfblvq/+Da5Nz14ue6qs1bjtMlobTVKYBzySYH+KlA2jX7CSDyW54tUxCJLpsbdgMe6M2SU6rSOZsyz/v+HKAsy8kX//aMRHpOHR3E9aMaA+xVaWyBVJcW/sgzrtlmTAKJ2SshhkSyBmQdu9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730030897; c=relaxed/simple;
-	bh=noerynl66xmn1/JdRnnTuWpbOb+XLii/WxKOh7vhuC4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eVotf4Ohk8dEIxcsKNyZVl/NUbIGeNTnwey1T0+8zO6iyDo+p/GGmssS/uLQnPmxty0jXXZX/LCy9ZHhliJqonThnkYmuOrRCcT1nLeEEmxc0fJ7iWsZx8exZTGTbyTKowmvoZIclHZrWnKaHt9uNtOA1UKXevgHwZCO7yiPPds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Llv92SaQ; arc=none smtp.client-ip=209.85.214.175
+	s=arc-20240116; t=1730030903; c=relaxed/simple;
+	bh=52tOPjSDZZ5PaUlFM91mvluoXT+WpaA7tF2vOrmXbuI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=j1Cu9H7/4VQDmrFfHAaGLqpYBoHJNT7hVEKNpWjIekErwfw1qEtAYijIV6+VjJrPWuq+794zH+fNOf3JhjcWer9X+wCvOlGq0TQ41pJaVzfHzL1B/4slOXqauD8Rc6QsIhMpmQ5N4Y+X1wwo94Qo4dSBHzKtOs7WKnYGUc9BRQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HXeuQDD4; arc=none smtp.client-ip=209.85.214.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-20c805a0753so32570265ad.0
-        for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 05:08:15 -0700 (PDT)
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-20e576dbc42so34500505ad.0
+        for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 05:08:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730030895; x=1730635695; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Gcz/4DTHqvkCQ2LiM7SD+jbXbuoBvYH2o1veBs5pO+8=;
-        b=Llv92SaQ7twyV0/sSxOZCYoIlCtB+e85ICcMr+K/GDuLARow3Nnwd5RZd1jXQSZ7nm
-         FMt5gTYZhiCOAuoKhcoSf4PpWKrvDdVtc3I5DqBux3JN0uO87gn+82AAQbC/f+cLvKzF
-         8SLJdg6wA6LHmNMQ/l8hutkmOYOJxfXzIggo1Am6e9kHNWDp4v8nDwYIw1anxKJkqdsa
-         aqqZYYn5fGuzVxNdXXGqy3mPBIRq0kVcVY3QixPYzJMhrREtykWzBUXaG6iooxLJXJfN
-         N97UZjiBuWxnVUrcQyeu5Uii7FozWHPRIbrc3Xrd0jOvjEnlehRjZa95/ajszupIyJsS
-         h+Tw==
+        d=gmail.com; s=20230601; t=1730030901; x=1730635701; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=C0YBTty29fCDfURPSOlaCYcuKhU2mEB3YdomHT84Hu0=;
+        b=HXeuQDD44wjKqAEXqoAiiw+ShqL4G3mpBXsM5VAC2mFq6TXP/XxCYH3AA4PlD1iJHq
+         Bz+fPVI0h2IUdFcWW8qaHnvbYRPVmojX9lZlbldQGS1AtKxP8wYtkLv3v78FQsem6Jmf
+         5m37jjWZdRGhOUqKShDDflGZNmunio+Jd/HUreFm0EVMh/RCEldSRcJRuCWk7P2xTL7m
+         seyUcnRg2fWh67pglaY/hr7DrZpNPK2HFa0k5s1MFZ5+f76zPVAA8HnOcZTgKSkI7Dib
+         x2qjFAA1K2zCTEP5wyBVg9+5XvZqAnKOHZvtd8DzCn7+o3AlXQwm8iSOoycWQJh8UgUM
+         SxKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730030895; x=1730635695;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Gcz/4DTHqvkCQ2LiM7SD+jbXbuoBvYH2o1veBs5pO+8=;
-        b=Hn98VN0fOYF+X3XRDVj1oxoGolDuToqh3+J7F44Phc4wCXP34b1/hVkcQUHkMKz+SJ
-         08jpWYYxvjYx3AXZ2wtIlqRZRlypGxXtZHPAwVV209XHBujQK908XC4MFeAmn8dueJkf
-         yf8kauFxniRRbY/KgHanhHc3ku1qRF+/m5d7I96t1v2mWfYS5I0LXkLzuQvWN2f19B60
-         oq2/lvlrLEit5kHuTCvabgpO9NuVuiV+wUvzegUF0+QLayC3wXUXKiGGG86uFrwd+0y+
-         PpYTEXmXsS93PwYpdf++UiSd/ChDBy9Sn0OSwd0Nhb5y8BWLYHLXE88+LU6l9paecR3X
-         OI9A==
-X-Forwarded-Encrypted: i=1; AJvYcCW8d5wakPeG1eZR68nlQSxRuz3+731gcfDkedZ6PacbHXpA4H+60jc2yJKnCvEkrRnIIKsCqg5Hu8PJP9I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOE2ZlStde5H6D5G4xAde/rN0y8K2pMZkq2XsSfE63HsJBlJpk
-	9eN/Qo8YB/FqEQjOxZPqbNnb7JwaOUlJXtACBGau57fL7oXHtDev
-X-Google-Smtp-Source: AGHT+IH6GX4gkYg2kA0Tkg8+/vZtagN6VHGAmt/oPfHaEmQBn1qj5oF3us/Xvv8X3TiTXVP4n/K+vw==
-X-Received: by 2002:a17:902:e851:b0:20c:94f6:3e03 with SMTP id d9443c01a7336-210c6c6a272mr62768785ad.47.1730030895066;
-        Sun, 27 Oct 2024 05:08:15 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1730030901; x=1730635701;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=C0YBTty29fCDfURPSOlaCYcuKhU2mEB3YdomHT84Hu0=;
+        b=JXlFoxj1JN1R/4oMGSJ77xTowbiNZ9ocP5GjOErCEj74/lRkp/68/2RZe0PFlmCfpS
+         yC8gkg9a0HHFsEkccahcZ3qK8YYKOlpGZvVnwc7VhqOUdOSZbe8bfXW11i0FGvG/WPXw
+         niHcogQtI4wTEwLlmxG1Xvwc55f2vXY/mV/I2TOT7I9mKMypNhgD8Mctdr3IDRIfyP8g
+         oBlWBN7S2di7A+UfjHd3BJZ3Yd59GWBu6HIVHB55eGADN9tXntaRtHh3A5ecwpAV2Hyc
+         lYfLU2rn9YE8S5577JcB6NU7UuU3u4LyozRSrGvEAF59qAH0qq2e3IlkX7l1zY/C0ZUP
+         qgRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXU9HLbDzS3BGSaAmzYAmI0CXIh3YbYTkLaQP/LhzewiY6sv6B7eFcV2YFo0MX7OJVSa1DrAEeiZXpk6AM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIWZHsL8BJljQbaIyYiPLs18KAt1MLoHi7O7EhormRnmSJFwD9
+	5VBJXdh57GKbl1H90+x+v2JLkA8eMVFckXjqYEwxU3nwlvjQd1ne
+X-Google-Smtp-Source: AGHT+IEC7SL1yaU6CsPvivYj99USvnYvIa+jRLOO6wsH1fIK/VVaqfW9WsUEB/88wKPnAtzTyVWulA==
+X-Received: by 2002:a17:903:8ce:b0:20c:c631:d81f with SMTP id d9443c01a7336-210c6c28284mr59132545ad.21.1730030901053;
+        Sun, 27 Oct 2024 05:08:21 -0700 (PDT)
 Received: from localhost.localdomain ([124.156.216.125])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bbf43476sm34897435ad.24.2024.10.27.05.08.09
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bbf43476sm34897435ad.24.2024.10.27.05.08.15
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Sun, 27 Oct 2024 05:08:14 -0700 (PDT)
+        Sun, 27 Oct 2024 05:08:20 -0700 (PDT)
 From: Lance Yang <ioworker0@gmail.com>
 To: akpm@linux-foundation.org
 Cc: dj456119@gmail.com,
@@ -82,11 +84,14 @@ Cc: dj456119@gmail.com,
 	linux-mm@kvack.org,
 	joel.granados@kernel.org,
 	linux@weissschuh.net,
-	Lance Yang <ioworker0@gmail.com>
-Subject: [PATCH v2 0/2] add detect count for hung tasks
-Date: Sun, 27 Oct 2024 20:07:45 +0800
-Message-ID: <20241027120747.42833-1-ioworker0@gmail.com>
+	Lance Yang <ioworker0@gmail.com>,
+	Mingzhe Yang <mingzhe.yang@ly.com>
+Subject: [PATCH v2 1/2] hung_task: add detect count for hung tasks
+Date: Sun, 27 Oct 2024 20:07:46 +0800
+Message-ID: <20241027120747.42833-2-ioworker0@gmail.com>
 X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20241027120747.42833-1-ioworker0@gmail.com>
+References: <20241027120747.42833-1-ioworker0@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,14 +100,12 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Hi all,
-
-This patchset adds a counter, hung_task_detect_count, to track the number
-of times hung tasks are detected. 
+This commit adds a counter, hung_task_detect_count, to track the number of
+times hung tasks are detected.
 
 IHMO, hung tasks are a critical metric. Currently, we detect them by
-periodically parsing dmesg. However, this method isn't as user-friendly
-as using a counter.
+periodically parsing dmesg. However, this method isn't as user-friendly as
+using a counter.
 
 Sometimes, a short-lived issue with NIC or hard drive can quickly decrease
 the hung_task_warnings to zero. Without warnings, we must directly access
@@ -118,26 +121,57 @@ automatically migrate containers to other nodes. Based on past experience,
 this approach could help avoid many production disruptions.
 
 Moreover, just like other important events such as OOM that already have
-counters, having a dedicated counter for hung tasks makes sense ;)
+counters, having a dedicated counter for hung tasks makes sense.
 
+Signed-off-by: Mingzhe Yang <mingzhe.yang@ly.com>
+Signed-off-by: Lance Yang <ioworker0@gmail.com>
 ---
+ kernel/hung_task.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-Changes since v1 [1]
-====================
- - hung_task: add detect count for hung tasks
-   - Update the changelog (per Andrew)
-   - Find other folks to CC (per Andrew)
-
-[1] https://lore.kernel.org/linux-mm/20241022114736.83285-1-ioworker0@gmail.com
-
-Lance Yang (2):
-  hung_task: add detect count for hung tasks
-  hung_task: add docs for hung_task_detect_count
-
- Documentation/admin-guide/sysctl/kernel.rst |  9 +++++++++
- kernel/hung_task.c                          | 18 ++++++++++++++++++
- 2 files changed, 27 insertions(+)
-
+diff --git a/kernel/hung_task.c b/kernel/hung_task.c
+index 959d99583d1c..229ff3d4e501 100644
+--- a/kernel/hung_task.c
++++ b/kernel/hung_task.c
+@@ -30,6 +30,11 @@
+  */
+ static int __read_mostly sysctl_hung_task_check_count = PID_MAX_LIMIT;
+ 
++/*
++ * Total number of tasks detected as hung since boot:
++ */
++static unsigned long __read_mostly sysctl_hung_task_detect_count;
++
+ /*
+  * Limit number of tasks checked in a batch.
+  *
+@@ -115,6 +120,12 @@ static void check_hung_task(struct task_struct *t, unsigned long timeout)
+ 	if (time_is_after_jiffies(t->last_switch_time + timeout * HZ))
+ 		return;
+ 
++	/*
++	 * This counter tracks the total number of tasks detected as hung
++	 * since boot.
++	 */
++	sysctl_hung_task_detect_count++;
++
+ 	trace_sched_process_hang(t);
+ 
+ 	if (sysctl_hung_task_panic) {
+@@ -314,6 +325,13 @@ static struct ctl_table hung_task_sysctls[] = {
+ 		.proc_handler	= proc_dointvec_minmax,
+ 		.extra1		= SYSCTL_NEG_ONE,
+ 	},
++	{
++		.procname	= "hung_task_detect_count",
++		.data		= &sysctl_hung_task_detect_count,
++		.maxlen		= sizeof(unsigned long),
++		.mode		= 0444,
++		.proc_handler	= proc_dointvec,
++	},
+ };
+ 
+ static void __init hung_task_sysctl_init(void)
 -- 
 2.45.2
 
