@@ -1,156 +1,183 @@
-Return-Path: <linux-kernel+bounces-383614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAD8B9B1E07
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 15:07:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BFE89B1E01
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 15:06:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65AEE1F216E4
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 14:07:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C029281AC7
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 14:06:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BB7817332C;
-	Sun, 27 Oct 2024 14:06:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 795CE161328;
+	Sun, 27 Oct 2024 14:06:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b="AsyQpyZw"
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.17.13])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="T9M0HXc6"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 992CF16F8EF;
-	Sun, 27 Oct 2024 14:06:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D6D9566A;
+	Sun, 27 Oct 2024 14:06:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730037995; cv=none; b=oJziin6/c7utTW+d4aQqn7zlxmGx+/z29NoSiyox6MrFfw1GZIvyaXpUVyLcR2CtqtdBa4gwUAl35nxn0ib58wmJZaMV/HMU9mN21B0T6h7YzpDK3bgrEmHVZBpmtTtrI7o5jlanGOAAFq+MWA5tm1Eq/lZFq261eNwR1XXaFjo=
+	t=1730037987; cv=none; b=kwA5fKcRqzxxpGFFU5kUN9sX91EtYBrnfNc/Tm6Wyg1Jn5mieE136JnXgT6spkVXuzTvZeUUyVIcYS0g0alHuY5KmOCCmVv5qw3xhiJ7FK4fFTGKQE8wpP3SjPKw0trOAbf2gOM1uoiCD0AyhRBQSXXIqCzGHg0lw0aZLZtaVB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730037995; c=relaxed/simple;
-	bh=shzMhA1ShIAzT/nl39/7faxKV6dT0AWJD5xF0gYTwuc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C+pTFRjcuZ0K6iPulQnF2KmVr4Nu15Oktg1SiAhkq6AEnI87duYVOtZ9XlLz1E2tpre3bhg7gYuoTENRZwRC5uHnzNlCioApvK2LoGfSibP+nqR6o5o9xqJC6sQuh652BZMTYHN8Rw1bLT7hFyi+RDm7IInW2cP5cEGltU4yJ+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu; spf=pass smtp.mailfrom=heusel.eu; dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b=AsyQpyZw; arc=none smtp.client-ip=212.227.17.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=heusel.eu
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=heusel.eu;
-	s=s1-ionos; t=1730037971; x=1730642771; i=christian@heusel.eu;
-	bh=jClmXAlUGXYrZ7D0GspMoXRQShIjacF/nvZ/v7Jg9oA=;
-	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:References:
-	 MIME-Version:Content-Type:In-Reply-To:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=AsyQpyZwUbrIy+LY5pWQZH7Qyzc48geigQrSR2a0ZbvnnvcEME2RxK4VP/+lW2SH
-	 gkQTwBqitfK4pjUlXwFikk3hgBY9+pHMwzsxBiP97Ks0hjZ8kdzK9QYusO+pK3Ki2
-	 SlnXedkDhBVjW+Rq/CPC2pGhbg9XEfzPfAlLzHdzslxhqoK/7GrQSMuuxaskE1VPM
-	 oemlH4iASedrrX7YH8DKgHqphRrY01Sqq70IPuBbFrmH3mS+OCNjOlNHshmEb0Lj1
-	 BqAiVUh2e2IY3gmccJq4R22bGdkOj0GMsAFaDLHgG5xXSxdvkVdUVGjRnkwzF/+KC
-	 HVtzAgbSdb5cslSk9A==
-X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
-Received: from localhost ([141.70.80.5]) by mrelayeu.kundenserver.de (mreue107
- [212.227.15.183]) with ESMTPSA (Nemesis) id 1MKc0o-1tJHuI3ZWO-00NhJl; Sun, 27
- Oct 2024 15:06:10 +0100
-Date: Sun, 27 Oct 2024 15:06:09 +0100
-From: Christian Heusel <christian@heusel.eu>
-To: "Ned T. Crigler" <crigler@gmail.com>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
-	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, regressions@lists.linux.dev, 
-	Jeff LaBundy <jeff@labundy.com>, Benjamin Tissoires <bentiss@kernel.org>
-Subject: Re: [REGRESSION] disabling and re-enabling magic sysrq fails after
- kernel 6.11
-Message-ID: <69b6119c-3c3a-406f-9375-3e55fba9b732@heusel.eu>
-References: <Zx2iQp6csn42PJA7@xavtug>
+	s=arc-20240116; t=1730037987; c=relaxed/simple;
+	bh=+w719NZeWpJQATCySgxL+7T4ydNQQFE6MvtDCIXUBKQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=m9S/awnY49yehIdYtCQa01Gf9LGgRONeQ8yUUp1YLeMwlSzmMBCEONQy6kCHbsuGQ+2b72gwjjeFr2nSeL7iBWb9V2EibjL0AhdpFAALyl4wb4LZMp4G+WndO9GDjIqjZ7JR+m9qIp29ah9mJMwWr4dnZZhNnhHN7LRwi546tm8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=T9M0HXc6; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730037986; x=1761573986;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=+w719NZeWpJQATCySgxL+7T4ydNQQFE6MvtDCIXUBKQ=;
+  b=T9M0HXc6lrLj68rO1BTdTOWZ1cg9iIofxL3Gr8u/kNlkc8HtcvPnZnsA
+   QDTMSXWukIhQGKhRbuG394swDAtKowEIHTGKpZ1rthCLieK5IOmLrdqYu
+   mzo0yaAXinhtGI6LRaKEYyIoAPgqf+U3/5wbcHsaGxNiQF0Dvk7OqfAsK
+   mzYAlM3QqWk/hbMeST9vK41jpKahuzXpE/fowIs52RWDN60h/7gGoql1Q
+   xeb6Qgx4i+8WItZmJy53LJeseuMS/r5QCkj5NjLJAeB244I+I7nhdYpCX
+   cfTXYb8uHHrrbWwgwkPb/+04il1YHHGZM9HXWWCpNOyAMOI0W63HRbcUg
+   w==;
+X-CSE-ConnectionGUID: kUXigcBfRZW5A77hlKN4Cg==
+X-CSE-MsgGUID: 7fxoS/A6RCS0GL/21w96eA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11238"; a="33557709"
+X-IronPort-AV: E=Sophos;i="6.11,237,1725346800"; 
+   d="scan'208";a="33557709"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2024 07:06:25 -0700
+X-CSE-ConnectionGUID: n8a56hwLS8+he2G/BxEBOw==
+X-CSE-MsgGUID: tuaZi8akSUKfju80jbQPCA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,237,1725346800"; 
+   d="scan'208";a="81323263"
+Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.227.172]) ([10.124.227.172])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2024 07:06:21 -0700
+Message-ID: <81e6604b-fa84-4b74-b9e6-2a37e8076fd7@intel.com>
+Date: Sun, 27 Oct 2024 22:06:17 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="6ltj3y347njtiyc7"
-Content-Disposition: inline
-In-Reply-To: <Zx2iQp6csn42PJA7@xavtug>
-X-Provags-ID: V03:K1:bcEW9OKSDcBN6iBJVT1IxSn0dhS4niUXkbBATWCvAS/NBbUxjJY
- Z3U3r2AUtpIW8o+uKSENCloX8B1NS9WxK0ftmtonYDROog7N386GJWdcnEl7nGCf+9u1deT
- ffHvWqhKOxr3tqN76jso3hbaAF3JWWTn87il7JwSjd6fxVQ+l4/TPNbgwHR7bLj/QMTqQ36
- 2fT8BkhgXis4YLwPCe+iA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:caUVJ2Omcak=;WNv1/VZRLTlqtc4h3php6RNqUdS
- r8poFdSan4gIt2JasRh72OQEoN9MmrvV6wJIDseSAWDPEMgGPDk9cVSeCzgefNxRz5laGerXY
- Rp29Q0XCrE0m48Lt1+O+kDC4K7/AAQd4BDB60l4HnoF88uVVfBPylIDzuHzTm42nYW2D9WcYa
- yfAU/zhfiM45rMrV7vU2U3GnfMlVXvtkq3f+pHk+iiCwyd4R7ptOizEn5ZPnulbGC0LGZdo8X
- 6HFWfXf4EKOO6bdAkwVwL/rGCqY8uGyhhVFp0YzA33lahwWHIiFG9zahdpfTOEZzDFExCrd0T
- SX4PtH72kCG2d31w0VB3+AKO3iVhCumaTJ4nGLZ9B8Jv5i+GFudJDOlS1b8bkT8UC8vRfYtTc
- iuwizEccItXSBSqtwuWZN1oNzmhpsyRb7BWInCPct2NHE46Bw3VnU1kZ9cvI0z15uw/1wrAOD
- MN4z+vBWQPe74Im8vnevUDl9KONWWVr0c9R0vLCh/kzu/31vpgZ+lqrLRpmnZqrelk0Y2F6j2
- O04oCD5YZxcdxPnc1UcAL3e9DOoJSQdkOewlXbRLERVi3Qe+kmkLThXRxdMi96JnUl8IIpBsj
- cwG/AHu95n9p1/BZtPwNQFE2ic0QZFw1jKg7TMLd/5x1OuFkKJOCZY9olGB6s9UvDDWkzTxTY
- 0P702eTc2wgTGkQQS9IQNcu+AGoFQoTFIHfGOyEEEOHgSdDY0aIHu1vnRvTnXJwogmf3cqagr
- Pp+kw/fZ9f6+ZxueYRvtfmY0EaLqIpjnA==
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] KVM: kvm-coco-queue: Support protected TSC
+To: Marcelo Tosatti <mtosatti@redhat.com>, "Nikunj A. Dadhania"
+ <nikunj@amd.com>
+Cc: Isaku Yamahata <isaku.yamahata@intel.com>, kvm@vger.kernel.org,
+ pbonzini@redhat.com, Sean Christopherson <seanjc@google.com>,
+ chao.gao@intel.com, rick.p.edgecombe@intel.com, yan.y.zhao@intel.com,
+ linux-kernel@vger.kernel.org, isaku.yamahata@gmail.com,
+ Tom Lendacky <thomas.lendacky@amd.com>
+References: <cover.1728719037.git.isaku.yamahata@intel.com>
+ <c4df36dc-9924-e166-ec8b-ee48e4f6833e@amd.com> <ZxvGPZDQmqmoT0Sj@tpad>
+Content-Language: en-US
+From: Xiaoyao Li <xiaoyao.li@intel.com>
+In-Reply-To: <ZxvGPZDQmqmoT0Sj@tpad>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 10/26/2024 12:24 AM, Marcelo Tosatti wrote:
+> On Mon, Oct 14, 2024 at 08:17:19PM +0530, Nikunj A. Dadhania wrote:
+>> Hi Isaku,
+>>
+>> On 10/12/2024 1:25 PM, Isaku Yamahata wrote:
+>>> This patch series is for the kvm-coco-queue branch.  The change for TDX KVM is
+>>> included at the last.  The test is done by create TDX vCPU and run, get TSC
+>>> offset via vCPU device attributes and compare it with the TDX TSC OFFSET
+>>> metadata.  Because the test requires the TDX KVM and TDX KVM kselftests, don't
+>>> include it in this patch series.
+>>>
+>>>
+>>> Background
+>>> ----------
+>>> X86 confidential computing technology defines protected guest TSC so that the
+>>> VMM can't change the TSC offset/multiplier once vCPU is initialized and the
+>>> guest can trust TSC.  The SEV-SNP defines Secure TSC as optional.  TDX mandates
+>>> it.  The TDX module determines the TSC offset/multiplier.  The VMM has to
+>>> retrieve them.
+>>>
+>>> On the other hand, the x86 KVM common logic tries to guess or adjust the TSC
+>>> offset/multiplier for better guest TSC and TSC interrupt latency at KVM vCPU
+>>> creation (kvm_arch_vcpu_postcreate()), vCPU migration over pCPU
+>>> (kvm_arch_vcpu_load()), vCPU TSC device attributes (kvm_arch_tsc_set_attr()) and
+>>> guest/host writing to TSC or TSC adjust MSR (kvm_set_msr_common()).
+>>>
+>>>
+>>> Problem
+>>> -------
+>>> The current x86 KVM implementation conflicts with protected TSC because the
+>>> VMM can't change the TSC offset/multiplier.  Disable or ignore the KVM
+>>> logic to change/adjust the TSC offset/multiplier somehow.
+>>>
+>>> Because KVM emulates the TSC timer or the TSC deadline timer with the TSC
+>>> offset/multiplier, the TSC timer interrupts are injected to the guest at the
+>>> wrong time if the KVM TSC offset is different from what the TDX module
+>>> determined.
+>>>
+>>> Originally the issue was found by cyclic test of rt-test [1] as the latency in
+>>> TDX case is worse than VMX value + TDX SEAMCALL overhead.  It turned out that
+>>> the KVM TSC offset is different from what the TDX module determines.
+>>
+>> Can you provide what is the exact command line to reproduce this problem ?
+> 
+> Nikunj,
+> 
+> Run cyclictest, on an isolated CPU, in a VM. For the maximum latency
+> metric, rather than 50us, one gets 500us at times.
+> 
+>> Any links to this reported issue ?
+> 
+> This was not posted publically. But its not hard to reproduce.
+> 
+>>> Solution
+>>> --------
+>>> The solution is to keep the KVM TSC offset/multiplier the same as the value of
+>>> the TDX module somehow.  Possible solutions are as follows.
+>>> - Skip the logic
+>>>    Ignore (or don't call related functions) the request to change the TSC
+>>>    offset/multiplier.
+>>>    Pros
+>>>    - Logically clean.  This is similar to the guest_protected case.
+>>>    Cons
+>>>    - Needs to identify the call sites.
+>>>
+>>> - Revert the change at the hooks after TSC adjustment
+>>>    x86 KVM defines the vendor hooks when the TSC offset/multiplier are
+>>>    changed.  The callback can revert the change.
+>>>    Pros
+>>>    - We don't need to care about the logic to change the TSC offset/multiplier.
+>>>    Cons:
+>>>    - Hacky to revert the KVM x86 common code logic.
+>>>
+>>> Choose the first one.  With this patch series, SEV-SNP secure TSC can be
+>>> supported.
+>>
+>> I am not sure how will this help SNP Secure TSC, as the GUEST_TSC_OFFSET and
+>> GUEST_TSC_SCALE are only available to the guest.
+> 
+> Nikunj,
+> 
+> FYI:
+> 
+> SEV-SNP processors (at least the one below) do not seem affected by this problem.
 
---6ltj3y347njtiyc7
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [REGRESSION] disabling and re-enabling magic sysrq fails after
- kernel 6.11
-MIME-Version: 1.0
+Did you apply Secure TSC patches of (guest kernel, KVM and QEMU) 
+manualy? because none of them are merged. Otherwise, I think SNP guest 
+is still using KVM emulated TSC.
 
-On 24/10/26 07:15PM, Ned T. Crigler wrote:
-> Hi,
+> At least this one:
+> 
+> vendor_id	: AuthenticAMD
+> cpu family	: 25
+> model		: 17
+> model name	: AMD EPYC 9124 16-Core Processor
+> 
+> 
 
-Hey Ned,
-
-> It looks like starting with kernel 6.11, disabling and re-enabling
-> magic
-> sysrq fails with these errors in dmesg:
->=20
-> kernel: input: input_handler_check_methods: only one event processing
-> method can be defined (sysrq)
-> kernel: sysrq: Failed to register input handler, error -22
->=20
-> after doing:
->=20
-> # echo 0 > /proc/sys/kernel/sysrq
-> # echo 438 > /proc/sys/kernel/sysrq
-> # echo 0 > /proc/sys/kernel/sysrq
-> # echo 438 > /proc/sys/kernel/sysrq
-> # echo 0 > /proc/sys/kernel/sysrq
-> # echo 438 > /proc/sys/kernel/sysrq
-
-I have found that this issue is also present in the latest mainline
-release and bisected it to the following commit:
-
-    d469647bafd9 ("Input: simplify event handling logic")
-
-The additional authors / maintainers have been added to the recipients
-lists.
-
-I hope I didn't overlook any pending fixes.
-
-> --=20
-> Ned T. Crigler
-
-Cheers,
-Chris
-
---6ltj3y347njtiyc7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEb3ea3iR6a4oPcswTwEfU8yi1JYUFAmceSNEACgkQwEfU8yi1
-JYXzXA/9GvWBON+9+wLDs4ZyBFbK2Vj514B0nAODEVNVS4+DlS9eg8/IKst/iybB
-YfEy/8NF6uRcyk74E36HOWQVe2BkG6bDK0ZzudNkLJy6ej3r1Z6ivAyJs8tLRGrV
-IoUBY0W4HzVo3cUb/tMoRkVTo/8XAroaB2iE/Znkq2VKe2ma6NEvnjuJgFbIE6aq
-NP8LXOH1XYnzrJLB/O2n5ejs+4vOO+AdKiQ/pptf9F1uWA3QLscLGY+BhLpyVPG8
-CxttSjehC/oyV0PcCXfDLvRaNPlbY3LyLmCYMqfFDVWK7kUVqZ5cnlOW78kmIOro
-gyi9EdP7jqu1HGsSU9xc6YXUe3ZEcrT2M3TRrbNn6C5rGOoIK1KXQy0+h8ru0cEq
-TgxixZDfuljKoGkDeMUZP+htIw3mLbkQK2CcHOoFxBZx49UaC3wR5cF7NPR4FeM/
-fSQNwmcsGnXBdENcjTWOcZIoujKA/AK1j4mPYAgseJC4CheUfQqFViApE1m2tehC
-/LN3c3VYxq4HcQYCIHOCyCPreQQgPCZ5P0n+xNTikklaJiR2m+zFddVTPBcyx86q
-MaRC6cWxDUnipA/T5qzVkpSIwlzuBQ7mAYa5F7Xo7wnRfV3RAcBV10M6zY3wjsiG
-UNy/Lo68/HiwHoa9JeJ2clU+DzB8IPgD0D4WkcyRVx9r02TvS/4=
-=+itq
------END PGP SIGNATURE-----
-
---6ltj3y347njtiyc7--
 
