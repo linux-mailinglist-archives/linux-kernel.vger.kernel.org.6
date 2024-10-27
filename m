@@ -1,129 +1,154 @@
-Return-Path: <linux-kernel+bounces-383421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D06E9B1B84
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 02:23:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F0459B1B85
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 02:25:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 911351F21B66
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 00:23:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A6FE1C20D62
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 00:25:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 931A653AC;
-	Sun, 27 Oct 2024 00:23:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WDJgdSQT"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D747291E;
+	Sun, 27 Oct 2024 00:25:47 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B652801
-	for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 00:23:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBDEF195
+	for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 00:25:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729988589; cv=none; b=HTAd8ZLtPe4e44jXOqc4LeLToMx/x/C8SpngNh0VlArAdMDRTw70ZPInH44DIs11kh0hQAKM6sff/ebps/Vr/AcOor1GiNBMU/vV+OqEdOaSTFy5CbBPYoUYgExKSsc7cKxXvCJZnQPWWY/CixhUEXLa+c028l5PB7c9IofPD9g=
+	t=1729988746; cv=none; b=CV0UholHx08O4hfcqCiuYzWBBnqwzvOpw4EZzQ12j0YLqCBHCd/1dggKWEPbktqPGQtBcoKz2FfqoLBMYhi3UgJCnQSkvrXCuaGSwnUOAUQkoSQDtigzyio6xa8r0vDs0jTKlsgiKvRmBdwr4d1/danLWwTubmDz8+gWFL3cwGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729988589; c=relaxed/simple;
-	bh=5Pqui25DPlwIWMLdGTLyIk3J0Uf993iIacmKnnuy3Mo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EjVvJI/fVoqcsC9C5iMG/zsNVASfCfSNPKTjq3+kPLBhgdry/FsPYinlZOR7NwgCOWg1ervqu/qu1UOGRFovAnOSppg47l1Rn9legfS75NRjFOc7Wpf22gGIopDOJOEGfey3SYqTbfHUcxahcn/wk9vZEO0YT4uXrv8ipeAHDRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WDJgdSQT; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2fb4feba303so749071fa.2
-        for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 17:23:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729988584; x=1730593384; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lFbW2IR5f5096oBox+ScFmNcX3VP41oZ+AfH+USsxkg=;
-        b=WDJgdSQTVgI9WqkJS4dNotgaakbY4G/r/cKN4Gzsn8dYqqi1H4gc3p0QaahEX3vRxy
-         Aynxt7k97yK2CCZFsA7STlz/BpV+HWwfIW1ZYtWTVAhiX6/7Bdby95pSB1NKnhVaQo6I
-         91RWYsPnp42GJz3vo+CtXFuH8eADg8laJz2SJlk7SK9lYhQlOE3N5kGStPzfrxJgFWWn
-         GmZhjjinUXl2kVSBURYlRAv/YNO7ENFGAT7Y835esjUWDxRvrzsdB5QUAyAwmes8Xd/M
-         phZGgHbjMiY5nsE0R6WNqMO7E00Fq0S/AKQqU5XyIqwtUO15voqwSlJQ775xXlQxs5m9
-         gm2A==
+	s=arc-20240116; t=1729988746; c=relaxed/simple;
+	bh=/Dz0/d5w67CSdo3+dmDTCiDWI/7BiZScEDMO4L/XjYg=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=glS2tYBPTbdksBSwtC3ReHI9zVanGxkcu1heXKrXwirp/4PFoaKnn9ljewEj1IO1Axvy0z31aRwzN0TrrdwEmBFDAzRahigXsF+zccUYgqbrd3vhEJ22Taky7BnDufXJNYKnfx01pgIga7sz6WNQwpp16eRM4pxLvka6z9pnFFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a3c90919a2so31090755ab.0
+        for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 17:25:44 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729988584; x=1730593384;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lFbW2IR5f5096oBox+ScFmNcX3VP41oZ+AfH+USsxkg=;
-        b=fEzABWWUAkL68/jR/de8+NtPJKIAxqU5RNqZAzCp3w94QoljXd/kXv5YIpu4TEf/fh
-         Sj3/Oru5RKVEOba3bSjPKoRwyhkDT2enEVZmoj5wESGq1mNWlMUwF9bOkpZ2ntpnlV+n
-         2a0qx31O6siR7qVW/FRjADia6Br+d4sZTm26+ZL46fSwctkr/X/Ygc0vjZS+7Z/cvG54
-         bB6I/HQgM7rrXoSsZtYpf1u0pe1tt5DB6CBsXPcY42r2787CE0eOGsTCVGfVDfiMejiG
-         51zVU9iS6KKDgDrGsXNckX18U18JSeE6neVpW8aqT9UrNqnbHZuN8Sb3hVCgOwNCYXpA
-         9G/A==
-X-Forwarded-Encrypted: i=1; AJvYcCW9tzi6iCMNwDpQFz7/9Fx/IW2lvNqB+dgmbBzEIMYVL/UXHqoBHblLLKCb6o5bGTvSAxtmdWCmt1+8xmA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4EpRDfL4tduw0WakjFpFNN2j1qr+thiFhu4X48b6otcJlMVNU
-	NNmh7T9rvqmWoMDESvlohkVPiWEZ2TdT5fwXgTb40I/eK+xMHJZnQZfwA+a/ELrplEn/sEX+xxr
-	rfAk=
-X-Google-Smtp-Source: AGHT+IHdy29xwLOA70AzPMwplw9gzzYMMz/eIfCANOvEjDMYS3JoalrmNdgzM+1ItaoaGQam7GjFHw==
-X-Received: by 2002:a2e:b8c9:0:b0:2fb:48f6:27af with SMTP id 38308e7fff4ca-2fcbe0676c2mr5270641fa.7.1729988584175;
-        Sat, 26 Oct 2024 17:23:04 -0700 (PDT)
-Received: from [192.168.1.4] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fcb4618b4asm6893501fa.131.2024.10.26.17.23.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 26 Oct 2024 17:23:02 -0700 (PDT)
-Message-ID: <1039ff2d-a6ff-47b3-bace-7f2ba291f94a@linaro.org>
-Date: Sun, 27 Oct 2024 03:22:51 +0300
+        d=1e100.net; s=20230601; t=1729988744; x=1730593544;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/wPn9P5b5vRdI9Ux1xI18zAb0ubyp9U/n0ZDH/tkeYQ=;
+        b=D3cgKMU51YPkT/pJgbtgdYae8CipEWI8Itkyh45GScSsMutf2QU6FhflZgKeWf8DZ5
+         dHbC9mG5givfMwcQ2qAc0DfB8lgxirJbrG9fF798yBoIvvCTCcOOMoGW04nVS+aZzogz
+         SItOs/b0wLRNAQzMP60shOhV5pePzsdvrnqtTSj5BZ7ph6bIeeD4MCCDqeTuHUWsglYX
+         refyehFrbGVJdesGaugj6YIr7wkw4q4Wy4fMMUeeoRkD/y0bNaDsRzBsA3xaFMPDeYDz
+         8XLdkKeSJxbclOlBbkZjbEznsaHXkNp4C02HAwB2JqjHJLXcsv567+0V5HwyEXfGGEQ1
+         P6RQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWKMJoq7Upuq3CGoJr1HQsOrgBz6t2CRF80oQ8QUgHixk09flr/EmjCu/hgNplRQUzYlWOFq06XDgoeU4A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzlBJ3GgCo9mzg0kW2NL4d9zYKrr/nvLsFENCBIlrucGvAqrHv/
+	t/DYaGbEQkTf0fxehfMlWk3Gh8vkeRonwuWw+i4lIMM90R4hygbPtkABQaDCykjmTpJKzYz+wX3
+	G/Ft5Ve23YoI6xDGfxSd6awy/hT0nIe7oaMd/d67PNmoJuTGMhygat70=
+X-Google-Smtp-Source: AGHT+IFKz3qq5JWqjtEfBzq7Yotyr0psAF60CECWfQOLXUndQt09QTmYffuM9gK/Jslc3fAXndx4+oF32trZS5T/ODSraA1sWCel
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: qcom: Make GCC_8150 depend on QCOM_GDSC
-Content-Language: en-US
-To: Konrad Dybcio <konradybcio@kernel.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, Konrad Dybcio
- <konrad.dybcio@oss.qualcomm.com>,
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-References: <20241026-topic-8150gcc_kconfig-v1-1-3772013d8804@oss.qualcomm.com>
-From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-In-Reply-To: <20241026-topic-8150gcc_kconfig-v1-1-3772013d8804@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:1606:b0:39b:3894:9298 with SMTP id
+ e9e14a558f8ab-3a4ed1bd7demr37436595ab.0.1729988743946; Sat, 26 Oct 2024
+ 17:25:43 -0700 (PDT)
+Date: Sat, 26 Oct 2024 17:25:43 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <671d8887.050a0220.2fdf0c.0230.GAE@google.com>
+Subject: [syzbot] [ocfs2?] UBSAN: shift-out-of-bounds in ocfs2_fill_super (2)
+From: syzbot <syzbot+56f7cd1abe4b8e475180@syzkaller.appspotmail.com>
+To: jlbec@evilplan.org, joseph.qi@linux.alibaba.com, 
+	linux-kernel@vger.kernel.org, mark@fasheh.com, ocfs2-devel@lists.linux.dev, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 10/26/24 13:58, Konrad Dybcio wrote:
-> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> 
-> Like all other non-ancient Qualcomm clock drivers, QCOM_GDSC is
-> required, as the GCC driver defines and instantiates a bunch of GDSCs.
-> 
-> Add the missing dependency.
-> 
-> Reported-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-> Closes: https://lore.kernel.org/linux-arm-msm/ab85f2ae-6c97-4fbb-a15b-31cc9e1f77fc@linaro.org/
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> ---
->   drivers/clk/qcom/Kconfig | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-> index 953589e07c593fd49fab21c7cfcf466d33f99a27..c298d8e6700f6293f62269e5cc4ef518afc97a7a 100644
-> --- a/drivers/clk/qcom/Kconfig
-> +++ b/drivers/clk/qcom/Kconfig
-> @@ -1042,6 +1042,7 @@ config SM_GCC_7150
->   config SM_GCC_8150
->   	tristate "SM8150 Global Clock Controller"
->   	depends on ARM64 || COMPILE_TEST
-> +	select QCOM_GDSC
->   	help
->   	  Support for the global clock controller on SM8150 devices.
->   	  Say Y if you want to use peripheral devices such as UART,
-> 
+Hello,
 
-Reviewed-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+syzbot found the following issue on:
 
---
-Best wishes,
-Vladimir
+HEAD commit:    c2ee9f594da8 KVM: selftests: Fix build on on non-x86 archi..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=14008c30580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=fc6f8ce8c5369043
+dashboard link: https://syzkaller.appspot.com/bug?extid=56f7cd1abe4b8e475180
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16ced0a7980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12008c30580000
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-c2ee9f59.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/8a3541902b13/vmlinux-c2ee9f59.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/a00efacc2604/bzImage-c2ee9f59.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/4065d12afe1f/mount_0.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+56f7cd1abe4b8e475180@syzkaller.appspotmail.com
+
+WARNING: The mand mount option has been deprecated and
+         and is ignored by this kernel. Remove the mand
+         option from the mount to silence this warning.
+=======================================================
+------------[ cut here ]------------
+UBSAN: shift-out-of-bounds in fs/ocfs2/super.c:2336:10
+shift exponent 32768 is too large for 32-bit type 'int'
+CPU: 0 UID: 0 PID: 5093 Comm: syz-executor204 Not tainted 6.12.0-rc4-syzkaller-00047-gc2ee9f594da8 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ ubsan_epilogue lib/ubsan.c:231 [inline]
+ __ubsan_handle_shift_out_of_bounds+0x3c8/0x420 lib/ubsan.c:468
+ ocfs2_verify_volume fs/ocfs2/super.c:2336 [inline]
+ ocfs2_sb_probe fs/ocfs2/super.c:792 [inline]
+ ocfs2_fill_super+0xf9c/0x5750 fs/ocfs2/super.c:988
+ mount_bdev+0x20a/0x2d0 fs/super.c:1679
+ legacy_get_tree+0xee/0x190 fs/fs_context.c:662
+ vfs_get_tree+0x90/0x2b0 fs/super.c:1800
+ do_new_mount+0x2be/0xb40 fs/namespace.c:3507
+ do_mount fs/namespace.c:3847 [inline]
+ __do_sys_mount fs/namespace.c:4057 [inline]
+ __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4034
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f8c48e89c7a
+Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 5e 04 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffd10baf0f8 EFLAGS: 00000282 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007ffd10baf110 RCX: 00007f8c48e89c7a
+RDX: 00000000200002c0 RSI: 0000000020000040 RDI: 00007ffd10baf110
+RBP: 0000000000000004 R08: 00007ffd10baf150 R09: 0000000000004434
+R10: 00000000000008c0 R11: 0000000000000282 R12: 00000000000008c0
+R13: 00007ffd10baf150 R14: 0000000000000003 R15: 0000000001000000
+ </TASK>
+---[ end trace ]---
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
