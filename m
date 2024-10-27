@@ -1,136 +1,104 @@
-Return-Path: <linux-kernel+bounces-383759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EF419B1FE6
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 20:47:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 911E69B1FE8
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 20:47:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A28F71F213A2
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 19:47:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A86951C208F6
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 19:47:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A821126C18;
-	Sun, 27 Oct 2024 19:47:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE8A317BEBF;
+	Sun, 27 Oct 2024 19:47:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="hpQ68OKH"
-Received: from mail-40133.protonmail.ch (mail-40133.protonmail.ch [185.70.40.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fiz7hLPh"
+Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72F7B17332C
-	for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 19:47:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9904B286A1;
+	Sun, 27 Oct 2024 19:47:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730058426; cv=none; b=PXal3niFF0+J/q7xmwbZyNNi6G1vNbXLG5P570MdWYGC4NSrNZy40eao2kSGutdpaakhCGuvwJeS28oLbctNoEZlDDGOW15Z7GsQglZzESCp2g97+f+dvMN3oIXin5Xp2Y/277QkaK/HZXqp/zQrJ/efKqpg6DRxUVrprrguQoQ=
+	t=1730058470; cv=none; b=K8NiN7FcrEPcF8AMI/bGPN6PhDrc+2Of5hvJMfRCFCSzrQMUHuFZm0iQwRPN9XZkC+islJBXjWPFZ+RXcBFl+5dr6DKCNQ+mqyzkzzcjHZG4jyzDTYV1RfqEYvE0WCPFJrVz9fkLYoPAs9DNpBWXG+i3uYy9HWLgrTlMxvI+BeM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730058426; c=relaxed/simple;
-	bh=yx7OKnMmxkaItU6s2bHO2Y8kAkumLtwqxfzQ1PKIJsk=;
-	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=V2NS6+5wkfK60G7LEVh0pP6laEYzxW4md19ky1gJ8sI5iicGMeVACyOa1WjAMfDjv59wJTwjh3z3BfvPga/lRNaykVpYBsqFelIKzMA21+JuklcIxdIpVt8BMdHwW+wzeL6sY1bFLTIbUEm2nLhMiM0qEo3Vqa6ruFh0eXzgMjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=hpQ68OKH; arc=none smtp.client-ip=185.70.40.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1730058415; x=1730317615;
-	bh=rBYrbCgFaMolyV5f9SMDe1X9M83MQXaQsQ9KhjScgm8=;
-	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
-	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
-	b=hpQ68OKH1Gr44wXmFZstKys8hQ2dYMfEYJ1tF8ZrZ63IkixSPIzi+4RbDIgAhfJtu
-	 sbhR6xOuClADk8Cur6YrIGtms84MoO7gBxe4wbilaUCTVFstIOiX0Hz8QMC6NnubJ6
-	 JhMb4EWgn4Wf8TSyVvz6bM/VRw98gK+62inxSttHQdAEQWAkkzOcfIY1tPlYGvC9S0
-	 1A6zON80wj0HuC0BRoMYWgorP2cg/xq55CjAz6HCXJlZpUOGPyHoaLgjIIekD3K1zH
-	 XUNWmZbyE/u1FgoEuWiItTLsNFA+y5oxy50OG81UuZkCIR2Dam7R44ba83T7C/56q0
-	 jXiWR2859DK0Q==
-Date: Sun, 27 Oct 2024 19:46:52 +0000
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org
-From: Piotr Zalewski <pZ010001011111@proton.me>
-Cc: skhan@linuxfoundation.org, Piotr Zalewski <pZ010001011111@proton.me>, syzbot+005ef9aa519f30d97657@syzkaller.appspotmail.com, Alan Huang <mmpgouride@gmail.com>
-Subject: [PATCH v3] bcachefs: Fix NULL ptr dereference in btree_node_iter_and_journal_peek
-Message-ID: <20241027193842.154220-2-pZ010001011111@proton.me>
-Feedback-ID: 53478694:user:proton
-X-Pm-Message-ID: 1b0b1b9852f05303eac84019b51a819f66b46bad
+	s=arc-20240116; t=1730058470; c=relaxed/simple;
+	bh=gExQvMPbAjbTN1DrtN0YgCuBiyCwkZbz6UrpFd1T4mk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SOT3iAtZ55cqK3jj/DX5P2JbL7KhFXJewf3gbTx4hpCDX28PSwzKrJjk2wPt2ZyoLNK123GDc1BvYs0dDjAUcI3CconsIC2MTjcweo47mNNmEZzsgP2kBMz4GBdYU+eYSI1lErWLZN+BsK5qatyWWX+I9nQIhtrC39U8bBs5pZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fiz7hLPh; arc=none smtp.client-ip=209.85.167.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-3e5fb8a4e53so1899632b6e.1;
+        Sun, 27 Oct 2024 12:47:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730058467; x=1730663267; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GLHfzF7Vu+uG1bFL3de93K0nfmzXaKnCeT4VFxwzIuw=;
+        b=fiz7hLPhM/vXzq9v5VibgPWkQVKQk6RU/aQsgi1hyl3Gx9BxgNJTJQLb7BtEkfiXK8
+         dSkmB3jLY6l11HUA5zGMe2N4nX5K6vFbG7kQgEFbdRYGIn2Xmc65UEroXDJMxmGK7OFP
+         uTjjoFfcY/Jd06YSv5NCL96+q0fXfZArbvVJlsx9nYmOCDVGfuN00voJC7DnHzedh0f2
+         9qz2FHG0DDC/FjknHZV/BKKiSJOgSIfJXVC59fIII4vePcdHlK/BIXontaI5G2chXkAN
+         D2J4sE1avyAo2C0R0Nwi9W0wQ/8X53f9Ltx51DBRlHWBG5Ttc52KRFR+TamJphCGEW4D
+         xF1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730058467; x=1730663267;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GLHfzF7Vu+uG1bFL3de93K0nfmzXaKnCeT4VFxwzIuw=;
+        b=emeDysM0aN+mXhWDqbyzkCRQmWeZqln1nBkSnLcAvkoFXBx4MY5RBsj31obxf1+FGF
+         rVCVskMTwhT8GVCdQO0so4ClpFWfjldAbava3CtXu9bg3hlisq1BAU3lrGn+CpGB/Tpq
+         +W3P7wUE9xRvgHXrgPYZjsZtDx+TKWY2cGS2szpezIlysLK6RSlYW5ZWg1EZiN8Y+Uhe
+         YMd9007LLcIkQONFmFuBqchvPrU7aIIghyyHpS49HrFszC3pM0itxT+951ODlQG+WdIN
+         ToPTDy+i2mnVQJS+XM/0+PGC7rLKhLNpZHzB/B7/hNDiXsPwFBKaHYo9e7gkohl2Rn9U
+         QZ5g==
+X-Forwarded-Encrypted: i=1; AJvYcCXKh6ulcKOr3WsbLm5GiFN6rD38+3nx0dHX4NN4J/d46O1pTyDB+NPB2Djbc1q3o+48XMUHk+3ZLDj13FIn@vger.kernel.org, AJvYcCXmFuX3sJ4a6qZJeD6OUCJ0dGncCSjtymUFoZFemmHGkZ1oymd5geM+55Iqlz4e0gr7HqqPrrGtrIOb@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGh/eTBaN+2PCXflg8R0CNQetr92QgKEk0OXXCtJzU0qol5z3C
+	sgLiYJ2/SWiEdzriKYPZB5EKiQhabW4x4GiQeJBP+vh9yDsFTu/9GPvnuYbe9hNNUBwOkI7aZWf
+	Udvl7erjflXrkWt5VlY1zaPZTFAM=
+X-Google-Smtp-Source: AGHT+IFvNqQtA2qCnvFgInL4k2FnnkyZ/+9lFFs4WtoDc5wn+xO0yla6E0XsnoYZRJjDYauPJAM0Y4iv7sBOCRGeqM0=
+X-Received: by 2002:a05:6808:3097:b0:3e5:fbdc:ba03 with SMTP id
+ 5614622812f47-3e63848a0d3mr3889116b6e.30.1730058467549; Sun, 27 Oct 2024
+ 12:47:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <20241014110304.60746-1-qianqiang.liu@163.com>
+In-Reply-To: <20241014110304.60746-1-qianqiang.liu@163.com>
+From: Ilya Dryomov <idryomov@gmail.com>
+Date: Sun, 27 Oct 2024 20:47:35 +0100
+Message-ID: <CAOi1vP9hTZTEu7YsV=+J-_TncwKU2paBmFfCjUyB2G52o4qYyg@mail.gmail.com>
+Subject: Re: [PATCH] ceph: return result directly from wait_for_completion_killable()
+To: Qianqiang Liu <qianqiang.liu@163.com>
+Cc: brauner@kernel.org, ceph-devel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Add NULL check for key returned from bch2_btree_and_journal_iter_peek in
-btree_node_iter_and_journal_peek to avoid NULL ptr dereference in
-bch2_bkey_buf_reassemble.
+On Mon, Oct 14, 2024 at 1:40=E2=80=AFPM Qianqiang Liu <qianqiang.liu@163.co=
+m> wrote:
+>
+> Simplify the code by returning the result of
+> wait_for_completion_killable() directly, instead of calling it
+> separately and then returning 0.
+>
+> No functional changes are introduced, this is a simple refactor
 
-When key returned from bch2_btree_and_journal_iter_peek is NULL it means
-that btree topology needs repair. Print topology error message with
-position at which node wasn't found, its parent node information and
-btree_id with level.
+Hi Qianqiang,
 
-Return error code returned by bch2_topology_error to ensure that topology
-error is handled properly by recovery.
+I don't think this statement is true.  If the wait is interrupted,
+wait_for_completion_killable() returns -ERESTARTSYS and currently
+ceph_lock_wait_for_completion() swallows it, similar to how -ERESTARTSYS
+coming from ceph_mdsc_do_request() is ignored a few lines above.
 
-Reported-by: syzbot+005ef9aa519f30d97657@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=3D005ef9aa519f30d97657
-Fixes: 5222a4607cd8 ("bcachefs: BTREE_ITER_WITH_JOURNAL")
-Suggested-by: Alan Huang <mmpgouride@gmail.com>
-Suggested-by: Kent Overstreet <kent.overstreet@linux.dev>
-Signed-off-by: Piotr Zalewski <pZ010001011111@proton.me>
----
+Thanks,
 
-Notes:
-    changes in v3:
-        - add btree_id and level info to the error message.
-        - use bch2_btree_pos_to_text.
-
-    changes in v2:
-        - make commit message more verbose.
-        - set topology error, print error message and return
-          appropriate error code.
-
-    link to v1: https://lore.kernel.org/linux-bcachefs/20241023072024.98915=
--3-pZ010001011111@proton.me/
-    link to v2: https://lore.kernel.org/linux-bcachefs/20241026174155.23343=
-0-3-pZ010001011111@proton.me/
-
- fs/bcachefs/btree_iter.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
-
-diff --git a/fs/bcachefs/btree_iter.c b/fs/bcachefs/btree_iter.c
-index 15ac72b1af51..acf70aaf2fd2 100644
---- a/fs/bcachefs/btree_iter.c
-+++ b/fs/bcachefs/btree_iter.c
-@@ -880,6 +880,18 @@ static noinline int btree_node_iter_and_journal_peek(s=
-truct btree_trans *trans,
- =09__bch2_btree_and_journal_iter_init_node_iter(trans, &jiter, l->b, l->it=
-er, path->pos);
-=20
- =09k =3D bch2_btree_and_journal_iter_peek(&jiter);
-+=09if (!k.k) {
-+=09=09struct printbuf buf =3D PRINTBUF;
-+
-+=09=09prt_str(&buf, "node not found at pos ");
-+=09=09bch2_bpos_to_text(&buf, path->pos);
-+=09=09prt_str(&buf, " at btree ");
-+=09=09bch2_btree_pos_to_text(&buf, c, l->b);
-+
-+=09=09ret =3D bch2_fs_topology_error(c, "%s", buf.buf);
-+=09=09printbuf_exit(&buf);
-+=09=09goto err;
-+=09}
-=20
- =09bch2_bkey_buf_reassemble(out, c, k);
-=20
-@@ -887,6 +899,7 @@ static noinline int btree_node_iter_and_journal_peek(st=
-ruct btree_trans *trans,
- =09    c->opts.btree_node_prefetch)
- =09=09ret =3D btree_path_prefetch_j(trans, path, &jiter);
-=20
-+err:
- =09bch2_btree_and_journal_iter_exit(&jiter);
- =09return ret;
- }
---=20
-2.47.0
-
-
+                Ilya
 
