@@ -1,92 +1,110 @@
-Return-Path: <linux-kernel+bounces-383571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0FE59B1D7B
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 12:43:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D53879B1D8D
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 13:00:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7285281A3C
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 11:43:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64A3F1F212E8
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 12:00:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0076154430;
-	Sun, 27 Oct 2024 11:43:49 +0000 (UTC)
-Received: from proxmox-new.maurer-it.com (proxmox-new.maurer-it.com [94.136.29.106])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D3BE154C00;
+	Sun, 27 Oct 2024 11:59:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UQaknicl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 869CF14A09A;
-	Sun, 27 Oct 2024 11:43:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.136.29.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A47CA14D2BE;
+	Sun, 27 Oct 2024 11:59:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730029429; cv=none; b=ef12hk734wyDNmTLyLZxqK4AvXlrSascw9qFc546X6ZLy6UywFvuT3+K3k5qaag6y0ucsySZrABJC9bELgd7T4BvQvgaqHNyg/ns113AnVs5E4RpIofOl0+BcfvNL1MZew4bGxnU5hWFcthC5+xXmTbGWurpNoZlzXvtaqyzaP0=
+	t=1730030396; cv=none; b=FIBWPewGPGcRulHWu4h+yeMo/AzvPRhJtmvYG7ZAHcfY6bF7G+HxIKfEop7eZhONhFqVGo8WwB6nztE5Sk5q4F1r/U71cLZNhUycKmvYqv46aGj5DpdQ7eiKEzPv2cKx1SO0nsC75QDDmhYbs0+oMNqCf0VNKj/iRXAODo4LtRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730029429; c=relaxed/simple;
-	bh=VhaA53Zp+2mrXZXUnUwu3gnRPns6El5q4T/OURux8kQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SMElyFJDnOwoRY8dnIQfHUD2ag4nhua9YBkM3APAB57ExFbTliPi7TbPtR+lAMISrdLHIO7w/i/es/SELICpxCV2ne/+xVL2ZX0o1VobH0/ywLygGpPrN8Jh5a+d674kWlNlaalwz/oDbK57buDuue7DsS0tKP7bt7d8sBGgWfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=proxmox.com; spf=pass smtp.mailfrom=proxmox.com; arc=none smtp.client-ip=94.136.29.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=proxmox.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proxmox.com
-Received: from proxmox-new.maurer-it.com (localhost.localdomain [127.0.0.1])
-	by proxmox-new.maurer-it.com (Proxmox) with ESMTP id EF5A4435C4;
-	Sun, 27 Oct 2024 12:43:37 +0100 (CET)
-From: Christian Ebner <c.ebner@proxmox.com>
-To: dhowells@redhat.com,
-	jlayton@kernel.org,
-	stable@vger.kernel.org
-Cc: netfs@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Christian Ebner <c.ebner@proxmox.com>
-Subject: [PATCH stable 6.11.y] netfs: reset subreq->iov_iter before netfs_clear_unread() tail clean
-Date: Sun, 27 Oct 2024 12:43:15 +0100
-Message-Id: <20241027114315.730407-1-c.ebner@proxmox.com>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1730030396; c=relaxed/simple;
+	bh=no/+AbuoRzYxRFzGoq3ejOzhVao1LX1mcfFKJ9bkfXA=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=lZQTSpMGsZzeZGN8+4fpWMA9tuE3loKiLsM5ie5IXSOJmh3nEUMel7IvS1DeLEMRiVgtVllvGZa5T/MegWCQiKvQ4Fr2ClTK804Lm3OZe9Y32bPTtbiyvlCfIwVDjeg+pKpc/k9pxA7sU3KC4Xa2Z16ip2dCxeboqZnCESnYcLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UQaknicl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E9AAC4CEE8;
+	Sun, 27 Oct 2024 11:59:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730030396;
+	bh=no/+AbuoRzYxRFzGoq3ejOzhVao1LX1mcfFKJ9bkfXA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=UQakniclNBUTG4LjfMqiEotg1kwXjpTW6UewlaZYZztiW56k7Hv/KAzkG8kD3WkuI
+	 eOEBsIxpBEA2KQRhrmGHd9tGGTrjMX9G+GoRpv5yfiRo/InbkTdsfq9j0yL6BHs6hD
+	 SSUMHdt/0ziNpw7Bn3vf4GgwAnCkYLx1tO3IjDHXoa6M/gHnMLpTPxU87dmMC3O0Ow
+	 Y1ZU+AyokkNMySopDCxtgkg+EZEPkTznLqolcUBeR54eseZpi0JtOrEVDXzAwu/2u5
+	 yP6+Vq+QkzmhmD8zV8fPaA39f4FXeF2eGE+WUMDtfOTOM61g8aFHgfcYkva5rHjuaB
+	 L0dbhimjSYY0A==
+Date: Sun, 27 Oct 2024 20:59:52 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linux trace kernel
+ <linux-trace-kernel@vger.kernel.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Mathieu
+ Desnoyers <mathieu.desnoyers@efficios.com>, Thomas Gleixner
+ <tglx@linutronix.de>
+Subject: Re: [PATCH] fgraph: Change the name of cpuhp state to
+ "fgraph:online"
+Message-Id: <20241027205952.e9c65a883362d8fdbdd2fe15@kernel.org>
+In-Reply-To: <20241024222944.473d88c5@rorschach.local.home>
+References: <20241024222944.473d88c5@rorschach.local.home>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Fixes file corruption issues when reading contents via ceph client.
+On Thu, 24 Oct 2024 22:29:44 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-Call netfs_reset_subreq_iter() to align subreq->io_iter before
-calling netfs_clear_unread() to clear tail, as subreq->io_iter count
-and subreq->transferred might not be aligned after incomplete I/O,
-having the subreq's NETFS_SREQ_CLEAR_TAIL set.
+> From: Steven Rostedt <rostedt@goodmis.org>
+> 
+> The cpuhp state name given to cpuhp_setup_state() is "fgraph_idle_init"
+> which doesn't really conform to the names that are used for cpu hotplug
+> setups. Instead rename it to "fgraph:online" to be in line with other
+> states.
+> 
+> Suggested-by: Masami Hiramatsu <mhiramat@kernel.org>
+> Fixes: 2c02f7375e658 ("fgraph: Use CPU hotplug mechanism to initialize idle shadow stacks")
+> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 
-Based on ee4cdf7b ("netfs: Speed up buffered reading"), which
-introduces a fix for the issue in mainline.
+Looks good to me.
 
-Fixes: 92b6cc5d ("netfs: Add iov_iters to (sub)requests to describe various buffers")
-Closes: https://bugzilla.kernel.org/show_bug.cgi?id=219237
-Signed-off-by: Christian Ebner <c.ebner@proxmox.com>
----
-Sending this patch in an attempt to backport the fix introduced by
-commit ee4cdf7b ("netfs: Speed up buffered reading"), which however
-can not be cherry picked for older kernels, as the patch is not
-independent from other commits and touches a lot of unrelated (to
-the fix) code.
+Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
- fs/netfs/io.c | 1 +
- 1 file changed, 1 insertion(+)
+Thank you!
 
-diff --git a/fs/netfs/io.c b/fs/netfs/io.c
-index d6ada4eba744..500119285346 100644
---- a/fs/netfs/io.c
-+++ b/fs/netfs/io.c
-@@ -528,6 +528,7 @@ void netfs_subreq_terminated(struct netfs_io_subrequest *subreq,
- 
- incomplete:
- 	if (test_bit(NETFS_SREQ_CLEAR_TAIL, &subreq->flags)) {
-+		netfs_reset_subreq_iter(rreq, subreq);
- 		netfs_clear_unread(subreq);
- 		subreq->transferred = subreq->len;
- 		goto complete;
+> ---
+>  kernel/trace/fgraph.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
+> index cd1c2946018c..69e226a48daa 100644
+> --- a/kernel/trace/fgraph.c
+> +++ b/kernel/trace/fgraph.c
+> @@ -1255,7 +1255,7 @@ int register_ftrace_graph(struct fgraph_ops *gops)
+>  	guard(mutex)(&ftrace_lock);
+>  
+>  	if (!fgraph_initialized) {
+> -		ret = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "fgraph_idle_init",
+> +		ret = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "fgraph:online",
+>  					fgraph_cpu_init, NULL);
+>  		if (ret < 0) {
+>  			pr_warn("fgraph: Error to init cpu hotplug support\n");
+> -- 
+> 2.45.2
+> 
+
+
 -- 
-2.39.5
-
-
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
