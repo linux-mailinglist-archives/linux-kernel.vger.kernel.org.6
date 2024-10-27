@@ -1,124 +1,85 @@
-Return-Path: <linux-kernel+bounces-383884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3946F9B2163
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 00:33:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 02A1E9B2164
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 00:33:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 677711C20D27
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 23:33:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33AE51C2098C
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 23:33:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7407189BA2;
-	Sun, 27 Oct 2024 23:32:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DAE41898FC;
+	Sun, 27 Oct 2024 23:33:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CM4nVdNu"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LGyFhEIV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71F0C43AAE;
-	Sun, 27 Oct 2024 23:32:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E65901865F6;
+	Sun, 27 Oct 2024 23:33:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730071976; cv=none; b=ahQm0NtrUtvP+cs6CGUE4/+Arh4MErcvcu0TOHrM6wYaYw+Vz5Sp6AKKbXxMxsu5zrvnY1FAFFhkxJ+vOa3W1JkpUGR87Nh0/u07lTJkgMENi30M2DIaOb2yUz3exjb1F3WWRELknNUH8UXHzO0HFfKqlXyC4IV3qJpGYe+azMY=
+	t=1730072008; cv=none; b=eEZ0xELCfpn9oYr17V+fxuGMGmCFMwmKbhFusZxUNSlwZS9fW2nbjhD2SkEBeWlC/zfo6UfV9Tmj9tufyy02Rn61SDmT7C1jC5soBWQBbopzKJv/1YcU7GJGGGcmcDmJeQSiCUJ6WQdqExvxTtFSSf4aR4ITjhbkMj8qhLvsonY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730071976; c=relaxed/simple;
-	bh=rqz+Ilu/nIZLj6ETXEVsVJ0BJ0E/UCVOZ631ZweaVX0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YVVzK40lToVUq7QGHExc3zH0HAFUWB5W//c/Mg4eItpT5KBL6hcW85+37EW/mTxesdzc6JGKpXu5QNXWjld/5N1hFOFj29uvbbCCVfj1p5dwfOv28Y/SlbNGc3c1PMiKHhBLhu7glTz3mGXut1RxxNeRCbhd1/1ENgNWGAMF4EE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CM4nVdNu; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-20c803787abso28297545ad.0;
-        Sun, 27 Oct 2024 16:32:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730071974; x=1730676774; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=63amZP33iYpS8AXXhtgX4nWJKEpmd3UTb0cRGCmUwK0=;
-        b=CM4nVdNuUuHQ7OIi3mOOTijfNKp9rtVg7wTniqTZQJKyHjrEYViAX0KHuo2aibxFVQ
-         K43z/3k+67UO7n0E76EevNKYkZ/+dV393lnLVsltJDkj7Gp/8qOfqGVmyXmZTpl7cyO8
-         GDkg2tz9ZzqmrzvkIOaC2sPR8I0yvCB3o2kSJDBO0gfMdhBUMTkj9xkzvdWjO1rXMU+2
-         XdtgLs5Uu/jC35tf8C2L+VsKNnoXjFfck7MGRGDz9hwj5kW0yTTBTlw7YCYK8j0/ClRB
-         LZ7dY307YZEkD/+b5kkepslaVxhnReT6Wb1ryyzKnQxRZCv+K7knNB5M7K1JhwYR+zNc
-         sjWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730071974; x=1730676774;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=63amZP33iYpS8AXXhtgX4nWJKEpmd3UTb0cRGCmUwK0=;
-        b=hqNbl677dk998Lv1afK2ZedjQ1PdhiLvRrHTU0Fk7uQJMZDxMvMBsgokbYGn2kYCtw
-         WDCImv+rJVEqi5RnwhBAAylH0eactB7YIa2B0pnJHmxzlf3SLyHHyfDlM9gd+eZQ90Q0
-         y5UZHFup00XLBtCNOQFiMRZEjsaOPUCk2kfZSYGcQUrcVS7ew5tYV8+R5zl1BLeu0a0O
-         gFnaZ9xESV4y6D5FSxLXCpWsA4OxyNU1+4bkBQmyRtCyJEYUyBsjLN9DldUOoXwTBVd9
-         tpP3p3aBkNw5v+AdxQsjjKE9/vl0RcmNFdyOY3EXhGSB7mEQ+vytBew9Xuqw6jZSa6xe
-         u/oQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU/ngFlb4Yd3IhdpLJPjE3H7gA4U1TgWzmnjkey4llEgxUIeod1bJ43fY12wfPsVwNSsTlTmcpH@vger.kernel.org, AJvYcCUHvd/hGPTeeXFRJt6f/KlSNSzwrEXcctwpr3QSlZwAT6eJ8r5X8nZ1LUob8KnO5ueJ6Ap8Cac5aMHUsoSK@vger.kernel.org, AJvYcCUWVBHcX85sbOoh6j6vnsrZ9q5T1zPHOt7ocCfXZxtnsXxgsHn+Z7WDVHtm+X2rLV8VVgO+3WoeA9Lp@vger.kernel.org
-X-Gm-Message-State: AOJu0YzGq6/OFlASN+SiQQ8sAnbNXm47sYud30kRY3L7YeZqjEl0cKYe
-	PW1f45RkvtbstTC8kkNFv5GfiL0euX2TaeWSlvgpccA9WmKc6wr1
-X-Google-Smtp-Source: AGHT+IGH/FrrfW96edZYOU/1eyhLzJAIrm6AzqPxdvn8RuUgJVuG2hN9MhbFU5coSZ1MSxKcT0X90A==
-X-Received: by 2002:a17:902:db0f:b0:20c:c482:1d72 with SMTP id d9443c01a7336-210c5a46f96mr94859525ad.20.1730071973692;
-        Sun, 27 Oct 2024 16:32:53 -0700 (PDT)
-Received: from localhost ([2001:da8:7001:11::cb])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bc044cb1sm39854595ad.249.2024.10.27.16.32.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 27 Oct 2024 16:32:53 -0700 (PDT)
-Date: Mon, 28 Oct 2024 07:32:28 +0800
-From: Inochi Amaoto <inochiama@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>, 
-	Inochi Amaoto <inochiama@gmail.com>
-Cc: Chen Wang <unicorn_wang@outlook.com>, 
-	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Inochi Amaoto <inochiama@outlook.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Jose Abreu <joabreu@synopsys.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Richard Cochran <richardcochran@gmail.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Giuseppe Cavallaro <peppe.cavallaro@st.com>, Yixun Lan <dlan@gentoo.org>, Longbin Li <looong.bin@gmail.com>, 
-	netdev@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, 
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v2 2/4] dt-bindings: net: Add support for Sophgo SG2044
- dwmac
-Message-ID: <mwlbdxw7yh5cqqi5mnbhelf4ihqihup4zkzppkxm7ggsb5itbb@mcbyevoat76d>
-References: <20241025011000.244350-1-inochiama@gmail.com>
- <20241025011000.244350-3-inochiama@gmail.com>
- <4avwff7m4puralnaoh6pat62nzpovre2usqkmp3q4r4bk5ujjf@j3jzr4p74v4a>
+	s=arc-20240116; t=1730072008; c=relaxed/simple;
+	bh=beKxMlT5b66BGo5NTosJeYD+LSXSmOMabs8Am/ym11I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VB+hP4VsKLwCUhMJMaZ2o1/W9OnlT014Y27v5cHzlWhqWPtCdBxeneOa7g/xwtQdXRZJzBEmTQjYYRFzdJ+H7X439fnSnj4COOjhLLfnoOF8zsDMyvx1mp6CV59NSIqdAFCbLHCr0c7mzEIKFS3tT68a217bKv3zF9+uzeCbAMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LGyFhEIV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B7B8C4CEE5;
+	Sun, 27 Oct 2024 23:33:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730072007;
+	bh=beKxMlT5b66BGo5NTosJeYD+LSXSmOMabs8Am/ym11I=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=LGyFhEIVQA9m9x0QViPi/qZubVOdZhHb71v7jDqY0rybkTcuMbAeAATQE8d1MO0yG
+	 +i5vYtdLQ7QxV2+F2BmYtAmRm9agxrdV2k3/BbIpL0F51xHLTGQQlJhrmwMyVUflso
+	 vQQzQbBO7xDY1ipBlhb7ql0sXrZvxd2+4NMg0RdTFLqhbymLdSQB6tF3KJWqPy2bFx
+	 4Fgh2DY2QdbnFsj/0nRfiI4iPDjnSxsI9YDkwBM/L+yeCqG6mfiIWHy0o+JfHj+ZuK
+	 IVNe/5zNloUJK0mK5eENtx8GCiOHK5djp2I0ERIphdqS+3qNVlSw84T9kHGPmjEWDp
+	 a0uNEaAc1niLA==
+Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-2884a6b897cso1905720fac.3;
+        Sun, 27 Oct 2024 16:33:27 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVTel4/w0LxVUbZ75K/FxWLsefLJ90ilpu41eqP3ru8NSTx2zQTzY6FhTSMrj/78Zg4wgngeAp5VSFY4x4J@vger.kernel.org, AJvYcCXgZjr2WXgVXMR4UzsUyDj7xTt7rvoeBazVr4sbfzOYoacaCaP5xkGGBM4fjh/3fo8E4C2wpAM5++s5@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQuUoD9dHZQMK5YERGkmpiRhaL5xSKTeTlyeZUpRWkLtx8xMw3
+	i1ect3YpA+Oq7TfmgiumCT3FnjRgt+lm7gmPhu4Rlby3SEav/hpDy+Q7E+miWma2g0tTH15rmFa
+	2RThQ4wEgMtbQpyVy/5rR77sgoJs=
+X-Google-Smtp-Source: AGHT+IEgFLkXtmx1f1u2oOtwtHGuyeH7nU8FZQrfUAeDT3tRajH+Npn5/YmKew//beG04HCrDPZW/qGiRyUSkqT+73s=
+X-Received: by 2002:a05:6870:568b:b0:277:ecd2:7b7 with SMTP id
+ 586e51a60fabf-29051af11a9mr4083851fac.7.1730072006843; Sun, 27 Oct 2024
+ 16:33:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4avwff7m4puralnaoh6pat62nzpovre2usqkmp3q4r4bk5ujjf@j3jzr4p74v4a>
+References: <20241026071002.118260-1-ruanjinjie@huawei.com>
+In-Reply-To: <20241026071002.118260-1-ruanjinjie@huawei.com>
+From: Namjae Jeon <linkinjeon@kernel.org>
+Date: Mon, 28 Oct 2024 08:33:16 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd-wvsibuLMw+nkLX6vD+u_yYsnv+YE3ikMFGXBquU5t-w@mail.gmail.com>
+Message-ID: <CAKYAXd-wvsibuLMw+nkLX6vD+u_yYsnv+YE3ikMFGXBquU5t-w@mail.gmail.com>
+Subject: Re: [PATCH] ksmbd: Fix the missing xa_store error check
+To: Jinjie Ruan <ruanjinjie@huawei.com>
+Cc: sfrench@samba.org, senozhatsky@chromium.org, tom@talpey.com, 
+	set_pte_at@outlook.com, linux-cifs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Oct 27, 2024 at 09:38:00PM +0100, Krzysztof Kozlowski wrote:
-> On Fri, Oct 25, 2024 at 09:09:58AM +0800, Inochi Amaoto wrote:
-> > The GMAC IP on SG2044 is almost a standard Synopsys DesignWare MAC
-> > with some extra clock.
-> > 
-> > Add necessary compatible string for this device.
-> > 
-> > Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
-> > ---
-> 
-> This should be squashed with a corrected previous patch 
-
-Good, I will.
-
-> (why do you need to select snps,dwmac-5.30a?), 
-
-The is because the driver use the fallback versioned compatible 
-string to set up some common arguments. (This is what the patch
-3 does). It is also better to have a accurate fallback compatible
-if we already know what it is.
-
-Regards,
-Inochi
+On Sat, Oct 26, 2024 at 4:10=E2=80=AFPM Jinjie Ruan <ruanjinjie@huawei.com>=
+ wrote:
+>
+> xa_store() can fail, it return xa_err(-EINVAL) if the entry cannot
+> be stored in an XArray, or xa_err(-ENOMEM) if memory allocation failed,
+> so check error for xa_store() to fix it.
+>
+> Cc: stable@vger.kernel.org
+> Fixes: b685757c7b08 ("ksmbd: Implements sess->rpc_handle_list as xarray")
+> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+Applied it to #ksmbd-for-next-next.
+Thanks!
 
