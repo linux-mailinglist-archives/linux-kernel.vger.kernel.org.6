@@ -1,141 +1,183 @@
-Return-Path: <linux-kernel+bounces-383764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A0ED9B1FF6
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 20:52:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C79859B1FF4
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 20:52:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69A881C20912
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 19:52:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C9A81F21311
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 19:52:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42F9617CA04;
-	Sun, 27 Oct 2024 19:52:31 +0000 (UTC)
-Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17FDA17D354;
+	Sun, 27 Oct 2024 19:52:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="nzxP9hJW"
+Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD7A817A924;
-	Sun, 27 Oct 2024 19:52:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF54156742
+	for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 19:52:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730058750; cv=none; b=AVs7FALfgHWDn6Jm8TRzp/EPrmkBNMkB5qxEXdXqqJiixjPr409YmybR8Hlg6mC1742jufFPxdMuiQqDe24Z6U5DOD24DWgRVka/qeXyWmTf61QevkZbu7UFjNoEApYar4kOnuuREiYHwTcXJAgmtB8FcCRLk6N5YDTV8y9fHyI=
+	t=1730058744; cv=none; b=VFxgj67Vo8m5wwxM9q+lCY/FTK0Uqc1v6jD711of8SgwOy41RBlmEzh/mHrh9Mb1gY9p70765f6aFPtb3bk75vkWgEMuOPvdvq+5WV3zAFNHkb9w0Rn2OG+UMDHNpW86rk+d9M4hJ8DthKIWJMIL2L7pnEYU8Y9sy9c/LrCuQHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730058750; c=relaxed/simple;
-	bh=Slx0hadI2DF4XTksLkkSS4jxKbe3wNck6qvxZTHGNcA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pA7kkqZaEeC1CIqO++nXltomFXTVnq7ocjnU896QcsIIDF4lK6s+QuSkAFXpIZdoiH9W6cgHJp5Zuvv0flDDaUV/xYfyPKYk8gVxwK3bb3FucWtybP/EU0QKgzvvvZXhzq8gLNVDvoKfwK7gGNown+b/dwBAlN3c71162f4F4vM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-5101c527611so303896e0c.3;
-        Sun, 27 Oct 2024 12:52:28 -0700 (PDT)
+	s=arc-20240116; t=1730058744; c=relaxed/simple;
+	bh=ueiLs+nLh8dmTHigot/Hj12sD7IB5HdWNU888qp/+8E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KFaBR+SU7qoX+VT3pqnxwFthh3gjYvogW7MqLFBpQILbM/bSzulAHd79v5/gkDZvPEQ6GZDfWG43xCbFX5u7e42e7b/CWQAATyZCdN2TKp1BrJXX+XYB9Apq6AJiX2fXroLJDOHkLvGLIGllQK/cNFdM2pxUTgw3s9x3PIsfSas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=nzxP9hJW; arc=none smtp.client-ip=209.85.160.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-288916b7fceso1974401fac.3
+        for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 12:52:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1730058740; x=1730663540; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+9de6YcBQ4CAkrMC7sV/+iMopqKB6hodYcK4fGhfmxw=;
+        b=nzxP9hJWDi5WtCVyPod3kCMQJH0dWdV2ypIrCpHez1mgBjgyqBA41St91MngZ2miRV
+         tnRyY+Nbd6V1Tp5UzRa2UFa90JD0szKVZsJrP8ZW+4RZc0zikMNj1xHroFzHdDUvb/zZ
+         LZzTHDQ3cJ5zixqcvndUIrOleSGmGApK8OyYy/0gJrJoCjxKDZGeXrEj4lm1RyqEjKa3
+         UzK+wF0YQIOBNPE4j+sNfXP2DEdudP1AmupHT26gofd2Trfe/jN7NbG3Tsl+ysUJMv8P
+         bhYtTt4ISLYzzKzueRLVsoj8xmMI+12a0WnmucqF3+yuCb4z45hlXE1gg9hrp7z++0+v
+         uRKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730058748; x=1730663548;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LeNyK1dS8fdGfFYCHz8SEYzY/h/VTeC8f7pSxMKfbEE=;
-        b=ioGYoFdMSqnhG+kxvjs0nV5OTDFC3QCzvX3pSEgl36lliWhocqw1FBpWSA5NO8MRe9
-         CAWC571KYfw7meGXNNbJXXE8qpH0O2XRkrnBM71MUAs2CKvwfeaFWjVF6FbjI9yCuV5y
-         yMtps5Z46gAGJyZdEnHLub3YHXZvcs/2xxTxbZRRoJYZazOthC2pe/kIj1D3y0q7SjL2
-         uX0U4Ei3MfsQAui80xGAbzcCkOzLJ/6z8w08/8pQnRYFDCR0WRiwf1w7r3cCBSFRjkqJ
-         /Gsk4kRPDd90NVqB16iDKahyoMkn3f9J3m53e7umnjGf+mZGwAK+aC8Ta31PgqGHqXuY
-         5u+g==
-X-Forwarded-Encrypted: i=1; AJvYcCUhezpeWZqk7v5wHBrUj6m3WJ6Erl7FtAT89p35at6NIRdQdGbKo6XWw++Z1H4syu78OuKGDNMtgvmMzi7d@vger.kernel.org, AJvYcCX0k95KzHqc+aUt02vfdbwnOyrqm56p9BO6sRZbZwtu1WUKnQrp1yqXwUnR/HNCaHC608TrYvDPqfo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTo99SKXqyTYPZSmeh253FMA379JQ+nI2b+UqEI1FiYlSKk6Nh
-	IKpIESXsQyEoETMVuOV6XVxtIIifB5nncb4lMCpfvpV+jHoY48weNkR1id32a8qB9+AxZUn8uHL
-	86nukwqB2emmPbFc4oV2sHtp+YxHaGuua
-X-Google-Smtp-Source: AGHT+IGZIhcR1qbYPRbikr3C426yAUQjADRfHf67ahq+w0TwSO4haB8Ydbmr5zPqqCM+K04KlxvHmSH5NQbFcMW8G3A=
-X-Received: by 2002:a05:6122:1ad5:b0:50a:36ab:c788 with SMTP id
- 71dfb90a1353d-51014ff5f55mr3170942e0c.3.1730058747749; Sun, 27 Oct 2024
- 12:52:27 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1730058740; x=1730663540;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+9de6YcBQ4CAkrMC7sV/+iMopqKB6hodYcK4fGhfmxw=;
+        b=fiEUktyWIrNkCDD43aD5giEpHSNjz59BXHd3I9bQIV6pDB5gTm+RNliAFwfmXqb60e
+         CiT5LitlPpnMdP2xrbCxo+XSB9TkMkbq6pu9H5/dTzGiMNtNumLsxJtVgjm1kVT8nYNf
+         3sxwrM9TMpgrwcEyl0mjcIOvMo09n1+fvRBAnsU3UhC8e2kKUuxDnHdgWDZvHrn1GOvD
+         LyVk0x8TV+FSf+lm3QGkVH4oqNfPiiBH25RG3M7BSOSwqep58ZYIytfpxrhFAi34pZ4R
+         NGEmiHUhXPv/vQifjsA3lzMkBV1Fe15l32MAIHg3PLVmDP3l/YgGa/kOTx3AcRiqGF2Z
+         P7hQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWL0gSnkQeWsOF3uXZSOUvYpk0UVroq0Au3zKDZULBAAe3g2Yp74NTdP2wGs59BzLFb3lIAm1SLM5mvPdk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyw1iQ15ywhPf0EXS/JBstjpJ3iELBf8AAEZlFV/bVvf2pM4yDG
+	h9EA1Yo5+qcAyPuXrhiNmg21JsucKyTEWvECq6hj9DizUgOzDg+TfoK32/ZHql0=
+X-Google-Smtp-Source: AGHT+IFepVB2QqdqP+C+Q8M8uASn8/LF4xicUTp5DH6V9fqU0SsmPYBPQioFgC1LGcXGMjTtSzGTeg==
+X-Received: by 2002:a05:6870:15d5:b0:278:978:9e9 with SMTP id 586e51a60fabf-29051e0360bmr4809398fac.44.1730058740066;
+        Sun, 27 Oct 2024 12:52:20 -0700 (PDT)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-290380f4bdasm1563675fac.46.2024.10.27.12.52.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 27 Oct 2024 12:52:18 -0700 (PDT)
+Message-ID: <2679570d-6255-467b-8312-117e553a52b4@baylibre.com>
+Date: Sun, 27 Oct 2024 14:52:17 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241027175743.1056710-1-mcanal@igalia.com> <20241027175743.1056710-2-mcanal@igalia.com>
-In-Reply-To: <20241027175743.1056710-2-mcanal@igalia.com>
-From: Barry Song <baohua@kernel.org>
-Date: Mon, 28 Oct 2024 03:52:16 +0800
-Message-ID: <CAGsJ_4xPr3X_EXh73c4gN-cUSxaXZ-XR=_VNE750zNH61nyR-Q@mail.gmail.com>
-Subject: Re: [PATCH 1/3] mm: fix the format of the kernel parameter ``thp_anon=``
-To: =?UTF-8?B?TWHDrXJhIENhbmFs?= <mcanal@igalia.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Andrew Morton <akpm@linux-foundation.org>, 
-	Hugh Dickins <hughd@google.com>, David Hildenbrand <david@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Lance Yang <ioworker0@gmail.com>, linux-mm@kvack.org, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kernel-dev@igalia.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v4 15/15] iio: adc: ad4695: Add support for SPI
+ offload
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ Lars-Peter Clausen <lars@metafoo.de>, David Jander <david@protonic.nl>,
+ Martin Sperl <kernel@martin.sperl.org>, linux-spi@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-iio@vger.kernel.org, linux-pwm@vger.kernel.org
+References: <20241023-dlech-mainline-spi-engine-offload-2-v4-0-f8125b99f5a1@baylibre.com>
+ <20241023-dlech-mainline-spi-engine-offload-2-v4-15-f8125b99f5a1@baylibre.com>
+ <20241026170038.4b629cff@jic23-huawei>
+ <5a090847-ee53-41be-ad28-b7604cf9020a@baylibre.com>
+ <20241027091244.2fe3c0ad@jic23-huawei>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <20241027091244.2fe3c0ad@jic23-huawei>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Oct 28, 2024 at 1:58=E2=80=AFAM Ma=C3=ADra Canal <mcanal@igalia.com=
-> wrote:
->
-> If we add ``thp_anon=3D32,64KB:always`` to the kernel command line, we
-> will see the following error:
->
-> [    0.000000] huge_memory: thp_anon=3D32,64K:always: error parsing strin=
-g, ignoring setting
->
-> This happens because the correct format isn't ``thp_anon=3D<size>,<size>[=
-KMG]:<state>```,
-> as [KMG] must follow each number to especify its unit. So, the correct
-> format is ``thp_anon=3D<size>[KMG],<size>[KMG]:<state>```.
+On 10/27/24 4:12 AM, Jonathan Cameron wrote:
+> On Sat, 26 Oct 2024 19:01:53 -0500
+> David Lechner <dlechner@baylibre.com> wrote:
+> 
+>> On 10/26/24 11:00 AM, Jonathan Cameron wrote:
+>>> On Wed, 23 Oct 2024 15:59:22 -0500
+>>> David Lechner <dlechner@baylibre.com> wrote:
+>>>   
 
-what if 32768,64K: always?
+...
 
->
-> Therefore, adjust the documentation to reflect the correct format of the
-> parameter ``thp_anon=3D``.
->
-> Fixes: dd4d30d1cdbe ("mm: override mTHP "enabled" defaults at kernel cmdl=
-ine")
-> Signed-off-by: Ma=C3=ADra Canal <mcanal@igalia.com>
-> ---
->  Documentation/admin-guide/kernel-parameters.txt | 2 +-
->  Documentation/admin-guide/mm/transhuge.rst      | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentat=
-ion/admin-guide/kernel-parameters.txt
-> index 1518343bbe22..1666576acc0e 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -6688,7 +6688,7 @@
->                         0: no polling (default)
->
->         thp_anon=3D       [KNL]
-> -                       Format: <size>,<size>[KMG]:<state>;<size>-<size>[=
-KMG]:<state>
-> +                       Format: <size>[KMG],<size>[KMG]:<state>;<size>[KM=
-G]-<size>[KMG]:<state>
->                         state is one of "always", "madvise", "never" or "=
-inherit".
->                         Control the default behavior of the system with r=
-espect
->                         to anonymous transparent hugepages.
-> diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/a=
-dmin-guide/mm/transhuge.rst
-> index 203ba7aaf5fc..745055c3dc09 100644
-> --- a/Documentation/admin-guide/mm/transhuge.rst
-> +++ b/Documentation/admin-guide/mm/transhuge.rst
-> @@ -303,7 +303,7 @@ control by passing the parameter ``transparent_hugepa=
-ge=3Dalways`` or
->  kernel command line.
->
->  Alternatively, each supported anonymous THP size can be controlled by
-> -passing ``thp_anon=3D<size>,<size>[KMG]:<state>;<size>-<size>[KMG]:<stat=
-e>``,
-> +passing ``thp_anon=3D<size>[KMG],<size>[KMG]:<state>;<size>[KMG]-<size>[=
-KMG]:<state>``,
->  where ``<size>`` is the THP size (must be a power of 2 of PAGE_SIZE and
->  supported anonymous THP)  and ``<state>`` is one of ``always``, ``madvis=
-e``,
->  ``never`` or ``inherit``.
-> --
-> 2.46.2
->
+>>>   
+>>>>  static int ad4695_probe(struct spi_device *spi)
+>>>>  {
+>>>>  	struct device *dev = &spi->dev;
+>>>>  	struct ad4695_state *st;
+>>>>  	struct iio_dev *indio_dev;
+>>>> -	struct gpio_desc *cnv_gpio;
+>>>>  	bool use_internal_ldo_supply;
+>>>>  	bool use_internal_ref_buffer;
+>>>>  	int ret;
+>>>>  
+>>>> -	cnv_gpio = devm_gpiod_get_optional(dev, "cnv", GPIOD_OUT_LOW);
+>>>> -	if (IS_ERR(cnv_gpio))
+>>>> -		return dev_err_probe(dev, PTR_ERR(cnv_gpio),
+>>>> -				     "Failed to get CNV GPIO\n");
+>>>> -
+>>>> -	/* Driver currently requires CNV pin to be connected to SPI CS */
+>>>> -	if (cnv_gpio)
+>>>> -		return dev_err_probe(dev, -ENODEV,
+>>>> -				     "CNV GPIO is not supported\n");
+>>>> -
+>>>>  	indio_dev = devm_iio_device_alloc(dev, sizeof(*st));
+>>>>  	if (!indio_dev)
+>>>>  		return -ENOMEM;
+>>>> @@ -1002,8 +1374,13 @@ static int ad4695_probe(struct spi_device *spi)
+>>>>  		return -EINVAL;
+>>>>  
+>>>>  	/* Registers cannot be read at the max allowable speed */
+>>>> +	st->spi_max_speed_hz = spi->max_speed_hz;
+>>>>  	spi->max_speed_hz = AD4695_REG_ACCESS_SCLK_HZ;
+>>>>  
+>>>> +	ret = devm_add_action_or_reset(dev, ad4695_restore_spi_max_speed_hz, st);  
+>>>
+>>> Why do you need to put it back in devm? What happens after this but without
+>>> a driver restart that uses that faster rate?
+>>>   
+>> I should have added a comment here as this was a weird bug to trace.
+>>
+>> The core SPI framework sets the initial value of spi->max_speed_hz
+>> to the minimum of the controller max rate and the max rate specified
+>> by the devicetree.
+>>
+>> The SPI device lives beyond this driver, so if we bind the driver
+>> and set spi->max_speed_hz to something other than what the SPI core
+>> set it, then the next time we bind the driver, we don't get the
+>> the max rate from the SPI core, but rather we changed it to when
+>> the driver unbound.
+>>
+>> So on the second bind, the max rate would be the slow register
+>> read rate instead of the actual max allowable rate.
+>>
+>> So we need to reset spi->max_speed_hz to what it was originally
+>> on driver unbind so that everything works as expected on the
+>> next bind.
+>>
+>> (Or we call this a SPI core bug and fix it there instead).
+> Definitely a question to ask.  Directly accessing spi_max_speed_hz may
+> be the fundamental issue as I don't think the driver is generally
+> expected to touch that in a dynamic fashion.  Should we be instead setting it
+> per transfer for the ones that need it controlled?
+> 
+> Jonathan
+> 
+
+The problem is that we are using regmap and that doesn't have
+a way to specify the max frequency for register reads that is
+different from other uses of the SPI bus (i.e. reading sample
+data). So we could fix it in the generic SPI regmap (not exactly
+trivial) or we could write our own regmap read/write callbacks
+in this driver that properly sets the per-transfer max speed.
+
 
