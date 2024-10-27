@@ -1,220 +1,190 @@
-Return-Path: <linux-kernel+bounces-383730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B24ED9B1F97
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 19:16:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 037EA9B1F9A
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 19:17:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5E0A1C2096E
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 18:16:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B60442816A8
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 18:17:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C392175D4F;
-	Sun, 27 Oct 2024 18:16:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36CCA175D4A;
+	Sun, 27 Oct 2024 18:17:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="soYkb2Hd"
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02olkn2078.outbound.protection.outlook.com [40.92.43.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DxANetuG"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 328271CABA;
-	Sun, 27 Oct 2024 18:16:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.43.78
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730052980; cv=fail; b=Ze+JXz+982SBLGeZG2xUuzDicPGrB6aPNYCVgWKDmQj04X/ojTx1Y4/DhtgCeheBU0M+A5wy903ix3jsGuRNvvNBTO9jbcZjwiBhmXqNJMQR5iqO9zwlnGlp8IcoqrNxTLVI8Spy6fUv0lzTFAKc32rj1wqWkYxbi7KYN2/LEiQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730052980; c=relaxed/simple;
-	bh=cACanpIN+OckKsCauX24L2azFqvQIrL2sp356WXoZd4=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=inKUpxJLPAEr33IE4ZX16QdToTegYqnlFu/0FWwSOGpA6ApXThI4ZwZXvkTvmFv3qLOt/JJcLJTyBZMwE8lCcJdct2XPkFno8FW2QJXTXi8xeNTl4VHFp/VANVhe661R2xcrrvd2snUaZCgmuG81RFQb+ddJJYwA4RraOBsxea4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=soYkb2Hd; arc=fail smtp.client-ip=40.92.43.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=dYEuwebuBKKtdHG3G/zKr6Y0qv7xsBg5eg1pA8Bbf35SUBJ2/mB6fs6K4+WZW6QgTqytFJ4RRQp3DPfFGVZJEZtsgpdCAMRonwROyemECHNiADPS+JUA8RzEGTNElf+qVtAG98tDjvGZ81k56DR2V95Kzmp3SZR+thUc5qs3G1hWL2ILWmS/KUxBSHJKMI8Ee6cWGzPr6osO9TmMzhTO9vqCUPLLuIHsnxmSkAuMX2KLgQ5XsTjUCutlNjYuqgvaD3kz9RUKZXaIYDqlHEkyQL6o0cKxPp/dqytJyp902Aso5+Isi2BaIbcF+JmzuAZzSRmeiSvwKDcaQyxjKXo34Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=UF1tZ3DDudgXDMkMtuZrdtfh9spaAuUXzeHLhpNY0rs=;
- b=paC1Sq+N78vdhvme2uGsgDqd7Z4r0NtNotAS0puTVdyIUWNqZlxb35fAVTOkOfTxX+sts0jm504SNLk8G0reh/LgVSAnC0d0y4D0VHsh9TAM3sh6XYqFiivnvtjPqtRqr3yCzwf8qG94bcfjSCgV530IRgYEWjaiQTaTjKyY/jC5pkI40omK3FrZw5VkMn7vZGyKP4+C4P/ryTH0C9W2rOT5BwNkxMtYu6WCM6BJiIIKqJU9VaymVvEJUAXzlr6sOI/w9NqHVoqT+ixS0nWYF57vQhUVy79mtzrv1TSBfjGDOeJQY+7cqiuTUfe5PdN9ckDQKAt0zwsylya10x2eaw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=UF1tZ3DDudgXDMkMtuZrdtfh9spaAuUXzeHLhpNY0rs=;
- b=soYkb2Hd3tXaQ+7RfGCCp66k4idBx4io3JUABiZ4/0wAEbIr1SujbMDw/M+wkKlpDllJ52Xfop8BexKz463TYJsvjfKWyKsEXDTRNC7678EPxo1NfLsiO9ab16m/KIe2elWvH6PO4+364V+apJhIZBC1xqQdVmGvoo3U2QFxTtSskOT2dInnvY4Q+Ug4LADFgqD8PjDJehZEWMXKkM05iA5jFPptxCDsCo0FJ31/vnkCUaOLITC3TvCCux+CRVmMBkkC+dghDj6Tn/H2+7fhev2Pf+58O85r6mYp/ME0Dp6wwTn33RY7exQHNh/Nv+INHWPWo0oWyJ5y2G3bGXSobQ==
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
- by PH0PR02MB8715.namprd02.prod.outlook.com (2603:10b6:510:da::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.25; Sun, 27 Oct
- 2024 18:16:15 +0000
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df%3]) with mapi id 15.20.8093.024; Sun, 27 Oct 2024
- 18:16:15 +0000
-From: Michael Kelley <mhklinux@outlook.com>
-To: "Guilherme G. Piccoli" <gpiccoli@igalia.com>, "kexec@lists.infradead.org"
-	<kexec@lists.infradead.org>, "linux-doc@vger.kernel.org"
-	<linux-doc@vger.kernel.org>
-CC: "bhe@redhat.com" <bhe@redhat.com>, "vgoyal@redhat.com"
-	<vgoyal@redhat.com>, "dyoung@redhat.com" <dyoung@redhat.com>,
-	"corbet@lwn.net" <corbet@lwn.net>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-debuggers@vger.kernel.org"
-	<linux-debuggers@vger.kernel.org>, "stephen.s.brennan@oracle.com"
-	<stephen.s.brennan@oracle.com>, "horms@kernel.org" <horms@kernel.org>,
-	"kernel@gpiccoli.net" <kernel@gpiccoli.net>, "kernel-dev@igalia.com"
-	<kernel-dev@igalia.com>
-Subject: RE: [PATCH V3] Documentation: Improve crash_kexec_post_notifiers
- description
-Thread-Topic: [PATCH V3] Documentation: Improve crash_kexec_post_notifiers
- description
-Thread-Index: AQHbJvnmbOpHVMum9U6tJODk/l66f7Ka59EA
-Date: Sun, 27 Oct 2024 18:16:15 +0000
-Message-ID:
- <SN6PR02MB41577D176FD038A3D630296DD4492@SN6PR02MB4157.namprd02.prod.outlook.com>
-References: <20241025162042.905104-1-gpiccoli@igalia.com>
-In-Reply-To: <20241025162042.905104-1-gpiccoli@igalia.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|PH0PR02MB8715:EE_
-x-ms-office365-filtering-correlation-id: b7a42753-cc69-48a7-d20a-08dcf6b3722f
-x-microsoft-antispam:
- BCL:0;ARA:14566002|8060799006|8062599003|19110799003|7072599006|461199028|8022599003|15080799006|3412199025|440099028|102099032;
-x-microsoft-antispam-message-info:
- G1PYCkGfOb/m5n8vfqyfqbtNvTBEZ/+hyoceaEPuYdnxnY8kojpLO5agMoZbh/LIZjlebQBwbVdgh6vDk4v98+D4dqm6f4OkD7kNFK9D9ySRyocIGasrTDyiF9aCehJDAQiBjOZ6cEGuOGK19itj6XRijYCy3AtJJ3N+7rTwA6Qh1/cCvamLA6zAlRL4Y3S6E9FucywERywFbawDkWxehhtlU14ioo8da++Ttbp2/sBDZ3cZu1FGcOdVnFNRHF/SkQciCV1YUpbA8BWeGV7A149FYw6wGNVZ9Bty506SvA2VoDCEurXjUExHXOOWGHJv0TOtuCyO7zJVDVARhoOyEa+6PyegPBlB8QcbrWKbD7IMZWnA3StU4gbGn36RiisMAsHMC6pHEEopzKd/y2092uWEiNQtPbOU+aOS772shwEt101/nOcODlD6GXtnvyaecM0Jt1GWNh3QZL+7FW9Wh5gDjyZQRxVAIDChfs+A6peWSs1KWaYIYl38VZtLnYZy5oOBaCih5u0e4QS6Son2Tfum+W0RVQd2FXdl2uOpvkd667JIorl7BlECzTUzk4JS3w0P7TsHCtgwURAwfc18YEk+ArSSHtZUTop0RxuxU1rYWdi2rLSAXW4xQ98i8yQG6OBiA9TpfeiAZ+Rs0vpE/EE3VCg3isB97wE+yQP52xapwhTFs7x6EnVZnOujtiLf4LUIYMNv6LbyKRguH94gmDb02ESqfGzQ9ts3mEOTDFH02ZXHg5mimBkwnaRxQuBwpK8fqwnNFPpKH5BBHD9+Dg==
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?/tU0FWjmima2RbYYVkqwaKN8CBQrp0NOeC9HSQ3SrcAVqN5o+93wk0vrpY9n?=
- =?us-ascii?Q?7H8qfUb1gkFO2Yqw0H9LrH12qmV2bBwSB6L6thzB3P4cqdH9qWoR+HQ/WRXv?=
- =?us-ascii?Q?3Vr3CIoaj9v4uL0zWp4fMt58LKKWz2ZinPx80pXd/bObgMfJNJHW8y5lINnQ?=
- =?us-ascii?Q?F5900APL2NDJxFrJIW2Mw25ZJE3x+xghdwbjkwjCW6Ow7U6Na22NdNdTsT13?=
- =?us-ascii?Q?Eg+pl9ZF8Te9YcVcdyhSm5zmjrqhBh/hqwQL2uvP6W1iYcmEZA6VMFsg/DRJ?=
- =?us-ascii?Q?HNN/TOetgg3xGaZloxSPVG/soVNbbfevOKar/AP3kNg/za0FwhFmVGHmKoDq?=
- =?us-ascii?Q?5nucpzNsSuKd+QoG/YvuO6lDMWSXbtYT7dZBPTA5sCfNwwLxXUlOk0auq9f9?=
- =?us-ascii?Q?qofLCNi4BneejcfIscqwo/kttGVNUQZA121luSHMufeDeJqtjxphc/X4rIUY?=
- =?us-ascii?Q?7xcaP1gFA+YOnp0PcMElL1SFT+MLcLzxegi7md/NIqLD2nx3Rbl0YF8wy+8P?=
- =?us-ascii?Q?+AZmXnwnqJ+zMRsE/OnLjjRQVyH8B6V3ekYgB/GeqL/86PKkMTMd4+udDOk7?=
- =?us-ascii?Q?zzcMIPKHpeH7OMCOQ6ZF1R47wPrvzCzdxnUn9HyJ/B4nqaW+KylsoHdGCX8c?=
- =?us-ascii?Q?n4V+OUSwCdkWWRxCRX2U0/5BzcxJAV0CzHRN/kP3lovfmwo08ZtPV5G5txUH?=
- =?us-ascii?Q?3MIXmRlaXTRFrHz3l6k5ypnNGajN0knC0h05tMjA243RUyu2+Hl/38uVxc3f?=
- =?us-ascii?Q?/OdQkaRrK5XN2FalgEwcKfe2dx+hTWMipuGgLveabgZLWAiSWx4bG+9Ll+jv?=
- =?us-ascii?Q?HfEs0pPzJrHWhKd623voinJmSaa7z/A+tSzwX8rS8zEpu+mIU0CI7pGz4Nr1?=
- =?us-ascii?Q?kldFTYY4jVPDW97QnDJjckkkajnRs7G52wrLApStjHpVk9842oAoqy46IsKf?=
- =?us-ascii?Q?FFzZaMk/qEZha5W5T8d130cPmeRZ+ItdZm/wFqv4cNDKEUp3o0e1+npMWRbr?=
- =?us-ascii?Q?J4VK+4dajQOCYcGqwnvw6OAkSYg9ENBudEpJx3TFjh+p+3XNtBCju+sV8ykj?=
- =?us-ascii?Q?9k/lpu0mkPazu+Gd+nlEk/gLgRTGo8r6tk/Hu0Ek5IvHtoPY2pBLyky5TA58?=
- =?us-ascii?Q?0mXC+hK+Riws6Pu/veM8woVURdJaTRbkvIzq8VtqL4y/LUOIhNNHEPdTi1KL?=
- =?us-ascii?Q?9qNipNSAzu6hobf0/H0pJ2LcbULAtmPb8S5d0P2E92Xnrim79Pd5qACFr68?=
- =?us-ascii?Q?=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 716B81CABA;
+	Sun, 27 Oct 2024 18:16:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730053019; cv=none; b=GiuXMOk9i3XUyCYBm9QreZu9ezQLRW2PD+ykMrq+sr4TFUvRlH9BssnBTmfgo32CeCd2qlUx15S/SRYNmw/hEyYo28Fh9bsKvnwX/lkRgTaWm+sBrvQBvV7idLjj4qhGINZSg5memnY5JQmB1BXhXg9F+rIcT/fkHbGWtazVAoY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730053019; c=relaxed/simple;
+	bh=k5DTPcbcVHWNuO7WqRv0e+WjFUH9BaOCY6fGphEXW4A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=B5g4IWX7Iq5dHuPBCJWbEIFF8OgBFUJKTXDUHNkLqh2sJeP3I4yqKmKPUrFC+T1zuf7B/Ce4tDDB/hsk0vTXog1kJJ2gplWmKKsCcOEVdBZ/QwzFW94aOXZX68aTY2fj/W02DPXdTdFjV1pgrNAebK/SZJqYd093YPOwJj8qYfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DxANetuG; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-207115e3056so29124685ad.2;
+        Sun, 27 Oct 2024 11:16:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730053017; x=1730657817; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=YGouoi2JyMMUSL4uwzkw3miQ+EC37EMawkaEdIcWtHo=;
+        b=DxANetuGf/ASBUzA5S/9lfQIxVGwFhSrkiVpGe9PyvLQ9p5CY9ZKfpgVMpsvN3PHlI
+         WoVUVpUJez1ZnZO8dVjvh4yWlNRZlK/VQorISzTwXKj1QIdupGWaYSsyHWXK8fqORhh6
+         e/Zf9XbNO265rMvmnX0r1Y6g/xLuyQ5KuXYViRe0uizl4W/Px4H73hB17jAEjTqr4qJz
+         3/zA3nUR0zsv/EAyonYQyNDhtow0C6DSdkxoXdy6DFbqIcjnAcHCBDYBv72axUx9G6o/
+         pKh1vFyUg1ib93bR9EFQ5uHUOrhbsRWxF9nwlk92jpUitj4+ne4LCFXchlDXnw07MXEG
+         8s/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730053017; x=1730657817;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YGouoi2JyMMUSL4uwzkw3miQ+EC37EMawkaEdIcWtHo=;
+        b=A/RwyyWEmBuIXiV7kHuDYco3lU61XDIO2RvuFva09u6vQBGGwBUHQd+qMfEasvkm1u
+         0vE4hwLHz9BqibtjngTpvN1PmX1GR9Rw//qatyvLHdzC/7O0A8Cthkna2gfjxBiSzPBr
+         wAsQz3NAbo6CQe3+SaaoSgMB+TJZSL27ubAueEnb1uJbudr16fpqeIudn1yiaeMX5dpR
+         sGPFHrrmydcfBeE/NolwffMq6xddnc7/D4kyAghGSwK/18IoTnE6whl2kpYg2r4cAsLe
+         G29uxRCuPmPq1j6N92Akvo0D8koKW8UnvNKv1TEM08YsHvBzlaXXk5uEvPHusRhuBIwX
+         kULg==
+X-Forwarded-Encrypted: i=1; AJvYcCUL/XgHO+/5bcce7F6FnUQbg1Rvp2PXH/7BNm+3mi0PYbP0/XfqJNuM3PfJhRFqQwcIOWYAxTlqdzNnnA==@vger.kernel.org, AJvYcCVoBEYQ1PAEK+UgG3hEHb+5PTtXk/KYhjJ6YkbCoKRuL8mkCNKLMRMkctocxkFF2pmiR0u6FxAZeNtCLBgT@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3AIC+Gwk09pUulYneUjaIADAgjtmaGbgN1mv7vevaT437wq8i
+	Ps5+a/kHNfeS8a+Kvg3LWB5x8jwWPO+jNYMVLBMc5+mjCHpPoEbF
+X-Google-Smtp-Source: AGHT+IFCnXZFuDM6dpCi4qofKY7ZFavu5Knt8J+0Rk9KRFWG6Rp2WDR/KA8YrVJCFSrb9lM9xV69ag==
+X-Received: by 2002:a17:902:fc4c:b0:202:26d:146c with SMTP id d9443c01a7336-210c68728f3mr82006185ad.5.1730053016600;
+        Sun, 27 Oct 2024 11:16:56 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bc082736sm37969735ad.288.2024.10.27.11.16.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 27 Oct 2024 11:16:55 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <24dc65c2-b6c9-4909-a784-fb81d9299f1c@roeck-us.net>
+Date: Sun, 27 Oct 2024 11:16:54 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: b7a42753-cc69-48a7-d20a-08dcf6b3722f
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Oct 2024 18:16:15.4950
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR02MB8715
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC] hwmon: pwm_enable clarification
+To: "Derek J. Clark" <derekjohn.clark@gmail.com>
+Cc: Jean Delvare <jdelvare@suse.com>, Jonathan Corbet <corbet@lwn.net>,
+ Cryolita PukNgae <cryolitia@gmail.com>, linux-hwmon@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241027174836.8588-1-derekjohn.clark@gmail.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ xsFNBE6H1WcBEACu6jIcw5kZ5dGeJ7E7B2uweQR/4FGxH10/H1O1+ApmcQ9i87XdZQiB9cpN
+ RYHA7RCEK2dh6dDccykQk3bC90xXMPg+O3R+C/SkwcnUak1UZaeK/SwQbq/t0tkMzYDRxfJ7
+ nyFiKxUehbNF3r9qlJgPqONwX5vJy4/GvDHdddSCxV41P/ejsZ8PykxyJs98UWhF54tGRWFl
+ 7i1xvaDB9lN5WTLRKSO7wICuLiSz5WZHXMkyF4d+/O5ll7yz/o/JxK5vO/sduYDIlFTvBZDh
+ gzaEtNf5tQjsjG4io8E0Yq0ViobLkS2RTNZT8ICq/Jmvl0SpbHRvYwa2DhNsK0YjHFQBB0FX
+ IdhdUEzNefcNcYvqigJpdICoP2e4yJSyflHFO4dr0OrdnGLe1Zi/8Xo/2+M1dSSEt196rXaC
+ kwu2KgIgmkRBb3cp2vIBBIIowU8W3qC1+w+RdMUrZxKGWJ3juwcgveJlzMpMZNyM1jobSXZ0
+ VHGMNJ3MwXlrEFPXaYJgibcg6brM6wGfX/LBvc/haWw4yO24lT5eitm4UBdIy9pKkKmHHh7s
+ jfZJkB5fWKVdoCv/omy6UyH6ykLOPFugl+hVL2Prf8xrXuZe1CMS7ID9Lc8FaL1ROIN/W8Vk
+ BIsJMaWOhks//7d92Uf3EArDlDShwR2+D+AMon8NULuLBHiEUQARAQABzTJHdWVudGVyIFJv
+ ZWNrIChMaW51eCBhY2NvdW50KSA8bGludXhAcm9lY2stdXMubmV0PsLBgQQTAQIAKwIbAwYL
+ CQgHAwIGFQgCCQoLBBYCAwECHgECF4ACGQEFAlVcphcFCRmg06EACgkQyx8mb86fmYFg0RAA
+ nzXJzuPkLJaOmSIzPAqqnutACchT/meCOgMEpS5oLf6xn5ySZkl23OxuhpMZTVX+49c9pvBx
+ hpvl5bCWFu5qC1jC2eWRYU+aZZE4sxMaAGeWenQJsiG9lP8wkfCJP3ockNu0ZXXAXwIbY1O1
+ c+l11zQkZw89zNgWgKobKzrDMBFOYtAh0pAInZ9TSn7oA4Ctejouo5wUugmk8MrDtUVXmEA9
+ 7f9fgKYSwl/H7dfKKsS1bDOpyJlqhEAH94BHJdK/b1tzwJCFAXFhMlmlbYEk8kWjcxQgDWMu
+ GAthQzSuAyhqyZwFcOlMCNbAcTSQawSo3B9yM9mHJne5RrAbVz4TWLnEaX8gA5xK3uCNCeyI
+ sqYuzA4OzcMwnnTASvzsGZoYHTFP3DQwf2nzxD6yBGCfwNGIYfS0i8YN8XcBgEcDFMWpOQhT
+ Pu3HeztMnF3HXrc0t7e5rDW9zCh3k2PA6D2NV4fews9KDFhLlTfCVzf0PS1dRVVWM+4jVl6l
+ HRIAgWp+2/f8dx5vPc4Ycp4IsZN0l1h9uT7qm1KTwz+sSl1zOqKD/BpfGNZfLRRxrXthvvY8
+ BltcuZ4+PGFTcRkMytUbMDFMF9Cjd2W9dXD35PEtvj8wnEyzIos8bbgtLrGTv/SYhmPpahJA
+ l8hPhYvmAvpOmusUUyB30StsHIU2LLccUPPOwU0ETofVZwEQALlLbQeBDTDbwQYrj0gbx3bq
+ 7kpKABxN2MqeuqGr02DpS9883d/t7ontxasXoEz2GTioevvRmllJlPQERVxM8gQoNg22twF7
+ pB/zsrIjxkE9heE4wYfN1AyzT+AxgYN6f8hVQ7Nrc9XgZZe+8IkuW/Nf64KzNJXnSH4u6nJM
+ J2+Dt274YoFcXR1nG76Q259mKwzbCukKbd6piL+VsT/qBrLhZe9Ivbjq5WMdkQKnP7gYKCAi
+ pNVJC4enWfivZsYupMd9qn7Uv/oCZDYoBTdMSBUblaLMwlcjnPpOYK5rfHvC4opxl+P/Vzyz
+ 6WC2TLkPtKvYvXmdsI6rnEI4Uucg0Au/Ulg7aqqKhzGPIbVaL+U0Wk82nz6hz+WP2ggTrY1w
+ ZlPlRt8WM9w6WfLf2j+PuGklj37m+KvaOEfLsF1v464dSpy1tQVHhhp8LFTxh/6RWkRIR2uF
+ I4v3Xu/k5D0LhaZHpQ4C+xKsQxpTGuYh2tnRaRL14YMW1dlI3HfeB2gj7Yc8XdHh9vkpPyuT
+ nY/ZsFbnvBtiw7GchKKri2gDhRb2QNNDyBnQn5mRFw7CyuFclAksOdV/sdpQnYlYcRQWOUGY
+ HhQ5eqTRZjm9z+qQe/T0HQpmiPTqQcIaG/edgKVTUjITfA7AJMKLQHgp04Vylb+G6jocnQQX
+ JqvvP09whbqrABEBAAHCwWUEGAECAA8CGwwFAlVcpi8FCRmg08MACgkQyx8mb86fmYHNRQ/+
+ J0OZsBYP4leJvQF8lx9zif+v4ZY/6C9tTcUv/KNAE5leyrD4IKbnV4PnbrVhjq861it/zRQW
+ cFpWQszZyWRwNPWUUz7ejmm9lAwPbr8xWT4qMSA43VKQ7ZCeTQJ4TC8kjqtcbw41SjkjrcTG
+ wF52zFO4bOWyovVAPncvV9eGA/vtnd3xEZXQiSt91kBSqK28yjxAqK/c3G6i7IX2rg6pzgqh
+ hiH3/1qM2M/LSuqAv0Rwrt/k+pZXE+B4Ud42hwmMr0TfhNxG+X7YKvjKC+SjPjqp0CaztQ0H
+ nsDLSLElVROxCd9m8CAUuHplgmR3seYCOrT4jriMFBtKNPtj2EE4DNV4s7k0Zy+6iRQ8G8ng
+ QjsSqYJx8iAR8JRB7Gm2rQOMv8lSRdjva++GT0VLXtHULdlzg8VjDnFZ3lfz5PWEOeIMk7Rj
+ trjv82EZtrhLuLjHRCaG50OOm0hwPSk1J64R8O3HjSLdertmw7eyAYOo4RuWJguYMg5DRnBk
+ WkRwrSuCn7UG+qVWZeKEsFKFOkynOs3pVbcbq1pxbhk3TRWCGRU5JolI4ohy/7JV1TVbjiDI
+ HP/aVnm6NC8of26P40Pg8EdAhajZnHHjA7FrJXsy3cyIGqvg9os4rNkUWmrCfLLsZDHD8FnU
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <20241027174836.8588-1-derekjohn.clark@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Guilherme G. Piccoli <gpiccoli@igalia.com> Sent: Friday, October 25, =
-2024 9:18 AM
->=20
-> The crash_kexec_post_notifiers description could be improved a bit,
-> by clarifying its upsides (yes, there are some!) and be more descriptive
-> about the downsides, specially mentioning code that enables the option
-> unconditionally, like Hyper-V[0], PowerPC (fadump)[1] and more
-> recently, AMD SEV[2].
->=20
-> [0] Commit a11589563e96 ("x86/Hyper-V: Report crash register data or kmsg=
- before
-> running crash kernel").
-> [1] Commit 06e629c25daa ("powerpc/fadump: Fix inaccurate CPU state info i=
-n vmcore
-> generated with panic").
-> [2] Commit 8ef979584ea8 ("crypto: ccp: Add panic notifier for SEV/SNP fir=
-mware
-> shutdown on kdump").
->=20
-> Reviewed-by: Stephen Brennan <stephen.s.brennan@oracle.com>
-> Signed-off-by: Guilherme G. Piccoli <gpiccoli@igalia.com>
-> ---
->=20
-> V3: Improved wording and commit description, detailing more about the add=
-ition
-> of code that enables crash_kexec_post_notifiers unconditionally.
->=20
-> Thanks Baoquan and Simon for the suggestions!
->=20
->=20
->  Documentation/admin-guide/kernel-parameters.txt | 16 ++++++++++------
->  1 file changed, 10 insertions(+), 6 deletions(-)
->=20
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt
-> b/Documentation/admin-guide/kernel-parameters.txt
-> index 3978fb704c53..2a7a523bb90b 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -918,12 +918,16 @@
->  			the parameter has no effect.
->=20
->  	crash_kexec_post_notifiers
-> -			Run kdump after running panic-notifiers and dumping
-> -			kmsg. This only for the users who doubt kdump always
-> -			succeeds in any situation.
-> -			Note that this also increases risks of kdump failure,
-> -			because some panic notifiers can make the crashed
-> -			kernel more unstable.
-> +			Only jump to kdump kernel after running the panic
-> +			notifiers and dumping kmsg. This option increases
-> +			the risks of a kdump failure, since some panic
-> +			notifiers can make the crashed kernel more unstable.
-> +			In configurations where kdump may not be reliable,
-> +			running the panic notifiers could allow collecting
-> +			more data on dmesg, like stack traces from other CPUS
-> +			or extra data dumped by panic_print. Note that some
-> +			configurations enable this option unconditionally,
-> +			like Hyper-V, PowerPC (fadump) and AMD SEV.
+On 10/27/24 10:48, Derek J. Clark wrote:
+> Greetings all,
+> 
+> I am working with Cryolita to fix up the GPD driver she submitted recently:
+> https://lore.kernel.org/all/20240718-gpd_fan-v4-0-116e5431a9fe@gmail.com/
+> 
+> We are currently having a discussion about the meaning of this part of the
+> documentation and are seeking some guidance from upstream.
+>  >> pwm[1-*]_enable
+>>      	Fan speed control method:
+>>      	0: no fan speed control (i.e. fan at full speed)
+>>      	1: manual fan speed control enabled (using pwm[1-*])
+>>      	2+: automatic fan speed control enabled
+>>      	Check individual chip documentation files for automatic mode
+>>      	details.
+>>      	RW
+> 
+> In oxp-sensors we took 0 to mean "no kernel control" so a setting of 0 is
+> technically "automatic" but fully controlled by the hardware with no
+> interaction from the driver. In her original driver draft she had taken this
 
-This last line should be more specific and use "AMD SEV-SNP" instead of
-just "AMD SEV". Commit 8ef979584ea8 that you mentioned above is
-specific to SEV-SNP.
+That is wrong. It should be (or have been) 2 or higher. Ah yes, I can see that
+the code sets fan control to automatic when oxp_pwm_disable() is called.
+Again, that is wrong. Congratulations to the submitters, you sneaked that by
+my review. That doesn't make it better. It is still wrong, and I call it "sneaky"
+because the function is not called "oxp_pwm_automatic()" or similar, it is
+called "oxp_pwm_disable(). Setting fan control to automatic does not disable
+fan control.
 
-There have been three versions of SEV functionality in AMD processors:
-* SEV:  the original guest VM encryption
-* SEV-ES:  SEV enhanced to cover register state as well
-* SEV-SNP:  SEV-ES plus Secure Nested Paging, which provides
-functionality to address the Confidential Computing VM threat model
-described in the Linux CoCo VM documentation. SEV-SNP processors are
-AMD's product that is widely deployed for CoCo VMs in large public clouds.
+My bad, I should have paid closer attention, and/or maybe not have trusted
+the submitters as much as I did. I guess I'll have to pay closer attention
+in the future.
 
-Just using "SEV" is somewhat ambiguous because it's not clear whether
-it refers to the family of three SEV levels, or just the original guest VM
-encryption. Since this case is clearly SEV-SNP only, being specific removes
-the ambiguity.
+> literally to have the driver set the fan speed to 100% on this setting rather
+> then give back control to the hardware. My question is simply what is the
+> correct interpretation here? Ideally I would like to see this interface match
 
-Michael
+It seems to me that the above text is well defined.
 
+> as existing userspace software is expecting 0 as hardware controlled and 1 as
+> manually controlled, but we also want to ensure this is correct before we
+> submit a v5.
+> 
 
+Any such userspace expectations are simply wrong. The ABI definition is above
+and, again, it is well defined.
 
->=20
->  	crashkernel=3Dsize[KMG][@offset[KMG]]
->  			[KNL,EARLY] Using kexec, Linux can switch to a 'crash kernel'
-> --
-> 2.46.2
->=20
+	0: no fan speed control (i.e. fan at full speed)
+
+I don't really see any ambiguity in this text. This isn't about kernel control,
+it is an absolute statement. There is no "kernel" in "no fan speed control".
+"fan at full speed" should make this even more obvious.
+
+Guenter
 
 
