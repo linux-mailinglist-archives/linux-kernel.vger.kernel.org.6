@@ -1,261 +1,172 @@
-Return-Path: <linux-kernel+bounces-383492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8FFF9B1C6D
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 09:09:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 488759B1C77
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 09:15:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2475DB211DE
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 08:08:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C31A41F21976
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 08:15:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 067DE42052;
-	Sun, 27 Oct 2024 08:08:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B92BE5674E;
+	Sun, 27 Oct 2024 08:14:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="pLmgTPBC"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2078.outbound.protection.outlook.com [40.107.220.78])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MZrpP4MR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E098AF4FA
-	for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 08:08:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.78
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730016531; cv=fail; b=QKvQph+ubbntsfVRnAJTYzIOw6O3wGNHTUObPjwvmpa3JBzhTWPN6gAX3Vd+GSdPUwlcYYt0LaBUg8862PBLtF0IVQ1vqN7vZkIWmSDQDOGZ4VG9D7lSGoO05prlSjJlG4A52tyFrCYvAOSdHhOXau4ev8/JYl6GbJOCetS0hlE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730016531; c=relaxed/simple;
-	bh=hqguJe/KMGTHidklB5UTn4eSyGf5nsBpYrF3gTR/XAU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=XraTT48bEWXR1+FcVnQUnmmy7ekj2zksXbQ9LIRYAlAddFUdBJq1HQiJSC+pPk66P+kmPX58fRtA6p3eVx1/xn1C66EruZ7vAMrP/HkvKmGcyOn1DysqqbELrEVrTA3uRPyPqDGYaRwpmoh5tE9bYYrcf31a3RkBw3zLQjunGpM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=pLmgTPBC; arc=fail smtp.client-ip=40.107.220.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=l1vYXV2Ko4nK6EnXUQ4FOp3hgB0BF9hTv63vfptpZtglfacZFGF44DKZRQSRtWuk85M99Ks9qR1071bL7BFu7kmvk7p9UDFbpkZ1LK8SLnWA+rbl4lsEz1hKTAdK1ozMv8Vy98anKucYf8NXyRmJ+5SF9nkN3HngzFskE6h9W2pE1TZ+6GQ576F3FNh/D/1kEKV90X687xNWC9icB+27t7cQLWwG6KaDPfeoQ0sHdu7KJyF5mNf3jtweR5WZxPyCyAzr/vucRte08X0hnvXF1ptIOYQVbxcWOsIFazWk3MQx2kPnWhWZFC4Wpq7IRCyhjZuZoOl/4aZ61Mnl5KGB9A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XGMq4N0x2sU6oWf4Vp0VtG9Yn9nLmLdTrETyTd4DRHg=;
- b=TLYZoRyYApChkNdXuLU/9OgF639eZ7o1YyBPHKW8+dlnA/OlCDCkSb8PFzecpSgiU/id1/lI6tcgX82v2NP9RJtm9nAhSgclT9LGk0fKNhKknR6pgBx8iK8E/jlinkIiDt4wbAwm+Au/C/L8eW9SE9n8ggw6kH8/V/Syz5HTyp3XWP3aIOBTAXF4VjSbZaoHsRE3mps/PQFox48zLJq66376Ib0goRsttUf8YcIu/POrCI8TVN1rvs+45gSXs6CNbME/rMCK15Z1YYY3tg2lhbGsAjGZ7M0SczxO+AESM4f2xYtzgSw7mqkYG+3EBSVK/qaH/G4MH8LJBh8cXfsANw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XGMq4N0x2sU6oWf4Vp0VtG9Yn9nLmLdTrETyTd4DRHg=;
- b=pLmgTPBCoXKGyI2S+GU/xPn0YtYq8kXAkq39JYEvqCQJjRQbsVDAZJcgfiIyweMIr6YPat/8AVDtEsHQOmKehFsbf1KJWHDYfRlhJCBDoTZWaRFnOVsq67uz8l/N3cttOzntwvbIq2aBJEtpU49esqbnpdqBZVEP/uvvMiUxVV91YHz3fCuBF8VPq3hUze4wvj8tNuyoatF2kICDjhmqD2OZs7ATsK9MH0/73CwRD3icT+7+FjthksqSpvo2BDuam9CQQeLhdbmQB5ouf0jMLq9y2wYPmeFR1lJJ6GPik4W4a/U0ewx4PCSJV3wouYMUQ0JfscPHVGd8Zev8hSIzGA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CY5PR12MB6405.namprd12.prod.outlook.com (2603:10b6:930:3e::17)
- by SA1PR12MB7412.namprd12.prod.outlook.com (2603:10b6:806:2b2::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.23; Sun, 27 Oct
- 2024 08:08:45 +0000
-Received: from CY5PR12MB6405.namprd12.prod.outlook.com
- ([fe80::2119:c96c:b455:53b5]) by CY5PR12MB6405.namprd12.prod.outlook.com
- ([fe80::2119:c96c:b455:53b5%6]) with mapi id 15.20.8093.024; Sun, 27 Oct 2024
- 08:08:45 +0000
-Date: Sun, 27 Oct 2024 09:08:40 +0100
-From: Andrea Righi <arighi@nvidia.com>
-To: Tejun Heo <tj@kernel.org>
-Cc: David Vernet <void@manifault.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] sched_ext: Introduce NUMA awareness to the default
- idle selection policy
-Message-ID: <Zx31CNqrI4TWgSDI@gpd3>
-References: <20241025162535.88059-1-arighi@nvidia.com>
- <Zxv5V5mwDAlGzpBb@slm.duckdns.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zxv5V5mwDAlGzpBb@slm.duckdns.org>
-X-ClientProxiedBy: FR4P281CA0201.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:e5::17) To CY5PR12MB6405.namprd12.prod.outlook.com
- (2603:10b6:930:3e::17)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D835D33981;
+	Sun, 27 Oct 2024 08:14:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730016896; cv=none; b=s3Jli1cuGpwfKFJ7tLwzipGdI4uKTUqIuuhsFLT//ONXA+5s4hgKVfMOpjeNmFNkpxDeo7hnTPgGKMErMQ77HsnKkBCuXOljP3ODOPu7aHpbYyeikQA0BEJgwcI0gSWgp/8cct/JZSVjNSg7tXMOJCbSC4QHQHziSV18s5xIXFw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730016896; c=relaxed/simple;
+	bh=qSAev/CmbF0LEyj0tVSWN8qmCbJsiIZdku/WjaNmB8Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FVJsB/R0lXJ/rP+V8U5WfQNKsqCOllOWF8j83kghw5XyHnXNFVhL7+Li6d6aCkxXXExhd+wnePAP4nRMGfTq8kbY8fRIY8PZhfITwssGuprO6RLUr8B/5wUk2TJemr2+Q/sX8iNTvwSR7X3euH/NKT4pbwH6wQaXIy+BPBOqRIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MZrpP4MR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A590C4AF09;
+	Sun, 27 Oct 2024 08:14:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730016895;
+	bh=qSAev/CmbF0LEyj0tVSWN8qmCbJsiIZdku/WjaNmB8Q=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=MZrpP4MR25ZJQaUjkXbWvdc5yqspOvJPpoP1laWGfu5qW0Bo5w7+sOKkNN0wFTFc6
+	 PKiAnBHnQLbmymCc6Ix2g32z3lrMLVbYBDbKHRK7wTcnhc0s7TmExnWPBavGFZA2CU
+	 ZxRZ2yQKLbZi954nmodxa3gz2r2765XCY13DTcc/5moZEI1Y5VMl2qOE1/CaCzYfBZ
+	 d0xolS/t0CNAWzjdhJc8/vC18yj/tzng9oiNhW1i1/DM5wimZSMibZgTJJr4RQf+Mz
+	 txNna8i6XM73z7TsjE2DyvvJtyQZu6VY2mWd8g1ZuHlsQxirw+6OUnQuLNMsd9yjTi
+	 Vo6meRtf3emmg==
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2fb51f39394so32281361fa.2;
+        Sun, 27 Oct 2024 01:14:55 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVKrY2JnajbhOgfOTMZwNUP2moJ7FsjU+bfBh6b0OV9xj94j+nmtVXGSjcIF8vole+YyKvU6Yg5DnY3FQ==@vger.kernel.org, AJvYcCVPBEe9i9XKzmuSrtaR6OrQ0VjNCqW21nuBlS16lF+gzxkbE4Q3655Db3xEslR129H1VPFmVHqauUk5uQ==@vger.kernel.org, AJvYcCViAwilGNYkXVO56bM2EXQJt2+46Y2Z4D9VfazS8au94efnqLeiQGg/Zg1h8U0YoePAz8YbMkZe9g4hyw==@vger.kernel.org, AJvYcCVozSjDwouWcSNxgyhoE/AUtPLyWRqbB5QzM5OninXfjUTFHneD8qfima4JlHXSpf+GMmjSKJoBcRCSnw==@vger.kernel.org, AJvYcCX63oaeAyaoD0MXtEg14BRnJ2OFn7PPEAQo7XnmkN2iSPMmiLL6xzB9KHTAUzWTgbkma1oSOdAM89Chh7pn@vger.kernel.org, AJvYcCXWK1O2eWjQdHIRhozPDAlBWa4thfStccxjlAyZUMQu4v6+zggzQHCtvRVyW2V/XlHNvW62iIdsGtiXpQ==@vger.kernel.org, AJvYcCXtLXZbnmPlCXYGxG5qGr4pM688XPxX2q/dZCVUKcYvtHI27jJMmhmfPEL0jURr7xZAOy4TqLL2KInb@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIsFcfOLDY3MYrxjckme8sxNqsiSEr+M3P0WTwTkpl93ensdGn
+	Wmybbu98cGeD0g7iDIg8nEYSghWLj4T0ORjZuKGjYEybHqKR8PQfgQaBezv356z8R9yXCVrTy2w
+	BXRfMyEPG380XUvoCe9fdvGA0p+U=
+X-Google-Smtp-Source: AGHT+IG7GbUAQTdcFb1Y8OjbqKjN3ralEO/b0dHGyoLDxr37yV7KwVs1ozIjCmGYYGFlqbwOihVt3NM/p1aqclI347g=
+X-Received: by 2002:a2e:be9a:0:b0:2fb:58c0:de5b with SMTP id
+ 38308e7fff4ca-2fcbdfb098emr13787941fa.11.1730016893642; Sun, 27 Oct 2024
+ 01:14:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY5PR12MB6405:EE_|SA1PR12MB7412:EE_
-X-MS-Office365-Filtering-Correlation-Id: 37cf9b70-c955-4c1a-e069-08dcf65e9402
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?9RJdVfQSQS3PhNkp7qwCrsIVHaOuOaQ7OQsX/3W2PRRYhNwU2O8tchbHPQhO?=
- =?us-ascii?Q?ZF1M6uKwBKb+Na9fq80fco66uRE2FdOG1DJj8qpC/28mTaniEdpKEedEu8vu?=
- =?us-ascii?Q?0hpXDUKZw166OJF3sNveLhChBWJpcdN+AMzUmy8x1U1OeJNcny/YIcgTyefx?=
- =?us-ascii?Q?kyvu1py2SyCYwNmXQpuXW6edxUkVCDivfI6J//Od5gqIMA8lw4h/zo2x5Xex?=
- =?us-ascii?Q?A/JwFX451DibNR4vNJ4bZRz8eUd18p5pYMDPJTgsrCc55/H+/dS3wNfvz5cK?=
- =?us-ascii?Q?pA6HQWj9Ve7wvPwLdIP5jcmK9pPQKWZnXOhULM+5ZxW0m6EH5CbbMAREOvTg?=
- =?us-ascii?Q?g9fz9lhsFVeranelIjZ5g+pXb/UOZ5KKEuMwK20AXBEPiKO61SipkfH2cRQv?=
- =?us-ascii?Q?QM/C04dpdFRA+BXxObH9eLpntGHdoV304xbQ9NZGsHQOgvwNSWGCUGrkJLa8?=
- =?us-ascii?Q?3gazS+qIpeCHIu214U0BsckX9VLK5SBgLrOcIy7sq7MGfmZWGcOfdMpRWTC7?=
- =?us-ascii?Q?jrN31ofBYD4259y8O0supLnWUoQSTSnOZbkUgF1obFq/SpBNDNQ+KBYf6lIs?=
- =?us-ascii?Q?OQ4gWAYatiNeM5q9g579uB4nqwXD2eU07fcBNIf4D1VnvNyByqUReV+VDoxb?=
- =?us-ascii?Q?/zln0DYbOqX0QnkSBv7h1Lpbyz/v5htkD7x4whs3v4CiV7fgqrkMM8fH9c2l?=
- =?us-ascii?Q?3zCIxQrDSMu7hF1CvLTZZVDQQEIoPNE1ERmudrt8WfLZ1J1W7X1pX07piBnK?=
- =?us-ascii?Q?69pcgcOIL9wQxmB0MPr0+EJaJZZEBal9UQNkdZ5LAQRC/56+aeFRnc26m09a?=
- =?us-ascii?Q?p+kkC40FwVnBovB5G6hnNhicT2WUMQepd+uqqvzcPTu2fR4NXgZWZafwZes/?=
- =?us-ascii?Q?gLoMUhrtnFefh9wA13EQ6Mc3CgAZTDy9qoQFhBOxs3IFXF12ekDB3MmplTyM?=
- =?us-ascii?Q?6sVSJTqzAcvihg7V62Vv4Q2yNDY55ptP2QHipNzoo18iag9VjhXkMpHivxGg?=
- =?us-ascii?Q?907CMZtZABiS0XgAMxhhFnhJaPshN30ekSFvRJVUympW6Ra0K7zj7B2LRXxA?=
- =?us-ascii?Q?ufmvK77PW1bSEXQh67+lImWAKDaTxCfBw0/f/IobF54n23X5pcniw6vA9Ngm?=
- =?us-ascii?Q?MRPdNXjxPnDwKJFpoX/xFzXKWgYeG4GYnsUICIl5JlBsKHQjaU58h1ownL0K?=
- =?us-ascii?Q?Jz5pROhcPQZL7YvWqs5hfk/jaoY2jnMqvZ7gyR3DMbo6JU8SXLp04A61KFF2?=
- =?us-ascii?Q?aZ4GM3bHoT5ltQIlQVDeX+kEOkOGQTRQopFmEdxMAKtBzwkZtHa6WSYGNww1?=
- =?us-ascii?Q?rAnn/gh9q8OTiVpf3KKXs3Av?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR12MB6405.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?ZAG3HJW9fCYEMPgXc8AiqS9y/Lz3h20aCfL5tWogqGYrg19xwQn9gMeCVzk/?=
- =?us-ascii?Q?7paGx8Y8A5wNi01J4RtiQciL/oFGGK81LPSv//dBfBHMJwPlHFLmGHR+1Y9t?=
- =?us-ascii?Q?ua8oG14BVInI5SN0Vj83V9fGaWzwJ83wW/M1hO8CvWZ1QxyD29LoKlc1pdQE?=
- =?us-ascii?Q?QvbL8SqemW7muyG0X7lh9XjT78x6Uvb/lw2GqeQCTvUwl35rBir8NhlrtYFk?=
- =?us-ascii?Q?sPGn5dWes1J5EoLaw48g/0YcunokUd67Uc2MnjB+ggHFspKXUMoJmZcDXotn?=
- =?us-ascii?Q?YKoXiT4v2xAeqSh3x7dgyD+CU0OFnYR65g+9EaL0ALdeOgSuxedu5GR8J5V2?=
- =?us-ascii?Q?dve5bI2aZRnnkJvl7shiGLKcmniGpsBZjBeiLOm0Yoct3HuVR7+moxTlEVf/?=
- =?us-ascii?Q?fyyoZl6TxN4h41L4XLs+fstBKZ4O4c3No/nSrt5hMcM+grFeyhmMwoy/KxHq?=
- =?us-ascii?Q?D5cJNGe/r27OotON966yefvl05hZYqZPTbZIkyQOWKB8VncNPlUWuMsoP6WA?=
- =?us-ascii?Q?uBn2/cnjOcArLsB+HpowG/4mwnAvnN79KHQkmBrWW22DsqzwNx6oDpl33sh/?=
- =?us-ascii?Q?vJQ+HUAqr4xXP2CiCpWeVP6deEV8BPih1bcyGxTx5zvKFuB73/VIh+xip5K7?=
- =?us-ascii?Q?CvHZBkUie/AL+MmTcUhmKJXJJ36DN2KhpihNwzWi31MhA+zdHXn3hrokQ66b?=
- =?us-ascii?Q?0bEigm2wmm7GD4sga54aJt6srp3fRF8tcQKhwG8u2HzaU4Dbtpzy5Wc4yHFU?=
- =?us-ascii?Q?na9kkW+wWiHjnh2FgqoICmu046vjm/GQqa7veJmPAgd7EC248wZepdQ95t9h?=
- =?us-ascii?Q?fF0dAi8M82Z5ajvG5AdTUsnL12EOMh8+Oh0nXSuluz/OxKa7BPuS136Rmj1v?=
- =?us-ascii?Q?K1S6czPeBBM5BsoxJacRc9ZPi/FtWA5OKtcvuAMFUkZhaUxIAoG42k80kVbc?=
- =?us-ascii?Q?lGwaa0oueXPTZZfP2h+B8WJNKO0SGytq6DqJLNZQ8Ad4BQUg6NHSRZrCcUSV?=
- =?us-ascii?Q?Olh2NKs5e1h23ubNpFynDfavya9HozuxrykTYAyHeS06Lfz+0ERLJyBrW+ka?=
- =?us-ascii?Q?kDB159gHsyMbC6TOIRRKnF6nk783FNBlCZGcrvlU+QZozV4QUa72izXY9ig0?=
- =?us-ascii?Q?2N8QlF4Zi0Bvem6HM6t+++/pPFv3KsWYRzGiw+Ovezkx9/oii1akVL7hfhG8?=
- =?us-ascii?Q?7xaJ7GGQ+ITfsi1FUVCXeBD21oAjVm4C2e3z1rRNEhWn8k6KcCRq+VezYamW?=
- =?us-ascii?Q?eSotQ/QjNWtiPQYqdY6zHyuY4L3IM64GmmwIqVxfC2z71sT4xhorSRbbFP4F?=
- =?us-ascii?Q?bjI2fCxgnWjI0bXi4dZ0NMyIYj1SgKVI+hz07QjIu7ilAvT9vNW811ZAK/ql?=
- =?us-ascii?Q?M4WCnGdeeC4Ul1YRg2MDt6R2HN/XqInV46i07DYkrjsdjZVex4cYBb3Ny4+u?=
- =?us-ascii?Q?JfnxQRiWv1krZyyLnGfxvxJk0/d373fx1LbhTKlRO1ogwf7G8kQgkL16ir62?=
- =?us-ascii?Q?1PdEiTohJyKxFKL/JitwcmhI8MFpD/X03dvQUmv71gMBzQdU5DZI0uwTZZoJ?=
- =?us-ascii?Q?XUVfV65TRtYUdJG1armr9Mm1p2XHY9T8wsHe4KY+?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 37cf9b70-c955-4c1a-e069-08dcf65e9402
-X-MS-Exchange-CrossTenant-AuthSource: CY5PR12MB6405.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Oct 2024 08:08:45.2770
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: CiU0ls6iYYUWgMauoN0oBTbUNkRShhKuVUydbxQ+mfpFOJbZUZSFDOBk5hx+1cVq3mtU1ZX96H74Mb7To1mX0w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB7412
+References: <20241025191454.72616-1-ebiggers@kernel.org> <20241025191454.72616-5-ebiggers@kernel.org>
+ <CAMj1kXEsq7iJThqZ7WA00ei4m59vpC23wPM+Mrj9W+HXfk-aSg@mail.gmail.com>
+ <20241025220239.GB2637569@google.com> <20241026040958.GA34351@sol.localdomain>
+In-Reply-To: <20241026040958.GA34351@sol.localdomain>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Sun, 27 Oct 2024 09:14:41 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXGGDNmPSH4nZH4r6b4UyrPEYBbTZibjXkmxU9c=16_hhw@mail.gmail.com>
+Message-ID: <CAMj1kXGGDNmPSH4nZH4r6b4UyrPEYBbTZibjXkmxU9c=16_hhw@mail.gmail.com>
+Subject: Re: [PATCH v2 04/18] crypto: crc32 - don't unnecessarily register
+ arch algorithms
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org, 
+	linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, 
+	linux-mips@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org, 
+	linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev, 
+	sparclinux@vger.kernel.org, x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Oct 25, 2024 at 10:02:31AM -1000, Tejun Heo wrote:
-> External email: Use caution opening links or attachments
-> 
-> 
-> Hello,
-> 
-> On Fri, Oct 25, 2024 at 06:25:35PM +0200, Andrea Righi wrote:
-> ...
-> > +static DEFINE_STATIC_KEY_FALSE(scx_topology_llc);
-> > +static DEFINE_STATIC_KEY_FALSE(scx_topology_numa);
-> 
-> Maybe name them sth like scx_selcpu_topo_llc given that this is only used by
-> selcpu?
+On Sat, 26 Oct 2024 at 06:10, Eric Biggers <ebiggers@kernel.org> wrote:
+>
+> On Fri, Oct 25, 2024 at 10:02:39PM +0000, Eric Biggers wrote:
+> > On Fri, Oct 25, 2024 at 10:47:15PM +0200, Ard Biesheuvel wrote:
+> > > On Fri, 25 Oct 2024 at 21:15, Eric Biggers <ebiggers@kernel.org> wrote:
+> > > >
+> > > > From: Eric Biggers <ebiggers@google.com>
+> > > >
+> > > > Instead of registering the crc32-$arch and crc32c-$arch algorithms if
+> > > > the arch-specific code was built, only register them when that code was
+> > > > built *and* is not falling back to the base implementation at runtime.
+> > > >
+> > > > This avoids confusing users like btrfs which checks the shash driver
+> > > > name to determine whether it is crc32c-generic.
+> > > >
+> > >
+> > > I think we agree that 'generic' specifically means a C implementation
+> > > that is identical across all architectures, which is why I updated my
+> > > patch to export -arch instead of wrapping the C code in yet another
+> > > driver just for the fuzzing tests.
+> > >
+> > > So why is this a problem? If no optimizations are available at
+> > > runtime, crc32-arch and crc32-generic are interchangeable, and so it
+> > > shouldn't matter whether you use one or the other.
+> > >
+> > > You can infer from the driver name whether the C code is being used,
+> > > not whether or not the implementation is 'fast', and the btrfs hack is
+> > > already broken on arm64.
+> > >
+> > > > (It would also make sense to change btrfs to test the crc32_optimization
+> > > > flags itself, so that it doesn't have to use the weird hack of parsing
+> > > > the driver name.  This change still makes sense either way though.)
+> > > >
+> > >
+> > > Indeed. That hack is very dubious and I'd be inclined just to ignore
+> > > this. On x86 and arm64, it shouldn't make a difference, given that
+> > > crc32-arch will be 'fast' in the vast majority of cases. On other
+> > > architectures, btrfs may use the C implementation while assuming it is
+> > > something faster, and if anyone actually notices the difference, we
+> > > can work with the btrfs devs to do something more sensible here.
+> >
+> > Yes, we probably could get away without this.  It's never really been
+> > appropriate to use the crypto driver names for anything important.  And btrfs
+> > probably should just assume CRC32C == fast unconditionally, like what it does
+> > with xxHash64, or even do a quick benchmark to measure the actual speed of its
+> > hash algorithm (which can also be sha256 or blake2b which can be very fast too).
+> >
+> > Besides the btrfs case, my concern was there may be advice floating around about
+> > checking /proc/crypto to check what optimized code is being used.  Having
+> > crc32-$arch potentially be running the generic code would make that misleading.
+> > It might make sense to keep it working similar to how it did before.
+> >
+> > But I do agree that we could probably get away without this.
+>
+> While testing this patchset I notice that none of the crypto API drivers for
+> crc32 or crc32c even need to be loaded on my system anymore, as everything on my
+> system that uses those algorithms (such as ext4) just uses the library APIs now.
+> That makes the "check /proc/crypto" trick stop working anyway.
+>
+> I think you're right that we shouldn't bother with patches 3-4, and I'll plan to
+> go back to leaving them out in the next version, unless someone yells.
+>
 
-Ok.
+Agreed.
 
-> 
-> > +static void init_topology(void)
-> 
-> Ditto with naming.
+If we need to make this distinction, it might be cleaner to use the
+static_call API instead, e.g.,
 
-Ok.
++DECLARE_STATIC_CALL(crc32_le_arch, crc32_le_base);
++
+ static inline u32 __pure crc32_le(u32 crc, const u8 *p, size_t len)
+ {
+        if (IS_ENABLED(CONFIG_CRC32_ARCH))
+-               return crc32_le_arch(crc, p, len);
++               return static_call(crc32_le_arch)(crc, p, len);
+        return crc32_le_base(crc, p, len);
+ }
 
-> 
-> >  {
-> > -     struct sched_domain *sd = rcu_dereference(per_cpu(sd_llc, cpu));
-> > -     const struct cpumask *llc_cpus = sd ? sched_domain_span(sd) : NULL;
-> > +     const struct cpumask *cpus;
-> > +     int nid;
-> > +     s32 cpu;
-> > +
-> > +     /*
-> > +      * Detect if the system has multiple NUMA nodes distributed across the
-> > +      * available CPUs and, in that case, enable NUMA-aware scheduling in
-> > +      * the default CPU idle selection policy.
-> > +      */
-> > +     for_each_node(nid) {
-> > +             cpus = cpumask_of_node(nid);
-> > +             if (cpumask_weight(cpus) < nr_cpu_ids) {
-> 
-> Comparing number of cpus with nr_cpu_ids doesn't work. The above condition
-> can trigger on single node machines with some CPUs offlines or unavailable
-> for example. I think num_node_state(N_CPU) should work or if you want to
-> keep with sched_domains, maybe highest_flag_domain(some_cpu,
-> SD_NUMA)->groups->weight would work?
+and use static_call_update() to update the target if the feature is
+supported. Then, we could check in the driver whether the static call
+points to the default or not:
 
-Ok, checking num_possible_cpus() instead of nr_cpu_ids makes more sense.
-
-I was also thinking to refresh the static keys on hotplug events and
-check for num_possible_cpus(), in this way the topology optimizations
-should be always (more) consistent, even when some of the CPUs are going
-offline/online. Old tasks won't update their p->nr_cpus_allowed I guess,
-but worst case they may miss some NUMA/LLC optimizations. Maybe we can
-add a generation counter and rely on scx_hotplug_seq to handle this case
-in a more precise way (like updating a local cpumask), but it seems a
-bit overkill...
-
-About node_state(nid, N_CPU), I've done some tests and it doesn't seem
-to work well for this scenario: it correctly returns 0 in case of
-memory-only NUMA nodes, but for example if I start a VM with a single
-NUMA node and I assign all the CPUs to that node, node_state(nid, N_CPU)
-returns 1 (correctly), but in our case the node should be considered
-like a memory-only node, since it includes all the possible CPUs.
-
-I've also tried to rely on sd_numa (similar to sd_llc), but it also
-doesn't seem to work as expected (this might be a bug? I'll investigate
-separately), because if I start a VM with 2 NUMA nodes (assigning half
-of the CPUs to node 1 and the other half to node 2), sd_numa still
-reports all CPUs assigned to the same node.
-
-Instead, highest_flag_domain(cpu, SD_NUMA)->groups seems to work as
-expected, and since the logic is also based on sched_domain like the LLC
-one, I definitely prefer this approach, thanks for the suggestions!
-
--Andrea
-
-> 
-> ...
-> > +     for_each_possible_cpu(cpu) {
-> > +             struct sched_domain *sd = rcu_dereference(per_cpu(sd_llc, cpu));
-> > +
-> > +             if (!sd)
-> > +                     continue;
-> > +             cpus = sched_domain_span(sd);
-> > +             if (cpumask_weight(cpus) < nr_cpu_ids) {
-> 
-> Ditto.
-> 
-> ...
-> > +     /*
-> > +      * Determine the scheduling domain only if the task is allowed to run
-> > +      * on all CPUs.
-> > +      *
-> > +      * This is done primarily for efficiency, as it avoids the overhead of
-> > +      * updating a cpumask every time we need to select an idle CPU (which
-> > +      * can be costly in large SMP systems), but it also aligns logically:
-> > +      * if a task's scheduling domain is restricted by user-space (through
-> > +      * CPU affinity), the task will simply use the flat scheduling domain
-> > +      * defined by user-space.
-> > +      */
-> > +     if (p->nr_cpus_allowed == nr_cpu_ids) {
-> 
-> Should compare against nr_possible_cpus.
-> 
-> Thanks.
-> 
-> --
-> tejun
++static bool have_arch;
++
+ static int __init crc32_mod_init(void)
+ {
++       have_arch = IS_ENABLED(CONFIG_CRC32_ARCH) &&
++                   static_call_query(crc32_le_arch) != crc32_le_base;
++
+        /* register the arch flavor only if it differs from the generic one */
+-       return crypto_register_shashes(algs, 1 + IS_ENABLED(CONFIG_CRC32_ARCH));
++       return crypto_register_shashes(algs, 1 + have_arch);
+ }
 
