@@ -1,155 +1,165 @@
-Return-Path: <linux-kernel+bounces-383822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8D7F9B2090
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 21:49:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 548FA9B2096
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 21:52:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9DA77B20BEB
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 20:49:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14E4A281DC4
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 20:52:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16C01184527;
-	Sun, 27 Oct 2024 20:49:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CB0418452C;
+	Sun, 27 Oct 2024 20:52:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DYcDLOlk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1kC6X2fp"
+Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com [209.85.217.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7511A17E8E2;
-	Sun, 27 Oct 2024 20:49:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6B44184523
+	for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 20:52:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730062153; cv=none; b=NMhZ7cou21iIBMzkE4LfefBmKcWGakmZ0FRv/LwVC2R7irDhFooTD4qIQfy7o47lg6z5vDnmeGZ1xoeL/4x4Fn7bgH1Na8DbWTh0jyZBzfRGTs3DP4LjkNeg1cWUiAsEy+3ysFiKLLN8Th7yEGgur4/c/c2Mq0zelRzyZ8N3DFE=
+	t=1730062342; cv=none; b=oLErW9LCngE3DT0mb5zWGL442kuEkiyOOg1lx+TkWmy9hgl5/lK+7E67cwaNz4fuxGPMz2ZPvaBVhU/ZMGImk9B8EifbIDuVaoz6Z5nG0AD50tHZmVAt1kqPBi9JbPKGf1eDWQKEhs39OZ3B7/kW/7IDnOvcB0cxs6tW7sWkLj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730062153; c=relaxed/simple;
-	bh=4N2IXPd0awSUXc0msCMuY8ABxxknYk5+HRsYIZWs06E=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=AVl/YY5kmH/Q3AQI4nJxEOrJuWF8bcOhcoVPJqx498MTmkQPmv+f4BB9zd+iQtH3DQYb6CKXw8sJ4eC8jQ8XamMj1q7EvVojX8x4XS89x3DytBuxWBrhnOhXxx7qXIGx3InYsI0bQfAazUTCw78qWrfww9YIFlBM02hAf2lop40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DYcDLOlk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA693C4CEC3;
-	Sun, 27 Oct 2024 20:49:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730062153;
-	bh=4N2IXPd0awSUXc0msCMuY8ABxxknYk5+HRsYIZWs06E=;
-	h=From:To:Cc:Subject:Date:From;
-	b=DYcDLOlknuhLoF8/ob1wzrJGL6pq4r8WcONkTREQ0gDiMWsg2Klsx3I6SK6k0qA2p
-	 4f9ayVqpEwYdf6LBOtDJwOoDRjFTC2Da5nzWwF3Uogr9XaK8T6LK7oUEjFc9y+jT9d
-	 EhXlVbg94ty1yz4FRBNfzGZ81K1MOy7YJEJxbzn0EnNCe66jdjouPdHZyxagxD06WI
-	 bWWDvAw9tu4q4o3+NoByjOT7ZiF4yiksBS3By6mAG0zvVhdCRYIX3vemM6RAYJRHQp
-	 pwga4s04gf9G3WSazUJ1XMRuwJ1R32Rbtj3+3K8Io/JtYsyXN9ouljRjrXD1LDZMG8
-	 LLvac85nUiPng==
-From: SeongJae Park <sj@kernel.org>
-To: damon@lists.linux.dev
-Cc: SeongJae Park <sj@kernel.org>,
-	kernel-team@meta.com,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Fwd: Two simple ideas for DAMON accuracy improvement
-Date: Sun, 27 Oct 2024 13:49:10 -0700
-Message-Id: <20241027204910.155254-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1730062342; c=relaxed/simple;
+	bh=N0DqaZmpk0rEOuzCN40mdzN7BdQa9w98Srl8UsV7hRo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eMGm0eHdOHOgr8h7kOsfNhChvIpcVeeugK4c7KLOBQrefdhTrGAomC7acWj1RfLHrfk/mLZvba9KFugDjy4FQqT6mNzbbHM3iPp1GCN2aLE32nPQlHQMVKYEzflbwTI1z1oVV9Kl+6fNgPYzad3vmdN6iSH1zfiw69qxC+8vc3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1kC6X2fp; arc=none smtp.client-ip=209.85.217.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-4a47cdaf158so1230842137.0
+        for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 13:52:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1730062339; x=1730667139; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uEP1aXwx4Opc5UBPmeJH/5/ytNpBnKvXGednu8gjFqE=;
+        b=1kC6X2fpjiE3KGvhMjWRFTJ6XUy80dBo4LABgjMOfa1d6PLpOxh1AE166vSSoqvDQr
+         xpA4cDM6XFZebSKQkU+LX8OTouXzL6pYG27pqXnxHT9dXgZ0s32reuyLPG7s8NrjMgvc
+         EYzIdnhMKXWB+3ndz/QLd1a554Yj1XQtTaUAlTQlQqfSHapuTMNCz9+s1p3E3nhi0T4r
+         KcHy8SdOrugqScADDtNZk3bmN40w+/3fFBxbU5IVz29enuJaciF4neT5ETzQixQjTgY3
+         dzhZe6M4fDBFnGmINUDVwRq0AyCRlYLbHYL/tavbA1HgtQy6LDDmXEqwDZgxlE2PqGuP
+         4Y+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730062339; x=1730667139;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uEP1aXwx4Opc5UBPmeJH/5/ytNpBnKvXGednu8gjFqE=;
+        b=Jcn1A6sPiir6PBA0pv9ITMrtyp+kA57WZFJX/00qfn24uZXHl+4W6ypV/XsT8aHwUu
+         7roAOGsEE/HCcKw3xvd1M18DY8UX/uKHi4EF52XAB6K7smPlN+oXYa/5fb5DqvMTJDB+
+         nL8bOXaf1D/gHrOCQ1vwqpEjhYc29odkn4GYLNQzemwN2Y2NvRwF+UJ62eBNRZqpVY//
+         WhHqmH251ZEp2XMCeCeMjodvRzl7OYhd1MmIPUxkapRmlUkRfJK3XlVJq7bFyLnrhWeE
+         l4lCV0jQ3jFQkBiEzb/ssC22sHa6BcFM4ltESyIdbXk1iGbFXoHtCrygnnMDQ3zUT64E
+         Benw==
+X-Forwarded-Encrypted: i=1; AJvYcCX46C5LenO+5VU74yRad8jH/8uMQznVjI8Ablh2faQxu8czbdF+9HaLXiGLrD5299XqXJJkyA6EbR+KOcc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+29KSrQM9hIpo9zJF3bN1nk8jJU49r9bfEMqKiiQzokIHnZv9
+	kzlzoZDJt7fbjUYAqeKf6WkdSUTYhj1uNHxiR14zMFX9W/6bWbTSdpmTbXYCtWoLc5wIHMab+A1
+	aOINuZfY9DpjhszYSbM58MuyJiVvq5zkCro1P
+X-Google-Smtp-Source: AGHT+IET90x0oUx9agpRnmE/iqRubOv9iCKU3Om1nVjpljKzJxZlCuH6iPVL7k9m2OXVXjAB/kD+AUOPM+Sdm67QaUM=
+X-Received: by 2002:a05:6102:dcf:b0:4a3:e1de:4fd8 with SMTP id
+ ada2fe7eead31-4a8cfd6d8b3mr4094664137.26.1730062339318; Sun, 27 Oct 2024
+ 13:52:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241026033625.2237102-1-yuzhao@google.com> <37a28ef7-e477-40b0-a8e4-3d74b747e323@suse.cz>
+ <CAOUHufaS-dGAPGs1Y1=imW_nusaTDeysN3qfJc9-76DBVEHScQ@mail.gmail.com> <8459b884-5877-41bd-a882-546e046b9dad@suse.cz>
+In-Reply-To: <8459b884-5877-41bd-a882-546e046b9dad@suse.cz>
+From: Yu Zhao <yuzhao@google.com>
+Date: Sun, 27 Oct 2024 14:51:42 -0600
+Message-ID: <CAOUHufbHVXNZpW1mVhuF+4p8PbPq44w4chQX7Q6QYVDCjSqa1Q@mail.gmail.com>
+Subject: Re: [PATCH mm-unstable v2] mm/page_alloc: keep track of free highatomic
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Zi Yan <ziy@nvidia.com>, Mel Gorman <mgorman@techsingularity.net>, 
+	Matt Fleming <mfleming@cloudflare.com>, David Rientjes <rientjes@google.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Link Lin <linkl@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Forgot Cc-ing linux-mm@ and linux-kernel@.  Forwarding.  Sorry for noise.
+On Sun, Oct 27, 2024 at 2:36=E2=80=AFPM Vlastimil Babka <vbabka@suse.cz> wr=
+ote:
+>
+> On 10/27/24 21:17, Yu Zhao wrote:
+> > On Sun, Oct 27, 2024 at 1:53=E2=80=AFPM Vlastimil Babka <vbabka@suse.cz=
+> wrote:
+> >>
+> >> On 10/26/24 05:36, Yu Zhao wrote:
+> >> > OOM kills due to vastly overestimated free highatomic reserves were
+> >> > observed:
+> >> >
+> >> >   ... invoked oom-killer: gfp_mask=3D0x100cca(GFP_HIGHUSER_MOVABLE),=
+ order=3D0 ...
+> >> >   Node 0 Normal free:1482936kB boost:0kB min:410416kB low:739404kB h=
+igh:1068392kB reserved_highatomic:1073152KB ...
+> >> >   Node 0 Normal: 1292*4kB (ME) 1920*8kB (E) 383*16kB (UE) 220*32kB (=
+ME) 340*64kB (E) 2155*128kB (UE) 3243*256kB (UE) 615*512kB (U) 1*1024kB (M)=
+ 0*2048kB 0*4096kB =3D 1477408kB
+> >> >
+> >> > The second line above shows that the OOM kill was due to the followi=
+ng
+> >> > condition:
+> >> >
+> >> >   free (1482936kB) - reserved_highatomic (1073152kB) =3D 409784KB < =
+min (410416kB)
+> >> >
+> >> > And the third line shows there were no free pages in any
+> >> > MIGRATE_HIGHATOMIC pageblocks, which otherwise would show up as type
+> >> > 'H'. Therefore __zone_watermark_unusable_free() underestimated the
+> >> > usable free memory by over 1GB, which resulted in the unnecessary OO=
+M
+> >> > kill above.
+> >> >
+> >> > The comments in __zone_watermark_unusable_free() warns about the
+> >> > potential risk, i.e.,
+> >> >
+> >> >   If the caller does not have rights to reserves below the min
+> >> >   watermark then subtract the high-atomic reserves. This will
+> >> >   over-estimate the size of the atomic reserve but it avoids a searc=
+h.
+> >> >
+> >> > However, it is possible to keep track of free pages in reserved
+> >> > highatomic pageblocks with a new per-zone counter nr_free_highatomic
+> >> > protected by the zone lock, to avoid a search when calculating the
+> >>
+> >> It's only possible to track this reliably since the "mm: page_alloc:
+> >> freelist migratetype hygiene" patchset was merged, which explains why
+> >> nr_reserved_highatomic was used until now, even if it's imprecise.
+> >
+> > I just refreshed my memory by quickly going through the discussion
+> > around that series and didn't find anything that helps me understand
+> > the above. More pointers please?
+>
+> For example:
+>
+> - a page is on pcplist in MIGRATE_MOVABLE list
+> - we reserve its pageblock as highatomic, which does nothing to the page =
+on
+> the pcplist
+> - page above is flushed from pcplist to zone freelist, but it remembers i=
+t
+> was MIGRATE_MOVABLE, merges with another buddy/buddies from the
+> now-highatomic list, the resulting order-X page ends up on the movable
+> freelist despite being in highatomic pageblock. The counter of free
+> highatomic is now wrong wrt the freelist reality
 
+This is the part I don't follow: how is it wrong w.r.t. the freelist
+reality? The new nr_free_highatomic should reflect how many pages are
+exactly on free_list[MIGRATE_HIGHATOMIC], because it's updated
+accordingly.
 
-Thanks,
-SJ
+(My current understanding is that, in this case, the reservation
+itself is messed up, i.e., under-reserved.)
 
-=== >8 ===
-From: SeongJae Park <sj@kernel.org>
-To: damon@lists.linux.dev
-CC: SeongJae Park <sj@kernel.org>, kernel-team@meta.com
-Subject: Two simple ideas for DAMON accuracy improvement
-Message-Id: <20241026215311.148363-1-sj@kernel.org>
-Date: Sat, 26 Oct 2024 14:53:11 -0700
-Local-Date: 2024-10-26 14:53:11-07:00
-
-Hello DAMON community,
-
-
-There were a number of grateful questions, concerns, and improvement ideas
-around monitoring output accuracy of DAMON.  I always admitted the fact that
-DAMON has many rooms for improvement, but was bit awary at changes for some
-reasons.  Now I think it caused some unnecessarily long delay.  Sorry about
-that.  Now I want to invest some time on the topic.  So starting by sharing
-below two simple ideas first.
-
-User-defined Regions Split Factor
----------------------------------
-
-DAMON's "Adasptive Regions Adjustment (ARA)" mechanism splits each region into
-randomly sized sub regions, show their access temperature, and merge back
-adjacent regions having similar temperature.  The split factor is hard-coded as
-two.  Increasing the number make DAMON regions more quickly converges in right
-shape.  However, it makes number of DAMON regions in usual situation higher,
-and therefore induce more overhead.  It will still keep the user-defined upper
-limit (max_nr_regions), though.
-
-The optimum value of the split factor would depend on the use case.  We will
-therefore add another knob to let users set the factor on runtime.  The default
-value will be two, so this will not introduce any regression or behavioral
-change to existing users.
-
-Periodic Fine-grain Split of Aged Regions
------------------------------------------
-
-If a region is continuously changing its boundary and access temperature, it
-means it is converging, or the access pattern of the workload is not
-stabilized.  Either case, this is a healthy signal.
-
-If a region is consistently showing same access pattern for long time, it may
-because the access pattern is stabilized, and the region is correctly
-converged.  However, it might be because the access pattern is changed, but the
-converging is slow.
-
-To avoid the too slow converging of aged regions, we will let users
-periodically increase the split factor for regions that kept current access
-pattern for long time (high 'age').  Users will be able to set the 'age'
-offset, the split factor for the aged regions, and time interval between the
-periodic fine-grain split of the regions.  For example, users can ask DAMON to
-"split regions keeping current access pattern for ten minutes or higher to five
-sub-regions every minute".
-
-The feature will be ignored unless users explicitly set those, so that it does
-not introduce any regression of behavioral change to existing users.
-
-Discussions
------------
-
-Someone might worry if these are adding too much knobs.  As I shared the long
-term plan on last LPC[1], we will keep supporting those new knobs in long term,
-and may introduce auto-tuning feature in future.  By letting these user-tunable
-first, we can collect experiment results and use those for the future
-improvements.  Anyway, these changes will not introduce any regresion or
-behavioral change to existing users based on the idea, so I believe these are
-safe to be added.
-
-One of the factors that made my work on this topic was absence of a formal
-DAMON accuracy evaluation method.  Using damon-tests, we were able to do the
-evaluation by drawing heatmaps of test workloads and comparing those from
-different versions of DAMON.  Comparing several DAMOS schemes results on test
-workloads were also one way for that.  But, those are not formal.  We still
-don't have a formal way for accuracy evaluation.  However, the two features
-will introduce no regression to existing users, so I believe this is the path
-forward for now.
-
-I believe implementing the features would be not difficult.  So unless someone
-voluntarily steps up, I will start implementation of the features, targeting
-v6.14 merge window.
-
-I'm looking forward to any comments.
-
-[1] https://lpc.events/event/18/contributions/1768/
-
-
-Thanks,
-SJ
+> The series has addressed various scenarios like that, where page can end =
+up
+> on the wrong freelist.
 
