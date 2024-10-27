@@ -1,168 +1,150 @@
-Return-Path: <linux-kernel+bounces-383787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CECD89B2036
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 21:10:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C4579B203A
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 21:15:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C6A91C20E3F
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 20:10:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EA081F21235
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 20:15:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21AC817BB25;
-	Sun, 27 Oct 2024 20:10:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0231F176AAF;
+	Sun, 27 Oct 2024 20:15:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="azyC2cAt"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PEeRgW/3"
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A45FD558BB
-	for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 20:10:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AD3C17736
+	for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 20:15:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730059818; cv=none; b=LzIyE507lZTQ0gFGlhXUCQzde1s9/WkC+UH7JWm3fIUVv0gYHdl5mER4jwna63yedrkz/xaNOxFfJRAgV4vjfvOtaOgE/cuQQa4xBugIZiSR4lZl637QdX9iOoRj/X8U29tClC8k8oArw4MK1BW1J69Y+ExQR/EWFUmmeFhUAP4=
+	t=1730060126; cv=none; b=J3NLEl24v61oiiXbi3+q/mQG2eZpxdP1WS/HXMJiHgMWyxPqAvUBe8zk4ltG1t3ibUFdA2B5RuSq59Fbh0URGKkXe1y5MJaufwin9G8kFdBUCr9Rlbu4QYDFjQdLS1P1MyrJNCFZ5JCVGO1ncSvKDtPxhr+PBTQ8Tkntj7szH/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730059818; c=relaxed/simple;
-	bh=1PN1fQesQJ3nsQ1SuItnIWC1qEaXkPMDXLaojlXKF5g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iq9PU1uz/CGRSUFmZZoQJgkNgHIfkB5pzVuPtb/XcT0YXMg2sKx5ZmnNTGxRTIoS+rZ+ADG4dMu5xEVFzz7hFAJ1f+/bwbq2I/w6z3UKyxxbxfVmCiu4G2RbiP2ezTe2T6mRxabgoQwJc6zjdbRzpfiQHxbVusVV17IUf3Dcxm0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=azyC2cAt; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-71e592d7f6eso2428384b3a.3
-        for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 13:10:16 -0700 (PDT)
+	s=arc-20240116; t=1730060126; c=relaxed/simple;
+	bh=gi8a+qB0hgf0818SBuVbYjAvc5O/kG13G0Jh1f8UVis=;
+	h=Date:From:To:cc:Subject:Message-ID:MIME-Version:Content-Type; b=j0yhFaHs7TBiPNpJz/4MSSSTh+/7JTtg0OyMh0iG51QqelsPcWTIkBimeLtRseM79/6Oxl3/zr8w69PZaz7Ck2Egu/i2Ce34E/6wPrO+AANnWVq67oo+e6lm+thNQUjiCLcIFkFdO3omqoD8xQCVJgqx8ULexLiuI1t7/oKgYLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PEeRgW/3; arc=none smtp.client-ip=209.85.215.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-7ede6803585so444080a12.0
+        for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 13:15:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730059816; x=1730664616; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7IcPykXlVzWmap0WJxwNrZ0QmvkKZjb6ImovIhp64Ts=;
-        b=azyC2cAtlCn+vx+s9oYJ03athjUKi2sy0GMH2+bfzD25V9oQZNBf4DrARbxMbOW9vl
-         PHbPhgThDb2OIRclXvQxKT12br0TjupH97/AV/uh9yElfLb12tnq5477RagMLdQucAy5
-         l9fxv6/+gHV2pKOiNRE73/eEu4FrJrk8OF6sfA7uwPrcHMJ0JIKjo0dmn/VuKSUiJ2Fj
-         Uvd9brgKmxe6UiB/+L8DyX8TfRlbMv47sUCWWuvYAFcS6jOWgNadIK37dEdDVoh8dhdN
-         Due9f1I/NDSPNqe+Jj7hDlJZ/vIaE2exnEpTM9HMOVROuVjW/RQo5o0GwOBhoNuQRhAl
-         dyCg==
+        d=google.com; s=20230601; t=1730060124; x=1730664924; darn=vger.kernel.org;
+        h=mime-version:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=N4tEyw4MScQ6/1KM0T2xQJOWBYB6ifsf58BJRWfhinQ=;
+        b=PEeRgW/37ZMvN7HFBc8/1RxR2zapPu2GQSANLc5ghCO9iqRwjCtEP8lKj9VfVZGPWh
+         g2JwlfjoSQBgN83yz5DNxti7L9s22y3968VOqw9LJUlwbYjNUYlJ3Muk4gr6xKhA5tLy
+         s35AK/GARierxcE4sOztSSKlJxZU8nCTL0eJCLENDkXvOy9bd9W/oSTzys+EDvn6T6oE
+         Yp0ePqTI9Qib+eOCuHcCXmeyGeEeGDwp98EKBzkJ+5jS7fV7F6VNjgMuxHnv8oMNBY85
+         ZoKl5m/1my+PcmHzmine005ACIw2xizCXRgG6WupR3Z9g+yobOe7W5pxRFryrSGJjcIW
+         5EJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730059816; x=1730664616;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7IcPykXlVzWmap0WJxwNrZ0QmvkKZjb6ImovIhp64Ts=;
-        b=LL5OcAjBA6jKgBp92q8HYrVCgTW+uEJaRBMmR2e3jNTc7lvKJAAZtOjMjuzcqBb+kj
-         gcP/MpgjEIpJDSmhkaIGmPsGymuekQPlQtE9ctYojKamh4jtbaAacqB0sGVg2MBMUaT7
-         OjbnLwyvYm3rSlPASbYM3rpJrkA9C4ae2h499fn7Qlq1wEZ+lxcxAIv9zSebkq9VYZji
-         RVFzLeRSYiBPiMif/oK7XpfIesFNnTrnTjT9rYiOtilg7h8SmGctpebOgrviAsv80i1U
-         81lcjRrHQjFdIuV0RHLtp6pShLmUXepIvWXBkbzV/cfF0r+RqfzJfqUKjttr3A6txEVb
-         DmaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUIdZa5eXBnc+X5Wqn2E6hmo5AcLA3IRz0o6iZ7787KMSu4z4WYZLnFCoKFAX8fnjtTB1j0bZuGLLhGiqQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXaA0CQhkZnCPwUMkboU8O0vGGI1u1kw1+aaNdnCNVoT2JrN7f
-	egcmeEkYaV2Hze5CMhAtNLDOdF4RjwsmH44xtD7ge/K51SaqPgi/z+vTkHksBImIS7ExmKraifv
-	CTipYNp6804v+yRlVmPJykKaWCVU=
-X-Google-Smtp-Source: AGHT+IFM947AOOL5ljeFnUR8gsVzYkcDbeaK9fbdkVpqGbimn1UTrDsCfmAGHViUdXQaSxuKdeigDcHjISoZ8+a4oeY=
-X-Received: by 2002:a05:6a00:a1d:b0:71e:5de:ad6d with SMTP id
- d2e1a72fcca58-72063094ed0mr9783146b3a.24.1730059815864; Sun, 27 Oct 2024
- 13:10:15 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1730060124; x=1730664924;
+        h=mime-version:message-id:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=N4tEyw4MScQ6/1KM0T2xQJOWBYB6ifsf58BJRWfhinQ=;
+        b=NISyZSHhKfbpdjYL7yyiP46NwAJAyIaQKEakK9gpKXxWajLZV/aCmg7b8vW1icgKw9
+         MQ4WoO5KJxA+euH+/8fAYw0nNyeqeinTcjBV/xVFgD8KoUDJIUxSaj4sjEJlTDG1RF8G
+         rvA9jvvnBvdyWv4vqQ7HTeXezoRlvdrn86MgREA/IS6V0XOOh5BPweRoS2+SkT41vT89
+         2eEdU7CRKyAe8B0tVuqv+t7BkCTtbc0svc4wnyCMokKcYHaDU6KCYYPUZb/gno1xhKaV
+         IgosKu+nJjyJoDR3Dxyr275z6Y4riJh/AjcVHjYxucc+4QxO5GWep36G6dKqU0Qzg0BZ
+         zL+w==
+X-Forwarded-Encrypted: i=1; AJvYcCWbAxAIUCHOyWuGmg8JqQ08U381WpvpjxMO7vuGj4QAI4EzSkvnjqSubjkDlZOTivlCVlGBd7RToFh75m0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YysnBc4DFo7GlFWmb5RJXydf0cYqGK+bPhSwAjzMxCo2/TRj+v4
+	Blf1SHKwQ1gDPH72G2sJIauex1nKpLiNcrgFQi2G2A/ab1Om+J+Ij/nQyf0eAg==
+X-Google-Smtp-Source: AGHT+IFuajBXTEjfZxgeX70hHYbqnSQ4RILHo5TwtobW0qjDHdOdgvn8GMN9BJnBmzaVyVwmXW8WhA==
+X-Received: by 2002:a17:90a:4d87:b0:2e0:7e80:2011 with SMTP id 98e67ed59e1d1-2e77e828515mr18864590a91.16.1730060123662;
+        Sun, 27 Oct 2024 13:15:23 -0700 (PDT)
+Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e77e56f3f8sm7537828a91.40.2024.10.27.13.15.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 27 Oct 2024 13:15:22 -0700 (PDT)
+Date: Sun, 27 Oct 2024 13:14:42 -0700 (PDT)
+From: Hugh Dickins <hughd@google.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+cc: Pasha Tatashin <pasha.tatashin@soleen.com>, Yang Shi <shy828301@gmail.com>, 
+    Matthew Wilcox <willy@infradead.org>, David Hildenbrand <david@redhat.com>, 
+    Peter Xu <peterx@redhat.com>, linux-kernel@vger.kernel.org, 
+    linux-mm@kvack.org
+Subject: [PATCH] mm: delete the unused put_pages_list()
+Message-ID: <d9985d6a-293e-176b-e63d-82fdfd28c139@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241026171441.3047904-1-samuel.holland@sifive.com> <20241026171441.3047904-3-samuel.holland@sifive.com>
-In-Reply-To: <20241026171441.3047904-3-samuel.holland@sifive.com>
-From: Jesse T <mr.bossman075@gmail.com>
-Date: Sun, 27 Oct 2024 16:09:40 -0400
-Message-ID: <CAJFTR8SM0itMgdYYKNS6YAaBRMrwsEcNu9zyxKn5cV_uyZR1MQ@mail.gmail.com>
-Subject: Re: [PATCH 2/6] riscv: Allow NOMMU kernels to access all of RAM
-To: Samuel Holland <samuel.holland@sifive.com>
-Cc: Palmer Dabbelt <palmer@dabbelt.com>, linux-kernel@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, Andrew Morton <akpm@linux-foundation.org>, 
-	Arnd Bergmann <arnd@arndb.de>, Alexandre Ghiti <alexghiti@rivosinc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
 
-On Sat, Oct 26, 2024 at 1:16=E2=80=AFPM Samuel Holland
-<samuel.holland@sifive.com> wrote:
->
-> NOMMU kernels currently cannot access memory below the kernel link
-> address. Remove this restriction by setting PAGE_OFFSET to the actual
-> start of RAM, as determined from the devicetree. The kernel link address
-> must be a constant, so keep using CONFIG_PAGE_OFFSET for that purpose.
->
-> Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
-Reviewed-by: Jesse Taube <mr.bossman075@gmail.com>
+The last user of put_pages_list() converted away from it in 6.10 commit
+06c375053cef ("iommu/vt-d: add wrapper functions for page allocations"):
+delete put_pages_list().
 
-> ---
->
->  arch/riscv/include/asm/page.h    | 12 ++++--------
->  arch/riscv/include/asm/pgtable.h |  2 +-
->  2 files changed, 5 insertions(+), 9 deletions(-)
->
-> diff --git a/arch/riscv/include/asm/page.h b/arch/riscv/include/asm/page.=
-h
-> index 32d308a3355f..24d1ac052609 100644
-> --- a/arch/riscv/include/asm/page.h
-> +++ b/arch/riscv/include/asm/page.h
-> @@ -26,12 +26,9 @@
->   * When not using MMU this corresponds to the first free page in
->   * physical memory (aligned on a page boundary).
->   */
-> -#ifdef CONFIG_64BIT
->  #ifdef CONFIG_MMU
-> +#ifdef CONFIG_64BIT
->  #define PAGE_OFFSET            kernel_map.page_offset
-> -#else
-> -#define PAGE_OFFSET            _AC(CONFIG_PAGE_OFFSET, UL)
-> -#endif
->  /*
->   * By default, CONFIG_PAGE_OFFSET value corresponds to SV57 address spac=
-e so
->   * define the PAGE_OFFSET value for SV48 and SV39.
-> @@ -41,6 +38,9 @@
->  #else
->  #define PAGE_OFFSET            _AC(CONFIG_PAGE_OFFSET, UL)
->  #endif /* CONFIG_64BIT */
-> +#else
-> +#define PAGE_OFFSET            ((unsigned long)phys_ram_base)
-> +#endif /* CONFIG_MMU */
->
->  #ifndef __ASSEMBLY__
->
-> @@ -97,11 +97,7 @@ typedef struct page *pgtable_t;
->  #define MIN_MEMBLOCK_ADDR      0
->  #endif
->
-> -#ifdef CONFIG_MMU
->  #define ARCH_PFN_OFFSET                (PFN_DOWN((unsigned long)phys_ram=
-_base))
-> -#else
-> -#define ARCH_PFN_OFFSET                (PAGE_OFFSET >> PAGE_SHIFT)
-> -#endif /* CONFIG_MMU */
->
->  struct kernel_mapping {
->         unsigned long page_offset;
-> diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pg=
-table.h
-> index e79f15293492..e224ac66e635 100644
-> --- a/arch/riscv/include/asm/pgtable.h
-> +++ b/arch/riscv/include/asm/pgtable.h
-> @@ -12,7 +12,7 @@
->  #include <asm/pgtable-bits.h>
->
->  #ifndef CONFIG_MMU
-> -#define KERNEL_LINK_ADDR       PAGE_OFFSET
-> +#define KERNEL_LINK_ADDR       _AC(CONFIG_PAGE_OFFSET, UL)
->  #define KERN_VIRT_SIZE         (UL(-1))
->  #else
->
-> --
-> 2.45.1
->
->
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+Signed-off-by: Hugh Dickins <hughd@google.com>
+---
+ include/linux/mm.h |  2 --
+ mm/swap.c          | 31 -------------------------------
+ 2 files changed, 33 deletions(-)
+
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index ecf63d2b0582..8524bf86dd74 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -1286,8 +1286,6 @@ static inline struct folio *virt_to_folio(const void *x)
+ 
+ void __folio_put(struct folio *folio);
+ 
+-void put_pages_list(struct list_head *pages);
+-
+ void split_page(struct page *page, unsigned int order);
+ void folio_copy(struct folio *dst, struct folio *src);
+ int folio_mc_copy(struct folio *dst, struct folio *src);
+diff --git a/mm/swap.c b/mm/swap.c
+index b8e3259ea2c4..638a3f001676 100644
+--- a/mm/swap.c
++++ b/mm/swap.c
+@@ -127,37 +127,6 @@ void __folio_put(struct folio *folio)
+ }
+ EXPORT_SYMBOL(__folio_put);
+ 
+-/**
+- * put_pages_list() - release a list of pages
+- * @pages: list of pages threaded on page->lru
+- *
+- * Release a list of pages which are strung together on page.lru.
+- */
+-void put_pages_list(struct list_head *pages)
+-{
+-	struct folio_batch fbatch;
+-	struct folio *folio, *next;
+-
+-	folio_batch_init(&fbatch);
+-	list_for_each_entry_safe(folio, next, pages, lru) {
+-		if (!folio_put_testzero(folio))
+-			continue;
+-		if (folio_test_hugetlb(folio)) {
+-			free_huge_folio(folio);
+-			continue;
+-		}
+-		/* LRU flag must be clear because it's passed using the lru */
+-		if (folio_batch_add(&fbatch, folio) > 0)
+-			continue;
+-		free_unref_folios(&fbatch);
+-	}
+-
+-	if (fbatch.nr)
+-		free_unref_folios(&fbatch);
+-	INIT_LIST_HEAD(pages);
+-}
+-EXPORT_SYMBOL(put_pages_list);
+-
+ typedef void (*move_fn_t)(struct lruvec *lruvec, struct folio *folio);
+ 
+ static void lru_add(struct lruvec *lruvec, struct folio *folio)
+-- 
+2.35.3
 
