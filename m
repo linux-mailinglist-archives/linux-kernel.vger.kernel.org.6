@@ -1,105 +1,103 @@
-Return-Path: <linux-kernel+bounces-383804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C3549B2062
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 21:32:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BEEE19B2065
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 21:33:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DEF11C211C4
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 20:32:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F08911C20FAF
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 20:33:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09E3B17D346;
-	Sun, 27 Oct 2024 20:32:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4BEA17D346;
+	Sun, 27 Oct 2024 20:33:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="armyY3y9"
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jaR68WW3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8203762E0;
-	Sun, 27 Oct 2024 20:32:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24AD3762E0;
+	Sun, 27 Oct 2024 20:33:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730061164; cv=none; b=criz3df/NrNTGJaC3qzIJsVyzTUSV2fND4CbxHZqE4J7L34OFELX73YXlDud0f+Wk/x/JOnQt6qOy+CPPvWWcU+AVbKONH6uJvg4/skW1Xg/AOD3NZUTjIksdN8RIkPyJd5MnW33iWM2zsnZCrfl5RVCtqnBAhnBTJ/hlY9k7lM=
+	t=1730061220; cv=none; b=WUHycI0puf5WdAnrkiMYsbYyGULY+ZIqyUYg098/SuNSioGG8NbN9C9r4bNDIS7bGE4Rk7FPBbvowr9BKIsdknneSzmexSZq64/YdbGiNPt7WoXcWpCU0W4ruBIx8qHGHvsdOuZV3glac35sO7+DVgskSH1P3M0026gCHlaXERs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730061164; c=relaxed/simple;
-	bh=MBLg/OHsvkXmNnHMU5vm8OYpQy434w+URxhW3T+UyhI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=diInD/5uVO+sFjzVfGO9Up2qnBJj8LCN69cvdxn6KwSPoom9KNlctQqJEpmxHtxKkBC24bAYFcHtWNy4VVFlm4XObD0tM37897RAnIQGqQeFJY+Bzn9DpzqvJpTnYw1SNDqyF23pQKpCI7UCJpr6PK3BU/r9783HKDXsTHzFa5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=armyY3y9; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2e2da8529e1so473056a91.1;
-        Sun, 27 Oct 2024 13:32:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730061162; x=1730665962; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JO6Wn/W7DXpFOgOHg2+qI7JkUohymRKs3+L+zv+wF38=;
-        b=armyY3y9qUL5Y5GA636IRzQ7n6emVaOFCwgyVX57J1oWwZED073lcNKUZi0/vZ6+RI
-         EEk28Pyzs87hLBpCzA7f1rEirYm7FNnEEGSczp9affMR4xhUyKbEiekYY9ZbULdRIrIF
-         jfom9RI/vAaYWq7Pl+/YBHCLFwOPTXrsliwtbwox5FI1hfjjiNfQBKniqfa8ieZ7lnNx
-         fytPxWXIfdVMzLuRn/xelKjnVmPnVMeT4Wth655LzfaHTKy19EErFXX1ARbphEaHlK6f
-         O8BhFu6lqg5gZXiVYJCY2D67rxHepcyw6iQVi8G9AtwJqTSUxkjS+7NA6CmwgjGAm07l
-         6miA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730061162; x=1730665962;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JO6Wn/W7DXpFOgOHg2+qI7JkUohymRKs3+L+zv+wF38=;
-        b=GZxQmpIXc5hJNl5X2WAqaS4k6XEKVCaLfaVlG/PB3dGMmE8KrT73DAz1h3IW7F/dpL
-         mfhrAVyTe70t8JuRIRqUdr4svoy69RgJ25ZKv8/oKH4VIiCSAjfPCi78N15NwIDW9qJc
-         +OtV89rWC/Ht65Qyks/O4LyTnAgOuryCakJhHVFpfFlOCXTBTop5RKtEw3Djhz6v17CP
-         b+aRCoRch5S9vauHthneQOFs2ym5VcM/Ubbno79UAyjpdB3TGoozvNAgDPleB0Y4utw0
-         IINPomzxl0+8v6+132uYQMq8PNa/qPBMh5QxPFeXRsNWzKXxTNlzbGL7PcNKI4wIvtB+
-         EZ3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVVLyjsoRH+U1SUYDFsqQBTpFK76S79/NTc2Nv5vcfPgyJIQ/HJ1wJ9Ai6nEnS9r5DGVyAMpDbl5sMrpvE=@vger.kernel.org, AJvYcCWerhe6tkcEtPVOMSNkvqV86ZxZUUJ6Y5/VInp5RoVw360wuHpSpbinjDxKJIU/YgM5VOG/6fWUrUut@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzl/uftLebbii/KWflwwEPUn0uSTGP+VaH55R+GR33Us8eP4h9k
-	JDRteZ0A8ZKi6u1L8hBnVTrv+tu2/AiTXbt1WitswijSJhIjlgfh
-X-Google-Smtp-Source: AGHT+IE41L74XWGTVeMUakZ4CX5VZvMo59R24MX1T61Km8jGghKlk6rov9vGRiRc9gnRwWI7mCR7Cg==
-X-Received: by 2002:a17:90a:780b:b0:2e2:b20b:59de with SMTP id 98e67ed59e1d1-2e8f1068be8mr3059152a91.3.1730061162098;
-        Sun, 27 Oct 2024 13:32:42 -0700 (PDT)
-Received: from motti-test.. ([2409:40f4:300a:9618:92ca:3f55:718b:1cab])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e77e48bebasm7721636a91.7.2024.10.27.13.32.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 27 Oct 2024 13:32:41 -0700 (PDT)
-From: MottiKumar Babu <mottikumarbabu@gmail.com>
-To: cem@kernel.org
-Cc: djwong@kernel.org,
-	chandanbabu@kernel.org,
-	dchinner@redhat.com,
-	zhangjiachen.jaycee@bytedance.com,
-	linux-xfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-kernel-mentees@lists.linux.dev,
-	anupnewsmail@gmail.com,
-	skhan@linuxfoundation.org
-Subject: [PATCH] Follow-up on Submitted Patch: Fix out-of-bounds access in xfs_bmapi_allocate
-Date: Mon, 28 Oct 2024 02:02:28 +0530
-Message-ID: <20241027203231.20251-1-mottikumarbabu@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241027193541.14212-1-mottikumarbabu@gmail.com>
-References: <20241027193541.14212-1-mottikumarbabu@gmail.com>
+	s=arc-20240116; t=1730061220; c=relaxed/simple;
+	bh=MFhXcuwpqZcUp1Hi6m3uZJlGW4HRA6hWyU6i0KMjz84=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S583G7MJDSi+Z7mkmkZdyLbZL5xWvwP8olp+0yaYz28rl/pB7zXwv1xVHCOoqiUtWg/gWOq9XfWoPkNuahmrQ3arnVQE9pvvEhzgeMtMmDMcFDBAKSpWgjD1d9JuY4oZEmQgxtY1ORxro9kjcmtv+4axo/6REzM9yJwg3MzTiHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jaR68WW3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9AA8C4CEE4;
+	Sun, 27 Oct 2024 20:33:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730061216;
+	bh=MFhXcuwpqZcUp1Hi6m3uZJlGW4HRA6hWyU6i0KMjz84=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jaR68WW3jWrqKdLWrdqJAv7GdgFfybeeO0ABT3ZYiY0+KKYIJYCZy0dh9ZbxHFoQB
+	 HCXvRa5MokkDZziRrkaUJYKNEYpX/RSWqC7/BwifSIcFdb4ZMoxHxpBVy3tAMxMlzI
+	 NV9OU3aJmxbBfoyYFphziQ671zuck4JxIK+q0UlvMWNJql32TeL+dqsVLlTDm/WNeM
+	 GjlDX8yUnfxPWsn8S6UnAxVndovoGDqn8sE7NKdsHb2lWy/DyYR0VliwgsSbk/Vjen
+	 NvAOlE5sJp2thowc2DaJH5FdP8uPNqXYNG7ZfJHuRcoJlB3QgZY26wk/KY2bjFtYmo
+	 XGmBTOI3QzM9Q==
+Date: Sun, 27 Oct 2024 21:33:32 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Vicentiu Galanopulo <vicentiu.galanopulo@remote-tech.co.uk>
+Cc: pavel@ucw.cz, lee@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/3] dt-bindings: leds: Add LED1202 LED Controller
+Message-ID: <56dut7eh7w75uz3mvl446uc5qpvyuogbyz55clmdaqez5noo6i@mtl43zjfkqtd>
+References: <Zx0AqwUUchl4M6po@admins-Air>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <Zx0AqwUUchl4M6po@admins-Air>
 
-Hi everyone,
+On Sat, Oct 26, 2024 at 04:46:03PM +0200, Vicentiu Galanopulo wrote:
+> The LED1202 is a 12-channel low quiescent current LED driver with:
+>   * Supply range from 2.6 V to 5 V
+>   * 20 mA current capability per channel
+>   * 1.8 V compatible I2C control interface
+>   * 8-bit analog dimming individual control
+>   * 12-bit local PWM resolution
+>   * 8 programmable patterns
+> 
+> If the led node is present in the controller then the channel is
+> set to active.
+> 
+> Signed-off-by: Vicentiu Galanopulo <vicentiu.galanopulo@remote-tech.co.uk>
+> ---
+> 
+> Changes in v3:
+>   - remove active property
+> Changes in v2:
+>   - renamed label to remove color from it
+>   - add color property for each node
+>   - add function and function-enumerator property for each node
 
-I hope this message finds you well. I wanted to follow up on my previously submitted patch titled "[PATCH] Fix out-of-bounds access in xfs_bmapi_allocate by validating whichfork."
+Where is the rest of the patches? I commented previously that you send
+them in some odd way messing with reviewers MUAs and lists.
 
-As a reminder, this patch addresses an issue reported by Coverity Scan (CID 1633175), where the variable `whichfork` can take invalid values, specifically `2`, leading to an out-of-bounds access in `xfs_bmbt_init_cursor`. The added validation check ensures that `whichfork` remains within the valid range of 0 or 1. If it falls outside this range, the function will return `-EINVAL`, enhancing the code's robustness and preventing potential crashes or undefined behavior.
+It seems nothing improved. Follow submitting-patches and use git
+format-patch or b4, where both handle it correctly.
 
-I appreciate any feedback or suggestions you might have.
 
-Best,  
-MottiKumar Babu  
-mottikumarbabu@gmail.com
+> 
+>  .../devicetree/bindings/leds/st,led1202.yml   | 103 ++++++++++++++++++
+>  1 file changed, 103 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/leds/st,led1202.yml
+
+OK, so you just ignored entire previous feedback?
+
+NAK.
+
+Best regards,
+Krzysztof
+
 
