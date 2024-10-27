@@ -1,118 +1,77 @@
-Return-Path: <linux-kernel+bounces-383857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A0BA9B2101
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 23:20:18 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C76479B2103
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 23:22:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6DBF51C20C87
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 22:20:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 18C87B20C7B
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 22:22:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AA811885BE;
-	Sun, 27 Oct 2024 22:20:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7B511885A1;
+	Sun, 27 Oct 2024 22:22:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K59S0Lsa"
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="T/YKO3E0"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A007618EBF;
-	Sun, 27 Oct 2024 22:20:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC2D544384;
+	Sun, 27 Oct 2024 22:21:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730067609; cv=none; b=QC/V6rVdNgrtTyhCjDE5ysKF64z3tvAA5+trgTLQDx5+NCWyJbts0l+qatdBUfe1tmDeaVmOTrIVXPfbBcyAji/i2o4jSOLUxxxS6p2Ur7HgBRvuhes8jovu0ZCRgutCIol4CCODKUb0A/xZhfj8+bIlO1hJBsM5J3l22q5yLsQ=
+	t=1730067720; cv=none; b=UhasZe0YMCYUaztbF93v8IPTqQUV2CvEj1ttlzEdFvkWnXn92XUWWGXZzgK+Q9diFcFmvakEaYJeM/UK6SuedBIw/++9bR+TygkZmRkmXTmNiaY77O2/lFQ8Tu9x8/7614OWNArdX3J8GL/JH2uq907nykI9EYu+CBiHsIv41VE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730067609; c=relaxed/simple;
-	bh=D2fzt15oN40rPfOx05cCSxCIdosrthcOMzQY+rwabv8=;
+	s=arc-20240116; t=1730067720; c=relaxed/simple;
+	bh=sxgyCZvsGdDbokMrGqYRMsBz5Z+jS3XC8LLxod9zO7U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=szVzX79BsI7M7zAU4ypbkKy2iZ6Z4pm5vIQTodLptq6W/QoSBYvNbhY9rNByzaEa7AET+E2Pj6WFTygL+rOQ0SUafu6ET11dALisDW8kqTqPc/QgKuIp9AtGNI72Twd62gPufHku9MtTy14qL3b683YJXCb65ZvnERk0o8sWnkI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K59S0Lsa; arc=none smtp.client-ip=209.85.160.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-460c0f9c13eso32630071cf.0;
-        Sun, 27 Oct 2024 15:20:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730067606; x=1730672406; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7DWIM30hSmiFkVWlDf1md4/nYtdvjo5qOjKey5YjI/w=;
-        b=K59S0LsaJctHG2Z4mO7ojeMJmna1nV1FCV2Da60vSN3+DbCv6pZ0nNsw126XmrOx+3
-         OdZg8znowepasWmPSkYAyjKaE8caFJinLtHpdIvD/f2qoB1DNc+nKr/U+xEnbvujXFTH
-         wwDa6XWRqdpcoIXN39INnOQsEud2tXstG56qIwUQCX9iQPl5J9+7V3AMM8+4Uw5160bz
-         rc0IerYyBmPdf8AZFILM/tmU/8+guVLD6OpKRzoM9q5WZADMFmd7/r3oXDZjaS1cYjct
-         o9yfRZnu8QMXCIxKrh1bjgugAYBfBRuPoYWawUQTP2d1ZBZbGhqm8SS5TGI0x2MdELTJ
-         l7aQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730067606; x=1730672406;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7DWIM30hSmiFkVWlDf1md4/nYtdvjo5qOjKey5YjI/w=;
-        b=B3NcSGURLTG5rVkUFdtdP2W7PYWiJYK78sfQDtp/rEgrcgLSQqHMm9Qa1EJjCy2MSd
-         bJYqcU98klj7AOM1Hx3ambQh+68D7tr+NVC9P8KujWkevNmMsKSAqRBxQr7U96aEHptB
-         95XuIEipi21NY7FKJNaXLiIIaSFqVUIrsdK9AL6fV0P5iUfK9qMRl/PGyCKMYdKIG8U2
-         VovoWAGpxavhngEfejm6nSMXkQeoW+EYHvg11RaasEU+7UnDNPz/0e8xUwx0ETEEIwe1
-         M2T2Y0SOIKhRuAub1WljTuqu3yIBFkSncp1L7HguB4nsgTEMOaBIueeyu2ivHPWiYGt7
-         Ywdw==
-X-Forwarded-Encrypted: i=1; AJvYcCUdZl/GS9pYAT7fshDZRXI6MtyVj0c74tPCdFahjH3yvGtDJdDZXpZFN9a5B3scgL6pyGxlyCD5nXcbqwo=@vger.kernel.org, AJvYcCV2s7JURfX9xmU53KSPGlfu/Gg9/gS9KFFX9Xj61H2Iig+FB5Dhta473M/1DRMP48u7jmRNk1MJWash5qIz8RY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YysOZAMdJAa3ONyVnLARu9cGSky+OXQJT/Oh5KXO6u/5Lv2jm/7
-	Q7lX6zxMri9baMDyU3qVTwoY+6MQOWxYmy/A/UMuA65EfMgR+Mpb
-X-Google-Smtp-Source: AGHT+IEG1QvJ/g9ScTXJuJpuzLdjUd2+GPkNkIVDSjZVlb0UQBGYNwbT+U2Sbup1kXCuopmvWGhV7g==
-X-Received: by 2002:ac8:5884:0:b0:45f:560:86de with SMTP id d75a77b69052e-4613b426930mr134001411cf.7.1730067606470;
-        Sun, 27 Oct 2024 15:20:06 -0700 (PDT)
-Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4613237f394sm28646771cf.65.2024.10.27.15.20.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 27 Oct 2024 15:20:05 -0700 (PDT)
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfauth.phl.internal (Postfix) with ESMTP id E414E1200043;
-	Sun, 27 Oct 2024 18:20:04 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-05.internal (MEProxy); Sun, 27 Oct 2024 18:20:04 -0400
-X-ME-Sender: <xms:lLweZzR3-Q1-vEia1n6vHmXRM15-iGZ0WbzpgVmFLFixZNqF7ubNKg>
-    <xme:lLweZ0yVNli_wPGA5vRFfCaX-0h1L9kE2cvksjZWPL1m7t7CrraR6gDvH_k2ftMMP
-    i0zXXPMjvpMCDj4dw>
-X-ME-Received: <xmr:lLweZ40x0BpMDi9HcVdTZpyuowuDyB0QbSGigluX17JPq6CNAh_vFtpTf28>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdejiedgudeitdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddv
-    necuhfhrohhmpeeuohhquhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilh
-    drtghomheqnecuggftrfgrthhtvghrnhephedugfduffffteeutddvheeuveelvdfhleel
-    ieevtdeguefhgeeuveeiudffiedvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomhepsghoqhhunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghl
-    ihhthidqieelvdeghedtieegqddujeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepgh
-    hmrghilhdrtghomhesfhhigihmvgdrnhgrmhgvpdhnsggprhgtphhtthhopeelpdhmohgu
-    vgepshhmthhpohhuthdprhgtphhtthhopegurghkrheskhgvrhhnvghlrdhorhhgpdhrtg
-    hpthhtoheprggsughivghlrdhjrghnuhhlghhuvgesghhmrghilhdrtghomhdprhgtphht
-    thhopehruhhsthdqfhhorhdqlhhinhhugiesvhhgvghrrdhkvghrnhgvlhdrohhrghdprh
-    gtphhtthhopegrlhhitggvrhihhhhlsehgohhoghhlvgdrtghomhdprhgtphhtthhopegu
-    rghkrhesrhgvughhrghtrdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlse
-    hvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghirhhlihgvugesrhgvughh
-    rghtrdgtohhmpdhrtghpthhtohepmhhighhuvghlrdhojhgvuggrrdhsrghnughonhhish
-    esghhmrghilhdrtghomhdprhgtphhtthhopegsohhquhhnsehfihigmhgvrdhnrghmvg
-X-ME-Proxy: <xmx:lLweZzAzCbAZK5xk2FymnSrqpmniVkEdPFsj5frN-Uv20Z9GP9kZ5Q>
-    <xmx:lLweZ8iva0SeRPQ2b1oH59RVoYwJTSJs5cLvcyrXjzfLtAiOnEOc6A>
-    <xmx:lLweZ3okDt-wuNHsDY9PvS_F-PvPLhKSgxvJJwVEzoTHL59ccpMOLg>
-    <xmx:lLweZ3i14IygYn5NbPlbFsG7qIO3_harNik7Mc18ljb2737jd_r3UA>
-    <xmx:lLweZ_TgB0Iil_lIoa74CtCVnUUu8Nc5mR0dMxxJweYReMw0774oo4vH>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 27 Oct 2024 18:20:04 -0400 (EDT)
-Date: Sun, 27 Oct 2024 15:20:03 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Abdiel Janulgue <abdiel.janulgue@gmail.com>,
-	rust-for-linux@vger.kernel.org, aliceryhl@google.com,
-	dakr@redhat.com, linux-kernel@vger.kernel.org, airlied@redhat.com,
-	miguel.ojeda.sandonis@gmail.com
-Subject: Re: [PATCH v2 5/5] rust: firmware: implement `Ownable` for Firmware
-Message-ID: <Zx68k94GrHb3Kz3-@Boquns-Mac-mini.local>
-References: <20241022224832.1505432-1-abdiel.janulgue@gmail.com>
- <20241022224832.1505432-6-abdiel.janulgue@gmail.com>
- <ZxjDUxUiKfE_7tvq@pollux>
+	 Content-Type:Content-Disposition:In-Reply-To; b=TvWzcfBUBD5mI5ioZ4CfZqT5j3zA+iHe1D19eR3qHg2N5/96XdvaErFF+j0c46rT29ZmlYdj9bZl3CHv4ao1+sxbclCRkXbMhZFHp4bFr6vbZHHwQNBfEW51WZFgZMyXAhgBzHCFbPl8eZRFDoucksZYfxRdzb33G2hihkjxZGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=T/YKO3E0; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730067718; x=1761603718;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=sxgyCZvsGdDbokMrGqYRMsBz5Z+jS3XC8LLxod9zO7U=;
+  b=T/YKO3E06TwR6BszNTEF+iLAz/hgEeK7qJeZ0U8SJkPTdfraf31WBQ6e
+   D+Z0hEA/6d/R1F+WIhQYgKgcI2JN97DHCVpkGnshLhmaCARm2pgSlmofY
+   QewlnLfk2boAKHbBbKlHpfTXeVJ/iFb3fSGe7ooPw6ttJG1RjhPyPt90g
+   AzGpokdKnsMEq8VECV1kLpZcyifPEudFkBgg4/H0gbjZp//HSRPCfV6yu
+   0jxgetWg1y9An4jyP8S62p0dipNih3q3zsRTY4IR2WWNLv79K5GEltNwu
+   MdII0MlX3F2WYQmt2ECMaTwxMsTHHMV4We0uTEpgbjmmtokBAb9dhpUS2
+   Q==;
+X-CSE-ConnectionGUID: keN3MUK3RNSEP4unCZMoeg==
+X-CSE-MsgGUID: cA6lzW5bQlaQJBzLX8/g/Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="29621079"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="29621079"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2024 15:21:58 -0700
+X-CSE-ConnectionGUID: aqQQUgt+R6SMkbyDbnFpUQ==
+X-CSE-MsgGUID: eIXFp/HrQA+Fdeb+6Gj0lg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,237,1725346800"; 
+   d="scan'208";a="104760119"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa002.fm.intel.com with ESMTP; 27 Oct 2024 15:21:54 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t5Bdw-000b1v-2R;
+	Sun, 27 Oct 2024 22:21:52 +0000
+Date: Mon, 28 Oct 2024 06:21:36 +0800
+From: kernel test robot <lkp@intel.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Kent Gibson <warthog618@gmail.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/5] gpio: sysfs: use cleanup guards for the
+ sysfs_lock mutex
+Message-ID: <202410280514.EkyQpKfw-lkp@intel.com>
+References: <20241026-gpio-notify-sysfs-v3-2-ad8f127d12f5@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -121,141 +80,137 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZxjDUxUiKfE_7tvq@pollux>
+In-Reply-To: <20241026-gpio-notify-sysfs-v3-2-ad8f127d12f5@linaro.org>
 
-On Wed, Oct 23, 2024 at 11:35:15AM +0200, Danilo Krummrich wrote:
-> On Wed, Oct 23, 2024 at 01:44:49AM +0300, Abdiel Janulgue wrote:
-> > For consistency, wrap the firmware as an `Owned` smart pointer in the
-> > constructor.
-> > 
-> > Cc: Danilo Krummrich <dakr@redhat.com>
-> > Suggested-by: Boqun Feng <boqun.feng@gmail.com>
-> > Signed-off-by: Abdiel Janulgue <abdiel.janulgue@gmail.com>
-> > ---
-> >  rust/kernel/firmware.rs | 31 ++++++++++++++++++-------------
-> >  1 file changed, 18 insertions(+), 13 deletions(-)
-> > 
-> > diff --git a/rust/kernel/firmware.rs b/rust/kernel/firmware.rs
-> > index dee5b4b18aec..6da834b37455 100644
-> > --- a/rust/kernel/firmware.rs
-> > +++ b/rust/kernel/firmware.rs
-> > @@ -4,8 +4,8 @@
-> >  //!
-> >  //! C header: [`include/linux/firmware.h`](srctree/include/linux/firmware.h)
-> >  
-> > -use crate::{bindings, device::Device, error::Error, error::Result, str::CStr};
-> > -use core::ptr::NonNull;
-> > +use crate::{bindings, device::Device, error::Error, error::Result, str::CStr,
-> > +            types::{Opaque, Owned, Ownable}};
-> >  
-> >  /// # Invariants
-> >  ///
-> > @@ -52,10 +52,11 @@ fn request_nowarn() -> Self {
-> >  /// # Ok(())
-> >  /// # }
-> >  /// ```
-> > -pub struct Firmware(NonNull<bindings::firmware>);
-> > + #[repr(transparent)]
-> > +pub struct Firmware(Opaque<bindings::firmware>);
-> >  
-> >  impl Firmware {
-> > -    fn request_internal(name: &CStr, dev: &Device, func: FwFunc) -> Result<Self> {
-> > +    fn request_internal(name: &CStr, dev: &Device, func: FwFunc) -> Result<Owned<Self>> {
-> 
-> I think it's fine to implement this for consistency, but I'm not sure I like
-> that drivers have to refer to it as `Owned<Firmware>`.
-> 
+Hi Bartosz,
 
-May I ask why not? ;-)
+kernel test robot noticed the following build errors:
 
-Ideally, we should not wrap a pointer to particular type, instead we
-should wrap the type and then combine it with a meaningful pointer type,
-e.g. Box<>, ARef<>, Owned<> ... in this way, we de-couple how the
-lifetime of object is maintained (described by the pointer type) and
-what operations are available on the object (described by the wrapper
-type).
+[auto build test ERROR on a39230ecf6b3057f5897bc4744a790070cfbe7a8]
 
-If later on, a firmware object creation is doable in pure Rust code for
-some condition, we can then have a function that returns a
-`KBox<Firmware>` (assume using kmalloc for the object), and it will just
-work (tm).
+url:    https://github.com/intel-lab-lkp/linux/commits/Bartosz-Golaszewski/gpio-sysfs-use-cleanup-guards-for-gpiod_data-mutex/20241026-210033
+base:   a39230ecf6b3057f5897bc4744a790070cfbe7a8
+patch link:    https://lore.kernel.org/r/20241026-gpio-notify-sysfs-v3-2-ad8f127d12f5%40linaro.org
+patch subject: [PATCH v3 2/5] gpio: sysfs: use cleanup guards for the sysfs_lock mutex
+config: i386-buildonly-randconfig-004-20241028 (https://download.01.org/0day-ci/archive/20241028/202410280514.EkyQpKfw-lkp@intel.com/config)
+compiler: clang version 19.1.2 (https://github.com/llvm/llvm-project 7ba7d8e2f7b6445b60679da826210cdde29eaf8b)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241028/202410280514.EkyQpKfw-lkp@intel.com/reproduce)
 
-Regards,
-Boqun
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410280514.EkyQpKfw-lkp@intel.com/
 
-> Anyway, if we keep it this way the patch also needs the following change.
-> 
-> diff --git a/rust/kernel/firmware.rs b/rust/kernel/firmware.rs
-> index 6da834b37455..1db854eb2422 100644
-> --- a/rust/kernel/firmware.rs
-> +++ b/rust/kernel/firmware.rs
-> @@ -115,8 +115,8 @@ unsafe fn ptr_drop(ptr: *mut Self) {
-> 
->  // SAFETY: `Firmware` only holds a pointer to a C `struct firmware`, which is safe to be used from
->  // any thread.
-> -unsafe impl Send for Firmware {}
-> +unsafe impl Send for Owned<Firmware> {}
-> 
->  // SAFETY: `Firmware` only holds a pointer to a C `struct firmware`, references to which are safe to
->  // be used from any thread.
-> -unsafe impl Sync for Firmware {}
-> +unsafe impl Sync for Owned<Firmware> {}
-> 
-> >          let mut fw: *mut bindings::firmware = core::ptr::null_mut();
-> >          let pfw: *mut *mut bindings::firmware = &mut fw;
-> >  
-> > @@ -65,25 +66,26 @@ fn request_internal(name: &CStr, dev: &Device, func: FwFunc) -> Result<Self> {
-> >          if ret != 0 {
-> >              return Err(Error::from_errno(ret));
-> >          }
-> > -
-> > +        // CAST: Self` is a `repr(transparent)` wrapper around `bindings::firmware`.
-> > +        let ptr = fw.cast::<Self>();
-> >          // SAFETY: `func` not bailing out with a non-zero error code, guarantees that `fw` is a
-> >          // valid pointer to `bindings::firmware`.
-> > -        Ok(Firmware(unsafe { NonNull::new_unchecked(fw) }))
-> > +        Ok(unsafe { Owned::to_owned(ptr) })
-> >      }
-> >  
-> >      /// Send a firmware request and wait for it. See also `bindings::request_firmware`.
-> > -    pub fn request(name: &CStr, dev: &Device) -> Result<Self> {
-> > +    pub fn request(name: &CStr, dev: &Device) -> Result<Owned<Self>> {
-> >          Self::request_internal(name, dev, FwFunc::request())
-> >      }
-> >  
-> >      /// Send a request for an optional firmware module. See also
-> >      /// `bindings::firmware_request_nowarn`.
-> > -    pub fn request_nowarn(name: &CStr, dev: &Device) -> Result<Self> {
-> > +    pub fn request_nowarn(name: &CStr, dev: &Device) -> Result<Owned<Self>> {
-> >          Self::request_internal(name, dev, FwFunc::request_nowarn())
-> >      }
-> >  
-> >      fn as_raw(&self) -> *mut bindings::firmware {
-> > -        self.0.as_ptr()
-> > +        self.0.get()
-> >      }
-> >  
-> >      /// Returns the size of the requested firmware in bytes.
-> > @@ -101,10 +103,13 @@ pub fn data(&self) -> &[u8] {
-> >      }
-> >  }
-> >  
-> > -impl Drop for Firmware {
-> > -    fn drop(&mut self) {
-> > -        // SAFETY: `self.as_raw()` is valid by the type invariant.
-> > -        unsafe { bindings::release_firmware(self.as_raw()) };
-> > +unsafe impl Ownable for Firmware {
-> > +    unsafe fn ptr_drop(ptr: *mut Self) {
-> > +        // SAFETY:
-> > +        // - By the type invariants, we have ownership of the ptr and can free it.
-> > +        // - Per function safety, this is called in Owned::drop(), so `ptr` is a
-> > +        //   unique pointer to object, it's safe to release the firmware.
-> > +        unsafe { bindings::release_firmware(ptr.cast()) };
-> >      }
-> >  }
-> >  
-> > -- 
-> > 2.43.0
-> > 
-> 
+All errors (new ones prefixed by >>):
+
+>> drivers/gpio/gpiolib-sysfs.c:588:3: error: cannot jump from this goto statement to its label
+     588 |                 goto err_clear_bit;
+         |                 ^
+   drivers/gpio/gpiolib-sysfs.c:591:21: note: jump bypasses initialization of variable with __attribute__((cleanup))
+     591 |         struct gpiod_data *data __free(kfree) = kzalloc(sizeof(*data),
+         |                            ^
+   drivers/gpio/gpiolib-sysfs.c:582:3: error: cannot jump from this goto statement to its label
+     582 |                 goto err_clear_bit;
+         |                 ^
+   drivers/gpio/gpiolib-sysfs.c:591:21: note: jump bypasses initialization of variable with __attribute__((cleanup))
+     591 |         struct gpiod_data *data __free(kfree) = kzalloc(sizeof(*data),
+         |                            ^
+   2 errors generated.
+
+
+vim +588 drivers/gpio/gpiolib-sysfs.c
+
+   534	
+   535	/**
+   536	 * gpiod_export - export a GPIO through sysfs
+   537	 * @desc: GPIO to make available, already requested
+   538	 * @direction_may_change: true if userspace may change GPIO direction
+   539	 * Context: arch_initcall or later
+   540	 *
+   541	 * When drivers want to make a GPIO accessible to userspace after they
+   542	 * have requested it -- perhaps while debugging, or as part of their
+   543	 * public interface -- they may use this routine.  If the GPIO can
+   544	 * change direction (some can't) and the caller allows it, userspace
+   545	 * will see "direction" sysfs attribute which may be used to change
+   546	 * the gpio's direction.  A "value" attribute will always be provided.
+   547	 *
+   548	 * Returns:
+   549	 * 0 on success, or negative errno on failure.
+   550	 */
+   551	int gpiod_export(struct gpio_desc *desc, bool direction_may_change)
+   552	{
+   553		struct gpio_device *gdev;
+   554		struct device *dev;
+   555		int status;
+   556	
+   557		/* can't export until sysfs is available ... */
+   558		if (!class_is_registered(&gpio_class)) {
+   559			pr_debug("%s: called too early!\n", __func__);
+   560			return -ENOENT;
+   561		}
+   562	
+   563		if (!desc) {
+   564			pr_debug("%s: invalid gpio descriptor\n", __func__);
+   565			return -EINVAL;
+   566		}
+   567	
+   568		CLASS(gpio_chip_guard, guard)(desc);
+   569		if (!guard.gc)
+   570			return -ENODEV;
+   571	
+   572		if (test_and_set_bit(FLAG_EXPORT, &desc->flags))
+   573			return -EPERM;
+   574	
+   575		gdev = desc->gdev;
+   576	
+   577		guard(mutex)(&sysfs_lock);
+   578	
+   579		/* check if chip is being removed */
+   580		if (!gdev->mockdev) {
+   581			status = -ENODEV;
+   582			goto err_clear_bit;
+   583		}
+   584	
+   585		if (!test_bit(FLAG_REQUESTED, &desc->flags)) {
+   586			gpiod_dbg(desc, "%s: unavailable (not requested)\n", __func__);
+   587			status = -EPERM;
+ > 588			goto err_clear_bit;
+   589		}
+   590	
+   591		struct gpiod_data *data __free(kfree) = kzalloc(sizeof(*data),
+   592								GFP_KERNEL);
+   593		if (!data) {
+   594			status = -ENOMEM;
+   595			goto err_clear_bit;
+   596		}
+   597	
+   598		data->desc = desc;
+   599		mutex_init(&data->mutex);
+   600		if (guard.gc->direction_input && guard.gc->direction_output)
+   601			data->direction_can_change = direction_may_change;
+   602		else
+   603			data->direction_can_change = false;
+   604	
+   605		dev = device_create_with_groups(&gpio_class, &gdev->dev,
+   606						MKDEV(0, 0), data, gpio_groups,
+   607						"gpio%u", desc_to_gpio(desc));
+   608		if (IS_ERR(dev)) {
+   609			status = PTR_ERR(dev);
+   610			goto err_clear_bit;
+   611		}
+   612	
+   613		data = NULL;
+   614		return 0;
+   615	
+   616	err_clear_bit:
+   617		clear_bit(FLAG_EXPORT, &desc->flags);
+   618		gpiod_dbg(desc, "%s: status %d\n", __func__, status);
+   619		return status;
+   620	}
+   621	EXPORT_SYMBOL_GPL(gpiod_export);
+   622	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
