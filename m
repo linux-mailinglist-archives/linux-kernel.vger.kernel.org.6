@@ -1,792 +1,322 @@
-Return-Path: <linux-kernel+bounces-383523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F1309B1CCE
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 10:33:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44BE19B1C99
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 10:13:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F23E01F21903
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 09:33:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0423A281C46
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 09:13:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BA1020B20;
-	Sun, 27 Oct 2024 09:33:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ED976F2FE;
+	Sun, 27 Oct 2024 09:12:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="dNTXzezN"
-Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ib8qUhc3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CF852905;
-	Sun, 27 Oct 2024 09:33:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A44B145948;
+	Sun, 27 Oct 2024 09:12:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730021606; cv=none; b=OOwsD0gDhgbbWcSR7TXPj17mNYHzQuI0544mbB0D5xwJMS0WtsoX/fn7LQ0Q+9lxFmBi83ycmrVjTcVQ/IenNGgA9ISuxNbg3Th47nWhmk7BE50Fa21bnpCrcKUyH+bhiIJwcS3I1T1qctuPPpazk37XIcrRM1pSiYh0ap1uMAI=
+	t=1730020373; cv=none; b=YQ1OwpPTijpMaoficIOKSw2D79ZgKaylJ0ADTBa2xO/Jhvsio5qghvJvGo49qgkjaoUC/MtUm8uKJm0ZVJFw+VYse0G5VFMNPcTQcsms8WEovGSmyxNqT4peKq8P/YqSPByBPMNLDrl8YEOWRcViPOdBhqLidTI+yFDw0rzD/Yk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730021606; c=relaxed/simple;
-	bh=HeKzBgxssbfev9u5aKoX/qa5KK/ZCq2b/nBy/VtMS8w=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RbZw08Am3OSOdpFp21pgrH6NQHz4tF1Nivg4q4hmxRoTJxLS+bQsfU38hdfDD3jS3wiJryzGCsn8Si3Tmj4UnnM5wvui7klToPc6q1FLlVJX68NtTTtc8jU0y4IdUtkrtZPY0E3YRNH9nuqv3yY7+gbrMT1vmzGPqV+HTYOffLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=dNTXzezN; arc=none smtp.client-ip=148.163.135.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
-Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
-	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49R348he027558;
-	Sun, 27 Oct 2024 03:19:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=DKIM; bh=dkNs5
-	qvLxPxgS1y0KbLzFRH8uz8axNi1SHIg9nszcP0=; b=dNTXzezNBBiOeXdo/Vu02
-	qoDzDGLOqBm2+gRhyfLGBvNuAx7uQXZiPGknLnJ0U+W0tZoFmFjRpyDeQUNmCAPM
-	QefDmPJ9YjlowLFuJS/2+1JLaryZTZVwWPUmufD6BEhWvn1AeMtewweRxr6BrfSK
-	3o2NkuAru0LqdG/bszW3YORjCVyUPwykPockV3kHDJO8+QLXHRvg6NR2yk5RRmhV
-	+QnirAcvjwfRmf5X2wNJTGqLuVFwBowfguAgfqayExIn5kXwUz3N/DGfv8SXF9tM
-	wwvNqniL0yobd2r6FmuN1ajhmn/xnfLMVLhUOCY9b+wQs4uEwFLSgDwa0ZeSiMtC
-	Q==
-Received: from nwd2mta3.analog.com ([137.71.173.56])
-	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 42gt92ka1c-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 27 Oct 2024 03:19:19 -0400 (EDT)
-Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
-	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 49R7JI60027542
-	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Sun, 27 Oct 2024 03:19:18 -0400
-Received: from ASHBCASHYB5.ad.analog.com (10.64.17.133) by
- ASHBMBX8.ad.analog.com (10.64.17.5) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.14; Sun, 27 Oct 2024 03:19:17 -0400
-Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by
- ASHBCASHYB5.ad.analog.com (10.64.17.133) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.14; Sun, 27 Oct 2024 03:19:17 -0400
-Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx9.ad.analog.com
- (10.64.17.10) with Microsoft SMTP Server id 15.2.986.14 via Frontend
- Transport; Sun, 27 Oct 2024 03:19:17 -0400
-Received: from kim-VirtualBox.ad.analog.com (KPALLER2-L03.ad.analog.com [10.116.18.26])
-	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 49R7IxwM009789;
-	Sun, 27 Oct 2024 03:19:11 -0400
-From: Kim Seer Paller <kimseer.paller@analog.com>
-To: <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Mike Looijmans <mike.looijmans@topic.nl>
-Subject: [PATCH 2/2] power/supply: Add support for ltc4162-f/s and ltc4015
-Date: Sun, 27 Oct 2024 15:18:52 +0800
-Message-ID: <20241027071852.56240-3-kimseer.paller@analog.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241027071852.56240-1-kimseer.paller@analog.com>
-References: <20241027071852.56240-1-kimseer.paller@analog.com>
+	s=arc-20240116; t=1730020373; c=relaxed/simple;
+	bh=vYmaaCF0O9kxNZGZuSUUPa9U+zrGwPci9G+GBw7A13U=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gy27p9Jm77mUQZssiXlFirBQVuXr+MfHwsARPanT/MUW0eVri9uc6r9QhAlk3Ufk+QCjUSXgdrt8fxA+28D6NnX9YFi/FL/KaC1ad0IJFFtB2F8bBXWEkCucR/QtMZDJmB4gMXUCdsX+8aixLGLTeycXPhTm6Ew1oxMxJ5JL+z8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ib8qUhc3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 156BDC4CEC3;
+	Sun, 27 Oct 2024 09:12:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730020373;
+	bh=vYmaaCF0O9kxNZGZuSUUPa9U+zrGwPci9G+GBw7A13U=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Ib8qUhc3gZ6m2kQ9mBHGW3P9PZeAETEToShpTwEJ4itJhDvOYHqyc13Doz3bYA1g7
+	 F0kd2HV/eVj3keu+DBtr/Wrxs7b2GiRNHV3HI+RL+GEu8Dl27u3JDPcOWuqg1M7DSM
+	 qKVeM/5xIRIYS22Gh9gpogurtjGBq78jG+S9mxxoJwl5+MFSK+g3h1SFsgFaEeRLDZ
+	 SkI/WuLlhAQF54l7Dq5V7vMDUGFtxDxDARTH1UtxOX1uQUgUgVyoVujCesZS7PZ35C
+	 deU1SmTANrMTcbAMsSjo3TWdLkKiWfNw6prD+7KoaPV2WPRcXe40wMyvSsPdonHqA1
+	 dFMA2Zdh4g2Ww==
+Date: Sun, 27 Oct 2024 09:12:44 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Uwe
+ =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <ukleinek@kernel.org>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Lars-Peter Clausen <lars@metafoo.de>, David
+ Jander <david@protonic.nl>, Martin Sperl <kernel@martin.sperl.org>,
+ linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+ linux-pwm@vger.kernel.org
+Subject: Re: [PATCH RFC v4 15/15] iio: adc: ad4695: Add support for SPI
+ offload
+Message-ID: <20241027091244.2fe3c0ad@jic23-huawei>
+In-Reply-To: <5a090847-ee53-41be-ad28-b7604cf9020a@baylibre.com>
+References: <20241023-dlech-mainline-spi-engine-offload-2-v4-0-f8125b99f5a1@baylibre.com>
+	<20241023-dlech-mainline-spi-engine-offload-2-v4-15-f8125b99f5a1@baylibre.com>
+	<20241026170038.4b629cff@jic23-huawei>
+	<5a090847-ee53-41be-ad28-b7604cf9020a@baylibre.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ADIRuleOP-NewSCL: Rule Triggered
-X-Proofpoint-GUID: CHhaJ8zWEQNFcgdYcKxMhNGpNCMoqGcy
-X-Proofpoint-ORIG-GUID: CHhaJ8zWEQNFcgdYcKxMhNGpNCMoqGcy
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=0
- phishscore=0 mlxlogscore=999 priorityscore=1501 clxscore=1015 adultscore=0
- bulkscore=0 impostorscore=0 malwarescore=0 lowpriorityscore=0 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2410270062
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Add support for
-LTC4162-F 35V/3.2A Multi-Cell LiFePO4 Step-Down Battery Charger
-LTC4162-S 35V/3.2A Lead-Acid Step-Down Battery Charger
-LTC4015 35V/3.2A Multichemistry Buck Battery Charger Controller
+On Sat, 26 Oct 2024 19:01:53 -0500
+David Lechner <dlechner@baylibre.com> wrote:
 
-Add chip_info struct to hold the chip specific data. Modify functions
-for battery voltage/current, input voltage/current, charge voltage,
-die temp, and force telemetry to handle different battery chemistries.
+> On 10/26/24 11:00 AM, Jonathan Cameron wrote:
+> > On Wed, 23 Oct 2024 15:59:22 -0500
+> > David Lechner <dlechner@baylibre.com> wrote:
+> >   
+> >> Add support for SPI offload to the ad4695 driver. SPI offload allows
+> >> sampling data at the max sample rate (500kSPS or 1MSPS).
+> >>
+> >> This is developed and tested against the ADI example FPGA design for
+> >> this family of ADCs [1].
+> >>
+> >> [1]: http://analogdevicesinc.github.io/hdl/projects/ad469x_fmc/index.html
+> >>
+> >> Signed-off-by: David Lechner <dlechner@baylibre.com>  
+> > A few questions inline. In general looks ok, but it's complex code and I'm
+> > too snowed under for a very close look at the whole thing for a least a few weeks.
+> > 
+> > Jonathan
+> >   
+> >> ---
+> >>  drivers/iio/adc/Kconfig  |   1 +
+> >>  drivers/iio/adc/ad4695.c | 470 +++++++++++++++++++++++++++++++++++++++++++----
+> >>  2 files changed, 440 insertions(+), 31 deletions(-)
+> >>
+> >> diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
+> >> index 92dfb495a8ce..f76a3f62a9ad 100644
+> >> --- a/drivers/iio/adc/Kconfig
+> >> +++ b/drivers/iio/adc/Kconfig
+> >> @@ -53,6 +53,7 @@ config AD4695
+> >>  	depends on SPI
+> >>  	select REGMAP_SPI
+> >>  	select IIO_BUFFER
+> >> +	select IIO_BUFFER_DMAENGINE
+> >>  	select IIO_TRIGGERED_BUFFER
+> >>  	help
+> >>  	  Say yes here to build support for Analog Devices AD4695 and similar  
+> >   
+> >> +static int ad4695_offload_buffer_postenable(struct iio_dev *indio_dev)
+> >> +{
+> >> +	struct ad4695_state *st = iio_priv(indio_dev);
+> >> +	struct spi_offload_trigger_config config = {
+> >> +		.type = SPI_OFFLOAD_TRIGGER_DATA_READY,
+> >> +	};
+> >> +	struct spi_transfer *xfer = &st->buf_read_xfer[0];
+> >> +	struct pwm_state state;
+> >> +	u8 temp_chan_bit = st->chip_info->num_voltage_inputs;
+> >> +	u8 num_slots = 0;
+> >> +	u8 temp_en = 0;
+> >> +	unsigned int bit;
+> >> +	int ret;
+> >> +
+> >> +	iio_for_each_active_channel(indio_dev, bit) {
+> >> +		if (bit == temp_chan_bit) {
+> >> +			temp_en = 1;
+> >> +			continue;
+> >> +		}
+> >> +
+> >> +		ret = regmap_write(st->regmap, AD4695_REG_AS_SLOT(num_slots),
+> >> +				   FIELD_PREP(AD4695_REG_AS_SLOT_INX, bit));
+> >> +		if (ret)
+> >> +			return ret;
+> >> +
+> >> +		num_slots++;
+> >> +	}
+> >> +
+> >> +	/*
+> >> +	 * For non-offload, we could discard data to work around this
+> >> +	 * restriction, but with offload, that is not possible.
+> >> +	 */
+> >> +	if (num_slots < 2) {
+> >> +		dev_err(&st->spi->dev,
+> >> +			"At least two voltage channels must be enabled.\n");
+> >> +		return -EINVAL;
+> >> +	}
+> >> +
+> >> +	ret = regmap_update_bits(st->regmap, AD4695_REG_TEMP_CTRL,
+> >> +				 AD4695_REG_TEMP_CTRL_TEMP_EN,
+> >> +				 FIELD_PREP(AD4695_REG_TEMP_CTRL_TEMP_EN,
+> >> +					    temp_en));
+> >> +	if (ret)
+> >> +		return ret;
+> >> +
+> >> +	/* Each BUSY event means just one sample for one channel is ready. */
+> >> +	memset(xfer, 0, sizeof(*xfer));
+> >> +	xfer->offload_flags = SPI_OFFLOAD_XFER_RX_STREAM;
+> >> +	xfer->bits_per_word = 16;
+> >> +	xfer->len = 2;
+> >> +
+> >> +	spi_message_init_with_transfers(&st->buf_read_msg, xfer, 1);
+> >> +	st->buf_read_msg.offload = st->offload;
+> >> +
+> >> +	st->spi->max_speed_hz = st->spi_max_speed_hz;
+> >> +	ret = spi_optimize_message(st->spi, &st->buf_read_msg);
+> >> +	st->spi->max_speed_hz = AD4695_REG_ACCESS_SCLK_HZ;
+> >> +	if (ret)
+> >> +		return ret;
+> >> +
+> >> +	/*
+> >> +	 * NB: technically, this is part the SPI offload trigger enable, but it
+> >> +	 * doesn't work to call it from the offload trigger enable callback
+> >> +	 * due to issues with ordering with respect to entering/exiting
+> >> +	 * conversion mode.  
+> > Give some detail on the operations order.
+> >   
+> >> +	 */
+> >> +	ret = regmap_set_bits(st->regmap, AD4695_REG_GP_MODE,
+> >> +			      AD4695_REG_GP_MODE_BUSY_GP_EN);
+> >> +	if (ret)
+> >> +		goto err_unoptimize_message;
+> >> +
+> >> +	ret = spi_offload_trigger_enable(st->offload, st->offload_trigger,
+> >> +					 &config);
+> >> +	if (ret)
+> >> +		goto err_disable_busy_output;
+> >> +
+> >> +	ret = ad4695_enter_advanced_sequencer_mode(st, num_slots);
+> >> +	if (ret)
+> >> +		goto err_offload_trigger_disable;
+> >> +
+> >> +	guard(mutex)(&st->cnv_pwm_lock);
+> >> +	pwm_get_state(st->cnv_pwm, &state);
+> >> +	/*
+> >> +	 * PWM subsystem generally rounds down, so requesting 2x minimum high
+> >> +	 * time ensures that we meet the minimum high time in any case.
+> >> +	 */
+> >> +	state.duty_cycle = AD4695_T_CNVH_NS * 2;
+> >> +	ret = pwm_apply_might_sleep(st->cnv_pwm, &state);
+> >> +	if (ret)
+> >> +		goto err_offload_exit_conversion_mode;
+> >> +
+> >> +	return 0;
+> >> +
+> >> +err_offload_exit_conversion_mode:
+> >> +	/* have to unwind in a different order to avoid triggering offload */  
+> > 
+> > Needs more details here.
+> >   
+> >> +	spi_offload_trigger_disable(st->offload, st->offload_trigger);
+> >> +	ad4695_cnv_manual_trigger(st);
+> >> +	ad4695_exit_conversion_mode(st);
+> >> +	goto err_disable_busy_output;
+> >> +
+> >> +err_offload_trigger_disable:
+> >> +	spi_offload_trigger_disable(st->offload, st->offload_trigger);
+> >> +
+> >> +err_disable_busy_output:
+> >> +	regmap_clear_bits(st->regmap, AD4695_REG_GP_MODE,
+> >> +			  AD4695_REG_GP_MODE_BUSY_GP_EN);
+> >> +
+> >> +err_unoptimize_message:
+> >> +	spi_unoptimize_message(&st->buf_read_msg);
+> >> +
+> >> +	return ret;
+> >> +}  
+> >   
+> >> +
+> >>  static int ad4695_write_raw(struct iio_dev *indio_dev,
+> >>  			    struct iio_chan_spec const *chan,
+> >>  			    int val, int val2, long mask)
+> >> @@ -779,6 +992,17 @@ static int ad4695_write_raw(struct iio_dev *indio_dev,
+> >>  			default:
+> >>  				return -EINVAL;
+> >>  			}
+> >> +		case IIO_CHAN_INFO_SAMP_FREQ: {
+> >> +			struct pwm_state state;
+> >> +
+> >> +			if (val <= 0)
+> >> +				return -EINVAL;
+> >> +
+> >> +			guard(mutex)(&st->cnv_pwm_lock);
+> >> +			pwm_get_state(st->cnv_pwm, &state);  
+> > 
+> > What limits this to rates the ADC can cope with?
+> >   
+> >> +			state.period = DIV_ROUND_UP_ULL(NSEC_PER_SEC, val);
+> >> +			return pwm_apply_might_sleep(st->cnv_pwm, &state);
+> >> +		}
+> >>  		default:
+> >>  			return -EINVAL;
+> >>  		}  
+> >   
+> >>  static int ad4695_probe(struct spi_device *spi)
+> >>  {
+> >>  	struct device *dev = &spi->dev;
+> >>  	struct ad4695_state *st;
+> >>  	struct iio_dev *indio_dev;
+> >> -	struct gpio_desc *cnv_gpio;
+> >>  	bool use_internal_ldo_supply;
+> >>  	bool use_internal_ref_buffer;
+> >>  	int ret;
+> >>  
+> >> -	cnv_gpio = devm_gpiod_get_optional(dev, "cnv", GPIOD_OUT_LOW);
+> >> -	if (IS_ERR(cnv_gpio))
+> >> -		return dev_err_probe(dev, PTR_ERR(cnv_gpio),
+> >> -				     "Failed to get CNV GPIO\n");
+> >> -
+> >> -	/* Driver currently requires CNV pin to be connected to SPI CS */
+> >> -	if (cnv_gpio)
+> >> -		return dev_err_probe(dev, -ENODEV,
+> >> -				     "CNV GPIO is not supported\n");
+> >> -
+> >>  	indio_dev = devm_iio_device_alloc(dev, sizeof(*st));
+> >>  	if (!indio_dev)
+> >>  		return -ENOMEM;
+> >> @@ -1002,8 +1374,13 @@ static int ad4695_probe(struct spi_device *spi)
+> >>  		return -EINVAL;
+> >>  
+> >>  	/* Registers cannot be read at the max allowable speed */
+> >> +	st->spi_max_speed_hz = spi->max_speed_hz;
+> >>  	spi->max_speed_hz = AD4695_REG_ACCESS_SCLK_HZ;
+> >>  
+> >> +	ret = devm_add_action_or_reset(dev, ad4695_restore_spi_max_speed_hz, st);  
+> > 
+> > Why do you need to put it back in devm? What happens after this but without
+> > a driver restart that uses that faster rate?
+> >   
+> I should have added a comment here as this was a weird bug to trace.
+> 
+> The core SPI framework sets the initial value of spi->max_speed_hz
+> to the minimum of the controller max rate and the max rate specified
+> by the devicetree.
+> 
+> The SPI device lives beyond this driver, so if we bind the driver
+> and set spi->max_speed_hz to something other than what the SPI core
+> set it, then the next time we bind the driver, we don't get the
+> the max rate from the SPI core, but rather we changed it to when
+> the driver unbound.
+> 
+> So on the second bind, the max rate would be the slow register
+> read rate instead of the actual max allowable rate.
+> 
+> So we need to reset spi->max_speed_hz to what it was originally
+> on driver unbind so that everything works as expected on the
+> next bind.
+> 
+> (Or we call this a SPI core bug and fix it there instead).
+Definitely a question to ask.  Directly accessing spi_max_speed_hz may
+be the fundamental issue as I don't think the driver is generally
+expected to touch that in a dynamic fashion.  Should we be instead setting it
+per transfer for the ones that need it controlled?
 
-Signed-off-by: Kim Seer Paller <kimseer.paller@analog.com>
----
- drivers/power/supply/ltc4162-l-charger.c | 434 ++++++++++++++++++++---
- 1 file changed, 383 insertions(+), 51 deletions(-)
+Jonathan
 
-diff --git a/drivers/power/supply/ltc4162-l-charger.c b/drivers/power/supply/ltc4162-l-charger.c
-index 2e4bc74e1..9c9ea7c5b 100644
---- a/drivers/power/supply/ltc4162-l-charger.c
-+++ b/drivers/power/supply/ltc4162-l-charger.c
-@@ -1,9 +1,14 @@
- // SPDX-License-Identifier: GPL-2.0-or-later
- /*
-- *  Driver for Analog Devices (Linear Technology) LTC4162-L charger IC.
-+ *  Driver for Analog Devices (Linear Technology)
-+ *  LTC4162-L 35V/3.2A Multi-Cell Lithium-Ion Step-Down Battery Charger
-+ *  LTC4162-F 35V/3.2A Multi-Cell LiFePO4 Step-Down Battery Charger
-+ *  LTC4162-S 35V/3.2A Lead-Acid Step-Down Battery Charger
-+ *  LTC4015 35V/3.2A Multichemistry Buck Battery Charger Controller
-  *  Copyright (C) 2020, Topic Embedded Products
-  */
- 
-+#include <linux/bitfield.h>
- #include <linux/module.h>
- #include <linux/delay.h>
- #include <linux/of.h>
-@@ -47,6 +52,20 @@
- #define LTC4162L_VBAT_FILT			0x47
- #define LTC4162L_INPUT_UNDERVOLTAGE_DAC		0x4B
- 
-+#define LTC4162L_CHEM_MASK			GENMASK(11, 8)
-+
-+enum ltc4162_chem {
-+	ltc4162_lad,
-+	ltc4162_l42,
-+	ltc4162_l41,
-+	ltc4162_l40,
-+	ltc4162_fad,
-+	ltc4162_ffs,
-+	ltc4162_fst,
-+	ltc4162_sst = 8,
-+	ltc4162_sad,
-+};
-+
- /* Enumeration as in datasheet. Individual bits are mutually exclusive. */
- enum ltc4162l_state {
- 	battery_detection = 2048,
-@@ -75,10 +94,28 @@ enum ltc4162l_charge_status {
- /* Magic number to write to ARM_SHIP_MODE register */
- #define LTC4162L_ARM_SHIP_MODE_MAGIC 21325
- 
-+struct ltc4162l_info;
-+
-+struct ltc4162l_chip_info {
-+	const char *name;
-+	int (*get_vbat)(struct ltc4162l_info *info, unsigned int reg,
-+			union power_supply_propval *val);
-+	int (*get_vcharge)(struct ltc4162l_info *info, unsigned int reg,
-+			   union power_supply_propval *val);
-+	int (*set_vcharge)(struct ltc4162l_info *info, unsigned int reg,
-+			   unsigned int value);
-+	int (*get_die_temp)(struct ltc4162l_info *info,
-+			    union power_supply_propval *val);
-+	unsigned int ibat_resolution_uv;
-+	unsigned int vin_resolution_mv;
-+	u8 telemetry_mask;
-+};
-+
- struct ltc4162l_info {
- 	struct i2c_client	*client;
- 	struct regmap		*regmap;
- 	struct power_supply	*charger;
-+	const struct ltc4162l_chip_info *chip_info;
- 	u32 rsnsb;	/* Series resistor that sets charge current, microOhm */
- 	u32 rsnsi;	/* Series resistor to measure input current, microOhm */
- 	u8 cell_count;	/* Number of connected cells, 0 while unknown */
-@@ -108,6 +145,18 @@ static u8 ltc4162l_get_cell_count(struct ltc4162l_info *info)
- 	return val;
- };
- 
-+static u8 ltc4162l_get_chem_type(struct ltc4162l_info *info)
-+{
-+	int ret;
-+	unsigned int val;
-+
-+	ret = regmap_read(info->regmap, LTC4162L_CHEM_CELLS_REG, &val);
-+	if (ret)
-+		return ret;
-+
-+	return FIELD_GET(LTC4162L_CHEM_MASK, val);
-+};
-+
- /* Convert enum value to POWER_SUPPLY_STATUS value */
- static int ltc4162l_state_decode(enum ltc4162l_state value)
- {
-@@ -223,25 +272,83 @@ static int ltc4162l_get_vbat(struct ltc4162l_info *info,
- 				  unsigned int reg,
- 				  union power_supply_propval *val)
- {
--	unsigned int regval;
-+	unsigned int regval, chem_type;
- 	int ret;
- 
- 	ret = regmap_read(info->regmap, reg, &regval);
- 	if (ret)
- 		return ret;
- 
--	/* cell_count × 192.4μV/LSB */
--	regval *= 1924;
--	regval *= ltc4162l_get_cell_count(info);
--	regval /= 10;
--	val->intval = regval;
-+	/*
-+	 * cell_count × scaling factor
-+	 * For ltc4162-s, it uses a cell_count value of 2 for each group of 3
-+	 * physical (2V) cells, thus will return 2, 4, 6, 8 for 6V, 12V, 18V,
-+	 * and 24V respectively, and has to divide by 2 to multiply the scale
-+	 * factor by 1, 2, 3, or 4 to represent a 6V, 12V, 18V, or 24V battery
-+	 * respectively.
-+	 */
-+	chem_type = ltc4162l_get_chem_type(info);
-+	switch (chem_type) {
-+	case ltc4162_lad ... ltc4162_fst:
-+		regval *= 1924;
-+		regval *= ltc4162l_get_cell_count(info);
-+		regval /= 10;
-+		val->intval = regval;
- 
--	return 0;
-+		return 0;
-+	case ltc4162_sst ... ltc4162_sad:
-+		regval *= 3848;
-+		regval *= ltc4162l_get_cell_count(info) / 2;
-+		regval /= 10;
-+		val->intval = regval;
-+
-+		return 0;
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
-+static int ltc4015_get_vbat(struct ltc4162l_info *info,
-+			    unsigned int reg,
-+			    union power_supply_propval *val)
-+{
-+	unsigned int regval, chem_type;
-+	int ret;
-+
-+	ret = regmap_read(info->regmap, reg, &regval);
-+	if (ret)
-+		return ret;
-+
-+	/*
-+	 * cell count x scaling factor
-+	 * ltc4015 lead-acid fixed and lead-acid programmable corresponds to
-+	 * 0x7 and 0x8 chem respectively
-+	 */
-+	chem_type = ltc4162l_get_chem_type(info);
-+	switch (chem_type) {
-+	case ltc4162_lad ... ltc4162_fst:
-+		regval *= 192264;
-+		regval *= ltc4162l_get_cell_count(info);
-+		regval /= 1000;
-+		val->intval = regval;
-+
-+		return 0;
-+	case ltc4162_sst - 1 ... ltc4162_sad - 1:
-+		regval *= 128176;
-+		regval *= ltc4162l_get_cell_count(info);
-+		regval /= 1000;
-+		val->intval = regval;
-+
-+		return 0;
-+	default:
-+		return -EINVAL;
-+	}
- }
- 
- static int ltc4162l_get_ibat(struct ltc4162l_info *info,
- 			     union power_supply_propval *val)
- {
-+	const struct ltc4162l_chip_info *chip_info = info->chip_info;
- 	unsigned int regval;
- 	int ret;
- 
-@@ -249,9 +356,8 @@ static int ltc4162l_get_ibat(struct ltc4162l_info *info,
- 	if (ret)
- 		return ret;
- 
--	/* Signed 16-bit number, 1.466μV / RSNSB amperes/LSB. */
- 	ret = (s16)(regval & 0xFFFF);
--	val->intval = 100 * mult_frac(ret, 14660, (int)info->rsnsb);
-+	val->intval = mult_frac(ret, chip_info->ibat_resolution_uv, info->rsnsb);
- 
- 	return 0;
- }
-@@ -260,6 +366,7 @@ static int ltc4162l_get_ibat(struct ltc4162l_info *info,
- static int ltc4162l_get_input_voltage(struct ltc4162l_info *info,
- 				      union power_supply_propval *val)
- {
-+	const struct ltc4162l_chip_info *chip_info = info->chip_info;
- 	unsigned int regval;
- 	int ret;
- 
-@@ -267,8 +374,7 @@ static int ltc4162l_get_input_voltage(struct ltc4162l_info *info,
- 	if (ret)
- 		return ret;
- 
--	/* 1.649mV/LSB */
--	val->intval =  regval * 1694;
-+	val->intval =  regval * chip_info->vin_resolution_mv;
- 
- 	return 0;
- }
-@@ -276,6 +382,7 @@ static int ltc4162l_get_input_voltage(struct ltc4162l_info *info,
- static int ltc4162l_get_input_current(struct ltc4162l_info *info,
- 				      union power_supply_propval *val)
- {
-+	const struct ltc4162l_chip_info *chip_info = info->chip_info;
- 	unsigned int regval;
- 	int ret;
- 
-@@ -283,11 +390,9 @@ static int ltc4162l_get_input_current(struct ltc4162l_info *info,
- 	if (ret)
- 		return ret;
- 
--	/* Signed 16-bit number, 1.466μV / RSNSI amperes/LSB. */
- 	ret = (s16)(regval & 0xFFFF);
--	ret *= 14660;
-+	ret *= chip_info->ibat_resolution_uv;
- 	ret /= info->rsnsi;
--	ret *= 100;
- 
- 	val->intval = ret;
- 
-@@ -336,7 +441,7 @@ static int ltc4162l_get_vcharge(struct ltc4162l_info *info,
- 				unsigned int reg,
- 				union power_supply_propval *val)
- {
--	unsigned int regval;
-+	unsigned int regval, chem_type;
- 	int ret;
- 	u32 voltage;
- 
-@@ -348,37 +453,177 @@ static int ltc4162l_get_vcharge(struct ltc4162l_info *info,
- 
- 	/*
- 	 * charge voltage setting can be computed from
--	 * cell_count × (vcharge_setting × 12.5mV + 3.8125V)
--	 * where vcharge_setting ranges from 0 to 31 (4.2V max).
-+	 * cell_count × (vcharge_setting × a + b)
-+	 * where vcharge_setting ranges from 0 to c (d).
-+	 * for ltc4162l: a = 12.5mV , b = 3.8125V, c = 31, d = 4.2Vmax
-+	 * for ltc4162f: a = 12.5mV , b = 3.4125V, c = 31, d = 3.8Vmax
-+	 *
-+	 * for ltc4162s, the charge voltage setting can be computed from
-+	 * N x (vcharge_setting x 28.571mV + 6.0V)
-+	 * where N is 1, 2, 3, or 4 for 6V, 12V, 18V, or 24V battery respectively,
-+	 * and vcharge_setting ranges from 0 to 31
- 	 */
--	voltage = 3812500 + (regval * 12500);
--	voltage *= ltc4162l_get_cell_count(info);
--	val->intval = voltage;
-+	chem_type = ltc4162l_get_chem_type(info);
-+	switch (chem_type) {
-+	case ltc4162_lad ... ltc4162_l40:
-+		voltage = 3812500 + (regval * 12500);
-+		voltage *= ltc4162l_get_cell_count(info);
-+		val->intval = voltage;
- 
--	return 0;
-+		return 0;
-+	case ltc4162_fad ... ltc4162_fst:
-+		voltage = 3412500 + (regval * 12500);
-+		voltage *= ltc4162l_get_cell_count(info);
-+		val->intval = voltage;
-+
-+		return 0;
-+	case ltc4162_sst ... ltc4162_sad:
-+		voltage = 6000000 + (regval * 28571);
-+		voltage *= ltc4162l_get_cell_count(info) / 2;
-+		val->intval = voltage;
-+
-+		return 0;
-+	default:
-+		return -EINVAL;
-+	}
- }
- 
--static int ltc4162l_set_vcharge(struct ltc4162l_info *info,
--				unsigned int reg,
--				unsigned int value)
-+static int ltc4015_get_vcharge(struct ltc4162l_info *info,
-+			       unsigned int reg,
-+			       union power_supply_propval *val)
- {
--	u8 cell_count = ltc4162l_get_cell_count(info);
-+	unsigned int regval, chem_type;
-+	int ret;
-+	u32 voltage;
-+
-+	ret = regmap_read(info->regmap, reg, &regval);
-+	if (ret)
-+		return ret;
- 
--	if (!cell_count)
--		return -EBUSY; /* Not available yet, try again later */
-+	regval &= BIT(6) - 1; /* Only the lower 5 bits */
-+
-+	/*
-+	 * charge voltage setting can be computed from:
-+	 * cell_count × (vcharge_setting × a + b)
-+	 * where vcharge_setting ranges from 0 to c (d).
-+	 * Li-Ion: a = 1/80V, b = 3.8125V, c = 31, d = 4.2Vmax
-+	 * LiFePO4: a = 1/80V, b = 3.4125V, c = 31, d = 3.8Vmax
-+	 * Lead Acid: a = 1/105V, b = 2V, c = 35, d = 2.6Vmax
-+	 */
-+	chem_type = ltc4162l_get_chem_type(info);
-+	switch (chem_type) {
-+	case ltc4162_lad ... ltc4162_l40:
-+		voltage = 3812500 + (regval * 12500);
-+		voltage *= ltc4162l_get_cell_count(info);
-+		val->intval = voltage;
-+
-+		return 0;
-+	case ltc4162_fad ... ltc4162_fst:
-+		voltage = 3412500 + (regval * 12500);
-+		voltage *= ltc4162l_get_cell_count(info);
-+		val->intval = voltage;
-+
-+		return 0;
-+	case ltc4162_sst - 1 ... ltc4162_sad - 1:
-+		voltage = 2000000 + mult_frac(regval, 1000000, 105);
-+		voltage *= ltc4162l_get_cell_count(info);
-+		val->intval = voltage;
- 
-+		return 0;
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
-+static int ltc4162l_vcharge(unsigned int base_voltage,
-+			    unsigned int scale_factor,
-+			    unsigned int range,
-+			    unsigned int value,
-+			    u8 cell_count)
-+{
- 	value /= cell_count;
- 
--	if (value < 3812500)
-+	if (value < base_voltage)
- 		return -EINVAL;
- 
--	value -= 3812500;
--	value /= 12500;
-+	value -= base_voltage;
-+	value /= scale_factor;
- 
--	if (value > 31)
-+	if (value > range)
- 		return -EINVAL;
- 
--	return regmap_write(info->regmap, reg, value);
-+	return value;
-+}
-+
-+static int ltc4162l_set_vcharge(struct ltc4162l_info *info,
-+				unsigned int reg,
-+				unsigned int value)
-+{
-+	unsigned int chem_type;
-+	u8 cell_count;
-+
-+	chem_type = ltc4162l_get_chem_type(info);
-+	switch (chem_type) {
-+	case ltc4162_lad ... ltc4162_l40:
-+		cell_count = ltc4162l_get_cell_count(info);
-+		if (!cell_count)
-+			return -EBUSY;
-+
-+		value = ltc4162l_vcharge(3812500, 12500, 31, value, cell_count);
-+		return regmap_write(info->regmap, reg, value);
-+	case ltc4162_fad ... ltc4162_fst:
-+		cell_count = ltc4162l_get_cell_count(info);
-+		if (!cell_count)
-+			return -EBUSY;
-+
-+		value = ltc4162l_vcharge(3412500, 12500, 31, value, cell_count);
-+		return regmap_write(info->regmap, reg, value);
-+	case ltc4162_sst ... ltc4162_sad:
-+		cell_count = ltc4162l_get_cell_count(info) / 2;
-+		if (!cell_count)
-+			return -EBUSY;
-+
-+		value = ltc4162l_vcharge(6000000, 28571, 31, value, cell_count);
-+		return regmap_write(info->regmap, reg, value);
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
-+static int ltc4015_set_vcharge(struct ltc4162l_info *info,
-+			       unsigned int reg,
-+			       unsigned int value)
-+{
-+	unsigned int chem_type;
-+	u8 cell_count;
-+
-+	chem_type = ltc4162l_get_chem_type(info);
-+	switch (chem_type) {
-+	case ltc4162_lad ... ltc4162_l40:
-+		cell_count = ltc4162l_get_cell_count(info);
-+		if (!cell_count)
-+			return -EBUSY;
-+
-+		value = ltc4162l_vcharge(3812500, 12500, 31, value, cell_count);
-+		return regmap_write(info->regmap, reg, value);
-+	case ltc4162_fad ... ltc4162_fst:
-+		cell_count = ltc4162l_get_cell_count(info);
-+		if (!cell_count)
-+			return -EBUSY;
-+
-+		value = ltc4162l_vcharge(3412500, 12500, 31, value, cell_count);
-+		return regmap_write(info->regmap, reg, value);
-+	case ltc4162_sst - 1 ... ltc4162_sad - 1:
-+		cell_count = ltc4162l_get_cell_count(info);
-+		if (!cell_count)
-+			return -EBUSY;
-+
-+		value = ltc4162l_vcharge(2000000, 1000000 / 105, 35,
-+					 value, cell_count);
-+		return regmap_write(info->regmap, reg, value);
-+	default:
-+		return -EINVAL;
-+	}
- }
- 
- static int ltc4162l_get_iin_limit_dac(struct ltc4162l_info *info,
-@@ -437,9 +682,30 @@ static int ltc4162l_get_die_temp(struct ltc4162l_info *info,
- 	return 0;
- }
- 
-+static int ltc4015_get_die_temp(struct ltc4162l_info *info,
-+				union power_supply_propval *val)
-+{
-+	unsigned int regval;
-+	int ret;
-+
-+	ret = regmap_read(info->regmap, LTC4162L_DIE_TEMPERATURE, &regval);
-+	if (ret)
-+		return ret;
-+
-+	/* (die_temp - 12010) / 45.6°C */
-+	ret = (s16)(regval & 0xFFFF);
-+	ret -= 12010;
-+	ret *= 1000;
-+	ret /= 456;
-+	val->intval = ret;
-+
-+	return 0;
-+}
-+
- static int ltc4162l_get_term_current(struct ltc4162l_info *info,
- 				     union power_supply_propval *val)
- {
-+	const struct ltc4162l_chip_info *chip_info = info->chip_info;
- 	unsigned int regval;
- 	int ret;
- 
-@@ -457,10 +723,9 @@ static int ltc4162l_get_term_current(struct ltc4162l_info *info,
- 	if (ret)
- 		return ret;
- 
--	/* 1.466μV / RSNSB amperes/LSB */
--	regval *= 14660u;
-+	regval *= chip_info->ibat_resolution_uv;
- 	regval /= info->rsnsb;
--	val->intval = 100 * regval;
-+	val->intval = regval;
- 
- 	return 0;
- }
-@@ -534,10 +799,11 @@ static ssize_t vbat_show(struct device *dev,
- {
- 	struct power_supply *psy = to_power_supply(dev);
- 	struct ltc4162l_info *info = power_supply_get_drvdata(psy);
-+	const struct ltc4162l_chip_info *chip_info = info->chip_info;
- 	union power_supply_propval val;
- 	int ret;
- 
--	ret = ltc4162l_get_vbat(info, LTC4162L_VBAT, &val);
-+	ret = chip_info->get_vbat(info, LTC4162L_VBAT, &val);
- 	if (ret)
- 		return ret;
- 
-@@ -550,10 +816,11 @@ static ssize_t vbat_avg_show(struct device *dev,
- {
- 	struct power_supply *psy = to_power_supply(dev);
- 	struct ltc4162l_info *info = power_supply_get_drvdata(psy);
-+	const struct ltc4162l_chip_info *chip_info = info->chip_info;
- 	union power_supply_propval val;
- 	int ret;
- 
--	ret = ltc4162l_get_vbat(info, LTC4162L_VBAT_FILT, &val);
-+	ret = chip_info->get_vbat(info, LTC4162L_VBAT_FILT, &val);
- 	if (ret)
- 		return ret;
- 
-@@ -589,7 +856,8 @@ static ssize_t force_telemetry_show(struct device *dev,
- 	if (ret)
- 		return ret;
- 
--	return sysfs_emit(buf, "%u\n", regval & BIT(2) ? 1 : 0);
-+	return sysfs_emit(buf, "%u\n", regval &
-+			  info->chip_info->telemetry_mask ? 1 : 0);
- }
- 
- static ssize_t force_telemetry_store(struct device *dev,
-@@ -607,7 +875,8 @@ static ssize_t force_telemetry_store(struct device *dev,
- 		return ret;
- 
- 	ret = regmap_update_bits(info->regmap, LTC4162L_CONFIG_BITS_REG,
--				 BIT(2), value ? BIT(2) : 0);
-+				 info->chip_info->telemetry_mask,
-+				 value ? info->chip_info->telemetry_mask : 0);
- 	if (ret < 0)
- 		return ret;
- 
-@@ -681,6 +950,7 @@ static int ltc4162l_get_property(struct power_supply *psy,
- 				 union power_supply_propval *val)
- {
- 	struct ltc4162l_info *info = power_supply_get_drvdata(psy);
-+	const struct ltc4162l_chip_info *chip_info = info->chip_info;
- 
- 	switch (psp) {
- 	case POWER_SUPPLY_PROP_STATUS:
-@@ -702,15 +972,13 @@ static int ltc4162l_get_property(struct power_supply *psy,
- 		return ltc4162l_get_icharge(info,
- 				LTC4162L_CHARGE_CURRENT_SETTING, val);
- 	case POWER_SUPPLY_PROP_CONSTANT_CHARGE_VOLTAGE:
--		return ltc4162l_get_vcharge(info,
--				LTC4162L_VCHARGE_DAC, val);
-+		return chip_info->get_vcharge(info, LTC4162L_VCHARGE_DAC, val);
- 	case POWER_SUPPLY_PROP_CONSTANT_CHARGE_VOLTAGE_MAX:
--		return ltc4162l_get_vcharge(info,
--				LTC4162L_VCHARGE_SETTING, val);
-+		return chip_info->get_vcharge(info, LTC4162L_VCHARGE_SETTING, val);
- 	case POWER_SUPPLY_PROP_INPUT_CURRENT_LIMIT:
- 		return ltc4162l_get_iin_limit_dac(info, val);
- 	case POWER_SUPPLY_PROP_TEMP:
--		return ltc4162l_get_die_temp(info, val);
-+		return chip_info->get_die_temp(info, val);
- 	case POWER_SUPPLY_PROP_CHARGE_TERM_CURRENT:
- 		return ltc4162l_get_term_current(info, val);
- 	default:
-@@ -772,7 +1040,6 @@ static enum power_supply_property ltc4162l_properties[] = {
- };
- 
- static const struct power_supply_desc ltc4162l_desc = {
--	.name		= "ltc4162-l",
- 	.type		= POWER_SUPPLY_TYPE_MAINS,
- 	.properties	= ltc4162l_properties,
- 	.num_properties	= ARRAY_SIZE(ltc4162l_properties),
-@@ -781,6 +1048,50 @@ static const struct power_supply_desc ltc4162l_desc = {
- 	.property_is_writeable = ltc4162l_property_is_writeable,
- };
- 
-+static const struct ltc4162l_chip_info ltc4162l_chip_info = {
-+	.name = "ltc4162-l",
-+	.get_vbat = ltc4162l_get_vbat,
-+	.get_vcharge = ltc4162l_get_vcharge,
-+	.set_vcharge = ltc4162l_set_vcharge,
-+	.get_die_temp = ltc4162l_get_die_temp,
-+	.ibat_resolution_uv = 1466000,
-+	.vin_resolution_mv = 1649,
-+	.telemetry_mask = BIT(2),
-+};
-+
-+static const struct ltc4162l_chip_info ltc4162f_chip_info = {
-+	.name = "ltc4162-f",
-+	.get_vbat = ltc4162l_get_vbat,
-+	.get_vcharge = ltc4162l_get_vcharge,
-+	.set_vcharge = ltc4162l_set_vcharge,
-+	.get_die_temp = ltc4162l_get_die_temp,
-+	.ibat_resolution_uv = 1466000,
-+	.vin_resolution_mv = 1649,
-+	.telemetry_mask = BIT(2),
-+};
-+
-+static const struct ltc4162l_chip_info ltc4162s_chip_info = {
-+	.name = "ltc4162-s",
-+	.get_vbat = ltc4162l_get_vbat,
-+	.get_vcharge = ltc4162l_get_vcharge,
-+	.set_vcharge = ltc4162l_set_vcharge,
-+	.get_die_temp = ltc4162l_get_die_temp,
-+	.ibat_resolution_uv = 1466000,
-+	.vin_resolution_mv = 1649,
-+	.telemetry_mask = BIT(2),
-+};
-+
-+static const struct ltc4162l_chip_info ltc4015_chip_info = {
-+	.name = "ltc4015",
-+	.get_vbat = ltc4015_get_vbat,
-+	.get_vcharge = ltc4015_get_vcharge,
-+	.set_vcharge = ltc4015_set_vcharge,
-+	.get_die_temp = ltc4015_get_die_temp,
-+	.ibat_resolution_uv = 1464870,
-+	.vin_resolution_mv = 1648,
-+	.telemetry_mask = BIT(4),
-+};
-+
- static bool ltc4162l_is_writeable_reg(struct device *dev, unsigned int reg)
- {
- 	/* all registers up to this one are writeable */
-@@ -825,6 +1136,8 @@ static int ltc4162l_probe(struct i2c_client *client)
- 	struct device *dev = &client->dev;
- 	struct ltc4162l_info *info;
- 	struct power_supply_config ltc4162l_config = {};
-+	struct power_supply_desc *desc;
-+	const struct ltc4162l_chip_info *chip_info;
- 	u32 value;
- 	int ret;
- 
-@@ -839,6 +1152,12 @@ static int ltc4162l_probe(struct i2c_client *client)
- 	info->client = client;
- 	i2c_set_clientdata(client, info);
- 
-+	chip_info = i2c_get_match_data(client);
-+	if (!chip_info)
-+		return -ENODEV;
-+
-+	info->chip_info = chip_info;
-+
- 	info->regmap = devm_regmap_init_i2c(client, &ltc4162l_regmap_config);
- 	if (IS_ERR(info->regmap)) {
- 		dev_err(dev, "Failed to initialize register map\n");
-@@ -870,8 +1189,15 @@ static int ltc4162l_probe(struct i2c_client *client)
- 	ltc4162l_config.drv_data = info;
- 	ltc4162l_config.attr_grp = ltc4162l_attr_groups;
- 
--	info->charger = devm_power_supply_register(dev, &ltc4162l_desc,
--						   &ltc4162l_config);
-+	/* Duplicate the default descriptor to set name based on chip_info. */
-+	desc = devm_kmemdup(dev, &ltc4162l_desc,
-+			    sizeof(struct power_supply_desc), GFP_KERNEL);
-+	if (!desc)
-+		return -ENOMEM;
-+
-+	desc->name = chip_info->name;
-+
-+	info->charger = devm_power_supply_register(dev, desc, &ltc4162l_config);
- 	if (IS_ERR(info->charger)) {
- 		dev_err(dev, "Failed to register charger\n");
- 		return PTR_ERR(info->charger);
-@@ -903,14 +1229,20 @@ static void ltc4162l_alert(struct i2c_client *client,
- }
- 
- static const struct i2c_device_id ltc4162l_i2c_id_table[] = {
--	{ "ltc4162-l" },
-+	{ "ltc4162-l", (kernel_ulong_t)&ltc4162l_chip_info },
-+	{ "ltc4162-f", (kernel_ulong_t)&ltc4162f_chip_info },
-+	{ "ltc4162-s", (kernel_ulong_t)&ltc4162s_chip_info },
-+	{ "ltc4015", (kernel_ulong_t)&ltc4015_chip_info },
- 	{ }
- };
- MODULE_DEVICE_TABLE(i2c, ltc4162l_i2c_id_table);
- 
- static const struct of_device_id ltc4162l_of_match[] __maybe_unused = {
--	{ .compatible = "lltc,ltc4162-l", },
--	{ },
-+	{ .compatible = "lltc,ltc4162-l", .data = &ltc4162l_chip_info },
-+	{ .compatible = "lltc,ltc4162-f", .data = &ltc4162f_chip_info },
-+	{ .compatible = "lltc,ltc4162-s", .data = &ltc4162s_chip_info },
-+	{ .compatible = "lltc,ltc4015", .data = &ltc4015_chip_info },
-+	{ }
- };
- MODULE_DEVICE_TABLE(of, ltc4162l_of_match);
- 
--- 
-2.34.1
+
+
+> 
 
 
