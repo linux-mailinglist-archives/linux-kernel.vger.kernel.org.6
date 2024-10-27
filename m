@@ -1,126 +1,109 @@
-Return-Path: <linux-kernel+bounces-383817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 891D19B2084
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 21:43:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 07D2C9B2086
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 21:45:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4ED0E281DA2
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 20:43:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C81F928137C
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 20:45:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA4BD18132A;
-	Sun, 27 Oct 2024 20:43:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 200B51836D9;
+	Sun, 27 Oct 2024 20:45:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="KVAL0ILp"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="PhwJgdLH"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDB1317D354;
-	Sun, 27 Oct 2024 20:43:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7320291E;
+	Sun, 27 Oct 2024 20:45:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730061820; cv=none; b=K29XfdJlGTlpd+Q7yG6ScjjZOGyRxprkCbg5NEeNiPY2BeArBJswvEt76BrwKkq9sdVkSEu8QaZXpFe6yZJV1UpXvaFRtQuHtu6pS8GUG3Xvo85Y9BubNc5SQXTWgW2hD9eYpvvHUflVTdK28qphBnKO7+rF9/MnrOq7mVMPSJY=
+	t=1730061927; cv=none; b=jqaqs7Gzhak3AyOoeO+miZuMj5vBghT52OlkSM11hy5bSXwpzjHpopMP8xm//x61FFw70do1IgJxiFN8KPEuuEqm02G34iLWVtzGSCVR144+/QBf3Faa5ouyRmYrsyZftWT4RByA33J7daDsuLmysS+V7h0BDBV07LIFxQeHDgI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730061820; c=relaxed/simple;
-	bh=rp/6cAX8qa+xCZdZgTWi88Vtnh8/7YSPavnh4VoQsqk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZxRL8Xe0Rh3wbNFwZMce9i1xXf/mI4SAl6oRImfeRNDLMaAaP09N2ugj1zQh+Sd7ymxMEVs3eOMGE2qTiBM/17nSDI7Q8CH4KWKbH4zVvXvlX9aEnNlSbsVJhzfF4Jo1Go7RUHtDcY+5XaFJw1AAmDuwD1lhMABtrOX2WgetYFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=KVAL0ILp; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=1T8ILKm4ovamc8emWS1f1es99V1XULDZVRfssxb0X7s=; b=KVAL0ILpywa5Lo2ngSEr1c3Swm
-	DDpKcW8zyC70vjJ9/IhyRe9C+5ZDWik1SQrbU1WtGwl/atuqIgj5PYCHAUslmNQ4Znm/JmHYUrDaX
-	P/vq2n/ofMGyollaUkkuHe/Ur5VKw9q3M7QUX8FXbYCXSTM8ydjN4mBKuSXo+7gggGv55YTNpuu8n
-	G1T1KtmnyqTyYofhsFJ2tLh5k8I+0Awt3f1LiqQnzUzxL/uoqKg3BvWH5htOfMfGRo3QEzbTJP/gz
-	ornnrreC2W7RvNiM27PJ02HbGeImEDRORIOX3XRXVUImFLFEvWur7HImNV/FvZ4Z8z8xfsyS9cjDX
-	8/k5UzYw==;
-Received: from [189.79.117.125] (helo=[192.168.1.60])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1t5A6j-00FpyE-3s; Sun, 27 Oct 2024 21:43:29 +0100
-Message-ID: <a07bc9f1-e3c6-04b4-b9b0-63d33373ee31@igalia.com>
-Date: Sun, 27 Oct 2024 17:43:22 -0300
+	s=arc-20240116; t=1730061927; c=relaxed/simple;
+	bh=9zXBIR4jK8F+z64bb1NP+JrpvanmQ0CF4s7/ZrMfyJc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F3iJHNTDbgSo6Ba5NlL1J9OnSBXl1HkAEkWzClXQgVHThg8GY9tC41HQ7qljcR7oddcQKG5hqEsUxUYqVyC4XBeG9jtNshxDpldStnaFez2TiLOoSJeUXcd6ihr41bUMC8P1YOzreFRUtMQfH0+2yloaPWOnKdqA5cGywCM7sJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=PhwJgdLH; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
+	:Subject; bh=PHzoQUxl50rm6D8h04ALz6ZmPdJ+g0LyRyAMK0/9l+4=; b=PhwJgdLH6Pul4/9D
+	BoGu8yjY7yNTMErvDcdNhXTD9jYnYZs0f7oFDR3dNZAQ7ZmAn7B/mov2rhGQA07BktX27+ZQWL9x/
+	2/FEkCxnD2PI21tkjuH88ZCgFGgOo/YtycKTVDaTFthxy4madOunQ4JAWT6F6FSNwA/b5yW0Kk8vQ
+	rE9MLs6dgQ92ubhD868AWrWeDrt6to7SUo/1PPk+kz0CBilu8uCR9KEbEYLGEtJ1ytYWUtI+PBYFY
+	/+rhOabRsrJ4LcgWOwVQH+vj/KWjBgPk+g7J21TXKJ54JD3TsycHqGgx7XE+QW05lUWNDMSnGL0DK
+	dIa1gZnVi/1FizwA7Q==;
+Received: from dg by mx.treblig.org with local (Exim 4.96)
+	(envelope-from <dg@treblig.org>)
+	id 1t5A8X-00DoO7-24;
+	Sun, 27 Oct 2024 20:45:21 +0000
+Date: Sun, 27 Oct 2024 20:45:21 +0000
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
+To: Ilya Dryomov <idryomov@gmail.com>
+Cc: xiubli@redhat.com, ceph-devel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/5] Ceph deadcoding
+Message-ID: <Zx6mYTxz0V3LscOW@gallifrey>
+References: <20241006011956.373622-1-linux@treblig.org>
+ <CAOi1vP8PaYSZCoWHkNFfSQyb2n0qc4pB7iJRrMpJ+9Ck9=UHdg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH V3] Documentation: Improve crash_kexec_post_notifiers
- description
-Content-Language: en-US
-To: Michael Kelley <mhklinux@outlook.com>
-Cc: "bhe@redhat.com" <bhe@redhat.com>,
- "kexec@lists.infradead.org" <kexec@lists.infradead.org>,
- "vgoyal@redhat.com" <vgoyal@redhat.com>,
- "dyoung@redhat.com" <dyoung@redhat.com>, "corbet@lwn.net" <corbet@lwn.net>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
- "linux-debuggers@vger.kernel.org" <linux-debuggers@vger.kernel.org>,
- "stephen.s.brennan@oracle.com" <stephen.s.brennan@oracle.com>,
- "horms@kernel.org" <horms@kernel.org>,
- "kernel@gpiccoli.net" <kernel@gpiccoli.net>,
- "kernel-dev@igalia.com" <kernel-dev@igalia.com>
-References: <20241025162042.905104-1-gpiccoli@igalia.com>
- <SN6PR02MB41577D176FD038A3D630296DD4492@SN6PR02MB4157.namprd02.prod.outlook.com>
-From: "Guilherme G. Piccoli" <gpiccoli@igalia.com>
-In-Reply-To: <SN6PR02MB41577D176FD038A3D630296DD4492@SN6PR02MB4157.namprd02.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOi1vP8PaYSZCoWHkNFfSQyb2n0qc4pB7iJRrMpJ+9Ck9=UHdg@mail.gmail.com>
+X-Chocolate: 70 percent or better cocoa solids preferably
+X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
+X-Uptime: 20:44:49 up 172 days,  7:58,  1 user,  load average: 0.00, 0.00,
+ 0.00
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
-On 27/10/2024 15:16, Michael Kelley wrote:
-> [...]
->>  	crash_kexec_post_notifiers
->> -			Run kdump after running panic-notifiers and dumping
->> -			kmsg. This only for the users who doubt kdump always
->> -			succeeds in any situation.
->> -			Note that this also increases risks of kdump failure,
->> -			because some panic notifiers can make the crashed
->> -			kernel more unstable.
->> +			Only jump to kdump kernel after running the panic
->> +			notifiers and dumping kmsg. This option increases
->> +			the risks of a kdump failure, since some panic
->> +			notifiers can make the crashed kernel more unstable.
->> +			In configurations where kdump may not be reliable,
->> +			running the panic notifiers could allow collecting
->> +			more data on dmesg, like stack traces from other CPUS
->> +			or extra data dumped by panic_print. Note that some
->> +			configurations enable this option unconditionally,
->> +			like Hyper-V, PowerPC (fadump) and AMD SEV.
+* Ilya Dryomov (idryomov@gmail.com) wrote:
+> On Sun, Oct 6, 2024 at 3:19 AM <linux@treblig.org> wrote:
+> >
+> > From: "Dr. David Alan Gilbert" <linux@treblig.org>
+> >
+> > Hi,
+> >   This series is a set of deadcoding in fs/ceph and net/ceph.
+> > It's strictly function deletion so should have no change
+> > in behaviour.
+> >
+> > (get_maintainer was suggesting the netdev team as well
+> > as ceph? Is that correct???)
 > 
-> This last line should be more specific and use "AMD SEV-SNP" instead of
-> just "AMD SEV". Commit 8ef979584ea8 that you mentioned above is
-> specific to SEV-SNP.
+> Hi David,
 > 
-> There have been three versions of SEV functionality in AMD processors:
-> * SEV:  the original guest VM encryption
-> * SEV-ES:  SEV enhanced to cover register state as well
-> * SEV-SNP:  SEV-ES plus Secure Nested Paging, which provides
-> functionality to address the Confidential Computing VM threat model
-> described in the Linux CoCo VM documentation. SEV-SNP processors are
-> AMD's product that is widely deployed for CoCo VMs in large public clouds.
+> No, it's not correct.  It's probably caused by
 > 
-> Just using "SEV" is somewhat ambiguous because it's not clear whether
-> it refers to the family of three SEV levels, or just the original guest VM
-> encryption. Since this case is clearly SEV-SNP only, being specific removes
-> the ambiguity.
+> F:    net/
 > 
-> Michael
+> entry in "NETWORKING [GENERAL]" section.  I don't recall
+> get_maintainer.pl doing that in the past, but I could be wrong.
 
-Thanks a lot Michael, for the clarification. I've just sent a V4
-updating that.
-Cheers,
+THanks, I didn't think it was right.
 
+> Anyway, I'll send a patch to exclude net/ceph there.
 
-Guilherme
+Thanks, and thanks for applying the cleanup.
+
+Dave
+
+> Thanks,
+> 
+>                 Ilya
+> 
+-- 
+ -----Open up your eyes, open up your mind, open up your code -------   
+/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+\        dave @ treblig.org |                               | In Hex /
+ \ _________________________|_____ http://www.treblig.org   |_______/
 
