@@ -1,172 +1,78 @@
-Return-Path: <linux-kernel+bounces-383750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E2B39B1FD2
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 20:02:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E6A89B1FD3
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 20:03:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18A811F2123B
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 19:02:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AEBE81C2086B
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 19:03:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F88E1779AE;
-	Sun, 27 Oct 2024 19:02:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A924B157E9F;
+	Sun, 27 Oct 2024 19:03:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="JrZqvHDS"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bavFuiHq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08E9F1DFE8;
-	Sun, 27 Oct 2024 19:02:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1693C1DFE8
+	for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 19:03:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730055735; cv=none; b=LYq9r9tnb2kogQJ8iu/xg36uvq4DhYpwRE4fctSAQ9tPrlwrE+zBCY5PvHUKlgNgYrPlkCFILB4C6atmlhehOx9dAOGlBPArHRz+QSswvp0XWR7Ku7ciylU2+XJeC0LQ6/DW13YK5AFo1MlRxaD8ZbS42IJH3AhlPToaxbgsI0E=
+	t=1730055815; cv=none; b=aRAt2YFula31imvyy5C8icgrOXoC8AcxR+Gv8MZxKT05cdtj57hyP2dLUDAEYqrLOo7KkVARk1YQDGnUniUNk4numjV2HkgA8T3RBxoGRry8TnEONO7WvMckFxVujhSPMPywAQkdi7OlODtbTsvKKX4sha6mKNCl8O+HW0ACW3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730055735; c=relaxed/simple;
-	bh=WvVdXnvaClZZhGy9E3SXD2zt0hOOkWPIob0/lnYVUlw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=GRxuWluf4rsF5eGb0CKESQUcpYtWOeq0cKcCo7RT1E1tqxAeDLe3vFpGV7mBye2WQrFr1aIJiSd58VVGI8Z9fngEfDIaI6CkbhUWjrJGhSimQlceSQ+NB8dFxnw7T2v1TL8nFaboUk++6Vmgo5eoaGN8SgH3lKXzjDtoLnOa5wM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=JrZqvHDS; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49REw7LE002830;
-	Sun, 27 Oct 2024 19:02:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	DB7k7FTPzcBwXcR8I+IAPfa2fMINv1VnibF6k3GaxKY=; b=JrZqvHDSfRZzPc99
-	JysowDQNjnMn2JZTFtEOuZ9pz3RsyP8F4UP19blJryBfp7pSdvPq2JK+0Va9HdzM
-	NAw/ncJX5da+DepDeP7DADGYydDFWuIvkVRh20KhqT9OHMOcwzWtzZYmYTL7PzOw
-	nRby0vGaK/dFzr861gsI+BxAaSoB6j/sG7KBNAI9Ot5oJdBZNjRzjpCSUus5wipC
-	L9v17XXo38XjbfA35y6BJ41U54QTauam3mw2ZOsWsDqm07XQ1TXD1LD9Mb7w1sI8
-	WT9N8gC1jgVaSHkpWuSJMBLmC4W28PgMgDIaklHZ/6jBocEwwwlAsnq2tf5eAxhK
-	ywkmCw==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42gp4du2b9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 27 Oct 2024 19:02:09 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49RJ297n007664
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 27 Oct 2024 19:02:09 GMT
-Received: from [10.216.2.255] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 27 Oct
- 2024 12:02:05 -0700
-Message-ID: <c87f96a7-f391-41d0-821b-cbd4e25b5831@quicinc.com>
-Date: Mon, 28 Oct 2024 00:32:02 +0530
+	s=arc-20240116; t=1730055815; c=relaxed/simple;
+	bh=xNP1YdtT/Rne+yViDRW+aQsMGGvVFEsLTpT95PsoQS0=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=iyrZDcAITJhfKiYNtfafjEAo+4mWsr0sTGR15CEqELCdlcsFy7L26wtfjBG/fMrBr46+eqhtTuL6SkFl5orCm4Dxv/7FJJVWN5DEKbJA83iIsmIXAby/DlaTJI+NMwe9heX/Tih61d2lppigN1jloOoK/eDGcr/iNauvjrdPRjk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bavFuiHq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E5EAC4CEC3;
+	Sun, 27 Oct 2024 19:03:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730055813;
+	bh=xNP1YdtT/Rne+yViDRW+aQsMGGvVFEsLTpT95PsoQS0=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=bavFuiHqwb/1iA/dxhXgLLXSj4mCyHSUnJQ1lLS6NXZ0SrG8iJ0jlvOuTwsC+mITz
+	 a6y8XK8zrQxycbEq5jC3akLmsNY/lsHBL6QaQk6VoKDaS4keidu23/7PXiUjqzqJun
+	 mjTbsqKT4tlkhIPINpWfGyoWEHj+6dCGIzVcsydeaBMxlcSc14AObS9JVu60E8kPTa
+	 DpvwHpNKwKjqlcTsWhoU/EBx3yH6AYZY0We11Z9SncRRvJBHoupFcSkeGY1wQt+qci
+	 MJcbP2bM2X3BaPlCQoWZHp/gutv3wr3zo913m79efnttbOdGsjEorlYAQJRDSI6WS5
+	 pfY2dZhrmIp0w==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB3673809A8A;
+	Sun, 27 Oct 2024 19:03:41 +0000 (UTC)
+Subject: Re: [GIT PULL] ftrace: Function graph fixes for 6.12
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20241026034506.2fe3e1aa@rorschach.local.home>
+References: <20241026034506.2fe3e1aa@rorschach.local.home>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20241026034506.2fe3e1aa@rorschach.local.home>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git ftrace-v6.12-rc4
+X-PR-Tracked-Commit-Id: a574e7f80e86c740e241c762923f50077b2c2a30
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: f69a1accfe2e2ee2c43096abd9080b1fdb0c894d
+Message-Id: <173005582053.3431633.17287997692977352638.pr-tracker-bot@kernel.org>
+Date: Sun, 27 Oct 2024 19:03:40 +0000
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Li Huafei <lihuafei1@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] arm64: dts: qcom: Enable USB controllers for
- QCS8300
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <quic_ppratap@quicinc.com>, <quic_jackp@quicinc.com>
-References: <20241011074619.796580-1-quic_kriskura@quicinc.com>
- <20241011074619.796580-3-quic_kriskura@quicinc.com>
- <xijjs445fzeuzbj2bg3ziwlzenrk4wo5zlyze4j5mldb444oj7@73ynic4xqfdj>
- <720aa372-a04b-4b0f-b2da-3be37a319ec9@quicinc.com>
- <fhgw2re45vn63lqox7vikg3hcak3wjf4wududebw7ow2enrqiq@inajq4l5qqir>
-Content-Language: en-US
-From: Krishna Kurapati <quic_kriskura@quicinc.com>
-In-Reply-To: <fhgw2re45vn63lqox7vikg3hcak3wjf4wududebw7ow2enrqiq@inajq4l5qqir>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: Kdkg1ZT5aT34BhSeT16UEsDfN-4oaqzm
-X-Proofpoint-GUID: Kdkg1ZT5aT34BhSeT16UEsDfN-4oaqzm
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- priorityscore=1501 mlxlogscore=636 clxscore=1015 spamscore=0
- lowpriorityscore=0 malwarescore=0 bulkscore=0 adultscore=0 phishscore=0
- mlxscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410270167
 
+The pull request you sent on Sat, 26 Oct 2024 03:45:06 -0400:
 
+> git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git ftrace-v6.12-rc4
 
-On 10/27/2024 11:14 PM, Dmitry Baryshkov wrote:
-> On Sun, Oct 27, 2024 at 11:59:44AM +0530, Krishna Kurapati wrote:
->>
->>
->> On 10/26/2024 11:06 PM, Dmitry Baryshkov wrote:
->>> On Fri, Oct 11, 2024 at 01:16:19PM +0530, Krishna Kurapati wrote:
->>>> Enable primary USB controller on QCS8300 Ride platform. The primary USB
->>>> controller is made "peripheral", as this is intended to be connected to
->>>> a host for debugging use cases.
->>>>
->>>> Signed-off-by: Krishna Kurapati <quic_kriskura@quicinc.com>
->>>> ---
->>>>    arch/arm64/boot/dts/qcom/qcs8300-ride.dts | 23 +++++++++++++++++++++++
->>>>    1 file changed, 23 insertions(+)
->>>>
->>>> diff --git a/arch/arm64/boot/dts/qcom/qcs8300-ride.dts b/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
->>>> index 7eed19a694c3..3e925228379c 100644
->>>> --- a/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
->>>> +++ b/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
->>>> @@ -265,3 +265,26 @@ &ufs_mem_phy {
->>>>    	vdda-pll-supply = <&vreg_l5a>;
->>>>    	status = "okay";
->>>>    };
->>>> +
->>>> +&usb_1_hsphy {
->>>> +	vdda-pll-supply = <&vreg_l7a>;
->>>> +	vdda18-supply = <&vreg_l7c>;
->>>> +	vdda33-supply = <&vreg_l9a>;
->>>> +
->>>> +	status = "okay";
->>>> +};
->>>> +
->>>> +&usb_qmpphy {
->>>> +	vdda-phy-supply = <&vreg_l7a>;
->>>> +	vdda-pll-supply = <&vreg_l5a>;
->>>> +
->>>> +	status = "okay";
->>>> +};
->>>> +
->>>> +&usb_1 {
->>>> +	status = "okay";
->>>> +};
->>>> +
->>>> +&usb_1_dwc3 {
->>>> +	dr_mode = "peripheral";
->>>> +};
->>>
->>> So, can it be used as a USB host controller / connector? What needs to
->>> be done in such a case?
->>>
->> Adding vbus boost pinctrl and changing dr_mode to host must be enough for
->> this case.
-> 
-> Could you please mention those either in the commie message or in the
-> comment before the board DT file?
-> 
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/f69a1accfe2e2ee2c43096abd9080b1fdb0c894d
 
-Sure, I can update commit text to add something like the following:
+Thank you!
 
-"In case first controller needs to be configured in host mode, X-GPIO to 
-be enabled and dr_mode to be changed accordingly."
-
-But when we add second controller (which I will after SPMI node is 
-done), this commit text would be redundant as the same file would show 
-example for host mode as well.
-
-Regards,
-Krishna,
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
