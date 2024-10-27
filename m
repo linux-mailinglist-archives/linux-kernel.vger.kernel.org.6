@@ -1,115 +1,197 @@
-Return-Path: <linux-kernel+bounces-383559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00A9B9B1D4E
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 12:01:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7961D9B1D50
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 12:10:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91FC1B21228
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 11:01:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28B37281C51
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 11:10:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31A2B13F43A;
-	Sun, 27 Oct 2024 11:01:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71AFD14389F;
+	Sun, 27 Oct 2024 11:10:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dJU57+HW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="KWnFBQXe"
+Received: from out203-205-221-209.mail.qq.com (out203-205-221-209.mail.qq.com [203.205.221.209])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 776262C182;
-	Sun, 27 Oct 2024 11:01:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC01F2C182;
+	Sun, 27 Oct 2024 11:10:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.209
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730026878; cv=none; b=Z/h6OqKfzcnLBctP+1eqLIhBqQvA2ynK2DN3uyRw6rUMsnhqMwBbJ51/Yegcu/MgAm9B4IpphylTVKuGdBuEP8oSpTeKvJ/pyHLD+czPktxyyDOUGz6FYprKefVusQPLX7qCooDu7zMa2VVdABXp2A1Zb7KsXmno13i9dE4/ZEs=
+	t=1730027407; cv=none; b=r5JOhOul5GGzrQY0DPvO6na+COrs4iIbMhPpvNIDu3fuxxoz/KOjobRqW7OGgUP4Nts5LAVIZZrkEBHjgvX4kUm8BlztyRsQgTzIkq3HIPw+vipp7V8VXlQrE6/kHrsNIblM/GyqjjXwDiREwFRdtppWmqyNd6tusizgcqb4A5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730026878; c=relaxed/simple;
-	bh=3quH9xYFiuttFZOs4ydoaTvF3jIBQchB3SK5V/gWpLc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FdMHc/zdjmqmsac6X1FuG5TyL7Lc9Ie4iyFtjxbdNYSFWhzSJguXhimimciYv7D7dp/iuUT94E30+y6TpwZbpkjHS7kIbQfQ82DU86Vla1L2lPOgAUe1b4P5UaeSmT/MlGH3e1I1Yr9YT3qh5vjDnjxNVSrm/7edEgvoapv1LHs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dJU57+HW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09121C4CEE4;
-	Sun, 27 Oct 2024 11:01:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730026878;
-	bh=3quH9xYFiuttFZOs4ydoaTvF3jIBQchB3SK5V/gWpLc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=dJU57+HWLoo/xHKQWSyEHFA9AbQNGSOiahO8sx4O1X7IqWwg68FFL/Qi0NLXh0iY9
-	 dYoKwKJBB+/6DZ0Z5ty8pfF8+IhQs8vtc+hVEYkIjH+vqLOtCKHoo7YZkocCnjlpqQ
-	 y7EagpoQFVSbAdYs868A/VyTiuMz5wfIi3rfAflAghEhaxs5yca8XWE6k7xzD0kDkJ
-	 izYZ31OQfIIKtN1cWX9qaOm9salyxjKEWmlxk4oOkfelZ6hPDqpPeV7e114q3pEwqh
-	 UQ6x+AEQxL5arkHkM/EAQW2V4QfsKdns3ga++3+Nc0njQLGy5rwO686F+CZPNMwkhr
-	 61M6Qul7zrIVQ==
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2fb5638dd57so30687531fa.0;
-        Sun, 27 Oct 2024 04:01:17 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUpdJ0gTpRw7auvQFzPRhOD0QdytO0IHzl5QJPoIW/qQEhZjyAguwpk3R3+gijdDd94OagJzxm+wRcurw==@vger.kernel.org, AJvYcCUrHdOVYju/RDw6jBGQt1J4+FAqGjB5gDEfX95b4bNqoSyzotQYfM6F/f1MOIcbrJ8CzPOf43mP763/mVlS@vger.kernel.org, AJvYcCVNMk/FpwKzm83vXSdZxHF1x41cZ+qdxTDnzzL1GI6nHUvyUvM34K9yTt4ZexSk3qj4eudcXWdGCh41EmY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxhl3n9Y8B8iRuPOtWrhfiKQH1EYtyGCqEPht55wVmZ/HkugjNv
-	o2vdAQTr9mqGOn7SSzaQMrhRK5qRmrjf2ptAemgExSpD0w3O4ToARsYllNVKL3n3lxDycuNSQ4L
-	8T1UmaWFS1WgIqwEhOvqnsctZytE=
-X-Google-Smtp-Source: AGHT+IHUiu1/2RDrCFQjE08nvbf0pFjgub83W2LWpUswHIlLPbwuLbY8emFcknGoqBH2i1i47pTbngVhgD5dL/oCDdk=
-X-Received: by 2002:a2e:be84:0:b0:2fb:4f2e:5be7 with SMTP id
- 38308e7fff4ca-2fcbdfe4a77mr17515121fa.24.1730026876753; Sun, 27 Oct 2024
- 04:01:16 -0700 (PDT)
+	s=arc-20240116; t=1730027407; c=relaxed/simple;
+	bh=m706RRhxZmjDTKjTZ9iaDsIdEbRocWoQozTDZyDsaVE=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=awGV+OxtOpM2BaUu60WQIIQhk8ORTq/C15wFayx3mlVHUv8qVecyz4HLzNYlvEEQXt4JKMLtBuYU0x14D2hJO6ptm4uk1K0xABcFSULvG/pBVgLOwb16tt1el7zpg4u99arXGxIaP/xTxHy4WV1B5cbh7SmToLeVxQpV6PVNbZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=KWnFBQXe; arc=none smtp.client-ip=203.205.221.209
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1730027401; bh=PaY5oQgrwqScWGmqZoVuDoZ/xHTBa5mLxTsz++JoPzI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=KWnFBQXehEAP57aTbfeYd6f8ZJ4A9RbZpdkuenKMrVvPPHDYRbxjFS6GDUtIItvza
+	 OPUS88V/m9cI3OrfmRYB4pXnxt3Ahv183h/Aq8BpMzMy26nZxOSIqsmuk73EpdNVLn
+	 5sc+HUbszFOaEKXFh9Y9b4UJCACrr9yJtvX7j52E=
+Received: from pek-lxu-l1.wrs.com ([111.198.227.254])
+	by newxmesmtplogicsvrszb20-0.qq.com (NewEsmtp) with SMTP
+	id 27AA1E1E; Sun, 27 Oct 2024 19:09:58 +0800
+X-QQ-mid: xmsmtpt1730027398tv56ynrx8
+Message-ID: <tencent_E4CFC65D09852ECE2EF28C83A7C3C6E41206@qq.com>
+X-QQ-XMAILINFO: OaubouGXmhNzbGx0kjZ6wxDsl4w8Yx4QoxIEO9GMAxh2DnYt9uML6lXPz5nKif
+	 iQNDPPk3LD53Of/T5+Iiy3ZOMUldi//LFgHjQ+EfeNHlXQTkKCUN+YvX0DeWmakbNWe/vl5y+cM4
+	 CNDvbtPa3oY9uaRpluzBsbArD3ARlxJZ9XOpZR7qef1z7ilpr3Xv9O5ow3W4vdXZQEEjzaULRsEz
+	 8Zps1stX42S0bpbCuNHiODP6SV7rCnQt8jAZbEfjZH6faGGHGBw5kHtnQn3MYyDyhlQoMcOUlZng
+	 8mSxsM6XK9xlX6tl0i8PUgf9/zNWH6INfdjKpHafIgzMjutnAMffW261KPLZ+jyGbtZZlEgwkiDC
+	 rVIZWXWknPgviMhF0fpRr99RcE+u4jB+TaqY38MYQEMEqpKBRwQ3oTNoyE6AdEkqLhq5XCsJrgPN
+	 zBrYN8wlNjq537fuhtARDYa5gthq/YBN0mVjW+gJUVOnV2hoFWsnwlNCQDQVZgFrgIQSQeuPWPEj
+	 SLaGjA5mzcmcOTb0NrMhu2tmj9VGKNWt3dC6Ty/rXti+o6mHb6ol2QslpkqdOBil5ErWutKwg3eT
+	 lonj1ZGi+I3qLdQjm36u0dIw8KuJEOoHGENIC54gfK1mRHaaZCO9C1JhpkkM5MCESnqfn74fv7Sp
+	 1UwS9cWhh0wFTScA4L5kIRWfYCW/GWGMmwoHaFYe0QbVLYJdtX0YsS6z1NTI1s0GYvx3AnUM6Lq6
+	 ox2zNkT4AyodR/uEEWHOVUjYeN0ynyIKWUAanb+dWO+WOzpLOpVQx2tZ/zbnteyAUeKmdnzfR3hC
+	 dFdqua81iKXoLm2tDZRTe2rSwY/Tndj9GJQKE3s+0c/fvKJ/UPdSPS7AhfHIrlBd3++TTXQaJLY7
+	 gXqaAJWh04WRZOUg4ZG+Y/QE7tzptox/b+eFCjWN+kNJ8VL+gx79BYf8f5zOakCwaqLYz9pE0rdk
+	 f4CDTtxdZjJwKps+zn7g==
+X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+0c99c3f90699936c1e77@syzkaller.appspotmail.com
+Cc: adilger.kernel@dilger.ca,
+	linux-ext4@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com,
+	tytso@mit.edu
+Subject: [PATCH] ext4: Add a sanity check for next dentry when insert
+Date: Sun, 27 Oct 2024 19:09:54 +0800
+X-OQ-MSGID: <20241027110953.1876304-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <671c2223.050a0220.2fdf0c.021c.GAE@google.com>
+References: <671c2223.050a0220.2fdf0c.021c.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240717-sparc-cflags-v2-0-259407e6eb5f@protonmail.com>
- <20241021201657.GA898643@thelio-3990X> <CAK7LNASTkUTK8JZCzySNh3BVKxauusVKRhjnchy6iZz4qLbq8w@mail.gmail.com>
- <20241022200732.GA487584@thelio-3990X> <etezvjy_HnDpgOTBrzap29if1ChFBhl1RawcNJK3UAsFk6i_g_cyHoz7hlqfYqASgJZ97W4HxnGA-nbCXL73pIRN9tUKUttAp1JefMRp8rs=@protonmail.com>
- <CAK7LNASbFeJc9Y=BFY85SwESUKNNDTRDunyLGveDusC--NVkCw@mail.gmail.com>
- <20241023164535.GB4081497@thelio-3990X> <InqlMfqWWeNw8Mh6y1y5oNb3EotVpA26gkX70xcVxt9ygCtb7DYfTB3Amg3SzZfs78q3osSW2BIEpgyhmOjSqBW7neH0Se2sQEpmdClVV3M=@protonmail.com>
-In-Reply-To: <InqlMfqWWeNw8Mh6y1y5oNb3EotVpA26gkX70xcVxt9ygCtb7DYfTB3Amg3SzZfs78q3osSW2BIEpgyhmOjSqBW7neH0Se2sQEpmdClVV3M=@protonmail.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Sun, 27 Oct 2024 12:00:39 +0100
-X-Gmail-Original-Message-ID: <CAK7LNATswFdLRO5YWvtogV+sVJ=SOPrP9frrYq_QNzgmugg8dA@mail.gmail.com>
-Message-ID: <CAK7LNATswFdLRO5YWvtogV+sVJ=SOPrP9frrYq_QNzgmugg8dA@mail.gmail.com>
-Subject: Re: [PATCH v2 0/2] sparc/build: Rework CFLAGS for clang compatibility
-To: Koakuma <koachan@protonmail.com>
-Cc: Nathan Chancellor <nathan@kernel.org>, Andreas Larsson <andreas@gaisler.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, 
-	Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, glaubitz@physik.fu-berlin.de, 
-	Nicolas Schier <nicolas@fjasle.eu>, sparclinux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
-	linux-kbuild@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Sat, Oct 26, 2024 at 4:53=E2=80=AFPM Koakuma <koachan@protonmail.com> wr=
-ote:
->
-> Masahiro Yamada <masahiroy@kernel.org> wrote:
-> > I think this should be documented (required LLVM version and
-> > the supported build command),
-> > otherwise people cannot test this patch.
->
-> Nathan Chancellor <nathan@kernel.org> wrote:
-> > I am not sure that there is a super concise way to describe for
-> > Documentation/kbuild/llvm.rst that sparc currently requires 'CC=3Dclang
-> > LLVM_IAS=3D0' along with a build of clang from the main branch of
-> > llvm-project to work properly.
->
-> So about this, as a middle ground, would it be okay if I put
->
-> ``CC=3Dclang LLVM_IAS=3D0`` (LLVM >=3D 20)
+Syzbot reported a use-after-free in ext4_insert_dentry.
 
-I am OK with this.
+Before inserting the next directory entry, it is necessary to confirm
+whether there is enough space in the next directory entry.
+When the space is insufficient, it will not be inserted and an error code
+-EINVAL will be returned.
 
-Having this info is more helpful than nothing.
+Reported-by: syzbot+0c99c3f90699936c1e77@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=0c99c3f90699936c1e77
+Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+---
+ fs/ext4/ext4.h   |  2 +-
+ fs/ext4/inline.c |  4 +++-
+ fs/ext4/namei.c  | 32 ++++++++++++++++++++++++++------
+ 3 files changed, 30 insertions(+), 8 deletions(-)
 
+diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+index 44b0d418143c..e07ac540ed00 100644
+--- a/fs/ext4/ext4.h
++++ b/fs/ext4/ext4.h
+@@ -2834,7 +2834,7 @@ extern int ext4_find_dest_de(struct inode *dir, struct inode *inode,
+ 			     void *buf, int buf_size,
+ 			     struct ext4_filename *fname,
+ 			     struct ext4_dir_entry_2 **dest_de);
+-void ext4_insert_dentry(struct inode *dir, struct inode *inode,
++int ext4_insert_dentry(struct inode *dir, struct inode *inode,
+ 			struct ext4_dir_entry_2 *de,
+ 			int buf_size,
+ 			struct ext4_filename *fname);
+diff --git a/fs/ext4/inline.c b/fs/ext4/inline.c
+index 3536ca7e4fcc..e318b13459d1 100644
+--- a/fs/ext4/inline.c
++++ b/fs/ext4/inline.c
+@@ -1022,7 +1022,9 @@ static int ext4_add_dirent_to_inline(handle_t *handle,
+ 					    EXT4_JTR_NONE);
+ 	if (err)
+ 		return err;
+-	ext4_insert_dentry(dir, inode, de, inline_size, fname);
++	err = ext4_insert_dentry(dir, inode, de, inline_size, fname);
++	if (err)
++		return err;
+ 
+ 	ext4_show_inline_dir(dir, iloc->bh, inline_start, inline_size);
+ 
+diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
+index 790db7eac6c2..843d23391b0c 100644
+--- a/fs/ext4/namei.c
++++ b/fs/ext4/namei.c
+@@ -2084,24 +2084,38 @@ int ext4_find_dest_de(struct inode *dir, struct inode *inode,
+ 	return 0;
+ }
+ 
+-void ext4_insert_dentry(struct inode *dir,
++int ext4_check_next_dentry(struct inode *dir,
+ 			struct inode *inode,
+ 			struct ext4_dir_entry_2 *de,
+ 			int buf_size,
+ 			struct ext4_filename *fname)
+ {
+-
+ 	int nlen, rlen;
+ 
+ 	nlen = ext4_dir_rec_len(de->name_len, dir);
+ 	rlen = ext4_rec_len_from_disk(de->rec_len, buf_size);
+ 	if (de->inode) {
+-		struct ext4_dir_entry_2 *de1 =
++		struct ext4_dir_entry_2 *nde =
+ 			(struct ext4_dir_entry_2 *)((char *)de + nlen);
+-		de1->rec_len = ext4_rec_len_to_disk(rlen - nlen, buf_size);
++		nde->rec_len = ext4_rec_len_to_disk(rlen - nlen, buf_size);
+ 		de->rec_len = ext4_rec_len_to_disk(nlen, buf_size);
+-		de = de1;
++		de = nde;
++		rlen = ext4_rec_len_from_disk(de->rec_len, buf_size);
++		return fname_len(fname) > rlen - EXT4_BASE_DIR_LEN;
+ 	}
++
++	return 0;
++}
++
++int ext4_insert_dentry(struct inode *dir,
++			struct inode *inode,
++			struct ext4_dir_entry_2 *de,
++			int buf_size,
++			struct ext4_filename *fname)
++{
++	if (ext4_check_next_dentry(dir, inode, de, buf_size, fname))
++		return -EINVAL;
++
+ 	de->file_type = EXT4_FT_UNKNOWN;
+ 	de->inode = cpu_to_le32(inode->i_ino);
+ 	ext4_set_de_type(inode->i_sb, de, inode->i_mode);
+@@ -2114,6 +2128,8 @@ void ext4_insert_dentry(struct inode *dir,
+ 		EXT4_DIRENT_HASHES(de)->minor_hash =
+ 						cpu_to_le32(hinfo->minor_hash);
+ 	}
++
++	return 0;
+ }
+ 
+ /*
+@@ -2151,7 +2167,11 @@ static int add_dirent_to_buf(handle_t *handle, struct ext4_filename *fname,
+ 	}
+ 
+ 	/* By now the buffer is marked for journaling */
+-	ext4_insert_dentry(dir, inode, de, blocksize, fname);
++	err = ext4_insert_dentry(dir, inode, de, blocksize, fname);
++	if (err) {
++		ext4_std_error(dir->i_sb, err);
++		return err;
++	}
+ 
+ 	/*
+ 	 * XXX shouldn't update any times until successful
+-- 
+2.43.0
 
-
-> In the documentation, in a similar manner to the s390x entry?
-> I know that LLVM 20 is still a couple months away but those commits will
-> likely be released with that version, and since it also tells people
-> to not use a version that is too old, I think it should be okay (?)
->
-
-
---=20
-Best Regards
-Masahiro Yamada
 
