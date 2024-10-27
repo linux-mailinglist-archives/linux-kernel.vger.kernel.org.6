@@ -1,108 +1,216 @@
-Return-Path: <linux-kernel+bounces-383726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 748B29B1F89
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 19:04:14 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5D9C9B1F8E
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 19:06:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B0801C2098A
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 18:04:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B69FCB211F3
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 18:06:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F793170A13;
-	Sun, 27 Oct 2024 18:04:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3DE617995E;
+	Sun, 27 Oct 2024 18:06:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="T0imSiSU"
-Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="LPpfUFJV"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3850217BB28;
-	Sun, 27 Oct 2024 18:03:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09171262A3;
+	Sun, 27 Oct 2024 18:06:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730052242; cv=none; b=ffTZZHDfZ2F/3b0Ze7fPW8gLUwhCQRYRrWTH/DVLfyh8+jENPABvmoUBN80emqyy2usFTOWZXp4M2MJlL3EJqsCSNsRYQTgrj/OrUdLSxnpXcj+U+iKQg/wTa8fyWMeVrVvq8O2UBjsjgqsNhUG8iyOSFyREO3nwbFxPdGTjZdQ=
+	t=1730052406; cv=none; b=mdiR7Z3DbZ/FLJ7ZhhaDm85Mz5PCO0veplanmE1Qr116CfDGPxyj7leX4BTLRLdK4ZpIaEmkyyiHrpeaYWFREv/fhv1SmE7Gsh8nGjncXIPktZEhiPD6pus6+73qCm79z39U9vjXm8V8z4eqxAz2GUw/Y5ncnXvcgpw0XqZZfvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730052242; c=relaxed/simple;
-	bh=ZnZmB8Py+/Z4N0BHxyg2cP7zkwgVmxt+IGO1cvKBO7A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=WuwRiPwlXwvF9zRug17BEepXuA6tzCdM4YFVeaBg4ziJd3o2oXBZSEMYs1UqtQFZyzILsP8M3dymNwG8cnm8CaSHowFEnWnQ50j7sp7q8+v+n2LJYnf+AM/ANKY+enpGd+8UIkSdXL21qWPHPUkuhPIp8QkRVo8AuH7NBiWP+vY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=T0imSiSU; arc=none smtp.client-ip=193.68.50.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
-Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
-	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id C96F4A0472;
-	Sun, 27 Oct 2024 19:03:56 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:from:from:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=mail; bh=SRsfm+4ttOXL38doVebO
-	wSAVzLny2y4gp7NYq/iRAnA=; b=T0imSiSUi8SfNPL3bjugdvFvHZv0geCXp1UH
-	tLJC9zzHCUbFBmSTSzNuX3u9vjmk5iv+0bRVo2/ibFTsMlEWKjaVE2WudqxhfFv4
-	f56qeQPcs/to3UffaXZAbTBl0h2VA1S9FyklHvPOonMnodO42Q9mpbAnTv9TgFto
-	bALV1hqIrxhoAiF8KL7cnb0qDZERcOZQ+L1KEDLgXvt+Yg59eCUfF+L+syiUcXGc
-	/9MTdHgZFJMTqZbkiCEXsL3E0CbTvLvE5E+H87eYgn7raQZvaoyjAEA3o4VgU/cl
-	avmn6OfVx8xejypNAS2oDgoz6BBMDjSg4nvnpJ5Q8bkIurZYENjTvHrW7IUBfmGp
-	9Z2XopKN6iPHA4gIsQtm5yOam03Z0sxRLvRpCfPQryhhUVGFuthXBy2zIKa9N7EF
-	gJGukIFEMIwYNjcBd+chqW6OqJehE4guSM8cKIEDlFkcrMcSjk7QewH7TPJwyTMS
-	rA4znpTmmfbgjRrQzJOjw2Docgon+u21NJbgvuLrdULZ3gwA21n5abAm+c8yvqBJ
-	eo5vQcCJSiRpNms1TB7h8nmKtyZyVHUzaeZEBPU2OOAGvEfiIILv8mqxps1I3YkT
-	d+leQUWXBMgiFaTsXCJlyOu8r7ATBcT9DH7aT2/wGDq41+e7e6ZkqqbgEPiusQp8
-	Q1AvVeM=
-Message-ID: <4b614d6c-6b46-438a-b5c3-de1e69f0feb8@prolan.hu>
-Date: Sun, 27 Oct 2024 19:03:55 +0100
+	s=arc-20240116; t=1730052406; c=relaxed/simple;
+	bh=4+0NulD4EEQ5BTETeq/86MPXoadMca0AwCvmywI7SSY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=ORV6TTQi4VMoS9Lhzqooq2fvpiRp6tSkicRXf+KJ5puFpQXNfl5AuKCnEumtW5XYSKAQlkdDACjDBafG9Gyu56ZCMjVsm3Av3HulKEo34G3cKj3QWzF2F776xn01B3VP/L9HTN4LLL3qcJ5LBORLgyVxhsUiGjJ91adQUhy+Gd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=LPpfUFJV; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49RFo3l0012317;
+	Sun, 27 Oct 2024 18:06:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=5eLO2C1SYyEAk2YPDJc1FV
+	TLIAHKQlZLKgQt46vMoFQ=; b=LPpfUFJVv+S6IScpi1lQX3XnL+7s5tXrI68zhm
+	sROHoGVo+Y0cuYjTholK7OwguqX1lZqLCDZctFHognbFnvxt0DPKEIoDLoPX/WW+
+	fqHsddLeeDs1jSxQscSC0QhNxUcBcl3fnr51K2TbwbCTzi71XcCPUJsYh26fDTyB
+	jmWdd8W3ShoyvJDdsk6U2yauT9q3U6tQPCYFw6YNIz17IwzJ0NYXYe/OagEjPSBQ
+	Gbag3ttuDi7UtPLYC9ZB/wmDw1lta99hlH7MWjDVX1heTwDGGEHy8hzPyX9ZPedz
+	tgRxSs5agRflJpu2NvoUF8wc8V/7sxZiUNMus1DQfQtpe4pA==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42grt6tq4a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 27 Oct 2024 18:06:26 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49RI6PKC030401
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 27 Oct 2024 18:06:25 GMT
+Received: from [10.213.111.143] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 27 Oct
+ 2024 11:06:19 -0700
+From: Akhil P Oommen <quic_akhilpo@quicinc.com>
+Date: Sun, 27 Oct 2024 23:35:47 +0530
+Subject: [PATCH] drm/msm/a6xx: Fix excessive stack usage
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 02/10] dma-engine: sun4i: Add has_reset option to quirk
-To: <dmaengine@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-sunxi@lists.linux.dev>, <linux-kernel@vger.kernel.org>
-CC: Mesih Kilinc <mesihkilinc@gmail.com>, Vinod Koul <vkoul@kernel.org>,
-	Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>, Philipp Zabel <p.zabel@pengutronix.de>
-References: <20241027091440.1913863-1-csokas.bence@prolan.hu>
- <20241027091440.1913863-2-csokas.bence@prolan.hu>
-Content-Language: en-US
-From: =?UTF-8?B?Q3PDs2vDoXMgQmVuY2U=?= <csokas.bence@prolan.hu>
-In-Reply-To: <20241027091440.1913863-2-csokas.bence@prolan.hu>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: ATLAS.intranet.prolan.hu (10.254.0.229) To
- ATLAS.intranet.prolan.hu (10.254.0.229)
-X-EsetResult: clean, is OK
-X-EsetId: 37303A2980D94855677C61
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20241027-stack-size-fix-v1-1-764e2e3566cb@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAPqAHmcC/yWMwQ6DIBAFf4XsuSQICOivNB4Al3bTqBVs09T47
+ yX18A4zyZsdCmbCAj3bIeObCi1zhebCIN79fENOY2WQQuqmjpfNxwcv9EWe6MOl88n6MKrkA9T
+ TM2PV/+B1ODnj+qrd7ZQQfEEel2mirWdWR2W10Q5H4TAFiUmpzrQmSWt0lC4KbbrWwHAcPxT9J
+ cSsAAAA
+To: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        "Konrad
+ Dybcio" <konradybcio@kernel.org>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, "Simona
+ Vetter" <simona@ffwll.ch>,
+        Nathan Chancellor <nathan@kernel.org>,
+        "Nick
+ Desaulniers" <ndesaulniers@google.com>,
+        Bill Wendling <morbo@google.com>,
+        Justin Stitt <justinstitt@google.com>
+CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        <llvm@lists.linux.dev>, Arnd Bergmann <arnd@kernel.org>,
+        Akhil P Oommen
+	<quic_akhilpo@quicinc.com>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1730052379; l=3569;
+ i=quic_akhilpo@quicinc.com; s=20240726; h=from:subject:message-id;
+ bh=4+0NulD4EEQ5BTETeq/86MPXoadMca0AwCvmywI7SSY=;
+ b=qJoax2Z2hTUQV4lstsski2oOlsORtBZY7vZ2fOfCUs/BduAPLP1/2H73fYix0YLuFj33ozm/G
+ cFTvuw0eZryA4UyFQf0K0O+7Awdno/9IvNOe8aDjOTumkGmAqnKzNuQ
+X-Developer-Key: i=quic_akhilpo@quicinc.com; a=ed25519;
+ pk=lmVtttSHmAUYFnJsQHX80IIRmYmXA4+CzpGcWOOsfKA=
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: VkbfgtwSZ3MAxdf5ovw3s8cmgryfRbg9
+X-Proofpoint-GUID: VkbfgtwSZ3MAxdf5ovw3s8cmgryfRbg9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 bulkscore=0
+ adultscore=0 clxscore=1015 impostorscore=0 malwarescore=0
+ priorityscore=1501 phishscore=0 mlxscore=0 suspectscore=0 mlxlogscore=999
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410270159
 
+Clang-19 and above sometimes end up with multiple copies of the large
+a6xx_hfi_msg_bw_table structure on the stack. The problem is that
+a6xx_hfi_send_bw_table() calls a number of device specific functions to
+fill the structure, but these create another copy of the structure on
+the stack which gets copied to the first.
 
+If the functions get inlined, that busts the warning limit:
 
-On 2024. 10. 27. 10:14, Csókás, Bence wrote:
-> From: Mesih Kilinc <mesihkilinc@gmail.com>
-> 
-> Allwinner suniv F1C100s has a reset bit for DMA in CCU. Sun4i do not
-> has this bit but in order to support suniv we need to add it. So add
-> support for reset bit.
-> 
-> Signed-off-by: Mesih Kilinc <mesihkilinc@gmail.com>
-> [ csokas.bence: Rebased and addressed comments ]
-> Signed-off-by: Csókás, Bence <csokas.bence@prolan.hu>
-> ---
-> 
-> Notes:
->      Changes in v2:
->      * Call reset_control_deassert() unconditionally, as it supports optional resets
->      * Use dev_err_probe()
+drivers/gpu/drm/msm/adreno/a6xx_hfi.c:631:12: error: stack frame size (1032) exceeds limit (1024) in 'a6xx_hfi_send_bw_table' [-Werror,-Wframe-larger-than]
 
-I missed one, namely:
+Fix this by kmalloc-ating struct a6xx_hfi_msg_bw_table instead of using
+the stack. Also, use this opportunity to skip re-initializing this table
+to optimize gpu wake up latency.
 
-> +		dev_err(&pdev->dev,
-> +			"Failed to deassert the reset control\n");
-> +		goto err_clk_disable;
-> +	}
+Cc: Arnd Bergmann <arnd@kernel.org>
 
-For now I'll resubmit just this patch, and then wait for more comments 
-that may arise during the week, then resubmit the whole amended series.
+Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
+---
+ drivers/gpu/drm/msm/adreno/a6xx_gmu.h |  1 +
+ drivers/gpu/drm/msm/adreno/a6xx_hfi.c | 34 ++++++++++++++++++++++------------
+ 2 files changed, 23 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.h b/drivers/gpu/drm/msm/adreno/a6xx_gmu.h
+index 94b6c5cab6f4..b4a79f88ccf4 100644
+--- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.h
++++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.h
+@@ -99,6 +99,7 @@ struct a6xx_gmu {
+ 	struct completion pd_gate;
+ 
+ 	struct qmp *qmp;
++	struct a6xx_hfi_msg_bw_table *bw_table;
+ };
+ 
+ static inline u32 gmu_read(struct a6xx_gmu *gmu, u32 offset)
+diff --git a/drivers/gpu/drm/msm/adreno/a6xx_hfi.c b/drivers/gpu/drm/msm/adreno/a6xx_hfi.c
+index cdb3f6e74d3e..55e51c81be1f 100644
+--- a/drivers/gpu/drm/msm/adreno/a6xx_hfi.c
++++ b/drivers/gpu/drm/msm/adreno/a6xx_hfi.c
+@@ -630,32 +630,42 @@ static void a6xx_build_bw_table(struct a6xx_hfi_msg_bw_table *msg)
+ 
+ static int a6xx_hfi_send_bw_table(struct a6xx_gmu *gmu)
+ {
+-	struct a6xx_hfi_msg_bw_table msg = { 0 };
++	struct a6xx_hfi_msg_bw_table *msg;
+ 	struct a6xx_gpu *a6xx_gpu = container_of(gmu, struct a6xx_gpu, gmu);
+ 	struct adreno_gpu *adreno_gpu = &a6xx_gpu->base;
+ 
++	if (gmu->bw_table)
++		goto send;
++
++	msg = devm_kzalloc(gmu->dev, sizeof(*msg), GFP_KERNEL);
++	if (!msg)
++		return -ENOMEM;
++
+ 	if (adreno_is_a618(adreno_gpu))
+-		a618_build_bw_table(&msg);
++		a618_build_bw_table(msg);
+ 	else if (adreno_is_a619(adreno_gpu))
+-		a619_build_bw_table(&msg);
++		a619_build_bw_table(msg);
+ 	else if (adreno_is_a640_family(adreno_gpu))
+-		a640_build_bw_table(&msg);
++		a640_build_bw_table(msg);
+ 	else if (adreno_is_a650(adreno_gpu))
+-		a650_build_bw_table(&msg);
++		a650_build_bw_table(msg);
+ 	else if (adreno_is_7c3(adreno_gpu))
+-		adreno_7c3_build_bw_table(&msg);
++		adreno_7c3_build_bw_table(msg);
+ 	else if (adreno_is_a660(adreno_gpu))
+-		a660_build_bw_table(&msg);
++		a660_build_bw_table(msg);
+ 	else if (adreno_is_a690(adreno_gpu))
+-		a690_build_bw_table(&msg);
++		a690_build_bw_table(msg);
+ 	else if (adreno_is_a730(adreno_gpu))
+-		a730_build_bw_table(&msg);
++		a730_build_bw_table(msg);
+ 	else if (adreno_is_a740_family(adreno_gpu))
+-		a740_build_bw_table(&msg);
++		a740_build_bw_table(msg);
+ 	else
+-		a6xx_build_bw_table(&msg);
++		a6xx_build_bw_table(msg);
++
++	gmu->bw_table = msg;
+ 
+-	return a6xx_hfi_send_msg(gmu, HFI_H2F_MSG_BW_TABLE, &msg, sizeof(msg),
++send:
++	return a6xx_hfi_send_msg(gmu, HFI_H2F_MSG_BW_TABLE, gmu->bw_table, sizeof(*(gmu->bw_table)),
+ 		NULL, 0);
+ }
+ 
+
+---
+base-commit: 74c374648ed08efb2ef339656f2764c28c046956
+change-id: 20241024-stack-size-fix-28af7abd3fab
+
+Best regards,
+-- 
+Akhil P Oommen <quic_akhilpo@quicinc.com>
 
 
