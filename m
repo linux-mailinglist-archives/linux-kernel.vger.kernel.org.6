@@ -1,145 +1,146 @@
-Return-Path: <linux-kernel+bounces-383861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42C679B2108
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 23:23:54 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C6169B210B
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 23:25:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E53C1C20B4B
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 22:23:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E1591B20D7A
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 22:25:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BA7F189528;
-	Sun, 27 Oct 2024 22:23:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FEE718871A;
+	Sun, 27 Oct 2024 22:25:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pG1rNBNQ"
-Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WdvPjBRS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E66D017BB38
-	for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 22:23:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0E3818EBF;
+	Sun, 27 Oct 2024 22:25:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730067821; cv=none; b=RHVispOfbjVekqztt6JpbZTkxkjxbmTXOc+Y+Z2QyufB6pBmanda6RMX62A9urZ3Cv1VP4HUeTMYkJ/3N6q4Q4iX6PgjBHxgRa7w09yK3C9nDXIaqjwrr4RUSMzOFh4LO4qQNB5X6/TMv8G9H8O1DLEpOFJGL/7G6SIet41Lo/g=
+	t=1730067908; cv=none; b=KJeZZoBwJ3LN32yiIAu23CEXSVfO+4RRdKoe3cTuaCnOl2zV/v+pLjFOdxccrLV2Wsz3uN4jthZYK3SXLr4kUy81my5mcO3ZlybxvtjoW6g73cZ4eRPwu+T7LeawdvYUfptDC9QkeIMhfrO0XLt1X1O2IhqR1M6YaQn0+JWeuXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730067821; c=relaxed/simple;
-	bh=Az/6E9Bz3pDkSLhUuGM6XS7I0+/lN+5RjptLOdn0Z9A=;
-	h=Date:From:To:cc:Subject:Message-ID:MIME-Version:Content-Type; b=njRc6n4wGU0jgp5BK55FG6c9AkGl7BWJK0TJJwJZCC1YJW17BveYVrfdZyzMm0Ehg3WQObWFbHRDvLayPK+bT7Xgs+2RLyV0DMkElpCPxp2V8jmqwFhJcXXXx55Hp2nAKohfO1J6i1w2GBjxjeqVrzbuc6xHhgY/e3Q7N0XJcHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pG1rNBNQ; arc=none smtp.client-ip=209.85.210.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-717fd68fe33so1953795a34.1
-        for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 15:23:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730067819; x=1730672619; darn=vger.kernel.org;
-        h=mime-version:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=+XkdkUsBCpwU48QmXXg+E+cbuL3jYIMICiO/oJZ7j9Y=;
-        b=pG1rNBNQScLQ5yWDMpSwoafspz6IVOs7+0h5/bpxDrJmNu9fM5RsH0JgFnXfPU6PSH
-         XiVQQGMXwrNUoeJmsAoLKyz049wW8EtXO8FxvUc/7kwyLg0wSdfRWuqnwAVQz0oouuDu
-         wGfQtEt4S0qgp3vxtUpnKkuZDdL0UjAYbCXFKO1VB6J03NZVIxLPSg6tHTE7qExijqHO
-         yTcyuuRBn+NOQzb6aBzO9iAgpvVSxF4i41U8A7qJE1N9yUWIuqCMVsrLLFpIqJAaAg09
-         ygLmear3kRv6+BW6fAVLGS5MLqIUcDN2DOnCpgJanqxM6RVE0DPvNHcm/THaEru1mvoH
-         Or6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730067819; x=1730672619;
-        h=mime-version:message-id:subject:cc:to:from:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+XkdkUsBCpwU48QmXXg+E+cbuL3jYIMICiO/oJZ7j9Y=;
-        b=rE5RpPyOHRdW7pQxy9pdGPAd+JR9pQVomZN+x/hl/FMFjt7w4T9AiRFsCVVwanZTrm
-         qUupCVj7LERRFinIECZ3lUzZSr1mrCc7F8XFN6GiKvTr2h8Kiyhsp9o8RF+AyaRyuElB
-         hNtNkfwoKkX9dI7cpYgoGVe+MDg3yOtrNzesYzOXt+hEuSqtBU+7Jw5mpumSPxr58cN6
-         nETuH8N/vwwXMhGNGN9Ia31f7WlGQ8lstT9peNQKv9P5F1jO3ZSAn/K/cD/vSWQVS80S
-         KsVXNqV4IM9RmJmRAgMnV7dUhN+rulVZN+iwHwA2J6EK1pnUwuZE4aIVg0VOmFc18X1g
-         3GYw==
-X-Forwarded-Encrypted: i=1; AJvYcCVnU1SozYZSxVw9rGBJdx5VzY9dzTSst3ydIchlG2gyw3F/Nr6Znf0xgwqJe/PJQlHN+jo3FlUzLLJ4HCo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2D2WmW7/rHXqQ3zNFaVujmMeKdJ7D2gcQtnaI2SCXH1pam2jv
-	hb4sVJBMoOFO96WDBHDvkjhuVGbHYRp4HaSI2L5GcXHCwcBgmCdbwWiJ2Bg9FQ==
-X-Google-Smtp-Source: AGHT+IHWRKvprk92gXrSyzyMGO8sYq9D2+dQAwzgUyL9Up++6xFGJPIJrFUiroBsPDyQ5b0RA039+w==
-X-Received: by 2002:a05:6830:440f:b0:718:118d:2bf6 with SMTP id 46e09a7af769-718683256d2mr5142266a34.23.1730067818830;
-        Sun, 27 Oct 2024 15:23:38 -0700 (PDT)
-Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5ec186fd35bsm1389857eaf.30.2024.10.27.15.23.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 27 Oct 2024 15:23:37 -0700 (PDT)
-Date: Sun, 27 Oct 2024 15:23:23 -0700 (PDT)
-From: Hugh Dickins <hughd@google.com>
-To: Alexander Viro <viro@zeniv.linux.org.uk>
-cc: Andrew Morton <akpm@linux-foundation.org>, 
-    Christian Brauner <brauner@kernel.org>, 
-    Matthew Wilcox <willy@infradead.org>, Christoph Hellwig <hch@lst.de>, 
-    Kent Overstreet <kent.overstreet@linux.dev>, 
-    "Darrick J. Wong" <djwong@kernel.org>, 
-    Thomas Gleixner <tglx@linutronix.de>, 
-    Peter Zijlstra <peterz@infradead.org>, linux-fsdevel@vger.kernel.org, 
-    linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
-    linux-mm@kvack.org
-Subject: [PATCH] iov_iter: fix copy_page_from_iter_atomic() if
- KMAP_LOCAL_FORCE_MAP
-Message-ID: <dd5f0c89-186e-18e1-4f43-19a60f5a9774@google.com>
+	s=arc-20240116; t=1730067908; c=relaxed/simple;
+	bh=Oaq3n6Gzx6um57cBqNlIEN/f+doqASBTkxLUrEN1T90=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F4WXNdXqqPS2dli2gemOHIBFnVcdnNolLkp6c1KpDKlMslElbIXz54x2ByqySTqUTs5QzdRan/TW2qsucc0N+FC7RAg7cY57Olxj+xaRGOqMWOJxbHwwopnr0pqYMZ5g9r4NOAIW47pYL6DG5EWYVU1y1P+K3Lr26DR6L8A6tbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WdvPjBRS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42A1EC4CEC3;
+	Sun, 27 Oct 2024 22:25:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730067908;
+	bh=Oaq3n6Gzx6um57cBqNlIEN/f+doqASBTkxLUrEN1T90=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WdvPjBRS3Voup2Ze5EOavrRAWlWmhsZY9g5H8HHU0PrM1CdP0UhQtmK6NXjKpwBfN
+	 lvkiuHbM9d9BRbmdIoAib83X03jK3xgjpcgaYfPUNukYqd10MyqBj7FqGrc8Vgo2o+
+	 cyhhTqHMpNIX4UCW2umr0LhR3UEIfshiCTXO5dqjcDDYcCaDLWzs7zR8hSumstSYvk
+	 wzQGSH1js2OrHI+oLS8s8LXAYjl3cVjgwmoCoOTq51+10+R8umMx0krPbRfQcfZnE4
+	 a2nVTXoLlqLC81XtNgEMLJOnVYGZjBHcm9vdgKz9KNiUN73GPrHhE+jZjzddRLD0w/
+	 oqzzL+2GUMZJA==
+Date: Sun, 27 Oct 2024 15:25:05 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Alex Gaynor <alex.gaynor@gmail.com>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	rust-for-linux@vger.kernel.org, Nicolas Schier <nicolas@fjasle.eu>,
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev,
+	Thorsten Leemhuis <regressions@leemhuis.info>,
+	Cameron MacPherson <cameron.macpherson@gmail.com>
+Subject: Re: [PATCH] kbuild: rust: avoid errors with old `rustc`s without
+ LLVM patch version
+Message-ID: <20241027222505.GA2882707@thelio-3990X>
+References: <20241027145636.416030-1-ojeda@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241027145636.416030-1-ojeda@kernel.org>
 
-generic/077 on x86_32 CONFIG_DEBUG_KMAP_LOCAL_FORCE_MAP=y with highmem,
-on huge=always tmpfs, issues a warning and then hangs (interruptibly):
+On Sun, Oct 27, 2024 at 03:56:36PM +0100, Miguel Ojeda wrote:
+> Some old versions of `rustc` did not report the LLVM version without
+> the patch version, e.g.:
+> 
+>     $ rustc --version --verbose
+>     rustc 1.48.0 (7eac88abb 2020-11-16)
+>     binary: rustc
+>     commit-hash: 7eac88abb2e57e752f3302f02be5f3ce3d7adfb4
+>     commit-date: 2020-11-16
+>     host: x86_64-unknown-linux-gnu
+>     release: 1.48.0
+>     LLVM version: 11.0
+> 
+> Which would make the new `scripts/rustc-llvm-version.sh` fail and,
+> in turn, the build:
+> 
+>     $ make LLVM=1
+>       SYNC    include/config/auto.conf.cmd
+>     ./scripts/rustc-llvm-version.sh: 13: arithmetic expression: expecting primary: "10000 * 10 + 100 * 0 + "
+>     init/Kconfig:83: syntax error
+>     init/Kconfig:83: invalid statement
+>     make[3]: *** [scripts/kconfig/Makefile:85: syncconfig] Error 1
+>     make[2]: *** [Makefile:679: syncconfig] Error 2
+>     make[1]: *** [/home/cam/linux/Makefile:780: include/config/auto.conf.cmd] Error 2
+>     make: *** [Makefile:224: __sub-make] Error 2
+> 
+> Since we do not need to support such binaries, we can avoid adding logic
+> for computing `rustc`'s LLVM version for those old binaries.
+> 
+> Thus, instead, just make the match stricter.
+> 
+> Other `rustc` binaries (even newer) did not report the LLVM version at
+> all, but that was fine, since it would not match "LLVM", e.g.:
+> 
+>     $ rustc --version --verbose
+>     rustc 1.49.0 (e1884a8e3 2020-12-29)
+>     binary: rustc
+>     commit-hash: e1884a8e3c3e813aada8254edfa120e85bf5ffca
+>     commit-date: 2020-12-29
+>     host: x86_64-unknown-linux-gnu
+>     release: 1.49.0
+> 
+> Cc: Thorsten Leemhuis <regressions@leemhuis.info>
+> Cc: Gary Guo <gary@garyguo.net>
+> Reported-by: Cameron MacPherson <cameron.macpherson@gmail.com>
+> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=219423
+> Fixes: af0121c2d303 ("kbuild: rust: add `CONFIG_RUSTC_LLVM_VERSION`")
+> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
 
-WARNING: CPU: 5 PID: 3517 at mm/highmem.c:622 kunmap_local_indexed+0x62/0xc9
-CPU: 5 UID: 0 PID: 3517 Comm: cp Not tainted 6.12.0-rc4 #2
-...
-copy_page_from_iter_atomic+0xa6/0x5ec
-generic_perform_write+0xf6/0x1b4
-shmem_file_write_iter+0x54/0x67
+and it still works for me with rustc 1.82.0:
 
-Fix copy_page_from_iter_atomic() by limiting it in that case
-(include/linux/skbuff.h skb_frag_must_loop() does similar).
+Reviewed-by: Nathan Chancellor <nathan@kernel.org>
+Tested-by: Nathan Chancellor <nathan@kernel.org>
 
-But going forward, perhaps CONFIG_DEBUG_KMAP_LOCAL_FORCE_MAP is too
-surprising, has outlived its usefulness, and should just be removed?
-
-Fixes: 908a1ad89466 ("iov_iter: Handle compound highmem pages in copy_page_from_iter_atomic()")
-Signed-off-by: Hugh Dickins <hughd@google.com>
-Cc: stable@vger.kernel.org
----
- lib/iov_iter.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/lib/iov_iter.c b/lib/iov_iter.c
-index 1abb32c0da50..94051b83fdd8 100644
---- a/lib/iov_iter.c
-+++ b/lib/iov_iter.c
-@@ -461,6 +461,8 @@ size_t copy_page_from_iter_atomic(struct page *page, size_t offset,
- 		size_t bytes, struct iov_iter *i)
- {
- 	size_t n, copied = 0;
-+	bool uses_kmap = IS_ENABLED(CONFIG_DEBUG_KMAP_LOCAL_FORCE_MAP) ||
-+			 PageHighMem(page);
- 
- 	if (!page_copy_sane(page, offset, bytes))
- 		return 0;
-@@ -471,7 +473,7 @@ size_t copy_page_from_iter_atomic(struct page *page, size_t offset,
- 		char *p;
- 
- 		n = bytes - copied;
--		if (PageHighMem(page)) {
-+		if (uses_kmap) {
- 			page += offset / PAGE_SIZE;
- 			offset %= PAGE_SIZE;
- 			n = min_t(size_t, n, PAGE_SIZE - offset);
-@@ -482,7 +484,7 @@ size_t copy_page_from_iter_atomic(struct page *page, size_t offset,
- 		kunmap_atomic(p);
- 		copied += n;
- 		offset += n;
--	} while (PageHighMem(page) && copied != bytes && n > 0);
-+	} while (uses_kmap && copied != bytes && n > 0);
- 
- 	return copied;
- }
--- 
-2.35.3
+> ---
+>  scripts/rustc-llvm-version.sh | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/scripts/rustc-llvm-version.sh b/scripts/rustc-llvm-version.sh
+> index b6063cbe5bdc..a500d1ae3101 100755
+> --- a/scripts/rustc-llvm-version.sh
+> +++ b/scripts/rustc-llvm-version.sh
+> @@ -13,7 +13,7 @@ get_canonical_version()
+>  	echo $((10000 * $1 + 100 * $2 + $3))
+>  }
+>  
+> -if output=$("$@" --version --verbose 2>/dev/null | grep LLVM); then
+> +if output=$("$@" --version --verbose 2>/dev/null | grep -E 'LLVM.*[0-9]+\.[0-9]+\.[0-9]+'); then
+>  	set -- $output
+>  	get_canonical_version $3
+>  else
+> -- 
+> 2.47.0
+> 
 
