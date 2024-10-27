@@ -1,59 +1,57 @@
-Return-Path: <linux-kernel+bounces-383828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A26EC9B209F
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 21:56:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 282BB9B20A1
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 21:59:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5987B1F21B0D
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 20:56:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC8831F21D24
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 20:59:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C376185B58;
-	Sun, 27 Oct 2024 20:56:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31697185B62;
+	Sun, 27 Oct 2024 20:59:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jIZQ3Ir2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MFmKBX8Z"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1C511DFE8;
-	Sun, 27 Oct 2024 20:56:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85E96184551;
+	Sun, 27 Oct 2024 20:59:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730062608; cv=none; b=hcsRFqSZeZrg7iXtuLqWGDgJqumSsAMR3x6ENqhrBk7fKaRnZ1DJgBTYHxCXUiN2S6BbxZqcaRYFs5jznuBuQ9+WVVPvC12zykjjQ7WMprQViTWhAzorv4wLHlqVcRZJz2YQi6Pbb79+4jsk6y/mUu+BT/92a/G1RAQT6GJwl5Q=
+	t=1730062759; cv=none; b=dC11G2rt+ev5gC3nCsP5RILCGMnK52F/NGHA/32hJ+d12g77ME8wAl43eEvnuUpENHMEDqcvbjtMYGZS30ZpDIpnBUGM+pXTEMsJyxW4n1ZBJ5dlYui1Ce6fyEHRgDIyewBa4l7rspcJpnTAWei1NoOMTrJT4OOECr4WUfi96+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730062608; c=relaxed/simple;
-	bh=wiW1+9/2t2c3YZRGJvpPEpiy2DceUIZ9uZej5DwHoas=;
+	s=arc-20240116; t=1730062759; c=relaxed/simple;
+	bh=fStGl32Y0xAhRyC+Z0PhJYiCdwrf57r+IzTtRSKzzW8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YNOARXoDq3BP2xCC/dSDwlTe22XCWhq1r9BJm0xKL/xcXfow767WHemWCJuaDJ7eP2g3gx0HvcI5eLNw3wAU0iPSYoX3/BDrzdGYtw4ypjsUxC4wIP4ww2fCDMgH/UxI3GCu7OptdT99nJJ0unJDm9zlF3DXH1PGSAr06+HjSxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jIZQ3Ir2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7907DC4CEC3;
-	Sun, 27 Oct 2024 20:56:47 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=oFtBdVvQwdg9MD6LhbRK9BhPR8tKRT2J0BxQyzpZtfMo6oOkmfH8AvtU59ky2LXZOrfuSsj+d9k+I2p6LVJyChmraJcfNg6w9nxW3K4iWcnkcmBTxOOrS88joJa24Zl1pe3/AJv3YWp2DDxpmGAR4S2VEmrURdKc3aochOVKPV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MFmKBX8Z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 825BAC4CEEA;
+	Sun, 27 Oct 2024 20:59:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730062608;
-	bh=wiW1+9/2t2c3YZRGJvpPEpiy2DceUIZ9uZej5DwHoas=;
+	s=k20201202; t=1730062759;
+	bh=fStGl32Y0xAhRyC+Z0PhJYiCdwrf57r+IzTtRSKzzW8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jIZQ3Ir2v1baN+g79ZQtOPKDXApQwMCW86W0NTfi+Fa+fm8SCl89IDDW2M8+tAwG7
-	 0p7umh6jVs2kC9JZ2z3rJfbycyispjtNuZsqglNvlmn5/No4GY9fmAcLBfq5++hovF
-	 B7X0Mv6gn7hoSyuLOtTAKfyIq1q/jTijW/JWpKkwxKZytzL/mDuudVAytLUzVejZyw
-	 ecZa8E+RRr21YNtxAfucZqXhUjNkgCAToQ1XkEctl8UjVV1Zcbh9J/pKzBWHTDJ5Wj
-	 ZcoyHpzFXVJm8lf/Xc2Uuw9AqFD0vQkUPMPlfw2JcSNgqi6m65Fiv7OKUEi3WmvqCu
-	 lwGqYPIuRiIeQ==
-Date: Sun, 27 Oct 2024 21:56:44 +0100
+	b=MFmKBX8Zmb1TGtjY+m94GvXWW+LoODiIgNZzedH6Ck61f0a+5yCdyjujtVHxUF5Aq
+	 XZEnjbJgQ/648z2X5egC9TSYVwIf0dO0UmlTXRV8urAcrH5BlCIM0G9nP8NCCmbNQg
+	 WlmsdvEKkFbRrNk4JoFDPfqMlaM2Q/5sqATcg6SVbqcJLrUOEXlmMjT/r4tpeHirs9
+	 9z9A1hAEfPI3cCf/AVpqIbzjNK9TmiJkb0WJIqxlNhjxvLKtUh84pV8f9OjviUXKjb
+	 5r+gKPPI2YpWXN1UwfaPkdnx+fvZsUaVVUzLlylPxF/4gi9T/ZFP94fOCkrr6BaytB
+	 TanqfVhIPYddQ==
+Date: Sun, 27 Oct 2024 21:59:15 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Fei Shao <fshao@chromium.org>
-Cc: Mark Brown <broonie@kernel.org>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Conor Dooley <conor+dt@kernel.org>, 
+Cc: Mark Brown <broonie@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
 	Krzysztof Kozlowski <krzk+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Trevor Wu <trevor.wu@mediatek.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, linux-sound@vger.kernel.org
-Subject: Re: [PATCH 2/4] ASoC: dt-bindings: mediatek,mt8188-mt6359: Update
- DAI link node pattern
-Message-ID: <j5qw52grlce63mccduvryx467h4hvcnqrxrova74d52izq3g5r@wjiflssmq6a5>
+	Rob Herring <robh@kernel.org>, Steve Lee <steves.lee@maximintegrated.com>, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org
+Subject: Re: [PATCH 4/4] ASoC: dt-bindings: maxim,max98390: Document
+ maxim,dsm_param_name property
+Message-ID: <r2qtuopc6d2vygxghgydole5ixxr4z5weougk7ldadyma4zi56@sp34zufvzdaq>
 References: <20241025104548.1220076-1-fshao@chromium.org>
- <20241025104548.1220076-3-fshao@chromium.org>
+ <20241025104548.1220076-5-fshao@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,53 +60,37 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241025104548.1220076-3-fshao@chromium.org>
+In-Reply-To: <20241025104548.1220076-5-fshao@chromium.org>
 
-On Fri, Oct 25, 2024 at 06:44:42PM +0800, Fei Shao wrote:
-> The associated machine driver is not dependent on the format of DAI link
-> node names. This means we are allowed to use more descriptive names
-> instead of indices without impacting functionality.
-> 
-> Update the binding to accept arbitrary DAI link names with a "-dai-link"
-> suffix. This is the common pattern used by the target (MT8188) and other
-> (MT8195, MT8186 etc.) MediaTek-based Chromebooks.
-
-We do not want arbitrary names. Why for example green-batman-dai-link
-should be correct? The existing pattern looks wrong. Please read DT spec
-and chapter about recommended names.
-
-
+On Fri, Oct 25, 2024 at 06:44:44PM +0800, Fei Shao wrote:
+> Add the missing "maxim,dsm_param_name" property in the binding.
+> This property specifies the customized DSM parameter binary name.
 > 
 > Signed-off-by: Fei Shao <fshao@chromium.org>
 > ---
 > 
->  .../devicetree/bindings/sound/mediatek,mt8188-mt6359.yaml     | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  Documentation/devicetree/bindings/sound/maxim,max98390.yaml | 4 ++++
+>  1 file changed, 4 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/sound/mediatek,mt8188-mt6359.yaml b/Documentation/devicetree/bindings/sound/mediatek,mt8188-mt6359.yaml
-> index 701cedfa38d2..2da34b66818f 100644
-> --- a/Documentation/devicetree/bindings/sound/mediatek,mt8188-mt6359.yaml
-> +++ b/Documentation/devicetree/bindings/sound/mediatek,mt8188-mt6359.yaml
-> @@ -40,7 +40,7 @@ properties:
->        name defined in the machine driver.
+> diff --git a/Documentation/devicetree/bindings/sound/maxim,max98390.yaml b/Documentation/devicetree/bindings/sound/maxim,max98390.yaml
+> index 5bd235cf15e6..fa4749735070 100644
+> --- a/Documentation/devicetree/bindings/sound/maxim,max98390.yaml
+> +++ b/Documentation/devicetree/bindings/sound/maxim,max98390.yaml
+> @@ -32,6 +32,10 @@ properties:
+>      minimum: 1
+>      maximum: 8388607
 >  
->  patternProperties:
-> -  "^dai-link-[0-9]+$":
-> +  ".*-dai-link$":
+> +  maxim,dsm_param_name:
+> +    description: The DSM parameter binary name (e.g. dsm_param.bin).
+> +    $ref: /schemas/types.yaml#/definitions/string
 
-This breaks existing users.
+NAK, you cannot document properties post-factum. It's not a property
+coming from 2014.
 
->      type: object
->      description:
->        Container for dai-link level properties and CODEC sub-nodes.
-> @@ -112,7 +112,7 @@ examples:
->              "Headphone", "Headphone L",
->              "Headphone", "Headphone R",
->              "AIN1", "Headset Mic";
-> -        dai-link-0 {
-> +        hdmi-dai-link {
+For me, this is obvious that this is for ACPI and if you want to use it
+for DT platforms, go through proper review.
 
-No. Not really justified.
+In any case: NAK for this and other ACPI properties.
 
 Best regards,
 Krzysztof
