@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-383656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 843CD9B1ECD
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 15:38:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74F6B9B1ECF
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 15:38:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48D59281AFC
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 14:38:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9FAF282071
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 14:38:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADC0018132F;
-	Sun, 27 Oct 2024 14:37:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DFBD183CD6;
+	Sun, 27 Oct 2024 14:37:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kt2jTpu7"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EWtNCt7C"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 270EB17C7CA;
-	Sun, 27 Oct 2024 14:37:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02E87166307;
+	Sun, 27 Oct 2024 14:37:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730039829; cv=none; b=higG9QmXRR05t4IQVSgRzg3UZkKrEzMkBvkq/QtMAHYTaAuU7QnosJSgbMw2N8WalXd864euVBOL52QTMdhxYsgpLTSuSzK/nmo92KGFv+UjoI7n0OKs0rBe73v4Xj71ASD4WTaiAER1fnMnaVlICMuNz2FUWGHgw1KUfUfySkI=
+	t=1730039829; cv=none; b=P3Y+CPh8BaYIbIDMhG9183VUDsZRME/JK/qiddXtAnZPhVDEeaItB8/VLLvDzI2aCwxyHi5tVlzkISR5DTmoNEOsc7i6msE4v9ShQLlLqL2QSh80xAHN0UBYYR77+H/qjdJEfTiLWGy5P8A0iBzrULEgdC/mFb7Wf4s6gf0xOMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1730039829; c=relaxed/simple;
-	bh=OtMc8F1P0PTrSTV9GAwD2G3wO6F1jpiSdyrg5IQ28zs=;
+	bh=1KzJp/fai6aB837Tp2XCYOTjK4FVSS8lCtpXFfw4Wj0=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=LzPWb1RYZxlTnuGtFgjBE7EoD8pgzu8WT6fYkR+BlgYHmjlEFsDikndSlPSX9nXCvRQ1qTTSq3o1Uhu9Eb3m5qp+tVROJHgDZeDYq0U8yMQSgG05ycWk5E8IcenNtBmg6EApE6XtNDfkgJZ5NTnjauL7TW3rVBEqCYBCSeTR4Iw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kt2jTpu7; arc=none smtp.client-ip=209.85.218.47
+	 MIME-Version; b=gL7TgkSGwl7I+eZJbPhC+n6THaJ6MhJx0TabH7CzHewlYF6scatONeYSXA8cQeCxX0ZlP+X1UEKnEfUlmvrpGVNO0Ojj8aYQrB/liLlf60i9yll65ebZ9w3XAHEZSgiMieguU8SykCHDOlhMyFXtcM+wBJif//gGpwEh2P2j084=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EWtNCt7C; arc=none smtp.client-ip=209.85.208.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a966de2f4d3so43926966b.2;
-        Sun, 27 Oct 2024 07:37:06 -0700 (PDT)
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5c93346dfc8so439942a12.3;
+        Sun, 27 Oct 2024 07:37:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730039825; x=1730644625; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1730039826; x=1730644626; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=zykG5xT9htU2beqODKL0ma8uO47wG8f6mRcFvD55rTU=;
-        b=kt2jTpu7H7Od9SE9S/USh7wVyhJiPO5JmfuKfbb+Zp/NgmAvg9RDyVD80rtlO9Ifcd
-         BMOUouzdCZDfLBOCBWAixSvRpgf47gYAM8BTa9cM1i3cCEFHrdrf9+9vJ7q9uwODPPt/
-         N3AntTyNHJQLc86O+sitRdxXK2MiuEfHyrqq6ffq27yD0aQMU0y9qvMWjnk3vWA1U0/i
-         iutbjeVaWZATla30aHbr7wIMpR/Yo4FuBct5EC/EbyZFcuT4sx9CoiDQytclfrw9aFAy
-         CjeqU2123Mdwl4XYWgxF/P7mZXWkb+uXqb751sfJ3QmZ6HgpJd6q0eN2Fg7CvdTP9UOE
-         4MRA==
+        bh=syqLQEEuQIy2cda968KqPmvPAkdMXpl9TyM7P/fgr+8=;
+        b=EWtNCt7C/Zb8x9o9XBO4C8pf5wPK9o0ENaQVOIMBYnFetJfEBS6MfW+YdnZlETFgct
+         6QJ6eyTa7Sy6LlTGw1Pt+/dXecYhB2jWLO7ixGq1mxJmrSf8noR5fpBVlGhyO9RSfC3F
+         2u4AWtE5q+O/a4vvs0B2hU/rcaudzLExBhKksekCv2PRn6c+vfMFIqJqPfVwNmHQp03v
+         sJhBrN9irJaKzzXb2TgztMnDaNPcE8kfMbkVwsTfi/1JY/AhukbJjTumvqvFXiK7QzNK
+         KKPSJ7iSe6raNkUjutqyqfHQ19xZTrHNRO68g4X/Vwp2ViJyqpMyyNuScSPKw0MQ9EMi
+         r7uQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730039825; x=1730644625;
+        d=1e100.net; s=20230601; t=1730039826; x=1730644626;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=zykG5xT9htU2beqODKL0ma8uO47wG8f6mRcFvD55rTU=;
-        b=koiArjZBz5WE+YZgdinw2UBsUPFeghAwczg/xH/JPmu0cTlTEiiNQXBs1WdAIlZfT3
-         1+GzNh1t4bsHUTdTXma9JwsJ95x3x3Nj8ZZA1ltnYYKYE53XIVu9AKiWSIyn5YVw6gRC
-         4+sDoETr7jPvKm8N6kaXK/jEqk21LyxYJ8Oft3cB4Ec5Z+i3aVBnPHHyo0PypYi+/GFY
-         NqIo5ur90GwETlzI6tE7ITb8EBJsmPyGxFQFFqDs3TkniQ+9GPZMrYBC1X38CyKPTfGC
-         Up4ctnE5qfQqq1p8mXZ8YtANvckawgRsFjAdvskVjl6y1xtjW9bylEDl6PmpMYePrOyB
-         tprw==
-X-Forwarded-Encrypted: i=1; AJvYcCUP/lKNZ+K/U89B6yv5nz+Y+U2P0Jdf/kG009IK6eduPuuE18+rtvhG2L8udozXOuHh3QHg+OR7ktrVH8PP@vger.kernel.org, AJvYcCX/Mv5zuzAQizOVfLU7DN1nKCgjDcTNdqcI2pBbyWgEBY+XdhdS7MuFSkM3WuUu4eY76vRSlGHVDtSC@vger.kernel.org
-X-Gm-Message-State: AOJu0Yysom9zc4rzyjC8mC7LWVyppBIiypqHa4Vgqgw75bsqgSg+ipyR
-	kAYX/FiXceV7QXaxwHBm0C8NIKGXvCYgKBlsfDVnJngmsY3mMLqL
-X-Google-Smtp-Source: AGHT+IG80f5DbgfZu1EssjWcBVSD7TKjNuwHRHvQM+3EHA3QJl8++utETn/JSBaSgAeMJJ6bjjTUcw==
-X-Received: by 2002:a17:907:7248:b0:a9a:6700:1ee5 with SMTP id a640c23a62f3a-a9de5f04372mr189557766b.5.1730039825333;
-        Sun, 27 Oct 2024 07:37:05 -0700 (PDT)
+        bh=syqLQEEuQIy2cda968KqPmvPAkdMXpl9TyM7P/fgr+8=;
+        b=ElGG+uZn3gfeNOfddL19kGiUtMW8ERy4m6o5CDyE0sY+cKFN9QbBISuHVn8uIsxvnQ
+         qbJ2tOBK9oZ7+pUTHc/ApL5uawvkWLw8JzgxE2t2Jzg6oVsmZb4ETLls0CqJ4pCLsBPJ
+         CWkpyy8vxSHjvExdLcOz+1zqpGmxOc3gACIeGAmD9gpTqvJCS8f+eQHYHj6MaIVys/vH
+         vqq8eTnb40tBGpj7uxPB8qR4ndgZphyu9zknBBsUWDWbpvjlWKxNqMvG8ZJZN1BtEuoq
+         Qv6IcuJl6xcYJ4vAFxMqO4sEl4w0QPz1jToTsahPl4RfHX6NTXr3YjYj5Tsfe/aKJ5iq
+         dYxg==
+X-Forwarded-Encrypted: i=1; AJvYcCUSVM8L/y5cO+kD0JcAzftQhKh7pWyUsxziRMatjaCOwvjtGTJuL/fWnhmMpZiHxO/dIEmSBEVqblwzZqMA@vger.kernel.org, AJvYcCWr9Q0YTrTM+BtQW+eaSL29RZiKOzOp4ak/Yc+RxcK2cvtu3cet2cA65+whNbtfbyU4LKOvVWkM6/wi@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQT19BxWwFweYy5XbGo71LpBhgREHAdPyV5JWZxlOEsbZFWrgQ
+	Vd1d7pneV3aWffrSWG8alIOC9LzzNrsXyQihoa/UGmPYr6ihuJO99izPmA==
+X-Google-Smtp-Source: AGHT+IH7N+ec9fuWlTgo+hObp1OYAFN6tl1TIuPS2k3vhGrnYICKxluiit2A4Irm9+Hg7SIh2zYp5g==
+X-Received: by 2002:a17:907:74b:b0:a99:fbb6:4956 with SMTP id a640c23a62f3a-a9de6175f57mr254372566b.10.1730039826379;
+        Sun, 27 Oct 2024 07:37:06 -0700 (PDT)
 Received: from 6c1d2e1f4cf4.v.cablecom.net (84-72-156-211.dclient.hispeed.ch. [84.72.156.211])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b331b0d44sm281127966b.187.2024.10.27.07.37.03
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b331b0d44sm281127966b.187.2024.10.27.07.37.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 27 Oct 2024 07:37:04 -0700 (PDT)
+        Sun, 27 Oct 2024 07:37:06 -0700 (PDT)
 From: Lothar Rubusch <l.rubusch@gmail.com>
 To: robh@kernel.org,
 	krzk+dt@kernel.org,
@@ -77,9 +77,9 @@ Cc: conor+dt@kernel.org,
 	l.rubusch@gmail.com,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCHv3 06/22] ARM: dts: socfpga: add missing cells properties
-Date: Sun, 27 Oct 2024 14:36:38 +0000
-Message-Id: <20241027143654.28474-7-l.rubusch@gmail.com>
+Subject: [PATCHv3 07/22] ARM: dts: socfpga: fix missing ranges
+Date: Sun, 27 Oct 2024 14:36:39 +0000
+Message-Id: <20241027143654.28474-8-l.rubusch@gmail.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20241027143654.28474-1-l.rubusch@gmail.com>
 References: <20241027143654.28474-1-l.rubusch@gmail.com>
@@ -91,24 +91,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Binding requires size-cells and address-cells to be around for the SRAM.
+Add reanges, since by dtschema 'ranges' is a required property here.
 
 Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
 ---
- arch/arm/boot/dts/intel/socfpga/socfpga_arria10.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm/boot/dts/intel/socfpga/socfpga_arria10.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/arch/arm/boot/dts/intel/socfpga/socfpga_arria10.dtsi b/arch/arm/boot/dts/intel/socfpga/socfpga_arria10.dtsi
-index 7f7ac0dc1..4b19fad1e 100644
+index 4b19fad1e..65d04339f 100644
 --- a/arch/arm/boot/dts/intel/socfpga/socfpga_arria10.dtsi
 +++ b/arch/arm/boot/dts/intel/socfpga/socfpga_arria10.dtsi
-@@ -684,6 +684,8 @@ nand: nand-controller@ffb90000 {
+@@ -81,10 +81,10 @@ pdma: dma-controller@ffda1000 {
+ 		};
  
- 		ocram: sram@ffe00000 {
- 			compatible = "mmio-sram";
-+			#address-cells = <1>;
-+			#size-cells = <1>;
- 			reg = <0xffe00000 0x40000>;
+ 		fpga-region {
++			compatible = "fpga-region";
+ 			#address-cells = <0x1>;
+ 			#size-cells = <0x1>;
+-
+-			compatible = "fpga-region";
++			ranges;
+ 			fpga-mgr = <&fpga_mgr>;
  		};
  
 -- 
