@@ -1,180 +1,172 @@
-Return-Path: <linux-kernel+bounces-383749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 004679B1FCF
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 20:00:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E2B39B1FD2
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 20:02:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CCF71C20A4F
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 19:00:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18A811F2123B
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 19:02:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CD8F157E9F;
-	Sun, 27 Oct 2024 19:00:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F88E1779AE;
+	Sun, 27 Oct 2024 19:02:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="ZKglY7lo"
-Received: from mail-40134.protonmail.ch (mail-40134.protonmail.ch [185.70.40.134])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="JrZqvHDS"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D20FB6FB6;
-	Sun, 27 Oct 2024 19:00:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08E9F1DFE8;
+	Sun, 27 Oct 2024 19:02:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730055617; cv=none; b=uPRfPStNlnTX9EWFHJH8GEbC92lgnyc6ojtdDLXciF5YMb1zv0Y8TjN9EdhDsELSzs6cp3FYosq6sm60jLMNHiKYGZedovSkS5L4VZ9Ic/zYlGCJlrMBKTdbf0wUO4WOdamvYZJiI9pwTyu12Ef5k3pxe/bVyqcq9glboVJh+ZA=
+	t=1730055735; cv=none; b=LYq9r9tnb2kogQJ8iu/xg36uvq4DhYpwRE4fctSAQ9tPrlwrE+zBCY5PvHUKlgNgYrPlkCFILB4C6atmlhehOx9dAOGlBPArHRz+QSswvp0XWR7Ku7ciylU2+XJeC0LQ6/DW13YK5AFo1MlRxaD8ZbS42IJH3AhlPToaxbgsI0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730055617; c=relaxed/simple;
-	bh=oXfsMzfLH5+0CftdcPlOInwf8zLm0ueqge6ZlGLUP8I=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=d+Esw0ilovQXkAg8pd+fDWJft64p5720bOPtorLrvZrOMvUEsAYpXBldGMcNsAwlUHKvShYzj0r2rBbthsMGJWH1d3saQ70c/+qSIjH8CM3w5W2XPKBWe/XczjnHp/UYlzZXQXuJalZZ9QjH6J0EJKtPvlTpGKAitaJwBoX1W5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=ZKglY7lo; arc=none smtp.client-ip=185.70.40.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1730055611; x=1730314811;
-	bh=oXfsMzfLH5+0CftdcPlOInwf8zLm0ueqge6ZlGLUP8I=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=ZKglY7loz1wqv2M0FhqyGMhmRqdLeH/FX9aWqalh9flgQdFEs+SOnU+lDDvsonxfG
-	 5AkaVArjwfcIhqd+9oObqemWKzdOQ00KBRdAKETTqpJI4Ofd6lSIVe1eVUsbz1m6D4
-	 QO8JDG7qK4sKHWroSabldw2TXCAGb90mzP5s4yOYnSMRbU5RWPHxRt0/j+gZtNNfkA
-	 EJryZeYAZ4RoOinbZ+tiU3AEUjfKSkX2vgZBt6w2rexj33n+cJiKg3mU7xeYC22uO9
-	 C8tJytscC3FA/nirVxkUNhWHfsRr+/SSoFcfre1M96wKNeZWxtSt/GpjCV5Jt95Km6
-	 5sjefEH1cewAA==
-Date: Sun, 27 Oct 2024 19:00:07 +0000
-To: Kent Overstreet <kent.overstreet@linux.dev>
-From: Piotr Zalewski <pZ010001011111@proton.me>
-Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, skhan@linuxfoundation.org, syzbot+005ef9aa519f30d97657@syzkaller.appspotmail.com, Alan Huang <mmpgouride@gmail.com>
-Subject: Re: [PATCH v2] bcachefs: Fix NULL ptr dereference in btree_node_iter_and_journal_peek
-Message-ID: <KoKsgyv6vBuqwCj7ZnzZNWLYuQ_2LAfUUp3Eq8m9RkIS8hQOCpszlKj1BbYO8Md844-U-h2bmQJZtlTptr2-lKzYVdFtWy_BMejp5uPpjz4=@proton.me>
-In-Reply-To: <vzmzlzbxlyapymoccpniahd6kajrtumz7zenn4fuess6kta3qc@kbtsbr3lnl73>
-References: <20241026174155.233430-3-pZ010001011111@proton.me> <j3aypufmcezitilxlgkfyetnonkzlkst3hx4zxr4zspfonh5pm@mwngtgo4h4vb> <BdSD2g3SGfWQrsTULTjViyG_t0llBh4NeIVbIE_3pvf1bWxk52ErCdP5yOErBZO3NkhyOv9Mgq2xc6CsGFliqDQrTgTwoquYKJKEUY5OE9g=@proton.me> <vzmzlzbxlyapymoccpniahd6kajrtumz7zenn4fuess6kta3qc@kbtsbr3lnl73>
-Feedback-ID: 53478694:user:proton
-X-Pm-Message-ID: 19754784f6c1991427663cc034d8c25d24b49ae9
+	s=arc-20240116; t=1730055735; c=relaxed/simple;
+	bh=WvVdXnvaClZZhGy9E3SXD2zt0hOOkWPIob0/lnYVUlw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=GRxuWluf4rsF5eGb0CKESQUcpYtWOeq0cKcCo7RT1E1tqxAeDLe3vFpGV7mBye2WQrFr1aIJiSd58VVGI8Z9fngEfDIaI6CkbhUWjrJGhSimQlceSQ+NB8dFxnw7T2v1TL8nFaboUk++6Vmgo5eoaGN8SgH3lKXzjDtoLnOa5wM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=JrZqvHDS; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49REw7LE002830;
+	Sun, 27 Oct 2024 19:02:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	DB7k7FTPzcBwXcR8I+IAPfa2fMINv1VnibF6k3GaxKY=; b=JrZqvHDSfRZzPc99
+	JysowDQNjnMn2JZTFtEOuZ9pz3RsyP8F4UP19blJryBfp7pSdvPq2JK+0Va9HdzM
+	NAw/ncJX5da+DepDeP7DADGYydDFWuIvkVRh20KhqT9OHMOcwzWtzZYmYTL7PzOw
+	nRby0vGaK/dFzr861gsI+BxAaSoB6j/sG7KBNAI9Ot5oJdBZNjRzjpCSUus5wipC
+	L9v17XXo38XjbfA35y6BJ41U54QTauam3mw2ZOsWsDqm07XQ1TXD1LD9Mb7w1sI8
+	WT9N8gC1jgVaSHkpWuSJMBLmC4W28PgMgDIaklHZ/6jBocEwwwlAsnq2tf5eAxhK
+	ywkmCw==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42gp4du2b9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 27 Oct 2024 19:02:09 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49RJ297n007664
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 27 Oct 2024 19:02:09 GMT
+Received: from [10.216.2.255] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 27 Oct
+ 2024 12:02:05 -0700
+Message-ID: <c87f96a7-f391-41d0-821b-cbd4e25b5831@quicinc.com>
+Date: Mon, 28 Oct 2024 00:32:02 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] arm64: dts: qcom: Enable USB controllers for
+ QCS8300
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <quic_ppratap@quicinc.com>, <quic_jackp@quicinc.com>
+References: <20241011074619.796580-1-quic_kriskura@quicinc.com>
+ <20241011074619.796580-3-quic_kriskura@quicinc.com>
+ <xijjs445fzeuzbj2bg3ziwlzenrk4wo5zlyze4j5mldb444oj7@73ynic4xqfdj>
+ <720aa372-a04b-4b0f-b2da-3be37a319ec9@quicinc.com>
+ <fhgw2re45vn63lqox7vikg3hcak3wjf4wududebw7ow2enrqiq@inajq4l5qqir>
+Content-Language: en-US
+From: Krishna Kurapati <quic_kriskura@quicinc.com>
+In-Reply-To: <fhgw2re45vn63lqox7vikg3hcak3wjf4wududebw7ow2enrqiq@inajq4l5qqir>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: Kdkg1ZT5aT34BhSeT16UEsDfN-4oaqzm
+X-Proofpoint-GUID: Kdkg1ZT5aT34BhSeT16UEsDfN-4oaqzm
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ priorityscore=1501 mlxlogscore=636 clxscore=1015 spamscore=0
+ lowpriorityscore=0 malwarescore=0 bulkscore=0 adultscore=0 phishscore=0
+ mlxscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410270167
 
 
 
+On 10/27/2024 11:14 PM, Dmitry Baryshkov wrote:
+> On Sun, Oct 27, 2024 at 11:59:44AM +0530, Krishna Kurapati wrote:
+>>
+>>
+>> On 10/26/2024 11:06 PM, Dmitry Baryshkov wrote:
+>>> On Fri, Oct 11, 2024 at 01:16:19PM +0530, Krishna Kurapati wrote:
+>>>> Enable primary USB controller on QCS8300 Ride platform. The primary USB
+>>>> controller is made "peripheral", as this is intended to be connected to
+>>>> a host for debugging use cases.
+>>>>
+>>>> Signed-off-by: Krishna Kurapati <quic_kriskura@quicinc.com>
+>>>> ---
+>>>>    arch/arm64/boot/dts/qcom/qcs8300-ride.dts | 23 +++++++++++++++++++++++
+>>>>    1 file changed, 23 insertions(+)
+>>>>
+>>>> diff --git a/arch/arm64/boot/dts/qcom/qcs8300-ride.dts b/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
+>>>> index 7eed19a694c3..3e925228379c 100644
+>>>> --- a/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
+>>>> +++ b/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
+>>>> @@ -265,3 +265,26 @@ &ufs_mem_phy {
+>>>>    	vdda-pll-supply = <&vreg_l5a>;
+>>>>    	status = "okay";
+>>>>    };
+>>>> +
+>>>> +&usb_1_hsphy {
+>>>> +	vdda-pll-supply = <&vreg_l7a>;
+>>>> +	vdda18-supply = <&vreg_l7c>;
+>>>> +	vdda33-supply = <&vreg_l9a>;
+>>>> +
+>>>> +	status = "okay";
+>>>> +};
+>>>> +
+>>>> +&usb_qmpphy {
+>>>> +	vdda-phy-supply = <&vreg_l7a>;
+>>>> +	vdda-pll-supply = <&vreg_l5a>;
+>>>> +
+>>>> +	status = "okay";
+>>>> +};
+>>>> +
+>>>> +&usb_1 {
+>>>> +	status = "okay";
+>>>> +};
+>>>> +
+>>>> +&usb_1_dwc3 {
+>>>> +	dr_mode = "peripheral";
+>>>> +};
+>>>
+>>> So, can it be used as a USB host controller / connector? What needs to
+>>> be done in such a case?
+>>>
+>> Adding vbus boost pinctrl and changing dr_mode to host must be enough for
+>> this case.
+> 
+> Could you please mention those either in the commie message or in the
+> comment before the board DT file?
+> 
 
+Sure, I can update commit text to add something like the following:
 
+"In case first controller needs to be configured in host mode, X-GPIO to 
+be enabled and dr_mode to be changed accordingly."
 
-Sent with Proton Mail secure email.
+But when we add second controller (which I will after SPMI node is 
+done), this commit text would be redundant as the same file would show 
+example for host mode as well.
 
-On Sunday, October 27th, 2024 at 6:53 PM, Kent Overstreet <kent.overstreet@=
-linux.dev> wrote:
-
-> On Sun, Oct 27, 2024 at 11:34:02AM +0000, Piotr Zalewski wrote:
->=20
-> > On Sunday, October 27th, 2024 at 2:28 AM, Kent Overstreet kent.overstre=
-et@linux.dev wrote:
-> >=20
-> > > On Sat, Oct 26, 2024 at 05:46:33PM +0000, Piotr Zalewski wrote:
-> > >=20
-> > > > Add NULL check for key returned from bch2_btree_and_journal_iter_pe=
-ek in
-> > > > btree_node_iter_and_journal_peek to avoid NULL ptr dereference in
-> > > > bch2_bkey_buf_reassemble.
-> > > >=20
-> > > > When key returned from bch2_btree_and_journal_iter_peek is NULL it =
-means
-> > > > that btree topology needs repair. Print error message with position=
- at
-> > > > which node wasn't found and its parent node information. Call
-> > > > bch2_topology_error and return error code returned by it to ensure =
-that
-> > > > topology error is handled properly.
-> > > >=20
-> > > > Reported-by: syzbot+005ef9aa519f30d97657@syzkaller.appspotmail.com
-> > > > Closes: https://syzkaller.appspot.com/bug?extid=3D005ef9aa519f30d97=
-657
-> > > > Fixes: 5222a4607cd8 ("bcachefs: BTREE_ITER_WITH_JOURNAL")
-> > > > Suggested-by: Alan Huang mmpgouride@gmail.com
-> > > > Suggested-by: Kent Overstreet kent.overstreet@linux.dev
-> > > > Signed-off-by: Piotr Zalewski pZ010001011111@proton.me
-> > > > ---
-> > > >=20
-> > > > Notes:
-> > > > changes in v2:
-> > > > - make commit message more verbose.
-> > > > - set topology error, print error message and return
-> > > > appropriate error code.
-> > > >=20
-> > > > link to v1: https://lore.kernel.org/linux-bcachefs/20241023072024.9=
-8915-3-pZ010001011111@proton.me/
-> > > >=20
-> > > > fs/bcachefs/btree_iter.c | 13 +++++++++++++
-> > > > 1 file changed, 13 insertions(+)
-> > > >=20
-> > > > diff --git a/fs/bcachefs/btree_iter.c b/fs/bcachefs/btree_iter.c
-> > > > index 15ac72b1af51..40c824779b15 100644
-> > > > --- a/fs/bcachefs/btree_iter.c
-> > > > +++ b/fs/bcachefs/btree_iter.c
-> > > > @@ -880,6 +880,18 @@ static noinline int btree_node_iter_and_journa=
-l_peek(struct btree_trans *trans,
-> > > > __bch2_btree_and_journal_iter_init_node_iter(trans, &jiter, l->b, l=
-->iter, path->pos);
-> > > >=20
-> > > > k =3D bch2_btree_and_journal_iter_peek(&jiter);
-> > > > + if (!k.k) {
-> > > > + struct printbuf buf =3D PRINTBUF;
-> > > > +
-> > > > + prt_str(&buf, "node not found at pos ");
-> > > > + bch2_bpos_to_text(&buf, path->pos);
-> > > > + prt_str(&buf, " within parent node ");
-> > > > + bch2_bkey_val_to_text(&buf, c, bkey_i_to_s_c(&l->b->key));
-> > > > +
-> > > > + ret =3D bch2_fs_topology_error(c, "%s", buf.buf);
-> > > > + printbuf_exit(&buf);
-> > > > + goto err;
-> > > > + }
-> > >=20
-> > > We'll want to add at least the btree ID and level to that.
-> > >=20
-> > > Could you also look over the other places we report topology errors a=
-nd
-> > > inconstencies for any commonality? btree_cache.c has some stuff, and =
-I
-> > > think there's a helper in there that might give you the error message
-> > > you want (instead of just the btree node key), and I'd have a glance =
-at
-> > > the topology error reporting in btree_update_interior.c and btree_gc.=
-c
-> > > as well.
-> >=20
-> > I scanned through mentioned files and some others. There are commonalit=
-ies
-> > but every error message seem to be different in some way so that there =
-is
-> > no truly common part.
-> >=20
-> > Information contained is usually a mixture of:
-> > - btree id and level.
-> > - position at which node wasn't found or if it was found but something
-> > else is wrong its key info.
-> > - parent node key information.
-> > - prev/next node key info.
-> > - min/max key pos info.
-> >=20
-> > Only appropriate helpers I found were (what I already used) -
-> > bch2_fs_topology_error and, in btree_iter.c, bch2_btree_path_to_text_sh=
-ort
-> > but there it doesn't print full parent key info just min_key pos and pa=
-rent
-> > key pos so I'm not sure.
-> >=20
-> > To what you already said I could also add min pos info.
->=20
-> bch2_btree_pos_to_text()?
-
-Ah yes, I missed it - not used in many places and ending similar to=20
-bpos_to_text. I will print path->pos + bch2_btree_pos_to_text() in the next
-version then.
+Regards,
+Krishna,
 
