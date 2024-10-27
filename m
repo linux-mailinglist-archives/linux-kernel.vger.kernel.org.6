@@ -1,276 +1,143 @@
-Return-Path: <linux-kernel+bounces-383564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A7189B1D65
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 12:30:28 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A2169B1D69
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 12:32:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49BB21C20BCA
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 11:30:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9CB16B2108D
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 11:32:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EBBC14E2D8;
-	Sun, 27 Oct 2024 11:30:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72D8C152E02;
+	Sun, 27 Oct 2024 11:31:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cv+xgXHv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="BeYUpPqv"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C35113F9D2;
-	Sun, 27 Oct 2024 11:30:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E45813D51E
+	for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 11:31:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730028619; cv=none; b=o/BR495Nk3/LgY8Tj4ycCjxAezw6YB0/H7VNlYoEcLfsB8vtG7fFus4mlPbfX3SCpeEC1vpRcQhxBGUR/NCI7Ip9Eqcv9g8M1dFCC9Tb/YSq0q9K/Bck8pT8yFLtrjxEBSAN3MO/tuKIkWTvs1v3dN1AqjspPATsvp3olBJX4Y8=
+	t=1730028715; cv=none; b=jSNk0qqKeoJpya3bWIXNcGFoVMyJ+VHWgki+2F3la0nY8Tkqpoc0osY7egpGlN27Xv1G7K+Ejh7vuzW/R4/qIM9iltEQENt73imiQVg5XDR7WJdpr390W2yQ51eV6y5y3mMt9vGkAES3RVxoQqYUo2JQd03yAy3LB7hEwWQWbfI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730028619; c=relaxed/simple;
-	bh=SqiAejqnwtdMsmclrn3s3s+9fkQcLWUueQtnzHdx0AI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Iji4S5UTAu8lRzupTC2fBzZ37aKaJX4NoYAfEOCxblXwnR0m6r8kST6vfziO095a2HRWkaeCvc7pe2AETw95JKmIBXVXTb1noDoRJfhFRVo/Ev37Y6SnjXlAUHe7DuLoJtbWVvw7XXx807PYpYt9qV+Amaxf9m3MER2m9cOAX/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cv+xgXHv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEA78C4CEC3;
-	Sun, 27 Oct 2024 11:30:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730028619;
-	bh=SqiAejqnwtdMsmclrn3s3s+9fkQcLWUueQtnzHdx0AI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Cv+xgXHvPfbO+FS5+P9ATOUIb8PDSTq12CZrA0rtoo9SzxQ1aTmfDVLQDWSeBisHp
-	 gt4LFxyc+Lnk339mrQI3WrrlZWxuLWXXXl761sSLEUQidSsp7TY1c0k2CYU2Ryl/Jk
-	 8yiO6fb5j445UYozxq7gikZTwxafLs+Zv5ag4lpbM6of9UHdT376Sac0QyPA79cA9Q
-	 ChOkdvzyuhv+taDHbDP/2WW06ur9XerqXx5icy9GfAqjcfQUDJnMIRPU3RiSJH2oaB
-	 wu6pSKds0mNH1Af+TzCCkE5VE78Bxh7lZJqvvW/VJgZWzjhqh7iRgbxmzaEjE7Ms0z
-	 SLzB1mSMbJawg==
-Date: Sun, 27 Oct 2024 11:30:10 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Ricardo Ribalda <ribalda@chromium.org>
-Cc: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Lars-Peter
- Clausen <lars@metafoo.de>, Harvey Yang <chenghaoyang@google.com>,
- linux-input@vger.kernel.org, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] iio: hid-sensor-prox: Add support for more channels
-Message-ID: <20241027113010.153fab2b@jic23-huawei>
-In-Reply-To: <20241024-hpd-v1-3-2a125882f1f8@chromium.org>
-References: <20241024-hpd-v1-0-2a125882f1f8@chromium.org>
-	<20241024-hpd-v1-3-2a125882f1f8@chromium.org>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1730028715; c=relaxed/simple;
+	bh=DUouMkMPwYUhhB5hED3nqhrzsDLSLxK8Lc6msZq7Nzg=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T0eqO4PoevYWGZ0ETVaa02WNzUGOrzgzSVnKIkeehHHyFFJBxdE0V5jdnQK/qY228yAGmM8xq85fFEtl0c5YCdELbyb08O+DBsBC2AzTSibwgTappYsQjoEENJZOvIU8hosTyELniKOO+RACaKPv5Y5nKebT/6CI23TBbfgAxfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=BeYUpPqv; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a9a850270e2so562558666b.0
+        for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 04:31:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1730028712; x=1730633512; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=zAAzwkbywlzLeMZLJye29I/uk/b0SdAyD/UYaZSIBHA=;
+        b=BeYUpPqvrVOuv6Xdg/R2sUE3NKi/OOJnJrJyBag3wR3o7SxO/BwV094pkgdWPs99tX
+         HlY9ExKswQDhH3EOn9Co4o5r7bY8NfKJP22bx0qZwiu8gXWR7kV2B16P02zPGGaWqAbd
+         7TjkBEUK2rW1Z8gpHJOTY/b/BtCli5pEvUTlP9s8AKpxRkmLd/SZBOAXfJxZ1ADHQ7H1
+         5t/iHUIazM19B7bRd7fBfTRSAh62MbMGcOubGRAB2HVq2feD6QIX6VpvQG0ZgIm22Jbs
+         kvNkCZEWwEoT44YxyAnWixjNYd9UT1QXC9usei+6eLzE18mLw4J79b0ESKVdv/eBcEv5
+         ODqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730028712; x=1730633512;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zAAzwkbywlzLeMZLJye29I/uk/b0SdAyD/UYaZSIBHA=;
+        b=sbRpRP5JZwikmg+zJt5KO94sXF7bcgWs+4hC1qCiZDDUvNohrjUGahA2MDjcrqPc6n
+         P//bDLDae2LDvXWtt0cJQTVmDX0xweKMTVDsU7PpvWKVPWu56z40IUhfXUp2WUvz4U3D
+         4C8wgPyWvtMVDKRjNsN3IQUWcTfGFkqTbvkn4dAqqMQHfsn0gEi/tyoHkWRStklehgqS
+         n7sB864JCfxK8WNFcBF9hFLVl8yNWCLM0SYfbbTw/gZls1EeC4kqgh+MIo/zEvQ6KHcO
+         U6bhrgZUpYkJ4gfNmnJPhrB0JFDHycXCgz2KyWFj1ppr72BQh4PcZBe2GKYDxCASwtwO
+         ApuA==
+X-Forwarded-Encrypted: i=1; AJvYcCWrkgDATyt4QsBMv7l4gaWzImw8GJLGemklqzag3UXfo/jYQI8BlR+2UcbTva+sI3nTuX2hV9rfemn8p7E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJ+fzxPL2iAPIZ2eAs14i7N6MuVFMiFz+3wjUym7Z3LCQRWLUp
+	IglfcaGF++v8cJzgV2mGErVIXmR/MuK8oL2MrflUZW6S5CohN03L3+RxYtcAoT0=
+X-Google-Smtp-Source: AGHT+IGcb2nHqx14PUMkCNT0X9V9WO/5lNGB1I27TxVk6SwkaaRS/wDbac5hShyQwMya3guhAU4zFg==
+X-Received: by 2002:a17:907:1c88:b0:a99:e1a1:473f with SMTP id a640c23a62f3a-a9de619406cmr494261466b.57.1730028711767;
+        Sun, 27 Oct 2024 04:31:51 -0700 (PDT)
+Received: from localhost (host-79-35-211-193.retail.telecomitalia.it. [79.35.211.193])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cbb6347f20sm2238951a12.86.2024.10.27.04.31.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 27 Oct 2024 04:31:51 -0700 (PDT)
+From: Andrea della Porta <andrea.porta@suse.com>
+X-Google-Original-From: Andrea della Porta <aporta@suse.de>
+Date: Sun, 27 Oct 2024 12:32:14 +0100
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Andrew Lunn <andrew@lunn.ch>
+Subject: Re: [PATCH v2 09/14] pinctrl: rp1: Implement RaspberryPi RP1 gpio
+ support
+Message-ID: <Zx4kvoKpni9oqPi0@apocalypse>
+References: <cover.1728300189.git.andrea.porta@suse.com>
+ <199a4994312b120c73c95fa368954ad5a2a8aee6.1728300190.git.andrea.porta@suse.com>
+ <CACRpkdb1muovPmKoUw=Q5sNXj3bsCt84LcKVDSLY09_5_1rXZQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACRpkdb1muovPmKoUw=Q5sNXj3bsCt84LcKVDSLY09_5_1rXZQ@mail.gmail.com>
 
-On Thu, 24 Oct 2024 13:29:07 +0000
-Ricardo Ribalda <ribalda@chromium.org> wrote:
+Hi Linux,
 
-> Egis620 supports 3 channels: presense, proximity and attention.
+On 11:03 Fri 11 Oct     , Linus Walleij wrote:
+> On Mon, Oct 7, 2024 at 2:39 PM Andrea della Porta <andrea.porta@suse.com> wrote:
+> 
+> > The RP1 is an MFD supporting a gpio controller and /pinmux/pinctrl.
+> > Add minimum support for the gpio only portion. The driver is in
+> > pinctrl folder since upcoming patches will add the pinmux/pinctrl
+> > support where the gpio part can be seen as an addition.
+> >
+> > Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+> 
+> This is a nice driver and I find no issues with it, what causes
+> an issue is gpiochip_set_names() as pointed out by Bartosz.
+> If you can live without the names you can remove that part for
+> now and we can merge the driver, then you can add the names
+> later when we sorted out how to share that function.
 
-It's not obvious to me that these should necessarily be represented
-as proximity channels.
+Sure, I'll drop the gpio-line-names patch for now.
 
-Presence and proximity perhaps though I'm confused as to why
-both make sense on a device, but maybe there are two forms of sensor.
-
-Attention is an oddity and not the same as proximity from the definition
-(see patch 1 review).
-
-So for that we probably need a new channel type.
-
-Jonathan
-
+Many thanks,
+Andrea
 
 > 
-> Modify the driver so it can read those channels as well.
-> 
-> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> ---
->  drivers/iio/light/hid-sensor-prox.c | 161 ++++++++++++++++++++----------------
->  1 file changed, 89 insertions(+), 72 deletions(-)
-> 
-> diff --git a/drivers/iio/light/hid-sensor-prox.c b/drivers/iio/light/hid-sensor-prox.c
-> index d38564fe22df..97550d0d21a9 100644
-> --- a/drivers/iio/light/hid-sensor-prox.c
-> +++ b/drivers/iio/light/hid-sensor-prox.c
-> @@ -13,16 +13,26 @@
->  #include <linux/iio/buffer.h>
->  #include "../common/hid-sensors/hid-sensor-trigger.h"
->  
-> -#define CHANNEL_SCAN_INDEX_PRESENCE 0
-> +static const u32 prox_usage_ids[] = {
-> +	HID_USAGE_SENSOR_HUMAN_PRESENCE,
-> +	HID_USAGE_SENSOR_HUMAN_PROXIMITY,
-> +	HID_USAGE_SENSOR_HUMAN_ATTENTION,
-> +};
-Use an enum so that you can set these as entries you can later index.
-
-[HID_HUMAN_PRESENCE] = HID_USAGE_...
-etc
-
-> +
-> +#define MAX_USAGE ARRAY_SIZE(prox_usage_ids)
-Name that something more specific or just use
-the ARRAY_SIZE inline.
-
->  
->  struct prox_state {
->  	struct hid_sensor_hub_callbacks callbacks;
->  	struct hid_sensor_common common_attributes;
-> -	struct hid_sensor_hub_attribute_info prox_attr;
-> -	u32 human_presence;
-> +	struct hid_sensor_hub_attribute_info prox_attr[MAX_USAGE];
-> +	struct iio_chan_spec channels[MAX_USAGE];
-> +	u32 channel2usage[MAX_USAGE];
-> +	u32 human_presence[MAX_USAGE];
->  	int scale_pre_decml;
->  	int scale_post_decml;
->  	int scale_precision;
-> +	unsigned long scan_mask[2];
-
-Perhaps add a comment that this is one entry plus a terminator.
-
-> +	int num_channels;
->  };
->  
->  static const u32 prox_sensitivity_addresses[] = {
-> @@ -30,17 +40,23 @@ static const u32 prox_sensitivity_addresses[] = {
->  	HID_USAGE_SENSOR_DATA_PRESENCE,
->  };
->  
-> -/* Channel definitions */
-> -static const struct iio_chan_spec prox_channels[] = {
-> -	{
-> -		.type = IIO_PROXIMITY,
-> -		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
-> -		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_OFFSET) |
-> -		BIT(IIO_CHAN_INFO_SCALE) |
-> -		BIT(IIO_CHAN_INFO_SAMP_FREQ) |
-> -		BIT(IIO_CHAN_INFO_HYSTERESIS),
-> -		.scan_index = CHANNEL_SCAN_INDEX_PRESENCE,
-> +#define PROX_CHANNEL(_indexed, _channel) \
-> +	{\
-> +		.type = IIO_PROXIMITY,\
-> +		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),\
-> +		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_OFFSET) |\
-> +		BIT(IIO_CHAN_INFO_SCALE) |\
-> +		BIT(IIO_CHAN_INFO_SAMP_FREQ) |\
-> +		BIT(IIO_CHAN_INFO_HYSTERESIS),\
-> +		.indexed = _indexed,\
-> +		.channel = _channel,\
->  	}
-> +
-> +/* Channel definitions (same order as prox_usage_ids) */
-> +static const struct iio_chan_spec prox_channels[] = {
-> +	PROX_CHANNEL(false, 0), // PRESENCE
-With a suitable enum as suggested above can use
-[HID_HUMAN_PRESENCE] = PROX_CHANNEL(false, 0) etc
-
-Combining index and not is unusual. If we have to do this
-I think we should consider the technical ABI breakage of adding
-an index to the first one.  It 'shouldn't' break code using the ABI
-correctly but it is a risk.
-
-> +	PROX_CHANNEL(true, 1), // PROXIMITY
-> +	PROX_CHANNEL(true, 2), // ATTENTION
->  };
->  
->  /* Adjust channel real bits based on report descriptor */
-> @@ -62,7 +78,7 @@ static int prox_read_raw(struct iio_dev *indio_dev,
->  {
->  	struct prox_state *prox_state = iio_priv(indio_dev);
->  	struct hid_sensor_hub_device *hsdev;
-> -	int report_id = -1;
-> +	int report_id;
->  	u32 address;
->  	int ret_type;
->  	s32 min;
-> @@ -71,29 +87,22 @@ static int prox_read_raw(struct iio_dev *indio_dev,
->  	*val2 = 0;
->  	switch (mask) {
->  	case IIO_CHAN_INFO_RAW:
-> -		switch (chan->scan_index) {
-> -		case  CHANNEL_SCAN_INDEX_PRESENCE:
-> -			report_id = prox_state->prox_attr.report_id;
-> -			min = prox_state->prox_attr.logical_minimum;
-> -			address = HID_USAGE_SENSOR_HUMAN_PRESENCE;
-> -			hsdev = prox_state->common_attributes.hsdev;
-> -			break;
-> -		default:
-> -			report_id = -1;
-> -			break;
-> -		}
-> -		if (report_id >= 0) {
-> -			hid_sensor_power_state(&prox_state->common_attributes,
-> -						true);
-> -			*val = sensor_hub_input_attr_get_raw_value(
-> -				hsdev, hsdev->usage, address, report_id,
-> -				SENSOR_HUB_SYNC, min < 0);
-> -			hid_sensor_power_state(&prox_state->common_attributes,
-> -						false);
-> -		} else {
-> +		if (chan->scan_index >= prox_state->num_channels) {
->  			*val = 0;
-No need to set this in an error path. Not sure why original code did.
-
->  			return -EINVAL;
->  		}
-> +		address = prox_state->channel2usage[chan->scan_index];
-> +		report_id = prox_state->prox_attr[chan->scan_index].report_id;
-> +		hsdev = prox_state->common_attributes.hsdev;
-> +		min = prox_state->prox_attr[chan->scan_index].logical_minimum;
-> +		hid_sensor_power_state(&prox_state->common_attributes, true);
-> +		*val = sensor_hub_input_attr_get_raw_value(hsdev,
-> +							   hsdev->usage,
-> +							   address,
-> +							   report_id,
-> +							   SENSOR_HUB_SYNC,
-> +							   min < 0);
-> +		hid_sensor_power_state(&prox_state->common_attributes, false);
->  		ret_type = IIO_VAL_INT;
->  		break;
-
-> @@ -178,48 +187,63 @@ static int prox_capture_sample(struct hid_sensor_hub_device *hsdev,
->  {
->  	struct iio_dev *indio_dev = platform_get_drvdata(priv);
->  	struct prox_state *prox_state = iio_priv(indio_dev);
-> -	int ret = -EINVAL;
-> -
-> -	switch (usage_id) {
-> -	case HID_USAGE_SENSOR_HUMAN_PRESENCE:
-> -		switch (raw_len) {
-> -		case 1:
-> -			prox_state->human_presence = *(u8 *)raw_data;
-> -			return 0;
-> -		case 4:
-> -			prox_state->human_presence = *(u32 *)raw_data;
-> -			return 0;
-> -		default:
-> +	int chan;
-> +
-> +	for (chan = 0; chan < prox_state->num_channels; chan++)
-> +		if (prox_state->channel2usage[chan] == usage_id)
->  			break;
-> -		}
-> +	if (chan == prox_state->num_channels)
-> +		return -EINVAL;
-> +
-> +	switch (raw_len) {
-> +	case 1:
-> +		prox_state->human_presence[chan] = *(u8 *)raw_data;
-> +		break;
-Might as well return here.
-> +	case 4:
-> +		prox_state->human_presence[chan] = *(u32 *)raw_data;
->  		break;
-and here.
-
->  	}
->  
-> -	return ret;
-> +	return 0;
->  }
->
->
+> Yours,
+> Linus Walleij
 
