@@ -1,88 +1,73 @@
-Return-Path: <linux-kernel+bounces-383672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44E079B1EED
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 15:41:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B61659B1EEE
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 15:41:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04891280F55
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 14:41:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D92721C21445
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 14:41:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BEF81F5EA;
-	Sun, 27 Oct 2024 14:37:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B199216DC12;
+	Sun, 27 Oct 2024 14:40:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gahMWV1E"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="bSvR2Oup"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45E8D18F2C3;
-	Sun, 27 Oct 2024 14:37:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA8E58489;
+	Sun, 27 Oct 2024 14:40:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730039852; cv=none; b=dd86212v0OlQ/3W6VKKnPNMRRBQDxwvXNBRxO7VxF6gev4NO4cqKrJ6L/sXLy9Llx2Od+gaGPfSAzaLzbQnP90LV4VJ16Y/XX+YdKefZ0pqdew8ySn8fL8mR0TbtdzDGx6JnKzK3Dty7p9MbDphB68SBZKehYV1jvtlPhGSR1uk=
+	t=1730040046; cv=none; b=Y+rwRip1s3tfQuWXPgK6D8SNUjlQyD0Ch47+H3MVIbS+7clF7yEFsRFFPLmZrX9dYq1yHb1tEqLZNis9V2apLUAJYm9rRwAlth84wiiYPlTyvqet1/aw8jUbxBzDtndKjvcVrqFUl+QrJkiKN5MYZzjLNpE6365RWCE+F12LH9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730039852; c=relaxed/simple;
-	bh=BKcROuWUYTw9JhFiD7stJcvz4b+0cKybV+ykIP65zt4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=q+MRlo5+xf9LlXPZbPjF+YyaB1+BVKy5q2ORQFvwMyvjX0BVqL345E3MZXadrbyzappThTP/Aob/O7PvrLR9B54YSBbYJ+OnO0FPf4J0/EQS3n4cSvdXgy3C8fCaAtBi8xjisiM1doN4Fahx4AqHVHRW3BsN0U5/oX9Rdg25gNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gahMWV1E; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5c937982445so527064a12.2;
-        Sun, 27 Oct 2024 07:37:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730039847; x=1730644647; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=58/Yp9z5BeuiNsOYUdEfHyKptWKflHI/Ww9dE/OYykM=;
-        b=gahMWV1EFrctG11dfb+2/bndOWvukvyJJ6mqzLRTHofQsZljmOdjvDZqxWYPDx/vTz
-         JIdh8fkCuglt3TRDBP9sjIWgAZvzeoEOBXdy+xsdVly4UGblVND3Tyv7LEeGAt70womX
-         jJuxJRrGpGHT5dbnm96F4NDYFaAXplxOa0+4RRJQxEESxgL9adUiu4eHdz3MhbLT/4RH
-         6BbI211p63lYg2U9QXwk6sZPLxtqXzFMhfIQ82/rudMaw9DkIIBJ6GG+XnKefWG4f2dV
-         QyNytpUTIRbBENdtFxdG/UQb5vOKCTuSfAZbYB3CSMJGOoaJ/NBgbPbTfFsz/cCpLPpW
-         ckNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730039847; x=1730644647;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=58/Yp9z5BeuiNsOYUdEfHyKptWKflHI/Ww9dE/OYykM=;
-        b=Um7DVHRv1wCRJvck90QXfsj0i8xoo6Yp50OOmurP1bp4yaVr5WXjiuDjXDCk95cBor
-         tcUI2eWIbAEF+SF+yW6hY4iW+4KONachUbZYeEUdDf8i71LfukVJcbkepXpB/NL0YkYk
-         DP6FuUdc7NGVkUwIXkagkUvi2PljQk8DtobusHmnqMdHvydgakExKcwll8TSw+9N7MIp
-         lnAFIr5l6ejb67oFgL6DOKWe9zapcD0PgraFHaiMjUQ4rdweRq2SdzNS7kDEf5lx6m1a
-         HVCA+5t7c5wFFQsDUXbqEKRH4wHpig/1U4L+qsUyKFhuSMtqBtlviSl1NHSc+ipdi5dc
-         E92A==
-X-Forwarded-Encrypted: i=1; AJvYcCUv5oVOvKV6+fUsQ+HR6AuRZQ+/+QIBByZgPJV7Y96KGR6DGvnegnw5I0wIM/r6ClnnitfINijQOmH4@vger.kernel.org, AJvYcCWPkqbzcw7rmM75oFAvar3dWudWuiFgz9a32imYyAeWIcjzC2H8rTVASI44F9sk4OViOtu24i3OKQv5UtLF@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzDNGlCACJOJw3++3mws3iW30WU3qwqWIeeD1eHTMoygJwF5r6
-	O7iDhPco0PB5Y+kjLEpm9UWMessSrnVRPDMSoCBqWO9a/BoXf3Nr
-X-Google-Smtp-Source: AGHT+IE+pjGwZzKFkmHylEKCUTmyYa+kJ9yEhD3yJWlDNWJeGM5ifCDRuBS/Pu+XIelNocd5xzrkpg==
-X-Received: by 2002:a17:906:794a:b0:a9a:2523:b4fa with SMTP id a640c23a62f3a-a9de5ceafaemr234347866b.4.1730039846425;
-        Sun, 27 Oct 2024 07:37:26 -0700 (PDT)
-Received: from 6c1d2e1f4cf4.v.cablecom.net (84-72-156-211.dclient.hispeed.ch. [84.72.156.211])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b331b0d44sm281127966b.187.2024.10.27.07.37.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 27 Oct 2024 07:37:25 -0700 (PDT)
-From: Lothar Rubusch <l.rubusch@gmail.com>
-To: robh@kernel.org,
-	krzk+dt@kernel.org,
-	a.fatoum@pengutronix.de
-Cc: conor+dt@kernel.org,
-	dinguyen@kernel.org,
-	marex@denx.de,
-	s.trumtrar@pengutronix.de,
-	l.rubusch@gmail.com,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCHv3 22/22] ARM: dts: socfpga: add Enclustra SoM dts files
-Date: Sun, 27 Oct 2024 14:36:54 +0000
-Message-Id: <20241027143654.28474-23-l.rubusch@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20241027143654.28474-1-l.rubusch@gmail.com>
-References: <20241027143654.28474-1-l.rubusch@gmail.com>
+	s=arc-20240116; t=1730040046; c=relaxed/simple;
+	bh=y7SnhNkgDAXuwQ0ZGXB4FjyYFKVVE+km2iPqONpuCPQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=F/wMhEEBQea4vJbNjfiGvB439JTRibuwQuc9j5TgWmSpwjJKTxed7MMhWZXng7N4DOyqw3nY9SxOvWQh6xk9dPfZXw4fUgI92C27HLFYBQjPy8Oxtqim/C5VkWjR6hDhIJyVSJKV14c62yWwGEiQnDFupGY3Q7N57NmD1zot36U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=bSvR2Oup; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49REe9uM089942;
+	Sun, 27 Oct 2024 09:40:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1730040009;
+	bh=fxeGiGOKwvfl9D2mFjLZqKn/3AkZq8oLkjJt0AaP3uM=;
+	h=From:To:CC:Subject:Date;
+	b=bSvR2Oup7Rg7PIlQFKlUi/2lC2H2uIsKwjmns08Os9NvUklgwuyeJ9IVFxZiBHaQw
+	 5bvKqZOITroyoSV1hqgIAAFbNRxj7fPR/TruiuYAesxuWaqc8KMPJAbS6x1yXow0Al
+	 o5ENUUP0aiRPoSN8Wh733f76lIEDDyYhjVyLGWWs=
+Received: from DFLE110.ent.ti.com (dfle110.ent.ti.com [10.64.6.31])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 49REe9uu029513
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Sun, 27 Oct 2024 09:40:09 -0500
+Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sun, 27
+ Oct 2024 09:40:08 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Sun, 27 Oct 2024 09:40:08 -0500
+Received: from lelvsmtp6.itg.ti.com ([10.250.165.138])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49REe0TF060334;
+	Sun, 27 Oct 2024 09:40:01 -0500
+From: Baojun Xu <baojun.xu@ti.com>
+To: <tiwai@suse.de>
+CC: <robh+dt@kernel.org>, <andriy.shevchenko@linux.intel.com>,
+        <lgirdwood@gmail.com>, <perex@perex.cz>,
+        <pierre-louis.bossart@linux.intel.com>, <shenghao-ding@ti.com>,
+        <navada@ti.com>, <13916275206@139.com>, <v-hampiholi@ti.com>,
+        <v-po@ti.com>, <linux-sound@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <liam.r.girdwood@intel.com>,
+        <yung-chuan.liao@linux.intel.com>, <baojun.xu@ti.com>,
+        <broonie@kernel.org>, <antheas.dk@gmail.com>
+Subject: [PATCH v3] ALSA: hda/tas2781: Add speaker id check for ASUS projects
+Date: Sun, 27 Oct 2024 22:39:35 +0800
+Message-ID: <20241027143935.1340-1-baojun.xu@ti.com>
+X-Mailer: git-send-email 2.43.0.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,627 +75,170 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Add the approach to set up a combination of Enclustra's SoM on a carrier
-board and corresponding boot-mode as single device-tree target.
+Add speaker id check by gpio in ACPI for ASUS projects.
+In other vendors, speaker id was checked by BIOS, and was applied in
+last bit of subsys id, so we can load corresponding firmware binary file
+for its speaker by subsys id.
+But in ASUS project, the firmware binary name will be appended an extra
+number to tell the speakers from different vendors. And this single digit
+come from gpio level of speaker id in BIOS.
 
-Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
+Signed-off-by: Baojun Xu <baojun.xu@ti.com>
 ---
- arch/arm/boot/dts/intel/socfpga/Makefile      | 24 +++++++++++++++++++
- .../socfpga_arria10_mercury_aa1_pe1_emmc.dts  | 16 +++++++++++++
- .../socfpga_arria10_mercury_aa1_pe1_qspi.dts  | 16 +++++++++++++
- .../socfpga_arria10_mercury_aa1_pe1_sdmmc.dts | 16 +++++++++++++
- .../socfpga_arria10_mercury_aa1_pe3_emmc.dts  | 16 +++++++++++++
- .../socfpga_arria10_mercury_aa1_pe3_qspi.dts  | 16 +++++++++++++
- .../socfpga_arria10_mercury_aa1_pe3_sdmmc.dts | 16 +++++++++++++
- .../socfpga_arria10_mercury_aa1_st1_emmc.dts  | 16 +++++++++++++
- .../socfpga_arria10_mercury_aa1_st1_qspi.dts  | 16 +++++++++++++
- .../socfpga_arria10_mercury_aa1_st1_sdmmc.dts | 16 +++++++++++++
- .../socfpga_cyclone5_mercury_sa1_pe1_emmc.dts | 16 +++++++++++++
- .../socfpga_cyclone5_mercury_sa1_pe1_qspi.dts | 16 +++++++++++++
- ...socfpga_cyclone5_mercury_sa1_pe1_sdmmc.dts | 16 +++++++++++++
- .../socfpga_cyclone5_mercury_sa1_pe3_emmc.dts | 16 +++++++++++++
- .../socfpga_cyclone5_mercury_sa1_pe3_qspi.dts | 16 +++++++++++++
- ...socfpga_cyclone5_mercury_sa1_pe3_sdmmc.dts | 16 +++++++++++++
- .../socfpga_cyclone5_mercury_sa1_st1_emmc.dts | 16 +++++++++++++
- .../socfpga_cyclone5_mercury_sa1_st1_qspi.dts | 16 +++++++++++++
- ...socfpga_cyclone5_mercury_sa1_st1_sdmmc.dts | 16 +++++++++++++
- .../socfpga_cyclone5_mercury_sa2_pe1_qspi.dts | 16 +++++++++++++
- ...socfpga_cyclone5_mercury_sa2_pe1_sdmmc.dts | 16 +++++++++++++
- .../socfpga_cyclone5_mercury_sa2_pe3_qspi.dts | 16 +++++++++++++
- ...socfpga_cyclone5_mercury_sa2_pe3_sdmmc.dts | 16 +++++++++++++
- .../socfpga_cyclone5_mercury_sa2_st1_qspi.dts | 16 +++++++++++++
- ...socfpga_cyclone5_mercury_sa2_st1_sdmmc.dts | 16 +++++++++++++
- 25 files changed, 408 insertions(+)
- create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_aa1_pe1_emmc.dts
- create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_aa1_pe1_qspi.dts
- create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_aa1_pe1_sdmmc.dts
- create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_aa1_pe3_emmc.dts
- create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_aa1_pe3_qspi.dts
- create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_aa1_pe3_sdmmc.dts
- create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_aa1_st1_emmc.dts
- create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_aa1_st1_qspi.dts
- create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_aa1_st1_sdmmc.dts
- create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1_pe1_emmc.dts
- create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1_pe1_qspi.dts
- create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1_pe1_sdmmc.dts
- create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1_pe3_emmc.dts
- create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1_pe3_qspi.dts
- create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1_pe3_sdmmc.dts
- create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1_st1_emmc.dts
- create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1_st1_qspi.dts
- create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1_st1_sdmmc.dts
- create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa2_pe1_qspi.dts
- create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa2_pe1_sdmmc.dts
- create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa2_pe3_qspi.dts
- create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa2_pe3_sdmmc.dts
- create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa2_st1_qspi.dts
- create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa2_st1_sdmmc.dts
+v3:
+ - Change strstr() to strncasecmp() for compare subsystem id.
+ - Remove result check after devm_acpi_dev_add_driver_gpios().
+ - Remove spk_id > 1 check, as result of gpiod_get_value(),
+   must be 0 or 1, or negative if error happend.
+ - Change scnprintf() to snprintf(), as didn't care the length.
+ - Remove changes which not relative current patch.
+v2:
+ - Change ASUS id from 0x10430000 to "1043".
+ - Move gpio setting to tas2781_read_acpi() from probe.
+ - Remove interrupt gpio in acpi_gpio_mapping.
+ - Add sub and physdev in tas2781_read_acpi() for subsys id read.
+ - Add debug log for get acpi resource failed.
+ - Return error if get resource or subsys id failed.
+ - Return error if get gpio fail for speaker id with ASUS projects.
+ - Change fixed buffer lengh to sizeof().
+ - Change bits calculator to lower_16_bits().
+ - Remove unnecessary empty line in tas2781_hda_i2c_probe().
+---
+ include/sound/tas2781.h         |  3 ++
+ sound/pci/hda/tas2781_hda_i2c.c | 60 +++++++++++++++++++++++++++++----
+ 2 files changed, 57 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm/boot/dts/intel/socfpga/Makefile b/arch/arm/boot/dts/intel/socfpga/Makefile
-index d95862e34..861880560 100644
---- a/arch/arm/boot/dts/intel/socfpga/Makefile
-+++ b/arch/arm/boot/dts/intel/socfpga/Makefile
-@@ -2,6 +2,30 @@
- dtb-$(CONFIG_ARCH_INTEL_SOCFPGA) += \
- 	socfpga_arria5_socdk.dtb \
- 	socfpga_arria10_chameleonv3.dtb \
-+	socfpga_arria10_mercury_aa1_pe1_emmc.dtb \
-+	socfpga_arria10_mercury_aa1_pe1_qspi.dtb \
-+	socfpga_arria10_mercury_aa1_pe1_sdmmc.dtb \
-+	socfpga_arria10_mercury_aa1_pe3_emmc.dtb \
-+	socfpga_arria10_mercury_aa1_pe3_qspi.dtb \
-+	socfpga_arria10_mercury_aa1_pe3_sdmmc.dtb \
-+	socfpga_arria10_mercury_aa1_st1_emmc.dtb \
-+	socfpga_arria10_mercury_aa1_st1_qspi.dtb \
-+	socfpga_arria10_mercury_aa1_st1_sdmmc.dtb \
-+	socfpga_cyclone5_mercury_sa1_pe1_emmc.dtb \
-+	socfpga_cyclone5_mercury_sa1_pe1_qspi.dtb \
-+	socfpga_cyclone5_mercury_sa1_pe1_sdmmc.dtb \
-+	socfpga_cyclone5_mercury_sa1_pe3_emmc.dtb \
-+	socfpga_cyclone5_mercury_sa1_pe3_qspi.dtb \
-+	socfpga_cyclone5_mercury_sa1_pe3_sdmmc.dtb \
-+	socfpga_cyclone5_mercury_sa1_st1_emmc.dtb \
-+	socfpga_cyclone5_mercury_sa1_st1_qspi.dtb \
-+	socfpga_cyclone5_mercury_sa1_st1_sdmmc.dtb \
-+	socfpga_cyclone5_mercury_sa2_pe1_qspi.dtb \
-+	socfpga_cyclone5_mercury_sa2_pe1_sdmmc.dtb \
-+	socfpga_cyclone5_mercury_sa2_pe3_qspi.dtb \
-+	socfpga_cyclone5_mercury_sa2_pe3_sdmmc.dtb \
-+	socfpga_cyclone5_mercury_sa2_st1_qspi.dtb \
-+	socfpga_cyclone5_mercury_sa2_st1_sdmmc.dtb \
- 	socfpga_arria10_socdk_nand.dtb \
- 	socfpga_arria10_socdk_qspi.dtb \
- 	socfpga_arria10_socdk_sdmmc.dtb \
-diff --git a/arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_aa1_pe1_emmc.dts b/arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_aa1_pe1_emmc.dts
-new file mode 100644
-index 000000000..b6cca0b5f
---- /dev/null
-+++ b/arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_aa1_pe1_emmc.dts
-@@ -0,0 +1,16 @@
-+// SPDX-License-Identifier: GPL-2.0+ OR MIT
-+/*
-+ * Copyright (C) 2024 Enclustra GmbH - https://www.enclustra.com
-+ */
+diff --git a/include/sound/tas2781.h b/include/sound/tas2781.h
+index 8cd6da0480b7..621ae485d3cb 100644
+--- a/include/sound/tas2781.h
++++ b/include/sound/tas2781.h
+@@ -107,6 +107,8 @@
+ #define TASDEVICE_CMD_DELAY		0x3
+ #define TASDEVICE_CMD_FIELD_W		0x4
+ 
++#define TAS2781_ASUS_ID			"1043"
 +
-+/dts-v1/;
+ enum audio_device {
+ 	TAS2563,
+ 	TAS2781,
+@@ -156,6 +158,7 @@ struct tasdevice_priv {
+ 	struct tasdevice_rca rcabin;
+ 	struct calidata cali_data;
+ 	struct tasdevice_fw *fmw;
++	struct gpio_desc *speaker_id;
+ 	struct gpio_desc *reset;
+ 	struct mutex codec_lock;
+ 	struct regmap *regmap;
+diff --git a/sound/pci/hda/tas2781_hda_i2c.c b/sound/pci/hda/tas2781_hda_i2c.c
+index 370d847517f9..3a0d1aeb5aea 100644
+--- a/sound/pci/hda/tas2781_hda_i2c.c
++++ b/sound/pci/hda/tas2781_hda_i2c.c
+@@ -110,10 +110,19 @@ static int tas2781_get_i2c_res(struct acpi_resource *ares, void *data)
+ 	return 1;
+ }
+ 
++static const struct acpi_gpio_params speakerid_gpios = { 0, 0, false };
 +
-+#include "socfpga_arria10_mercury_aa1.dtsi"
-+#include "socfpga_enclustra_mercury_pe1.dtsi"
-+#include "socfpga_enclustra_mercury_bootmode_emmc.dtsi"
-+
-+/ {
-+	model = "Enclustra Mercury SA1 on Mercury+ PE1 Base Board";
-+	compatible = "enclustra,mercury-sa1-pe1", "enclustra,mercury-sa1",
-+		     "altr,socfpga-cyclone5", "altr,socfpga";
++static const struct acpi_gpio_mapping tas2781_speaker_id_gpios[] = {
++	{ "speakerid-gpios", &speakerid_gpios, 1 },
++	{ }
 +};
-diff --git a/arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_aa1_pe1_qspi.dts b/arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_aa1_pe1_qspi.dts
-new file mode 100644
-index 000000000..6ad023477
---- /dev/null
-+++ b/arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_aa1_pe1_qspi.dts
-@@ -0,0 +1,16 @@
-+// SPDX-License-Identifier: GPL-2.0+ OR MIT
-+/*
-+ * Copyright (C) 2024 Enclustra GmbH - https://www.enclustra.com
-+ */
 +
-+/dts-v1/;
-+
-+#include "socfpga_arria10_mercury_aa1.dtsi"
-+#include "socfpga_enclustra_mercury_pe1.dtsi"
-+#include "socfpga_enclustra_mercury_bootmode_qspi.dtsi"
-+
-+/ {
-+	model = "Enclustra Mercury+ AA1 on Mercury+ PE1 Base Board";
-+	compatible = "enclustra,mercury-aa1-pe1", "enclustra,mercury-aa1",
-+		     "altr,socfpga-arria10", "altr,socfpga";
-+};
-diff --git a/arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_aa1_pe1_sdmmc.dts b/arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_aa1_pe1_sdmmc.dts
-new file mode 100644
-index 000000000..653c9a865
---- /dev/null
-+++ b/arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_aa1_pe1_sdmmc.dts
-@@ -0,0 +1,16 @@
-+// SPDX-License-Identifier: GPL-2.0+ OR MIT
-+/*
-+ * Copyright (C) 2024 Enclustra GmbH - https://www.enclustra.com
-+ */
-+
-+/dts-v1/;
-+
-+#include "socfpga_arria10_mercury_aa1.dtsi"
-+#include "socfpga_enclustra_mercury_pe1.dtsi"
-+#include "socfpga_enclustra_mercury_bootmode_sdmmc.dtsi"
-+
-+/ {
-+	model = "Enclustra Mercury+ AA1 on Mercury+ PE1 Base Board";
-+	compatible = "enclustra,mercury-aa1-pe1", "enclustra,mercury-aa1",
-+		     "altr,socfpga-arria10", "altr,socfpga";
-+};
-diff --git a/arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_aa1_pe3_emmc.dts b/arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_aa1_pe3_emmc.dts
-new file mode 100644
-index 000000000..ae9c7c6a2
---- /dev/null
-+++ b/arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_aa1_pe3_emmc.dts
-@@ -0,0 +1,16 @@
-+// SPDX-License-Identifier: GPL-2.0+ OR MIT
-+/*
-+ * Copyright (C) 2024 Enclustra GmbH - https://www.enclustra.com
-+ */
-+
-+/dts-v1/;
-+
-+#include "socfpga_arria10_mercury_aa1.dtsi"
-+#include "socfpga_enclustra_mercury_pe3.dtsi"
-+#include "socfpga_enclustra_mercury_bootmode_emmc.dtsi"
-+
-+/ {
-+	model = "Enclustra Mercury+ AA1 on Mercury+ PE3 Base Board";
-+	compatible = "enclustra,mercury-aa1-pe3", "enclustra,mercury-aa1",
-+		     "altr,socfpga-arria10", "altr,socfpga";
-+};
-diff --git a/arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_aa1_pe3_qspi.dts b/arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_aa1_pe3_qspi.dts
-new file mode 100644
-index 000000000..c3a0c30a0
---- /dev/null
-+++ b/arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_aa1_pe3_qspi.dts
-@@ -0,0 +1,16 @@
-+// SPDX-License-Identifier: GPL-2.0+ OR MIT
-+/*
-+ * Copyright (C) 2024 Enclustra GmbH - https://www.enclustra.com
-+ */
-+
-+/dts-v1/;
-+
-+#include "socfpga_arria10_mercury_aa1.dtsi"
-+#include "socfpga_enclustra_mercury_pe3.dtsi"
-+#include "socfpga_enclustra_mercury_bootmode_qspi.dtsi"
-+
-+/ {
-+	model = "Enclustra Mercury+ AA1 on Mercury+ PE3 Base Board";
-+	compatible = "enclustra,mercury-aa1-pe3", "enclustra,mercury-aa1",
-+		     "altr,socfpga-arria10", "altr,socfpga";
-+};
-diff --git a/arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_aa1_pe3_sdmmc.dts b/arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_aa1_pe3_sdmmc.dts
-new file mode 100644
-index 000000000..dc1e1ad20
---- /dev/null
-+++ b/arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_aa1_pe3_sdmmc.dts
-@@ -0,0 +1,16 @@
-+// SPDX-License-Identifier: GPL-2.0+ OR MIT
-+/*
-+ * Copyright (C) 2024 Enclustra GmbH - https://www.enclustra.com
-+ */
-+
-+/dts-v1/;
-+
-+#include "socfpga_arria10_mercury_aa1.dtsi"
-+#include "socfpga_enclustra_mercury_pe3.dtsi"
-+#include "socfpga_enclustra_mercury_bootmode_sdmmc.dtsi"
-+
-+/ {
-+	model = "Enclustra Mercury+ AA1 on Mercury+ PE3 Base Board";
-+	compatible = "enclustra,mercury-aa1-pe3", "enclustra,mercury-aa1",
-+		     "altr,socfpga-arria10", "altr,socfpga";
-+};
-diff --git a/arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_aa1_st1_emmc.dts b/arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_aa1_st1_emmc.dts
-new file mode 100644
-index 000000000..61d5e4c85
---- /dev/null
-+++ b/arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_aa1_st1_emmc.dts
-@@ -0,0 +1,16 @@
-+// SPDX-License-Identifier: GPL-2.0+ OR MIT
-+/*
-+ * Copyright (C) 2024 Enclustra GmbH - https://www.enclustra.com
-+ */
-+
-+/dts-v1/;
-+
-+#include "socfpga_arria10_mercury_aa1.dtsi"
-+#include "socfpga_enclustra_mercury_st1.dtsi"
-+#include "socfpga_enclustra_mercury_bootmode_emmc.dtsi"
-+
-+/ {
-+	model = "Enclustra Mercury+ AA1 on Mercury+ ST1 Base Board";
-+	compatible = "enclustra,mercury-aa1-st1", "enclustra,mercury-aa1",
-+		     "altr,socfpga-arria10", "altr,socfpga";
-+};
-diff --git a/arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_aa1_st1_qspi.dts b/arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_aa1_st1_qspi.dts
-new file mode 100644
-index 000000000..a3b99c9b1
---- /dev/null
-+++ b/arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_aa1_st1_qspi.dts
-@@ -0,0 +1,16 @@
-+// SPDX-License-Identifier: GPL-2.0+ OR MIT
-+/*
-+ * Copyright (C) 2024 Enclustra GmbH - https://www.enclustra.com
-+ */
-+
-+/dts-v1/;
-+
-+#include "socfpga_arria10_mercury_aa1.dtsi"
-+#include "socfpga_enclustra_mercury_st1.dtsi"
-+#include "socfpga_enclustra_mercury_bootmode_qspi.dtsi"
-+
-+/ {
-+	model = "Enclustra Mercury+ AA1 on Mercury+ ST1 Base Board";
-+	compatible = "enclustra,mercury-aa1-st1", "enclustra,mercury-aa1",
-+		     "altr,socfpga-arria10", "altr,socfpga";
-+};
-diff --git a/arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_aa1_st1_sdmmc.dts b/arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_aa1_st1_sdmmc.dts
-new file mode 100644
-index 000000000..5deb289e2
---- /dev/null
-+++ b/arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_aa1_st1_sdmmc.dts
-@@ -0,0 +1,16 @@
-+// SPDX-License-Identifier: GPL-2.0+ OR MIT
-+/*
-+ * Copyright (C) 2024 Enclustra GmbH - https://www.enclustra.com
-+ */
-+
-+/dts-v1/;
-+
-+#include "socfpga_arria10_mercury_aa1.dtsi"
-+#include "socfpga_enclustra_mercury_st1.dtsi"
-+#include "socfpga_enclustra_mercury_bootmode_sdmmc.dtsi"
-+
-+/ {
-+	model = "Enclustra Mercury+ AA1 on Mercury+ ST1 Base Board";
-+	compatible = "enclustra,mercury-aa1-st1", "enclustra,mercury-aa1",
-+		     "altr,socfpga-arria10", "altr,socfpga";
-+};
-diff --git a/arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1_pe1_emmc.dts b/arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1_pe1_emmc.dts
-new file mode 100644
-index 000000000..85d6146da
---- /dev/null
-+++ b/arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1_pe1_emmc.dts
-@@ -0,0 +1,16 @@
-+// SPDX-License-Identifier: GPL-2.0+ OR MIT
-+/*
-+ * Copyright (C) 2024 Enclustra GmbH - https://www.enclustra.com
-+ */
-+
-+/dts-v1/;
-+
-+#include "socfpga_cyclone5_mercury_sa1.dtsi"
-+#include "socfpga_enclustra_mercury_pe1.dtsi"
-+#include "socfpga_enclustra_mercury_bootmode_emmc.dtsi"
-+
-+/ {
-+	model = "Enclustra Mercury SA1 on Mercury+ PE1 Base Board";
-+	compatible = "enclustra,mercury-sa1-pe1", "enclustra,mercury-aa1",
-+		     "altr,socfpga-arria10", "altr,socfpga";
-+};
-diff --git a/arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1_pe1_qspi.dts b/arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1_pe1_qspi.dts
-new file mode 100644
-index 000000000..770ab680a
---- /dev/null
-+++ b/arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1_pe1_qspi.dts
-@@ -0,0 +1,16 @@
-+// SPDX-License-Identifier: GPL-2.0+ OR MIT
-+/*
-+ * Copyright (C) 2024 Enclustra GmbH - https://www.enclustra.com
-+ */
-+
-+/dts-v1/;
-+
-+#include "socfpga_cyclone5_mercury_sa1.dtsi"
-+#include "socfpga_enclustra_mercury_pe1.dtsi"
-+#include "socfpga_enclustra_mercury_bootmode_qspi.dtsi"
-+
-+/ {
-+	model = "Enclustra Mercury SA1 on Mercury+ PE1 Base Board";
-+	compatible = "enclustra,mercury-sa1-pe1", "enclustra,mercury-sa1",
-+		     "altr,socfpga-cyclone5", "altr,socfpga";
-+};
-diff --git a/arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1_pe1_sdmmc.dts b/arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1_pe1_sdmmc.dts
-new file mode 100644
-index 000000000..990ca0fec
---- /dev/null
-+++ b/arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1_pe1_sdmmc.dts
-@@ -0,0 +1,16 @@
-+// SPDX-License-Identifier: GPL-2.0+ OR MIT
-+/*
-+ * Copyright (C) 2024 Enclustra GmbH - https://www.enclustra.com
-+ */
-+
-+/dts-v1/;
-+
-+#include "socfpga_cyclone5_mercury_sa1.dtsi"
-+#include "socfpga_enclustra_mercury_pe1.dtsi"
-+#include "socfpga_enclustra_mercury_bootmode_sdmmc.dtsi"
-+
-+/ {
-+	model = "Enclustra Mercury SA1 on Mercury+ PE1 Base Board";
-+	compatible = "enclustra,mercury-sa1-pe1", "enclustra,mercury-sa1",
-+		     "altr,socfpga-cyclone5", "altr,socfpga";
-+};
-diff --git a/arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1_pe3_emmc.dts b/arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1_pe3_emmc.dts
-new file mode 100644
-index 000000000..6c8fd5b0d
---- /dev/null
-+++ b/arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1_pe3_emmc.dts
-@@ -0,0 +1,16 @@
-+// SPDX-License-Identifier: GPL-2.0+ OR MIT
-+/*
-+ * Copyright (C) 2024 Enclustra GmbH - https://www.enclustra.com
-+ */
-+
-+/dts-v1/;
-+
-+#include "socfpga_cyclone5_mercury_sa1.dtsi"
-+#include "socfpga_enclustra_mercury_pe3.dtsi"
-+#include "socfpga_enclustra_mercury_bootmode_emmc.dtsi"
-+
-+/ {
-+	model = "Enclustra Mercury SA1 on Mercury+ PE3 Base Board";
-+	compatible = "enclustra,mercury-sa1-pe3", "enclustra,mercury-sa1",
-+		     "altr,socfpga-cyclone5", "altr,socfpga";
-+};
-diff --git a/arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1_pe3_qspi.dts b/arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1_pe3_qspi.dts
-new file mode 100644
-index 000000000..329242607
---- /dev/null
-+++ b/arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1_pe3_qspi.dts
-@@ -0,0 +1,16 @@
-+// SPDX-License-Identifier: GPL-2.0+ OR MIT
-+/*
-+ * Copyright (C) 2024 Enclustra GmbH - https://www.enclustra.com
-+ */
-+
-+/dts-v1/;
-+
-+#include "socfpga_cyclone5_mercury_sa1.dtsi"
-+#include "socfpga_enclustra_mercury_pe3.dtsi"
-+#include "socfpga_enclustra_mercury_bootmode_qspi.dtsi"
-+
-+/ {
-+	model = "Enclustra Mercury SA1 on Mercury+ PE3 Base Board";
-+	compatible = "enclustra,mercury-sa1-pe3", "enclustra,mercury-sa1",
-+		     "altr,socfpga-cyclone5", "altr,socfpga";
-+};
-diff --git a/arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1_pe3_sdmmc.dts b/arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1_pe3_sdmmc.dts
-new file mode 100644
-index 000000000..1eb10b524
---- /dev/null
-+++ b/arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1_pe3_sdmmc.dts
-@@ -0,0 +1,16 @@
-+// SPDX-License-Identifier: GPL-2.0+ OR MIT
-+/*
-+ * Copyright (C) 2024 Enclustra GmbH - https://www.enclustra.com
-+ */
-+
-+/dts-v1/;
-+
-+#include "socfpga_cyclone5_mercury_sa1.dtsi"
-+#include "socfpga_enclustra_mercury_pe3.dtsi"
-+#include "socfpga_enclustra_mercury_bootmode_sdmmc.dtsi"
-+
-+/ {
-+	model = "Enclustra Mercury SA1 on Mercury+ PE3 Base Board";
-+	compatible = "enclustra,mercury-sa1-pe3", "enclustra,mercury-sa1",
-+		     "altr,socfpga-cyclone5", "altr,socfpga";
-+};
-diff --git a/arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1_st1_emmc.dts b/arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1_st1_emmc.dts
-new file mode 100644
-index 000000000..8c97b5b3a
---- /dev/null
-+++ b/arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1_st1_emmc.dts
-@@ -0,0 +1,16 @@
-+// SPDX-License-Identifier: GPL-2.0+ OR MIT
-+/*
-+ * Copyright (C) 2024 Enclustra GmbH - https://www.enclustra.com
-+ */
-+
-+/dts-v1/;
-+
-+#include "socfpga_cyclone5_mercury_sa1.dtsi"
-+#include "socfpga_enclustra_mercury_st1.dtsi"
-+#include "socfpga_enclustra_mercury_bootmode_emmc.dtsi"
-+
-+/ {
-+	model = "Enclustra Mercury SA1 on Mercury+ ST1 Base Board";
-+	compatible = "enclustra,mercury-sa1-st1", "enclustra,mercury-sa1",
-+		     "altr,socfpga-cyclone5", "altr,socfpga";
-+};
-diff --git a/arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1_st1_qspi.dts b/arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1_st1_qspi.dts
-new file mode 100644
-index 000000000..e6d14b22e
---- /dev/null
-+++ b/arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1_st1_qspi.dts
-@@ -0,0 +1,16 @@
-+// SPDX-License-Identifier: GPL-2.0+ OR MIT
-+/*
-+ * Copyright (C) 2024 Enclustra GmbH - https://www.enclustra.com
-+ */
-+
-+/dts-v1/;
-+
-+#include "socfpga_cyclone5_mercury_sa1.dtsi"
-+#include "socfpga_enclustra_mercury_st1.dtsi"
-+#include "socfpga_enclustra_mercury_bootmode_qspi.dtsi"
-+
-+/ {
-+	model = "Enclustra Mercury SA1 on Mercury+ ST1 Base Board";
-+	compatible = "enclustra,mercury-sa1-st1", "enclustra,mercury-sa1",
-+		     "altr,socfpga-cyclone5", "altr,socfpga";
-+};
-diff --git a/arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1_st1_sdmmc.dts b/arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1_st1_sdmmc.dts
-new file mode 100644
-index 000000000..beaeca94d
---- /dev/null
-+++ b/arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1_st1_sdmmc.dts
-@@ -0,0 +1,16 @@
-+// SPDX-License-Identifier: GPL-2.0+ OR MIT
-+/*
-+ * Copyright (C) 2024 Enclustra GmbH - https://www.enclustra.com
-+ */
-+
-+/dts-v1/;
-+
-+#include "socfpga_cyclone5_mercury_sa1.dtsi"
-+#include "socfpga_enclustra_mercury_st1.dtsi"
-+#include "socfpga_enclustra_mercury_bootmode_sdmmc.dtsi"
-+
-+/ {
-+	model = "Enclustra Mercury SA1 on Mercury+ ST1 Base Board";
-+	compatible = "enclustra,mercury-sa1-st1", "enclustra,mercury-sa1",
-+		     "altr,socfpga-cyclone5", "altr,socfpga";
-+};
-diff --git a/arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa2_pe1_qspi.dts b/arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa2_pe1_qspi.dts
-new file mode 100644
-index 000000000..6f79d9ed1
---- /dev/null
-+++ b/arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa2_pe1_qspi.dts
-@@ -0,0 +1,16 @@
-+// SPDX-License-Identifier: GPL-2.0+ OR MIT
-+/*
-+ * Copyright (C) 2024 Enclustra GmbH - https://www.enclustra.com
-+ */
-+
-+/dts-v1/;
-+
-+#include "socfpga_cyclone5_mercury_sa2.dtsi"
-+#include "socfpga_enclustra_mercury_pe1.dtsi"
-+#include "socfpga_enclustra_mercury_bootmode_qspi.dtsi"
-+
-+/ {
-+	model = "Enclustra Mercury+ SA2 on Mercury+ PE1 Base Board";
-+	compatible = "enclustra,mercury-sa2-pe1", "enclustra,mercury-sa2",
-+		     "altr,socfpga-cyclone5", "altr,socfpga";
-+};
-diff --git a/arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa2_pe1_sdmmc.dts b/arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa2_pe1_sdmmc.dts
-new file mode 100644
-index 000000000..b94bd8baf
---- /dev/null
-+++ b/arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa2_pe1_sdmmc.dts
-@@ -0,0 +1,16 @@
-+// SPDX-License-Identifier: GPL-2.0+ OR MIT
-+/*
-+ * Copyright (C) 2024 Enclustra GmbH - https://www.enclustra.com
-+ */
-+
-+/dts-v1/;
-+
-+#include "socfpga_cyclone5_mercury_sa2.dtsi"
-+#include "socfpga_enclustra_mercury_pe1.dtsi"
-+#include "socfpga_enclustra_mercury_bootmode_sdmmc.dtsi"
-+
-+/ {
-+	model = "Enclustra Mercury+ SA2 on Mercury+ PE1 Base Board";
-+	compatible = "enclustra,mercury-sa2-pe1", "enclustra,mercury-sa2",
-+		     "altr,socfpga-cyclone5", "altr,socfpga";
-+};
-diff --git a/arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa2_pe3_qspi.dts b/arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa2_pe3_qspi.dts
-new file mode 100644
-index 000000000..51fc4a229
---- /dev/null
-+++ b/arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa2_pe3_qspi.dts
-@@ -0,0 +1,16 @@
-+// SPDX-License-Identifier: GPL-2.0+ OR MIT
-+/*
-+ * Copyright (C) 2024 Enclustra GmbH - https://www.enclustra.com
-+ */
-+
-+/dts-v1/;
-+
-+#include "socfpga_cyclone5_mercury_sa2.dtsi"
-+#include "socfpga_enclustra_mercury_pe3.dtsi"
-+#include "socfpga_enclustra_mercury_bootmode_qspi.dtsi"
-+
-+/ {
-+	model = "Enclustra Mercury+ SA2 on Mercury+ PE3 Base Board";
-+	compatible = "enclustra,mercury-sa2-pe3", "enclustra,mercury-sa2",
-+		     "altr,socfpga-cyclone5", "altr,socfpga";
-+};
-diff --git a/arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa2_pe3_sdmmc.dts b/arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa2_pe3_sdmmc.dts
-new file mode 100644
-index 000000000..e4209209f
---- /dev/null
-+++ b/arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa2_pe3_sdmmc.dts
-@@ -0,0 +1,16 @@
-+// SPDX-License-Identifier: GPL-2.0+ OR MIT
-+/*
-+ * Copyright (C) 2024 Enclustra GmbH - https://www.enclustra.com
-+ */
-+
-+/dts-v1/;
-+
-+#include "socfpga_cyclone5_mercury_sa2.dtsi"
-+#include "socfpga_enclustra_mercury_pe3.dtsi"
-+#include "socfpga_enclustra_mercury_bootmode_sdmmc.dtsi"
-+
-+/ {
-+	model = "Enclustra Mercury+ SA2 on Mercury+ PE3 Base Board";
-+	compatible = "enclustra,mercury-sa2-pe3", "enclustra,mercury-sa2",
-+		     "altr,socfpga-cyclone5", "altr,socfpga";
-+};
-diff --git a/arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa2_st1_qspi.dts b/arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa2_st1_qspi.dts
-new file mode 100644
-index 000000000..ab4549a0d
---- /dev/null
-+++ b/arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa2_st1_qspi.dts
-@@ -0,0 +1,16 @@
-+// SPDX-License-Identifier: GPL-2.0+ OR MIT
-+/*
-+ * Copyright (C) 2024 Enclustra GmbH - https://www.enclustra.com
-+ */
-+
-+/dts-v1/;
-+
-+#include "socfpga_cyclone5_mercury_sa2.dtsi"
-+#include "socfpga_enclustra_mercury_st1.dtsi"
-+#include "socfpga_enclustra_mercury_bootmode_qspi.dtsi"
-+
-+/ {
-+	model = "Enclustra Mercury+ SA2 on Mercury+ ST1 Base Board";
-+	compatible = "enclustra,mercury-sa2-st1", "enclustra,mercury-sa2",
-+		     "altr,socfpga-cyclone5", "altr,socfpga";
-+};
-diff --git a/arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa2_st1_sdmmc.dts b/arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa2_st1_sdmmc.dts
-new file mode 100644
-index 000000000..ebe62879c
---- /dev/null
-+++ b/arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa2_st1_sdmmc.dts
-@@ -0,0 +1,16 @@
-+// SPDX-License-Identifier: GPL-2.0+ OR MIT
-+/*
-+ * Copyright (C) 2024 Enclustra GmbH - https://www.enclustra.com
-+ */
-+
-+/dts-v1/;
-+
-+#include "socfpga_cyclone5_mercury_sa2.dtsi"
-+#include "socfpga_enclustra_mercury_st1.dtsi"
-+#include "socfpga_enclustra_mercury_bootmode_sdmmc.dtsi"
-+
-+/ {
-+	model = "Enclustra Mercury+ SA2 on Mercury+ ST1 Base Board";
-+	compatible = "enclustra,mercury-sa2-st1", "enclustra,mercury-sa2",
-+		     "altr,socfpga-cyclone5", "altr,socfpga";
-+};
+ static int tas2781_read_acpi(struct tasdevice_priv *p, const char *hid)
+ {
+ 	struct acpi_device *adev;
++	struct device *physdev;
+ 	LIST_HEAD(resources);
++	const char *sub;
+ 	int ret;
+ 
+ 	adev = acpi_dev_get_first_match_dev(hid, NULL, -1);
+@@ -122,19 +131,40 @@ static int tas2781_read_acpi(struct tasdevice_priv *p, const char *hid)
+ 			"Failed to find an ACPI device for %s\n", hid);
+ 		return -ENODEV;
+ 	}
+-
+-	ret = acpi_dev_get_resources(adev, &resources, tas2781_get_i2c_res, p);
+-	if (ret < 0)
++	physdev = get_device(acpi_get_first_physical_node(adev));
++	ret = acpi_dev_get_resources(adev, &resources, tas2781_get_i2c_res, p);
++	if (ret < 0) {
++		dev_err(p->dev, "Failed to get ACPI resource.\n");
++		goto err;
++	}
++	sub = acpi_get_subsystem_id(ACPI_HANDLE(physdev));
++	if (IS_ERR(sub)) {
++		dev_err(p->dev, "Failed to get SUBSYS ID.\n");
+ 		goto err;
++	}
++	// Speaker id was needed for ASUS projects.
++	if (!strncasecmp(sub, TAS2781_ASUS_ID, sizeof(TAS2781_ASUS_ID))) {
++		devm_acpi_dev_add_driver_gpios(p->dev,
++			tas2781_speaker_id_gpios);
++		p->speaker_id = devm_gpiod_get(p->dev, "speakerid", GPIOD_IN);
++		if (IS_ERR(p->speaker_id)) {
++			dev_err(p->dev, "Failed to get Speaker id.\n");
++			goto err;
++		}
++	} else {
++		p->speaker_id = NULL;
++	}
+ 
+ 	acpi_dev_free_resource_list(&resources);
+ 	strscpy(p->dev_name, hid, sizeof(p->dev_name));
++	put_device(physdev);
+ 	acpi_dev_put(adev);
+ 
+ 	return 0;
+ 
+ err:
+ 	dev_err(p->dev, "read acpi error, ret: %d\n", ret);
++	put_device(physdev);
+ 	acpi_dev_put(adev);
+ 
+ 	return ret;
+@@ -615,7 +645,7 @@ static void tasdev_fw_ready(const struct firmware *fmw, void *context)
+ 	struct tasdevice_priv *tas_priv = context;
+ 	struct tas2781_hda *tas_hda = dev_get_drvdata(tas_priv->dev);
+ 	struct hda_codec *codec = tas_priv->codec;
+-	int i, ret;
++	int i, ret, spk_id;
+ 
+ 	pm_runtime_get_sync(tas_priv->dev);
+ 	mutex_lock(&tas_priv->codec_lock);
+@@ -648,8 +678,26 @@ static void tasdev_fw_ready(const struct firmware *fmw, void *context)
+ 	tasdevice_dsp_remove(tas_priv);
+ 
+ 	tas_priv->fw_state = TASDEVICE_DSP_FW_PENDING;
+-	scnprintf(tas_priv->coef_binaryname, 64, "TAS2XXX%04X.bin",
+-		codec->core.subsystem_id & 0xffff);
++	if (tas_priv->speaker_id != NULL) {
++		// Speaker id need to be checked for ASUS only.
++		spk_id = gpiod_get_value(tas_priv->speaker_id);
++		if (spk_id < 0) {
++			// Speaker id is not valid, use default.
++			dev_dbg(tas_priv->dev, "Wrong spk_id = %d\n", spk_id);
++			spk_id = 0;
++		}
++		snprintf(tas_priv->coef_binaryname,
++			  sizeof(tas_priv->coef_binaryname),
++			  "TAS2XXX%04X%01d.bin",
++			  lower_16_bits(codec->core.subsystem_id),
++			  spk_id);
++	} else {
++		snprintf(tas_priv->coef_binaryname,
++			  sizeof(tas_priv->coef_binaryname),
++			  "TAS2XXX%04X.bin",
++			  lower_16_bits(codec->core.subsystem_id));
++	}
++
+ 	ret = tasdevice_dsp_parser(tas_priv);
+ 	if (ret) {
+ 		dev_err(tas_priv->dev, "dspfw load %s error\n",
 -- 
-2.25.1
+2.43.0
 
 
