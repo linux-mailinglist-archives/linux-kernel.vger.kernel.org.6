@@ -1,197 +1,180 @@
-Return-Path: <linux-kernel+bounces-383460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE3009B1C1E
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 05:07:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 741259B1C23
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 05:28:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2EB571F21B5C
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 04:07:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34814281F76
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 04:28:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56C7A273FD;
-	Sun, 27 Oct 2024 04:07:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF55D2A1CA;
+	Sun, 27 Oct 2024 04:28:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="C7qVNel0"
-Received: from mail-qt1-f226.google.com (mail-qt1-f226.google.com [209.85.160.226])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gmyXI7I0"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8119217C61
-	for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 04:07:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.226
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBE9B2A1C9;
+	Sun, 27 Oct 2024 04:28:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730002042; cv=none; b=GmhL0FeHVO/jGDziTWmWpxyamDJ6nOw2/2LHVfHyHVNuBNOIZUnlgSZu4lnT9tw1Yax45y4+yqEF+bmC4I9MGsyr/ey2K1OLQgr0eihmsxAsEknbmexGKxQCvUYrwEdH9x5HRyWVYAnybnqeTau83rcj3Jq0XcvQvdtf/ov/KuM=
+	t=1730003293; cv=none; b=WV2OQ1Xfa8cJ9cyYZ9ylgfgpchIdDxl8Mu8O9IZ+02FsvZvgJSo22UhP5I5a1UvsU9EcRtmo4H9ekuteVSPICZynQ8hUBrRBS4V88F+dpg9NMfOfAtliiYMPRZamxM+t4CBZsS/eNlcb8nrWuxz7deSSVl/Fyw2gNRLRGeyd7A0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730002042; c=relaxed/simple;
-	bh=K40sm6a5rnZnDviFoC5gXMAnEzE/x92f8YKdKML+Okg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Dtvt/Sn+P3SeEwI79mrIB18FwrnAszHBRBFr+85jknurTHEGs6r+lqSWYtcPH8S26Y4lSpcrhSy1AjrLQCRI7qgboVPnuO0ioQMAzXCHVpocpAs1Gb5tx8tRwhWrb0hNeq/l4Pxu7cLlRAdStDv/Uoij4O6DGSdmJu3ondAdSGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=C7qVNel0; arc=none smtp.client-ip=209.85.160.226
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-qt1-f226.google.com with SMTP id d75a77b69052e-4609e617d31so1358901cf.1
-        for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 21:07:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1730002038; x=1730606838; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=yFPBOawvNAC40LRH3vsqWPQVymUE1kR2pFs5OkfXjZc=;
-        b=C7qVNel0KuEN8AXD5Kh9lOPOqHCR/e8KbpEspG5b2wcsvI9X6hHUTMhVuIuqN66ttR
-         OKSSCy+54NjI/LJH9z6fjRyI/g2zK3MSW33hfWC54JK6zamJWiZcTWJn0k902qcKf1k8
-         16sf359118BwJHcq1ggUzuMSLaubuVGNIknuI7+/1WrxuLEiNP8bHz5UFvnjdFe13Yhe
-         073W4Rvcy1AR+7elNcBG2I3z6xrYkUs+GPuZAb7JS18zCJBrBZ0zUV44G45/+Z3cnxK+
-         4rIl/EG7Q+ZxcPfVobo2MT/0pvqITRyIs0lbO6KxMVWiMOPJHejKFbpao5HLPQEbgcwp
-         fIDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730002038; x=1730606838;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yFPBOawvNAC40LRH3vsqWPQVymUE1kR2pFs5OkfXjZc=;
-        b=etln8Q/JkaYCY8bwmNU7M5jK3IAlJTabomaFz99eEpmHXhOqSqtVikJCGQknHnNIu8
-         NAYmA4lu6KUXyhZnu2Y4zFpiSS6r5fxaxCyUWre3USEMjO3Vgch6x4GrSCbb8hNolTvu
-         jFB8qcwIPx7AUEbUvXjMEdjXBPob/+VexF1TkwULR8MqC1rYaSH8VV9j9+rM4rQdX+v5
-         p/wl7tD9vmISJjd03zuO0oQ+q9O3/htYqkjKfoFgXbkm8re6m49idS5NOBVT8BOBfpmk
-         cKRwLQmZUYKSVwMzY3Ge7+vf0mbUrjgPE9e2d3CwzDJI/3pLMbLZlkIBQ7XpoKvcY/zY
-         ME2w==
-X-Forwarded-Encrypted: i=1; AJvYcCVtWSUxEYnonrPgvEs4I8TWTkTmqffpmxfr4CTM9RDnFW5ZVluIxaUh4q5GK+JfFfItEjm2ZM74c6lOCtI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxosy6N0AtLC6lQCfAil6jK7wQIl65fUOXjGVr2Eb5pTN9sGLG/
-	2fF4omWEqKdD2zL7wbtuLUVWVdoKCfF0KZqJaqOZIZwnoWGOuSjRMvKNCcwBYpqakpFtmcUtuIm
-	c5ytQGvPw5R3rnZWrD5F3x3bFTFV1XT0RMDMO0h4GAW3rwGWL
-X-Google-Smtp-Source: AGHT+IFLVMIJviFB7oFNyQyjEM3uN/bEshHi0Ww68pbsDPdz+G/261P3Itvj7Q1GDkCFDmN+vqTdp3NEj8vT
-X-Received: by 2002:a05:622a:89:b0:460:9acd:68be with SMTP id d75a77b69052e-4613c005fbcmr32681281cf.5.1730002038304;
-        Sat, 26 Oct 2024 21:07:18 -0700 (PDT)
-Received: from c7-smtp-2023.dev.purestorage.com ([2620:125:9017:12:36:3:5:0])
-        by smtp-relay.gmail.com with ESMTPS id d75a77b69052e-46132179ceesm1643211cf.11.2024.10.26.21.07.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 26 Oct 2024 21:07:18 -0700 (PDT)
-X-Relaying-Domain: purestorage.com
-Received: from dev-csander.dev.purestorage.com (dev-csander.dev.purestorage.com [10.7.70.37])
-	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id D2313340278;
-	Sat, 26 Oct 2024 22:07:16 -0600 (MDT)
-Received: by dev-csander.dev.purestorage.com (Postfix, from userid 1557716354)
-	id CD2F9E40D12; Sat, 26 Oct 2024 22:07:16 -0600 (MDT)
-From: Caleb Sander Mateos <csander@purestorage.com>
-To: Saeed Mahameed <saeedm@nvidia.com>,
-	Leon Romanovsky <leon@kernel.org>,
-	Tariq Toukan <tariqt@nvidia.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: Caleb Sander Mateos <csander@purestorage.com>,
-	netdev@vger.kernel.org,
-	linux-rdma@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] mlx5: only schedule EQ comp tasklet if necessary
-Date: Sat, 26 Oct 2024 22:06:55 -0600
-Message-ID: <20241027040700.1616307-1-csander@purestorage.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1730003293; c=relaxed/simple;
+	bh=S5z1ERvXpeJxLkMI4pFAGnwF3EQD1xNCXk1RPrpneXE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uhGVZkFcXU2LKb4ONrB+GAsRZ29hqM1nYosXTOwh7ORU4trdK6jTc+Y+OWcDfZvGIQkvkjVTgBqcj4qN5PJL8WbTdGtmnh49YoXLM6ekBfghc6xCHN2sJugsupFeXMd6QEF9r/zm62aTLOseedHS+e9l8nbJJ//7uUMLL9ohZx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gmyXI7I0; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730003291; x=1761539291;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=S5z1ERvXpeJxLkMI4pFAGnwF3EQD1xNCXk1RPrpneXE=;
+  b=gmyXI7I0QIGQxd3yUrSTERYUUTMnG0ahtp8YI/0ZZw24JbS2dw3WnUzA
+   pkn7V5nSe/JxDGFmhFNVZTl/y1jrMsAs4QEVVoxTDTfSzds7iVVcGH4Rm
+   uakz4+57RjBMCHEfxHEpsmRX3LD3W/FF2TaxQ/Vi0ok3FQio+d7BTXuX+
+   ehK4wm0W53l/DsS0rFNznjOBA0kiZJAlL0U8qKIWUY9nKx0Mjpwbr0PF3
+   p+NAz5cwOnuBs2YqwufypcPpxc+ImsRxJO7Zw1rZvfw2pV6BY87iqIt5/
+   aoGdjPUG6MGkKZNxR9rokLzC0xQfDapTBXO1NxLWowL2ioE5iAcctdTc4
+   A==;
+X-CSE-ConnectionGUID: Wl+DIG6lSPybFHoxHmj9eA==
+X-CSE-MsgGUID: kjz0IyzoTPSF5o+6wEEmoA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11237"; a="17264213"
+X-IronPort-AV: E=Sophos;i="6.11,236,1725346800"; 
+   d="scan'208";a="17264213"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Oct 2024 21:28:10 -0700
+X-CSE-ConnectionGUID: dAJp7rJJTXqJcpv+Fv/wrQ==
+X-CSE-MsgGUID: 1aXRmt+JQ52MfrTX0L+PpA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="86050350"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa003.jf.intel.com with ESMTP; 26 Oct 2024 21:28:08 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t4usn-000aMC-2r;
+	Sun, 27 Oct 2024 04:28:05 +0000
+Date: Sun, 27 Oct 2024 12:27:10 +0800
+From: kernel test robot <lkp@intel.com>
+To: David Lechner <dlechner@baylibre.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Jonathan Cameron <jic23@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Michael Hennerich <michael.hennerich@analog.com>,
+	linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+	David Lechner <dlechner@baylibre.com>
+Subject: Re: [PATCH v2] iio: adc: ad7380: use if_not_cond_guard for claim
+ direct
+Message-ID: <202410271218.9sti93hi-lkp@intel.com>
+References: <20241024-cleanup-if_not_cond_guard-v2-1-1bef98c9fd2e@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241024-cleanup-if_not_cond_guard-v2-1-1bef98c9fd2e@baylibre.com>
 
-Currently, the mlx5_eq_comp_int() interrupt handler schedules a tasklet
-to call mlx5_cq_tasklet_cb() if it processes any completions. For CQs
-whose completions don't need to be processed in tasklet context, this
-overhead is unnecessary. Atomic operations are needed to schedule, lock,
-and clear the tasklet. And when mlx5_cq_tasklet_cb() runs, it acquires a
-spin lock to access the list of CQs enqueued for processing.
+Hi David,
 
-Schedule the tasklet in mlx5_add_cq_to_tasklet() instead to avoid this
-overhead. mlx5_add_cq_to_tasklet() is responsible for enqueuing the CQs
-to be processed in tasklet context, so it can schedule the tasklet. CQs
-that need tasklet processing have their interrupt comp handler set to
-mlx5_add_cq_to_tasklet(), so they will schedule the tasklet. CQs that
-don't need tasklet processing won't schedule the tasklet. To avoid
-scheduling the tasklet multiple times during the same interrupt, only
-schedule the tasklet in mlx5_add_cq_to_tasklet() if the tasklet work
-queue was empty before the new CQ was pushed to it.
+kernel test robot noticed the following build errors:
 
-Note that the mlx4 driver works the same way: it schedules the tasklet
-in mlx4_add_cq_to_tasklet() and only if the work queue was empty before.
+[auto build test ERROR on 431c39f6d3edbab14f48dbf37a58ccdc0ac3be1e]
 
-Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
----
- drivers/net/ethernet/mellanox/mlx5/core/cq.c | 5 +++++
- drivers/net/ethernet/mellanox/mlx5/core/eq.c | 5 +----
- 2 files changed, 6 insertions(+), 4 deletions(-)
+url:    https://github.com/intel-lab-lkp/linux/commits/David-Lechner/iio-adc-ad7380-use-if_not_cond_guard-for-claim-direct/20241025-001415
+base:   431c39f6d3edbab14f48dbf37a58ccdc0ac3be1e
+patch link:    https://lore.kernel.org/r/20241024-cleanup-if_not_cond_guard-v2-1-1bef98c9fd2e%40baylibre.com
+patch subject: [PATCH v2] iio: adc: ad7380: use if_not_cond_guard for claim direct
+config: i386-allmodconfig (https://download.01.org/0day-ci/archive/20241027/202410271218.9sti93hi-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241027/202410271218.9sti93hi-lkp@intel.com/reproduce)
 
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/cq.c b/drivers/net/ethernet/mellanox/mlx5/core/cq.c
-index 4caa1b6f40ba..25f3b26db729 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/cq.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/cq.c
-@@ -69,22 +69,27 @@ void mlx5_cq_tasklet_cb(struct tasklet_struct *t)
- static void mlx5_add_cq_to_tasklet(struct mlx5_core_cq *cq,
- 				   struct mlx5_eqe *eqe)
- {
- 	unsigned long flags;
- 	struct mlx5_eq_tasklet *tasklet_ctx = cq->tasklet_ctx.priv;
-+	bool schedule_tasklet = false;
- 
- 	spin_lock_irqsave(&tasklet_ctx->lock, flags);
- 	/* When migrating CQs between EQs will be implemented, please note
- 	 * that you need to sync this point. It is possible that
- 	 * while migrating a CQ, completions on the old EQs could
- 	 * still arrive.
- 	 */
- 	if (list_empty_careful(&cq->tasklet_ctx.list)) {
- 		mlx5_cq_hold(cq);
-+		schedule_tasklet = list_empty(&tasklet_ctx->list);
- 		list_add_tail(&cq->tasklet_ctx.list, &tasklet_ctx->list);
- 	}
- 	spin_unlock_irqrestore(&tasklet_ctx->lock, flags);
-+
-+	if (schedule_tasklet)
-+		tasklet_schedule(&tasklet_ctx->task);
- }
- 
- /* Callers must verify outbox status in case of err */
- int mlx5_create_cq(struct mlx5_core_dev *dev, struct mlx5_core_cq *cq,
- 		   u32 *in, int inlen, u32 *out, int outlen)
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/eq.c b/drivers/net/ethernet/mellanox/mlx5/core/eq.c
-index 68cb86b37e56..66fc17d9c949 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/eq.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/eq.c
-@@ -112,17 +112,17 @@ static int mlx5_eq_comp_int(struct notifier_block *nb,
- 	struct mlx5_eq_comp *eq_comp =
- 		container_of(nb, struct mlx5_eq_comp, irq_nb);
- 	struct mlx5_eq *eq = &eq_comp->core;
- 	struct mlx5_eqe *eqe;
- 	int num_eqes = 0;
--	u32 cqn = -1;
- 
- 	eqe = next_eqe_sw(eq);
- 	if (!eqe)
- 		goto out;
- 
- 	do {
-+		u32 cqn;
- 		struct mlx5_core_cq *cq;
- 
- 		/* Make sure we read EQ entry contents after we've
- 		 * checked the ownership bit.
- 		 */
-@@ -145,13 +145,10 @@ static int mlx5_eq_comp_int(struct notifier_block *nb,
- 	} while ((++num_eqes < MLX5_EQ_POLLING_BUDGET) && (eqe = next_eqe_sw(eq)));
- 
- out:
- 	eq_update_ci(eq, 1);
- 
--	if (cqn != -1)
--		tasklet_schedule(&eq_comp->tasklet_ctx.task);
--
- 	return 0;
- }
- 
- /* Some architectures don't latch interrupts when they are disabled, so using
-  * mlx5_eq_poll_irq_disabled could end up losing interrupts while trying to
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410271218.9sti93hi-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   drivers/iio/adc/ad7380.c: In function 'ad7380_debugfs_reg_access':
+>> drivers/iio/adc/ad7380.c:574:9: error: implicit declaration of function 'if_not_cond_guard' [-Werror=implicit-function-declaration]
+     574 |         if_not_cond_guard(iio_claim_direct_try, indio_dev)
+         |         ^~~~~~~~~~~~~~~~~
+>> drivers/iio/adc/ad7380.c:574:27: error: 'iio_claim_direct_try' undeclared (first use in this function); did you mean 'class_iio_claim_direct_try_t'?
+     574 |         if_not_cond_guard(iio_claim_direct_try, indio_dev)
+         |                           ^~~~~~~~~~~~~~~~~~~~
+         |                           class_iio_claim_direct_try_t
+   drivers/iio/adc/ad7380.c:574:27: note: each undeclared identifier is reported only once for each function it appears in
+>> drivers/iio/adc/ad7380.c:574:59: error: expected ';' before 'return'
+     574 |         if_not_cond_guard(iio_claim_direct_try, indio_dev)
+         |                                                           ^
+         |                                                           ;
+     575 |                 return -EBUSY;
+         |                 ~~~~~~                                     
+   drivers/iio/adc/ad7380.c: In function 'ad7380_read_raw':
+   drivers/iio/adc/ad7380.c:823:35: error: 'iio_claim_direct_try' undeclared (first use in this function); did you mean 'class_iio_claim_direct_try_t'?
+     823 |                 if_not_cond_guard(iio_claim_direct_try, indio_dev)
+         |                                   ^~~~~~~~~~~~~~~~~~~~
+         |                                   class_iio_claim_direct_try_t
+   drivers/iio/adc/ad7380.c:823:67: error: expected ';' before 'return'
+     823 |                 if_not_cond_guard(iio_claim_direct_try, indio_dev)
+         |                                                                   ^
+         |                                                                   ;
+     824 |                         return -EBUSY;
+         |                         ~~~~~~                                     
+   drivers/iio/adc/ad7380.c: In function 'ad7380_write_raw':
+   drivers/iio/adc/ad7380.c:912:35: error: 'iio_claim_direct_try' undeclared (first use in this function); did you mean 'class_iio_claim_direct_try_t'?
+     912 |                 if_not_cond_guard(iio_claim_direct_try, indio_dev)
+         |                                   ^~~~~~~~~~~~~~~~~~~~
+         |                                   class_iio_claim_direct_try_t
+   drivers/iio/adc/ad7380.c:912:67: error: expected ';' before 'return'
+     912 |                 if_not_cond_guard(iio_claim_direct_try, indio_dev)
+         |                                                                   ^
+         |                                                                   ;
+     913 |                         return -EBUSY;
+         |                         ~~~~~~                                     
+   cc1: some warnings being treated as errors
+
+Kconfig warnings: (for reference only)
+   WARNING: unmet direct dependencies detected for MODVERSIONS
+   Depends on [n]: MODULES [=y] && !COMPILE_TEST [=y]
+   Selected by [y]:
+   - RANDSTRUCT_FULL [=y] && (CC_HAS_RANDSTRUCT [=n] || GCC_PLUGINS [=y]) && MODULES [=y]
+   WARNING: unmet direct dependencies detected for GET_FREE_REGION
+   Depends on [n]: SPARSEMEM [=n]
+   Selected by [m]:
+   - RESOURCE_KUNIT_TEST [=m] && RUNTIME_TESTING_MENU [=y] && KUNIT [=m]
+
+
+vim +/if_not_cond_guard +574 drivers/iio/adc/ad7380.c
+
+   568	
+   569	static int ad7380_debugfs_reg_access(struct iio_dev *indio_dev, u32 reg,
+   570					     u32 writeval, u32 *readval)
+   571	{
+   572		struct ad7380_state *st = iio_priv(indio_dev);
+   573	
+ > 574		if_not_cond_guard(iio_claim_direct_try, indio_dev)
+   575			return -EBUSY;
+   576	
+   577		if (readval)
+   578			return regmap_read(st->regmap, reg, readval);
+   579	
+   580		return regmap_write(st->regmap, reg, writeval);
+   581	}
+   582	
+
 -- 
-2.45.2
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
