@@ -1,125 +1,107 @@
-Return-Path: <linux-kernel+bounces-383464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBB2A9B1C29
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 05:38:19 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 030969B1C2C
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 05:38:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 075081C211F1
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 04:38:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A4B21C21047
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 04:38:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E03C2EAE5;
-	Sun, 27 Oct 2024 04:38:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1009D38DE5;
+	Sun, 27 Oct 2024 04:38:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ru49DLQW"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="j/nYKqSg"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BC1924B29;
-	Sun, 27 Oct 2024 04:38:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F40D2B9B7
+	for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 04:38:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730003894; cv=none; b=fBDzwE8t+3Ghpc+17rILQwWn1ij8ICkDBwTPPYVIxwFHc4psI/JzKBbFwYq4B4pG/1Su/i5JNTtBQHto6x/sdXQ8Wi43cvBV7Xj0Dj8fT87ju56Mu+518jIa2u8HNT5K6tF7xO5VSo64sJryipN/6M6PBmu4lvVsYwlcs0YSxMI=
+	t=1730003912; cv=none; b=HGsGA2mOMxDK+tAY2mn0zVB9doWsNp59oQ64Pn9YEa6bobs1gzfsqXN4Z4LGetFVec69+P/uQtXxR3uQuEx0SHm5uQrqNb3JIrUXC1d8zMd54tiLR8OKzCnA0YmmySYNTlzEKS1hDU8iGI1wVCxeg3uj7KY56Hr9PXm2zPacOsQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730003894; c=relaxed/simple;
-	bh=ECxxFyhpO8qHRImcih3jeV1ktiIwqvcCsxWmhdKNxh4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H/JWgRUweW36T21dAr/TYe0ZVl89DwfiiYWXJaGgwGEjpLZilP6Hc1fo8E5l5zfAi2ublSQnE3MxOViD4t/HJzbRRE3k+4o3B7u37Dq4d6vyi1WUwRQDcfiLg6osWtytPY2yFk9u8G+4zVkIMib2c32zo8bdSphrCMUUm/ohftQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ru49DLQW; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730003892; x=1761539892;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ECxxFyhpO8qHRImcih3jeV1ktiIwqvcCsxWmhdKNxh4=;
-  b=Ru49DLQWBXeFYhCAHUsRzVZzMHhz4TYz2m9U4pKRHl8DbiKRH9R9tuCO
-   BpFQ8x2OPnHWAIq6oiZxO13SXXrG6b4Q8kX8LiKXbRAChiyQzeY+vdt7U
-   tjmLsqpAyHiaEuKVcvNaFhsI6IonZXP8fJ15bgRLnZM1qDfoBzP8DElR/
-   V5pO8GbQJhbPj4pIRlieFuLQ+bfEwaFQiy0OZxzcfP25HbrkegEQ2FV9m
-   UmAaPhWOsg0xkC3tindgRCm7hAqtkK06aK8OBiACMb/chxz+DF4eW0rQ0
-   AMg4vPiWPdUfDHvaAoT5SwBvqmb+6gvVA+zKer3ZRG/ebQvTcNlkmEVrV
-   A==;
-X-CSE-ConnectionGUID: 8Ei0AJGySkqPUxOYFDOFag==
-X-CSE-MsgGUID: dmHpKKnNRsa13MId6jkuTQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11237"; a="32491949"
-X-IronPort-AV: E=Sophos;i="6.11,236,1725346800"; 
-   d="scan'208";a="32491949"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Oct 2024 21:38:11 -0700
-X-CSE-ConnectionGUID: TUJ2qrRORae0DfeeuQklgQ==
-X-CSE-MsgGUID: 8d3gP7ykRz+5Hpbrgjsbbw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,236,1725346800"; 
-   d="scan'208";a="112140445"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa001.fm.intel.com with ESMTP; 26 Oct 2024 21:38:08 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t4v2U-000aMc-0Z;
-	Sun, 27 Oct 2024 04:38:06 +0000
-Date: Sun, 27 Oct 2024 12:38:04 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Karl.Li" <karl.li@mediatek.com>, Jassi Brar <jassisinghbrar@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Chungying Lu <chungying.lu@mediatek.com>,
-	Project_Global_Chrome_Upstream_Group@mediatek.com
-Subject: Re: [PATCH 3/3] mailbox: mediatek: Add mtk-apu-mailbox driver
-Message-ID: <202410271207.42FIkHwC-lkp@intel.com>
-References: <20241024092608.431581-4-karl.li@mediatek.com>
+	s=arc-20240116; t=1730003912; c=relaxed/simple;
+	bh=9a894voPSeKCWDpJXy575tccinogzHEiPfzfOZ7KaWk=;
+	h=Mime-Version:From:References:In-Reply-To:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MuUxwTP5MJ43oIUbNCbBrY/m9vuOLZbimvh5n3f9/pDzpI6cHSTIsPMKTJ8YzJ0xQjI0bleqk8+MbNoTZq70cqmXHAj7LfuMTokQ0yx2sboem5feX0iCtjMNB7xbWZKB5yyz+zWciryRDsSi3vqwbo/8JlPO92/DQx4lb3Qp5SI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=j/nYKqSg; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-37d4ba20075so2287835f8f.0
+        for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 21:38:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730003909; x=1730608709; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:in-reply-to:references:from
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=9a894voPSeKCWDpJXy575tccinogzHEiPfzfOZ7KaWk=;
+        b=j/nYKqSgrHJ7komN/lKf2nLp04jiVuC1JtUzsTodyZpXotbJBwRSaeEyh38pbTt658
+         1o7tY4+AuaXIAsb8b22wuxJSI43ivZVdzv6BSL5smM+IOU0XJclTy0nC8+q+hNX+IXFR
+         LsWqD5W3JCx/XaUlrOTIO5zdq1G6SouKgCbUidxE7Ye/UQRgf3kKOWfgnvB40bvJbsHs
+         0BQvAcfqreMrTCR0PJowU67iRdVpQackv7tcfOxu6BvLNu4XofkIVBRiFufH+X91r1Da
+         +amfterwgWvl+FXUsaKhiJDApWD60olKLdltEMTVKUvlz9OQDWTm5SM0rzfma1uGfba/
+         PDVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730003909; x=1730608709;
+        h=cc:to:subject:message-id:date:in-reply-to:references:from
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9a894voPSeKCWDpJXy575tccinogzHEiPfzfOZ7KaWk=;
+        b=mX7fD1/3Ixu+0LItXdwBteBH/QGymqe/MVPwsGSUvdNHytElSaoYGX9ABfHYbOxESr
+         aCA59eesDk3ClA0CTtI+RR9+n0X1TGQToff317bfJjNjQnciOTxvkGHPmtcCglC0kpUm
+         hAySFnOwDYmLENg/ncXzsTEkv1DjdPoKJMxs7lWctlvbz/3/7iE+BnpCBJP3fcfa8MXY
+         CP6RpKs9Bhl7YKFNBuK9pyqScWZrFAGhv/4OWWXRqKPSU4jos+4W/TFb/fwUdBDlGZ+I
+         VlNBVx0aOIiGDWk3iRjXU+XDkhQGZUWMeIX9zIf4HgEo4L4hkw4L18SidWML0JcYA8Gv
+         dTzg==
+X-Forwarded-Encrypted: i=1; AJvYcCWdY4cyyD69qDtOT/bY+ObGwLSfTu5zKZg+xe2aC9MXVzWfHt0/OT2oYtsRdi3e86jKO0VH724Y289iZMU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrPqWVMTHLzZOzNVOFBuQW8BhUlIy5tzLYQI70pRTjSNJKyrgA
+	VQDGYuzqH6Ro0SHPaXIqNmmyzbD0ixErSE6IWo+hejbLTAsJB5Um/Ppi+x23ySDgJ1+ca8/4GsM
+	WH7pcpCzutMXHbrDaXdaJvPUYsphCsRudCH8ePg==
+X-Google-Smtp-Source: AGHT+IGrmepASh+YocMFUfgAy92GhVR+klP9wWMNEuAWzRuq4yxkKFPU9cJ/lzmrPpvIIX5JE3SRzZGJH1Ndbg/FpAQ=
+X-Received: by 2002:a5d:5743:0:b0:37d:4647:155a with SMTP id
+ ffacd0b85a97d-38061005dbcmr3261878f8f.0.1730003907260; Sat, 26 Oct 2024
+ 21:38:27 -0700 (PDT)
+Received: from 753933720722 named unknown by gmailapi.google.com with
+ HTTPREST; Sun, 27 Oct 2024 05:38:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241024092608.431581-4-karl.li@mediatek.com>
+Mime-Version: 1.0
+From: Fabien Parent <fabien.parent@linaro.org>
+X-Mailer: aerc 0.18.2
+References: <20241022213221.2383-1-dakr@kernel.org> <20241022213221.2383-15-dakr@kernel.org>
+In-Reply-To: <20241022213221.2383-15-dakr@kernel.org>
+Date: Sun, 27 Oct 2024 05:38:26 +0100
+Message-ID: <CAPFo5VLC3QT3r2CYw8K7Nf7p7xhWJ0+PPTHYN=8a8QQeGiYfOg@mail.gmail.com>
+Subject: Re: [PATCH v3 14/16] rust: of: add `of::DeviceId` abstraction
+To: Danilo Krummrich <dakr@kernel.org>, gregkh@linuxfoundation.org, rafael@kernel.org, 
+	bhelgaas@google.com, ojeda@kernel.org, alex.gaynor@gmail.com, 
+	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
+	benno.lossin@proton.me, tmgross@umich.edu, a.hindborg@samsung.com, 
+	aliceryhl@google.com, airlied@gmail.com, fujita.tomonori@gmail.com, 
+	lina@asahilina.net, pstanner@redhat.com, ajanulgu@redhat.com, 
+	lyude@redhat.com, robh@kernel.org, daniel.almeida@collabora.com, 
+	saravanak@google.com
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Karl.Li,
+Hi Danilo,
 
-kernel test robot noticed the following build warnings:
+On Tue Oct 22, 2024 at 2:31 PM PDT, Danilo Krummrich wrote:
+> +/// An open firmware device id.
+> +#[derive(Clone, Copy)]
+> +pub struct DeviceId(bindings::of_device_id);
+...
+> +// SAFETY:
+> +// * `DeviceId` is a `#[repr(transparent)` wrapper of `struct of_device_id` and does not add
 
-[auto build test WARNING on robh/for-next]
-[also build test WARNING on linus/master v6.12-rc4 next-20241025]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+DeviceId is missing the `#[repr(transparent)]`.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Karl-Li/dt-bindings-mailbox-mediatek-Add-apu-mailbox-document/20241024-173032
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
-patch link:    https://lore.kernel.org/r/20241024092608.431581-4-karl.li%40mediatek.com
-patch subject: [PATCH 3/3] mailbox: mediatek: Add mtk-apu-mailbox driver
-config: nios2-randconfig-r111-20241027 (https://download.01.org/0day-ci/archive/20241027/202410271207.42FIkHwC-lkp@intel.com/config)
-compiler: nios2-linux-gcc (GCC) 14.1.0
-reproduce: (https://download.01.org/0day-ci/archive/20241027/202410271207.42FIkHwC-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410271207.42FIkHwC-lkp@intel.com/
-
-sparse warnings: (new ones prefixed by >>)
->> drivers/mailbox/mtk-apu-mailbox.c:29:24: sparse: sparse: symbol 'g_mbox' was not declared. Should it be static?
-
-vim +/g_mbox +29 drivers/mailbox/mtk-apu-mailbox.c
-
-    28	
-  > 29	struct mtk_apu_mailbox *g_mbox;
-    30	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+BR,
+Fabien
 
