@@ -1,147 +1,108 @@
-Return-Path: <linux-kernel+bounces-383500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6ED529B1C8C
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 09:50:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E80899B1C8E
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 10:00:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3457A281E5D
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 08:50:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BC5A1F2162F
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 09:00:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 325696F073;
-	Sun, 27 Oct 2024 08:50:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4B9C55E53;
+	Sun, 27 Oct 2024 08:59:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k/eZ/xrb"
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="rx8tSTJn"
+Received: from out203-205-221-210.mail.qq.com (out203-205-221-210.mail.qq.com [203.205.221.210])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA36917BA6;
-	Sun, 27 Oct 2024 08:50:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4EB4161
+	for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 08:59:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.210
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730019010; cv=none; b=fdwuVVf2muEvjcn9IOPCBeuB8BBLr5KoEGm2oT47DGIBl44HF9bT57xVI7wCeVQz3j7RTOSYgSBwl5RVjAuoxwvtBSI61NGVWrA12pZ69CgBKtR7e7vC58vFelsXbd3e0LTSxh/R3zTim+ITxOtjhoAncRkM1PhDymyjtUtj8U8=
+	t=1730019598; cv=none; b=NzTHQUMnj8V+NNWZOCa3Nzc0yok70QP6UblDd3hC8MblFAN2g3Ei3aGXJB7//M1Qjz1GlE6dGiAKH1ASRsELE3UZv0mmJhqUFbgP5LVkEarBhfv3jWJlM+c3XkzEhB26/rJf71MF4gJxYcwW3jSI6z7rq6+S79rGNzpc8h0QIBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730019010; c=relaxed/simple;
-	bh=S/ictX+ATqsv0Y7ayYtph846aC6YU8IxoN4tJYh75X4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=c46rp1MXsFWvzh6pWuhjp9daFGbW8q9/hEhT6RvaijjqXCaF/L1+zLu+b1VeK+n8tTy7kePHe4MF/u0NLBmoMDgvF1LQVoqO8KjnWLG76UNTFQdQXY4OTpRjmZo0wxeUboS4op3+YkCyFrQR7XAsxKbcw1I5Gt3AYpbsgm2XuvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k/eZ/xrb; arc=none smtp.client-ip=209.85.128.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-6e314136467so30541327b3.0;
-        Sun, 27 Oct 2024 01:50:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730019007; x=1730623807; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rp71bNijwv9lCHfBZe/MgLr7AbbyQ7KKNxx/7WbExbE=;
-        b=k/eZ/xrbI/ybZh8RXKdtlCPUnG1FxWi/crDAnxKCf49fw/+wAnvUUnXYN4cVnA/bVX
-         hI6R4knOGmNSUgQFT+WxwpBfIe2dTPUE8BZgusS7I8SM8XR05wBIZSoPFi4OjL4VStJp
-         iX9YJcquWGDGH+EXW9iSFdARU1FxaIJLHhDSyZRHXKnW86+gm2uWgMJ8l+8bkvMWAttF
-         k/BZPpqlffNgs3oZWY8YoIp4E6WBJFWbG9JkS0AiGQ60UNJY0l9n5lh1VvmoN9NNP8Wv
-         C9RwzFBBiKmo78QkxRD8XJi9/a2Q7FRD55pgdhPXrzbI9GFH1wHIuJJCl5bHHLLRzpHM
-         CBaw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730019007; x=1730623807;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rp71bNijwv9lCHfBZe/MgLr7AbbyQ7KKNxx/7WbExbE=;
-        b=icbW4YZMoCP6UpYGLPIpSoqkr7xScPJldChFv6/aKMpz3Li2W5RBmMy/kvQEGV1zpN
-         92YenEoEvuim+eTnQN9M7uZ4uhVrgD7luM4s0QL/83kXH5MmbHQbgYG9XN+DsRMPjpjO
-         JnnGhRLd9c0/XZkuE2Dz6VeLm6ayXCAWo4jjOFYWN4dY/Tj7mmZm7R5jqi6a2UIby9Su
-         2hVC92Pbv1CsZ9z/cNyNyrzfM8qgmHo56+gbZbN8KXw7sMNxGAjS6tfVpjL6SpVtKrZ6
-         tADgnjah80V/rgABE5eX00XgVWpFjD4bP2DCC1HXHtP/3v3LTrNABFrQtbWPf7EJ+O1O
-         bc9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVUJDqbt0/5iae42f52B39tcwMHfYj2XMLRIOEPJ0wkkEyki425O/p2PJLW8Q19792AFWc=@vger.kernel.org, AJvYcCWLs7jlasIcL3j1MPpm9V5At+KB9SqKQv/6Ck+J+A2SFyM8gymoUUAm1Y3hMHVYrF0mZMoVLKzK@vger.kernel.org, AJvYcCXF7d2g33vQ4gMOvxgrQAy8n+R+qz6Wjj9F6IF5E6Og/hnrP76rKQqIcNyLMpvlbi7RFGOcT8FsveqeLzzT@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+a2hm5MJdEMdkK3lmCge7QDzG7px8G0nfxhmPZGurzNlIZBQ0
-	5Mo6sp1Fu95+EEtVFsHpn6STJoWaM21beEcu22rlXk9E3Hjhd58E2VQ2e0CsK01y8Dca0gqp43S
-	obVHD1dAz8ciHJ1SFuJ25yIs0ae0=
-X-Google-Smtp-Source: AGHT+IGjEgppN7G6fYO1LK7LTzhJNQ42OewN6u2JsRtG2cmXhUoGZCg3CYT8MCetd8kVr0h5oRb/n4T+/fHRCAPHfyE=
-X-Received: by 2002:a05:690c:6f0b:b0:6e3:2bbd:cd08 with SMTP id
- 00721157ae682-6e842f88314mr85751807b3.3.1730019007598; Sun, 27 Oct 2024
- 01:50:07 -0700 (PDT)
+	s=arc-20240116; t=1730019598; c=relaxed/simple;
+	bh=11i1AgQow2WhGLzPpBPh7Vb/cUhrEUuBhncxE38/cGA=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=SdnnMen+pUr7LzLyqjwMA7ZQ4RJVBDLEx+cPK1NNs6flII8aFgmfATAHqo6tS284bbtYPntwcOPnnb5q80RBoLKcD7QhwKICjmngIqCDgeYy6MeTvh8yTkZ0hWYPkJGexXyOx3YgkWP5diG7tpJIYUjhqsxN/xMpidzrI0OkO6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=rx8tSTJn; arc=none smtp.client-ip=203.205.221.210
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1730019285; bh=d9eB+SnHR+98czXwGSKWmX6BOVpjxwH6QUJ7429JbHA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=rx8tSTJnrXpumqI6yM5Kzyi92qfFggN+On4YbU/gyzZQkQy/7WZSUFDVN8jUvmo6+
+	 CT5rzFoXoG1wiMJyrkwFsxf+V0Gj1q/oPzqnvMI6CuTygLddrgcv+TbvgG8gsi/TEw
+	 ghyhWvHqqGud6EohLk5swA8W1aSdPBZBawLXQ5vU=
+Received: from pek-lxu-l1.wrs.com ([111.198.227.254])
+	by newxmesmtplogicsvrszb21-0.qq.com (NewEsmtp) with SMTP
+	id DABA88CB; Sun, 27 Oct 2024 16:54:43 +0800
+X-QQ-mid: xmsmtpt1730019283txyjqbrio
+Message-ID: <tencent_4E83A7C006C212DC065509AAEEC86EC48C06@qq.com>
+X-QQ-XMAILINFO: NhDhJCJPIfnTumN+Tm4o6xvRGoCMAAMFn3u2pOgl9Zj42REsCGGPl00BCedlrP
+	 GXpBH1gtSkY0yNL844D42p7Dx3NNh5sZr/ZEOE8M4u41B2gAx8kg2cYqY9NztPXEb1mAkiS9UADW
+	 Pq+mmOJE48IQYT+KMURLCgJIXBpVa1TzAFiat2Iad3LWUrOarqwectvbU/QJWwGPulD/qc817B4T
+	 yjp00OZU/PbgHx/94CuKIFuI3yD581PJNMo3I3vXq+w/KGRM3m9TsicvEAMwxIKW8QVbYIrWihjD
+	 F3PxNv9MMbbvZWRsh/Ds2FWdBymK3GNQR8J+4aEcfjGXthkz2fBO74ORqzHeR4rkFCpW+YtjZnbS
+	 D17SgmKfefHNM4WDH5dldwI4UkmO/jLENxHDWXKacRbh3SVthenhyO/KQw7MfNeUXgagMrZxavqX
+	 h9RSbQtSsSVCmzJZVA7LiOddzl8ONdxS71AXzhgGeqaU6uq8Um1vf7llJhPBsSjpbN/6M/nWMhVC
+	 IWr8Jtwre9auIdNTniGGmFcCcD8eruOdddt7Q9OGvLhk7YE4nlsQYb0ipsPhqt1FfQcjt0K5ko49
+	 EzGJRoS+zmHsXvbVks9xZ+kzMmA5t26ylUS7k8Ws3nHiJIVotTtXb4bCs00nfXncLF4SeEO7UH5u
+	 IQEpUPlDVx3GWgz8ZY/0L8DMKzzacYZ11Dydy0glwW/Z9zo9u8SAxJwCmLjoTwrMMjyl3WDL0OJb
+	 /Uux7n3qGNOgZznsOJDx9Fac3qBptWKC81CYhVbsmxxKQYHE9SFpQYWW6nuFcYvtnEGd9ieekKR0
+	 HdUCqEFwV3rJTXF5FO5iUeeV5PQpNpOk8onSaKZ7sUhAfm6PLKCf6HdYtI0bXsopKkF561aXruDJ
+	 6lNY9ARlQzaPWOeA2NAn9MgSGkeI8gwkKBw1d62WBz/gOsp9LlhIKVfphDRNzvfg==
+X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+0c99c3f90699936c1e77@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [ext4?] KASAN: use-after-free Write in ext4_insert_dentry
+Date: Sun, 27 Oct 2024 16:54:44 +0800
+X-OQ-MSGID: <20241027085443.1753197-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <671c2223.050a0220.2fdf0c.021c.GAE@google.com>
+References: <671c2223.050a0220.2fdf0c.021c.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241019071149.81696-1-danielyangkang@gmail.com>
- <c7d0503b-e20d-4a6d-aecf-2bd7e1c7a450@linux.dev> <CAGiJo8R2PhpOitTjdqZ-jbng0Yg=Lxu6L+6FkYuUC1M_d10U2Q@mail.gmail.com>
- <5c8fb835-b0cb-428b-ab07-e20f905eb19f@linux.dev>
-In-Reply-To: <5c8fb835-b0cb-428b-ab07-e20f905eb19f@linux.dev>
-From: Daniel Yang <danielyangkang@gmail.com>
-Date: Sun, 27 Oct 2024 01:49:31 -0700
-Message-ID: <CAGiJo8RJ+0K-JYtCq4ZLg_4eq7HDkib9iwE-UTnimgEQE8rgtg@mail.gmail.com>
-Subject: Re: [PATCH net] Drop packets with invalid headers to prevent KMSAN infoleak
-To: Martin KaFai Lau <martin.lau@linux.dev>
-Cc: Daniel Borkmann <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, 
-	Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>, 
-	Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
-	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	"open list:BPF [NETWORKING] (tcx & tc BPF, sock_addr)" <bpf@vger.kernel.org>, 
-	"open list:BPF [NETWORKING] (tcx & tc BPF, sock_addr)" <netdev@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
-	syzbot+346474e3bf0b26bd3090@syzkaller.appspotmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 22, 2024 at 11:14=E2=80=AFAM Martin KaFai Lau <martin.lau@linux=
-.dev> wrote:
->
-> On 10/21/24 6:37 PM, Daniel Yang wrote:
-> >> A test in selftests/bpf is needed to reproduce and better understand t=
-his.
-> > I don't know much about self tests but I've just been using the syzbot
-> > repro and #syz test at the link in the patch:
-> > https://syzkaller.appspot.com/bug?extid=3D346474e3bf0b26bd3090. Testing
-> > the patch showed that the uninitialized memory was not getting written
-> > to memory.
-> >
-> >> Only bpf_clone_redirect() is needed to reproduce or other bpf_skb_*() =
-helpers calls
-> >> are needed to reproduce?
->
-> If only bpf_clone_redirect() is needed, it should be simple to write a se=
-lftest
-> to reproduce it. It also helps to catch future regression.
->
-> Please tag the next respin as "bpf" also.
+directory entry space is too smaller than file name?
 
-I have a problem. I can't seem to build the bpf kselftests for some
-reason. There is always a struct definition error:
-In file included from progs/profiler1.c:5:
-progs/profiler.inc.h:599:49: error: declaration of 'struct
-syscall_trace_enter' will not be visible outside of t]
-  599 | int tracepoint__syscalls__sys_enter_kill(struct
-syscall_trace_enter* ctx)
-      |                                                 ^
-progs/profiler.inc.h:604:15: error: incomplete definition of type
-'struct syscall_trace_enter'
-  604 |         int pid =3D ctx->args[0];
-      |                   ~~~^
-progs/profiler.inc.h:599:49: note: forward declaration of 'struct
-syscall_trace_enter'
-  599 | int tracepoint__syscalls__sys_enter_kill(struct
-syscall_trace_enter* ctx)
-      |                                                 ^
-progs/profiler.inc.h:605:15: error: incomplete definition of type
-'struct syscall_trace_enter'
-  605 |         int sig =3D ctx->args[1];
-      |                   ~~~^
-progs/profiler.inc.h:599:49: note: forward declaration of 'struct
-syscall_trace_enter'
-  599 | int tracepoint__syscalls__sys_enter_kill(struct
-syscall_trace_enter* ctx)
+#syz test
 
-I just run the following to build:
-$ cd tools/testing/selftests/bpf/
-$ make
 
-I can't find anyone else encountering the same error.
+diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
+index 790db7eac6c2..cd1e1e8e0c04 100644
+--- a/fs/ext4/namei.c
++++ b/fs/ext4/namei.c
+@@ -2098,15 +2098,19 @@ void ext4_insert_dentry(struct inode *dir,
+ 	if (de->inode) {
+ 		struct ext4_dir_entry_2 *de1 =
+ 			(struct ext4_dir_entry_2 *)((char *)de + nlen);
++		printk("old name: %s, old nl: %d, oonl: %d, %s\n", de->name, nlen, de->name_len, __func__);
+ 		de1->rec_len = ext4_rec_len_to_disk(rlen - nlen, buf_size);
+ 		de->rec_len = ext4_rec_len_to_disk(nlen, buf_size);
+ 		de = de1;
++		rlen = ext4_rec_len_from_disk(de->rec_len, buf_size);
+ 	}
+ 	de->file_type = EXT4_FT_UNKNOWN;
+ 	de->inode = cpu_to_le32(inode->i_ino);
+ 	ext4_set_de_type(inode->i_sb, de, inode->i_mode);
+-	de->name_len = fname_len(fname);
+-	memcpy(de->name, fname_name(fname), fname_len(fname));
++	de->name_len = min_t(int, fname_len(fname), rlen - 8);
++	printk("rec length: %d, buf_size: %d, old nl: %d, name length:%d, %s\n", 
++		rlen, buf_size, nlen, fname_len(fname), __func__);
++	memcpy(de->name, fname_name(fname), de->name_len);
+ 	if (ext4_hash_in_dirent(dir)) {
+ 		struct dx_hash_info *hinfo = &fname->hinfo;
+ 
+
 
