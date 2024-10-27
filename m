@@ -1,109 +1,82 @@
-Return-Path: <linux-kernel+bounces-383812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2876E9B2079
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 21:41:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB12F9B2076
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 21:41:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1FBA281E06
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 20:41:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DE40281DA5
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 20:41:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41A8E1822F8;
-	Sun, 27 Oct 2024 20:41:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5BD318130D;
+	Sun, 27 Oct 2024 20:40:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a0LooTd2"
-Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com [209.85.167.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LnEcATsv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E19A5558BB;
-	Sun, 27 Oct 2024 20:41:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 078C4558BB;
+	Sun, 27 Oct 2024 20:40:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730061668; cv=none; b=awx3UaWhDIijCNhqV62eU2bw/LI9NqFKEg8tQcSXo+9pVXcGFh6q+iv3lJa4UJePVx1GN45QilQTQt/QCSvAQavxNNvD3b0BtuTtmQL/wpnRo09AvaTkok+b6FXndA3syy9wX8u2US3DJvNWj8zfb10dEMXa4GJ5fcbuQsdNpK8=
+	t=1730061658; cv=none; b=VB5r1uJtxAp0UOCEeZkxE0N7DCPOKhPEjrKnIXee/UZc+QPrNNdMVNYb/pyDvkOoCHfQfXYxuP2Xsdc51tVnRtfEj7BW8Uu6odZCmmGMXKGuL7mZ4kVa3Q6lvwHwsOeX1REeF5/JdHz54dic8gu+zLP5u1karETOobjMy8THeG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730061668; c=relaxed/simple;
-	bh=j6zZJd27rgLbrZ5NTRtCJlGPSSgjUXBSM6i4ASNcR1A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=N8nT32acNWg6MoGIKMlcA7J/73eB4oYlFGvexAexGUqo2nn9/lU30On6WwyKdHnNbjpQR411AU8QXhbYe8v8iWidXGXcLfho6sgEPykPoxn32soVHdbM6l4vePunlB3Z+n7Tum176uc41dI4kezPR6uiXIbuF3Nlf1TqL0Q4bHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a0LooTd2; arc=none smtp.client-ip=209.85.167.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f177.google.com with SMTP id 5614622812f47-3e601b6a33aso2149239b6e.0;
-        Sun, 27 Oct 2024 13:41:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730061666; x=1730666466; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tVOMgAe3RRwdAR+xhS/ahUABlt9WYQ00kCmXKennVJo=;
-        b=a0LooTd2er3ZY4S5SmB6GGN4+DfSCer4XDFnYKqwEq1tLFHArItCdUrPNxVT2gUbAw
-         hk0Q8Fhugt90U9w4gwBkqDnbi2Zr6oxOs7a4en1F284y66Bqb+0IJseD+quAYL32SM3B
-         bCjJo4jThAPYjrFqg3fcH8yG4nXYu0tHudzuHYlE9CrsaxgPA4f5ZC1Vp/+3VSp/lwnf
-         1xQ/hHckJCgnCVRXhkvC/MLKAg5mW5U0bKUAzhKEjabrVwxYVCD+sSDS0gJoD0u+kF+y
-         mE7Vr8401KzJSAO2rD0YmuGhxUm51MGrMZngdGUWNPgDVkSQX7ngzqt5e/yUGpvOEL//
-         gDmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730061666; x=1730666466;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tVOMgAe3RRwdAR+xhS/ahUABlt9WYQ00kCmXKennVJo=;
-        b=TFUM60YgGLGjZOuXb7ce6xsAZKHHHX4/NlCcozJImjP/0C75PdZ1fdKGA6coJ7F1uB
-         X0LBuYA3Qd6N5JHnP1YWmx78jtQPTWNBYNl1n9QbFWsPZyMo5A5YI33MbHOGy6AMa0kr
-         N6G5xMhMdW4XsYnsaqedIOtzcUKS/4FQBBcYk1CKJQZ5TmxfzRtvCDk6e3O1M3mNpPj6
-         TEw26UsvPGyJEq1tVgr93XQq8C5R6mF+f39E6Cx38qZeYj0Ygrg4+FjSYOZHL8uOciSS
-         SkLPmtTfMKtyt/p9rH6UgJG+OPqyyfhpffbXOzkHTufba3iK/Bao9hLDYpkp8ludT0gB
-         Vymg==
-X-Forwarded-Encrypted: i=1; AJvYcCV2uByCxh7qaNdcqSbXwd/jMEv7v0yop4ejgY1ZP0kuuPefuhy0WVcoMZhpGyIlHX6MpsRPZvuwO4eSuVlL@vger.kernel.org, AJvYcCV526IcZgZKXcId3zjmEg4UBQytYU8gDWB9irb7Mpe4daysHh0Q++Ig8Vcq4HBQNsY0kGsRm1rQ@vger.kernel.org, AJvYcCWzgicvB8eZcQVZ5Ax04UeCfdTVEgk/5d2bxtLt+Rkv94u46OK+x974vXQhyWi2j5O6zxx0ZDCeITjU@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlGhxjq1PoKt5WrqDXFv/zH67PWbfaEg36ghD7nn07NON4CwOJ
-	S0NheYQ10nvafT6+Iqz3W4IJ28fdG1V4+6dqGAOY+WViOSIFR49BB61l6aMA+3+kZYUHG5/5AHM
-	m1QxZgLg+vGYTkTwyfptLRSV0EGk=
-X-Google-Smtp-Source: AGHT+IH+JxOFEQ+kqwejAXVzFqiU5acSuZcO22SFIm9cfV1KUI4DKv5HE7yFAFL/l0kl3yq2Zo6FvD7AK4hJebj41T0=
-X-Received: by 2002:a05:6870:450b:b0:277:df58:1647 with SMTP id
- 586e51a60fabf-29051da0aa4mr4481229fac.35.1730061666001; Sun, 27 Oct 2024
- 13:41:06 -0700 (PDT)
+	s=arc-20240116; t=1730061658; c=relaxed/simple;
+	bh=CbXmtdv3IjeDBQxB55AZf9jmxsHSvyuvWmObEhgds4Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BSkCVXSAqWyiyuhQg1WuWAxFOd3MP/ijhVaMaCXxct/wBIreIzfF7uzSAvN7alxGBLcbxd9AcGd/XPvZKLPwXc7ixY5gF2QMCQIbKDtHMX/+jg6f+WCKtFrVhFXlybYlC/A4U821sRZ+4qmrA+MLVPUCdE0Mcp65Kv5dr4YYNNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LnEcATsv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFB30C4CEC3;
+	Sun, 27 Oct 2024 20:40:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730061657;
+	bh=CbXmtdv3IjeDBQxB55AZf9jmxsHSvyuvWmObEhgds4Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LnEcATsv4UT/1vK5R7I5/K9/vJjlyku4VD0Cz9tTzKxg/1okqaOmGYhSQzEAM6V4p
+	 Bqgb03IVNIqiJq6KW0v26HYIxTMTCWGjAgfHLP7db7WReBwc8ueZRCGXOE7hDBT3cJ
+	 EdzATkwXfLrdUZ7w5WKD7j28Vz3F49GEQpVxGh4QDN6MJYqgAovHUBTd1vRHq3acqE
+	 4tLI2AJtTNOOtFN2/MJ97OIuaLQwHvO/BIRjct6GUkBM7CTtzLW4g5Wks0Cbg6w1Pj
+	 JnM5fmvSBY/n132MaqDfC7WKLFaBSRvfHCaV8xuUmVawSfjDwbKAhP0K/KlY92wRuJ
+	 qH7pT4pOKG7zQ==
+Date: Sun, 27 Oct 2024 21:40:53 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: =?utf-8?B?Q3PDs2vDoXMs?= Bence <csokas.bence@prolan.hu>
+Cc: Chen-Yu Tsai <wens@csie.org>, Maxime Ripard <mripard@kernel.org>, 
+	dmaengine@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	Conor Dooley <conor.dooley@microchip.com>, Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>
+Subject: Re: [PATCH v2 03/10] dt-bindings: dmaengine: Add Allwinner suniv
+ F1C100s DMA
+Message-ID: <b44xrgwi3swuvliaxzzk5tvanxrmik5zm4tcqzavl32wbgce3e@yb4eerrluanv>
+References: <20241027091440.1913863-1-csokas.bence@prolan.hu>
+ <20241027091440.1913863-3-csokas.bence@prolan.hu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241011224736.236863-1-linux@treblig.org>
-In-Reply-To: <20241011224736.236863-1-linux@treblig.org>
-From: Ilya Dryomov <idryomov@gmail.com>
-Date: Sun, 27 Oct 2024 21:40:53 +0100
-Message-ID: <CAOi1vP9au=SqKfmyD79YA3gCGOCj1FjLNJxtF9N_k0cafCJ3uw@mail.gmail.com>
-Subject: Re: [PATCH] libceph: Remove crush deadcode
-To: linux@treblig.org
-Cc: xiubli@redhat.com, ceph-devel@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20241027091440.1913863-3-csokas.bence@prolan.hu>
 
-On Sat, Oct 12, 2024 at 12:47=E2=80=AFAM <linux@treblig.org> wrote:
->
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
->
-> crush_bucket_alg_name(), crush_get_bucket_item_weight(), crush_hash32(),
-> and crush_hash32_5() were added by commit
-> 5ecc0a0f8128 ("ceph: CRUSH mapping algorithm")
-> in 2009 but never used.
->
-> crush_hash_name() was added a little later by commit
-> fb690390e305 ("ceph: make CRUSH hash function a bucket property")
-> and also not used.
->
-> Remove them.
+On Sun, Oct 27, 2024 at 10:14:34AM +0100, Cs=C3=B3k=C3=A1s, Bence wrote:
+> Add compatible string for Allwinner suniv F1C100s DMA.
+>=20
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> Link: https://lore.kernel.org/linux-kernel/20241024-recycler-borrowing-5d=
+4296fd4a56@spud/
+> [ csokas.bence: Reimplemented Mesih Kilinc's binding in YAML ]
+> Signed-off-by: Cs=C3=B3k=C3=A1s, Bence <csokas.bence@prolan.hu>
 
-Hi David,
+Missing quotes? Are you sure this passes checkpatch?
 
-The implementation of the CRUSH algorithm is shared with userspace and
-these functions are used there (except for crush_hash32_5() perhaps).
-They are all trivial code, so I'd prefer to keep them for convenience.
+Best regards,
+Krzysztof
 
-Thanks,
-
-                Ilya
 
