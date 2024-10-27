@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-383486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67FAB9B1C66
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 08:51:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E011B9B1C67
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 08:52:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97A041C20B39
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 07:51:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C78B21C20974
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 07:52:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9154378C9D;
-	Sun, 27 Oct 2024 07:51:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DFBB217F3B;
+	Sun, 27 Oct 2024 07:51:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dF+rboRA"
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a747LVY5"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BCE77346D
-	for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 07:51:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E2657DA88
+	for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 07:51:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730015490; cv=none; b=jCN70oKAs3e22kAoZ1oDOfNMnQ0I4hYMEC/d8Sw5qpaQz9hsdMbAViNSiP5/qgDiz4pOZEtjBMAMC+k16AbbbIjL5rnTebjKTAICSjO3VpUF8ak1fFz8TGux8aYESTFW7QjJpFrOe+BPHCwGIJ+J2B2+YeEcDQCm6KObjshjMXI=
+	t=1730015493; cv=none; b=pRdN/VwZDp0JXzUQZxxbJZsalyK87GzDKB5zg2t3zaZn9HUHGTeKIipRUo0+/u7CVZ8qFXo8D51hIPNhCUsHUhI26HBBc2DyXma9k10vNzD5hsZAFXrHf7t4O1mMi+0QWnnoGlaxWSDJk7A/2/DWCKsZdyHMzUycuNcAHVlT2nU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730015490; c=relaxed/simple;
-	bh=nhIxyCQYfb/pjLbh6iu5zVWZFBHtkKHs0QJxP7HhhyA=;
+	s=arc-20240116; t=1730015493; c=relaxed/simple;
+	bh=UUC8cC3TAMgwQ1yjoC8b/V5qpSb9de4BBZikaAxoqn4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GFgEI7GIzRduFtmF/yYdwETerMR9LI6KXDc/mR+v3d5B7HGvn/97yqJ/wDHr9Atib1ATNNPfthOGi3n5jjLiUsTqdVA86Gt21DvNx76Gnpi3KeFfq94Wl3sbjAHOcXTk1YUQ5mBCFvPy+yyKdSLyiYXfvuw1W7Kt9wgkngTAVTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dF+rboRA; arc=none smtp.client-ip=209.85.215.182
+	 MIME-Version; b=B3gRGmJbmujSxWaN+tmZHjzFFAnAbNT+jfAxhZfNkuCJQRscaU6blCIaKlgAbClWsvMm331pcsxMFRfimrz0e8zDRcwVRyDWd+lp6mniefQ4jtsq2+oZKsfYb71SFFChDJT4K264G9Tpkwn3DeHxmJpQ59YiZyHbSg4ooIw4Ero=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a747LVY5; arc=none smtp.client-ip=209.85.214.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-7ea0ff74b15so2113466a12.3
-        for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 00:51:27 -0700 (PDT)
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-20cdb889222so30666185ad.3
+        for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 00:51:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730015487; x=1730620287; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1730015491; x=1730620291; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=nzgoY73OAH7IN4I8JIVtQ+45LcH7GhgBHjlXlGpHvfY=;
-        b=dF+rboRAtAsVBu386RjRmSPB4D3dwt6iLw2w2ZLNSvITwHmMjy2BGeUE2wBeGi/ACf
-         5g6hJPw/R3b4h4J8aPZpla49XN5PKv/e74o17HdbB3l/nl3c6LSfri3/KLZco4VK3uAM
-         /hDxywfACupnrw7QJpDEqYCvDGAVy6wiC12PBf9Kg3w5iofvZYZ9tlqjM7KLThyzuJa1
-         o6a11+WHyTkbHAK+EFSTa8DwuRkeNNN3f3jGE70IySrABm6Eabsi5vieJSj4HEBa8tLV
-         UpqFAbMER6wGHrGZgKUZXLyBa4x4rCG+4A/yymuS2LvfRLgScz2d3OXZndUOuDFM5gmu
-         2BIQ==
+        bh=95caNnI7hgOLxEqas86hhjYPjq4p60okYGlZe1W9+VQ=;
+        b=a747LVY5VzdvPurx0+fmJK56R/UOOVS72/R5Vei2zVmzPJ/HE/gpkkfoW0laBbZ9/q
+         Q5ac2JsL8Ic/vO89PnTukxSRZWddG+fHQnufSzTcaJzSvOT8DWtwp9uBkLUhTCgc86rr
+         YltsKN2HvGZEhnaMiesSx+yzMzqCMPbZvH9LUO4yzLFIjrHUL2CmT0xB4Q/KvDdipP85
+         H3GZjExGbGeJCX7e3ITi1CVkYj35avi4yFzSKaIsHRFo7vQeHrs9Yuo0iTcEn5EuJQpF
+         BqHagnWmiJnYMFt90YaJ273RwRaBPNlW+h7PeI/cTqYkQyOKiQdgszLkt0S2ImQjVvg3
+         YZqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730015487; x=1730620287;
+        d=1e100.net; s=20230601; t=1730015491; x=1730620291;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=nzgoY73OAH7IN4I8JIVtQ+45LcH7GhgBHjlXlGpHvfY=;
-        b=qNJF4UtJJoXgxQIB6akP8tyK9vwFmTJ2IXLs/AsA6SBSwMdeKjkaZU1XT+Y6zPX3Yv
-         mGgbZJdSuLPUZsc6PubPJK1amZBT+f1O+D0YeWFjOQi0rxIHPZw91GpPEFSV07yNY3KB
-         Au6uMDBpQWNjGK/BJ0EZpLwlLaplCqiBi6JqD/jJaatzsJPChxdB8WhmNobC1tTk7dls
-         n5F6HO+eHvLiQ2wxqrdHyPbjRcVbkC766jsPEoC8yEYVJHSKc/IQn4bJyu++rczIjYFL
-         7HMwtvTsjfTbQ8gsMQDmamg7X3cVSR+sYYUrJYTPs13/592OSiUbf6Kw9gFA7CFaytgA
-         GQ3w==
-X-Forwarded-Encrypted: i=1; AJvYcCUsnN73WMUqEX23grCcoPooBjcCWJ4smflplRwK+GzjPq+aU+LSp4PKaaLh4sRRuX6XBVNd361r4yi4qV4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzz7tA6XPb0nyc8AjEMANfAzIFKzURzOCGzwqXvXqCZnSQVGPCd
-	NsqKHoOft+ejrfucTp7/BF1xtqEP6dThIgpKMEQ1VSfq0LuLqTWt6I92Wm5bC0I=
-X-Google-Smtp-Source: AGHT+IFIvv3jnR4vgZY784qrPZUlPI3xPYuwCE5+QmhB3umvWUCbhT9ijcuc5ukibYVcOx+Qde/7kQ==
-X-Received: by 2002:a05:6a21:1193:b0:1d9:61:e779 with SMTP id adf61e73a8af0-1d9a83ab127mr6572670637.4.1730015487264;
-        Sun, 27 Oct 2024 00:51:27 -0700 (PDT)
+        bh=95caNnI7hgOLxEqas86hhjYPjq4p60okYGlZe1W9+VQ=;
+        b=kwD9kr4YTHojy215me9eh31SGfFkMEPDz3WCjP3sDux/aRzYyZj4bQs8c5dxGmUKM8
+         Hh7iZm8Aa7w8v4B4daWVSKsHpV0vlbeZS5hBBznhINNTjh4mWscG9JsYNqeqYhCOPvVB
+         90rzEwp19sPWR0f6AKLISMmJhyKurIj+pQo4yWVMhzZa/Mu9VwkMs1VrJDx8oM/rnvFY
+         BzzR1i644fzJiJs+Q3fc6bJF4rHiQHFSBAb4bGzF7oNiz1sLEnVFha0KFiV/le0zDWXf
+         sdNnXCJurgfdujOGxnpFR0IKKOh7q2wXycSXumo1jO6lph+z6gImkH7ENt+N3zU5aHyB
+         JEYg==
+X-Forwarded-Encrypted: i=1; AJvYcCVo6+0YQQrl4IJexViHLVrS7whmEIfm29ixO3w+oheTEoIXNK/PW4WnS4mPs/Gmw26j0PGfs2KALgM+wMU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzvYJ7TGWFwrsOfScU1QooYcHRNCtwL1Dvqv0iGWEXZISkPyZOu
+	T/LeAoJTUT3AkN8j1M9ycIwT5Q0x1dXUI56XAu5HCflbWsb+/sZ2
+X-Google-Smtp-Source: AGHT+IH7qS5niQmAAfTA2UGQJF1s0kcotIcMoHkxWCvAmGRljhi8/z+HxbR/00ppveIZ8SYyL8JZRA==
+X-Received: by 2002:a05:6a21:6282:b0:1cc:9f25:54d4 with SMTP id adf61e73a8af0-1d9a84d9ddfmr6268806637.38.1730015491155;
+        Sun, 27 Oct 2024 00:51:31 -0700 (PDT)
 Received: from fedora.. ([2405:201:d007:50c2:b7e7:6df3:9958:a45d])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7205794f9a1sm3785551b3a.90.2024.10.27.00.51.23
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7205794f9a1sm3785551b3a.90.2024.10.27.00.51.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 27 Oct 2024 00:51:26 -0700 (PDT)
+        Sun, 27 Oct 2024 00:51:30 -0700 (PDT)
 From: Vamsi Krishna Brahmajosyula <vamsikrishna.brahmajosyula@gmail.com>
 To: maarten.lankhorst@linux.intel.com,
 	mripard@kernel.org,
@@ -76,9 +76,9 @@ To: maarten.lankhorst@linux.intel.com,
 Cc: skhan@linuxfoundation.org,
 	dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 3/5] drm/edid: convert drm_parse_microsoft_vsdb to use struct cea_db *
-Date: Sun, 27 Oct 2024 13:21:06 +0530
-Message-ID: <20241027075108.14273-4-vamsikrishna.brahmajosyula@gmail.com>
+Subject: [PATCH 4/5] drm/edid: convert drm_parse_vcdb to use struct cea_db *
+Date: Sun, 27 Oct 2024 13:21:07 +0530
+Message-ID: <20241027075108.14273-5-vamsikrishna.brahmajosyula@gmail.com>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <20241027075108.14273-1-vamsikrishna.brahmajosyula@gmail.com>
 References: <20241027075108.14273-1-vamsikrishna.brahmajosyula@gmail.com>
@@ -91,55 +91,49 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
 Address the following
-	FIXME: convert parsers to use struct cea_db
-in the parser drm_parse_microsoft_vsdb
+        FIXME: convert parsers to use struct cea_db
+in the parser drm_parse_vcdb
 
 cea_db contains len and then data. Appropriately change the indices
 when referring to individual elements (db[n] becomes data[n-1]).
 
 Signed-off-by: Vamsi Krishna Brahmajosyula <vamsikrishna.brahmajosyula@gmail.com>
 ---
- drivers/gpu/drm/drm_edid.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/drm_edid.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/gpu/drm/drm_edid.c b/drivers/gpu/drm/drm_edid.c
-index f79d8fbdb62b..e2ef07d00aaf 100644
+index e2ef07d00aaf..d9fa994a3acc 100644
 --- a/drivers/gpu/drm/drm_edid.c
 +++ b/drivers/gpu/drm/drm_edid.c
-@@ -6361,11 +6361,12 @@ drm_parse_hdmi_vsdb_video(struct drm_connector *connector, const struct cea_db *
-  * https://docs.microsoft.com/en-us/windows-hardware/drivers/display/specialized-monitors-edid-extension
-  */
- static void drm_parse_microsoft_vsdb(struct drm_connector *connector,
--				     const u8 *db)
-+				     const struct cea_db *db)
- {
- 	struct drm_display_info *info = &connector->display_info;
--	u8 version = db[4];
--	bool desktop_usage = db[5] & BIT(6);
-+	const u8 *data = cea_db_data(db);
-+	u8 version = data[3];
-+	bool desktop_usage = data[4] & BIT(6);
- 
- 	/* Version 1 and 2 for HMDs, version 3 flags desktop usage explicitly */
- 	if (version == 1 || version == 2 || (version == 3 && !desktop_usage))
-@@ -6373,7 +6374,7 @@ static void drm_parse_microsoft_vsdb(struct drm_connector *connector,
- 
- 	drm_dbg_kms(connector->dev,
- 		    "[CONNECTOR:%d:%s] HMD or specialized display VSDB version %u: 0x%02x\n",
--		    connector->base.id, connector->name, version, db[5]);
-+		    connector->base.id, connector->name, version, data[4]);
+@@ -6065,14 +6065,15 @@ static void parse_cta_y420vdb(struct drm_connector *connector,
+ 	}
  }
  
- static void drm_parse_cea_ext(struct drm_connector *connector,
-@@ -6423,7 +6424,7 @@ static void drm_parse_cea_ext(struct drm_connector *connector,
- 			 cea_db_is_hdmi_forum_scdb(db))
- 			drm_parse_hdmi_forum_scds(connector, db);
- 		else if (cea_db_is_microsoft_vsdb(db))
--			drm_parse_microsoft_vsdb(connector, data);
-+			drm_parse_microsoft_vsdb(connector, db);
- 		else if (cea_db_is_y420cmdb(db))
- 			parse_cta_y420cmdb(connector, db, &y420cmdb_map);
+-static void drm_parse_vcdb(struct drm_connector *connector, const u8 *db)
++static void drm_parse_vcdb(struct drm_connector *connector, const struct cea_db *db)
+ {
+ 	struct drm_display_info *info = &connector->display_info;
++	const u8 *data = cea_db_data(db);
+ 
+ 	drm_dbg_kms(connector->dev, "[CONNECTOR:%d:%s] CEA VCDB 0x%02x\n",
+-		    connector->base.id, connector->name, db[2]);
++		    connector->base.id, connector->name, data[1]);
+ 
+-	if (db[2] & EDID_CEA_VCDB_QS)
++	if (data[1] & EDID_CEA_VCDB_QS)
+ 		info->rgb_quant_range_selectable = true;
+ }
+ 
+@@ -6430,7 +6431,7 @@ static void drm_parse_cea_ext(struct drm_connector *connector,
  		else if (cea_db_is_y420vdb(db))
+ 			parse_cta_y420vdb(connector, db);
+ 		else if (cea_db_is_vcdb(db))
+-			drm_parse_vcdb(connector, data);
++			drm_parse_vcdb(connector, db);
+ 		else if (cea_db_is_hdmi_hdr_metadata_block(db))
+ 			drm_parse_hdr_metadata_block(connector, data);
+ 		else if (cea_db_tag(db) == CTA_DB_VIDEO)
 -- 
 2.47.0
 
