@@ -1,103 +1,119 @@
-Return-Path: <linux-kernel+bounces-383724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A69069B1F85
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 18:59:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3D619B1F87
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 19:04:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34179B2127F
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 17:59:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BA771F21537
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 18:04:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE1E317B4FF;
-	Sun, 27 Oct 2024 17:59:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0912C16F8F5;
+	Sun, 27 Oct 2024 18:03:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S8+jptRD"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QdqBQ8sp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BCA217A5BD;
-	Sun, 27 Oct 2024 17:59:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61C5828F5
+	for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 18:03:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730051967; cv=none; b=KlYVvAh6aMfY3lRjzdTzixX3kfh9WEAUUVnyxUEZPs79fiTegWsrYfTP7h8/MCrQdpsnbwhdmNYXKyPFA21fUUMF10VKa5v8WfOqAp1a7oxqt4Nz72a0MZhygiGdDCmqDPocG2W/xtw8Nb0NQw7ukvCpnyaCFbanjtVLCOTHenc=
+	t=1730052235; cv=none; b=jYx+R9cgpoPsFEwrfse9xhlRb1eOdz3/SlHkWax6vu4hCZsBEusT7vnjCU1ZhQsXosR2YOdn2ElqLRfWk9wGNhu79sy2B6dUsT66/3Io7un3OQyLOUJKnSEg+AHbM4Oem4Bc9KSWVonLFuPo4nnc4Q4sWztEHvpPx0vvJI0NfxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730051967; c=relaxed/simple;
-	bh=0UbSjGcSDB+S7wUx4CXOcRobJQ1oRD4vD2zOYuX2Kew=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=njEbJBonSvOj57oLvRw2ZzXUSU3oDJ/gsWbBPN3PvESr79m5p81/lPPMQDiVcVH8wHpJpOQ2BdO1rdOlMZD9ywedjgKIU5kdoRtwA1djp4INmiX60G0I4/6qE+541OQboujuTaZviJH4sNgSEPVMwGNJ6eXQznggRVcrmJwORGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S8+jptRD; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2e2b4110341so546704a91.1;
-        Sun, 27 Oct 2024 10:59:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730051965; x=1730656765; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0UbSjGcSDB+S7wUx4CXOcRobJQ1oRD4vD2zOYuX2Kew=;
-        b=S8+jptRDxdQvS48G/xhm56EIul+yW3Ynq5k33sKpguJisZetTPh3fuqZ4vyB7qOHM+
-         VKIAGEXsMI9kBlrj9pnWRibAoHFMPXF+A1I+/CkqxfUtbk5REr5D+nBIGpZpxiEG3Axr
-         NJ2DHBNDROvXqPyaW4BwMFbcsqPA+BKOSH+eLwsFuHlpAuPUdr9q59sZK8gH6H3cZVw4
-         f9TLUBzB6GHtBx4bTXeFdD1ba9UMqtHXeO9b5EzWJiMiYV5I4wiwKXKiocHvIrzd9+92
-         k1Ej+6NLPmUZuTordMqpqKAauTkGvHBkeIZrvq9oyK8cJUHqA+anLKMwiifkMZ5TCGkl
-         LTUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730051965; x=1730656765;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0UbSjGcSDB+S7wUx4CXOcRobJQ1oRD4vD2zOYuX2Kew=;
-        b=QrrkKcGNf3Dvpa0QcdTIRTvAbxznxGGM2+XMHeCqvD4KWQD7XXFI4DYNS7hsDoE4R8
-         qx+aDSNjNed+YUHBcqI1HigvfaYAF15xpMoololm0hzuWhdaLyRL3cKswVW5c1dvXUEh
-         AamfRK4UozBCgAKo4qFcqmtXD3Fox5agfIA7GGexuHyH/4O3UxlP6QyJP9AnKiEU9/ty
-         MeMBlOWK7T7nBcsygqP8KqF4cnZmQc0jcSrBYX5naCaESzDeq7QCpbP3wh4yjxEBo2Qx
-         GCqS9mkCmNWIjJ32T5/JYDcCzUOimOd8kTRNZDELycHwANz0jOL/eZrUtj40CaLERmtc
-         3VHg==
-X-Forwarded-Encrypted: i=1; AJvYcCVDtx7dY0a4D0CpR/x40XeARrsfpNotOY2eCzMiHhNb5qOVpNrVj491hxSSame57YoSUJ/Dl3JJL3R15jLAmU8=@vger.kernel.org, AJvYcCVxTco1xncuW1P95kObHEA0j5iuOWAjFLtYur5Q2HrwGqsK+YXpTQLBaM4mXqcbPiHzZg/2bEGW4pm53TM=@vger.kernel.org, AJvYcCXM3shwESCzC2ZBSxRFJU7DfQ7Wi9ZiSn0GszQPg55cZFvRWqCLvQzenQgXnozE25W+sL3I337xYH5oxSCZ@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDhdLJe4Q4CnwbTq60tVk+eXM18zhRaBwl0TVlRgnE9A4oFrsm
-	Nw/jNp2uOdzGMEIC9xWtunkMti54UtSVTEWaEubui1A2gwTD46qv7oM8/Gx3esvRKLIiHDzrOk9
-	53C7GcUwTLYAaKvH7jJjG+6/X64E=
-X-Google-Smtp-Source: AGHT+IEeZnnHbXtBp8iqrs4W8ijIFAmvZkYu6WsDP0Rj0vVPVd5O/4PVkQIVuOKO+4nppet5edWf+GUBkU6bai5spq4=
-X-Received: by 2002:a17:90b:3cce:b0:2e2:c414:80a4 with SMTP id
- 98e67ed59e1d1-2e8f12e1014mr3006581a91.9.1730051964867; Sun, 27 Oct 2024
- 10:59:24 -0700 (PDT)
+	s=arc-20240116; t=1730052235; c=relaxed/simple;
+	bh=/hIsMd6rdRDYha3A27+FzlsMw32f6kZGTal0sz54thY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=niqJqbRrfrfbSukNEDjbC2VYPfQn7yA0Nlwe19dIlZvHFBX15Y8r1zWCAhqHfsnNkFYGCJWOVg2QGIeDu8Uhaj58Z3B2G3RJ8k2PssCCPrbOBtJoXTtjbRIE13hQhC4gd5MkMemp6JHlNRCriDDZOdOq6lux99FTSHOVMykbO40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QdqBQ8sp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D191DC4CEC3;
+	Sun, 27 Oct 2024 18:03:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730052235;
+	bh=/hIsMd6rdRDYha3A27+FzlsMw32f6kZGTal0sz54thY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QdqBQ8spphZDq6y5tYQMEBdcSjc7KjGBt7TaK5WdqFxNvnhleOARfmDrQrG2hDHpJ
+	 K0hiMQgQOEhi68F8hkh6GKFeMp+zqgwZTWeI33YONxVEcP1OqHokgy8nChUJ/3i02R
+	 ACUDtSAxg31nmjG025Rf5HjyN9dDNBjr+myNLUFT3GPohzQ6pEXkRNzeR6pD2a6BjK
+	 aJ8FP0V7TmA9en9q4/3t5LzCChNMZi0zJM1Ex/Pxe4crEWBFsPbRRVdZAjjL607pTX
+	 +XGZqzgdJDVts3+XRXn3Lly01gL2I0SdriNVhvtRy/izrGFLatv/hTWykJSQ7P0lCL
+	 MMgMq7kyhkdKw==
+Date: Sun, 27 Oct 2024 08:03:53 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Andrea Righi <arighi@nvidia.com>
+Cc: David Vernet <void@manifault.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] sched_ext: Introduce NUMA awareness to the default
+ idle selection policy
+Message-ID: <Zx6AiTja6jX7bC7R@slm.duckdns.org>
+References: <20241027174953.49655-1-arighi@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241027145636.416030-1-ojeda@kernel.org>
-In-Reply-To: <20241027145636.416030-1-ojeda@kernel.org>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Sun, 27 Oct 2024 18:59:12 +0100
-Message-ID: <CANiq72n3mFKeErzp-OVk=+yZD_sZurR-6u7mEn_QunfMTKD-Fw@mail.gmail.com>
-Subject: Re: [PATCH] kbuild: rust: avoid errors with old `rustc`s without LLVM
- patch version
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: Alex Gaynor <alex.gaynor@gmail.com>, Masahiro Yamada <masahiroy@kernel.org>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
-	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev, 
-	Thorsten Leemhuis <regressions@leemhuis.info>, 
-	Cameron MacPherson <cameron.macpherson@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241027174953.49655-1-arighi@nvidia.com>
 
-On Sun, Oct 27, 2024 at 3:56=E2=80=AFPM Miguel Ojeda <ojeda@kernel.org> wro=
-te:
->
-> Thus, instead, just make the match stricter.
+Hello,
 
-Applied to `rust-fixes` early to start getting it in tomorrow's -next -- th=
-anks!
+On Sun, Oct 27, 2024 at 06:49:53PM +0100, Andrea Righi wrote:
+...
+> +static void update_selcpu_topology(void)
+>  {
+> +	bool enable_llc = false, enable_numa = false;
+> +	s32 cpu;
+>  
+> +	rcu_read_lock();
+> +	for_each_possible_cpu(cpu) {
+> +		struct sched_domain *sd;
+> +		const struct cpumask *cpus;
+> +
+> +		sd = rcu_dereference(per_cpu(sd_llc, cpu));
+> +		if (sd) {
+> +			cpus = sched_domain_span(sd);
+> +			pr_debug("sched_ext: LLC cpu%d: %*pbl\n",
+> +				 cpu, cpumask_pr_args(cpus));
+> +			if (cpumask_weight(cpus) < num_possible_cpus())
+> +				enable_llc = true;
+> +		}
+> +
+> +		sd = highest_flag_domain(cpu, SD_NUMA);
+> +		if (sd) {
+> +			cpus = sched_group_span(sd->groups);
+> +			pr_debug("sched_ext: NUMA cpu%d: %*pbl\n",
+> +				 cpu, cpumask_pr_args(cpus));
+> +			if (cpumask_weight(cpus) < num_possible_cpus())
+> +				enable_numa = true;
 
-Cheers,
-Miguel
+This isn't a big problem but the loop looks a bit odd in that once both are
+set, it's obvious that there's no reason to continue. Doesn't this need to
+check only one CPU in fact? e.g. for the first possible CPU, if sd doesn't
+exist or cpumask_weight(sd) == num_possible_cpu(), don't we know for sure
+that llc or numa doesn't need to be enabled and vice-versa?
+
+>  static s32 scx_select_cpu_dfl(struct task_struct *p, s32 prev_cpu,
+>  			      u64 wake_flags, bool *found)
+>  {
+> +	const struct cpumask *llc_cpus = NULL;
+> +	const struct cpumask *numa_cpus = NULL;
+>  	s32 cpu;
+>  
+>  	*found = false;
+...
+> +	if (p->nr_cpus_allowed >= num_possible_cpus()) {
+> +		if (static_branch_unlikely(&scx_selcpu_topo_numa))
+> +			numa_cpus = cpumask_of_node(cpu_to_node(prev_cpu));
+> +
+> +		if (static_branch_unlikely(&scx_selcpu_topo_llc)) {
+
+static_branch_maybe() is probably the better one for llc.
+
+Thanks.
+
+-- 
+tejun
 
