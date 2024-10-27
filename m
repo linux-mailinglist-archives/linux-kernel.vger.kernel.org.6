@@ -1,198 +1,205 @@
-Return-Path: <linux-kernel+bounces-383688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 077089B1F1E
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 16:37:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94ED69B1F20
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 16:38:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 783941F21622
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 15:37:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 179551F216A7
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 15:38:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BB3D175D4C;
-	Sun, 27 Oct 2024 15:37:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 462FC176AAF;
+	Sun, 27 Oct 2024 15:37:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="l0aKoSdV"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=ps.report@gmx.net header.b="Uf1Q3rTH"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AD6016BE3A;
-	Sun, 27 Oct 2024 15:37:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0D8BB640;
+	Sun, 27 Oct 2024 15:37:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730043462; cv=none; b=Zcen0CDBhbRsvUcaac4HHZlV1K6B5cprccvdljT+t2XzuuZjd1rnech3A6n8aXCPxUUlYmGbbes1n6haK+J80AVYbNuiq/6kun+lK5BZbXJTnV/GuHVmUS7813/jx++Za9s7guqfZGrP61pK1YOjl6dNmVOCNA7iw8tuPEL/Fbc=
+	t=1730043478; cv=none; b=DzRZvKx/z2gOUAoJGysjWjCZ0Y7AXMdUwjpRrL3M+/2vIYUrV6W0Ow+hPccarFlS+xyn1aFuzIE3QnyvGmAA9IViQAgbp7gPu6TWvJ1AHZjGpebekSiM4ojDH3tPcFx20XadgQQCY6wH/gGWWJBYnJ4elKBjvZkD3X7F1yvi8rA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730043462; c=relaxed/simple;
-	bh=B0aY7cOry/DtnuvrZS2v4+CUzhOjGyMSgMMBV884kz0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=M5FzWmka3FvFv6QBK3EsoPD2kH7WlybFgEExWGQLY/sigJZQ1a+SaGmAbHw22CZET6Q+1RsEeJvc8HRlTUXclzhIa7CRlf31O70bTilpZvSRk4QccGMqFkwUDnB27XWSE52bMhxJJZPGde9KuB1kDPsvPOXs1bYQ5oWXza+KZOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=l0aKoSdV; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49REIi6J020846;
-	Sun, 27 Oct 2024 15:37:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	w0SVi4wuY31MEA962sDb73MizyKBANV4LsDxIEBcBrY=; b=l0aKoSdVTsmllT9Q
-	Q8E2g2TiRdeN1n2yADEr4Ss1oadNTl/PlF+ITidFlXxXSoB+wk3dNqbky7TU2SJw
-	zThsIWSxnYYD36G0gFahxDXl8yfru8kP7ZxG25sSauyGLj7OeAwdd0KPb/7EseU1
-	w+Tjoiiu3bsHr4HpiYo5SVd645di8ne41XEdmHBSUSvzF5KciQ5aLCOyNRZE0Bd5
-	StHJoXy17QL7YzLfkSdHW/+CvO5Cm2yY5Bt4UXR5vOZGWoaKMAgsTndDiqoqeK1H
-	ISGtIE4gNJqa9pquZ0H6cpmS/brSCaMmmlCZyKsCji2FGkVDMI3HWVBtqwEv+b2t
-	DxOodg==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42grguajqu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 27 Oct 2024 15:37:02 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49RFb1eC030189
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 27 Oct 2024 15:37:01 GMT
-Received: from [10.216.8.251] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 27 Oct
- 2024 08:36:56 -0700
-Message-ID: <6b3d3815-ca7a-470e-993d-862f96249edb@quicinc.com>
-Date: Sun, 27 Oct 2024 21:06:53 +0530
+	s=arc-20240116; t=1730043478; c=relaxed/simple;
+	bh=aMqM3/9s8d9LV0yWPG7wkoQZ5rqAivQmGr2aPzn6kVQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Nvu/yYdAt27Bha3YnR771pGDyzEcgUCYNgUhn4HRdK3pfO096gWlJ2PtxdtOMWmeM7glju5OQoDjsr1aiMZgtF2olyB5+5JRkC0JCG5JoVK2GM+CW0zi1fRAkQpjAugWBi/BtM7AEOLIv/GTF3VOUI2YhuruwiryLsGoksLyRQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=ps.report@gmx.net header.b=Uf1Q3rTH; arc=none smtp.client-ip=212.227.17.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
+	s=s31663417; t=1730043466; x=1730648266; i=ps.report@gmx.net;
+	bh=RubjZSxE8AGnSNfV7sB96uuCUx0J27w5smtNhwXneeY=;
+	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:In-Reply-To:
+	 References:MIME-Version:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=Uf1Q3rTHH4unirV/gdcAaPJGM0ipV+lrUe26h36vXXyMm45SAcKC4p1ChRFmRNEj
+	 xAQrhC0sO7z0S0dI6sF1st79xlM2AxVwf+z6OeoFclTNBfESvcPolXS8zEhUnJNL1
+	 +0pKJDWa4ZeLrRSrXU3sV4bMrAWmwhY6A1WKQDJLlayWvrtds94BHV8TSZcUSzo/K
+	 fd9RlsQvsxYuu6AmjRtfzPW1f8/kdTibgx3qzBgFZjRo64Tk9QgN/pEoKvrj1n57C
+	 GTTuwKBm3xRBFpy9WBXQIdkEbodqFsm47T1mthThAe57xDsZ+GdVSi+O2xlYFMBWD
+	 AF2DkNa1xRC6eCVc4A==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from localhost ([82.135.81.151]) by mail.gmx.net (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MNt0C-1tFzPt3JH6-00StcE; Sun, 27
+ Oct 2024 16:37:45 +0100
+Date: Sun, 27 Oct 2024 16:37:44 +0100
+From: Peter Seiderer <ps.report@gmx.net>
+To: Christian Heusel <christian@heusel.eu>
+Cc: "Ned T. Crigler" <crigler@gmail.com>, Dmitry Torokhov
+ <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org,
+ linux-kernel@vger.kernel.org, regressions@lists.linux.dev, Jeff LaBundy
+ <jeff@labundy.com>, Benjamin Tissoires <bentiss@kernel.org>
+Subject: Re: [REGRESSION] disabling and re-enabling magic sysrq fails after
+ kernel 6.11
+Message-ID: <20241027163744.2d396c61@gmx.net>
+In-Reply-To: <69b6119c-3c3a-406f-9375-3e55fba9b732@heusel.eu>
+References: <Zx2iQp6csn42PJA7@xavtug>
+	<69b6119c-3c3a-406f-9375-3e55fba9b732@heusel.eu>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-suse-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] iommu/arm-smmu: Defer probe of clients after smmu
- device bound
-To: Robin Murphy <robin.murphy@arm.com>, <will@kernel.org>
-CC: <joro@8bytes.org>, <jgg@ziepe.ca>, <jsnitsel@redhat.com>,
-        <robdclark@chromium.org>, <quic_c_gdjako@quicinc.com>,
-        <dmitry.baryshkov@linaro.org>, <linux-arm-kernel@lists.infradead.org>,
-        <iommu@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-        <quic_charante@quicinc.com>, <stable@vger.kernel.org>,
-        Prakash Gupta
-	<quic_guptap@quicinc.com>
-References: <20241004090428.2035-1-quic_pbrahma@quicinc.com>
- <d4a52579-0e2a-4df3-a1fa-e8e154ff1e90@quicinc.com>
- <3925d2f0-3b1f-4200-acc4-8f991616ec0f@arm.com>
-Content-Language: en-US
-From: Pratyush Brahma <quic_pbrahma@quicinc.com>
-In-Reply-To: <3925d2f0-3b1f-4200-acc4-8f991616ec0f@arm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: jm-iVN1pNVfu1vBKJI6TSGdOIwF8CGpr
-X-Proofpoint-GUID: jm-iVN1pNVfu1vBKJI6TSGdOIwF8CGpr
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 clxscore=1011
- lowpriorityscore=0 adultscore=0 mlxscore=0 bulkscore=0 suspectscore=0
- phishscore=0 spamscore=0 malwarescore=0 mlxlogscore=999 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2410270136
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:x6Ej45qEVG36VIlMVNp9H7pB/diSB9t4AZM3pUa/7+gX/vMGutH
+ xVFrMSR2xdkE2AqP7FCxo6YeJcu7qJsQi7WebaJq8zbGAxoqFj8YyZihOgPxlFi4o+f+T4+
+ 6MRlrmpWni9WBR7mtE6aXVzQ2AeQIktaDC/YMwITPf3cCsGZQ3MJOqIpTywSVArjgoMS2ww
+ WDMC9siawWxce3DYJL1Gw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:Bkr3ymwo2hA=;bLCXZjt6sYcWROPGK+CQNGWr4jG
+ ywaAPAUD8naTEi3hXc1oWUd7SmlFeQO1A9a6/xb9gcR4XDaVxMRvTIpUYaZqEQjLcbVzaMmqj
+ fnmJp67vNhl1BchK/LY/KY4lUc03zNLKqgCf0LcfUMi3MuoLczxeq2iNehNpLh0cRO0XKfp30
+ QRPFn9dYNPcVzuIaasll0NFdO859KpOg5w42ebUw0YNyKud5+6QZkH/U7aT0N4HYZHz4jScqN
+ 1QtSXpgtdYuzHgEhGX5WuZf6pnsiPQo318lmNpQ7Dg6v/Qb74RB/CqyMSXNK9XDfyPbkeEd/u
+ oDFRymx3GS8GfGp21c4zZ1dXjllbSJYN24it9+zUI9/qdbTsbMGtGFm9GBltEn0hOOHSWsOEq
+ eoNu6b7QJBkF8rXbvtIT2YX5G4+jo3ISLTNLftC/IT/nLdOAs5yFw+iTCFKKPhAPpAafGBLsI
+ lAJGd1e9FL3HgBuSI3xPMIaEURTjj6YCntAgb7TN8K7Zg6lQAM/j5LfjbPiwmGkVlx+5OvRFb
+ aFBCamyMJsJFL48m8Fn0X0sH02Pv8PlfEq8nm5nTM690QB7Mn1uwvLVf4TD5IwgFRMzOQci3N
+ c8yJjbwZlZzbNBE9ZhpvfLu6kogNUIb+SUezkeFKApHpyq083mbAM54OpG68mam1w2n7G/fb1
+ 7bY0NWmHzUxnzy6rcl3jycCsvCBmLl6siidZJCO3rphfMk9jLF1DxFmxVN8+pFiuohnsj1MND
+ V4I/NXuJE9OsSvkAyjTKjvIM7FzC+bMfSfbgMzjmmPzGs+baNTaZ096Dzl5J7sBDRyDhtTeNj
+ PpJmvCk3hgeN4ELCAH1wE4xg==
 
+Hello Ned, Christian, *,
 
-On 10/17/2024 7:24 PM, Robin Murphy wrote:
-> On 15/10/2024 2:31 pm, Pratyush Brahma wrote:
->>
->> On 10/4/2024 2:34 PM, Pratyush Brahma wrote:
->>> Null pointer dereference occurs due to a race between smmu
->>> driver probe and client driver probe, when of_dma_configure()
->>> for client is called after the iommu_device_register() for smmu driver
->>> probe has executed but before the driver_bound() for smmu driver
->>> has been called.
->>>
->>> Following is how the race occurs:
->>>
->>> T1:Smmu device probe        T2: Client device probe
->>>
->>> really_probe()
->>> arm_smmu_device_probe()
->>> iommu_device_register()
->>>                     really_probe()
->>>                     platform_dma_configure()
->>>                     of_dma_configure()
->>>                     of_dma_configure_id()
->>>                     of_iommu_configure()
->>>                     iommu_probe_device()
->>>                     iommu_init_device()
->>>                     arm_smmu_probe_device()
->>>                     arm_smmu_get_by_fwnode()
->>>                         driver_find_device_by_fwnode()
->>>                         driver_find_device()
->>>                         next_device()
->>>                         klist_next()
->>>                             /* null ptr
->>>                                assigned to smmu */
->>>                     /* null ptr dereference
->>>                        while smmu->streamid_mask */
->>> driver_bound()
->>>     klist_add_tail()
->>>
->>> When this null smmu pointer is dereferenced later in
->>> arm_smmu_probe_device, the device crashes.
->>>
->>> Fix this by deferring the probe of the client device
->>> until the smmu device has bound to the arm smmu driver.
->>>
->>> Fixes: 021bb8420d44 ("iommu/arm-smmu: Wire up generic configuration 
->>> support")
->>> Cc: stable@vger.kernel.org
->>> Co-developed-by: Prakash Gupta <quic_guptap@quicinc.com>
->>> Signed-off-by: Prakash Gupta <quic_guptap@quicinc.com>
->>> Signed-off-by: Pratyush Brahma <quic_pbrahma@quicinc.com>
->>> ---
->>> Changes in v2:
->>>   Fix kernel test robot warning
->>>   Add stable kernel list in cc
->>>   Link to v1: 
->>> https://lore.kernel.org/all/20241001055633.21062-1-quic_pbrahma@quicinc.com/
->>>
->>>   drivers/iommu/arm/arm-smmu/arm-smmu.c | 3 +++
->>>   1 file changed, 3 insertions(+)
->>>
->>> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu.c 
->>> b/drivers/iommu/arm/arm-smmu/arm-smmu.c
->>> index 723273440c21..7c778b7eb8c8 100644
->>> --- a/drivers/iommu/arm/arm-smmu/arm-smmu.c
->>> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu.c
->>> @@ -1437,6 +1437,9 @@ static struct iommu_device 
->>> *arm_smmu_probe_device(struct device *dev)
->>>               goto out_free;
->>>       } else {
->>>           smmu = arm_smmu_get_by_fwnode(fwspec->iommu_fwnode);
->>> +        if (!smmu)
->>> +            return ERR_PTR(dev_err_probe(dev, -EPROBE_DEFER,
->>> +                        "smmu dev has not bound yet\n"));
->>>       }
->>>       ret = -EINVAL;
->>
->>
->> Hi
->> Can someone please review this patch? Let me know if any further 
->> information is required.
+On Sun, 27 Oct 2024 15:06:09 +0100, Christian Heusel <christian@heusel.eu>=
+ wrote:
+
+> On 24/10/26 07:15PM, Ned T. Crigler wrote:
+> > Hi,
 >
-> This really shouldn't be leaking into drivers... :(
+> Hey Ned,
 >
-> Honestly, I'm now so fed up of piling on hacks around the fundamental 
-> mis-design here, I think it's finally time to blow everything else off 
-> and spend a few days figuring out the most expedient way to fix it 
-> properly once and for all. Watch this space...
+> > It looks like starting with kernel 6.11, disabling and re-enabling
+> > magic
+> > sysrq fails with these errors in dmesg:
+> >
+> > kernel: input: input_handler_check_methods: only one event processing
+> > method can be defined (sysrq)
+> > kernel: sysrq: Failed to register input handler, error -22
+> >
+> > after doing:
+> >
+> > # echo 0 > /proc/sys/kernel/sysrq
+> > # echo 438 > /proc/sys/kernel/sysrq
+> > # echo 0 > /proc/sys/kernel/sysrq
+> > # echo 438 > /proc/sys/kernel/sysrq
+> > # echo 0 > /proc/sys/kernel/sysrq
+> > # echo 438 > /proc/sys/kernel/sysrq
 >
-> Thanks,
-> Robin.
+> I have found that this issue is also present in the latest mainline
+> release and bisected it to the following commit:
+>
+>     d469647bafd9 ("Input: simplify event handling logic")
+>
 
-Hi Robin
+After the mentioned commit a call sysrq_register_handler() -->
+input_register_handler(&sysrq_handler) with sysrq_handler.filter set
+will result in sysrq_handler.events set to input_handler_events_filter,
+see drivers/input/input.c (line 2607 to 2608):
 
-Do you have any approaches in mind that you are currently considering or 
-exploring?
+2596 int input_register_handler(struct input_handler *handler)
+2597 {
+2598         struct input_dev *dev;
+2599         int error;
+2600
+2601         error =3D input_handler_check_methods(handler);
+2602         if (error)
+2603                 return error;
+2604
+2605         INIT_LIST_HEAD(&handler->h_list);
+2606
+2607         if (handler->filter)
+2608                 handler->events =3D input_handler_events_filter;
+2609         else if (handler->event)
+2610                 handler->events =3D input_handler_events_default;
+2611         else if (!handler->events)
+2612                 handler->events =3D input_handler_events_null;
 
-Thanks
-Pratyush
+So the second call will fail at the check 'input_handler_check_methods(han=
+dler)'
+which only allows one method to be set, see drivers/input/input.c:
+
+2517 static int input_handler_check_methods(const struct input_handler *ha=
+ndler)
+2518 {
+2519         int count =3D 0;
+2520
+2521         if (handler->filter)
+2522                 count++;
+2523         if (handler->events)
+2524                 count++;
+2525         if (handler->event)
+2526                 count++;
+2527
+2528         if (count > 1) {
+2529                 pr_err("%s: only one event processing method can be d=
+efined      (%s)\n",
+2530                        __func__, handler->name);
+2531                 return -EINVAL;
+2532         }
+2533
+2534         return 0;
+2535 }
+
+
+A quick fix/hack for the sysrq case:
+
+=2D-- a/drivers/tty/sysrq.c
++++ b/drivers/tty/sysrq.c
+@@ -1045,7 +1045,7 @@ static inline void sysrq_register_handler(void)
+        int error;
+
+        sysrq_of_get_keyreset_config();
+-
++       sysrq_handler.events =3D NULL;
+        error =3D input_register_handler(&sysrq_handler);
+        if (error)
+                pr_err("Failed to register input handler, error %d", error=
+);
+lines 1-13/13 (END)
+
+Regards,
+Peter
+
+
+> The additional authors / maintainers have been added to the recipients
+> lists.
+>
+> I hope I didn't overlook any pending fixes.
+>
+> > --
+> > Ned T. Crigler
+>
+> Cheers,
+> Chris
+
 
