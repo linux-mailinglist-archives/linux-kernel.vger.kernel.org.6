@@ -1,141 +1,197 @@
-Return-Path: <linux-kernel+bounces-383459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78F0E9B1C1A
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 05:05:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE3009B1C1E
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 05:07:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A0861C20FE1
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 04:05:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2EB571F21B5C
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 04:07:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2823C1CFA9;
-	Sun, 27 Oct 2024 04:05:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56C7A273FD;
+	Sun, 27 Oct 2024 04:07:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Ec6pRUMH"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AED01E517;
-	Sun, 27 Oct 2024 04:05:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="C7qVNel0"
+Received: from mail-qt1-f226.google.com (mail-qt1-f226.google.com [209.85.160.226])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8119217C61
+	for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 04:07:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.226
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730001938; cv=none; b=H7qDpRtk6kaF6DMD0pnI8SQX/2rx9hdld/H9XvYzL77NCAdYvzqhKP1z5yID8H2bisQuSY6uuvtl0l3GpkSEv2P+zeS3Rv1KaejfB7ZO3tA/vYY4pNqht4n9An0jFH7If/eouYu4nl+cn9zgJYPAnvtTfxjki0ua4XswBsH07Xs=
+	t=1730002042; cv=none; b=GmhL0FeHVO/jGDziTWmWpxyamDJ6nOw2/2LHVfHyHVNuBNOIZUnlgSZu4lnT9tw1Yax45y4+yqEF+bmC4I9MGsyr/ey2K1OLQgr0eihmsxAsEknbmexGKxQCvUYrwEdH9x5HRyWVYAnybnqeTau83rcj3Jq0XcvQvdtf/ov/KuM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730001938; c=relaxed/simple;
-	bh=/u39L6fOM3MVKTnjv+pj0ryNWFFxhoHQrl+wnYHsIok=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=W+gWQegTQD3Qli5MlIXS7o7o476UodMN9Dpn4EneoLxFDBP65CR25w5SJ+FFAg9YDciIZQ+rDsIBxpV5QwN2AGXGjrRI6lmfxcxdfIOxnldkxnUfi/IynIG+y+LkZ+fcX4F4aRedahKeVi0Q2vo6BFqzdWKcOkMgNuqrWIqRcT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Ec6pRUMH; arc=none smtp.client-ip=117.135.210.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
-	Content-Type; bh=QXs92Vj1eumE7lNUPlAilLfDF8TkiWz3pX76dGci32E=;
-	b=Ec6pRUMHaxmlIH1Vfv6yWHQUsF8sPORzW4ej4wiLSLibz5e0E3Kx1HsEQLCDnr
-	Q4TqQtPOyFDZ9zVgcs/gD46vr2XPaY0tpjeyxXnOOWRT6UV3mK9pbKeE7iOrchl5
-	pRh3RrdzJUNbtffHYSwIOzCo7D8flxScS2qH2iKEhpsGE=
-Received: from [192.168.65.169] (unknown [123.114.208.230])
-	by gzsmtp4 (Coremail) with SMTP id PygvCgD3H2n0ux1nH+HBBQ--.29051S2;
-	Sun, 27 Oct 2024 12:05:09 +0800 (CST)
-Message-ID: <92065b35-31fa-4df7-b4ce-b79cd0802c1a@163.com>
-Date: Sun, 27 Oct 2024 12:05:08 +0800
+	s=arc-20240116; t=1730002042; c=relaxed/simple;
+	bh=K40sm6a5rnZnDviFoC5gXMAnEzE/x92f8YKdKML+Okg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Dtvt/Sn+P3SeEwI79mrIB18FwrnAszHBRBFr+85jknurTHEGs6r+lqSWYtcPH8S26Y4lSpcrhSy1AjrLQCRI7qgboVPnuO0ioQMAzXCHVpocpAs1Gb5tx8tRwhWrb0hNeq/l4Pxu7cLlRAdStDv/Uoij4O6DGSdmJu3ondAdSGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=C7qVNel0; arc=none smtp.client-ip=209.85.160.226
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-qt1-f226.google.com with SMTP id d75a77b69052e-4609e617d31so1358901cf.1
+        for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 21:07:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=purestorage.com; s=google2022; t=1730002038; x=1730606838; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=yFPBOawvNAC40LRH3vsqWPQVymUE1kR2pFs5OkfXjZc=;
+        b=C7qVNel0KuEN8AXD5Kh9lOPOqHCR/e8KbpEspG5b2wcsvI9X6hHUTMhVuIuqN66ttR
+         OKSSCy+54NjI/LJH9z6fjRyI/g2zK3MSW33hfWC54JK6zamJWiZcTWJn0k902qcKf1k8
+         16sf359118BwJHcq1ggUzuMSLaubuVGNIknuI7+/1WrxuLEiNP8bHz5UFvnjdFe13Yhe
+         073W4Rvcy1AR+7elNcBG2I3z6xrYkUs+GPuZAb7JS18zCJBrBZ0zUV44G45/+Z3cnxK+
+         4rIl/EG7Q+ZxcPfVobo2MT/0pvqITRyIs0lbO6KxMVWiMOPJHejKFbpao5HLPQEbgcwp
+         fIDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730002038; x=1730606838;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yFPBOawvNAC40LRH3vsqWPQVymUE1kR2pFs5OkfXjZc=;
+        b=etln8Q/JkaYCY8bwmNU7M5jK3IAlJTabomaFz99eEpmHXhOqSqtVikJCGQknHnNIu8
+         NAYmA4lu6KUXyhZnu2Y4zFpiSS6r5fxaxCyUWre3USEMjO3Vgch6x4GrSCbb8hNolTvu
+         jFB8qcwIPx7AUEbUvXjMEdjXBPob/+VexF1TkwULR8MqC1rYaSH8VV9j9+rM4rQdX+v5
+         p/wl7tD9vmISJjd03zuO0oQ+q9O3/htYqkjKfoFgXbkm8re6m49idS5NOBVT8BOBfpmk
+         cKRwLQmZUYKSVwMzY3Ge7+vf0mbUrjgPE9e2d3CwzDJI/3pLMbLZlkIBQ7XpoKvcY/zY
+         ME2w==
+X-Forwarded-Encrypted: i=1; AJvYcCVtWSUxEYnonrPgvEs4I8TWTkTmqffpmxfr4CTM9RDnFW5ZVluIxaUh4q5GK+JfFfItEjm2ZM74c6lOCtI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxosy6N0AtLC6lQCfAil6jK7wQIl65fUOXjGVr2Eb5pTN9sGLG/
+	2fF4omWEqKdD2zL7wbtuLUVWVdoKCfF0KZqJaqOZIZwnoWGOuSjRMvKNCcwBYpqakpFtmcUtuIm
+	c5ytQGvPw5R3rnZWrD5F3x3bFTFV1XT0RMDMO0h4GAW3rwGWL
+X-Google-Smtp-Source: AGHT+IFLVMIJviFB7oFNyQyjEM3uN/bEshHi0Ww68pbsDPdz+G/261P3Itvj7Q1GDkCFDmN+vqTdp3NEj8vT
+X-Received: by 2002:a05:622a:89:b0:460:9acd:68be with SMTP id d75a77b69052e-4613c005fbcmr32681281cf.5.1730002038304;
+        Sat, 26 Oct 2024 21:07:18 -0700 (PDT)
+Received: from c7-smtp-2023.dev.purestorage.com ([2620:125:9017:12:36:3:5:0])
+        by smtp-relay.gmail.com with ESMTPS id d75a77b69052e-46132179ceesm1643211cf.11.2024.10.26.21.07.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 26 Oct 2024 21:07:18 -0700 (PDT)
+X-Relaying-Domain: purestorage.com
+Received: from dev-csander.dev.purestorage.com (dev-csander.dev.purestorage.com [10.7.70.37])
+	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id D2313340278;
+	Sat, 26 Oct 2024 22:07:16 -0600 (MDT)
+Received: by dev-csander.dev.purestorage.com (Postfix, from userid 1557716354)
+	id CD2F9E40D12; Sat, 26 Oct 2024 22:07:16 -0600 (MDT)
+From: Caleb Sander Mateos <csander@purestorage.com>
+To: Saeed Mahameed <saeedm@nvidia.com>,
+	Leon Romanovsky <leon@kernel.org>,
+	Tariq Toukan <tariqt@nvidia.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: Caleb Sander Mateos <csander@purestorage.com>,
+	netdev@vger.kernel.org,
+	linux-rdma@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] mlx5: only schedule EQ comp tasklet if necessary
+Date: Sat, 26 Oct 2024 22:06:55 -0600
+Message-ID: <20241027040700.1616307-1-csander@purestorage.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] xfs: Reduce unnecessary searches when searching for the
- best extents
-To: Dave Chinner <david@fromorbit.com>
-Cc: cem@kernel.org, djwong@kernel.org, linux-xfs@vger.kernel.org,
- linux-kernel@vger.kernel.org, Chi Zhiling <chizhiling@kylinos.cn>
-References: <20241025023320.591468-1-chizhiling@163.com>
- <ZxtEJN/dTw9JipJe@dread.disaster.area>
-Content-Language: en-US
-From: Chi Zhiling <chizhiling@163.com>
-In-Reply-To: <ZxtEJN/dTw9JipJe@dread.disaster.area>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:PygvCgD3H2n0ux1nH+HBBQ--.29051S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxXFy5WFW7Ar4DAFW8Gr47XFb_yoW5Gr1Upr
-	Zaya1jkrZ8tw17Gr9rWrsFq343Kw18Wr47Zr909r13C3Z0gF13Kr9Fkr4Y9a4UZr4rW3W0
-	9r4ftFy0vw1Yva7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07U20PhUUUUU=
-X-CM-SenderInfo: hfkl6xxlol0wi6rwjhhfrp/1tbiTxuDnWcbQw4VZQABsK
+Content-Transfer-Encoding: 8bit
 
+Currently, the mlx5_eq_comp_int() interrupt handler schedules a tasklet
+to call mlx5_cq_tasklet_cb() if it processes any completions. For CQs
+whose completions don't need to be processed in tasklet context, this
+overhead is unnecessary. Atomic operations are needed to schedule, lock,
+and clear the tasklet. And when mlx5_cq_tasklet_cb() runs, it acquires a
+spin lock to access the list of CQs enqueued for processing.
 
-On 2024/10/25 15:09, Dave Chinner wrote:
-> On Fri, Oct 25, 2024 at 10:33:20AM +0800, Chi Zhiling wrote:
->> From: Chi Zhiling <chizhiling@kylinos.cn>
->>
->> Recently, we found that the CPU spent a lot of time in
->> xfs_alloc_ag_vextent_size when the filesystem has millions of fragmented
->> spaces.
->>
->> The reason is that we conducted much extra searching for extents that
->> could not yield a better result, and these searches would cost a lot of
->> time when there were millions of extents to search through. Even if we
->> get the same result length, we don't switch our choice to the new one,
->> so we can definitely terminate the search early.
->>
->> Since the result length cannot exceed the found length, when the found
->> length equals the best result length we already have, we can conclude
->> the search.
->>
->> We did a test in that filesystem:
->> [root@localhost ~]# xfs_db -c freesp /dev/vdb
->>     from      to extents  blocks    pct
->>        1       1     215     215   0.01
->>        2       3  994476 1988952  99.99
-> Ok, so you have *badly* fragmented free space. That going to cause
-> lots more problems than only "allocation searches take a long
-> time". e.g. you can't allocate inodes in a AG that is fragmented
-> this badly - not even sparse inode clusters....
+Schedule the tasklet in mlx5_add_cq_to_tasklet() instead to avoid this
+overhead. mlx5_add_cq_to_tasklet() is responsible for enqueuing the CQs
+to be processed in tasklet context, so it can schedule the tasklet. CQs
+that need tasklet processing have their interrupt comp handler set to
+mlx5_add_cq_to_tasklet(), so they will schedule the tasklet. CQs that
+don't need tasklet processing won't schedule the tasklet. To avoid
+scheduling the tasklet multiple times during the same interrupt, only
+schedule the tasklet in mlx5_add_cq_to_tasklet() if the tasklet work
+queue was empty before the new CQ was pushed to it.
 
-Yes, this usually happens in some systems that use Mysql table 
-compression, which continuously punches holes in file, eventually 
-causing most fragment lengths to converge to the hole size.
+Note that the mlx4 driver works the same way: it schedules the tasklet
+in mlx4_add_cq_to_tasklet() and only if the work queue was empty before.
 
->
->> Before this patch:
->>   0)               |  xfs_alloc_ag_vextent_size [xfs]() {
->>   0) * 15597.94 us |  }
->>
->> After this patch:
->>   0)               |  xfs_alloc_ag_vextent_size [xfs]() {
->>   0)   19.176 us    |  }
-> Yup, that's a good improvement.
->
->
->> Signed-off-by: Chi Zhiling <chizhiling@kylinos.cn>
->> ---
->>   fs/xfs/libxfs/xfs_alloc.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/fs/xfs/libxfs/xfs_alloc.c b/fs/xfs/libxfs/xfs_alloc.c
->> index 04f64cf9777e..22bdbb3e9980 100644
->> --- a/fs/xfs/libxfs/xfs_alloc.c
->> +++ b/fs/xfs/libxfs/xfs_alloc.c
->> @@ -1923,7 +1923,7 @@ xfs_alloc_ag_vextent_size(
->>   				error = -EFSCORRUPTED;
->>   				goto error0;
->>   			}
->> -			if (flen < bestrlen)
->> +			if (flen <= bestrlen)
->>   				break;
->>   			busy = xfs_alloc_compute_aligned(args, fbno, flen,
->>   					&rbno, &rlen, &busy_gen);
-> Yup, I think that works fine. We aren't caring about using locality
-> as a secondary search key so as soon as we have a candidate extent
-> of a length that that the remaining extents in the free space btree
-> can't improve on, we are done.
->
-> Nice work!
->
-> Reviewed-by: Dave Chinner <dchinner@redhat.com>
-Thanks!
->
+Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
+---
+ drivers/net/ethernet/mellanox/mlx5/core/cq.c | 5 +++++
+ drivers/net/ethernet/mellanox/mlx5/core/eq.c | 5 +----
+ 2 files changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/cq.c b/drivers/net/ethernet/mellanox/mlx5/core/cq.c
+index 4caa1b6f40ba..25f3b26db729 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/cq.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/cq.c
+@@ -69,22 +69,27 @@ void mlx5_cq_tasklet_cb(struct tasklet_struct *t)
+ static void mlx5_add_cq_to_tasklet(struct mlx5_core_cq *cq,
+ 				   struct mlx5_eqe *eqe)
+ {
+ 	unsigned long flags;
+ 	struct mlx5_eq_tasklet *tasklet_ctx = cq->tasklet_ctx.priv;
++	bool schedule_tasklet = false;
+ 
+ 	spin_lock_irqsave(&tasklet_ctx->lock, flags);
+ 	/* When migrating CQs between EQs will be implemented, please note
+ 	 * that you need to sync this point. It is possible that
+ 	 * while migrating a CQ, completions on the old EQs could
+ 	 * still arrive.
+ 	 */
+ 	if (list_empty_careful(&cq->tasklet_ctx.list)) {
+ 		mlx5_cq_hold(cq);
++		schedule_tasklet = list_empty(&tasklet_ctx->list);
+ 		list_add_tail(&cq->tasklet_ctx.list, &tasklet_ctx->list);
+ 	}
+ 	spin_unlock_irqrestore(&tasklet_ctx->lock, flags);
++
++	if (schedule_tasklet)
++		tasklet_schedule(&tasklet_ctx->task);
+ }
+ 
+ /* Callers must verify outbox status in case of err */
+ int mlx5_create_cq(struct mlx5_core_dev *dev, struct mlx5_core_cq *cq,
+ 		   u32 *in, int inlen, u32 *out, int outlen)
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/eq.c b/drivers/net/ethernet/mellanox/mlx5/core/eq.c
+index 68cb86b37e56..66fc17d9c949 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/eq.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/eq.c
+@@ -112,17 +112,17 @@ static int mlx5_eq_comp_int(struct notifier_block *nb,
+ 	struct mlx5_eq_comp *eq_comp =
+ 		container_of(nb, struct mlx5_eq_comp, irq_nb);
+ 	struct mlx5_eq *eq = &eq_comp->core;
+ 	struct mlx5_eqe *eqe;
+ 	int num_eqes = 0;
+-	u32 cqn = -1;
+ 
+ 	eqe = next_eqe_sw(eq);
+ 	if (!eqe)
+ 		goto out;
+ 
+ 	do {
++		u32 cqn;
+ 		struct mlx5_core_cq *cq;
+ 
+ 		/* Make sure we read EQ entry contents after we've
+ 		 * checked the ownership bit.
+ 		 */
+@@ -145,13 +145,10 @@ static int mlx5_eq_comp_int(struct notifier_block *nb,
+ 	} while ((++num_eqes < MLX5_EQ_POLLING_BUDGET) && (eqe = next_eqe_sw(eq)));
+ 
+ out:
+ 	eq_update_ci(eq, 1);
+ 
+-	if (cqn != -1)
+-		tasklet_schedule(&eq_comp->tasklet_ctx.task);
+-
+ 	return 0;
+ }
+ 
+ /* Some architectures don't latch interrupts when they are disabled, so using
+  * mlx5_eq_poll_irq_disabled could end up losing interrupts while trying to
+-- 
+2.45.2
 
 
