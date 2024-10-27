@@ -1,150 +1,205 @@
-Return-Path: <linux-kernel+bounces-383431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 709249B1B98
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 02:18:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CC8769B1B9A
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 02:20:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC95A1F21B1A
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 01:18:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 445411F216BD
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 01:20:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DAEEE573;
-	Sun, 27 Oct 2024 01:18:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70469DDDC;
+	Sun, 27 Oct 2024 01:20:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="mn25l205"
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ynz/jgae"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47BDD9476
-	for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 01:18:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF2E94C85
+	for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 01:20:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729991926; cv=none; b=tMxUX9Mffn+Y4ZcBQKDMOzu8SH17PtSfdmj+XtUTTVvpu6SntTRVB0eIA7ULptOw9ur94WWOR62IBkDA9IH0Xym18V3Cl5wJGZjefDKBdCdxbsAWE8sK+SEwcpU6F+mmR6PocuZIQUKGE9QQQpKjKglPmsvlWvxdOCCnUqGahjU=
+	t=1729992019; cv=none; b=OtiREs4oqpOOSEgg3oUd1MKsZgousEy4g9NrLUF3+SL8rjreVr7a/2QM498XqBwIBcGPvvrIDAqWs0uW/pvdAVEqO0b24W9YK71NF1Pf3zpxuhvI0Lwla+Safi9ZXhKGegYSkvdZy0ooqBi5NB8KWpSMZePOwodaxNMJF6Wy5bU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729991926; c=relaxed/simple;
-	bh=U8QJPKyyTDXdhLxIVXdsg9oEMwLT+uSchUx25oUDr9g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qcE7mT4fZFXhK9kCJv4UTRRMzBsXa1N75OKghRGnXxZlizOke7YNuvKR1fG73QYdsFa6K/gyVJFQNnc6I54g2Rk6LjBEz4jKVPfIA9mAmNd/HhBovS0/MbJ5ET9gSUYKOkVG32TYEKlzQaZMw12fWnvWLPh8M2mSEFifnG/H9JY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=mn25l205; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from macsyma.thunk.org (99-196-129-121.cust.exede.net [99.196.129.121] (may be forged))
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 49R1I9eJ015160
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 26 Oct 2024 21:18:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1729991901; bh=oeDNW4t5Q8UciCSZ6PSKNouh/u7JRhCcE7T8hef1oE8=;
-	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-	b=mn25l2054zU1JtBOAaOMYsTMBRz1d1NkFZxlklqW9MD3V2H/YheAJ1T21JVCvzgDY
-	 7s+FyEJ4QQ8c8WrwZfKTM6ExJVtaFzhTzZY4Vg7RDTegLDXzy+yi6GMOyH9uNZnnr5
-	 riGEBM6qnU8wPHQxm4znfoYhEh6jxcppQJqvEYongCsBHCevMmM7sH2LWwTc7wLqLU
-	 Nixzu+skiJwbE0EKBOJ3qAF2i+KZa3rtgfVIhZhxoaPabiG/8OxwS3J5yN70f+WUjz
-	 Rq00AZS9wQhpmO2DtQ2kufUPEaI8kz2AwKyrTDYvvSiAD1wGvy5eS4pqpwmJGugN3j
-	 lro+VioZEP92Q==
-Received: by macsyma.thunk.org (Postfix, from userid 15806)
-	id 321D234033D; Sat, 26 Oct 2024 20:14:22 -0500 (CDT)
-Date: Sat, 26 Oct 2024 21:14:22 -0400
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Jiaxun Yang <jiaxun.yang@flygoat.com>
-Cc: linux-kernel@vger.kernel.org, conduct@kernel.org, security@kernel.org,
-        cve@kernel.org, linux-doc@vger.kernel.org,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>, shuah@kernel.org,
-        lee@kernel.org, sashal@kernel.org, Jonathan Corbet <corbet@lwn.net>
-Subject: Re: Concerns over transparency of informal kernel groups
-Message-ID: <20241027011422.GA3842351@mit.edu>
-References: <73b8017b-fce9-4cb1-be48-fc8085f1c276@app.fastmail.com>
- <20241026145640.GA4029861@mit.edu>
- <522bd817-339a-45b0-84c2-2b1a4a87980a@app.fastmail.com>
+	s=arc-20240116; t=1729992019; c=relaxed/simple;
+	bh=aoGOW9UMQu3eHbNSLgmSRaBhzUUjb5RcXfatKTV7/3U=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=WcgULrU3qyqYlgWH9yqQu/Spm30PfDwrKUI+l7B1H08CO2ayR0A0RfGZGsgHQixvZu4Mqgq17LzX0dlMfwe6h1TPsrQvBjP+/EoIvUMYoaCIIMWx8s87Yr7ASmU7OFKx882WH+HxVuidlBGct2QfRO6xUa+/CFqIzes2C7bTQHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ynz/jgae; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2e2dc61bc41so2289983a91.1
+        for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 18:20:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729992017; x=1730596817; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=PC+F0uXppq0my0Enu0GUjnL3zjI0FTc8OpigtshywaQ=;
+        b=Ynz/jgae2WXckGSPUTgOoQHCCNwICDOl5Qf6oM/KgQ+tOnpXERqqLYaFOF/q/jKHOh
+         Z8ZuTafrtPUlylhHilSW4tOuSoqXij1d/EFnSpt45XY+tN0GPwL7ENm8ZyPvmDYEM3Ke
+         SFcgmJb6SjQB4qrRjJGBzgY1Dg5ConIsyShvypuKVx7peoZNxRxcGmW6qqTvF+zPhITa
+         ufR+ZW7hU7M01EaozvYHUfJmeGA8O+q5UogtIsUzjHxcu7htkBBqEMWy9DSpisQtLv0M
+         YAAGzVKjoULVbg1/pKz/hcgGPyfBLMSfdyPgnFBinHRdP+mlAw89Vlp81pZ1O2AWhTyy
+         UWPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729992017; x=1730596817;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PC+F0uXppq0my0Enu0GUjnL3zjI0FTc8OpigtshywaQ=;
+        b=n6GyJYiQHOhBLVLukk45al1YmLBEoPSBNUnUHU0UdIQ7D0KVOA3BoJDSuybZgtmHMz
+         HS4TIoCT18/9acMqQVC244TEPb13Vem3ovsOaHrT6r+/XIx08IBYEIyjuoIOmfmtQaYI
+         RjgMoUZlo9qnOKpPr2vdxH5NfaOy0ghXp9y07sP4o+G48O65q2jFbozvHmzSTqg7gYjg
+         ZLQMeWQzZ7VJSvPt3sc+uMXhMIdirlYhHiho/yZRWRtEakBDyVzyAlPmARsioZ1arzD/
+         KE7/FOzRBVDlo1KBHETPkaktoqV7GgPvvUlM+fCuhwfQ+ZlM0FQ15HyGMVKOUZf/2J20
+         YgOQ==
+X-Gm-Message-State: AOJu0YwtkH6h1MyCmuyV6IhWVzniVJ+AivQt9Q5MrOPGMIAZU0RaHUpk
+	i3rqhxmr4Obq8NL8reXLPcFaHfImxR7MmT6k/CAJSN5GaOlTyKNK
+X-Google-Smtp-Source: AGHT+IEG22nqSr90rq439P2EfIDTm8P1FSy/cp8zFJqQJiDLfrSlxzYAvColiz62KcHhN3XpYvDaOA==
+X-Received: by 2002:a17:90b:1202:b0:2e2:d1c9:95c with SMTP id 98e67ed59e1d1-2e8f105f207mr5062395a91.16.1729992016932;
+        Sat, 26 Oct 2024 18:20:16 -0700 (PDT)
+Received: from Barrys-MBP.hub ([2407:7000:8942:5500:dd3b:f946:8c2b:40fb])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e77e48bdfesm6204592a91.10.2024.10.26.18.20.10
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Sat, 26 Oct 2024 18:20:16 -0700 (PDT)
+From: Barry Song <21cnbao@gmail.com>
+To: akpm@linux-foundation.org,
+	linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org,
+	Barry Song <v-songbaohua@oppo.com>,
+	Usama Arif <usamaarif642@gmail.com>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	Yosry Ahmed <yosryahmed@google.com>,
+	Nhat Pham <nphamcs@gmail.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	David Hildenbrand <david@redhat.com>,
+	Hugh Dickins <hughd@google.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Andi Kleen <ak@linux.intel.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chris Li <chrisl@kernel.org>,
+	"Huang, Ying" <ying.huang@intel.com>,
+	Kairui Song <kasong@tencent.com>,
+	Ryan Roberts <ryan.roberts@arm.com>
+Subject: [PATCH RFC] mm: count zeromap read and set for swapout and swapin
+Date: Sun, 27 Oct 2024 14:19:59 +1300
+Message-Id: <20241027011959.9226-1-21cnbao@gmail.com>
+X-Mailer: git-send-email 2.39.3 (Apple Git-146)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <522bd817-339a-45b0-84c2-2b1a4a87980a@app.fastmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Sat, Oct 26, 2024 at 05:33:16PM +0100, Jiaxun Yang wrote:
-> That being said, I'll try to improve the documentation on these things
-> based on my observations. My background perhaps makes me particularly
-> sensitive to some ambiguous language, especially where "constructive
-> ambiguity" might be involved. Recent events make me started to look
-> into those aspects in border community.
+From: Barry Song <v-songbaohua@oppo.com>
 
-Well, make no mistake, there *is* a lot of ambiguity, because we don't
-really have a centralized governance structure other than Linus has
-the benvelent dictator.  The general philosophy is to have just as
-much structure as necessary, but no more.  We do need to have a legal
-organization to sign contracts with hotels, caterers, etc., for the
-purposes of organizing conferences.  That is one of the roles of the
-Linux Foundation.  But just because the Linux Foundation organizes
-conferences, and accepts corporate donations, and pays Linus's salary,
-*doesn't* mean that they get to dictate to Linus what he does, or
-anything about what code does or doesn't get accepted into the Linux
-kernel.  As Jim Zemlin, the Executive Director of the Linux Foundation
-has been known to have said, he works for Linus, and not the other way
-around.
+When the proportion of folios from the zero map is small, missing their
+accounting may not significantly impact profiling. However, it’s easy
+to construct a scenario where this becomes an issue—for example,
+allocating 1 GB of memory, writing zeros from userspace, followed by
+MADV_PAGEOUT, and then swapping it back in. In this case, the swap-out
+and swap-in counts seem to vanish into a black hole, potentially
+causing semantic ambiguity.
 
-This is not the only way to organize an open source project, of
-course.  For example, the Rust community has a lot more structure
-process.  I will note that this has not reduced the amount of
-organizational drama and contrversy.  In fact, some might argue that
-their governance structures may have caused some of the more recent
-drama that lead to some people stepping down from official leadership
-roles....
+We have two ways to address this:
 
-Or you can take a look at some of the BSD projects, which early on had
-a lot of drama and some of the BSD forks based on who was officiallty
-part of the core team, and who wasn't (or who was thrown off of the
-core team).  It's perhaps because of that drama in the early 90's that
-some of us who were around during that era rather consciously rejected
-the formation of anything like the BSD formal core team model, because
-we saw the dysfunction that could result from it.
+1. Add a separate counter specifically for the zero map.
+2. Continue using the current accounting, treating the zero map like
+a normal backend. (This aligns with the current behavior of zRAM
+when supporting same-page fills at the device level.)
 
-There are limits to the informal model, of course.  One of the ways
-that we have tried to make it scale is that there is great value in
-making sure that the kernel developers have face time with each other.
-It's one of the reasons why I organized the Linux Kernel Summit, which
-later morphed into the Maintainer's Summit.  It's why there are many
-people who spend a huge amount of time organizing the Linux Plumbers
-Conference and other workshops, whether it's the Linux Security
-Symposium, or the Linux Storage, File Systems, and MM workshop, or
-Netconf.  The ability for us to see each other face to face, and break
-bread together, makes the human relationships real in a way that
-avoids e-mail conversations alone can turning into flame wars.
+This patch adopts option 2. I'm curious if others have different
+opinions, so I'm marking it as RFC.
 
-More recently, some subsystem teams have started regular video chats.
-They aren't a substitute for in-person meetings, but they still are
-valuable in terms of having that higher bandwidth conversation where
-the non-verbal cues can humanize the personal connection.
+Fixes: 0ca0c24e3211 ("mm: store zero pages to be swapped out in a bitmap")
+Cc: Usama Arif <usamaarif642@gmail.com>
+Cc: Chengming Zhou <chengming.zhou@linux.dev>
+Cc: Yosry Ahmed <yosryahmed@google.com>
+Cc: Nhat Pham <nphamcs@gmail.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: David Hildenbrand <david@redhat.com>
+Cc: Hugh Dickins <hughd@google.com>
+Cc: Matthew Wilcox (Oracle) <willy@infradead.org>
+Cc: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
+Cc: Chris Li <chrisl@kernel.org>
+Cc: "Huang, Ying" <ying.huang@intel.com>
+Cc: Kairui Song <kasong@tencent.com>
+Cc: Ryan Roberts <ryan.roberts@arm.com>
+Signed-off-by: Barry Song <v-songbaohua@oppo.com>
+---
+ mm/page_io.c | 30 +++++++++++++++++-------------
+ 1 file changed, 17 insertions(+), 13 deletions(-)
 
-Of course, like all things, there are tradeoff and limitations.
-Attendance at in-person meetings can be hampered by real-world
-considerations such as the cost of travel, or the need to get travel
-visas, or for people for whom English is not their primary language,
-they might be able to use Google Translate for e-mail, but that
-doesn't work that well for in-person meetings or video conferences.
-Some of these can be mitigated; the Linux Foundation has a travel
-scholarship fund for people who can't get corporate sponsorship for
-their travel, and many conferences now have a hybrid option for people
-who can't attend in person for whatever reason.  But the language
-barrier can still be an issue for some.  Maybe someday we will have
-something like Star Trek's universal translator...
+diff --git a/mm/page_io.c b/mm/page_io.c
+index 5d9b6e6cf96c..90c5ea870038 100644
+--- a/mm/page_io.c
++++ b/mm/page_io.c
+@@ -226,6 +226,19 @@ static void swap_zeromap_folio_clear(struct folio *folio)
+ 	}
+ }
+ 
++static inline void count_swpout_vm_event(struct folio *folio)
++{
++#ifdef CONFIG_TRANSPARENT_HUGEPAGE
++	if (unlikely(folio_test_pmd_mappable(folio))) {
++		count_memcg_folio_events(folio, THP_SWPOUT, 1);
++		count_vm_event(THP_SWPOUT);
++	}
++#endif
++	count_mthp_stat(folio_order(folio), MTHP_STAT_SWPOUT);
++	count_memcg_folio_events(folio, PSWPOUT, folio_nr_pages(folio));
++	count_vm_events(PSWPOUT, folio_nr_pages(folio));
++}
++
+ /*
+  * We may have stale swap cache pages in memory: notice
+  * them here and get rid of the unnecessary final write.
+@@ -258,6 +271,7 @@ int swap_writepage(struct page *page, struct writeback_control *wbc)
+ 	 */
+ 	if (is_folio_zero_filled(folio)) {
+ 		swap_zeromap_folio_set(folio);
++		count_swpout_vm_event(folio);
+ 		folio_unlock(folio);
+ 		return 0;
+ 	} else {
+@@ -282,19 +296,6 @@ int swap_writepage(struct page *page, struct writeback_control *wbc)
+ 	return 0;
+ }
+ 
+-static inline void count_swpout_vm_event(struct folio *folio)
+-{
+-#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+-	if (unlikely(folio_test_pmd_mappable(folio))) {
+-		count_memcg_folio_events(folio, THP_SWPOUT, 1);
+-		count_vm_event(THP_SWPOUT);
+-	}
+-#endif
+-	count_mthp_stat(folio_order(folio), MTHP_STAT_SWPOUT);
+-	count_memcg_folio_events(folio, PSWPOUT, folio_nr_pages(folio));
+-	count_vm_events(PSWPOUT, folio_nr_pages(folio));
+-}
+-
+ #if defined(CONFIG_MEMCG) && defined(CONFIG_BLK_CGROUP)
+ static void bio_associate_blkg_from_page(struct bio *bio, struct folio *folio)
+ {
+@@ -621,6 +622,9 @@ void swap_read_folio(struct folio *folio, struct swap_iocb **plug)
+ 	delayacct_swapin_start();
+ 
+ 	if (swap_read_folio_zeromap(folio)) {
++		count_mthp_stat(folio_order(folio), MTHP_STAT_SWPIN);
++		count_memcg_folio_events(folio, PSWPIN, folio_nr_pages(folio));
++		count_vm_events(PSWPIN, folio_nr_pages(folio));
+ 		folio_unlock(folio);
+ 		goto finish;
+ 	} else if (zswap_load(folio)) {
+-- 
+2.39.3 (Apple Git-146)
 
-The bottom line, though, that any organization is made up of *people*,
-and so there is no substitute for personal relationships and trust.
-If you don't have that, I doubt any amount of organizational structure
-can save you, and in fact, to the extent that some people might try to
-game the formal rules/structure, it might actually make things worse.
-
-Cheers,
-
-					- Ted
 
