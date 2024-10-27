@@ -1,93 +1,145 @@
-Return-Path: <linux-kernel+bounces-383860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B2EB9B2105
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 23:23:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42C679B2108
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 23:23:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03E0D1C20A19
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 22:23:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E53C1C20B4B
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 22:23:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B1751885A1;
-	Sun, 27 Oct 2024 22:23:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BA7F189528;
+	Sun, 27 Oct 2024 22:23:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="rNX782Pz"
-Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pG1rNBNQ"
+Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5599418EBF
-	for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 22:23:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E66D017BB38
+	for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 22:23:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730067821; cv=none; b=SWBcS4msTvR89nDVtTXxOguyULfmoBP8Ws4qNmlqE24SUAsttq2iWL9pFiSqmblwrNfYgG9p2JFeNJS31Pemxjf0oKi3RwZE6c2sBtYAbqkI6RL/EE3+qyod5Sa/csB/QOG0FRZZnfmVNIeHR+ubpS6l5lQpTRxkS4ZXUR7u/DE=
+	t=1730067821; cv=none; b=RHVispOfbjVekqztt6JpbZTkxkjxbmTXOc+Y+Z2QyufB6pBmanda6RMX62A9urZ3Cv1VP4HUeTMYkJ/3N6q4Q4iX6PgjBHxgRa7w09yK3C9nDXIaqjwrr4RUSMzOFh4LO4qQNB5X6/TMv8G9H8O1DLEpOFJGL/7G6SIet41Lo/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1730067821; c=relaxed/simple;
-	bh=6Q21XBG/rkegRl0phZ335sIvAzzjFtK5j2o7saAseuo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Tkyl1aXjTyFFGNhkRY+m2s/5au18gQMTiLhyq5a/t0u8TazYIYvsE60pGTR/5gWsLevYS9uI/QuvdZxp5Wk7uO9riDQUTIPGL9FgKAfUfVELY5tmVdvD1/nqCJELOorwSnagawmm/6bTsKZYuvl6rbOjcpHaJkqMRLm4n5NYpjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=rNX782Pz; arc=none smtp.client-ip=91.218.175.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1730067816;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=fTHpML+cXhXVk5sDOgFNdpjjjYAsXUVhALDoRO9IXDc=;
-	b=rNX782Pzmk+sZ0nAYFFrycSymcoz2IeA67TjC0pSShLd6PBbhg5EwhoGovDumkChmdJEK8
-	68r6FVdP9kHeZ1wzFr8EfsldlsKnG4LDrrHBwCOHEl2fXAQSUxZWWbcOhWnKKdnXzRS5mz
-	jd/2HOCD8gLRAYbB5I8tNlQ/8gBbvFY=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Steve French <sfrench@samba.org>,
-	Paulo Alcantara <pc@manguebit.com>,
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>,
-	Shyam Prasad N <sprasad@microsoft.com>,
-	Tom Talpey <tom@talpey.com>,
-	Bharath SM <bharathsm@microsoft.com>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	linux-cifs@vger.kernel.org,
-	samba-technical@lists.samba.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] cifs: Use str_yes_no() helper in cifs_ses_add_channel()
-Date: Sun, 27 Oct 2024 23:23:05 +0100
-Message-ID: <20241027222304.1270-2-thorsten.blum@linux.dev>
+	bh=Az/6E9Bz3pDkSLhUuGM6XS7I0+/lN+5RjptLOdn0Z9A=;
+	h=Date:From:To:cc:Subject:Message-ID:MIME-Version:Content-Type; b=njRc6n4wGU0jgp5BK55FG6c9AkGl7BWJK0TJJwJZCC1YJW17BveYVrfdZyzMm0Ehg3WQObWFbHRDvLayPK+bT7Xgs+2RLyV0DMkElpCPxp2V8jmqwFhJcXXXx55Hp2nAKohfO1J6i1w2GBjxjeqVrzbuc6xHhgY/e3Q7N0XJcHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pG1rNBNQ; arc=none smtp.client-ip=209.85.210.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-717fd68fe33so1953795a34.1
+        for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 15:23:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1730067819; x=1730672619; darn=vger.kernel.org;
+        h=mime-version:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=+XkdkUsBCpwU48QmXXg+E+cbuL3jYIMICiO/oJZ7j9Y=;
+        b=pG1rNBNQScLQ5yWDMpSwoafspz6IVOs7+0h5/bpxDrJmNu9fM5RsH0JgFnXfPU6PSH
+         XiVQQGMXwrNUoeJmsAoLKyz049wW8EtXO8FxvUc/7kwyLg0wSdfRWuqnwAVQz0oouuDu
+         wGfQtEt4S0qgp3vxtUpnKkuZDdL0UjAYbCXFKO1VB6J03NZVIxLPSg6tHTE7qExijqHO
+         yTcyuuRBn+NOQzb6aBzO9iAgpvVSxF4i41U8A7qJE1N9yUWIuqCMVsrLLFpIqJAaAg09
+         ygLmear3kRv6+BW6fAVLGS5MLqIUcDN2DOnCpgJanqxM6RVE0DPvNHcm/THaEru1mvoH
+         Or6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730067819; x=1730672619;
+        h=mime-version:message-id:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+XkdkUsBCpwU48QmXXg+E+cbuL3jYIMICiO/oJZ7j9Y=;
+        b=rE5RpPyOHRdW7pQxy9pdGPAd+JR9pQVomZN+x/hl/FMFjt7w4T9AiRFsCVVwanZTrm
+         qUupCVj7LERRFinIECZ3lUzZSr1mrCc7F8XFN6GiKvTr2h8Kiyhsp9o8RF+AyaRyuElB
+         hNtNkfwoKkX9dI7cpYgoGVe+MDg3yOtrNzesYzOXt+hEuSqtBU+7Jw5mpumSPxr58cN6
+         nETuH8N/vwwXMhGNGN9Ia31f7WlGQ8lstT9peNQKv9P5F1jO3ZSAn/K/cD/vSWQVS80S
+         KsVXNqV4IM9RmJmRAgMnV7dUhN+rulVZN+iwHwA2J6EK1pnUwuZE4aIVg0VOmFc18X1g
+         3GYw==
+X-Forwarded-Encrypted: i=1; AJvYcCVnU1SozYZSxVw9rGBJdx5VzY9dzTSst3ydIchlG2gyw3F/Nr6Znf0xgwqJe/PJQlHN+jo3FlUzLLJ4HCo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2D2WmW7/rHXqQ3zNFaVujmMeKdJ7D2gcQtnaI2SCXH1pam2jv
+	hb4sVJBMoOFO96WDBHDvkjhuVGbHYRp4HaSI2L5GcXHCwcBgmCdbwWiJ2Bg9FQ==
+X-Google-Smtp-Source: AGHT+IHWRKvprk92gXrSyzyMGO8sYq9D2+dQAwzgUyL9Up++6xFGJPIJrFUiroBsPDyQ5b0RA039+w==
+X-Received: by 2002:a05:6830:440f:b0:718:118d:2bf6 with SMTP id 46e09a7af769-718683256d2mr5142266a34.23.1730067818830;
+        Sun, 27 Oct 2024 15:23:38 -0700 (PDT)
+Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5ec186fd35bsm1389857eaf.30.2024.10.27.15.23.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 27 Oct 2024 15:23:37 -0700 (PDT)
+Date: Sun, 27 Oct 2024 15:23:23 -0700 (PDT)
+From: Hugh Dickins <hughd@google.com>
+To: Alexander Viro <viro@zeniv.linux.org.uk>
+cc: Andrew Morton <akpm@linux-foundation.org>, 
+    Christian Brauner <brauner@kernel.org>, 
+    Matthew Wilcox <willy@infradead.org>, Christoph Hellwig <hch@lst.de>, 
+    Kent Overstreet <kent.overstreet@linux.dev>, 
+    "Darrick J. Wong" <djwong@kernel.org>, 
+    Thomas Gleixner <tglx@linutronix.de>, 
+    Peter Zijlstra <peterz@infradead.org>, linux-fsdevel@vger.kernel.org, 
+    linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
+    linux-mm@kvack.org
+Subject: [PATCH] iov_iter: fix copy_page_from_iter_atomic() if
+ KMAP_LOCAL_FORCE_MAP
+Message-ID: <dd5f0c89-186e-18e1-4f43-19a60f5a9774@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=US-ASCII
 
-Remove hard-coded strings by using the str_yes_no() helper function.
+generic/077 on x86_32 CONFIG_DEBUG_KMAP_LOCAL_FORCE_MAP=y with highmem,
+on huge=always tmpfs, issues a warning and then hangs (interruptibly):
 
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+WARNING: CPU: 5 PID: 3517 at mm/highmem.c:622 kunmap_local_indexed+0x62/0xc9
+CPU: 5 UID: 0 PID: 3517 Comm: cp Not tainted 6.12.0-rc4 #2
+...
+copy_page_from_iter_atomic+0xa6/0x5ec
+generic_perform_write+0xf6/0x1b4
+shmem_file_write_iter+0x54/0x67
+
+Fix copy_page_from_iter_atomic() by limiting it in that case
+(include/linux/skbuff.h skb_frag_must_loop() does similar).
+
+But going forward, perhaps CONFIG_DEBUG_KMAP_LOCAL_FORCE_MAP is too
+surprising, has outlived its usefulness, and should just be removed?
+
+Fixes: 908a1ad89466 ("iov_iter: Handle compound highmem pages in copy_page_from_iter_atomic()")
+Signed-off-by: Hugh Dickins <hughd@google.com>
+Cc: stable@vger.kernel.org
 ---
- fs/smb/client/sess.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ lib/iov_iter.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/fs/smb/client/sess.c b/fs/smb/client/sess.c
-index c88e9657f47a..3cd157c2c0a5 100644
---- a/fs/smb/client/sess.c
-+++ b/fs/smb/client/sess.c
-@@ -491,11 +491,11 @@ cifs_ses_add_channel(struct cifs_ses *ses,
+diff --git a/lib/iov_iter.c b/lib/iov_iter.c
+index 1abb32c0da50..94051b83fdd8 100644
+--- a/lib/iov_iter.c
++++ b/lib/iov_iter.c
+@@ -461,6 +461,8 @@ size_t copy_page_from_iter_atomic(struct page *page, size_t offset,
+ 		size_t bytes, struct iov_iter *i)
+ {
+ 	size_t n, copied = 0;
++	bool uses_kmap = IS_ENABLED(CONFIG_DEBUG_KMAP_LOCAL_FORCE_MAP) ||
++			 PageHighMem(page);
  
- 	if (iface->sockaddr.ss_family == AF_INET)
- 		cifs_dbg(FYI, "adding channel to ses %p (speed:%zu bps rdma:%s ip:%pI4)\n",
--			 ses, iface->speed, iface->rdma_capable ? "yes" : "no",
-+			 ses, iface->speed, str_yes_no(iface->rdma_capable),
- 			 &ipv4->sin_addr);
- 	else
- 		cifs_dbg(FYI, "adding channel to ses %p (speed:%zu bps rdma:%s ip:%pI6)\n",
--			 ses, iface->speed, iface->rdma_capable ? "yes" : "no",
-+			 ses, iface->speed, str_yes_no(iface->rdma_capable),
- 			 &ipv6->sin6_addr);
+ 	if (!page_copy_sane(page, offset, bytes))
+ 		return 0;
+@@ -471,7 +473,7 @@ size_t copy_page_from_iter_atomic(struct page *page, size_t offset,
+ 		char *p;
  
- 	/*
+ 		n = bytes - copied;
+-		if (PageHighMem(page)) {
++		if (uses_kmap) {
+ 			page += offset / PAGE_SIZE;
+ 			offset %= PAGE_SIZE;
+ 			n = min_t(size_t, n, PAGE_SIZE - offset);
+@@ -482,7 +484,7 @@ size_t copy_page_from_iter_atomic(struct page *page, size_t offset,
+ 		kunmap_atomic(p);
+ 		copied += n;
+ 		offset += n;
+-	} while (PageHighMem(page) && copied != bytes && n > 0);
++	} while (uses_kmap && copied != bytes && n > 0);
+ 
+ 	return copied;
+ }
 -- 
-2.47.0
-
+2.35.3
 
