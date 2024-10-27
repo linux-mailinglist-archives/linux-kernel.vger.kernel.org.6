@@ -1,108 +1,109 @@
-Return-Path: <linux-kernel+bounces-383840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E1039B20C5
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 22:14:26 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 145F09B20C2
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 22:14:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F3652B20C72
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 21:14:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B5152B21021
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 21:14:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBC4C1865FA;
-	Sun, 27 Oct 2024 21:14:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D6E9186E39;
+	Sun, 27 Oct 2024 21:13:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="n/2DeL6c"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=epochal.quest header.i=@epochal.quest header.b="FuwAK7Nd"
+Received: from thales.epochal.quest (thales.epochal.quest [51.222.15.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1C4D5684;
-	Sun, 27 Oct 2024 21:14:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08B365684;
+	Sun, 27 Oct 2024 21:13:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.222.15.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730063649; cv=none; b=rQnaKaJuHaSYop1gPOnBM4H3Nd6+artWigtlOStqNNhJxecImbVUG+Y3pULn/j3ZmXTWHqltBqRTwaYjPKpJbU2RbNh17r5HY2zHoa2efBdJ1wuQ3mZfgslc7c0ZGjCf91jAZT1RmLQpsSOdfcvq/95//sOibNUHD+P61pjlwJU=
+	t=1730063635; cv=none; b=eOGv3d5FKelLeA27SxJOPNn+15G1bHbRVrFBMiysL+/KZQ9qi968DepNK4+xpZx3ZRcc4L8abVl/cyC2JyZ9ofshSe+PjPwkvnZ8m1RjkajBQjC5L+VL72Y9lz5bcBJnNAcLVTq26kwxQrU+C9/oJ9kgmvn+G0+SNeIEUYdwQXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730063649; c=relaxed/simple;
-	bh=so+AoySYcBM12c77z/LnWClqHDFKcepvmE8+98poeKE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=QKSomf0NLa2UfLQrwVWBUhcCaI0e6WvElZ2rhA3aSmuKbpqcysNXPEs1MvOvF+3u1eOTwEnTyM8Rz8ZFEOcum0/FRbfY+iXpZb0fSSf0gCkbqNToBGfIZ/V3IZcjGGx8WWK0p1Gw2jE1tL3GPFVzZm1aa+A9twTDNXfsTIs7+qE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=n/2DeL6c; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1730063632;
-	bh=mIWK1Jsn/3SU028ik+J4ZKdihUKmSuKh5p9duoSc4bc=;
-	h=Date:From:To:Cc:Subject:From;
-	b=n/2DeL6c4ZN6p1AsQFlt6JGrSYJU6hjGYcHuTwIFKHAqaNBH992Z3jzZ/iyWc97XJ
-	 3ktGEAthHJxO2L540VuoIICiD6JtiY9eojxWrZW3hLI9Rt1eLWt7JVsThCtFyjVp8V
-	 IIFKLAGNS9LjVkmwMPRma+2bz0e3xzbb0DsU2cnr6u7DaLRAnpe/imZgI28D19kDDi
-	 xw63UDevA7tzswg0vgV1gTmkuWo/4bL3TdXB0v8U2EaGFxheXXnkg9CVtGx9hexP21
-	 2jSg1G3yOaqP7qqIcZVHg1J1qVhjYYiGpVqrVv19AAVbqSKd3TJJUlYNYcMjk7pxQg
-	 03G5xz0zVhjmw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Xc8QR3Prvz4x3J;
-	Mon, 28 Oct 2024 08:13:51 +1100 (AEDT)
-Date: Mon, 28 Oct 2024 08:13:32 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Herbert Xu <herbert@gondor.apana.org.au>, Linux Crypto List
- <linux-crypto@vger.kernel.org>
-Cc: Lukas Wunner <lukas@wunner.de>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: Fixes tag needs some work in the crypto tree
-Message-ID: <20241028081332.70264ab0@canb.auug.org.au>
+	s=arc-20240116; t=1730063635; c=relaxed/simple;
+	bh=9QcJyUO4rgbvh0nZF74gzlP4IEdWBHI4BsTfagAk9YA=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=cblmXGF/B0IA1nELwyTTs/F36aCH//vh7zxC9iM94YUPmkOQhqrwsZjWrlCovMva35QvliQLflMZZVEhX/Twu6cOeJW0bfmR5qJ1NZbqu+Rs/UBM+N3qh2XaPiUDDysxbpz5Zt3bORHwweZxNapCgFMX7E4FIq8lvC36r930MxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=epochal.quest; spf=pass smtp.mailfrom=epochal.quest; dkim=pass (2048-bit key) header.d=epochal.quest header.i=@epochal.quest header.b=FuwAK7Nd; arc=none smtp.client-ip=51.222.15.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=epochal.quest
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=epochal.quest
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=epochal.quest;
+	s=default; t=1730063626;
+	bh=9QcJyUO4rgbvh0nZF74gzlP4IEdWBHI4BsTfagAk9YA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=FuwAK7NdLwxMj68iES/Wcypbkr/KF98eAUuzibyV5kzOusZ6ZXMDsDOywIk/orzv7
+	 TwqwP0+JBShS3xV4i3E+vsNTTeC+Vhejc32LlyZ3CdUNffGawfFa67q48G+bIZkWG+
+	 O5z0ZacO9KRdNjKzofE9pYO9KBKsdnAQSHci+buXGCtkYAiAQJqA7hK6RnQj3JsZiH
+	 NzW1JP1YEEfNdhmOZ3tk0IThlPjILadtVNLoIcFTAvzuwFwSHFqXt+LTEBSA7tcaoi
+	 9eMPTvYJ/twTrWe0s64rVk5POU6HonaUAYvKo8TBtxv/l38m9tf+J6ttt8Bl8yd+pd
+	 y8kbFDqrL/i4A==
+X-Virus-Scanned: by epochal.quest
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/BMIWo6+TNJ9OhoHAfSUg6Xt";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Date: Sun, 27 Oct 2024 18:13:44 -0300
+From: Cody Eksal <masterr3c0rd@epochal.quest>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+ linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
+ linux-usb@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>, Viresh Kumar
+ <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai
+ <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland
+ <samuel@sholland.org>, Maxime Ripard <mripard@kernel.org>, Andre Przywara
+ <andre.przywara@arm.com>, Parthiban <parthiban@linumiz.com>, Florian
+ Fainelli <florian.fainelli@broadcom.com>, Vinod Koul <vkoul@kernel.org>,
+ Linus Walleij <linus.walleij@linaro.org>, Thierry Reding
+ <treding@nvidia.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Kishon Vijay Abraham I <kishon@kernel.org>, "Rafael J. Wysocki"
+ <rafael@kernel.org>
+Subject: Re: [PATCH 11/13] dt-bindings: opp: h6: Add A100 operating points
+In-Reply-To: <7dybkf3zveidwapwfivvq3jk6qxntuqgycndff3ajjl2owhjhn@khqgycnzh76j>
+References: <20241024170540.2721307-1-masterr3c0rd@epochal.quest>
+ <20241024170540.2721307-12-masterr3c0rd@epochal.quest>
+ <7dybkf3zveidwapwfivvq3jk6qxntuqgycndff3ajjl2owhjhn@khqgycnzh76j>
+Message-ID: <13a5e833ce19df20b0420d7f1052fd96@epochal.quest>
+X-Sender: masterr3c0rd@epochal.quest
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
 
---Sig_/BMIWo6+TNJ9OhoHAfSUg6Xt
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 2024/10/27 5:47 pm, Krzysztof Kozlowski wrote:
+> On Thu, Oct 24, 2024 at 02:05:29PM -0300, Cody Eksal wrote:
+>> diff --git 
+>> a/Documentation/devicetree/bindings/opp/allwinner,sun50i-h6-operating-points.yaml 
+>> b/Documentation/devicetree/bindings/opp/allwinner,sun50i-h6-operating-points.yaml
+>> index ec5e424bb3c8..603c6c88d080 100644
+>> --- 
+>> a/Documentation/devicetree/bindings/opp/allwinner,sun50i-h6-operating-points.yaml
+>> +++ 
+>> b/Documentation/devicetree/bindings/opp/allwinner,sun50i-h6-operating-points.yaml
+>> @@ -23,6 +23,7 @@ properties:
+>>    compatible:
+>>      enum:
+>>        - allwinner,sun50i-h6-operating-points
+>> +      - allwinner,sun50i-a100-operating-points
+>>        - allwinner,sun50i-h616-operating-points
+> 
+> I have no clue why a100 is between h6 and h616. :/
+ From my understanding, the A100 was released before the H616, but after 
+the H6. There are not many sources to rely on for this, but the H6 
+appears to have launched in 2017, the A100 in 2019, and the H616 in 
+2020.
 
-Hi all,
+I assumed ordering was intended to be in chronological order; perhaps it 
+was intended to be in lexicographical order instead? If so, I can move 
+this entry above the H6.
 
-In commit
-
-  6835b816d02d ("crypto: ecdsa - Update Kconfig help text for NIST P521")
-
-Fixes tag
-
-  Fixes: a7d45ba77d3d ("crypto: ecdsa - Register NIST P521 and extend test
-
-has these problem(s):
-
-  - Subject has leading but no trailing parentheses
-  - Subject has leading but no trailing quotes
-
-Please do not split fixes tags over more than one line.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/BMIWo6+TNJ9OhoHAfSUg6Xt
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcerPwACgkQAVBC80lX
-0GzVOQf/b65KoYpfb/QG5k6StU5qf+mxNJUVX7QO6obpWotGuyzdCH3VmB3RL5W+
-M2xAms21r6QmZsohUdDIzvVcMonwiV9alf0pbScEyN16rYLeafEzkkvWZIbTy9Zp
-wVXiu2IqpQ9mfRQv6YDulVaXltIR5FGR3ppOoKAwYHhuHD3EsluGZFOuuciqylZd
-MtTbdmml+7fBGGOB7FZvBNt3gRKx+vJ9o9FtStf2/wKoCA1c9ON3GV70Maxo8aTU
-teIb6CVGl2IelBW5uF8GPxWHfzrxa2W8gPKJf4+UUNLBgGstQAAGi54AqXgPsgQy
-3KxNEs+lM5aG+3/qO3ZsVYLoWBBgbA==
-=CxKY
------END PGP SIGNATURE-----
-
---Sig_/BMIWo6+TNJ9OhoHAfSUg6Xt--
+- Cody
+> Best regards,
+> Krzysztof
 
