@@ -1,252 +1,111 @@
-Return-Path: <linux-kernel+bounces-383799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31BEE9B2053
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 21:26:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D8C39B2059
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 21:27:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E172A2810BF
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 20:26:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6D4F2812DA
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 20:27:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17CE117CA09;
-	Sun, 27 Oct 2024 20:26:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3F1417F4F6;
+	Sun, 27 Oct 2024 20:27:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DQTr2gdj"
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bUzf7gsX"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41D6315885E
-	for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 20:26:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35F0115885E;
+	Sun, 27 Oct 2024 20:27:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730060769; cv=none; b=TbMZcHL5hXXmyXCo5fgy05mfffyeTVPQO2Upk7swBgDAb4tpCZYA258iA+vbBW/P74p5wIixzkjfUenAISnY3MdX8F6qk+26LaZabFCkH8+HSG/wl8/YJQym/BUJkSIScmViaGQ93T8JwQaSrgnO/YRUPxRTIhQe1MAfbuUyDic=
+	t=1730060844; cv=none; b=XvRW8vsI/aHxcV6JfDlq37V6YP9k/rR5RyUF/99M6E1jMidH+SGKVoZP6+jdjiNHHscM6acdt6AECTMdaBYs5yGttEB/D5CDvT6TlGxpqmGsqxlg+5zhI3/G8rzD5Md20v4jbXH29oB3a9wU+TKERaLqLDDW7IaKDqwbSepp6B8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730060769; c=relaxed/simple;
-	bh=4iX+hjIAsXN6wsa53VrKIxg2sWTgQk/YE6aPYpKH/eA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GaYrhBKP+UOHeJvTfPR2Su0ZSlmcPMXyFH0NL/eENwkEbQEKKoWynASeHqrzraF8Z0JEH+W7tKbxDKdPwOTFNOCtZNJH7Xm0G9+ROQ31AwSlvegcOeeKzt98VSZqHjptCINwpB81qSp+p82pTt+Mv1BZ4K+70GcoGG0bA6ba/ZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DQTr2gdj; arc=none smtp.client-ip=209.85.215.172
+	s=arc-20240116; t=1730060844; c=relaxed/simple;
+	bh=JpXCiKC2ct+IT2kSHw/v+QOTATgFdJ18Z/JSLY8FTvQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=q2U9QYpYQHE21yu8Rd0ZYScjca0C997YLj+GU/4KXkonTAO6PbRunk95RrcQj5BxZec3SklPyTwhBbsC142FpsEQzqubjsNyCXqDhOh7FhV+Ztn87+4FWLWqw6BfATWUijZhv5RCTDmab7SOGxloB5iaAA7KToD8nEv1dcDkpMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bUzf7gsX; arc=none smtp.client-ip=209.85.128.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-7cd8803fe0aso2468113a12.0
-        for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 13:26:07 -0700 (PDT)
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43163667f0eso35864845e9.0;
+        Sun, 27 Oct 2024 13:27:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730060766; x=1730665566; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WZQCNHp8BAwV5cLSWa4H7dFNLCnjYR05zJc1+gDeJDI=;
-        b=DQTr2gdjzAtpnq7mI0CQufkjDUoN+NLY/d4xT2pLTGdaZG3/5JAv21SYNu+FcjN0mW
-         KegKtuc6zbKgj8SSs7vpcfXQj/ILHIA3gMoxHlDfZ8jvzjiGLmOlUG7jyRyVdc2GvD3V
-         fxvtBAlCone/LL4Pfv+4bi186j7k9EwDOBWsVo5Pr9Q+Yb1AJMmJnS8ysoEUbuah11tX
-         DFQSRkkRNRkeyN6wwk+rnr3eoaAsFamoy7Ts/WDidb64v/KY9TnHE4fGvqBGmxmv+F0z
-         slbcz4N0PU+/ZgGHS0dGJVPDASbhcuwEohc6Bkn3Q4yEQNku/xXNCc7eGrAM0bLUk00g
-         4J/g==
+        d=gmail.com; s=20230601; t=1730060840; x=1730665640; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=pRQHOJ1yYQQJLj2MH1qHa8MZFRBtwB0M1hjRbBCmZ8w=;
+        b=bUzf7gsX3VfiiAR079SEGNRXO5BAOWhtVC7Nvc2qPmZsB9y0jZAnSe3DwC9Sx0But8
+         l0zol6MEWMmcRDaLoW7NpovyovPkybI3l8UBT6vGoBkyfBCrh8IBOpdWkCai2ag2ajLh
+         rtXM6iEqH8lsPy9Ml2cMAiLteOIoF+bCtddrPsShJ6LbQAr+o9cYb23+A3xRiBUjCi/5
+         hfEt6bxqYBwRhVlrjKr7LLWQ9+NUkY/5WnY9C5oWjErOoOcr4IOeRWytpOXi15eVVQF7
+         pyrrNz/c10hhk3DoNkbEiolTO3XZjdoL1c2+qydf5ndDmG2i3MhgXkJAO9h/UJR22/dp
+         V2lw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730060766; x=1730665566;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WZQCNHp8BAwV5cLSWa4H7dFNLCnjYR05zJc1+gDeJDI=;
-        b=lMKzzxqu5euwi+4PhwIiFYo9/ir4+KjfnCEeV2ME1e+CiMNeWSkCbdZmbMVUiDesNE
-         oear7/RSeZED8T355BQKUieNQgSCs+T9Rq6JusbUihIxfAWlQgU8itONjiNuO6mK9DAW
-         mLAzVxwT6gCo2w8VgyTT9Mk3I1RqTpjhF4LxFRjEyEEAGDqIhvuX4JTad2KqPE4DRcQt
-         hOp9+jzKpQtLRmI/+obR5VWZw+sH8+0okOE9VbPdwa3E/c/ic98jPiXa0RAZK890j/li
-         FG3U+Wa4CINARP7OmCCLqjyJbFVhwrCYNer1B+SjLxg94wyy96kvGI57f/SkFuNYd0qS
-         6Y5w==
-X-Forwarded-Encrypted: i=1; AJvYcCV/2FpTnRXf7yYd2hQFN/PfC0ERRKOinjJguOMPYhqrPu6f+2PZyGDMpYAiHihVWfiKc8B/NdM//2q7wV4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwgfxuTu4ZbjD4dHtE6ymzrcRHSOePKsUIZJNmeb8F/Hec09FgA
-	ZET9aZrlJbaHeLP15ee9WzZCwgQrxyD9NVXZbsUcYT/rclVX9QZBNWFeepwnuH0NKVzJ0BMXWiI
-	sbrakPe2UUCUBrrtOqpUj0Ed41R8=
-X-Google-Smtp-Source: AGHT+IEoV85pZcjnD1jjPkci6ROXQwwjZK5h8YcKZWw55Z0O/M8GYhsNQm6DwRg6UntvImKPJovBgxeoxAV5ndIHAgU=
-X-Received: by 2002:a17:90b:17cc:b0:2e2:92dc:6fd4 with SMTP id
- 98e67ed59e1d1-2e8f107d4camr8257794a91.23.1730060766027; Sun, 27 Oct 2024
- 13:26:06 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1730060840; x=1730665640;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pRQHOJ1yYQQJLj2MH1qHa8MZFRBtwB0M1hjRbBCmZ8w=;
+        b=bj25oJNNik7i75ad9BkYpFvX42n+mb4PA0xtU8e2T6w9cKPuCsh+ztxFe6LzhAH4qJ
+         GzzndzL4iNpIozV6xygmcPXea5sFNtZRJ7b/V1xJ8Ktll5azD5KSA64/wQmGqPnR3qkT
+         FEpG0Da2OPocX8fu346aFE3CcXO6/P71VyOXAX757uIZ8/714QImHLdoEmAq91LohCEC
+         9hXN1XdG/Ti4ybAZihVxzv/Qnb9oENL1+cSG97ZKlCUSWZBDToQUCjsPOObcXHxkuVC8
+         M5bxiFOWuWgFLepovxokd6sAjfCFRDYZvX6jaY3V1nR26n8Nj5OjxtquLBYL0S55fGgJ
+         Vz5g==
+X-Forwarded-Encrypted: i=1; AJvYcCWhq2Vkfij7VVw/HbvIrUGuTcLFCactakHTIK/lWSXN7G7FbwJ/nB3t+NfSzU91SdV/oSCLmgA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvAHH8fuylV9htJ6nsy7Y6NLLnTldiDPgvZ+SUMWy6zUMBpaBw
+	SBNn6vhTz+AGiuGvUUHyf3CuB2PcI5h32VvevB5UAuAcmSvDVaX1pyHvKw==
+X-Google-Smtp-Source: AGHT+IGfZlFtFiOmu6yt4/YDXSdaWRDmabBDLowk75VcOEYzt8Gz3JYTjL8M6596GWqRfATTt9b9rg==
+X-Received: by 2002:a05:600c:1c82:b0:431:5503:43ca with SMTP id 5b1f17b1804b1-4319ad16173mr47913515e9.28.1730060840214;
+        Sun, 27 Oct 2024 13:27:20 -0700 (PDT)
+Received: from localhost.localdomain (ip-94-112-167-15.bb.vodafone.cz. [94.112.167.15])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4318b5430edsm116260535e9.2.2024.10.27.13.27.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 27 Oct 2024 13:27:19 -0700 (PDT)
+From: Ilya Dryomov <idryomov@gmail.com>
+To: ceph-devel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	"David S. Miller" <davem@davemloft.net>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [PATCH] MAINTAINERS: exclude net/ceph from networking
+Date: Sun, 27 Oct 2024 21:25:55 +0100
+Message-ID: <20241027202556.1621268-1-idryomov@gmail.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241026171441.3047904-1-samuel.holland@sifive.com> <20241026171441.3047904-7-samuel.holland@sifive.com>
-In-Reply-To: <20241026171441.3047904-7-samuel.holland@sifive.com>
-From: Jesse T <mr.bossman075@gmail.com>
-Date: Sun, 27 Oct 2024 16:25:30 -0400
-Message-ID: <CAJFTR8RJYdT6CQ=FgBkM3jUj=PnYnuyi3+bO3=NPeH6xJ6TTaw@mail.gmail.com>
-Subject: Re: [PATCH 6/6] riscv: Remove CONFIG_PAGE_OFFSET
-To: Samuel Holland <samuel.holland@sifive.com>
-Cc: Palmer Dabbelt <palmer@dabbelt.com>, linux-kernel@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, Andrew Morton <akpm@linux-foundation.org>, 
-	Arnd Bergmann <arnd@arndb.de>, Alexandre Ghiti <alexghiti@rivosinc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Sat, Oct 26, 2024 at 1:16=E2=80=AFPM Samuel Holland
-<samuel.holland@sifive.com> wrote:
->
-> The current definition of CONFIG_PAGE_OFFSET is problematic for a couple
-> of reasons:
->  1) The value is misleading for normal 64-bit kernels, where it is
->     overridden at runtime if Sv48 or Sv39 is chosen. This is especially
->     the case for XIP kernels, which always use Sv39.
->  2) The option is not user-visible, but for NOMMU kernels it must be a
->     valid RAM address, and for !RELOCATABLE it must additionally be the
->     exact address where the kernel is loaded.
->
-> Fix both of these by removing the option.
->  1) For MMU kernels, drop the indirection through Kconfig. Additionally,
->     for XIP, drop the indirection through kernel_map.
->  2) For NOMMU kernels, use the user-visible physical RAM base if
->     provided. Otherwise, force the kernel to be relocatable.
->
-> Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
-Reviewed-by: Jesse Taube <mr.bossman075@gmail.com>
+net/ceph (libceph) patches have always gone through the Ceph tree.
+Avoid CCing netdev in addition to ceph-devel list.
 
-> ---
->
->  arch/riscv/Kconfig               |  8 +-------
->  arch/riscv/include/asm/page.h    | 15 ++++++++-------
->  arch/riscv/include/asm/pgtable.h |  2 +-
->  arch/riscv/mm/init.c             |  8 ++------
->  4 files changed, 12 insertions(+), 21 deletions(-)
->
-> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-> index 33aa79d84021..297ccbf4b5ce 100644
-> --- a/arch/riscv/Kconfig
-> +++ b/arch/riscv/Kconfig
-> @@ -195,6 +195,7 @@ config RISCV
->         select PCI_DOMAINS_GENERIC if PCI
->         select PCI_ECAM if (ACPI && PCI)
->         select PCI_MSI if PCI
-> +       select RELOCATABLE if !MMU && !PHYS_RAM_BASE_FIXED
->         select RISCV_ALTERNATIVE if !XIP_KERNEL
->         select RISCV_APLIC
->         select RISCV_IMSIC
-> @@ -282,13 +283,6 @@ config MMU
->           Select if you want MMU-based virtualised addressing space
->           support by paged memory management. If unsure, say 'Y'.
->
-> -config PAGE_OFFSET
-> -       hex
-> -       default 0x80000000 if !MMU && RISCV_M_MODE
-> -       default 0x80200000 if !MMU
+Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
+---
+ MAINTAINERS | 1 +
+ 1 file changed, 1 insertion(+)
 
-Should the default values above now be moved to CONFIG_PHYS_RAM_BASE?
+diff --git a/MAINTAINERS b/MAINTAINERS
+index e9659a5a7fb3..94077e2de510 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -16096,6 +16096,7 @@ X:	include/net/mac80211.h
+ X:	include/net/wext.h
+ X:	net/9p/
+ X:	net/bluetooth/
++X:	net/ceph/
+ X:	net/mac80211/
+ X:	net/rfkill/
+ X:	net/wireless/
+-- 
+2.46.1
 
-> -       default 0xc0000000 if 32BIT
-> -       default 0xff60000000000000 if 64BIT
-> -
->  config KASAN_SHADOW_OFFSET
->         hex
->         depends on KASAN_GENERIC
-> diff --git a/arch/riscv/include/asm/page.h b/arch/riscv/include/asm/page.=
-h
-> index 24d1ac052609..d1acd1efe0dc 100644
-> --- a/arch/riscv/include/asm/page.h
-> +++ b/arch/riscv/include/asm/page.h
-> @@ -28,15 +28,16 @@
->   */
->  #ifdef CONFIG_MMU
->  #ifdef CONFIG_64BIT
-> -#define PAGE_OFFSET            kernel_map.page_offset
-> -/*
-> - * By default, CONFIG_PAGE_OFFSET value corresponds to SV57 address spac=
-e so
-> - * define the PAGE_OFFSET value for SV48 and SV39.
-> - */
-> +#define PAGE_OFFSET_L5         _AC(0xff60000000000000, UL)
->  #define PAGE_OFFSET_L4         _AC(0xffffaf8000000000, UL)
->  #define PAGE_OFFSET_L3         _AC(0xffffffd600000000, UL)
-> +#ifdef CONFIG_XIP_KERNEL
-> +#define PAGE_OFFSET            PAGE_OFFSET_L3
->  #else
-> -#define PAGE_OFFSET            _AC(CONFIG_PAGE_OFFSET, UL)
-> +#define PAGE_OFFSET            kernel_map.page_offset
-> +#endif /* CONFIG_XIP_KERNEL */
-> +#else
-> +#define PAGE_OFFSET            _AC(0xc0000000, UL)
->  #endif /* CONFIG_64BIT */
->  #else
->  #define PAGE_OFFSET            ((unsigned long)phys_ram_base)
-> @@ -100,7 +101,6 @@ typedef struct page *pgtable_t;
->  #define ARCH_PFN_OFFSET                (PFN_DOWN((unsigned long)phys_ram=
-_base))
->
->  struct kernel_mapping {
-> -       unsigned long page_offset;
->         unsigned long virt_addr;
->         unsigned long virt_offset;
->         uintptr_t phys_addr;
-> @@ -114,6 +114,7 @@ struct kernel_mapping {
->         uintptr_t xiprom;
->         uintptr_t xiprom_sz;
->  #else
-> +       unsigned long page_offset;
->         unsigned long va_kernel_pa_offset;
->  #endif
->  };
-> diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pg=
-table.h
-> index d0190ee9b2e4..b8125c3aa85d 100644
-> --- a/arch/riscv/include/asm/pgtable.h
-> +++ b/arch/riscv/include/asm/pgtable.h
-> @@ -15,7 +15,7 @@
->  #ifdef CONFIG_RELOCATABLE
->  #define KERNEL_LINK_ADDR       UL(0)
->  #else
-> -#define KERNEL_LINK_ADDR       _AC(CONFIG_PAGE_OFFSET, UL)
-> +#define KERNEL_LINK_ADDR       _AC(CONFIG_PHYS_RAM_BASE, UL)
->  #endif
->  #define KERN_VIRT_SIZE         (UL(-1))
->  #else
-> diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
-> index 0aad925848a4..a1a185e6faf0 100644
-> --- a/arch/riscv/mm/init.c
-> +++ b/arch/riscv/mm/init.c
-> @@ -843,6 +843,8 @@ static __init void set_satp_mode(uintptr_t dtb_pa)
->         uintptr_t set_satp_mode_pmd =3D ((unsigned long)set_satp_mode) & =
-PMD_MASK;
->         u64 satp_mode_cmdline =3D __pi_set_satp_mode_from_cmdline(dtb_pa)=
-;
->
-> +       kernel_map.page_offset =3D PAGE_OFFSET_L5;
-> +
->         if (satp_mode_cmdline =3D=3D SATP_MODE_57) {
->                 disable_pgtable_l5();
->         } else if (satp_mode_cmdline =3D=3D SATP_MODE_48) {
-> @@ -1090,11 +1092,6 @@ asmlinkage void __init setup_vm(uintptr_t dtb_pa)
->         kernel_map.virt_addr =3D KERNEL_LINK_ADDR + kernel_map.virt_offse=
-t;
->
->  #ifdef CONFIG_XIP_KERNEL
-> -#ifdef CONFIG_64BIT
-> -       kernel_map.page_offset =3D PAGE_OFFSET_L3;
-> -#else
-> -       kernel_map.page_offset =3D _AC(CONFIG_PAGE_OFFSET, UL);
-> -#endif
->         kernel_map.xiprom =3D (uintptr_t)CONFIG_XIP_PHYS_ADDR;
->         kernel_map.xiprom_sz =3D (uintptr_t)(&_exiprom) - (uintptr_t)(&_x=
-iprom);
->
-> @@ -1106,7 +1103,6 @@ asmlinkage void __init setup_vm(uintptr_t dtb_pa)
->         kernel_map.va_kernel_xip_data_pa_offset =3D kernel_map.virt_addr =
-- kernel_map.phys_addr
->                                                 + (uintptr_t)&_sdata - (u=
-intptr_t)&_start;
->  #else
-> -       kernel_map.page_offset =3D _AC(CONFIG_PAGE_OFFSET, UL);
->         kernel_map.phys_addr =3D (uintptr_t)(&_start);
->         kernel_map.size =3D (uintptr_t)(&_end) - kernel_map.phys_addr;
->         kernel_map.va_kernel_pa_offset =3D kernel_map.virt_addr - kernel_=
-map.phys_addr;
-> --
-> 2.45.1
->
->
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
