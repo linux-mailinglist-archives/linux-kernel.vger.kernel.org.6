@@ -1,110 +1,92 @@
-Return-Path: <linux-kernel+bounces-383578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D53879B1D8D
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 13:00:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 423949B1D8F
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 13:00:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64A3F1F212E8
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 12:00:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BBB71C20FB4
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 12:00:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D3BE154C00;
-	Sun, 27 Oct 2024 11:59:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UQaknicl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BB1A156F45;
+	Sun, 27 Oct 2024 12:00:06 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A47CA14D2BE;
-	Sun, 27 Oct 2024 11:59:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 512316F2FE
+	for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 12:00:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730030396; cv=none; b=FIBWPewGPGcRulHWu4h+yeMo/AzvPRhJtmvYG7ZAHcfY6bF7G+HxIKfEop7eZhONhFqVGo8WwB6nztE5Sk5q4F1r/U71cLZNhUycKmvYqv46aGj5DpdQ7eiKEzPv2cKx1SO0nsC75QDDmhYbs0+oMNqCf0VNKj/iRXAODo4LtRA=
+	t=1730030406; cv=none; b=YEzWIN0KmVnC34+NvRR5g0LVH5BpHi+kiRLAU3lUyQzZ40OHk87LKSECjq9FcBDEOOIAXt/IGu6S3pLgBG1e/n7IHMlHWiVe848LUgQiGHnfx0xCl3hVWinpYL60Ts1YHjpL6I/F39r7PmIDFBg2ZjlmQ8g0D0+bnocvyRhuVfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730030396; c=relaxed/simple;
-	bh=no/+AbuoRzYxRFzGoq3ejOzhVao1LX1mcfFKJ9bkfXA=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=lZQTSpMGsZzeZGN8+4fpWMA9tuE3loKiLsM5ie5IXSOJmh3nEUMel7IvS1DeLEMRiVgtVllvGZa5T/MegWCQiKvQ4Fr2ClTK804Lm3OZe9Y32bPTtbiyvlCfIwVDjeg+pKpc/k9pxA7sU3KC4Xa2Z16ip2dCxeboqZnCESnYcLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UQaknicl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E9AAC4CEE8;
-	Sun, 27 Oct 2024 11:59:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730030396;
-	bh=no/+AbuoRzYxRFzGoq3ejOzhVao1LX1mcfFKJ9bkfXA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=UQakniclNBUTG4LjfMqiEotg1kwXjpTW6UewlaZYZztiW56k7Hv/KAzkG8kD3WkuI
-	 eOEBsIxpBEA2KQRhrmGHd9tGGTrjMX9G+GoRpv5yfiRo/InbkTdsfq9j0yL6BHs6hD
-	 SSUMHdt/0ziNpw7Bn3vf4GgwAnCkYLx1tO3IjDHXoa6M/gHnMLpTPxU87dmMC3O0Ow
-	 Y1ZU+AyokkNMySopDCxtgkg+EZEPkTznLqolcUBeR54eseZpi0JtOrEVDXzAwu/2u5
-	 yP6+Vq+QkzmhmD8zV8fPaA39f4FXeF2eGE+WUMDtfOTOM61g8aFHgfcYkva5rHjuaB
-	 L0dbhimjSYY0A==
-Date: Sun, 27 Oct 2024 20:59:52 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linux trace kernel
- <linux-trace-kernel@vger.kernel.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Mathieu
- Desnoyers <mathieu.desnoyers@efficios.com>, Thomas Gleixner
- <tglx@linutronix.de>
-Subject: Re: [PATCH] fgraph: Change the name of cpuhp state to
- "fgraph:online"
-Message-Id: <20241027205952.e9c65a883362d8fdbdd2fe15@kernel.org>
-In-Reply-To: <20241024222944.473d88c5@rorschach.local.home>
-References: <20241024222944.473d88c5@rorschach.local.home>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1730030406; c=relaxed/simple;
+	bh=XO1lGRkxLeB+9+Bplf2WMXDq+XPLUt8XczjTuzuUnQ8=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=CMbR8xHeAOyRHKJK4kTMx4VJ1z/8SRK4zZ6R0JNoYe3fHBIdKyNAlimdp49wIO3vSuUBcrcm2mltSPfQoCtlzilrQgFct8lQgZnsweKkr1k6t6qecXh6TzAR8U4HLD+9TPPRS0UlLc2/XWuwcOibrkQzxUp2cjmFxc761QlQL30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a4e41e2732so21498445ab.2
+        for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 05:00:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730030403; x=1730635203;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=no1ZFOGLUySkY+ghDrsyWwT3pLKnG1CnPDNFguvuHe0=;
+        b=Dvi9qLioPhRbknGgIFlcDWlqbYrDxZZjFAWFkz2AQtbmgGDgGKV4u+lMdZ6pNDhT11
+         ZewfTAnYnzBnChWOEamIthy3IsK0WSfNf+wx9l+DhVos1cojjn6Id3RL+26YEv49e2a3
+         dQPCpXo7MKjeP4HoXd6neb9+iSEBwqJl4Glao//lyPSGly9cFRsQFYZmL01dJR/Cx4ho
+         492c/VpfgDHu4+k3PidK0BN6jqPXiW8UwLH0oiAqcbB+vmhWkOdIXc403gr1KyWNTGkT
+         21C0frA+T56rAipCN/sLIhXDGguOZQl4b8kGHVAPipsxTtmXs5mKmUcMJ9ZQtreCKWAL
+         bfvA==
+X-Forwarded-Encrypted: i=1; AJvYcCXHM8A2qMDJQQRV98yre+M6AAVOS+WEeIo7gykPFKAE6ep0EIW+aNDeY0nvzFLBC41p9kqT07dx9F8AicA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6lDlisVb7fTUqKYZmhdbaoap08RtawkIcjtdurTEiSdbUx2kt
+	x7IRGY1VaTOUukS/qLMGyGntEaapB087Fk3ZiICBYruqoi9CrPVwXdtEWeHSLE7VugfNVaxoA/q
+	zflyg2KqiP2mOhkqRnsDHB4OhJk6j/iJiRyN1FbheRbRdp0v2RkETEUA=
+X-Google-Smtp-Source: AGHT+IHN18d5nvGLfk1zOtpizfizKtdkWBBv3m/+dQNMHigd0YvrEMcYJQnZmE4RBIDiNkwypEIJqmOf467eaXwhojoR4OTkPxAl
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-Received: by 2002:a92:ca08:0:b0:3a0:4e2b:9ab9 with SMTP id
+ e9e14a558f8ab-3a4ed26642amr35233065ab.5.1730030403309; Sun, 27 Oct 2024
+ 05:00:03 -0700 (PDT)
+Date: Sun, 27 Oct 2024 05:00:03 -0700
+In-Reply-To: <66fdd08c.050a0220.40bef.0026.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <671e2b43.050a0220.2b8c0f.01d5.GAE@google.com>
+Subject: Re: [syzbot] [net?] INFO: task hung in genl_rcv_msg (4)
+From: syzbot <syzbot+85d0bec020d805014a3a@syzkaller.appspotmail.com>
+To: bigeasy@linutronix.de, davem@davemloft.net, edumazet@google.com, 
+	kerneljasonxing@gmail.com, kuba@kernel.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com, 
+	tglx@linutronix.de
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 24 Oct 2024 22:29:44 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+syzbot has bisected this issue to:
 
-> From: Steven Rostedt <rostedt@goodmis.org>
-> 
-> The cpuhp state name given to cpuhp_setup_state() is "fgraph_idle_init"
-> which doesn't really conform to the names that are used for cpu hotplug
-> setups. Instead rename it to "fgraph:online" to be in line with other
-> states.
-> 
-> Suggested-by: Masami Hiramatsu <mhiramat@kernel.org>
-> Fixes: 2c02f7375e658 ("fgraph: Use CPU hotplug mechanism to initialize idle shadow stacks")
-> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+commit d15121be7485655129101f3960ae6add40204463
+Author: Paolo Abeni <pabeni@redhat.com>
+Date:   Mon May 8 06:17:44 2023 +0000
 
-Looks good to me.
+    Revert "softirq: Let ksoftirqd do its job"
 
-Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1492cca7980000
+start commit:   c2ee9f594da8 KVM: selftests: Fix build on on non-x86 archi..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1292cca7980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=fd919c0fc1af4272
+dashboard link: https://syzkaller.appspot.com/bug?extid=85d0bec020d805014a3a
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12d40230580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16d40230580000
 
-Thank you!
+Reported-by: syzbot+85d0bec020d805014a3a@syzkaller.appspotmail.com
+Fixes: d15121be7485 ("Revert "softirq: Let ksoftirqd do its job"")
 
-> ---
->  kernel/trace/fgraph.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
-> index cd1c2946018c..69e226a48daa 100644
-> --- a/kernel/trace/fgraph.c
-> +++ b/kernel/trace/fgraph.c
-> @@ -1255,7 +1255,7 @@ int register_ftrace_graph(struct fgraph_ops *gops)
->  	guard(mutex)(&ftrace_lock);
->  
->  	if (!fgraph_initialized) {
-> -		ret = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "fgraph_idle_init",
-> +		ret = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "fgraph:online",
->  					fgraph_cpu_init, NULL);
->  		if (ret < 0) {
->  			pr_warn("fgraph: Error to init cpu hotplug support\n");
-> -- 
-> 2.45.2
-> 
-
-
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
