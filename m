@@ -1,102 +1,95 @@
-Return-Path: <linux-kernel+bounces-383836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52AFD9B20B6
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 22:10:23 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6340F9B20BA
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 22:11:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 848C91C20BAF
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 21:10:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 04B9FB20DDC
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 21:11:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 884D5186294;
-	Sun, 27 Oct 2024 21:10:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7654E1865F6;
+	Sun, 27 Oct 2024 21:11:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AEldmhSe"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="roFr7gAu"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEABF1DFE8;
-	Sun, 27 Oct 2024 21:10:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3DDE1DFE8;
+	Sun, 27 Oct 2024 21:11:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730063414; cv=none; b=nwnh/hVlPOelcPFVWTouFEeoqx4zEUUbnIDhG6TZDhx9fjBq/T52i03wBgLaZVs3Zrcy8wkr82lFtcy8MW9DHxep1shOl9DHnatZwnGkKPxTT5EJHAOF077jj1AFnt6a6jNf3hECsooisE2Mjg74AcQC9vmIAOnAaRVyC8tEDeI=
+	t=1730063486; cv=none; b=t1lHWtGer1DgD4kqsJHuLJHKn+uwbKMknAuZ7uLxeVuiE5bcGS+YhzrwmZph5jSSUJHqlEjHwuORtt8PMx513VzZhdlrKJFH53X+JES6dxUkwArBgcbHt4jGHvXQ/iEJjwe2AbI+MY6GIXgI4LVKsiiOoptisF/Tbu1A9EB3BLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730063414; c=relaxed/simple;
-	bh=FHPod0TcGB1+Z8/HScnJyv0wJJKMmlBsJCMaVTNArIc=;
+	s=arc-20240116; t=1730063486; c=relaxed/simple;
+	bh=qxdDf/jwCLwtMg/BFx08kpItrd6GwiKsheCB5mZ8L5g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SWuG5WUv8rR4En9HatxsOhkbPtM2SsMMkE3Ep6zG/R3OtHP7/CJP4gSB/G4QxpaWdRd2ZH6DlLMXc08Q4VCKsncFfzVNGB26UPpXCcgon0l9ig8IR2ywdpmknAwThYO0aiPA1tRoqX/PeniW0FXTgfvvGB7IP582ajYCxI9taZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AEldmhSe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D504DC4CEC3;
-	Sun, 27 Oct 2024 21:10:12 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=hGX8QLjCVoGuV68xI+N4i2xxsdtSWQ//DzVj3GRvSVWuNV9kaYvJtSKANBufElMu4OkuT0cWghxR5OigfhKOfW6V4Hq7gGMMuOmVc6zRJEgycTusyAaV7mqO095KoCUIHeFnoTh/U/KcfUYdlYpw9kSdS+3mlNRERIK5WxzTF9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=roFr7gAu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0D27C4CEC3;
+	Sun, 27 Oct 2024 21:11:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730063413;
-	bh=FHPod0TcGB1+Z8/HScnJyv0wJJKMmlBsJCMaVTNArIc=;
+	s=k20201202; t=1730063486;
+	bh=qxdDf/jwCLwtMg/BFx08kpItrd6GwiKsheCB5mZ8L5g=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AEldmhSeVYdk2X5Zg6UjyWmakQKS3DJ7+pyIuuCjltSh1HBvIhsjEIQW3vDE1+4CM
-	 mFu0dXL74Mfc6fpF4aMnzRw6O/RP/zepuTbvYGE4W5lEtlzcmeZT/+nRt1cYw4H5WJ
-	 sCaOoG5K+qD3yQGjGP6a0ULCLcKnVsNMVAEXgNkTnhMu2vLze46xmWhRpFwapV10dU
-	 XNd+5aY3T3d7fXZucocp7HiQuaZQuSY1NlbA0hstKl5tZ2dVAJl4VjXbBp8v+P58GY
-	 pMqH28XtmrD5Z2C+lPTlZPT11+YVTpILR5FFhQvgfPxzU2nWTFhxfKfGztbqcw4XQ/
-	 5d6Nei2h1YH/Q==
-Date: Sun, 27 Oct 2024 22:10:10 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] dt-bindings: arm: qcom: add QAR2130P board
-Message-ID: <xiqgif6a3nb6ab6nwpiir333jf4vmcn734ks2hjq7mlybgxl6f@lh3o6ca5t2lf>
-References: <20241027-sar2130p-dt-v1-0-739d36d31c33@linaro.org>
- <20241027-sar2130p-dt-v1-2-739d36d31c33@linaro.org>
+	b=roFr7gAuUh9x1bpL1a0X8t4pPfIME4ciTyiS0Xlu+4gWLAEBQ+uQL0SehfyR/hlc3
+	 wt5kyLKGovdfDXWrMtpmn4LPYhctXKnxbGbSkcppX3uiveof5OYnKSWQ1D2xYM1myr
+	 uUdHKipcFFu2jiHLHXcw/nK/Xgqy6JqzlhoqoAJ8yea3k923xOnYX7+KYpkWCIRT5p
+	 Xq85rQpq71LfaYvdEiIF93WtNBxtPUym+NgeS/EM6MKs99yapMKkMQcumgMTba2oZc
+	 PVx6EDRO2HXb2Y0Qa2lz20vNo3Ig/eR7jkBwRiKtOIdvFCegFlu+EjtHYKdntM69ob
+	 h0SNp3L2sf16Q==
+Date: Sun, 27 Oct 2024 16:11:25 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Cody Eksal <masterr3c0rd@epochal.quest>
+Cc: Samuel Holland <samuel@sholland.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	devicetree@vger.kernel.org, Viresh Kumar <vireshk@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Thierry Reding <treding@nvidia.com>, Nishanth Menon <nm@ti.com>,
+	Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Yangtao Li <frank@allwinnertech.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Maxime Ripard <mripard@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+	Vinod Koul <vkoul@kernel.org>, linux-pm@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	linux-phy@lists.infradead.org, linux-usb@vger.kernel.org,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Andre Przywara <andre.przywara@arm.com>,
+	linux-sunxi@lists.linux.dev, Yangtao Li <tiny.windzz@gmail.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Parthiban <parthiban@linumiz.com>
+Subject: Re: [PATCH 03/13] dt-bindings: phy: sun50i-a64: add a100 compatible
+Message-ID: <173006348387.87150.15151805812797724971.robh@kernel.org>
+References: <20241024170540.2721307-1-masterr3c0rd@epochal.quest>
+ <20241024170540.2721307-4-masterr3c0rd@epochal.quest>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241027-sar2130p-dt-v1-2-739d36d31c33@linaro.org>
+In-Reply-To: <20241024170540.2721307-4-masterr3c0rd@epochal.quest>
 
-On Sun, Oct 27, 2024 at 03:24:04AM +0200, Dmitry Baryshkov wrote:
-> Add the Qualcomm QAR2130P development board using the Qualcomm AR2 Gen1
-> aka SAR2130P platform.
+
+On Thu, 24 Oct 2024 14:05:21 -0300, Cody Eksal wrote:
+> The USB PHY found in the A100 is similar to that found in the A64,
+> although it requires some quirks to be enabled. Add a compatible for the
+> A100's variant.
 > 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Signed-off-by: Cody Eksal <masterr3c0rd@epochal.quest>
 > ---
->  Documentation/devicetree/bindings/arm/qcom.yaml | 7 +++++++
->  1 file changed, 7 insertions(+)
+>  .../devicetree/bindings/phy/allwinner,sun50i-a64-usb-phy.yaml    | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/arm/qcom.yaml b/Documentation/devicetree/bindings/arm/qcom.yaml
-> index 0f18cb35c774aec48967eddbef4b4480dbc8edbe..02b2379ccf7741a0fba345d83d0ce7db731a3772 100644
-> --- a/Documentation/devicetree/bindings/arm/qcom.yaml
-> +++ b/Documentation/devicetree/bindings/arm/qcom.yaml
-> @@ -52,6 +52,7 @@ description: |
->          sa8155p
->          sa8540p
->          sa8775p
-> +        sar2130p
->          sc7180
->          sc7280
->          sc8180x
-> @@ -407,6 +408,12 @@ properties:
->                - qcom,qru1000-idp
->            - const: qcom,qru1000
->  
-> +      - description: Qualcomm AR2 Gen1 platform
-> +        items:
-> +          - enum:
-> +              - qcom,qar2130p
-> +          - const: qcom,sar2130p
 
-That's a tricky different to spot.
-
-You need to update qcom-soc.yaml with new pattern.
-
-Best regards,
-Krzysztof
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
 
