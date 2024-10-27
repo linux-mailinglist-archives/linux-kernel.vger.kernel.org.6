@@ -1,180 +1,193 @@
-Return-Path: <linux-kernel+bounces-383462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 741259B1C23
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 05:28:22 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 279D69B1C22
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 05:27:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34814281F76
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 04:28:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 475681C210EE
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 04:27:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF55D2A1CA;
-	Sun, 27 Oct 2024 04:28:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D8EF29CE8;
+	Sun, 27 Oct 2024 04:27:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gmyXI7I0"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WfdX3s+3"
+Received: from mail-oa1-f46.google.com (mail-oa1-f46.google.com [209.85.160.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBE9B2A1C9;
-	Sun, 27 Oct 2024 04:28:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2E70748A;
+	Sun, 27 Oct 2024 04:27:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730003293; cv=none; b=WV2OQ1Xfa8cJ9cyYZ9ylgfgpchIdDxl8Mu8O9IZ+02FsvZvgJSo22UhP5I5a1UvsU9EcRtmo4H9ekuteVSPICZynQ8hUBrRBS4V88F+dpg9NMfOfAtliiYMPRZamxM+t4CBZsS/eNlcb8nrWuxz7deSSVl/Fyw2gNRLRGeyd7A0=
+	t=1730003239; cv=none; b=IgTbRbwzijJb61ab4BGikrfdfIZfEroLNdes9+uqHRs8yHlWw4DO9+bTETZFAobS8qeRG/3yRfQHrMcLG3L9eSPacSQf178GBzI8C+ZvcR9zgN4yC4B0IaFYs1gv/1GvDbOBWQgqxlibZ87VAKpX01hFv8U4rcEH3cXB7rriG3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730003293; c=relaxed/simple;
-	bh=S5z1ERvXpeJxLkMI4pFAGnwF3EQD1xNCXk1RPrpneXE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uhGVZkFcXU2LKb4ONrB+GAsRZ29hqM1nYosXTOwh7ORU4trdK6jTc+Y+OWcDfZvGIQkvkjVTgBqcj4qN5PJL8WbTdGtmnh49YoXLM6ekBfghc6xCHN2sJugsupFeXMd6QEF9r/zm62aTLOseedHS+e9l8nbJJ//7uUMLL9ohZx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gmyXI7I0; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730003291; x=1761539291;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=S5z1ERvXpeJxLkMI4pFAGnwF3EQD1xNCXk1RPrpneXE=;
-  b=gmyXI7I0QIGQxd3yUrSTERYUUTMnG0ahtp8YI/0ZZw24JbS2dw3WnUzA
-   pkn7V5nSe/JxDGFmhFNVZTl/y1jrMsAs4QEVVoxTDTfSzds7iVVcGH4Rm
-   uakz4+57RjBMCHEfxHEpsmRX3LD3W/FF2TaxQ/Vi0ok3FQio+d7BTXuX+
-   ehK4wm0W53l/DsS0rFNznjOBA0kiZJAlL0U8qKIWUY9nKx0Mjpwbr0PF3
-   p+NAz5cwOnuBs2YqwufypcPpxc+ImsRxJO7Zw1rZvfw2pV6BY87iqIt5/
-   aoGdjPUG6MGkKZNxR9rokLzC0xQfDapTBXO1NxLWowL2ioE5iAcctdTc4
-   A==;
-X-CSE-ConnectionGUID: Wl+DIG6lSPybFHoxHmj9eA==
-X-CSE-MsgGUID: kjz0IyzoTPSF5o+6wEEmoA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11237"; a="17264213"
-X-IronPort-AV: E=Sophos;i="6.11,236,1725346800"; 
-   d="scan'208";a="17264213"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Oct 2024 21:28:10 -0700
-X-CSE-ConnectionGUID: dAJp7rJJTXqJcpv+Fv/wrQ==
-X-CSE-MsgGUID: 1aXRmt+JQ52MfrTX0L+PpA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="86050350"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa003.jf.intel.com with ESMTP; 26 Oct 2024 21:28:08 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t4usn-000aMC-2r;
-	Sun, 27 Oct 2024 04:28:05 +0000
-Date: Sun, 27 Oct 2024 12:27:10 +0800
-From: kernel test robot <lkp@intel.com>
-To: David Lechner <dlechner@baylibre.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Jonathan Cameron <jic23@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Michael Hennerich <michael.hennerich@analog.com>,
-	linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
-	David Lechner <dlechner@baylibre.com>
-Subject: Re: [PATCH v2] iio: adc: ad7380: use if_not_cond_guard for claim
- direct
-Message-ID: <202410271218.9sti93hi-lkp@intel.com>
-References: <20241024-cleanup-if_not_cond_guard-v2-1-1bef98c9fd2e@baylibre.com>
+	s=arc-20240116; t=1730003239; c=relaxed/simple;
+	bh=ErZvRMNFTC1JtfD7DlH7USWk//QvBMg14jI626yimY0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gThQHC1IshJVNMVg/Or1thMunSF/OdHyKpigIfECqTz5RMMVWITw7Nx5cX82FysW+ot+1WfY3zT6NZIV/eM2pHdo97n8w+U+bhcJe8cP8M/q4NPd8DYT71cTP0SHexomMkldiC4wW06Zez7YxRGSI7WG8PqGcko7X9SFJn4Wo/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WfdX3s+3; arc=none smtp.client-ip=209.85.160.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-288d74b3a91so1859818fac.0;
+        Sat, 26 Oct 2024 21:27:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730003236; x=1730608036; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=C3ERsECHBxHLHOagymcD1zigsnGkXaBUgS4zAFSQOKA=;
+        b=WfdX3s+3wbipy+0lXQVjpjgpKgWPMR4M5wuhcal8T1/WcCb+JxLcixc/Ec2eg46SOD
+         NcnVCvL7xNZuzF4XJU5rZuaWJp/INw76D3/p6st/ScM6SEGGr6B0eOtqKGu1kPNJDLxm
+         PGGgDjZHVjVMONELSWpcLKN+3ZmZDeiwaQ0zmh1aypa8VGG7tx8QsJfwTjywErXXitr6
+         iiANh9Zzr8Qpyw1M2rLDI83jduNAbZeNy20SqHP7k2l8duHolg2lOmjUSRU9HiQoxlBv
+         KgtQzJVOd7nFiOO1vncvTT4DcbZYiAczel977PMXXxIKBisG7+OsLm/iW+H37yQd0Fw4
+         SjzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730003236; x=1730608036;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=C3ERsECHBxHLHOagymcD1zigsnGkXaBUgS4zAFSQOKA=;
+        b=Wi2yXftrBYPUarmkPhPt67kqq4K+UN0nWPVeFTKyFcVM+lVz4T82jUMzqPaF6fwg8y
+         f3iuWEZlWyfYKcEJsD3wMRKfXC8f2zJKKNjW9stvLOKWcFOgIm1e5HlrODiHqoKii1DJ
+         omyXWuv0wDcYpADzo0hOicxsPQABfdPoDpcUicJ/snKwHTpBpy6YyJByEI/DZzxfiGbo
+         Ermh+k0CbzV6QqF6mik+99etSU8iqUW1FCFEyXiA/+RV30ER7vnBfkgZbgC1U0/ySHJb
+         ZFVjP3y4HlALEWMYWZjxWyxNprbBqcOJaOYTjvDJRjePP9AYiMm+kEK6GFnhCaCsePaw
+         VgnA==
+X-Forwarded-Encrypted: i=1; AJvYcCWx+q3vtGkKlW8/3QuhBWPg+OJtF8Rh6A8l2lF9eEmngGPog/+is4HkhcUA4CyaNvDFtrfkdjL4MgbfT1U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWk8Zs33Inx34tjLPzUFRcurAiT462RQdeWy1nd07QoU0CO1lv
+	zIYu6Ah7cKJ55dMm4RvEFfPimmDGHiYGDLRhw+NuWPH9P3z43BIh
+X-Google-Smtp-Source: AGHT+IGXRBRB5XvgbPVCdvrKM/2Xm5Yc7Cnlexf8ner2J6xCeCzsnPKJydgFYdf7iYsje5aK7U7n4Q==
+X-Received: by 2002:a05:6871:29a:b0:27c:4f04:a1f1 with SMTP id 586e51a60fabf-29051dc7c23mr3209798fac.32.1730003236452;
+        Sat, 26 Oct 2024 21:27:16 -0700 (PDT)
+Received: from ?IPV6:2607:fb91:1219:44f1:b4e8:dada:a078:b601? ([2607:fb91:1219:44f1:b4e8:dada:a078:b601])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7186189e28esm1005170a34.61.2024.10.26.21.27.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 26 Oct 2024 21:27:15 -0700 (PDT)
+Message-ID: <5cfc19d6-e171-4049-ad00-5f8474051c9b@gmail.com>
+Date: Sat, 26 Oct 2024 23:27:13 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241024-cleanup-if_not_cond_guard-v2-1-1bef98c9fd2e@baylibre.com>
-
-Hi David,
-
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on 431c39f6d3edbab14f48dbf37a58ccdc0ac3be1e]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/David-Lechner/iio-adc-ad7380-use-if_not_cond_guard-for-claim-direct/20241025-001415
-base:   431c39f6d3edbab14f48dbf37a58ccdc0ac3be1e
-patch link:    https://lore.kernel.org/r/20241024-cleanup-if_not_cond_guard-v2-1-1bef98c9fd2e%40baylibre.com
-patch subject: [PATCH v2] iio: adc: ad7380: use if_not_cond_guard for claim direct
-config: i386-allmodconfig (https://download.01.org/0day-ci/archive/20241027/202410271218.9sti93hi-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241027/202410271218.9sti93hi-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410271218.9sti93hi-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   drivers/iio/adc/ad7380.c: In function 'ad7380_debugfs_reg_access':
->> drivers/iio/adc/ad7380.c:574:9: error: implicit declaration of function 'if_not_cond_guard' [-Werror=implicit-function-declaration]
-     574 |         if_not_cond_guard(iio_claim_direct_try, indio_dev)
-         |         ^~~~~~~~~~~~~~~~~
->> drivers/iio/adc/ad7380.c:574:27: error: 'iio_claim_direct_try' undeclared (first use in this function); did you mean 'class_iio_claim_direct_try_t'?
-     574 |         if_not_cond_guard(iio_claim_direct_try, indio_dev)
-         |                           ^~~~~~~~~~~~~~~~~~~~
-         |                           class_iio_claim_direct_try_t
-   drivers/iio/adc/ad7380.c:574:27: note: each undeclared identifier is reported only once for each function it appears in
->> drivers/iio/adc/ad7380.c:574:59: error: expected ';' before 'return'
-     574 |         if_not_cond_guard(iio_claim_direct_try, indio_dev)
-         |                                                           ^
-         |                                                           ;
-     575 |                 return -EBUSY;
-         |                 ~~~~~~                                     
-   drivers/iio/adc/ad7380.c: In function 'ad7380_read_raw':
-   drivers/iio/adc/ad7380.c:823:35: error: 'iio_claim_direct_try' undeclared (first use in this function); did you mean 'class_iio_claim_direct_try_t'?
-     823 |                 if_not_cond_guard(iio_claim_direct_try, indio_dev)
-         |                                   ^~~~~~~~~~~~~~~~~~~~
-         |                                   class_iio_claim_direct_try_t
-   drivers/iio/adc/ad7380.c:823:67: error: expected ';' before 'return'
-     823 |                 if_not_cond_guard(iio_claim_direct_try, indio_dev)
-         |                                                                   ^
-         |                                                                   ;
-     824 |                         return -EBUSY;
-         |                         ~~~~~~                                     
-   drivers/iio/adc/ad7380.c: In function 'ad7380_write_raw':
-   drivers/iio/adc/ad7380.c:912:35: error: 'iio_claim_direct_try' undeclared (first use in this function); did you mean 'class_iio_claim_direct_try_t'?
-     912 |                 if_not_cond_guard(iio_claim_direct_try, indio_dev)
-         |                                   ^~~~~~~~~~~~~~~~~~~~
-         |                                   class_iio_claim_direct_try_t
-   drivers/iio/adc/ad7380.c:912:67: error: expected ';' before 'return'
-     912 |                 if_not_cond_guard(iio_claim_direct_try, indio_dev)
-         |                                                                   ^
-         |                                                                   ;
-     913 |                         return -EBUSY;
-         |                         ~~~~~~                                     
-   cc1: some warnings being treated as errors
-
-Kconfig warnings: (for reference only)
-   WARNING: unmet direct dependencies detected for MODVERSIONS
-   Depends on [n]: MODULES [=y] && !COMPILE_TEST [=y]
-   Selected by [y]:
-   - RANDSTRUCT_FULL [=y] && (CC_HAS_RANDSTRUCT [=n] || GCC_PLUGINS [=y]) && MODULES [=y]
-   WARNING: unmet direct dependencies detected for GET_FREE_REGION
-   Depends on [n]: SPARSEMEM [=n]
-   Selected by [m]:
-   - RESOURCE_KUNIT_TEST [=m] && RUNTIME_TESTING_MENU [=y] && KUNIT [=m]
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/4] cpufreq/amd-pstate: Remove the redundant
+ amd_pstate_set_driver() call
+To: Klara Modin <klarasmodin@gmail.com>,
+ Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>, gautham.shenoy@amd.com,
+ mario.limonciello@amd.com, perry.yuan@amd.com, rafael@kernel.org,
+ viresh.kumar@linaro.org
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, klara@kasm.eu
+References: <20241017100528.300143-1-Dhananjay.Ugwekar@amd.com>
+ <20241017100528.300143-5-Dhananjay.Ugwekar@amd.com>
+ <cf9c146d-bacf-444e-92e2-15ebf513af96@gmail.com>
+Content-Language: en-US
+From: Mario Limonciello <superm1@gmail.com>
+In-Reply-To: <cf9c146d-bacf-444e-92e2-15ebf513af96@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
-vim +/if_not_cond_guard +574 drivers/iio/adc/ad7380.c
 
-   568	
-   569	static int ad7380_debugfs_reg_access(struct iio_dev *indio_dev, u32 reg,
-   570					     u32 writeval, u32 *readval)
-   571	{
-   572		struct ad7380_state *st = iio_priv(indio_dev);
-   573	
- > 574		if_not_cond_guard(iio_claim_direct_try, indio_dev)
-   575			return -EBUSY;
-   576	
-   577		if (readval)
-   578			return regmap_read(st->regmap, reg, readval);
-   579	
-   580		return regmap_write(st->regmap, reg, writeval);
-   581	}
-   582	
+On 10/26/24 06:58, Klara Modin wrote:
+> Hi,
+> 
+> On 2024-10-17 12:05, Dhananjay Ugwekar wrote:
+>> amd_pstate_set_driver() is called twice, once in amd_pstate_init() and 
+>> once
+>> as part of amd_pstate_register_driver(). Move around code and eliminate
+>> the redundancy.
+>>
+>> Signed-off-by: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
+>> ---
+>>   drivers/cpufreq/amd-pstate.c | 12 ++++--------
+>>   1 file changed, 4 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
+>> index 13ee5cac901d..6f6d961879cc 100644
+>> --- a/drivers/cpufreq/amd-pstate.c
+>> +++ b/drivers/cpufreq/amd-pstate.c
+>> @@ -1848,9 +1848,11 @@ static int __init amd_pstate_init(void)
+>>           return -ENODEV;
+>>       }
+>> -    ret = amd_pstate_set_driver(cppc_state);
+>> -    if (ret)
+>> +    ret = amd_pstate_register_driver(cppc_state);
+>> +    if (ret) {
+>> +        pr_err("failed to register with return %d\n", ret);
+>>           return ret;
+>> +    }
+>>       /* capability check */
+>>       if (cpu_feature_enabled(X86_FEATURE_CPPC)) {
+>> @@ -1870,12 +1872,6 @@ static int __init amd_pstate_init(void)
+>>               return ret;
+>>       }
+>> -    ret = amd_pstate_register_driver(cppc_state);
+>> -    if (ret) {
+>> -        pr_err("failed to register with return %d\n", ret);
+>> -        return ret;
+>> -    }
+>> -
+>>       dev_root = bus_get_dev_root(&cpu_subsys);
+>>       if (dev_root) {
+>>           ret = sysfs_create_group(&dev_root->kobj, 
+>> &amd_pstate_global_attr_group);
+> 
+> 
+> This seems to break boot on my Zen 2 desktop (my Zen 4 laptop is fine, 
+> however). I don't see any messages on the console and nothing shows up 
+> in the pstore either.
+> 
+> I'll attach the kernel log from a normal boot (with the patch reverted) 
+> in case it helps.
+> 
+> Please let me know if there's anything else you need.
+> 
+> Regards,
+> Klara Modin
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Hi,
+
+Thanks for reporting.  I think this might be a regression on shared 
+memory designs specifically because static calls weren't updated yet.
+
+Can you try this below diff?
+
+diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
+index 206725219d8c9..2f0e29b05963d 100644
+--- a/drivers/cpufreq/amd-pstate.c
++++ b/drivers/cpufreq/amd-pstate.c
+@@ -1857,12 +1857,6 @@ static int __init amd_pstate_init(void)
+                 return -ENODEV;
+         }
+
+-       ret = amd_pstate_register_driver(cppc_state);
+-       if (ret) {
+-               pr_err("failed to register with return %d\n", ret);
+-               return ret;
+-       }
+-
+         /* capability check */
+         if (cpu_feature_enabled(X86_FEATURE_CPPC)) {
+                 pr_debug("AMD CPPC MSR based functionality is 
+supported\n");
+@@ -1881,6 +1875,12 @@ static int __init amd_pstate_init(void)
+                         return ret;
+         }
+
++       ret = amd_pstate_register_driver(cppc_state);
++       if (ret) {
++               pr_err("failed to register with return %d\n", ret);
++               return ret;
++       }
++
+         dev_root = bus_get_dev_root(&cpu_subsys);
+         if (dev_root) {
+                 ret = sysfs_create_group(&dev_root->kobj, 
+&amd_pstate_global_attr_group);
+
 
