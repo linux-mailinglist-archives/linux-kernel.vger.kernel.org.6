@@ -1,100 +1,101 @@
-Return-Path: <linux-kernel+bounces-383797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16BA09B204D
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 21:23:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DBECC9B2052
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 21:24:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B45481F21B1F
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 20:23:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87B171F21F18
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 20:24:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DF4717C9A3;
-	Sun, 27 Oct 2024 20:23:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 968C617E004;
+	Sun, 27 Oct 2024 20:24:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MpJOVy1l"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hii6+6d6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67CB079C2;
-	Sun, 27 Oct 2024 20:23:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE83D79C2;
+	Sun, 27 Oct 2024 20:24:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730060603; cv=none; b=uC4xE7tea4nGHwkWiPNpjpnsKWDgnYHpD01UazeZ6pGlIJnfdMpciJwluP3PoihxW/FOMK5Ys8EjkVlvOIK/IG7xmY4zHINbMhqCPQimcRTIW1PuZzfGmtnbJv82b3IDmj1uayxWrGIt5s40ZFVhSxWoTuRFPHF5El2no1p0k3o=
+	t=1730060665; cv=none; b=ZROEo08UL2Bb6GZ86waI5A3RGCtqOeB6aRGs3lVfIDJKmuPjHA3a031AHySVgSFBvQc4Q29Igsg953KJjmSAJQFQuz9BYk4/ggezVAVJZG2qN/WNU7WdpBOw8uw94nJXjyaDnCJvTpqc/XEGCV9TIZuBzp36S2w9acMKHSkvXtc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730060603; c=relaxed/simple;
-	bh=l+KLEU/TejY89e8DOEnhG5YxQLO2/xSSIb74ARcfb3M=;
+	s=arc-20240116; t=1730060665; c=relaxed/simple;
+	bh=zealYBrI6W8wdD5666Nv0nCWGRRCBk0RAzKP+h2Zbqo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H1jcNzFYHmm4S8nbw6C6slFiHa3AbF/2l1tys+F2N8PpIq5jend/7TB4drHFWTYtp6gB6ovqjukYI1uclPNmVwwzXLzudWuaQwRN5n0tvbmYYe0ZDoDrbEtGLJdnjmYhVTpI37u2YdJXCo98XvfntDykIjxJf+Zgfo9FNqzcwCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MpJOVy1l; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EC4EC4CEC3;
-	Sun, 27 Oct 2024 20:23:22 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=fUydQhQjJ3axmHy1iMkVV1LAErqGxzk/c9HW7mcgueDhZaXKUvxKP2JP1PyfAqAqO02a6GZ6Z/VQp1DyJUc6HPS12TBxGqGTONwjnpvAGJC/XRuoEKHLdfi/qFwf3fiVPVRMwWTJE22jzPvUOpcAsAI8KQPnJTaLZABsNnq0Zxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hii6+6d6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B0EFC4CEC3;
+	Sun, 27 Oct 2024 20:24:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730060603;
-	bh=l+KLEU/TejY89e8DOEnhG5YxQLO2/xSSIb74ARcfb3M=;
+	s=k20201202; t=1730060664;
+	bh=zealYBrI6W8wdD5666Nv0nCWGRRCBk0RAzKP+h2Zbqo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MpJOVy1lJNeWJFSfuJ23rNyQ+BiRQMF7CwLBem5hMHaDoJuaf3xkysD+clkOWSQG3
-	 eoIrIYZeCuBgAiWKXUergxjSeKvANIYUoN3eaV4rZjFv5bIhQJt/+aI3wJxhFgeAXf
-	 BPPuyIsgZOmC674mkQBO9DQfEqpoFBsOTa0O3Bp2qb78PKP+j7YJ3p0QO2AcV6m82H
-	 yGIFwyx7Vuk2XE0S6mnAh7BUj6AJMvT14XxqFmg+p79x6WFYjesXwnhMGLTyynLBAv
-	 x7rhsQ1OoZDvS8PHOowNAt2CtEPw5FcQYkcjVj73w/SGVnV2atxoonSGvciiEfrWeI
-	 iw1ePNyAcRK2A==
-Date: Sun, 27 Oct 2024 21:23:19 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Lothar Rubusch <l.rubusch@gmail.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, a.fatoum@pengutronix.de, 
-	conor+dt@kernel.org, dinguyen@kernel.org, marex@denx.de, s.trumtrar@pengutronix.de, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv3 11/22] dt-bindings: net: snps,dwmac: add support for
- Arria10
-Message-ID: <kaaldxod6vrs7dmf23xmpwebjgfq2jfuf2anexowx775lgupnf@n37epl54kcpx>
-References: <20241027143654.28474-1-l.rubusch@gmail.com>
- <20241027143654.28474-12-l.rubusch@gmail.com>
+	b=Hii6+6d6G5kHdfmltb0sDzctukHhQVRjUaMvsVDy86prI/HvJwxEECt5NB7aY1Lpl
+	 cqSDbNi4gox0Dab658yIUUbNh8e9qQiE7iQoUv/BB6xQDqOSeoObrctJruls2KO65U
+	 GW2QuLJlpjUACc4aFZNNTfDlCezJp/8yrgiJdDZ7qyMZr3bm4GyS10QyvZ76EfnwSM
+	 NPQPLQCYDKRE7BeuTweyPlC40BKaWQTd9xQfrtpNiy/3NEEQh86NPX/pDALVDTXMnw
+	 OavhB1yKHu8zUFdNawG9U06CO1c+PGxhNAvEhP+ToetWZkq+7cZKqnrKhJKKUQzXWq
+	 +BL+eSiMHrpsA==
+Date: Sun, 27 Oct 2024 20:24:19 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: David Lechner <dlechner@baylibre.com>, Mark Brown <broonie@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	David Jander <david@protonic.nl>,
+	Martin Sperl <kernel@martin.sperl.org>, linux-spi@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-iio@vger.kernel.org, linux-pwm@vger.kernel.org
+Subject: Re: [PATCH RFC v4 05/15] spi: dt-bindings: add PWM SPI offload
+ trigger
+Message-ID: <20241027-uncaring-popsicle-d64e25f954e2@spud>
+References: <20241023-dlech-mainline-spi-engine-offload-2-v4-0-f8125b99f5a1@baylibre.com>
+ <20241023-dlech-mainline-spi-engine-offload-2-v4-5-f8125b99f5a1@baylibre.com>
+ <20241026161837.30a56ae1@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="l2yxdNpy+aKzuPvZ"
 Content-Disposition: inline
-In-Reply-To: <20241027143654.28474-12-l.rubusch@gmail.com>
+In-Reply-To: <20241026161837.30a56ae1@jic23-huawei>
 
-On Sun, Oct 27, 2024 at 02:36:43PM +0000, Lothar Rubusch wrote:
-> The hard processor system (HPS) on the Inte/Altera Arria10 provides
 
-s/Inte/Intel/
+--l2yxdNpy+aKzuPvZ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> three Ethernet Media Access Controller (EMAC) peripherals. Each EMAC
-> can be used to transmit and receive data at 10/100/1000 Mbps over
-> ethernet connections in compliance with the IEEE 802.3 specification.
-> The EMACs on the Arria10 are instances of the Synopsis DesignWare
-> Universal 10/100/1000 Ethernet MAC, version 3.72a.
-> 
-> Support the Synopsis DesignWare version 3.72a, which is used in Intel's
-> Arria10 SoC, since it was missing.
-> 
-> Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
-> ---
->  Documentation/devicetree/bindings/net/snps,dwmac.yaml | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/net/snps,dwmac.yaml b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
-> index 15073627c..d26bb77eb 100644
-> --- a/Documentation/devicetree/bindings/net/snps,dwmac.yaml
-> +++ b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
-> @@ -26,6 +26,7 @@ select:
->            - snps,dwmac-3.610
->            - snps,dwmac-3.70a
->            - snps,dwmac-3.710
-> +          - snps,dwmac-3.72a
+On Sat, Oct 26, 2024 at 04:18:37PM +0100, Jonathan Cameron wrote:
 
-This is incomplete. This is a list of fallbacks. Where is the actual
-specific compatibler (see existing compatibles and their specific
-bindings).
+> So this one may need more explanation and justification and I'd definitely
+> like some DT maintainer review on this at a fairly early stage!
+> (might have happened in earlier reviews but it has been a while so I've
+> forgotten if it did)
 
-Best regards,
-Krzysztof
+I intend looking at this, but it'll be Wednesday before I do.
 
+--l2yxdNpy+aKzuPvZ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZx6hcwAKCRB4tDGHoIJi
+0perAP9oQoeOiUJ+7aWxSJJ+VLf0bQCYbgBVVl/ZrZEuqyfEYQEAqlGurtl/bTSb
++FbT17liXH5mCGTXaWgWZST0cnSOsAo=
+=0Fzf
+-----END PGP SIGNATURE-----
+
+--l2yxdNpy+aKzuPvZ--
 
