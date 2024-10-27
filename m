@@ -1,124 +1,171 @@
-Return-Path: <linux-kernel+bounces-383455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6ADCE9B1BEE
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 04:29:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B1999B1BF0
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 04:36:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91F4D1C20D18
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 03:29:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A0E71F21B23
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 03:36:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9C5418028;
-	Sun, 27 Oct 2024 03:29:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CD1F18EA2;
+	Sun, 27 Oct 2024 03:36:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UnOK7YJ5"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JRwmrAP9"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84A5C101F2
-	for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 03:29:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6790125B9;
+	Sun, 27 Oct 2024 03:36:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729999779; cv=none; b=Fn9iirxCOMq+hdhWrqOsqVcvCnwYDAxtrJ43bTo34pheJY15I2a96Q7tPmm0jy84L4D0gLYfgbLf2TtAypZ4OvjCAYNQSyZV77rI3/YnMFjXT9w5Ru50zxzyMeLF0AV/kfFDLoSX5E6dMAVYV47lIza3zIrag6DxhGG5TwFWpak=
+	t=1730000173; cv=none; b=ViiA2p+IoeYL3zq7EU+kVTLz2G1kWSeV+LyiYwxZifE77m0YSHn9qOaxQjm5lkyqHa7+5RFfyEcqkmNZGtauHD3YKUnlMFCoDSWfZMHw5PIslGQo/QuxQEpuCYRHETsWkk0dMoTHFuerWGmQ1rs/QNRFY3MeiKlzPu3qzElvtPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729999779; c=relaxed/simple;
-	bh=9OV73Lm/Xt79I6XstEhjHFVT5bUQajL2bi5zxZSAmMM=;
-	h=From:Content-Type:Mime-Version:Subject:Date:In-Reply-To:Cc:
-	 References:Message-Id; b=TeZ+nZgO56ceconsegzoJWUOVsJ6Kew5hOJ7658u1cIQcvgqjTJXOXx3BmlzkF/S2NwGnZRVMIUcnHf+mSZOLDw7pQI1UIrareXu+jm9VCWctbNF04VAof/kdlUuXLYdHFspc0BmbyioEjCGuNDVPeWb829BzfshVD40Au+jonA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UnOK7YJ5; arc=none smtp.client-ip=209.85.215.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-7ea7ad1e01fso2176456a12.0
-        for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 20:29:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729999775; x=1730604575; darn=vger.kernel.org;
-        h=message-id:references:cc:in-reply-to:date:subject:mime-version
-         :content-transfer-encoding:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9OV73Lm/Xt79I6XstEhjHFVT5bUQajL2bi5zxZSAmMM=;
-        b=UnOK7YJ5dWhDVE76OyeC8SBNPqgEaGksKeSTdpcIOwm6+aVvOFtCJCFkE2Yr/keQdT
-         fOTwwUdj9ZR6DIkIIXSXWXm5Tczmx1QTA7kncFA/ZsE7x1NDyGB/f1nbC3Oths0xd0hP
-         CCsfJ8zxIPSudhHagPTzKWBd8ust2lrobHHQCUcaoHOX7bJJ3dlYMKzpjIsV4pLtAjNP
-         srfOkyeYcvM+XHURvTLqVBHY87JUWBr+KRPR6qh1jt807I5AMG+H4039t5zUzeRqycyZ
-         IdlEoVFBp7KwZyZv5Ul9Lp+HrA4VWhj6zok9+m5G60BiKT7yLAwqngy12o+BibfSXEWC
-         +trQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729999775; x=1730604575;
-        h=message-id:references:cc:in-reply-to:date:subject:mime-version
-         :content-transfer-encoding:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9OV73Lm/Xt79I6XstEhjHFVT5bUQajL2bi5zxZSAmMM=;
-        b=qoVodqZu9q2tGwAPdXTMKFhGq83wjX98+3X0eE/Cy3g8jYWlcYGOyVy3ePK2BCQWRb
-         j1IajwMKq/eMOQeJPFQb6RJTLVN7OEcRKiV6AYw8K9ODgUiKYu8/IEwPiccBcYaBrebM
-         ZJiHuHdJ6i4dRTq2lNzNo+TwtvRZvbRiCMku0ErGwBTWDbx3SANT4N9H0EJLt/rGTnEK
-         JDLMKd6wtmHtmZoEoPtt9U/jF9LTsfcrUhtYQo7N6FtZQp4p/7yHN3D/+vFlvwtkoivt
-         /kgYGZiAYq/yrxzX47vhwrkQGm72KeMsByLxHkmq+7Mgtn4JkOeaiDd45Iz38YIXPVTq
-         V4iQ==
-X-Gm-Message-State: AOJu0YyR3ImZicp4ob7gZeIJ3u29GZ3DvDUrsdvPw2QB3ngo/Nj2Z2aK
-	axC+faXv20zjhp/nFS5zPGudDj61f7IQNZHo77i3VdUjRuQci2ClvzZtJQ==
-X-Google-Smtp-Source: AGHT+IHcrJADA256wzKAaUyzqabPAja48obqnInHVXg3GTcOZGoJqSvHM/3zsaQFjBqtcGA0W6CSjw==
-X-Received: by 2002:a17:902:da81:b0:20c:ea22:3317 with SMTP id d9443c01a7336-210c5aac7f6mr76181905ad.29.1729999774961;
-        Sat, 26 Oct 2024 20:29:34 -0700 (PDT)
-Received: from smtpclient.apple (c-76-132-43-215.hsd1.ca.comcast.net. [76.132.43.215])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bc0864ccsm30191215ad.302.2024.10.26.20.29.34
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 26 Oct 2024 20:29:34 -0700 (PDT)
-From: Matthew Lindner <mattlindn@gmail.com>
-Content-Type: text/plain;
-	charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1730000173; c=relaxed/simple;
+	bh=tuqOPQeN5J9ifQjSyw5F6waaOmkOaPGwOqm5ND0MEeA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q2NqrnDIk1is7KRbfGtRkKY/c8otrRgeVXUKIaUN6XIVILTnsrFUYMrHNtOk5iJ4ILYX0zbvWKC2OGWjgzzms1ntKSp83XURuSQSsVe4MCdSl7/j0jrwjc0V5xAOZbjnQ2PJoX/Y/6pBYN4j+iP5BjGVaRgRdMsHXhvjF+KIE2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JRwmrAP9; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730000171; x=1761536171;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=tuqOPQeN5J9ifQjSyw5F6waaOmkOaPGwOqm5ND0MEeA=;
+  b=JRwmrAP9EmRirJevIrl7acVUwZIdEORVj3BErOZi9Nho4R55IRAEUvdr
+   nphleZ40N8d100pQYuM1t8oNf8J+dw3AEBMTLS67mX5xD9yKjCkq5pyyq
+   HBZPCoh6l+HqkYBiECOrqJCbGBPQ6uXpArEGvSFHKXpW+lgwZLcUAVHvl
+   qRCeeLN/QW8KgJasYCViMTi9S21atENpABeIfmgZGHEqpx1A9MGkS8t2n
+   1IgDVn0ff6w9UXZeYUoIcE7XHr7yRcXNljXOm8Bf1h4fWQw+uQSo0JbJN
+   V9f+yE1UTvfl4+eMDoBDMY3z+w8tn9PO97+UOAfCamAZjrbNp0DNHSDM+
+   g==;
+X-CSE-ConnectionGUID: EaGGrze+RTy7ZiXwaaVTrg==
+X-CSE-MsgGUID: 2BXnmgBVSImed46+NMua3Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="29766356"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="29766356"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Oct 2024 20:36:10 -0700
+X-CSE-ConnectionGUID: +czJQ7F3Rt2k4fq9aWg89Q==
+X-CSE-MsgGUID: ql3X8lkzRTC9A4t5AZnybg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,236,1725346800"; 
+   d="scan'208";a="85835570"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa005.fm.intel.com with ESMTP; 26 Oct 2024 20:36:07 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t4u4S-000aKG-1k;
+	Sun, 27 Oct 2024 03:36:04 +0000
+Date: Sun, 27 Oct 2024 11:35:12 +0800
+From: kernel test robot <lkp@intel.com>
+To: chang hao <ot_chhao.chang@mediatek.com>, matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com, sean.wang@kernel.org,
+	linus.walleij@linaro.org
+Cc: oe-kbuild-all@lists.linux.dev, linux-mediatek@lists.infradead.org,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Chhao Chang <ot_chhao.chang@mediatek.com>
+Subject: Re: [PATCH] pinctrl: mediatek: add eint new design for mt8196
+Message-ID: <202410271123.3hyFF6pg-lkp@intel.com>
+References: <20241025031814.21442-1-ot_chhao.chang@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3696.120.41.1.10\))
-Subject: Re: Stop spreading propaganda
-Date: Sat, 26 Oct 2024 20:29:33 -0700
-In-Reply-To: <4DC4A33E-8163-4045-8945-3B8DAC2E33D5@gmail.com>
-Cc: linux-kernel@vger.kernel.org
-References: <0522F9B1-376D-4956-874E-A0D919E0EE81@gmail.com>
- <CALtW_ahL2fWAy3haCe+fnNcPHzq+4w7YXt2vaQVzmCe6Uis+Rg@mail.gmail.com>
- <4DC4A33E-8163-4045-8945-3B8DAC2E33D5@gmail.com>
-Message-Id: <5249090D-E8AA-4B7E-813D-432FF7102BE9@gmail.com>
-X-Mailer: Apple Mail (2.3696.120.41.1.10)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241025031814.21442-1-ot_chhao.chang@mediatek.com>
+
+Hi chang,
+
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on linusw-pinctrl/devel]
+[also build test ERROR on linusw-pinctrl/for-next linus/master v6.12-rc4 next-20241025]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/chang-hao/pinctrl-mediatek-add-eint-new-design-for-mt8196/20241025-111952
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git devel
+patch link:    https://lore.kernel.org/r/20241025031814.21442-1-ot_chhao.chang%40mediatek.com
+patch subject: [PATCH] pinctrl: mediatek: add eint new design for mt8196
+config: csky-randconfig-r071-20241027 (https://download.01.org/0day-ci/archive/20241027/202410271123.3hyFF6pg-lkp@intel.com/config)
+compiler: csky-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241027/202410271123.3hyFF6pg-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410271123.3hyFF6pg-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   drivers/pinctrl/mediatek/mtk-eint.c: In function 'mtk_eint_do_suspend':
+>> drivers/pinctrl/mediatek/mtk-eint.c:588:9: error: implicit declaration of function 'dsb' [-Wimplicit-function-declaration]
+     588 |         dsb(sy);
+         |         ^~~
+>> drivers/pinctrl/mediatek/mtk-eint.c:588:13: error: 'sy' undeclared (first use in this function); did you mean 's8'?
+     588 |         dsb(sy);
+         |             ^~
+         |             s8
+   drivers/pinctrl/mediatek/mtk-eint.c:588:13: note: each undeclared identifier is reported only once for each function it appears in
+   drivers/pinctrl/mediatek/mtk-eint.c: In function 'mtk_eint_do_resume':
+   drivers/pinctrl/mediatek/mtk-eint.c:609:13: error: 'sy' undeclared (first use in this function); did you mean 's8'?
+     609 |         dsb(sy);
+         |             ^~
+         |             s8
+   drivers/pinctrl/mediatek/mtk-eint.c: At top level:
+   drivers/pinctrl/mediatek/mtk-eint.c:686:14: warning: no previous prototype for 'mtk_eint_get_debounce_en' [-Wmissing-prototypes]
+     686 | unsigned int mtk_eint_get_debounce_en(struct mtk_eint *eint,
+         |              ^~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/pinctrl/mediatek/mtk-eint.c:709:14: warning: no previous prototype for 'mtk_eint_get_debounce_value' [-Wmissing-prototypes]
+     709 | unsigned int mtk_eint_get_debounce_value(struct mtk_eint *eint,
+         |              ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/pinctrl/mediatek/mtk-eint.c:749:34: warning: 'eint_compatible_ids' defined but not used [-Wunused-const-variable=]
+     749 | static const struct of_device_id eint_compatible_ids[] = {
+         |                                  ^~~~~~~~~~~~~~~~~~~
+
+Kconfig warnings: (for reference only)
+   WARNING: unmet direct dependencies detected for GET_FREE_REGION
+   Depends on [n]: SPARSEMEM [=n]
+   Selected by [m]:
+   - RESOURCE_KUNIT_TEST [=m] && RUNTIME_TESTING_MENU [=y] && KUNIT [=m]
 
 
+vim +/dsb +588 drivers/pinctrl/mediatek/mtk-eint.c
 
-> On Oct 26, 2024, at 8:27 PM, Matthew Lindner <mattlindn@gmail.com> =
-wrote:
->=20
->=20
->=20
->> On Oct 26, 2024, at 8:21 PM, Dragan Milivojevi=C4=87 =
-<d.milivojevic@gmail.com> wrote:
->>=20
->> On Fri, 25 Oct 2024 at 09:58, Matthew Lindner <mattlindn@gmail.com> =
-wrote:
->>>> BTW can I be racist towards Germans and Croats since their =
-ancestors exterminated my kin in their death camps?
->>>=20
->>> Russia is exterminating Ukrainians TODAY. Fuck off.
->>=20
->> They are exterminating Ukrainian soldiers but that is beside the =
-point.
->>=20
->> The issue here is: are you allowed to be a racist, as Linus is =
-towards Russians,
->> because you hold historical grievances. Ukraine has nothing to do =
-with it.
->=20
-> No they are killing Ukrainian citizens, en masse. The issue here has =
-nothing to do with racism, except maybe your own toward both the Finnish =
-and the Ukrainians. Linus is rightfully pissed off at Russia for their =
-_uninterrupted_ behavior from pre-Soviet Union through the Soviet period =
-all the way into the modern day. Russia has never learned. Perhaps they =
-need to lose a major war and get balkanized themselves before they =
-finally learn that lesson.
+   572	
+   573	int mtk_eint_do_suspend(struct mtk_eint *eint)
+   574	{
+   575		unsigned int i, j, port;
+   576	
+   577		for (i = 0; i < eint->instance_number; i++) {
+   578			struct mtk_eint_instance inst = eint->instances[i];
+   579	
+   580			for (j = 0; j < inst.number; j += MAX_BIT) {
+   581				port = j >> REG_GROUP;
+   582				writel_relaxed(~inst.wake_mask[port],
+   583					       inst.base + port*REG_OFSET + eint->comp->regs->mask_set);
+   584				writel_relaxed(inst.wake_mask[port],
+   585					       inst.base + port*REG_OFSET + eint->comp->regs->mask_clr);
+   586			}
+   587		}
+ > 588		dsb(sy);
+   589	
+   590		return 0;
+   591	}
+   592	EXPORT_SYMBOL_GPL(mtk_eint_do_suspend);
+   593	
 
-Dragan dragged a private conversation on to the linux kernel mailing =
-list. Absolutely ridiculous. Block him from the list.=
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
