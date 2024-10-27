@@ -1,81 +1,93 @@
-Return-Path: <linux-kernel+bounces-383603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9F1E9B1DD8
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 14:35:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF9829B1DD7
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 14:35:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 963721F2164B
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 13:35:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B732281AD8
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 13:35:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 772541547E1;
-	Sun, 27 Oct 2024 13:35:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E795F38DDB;
+	Sun, 27 Oct 2024 13:35:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wv1H/9yj"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M1gQFzsS"
+Received: from mail-pf1-f193.google.com (mail-pf1-f193.google.com [209.85.210.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08CEF2C697;
-	Sun, 27 Oct 2024 13:35:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87CB2370;
+	Sun, 27 Oct 2024 13:35:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730036148; cv=none; b=AuM/8L1oC3YilIzsj4V3YxOyUxPoBnH4vxgjo8Tr4Jutwe09KT8W2WuVoyRtLpOFtDewQkD9XSvqV6BedL7gpvtQ9xZbdzM3on6K5juhwe2MEUnwrjYrx+834Th8Lc+4DyBPhYgaMOR95rI6KVvIbwM183AXQHQM30F8KEe4FKY=
+	t=1730036126; cv=none; b=NBr/Ax7BZk/CX30dJsOxXcEZKytuSxQ/3mejMmj65E8SeIBfySA/wh7gRoBZWxzkcyupvp2XOMvqBNm/AKLSPS+WQxHP06tNy1EsFPkceGz5KPxaCG0nE7kSWYBgkEYbuZs2/eKgZZeT9GPC2UkZ/pzjU199EUA0qtkGq18PGmk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730036148; c=relaxed/simple;
-	bh=0O8eKPQladhE8cLxr/bSaYHnQGuNIfdauWs5HzIC8rs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HOMOPokxnTGXyeZqo/OaxLq/Wfdp9sbw4n0Hg5UidT2Mx+HJUpD128++LkQTd5gkIojCe+qIoTAIa0AVvEbD96csIg00rddsrbp89SXfcwLg7Z3Lq8zHEw6Xazb0mC2hSqwnQ4dz826KqmDmWdTpAZjnS23RG7HTptyJYA18oPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wv1H/9yj; arc=none smtp.client-ip=209.85.128.41
+	s=arc-20240116; t=1730036126; c=relaxed/simple;
+	bh=MXei8uQu9y1r4BBC57091KVEYwwDjCMgPkpBWBvRrrQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=TJNzkEwiH4uEELic58iEz2yy07OZ91M9oIVfkxjNoNp6u4OGVvc99kS7VBX1w66Sbb3Dy38HDTv8hJ8dPZbEG6CIkGMOkqzQpMdZVXqwKzi774zC6cyJig6breLrZS153Qp631wui0OK+w0QH8+4t9BKID/wMnTtoQGGfAjFwxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M1gQFzsS; arc=none smtp.client-ip=209.85.210.193
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43159c9f617so34349905e9.2;
-        Sun, 27 Oct 2024 06:35:46 -0700 (PDT)
+Received: by mail-pf1-f193.google.com with SMTP id d2e1a72fcca58-7203c431f93so2746166b3a.1;
+        Sun, 27 Oct 2024 06:35:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730036145; x=1730640945; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=mK7sVqYoX25AgNKVn0A6qLQfrJlccu+9fSrGoYMncso=;
-        b=Wv1H/9yj0Iz81R5tRABdfT3BIi/fpOLzkToQ6IxPsBTM1luxzicSkld/80TVAAuf6t
-         XhPAHuja95kKIKnntEXxpsimwB1n2a0BQ8TV4sDn3tCY4iuG4w0DX+hI233jV8xbAzpE
-         Z+lYPBFFeuJBCUv1t7b79D8vVGPTS0D3k8WzQ2GrWg6KWq1z3/Tt/N0seeHhDBbmew0V
-         Q5hkYP7VoUZUzta/KM22YrL0MPdndM9N04s2Fpm6jPDy+5Lvj215k+O62nHLlXrwNDcj
-         jvZgsgWRf/b2oYh1mVIa+85mAdENHyisV0LfV5z4sAuuzyn678V4fSwJ8n1jUbOlacEK
-         8kcw==
+        d=gmail.com; s=20230601; t=1730036124; x=1730640924; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kQ4B0yCTz1C52h9t9eSs+TfpkTdeGxsoHYRjw7nbq3A=;
+        b=M1gQFzsSRaqirGzuAmIKr5yHqVSrEqttp9QIxZeO2XFjruqLOYy6EEisYD+GI1IGzV
+         ojkVC0gMwX0PCv759tjZAgDrPjF1U+lzW+8+JobNjgPbZgOgmMz7kr8x1uMiLzdxslFC
+         yt5tNjBlYoZfrJaIqYraa9eopc1PCFg4qXGCstp3YfRfcD0MdUnGhCNWELO9vlr2mDEq
+         jqK7GOcxCsLzVfm7IbvU2cOom4q800DdOihttpOQTlCani9cTkrg/BJ4BEnaHTSDB4kY
+         RE5+eKgN29kt+NNv/9cluWDYV+IQ0EH7OzT8bVeVglYNMsN7a1fLV51qeBJXRNby9B+w
+         aTSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730036145; x=1730640945;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mK7sVqYoX25AgNKVn0A6qLQfrJlccu+9fSrGoYMncso=;
-        b=C1ScyW8Rt5xp/1dg91QvmWKaQOGTEY3PnKtdNpE8v7UyLfGvhsVHGIfyTH2HcbiZyl
-         n2pQahxR32vUp1Byvhos9JS4quHDEDXFJJaBMEV3UfUmxGWdyHnnSa3wNY8De+Ba1Z6E
-         a4GnyuxlDQxY4XB/gUbHV28wFQh+ZstCy9vsKEl7I3WfMAglBlqXsA/r5VuJ627PHYem
-         0Wo2a+qhBzx2XBbpXWfbrBjxmJ2hAFmbNyiOUYYgt56r+7H3jqgcpfOTHG2GaUUBWDK6
-         zZEC97NymzMt88gsxZF0a5eSfZ8B0bzVF94XJBgHtXzTSeaMQ3IRsG7ziSJ6r2Wt/phD
-         nk2w==
-X-Forwarded-Encrypted: i=1; AJvYcCVDxgAYLPGy6ah0ySN8q0J/YTHnjMEyBhcSAKSJpB1KnZc5RizeuxBpQsrd/5JjsAnJfAMG7T23Op/I9PFF@vger.kernel.org, AJvYcCWAzMVpp/OUSx7w2y0DZC6B68K4c6qeMMkDV+A3YAHdKMcK0e0p5j+w4KLH0iNZVXTh+16QHi1vbjOt4PKsWt8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQWiF/dt9osZCrz2VndAWjvvyW1j/d4cqMtOLsJt4b/3js8Ve+
-	V67V0kcwYYv28vXUXsdfsCXCB5Sx2lpgfYFC94/7xDPxenoG7gLl
-X-Google-Smtp-Source: AGHT+IFvoR5pALM3sVKeUHGr16ao40f833nEkt8YEwQlcfMaEnCIzjNv8RcjHl6d476xPvJAQ3quew==
-X-Received: by 2002:a7b:c5cc:0:b0:428:1310:b6b5 with SMTP id 5b1f17b1804b1-431aa802774mr1484315e9.34.1730036145278;
-        Sun, 27 Oct 2024 06:35:45 -0700 (PDT)
-Received: from void.void ([141.226.10.223])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b712d6sm6814218f8f.78.2024.10.27.06.35.44
+        d=1e100.net; s=20230601; t=1730036124; x=1730640924;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kQ4B0yCTz1C52h9t9eSs+TfpkTdeGxsoHYRjw7nbq3A=;
+        b=knU5tUhcsXWiRKTUyKepUqtckXWkwZaiE3WOvDNHYVnXpg/Sr+fwF7TnUvXYjYwB2v
+         vek/TWwcj1oXsc3gkR1BrJeE1Q2mWeF5Oe8ykKXrguhpSghiOfI4MwAk6+T0X91eCgvi
+         KGZxj47JslG3ZPuxw/v0+cyN8XO3c4ca1SJp8VS+zEwWdXkUj5EXvv0TrYG2HPLrN5sW
+         xSjrkm+U/42/5kMhYsbJALH5DRR1kxxP+TPE6klmESpwUpcdZfQV2rhrLcjzQ1vkRqpD
+         Mh4nJZlerSCyvQvx76p0P37KjPsJ4a7n9UmIzfacE8BSVTqGyBssZUQznUYuLSRRPjcv
+         2e9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU0pmKsM+gai5zmS/+xgneWStt/QDch4JJ6c+78bR1GeLGgzAqTKAVnlBzFQoILdszbeArSMFhJFKg=@vger.kernel.org, AJvYcCXiretBhgIV1TgvtQhUCeb3dQnGh+UFXjV5jSbDkvqftESoWjf1EO4BsPqKoVie8X2ukFL+lLIl4p2enMSO@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJnv10cADbZOW9L4mYpVtstNZf7ZS7oUqNJJRNFcabc7g2Beqp
+	AV8hQ0RKZGZGR5BztLen6l+0wuumPFoOUXEyNXj1K9+M2IQDwKu/Z0QS2tgq
+X-Google-Smtp-Source: AGHT+IHm7D0bMRKb+u/k3Hli8PIXaPXScDJUFxksYsUKV4RdCnH9ZxFjkYeh6FgUo26Cot30VXbOxg==
+X-Received: by 2002:a05:6a21:e93:b0:1d9:6e43:58c0 with SMTP id adf61e73a8af0-1d9a81d5da4mr6578775637.0.1730036123634;
+        Sun, 27 Oct 2024 06:35:23 -0700 (PDT)
+Received: from localhost.localdomain ([193.203.214.57])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7edc866adc2sm4116740a12.18.2024.10.27.06.35.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 27 Oct 2024 06:35:44 -0700 (PDT)
-From: Andrew Kreimer <algonell@gmail.com>
-To: Mark Fasheh <mark@fasheh.com>,
-	Joel Becker <jlbec@evilplan.org>,
-	Joseph Qi <joseph.qi@linux.alibaba.com>
-Cc: ocfs2-devel@lists.linux.dev,
+        Sun, 27 Oct 2024 06:35:23 -0700 (PDT)
+From: xu xin <xu.xin.sc@gmail.com>
+X-Google-Original-From: xu xin <xu.xin16@zte.com.cn>
+To: corbet@lwn.net
+Cc: alexs@kernel.org,
+	fan.yu9@zte.com.cn,
+	he.peilin@zte.com.cn,
+	linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Andrew Kreimer <algonell@gmail.com>
-Subject: [PATCH] ocfs2: cluster: fix a typo
-Date: Sun, 27 Oct 2024 15:35:18 +0200
-Message-ID: <20241027133540.22090-1-algonell@gmail.com>
-X-Mailer: git-send-email 2.47.0.149.g3e3ac46130
+	mudongliangabcd@gmail.com,
+	qiu.yutan@zte.com.cn,
+	seakeel@gmail.com,
+	si.yanteng@linux.dev,
+	tu.qiang35@zte.com.cn,
+	wang.yaxin@zte.com.cn,
+	xu.xin16@zte.com.cn,
+	zhang.yunkai@zte.com.cn
+Subject: Re: [PATCH linux-next v8] Docs/zh_CN: Translate physical_memory.rst to Simplified Chinese
+Date: Sun, 27 Oct 2024 13:35:18 +0000
+Message-Id: <20241027133518.2972180-1-xu.xin16@zte.com.cn>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <87ldyc1g3o.fsf@trenco.lwn.net>
+References: <87ldyc1g3o.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,29 +96,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Fix a typo: panicing -> panicking.
+> > From: Yaxin Wang <wang.yaxin@zte.com.cn>
+> >
+> > This patch translates the "physical_memory.rst" document into
+> > Simplified Chinese to improve accessibility for Chinese-speaking
+> > developers and users.
+> >
+> > The translation was done with attention to technical accuracy
+> > and readability, ensuring that the document remains informative
+> > and useful in its translated form.
+> >
+> > Update to commit 7332f9e45d2e("docs/mm: Physical Memory: Fix grammar")
+> >
+> > Signed-off-by: Yaxin Wang <wang.yaxin@zte.com.cn>
+> > Signed-off-by: Jiang Kun <jiang.kun2@zte.com.cn>
+> > Reviewed-by: xu xin <xu.xin16@zte.com.cn>
+> 
+> One does not normally put a Reviewed-by tag on one's own patches, so now
+> I am confused.  What is the role of you and Jiang Kung in the
+> presentation of this patch?
+> 
 
-Via codespell.
+ Let me explain that, it's because of our company email permission policy,
+ The author of this patch, Yaxin, has no permission to send out the patch
+ temporarily. So I'm just helping to send it on their behalf. and at the same time,
+ I'm a just reviewer, not the owner of this patch.
 
-Signed-off-by: Andrew Kreimer <algonell@gmail.com>
----
- fs/ocfs2/cluster/quorum.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Thanks.
 
-diff --git a/fs/ocfs2/cluster/quorum.c b/fs/ocfs2/cluster/quorum.c
-index 15d0ed9c13e5..8bf17231d7b7 100644
---- a/fs/ocfs2/cluster/quorum.c
-+++ b/fs/ocfs2/cluster/quorum.c
-@@ -60,7 +60,7 @@ static void o2quo_fence_self(void)
- 	switch (o2nm_single_cluster->cl_fence_method) {
- 	case O2NM_FENCE_PANIC:
- 		panic("*** ocfs2 is very sorry to be fencing this system by "
--		      "panicing ***\n");
-+		      "panicking ***\n");
- 		break;
- 	default:
- 		WARN_ON(o2nm_single_cluster->cl_fence_method >=
--- 
-2.47.0.149.g3e3ac46130
-
+> Thanks,
 
