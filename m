@@ -1,198 +1,115 @@
-Return-Path: <linux-kernel+bounces-383551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92E109B1D33
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 11:19:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71D989B1D34
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 11:22:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B07591C20B04
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 10:19:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 176E01F2169C
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 10:22:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4981613B2B8;
-	Sun, 27 Oct 2024 10:19:27 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 445B513AA3F;
+	Sun, 27 Oct 2024 10:22:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MZWwo/Us"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88DC47E110
-	for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 10:19:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7DE328399
+	for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 10:22:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730024366; cv=none; b=NN/C4rfIE0NWywbz8X/z3W5Ty82ThEm0cp75tQQxHh14MY66382YeDS78a3zx6rTmsF/DJC2dQVX3WUwkDP1ATvqJsQnwB2WFJRWHp+GS/52CMSSFbVCGLNj5a0aPSIY7OYxeRv7lVnFy07EB4C2eOZ+FNXp87H4O171WC82150=
+	t=1730024545; cv=none; b=DpyFnCOZxI9u8rhp6kgV5XM7SWvVHBfHErzSJ+L7zQ7AR1XxfvDbxTIvegCL+KYUuVEoEDFLx7mCosLJFQH2mw3RDeYVEj4c46UQ5jAQ7yc6pFxQeZbQFi8Qv32E9x4PNenidJIizGyWdLMJa0CO2JvW5bNTu+2Pi3QRqss/VBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730024366; c=relaxed/simple;
-	bh=qRTd0c5r2UBxAkqC5ig+z+WyhXzuqJKegjPdOLhaaVs=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=sj0Ivx6gwWFL2pbsAc+cIQhoZicWw/WHgD2tmjEHGFWirHFStZJ/ymsWOZGMU6f/0N2rMtiJCWvz+YSDyMlBgxpfky737moRcSd/yCaQhRf3r14FK6Gtbv+lYEsi61nVYfMMtCLuVnCuDD450G6EJdHcVqhjOy4FXOmBHoogOSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a4e77be28dso17784405ab.1
-        for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 03:19:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730024364; x=1730629164;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=X7yBQ7adT+27PYHQzx3rievw5FftioafdeMYYsgAE/E=;
-        b=C0mKMiGCMsNPuuXzmVjj/UgGH6BiP1MBFgCEhV0QP3StxzJbXSO5pLpHvHpuMqVRto
-         HFUD1ttp5DOrF1yxLU8QMwJmBsjzT7XQGMCtNRpc0POmgpu4c9VkTm+LCSZSy4ZvUjCm
-         rRWUHJCiFLrWrk0t74wYogh2UtGWzz0fQj6hm8Mw5O8cKk6KN455zc5F58EA2RQN16ka
-         zqbVy9aO5+8scvM0O7BbKw419gbVGXYicPRVgvoXBnMzeinIzR6kg6Z0GonuSlrOYqm1
-         w/LxIgvjmVmEOn4JTFypFjri0cGgMBFgqU5yvyqNfWuuHYKfOY9iewyO1l14e8NthNJz
-         hJoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUf3bNNzdJzGLYcKL/EmEH+dbKiozQQjIudT8DjeJA3Y0Jb/rl7nXJsQaRHzusGAJePZVrjXf76qbsQkOQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCjK5FxtzKm2mXewoCPrOt91aVqCBWvhXp4QFF/0TvpcoYxVbj
-	PyhYrrL5Dc7dpjKPjP7ZeZBXbKFrzBXQ8Zh1mO4k71a2A7jpFntLluzEJbmLmY5Lh8UofWWqxcK
-	ZbfAY+Bdpfz0NIOm8Uq6nTp1ah3F7jfTM0vgb8w4sHZNhOIPdFaiLuYo=
-X-Google-Smtp-Source: AGHT+IHXka4mtV1N/LMxD8SbGh4vMl/E5YMdqP/2rftJopwTR+SSIfmXZWSp23Wc/Tu3os3vaS/kax1YiPJSSJWx6JE8k1/9HHfi
+	s=arc-20240116; t=1730024545; c=relaxed/simple;
+	bh=0k3MEtE9BF8rhv6xudb8XxGPOormm9MhLswXlpEWSUo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=t+DV8hWCFyndlteDzxUcI9lS8WNGdLmZQdb3MdSbZB2tJdbWkmYuCfs33kqW0JcRV0EbrYzuh9aSqnQE6dwI/oY4erWyyBQiIw5zwlKyGj6ChQG8tR2I7UIkf2XbRbVDPLEGIPDjOAo4F5c5dWiZhrD6oVAWvvCLuXF4vDFOgt0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MZWwo/Us; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46316C4CEC3;
+	Sun, 27 Oct 2024 10:22:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730024545;
+	bh=0k3MEtE9BF8rhv6xudb8XxGPOormm9MhLswXlpEWSUo=;
+	h=From:To:Cc:Subject:Date:From;
+	b=MZWwo/UsB+fGmGC8cUmGUFUAuYqzccLyCvXjDbUNtRQSVCiP5ot0TpxiU9pKo9III
+	 bCeJutiffoylbY/x5N1tVK18HjblSsE18Fa+4aomsBf+sMK0aMBDEV4SyTSgGFrSeb
+	 zwN5L4o1UADnSYHKHjRO6xWUOgPoEtRqK0TbHpayYoXngzeAFlue62PDJTXFDqgjiY
+	 WbRMslifzOKyjgxtIOyRpWIttZmVJXfL9jD78TxCiPHnZHWU51hGDFgs5g1zk+0awc
+	 H++UBvYzKPGWibPylvLFCChOxLOGEUH1kdodS5uwQSGmr6QpVPZuARaKQKtKtdgoHe
+	 4NRS0AzPqJ2IQ==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=valley-girl.lan)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1t50Pf-007I7d-3j;
+	Sun, 27 Oct 2024 10:22:23 +0000
+From: Marc Zyngier <maz@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Zenghui Yu <yuzenghui@huawei.com>
+Subject: [PATCH] irqchip/gic-v4: Correctly deal with set_affinity on lazily-mapped VPEs
+Date: Sun, 27 Oct 2024 10:22:20 +0000
+Message-Id: <20241027102220.1858558-1-maz@kernel.org>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:17cf:b0:3a0:9238:d38 with SMTP id
- e9e14a558f8ab-3a4ed293143mr33026905ab.10.1730024363769; Sun, 27 Oct 2024
- 03:19:23 -0700 (PDT)
-Date: Sun, 27 Oct 2024 03:19:23 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <671e13ab.050a0220.2b8c0f.01d0.GAE@google.com>
-Subject: [syzbot] [ocfs2?] general protection fault in ocfs2_xa_block_wipe_namevalue
-From: syzbot <syzbot+386ce9e60fa1b18aac5b@syzkaller.appspotmail.com>
-To: jlbec@evilplan.org, joseph.qi@linux.alibaba.com, 
-	linux-kernel@vger.kernel.org, mark@fasheh.com, ocfs2-devel@lists.linux.dev, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, tglx@linutronix.de, yuzenghui@huawei.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-Hello,
+Zenghui points out that a recent change to the way set_affinity is
+handled for VPEs has the potential to return an error if the VPE
+hasn't been mapped yet (because the guest hasn't emited a MAPTI
+command yet), affecting GICv4.0 implementations that rely on the
+ITSList feature.
 
-syzbot found the following issue on:
+Fix this by making the set_affinity succeed in this case, and
+return early, without trying to touch the HW.
 
-HEAD commit:    c2ee9f594da8 KVM: selftests: Fix build on on non-x86 archi..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12d688a7980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=fc6f8ce8c5369043
-dashboard link: https://syzkaller.appspot.com/bug?extid=386ce9e60fa1b18aac5b
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11ff2a5f980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=131c4c30580000
-
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-c2ee9f59.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/8a3541902b13/vmlinux-c2ee9f59.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/a00efacc2604/bzImage-c2ee9f59.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/24458d1e01ba/mount_0.gz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+386ce9e60fa1b18aac5b@syzkaller.appspotmail.com
-
-(syz-executor887,5095,0):ocfs2_xa_remove:2028 ERROR: status = -12
-(syz-executor887,5095,0):ocfs2_xa_cleanup_value_truncate:1999 ERROR: Partial truncate while removing xattr overlay.upper.  Leaking 1 clusters and removing the entry
-Oops: general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] PREEMPT SMP KASAN NOPTI
-KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
-CPU: 0 UID: 0 PID: 5095 Comm: syz-executor887 Not tainted 6.12.0-rc4-syzkaller-00047-gc2ee9f594da8 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:ocfs2_xa_block_wipe_namevalue+0x91/0x550 fs/ocfs2/xattr.c:1637
-Code: f8 48 c1 e8 03 48 bb 00 00 00 00 00 fc ff df 0f b6 04 18 84 c0 0f 85 f7 03 00 00 45 0f b7 27 49 8d 7d 04 48 89 f8 48 c1 e8 03 <0f> b6 04 18 84 c0 0f 85 f9 03 00 00 41 0f b7 45 04 89 44 24 04 49
-RSP: 0018:ffffc9000aecebf0 EFLAGS: 00010247
-RAX: 0000000000000000 RBX: dffffc0000000000 RCX: dffffc0000000000
-RDX: 0000000000000000 RSI: 00000000fffffff4 RDI: 0000000000000004
-RBP: ffffc9000aecf418 R08: ffffffff83a08052 R09: 0000000000000000
-R10: ffff8880473f73c0 R11: ffffffff83a0a5e0 R12: 0000000000000000
-R13: 0000000000000000 R14: ffffc9000aecf410 R15: ffff8880473f7230
-FS:  000055557176f380(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020001400 CR3: 000000003fa50000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- ocfs2_xa_wipe_namevalue fs/ocfs2/xattr.c:1470 [inline]
- ocfs2_xa_remove_entry fs/ocfs2/xattr.c:1941 [inline]
- ocfs2_xa_remove fs/ocfs2/xattr.c:2044 [inline]
- ocfs2_xa_set+0x1120/0x2b40 fs/ocfs2/xattr.c:2248
- ocfs2_xattr_block_set+0x46e/0x3390 fs/ocfs2/xattr.c:2986
- __ocfs2_xattr_set_handle+0x28c/0x10a0
- ocfs2_xattr_set+0x128c/0x1930 fs/ocfs2/xattr.c:3651
- __vfs_removexattr+0x42a/0x460 fs/xattr.c:518
- __vfs_removexattr_locked+0x206/0x450 fs/xattr.c:553
- vfs_removexattr+0x103/0x2b0 fs/xattr.c:575
- removexattr fs/xattr.c:907 [inline]
- path_removexattr+0x284/0x3a0 fs/xattr.c:928
- __do_sys_lremovexattr fs/xattr.c:948 [inline]
- __se_sys_lremovexattr fs/xattr.c:945 [inline]
- __x64_sys_lremovexattr+0x5d/0x70 fs/xattr.c:945
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fdd4bc7a7c9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 d1 1a 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fffe80c9a48 EFLAGS: 00000246 ORIG_RAX: 00000000000000c6
-RAX: ffffffffffffffda RBX: 00007fffe80c9a60 RCX: 00007fdd4bc7a7c9
-RDX: 00007fdd4bc79950 RSI: 0000000020000280 RDI: 0000000020000240
-RBP: 0000000000000001 R08: 00007fffe80c97e7 R09: 0000555571770378
-R10: 0000000000000001 R11: 0000000000000246 R12: 00007fffe80c9a80
-R13: 00007fffe80c9ca8 R14: 431bde82d7b634db R15: 00007fdd4bcbc01d
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:ocfs2_xa_block_wipe_namevalue+0x91/0x550 fs/ocfs2/xattr.c:1637
-Code: f8 48 c1 e8 03 48 bb 00 00 00 00 00 fc ff df 0f b6 04 18 84 c0 0f 85 f7 03 00 00 45 0f b7 27 49 8d 7d 04 48 89 f8 48 c1 e8 03 <0f> b6 04 18 84 c0 0f 85 f9 03 00 00 41 0f b7 45 04 89 44 24 04 49
-RSP: 0018:ffffc9000aecebf0 EFLAGS: 00010247
-RAX: 0000000000000000 RBX: dffffc0000000000 RCX: dffffc0000000000
-RDX: 0000000000000000 RSI: 00000000fffffff4 RDI: 0000000000000004
-RBP: ffffc9000aecf418 R08: ffffffff83a08052 R09: 0000000000000000
-R10: ffff8880473f73c0 R11: ffffffff83a0a5e0 R12: 0000000000000000
-R13: 0000000000000000 R14: ffffc9000aecf410 R15: ffff8880473f7230
-FS:  000055557176f380(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020001400 CR3: 000000003fa50000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	f8                   	clc
-   1:	48 c1 e8 03          	shr    $0x3,%rax
-   5:	48 bb 00 00 00 00 00 	movabs $0xdffffc0000000000,%rbx
-   c:	fc ff df
-   f:	0f b6 04 18          	movzbl (%rax,%rbx,1),%eax
-  13:	84 c0                	test   %al,%al
-  15:	0f 85 f7 03 00 00    	jne    0x412
-  1b:	45 0f b7 27          	movzwl (%r15),%r12d
-  1f:	49 8d 7d 04          	lea    0x4(%r13),%rdi
-  23:	48 89 f8             	mov    %rdi,%rax
-  26:	48 c1 e8 03          	shr    $0x3,%rax
-* 2a:	0f b6 04 18          	movzbl (%rax,%rbx,1),%eax <-- trapping instruction
-  2e:	84 c0                	test   %al,%al
-  30:	0f 85 f9 03 00 00    	jne    0x42f
-  36:	41 0f b7 45 04       	movzwl 0x4(%r13),%eax
-  3b:	89 44 24 04          	mov    %eax,0x4(%rsp)
-  3f:	49                   	rex.WB
-
-
+Fixes: 1442ee0011983 ("irqchip/gic-v4: Don't allow a VMOVP on a dying VPE")
+Reported-by: Zenghui Yu <yuzenghui@huawei.com>
+Reviewed-by: Zenghui Yu <yuzenghui@huawei.com>
+Signed-off-by: Marc Zyngier <maz@kernel.org>
+Link: https://lore.kernel.org/r/aab45cd3-e5ca-58cf-e081-e32a17f5b4e7@huawei.com
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ drivers/irqchip/irq-gic-v3-its.c | 14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
+index ab597e74ba08e..52f625e07658c 100644
+--- a/drivers/irqchip/irq-gic-v3-its.c
++++ b/drivers/irqchip/irq-gic-v3-its.c
+@@ -3810,8 +3810,18 @@ static int its_vpe_set_affinity(struct irq_data *d,
+ 	 * Check if we're racing against a VPE being destroyed, for
+ 	 * which we don't want to allow a VMOVP.
+ 	 */
+-	if (!atomic_read(&vpe->vmapp_count))
+-		return -EINVAL;
++	if (!atomic_read(&vpe->vmapp_count)) {
++		if (gic_requires_eager_mapping())
++			return -EINVAL;
++
++		/*
++		 * If we lazily map the VPEs, this isn't an error and
++		 * we can exit cleanly.
++		 */
++		cpu = cpumask_first(mask_val);
++		irq_data_update_effective_affinity(d, cpumask_of(cpu));
++		return IRQ_SET_MASK_OK_DONE;
++	}
+ 
+ 	/*
+ 	 * Changing affinity is mega expensive, so let's be as lazy as
+-- 
+2.39.2
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
