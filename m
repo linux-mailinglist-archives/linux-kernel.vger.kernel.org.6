@@ -1,89 +1,157 @@
-Return-Path: <linux-kernel+bounces-383877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C80B39B2152
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 00:06:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 24B089B2155
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 00:10:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02F6B1C20DBB
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 23:06:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 47AF61C20A80
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 23:10:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 297FE189B98;
-	Sun, 27 Oct 2024 23:06:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65E71189B8D;
+	Sun, 27 Oct 2024 23:10:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aDGN8qGe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KIhHuoX3"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D23C13D297;
-	Sun, 27 Oct 2024 23:06:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A57C1161;
+	Sun, 27 Oct 2024 23:10:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730070384; cv=none; b=R6McIqvBGH+5kLoXQkyvRD6UeqIzYB/7aJKqAu33fvBhttUqm7pvqfOyywaWoiZCV/+XOP1QRxJg9CUHn8HarOKrxVnSAJ9e3AAoKy9Af10R+EilBtRVcLaB7tzHAO2nf15duTUMwgEligYbVlSX9XyG9KefIHHThiMY9sTUvmY=
+	t=1730070637; cv=none; b=fjH+cJCoFcrcsDlFSVtw0bp0xeEyuP/NrVmZKZGhNQg8KsNkUaJx0t23q1gDoEtxrcyuSuDdZ8Z6dSifOr4pCEZEahIT3sFs3CGDUoYG7JSaEX6nyCeoj7pZh1iEmu5PjA/XsehNq9yvU50t8x+BV5X/1LIlNUmZKf1xQwHlzFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730070384; c=relaxed/simple;
-	bh=k+itR6a4fehC9AapuLt8sMTMaRbxcBj9JLpRURPUyWo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XIAMNFMi/tva3f5XC97AKpBiwDFFumwFjBkpgphjO6lrCio9bzvWcYh87uZnf2fOSkoLXtt5qYbpvP16s8fCQEWCUBWeU8oYjAilAgRZI+zp8ue56XPegyDw53XNgW4sV63RrpekZiD3xN/vnBlU0LUB63qo3M0MY6ClfD5XxcQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aDGN8qGe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0216C4CEC3;
-	Sun, 27 Oct 2024 23:06:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730070384;
-	bh=k+itR6a4fehC9AapuLt8sMTMaRbxcBj9JLpRURPUyWo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aDGN8qGeqw7k1uG6exl7xg+qcsPNWAkeTXw/CVGF3w62SwiruromTWbyMSPO7Zc4J
-	 3KLxtPWUHhai8sT9yInwfi5AAlcgMq/sV3S3yvv2esJ+58DLTkWnDd6fAt1C0gr4UN
-	 Z+I0zRSuZQ2n5vxL6nSHq0tryrNWEzDdddaUf4e32PxwFTRMR+qi42Dc5XMLMkZDUn
-	 GitBVNaRudG94kRP8ApUpoTtI0TfLVixvft7xBkrPp7Pwo/X7bepXWUdCDGbaXvFRy
-	 RfbopWr5KcdvnscW6h6ZAc6rWjk5ze8IOx683kc24PcEC3gBD/nKLzxqutdBRGfeZN
-	 oLlm+GE9hr3XQ==
-Date: Sun, 27 Oct 2024 18:06:22 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Woojung Huh <woojung.huh@microchip.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Arun Ramadoss <arun.ramadoss@microchip.com>,
-	Rob Herring <robh+dt@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	linux-kernel@vger.kernel.org,
-	"Russell King (Oracle)" <linux@armlinux.org.uk>,
-	devicetree@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Vladimir Oltean <olteanv@gmail.com>, UNGLinuxDriver@microchip.com,
-	Jakub Kicinski <kuba@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, netdev@vger.kernel.org,
-	kernel@pengutronix.de
-Subject: Re: [PATCH net-next v1 2/5] dt-bindings: net: dsa: ksz: add
- mdio-parent-bus property for internal MDIO
-Message-ID: <173007038174.211419.15098396970217241846.robh@kernel.org>
-References: <20241026063538.2506143-1-o.rempel@pengutronix.de>
- <20241026063538.2506143-3-o.rempel@pengutronix.de>
+	s=arc-20240116; t=1730070637; c=relaxed/simple;
+	bh=useqysxUEcLQ2aMXTgKfsuhB1B/otftxIG5Fs/y2k3Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MS1MMfcOej+sP7k//nt7+kUadMFNM35Mz1KCcniuDGHg9xgy0nv2SLyhOH7LRuV1C/BRrUkPCHFDUfau0Mln7IEb36dSzm7u7HY6MgU3YazS2DZJhzg0EjU0bhTMP/ylPdeF/10tt/hSYlgN23qTBZxSgo9WBHKTuqucVUNHhsk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KIhHuoX3; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43155abaf0bso38538575e9.0;
+        Sun, 27 Oct 2024 16:10:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730070634; x=1730675434; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=gFeZ965nAQAUdBsdbWiwD7ivDZutozPpLb7/lBQkTLY=;
+        b=KIhHuoX3UoFER1dXIYgVASuGaozJponHR7Q5XovQRb/h7Rw4URbd3R8ojNybos8cKK
+         DsGmu9JZFPA0HqgrDAuf3RtAsKCnIhwecOqxlFywQydQI/JJl8r4l1Z6wiaZNMVu1e5k
+         v7HVkVFtBvosXl+/XUP9LF8qiClkslvH62phSjw2DtGCQoqLt3UmVjwO7v7k8E0EvYXu
+         48T6CwAPax8YqguDeYgJNMnGSO2ZuiMCW5y4kBo54ntTjkbE5zblfeimeuWksJ2vsIUR
+         TlaHWbnAu+5/wvEOcEb3RVePN7KUfdnEBg5LhoTwRyS2he1MavD1xxYLWk5qhEkf3uC+
+         xaJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730070634; x=1730675434;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gFeZ965nAQAUdBsdbWiwD7ivDZutozPpLb7/lBQkTLY=;
+        b=qWkQ0IP9hl3ZJ0x8PQraIZ/rJb6EwPlHyhnaA1aNbbow6iIzE6OTc9fCPvUcKB91u5
+         maGZDcDg6MEw3N3KTXrqT6TNSPKbhZ42SaMAmvgribqNKIBbX0hsGQP8z0bWkNkNdo22
+         3SRp177qsTrBGs6GRFnkMLcmbmvBqsNIPl2hkbMGnCSzVvt56ApXVXoFijpZaIwwBNb5
+         ilB7HiBU9I2SZfLF1lgHNe1xlPX7Cvfgj78lHJKxTnxJovVTa3XWjHo0yjiEUD1uaddV
+         lvAV5DvXO9BvNnG3Q1822oRySGjiDjuXZgn90e64PZ7KVeqRhII8KPVaYKpuMm8PAXtu
+         QtZA==
+X-Forwarded-Encrypted: i=1; AJvYcCUtfxFfXbhAfn2dm7PMIHVHWs6Ggd6n8Xv2cS1jCP7B0HnE2LUS5iAfsx9Hw4D9fnKOVi8UR8oGLbHQHCd44J3kaA6X0g==@vger.kernel.org, AJvYcCVZDyjxhcIMTXi5AoZFtcpHSP7adeOx9v3NUVQg+jjgyUhdI99J27tVhuL5/h9Ee6qBtGvyxy54zr6c@vger.kernel.org, AJvYcCWCcpM18i1tFbQQTeY3MZawLwEJYjno93K/H2S9Gi4+XLtTRjUhyKsYmg07MIMCxZyT0gH3y8ukqgHk+Lqu@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXvx44sr0pYE6N9KAkm859iz7iTJBMCSNjIb8N9Jt0CjgobtbW
+	h+wKrQrxSfBAFmOtKp7i8P4/p7tCxPZmXyXbNUaS0WvgD2ge1MvyIf6ujQ==
+X-Google-Smtp-Source: AGHT+IF9C2sepihkCo09FcSIB2MaX2p26yqSY+v+9+AQuuAMZdKvr4i/LMnsTh7IFenX+G1hoozDAA==
+X-Received: by 2002:a05:600c:1d8c:b0:431:5e3c:2ff0 with SMTP id 5b1f17b1804b1-4319ac94a2emr53822605e9.8.1730070633657;
+        Sun, 27 Oct 2024 16:10:33 -0700 (PDT)
+Received: from ?IPV6:2a02:8071:b783:140:927c:82ba:d32d:99c1? ([2a02:8071:b783:140:927c:82ba:d32d:99c1])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4318b579613sm119223815e9.38.2024.10.27.16.10.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 27 Oct 2024 16:10:32 -0700 (PDT)
+Message-ID: <14053a51-3101-4d76-8947-2f74e1ee6c58@gmail.com>
+Date: Mon, 28 Oct 2024 00:10:28 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241026063538.2506143-3-o.rempel@pengutronix.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/8] platform/surface: aggregator: Add platform handler
+ pointer to device
+To: Mario Limonciello <mario.limonciello@amd.com>,
+ Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Lee Chun-Yi <jlee@suse.com>, Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+ Corentin Chary <corentin.chary@gmail.com>, "Luke D . Jones"
+ <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>,
+ Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
+ Alexis Belmonte <alexbelm48@gmail.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+ Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>,
+ open list <linux-kernel@vger.kernel.org>,
+ "open list:ACPI" <linux-acpi@vger.kernel.org>,
+ "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER"
+ <platform-driver-x86@vger.kernel.org>,
+ "open list:THINKPAD ACPI EXTRAS DRIVER"
+ <ibm-acpi-devel@lists.sourceforge.net>,
+ Mark Pearson <mpearson-lenovo@squebb.ca>,
+ Matthew Schwartz <matthew.schwartz@linux.dev>
+References: <20241025193055.2235-1-mario.limonciello@amd.com>
+ <20241025193055.2235-3-mario.limonciello@amd.com>
+Content-Language: en-US
+From: Maximilian Luz <luzmaximilian@gmail.com>
+In-Reply-To: <20241025193055.2235-3-mario.limonciello@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-
-On Sat, 26 Oct 2024 08:35:35 +0200, Oleksij Rempel wrote:
-> Introduce `mdio-parent-bus` property in the ksz DSA bindings to
-> reference the parent MDIO bus when the internal MDIO bus is attached to
-> it, bypassing the main management interface.
+On 10/25/24 9:30 PM, Mario Limonciello wrote:
+> To be able to reference the platform handler in remove, add
+> a pointer to `struct ssam_device`.
 > 
-> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> Tested-by: Matthew Schwartz <matthew.schwartz@linux.dev>
+> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
 > ---
->  .../devicetree/bindings/net/dsa/microchip,ksz.yaml       | 9 +++++++++
->  1 file changed, 9 insertions(+)
+>   drivers/platform/surface/surface_platform_profile.c | 1 +
+>   include/linux/surface_aggregator/device.h           | 2 ++
+>   2 files changed, 3 insertions(+)
 > 
+> diff --git a/drivers/platform/surface/surface_platform_profile.c b/drivers/platform/surface/surface_platform_profile.c
+> index 61aa488a80eb5..958afd7bce223 100644
+> --- a/drivers/platform/surface/surface_platform_profile.c
+> +++ b/drivers/platform/surface/surface_platform_profile.c
+> @@ -210,6 +210,7 @@ static int surface_platform_profile_probe(struct ssam_device *sdev)
+>   		return -ENOMEM;
+>   
+>   	tpd->sdev = sdev;
+> +	sdev->tpd = tpd;
+>   
+>   	tpd->handler.name = "Surface Platform Profile";
+>   	tpd->handler.profile_get = ssam_platform_profile_get;
+> diff --git a/include/linux/surface_aggregator/device.h b/include/linux/surface_aggregator/device.h
+> index 8cd8c38cf3f30..6a72b5bdc8782 100644
+> --- a/include/linux/surface_aggregator/device.h
+> +++ b/include/linux/surface_aggregator/device.h
+> @@ -164,6 +164,7 @@ enum ssam_device_flags {
+>    * @dev:   Driver model representation of the device.
+>    * @ctrl:  SSAM controller managing this device.
+>    * @uid:   UID identifying the device.
+> + * @tpd:   Platform profile device data.
+>    * @flags: Device state flags, see &enum ssam_device_flags.
+>    */
+>   struct ssam_device {
+> @@ -171,6 +172,7 @@ struct ssam_device {
+>   	struct ssam_controller *ctrl;
+>   
+>   	struct ssam_device_uid uid;
+> +	struct ssam_platform_profile_device *tpd;
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Do we really need to introduce a new field in the main SSAM device struct? I
+only had time for a brief look, but IIUC you could just use ssam_device_set_drvdata()
+and ssam_device_get_drvdata().
 
+>   	unsigned long flags;
+>   };
+
+Best regards,
+Max
 
