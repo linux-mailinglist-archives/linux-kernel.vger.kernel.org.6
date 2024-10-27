@@ -1,114 +1,156 @@
-Return-Path: <linux-kernel+bounces-383613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68DBD9B1E04
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 15:06:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAD8B9B1E07
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 15:07:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A9DB1C20A9A
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 14:06:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65AEE1F216E4
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 14:07:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82C6616F282;
-	Sun, 27 Oct 2024 14:06:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BB7817332C;
+	Sun, 27 Oct 2024 14:06:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HZTVVR2C"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b="AsyQpyZw"
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.17.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0977B16B3B7;
-	Sun, 27 Oct 2024 14:06:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 992CF16F8EF;
+	Sun, 27 Oct 2024 14:06:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730037992; cv=none; b=US76GkpQb7mk+VX7Ys+ZJqnPdBZLN7WGISsmucIx7jL4+hzRFWRYLyWo7jqLsiEaGPU6TJiQgkZdPoSILoP+H9T4mQbn7lvy8tu03XluvWKZlXAd9yBoFovygs9nlL9dfsbwEKcGAdg9f+UJr2yiGPHfmVq2gVWg0bqSymp/2Zc=
+	t=1730037995; cv=none; b=oJziin6/c7utTW+d4aQqn7zlxmGx+/z29NoSiyox6MrFfw1GZIvyaXpUVyLcR2CtqtdBa4gwUAl35nxn0ib58wmJZaMV/HMU9mN21B0T6h7YzpDK3bgrEmHVZBpmtTtrI7o5jlanGOAAFq+MWA5tm1Eq/lZFq261eNwR1XXaFjo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730037992; c=relaxed/simple;
-	bh=DlNqd9z2/ZM2XeHgclPgzwfuQVlBcaEE++IuuvdtZHM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DdzkxYrY4TkSSq2JLmCtyUQ/Axg2GUjbZ3aEd++7eQH6W2uq4OMlDVbFfqmWYK9VCEXAfJfFQerp2acVIlIjWtuXrflxNO1ZdmAFhRmp74XlkfYGh9o/h2b7LQjdT3XHGfC08Z+eqCtjNbmnrQWHpkLRq08ZBPtYJUf4/Ax6Dpc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HZTVVR2C; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-37d4d1b48f3so2625745f8f.1;
-        Sun, 27 Oct 2024 07:06:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730037988; x=1730642788; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ciP5PqyHVqbZ4ar5lDSwgDPW/+/+QdOUjUbcyphWzWE=;
-        b=HZTVVR2CS7eOBP+K8+FWun+zIY3aFqWaUE93mGd+Y9VEenlY0lxDOzmRqw9KT9ty02
-         WybdAJxwyILupsMUWOGRaMYGEMM/9SizZX6hIvzTNQyTpCMBefSQmol/47HZ6148md5i
-         z3ue/KUSnsrrvpNznmbjgR0driK9Nw1E3RhaQ13DkneaQD5BAdkRkNKKCwvidJG8IeWu
-         xrKgSZAMOv4Tm6W2Gepu/8I/4MsmviikcpmUVqmbKipHGNLTUvnQPfWMI88lGAe20NZk
-         zBKzp0DQYWdwnteIlXuBnWSoVwVkM2ixQK/S4qTyJVu7Fbk+YE60NMxDkgSuyDb0obgZ
-         IYsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730037988; x=1730642788;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ciP5PqyHVqbZ4ar5lDSwgDPW/+/+QdOUjUbcyphWzWE=;
-        b=IkQ5UbR3oE0885XbvnWZUzpJYzX1dL7iWCxonaotMnTTViIXzP7qneSI38bvTlR34G
-         nIvGFrSXGJJAPDlLlRSLJgDHa4OGy2mGJB7zSDFpJpcUG06PWKR6UyOdIPmLJrNpTOkS
-         8GFmCDwbMOHfChP2LA4dWdE+IUbPAcj3CqHs0dGgLR4nzb7NL+lSRx76EuEThQmHfJ17
-         4XZMnOG2mDiHrZKxHcXo+fE/h+xlFgOfl4eUxxS5xRJbbCphLg49EUg4td2ZLV+BIEPB
-         WjSfRlXON5zbvHdeutDwmNtNBs9mVaqRjetX8npi4odjzdoc9ajzc9dxj9U1uzFlYWu9
-         R3dg==
-X-Forwarded-Encrypted: i=1; AJvYcCV01Kw/ZDMftkBSheuOituNYqTCEPkfYGiV8homRwuzOM8fAYuxMEuChf4qEE/mK3r64olV1TYAgd3ClEr14T0=@vger.kernel.org, AJvYcCWuBlNepppttICfT7al6ZurlcKsRb6NwveGp34I3WIfQCG251yLyFQXoc2wH/zUs1IrAGN8JIqf+a88iHBk@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIMyM/67X9by6/iDYqt5pm9vli3CFsRQEgEMf0GiuQNifpAjnx
-	aIVteoe7NPwCBCvsdI3v8NrnQE4PEBrwahaL7TWVpjFQMnriQs5c
-X-Google-Smtp-Source: AGHT+IGa9wvaZ5QuHXadDbtM1Tfk0wq1icLe9dx7brgIhawTZ5Q9vy/wi9r4O8n+YU+MyNdylirWTA==
-X-Received: by 2002:adf:f050:0:b0:37d:4657:ea78 with SMTP id ffacd0b85a97d-380611f5b86mr4049920f8f.54.1730037988207;
-        Sun, 27 Oct 2024 07:06:28 -0700 (PDT)
-Received: from void.void ([141.226.10.223])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b9d70fsm6871843f8f.108.2024.10.27.07.06.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 27 Oct 2024 07:06:28 -0700 (PDT)
-From: Andrew Kreimer <algonell@gmail.com>
-To: Jaegeuk Kim <jaegeuk@kernel.org>,
-	Chao Yu <chao@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Andrew Kreimer <algonell@gmail.com>
-Subject: [PATCH] f2fs: fix typos
-Date: Sun, 27 Oct 2024 16:06:08 +0200
-Message-ID: <20241027140623.24802-1-algonell@gmail.com>
-X-Mailer: git-send-email 2.47.0.149.g3e3ac46130
+	s=arc-20240116; t=1730037995; c=relaxed/simple;
+	bh=shzMhA1ShIAzT/nl39/7faxKV6dT0AWJD5xF0gYTwuc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C+pTFRjcuZ0K6iPulQnF2KmVr4Nu15Oktg1SiAhkq6AEnI87duYVOtZ9XlLz1E2tpre3bhg7gYuoTENRZwRC5uHnzNlCioApvK2LoGfSibP+nqR6o5o9xqJC6sQuh652BZMTYHN8Rw1bLT7hFyi+RDm7IInW2cP5cEGltU4yJ+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu; spf=pass smtp.mailfrom=heusel.eu; dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b=AsyQpyZw; arc=none smtp.client-ip=212.227.17.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=heusel.eu
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=heusel.eu;
+	s=s1-ionos; t=1730037971; x=1730642771; i=christian@heusel.eu;
+	bh=jClmXAlUGXYrZ7D0GspMoXRQShIjacF/nvZ/v7Jg9oA=;
+	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:References:
+	 MIME-Version:Content-Type:In-Reply-To:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=AsyQpyZwUbrIy+LY5pWQZH7Qyzc48geigQrSR2a0ZbvnnvcEME2RxK4VP/+lW2SH
+	 gkQTwBqitfK4pjUlXwFikk3hgBY9+pHMwzsxBiP97Ks0hjZ8kdzK9QYusO+pK3Ki2
+	 SlnXedkDhBVjW+Rq/CPC2pGhbg9XEfzPfAlLzHdzslxhqoK/7GrQSMuuxaskE1VPM
+	 oemlH4iASedrrX7YH8DKgHqphRrY01Sqq70IPuBbFrmH3mS+OCNjOlNHshmEb0Lj1
+	 BqAiVUh2e2IY3gmccJq4R22bGdkOj0GMsAFaDLHgG5xXSxdvkVdUVGjRnkwzF/+KC
+	 HVtzAgbSdb5cslSk9A==
+X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
+Received: from localhost ([141.70.80.5]) by mrelayeu.kundenserver.de (mreue107
+ [212.227.15.183]) with ESMTPSA (Nemesis) id 1MKc0o-1tJHuI3ZWO-00NhJl; Sun, 27
+ Oct 2024 15:06:10 +0100
+Date: Sun, 27 Oct 2024 15:06:09 +0100
+From: Christian Heusel <christian@heusel.eu>
+To: "Ned T. Crigler" <crigler@gmail.com>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, regressions@lists.linux.dev, 
+	Jeff LaBundy <jeff@labundy.com>, Benjamin Tissoires <bentiss@kernel.org>
+Subject: Re: [REGRESSION] disabling and re-enabling magic sysrq fails after
+ kernel 6.11
+Message-ID: <69b6119c-3c3a-406f-9375-3e55fba9b732@heusel.eu>
+References: <Zx2iQp6csn42PJA7@xavtug>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="6ltj3y347njtiyc7"
+Content-Disposition: inline
+In-Reply-To: <Zx2iQp6csn42PJA7@xavtug>
+X-Provags-ID: V03:K1:bcEW9OKSDcBN6iBJVT1IxSn0dhS4niUXkbBATWCvAS/NBbUxjJY
+ Z3U3r2AUtpIW8o+uKSENCloX8B1NS9WxK0ftmtonYDROog7N386GJWdcnEl7nGCf+9u1deT
+ ffHvWqhKOxr3tqN76jso3hbaAF3JWWTn87il7JwSjd6fxVQ+l4/TPNbgwHR7bLj/QMTqQ36
+ 2fT8BkhgXis4YLwPCe+iA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:caUVJ2Omcak=;WNv1/VZRLTlqtc4h3php6RNqUdS
+ r8poFdSan4gIt2JasRh72OQEoN9MmrvV6wJIDseSAWDPEMgGPDk9cVSeCzgefNxRz5laGerXY
+ Rp29Q0XCrE0m48Lt1+O+kDC4K7/AAQd4BDB60l4HnoF88uVVfBPylIDzuHzTm42nYW2D9WcYa
+ yfAU/zhfiM45rMrV7vU2U3GnfMlVXvtkq3f+pHk+iiCwyd4R7ptOizEn5ZPnulbGC0LGZdo8X
+ 6HFWfXf4EKOO6bdAkwVwL/rGCqY8uGyhhVFp0YzA33lahwWHIiFG9zahdpfTOEZzDFExCrd0T
+ SX4PtH72kCG2d31w0VB3+AKO3iVhCumaTJ4nGLZ9B8Jv5i+GFudJDOlS1b8bkT8UC8vRfYtTc
+ iuwizEccItXSBSqtwuWZN1oNzmhpsyRb7BWInCPct2NHE46Bw3VnU1kZ9cvI0z15uw/1wrAOD
+ MN4z+vBWQPe74Im8vnevUDl9KONWWVr0c9R0vLCh/kzu/31vpgZ+lqrLRpmnZqrelk0Y2F6j2
+ O04oCD5YZxcdxPnc1UcAL3e9DOoJSQdkOewlXbRLERVi3Qe+kmkLThXRxdMi96JnUl8IIpBsj
+ cwG/AHu95n9p1/BZtPwNQFE2ic0QZFw1jKg7TMLd/5x1OuFkKJOCZY9olGB6s9UvDDWkzTxTY
+ 0P702eTc2wgTGkQQS9IQNcu+AGoFQoTFIHfGOyEEEOHgSdDY0aIHu1vnRvTnXJwogmf3cqagr
+ Pp+kw/fZ9f6+ZxueYRvtfmY0EaLqIpjnA==
 
-Fix typos: datas -> data.
 
-Via codespell.
+--6ltj3y347njtiyc7
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [REGRESSION] disabling and re-enabling magic sysrq fails after
+ kernel 6.11
+MIME-Version: 1.0
 
-Signed-off-by: Andrew Kreimer <algonell@gmail.com>
----
- fs/f2fs/debug.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+On 24/10/26 07:15PM, Ned T. Crigler wrote:
+> Hi,
 
-diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
-index 546b8ba91261..9dfb577d695b 100644
---- a/fs/f2fs/debug.c
-+++ b/fs/f2fs/debug.c
-@@ -598,9 +598,9 @@ static int stat_show(struct seq_file *s, void *v)
- 			   si->ndirty_node, si->node_pages);
- 		seq_printf(s, "  - dents: %4d in dirs:%4d (%4d)\n",
- 			   si->ndirty_dent, si->ndirty_dirs, si->ndirty_all);
--		seq_printf(s, "  - datas: %4d in files:%4d\n",
-+		seq_printf(s, "  - data: %4d in files:%4d\n",
- 			   si->ndirty_data, si->ndirty_files);
--		seq_printf(s, "  - quota datas: %4d in quota files:%4d\n",
-+		seq_printf(s, "  - quota data: %4d in quota files:%4d\n",
- 			   si->ndirty_qdata, si->nquota_files);
- 		seq_printf(s, "  - meta: %4d in %4d\n",
- 			   si->ndirty_meta, si->meta_pages);
--- 
-2.47.0.149.g3e3ac46130
+Hey Ned,
 
+> It looks like starting with kernel 6.11, disabling and re-enabling
+> magic
+> sysrq fails with these errors in dmesg:
+>=20
+> kernel: input: input_handler_check_methods: only one event processing
+> method can be defined (sysrq)
+> kernel: sysrq: Failed to register input handler, error -22
+>=20
+> after doing:
+>=20
+> # echo 0 > /proc/sys/kernel/sysrq
+> # echo 438 > /proc/sys/kernel/sysrq
+> # echo 0 > /proc/sys/kernel/sysrq
+> # echo 438 > /proc/sys/kernel/sysrq
+> # echo 0 > /proc/sys/kernel/sysrq
+> # echo 438 > /proc/sys/kernel/sysrq
+
+I have found that this issue is also present in the latest mainline
+release and bisected it to the following commit:
+
+    d469647bafd9 ("Input: simplify event handling logic")
+
+The additional authors / maintainers have been added to the recipients
+lists.
+
+I hope I didn't overlook any pending fixes.
+
+> --=20
+> Ned T. Crigler
+
+Cheers,
+Chris
+
+--6ltj3y347njtiyc7
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEb3ea3iR6a4oPcswTwEfU8yi1JYUFAmceSNEACgkQwEfU8yi1
+JYXzXA/9GvWBON+9+wLDs4ZyBFbK2Vj514B0nAODEVNVS4+DlS9eg8/IKst/iybB
+YfEy/8NF6uRcyk74E36HOWQVe2BkG6bDK0ZzudNkLJy6ej3r1Z6ivAyJs8tLRGrV
+IoUBY0W4HzVo3cUb/tMoRkVTo/8XAroaB2iE/Znkq2VKe2ma6NEvnjuJgFbIE6aq
+NP8LXOH1XYnzrJLB/O2n5ejs+4vOO+AdKiQ/pptf9F1uWA3QLscLGY+BhLpyVPG8
+CxttSjehC/oyV0PcCXfDLvRaNPlbY3LyLmCYMqfFDVWK7kUVqZ5cnlOW78kmIOro
+gyi9EdP7jqu1HGsSU9xc6YXUe3ZEcrT2M3TRrbNn6C5rGOoIK1KXQy0+h8ru0cEq
+TgxixZDfuljKoGkDeMUZP+htIw3mLbkQK2CcHOoFxBZx49UaC3wR5cF7NPR4FeM/
+fSQNwmcsGnXBdENcjTWOcZIoujKA/AK1j4mPYAgseJC4CheUfQqFViApE1m2tehC
+/LN3c3VYxq4HcQYCIHOCyCPreQQgPCZ5P0n+xNTikklaJiR2m+zFddVTPBcyx86q
+MaRC6cWxDUnipA/T5qzVkpSIwlzuBQ7mAYa5F7Xo7wnRfV3RAcBV10M6zY3wjsiG
+UNy/Lo68/HiwHoa9JeJ2clU+DzB8IPgD0D4WkcyRVx9r02TvS/4=
+=+itq
+-----END PGP SIGNATURE-----
+
+--6ltj3y347njtiyc7--
 
