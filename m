@@ -1,111 +1,78 @@
-Return-Path: <linux-kernel+bounces-383801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D8C39B2059
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 21:27:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45A4B9B2056
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 21:26:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6D4F2812DA
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 20:27:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1DBB1F21E56
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 20:26:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3F1417F4F6;
-	Sun, 27 Oct 2024 20:27:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E10D717E472;
+	Sun, 27 Oct 2024 20:26:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bUzf7gsX"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CszlurXO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35F0115885E;
-	Sun, 27 Oct 2024 20:27:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DBDE15885E;
+	Sun, 27 Oct 2024 20:26:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730060844; cv=none; b=XvRW8vsI/aHxcV6JfDlq37V6YP9k/rR5RyUF/99M6E1jMidH+SGKVoZP6+jdjiNHHscM6acdt6AECTMdaBYs5yGttEB/D5CDvT6TlGxpqmGsqxlg+5zhI3/G8rzD5Md20v4jbXH29oB3a9wU+TKERaLqLDDW7IaKDqwbSepp6B8=
+	t=1730060805; cv=none; b=EdehZiEhKicRe3ddpa9IHdxk5XK6xuy7Fou3uCuqE6DyHi827Mpo2pdg6c0TakFFcU7IBuFlwogQMQkNLIQmiBZllam4DFPVZEP6ZTCVk6bFgLlYPXSwieL0H9Zn9UppJ//nrNCn35vHC+vOdFTtk30VssvFL55KhoocOQEm3XA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730060844; c=relaxed/simple;
-	bh=JpXCiKC2ct+IT2kSHw/v+QOTATgFdJ18Z/JSLY8FTvQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=q2U9QYpYQHE21yu8Rd0ZYScjca0C997YLj+GU/4KXkonTAO6PbRunk95RrcQj5BxZec3SklPyTwhBbsC142FpsEQzqubjsNyCXqDhOh7FhV+Ztn87+4FWLWqw6BfATWUijZhv5RCTDmab7SOGxloB5iaAA7KToD8nEv1dcDkpMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bUzf7gsX; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43163667f0eso35864845e9.0;
-        Sun, 27 Oct 2024 13:27:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730060840; x=1730665640; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=pRQHOJ1yYQQJLj2MH1qHa8MZFRBtwB0M1hjRbBCmZ8w=;
-        b=bUzf7gsX3VfiiAR079SEGNRXO5BAOWhtVC7Nvc2qPmZsB9y0jZAnSe3DwC9Sx0But8
-         l0zol6MEWMmcRDaLoW7NpovyovPkybI3l8UBT6vGoBkyfBCrh8IBOpdWkCai2ag2ajLh
-         rtXM6iEqH8lsPy9Ml2cMAiLteOIoF+bCtddrPsShJ6LbQAr+o9cYb23+A3xRiBUjCi/5
-         hfEt6bxqYBwRhVlrjKr7LLWQ9+NUkY/5WnY9C5oWjErOoOcr4IOeRWytpOXi15eVVQF7
-         pyrrNz/c10hhk3DoNkbEiolTO3XZjdoL1c2+qydf5ndDmG2i3MhgXkJAO9h/UJR22/dp
-         V2lw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730060840; x=1730665640;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pRQHOJ1yYQQJLj2MH1qHa8MZFRBtwB0M1hjRbBCmZ8w=;
-        b=bj25oJNNik7i75ad9BkYpFvX42n+mb4PA0xtU8e2T6w9cKPuCsh+ztxFe6LzhAH4qJ
-         GzzndzL4iNpIozV6xygmcPXea5sFNtZRJ7b/V1xJ8Ktll5azD5KSA64/wQmGqPnR3qkT
-         FEpG0Da2OPocX8fu346aFE3CcXO6/P71VyOXAX757uIZ8/714QImHLdoEmAq91LohCEC
-         9hXN1XdG/Ti4ybAZihVxzv/Qnb9oENL1+cSG97ZKlCUSWZBDToQUCjsPOObcXHxkuVC8
-         M5bxiFOWuWgFLepovxokd6sAjfCFRDYZvX6jaY3V1nR26n8Nj5OjxtquLBYL0S55fGgJ
-         Vz5g==
-X-Forwarded-Encrypted: i=1; AJvYcCWhq2Vkfij7VVw/HbvIrUGuTcLFCactakHTIK/lWSXN7G7FbwJ/nB3t+NfSzU91SdV/oSCLmgA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyvAHH8fuylV9htJ6nsy7Y6NLLnTldiDPgvZ+SUMWy6zUMBpaBw
-	SBNn6vhTz+AGiuGvUUHyf3CuB2PcI5h32VvevB5UAuAcmSvDVaX1pyHvKw==
-X-Google-Smtp-Source: AGHT+IGfZlFtFiOmu6yt4/YDXSdaWRDmabBDLowk75VcOEYzt8Gz3JYTjL8M6596GWqRfATTt9b9rg==
-X-Received: by 2002:a05:600c:1c82:b0:431:5503:43ca with SMTP id 5b1f17b1804b1-4319ad16173mr47913515e9.28.1730060840214;
-        Sun, 27 Oct 2024 13:27:20 -0700 (PDT)
-Received: from localhost.localdomain (ip-94-112-167-15.bb.vodafone.cz. [94.112.167.15])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4318b5430edsm116260535e9.2.2024.10.27.13.27.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 27 Oct 2024 13:27:19 -0700 (PDT)
-From: Ilya Dryomov <idryomov@gmail.com>
-To: ceph-devel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	"David S. Miller" <davem@davemloft.net>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH] MAINTAINERS: exclude net/ceph from networking
-Date: Sun, 27 Oct 2024 21:25:55 +0100
-Message-ID: <20241027202556.1621268-1-idryomov@gmail.com>
-X-Mailer: git-send-email 2.46.1
+	s=arc-20240116; t=1730060805; c=relaxed/simple;
+	bh=fmET3DxbTI+s6LHfEIONpSc9VXeYTzuQ/HGG1C43jVM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l2gWMMz+Q7HQOUp9K499kRienlUfkY/ONWYtBg1N0YCacQPJjhHRyHGp75GsRt85TIrktLt7EDnyhDMQX7F3Dg+f4Kxx3xbKHG/+1t7S00HclO6l8HRDHkw9ToUGc9GPgkmqQD1E7CpcQts6e4KXaUcO0nQyJFHLLIPGd7FB6F8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CszlurXO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC7DFC4CEC3;
+	Sun, 27 Oct 2024 20:26:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730060804;
+	bh=fmET3DxbTI+s6LHfEIONpSc9VXeYTzuQ/HGG1C43jVM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CszlurXOGTrkT/Apmjj3aitOpY8n9M64wH0fYfR2tR+QIDKid0ynOm1k/liu9Ofwy
+	 qKrGKhUvTTz57vio1KGU4Ivh48ne3+kay+jV53r42iabxRFgXZ3F1PZCaC2GPH3AD3
+	 32hgcDvvNLMBTcRzdJlEdh483ENdTPKTA7FWrC5K/4IJj//kpG7KuqAA1sxwF2BU1g
+	 mlnnVr2m/PLHissKB9VZqTi1Dh5uXgfRHsKOiFYs+t7ejaDaPGwxHMoopS8LFMSwqn
+	 2BaIPKBGdmGSx/YMTAF/MkOoP9MqL4G1i6EztCu4NY4N9h4rukhhgGGgC7v76NWbFL
+	 CDLODwNjthIxA==
+Date: Sun, 27 Oct 2024 21:26:40 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Justin Weiss <justin@justinweiss.com>
+Cc: Alex Lanzano <lanzano.alex@gmail.com>, 
+	Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	"Derek J . Clark" <derekjohn.clark@gmail.com>, Philip =?utf-8?Q?M=C3=BCller?= <philm@manjaro.org>
+Subject: Re: [PATCH v4 3/4] dt-bindings: iio: imu: bmi270: Add Bosch BMI260
+Message-ID: <aovygvsb64kdcppjred6ptriwshpwi6xpxc7tqawxthpdv54v7@l637kn4cbzf2>
+References: <20241027172029.160134-1-justin@justinweiss.com>
+ <20241027172029.160134-4-justin@justinweiss.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241027172029.160134-4-justin@justinweiss.com>
 
-net/ceph (libceph) patches have always gone through the Ceph tree.
-Avoid CCing netdev in addition to ceph-devel list.
+On Sun, Oct 27, 2024 at 10:20:24AM -0700, Justin Weiss wrote:
+> The BMI260's register map, configuration, and capabilities are nearly
+> identical to the BMI270, but the devices have different chip IDs and
+> require different initialization firmware.
+> 
+> Signed-off-by: Justin Weiss <justin@justinweiss.com>
 
-Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
----
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index e9659a5a7fb3..94077e2de510 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -16096,6 +16096,7 @@ X:	include/net/mac80211.h
- X:	include/net/wext.h
- X:	net/9p/
- X:	net/bluetooth/
-+X:	net/ceph/
- X:	net/mac80211/
- X:	net/rfkill/
- X:	net/wireless/
--- 
-2.46.1
+Best regards,
+Krzysztof
 
 
