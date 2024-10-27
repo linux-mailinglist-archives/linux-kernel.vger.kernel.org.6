@@ -1,151 +1,103 @@
-Return-Path: <linux-kernel+bounces-383719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5A899B1F7A
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 18:53:22 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A69069B1F85
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 18:59:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61E941F214B5
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 17:53:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34179B2127F
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 17:59:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7434C17837F;
-	Sun, 27 Oct 2024 17:53:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE1E317B4FF;
+	Sun, 27 Oct 2024 17:59:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="LFT2mZV2"
-Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S8+jptRD"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AE2116ABC6
-	for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 17:53:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BCA217A5BD;
+	Sun, 27 Oct 2024 17:59:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730051596; cv=none; b=MbEG7rrWhJPMgJs3VOGWGtPuhX+4x34MkXJxwGE2Ok8i+PhiBuKnhApNgpoGyrja2b5A7t5FVSB7FXfh4weX9jAaF7B72tYT1uYqoyzDCpXeydmesYOf73HW5Z27vUWuWQ4ttyxKnjFqV/SzXG1twChU8d8Ocq/mXGNkFCrlMGk=
+	t=1730051967; cv=none; b=KlYVvAh6aMfY3lRjzdTzixX3kfh9WEAUUVnyxUEZPs79fiTegWsrYfTP7h8/MCrQdpsnbwhdmNYXKyPFA21fUUMF10VKa5v8WfOqAp1a7oxqt4Nz72a0MZhygiGdDCmqDPocG2W/xtw8Nb0NQw7ukvCpnyaCFbanjtVLCOTHenc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730051596; c=relaxed/simple;
-	bh=oYMIU0VPMRtqoZ1hPMOCLNac7GJ9if8MWv8xY/LvZUw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=at+J6xx3h0583AV+/EKERIhYIZDacjJKl+iQTNH192JtO/lIQmLZrKQ4JknOMcJWPeJTSVnNF0ExFdv5N/6zFn64PSqW43XbbVh2uwpnZJB8hhJXELoo+2e++P2NRmDjKbVSYAlXyhsGrfi3XMeHWN8qsUNETkE5uDIpdjcnYVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=LFT2mZV2; arc=none smtp.client-ip=91.218.175.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Sun, 27 Oct 2024 13:53:05 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1730051589;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oeZKBVCKuETV3xFB5vKc+yd4y2UP268l5tnN2Zy26cg=;
-	b=LFT2mZV25GobqvTxFkgC2PQBDqIP0WvwfUBmaOgnGRPbxAZVAaKjTdRyim+34qfBYotIIK
-	HpyNC1qqAHCkQZnMQ680z4z1rdbVur1oRHFRqO79gV6VvoUUoTkAi2HvovyN/fqJl5LNhp
-	lMEjTks2D4FM3H4Mk1b3g3dsLh1yMPA=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Piotr Zalewski <pZ010001011111@proton.me>
-Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	skhan@linuxfoundation.org, syzbot+005ef9aa519f30d97657@syzkaller.appspotmail.com, 
-	Alan Huang <mmpgouride@gmail.com>
-Subject: Re: [PATCH v2] bcachefs: Fix NULL ptr dereference in
- btree_node_iter_and_journal_peek
-Message-ID: <vzmzlzbxlyapymoccpniahd6kajrtumz7zenn4fuess6kta3qc@kbtsbr3lnl73>
-References: <20241026174155.233430-3-pZ010001011111@proton.me>
- <j3aypufmcezitilxlgkfyetnonkzlkst3hx4zxr4zspfonh5pm@mwngtgo4h4vb>
- <BdSD2g3SGfWQrsTULTjViyG_t0llBh4NeIVbIE_3pvf1bWxk52ErCdP5yOErBZO3NkhyOv9Mgq2xc6CsGFliqDQrTgTwoquYKJKEUY5OE9g=@proton.me>
+	s=arc-20240116; t=1730051967; c=relaxed/simple;
+	bh=0UbSjGcSDB+S7wUx4CXOcRobJQ1oRD4vD2zOYuX2Kew=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=njEbJBonSvOj57oLvRw2ZzXUSU3oDJ/gsWbBPN3PvESr79m5p81/lPPMQDiVcVH8wHpJpOQ2BdO1rdOlMZD9ywedjgKIU5kdoRtwA1djp4INmiX60G0I4/6qE+541OQboujuTaZviJH4sNgSEPVMwGNJ6eXQznggRVcrmJwORGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S8+jptRD; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2e2b4110341so546704a91.1;
+        Sun, 27 Oct 2024 10:59:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730051965; x=1730656765; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0UbSjGcSDB+S7wUx4CXOcRobJQ1oRD4vD2zOYuX2Kew=;
+        b=S8+jptRDxdQvS48G/xhm56EIul+yW3Ynq5k33sKpguJisZetTPh3fuqZ4vyB7qOHM+
+         VKIAGEXsMI9kBlrj9pnWRibAoHFMPXF+A1I+/CkqxfUtbk5REr5D+nBIGpZpxiEG3Axr
+         NJ2DHBNDROvXqPyaW4BwMFbcsqPA+BKOSH+eLwsFuHlpAuPUdr9q59sZK8gH6H3cZVw4
+         f9TLUBzB6GHtBx4bTXeFdD1ba9UMqtHXeO9b5EzWJiMiYV5I4wiwKXKiocHvIrzd9+92
+         k1Ej+6NLPmUZuTordMqpqKAauTkGvHBkeIZrvq9oyK8cJUHqA+anLKMwiifkMZ5TCGkl
+         LTUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730051965; x=1730656765;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0UbSjGcSDB+S7wUx4CXOcRobJQ1oRD4vD2zOYuX2Kew=;
+        b=QrrkKcGNf3Dvpa0QcdTIRTvAbxznxGGM2+XMHeCqvD4KWQD7XXFI4DYNS7hsDoE4R8
+         qx+aDSNjNed+YUHBcqI1HigvfaYAF15xpMoololm0hzuWhdaLyRL3cKswVW5c1dvXUEh
+         AamfRK4UozBCgAKo4qFcqmtXD3Fox5agfIA7GGexuHyH/4O3UxlP6QyJP9AnKiEU9/ty
+         MeMBlOWK7T7nBcsygqP8KqF4cnZmQc0jcSrBYX5naCaESzDeq7QCpbP3wh4yjxEBo2Qx
+         GCqS9mkCmNWIjJ32T5/JYDcCzUOimOd8kTRNZDELycHwANz0jOL/eZrUtj40CaLERmtc
+         3VHg==
+X-Forwarded-Encrypted: i=1; AJvYcCVDtx7dY0a4D0CpR/x40XeARrsfpNotOY2eCzMiHhNb5qOVpNrVj491hxSSame57YoSUJ/Dl3JJL3R15jLAmU8=@vger.kernel.org, AJvYcCVxTco1xncuW1P95kObHEA0j5iuOWAjFLtYur5Q2HrwGqsK+YXpTQLBaM4mXqcbPiHzZg/2bEGW4pm53TM=@vger.kernel.org, AJvYcCXM3shwESCzC2ZBSxRFJU7DfQ7Wi9ZiSn0GszQPg55cZFvRWqCLvQzenQgXnozE25W+sL3I337xYH5oxSCZ@vger.kernel.org
+X-Gm-Message-State: AOJu0YxDhdLJe4Q4CnwbTq60tVk+eXM18zhRaBwl0TVlRgnE9A4oFrsm
+	Nw/jNp2uOdzGMEIC9xWtunkMti54UtSVTEWaEubui1A2gwTD46qv7oM8/Gx3esvRKLIiHDzrOk9
+	53C7GcUwTLYAaKvH7jJjG+6/X64E=
+X-Google-Smtp-Source: AGHT+IEeZnnHbXtBp8iqrs4W8ijIFAmvZkYu6WsDP0Rj0vVPVd5O/4PVkQIVuOKO+4nppet5edWf+GUBkU6bai5spq4=
+X-Received: by 2002:a17:90b:3cce:b0:2e2:c414:80a4 with SMTP id
+ 98e67ed59e1d1-2e8f12e1014mr3006581a91.9.1730051964867; Sun, 27 Oct 2024
+ 10:59:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <BdSD2g3SGfWQrsTULTjViyG_t0llBh4NeIVbIE_3pvf1bWxk52ErCdP5yOErBZO3NkhyOv9Mgq2xc6CsGFliqDQrTgTwoquYKJKEUY5OE9g=@proton.me>
-X-Migadu-Flow: FLOW_OUT
+References: <20241027145636.416030-1-ojeda@kernel.org>
+In-Reply-To: <20241027145636.416030-1-ojeda@kernel.org>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Sun, 27 Oct 2024 18:59:12 +0100
+Message-ID: <CANiq72n3mFKeErzp-OVk=+yZD_sZurR-6u7mEn_QunfMTKD-Fw@mail.gmail.com>
+Subject: Re: [PATCH] kbuild: rust: avoid errors with old `rustc`s without LLVM
+ patch version
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Alex Gaynor <alex.gaynor@gmail.com>, Masahiro Yamada <masahiroy@kernel.org>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
+	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev, 
+	Thorsten Leemhuis <regressions@leemhuis.info>, 
+	Cameron MacPherson <cameron.macpherson@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Oct 27, 2024 at 11:34:02AM +0000, Piotr Zalewski wrote:
-> On Sunday, October 27th, 2024 at 2:28 AM, Kent Overstreet <kent.overstreet@linux.dev> wrote:
-> 
-> > On Sat, Oct 26, 2024 at 05:46:33PM +0000, Piotr Zalewski wrote:
-> > 
-> > > Add NULL check for key returned from bch2_btree_and_journal_iter_peek in
-> > > btree_node_iter_and_journal_peek to avoid NULL ptr dereference in
-> > > bch2_bkey_buf_reassemble.
-> > > 
-> > > When key returned from bch2_btree_and_journal_iter_peek is NULL it means
-> > > that btree topology needs repair. Print error message with position at
-> > > which node wasn't found and its parent node information. Call
-> > > bch2_topology_error and return error code returned by it to ensure that
-> > > topology error is handled properly.
-> > > 
-> > > Reported-by: syzbot+005ef9aa519f30d97657@syzkaller.appspotmail.com
-> > > Closes: https://syzkaller.appspot.com/bug?extid=005ef9aa519f30d97657
-> > > Fixes: 5222a4607cd8 ("bcachefs: BTREE_ITER_WITH_JOURNAL")
-> > > Suggested-by: Alan Huang mmpgouride@gmail.com
-> > > Suggested-by: Kent Overstreet kent.overstreet@linux.dev
-> > > Signed-off-by: Piotr Zalewski pZ010001011111@proton.me
-> > > ---
-> > > 
-> > > Notes:
-> > > changes in v2:
-> > > - make commit message more verbose.
-> > > - set topology error, print error message and return
-> > > appropriate error code.
-> > > 
-> > > link to v1: https://lore.kernel.org/linux-bcachefs/20241023072024.98915-3-pZ010001011111@proton.me/
-> > > 
-> > > fs/bcachefs/btree_iter.c | 13 +++++++++++++
-> > > 1 file changed, 13 insertions(+)
-> > > 
-> > > diff --git a/fs/bcachefs/btree_iter.c b/fs/bcachefs/btree_iter.c
-> > > index 15ac72b1af51..40c824779b15 100644
-> > > --- a/fs/bcachefs/btree_iter.c
-> > > +++ b/fs/bcachefs/btree_iter.c
-> > > @@ -880,6 +880,18 @@ static noinline int btree_node_iter_and_journal_peek(struct btree_trans *trans,
-> > > __bch2_btree_and_journal_iter_init_node_iter(trans, &jiter, l->b, l->iter, path->pos);
-> > > 
-> > > k = bch2_btree_and_journal_iter_peek(&jiter);
-> > > + if (!k.k) {
-> > > + struct printbuf buf = PRINTBUF;
-> > > +
-> > > + prt_str(&buf, "node not found at pos ");
-> > > + bch2_bpos_to_text(&buf, path->pos);
-> > > + prt_str(&buf, " within parent node ");
-> > > + bch2_bkey_val_to_text(&buf, c, bkey_i_to_s_c(&l->b->key));
-> > > +
-> > > + ret = bch2_fs_topology_error(c, "%s", buf.buf);
-> > > + printbuf_exit(&buf);
-> > > + goto err;
-> > > + }
-> > 
-> > 
-> > We'll want to add at least the btree ID and level to that.
-> > 
-> > Could you also look over the other places we report topology errors and
-> > inconstencies for any commonality? btree_cache.c has some stuff, and I
-> > think there's a helper in there that might give you the error message
-> > you want (instead of just the btree node key), and I'd have a glance at
-> > the topology error reporting in btree_update_interior.c and btree_gc.c
-> > as well.
-> 
-> I scanned through mentioned files and some others. There are commonalities
-> but every error message seem to be different in some way so that there is 
-> no truly common part.
-> 
-> Information contained is usually a mixture of:
->   - btree id and level.
->   - position at which node wasn't found or if it was found but something 
->     else is wrong its key info.
->   - parent node key information.
->   - prev/next node key info.
->   - min/max key pos info.
-> 
-> Only appropriate helpers I found were (what I already used) - 
-> bch2_fs_topology_error and, in btree_iter.c, bch2_btree_path_to_text_short
-> but there it doesn't print full parent key info just min_key pos and parent
-> key pos so I'm not sure.
-> 
-> To what you already said I could also add min pos info.
+On Sun, Oct 27, 2024 at 3:56=E2=80=AFPM Miguel Ojeda <ojeda@kernel.org> wro=
+te:
+>
+> Thus, instead, just make the match stricter.
 
-bch2_btree_pos_to_text()?
+Applied to `rust-fixes` early to start getting it in tomorrow's -next -- th=
+anks!
+
+Cheers,
+Miguel
 
