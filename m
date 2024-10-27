@@ -1,73 +1,154 @@
-Return-Path: <linux-kernel+bounces-383761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF5A99B1FEB
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 20:48:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 476DC9B1FEF
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 20:51:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D0401C2099D
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 19:48:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83E022813F7
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 19:51:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1299417C22B;
-	Sun, 27 Oct 2024 19:48:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB02417C9E9;
+	Sun, 27 Oct 2024 19:51:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uJIsJTIO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pzESvclu"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6742E286A1;
-	Sun, 27 Oct 2024 19:48:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB7D2286A1;
+	Sun, 27 Oct 2024 19:51:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730058517; cv=none; b=d4vYolarqhSruu38VUKywM4ZKiVOr7vkfShg33BX1d1FFTlxhpENZDIsePcjkiOxQuQvSFXmTN2TqEb47q+4Nm9Fcm/pBvg48rz+AYbYAH0UjkYR3M92vIPQz+oLw2WQs5mnWpMzkVqRqSj1m6a7eAKb3nTF2qs3iC+OxYNU1R0=
+	t=1730058680; cv=none; b=VD9zCZyRy/TWS6FbVbZ59XonUhK6AJUb26SsU2X9OZJGh9iJfDd1cmmMRtksVBmh4w13ZFmMyq/oQG03r+n72sN4sLFgf+Z9+LUV/4QTDjm0Qirb3222lA3CfdXcQXCfHmuL3FAWFJdL8gVc/14kAh/+U1vDsVTC+wshb1nTc08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730058517; c=relaxed/simple;
-	bh=w3vKUjdSX9tc/J4Pkj3p4KIlJyBMlEnLHrC4g+m5zqI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MnWT4K/xbY+yh7uL2xMF3MoYKfrXWwtFtX3t3qhixVdayhlH8HH6//ISLgO/YOhophOZ7ocXagg0kKrI/oTg9t+oGV/3JS+/yym5DVTCBa6l5ATmfcmL1W3Xp8iO+A+XPbYJb4QXk7216iZGSqb/7rjf5ny70odboYDj8qjxBsc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uJIsJTIO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41947C4CEC3;
-	Sun, 27 Oct 2024 19:48:34 +0000 (UTC)
+	s=arc-20240116; t=1730058680; c=relaxed/simple;
+	bh=nqjToYSx8UYzZxiPqreTWrIIUuSGYgDj6sn7u0rrR3I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DRJCvVVpA2I/q5yC3Li8l1ihV3GOvo4v1pFQB1rk/sojArJ3C+ELbP9hYUgngaqGuFLMOgncRZSUF5oFkLnzhqtT0Qy0nfz5/a+15H3TaGCD3bvqrWzwMagofo0XznfG41ZMRYRuFmr5qgjnEyXe1OUWE1Q7CzoYlWLiQwRI5Zw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pzESvclu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CD48C4CEC3;
+	Sun, 27 Oct 2024 19:51:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730058515;
-	bh=w3vKUjdSX9tc/J4Pkj3p4KIlJyBMlEnLHrC4g+m5zqI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uJIsJTIOl0Ry+IYC4ZugtnKEh9+8moghp6sy73CRyQwYDWIiMxtMtmvCg21f1EE8y
-	 bAc+I2oa5N4Khec5mtmIPcqZvqNsyBGW0rQgYN8e2cICEVZTB1PYUmUufA2gJ6nkmc
-	 IjHZ8w1yghUCwKrbK74LpcIK82Lo5j2o9blWHVoJCRToq1JHDYL2z6JjeOhL0y4ggQ
-	 X3qH83157R/ZQEp7yAI6/LQk+GXTDmzt9BMM48FsOYYsxjxvZvNeizmXdRMQWJlBuG
-	 dZCDCqL0QfxaAYqQInHGLoaB09WjNe4FzJoocbbP5gYOJx+n3uN3BxrYGMXc1Xyzoy
-	 FJaJ23dDFXTbA==
-Date: Sun, 27 Oct 2024 20:48:32 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] dt-bindings: nvmem: qcom,qfprom: Add SAR2130P
- compatible
-Message-ID: <pm3f6guakzyn7xujcqrwv4xkcoq3zsigl3qvry7dzirxcoojjs@zrkvlupw3vyg>
-References: <20241027-sar2130p-nvmem-v2-0-743c1271bf2d@linaro.org>
- <20241027-sar2130p-nvmem-v2-2-743c1271bf2d@linaro.org>
+	s=k20201202; t=1730058678;
+	bh=nqjToYSx8UYzZxiPqreTWrIIUuSGYgDj6sn7u0rrR3I=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=pzESvcluauIevaTn9F92OyfEPrTqi/viXEASBTDZlSfedrKcYQvqZOZRKEfzxEy2F
+	 pWjl8MDPPsyfihVHg9PP007YWWcgKzb2pNaPb8V0UXPklbetgFeQzLq12YtY3i0i7Q
+	 hl+O6dUjOYg94WfNwV8+cT4rm0fA+EOiUVVpo4HXJF4lLtaXUBOVti3mnIKPgH87M9
+	 z3owMP26GY/URKLXfe3CdLzPxQKHajYCThN0dMeRnjMIlupqkThVJwRUUPsFf/mLAs
+	 3t61wZHlIPwux3PvHps0mgMUkWJXFkhRr6eFO94cZw01xVhNOOCYtUA7dDJkVx8GA2
+	 hcugVE3IXlqlQ==
+Message-ID: <779f4e04-b555-43db-b770-95a7539605ba@kernel.org>
+Date: Sun, 27 Oct 2024 20:51:10 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241027-sar2130p-nvmem-v2-2-743c1271bf2d@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 02/10] dt-bindings: hwinfo: samsung,exynos-chipid: Add
+ Samsung exynos9810 compatible
+To: Markuss Broks <markuss.broks@gmail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa
+ <tomasz.figa@gmail.com>, Will Deacon <will@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-gpio@vger.kernel.org, Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
+ Maksym Holovach <nergzd@nergzd723.xyz>
+References: <20241026-exynos9810-v3-0-b89de9441ea8@gmail.com>
+ <20241026-exynos9810-v3-2-b89de9441ea8@gmail.com>
+Content-Language: en-US
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241026-exynos9810-v3-2-b89de9441ea8@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sun, Oct 27, 2024 at 01:42:34AM +0300, Dmitry Baryshkov wrote:
-> Document compatible for the QFPROM on SAR2130P platform.
+On 26/10/2024 22:32, Markuss Broks wrote:
+> Add the compatible for Samsung Exynos9810 chipid to schema.
+> Exynos9810 is a flagship mobile SoC released in 2018 and used in
+> various Samsung devices, including Samsung Galaxy S9 (SM-G960F),
+> S9 Plus (SM-G965F), and Note 9 (SM-N960F).
 > 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Co-developed-by: Maksym Holovach <nergzd@nergzd723.xyz>
+> Signed-off-by: Maksym Holovach <nergzd@nergzd723.xyz>
+> Signed-off-by: Markuss Broks <markuss.broks@gmail.com>
+> ---
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Please NEVER include unrelated dependencies. I tried to apply patches
+from here and:
+
+ Base: base-commit f2493655d2d3d5c6958ed996b043c821c23ae8d3 not known,
+ignoring
+ Deps: looking for dependencies matching 2 patch-ids
+ Deps: Applying prerequisite patch: [PATCH 07/12] dt-bindings: arm: pmu:
+Add Samsung Mongoose core compatible
+ Deps: Applying prerequisite patch: [PATCH 08/12] perf: arm_pmuv3: Add
+support for Samsung Mongoose PMU
+Applying: dt-bindings: arm: pmu: Add Samsung Mongoose core compatible
+Applying: perf: arm_pmuv3: Add support for Samsung Mongoose PMU
+Applying: dt-bindings: hwinfo: samsung,exynos-chipid: Add Samsung
+exynos9810 compatible
+[Checking commit]  839751ee6872 dt-bindings: arm: pmu: Add Samsung
+Mongoose core compatible
+[Checkpatch]
+WARNING: Non-standard signature: Co-authored-by:
+#8:
+Co-authored-by: Maksym Holovach <nergzd@nergzd723.xyz>
+
+
+
+
 
 Best regards,
 Krzysztof
