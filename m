@@ -1,242 +1,215 @@
-Return-Path: <linux-kernel+bounces-383674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02D1E9B1EF1
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 15:42:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70A479B1EF4
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 15:45:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B567C281D5A
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 14:42:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B26F1C21D4F
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 14:45:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD6111714D0;
-	Sun, 27 Oct 2024 14:41:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1B5416B3B7;
+	Sun, 27 Oct 2024 14:45:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=solidrn.onmicrosoft.com header.i=@solidrn.onmicrosoft.com header.b="XGNLriCY"
-Received: from EUR02-DB5-obe.outbound.protection.outlook.com (mail-db5eur02on2099.outbound.protection.outlook.com [40.107.249.99])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="iZhNxvvq"
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD12113BADF;
-	Sun, 27 Oct 2024 14:41:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.249.99
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730040082; cv=fail; b=TD2VgmQjiRA+aHjjl7du83Ymr1WwTTh5VfaM9YTEnib5kegwbfYitPf6Ljo8Bw6sZSKxTrl/udeubZFUmoQb+BbIUgTjNrKL8VKIpXHm+JvaCC8Q4WXSmfJyLfFv976UnGaEdvhUTj4q7U4B0krcoeQN6NTMwBLZJqFUAeY41HM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730040082; c=relaxed/simple;
-	bh=M5Uuow6FS21HCYbB7Yl2VeSRzs3nfkY7zhGpdfFqc50=;
-	h=From:Date:Subject:Content-Type:Message-Id:To:Cc:MIME-Version; b=Y8dN9Od3Ef4XHDpltuw1GCE7NPKUyYdpUJOsb/lwZBue0yLwwdufeGC2/QLmB7uwJDUixZA2AhEDNbL5iaQqu7+blV/VbpbQM0aIK/Ut25inYhjTQg/BpaGKoRnVyPZ/OD60pD4epXd7/untqCQz3OFcjO2FnIlR5tJeB4kXHVQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=solid-run.com; spf=pass smtp.mailfrom=solid-run.com; dkim=pass (1024-bit key) header.d=solidrn.onmicrosoft.com header.i=@solidrn.onmicrosoft.com header.b=XGNLriCY; arc=fail smtp.client-ip=40.107.249.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=solid-run.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=solid-run.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Q2NHdCZy8uTD35kK8TmufmfDWzHt8JGNfwPin2cvQq2XPO88gbPaEW34/REXFDW46lzqBbpTZ4Lm3RKiMldmr7MBsjyNKIO6at6Ny+zulZfIp5pUvt5WYs9FMu0eAdxmoHM3E71QaP2pSwpwZikvCTafYw1zqPcA+UlJWlBBso+vVgfBr4f/4zZOw7J0Hy95hi4tFb9jgY26ujPAQoN0wv/aMhlfMyn9Hhx3v4OEi22QHL/hHQguaZzHYaO+nB5+DIlY8p9hMICMu2ShTIzs+wJk9lX3/jjjvQe1Iz1M9gUGzRZ5CTwFZoDoAcQ7BoofP7+g69ZGtQRJ+Yj0sMQtIA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xJvzBad7BdbiPp+Q5rmwluJa3grMemuK7fh1H4tocws=;
- b=ojs5wEJk8RnghP0s+jDTDZ65EwOpAKC4qXTrUW+a9sYux01O7wxXaDlT3OvRf0qb+6jz0DMxfUYHiwMuafyxGju0lK4AxrzbRgsS3hIG6ACfa0woYDE/iG//+bv6LCeiNaPz8275G75SORhsB/UJ4K91lCe0lIk7Pr1bk5/E8gYjatoea3NM0E4InFYHBzkbTzHh7UGtd5Q5jCUlwmas0WH/7bpgARNZgyQRFu9fzp+1qTelpH3KVGdxP6VPyA07EuJJuFe76JGKwU4s8CZSdwfwMLlhOaRZDEqMUHwe1KarijtKIuOaniQXf5hq16C+V4pZOBtYA0F7Io/uCxjR6w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=solid-run.com; dmarc=pass action=none
- header.from=solid-run.com; dkim=pass header.d=solid-run.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3654A482CD
+	for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 14:45:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730040328; cv=none; b=ECcRuRqSDo58moP+he+THJSnRmhodR6/1z53NlqEK/F5qICnieu7T9RCRst01kAZDKs9TgWzkmM9N/62PKMuo/wNlvJ5ljej1DzRs8tRPiiIQssP0Cxg6MMCNsJV8LuBYrjfZy+tquRLT/exbZGeLQoIgUHTUyCDNps3VJIVjkI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730040328; c=relaxed/simple;
+	bh=l4Dn5B+g0B7e7WnStCDidZiB7QU9h1YHPVwsaRK2kO0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=i2ZdC/u24LTBPRqlfObmYehBkN/A/QgQpMJW+TDS+wP0T0AkD4Jjl4BMBwwOblJydzy8hH32U+4RAaE/1gwGDLWA5TdHFM8PY3fEaae9fTIF7JALFl24+0NaDpkfb1tWbiyzTDB4JZ/fffMuGReUYTvLKNF/c7ztRRmGI9Xm8Kk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=iZhNxvvq; arc=none smtp.client-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-7eda47b7343so2196415a12.0
+        for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 07:45:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=solidrn.onmicrosoft.com; s=selector1-solidrn-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xJvzBad7BdbiPp+Q5rmwluJa3grMemuK7fh1H4tocws=;
- b=XGNLriCYupaD11OdiNFvVwHkjCB9wmF9vB0Y/zDjNcCAyZLJrL7MMkYlI/z6Esgh/lxvXesfDuSixpaLs1xH6p0wUPNir2ckHccMwQvp4nYAveLcupdcuOoKvm1m/XVgvqz5FPEGW8uhHa5n5sFsPLCXi6BbkQZZIR8ZD2Zk8Qo=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=solid-run.com;
-Received: from AM9PR04MB7586.eurprd04.prod.outlook.com (2603:10a6:20b:2d5::17)
- by AS8PR04MB8385.eurprd04.prod.outlook.com (2603:10a6:20b:3f3::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.17; Sun, 27 Oct
- 2024 14:41:16 +0000
-Received: from AM9PR04MB7586.eurprd04.prod.outlook.com
- ([fe80::c04e:8a97:516c:5529]) by AM9PR04MB7586.eurprd04.prod.outlook.com
- ([fe80::c04e:8a97:516c:5529%4]) with mapi id 15.20.8093.024; Sun, 27 Oct 2024
- 14:41:16 +0000
-From: Josua Mayer <josua@solid-run.com>
-Date: Sun, 27 Oct 2024 15:41:02 +0100
-Subject: [PATCH] mmc: host: sdhci-esdhc-imx: implement emmc hardware reset
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241027-imx-emmc-reset-v1-1-d5d0c672864a@solid-run.com>
-X-B4-Tracking: v=1; b=H4sIAP1QHmcC/x3MQQqAIBBA0avIrBtwTBC6SrQInWoWWmiEIN09a
- fkW/zconIULTKpB5keKnKmDBgX+WNPOKKEbjDaWtHEosSLH6DFz4RsdGRdGInLWQ4+uzJvUfzg
- v7/sBVNauuGAAAAA=
-X-Change-ID: 20241027-imx-emmc-reset-7127d311174c
-To: Adrian Hunter <adrian.hunter@intel.com>, 
- Haibo Chen <haibo.chen@nxp.com>, Ulf Hansson <ulf.hansson@linaro.org>, 
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>
-Cc: Yazan Shhady <yazan.shhady@solid-run.com>, 
- Rabeeh Khoury <rabeeh@solid-run.com>, imx@lists.linux.dev, 
- linux-mmc@vger.kernel.org, s32@nxp.com, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Josua Mayer <josua@solid-run.com>
-X-Mailer: b4 0.14.2
-X-ClientProxiedBy: FR3P281CA0183.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:a4::11) To AM9PR04MB7586.eurprd04.prod.outlook.com
- (2603:10a6:20b:2d5::17)
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1730040324; x=1730645124; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=LA7ovDYy10u8Lc9oUJDda4GDCHrbHPvh33g7r+01N0I=;
+        b=iZhNxvvqHYhYZ58lQavmbQeRxND50NeXi3FBdIkAyzypojYqgKVa+kX8/Ayi1xrUw2
+         Q1ToD736T54SnENfn1+j0gWIJYzGVatdebV4JxLvUzMAzjoPJ2Beg/X3th86GgOB4diN
+         J09m1bKeiJbkS8pCllZG/sunS1Ctui1/uD8ZVJu+w7b5kTfmJXTgH2bR0L/jboBRD62p
+         6KsMYnsnvCg5x9hHuBuA3ORag+v9pzhNTU5Y9UICXLvkjfz967tD1rtAnUQnoLBF9R0M
+         Eacq5eiDQ9xMivU1ZcyllAVlLz9Z2KyLC1NcABhVBkl/agJ6n3neY87odqw7qatP3Xh0
+         RjVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730040324; x=1730645124;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LA7ovDYy10u8Lc9oUJDda4GDCHrbHPvh33g7r+01N0I=;
+        b=ObS43l2vWtT9DrIxW1xe+SE4cke3KGhapFFLwzxYhxNKOMPpG6VGZJZvsFaiv2Pmc3
+         JelOfRqDQcoAUF+gFB11RUQ/0Vl5WJeO4bnYp6pARB6S7I1WZXdxgc8LmzwcUh4fjnh1
+         qfTl1KIluV/u4hVHSGHWGbXWPeNyqWZrK/8Gcjlo9ILnAwURSNsSS1Ny3FjsfOcoVzZ6
+         YKMEEXPh4MlndWJUqPkHL7q+BTmqnOLpYoQfdKHF9+W3ExdtZXcj3ll9HZkTjRxrCmAd
+         9Gv/1R3KT1PpBEpzI+3O+tJXsUysMGH+jEpwva97eYy5o8gp0x6JXhf1HuCc8JqMDlK/
+         poaw==
+X-Forwarded-Encrypted: i=1; AJvYcCXxRmK9+htQGwPUCIg/fBB+G3LfwdB6GGPPf3Zufq7WDY0b1xx9nLPloyEZdczD+Ro6NdYQdu1oag6pFZI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRT7aM4ieGwZz1x+RBazxNqt1YNFF/8u1AlwM41ZnV6S2s0bt+
+	xJdzQXM4EqkLCL2VeVbEVqf6w66UQFWK53FhDOVur0FWJZwrHoZ2m46bB6ogZ80=
+X-Google-Smtp-Source: AGHT+IEeFI0nqucYFP3u69R5Ja9TjYspR7cibVOeMBZFQT2BryMkO9srCATLXUqSED+U2a84KgdKsA==
+X-Received: by 2002:a05:6a21:1706:b0:1d9:2018:9e19 with SMTP id adf61e73a8af0-1d9a85144afmr7512209637.44.1730040324493;
+        Sun, 27 Oct 2024 07:45:24 -0700 (PDT)
+Received: from localhost.localdomain ([2a11:3:200::401b])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72057a0cb06sm4065110b3a.115.2024.10.27.07.45.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 27 Oct 2024 07:45:24 -0700 (PDT)
+From: Guodong Xu <guodong@riscstar.com>
+To: Conor Dooley <conor@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Emil Renner Berthing <kernel@esmil.dk>,
+	rafal@milecki.pl,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Heiko Stuebner <heiko.stuebner@cherry.de>,
+	Michael Zhu <michael.zhu@starfivetech.com>,
+	Drew Fustini <drew@beagleboard.org>,
+	Alexandru Stan <ams@frame.work>,
+	Daniel Schaefer <dhs@frame.work>,
+	Sandie Cao <sandie.cao@deepcomputing.io>,
+	Yuning Liang <yuning.liang@deepcomputing.io>,
+	Huiming Qiu <huiming.qiu@deepcomputing.io>,
+	Alex Elder <elder@riscstar.com>,
+	linux@frame.work,
+	devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Guodong Xu <guodong@riscstar.com>
+Subject: [PATCH v6 0/5] Add DeepComputing FML13V01 board dts
+Date: Sun, 27 Oct 2024 22:44:43 +0800
+Message-Id: <20241027144448.1813611-1-guodong@riscstar.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM9PR04MB7586:EE_|AS8PR04MB8385:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9a991ab4-c15d-4ec3-9005-08dcf695696f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|52116014|366016|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ZmlGYS9XSGE0UktKc0JPL0ZVZzV2WVRSNkoxZUFTajdRUDVaTWVrb3liL3Jt?=
- =?utf-8?B?aHhSUFZSVm9yNlVkeDUxTDVqOUlrNTNOQWYzdFNwdDBlVERzQjdCNC9BNEho?=
- =?utf-8?B?RGFDWFRMV0JaZmFWbGZ1Y0lRM1hzRk1STnZMTjJOd1JkelIvSW9mQlBtSWpx?=
- =?utf-8?B?MWxsUVp1ZUowK1FoVmNBS3pZQ0o1ZTF2bDI2dlFJWnJLWWt2c2F2TDZ5M0FG?=
- =?utf-8?B?Yy9DVzhDcnJRaHhIOUZFTWJ3RnIwQUlVRmNES3BBZ2x4TytDd2lwaUd5VG5v?=
- =?utf-8?B?M1RTemVmOGQ4Q2xWa0hGbnZlVmhGY2xUYmlORFNxWFNCS1VESGQ5bUgxZW5y?=
- =?utf-8?B?d0tybzNjaDV1a01OUytVYUJGU0F0NytQVVdhREVpbkxZYndFQjhIY3hPSHBu?=
- =?utf-8?B?bWdHN21jc0M5Z3F3SVAyWTFRQndBVEx5WGRmSWpCd0ZxS1drTks3Z3hybjcw?=
- =?utf-8?B?MDhSYUNlMW9Xc3ZScTJJbDB4blhqcUw2SnBNZ0VBL240TW5keS96UWNqZVpO?=
- =?utf-8?B?Z2tUMmhNdjVUU3dwQWhtMmdUV20wZ0h4VW5oTklZWjFPNXlFbDZNZUEwUEJ4?=
- =?utf-8?B?VGZQVEFsdkZhNXNJMTl1N2hIcDNrdlh3QXNEUzZyUHRQcXpVOFoyQWtac0w3?=
- =?utf-8?B?UnVuOUNCKzBGNldDRER1b0NwamZvc3Q3OS9uZHdDcC83YjkrVGtwa0RzdThO?=
- =?utf-8?B?N3F3cDVhT0RyNDM0RFgvSWF1WFNyeFZlTktxU1dmYnQzWUNENWt6V01CVG9F?=
- =?utf-8?B?LzVXdnlxd1JpWTgyTnZ1S0NHUzBINEl2elc3ZjR1ZmVUcDlXcUVkQzBDTGJT?=
- =?utf-8?B?Wk56OTRKZmFIMDIzbmt4WnJXRndZQjNUazBhTURGRGZGVmxtZVZISlBoUUp0?=
- =?utf-8?B?WmNTTEhiaTdTd3pnSHZIaVhhbUpiRkRjV3Z0VTRsMHp5cGpuSzJKd3ZaU0ow?=
- =?utf-8?B?REhNRHc1bHJkQnd2blA3b29nYTF3OGVDbHRnUEVLeTJDTXpkUHNKRnlzd0Vz?=
- =?utf-8?B?YSt0NVdLUGp5S1J1TkpYaHhtWElhT2IzTUlVVmp3eUJ1cEhzelZoZFNHRjRE?=
- =?utf-8?B?U21pN25sUHhIQXFocHQ2U29WVWJpQXIwcjJYMFJqSmdJU0k3d0hQejFmWWxR?=
- =?utf-8?B?cnRoNzJHcWRMRmFLSHJKRWNoOVdRMGhnSUQwUXAvVW1udHFKK2Uyc0dIVnVW?=
- =?utf-8?B?UEFLdVdHMXNHdTg2UkNZNUVCaks1Rm9YZmY2RzR4L1FpQlk3WGRQT251TWRE?=
- =?utf-8?B?ZFhSa1EyYmtIdlQ2Wms1MzRGRXhldmFiR1UxTWJSS09Rb0czWUYwTjhkZ1Q5?=
- =?utf-8?B?MUxlc3lzbW4wcXQ4ekNxNGJqdTdrV2IzNE1EWE5zYzJ0aHZCNCtKYVdySmZK?=
- =?utf-8?B?T3F5YVhQMTYvV1pvU2ROeXJXMnZ1VGd5MDRTY2F3dGFabzBHZkVaUGt5ZWpJ?=
- =?utf-8?B?TVFRcnFQQ05JUHNDQlB3V1hEREd1a2J1TnlISXNodkhHQW9BaHF5b3RSM3dC?=
- =?utf-8?B?QkZUeDhieHUyZzloSFZLRXNxcUlnWHpzY0tFOHorSkJQOFIrRit5NHp1N3dM?=
- =?utf-8?B?Z1ZIQ3lYVUw0UVYxUUNRZDdwcjZHaXNSeEEvK1B4Z0RHUTVESkNXYlFhTVFC?=
- =?utf-8?B?OTkzeFJzKy9KQ0V0RGxOejkvUEQ4Y0RSY2JoL3lwWXhTL21Db3dYRHVENzNX?=
- =?utf-8?B?c0x6YXVFWmY3bno5cm9OV3crUkRPemFaSm1YTEttemQwN21qazZhS3lvS1ZV?=
- =?utf-8?B?UWNFVGZxNEF5Yzl5SkpPMmxkdC9vTDFNeXVMaEdGeFlyYll5MDFzSzcyT3pt?=
- =?utf-8?Q?WWrzw9Ox5rNSulSi5r0MNa2yg3SCzMTDCmkhc=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR04MB7586.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(52116014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ZUVNVThKYTArWGhLN0FubDU2bEg1MVJZOU9VblhTamw4UTRkNGlPQTh0UGxG?=
- =?utf-8?B?Vkl3UytMYWV4cU5XaDcrajZNd1RxNlRaV1RzN2pvZHRFZ2xSeXFTZUlRNzdJ?=
- =?utf-8?B?WWx1dG1ZdVFvYmo2cmNvK1JlMnc0S3p0bU94YzFKYzhzaEZiYjk5K0dGOG5o?=
- =?utf-8?B?dHFEL3U3SzN6LzdZRy8rU0poZjY1SmpqdDRHV3ViSTNLL2Y0enRWMmg2alAx?=
- =?utf-8?B?M0c2Vmdycmg1dkF2Snh3MEppVkFCM3V2SHFJYkJEVm1WSWw1MkJwZm9YWXJ2?=
- =?utf-8?B?Z1ZqV1ZYODNkRmdybkRxV1RleG1Ic3NrZlBGOTJUM1RCeUhEYTQrQlVGM3A3?=
- =?utf-8?B?VUIxWHdVb3dETzNMdWtqMDJINFhrc1dtWjdTVnBLYjN6ZW5IaENMWWd5RVFX?=
- =?utf-8?B?aGtpcmVDemRBcHVveU5tTUUya0hOWk42THY0WDI1Qy9iMDd3L2s3dGppQkJy?=
- =?utf-8?B?VVpWYWd1R3k1MWl2OW9QZEpwWjNicnN5QkhTY2RCTzNENW8xeGR6NkowYWlp?=
- =?utf-8?B?ZGFBdnphNVFiMUlzU0RaUFZWMnduWmJzV2VHQUhCU010Z0FkMnhtUWlLQllk?=
- =?utf-8?B?aHNKb0dhUHlXQ2toS3pLL21CeFBEcUZjdzZSTXZGUlpKWjRwV2xxUnUyUTYv?=
- =?utf-8?B?cHNQL2hKUTZtTUpYR21va3BITGVqaTNXbkJzNk4zYTNyV3M4U0tQeTRkQmVz?=
- =?utf-8?B?dDE4QzV1WFhQc2p2WHlSaTlmS09xNHI1dSsxZ3RiKzBRNmhaT29TZk9iMWVp?=
- =?utf-8?B?c3BiMXYyRHcvVUVDanF6L2lVeVRnWlpqWHQxd1JYY1RXSHNGTSs2WGI3ZkJR?=
- =?utf-8?B?SVRQUWxiUGIrWmxBVEwyRDRLYkdYdjQ1NlhwNGY0cUNtcGlUa3VkanBGcHdG?=
- =?utf-8?B?bDc0ckZEUVI0SGsrN0xLWHBUQTBuM0V5ZW5SSitjVXBRL0pyaEN5Y1dMU2Fy?=
- =?utf-8?B?eEN6RmJSRE1MYlZNcTg5TGc3bXpiUFVqdVNQbUx0bmV0OUtOMW5zS1p6WUlO?=
- =?utf-8?B?ZXVLQTRzc2tkVWVJdENPcTh0ZktMeFNSSkhTM0NhQjV4TXRpL1BWTXVocHkz?=
- =?utf-8?B?MEt2bTJHOGpWQ3QrYjU2SzcyKzE1YjdudFBNWWtZOHNiQjVxZVM1RUlTVXRp?=
- =?utf-8?B?Q25UbEtGK0VaYXpjTTlKS2dRblRUemhncE5ldVVuTUUxMEF3SzFPUFVSVCt4?=
- =?utf-8?B?U0VjN2FHdkVGcHFWcWtLOG5ObzhxL0l0YmVMMFlmeU9KbWxWT3UrNnZEaTU4?=
- =?utf-8?B?MXdlVW1XSis1Y0Y4bnZUR042MUJVd2ZaQUpBY3lVNTlITURTeWhmdkszcEpQ?=
- =?utf-8?B?MmdNc0lkcElWbyt0WWpGc1Z4QzdxZ2FJZ3RSN1c0N0dHUzZsM0w5MTFJR2ll?=
- =?utf-8?B?VS9Ta1VOS1pjK2VlUFcydnlBcTlRaDdaZnJreE1UUFQrMjVZOEc3ZzRMNFVa?=
- =?utf-8?B?eUZYVFZlSVcyQzdoQVMvNjJvM0ZFNWswVlh5QnZhYjVFZllpb1FSSkw5S2lM?=
- =?utf-8?B?cDN2OUQxTlVyL2xCVmNVWUZwM2ZxSFNPZjdQakVBejNLK0U0bTJOeGRlT082?=
- =?utf-8?B?em8wNUNtR1ZYcDJvYm90dlg0d3FHUVltdDlnRjUyd2hmK3Bnd3VyWkZ6YXY5?=
- =?utf-8?B?a1pnbUFqQ1ltNUl6ZG01VlRZSE85Uks4TzVwemw3WHdiaEhuaEp4NDBXSVNp?=
- =?utf-8?B?M3p2T2dsbjREK1F2aHBab3dydlRXU2o4cS90VTZoU3N0Z3gwZW0zRlAzMXJp?=
- =?utf-8?B?cUhGdlJUZjl4eE5ibHV6S3NIaUFwQzFZdXgycHowKzJSemhjMEMrcjB4d3Zj?=
- =?utf-8?B?UGlodlNUb2JLM00wNjk4SzMyWEt2SWZKMG1SaFoxUGZ3VGxiK2hGaEN6L3Uy?=
- =?utf-8?B?eHJPT1JnUEZtYXZoaWhUeHlwbTFFdG5vMW1ta3d1OEtVODJYbUxBeW9OQWxB?=
- =?utf-8?B?dCtTMFp4bmNnbXp6YUtkZVRrZGprKzl0MC9WdXp2UkErb3JDTUpVc3NZUzVN?=
- =?utf-8?B?bG9QRXJGMlVTUmhSeStTa2VYS0NIZ0R4aXVob05PZW05N3pzSEFpNHh6QW9D?=
- =?utf-8?B?RS8yMnV5VURqZ0VWRGhQM0Q4OWlQYXUwck5MWWZZWGY5ckZGTUFYVEdQYjZF?=
- =?utf-8?Q?A0JbPLKA14xovEMdhL8gA1aqd?=
-X-OriginatorOrg: solid-run.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9a991ab4-c15d-4ec3-9005-08dcf695696f
-X-MS-Exchange-CrossTenant-AuthSource: AM9PR04MB7586.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Oct 2024 14:41:16.0409
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: a4a8aaf3-fd27-4e27-add2-604707ce5b82
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: /+PowfP02mi1rqObxzkV3zcUp/Zxq+OoJzb8IbFUqdQE+sj070RmvFifEFYY6UkzyObegrXijBdCvsrdUX+hxQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8385
+Content-Transfer-Encoding: 8bit
 
-NXP ESDHC supports control of native emmc reset signal when pinmux is
-set accordingly, using uSDHCx_SYS_CTRL register IPP_RST_N bit.
-Documentation is available in NXP i.MX6Q Reference Manual.
+This series updates Device Tree related files to introduce the
+FML13V10 board from DeepComputing, which incorporates a StarFive
+JH7110 SoC.  This board is designed for use on the Framework Laptop 13
+Chassis, which has (Framework) SKU FRANHQ0001.
 
-Implement the hw_reset function in sdhci_ops asserting reset for at
-least 10us and waiting an extra 300us after deassertion.
-These particular delays were inspired by sunxi-mmc hw_reset function.
+The original three versions of this series were posted by Sandie Cao
+from DeepComputing.  Her mailer configuration caused mail threading
+errors, which led to some confusion.  After some discussion, we have
+agreed to take over moving this series toward acceptance.
 
-Tested on SolidRun i.MX8DXL SoM with a scope, and confirmed that eMMC is
-still accessible after boot. eMMC extcsd has RST_N_FUNCTION=0x01, i.e.
-reset input enabled, Linux v5.15.
+In the original series, the FML13V10 board DTS file disabled some
+nodes that had been enabled in a common included DTSI file.  We
+proposed fixing this in a follow-on series.  However there was some
+disagreement about the right way to do this.  In the end, Emil
+requested that we resolve this by adding two changes to the next
+version of the patch series:
+- Do not enable any nodes in the common DTSI file that would need
+  to be disabled in a board DTS (or DTSI) file.  (Note that there
+  still might be nodes enabled in the common file.)
+- Because it will differ dependent on board, do not define the
+  "dr_mode" (dual-role mode) property in the common DTSI file,
+  defining it in the board files instead.
 
-Signed-off-by: Josua Mayer <josua@solid-run.com>
----
- drivers/mmc/host/sdhci-esdhc-imx.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+To address this, two new patches have been added to the beginning
+of this version of the series.  The first patch no longer enables
+nodes that would need to be disabled for the new FML13V01 board,
+and enables them instead in the existing boards that need them
+enabled.  The second patch moves the definition of the "dr_mode"
+property for the usb0 node out of the common file and into the
+board files.
 
-diff --git a/drivers/mmc/host/sdhci-esdhc-imx.c b/drivers/mmc/host/sdhci-esdhc-imx.c
-index 8f0bc6dca2b0402fd2a0695903cf261a5b4e19dc..ebcfa427cca6cc2791a1701a3515ef6515779aa4 100644
---- a/drivers/mmc/host/sdhci-esdhc-imx.c
-+++ b/drivers/mmc/host/sdhci-esdhc-imx.c
-@@ -33,6 +33,8 @@
- #define ESDHC_SYS_CTRL_DTOCV_MASK	0x0f
- #define	ESDHC_CTRL_D3CD			0x08
- #define ESDHC_BURST_LEN_EN_INCR		(1 << 27)
-+#define ESDHC_SYS_CTRL			0x2c
-+#define ESDHC_SYS_CTRL_IPP_RST_N	BIT(23)
- /* VENDOR SPEC register */
- #define ESDHC_VENDOR_SPEC		0xc0
- #define  ESDHC_VENDOR_SPEC_SDIO_QUIRK	(1 << 1)
-@@ -1402,6 +1404,15 @@ static u32 esdhc_cqhci_irq(struct sdhci_host *host, u32 intmask)
- 	return 0;
- }
- 
-+static void esdhc_hw_reset(struct sdhci_host *host)
-+{
-+	esdhc_clrset_le(host, ESDHC_SYS_CTRL_IPP_RST_N, 0, ESDHC_SYS_CTRL);
-+	udelay(10);
-+	esdhc_clrset_le(host, ESDHC_SYS_CTRL_IPP_RST_N,
-+			ESDHC_SYS_CTRL_IPP_RST_N, ESDHC_SYS_CTRL);
-+	udelay(300);
-+}
-+
- static struct sdhci_ops sdhci_esdhc_ops = {
- 	.read_l = esdhc_readl_le,
- 	.read_w = esdhc_readw_le,
-@@ -1420,6 +1431,7 @@ static struct sdhci_ops sdhci_esdhc_ops = {
- 	.reset = esdhc_reset,
- 	.irq = esdhc_cqhci_irq,
- 	.dump_vendor_regs = esdhc_dump_debug_regs,
-+	.hw_reset = esdhc_hw_reset,
- };
- 
- static const struct sdhci_pltfm_data sdhci_esdhc_imx_pdata = {
+The remaining three patches are roughly the same as the three
+patches in the previous version of this series.  The final
+patch has been modified, because it no longer needs to disable
+certain nodes that had previously been enabled.
 
----
-base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
-change-id: 20241027-imx-emmc-reset-7127d311174c
+Below is a version history, including direct links to all of the
+patches (note: in v1, v2 and v3, a single link to each series
+doesn't work).
 
 Best regards,
+Guodong, Alex
+
+v6:
+- Updated to apply to the latest version of riscv/for-next
+- Move nodes enablement from jh7110-common.dtsi into board dts/dtsi
+- Do not specify the USB "dr_mode" property in the common file
+- Add Emil's reviewed-by on patch 4 (previously patch 2)
+
+v5:
+- Remove the extra "From:" line in commit messages of patch 1 & 2.
+
+https://lore.kernel.org/all/20241020134959.519462-1-guodong@riscstar.com/
+
+v4:
+- Board name was changed from FM7110 to FML13V10
+- Descriptions for all patches in this series were updated slightly
+- Add Rob's ack on patch 2
+- In patch 3, device nodes were updated to reflect their proper status
+
+https://lore.kernel.org/all/20241019162605.308475-1-guodong@riscstar.com/
+
+v3:
+- Update board features into description
+- Add Krzysztof's ack on patch 1
+
+https://lore.kernel.org/all/20240925053123.1364574-1-sandie.cao@deepcomputing.io/
+https://lore.kernel.org/all/20240925053123.1364574-2-sandie.cao@deepcomputing.io/
+https://lore.kernel.org/all/20240925053123.1364574-3-sandie.cao@deepcomputing.io/
+https://lore.kernel.org/all/20240925053123.1364574-4-sandie.cao@deepcomputing.io/
+
+v2:
+- Add deepcomputing into vendor list.
+- Add deepcomputing,fm7110 into model compatible list.
+- Framework Config will be included in later a patch.
+
+https://lore.kernel.org/all/20240924080650.1345485-1-sandie.cao@deepcomputing.io/
+https://lore.kernel.org/all/20240924080650.1345485-2-sandie.cao@deepcomputing.io/
+https://lore.kernel.org/all/20240924080650.1345485-3-sandie.cao@deepcomputing.io/
+https://lore.kernel.org/all/20240924080650.1345485-4-sandie.cao@deepcomputing.io/
+
+v1:
+- Add framework dts and config.
+
+https://lore.kernel.org/all/20240923053621.1585972-1-sandie.cao@deepcomputing.io/
+https://lore.kernel.org/all/20240923053621.1585972-2-sandie.cao@deepcomputing.io/
+https://lore.kernel.org/all/20240923053806.1586080-1-sandie.cao@deepcomputing.io/
+
+Guodong Xu (3):
+  riscv: dts: starfive: jh7110-common: revised device node
+  riscv: dts: starfive: jh7110-common: move usb0 config to board dts
+  riscv: dts: starfive: add DeepComputing FML13V01 board device tree
+
+Sandie Cao (2):
+  dt-bindings: vendor: add deepcomputing
+  dt-bindings: riscv: starfive: add deepcomputing,fml13v01
+
+ .../devicetree/bindings/riscv/starfive.yaml   |  1 +
+ .../devicetree/bindings/vendor-prefixes.yaml  |  2 ++
+ arch/riscv/boot/dts/starfive/Makefile         |  1 +
+ .../boot/dts/starfive/jh7110-common.dtsi      | 10 --------
+ .../jh7110-deepcomputing-fml13v01.dts         | 17 +++++++++++++
+ .../boot/dts/starfive/jh7110-milkv-mars.dts   | 22 ++++++++++++++++
+ .../dts/starfive/jh7110-pine64-star64.dts     | 22 ++++++++++++++++
+ .../jh7110-starfive-visionfive-2.dtsi         | 25 +++++++++++++++++++
+ 8 files changed, 90 insertions(+), 10 deletions(-)
+ create mode 100644 arch/riscv/boot/dts/starfive/jh7110-deepcomputing-fml13v01.dts
+
 -- 
-Josua Mayer <josua@solid-run.com>
+2.34.1
 
 
