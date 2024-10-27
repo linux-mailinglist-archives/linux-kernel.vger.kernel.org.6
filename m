@@ -1,111 +1,120 @@
-Return-Path: <linux-kernel+bounces-383844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F43E9B20D6
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 22:17:52 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 597759B20D9
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 22:19:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9EDDAB21196
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 21:17:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D5A3BB20D3E
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 21:19:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86A7F1865E3;
-	Sun, 27 Oct 2024 21:17:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1710F1865EA;
+	Sun, 27 Oct 2024 21:19:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S+GdVswh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jhnbE+cJ"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFF6F1714D0
-	for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 21:17:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C259716EB54;
+	Sun, 27 Oct 2024 21:19:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730063835; cv=none; b=G4DCKjJSByaYBObX+pntmbIwrsdxKrotReZagn+aJ6L1MYwr5JJCYXrq/HXoge/ABqgF7UescwkKuou/iqmLcUXZq7k26o3HfkM0MWkUoBqCNdw3d+8Y3J+8eSawBlU3uANRi8uEFhk2zooVmu6ksH0of+U60giM1aop/cyNQQM=
+	t=1730063981; cv=none; b=hDEC1dHV/IgGnCMTkr2/I5vHnu/eAcTDE9B+1c1c37GRaO6AB14wYDl/ORVas1TUiTfJETt6I985wn4jFesIhyhQWK0JLMNGsWo3d1tUYjh2TtmZ8kTooJGx/n/XT7e5T77zsT5l1zMAHGPV0rzkP/PDD14H9Q7j702aAB2mePM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730063835; c=relaxed/simple;
-	bh=OkJZ2a0tGPzKgYgNIUYRWslx1RQvJ/CB+bAEJ9oofo0=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=IkvITWKfNbiYV4ToDP1SQeG3BiddQwhPzLUgVtOj+FeskzeMGoVdnYrhG/UbuiHUhGM+mLh0D454k0pgrq6sbm1AL+091QXbumxnNEKj+bfH1i+8HeInvbV9ssBSb04uVfvbBSba21ojIBxapcD6LB4InqQsIJfke8IPQrQRJ80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S+GdVswh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4116FC4CEE7;
-	Sun, 27 Oct 2024 21:17:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730063834;
-	bh=OkJZ2a0tGPzKgYgNIUYRWslx1RQvJ/CB+bAEJ9oofo0=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=S+GdVswh60z/kEkUsuzXLgj+T8owXIvOxYNHX6yyDkIxxx2E8rifTfika/3uiDv/q
-	 A16J7Jy4OUmIpf06jHuD1wCestK//KnUTHSUodBdeKELQE28xSsiOMzsFw2c7PKipn
-	 NF/Yd2mW8S9mLtV4h7HXOlJqZYIvd4qomfcG90oYegHqqzjlhrC/gAKjYYoOO7O2kL
-	 5irjDOkbPY0ogJye2vPhSp5m5Fn499YqwwxI2foU8HoR77o0CJFts7oUrlj1bYmQbu
-	 BoyVMgEaWQ8JthFewww2TQxFjrSzKkZdIRCOWg5Wp378AcbCyLxt6YJorc36meKEp2
-	 LkUAPEC83Wz9Q==
-Date: Sun, 27 Oct 2024 16:17:07 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1730063981; c=relaxed/simple;
+	bh=KdJh3u3ZP0U2JiSBziw64zZvKITJSsDF5v402M9mu6I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DJZoOtLX8k4BTgp4IZaKGNVUiy9NghtOaE9jqHAgIgH8lhjHGXLDoDXX7ue07LyDKQWnIrGMhWabxeBRCO82/wS7xWrZwWyIUGyHBlaG+QyGY9KrlTyeClzYcO1Dt10I4YBbiZkVMUOU10MvVTYpmWUuSRZqsPq1DzVKD1VQ1S0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jhnbE+cJ; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2e2ab5bbc01so570944a91.2;
+        Sun, 27 Oct 2024 14:19:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730063979; x=1730668779; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=AEQW5MOWjW7KV/lqVtyNAJeFCNbHriW6AQc/1TGHzzM=;
+        b=jhnbE+cJWpLpZzGJ04kihbeBSSIEFNnr7SujugP4qnG2io500mtz+Za5MOaK09SlZd
+         hDv/QQXsPmQzGDyecfHAzJnsPUtepW+D1Ornz914Ky4wNmCeKQGLc4kaa8cbe4ChjquV
+         7F/1MsQzw4cA9BaTMgQJ600vPaFrdpeki/IbzBT8tt7pgvUOn7eaPLlfVZxNE/jCse+O
+         YaIWmcWZUsG+6SO+NkmWb3stTYXaXblUNGbgdnko01durhs3NyjM5okyehw9FhhpdbCB
+         G5hKteW15w4cPLIhnTM1U4p1d7SPpoXEJ/m1aHsAEIzOtyVdSqhydhM1/vupY3aUjiBu
+         V5Sg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730063979; x=1730668779;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AEQW5MOWjW7KV/lqVtyNAJeFCNbHriW6AQc/1TGHzzM=;
+        b=AiTTUBYfbWIVvOfGtoEb2sD7IuKTOviMALizgfbmFbEGZq3fTuf+j4c8BB2lKjE186
+         fE1C3KdWNkZ0pCWV+3hA65ASfbV7LNfriMn9AbpkLAvhpJClkI7ELUgmixW156b8fh/b
+         GzRivvuw6td5GVGJ74elE99sOav8Qw+jv0ZTCABvGo9CYDBufK1Q8FrVMNtfwJNrCGcj
+         aA6Vr/XN6i7aJobEJlSGpaTWXp2vxqMbfS2aspE55FNc4jp+0zkdLcUdXj8QUMIpcU05
+         dkpbN5JASTu1j9JuWSQinsOor2BORiEnW7HLuHDUMfowTO+KtitKAt5gPsc2BCVg3OfM
+         Vj3g==
+X-Forwarded-Encrypted: i=1; AJvYcCVQ4MXJBq1AOxNpSisoyLdHLdmYKCEXwdmtI811dzMaKx4lmSgl0EZZtY9zYXN8SJGj41nabCJ2UkWePPH5UbCev9+H@vger.kernel.org, AJvYcCX+nBxOTGgLCtOs5xID+dFgYMDAZeG3SOHgVaiKx9gj/YE6DtWNFk/iS3lLpJ9mNL/QgWAy1GDQWY8zC3w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMiDc7lEQIO4niZD+PIMbkzcPKn5mE/QWT/IL+nM+M7QYfRDEB
+	6of5l3fSOYEVG/I4xXQLC6zlvreM1OGaVkdfZad7sqD2jwOGgMkg
+X-Google-Smtp-Source: AGHT+IEOQnQ3OFqJ1bnyeZSnpt9CJgoKqnnMYnDe0BvRc7amn7cMEMJ+P4mQ2xX1emxWf5yAVIR3Ag==
+X-Received: by 2002:a05:6a21:9997:b0:1d9:1894:cdc4 with SMTP id adf61e73a8af0-1d9a8534ed8mr3959762637.11.1730063979023;
+        Sun, 27 Oct 2024 14:19:39 -0700 (PDT)
+Received: from motti-test.. ([2409:40f4:300a:9618:92ca:3f55:718b:1cab])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7edc89f2d19sm4383887a12.67.2024.10.27.14.19.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 27 Oct 2024 14:19:38 -0700 (PDT)
+From: MottiKumar Babu <mottikumarbabu@gmail.com>
+To: 
+Cc: rostedt@goodmis.org,
+	mhiramat@kernel.org,
+	mark.rutland@arm.com,
+	mathieu.desnoyers@efficios.com,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	linux-kernel-mentees@lists.linux.dev,
+	anupnewsmail@gmail.com,
+	skhan@linuxfoundation.org
+Subject: [PATCH] Removed unnecessary initialization of "ret"
+Date: Mon, 28 Oct 2024 02:48:18 +0530
+Message-ID: <20241027211913.26718-2-mottikumarbabu@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Andy Yan <andyshrk@163.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-rockchip@lists.infradead.org, heiko@sntech.de
-In-Reply-To: <20241026081942.348459-1-andyshrk@163.com>
-References: <20241026081942.348459-1-andyshrk@163.com>
-Message-Id: <173006367828.91304.9007142735562178151.robh@kernel.org>
-Subject: Re: [PATCH 0/3] Enable hdmi for rk3588 based Cool Pi
+Content-Transfer-Encoding: 8bit
+
+The initialization of ret to 0 was redundant since ret is set to meaningful values later in the function. This change simplifies the code and avoids confusion about its initial state.
+
+The issue was reported by Coverity Scan.
+
+Report:
+CID 1633338 Unused value - An assigned value that is never used may represent unnecessary computation, an incorrect algorithm, or possibly the need for cleanup or refactoring.
+In register_ftrace_graph: A value assigned to a variable is never used. (CWE-563)
 
 
-On Sat, 26 Oct 2024 16:19:25 +0800, Andy Yan wrote:
-> As the hdmi-qp controller recently get merged, we can enable hdmi
-> display out on these boards now.
-> 
-> 
-> Andy Yan (3):
->   arm64: dts: rockchip: Enable HDMI0 for rk3588 Cool Pi CM5 EVB
->   arm64: dts: rockchip: Enable HDMI display for rk3588 Cool Pi 4B
->   arm64: dts: rockchip: Enable HDMI display for rk3588 Cool Pi GenBook
-> 
->  .../dts/rockchip/rk3588-coolpi-cm5-evb.dts    | 49 ++++++++++++++++++
->  .../rockchip/rk3588-coolpi-cm5-genbook.dts    | 51 +++++++++++++++++++
->  .../boot/dts/rockchip/rk3588s-coolpi-4b.dts   | 49 ++++++++++++++++++
->  3 files changed, 149 insertions(+)
-> 
-> --
-> 2.43.0
-> 
-> 
-> 
+Signed-off-by: MottiKumar Babu <mottikumarbabu@gmail.com>
+---
+ kernel/trace/fgraph.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
-
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
-
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
-
-  pip3 install dtschema --upgrade
-
-
-New warnings running 'make CHECK_DTBS=y rockchip/rk3588-coolpi-cm5-evb.dtb rockchip/rk3588-coolpi-cm5-genbook.dtb rockchip/rk3588s-coolpi-4b.dtb' for 20241026081942.348459-1-andyshrk@163.com:
-
-arch/arm64/boot/dts/rockchip/rk3588-coolpi-cm5-evb.dtb: hdmi@fde80000: Unevaluated properties are not allowed ('enable-gpios' was unexpected)
-	from schema $id: http://devicetree.org/schemas/display/rockchip/rockchip,rk3588-dw-hdmi-qp.yaml#
-arch/arm64/boot/dts/rockchip/rk3588s-coolpi-4b.dtb: hdmi@fde80000: Unevaluated properties are not allowed ('enable-gpios' was unexpected)
-	from schema $id: http://devicetree.org/schemas/display/rockchip/rockchip,rk3588-dw-hdmi-qp.yaml#
-arch/arm64/boot/dts/rockchip/rk3588-coolpi-cm5-genbook.dtb: hdmi@fde80000: Unevaluated properties are not allowed ('enable-gpios' was unexpected)
-	from schema $id: http://devicetree.org/schemas/display/rockchip/rockchip,rk3588-dw-hdmi-qp.yaml#
-
-
-
-
+diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
+index 69e226a48daa..b13ab2ad0e88 100644
+--- a/kernel/trace/fgraph.c
++++ b/kernel/trace/fgraph.c
+@@ -1249,7 +1249,7 @@ int register_ftrace_graph(struct fgraph_ops *gops)
+ {
+ 	static bool fgraph_initialized;
+ 	int command = 0;
+-	int ret = 0;
++	int ret;
+ 	int i = -1;
+ 
+ 	guard(mutex)(&ftrace_lock);
+-- 
+2.43.0
 
 
