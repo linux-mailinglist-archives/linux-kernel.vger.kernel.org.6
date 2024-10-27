@@ -1,103 +1,94 @@
-Return-Path: <linux-kernel+bounces-383540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 994A39B1D08
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 11:01:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28BFC9B1D0C
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 11:01:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 564BD281E12
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 10:01:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40F4A1C20BAE
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 10:01:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45A4513AA2A;
-	Sun, 27 Oct 2024 10:01:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 885BE136327;
+	Sun, 27 Oct 2024 10:01:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="obE7Np2r"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="HvTiRPjD";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="avM1gUEr"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A86029CE8;
-	Sun, 27 Oct 2024 10:01:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4020613D531
+	for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 10:01:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730023276; cv=none; b=TJnXaMAJD8qdZclPu2s2uPn1XBfxulP+U0tJ8mGONweshCjxSmsZv7Dhif7Q94nlPBuz3kYZ4BL+8Zrn55SJx12Bz/MgM6gTmJGHcmmIR0PJ4WFYCtM0Iu5JNWbY5ABSesAUcWDB2BkcsuIs2B5anldltU0jIWLfX/umxt1CSts=
+	t=1730023299; cv=none; b=fP4wew9R7tXgpBbDE7SZKTiNc4msOrq0NvvxXYrv7ieYVF0ZLJJ8HSb+dA3Lqi0wkDTjOI6Gv+ckuTOCOBSrtbpSoJ6cW0rEwL3TQ7gy+gLgxmsHsfOPiVipriP5snkyw8U0mut9HLR5DuN6+sgGXMy7DcVkAIPdkvZF+vNWg/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730023276; c=relaxed/simple;
-	bh=aH/G0HyyJs7XC/tWOKHsQCDORW67U2EB/82+ZBzGeVM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ai19HWnlELNdCimPKcS1i3vLApXIcLQ615kYZF9BRDlHGQItSn7Qo3yUaK3U3O93FquGpj5RUAGqqQf46WGfYfzJCN/3Mh/x5BBdTDOUWc38g8yZm4hKlSEA8/vWjtaztXgjtaIbpG4l6S8bwt51tTQyBDNKbTORqjZF2AXySmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=obE7Np2r; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 268B4C4CEC3;
-	Sun, 27 Oct 2024 10:01:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730023276;
-	bh=aH/G0HyyJs7XC/tWOKHsQCDORW67U2EB/82+ZBzGeVM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=obE7Np2rfF+bk8SYiAlys/FconhybGsPHFDTDpOz9zQyd9XFMkOpf9QgC8SoYb/Ep
-	 OncH7eYb24NXOfHgw99hULGENsocyvZVfAkNa/dSx5ZytzmSOxRwlkpS9p3PwE5KPA
-	 8F9T+dzOojnUvodEJgPeEqY94af4Z4BBBF23Vrbr+9BTkQHUNb4o+TFcQcmp4mlA20
-	 jRgeSQZ3L8aVfx+qo0IKCB6GWFVq7Liw9ivhwcVSzvDVQ+a7MQaRDME/vibbo88QRu
-	 3ZWSvh2tE0VQRzfvDJERhlx+CurwZlez7BX7TmwS4LuRySQ+HSOzUA4POmVQq1MqMa
-	 5c3WEieLQq5UQ==
-Date: Sun, 27 Oct 2024 10:01:08 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Vasileios Amoiridis <vassilisamir@gmail.com>
-Cc: lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, andriy.shevchenko@linux.intel.com,
- anshulusr@gmail.com, gustavograzs@gmail.com, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 05/13] iio: chemical: bme680: move to fsleep()
-Message-ID: <20241027100108.061c9074@jic23-huawei>
-In-Reply-To: <20241021195316.58911-6-vassilisamir@gmail.com>
-References: <20241021195316.58911-1-vassilisamir@gmail.com>
-	<20241021195316.58911-6-vassilisamir@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1730023299; c=relaxed/simple;
+	bh=VwOS3aKEnjqgGuo1ahQYpJ7O1V3XSOZ6/1d2ffvlL58=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=SleThFprXEKeKPa2iNn7uSLK5nTzJ50t+norzdAwiaaNHzN/U2lREmMwCF1qTgnY+yENSutFf3NLzHj8on3AwyRhSZ+jHwNbUefUu5uif2SV09s8zP7MfffVsHj+Be6haFeK5AYaszxsF6mNqsh6egerptxY57/Lr+6sGRA7jII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=HvTiRPjD; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=avM1gUEr; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1730023294;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=S7NVNIvB0/48et90ayphb0tBlaktmdq0J+1e4kqcntM=;
+	b=HvTiRPjD0DsmxxZz0EJk4LcYAzavFTllAtV40WN20cvToaVPBio7LIoWjlXAHHsFA4dsvw
+	S7LDkMmho+ZmQCoy6ijcj53Pcw+7Z7HWfsHFDvG86/4oGxlBHYY2vc3qCw7vUyn/ua0bLg
+	JWDBYAeSQU1YMykUANXKLV1ppzJ+HPlUHfCdew4tftpqcEVv2e3TgoXfvGY3ZNjra9i+Tx
+	SxvMA7EH4kLh1+wUtz0Lfe9XCRZFG8e5Sngr61sIwfYzVC5IjQD4S8aIOIgDxQmR953OUh
+	/1kqT8zJrrSWBGESpGZVbDIgxc7l5rWlf66zla9sKb4wHAdV9iFk7t/lTq7dGQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1730023294;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=S7NVNIvB0/48et90ayphb0tBlaktmdq0J+1e4kqcntM=;
+	b=avM1gUErfQH+EH37JscZN0xPbvFFawrmqGdB81/GTVvOO1MTwD4tGQ8VSmhFybkv5Isu1W
+	7KdG+xyrzJ2ucDDw==
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ linux-kernel@vger.kernel.org
+Cc: =?utf-8?Q?Andr=C3=A9?= Almeida <andrealmeid@igalia.com>, Darren Hart
+ <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar
+ <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, Peter Zijlstra
+ <peterz@infradead.org>, Valentin Schneider <vschneid@redhat.com>, Waiman
+ Long <longman@redhat.com>
+Subject: Re: [RFC PATCH 0/3] futex: Add support task local hash maps.
+In-Reply-To: <20241026224306.982896-1-bigeasy@linutronix.de>
+References: <20241026224306.982896-1-bigeasy@linutronix.de>
+Date: Sun, 27 Oct 2024 11:01:33 +0100
+Message-ID: <87froh50g2.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On Mon, 21 Oct 2024 21:53:08 +0200
-Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
+On Sun, Oct 27 2024 at 00:34, Sebastian Andrzej Siewior wrote:
+> and adds support for task local futex_hash_bucket. It can be created via
+> prctl() and each thread has to enable it via another prctl() interface.
 
-> Use the new fsleep() function in the remaining driver instances.
-> 
-> Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
-Applied. Note I'm applying these having skipped patch 4, so at somepoint I may
-hit a conflict with that and stop even if this code in the later patches is fine.
+That's a quick way to evaluate it.
 
-Jonathan
+> Individual threads may enable it but I guess this gets more complicated
+> because the libc internal locks (or another lib) maybe be shared by
+> multiple threads. So maybe it would be best to enable the local hash by
+> the group leader and automatically enable for each thread on fork().
 
-> ---
->  drivers/iio/chemical/bme680_core.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/iio/chemical/bme680_core.c b/drivers/iio/chemical/bme680_core.c
-> index 9002519d2c33..2ff85e29bfc1 100644
-> --- a/drivers/iio/chemical/bme680_core.c
-> +++ b/drivers/iio/chemical/bme680_core.c
-> @@ -544,7 +544,7 @@ static int bme680_wait_for_eoc(struct bme680_data *data)
->  			   data->oversampling_humid) * 1936) + (477 * 4) +
->  			   (477 * 5) + 1000 + (data->heater_dur * 1000);
->  
-> -	usleep_range(wait_eoc_us, wait_eoc_us + 100);
-> +	fsleep(wait_eoc_us);
->  
->  	ret = regmap_read(data->regmap, BME680_REG_MEAS_STAT_0, &data->check);
->  	if (ret) {
-> @@ -890,7 +890,7 @@ int bme680_core_probe(struct device *dev, struct regmap *regmap,
->  	if (ret < 0)
->  		return dev_err_probe(dev, ret, "Failed to reset chip\n");
->  
-> -	usleep_range(BME680_STARTUP_TIME_US, BME680_STARTUP_TIME_US + 1000);
-> +	fsleep(BME680_STARTUP_TIME_US);
->  
->  	ret = regmap_read(regmap, BME680_REG_CHIP_ID, &data->check);
->  	if (ret < 0)
+At the end we want to let the kernel automatically create the hash table
+on first use of a private futex with a default size. That's a one off
+latency. The prctl should only be there for preallocation and sizing.
 
+And yes, you want to inherit when a new thread is created.
+
+Thanks,
+
+        tglx
 
