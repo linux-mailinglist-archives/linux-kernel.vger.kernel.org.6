@@ -1,104 +1,102 @@
-Return-Path: <linux-kernel+bounces-383845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF1329B20D8
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 22:19:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F10B9B20DD
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 22:23:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A40F6281528
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 21:19:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A8A91F2114B
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 21:23:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B82881865E3;
-	Sun, 27 Oct 2024 21:19:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 892C8187FFA;
+	Sun, 27 Oct 2024 21:22:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Dt97lVT+"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hhZb8jOA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B281B126C10;
-	Sun, 27 Oct 2024 21:19:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0D76186E27;
+	Sun, 27 Oct 2024 21:22:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730063952; cv=none; b=uS1UwyWoaf7Ot+2+dKJPJGrFvq7jC02Lq1t/jQDZGuPUrbSCNAb0CGyvI6EDYGgYP1qepOEbggbBtm/p5sc6btAVPnNM8n6q6VNPj2sCRfoqkIj+qyu54qKzjzwgpo2KGMJO3ig/TZakdoJQS8A5/uo2M1DE5elVrKJvSA+oK50=
+	t=1730064175; cv=none; b=nKA5XwvzxB0hmxNAJaX3UBaxpqE5n3QZn/GNHUVnvJaWxTRfc4qzQNyCpde6iKTJazD+/CiRBVvg25O5/jK6dn5zbTdWSS0B9K57NI7QvlgqOyU4cat3RdjdnzIBSWlawm36ZAatFN9BlkwQElwHuGcr6Xv7wa8uaTF5l+fa1WE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730063952; c=relaxed/simple;
-	bh=PjrQyDeI62UFtZJCp2jSsNNSboTSj4fuF5f+XzItC14=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=WAIJGJisbxne4zSm3z3QvmWwUw6S+SCbfJ0UIdWn+foimr5p3XimCemhce/2QLgahLWhu50iXcVVvlEoPRRrlqWfmLoCJixe1QLfiKpTGgQNVXJvTJlkWegA/GZnFVF81lHU/5/T4HR/qyaN6g60C398Cqdbeul33o1eJ1AYJyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Dt97lVT+; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1730063946;
-	bh=xRPCKQ2GPEvjyvtUpfEOB4C5Q2rfWJs0ggvBpCU2ZUg=;
-	h=Date:From:To:Cc:Subject:From;
-	b=Dt97lVT+zgR8XvpETIS7hEQQMVImpPF6AbyLJpaX1BoJ99cXliA+wSrSN0Xz0yV/3
-	 TlvXiHGhOKGPrRougE+Daw554ol8+rZ/FaTx5XFx3STeJG4kA9u/AhhQ43R/xVeXzg
-	 CWVXzX4qvmOr0iABGvFXdKfcdF+z/Q0wDFHxQPZCt93AFbenVEotgvKobP8i1jByKi
-	 +imX59oq+7cpSiQ0HtDJViRtuKlvgV2mi2FOJLC1RQ6b4GkOiQdGFF0wlAQPBPVPfK
-	 QbYJwXlrCx1CMmwta7gUf1+CCcIdmz1TlDzSkk95mi/UmoSl+hpCNjbqSjLOpIHMl4
-	 BKRsYxGsgYCTQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Xc8XV1dGMz4wnp;
-	Mon, 28 Oct 2024 08:19:06 +1100 (AEDT)
-Date: Mon, 28 Oct 2024 08:19:07 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Anup Patel <anup@brainfault.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patch in the kvm-riscv tree
-Message-ID: <20241028081907.10fa06fa@canb.auug.org.au>
+	s=arc-20240116; t=1730064175; c=relaxed/simple;
+	bh=uGeF6fhJYsqOGnMmd6g0ql7+lc90LCLzjPxmpQyJ48Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B/LLRS7Ug9jGf/SyOtZGzZ7Qnv2WOFkVVRI0J62D5IOTJjrrJB3hslYzlOggZ6BDJG/dycdQAD7Q+9+mA8qZ9qtiEYFyMv2h76L4xpxQsvps4fktajHKbDcML1HUjbcu6vC4zlAvYIs5njh1moQ0LTBuFktTiRvwwU1A6TRLkkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hhZb8jOA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B199C4CEC3;
+	Sun, 27 Oct 2024 21:22:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730064174;
+	bh=uGeF6fhJYsqOGnMmd6g0ql7+lc90LCLzjPxmpQyJ48Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hhZb8jOArLdcBAtkKDB0KQ7NICYF0jo3qvjleBFXtQ739hnWxUoLMc1jWvLU4rnGM
+	 zxtoNtukh3Kdzp6+gfkAmNHVi1QB9xBblRH3AdI3IxYsJ0t5D0Mgz7Ctjn7og225JH
+	 XLIxjOtOt8yTX1r04qHOziBulN7PIBkxSxjNkG0/6fZZK6brTlUfoG3aTMPaMwdLTG
+	 suF1nexrEhEAMf0t9AzsNRJ3e0miozS7w4+yD7mpfl/9GAWyMZveE3GMj5rYKp4YHC
+	 RpuVQht9dtvEg2byV8o5VFISquOuvBd0c+AzEPQFP8Lzk6wKjWWBR/GeZ1Bme347o4
+	 mMUC9KYCUXA1w==
+Date: Sun, 27 Oct 2024 16:22:53 -0500
+From: Rob Herring <robh@kernel.org>
+To: Cody Eksal <masterr3c0rd@epochal.quest>
+Cc: Vinod Koul <vkoul@kernel.org>, devicetree@vger.kernel.org,
+	Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-sunxi@lists.linux.dev, Yangtao Li <tiny.windzz@gmail.com>,
+	Viresh Kumar <vireshk@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	linux-pm@vger.kernel.org, Andre Przywara <andre.przywara@arm.com>,
+	Yangtao Li <frank@allwinnertech.com>, linux-phy@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Parthiban <parthiban@linumiz.com>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maxime Ripard <mripard@kernel.org>, linux-usb@vger.kernel.org,
+	Samuel Holland <samuel@sholland.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	linux-kernel@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Thierry Reding <treding@nvidia.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH 04/13] dt-bindings: usb: Add A100 compatible string
+Message-ID: <20241027212253.GA98977-robh@kernel.org>
+References: <20241024170540.2721307-1-masterr3c0rd@epochal.quest>
+ <20241024170540.2721307-5-masterr3c0rd@epochal.quest>
+ <173006354857.88418.13246529686874362124.robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/_G+aN87.x7TZpgPF1iTbm=k";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <173006354857.88418.13246529686874362124.robh@kernel.org>
 
---Sig_/_G+aN87.x7TZpgPF1iTbm=k
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Sun, Oct 27, 2024 at 04:12:29PM -0500, Rob Herring (Arm) wrote:
+> 
+> On Thu, 24 Oct 2024 14:05:22 -0300, Cody Eksal wrote:
+> > The Allwinner A100 contains two fully OHCI/EHCI compatible USB host
+> > controllers. Add their compatible strings to the list of
+> > generic OHCI/EHCI controllers.
+> > 
+> > Signed-off-by: Cody Eksal <masterr3c0rd@epochal.quest>
+> > ---
+> >  Documentation/devicetree/bindings/usb/generic-ehci.yaml | 1 +
+> >  Documentation/devicetree/bindings/usb/generic-ohci.yaml | 1 +
+> >  2 files changed, 2 insertions(+)
+> > 
+> 
+> Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
-Hi all,
+Well, except that the compatibles should be alphabetical order.
 
-The following commit is also in Linus Torvalds' tree as a different commit
-(but the same patch):
+Rob
 
-  4abcb5504609 ("RISCV: KVM: use raw_spinlock for critical section in imsic=
-")
-
-This is commit
-
-  3ec4350d4efb ("RISCV: KVM: use raw_spinlock for critical section in imsic=
-")
-
-in Linus' tree.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/_G+aN87.x7TZpgPF1iTbm=k
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcerksACgkQAVBC80lX
-0GzK7Af+J8QogpydRx+OMvGCZJe8CijEPSsPzGCjX4iUX02ngby8V+X/NjagFV5H
-5duj6LkOb/cS/HtGMmuhQd6uWAnsnlu9mbOvhh8jgoSsrRLnkx+xmekGO2NbgDT3
-rx9cM3VtyZQFDRpjnqoN7m5749kNraKtEFPzoh83rI4KI47PQDxUPk9ZBHoddkt2
-zAlOYZVMFKmOXDQKK9/ZTya1BtGl6BJ+FFdESCdoCUl5gijmvLR3pP0SmG3AjbVx
-cSxF2MMSMOqfZn3A513CbYGsWavqLQwA1uYqRz6CEfc/qQmi3ErjV4q9uW8wJp1Y
-fZwI67Dv8MMjBq9VNwfr876tjr4jJA==
-=jeT9
------END PGP SIGNATURE-----
-
---Sig_/_G+aN87.x7TZpgPF1iTbm=k--
 
