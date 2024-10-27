@@ -1,107 +1,143 @@
-Return-Path: <linux-kernel+bounces-383465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 030969B1C2C
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 05:38:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 88C2B9B1C2D
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 05:43:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A4B21C21047
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 04:38:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87D981C20DBC
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 04:43:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1009D38DE5;
-	Sun, 27 Oct 2024 04:38:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 716132BAEF;
+	Sun, 27 Oct 2024 04:43:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="j/nYKqSg"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZlQBDDHy"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F40D2B9B7
-	for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 04:38:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 064C822F1C
+	for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 04:43:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730003912; cv=none; b=HGsGA2mOMxDK+tAY2mn0zVB9doWsNp59oQ64Pn9YEa6bobs1gzfsqXN4Z4LGetFVec69+P/uQtXxR3uQuEx0SHm5uQrqNb3JIrUXC1d8zMd54tiLR8OKzCnA0YmmySYNTlzEKS1hDU8iGI1wVCxeg3uj7KY56Hr9PXm2zPacOsQ=
+	t=1730004203; cv=none; b=oLdFbSkKf9FJtSzWY23x+bd6w7ZdiyXLJFKvPEQCR1FF+X8LsVFq2cQakUZO//d5cB/4dwPk6SBnnKD8DEscfCj14T+rX5iHOm3k+8TMgxDF18AleVm9GkRV/fadSLsdeXNjRowUy45XZDP25PWAVX7Sulqy3Eph/RgikPA1fEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730003912; c=relaxed/simple;
-	bh=9a894voPSeKCWDpJXy575tccinogzHEiPfzfOZ7KaWk=;
-	h=Mime-Version:From:References:In-Reply-To:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MuUxwTP5MJ43oIUbNCbBrY/m9vuOLZbimvh5n3f9/pDzpI6cHSTIsPMKTJ8YzJ0xQjI0bleqk8+MbNoTZq70cqmXHAj7LfuMTokQ0yx2sboem5feX0iCtjMNB7xbWZKB5yyz+zWciryRDsSi3vqwbo/8JlPO92/DQx4lb3Qp5SI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=j/nYKqSg; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-37d4ba20075so2287835f8f.0
-        for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 21:38:30 -0700 (PDT)
+	s=arc-20240116; t=1730004203; c=relaxed/simple;
+	bh=1pm4DpTKXFFG1e38UC1ev5/Q43kxORvmneZ5l2b57Kw=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=E3BI7pJryKsB64vor1gL1u7tzmsoQshq8pfVrPwN3/2MGL7QpY7/xbkp3S4Uf6P8f0Z0Buu63IZz2QaEAKxF5vYepzs4b+1g0i9tYBEBW2EVtpi09IuiwNBrs/Xo3p9zbjWOS+EDklk5F3Ett5+8qJajquNLku4PiqEroLFxuto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZlQBDDHy; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-20caccadbeeso34295655ad.2
+        for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 21:43:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730003909; x=1730608709; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:in-reply-to:references:from
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=9a894voPSeKCWDpJXy575tccinogzHEiPfzfOZ7KaWk=;
-        b=j/nYKqSgrHJ7komN/lKf2nLp04jiVuC1JtUzsTodyZpXotbJBwRSaeEyh38pbTt658
-         1o7tY4+AuaXIAsb8b22wuxJSI43ivZVdzv6BSL5smM+IOU0XJclTy0nC8+q+hNX+IXFR
-         LsWqD5W3JCx/XaUlrOTIO5zdq1G6SouKgCbUidxE7Ye/UQRgf3kKOWfgnvB40bvJbsHs
-         0BQvAcfqreMrTCR0PJowU67iRdVpQackv7tcfOxu6BvLNu4XofkIVBRiFufH+X91r1Da
-         +amfterwgWvl+FXUsaKhiJDApWD60olKLdltEMTVKUvlz9OQDWTm5SM0rzfma1uGfba/
-         PDVg==
+        d=google.com; s=20230601; t=1730004201; x=1730609001; darn=vger.kernel.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=MxJ7jTPYF7MJ+n+x+vALmSMEUZ0wIVJqL5CFxRxgP8A=;
+        b=ZlQBDDHyJ6qSSHS1sZKOZIZN1rx2qzaJCxhfRDzpqFzs5/HYiVQAfCoxpBN/1ZgObj
+         WL1R/FE+KYlXCkoyGCn6ybg8DESCR1iz2/pkb90n66WLlqUCBWxDnzMem96zsnRPvwQX
+         i+O9NeL9L5lzoo3RfueWyP7N6Y4XqlH4gAWaSHokgARj5LuvrU28hwrh3y+BGiWbueAR
+         mdzlVie3qOVNW9VmuNh49aacHtWjaKOFd2ZpT0ta9YXkd33LJfUBzHmLtXCtcKyuhike
+         3YL0uaWa0K0shio/6q9E85jQYw5GgYi+8EFLDQzWU8vRJ8WLOv518btQkxWu3CnxcIjD
+         rLFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730003909; x=1730608709;
-        h=cc:to:subject:message-id:date:in-reply-to:references:from
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9a894voPSeKCWDpJXy575tccinogzHEiPfzfOZ7KaWk=;
-        b=mX7fD1/3Ixu+0LItXdwBteBH/QGymqe/MVPwsGSUvdNHytElSaoYGX9ABfHYbOxESr
-         aCA59eesDk3ClA0CTtI+RR9+n0X1TGQToff317bfJjNjQnciOTxvkGHPmtcCglC0kpUm
-         hAySFnOwDYmLENg/ncXzsTEkv1DjdPoKJMxs7lWctlvbz/3/7iE+BnpCBJP3fcfa8MXY
-         CP6RpKs9Bhl7YKFNBuK9pyqScWZrFAGhv/4OWWXRqKPSU4jos+4W/TFb/fwUdBDlGZ+I
-         VlNBVx0aOIiGDWk3iRjXU+XDkhQGZUWMeIX9zIf4HgEo4L4hkw4L18SidWML0JcYA8Gv
-         dTzg==
-X-Forwarded-Encrypted: i=1; AJvYcCWdY4cyyD69qDtOT/bY+ObGwLSfTu5zKZg+xe2aC9MXVzWfHt0/OT2oYtsRdi3e86jKO0VH724Y289iZMU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrPqWVMTHLzZOzNVOFBuQW8BhUlIy5tzLYQI70pRTjSNJKyrgA
-	VQDGYuzqH6Ro0SHPaXIqNmmyzbD0ixErSE6IWo+hejbLTAsJB5Um/Ppi+x23ySDgJ1+ca8/4GsM
-	WH7pcpCzutMXHbrDaXdaJvPUYsphCsRudCH8ePg==
-X-Google-Smtp-Source: AGHT+IGrmepASh+YocMFUfgAy92GhVR+klP9wWMNEuAWzRuq4yxkKFPU9cJ/lzmrPpvIIX5JE3SRzZGJH1Ndbg/FpAQ=
-X-Received: by 2002:a5d:5743:0:b0:37d:4647:155a with SMTP id
- ffacd0b85a97d-38061005dbcmr3261878f8f.0.1730003907260; Sat, 26 Oct 2024
- 21:38:27 -0700 (PDT)
-Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Sun, 27 Oct 2024 05:38:26 +0100
+        d=1e100.net; s=20230601; t=1730004201; x=1730609001;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MxJ7jTPYF7MJ+n+x+vALmSMEUZ0wIVJqL5CFxRxgP8A=;
+        b=mLtEso1KLt5eTdMTr0HlAtcczkwBfcsTeflU/F5yWs/A0eleVlP4fza+ZABL6MgnWy
+         lpnR2IsoaeefIhRETBNI+iUG/Ys4P7WVCiISBxRUHgchoOZxD+US/jETJos5E8N1w0cc
+         FUSqFVq/Mhqkg/Q+GuMgstVV093Z1sxol+7kQB2Ldoco0XFjMOZGscFlb1cCHnC1Vn3Y
+         /Y2kQSH7QIM/1Qby3sQp7xCO7aGD3j0tyR/AnAgpwju6gd1uoui51qexb2AbDN80FAAc
+         hPPXYppA1ggVQvE1KwEl52unBkN9RzecZBte1adRgUqTd1LPm4RAKbB5DnT/R3oDPx5W
+         nNFg==
+X-Forwarded-Encrypted: i=1; AJvYcCVELqJXj66PkP5+uWwTn51px7ue4qeQVkD+CFsw6fkQ9ncEFsD9p5hu5Aiv3VheI8JdbL3lann8CKqCkog=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyg3K78xuvoqVsjPwoW+rWqi1o9sd5BVw8YfuK216RUmqBj5bPe
+	tLjcm6tBwM5weW48UIibUnMKTB6tS0Exv/MiaGddXubOaBLfUaketGxWWlcSkg==
+X-Google-Smtp-Source: AGHT+IFoimWn5iWOVL+r7Tuqqyu0INnrIinhsFyVKabz7kFPstUFS6IMfI3GNvN+lNKp/poVnkhlRw==
+X-Received: by 2002:a17:902:d4d0:b0:20c:a44b:3221 with SMTP id d9443c01a7336-210c6c08b12mr52868115ad.15.1730004201071;
+        Sat, 26 Oct 2024 21:43:21 -0700 (PDT)
+Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bc04b8bbsm30616895ad.244.2024.10.26.21.43.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 26 Oct 2024 21:43:19 -0700 (PDT)
+Date: Sat, 26 Oct 2024 21:43:09 -0700 (PDT)
+From: Hugh Dickins <hughd@google.com>
+To: Zi Yan <ziy@nvidia.com>
+cc: Hugh Dickins <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
+    Usama Arif <usamaarif642@gmail.com>, Yang Shi <shy828301@gmail.com>, 
+    Wei Yang <richard.weiyang@gmail.com>, 
+    "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, 
+    Matthew Wilcox <willy@infradead.org>, David Hildenbrand <david@redhat.com>, 
+    Johannes Weiner <hannes@cmpxchg.org>, 
+    Baolin Wang <baolin.wang@linux.alibaba.com>, 
+    Barry Song <baohua@kernel.org>, Kefeng Wang <wangkefeng.wang@huawei.com>, 
+    Ryan Roberts <ryan.roberts@arm.com>, Nhat Pham <nphamcs@gmail.com>, 
+    Chris Li <chrisl@kernel.org>, linux-kernel@vger.kernel.org, 
+    linux-mm@kvack.org
+Subject: Re: [PATCH hotfix 1/2] mm/thp: fix deferred split queue not
+ partially_mapped
+In-Reply-To: <E5A75697-55C7-4335-8D86-EE5CB6A99C4F@nvidia.com>
+Message-ID: <947f23e2-c817-b714-57d7-c893aad5002f@google.com>
+References: <760237a3-69d6-9197-432d-0306d52c048a@google.com> <3A1E5353-D8C5-4D38-A3FF-BFC671FC25CE@nvidia.com> <966a4aff-f587-c4bb-1e10-2673734c2aa0@google.com> <E5A75697-55C7-4335-8D86-EE5CB6A99C4F@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: Fabien Parent <fabien.parent@linaro.org>
-X-Mailer: aerc 0.18.2
-References: <20241022213221.2383-1-dakr@kernel.org> <20241022213221.2383-15-dakr@kernel.org>
-In-Reply-To: <20241022213221.2383-15-dakr@kernel.org>
-Date: Sun, 27 Oct 2024 05:38:26 +0100
-Message-ID: <CAPFo5VLC3QT3r2CYw8K7Nf7p7xhWJ0+PPTHYN=8a8QQeGiYfOg@mail.gmail.com>
-Subject: Re: [PATCH v3 14/16] rust: of: add `of::DeviceId` abstraction
-To: Danilo Krummrich <dakr@kernel.org>, gregkh@linuxfoundation.org, rafael@kernel.org, 
-	bhelgaas@google.com, ojeda@kernel.org, alex.gaynor@gmail.com, 
-	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
-	benno.lossin@proton.me, tmgross@umich.edu, a.hindborg@samsung.com, 
-	aliceryhl@google.com, airlied@gmail.com, fujita.tomonori@gmail.com, 
-	lina@asahilina.net, pstanner@redhat.com, ajanulgu@redhat.com, 
-	lyude@redhat.com, robh@kernel.org, daniel.almeida@collabora.com, 
-	saravanak@google.com
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 
-Hi Danilo,
+On Fri, 25 Oct 2024, Zi Yan wrote:
+> 
+> Thank you a lot for taking the time to check the locked version. Looking
+> forward to the result.
 
-On Tue Oct 22, 2024 at 2:31 PM PDT, Danilo Krummrich wrote:
-> +/// An open firmware device id.
-> +#[derive(Clone, Copy)]
-> +pub struct DeviceId(bindings::of_device_id);
-...
-> +// SAFETY:
-> +// * `DeviceId` is a `#[repr(transparent)` wrapper of `struct of_device_id` and does not add
+The locked version worked fine (I did see some unusual filesystem on loop
+errors on this laptop, but very much doubt that was related to the extra
+deferred split queue locking).  But I do still prefer the original version.
 
-DeviceId is missing the `#[repr(transparent)]`.
+> BTW, I am not going to block this patch since it fixes the bug.
 
-BR,
-Fabien
+Thanks!  I'll put out the same as v2 1/2.
+
+> 
+> The tricky part in deferred_list_scan() is always the use of
+> folio->_deferred_list without taking split_queue_lock. I am thinking about
+> use folio_batch to store the out-of-split_queue folios, so that _deferred_list
+> will not be touched when these folios are tried to be split. Basically,
+> 
+> 1. loop through split_queue and move folios to a folio_batch until the
+>    folio_batch is full;
+> 2. loop through the folio_batch to try to split each folio;
+> 3. move the remaining folios back to split_queue.
+> 
+> With this approach, split_queue_lock might be taken more if there are
+> more than 31 (folio_batch max size) folios on split_queue and split_queue_lock
+> will be held longer in step 3, since the remaining folios need to be
+> added back to split_queue one by one instead of a single list splice.
+> 
+> Let me know your thoughts. I can look into this if this approach sounds
+> promising. Thanks.
+
+TBH, I just don't see the point: we have a working mechanism, and
+complicating it to rely on more infrastructure, just to reach the
+same endpoint, seems a waste of developer time to me.  It's not as
+if a folio_batch there would make the split handling more efficient.
+
+It would disambiguate the list_empty(), sure; but as it stands,
+there's nothing in the handling which needs that disambiguated.
+
+I can half-imagine that a folio_batch might become a better technique,
+if we go on to need less restricted use of the deferred split queue:
+if for some reason we grow to want to unqueue a THP while it's still
+in use (as memcg move wanted in 2/2, but was not worth recoding for).
+
+But I'm not sure whether a folio_batch would actually help there,
+and I wouldn't worry about it unless there's a need.
+
+Hugh
 
