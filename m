@@ -1,292 +1,135 @@
-Return-Path: <linux-kernel+bounces-383710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F4FC9B1F64
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 18:22:53 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC5829B1F65
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 18:24:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B20A1F2159B
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 17:22:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F934B20FBD
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 17:24:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4F4A18132A;
-	Sun, 27 Oct 2024 17:21:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0304D16FF45;
+	Sun, 27 Oct 2024 17:24:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=justinweiss.com header.i=@justinweiss.com header.b="baogTKWQ";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="CKRVWrUy"
-Received: from fhigh-b7-smtp.messagingengine.com (fhigh-b7-smtp.messagingengine.com [202.12.124.158])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NUG8Wn3M"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3971417C9F8;
-	Sun, 27 Oct 2024 17:21:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8410627466
+	for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 17:24:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730049716; cv=none; b=Kp37noRv80yZdZsZqhmYsBQuG5tAjBK/HlJQPCc/e7xf89CngY3QzaXls54DG1zS3czXEUEs+t40qV20P7fGmLm8+KmgPeO99ADAtKKiW7sxD52TxW2q0DXJDcU08DwhuFYyICFxQ7z3Mkzzn17gEUw6SJ3Fixs3Q7meBq0KLRs=
+	t=1730049880; cv=none; b=hSd3iKpUtQmxuGEFFeHjGMLU6n68WLEBK2sTAdcrgDd5W1jysSPYp0PVfM1PMk7qfBKT3cQuVcqY1Cso+d4h6xT9b88kG2iODzj3miHEWyKT6fRwLqbb2lTZP9GrcQIxrayPqI3X6cwWqQsZwQBMkw9N/eFDs2xf30c2tYN1CoU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730049716; c=relaxed/simple;
-	bh=mZli/58Bf8b2rVFGCQQ5z0QEq2d90jadrU+ROb/40TA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fppkjrTtz2UQ96YqZjz2OqHwnZxU5TSvBkc+UpXNTv/4dkO6kuQcMfKqPQAX7r/6nt8JNXZAZj9NCaOuN0FPrQM/GKtdpETRET/lSG+c2H4HQq/J9fVPSlGYrL1lkpnif1Uoi41jV0i74kqTq6N0yNgPX1EraHVzVOnNgxNWXKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=justinweiss.com; spf=pass smtp.mailfrom=justinweiss.com; dkim=pass (2048-bit key) header.d=justinweiss.com header.i=@justinweiss.com header.b=baogTKWQ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=CKRVWrUy; arc=none smtp.client-ip=202.12.124.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=justinweiss.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=justinweiss.com
-Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 0320325400A4;
-	Sun, 27 Oct 2024 13:21:52 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-03.internal (MEProxy); Sun, 27 Oct 2024 13:21:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=justinweiss.com;
-	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
-	:from:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm2; t=1730049712; x=
-	1730136112; bh=HZ0f4dodd217AkGZBJ4uwjooGTB/NPsDwvhotzR1ZOw=; b=b
-	aogTKWQ9MqVrjOh/u0IijpEnBp/BT/RtM+EIFoSX7oaSHROmpWPPQL/ell9hp+Jv
-	Up1HDCYeBvrjcPL5gD63ZFnDBxjCo/cyBYiVqj11GkV315yCEivX5IPWwZ/I85Yx
-	YncMBYr6BcPimzd4xAf7eax090cy6iYFFjatqpGR4InBU0sAD899VD3tm4oUVM1S
-	EWtI38ZGLTlX2mKL5IH6AFy9bPsWxuyWLINy9d9ZGESmR5IT3NKUu7vBma3PZn7r
-	98nf+gMY92YEMwiiMm8VstMmN+HYzz3ioDK12ltXeFjUdX0Utbxd9AkLfcjOpg5k
-	7rQdEKu4dl/D8q4dDUY8g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1730049712; x=
-	1730136112; bh=HZ0f4dodd217AkGZBJ4uwjooGTB/NPsDwvhotzR1ZOw=; b=C
-	KRVWrUyYOk00Y4ZfyUBSkAQI6Rki9PC5X2v8NilCOFbIaXkypcbAT4VpaDznp52h
-	Xp7PEyc+U2Rpj4GBE22fuvG9ri02T+UpeQhQz5M0qxzYrUtYGsTumkuYCnLbh5R6
-	PuX+ENbodQNLqrWHF+D33YSEuEpODKnBI011LJJ6skMmd8uy0n7FpfOVZtUDeRn9
-	Npeq+wedC9lmBeBoPm7C1nlJZyNTjKBkS8G6BQby3agszAS9zG2dIMAMFMwDx4+k
-	ScNu/zO06coBtya4SuGUibdC6v8FJERgyeXQOWHrkt9ptVw1i2H1v7ISC01peTn6
-	sTL3sYKnvRekPjvDZqx6g==
-X-ME-Sender: <xms:sHYeZxgU_XWYYEQnUSMtFxOK2W2gHxaQ5g7NGRD8c-FK24e5DmuG8Q>
-    <xme:sHYeZ2A65Tqdat2VTS1MozpyKRDhgCsBdxs6OPnDtMDEyUtDuAzr7mdxelY-ccZl2
-    bPh00wvVNoMgwGPWg>
-X-ME-Received: <xmr:sHYeZxFz7A07CUQiYctzIEoXHxqtmV5q7iQR_Sqd0sOoxoGRJ60dnB00wkQjHgzIATnIdEcYaBiHZOTuxQVhjz36H-7GD37MXTB3kUet-g>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdejiedguddttdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefhvfevufffkffojghfggfgsedtkeertdertddt
-    necuhfhrohhmpefluhhsthhinhcuhggvihhsshcuoehjuhhsthhinhesjhhushhtihhnfi
-    gvihhsshdrtghomheqnecuggftrfgrthhtvghrnhepfeeuvdehieefleeiiedugfefleei
-    uedtveevkeeigeeiudfhleeluedvkeeiveelnecuffhomhgrihhnpegsmhhivddrpggtrh
-    hsnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepjhhu
-    shhtihhnsehjuhhsthhinhifvghishhsrdgtohhmpdhnsggprhgtphhtthhopedufedpmh
-    houggvpehsmhhtphhouhhtpdhrtghpthhtoheplhgrnhiirghnohdrrghlvgigsehgmhgr
-    ihhlrdgtohhmpdhrtghpthhtohepjhhitgdvfeeskhgvrhhnvghlrdhorhhgpdhrtghpth
-    htoheplhgrrhhssehmvghtrghfohhordguvgdprhgtphhtthhopehrohgshheskhgvrhhn
-    vghlrdhorhhgpdhrtghpthhtohepkhhriihkodgutheskhgvrhhnvghlrdhorhhgpdhrtg
-    hpthhtoheptghonhhorhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrnhgu
-    rhhihidrshhhvghvtghhvghnkhhosehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpth
-    htohepjhhushhtihhnsehjuhhsthhinhifvghishhsrdgtohhmpdhrtghpthhtoheplhhi
-    nhhugidqihhiohesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:sHYeZ2SwnXMfUJwq52yY0X7EzybAtRhKTg3Qh196OiqmKgKhEpDLsw>
-    <xmx:sHYeZ-y2EXdo8vbGYGl7CnoYK_KvM9uY6lexyQf-Ns5mXOuBHT5uFQ>
-    <xmx:sHYeZ86GWWd_PX4KEwEIJc65Zszwn3Gjdlzp9rM2iOQ_BJX_UP2Dpg>
-    <xmx:sHYeZzwLwcw4bk3MHL_EK92OEhPAtlg2k8bkALmJ1WmSUM5jtlDylQ>
-    <xmx:sHYeZygDcd-mbAoGwmQ-KWLUevUlRxt7kB7E3VL4e9zF-w6veQIR8TxC>
-Feedback-ID: icf614246:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 27 Oct 2024 13:21:51 -0400 (EDT)
-From: Justin Weiss <justin@justinweiss.com>
-To: Alex Lanzano <lanzano.alex@gmail.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Justin Weiss <justin@justinweiss.com>,
-	linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Derek J . Clark" <derekjohn.clark@gmail.com>,
-	=?UTF-8?q?Philip=20M=C3=BCller?= <philm@manjaro.org>
-Subject: [PATCH v4 4/4] iio: imu: bmi270: Add support for BMI260
-Date: Sun, 27 Oct 2024 10:20:25 -0700
-Message-ID: <20241027172029.160134-5-justin@justinweiss.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241027172029.160134-1-justin@justinweiss.com>
-References: <20241027172029.160134-1-justin@justinweiss.com>
+	s=arc-20240116; t=1730049880; c=relaxed/simple;
+	bh=zhVGBVUvdv5n44mB2wEPT5OL2UEmLnnvAOHar/u2w1c=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g0IR1Lc6tNphbiUYCmDxfNeg2KHEnAMY/vAfdw7/N+mArsoHbMCSWQnKrreYXsruEINNqKj6dHKpUlgP0M2YunC1fWWjLlEvj84SFoiGPuW1VKcOCG9tur71PpymG2V3w3gkIJyheBnl3keYxctuKJ6ZSM4F8eeVfOs6PWGHZg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NUG8Wn3M; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730049877;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oKr50uLSi3qbyn6NnQwGUQ1OqmR3FtuQutM4PWASyVU=;
+	b=NUG8Wn3MW4TTkst0+/v3NaeLXJZDsjtKrUX9YM0N/ead9BxRIeVo+thn6NGRb60O3ejbOC
+	s7rZHvQp7CNVDV6Zt5vAEcfmDisO/YN2TaqNIV+D04muO6VHLstAcKr4M+w3B8iLWJCqcq
+	mde35Vu1GV6OpjUFdt5kxP3D7qqAy0o=
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
+ [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-622-jzk2n5YRNhqIfRxgeODhTg-1; Sun, 27 Oct 2024 13:24:36 -0400
+X-MC-Unique: jzk2n5YRNhqIfRxgeODhTg-1
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-2e2eba0efc6so3636457a91.3
+        for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 10:24:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730049875; x=1730654675;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oKr50uLSi3qbyn6NnQwGUQ1OqmR3FtuQutM4PWASyVU=;
+        b=vS047K61A0dg23HcOMNF0MDPGMMwvgsl2b/zRU8IGQl58wEsxAmT2mHUM0CSaEaf5z
+         KVYZnKWsMN07ekM214OcbsqTr05us94kPnyTDerC97X8lCqXIm9qLUutD3KVMytfJ0Na
+         dIXi088yBg6qlPMAVtcunXv3bqnVYjutOG13To+ue4nwFAZ0RMMI6d6HJOaJKrY5r7zN
+         O6T70+dSKDpTlgCzeq41AXGjtcgErvnzMCPjr+MdfPVguhy5oIoWTITEjIRLdX1N9P34
+         Ux4lUG/3lWVOsp2Gz8fJOJqXNNitCP4GJy+nYLyPt43Xtj2svyvnfmLcG8cwDZYE6q4M
+         zbPw==
+X-Forwarded-Encrypted: i=1; AJvYcCWRRIKpqKX2J+7spSzpkOCmRNRvQ48JAXelpu7vhtZvLa1z9vzOdz/qdqr5Z4D4uHGV6Vjf6vhb2qZ+UQY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+7MaV134XXsNMVbp2DxHZp8pHeDqhf9DiWQuVUT1M6O2Yzs9n
+	NNTnOWNoG5Z/IK3i8OUoewq1u6coU5NjFsFdhy9uq/SKT2ktq8q5/OdY0jHGuVqumGbe1I7lOct
+	Rv+GpVXG2sbIyVnVDPsFFQdn6wjefnL2NPOx5yJ9TV/cfqRZESEGuswq97z2LiQ==
+X-Received: by 2002:a17:90b:1d89:b0:2d8:3fe8:a195 with SMTP id 98e67ed59e1d1-2e8f0f53d9dmr7801776a91.4.1730049874820;
+        Sun, 27 Oct 2024 10:24:34 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHe+3d9HBdJOxMCmo51cWugL7SDRTWmCgDMsRin/SjlPT/YU/GdVOSAVPjeVeYYGsQojJUnHQ==
+X-Received: by 2002:a17:90b:1d89:b0:2d8:3fe8:a195 with SMTP id 98e67ed59e1d1-2e8f0f53d9dmr7801761a91.4.1730049874473;
+        Sun, 27 Oct 2024 10:24:34 -0700 (PDT)
+Received: from treble.attlocal.net ([2600:1700:6e32:6c00::3e])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e77e56f468sm7388597a91.41.2024.10.27.10.24.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 27 Oct 2024 10:24:33 -0700 (PDT)
+From: Josh Poimboeuf <jpoimboe@redhat.com>
+X-Google-Original-From: Josh Poimboeuf <jpoimboe@kernel.org>
+Date: Sun, 27 Oct 2024 10:24:30 -0700
+To: Jens Remus <jremus@linux.ibm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	linux-kernel@vger.kernel.org, Indu Bhagat <indu.bhagat@oracle.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	linux-perf-users@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+	linux-toolchains@vger.kernel.org, Jordan Rome <jordalgo@meta.com>,
+	Sam James <sam@gentoo.org>, x86@kernel.org,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Ilya Leoshkevich <iii@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>
+Subject: Re: [PATCH v2 00/11] unwind, perf: sframe user space unwinding,
+ deferred perf callchains
+Message-ID: <20241027172430.h6xvamrauxmwccx7@treble.attlocal.net>
+References: <cover.1726268190.git.jpoimboe@kernel.org>
+ <a5c67047-94d9-482b-892b-ef1662d2fe65@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <a5c67047-94d9-482b-892b-ef1662d2fe65@linux.ibm.com>
 
-Adds support for the Bosch BMI260 6-axis IMU to the Bosch BMI270
-driver. Setup and operation is nearly identical to the Bosch BMI270,
-but has a different chip ID and requires different firmware.
+On Wed, Oct 23, 2024 at 03:22:35PM +0200, Jens Remus wrote:
+> We are looking forward to implement support for unwinding of user space
+> using SFrame in kernel/perf on s390. One major concern is that your x86
+> implementation currently relies on a fallback to unwinding using frame
+> pointer. On s390 unwinding using frame pointer is unsupported, because
+> of lack of proper s390x ABI [1] specification and compiler support. In
+> theory there would be a s390-specific alternative of unwinding using
+> backchain (compiler option -mbackchain), but this has limitations and
+> there is currently no distribution where user space is built with
+> backchain.
+> 
+> How much of an issue would it be if s390 could not provide an unwinding
+> fallback implementation? Do you see the possibility to get away without?
 
-Firmware is requested and loaded from userspace.
+No problem, I'll make the fallback dependent on CONFIG_HAVE_UNWIND_USER_FP.
 
-Adds ACPI ID BMI0160, used by several devices including the GPD Win
-Mini, Aya Neo AIR Pro, and OXP Mini Pro.
+> For s390 support of unwinding using SFrame we would need to make a few
+> changes to your generic unwinding framework in the kernel:
 
-GPD Win Mini:
+Also no problem, I'm sure there will need to be tweaks going forward.
 
-Device (BMI2)
-{
-    Name (_ADR, Zero)  // _ADR: Address
-    Name (_HID, "BMI0160")  // _HID: Hardware ID
-    Name (_CID, "BMI0160")  // _CID: Compatible ID
-    Name (_DDN, "Accelerometer")  // _DDN: DOS Device Name
-    Name (_UID, One)  // _UID: Unique ID
-    Method (_CRS, 0, NotSerialized)  // _CRS: Current Resource Settings
-    {
-        Name (RBUF, ResourceTemplate ()
-        {
-            I2cSerialBusV2 (0x0068, ControllerInitiated, 0x00061A80,
-                AddressingMode7Bit, "\\_SB.I2CB",
-                0x00, ResourceConsumer, , Exclusive,
-                )
-            GpioInt (Edge, ActiveLow, Exclusive, PullDefault, 0x0000,
-                "\\_SB.GPIO", 0x00, ResourceConsumer, ,
-                )
-                {   // Pin list
-                    0x008B
-                }
-        })
-        Return (RBUF) /* \_SB_.I2CB.BMI2._CRS.RBUF */
-    }
-    ...
-}
+Thanks for looking at it!  v3 will be posted soon.
 
-Signed-off-by: Justin Weiss <justin@justinweiss.com>
----
- drivers/iio/imu/bmi270/bmi270.h      |  1 +
- drivers/iio/imu/bmi270/bmi270_core.c | 28 +++++++++++++++++++++++++++-
- drivers/iio/imu/bmi270/bmi270_i2c.c  |  9 +++++++++
- drivers/iio/imu/bmi270/bmi270_spi.c  |  2 ++
- 4 files changed, 39 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/iio/imu/bmi270/bmi270.h b/drivers/iio/imu/bmi270/bmi270.h
-index 6173be929bac..fdfad5784cc5 100644
---- a/drivers/iio/imu/bmi270/bmi270.h
-+++ b/drivers/iio/imu/bmi270/bmi270.h
-@@ -29,6 +29,7 @@ struct bmi270_chip_info {
- };
- 
- extern const struct regmap_config bmi270_regmap_config;
-+extern const struct bmi270_chip_info bmi260_chip_info;
- extern const struct bmi270_chip_info bmi270_chip_info;
- 
- int bmi270_core_probe(struct device *dev, struct regmap *regmap,
-diff --git a/drivers/iio/imu/bmi270/bmi270_core.c b/drivers/iio/imu/bmi270/bmi270_core.c
-index 27e501a15095..938cf14d46bd 100644
---- a/drivers/iio/imu/bmi270/bmi270_core.c
-+++ b/drivers/iio/imu/bmi270/bmi270_core.c
-@@ -14,6 +14,11 @@
- #include "bmi270.h"
- 
- #define BMI270_CHIP_ID_REG				0x00
-+
-+/* Checked to prevent sending incompatible firmware to BMI160 devices */
-+#define BMI160_CHIP_ID_VAL				0xD1
-+
-+#define BMI260_CHIP_ID_VAL				0x27
- #define BMI270_CHIP_ID_VAL				0x24
- #define BMI270_CHIP_ID_MSK				GENMASK(7, 0)
- 
-@@ -64,6 +69,7 @@
- #define BMI270_PWR_CTRL_ACCEL_EN_MSK			BIT(2)
- #define BMI270_PWR_CTRL_TEMP_EN_MSK			BIT(3)
- 
-+#define BMI260_INIT_DATA_FILE "bmi260-init-data.fw"
- #define BMI270_INIT_DATA_FILE "bmi270-init-data.fw"
- 
- enum bmi270_scan {
-@@ -86,6 +92,13 @@ static const unsigned long bmi270_avail_scan_masks[] = {
- 	0
- };
- 
-+const struct bmi270_chip_info bmi260_chip_info = {
-+	.name = "bmi260",
-+	.chip_id = BMI260_CHIP_ID_VAL,
-+	.fw_name = BMI260_INIT_DATA_FILE,
-+};
-+EXPORT_SYMBOL_NS_GPL(bmi260_chip_info, IIO_BMI270);
-+
- const struct bmi270_chip_info bmi270_chip_info = {
- 	.name = "bmi270",
- 	.chip_id = BMI270_CHIP_ID_VAL,
-@@ -546,8 +559,21 @@ static int bmi270_validate_chip_id(struct bmi270_data *bmi270_device)
- 	if (ret)
- 		return dev_err_probe(dev, ret, "Failed to read chip id");
- 
-+	/*
-+	 * Some manufacturers use "BMI0160" for both the BMI160 and
-+	 * BMI260. If the device is actually a BMI160, the bmi160
-+	 * driver should handle it and this driver should not.
-+	 */
-+	if (chip_id == BMI160_CHIP_ID_VAL)
-+		return -ENODEV;
-+
- 	if (chip_id != bmi270_device->chip_info->chip_id)
--		dev_info(dev, "Unknown chip id 0x%x", chip_id);
-+		dev_info(dev, "Unexpected chip id 0x%x", chip_id);
-+
-+	if (chip_id == bmi260_chip_info.chip_id)
-+		bmi270_device->chip_info = &bmi260_chip_info;
-+	else if (chip_id == bmi270_chip_info.chip_id)
-+		bmi270_device->chip_info = &bmi270_chip_info;
- 
- 	return 0;
- }
-diff --git a/drivers/iio/imu/bmi270/bmi270_i2c.c b/drivers/iio/imu/bmi270/bmi270_i2c.c
-index 394f27996059..6bd82e4362ab 100644
---- a/drivers/iio/imu/bmi270/bmi270_i2c.c
-+++ b/drivers/iio/imu/bmi270/bmi270_i2c.c
-@@ -32,11 +32,19 @@ static int bmi270_i2c_probe(struct i2c_client *client)
- }
- 
- static const struct i2c_device_id bmi270_i2c_id[] = {
-+	{ "bmi260", (kernel_ulong_t)&bmi260_chip_info },
- 	{ "bmi270", (kernel_ulong_t)&bmi270_chip_info },
- 	{ }
- };
- 
-+static const struct acpi_device_id bmi270_acpi_match[] = {
-+	/* GPD Win Mini, Aya Neo AIR Pro, OXP Mini Pro, etc. */
-+	{ "BMI0160",  (kernel_ulong_t)&bmi260_chip_info },
-+	{ }
-+};
-+
- static const struct of_device_id bmi270_of_match[] = {
-+	{ .compatible = "bosch,bmi260", .data = &bmi260_chip_info },
- 	{ .compatible = "bosch,bmi270", .data = &bmi270_chip_info },
- 	{ }
- };
-@@ -44,6 +52,7 @@ static const struct of_device_id bmi270_of_match[] = {
- static struct i2c_driver bmi270_i2c_driver = {
- 	.driver = {
- 		.name = "bmi270_i2c",
-+		.acpi_match_table = bmi270_acpi_match,
- 		.of_match_table = bmi270_of_match,
- 	},
- 	.probe = bmi270_i2c_probe,
-diff --git a/drivers/iio/imu/bmi270/bmi270_spi.c b/drivers/iio/imu/bmi270/bmi270_spi.c
-index 7c2062c660d9..b1fd9fc5dc98 100644
---- a/drivers/iio/imu/bmi270/bmi270_spi.c
-+++ b/drivers/iio/imu/bmi270/bmi270_spi.c
-@@ -65,11 +65,13 @@ static int bmi270_spi_probe(struct spi_device *spi)
- }
- 
- static const struct spi_device_id bmi270_spi_id[] = {
-+	{ "bmi260", (kernel_ulong_t)&bmi260_chip_info},
- 	{ "bmi270", (kernel_ulong_t)&bmi270_chip_info },
- 	{ }
- };
- 
- static const struct of_device_id bmi270_of_match[] = {
-+	{ .compatible = "bosch,bmi260", .data = &bmi260_chip_info },
- 	{ .compatible = "bosch,bmi270", .data = &bmi270_chip_info },
- 	{ }
- };
 -- 
-2.47.0
+Josh
 
 
