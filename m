@@ -1,180 +1,179 @@
-Return-Path: <linux-kernel+bounces-383600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D57299B1DD0
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 14:26:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 57C409B1DD4
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 14:33:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94EB2281C34
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 13:26:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1B97281B14
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 13:33:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1975D4685;
-	Sun, 27 Oct 2024 13:26:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7AC42FE33;
+	Sun, 27 Oct 2024 13:33:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="aOaB/FGV"
-Received: from mail-ed1-f68.google.com (mail-ed1-f68.google.com [209.85.208.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=zillerbaer@gmx.de header.b="PHOqhN0U"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F0281DA4E
-	for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 13:26:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C523F370
+	for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 13:33:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730035601; cv=none; b=KTBPdGggCbh27Y2i6S18C4UnzIidgMXXFhSAj33WnQ3xwH/N3fzrplPD4xkXBAIjNGKEA2OT4rjITfGycB0n0f1tuD8B2+jVhezMkBRfgaon4o8TJyqKHy17n2rFg2zeH9wUB9R4eRgQRKacO3A9H9wE2mJrrh1Y8je6Guzkjcs=
+	t=1730035983; cv=none; b=LV6dNvftEilvOD0edlf6tjadAAindZ8sX/W3EH7LRzQGf5ZBbhcRayApd2+tSNXwb3hwGFEe+A++sFSfrkD272029ZK+FtK4rFly0D8xyXU/pzp/1FD3VHMa02PlHE3pa9Hyn8NfZTLG/GNntHqeeaQCdw/9TFoiLVrvWYvU+Qw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730035601; c=relaxed/simple;
-	bh=wvx2ME6bKjTIAPbcU/DAQDlfa8UXrdBQj2biPzzxyl4=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ukl1RSAomQbA9enIHOGGSXIGvajZ4ksZb8q3KJd2c9sXC+4IchmPbBDQR8WzcQ5lA1YBCqicVV7iJRtxtol4A/pxHL5dBMqJAjJ4r44/ZMuoD88SsWxk2AyDBGH2zMLmYuqAdPVhYtLdAusrsxAybWhNTXafB6mM5ONDLL+QV58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=aOaB/FGV; arc=none smtp.client-ip=209.85.208.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f68.google.com with SMTP id 4fb4d7f45d1cf-5c984352742so3763619a12.1
-        for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 06:26:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1730035597; x=1730640397; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=hkayB6WnSxJs4BKoPWSzkYu8BfwRMxQ9y2LaJgKG6IY=;
-        b=aOaB/FGVmkeQ3akQyb4N6EOp9dm4Tzj74BHV+5/08ZTKaimYPxNCgSjO44YOh7H0P3
-         UVmLL1BVzbRjYFBqgqqsKAPma4mBh2DLDYBgy1bmgTyN1XCBJhh1RXURqlVmv4fbdkNv
-         2RygW9l1+JISERGMtDMoIOOVeMrx/4dKIcZcC3GxxC9V2Uot9FQfly3YLJNapwLThYzY
-         m3inBww0G7HSHyCO8x4VuvYTv8/42H1vSM4FhVi4Clwx4rxtnF2XKQXto245kl2HyfKG
-         FYqjAMyWzbajNhj6RIlQiqTnPhSZl1kfnEQaHqm9b2/YtI4m+G8C1LIpjbqX9s6h2EWc
-         eoDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730035597; x=1730640397;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hkayB6WnSxJs4BKoPWSzkYu8BfwRMxQ9y2LaJgKG6IY=;
-        b=bNcAyZKyCZetGh5QZ+wzZc8iGbIh6zZWY9pH5y5jHopMRGJ0vsSSKYqu/xjQ5zixrE
-         dvbXai0FuLL4aL0hN0jkmgdgn0UMWHpaGGLoc6e+7OwZHdACgayz/HjFdBUkIZckJ5AZ
-         8AUF0d/RNlEkKHWeWxhUj1fCJRQF+UqDAym03HLRRwTlY0yV2VjGRMDmlsrAxNZ9Kqqq
-         K3GigA0lxR2UUgry0hBbAg9RqwY5ng1/m2i+3Kdf08XhlSyrmaEjMOkRAwIz4ST/32dG
-         pwRxn95cpht1iQVRxfgrXRXP6dphoaKb0+JlDB0mHrzMIYs1r8TTjRVA8t1MOSU0QjI3
-         5XlA==
-X-Forwarded-Encrypted: i=1; AJvYcCVOMCx28hvckIh8+ptjZoPDGa8WyJNu8vEKhK8tqYfcodm9J3fUOPd4dtqGuGBOmVAwWBPQ9lGfX/r4jNM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzGQ8EqqMJJm130HjYtrjGjziA2rbOgOsqqBpK8/NgGBFxqjIRq
-	cvUncqIEOEfeG7NTfP21tycVroy9gOd/rD+iHP2fwTpgt8ID+sN+LbNjCXMo5II=
-X-Google-Smtp-Source: AGHT+IGODKCkNnm13dGswFX5M8oMKsn4zXbFtPFHoQf1TvOwmbqjg60TYzbmHIVU8ekajFjlSp52dQ==
-X-Received: by 2002:a17:907:94d0:b0:a9a:634:dd2 with SMTP id a640c23a62f3a-a9de61ceb81mr470840366b.43.1730035597406;
-        Sun, 27 Oct 2024 06:26:37 -0700 (PDT)
-Received: from localhost (host-79-35-211-193.retail.telecomitalia.it. [79.35.211.193])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cbb62c3646sm2364100a12.47.2024.10.27.06.26.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 27 Oct 2024 06:26:36 -0700 (PDT)
-From: Andrea della Porta <andrea.porta@suse.com>
-X-Google-Original-From: Andrea della Porta <aporta@suse.de>
-Date: Sun, 27 Oct 2024 14:26:59 +0100
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Andrea della Porta <andrea.porta@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Stefan Wahren <wahrenst@gmx.net>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [PATCH v2 10/14] arm64: dts: rp1: Add support for RaspberryPi's
- RP1 device
-Message-ID: <Zx4_o34Iyqb5mh_l@apocalypse>
-References: <cover.1728300189.git.andrea.porta@suse.com>
- <3f6f38c06b065f5f6034ad4ed3a24902ee59f378.1728300190.git.andrea.porta@suse.com>
- <20241007165740.14d372f5@bootlin.com>
+	s=arc-20240116; t=1730035983; c=relaxed/simple;
+	bh=Z4vq4XiAVJ+SVe00yOMPKY7LGZbqb+bkTXyrRPPv3+U=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=n5mx7aNXIvweFiuyhWc4LSHr6oJsOtJ3vLjvRimPkC6lvplPdjOG1c5nflVKh2ersk5yf9V5U1zxo/9inCJv7g/ImkTQR0wu7F1X+58hEvWwru01/Rx95NskaBZDb+jA22y1+7RYTcLh1onDyAgbBmA0vbBpBHRdlXPQrvqJqaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=zillerbaer@gmx.de header.b=PHOqhN0U; arc=none smtp.client-ip=212.227.15.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1730035953; x=1730640753; i=zillerbaer@gmx.de;
+	bh=CRby7dmwgTF0ikgqeJhgwhCuPsnBA2ft/jZDlJBhkmE=;
+	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:In-Reply-To:
+	 References:MIME-Version:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=PHOqhN0USMrb0agtbMuwVxj/nCIfycdeCg3UFfunRgtkmOGOM1LG/ky/oSi28uZY
+	 bBgzrUKLrfDQjIkp3MF2rf4w3hNS1tp94wyGHmYnQr+izNeUKhMK+QNBekEPAr7oK
+	 /nDx4OhBpDyr/9oW4a4HZGPJcWaDS/Tju0T3bTGwh1/AVWO+0OyAXHV+SHQdVQHIg
+	 9MepWMSofkqc4UlgJVe4b/VZglwAeW89wiuYoOxYUWVSO/2bpzusG7Aek7JLKwu4l
+	 8MyKsoI5WQqeF7LqE8wXLE1kV3SjVZG7tGF7UK5v6SaUtSlDrWbde7Jlt7gyvA6+P
+	 u4uvyuj0q+Kia6HBjA==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from schleppi.lan ([91.14.228.167]) by mail.gmx.net (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MtfNl-1tsMLm0o4F-00yCgE; Sun, 27
+ Oct 2024 14:32:33 +0100
+Date: Sun, 27 Oct 2024 14:32:19 +0100
+From: Jens Ziller <zillerbaer@gmx.de>
+To: Shuijing Li <shuijing.li@mediatek.com>
+Cc: <chunkuang.hu@kernel.org>, <p.zabel@pengutronix.de>,
+ <airlied@gmail.com>, <daniel@ffwll.ch>, <matthias.bgg@gmail.com>,
+ <angelogioacchino.delregno@collabora.com>, <jitao.shi@mediatek.com>,
+ <dri-devel@lists.freedesktop.org>, <linux-mediatek@lists.infradead.org>,
+ <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+ <Project_Global_Chrome_Upstream_Group@mediatek.com>
+Subject: Re: [PATCH v2] mediatek: dsi: Correct calculation formula of PHY
+ Timing
+Message-ID: <20241027143219.56e7b4d0@schleppi.lan>
+In-Reply-To: <20240412031208.30688-1-shuijing.li@mediatek.com>
+References: <20240412031208.30688-1-shuijing.li@mediatek.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241007165740.14d372f5@bootlin.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:Xcy5zVxWCRLQ6wQYRLlEEyAXQMtxxOLf8Uy67bys0mFVHke0mm0
+ eW87nZYvbJeWK0bXYf0/H2gbewq0VQXgKnv7sV25mS3FSJoS/3L40FAhSo86M1A9MwHRz1i
+ Vp5ykzLWplMIjtpFDWW/9XLXRNBYuBQMb80FDvCL1LWxuHl8vlm87FaF1Ldn5eZiNEhsJMn
+ 65wOXCM/ak4MdnSCS82zA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:QaEgIXRvn+4=;kRhF5hx+fLQztGb6SOdlfogKUX3
+ cZ4yacDvl+YE/uQSp3Mgv5FtcwN6NycUvL6odgmEJnGsZUXJqi+UPg+hT6moPiF/O1rNpNSQl
+ XHO9KOxWATLLgRL4dhmaT1QLiBoG6iiGvEoqNHvW3jAF4DlgI646eqOSS/EUqfDWtUogabTd2
+ KVAYYC3DiXWjrlu2cXSOKZ42DDLVOUgb8gsjMWz1547LIi0b8BN262McVxLlahjniUOXz/1wE
+ yUwh1Xqqk5hKZ4fFEAakfQLIzjGT882ElK/Tchy67UEz/0y7d1DrZtIS4BgVVKwJQ9JouH1S0
+ x/eiAVMzhQ60GKRinQi0BF/hJX1GDbQl4P+uIYeintg8urbEpVdoy8OVl0YPz6nDkDb0+W5c4
+ LxypArRX6RBi3FLov0I4u3ZhHtFtLZXeL/MdL+/MDXJZlfL2YwmxhBMZwKPgyzoh+EAXRzuwQ
+ KKZ5DeRR52kufNs71Oviy9TrEx6+Gb/iP3vyNmUUhJzv3evHwdNqgWDneziFB1KV8/S+kZjsR
+ 6IZrRJMhSyePbRhaaWuabNoY3DC1ZMQMjK9Z5bcxF8q36COPivBAh7PNCdY56mqStlNZm48Xv
+ tOPXcVgJRIE1+gpwfLVUbbLWY3RsKVEq63Zll26E2Aja9rJ+vck3+uQ6SttH1FjuzLu+3K34t
+ JnW5/A6tD75atEHBJJ9UsUYuQNW2t7wA59dQ4fC4eKQrX404EJ17MvzuGUA/OqFs7h0buzGi5
+ hL3R1J8DSXTSYu3cMyL8lS2njdslfQs0ks66XAQB/c1qJuE0n84M1J/jDNkmIwTicRjgJmxAg
+ LXpHj0ATkquo83uh4K2vjRWA==
 
-Hi Herve,
 
-On 16:57 Mon 07 Oct     , Herve Codina wrote:
-> Hi Andrea,
-> 
-> On Mon,  7 Oct 2024 14:39:53 +0200
-> Andrea della Porta <andrea.porta@suse.com> wrote:
-> 
-> > RaspberryPi RP1 is a multi function PCI endpoint device that
-> > exposes several subperipherals via PCI BAR.
-> > Add a dtb overlay that will be compiled into a binary blob
-> > and linked in the RP1 driver.
-> > This overlay offers just minimal support to represent the
-> > RP1 device itself, the sub-peripherals will be added by
-> > future patches.
-> > 
-> > Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
-> > ---
-> 
-> ...
-> > +/ {
-> > +	fragment@0 {
-> > +		target-path="";
-> > +		__overlay__ {
-> > +			compatible = "pci1de4,1";
-> 
-> The compatible is not needed here. Indeed, it will be added by the PCI core
-> when it scans the bus and adds the missing nodes.
->   https://elixir.bootlin.com/linux/v6.12-rc2/source/drivers/pci/of_property.c#L383
+Am Fri, 12 Apr 2024 11:11:39 +0800
+schrieb Shuijing Li <shuijing.li@mediatek.com>:
 
-Sure, but I've added it so that the dts could be validated.
+> This patch correct calculation formula of PHY timing.
+> The spec define HS-PREPARE should be from 40ns+4*UI(44ns) to
+> 85ns+6*UI(91ns). But current duration is 88ns and is near the
+> boundary. So this patch make the duration to 64ns so it is near the
+> safe range.
 
-> 
-> > +			#address-cells = <3>;
-> > +			#size-cells = <2>;
-> > +
-> > +			pci_ep_bus: pci-ep-bus@1 {
-> > +				compatible = "simple-bus";
-> > +				ranges = <0xc0 0x40000000
-> > +					  0x01 0x00 0x00000000
-> > +					  0x00 0x00400000>;
-> > +				dma-ranges = <0x10 0x00000000
-> > +					      0x43000000 0x10 0x00000000
-> > +					      0x10 0x00000000>;
-> > +				#address-cells = <2>;
-> > +				#size-cells = <2>;
-> > +				interrupt-controller;
-> > +				interrupt-parent = <&pci_ep_bus>;
-> > +				#interrupt-cells = <2>;
-> 
-> Not sure this node should be an interrupt controller.
-> The interrupt controller is the PCI device itself (i.e.the node
-> where the overlay is applied).
+Hi Shuijing,
 
-Right.
+with this patch the panel in the Tentacruel ASUS Chromebook CM14
+(CM1402F) flickers. There are 1 or 2 times per second a black panel.
+Stable Kernel 6.11.5 and mainline 6.12-rc4 works only when I reverse
+this patch. There's a bug inside. Can you please check that?
 
-Many thanks,
-Andrea
+Best regards
+Jens
 
-> 
-> Best regards,
-> Hervé
-> 
+>
+> Signed-off-by: Shuijing Li <shuijing.li@mediatek.com>
+> ---
+> Changes in v2:
+> Add a commit to describe the improvements to this patch in detail,
+> per suggestion frome previous thread:
+> https://patchwork.kernel.org/project/linux-mediatek/patch/20240315072945=
+.19502-1-shuijing.li@mediatek.com/
+> ---
+>  drivers/gpu/drm/mediatek/mtk_dsi.c | 33
+> +++++++++++++++--------------- 1 file changed, 17 insertions(+), 16
+> deletions(-)
+>
+> diff --git a/drivers/gpu/drm/mediatek/mtk_dsi.c
+> b/drivers/gpu/drm/mediatek/mtk_dsi.c index a2fdfc8ddb15..d1bd7d671880
+> 100644 --- a/drivers/gpu/drm/mediatek/mtk_dsi.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_dsi.c
+> @@ -235,22 +235,23 @@ static void mtk_dsi_phy_timconfig(struct
+> mtk_dsi *dsi) u32 data_rate_mhz =3D DIV_ROUND_UP(dsi->data_rate,
+> 1000000); struct mtk_phy_timing *timing =3D &dsi->phy_timing;
+>
+> -	timing->lpx =3D (60 * data_rate_mhz / (8 * 1000)) + 1;
+> -	timing->da_hs_prepare =3D (80 * data_rate_mhz + 4 * 1000) /
+> 8000;
+> -	timing->da_hs_zero =3D (170 * data_rate_mhz + 10 * 1000) /
+> 8000 + 1 -
+> -			     timing->da_hs_prepare;
+> -	timing->da_hs_trail =3D timing->da_hs_prepare + 1;
+> -
+> -	timing->ta_go =3D 4 * timing->lpx - 2;
+> -	timing->ta_sure =3D timing->lpx + 2;
+> -	timing->ta_get =3D 4 * timing->lpx;
+> -	timing->da_hs_exit =3D 2 * timing->lpx + 1;
+> -
+> -	timing->clk_hs_prepare =3D 70 * data_rate_mhz / (8 * 1000);
+> -	timing->clk_hs_post =3D timing->clk_hs_prepare + 8;
+> -	timing->clk_hs_trail =3D timing->clk_hs_prepare;
+> -	timing->clk_hs_zero =3D timing->clk_hs_trail * 4;
+> -	timing->clk_hs_exit =3D 2 * timing->clk_hs_trail;
+> +	timing->lpx =3D (80 * data_rate_mhz / (8 * 1000)) + 1;
+> +	timing->da_hs_prepare =3D (59 * data_rate_mhz + 4 * 1000) /
+> 8000 + 1;
+> +	timing->da_hs_zero =3D (163 * data_rate_mhz + 11 * 1000) /
+> 8000 + 1 -
+> +		timing->da_hs_prepare;
+> +	timing->da_hs_trail =3D (78 * data_rate_mhz + 7 * 1000) / 8000
+> + 1; +
+> +	timing->ta_go =3D 4 * timing->lpx;
+> +	timing->ta_sure =3D 3 * timing->lpx / 2;
+> +	timing->ta_get =3D 5 * timing->lpx;
+> +	timing->da_hs_exit =3D (118 * data_rate_mhz / (8 * 1000)) + 1;
+> +
+> +	timing->clk_hs_prepare =3D (57 * data_rate_mhz / (8 * 1000)) +
+> 1;
+> +	timing->clk_hs_post =3D (65 * data_rate_mhz + 53 * 1000) /
+> 8000 + 1;
+> +	timing->clk_hs_trail =3D (78 * data_rate_mhz + 7 * 1000) /
+> 8000 + 1;
+> +	timing->clk_hs_zero =3D (330 * data_rate_mhz / (8 * 1000)) + 1
+> -
+> +		timing->clk_hs_prepare;
+> +	timing->clk_hs_exit =3D (118 * data_rate_mhz / (8 * 1000)) + 1;
+>
+>  	timcon0 =3D timing->lpx | timing->da_hs_prepare << 8 |
+>  		  timing->da_hs_zero << 16 | timing->da_hs_trail <<
+> 24;
+
 
