@@ -1,119 +1,108 @@
-Return-Path: <linux-kernel+bounces-383725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3D619B1F87
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 19:04:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 748B29B1F89
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 19:04:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BA771F21537
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 18:04:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B0801C2098A
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 18:04:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0912C16F8F5;
-	Sun, 27 Oct 2024 18:03:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F793170A13;
+	Sun, 27 Oct 2024 18:04:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QdqBQ8sp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="T0imSiSU"
+Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61C5828F5
-	for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 18:03:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3850217BB28;
+	Sun, 27 Oct 2024 18:03:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730052235; cv=none; b=jYx+R9cgpoPsFEwrfse9xhlRb1eOdz3/SlHkWax6vu4hCZsBEusT7vnjCU1ZhQsXosR2YOdn2ElqLRfWk9wGNhu79sy2B6dUsT66/3Io7un3OQyLOUJKnSEg+AHbM4Oem4Bc9KSWVonLFuPo4nnc4Q4sWztEHvpPx0vvJI0NfxY=
+	t=1730052242; cv=none; b=ffTZZHDfZ2F/3b0Ze7fPW8gLUwhCQRYRrWTH/DVLfyh8+jENPABvmoUBN80emqyy2usFTOWZXp4M2MJlL3EJqsCSNsRYQTgrj/OrUdLSxnpXcj+U+iKQg/wTa8fyWMeVrVvq8O2UBjsjgqsNhUG8iyOSFyREO3nwbFxPdGTjZdQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730052235; c=relaxed/simple;
-	bh=/hIsMd6rdRDYha3A27+FzlsMw32f6kZGTal0sz54thY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=niqJqbRrfrfbSukNEDjbC2VYPfQn7yA0Nlwe19dIlZvHFBX15Y8r1zWCAhqHfsnNkFYGCJWOVg2QGIeDu8Uhaj58Z3B2G3RJ8k2PssCCPrbOBtJoXTtjbRIE13hQhC4gd5MkMemp6JHlNRCriDDZOdOq6lux99FTSHOVMykbO40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QdqBQ8sp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D191DC4CEC3;
-	Sun, 27 Oct 2024 18:03:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730052235;
-	bh=/hIsMd6rdRDYha3A27+FzlsMw32f6kZGTal0sz54thY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QdqBQ8spphZDq6y5tYQMEBdcSjc7KjGBt7TaK5WdqFxNvnhleOARfmDrQrG2hDHpJ
-	 K0hiMQgQOEhi68F8hkh6GKFeMp+zqgwZTWeI33YONxVEcP1OqHokgy8nChUJ/3i02R
-	 ACUDtSAxg31nmjG025Rf5HjyN9dDNBjr+myNLUFT3GPohzQ6pEXkRNzeR6pD2a6BjK
-	 aJ8FP0V7TmA9en9q4/3t5LzCChNMZi0zJM1Ex/Pxe4crEWBFsPbRRVdZAjjL607pTX
-	 +XGZqzgdJDVts3+XRXn3Lly01gL2I0SdriNVhvtRy/izrGFLatv/hTWykJSQ7P0lCL
-	 MMgMq7kyhkdKw==
-Date: Sun, 27 Oct 2024 08:03:53 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Andrea Righi <arighi@nvidia.com>
-Cc: David Vernet <void@manifault.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] sched_ext: Introduce NUMA awareness to the default
- idle selection policy
-Message-ID: <Zx6AiTja6jX7bC7R@slm.duckdns.org>
-References: <20241027174953.49655-1-arighi@nvidia.com>
+	s=arc-20240116; t=1730052242; c=relaxed/simple;
+	bh=ZnZmB8Py+/Z4N0BHxyg2cP7zkwgVmxt+IGO1cvKBO7A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=WuwRiPwlXwvF9zRug17BEepXuA6tzCdM4YFVeaBg4ziJd3o2oXBZSEMYs1UqtQFZyzILsP8M3dymNwG8cnm8CaSHowFEnWnQ50j7sp7q8+v+n2LJYnf+AM/ANKY+enpGd+8UIkSdXL21qWPHPUkuhPIp8QkRVo8AuH7NBiWP+vY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=T0imSiSU; arc=none smtp.client-ip=193.68.50.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
+Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
+	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id C96F4A0472;
+	Sun, 27 Oct 2024 19:03:56 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:from:from:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=mail; bh=SRsfm+4ttOXL38doVebO
+	wSAVzLny2y4gp7NYq/iRAnA=; b=T0imSiSUi8SfNPL3bjugdvFvHZv0geCXp1UH
+	tLJC9zzHCUbFBmSTSzNuX3u9vjmk5iv+0bRVo2/ibFTsMlEWKjaVE2WudqxhfFv4
+	f56qeQPcs/to3UffaXZAbTBl0h2VA1S9FyklHvPOonMnodO42Q9mpbAnTv9TgFto
+	bALV1hqIrxhoAiF8KL7cnb0qDZERcOZQ+L1KEDLgXvt+Yg59eCUfF+L+syiUcXGc
+	/9MTdHgZFJMTqZbkiCEXsL3E0CbTvLvE5E+H87eYgn7raQZvaoyjAEA3o4VgU/cl
+	avmn6OfVx8xejypNAS2oDgoz6BBMDjSg4nvnpJ5Q8bkIurZYENjTvHrW7IUBfmGp
+	9Z2XopKN6iPHA4gIsQtm5yOam03Z0sxRLvRpCfPQryhhUVGFuthXBy2zIKa9N7EF
+	gJGukIFEMIwYNjcBd+chqW6OqJehE4guSM8cKIEDlFkcrMcSjk7QewH7TPJwyTMS
+	rA4znpTmmfbgjRrQzJOjw2Docgon+u21NJbgvuLrdULZ3gwA21n5abAm+c8yvqBJ
+	eo5vQcCJSiRpNms1TB7h8nmKtyZyVHUzaeZEBPU2OOAGvEfiIILv8mqxps1I3YkT
+	d+leQUWXBMgiFaTsXCJlyOu8r7ATBcT9DH7aT2/wGDq41+e7e6ZkqqbgEPiusQp8
+	Q1AvVeM=
+Message-ID: <4b614d6c-6b46-438a-b5c3-de1e69f0feb8@prolan.hu>
+Date: Sun, 27 Oct 2024 19:03:55 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241027174953.49655-1-arighi@nvidia.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 02/10] dma-engine: sun4i: Add has_reset option to quirk
+To: <dmaengine@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-sunxi@lists.linux.dev>, <linux-kernel@vger.kernel.org>
+CC: Mesih Kilinc <mesihkilinc@gmail.com>, Vinod Koul <vkoul@kernel.org>,
+	Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>, Philipp Zabel <p.zabel@pengutronix.de>
+References: <20241027091440.1913863-1-csokas.bence@prolan.hu>
+ <20241027091440.1913863-2-csokas.bence@prolan.hu>
+Content-Language: en-US
+From: =?UTF-8?B?Q3PDs2vDoXMgQmVuY2U=?= <csokas.bence@prolan.hu>
+In-Reply-To: <20241027091440.1913863-2-csokas.bence@prolan.hu>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: ATLAS.intranet.prolan.hu (10.254.0.229) To
+ ATLAS.intranet.prolan.hu (10.254.0.229)
+X-EsetResult: clean, is OK
+X-EsetId: 37303A2980D94855677C61
 
-Hello,
 
-On Sun, Oct 27, 2024 at 06:49:53PM +0100, Andrea Righi wrote:
-...
-> +static void update_selcpu_topology(void)
->  {
-> +	bool enable_llc = false, enable_numa = false;
-> +	s32 cpu;
->  
-> +	rcu_read_lock();
-> +	for_each_possible_cpu(cpu) {
-> +		struct sched_domain *sd;
-> +		const struct cpumask *cpus;
-> +
-> +		sd = rcu_dereference(per_cpu(sd_llc, cpu));
-> +		if (sd) {
-> +			cpus = sched_domain_span(sd);
-> +			pr_debug("sched_ext: LLC cpu%d: %*pbl\n",
-> +				 cpu, cpumask_pr_args(cpus));
-> +			if (cpumask_weight(cpus) < num_possible_cpus())
-> +				enable_llc = true;
-> +		}
-> +
-> +		sd = highest_flag_domain(cpu, SD_NUMA);
-> +		if (sd) {
-> +			cpus = sched_group_span(sd->groups);
-> +			pr_debug("sched_ext: NUMA cpu%d: %*pbl\n",
-> +				 cpu, cpumask_pr_args(cpus));
-> +			if (cpumask_weight(cpus) < num_possible_cpus())
-> +				enable_numa = true;
 
-This isn't a big problem but the loop looks a bit odd in that once both are
-set, it's obvious that there's no reason to continue. Doesn't this need to
-check only one CPU in fact? e.g. for the first possible CPU, if sd doesn't
-exist or cpumask_weight(sd) == num_possible_cpu(), don't we know for sure
-that llc or numa doesn't need to be enabled and vice-versa?
+On 2024. 10. 27. 10:14, Csókás, Bence wrote:
+> From: Mesih Kilinc <mesihkilinc@gmail.com>
+> 
+> Allwinner suniv F1C100s has a reset bit for DMA in CCU. Sun4i do not
+> has this bit but in order to support suniv we need to add it. So add
+> support for reset bit.
+> 
+> Signed-off-by: Mesih Kilinc <mesihkilinc@gmail.com>
+> [ csokas.bence: Rebased and addressed comments ]
+> Signed-off-by: Csókás, Bence <csokas.bence@prolan.hu>
+> ---
+> 
+> Notes:
+>      Changes in v2:
+>      * Call reset_control_deassert() unconditionally, as it supports optional resets
+>      * Use dev_err_probe()
 
->  static s32 scx_select_cpu_dfl(struct task_struct *p, s32 prev_cpu,
->  			      u64 wake_flags, bool *found)
->  {
-> +	const struct cpumask *llc_cpus = NULL;
-> +	const struct cpumask *numa_cpus = NULL;
->  	s32 cpu;
->  
->  	*found = false;
-...
-> +	if (p->nr_cpus_allowed >= num_possible_cpus()) {
-> +		if (static_branch_unlikely(&scx_selcpu_topo_numa))
-> +			numa_cpus = cpumask_of_node(cpu_to_node(prev_cpu));
-> +
-> +		if (static_branch_unlikely(&scx_selcpu_topo_llc)) {
+I missed one, namely:
 
-static_branch_maybe() is probably the better one for llc.
+> +		dev_err(&pdev->dev,
+> +			"Failed to deassert the reset control\n");
+> +		goto err_clk_disable;
+> +	}
 
-Thanks.
+For now I'll resubmit just this patch, and then wait for more comments 
+that may arise during the week, then resubmit the whole amended series.
 
--- 
-tejun
 
