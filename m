@@ -1,66 +1,65 @@
-Return-Path: <linux-kernel+bounces-383518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0174C9B1CBC
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 10:22:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9BBD9B1CBA
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 10:22:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5F60281DB6
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 09:22:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 715201F21551
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 09:22:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDF43768E1;
-	Sun, 27 Oct 2024 09:21:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE40C14F104;
+	Sun, 27 Oct 2024 09:21:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="k9T0I8ki"
+	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="qIBXSWKP"
 Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C66A131E2D;
-	Sun, 27 Oct 2024 09:21:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB8C957CB6;
+	Sun, 27 Oct 2024 09:21:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730020868; cv=none; b=qvzBiKSOWy/6BQsSQ/mEU+bRpbk/iEG+/+g5Nsxwau1LBEHPaxYIXQFa60pMRWKJPkf2h0l/EmvLUXXEHjLRSKvohXv6uxtl8hPa09s+vyFt5SUk0mXM5IiOc+Htmnc0sPVojf87s9NdI1/PVuzw0muQGh/cO+7OxSZknZVgAPY=
+	t=1730020868; cv=none; b=TMxfkzhxWKdyb5rq1+u3bSdox2VyA2HjcldR3y71hWgenDlo9YxTiBE/vSZEo6Wlnj799aayEllmwpqM0PMZ4NHJbWkIWM0Hh8KdprrVnXytL5G+thjaLf8aI6Vp9mUPhDxzfJwOJp0BPg9BUYzLjpw74F1JsqcV3ZUo6oGZNTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1730020868; c=relaxed/simple;
-	bh=WkVG92KNGudSZMatx1GeAahvdfnBBhhb6qJUAzX4wiY=;
+	bh=gHD9yVfr2NpwXHx3iGiB9EPI6jKOz7lrwADbR8y8a/s=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QCTo5fNZ9hNOstB3I4BeM81BbK3TYbBTn4ALuwYpZwNEtADIUUfg7t0XQ1pKX94opGJOdMurGyB2jaMyhRMo38PjG0fXRuPRq0hhOvMblgUXwoFapuOGKaa1le4mmqiZU+UrElmN5W2/CmdlCgC8YeiCe4p8aJC0HWjRt1SQOQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=k9T0I8ki; arc=none smtp.client-ip=193.68.50.107
+	 MIME-Version:Content-Type; b=T7rhya0Mgbasb5LDsld0RmQRENM6XplD2Byb9oe12lP2VOLyOAqi/ANE1Mv7ehV5K//8B0EXOJItlxYEItHO/DqvSN7On5Ktwyd+pSSnNz6LmBNqIcRRgW3MPTAHUHHG7xMNSVRBcdKicB5xfn7ChKtsIENDSrDYcm3vEtokyYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=qIBXSWKP; arc=none smtp.client-ip=193.68.50.107
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
 Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
-	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id ADE14A0C02;
+	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 5988BA0DC8;
 	Sun, 27 Oct 2024 10:21:03 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
 	:cc:content-transfer-encoding:content-type:content-type:date
 	:from:from:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=mail; bh=DhxQ91EGT4DSYqoWyGId
-	CsC8RIt53R71Y7/n9OcCCsE=; b=k9T0I8kirk24I+BFTtDXym+daT51HcT+Vi6e
-	ND2ub/7b6aESBBS89OeFAemscS57kxl5sc7nKy3ZuuSM/5nFKpP7SCl2PSk9kc18
-	umJeYiTKdiF4uV0Bdq7CDGaL5yXjejMVDcoNzqhulT/ue/I+0z8ELxMfHepgEayM
-	WleCPHT+CtE6viQcQamgaYAjII5ygb/r1wzf0oLSsNcaV8idSp9nxZazN3zl7WAo
-	Ia8nmI28avXjztc9H+RZt213+VdNYs4qc/C28tPqwCMZfEc6m4WXZbZH/ZFeGNgA
-	ZME6HTErPILIJz8PwRUf1irmShG1CWoXSbmRquHbVzJj+y+qW+MK5w+7vedzE8fz
-	eKa0SDrTri3NW0OnKoRSv0/xPvS1QbuZmXPoPLvIAO2ui96/hUpfiM8vpH2/SpET
-	jqDHTndnQUe28b6Liyh2rPlsGVGiE16STQFgNAQKBKovWI15AD684alPApC5ESX0
-	9XXR14nJlNnkFGkK8hXNSdUM3MlnNuHwXYv7Kv/KzSQqEyKD8XbeOcVVWYYygRae
-	AEGTML2jb9Usjpx9pwpBMoqeFc9+7LE8Ex/OXLWw5dEeBfOXHQdpka8fyT2gw1IU
-	ruilANtKdFkTaJByK9Y+n+ym0CcVUY5ha8tKuxsHRISX/enhGVf+jB2ndQuHGewb
-	SRr3B1I=
+	:reply-to:subject:subject:to:to; s=mail; bh=J0TfKIJhJzBxEoeio8uy
+	Um+I+RQoIvnhme6u8bHSaZ0=; b=qIBXSWKPRm8AUp8bFyY0gZCHCIew2oBPq9x5
+	VWSu8jrr4s4Jr6DYnH+FSDWp/8nlIlGD9BWQ+gbKiDNHSGJ/g2GMy+35pNg8+eE8
+	OiVtEfX0zHcAPf2YJ7Opux0QL6+bTcKwsr5M17CTkc6NVCFKqyJMsH344MM/kqlc
+	Zrnv+aDnvcT7EVOjOcu0k/hHgmCsoZQq3SlgQGLGFlikUCSkIBn3WTUqRyJJHJsj
+	ZqA7lMss5E8mA37hTOIZ5VKmVIUQWyrkUZKFMLyOi9I+c/pbaxcVR7fmjoedmevf
+	EFApdsuSRE7bSq7CYQI8BKWuiHZ8hHrLCbBLm+udU+pVYSaJd7hAlrF7WegZAwLl
+	mWpL8Zc9wbi4VJV7jtvUldSw2zjBG5S3wTa3vMKsadtce7wlevldB+QQx1Z3HmSa
+	FoI98nB8224z5FIeR05meH970c8Zon8Tr8EdqoabxNv3Sgc1W79C4du+T6he1y3O
+	sNurIlmu4XzaFsV7lZDWCI8dmfheCMiW73L9+bXoF+ZU9qzoYLSzCVAfW0NV1qUv
+	DweMyRd8EeAVZibiFU46bEjGbIQ6XzRDRJrpSb3vikRlBlcavSF6lu90ujMoURjZ
+	z/XkTU6IOuS9ub/OO+Fy0AE8mxdq+15qwb5v/pEcWkIdVF1yJoalndhC9egWicCJ
+	CkQ93so=
 From: =?UTF-8?q?Cs=C3=B3k=C3=A1s=2C=20Bence?= <csokas.bence@prolan.hu>
-To: <linux-sound@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+To: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
 	<linux-sunxi@lists.linux.dev>, <linux-kernel@vger.kernel.org>
 CC: Mesih Kilinc <mesihkilinc@gmail.com>,
-	=?UTF-8?q?Cs=C3=B3k=C3=A1s=2C=20Bence?= <csokas.bence@prolan.hu>, "Liam
- Girdwood" <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, "Jaroslav
- Kysela" <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Chen-Yu Tsai
-	<wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland
-	<samuel@sholland.org>
-Subject: [PATCH v2 08/10] ASoC: sun4i-codec: Add support for Allwinner suniv F1C100s
-Date: Sun, 27 Oct 2024 10:14:39 +0100
-Message-ID: <20241027091440.1913863-8-csokas.bence@prolan.hu>
+	=?UTF-8?q?Cs=C3=B3k=C3=A1s=2C=20Bence?= <csokas.bence@prolan.hu>, Rob Herring
+	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec
+	<jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>
+Subject: [PATCH v2 09/10] ARM: dts: suniv: f1c100s: Add support for Audio Codec
+Date: Sun, 27 Oct 2024 10:14:40 +0100
+Message-ID: <20241027091440.1913863-9-csokas.bence@prolan.hu>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20241027091440.1913863-1-csokas.bence@prolan.hu>
 References: <20241027091440.1913863-1-csokas.bence@prolan.hu>
@@ -72,438 +71,47 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1730020862;VERSION=7978;MC=3920792487;ID=156044;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
+X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1730020862;VERSION=7978;MC=3302600005;ID=156045;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
 X-ESET-Antispam: OK
 X-EsetResult: clean, is OK
 X-EsetId: 37303A29ACD94855677D65
 
 From: Mesih Kilinc <mesihkilinc@gmail.com>
 
-Allwinner suniv F1C100s has similar but primitive audio codec
-comparared to sun4i. Add support for it.
+Allwinner suniv F1C100s now has basic audio codec support. Enable it
+under device tree.
 
 Signed-off-by: Mesih Kilinc <mesihkilinc@gmail.com>
-[ csokas.bence: Remove `non_legacy_dai_naming` ]
+[ csokas.bence: Rebased on current master ]
 Signed-off-by: Csókás, Bence <csokas.bence@prolan.hu>
 ---
+ arch/arm/boot/dts/allwinner/suniv-f1c100s.dtsi | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-Notes:
-    Changes in v2:
-    * Whitespace
-
- sound/soc/sunxi/sun4i-codec.c | 352 ++++++++++++++++++++++++++++++++++
- 1 file changed, 352 insertions(+)
-
-diff --git a/sound/soc/sunxi/sun4i-codec.c b/sound/soc/sunxi/sun4i-codec.c
-index 4953b5013c58..e253fb8a4226 100644
---- a/sound/soc/sunxi/sun4i-codec.c
-+++ b/sound/soc/sunxi/sun4i-codec.c
-@@ -5,6 +5,7 @@
-  * Copyright 2015 Maxime Ripard <maxime.ripard@free-electrons.com>
-  * Copyright 2015 Adam Sampson <ats@offog.org>
-  * Copyright 2016 Chen-Yu Tsai <wens@csie.org>
-+ * Copyright 2018 Mesih Kilinc <mesihkilinc@gmail.com>
-  *
-  * Based on the Allwinner SDK driver, released under the GPL.
-  */
-@@ -230,6 +231,62 @@
- 
- #define SUN4I_DMA_MAX_BURST			(8)
- 
-+/* suniv specific registers */
+diff --git a/arch/arm/boot/dts/allwinner/suniv-f1c100s.dtsi b/arch/arm/boot/dts/allwinner/suniv-f1c100s.dtsi
+index 290efe026ceb..e4b41bc93852 100644
+--- a/arch/arm/boot/dts/allwinner/suniv-f1c100s.dtsi
++++ b/arch/arm/boot/dts/allwinner/suniv-f1c100s.dtsi
+@@ -336,5 +336,19 @@ uart2: serial@1c25800 {
+ 			resets = <&ccu RST_BUS_UART2>;
+ 			status = "disabled";
+ 		};
 +
-+#define SUNIV_DMA_MAX_BURST			(4)
-+
-+/* Codec DAC digital controls and FIFO registers */
-+#define SUNIV_CODEC_ADC_FIFOC			(0x10)
-+#define SUNIV_CODEC_ADC_FIFOC_EN_AD		(28)
-+#define SUNIV_CODEC_ADC_FIFOS			(0x14)
-+#define SUNIV_CODEC_ADC_RXDATA			(0x18)
-+
-+/* Output mixer and gain controls */
-+#define SUNIV_CODEC_OM_DACA_CTRL			(0x20)
-+#define SUNIV_CODEC_OM_DACA_CTRL_DACAREN		(31)
-+#define SUNIV_CODEC_OM_DACA_CTRL_DACALEN		(30)
-+#define SUNIV_CODEC_OM_DACA_CTRL_RMIXEN			(29)
-+#define SUNIV_CODEC_OM_DACA_CTRL_LMIXEN			(28)
-+#define SUNIV_CODEC_OM_DACA_CTRL_RHPPAMUTE		(27)
-+#define SUNIV_CODEC_OM_DACA_CTRL_LHPPAMUTE		(26)
-+#define SUNIV_CODEC_OM_DACA_CTRL_RHPIS			(25)
-+#define SUNIV_CODEC_OM_DACA_CTRL_LHPIS			(24)
-+#define SUNIV_CODEC_OM_DACA_CTRL_HPCOM_CTL		(22)
-+#define SUNIV_CODEC_OM_DACA_CTRL_COMPTEN		(21)
-+#define SUNIV_CODEC_OM_DACA_CTRL_RMIXMUTE_MICIN		(20)
-+#define SUNIV_CODEC_OM_DACA_CTRL_RMIXMUTE_LINEIN	(19)
-+#define SUNIV_CODEC_OM_DACA_CTRL_RMIXMUTE_FMIN		(18)
-+#define SUNIV_CODEC_OM_DACA_CTRL_RMIXMUTE_RDAC		(17)
-+#define SUNIV_CODEC_OM_DACA_CTRL_RMIXMUTE_LDAC		(16)
-+#define SUNIV_CODEC_OM_DACA_CTRL_HPPAEN			(15)
-+#define SUNIV_CODEC_OM_DACA_CTRL_LMIXMUTE_MICIN		(12)
-+#define SUNIV_CODEC_OM_DACA_CTRL_LMIXMUTE_LINEIN	(11)
-+#define SUNIV_CODEC_OM_DACA_CTRL_LMIXMUTE_FMIN		(10)
-+#define SUNIV_CODEC_OM_DACA_CTRL_LMIXMUTE_LDAC		(9)
-+#define SUNIV_CODEC_OM_DACA_CTRL_LMIXMUTE_RDAC		(8)
-+#define SUNIV_CODEC_OM_DACA_CTRL_LTLNMUTE		(7)
-+#define SUNIV_CODEC_OM_DACA_CTRL_RTLNMUTE		(6)
-+#define SUNIV_CODEC_OM_DACA_CTRL_HPVOL			(0)
-+
-+/* Analog Input Mixer controls */
-+#define SUNIV_CODEC_ADC_ACTL		(0x24)
-+#define SUNIV_CODEC_ADC_ADCEN		(31)
-+#define SUNIV_CODEC_ADC_MICG		(24)
-+#define SUNIV_CODEC_ADC_LINEINVOL	(21)
-+#define SUNIV_CODEC_ADC_ADCG		(16)
-+#define SUNIV_CODEC_ADC_ADCMIX_MIC	(13)
-+#define SUNIV_CODEC_ADC_ADCMIX_FMINL	(12)
-+#define SUNIV_CODEC_ADC_ADCMIX_FMINR	(11)
-+#define SUNIV_CODEC_ADC_ADCMIX_LINEIN	(10)
-+#define SUNIV_CODEC_ADC_ADCMIX_LOUT	(9)
-+#define SUNIV_CODEC_ADC_ADCMIX_ROUT	(8)
-+#define SUNIV_CODEC_ADC_PASPEEDSELECT	(7)
-+#define SUNIV_CODEC_ADC_FMINVOL		(4)
-+#define SUNIV_CODEC_ADC_MICAMPEN	(3)
-+#define SUNIV_CODEC_ADC_MICBOOST	(0)
-+
-+#define SUNIV_CODEC_ADC_DBG		(0x4c)
-+
- struct sun4i_codec {
- 	struct device	*dev;
- 	struct regmap	*regmap;
-@@ -1218,6 +1275,228 @@ static const struct snd_soc_component_driver sun8i_a23_codec_codec = {
- 	.endianness		= 1,
++		codec: codec@1c23c00 {
++			#sound-dai-cells = <0>;
++			compatible = "allwinner,suniv-f1c100s-codec";
++			reg = <0x01c23c00 0x400>;
++			interrupts = <21>;
++			clocks = <&ccu CLK_BUS_CODEC>, <&ccu CLK_CODEC>;
++			clock-names = "apb", "codec";
++			dmas = <&dma SUN4I_DMA_NORMAL 12>,
++			       <&dma SUN4I_DMA_NORMAL 12>;
++			dma-names = "rx", "tx";
++			resets = <&ccu RST_BUS_CODEC>;
++			status = "disabled";
++		};
+ 	};
  };
- 
-+/*suniv F1C100s codec */
-+
-+/* headphone controls */
-+static const char * const suniv_codec_hp_src_enum_text[] = {
-+	"DAC", "Mixer",
-+};
-+
-+static SOC_ENUM_DOUBLE_DECL(suniv_codec_hp_src_enum,
-+			    SUNIV_CODEC_OM_DACA_CTRL,
-+			    SUNIV_CODEC_OM_DACA_CTRL_LHPIS,
-+			    SUNIV_CODEC_OM_DACA_CTRL_RHPIS,
-+			    suniv_codec_hp_src_enum_text);
-+
-+static const struct snd_kcontrol_new suniv_codec_hp_src[] = {
-+	SOC_DAPM_ENUM("Headphone Source Playback Route",
-+		      suniv_codec_hp_src_enum),
-+};
-+
-+/* mixer controls */
-+static const struct snd_kcontrol_new suniv_codec_adc_mixer_controls[] = {
-+	SOC_DAPM_SINGLE("Right Out Capture Switch", SUNIV_CODEC_ADC_ACTL,
-+			SUNIV_CODEC_ADC_ADCMIX_ROUT, 1, 0),
-+	SOC_DAPM_SINGLE("Left Out Capture Switch", SUNIV_CODEC_ADC_ACTL,
-+			SUNIV_CODEC_ADC_ADCMIX_LOUT, 1, 0),
-+	SOC_DAPM_SINGLE("Line In Capture Switch", SUNIV_CODEC_ADC_ACTL,
-+			SUNIV_CODEC_ADC_ADCMIX_LINEIN, 1, 0),
-+	SOC_DAPM_SINGLE("Right FM In Capture Switch", SUNIV_CODEC_ADC_ACTL,
-+			SUNIV_CODEC_ADC_ADCMIX_FMINR, 1, 0),
-+	SOC_DAPM_SINGLE("Left FM In Capture Switch", SUNIV_CODEC_ADC_ACTL,
-+			SUNIV_CODEC_ADC_ADCMIX_FMINL, 1, 0),
-+	SOC_DAPM_SINGLE("Mic Capture Switch", SUNIV_CODEC_ADC_ACTL,
-+			SUNIV_CODEC_ADC_ADCMIX_MIC, 1, 0),
-+};
-+
-+static const struct snd_kcontrol_new suniv_codec_dac_lmixer_controls[] = {
-+	SOC_DAPM_SINGLE("Right DAC Playback Switch", SUNIV_CODEC_OM_DACA_CTRL,
-+			SUNIV_CODEC_OM_DACA_CTRL_LMIXMUTE_RDAC, 1, 0),
-+	SOC_DAPM_SINGLE("Left DAC Playback Switch", SUNIV_CODEC_OM_DACA_CTRL,
-+			SUNIV_CODEC_OM_DACA_CTRL_LMIXMUTE_LDAC, 1, 0),
-+	SOC_DAPM_SINGLE("FM In Playback Switch", SUNIV_CODEC_OM_DACA_CTRL,
-+			SUNIV_CODEC_OM_DACA_CTRL_LMIXMUTE_FMIN, 1, 0),
-+	SOC_DAPM_SINGLE("Line In Playback Switch", SUNIV_CODEC_OM_DACA_CTRL,
-+			SUNIV_CODEC_OM_DACA_CTRL_LMIXMUTE_LINEIN, 1, 0),
-+	SOC_DAPM_SINGLE("Mic In Playback Switch", SUNIV_CODEC_OM_DACA_CTRL,
-+			SUNIV_CODEC_OM_DACA_CTRL_LMIXMUTE_MICIN, 1, 0),
-+};
-+
-+static const struct snd_kcontrol_new suniv_codec_dac_rmixer_controls[] = {
-+	SOC_DAPM_SINGLE("Left DAC Playback Switch", SUNIV_CODEC_OM_DACA_CTRL,
-+			SUNIV_CODEC_OM_DACA_CTRL_RMIXMUTE_LDAC, 1, 0),
-+	SOC_DAPM_SINGLE("Right DAC Playback Switch", SUNIV_CODEC_OM_DACA_CTRL,
-+			SUNIV_CODEC_OM_DACA_CTRL_RMIXMUTE_RDAC, 1, 0),
-+	SOC_DAPM_SINGLE("FM In Playback Switch", SUNIV_CODEC_OM_DACA_CTRL,
-+			SUNIV_CODEC_OM_DACA_CTRL_RMIXMUTE_FMIN, 1, 0),
-+	SOC_DAPM_SINGLE("Line In Playback Switch", SUNIV_CODEC_OM_DACA_CTRL,
-+			SUNIV_CODEC_OM_DACA_CTRL_RMIXMUTE_LINEIN, 1, 0),
-+	SOC_DAPM_SINGLE("Mic In Playback Switch", SUNIV_CODEC_OM_DACA_CTRL,
-+			SUNIV_CODEC_OM_DACA_CTRL_RMIXMUTE_MICIN, 1, 0),
-+};
-+
-+static const DECLARE_TLV_DB_SCALE(suniv_codec_dvol_scale, -7308, 116, 0);
-+static const DECLARE_TLV_DB_SCALE(suniv_codec_hp_vol_scale, -6300, 100, 1);
-+static const DECLARE_TLV_DB_SCALE(suniv_codec_out_mixer_pregain_scale,
-+				  -450, 150, 0);
-+
-+static const DECLARE_TLV_DB_RANGE(suniv_codec_mic_gain_scale,
-+	0, 0, TLV_DB_SCALE_ITEM(0, 0, 0),
-+	1, 7, TLV_DB_SCALE_ITEM(2400, 300, 0),
-+);
-+
-+static const struct snd_kcontrol_new suniv_codec_codec_widgets[] = {
-+	SOC_SINGLE_TLV("DAC Playback Volume", SUN4I_CODEC_DAC_DPC,
-+		       SUN4I_CODEC_DAC_DPC_DVOL, 0x3f, 1,
-+		       suniv_codec_dvol_scale),
-+	SOC_SINGLE_TLV("Headphone Playback Volume",
-+		       SUNIV_CODEC_OM_DACA_CTRL,
-+		       SUNIV_CODEC_OM_DACA_CTRL_HPVOL, 0x3f, 0,
-+		       suniv_codec_hp_vol_scale),
-+	SOC_DOUBLE("Headphone Playback Switch",
-+		   SUNIV_CODEC_OM_DACA_CTRL,
-+		   SUNIV_CODEC_OM_DACA_CTRL_LHPPAMUTE,
-+		   SUNIV_CODEC_OM_DACA_CTRL_RHPPAMUTE, 1, 0),
-+	SOC_SINGLE_TLV("Line In Playback Volume",
-+		       SUNIV_CODEC_ADC_ACTL, SUNIV_CODEC_ADC_LINEINVOL,
-+		       0x7, 0, suniv_codec_out_mixer_pregain_scale),
-+	SOC_SINGLE_TLV("FM In Playback Volume",
-+		       SUNIV_CODEC_ADC_ACTL, SUNIV_CODEC_ADC_FMINVOL,
-+		       0x7, 0, suniv_codec_out_mixer_pregain_scale),
-+	SOC_SINGLE_TLV("Mic In Playback Volume",
-+		       SUNIV_CODEC_ADC_ACTL, SUNIV_CODEC_ADC_MICG,
-+		       0x7, 0, suniv_codec_out_mixer_pregain_scale),
-+
-+	/* Microphone Amp boost gains */
-+	SOC_SINGLE_TLV("Mic Boost Volume", SUNIV_CODEC_ADC_ACTL,
-+		       SUNIV_CODEC_ADC_MICBOOST, 0x7, 0,
-+		       suniv_codec_mic_gain_scale),
-+	SOC_SINGLE_TLV("ADC Capture Volume",
-+		       SUNIV_CODEC_ADC_ACTL, SUNIV_CODEC_ADC_ADCG,
-+		       0x7, 0, suniv_codec_out_mixer_pregain_scale),
-+};
-+
-+static const struct snd_soc_dapm_widget suniv_codec_codec_dapm_widgets[] = {
-+	/* Microphone inputs */
-+	SND_SOC_DAPM_INPUT("MIC"),
-+
-+	/* Microphone Bias */
-+	/* deleted: HBIAS, MBIAS */
-+
-+	/* Mic input path */
-+	SND_SOC_DAPM_PGA("Mic Amplifier", SUNIV_CODEC_ADC_ACTL,
-+			 SUNIV_CODEC_ADC_MICAMPEN, 0, NULL, 0),
-+
-+	/* Line In */
-+	SND_SOC_DAPM_INPUT("LINEIN"),
-+
-+	/* FM In */
-+	SND_SOC_DAPM_INPUT("FMINR"),
-+	SND_SOC_DAPM_INPUT("FMINL"),
-+
-+	/* Digital parts of the ADCs */
-+	SND_SOC_DAPM_SUPPLY("ADC Enable", SUNIV_CODEC_ADC_FIFOC,
-+			    SUNIV_CODEC_ADC_FIFOC_EN_AD, 0,
-+			    NULL, 0),
-+
-+	/* Analog parts of the ADCs */
-+	SND_SOC_DAPM_ADC("ADC", "Codec Capture", SUNIV_CODEC_ADC_ACTL,
-+			 SUNIV_CODEC_ADC_ADCEN, 0),
-+
-+	/* ADC Mixers */
-+	SOC_MIXER_ARRAY("ADC Mixer", SUNIV_CODEC_ADC_ACTL,
-+			SND_SOC_NOPM, 0,
-+			suniv_codec_adc_mixer_controls),
-+
-+	/* Digital parts of the DACs */
-+	SND_SOC_DAPM_SUPPLY("DAC Enable", SUN4I_CODEC_DAC_DPC,
-+			    SUN4I_CODEC_DAC_DPC_EN_DA, 0,
-+			    NULL, 0),
-+
-+	/* Analog parts of the DACs */
-+	SND_SOC_DAPM_DAC("Left DAC", "Codec Playback",
-+			 SUNIV_CODEC_OM_DACA_CTRL,
-+			 SUNIV_CODEC_OM_DACA_CTRL_DACALEN, 0),
-+	SND_SOC_DAPM_DAC("Right DAC", "Codec Playback",
-+			 SUNIV_CODEC_OM_DACA_CTRL,
-+			 SUNIV_CODEC_OM_DACA_CTRL_DACAREN, 0),
-+
-+	/* Mixers */
-+	SOC_MIXER_ARRAY("Left Mixer", SUNIV_CODEC_OM_DACA_CTRL,
-+			SUNIV_CODEC_OM_DACA_CTRL_LMIXEN, 0,
-+			suniv_codec_dac_lmixer_controls),
-+	SOC_MIXER_ARRAY("Right Mixer", SUNIV_CODEC_OM_DACA_CTRL,
-+			SUNIV_CODEC_OM_DACA_CTRL_RMIXEN, 0,
-+			suniv_codec_dac_rmixer_controls),
-+
-+	/* Headphone output path */
-+	SND_SOC_DAPM_MUX("Headphone Source Playback Route",
-+			 SND_SOC_NOPM, 0, 0, suniv_codec_hp_src),
-+	SND_SOC_DAPM_OUT_DRV("Headphone Amp", SUNIV_CODEC_OM_DACA_CTRL,
-+			     SUNIV_CODEC_OM_DACA_CTRL_HPPAEN, 0, NULL, 0),
-+	SND_SOC_DAPM_SUPPLY("HPCOM Protection", SUNIV_CODEC_OM_DACA_CTRL,
-+			    SUNIV_CODEC_OM_DACA_CTRL_COMPTEN, 0, NULL, 0),
-+	SND_SOC_DAPM_REG(snd_soc_dapm_supply, "HPCOM", SUNIV_CODEC_OM_DACA_CTRL,
-+			 SUNIV_CODEC_OM_DACA_CTRL_HPCOM_CTL, 0x3, 0x3, 0),
-+	SND_SOC_DAPM_OUTPUT("HP"),
-+};
-+
-+static const struct snd_soc_dapm_route suniv_codec_codec_dapm_routes[] = {
-+	/* DAC Routes */
-+	{ "Left DAC", NULL, "DAC Enable" },
-+	{ "Right DAC", NULL, "DAC Enable" },
-+
-+	/* Microphone Routes */
-+	{ "Mic Amplifier", NULL, "MIC"},
-+
-+	/* Left Mixer Routes */
-+	{ "Left Mixer", "Right DAC Playback Switch", "Right DAC" },
-+	{ "Left Mixer", "Left DAC Playback Switch", "Left DAC" },
-+	{ "Left Mixer", "FM In Playback Switch", "FMINL" },
-+	{ "Left Mixer", "Line In Playback Switch", "LINEIN" },
-+	{ "Left Mixer", "Mic In Playback Switch", "Mic Amplifier" },
-+
-+	/* Right Mixer Routes */
-+	{ "Right Mixer", "Left DAC Playback Switch", "Left DAC" },
-+	{ "Right Mixer", "Right DAC Playback Switch", "Right DAC" },
-+	{ "Right Mixer", "FM In Playback Switch", "FMINR" },
-+	{ "Right Mixer", "Line In Playback Switch", "LINEIN" },
-+	{ "Right Mixer", "Mic In Playback Switch", "Mic Amplifier" },
-+
-+	/* ADC Mixer Routes */
-+	{ "ADC Mixer", "Right Out Capture Switch", "Right Mixer" },
-+	{ "ADC Mixer", "Left Out Capture Switch", "Left Mixer" },
-+	{ "ADC Mixer", "Line In Capture Switch", "LINEIN" },
-+	{ "ADC Mixer", "Right FM In Capture Switch", "FMINR" },
-+	{ "ADC Mixer", "Left FM In Capture Switch", "FMINL" },
-+	{ "ADC Mixer", "Mic Capture Switch", "Mic Amplifier" },
-+
-+	/* Headphone Routes */
-+	{ "Headphone Source Playback Route", "DAC", "Left DAC" },
-+	{ "Headphone Source Playback Route", "DAC", "Right DAC" },
-+	{ "Headphone Source Playback Route", "Mixer", "Left Mixer" },
-+	{ "Headphone Source Playback Route", "Mixer", "Right Mixer" },
-+	{ "Headphone Amp", NULL, "Headphone Source Playback Route" },
-+	{ "HP", NULL, "Headphone Amp" },
-+	{ "HPCOM", NULL, "HPCOM Protection" },
-+
-+	/* ADC Routes */
-+	{ "ADC", NULL, "ADC Mixer" },
-+	{ "ADC", NULL, "ADC Enable" },
-+};
-+
-+static const struct snd_soc_component_driver suniv_codec_codec = {
-+	.controls		= suniv_codec_codec_widgets,
-+	.num_controls		= ARRAY_SIZE(suniv_codec_codec_widgets),
-+	.dapm_widgets		= suniv_codec_codec_dapm_widgets,
-+	.num_dapm_widgets	= ARRAY_SIZE(suniv_codec_codec_dapm_widgets),
-+	.dapm_routes		= suniv_codec_codec_dapm_routes,
-+	.num_dapm_routes	= ARRAY_SIZE(suniv_codec_codec_dapm_routes),
-+	.idle_bias_on		= 1,
-+	.use_pmdown_time	= 1,
-+	.endianness		= 1,
-+};
-+
- static const struct snd_soc_component_driver sun4i_codec_component = {
- 	.name			= "sun4i-codec",
- 	.legacy_dai_naming	= 1,
-@@ -1520,6 +1799,56 @@ static struct snd_soc_card *sun8i_v3s_codec_create_card(struct device *dev)
- 	return card;
- };
- 
-+static const struct snd_soc_dapm_widget suniv_codec_card_dapm_widgets[] = {
-+	SND_SOC_DAPM_HP("Headphone", NULL),
-+	SND_SOC_DAPM_LINE("Line In", NULL),
-+	SND_SOC_DAPM_LINE("Right FM In", NULL),
-+	SND_SOC_DAPM_LINE("Left FM In", NULL),
-+	SND_SOC_DAPM_MIC("Mic", NULL),
-+	SND_SOC_DAPM_SPK("Speaker", sun4i_codec_spk_event),
-+};
-+
-+/* Connect digital side enables to analog side widgets */
-+static const struct snd_soc_dapm_route suniv_codec_card_routes[] = {
-+	/* ADC Routes */
-+	{ "ADC", NULL, "ADC Enable" },
-+	{ "Codec Capture", NULL, "ADC" },
-+
-+	/* DAC Routes */
-+	{ "Left DAC", NULL, "DAC Enable" },
-+	{ "Right DAC", NULL, "DAC Enable" },
-+	{ "Left DAC", NULL, "Codec Playback" },
-+	{ "Right DAC", NULL, "Codec Playback" },
-+};
-+
-+static struct snd_soc_card *suniv_codec_create_card(struct device *dev)
-+{
-+	struct snd_soc_card *card;
-+	int ret;
-+
-+	card = devm_kzalloc(dev, sizeof(*card), GFP_KERNEL);
-+	if (!card)
-+		return ERR_PTR(-ENOMEM);
-+
-+	card->dai_link = sun4i_codec_create_link(dev, &card->num_links);
-+	if (!card->dai_link)
-+		return ERR_PTR(-ENOMEM);
-+
-+	card->dev		= dev;
-+	card->name		= "F1C100s Audio Codec";
-+	card->dapm_widgets	= suniv_codec_card_dapm_widgets;
-+	card->num_dapm_widgets	= ARRAY_SIZE(suniv_codec_card_dapm_widgets);
-+	card->dapm_routes	= suniv_codec_card_routes;
-+	card->num_dapm_routes	= ARRAY_SIZE(suniv_codec_card_routes);
-+	card->fully_routed	= true;
-+
-+	ret = snd_soc_of_parse_audio_routing(card, "allwinner,audio-routing");
-+	if (ret)
-+		dev_warn(dev, "failed to parse audio-routing: %d\n", ret);
-+
-+	return card;
-+};
-+
- static const struct regmap_config sun4i_codec_regmap_config = {
- 	.reg_bits	= 32,
- 	.reg_stride	= 4,
-@@ -1562,6 +1891,13 @@ static const struct regmap_config sun8i_v3s_codec_regmap_config = {
- 	.max_register	= SUN8I_H3_CODEC_ADC_DBG,
- };
- 
-+static const struct regmap_config suniv_codec_regmap_config = {
-+	.reg_bits	= 32,
-+	.reg_stride	= 4,
-+	.val_bits	= 32,
-+	.max_register	= SUNIV_CODEC_ADC_DBG,
-+};
-+
- struct sun4i_codec_quirks {
- 	const struct regmap_config *regmap_config;
- 	const struct snd_soc_component_driver *codec;
-@@ -1646,6 +1982,17 @@ static const struct sun4i_codec_quirks sun8i_v3s_codec_quirks = {
- 	.dma_max_burst	= SUN4I_DMA_MAX_BURST,
- };
- 
-+static const struct sun4i_codec_quirks suniv_f1c100s_codec_quirks = {
-+	.regmap_config	= &suniv_codec_regmap_config,
-+	.codec		= &suniv_codec_codec,
-+	.create_card	= suniv_codec_create_card,
-+	.reg_adc_fifoc	= REG_FIELD(SUNIV_CODEC_ADC_FIFOC, 0, 31),
-+	.reg_dac_txdata	= SUN4I_CODEC_DAC_TXDATA,
-+	.reg_adc_rxdata	= SUNIV_CODEC_ADC_RXDATA,
-+	.has_reset	= true,
-+	.dma_max_burst	= SUNIV_DMA_MAX_BURST,
-+};
-+
- static const struct of_device_id sun4i_codec_of_match[] = {
- 	{
- 		.compatible = "allwinner,sun4i-a10-codec",
-@@ -1671,6 +2018,10 @@ static const struct of_device_id sun4i_codec_of_match[] = {
- 		.compatible = "allwinner,sun8i-v3s-codec",
- 		.data = &sun8i_v3s_codec_quirks,
- 	},
-+	{
-+		.compatible = "allwinner,suniv-f1c100s-codec",
-+		.data = &suniv_f1c100s_codec_quirks,
-+	},
- 	{}
- };
- MODULE_DEVICE_TABLE(of, sun4i_codec_of_match);
-@@ -1846,4 +2197,5 @@ MODULE_AUTHOR("Emilio López <emilio@elopez.com.ar>");
- MODULE_AUTHOR("Jon Smirl <jonsmirl@gmail.com>");
- MODULE_AUTHOR("Maxime Ripard <maxime.ripard@free-electrons.com>");
- MODULE_AUTHOR("Chen-Yu Tsai <wens@csie.org>");
-+MODULE_AUTHOR("Mesih Kilinc <mesikilinc@gmail.com>");
- MODULE_LICENSE("GPL");
 -- 
 2.34.1
 
