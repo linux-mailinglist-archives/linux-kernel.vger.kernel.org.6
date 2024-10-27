@@ -1,169 +1,119 @@
-Return-Path: <linux-kernel+bounces-383755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5BAC9B1FD9
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 20:16:17 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6ACEF9B1FDF
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 20:36:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D81C61C20B43
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 19:16:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CA9C6B20C6F
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 19:36:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFBEC17ADE8;
-	Sun, 27 Oct 2024 19:16:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2396C17BB35;
+	Sun, 27 Oct 2024 19:35:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="lojUDuN4"
-Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZedHdQJI"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C13617E110
-	for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 19:16:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D66EC28F5;
+	Sun, 27 Oct 2024 19:35:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730056570; cv=none; b=qzIGOyWZS+qV7n+wGgd9PNOrxcJhXbMpzx8U4U2154kzpHxjc8C+/kWWMLX5Tnm00t7Iw+Fm484S0MbB3EFQzETmF76veNvSyBnYTMPxMOhtdlD1LiU8UNesXUqo/CYba1isPFqpfcpK+i+XJXhIGrZ1cTXSXajm79j2cu+O6Zw=
+	t=1730057755; cv=none; b=ReKGif1BvqEvWito0Wrp1nSIHXI1WfBomr4xXEbufHMVvKs5NJyXcAyDBkvAfBDuMUY8fy8p35+55lCqf0BudkZ4hpx0BbFbQioUyud4sc/mvrVVPHwiGaIIrCtHkHiCa8WizdDCFxyCaqBXkudChvtMkCrWcnAqnf0k3rtscBA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730056570; c=relaxed/simple;
-	bh=MgUv+Wl0CnMNphccEjRVVtcSIQr42qx3lkRhtJKjqh8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KbqnSlBaFCrY84vGJ/M1dmb5uITRx5lLcuaiH1gJHkTRPsM3bLi/5kw+c8ZnwW8bnuDQ4BSpp2iyOqc7dvkXw6WWtsZtXKS7k3p6jHDmS5ryiZ3dcbVxknFdroTcVl2kmkKX1gvu4CgjxnPdg/KuqXHwxPwgZAE5mflGyIdMya8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=lojUDuN4; arc=none smtp.client-ip=91.218.175.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Sun, 27 Oct 2024 15:15:57 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1730056562;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6xqRa+1y/EtfkL88HSjsBOpbOYlfkBNwGrPgHlajZHU=;
-	b=lojUDuN4Dg936vF2rFT2UrPoiu0qA46z3rKd+fs4YFdbyXMcbW5WWtRddr5f9rsASOcfsB
-	YHGAAXI7ZvYf1Lo83ZsGhqcoEkBR+sfKB/TISk0wD8LVMujoW78xurzouXF4RUC3Kfcj/i
-	3GHAcIAmv7XaKTxpgazAeerpcJxd770=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Piotr Zalewski <pZ010001011111@proton.me>
-Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	skhan@linuxfoundation.org, syzbot+005ef9aa519f30d97657@syzkaller.appspotmail.com, 
-	Alan Huang <mmpgouride@gmail.com>
-Subject: Re: [PATCH v2] bcachefs: Fix NULL ptr dereference in
- btree_node_iter_and_journal_peek
-Message-ID: <2krm2aw3ndg2c4uw3peuhb6ldm32x5sri4p2lwou4tosfbzmpx@77kws7hnizdf>
-References: <20241026174155.233430-3-pZ010001011111@proton.me>
- <j3aypufmcezitilxlgkfyetnonkzlkst3hx4zxr4zspfonh5pm@mwngtgo4h4vb>
- <BdSD2g3SGfWQrsTULTjViyG_t0llBh4NeIVbIE_3pvf1bWxk52ErCdP5yOErBZO3NkhyOv9Mgq2xc6CsGFliqDQrTgTwoquYKJKEUY5OE9g=@proton.me>
- <vzmzlzbxlyapymoccpniahd6kajrtumz7zenn4fuess6kta3qc@kbtsbr3lnl73>
- <KoKsgyv6vBuqwCj7ZnzZNWLYuQ_2LAfUUp3Eq8m9RkIS8hQOCpszlKj1BbYO8Md844-U-h2bmQJZtlTptr2-lKzYVdFtWy_BMejp5uPpjz4=@proton.me>
+	s=arc-20240116; t=1730057755; c=relaxed/simple;
+	bh=EmSWh3xSmAM5RDES6zjzSSlBGnygje4dYfMLKmhvKv8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=koR8XU2j4kYSiMpzBKpaR3JACJ1oaXerg4mp19IQ0Oho4FrGCiROVSOQ07VbNPBH6rbYSog7s54qhbFjHNII+4H3vaxBTAdeTrKjoJT0HgOsbNEx7CS/XXKj9xtMDCI0CDCPotFm+3phydXOuzyVArZCl0ncUHy2I5D/SIHxBzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZedHdQJI; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2e2ab5bbc01so558724a91.2;
+        Sun, 27 Oct 2024 12:35:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730057753; x=1730662553; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=HwqSxNHwODb6IvlEFxHFvLCBRbv93BzZ32A8QUXgGBQ=;
+        b=ZedHdQJIwMMEFISHE/lbubfiVNgpo1P2Wn1iUg817BsPAopTSNogn+DI/hc8B1fOs/
+         PfwmTLe+2Fut5t7/ULAM+VvfrGRIyWzt0Ki2Vt2CzWuyVT71JgQy9O8OxVLK3L9mMPiD
+         BmZ5KIhOPj141AFbdGyM8TvVAn+cf8KvK7Y44Kwrxg7CyRfbL1o4Hz5Q6WhFa0Tppqgg
+         0l+rLeFswimmTSHUAU17kEhqWWMierADrdVyOj7h2jyxhOZxXF7nKTH/eEW3MCztDwn3
+         b7G9axugfxG0EQubyN2mr0vEKBusPVcsp9ilIYYpJnLfWfrV1k1LRaBYdkeLLPS1atMx
+         99mg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730057753; x=1730662553;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HwqSxNHwODb6IvlEFxHFvLCBRbv93BzZ32A8QUXgGBQ=;
+        b=m8jt4mi1dJPwh1EVuUf6QS1rSr6PKWFmZZtydTLKsGSQk0N7LCzxWib0J8B0EKGveg
+         6U3Soda37bgLqTJurU6W01NkwuEbxi6w2r3jhTNahy9aMCKmmr3Pfff8F3jqZNtCxZ9A
+         cpNZSaQJ3XsvYkLfhh5S73Jgfjf+l3Mg2hYHK0dGDUsz2BkflrPRQyxeEDkja9Py8KTX
+         5qXugGErCRHeVKVqln6r+PNBegJLB77jkMYwHH25RqVVRWkKaVMtw+w5oGhck2PcFV1t
+         O1Ww/WannFgJWtuDtDWpvmpZfh1oP4bJjMuRUb/AdjvMDZVuOAao+K6LE+3pPnbz1WA8
+         cV6g==
+X-Forwarded-Encrypted: i=1; AJvYcCUrI0HDYjEsaRixjrVu0dhSSVTLOlmFQM9kfiCsNld4pO1gZ7SweZFaC5bAR2fc4jY5B9i5jl/brNXB@vger.kernel.org, AJvYcCWxKNbNSnvjx30a70A0MKkmuzSJw1Nz/acgfUH68UuZLg7KNx1NAS9lEEZnw3qC1LiSWT6qtdwUjnrSrUw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxATi/sCkJQLaLnxbFLeniKegHCzByh+C1xDOUpDqhpQgMDfOLP
+	ZqIwEP0E7pT01H8Mf+AAP2FJb7cgW30358o19w+nPOhYmqiIQG2P
+X-Google-Smtp-Source: AGHT+IFnpox8/7BeIDqsmu1QYNjIHDlNfclJIiHXqMfENK7pNaSGbRDvq+/+Hfvz/omYQRE/LqyaUQ==
+X-Received: by 2002:a17:90b:1c8e:b0:2e2:c1e5:2df3 with SMTP id 98e67ed59e1d1-2e8f12e5b6cmr2789942a91.8.1730057753028;
+        Sun, 27 Oct 2024 12:35:53 -0700 (PDT)
+Received: from motti-test.. ([2409:40f4:300a:9618:92ca:3f55:718b:1cab])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e77e48ed34sm8371290a91.9.2024.10.27.12.35.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 27 Oct 2024 12:35:52 -0700 (PDT)
+From: MottiKumar Babu <mottikumarbabu@gmail.com>
+To: cem@kernel.org,
+	djwong@kernel.org,
+	chandanbabu@kernel.org,
+	dchinner@redhat.com,
+	zhangjiachen.jaycee@bytedance.com,
+	linux-xfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: linux-kernel-mentees@lists.linux.dev,
+	anupnewsmail@gmail.com,
+	skhan@linuxfoundation.org
+Subject: [PATCH] Fix out-of-bounds access in xfs_bmapi_allocate by validating whichfork
+Date: Mon, 28 Oct 2024 01:05:27 +0530
+Message-ID: <20241027193541.14212-1-mottikumarbabu@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <KoKsgyv6vBuqwCj7ZnzZNWLYuQ_2LAfUUp3Eq8m9RkIS8hQOCpszlKj1BbYO8Md844-U-h2bmQJZtlTptr2-lKzYVdFtWy_BMejp5uPpjz4=@proton.me>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-On Sun, Oct 27, 2024 at 07:00:07PM +0000, Piotr Zalewski wrote:
-> 
-> 
-> 
-> 
-> 
-> Sent with Proton Mail secure email.
-> 
-> On Sunday, October 27th, 2024 at 6:53 PM, Kent Overstreet <kent.overstreet@linux.dev> wrote:
-> 
-> > On Sun, Oct 27, 2024 at 11:34:02AM +0000, Piotr Zalewski wrote:
-> > 
-> > > On Sunday, October 27th, 2024 at 2:28 AM, Kent Overstreet kent.overstreet@linux.dev wrote:
-> > > 
-> > > > On Sat, Oct 26, 2024 at 05:46:33PM +0000, Piotr Zalewski wrote:
-> > > > 
-> > > > > Add NULL check for key returned from bch2_btree_and_journal_iter_peek in
-> > > > > btree_node_iter_and_journal_peek to avoid NULL ptr dereference in
-> > > > > bch2_bkey_buf_reassemble.
-> > > > > 
-> > > > > When key returned from bch2_btree_and_journal_iter_peek is NULL it means
-> > > > > that btree topology needs repair. Print error message with position at
-> > > > > which node wasn't found and its parent node information. Call
-> > > > > bch2_topology_error and return error code returned by it to ensure that
-> > > > > topology error is handled properly.
-> > > > > 
-> > > > > Reported-by: syzbot+005ef9aa519f30d97657@syzkaller.appspotmail.com
-> > > > > Closes: https://syzkaller.appspot.com/bug?extid=005ef9aa519f30d97657
-> > > > > Fixes: 5222a4607cd8 ("bcachefs: BTREE_ITER_WITH_JOURNAL")
-> > > > > Suggested-by: Alan Huang mmpgouride@gmail.com
-> > > > > Suggested-by: Kent Overstreet kent.overstreet@linux.dev
-> > > > > Signed-off-by: Piotr Zalewski pZ010001011111@proton.me
-> > > > > ---
-> > > > > 
-> > > > > Notes:
-> > > > > changes in v2:
-> > > > > - make commit message more verbose.
-> > > > > - set topology error, print error message and return
-> > > > > appropriate error code.
-> > > > > 
-> > > > > link to v1: https://lore.kernel.org/linux-bcachefs/20241023072024.98915-3-pZ010001011111@proton.me/
-> > > > > 
-> > > > > fs/bcachefs/btree_iter.c | 13 +++++++++++++
-> > > > > 1 file changed, 13 insertions(+)
-> > > > > 
-> > > > > diff --git a/fs/bcachefs/btree_iter.c b/fs/bcachefs/btree_iter.c
-> > > > > index 15ac72b1af51..40c824779b15 100644
-> > > > > --- a/fs/bcachefs/btree_iter.c
-> > > > > +++ b/fs/bcachefs/btree_iter.c
-> > > > > @@ -880,6 +880,18 @@ static noinline int btree_node_iter_and_journal_peek(struct btree_trans *trans,
-> > > > > __bch2_btree_and_journal_iter_init_node_iter(trans, &jiter, l->b, l->iter, path->pos);
-> > > > > 
-> > > > > k = bch2_btree_and_journal_iter_peek(&jiter);
-> > > > > + if (!k.k) {
-> > > > > + struct printbuf buf = PRINTBUF;
-> > > > > +
-> > > > > + prt_str(&buf, "node not found at pos ");
-> > > > > + bch2_bpos_to_text(&buf, path->pos);
-> > > > > + prt_str(&buf, " within parent node ");
-> > > > > + bch2_bkey_val_to_text(&buf, c, bkey_i_to_s_c(&l->b->key));
-> > > > > +
-> > > > > + ret = bch2_fs_topology_error(c, "%s", buf.buf);
-> > > > > + printbuf_exit(&buf);
-> > > > > + goto err;
-> > > > > + }
-> > > > 
-> > > > We'll want to add at least the btree ID and level to that.
-> > > > 
-> > > > Could you also look over the other places we report topology errors and
-> > > > inconstencies for any commonality? btree_cache.c has some stuff, and I
-> > > > think there's a helper in there that might give you the error message
-> > > > you want (instead of just the btree node key), and I'd have a glance at
-> > > > the topology error reporting in btree_update_interior.c and btree_gc.c
-> > > > as well.
-> > > 
-> > > I scanned through mentioned files and some others. There are commonalities
-> > > but every error message seem to be different in some way so that there is
-> > > no truly common part.
-> > > 
-> > > Information contained is usually a mixture of:
-> > > - btree id and level.
-> > > - position at which node wasn't found or if it was found but something
-> > > else is wrong its key info.
-> > > - parent node key information.
-> > > - prev/next node key info.
-> > > - min/max key pos info.
-> > > 
-> > > Only appropriate helpers I found were (what I already used) -
-> > > bch2_fs_topology_error and, in btree_iter.c, bch2_btree_path_to_text_short
-> > > but there it doesn't print full parent key info just min_key pos and parent
-> > > key pos so I'm not sure.
-> > > 
-> > > To what you already said I could also add min pos info.
-> > 
-> > bch2_btree_pos_to_text()?
-> 
-> Ah yes, I missed it - not used in many places and ending similar to 
-> bpos_to_text. I will print path->pos + bch2_btree_pos_to_text() in the next
-> version then.
+This issue was reported by Coverity Scan.
 
-yeah, keeping things organized is a never ending battle :)
+Report:
+CID 1633175 Out-of-bounds access - Access of memory not owned by this buffer may cause crashes or incorrect computations.
+In xfs_bmapi_allocate: Out-of-bounds access to a buffer (CWE-119)
+
+Signed-off-by: MottiKumar Babu <mottikumarbabu@gmail.com>
+---
+ fs/xfs/libxfs/xfs_bmap.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/fs/xfs/libxfs/xfs_bmap.c b/fs/xfs/libxfs/xfs_bmap.c
+index 36dd08d13293..6ff378d2d3d9 100644
+--- a/fs/xfs/libxfs/xfs_bmap.c
++++ b/fs/xfs/libxfs/xfs_bmap.c
+@@ -4169,6 +4169,10 @@ xfs_bmapi_allocate(
+ 		 * is not on the busy list.
+ 		 */
+ 		bma->datatype = XFS_ALLOC_NOBUSY;
++		// Ensure whichfork is valid (0 or 1) before further checks
++		if (whichfork < 0 || whichfork > 1) {
++			return -EINVAL; // Invalid fork
++		}
+ 		if (whichfork == XFS_DATA_FORK || whichfork == XFS_COW_FORK) {
+ 			bma->datatype |= XFS_ALLOC_USERDATA;
+ 			if (bma->offset == 0)
+-- 
+2.43.0
+
 
