@@ -1,58 +1,57 @@
-Return-Path: <linux-kernel+bounces-383833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5974D9B20AB
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 22:06:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43F3F9B20AF
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 22:07:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DD84FB20F90
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 21:06:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D94D11F214CA
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 21:07:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4ADE18595B;
-	Sun, 27 Oct 2024 21:06:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C9591862BB;
+	Sun, 27 Oct 2024 21:07:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pIIcuwp4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tZn8ed1L"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09CBC170A1B;
-	Sun, 27 Oct 2024 21:06:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9736F1DFE8;
+	Sun, 27 Oct 2024 21:07:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730063206; cv=none; b=EH9xCbHU8WWdreHxedqkq1r5f7uGfFRb2gOhcBffG2vNiPg6rslIBwyiPuafN7ViVwBpkUXpPLfdeboxIJcNfwSnkUXUcyMjnGfkiqxab8RGxn3piz+mFhXHhOeSqfnL0Xmp6DHghTZaaiitqN9vEID7TjeqqyWLTspZ40vkVnA=
+	t=1730063246; cv=none; b=EMvV7r1ToTjnQIcgh626P1v44PSBxQFefb5xvGcTL6LFTSfHPrPhm7CpugC4E9rmUH6NHjVQ51OU5jOLO9yVN7vKoivsx0lDDqkZkfVVMPhVKCbj7huOvu/qsqmAPgoDugke5UH1dM0P4EqC1Qqf9n8L/7J5mOPHE8opCpePFaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730063206; c=relaxed/simple;
-	bh=CO7k2Dg/RtRuxPaLMt+WxKeEr7MfB16b+EAkMICuDQY=;
+	s=arc-20240116; t=1730063246; c=relaxed/simple;
+	bh=Vg7bc+N2WqnmGKQnX7h+4b+1CbkCilzWV2NEXN83oj8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hGO6gbI2uHFIVexa7oFtrgvlxHGkUa7Xv81XBNJDw+Js+QLF4deoPyNeAaiNLdQhPoudjj1Ku2KbcTA9c5VCbhTy+eygmdWUKF0CPeQdzQDMSCGi2s+tdkh7UCKM3dgGbHi64DAHl71QN02oYI7mn19b6ND8gBUIyUVZxCJvD7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pIIcuwp4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E333C4CEC3;
-	Sun, 27 Oct 2024 21:06:44 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=AlqsxhXeRHNORVZ8SBUNlYCIrqBay/M1bvhrcWRLJGa7zW39ld9u1ny603ViMjWj18BpLuCgitKWVamqgNZq99ucZLiUbPJ1FghG3Sd9in/rXBMgNGoLz6nV7BvDPSjbl2XXgdN/CX4V5ImYNSEBVjBc6yMiRi+slxsYknHB5QA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tZn8ed1L; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8686C4CEC3;
+	Sun, 27 Oct 2024 21:07:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730063205;
-	bh=CO7k2Dg/RtRuxPaLMt+WxKeEr7MfB16b+EAkMICuDQY=;
+	s=k20201202; t=1730063246;
+	bh=Vg7bc+N2WqnmGKQnX7h+4b+1CbkCilzWV2NEXN83oj8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pIIcuwp4gdtTDh6Clgp23Kw9gsZ0nOzwkhUKsgMa2vpwg3C9L91p4Fy3gnTZjk6po
-	 r3lhEHhgiMCAQYilsGrxu7mOghlEBJuMKhG/xrZ0iWsEGBbqEHlq3K60fcx910Nrh3
-	 EsrJWjlmiKyCCifgbgeLoYpS0TA37cXTgXO/2MqyZP7srQ9xsx3D0S4XfP+0F92gYJ
-	 MkamC0N2UAGHHFUJoK3YrNWH2XOe27G8eADqIvi+KwXk0EYJ0dpHW7LnIqlzbXIrAn
-	 NQbmNOyqYHJRnYlIEwsvScQ0Kvt+xdm/xbhaOPUAdT5M/rCyUxBOsFZwHtDTbSL6c2
-	 mycV4qiZ7HAMw==
-Date: Sun, 27 Oct 2024 22:06:41 +0100
+	b=tZn8ed1LLwuxHHVKIiQYgIYTfqRjhcreqnwhY8ZM4oLBj7zYKErvANHzd+wmYYOve
+	 uugnP0dYkAhpq0y35FBvMxM7mNMnW8dmoDQY/ME3Ft0fDG8QN+llk0XRyfYAU1oT8K
+	 /x0bs/s1xhlWtGXZ/ZMpmLNvRNPQVD4Gux8gzYoqIhcTCZ9e/tqzx3kyt9MXmITBtS
+	 o2C/cCMzt+p+VV5Xq9xkhTUA1VLiWQTnRhbQINGCKy0TX+oagLOXmztXuMUUCk84Pv
+	 pl5QMFH66Sq16G+2fUx4wXsIkJYF+OJ307JiG91BAOc2Nn5c2uH3DbVCb7mXFyJqTb
+	 9tgggXMzSA9Vw==
+Date: Sun, 27 Oct 2024 22:07:23 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Markuss Broks <markuss.broks@gmail.com>
-Cc: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>, 
-	Maksym Holovach <nergzd@nergzd723.xyz>
-Subject: Re: [PATCH 1/2] dt-bindings: arm: pmu: Add Samsung Mongoose core
- compatible
-Message-ID: <zcxzmsc642ggozzpj73skzxfce7jnoj7fmdg57edbin2rfh7mn@6acurllfar73>
-References: <20241026-mongoose-pmu-v1-0-f1a7448054be@gmail.com>
- <20241026-mongoose-pmu-v1-1-f1a7448054be@gmail.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Amit Kucheria <amitk@kernel.org>, 
+	Thara Gopinath <thara.gopinath@gmail.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
+	Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-pm@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: thermal: qcom-tsens: add SAR2130P compatible
+Message-ID: <thr77dlmwj5mm3444g35c5f4pgrdqi3o5gkhqrizomndug22oq@e34mltywe4zb>
+References: <20241027-sar2130p-tsens-v1-1-8dee27fc02ae@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,17 +60,12 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241026-mongoose-pmu-v1-1-f1a7448054be@gmail.com>
+In-Reply-To: <20241027-sar2130p-tsens-v1-1-8dee27fc02ae@linaro.org>
 
-On Sat, Oct 26, 2024 at 11:28:08PM +0300, Markuss Broks wrote:
-> Add the compatible for the Samsung Mongoose CPU PMU to the schema.
+On Sun, Oct 27, 2024 at 01:06:50AM +0300, Dmitry Baryshkov wrote:
+> Document compatible for thermal sensors on Qualcomm SAR2130P platform.
 > 
-> Co-developed-by: Maksym Holovach <nergzd@nergzd723.xyz>
-> Signed-off-by: Maksym Holovach <nergzd@nergzd723.xyz>
-> Signed-off-by: Markuss Broks <markuss.broks@gmail.com>
-> ---
->  Documentation/devicetree/bindings/arm/pmu.yaml | 1 +
->  1 file changed, 1 insertion(+)
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
 Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
