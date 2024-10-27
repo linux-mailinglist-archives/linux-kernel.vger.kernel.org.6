@@ -1,103 +1,159 @@
-Return-Path: <linux-kernel+bounces-383451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07C789B1BE1
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 03:15:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A21F09B1BE6
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 03:35:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C939A2820B1
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 02:15:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55306282233
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 02:35:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C65BF101F2;
-	Sun, 27 Oct 2024 02:15:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEF55101F2;
+	Sun, 27 Oct 2024 02:35:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LWEk783Q"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DcnX+9TU"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AF213D9E;
-	Sun, 27 Oct 2024 02:15:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC14A3C39
+	for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 02:35:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729995341; cv=none; b=o+9SOcLauaOD+N/fx8A+kBebWZ79sBViYHm5ZoSlXTxE1+2iscb0loEMxt/UTEb8mq5dmZbE9OnPrim6pOwv78uhGAVw2HddqzeLzU/4t7a7zhl0gt8JpDgK+FUKkKh/BEB5i3xtI0V3VAI6NcYYJKlS+ZTNY+dRIXwpKP5uJ2A=
+	t=1729996509; cv=none; b=eYzRjK4f2vc2Hw+LXcPmWS0Gnk5surWL/MeNL8dfozsjf9eH6XGmig8OYaff/95XSCBzOWH49rBSSwBn/JPVxtnX1v8PBzLEsuVLIBio61mjZgEM1V8Gzbe5OgnV0oaO40iYMj1+crVcnVu9dB0DNauz6uP1h+s+TAXvgQgpYwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729995341; c=relaxed/simple;
-	bh=hxyYesuKW8UwIewwsEyAhRB8GZYN0soW/MiwfKG+nlM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=cDPQPA68Pa8ogAnc+iTqzkpGn62BlUh3jqqxWd0kYIdU1nGO0PCgeURv8qov0Inf5Spg6Wxh7KYj29gj5Gtd8WeKzuod6RBcGIxUuOr0VHrbrwu162A2Rhm9AvJ+53vE5mhYgEqDtWFV9Z1Zp7V/IGpIikfxUltw4aDgLKY9Gno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LWEk783Q; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2e2b549799eso2402249a91.3;
-        Sat, 26 Oct 2024 19:15:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729995339; x=1730600139; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=kn7556O2AaB8qeM5FvO18kqRJQd5qATE5xO+xdeHALg=;
-        b=LWEk783QE3qHZtortmxS92pfnvms7D8I89gXWKOR4zMw14mQpO7nipn8rb6f98Wko7
-         fzCva+amTAV/cFoPai0aNsgyudKY7/ZoD02Y/MWkFojztXWVomqKHegH1LM77bU9aE9s
-         wUmlK35wIhvZQaTKIDMkAcORg/lV1ey8FJ3QjhvRVKsi3FdtIjAhf5SGouqXQVKy1aIJ
-         QDlC/r8bYEX1Hu9WBsSa/dL4u1XWKZOjy7nSQp0vJPcrsVJE54jpJk7OWszWDur8btF3
-         G5u064PGHPYsDXXBA0pH+9QslAXCCJrwnYAfbyCwFH/gSMIsDEjfI53/iSOnwGhEp3yb
-         vlpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729995339; x=1730600139;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kn7556O2AaB8qeM5FvO18kqRJQd5qATE5xO+xdeHALg=;
-        b=wMmY8wndX4t4BHfn3AmmvxEbQupvZq5sBITQ3V4KQZ4s7aitqzqs4sLaBVvKM9GY7T
-         URt/S0Y/t1kqGmgN44z2rQix3GUSo7+3xE2+LEYO5U9u0Et3kxmeZTn/Af9cL5mzAtxL
-         5Gv+OJeJbd/sra9prXPpgox0ZQ6w/bf7lS05KdJZiNP+IwZu8rucXwNHQIhXjdoNxIjl
-         2YXCuRHE6MZxgqLUyo+/X6OQ6SSyTd4AnIgJ+f6ft+L1/SYMbn8MQqH+xhrt2HKYHk+l
-         mH8aFvVn/FjiIeWnK0izs3K+enPTRxwvFnH84hlW7ytUgqhMsvPR5S/RKdCKeARLcovu
-         OOyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWzNNK77N+TwTzK0qTB5TQsA1XCNjgHd/smSdTjzJ6l8LJ8QWNYczh4TV4kIA/HzFKC3uo/O/6GGxUyljs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzbtU0g9wiJ9jl1+dPBkYqupxzMrsF3sn7RmQKitBX8q3CaSXq
-	DT4mw3BHesgo9CW67aBqSINfLUCm4dj2eg3CwDLwFM5l8Og1DyHI
-X-Google-Smtp-Source: AGHT+IENEg89SvDTJCqpYtjzefuJS1rHwhjH3fDPuTP5uGu9fpxx8xMfiIHHToJFRdh1bmKSuWC1JQ==
-X-Received: by 2002:a17:90a:f301:b0:2e2:b211:a4da with SMTP id 98e67ed59e1d1-2e8f1070126mr4604251a91.14.1729995338616;
-        Sat, 26 Oct 2024 19:15:38 -0700 (PDT)
-Received: from xavtug (2603-9008-1600-2265-a236-bcff-feba-a919.inf6.spectrum.com. [2603:9008:1600:2265:a236:bcff:feba:a919])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e77e4e631esm6201983a91.27.2024.10.26.19.15.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 26 Oct 2024 19:15:38 -0700 (PDT)
-Date: Sat, 26 Oct 2024 19:15:30 -0700
-From: "Ned T. Crigler" <crigler@gmail.com>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-	regressions@lists.linux.dev
-Subject: [REGRESSION] disabling and re-enabling magic sysrq fails after
- kernel 6.11
-Message-ID: <Zx2iQp6csn42PJA7@xavtug>
+	s=arc-20240116; t=1729996509; c=relaxed/simple;
+	bh=5gAP4fD8DqhuNukQMzKkZIw0LZPIxlIx/c9UyRWCkfQ=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=fkCzjGO2RP6vpsTR8d54dhw25J2F/vMgm44SiordkBsrcXagGAfWS35GuvSt8TqtUW9v0uMY/70fnIBngU7vi76O2WDwYo2hgKUTE+ZNFH2SNXBSj4M6pEy61nNXJFCGNJPoxGEXWxR8Wi6pMLRp7JhJZDhGHvs12uBr5S8yaSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DcnX+9TU; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729996506; x=1761532506;
+  h=date:from:to:cc:subject:message-id;
+  bh=5gAP4fD8DqhuNukQMzKkZIw0LZPIxlIx/c9UyRWCkfQ=;
+  b=DcnX+9TUuyuqxF1roBQmBM/oShwxvv63JOIGVOziT2jFU7vcVNjsmwIR
+   6GKy10nvFy+l4hag82K2DS/ZepqMNDAnz3C/jXsHRtA9Ly95glhDOj37N
+   vm4uKdr73M8Jl30HtfftiawZxhhqd4PA4cYSptJe4ptM8EwHikQC/qtgX
+   YSKHv7/PlXjMaYv1uPKzwP1VC5DuKA3y2uMhg3CYlEW3CagJDLoxAiB+4
+   jEuzsoN/Is1dB6VaviERqxjHYpRhxTIFNxQ2JPfDJgaA0l9YlNGB+/np6
+   Xeg3/RmUgim0gffa1RMB5C6/k0oTcFvcAbRkVXVcx+b/H24FxaMz+N+C3
+   A==;
+X-CSE-ConnectionGUID: JMDgxEvcT0uStIClaThkHw==
+X-CSE-MsgGUID: 6K+jp9jlQXakarS1ACGFNA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11237"; a="55037536"
+X-IronPort-AV: E=Sophos;i="6.11,236,1725346800"; 
+   d="scan'208";a="55037536"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Oct 2024 19:35:05 -0700
+X-CSE-ConnectionGUID: JXaiEy2dRdC3rqLqAvcoeg==
+X-CSE-MsgGUID: ZV1guwYOQW+w8cCOj3GPLA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,236,1725346800"; 
+   d="scan'208";a="104605375"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa002.fm.intel.com with ESMTP; 26 Oct 2024 19:35:05 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t4t7O-000aHY-2y;
+	Sun, 27 Oct 2024 02:35:02 +0000
+Date: Sun, 27 Oct 2024 10:35:00 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:x86/cleanups] BUILD SUCCESS
+ 7565caab47e89e9681a2c4439100e78f520833fa
+Message-ID: <202410271052.pyQGLEW2-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-Hi,
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/cleanups
+branch HEAD: 7565caab47e89e9681a2c4439100e78f520833fa  x86/cpu: Use str_yes_no() helper in show_cpuinfo_misc()
 
-It looks like starting with kernel 6.11, disabling and re-enabling magic
-sysrq fails with these errors in dmesg:
+elapsed time: 737m
 
-kernel: input: input_handler_check_methods: only one event processing method can be defined (sysrq)
-kernel: sysrq: Failed to register input handler, error -22
+configs tested: 67
+configs skipped: 145
 
-after doing:
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-# echo 0 > /proc/sys/kernel/sysrq
-# echo 438 > /proc/sys/kernel/sysrq
-# echo 0 > /proc/sys/kernel/sysrq
-# echo 438 > /proc/sys/kernel/sysrq
-# echo 0 > /proc/sys/kernel/sysrq
-# echo 438 > /proc/sys/kernel/sysrq
+tested configs:
+alpha          allnoconfig    gcc-14.1.0
+alpha         allyesconfig    clang-20
+alpha            defconfig    gcc-14.1.0
+arc           allmodconfig    clang-20
+arc            allnoconfig    gcc-14.1.0
+arc           allyesconfig    clang-20
+arc              defconfig    gcc-14.1.0
+arm           allmodconfig    clang-20
+arm            allnoconfig    gcc-14.1.0
+arm           allyesconfig    clang-20
+arm              defconfig    gcc-14.1.0
+arm64         allmodconfig    clang-20
+arm64          allnoconfig    gcc-14.1.0
+arm64            defconfig    gcc-14.1.0
+csky           allnoconfig    gcc-14.1.0
+csky             defconfig    gcc-14.1.0
+hexagon       allmodconfig    clang-20
+hexagon        allnoconfig    gcc-14.1.0
+hexagon       allyesconfig    clang-20
+hexagon          defconfig    gcc-14.1.0
+i386          allmodconfig    clang-19
+i386          allmodconfig    gcc-12
+i386           allnoconfig    clang-19
+i386           allnoconfig    gcc-12
+i386          allyesconfig    clang-19
+i386          allyesconfig    gcc-12
+i386             defconfig    clang-19
+loongarch     allmodconfig    gcc-14.1.0
+loongarch      allnoconfig    gcc-14.1.0
+loongarch        defconfig    gcc-14.1.0
+m68k          allmodconfig    gcc-14.1.0
+m68k           allnoconfig    gcc-14.1.0
+m68k          allyesconfig    gcc-14.1.0
+m68k             defconfig    gcc-14.1.0
+microblaze    allmodconfig    gcc-14.1.0
+microblaze     allnoconfig    gcc-14.1.0
+microblaze    allyesconfig    gcc-14.1.0
+microblaze       defconfig    gcc-14.1.0
+mips           allnoconfig    gcc-14.1.0
+nios2          allnoconfig    gcc-14.1.0
+nios2            defconfig    gcc-14.1.0
+openrisc       allnoconfig    clang-20
+parisc         allnoconfig    clang-20
+parisc64         defconfig    gcc-14.1.0
+powerpc        allnoconfig    clang-20
+riscv          allnoconfig    clang-20
+s390          allmodconfig    gcc-14.1.0
+s390           allnoconfig    clang-20
+s390          allyesconfig    gcc-14.1.0
+sh            allmodconfig    gcc-14.1.0
+sh             allnoconfig    gcc-14.1.0
+sh            allyesconfig    gcc-14.1.0
+sparc         allmodconfig    gcc-14.1.0
+um            allmodconfig    clang-20
+um             allnoconfig    clang-20
+um            allyesconfig    clang-20
+x86_64         allnoconfig    clang-19
+x86_64        allyesconfig    clang-19
+x86_64           defconfig    clang-19
+x86_64           defconfig    gcc-11
+x86_64               kexec    clang-19
+x86_64            rhel-8.3    gcc-12
+x86_64        rhel-8.3-bpf    clang-19
+x86_64      rhel-8.3-kunit    clang-19
+x86_64        rhel-8.3-ltp    clang-19
+x86_64       rhel-8.3-rust    clang-19
+xtensa         allnoconfig    gcc-14.1.0
 
--- 
-Ned T. Crigler
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
