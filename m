@@ -1,202 +1,149 @@
-Return-Path: <linux-kernel+bounces-383867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 900C39B211E
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 23:42:58 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 801519B2122
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 23:48:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2E421C2098A
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 22:42:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D82E1B20EB1
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 22:48:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1FB91891AA;
-	Sun, 27 Oct 2024 22:42:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D77D188591;
+	Sun, 27 Oct 2024 22:48:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ba5hmnaJ"
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=themaw.net header.i=@themaw.net header.b="Z5amQny2";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Y3SZoRA9"
+Received: from fout-a2-smtp.messagingengine.com (fout-a2-smtp.messagingengine.com [103.168.172.145])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E90C17C61;
-	Sun, 27 Oct 2024 22:42:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA337286A1;
+	Sun, 27 Oct 2024 22:48:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730068967; cv=none; b=gli05NsbDT/zgQzjzl6zxbRMPT4ZF/DxC0ORbzd8vcAfsLX1fLxoLU4ANdQm3tpCbgiUBzK/oM2pSRrpz+1RNPfwaXxeKdaoRPqUQ5dnaWVcYiTf8/ETLfujwYOW8kv7qos8bSlC3O1zlzdeQTXwkqEtrgBje1TMvWfI7bu0chI=
+	t=1730069293; cv=none; b=uetT16QmdiLp4/k2/qzNgBZE8lGAQEsG0y/tj7FRY2arKJVQihJzbaqvi2z/9pgEuHzzCcE9Al/LRX+Ar2boc7qdt6FPop8znK0mgp0BNXyOAGN2pcVNxUdTID586Wz9eufKHU+Ajv+lErpA2iX+S+zuqBKb3eoCi/3B1K6b8go=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730068967; c=relaxed/simple;
-	bh=uwcvHusTROomeBLvylyvcg7lb+WgLhouV6Wbzq3dRwM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QYfL4fVoPrEpcVmEqjuqbPet3PrbLEG9UK3anxW0XZYaqrbEkmZEgq/1yOvSkmrLkvCN9/zCY8Kc5zCPzlis1NQ93bd6ouwvkTdVGSIjRv+mBuE4s1aF7v1h+EQsMmZLz24yaPgtix7DQ9Suf/R7un1Nxd4AHFS8wrPbYEAwN54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ba5hmnaJ; arc=none smtp.client-ip=209.85.222.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7b1467af9dbso306127185a.0;
-        Sun, 27 Oct 2024 15:42:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730068964; x=1730673764; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zf88lwRLiw9XE+1YEpyETRw1RNFcdzsY3C5vLeR+o+I=;
-        b=ba5hmnaJo1/34X8FDZgdV0PwdISmh72IrnzHBEkMJAsz/5CmTxurUccv7HCXNQDV0a
-         msr0eSH+lWwtIhMRYkEYI5Hx5AF69ZHRI+PqBeZT8gOr4zFj+O/k3RUw3bujLgOh01Hd
-         WLIWScG/6OvfcO8q0LBG38lC41p2C7Rgz/tug5V+GkivyGBW8/oEQrTAi1qZHpNDHFYX
-         0luEb4px2JC9W1bhzdeU/uM6VcLaJS2wcSRg32oIDyJC/pZiViFBnoH7o12AlVq/dagZ
-         QxV71EDpBmeGxlt5Pn5rxHSZ+am6LSCgwI6q2ya+m5i5twhxPOZ59YjW9+2kyp0N9QwQ
-         d2Pw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730068964; x=1730673764;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zf88lwRLiw9XE+1YEpyETRw1RNFcdzsY3C5vLeR+o+I=;
-        b=aUOIamnKgJfZrvsaXLF6eANQTeJJ8PMXPlQ0pRpCnHvU93A41YCRDYQMaUr72b/br2
-         rAU0BqpwCHv34fJ6uwS3emPcisqxJs4Eay7a5tyPU8OaRLan9cPaTeVIsuNBVFfX5W95
-         psaaOpY9UsA94zDAewJXoXsCIO9qlfFGF8PXqzIpFqTRiuLIMdzxc6cNU5JeO7cyDjP9
-         ibhXm6MdPH0mYx8o2F6QaXtgDryGvSx9/FoZ+YEMsScJERnT2vw3zAfbG9ooRTdDQ9Gy
-         AT8EprVBu9NwW9VkXlLB7G28tgggT/OpkBOgvJi0vY3qVe63s0OZbfb7yn6gi9MIWmsi
-         B+Iw==
-X-Forwarded-Encrypted: i=1; AJvYcCU6MSpNJjiHQZaRfoxwcZ+cnVUWc+f83g9r2l0iCYtRafzydxFdqjVlNOLlDC7f82n+mmB5Fv3BQoG/y0ckiiQ=@vger.kernel.org, AJvYcCV8J60dAtb3T+LV/PDoLR00gid0/JQSNj+vOP5BhlIRv9si1nGaFxYcPtQzW/5Aa5k0DuIOUuPptctU8MBw@vger.kernel.org, AJvYcCVn09d1MI2Qsm0I85AZ9Wk+64M8pvdOE+xpe0ziWQRvZkDMwVCUmKJaboubbVMjEDEHP2MqphZFTGCK@vger.kernel.org, AJvYcCWolvtyvE0cE23Ts7ODiD9EAWf/XJBpy3q1LAd2yw7gMkBSbjiydcYL7uCTWnlaY1sRUnpeermhcx+Y@vger.kernel.org
-X-Gm-Message-State: AOJu0YzgZTLJIv0neEXR1ocivduTtdtdmGHKWs7EidafaXuODecLX0gQ
-	d9/o270OJS2TRtFuEBN/HF1cF3CJ7kE9Ro6eaXKMPv2bU+pDW/GI
-X-Google-Smtp-Source: AGHT+IGuEo27itZqVNbjuW74b9O6UzUFckGLYcwJUF47GVyp1zWayZUgYG0JcTltHutqwp9sOcXnmg==
-X-Received: by 2002:a05:620a:280a:b0:7af:ce28:a10c with SMTP id af79cd13be357-7b193edacb6mr1010834485a.12.1730068963970;
-        Sun, 27 Oct 2024 15:42:43 -0700 (PDT)
-Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b18d27a9ffsm270684285a.23.2024.10.27.15.42.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 27 Oct 2024 15:42:43 -0700 (PDT)
-Received: from phl-compute-02.internal (phl-compute-02.phl.internal [10.202.2.42])
-	by mailfauth.phl.internal (Postfix) with ESMTP id D3C361200043;
-	Sun, 27 Oct 2024 18:42:42 -0400 (EDT)
+	s=arc-20240116; t=1730069293; c=relaxed/simple;
+	bh=mNwCDYHaewSTiQZC6F8XtuBW3oExxbRrggmg6HesAN4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MM0XtmCca6hWl6F/I4ISfhc/rW4BbsngGuryov+rBpe98nn7z++J6OtuLLNZ9+tYhBpjT43g1eUvB8dCc1l2wHzDoShcSA8vCbTkQnOr51hVnKalug3AfJoHXL6EJg2NGo3f0Yg2Mf9ytP9BwXtcqqE8qcGMaXS/QzRqb+vm9h0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=themaw.net; spf=pass smtp.mailfrom=themaw.net; dkim=pass (2048-bit key) header.d=themaw.net header.i=@themaw.net header.b=Z5amQny2; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Y3SZoRA9; arc=none smtp.client-ip=103.168.172.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=themaw.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=themaw.net
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfout.phl.internal (Postfix) with ESMTP id DDE821380174;
+	Sun, 27 Oct 2024 18:48:09 -0400 (EDT)
 Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-02.internal (MEProxy); Sun, 27 Oct 2024 18:42:42 -0400
-X-ME-Sender: <xms:4sEeZ_VHJmyGg-FfIabIaaOtTjLSI20jkk0ilxUbc4p0oMXOOZhF_Q>
-    <xme:4sEeZ3ndxIS0gIWBEnKtjq0KBv00ahm3NpMMEzHntnr-ty-sqypDa_m2clp-0W2Aa
-    JFWrrVRONvH1D9b3Q>
-X-ME-Received: <xmr:4sEeZ7ZauXdN0Hgvcnx5Ur37MMQ3MmC1dPLQfKynLkkk11La_KYsOZe-LUk>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdejjedgtddvucetufdoteggodetrfdotf
+  by phl-compute-10.internal (MEProxy); Sun, 27 Oct 2024 18:48:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=cc
+	:cc:content-transfer-encoding:content-type:date:date:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to; s=fm2; t=1730069289; x=1730155689; bh=ovpSW08eRQWRSpckMlBzd
+	TJs6o+8zDMYbK3U5gGCDho=; b=Z5amQny2a0z7rN/Q/E40o+6idE/O/tW743VsL
+	rsusfhOs5wS8OiPTVrnLKBjNG315kSkq0ueWvMlaKF40+n/1bh20lgqJHOGqrJDz
+	g/eeleneftMg5rjJ+WwqxK/6BaL+WcKOQigZ25eREPPxUrJ7+SpkBvFq0wxjJ1JY
+	bmh4n9atQ+Q03W0ku3GycA5pZBs2ye8/W+8MEATfpqFIHIqxBJr9virp5B37ZVtt
+	9WsFfWxunuK4NjVlcEJ6ZpkY6qK9Cjl9q9pJzSJY4oa0GBDdlfqLnzGVJD/EZMi0
+	c2f02xuzsUqeBMLygDGnW8jIcNjkITMAJ/Y5625HuaPHwmyvQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm3; t=1730069289; x=1730155689; bh=ovpSW08eRQWRSpckMlBzdTJs6o+8
+	zDMYbK3U5gGCDho=; b=Y3SZoRA9f4uscKyiBfLaHEp8BcaHWSKu81zhsrwAeugw
+	TP+6SkyWjidStAMCzFKo1iX+NRBLSQu7QYGJKgZtn8h5T7BZmNnLkW/1+k2Nxcc5
+	d5tUV1cKPEfp0L6iOQFqEc0QV374c/7FV08OS9jdw6UoPi9haLO0KixPUwTnwxvU
+	LV14uNLzjI/6em6xFSdPyGseD4I5Zda7MGw5qKjferqURPuKeqTYP26VqVFa73nk
+	WLNqMbPLXXe4h18JNAltj5zFuttL2iwSXfbMocch/0SQqR7IJgLAep3LvQq0JfX7
+	0jB6Ppna35OYRWfsHjYVqLVeC2qLV40TSQu40PaTjQ==
+X-ME-Sender: <xms:KcMeZ3_tqvVxSx0K6Iz_SzEoVL2FErWUMmApL-uZBaLATMnhQSjIFg>
+    <xme:KcMeZztVMYZlpK4nZdexcHVuvXvhfwlQsfrmymWC9TVcdZ3mrgUc_t-yFg_shRBad
+    PwCBo4_-8cn>
+X-ME-Received: <xmr:KcMeZ1CkWCnj1mENtV0u9d5iOk2VtZRBvNj9LBlGQyizXfAlIBsLP3IRm5XoRI9M7T9GU_j312nAAgia7RVBqmdC4Ae7D0MuESiC8RD1Fgx37xAjkvxXVOPG8A>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdejjedgtdefucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
     rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvden
-    ucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrd
-    gtohhmqeenucggtffrrghtthgvrhhnpefhtedvgfdtueekvdekieetieetjeeihedvteeh
-    uddujedvkedtkeefgedvvdehtdenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuve
-    hluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqhhunhdo
-    mhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqddujeejke
-    ehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvgdrnhgr
-    mhgvpdhnsggprhgtphhtthhopedviedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoh
-    epuggrkhhrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehgrhgvghhkhheslhhinhhu
-    gihfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehrrghfrggvlheskhgvrhhnvg
-    hlrdhorhhgpdhrtghpthhtohepsghhvghlghgrrghssehgohhoghhlvgdrtghomhdprhgt
-    phhtthhopehojhgvuggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrlhgvgidrgh
-    grhihnohhrsehgmhgrihhlrdgtohhmpdhrtghpthhtohepghgrrhihsehgrghrhihguhho
-    rdhnvghtpdhrtghpthhtohepsghjohhrnhefpghghhesphhrohhtohhnmhgrihhlrdgtoh
-    hmpdhrtghpthhtohepsggvnhhnohdrlhhoshhsihhnsehprhhothhonhdrmhgv
-X-ME-Proxy: <xmx:4sEeZ6WPFjovLxdtqrWq6_gxxTCmV0sZyHdw5a1OFAHCm4WPLY3c3w>
-    <xmx:4sEeZ5krCb9DTpM9NnVd6I084dqSTDordDDA-BGg-eteG72MNpb4oQ>
-    <xmx:4sEeZ3eiBfQWaHDdAZOqQB4AhIVUJUO8wpVzuHoyWiWRNHuqnCMC6Q>
-    <xmx:4sEeZzGormCjIH0dhCPuMfw76sEaTZeVfvkeNYBuHIkuNAsdTkl65w>
-    <xmx:4sEeZ7lvVqn9mWXbfvRZ8_kUgvFNGjPD1YhlxN6C5g_b1v4vXW5jGNkZ>
-Feedback-ID: iad51458e:Fastmail
+    htshculddquddttddmnecujfgurhephffvvefufffkofgggfestdekredtredttdenucfh
+    rhhomhepkfgrnhcumfgvnhhtuceorhgrvhgvnhesthhhvghmrgifrdhnvghtqeenucggtf
+    frrghtthgvrhhnpedutdfhveehuefhjefgffegieduhefhtdejkefhvdekteeihfehtddt
+    gffgheduleenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
+    hmpehrrghvvghnsehthhgvmhgrfidrnhgvthdpnhgspghrtghpthhtohepiedpmhhouggv
+    pehsmhhtphhouhhtpdhrtghpthhtohepsghrrghunhgvrheskhgvrhhnvghlrdhorhhgpd
+    hrtghpthhtoheprhgrvhgvnhesthhhvghmrgifrdhnvghtpdhrtghpthhtohepvhhirhho
+    seiivghnihhvrdhlihhnuhigrdhorhhgrdhukhdprhgtphhtthhopegruhhtohhfshesvh
+    hgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhes
+    vhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhfshguvghvvg
+    hlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:KcMeZzdCAV1YzSwxzgetXf9xvVNJcthcDsgMynmDDfDby5Pgh0ZmvA>
+    <xmx:KcMeZ8Nf_rPKE9eYOW8JoQlOBNe86a1UXBPC2BGjeOnUqLOQA6DhnQ>
+    <xmx:KcMeZ1mUAhD3jvpnXqTd0t_Pmow9sUlrIsdEg5oXPYB6lCe0cjQMqA>
+    <xmx:KcMeZ2uxCoWqAxR4zHG-_12J_8eKLkyY2ajX98DjlvOZtI6tfTR30g>
+    <xmx:KcMeZ4CwOp8wGzCnd_HapAsFzhgmXD2i4brtg2gpngdylC_FJ2mFkg1X>
+Feedback-ID: i31e841b0:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 27 Oct 2024 18:42:42 -0400 (EDT)
-Date: Sun, 27 Oct 2024 15:42:41 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: gregkh@linuxfoundation.org, rafael@kernel.org, bhelgaas@google.com,
-	ojeda@kernel.org, alex.gaynor@gmail.com, gary@garyguo.net,
-	bjorn3_gh@protonmail.com, benno.lossin@proton.me, tmgross@umich.edu,
-	a.hindborg@samsung.com, aliceryhl@google.com, airlied@gmail.com,
-	fujita.tomonori@gmail.com, lina@asahilina.net, pstanner@redhat.com,
-	ajanulgu@redhat.com, lyude@redhat.com, robh@kernel.org,
-	daniel.almeida@collabora.com, saravanak@google.com,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 11/16] rust: pci: add basic PCI device / driver
- abstractions
-Message-ID: <Zx7B4Y5iegKVXpC4@Boquns-Mac-mini.local>
-References: <20241022213221.2383-1-dakr@kernel.org>
- <20241022213221.2383-12-dakr@kernel.org>
+ 27 Oct 2024 18:48:07 -0400 (EDT)
+From: Ian Kent <raven@themaw.net>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Ian Kent <raven@themaw.net>,
+	Al Viro <viro@ZenIV.linux.org.uk>,
+	autofs mailing list <autofs@vger.kernel.org>,
+	Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: [PATCH] autofs: fix thinko in validate_dev_ioctl()
+Date: Mon, 28 Oct 2024 06:47:17 +0800
+Message-ID: <20241027224732.5507-1-raven@themaw.net>
+X-Mailer: git-send-email 2.46.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241022213221.2383-12-dakr@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-Hi Danilo,
+I was so sure the per-dentry expire timeout patch worked ok but my
+testing was flawed.
 
-On Tue, Oct 22, 2024 at 11:31:48PM +0200, Danilo Krummrich wrote:
-[...]
-> +/// The PCI device representation.
-> +///
-> +/// A PCI device is based on an always reference counted `device:Device` instance. Cloning a PCI
-> +/// device, hence, also increments the base device' reference count.
-> +#[derive(Clone)]
-> +pub struct Device(ARef<device::Device>);
-> +
+In validate_dev_ioctl() the check for ioctl AUTOFS_DEV_IOCTL_TIMEOUT_CMD
+should use the ioctl number not the passed in ioctl command.
 
-Similar to https://lore.kernel.org/rust-for-linux/ZgG7TlybSa00cuoy@boqun-archlinux/
+Signed-off-by: Ian Kent <raven@themaw.net>
+---
+ fs/autofs/dev-ioctl.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-Could you also avoid wrapping a point to a PCI device? Instead, wrap the
-object type:
+diff --git a/fs/autofs/dev-ioctl.c b/fs/autofs/dev-ioctl.c
+index f011e026358e..6d57efbb8110 100644
+--- a/fs/autofs/dev-ioctl.c
++++ b/fs/autofs/dev-ioctl.c
+@@ -110,6 +110,7 @@ static inline void free_dev_ioctl(struct autofs_dev_ioctl *param)
+  */
+ static int validate_dev_ioctl(int cmd, struct autofs_dev_ioctl *param)
+ {
++	unsigned int inr = _IOC_NR(cmd);
+ 	int err;
+ 
+ 	err = check_dev_ioctl_version(cmd, param);
+@@ -133,7 +134,7 @@ static int validate_dev_ioctl(int cmd, struct autofs_dev_ioctl *param)
+ 		 * check_name() return for AUTOFS_DEV_IOCTL_TIMEOUT_CMD.
+ 		 */
+ 		err = check_name(param->path);
+-		if (cmd == AUTOFS_DEV_IOCTL_TIMEOUT_CMD)
++		if (inr == AUTOFS_DEV_IOCTL_TIMEOUT_CMD)
+ 			err = err ? 0 : -EINVAL;
+ 		if (err) {
+ 			pr_warn("invalid path supplied for cmd(0x%08x)\n",
+@@ -141,8 +142,6 @@ static int validate_dev_ioctl(int cmd, struct autofs_dev_ioctl *param)
+ 			goto out;
+ 		}
+ 	} else {
+-		unsigned int inr = _IOC_NR(cmd);
+-
+ 		if (inr == AUTOFS_DEV_IOCTL_OPENMOUNT_CMD ||
+ 		    inr == AUTOFS_DEV_IOCTL_REQUESTER_CMD ||
+ 		    inr == AUTOFS_DEV_IOCTL_ISMOUNTPOINT_CMD) {
+-- 
+2.46.2
 
-    #[repr(transparent)]
-    pub struct Device(Opaque<bindings::pci_dev>);
-
-    impl AlwaysRefCounted for Device {
-        <put_device() and get_device() on ->dev>
-    }
-
-Regards,
-Boqun
-
-> +impl Device {
-> +    /// Create a PCI Device instance from an existing `device::Device`.
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// `dev` must be an `ARef<device::Device>` whose underlying `bindings::device` is a member of
-> +    /// a `bindings::pci_dev`.
-> +    pub unsafe fn from_dev(dev: ARef<device::Device>) -> Self {
-> +        Self(dev)
-> +    }
-> +
-> +    fn as_raw(&self) -> *mut bindings::pci_dev {
-> +        // SAFETY: By the type invariant `self.0.as_raw` is a pointer to the `struct device`
-> +        // embedded in `struct pci_dev`.
-> +        unsafe { container_of!(self.0.as_raw(), bindings::pci_dev, dev) as _ }
-> +    }
-> +
-> +    /// Enable memory resources for this device.
-> +    pub fn enable_device_mem(&self) -> Result {
-> +        // SAFETY: `self.as_raw` is guaranteed to be a pointer to a valid `struct pci_dev`.
-> +        let ret = unsafe { bindings::pci_enable_device_mem(self.as_raw()) };
-> +        if ret != 0 {
-> +            Err(Error::from_errno(ret))
-> +        } else {
-> +            Ok(())
-> +        }
-> +    }
-> +
-> +    /// Enable bus-mastering for this device.
-> +    pub fn set_master(&self) {
-> +        // SAFETY: `self.as_raw` is guaranteed to be a pointer to a valid `struct pci_dev`.
-> +        unsafe { bindings::pci_set_master(self.as_raw()) };
-> +    }
-> +}
-> +
-> +impl AsRef<device::Device> for Device {
-> +    fn as_ref(&self) -> &device::Device {
-> +        &self.0
-> +    }
-> +}
-> -- 
-> 2.46.2
-> 
-> 
 
