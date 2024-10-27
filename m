@@ -1,321 +1,276 @@
-Return-Path: <linux-kernel+bounces-383563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6A6B9B1D60
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 12:28:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A7189B1D65
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 12:30:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34BDB1F217E5
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 11:28:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49BB21C20BCA
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 11:30:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 510C8143C45;
-	Sun, 27 Oct 2024 11:28:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EBBC14E2D8;
+	Sun, 27 Oct 2024 11:30:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="T1d2eAb9"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cv+xgXHv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2CF013D601
-	for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 11:28:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C35113F9D2;
+	Sun, 27 Oct 2024 11:30:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730028485; cv=none; b=jRGsYmhi7EAwjPULwo9z3BQ55M22NuRU06CqaBZHrRCGWhdgDaLUwa/OSdFBvR2Zp3d0jYRZLMNLv1P22NO9dSj6mxATGbl6+L9nibQejekiWKOo2UR61E0BHbgkkbqY/9nENR6DDVN6hbozpBsTVnGuDKsGJU5hwVZWMmnZV2Y=
+	t=1730028619; cv=none; b=o/BR495Nk3/LgY8Tj4ycCjxAezw6YB0/H7VNlYoEcLfsB8vtG7fFus4mlPbfX3SCpeEC1vpRcQhxBGUR/NCI7Ip9Eqcv9g8M1dFCC9Tb/YSq0q9K/Bck8pT8yFLtrjxEBSAN3MO/tuKIkWTvs1v3dN1AqjspPATsvp3olBJX4Y8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730028485; c=relaxed/simple;
-	bh=VuKJDG266cXHH/tjX7LtgrRYflBqMpSCHHivTRBSIco=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P/BzSaJgZjawx1oesuZsiYtpUgPioay9rA5z4tbwK/hBP6KOvM7/8W2j8dva8k6+i1PcKHxp+CEvD8JukR5CIczfThxBrROdq6Np2T8ZjUcjRyvTBvOhsWCjDgHtJ5XhO4rpdds+L34Kqm0a1oCmfQ5Zb9oVE7H/LoATB/dv8lo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=T1d2eAb9; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a99ea294480so244109266b.2
-        for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 04:28:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1730028481; x=1730633281; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=/cPFShITTIvH/DlQLcbPYfMWua0oqN7/wabrQnP5/RY=;
-        b=T1d2eAb9N2HuHrZFTLZpeW+Cdvp5t0rsi4/TNGhOju3HzPhx7zkqEhZjHw4UhBHIni
-         oHufcrp2J7zY1ZuBO7T3L2Wc9bswBB6Hp2NwSoyNztyHYH+Wr1cM29uvQo6z+Jp0rDmQ
-         VFv9OEbMHJhe+ZWqe/IAdbiycz43/orn7DVXz/d9cRSWPjE6gazhcpILNsJ7iwXOlLO3
-         /ufq6RR18Hi3FyvTs3nme+pw+qgEHcb0uJLTnV276wnqVXNUjBZlEZcrVaJv77MSO1xJ
-         WKEHoojlNWeMMmITeW8gKBajVgGz5jhLHlIwIVWJ7CVkSMgUKyQgDq7NG38Up4qYyacZ
-         RuTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730028481; x=1730633281;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/cPFShITTIvH/DlQLcbPYfMWua0oqN7/wabrQnP5/RY=;
-        b=Jxq6j0dcidEyZugV/F2oyMmuHFHTLYNqi4xInawzWTTSGODPE0nwqcqLdlwcBojVCv
-         dWeVZxLlZN39ly1nafY1YJHboNXi8R+yZgpUMCTrmNGT1P72AeXfWT7/LPp51MYTQh6f
-         JaJYp2U4cCGErBvJu15Xe6yGcWD5epySNCiGPh7qph9Kpnf4tqfBgZMk/PAbC1qw4Tm2
-         Lec/07Iap+ZL/jnklEqnhjf6KDJYM0zK1cego5CuFY0lj4LfWVSHtFVcD0f88dqO7KmO
-         /Dyr2+Ytdt50Khf9i4SesjtLWENXWoLnpH03NOIOSqE+qzhn2KOm5Mazl/sKL7zHsJH9
-         mmjA==
-X-Forwarded-Encrypted: i=1; AJvYcCV+JqO/HPcw3/5zxGPMAjirISqSn2sQP13QIdTph3EEFlobRkqDROonyNPP+CiJk0PbgEIsiFRWN0XC40M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYTrFNJRmrWkf9JUgE/3apeymtoqodskcIlXWEREKdiLjpbSY0
-	yNSh74YchybFWmDT7kzJsSkYueJnOm9LoC6cKg56tM+cFXpf/kO4p3RbtOn6i98=
-X-Google-Smtp-Source: AGHT+IHDe3aK5safK/g97VZSuOAzRy7Z2gXlHXYzn/JhQ/9v/lVnM4Ln7FVM4yZYPgeb/pi28OnT4g==
-X-Received: by 2002:a05:6402:5244:b0:5c9:45b5:6077 with SMTP id 4fb4d7f45d1cf-5cbbfa72da0mr6049967a12.23.1730028481000;
-        Sun, 27 Oct 2024 04:28:01 -0700 (PDT)
-Received: from localhost (host-79-35-211-193.retail.telecomitalia.it. [79.35.211.193])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cbb63487fcsm2268240a12.91.2024.10.27.04.28.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 27 Oct 2024 04:28:00 -0700 (PDT)
-From: Andrea della Porta <andrea.porta@suse.com>
-X-Google-Original-From: Andrea della Porta <aporta@suse.de>
-Date: Sun, 27 Oct 2024 12:28:23 +0100
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Andrea della Porta <andrea.porta@suse.com>,
-	Andrew Lunn <andrew@lunn.ch>, Arnd Bergmann <arnd@arndb.de>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	St efan Wahren <wahrenst@gmx.net>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Will Deacon <will@kernel.org>, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	phil@raspberrypi.com, jonathan@raspberrypi.com
-Subject: Re: [PATCH v2 08/14] clk: rp1: Add support for clocks provided by RP1
-Message-ID: <Zx4j1-y26si9Ojp8@apocalypse>
-References: <cover.1728300189.git.andrea.porta@suse.com>
- <022cf4920f8147cc720eaf02fd52c0fa56f565c5.1728300189.git.andrea.porta@suse.com>
- <611de50b5f083ea4c260f920ccc0e300.sboyd@kernel.org>
- <ZxkX5gnDkWrTynRv@apocalypse>
- <21fe104262989f04fadf9ec57dcac6df.sboyd@kernel.org>
+	s=arc-20240116; t=1730028619; c=relaxed/simple;
+	bh=SqiAejqnwtdMsmclrn3s3s+9fkQcLWUueQtnzHdx0AI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Iji4S5UTAu8lRzupTC2fBzZ37aKaJX4NoYAfEOCxblXwnR0m6r8kST6vfziO095a2HRWkaeCvc7pe2AETw95JKmIBXVXTb1noDoRJfhFRVo/Ev37Y6SnjXlAUHe7DuLoJtbWVvw7XXx807PYpYt9qV+Amaxf9m3MER2m9cOAX/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cv+xgXHv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEA78C4CEC3;
+	Sun, 27 Oct 2024 11:30:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730028619;
+	bh=SqiAejqnwtdMsmclrn3s3s+9fkQcLWUueQtnzHdx0AI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Cv+xgXHvPfbO+FS5+P9ATOUIb8PDSTq12CZrA0rtoo9SzxQ1aTmfDVLQDWSeBisHp
+	 gt4LFxyc+Lnk339mrQI3WrrlZWxuLWXXXl761sSLEUQidSsp7TY1c0k2CYU2Ryl/Jk
+	 8yiO6fb5j445UYozxq7gikZTwxafLs+Zv5ag4lpbM6of9UHdT376Sac0QyPA79cA9Q
+	 ChOkdvzyuhv+taDHbDP/2WW06ur9XerqXx5icy9GfAqjcfQUDJnMIRPU3RiSJH2oaB
+	 wu6pSKds0mNH1Af+TzCCkE5VE78Bxh7lZJqvvW/VJgZWzjhqh7iRgbxmzaEjE7Ms0z
+	 SLzB1mSMbJawg==
+Date: Sun, 27 Oct 2024 11:30:10 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Lars-Peter
+ Clausen <lars@metafoo.de>, Harvey Yang <chenghaoyang@google.com>,
+ linux-input@vger.kernel.org, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] iio: hid-sensor-prox: Add support for more channels
+Message-ID: <20241027113010.153fab2b@jic23-huawei>
+In-Reply-To: <20241024-hpd-v1-3-2a125882f1f8@chromium.org>
+References: <20241024-hpd-v1-0-2a125882f1f8@chromium.org>
+	<20241024-hpd-v1-3-2a125882f1f8@chromium.org>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <21fe104262989f04fadf9ec57dcac6df.sboyd@kernel.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Stephen,
+On Thu, 24 Oct 2024 13:29:07 +0000
+Ricardo Ribalda <ribalda@chromium.org> wrote:
 
-On 14:52 Wed 23 Oct     , Stephen Boyd wrote:
-> Quoting Andrea della Porta (2024-10-23 08:36:06)
-> > Hi Stephen,
-> > 
-> > On 15:08 Wed 09 Oct     , Stephen Boyd wrote:
-> > > Quoting Andrea della Porta (2024-10-07 05:39:51)
-> > > > diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> > > > index 299bc678ed1b..537019987f0c 100644
-> > > > --- a/drivers/clk/Kconfig
-> > > > +++ b/drivers/clk/Kconfig
-> > > > @@ -88,6 +88,15 @@ config COMMON_CLK_RK808
-> > > >           These multi-function devices have two fixed-rate oscillators, clocked at 32KHz each.
-> > > >           Clkout1 is always on, Clkout2 can off by control register.
-> > > >  
-> > > > +config COMMON_CLK_RP1
-> > > > +       tristate "Raspberry Pi RP1-based clock support"
-> > > > +       depends on PCI || COMPILE_TEST
-> > > 
-> > > A better limit would be some ARCH_* config.
-> > 
-> > I've avoided ARCH_BCM2835 since the original intention is for this driver
-> > to work (in the future) also for custom PCI cards with RP1 on-board, and not
-> > only for Rpi5.
-> 
-> How will that custom PCI card work? It will need this driver to probe?
+> Egis620 supports 3 channels: presense, proximity and attention.
 
-AFAICT there's no commercially available PCI card slot sporting an RP1 on-board,
-but this driver should be used to probe and use that card too.
+It's not obvious to me that these should necessarily be represented
+as proximity channels.
 
-> Is the iomem going to be exposed through some PCI config space?
+Presence and proximity perhaps though I'm confused as to why
+both make sense on a device, but maybe there are two forms of sensor.
 
-Yes, just as leverage in this driver through BAR1.
+Attention is an oddity and not the same as proximity from the definition
+(see patch 1 review).
+
+So for that we probably need a new channel type.
+
+Jonathan
+
 
 > 
-> It's not great to depend on CONFIG_PCI because then the driver is forced
-> to be =m if PCI ever becomes tristate (unlikely, but still makes for bad
-> copy/pasta). I understand this line is trying to limit the availability
-> of the config symbol. Maybe it should simply depend on ARM or ARM64? Or
-> on nothing at all.
+> Modify the driver so it can read those channels as well.
+> 
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> ---
+>  drivers/iio/light/hid-sensor-prox.c | 161 ++++++++++++++++++++----------------
+>  1 file changed, 89 insertions(+), 72 deletions(-)
+> 
+> diff --git a/drivers/iio/light/hid-sensor-prox.c b/drivers/iio/light/hid-sensor-prox.c
+> index d38564fe22df..97550d0d21a9 100644
+> --- a/drivers/iio/light/hid-sensor-prox.c
+> +++ b/drivers/iio/light/hid-sensor-prox.c
+> @@ -13,16 +13,26 @@
+>  #include <linux/iio/buffer.h>
+>  #include "../common/hid-sensors/hid-sensor-trigger.h"
+>  
+> -#define CHANNEL_SCAN_INDEX_PRESENCE 0
+> +static const u32 prox_usage_ids[] = {
+> +	HID_USAGE_SENSOR_HUMAN_PRESENCE,
+> +	HID_USAGE_SENSOR_HUMAN_PROXIMITY,
+> +	HID_USAGE_SENSOR_HUMAN_ATTENTION,
+> +};
+Use an enum so that you can set these as entries you can later index.
 
-I see, Herve proposed CONFIG_MISC_RP1 that is enabled whenever this driver is
-selected, and it makes a lot of sense to me.
+[HID_HUMAN_PRESENCE] = HID_USAGE_...
+etc
 
-> 
-> > 
-> > > > diff --git a/drivers/clk/clk-rp1.c b/drivers/clk/clk-rp1.c
-> > > > new file mode 100644
-> > > > index 000000000000..9016666fb27d
-> > > > --- /dev/null
-> > > > +++ b/drivers/clk/clk-rp1.c
-> > > 
-> > > > +#include <linux/clk.h>
-> > > 
-> > > Preferably this include isn't included.
-> > 
-> > This include is currently needed by devm_clk_get_enabled() to retrieve
-> > the xosc. Since that clock is based on a crystal (so it's fixed and
-> > always enabled), I'm planning to hardcode it in the driver. This will
-> > not only get rid of the devm_clk_get_enabled() call (and hence of the
-> > clk.h include), but it'll also simplify the top devicetree. No promise
-> > though, I need to check a couple of things first.
-> 
-> A clk provider (clk-provider.h) should ideally not be a clk consumer
-> (clk.h).
+> +
+> +#define MAX_USAGE ARRAY_SIZE(prox_usage_ids)
+Name that something more specific or just use
+the ARRAY_SIZE inline.
 
-Ack.
+>  
+>  struct prox_state {
+>  	struct hid_sensor_hub_callbacks callbacks;
+>  	struct hid_sensor_common common_attributes;
+> -	struct hid_sensor_hub_attribute_info prox_attr;
+> -	u32 human_presence;
+> +	struct hid_sensor_hub_attribute_info prox_attr[MAX_USAGE];
+> +	struct iio_chan_spec channels[MAX_USAGE];
+> +	u32 channel2usage[MAX_USAGE];
+> +	u32 human_presence[MAX_USAGE];
+>  	int scale_pre_decml;
+>  	int scale_post_decml;
+>  	int scale_precision;
+> +	unsigned long scan_mask[2];
 
-> 
-> > 
-> > 
-> > > > +
-> > > > +static int rp1_pll_ph_set_rate(struct clk_hw *hw,
-> > > > +                              unsigned long rate, unsigned long parent_rate)
-> > > > +{
-> > > > +       struct rp1_pll_ph *pll_ph = container_of(hw, struct rp1_pll_ph, hw);
-> > > > +       const struct rp1_pll_ph_data *data = pll_ph->data;
-> > > > +
-> > > > +       /* Nothing really to do here! */
-> > > 
-> > > Is it read-only? Don't define a set_rate function then and make the rate
-> > > determination function return the same value all the time.
-> > 
-> > Not 100% sure about it, maybe Raspberry Pi colleagues can explain.
-> > By 'rate determination function' you're referring (in this case) to
-> > rp1_pll_ph_recalc_rate(), right?
-> 
-> Yes.
-> 
-> > If so, that clock type seems to have
-> > a fixed divider but teh resulting clock depends on the parent rate, so
-> > it has to be calculated.
-> 
-> Sure, it has to be calculated, but it will return the rate that causes
-> no change to the hardware. When that happens, the set_rate() op should
-> be skipped, and you can see that with clk_divider_ro_ops not having a
-> set_rate() function pointer.
+Perhaps add a comment that this is one entry plus a terminator.
 
-Ack.
+> +	int num_channels;
+>  };
+>  
+>  static const u32 prox_sensitivity_addresses[] = {
+> @@ -30,17 +40,23 @@ static const u32 prox_sensitivity_addresses[] = {
+>  	HID_USAGE_SENSOR_DATA_PRESENCE,
+>  };
+>  
+> -/* Channel definitions */
+> -static const struct iio_chan_spec prox_channels[] = {
+> -	{
+> -		.type = IIO_PROXIMITY,
+> -		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
+> -		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_OFFSET) |
+> -		BIT(IIO_CHAN_INFO_SCALE) |
+> -		BIT(IIO_CHAN_INFO_SAMP_FREQ) |
+> -		BIT(IIO_CHAN_INFO_HYSTERESIS),
+> -		.scan_index = CHANNEL_SCAN_INDEX_PRESENCE,
+> +#define PROX_CHANNEL(_indexed, _channel) \
+> +	{\
+> +		.type = IIO_PROXIMITY,\
+> +		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),\
+> +		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_OFFSET) |\
+> +		BIT(IIO_CHAN_INFO_SCALE) |\
+> +		BIT(IIO_CHAN_INFO_SAMP_FREQ) |\
+> +		BIT(IIO_CHAN_INFO_HYSTERESIS),\
+> +		.indexed = _indexed,\
+> +		.channel = _channel,\
+>  	}
+> +
+> +/* Channel definitions (same order as prox_usage_ids) */
+> +static const struct iio_chan_spec prox_channels[] = {
+> +	PROX_CHANNEL(false, 0), // PRESENCE
+With a suitable enum as suggested above can use
+[HID_HUMAN_PRESENCE] = PROX_CHANNEL(false, 0) etc
 
-> 
-> > 
-> > > > +static int rp1_clock_determine_rate(struct clk_hw *hw,
-> > > > +                                   struct clk_rate_request *req)
-> > > > +{
-> > > > +       struct clk_hw *parent, *best_parent = NULL;
-> > > > +       unsigned long best_rate = 0;
-> > > > +       unsigned long best_prate = 0;
-> > > > +       unsigned long best_rate_diff = ULONG_MAX;
-> > > > +       unsigned long prate, calc_rate;
-> > > > +       size_t i;
-> > > > +
-> > > > +       /*
-> > > > +        * If the NO_REPARENT flag is set, try to use existing parent.
-> > > > +        */
-> > > > +       if ((clk_hw_get_flags(hw) & CLK_SET_RATE_NO_REPARENT)) {
-> > > 
-> > > Is this flag ever set?
-> > 
-> > Not right now, but it will be used as soon as I'll add the video clocks,
-> > so I thought to leave it be to avoid adding it back in the future.
-> > For this minimal support is not needed though, so let me know if you
-> > want it removed.
-> > 
-> 
-> Ok sure.
-> 
-> > 
-> > > > +
-> > > > +       [RP1_CLK_ETH_TSU] = REGISTER_CLK(.name = "clk_eth_tsu",
-> > > > +                               .parents = {"rp1-xosc"},
-> > > > +                               .num_std_parents = 0,
-> > > > +                               .num_aux_parents = 1,
-> > > > +                               .ctrl_reg = CLK_ETH_TSU_CTRL,
-> > > > +                               .div_int_reg = CLK_ETH_TSU_DIV_INT,
-> > > > +                               .sel_reg = CLK_ETH_TSU_SEL,
-> > > > +                               .div_int_max = DIV_INT_8BIT_MAX,
-> > > > +                               .max_freq = 50 * MHz,
-> > > > +                               .fc0_src = FC_NUM(5, 7),
-> > > > +                               ),
-> > > > +
-> > > > +       [RP1_CLK_SYS] = REGISTER_CLK(.name = "clk_sys",
-> > > > +                               .parents = {"rp1-xosc", "-", "pll_sys"},
-> > > 
-> > > Please use struct clk_parent_data or clk_hw directly. Don't use strings
-> > > to describe parents.
-> > 
-> > Describing parents as as strings allows to directly assign it to struct
-> > clk_init_data, as in rp1_register_clock():
-> > 
-> > const struct rp1_clock_data *clock_data = data;
-> > struct clk_init_data init = { };
-> > ...
-> > init.parent_names = clock_data->parents;
-> > 
-> > otherwise we should create an array and populate from clk_parent_data::name,
-> > which is of course feasible but a bit less compact. Are you sure you want
-> > to change it?
-> > 
-> 
-> Do not use strings to describe parents. That's the guiding principle
-> here. I agree using strings certainly makes it easy to describe things
-> but that doesn't mean it is acceptable.
+Combining index and not is unusual. If we have to do this
+I think we should consider the technical ABI breakage of adding
+an index to the first one.  It 'shouldn't' break code using the ABI
+correctly but it is a risk.
 
-Ack.
+> +	PROX_CHANNEL(true, 1), // PROXIMITY
+> +	PROX_CHANNEL(true, 2), // ATTENTION
+>  };
+>  
+>  /* Adjust channel real bits based on report descriptor */
+> @@ -62,7 +78,7 @@ static int prox_read_raw(struct iio_dev *indio_dev,
+>  {
+>  	struct prox_state *prox_state = iio_priv(indio_dev);
+>  	struct hid_sensor_hub_device *hsdev;
+> -	int report_id = -1;
+> +	int report_id;
+>  	u32 address;
+>  	int ret_type;
+>  	s32 min;
+> @@ -71,29 +87,22 @@ static int prox_read_raw(struct iio_dev *indio_dev,
+>  	*val2 = 0;
+>  	switch (mask) {
+>  	case IIO_CHAN_INFO_RAW:
+> -		switch (chan->scan_index) {
+> -		case  CHANNEL_SCAN_INDEX_PRESENCE:
+> -			report_id = prox_state->prox_attr.report_id;
+> -			min = prox_state->prox_attr.logical_minimum;
+> -			address = HID_USAGE_SENSOR_HUMAN_PRESENCE;
+> -			hsdev = prox_state->common_attributes.hsdev;
+> -			break;
+> -		default:
+> -			report_id = -1;
+> -			break;
+> -		}
+> -		if (report_id >= 0) {
+> -			hid_sensor_power_state(&prox_state->common_attributes,
+> -						true);
+> -			*val = sensor_hub_input_attr_get_raw_value(
+> -				hsdev, hsdev->usage, address, report_id,
+> -				SENSOR_HUB_SYNC, min < 0);
+> -			hid_sensor_power_state(&prox_state->common_attributes,
+> -						false);
+> -		} else {
+> +		if (chan->scan_index >= prox_state->num_channels) {
+>  			*val = 0;
+No need to set this in an error path. Not sure why original code did.
 
-> 
-> > > > +       struct clk *clk_xosc;
-> > > > +       struct clk_hw **hws;
-> > > > +       unsigned int i;
-> > > > +
-> > > > +       clockman = devm_kzalloc(dev, struct_size(clockman, onecell.hws, asize),
-> > > > +                               GFP_KERNEL);
-> > > > +       if (!clockman)
-> > > > +               return -ENOMEM;
-> > > > +
-> > > > +       spin_lock_init(&clockman->regs_lock);
-> > > > +       clockman->dev = dev;
-> > > > +
-> > > > +       clockman->regs = devm_platform_ioremap_resource(pdev, 0);
-> > > > +       if (IS_ERR(clockman->regs))
-> > > > +               return PTR_ERR(clockman->regs);
-> > > > +
-> > > > +       clk_xosc = devm_clk_get_enabled(dev, NULL);
-> > > > +       if (IS_ERR(clk_xosc))
-> > > > +               return PTR_ERR(clk_xosc);
-> > > > +
-> > > > +       clockman->hw_xosc = __clk_get_hw(clk_xosc);
-> > > 
-> > > Please use struct clk_parent_data::index instead.
-> > 
-> > Sorry, I didn't catch what you mean here. Can you please elaborate?
-> > 
-> 
-> Don't use __clk_get_hw() at all. Also, don't use clk_get() and friends
-> in clk provider drivers. Use struct clk_parent_data so that the
-> framework can do the work for you at the right time.
+>  			return -EINVAL;
+>  		}
+> +		address = prox_state->channel2usage[chan->scan_index];
+> +		report_id = prox_state->prox_attr[chan->scan_index].report_id;
+> +		hsdev = prox_state->common_attributes.hsdev;
+> +		min = prox_state->prox_attr[chan->scan_index].logical_minimum;
+> +		hid_sensor_power_state(&prox_state->common_attributes, true);
+> +		*val = sensor_hub_input_attr_get_raw_value(hsdev,
+> +							   hsdev->usage,
+> +							   address,
+> +							   report_id,
+> +							   SENSOR_HUB_SYNC,
+> +							   min < 0);
+> +		hid_sensor_power_state(&prox_state->common_attributes, false);
+>  		ret_type = IIO_VAL_INT;
+>  		break;
 
-Ack.
+> @@ -178,48 +187,63 @@ static int prox_capture_sample(struct hid_sensor_hub_device *hsdev,
+>  {
+>  	struct iio_dev *indio_dev = platform_get_drvdata(priv);
+>  	struct prox_state *prox_state = iio_priv(indio_dev);
+> -	int ret = -EINVAL;
+> -
+> -	switch (usage_id) {
+> -	case HID_USAGE_SENSOR_HUMAN_PRESENCE:
+> -		switch (raw_len) {
+> -		case 1:
+> -			prox_state->human_presence = *(u8 *)raw_data;
+> -			return 0;
+> -		case 4:
+> -			prox_state->human_presence = *(u32 *)raw_data;
+> -			return 0;
+> -		default:
+> +	int chan;
+> +
+> +	for (chan = 0; chan < prox_state->num_channels; chan++)
+> +		if (prox_state->channel2usage[chan] == usage_id)
+>  			break;
+> -		}
+> +	if (chan == prox_state->num_channels)
+> +		return -EINVAL;
+> +
+> +	switch (raw_len) {
+> +	case 1:
+> +		prox_state->human_presence[chan] = *(u8 *)raw_data;
+> +		break;
+Might as well return here.
+> +	case 4:
+> +		prox_state->human_presence[chan] = *(u32 *)raw_data;
+>  		break;
+and here.
 
-Many thanks,
-Andrea
+>  	}
+>  
+> -	return ret;
+> +	return 0;
+>  }
+>
+>
 
