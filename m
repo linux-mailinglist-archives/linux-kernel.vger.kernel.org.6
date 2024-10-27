@@ -1,114 +1,78 @@
-Return-Path: <linux-kernel+bounces-383746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74D079B1FCA
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 19:57:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26A359B1FC7
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 19:56:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39D9E2815D1
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 18:57:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E04E12814B8
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 18:56:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2568017B41F;
-	Sun, 27 Oct 2024 18:57:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3D3A17C230;
+	Sun, 27 Oct 2024 18:56:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FtZZeWxy"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a0V20pfK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 912B679C2;
-	Sun, 27 Oct 2024 18:57:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FD8017BEBF
+	for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 18:56:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730055445; cv=none; b=fq7rDfY2FJ3zaAyZui/fLit9Ho9220uYmc6E5kNRHh+tWqCocwYCiqc4JKp9C0JCoV++u3rVzZYytC2YeDT3cWnpdXwKBdWOi+mRll7bAe1rJJ+0jQKDjryPLOxUhd+WlAqjJM3+mjwCZsahfTH7731UetDmjj2jvS/lKfre5l0=
+	t=1730055399; cv=none; b=W/Ke7U49D+vCWp/ES+CBjijc+Qog7msqViNRzQyctiVHmaslpmkzxzhL5EhFMM6TZFAV+UF117lztJV7/3lF6hW6F6SQuytl++wb2zWpNpcqGbJNuzIcL3LFBvJDvnqUQernlJeCFZT4WGrCLCl/6ByjXQ8LxQYWHFRxUZ1rtso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730055445; c=relaxed/simple;
-	bh=Ydgcd7V8Rk0BqHzg9kMDtZlz0BknHAiBAnOTCCda5xw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qNi5x5k1C9FJHorafiXIRZzeLf7grO6Q9C7ZLkr0Ig7ubPCF0R/bt3VTQ2HcEONYsDYakTq69wmIol0zEzpvHCzQIQCK2GubofMCP2cjRxcJxuSav2WcBXi5FDyaRcRX1JLbYp/TJJR51nwl0LOzqzYQdMLIb6N9PJ21WzoJlmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FtZZeWxy; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a99ebb390a5so861145466b.1;
-        Sun, 27 Oct 2024 11:57:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730055442; x=1730660242; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HDpvfAr7yg4uqjMsJ37M6bah0IGeg1cqpDTcfwTQmWA=;
-        b=FtZZeWxy/uYl7pPPxYMd18m2/u0Bipn6x/FQCHIr+6YE8cxstU3dN89r+8KqCWKtkU
-         OFlNKSfhAbLHijZ3eXxXgdyJFdZVnevrmIR0eQkpr3Pw/zVG+arKl8/96n+6IQXtVdeS
-         ydi9U6+k+oXnc6a/U67zCLFsp+vPIvosbq+fH+7UW1GgzbDmwhEMQqaHl7CQ+9pzyMj3
-         a7IcnIfih6nIUuQXgw6OMxBql5pkOfF2UlRHAhPGqpuvdSBmN+EfcYIlRCUcy+TA9J4+
-         K/1RapUFn65tA59Asxbgcp/hU2H6jgRFXxuw3yx81xZJclP5E1LNLnTtDYFp0MdJ/HOF
-         SH/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730055442; x=1730660242;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HDpvfAr7yg4uqjMsJ37M6bah0IGeg1cqpDTcfwTQmWA=;
-        b=Jl2ZI3P7NJHbqEKJXgguh0vwWDBe74k9ppbIhW0D76s9I9bU06eFPLkVtWeaKim3qq
-         jt2V/DEG9vqUK5rOV4AuXa3Bl3yDlAc5L8NRuE0l+NBI8B8vtv8apVkuY8K87jRCuvHr
-         8cwS/y7rjDhKg8C4TOogEnf1I+BfyHtoDwQZrn6IwtzsaYf8LrDOgUWCe0EwdRTCZIEm
-         bKT7tfA5diqpOqcpL8I3PTl5uRrbjsaYSFJydSpKVARNJILpqtF+B7wceKePT+KCL3r7
-         X9E0sSOJZ7kaY1STBnL8xAeZivdTXgUCPav4HUyEovGh5yPH5MQbbHD4+s8Y0+0irCwb
-         mTAA==
-X-Forwarded-Encrypted: i=1; AJvYcCVvtnKIUw3o+p6wlp9tSDBAC4OrQHFKN1oi637cuqTxD60G9UHf+DW1wsN4wZOvRPTKnif3WTOPAAz6f7z0wLA=@vger.kernel.org, AJvYcCXefEiqwg6+YQ0m7rWQG4URYcNxiuXFB6DMmUGSWax9plEKR4JmqGYunIlZGTqLNC5XGQbq7EUMpRaVR9CG@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLS/NyyqR94nL5gMEGvplWm2P0GZQIF8ycoY9/0eyXQlmefZYQ
-	ODM+/ykTia5bFrmEMgz/hvv59cxFoQteBwE/nsRtL4ljpxJ9IVkB1mqWZnHbn5tRHLjCtIrfqJX
-	LtjbHAo/LK2yWQg85IlsovjRWKJ0=
-X-Google-Smtp-Source: AGHT+IHpsz2AO82tS5i/igyhlrOSd8kln+NWEYxVU05Tx0rYmrjbp9XkLKHBCMfdHQXOEoOKQNGSrwbzgQa0SbxERiU=
-X-Received: by 2002:a17:906:dc93:b0:a99:eef5:d360 with SMTP id
- a640c23a62f3a-a9ad19c506cmr1197003066b.19.1730055441654; Sun, 27 Oct 2024
- 11:57:21 -0700 (PDT)
+	s=arc-20240116; t=1730055399; c=relaxed/simple;
+	bh=yyk5mxPstsYZr5HJdHHo4bHqQe8fl1reGj6iriKpjGo=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=a8V4dfYc/RuhnpALoJNonUkUlJG/LWWIt0o5ZwKKS02upcZUhaAKN5XKars5NDRobhDVwfU1eSTCu1f6j04jwBroveEOBnzS3+jpjBNf9Wb36/YMzb/xZQoyzIb/rlFeE2a6SpRd6l3qLHs+vAJcL6sFPdOW7DIwskKvLC6bXzk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a0V20pfK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB65FC4CEC7;
+	Sun, 27 Oct 2024 18:56:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730055399;
+	bh=yyk5mxPstsYZr5HJdHHo4bHqQe8fl1reGj6iriKpjGo=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=a0V20pfKrUBqWGlHS041H/HFUJL8W4ggGFshsx0QNThXpYz8bGvofpK2tbjz4Dga+
+	 njsW6rjUPW6rblofoQeRMgjVWGmJ8ggRKpY5ddQJBIh7tcfDzN4l6liZmhpwtB6VCH
+	 iGihq7KRzmzkGfJqiON7EMjepg2w33zScI3KEC4VbFzGcXsI0TAPTjYo2WKRubvWKx
+	 4aJDKuMXoK+h0K9LERq4UE+k9ejyxXYJ44D8+9hNfegdgZ+gxA74968wYbpD4Qlc/a
+	 Hn5lXAwbqetCQPdkusZDRoqr/WmnmoEB6pfdXgzxPdK9jx2K+ex3YOFnOGuQA3zH3N
+	 iZb6JqcV4lawA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70C2A3809A8A;
+	Sun, 27 Oct 2024 18:56:47 +0000 (UTC)
+Subject: Re: [GIT PULL] firewire fixes for 6.12-rc5
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20241027070355.GA146113@workstation.local>
+References: <20241027070355.GA146113@workstation.local>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20241027070355.GA146113@workstation.local>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/ieee1394/linux1394.git tags/firewire-fixes-6.12-rc5
+X-PR-Tracked-Commit-Id: f6a6780e0b9bbcf311a727afed06fee533a5e957
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 7bec4657b0c9355f235a3dc60578bc200146aabd
+Message-Id: <173005540596.3429718.14573389681304590481.pr-tracker-bot@kernel.org>
+Date: Sun, 27 Oct 2024 18:56:45 +0000
+To: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Cc: torvalds@linux-foundation.org, linux-kernel@vger.kernel.org, linux1394-devel@lists.sourceforge.net
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20241027125858.1804-2-thorsten.blum@linux.dev>
- <CAHp75VeeUKWakOWW7ft8BB9Gg=29_z93fCjDk_VGsqd8py878A@mail.gmail.com> <alpine.DEB.2.22.394.2410271624210.3498@hadrien>
-In-Reply-To: <alpine.DEB.2.22.394.2410271624210.3498@hadrien>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Sun, 27 Oct 2024 20:56:44 +0200
-Message-ID: <CAHp75Ve49oDYm56R+__5w3Rz8zG9L-0L1zaRrEctg3zTNXdgoQ@mail.gmail.com>
-Subject: Re: [PATCH] coccinelle: Add str_off_on() and str_no_yes() rules
-To: Julia Lawall <julia.lawall@inria.fr>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>, Kees Cook <kees@kernel.org>, 
-	Andy Shevchenko <andy@kernel.org>, Nicolas Palix <nicolas.palix@imag.fr>, linux-hardening@vger.kernel.org, 
-	cocci@inria.fr, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Sun, Oct 27, 2024 at 5:25=E2=80=AFPM Julia Lawall <julia.lawall@inria.fr=
-> wrote:
-> On Sun, 27 Oct 2024, Andy Shevchenko wrote:
-> > On Sun, Oct 27, 2024 at 2:59=E2=80=AFPM Thorsten Blum <thorsten.blum@li=
-nux.dev> wrote:
-> > >
-> > > In addition to str_on_off() and str_yes_no(), add rules to search for
-> > > str_off_on() and str_no_yes() replacements.
-> >
-> > I don't know cocci well enough, but this does simply not scale. We
-> > also have cases where "Yes"/"No", "YES"/"NO" and all possible
-> > variations of that.
->
-> Andy, are you concerned about the number of such functions in the kernel
-> or the number of rules in the semantic patch.
+The pull request you sent on Sun, 27 Oct 2024 16:03:55 +0900:
 
-Rules for the semantic patches I am worried about.
+> git://git.kernel.org/pub/scm/linux/kernel/git/ieee1394/linux1394.git tags/firewire-fixes-6.12-rc5
 
->  There are indeed more
-> concise ways to write the semantic patch.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/7bec4657b0c9355f235a3dc60578bc200146aabd
 
-Would be nice to see ways to cover more cases in less lines in the spatch.
+Thank you!
 
-
---=20
-With Best Regards,
-Andy Shevchenko
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
