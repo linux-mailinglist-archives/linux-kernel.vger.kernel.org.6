@@ -1,130 +1,115 @@
-Return-Path: <linux-kernel+bounces-383558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F58A9B1D4A
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 11:58:20 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00A9B9B1D4E
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 12:01:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4755A281A86
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 10:58:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91FC1B21228
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 11:01:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 921A414389F;
-	Sun, 27 Oct 2024 10:58:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31A2B13F43A;
+	Sun, 27 Oct 2024 11:01:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="kkDGZwxX"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dJU57+HW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E59E53BBC5
-	for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 10:58:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 776262C182;
+	Sun, 27 Oct 2024 11:01:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730026692; cv=none; b=m/N4tH4l37uictjSdEEWFCjyUousYlXvTJkir+bp7WSKCNVLlU7nIQAIaZzxtp2UPr8DWZfIxuYC927ycOnzmTIzo6IyyU8MCBZh3hIt4SD5URLJYyMi8ZbvE91P9yyopm6+Ju03R6uVID+8qYV2qAVIzCUoVriGC2Lca7GtImc=
+	t=1730026878; cv=none; b=Z/h6OqKfzcnLBctP+1eqLIhBqQvA2ynK2DN3uyRw6rUMsnhqMwBbJ51/Yegcu/MgAm9B4IpphylTVKuGdBuEP8oSpTeKvJ/pyHLD+czPktxyyDOUGz6FYprKefVusQPLX7qCooDu7zMa2VVdABXp2A1Zb7KsXmno13i9dE4/ZEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730026692; c=relaxed/simple;
-	bh=TAqnak62CxsU5fwfWN4e/426CubKkio1XUmDfxD7LjQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=VZnUHOpKRa6Y27oG6klSsP3Yx5I3R3h+yzHx6Ron7W8mhzdhsM3NBNWgW4uwg9lIYE/aStdwMAWCxQldzacH+n97voppimCMPJ0ZU5jg9usL0Ou7zga3EDU6GG1NA9dCcVypmYnCxnVNkCWcJHYD+Kvz/SFNyt3dQFYtRH1YxQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=kkDGZwxX; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 8BF9C40E0192;
-	Sun, 27 Oct 2024 10:57:59 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id NdnTJqdfcyN3; Sun, 27 Oct 2024 10:57:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1730026675; bh=NNUoBBKMpKtZJZhfRFXbhgHAYPHOD/93KKMLNF8yXEQ=;
-	h=Date:From:To:Cc:Subject:From;
-	b=kkDGZwxXhBkFAcNa5Lcu+tEDIwJvUoMgM00dHx6mrQ3qmxg9mI+jomhosA0k0QgBU
-	 FvbAoaLHkcWMl/qjaaakVN1dRC4Go1XjmZ89N3wvDjA9rOoCnkr8uK0rMrjLoKTC8S
-	 a4Ud0Yi5Ns4mzytff5fSlbIIZMqDdLBC2M9e/UQSbkPOEBljXcBt7rjgqMVDlTHyNT
-	 GT0yu2wlc8NCk0VAvLLq0Z3rdWXByTwTnyrol/gZ7rWyWuO7jlpoZQcJkwbYHgRWXu
-	 G9D1wwp+r5iwvMFkZk4mItTIOXfZufSyQC0S4+hGtPDKvRBX4RG6Rn5SjUu+vhTjzV
-	 DT1uQwiuVAVHI5BxxV6iukPgRv6Ffiw8z0q+uRUP3beVFuTfKduNE6QfK3gAAfxz0z
-	 6PTeSvZDXRfZBEYDklbCbVQfHBpJVqAMngCsFxlyftALNSpXArmzKvYiS9eD9MfydI
-	 KSzgwqF24uUfcr102ZHmESIYNlAUEXgMrccyn/68DiZwcOd1T11IVKr+Km7yfcsOw6
-	 5T1fNhiIiwtMSnkkGEbSisats57MjZeaU0zXSIcMFHQgv98izR0IRmlIY0Os0nCbH9
-	 1r15gyXYe7bOnhuJkdZWNS/i+zDiN7R0spjGUuJ1kqx7FwOnNIlK9elsZh7ClF+yof
-	 4N11yj2/cYlIjqOaFO8x2AOI=
-Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 3050A40E0219;
-	Sun, 27 Oct 2024 10:57:52 +0000 (UTC)
-Date: Sun, 27 Oct 2024 11:57:41 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] x86/urgent for v6.12-rc5
-Message-ID: <20241027105741.GAZx4cpWYuun5QaU8K@fat_crate.local>
+	s=arc-20240116; t=1730026878; c=relaxed/simple;
+	bh=3quH9xYFiuttFZOs4ydoaTvF3jIBQchB3SK5V/gWpLc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FdMHc/zdjmqmsac6X1FuG5TyL7Lc9Ie4iyFtjxbdNYSFWhzSJguXhimimciYv7D7dp/iuUT94E30+y6TpwZbpkjHS7kIbQfQ82DU86Vla1L2lPOgAUe1b4P5UaeSmT/MlGH3e1I1Yr9YT3qh5vjDnjxNVSrm/7edEgvoapv1LHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dJU57+HW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09121C4CEE4;
+	Sun, 27 Oct 2024 11:01:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730026878;
+	bh=3quH9xYFiuttFZOs4ydoaTvF3jIBQchB3SK5V/gWpLc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=dJU57+HWLoo/xHKQWSyEHFA9AbQNGSOiahO8sx4O1X7IqWwg68FFL/Qi0NLXh0iY9
+	 dYoKwKJBB+/6DZ0Z5ty8pfF8+IhQs8vtc+hVEYkIjH+vqLOtCKHoo7YZkocCnjlpqQ
+	 y7EagpoQFVSbAdYs868A/VyTiuMz5wfIi3rfAflAghEhaxs5yca8XWE6k7xzD0kDkJ
+	 izYZ31OQfIIKtN1cWX9qaOm9salyxjKEWmlxk4oOkfelZ6hPDqpPeV7e114q3pEwqh
+	 UQ6x+AEQxL5arkHkM/EAQW2V4QfsKdns3ga++3+Nc0njQLGy5rwO686F+CZPNMwkhr
+	 61M6Qul7zrIVQ==
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2fb5638dd57so30687531fa.0;
+        Sun, 27 Oct 2024 04:01:17 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUpdJ0gTpRw7auvQFzPRhOD0QdytO0IHzl5QJPoIW/qQEhZjyAguwpk3R3+gijdDd94OagJzxm+wRcurw==@vger.kernel.org, AJvYcCUrHdOVYju/RDw6jBGQt1J4+FAqGjB5gDEfX95b4bNqoSyzotQYfM6F/f1MOIcbrJ8CzPOf43mP763/mVlS@vger.kernel.org, AJvYcCVNMk/FpwKzm83vXSdZxHF1x41cZ+qdxTDnzzL1GI6nHUvyUvM34K9yTt4ZexSk3qj4eudcXWdGCh41EmY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxhl3n9Y8B8iRuPOtWrhfiKQH1EYtyGCqEPht55wVmZ/HkugjNv
+	o2vdAQTr9mqGOn7SSzaQMrhRK5qRmrjf2ptAemgExSpD0w3O4ToARsYllNVKL3n3lxDycuNSQ4L
+	8T1UmaWFS1WgIqwEhOvqnsctZytE=
+X-Google-Smtp-Source: AGHT+IHUiu1/2RDrCFQjE08nvbf0pFjgub83W2LWpUswHIlLPbwuLbY8emFcknGoqBH2i1i47pTbngVhgD5dL/oCDdk=
+X-Received: by 2002:a2e:be84:0:b0:2fb:4f2e:5be7 with SMTP id
+ 38308e7fff4ca-2fcbdfe4a77mr17515121fa.24.1730026876753; Sun, 27 Oct 2024
+ 04:01:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+References: <20240717-sparc-cflags-v2-0-259407e6eb5f@protonmail.com>
+ <20241021201657.GA898643@thelio-3990X> <CAK7LNASTkUTK8JZCzySNh3BVKxauusVKRhjnchy6iZz4qLbq8w@mail.gmail.com>
+ <20241022200732.GA487584@thelio-3990X> <etezvjy_HnDpgOTBrzap29if1ChFBhl1RawcNJK3UAsFk6i_g_cyHoz7hlqfYqASgJZ97W4HxnGA-nbCXL73pIRN9tUKUttAp1JefMRp8rs=@protonmail.com>
+ <CAK7LNASbFeJc9Y=BFY85SwESUKNNDTRDunyLGveDusC--NVkCw@mail.gmail.com>
+ <20241023164535.GB4081497@thelio-3990X> <InqlMfqWWeNw8Mh6y1y5oNb3EotVpA26gkX70xcVxt9ygCtb7DYfTB3Amg3SzZfs78q3osSW2BIEpgyhmOjSqBW7neH0Se2sQEpmdClVV3M=@protonmail.com>
+In-Reply-To: <InqlMfqWWeNw8Mh6y1y5oNb3EotVpA26gkX70xcVxt9ygCtb7DYfTB3Amg3SzZfs78q3osSW2BIEpgyhmOjSqBW7neH0Se2sQEpmdClVV3M=@protonmail.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Sun, 27 Oct 2024 12:00:39 +0100
+X-Gmail-Original-Message-ID: <CAK7LNATswFdLRO5YWvtogV+sVJ=SOPrP9frrYq_QNzgmugg8dA@mail.gmail.com>
+Message-ID: <CAK7LNATswFdLRO5YWvtogV+sVJ=SOPrP9frrYq_QNzgmugg8dA@mail.gmail.com>
+Subject: Re: [PATCH v2 0/2] sparc/build: Rework CFLAGS for clang compatibility
+To: Koakuma <koachan@protonmail.com>
+Cc: Nathan Chancellor <nathan@kernel.org>, Andreas Larsson <andreas@gaisler.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, 
+	Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, 
+	Justin Stitt <justinstitt@google.com>, glaubitz@physik.fu-berlin.de, 
+	Nicolas Schier <nicolas@fjasle.eu>, sparclinux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
+	linux-kbuild@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Linus,
+On Sat, Oct 26, 2024 at 4:53=E2=80=AFPM Koakuma <koachan@protonmail.com> wr=
+ote:
+>
+> Masahiro Yamada <masahiroy@kernel.org> wrote:
+> > I think this should be documented (required LLVM version and
+> > the supported build command),
+> > otherwise people cannot test this patch.
+>
+> Nathan Chancellor <nathan@kernel.org> wrote:
+> > I am not sure that there is a super concise way to describe for
+> > Documentation/kbuild/llvm.rst that sparc currently requires 'CC=3Dclang
+> > LLVM_IAS=3D0' along with a build of clang from the main branch of
+> > llvm-project to work properly.
+>
+> So about this, as a middle ground, would it be okay if I put
+>
+> ``CC=3Dclang LLVM_IAS=3D0`` (LLVM >=3D 20)
 
-please pull the x86/urgent lineup for v6.12-rc5.
+I am OK with this.
 
-Thx.
-
----
-
-The following changes since commit ffd95846c6ec6cf1f93da411ea10d504036cab42:
-
-  x86/apic: Always explicitly disarm TSC-deadline timer (2024-10-15 05:45:18 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip tags/x86_urgent_for_v6.12_rc5
-
-for you to fetch changes up to 88a921aa3c6b006160d6a46a231b8b32227e8196:
-
-  x86/sev: Ensure that RMP table fixups are reserved (2024-10-23 12:34:06 +0200)
-
-----------------------------------------------------------------
-- Prevent a certain range of pages which get marked as hypervisor-only, to get
-  allocated to a CoCo (SNP) guest which cannot use them and thus fail booting
-
-- Fix the microcode loader on AMD to pay attention to the stepping of a patch
-  and to handle the case where a BIOS config option splits the machine into
-  logical NUMA nodes per L3 cache slice
-
-- Disable LAM from being built by default due to security concerns of
-  a various kind
-
-----------------------------------------------------------------
-Ashish Kalra (1):
-      x86/sev: Ensure that RMP table fixups are reserved
-
-Borislav Petkov (AMD) (2):
-      x86/microcode/AMD: Pay attention to the stepping dynamically
-      x86/microcode/AMD: Split load_microcode_amd()
-
-Pawan Gupta (1):
-      x86/lam: Disable ADDRESS_MASKING in most cases
-
- arch/x86/Kconfig                    |  1 +
- arch/x86/kernel/cpu/microcode/amd.c | 51 +++++++++++++++++++++++++------------
- arch/x86/virt/svm/sev.c             |  2 ++
- 3 files changed, 38 insertions(+), 16 deletions(-)
+Having this info is more helpful than nothing.
 
 
--- 
-Regards/Gruss,
-    Boris.
 
-https://people.kernel.org/tglx/notes-about-netiquette
+> In the documentation, in a similar manner to the s390x entry?
+> I know that LLVM 20 is still a couple months away but those commits will
+> likely be released with that version, and since it also tells people
+> to not use a version that is too old, I think it should be okay (?)
+>
+
+
+--=20
+Best Regards
+Masahiro Yamada
 
