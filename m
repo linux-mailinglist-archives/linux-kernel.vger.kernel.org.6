@@ -1,112 +1,172 @@
-Return-Path: <linux-kernel+bounces-383471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8ACFE9B1C35
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 06:08:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AC3E59B1C37
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 06:10:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B85EC1C20EBB
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 05:08:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB1421C20E83
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 05:10:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6B1B4204B;
-	Sun, 27 Oct 2024 05:08:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68C963B192;
+	Sun, 27 Oct 2024 05:10:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jL8aof0t"
-Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZqAEl84s"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56BD23FB0E
-	for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 05:08:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48AF929CE8;
+	Sun, 27 Oct 2024 05:10:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730005710; cv=none; b=dpUW90E7Wl252oM+Sco+4gnmCGrYrS9zPs827/gYHrhorSLG66HPNhwlEflH+gluo19zLwghWCCKXUcUFNJzs1Vv1Hw3Y+bQb5bBEpwIhT2yddCFCcytciT3BS63DBcMeYDDMbz1ThXaPr0w79y43yrq187rC3KwYs4R43TKw5c=
+	t=1730005815; cv=none; b=tqO4CMQAvEoDDwb8R8hNwf2mqeDxk5CLY3cbM7ZpH88hYwqybW6OoSK6C9dBws6GKG9DSTtqV6hwR8wB4n88cX5ETwwfId3y2JJmsKWtcbw7wWJRuhWuBZDVeg/HQwHI9xYubCdB1EcXUCKb2dPykSZ4BGfJErAe6V2mWTHlPpA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730005710; c=relaxed/simple;
-	bh=dp66j1umkefnkG2UdqRts5LKxZZ7fwfaz2ENwKC3Lao=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=B4T6Gm0WLA1n4t1hZm4+FXUVSgqmtCVlNeB2lVezGNCq+S5IGFPeuqqZ/yBj5nfLorTT0TWOmWrTzYAWYw/LJV18syMlRJpILS56/933kjO8639YGYgBzNJY8oAiGqXh4dW0297S2OVahlzEZj02fV2nxYsXjWj8d4nnQABTtCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jL8aof0t; arc=none smtp.client-ip=209.85.210.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-718123ec383so1872015a34.3
-        for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 22:08:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730005706; x=1730610506; darn=vger.kernel.org;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=W8OblH46z3viSEcwlc9hpu71gThmqui1kydso5kdQnc=;
-        b=jL8aof0tdHq8PIPqoCPrJFwWej5mwdkFyP6ezjsS7AxoXUwWyJbImOuc820wu4hhpw
-         43ViLUcmMVWE0oNQCjTIGeMc/FfuFoKHftrf+OsZ1pJESUftLQvhpGMrPd+t/GmDSOCG
-         qLKNE/e86M4l1CGxQlL7a70z5iszU7tbMpbwEFx42Iexfj/A6FOJabWQ7NJVEZ093WQP
-         XK+NUGE5CVfbnXJS4oGd1HJfcQ91mC8psTuxVKf549ckjcYhJntt8kkHblInhTB1zaix
-         muEETYd8xZ8HocAGjdN7k/g2C5YVIt9+esxbkXOO/8buaDmUlZytXr6b1bcbIILGsEUm
-         pWmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730005706; x=1730610506;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=W8OblH46z3viSEcwlc9hpu71gThmqui1kydso5kdQnc=;
-        b=jMpjz5lL4Qf8aVIi8pK5KD6Vc1/Wi/J0xfaJ5Yl1QKG1/pB4bKxfUCxINRrb1rUZzQ
-         DMSw+kWDOkehWTiooucGVGmm6WN+WyAGkiVTNHrLhICqrc7gmTzuhqO+/zc7FUMLatgr
-         tJhk2hHFmYdRs2pV+6GASS1nC96AHTMGm4veUH6kNduV/tHKUHmfCeJ8/KHJHhvonnxF
-         63eCZ7pffe7S73OnCVCibVT8PdhkuNbdkd9f0UjnO3ZJ+cAzPfS8zoc1oOWuGzMXBlGE
-         vhMEJHlf3I/SqR1Kv6K3O/lCHJifKDmhdnkpAz3vf0kavyYkwVmlXvg3N0HY0wF3BZAx
-         rqGw==
-X-Forwarded-Encrypted: i=1; AJvYcCWrtlCx5pib0+GMiRv6JCvGAjmZwQkSQOmEvRiplAkUa7UDKV/cx60St1vedn4bJwkey+TUSV7GVtwmt1c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxmYZDPQpZkl9Rg/J5S2MK+JEucnStakoVQyOX8uPTyS8hz9X5E
-	QLGl7Sktamvh9+tXfu5CWWXIlquOuqJNtLzuNl323z3nwNB8cyUk76s5zP0OXQ==
-X-Google-Smtp-Source: AGHT+IE1m1v5pF0d5usmCN9rKf27XN9GdvVqGi89h/b7QxHBIDEx7ry5hqLmUQWWtWQeoIQyauq4fw==
-X-Received: by 2002:a05:6830:8d1:b0:718:167f:7f1c with SMTP id 46e09a7af769-7186821f6b5mr3335672a34.13.1730005706274;
-        Sat, 26 Oct 2024 22:08:26 -0700 (PDT)
-Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-718615068f1sm1001454a34.8.2024.10.26.22.08.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 26 Oct 2024 22:08:25 -0700 (PDT)
-Date: Sat, 26 Oct 2024 22:08:13 -0700 (PDT)
-From: Hugh Dickins <hughd@google.com>
-To: Yang Shi <shy828301@gmail.com>
-cc: Zi Yan <ziy@nvidia.com>, Hugh Dickins <hughd@google.com>, 
-    Andrew Morton <akpm@linux-foundation.org>, 
-    Usama Arif <usamaarif642@gmail.com>, Wei Yang <richard.weiyang@gmail.com>, 
-    "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, 
-    Matthew Wilcox <willy@infradead.org>, David Hildenbrand <david@redhat.com>, 
-    Johannes Weiner <hannes@cmpxchg.org>, 
-    Baolin Wang <baolin.wang@linux.alibaba.com>, 
-    Barry Song <baohua@kernel.org>, Kefeng Wang <wangkefeng.wang@huawei.com>, 
-    Ryan Roberts <ryan.roberts@arm.com>, Nhat Pham <nphamcs@gmail.com>, 
-    Chris Li <chrisl@kernel.org>, linux-kernel@vger.kernel.org, 
-    linux-mm@kvack.org
-Subject: Re: [PATCH hotfix 1/2] mm/thp: fix deferred split queue not
- partially_mapped
-In-Reply-To: <CAHbLzkqEhbw89HMh7h-r6M1xM5vw7bUZDNO7KEgPyaguO32d-Q@mail.gmail.com>
-Message-ID: <5d28df34-f073-dec5-730e-a3073f14d849@google.com>
-References: <760237a3-69d6-9197-432d-0306d52c048a@google.com> <3A1E5353-D8C5-4D38-A3FF-BFC671FC25CE@nvidia.com> <966a4aff-f587-c4bb-1e10-2673734c2aa0@google.com> <E5A75697-55C7-4335-8D86-EE5CB6A99C4F@nvidia.com>
- <CAHbLzkqEhbw89HMh7h-r6M1xM5vw7bUZDNO7KEgPyaguO32d-Q@mail.gmail.com>
+	s=arc-20240116; t=1730005815; c=relaxed/simple;
+	bh=SWeLyCKZ3my3ZuW9ckkJgeuwnpPSvITLtLoBuJ2Wan4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=N0FH0E5nWM/mV75t4Q9CEP1IsztClxqZHVl15TypJyfuZ/3j9GJwmp6agc9rOIB2SVczTGtCaA9LQtabvO7XjmH+cSOzGdc0QluMyuBgcfBl7g8Y25m/MTZ3r2nGFshlyHxe1S/D4iXWItCl+jDyqEqR+v6svDgrkwXyOOpLflk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZqAEl84s; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730005814; x=1761541814;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=SWeLyCKZ3my3ZuW9ckkJgeuwnpPSvITLtLoBuJ2Wan4=;
+  b=ZqAEl84s2Tetn4snyuWEL5f5ZJ4nv2PQMBi8aQTf43TwS/wR1CRn9epv
+   EBqcHQsFqqv80hvbbU3YpCEZC7vZi6ANTdRSX2NgLcsXKdN0SUjJ0V6oF
+   fikFpkRTWluZBGeRIMK8ZLsJRc45E3wvThMoQQ4EpfH4pSJ0H//lBIVff
+   /9G7zQVMOx5Ags8nqnNlZa63gmRG3VcrKK6RTnnNB+GyKwuKL9GNfUj6E
+   +D5s3i/kaw63W9pgyDwxWrGKz3k3iogYe8QubCiGo7j2BxxUE1dBeNuOa
+   V94obUIRxCZ+qOPL2PWueV0ADsjcazD/y0uFmO/X7H9K8M/M0kL92E6xH
+   w==;
+X-CSE-ConnectionGUID: X97Cyzf3QemnOY5lgRgeKw==
+X-CSE-MsgGUID: Ogoq9itoT9SCR9WsDngspQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="47091811"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="47091811"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Oct 2024 22:10:13 -0700
+X-CSE-ConnectionGUID: sIjJOROGQPS5rEdqt2fkjA==
+X-CSE-MsgGUID: p/7Y7y2DSMmOlQJC41YLug==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,236,1725346800"; 
+   d="scan'208";a="118766793"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa001.jf.intel.com with ESMTP; 26 Oct 2024 22:10:10 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t4vXU-000aO2-0C;
+	Sun, 27 Oct 2024 05:10:08 +0000
+Date: Sun, 27 Oct 2024 13:09:16 +0800
+From: kernel test robot <lkp@intel.com>
+To: David Lechner <dlechner@baylibre.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Jonathan Cameron <jic23@kernel.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Michael Hennerich <michael.hennerich@analog.com>,
+	linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+	David Lechner <dlechner@baylibre.com>
+Subject: Re: [PATCH v2] iio: adc: ad7380: use if_not_cond_guard for claim
+ direct
+Message-ID: <202410271212.2EFjrzX0-lkp@intel.com>
+References: <20241024-cleanup-if_not_cond_guard-v2-1-1bef98c9fd2e@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241024-cleanup-if_not_cond_guard-v2-1-1bef98c9fd2e@baylibre.com>
 
-On Fri, 25 Oct 2024, Yang Shi wrote:
-> 
-> The other subtle thing is folio->_deferred_list is reused when the
-> folio is moved to the local on-stack list. And some
+Hi David,
 
-Yes.
+kernel test robot noticed the following build errors:
 
-> list_empty(deferred_list) checks return true even though the folio is
-> actually on the local on-stack list. Some code may depend on or
+[auto build test ERROR on 431c39f6d3edbab14f48dbf37a58ccdc0ac3be1e]
 
-The code definitely depends on that behaviour: that's how folios get
-unqueued when refcount reaches 0, whether they are on the public list
-or on the local list at that time.
+url:    https://github.com/intel-lab-lkp/linux/commits/David-Lechner/iio-adc-ad7380-use-if_not_cond_guard-for-claim-direct/20241025-001415
+base:   431c39f6d3edbab14f48dbf37a58ccdc0ac3be1e
+patch link:    https://lore.kernel.org/r/20241024-cleanup-if_not_cond_guard-v2-1-1bef98c9fd2e%40baylibre.com
+patch subject: [PATCH v2] iio: adc: ad7380: use if_not_cond_guard for claim direct
+config: arm-randconfig-001-20241027 (https://download.01.org/0day-ci/archive/20241027/202410271212.2EFjrzX0-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 5886454669c3c9026f7f27eab13509dd0241f2d6)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241027/202410271212.2EFjrzX0-lkp@intel.com/reproduce)
 
-> inadvertently depend on this behavior. Using folio_batch may break
-> some assumptions, but depending on this subtle behavior is definitely
-> not reliable IMHO.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410271212.2EFjrzX0-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from drivers/iio/adc/ad7380.c:27:
+   In file included from include/linux/regulator/consumer.h:35:
+   In file included from include/linux/suspend.h:5:
+   In file included from include/linux/swap.h:9:
+   In file included from include/linux/memcontrol.h:21:
+   In file included from include/linux/mm.h:2213:
+   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+>> drivers/iio/adc/ad7380.c:574:2: error: call to undeclared function 'if_not_cond_guard'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     574 |         if_not_cond_guard(iio_claim_direct_try, indio_dev)
+         |         ^
+>> drivers/iio/adc/ad7380.c:574:52: error: expected ';' after expression
+     574 |         if_not_cond_guard(iio_claim_direct_try, indio_dev)
+         |                                                           ^
+         |                                                           ;
+>> drivers/iio/adc/ad7380.c:574:20: error: use of undeclared identifier 'iio_claim_direct_try'
+     574 |         if_not_cond_guard(iio_claim_direct_try, indio_dev)
+         |                           ^
+   drivers/iio/adc/ad7380.c:823:3: error: call to undeclared function 'if_not_cond_guard'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     823 |                 if_not_cond_guard(iio_claim_direct_try, indio_dev)
+         |                 ^
+   drivers/iio/adc/ad7380.c:823:53: error: expected ';' after expression
+     823 |                 if_not_cond_guard(iio_claim_direct_try, indio_dev)
+         |                                                                   ^
+         |                                                                   ;
+   drivers/iio/adc/ad7380.c:823:21: error: use of undeclared identifier 'iio_claim_direct_try'
+     823 |                 if_not_cond_guard(iio_claim_direct_try, indio_dev)
+         |                                   ^
+   drivers/iio/adc/ad7380.c:912:3: error: call to undeclared function 'if_not_cond_guard'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     912 |                 if_not_cond_guard(iio_claim_direct_try, indio_dev)
+         |                 ^
+   drivers/iio/adc/ad7380.c:912:53: error: expected ';' after expression
+     912 |                 if_not_cond_guard(iio_claim_direct_try, indio_dev)
+         |                                                                   ^
+         |                                                                   ;
+   drivers/iio/adc/ad7380.c:912:21: error: use of undeclared identifier 'iio_claim_direct_try'
+     912 |                 if_not_cond_guard(iio_claim_direct_try, indio_dev)
+         |                                   ^
+   1 warning and 9 errors generated.
+
+
+vim +/if_not_cond_guard +574 drivers/iio/adc/ad7380.c
+
+   568	
+   569	static int ad7380_debugfs_reg_access(struct iio_dev *indio_dev, u32 reg,
+   570					     u32 writeval, u32 *readval)
+   571	{
+   572		struct ad7380_state *st = iio_priv(indio_dev);
+   573	
+ > 574		if_not_cond_guard(iio_claim_direct_try, indio_dev)
+   575			return -EBUSY;
+   576	
+   577		if (readval)
+   578			return regmap_read(st->regmap, reg, readval);
+   579	
+   580		return regmap_write(st->regmap, reg, writeval);
+   581	}
+   582	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
