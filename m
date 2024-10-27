@@ -1,238 +1,239 @@
-Return-Path: <linux-kernel+bounces-383649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 806149B1EBF
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 15:33:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BEE99B1EC2
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 15:37:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4006728202C
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 14:33:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E325B281A98
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 14:37:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC537170A23;
-	Sun, 27 Oct 2024 14:31:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB88716C684;
+	Sun, 27 Oct 2024 14:37:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kxnAzRD/"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A6SooLCK"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3C3E15573A;
-	Sun, 27 Oct 2024 14:31:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84A8CC13B;
+	Sun, 27 Oct 2024 14:36:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730039506; cv=none; b=G2HVjqWhGsqcmicjBPmjLZ3o1v/8ckDZlgd1tmZENnh+GoLzXmWZLqzbL6rbMW19hG4cfXA3CeuQjmYRCQHPQEU89KWEmYgWl01d7XQBcYN6a79vAI0EHy1QZdC8loIYu8hbLw7MgVSBopP+uSOfPmElROXIUl70ZKHefirsFvo=
+	t=1730039821; cv=none; b=iTFYJX00zWmdKJE1oi2qNLEtMM9Wa+H2nyCjVo+6+DBIBaz4UrxKXhKZ/ANYfTi9kI1Z6WEFBaNkbxh6AUg/nU8e3B1nYlAsqqRa2CohtWAXfdETH7LMeAqyfSdVoLuuptrTAV3J52FehXrCltXd/4yBL2gzvkcNSnVhGhBn/TU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730039506; c=relaxed/simple;
-	bh=camzmMf5Fi5UPFDqxtb+tbNiz4IvdOTVNzJTLFevpcs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=cwMx4aBwVPoWG92ZkN5p4k18z0jJTo+zUJo4JGcTLg0bVZQJ2QlRDCtPGmcn93AIuHpOpLNJBV0VS16L3q9VnlKeF+Q6kAJiJhoKNb1HU1LRRDbSJ1JC2i+ut48MnTBUPKbLGfB1VnKqlAL2P07OG/uPl7MgXrySvlCmxW6HHGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kxnAzRD/; arc=none smtp.client-ip=209.85.208.45
+	s=arc-20240116; t=1730039821; c=relaxed/simple;
+	bh=xwWOu7nT23G4YyhQSEEXcfToiXRqnUTQONgVDT6QpY4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=EUuanwrvWaVQxtZ7Dm7e3SC0D0KPBS3xd44kFiR3Ic9gbKgPdmQI8mGunGrVmCsvn7gQ8dRshU5l8Uff/xtURuMOCfQY389I6qCe0XRZfLvxqC5NaBP7LF2cPswJoBOD0GIV11xgpn+ho6u0p9t4LfuET4oL5FM99Yjyi+p4Reo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A6SooLCK; arc=none smtp.client-ip=209.85.218.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5cb15b84544so4393128a12.2;
-        Sun, 27 Oct 2024 07:31:43 -0700 (PDT)
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a966de2f4d3so43925466b.2;
+        Sun, 27 Oct 2024 07:36:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730039502; x=1730644302; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ViqwTp0n7slxj0+sutWl11crfN2XQoRXTaxSzJ6qT4c=;
-        b=kxnAzRD/PcV8JQzn1xgStsM46e6obxDv3rN36byz5qQ6TeM9yPpJ/wFlQ4uyGbBsSc
-         YfRVqOyVEYERUobPgxVVlOtTsK+tLP3fVl3M+JE0ACKQ0zs9xg0u7KuYBM6ThMym8UQZ
-         2ep42vWGteA/N4ARFUgn2RPpTPw1Lt9tvrwOlMTIe5WB7MW90vGVHFkQ+wLIN5VcPVmG
-         qvjzN/HLEeFXLu5eAqDoGIzjbdqaLb5TXiPqfAQDpMwj1MluIn9cBOaPcBSQVzA2PDa2
-         bObvNRB6r2wi/7lxMMT3WlDgikSLmD5tIu7ftInwBI/aJ/HJsS1Po99fFHZK718aQ89W
-         Hy4g==
+        d=gmail.com; s=20230601; t=1730039817; x=1730644617; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4UZPYEQoi3bWFcLqWNqHS8KS5U5p0uA6DEBBD7qYfXU=;
+        b=A6SooLCKQQ8KadgrOfLjDxShdkvTSRGM3uuy7Ka2+5Ng3lyl7ymshv5sRGwPFtEbrf
+         TIx94+BoTBtVmk8TUA6WSzDKNY7QQdoYDwPkdAvczO1N9I32BaqvsI7U5O3Ssu+D66IN
+         h6bDR8H/wimBsw8NohN8oy5HIAgYiaW/Nvzio9ggl81n0EnUhVKrax/fWfcEadHHHgp+
+         CFY/ej6Mpe1sha6YxFln2etKi7Nzerfvz9g9cBA7+Wvu0CBh8agX3ty+qZINo2gqgBWj
+         TjU3DSJcHxcqaCdgWpiNrg3K1jwLLaV/yX1XkXg9bqlWmLrG0INwgD1zQLlMb4AH6yIz
+         xSvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730039502; x=1730644302;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ViqwTp0n7slxj0+sutWl11crfN2XQoRXTaxSzJ6qT4c=;
-        b=oCsEZoRvsoNwavjEUQiT32MlRb/0sM6Xjorq3uqXTlm8rf2u71gqUTImMVH8OzEzMw
-         4w4/+1Zm0Zjb5yXCKhSXAIj88nFvTgIepqUMrZjYCArm1h2H0EDwWg4L++lRuelhyInh
-         ep6ZMWDQ5Uf2ZpY4TL/CBG7kPOxqh3EuOQzsoiZA+Xo/YQF+a4qxiPq8KMmwj8r7ns3Y
-         7sCfSHxPKDShKKTj2pcohPF2WZf3QdWUDnp7g83gmsDxGxCeQMPWN+dX/8kmftlSuYGb
-         3ckwgS9mhjZzHmuw7YoG2EZP3pEhI4buy26yh1vb2r1UX2m4riNfa5bSZXdUTa/oDo1X
-         toHA==
-X-Forwarded-Encrypted: i=1; AJvYcCUQrXdlZ33LA237u7Zwb+3DUy6nMOrIovERPp+SJeHMJFW+8tYRLsWOKMrTSTyCQTcsDWKfr9eD7UOxtg==@vger.kernel.org, AJvYcCUgzKgfagxJcKIjWOtQFWr1olG8Tilhl906heQEhNqhRE12j58TTAehV0lRa0SqS95A1Ioe0+ZgbTatL8I5@vger.kernel.org, AJvYcCVSm5gaGDbiImi0CqWolp2zkXFoUrveUCI4XljkqrBo8oJQ6uaw5s0meqCbUXyJe6qxsdWVeFD9Q76H@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbmOsNops8QxaAHsnOSKqobrSDepaFqL4Q3T5o/0kSHqllFVmo
-	nIe7bpDn/MHr1H6Gm2epqoKW9bKEvIyNyAV3ALlZN/4as/XDE5eJ
-X-Google-Smtp-Source: AGHT+IGThw74/e04YOIKvgL3EKIEnqOHiGdb2Vg4qxOeUo9n0KY+sTpx4a7nBMxnPOu52UWqi2WM5Q==
-X-Received: by 2002:a17:907:9727:b0:a9a:230b:ff2c with SMTP id a640c23a62f3a-a9de5f2226dmr540944766b.30.1730039501952;
-        Sun, 27 Oct 2024 07:31:41 -0700 (PDT)
-Received: from [192.168.0.131] ([194.183.54.57])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cbb634737fsm2407562a12.82.2024.10.27.07.31.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 27 Oct 2024 07:31:40 -0700 (PDT)
-Message-ID: <84dcf231-df5d-7503-f61c-10a30d092287@gmail.com>
-Date: Sun, 27 Oct 2024 15:31:38 +0100
+        d=1e100.net; s=20230601; t=1730039817; x=1730644617;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4UZPYEQoi3bWFcLqWNqHS8KS5U5p0uA6DEBBD7qYfXU=;
+        b=MLQIkLguYSJUhR93Sqs/WROn15jQkHSbFHpJJIDYJ+h4LvTW9A/nwFDRjOPu4Waa/0
+         3fzkiciJhgfdJ3oiVpDLwDnuN4l06obl/SBa32WrPaXotIA7yhAd9LF4MYc/2AubqeYb
+         ZxnPzQidexhgEdRGLUZ4ZazY9rHBpdDIZDQbCS+zq8zweHfi4uIHu2wBbWaaNiafLsgr
+         s1l5YHVqTqcEbv2XrwV2LRBwT08iyFRlJlhV4lhNwT6Glp+T8NhBLP9ZtKO/GxHqHfRi
+         ulRq1s+iMU0WQX09t8j1QpGKq8vxrksq8P3KqOcIP3GES9r2vTlEyQdPT8BhYXJZ+Arx
+         u9vQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVh8MhJpSR6izqHPkX2KpxcdXsCUiwCpTey0+Urt2LGX45rnQra8t1z9IdBRppAHnXIrZYq1Y/s3vik@vger.kernel.org, AJvYcCX+9+wngf6naxpUT8En08lBDULnz9SZ+CHapZa01LKMwe4MH/Oxx29T3FxZbiEDk6QshmG7DYaZtxPP8mG7@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9R406+ELu5TO0HyZe9BXl+NZ/Nla+cgRd7se8EpIJIAMiIeZi
+	diAz6K/3VrVRs6O3vo0s5ji1MocypjM4iXnuKr3X12iOrJeNDwBP
+X-Google-Smtp-Source: AGHT+IGrhLfsAvm7TepnFYyZFnNQnvfJfyNs0C2+I2pIVsJ8VkyulgKGiaYw+Lrrobm93JwEWI7z/g==
+X-Received: by 2002:a17:906:6a24:b0:a9a:3dc0:e128 with SMTP id a640c23a62f3a-a9de5d91898mr242991066b.4.1730039816580;
+        Sun, 27 Oct 2024 07:36:56 -0700 (PDT)
+Received: from 6c1d2e1f4cf4.v.cablecom.net (84-72-156-211.dclient.hispeed.ch. [84.72.156.211])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b331b0d44sm281127966b.187.2024.10.27.07.36.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 27 Oct 2024 07:36:56 -0700 (PDT)
+From: Lothar Rubusch <l.rubusch@gmail.com>
+To: robh@kernel.org,
+	krzk+dt@kernel.org,
+	a.fatoum@pengutronix.de
+Cc: conor+dt@kernel.org,
+	dinguyen@kernel.org,
+	marex@denx.de,
+	s.trumtrar@pengutronix.de,
+	l.rubusch@gmail.com,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCHv3 00/22] Add Enclustra Arria10 and Cyclone5 SoMs
+Date: Sun, 27 Oct 2024 14:36:32 +0000
+Message-Id: <20241027143654.28474-1-l.rubusch@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH v3 1/3] dt-bindings: leds: Add LED1202 LED Controller
-Content-Language: en-US
-To: Vicentiu Galanopulo <vicentiu.galanopulo@remote-tech.co.uk>,
- pavel@ucw.cz, lee@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <Zx0AqwUUchl4M6po@admins-Air>
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-In-Reply-To: <Zx0AqwUUchl4M6po@admins-Air>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi Vicentiu,
+Add device-tree support for the following SoMs:
 
-On 10/26/24 16:46, Vicentiu Galanopulo wrote:
-> The LED1202 is a 12-channel low quiescent current LED driver with:
->    * Supply range from 2.6 V to 5 V
->    * 20 mA current capability per channel
->    * 1.8 V compatible I2C control interface
->    * 8-bit analog dimming individual control
->    * 12-bit local PWM resolution
->    * 8 programmable patterns
-> 
-> If the led node is present in the controller then the channel is
-> set to active.
-> 
-> Signed-off-by: Vicentiu Galanopulo <vicentiu.galanopulo@remote-tech.co.uk>
-> ---
-> 
-> Changes in v3:
->    - remove active property
-> Changes in v2:
->    - renamed label to remove color from it
->    - add color property for each node
->    - add function and function-enumerator property for each node
-> 
->   .../devicetree/bindings/leds/st,led1202.yml   | 103 ++++++++++++++++++
->   1 file changed, 103 insertions(+)
->   create mode 100644 Documentation/devicetree/bindings/leds/st,led1202.yml
-> 
-> diff --git a/Documentation/devicetree/bindings/leds/st,led1202.yml b/Documentation/devicetree/bindings/leds/st,led1202.yml
-> new file mode 100644
-> index 000000000000..f64273599181
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/leds/st,led1202.yml
-> @@ -0,0 +1,103 @@
-> +patternProperties:
-> +    "^led@[0-9a-f]+$":
-> +    type: object
-> +    $ref: common.yaml#
-> +    unevaluatedProperties: false
-> +
-> +    properties:
-> +        reg:
-> +        minimum: 0
-> +        maximum: 11
-> +
-> +    required:
-> +        - reg
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +    - |
-> +        #include <dt-bindings/leds/common.h>
-> +
-> +    i2c {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        led-controller@58 {
-> +            compatible = "st,led1202";
-> +            reg = <0x58>;
-> +            address-cells = <1>;
-> +            size-cells = <0>;
-> +
-> +            led@0 {
-> +                reg = <0>;
-> +                label = "led1";
-> +                function = LED_FUNCTION_STATUS;
-> +                color = <LED_COLOR_ID_RED>;
-> +                function-enumerator = <1>;
+- Mercury SA1 (cyclone5)
+- Mercury+ SA2 (cyclone5)
+- Mercury+ AA1 (arria10)
 
-You should use devm_led_classdev_register_ext() to let LED core create
-LED class device name basing on the above three properties.
-'label' property will be useless in that case, so please drop it and
-avoid constructing LED name in the driver.
+Further add device-tree support for the corresponding carrier boards:
 
-> +            };
-> +
-> +            led@1 {
-> +                reg = <1>;
-> +                label = "led2";
-> +                function = LED_FUNCTION_STATUS;
-> +                color = <LED_COLOR_ID_GREEN>;
-> +                function-enumerator = <2>;
-> +            };
-> +
-> +            led@2 {
-> +                reg = <2>;
-> +                label = "led3";
-> +                function = LED_FUNCTION_STATUS;
-> +                color = <LED_COLOR_ID_BLUE>;
-> +                function-enumerator = <3>;
-> +            };
-> +
-> +            led@3 {
-> +                reg = <3>;
-> +                label = "led4";
-> +                function = LED_FUNCTION_STATUS;
-> +                color = <LED_COLOR_ID_RED>;
-> +                function-enumerator = <4>;
-> +            };
-> +
-> +            led@4 {
-> +                reg = <4>;
-> +                label = "led5";
-> +                function = LED_FUNCTION_STATUS;
-> +                color = <LED_COLOR_ID_GREEN>;
-> +                function-enumerator = <5>;
-> +            };
-> +
-> +            led@5 {
-> +                reg = <5>;
-> +                label = "led6";
-> +                function = LED_FUNCTION_STATUS;
-> +                color = <LED_COLOR_ID_BLUE>;
-> +                function-enumerator = <6>;
-> +            };
-> +
-> +            led@6 {
-> +                reg = <6>;
-> +                label = "led7";
-> +                function = LED_FUNCTION_STATUS;
-> +                color = <LED_COLOR_ID_RED>;
-> +                function-enumerator = <7>;
-> +            };
-> +
-> +            led@7 {
-> +                reg = <7>;
-> +                label = "led8";
-> +                function = LED_FUNCTION_STATUS;
-> +                color = <LED_COLOR_ID_GREEN>;
-> +                function-enumerator = <8>;
-> +            };
-> +
-> +            led@8 {
-> +                reg = <8>;
-> +                label = "led9";
-> +                function = LED_FUNCTION_STATUS;
-> +                color = <LED_COLOR_ID_BLUE>;
-> +                function-enumerator = <9>;
-> +            };
-> +        };
-> +    };
+- Mercury+ PE1
+- Mercury+ PE3
+- Mercury+ ST1
+
+Finally, provide generic support for combinations of the above with
+one of the boot-modes
+- SD
+- eMMC
+- QSPI
+
+Almost all of the above can be freely combined. Combinations are
+covered by the provided .dts files. This makes an already existing
+.dts file obsolete. Further minor fixes of the dtbs_checks are
+added separtely.
+
+The current approach shall be partly useful also for corresponding
+bootloader integration using dts/upstream. That's also one of the
+reasons for the .dtsi split.
+
+Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
+---
+v2 -> v3:
+- dropped the patch to add the socfpga clock bindings:
+  Documentation/devicetree/bindings/clock/altr,socfpga-a10.yaml
+  reason: refactoring the "altr,socfpga-" TXT files to .yaml files is a
+  different story involving several other files, thus can be part of a
+  future patch series, not related to the current upstreaming the
+  Enclustra DTS support, so dropped
+- adjust comments on boot mode selection
+- adjust titles to several bindings patches
+
+v1 -> v2:
+- split bindings and DT adjustments/additions
+- add several fixes to the socfpga.dtsi and socfpga_arria10.dtsi where
+  bindings did not match
+- extend existing bindings by properties and nods from arria10 setup
+- implement the clock binding altr,socfpga-a10.yaml based on existing
+  text file, rudimentary datasheet study and requirements of the
+  particular DT setup
+---
+Lothar Rubusch (22):
+  ARM: dts: socfpga: fix typo
+  ARM: dts: socfpga: align bus name with bindings
+  ARM: dts: socfpga: align dma name with binding
+  ARM: dts: socfpga: align fpga-region name
+  ARM: dts: socfpga: add label to clock manager
+  ARM: dts: socfpga: add missing cells properties
+  ARM: dts: socfpga: fix missing ranges
+  ARM: dts: socfpga: add clock-frequency property
+  ARM: dts: socfpga: add ranges property to sram
+  ARM: dts: socfpga: remove arria10 reset-names
+  dt-bindings: net: snps,dwmac: add support for Arria10
+  ARM: dts: socfpga: add Enclustra boot-mode dtsi
+  ARM: dts: socfpga: add Enclustra base-board dtsi
+  ARM: dts: socfpga: add Enclustra Mercury SA1
+  dt-bindings: altera: add Enclustra Mercury SA1
+  ARM: dts: socfpga: add Enclustra Mercury+ SA2
+  dt-bindings: altera: add binding for Mercury+ SA2
+  ARM: dts: socfpga: add Mercury AA1 combinations
+  dt-bindings: altera: add Mercury AA1 combinations
+  ARM: dts: socfpga: removal of generic PE1 dts
+  dt-bindings: altera: removal of generic PE1 dts
+  ARM: dts: socfpga: add Enclustra SoM dts files
+
+ .../devicetree/bindings/arm/altera.yaml       |  24 ++-
+ .../devicetree/bindings/net/snps,dwmac.yaml   |   2 +
+ arch/arm/boot/dts/intel/socfpga/Makefile      |  25 ++-
+ arch/arm/boot/dts/intel/socfpga/socfpga.dtsi  |   6 +-
+ .../dts/intel/socfpga/socfpga_arria10.dtsi    |  26 ++--
+ .../socfpga/socfpga_arria10_mercury_aa1.dtsi  | 141 ++++++++++++++---
+ .../socfpga_arria10_mercury_aa1_pe1_emmc.dts  |  16 ++
+ .../socfpga_arria10_mercury_aa1_pe1_qspi.dts  |  16 ++
+ .../socfpga_arria10_mercury_aa1_pe1_sdmmc.dts |  16 ++
+ .../socfpga_arria10_mercury_aa1_pe3_emmc.dts  |  16 ++
+ .../socfpga_arria10_mercury_aa1_pe3_qspi.dts  |  16 ++
+ .../socfpga_arria10_mercury_aa1_pe3_sdmmc.dts |  16 ++
+ .../socfpga_arria10_mercury_aa1_st1_emmc.dts  |  16 ++
+ .../socfpga_arria10_mercury_aa1_st1_qspi.dts  |  16 ++
+ .../socfpga_arria10_mercury_aa1_st1_sdmmc.dts |  16 ++
+ .../socfpga/socfpga_arria10_mercury_pe1.dts   |  55 -------
+ .../socfpga/socfpga_cyclone5_mercury_sa1.dtsi | 143 +++++++++++++++++
+ .../socfpga_cyclone5_mercury_sa1_pe1_emmc.dts |  16 ++
+ .../socfpga_cyclone5_mercury_sa1_pe1_qspi.dts |  16 ++
+ ...socfpga_cyclone5_mercury_sa1_pe1_sdmmc.dts |  16 ++
+ .../socfpga_cyclone5_mercury_sa1_pe3_emmc.dts |  16 ++
+ .../socfpga_cyclone5_mercury_sa1_pe3_qspi.dts |  16 ++
+ ...socfpga_cyclone5_mercury_sa1_pe3_sdmmc.dts |  16 ++
+ .../socfpga_cyclone5_mercury_sa1_st1_emmc.dts |  16 ++
+ .../socfpga_cyclone5_mercury_sa1_st1_qspi.dts |  16 ++
+ ...socfpga_cyclone5_mercury_sa1_st1_sdmmc.dts |  16 ++
+ .../socfpga/socfpga_cyclone5_mercury_sa2.dtsi | 146 ++++++++++++++++++
+ .../socfpga_cyclone5_mercury_sa2_pe1_qspi.dts |  16 ++
+ ...socfpga_cyclone5_mercury_sa2_pe1_sdmmc.dts |  16 ++
+ .../socfpga_cyclone5_mercury_sa2_pe3_qspi.dts |  16 ++
+ ...socfpga_cyclone5_mercury_sa2_pe3_sdmmc.dts |  16 ++
+ .../socfpga_cyclone5_mercury_sa2_st1_qspi.dts |  16 ++
+ ...socfpga_cyclone5_mercury_sa2_st1_sdmmc.dts |  16 ++
+ ...cfpga_enclustra_mercury_bootmode_emmc.dtsi |  12 ++
+ ...cfpga_enclustra_mercury_bootmode_qspi.dtsi |   8 +
+ ...fpga_enclustra_mercury_bootmode_sdmmc.dtsi |   8 +
+ .../socfpga_enclustra_mercury_pe1.dtsi        |  33 ++++
+ .../socfpga_enclustra_mercury_pe3.dtsi        |  55 +++++++
+ .../socfpga_enclustra_mercury_st1.dtsi        |  15 ++
+ 39 files changed, 990 insertions(+), 93 deletions(-)
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_aa1_pe1_emmc.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_aa1_pe1_qspi.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_aa1_pe1_sdmmc.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_aa1_pe3_emmc.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_aa1_pe3_qspi.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_aa1_pe3_sdmmc.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_aa1_st1_emmc.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_aa1_st1_qspi.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_aa1_st1_sdmmc.dts
+ delete mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_pe1.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1.dtsi
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1_pe1_emmc.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1_pe1_qspi.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1_pe1_sdmmc.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1_pe3_emmc.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1_pe3_qspi.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1_pe3_sdmmc.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1_st1_emmc.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1_st1_qspi.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1_st1_sdmmc.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa2.dtsi
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa2_pe1_qspi.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa2_pe1_sdmmc.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa2_pe3_qspi.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa2_pe3_sdmmc.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa2_st1_qspi.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa2_st1_sdmmc.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_enclustra_mercury_bootmode_emmc.dtsi
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_enclustra_mercury_bootmode_qspi.dtsi
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_enclustra_mercury_bootmode_sdmmc.dtsi
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_enclustra_mercury_pe1.dtsi
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_enclustra_mercury_pe3.dtsi
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_enclustra_mercury_st1.dtsi
 
 -- 
-Best regards,
-Jacek Anaszewski
+2.25.1
+
 
