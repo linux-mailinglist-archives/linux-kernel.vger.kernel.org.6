@@ -1,135 +1,210 @@
-Return-Path: <linux-kernel+bounces-383586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C0CE9B1D9D
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 13:08:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB98E9B1D9E
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 13:14:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51686281C73
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 12:08:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C92B81C20A04
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 12:14:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FD1B1552F6;
-	Sun, 27 Oct 2024 12:08:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8BB3154BE3;
+	Sun, 27 Oct 2024 12:14:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kJyCwH1a"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cs2OVS4Q"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7C732FE33
-	for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 12:08:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16D91145A0B;
+	Sun, 27 Oct 2024 12:14:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730030910; cv=none; b=mNL1Ntv2vO3MRg+DdMvrP0LssR0rVHI2b/K76ldP0b584cx/E/xLKTnbknu1Sn+gZIDyXWUaXzjW/3tHdR+3eRTZgBJEkfYakDHLnJVjzXZiBlAekDvW4jDdMeBc3DpVDhHizHCq2IfvDmDcaEMbzfwkqJajsXnXedZ1HGIUxBk=
+	t=1730031261; cv=none; b=TmC0MFHF98m1X7YTmDOpHmFZu38Xx371Qs+b4C5dTMCbaQBaZsrpnjsvAjBKrDHqNUpGYMWoQIZWOfs5cnB4h/gA/CvISDFgt7iWAob0wRR5WMVFzHkV8nwCVFk3QtjdpaT2lVvmeNwaQv2qGKJdE59ztG0H0Lu8dymWsa+nAa8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730030910; c=relaxed/simple;
-	bh=D/ynVHYmqi2Ckh7aFWJwqCLmolJOnpYqtWvCpDp09O8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=neLpAjPyGUnDBYla7kl6DUEbQ0WUKx9vqGhmlX2UFdZ5hFKd+VMy09EXwTxYmPPkqCS/zTwKdylYLJFWZECCkAjiMIufITMARolNvkhCPPdZX6bnirRIf1JzsafetbooB0Y/U5A/E8oN+EDSNGLQbvYgD2N65EDVEzAlSDd0jOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kJyCwH1a; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-20c803787abso26246675ad.0
-        for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 05:08:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730030907; x=1730635707; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BAlFXpVPV8uFWMmnJmNJ4B3bgnH5ueF+92q0u74/c1Q=;
-        b=kJyCwH1aAHr+w0ApbQwn8jP59mwtutvZjpFn086qbxQwDujHWy78wdDBtOiu63qmQc
-         XupcsMt5MaUmPpozQOYsNrDXqqnDx7e5ja8ncoRHpqR0D9BvWGgCpeiEZ1/jw+/SAo3C
-         1geQ7X2XrOH6AIqO1qRAMqSijgsqcguFp70AwYfjN03jxHDexPEoNmjYJ0k4ym2O8665
-         3DoUSnl37xDBwB3Rt7jGrtTa6vNK6UJVd7XdnDPFYerx0BmVMkpNpZhd5TSreuj0fAiG
-         UjDxkvTs0mqxHVPVMCZxEapncdmtLNncnfNPibPF6u1nUwFL14N3mhhTKFLdC0D4xJ8I
-         4CmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730030907; x=1730635707;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BAlFXpVPV8uFWMmnJmNJ4B3bgnH5ueF+92q0u74/c1Q=;
-        b=VSbyntgENS87KJ/p5LC75/YJOuM+yt2xpO1C8b08Za3OM3i9i0v/HeF9kJVWGPDG3H
-         t9RGWIpCQVWqK0CeYhKYypLtEhNJdvLA0yrD3EMnuKV3FSLe3doUe+lo6fckUUPq/EGE
-         wrGPEEHl2ds2ITwKVVG2TW3PQCjqOWB9SeE4PHijdr4/3FGAwg5lU0D9nKk2A6Bx2e93
-         6T6AVz5ABnNyKQLqFpbthIKm6zcD7cfabcuDdWVDNCjaDGquYWmXZLqC7UHcYwe+AZii
-         3XUXIJdZN8Bdsq+jGTIHKkSTe0gBKNXKgbmC15tT6i0Nhob7wrJRReIGcOJiiz5mHCsd
-         XxUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW8/b9SHn3rsJjRvArxFD+OEAQ5eI8Gf4kEyPu3+IjkasqcnMQqZIubsejjD/aIxUCN+eD7PNxPoR2xNbs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzeiuMnsWGbP0h7DUCjEAiPQLL1hv9t1RRkZDDCcNMCAWrZrQj1
-	hDS3CB87MhUSLExgHhvRSc6Ex1p2mPDc2eq5zaOvYR1tv+b2Dq8D
-X-Google-Smtp-Source: AGHT+IHKTzcPBHYCFSnQ1nhY97KwfygCayjkBvcjT39mMpBhj6B1ICPcfkvwjOJwvhjJetE2jY9bZg==
-X-Received: by 2002:a17:902:d2c8:b0:20a:fd4e:fef6 with SMTP id d9443c01a7336-20fb88d5d7fmr161143025ad.8.1730030906970;
-        Sun, 27 Oct 2024 05:08:26 -0700 (PDT)
-Received: from localhost.localdomain ([124.156.216.125])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bbf43476sm34897435ad.24.2024.10.27.05.08.21
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Sun, 27 Oct 2024 05:08:26 -0700 (PDT)
-From: Lance Yang <ioworker0@gmail.com>
-To: akpm@linux-foundation.org
-Cc: dj456119@gmail.com,
-	cunhuang@tencent.com,
-	leonylgao@tencent.com,
-	j.granados@samsung.com,
-	jsiddle@redhat.com,
-	kent.overstreet@linux.dev,
-	21cnbao@gmail.com,
-	ryan.roberts@arm.com,
-	david@redhat.com,
-	ziy@nvidia.com,
-	libang.li@antgroup.com,
-	baolin.wang@linux.alibaba.com,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	joel.granados@kernel.org,
-	linux@weissschuh.net,
-	Lance Yang <ioworker0@gmail.com>,
-	Mingzhe Yang <mingzhe.yang@ly.com>
-Subject: [PATCH v2 2/2] hung_task: add docs for hung_task_detect_count
-Date: Sun, 27 Oct 2024 20:07:47 +0800
-Message-ID: <20241027120747.42833-3-ioworker0@gmail.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241027120747.42833-1-ioworker0@gmail.com>
-References: <20241027120747.42833-1-ioworker0@gmail.com>
+	s=arc-20240116; t=1730031261; c=relaxed/simple;
+	bh=K7mregKkm97B4UPy/3KG+ChtXDnIj722Cg4nu0OcQo4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=uodfHkz2PIu/MvX1GSdMhPkoGEm8Po5ttxjiorieJaYttVEkNrX36wnR4paNngfLTn5vcl14K+Iq+xsG5IrSUz5JFLg73EdH9cSyDxhdRqxZ9VX4wAjpSMIfBiI+1dP3HfIU2frxtdK2XRJXLLU0jykMs26tc+W0Ljejo9U5Jb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cs2OVS4Q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE50EC4CEC3;
+	Sun, 27 Oct 2024 12:14:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730031260;
+	bh=K7mregKkm97B4UPy/3KG+ChtXDnIj722Cg4nu0OcQo4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=cs2OVS4QiuO2vtmi0FttGb/TU9hJlSJ4VyA2eZmmwZG6iz3ke1ATlLavT8/UfM6dd
+	 xRNm7ExTV01i5aKwgmAXsFbt4Cm5fWxeTdZ/oKLYg9xmxBg+zHbMqeG6jmsm8xQCwl
+	 NppURYlTFFwkASRMfVbYJEQSJsW0nFKHeyFKFdA+A7zMs3HZcTYO+lLNu5BZ2mQNpt
+	 ex/SJRvyOWItBTCBOqDj3SSVEMW0z2pnrjJ/6E+y9sTnElPBjk/dacECdi86Q86jXM
+	 +KoWAT/faEA0td0fiikrR7A/yogJTFv5/CVj3htjT0CMr4i40wDsWnCWAew9ZZMnjv
+	 iEMNI0Ogm2fvw==
+Date: Sun, 27 Oct 2024 12:14:12 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: <victor.duicu@microchip.com>
+Cc: <matteomartelli3@gmail.com>, <lars@metafoo.de>,
+ <marius.cristea@microchip.com>, <linux-iio@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v6] iio: adc: pac1921: Add ACPI support to Microchip
+ pac1921
+Message-ID: <20241027121412.0a71eb55@jic23-huawei>
+In-Reply-To: <20241024100050.4727-1-victor.duicu@microchip.com>
+References: <20241024100050.4727-1-victor.duicu@microchip.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-This commit introduces documentation for hung_task_detect_count in
-kernel.rst.
+On Thu, 24 Oct 2024 13:00:50 +0300
+<victor.duicu@microchip.com> wrote:
 
-Signed-off-by: Mingzhe Yang <mingzhe.yang@ly.com>
-Signed-off-by: Lance Yang <ioworker0@gmail.com>
----
- Documentation/admin-guide/sysctl/kernel.rst | 9 +++++++++
- 1 file changed, 9 insertions(+)
+> From: Victor Duicu <victor.duicu@microchip.com>
+> 
+> This patch implements ACPI support to Microchip pac1921.
+> The driver can read shunt resistor value and label from ACPI table.
+> 
+> Signed-off-by: Victor Duicu <victor.duicu@microchip.com>
+Hi Victor,
 
-diff --git a/Documentation/admin-guide/sysctl/kernel.rst b/Documentation/admin-guide/sysctl/kernel.rst
-index f8bc1630eba0..b2b36d0c3094 100644
---- a/Documentation/admin-guide/sysctl/kernel.rst
-+++ b/Documentation/admin-guide/sysctl/kernel.rst
-@@ -401,6 +401,15 @@ The upper bound on the number of tasks that are checked.
- This file shows up if ``CONFIG_DETECT_HUNG_TASK`` is enabled.
- 
- 
-+hung_task_detect_count
-+======================
-+
-+Indicates the total number of tasks that have been detected as hung since
-+the system boot.
-+
-+This file shows up if ``CONFIG_DETECT_HUNG_TASK`` is enabled.
-+
-+
- hung_task_timeout_secs
- ======================
- 
--- 
-2.45.2
+Been a while since I looked at a version of this. Some comments inline
+on stuff that I probably missed before now.
+
+Jonathan
+
+>  };
+>  
+> +static inline bool pac1921_shunt_is_invalid(u32 shunt_val)
+> +{
+> +	return (shunt_val == 0 || shunt_val > INT_MAX);
+
+Drop the brackets as they don't add anything much.
+
+> +}
+> +
+
+> +/*
+> + * documentation related to the ACPI device definition
+> + * https://ww1.microchip.com/downloads/aemDocuments/documents/OTH/ApplicationNotes/ApplicationNotes/PAC193X-Integration-Notes-for-Microsoft-Windows-10-and-Windows-11-Driver-Support-DS00002534.pdf
+> + */
+> +static int pac1921_match_acpi_device(struct i2c_client *client, struct pac1921_priv *priv,
+> +				     struct iio_dev *indio_dev)
+> +{
+> +	acpi_handle handle;
+> +	union acpi_object *rez;
+> +	guid_t guid;
+> +	char *label;
+> +
+> +	guid_parse(PAC1921_DSM_UUID, &guid);
+> +	handle = ACPI_HANDLE(&client->dev);
+> +
+> +	rez = acpi_evaluate_dsm(handle, &guid, 1, PAC1921_ACPI_GET_UOHMS_VALS, NULL);
+> +	if (!rez)
+> +		return dev_err_probe(&client->dev, -EINVAL,
+> +				     "Could not read shunt from ACPI table\n");
+> +
+> +	priv->rshunt_uohm = rez->package.elements[0].integer.value;
+> +	ACPI_FREE(rez);
+> +
+> +	if (pac1921_shunt_is_invalid(priv->rshunt_uohm))
+> +		return dev_err_probe(&client->dev, -EINVAL, "Invalid shunt resistor\n");
+> +
+> +	pac1921_calc_current_scales(priv);
+
+As below - I'd do this and the validity check outside of this function to avoid
+duplication for the two firmware types.
+
+> +
+> +	rez = acpi_evaluate_dsm(handle, &guid, 1, PAC1921_ACPI_GET_LABEL, NULL);
+> +	if (!rez)
+> +		return dev_err_probe(&client->dev, -EINVAL,
+> +				     "Could not read label from ACPI table\n");
+> +
+> +	label = devm_kmemdup(&client->dev, rez->package.elements->string.pointer,
+> +			     (size_t)rez->package.elements->string.length + 1,
+Are you duplicating one off the of the string?
+I'm curious at the need for a null.
+
+Consider devm_kstrdup() which only copies the actual string + adds the terminator.
+
++ check for allocation failure label may be NULL.
+
+> +			     GFP_KERNEL);
+> +	label[rez->package.elements->string.length] = '\0';
+> +	indio_dev->label = label;
+> +	ACPI_FREE(rez);
+> +
+> +	return 0;
+> +}
+> +
+> +static int pac1921_parse_of_fw(struct i2c_client *client, struct pac1921_priv *priv)
+> +{
+> +	int ret;
+> +	struct device *dev = &client->dev;
+> +
+> +	ret = device_property_read_u32(dev, "shunt-resistor-micro-ohms",
+> +				       &priv->rshunt_uohm);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret,
+> +				     "Cannot read shunt resistor property\n");
+> +
+> +	if (pac1921_shunt_is_invalid(priv->rshunt_uohm))
+> +		return dev_err_probe(dev, -EINVAL, "Invalid shunt resistor: %u\n",
+> +				     priv->rshunt_uohm);
+> +
+> +	pac1921_calc_current_scales(priv);
+
+Why not do the sanity checks and scale calc outside of the firmware specific code
+given it is duplicated and not related to the firmware parsing itself.
+
+
+> +
+> +	return 0;
+> +}
+> +
+>  static int pac1921_probe(struct i2c_client *client)
+>  {
+>  	struct device *dev = &client->dev;
+> @@ -1176,17 +1254,13 @@ static int pac1921_probe(struct i2c_client *client)
+>  	priv->di_gain = PAC1921_DEFAULT_DI_GAIN;
+>  	priv->n_samples = PAC1921_DEFAULT_NUM_SAMPLES;
+>  
+> -	ret = device_property_read_u32(dev, "shunt-resistor-micro-ohms",
+> -				       &priv->rshunt_uohm);
+> -	if (ret)
+> -		return dev_err_probe(dev, ret,
+> -				     "Cannot read shunt resistor property\n");
+> -	if (priv->rshunt_uohm == 0 || priv->rshunt_uohm > INT_MAX)
+> -		return dev_err_probe(dev, -EINVAL,
+> -				     "Invalid shunt resistor: %u\n",
+> -				     priv->rshunt_uohm);
+> -
+> -	pac1921_calc_current_scales(priv);
+> +	if (ACPI_HANDLE(&client->dev))
+> +		ret = pac1921_match_acpi_device(client, priv, indio_dev);
+
+priv is trivial to get from the indio_dev, so don't pass them both in.
+Client also trivial to get from there, so just pass in the indio_dev to both
+calls.
+
+
+> +	else
+> +		ret = pac1921_parse_of_fw(client, priv);
+> +	if (ret < 0)
+> +		return dev_err_probe(&client->dev, ret,
+Use dev as it is the same device.
+
+> +				     "parameter parsing error\n");
+>  
+>  	priv->vdd = devm_regulator_get(dev, "vdd");
+>  	if (IS_ERR(priv->vdd))
+> @@ -1243,11 +1317,17 @@ static const struct of_device_id pac1921_of_match[] = {
+>  };
+>  MODULE_DEVICE_TABLE(of, pac1921_of_match);
 
 
