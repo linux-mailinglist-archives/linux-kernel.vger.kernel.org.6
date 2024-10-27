@@ -1,109 +1,140 @@
-Return-Path: <linux-kernel+bounces-383605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCA429B1DF2
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 14:50:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 968179B1DF4
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 14:55:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91A8B2818EF
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 13:50:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F39AA1F21290
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 13:55:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B84CF1547F0;
-	Sun, 27 Oct 2024 13:50:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RP1SSjc3"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E826E157465;
+	Sun, 27 Oct 2024 13:55:36 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 367D98489;
-	Sun, 27 Oct 2024 13:50:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62FC26BFCA
+	for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 13:55:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730037051; cv=none; b=CMoPdTyvCPLnCj77Yxya6T0oAEGFtSHHCEweykhiLrEaZ+OdryZOrU8qGmtI+Kw9MjH84jEXNvCGWJr8gFYaSoHzRW8TKKtv0sb8OhK4j8gDk1iCPCz+TWU6XeiZmZSdFWBwz1HJBrcrm1dXQ8U10vdvXYz2LYiwsfv06qlNoj0=
+	t=1730037336; cv=none; b=tW4pXVpe0cQ5/gFYfksVxnJ+x4+MvheLwaLn/y4tTuikiuDssamRhIxqMx28NbKkUwYQlE7u6Qml8MgxbUrFPSGDKnO+ca9nEKNP/5mgdW1aEXiwpB24JfhuTaiNtm4AHJ+p0/ZZgUdwU35SaYGN9p1L/H36AL/Qe97pBaw8IOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730037051; c=relaxed/simple;
-	bh=rntz41aukF0GgOif9N9M6U96FYbkXK0Me9t+AAat9vo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pzvQhACI6A15/ur4RI+Zw6nsNivWpUXTN3TaBr04c1KXsA17JoAjQl+vwqbhLBTPJ/iMg5rwY6ddXStKwWp8NYKngiR869nJbBNtoY5dBOmDrr7fKM7J3hKzV5+9usXQ3y5SY+8Ju8/6fVXLuyPzJ69yURWDvIhBG4/rYYOEvZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RP1SSjc3; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43159c9f617so34392175e9.2;
-        Sun, 27 Oct 2024 06:50:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730037047; x=1730641847; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=IjLV1bEDo/MtMx6gk/KnUwVzXIaCsBTVYT7dT2Z8X0U=;
-        b=RP1SSjc3h2805fgMIMPMvHg7FdkuDn8bTfy++C3lXnr4qeSbN0lbmm3L0Z3WLNZv5/
-         i+lXrvkOssOpwxCg1ustsMNN/qjyKV7iPYkmcOv1/ZnNR91lCq3VWx8uTvU8+uvoXlQR
-         AUl2FWAlwlBBPWB58xJhA6VARkx4Qwe6KJUNKNb/8fu+bLGrwAr0Be3YE5TR+rmrL8qT
-         XuZShwRkzrroEP2lUbuxnNPgkOBbuiIWEAQdaI+/EpvaVLVaqbOswbpNhuGoWCVPgf2/
-         NanHxIy9Mj60i9EPloiEklKfwcE05rwHiWAxqQ+ODj77YoRhHh/59F2xZRE77AOqSJlU
-         Y+Bg==
+	s=arc-20240116; t=1730037336; c=relaxed/simple;
+	bh=IagfQGZZSfpCbczPiCtVB7H5zIQnFPYsAAqk0fIFFNc=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Pzdi2MtCxOgXMnKa1ZilEO8c2xiCYDlBsAgwdEECU8m+nhA93SwVKhH+IhXrv9d1M+ErVq18zmvRx9D9ph9+KkaD99bMZ6S5tkdzLUJyQRQDn/WpVwMEJWXIMuXB9P4cOiOvM7K2qgf6b3X/o8WLm1GlRW/rUo/exF8gnW8KWGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-83acaa1f819so290662539f.3
+        for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 06:55:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730037047; x=1730641847;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IjLV1bEDo/MtMx6gk/KnUwVzXIaCsBTVYT7dT2Z8X0U=;
-        b=MIeY6Gy95idxw/OdqTv5UnXKE29LSAx7gX/0B78OWoK1U+gW5LZc9kWindGCBGn3wa
-         lv9wz0bABgZN9PvMvjcsjjTi8HFl3smn34aU23vKqGwxm9dFuUxVgKjxDBGKXgzznlAn
-         KCTCrS8Hug7BPb4sT5UgGBtxGNABczSk/8w4NMrPY5v/UjsVX4JJXyP0VB97emDmNSLS
-         MuPj8Wn0e4ERyCKc2UhMfEThYWggOp20SY7k9jjYNXjNuoi1ZMKdqkEDGI+A+/JG6zNc
-         rmm8EZjOXNFvjzqGbGrAgvj8r/ozNBuY9uJ37KId/uPgyaLZSQvIOSSGvY371zEaT8nw
-         j7Pw==
-X-Forwarded-Encrypted: i=1; AJvYcCXm4ZGsFw0I49uvAr9zfctPYojSSXEncaAD3UHv5xpKpwjdujnreMf9TjPBoT0UUIQ/G91I/6K9N/P1Wo+E/U8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywa9S8U5iN5I5U7f2hiwIUgSsC+42zx5mowtlZcNtPOcf8aehRN
-	ZYQ0sxREd0Rx1M7CTSEP716UoauA7d7roQMjGK2nF52vL2yqGg7q
-X-Google-Smtp-Source: AGHT+IFZSdsgh8pvcncgHwHZRd8w844yRAmKPjSvmnyw+tgZwytUA1t/mD3WcP4RP6lpmD54tce6IA==
-X-Received: by 2002:a05:600c:458f:b0:431:3bf9:3ebb with SMTP id 5b1f17b1804b1-4319ad047a7mr46439315e9.24.1730037047280;
-        Sun, 27 Oct 2024 06:50:47 -0700 (PDT)
-Received: from void.void ([141.226.10.223])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4318b57b5d9sm105627565e9.44.2024.10.27.06.50.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 27 Oct 2024 06:50:47 -0700 (PDT)
-From: Andrew Kreimer <algonell@gmail.com>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Andrew Kreimer <algonell@gmail.com>
-Subject: [PATCH] freevxfs: fix a typo
-Date: Sun, 27 Oct 2024 15:50:27 +0200
-Message-ID: <20241027135042.23693-1-algonell@gmail.com>
-X-Mailer: git-send-email 2.47.0.149.g3e3ac46130
+        d=1e100.net; s=20230601; t=1730037333; x=1730642133;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DvpTdNJAHMUYMjV0otN9rJrodmRbe5MNxe8dC8b5a+s=;
+        b=cAu42B4999OukHXjIo59btcfYT4pMir4MBtJj54Y8rN7AvJ2WpznlPd8ELNNlygN00
+         zsfJNqMVF6XK/sIjT2nv/eBfNtywMO+4DP9kwnGMsH8iVSi/uAz1/1vgW0SsqC8R0lcG
+         tfH/GGgWhBlX00f8G1qbM+khqs/yYJgR+/H6pq/DPD1wfJLz0vISSeq6MZSnBubbWF3N
+         VQtk4jbt0QQCZusWNnwAOe/JBH7cpeiawXv3lPYnUs3rlHuIM2VOarM4ibOgInR4SOb4
+         NRNd2Zmy4VpZlc2qidLxviKBw8mdFQGhDyq0EmVRYHrfKLHDfDSUWfXY9dbgZaZr6whQ
+         C/Hg==
+X-Forwarded-Encrypted: i=1; AJvYcCW/9BBRrZvf8IcwWWE428pt4z9q5Hd90esz70SDifkdDWPyb39IgDT2psBKUoDZoDRBcgeIC5bBuiJzva8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxf3ZFoQpoo7xVM9YxGvVcxKDmMbOFOIWCEX6L6u3nKuCh4x0Bt
+	liI/lpFF1sDwCNBNduKJbCkRKVr6xKM+8X8qwRQ7q6igp7vuMlDluSe188fnqFJsqMzCfVlrO6r
+	DlagIgUXvQ0bfi68gzHXVg3AcIoXU3px46J7rgfMWI1gagj6gdaEC9j4=
+X-Google-Smtp-Source: AGHT+IFgVj5y7UcihmmcffRNSjAUAwJfopX6wPsav4ShCezh1Hg0VzDeEPFvjj/nI9gnNr1RM0lkZYrJahlIKMAz9BYGshq8ciZq
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:1445:b0:3a3:b45b:a8cc with SMTP id
+ e9e14a558f8ab-3a4ed2b5cb9mr42286565ab.15.1730037333549; Sun, 27 Oct 2024
+ 06:55:33 -0700 (PDT)
+Date: Sun, 27 Oct 2024 06:55:33 -0700
+In-Reply-To: <66f4164d.050a0220.211276.0032.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <671e4655.050a0220.2b8c0f.01d8.GAE@google.com>
+Subject: Re: [syzbot] [bcachefs] WARNING in srcu_check_nmi_safety (2)
+From: syzbot <syzbot+314c2cfd4071ad738810@syzkaller.appspotmail.com>
+To: kent.overstreet@linux.dev, kvm@vger.kernel.org, 
+	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	pbonzini@redhat.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Fix a typo: ivalid -> invalid.
+syzbot has found a reproducer for the following issue on:
 
-Via codespell.
+HEAD commit:    850925a8133c Merge tag '9p-for-6.12-rc5' of https://github..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1311ea87980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=309bb816d40abc28
+dashboard link: https://syzkaller.appspot.com/bug?extid=314c2cfd4071ad738810
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14bf3e5f980000
 
-Signed-off-by: Andrew Kreimer <algonell@gmail.com>
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-850925a8.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/c831c931f29c/vmlinux-850925a8.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/85f584e52a7f/bzImage-850925a8.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/9ebb84247bd1/mount_5.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+314c2cfd4071ad738810@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+CPU 0 old state 2 new state 1
+WARNING: CPU: 0 PID: 5631 at kernel/rcu/srcutree.c:708 srcu_check_nmi_safety+0xca/0x150 kernel/rcu/srcutree.c:708
+Modules linked in:
+CPU: 0 UID: 0 PID: 5631 Comm: syz.2.27 Not tainted 6.12.0-rc4-syzkaller-00261-g850925a8133c #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:srcu_check_nmi_safety+0xca/0x150 kernel/rcu/srcutree.c:708
+Code: 81 c3 c8 01 00 00 48 89 d8 48 c1 e8 03 42 0f b6 04 20 84 c0 75 77 8b 33 48 c7 c7 80 0d 0c 8c 89 ea 44 89 f9 e8 87 81 db ff 90 <0f> 0b 90 90 eb 0c 42 0f b6 04 23 84 c0 75 3d 45 89 3e 48 83 c4 08
+RSP: 0000:ffffc9000d1c7648 EFLAGS: 00010246
+RAX: 84aa6098780aa300 RBX: ffffe8ffffc537c8 RCX: ffff88803ecb8000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000002 R08: ffffffff8155e452 R09: 1ffff11003f8519a
+R10: dffffc0000000000 R11: ffffed1003f8519b R12: dffffc0000000000
+R13: 0000607fe0053600 R14: ffffe8ffffc53620 R15: 0000000000000001
+FS:  00007fe40acde6c0(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fe409f7e719 CR3: 000000001f99c000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ srcu_read_lock include/linux/srcu.h:248 [inline]
+ __kvm_handle_hva_range virt/kvm/kvm_main.c:612 [inline]
+ kvm_mmu_notifier_invalidate_range_end+0x90/0x3e0 virt/kvm/kvm_main.c:843
+ mn_hlist_invalidate_end mm/mmu_notifier.c:550 [inline]
+ __mmu_notifier_invalidate_range_end+0x241/0x410 mm/mmu_notifier.c:569
+ mmu_notifier_invalidate_range_end include/linux/mmu_notifier.h:472 [inline]
+ wp_page_copy mm/memory.c:3460 [inline]
+ do_wp_page+0x265a/0x52d0 mm/memory.c:3745
+ handle_pte_fault+0x10e3/0x6800 mm/memory.c:5771
+ __handle_mm_fault mm/memory.c:5898 [inline]
+ handle_mm_fault+0x1106/0x1bb0 mm/memory.c:6066
+ do_user_addr_fault arch/x86/mm/fault.c:1338 [inline]
+ handle_page_fault arch/x86/mm/fault.c:1481 [inline]
+ exc_page_fault+0x459/0x8c0 arch/x86/mm/fault.c:1539
+ asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
+RIP: 0033:0x7fe409e418e0
+Code: 39 4f 08 72 4c 8d 4d ff 85 ed 74 33 66 0f 1f 44 00 00 48 39 f0 72 1b 4d 8b 07 49 89 c1 49 29 f1 47 0f b6 0c 08 45 84 c9 74 08 <45> 88 0c 00 49 8b 47 10 48 83 c0 01 49 89 47 10 83 e9 01 73 d3 41
+RSP: 002b:00007fe40acdd4a0 EFLAGS: 00010202
+RAX: 0000000000147010 RBX: 00007fe40acdd540 RCX: 0000000000000007
+RDX: 00000000000007ff RSI: 0000000000001000 RDI: 00007fe40acdd5e0
+RBP: 0000000000000008 R08: 00007fe400c00000 R09: 0000000000000015
+R10: 0000000020005982 R11: 00000000000058ad R12: 0000000000000c01
+R13: 00007fe40a005ae0 R14: 0000000000000017 R15: 00007fe40acdd5e0
+ </TASK>
+
+
 ---
- fs/freevxfs/vxfs_olt.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/freevxfs/vxfs_olt.c b/fs/freevxfs/vxfs_olt.c
-index 23f35187c289..48027a421fa3 100644
---- a/fs/freevxfs/vxfs_olt.c
-+++ b/fs/freevxfs/vxfs_olt.c
-@@ -63,7 +63,7 @@ vxfs_read_olt(struct super_block *sbp, u_long bsize)
- 
- 	op = (struct vxfs_olt *)bp->b_data;
- 	if (fs32_to_cpu(infp, op->olt_magic) != VXFS_OLT_MAGIC) {
--		printk(KERN_NOTICE "vxfs: ivalid olt magic number\n");
-+		printk(KERN_NOTICE "vxfs: invalid olt magic number\n");
- 		goto fail;
- 	}
- 
--- 
-2.47.0.149.g3e3ac46130
-
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
