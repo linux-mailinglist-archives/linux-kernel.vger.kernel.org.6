@@ -1,73 +1,79 @@
-Return-Path: <linux-kernel+bounces-383496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C38C9B1C81
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 09:28:02 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B557A9B1C85
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 09:30:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07EA71F21981
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 08:28:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BA0ABB212D3
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 08:30:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AE9371747;
-	Sun, 27 Oct 2024 08:27:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A98234AEE0;
+	Sun, 27 Oct 2024 08:30:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="ltJVkXWM"
-Received: from esa1.hgst.iphmx.com (esa1.hgst.iphmx.com [68.232.141.245])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f1QLLr7X"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7AA833993;
-	Sun, 27 Oct 2024 08:27:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.141.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 200662905;
+	Sun, 27 Oct 2024 08:30:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730017664; cv=none; b=De+ZyNB81VUtOyshKmCTXHnA76BZVynOZeUsNkWTXj4KIfVrp3M5n7WjaEifgbpplKXci7WetqPq7+CWhImYv1zYrTN7seC/iOOEN1ISenh/6TYBnshwl0OFQDDx7cK9oAg4vwc9sdLpRh0jh7Vv90T88PFkRezpxnjRFU1lYRo=
+	t=1730017833; cv=none; b=Pir1OenGgf5CZV3ITy9Uadp34at+eVKifYTSwhuzyi0DRsJ2Cu1CZC4iCs26pT5zUDLEjfjiZgbgSMBxmjWgE3e9ZPatyZ6j7ugz/XDVE9Wk/91vPt5GRFVcuFnJWIqf5rYKhK2ZDbDX07Vj1b2MUHrqRpMIFglpfmXMMhCS+Qo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730017664; c=relaxed/simple;
-	bh=l9hhujw59rfeda7wtIGqeZACyi1A6uOoHmQ6L1d/reE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=dVIko0a06e1qbVW8io00d/NLug9kR25nxtvhmgNveemI1gYrvTsLK3s9Jo+ubDkKaCLFjhqj+34h2G3w630vps45YM93QN8HJ0rwVnnJN0sg8xMZPVcbPjGOqQiwp3rtDxHr5SlvJ0V7awSUiCAfACukBoULYiyFMWPVtOWtS34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com; spf=pass smtp.mailfrom=wdc.com; dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b=ltJVkXWM; arc=none smtp.client-ip=68.232.141.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wdc.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1730017661; x=1761553661;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=l9hhujw59rfeda7wtIGqeZACyi1A6uOoHmQ6L1d/reE=;
-  b=ltJVkXWMDqvSxrXsg78taDLkp56BeOoZAWv3iTBSpTbhp6y947erGrBV
-   fQAmB/diygnFgpNLEvxP7Rzr1DYjJEDl2NWisqEKAtqi9MQYSvI6hLpv0
-   mnNKk+RpV0B7F5V5VZyU24pF5bYw1TQt2TyRyZd+jrx6drzdkax1GqyvC
-   mTWgykzGQnlVcMY2dHpCOv3lrNuy5K7UkiU+IHkPQqa5Xq29tZbi/dlZO
-   JDvSXJCfDX8MZKTxKRSoKhwE2eHw6wNiL6X/uif3bVCvsby1biege5tfv
-   CBHvWZakQ+J4zsA6RSQv/si6WB0wUCnFUA7soqh0lb2EmJFNcIA1LsSPQ
-   Q==;
-X-CSE-ConnectionGUID: +GjJ7cfeSFqZlVNoCgnfSA==
-X-CSE-MsgGUID: vxKlmPKZRayqqv01FXSdHA==
-X-IronPort-AV: E=Sophos;i="6.11,236,1725292800"; 
-   d="scan'208";a="30942560"
-Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 27 Oct 2024 16:27:41 +0800
-IronPort-SDR: 671deb08_WY5pAi0AdM0+2Ihmk90GDmv0ZGTBvz+6xNulBmYGajCZAFB
- cOGDtBvpld1yQExeIRBJIdqXJLTKzV51mP3qTVw==
-Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 27 Oct 2024 00:26:00 -0700
-WDCIronportException: Internal
-Received: from avri-office.ad.shared (HELO avri-office.sdcorp.global.sandisk.com) ([10.45.31.142])
-  by uls-op-cesaip01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 27 Oct 2024 01:27:40 -0700
-From: Avri Altman <avri.altman@wdc.com>
-To: "Martin K . Petersen" <martin.petersen@oracle.com>
-Cc: linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bart Van Assche <bvanassche@acm.org>,
-	Avri Altman <avri.altman@wdc.com>
-Subject: [PATCH 2/2] scsi: ufs: core: Introduce a new clock_scaling lock
-Date: Sun, 27 Oct 2024 10:25:19 +0200
-Message-Id: <20241027082519.576869-3-avri.altman@wdc.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20241027082519.576869-1-avri.altman@wdc.com>
-References: <20241027082519.576869-1-avri.altman@wdc.com>
+	s=arc-20240116; t=1730017833; c=relaxed/simple;
+	bh=gouKImRFYnaBBzBkfq3ig2WZ7pomlL4cL+zGTR6yjno=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=c9gZMBSrSgsDQ3plPbMnF/gU0ZJhwUqbIN3Y7BGqSJjQG0Km99Xia73FMkPsOsn585Q88KiSrt+8hvcO9KC4KLitDOE8zQg4Yd+lLOULx2JDOw6PkxcsHFvEre6wc2vLl7gRROUTRjIM9vLGaLGouJ3bW53D2Mn39/XeJhmo+Dk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f1QLLr7X; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a9a0cee600aso430316666b.1;
+        Sun, 27 Oct 2024 01:30:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730017829; x=1730622629; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=u1vGrccCsw2x4e5+h4aYR/O+/2E7ZxptNRn/W4DOcxw=;
+        b=f1QLLr7X8N6n2ubt5MG3jVpTpFmtzPpsd2ctciWesFkuefhW+jEbZRNESEf2iUVqSA
+         wCmfI3pi1oC0axt68+cz5H2bGBP0AL9yEqyzO9gXhYObFJleueaEP5DQewNPMwP6myqt
+         0ElcfdX3ttS4Cp5A5Bvr2zibp70MUdQsUnwMIX4n8KyWKcH9x3U7Nuu/hswDV36jNxRV
+         B5z1lR3H/ruU1csFuTDEXFis/DID9CrBF8Oofylf+x5nizPzrl9qyhCXox/QnBPEt+T/
+         VrayIbBlUns52pJfLOlXBdjqLs237n7oxGKykyWrDGE82iyZ0F548K7VsPoZF7k/Q9wy
+         NcsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730017829; x=1730622629;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=u1vGrccCsw2x4e5+h4aYR/O+/2E7ZxptNRn/W4DOcxw=;
+        b=iKMiIp0I9MP6QyMeJri1M8hkCDZpvma36OqafQUeva5fTFDRjtrTDqtCXZPH+aY7Ac
+         Tc47Dm28HaZxECEMgF7TIuw2DG9vSpD3Dehrn/1qzn88Cmd1QI71mxaWkDtHE+TMUvsx
+         5DT0ScMOPwYJGTDinia32yLdO1CeTexRw4MkW+gVD70b258L9PBy/Fbm4q/M1gS5ShMK
+         eKqWWvgt1KOW4LpWxlkl+nBOY2ecHtSYK+QqCIMWt4z6K/Izck2iScZ07my3ugRHZRaI
+         vqusMeFK4+QT9b7KLkDoErmrj/zw2spsKmkza7/mAUZ8i3mnKfwCJ0tbuj0CWh//UTDV
+         jUfw==
+X-Forwarded-Encrypted: i=1; AJvYcCUNZeRwtnwdZUp14kWhqgxJfulDJuNbivxz0zfvtyXZlmwgwSuc5f4oxCQSkJNeno7bLTSbFJF//EYN@vger.kernel.org, AJvYcCVGUoMWaP3lxcaHkxlIrzTd0/0We76EL3xwAqzEW9MHL5f7mXNVEGYUf529+sQq6RrqQsjy+QwT9JJ6VPNB@vger.kernel.org
+X-Gm-Message-State: AOJu0YziBv0vq5cHNR6At3roQvksl+gMNWdTO6C2E4Dv0L5udBlnm9hi
+	yBAGDgX7cSypAH7o/HKjTHr/oHKatlYeOhSyBDBhm2zQDayYTQxM
+X-Google-Smtp-Source: AGHT+IGpTZr5g9u1ganARRHI/a/Z328l3kVJ2LzfOfQz7zGGkjPTal0tIv3/I6wF+OSAZEn0CmiFew==
+X-Received: by 2002:a17:907:9447:b0:a9a:c03:ebc8 with SMTP id a640c23a62f3a-a9de5fa914cmr406119866b.37.1730017828980;
+        Sun, 27 Oct 2024 01:30:28 -0700 (PDT)
+Received: from qamajeed.. ([154.80.48.118])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b1dec79aasm255515866b.40.2024.10.27.01.30.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 27 Oct 2024 01:30:28 -0700 (PDT)
+From: Muhammad Qasim Abdul Majeed <qasim.majeed20@gmail.com>
+To: rafael@kernel.org,
+	lenb@kernel.org,
+	linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Muhammad Qasim Abdul Majeed <qasim.majeed20@gmail.com>
+Subject: [PATCH] ACPI: thermal: Use strscpy instead of strcpy.
+Date: Sun, 27 Oct 2024 13:28:58 +0500
+Message-ID: <20241027083007.11199-1-qasim.majeed20@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,217 +82,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Introduce a new clock gating lock to seriliaze access to the clock
-scaling members instead of the host_lock.
+Replace strcpy() with strscpy() in the ACPI thermal driver.
 
-Signed-off-by: Avri Altman <avri.altman@wdc.com>
+strcpy() has been deprecated because it is generally unsafe.
+Eliminating it from the kernel source.
+
+Link: https://github.com/KSPP/linux/issues/88
+Signed-off-by: Muhammad Qasim Abdul Majeed <qasim.majeed20@gmail.com>
+
+Hi Rafael,
+
+Any update on the patches?
+
+Best Regards,
+Qasim
+
 ---
- drivers/ufs/core/ufshcd.c | 48 ++++++++++++++++++++-------------------
- include/ufs/ufshcd.h      |  2 ++
- 2 files changed, 27 insertions(+), 23 deletions(-)
+ drivers/acpi/thermal.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
-index b7c7a7dd327f..fbaee68064c9 100644
---- a/drivers/ufs/core/ufshcd.c
-+++ b/drivers/ufs/core/ufshcd.c
-@@ -1449,14 +1449,14 @@ static void ufshcd_clk_scaling_suspend_work(struct work_struct *work)
- 					   clk_scaling.suspend_work);
- 	unsigned long irq_flags;
+diff --git a/drivers/acpi/thermal.c b/drivers/acpi/thermal.c
+index a0cfc857fb55..0c69d04fbac9 100644
+--- a/drivers/acpi/thermal.c
++++ b/drivers/acpi/thermal.c
+@@ -842,9 +842,9 @@ static int acpi_thermal_add(struct acpi_device *device)
+ 		return -ENOMEM;
  
--	spin_lock_irqsave(hba->host->host_lock, irq_flags);
-+	spin_lock_irqsave(&hba->clk_scaling.lock, irq_flags);
- 	if (hba->clk_scaling.active_reqs || hba->clk_scaling.is_suspended) {
--		spin_unlock_irqrestore(hba->host->host_lock, irq_flags);
-+		spin_unlock_irqrestore(&hba->clk_scaling.lock, irq_flags);
- 		return;
- 	}
- 	hba->clk_scaling.is_suspended = true;
- 	hba->clk_scaling.window_start_t = 0;
--	spin_unlock_irqrestore(hba->host->host_lock, irq_flags);
-+	spin_unlock_irqrestore(&hba->clk_scaling.lock, irq_flags);
+ 	tz->device = device;
+-	strcpy(tz->name, device->pnp.bus_id);
+-	strcpy(acpi_device_name(device), ACPI_THERMAL_DEVICE_NAME);
+-	strcpy(acpi_device_class(device), ACPI_THERMAL_CLASS);
++	strscpy(tz->name, device->pnp.bus_id);
++	strscpy(acpi_device_name(device), ACPI_THERMAL_DEVICE_NAME);
++	strscpy(acpi_device_class(device), ACPI_THERMAL_CLASS);
+ 	device->driver_data = tz;
  
- 	devfreq_suspend_device(hba->devfreq);
- }
-@@ -1467,13 +1467,13 @@ static void ufshcd_clk_scaling_resume_work(struct work_struct *work)
- 					   clk_scaling.resume_work);
- 	unsigned long irq_flags;
- 
--	spin_lock_irqsave(hba->host->host_lock, irq_flags);
-+	spin_lock_irqsave(&hba->clk_scaling.lock, irq_flags);
- 	if (!hba->clk_scaling.is_suspended) {
--		spin_unlock_irqrestore(hba->host->host_lock, irq_flags);
-+		spin_unlock_irqrestore(&hba->clk_scaling.lock, irq_flags);
- 		return;
- 	}
- 	hba->clk_scaling.is_suspended = false;
--	spin_unlock_irqrestore(hba->host->host_lock, irq_flags);
-+	spin_unlock_irqrestore(&hba->clk_scaling.lock, irq_flags);
- 
- 	devfreq_resume_device(hba->devfreq);
- }
-@@ -1508,15 +1508,15 @@ static int ufshcd_devfreq_target(struct device *dev,
- 		*freq =	(unsigned long) clk_round_rate(clki->clk, *freq);
- 	}
- 
--	spin_lock_irqsave(hba->host->host_lock, irq_flags);
-+	spin_lock_irqsave(&hba->clk_scaling.lock, irq_flags);
- 	if (ufshcd_eh_in_progress(hba)) {
--		spin_unlock_irqrestore(hba->host->host_lock, irq_flags);
-+		spin_unlock_irqrestore(&hba->clk_scaling.lock, irq_flags);
- 		return 0;
- 	}
- 
- 	/* Skip scaling clock when clock scaling is suspended */
- 	if (hba->clk_scaling.is_suspended) {
--		spin_unlock_irqrestore(hba->host->host_lock, irq_flags);
-+		spin_unlock_irqrestore(&hba->clk_scaling.lock, irq_flags);
- 		dev_warn(hba->dev, "clock scaling is suspended, skip");
- 		return 0;
- 	}
-@@ -1525,7 +1525,7 @@ static int ufshcd_devfreq_target(struct device *dev,
- 		sched_clk_scaling_suspend_work = true;
- 
- 	if (list_empty(clk_list)) {
--		spin_unlock_irqrestore(hba->host->host_lock, irq_flags);
-+		spin_unlock_irqrestore(&hba->clk_scaling.lock, irq_flags);
- 		goto out;
- 	}
- 
-@@ -1540,11 +1540,11 @@ static int ufshcd_devfreq_target(struct device *dev,
- 
- 	/* Update the frequency */
- 	if (!ufshcd_is_devfreq_scaling_required(hba, *freq, scale_up)) {
--		spin_unlock_irqrestore(hba->host->host_lock, irq_flags);
-+		spin_unlock_irqrestore(&hba->clk_scaling.lock, irq_flags);
- 		ret = 0;
- 		goto out; /* no state change required */
- 	}
--	spin_unlock_irqrestore(hba->host->host_lock, irq_flags);
-+	spin_unlock_irqrestore(&hba->clk_scaling.lock, irq_flags);
- 
- 	start = ktime_get();
- 	ret = ufshcd_devfreq_scale(hba, *freq, scale_up);
-@@ -1577,7 +1577,7 @@ static int ufshcd_devfreq_get_dev_status(struct device *dev,
- 
- 	memset(stat, 0, sizeof(*stat));
- 
--	spin_lock_irqsave(hba->host->host_lock, flags);
-+	spin_lock_irqsave(&scaling->lock, flags);
- 	curr_t = ktime_get();
- 	if (!scaling->window_start_t)
- 		goto start_window;
-@@ -1613,7 +1613,7 @@ static int ufshcd_devfreq_get_dev_status(struct device *dev,
- 		scaling->busy_start_t = 0;
- 		scaling->is_busy_started = false;
- 	}
--	spin_unlock_irqrestore(hba->host->host_lock, flags);
-+	spin_unlock_irqrestore(&scaling->lock, flags);
- 	return 0;
- }
- 
-@@ -1683,13 +1683,13 @@ static void ufshcd_suspend_clkscaling(struct ufs_hba *hba)
- 	cancel_work_sync(&hba->clk_scaling.suspend_work);
- 	cancel_work_sync(&hba->clk_scaling.resume_work);
- 
--	spin_lock_irqsave(hba->host->host_lock, flags);
-+	spin_lock_irqsave(&hba->clk_scaling.lock, flags);
- 	if (!hba->clk_scaling.is_suspended) {
- 		suspend = true;
- 		hba->clk_scaling.is_suspended = true;
- 		hba->clk_scaling.window_start_t = 0;
- 	}
--	spin_unlock_irqrestore(hba->host->host_lock, flags);
-+	spin_unlock_irqrestore(&hba->clk_scaling.lock, flags);
- 
- 	if (suspend)
- 		devfreq_suspend_device(hba->devfreq);
-@@ -1700,12 +1700,12 @@ static void ufshcd_resume_clkscaling(struct ufs_hba *hba)
- 	unsigned long flags;
- 	bool resume = false;
- 
--	spin_lock_irqsave(hba->host->host_lock, flags);
-+	spin_lock_irqsave(&hba->clk_scaling.lock, flags);
- 	if (hba->clk_scaling.is_suspended) {
- 		resume = true;
- 		hba->clk_scaling.is_suspended = false;
- 	}
--	spin_unlock_irqrestore(hba->host->host_lock, flags);
-+	spin_unlock_irqrestore(&hba->clk_scaling.lock, flags);
- 
- 	if (resume)
- 		devfreq_resume_device(hba->devfreq);
-@@ -1791,6 +1791,8 @@ static void ufshcd_init_clk_scaling(struct ufs_hba *hba)
- 	INIT_WORK(&hba->clk_scaling.resume_work,
- 		  ufshcd_clk_scaling_resume_work);
- 
-+	spin_lock_init(&hba->clk_scaling.lock);
-+
- 	hba->clk_scaling.workq = alloc_ordered_workqueue(
- 		"ufs_clkscaling_%d", WQ_MEM_RECLAIM, hba->host->host_no);
- 
-@@ -2161,12 +2163,12 @@ static void ufshcd_clk_scaling_start_busy(struct ufs_hba *hba)
- 	if (!ufshcd_is_clkscaling_supported(hba))
- 		return;
- 
--	spin_lock_irqsave(hba->host->host_lock, flags);
-+	spin_lock_irqsave(&hba->clk_scaling.lock, flags);
- 	if (!hba->clk_scaling.active_reqs++)
- 		queue_resume_work = true;
- 
- 	if (!hba->clk_scaling.is_enabled || hba->pm_op_in_progress) {
--		spin_unlock_irqrestore(hba->host->host_lock, flags);
-+		spin_unlock_irqrestore(&hba->clk_scaling.lock, flags);
- 		return;
- 	}
- 
-@@ -2184,7 +2186,7 @@ static void ufshcd_clk_scaling_start_busy(struct ufs_hba *hba)
- 		hba->clk_scaling.busy_start_t = curr_t;
- 		hba->clk_scaling.is_busy_started = true;
- 	}
--	spin_unlock_irqrestore(hba->host->host_lock, flags);
-+	spin_unlock_irqrestore(&hba->clk_scaling.lock, flags);
- }
- 
- static void ufshcd_clk_scaling_update_busy(struct ufs_hba *hba)
-@@ -2195,7 +2197,7 @@ static void ufshcd_clk_scaling_update_busy(struct ufs_hba *hba)
- 	if (!ufshcd_is_clkscaling_supported(hba))
- 		return;
- 
--	spin_lock_irqsave(hba->host->host_lock, flags);
-+	spin_lock_irqsave(&hba->clk_scaling.lock, flags);
- 	hba->clk_scaling.active_reqs--;
- 	if (!scaling->active_reqs && scaling->is_busy_started) {
- 		scaling->tot_busy_t += ktime_to_us(ktime_sub(ktime_get(),
-@@ -2203,7 +2205,7 @@ static void ufshcd_clk_scaling_update_busy(struct ufs_hba *hba)
- 		scaling->busy_start_t = 0;
- 		scaling->is_busy_started = false;
- 	}
--	spin_unlock_irqrestore(hba->host->host_lock, flags);
-+	spin_unlock_irqrestore(&hba->clk_scaling.lock, flags);
- }
- 
- static inline int ufshcd_monitor_opcode2dir(u8 opcode)
-diff --git a/include/ufs/ufshcd.h b/include/ufs/ufshcd.h
-index 52c822fe2944..058d27bc1e86 100644
---- a/include/ufs/ufshcd.h
-+++ b/include/ufs/ufshcd.h
-@@ -453,6 +453,7 @@ struct ufs_clk_gating {
-  * @is_initialized: Indicates whether clock scaling is initialized or not
-  * @is_busy_started: tracks if busy period has started or not
-  * @is_suspended: tracks if devfreq is suspended or not
-+ * @lock: seriliaze access to the clock_scaling members
-  */
- struct ufs_clk_scaling {
- 	int active_reqs;
-@@ -472,6 +473,7 @@ struct ufs_clk_scaling {
- 	bool is_busy_started;
- 	bool is_suspended;
- 	bool suspend_on_no_request;
-+	spinlock_t lock;
- };
- 
- #define UFS_EVENT_HIST_LENGTH 8
+ 	acpi_thermal_aml_dependency_fix(tz);
 -- 
-2.25.1
+2.43.0
 
 
