@@ -1,216 +1,173 @@
-Return-Path: <linux-kernel+bounces-383727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5D9C9B1F8E
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 19:06:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52C4F9B1F90
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 19:10:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B69FCB211F3
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 18:06:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 864602815C0
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 18:10:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3DE617995E;
-	Sun, 27 Oct 2024 18:06:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20EF417ADE8;
+	Sun, 27 Oct 2024 18:10:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="LPpfUFJV"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="FMJkX+bJ"
+Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09171262A3;
-	Sun, 27 Oct 2024 18:06:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F644156F45;
+	Sun, 27 Oct 2024 18:10:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730052406; cv=none; b=mdiR7Z3DbZ/FLJ7ZhhaDm85Mz5PCO0veplanmE1Qr116CfDGPxyj7leX4BTLRLdK4ZpIaEmkyyiHrpeaYWFREv/fhv1SmE7Gsh8nGjncXIPktZEhiPD6pus6+73qCm79z39U9vjXm8V8z4eqxAz2GUw/Y5ncnXvcgpw0XqZZfvA=
+	t=1730052604; cv=none; b=Ne/W15HMdfVfAX/5dWHVEkQYSoWrsXwdPpluuRiDZZGMhJ9L7yGkWV6s9UK7/oa4zZ6EhYS5OdiRv1/MmrYQ44LQ8u9J1HmfKSAoVGFi5hePqde6oh1MzEWv6agY39o+XA0FYLKCrukWPXCRAaUSWVnWla6wXoP7ygVtNumwtgI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730052406; c=relaxed/simple;
-	bh=4+0NulD4EEQ5BTETeq/86MPXoadMca0AwCvmywI7SSY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=ORV6TTQi4VMoS9Lhzqooq2fvpiRp6tSkicRXf+KJ5puFpQXNfl5AuKCnEumtW5XYSKAQlkdDACjDBafG9Gyu56ZCMjVsm3Av3HulKEo34G3cKj3QWzF2F776xn01B3VP/L9HTN4LLL3qcJ5LBORLgyVxhsUiGjJ91adQUhy+Gd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=LPpfUFJV; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49RFo3l0012317;
-	Sun, 27 Oct 2024 18:06:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=5eLO2C1SYyEAk2YPDJc1FV
-	TLIAHKQlZLKgQt46vMoFQ=; b=LPpfUFJVv+S6IScpi1lQX3XnL+7s5tXrI68zhm
-	sROHoGVo+Y0cuYjTholK7OwguqX1lZqLCDZctFHognbFnvxt0DPKEIoDLoPX/WW+
-	fqHsddLeeDs1jSxQscSC0QhNxUcBcl3fnr51K2TbwbCTzi71XcCPUJsYh26fDTyB
-	jmWdd8W3ShoyvJDdsk6U2yauT9q3U6tQPCYFw6YNIz17IwzJ0NYXYe/OagEjPSBQ
-	Gbag3ttuDi7UtPLYC9ZB/wmDw1lta99hlH7MWjDVX1heTwDGGEHy8hzPyX9ZPedz
-	tgRxSs5agRflJpu2NvoUF8wc8V/7sxZiUNMus1DQfQtpe4pA==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42grt6tq4a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 27 Oct 2024 18:06:26 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49RI6PKC030401
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 27 Oct 2024 18:06:25 GMT
-Received: from [10.213.111.143] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 27 Oct
- 2024 11:06:19 -0700
-From: Akhil P Oommen <quic_akhilpo@quicinc.com>
-Date: Sun, 27 Oct 2024 23:35:47 +0530
-Subject: [PATCH] drm/msm/a6xx: Fix excessive stack usage
+	s=arc-20240116; t=1730052604; c=relaxed/simple;
+	bh=Xl4a65iUilugV+fBphpVSgOCCRtwM6mhRH4xdVAsPaQ=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MMXMbFdaEv28spTJEqBZxXaz1hPID8n+ApmiAFi0opDl35+uSj0u2DDn8V63Hc0hRfBtC2MYVt+MmFTENIE96BGcysOtCBab+r4ltUGfn5FsWudBrqTu/tHDPogsDVfWnmwrmV3icE+5kyXCzNPK3Q6Qzi+nzSHRyfz9FRKX1oY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=FMJkX+bJ; arc=none smtp.client-ip=193.68.50.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
+Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
+	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 655CBA0472;
+	Sun, 27 Oct 2024 19:10:00 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:from:from:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=mail; bh=CQYMBjKa/6089/ZeL5xA
+	OUfW85stKiaNK4L4qGdqr04=; b=FMJkX+bJSwPqBMXD4Q4BKkFtLymd0M6lsHR9
+	be8afXm3uNXRMAY/T4H4ReFiLi3GquQaI/CJq9/45fz+ksGhWc3KHHPdGAKdOyGV
+	wBfxn0anf2F2n76ghD/OeVyObZjwjoNahcCPcFMBWlhiLfkzTwQ+jOm6S7X4DMzo
+	r81Xl97O0bUcfHB5qGdZ6SlSjz0Isruj68gqD/TH8oFZru61H0K2q4B7Rdur0NIo
+	IrpGF4wQAlO4vTVzICjHRludv77cGemmv7b3nBhO4JgG7LP21Em0r/+7DPfmvuyT
+	JMSXXJ+OiOda0T8H7McGgSwoyo3JVYFt5xF+gNakl7mv/1jS3oophSxMH+KFkMTa
+	v15WEqy/sVOAvnlaOZyqX6ndG6mcvTOh4iqP1DwETJmRNgbNy0Aw7CxDUVD4Me6M
+	smPeWjadffqIZxwTUu5rWvZ87ky24p7MMDL47/sOUSbUolXVLvMIk3YMgkGVLytB
+	9UaxrxDKIQn0cn3XMw+Oq1HybCnhW9Hdgfd1sc0mnAZhbfxwIyx0h5sZj1FfeqoJ
+	An9dSBo8U0ok7Ryl/IoiCqYlgifS70zGDweuFvsA9bQaQV39QkU/jDBxFzTEUsz5
+	JWjodgTGf2MjiIhDBuA3FJedJed/ewaVQUcJIaZebF/npECMJBkUS4FxjpMvFbYD
+	VZ3TpUY=
+From: =?UTF-8?q?Cs=C3=B3k=C3=A1s=2C=20Bence?= <csokas.bence@prolan.hu>
+To: <dmaengine@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-sunxi@lists.linux.dev>, <linux-kernel@vger.kernel.org>
+CC: Mesih Kilinc <mesihkilinc@gmail.com>,
+	=?UTF-8?q?Cs=C3=B3k=C3=A1s=2C=20Bence?= <csokas.bence@prolan.hu>, Vinod Koul
+	<vkoul@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec
+	<jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, "Philipp
+ Zabel" <p.zabel@pengutronix.de>
+Subject: [PATCH v3 02/10] dma-engine: sun4i: Add has_reset option to quirk
+Date: Sun, 27 Oct 2024 19:08:55 +0100
+Message-ID: <20241027180903.2035820-2-csokas.bence@prolan.hu>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <4b614d6c-6b46-438a-b5c3-de1e69f0feb8@prolan.hu>
+References:
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20241027-stack-size-fix-v1-1-764e2e3566cb@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAPqAHmcC/yWMwQ6DIBAFf4XsuSQICOivNB4Al3bTqBVs09T47
- yX18A4zyZsdCmbCAj3bIeObCi1zhebCIN79fENOY2WQQuqmjpfNxwcv9EWe6MOl88n6MKrkA9T
- TM2PV/+B1ODnj+qrd7ZQQfEEel2mirWdWR2W10Q5H4TAFiUmpzrQmSWt0lC4KbbrWwHAcPxT9J
- cSsAAAA
-To: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        "Konrad
- Dybcio" <konradybcio@kernel.org>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, "Simona
- Vetter" <simona@ffwll.ch>,
-        Nathan Chancellor <nathan@kernel.org>,
-        "Nick
- Desaulniers" <ndesaulniers@google.com>,
-        Bill Wendling <morbo@google.com>,
-        Justin Stitt <justinstitt@google.com>
-CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        <llvm@lists.linux.dev>, Arnd Bergmann <arnd@kernel.org>,
-        Akhil P Oommen
-	<quic_akhilpo@quicinc.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1730052379; l=3569;
- i=quic_akhilpo@quicinc.com; s=20240726; h=from:subject:message-id;
- bh=4+0NulD4EEQ5BTETeq/86MPXoadMca0AwCvmywI7SSY=;
- b=qJoax2Z2hTUQV4lstsski2oOlsORtBZY7vZ2fOfCUs/BduAPLP1/2H73fYix0YLuFj33ozm/G
- cFTvuw0eZryA4UyFQf0K0O+7Awdno/9IvNOe8aDjOTumkGmAqnKzNuQ
-X-Developer-Key: i=quic_akhilpo@quicinc.com; a=ed25519;
- pk=lmVtttSHmAUYFnJsQHX80IIRmYmXA4+CzpGcWOOsfKA=
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: VkbfgtwSZ3MAxdf5ovw3s8cmgryfRbg9
-X-Proofpoint-GUID: VkbfgtwSZ3MAxdf5ovw3s8cmgryfRbg9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 bulkscore=0
- adultscore=0 clxscore=1015 impostorscore=0 malwarescore=0
- priorityscore=1501 phishscore=0 mlxscore=0 suspectscore=0 mlxlogscore=999
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410270159
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1730052599;VERSION=7978;MC=629135376;ID=158215;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
+X-ESET-Antispam: OK
+X-EsetResult: clean, is OK
+X-EsetId: 37303A29ACD94855677C63
 
-Clang-19 and above sometimes end up with multiple copies of the large
-a6xx_hfi_msg_bw_table structure on the stack. The problem is that
-a6xx_hfi_send_bw_table() calls a number of device specific functions to
-fill the structure, but these create another copy of the structure on
-the stack which gets copied to the first.
+From: Mesih Kilinc <mesihkilinc@gmail.com>
 
-If the functions get inlined, that busts the warning limit:
+Allwinner suniv F1C100s has a reset bit for DMA in CCU. Sun4i do not
+has this bit but in order to support suniv we need to add it. So add
+support for reset bit.
 
-drivers/gpu/drm/msm/adreno/a6xx_hfi.c:631:12: error: stack frame size (1032) exceeds limit (1024) in 'a6xx_hfi_send_bw_table' [-Werror,-Wframe-larger-than]
-
-Fix this by kmalloc-ating struct a6xx_hfi_msg_bw_table instead of using
-the stack. Also, use this opportunity to skip re-initializing this table
-to optimize gpu wake up latency.
-
-Cc: Arnd Bergmann <arnd@kernel.org>
-
-Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
+Signed-off-by: Mesih Kilinc <mesihkilinc@gmail.com>
+[ csokas.bence: Rebased and addressed comments ]
+Signed-off-by: Csókás, Bence <csokas.bence@prolan.hu>
 ---
- drivers/gpu/drm/msm/adreno/a6xx_gmu.h |  1 +
- drivers/gpu/drm/msm/adreno/a6xx_hfi.c | 34 ++++++++++++++++++++++------------
- 2 files changed, 23 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.h b/drivers/gpu/drm/msm/adreno/a6xx_gmu.h
-index 94b6c5cab6f4..b4a79f88ccf4 100644
---- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.h
-+++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.h
-@@ -99,6 +99,7 @@ struct a6xx_gmu {
- 	struct completion pd_gate;
+Notes:
+    Changes in v2:
+    * Call reset_control_deassert() unconditionally, as it supports optional resets
+    * Use dev_err_probe()
+    * Whitespace
+    Changes in v3:
+    * More dev_err_probe()
+
+ drivers/dma/sun4i-dma.c | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
+
+diff --git a/drivers/dma/sun4i-dma.c b/drivers/dma/sun4i-dma.c
+index d472f57a39ea..f485d6f378c0 100644
+--- a/drivers/dma/sun4i-dma.c
++++ b/drivers/dma/sun4i-dma.c
+@@ -15,6 +15,7 @@
+ #include <linux/of_dma.h>
+ #include <linux/of_device.h>
+ #include <linux/platform_device.h>
++#include <linux/reset.h>
+ #include <linux/slab.h>
+ #include <linux/spinlock.h>
  
- 	struct qmp *qmp;
-+	struct a6xx_hfi_msg_bw_table *bw_table;
+@@ -159,6 +160,7 @@ struct sun4i_dma_config {
+ 	u8 ddma_drq_sdram;
+ 
+ 	u8 max_burst;
++	bool has_reset;
  };
  
- static inline u32 gmu_read(struct a6xx_gmu *gmu, u32 offset)
-diff --git a/drivers/gpu/drm/msm/adreno/a6xx_hfi.c b/drivers/gpu/drm/msm/adreno/a6xx_hfi.c
-index cdb3f6e74d3e..55e51c81be1f 100644
---- a/drivers/gpu/drm/msm/adreno/a6xx_hfi.c
-+++ b/drivers/gpu/drm/msm/adreno/a6xx_hfi.c
-@@ -630,32 +630,42 @@ static void a6xx_build_bw_table(struct a6xx_hfi_msg_bw_table *msg)
+ struct sun4i_dma_pchan {
+@@ -208,6 +210,7 @@ struct sun4i_dma_dev {
+ 	int				irq;
+ 	spinlock_t			lock;
+ 	const struct sun4i_dma_config *cfg;
++	struct reset_control *rst;
+ };
  
- static int a6xx_hfi_send_bw_table(struct a6xx_gmu *gmu)
- {
--	struct a6xx_hfi_msg_bw_table msg = { 0 };
-+	struct a6xx_hfi_msg_bw_table *msg;
- 	struct a6xx_gpu *a6xx_gpu = container_of(gmu, struct a6xx_gpu, gmu);
- 	struct adreno_gpu *adreno_gpu = &a6xx_gpu->base;
+ static struct sun4i_dma_dev *to_sun4i_dma_dev(struct dma_device *dev)
+@@ -1215,6 +1218,16 @@ static int sun4i_dma_probe(struct platform_device *pdev)
+ 		return PTR_ERR(priv->clk);
+ 	}
  
-+	if (gmu->bw_table)
-+		goto send;
++	if (priv->cfg->has_reset) {
++		priv->rst = devm_reset_control_get_exclusive(&pdev->dev,
++							     NULL);
++		if (IS_ERR(priv->rst)) {
++			dev_err_probe(&pdev->dev, PTR_ERR(priv->rst),
++						  "Failed to get reset control\n");
++			return PTR_ERR(priv->rst);
++		}
++	}
 +
-+	msg = devm_kzalloc(gmu->dev, sizeof(*msg), GFP_KERNEL);
-+	if (!msg)
-+		return -ENOMEM;
-+
- 	if (adreno_is_a618(adreno_gpu))
--		a618_build_bw_table(&msg);
-+		a618_build_bw_table(msg);
- 	else if (adreno_is_a619(adreno_gpu))
--		a619_build_bw_table(&msg);
-+		a619_build_bw_table(msg);
- 	else if (adreno_is_a640_family(adreno_gpu))
--		a640_build_bw_table(&msg);
-+		a640_build_bw_table(msg);
- 	else if (adreno_is_a650(adreno_gpu))
--		a650_build_bw_table(&msg);
-+		a650_build_bw_table(msg);
- 	else if (adreno_is_7c3(adreno_gpu))
--		adreno_7c3_build_bw_table(&msg);
-+		adreno_7c3_build_bw_table(msg);
- 	else if (adreno_is_a660(adreno_gpu))
--		a660_build_bw_table(&msg);
-+		a660_build_bw_table(msg);
- 	else if (adreno_is_a690(adreno_gpu))
--		a690_build_bw_table(&msg);
-+		a690_build_bw_table(msg);
- 	else if (adreno_is_a730(adreno_gpu))
--		a730_build_bw_table(&msg);
-+		a730_build_bw_table(msg);
- 	else if (adreno_is_a740_family(adreno_gpu))
--		a740_build_bw_table(&msg);
-+		a740_build_bw_table(msg);
- 	else
--		a6xx_build_bw_table(&msg);
-+		a6xx_build_bw_table(msg);
-+
-+	gmu->bw_table = msg;
+ 	platform_set_drvdata(pdev, priv);
+ 	spin_lock_init(&priv->lock);
  
--	return a6xx_hfi_send_msg(gmu, HFI_H2F_MSG_BW_TABLE, &msg, sizeof(msg),
-+send:
-+	return a6xx_hfi_send_msg(gmu, HFI_H2F_MSG_BW_TABLE, gmu->bw_table, sizeof(*(gmu->bw_table)),
- 		NULL, 0);
- }
+@@ -1287,6 +1300,14 @@ static int sun4i_dma_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
  
-
----
-base-commit: 74c374648ed08efb2ef339656f2764c28c046956
-change-id: 20241024-stack-size-fix-28af7abd3fab
-
-Best regards,
++	/* Deassert the reset control */
++	ret = reset_control_deassert(priv->rst);
++	if (ret) {
++		dev_err_probe(&pdev->dev, ret,
++			"Failed to deassert the reset control\n");
++		goto err_clk_disable;
++	}
++
+ 	/*
+ 	 * Make sure the IRQs are all disabled and accounted for. The bootloader
+ 	 * likes to leave these dirty
+@@ -1356,6 +1377,7 @@ static struct sun4i_dma_config sun4i_a10_dma_cfg = {
+ 	.ddma_drq_sdram		= SUN4I_DDMA_DRQ_TYPE_SDRAM,
+ 
+ 	.max_burst		= SUN4I_MAX_BURST,
++	.has_reset		= false,
+ };
+ 
+ static const struct of_device_id sun4i_dma_match[] = {
 -- 
-Akhil P Oommen <quic_akhilpo@quicinc.com>
+2.34.1
+
 
 
