@@ -1,173 +1,152 @@
-Return-Path: <linux-kernel+bounces-383728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52C4F9B1F90
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 19:10:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EE269B1F95
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 19:15:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 864602815C0
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 18:10:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 886781F213D7
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 18:15:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20EF417ADE8;
-	Sun, 27 Oct 2024 18:10:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12705175D4F;
+	Sun, 27 Oct 2024 18:15:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="FMJkX+bJ"
-Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="XEi4zs8u"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F644156F45;
-	Sun, 27 Oct 2024 18:10:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4C521CABA;
+	Sun, 27 Oct 2024 18:15:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730052604; cv=none; b=Ne/W15HMdfVfAX/5dWHVEkQYSoWrsXwdPpluuRiDZZGMhJ9L7yGkWV6s9UK7/oa4zZ6EhYS5OdiRv1/MmrYQ44LQ8u9J1HmfKSAoVGFi5hePqde6oh1MzEWv6agY39o+XA0FYLKCrukWPXCRAaUSWVnWla6wXoP7ygVtNumwtgI=
+	t=1730052920; cv=none; b=DLtjhy9LntrLgSRold4dMOV2/0qKxCu08+Z2PQzOFe/KIn6gnJlnXJ7rt2F9NG5KcpZEUS716Rc9rpbdbqYYVScKTcnxgNOdsaKnL/keOIUw6pqFV/bSwXzgCOd1cURws+n4JMB7nGYYlBOs0CTIkrSJGlsXyD9N4xB3lKhXf/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730052604; c=relaxed/simple;
-	bh=Xl4a65iUilugV+fBphpVSgOCCRtwM6mhRH4xdVAsPaQ=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MMXMbFdaEv28spTJEqBZxXaz1hPID8n+ApmiAFi0opDl35+uSj0u2DDn8V63Hc0hRfBtC2MYVt+MmFTENIE96BGcysOtCBab+r4ltUGfn5FsWudBrqTu/tHDPogsDVfWnmwrmV3icE+5kyXCzNPK3Q6Qzi+nzSHRyfz9FRKX1oY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=FMJkX+bJ; arc=none smtp.client-ip=193.68.50.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
-Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
-	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 655CBA0472;
-	Sun, 27 Oct 2024 19:10:00 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:from:from:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=mail; bh=CQYMBjKa/6089/ZeL5xA
-	OUfW85stKiaNK4L4qGdqr04=; b=FMJkX+bJSwPqBMXD4Q4BKkFtLymd0M6lsHR9
-	be8afXm3uNXRMAY/T4H4ReFiLi3GquQaI/CJq9/45fz+ksGhWc3KHHPdGAKdOyGV
-	wBfxn0anf2F2n76ghD/OeVyObZjwjoNahcCPcFMBWlhiLfkzTwQ+jOm6S7X4DMzo
-	r81Xl97O0bUcfHB5qGdZ6SlSjz0Isruj68gqD/TH8oFZru61H0K2q4B7Rdur0NIo
-	IrpGF4wQAlO4vTVzICjHRludv77cGemmv7b3nBhO4JgG7LP21Em0r/+7DPfmvuyT
-	JMSXXJ+OiOda0T8H7McGgSwoyo3JVYFt5xF+gNakl7mv/1jS3oophSxMH+KFkMTa
-	v15WEqy/sVOAvnlaOZyqX6ndG6mcvTOh4iqP1DwETJmRNgbNy0Aw7CxDUVD4Me6M
-	smPeWjadffqIZxwTUu5rWvZ87ky24p7MMDL47/sOUSbUolXVLvMIk3YMgkGVLytB
-	9UaxrxDKIQn0cn3XMw+Oq1HybCnhW9Hdgfd1sc0mnAZhbfxwIyx0h5sZj1FfeqoJ
-	An9dSBo8U0ok7Ryl/IoiCqYlgifS70zGDweuFvsA9bQaQV39QkU/jDBxFzTEUsz5
-	JWjodgTGf2MjiIhDBuA3FJedJed/ewaVQUcJIaZebF/npECMJBkUS4FxjpMvFbYD
-	VZ3TpUY=
-From: =?UTF-8?q?Cs=C3=B3k=C3=A1s=2C=20Bence?= <csokas.bence@prolan.hu>
-To: <dmaengine@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-sunxi@lists.linux.dev>, <linux-kernel@vger.kernel.org>
-CC: Mesih Kilinc <mesihkilinc@gmail.com>,
-	=?UTF-8?q?Cs=C3=B3k=C3=A1s=2C=20Bence?= <csokas.bence@prolan.hu>, Vinod Koul
-	<vkoul@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec
-	<jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, "Philipp
- Zabel" <p.zabel@pengutronix.de>
-Subject: [PATCH v3 02/10] dma-engine: sun4i: Add has_reset option to quirk
-Date: Sun, 27 Oct 2024 19:08:55 +0100
-Message-ID: <20241027180903.2035820-2-csokas.bence@prolan.hu>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <4b614d6c-6b46-438a-b5c3-de1e69f0feb8@prolan.hu>
-References:
+	s=arc-20240116; t=1730052920; c=relaxed/simple;
+	bh=qI0FQln2WNTO+W2mP8bmh7MmrUK/GDrK+N8xjimv6Mk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Yt5S9mCu7/9NyaRkgixx0achGtWExvzQtlfm1hzSBpL1GlrSM+MlHjWxniCyFuvq/4pHiZOCLv3QOCu2nynN9zDFkGShrgGmdjSp5oL/braz8gDUmm/IVueXF7vSotnq691iWsDOIStAUr/MBYqrn/lDXR6D4PBLtWAwfo+8b9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=XEi4zs8u; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49RGWAcX018030;
+	Sun, 27 Oct 2024 18:14:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	ryLDfSY5+pfgufjaYOpd06CcYoxxkOqG1oO+4yReuYY=; b=XEi4zs8uLO20L+lQ
+	5/khr7SLDMRSaDTmqG+yHYyBTc2aWvyKvy+LlEcBRQJxX6fEvVZSuBaMP1a8RFsE
+	s070FuGWQ3l12FFlt2uozDZhxrPhS/8ouzmr2w2qsAVWMNAOz7O3aklk7Wh9oFbC
+	fiXN1WGU2+jp8I2KR4F3etuII8rMq9ziQXhSDAtFgRTsR/mq4JeRHkzZ9ADSd/M6
+	qJ+QhGkpfGmcGztcs/Nj5Fnm/WhdBGn3HEyAcRixBGiGSgLHP+hgLyuufN4Dv2s6
+	Le0O7iQCnyMs6xpKATtAxYaXdPfgfPuY0ljN4V2ekuxyL8Br1ZUKrhmWsGK90ypq
+	SUKWNg==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42gqcqjvf0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 27 Oct 2024 18:14:53 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49RIEqBD019859
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 27 Oct 2024 18:14:52 GMT
+Received: from [10.216.3.65] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 27 Oct
+ 2024 11:14:45 -0700
+Message-ID: <bc1ba8bd-4433-4f83-8ce6-73bed5abd843@quicinc.com>
+Date: Sun, 27 Oct 2024 23:44:43 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm: a6xx: avoid excessive stack usage
+To: Arnd Bergmann <arnd@arndb.de>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@linaro.org>
+CC: Arnd Bergmann <arnd@kernel.org>, Rob Clark <robdclark@gmail.com>,
+        "Abhinav
+ Kumar" <quic_abhinavk@quicinc.com>,
+        Dave Airlie <airlied@gmail.com>, "Simona
+ Vetter" <simona@ffwll.ch>,
+        Nathan Chancellor <nathan@kernel.org>, Sean Paul
+	<sean@poorly.run>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Bill Wendling <morbo@google.com>,
+        Justin Stitt <justinstitt@google.com>, <linux-arm-msm@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
+        <linux-kernel@vger.kernel.org>, <llvm@lists.linux.dev>
+References: <20241018151143.3543939-1-arnd@kernel.org>
+ <20241019093146.kdp25pir5onjmg4g@hu-akhilpo-hyd.qualcomm.com>
+ <k42wmgziqia6balqsrfualbg73giesjxxtyaldkxsrdxkro2li@6neybqsu27me>
+ <20241021092509.tm4w3ufdgcd7of37@hu-akhilpo-hyd.qualcomm.com>
+ <cb728358-ac32-4b37-a954-967f338385e2@app.fastmail.com>
+Content-Language: en-US
+From: Akhil P Oommen <quic_akhilpo@quicinc.com>
+In-Reply-To: <cb728358-ac32-4b37-a954-967f338385e2@app.fastmail.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1730052599;VERSION=7978;MC=629135376;ID=158215;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
-X-ESET-Antispam: OK
-X-EsetResult: clean, is OK
-X-EsetId: 37303A29ACD94855677C63
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: uCJRpz51yTRPHh7tnnEpDC96pKyVw-wS
+X-Proofpoint-GUID: uCJRpz51yTRPHh7tnnEpDC96pKyVw-wS
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ malwarescore=0 suspectscore=0 bulkscore=0 adultscore=0 spamscore=0
+ phishscore=0 impostorscore=0 clxscore=1015 priorityscore=1501 mlxscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410270160
 
-From: Mesih Kilinc <mesihkilinc@gmail.com>
+On 10/21/2024 3:31 PM, Arnd Bergmann wrote:
+> On Mon, Oct 21, 2024, at 09:25, Akhil P Oommen wrote:
+>> On Sat, Oct 19, 2024 at 04:14:13PM +0300, Dmitry Baryshkov wrote:
+>>> On Sat, Oct 19, 2024 at 03:01:46PM +0530, Akhil P Oommen wrote:
+>>>> On Fri, Oct 18, 2024 at 03:11:38PM +0000, Arnd Bergmann wrote:
+>>>>> From: Arnd Bergmann <arnd@arndb.de>
+>>>>>
+>>>>> Clang-19 and above sometimes end up with multiple copies of the large
+>>>>> a6xx_hfi_msg_bw_table structure on the stack. The problem is that
+>>>>> a6xx_hfi_send_bw_table() calls a number of device specific functions to
+>>>>> fill the structure, but these create another copy of the structure on
+>>>>> the stack which gets copied to the first.
+>>>>>
+>>>>> If the functions get inlined, that busts the warning limit:
+>>>>>
+>>>>> drivers/gpu/drm/msm/adreno/a6xx_hfi.c:631:12: error: stack frame size (1032) exceeds limit (1024) in 'a6xx_hfi_send_bw_table' [-Werror,-Wframe-larger-than]
+>>>>
+>>>> Why does this warning says that the limit is 1024? 1024 bytes is too small, isn't it?
+>>>
+>>> Kernel stacks are expected to be space limited, so 1024 is a logical
+>>> limit for a single function.
+>>
+>> Thanks for the clarification. I think it is better to move this table to
+>> struct a6xx_gmu which is required anyway when we implement dynamic generation
+>> of bw table. Also, we can skip initializing it in subsequent gpu wake ups.
+>>
+>> Arnd, do you think that would be sufficient? I can send that patch if you
+>> want help.
+> 
+> Yes, that should work. I actually tried first to turn the model
+> specific data into static const structures but that ended up 
+> not working because some of them have a couple of dynamically
+> computed values. I think that would have been even nicer.
+> 
+>       Arnd
 
-Allwinner suniv F1C100s has a reset bit for DMA in CCU. Sun4i do not
-has this bit but in order to support suniv we need to add it. So add
-support for reset bit.
+https://patchwork.freedesktop.org/patch/621814/
 
-Signed-off-by: Mesih Kilinc <mesihkilinc@gmail.com>
-[ csokas.bence: Rebased and addressed comments ]
-Signed-off-by: Csókás, Bence <csokas.bence@prolan.hu>
----
+Posted the fix. Btw, I have copied most of the commit text from this patch.
 
-Notes:
-    Changes in v2:
-    * Call reset_control_deassert() unconditionally, as it supports optional resets
-    * Use dev_err_probe()
-    * Whitespace
-    Changes in v3:
-    * More dev_err_probe()
-
- drivers/dma/sun4i-dma.c | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
-
-diff --git a/drivers/dma/sun4i-dma.c b/drivers/dma/sun4i-dma.c
-index d472f57a39ea..f485d6f378c0 100644
---- a/drivers/dma/sun4i-dma.c
-+++ b/drivers/dma/sun4i-dma.c
-@@ -15,6 +15,7 @@
- #include <linux/of_dma.h>
- #include <linux/of_device.h>
- #include <linux/platform_device.h>
-+#include <linux/reset.h>
- #include <linux/slab.h>
- #include <linux/spinlock.h>
- 
-@@ -159,6 +160,7 @@ struct sun4i_dma_config {
- 	u8 ddma_drq_sdram;
- 
- 	u8 max_burst;
-+	bool has_reset;
- };
- 
- struct sun4i_dma_pchan {
-@@ -208,6 +210,7 @@ struct sun4i_dma_dev {
- 	int				irq;
- 	spinlock_t			lock;
- 	const struct sun4i_dma_config *cfg;
-+	struct reset_control *rst;
- };
- 
- static struct sun4i_dma_dev *to_sun4i_dma_dev(struct dma_device *dev)
-@@ -1215,6 +1218,16 @@ static int sun4i_dma_probe(struct platform_device *pdev)
- 		return PTR_ERR(priv->clk);
- 	}
- 
-+	if (priv->cfg->has_reset) {
-+		priv->rst = devm_reset_control_get_exclusive(&pdev->dev,
-+							     NULL);
-+		if (IS_ERR(priv->rst)) {
-+			dev_err_probe(&pdev->dev, PTR_ERR(priv->rst),
-+						  "Failed to get reset control\n");
-+			return PTR_ERR(priv->rst);
-+		}
-+	}
-+
- 	platform_set_drvdata(pdev, priv);
- 	spin_lock_init(&priv->lock);
- 
-@@ -1287,6 +1300,14 @@ static int sun4i_dma_probe(struct platform_device *pdev)
- 		return ret;
- 	}
- 
-+	/* Deassert the reset control */
-+	ret = reset_control_deassert(priv->rst);
-+	if (ret) {
-+		dev_err_probe(&pdev->dev, ret,
-+			"Failed to deassert the reset control\n");
-+		goto err_clk_disable;
-+	}
-+
- 	/*
- 	 * Make sure the IRQs are all disabled and accounted for. The bootloader
- 	 * likes to leave these dirty
-@@ -1356,6 +1377,7 @@ static struct sun4i_dma_config sun4i_a10_dma_cfg = {
- 	.ddma_drq_sdram		= SUN4I_DDMA_DRQ_TYPE_SDRAM,
- 
- 	.max_burst		= SUN4I_MAX_BURST,
-+	.has_reset		= false,
- };
- 
- static const struct of_device_id sun4i_dma_match[] = {
--- 
-2.34.1
-
-
+-Akhil.
 
