@@ -1,174 +1,101 @@
-Return-Path: <linux-kernel+bounces-383739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F14669B1FB5
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 19:30:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 605009B1FB9
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 19:34:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B03A12817F7
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 18:30:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FC661F2146D
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 18:34:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DF1217BB35;
-	Sun, 27 Oct 2024 18:29:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF9BE1741CB;
+	Sun, 27 Oct 2024 18:34:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G3L3sDLE"
-Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IwIh+t+N"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AB4416ABC6;
-	Sun, 27 Oct 2024 18:29:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C0E874059;
+	Sun, 27 Oct 2024 18:34:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730053798; cv=none; b=OIP4LsvzmU28PLASXnsOP3Qvyq+UgxOIGW7qNZ8lzdFCfek/3wQilJ9bn0O5liztafSSOaUweZ1r2mu8PZw88IcXsZfvCv13Y1AmeX/AcQjnZk+V7i1tho1uwtcLRUJge0FsOes9mGSWiXJPcocUV54qu/GvNlIfNsaRdAKjqJ0=
+	t=1730054083; cv=none; b=VV+PPSoP71iOAvUPSnycCVJ4fgHdZ0KkAfl/5bUi4jGUKALI2bSsteqZIdMtWfs9SQS1NcJMmu4EAnYhIIeNTtO+/ZWu5ZzEfMZRjYfMyw6vTeGzlGEJVBhlTmGxptVSCs4SfsHhNfxoW1wk7zXkzysdFBRAlXpbrqZYhoVZQTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730053798; c=relaxed/simple;
-	bh=RWPvgK6oqORIrZGEDDkmHoNUXpJG2FxwoWGO0fiGPR4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cnKds8Qshk9RV5EEa0UaV8pGGfOb2jq8KulSjEk3tE8OCrdslChOLB2aQIq67RKAnXFhRn/3TLULXNDASjZjRenTsknqv7wJUXnwbT/k+g6THSkDA7GKNIQJcAm3Ec191VW3Tmn3DBwbrqmp2sISFIuJPE9F31cHyaynZus6lIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G3L3sDLE; arc=none smtp.client-ip=209.85.219.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6cbf0e6414aso18075066d6.1;
-        Sun, 27 Oct 2024 11:29:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730053795; x=1730658595; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ylECE2zEuNqtiXNvplMAJctSOQtfxMBeffxsBMJW/LE=;
-        b=G3L3sDLEsy8W1XITqeiDcIYt6KdtrpzC/3yYKyWWYpEHy4p5wAXLku53NRK13zjM+1
-         CwP/TNMyvEr9LdLdKnu50JmxXRBD5xqCeS72ilho9xWwdbJCytUwSZdU7Dv5buqjHEIZ
-         oeZOSzMsviROnmoNOuMZKGXUd+4MjE7B1WKuH78eM0fjbIc5MwbvHJq04+McyS0PYLIn
-         JwQ2XNQC0o4gAigAz6lgIV1tloBGeWp5ZUs4LWJcjFFPxrckWlrtXQ6BPPpZvVHo2RVs
-         BqGoRlHcatqZODhOoKvq/4ba9QfJduF92D7mnSQHkLD4GIIdS0Fni2ob1OgqSn7PJ1iZ
-         8w1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730053795; x=1730658595;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ylECE2zEuNqtiXNvplMAJctSOQtfxMBeffxsBMJW/LE=;
-        b=sHDermCgbruk9XXUv0/vsTJblCncrl2KhfXvu6yGmAKR6nf7icdLpznEz49K+BAD76
-         FLKsGe6tkJcSlZ1GzWx94GGMHQ94u+E8VMvH06woltd2dUaEbSzqMjuoImVIuLUMV92C
-         KKSc99e75N+QEoF7S1Xbb795muJuEZDmaro5gOKvjHDEgbLoXdnyQB368iPgEhIQvgYC
-         hPq8DSSw9teodEP1He9Ai8UuQ9UUKaetbzezqWJ9IuygcxlCaPRR7rS4Bip0FrXThNGL
-         J3EJvVnK6spzu5tz+gwO0jYxo1TbHSToFRep+I3Vh0Q9CU6QZOuOWvuhVzHCxeYd6yR3
-         rGjA==
-X-Forwarded-Encrypted: i=1; AJvYcCUzOY5u70SL2AJwAfXCtJoUCDQVaxSpWks7sn1yDqy/kI57Zu2M3JDr6I8QZ3cSLAa4MedXe0p10Oiy0g==@vger.kernel.org, AJvYcCWflKefv1I5nU/BpvYtrxAnwwC4N7rSHJWBCe4najfnkrEaG9Apy/9oqYXQXHOyjGjJNKtiXoVIhY7N3eEz@vger.kernel.org
-X-Gm-Message-State: AOJu0YxciPSG+LdtCVI3I9QOX9OdW6B2ONOPAlxwCUY0k77zJqARM7J2
-	zpa5tAlc+SGh5Nj5tYYrQztfpeVTp0ZIRTT60qGsuNgSQFSjhSvLJKNsHYrMlIXqL6qqX1Iupfc
-	cryCfqpF6mSfl9Rcal5h4UXNPs9dEXPSP1hY=
-X-Google-Smtp-Source: AGHT+IFLaSlEeUs3VzjQt9tbbFlo4sUAXdSeMbM5hLfsCWvUNXkYs4aURay4tubeXysw/BKUsLHhB+xCgDye14JL5PQ=
-X-Received: by 2002:a05:6214:3186:b0:6cc:3a:a7f0 with SMTP id
- 6a1803df08f44-6d185857230mr118923196d6.44.1730053794188; Sun, 27 Oct 2024
- 11:29:54 -0700 (PDT)
+	s=arc-20240116; t=1730054083; c=relaxed/simple;
+	bh=Ab1LD0YPRiCsaMpw6QmeIUY4TM1fzamI5B5sMH/HSGw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fy2nRwBSpElHaklIAuH8sF8dilzJsD1KkROaKkBwn4LEnWBlEb5pjvfC10sKSIfQa1gPs/o2PGKo9n/SyajeodUPffg4O7HXaHoCOIceUlP0SkiPID+1qdq79yTRMWnRrv8v1UdWf3mD3ckVx7349q54VXpbQcwVyi0ARo/UZx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IwIh+t+N; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6DD3C4CEC3;
+	Sun, 27 Oct 2024 18:34:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730054082;
+	bh=Ab1LD0YPRiCsaMpw6QmeIUY4TM1fzamI5B5sMH/HSGw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IwIh+t+NmDWdzDo9uy+/UuRmYcIx6PygiXzpCNabpiNcsultp+7hqhXDxOLYFwPY3
+	 8LHcfYKNzx6EjyWPHp6mo2LQy57BSv85SwP1Y/pqzbOEJ1/WZ6chL88GjThxZJaWLi
+	 R2sqFZH1qHkuS3eHjSYJ9Efj4kSNY3q+vFww2BHTzw4JY0t7L4P8qIXXA3xC+ZrAyh
+	 DSfc1DOe50EvHstnoL5VU6AqZd0Lfn2ss7yMteMLrdWwbuTL7/FnfajNnmXM6GXgx8
+	 NpJSsDPbzlY8RvydVNLNwww3pYOOuEw1/pJQIGffaKrLub4zqp6vsQNBJELX89plf8
+	 n+GbgE3XGrWvA==
+Date: Sun, 27 Oct 2024 11:34:40 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Koakuma <koachan@protonmail.com>
+Cc: Masahiro Yamada <masahiroy@kernel.org>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>, glaubitz@physik.fu-berlin.de,
+	Nicolas Schier <nicolas@fjasle.eu>, sparclinux@vger.kernel.org,
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
+	linux-kbuild@vger.kernel.org
+Subject: Re: [PATCH v2 0/2] sparc/build: Rework CFLAGS for clang compatibility
+Message-ID: <20241027183440.GA2755311@thelio-3990X>
+References: <20240717-sparc-cflags-v2-0-259407e6eb5f@protonmail.com>
+ <20241021201657.GA898643@thelio-3990X>
+ <CAK7LNASTkUTK8JZCzySNh3BVKxauusVKRhjnchy6iZz4qLbq8w@mail.gmail.com>
+ <20241022200732.GA487584@thelio-3990X>
+ <etezvjy_HnDpgOTBrzap29if1ChFBhl1RawcNJK3UAsFk6i_g_cyHoz7hlqfYqASgJZ97W4HxnGA-nbCXL73pIRN9tUKUttAp1JefMRp8rs=@protonmail.com>
+ <CAK7LNASbFeJc9Y=BFY85SwESUKNNDTRDunyLGveDusC--NVkCw@mail.gmail.com>
+ <20241023164535.GB4081497@thelio-3990X>
+ <InqlMfqWWeNw8Mh6y1y5oNb3EotVpA26gkX70xcVxt9ygCtb7DYfTB3Amg3SzZfs78q3osSW2BIEpgyhmOjSqBW7neH0Se2sQEpmdClVV3M=@protonmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241027174836.8588-1-derekjohn.clark@gmail.com> <24dc65c2-b6c9-4909-a784-fb81d9299f1c@roeck-us.net>
-In-Reply-To: <24dc65c2-b6c9-4909-a784-fb81d9299f1c@roeck-us.net>
-From: Derek John Clark <derekjohn.clark@gmail.com>
-Date: Sun, 27 Oct 2024 11:29:43 -0700
-Message-ID: <CAFqHKTmEauJ4RQUrn6pjX-hgLGZLNE8gaD5S41Uy0L0cNB4+mA@mail.gmail.com>
-Subject: Re: [RFC] hwmon: pwm_enable clarification
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Jean Delvare <jdelvare@suse.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Cryolita PukNgae <cryolitia@gmail.com>, linux-hwmon@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <InqlMfqWWeNw8Mh6y1y5oNb3EotVpA26gkX70xcVxt9ygCtb7DYfTB3Amg3SzZfs78q3osSW2BIEpgyhmOjSqBW7neH0Se2sQEpmdClVV3M=@protonmail.com>
 
-On Sun, Oct 27, 2024 at 11:16=E2=80=AFAM Guenter Roeck <linux@roeck-us.net>=
- wrote:
->
-> On 10/27/24 10:48, Derek J. Clark wrote:
-> > Greetings all,
-> >
-> > I am working with Cryolita to fix up the GPD driver she submitted recen=
-tly:
-> > https://lore.kernel.org/all/20240718-gpd_fan-v4-0-116e5431a9fe@gmail.co=
-m/
-> >
-> > We are currently having a discussion about the meaning of this part of =
-the
-> > documentation and are seeking some guidance from upstream.
-> >  >> pwm[1-*]_enable
-> >>              Fan speed control method:
-> >>              0: no fan speed control (i.e. fan at full speed)
-> >>              1: manual fan speed control enabled (using pwm[1-*])
-> >>              2+: automatic fan speed control enabled
-> >>              Check individual chip documentation files for automatic m=
-ode
-> >>              details.
-> >>              RW
-> >
-> > In oxp-sensors we took 0 to mean "no kernel control" so a setting of 0 =
-is
-> > technically "automatic" but fully controlled by the hardware with no
-> > interaction from the driver. In her original driver draft she had taken=
- this
->
-> That is wrong. It should be (or have been) 2 or higher. Ah yes, I can see=
- that
-> the code sets fan control to automatic when oxp_pwm_disable() is called.
-> Again, that is wrong. Congratulations to the submitters, you sneaked that=
- by
-> my review. That doesn't make it better. It is still wrong, and I call it =
-"sneaky"
-> because the function is not called "oxp_pwm_automatic()" or similar, it i=
-s
-> called "oxp_pwm_disable(). Setting fan control to automatic does not disa=
-ble
-> fan control.
->
-> My bad, I should have paid closer attention, and/or maybe not have truste=
-d
-> the submitters as much as I did. I guess I'll have to pay closer attentio=
-n
-> in the future.
->
-> > literally to have the driver set the fan speed to 100% on this setting =
-rather
-> > then give back control to the hardware. My question is simply what is t=
-he
-> > correct interpretation here? Ideally I would like to see this interface=
- match
->
-> It seems to me that the above text is well defined.
->
-> > as existing userspace software is expecting 0 as hardware controlled an=
-d 1 as
-> > manually controlled, but we also want to ensure this is correct before =
-we
-> > submit a v5.
-> >
->
-> Any such userspace expectations are simply wrong. The ABI definition is a=
-bove
-> and, again, it is well defined.
->
->         0: no fan speed control (i.e. fan at full speed)
->
-> I don't really see any ambiguity in this text. This isn't about kernel co=
-ntrol,
-> it is an absolute statement. There is no "kernel" in "no fan speed contro=
-l".
-> "fan at full speed" should make this even more obvious.
->
-> Guenter
+On Sat, Oct 26, 2024 at 02:52:52PM +0000, Koakuma wrote:
+> Masahiro Yamada <masahiroy@kernel.org> wrote:
+> > I think this should be documented (required LLVM version and
+> > the supported build command),
+> > otherwise people cannot test this patch.
+> 
+> Nathan Chancellor <nathan@kernel.org> wrote:
+> > I am not sure that there is a super concise way to describe for
+> > Documentation/kbuild/llvm.rst that sparc currently requires 'CC=clang
+> > LLVM_IAS=0' along with a build of clang from the main branch of
+> > llvm-project to work properly.
+> 
+> So about this, as a middle ground, would it be okay if I put
+> 
+> ``CC=clang LLVM_IAS=0`` (LLVM >= 20)
+> 
+> In the documentation, in a similar manner to the s390x entry?
+> I know that LLVM 20 is still a couple months away but those commits will
+> likely be released with that version, and since it also tells people
+> to not use a version that is too old, I think it should be okay (?)
 
-Guenter,
+Yes, I think that would be reasonable.
 
-I'll keep this in mind in the future, and I will send a patch soon to fix t=
-he
-oxp_sensors driver. One final question, is a "0" setting mandatory?
-
-Thanks for the quick reply.
-
-Derek
+Cheers,
+Nathan
 
