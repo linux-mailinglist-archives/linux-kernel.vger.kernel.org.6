@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-383435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B814A9B1BA4
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 02:24:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DE4C9B1BAB
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 02:25:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77AF82815E2
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 01:24:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE32A1C20DF2
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 01:25:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 532F133993;
-	Sun, 27 Oct 2024 01:24:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C888F9E6;
+	Sun, 27 Oct 2024 01:24:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rsWhfO45"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TBd8IJpd"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7B192746B
-	for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 01:24:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21920DF5C
+	for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 01:24:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729992260; cv=none; b=uS3Cd3WK6B+k7fhA2hU7CwjVmZImr5IE2+gcGiHcVkrrH6WySaXpjdhU6W/+naighPRXCpSpH29rpyLIi/EBiwgMOnbTDP/wrHfWZtX8Ka7RC0VV6hgSqEvZPU71jB4mYZYfeD1ckU5fU3Emq2EW+lYYSQ/FhsORBWxmy1aUes8=
+	t=1729992296; cv=none; b=kf1/YQlzRxUrPEbVscQkwCELI6ivuxn2U3zIozPFm7chHZ5TiTnMEFk5i/nHsIYstGO/ZryAv2KVy4oPQPxzuNcm48BpRGGeDSvi2w/XN8b/h6pIzD4qr+lVz89fJqdAIR2Df4L+W4o/tMnS/viXQJ+w2ApQQCJWo+1HPc2Skc4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729992260; c=relaxed/simple;
-	bh=oKK5gbWEejDoMYSUIFjcuSz0eq7ltuyCy9xv93iydLE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=JoPPZGgMPj/JKdb21xpS8Y0EnCruhJ24+T/jb7SGPz52o2/ByFgQ9jFuluT+GOGiHZb08cxVudZgRFjyelngiC/Z2CAGqf67i4CFQU5bMI1PF5wrH/bwtgoNDsiGt5lbVNLaA3ZE8GsPPnNITv9jfKO9+oNwyTfClbbFof/GEHs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rsWhfO45; arc=none smtp.client-ip=209.85.208.182
+	s=arc-20240116; t=1729992296; c=relaxed/simple;
+	bh=7tM/N1XH2DuKOmOBVNe95VBzXFxfDobIX6AJnVgmH/0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=S1D3vIEsC1NC6supAFEo3ZhKe+TKc1+7lS5QSGXmU4nldV4y/f+clLgKO6mnmLvV0hnklhzoVT0piKxfU/rGXO//hapKBtpqybMEbo1/nWgx36Pw5J34i+1NhIFX0V+/JcVA0mjU5iTDMwXgETrH8yPhGCzJhET3JW6kOvuU5o4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TBd8IJpd; arc=none smtp.client-ip=209.85.167.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2fb5a9c7420so29697901fa.3
-        for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 18:24:16 -0700 (PDT)
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-539e4b7409fso3195080e87.0
+        for <linux-kernel@vger.kernel.org>; Sat, 26 Oct 2024 18:24:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729992255; x=1730597055; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5y2SXSw01PWxmjVoX9nfv7FS4uwhOzizq9TAwp4iCpk=;
-        b=rsWhfO45eCQzUYJQViBiHvtbS0KCz9BtWocCpO5PAryR5lgcZiug/VLnzBQeyi8S5C
-         F6mW6r08VUxFTY2ptK88ng6i8yB4E8K8afYsm4elYle+lSeVBHd96Z5b/aQ04TrDbGau
-         okZ2R8xXjw/e6TH6SDTzw/5t5lgANmY9Kt6ONPC+YwWQr1toItGqUxFFOPnXwRR5Gjbj
-         GzvKqjbb1iyww82mDghZ0L5+X9Jx894yi7dGQwvP6PnRjH7RYhuge9axgI/s7Bt/Ev8Y
-         ZFK8zZZCf6GKFocyLt6JufLy2b3DbjOnPGRMCj8VuqCTAVj9Bh6eAPtXhDAEc5GXOc8C
-         uiGg==
+        d=linaro.org; s=google; t=1729992292; x=1730597092; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=68AeqYijcL7oecvXqcrDIqXV8PPNtXZ3Z0x7Bk8ng0Y=;
+        b=TBd8IJpdBr2UfyKCkiMAUOcSv4K9S/vWmuhM9+7QmV+kaCRA+WYg2XuaGFWrhHBy7C
+         OPEH7ezq/kAQ/oUtmYOSTw1Ytf/5FKjDanbeO+mQ29ypJOWQSoyNXX3JVqdkRdxa7ezH
+         EpCCHHXUv8iC30Vkhfq1JmPVgy9AS8u/psWXeeHvZ0JFOynZlckTsdulbmkiLA30TpFi
+         DIk61N5qRUOcXuIrD2AQIpg5hE6oIl8cVDFxaIxXyCzozJH4Mj/zo06tuKjmlq7wtzAj
+         QsFgd+qWAQI55avephaB60EcAfTurUNHu6hQ8QYgR4R4QdAMC8oy6qgwsAhg74AXxSOy
+         BNiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729992255; x=1730597055;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5y2SXSw01PWxmjVoX9nfv7FS4uwhOzizq9TAwp4iCpk=;
-        b=sU4VTtIheCBthQlzX8kvbhpTfPYdKhNi/ZrAuTWj3+Fe8MJpEKJeYCel9AiVCkba6G
-         wC9VbPFxREu0qxFvJsSN/Wy9NBl9F2yiIOCstAG0p9NFnGQiVjZ10qiWKBxZJ5Nd9wRG
-         fOdCJ3HqgK7XXl0At97ekmbZnBYS/oHNeg2zNJWOz2QNCrrZgD1Rlpst3SS4o0oKwbPS
-         Wucul967ESybxWLf/wDjllLL/JOJw8XaOzIktO77ARP1uJq7Osd3iO75GPDTewcaiVPM
-         4Kvh8rMJpG5x7UpImYor9pdO4hnEy+dw/LkiKb2izeJOrAJlVtxafu3r9o6CCKDROX4s
-         VI1w==
-X-Forwarded-Encrypted: i=1; AJvYcCXvr/SnLLMEBZnWdJsjfEDXvFUu4rJdCwVGqbHpcSoKF1zCVVu/KORqteRcbq517DVrgLnhfUN5sXA2c+s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyuFHWUyJmzkAVBmjtxrLgUe2JdsYtu6R+KUA7EANVikM7NUkUL
-	SDEuVloNEofPBIa/RyBeN1WxbXhux9DKnN8Qt4R33Sot7HvkYq1hX/1b1w3sKd8=
-X-Google-Smtp-Source: AGHT+IGQoQ4KCO+b9gFfaMe6z9N/jNF8Gk0UBe4vljjuEWG79ruDCVy+XouF124MxoqxFnX2E29clA==
-X-Received: by 2002:a2e:812:0:b0:2fb:3d1d:dd96 with SMTP id 38308e7fff4ca-2fcbdfc7594mr12079041fa.20.1729992254837;
-        Sat, 26 Oct 2024 18:24:14 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729992292; x=1730597092;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=68AeqYijcL7oecvXqcrDIqXV8PPNtXZ3Z0x7Bk8ng0Y=;
+        b=Yv7yAZMduwLpw4zSRUcGr1mM74Z3kvQJO+Tb8P57e1e4x23i2vF3Pg8IQoFNigJUS5
+         h0M/B5g3wtGRxL4bOruYvH/AQK/+n6TRzj7N0nbeYDko2CPu0sCcVdBV5z8mWTr4nJNi
+         8UprKYeU5b/Kve5FbxUXv46jGP7Pu2eCEQfGPybH3bpDuaHZ9RXuj/ArpB82r98+sJH5
+         Rbx+atzSDkwbnT7oAQc2+/km+bkAyUsUQoMOHi9nOXgwJVXNeTurukqmVE3HetXykIA0
+         5Mw9YGDFaG0eScENc9LRjQGtLIc1NodTtAzUQXzERdPFjngf5J3Oazdg//hUEaMw+mxJ
+         wd7g==
+X-Forwarded-Encrypted: i=1; AJvYcCVLWEK9seLmTB6MyxoxFvlvhbOnAEb6wk4CyRRR4GootJ11KeI0YzO7DxGIWNYSEjPanXqKPVFGO/Wy0wQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzApb8EnhgWJ5l5Gj79BYEMcdLTdGHaenXaerGPZiqgYDmTsdzu
+	gkGOzCsiJ4R2Lhkl1f+ELshlkIFLxkUc1v2b+0UxuFoBJPG6WHl7wxJzKCGqZqo=
+X-Google-Smtp-Source: AGHT+IGNFnfvQwIz3yLv6F260HUn98pzMeiIWO1/m5aRrYXNlOj/wOWz3oQEixnqG9n7ICb+rpU1Aw==
+X-Received: by 2002:a05:6512:6ce:b0:539:fcf0:268e with SMTP id 2adb3069b0e04-53b237094admr3368579e87.14.1729992292227;
+        Sat, 26 Oct 2024 18:24:52 -0700 (PDT)
 Received: from [127.0.1.1] (2001-14ba-a0c3-3a00-70b-e6fc-b322-6a1b.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:70b:e6fc:b322:6a1b])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fcb4519b3esm6913881fa.44.2024.10.26.18.24.12
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53b2e1c901esm642356e87.219.2024.10.26.18.24.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 26 Oct 2024 18:24:13 -0700 (PDT)
+        Sat, 26 Oct 2024 18:24:51 -0700 (PDT)
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Sun, 27 Oct 2024 03:24:05 +0200
-Subject: [PATCH 3/3] arm64: dts: qcom: sar2130p: add QAR2130P board file
+Subject: [PATCH v5 00/11] clk: qcom: add support for clock controllers on
+ the SAR2130P platform
+Date: Sun, 27 Oct 2024 03:24:39 +0200
+Message-Id: <20241027-sar2130p-clocks-v5-0-ecad2a1432ba@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,615 +77,122 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241027-sar2130p-dt-v1-3-739d36d31c33@linaro.org>
-References: <20241027-sar2130p-dt-v1-0-739d36d31c33@linaro.org>
-In-Reply-To: <20241027-sar2130p-dt-v1-0-739d36d31c33@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAFiWHWcC/3XPwQrCMAwG4FeRnq0kaeumJ99DPHRrqkVZpZWhy
+ N7dztOkePwD+f7kLTKnwFnsV2+ReAw5xKEEs16J/mKHM8vgShYEpBGwkdkmQgV32d9if83S+M6
+ 5XedBM4uydU/sw/MrHk8lX0J+xPT6Fow4T/9bI0qQvjHcaPBgW3e4hcGmuInpLGZspAVAWANUA
+ NUqNtwhKUsVoJaAqQFVAN16bDV5h2ZbAXoJbGtAzxc0CODKD9b1P8A0TR9seqSKcgEAAA==
+X-Change-ID: 20241017-sar2130p-clocks-5fbdd9bf04ee
 To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org
+ Conor Dooley <conor+dt@kernel.org>, Taniya Das <quic_tdas@quicinc.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, 
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, 
+ Kalpak Kawadkar <quic_kkawadka@quicinc.com>, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=13712;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3650;
  i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=oKK5gbWEejDoMYSUIFjcuSz0eq7ltuyCy9xv93iydLE=;
- b=owEBbQKS/ZANAwAKARTbcu2+gGW4AcsmYgBnHZY06Tuo+SH0I+zhqdUTKUtZ924MtsNpc/dzT
- v2FOADrWZmJAjMEAAEKAB0WIQRdB85SOKWMgfgVe+4U23LtvoBluAUCZx2WNAAKCRAU23LtvoBl
- uMJsD/9HA/OiaNR9vg2ymGyrGhzhVG9S+KArX73X0etbzz4ESWJuHEGCvPVa2wvuG+0Ed+WIJUH
- NZ8VvPcT1OIQ7nd4rfiqYRBWcM7gZkQYwbdHztSKOVTivNekOQqfTbj8jhoZjf3InG3OY6q3Sot
- 27gBNTWCZI1Tdsj6rwxBOYuMVuFAM6NghPLGqDanNXGl9/2R97oABnmtwAqth8C151Wp5xUv4uj
- nSmdfSozQXTH1Nj2oa0lfEdqyq1N1tPDDf0S9av0VKp01fF5mNNkwMzj8HkguhguE49PUarII94
- 3VlGK+2aS/NzNbHtYa4UlLOZdOhXR3VCmjMiOyJKroRNIuQNDAr3AxdFy/Sd61iPoZwdB6tzW11
- z5/Xe4CVPUw8GQ+bqnz6yPZcH7kyU2DYOt8eVcu3NYupakmOf+MytLvQtGKb5fKRSwPdwg7/fdD
- X580H/mv4NcCfHVNGKaKrACjZCoiFIk/oCq0MGS+L3IOFcnA5StgVKt6I7sDJHVqDSCFCE5FloM
- 5LO75dzlyX1rvgwz795hjzhfJoChr/hP0DscF5jtj8gLufHrIwcj+5NuqWJZm/hAzSZy1YKlJ0A
- P8059VP3+VSaeIasCOAP0xZuGCRGH9fzhvN0vKs5vn4oPiBuufebx6phAe/nowGee/H9f9EhJ2t
- Vg17eWFSGi8U5eg==
+ bh=7tM/N1XH2DuKOmOBVNe95VBzXFxfDobIX6AJnVgmH/0=;
+ b=owEBbQKS/ZANAwAKARTbcu2+gGW4AcsmYgBnHZZeEhUulsjctkQk+MwpZ4ZDh+dALftQ3exsW
+ Ir+jth7k3CJAjMEAAEKAB0WIQRdB85SOKWMgfgVe+4U23LtvoBluAUCZx2WXgAKCRAU23LtvoBl
+ uLu7D/oCMrWp8UQmOcTjas/Va59LwsbBlENgFF0VC3gth+la6dNy2e00d9zkQ+weAPEyoiMan8V
+ L/rINmzYyyrs5W7JCi3pjKbUHvWB+undEWu/cYhwVP36S4gUZdpPqaL4/+GPc5pyj/InT/3aj2f
+ JWFVeL8VyWczM8U0//V8W+NOGvILGYg9huSljEduQha4suDqRMXHBViQi1i8SEh4tdB9R0aKXTK
+ 3TqgOMH7gewVlz9avOAyWkvw2uzpNhmDc6WZ8Ia55SisPwURU0RLmY3m7uqCR0psPK+rLa+P8Nm
+ hlnTFgW6rBE+v371Ha+8wNQ3H4t+/6I/3otZJ5lP2jeh2x+J5+gUJJQg5ZKrHWmZhKbpHp8NxGj
+ eabflV9HzP70TNmg8PdOEbtVkFfN3XvPu+ZWGyQ+1yLs6mc9pBtrVgZi93yrNISKeT9Uzf1gPHs
+ w5Fn3xcqBNC7sOyVJ+Vx5v0kiWCzbiT9qrKa6XVWg9AhmQmzZHwi1ZaNVwI97IvXfKlVqNSfrLk
+ Au3ZYXDpujx3m8cQxjCHLXou8YC5JmXqktphT0yqeNZHD6T86yw0FlS+f3VzGeI+HIGFF9Q1gO5
+ 4ckWdQfJUxmfuwX4K24atZKa/lcxZBjhRy4/G1CzP6OtFvmwfJZqxRBBWVuyfIuPi2OfxAZiCY+
+ bcSZ7x9Mf8WG2aA==
 X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
  fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-Add board DT file for the Qualcomm Snapdragon AR2 Gen1 Smart Viewer
-Development Kit.
+Add support for the RPMh, TCSR, Global, Display and GPU clock
+controllers as present on the Qualcomm SAR2130P platform.
 
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- arch/arm64/boot/dts/qcom/Makefile              |   2 +
- arch/arm64/boot/dts/qcom/sar2130p-qar2130p.dts | 551 +++++++++++++++++++++++++
- 2 files changed, 553 insertions(+)
+Changes in v5:
+- Dropped the stray 'int ret' variable, leftover from the previous
+  cleanup.
+- Link to v4: https://lore.kernel.org/r/20241026-sar2130p-clocks-v4-0-37100d40fadc@linaro.org
 
-diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
-index ac199f809b0d4e514878518604a23b4f1ab8ef79..fc4ab86895441fb3832e43eed758719cee73a250 100644
---- a/arch/arm64/boot/dts/qcom/Makefile
-+++ b/arch/arm64/boot/dts/qcom/Makefile
-@@ -3,6 +3,8 @@ dtb-$(CONFIG_ARCH_QCOM)	+= apq8016-sbc.dtb
- 
- apq8016-sbc-usb-host-dtbs	:= apq8016-sbc.dtb apq8016-sbc-usb-host.dtbo
- 
-+dtb-$(CONFIG_ARCH_QCOM) += sar2130p-qar2130p.dtb
-+
- dtb-$(CONFIG_ARCH_QCOM)	+= apq8016-sbc-usb-host.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= apq8016-sbc-d3-camera-mezzanine.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= apq8016-schneider-hmibsc.dtb
-diff --git a/arch/arm64/boot/dts/qcom/sar2130p-qar2130p.dts b/arch/arm64/boot/dts/qcom/sar2130p-qar2130p.dts
-new file mode 100644
-index 0000000000000000000000000000000000000000..fbf84877672ed9065db2ff6f2c8bf742291deda6
---- /dev/null
-+++ b/arch/arm64/boot/dts/qcom/sar2130p-qar2130p.dts
-@@ -0,0 +1,551 @@
-+// SPDX-License-Identifier: BSD-3-Clause
-+/*
-+ * Copyright (c) 2024, Linaro Limited
-+ */
-+
-+/dts-v1/;
-+
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/regulator/qcom,rpmh-regulator.h>
-+#include "sar2130p.dtsi"
-+#include "pm8150.dtsi"
-+
-+/ {
-+	model = "Qualcomm Snapdragon AR2 Gen1 Smart Viewer Development Kit";
-+	compatible = "qcom,qar2130p", "qcom,sar2130p";
-+	chassis-type = "embedded";
-+
-+	aliases {
-+		serial0 = &uart11;
-+		serial1 = &uart7;
-+		i2c0 = &i2c8;
-+		i2c1 = &i2c10;
-+		mmc1 = &sdhc_1;
-+		spi0 = &spi0;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	vph_pwr: regulator-vph-pwr {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vph_pwr";
-+		regulator-min-microvolt = <3700000>;
-+		regulator-max-microvolt = <3700000>;
-+		regulator-always-on;
-+	};
-+
-+	/* pm3003a on I2C0, should not be controlled */
-+	vreg_ext_1p3: regulator-ext-1p3 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vph_ext_1p3";
-+		regulator-min-microvolt = <1300000>;
-+		regulator-max-microvolt = <1300000>;
-+		regulator-always-on;
-+		vin-supply = <&vph_pwr>;
-+	};
-+
-+	/* EBI rail, used as LDO input, can not be part of PMIC config */
-+	vreg_s10a_0p89: regulator-s10a-0p89 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vph_s10a_0p89";
-+		regulator-min-microvolt = <890000>;
-+		regulator-max-microvolt = <890000>;
-+		regulator-always-on;
-+		vin-supply = <&vph_pwr>;
-+	};
-+
-+	thermal-zones {
-+		sar2130p-thermal {
-+			thermal-sensors = <&pm8150_adc_tm 1>;
-+
-+			trips {
-+				active-config0 {
-+					temperature = <100000>;
-+					hysteresis = <1000>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		wifi-thermal {
-+			thermal-sensors = <&pm8150_adc_tm 2>;
-+
-+			trips {
-+				active-config0 {
-+					temperature = <52000>;
-+					hysteresis = <4000>;
-+					type = "passive";
-+				};
-+			};
-+		};
-+
-+		xo-thermal {
-+			thermal-sensors = <&pm8150_adc_tm 0>;
-+
-+			trips {
-+				active-config0 {
-+					temperature = <50000>;
-+					hysteresis = <4000>;
-+					type = "passive";
-+				};
-+			};
-+		};
-+	};
-+
-+	wcn7850-pmu {
-+		compatible = "qcom,wcn7850-pmu";
-+
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&wlan_en_state>, <&bt_en_state>;
-+
-+		wlan-enable-gpios = <&tlmm 45 GPIO_ACTIVE_HIGH>;
-+		bt-enable-gpios = <&tlmm 46 GPIO_ACTIVE_HIGH>;
-+
-+		vdd-supply = <&vreg_s4a_0p95>;
-+		vddio-supply = <&vreg_l15a_1p8>;
-+		vddaon-supply = <&vreg_s4a_0p95>;
-+		vdddig-supply = <&vreg_s4a_0p95>;
-+		vddrfa1p2-supply = <&vreg_s4a_0p95>;
-+		vddrfa1p8-supply = <&vreg_s5a_1p88>;
-+
-+		regulators {
-+			vreg_pmu_rfa_cmn: ldo0 {
-+				regulator-name = "vreg_pmu_rfa_cmn";
-+			};
-+
-+			vreg_pmu_aon_0p59: ldo1 {
-+				regulator-name = "vreg_pmu_aon_0p59";
-+			};
-+
-+			vreg_pmu_wlcx_0p8: ldo2 {
-+				regulator-name = "vreg_pmu_wlcx_0p8";
-+			};
-+
-+			vreg_pmu_wlmx_0p85: ldo3 {
-+				regulator-name = "vreg_pmu_wlmx_0p85";
-+			};
-+
-+			vreg_pmu_btcmx_0p85: ldo4 {
-+				regulator-name = "vreg_pmu_btcmx_0p85";
-+			};
-+
-+			vreg_pmu_rfa_0p8: ldo5 {
-+				regulator-name = "vreg_pmu_rfa_0p8";
-+			};
-+
-+			vreg_pmu_rfa_1p2: ldo6 {
-+				regulator-name = "vreg_pmu_rfa_1p2";
-+			};
-+
-+			vreg_pmu_rfa_1p8: ldo7 {
-+				regulator-name = "vreg_pmu_rfa_1p8";
-+			};
-+
-+			vreg_pmu_pcie_0p9: ldo8 {
-+				regulator-name = "vreg_pmu_pcie_0p9";
-+			};
-+
-+			vreg_pmu_pcie_1p8: ldo9 {
-+				regulator-name = "vreg_pmu_pcie_1p8";
-+			};
-+		};
-+	};
-+};
-+
-+&apps_rsc {
-+	regulators-0 {
-+		compatible = "qcom,pm8150-rpmh-regulators";
-+		qcom,pmic-id = "a";
-+
-+		vdd-s1-supply = <&vph_pwr>;
-+		vdd-s2-supply = <&vph_pwr>;
-+		vdd-s3-supply = <&vph_pwr>;
-+		vdd-s4-supply = <&vph_pwr>;
-+		vdd-s5-supply = <&vph_pwr>;
-+		vdd-s6-supply = <&vph_pwr>;
-+		vdd-s7-supply = <&vph_pwr>;
-+		vdd-s8-supply = <&vph_pwr>;
-+		vdd-s9-supply = <&vph_pwr>;
-+		vdd-s10-supply = <&vph_pwr>;
-+		vdd-l1-l8-l11-supply = <&vreg_s4a_0p95>;
-+		vdd-l3-l4-l5-l18-supply = <&vreg_ext_1p3>;
-+		vdd-l6-l9-supply = <&vreg_s10a_0p89>;
-+		vdd-l7-l12-l14-l15-supply = <&vreg_s5a_1p88>;
-+
-+		vreg_s4a_0p95: smps6 {
-+			regulator-name = "vreg_s4a_0p95";
-+			regulator-min-microvolt = <950000>;
-+			regulator-max-microvolt = <1170000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_s5a_1p88: smps5 {
-+			regulator-name = "vreg_s5a_1p88";
-+			regulator-min-microvolt = <1856000>;
-+			regulator-max-microvolt = <2040000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l1a_0p91: ldo1 {
-+			regulator-name = "vreg_l1a_0p91";
-+			regulator-min-microvolt = <912000>;
-+			regulator-max-microvolt = <920000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l2a_3p1: ldo2 {
-+			regulator-name = "vreg_l2a_3p1";
-+			regulator-min-microvolt = <3080000>;
-+			regulator-max-microvolt = <3544000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l3a_1p2: ldo3 {
-+			regulator-name = "vreg_l3a_1p2";
-+			regulator-min-microvolt = <1200000>;
-+			regulator-max-microvolt = <1304000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		/* ldo4 1.26 - system ? */
-+
-+		vreg_l5a_1p13: ldo5 {
-+			regulator-name = "vreg_l5a_1p13";
-+			regulator-min-microvolt = <1128000>;
-+			regulator-max-microvolt = <1170000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l6a_0p6: ldo6 {
-+			regulator-name = "vreg_l6a_0p6";
-+			regulator-min-microvolt = <600000>;
-+			regulator-max-microvolt = <650000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l7a_1p8: ldo7 {
-+			regulator-name = "vreg_l7a_1p8";
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1950000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l8a_0p88: ldo8 {
-+			regulator-name = "vreg_l8a_0p88";
-+			regulator-min-microvolt = <880000>;
-+			regulator-max-microvolt = <950000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		/* ldo9 - LCX */
-+
-+		vreg_l10a_2p95: ldo10 {
-+			regulator-name = "vreg_l10a_2p95";
-+			regulator-min-microvolt = <2952000>;
-+			regulator-max-microvolt = <3544000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		/* ldo11 - LMX */
-+
-+		vreg_l12a_1p8: ldo12 {
-+			regulator-name = "vreg_l12a_1p8";
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1880000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		/* no ldo13 */
-+
-+		vreg_l14a_1p8: ldo14 {
-+			regulator-name = "vreg_l14a_1p8";
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1880000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l15a_1p8: ldo15 {
-+			regulator-name = "vreg_l15a_1p8";
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		/* no ldo16 - system */
-+
-+		vreg_l17a_3p26: ldo17 {
-+			regulator-name = "vreg_l17a_3p26";
-+			regulator-min-microvolt = <3200000>;
-+			regulator-max-microvolt = <3544000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l18a_1p2: ldo18 {
-+			regulator-name = "vreg_l18a_1p2";
-+			regulator-min-microvolt = <1200000>;
-+			regulator-max-microvolt = <1304000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+	};
-+
-+};
-+
-+&gpi_dma0 {
-+	status = "okay";
-+};
-+
-+&gpi_dma1 {
-+	status = "okay";
-+};
-+
-+&gpu {
-+	status = "okay";
-+};
-+
-+&gpu_zap_shader {
-+	firmware-name = "qcom/sar2130p/a620_zap.mbn";
-+};
-+
-+&pon_pwrkey {
-+	status = "okay";
-+};
-+
-+&pon_resin {
-+	status = "okay";
-+
-+	linux,code = <KEY_VOLUMEDOWN>;
-+};
-+
-+&qupv3_id_0 {
-+	status = "okay";
-+};
-+
-+&qupv3_id_1 {
-+	status = "okay";
-+};
-+
-+&i2c4 {
-+	clock-frequency = <400000>;
-+	status = "okay";
-+};
-+
-+&i2c8 {
-+	clock-frequency = <400000>;
-+	status = "okay";
-+
-+	ptn3222: redriver@4f {
-+		compatible = "nxp,ptn3222";
-+		reg = <0x4f>;
-+		#phy-cells = <0>;
-+		vdd3v3-supply = <&vreg_l2a_3p1>;
-+		vdd1v8-supply = <&vreg_l15a_1p8>;
-+		reset-gpios = <&tlmm 99 GPIO_ACTIVE_LOW>;
-+	};
-+};
-+
-+&i2c10 {
-+	clock-frequency = <400000>;
-+	status = "okay";
-+};
-+
-+&pcie0 {
-+	perst-gpios = <&tlmm 55 GPIO_ACTIVE_LOW>;
-+	wake-gpios = <&tlmm 57 GPIO_ACTIVE_HIGH>;
-+
-+	pinctrl-0 = <&pcie0_default_state>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+};
-+
-+&pcieport0 {
-+	wifi@0 {
-+		compatible = "pci17cb,1107";
-+		reg = <0x10000 0x0 0x0 0x0 0x0>;
-+
-+		vddaon-supply = <&vreg_pmu_aon_0p59>;
-+		vddwlcx-supply = <&vreg_pmu_wlcx_0p8>;
-+		vddwlmx-supply = <&vreg_pmu_wlmx_0p85>;
-+		vddrfacmn-supply = <&vreg_pmu_rfa_cmn>;
-+		vddrfa0p8-supply = <&vreg_pmu_rfa_0p8>;
-+		vddrfa1p2-supply = <&vreg_pmu_rfa_1p2>;
-+		vddrfa1p8-supply = <&vreg_pmu_rfa_1p8>;
-+		vddpcie0p9-supply = <&vreg_pmu_pcie_0p9>;
-+		vddpcie1p8-supply = <&vreg_pmu_pcie_1p8>;
-+	};
-+};
-+
-+&pcie0_phy {
-+	vdda-phy-supply = <&vreg_l8a_0p88>;
-+	vdda-pll-supply = <&vreg_l3a_1p2>;
-+
-+	status = "okay";
-+};
-+
-+&pm8150_adc {
-+	channel@4c {
-+		reg = <ADC5_XO_THERM_100K_PU>;
-+		qcom,ratiometric;
-+		qcom,hw-settle-time = <200>;
-+		label = "xo_therm";
-+	};
-+
-+	channel@4d {
-+		reg = <ADC5_AMUX_THM1_100K_PU>;
-+		qcom,ratiometric;
-+		qcom,hw-settle-time = <200>;
-+		qcom,pre-scaling = <1 1>;
-+		label = "skin_therm";
-+	};
-+
-+	channel@4e {
-+		/* msm-5.10 uses ADC5_AMUX_THM2 / 0x0e, although there is a pullup */
-+		reg = <ADC5_AMUX_THM2_100K_PU>;
-+		qcom,hw-settle-time = <200>;
-+		qcom,pre-scaling = <1 1>;
-+		label = "wifi_therm";
-+	};
-+};
-+
-+&pm8150_adc_tm {
-+	status = "okay";
-+
-+	xo-therm@0 {
-+		reg = <0>;
-+		io-channels = <&pm8150_adc ADC5_XO_THERM_100K_PU>;
-+		qcom,ratiometric;
-+		qcom,hw-settle-time-us = <200>;
-+	};
-+
-+	skin-therm@1 {
-+		reg = <1>;
-+		io-channels = <&pm8150_adc ADC5_AMUX_THM1_100K_PU>;
-+		qcom,ratiometric;
-+		qcom,hw-settle-time-us = <200>;
-+	};
-+
-+	wifi-therm@2 {
-+		reg = <2>;
-+		/* msm-5.10 uses ADC5_AMUX_THM2, although there is a pullup */
-+		io-channels = <&pm8150_adc ADC5_AMUX_THM2_100K_PU>;
-+		qcom,hw-settle-time-us = <200>;
-+	};
-+};
-+
-+&remoteproc_adsp {
-+	firmware-name = "qcom/sar2130p/adsp.mbn";
-+	status = "okay";
-+};
-+
-+&sdhc_1 {
-+	vmmc-supply = <&vreg_l10a_2p95>;
-+	vqmmc-supply = <&vreg_l7a_1p8>;
-+
-+	status = "okay";
-+};
-+
-+&tlmm {
-+	bt_en_state: bt-enable-state {
-+		pins = "gpio46";
-+		function = "gpio";
-+		drive-strength = <16>;
-+		bias-disable;
-+	};
-+
-+	pcie0_default_state: pcie0-default-state {
-+		perst-pins {
-+			pins = "gpio55";
-+			function = "gpio";
-+			drive-strength = <2>;
-+			bias-pull-down;
-+		};
-+
-+		clkreq-pins {
-+			pins = "gpio56";
-+			function = "pcie0_clkreqn";
-+			drive-strength = <2>;
-+			bias-pull-up;
-+		};
-+
-+		wake-pins {
-+			pins = "gpio57";
-+			function = "gpio";
-+			drive-strength = <2>;
-+			bias-pull-up;
-+		};
-+	};
-+
-+	pcie1_default_state: pcie1-default-state {
-+		perst-pins {
-+			pins = "gpio58";
-+			function = "gpio";
-+			drive-strength = <2>;
-+			bias-pull-down;
-+		};
-+
-+		clkreq-pins {
-+			pins = "gpio59";
-+			function = "pcie1_clkreqn";
-+			drive-strength = <2>;
-+			bias-pull-up;
-+		};
-+
-+		wake-pins {
-+			pins = "gpio60";
-+			function = "gpio";
-+			drive-strength = <2>;
-+			bias-pull-up;
-+		};
-+	};
-+
-+	wlan_en_state: wlan-enable-state {
-+		pins = "gpio45";
-+		function = "gpio";
-+		drive-strength = <16>;
-+		bias-disable;
-+	};
-+};
-+
-+&uart7 {
-+	status = "okay";
-+
-+	bluetooth {
-+		compatible = "qcom,wcn7850-bt";
-+
-+		vddrfacmn-supply = <&vreg_pmu_rfa_cmn>;
-+		vddaon-supply = <&vreg_pmu_aon_0p59>;
-+		vddwlcx-supply = <&vreg_pmu_wlcx_0p8>;
-+		vddwlmx-supply = <&vreg_pmu_wlmx_0p85>;
-+		vddrfa0p8-supply = <&vreg_pmu_rfa_0p8>;
-+		vddrfa1p2-supply = <&vreg_pmu_rfa_1p2>;
-+		vddrfa1p8-supply = <&vreg_pmu_rfa_1p8>;
-+
-+		max-speed = <3200000>;
-+	};
-+};
-+
-+&uart11 {
-+	status = "okay";
-+};
-+
-+&usb_1 {
-+	status = "okay";
-+};
-+
-+&usb_1_hsphy {
-+	vdd-supply = <&vreg_l8a_0p88>;
-+	vdda12-supply = <&vreg_l3a_1p2>;
-+
-+	phys = <&ptn3222>;
-+
-+	status = "okay";
-+};
-+
-+&usb_dp_qmpphy {
-+	vdda-phy-supply = <&vreg_l3a_1p2>;
-+	vdda-pll-supply = <&vreg_l1a_0p91>;
-+
-+	status = "okay";
-+};
+Changes in v4:
+- Fixed commit message for the RPMh clocks patch to mention RF_CLK1
+  clock (Konrad)
+- Link to v3: https://lore.kernel.org/r/20241025-sar2130p-clocks-v3-0-48f1842fd156@linaro.org
 
+Changes in v3:
+- Added rfclka1 to RPMh clocks for SAR2140P (Taniya)
+- Added HLOS1_VOTE_MM_SNOC_MMU_TBU_HF0_GDSC,
+	HLOS1_VOTE_MM_SNOC_MMU_TBU_SF0_GDSC,
+	HLOS1_VOTE_TURING_MMU_TBU0_GDSC,
+	HLOS1_VOTE_TURING_MMU_TBU1_GDSC
+ (Taniya)
+- Removed extra debug print in gpucc probe (Konrad)
+- Link to v2: https://lore.kernel.org/r/20241021-sar2130p-clocks-v2-0-383e5eb123a2@linaro.org
+
+Changes in v2:
+- Dropped gcc_camera_hf_axi_clk, gcc_camera_sf_axi_clk,
+  gcc_qmip_camera_nrt_ahb_clk, gcc_qmip_camera_rt_ahb_clk,
+  gcc_iris_ss_hf_axi1_sreg, gcc_iris_ss_spd_axi1_sreg,
+  gcc_video_axi0_sreg and gcc_video_axi1_sreg clocks until corresponding
+  subsytems bringup (Taniya)
+- Program GDSC_SLEEP_ENA_VOTE directly from the probe function (Taniya)
+- Dropped sreg, BRANCH_HALT_POLL and collapse_sleep_mask patches
+  (Taniya)
+- Dropped gcc_parent_data_4, gcc_parent_map_4, gcc_parent_data_5,
+  gcc_parent_map_5 (LKP)
+- Link to v1: https://lore.kernel.org/r/20241017-sar2130p-clocks-v1-0-f75e740f0a8d@linaro.org
+
+---
+Dmitry Baryshkov (9):
+      dt-bindings: clock: qcom,rpmhcc: Add SAR2130P compatible
+      dt-bindings: clock: qcom: document SAR2130P Global Clock Controller
+      dt-bindings: clock: qcom,sm8550-tcsr: Add SAR2130P compatible
+      dt-bindings: clock: qcom,sm8550-dispcc: Add SAR2130P compatible
+      clk: qcom: rcg2: add clk_rcg2_shared_floor_ops
+      clk: qcom: rpmh: add support for SAR2130P
+      clk: qcom: add support for GCC on SAR2130P
+      clk: qcom: tcsrcc-sm8550: add SAR2130P support
+      clk: qcom: dispcc-sm8550: enable support for SAR2130P
+
+Konrad Dybcio (2):
+      dt-bindings: clk: qcom,sm8450-gpucc: add SAR2130P compatibles
+      clk: qcom: add SAR2130P GPU Clock Controller support
+
+ .../devicetree/bindings/clock/qcom,rpmhcc.yaml     |    1 +
+ .../bindings/clock/qcom,sar2130p-gcc.yaml          |   65 +
+ .../bindings/clock/qcom,sm8450-gpucc.yaml          |    2 +
+ .../bindings/clock/qcom,sm8550-dispcc.yaml         |    1 +
+ .../bindings/clock/qcom,sm8550-tcsr.yaml           |    1 +
+ drivers/clk/qcom/Kconfig                           |   22 +-
+ drivers/clk/qcom/Makefile                          |    2 +
+ drivers/clk/qcom/clk-rcg.h                         |    1 +
+ drivers/clk/qcom/clk-rcg2.c                        |   48 +-
+ drivers/clk/qcom/clk-rpmh.c                        |   13 +
+ drivers/clk/qcom/dispcc-sm8550.c                   |   18 +-
+ drivers/clk/qcom/gcc-sar2130p.c                    | 2366 ++++++++++++++++++++
+ drivers/clk/qcom/gpucc-sar2130p.c                  |  502 +++++
+ drivers/clk/qcom/tcsrcc-sm8550.c                   |   18 +-
+ include/dt-bindings/clock/qcom,sar2130p-gcc.h      |  185 ++
+ include/dt-bindings/clock/qcom,sar2130p-gpucc.h    |   33 +
+ include/dt-bindings/reset/qcom,sar2130p-gpucc.h    |   14 +
+ 17 files changed, 3281 insertions(+), 11 deletions(-)
+---
+base-commit: f6202e7cb4762be30b01ca4e1666512171c16d2a
+change-id: 20241017-sar2130p-clocks-5fbdd9bf04ee
+
+Best regards,
 -- 
-2.39.5
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
 
