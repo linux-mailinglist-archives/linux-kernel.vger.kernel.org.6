@@ -1,89 +1,155 @@
-Return-Path: <linux-kernel+bounces-383821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 325309B208E
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 21:48:02 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8D7F9B2090
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 21:49:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 645C11C20BCF
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 20:48:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9DA77B20BEB
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 20:49:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12C791865F6;
-	Sun, 27 Oct 2024 20:47:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16C01184527;
+	Sun, 27 Oct 2024 20:49:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DYcDLOlk"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96CC7291E;
-	Sun, 27 Oct 2024 20:47:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7511A17E8E2;
+	Sun, 27 Oct 2024 20:49:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730062064; cv=none; b=QngNxgfSawvmuQkRs2FALzq2zHJHZESa3wC/Z23AYNW0VlvavvO+kHbv7v/u5lCyt2d5kME+DsKHzRD4XoT5jgWyR4VYJ8e1MiiOha2jhLz2IGICp/Pn4qiMY6Hswu01Zlb8gF+zqJIgg8/2QwI5qDIXWeVI1hOuWON0hbFW7WI=
+	t=1730062153; cv=none; b=NMhZ7cou21iIBMzkE4LfefBmKcWGakmZ0FRv/LwVC2R7irDhFooTD4qIQfy7o47lg6z5vDnmeGZ1xoeL/4x4Fn7bgH1Na8DbWTh0jyZBzfRGTs3DP4LjkNeg1cWUiAsEy+3ysFiKLLN8Th7yEGgur4/c/c2Mq0zelRzyZ8N3DFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730062064; c=relaxed/simple;
-	bh=I3NWrlfErvRrt2F/00Eo3m3dBULSZazp0Iyhj4t2nW4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tGf3Dv7oE8Jx3t2kiTZFeseq6c6U3rYfefFvnpR3F7qKNO94bJ9wh4l4wzkOGdBNStdnS95n8eywOB1FlbjbJMKNth1umJtJdssA0Fgyged/J2XaDYEkY1GChOOP+VQw7Z2VNuyia/oNbesIolV2aU6Rt5CA2A4atHnwsR6WJJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85284C4CEE4;
-	Sun, 27 Oct 2024 20:47:43 +0000 (UTC)
-Date: Sun, 27 Oct 2024 21:47:41 +0100
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Cody Eksal <masterr3c0rd@epochal.quest>
-Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	linux-phy@lists.infradead.org, linux-usb@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>, 
-	Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
-	Maxime Ripard <mripard@kernel.org>, Andre Przywara <andre.przywara@arm.com>, 
-	Parthiban <parthiban@linumiz.com>, Yangtao Li <frank@allwinnertech.com>, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, Vinod Koul <vkoul@kernel.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, Thierry Reding <treding@nvidia.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kishon Vijay Abraham I <kishon@kernel.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>
-Subject: Re: [PATCH 11/13] dt-bindings: opp: h6: Add A100 operating points
-Message-ID: <7dybkf3zveidwapwfivvq3jk6qxntuqgycndff3ajjl2owhjhn@khqgycnzh76j>
-References: <20241024170540.2721307-1-masterr3c0rd@epochal.quest>
- <20241024170540.2721307-12-masterr3c0rd@epochal.quest>
+	s=arc-20240116; t=1730062153; c=relaxed/simple;
+	bh=4N2IXPd0awSUXc0msCMuY8ABxxknYk5+HRsYIZWs06E=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=AVl/YY5kmH/Q3AQI4nJxEOrJuWF8bcOhcoVPJqx498MTmkQPmv+f4BB9zd+iQtH3DQYb6CKXw8sJ4eC8jQ8XamMj1q7EvVojX8x4XS89x3DytBuxWBrhnOhXxx7qXIGx3InYsI0bQfAazUTCw78qWrfww9YIFlBM02hAf2lop40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DYcDLOlk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA693C4CEC3;
+	Sun, 27 Oct 2024 20:49:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730062153;
+	bh=4N2IXPd0awSUXc0msCMuY8ABxxknYk5+HRsYIZWs06E=;
+	h=From:To:Cc:Subject:Date:From;
+	b=DYcDLOlknuhLoF8/ob1wzrJGL6pq4r8WcONkTREQ0gDiMWsg2Klsx3I6SK6k0qA2p
+	 4f9ayVqpEwYdf6LBOtDJwOoDRjFTC2Da5nzWwF3Uogr9XaK8T6LK7oUEjFc9y+jT9d
+	 EhXlVbg94ty1yz4FRBNfzGZ81K1MOy7YJEJxbzn0EnNCe66jdjouPdHZyxagxD06WI
+	 bWWDvAw9tu4q4o3+NoByjOT7ZiF4yiksBS3By6mAG0zvVhdCRYIX3vemM6RAYJRHQp
+	 pwga4s04gf9G3WSazUJ1XMRuwJ1R32Rbtj3+3K8Io/JtYsyXN9ouljRjrXD1LDZMG8
+	 LLvac85nUiPng==
+From: SeongJae Park <sj@kernel.org>
+To: damon@lists.linux.dev
+Cc: SeongJae Park <sj@kernel.org>,
+	kernel-team@meta.com,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Fwd: Two simple ideas for DAMON accuracy improvement
+Date: Sun, 27 Oct 2024 13:49:10 -0700
+Message-Id: <20241027204910.155254-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241024170540.2721307-12-masterr3c0rd@epochal.quest>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 24, 2024 at 02:05:29PM -0300, Cody Eksal wrote:
-> The A100, similar to the H6 and H616, use an NVMEM value to determine
-> speed binnings. The method used is similar to that of the H6. However,
-> the information is stored at a slightly different bit offset.
-> 
-> Add a new compatible for the A100.
-> 
-> Signed-off-by: Cody Eksal <masterr3c0rd@epochal.quest>
-> ---
->  .../bindings/opp/allwinner,sun50i-h6-operating-points.yaml       | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/opp/allwinner,sun50i-h6-operating-points.yaml b/Documentation/devicetree/bindings/opp/allwinner,sun50i-h6-operating-points.yaml
-> index ec5e424bb3c8..603c6c88d080 100644
-> --- a/Documentation/devicetree/bindings/opp/allwinner,sun50i-h6-operating-points.yaml
-> +++ b/Documentation/devicetree/bindings/opp/allwinner,sun50i-h6-operating-points.yaml
-> @@ -23,6 +23,7 @@ properties:
->    compatible:
->      enum:
->        - allwinner,sun50i-h6-operating-points
-> +      - allwinner,sun50i-a100-operating-points
->        - allwinner,sun50i-h616-operating-points
+Forgot Cc-ing linux-mm@ and linux-kernel@.  Forwarding.  Sorry for noise.
 
-I have no clue why a100 is between h6 and h616. :/
 
-Best regards,
-Krzysztof
+Thanks,
+SJ
 
+=== >8 ===
+From: SeongJae Park <sj@kernel.org>
+To: damon@lists.linux.dev
+CC: SeongJae Park <sj@kernel.org>, kernel-team@meta.com
+Subject: Two simple ideas for DAMON accuracy improvement
+Message-Id: <20241026215311.148363-1-sj@kernel.org>
+Date: Sat, 26 Oct 2024 14:53:11 -0700
+Local-Date: 2024-10-26 14:53:11-07:00
+
+Hello DAMON community,
+
+
+There were a number of grateful questions, concerns, and improvement ideas
+around monitoring output accuracy of DAMON.  I always admitted the fact that
+DAMON has many rooms for improvement, but was bit awary at changes for some
+reasons.  Now I think it caused some unnecessarily long delay.  Sorry about
+that.  Now I want to invest some time on the topic.  So starting by sharing
+below two simple ideas first.
+
+User-defined Regions Split Factor
+---------------------------------
+
+DAMON's "Adasptive Regions Adjustment (ARA)" mechanism splits each region into
+randomly sized sub regions, show their access temperature, and merge back
+adjacent regions having similar temperature.  The split factor is hard-coded as
+two.  Increasing the number make DAMON regions more quickly converges in right
+shape.  However, it makes number of DAMON regions in usual situation higher,
+and therefore induce more overhead.  It will still keep the user-defined upper
+limit (max_nr_regions), though.
+
+The optimum value of the split factor would depend on the use case.  We will
+therefore add another knob to let users set the factor on runtime.  The default
+value will be two, so this will not introduce any regression or behavioral
+change to existing users.
+
+Periodic Fine-grain Split of Aged Regions
+-----------------------------------------
+
+If a region is continuously changing its boundary and access temperature, it
+means it is converging, or the access pattern of the workload is not
+stabilized.  Either case, this is a healthy signal.
+
+If a region is consistently showing same access pattern for long time, it may
+because the access pattern is stabilized, and the region is correctly
+converged.  However, it might be because the access pattern is changed, but the
+converging is slow.
+
+To avoid the too slow converging of aged regions, we will let users
+periodically increase the split factor for regions that kept current access
+pattern for long time (high 'age').  Users will be able to set the 'age'
+offset, the split factor for the aged regions, and time interval between the
+periodic fine-grain split of the regions.  For example, users can ask DAMON to
+"split regions keeping current access pattern for ten minutes or higher to five
+sub-regions every minute".
+
+The feature will be ignored unless users explicitly set those, so that it does
+not introduce any regression of behavioral change to existing users.
+
+Discussions
+-----------
+
+Someone might worry if these are adding too much knobs.  As I shared the long
+term plan on last LPC[1], we will keep supporting those new knobs in long term,
+and may introduce auto-tuning feature in future.  By letting these user-tunable
+first, we can collect experiment results and use those for the future
+improvements.  Anyway, these changes will not introduce any regresion or
+behavioral change to existing users based on the idea, so I believe these are
+safe to be added.
+
+One of the factors that made my work on this topic was absence of a formal
+DAMON accuracy evaluation method.  Using damon-tests, we were able to do the
+evaluation by drawing heatmaps of test workloads and comparing those from
+different versions of DAMON.  Comparing several DAMOS schemes results on test
+workloads were also one way for that.  But, those are not formal.  We still
+don't have a formal way for accuracy evaluation.  However, the two features
+will introduce no regression to existing users, so I believe this is the path
+forward for now.
+
+I believe implementing the features would be not difficult.  So unless someone
+voluntarily steps up, I will start implementation of the features, targeting
+v6.14 merge window.
+
+I'm looking forward to any comments.
+
+[1] https://lpc.events/event/18/contributions/1768/
+
+
+Thanks,
+SJ
 
