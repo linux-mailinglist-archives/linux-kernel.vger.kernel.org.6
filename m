@@ -1,141 +1,162 @@
-Return-Path: <linux-kernel+bounces-383616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D824E9B1E0C
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 15:13:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C0359B1E12
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 15:19:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4356C281BBE
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 14:13:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B67F728118C
+	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 14:19:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5805D165EF8;
-	Sun, 27 Oct 2024 14:13:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD5701684AC;
+	Sun, 27 Oct 2024 14:19:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Sxkuj1G7"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QvyydbwQ"
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92B9515EFA1
-	for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 14:13:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69C95CA5B;
+	Sun, 27 Oct 2024 14:19:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730038391; cv=none; b=qtrsyp6tHZ/Y2m7EJtBWcohqc22tceor5GRDnJ2yUolV0JMvrsGDWgDgNeboaz6bsaX5aH60CT/T4g8my01fwgYt7JnRV+6JLNzj0KGz70NeNWJNVh8op3by4ng6eXMw2YvDG8Pw1SxuLw1zQNkx5KkAtIDyaOMAYN6VZSuX1ik=
+	t=1730038758; cv=none; b=Ex/alWTERRhrQEAP+6rZEOuGoWTjyjgY/1h6GKomn+l28KkGlkrDOjppnMbS+IIJiL7nwjGpJdTrfcFMTbkWCCEp78MzPLHcEFm20J0WcKwE369U1nT5qEgEXRMgoP6d6fAmk0izdIO9GgXDJyvJ1uaLIEF/TcHfgQo4J/0PeYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730038391; c=relaxed/simple;
-	bh=NuJVWMDK6/NmMLATecVP6fHMJcRsxCQ6vGdOe7SC6Co=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=c9U4qiUpQFHe/vQf8W8a7Qht6eQwD6LIvt12qouU9dK0L48kVeo0AG7qsTfaXgfcnvFi11e0fNS5ZCX78EXlOcARAnkTqQSqZ6BMKdN0uUDiDeLrOY1R357aWO1vubav6RONbAjT4+q1R1vnLds9T4cAhjL7GwVYIwXMJT6CV1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Sxkuj1G7; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-539f4d8ef66so4770373e87.1
-        for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 07:13:09 -0700 (PDT)
+	s=arc-20240116; t=1730038758; c=relaxed/simple;
+	bh=pZmdno5w/h5CLZTmP0ycuh7qjUDnBWjUFcxWgjzzZec=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hsW8m2IzrRdcpZLrPVKUOwNyYfFHtzizogFYnNkaO7Vs139AVOGQQkA4jlzelXU2iYQaWKXsuWUW7HsExN5+Nb0s/vWQSeXOU6uH6mYTg2PgPRjz/BFFQByvm5x31ehvBOKi5cM5tSIf9ZwUfCN4Uc/aQz45x1Bd8+uKKeuPPc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QvyydbwQ; arc=none smtp.client-ip=209.85.215.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-7eadb7f77e8so532239a12.1;
+        Sun, 27 Oct 2024 07:19:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730038388; x=1730643188; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=mY015nA+JmXHvPrUJpYeYBU2P2Uf8UWr8WMYD7k1UEk=;
-        b=Sxkuj1G73tKdsQyZ6pQ6RYfz1aBK/91UGiVAE28rkeOOY0r1sTFEtj8m/175gdo93a
-         2JHtHHuzBhr57rN0SKsLfysMtHh1T15oEqVLh2iLjgqpQqCiy5EgAPeugGaSLdiG8lMj
-         jTelkqzibgD2U35FRNtGJvC0uan80Vv3wVNIwwGtIMXGi92TTI5npBV14ohJbI2ggvtj
-         4nfmgJ3l0jSz4WhjVtaGmp7+MNSSiMx/Xpag7oersrNQMa/ywJfrD+bicjozuLk7KW52
-         mAVPF0OwsHxY+KHTi8D8/XS8Okpveqm23o0GD6D9m7UhpHpLE8v4RqtAzHnATslgfAxY
-         C/1g==
+        d=gmail.com; s=20230601; t=1730038756; x=1730643556; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=XXPjWYkS1ou6WAfmU+S7znEG1ISKjNgZKIg99AXek2E=;
+        b=QvyydbwQidV7h8Fpku5xCGqhDxO/kp043cqfkL9RmheuDZqQp1JP5+cByVZbLcp/Yl
+         vwi8ee/8Bffh55juFrTXEuKPBgv0i7f6KBLDcqeLSbQMe90UoH5EsbmyCUCBGM2AOieq
+         PLGduHIeCmV2KnewXzXnu2nniVfL7uDnZKpG+SOIUx8PO74JOzCZwxLlYYSfxflr8alt
+         7qkYmfrtzyytWadfqLITG57lNvasw+qHXNCdGvkw/+vt4vSC+0t+d1Ad6QQQM48Mnp7+
+         ibjecHJRmovFZdo1kHO/6tJ89MsOIlZEe0CMpydaZseWq6vAf/laZCwsueYRn/6n2MaV
+         nKhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730038388; x=1730643188;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1730038756; x=1730643556;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=mY015nA+JmXHvPrUJpYeYBU2P2Uf8UWr8WMYD7k1UEk=;
-        b=e5Xvnwu+FktjQQ8/I9he7+ATEaosFFuHzaBCl90c23Pm3gQP14jhEi+YeRIHfNaGYa
-         vq6YIV7/emDe3Em9RbydZlmOYiV6R4Htln/gC/XxCou/l66+AEOZ2RMIFkUvo537wUwY
-         eJl4Jyv/jHaU5QPhpZltsG6LTKbYo9h1bTnBJ5KEHD7z0g0f6qM4jjYo6aNMPUSX7rlt
-         tQcoOX129z1ld/b+qhQ/D/8/RJYSvxUxMHjytcMzz750QL3fD312uM/MHGlTUGicuxOB
-         MDGk3PdbmTQYPniFMekuW1qrDcktORbA1SMgbqZfjgoXKo/mAff1ZWN/bJcTlAv2f9ZS
-         EfqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW0U+fR5BuWfOYNPQMPyCmSXkiNwhpCxYre8l7Lf83q8F76KZTtsh/9cDajsm+oFt81IkRaK9sVAl3Ii8Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YypEddetbuCWheojn+bYdZGwYzVs8TE29E40TnJ11buUuuGfWdc
-	gumOoqVfarW0ncK79/nKUDDQ234LMYfnMEIefbKY+beWzecZ1XyvIXLht6tVDq4h+C7BHgTNYpu
-	UIuExLwf21G0oXzb29PU6zxp+vSxbHWoxGJ+ggQ==
-X-Google-Smtp-Source: AGHT+IG4rD8sxA4zeN56s3nv4eo2saz2wQJT8dqXvPZ5lIrF4A6ASYbFn9RyJjsRApMWKVy/sZQFavLyt3vl81pP7/0=
-X-Received: by 2002:a05:6512:3b27:b0:539:de9c:c890 with SMTP id
- 2adb3069b0e04-53b34c5f9b5mr1778649e87.42.1730038387547; Sun, 27 Oct 2024
- 07:13:07 -0700 (PDT)
+        bh=XXPjWYkS1ou6WAfmU+S7znEG1ISKjNgZKIg99AXek2E=;
+        b=R4oQoA+eISCjapKoSJ4HVOeeiu26E5YjtjIcCLwDxyASNcnuV7M55lXIyKvY51+lJI
+         tF4R6z30o25+1pXwYGQMo9n2egnJcZddAODLUDDNUJ9Cx/u4jkTem17C6pKCQ0f0N/TC
+         Eb/Xnn47l+4qxiCtNLQLd7eYYM/XZi8yxawM0znxc3ChjYn6SoD/nj4jtN+eiOIQcSWs
+         EJckBRY2PHJvGZfcNCtUd1Oy+cw0f1o1GcN39vfUmwxeRTGHIqOeg0wT5uDVIhj0aBXt
+         g74WNEDk59LiTEeV/iy5Z1w5LHLM4RUeMZJPfUzLVu6brhS5gwjYv9DEH7IMN5dL8F95
+         MWfA==
+X-Forwarded-Encrypted: i=1; AJvYcCUFPOskI4J48o2Bi1+YoX/AJUxouvNV7t87g5twhEfVF9bDAEH3BSByXF4C/hEJAzDEXlh2Gyz0wXsvJHY=@vger.kernel.org, AJvYcCXnfUwkqtLMyaXB0FHnGgkR5XTRdzo6s526bZpiBKedV4XGX2swfCPbJSTopNblTQAMWH/rJ8O8@vger.kernel.org
+X-Gm-Message-State: AOJu0YxeebJ5jSubDhNANnzo+IiIMlbBtWPIMNy50oIvIX0ndckHjwqF
+	KUM1PC0yymLLb1CylRpaphQZ0hZ2m/spqsUoIYJZdzEp2vJ8Ki6b
+X-Google-Smtp-Source: AGHT+IGdcF+/Dvwbm6ynLf8C2n0Fs1lvcxhZ/buJsFTOqotTyakOouENBfyYD4vXxijoqhpweq464A==
+X-Received: by 2002:a17:90a:cb8b:b0:2d8:be3b:4785 with SMTP id 98e67ed59e1d1-2e8f11beea7mr2607524a91.6.1730038755626;
+        Sun, 27 Oct 2024 07:19:15 -0700 (PDT)
+Received: from dev.. ([2402:e280:214c:86:1331:92bc:956d:bb87])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e77e48bba8sm7350367a91.3.2024.10.27.07.19.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 27 Oct 2024 07:19:15 -0700 (PDT)
+From: R Sundar <prosunofficial@gmail.com>
+To: Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	davem@davemloft.net,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Richard Cochran <richardcochran@gmail.com>
+Cc: intel-wired-lan@lists.osuosl.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	karol.kolacinski@intel.com,
+	arkadiusz.kubalewski@intel.com,
+	jacob.e.keller@intel.com,
+	R Sundar <prosunofficial@gmail.com>,
+	kernel test robot <lkp@intel.com>,
+	Julia Lawall <julia.lawall@inria.fr>
+Subject: [PATCH linux-next] ice: use string choice helpers
+Date: Sun, 27 Oct 2024 19:49:07 +0530
+Message-Id: <20241027141907.503946-1-prosunofficial@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240702063444.105814-1-baolu.lu@linux.intel.com>
- <20240702063444.105814-8-baolu.lu@linux.intel.com> <CABQgh9EeKtYuu+vTTM0fwaKrLxdyC355MQxN8o8_OL9Y1NkE8A@mail.gmail.com>
- <20241015125420.GK1825128@ziepe.ca> <CABQgh9E+AnuyJgcM9tf1gEOUqcC_QSrA__Xha9sKYZp=NVRwhQ@mail.gmail.com>
- <20241016152503.GB4020792@ziepe.ca> <CABQgh9FCJcOa0G0Kj__NUm-Q8C9uH4ud04XcHv+3c48T2qEnug@mail.gmail.com>
- <20241017120518.GI4020792@ziepe.ca> <CABQgh9EnEqDKkxg3VUgjSqBzz27h8B3Ct4w=A0vR6JK=d7fXHQ@mail.gmail.com>
- <20241017130805.GA926121@ziepe.ca> <f218230c-ae01-4168-b36e-5e502de6b3db@linux.intel.com>
- <CABQgh9GU4xp=7Svs_Ni=bvNKECKKUjHgq4d-FjT5Y_4wu44kDA@mail.gmail.com>
-In-Reply-To: <CABQgh9GU4xp=7Svs_Ni=bvNKECKKUjHgq4d-FjT5Y_4wu44kDA@mail.gmail.com>
-From: Zhangfei Gao <zhangfei.gao@linaro.org>
-Date: Sun, 27 Oct 2024 22:12:55 +0800
-Message-ID: <CABQgh9HYDRVOYtL=jgc4CqX0XhNmCtBDOCm8S6_mgBzBtZVk7Q@mail.gmail.com>
-Subject: Re: [PATCH v8 07/10] iommufd: Fault-capable hwpt attach/detach/replace
-To: Baolu Lu <baolu.lu@linux.intel.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>, Joerg Roedel <joro@8bytes.org>, 
-	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, 
-	Jean-Philippe Brucker <jean-philippe@linaro.org>, Nicolin Chen <nicolinc@nvidia.com>, 
-	Yi Liu <yi.l.liu@intel.com>, Jacob Pan <jacob.jun.pan@linux.intel.com>, 
-	Joel Granados <j.granados@samsung.com>, iommu@lists.linux.dev, 
-	virtualization@lists.linux-foundation.org, linux-kernel@vger.kernel.org, 
-	Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hi, Baolu
+Use string choice helpers for better readability.
 
-On Fri, 18 Oct 2024 at 10:45, Zhangfei Gao <zhangfei.gao@linaro.org> wrote:
->
-> Hi, Baolu
->
-> On Fri, 18 Oct 2024 at 09:58, Baolu Lu <baolu.lu@linux.intel.com> wrote:
-> >
-> > On 2024/10/17 21:08, Jason Gunthorpe wrote:
-> > > On Thu, Oct 17, 2024 at 08:35:24PM +0800, Zhangfei Gao wrote:
-> > >
-> > >> Yes, you are right
-> > >>   I am using SRIOV vf and stall feature, so is_virtfn == true
-> > >>
-> > >> Our ACC devices are fake pci endpoint devices which supports stall,
-> > >> And they also supports sriov
-> > >>
-> > >> So I have to ignore the limitation.
-> > > I see, so that is more complicated.
-> > >
-> > > Lu, what do you think about also checking if the PCI function has PRI
-> > > ? If not PRI assume the fault is special and doesn't follow PRI rules?
-> > >
-> > > Or maybe we can have the iommu driver tag the event as a PRI/not-PRI
-> > > fault?
-> >
-> > This limitation applies to PRI on PCI/SRIOV VFs because the PRI might be
-> > a shared resource and current iommu subsystem is not ready to support
-> > enabling/disabling PRI on a VF without any impact on others.
-> >
-> > In my understanding, it's fine to remove this limitation from the use
-> > case of non-PRI on SRIOV VFs. Perhaps something like below?
-> >
-> #include <linux/pci-ats.h>
-> >         if (dev_is_pci(dev)) {
-> >                 struct pci_dev *pdev = to_pci_dev(dev);
-> >                 if (pdev->is_virtfn && pci_pri_supported(pdev))
-> >                         return -EINVAL;
-> >         }
->
-> Yes, this works on our platform.
+Reported-by: kernel test robot <lkp@intel.com>
+Reported-by: Julia Lawall <julia.lawall@inria.fr>
+Closes: https://lore.kernel.org/r/202410121553.SRNFzc2M-lkp@intel.com/
+Signed-off-by: R Sundar <prosunofficial@gmail.com>
+---
 
-Will you send this patch?
+Reported in linux repository.
 
-Tested-by: Zhangfei Gao <zhangfei.gao@linaro.org>
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
 
-Thanks
+cocci warnings: (new ones prefixed by >>)
+>> drivers/net/ethernet/intel/ice/ice_ptp_hw.c:396:4-22: opportunity for str_enabled_disabled(dw24 . ts_pll_enable)
+   drivers/net/ethernet/intel/ice/ice_ptp_hw.c:474:4-22: opportunity for str_enabled_disabled(dw24 . ts_pll_enable)
+
+vim +396 drivers/net/ethernet/intel/ice/ice_ptp_hw.c
+
+
+ drivers/net/ethernet/intel/ice/ice_ptp_hw.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/net/ethernet/intel/ice/ice_ptp_hw.c b/drivers/net/ethernet/intel/ice/ice_ptp_hw.c
+index da88c6ccfaeb..d8d3395e49c3 100644
+--- a/drivers/net/ethernet/intel/ice/ice_ptp_hw.c
++++ b/drivers/net/ethernet/intel/ice/ice_ptp_hw.c
+@@ -393,7 +393,7 @@ static int ice_cfg_cgu_pll_e82x(struct ice_hw *hw,
+ 
+ 	/* Log the current clock configuration */
+ 	ice_debug(hw, ICE_DBG_PTP, "Current CGU configuration -- %s, clk_src %s, clk_freq %s, PLL %s\n",
+-		  dw24.ts_pll_enable ? "enabled" : "disabled",
++		  str_enabled_disabled(dw24.ts_pll_enable),
+ 		  ice_clk_src_str(dw24.time_ref_sel),
+ 		  ice_clk_freq_str(dw9.time_ref_freq_sel),
+ 		  bwm_lf.plllock_true_lock_cri ? "locked" : "unlocked");
+@@ -471,7 +471,7 @@ static int ice_cfg_cgu_pll_e82x(struct ice_hw *hw,
+ 
+ 	/* Log the current clock configuration */
+ 	ice_debug(hw, ICE_DBG_PTP, "New CGU configuration -- %s, clk_src %s, clk_freq %s, PLL %s\n",
+-		  dw24.ts_pll_enable ? "enabled" : "disabled",
++		  str_enabled_disabled(dw24.ts_pll_enable),
+ 		  ice_clk_src_str(dw24.time_ref_sel),
+ 		  ice_clk_freq_str(dw9.time_ref_freq_sel),
+ 		  bwm_lf.plllock_true_lock_cri ? "locked" : "unlocked");
+@@ -548,7 +548,7 @@ static int ice_cfg_cgu_pll_e825c(struct ice_hw *hw,
+ 
+ 	/* Log the current clock configuration */
+ 	ice_debug(hw, ICE_DBG_PTP, "Current CGU configuration -- %s, clk_src %s, clk_freq %s, PLL %s\n",
+-		  dw24.ts_pll_enable ? "enabled" : "disabled",
++		  str_enabled_disabled(dw24.ts_pll_enable),
+ 		  ice_clk_src_str(dw23.time_ref_sel),
+ 		  ice_clk_freq_str(dw9.time_ref_freq_sel),
+ 		  ro_lock.plllock_true_lock_cri ? "locked" : "unlocked");
+@@ -653,7 +653,7 @@ static int ice_cfg_cgu_pll_e825c(struct ice_hw *hw,
+ 
+ 	/* Log the current clock configuration */
+ 	ice_debug(hw, ICE_DBG_PTP, "New CGU configuration -- %s, clk_src %s, clk_freq %s, PLL %s\n",
+-		  dw24.ts_pll_enable ? "enabled" : "disabled",
++		  str_enabled_disabled(dw24.ts_pll_enable),
+ 		  ice_clk_src_str(dw23.time_ref_sel),
+ 		  ice_clk_freq_str(dw9.time_ref_freq_sel),
+ 		  ro_lock.plllock_true_lock_cri ? "locked" : "unlocked");
+-- 
+2.34.1
+
 
