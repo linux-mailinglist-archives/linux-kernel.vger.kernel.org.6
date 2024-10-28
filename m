@@ -1,73 +1,50 @@
-Return-Path: <linux-kernel+bounces-385052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BE439B31CB
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:35:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B1DC9B31D0
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:37:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD7151C217DC
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:35:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 425B91F21A6E
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:37:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 007391DBB13;
-	Mon, 28 Oct 2024 13:35:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2104D1DBB37;
+	Mon, 28 Oct 2024 13:37:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="NYs+3bbn"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="VrouR1He"
+Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14F4738DC0
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 13:35:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89EE3191F82;
+	Mon, 28 Oct 2024 13:37:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730122530; cv=none; b=D0BWOF4wg+B/rEJXS7Q7uD6IM2/XdqFXNwUjvdqJmNYuHy0YC5xmp1QicWLQ6XgwjqA8zLw0J1fR8a9u3Fq+r8JhsqllNng68vRdprT7ENSewU+2DKY3MyYzk6MaDOnjaD7KKdQ32HTxIvF5+9pvaa1QA5gINV7Mp+Qnq3E1Rzc=
+	t=1730122641; cv=none; b=W/aXslBjMw3bIqJzGV40Qlqv2zIzvyyw0UdF5zH2UayTAdTMy/1aoRaAGmghYjjU/i0udGjPGOOWhM7NokFf+0ZseXZXoCJv9nf6RW0YGve0BjJO9D2PbUczyT5gUqxj8P1NOgV3yTysaRNkrf4LDniyctky5zOtk22MQ25EdGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730122530; c=relaxed/simple;
-	bh=HNBks9e1vl34WmEjVbpxdvo08eotgbDW9SoN+CEgU+E=;
+	s=arc-20240116; t=1730122641; c=relaxed/simple;
+	bh=y2WNLzk+y8tyPyQZDwh342N+ZiOB+lOrNQ9Gaw7aQKo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=f6OZQ5yJUmehMccM6uwvSfUeA3QuivqteG5vd185RaiUDdsKLIWiZavw8l1lQl0CswVNKfQMMDLCB5Hx08bJw1TyvPjUOlDUz3OLUORnF+c7pztQL+oZpbc+m+SlHIpa3270TYeA7YOVq2QEASiKRdKFrXw8zK4Z+Dx6WdhVEIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=NYs+3bbn; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5c40aea5c40so3127787a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 06:35:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1730122526; x=1730727326; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=aakmLMmCxXB7wpvkPBt3r392oce9ATpj+r1roqlA3L8=;
-        b=NYs+3bbnN1KTnfPOGzEPmX4UmOaVKt7c0ic0yN2ZkDd1gckcuOBqPUazn/zO4anTsv
-         GFoyehvM0XQTBeU8n7ympvstoJttjzabVQKdTPaUAbFj/ZvZIQEjFXxUE7sx9EaJHsUf
-         +vEHzv+ZlgQQnVnEwO157J8ApA26+WqrxKWlXZbNkFq4QNGDaRavH6rhfJcejEFYUytE
-         Gz/uuTTPeWLfhxEnM0v1C/59TlwwJmqlwHdWkjSO3BCMxkvORehQFgxbrOOpS2EPcBy4
-         CvZzCyeqatjTeXwNH7xYr8yg+Q4jlLRW8HVa5Q51wDRmzoJ8/DJKipBHwyqbhrOvvFtV
-         DCHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730122526; x=1730727326;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aakmLMmCxXB7wpvkPBt3r392oce9ATpj+r1roqlA3L8=;
-        b=kGgGD68hFIGH0ahoFmyVHG2evNciPKzB2zrV3YteCZtmji31agqVdRroj5SicCBcfm
-         GzroC9nBlN3OkzM9M2z1K03J2K3YP62wbjeXLTOghNUfnzrkykUXoL0rkaqOBm10X3Cl
-         NN26wzZ1dyVeryTWb9e39nkRAl2KsLTmYBXppGwg4cXcQ9JJAn0bmBdwBLBxl1U32MnQ
-         0vNOPewWKFHMbIWH6wtOFQnnH2HaHocLW2m/4OiMG9bbjIzYxKNopsQLXpSObJmVYxy5
-         McVHOkC1SkfepTXPfTSpu4PcKhgbW33irF5P+TWd3p01YibpOcevIszNqFvvyG/2xd1U
-         Gymw==
-X-Forwarded-Encrypted: i=1; AJvYcCW6NNRwGPXW4UmdRW5GQdVw21e+ElTuR6kc2JSWiYql7Q+9b8hHW+mn6OP3Zj/m61oJG+vmqS6bTSesWug=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhxY8ejZv5cloMw9LZQciiM/H5AeCXvTtnIYUjg0cQhW6fQO+m
-	ChjCv/E79fLFjmE3KNHBxlKmJ+2i5YCftVW6ZfEshJ8OESKIKtsPWFluNK+FGAE=
-X-Google-Smtp-Source: AGHT+IFRZYdc1FZgv9Sm+y05+0k0ikQkXWpLJMCtLfi+YlSesKp0fLzYfhcuL5wkvAKY/4NmpykgmA==
-X-Received: by 2002:a05:6402:268e:b0:5cb:d554:4090 with SMTP id 4fb4d7f45d1cf-5cbd554424bmr4438909a12.14.1730122526300;
-        Mon, 28 Oct 2024 06:35:26 -0700 (PDT)
-Received: from ?IPV6:2a10:bac0:b000:7465:7285:c2ff:fedd:7e3a? ([2a10:bac0:b000:7465:7285:c2ff:fedd:7e3a])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cbb631d240sm3140487a12.59.2024.10.28.06.35.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Oct 2024 06:35:26 -0700 (PDT)
-Message-ID: <37561b9c-b012-469d-adb7-c301829c1863@suse.com>
-Date: Mon, 28 Oct 2024 15:35:24 +0200
+	 In-Reply-To:Content-Type; b=gv5SGvanDIgsvl5MDUr2UZ3+9nZQEspInc7+vbju45J4NRtDX8j9rFN6CPjbF4WkJD+WvfyaXjROV4EaOeGDYniD8mf3kkYnu8JsuYoA4kFL8bGR1ocW/zvsdnQU/+SXtoBV9Q2pyItCIeu0TR19dylVVtAKVQdeqWZnPsqQb3E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=VrouR1He; arc=none smtp.client-ip=167.114.26.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
+	s=smtpout1; t=1730122631;
+	bh=y2WNLzk+y8tyPyQZDwh342N+ZiOB+lOrNQ9Gaw7aQKo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=VrouR1HeZdD7JVENkNi6D+emgnm5tggHHouWyUL7T+v5vDYvpN7mD/46I2+6VKkvd
+	 hjntmof3JEBhdBwj8owLFl8AqLCxo7aE/qIlf1P3nQczEebyRBWgFYunxNm8OIMT2i
+	 0lrqTSs6TRqrOIBu2Mh0fdF9//h1h3qDctWh7pDO0t9nspqIIAlIcNhwASrDtQl/hW
+	 CWNoGWk61W3puQff4nOjhAVes7TR9NNcKZH2C6iVeHMaQGtjMVIuQe3BnHnvcNEI5u
+	 yF+9LVsF4UW1FRQAsuh3bIwvxgw8cOHvIhI5fptYTx96/GSMfLKg8UhB7lmJZSmBsh
+	 Nnp6AiRMvsrAQ==
+Received: from [172.16.0.134] (96-127-217-162.qc.cable.ebox.net [96.127.217.162])
+	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XcZF252xrzq0y;
+	Mon, 28 Oct 2024 09:37:10 -0400 (EDT)
+Message-ID: <9e9c37d6-3fa8-4f58-9d27-a629b4a817f5@efficios.com>
+Date: Mon, 28 Oct 2024 09:35:31 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,36 +52,112 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 05/10] x86/virt/tdx: Add missing header file inclusion
- to local tdx.h
-To: Kai Huang <kai.huang@intel.com>, dave.hansen@intel.com,
- kirill.shutemov@linux.intel.com, tglx@linutronix.de, bp@alien8.de,
- peterz@infradead.org, mingo@redhat.com, hpa@zytor.com,
- dan.j.williams@intel.com, seanjc@google.com, pbonzini@redhat.com
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
- rick.p.edgecombe@intel.com, isaku.yamahata@intel.com, adrian.hunter@intel.com
-References: <cover.1730118186.git.kai.huang@intel.com>
- <3f268f096b7427ffbf39358d8559d884c85bec88.1730118186.git.kai.huang@intel.com>
-From: Nikolay Borisov <nik.borisov@suse.com>
+Subject: Re: [RFC PATCH v3 2/3] tracing: Introduce tracepoint_is_syscall()
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel@vger.kernel.org, Michael Jeanson <mjeanson@efficios.com>,
+ Masami Hiramatsu <mhiramat@kernel.org>, Peter Zijlstra
+ <peterz@infradead.org>, Alexei Starovoitov <ast@kernel.org>,
+ Yonghong Song <yhs@fb.com>, "Paul E . McKenney" <paulmck@kernel.org>,
+ Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Namhyung Kim <namhyung@kernel.org>,
+ Andrii Nakryiko <andrii.nakryiko@gmail.com>, bpf@vger.kernel.org,
+ Joel Fernandes <joel@joelfernandes.org>, Jordan Rife <jrife@google.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>
+References: <20241026154629.593041-1-mathieu.desnoyers@efficios.com>
+ <20241026154629.593041-2-mathieu.desnoyers@efficios.com>
+ <20241026200840.17171eb2@rorschach.local.home>
+ <933ab148-2a28-4912-9bca-150a0643eecd@efficios.com>
+ <20241028010647.38f4847f@rorschach.local.home>
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 Content-Language: en-US
-In-Reply-To: <3f268f096b7427ffbf39358d8559d884c85bec88.1730118186.git.kai.huang@intel.com>
+In-Reply-To: <20241028010647.38f4847f@rorschach.local.home>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-
-
-On 28.10.24 г. 14:41 ч., Kai Huang wrote:
-> Compiler attributes __packed and __aligned, and DECLARE_FLEX_ARRAY() are
-> currently used in arch/x86/virt/vmx/tdx/tdx.h, but the relevant headers
-> are not included explicitly.
+On 2024-10-28 01:06, Steven Rostedt wrote:
+> On Sun, 27 Oct 2024 08:30:54 -0400
+> Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
+>>>
+>>> I wonder if we should call it "sleepable" instead? For this patch set
+>>> do we really care if it's a system call or not? It's really if the
+>>> tracepoint is sleepable or not that's the issue. System calls are just
+>>> one user of it, there may be more in the future, and the changes to BPF
+>>> will still be needed.
+>>
+>> Remember that syscall tracepoint probes are allowed to handle page
+>> faults, but should not generally block, otherwise it would postpone the
+>> grace periods of all RCU tasks trace users.
+>>
+>> So naming this "sleepable" would be misleading, because probes are
+>> not allowed general blocking, just to handle page faults.
 > 
-> There's no build issue in the current code since this "tdx.h" is only
-> included by arch/x86/virt/vmx/tdx/tdx.c and it includes bunch of other
-> <linux/xxx.h> before including "tdx.h".  But for the better explicitly
-> include the relevant headers to "tdx.h".  Also include <linux/types.h>
-> for basic variable types like u16.
+> I'm fine with "faultable" too.
 > 
-> Signed-off-by: Kai Huang <kai.huang@intel.com>
+>>
+>> If we look at the history of this tracepoint feature, we went with
+>> the following naming over the various versions of the patch series:
+>>
+>> 1) Sleepable tracepoints: until we understood that we just want to
+>>      allow page fault, not general sleeping, so we needed to change
+>>      the name,
+>>
+>> 2) Faultable tracepoints: until Linus requested that we aim for
+>>      something that is specific to system calls, rather than a generic
+>>      thing.
+>>
+>>      https://lore.kernel.org/lkml/CAHk-=wggDLDeTKbhb5hh--x=-DQd69v41137M72m6NOTmbD-cw@mail.gmail.com/
+> 
+> Reading that thread again, I believe that Linus was talking more about
+> all the infrastructure going around to make a special "faultable"
+> tracepoint (I could be wrong, and Linus may correct me here). When in
+> fact, the only user is system calls. But from the BPF POV, it doesn't
+> care if it's a system call, it cares that it is faultable, and the
+> check should be on that. Having BPF check if it's a system call is
+> requiring that BPF knows the implementation details of system call
+> tracepoints. But if it knows it is faultable, then it needs to do
+> something special.
 
-Reviewed-by: Nikolay Borisov <nik.borisov@suse.com>
+It might just be that, indeed. Considering the overwhelming preference
+for something a little more general (sleepable/faultable vs syscall),
+I am tempted to go for "tracepoint_is_faultable()".
+
+> 
+>>
+>> 3) Syscall tracepoints: This is what we currently have.
+>>
+>>> Other than that, I think this could work.
+>>
+>> Calling this field "sleepable" would be misleading. Calling it "faultable"
+>> would be a better fit, but based on Linus' request, I'm tempted to stick
+>> with "syscall" for now.
+>>
+>> Your concern is to name this in a way that is general and future-proof.
+>> Linus' point was to make it syscall-specific rather than general. My
+>> position is that we should wait until we face other use-cases (if we
+>> even do) before consider changing the naming from "syscall" to something
+>> more generic.
+> 
+> Yes, but that was for the infrastructure itself. It really doesnt' make
+> sense that BPF needs to know which type of tracepoint can fault. That's
+> telling BPF, you need to know the implementation of this type of
+> tracepoint.
+
+OK, I'll use tracepoint_is_faultable() and a "faultable" field name, and
+see how people react. I really prefer "faultable" to "sleepable" here,
+because I envision that in the future we may introduce tracepoints
+which are really able to sleep (general blocking), for instance though
+use of hazard pointers to protect a list iteration. (if there is ever
+a need for it)
+
+Thanks,
+
+Mathieu
+
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
+
 
