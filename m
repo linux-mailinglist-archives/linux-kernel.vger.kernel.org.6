@@ -1,113 +1,212 @@
-Return-Path: <linux-kernel+bounces-385186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 469609B33A8
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 15:35:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C2E99B33A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 15:35:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 782991C22AF4
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:35:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF9A41C22BD3
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:35:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB7B51DDC07;
-	Mon, 28 Oct 2024 14:35:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 483AE1DE2B5;
+	Mon, 28 Oct 2024 14:35:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BWDExHd3"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="acA0zMfQ"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2042.outbound.protection.outlook.com [40.107.93.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 326701DD87D
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 14:35:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730126126; cv=none; b=CxWJ+3DdgmGTuj8kl5PjKq5lkNrurFHTrDkjg9Co2EdZNqqzQR6iEar0HOFzh/QpTpwv0T3qFLIDWKsHaGhiZM/CRD+gsz8o7lmrZihibxVzADnog78NqjKMgeofTu8Cz4ME0q1jQoAU5N4Iy+TgGsd3Y9pFv2gqJ0gBvVW6fKc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730126126; c=relaxed/simple;
-	bh=FtrrQnO5dxhRGvDxtYkgewZI0NY2yKQJ3RdlOX8eFCg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T+jI+uO0N+60PBgW8e1Dms+WnFf3Y7yzSgCSSB9Beo+dgtPLluLZKujmp9Wzo5htfAMPv683mNGl1W2u049qlIHpXL9liy887XrEowd0PEgfTL2pWP4Ocud+HIXvYS4cOUxh3uKgVb/VvQ/3UXb/bod0yaEnp6FEQBiv5rs/bMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BWDExHd3; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730126124; x=1761662124;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=FtrrQnO5dxhRGvDxtYkgewZI0NY2yKQJ3RdlOX8eFCg=;
-  b=BWDExHd3RT6pYIvNzd6quixKawukk1z+J9em2x3KWlIHm4Tb7Zi7FuGG
-   CI8W3/narj+YsFolKj4i4Vas5zXYtRy/sHPH3Qawup8+BqPSvQ9fi1Kqv
-   7/U1/30e2J2RcJDmngOj8NQ8Bk8Mw6Dfr7pIGmNRC9VYHg8x7S3yAmo59
-   eT4qWVgrAhgluJYkM57GtI470zaeMlI+iRS+mT1uZL6iQ+qKECJ2OEdlB
-   0ikzCcDhH0jVK/WHs83xaXhlfB7bDDfQEMiPLPWuaNctlfSv8H+YBD5F3
-   lbShd/SdSvhKS/BmmeANzZpLO0nnQIzFSFIgCDzhWmeUEskKOacBOFXA6
-   A==;
-X-CSE-ConnectionGUID: 6Nx2k/LdSlOLCcfmpktM4w==
-X-CSE-MsgGUID: bV8WXpatS3SF6exrfY+sIA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11238"; a="32584488"
-X-IronPort-AV: E=Sophos;i="6.11,239,1725346800"; 
-   d="scan'208";a="32584488"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2024 07:35:17 -0700
-X-CSE-ConnectionGUID: ozkoEPzbTCW1vELRE3JqjA==
-X-CSE-MsgGUID: 2mqvzgnwSuahcIAsYHWMQQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,239,1725346800"; 
-   d="scan'208";a="86207811"
-Received: from rvedam-mobl.amr.corp.intel.com (HELO desk) ([10.125.149.30])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2024 07:35:17 -0700
-Date: Mon, 28 Oct 2024 07:34:53 -0700
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To: Breno Leitao <leitao@debian.org>
-Cc: bp@alien8.de, x86@kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>, kernel-team@meta.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] x86/bugs: spectre user default must depend on
- MITIGATION_SPECTRE_V2
-Message-ID: <20241028143453.govo3bnbayc7rqjj@desk>
-References: <20241015105107.496105-1-leitao@debian.org>
- <20241015105107.496105-3-leitao@debian.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E6A01DE2A6;
+	Mon, 28 Oct 2024 14:35:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.42
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730126132; cv=fail; b=BzjtbJRcXDtv+DAYwuR022dQsDFpN4LcvB8xvLtfhFb6xy/SroEVzvc8i3fkEX7JGXnFqYCJ0/eHQIingSr1P1Tfit/sMJhZHd1+MEwY1rL9F+egrP02c+jyokgiwNBx3gGMPDWwG92VoQf9mjbZsSs4zZJX4XRxgcv19Uvi17Y=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730126132; c=relaxed/simple;
+	bh=vL1U1VbtY/I8GEtjj9qHbzZnzKaqztESMFBRrR6xvZg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=aEixJs1EF+VxQSPqMMTATb1hRopgDCZhiIf+JQfQGao1E9LdkbLG0FuYNykkI2lvWOx9UhsoBYcg+4EUMzsf2oz70Xc66Dwhka88n+aAEagPsHPJLgfIBgPfy/OWI3OADINsDxcq7XpRyrgyhsFeLqGkcHJwi7mZwdqFGXBLv7Q=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=acA0zMfQ; arc=fail smtp.client-ip=40.107.93.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=w6MiBkjksK7uG3tyd/b/Qpbi7Gu0KwuJbNoXFaFma5QDjiUUoYbqi0x2tETh7Quw/KUPw1sHKNE0JlcW6/UaDIuLuh8wbN3830sN2eN2R4tsoqk3kEQat93ZUdIN/Ff8R+X8xbWwgtAmEZwZX0j3x1W0K4Giay/t0DimNqz3cfHy6x6rXsVML8Ndn/1pGsqQoLcU41Y3CHbyTdDcQSKHXKFhAnFBuE5u333m3MCJFjbUREJ6sWG1bvWLnNp/NqTl+NPzv5JsZ5r8HAuF6g1TONpjaACVli9lzjjPbbKRQpYJk9Au27I29FqZLmq+pI0FLmHlWGs2hJcLRt5C2Fs/Cg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=2aoCFkmR8ku/BbYgOG9jswlYj9DEVjwgIloiecez/1s=;
+ b=DLDXVwvONgr2w477yd/rjgb3eYESbGMRYiYWD/CQP993/yN5xcQmyIdMcqbpA1FSKRIeGZCDp0hfv4+VK+Iu5fGF44X+WoZzqx+cJR/Ykr3TKcKV2mKvKcuBT8QCyKUS5GMpNSlI1nio+Fq16ndiVO8z3RpzB8hE5fCB/8gkW0uSVlbSv685FOsCK6JFe+vJACN+IIAKPyUfxzCF6m0JDeNovWKbFXSCi2R7DM5nS1jcRb8QMAiaCCTUUvX1od/Pz5noDVc2lOQydbUcPmuVt6sZ/MWRkU8IHTWlLd1iAMAOAU6Hq3aGwQhKupWVYp2a+yQDsBVnk1IMa1JVXLJZnw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=2aoCFkmR8ku/BbYgOG9jswlYj9DEVjwgIloiecez/1s=;
+ b=acA0zMfQ4fEfHfwCobzsfDSUCbLXA85mtL9CpuVRlcNwEC8nt7KZrRqrf3Qwz9JKosEEq41O8yD6CeMM+Fwy9gWwkyQTtGLcq0S/fbEUUYs8Tt1VhqjYD28oIS9mJpX0FO5vf4ofRJzp2x3zE5IJ7Fuwr9fu4o2gLuCTbnMxtpI=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DS7PR12MB8252.namprd12.prod.outlook.com (2603:10b6:8:ee::7) by
+ SJ2PR12MB8884.namprd12.prod.outlook.com (2603:10b6:a03:547::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.27; Mon, 28 Oct
+ 2024 14:35:27 +0000
+Received: from DS7PR12MB8252.namprd12.prod.outlook.com
+ ([fe80::2d0c:4206:cb3c:96b7]) by DS7PR12MB8252.namprd12.prod.outlook.com
+ ([fe80::2d0c:4206:cb3c:96b7%6]) with mapi id 15.20.8093.018; Mon, 28 Oct 2024
+ 14:35:27 +0000
+Date: Mon, 28 Oct 2024 20:05:15 +0530
+From: "Gautham R. Shenoy" <gautham.shenoy@amd.com>
+To: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
+Cc: peterz@infradead.org, mingo@redhat.com, rui.zhang@intel.com,
+	acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+	irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, tglx@linutronix.de, bp@alien8.de,
+	dave.hansen@linux.intel.com, ananth.narayan@amd.com,
+	kprateek.nayak@amd.com, ravi.bangoria@amd.com, x86@kernel.org,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 08/10] perf/x86/rapl: Remove the global variable
+ rapl_msrs
+Message-ID: <Zx+hI+8sRPRBvv8v@BLRRASHENOY1.amd.com>
+References: <20241025111348.3810-1-Dhananjay.Ugwekar@amd.com>
+ <20241025111348.3810-9-Dhananjay.Ugwekar@amd.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241025111348.3810-9-Dhananjay.Ugwekar@amd.com>
+X-ClientProxiedBy: PN2PR01CA0158.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:26::13) To DS7PR12MB8252.namprd12.prod.outlook.com
+ (2603:10b6:8:ee::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241015105107.496105-3-leitao@debian.org>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB8252:EE_|SJ2PR12MB8884:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4677b01b-c48f-4e34-5fb7-08dcf75dc3ab
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?8TVSJ+vdPAOSKpa7oOBVQ+ly+9J0kEUUyK4+FlA9Fcm8mLIvFOURzz+i16xk?=
+ =?us-ascii?Q?qD43lYi4oYd0ozgAJu7RN4Q4OO6JJmXvcuGQxU/atofb/5KlrJUBRQiMqKVX?=
+ =?us-ascii?Q?qaEQMxShPo6RPFCgidk/UvlpurlkxRj/505eZ5SvBPKrsiC7qNVdOrwYgrQf?=
+ =?us-ascii?Q?VUGmPscUJQjPHzfAI9X4N5TnwfgilQ5Cni8gx6BSofB4kx2aSiN1w26egmK2?=
+ =?us-ascii?Q?qCJzal44v29wtW+lD4rJryUdClOf+PWZgSRaZyH9Kc4Go+bJULWPbYG5QMSu?=
+ =?us-ascii?Q?nLdQ07s6Vj8OpWKaCaSTNiB/TaqQ8mNQOVsOP/mgvtx8Qav56SPHy0ttbx8A?=
+ =?us-ascii?Q?ociFR13WRLimMaIG4IQ8kHYELlMAyukb4dL74UZI0AchZmnxnly0YtBIxQPW?=
+ =?us-ascii?Q?PYQ3KLnpePc2VOEX+fKuZIoOeda0hPhV0TUiCaw9rcS1R6WyLp5fwEcdIJ4d?=
+ =?us-ascii?Q?VRp1moMGBfAp4RzmqWu+SMQMWh9rW8KxTJKho6jDLfR1sensbkDCPGeF+FR1?=
+ =?us-ascii?Q?vvtxr2K7koVG0wO9JibzP/B0J0pJJW/98IyjwvBflKzIdvgJUkfOxV/+7xAz?=
+ =?us-ascii?Q?6OsEGJ+RJt4Fr9Hn86JeXam7Ahj8m3OpuESLt4dokXbNp0Vjhco+pmMDEVWE?=
+ =?us-ascii?Q?ffdQA3WCDgK943xjq6sQ1bkDGYkl0iDqCL8fphbL5PfjVOBijyYciFlaJZSc?=
+ =?us-ascii?Q?UyTPUQunPxZgyudrwRTiDcXCk2M3DCs8N1yWcK3z6URG/yw7o5YxwEJ4KP0d?=
+ =?us-ascii?Q?8cnS4h39oiiu9z1fNnkyzZ+JDtlUFnWOBe2sIxv1BlaIRJg4De/kBm196Qt7?=
+ =?us-ascii?Q?g6bFW4HOa2DlJNvkP7x7z2sLKSNC4E7+ZLN9A4/TB6m4+4Wue7WS9poMypFo?=
+ =?us-ascii?Q?tkc+W8Ps6iAdsbouAA5t9SKadiVxUYi3gcHM22fSBky924KUyJmXWg4VkVJG?=
+ =?us-ascii?Q?OgfezIkquXjs8GQ0Kg2WCNLGbjjEjfYxkSsXE2JB5Tq0kQhWdvBXxifFslJN?=
+ =?us-ascii?Q?wnnqO3NHMjnAIB4LdWwJ+Rsr9iYbZgIDaNeqlNTuYoAQYhBo2zIFOFWooS+I?=
+ =?us-ascii?Q?E2oRhruvm3d56Cvamzskxj4WV2rS27JXclCoHqiul9u8jkdzsW4u6M7ZQ4Eo?=
+ =?us-ascii?Q?u/Wtj88FdtBUYlPGQt0NvHB5DrFvfh2P/UbJB57otBFkXQf8zY7/9CPuPKk6?=
+ =?us-ascii?Q?aqwyothRNVubBjg7rtrmgHPvQHjYN8vyeRwh2Bc8QM+Tzi78aChMeQGu6sGO?=
+ =?us-ascii?Q?/3j4EqpbI1xTVLFtuw+2MYyYTo5q+03ZTZVEALLVfJyJgF6HT4c/EmN8ziuE?=
+ =?us-ascii?Q?M/jrqTSv8JtGRM34MiAJmc1I?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB8252.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?8wFJ5lgc2gyZGok8h+n8k1zu7KRaF1ws/PCPC+YIetjED9UHKiMho6vkYhjS?=
+ =?us-ascii?Q?YzuiYL736U7bvq2taKzxcrqzsAPoehgFJwb/90vZxJ0/Z/9syvxKUilFRawm?=
+ =?us-ascii?Q?46h3/Rj28GdbUQCIO9Ni4ajoAoK5lCTrMyKAeGt+gWap6SjvbU+il1DARJpA?=
+ =?us-ascii?Q?c0YQ2/9aIQlJujaAb5pOY6ZQ2SWubgbc+BUpKQdS8fSNbdW/pThDVsLnU2Rw?=
+ =?us-ascii?Q?W0ewT6z2bPPdFXrbLL5v/ZfhSq7QyGID8ZPwH97NF+sOlEacC17QyrdxmFBO?=
+ =?us-ascii?Q?tOjEAwk2pPQp6rozEbwUVQpf5M60rGHWSFQo9wr+bjSn9lukk9EAHwn4HpTu?=
+ =?us-ascii?Q?efO/491pPAEG3OgHcG6gJmTg9zzTb8lesiiP9kjvx84wkq+ozkg3kxywoabM?=
+ =?us-ascii?Q?b8UiYMtjXP9/2Hlmog6tE6QawRf/yMIwxJMSYVnsdP/Yo7xT/ByvP8/lb1Yw?=
+ =?us-ascii?Q?tXLIV07YFWywo5JCCldTVZLpNRvCmwh0MJQOOcQdXdsWITIELjNJLniosF8J?=
+ =?us-ascii?Q?gE1uVHiwfgMo6OxS1lJi0/82/vrnIkQ6Y3vUyLg7oFbfL2AZfv9SxwRodq0W?=
+ =?us-ascii?Q?PC/I3MFbS5Cfv0IZzHdCvCWBJk7nDU76KfyWZrYUf3u4xIJyHo6VAcqnD9hn?=
+ =?us-ascii?Q?PDdEMDEnOJiJdjwDX1+xbuL6PYCObRhEv8r9GCRjyunbV15+PedvZeslMFjT?=
+ =?us-ascii?Q?1u8Ke4VVRfmI+UA0x9m6VN/zgslG0CSHLC13QZ/+fub1LFmNgglfUs84JXT2?=
+ =?us-ascii?Q?u7/lRTMu3pizG3TQVctmZrEtUlpy16Npz3GrqBDDI3iJ9S/04yciRR5cMqQ2?=
+ =?us-ascii?Q?q2uPYuZZUaC5QSb3FNd4GkjUoRjOeNIRMXwoDTQGe8soxb3Tin9qfrBMfTmf?=
+ =?us-ascii?Q?vHoSWQxxhX8zqSjnRzRjoYFP0IGCreXwYhAkgEzErf0ExseVb4mC/O3SZbpB?=
+ =?us-ascii?Q?Y2BF2oBESZxsMFqAWhCMLhrhDOspaAlb/kRjZKakuheAPVbuTkSJp5+7L/+E?=
+ =?us-ascii?Q?szi0lc1E+0MbJCoVklecjIDPep813/eXt4OWVTjQoFjDYvKpv91+fErEH31D?=
+ =?us-ascii?Q?tCjZ7HmBN7S2282N3Y+ee/UOLdpjuSMp+pjgkaFN1vM/GJzGQaJr7JUxVNyT?=
+ =?us-ascii?Q?yc0hUWIy5bQo/PiMjAankYL6HfwKr+t7JRgp9+avm0lXhxlOzz0gSCnmCBAm?=
+ =?us-ascii?Q?EkA1OtEm+vCL8D9SkdkeDQJG123Elt1zFVnwRQ3Ipvy0EJ+xZAGSbn+OgHoy?=
+ =?us-ascii?Q?W9tQmnx0ERIW49S8ZI1+AstYl8lF7eXGgUwhmaX6wQL0J/6IaOH3uHWMiaTg?=
+ =?us-ascii?Q?BjZq+8SVvdjDt+2v59OBGvqNYG0Sh3p0Rtl0b47uHkyR62RdFZl8fjEXpajG?=
+ =?us-ascii?Q?27iCQ+9gVf+7DAssSEr7Ak/3DkC93WnrSuZRp3glLBPoEu4/yrfAk6w2bopG?=
+ =?us-ascii?Q?3d3etueZCAv3OzksTG7H/Mf+fbqPZyT1kdWO9ZK2GR2hZTilFJ4BwIwapAnO?=
+ =?us-ascii?Q?W5+S3JCF5vLs8B/1E5IxzP0D8A9sDiOZHTy5kusREh5jgRQoKEGKQvgPezth?=
+ =?us-ascii?Q?oVrNz7hwLV1CQW5yL8jvt6Axrc9JW8Bejgli3Qht?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4677b01b-c48f-4e34-5fb7-08dcf75dc3ab
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB8252.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2024 14:35:27.0378
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: GZg+lfWh1IEGCjus4kb+aw4joJFYeG/GBCDuDHWUDRS0d1j71pT+b2h5UO2dctnfZOSIjxLpDWUBRQhVUiT7Ww==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB8884
 
-On Tue, Oct 15, 2024 at 03:51:06AM -0700, Breno Leitao wrote:
-> @@ -1277,9 +1277,13 @@ static __ro_after_init enum spectre_v2_mitigation_cmd spectre_v2_cmd;
->  static enum spectre_v2_user_cmd __init
->  spectre_v2_parse_user_cmdline(void)
->  {
-> +	enum spectre_v2_user_cmd mode;
->  	char arg[20];
->  	int ret, i;
+On Fri, Oct 25, 2024 at 11:13:46AM +0000, Dhananjay Ugwekar wrote:
+> Prepare for the addition of RAPL core energy counter support.
+> 
+> After making the rapl_model struct global, the rapl_msrs global
+> variable isn't needed, so remove it.
+> 
+> Signed-off-by: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
+
+Reviewed-by: Gautham R. Shenoy <gautham.shenoy@amd.com>
+
+--
+Thanks and Regards
+gautham.
+
+> ---
+>  arch/x86/events/rapl.c | 7 ++-----
+>  1 file changed, 2 insertions(+), 5 deletions(-)
+> 
+> diff --git a/arch/x86/events/rapl.c b/arch/x86/events/rapl.c
+> index ae8b450caa9b..e80b62cf9abc 100644
+> --- a/arch/x86/events/rapl.c
+> +++ b/arch/x86/events/rapl.c
+> @@ -150,7 +150,6 @@ static int rapl_pkg_hw_unit[NR_RAPL_PKG_DOMAINS] __read_mostly;
+>  static struct rapl_pmus *rapl_pmus_pkg;
+>  static unsigned int rapl_pkg_cntr_mask;
+>  static u64 rapl_timer_ms;
+> -static struct perf_msr *rapl_msrs;
+>  static struct rapl_model *rapl_model;
 >  
-> +	mode = IS_ENABLED(CONFIG_MITIGATION_SPECTRE_V2) ?
-> +		SPECTRE_V2_USER_CMD_AUTO : SPECTRE_V2_USER_CMD_NONE;
-> +
->  	switch (spectre_v2_cmd) {
->  	case SPECTRE_V2_CMD_NONE:
->  		return SPECTRE_V2_USER_CMD_NONE;
-> @@ -1292,7 +1296,7 @@ spectre_v2_parse_user_cmdline(void)
->  	ret = cmdline_find_option(boot_command_line, "spectre_v2_user",
->  				  arg, sizeof(arg));
->  	if (ret < 0)
-> -		return SPECTRE_V2_USER_CMD_AUTO;
-> +		return mode;
-
-This doesn't look right to me, spectre_v2=eibrs|retpoline... will override
-CONFIG_MITIGATION_SPECTRE_V2=n and enable the kernel mitigation, but the
-user mitigation will stay disabled. If this is the intention it should be
-clearly documented that enabling kernel mitigation does not enable user
-mitigation. And an explicit spectre_v2_user= is required to enable user
-mitigation.
+>  /*
+> @@ -376,7 +375,7 @@ static int rapl_pmu_event_init(struct perf_event *event)
+>  		return -EINVAL;
+>  
+>  	event->pmu_private = rapl_pmu;
+> -	event->hw.event_base = rapl_msrs[bit].msr;
+> +	event->hw.event_base = rapl_model->rapl_pkg_msrs[bit].msr;
+>  	event->hw.config = cfg;
+>  	event->hw.idx = bit;
+>  
+> @@ -805,9 +804,7 @@ static int __init rapl_pmu_init(void)
+>  
+>  	rapl_model = (struct rapl_model *) id->driver_data;
+>  
+> -	rapl_msrs = rapl_model->rapl_pkg_msrs;
+> -
+> -	rapl_pkg_cntr_mask = perf_msr_probe(rapl_msrs, PERF_RAPL_PKG_EVENTS_MAX,
+> +	rapl_pkg_cntr_mask = perf_msr_probe(rapl_model->rapl_pkg_msrs, PERF_RAPL_PKG_EVENTS_MAX,
+>  					false, (void *) &rapl_model->pkg_events);
+>  
+>  	ret = rapl_check_hw_unit();
+> -- 
+> 2.34.1
+> 
 
