@@ -1,168 +1,119 @@
-Return-Path: <linux-kernel+bounces-385581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC9439B38EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 19:18:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55AED9B3926
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 19:29:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A439D1F22829
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 18:18:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6418B1C215A6
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 18:29:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D92FC1DF757;
-	Mon, 28 Oct 2024 18:18:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19C1E1DF966;
+	Mon, 28 Oct 2024 18:29:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DfzpFEJN"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hPeHdkvb"
+Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E84F1547CA;
-	Mon, 28 Oct 2024 18:18:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7743186616
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 18:29:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730139528; cv=none; b=d02uC/ZcMlMekHLSlH5lcr9sX9UCZ228LswhHHzRlJb/+zNyTxaQr54GguBwzjzrLfqsrRu+wn9FTor/x084szND6rhpq+5G4irqtcMmqblhLKwquaMCENPg8nWFllSYuT94FEyhJLHnBFqzhoBq/ULhsCUHt9GEySpVZWOgSt0=
+	t=1730140156; cv=none; b=E7mtz8uowKaonyYaC8wRbF0RL4DvQWpMpqzqmqKO2mEZBj23L9OUQeD+/7KlT3ESLxtBaP7HXPxN6bDI9Blxm22oQR9qcwCjWHyYw6taDG/4v4RWECytOxwJfRg2ns8c+1ePuVmZNcGd3QRRce4rdXfwP3cYW+OSRHeEjhw4FeY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730139528; c=relaxed/simple;
-	bh=R2DVy8iU7fbfJEnyj+dAeHE6Oyfz71RsNxNurlp22O8=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=UNJdmIuQPU2ghcF99I5cG4KFOWUzA3d9WzwfgeXuc+KNQC3G91Poy6Eo6DBixsExwlKfB66hC7VzpI+z2w3zRWn/h+PFhWh7axXh+onaK5cPBpHM/BHTBRPHzdboXmNU9y/q5akfQzibCMv/jDp9Q4QfkbRMSzv34zF+3/tm/08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DfzpFEJN; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730139526; x=1761675526;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=R2DVy8iU7fbfJEnyj+dAeHE6Oyfz71RsNxNurlp22O8=;
-  b=DfzpFEJNEJCnb9R7Mt1JIKBxOvPlziISPLdVwVGExwcAmHPykv+IKKTV
-   HL6r2YmztsoJqMs0xvFw6FKpFPKLEkg0pY7zRminCgMTnqXPLbQA5iYMH
-   6j4T8aHC1vvTgXjYCjm+wVwyPy/pWQc5RKTHvfUlnEy2rQGlp70vkTJnM
-   mNK9WvpLjFon7JZPFHrHiDVKML3mSY+JKBeGn30LJlZXJzRAfGsU8Hmv0
-   fnwf2GTzkPM8ba8a1P9ZqcbZjYJcCv+ns7zKat0j0kB4fBeTbmPwU+SWh
-   ZVQk8pAvhFgk2zj3Ed4YMm5p3+eCWJJX4xL5tVKo+YVhk1l5cuB5iLE1J
-   A==;
-X-CSE-ConnectionGUID: luYixyotSDGEq9NLiImvJw==
-X-CSE-MsgGUID: wBCtcbrERNCrgQNAE+D+sw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="29890417"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="29890417"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2024 11:18:45 -0700
-X-CSE-ConnectionGUID: nlwtlu05TdqCiPMMaaJHTQ==
-X-CSE-MsgGUID: a1iIFpFwRWOLai9o3BreiA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,239,1725346800"; 
-   d="scan'208";a="85647119"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.203])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2024 11:18:43 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Mon, 28 Oct 2024 20:18:39 +0200 (EET)
-To: Keith Busch <kbusch@kernel.org>
-cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, 
-    LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/3] PCI/sysfs: Use __free() in reset_method_store()
-In-Reply-To: <8862b34b-26b3-af75-5d23-d765fb41b5d4@linux.intel.com>
-Message-ID: <d07973e2-0ac1-d3e0-25f0-7b1270ca4a15@linux.intel.com>
-References: <20241028174046.1736-1-ilpo.jarvinen@linux.intel.com> <20241028174046.1736-3-ilpo.jarvinen@linux.intel.com> <Zx_Pt2ObNKIS8cu2@kbusch-mbp> <8862b34b-26b3-af75-5d23-d765fb41b5d4@linux.intel.com>
+	s=arc-20240116; t=1730140156; c=relaxed/simple;
+	bh=EG9g2ix8QDrI490G6Rb3uabFYXJ29pFurC+OCK/CftA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=J96KoPR6yJUgnt+0pO5lj9UT8OTcNPCH9IopZEDcdV4BcG9uXbUpVAwz3PALAKmSm438kP9nK2jcYG3p56UX03eBsXlosGInoxJLZqXR1D0Q75wJWZqXxjZ5sT+I/dKvkxRzdvxowv1Q4GDYja+tX7lMeh93YvJGDnI650WONJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hPeHdkvb; arc=none smtp.client-ip=209.85.166.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-3a5075ed279so1981115ab.0
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 11:29:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730140154; x=1730744954; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=iNh72+AxACbmdQMt8H/yJzH0BaV6epZ3NPnzLvAOIgw=;
+        b=hPeHdkvbCKIJrL2wiRV1SC9fcQT224aIkO/fSSgjrv3Uem998ws+3HMIRfyqQFlKmH
+         mUQi5PrbPw/ImNva3CCjRrmXmEExwwi2nZNHse0hjmwSbzyj7Rmrs+MAhCLFsJiQnnlx
+         icDdQ9gqcOBHjiZ3PmRgcUGkjEzNMP3hc+8fMipMViUly4QHBqqMufNDKOvuhlrlLjTf
+         GBJmkQR43UYXRwlLuYVae7y+RbI0MiN9nfVKvDPJYb5Ta5aN/79de1pr4V8yFTkFW1Pr
+         SgQr+1RcK7rVdhJ3+yjhx9uF7oIcx+t5Cqh5iWt7c2vk7lp0gT79KGsXSBjPkvm6u+Pa
+         MgYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730140154; x=1730744954;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iNh72+AxACbmdQMt8H/yJzH0BaV6epZ3NPnzLvAOIgw=;
+        b=Y2K7jGvk113pqySADM670h22ygwgU0l0ZOTm+2UKEp4888rC2gQRBpMIYaPJXCnUmI
+         CuwQYIo8URI+rHniaypAhzagkDBZ+ciVW5RJjRuoOIw887EQvmsN01twODOFzcpzHbyV
+         TPWpdsTZMS+wssD/17mGJL1i5eBsQSJ1HpwsUSoyJ438ln/oYfYBwLolFigjwCTSQ0qJ
+         EJNPa75uGlPNGiIlm7UM3ue+HM2zAwQybOo/Sqgt5k7F3OoB46y6UrOCPmjc7jyiOY9c
+         gfk62+FlLv3zo+HLxfi9+dIWqiufNdTHKSkWRpvzlIOMwINUQ96K1zkkvLx4B9DTkaLQ
+         ebOw==
+X-Forwarded-Encrypted: i=1; AJvYcCWb74rfPsu6c1dh3aZxurmewa3xams70ElWG4PR+bJEMVHWDrpeuE3Dah1vXfWsM73LfHvGZXOhcSN8J3o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YycC/YZyQvXUs1f9iJoXO7R4RfYlYTO0TZrmQ31ZMMWie3HsMeA
+	yueSsg88Q2I6r+s7/5AAQwLmXUXVmDsJxUIuw3NbCOVAbIHz3eRN
+X-Google-Smtp-Source: AGHT+IExqyJrYtAdOoIXSEb1tPaKnGgmpoNVNp2TZK2xOkG6+S97+gF+8/Q2cUF9xq7qYuXFqmAwWA==
+X-Received: by 2002:a92:c26d:0:b0:3a3:b256:f31f with SMTP id e9e14a558f8ab-3a4ed2fc0a7mr84712265ab.19.1730140153718;
+        Mon, 28 Oct 2024 11:29:13 -0700 (PDT)
+Received: from debian.resnet.ucla.edu (s-169-232-97-87.resnet.ucla.edu. [169.232.97.87])
+        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-7edc8495cabsm6159225a12.0.2024.10.28.11.29.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Oct 2024 11:29:13 -0700 (PDT)
+From: Daniel Yang <danielyangkang@gmail.com>
+To: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+	linux-kernel@vger.kernel.org (open list)
+Cc: Daniel Yang <danielyangkang@gmail.com>,
+	syzbot+0dd28f0c6293cc87d462@syzkaller.appspotmail.com
+Subject: [PATCH] Fix BUG: KCSAN: data-race in xas_find_marked / xas_init_marks
+Date: Mon, 28 Oct 2024 11:19:22 -0700
+Message-Id: <20241028181922.406204-1-danielyangkang@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-1788405296-1730139519=:947"
+Content-Transfer-Encoding: 8bit
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+The cause of the bug is a call to truncate_setsize() while
+fat_file_fsync() is attempting to read. Although fat_setattr() acquires
+&MSDOS_I(inode)->truncate_lock before calling truncate, fat_file_fsync()
+doesn't acquire the read lock for truncate_lock. The function
+__generic_file_fsync() called in fat_file_fsync() only acquires lock to
+the inode itself, not the &MSDOS_I(inode) it is a member of. This leads
+to the data race where fat_file_fsync is reading during truncation.
 
---8323328-1788405296-1730139519=:947
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+To fix: &MSDOS_I(inode)->truncate_lock is acquired for reading before
+calling __generic_file_fsync().
 
-On Mon, 28 Oct 2024, Ilpo J=E4rvinen wrote:
+Signed-off-by: Daniel Yang <danielyangkang@gmail.com>
+Reported-by: syzbot+0dd28f0c6293cc87d462@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=0dd28f0c6293cc87d462
+---
+ fs/fat/file.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-> On Mon, 28 Oct 2024, Keith Busch wrote:
->=20
-> > On Mon, Oct 28, 2024 at 07:40:45PM +0200, Ilpo J=E4rvinen wrote:
-> > > @@ -1430,7 +1431,7 @@ static ssize_t reset_method_store(struct device=
- *dev,
-> > >  =09=09=09=09  const char *buf, size_t count)
-> > >  {
-> > >  =09struct pci_dev *pdev =3D to_pci_dev(dev);
-> > > -=09char *options, *tmp_options, *name;
-> > > +=09char *tmp_options, *name;
-> > >  =09int m, n;
-> > >  =09u8 reset_methods[PCI_NUM_RESET_METHODS] =3D { 0 };
-> > > =20
-> > > @@ -1445,7 +1446,7 @@ static ssize_t reset_method_store(struct device=
- *dev,
-> > >  =09=09return count;
-> > >  =09}
-> > > =20
-> > > -=09options =3D kstrndup(buf, count, GFP_KERNEL);
-> > > +=09char *options __free(kfree) =3D kstrndup(buf, count, GFP_KERNEL);
-> >=20
-> > We should avoid mixing declarations with code. Please declare it with
-> > the cleanup attribute at the top like before, and just initialize it to
-> > NULL.
->=20
-> Hi,
->=20
-> I don't exactly disagree with you myself and would prefer to keep=20
-> declarations at top, but I think as done now is exactly what Bjorn wants=
-=20
-> for the specific case where __free() is used. This was discussed earlier=
-=20
-> on the list.
+diff --git a/fs/fat/file.c b/fs/fat/file.c
+index e887e9ab7..5578b771a 100644
+--- a/fs/fat/file.c
++++ b/fs/fat/file.c
+@@ -188,7 +188,9 @@ int fat_file_fsync(struct file *filp, loff_t start, loff_t end, int datasync)
+ 	struct inode *inode = filp->f_mapping->host;
+ 	int err;
+ 
++	down_read(&MSDOS_I(inode)->truncate_lock);
+ 	err = __generic_file_fsync(filp, start, end, datasync);
++	up_read(&MSDOS_I(inode)->truncate_lock);
+ 	if (err)
+ 		return err;
+ 
+-- 
+2.39.2
 
-Hi again,
-
-I went to archives and found out it had already made itself into=20
-include/linux/cleanup.h which now says this:
-
-"
- * Now, when a function uses both __free() and guard(), or multiple
- * instances of __free(), the LIFO order of variable definition order
- * matters. GCC documentation says:
- *
- * "When multiple variables in the same scope have cleanup attributes,
- * at exit from the scope their associated cleanup functions are run in
- * reverse order of definition (last defined, first cleanup)."
- *
- * When the unwind order matters it requires that variables be defined
- * mid-function scope rather than at the top of the file.
-
-[...snip examples...]
-
- * Given that the "__free(...) =3D NULL" pattern for variables defined at
- * the top of the function poses this potential interdependency problem
- * the recommendation is to always define and assign variables in one
- * statement and not group variable definitions at the top of the
- * function when __free() is used.
-"
-
-After reading the documentation for real now myself :-), I realized it's
-not just about maintainer preferences but about order of releasing things,=
-=20
-so it's a BAD PATTERN to put those declarations into the usual place when
-using __free().
-
-
-For completeness, the discussion thread (there might have been another=20
-thread earlier than these):
-
-https://lore.kernel.org/linux-pci/171140738438.1574931.15717256954707430472=
-=2Estgit@dwillia2-xfh.jf.intel.com/T/#u
-
-> If I misunderstood the conclusion of the earlier cleanup related=20
-> discussion, can you please correct me Bjorn?
->=20
->=20
-
---=20
- i.
-
---8323328-1788405296-1730139519=:947--
 
