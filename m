@@ -1,145 +1,134 @@
-Return-Path: <linux-kernel+bounces-385144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DF1A9B331B
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 15:16:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FB4B9B331C
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 15:16:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4EF711C21508
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:16:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 808131C21E29
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:16:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF7681DE4E4;
-	Mon, 28 Oct 2024 14:15:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAB571DD0F3;
+	Mon, 28 Oct 2024 14:16:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="K/Cglwzm"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="u0f1ndXY"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C046D1DDC3F;
-	Mon, 28 Oct 2024 14:15:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0A141DACA9
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 14:16:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730124909; cv=none; b=oSewyLi1ZHDvIBAW91Brd1v3VP6nTyxN0aZTWKjkkhDrB3tEZKbldeJksYUifUNAYHtd/35EgmtKE47o8bx48+FTjI34g+prVgZcVahuL9uIjzeVh9K95aprzlSirCPzFEsi6McHat9xiV5He0tB7HGOhjGRByr7+ZiF4sFsp+8=
+	t=1730125000; cv=none; b=TOUg92cQ7k8JTTsYPD4g9i+/8RV6HdivNyrPY3rJZ4ytc7buMn3MKNRgOZTicKLBMrMr51woxEkbOyniKkZjwXZMs40CauGmYC54K+0IYv2wfBvs38fxa3PIalK9VUzkRoaPYPFCHdq+VkX0F+P9/pG3FfQwph8BTtJnqJn5x9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730124909; c=relaxed/simple;
-	bh=KauFzW447yV1YygaFufYczwE3m1im87cT3aqIlvlSus=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y3V2jZlsRXJePM/ahu0SOaM5yjRF/gGlgxjjCDRC93Io5rFVyvExnyr8dl9kNkX7SyCbftruSA3sHc5+8iHMFG5pP/bz2ACCXITfVtmv4ErtdGcVLCu6S5ODleyLXEm9v3G+cAb9AEvukQV0K05pAsYyLgUhunjxwpP9CLoZss4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=K/Cglwzm; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730124906; x=1761660906;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=KauFzW447yV1YygaFufYczwE3m1im87cT3aqIlvlSus=;
-  b=K/CglwzmnRxql9YD/hxG0w2xEkDgPcZKGTflVPIGHzzS3bWA1FOd7lXB
-   RcBNq2xB4hTcE3IHbJULA4WcFeD1qR5jcGNxZb2mNZwcKF6F5r+lXI78T
-   39fY0qq1who8vg+joga9zqui3fO0WjnTpjTVP33lzmKFB9SM3r59uKgTK
-   YoOF7Hjupll70of4QHklOM4hsptRUQGdu0HDlvzDf+wH4q+YzygZq59Ge
-   1S69DQk+zvTnP1On2enX3fDqgPWxYMJKtla9kWvbmCGlwfsTpSTHjjj9O
-   dpAw7/Agxpq3vCUjLKFFQm48Gqwl3V2reNirMwnDwSQhvTaEHNvGEbJLH
-   w==;
-X-CSE-ConnectionGUID: uFOXXgZESx2DaktINyeAyA==
-X-CSE-MsgGUID: Rv1pIwYVRq6cTjiS8suKLA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11238"; a="29827727"
-X-IronPort-AV: E=Sophos;i="6.11,239,1725346800"; 
-   d="scan'208";a="29827727"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2024 07:15:06 -0700
-X-CSE-ConnectionGUID: y2TPtzXrQHmVK0j7fB4TOA==
-X-CSE-MsgGUID: xQ4JiPp0Ram2dVoO9axa3g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,239,1725346800"; 
-   d="scan'208";a="81951815"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 28 Oct 2024 07:15:04 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t5QWL-000cVw-2G;
-	Mon, 28 Oct 2024 14:15:01 +0000
-Date: Mon, 28 Oct 2024 22:14:25 +0800
-From: kernel test robot <lkp@intel.com>
-To: Edward Adam Davis <eadavis@qq.com>,
-	syzbot+0c99c3f90699936c1e77@syzkaller.appspotmail.com
-Cc: oe-kbuild-all@lists.linux.dev, adilger.kernel@dilger.ca,
-	linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com, tytso@mit.edu
-Subject: Re: [PATCH] ext4: Add a sanity check for next dentry when insert
-Message-ID: <202410282131.FBDMC1Gq-lkp@intel.com>
-References: <tencent_E4CFC65D09852ECE2EF28C83A7C3C6E41206@qq.com>
+	s=arc-20240116; t=1730125000; c=relaxed/simple;
+	bh=Z/1tooQXxbcK4lVGwo/4bZ6ga1NIJM4QYTPFDM9Mo3o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iC0H7viymlJVsfK3Vd05HDQhYZo1iKjo+Opnno+7Iiy+ZmUS3FKL6cBaC83M5qpZyQB1r4ZLgQfvxhOvQ6fOvnzSDM6ivH5IN9zUmkW3PIIkBrzTjz2i6PetQ5BHN7EoO9D/MC+fAE539Mq0DphI1zb3tTgRj2twuggG0AyrMnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=u0f1ndXY; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-37f52925fc8so3115395f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 07:16:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730124996; x=1730729796; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=quqfrl+ntrh5+Sv/MCcmT5/a0XinSFOWiABW7uGEUZM=;
+        b=u0f1ndXYwhLC6eiCBEqmAgakM+GGinhRHxTXsaCoIpZHM9yOE5XR0CCs4iw1yTJfK7
+         eoBtPtHlaPUwaIR2b2k2G4TVc4fBWQbvu5n8dHvi97cO80/1aqMSxmxcvTBscgoArp66
+         qWRV7cHaGwBirI9mPPiHkXw6w2CRL2xq/fb2EBdKdg+ndI9o3gkLBU3Vh4Ozyhh2UDnr
+         +UIoI+bnXuOjg109K7SqgRo75PRq1vMVwrI+HuBYN1OVB9HK5a9kMOVwzRJBzqvIDp7u
+         4M0/bqGSFjSoHjtiMNIIXaaY0XcPoezQQKVluKLZtASq0rZPOUSGVVmjgnNIaMb2wvqY
+         mIpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730124996; x=1730729796;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=quqfrl+ntrh5+Sv/MCcmT5/a0XinSFOWiABW7uGEUZM=;
+        b=RlquOdmnb/xE+XPvZVNR6LXuNB+yCJwRt/O5YsPnmyW0SLJ63ofXjWH2+hqB3GsEYS
+         uGxT+c3zjzA3P4OhVXdJ7DH68YJwNaQVxT4JUNI1jCf3ytqT0KeRqVkuPfAhOAZJKMJJ
+         VBCMf8ULkOTxg9ZTV1V1MR+FGDKHw0T74x0jabuqgJAj2rvAAPoCi5+XlKEIkOcuoKtR
+         S58Ap/t1aNfrkDjqcCdTqeR5VzqZcw4/SLh5J/1RBlnLzJu4hh+0EbjCx1vSyR6O+Ufc
+         695lc+5g/SobYNRT3u1gdBM+cFrshUfUhCTCOA77iRu4SUxr2B246hjFltKbd08LZ/Ep
+         Wktw==
+X-Forwarded-Encrypted: i=1; AJvYcCVcthLTZihI5q6EtByDZRdrgF+grCDU03x77SPldWitKR64b09bTTQcHnkvyF3posxwavYVvOnZk5zXAZk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCCrmZQkBTAB4JhpCt/iVxKyoQyWM8uSgEv9D4NvLLNVfqXW6l
+	NfN2XnNwRy1vbWqbcA+6926pCnSNbbT+7KLQlyQ2d7rmbGGSqYtbH2i7rO8NKxw=
+X-Google-Smtp-Source: AGHT+IEZY+k0aXn5tfgk7XRpaz73GX3fpQstWkbVAp4n6D3wdTEULhrWgfBHQTYZF4C9BVFIPagq6Q==
+X-Received: by 2002:a5d:4748:0:b0:37d:51bc:3229 with SMTP id ffacd0b85a97d-3806120b1b0mr4859262f8f.51.1730124996070;
+        Mon, 28 Oct 2024 07:16:36 -0700 (PDT)
+Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-38058b1cc0asm9715947f8f.10.2024.10.28.07.16.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 28 Oct 2024 07:16:35 -0700 (PDT)
+Message-ID: <4f4572c2-8436-41a6-8c8d-4811da8231b1@linaro.org>
+Date: Mon, 28 Oct 2024 15:16:34 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <tencent_E4CFC65D09852ECE2EF28C83A7C3C6E41206@qq.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] clocksource: move System Tick Counter from
+ 'arch/mips/ralink'
+To: Sergio Paracuellos <sergio.paracuellos@gmail.com>,
+ linux-mips@vger.kernel.org
+Cc: tglx@linutronix.de, tsbogend@alpha.franken.de, john@phrozen.org,
+ linux-kernel@vger.kernel.org, yangshiji66@outlook.com
+References: <20240920075306.704665-1-sergio.paracuellos@gmail.com>
+ <CAMhs-H-ChXQSZ_6EBiTKtD7ve2j2QsVvgVm0B5O1O7BfGwKFmQ@mail.gmail.com>
+Content-Language: en-US
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <CAMhs-H-ChXQSZ_6EBiTKtD7ve2j2QsVvgVm0B5O1O7BfGwKFmQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Edward,
+On 28/10/2024 15:14, Sergio Paracuellos wrote:
+> On Fri, Sep 20, 2024 at 9:53 AM Sergio Paracuellos
+> <sergio.paracuellos@gmail.com> wrote:
+>>
+>> Hi Daniel,
+>>
+>> System Tick Counter is present in RT3352 and MT7620 Ralink SoCs. This driver has
+>> been in 'arch/mips/ralink' from the beggining and can be easily moved into a more
+>> accurate place in 'drivers/clocksource' folder. This makes easier to enable it
+>> for compile test targets as well as reduce LOC in architecture specific folders.
+>> Bindings are already mainlined and can be located here [0].
+>>
+>> Thanks in advance for your time.
+>>
+>> Best regards,
+>>     Sergio Paracuellos
+>>
+>> [0]: https://elixir.bootlin.com/linux/latest/source/Documentation/devicetree/bindings/timer/ralink,cevt-systick.yaml
+>>
+>> Sergio Paracuellos (2):
+>>    clocksource: Add Ralink System Tick Counter driver
+>>    MIPS: ralink: remove System Tick Counter driver
+>>
+>>   arch/mips/ralink/Kconfig                              |  7 -------
+>>   arch/mips/ralink/Makefile                             |  2 --
+>>   drivers/clocksource/Kconfig                           | 10 ++++++++++
+>>   drivers/clocksource/Makefile                          |  1 +
+>>   .../clocksource/timer-ralink.c                        | 11 ++++-------
+>>   5 files changed, 15 insertions(+), 16 deletions(-)
+>>   rename arch/mips/ralink/cevt-rt3352.c => drivers/clocksource/timer-ralink.c (91%)
+> 
+> Gentle ping on this patch series :-)
 
-kernel test robot noticed the following build warnings:
+I'm on it
 
-[auto build test WARNING on tytso-ext4/dev]
-[also build test WARNING on linus/master v6.12-rc5 next-20241028]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Edward-Adam-Davis/ext4-Add-a-sanity-check-for-next-dentry-when-insert/20241027-191200
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/tytso/ext4.git dev
-patch link:    https://lore.kernel.org/r/tencent_E4CFC65D09852ECE2EF28C83A7C3C6E41206%40qq.com
-patch subject: [PATCH] ext4: Add a sanity check for next dentry when insert
-config: x86_64-randconfig-121-20241028 (https://download.01.org/0day-ci/archive/20241028/202410282131.FBDMC1Gq-lkp@intel.com/config)
-compiler: clang version 19.1.2 (https://github.com/llvm/llvm-project 7ba7d8e2f7b6445b60679da826210cdde29eaf8b)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241028/202410282131.FBDMC1Gq-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410282131.FBDMC1Gq-lkp@intel.com/
-
-sparse warnings: (new ones prefixed by >>)
->> fs/ext4/namei.c:2087:5: sparse: sparse: symbol 'ext4_check_next_dentry' was not declared. Should it be static?
-   fs/ext4/namei.c: note: in included file (through include/linux/mmzone.h, include/linux/gfp.h, include/linux/xarray.h, ...):
-   include/linux/page-flags.h:237:46: sparse: sparse: self-comparison always evaluates to false
-   include/linux/page-flags.h:237:46: sparse: sparse: self-comparison always evaluates to false
-   fs/ext4/namei.c: note: in included file:
-   fs/ext4/ext4.h:2429:9: sparse: sparse: self-comparison always evaluates to false
-
-vim +/ext4_check_next_dentry +2087 fs/ext4/namei.c
-
-  2086	
-> 2087	int ext4_check_next_dentry(struct inode *dir,
-  2088				struct inode *inode,
-  2089				struct ext4_dir_entry_2 *de,
-  2090				int buf_size,
-  2091				struct ext4_filename *fname)
-  2092	{
-  2093		int nlen, rlen;
-  2094	
-  2095		nlen = ext4_dir_rec_len(de->name_len, dir);
-  2096		rlen = ext4_rec_len_from_disk(de->rec_len, buf_size);
-  2097		if (de->inode) {
-  2098			struct ext4_dir_entry_2 *nde =
-  2099				(struct ext4_dir_entry_2 *)((char *)de + nlen);
-  2100			nde->rec_len = ext4_rec_len_to_disk(rlen - nlen, buf_size);
-  2101			de->rec_len = ext4_rec_len_to_disk(nlen, buf_size);
-  2102			de = nde;
-  2103			rlen = ext4_rec_len_from_disk(de->rec_len, buf_size);
-  2104			return fname_len(fname) > rlen - EXT4_BASE_DIR_LEN;
-  2105		}
-  2106	
-  2107		return 0;
-  2108	}
-  2109	
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
