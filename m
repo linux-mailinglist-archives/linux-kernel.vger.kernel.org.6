@@ -1,873 +1,277 @@
-Return-Path: <linux-kernel+bounces-385212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D70CB9B3411
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 15:54:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD9489B3415
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 15:55:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93B9E282B55
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:54:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5330E1F22A64
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:55:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A32921DE2B5;
-	Mon, 28 Oct 2024 14:54:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 456811DE2A7;
+	Mon, 28 Oct 2024 14:54:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=friedrich.vock@gmx.de header.b="pEF6pON2"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
+	dkim=pass (1024-bit key) header.d=kunbus.com header.i=@kunbus.com header.b="TMNjdtQ2"
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2097.outbound.protection.outlook.com [40.107.20.97])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A95471DB360;
-	Mon, 28 Oct 2024 14:54:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730127262; cv=none; b=CqkLvVKSvUB+Vz4q2zMqfex+byeUlZIIz/ntvL5jmhzYSsHEI/zRZDwdt4zZdFmQkR2ZE7Dw8yPFmG7SGaGF0JHLVmj5Za8PL/R+g2RJdCzNhc5zBS1D/AMFAD2PUDJ2YNs2f+8ggEb9aNhVMtgk7pBUNIsI2USvjDG6g6cF/aA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730127262; c=relaxed/simple;
-	bh=PQO0UD0eqxVMSC1iZPiGCbp7bMrjvVlRR2aXY5tIyGM=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=fbqXzJepgd1tsRFlyCVheDG2vx9kU0BPoN5vTp7putrhW+LO5bGIDjgB6DKrSec9Kz7DO6lR2/5VeUsTa6cOs6syEv25ssG1GtqP2EgKR1zaLOCkNr6pTz2fp2vWT/9Fl/FYrWYwl9677ZIFDegDOu9kD2gkE9gc4vcxLpUes7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=friedrich.vock@gmx.de header.b=pEF6pON2; arc=none smtp.client-ip=212.227.17.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1730127226; x=1730732026; i=friedrich.vock@gmx.de;
-	bh=STUU9owkaaMERJZ2AXTBH+gorsSTFfmO6SNkJBMaIzo=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:From:Subject:To:
-	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=pEF6pON2HRo3yZqSsDiSgFwCDYa/cj3JbLuXV2sy+J4HFnRaprrNwtQAkcRk3DHC
-	 hpdVQ5dJnqDlYuoPB2Ns0ZiGWK8sbmhBY71IfCyTD35t8RhgoyrU1FjyEadQabv8f
-	 3B1JcFiKsNQlQtF2qLjZQBt/DSHNfsNSR5orhKCKEtoRUEu3IMBGJ2Y60shPhWLJ3
-	 f6PUolsKNi6kkxTcHCIBkj4V4g1gZ3yws1RZSZGGY5rrMve/rKBm4joQFglXMQIfn
-	 25Z5obZus/TabDocDgvYR/Sl0QbrKLHcqfz9hu0Bokg7wUKnee+pauW6o8yZAyN1g
-	 u48bkkPdAYIWwyfADQ==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.0.3] ([109.91.201.165]) by mail.gmx.net (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1Mkpap-1tj8uz2EAR-00hiM6; Mon, 28
- Oct 2024 15:53:46 +0100
-Message-ID: <91125995-3a33-4971-a581-e6e24ccf0b47@gmx.de>
-Date: Mon, 28 Oct 2024 15:53:43 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1DD61DDA1B;
+	Mon, 28 Oct 2024 14:54:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.97
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730127293; cv=fail; b=iaaTK+ePwWkfEeDLB5U/mly+Zp2iCBdnkIinji1FRYAXMq/z+dztvg0AXJENIgwuLWU3s7cbTFcGiA4JUGAa2QItKG0EUbwU5j2BYHiU/2irTuYWjGQ4dJBeLqHxgON6kvtADYGn6QG1D3PZnrtp/OllD4TTWhN1dr+wa68L1tI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730127293; c=relaxed/simple;
+	bh=+tqpwiIu5qjdc8gQnBCY3PEUcf7rUA9+E3VS/z9dzIs=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=ZIKskl9hXTjfnhrzyMZhqC4RJnuWy+isaa79554OnX4FThkqTAo3PTdwiAdA40W3abHAt/aBK+uGbXOUb6NYivNlUR1uxCs5/Tr9GIUVo/yEr1xT/rOni2uR74ctHvnJtdWDYFVMfae4PaKuxHY8GrMB5srK1n4tJWGHBtREK+o=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kunbus.com; spf=pass smtp.mailfrom=kunbus.com; dkim=pass (1024-bit key) header.d=kunbus.com header.i=@kunbus.com header.b=TMNjdtQ2; arc=fail smtp.client-ip=40.107.20.97
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kunbus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kunbus.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ylOvvg2bAHsHp20zWuLzkV5lhf646M5PYR5gc1CPPMaeVQp4HviOvH+syT46xkReOuz424Y/NmkM3inVQOWtTP93YmH9nbxOwF9UgghSwxnlUS2SZZMKNvFfPjAMVxFGmZLLB1FrUO2TWTf0m7/TNJgpcV2pVF7iqcbDH3MwrS7qys2y8OgrRCYujYeQaM6NLjNOGsmCklpsu+Sh+n93+IB2vanuUnO6H7KReTd1+iQhp8fp9ZOQtViiwEtehOs6qOVraWSDsJEkNGT0RDnrA3+eHVD+BJk5HbRm505sDcbm6DNeqAjmzacYw1E0SSqT+00B/VNzpRLQX3Mo2DyrVA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=jmcCMJT6yLxVPwe1FvDRJ9vm8Yhc2Qfa5iILgBiv7go=;
+ b=Nu7N2FFSVfC92UcLqfufXBTbCd+/KZq4jPVrUi1ZixMMeHYkyetjk9CkekNIgL95pBSxrXRDhFMcKt5fEUMgLSgbR08nt5a2SQ5B1KcFufTevDm2FU/O3EZUM7kDOTE3jTm0TwcAOo4SNJD5SN9SFA5sxiQiJhqw2/LynPs5KW4VanQdtPHTdoYO1p2IFF8rUuuo8/LFKeLX6qc8IhAcfzStOskru3jx/v5j0xQ1mic6GGXXfpHEja/QH+H7PdKbgrkmpF/sPNPsVZhAZH08vp01ivwfVEl5+ldE+LFDS9C5dabfOqfiZ++TRPyaZXTNHzg3r3fv92+K5RGRKrQG+Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=kunbus.com; dmarc=pass action=none header.from=kunbus.com;
+ dkim=pass header.d=kunbus.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kunbus.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=jmcCMJT6yLxVPwe1FvDRJ9vm8Yhc2Qfa5iILgBiv7go=;
+ b=TMNjdtQ27xAJ9Gh2dIRRYKPfYGBB39jdIY7w4ZUAylU95fesWlsz3SvSUyG5N3qCN1ON0yoXzu7P0aBoly1eV+ci6irfj8zib2pi9FjcRFxzDFCY5EFqsw+x/AY90uSK+WfmXyBmMjLFngvhGxP2XMTFvem3Oeu9VpckZUGKD0Y=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=kunbus.com;
+Received: from AM0P193MB0738.EURP193.PROD.OUTLOOK.COM (2603:10a6:20b:160::8)
+ by DBAP193MB0970.EURP193.PROD.OUTLOOK.COM (2603:10a6:10:1cf::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.23; Mon, 28 Oct
+ 2024 14:54:45 +0000
+Received: from AM0P193MB0738.EURP193.PROD.OUTLOOK.COM
+ ([fe80::2398:d74:da85:f90]) by AM0P193MB0738.EURP193.PROD.OUTLOOK.COM
+ ([fe80::2398:d74:da85:f90%3]) with mapi id 15.20.8093.024; Mon, 28 Oct 2024
+ 14:54:45 +0000
+Message-ID: <b8c28db1-11b2-498d-a2d8-0302c7081251@kunbus.com>
+Date: Mon, 28 Oct 2024 15:54:43 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] dt-bindings: rtc: pcf2127: Add
+ nxp,battery-switch-over property
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Conor Dooley <conor@kernel.org>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-rtc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Lino Sanfilippo <l.sanfilippo@kunbus.com>
+References: <20241022092855.1609427-1-p.rosenberger@kunbus.com>
+ <20241022092855.1609427-2-p.rosenberger@kunbus.com>
+ <20241022-radiator-blemish-3819dd4d94e0@spud>
+ <36f46d44-8852-4988-9ff9-5b8bf49e2aa8@kunbus.com>
+ <pj3tgtsdsjsqqznxgzzmxrcozibqie6ubtythou7t23tfgde5w@t6nwxob4rjah>
+Content-Language: en-US
+From: Philipp Rosenberger <p.rosenberger@kunbus.com>
+In-Reply-To: <pj3tgtsdsjsqqznxgzzmxrcozibqie6ubtythou7t23tfgde5w@t6nwxob4rjah>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: FR4P281CA0003.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:c8::14) To AM0P193MB0738.EURP193.PROD.OUTLOOK.COM
+ (2603:10a6:20b:160::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Friedrich Vock <friedrich.vock@gmx.de>
-Subject: Re: [PATCH 1/7] kernel/cgroup: Add "dev" memory accounting cgroup
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- intel-xe@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, Tejun Heo <tj@kernel.org>,
- Zefan Li <lizefan.x@bytedance.com>, Johannes Weiner <hannes@cmpxchg.org>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: cgroups@vger.kernel.org, linux-mm@kvack.org,
- Maxime Ripard <mripard@kernel.org>
-References: <20241023075302.27194-1-maarten.lankhorst@linux.intel.com>
- <20241023075302.27194-2-maarten.lankhorst@linux.intel.com>
-Content-Language: en-US
-Autocrypt: addr=friedrich.vock@gmx.de; keydata=
- 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
- f7+xmX0X3AMtWz/15Y+7cPO2
-In-Reply-To: <20241023075302.27194-2-maarten.lankhorst@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:pziIyt1R1k7EKHH++g4jENSEZPOXW7R1TbVzy/qL3Zt98EPFb/G
- UC1KNhpaWA6w8z+bwt12+Qk//PMsVk3DIkrgEIY9gaH0vDt1qEoCTPmSTTT1xwLXVYolhlx
- WB0gak4Qrl8MQX9HXG3C1I+irUhwr7JXtRKwWf3CfT4frSacG452+1/izgReGQkW9ml+0CG
- 9crfjeEX9Xj9dRI1NL4lw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:8dbEG3fUhP4=;fxXBKRd5JJFlZZ1+V+ksAOp+vkm
- bENoHSpcoHX3DKO2PGcL8WMXxuVBA9SNCzlWl6wDnW310Fj9G+Rt8oHZFhbFUQ2lLOvCavLyg
- l+FyMM+N7KAMVniya9kXLcX99bljQjpPzdUq17SuhyvNUff6qdc/U1zZKcL4q88WNFOjAomlU
- lJ5cC/hs9p2zwDnkPQuJlTFDI1CwbmIQRot7YkcZuxiCeEv4EKCQyOv/5+NDA3OcCFmvA9L+b
- B/1W8ZRbFCd+/va6Uo5OG0nBG11vn7ZV9IeSu501VEZ/G+/+qr/SAhLP0T8MSh/el5ejgJofq
- yiCZPkAey9jpD25tPNZMVgTuTREO2oxf7Oz3Av35zDvGD4cBlckXjL1to21kKe/+NmjJl7U0l
- ZuvWK9mDyxzYmxuul/AkRNMttQVRSXpq7d7aaCIZ0j5+d3hl4X4yorC2V6E9/VTd8LLvfODXN
- nPsgYB536LSliT7zIW4zR8i1Chhmpl3GgFXMq2pi5LXJngVuxdU/n/A+uQaR1podFqEiLeToe
- tpPuiqZ3V7ysGy9SVHfhfD8+W7ELrkY1FcbNn8MjV37YBDQXclNJbjtuBxnfUAdPFUzQTlchq
- KqWrQdfXlHKELzq431RtkM4i00Vn1LDhWJuSNRsgIY1t8DSVcB1t2Q3kIgyMNvFGGEZO8tCvQ
- Shu8UsyaRN7tModJJHwALmXMS6pTu5VAX+/3QTwZ9wsOQ/gVQOjPgXwLC1KeExVWR4UZnXb1w
- UI2KSA77xLCVAgCx78A5U2G499j8viQz4kyA+cB+94ntczKEdEW4A4dSief9vk+gtQykVLSfL
- 2g2yzKOqlWOq8+VGULRpP8/A==
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM0P193MB0738:EE_|DBAP193MB0970:EE_
+X-MS-Office365-Filtering-Correlation-Id: ce604c3a-e02d-4706-81fa-08dcf7607627
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?RVlwMjJlU1VPV1NBWmtZdGpPUWFZaUlSeExCSFczSEdsNUE0a1hKMVNtN0wv?=
+ =?utf-8?B?ZG9JNzZ4N2lTMlZMMFhCaU5GdkhqYjdENjBLME54TTdOc3ZCcUtKREFocXRH?=
+ =?utf-8?B?QUFYSUgrNGJEZy8wVXJ3NFNJdXQ2ckR3MW8rTC9QZzVrVXIxUWhIOXAwTmZO?=
+ =?utf-8?B?RGZHS09lY0owVVJTSGcrU05Tci9kN1RldWhWcGh4RzNBTlFDRm1uMm5ERERE?=
+ =?utf-8?B?WjBCaTBFYWF3T0dVMTRoUTgxUzlTejZNc0lxYXVRV1B2dVFXRG1YSENmU0ZS?=
+ =?utf-8?B?QmFxVDFSUkNzNTR6R0gxc2VxRG9BTE5QRWdXbk05WFZXUXdZa2hTdmFPanN5?=
+ =?utf-8?B?YkpxQTdvTnh2REZHblR3RlJobEpwTEgzMWowQzdoMnBuZmhMazg4TzNDMTNm?=
+ =?utf-8?B?YkRpWS96WUFjUm0rMnR4MlFPdlZOUFdycEdubExReWx5VUk5eUlUYUo2Z0NQ?=
+ =?utf-8?B?ODExa0tWL29aYUVCQitHZFNCa0dLLzFLbitkUm9IUTV2ZXI5aXpVbVBHeDgr?=
+ =?utf-8?B?UkxDemZEVEpYbk1tZEphVGhxUDByL1RoSEY3Ry85VnpQUEpxeEVsd2JobGdo?=
+ =?utf-8?B?dHQ0ajEwTmgzV21KTlA1RFJYQmZNUGtrbyt6c3Y3eTNaSjdMZFFEYXRJUVlm?=
+ =?utf-8?B?WWN2L3FRdjJqUHk3TXdRZFlsQ0d0TmdjZU0vbGNFdTNGTjcySWl4ckRVVTh4?=
+ =?utf-8?B?aEMxanA4WjU3ditNMzBTUVQ0YmFaUk8vcndrQURKV1dwU1hxV0x4RHJxZ21t?=
+ =?utf-8?B?RlEvUzU4SnpXenZFclprcll0em05YlhHZTF5Z2NKUTRGTk9RMjFQYS9LM253?=
+ =?utf-8?B?UFBBQUVMNk5WZGQyWGFUVHM3dUgybVdoRkdRSUlZNHU0bVhyYlBka3dDM0l0?=
+ =?utf-8?B?QVA0SFU0bUQxSDBTdHFUbDlZLzh0a1BGeUlybmd3VGhzM3ZIekJKVnp5N2ll?=
+ =?utf-8?B?SnZnR3VZWWJOblBNUm1QT00wTnlyWFVDbGZTZzE4Q0Rtd2dsVnFsa2hiY1pW?=
+ =?utf-8?B?aVVQcEtBNTlXY3RZcmQ2UnBacXg5VVRxdTBWVFN3ZE5rQ3k0VDBOMGxMeW9i?=
+ =?utf-8?B?Vk4vTy9IMXVrc1owbVZtc3dQbTNqU3pFc0FxOHNDNVY3Qms2ankrNTFnSmZX?=
+ =?utf-8?B?OGJyK3FRUG9ORFpSM2g1V2VHRHBwdHRrZkp3K0xaY1lZSW56SE1TRFJaVzlT?=
+ =?utf-8?B?VFk1T1d5bmx5MDJ1enpjVC9sU3RPVmZtVVJFNHQzUFY2VFFUSDdmeXFEZEZm?=
+ =?utf-8?B?Z0hGRVNRNkZWOGo0VVhSejVvQTlmUHIzbDVtakJpL255NjA3anZZVmhsSG9F?=
+ =?utf-8?B?VU9sK0p3dm90YXFBMFdlcWI0ZjEwdmR5UERLVXJxT0N3THRmdWlab21aU2NO?=
+ =?utf-8?B?aVkvU3NXYXQrLy84dzdINnRLS2RhdFFvRXdSdkg3b0ptYnNJTmo1UjQyc0lI?=
+ =?utf-8?B?M3c1T2NCc0JVNG1UUFNaTFNoZUtrdnpMbS9IM1g2UGdHOXN1eG1WUFNBQzdC?=
+ =?utf-8?B?UTZGYWFaL2UzR0JzdS9RYldLRGJTeVRnVk5VcS9XczFqTXVUTElpVHhlcVZQ?=
+ =?utf-8?B?TWI5eUp4TGY5K2NsUHE2ckxNaVQ0eHZOeW1xMkxBSE54RTNvTG95MEpJamRj?=
+ =?utf-8?B?OVBaZUJraDVrdStiZ0JRSVlZWnlmS1RseHRqVC82RDNQZnNmWU9GakJMQ3ZE?=
+ =?utf-8?B?R3BqaFRNR25mYXpJZ3AwZnhoZzZzeGhzdk1ycktYbGhsYXhTc0p0OWpjRGZN?=
+ =?utf-8?Q?RP41BPLdoNQ1R3qyaOSf7gyZN8DNbLTFD9xA/5w?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0P193MB0738.EURP193.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?ZU5vMXk2UlBrdlBncy9kMTJ4V2dvNUpmVjdTQzR6WUNHTDYyKy9xK1lnT1Vr?=
+ =?utf-8?B?NitRRGJ6bmZqVWVTVWhZTnNaNVlnQWVqY2VrL3dFYUlQSHdub1N5dkpzY3E5?=
+ =?utf-8?B?aFljTWFKZUxNRm9DVHpMS1ZpdS9BQ3JrMndGeEMvL3UybEN6aVllN2xURWFG?=
+ =?utf-8?B?Qy9jdVY5ZHhtNkY3dDJES3N1WHhqTllnTlpndVVPYlBmQ0Q2NjgwMWRuVDJm?=
+ =?utf-8?B?VkNNY1ZHOS9jNjFqKzNaWXJtT0NLRnBBb0pUMVk1SHVUbFRyOFhsVldNM1VC?=
+ =?utf-8?B?QTZhVzd3cFhpYlFOZmJKc2dWMFlVVm0zYjJHWUF5VS9vWlRva2NSVEhlSDU0?=
+ =?utf-8?B?VngxTVRJSTg5OWJKU2V3Yk5QMk9hRWdWV2h0c0tZbzBNb0VHZGE5eHBoRko4?=
+ =?utf-8?B?RGVNMFBwdmpCL2xveEExTVBrcE1KbER3T2FqMjNlLzVoWEF5aUVoN0NWNk01?=
+ =?utf-8?B?czR3V2s4MnhIemE3aUk2MFpZQTdpdHFVWlBDT1NvOTFUeitsVUpjOGkvbUlU?=
+ =?utf-8?B?dkR1MDlLY0laazlJMzNHRzZESFloNG1qaXpDbVp3Y2pDRUtEQ014dWM5QSs4?=
+ =?utf-8?B?TG41ejlxb3Y3Q3h4VG1qczVlOXZEV2RQZ3hlS2lOVlpra2dlcVdYUDlyTWUz?=
+ =?utf-8?B?a1ZxNHhva2JDZVUwZlBGMlNPM2hFUzEyTDRZZFQwK3FFRDV6c3hBdkV3cmFJ?=
+ =?utf-8?B?aHpWZ3RzSFExSHN4Lzl6WHNzZ3F3N1EwRGZjdUFHakNqWll6d2ZZUWw3Q21w?=
+ =?utf-8?B?L2ZZemw5cjc3UFBDeHRPMkN5NjVyYTBxRUdCVWkvYUtTZWZGRUxWaFhCSWFq?=
+ =?utf-8?B?WWx1Q2gwYWtFbldpM3haTnVhWUs2RVJHYk1lcXEzY1loODFWRmFtc2VIZHI0?=
+ =?utf-8?B?bXE5TndVMzZGSXM3bW8vUEwrcHVGL05aMGhTbW1sbjNqRjZldWpML3FtWHNK?=
+ =?utf-8?B?NzBxVU51T1QyTHZpNGthWHN5UTl2aTQrOHZGNWdCeExudURTaEJJVExURmdx?=
+ =?utf-8?B?TEtQeEF2ZWFWc1paNUFOUFprYXFCbHVzczdSMGJ2QXhOUnF5Tm1FUFBrYW9I?=
+ =?utf-8?B?KzZXQTloaDBCdTRieXhRY1VUazZmL3NzZnNtNlAyYk9MMzJqNWJZWVFCRng3?=
+ =?utf-8?B?MVNiV3NpZFI0cEUrR3dkSWxYU3JCSVgxamFsMjNDbG9EMHNEOXE0anNLdWtL?=
+ =?utf-8?B?c2tGcHZNcEUvVTBlMjVmeGlOcHk5NVRuejYzRlpIa0VlOEhYVDBsRnZ1VFZ6?=
+ =?utf-8?B?ZTI4dlkyWjVBQm9HUnpoZkgvenI2Z09ReHB1YjJaQWgzNEdYcFp0amNWSUZu?=
+ =?utf-8?B?QVF4WlBTNjdoRGxVU3MzR0luS25tczczNG5MRDVNVXlkV0tFMnIyelRuQXNW?=
+ =?utf-8?B?NHFWR1IwZUF4dE5jaGVKZWFmUDhORFd4RG9lRVhJTFdlaUpmVERCV2xtNkJw?=
+ =?utf-8?B?NEw3ZWltamlyR25Dd0hya3pDck80Q0FWaGdMNlM2b0lFZDAwVTRaM3hjaFVr?=
+ =?utf-8?B?S21hQk04dlFYN1grL0FNV3ZiQ0VPT2V6SlpSaVNLUkx6K09neVpJZmRSTFVa?=
+ =?utf-8?B?L2Y2dE1SNGlrckFlN1lHM1JoN1dZL3ZSNjd4eUlER3RRbTljV0NQVk9nT0hW?=
+ =?utf-8?B?U2VNZUxvUGg1NUh2RjFOOTIvWXZPdkZXWTU4OStxODBVWWRITUV3MlJkdDBX?=
+ =?utf-8?B?WDdpbStvRmZDYkMxeDFpcWQzOTd1QUI4a2ZueTVVaXdIdno0VVRqOVp0Z0ZZ?=
+ =?utf-8?B?b1YrODAzYnZvdlZhazQ4QkpidTdTUVMrU2tRNmtyNFJ5dUo1azVBMDI3LzA4?=
+ =?utf-8?B?dU84eGtIcllLWjRBUndXak90MHBHWUc5SVhEaDNKbWdBMGo3YzdjUkJPUnY5?=
+ =?utf-8?B?TEFDZkRiUURNbmpTdFVJVUNyek5Qa1M3Nzg3K2pHVTM1czJNUmIxN2ZTVkxk?=
+ =?utf-8?B?K0dQODJsUFdVMjhuelRRU2lISGM5U0tVRVVnRDZGSXhWbXZGMlVNeTlIbnNm?=
+ =?utf-8?B?ZS9nL3pkSDdwdXE2ZVZSMmdTOXpzM3krN3lvcmwvNTRKZC96Ny81V3Q5amdq?=
+ =?utf-8?B?c0NQZVpCVGFQUWZoZ1NJSXJwRHJpbkxmQWw4VnA5bkxtNWFueTNtbjVLS3NB?=
+ =?utf-8?B?ei9mZUJId2dPWEt5ZTQxOHF3d2hXUG05QjR1RHZLY2FTdWRLaWtLMjEvTkpI?=
+ =?utf-8?B?VXc9PQ==?=
+X-OriginatorOrg: kunbus.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ce604c3a-e02d-4706-81fa-08dcf7607627
+X-MS-Exchange-CrossTenant-AuthSource: AM0P193MB0738.EURP193.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2024 14:54:45.2242
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: aaa4d814-e659-4b0a-9698-1c671f11520b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: RnnCjoqQkGBB8leYiVhj6ghyvjErlFNv6pvwhCoMGbr68SW1lU7Tj+pSQYmfk3SZ0KbtRHU+RF3bnH0lrdHutn9FBxRuLsBKVsbjMJaFxCc=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBAP193MB0970
 
-On 23.10.24 09:52, Maarten Lankhorst wrote:
-> The initial version was based roughly on the rdma and misc cgroup
-> controllers, with a lot of the accounting code borrowed from rdma.
->
-> The current version is a complete rewrite with page counter; it uses
-> the same min/low/max semantics as the memory cgroup as a result.
->
-> There's a small mismatch as TTM uses u64, and page_counter long pages.
-> In practice it's not a problem. 32-bits systems don't really come with
->> =3D4GB cards and as long as we're consistently wrong with units, it's
-> fine. The device page size may not be in the same units as kernel page
-> size, and each region might also have a different page size (VRAM vs GAR=
-T
-> for example).
->
-> The interface is simple:
-> - populate dev_cgroup_try_charge->regions[..] name and size for each act=
-ive
->    region, set num_regions accordingly.
-> - Call (dev,drmm)_cgroup_register_device()
-> - Use dev_cgroup_try_charge to check if you can allocate a chunk of memo=
-ry,
->    use dev_cgroup__uncharge when freeing it. This may return an error co=
-de,
->    or -EAGAIN when the cgroup limit is reached. In that case a reference
->    to the limiting pool is returned.
-> - The limiting cs can be used as compare function for
->    dev_cgroup_state_evict_valuable.
-> - After having evicted enough, drop reference to limiting cs with
->    dev_cgroup_pool_state_put.
->
-> This API allows you to limit device resources with cgroups.
-> You can see the supported cards in /sys/fs/cgroup/dev.region.capacity
-> You need to echo +dev to cgroup.subtree_control, and then you can
-> partition memory.
->
-> Co-developed-by: Friedrich Vock <friedrich.vock@gmx.de>
-> Signed-off-by: Friedrich Vock <friedrich.vock@gmx.de>
-> Co-developed-by: Maxime Ripard <mripard@kernel.org>
-> Signed-off-by: Maxime Ripard <mripard@kernel.org>
-> Signed-off-by: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-> ---
->   Documentation/admin-guide/cgroup-v2.rst |  51 ++
->   Documentation/core-api/cgroup.rst       |   9 +
->   Documentation/core-api/index.rst        |   1 +
->   Documentation/gpu/drm-compute.rst       |  54 ++
->   include/linux/cgroup_dev.h              |  91 +++
->   include/linux/cgroup_subsys.h           |   4 +
->   include/linux/page_counter.h            |   2 +-
->   init/Kconfig                            |   7 +
->   kernel/cgroup/Makefile                  |   1 +
->   kernel/cgroup/dev.c                     | 893 ++++++++++++++++++++++++
->   mm/page_counter.c                       |   4 +-
->   11 files changed, 1114 insertions(+), 3 deletions(-)
->   create mode 100644 Documentation/core-api/cgroup.rst
->   create mode 100644 Documentation/gpu/drm-compute.rst
->   create mode 100644 include/linux/cgroup_dev.h
->   create mode 100644 kernel/cgroup/dev.c
->
-> diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/adm=
-in-guide/cgroup-v2.rst
-> index 69af2173555fb..e8fe79244af9c 100644
-> --- a/Documentation/admin-guide/cgroup-v2.rst
-> +++ b/Documentation/admin-guide/cgroup-v2.rst
-> @@ -2612,6 +2612,57 @@ RDMA Interface Files
->   	  mlx4_0 hca_handle=3D1 hca_object=3D20
->   	  ocrdma1 hca_handle=3D1 hca_object=3D23
->
-> +DEV
-> +----
-> +
-> +The "dev" controller regulates the distribution and accounting of
-> +device resources, currently only memory regions. Because each memory
-> +region may have its own page size, which does not have to be equal
-> +to the system page size. the units are in bytes.
-> +
-> +DEV Interface Files
-> +~~~~~~~~~~~~~~~~~~~~
-> +
-> +  dev.region.max, dev.region.min, dev.region.low
-> +	A readwrite nested-keyed file that exists for all the cgroups
-> +	except root that describes current configured resource limit
-> +	for a device.
-> +
-> +	Lines are keyed by device name and are not ordered.
-> +	Each line contains space separated resource name and its configured
-> +	limit that can be distributed.
-> +
-> +	The following nested keys are defined.
-> +
-> +	  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D	=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +	  *	 	Maximum amount of bytes that allocatable in this region
-> +	  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D	=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +	An example for xe follows::
-> +
-> +	  drm/0000:03:00.0 vram0=3D1073741824 stolen=3Dmax
-> +
-> +	The semantics are the same as for the memory cgroup controller, and ar=
-e
-> +	calculated in the same way.
-> +
-> +  dev.region.capacity
-> +	A read-only file that describes maximum region capacity.
-> +	It only exists on the root cgroup. Not all memory can be
-> +	allocated by cgroups, as the kernel reserves some for
-> +	internal use.
-> +
-> +	An example for xe follows::
-> +
-> +	  drm/0000:03:00.0 vram0=3D8514437120 stolen=3D67108864
-> +
-> +  dev.region.current
-> +	A read-only file that describes current resource usage.
-> +	It exists for all the cgroup except root.
-> +
-> +	An example for xe follows::
-> +
-> +	  drm/0000:03:00.0 vram0=3D12550144 stolen=3D8650752
-> +
->   HugeTLB
->   -------
->
-> diff --git a/Documentation/core-api/cgroup.rst b/Documentation/core-api/=
-cgroup.rst
-> new file mode 100644
-> index 0000000000000..475b32255bd68
-> --- /dev/null
-> +++ b/Documentation/core-api/cgroup.rst
-> @@ -0,0 +1,9 @@
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +Cgroup Kernel APIs
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +Device Cgroup API (devcg)
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D
-> +.. kernel-doc:: kernel/cgroup/dev.c
-> +   :export:
-> +
-> diff --git a/Documentation/core-api/index.rst b/Documentation/core-api/i=
-ndex.rst
-> index 6a875743dd4b7..dbd6c4f9a6313 100644
-> --- a/Documentation/core-api/index.rst
-> +++ b/Documentation/core-api/index.rst
-> @@ -108,6 +108,7 @@ more memory-management documentation in Documentatio=
-n/mm/index.rst.
->      dma-isa-lpc
->      swiotlb
->      mm-api
-> +   cgroup
->      genalloc
->      pin_user_pages
->      boot-time-mm
-> diff --git a/Documentation/gpu/drm-compute.rst b/Documentation/gpu/drm-c=
-ompute.rst
-> new file mode 100644
-> index 0000000000000..116270976ef7a
-> --- /dev/null
-> +++ b/Documentation/gpu/drm-compute.rst
-> @@ -0,0 +1,54 @@
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +Long running workloads and compute
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +Long running workloads (compute) are workloads that will not complete i=
-n 10
-> +seconds. (The time let the user wait before he reaches for the power bu=
-tton).
-> +This means that other techniques need to be used to manage those worklo=
-ads,
-> +that cannot use fences.
-> +
-> +Some hardware may schedule compute jobs, and have no way to pre-empt th=
-em, or
-> +have their memory swapped out from them. Or they simply want their work=
-load
-> +not to be preempted or swapped out at all.
-> +
-> +This means that it differs from what is described in driver-api/dma-buf=
-.rst.
-> +
-> +As with normal compute jobs, dma-fence may not be used at all. In this =
-case,
-> +not even to force preemption. The driver with is simply forced to unmap=
- a BO
-> +from the long compute job's address space on unbind immediately, not ev=
-en
-> +waiting for the workload to complete. Effectively this terminates the w=
-orkload
-> +when there is no hardware support to recover.
-> +
-> +Since this is undesirable, there need to be mitigations to prevent a wo=
-rkload
-> +from being terminated. There are several possible approach, all with th=
-eir
-> +advantages and drawbacks.
-> +
-> +The first approach you will likely try is to pin all buffers used by co=
-mpute.
-> +This guarantees that the job will run uninterrupted, but also allows a =
-very
-> +denial of service attack by pinning as much memory as possible, hogging=
- the
-> +all GPU memory, and possibly a huge chunk of CPU memory.
-> +
-> +A second approach that will work slightly better on its own is adding a=
-n option
-> +not to evict when creating a new job (any kind). If all of userspace op=
-ts in
-> +to this flag, it would prevent cooperating userspace from forced termin=
-ating
-> +older compute jobs to start a new one.
-> +
-> +If job preemption and recoverable pagefaults are not available, those a=
-re the
-> +only approaches possible. So even with those, you want a separate way o=
-f
-> +controlling resources. The standard kernel way of doing so is cgroups.
-> +
-> +This creates a third option, using cgroups to prevent eviction. Both GP=
-U and
-> +driver-allocated CPU memory would be accounted to the correct cgroup, a=
-nd
-> +eviction would be made cgroup aware. This allows the GPU to be partitio=
-ned
-> +into cgroups, that will allow jobs to run next to each other without
-> +interference.
-> +
-> +The interface to the cgroup would be similar to the current CPU memory
-> +interface, with similar semantics for min/low/high/max, if eviction can
-> +be made cgroup aware. For now only max is implemented.
-> +
-> +What should be noted is that each memory region (tiled memory for examp=
-le)
-> +should have its own accounting, using $card key0 =3D value0 key1 =3D va=
-lue1.
-> +
-> +The key is set to the regionid set by the driver, for example "tile0".
-> +For the value of $card, we use drmGetUnique().
-> diff --git a/include/linux/cgroup_dev.h b/include/linux/cgroup_dev.h
-> new file mode 100644
-> index 0000000000000..c6311d1d3ce48
-> --- /dev/null
-> +++ b/include/linux/cgroup_dev.h
-> @@ -0,0 +1,91 @@
-> +/* SPDX-License-Identifier: MIT */
-> +/*
-> + * Copyright =C2=A9 2023 Intel Corporation
-> + */
-> +
-> +#ifndef _CGROUP_DEV_H
-> +#define _CGROUP_DEV_H
-> +
-> +#include <linux/types.h>
-> +#include <linux/llist.h>
-> +
-> +struct dev_cgroup_pool_state;
-> +
-> +/*
-> + * Use 8 as max, because of N^2 lookup when setting things, can be bump=
-ed if needed
-> + * Identical to TTM_NUM_MEM_TYPES to allow simplifying that code.
-> + */
-> +#define DEVICE_CGROUP_MAX_REGIONS 8
-> +
-> +/* Public definition of cgroup device, should not be modified after _re=
-gister() */
-> +struct dev_cgroup_device {
-> +	struct {
-> +		u64 size;
-> +		const char *name;
-> +	} regions[DEVICE_CGROUP_MAX_REGIONS];
-> +
-> +	int num_regions;
-> +
-> +	/* used by cgroups, do not use */
-> +	void *priv;
-> +};
-> +
-> +#if IS_ENABLED(CONFIG_CGROUP_DEV)
-> +int dev_cgroup_register_device(struct dev_cgroup_device *cgdev,
-> +			       const char *name);
-> +void dev_cgroup_unregister_device(struct dev_cgroup_device *cgdev);
-> +int dev_cgroup_try_charge(struct dev_cgroup_device *cgdev,
-> +			  u32 index, u64 size,
-> +			  struct dev_cgroup_pool_state **ret_pool,
-> +			  struct dev_cgroup_pool_state **ret_limit_pool);
-> +void dev_cgroup_uncharge(struct dev_cgroup_pool_state *pool,
-> +			 u32 index, u64 size);
-> +bool dev_cgroup_state_evict_valuable(struct dev_cgroup_device *dev, int=
- index,
-> +				     struct dev_cgroup_pool_state *limit_pool,
-> +				     struct dev_cgroup_pool_state *test_pool,
-> +				     bool ignore_low, bool *ret_hit_low);
-> +
-> +void dev_cgroup_pool_state_put(struct dev_cgroup_pool_state *pool);
-> +#else
-> +static inline int
-> +dev_cgroup_register_device(struct dev_cgroup_device *cgdev,
-> +			   const char *name)
-> +{
-> +	return 0;
-> +}
-> +
-> +static inline void dev_cgroup_unregister_device(struct dev_cgroup_devic=
-e *cgdev)
-> +{
-> +}
-> +
-> +static int int dev_cgroup_try_charge(struct dev_cgroup_device *cgdev,
-> +				     u32 index, u64 size,
-> +				     struct dev_cgroup_pool_state **ret_pool,
-> +				     struct dev_cgroup_pool_state **ret_limit_pool);
-> +{
-> +	*ret_pool =3D NULL;
-> +
-> +	if (ret_limit_pool)
-> +		*ret_limit_pool =3D NULL;
-> +
-> +	return 0;
-> +}
-> +
-> +static inline void dev_cgroup_uncharge(struct dev_cgroup_pool_state *po=
-ol,
-> +				       u32 index, u64 size)
-> +{ }
-> +
-> +static inline
-> +bool dev_cgroup_state_evict_valuable(struct dev_cgroup_device *dev, int=
- index,
-> +				     struct dev_cgroup_pool_state *limit_pool,
-> +				     struct dev_cgroup_pool_state *test_pool,
-> +				     bool ignore_low, bool *ret_hit_low)
-> +{
-> +	return true;
-> +}
-> +
-> +static inline void dev_cgroup_pool_state_put(struct dev_cgroup_pool_sta=
-te *pool)
-> +{ }
-> +
-> +#endif
-> +#endif	/* _CGROUP_DEV_H */
-> diff --git a/include/linux/cgroup_subsys.h b/include/linux/cgroup_subsys=
-.h
-> index 4452354872307..898340cfe5843 100644
-> --- a/include/linux/cgroup_subsys.h
-> +++ b/include/linux/cgroup_subsys.h
-> @@ -65,6 +65,10 @@ SUBSYS(rdma)
->   SUBSYS(misc)
->   #endif
->
-> +#if IS_ENABLED(CONFIG_CGROUP_DEV)
-> +SUBSYS(dev)
-> +#endif
-> +
->   /*
->    * The following subsystems are not supported on the default hierarchy=
-.
->    */
-> diff --git a/include/linux/page_counter.h b/include/linux/page_counter.h
-> index 79dbd8bc35a72..d75376a1694ee 100644
-> --- a/include/linux/page_counter.h
-> +++ b/include/linux/page_counter.h
-> @@ -96,7 +96,7 @@ static inline void page_counter_reset_watermark(struct=
- page_counter *counter)
->   	counter->watermark =3D usage;
->   }
->
-> -#ifdef CONFIG_MEMCG
-> +#if IS_ENABLED(CONFIG_MEMCG) || IS_ENABLED(CONFIG_CGROUP_DEVICE)
->   void page_counter_calculate_protection(struct page_counter *root,
->   				       struct page_counter *counter,
->   				       bool recursive_protection);
-> diff --git a/init/Kconfig b/init/Kconfig
-> index 530a382ee0feb..2da595facd97f 100644
-> --- a/init/Kconfig
-> +++ b/init/Kconfig
-> @@ -1123,6 +1123,13 @@ config CGROUP_RDMA
->   	  Attaching processes with active RDMA resources to the cgroup
->   	  hierarchy is allowed even if can cross the hierarchy's limit.
->
-> +config CGROUP_DEV
-> +	bool "Device controller"
-> +	help
-> +	  Provides the device subsystem controller.
-> +
-> +	  ...
-> +
->   config CGROUP_FREEZER
->   	bool "Freezer controller"
->   	help
-> diff --git a/kernel/cgroup/Makefile b/kernel/cgroup/Makefile
-> index a5c9359d516f8..441d346fdc51f 100644
-> --- a/kernel/cgroup/Makefile
-> +++ b/kernel/cgroup/Makefile
-> @@ -7,4 +7,5 @@ obj-$(CONFIG_CGROUP_RDMA) +=3D rdma.o
->   obj-$(CONFIG_CPUSETS) +=3D cpuset.o
->   obj-$(CONFIG_CPUSETS_V1) +=3D cpuset-v1.o
->   obj-$(CONFIG_CGROUP_MISC) +=3D misc.o
-> +obj-$(CONFIG_CGROUP_DEV) +=3D dev.o
->   obj-$(CONFIG_CGROUP_DEBUG) +=3D debug.o
-> diff --git a/kernel/cgroup/dev.c b/kernel/cgroup/dev.c
-> new file mode 100644
-> index 0000000000000..e422ccbfbc444
-> --- /dev/null
-> +++ b/kernel/cgroup/dev.c
-> @@ -0,0 +1,893 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright 2023-2024 Intel Corporation (Maarten Lankhorst <dev@lankho=
-rst.se>)
-> + * Copyright 2024 Red Hat (Maxime Ripard <mripard@kernel.org>)
-> + * Partially based on the rdma and misc controllers, which bear the fol=
-lowing copyrights:
-> + *
-> + * Copyright 2020 Google LLC
-> + * Copyright (C) 2016 Parav Pandit <pandit.parav@gmail.com>
-> + */
-> +
-> +#include <linux/cgroup.h>
-> +#include <linux/cgroup_dev.h>
-> +#include <linux/list.h>
-> +#include <linux/mutex.h>
-> +#include <linux/page_counter.h>
-> +#include <linux/parser.h>
-> +#include <linux/slab.h>
-> +
-> +struct devcg_device {
-> +	/**
-> +	 * @ref: References keeping the device alive.
-> +	 * Keeps the device reference alive after a succesful RCU lookup.
-> +	 */
-> +	struct kref ref;
-> +
-> +	/** @rcu: RCU head for freeing */
-> +	struct rcu_head rcu;
-> +
-> +	/**
-> +	 * @dev_node: Linked into &devcg_devices list.
-> +	 * Protected by RCU and global spinlock.
-> +	 */
-> +	struct list_head dev_node;
-> +
-> +	/**
-> +	 * @pools: List of pools linked to this device.
-> +	 * Protected by global spinlock only
-> +	 */
-> +	struct list_head pools;
-> +
-> +	/**
-> +	 * @base: Copy of the struct passed on register.
-> +	 * A copy is made to prevent lifetime issues. devcg_device may
-> +	 * be kept alive when changing cgroups values concurrently through
-> +	 * rcu lookups.
-> +	 */
-> +	struct dev_cgroup_device base;
-> +
-> +	/** @name: Name describing the node, set by dev_cgroup_register_device=
- */
-> +	const char *name;
-> +
-> +	/**
-> +	 * @unregistered: Whether the device is unregistered by its caller.
-> +	 * No new pools should be added to the device afterwards.
-> +	 */
-> +	bool unregistered;
-> +};
-> +
-> +struct devcg_state {
-> +	struct cgroup_subsys_state css;
-> +
-> +	struct list_head pools;
-> +};
-> +
-> +struct dev_cgroup_pool_state {
-> +	struct devcg_device *device;
-> +	struct devcg_state *cs;
-> +
-> +	/* css node, RCU protected against device teardown */
-> +	struct list_head	css_node;
-> +
-> +	/* dev node, no RCU protection required */
-> +	struct list_head	dev_node;
-> +
-> +	int num_res, inited;
-> +	struct rcu_head rcu;
-> +
-> +	struct devcg_pool_res {
-> +		struct page_counter cnt;
-> +	} resources[];
-> +};
-> +
-> +/*
-> + * 3 operations require locking protection:
-> + * - Registering and unregistering device to/from list, requires global=
- lock.
-> + * - Adding a dev_cgroup_pool_state to a CSS, removing when CSS is free=
-d.
-> + * - Adding a dev_cgroup_pool_state to a device list.
-> + *
-> + * Since for the most common operations RCU provides enough protection,=
- I
-> + * do not think more granular locking makes sense. Most protection is o=
-ffered
-> + * by RCU and the lockless operating page_counter.
-> + */
-> +static DEFINE_SPINLOCK(devcg_lock);
-> +static LIST_HEAD(devcg_devices);
-> +
-> +static inline struct devcg_state *
-> +css_to_devcs(struct cgroup_subsys_state *css)
-> +{
-> +	return container_of(css, struct devcg_state, css);
-> +}
-> +
-> +static inline struct devcg_state *get_current_devcs(void)
-> +{
-> +	return css_to_devcs(task_get_css(current, dev_cgrp_id));
-> +}
-> +
-> +static struct devcg_state *parent_devcs(struct devcg_state *cg)
-> +{
-> +	return cg->css.parent ? css_to_devcs(cg->css.parent) : NULL;
-> +}
-> +
-> +static void free_cg_pool(struct dev_cgroup_pool_state *pool)
-> +{
-> +	list_del(&pool->dev_node);
-> +	kfree(pool);
-> +}
-> +
-> +static void
-> +set_resource_min(struct dev_cgroup_pool_state *pool, int i, u64 val)
-> +{
-> +	page_counter_set_min(&pool->resources[i].cnt, val);
-> +}
-> +
-> +static void
-> +set_resource_low(struct dev_cgroup_pool_state *pool, int i, u64 val)
-> +{
-> +	page_counter_set_low(&pool->resources[i].cnt, val);
-> +}
-> +
-> +static void
-> +set_resource_max(struct dev_cgroup_pool_state *pool, int i, u64 val)
-> +{
-> +	page_counter_set_max(&pool->resources[i].cnt, val);
-> +}
-> +
-> +static u64 get_resource_low(struct dev_cgroup_pool_state *pool, int idx=
-)
-> +{
-> +	return pool ? READ_ONCE(pool->resources[idx].cnt.low) : 0;
-> +}
-> +
-> +static u64 get_resource_min(struct dev_cgroup_pool_state *pool, int idx=
-)
-> +{
-> +	return pool ? READ_ONCE(pool->resources[idx].cnt.min) : 0;
-> +}
-> +
-> +static u64 get_resource_max(struct dev_cgroup_pool_state *pool, int idx=
-)
-> +{
-> +	return pool ? READ_ONCE(pool->resources[idx].cnt.max) : PAGE_COUNTER_M=
-AX;
-> +}
-> +
-> +static u64 get_resource_current(struct dev_cgroup_pool_state *pool, int=
- idx)
-> +{
-> +	return pool ? page_counter_read(&pool->resources[idx].cnt) : 0;
-> +}
-> +
-> +static void reset_all_resource_limits(struct dev_cgroup_pool_state *rpo=
-ol)
-> +{
-> +	int i;
-> +
-> +	for (i =3D 0; i < rpool->num_res; i++) {
-> +		set_resource_min(rpool, i, 0);
-> +		set_resource_low(rpool, i, 0);
-> +		set_resource_max(rpool, i, PAGE_COUNTER_MAX);
-> +	}
-> +}
-> +
-> +static void devcs_offline(struct cgroup_subsys_state *css)
-> +{
-> +	struct devcg_state *devcs =3D css_to_devcs(css);
-> +	struct dev_cgroup_pool_state *pool;
-> +
-> +	rcu_read_lock();
-> +	list_for_each_entry_rcu(pool, &devcs->pools, css_node)
-> +		reset_all_resource_limits(pool);
-> +	rcu_read_unlock();
-> +}
-> +
-> +static void devcs_free(struct cgroup_subsys_state *css)
-> +{
-> +	struct devcg_state *devcs =3D css_to_devcs(css);
-> +	struct dev_cgroup_pool_state *pool, *next;
-> +
-> +	spin_lock(&devcg_lock);
-> +	list_for_each_entry_safe(pool, next, &devcs->pools, css_node) {
-> +		/*
-> +		 *The pool is dead and all references are 0,
-> +		 * no need for RCU protection with list_del_rcu or freeing.
-> +		 */
-> +		list_del(&pool->css_node);
-> +		free_cg_pool(pool);
-> +	}
-> +	spin_unlock(&devcg_lock);
-> +
-> +	kfree(devcs);
-> +}
-> +
-> +static struct cgroup_subsys_state *
-> +devcs_alloc(struct cgroup_subsys_state *parent_css)
-> +{
-> +	struct devcg_state *devcs =3D kzalloc(sizeof(*devcs), GFP_KERNEL);
-> +	if (!devcs)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	INIT_LIST_HEAD(&devcs->pools);
-> +	return &devcs->css;
-> +}
-> +
-> +static struct dev_cgroup_pool_state *
-> +find_cg_pool_locked(struct devcg_state *devcs, struct devcg_device *dev=
-)
-> +{
-> +	struct dev_cgroup_pool_state *pool;
-> +
-> +	list_for_each_entry_rcu(pool, &devcs->pools, css_node, spin_is_locked(=
-&devcg_lock))
-> +		if (pool->device =3D=3D dev)
-> +			return pool;
-> +
-> +	return NULL;
-> +}
-> +
-> +static struct dev_cgroup_pool_state *pool_parent(struct dev_cgroup_pool=
-_state *pool)
-> +{
-> +	if (!pool->resources[0].cnt.parent)
-> +		return NULL;
-> +
-> +	return container_of(pool->resources[0].cnt.parent, typeof(*pool), reso=
-urces[0].cnt);
-> +}
-> +
-> +/**
-> + * dev_cgroup_state_evict_valuable() - Check if we should evict from te=
-st_pool
-> + * @dev: &dev_cgroup_device
-> + * @index: The index number of the region being tested.
-> + * @limit_pool: The pool for which we hit limits
-> + * @test_pool: The pool for which to test
-> + * @ignore_low: Whether we have to respect low watermarks.
-> + * @ret_hit_low: Pointer to whether it makes sense to consider low wate=
-rmark.
-> + *
-> + * This function returns true if we can evict from @test_pool, false if=
- not.
-> + * When returning false and @ignore_low is false, @ret_hit_low may
-> + * be set to true to indicate this function can be retried with @ignore=
-_low
-> + * set to true.
-> + *
-> + * Return: bool
-> + */
-> +bool dev_cgroup_state_evict_valuable(struct dev_cgroup_device *dev, int=
- index,
-> +				     struct dev_cgroup_pool_state *limit_pool,
-> +				     struct dev_cgroup_pool_state *test_pool,
-> +				     bool ignore_low, bool *ret_hit_low)
-> +{
-> +	struct dev_cgroup_pool_state *pool =3D test_pool;
-> +	struct page_counter *climit, *ctest;
-> +	u64 used, min, low;
-> +
-> +	/* Can always evict from current pool, despite limits */
-> +	if (limit_pool =3D=3D test_pool)
-> +		return true;
-> +
-> +	if (limit_pool) {
-> +		if (!parent_devcs(limit_pool->cs))
-> +			return true;
-> +
-> +		for (pool =3D test_pool; pool && limit_pool !=3D pool; pool =3D pool_=
-parent(pool))
-> +			{}
-> +
-> +		if (!pool)
-> +			return false;
-> +	} else {
-> +		/*
-> +		 * If there is no cgroup limiting memory usage, use the root
-> +		 * cgroup instead for limit calculations.
-> +		 */
-> +		for (limit_pool =3D test_pool; pool_parent(limit_pool); limit_pool =
-=3D pool_parent(limit_pool))
-> +			{}
-> +	}
-> +
-> +	climit =3D &limit_pool->resources[index].cnt;
-> +	ctest =3D &test_pool->resources[index].cnt;
-> +
-> +	page_counter_calculate_protection(climit, ctest, true);
+On 24.10.24 09:25, Krzysztof Kozlowski wrote:
+> On Thu, Oct 24, 2024 at 09:11:04AM +0200, Philipp Rosenberger wrote:
+>> On 22.10.24 18:35, Conor Dooley wrote:
+>>> On Tue, Oct 22, 2024 at 11:28:54AM +0200, Philipp Rosenberger wrote:
+>>>> The nxp,battery-switch-over property is used to control the switch-over,
+>>>> battery low detection and extra power fail detection functions.
+>>>>
+>>>> The PCF2131 has a different default value for the PWRMNG bits. It is set
+>>>> to 0x7: battery switch-over function is disabled, only one power supply
+>>>> (VDD); battery low detection function is disabled.
+>>>> This is the opposite of the default of the PCF2127/PCA2129 and PCF2129.
+>>>> With the nxp,battery-switch-over the behavior can be controlled through
+>>>> the device tree.
+>>>>
+>>>> Signed-off-by: Philipp Rosenberger <p.rosenberger@kunbus.com>
+>>>> ---
+>>>>    Documentation/devicetree/bindings/rtc/nxp,pcf2127.yaml | 10 ++++++++++
+>>>>    1 file changed, 10 insertions(+)
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/rtc/nxp,pcf2127.yaml b/Documentation/devicetree/bindings/rtc/nxp,pcf2127.yaml
+>>>> index 2d9fe5a75b06..5739c3e371e7 100644
+>>>> --- a/Documentation/devicetree/bindings/rtc/nxp,pcf2127.yaml
+>>>> +++ b/Documentation/devicetree/bindings/rtc/nxp,pcf2127.yaml
+>>>> @@ -30,6 +30,16 @@ properties:
+>>>>      reset-source: true
+>>>> +  nxp,battery-switch-over:
+>>>> +    description:
+>>>> +      Battery and power related configuration. This property is used to set the
+>>>> +      PWRMNG bits of the Control_3 register to control the battery switch-over,
+>>>> +      battery low detection and extra power fail detection functions.
+>>>> +      The actual supported functions depend on the device capabilities.
+>>>> +    $ref: /schemas/types.yaml#/definitions/uint8
+>>>> +    minimum: 0
+>>>> +    maximum: 7
+>>>
+>>> Beyond the fact that I dislike register-content properties like this, where
+>>> it is not possible to grok the meaning by reading the property, what
+>>
+>> Yes, I'm not satisfied with this solution myself.
+>> There are three different functions, which can be configured in the
+>> register:
+>> - battery switch-over mode: standard; direct; disabled
+>> - battery low detection: enabled; disabled
+>> - extra power fail detection: enabled; disabled
+>>
+>> I'm not sure what a proper way is to implement this in the devicetree.
+>>
+>>> even makes this suitable for DT in the first place? Reading the commit
+>>> message this sounds like software policy, and that different users of
+>>> the same board might want to configure these register bits in different
+>>> ways.
+>>
+>> It is less a software policy, but a configuration how the hardware is
+>> implemented. If the device has no battery, it is possible to disable the
+>> battery switch-over function. In this case the V_BAT must be connected to
+>> ground.
+> 
+> monitored-battery property already tells you this.
 
-I realized we can't do this. As the documentation for
-page_counter_calculate_protection states:
+If I understand this correctly, the monitored-battery property is meant 
+for rechargeable batteries, not for a simple button cell to back up an RTC.
 
-> WARNING: This function is not stateless! It can only be used as part
->          of a top-down tree iteration, not for isolated queries.
+> 
+>> If a battery is connected, the battery switchover will only work if the
+>> battery switch-over function is in standard mode or direct switching mode.
+>> Until now the driver has just ignored the PWRMNG bits. As the default was
+>> battery switching in standard mode. Thus all use cases worked good enough.
+>> Battery switching was working if a battery was connected. If no battery was
+>> connected it did no real harm (the rtc may have used a tiny bit more power
+>> then needed, I guess).
+> 
+> Why driver cannot use standard mode always? Or other way?
 
-I authored a fix with [1], though I'm not super happy with having to
-iterate through the entire (sub-)hierarchy like this every time we
-consider eviction. If anyone has a better idea, feel free to propose it.
+This would overwrite any configuration set by a bootloader/firmware. For 
+the older chips (pre PCF2131) this was no problem. As the reset default, 
+was "battery switch-over in standard mode". The driver just left the 
+whole battery switch-over configuration untouched.
+If we decide to change the battery switch-over configuration 
+unconditionally, this could overwrite any third-party configuration.
 
-This branch also contains another idea [2][3] I've been playing around
-with. Essentially, what I'm trying to solve is TTM preferring to use
-system memory over evicting VRAM, even if the new VRAM allocation would
-be protected from eviction by low/min memory protection. In my testing,
-it leads to a better experience to try evicting unprotected allocations
-immediately in that case. I'm fine with this being follow-up work, but
-given that the patchset is still in a rather early stage I thought I'd
-pitch this now.
+>> With the new PCF2131 the default has changed to battery switch-over
+>> disabled. Now even with a battery attached, the rtc will lose time after a
+>> power cycle.
+>> I guess I should describe this better in the commit message.
+> 
+> In any case this is pcf2131 related, right? So compatible implies it.
 
-Thanks,
-Friedrich
+The reason, why this property is necessary for our devices is the new 
+PCF2131. But the function is not limited to this device.
 
-[1] https://gitlab.freedesktop.org/pixelcluster/linux/-/commit/1adc35adc2a=
-7d05260275d69f139450c8af5dc3b
-[2] https://gitlab.freedesktop.org/pixelcluster/linux/-/commit/3d2cdd25d62=
-c539d80055d615bd0912e5907f639
-[3] https://gitlab.freedesktop.org/pixelcluster/linux/-/commit/54446cc696f=
-b8b2cab27b3dcc992a6738f5392ad
+I’m considering simplifying this to just a property that informs the 
+driver that a backup battery is available. If the property is available, 
+the driver will enable the battery switch-over function; otherwise, it 
+will not touch the configuration.
+
+Best regards,
+Philipp
 
