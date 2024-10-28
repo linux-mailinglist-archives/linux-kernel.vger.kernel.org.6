@@ -1,158 +1,125 @@
-Return-Path: <linux-kernel+bounces-384710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCC0E9B2D8A
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 11:55:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F29F19B2D4C
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 11:50:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81159280DA7
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 10:55:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9D9D1F222E5
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 10:50:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EC2E1DD867;
-	Mon, 28 Oct 2024 10:51:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16A721D47BC;
+	Mon, 28 Oct 2024 10:50:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k9dRTPsH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VGtDN4rC"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BC191DD552;
-	Mon, 28 Oct 2024 10:51:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 642111CF2A3;
+	Mon, 28 Oct 2024 10:50:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730112695; cv=none; b=pS+jxH2vVQ9NVLVPUyaKx128lkNoEPSp5E/ZhbZO0xa17Gjh/BRp+/RZFnOKRYpii5qpoghPx2a+UQJJZNf/4HkULjgl1/LluDgJ2E3QGP8X99J0JZQQIhLatFmnLfgEhYKVXJCLXvsNuk/5VB6UJ0NQkdHhWpwJRoQnH2YEzRA=
+	t=1730112600; cv=none; b=BMJ44OHbzBy4BmUkYQMn/Uk/Yi7vuXjQ5ere5IFmCZMrjxufiFNHqabZmYb2o4qMGtPROSSzPCSjMFQ4r6XmmnwyKQepN0JFqBmrP7t0Ggp3H4GoDOSDq8tK+foM7mrlg3e8aEPr4Ijo5BFBIrsAtJpGTf2PjZINnS0IHV37ewU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730112695; c=relaxed/simple;
-	bh=8lJ+P9KSX9o1hRSB/48Wv+ZCfu9eEPeLGW7CKNQfTaE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZRBzwIQ0D53nI+/CqemSP2TBSlwHJDHobuOdtx6Qk8zfM99yHVNJ5u1XkbgMICD1qga+TK70YFf9VnxUvNr10BjYcIEnCHlXn7TFqmLU28Ue9TvhDmtoPihm1pYZa2mzEXLpV7uAjJBZZysOntEaTCJbs+YF4dx/BQlil8d3WAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k9dRTPsH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C610C4CEC3;
-	Mon, 28 Oct 2024 10:51:33 +0000 (UTC)
+	s=arc-20240116; t=1730112600; c=relaxed/simple;
+	bh=5gcR1znD1cGAtY6UrFbxboTgffk6OVdycQmErW5b3Qg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=N3KOWTatGrUSa18MG502us5umDmcQrteZ76yvL8uTBcfUP3lhNno/NFh/wdt1S1OTai0DyHixIc0X/hZaFY1OphklS2XwnAWU1ZZkrkENfSKFzOAo9slCm6LRtol6DxhONRy3QfBj27O33A0XnF48ekBY1yyzOTTgDTFI++vDKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VGtDN4rC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D388C4CEC3;
+	Mon, 28 Oct 2024 10:49:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730112695;
-	bh=8lJ+P9KSX9o1hRSB/48Wv+ZCfu9eEPeLGW7CKNQfTaE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=k9dRTPsHbHjDKc7sX6frEfd+JHeGlheTBcdTei7r4kjn3l341NVtUC3ulD0+GBDJl
-	 Sa1Mx1/cj2ly7151B3DV8y34KtITepHVVNSnLH0/k+ulvuDUb3zuBk+XgvxVU/GyxD
-	 C91H0zEFGIudr4oDcetCx5x9/+ThWOjfrX9ni6FmpOlGDUIg4Z5TNQQai8+cFAzrdE
-	 lwRti3NLWjdCwSJ9gLMjJ3L0+jdoYA5we4WW04CDWY5CLvz8By2xdWRwrxmszMuIjA
-	 dkz/MSswHckc3ixXmGywvFWvi8E6vrPfoq5zodv1kdPNX4iAE7KMv2sHXy9DeW/xNx
-	 VWKRrMXOuAhSQ==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: =?UTF-8?q?Bart=C5=82omiej=20Mary=C5=84czak?= <marynczakbartlomiej@gmail.com>,
-	Jiri Kosina <jkosina@suse.com>,
-	Sasha Levin <sashal@kernel.org>,
-	jikos@kernel.org,
-	bentiss@kernel.org,
-	hdegoede@redhat.com,
-	dianders@chromium.org,
-	kl@kl.wtf,
-	dmitry.torokhov@gmail.com,
-	viro@zeniv.linux.org.uk,
-	namcao@linutronix.de,
-	linux-input@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.11 15/32] HID: i2c-hid: Delayed i2c resume wakeup for 0x0d42 Goodix touchpad
-Date: Mon, 28 Oct 2024 06:49:57 -0400
-Message-ID: <20241028105050.3559169-15-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241028105050.3559169-1-sashal@kernel.org>
-References: <20241028105050.3559169-1-sashal@kernel.org>
+	s=k20201202; t=1730112599;
+	bh=5gcR1znD1cGAtY6UrFbxboTgffk6OVdycQmErW5b3Qg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VGtDN4rCB75s5s0aUagy+xt8qdgqkWDO7bcJSQo6NCniEXIl6De1+xQqmvmZKTMNu
+	 5pVmauCmMVuEgflzUrOepb/hIPUuq75qgoMLTlveFBuqPH96Btsbw0hhIqRvQW0cWi
+	 nkB+O7GV66nyRa7n0kUzql9jEPjVoB/Mk+JL/ToAybXnCb+Tm8TWc4Wmts02N7rcjw
+	 L3ns2Nn+j8o6kto65VgI862il+H/dP24X51QrlRMsGk3LHOLJcWcM7J3VT3M7a+9Ik
+	 bpBkonJL4OdxoMJMg03+WCJfi+QG5W3itXVJomovKxkqYjb+4CV8qhyJXWTjEJl7cX
+	 7AoRu5HYBGSmw==
+Date: Mon, 28 Oct 2024 11:49:57 +0100
+From: Maxime Ripard <mripard@kernel.org>
+To: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Cc: linux-kernel@vger.kernel.org, linux-amarula@amarulasolutions.com, 
+	Andrey Smirnov <andrew.smirnov@gmail.com>, Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Conor Dooley <conor+dt@kernel.org>, David Airlie <airlied@gmail.com>, 
+	Fabio Estevam <festevam@gmail.com>, Inki Dae <inki.dae@samsung.com>, 
+	Jagan Teki <jagan@amarulasolutions.com>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Jessica Zhang <quic_jesszhan@quicinc.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Lucas Stach <l.stach@pengutronix.de>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Marek Szyprowski <m.szyprowski@samsung.com>, 
+	Marek Vasut <marex@denx.de>, Michael Trimarchi <michael@amarulasolutions.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Peng Fan <peng.fan@nxp.com>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Rob Herring <robh@kernel.org>, Robert Foss <rfoss@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, 
+	Shengjiu Wang <shengjiu.wang@nxp.com>, Simona Vetter <simona@ffwll.ch>, Stefan Agner <stefan@agner.ch>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Ulf Hansson <ulf.hansson@linaro.org>, 
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org
+Subject: Re: [RFC PATCH 00/10] Support simple-framebuffer on imx8m
+Message-ID: <20241028-scrupulous-paper-condor-0742fb@houat>
+References: <20241028102559.1451383-1-dario.binacchi@amarulasolutions.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.11.5
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="mpcp65bzqsipkaam"
+Content-Disposition: inline
+In-Reply-To: <20241028102559.1451383-1-dario.binacchi@amarulasolutions.com>
 
-From: Bartłomiej Maryńczak <marynczakbartlomiej@gmail.com>
 
-[ Upstream commit 293c485cbac2607595fdaae2b1fb390fc7b2d014 ]
+--mpcp65bzqsipkaam
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Subject: Re: [RFC PATCH 00/10] Support simple-framebuffer on imx8m
+MIME-Version: 1.0
 
-Patch for Goodix 27c6:0d42 touchpads found in Inspiron 5515 laptops.
+Hi,
 
-After resume from suspend, one can communicate with this device just fine.
-We can read data from it or request a reset,
-but for some reason the interrupt line will not go up
-when new events are available.
-(it can correctly respond to a reset with an interrupt tho)
+On Mon, Oct 28, 2024 at 11:25:23AM +0100, Dario Binacchi wrote:
+> This series is the Linux counterpart of what was sent to U-Boot [1]
+> for the support of the simple-framebuffer for the BSH SMM S2Pro board.
 
-The only way I found to wake this device up
-is to send anything to it after ~1.5s mark,
-for example a simple read request, or power mode change.
+I'm confused. simple-framebuffer is a mechanism for which the entire
+point is that the kernel doesn't need the driver for.
 
-In this patch, I simply delay the resume steps with msleep,
-this will cause the set_power request to happen after
-the ~1.5s barrier causing the device to resume its event interrupts.
+Why do you need to have patches for bridges and panels for
+simple-framebuffer? They won't be used.
 
-Sleep was used rather than delayed_work
-to make this workaround as non-invasive as possible.
+> The need to avoid re-initializing the hardware (power domains,
+> controllers, bridges, display panels) that has already been initialized
+> and kept powered on by the bootloader has required updating more than
+> one YAML file, with the addition of boolean properties to inform the
+> driver that the corresponding hardware has been initialized and left
+> on by the bootloader. All these properties are added on the fly by the
+> bootloader to the various relevant nodes.
 
-[jkosina@suse.com: shortlog update]
-Signed-off-by: Bartłomiej Maryńczak <marynczakbartlomiej@gmail.com>
-Signed-off-by: Jiri Kosina <jkosina@suse.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/hid/hid-ids.h              |  1 +
- drivers/hid/i2c-hid/i2c-hid-core.c | 10 ++++++++++
- 2 files changed, 11 insertions(+)
+So it's not about simple-framebuffer at all, but rather that you don't
+want to re-initialize the hardware that has already been setup?
 
-diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
-index 8a991b30e3c6d..25f96494700d8 100644
---- a/drivers/hid/hid-ids.h
-+++ b/drivers/hid/hid-ids.h
-@@ -509,6 +509,7 @@
- #define I2C_DEVICE_ID_GOODIX_01E8	0x01e8
- #define I2C_DEVICE_ID_GOODIX_01E9	0x01e9
- #define I2C_DEVICE_ID_GOODIX_01F0	0x01f0
-+#define I2C_DEVICE_ID_GOODIX_0D42	0x0d42
- 
- #define USB_VENDOR_ID_GOODTOUCH		0x1aad
- #define USB_DEVICE_ID_GOODTOUCH_000f	0x000f
-diff --git a/drivers/hid/i2c-hid/i2c-hid-core.c b/drivers/hid/i2c-hid/i2c-hid-core.c
-index 2f8a9d3f1e861..8914c7db94718 100644
---- a/drivers/hid/i2c-hid/i2c-hid-core.c
-+++ b/drivers/hid/i2c-hid/i2c-hid-core.c
-@@ -50,6 +50,7 @@
- #define I2C_HID_QUIRK_BAD_INPUT_SIZE		BIT(3)
- #define I2C_HID_QUIRK_NO_WAKEUP_AFTER_RESET	BIT(4)
- #define I2C_HID_QUIRK_NO_SLEEP_ON_SUSPEND	BIT(5)
-+#define I2C_HID_QUIRK_DELAY_WAKEUP_AFTER_RESUME BIT(6)
- 
- /* Command opcodes */
- #define I2C_HID_OPCODE_RESET			0x01
-@@ -140,6 +141,8 @@ static const struct i2c_hid_quirks {
- 	{ USB_VENDOR_ID_ELAN, HID_ANY_ID,
- 		 I2C_HID_QUIRK_NO_WAKEUP_AFTER_RESET |
- 		 I2C_HID_QUIRK_BOGUS_IRQ },
-+	{ I2C_VENDOR_ID_GOODIX, I2C_DEVICE_ID_GOODIX_0D42,
-+		 I2C_HID_QUIRK_DELAY_WAKEUP_AFTER_RESUME },
- 	{ 0, 0 }
- };
- 
-@@ -981,6 +984,13 @@ static int i2c_hid_core_resume(struct i2c_hid *ihid)
- 		return -ENXIO;
- 	}
- 
-+	/* On Goodix 27c6:0d42 wait extra time before device wakeup.
-+	 * It's not clear why but if we send wakeup too early, the device will
-+	 * never trigger input interrupts.
-+	 */
-+	if (ihid->quirks & I2C_HID_QUIRK_DELAY_WAKEUP_AFTER_RESUME)
-+		msleep(1500);
-+
- 	/* Instead of resetting device, simply powers the device on. This
- 	 * solves "incomplete reports" on Raydium devices 2386:3118 and
- 	 * 2386:4B33 and fixes various SIS touchscreens no longer sending
--- 
-2.43.0
+If so, this isn't how you should do it, but rather:
+https://lore.kernel.org/all/CAKMK7uHtqHy_oz4W7F+hmp9iqp7W5Ra8CxPvJ=9BwmvfU-O0gg@mail.gmail.com/
 
+Maxime
+
+--mpcp65bzqsipkaam
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZx9sUAAKCRAnX84Zoj2+
+dmtQAX9wVFF++uMLanShp1lqMmKbCAPRFsgHbuZ+e7vfogD2WBD/EF768xzbQaKx
+8geIGicBgLRVa5ByCU/nhpBq9G9w4jzWcQ3tuYcJYH2sUP44PdFel9LS9HcmKc2G
+pooK6h9HIg==
+=7XGK
+-----END PGP SIGNATURE-----
+
+--mpcp65bzqsipkaam--
 
