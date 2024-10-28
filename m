@@ -1,30 +1,30 @@
-Return-Path: <linux-kernel+bounces-385307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69DAE9B3569
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 16:53:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47E4F9B356D
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 16:55:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B7051C2164B
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 15:53:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75C6A1C21D09
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 15:55:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB6BE1DE3D1;
-	Mon, 28 Oct 2024 15:53:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D8CF1DE4FF;
+	Mon, 28 Oct 2024 15:55:07 +0000 (UTC)
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64909189913
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 15:53:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDEBC1DD9A6
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 15:55:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730130828; cv=none; b=GRB4QnxZvjmfCxd2ynW1DeNojvWZcKx2kJ3Mpn9AEuQCfYJ20lVtX/ojAR4tP5UGlPekDrOxEcT4QALCNjGL77dqSYXIfX8EvGEq9Cm0b2kxTN7HZ6F1035ZT7rRGgmzl8DhQhHSLdnu740IIPGPVEAaF3/FZ1NqFYR1JLFg1ho=
+	t=1730130906; cv=none; b=oMm1FBp3nJOayROqTzD6QVOZSrnpPdgYelpzoIOax/wI5LenPxf3SRLeSjCMvE+rAnVIDfLxgrEoa3N00LWYdDdLmr8T6iabyPSci8xuO5pXZ8SoBt1PXrcMx+f5d6GTi+V/UvKJFUV9Wb5/2tLMINyAE+boEDfQpSQ5JI/M8lI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730130828; c=relaxed/simple;
-	bh=AkqaXmkEuQ0bNQtkJInNM4PEhU+FwCLgA7P2Nxpnb0Y=;
+	s=arc-20240116; t=1730130906; c=relaxed/simple;
+	bh=IV+HK0si5bJwfaunJrOfqKaExrOGoqO65umfFzj3n18=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ktB16LYexbB2ANnXuBf9ZAmud47l+6DFK5SLgVlGof+TxE28HyZvWy42QgD6iMlHfVOzRNF2FTDq0GPZQCyVuANiTMDG4ulPwv+s00WTVfstozwQRg6Rat9Dx4FZAWowM5tvk86hX90NSk1HlupHUucVYKYipVYBEIa12j9Y9dY=
+	 Content-Type:MIME-Version; b=lQri/uJq2Sami0OqHAkbi6akALkBZq4+c/M7WawpVA44C18enRIC9Mqh8CRzCbOwKyMIMLP4xLFcNOrde32Z54H1/kVrugfK2JCz+diu4lp5Q5uwTbI0SNYGT4lMqWKixXwE1u1P/iBqcwzif3IEIN0gpvIq8tJobXe3uAWR0m8=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
@@ -32,19 +32,21 @@ Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[IPv
 	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
 	(Exim 4.92)
 	(envelope-from <l.stach@pengutronix.de>)
-	id 1t5S3c-000401-OB; Mon, 28 Oct 2024 16:53:28 +0100
-Message-ID: <15a386d0093af21447aeb5c2f1ee98d61e89e9b2.camel@pengutronix.de>
-Subject: Re: [PATCH v4] drm/etnaviv: Request pages from DMA32 zone on
- addressing_limited
+	id 1t5S4w-0004F2-N2; Mon, 28 Oct 2024 16:54:50 +0100
+Message-ID: <0eb75d1a3d0da6ec4d520da9ba2061dcf69dadff.camel@pengutronix.de>
+Subject: Re: [PATCH v2 1/5] drm/etnaviv: Use unsigned type to count the
+ number of pages
 From: Lucas Stach <l.stach@pengutronix.de>
-To: Xiaolei Wang <xiaolei.wang@windriver.com>, sui.jingfeng@linux.dev, 
-	christian.gmeiner@gmail.com, airlied@gmail.com, daniel@ffwll.ch, 
-	linux+etnaviv@armlinux.org.uk
-Cc: etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Date: Mon, 28 Oct 2024 16:53:27 +0100
-In-Reply-To: <20241001233430.4072268-1-xiaolei.wang@windriver.com>
-References: <20241001233430.4072268-1-xiaolei.wang@windriver.com>
+To: Sui Jingfeng <sui.jingfeng@linux.dev>
+Cc: Christian Gmeiner <christian.gmeiner@gmail.com>, Russell King
+ <linux+etnaviv@armlinux.org.uk>, David Airlie <airlied@gmail.com>, Daniel
+ Vetter <daniel@ffwll.ch>, Thomas Zimmermann <tzimmermann@suse.de>, Maxime
+ Ripard <mripard@kernel.org>, dri-devel@lists.freedesktop.org, 
+ etnaviv@lists.freedesktop.org, linux-kernel@vger.kernel.org, Christian
+ Gmeiner <cgmeiner@igalia.com>
+Date: Mon, 28 Oct 2024 16:54:50 +0100
+In-Reply-To: <20240908121107.328740-1-sui.jingfeng@linux.dev>
+References: <20240908121107.328740-1-sui.jingfeng@linux.dev>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
@@ -59,85 +61,38 @@ X-SA-Exim-Mail-From: l.stach@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Am Mittwoch, dem 02.10.2024 um 07:34 +0800 schrieb Xiaolei Wang:
-> Remove __GFP_HIGHMEM when requesting a page from DMA32 zone,
-> and since all vivante GPUs in the system will share the same
-> DMA constraints, move the check of whether to get a page from
-> DMA32 to etnaviv_bind().
+Am Sonntag, dem 08.09.2024 um 20:11 +0800 schrieb Sui Jingfeng:
+> The drm_prime_pages_to_sg() function takes an 'unsigned int' argument to
+> store the length of the page vector. The size of the object in number of
+> CPU pages can not be negative, hence, use 'unsigned' variable to store
+> the number of pages, instead of the 'signed' one.
 >=20
-> Fixes: b72af445cd38 ("drm/etnaviv: request pages from DMA32 zone when nee=
-ded")
-> Suggested-by: Sui Jingfeng <sui.jingfeng@linux.dev>
-> Signed-off-by: Xiaolei Wang <xiaolei.wang@windriver.com>
 > Reviewed-by: Christian Gmeiner <cgmeiner@igalia.com>
+> Signed-off-by: Sui Jingfeng <sui.jingfeng@linux.dev>
 
-Thanks, applied to etnaviv/next.
+Thanks, series applied to etnaviv/next.
 
 > ---
-> v1:
->   https://patchwork.kernel.org/project/dri-devel/patch/20240806104733.201=
-8783-1-xiaolei.wang@windriver.com/
 >=20
-> v2:
->   Modify the issue of not retaining GFP_USER in v1 and update the commit =
-log.
+> v2: Pick up tags and improve commit message
 >=20
-> v3:
->   Use "priv->shm_gfp_mask =3D GFP_USER | __GFP_RETRY_MAYFAIL | __GFP_NOWA=
-RN;"
-> instead of
->   "priv->shm_gfp_mask =3D GFP_HIGHUSER | __GFP_RETRY_MAYFAIL | __GFP_NOWA=
-RN;"
+>  drivers/gpu/drm/etnaviv/etnaviv_gem_prime.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >=20
-> v4:
->   drop the HIGHMEM bit only if dma addressing is limited.
->=20
->  drivers/gpu/drm/etnaviv/etnaviv_drv.c | 10 ++++++++++
->  drivers/gpu/drm/etnaviv/etnaviv_gpu.c |  8 --------
->  2 files changed, 10 insertions(+), 8 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_drv.c b/drivers/gpu/drm/etna=
-viv/etnaviv_drv.c
-> index 6500f3999c5f..19ec67a5a918 100644
-> --- a/drivers/gpu/drm/etnaviv/etnaviv_drv.c
-> +++ b/drivers/gpu/drm/etnaviv/etnaviv_drv.c
-> @@ -538,6 +538,16 @@ static int etnaviv_bind(struct device *dev)
->  	priv->num_gpus =3D 0;
->  	priv->shm_gfp_mask =3D GFP_HIGHUSER | __GFP_RETRY_MAYFAIL | __GFP_NOWAR=
-N;
+> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gem_prime.c b/drivers/gpu/dr=
+m/etnaviv/etnaviv_gem_prime.c
+> index 3524b5811682..6b98200068e4 100644
+> --- a/drivers/gpu/drm/etnaviv/etnaviv_gem_prime.c
+> +++ b/drivers/gpu/drm/etnaviv/etnaviv_gem_prime.c
+> @@ -17,7 +17,7 @@ static struct lock_class_key etnaviv_prime_lock_class;
+>  struct sg_table *etnaviv_gem_prime_get_sg_table(struct drm_gem_object *o=
+bj)
+>  {
+>  	struct etnaviv_gem_object *etnaviv_obj =3D to_etnaviv_bo(obj);
+> -	int npages =3D obj->size >> PAGE_SHIFT;
+> +	unsigned int npages =3D obj->size >> PAGE_SHIFT;
 > =20
-> +	/*
-> +	 * If the GPU is part of a system with DMA addressing limitations,
-> +	 * request pages for our SHM backend buffers from the DMA32 zone to
-> +	 * hopefully avoid performance killing SWIOTLB bounce buffering.
-> +	 */
-> +	if (dma_addressing_limited(dev)) {
-> +		priv->shm_gfp_mask |=3D GFP_DMA32;
-> +		priv->shm_gfp_mask &=3D ~__GFP_HIGHMEM;
-> +	}
-> +
->  	priv->cmdbuf_suballoc =3D etnaviv_cmdbuf_suballoc_new(drm->dev);
->  	if (IS_ERR(priv->cmdbuf_suballoc)) {
->  		dev_err(drm->dev, "Failed to create cmdbuf suballocator\n");
-> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gpu.c b/drivers/gpu/drm/etna=
-viv/etnaviv_gpu.c
-> index 7c7f97793ddd..5e753dd42f72 100644
-> --- a/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
-> +++ b/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
-> @@ -839,14 +839,6 @@ int etnaviv_gpu_init(struct etnaviv_gpu *gpu)
->  	if (ret)
->  		goto fail;
-> =20
-> -	/*
-> -	 * If the GPU is part of a system with DMA addressing limitations,
-> -	 * request pages for our SHM backend buffers from the DMA32 zone to
-> -	 * hopefully avoid performance killing SWIOTLB bounce buffering.
-> -	 */
-> -	if (dma_addressing_limited(gpu->dev))
-> -		priv->shm_gfp_mask |=3D GFP_DMA32;
-> -
->  	/* Create buffer: */
->  	ret =3D etnaviv_cmdbuf_init(priv->cmdbuf_suballoc, &gpu->buffer,
->  				  PAGE_SIZE);
+>  	if (WARN_ON(!etnaviv_obj->pages))  /* should have already pinned! */
+>  		return ERR_PTR(-EINVAL);
 
 
