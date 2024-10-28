@@ -1,177 +1,181 @@
-Return-Path: <linux-kernel+bounces-385465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7A4F9B3783
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 18:19:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 00A099B3785
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 18:20:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3779DB2583A
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 17:19:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B43DB21379
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 17:20:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BAB21DF267;
-	Mon, 28 Oct 2024 17:19:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BD561DF24B;
+	Mon, 28 Oct 2024 17:19:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qOqeRxnH"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tSgEXM0/"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AC5A1DEFDC
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 17:19:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73FCC1DED57
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 17:19:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730135958; cv=none; b=kW2Dew0j3Zje/SkZlMewT8+oxW9iT2KAGnS5tyebB/h2OiW8Bkr6RAe5NkQ8MlUlVyb378oluPHGLbI958FjFoOb2oyHiTP5aPGNBHD4zCKQOig1mPuvuO52KImobEk5lQ+AO1PBogrF0ASJxXcl/51LDLIWQVs2ahGwzLMfQ+M=
+	t=1730135994; cv=none; b=V8YfHqq2dKGuAOeGwYcjutxZQOcR88/1fc+AR+OMNrwWHYq5+Ri5CUSeRNfngW3UEXGdTsoA4lGfPO916Ymm1vKaLgHFTZYBqYylpzBS5vvnOVgmxuHTxQ7LhYOsqyiuC6kuKqo2RQ4HytZXCoXX3fQk9t8LS/acqnAaLtzIs6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730135958; c=relaxed/simple;
-	bh=RK5VA9S32Yz8dl7njZw5jAITmojkn2XFDc8BEOO9Y1g=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hgQBR7B8eGsUZtJ0iqofibtW7Acbd34L2CPaYNErxfOHSrAr78X6+1Cfi+VHuGRNEfMBrdBlZftTy1nhLUuRLXUrfIGYokDRPXWF4H3InL7RhemmzT3Nari4NBXd7R1yyKI9ekXGwnnWkutLl267lQ2BMGQLCKg9yuBLz07XyJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qOqeRxnH; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4315eeb2601so60869585e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 10:19:15 -0700 (PDT)
+	s=arc-20240116; t=1730135994; c=relaxed/simple;
+	bh=G95DEzV0F1JIKxJidz8QzR0/fQJUIyDTNSavswOe7ac=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=kWLoxiV0BtWUdOiQ6Cr/bvvvDBZxCBN9LYN84YVght6eeL/18ip+wIh3+wiPGZiZ5k39AOs5v0VySHF1I304tE0KIRZyVNyS6lwX8kTiRYgMSVu4OmlC6ghdMtYrKkYnHt+KbJBM2XTKwiIs2a764avco8Cc8bbbkQJ7rL+MXpI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tSgEXM0/; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-71e61b47c6cso3673234b3a.2
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 10:19:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730135954; x=1730740754; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1fkTku/2hlfLuFEUEbfmaTEX5P1Wden2mB6YLijG1sA=;
-        b=qOqeRxnH6NhDCI5FZ/QOqwWf9X5sZnfB22CqhimD8YdSXDJLYCYgxTC1wvkOTghIHq
-         X1/rCpHyeKgBxykBfJ0kTX8E0I+DKuKsXiWvAGysBBwpi2evaXpwFEqrWdaeQ4vKjGhi
-         2CIAWuh9hW1+In+YVZDkf2PkifEMpYyfd50ppjMx8cm+tLHWtDIoU58E1uKjFVpWzUHH
-         GOY3nnbvmzT3NsgZGx55/5TTP00DrNhAZMzlhFUBVEsSBuYpIFsxfMbCrSe6cYKA7VhZ
-         LLYSiPMmKinVI2rFa20QN27z9Y1rCMsE/J16lf7DATVkGA4OCrp1C8KN8EO54iqkLytE
-         vxrg==
+        d=google.com; s=20230601; t=1730135992; x=1730740792; darn=vger.kernel.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=RY6zr2YzyvahJvl44LPriDmoX1vRe4PibvLEnYm5kVI=;
+        b=tSgEXM0/3N0Cgiq2LXCodUrDEWTP5tczzSwC9iT9nzcKNUyLnraP/0g3A7CfsXkdf+
+         BdeCg9VtpiKwNdqcORRgMiZpcezgmQyHl7YOkt9vR8Bj+POehMPzymD4LoXHSgczEJna
+         nO2nl28jU5u6vxVXo6RNl5DN/Fz/rQMZEy905j9NlqIPdAmzbPxl+n/zz/TFarUD52RV
+         zzKkLsyC9jO+2rehCPXO2b18K2tCTKeq62uPu+NxawYMCQeShV8B6zR2xualavr7GAC6
+         8G+OxMciZTY8eh/RFwDpU7ESc9YUuGJ6WLROOks7y4GHIRuhFqSrAQOJ9l5iCNGaUtEB
+         BrCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730135954; x=1730740754;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1fkTku/2hlfLuFEUEbfmaTEX5P1Wden2mB6YLijG1sA=;
-        b=UR3c06rkAdKcbHV7UWVoP1x5lRL/EhuUVqjF9dRDsWxBxoIUVyk06No5TIt3ep/sXY
-         9KCbEl1IsYPkECRddZfjUDUkEM9ssyoUXvXZXgIUZT76rswVO5Qbfz28LIME3I+c9a5X
-         RXJLdgchrRMsUAsU8d/WrRIcxP6o0i8QrKBiJgIYQzG0IplOnhalszkrrVtGve+PCyD3
-         OHi+AUeOQH2dnpkHXFnMgeSFA24EINdVLbqU9iFuxLTF5xQtDEmAJzDN69wQHTFXA0xy
-         uqnqplHgYXhY1j3oLynv44IFvfUKIFNEuYG1ZIeFjUrO761Zaim39uegGmNJd383zHu/
-         1klw==
-X-Forwarded-Encrypted: i=1; AJvYcCWEBO61efIXt5Yo528MCiOs2AhF8zKJskXM/tStMSJf1g97+bq7wf40jM5kajyXy/fkCzew1eINyZnoS+w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyI+h4qdrZP/F9ST3W/PpDFhokJQS0jb5QCVKfGPo/fgMkmC4cc
-	kVu9g0npknp6oQlSvRVZdcgya53syzumo06WOH87g0O0xJ8AzPcPeYJfo74tFoo=
-X-Google-Smtp-Source: AGHT+IECm76pRbyYpp6SjkcMtCuO1SyMDPfHW0X9U1Tuvf/svqN92ChLfU5gRa1/AIweI4/7e+k+4A==
-X-Received: by 2002:a05:600c:1e03:b0:431:555d:e184 with SMTP id 5b1f17b1804b1-4319ad06917mr98125275e9.25.1730135952130;
-        Mon, 28 Oct 2024 10:19:12 -0700 (PDT)
-Received: from mai.. (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b1c8a9sm10096153f8f.12.2024.10.28.10.19.11
+        d=1e100.net; s=20230601; t=1730135992; x=1730740792;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RY6zr2YzyvahJvl44LPriDmoX1vRe4PibvLEnYm5kVI=;
+        b=lGm8m+VJer2P5NcmAV5gL42msxd0hSzrYB37s1V8Q3wCfoRMBbR3GUH9mC4GdZUpXl
+         sCxe/D+2hWzkovRul3aRw+hFd2MknpskbqmV33SF0wc10o1to4lDUKjNdYJ2Uo+kNSqK
+         OfxUA2AnVZOBT53CKxk2p6DNCa/+7kikHudN76CJYs3s/TTyq2FAwutt+zLaSARMYrd5
+         KKtrvH5EAsGci9WtOS0Qr0WUSgQf5kn4zUHdiLZCRqjB8hTlDhe6EXvn7Z1wtzJRDuIx
+         3y8yeej2kuWcjHKi78yUwgETxUkJ5NigLeM57EDTw3BYvAJRp85860wkovw0YjZMr8zU
+         fXSg==
+X-Forwarded-Encrypted: i=1; AJvYcCWU4qpxP7TtLbHtlMsGWvMrrMLa6jd1R5cb+EheADXLcxZBdEMf83Qt2bygagKx+6KbD0vL6ddQCnW61WY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzm/NXkkW0LYffykg+XBnGgdnw51CkloK2AcFz4C9Qcl2sMzYJw
+	enviwTJkfIYMkJu9doR6P9hAVg6p1fi4zoPyBwlIwqynCQBIx8uR4GsM8coX1Q==
+X-Google-Smtp-Source: AGHT+IEnP7I9ySstlcZGJ1tZDqOTjeuAM8G3XCA455EMBwktt5hFsyHctd8BrSjV+FAC7IE5LbliZg==
+X-Received: by 2002:a05:6a00:2389:b0:71e:79a9:ec47 with SMTP id d2e1a72fcca58-72062f82516mr13531018b3a.6.1730135991320;
+        Mon, 28 Oct 2024 10:19:51 -0700 (PDT)
+Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72057935747sm6000792b3a.78.2024.10.28.10.19.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Oct 2024 10:19:11 -0700 (PDT)
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-To: wenst@chromium.org,
-	rafael@kernel.org
-Cc: Icenowy Zheng <uwu@icenowy.me>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Lukasz Luba <lukasz.luba@arm.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-pm@vger.kernel.org (open list:THERMAL),
-	linux-kernel@vger.kernel.org (open list),
-	linux-arm-kernel@lists.infradead.org (moderated list:ARM/Mediatek SoC support),
-	linux-mediatek@lists.infradead.org (moderated list:ARM/Mediatek SoC support)
-Subject: [PATCH] thermal/of: support thermal zones w/o trips subnode
-Date: Mon, 28 Oct 2024 18:19:01 +0100
-Message-ID: <20241028171901.2484882-1-daniel.lezcano@linaro.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241018073139.1268995-1-wenst@chromium.org>
-References: <20241018073139.1268995-1-wenst@chromium.org>
+        Mon, 28 Oct 2024 10:19:50 -0700 (PDT)
+Date: Mon, 28 Oct 2024 10:19:39 -0700 (PDT)
+From: Hugh Dickins <hughd@google.com>
+To: David Hildenbrand <david@redhat.com>
+cc: Hugh Dickins <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
+    Usama Arif <usamaarif642@gmail.com>, Yang Shi <shy828301@gmail.com>, 
+    Wei Yang <richard.weiyang@gmail.com>, 
+    "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, 
+    Matthew Wilcox <willy@infradead.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+    Baolin Wang <baolin.wang@linux.alibaba.com>, 
+    Barry Song <baohua@kernel.org>, Kefeng Wang <wangkefeng.wang@huawei.com>, 
+    Ryan Roberts <ryan.roberts@arm.com>, Nhat Pham <nphamcs@gmail.com>, 
+    Zi Yan <ziy@nvidia.com>, Chris Li <chrisl@kernel.org>, 
+    Shakeel Butt <shakeel.butt@linux.dev>, linux-kernel@vger.kernel.org, 
+    linux-mm@kvack.org
+Subject: Re: [PATCH hotfix v2 2/2] mm/thp: fix deferred split unqueue naming
+ and locking
+In-Reply-To: <154430c4-7b17-443f-8628-ef3bb7738ae9@redhat.com>
+Message-ID: <c47c355f-fc2a-d8f4-4c8d-4a7a1468f0b2@google.com>
+References: <81e34a8b-113a-0701-740e-2135c97eb1d7@google.com> <8dc111ae-f6db-2da7-b25c-7a20b1effe3b@google.com> <154430c4-7b17-443f-8628-ef3bb7738ae9@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 
-From: Icenowy Zheng <uwu@icenowy.me>
+On Mon, 28 Oct 2024, David Hildenbrand wrote:
 
-Although the current device tree binding of thermal zones require the
-trips subnode, the binding in kernel v5.15 does not require it, and many
-device trees shipped with the kernel, for example,
-allwinner/sun50i-a64.dtsi and mediatek/mt8183-kukui.dtsi in ARM64, still
-comply to the old binding and contain no trips subnode.
+> Hi Hugh,
+> 
+> mostly looks good to me, one comment:
 
-Allow the code to successfully register thermal zones w/o trips subnode
-for DT binding compatibility now.
+Thanks...
 
-Furtherly, the inconsistency between DTs and bindings should be resolved
-by either adding empty trips subnode or dropping the trips subnode
-requirement.
+> 
+> > +++ b/mm/memcontrol-v1.c
+> > @@ -848,6 +848,8 @@ static int mem_cgroup_move_account(struct folio *folio,
+> >    css_get(&to->css);
+> >    css_put(&from->css);
+> >   +	/* Warning should never happen, so don't worry about refcount non-0 */
+> > +	WARN_ON_ONCE(folio_unqueue_deferred_split(folio));
+> >    folio->memcg_data = (unsigned long)to;
+> >   
+> >   	__folio_memcg_unlock(from);
+> > @@ -1217,7 +1219,9 @@ static int mem_cgroup_move_charge_pte_range(pmd_t
+> > *pmd,
+> >    enum mc_target_type target_type;
+> >    union mc_target target;
+> >    struct folio *folio;
+> > +	bool tried_split_before = false;
+> >   +retry_pmd:
+> >    ptl = pmd_trans_huge_lock(pmd, vma);
+> >    if (ptl) {
+> >   		if (mc.precharge < HPAGE_PMD_NR) {
+> > @@ -1227,6 +1231,27 @@ static int mem_cgroup_move_charge_pte_range(pmd_t
+> > *pmd,
+> >     target_type = get_mctgt_type_thp(vma, addr, *pmd, &target);
+> >     if (target_type == MC_TARGET_PAGE) {
+> >   			folio = target.folio;
+> > +			/*
+> > +			 * Deferred split queue locking depends on memcg,
+> > +			 * and unqueue is unsafe unless folio refcount is 0:
+> > +			 * split or skip if on the queue? first try to split.
+> > +			 */
+> > +			if (!list_empty(&folio->_deferred_list)) {
+> > +				spin_unlock(ptl);
+> > +				if (!tried_split_before)
+> > +					split_folio(folio);
+> > +				folio_unlock(folio);
+> > +				folio_put(folio);
+> > +				if (tried_split_before)
+> > +					return 0;
+> > +				tried_split_before = true;
+> > +				goto retry_pmd;
+> > +			}
+> > +			/*
+> > +			 * So long as that pmd lock is held, the folio cannot
+> > +			 * be racily added to the _deferred_list, because
+> > +			 * __folio_remove_rmap() will find !partially_mapped.
+> > +			 */
+> 
+> Fortunately that code is getting ripped out.
 
-Fixes: d0c75fa2c17f ("thermal/of: Initialize trip points separately")
-Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
-[wenst@chromium.org: Reworked logic and kernel log messages]
-Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
-Reviewed-by: Rafael J. Wysocki <rafael@kernel.org>
-Link: https://lore.kernel.org/r/20241018073139.1268995-1-wenst@chromium.org
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
----
- drivers/thermal/thermal_of.c | 21 ++++++++++-----------
- 1 file changed, 10 insertions(+), 11 deletions(-)
+Yes, and even more fortunately, we're in time to fix its final incarnation!
 
-diff --git a/drivers/thermal/thermal_of.c b/drivers/thermal/thermal_of.c
-index a4caf7899f8e..07e09897165f 100644
---- a/drivers/thermal/thermal_of.c
-+++ b/drivers/thermal/thermal_of.c
-@@ -99,18 +99,15 @@ static struct thermal_trip *thermal_of_trips_init(struct device_node *np, int *n
- 	struct device_node *trips;
- 	int ret, count;
- 
-+	*ntrips = 0;
-+	
- 	trips = of_get_child_by_name(np, "trips");
--	if (!trips) {
--		pr_err("Failed to find 'trips' node\n");
--		return ERR_PTR(-EINVAL);
--	}
-+	if (!trips)
-+		return NULL;
- 
- 	count = of_get_child_count(trips);
--	if (!count) {
--		pr_err("No trip point defined\n");
--		ret = -EINVAL;
--		goto out_of_node_put;
--	}
-+	if (!count)
-+		return NULL;
- 
- 	tt = kzalloc(sizeof(*tt) * count, GFP_KERNEL);
- 	if (!tt) {
-@@ -133,7 +130,6 @@ static struct thermal_trip *thermal_of_trips_init(struct device_node *np, int *n
- 
- out_kfree:
- 	kfree(tt);
--	*ntrips = 0;
- out_of_node_put:
- 	of_node_put(trips);
- 
-@@ -401,11 +397,14 @@ static struct thermal_zone_device *thermal_of_zone_register(struct device_node *
- 
- 	trips = thermal_of_trips_init(np, &ntrips);
- 	if (IS_ERR(trips)) {
--		pr_err("Failed to find trip points for %pOFn id=%d\n", sensor, id);
-+		pr_err("Failed to parse trip points for %pOFn id=%d\n", sensor, id);
- 		ret = PTR_ERR(trips);
- 		goto out_of_node_put;
- 	}
- 
-+	if (!trips)
-+		pr_info("No trip points found for %pOFn id=%d\n", sensor, id);
-+
- 	ret = thermal_of_monitor_init(np, &delay, &pdelay);
- 	if (ret) {
- 		pr_err("Failed to initialize monitoring delays from %pOFn\n", np);
--- 
-2.43.0
+> 
+> https://lkml.kernel.org/r/20241025012304.2473312-3-shakeel.butt@linux.dev
+> 
+> So I wonder ... as a quick fix should we simply handle it like the code
+> further down where we refuse PTE-mapped large folios completely?
 
+(I went through the same anxiety attack as you did, wondering what
+happens to the large-but-not-PMD-large folios: then noticed it's safe
+as you did.  The v1 commit message had a paragraph pondering whether
+the deprecated code will need a patch to extend it for the new feature:
+but once Shakeel posted the ripout, I ripped out that paragraph -
+no longer any need for an answer.)
+
+> 
+> "ignore such a partial THP and keep it in original memcg"
+> 
+> ...
+> 
+> and simply skip this folio similarly? I mean, it's a corner case either way.
+
+I certainly considered that option: it's known to give up like that
+for many reasons.  But my thinking (in the commit message) was "Not ideal,
+but moving charge has been requested, and khugepaged should repair the THP
+later" - if someone is still using move_charge_at_immigrate, I thought
+this change would generate fewer surprises - that huge charge likely
+to be moved as it used to be.
+
+Hugh
 
