@@ -1,98 +1,94 @@
-Return-Path: <linux-kernel+bounces-385248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FE2E9B348A
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 16:15:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60FEC9B3490
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 16:17:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1422F282640
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 15:15:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13A2C1F228B9
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 15:17:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93D741DE2A2;
-	Mon, 28 Oct 2024 15:15:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="P44ENAXK"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FF89155747
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 15:15:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 704BF1DE2C1;
+	Mon, 28 Oct 2024 15:17:20 +0000 (UTC)
+Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76C4855E73;
+	Mon, 28 Oct 2024 15:17:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730128550; cv=none; b=lxZY/ack1fVDHSNzJbW5kaYe5RCLdYKgU2OE8K4rMvYlmFhzw3OVRVHwUTA4ExnYguAerd7ZGe8sVt7AKfYhbIc3Xw3o+1MaUssS26EHG7RYdvyyA1jtgvofd/LZ4/qU1mEJOjg3kvsISMoeAnbQXiVmonfCTCtTGGpCxImqoQA=
+	t=1730128640; cv=none; b=BKLs1tIz2IIg1fuvKh3GscwJo5U4VVySzhzMLv8Rj5twMrdpAEOl20ewWnzkCTUkuv2+Rg/ZQppXwss2dYdNYQtn84r++/zIp4+OkjiHB/PsnraLY4s7y1YRkI8+tr/TvIXKXqTUS9a3HVb9Tf0Md0GUll/kjOQZQFKLJvFnEtc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730128550; c=relaxed/simple;
-	bh=8kijLKCe9/u6hJG2B0Upu24V5HO2+0j+WKWv+aXrPEI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=n7cXR4GhBwmDGjEv/G/siibv1b9Yi7VLlboDkNr1UW+h1boFOUCowNLZM0FG8Uw1oUl1/H2PKwxYjeNL2U6aPnCmPkuYFOfamk6GacLDa20k0XnMnwBgQ7gVmMmAStR4yhb8BbEUDEc0BP+jBpltUG/o9uVrLJvacfF4Pe1wCfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=P44ENAXK; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-539e66ba398so15710e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 08:15:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730128546; x=1730733346; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8kijLKCe9/u6hJG2B0Upu24V5HO2+0j+WKWv+aXrPEI=;
-        b=P44ENAXKDGyxhPjZtHokDN8gEGexkYihi094LnTU3vOQNaR92zW6KC0zjf1WmhHnDy
-         5yxd3xwGNIwxnOrecO8nClOhrCzp9pef+AgMJgLy5mkxtj8qOhLs/ETGFjdgy69lelOS
-         a6rO18/uGo5balAEBJ5lB8Th8KYAvnQzQtW97J2z7uWef5zaSv3Ucd1mr6V1ET6Lq+9v
-         5lerhx0Kk/bA1KPptXX/9NiLtAbdcFgpdqogrMlmABW1V9soC8ZBAiAF/oOMwod/DN7M
-         yw4XLiuom+b/+PZexSqtPiY25xCreNA0Gzf4876/F3D8AO3R42uXoqrRRhVwPoU8sKbY
-         y7Ow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730128546; x=1730733346;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8kijLKCe9/u6hJG2B0Upu24V5HO2+0j+WKWv+aXrPEI=;
-        b=dM4g+6dlg095IOqo2ZPrCDgbmlyQ/dyS9/YcbgJl1w26MF9M0WKuX2zQz6B2w3Pxra
-         Tk37SeL1DsKZMKZDhtrgEuo0ibN4kbIuFD5v/OYUN2l9+Sl2vxLc+lQnR7lqO1+Vu6Ay
-         dXuEDaJlSjKEVpesJ61KYzAi1KMqJ83tAdDu0+x84V1sBH7g6XmQ6ZO29scZ3NLxcT69
-         CvWfgxKXzmoyHfuiFXb7EZSaS3qvJgx6ZVaJwugHv0n5MR92zengplt3Ct/wALvTaD46
-         4bHp81/RXz2ckpjYtVpPcrjNICDpqBhu2SGsoeWL+7q2b6xqLIPneb+tfD9J24EhmBFX
-         ILcA==
-X-Forwarded-Encrypted: i=1; AJvYcCWJSF+GOgh6nOj4qYBlgv6X7/YNVcQFBEXT6fwiV/Aj7BCtOjC7qQNtmB8rApz+gcN32cHmaJBGPWq51xM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCVsZoVPxICK2vjmTekxMKCuxtcXDYQ+dy5nDScwIChDiwMLKB
-	PvL7g74PTiufZ4kfFOhYMnNIAEFPm3pVu/YJgUU4fCNJ1qyUzVuFcUvkfD2y9c8QOtW1gciwLqD
-	r/rXzFTRgrZO7fX8g3NSszCOGsJ/C1lueHkrz
-X-Google-Smtp-Source: AGHT+IHhlr80qnjoc3qPeloimsNoLpzMT+nVpsqmMp/GNu8LTEZexj0DumIAuFBPOq8X0buSO+lGjgFpbMJGOi/NiT8=
-X-Received: by 2002:a05:6512:10d0:b0:538:9e44:3034 with SMTP id
- 2adb3069b0e04-53b348e3504mr295422e87.6.1730128545894; Mon, 28 Oct 2024
- 08:15:45 -0700 (PDT)
+	s=arc-20240116; t=1730128640; c=relaxed/simple;
+	bh=EoS6T9dWIm2K555CyyqkHgPkL0u4PFB9JhAMCsZOA0k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Laio/n07kbLRjSdVf0YqLOQJk9eHDxER+pr/CTm7J6fWR1QXTM2/JvosWjqO1fW+GZdHABN89QpOmP8NY9BtIbjjYif5NTpDxzn+FRRQEI43FoBlZSrSnYKDYgbasdyE1wY8DJDNa/oGUHSYEVkEhl4xCI+CW46Gx5o3uKFDx+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
+Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
+	id 1t5RTo-00056m-00; Mon, 28 Oct 2024 16:16:28 +0100
+Received: by alpha.franken.de (Postfix, from userid 1000)
+	id D4572C025F; Mon, 28 Oct 2024 16:15:57 +0100 (CET)
+Date: Mon, 28 Oct 2024 16:15:57 +0100
+From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Aleksandar Rikalo <arikalo@gmail.com>, Chao-ying Fu <cfu@wavecomp.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Greg Ungerer <gerg@kernel.org>, Hauke Mehrtens <hauke@hauke-m.de>,
+	Ilya Lipnitskiy <ilya.lipnitskiy@gmail.com>,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>, linux-kernel@vger.kernel.org,
+	linux-mips@vger.kernel.org, Marc Zyngier <maz@kernel.org>,
+	Paul Burton <paulburton@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Serge Semin <fancer.lancer@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Tiezhu Yang <yangtiezhu@loongson.cn>,
+	Gregory CLEMENT <gregory.clement@bootlin.com>
+Subject: Re: [PATCH v7 05/12] clocksource: mips-gic-timer: Always use cluster
+ 0 counter as clocksource
+Message-ID: <Zx+qrRVdv5EGXbCF@alpha.franken.de>
+References: <20241019071037.145314-1-arikalo@gmail.com>
+ <20241019071037.145314-6-arikalo@gmail.com>
+ <3c98775b-b61b-478f-838e-59f8e1cf8aed@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <202410281414.c351044e-oliver.sang@intel.com> <CAH5fLggdtev=scJ1C9EefZf-fVrMvgMbfD+b_T5vFfHqNTn8Kw@mail.gmail.com>
-In-Reply-To: <CAH5fLggdtev=scJ1C9EefZf-fVrMvgMbfD+b_T5vFfHqNTn8Kw@mail.gmail.com>
-From: Sami Tolvanen <samitolvanen@google.com>
-Date: Mon, 28 Oct 2024 08:15:07 -0700
-Message-ID: <CABCJKudR2UwvR8x4MwKYPmHETMz+aoiXEXz135BoufTF9Pt2Gg@mail.gmail.com>
-Subject: Re: [linus:master] [cfi] 8b8ca9c25f: CFI_failure_at_do_basic_setup
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: oe-lkp@lists.linux.dev, lkp@intel.com, linux-kernel@vger.kernel.org, 
-	kernel test robot <oliver.sang@intel.com>, Miguel Ojeda <ojeda@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3c98775b-b61b-478f-838e-59f8e1cf8aed@linaro.org>
 
-On Mon, Oct 28, 2024 at 1:34=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> w=
-rote:
->
-> Hmm. This config has:
->
-> CONFIG_CLANG_VERSION=3D190102
->
-> Sami, is the fix not available as of llvm 19?
+On Mon, Oct 28, 2024 at 03:54:48PM +0100, Daniel Lezcano wrote:
+> On 19/10/2024 09:10, Aleksandar Rikalo wrote:
+> > From: Paul Burton <paulburton@kernel.org>
+> > 
+> > In a multi-cluster MIPS system, there are multiple GICs - one in each
+> > cluster - each of which has its independent counter. The counters in
+> > each GIC are not synchronized in any way, so they can drift relative
+> > to one another through the lifetime of the system. This is problematic
+> > for a clock source which ought to be global.
+> > 
+> > Avoid problems by always accessing cluster 0's counter, using
+> > cross-cluster register access. This adds overhead so it is applied only
+> > on multi-cluster systems.
+> > 
+> > Signed-off-by: Paul Burton <paulburton@kernel.org>
+> > Signed-off-by: Chao-ying Fu <cfu@wavecomp.com>
+> > Signed-off-by: Dragan Mladjenovic <dragan.mladjenovic@syrmia.com>
+> > Signed-off-by: Aleksandar Rikalo <arikalo@gmail.com>
+> > Tested-by: Serge Semin <fancer.lancer@gmail.com>
+> > ---
+> 
+> May I take this patch through the clocksource tree ?
 
-Looks like llvmorg-19.1.2 doesn't have the fix, which means it won't
-be available until LLVM 20. :/
+sure, should be the best option.
 
-Sami
+Thomas.
+
+-- 
+Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
+good idea.                                                [ RFC1925, 2.3 ]
 
