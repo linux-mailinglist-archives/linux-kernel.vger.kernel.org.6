@@ -1,204 +1,234 @@
-Return-Path: <linux-kernel+bounces-385708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 086CC9B3AAB
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 20:46:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 519E29B3AAD
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 20:47:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCB1E28304D
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 19:46:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74D801C21407
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 19:47:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64739190049;
-	Mon, 28 Oct 2024 19:46:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D02E318FC81;
+	Mon, 28 Oct 2024 19:47:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="B2pJYZy0"
-Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com [209.85.217.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EMwJlj7/"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5222F3A1DB
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 19:46:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.54
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730144807; cv=none; b=pmewuEOI0/qWoJNO5p3dGDUabluwnx4jpL9BS3JgVvfoy20Qx5S1bsO5wosBTfo3f3O1wShtDCcZqhxJdVJDVtH5TgNka27cReUjaUCqH+Xh62ZRkgJ2eQqAmxoUUOasr4HH96tDQSQuLtFmSYVMjvtZ7u7ARy7T9WHJMRre6I0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730144807; c=relaxed/simple;
-	bh=Wrs9JhiATMWL0KsGQ/kqNx9VR2O0tggm+HVJNv2F/io=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=VNk/29OWfBBvtuIKRIbBEjLVnplioSL9sfB6TGTzqkFoSPSdHqPV1kVpikHJUTeaJfG1mIJXtGjkIL6jKu4Bq0rTRyw3hZkum1fxzEU7lW3vyfjBXF3cznnZColyqTjxIQE561iJ9nCl4TigIc+qOfWAuVE7XdcuMFU1oU2vBmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=B2pJYZy0; arc=none smtp.client-ip=209.85.217.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-vs1-f54.google.com with SMTP id ada2fe7eead31-4a47177cf6bso1582873137.3
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 12:46:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730144804; x=1730749604; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=j5XRrBUeW9Wl3ksjbcOXPj9gNcJLkL1Vlbum4WC6ah4=;
-        b=B2pJYZy0i592JVnT0LtcmwgGRy256ikDCz2MXBvv7NdTO/r3XBh9JrE4V143wvu/MT
-         ESbrBLNdYcBzeuUbgOnx2TIc4muhRx1uGZHVIS8xrsJKJqzZ0Aksk9Snm9ENAvVMGGUF
-         bFgSvCkHGvLhzQHnAMTSkMXot725Yk57ToP6NsplUForySMMNN1I90z+GsqrufRowmBV
-         s8om3r6HWp6iJCwBdb+rYEdpep5OzXmidq1XvRtbU8FDpSGhlNLxHickQUUzPHAHxt+3
-         fWCEg2xjbzHeGMgRnPr+yJv5+1MsHuvYorPRu3mn5PHGALwrzpghXN43upKBMweKEpXf
-         TgSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730144804; x=1730749604;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=j5XRrBUeW9Wl3ksjbcOXPj9gNcJLkL1Vlbum4WC6ah4=;
-        b=vXSxRNI8peVEKdQL9dkX9z/55xhmXejIgLUeP2BVQnNjsDwwXX/j/xotKpgO9p/YBT
-         +7ohnNP/adMxA9TPsvJ1IVKc1ZmN5b1zREUD8n1rCIRFOZPritrkHlCBBsG5Szlf/YUx
-         ejo5vvR4h1HdUrXnjRiyjcTSEvfEYR6zIbSUw5GszqyOOmUPZUcpA3Uu2ep65rffv+Vd
-         i1rIZvyba5U8MZspwr5s/9mB++/lUA3/VcMSOpfXiLFgJBT6t1jBt/Fx5ZLvqhnNktQ8
-         3ccQAcTgwCbt+Vf9bJ00WdonlN6NqkRsTD+/bz8qhwzlr0xpgIJFOk1QfXIwcMhX3GEp
-         3PSA==
-X-Gm-Message-State: AOJu0Yzc0xRYUsWN2xk6vlh/a1WQ6bAyNV4luG8g9rDPchaBybBYXC/w
-	Utr9RG9ZDu1Rdd+HVtm/TPz8ODkDUeinQX8XvTl3TKiyBrqIJEwoY+Z4ARwJJ9BnVj3OPgqUrsz
-	XInFECcw835IkjlfX8OW6rsO8/cpD19mavELZ8bi08bKpsDETopI=
-X-Google-Smtp-Source: AGHT+IH6BXN+34x6/Q4FZwz5j6uquVhYmRBikZ0QKoU5eshCI12u7ivTDuCHpv6wXsxYB2wLgvjIZwpib6ufggFyI1Y=
-X-Received: by 2002:a05:6102:3707:b0:4a5:c0e2:c42d with SMTP id
- ada2fe7eead31-4a8cfb45762mr7377334137.8.1730144803771; Mon, 28 Oct 2024
- 12:46:43 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED3E5524C
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 19:47:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.10
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730144860; cv=fail; b=co5Cn1amE9VAkokEyobMNezCIxFmSwAtJw2hkwn8L5Zs+1Im/p77XzCo1n4wOMqIt3PHjGazSQ5Pp/E1x3xkYjeJCvj5LQfUzSvaiVJ/j1dlbwv06P+kqa17mZOCV5Z1GcgaQXoDtnrOrzRTTRxHwSWlDS+vYHgeEqYZUY30u0c=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730144860; c=relaxed/simple;
+	bh=nPpp5ml0039uwgPd39t7mHbZSKJuVo3so0HZzpw0CK4=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=cAtEJjbkc5+0fXsBItKjjCsvIjDEqfWTaSeXVcYbwvkhH8pdVlXI9unNnGtT1DAIxA1j4V/Wx1nbRcbC0IPO0WwmdvbTErhJBDaUgPK6x1AERUQHgxWgKYLwfVDrBEoJxTRw1r1K6hvDf14LQZkgCaadxzoKS47VdZOE6xCGfjg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EMwJlj7/; arc=fail smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730144858; x=1761680858;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=nPpp5ml0039uwgPd39t7mHbZSKJuVo3so0HZzpw0CK4=;
+  b=EMwJlj7/sA2LfW2hUxgmLil/riLWe4+p+a5IU1MBYqalRdmV71soUzNG
+   tWZCpQRjW0oqiuB4Z5wR/hbaqfSwpkWShY+6XyKno0MN8dIXXkDmQjCFw
+   1FyWWFV5gJSjp17j+FPXApGp+VdZAN1BQZij+Q5h+g3qJAlAoTSX9Af7Z
+   mgfDnYAZeY3O2vNKAJdjVr4M7dde46n0h55DyMTW1JCreJ7s3Vlet0LDi
+   qoAFIFdlNcWBGV2AxP9gbmhjoIcdaBkIaj4PpXMKYDGm36ilnQK4g82OR
+   gI7qcibPCi4A6M+HNDAsIBGddM36toQWpqg33Geqkwp9D5qy+QhA5rm7S
+   g==;
+X-CSE-ConnectionGUID: zrFSnqAGR5eN/O1UlsHovA==
+X-CSE-MsgGUID: nDTtfqwqQwaPTKM1x+RRig==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="47221390"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="47221390"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2024 12:47:37 -0700
+X-CSE-ConnectionGUID: vft32EKSSF28DvWE7Hqh1g==
+X-CSE-MsgGUID: XyLWHd+0TIWlyNS45tsIuA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,239,1725346800"; 
+   d="scan'208";a="81345165"
+Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
+  by fmviesa007.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 28 Oct 2024 12:47:37 -0700
+Received: from fmsmsx603.amr.corp.intel.com (10.18.126.83) by
+ fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Mon, 28 Oct 2024 12:47:36 -0700
+Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Mon, 28 Oct 2024 12:47:36 -0700
+Received: from NAM02-BN1-obe.outbound.protection.outlook.com (104.47.51.45) by
+ edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 28 Oct 2024 12:47:36 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=UBMUHw/iKwewj0GFGYCs2p7+aHmWSp5T/438Rc6TQhpOlqfj29xRlxTvpgxn2PPxklkD5h3uE55HU4boYktJL9DYRYQ/O2KfhcpZFa7bj4cRfP56I+RSTOqDzJIH0zrB2R9mN7u42znS0R6OArncv9akUWlkgy4CIo/YnF8i0w36JnPqv6+B1DrefVgtBLMrjuF9jtGBJ0/y0eWsB8X/RWMUkK2Nfb7vm4BqkGVW23hlcRq4CwKzUU61UGYlBW9XXuyJLZdaC3rKqxdciUTLkFWvvLxdQf4+8mG/wsRPEL/PaiOVrebfwdvUnrmuhAizVG6fE1OIc92+FHYSw86Ztg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=q2MYjsNGHQYRjg4yegoWyGBuKULIR0RcxiewM8tTq8A=;
+ b=tKRhaHPaXko51Av8owsVPZatSpxkHG4PMdSDAvSubXM/RHHbgWvwm7zijjXktir9tsoeOXFRWThBwZzN/DTV9Pj49fAe7PKATzeTM9DmWEV1EaAzogqPCkC0V9HswE4Eta8V/VvLPzjpKDEtVmIdb5N4g1K1W5CWN1H7IC/quZqucT0hY4lf8kbY1rV86PWD1nlXv4TRENQ/YrQPpI2ZSJ6nkWQaw2/sX0EbCtKzGCsxTux6B6YiTn/pWMHUlfwvmMIJoHtJx+AYnBLTbd3hM4QcnjzMIBfICBDILEw5+x6jDnTAcheVhf9EtHEkFdMS3cHUkt9R7jX+qhgmgQgdEw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from CY5PR11MB6139.namprd11.prod.outlook.com (2603:10b6:930:29::17)
+ by DS7PR11MB6296.namprd11.prod.outlook.com (2603:10b6:8:94::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.27; Mon, 28 Oct
+ 2024 19:47:32 +0000
+Received: from CY5PR11MB6139.namprd11.prod.outlook.com
+ ([fe80::7141:316f:77a0:9c44]) by CY5PR11MB6139.namprd11.prod.outlook.com
+ ([fe80::7141:316f:77a0:9c44%6]) with mapi id 15.20.8093.024; Mon, 28 Oct 2024
+ 19:47:32 +0000
+Date: Mon, 28 Oct 2024 14:47:27 -0500
+From: Lucas De Marchi <lucas.demarchi@intel.com>
+To: Gyeyoung Baek <gye976@gmail.com>
+CC: Oded Gabbay <ogabbay@kernel.org>, Thomas =?utf-8?Q?Hellstr=C3=B6m?=
+	<thomas.hellstrom@linux.intel.com>, Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>, <intel-xe@lists.freedesktop.org>,
+	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] drm/xe: Fix build error for XE_IOCTL_DBG macro
+Message-ID: <53slkiaabzxkr4npxjgc32igwnspzyohvswwhooc4nfzdjw547@q3nnf3wblgfd>
+References: <20241027045752.10530-1-gye976@gmail.com>
+Content-Type: text/plain; charset="us-ascii"; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20241027045752.10530-1-gye976@gmail.com>
+X-ClientProxiedBy: MW4PR04CA0079.namprd04.prod.outlook.com
+ (2603:10b6:303:6b::24) To CY5PR11MB6139.namprd11.prod.outlook.com
+ (2603:10b6:930:29::17)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Tue, 29 Oct 2024 01:16:32 +0530
-Message-ID: <CA+G9fYt0pqM_f-uiK=xH0RWrhfABdjy743yyxu4CLtb+kkS6-w@mail.gmail.com>
-Subject: kselftest:arm64/FVP: arm64_check_buffer_fill - failed on Linux next-20241025
-To: open list <linux-kernel@vger.kernel.org>, 
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, 
-	Linux ARM <linux-arm-kernel@lists.infradead.org>, lkft-triage@lists.linaro.org
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Mark Brown <broonie@kernel.org>, 
-	Andre Przywara <andre.przywara@arm.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Dan Carpenter <dan.carpenter@linaro.org>, Aishwarya TCV <Aishwarya.TCV@arm.com>, 
-	Anders Roxell <anders.roxell@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY5PR11MB6139:EE_|DS7PR11MB6296:EE_
+X-MS-Office365-Filtering-Correlation-Id: faa4ec32-7b06-4384-0e3a-08dcf7895d1a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?EvLX5fwtFUsLX7CKeKeuUnUU/6KquUh3We+OthtgkrpUbdX2qqam/ZZhyRsA?=
+ =?us-ascii?Q?ivfpB24CvWWF543MSBwurX1KJX4RSofaS4V2h/ed5Kmgipc6nO+0NzbYUBlO?=
+ =?us-ascii?Q?Rx5QUtMESVAOYThLpcWOynQ8HXRg3lvsyC/GGI+xOaqb2+pnUBKxiWy8xmeI?=
+ =?us-ascii?Q?i3AiZe5MZvOCtH+JxejQ8IfnzdQVKGcbC5UJfBY2DfeyVh1L5AlvU8cnHyOv?=
+ =?us-ascii?Q?gdVtnmu0s8UZHq5bSC0POvbLbuoVS5fdnlppe8v3IiIoosu603M7c9Mpr+W6?=
+ =?us-ascii?Q?fUyzxbZDdXH8J2wwhYKss2N6B5eZYFac5UIWd6eGQ1+B+uYicIdJA7MB+TaA?=
+ =?us-ascii?Q?jdxWcLxqrhPBzlNiEugDqCtIJciEpXnwNzihH64J40qoyIXjijaGknP60Qlk?=
+ =?us-ascii?Q?aQjJkJrFCx/O1iC9+tyvig0VZm8UozGm0923f8x9XU6D4SGlqnmj3hKMKT2C?=
+ =?us-ascii?Q?f2RaS5g5gqET8Q2W5Jl2o2jiAts4wW+rVjCrl7ExY9bQqCbCOr8g+ULu7KwS?=
+ =?us-ascii?Q?qqmjHVtSVV5BfXyWV+ZRyx5nH8Qv+Suc1FT8LAWLmg71LPOodt8j3OuHbcKA?=
+ =?us-ascii?Q?U7K1ZLdk4/uY1/Zn8E8mvizkk1sGYp/8xfR0yd0gkwqFCaQXWFPJ1fmxvVzG?=
+ =?us-ascii?Q?Srq8XRBd0z5z4m0TSFP8s62wbUH6gUV2121/0h6JB3HDlmTWfiXEUOyKX8kf?=
+ =?us-ascii?Q?hHbkZn/d7ngapnwIizEPy3a1U3r377zr3SR3YleqD3Bb8t4qE1B1/zEzTgEI?=
+ =?us-ascii?Q?RC0G+/0gyqF0w8n9qIO3eYlAgvsT+1hAAap4m4iB29P+BCFHq9pA6fHozcap?=
+ =?us-ascii?Q?3oDeVcWXyrEgY6ewiqyfDSErmEnSQpTBmAgSJCcz/eAo8T2ySieDsbf/H4id?=
+ =?us-ascii?Q?3pebfzli7wmvY/G7a639e5DmJfN+r1GogLbQeqwRdFaZL560fY/B1T0FsL7q?=
+ =?us-ascii?Q?3vQtiyEzMa1cRFHr/oQFD9N0vKsHNkwcs5gTQ6RSHcNOBV3Pz5w2cRjU4dDg?=
+ =?us-ascii?Q?ZbWQTf5pQxpWJ9kofSyd75x3YlBHZALgwSzzppDJDT3ylo8cYWfMGI792l2G?=
+ =?us-ascii?Q?miXNjdFv318lkfQGpCjGvGv1JbnFrxm2fWoga4hS4rsGlZ5Db2QwWuFIDWFT?=
+ =?us-ascii?Q?e73llqKBcBuqFBOHWnSzner8gcMuC/tAbaDyk6s89CO1rHdaJGNuoGZdVgxs?=
+ =?us-ascii?Q?thM9mTu3nX8OdagjL1jn8EqN4qitngljkcJfj97p/c1i4u/Ij2WfUqT2nyoN?=
+ =?us-ascii?Q?al58l9G8JlKMJ9qhKwVwbkIIX7mKB6LtoG00xFyh0W6qux7aCa+wHOo1RoUc?=
+ =?us-ascii?Q?37ulvs3z0kQF8m1L590R8ZML?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR11MB6139.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?hjX5K+snOnzpT3cf/cgwNii1He96dXP3vUYXtQdG3CRrJgvZEn6dfFd4jDm/?=
+ =?us-ascii?Q?/bp+mWEr+/o/jpSKhR/T9NA8qapYgfoOX2P7N8VBQxp/alf6eiqEWXI/wDPI?=
+ =?us-ascii?Q?24GzdxpbrxMr6C1/ScYd9qp4vaSJJZGILmuZnHqVOU9tdQVvwOYq3o+n/Jqp?=
+ =?us-ascii?Q?X2nVxOAkQoYp8zUuPhv/XPP7Zh9XBpkdjIzEJQlczN+8fg4Z+lRAvMPHOu/b?=
+ =?us-ascii?Q?d3nJUCXEOm5HP9oAjDKAS/Lh69r54N5A78B+WvctTfL/gonTPgoY3k1S3fwE?=
+ =?us-ascii?Q?Ma9LZ9xcvrFIi2VlNGi7QyUcz2H3KOBALlNHap+S6tuxnEqUD3nl+GlkzVmR?=
+ =?us-ascii?Q?7tR/7NMW1ttmRrYl1QotxnsZNPIhS9IT7Bj/2JshiYDzTc/J1SPsirLCAY7d?=
+ =?us-ascii?Q?9afLyoHTR/ZI2QEPvPnbQdXkQHJBolhaEWSQh9tCyvQJGwqyKXv6huI6sFKX?=
+ =?us-ascii?Q?VIpbHulyyFnSdUC7wa9utx5tSZQG+A6jigLVD3HBZkWtzAwB9yZku2eK7B5M?=
+ =?us-ascii?Q?wp8p9QDvIAGr+UNmQxJVsG23QtnGWwlDlAD+/B9FKfLZdCzvhzACrVkHpqN6?=
+ =?us-ascii?Q?QmXQf6m3o1pVvbEPmwYa+HximWgTbl9t6FtBpIF7FLjqT7EjzGe2sTEEawZr?=
+ =?us-ascii?Q?ILC+3pZ3py49SRyRKThcvbVZkZ/epsJFYgVrpIKc9TU/suZAcoS6kYTXqzZT?=
+ =?us-ascii?Q?HWv6KA9zkHxDc7T7JbikuaLipGA7sZ+PWLZneSdUwI6tBTF2UfqYTMVo0+xE?=
+ =?us-ascii?Q?G2XFv5ZctjdQYhqd3DRIQwot0ygOuO0uErp0zOz/e4rO+6ebWB/RDgm6slom?=
+ =?us-ascii?Q?gUEz3lacyntSwZgdKaFSxkeSVulWNGeZY9XGZDjBegY1hTIWXWaNMrnqeuXA?=
+ =?us-ascii?Q?zG1DSjjDCH5mCgCga3/fvIqW5EjdRHVfxRPKnHgLnrkpdVuIrfnxrEEpjZ46?=
+ =?us-ascii?Q?MA1nM4SL061tHkzci3srFqZzcaYIJS35NdWx7q9NnJravNoSQ+dHGz2yzNRx?=
+ =?us-ascii?Q?HHL7iZikjJVjbpxOTu5VZLyAA/Kqzh7Gjsmx2WwmjTx2TKWc0e2rD8cWaZV7?=
+ =?us-ascii?Q?KavA6jSd2xP2AOm4WDgPvvkP896yo6o2gpXIZqELLBm2xENT26UYBMOwsFzP?=
+ =?us-ascii?Q?YSNafQwabRFcJWeplGqTjOcvTZiFFup0PYlwSJWEN/L8fo+jTL+/wqrJ0eYq?=
+ =?us-ascii?Q?hpkY0xu+Z9fRjqJ0zRZYS3Ok1vqZEwtTFOaUa95cuI+uctfAIi0eE1Wmqh95?=
+ =?us-ascii?Q?KmyL2qXOGFRsi1BfxHCFWdYNsHp7nqUmNe6Bv+6l7vwf1BkweGfHl0U+eM5C?=
+ =?us-ascii?Q?tcrEH6+QsrjmtSX4DfEhtQgf9jvkMyWKDhxBPrDTXiGu4W5pYRywXl/Ft1Aq?=
+ =?us-ascii?Q?9iKd3Mykl10w2cjoXpHih+CniAnwaN2l+WKXvnT/J9nfEdvhI0cUsp9aTii8?=
+ =?us-ascii?Q?kZ45k806nM6U5CdInwUiULfGlc+h6XWCRp53/LFa2uAKscF2srNSHlgBMb2K?=
+ =?us-ascii?Q?Zi20wzbXKx5DMx8z6vI9ojxYOJfnG+T7P3c1txlk3RrRM0RMGJ9nhQXJOCZw?=
+ =?us-ascii?Q?R+ddlSuJ8xBJUeEZsr1CDk3hS+PeHlMrYQQkd5bCCeOF0pCTr850ndZBySjL?=
+ =?us-ascii?Q?Gw=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: faa4ec32-7b06-4384-0e3a-08dcf7895d1a
+X-MS-Exchange-CrossTenant-AuthSource: CY5PR11MB6139.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2024 19:47:32.7170
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: WwNSql3QJeaxrW/iRipBULq0ed8mOcT32tcttlwmzZT3abiX5wiThlM4tpJR2PNKBzzT+N0OY6sN61sa/VRKVfX/0eiv3pcom17DP9o9jwc=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR11MB6296
+X-OriginatorOrg: intel.com
 
-The following kselftest arm64 and FVP failed with Linux next-20241025 on
-  - Qemu-arm64
-  - FVP
+On Sun, Oct 27, 2024 at 01:57:52PM +0900, Gyeyoung Baek wrote:
+>In the previous code, there is build error.
+>if CONFIG_DRM_USE_DYNAMIC_DEBUG is set,
+>'drm_dbg' function is replaced with '__dynamic_func_call_cls',
+>which is replaced with a do while statement.
+>
+>The problem is that,
+>XE_IOCTL_DBG uses this function for conditional expression.
+>
+>so I fix the expression to be compatible with the do while statement,
+>by referring to "https://gcc.gnu.org/onlinedocs/gcc/Statement-Exprs.html".
+>
+>Signed-off-by: Gyeyoung Baek <gye976@gmail.com>
+>---
+> drivers/gpu/drm/xe/xe_macros.h | 6 +++---
+> 1 file changed, 3 insertions(+), 3 deletions(-)
+>
+>diff --git a/drivers/gpu/drm/xe/xe_macros.h b/drivers/gpu/drm/xe/xe_macros.h
+>index daf56c846d03..58a9d1e33502 100644
+>--- a/drivers/gpu/drm/xe/xe_macros.h
+>+++ b/drivers/gpu/drm/xe/xe_macros.h
+>@@ -11,8 +11,8 @@
+> #define XE_WARN_ON WARN_ON
+>
+> #define XE_IOCTL_DBG(xe, cond) \
+>-	((cond) && (drm_dbg(&(xe)->drm, \
+>-			    "Ioctl argument check failed at %s:%d: %s", \
+>-			    __FILE__, __LINE__, #cond), 1))
+>+	({drm_dbg(&(xe)->drm, \
+>+		"Ioctl argument check failed at %s:%d: %s", \
+>+		__FILE__, __LINE__, #cond); (cond); })
 
-running Linux next-20241025 kernel.
+but this would print the debug message regardless of the cond being
+true. Previously this would enter the condition if cond && 1 (due to the
+comma operator use), but printing the message was shortcut when cond was
+false.
 
-First seen on next-20241025
-  Good: next-20241024
-  BAD:  next-20241025
+It looks like keeping cond outside and the statement expr to cover only
+the call to drm_dbg would work.
 
- kselftest-arm64, FVP
-    * arm64_check_buffer_fill
-    * arm64_check_mmap_options
-    * arm64_check_child_memory
+Lucas De Marchi
 
-Anyone have seen these failures ?
-
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-
-Test log:
-----------
-# selftests: arm64: check_buffer_fill
-# 1..20
-# ok 1 Check buffer correctness by byte with sync err mode and mmap memory
-# ok 2 Check buffer correctness by byte with async err mode and mmap memory
-# ok 3 Check buffer correctness by byte with sync err mode and
-mmap/mprotect memory
-# ok 4 Check buffer correctness by byte with async err mode and
-mmap/mprotect memory
-# ok 5 Check buffer write underflow by byte with sync mode and mmap memory
-# ok 6 Check buffer write underflow by byte with async mode and mmap memory
-# ok 7 Check buffer write underflow by byte with tag check fault
-ignore and mmap memory
-# ok 8 Check buffer write underflow by byte with sync mode and mmap memory
-# ok 9 Check buffer write underflow by byte with async mode and mmap memory
-# ok 10 Check buffer write underflow by byte with tag check fault
-ignore and mmap memory
-# ok 11 Check buffer write overflow by byte with sync mode and mmap memory
-# ok 12 Check buffer write overflow by byte with async mode and mmap memory
-# ok 13 Check buffer write overflow by byte with tag fault ignore mode
-and mmap memory
-# ok 14 Check buffer write correctness by block with sync mode and mmap memory
-# ok 15 Check buffer write correctness by block with async mode and mmap memory
-# ok 16 Check buffer write correctness by block with tag fault ignore
-and mmap memory
-# # FAIL: mmap allocation
-# # FAIL: memory allocation
-# not ok 17 Check initial tags with private mapping, sync error mode
-and mmap memory
-# ok 18 Check initial tags with private mapping, sync error mode and
-mmap/mprotect memory
-# # FAIL: mmap allocation
-# # FAIL: memory allocation
-# not ok 19 Check initial tags with shared mapping, sync error mode
-and mmap memory
-# ok 20 Check initial tags with shared mapping, sync error mode and
-mmap/mprotect memory
-# # Totals: pass:18 fail:2 xfail:0 xpass:0 skip:0 error:0
-not ok 21 selftests: arm64: check_buffer_fill # exit=1
-# timeout set to 45
-# selftests: arm64: check_child_memory
-# 1..12
-# ok 1 Check child anonymous memory with private mapping, precise mode
-and mmap memory
-# ok 2 Check child anonymous memory with shared mapping, precise mode
-and mmap memory
-# ok 3 Check child anonymous memory with private mapping, imprecise
-mode and mmap memory
-# ok 4 Check child anonymous memory with shared mapping, imprecise
-mode and mmap memory
-# ok 5 Check child anonymous memory with private mapping, precise mode
-and mmap/mprotect memory
-# ok 6 Check child anonymous memory with shared mapping, precise mode
-and mmap/mprotect memory
-# # FAIL: mmap allocation
-# # FAIL: memory allocation
-# not ok 7 Check child file memory with private mapping, precise mode
-and mmap memory
-# # FAIL: mmap allocation
-# # FAIL: memory allocation
-# not ok 8 Check child file memory with shared mapping, precise mode
-and mmap memory
-# ok 9 Check child file memory with private mapping, imprecise mode
-and mmap memory
-# ok 10 Check child file memory with shared mapping, imprecise mode
-and mmap memory
-# ok 11 Check child file memory with private mapping, precise mode and
-mmap/mprotect memory
-# ok 12 Check child file memory with shared mapping, precise mode and
-mmap/mprotect memory
-# # Totals: pass:10 fail:2 xfail:0 xpass:0 skip:0 error:0
-not ok 22 selftests: arm64: check_child_memory # exit=1
-
-boot Log links,
---------
-  - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20241028/testrun/25586532/suite/kselftest-arm64/test/arm64_check_buffer_fill/log
-  - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20241028/testrun/25586576/suite/kselftest-arm64/test/arm64_check_mmap_options/log
-
-
-Test results history:
-----------
-  - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20241028/testrun/25586532/suite/kselftest-arm64/test/arm64_check_buffer_fill/history/
-  - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20241028/testrun/25586532/suite/kselftest-arm64/test/arm64_check_mmap_options/history/
-
-metadata:
-----
-  git describe: next-20241028
-  git repo: https://gitlab.com/Linaro/lkft/mirrors/next/linux-next
-  git sha: dec9255a128e19c5fcc3bdb18175d78094cc624d
-  kernel config:
-https://storage.tuxsuite.com/public/linaro/lkft/builds/2o3tMqzOtHXYQjlvfR5tnTcVMe5/config
-  build url: https://storage.tuxsuite.com/public/linaro/lkft/builds/2o3tMqzOtHXYQjlvfR5tnTcVMe5/
-  toolchain: gcc-13
-
-Steps to reproduce:
----------
-- https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/2o3tON5kNijMOtxu3bD6Cg6QFYC/reproducer
-- https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/2o3tON5kNijMOtxu3bD6Cg6QFYC/tux_plan
-
---
-Linaro LKFT
-https://lkft.linaro.org
+> #endif
+>-- 
+>2.34.1
+>
 
