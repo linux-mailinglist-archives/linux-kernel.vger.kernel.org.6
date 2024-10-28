@@ -1,58 +1,58 @@
-Return-Path: <linux-kernel+bounces-384312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B14F99B291B
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EFC69B291A
 	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 08:45:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7577728254B
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 07:45:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 053E61F21EBE
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 07:45:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03D401DF740;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 035281DF73D;
 	Mon, 28 Oct 2024 07:34:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0FTdeYzd";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="CCJWymg5"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ejWBxQxo";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="hAzsxZcL"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BB911D5AB4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98E331D5CCD
 	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 07:34:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730100894; cv=none; b=KBWCMf+PQCHdrMoyrHPmQdxiUI40TlocRHev+MDHZCOpTzhcHkWuaVrt0y3WxJGc6/4cGcv3OmrP5rZF4BGzx1tnJcInPMb8q52scfKQHwQeTswSH0Ac/lMR7LJIp8K8HLK8qjADXAoZ8xeH56wxb96u0fNZSc1S0chpQsJ5ehs=
+	t=1730100893; cv=none; b=C9MIHL8wFLAHme2I640jV8EtaNuZMRJhogwL29ULihLlED6XL8j1muOV+SrjRDHbuHzqrzzQ7ebsxqvrN0wKG87/NTIlM1Y5oV/p92z1RqnSFuiLAYaov1ASuR6Vf5POKWdAxZpzbws3ez3BbILjY+Of/SWo4wpg8zXk/Wkt/Lk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730100894; c=relaxed/simple;
-	bh=FgH+4oSFObwGJ6HnAfIGc8i9ehCagLGw5KwoO+DxTqQ=;
+	s=arc-20240116; t=1730100893; c=relaxed/simple;
+	bh=gyrFNuy5vudjM1FLkrlB1tmDnkFne3GntyyK+xSUUIs=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=OI+QbBRzSmxyRccNN3mMMWiT9g85+a2JvgU0W0tYnzlMEEwl0u4QLKROSmJE8bHffekcG9jBfqydfn5AS4umDe0SEyht+N3boVKFsB/0c0syk3YJrg+h1M289l87uicu+isrfH2xh72hgqJ3tymGtFME1qa13XjjKwNjZYn7nMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0FTdeYzd; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=CCJWymg5; arc=none smtp.client-ip=193.142.43.55
+	 MIME-Version; b=gFQSwYCClNdlVZjwXUHTcX2D88XWdu9KzuNJQ42Qa9snpnrDMYWQf6eHH2j+IReWYYvyIcqHajgAZGbT1jEOiZYCPVX4tEnFGKGxMEplU4R0d8Ram3bGS0WK2L1oiLj8gwDedPcWIdoH5qsvST9BRkebr8jDzPot3O/tdNXsFAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ejWBxQxo; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=hAzsxZcL; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: Nam Cao <namcao@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1730100889;
+	s=2020; t=1730100890;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=tTKC6D++uGTdE7vVcbbnaEeewmEp+B/DaXmcW6uXuo0=;
-	b=0FTdeYzd0H8IeImmDi0qKoq5NzGdMZ9cXu1pkgeHRm5F7HfrGw48WOp8JYHInqrdcSqvQW
-	qaWPPcKvRKnJW7IfES0dDpp7X2EoCd1AqoTK/P1uv4w9H+WRUebW6cfwu9b+KhB5Zsqh0O
-	rWi+EswTyMzvyjl1r6muIFBIiYuwh+3YihkfunGo7+TcXawhyD+3Mj3GKEQ25I130aUsDK
-	gmGnZCJ64+AS9rTXp9ByWr5iOVtuz+ZdQ8PwiIszgUb9VASraCypalZmaUNlzgV9rDr6/M
-	j/KsKTMpxfBn7D3rQunrQ5pgoxSzS4ckaZcBfkptb6kN9OaAEwpxHyN6ogBhaQ==
+	bh=tGSlDHf/SBeslCdjprCChultehdciaufyoVKgGuOcx0=;
+	b=ejWBxQxoFSyUBbDp8E5TOIjyyQYyabsnsZpnPL+gCVBCTNC0D45El141XjSx+baWWDyNTp
+	tNi+2r/2oifi5Wv9mVZRH18Y7Bl1jZ/aITQe3cjps1IAipHdYhFwyEdS7UtMIuVBuDo+Bt
+	lF1ConQdZRtZKyai4sXpA94A04LF0BBs/dlgPLoPuMHnLjNguGTSnhSNET5HHMYX0yBVZM
+	oeralENlDHkiGgTOFfYQE2/OHiznXQ4ZrbPeWMKrmQf90URAkhN+Zg/PFMX8WVkBeHj70+
+	7Z1pyd0tS09pYeOkdcqavEAwcBlA5AUShXGPikBd4vNajC4b+98+O0Tu8Sw1fA==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1730100889;
+	s=2020e; t=1730100890;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=tTKC6D++uGTdE7vVcbbnaEeewmEp+B/DaXmcW6uXuo0=;
-	b=CCJWymg5dmJrFFrp6uQuXwxilNowTQdSn6UqxumhDKiHPnfyH/wov7tUbaM84JL9sryRmb
-	hzUtwSRVBtG/FIAw==
+	bh=tGSlDHf/SBeslCdjprCChultehdciaufyoVKgGuOcx0=;
+	b=hAzsxZcLJRMYO0wcpz0/SjeD6fmVGj0W4UefWgxEil/NAsWN0pL5tkUHA6tCr5qGa3nlBE
+	pfOPlCGuiG1tRHDg==
 To: Anna-Maria Behnsen <anna-maria@linutronix.de>,
 	Frederic Weisbecker <frederic@kernel.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
@@ -64,9 +64,9 @@ To: Anna-Maria Behnsen <anna-maria@linutronix.de>,
 Cc: Nam Cao <namcao@linutronix.de>,
 	Jakub Kicinski <kuba@kernel.org>,
 	Paolo Abeni <pabeni@redhat.com>
-Subject: [PATCH 13/24] net: ieee802154: at86rf230: Switch to use hrtimer_setup()
-Date: Mon, 28 Oct 2024 08:34:26 +0100
-Message-Id: <89dcfc5c1cbf4c38d72bd565552abd4946aa99a8.1729865232.git.namcao@linutronix.de>
+Subject: [PATCH 14/24] net: mvpp2: Switch to use hrtimer_setup()
+Date: Mon, 28 Oct 2024 08:34:27 +0100
+Message-Id: <9e05dcbb3bab1cf10dda5b5f0d4c8519f68f4efa.1729865232.git.namcao@linutronix.de>
 In-Reply-To: <cover.1729865232.git.namcao@linutronix.de>
 References: <cover.1729865232.git.namcao@linutronix.de>
 Precedence: bulk
@@ -83,30 +83,35 @@ also sanity-checks and initializes the timer's callback function.
 
 Switch to use this new function.
 
+Patch was created by using Coccinelle.
+
 Signed-off-by: Nam Cao <namcao@linutronix.de>
 ---
 Cc: Jakub Kicinski <kuba@kernel.org>
 Cc: Paolo Abeni <pabeni@redhat.com>
 ---
- drivers/net/ieee802154/at86rf230.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/ieee802154/at86rf230.c b/drivers/net/ieee802154/at=
-86rf230.c
-index f632b0cfd5ae..fd91f8a45bce 100644
---- a/drivers/net/ieee802154/at86rf230.c
-+++ b/drivers/net/ieee802154/at86rf230.c
-@@ -776,8 +776,8 @@ at86rf230_setup_spi_messages(struct at86rf230_local *lp,
- 	state->trx.tx_buf =3D state->buf;
- 	state->trx.rx_buf =3D state->buf;
- 	spi_message_add_tail(&state->trx, &state->msg);
--	hrtimer_init(&state->timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
--	state->timer.function =3D at86rf230_async_state_timer;
-+	hrtimer_setup(&state->timer, at86rf230_async_state_timer, CLOCK_MONOTONIC,
-+		      HRTIMER_MODE_REL);
- }
+diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c b/drivers/net/=
+ethernet/marvell/mvpp2/mvpp2_main.c
+index 3880dcc0418b..03038402957e 100644
+--- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
++++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+@@ -6914,9 +6914,8 @@ static int mvpp2_port_probe(struct platform_device *p=
+dev,
+ 		for (thread =3D 0; thread < priv->nthreads; thread++) {
+ 			port_pcpu =3D per_cpu_ptr(port->pcpu, thread);
 =20
- static irqreturn_t at86rf230_isr(int irq, void *data)
+-			hrtimer_init(&port_pcpu->tx_done_timer, CLOCK_MONOTONIC,
+-				     HRTIMER_MODE_REL_PINNED_SOFT);
+-			port_pcpu->tx_done_timer.function =3D mvpp2_hr_timer_cb;
++			hrtimer_setup(&port_pcpu->tx_done_timer, mvpp2_hr_timer_cb, CLOCK_MONOT=
+ONIC,
++				      HRTIMER_MODE_REL_PINNED_SOFT);
+ 			port_pcpu->timer_scheduled =3D false;
+ 			port_pcpu->dev =3D dev;
+ 		}
 --=20
 2.39.5
 
