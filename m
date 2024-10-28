@@ -1,177 +1,137 @@
-Return-Path: <linux-kernel+bounces-385588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E3449B3910
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 19:27:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B2F29B3915
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 19:27:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E45801F227DF
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 18:27:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F3F8280D6C
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 18:27:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42DA01DF757;
-	Mon, 28 Oct 2024 18:27:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD16F1DFD98;
+	Mon, 28 Oct 2024 18:27:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ndg5c+EY"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dIJp2+P5"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B7DB186616
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 18:27:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 441481DF74D
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 18:27:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730140022; cv=none; b=fBJX02zbK3Qv/p2Twa9JbafBRSr9oda+n74irW//l6lipk2pEtHUDg9Jnk4sB/wjpoyyvmHiz4CrIoFyvfuHZuh+BrfORdOpceabywOJjxZFoKrUIbVoMf/PunPIm1tDW7XsXGei+4D9veWAV8Ea91vlWyZ6iWFpGmAOh3BZTMc=
+	t=1730140061; cv=none; b=QfM59trWejeQuhPtYJKUF/K4AFMSF15ECE3rD07Hk5uIOFAyqzZ7LKEX/aX+Ek55Vu7SLi8ypB0fAE0EY7TIR/0JTAFMYFiovl10Hr8VoV7VcLsCBD/0PqfBF5b3FPdjOmhhbYOxU8jbZqIbRa3ba2K1loWacKWD+rrMkHXVtog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730140022; c=relaxed/simple;
-	bh=xCHg34d/z2Iyw41CqIOn82y5Z51ZewWBi9AvOb/PN2s=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=NUYPhOrMnzgT9c0LhnhS4zsqo28rdaYXWjC+qsQMkoIeWQCbBVtY7QF0phoWKfpc8tCMuTcI58/vF53qSRhV83t6GQ9rnlku7q25wETzSmGxEX/6Kx1JsbEsE48J9DS9/k82+rGQ9kMwpaaoNJpPeQojsTGneWQHpxdCoOak5zc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--yuzhao.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Ndg5c+EY; arc=none smtp.client-ip=209.85.219.201
+	s=arc-20240116; t=1730140061; c=relaxed/simple;
+	bh=b1S1kMmCum00nro+Vr3336NHK/tiVehkGpWnxsKKwWw=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Tw5TuKLZ8sRPQ1MdHINBJZYbQtGsMXtc324eBb6097HDRDgaoHAtdnAql+K2bhhy5p0vlTyLeJa73+8/q4T/9CGQVOK3bdrNmA3kWwugqQ0wk4lur28IzIA+Osd+nlU2lyIt+1FVpoJt0/+rZC3CqhU0T380iDaYGLAHc7PaekE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dIJp2+P5; arc=none smtp.client-ip=209.85.128.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--yuzhao.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e02b5792baaso7816693276.2
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 11:27:00 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e1fbe2a6b1so94835427b3.2
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 11:27:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730140019; x=1730744819; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=SAR6sfCl7q8CLvZahnZnQP4NAt397CoYQQGsmmQJtFQ=;
-        b=Ndg5c+EYZ82Olxa7fJz11JwUUajDO2GNoNXJw7XhEU4ZSAnhAnxek5Lax9P3W8lyIb
-         ysl8xZcWcvNAGUQfbIvXllve6JX20jbxOdXmNsMtkW13vE6qptxNcFZykrFGUc5SE0yi
-         /LfFy4IRAZ4QHhaAWY3DWxCm+RB6PXaYAgUFOhDHJFjb2FAP8XS9nIZvN9IeK9fvcOPV
-         /D5SAtl5kZgVmDDKNVZ4ufY5/yaWDLRxMRkGWHr4f/pB99zpREKx2qiQqtVGGrIY3v/D
-         PbH7K3302n+vRTpaCwiooWKzTIbg2ayOk4ZKys7rbGVpwpVQMkNzYepP+szyiQxcVZYL
-         fpJg==
+        d=google.com; s=20230601; t=1730140058; x=1730744858; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=cmnbZOU0qjIEimURD21SxRpoBoMeIUpyXKqWoTkNi2A=;
+        b=dIJp2+P5X5PHVU8BE/doOTRgmnSVZxdnbz1OZM8RcfVnZSmOpPc9vMaZ4g6O5fliiK
+         Lsj1+wGw5dgihVYMbItp2+oHmp1s52H/tv38LGlMVo8ZUa6QCh6ptHB/LmlmIJMXtQ7m
+         uZT8ZDG9AX2mKEkY8j+4iHtvuacpJRsTLNaFaqNXYqs5IOdpJhfK2pQllemwf6ccR4DX
+         5qDnDeinhdrME/SEveYh0vszejw9eVoOFVs+7P4J63Xyowwtb+nDihI92dWgErXSxJtU
+         TRGSuWaghojh3XQGhw7Wt6AhIV5ehLclk1k0tZVQQXj7ueqoclII86rEfB61nDweIvfq
+         gMuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730140019; x=1730744819;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=SAR6sfCl7q8CLvZahnZnQP4NAt397CoYQQGsmmQJtFQ=;
-        b=Ezva9wte8K5Blw4Tn8m9ZQfgRoRS+HKCU8Djp862Ip2To0d/ldPuls/hNXEkxtmNBT
-         tNOL9ypwRkh+YpxHSvGe6pGdstLCVzZb3UnJ9mjPqYIW2EJ6EsWfvuFbX7wiyimxjfdw
-         mtVmiGEDf3I2c3hZepPXYVdKGBZtaypmZWvutb7W4TAunFFLum0YSR4/ICMqptKV+RAJ
-         2iiKutHyGe07aZ4NHsgR2/Ns4UN5fSLLGHu47O8nl5cWc17TiCiHoe/wiToPguIy9Vxk
-         0gd0qH+cICQJBOVoZJxYa5x+omyku89eVzk7O+QTtDdyumvfUxK+odKTgFZh4Wyl6fnt
-         CVDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUz5PC09q4D2XwW/Bx9ms8xH40LbMNqRBCSUtX16OVekO5yWcIal59E63SXFhVLEnDAQwP0TDwhFZA8cfc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZWT8vvNh9Voh4IppNPXtjm/79/hhXODy/pg0i0fVunJZGprzH
-	wS6wk6teSgHpjgwqJ4Q6bevYUm4dUkzYDgnS3frefoYq+qqvkUNithFjds7WCG3DVGw/pVlhCTI
-	Chg==
-X-Google-Smtp-Source: AGHT+IF9DI9pp2VPfLEJ3zKqqGeHwod+kO2SFViH2kiVn5KE0GbX5j8j/rSkrE/wdW7Vn+59QAK4wt9Kcgs=
-X-Received: from yuzhao2.bld.corp.google.com ([2a00:79e0:2e28:6:28ef:e08b:2af:6fd])
- (user=yuzhao job=sendgmr) by 2002:a25:8512:0:b0:e2e:3401:ea0f with SMTP id
- 3f1490d57ef6-e3087bd5448mr92425276.7.1730140019385; Mon, 28 Oct 2024 11:26:59
+        d=1e100.net; s=20230601; t=1730140058; x=1730744858;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cmnbZOU0qjIEimURD21SxRpoBoMeIUpyXKqWoTkNi2A=;
+        b=ooLpHf3+SOng+DHn7QHYC68uviCs36lsJ6yRwrsjwVTNZN6d8Bqj0gyQQwlkmax9hs
+         /7qP0bBcNklEEsoLnyzcBoGm6dXl7fh8egFrKsnNuwCPMNAMoIt38D2XI6oPj4n5fexR
+         a3UWACd7uKQDLfZRlGaE3OnJtRQcV9bfAzKoWKu07393zJz0LoPkno3IRFp8y8/VVvxz
+         kBTt3Okqxfd4bOHG1d0ICG7S3c5b2nAYDGZd7YrxO4sm6prQx2G/qex9lNcGRpZAbQ0j
+         8YdvJHqQu/dqvpUUCYLegmH/ZPhmdUoDRVPLlDP4P3tMx3u4gDW5+E7dnPUG2atoS3Yi
+         HOyA==
+X-Forwarded-Encrypted: i=1; AJvYcCXv3RZL54VkMr0f17S5rU0WugCz0ONjxawuvCzLLJJjZoG+yeRuESeF/7xuaUD/g9w6qmrylJK7REWdSgs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGhlRv9bH7XZgFkOEC0QklduYVazMmYSZFjbEjZtRxdoAyeYb+
+	TDxnmP/ZpE/sOhNlsmn3k7XrpTLQy3xKf2IX2v6jLCK+mV19jXmYql6q9EtS16W/oa+tItm0OI6
+	JTQ==
+X-Google-Smtp-Source: AGHT+IFn240YgEA2N2ByflWwnKUPX22a8Bmi+G7kKnmPMa+4cJwROFpduXbMAKP/dP2eb/K6QoAQDQFEUeI=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
+ (user=seanjc job=sendgmr) by 2002:a25:b28e:0:b0:e29:6df8:ef58 with SMTP id
+ 3f1490d57ef6-e3087a5bd64mr65240276.4.1730140058246; Mon, 28 Oct 2024 11:27:38
  -0700 (PDT)
-Date: Mon, 28 Oct 2024 12:26:53 -0600
+Date: Mon, 28 Oct 2024 11:27:36 -0700
+In-Reply-To: <Zx9Ua0dTQXwC9lzS@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-X-Mailer: git-send-email 2.47.0.163.g1226f6d8fa-goog
-Message-ID: <20241028182653.3420139-1-yuzhao@google.com>
-Subject: [PATCH mm-unstable v3] mm/page_alloc: keep track of free highatomic
-From: Yu Zhao <yuzhao@google.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	Yu Zhao <yuzhao@google.com>, Link Lin <linkl@google.com>, 
-	David Rientjes <rientjes@google.com>
-Content-Type: text/plain; charset="UTF-8"
+References: <20241001050110.3643764-1-xin@zytor.com> <20241001050110.3643764-26-xin@zytor.com>
+ <Zxn6Vc/2vvJ3VHCb@intel.com> <f9bb0740-21ec-482d-92fb-7fed3fef7d36@zytor.com> <Zx9Ua0dTQXwC9lzS@intel.com>
+Message-ID: <Zx_XmJnMCZjb7VBS@google.com>
+Subject: Re: [PATCH v3 25/27] KVM: nVMX: Add FRED VMCS fields
+From: Sean Christopherson <seanjc@google.com>
+To: Chao Gao <chao.gao@intel.com>
+Cc: Xin Li <xin@zytor.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, pbonzini@redhat.com, corbet@lwn.net, 
+	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, luto@kernel.org, 
+	peterz@infradead.org, andrew.cooper3@citrix.com
+Content-Type: text/plain; charset="us-ascii"
 
-OOM kills due to vastly overestimated free highatomic reserves were
-observed:
+On Mon, Oct 28, 2024, Chao Gao wrote:
+> On Fri, Oct 25, 2024 at 12:25:45AM -0700, Xin Li wrote:
+> >> > static void nested_vmx_setup_cr_fixed(struct nested_vmx_msrs *msrs)
+> >> > diff --git a/arch/x86/kvm/vmx/nested.h b/arch/x86/kvm/vmx/nested.h
+> >> > index 2c296b6abb8c..5272f617fcef 100644
+> >> > --- a/arch/x86/kvm/vmx/nested.h
+> >> > +++ b/arch/x86/kvm/vmx/nested.h
+> >> > @@ -251,6 +251,14 @@ static inline bool nested_cpu_has_encls_exit(struct vmcs12 *vmcs12)
+> >> > 	return nested_cpu_has2(vmcs12, SECONDARY_EXEC_ENCLS_EXITING);
+> >> > }
+> >> > 
+> >> > +static inline bool nested_cpu_has_fred(struct vmcs12 *vmcs12)
+> >> > +{
+> >> > +	return vmcs12->vm_entry_controls & VM_ENTRY_LOAD_IA32_FRED &&
+> >> > +	       vmcs12->vm_exit_controls & VM_EXIT_ACTIVATE_SECONDARY_CONTROLS &&
+> >> > +	       vmcs12->secondary_vm_exit_controls & SECONDARY_VM_EXIT_SAVE_IA32_FRED &&
+> >> > +	       vmcs12->secondary_vm_exit_controls & SECONDARY_VM_EXIT_LOAD_IA32_FRED;
+> >> 
+> >> Is it a requirement in the SDM that the VMM should enable all FRED controls or
+> >> none? If not, the VMM is allowed to enable only one or two of them. This means
+> >> KVM would need to emulate FRED controls for the L1 VMM as three separate
+> >> features.
+> >
+> >The SDM doesn't say that.  But FRED states are used during and
+> >immediately after VM entry and exit, I don't see a good reason for a VMM
+> >to enable only one or two of the 3 save/load configs.
 
-  ... invoked oom-killer: gfp_mask=0x100cca(GFP_HIGHUSER_MOVABLE), order=0 ...
-  Node 0 Normal free:1482936kB boost:0kB min:410416kB low:739404kB high:1068392kB reserved_highatomic:1073152KB ...
-  Node 0 Normal: 1292*4kB (ME) 1920*8kB (E) 383*16kB (UE) 220*32kB (ME) 340*64kB (E) 2155*128kB (UE) 3243*256kB (UE) 615*512kB (U) 1*1024kB (M) 0*2048kB 0*4096kB = 1477408kB
+Not KVM's concern.
 
-The second line above shows that the OOM kill was due to the following
-condition:
+> >Say if VM_ENTRY_LOAD_IA32_FRED is not set, it means a VMM needs to
+> >switch to guest FRED states before it does a VM entry, which is
+> >absolutely a big mess.
 
-  free (1482936kB) - reserved_highatomic (1073152kB) = 409784KB < min (410416kB)
+Again, not KVM's concern.
 
-And the third line shows there were no free pages in any
-MIGRATE_HIGHATOMIC pageblocks, which otherwise would show up as type
-'H'. Therefore __zone_watermark_unusable_free() underestimated the
-usable free memory by over 1GB, which resulted in the unnecessary OOM
-kill above.
+> If the VMM doesn't enable FRED, it's fine to load guest FRED states before VM
+> entry, right?
 
-The comments in __zone_watermark_unusable_free() warns about the
-potential risk, i.e.,
+Yep.  Or if L1 is simply broken and elects to manually load FRED state before
+VM-Enter instead of using VM_ENTRY_LOAD_IA32_FRED, then any badness that happens
+is 100% L1's problem to deal with.  KVM's responsiblity is to emulate the
+architectural behavior, what L1 may or may not do is irrelevant.
 
-  If the caller does not have rights to reserves below the min
-  watermark then subtract the high-atomic reserves. This will
-  over-estimate the size of the atomic reserve but it avoids a search.
+> The key is to emulate hardware behavior accurately without making assumptions
+> about guests.
 
-However, it is possible to keep track of free pages in reserved
-highatomic pageblocks with a new per-zone counter nr_free_highatomic
-protected by the zone lock, to avoid a search when calculating the
-usable free memory. And the cost would be minimal, i.e., simple
-arithmetics in the highatomic alloc/free/move paths.
++1000
 
-Note that since nr_free_highatomic can be relatively small, using a
-per-cpu counter might cause too much drift and defeat its purpose,
-in addition to the extra memory overhead.
-
-Reported-by: Link Lin <linkl@google.com>
-Signed-off-by: Yu Zhao <yuzhao@google.com>
-Acked-by: David Rientjes <rientjes@google.com>
----
- include/linux/mmzone.h |  1 +
- mm/page_alloc.c        | 10 +++++++---
- 2 files changed, 8 insertions(+), 3 deletions(-)
-
-diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-index 2e8c4307c728..5e8f567753bd 100644
---- a/include/linux/mmzone.h
-+++ b/include/linux/mmzone.h
-@@ -825,6 +825,7 @@ struct zone {
- 	unsigned long watermark_boost;
- 
- 	unsigned long nr_reserved_highatomic;
-+	unsigned long nr_free_highatomic;
- 
- 	/*
- 	 * We don't know if the memory that we're going to allocate will be
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index a78acaae6d9c..372a386f34f5 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -635,6 +635,8 @@ compaction_capture(struct capture_control *capc, struct page *page,
- static inline void account_freepages(struct zone *zone, int nr_pages,
- 				     int migratetype)
- {
-+	lockdep_assert_held(&zone->lock);
-+
- 	if (is_migrate_isolate(migratetype))
- 		return;
- 
-@@ -642,6 +644,9 @@ static inline void account_freepages(struct zone *zone, int nr_pages,
- 
- 	if (is_migrate_cma(migratetype))
- 		__mod_zone_page_state(zone, NR_FREE_CMA_PAGES, nr_pages);
-+
-+	if (is_migrate_highatomic(migratetype))
-+		WRITE_ONCE(zone->nr_free_highatomic, zone->nr_free_highatomic + nr_pages);
- }
- 
- /* Used for pages not on another list */
-@@ -3117,11 +3122,10 @@ static inline long __zone_watermark_unusable_free(struct zone *z,
- 
- 	/*
- 	 * If the caller does not have rights to reserves below the min
--	 * watermark then subtract the high-atomic reserves. This will
--	 * over-estimate the size of the atomic reserve but it avoids a search.
-+	 * watermark then subtract the free pages reserved for highatomic.
- 	 */
- 	if (likely(!(alloc_flags & ALLOC_RESERVES)))
--		unusable_free += z->nr_reserved_highatomic;
-+		unusable_free += READ_ONCE(z->nr_free_highatomic);
- 
- #ifdef CONFIG_CMA
- 	/* If allocation can't use CMA areas don't use free CMA pages */
--- 
-2.47.0.163.g1226f6d8fa-goog
-
+> If some combinations of controls cannot be emulated properly, KVM
+> should report internal errors at some point.
 
