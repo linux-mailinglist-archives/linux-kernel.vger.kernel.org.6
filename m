@@ -1,58 +1,58 @@
-Return-Path: <linux-kernel+bounces-384316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB3DF9B291F
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 08:46:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E704B9B2921
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 08:47:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B8A31F210A6
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 07:46:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB415282603
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 07:47:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5B461D7E3D;
-	Mon, 28 Oct 2024 07:34:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1716E1DFE06;
+	Mon, 28 Oct 2024 07:34:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="d6Clmt90";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WKiJKrfq"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="O/CZaGLC";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4CQnBKyO"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80CAB1DA634
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C7C21DD554
 	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 07:34:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730100896; cv=none; b=sN6tBQV6fLKCU10A29jIZgONNYpMGJCa/6iJV7+SvUKXe28XjO944KCarsLq9sYKN6eDTTztpE1FIceLRuOqsmfafpQg5pcAPjK20Aaww6I6CjlvrZ/Sw+XIxSdVQKKmTUaV0EdhTgGPDpK3ferLGr+dskwbKrMC51IYQ5omivM=
+	t=1730100896; cv=none; b=OmUpxlc/Yvxpd0H5gdYbbvZToZC+sg3ekbeHmVsgDDAyLcXNcinwbnHMmixjMGC24S+h8FCctImf8CAsaBsoQCQN/LlLzM9gBtD3F2koCRbQitNylmyXNMQe6z14BKq07ZYsXOYMloKuovArBQvdJxGQ5F62Oc6V9vIdaGquWO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1730100896; c=relaxed/simple;
-	bh=IIbEppl4dS+chwmBL45RLcZjLxLuKIjbYMvPgSIRg+w=;
+	bh=q85l8Rn54jUqp09xOP9w1ZewUSf4Q6vKvgjhh7tfDi8=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=C0qgRzKQJMS+xbFj0Utaq8FRlKbsfAn725IZz5VdKRKj/4gYb3Un7IhSwtiV7zzCUKUlRe5qFiqfPhWtl361f1go/ta+0G/BatbYH7dXCqZ3iIJB/GhsRrCeOywk/qHRf6wk+WnOd2QOGsxvkQyQtp4hx40uPppZiLpRp1SXqt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=d6Clmt90; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WKiJKrfq; arc=none smtp.client-ip=193.142.43.55
+	 MIME-Version; b=j9r6dSfc2yr+52d04JlJ74DdhcVnSG9RsY1P2k0YED6Fn/qLCkV8da3Il1F08B8vQUFKTKt5gtL1Knb5JKvL+Sik88q/9WfvlSx0tRwuN5Q0cbrnAHXzRe3KTTSFMeoZrffPcvbxpEFmzFmyouDXzHDqRZCqAzw6FNm3ldGNedE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=O/CZaGLC; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4CQnBKyO; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: Nam Cao <namcao@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1730100891;
+	s=2020; t=1730100892;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=LJdI/mozZHXhIuU2am3kttDkMcd+QLHW2Wp2sHPuTUc=;
-	b=d6Clmt90z4tM0ANE9itUdXnm1TKSEoiFc/5LwsB1i0dBsTb1hnTCuK3GdnRTQDO5s/DBd4
-	SkbX6F52AYVOzdC3CyH+fwKvcSXpy1Fl3z1YaI+SvA7LxyiNjiFTjmYmLESs8Quv1MLTv/
-	Z0wue0GsWc1afyS0lyF3M/XZgz8BaT1gewDrKesRFlFMSdjsPufDyt9qD933jj8xAkUM8I
-	v6DmOP9BPYUGj/Mo2fBd7/ulwkxFPoFy1CTS4p7eIDs3QWD+jT1tGz4r+9CgYgTH8vQVNJ
-	wLv2KlDWVSW0Ks0NOGQkCLYqbe1dgFvT1ti+GOXqhekNxjNgz1XeCkgN5YkzjQ==
+	bh=XyzJyFR/q82cIdy9DlEUJKpApgLq4Sn0n6FEbCe/fz0=;
+	b=O/CZaGLCYsdv/6x//9IkN3MDOvHsHZ5JmWsDeKt/wcf0w3bzinY35edPkW0wYdok7S8apW
+	0O0M2eEbx+lafLwyHj0jS61a5kwDyNtKq7tV5gKPZNAoswCy9NEtvdM5l+JgdpyzcgwGD5
+	jE7mWoYr70nbQBCUPkbTB9PNL9Aoelfpq4Hdc8cMYX5MeaifhqzbIBabUP7+9BD5x70QXU
+	OFjg5E47U10ny5t6HEN0Rf7RGzYWdK7XEl9+vRbyeSOhHZ24XvbB8ITwx3iN+Ml+xhuAjF
+	LXpuQ0CPRCKXK+NVWot5oaPv3myfDpmAcpjagr0pwJaCpF6wgYplEkCJv4Xj0g==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1730100891;
+	s=2020e; t=1730100892;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=LJdI/mozZHXhIuU2am3kttDkMcd+QLHW2Wp2sHPuTUc=;
-	b=WKiJKrfqIRrEvd3kHACthQ4R1va8cfjJgpe3wZifAat/SnrDNO35tZFW5R4lvJnb6tO1Kg
-	xEKi6yrblff+c2DA==
+	bh=XyzJyFR/q82cIdy9DlEUJKpApgLq4Sn0n6FEbCe/fz0=;
+	b=4CQnBKyOIkW/P5tkSUh6OLMxChh4drX2hePBe/e4D8l5Xd4xEneCihIHtvX2s2i8Y/7sHu
+	wPOqCdCE/h/iDaDQ==
 To: Anna-Maria Behnsen <anna-maria@linutronix.de>,
 	Frederic Weisbecker <frederic@kernel.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
@@ -62,11 +62,12 @@ To: Anna-Maria Behnsen <anna-maria@linutronix.de>,
 	Kees Cook <kees@kernel.org>,
 	linux-kernel@vger.kernel.org
 Cc: Nam Cao <namcao@linutronix.de>,
+	Oliver Neukum <oliver@neukum.org>,
 	Jakub Kicinski <kuba@kernel.org>,
 	Paolo Abeni <pabeni@redhat.com>
-Subject: [PATCH 18/24] net: wwan: iosm: Switch to use hrtimer_setup()
-Date: Mon, 28 Oct 2024 08:34:31 +0100
-Message-Id: <5b39405467f80bb8e4c83108df12cd2f4a0193e6.1729865232.git.namcao@linutronix.de>
+Subject: [PATCH 19/24] net/cdc_ncm: Switch to use hrtimer_setup()
+Date: Mon, 28 Oct 2024 08:34:32 +0100
+Message-Id: <f2a07b8c0a24dc4526658ab5bb91fda0f4f0bcd2.1729865232.git.namcao@linutronix.de>
 In-Reply-To: <cover.1729865232.git.namcao@linutronix.de>
 References: <cover.1729865232.git.namcao@linutronix.de>
 Precedence: bulk
@@ -87,58 +88,29 @@ Patch was created by using Coccinelle.
 
 Signed-off-by: Nam Cao <namcao@linutronix.de>
 ---
+Cc: Oliver Neukum <oliver@neukum.org>
 Cc: Jakub Kicinski <kuba@kernel.org>
 Cc: Paolo Abeni <pabeni@redhat.com>
 ---
- drivers/net/wwan/iosm/iosm_ipc_imem.c | 24 ++++++++++--------------
- 1 file changed, 10 insertions(+), 14 deletions(-)
+ drivers/net/usb/cdc_ncm.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/net/wwan/iosm/iosm_ipc_imem.c b/drivers/net/wwan/iosm/=
-iosm_ipc_imem.c
-index 829515a601b3..530a3ea47a1a 100644
---- a/drivers/net/wwan/iosm/iosm_ipc_imem.c
-+++ b/drivers/net/wwan/iosm/iosm_ipc_imem.c
-@@ -1381,24 +1381,20 @@ struct iosm_imem *ipc_imem_init(struct iosm_pcie *p=
-cie, unsigned int device_id,
- 	/* The phase is set to power off. */
- 	ipc_imem->phase =3D IPC_P_OFF;
+diff --git a/drivers/net/usb/cdc_ncm.c b/drivers/net/usb/cdc_ncm.c
+index d5c47a2a62dc..34e82f1e37d9 100644
+--- a/drivers/net/usb/cdc_ncm.c
++++ b/drivers/net/usb/cdc_ncm.c
+@@ -833,8 +833,7 @@ int cdc_ncm_bind_common(struct usbnet *dev, struct usb_=
+interface *intf, u8 data_
 =20
--	hrtimer_init(&ipc_imem->startup_timer, CLOCK_MONOTONIC,
--		     HRTIMER_MODE_REL);
--	ipc_imem->startup_timer.function =3D ipc_imem_startup_timer_cb;
-+	hrtimer_setup(&ipc_imem->startup_timer, ipc_imem_startup_timer_cb, CLOCK_=
-MONOTONIC,
-+		      HRTIMER_MODE_REL);
+ 	ctx->dev =3D dev;
 =20
--	hrtimer_init(&ipc_imem->tdupdate_timer, CLOCK_MONOTONIC,
--		     HRTIMER_MODE_REL);
--	ipc_imem->tdupdate_timer.function =3D ipc_imem_td_update_timer_cb;
-+	hrtimer_setup(&ipc_imem->tdupdate_timer, ipc_imem_td_update_timer_cb, CLO=
-CK_MONOTONIC,
-+		      HRTIMER_MODE_REL);
-=20
--	hrtimer_init(&ipc_imem->fast_update_timer, CLOCK_MONOTONIC,
--		     HRTIMER_MODE_REL);
--	ipc_imem->fast_update_timer.function =3D ipc_imem_fast_update_timer_cb;
-+	hrtimer_setup(&ipc_imem->fast_update_timer, ipc_imem_fast_update_timer_cb=
-, CLOCK_MONOTONIC,
-+		      HRTIMER_MODE_REL);
-=20
--	hrtimer_init(&ipc_imem->td_alloc_timer, CLOCK_MONOTONIC,
--		     HRTIMER_MODE_REL);
--	ipc_imem->td_alloc_timer.function =3D ipc_imem_td_alloc_timer_cb;
-+	hrtimer_setup(&ipc_imem->td_alloc_timer, ipc_imem_td_alloc_timer_cb, CLOC=
-K_MONOTONIC,
-+		      HRTIMER_MODE_REL);
-=20
--	hrtimer_init(&ipc_imem->adb_timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
--	ipc_imem->adb_timer.function =3D ipc_imem_adb_timer_cb;
-+	hrtimer_setup(&ipc_imem->adb_timer, ipc_imem_adb_timer_cb, CLOCK_MONOTONI=
-C,
-+		      HRTIMER_MODE_REL);
-=20
- 	if (ipc_imem_config(ipc_imem)) {
- 		dev_err(ipc_imem->dev, "failed to initialize the imem");
+-	hrtimer_init(&ctx->tx_timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
+-	ctx->tx_timer.function =3D &cdc_ncm_tx_timer_cb;
++	hrtimer_setup(&ctx->tx_timer, &cdc_ncm_tx_timer_cb, CLOCK_MONOTONIC, HRTI=
+MER_MODE_REL);
+ 	tasklet_setup(&ctx->bh, cdc_ncm_txpath_bh);
+ 	atomic_set(&ctx->stop, 0);
+ 	spin_lock_init(&ctx->mtx);
 --=20
 2.39.5
 
