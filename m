@@ -1,141 +1,225 @@
-Return-Path: <linux-kernel+bounces-385033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47FC79B3196
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:22:48 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0E399B3199
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:23:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70B9B1C213DB
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:22:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2718DB220C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:23:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EA9F1DBB13;
-	Mon, 28 Oct 2024 13:22:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03DF71DC054;
+	Mon, 28 Oct 2024 13:23:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LDFUQwsS";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="OIZ4ris+"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PudSzRtk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C0DB18A921;
-	Mon, 28 Oct 2024 13:22:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41F8538396;
+	Mon, 28 Oct 2024 13:23:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730121759; cv=none; b=NpjWZ8bi83H4jkeWmTSGpw8jgpb4x/lDWHC+CQU657ZH9z2mAbt5804Fn7TlcK2Shs6oavzswOTv2SVPpjh+Ay++dWuX3W+gTJFu6Op7kHeeqdCwqfgLqdun2b4W1lnwd61uEquqvpqwyq+nvVUdHqgdE/u+fS8nutgJvtN0+Fw=
+	t=1730121784; cv=none; b=QHpNzAjF+L/ZxrA1jUNi+hIG3HwOOe0vVKDyhnt9D/IaeazejB1HYlG73HlXS61i7aKFP8GgmwoTc8Dhuca60nfyJsuzsroCh+7G9Vo3iGU8lnLdwNfWDKFC3BkR+0W5ECccnMKeAJBoYAYOnTtWsw622INXeDSXvO04VxAZ/ME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730121759; c=relaxed/simple;
-	bh=roDEL1+bPO2wS+cBM+y0aiHYpgneB1/8mG78KA5yY64=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Fc0OSroGi8xXczKP+aDiU/w0kNzYsQUZyk5s29iN6wsXM9wq216fD5cr8kAmn1sW2fY1RRnNnb5bvbgqrX9w8DDEWOIED9mzsk5WdHniD7hHigMod+TUiRfI8hmqjEICNgZ+SjltRYS5fAgPPQMD7d6oawc6vI/9Eqs95Q/npx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LDFUQwsS; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=OIZ4ris+; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: John Ogness <john.ogness@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1730121756;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=apY6S+qeU253Dd/TKZK2biKnIZhCt99HbkaZ7kbjDVE=;
-	b=LDFUQwsSME0pYe9xdUvkoGlcU7qsslf7g7nlRu5paPljeoREOtOjM6krVD9I+SeYHKjQ6t
-	08Lnthd4DiYwVsDTa+7vom92MS+JNwqk4XK6wyUKHYQx5UrUyHVoJOL/ddt9XoYY1TmMl1
-	zzdKyoExedY7FBs86UZyFbNF2kUHAewWuVtXsZc8wOkixnKdhZN2/f0FphbmQjmoOpw1ip
-	LW+rTccgZoo13JAOYjnrE2lsnJ7fut26CbRA76NNDHvO5vIgJUYamaTeNg/yWGfueGuoHJ
-	LgyMHQ4cZaOLX/GHzB5F9hKmminpkVjmDnm5e+OQMMKi70TEsfCW2Koqh6vLvQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1730121756;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=apY6S+qeU253Dd/TKZK2biKnIZhCt99HbkaZ7kbjDVE=;
-	b=OIZ4ris+cVy5tg+Br/SXpkJX931O3A4q3LdJXlkysQjqZUG6kzAeVpKuyQXAvYuhjii3L+
-	aghviZNEtjFUehCw==
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby
- <jirislaby@kernel.org>, Petr Mladek <pmladek@suse.com>, Sergey Senozhatsky
- <senozhatsky@chromium.org>, Steven Rostedt <rostedt@goodmis.org>, Thomas
- Gleixner <tglx@linutronix.de>, Esben Haabendal <esben@geanix.com>,
- linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, Geert
- Uytterhoeven <geert+renesas@glider.be>, Arnd Bergmann <arnd@arndb.de>, Uwe
- =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, Tony
- Lindgren
- <tony@atomide.com>, Rengarajan S <rengarajan.s@microchip.com>, Peter
- Collingbourne <pcc@google.com>, Serge Semin <fancer.lancer@gmail.com>,
- Lino Sanfilippo <l.sanfilippo@kunbus.com>
-Subject: Re: [PATCH tty-next v3 5/6] serial: 8250: Switch to nbcon console
-In-Reply-To: <ZxupiKSSpZlyKhz-@smile.fi.intel.com>
-References: <20241025105728.602310-1-john.ogness@linutronix.de>
- <20241025105728.602310-6-john.ogness@linutronix.de>
- <ZxupiKSSpZlyKhz-@smile.fi.intel.com>
-Date: Mon, 28 Oct 2024 14:28:35 +0106
-Message-ID: <848qu8nyzo.fsf@jogness.linutronix.de>
+	s=arc-20240116; t=1730121784; c=relaxed/simple;
+	bh=9tECmQTWRmCrctZx1DA72M0oCUbizMBPA+xl+7zZJYo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=a7iPZFw1JBZbxyzidJOQjssUfxgBGmWu8TtTx2jjbFxJ0+q39wjHLfUwTzVb4gr9mvtS73KccDfZJ6YLKb3+eXMxGl2GU1qNXuH8GX8znxtMshl4kqi+CYdhi3PD3XmzOVIbMcRS8eE9BPXHRk7G7XmUM7tv22taRnwBxqq4mVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PudSzRtk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED931C4CEC3;
+	Mon, 28 Oct 2024 13:22:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730121783;
+	bh=9tECmQTWRmCrctZx1DA72M0oCUbizMBPA+xl+7zZJYo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PudSzRtksSiVNKwGVRWY+Dv/cjY6o52UJ0NnBF7zVDLApZAd+3k1U+8KEOalpOQSz
+	 POD/7Kbnv5zzk76wsCPMIf0GzShT7MPuShwXhOmvrxsYnXj/H/8UMUCSnH8fHWrJz8
+	 fqBbtiavtPcg2WMEWraY9Vozjtw5ejFDYzr62CACQtyvybrbMMo28MQtnYVd4S7Vu/
+	 gFF4y9CUyjwEyQXnBnNs+gniZG0KiyXqY+D55Gcivzne0KfVo0RRDyw8lWaxqlrPJV
+	 UTO4rZjPzhelBMLEhjQBnbfbQPc0JrbawU9rmefiYtL8ehhGebUyH4kPGwkxWcpUA+
+	 JQiK+GV53c/3g==
+Date: Mon, 28 Oct 2024 14:22:56 +0100
+From: Danilo Krummrich <dakr@kernel.org>
+To: Rob Herring <robh@kernel.org>
+Cc: gregkh@linuxfoundation.org, rafael@kernel.org, bhelgaas@google.com,
+	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
+	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+	tmgross@umich.edu, a.hindborg@samsung.com, aliceryhl@google.com,
+	airlied@gmail.com, fujita.tomonori@gmail.com, lina@asahilina.net,
+	pstanner@redhat.com, ajanulgu@redhat.com, lyude@redhat.com,
+	daniel.almeida@collabora.com, saravanak@google.com,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 13/16] samples: rust: add Rust PCI sample driver
+Message-ID: <Zx-QMBHtWSFkLiKm@pollux>
+References: <20241022213221.2383-1-dakr@kernel.org>
+ <20241022213221.2383-14-dakr@kernel.org>
+ <20241023155737.GB1064929-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241023155737.GB1064929-robh@kernel.org>
 
-On 2024-10-25, Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
->> +/*
->> + * Only to be used directly by the console write callbacks, which may not
->> + * require the port lock. Use serial8250_clear_IER() instead for all other
->> + * cases.
->> + */
->> +static void __serial8250_clear_IER(struct uart_8250_port *up)
->>  {
->>  	if (up->capabilities & UART_CAP_UUE)
->>  		serial_out(up, UART_IER, UART_IER_UUE);
->
->>  		serial_out(up, UART_IER, 0);
->>  }
->>  
->> +static inline void serial8250_clear_IER(struct uart_8250_port *up)
->> +{
->> +	__serial8250_clear_IER(up);
->
-> Shouldn't this have a lockdep annotation to differentiate with the
-> above?
+On Wed, Oct 23, 2024 at 10:57:37AM -0500, Rob Herring wrote:
+> On Tue, Oct 22, 2024 at 11:31:50PM +0200, Danilo Krummrich wrote:
+> > This commit adds a sample Rust PCI driver for QEMU's "pci-testdev"
+> > device. To enable this device QEMU has to be called with
+> > `-device pci-testdev`.
+> 
+> Note that the DT unittests also use this device. So this means we have 2 
+> drivers that bind to the device. Probably it's okay, but does make 
+> them somewhat mutually-exclusive.
+>  
+> > The same driver shows how to use the PCI device / driver abstractions,
+> > as well as how to request and map PCI BARs, including a short sequence of
+> > MMIO operations.
+> > 
+> > Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+> > ---
+> >  MAINTAINERS                     |   1 +
+> >  samples/rust/Kconfig            |  11 ++++
+> >  samples/rust/Makefile           |   1 +
+> >  samples/rust/rust_driver_pci.rs | 109 ++++++++++++++++++++++++++++++++
+> >  4 files changed, 122 insertions(+)
+> >  create mode 100644 samples/rust/rust_driver_pci.rs
+> > 
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index 2d00d3845b4a..d9c512a3e72b 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -17940,6 +17940,7 @@ F:	include/linux/of_pci.h
+> >  F:	include/linux/pci*
+> >  F:	include/uapi/linux/pci*
+> >  F:	rust/kernel/pci.rs
+> > +F:	samples/rust/rust_driver_pci.rs
+> >  
+> >  PCIE DRIVER FOR AMAZON ANNAPURNA LABS
+> >  M:	Jonathan Chocron <jonnyc@amazon.com>
+> > diff --git a/samples/rust/Kconfig b/samples/rust/Kconfig
+> > index b0f74a81c8f9..6d468193cdd8 100644
+> > --- a/samples/rust/Kconfig
+> > +++ b/samples/rust/Kconfig
+> > @@ -30,6 +30,17 @@ config SAMPLE_RUST_PRINT
+> >  
+> >  	  If unsure, say N.
+> >  
+> > +config SAMPLE_RUST_DRIVER_PCI
+> > +	tristate "PCI Driver"
+> > +	depends on PCI
+> > +	help
+> > +	  This option builds the Rust PCI driver sample.
+> > +
+> > +	  To compile this as a module, choose M here:
+> > +	  the module will be called driver_pci.
+> > +
+> > +	  If unsure, say N.
+> > +
+> >  config SAMPLE_RUST_HOSTPROGS
+> >  	bool "Host programs"
+> >  	help
+> > diff --git a/samples/rust/Makefile b/samples/rust/Makefile
+> > index 03086dabbea4..b66767f4a62a 100644
+> > --- a/samples/rust/Makefile
+> > +++ b/samples/rust/Makefile
+> > @@ -2,5 +2,6 @@
+> >  
+> >  obj-$(CONFIG_SAMPLE_RUST_MINIMAL)		+= rust_minimal.o
+> >  obj-$(CONFIG_SAMPLE_RUST_PRINT)			+= rust_print.o
+> > +obj-$(CONFIG_SAMPLE_RUST_DRIVER_PCI)		+= rust_driver_pci.o
+> >  
+> >  subdir-$(CONFIG_SAMPLE_RUST_HOSTPROGS)		+= hostprogs
+> > diff --git a/samples/rust/rust_driver_pci.rs b/samples/rust/rust_driver_pci.rs
+> > new file mode 100644
+> > index 000000000000..d24dc1fde9e8
+> > --- /dev/null
+> > +++ b/samples/rust/rust_driver_pci.rs
+> > @@ -0,0 +1,109 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +
+> > +//! Rust PCI driver sample (based on QEMU's `pci-testdev`).
+> > +//!
+> > +//! To make this driver probe, QEMU must be run with `-device pci-testdev`.
+> > +
+> > +use kernel::{bindings, c_str, devres::Devres, pci, prelude::*};
+> > +
+> > +struct Regs;
+> > +
+> > +impl Regs {
+> > +    const TEST: usize = 0x0;
+> > +    const OFFSET: usize = 0x4;
+> > +    const DATA: usize = 0x8;
+> > +    const COUNT: usize = 0xC;
+> > +    const END: usize = 0x10;
+> > +}
+> > +
+> > +type Bar0 = pci::Bar<{ Regs::END }>;
+> > +
+> > +#[derive(Debug)]
+> > +struct TestIndex(u8);
+> > +
+> > +impl TestIndex {
+> > +    const NO_EVENTFD: Self = Self(0);
+> > +}
+> > +
+> > +struct SampleDriver {
+> > +    pdev: pci::Device,
+> > +    bar: Devres<Bar0>,
+> > +}
+> > +
+> > +kernel::pci_device_table!(
+> > +    PCI_TABLE,
+> > +    MODULE_PCI_TABLE,
+> > +    <SampleDriver as pci::Driver>::IdInfo,
+> > +    [(
+> > +        pci::DeviceId::new(bindings::PCI_VENDOR_ID_REDHAT, 0x5),
+> > +        TestIndex::NO_EVENTFD
+> > +    )]
+> > +);
+> > +
+> > +impl SampleDriver {
+> > +    fn testdev(index: &TestIndex, bar: &Bar0) -> Result<u32> {
+> > +        // Select the test.
+> > +        bar.writeb(index.0, Regs::TEST);
+> > +
+> > +        let offset = u32::from_le(bar.readl(Regs::OFFSET)) as usize;
+> 
+> The C version of readl takes care of from_le for you. Why not here?
 
-Yes, but the follow-up patch adds the annotation as a clean "revert
-patch". I can add a line about that in the commit message.
+It's just an abstraction around the C readl(), so it does -- good catch.
 
->> +static void serial8250_console_byte_write(struct uart_8250_port *up,
->> +					  struct nbcon_write_context *wctxt)
->> +{
->> +	const char *s = READ_ONCE(wctxt->outbuf);
->> +	const char *end = s + READ_ONCE(wctxt->len);
->
-> Is there any possibility that outbuf value be changed before we get
-> the len and at the end we get the wrong pointer?
+> 
+> Also, can't we do better with rust and make this a generic:
+> 
+> let offset = bar.read::<u32>(Regs::OFFSET)) as usize;
 
-No. I was concerned about compiler optimization, since @outbuf can
-become NULL. However, it can only become NULL if ownership was
-transferred, and that is properly checked anyway. I will remove the
-READ_ONCE() usage for v4.
+I think we probably could, but we'd still need to handle the special cases for 1
+to 8 bytes type size (always using memcopy_{to,from}io() would lead to
+unnecessary overhead). Hence, there's probably not much benefit in that.
 
->>  struct uart_8250_port {
->
->>  	u16			lsr_save_mask;
->>  #define MSR_SAVE_FLAGS UART_MSR_ANY_DELTA
->>  	unsigned char		msr_saved_flags;
->> +	struct irq_work		modem_status_work;
->> +
->> +	bool			console_line_ended;	/* line fully output */
->>  
->>  	struct uart_8250_dma	*dma;
->>  	const struct uart_8250_ops *ops;
->
-> Btw, have you run `pahole` on this? Perhaps there are better places
-> for new members?
+Also, what would be the logic for a generic `{read, write}::<T>` in terms of
+memory barriers? I think memcopy_{to,from}io() is always "relaxed", isn't it?
 
-Indeed there are. Placing it above the MSR_SAVE_FLAGS macro will reduce
-an existing 3-byte hole to 2-bytes and avoid creating a new 7-byte
-hole.
+I think it's probably best to keep the two separate, the b,w,l,q variants and
+a generic one that maps to memcopy_{to,from}io().
 
-Thanks.
-
-John
+> 
+> 
+> > +        let data = bar.readb(Regs::DATA);
+> > +
+> > +        // Write `data` to `offset` to increase `count` by one.
+> > +        //
+> > +        // Note that we need `try_writeb`, since `offset` can't be checked at compile-time.
+> > +        bar.try_writeb(data, offset)?;
+> > +
+> > +        Ok(u32::from_le(bar.readl(Regs::COUNT)))
+> > +    }
+> > +}
+> 
 
