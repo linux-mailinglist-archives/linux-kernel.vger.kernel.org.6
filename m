@@ -1,116 +1,128 @@
-Return-Path: <linux-kernel+bounces-385685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D305F9B3A55
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 20:21:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2B409B3A56
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 20:21:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E30A11C21B8A
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 19:21:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F5401F22846
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 19:21:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 622201DE3B7;
-	Mon, 28 Oct 2024 19:21:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5B5B1DFD96;
+	Mon, 28 Oct 2024 19:21:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="Wpn2gb/e"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=lichtman.org header.i=@lichtman.org header.b="orSQodXM"
+Received: from lichtman.org (lichtman.org [149.28.33.109])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C221618EFF1;
-	Mon, 28 Oct 2024 19:20:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB2CC18F2D4;
+	Mon, 28 Oct 2024 19:21:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.33.109
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730143261; cv=none; b=GyEO3ZM0Ow93CNbv0y/DfHrfKs+bISbe6Cz8znH3mRLaQmud+LUQuz13oOrA0d8jZtmv+fUjsj8fA5kDnJEYlguwdiPdLkaJR+PVkHkAlI6ECMDNTeOSNrxGm/dC3dKgI7LA+4x6nZdp2aGwaq+SgM1UBg/kpRtDkZzrlFaVlRU=
+	t=1730143264; cv=none; b=g6QidYXNyj24tp04yIDowi3XEzezDtHPRrgiBgFwa+t6SqTtOgYoieVmxs2WqVjCzmi9Mc1sk7t+SsBdt74HQID5K4UGoC4Khi+9UmCaloZV9THH67mRboZe9+UL2wMNRggmhsN8D80y8FM849rqyIk168n/k8CswgLb25Asiq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730143261; c=relaxed/simple;
-	bh=F981mQfK+GakF4x7z8yIC7+kOIceY26cwCoUqATTl8I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RyyfNb7qRD+9pQP+1UA0B5Hhqjn9ut8AVYTZ+xIFpyXYUUeq3fMMtKmAJ3srwjInZRdmexllE+luQqWG9yCbLuj26W/nRV+nai/SywjFX/7quwOtmphRNWKTUgMttUL/tPgH8yR+HMYs265n0WZ2MIlD+ZCPAT0fgfMTjrVOCEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=Wpn2gb/e; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4315e9e9642so43418875e9.0;
-        Mon, 28 Oct 2024 12:20:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1730143258; x=1730748058; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=nmyfLhJgqZpTB9dOyWQs56gLuQycztkSBu1M1yDh9Ag=;
-        b=Wpn2gb/eAMB/2+wEr27/rIg8p2Fcs/6Oa9bTzcrgaEMMCzI61J1wV2K/o09HTcf6Ob
-         n9j/IYOO2dDoiz1XQB23QDYJdcizG9L5VzAcU0TwPRBdAipsL43SWdSpTIKUqjwtpZnD
-         zhbODrRiOxUrXMQMZpPuf5pLocBC4PoeLCoSsjs3GNbs+zi77sObU3vdszZDYPsMB/Oo
-         UFAASlUtEgPW9LWbJoZvz/glRMeID7i9YPWji80qUN/6c9n5L3r3uOpb9foNRaUG3yYs
-         brHtj0/HHiPzb2S0DjIkAI3C55aPcSjJDeYiRb19aTQPg4dlsxsaPyb4HSAAzJFtU3/v
-         IJHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730143258; x=1730748058;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nmyfLhJgqZpTB9dOyWQs56gLuQycztkSBu1M1yDh9Ag=;
-        b=V3N5Tcd9WbLWT8Kw83EzV2Zalr691laGzHO98xC/Bdso+fmEXFYAhq5/2in+t1LLck
-         mGDdsRiQGCQJ+qOQiRUuBdWRlpLexyYnZr+3dQ9Fe1oriqwtGciOTfPuZlPrdWCzR14K
-         f37s6KqDwhv/hBrVoEN1GNXQY1pqqTv3az0yN124g/I/b6ujppICpgUDiNt+rmPFmWIl
-         7RvbwFKipqiGtsqIDduZGqG20PZ26ay+eonJCMI+oTr+zJRk5XhFz2r8gECwgIJ4qIge
-         ShkMFgxJL8v3kKveK2rvHjJqrlNp14C4GGp/2+an7cc2+ifnIYg0J2JC29cVs55OqO3Y
-         YNMA==
-X-Forwarded-Encrypted: i=1; AJvYcCUP3Y075nJy2AfwDHUwkgweRcz3sY8r+YKlkTAf315drP2cetJSyg/wqNzbLfpJunoBWr5Kdw5u@vger.kernel.org, AJvYcCVmDQRrDqQcFlo2ODIG46s/b++RscXLVOLrTmeEM/u0K66YUV4S745vRqeUyzQ2NqemrSQBtXuIPNrUcSc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFN2pOXKxKZV3AWU59Y8w57ijkVFhXZ3m8NUb2q7JE9QvOBu9T
-	7QlwZTLG/quXjvQU7kZcYCTtGR42FcN5wc5I/ka5pmIK6wYul2ukvqYlNUo=
-X-Google-Smtp-Source: AGHT+IHdJPH8eCW/evibf4e02yyUQeiLZFkHgIBy7hWOQsM3sVPbez5w+tlVulpQhfUSmgb2F6Wm7g==
-X-Received: by 2002:a05:600c:1d15:b0:431:4a83:2d80 with SMTP id 5b1f17b1804b1-4319ab94761mr79671595e9.0.1730143257909;
-        Mon, 28 Oct 2024 12:20:57 -0700 (PDT)
-Received: from [192.168.1.3] (p5b2ace6d.dip0.t-ipconnect.de. [91.42.206.109])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b8c394sm10322778f8f.90.2024.10.28.12.20.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Oct 2024 12:20:57 -0700 (PDT)
-Message-ID: <7d6ae25f-0ad4-47a4-a155-e3efc6d9ee1a@googlemail.com>
-Date: Mon, 28 Oct 2024 20:20:56 +0100
+	s=arc-20240116; t=1730143264; c=relaxed/simple;
+	bh=aR+7Rb7rc6q3gGzSjOyg5o99zroVCJk79Aj9JqT1/88=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XhZwiDl6mnyO9FZq2Mr96+oiRZQCWfD0UTwmDJ1Y4HXghPj3LyU0mNnqb9DMCLc8IcqXjnheQgNGMiaUdxJNpP5DAA8/vc51s1jliEW0hlC1EBDPNgI+h+Za0kcJjisIh6n4j6idw0RdyBOJsv6M0p+RFQEnO984utVYOn4JxhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lichtman.org; spf=pass smtp.mailfrom=lichtman.org; dkim=pass (2048-bit key) header.d=lichtman.org header.i=@lichtman.org header.b=orSQodXM; arc=none smtp.client-ip=149.28.33.109
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lichtman.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lichtman.org
+Received: by lichtman.org (Postfix, from userid 1000)
+	id CFFF2177105; Mon, 28 Oct 2024 19:21:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=lichtman.org; s=mail;
+	t=1730143260; bh=aR+7Rb7rc6q3gGzSjOyg5o99zroVCJk79Aj9JqT1/88=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=orSQodXMtUmlKyB73JDULeBid9AJ6rPnRD68MID81NBTYVV30oh7jJeAoseL51L75
+	 81+B5UByPJmHIL0yHhZFXXLLK7Mtg/HsLR3yHIxDZokKQI8BeOs4vk3ceDTtZa7KnR
+	 CLEI/VnDcSfAlOeaVp2Szg7afTIqZpKmcdP0TJjXM+GhnMupl++C6RhaanaxwF6Jih
+	 TKnHK+eq0SWfd4gsd2+GFfZNoTkh/bSisHAhiwQGUrE+9JlSgr/8E2OcKXV09CJ7Ob
+	 rjZAldP/XbT26cLThzzujTlXR3zP5BGrydlbcp3h1bj72Lcm4I5+oQdsLjj5dcTMP8
+	 g861LPRay+H2g==
+Date: Mon, 28 Oct 2024 19:21:00 +0000
+From: Nir Lichtman <nir@lichtman.org>
+To: kgdb-bugreport@lists.sourceforge.net,
+	linux-trace-kernel@vger.kernel.org
+Cc: yuran.pereira@hotmail.com, jason.wessel@windriver.com,
+	daniel.thompson@linaro.org, dianders@chromium.org,
+	rostedt@goodmis.org, mhiramat@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-kernel-mentees@lists.linuxfoundation.org
+Subject: [PATCH v4 2/3] trace: kdb: Replace simple_strtoul with kstrtoul in
+ kdb_ftdump
+Message-ID: <20241028192100.GB918454@lichtman.org>
+References: <20241028191700.GA918263@lichtman.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH 6.6 000/208] 6.6.59-rc1 review
-Content-Language: de-DE
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20241028062306.649733554@linuxfoundation.org>
-From: Peter Schneider <pschneider1968@googlemail.com>
-In-Reply-To: <20241028062306.649733554@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241028191700.GA918263@lichtman.org>
 
-Am 28.10.2024 um 07:23 schrieb Greg Kroah-Hartman:
-> This is the start of the stable review cycle for the 6.6.59 release.
-> There are 208 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+From: Yuran Pereira <yuran.pereira@hotmail.com>
 
-Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg 
-oddities or regressions found.
+The function simple_strtoul performs no error checking in scenarios
+where the input value overflows the intended output variable.
+This results in this function successfully returning, even when the
+output does not match the input string (aka the function returns
+successfully even when the result is wrong).
 
-Tested-by: Peter Schneider <pschneider1968@googlemail.com>
+Or as it was mentioned [1], "...simple_strtol(), simple_strtoll(),
+simple_strtoul(), and simple_strtoull() functions explicitly ignore
+overflows, which may lead to unexpected results in callers."
+Hence, the use of those functions is discouraged.
 
-Beste Grüße,
-Peter Schneider
+This patch replaces all uses of the simple_strtoul with the safer
+alternatives kstrtoint and kstrtol.
 
+[1] https://www.kernel.org/doc/html/latest/process/deprecated.html#simple-strtol-simple-strtoll-simple-strtoul-simple-strtoull
+
+Signed-off-by: Yuran Pereira <yuran.pereira@hotmail.com>
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
+Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+[nir: style fixes]
+Signed-off-by: Nir Lichtman <nir@lichtman.org>
+---
+ kernel/trace/trace_kdb.c | 13 +++++--------
+ 1 file changed, 5 insertions(+), 8 deletions(-)
+
+diff --git a/kernel/trace/trace_kdb.c b/kernel/trace/trace_kdb.c
+index 59857a1ee44c..1e72d20b3c2f 100644
+--- a/kernel/trace/trace_kdb.c
++++ b/kernel/trace/trace_kdb.c
+@@ -96,22 +96,19 @@ static int kdb_ftdump(int argc, const char **argv)
+ {
+ 	int skip_entries = 0;
+ 	long cpu_file;
+-	char *cp;
++	int err;
+ 	int cnt;
+ 	int cpu;
+ 
+ 	if (argc > 2)
+ 		return KDB_ARGCOUNT;
+ 
+-	if (argc) {
+-		skip_entries = simple_strtol(argv[1], &cp, 0);
+-		if (*cp)
+-			skip_entries = 0;
+-	}
++	if (argc && kstrtoint(argv[1], 0, &skip_entries))
++		return KDB_BADINT;
+ 
+ 	if (argc == 2) {
+-		cpu_file = simple_strtol(argv[2], &cp, 0);
+-		if (*cp || cpu_file >= NR_CPUS || cpu_file < 0 ||
++		err = kstrtol(argv[2], 0, &cpu_file);
++		if (err || cpu_file >= NR_CPUS || cpu_file < 0 ||
+ 		    !cpu_online(cpu_file))
+ 			return KDB_BADINT;
+ 	} else {
 -- 
-Climb the mountain not to plant your flag, but to embrace the challenge,
-enjoy the air and behold the view. Climb it so you can see the world,
-not so the world can see you.                    -- David McCullough Jr.
-
-OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
-Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
+2.39.2
 
