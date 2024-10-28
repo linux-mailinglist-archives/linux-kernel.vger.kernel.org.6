@@ -1,147 +1,84 @@
-Return-Path: <linux-kernel+bounces-385807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B86409B3BFF
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 21:38:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FE7F9B3C01
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 21:39:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D584285F36
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 20:38:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 560602863C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 20:39:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4679C1E0095;
-	Mon, 28 Oct 2024 20:38:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 763D91E0DBA;
+	Mon, 28 Oct 2024 20:38:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oMIV7ouo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="dC8/TwOH"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EC49148300;
-	Mon, 28 Oct 2024 20:38:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DF4C1E0B7A;
+	Mon, 28 Oct 2024 20:38:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730147930; cv=none; b=Tc70MdybFNtnloEmIR3AeLLO0dteUGtDQHmoez16ke8OzK7jS7f+dJXzQfdRG4N4EQrlwEc1eRFSBsFuQPJGJWJm0xdNK9K/xXhqgKfHIgo13sYetxkS7wiB5JcrQv5tzG8AMQrAE+GzHyskSkIWquMLD1JB/csTZXL+PdNzjdA=
+	t=1730147934; cv=none; b=bHpusQkVitGE8apQdFyR5DmXexAiaH/HCVPdmMkxG9i1yof8kK7fRt2qMX1INjYyCSyYgaOqsVpi5ZYdLVkoVpoM2MnxKJjj1KBV6OSLMxLUV1HC24vE+w/5alCeI+AypURiG1krhmxsVH6+HqBfj9WDOxZWydO6nVfVrHsS1j0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730147930; c=relaxed/simple;
-	bh=m3PZAoWfta+ZnN37Ke0OPKpW1qTjsH1pXd/rg1xGge8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qt0yXYBIg4X0qiX0Pp5dlHtsfL/U4sgrLRjhbRuFewfk9wAYSncIQ/ZKTBhcCrRGhJ8d3L/6WgN/t1XXnUff1NgxpNnsxHexNCMGsW19GQlzyk/i+Kh9quYK4IMmjztkElbJfAtBgpXFDEQ1qFggGYgFiUjJ0F4x6d4d0414wOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oMIV7ouo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99932C4CEC3;
-	Mon, 28 Oct 2024 20:38:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730147930;
-	bh=m3PZAoWfta+ZnN37Ke0OPKpW1qTjsH1pXd/rg1xGge8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=oMIV7ouoNxO1A4ULnqqb+zD3y3ho0clS8GBIBs9qHMH/dskaNgIq+bZz1RhmTW+DE
-	 SdERiwUKLf/JmJS73kqRx3/PkieSIliCACITTT85+ZwQcUoI1m4mnZR2cD4eGCc3O5
-	 DnKK7yMH+cuPax9jnFOtaF0Loz/0flFGLZJWwepSNIQAT8Cg7Kmr4liSyVojS5UznI
-	 3JHumZdHCyFHX/xpTUN6XW06BesrhaH7FMdfjfSl3K4hMRUump6ly9ZSFMU54gRSiV
-	 HJO6jwiYGeUjG9em0maWV5mqGxa0K2xPhFnz5ulbFyTuX2kLo1eg1TnyrnoTAmZnnb
-	 wz3rU2IKfHlCA==
-Date: Mon, 28 Oct 2024 20:38:39 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Aren Moynihan <aren@peacevolution.org>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Lars-Peter Clausen
- <lars@metafoo.de>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai
- <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland
- <samuel@sholland.org>, Kaustabh Chakraborty <kauschluss@disroot.org>,
- =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <trabarni@gmail.com>, Ondrej Jirman
- <megi@xff.cz>, Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?=
- <u.kleine-koenig@pengutronix.de>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, Dragan
- Simic <dsimic@manjaro.org>, phone-devel@vger.kernel.org
-Subject: Re: [PATCH v3 3/6] iio: light: stk3310: Implement vdd and leda
- supplies
-Message-ID: <20241028203839.65debe2b@jic23-huawei>
-In-Reply-To: <ggpxs4mlkobdkvqxbzroeogqe2kxlixne7ly4njb5ynnszvvkv@3gusj5w53bbj>
-References: <20241028142000.1058149-1-aren@peacevolution.org>
-	<20241028142000.1058149-4-aren@peacevolution.org>
-	<Zx-h7QUnCKwtu8iC@smile.fi.intel.com>
-	<ggpxs4mlkobdkvqxbzroeogqe2kxlixne7ly4njb5ynnszvvkv@3gusj5w53bbj>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1730147934; c=relaxed/simple;
+	bh=0SHhwMvBQ0R/VwzQbIYNd7Gy0atuINm9sxnfjq3nmGw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mbWHh+jC9LN0nSvI6/3sBAiMPPOJmeau7htCIRSyCxicuQuKznu9wgYYhLwmCwIRJfEA3H1roCvZMEQsPmpNm+1/ELcd1CNUD440sCWRRTXC4WrBPpPIDH1cO6XmXYSqFSZnaahrCCi8KDC/1Y5DJqY+NO6OFuu693BZxW/if1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=dC8/TwOH; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=0cyChLLmUWYrZilbG+gZNOZFe7OHGrSoufugVIJy4Og=; b=dC8/TwOHMmChIkwoaPwsvpOWwg
+	n7VREjt24R6PPg8Ts918jTJqwKotUYuMH/bgWI03PrzGNq67+jWGDFi3Mei4ZSQqUpLRQmy2YmLB2
+	5s5WxtnD0nR8NbUt70pmG7UltPqWOcrdW+bUssN1YekgV4FCpBucJ90ka+XWsX50k4+M=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1t5WVi-00BULE-L0; Mon, 28 Oct 2024 21:38:46 +0100
+Date: Mon, 28 Oct 2024 21:38:46 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	David Ahern <dsahern@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org, Kees Cook <kees@kernel.org>,
+	Simon Horman <horms@kernel.org>
+Subject: Re: [PATCH v2 1/4][next] uapi: socket: Introduce struct
+ sockaddr_legacy
+Message-ID: <66641c32-a9fb-4cd6-b910-52d2872fad3d@lunn.ch>
+References: <cover.1729802213.git.gustavoars@kernel.org>
+ <23bd38a4bf024d4a92a8a634ddf4d5689cd3a67e.1729802213.git.gustavoars@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <23bd38a4bf024d4a92a8a634ddf4d5689cd3a67e.1729802213.git.gustavoars@kernel.org>
 
-On Mon, 28 Oct 2024 12:37:14 -0400
-Aren Moynihan <aren@peacevolution.org> wrote:
+> As this new struct will live in UAPI, to avoid breaking user-space code
+> that expects `struct sockaddr`, the `__kernel_sockaddr_legacy` macro is
+> introduced. This macro allows us to use either `struct sockaddr` or
+> `struct sockaddr_legacy` depending on the context in which the code is
+> used: kernel-space or user-space.
 
-> On Mon, Oct 28, 2024 at 04:38:37PM +0200, Andy Shevchenko wrote:
-> > On Mon, Oct 28, 2024 at 10:19:57AM -0400, Aren Moynihan wrote:  
-> > > The vdd and leda supplies must be powered on for the chip to function
-> > > and can be powered off during system suspend.
-> > > 
-> > > Co-developed-by: Ondrej Jirman <megi@xff.cz>  
-> > 
-> > Missing SoB. Please, read Submitting Patches documentation for understanding
-> > what has to be done here.
-> >   
-> > > Signed-off-by: Aren Moynihan <aren@peacevolution.org>  
-> > 
-> > ...
-> >   
-> > > Notes:
-> > >     I'm not sure what the proper way to handle attribution for this patch
-> > >     is. It was origionally based on a patch by Ondrej Jirman[1], but I have
-> > >     rewritten a large portion if it. I have included a Co-developed-by tag
-> > >     to indicate this, but haven't sent him this patch, so I'm not sure what
-> > >     to do about a Signed-off-by.  
-> > 
-> > Ah, seems you already aware of this issue. So, either drop Co-developed-by
-> > (and if you wish you may give a credit in a free form inside commit message)
-> > or make sure you get his SoB tag.  
-> 
-> Alright, thanks for clarifying that.
-> 
-> > >  	mutex_init(&data->lock);  
-> > 
-> > Somewhere (in the previous patch?) you want to switch to devm_mutex_init().  
-> 
-> Good catch, it looks like that was being leaked before this refactor.
-> Yeah that sounds like the right place, I'll include it in v4.
-Not really on the leaking.  Take a look at the cleanup for devm_mutex_init().
-It's debug only and not all that useful in most cases.
+Are there cases of userspace API structures where the flexiable array
+appears in the middle? I assume this new compiler flag is not only for
+use in the kernel? When it gets turned on in user space, will the
+kernel headers will again produce warnings? Should we be considering
+allowing user space to opt in to using sockaddr_legacy?
 
-However, it is good to not assume that now we have a devm_mutex_init()
-available that is easy to use.
-
-> 
-> > > +	ret = devm_regulator_bulk_get(&client->dev, ARRAY_SIZE(data->supplies),
-> > > +				      data->supplies);
-> > > +	if (ret)
-> > > +		return dev_err_probe(&client->dev, ret, "get regulators failed\n");  
-> >   
-> > > +		return dev_err_probe(&client->dev, ret,
-> > > +				     "regulator enable failed\n");  
-> >   
-> > > +	ret = devm_add_action_or_reset(&client->dev, stk3310_regulators_disable, data);
-> > > +	if (ret)
-> > > +		return dev_err_probe(&client->dev, ret,
-> > > +				     "failed to register regulator cleanup\n");  
-> > 
-> > With
-> > 
-> > 	struct devuce *dev = &client->dev;
-> > 
-> > at the top of the function makes these and more lines neater.
-> >   
-> [snip]
-> > 
-> > While changing to RCT order here, it seems you have inconsistent approach
-> > elsewhere (in your own patches!). Please, be consistent with chosen style.  
-> 
-> Sounds easy enough to fix, I'll include these in v4.
-> 
-> Thanks taking the time to review
->  - Aren
-
+    Andrew
 
