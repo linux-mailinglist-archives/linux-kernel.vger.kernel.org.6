@@ -1,62 +1,61 @@
-Return-Path: <linux-kernel+bounces-385631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8BEE9B39A9
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 19:52:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C91CC9B39AB
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 19:52:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 65DDDB225C7
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 18:52:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D7DF283E9C
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 18:52:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B44831DF738;
-	Mon, 28 Oct 2024 18:52:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5EBA1DFE10;
+	Mon, 28 Oct 2024 18:52:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SlQxEFz7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XrtKYXjI"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10CBA3A268
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 18:52:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DC471DFDAF
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 18:52:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730141549; cv=none; b=sjAqZYqOsCpThbKP8yCmR2dB/1K0EQJpn3+i94e4AMRB8We2ZF+2T1fqAqYxJK+/VDqdj73Pld2SNarvvBk4YNyVL2gWt0xHf97/WEXecz1ELcieQU0+RWzehU4EoDd7NB/mlJbzdzxPZsBvFLB9QkF5DaIVGLtuG3vBsKmF1T0=
+	t=1730141551; cv=none; b=Xl+dGyHRoD6UCcDk3zZ7/uBc9Gsi+FZWifuInQ2PmUCnJCcJ/zkInIdZ7ttxT/kENO1AosJZA6QIwQ63/btPvYYDaX4DtDG/q9eDNphUqHP1ao5bserzTIuJiIZxrOFfOyKQErawIw3/rnwjqLpheMF9SfhO6IeFn2At4a05rmU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730141549; c=relaxed/simple;
-	bh=ZASCXqyqeKEqmkgLJmRKVYVAx20KxDN1lRlbt5A3fTM=;
+	s=arc-20240116; t=1730141551; c=relaxed/simple;
+	bh=aOaHr4oONyfJNeV8zxUGMQ48BDUo4kPUaMe9VE1kEIM=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DgkkVKorZaH9/co/KxIybw3orj+HKs4ItSzYut2QBRicF7+jQME9AgwNyzPBkLo8UYE8nRi6cCED7TCXHU/uSHHKcmTgdE0yGj2ZShPjyIrXYcL7QQjDLSJPHfOpyTMAawg3i58r1eq8B88yQ//6YnC8wHjQvNpsfoaKc91cztM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SlQxEFz7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99849C4CEC3;
-	Mon, 28 Oct 2024 18:52:26 +0000 (UTC)
+	 MIME-Version:Content-Type; b=EaMTm9mAQ5SY8h39s2LcuT8sNZOaUSyS6SXCoxB4Gb3YZADo6C6Y3ilJSLbMrbE+eHdeTUydXbdCNlx3oA9hgBB3rj3UvrBpRVtOM883hUXv6MGsxgTlLUn2zqik65EyzaG/620Y2vLL5pNCEF9VuA2AjuOCYNsL+HRIC5mASn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XrtKYXjI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F29D2C4CEE4;
+	Mon, 28 Oct 2024 18:52:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730141548;
-	bh=ZASCXqyqeKEqmkgLJmRKVYVAx20KxDN1lRlbt5A3fTM=;
+	s=k20201202; t=1730141550;
+	bh=aOaHr4oONyfJNeV8zxUGMQ48BDUo4kPUaMe9VE1kEIM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=SlQxEFz7DrVnEJOW/sRypc1wm8pKWjk41lSbDk/n+rQhpZNMZFot5MSStmb4ve8yH
-	 InAB8xVutdi6YWWNziUzp30uaVK8/+ZitVLZqjC9KEfOedZLuy0bl2RBxWC+Wq3UNH
-	 x92KgaXo4aFxvocDOSLMBaQwfm+kql1I8QnDdNefQjtOeT4ZJdQjnnByne1vTN6lJ8
-	 y5omnyXk4p+PkvfQ6WJVJ+NyLsW9jRiOer6zkJkiy1qdFcAysWXpoiaqBFMV8fjjhX
-	 4HMsJzJt0kKRf7h6drgVAgmnLqTKNnZINv/ErENgCcRKlM1ejM/i2JLsCV0qBXRPdF
-	 SFGnTk131IbMA==
+	b=XrtKYXjIPHN7+hSKciIP782In5nosaMgoCPNmoVqEZHzYbFxBseBaL+5hXfJQuxFd
+	 ldUPyXec5fhWIXRTQukN2dtAOmH0aiFDAX8BHNnFzDpzwPPi6wTBQVvWySQo0jX6VT
+	 Id8JZmhWAvZxfuQs4TR9GBHi6qEhIjaOiSpZrEzDZvsPlbMrsIvpVQJTSIYRB3wzqF
+	 0dXTRk+9EDN8LfmjhByTkT9VvFlASLCw+yhuuFgkovmrVbUNY8raiuFiNBCzEjOMlo
+	 XDXdXgVJ8b4LUzcfZGVExzJ/BpSF6s5ADhH00aLr7rFzvMFBcDXhhxJOJZ+ekyBeH9
+	 2I2cu4Ijn/plw==
 From: Will Deacon <will@kernel.org>
-To: mark.rutland@arm.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Gowthami Thiagarajan <gthiagarajan@marvell.com>
-Cc: catalin.marinas@arm.com,
-	kernel-team@android.com,
+To: Marc Zyngier <maz@kernel.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	"Rob Herring (Arm)" <robh@kernel.org>
+Cc: kernel-team@android.com,
 	Will Deacon <will@kernel.org>,
-	gcherian@marvell.com,
-	sgoutham@marvell.com,
-	lcherian@marvell.com
-Subject: Re: [PATCH v10] perf/marvell: Marvell PEM performance monitor support
-Date: Mon, 28 Oct 2024 18:52:20 +0000
-Message-Id: <173013693587.4157891.11060695677574129414.b4-ty@kernel.org>
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] perf/arm_pmuv3: Add PMUv3.9 per counter EL0 access control
+Date: Mon, 28 Oct 2024 18:52:21 +0000
+Message-Id: <173013643645.2908148.3061264044552373982.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20241028055309.17893-1-gthiagarajan@marvell.com>
-References: <20241028055309.17893-1-gthiagarajan@marvell.com>
+In-Reply-To: <20241002184326.1105499-1-robh@kernel.org>
+References: <20241002184326.1105499-1-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,22 +65,22 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-On Mon, 28 Oct 2024 11:23:09 +0530, Gowthami Thiagarajan wrote:
-> PCI Express Interface PMU includes various performance counters
-> to monitor the data that is transmitted over the PCIe link. The
-> counters track various inbound and outbound transactions which
-> includes separate counters for posted/non-posted/completion TLPs.
-> Also, inbound and outbound memory read requests along with their
-> latencies can also be monitored. Address Translation Services(ATS)events
-> such as ATS Translation, ATS Page Request, ATS Invalidation along with
-> their corresponding latencies are also supported.
+On Wed, 02 Oct 2024 13:43:24 -0500, Rob Herring (Arm) wrote:
+> Armv8.9/9.4 PMUv3.9 adds per counter EL0 access controls. Per counter
+> access is enabled with the UEN bit in PMUSERENR_EL1 register. Individual
+> counters are enabled/disabled in the PMUACR_EL1 register. When UEN is
+> set, the CR/ER bits control EL0 write access and must be set to disable
+> write access.
+> 
+> With the access controls, the clearing of unused counters can be
+> skipped.
 > 
 > [...]
 
 Applied to will (for-next/perf), thanks!
 
-[1/1] perf/marvell: Marvell PEM performance monitor support
-      https://git.kernel.org/will/c/e1dce56443a4
+[1/1] perf/arm_pmuv3: Add PMUv3.9 per counter EL0 access control
+      https://git.kernel.org/will/c/0bbff9ed8165
 
 Cheers,
 -- 
