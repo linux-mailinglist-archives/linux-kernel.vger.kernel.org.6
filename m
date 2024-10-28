@@ -1,74 +1,84 @@
-Return-Path: <linux-kernel+bounces-385245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E72999B347B
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 16:09:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EAAD9B3471
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 16:08:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23B141C21FC4
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 15:09:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE1061F227D3
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 15:08:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CB521DE3DB;
-	Mon, 28 Oct 2024 15:09:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14F301DE2C6;
+	Mon, 28 Oct 2024 15:08:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="b+vT8B6q"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="yg+IIvk9"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE638185B68;
-	Mon, 28 Oct 2024 15:09:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6702418FDB0;
+	Mon, 28 Oct 2024 15:08:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730128150; cv=none; b=Utv0PZmp9hZWmGEXj1scwyVcayjAB38MscGKBAP+pI298Wb0LQlOFwH3Dn1OhKZPZCXwTI0rmjYa6TwhIVOUS0sS8vnscCHrrif+aC5oGouK5CfxZWFiw9RJgiLYmAk+JH5IjQVbg/QSEHMdZP40Cde3RIwdRH4IPSCidqtD9gg=
+	t=1730128112; cv=none; b=jHuQ0Vcg+LWnIg+obqQDetgZUZ+e7gDamaF3NPXSC59WJW15WowvwSthZQAqMlqSE1KIYOvwkN7iL9kRvt/roPe5vM2f9MI0/bQDoame8wxkjChrlOvzs8dYkfpmLSQPN0UeBaQpML2ZaTT3hEwSYOkzfGYKAX6wgxS1yDIef3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730128150; c=relaxed/simple;
-	bh=neoFJQoBplIOMB2Oli0Va+P0LfEckZZNG2EuEzQElTg=;
+	s=arc-20240116; t=1730128112; c=relaxed/simple;
+	bh=jiVKQ57hi7A062XHeQCcuk0VcgebYgwGxpIVbT11fb4=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=e4VAyQk4egwO10WoO5EhgqD04voYkmHHziPYuPKQ07Gw3AGHZp/RmkZm72XA0w/ydXzkIEaVwU3RCbYoAjrpBDbAfeJwqI99+tSnWOmFJWrxgqCkG2Vdet1CfhUssvbHuvTPMRPijw0kELmL3ufoDZMlMBKsra0nUawOXrCD+Fw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=b+vT8B6q; arc=none smtp.client-ip=198.47.23.249
+	 MIME-Version:Content-Type; b=Cmoib8lR8T93EEGY0MfEg/KRZ2D3ljhprDjRSDTXvH21H8rIrIan/fsz+YifivCMkB4TDyS5gmO9O85u52DZNOw3st0K0fufhO1nfaE+Ksnbi4lIYFN9bK8xXBGo/I50uSmJUT4vQQbzP13uIQbDwu8o7iy2lXwF2j4kDkYEsXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=yg+IIvk9; arc=none smtp.client-ip=198.47.23.248
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49SF8JL1091957;
-	Mon, 28 Oct 2024 10:08:19 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49SF8Ox3024829;
+	Mon, 28 Oct 2024 10:08:24 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1730128099;
-	bh=PcG6NepwaS5v72y5EW4BrZy3aZfCt9DWG2OfGvOadBQ=;
+	s=ti-com-17Q1; t=1730128104;
+	bh=Gx1ESAmVytH8Um5rIC3OkBCktJHLJF3/Z1qDATXgXjE=;
 	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=b+vT8B6q2raKBHSXuY35w2rCwScPCPJi5zOj91ho3/XcT4GZlyJkCGMufrCEjMs4O
-	 ZDNJvlPRfsafg3PhRB1HPR0cetK/SZA5vYZWCack5ewd3SJTq1KR4Q1msiGhrRmR95
-	 cWHYyyaCryvomCR6UxZpkfMAU6SoZ3sVg8kNfCVg=
-Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49SF8Jsq057726;
-	Mon, 28 Oct 2024 10:08:19 -0500
-Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+	b=yg+IIvk9jmGlq6ZRDfVy0theDCtSnN/eqJ4zLfPaxhIcI2lmQE4Cn5Ud8nOFcPYdg
+	 Jw1fj+k60mCPcsAosOC7yhvjzjcoznIY9HSes5K4fVUADWz8XuGWxL9CChSEQDdAET
+	 xfS5VaLLAvhAycPpMj05KxjXIf6LOBmr5BGVYRDM=
+Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 49SF8Ofj052100
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 28 Oct 2024 10:08:24 -0500
+Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 28
- Oct 2024 10:08:18 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ Oct 2024 10:08:23 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 28 Oct 2024 10:08:18 -0500
+ Frontend Transport; Mon, 28 Oct 2024 10:08:23 -0500
 Received: from uda0132425.dhcp.ti.com (uda0132425.dhcp.ti.com [172.24.227.94])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49SF5tcs129665;
-	Mon, 28 Oct 2024 10:08:15 -0500
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49SF5tct129665;
+	Mon, 28 Oct 2024 10:08:19 -0500
 From: Vignesh Raghavendra <vigneshr@ti.com>
-To: William Breathitt Gray <wbg@kernel.org>, Judith Mendez <jm@ti.com>
-CC: Vignesh Raghavendra <vigneshr@ti.com>, Rob Herring <robh@kernel.org>,
+To: Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>,
+        Rob Herring
+	<robh@kernel.org>,
         Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Tero Kristo <kristo@kernel.org>, David Lechner
-	<david@lechnology.com>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-iio@vger.kernel.org>
-Subject: Re: [PATCH v6 0/5] Enable eQEP DT support for Sitara K3 platforms
-Date: Mon, 28 Oct 2024 20:35:24 +0530
-Message-ID: <173012710989.558239.256253831200168385.b4-ty@ti.com>
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Manorit Chawdhry <m-chawdhry@ti.com>
+CC: Vignesh Raghavendra <vigneshr@ti.com>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Udit Kumar <u-kumar1@ti.com>,
+        Neha Malcom
+ Francis <n-francis@ti.com>,
+        Aniket Limaye <a-limaye@ti.com>, Beleswar Padhi
+	<b-padhi@ti.com>,
+        Siddharth Vadapalli <s-vadapalli@ti.com>,
+        Krzysztof
+ Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v6 0/5] Introduce J742S2 SoC and EVM
+Date: Mon, 28 Oct 2024 20:35:25 +0530
+Message-ID: <173012710987.558239.1177036960002400473.b4-ty@ti.com>
 X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20240924220700.886313-1-jm@ti.com>
-References: <20240924220700.886313-1-jm@ti.com>
+In-Reply-To: <20240902-b4-upstream-j742s2-v6-0-6a7aa2736797@ti.com>
+References: <20240902-b4-upstream-j742s2-v6-0-6a7aa2736797@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,34 +89,32 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hi Judith Mendez,
+Hi Manorit Chawdhry,
 
-On Tue, 24 Sep 2024 17:06:55 -0500, Judith Mendez wrote:
-> Git rebased the series since due to merge conflicts, part of the
-> series was not merged. Also dropped the patches that were already
-> merged.
+On Mon, 02 Sep 2024 17:56:48 +0530, Manorit Chawdhry wrote:
+> The series adds support for J742S2 family of SoCs. Also adds J742S2 EVM
+> Support and re-uses most of the stuff from the superset device J784s4.
 > 
-> This patch series adds eQEP DT nodes for K3 Sitara devices:
-> - AM62x
-> - AM62ax
-> - AM62px
-> - AM64x
+> It initially cleans up the J784s4 SoC files so that they can be
+> re-usable for j742s2 by introducing -common files. Next it cleans up the
+> EVM files for j784s4 in a similar way and then goes about adding the
+> support for j742s2.
 > 
 > [...]
 
 I have applied the following to branch ti-k3-dts-next on [1].
 Thank you!
 
-[1/5] arm64: dts: ti: k3-am62-main: Add eQEP nodes
-      commit: 79e668d0d938ca05f340bd1faf37262f31c7a029
-[2/5] arm64: dts: ti: k3-am62a-main: Add eQEP nodes
-      commit: 36370ccf93bd0bd2be0c529ef7c0b687988ad3c0
-[3/5] arm64: dts: ti: k3-am62p-main: Add eQEP nodes
-      commit: 0f4a318ee64c647e2cbf7d802b8d06b03aef31e5
-[4/5] arm64: dts: ti: k3-am64-main: Add eQEP nodes
-      commit: 78b918b58e4b13ad53373882b01945106d196ff9
-[5/5] arm64: dts: ti: k3-am64x-sk: Enable eQEP
-      commit: 25da98eb3997d21e128ab75d426923a0dc23c4e4
+[1/5] arm64: dts: ti: Refactor J784s4 SoC files to a common file
+      commit: 9cc161a4509c2fda7cbe35b4858b496cec03c5d0
+[2/5] arm64: dts: ti: Refactor J784s4-evm to a common file
+      commit: 39b623c05c4652f2ec450a07cee3d179a283733b
+[3/5] dt-bindings: arm: ti: Add bindings for J742S2 SoCs and Boards
+      commit: 9c65033884bfec836fe45f21d079de40fc7c7bda
+[4/5] arm64: dts: ti: Introduce J742S2 SoC family
+      commit: 38fd90a3e1ac7e948081cf168cf10f0a20febc21
+[5/5] arm64: dts: ti: Add support for J742S2 EVM board
+      commit: 13dc96a52712053cfad59b0d11cab694ed5bc5ef
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent up the chain during
