@@ -1,153 +1,138 @@
-Return-Path: <linux-kernel+bounces-385727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FDDF9B3AE7
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 21:00:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B4E99B3AE1
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 20:58:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 72871B214A6
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 19:59:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 392A21C21BCE
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 19:58:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4485A1DFD83;
-	Mon, 28 Oct 2024 19:59:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 531B41DFDA1;
+	Mon, 28 Oct 2024 19:58:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="GX3DRS2y"
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
+	dkim=pass (2048-bit key) header.d=mess.org header.i=@mess.org header.b="lBYeQE5d"
+Received: from gofer.mess.org (gofer.mess.org [88.97.38.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 895511DF97C;
-	Mon, 28 Oct 2024 19:59:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 515DB18EFE0;
+	Mon, 28 Oct 2024 19:58:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=88.97.38.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730145588; cv=none; b=l5JeZIyGNdgKbNRbBEZuaTWyIJ0DyuBNPrsJvyTcY+Aazw0lD+sQ5mx1rPqG/r0XBCnsN7mhjGx6vgbNW8SWJZyKUxnRya377rB3s9E1Kw7vOzjAuvca7H87Ns8bYbhySO4m1HQUu2irh/DGcvzHSvdOlW0SZnE6FtY5nTJXHoU=
+	t=1730145524; cv=none; b=eBYZ8U582ESr6bN1qA8RpljPbp/8VL1MyqzDg27EuiUKEyEpDw9F5oFVBG4VDOgRxnVfcHaF4x1UZ/yN6aIwr1KaeyaTW49qNH3gPvJAfsjaazZnN3dB/axvSmn4SQaT2+GqOi+RBb0JWORvMFzQQjXTYedxmh2h7IQ3Js8ESCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730145588; c=relaxed/simple;
-	bh=lIEvAnoQaQ0IDqgug4/zfMMO0xb0rzhSucAQ+l+pJqc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qW2qwBwdTxEVVmPMIbHTrWj+FYloUVHneCS5jkYoZR5W81HWplhbAdi2pM466xkpWUuDH54kBcfssnp7FXz8z87hfe1jI2xbjTLOz6cXd8R68gn3VYy1yX8JZI2IPZJO2RIeq/8vnEdbQd5jB+MZWNEtrFuoA8euReG+JKFMgZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=GX3DRS2y; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1730145585;
-	bh=lIEvAnoQaQ0IDqgug4/zfMMO0xb0rzhSucAQ+l+pJqc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=GX3DRS2yMWT6J3vviUgj0mrvmwUUXByVklnuTE/yD8r12X4DgpiTgjmXccTb3MFDY
-	 YausOVESED6NMzHkNLZDcD0EcGVIT0gnBLAgNYpmvTRKLJAW0K6Luzoatdc8JHD1/n
-	 3Sf91TRrpQBMHTqs8Odi2z8bxnus+SUEapVoN8DywREfQpD+bvdUTGkIPYzEq1FpBt
-	 Sd9x1eIeqTUoARfvu0x2DIHggXXLnAfJfonHqgu3WqUSaa6tQw6eTlFCtQ1e9BrXl+
-	 nNpDlzwfc4CwercvSnq030fcMclw6DdCf7Blm8FMqQcyu4QLZS43DS1pDUSii0jzRT
-	 L5m0RHuvVJUFw==
-Received: from [172.16.0.134] (96-127-217-162.qc.cable.ebox.net [96.127.217.162])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XckkT1vgQzsRs;
-	Mon, 28 Oct 2024 15:59:45 -0400 (EDT)
-Message-ID: <e18e953b-9030-487c-bb8a-125521568e9e@efficios.com>
-Date: Mon, 28 Oct 2024 15:58:06 -0400
+	s=arc-20240116; t=1730145524; c=relaxed/simple;
+	bh=mupsOZZGrluRvU7cSZ7krt1ma7qCAMbyzWbQDwdXUnU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FSXPku+/r+j3LJp4EieXGqcZhD4wU6q641ybux4uD83ZiNSr/76D56fDzgH/geBxb6uK9S+1CEwAtOV19ujzN50jm0FiqlQJcP25GgF378EyHoGL/lpX9esVjHFTR7Ag1fs2Vi4FNIXwDBrpURuw0DvelRuMDwbgzEvqMTw/zSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mess.org; spf=pass smtp.mailfrom=mess.org; dkim=pass (2048-bit key) header.d=mess.org header.i=@mess.org header.b=lBYeQE5d; arc=none smtp.client-ip=88.97.38.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mess.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mess.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mess.org; s=2020;
+	t=1730145519; bh=mupsOZZGrluRvU7cSZ7krt1ma7qCAMbyzWbQDwdXUnU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lBYeQE5dpHOxFG/t09hhIZR+mCZPyytWeRcFYMGSfgmlcfO7Z6VFjqdAzTYpMEibz
+	 P1wi0dhJIUrMzqyDkHdBANGJMw7a1pkFQlIQU+lrZZ7UPTzEs+1vIHk9ZOilmQ6YcJ
+	 Wqxgq+B6B+zX8wy+8BJxvuKlcalvOn2Tul/rol7RRuP0H1W1HldD5xNVDzoaJlwOk1
+	 dnVdycfWsq+iC9E8OPEUBp2vper03+H3a4q7cPUHlqVKKUOJRwa312jVcG7mw2lxp4
+	 mXSeUQSa2FTsWY3azMGmMjFW1Crzx5ffy+tb2fuk/5gsTZbGGY1c47IXV56E1WP7M/
+	 p44ktW4R4bqFA==
+Received: by gofer.mess.org (Postfix, from userid 1000)
+	id CC6791000C4; Mon, 28 Oct 2024 19:58:39 +0000 (GMT)
+Date: Mon, 28 Oct 2024 19:58:39 +0000
+From: Sean Young <sean@mess.org>
+To: linux@treblig.org
+Cc: awalls@md.metrocast.net, mchehab@kernel.org,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] media: cx18: Remove unused cx18_reset_ir_gpio
+Message-ID: <Zx_s76gUaQwAxzip@gofer.mess.org>
+References: <20241012233932.255211-1-linux@treblig.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v4 4/4] tracing: Add might_fault() check in
- __DO_TRACE() for syscall
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
- Michael Jeanson <mjeanson@efficios.com>,
- Masami Hiramatsu <mhiramat@kernel.org>, Peter Zijlstra
- <peterz@infradead.org>, Alexei Starovoitov <ast@kernel.org>,
- Yonghong Song <yhs@fb.com>, "Paul E . McKenney" <paulmck@kernel.org>,
- Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Namhyung Kim <namhyung@kernel.org>,
- Andrii Nakryiko <andrii.nakryiko@gmail.com>, bpf@vger.kernel.org,
- Joel Fernandes <joel@joelfernandes.org>, Jordan Rife <jrife@google.com>
-References: <20241028190927.648953-1-mathieu.desnoyers@efficios.com>
- <20241028190927.648953-5-mathieu.desnoyers@efficios.com>
-Content-Language: en-US
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-In-Reply-To: <20241028190927.648953-5-mathieu.desnoyers@efficios.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241012233932.255211-1-linux@treblig.org>
 
-On 2024-10-28 15:09, Mathieu Desnoyers wrote:
-> Catch incorrect use of syscall tracepoints even if no probes are
-> registered by adding a might_fault() check in __DO_TRACE() when
-> syscall=1.
+On Sun, Oct 13, 2024 at 12:39:32AM +0100, linux@treblig.org wrote:
+> From: "Dr. David Alan Gilbert" <linux@treblig.org>
 > 
-> Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-> Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Michael Jeanson <mjeanson@efficios.com>
-> Cc: Steven Rostedt <rostedt@goodmis.org>
-> Cc: Masami Hiramatsu <mhiramat@kernel.org>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Alexei Starovoitov <ast@kernel.org>
-> Cc: Yonghong Song <yhs@fb.com>
-> Cc: Paul E. McKenney <paulmck@kernel.org>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-> Cc: Namhyung Kim <namhyung@kernel.org>
-> Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-> Cc: bpf@vger.kernel.org
-> Cc: Joel Fernandes <joel@joelfernandes.org>
-> Cc: Jordan Rife <jrife@google.com>
+> cx18_reset_ir_gpio() has been unused in tree since 2009
+> commit eefe1010a465 ("V4L/DVB (10759): cx18: Convert GPIO connected
+> functions to act as v4l2_subdevices")
+> 
+> It has a comment saying it's exported for use by 'lirc_pvr150' but I don't
+> see any sign of it in the lirc git, and I see it removed support
+> for lirc_i2c.c 'Flavors of the Hauppage PVR-150...' in 2014.
+> 
+> Remove it.
+
+Interesting, I can't find any call site either. The ir-i2c-kbd driver could
+potentially use this, but it would to know the correct v4l2_dev for the
+device; also there are devices other than the cx18 which use the same IR
+module, so they would not have a way to force a reset or need a different
+mechanism (e.g. ivtv driver).
+
+So I don't understand how this could be wired up or how it was ever wired
+up.
+
+This could be great because if done correctly, we could remove the
+VIDIOC_INT_RESET ioctl completely. Then again, I don't know how often the
+device hangs. With the current driver the IR module I don't know of any
+hangs -- maybe the ioctl could just go anyway.
+
+
+Sean
+
+> 
+> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
 > ---
->   include/linux/tracepoint.h | 6 ++++--
->   1 file changed, 4 insertions(+), 2 deletions(-)
+>  drivers/media/pci/cx18/cx18-gpio.c | 15 ---------------
+>  drivers/media/pci/cx18/cx18-gpio.h |  1 -
+>  2 files changed, 16 deletions(-)
 > 
-> diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
-> index 259f0ab4ece6..7bed499b7055 100644
-> --- a/include/linux/tracepoint.h
-> +++ b/include/linux/tracepoint.h
-> @@ -226,10 +226,12 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
->   		if (!(cond))						\
->   			return;						\
->   									\
-> -		if (syscall)						\
-> +		if (syscall) {						\
->   			rcu_read_lock_trace();				\
-> -		else							\
-> +			might_fault();					\
-
-Actually, __DO_TRACE() is not the best place to put this, because it's
-only executed when the tracepoint is enabled.
-
-I'll move this to __DECLARE_TRACE_SYSCALL()
-
-#define __DECLARE_TRACE_SYSCALL(name, proto, args, cond, data_proto)    \
-         __DECLARE_TRACE_COMMON(name, PARAMS(proto), PARAMS(args), cond, PARAMS(data_proto)) \
-         static inline void trace_##name(proto)                          \
-         {                                                               \
-                 might_fault();                                          \
-                 if (static_branch_unlikely(&__tracepoint_##name.key))   \
-                         __DO_TRACE(name,                                \
-                                 TP_ARGS(args),                          \
-                                 TP_CONDITION(cond), 1);                 \
-[...]
-
-instead in v5.
-
-Thanks,
-
-Mathieu
-
-> +		} else {						\
->   			preempt_disable_notrace();			\
-> +		}							\
->   									\
->   		__DO_TRACE_CALL(name, TP_ARGS(args));			\
->   									\
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
-
+> diff --git a/drivers/media/pci/cx18/cx18-gpio.c b/drivers/media/pci/cx18/cx18-gpio.c
+> index c85eb8d25837..485a6cbeb15a 100644
+> --- a/drivers/media/pci/cx18/cx18-gpio.c
+> +++ b/drivers/media/pci/cx18/cx18-gpio.c
+> @@ -305,21 +305,6 @@ int cx18_gpio_register(struct cx18 *cx, u32 hw)
+>  	return v4l2_device_register_subdev(&cx->v4l2_dev, sd);
+>  }
+>  
+> -void cx18_reset_ir_gpio(void *data)
+> -{
+> -	struct cx18 *cx = to_cx18(data);
+> -
+> -	if (cx->card->gpio_i2c_slave_reset.ir_reset_mask == 0)
+> -		return;
+> -
+> -	CX18_DEBUG_INFO("Resetting IR microcontroller\n");
+> -
+> -	v4l2_subdev_call(&cx->sd_resetctrl,
+> -			 core, reset, CX18_GPIO_RESET_Z8F0811);
+> -}
+> -EXPORT_SYMBOL(cx18_reset_ir_gpio);
+> -/* This symbol is exported for use by lirc_pvr150 for the IR-blaster */
+> -
+>  /* Xceive tuner reset function */
+>  int cx18_reset_tuner_gpio(void *dev, int component, int cmd, int value)
+>  {
+> diff --git a/drivers/media/pci/cx18/cx18-gpio.h b/drivers/media/pci/cx18/cx18-gpio.h
+> index 0fa4c7ad2286..8d5797dea7f5 100644
+> --- a/drivers/media/pci/cx18/cx18-gpio.h
+> +++ b/drivers/media/pci/cx18/cx18-gpio.h
+> @@ -17,5 +17,4 @@ enum cx18_gpio_reset_type {
+>  	CX18_GPIO_RESET_XC2028  = 2,
+>  };
+>  
+> -void cx18_reset_ir_gpio(void *data);
+>  int cx18_reset_tuner_gpio(void *dev, int component, int cmd, int value);
+> -- 
+> 2.47.0
+> 
 
