@@ -1,149 +1,114 @@
-Return-Path: <linux-kernel+bounces-384492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 893DE9B2ADC
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 09:58:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47A119B2AE0
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 10:00:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C326B212EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 08:58:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38EBA1F22262
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 09:00:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0110F1925B6;
-	Mon, 28 Oct 2024 08:58:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BFucrraw"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03669192D61;
+	Mon, 28 Oct 2024 09:00:40 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35CD2155C97
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 08:58:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25C8A18BC36
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 09:00:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730105925; cv=none; b=mUj+IQV0VN5b6A7VZnXcqNRPorga7JnWXDaCX0f1VYRHsRwADGyUyENbYcX2IvfG+lGrYQXmvpolIPlPg8VNp3pcfThqiT7lr7wVyUeLnTQRJDx9abdJAoTdWo85QR8is/xsUq5gpsaIo6rA4TXBlr2As0lgYsj1bIlAR+2cV0Y=
+	t=1730106039; cv=none; b=PkfX6yULi36R+6V6yHmBnKTqAzBmtcTjXOEZTozfqsteha/iB6caU/qwMkjTg5XddckHjS7dbyd5zomQmHE4gKVNyoYWRcJU6UpJAj2ZKK7vHw5hoDnIUV+M4Wx+o9QLh2CH2CpImEBGr7Gt//SsOnmdRQZ4d9F9QMWQPpCd9r8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730105925; c=relaxed/simple;
-	bh=KIBZkEQKwG2vsUBvKGjwFPZYZDY9aZXu2ruXx2f15ho=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=W52LXGZdkSc1pueE9GysFTzi+QbJjSFMFOfSeK+iu8F0tbmcRVpPuYL1zMoehq5V2VtMTeoJcYvsqVT+edUQbYR9vfkvlLyXY8UZa28mz9WusY7dLOubggKneOTJRd5WtjqIKtgIzksRNUtP4xcePY9a98oUt5cPucLrOtN2Oq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BFucrraw; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730105923; x=1761641923;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=KIBZkEQKwG2vsUBvKGjwFPZYZDY9aZXu2ruXx2f15ho=;
-  b=BFucrraw4hmSPYR62eMbEwTVaaH0oeZq2XdjLGld6Xec9JN22GKcNUrQ
-   i00IxQQe2e7+C64J1YzNl9dvUMmCSeBqv+JF9Ne9xdHQjBXJ2v28iQ4wr
-   +tzPBmJe76revm7svVXjNFZE0vDyJRKwEP8N0KIH5q5WHbCaCPjTxqmnE
-   ve9qj2W9dpbKRqUKrBYNN9cG7MbKZ+5+/6EcvGHGV/o2zQQJfMONxff9q
-   uECFzaDgI1szI9t8cXCxJkdXyhlodf3WYF3IwYv8OInJlKnv1mjT4JqBR
-   itA3QJyD94cKH77+eX2LnaMxNl/g216tHL2QYnCdz7/972XRDvtp6jBpB
-   Q==;
-X-CSE-ConnectionGUID: 8w5CcSwXSxaCtwl04uNW5g==
-X-CSE-MsgGUID: o1hpaFeQSY2qZXv+Ll/fXA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11238"; a="29904811"
-X-IronPort-AV: E=Sophos;i="6.11,238,1725346800"; 
-   d="scan'208";a="29904811"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2024 01:58:42 -0700
-X-CSE-ConnectionGUID: 3xGqxhKITtGP8LFkIYidmQ==
-X-CSE-MsgGUID: yStzSllZQA6rLRRdaYPPSQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,238,1725346800"; 
-   d="scan'208";a="81657512"
-Received: from ubik.fi.intel.com (HELO localhost) ([10.237.72.184])
-  by fmviesa008.fm.intel.com with ESMTP; 28 Oct 2024 01:58:35 -0700
-From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-To: Nam Cao <namcao@linutronix.de>, Anna-Maria Behnsen
- <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>, Andreas Hindborg
- <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda
- <ojeda@kernel.org>, Kees Cook <kees@kernel.org>,
- linux-kernel@vger.kernel.org
-Cc: Nam Cao <namcao@linutronix.de>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, "Martin K. Petersen"
- <martin.petersen@oracle.com>, Alexandre Belloni
- <alexandre.belloni@bootlin.com>, "Rafael J. Wysocki" <rafael@kernel.org>,
- Linus Walleij <linus.walleij@linaro.org>, Sebastian Reichel
- <sre@kernel.org>, Will Deacon <will@kernel.org>, Jon Mason
- <jdmason@kudzu.us>, Jaehoon Chung <jh80.chung@samsung.com>, Hans Verkuil
- <hverkuil-cisco@xs4all.nl>, Jassi Brar <jassisinghbrar@gmail.com>, Pavel
- Machek <pavel@ucw.cz>, Dmitry Torokhov <dmitry.torokhov@gmail.com>,
- Jonathan Cameron <jic23@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
- Alex Deucher <alexander.deucher@amd.com>, Jani Nikula
- <jani.nikula@linux.intel.com>, Rob Clark <robdclark@gmail.com>, Lucas De
- Marchi <lucas.demarchi@intel.com>, Zack Rusin <zack.rusin@broadcom.com>,
- "Michael S. Tsirkin" <mst@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>, Uwe
- =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, Takashi Iwai
- <tiwai@suse.com>,
- alexander.shishkin@linux.intel.com
-Subject: Re: [PATCH 00/44] hrtimers: Switch to new hrtimer interface
- functions (4/5)
-In-Reply-To: <cover.1729865485.git.namcao@linutronix.de>
-References: <cover.1729865485.git.namcao@linutronix.de>
-Date: Mon, 28 Oct 2024 10:58:34 +0200
-Message-ID: <87y128txhh.fsf@ubik.fi.intel.com>
+	s=arc-20240116; t=1730106039; c=relaxed/simple;
+	bh=bl9/7r5wFic/hgYS8Fw+Z2oL0nlnCRN9YRefczCnCeg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p2vgCMfQGxzrIvBrLNZnVlMNhNQJopc5MdMaWqSiWmTPp1CH5dbBzdMpRGTxQy+2+BYMjoyAAqnnHwm+k9tAt2eXIL2pEWnzpatomglmcYiDG1e690jcH4rgNXK5v3DAEe/wwqeqMfhcb0lwPThFKpDmReE4Rin5k7eN4/3eSOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1t5Lbw-0003UW-SI; Mon, 28 Oct 2024 10:00:28 +0100
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1t5Lbw-000otJ-1O;
+	Mon, 28 Oct 2024 10:00:28 +0100
+Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1t5Lbw-000fOe-14;
+	Mon, 28 Oct 2024 10:00:28 +0100
+Date: Mon, 28 Oct 2024 10:00:28 +0100
+From: Marco Felsch <m.felsch@pengutronix.de>
+To: Sherry Sun <sherry.sun@nxp.com>
+Cc: POPESCU Catalin <catalin.popescu@leica-geosystems.com>,
+	Amitkumar Karwar <amitkumar.karwar@nxp.com>,
+	Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>,
+	"marcel@holtmann.org" <marcel@holtmann.org>,
+	"luiz.dentz@gmail.com" <luiz.dentz@gmail.com>,
+	"robh@kernel.org" <robh@kernel.org>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+	"linux-bluetooth@vger.kernel.org" <linux-bluetooth@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	GEO-CHHER-bsp-development <bsp-development.geo@leica-geosystems.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 1/2] dt-bindings: net: bluetooth: nxp: add support for
+ supply and reset
+Message-ID: <20241028090028.x6rzopvpcdvgouqv@pengutronix.de>
+References: <20241021102558.rfnz7nxcg5knibxs@pengutronix.de>
+ <DB9PR04MB842939900805C080F2CC32B2924C2@DB9PR04MB8429.eurprd04.prod.outlook.com>
+ <20241022072311.ubh2sia5lwgvebsg@pengutronix.de>
+ <DB9PR04MB8429657FCB48ACAD74FDD471924C2@DB9PR04MB8429.eurprd04.prod.outlook.com>
+ <20241022082256.nzfxqp67tdaxtn56@pengutronix.de>
+ <DB9PR04MB84292445D0FEDB8211ED52C3924C2@DB9PR04MB8429.eurprd04.prod.outlook.com>
+ <9b09774e-d0ed-4c97-b6a0-e976580b5bb5@leica-geosystems.com>
+ <DB9PR04MB8429CF700571FE42C997FB9C924D2@DB9PR04MB8429.eurprd04.prod.outlook.com>
+ <1b8864e5-0ec7-49c4-932a-89cfbaeacc9f@leica-geosystems.com>
+ <DB9PR04MB842929186683C1DF13DCBD92924A2@DB9PR04MB8429.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DB9PR04MB842929186683C1DF13DCBD92924A2@DB9PR04MB8429.eurprd04.prod.outlook.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Nam Cao <namcao@linutronix.de> writes:
+Hi,
 
-> This is the forth part of a 5-part series (split for convenience). All 5
-> parts are:
+On 24-10-28, Sherry Sun wrote:
+> 
+> > From: POPESCU Catalin <catalin.popescu@leica-geosystems.com>
+> >
+> > We use the NXP downstream driver mwifiex which doesn't have support for
+> > regulator or PDn.
+> >
+> > However, regulator is already supported by the MMC core (vmmc-supply).
+> >
+> > For PDn, we use mmc pwrseq simple driver that has been patched to add
+> > support for reset-control.
+> 
+> Ok, thanks, the mmc change looks good for me, so there is no problem
+> with the NXP SDIO wifi.
 >
-> Part 1: https://lore.kernel.org/lkml/cover.1729864615.git.namcao@linutronix.de
-> Part 2: https://lore.kernel.org/lkml/cover.1729864823.git.namcao@linutronix.de
-> Part 3: https://lore.kernel.org/lkml/cover.1729865232.git.namcao@linutronix.de
-> Part 4: https://lore.kernel.org/lkml/cover.1729865485.git.namcao@linutronix.de
-> Part 5: https://lore.kernel.org/lkml/cover.1729865740.git.namcao@linutronix.de
+> But how do you plan to handle the NXP PCIe wifi? We also need to make
+> sure the BT patch won't break the PCIe wifi function.
 
-Which one do I need to click on to see the actual hrtimer_setup*()
-implementations? Why is it even a separate series? Please, don't make
-people click on things.
+Can you please elaborate how this could break the PCIe use-case?
 
-> To use hrtimer, hrtimer_init() (or one of its variant) must be called, and
-> also the timer's callfack function must be setup separately.
-
-"callback", right?
-
-> That can cause misuse of hrtimer. For example, because:
->   - The callback function is not setup
->   - The callback function is setup while it is not safe to do so
-
-These are not examples, these are hypotheticals. Do either of these
-things actually happen in the codebase?
-
-> To prevent misuse of hrtimer, this series:
->   - Introduce new functions hrtimer_setup*(). These new functions are
->     similar to hrtimer_init*(), except that they also sanity-check and
->     initialize the callback function.
-
-No, it doesn't. This series only converts some drivers. I'd like to see
-the sanity-checking in question, since it's the big selling point.
-But IMO, "switching to a cleaner hrtimer API" or some words to that
-effect is a better justification than sanity checking.
-
-I'm not objecting to the idea, it's just carried out weirdly.
-
->   - Introduce hrtimer_update_function() which checks that it is safe to
->     change the callback function. The 'function' field of hrtimer is then
->     made private.
-
-Also not in this series.
-
->   - Convert all users to use the new functions.
->   - Some minor cleanups on the way.
-
-Thanks,
---
-Alex
+Regards,
+  Marco
 
