@@ -1,102 +1,158 @@
-Return-Path: <linux-kernel+bounces-385332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4D679B35B6
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 17:05:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 255309B35B8
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 17:06:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 40809B21F73
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 16:05:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB54D1F22D69
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 16:06:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 033D81DE886;
-	Mon, 28 Oct 2024 16:05:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76C6B1DE8A2;
+	Mon, 28 Oct 2024 16:05:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1E8nCHaz"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b="pRb6zxXT"
+Received: from buffalo.tulip.relay.mailchannels.net (buffalo.tulip.relay.mailchannels.net [23.83.218.24])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB10415C13A
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 16:05:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730131545; cv=none; b=ZOdq6pNASkhbcnslus8CGL1nalTakSfqQnseINJSs90F/zMM8cpAN1RWRpWfXFjlNnSeUrVUNfuuy04xj+MoSTm9/dIQTX8/u5oElJ2RL6O7U+JgIlmMt+Ah55YKV/Wg2JLMbQ+OHLOoTFEfZV5yudBQPmMx5csd4PE6G9xOBnU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730131545; c=relaxed/simple;
-	bh=l3Cp9BeMNFNwz6C7czruHn0SabbRUc5K/fwbW1PyUQ0=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=rYkoWkiSk1WpLnpwVgEjPGPwKRSd3YVIKrhnf8TtvVhLmoYIcLUBJFb6HECaHUC2L+d4plXheNS9l2jOt3jo7HWZwGyTjuCb9kg9xTYRFW9Ed+4lIY3W5DztzXfvGENWZw9KNxqVmyA5FCCDaZVDvh1YrDRF8sAYq8nCBcpo5qk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1E8nCHaz; arc=none smtp.client-ip=209.85.215.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-7eaac1e95ffso4056098a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 09:05:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730131543; x=1730736343; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=B3ie5ifufASI9G1WuRdLsyt/LowS1PCrH+CXnaSQRWk=;
-        b=1E8nCHaz7pMDvveBg1/ZAzCfsimwiYezJq8l94lXGZbpJ/VZv0wkfMldufjkEvySj0
-         nbUu+chHpWfK/fdTp5J/UsGebtJBo1ryf9tQM0IFLogyTpIZCkyJ5yXvt+QBHcu1auOo
-         /bpvdPhzhxfpBYFzfbyA/GOoBzpVgx2fsdwWsj5ArQHSdZS/2bZdqJ8VcgxgAJmKowro
-         IgQIu/Sh6r8oMOcfNu92cEvKmxYVt9aZpZ3E2mLLBiZkOJLA2N5kZOAcJqfvsvH54cW9
-         lVyUdI1tCMsE61nl7k5ANN3xqUqGEM63ypJM6kzQjlRg4iIPv7DFcMgKr6ZCYHoNRH99
-         F4Qg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730131543; x=1730736343;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=B3ie5ifufASI9G1WuRdLsyt/LowS1PCrH+CXnaSQRWk=;
-        b=LU/AgbUy/ccw9uNNlM8dL5sxHv4xCjY/FSl3X6SngAwaU4DgrqqVHRrb579Doeb64c
-         qM9kutfxUJvVZitAd/ThIIsOJAQ3pdAoa5lEDocDKOlGuWSfnf490Tjgv3DLCRMtyOl6
-         JyVtQBnTNToj2FvjOUO/PVcJ0GFLvUSnMbGLE575+oXddY+s5nPbVbcAjFYsX0LQ6zb+
-         rZs8OF5EdHT/LTPJ/5ZQk/mVzz/FIqsyc+LCaf+3JfA+A41Mfoayt/oaPZCmr/ubvNPF
-         AQSdWeDFTthCEiMFfdRYv1KwOHqj3zJTT3u4zkpNkzlDRH8L0dCSRIro/CENLek7Y1sv
-         CXuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU1PNfyoC5cmHj4kAYxyALTaDJgqdpnwCa6FFpByj7xbFnvCuCMIqosN6cP/n6hCSp67Vh1U32AxdMTDUk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLYO3haYCXzY3tk1TKltUCFfakqM4iTPKDNa2oXCcDlGJ1yQXg
-	nitzJXempTnyOTXLMQTM2E9ablhg5F8YEzaz+SSXJrR82KuDvNua70aBldVRMFwOQ9uNMyWVFmV
-	D/g==
-X-Google-Smtp-Source: AGHT+IEkBL9DoH8uTQuOjkre99PEFXZckOFmK9CscV/GJCoHB/bdQSJL+dlAtt1G6F8MmFhv2zGn+OlwJG4=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
- (user=seanjc job=sendgmr) by 2002:a63:155a:0:b0:7ea:6ca8:bec5 with SMTP id
- 41be03b00d2f7-7edd7c5054emr16022a12.7.1730131542804; Mon, 28 Oct 2024
- 09:05:42 -0700 (PDT)
-Date: Mon, 28 Oct 2024 09:05:41 -0700
-In-Reply-To: <cover.1729864615.git.namcao@linutronix.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CF9215C13A;
+	Mon, 28 Oct 2024 16:05:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.218.24
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730131557; cv=pass; b=DbcC450lAZNY+b7P7ycC0IPPiLpPgXcW0SRoV1MgIoIRVHjtan79iG0wUPxhFDIy+4O0iqQ1SohRbeHuQiqSAQsIXgUyi7vukfYJupHIJ+Lnit0Eu1HECYwjI85kQ2XcxLOFEN4BOxqpXJG3ojhCpgnHwaIB3+Ve+CwwGyZr4a0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730131557; c=relaxed/simple;
+	bh=tRCzbSUsTCh+0Z4ZKKxrsha7cooCEG0tDml+CfGNwv4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fsm56WZlfU6R8jethKkCQsQ6zMN3CVOReIL9RrU0orU8QzunGc0W3jVkul3gL9P5blyalGTMEyP3uId441TR1lJ0M8YKw11XkKevloLNe+PgJPcgNec7C6Vk8SLxNqWSNIV3OWL3OpfsZOKrNjKO3VZ4TvOkaXHhYcP/+CzYil4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net; spf=pass smtp.mailfrom=stgolabs.net; dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b=pRb6zxXT; arc=pass smtp.client-ip=23.83.218.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=stgolabs.net
+X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
+Received: from relay.mailchannels.net (localhost [127.0.0.1])
+	by relay.mailchannels.net (Postfix) with ESMTP id 6EA0FC23E0;
+	Mon, 28 Oct 2024 16:05:49 +0000 (UTC)
+Received: from pdx1-sub0-mail-a294.dreamhost.com (trex-1.trex.outbound.svc.cluster.local [100.103.137.60])
+	(Authenticated sender: dreamhost)
+	by relay.mailchannels.net (Postfix) with ESMTPA id D7B60C2663;
+	Mon, 28 Oct 2024 16:05:47 +0000 (UTC)
+ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1730131547; a=rsa-sha256;
+	cv=none;
+	b=gjOSM2Z9Jm9LYkdQHmgJXWqSUh7fs1HtqOXqc9BZ+m1Mkullab/Y3QQVFs34Vrx23PtddD
+	MqNXIi6gtCh7h/e1v57fAuZYMM0gXyRu+7z+b7itG5rTqU5acmA2OWqFhmkl3J7iBfmZAL
+	1nFdUhq1A80+wcI4+yyY16E5pQP7AS0kfzruy8KtL9KlXTzjEM7lvJtAwxBor2FWPlWT61
+	AyGoTjPu/fGHK2gbmzShWnglB3nFuyez5Nr5xJewoe6TS7lA9DYqOnc65px42j43RoVUMY
+	h2giAuq1wl0Vi0uD8qc4v5yCaAIlMZ4nT+rlwxK6bDFbOEzOUL4LAm5sPczR5Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=mailchannels.net;
+	s=arc-2022; t=1730131547;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references:dkim-signature;
+	bh=QrniIkJ7AhEemPvfI/4hebsJ2/X7SQhZHVjWmCujUIk=;
+	b=prlnfOqlRTtx64vNliTHZpmg8x/ACe7Omj7n7mIxrfnq6L9yWKRALiJiXGfKdu+2VjTUI2
+	yq7Z8FYgYSVj32SnCCRD4fRWIlBf7V8Fh6oCVTBqQnQpUcOr51h72oSHHsTHIMIjbIRZ+f
+	hROkNRN2DhMnc3pAIF8LNzhjsRpFCXFXu5Zah2AdB1u16dDfaWqR01tlWpRdhsafJ8m/tT
+	fOgHVwnLggiv5AdKcK6Jk4/ytCkFz+Q7surfHsN0JttC34GMRg7FPPSX5J6i0O7QbORMh5
+	nXygM9XA6Gf1M42RpUmYHXDpEVCDbo3l33x+2vg41CKZKm/jAg7WT0PxaW4ZJA==
+ARC-Authentication-Results: i=1;
+	rspamd-7fb5679c85-q9vff;
+	auth=pass smtp.auth=dreamhost smtp.mailfrom=dave@stgolabs.net
+X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
+X-MC-Relay: Neutral
+X-MailChannels-SenderId: dreamhost|x-authsender|dave@stgolabs.net
+X-MailChannels-Auth-Id: dreamhost
+X-Obese-Average: 6124764d4c3d56fe_1730131549271_1704196374
+X-MC-Loop-Signature: 1730131549271:1143415517
+X-MC-Ingress-Time: 1730131549271
+Received: from pdx1-sub0-mail-a294.dreamhost.com (pop.dreamhost.com
+ [64.90.62.162])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
+	by 100.103.137.60 (trex/7.0.2);
+	Mon, 28 Oct 2024 16:05:49 +0000
+Received: from offworld (ip72-199-50-187.sd.sd.cox.net [72.199.50.187])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dave@stgolabs.net)
+	by pdx1-sub0-mail-a294.dreamhost.com (Postfix) with ESMTPSA id 4XcdXV6hw2zFT;
+	Mon, 28 Oct 2024 09:05:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=stgolabs.net;
+	s=dreamhost; t=1730131547;
+	bh=QrniIkJ7AhEemPvfI/4hebsJ2/X7SQhZHVjWmCujUIk=;
+	h=Date:From:To:Cc:Subject:Content-Type;
+	b=pRb6zxXTtYvDTPeG9SRZ6nbgS3wM+h/vwqna5XxL16DhjD+cPHqJlKpnqcWojhvrs
+	 LPXRom2VjmRUjkSUXcG7Qlv26c1DPM7iRxAmTQ3dFPNyRD/rJzohL9gbc/bdd3+1uz
+	 tHQFOMJKGvvA8ZRYXgFPpzW8DOKj5Ix+/lh3QbE7Z6a7IQXopvg2At6l3MQmGF7BK2
+	 sYSVFMHak78kaUTL5UwLhtTQNaqtFPMLEY2+Tex2t3+6oDDJEJnXDLUSnDZBxX3IjN
+	 5EbCudo97qAMcaX7r/2q8ADmTm2BVlhdm7TyaaMUBOS5sPgtqZp+lgKAuyAj/I8SPL
+	 CO2ySZXP607cQ==
+Date: Mon, 28 Oct 2024 09:05:43 -0700
+From: Davidlohr Bueso <dave@stgolabs.net>
+To: Gregory Price <gourry@gourry.net>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, kernel-team@meta.com,
+	akpm@linux-foundation.org, ying.huang@intel.com, weixugc@google.com,
+	dave.hansen@linux.intel.com, osalvador@suse.de, shy828301@gmail.com,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] vmscan,migrate: fix double-decrement on node stats when
+ demoting pages
+Message-ID: <20241028160543.rzx6nqsyldwocxe6@offworld>
+Mail-Followup-To: Gregory Price <gourry@gourry.net>,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	kernel-team@meta.com, akpm@linux-foundation.org,
+	ying.huang@intel.com, weixugc@google.com,
+	dave.hansen@linux.intel.com, osalvador@suse.de, shy828301@gmail.com,
+	stable@vger.kernel.org
+References: <20241025141724.17927-1-gourry@gourry.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <cover.1729864615.git.namcao@linutronix.de>
-Message-ID: <Zx-2VV9rRnHOgtvG@google.com>
-Subject: Re: [PATCH 00/21] hrtimers: Switch to new hrtimer interface functions (1/5)
-From: Sean Christopherson <seanjc@google.com>
-To: Nam Cao <namcao@linutronix.de>
-Cc: Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>, Kees Cook <kees@kernel.org>, 
-	linux-kernel@vger.kernel.org, Jani Nikula <jani.nikula@linux.intel.com>, 
-	intel-gfx@lists.freedesktop.org, Paolo Bonzini <pbonzini@redhat.com>, x86@kernel.org, 
-	Jakub Kicinski <kuba@kernel.org>, Oliver Hartkopp <socketcan@hartkopp.net>, Kalle Valo <kvalo@kernel.org>, 
-	Jens Axboe <axboe@kernel.dk>, Christian Brauner <brauner@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, John Stultz <jstultz@google.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20241025141724.17927-1-gourry@gourry.net>
+User-Agent: NeoMutt/20220429
 
-On Mon, Oct 28, 2024, Nam Cao wrote:
-> This is the first part of a 5-part series (split for convenience). All 5
-> parts are:
-> 
-> Part 1: https://lore.kernel.org/lkml/cover.1729864615.git.namcao@linutronix.de
-> Part 2: https://lore.kernel.org/lkml/cover.1729864823.git.namcao@linutronix.de
-> Part 3: https://lore.kernel.org/lkml/cover.1729865232.git.namcao@linutronix.de
-> Part 4: https://lore.kernel.org/lkml/cover.1729865485.git.namcao@linutronix.de
-> Part 5: https://lore.kernel.org/lkml/cover.1729865740.git.namcao@linutronix.de
+On Fri, 25 Oct 2024, Gregory Price wrote:
 
-How do y'all anticipate landing these patches?  Is the plan/desire to get acks
-from subsystems?  Land the new helpers and then let subsystems grab their relevant
-patches?  Option C?
+>When numa balancing is enabled with demotion, vmscan will call
+>migrate_pages when shrinking LRUs.  Successful demotions will
+>cause node vmstat numbers to double-decrement, leading to an
+>imbalanced page count.  The result is dmesg output like such:
+>
+>$ cat /proc/sys/vm/stat_refresh
+>
+>[77383.088417] vmstat_refresh: nr_isolated_anon -103212
+>[77383.088417] vmstat_refresh: nr_isolated_file -899642
+>
+>This negative value may impact compaction and reclaim throttling.
+>
+>The double-decrement occurs in the migrate_pages path:
+>
+>caller to shrink_folio_list decrements the count
+>  shrink_folio_list
+>    demote_folio_list
+>      migrate_pages
+>        migrate_pages_batch
+>          migrate_folio_move
+>            migrate_folio_done
+>              mod_node_page_state(-ve) <- second decrement
+>
+>This path happens for SUCCESSFUL migrations, not failures. Typically
+>callers to migrate_pages are required to handle putback/accounting for
+>failures, but this is already handled in the shrink code.
+>
+>When accounting for migrations, instead do not decrement the count
+>when the migration reason is MR_DEMOTION. As of v6.11, this demotion
+>logic is the only source of MR_DEMOTION.
+>
+>Signed-off-by: Gregory Price <gourry@gourry.net>
+>Fixes: 26aa2d199d6f2 ("mm/migrate: demote pages during reclaim")
+>Cc: stable@vger.kernel.org
+
+Reviewed-by: Davidlohr Bueso <dave@stgolabs.net>
 
