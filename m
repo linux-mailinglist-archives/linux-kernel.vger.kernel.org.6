@@ -1,90 +1,102 @@
-Return-Path: <linux-kernel+bounces-384893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46E5B9B2FDC
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:12:04 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B39E79B2FE6
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:12:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B7FB9B21A73
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 12:12:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4FB87B224AE
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 12:12:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 856F21D88A4;
-	Mon, 28 Oct 2024 12:11:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7DCE1D8A14;
+	Mon, 28 Oct 2024 12:12:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s56hn1P0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uTA10aeL"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEF34189B8D;
-	Mon, 28 Oct 2024 12:11:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06E2A1D86DC;
+	Mon, 28 Oct 2024 12:12:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730117491; cv=none; b=lk9gkAK/zGvK4cgkG7m+PKNlnFKzqI5Aaw/7/4zlditpZ9MFaJG41/gh/nBB8tVqjWtH47ozCkuwEZet5jwlZZE6r7QjN8HEpiUiE52Ube+D3B8B6G5P8yBxt7vyF65klMqkukRGDbNrC0LlNzWq4PHL7Vxz3BMnwUIAZSPltFs=
+	t=1730117524; cv=none; b=CpTSqwPCAIwx+9aUvdjzZtkOrapSZDnZv7Opbu2Fu9svJSPfhOOCkrM5pm9JqkDSjmfC3z2xAjq+IUeM1fnKbpGaVNrss44dVLGS6Qgz+qmr0ETiCpcFLxq3Xi+DAjKF8jhb1bJTcyfllsn9W9kXHTnJUUwL90GIyWkvAqPkQI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730117491; c=relaxed/simple;
-	bh=rv69JvQBuERLoDd8e9ag5C41cMWOhw/9p+RshC/x6lU=;
+	s=arc-20240116; t=1730117524; c=relaxed/simple;
+	bh=NAZkhhTeYWBcCRnnAZH+eZCWBsmCMSLDc9mRceexjgU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CdrBpU7n/hncD2NYHMckYoEzdUptLI60E+WubywBihQQQe7MSKHLRRw4yKGbSQBvOE/YhTKY3VV3FwzCJLBq1jT1scwtqu3EZxvG/AHpH/zo0gg6bXjTv5D7bDV/ROjNl6M5mN/y7Xib+ZpwU+bYl1uYitPjeqgyt9iI44YDYjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s56hn1P0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1AC3C4CEC3;
-	Mon, 28 Oct 2024 12:11:29 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=PVLUDhNxgnBNhi4mfDSH4lu4yX3XaRxbcv5O6KqJZdXCF99aUlO2BnAwfKLx7opD5EZCAj0d7slPmo7IbYI/rfckl4ScAPs+BMk/N/5+GrTZfPGbI5uBDLcnTYS6pV4NN7wYQe/AjSCfBaF3r0/Ro5aJ+azRArYDv1Llb3bqVaM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uTA10aeL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FB9FC4CEC3;
+	Mon, 28 Oct 2024 12:12:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730117491;
-	bh=rv69JvQBuERLoDd8e9ag5C41cMWOhw/9p+RshC/x6lU=;
+	s=k20201202; t=1730117523;
+	bh=NAZkhhTeYWBcCRnnAZH+eZCWBsmCMSLDc9mRceexjgU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=s56hn1P0WYwxElh6FCKpnpSdxRyQaBzWC13T9yiz1VUQ9l8aYngJEp0QLxEHyfm/z
-	 +/0xA+LUyD1twvPJhCdvgueubcP1CvRLaQgy219IW38iLmi/ee8Yrd2ZiaZiUN1kft
-	 EGURvmnwxjx46cEj5TTKr5k+9hAIXTNmVKytyuueq7dxig19EdZ3QvjUXUd39zlDG3
-	 WMndXSkoDBneDiUqJ4/fKtKbTjQt4WAqgmeKrfPeh35qN+DXI8I1K/soTjZA/vmw6E
-	 yzd8F8vlybffYcVVwA34pPv0losWcviNasCETKIYwHn6tnOd93x7KwAvLkTp3b4r79
-	 RpA/ytWrLNJTw==
-Date: Mon, 28 Oct 2024 13:11:26 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: zhouyuhang <zhouyuhang1010@163.com>
-Cc: sforshee@kernel.org, shuah@kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, zhouyuhang <zhouyuhang@kylinos.cn>
-Subject: Re: [PATCH v2] selftests/mount_setattr: fix idmap_mount_tree_invalid
- failed to run
-Message-ID: <20241028-rodung-kotzen-577438c3b82c@brauner>
-References: <20241028084132.3212598-1-zhouyuhang1010@163.com>
+	b=uTA10aeL4xtGd63PUIPx4KhhP7HDf7HveJCfWaAvK3qMB3bC8jLKkEhFESanGKbGf
+	 uhuDju3v8m3q6ieocv7/yEBPF18Cm83bCKgYPTn2qye5/6F6nwYL+lAxM0hDQ1du8V
+	 Dh/ZPyGjrWiPXyKtiTxIol4e2/k0WxJX+/8AtT6n40dTRWQ6cmbQyboWn5RSmZglPA
+	 IbMxrtYqDvMPSdSB2BvEZtP6NHs/n63XsT/dRKP97i6mPmFZuEeHcDLhqQx9yYFICM
+	 PkHz47nn0gx8oL6zQVXRROwud3Sjg/7pm75NIrx5uhJzzS+wGzJ9liRCwrMSQ+e+/y
+	 8X53OSDt6bqxw==
+Date: Mon, 28 Oct 2024 12:11:58 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Sasha Levin <sashal@kernel.org>
+Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+	Shengjiu Wang <shengjiu.wang@nxp.com>,
+	Iuliana Prodan <iuliana.prodan@nxp.com>, shengjiu.wang@gmail.com,
+	Xiubo.Lee@gmail.com, lgirdwood@gmail.com, perex@perex.cz,
+	tiwai@suse.com, linux-sound@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH AUTOSEL 6.11 05/32] ASoC: fsl_esai: change dev_warn to
+ dev_dbg in irq handler
+Message-ID: <1ad8216d-c24d-4d35-9562-4106e2aafa34@sirena.org.uk>
+References: <20241028105050.3559169-1-sashal@kernel.org>
+ <20241028105050.3559169-5-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="Jw04mRIq6Tcvx3ro"
 Content-Disposition: inline
-In-Reply-To: <20241028084132.3212598-1-zhouyuhang1010@163.com>
+In-Reply-To: <20241028105050.3559169-5-sashal@kernel.org>
+X-Cookie: Remember the... the... uhh.....
 
-On Mon, Oct 28, 2024 at 04:41:32PM +0800, zhouyuhang wrote:
-> From: zhouyuhang <zhouyuhang@kylinos.cn>
-> 
-> Test case idmap_mount_tree_invalid failed to run on the newer kernel
-> with the following output:
-> 
->  #  RUN           mount_setattr_idmapped.idmap_mount_tree_invalid ...
->  # mount_setattr_test.c:1428:idmap_mount_tree_invalid:Expected sys_mount_setattr(open_tree_fd, "", AT_EMPTY_PATH, &attr,  sizeof(attr)) (0) ! = 0 (0)
->  # idmap_mount_tree_invalid: Test terminated by assertion
-> 
-> This is because tmpfs is mounted at "/mnt/A", and tmpfs already
-> contains the flag FS_ALLOW_IDMAP after the commit 7a80e5b8c6fa ("shmem:
-> support idmapped mounts for tmpfs"). So calling sys_mount_setattr here
-> returns 0 instead of -EINVAL as expected.
-> 
-> Ramfs does not support idmap mounts, so we can use it here to test invalid mounts,
-> which allows the test case to pass with the following output:
-> 
->  # Starting 1 tests from 1 test cases.
->  #  RUN           mount_setattr_idmapped.idmap_mount_tree_invalid ...
->  #            OK  mount_setattr_idmapped.idmap_mount_tree_invalid
->  ok 1 mount_setattr_idmapped.idmap_mount_tree_invalid
->  # PASSED: 1 / 1 tests passed.
-> 
-> Signed-off-by: zhouyuhang <zhouyuhang@kylinos.cn>
-> ---
 
-Reviewed-by: Christian Brauner <brauner@kernel.org>
+--Jw04mRIq6Tcvx3ro
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Oct 28, 2024 at 06:49:47AM -0400, Sasha Levin wrote:
+> From: Shengjiu Wang <shengjiu.wang@nxp.com>
+>=20
+> [ Upstream commit 54c805c1eb264c839fa3027d0073bb7f323b0722 ]
+>=20
+> Irq handler need to be executed as fast as possible, so
+> the log in irq handler is better to use dev_dbg which needs
+> to be enabled when debugging.
+
+This is very marginal for stable material.
+
+--Jw04mRIq6Tcvx3ro
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcff40ACgkQJNaLcl1U
+h9CXwAf/dKgisn32gugwOj7kv0kcdBJdUWmANJAOcx1EOHgkOSaJivv+5thFldfv
+7oqPwtMJ7fY3dgB+F9mBaeEme5UEhSHLoawxHLf4C5paoOTr4z3YcXrdwYgwrF3Q
+n+sGIw5qXOgLhuHyOaGLyaMsGaHuI4yB4PfFi/muoWK98SQex0M6iC3+WbAY41D+
+0ghy0A9fIIAy/xK9Q309x9hV6dwfUE4Sg4+DHC2kH9E5JBD9sY4EaGmkdZ7azV2A
+tqwaPUgw34Hip+veM7UMb4m/G3jM6BwAUJporndNYVBmo3O06bDGvZulrRDsUkEi
+7PvclJ+x+hhfc90E9zZn2mCpDj9trg==
+=yJsI
+-----END PGP SIGNATURE-----
+
+--Jw04mRIq6Tcvx3ro--
 
