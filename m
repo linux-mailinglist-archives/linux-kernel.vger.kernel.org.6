@@ -1,245 +1,191 @@
-Return-Path: <linux-kernel+bounces-383894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7AD99B217D
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 01:09:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 45F869B217F
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 01:11:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5676EB20C5A
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 00:09:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8932DB20D99
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 00:11:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08210A47;
-	Mon, 28 Oct 2024 00:09:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBBF080B;
+	Mon, 28 Oct 2024 00:11:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P4OFT20C"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="iNuWMQLe"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E7ED36C;
-	Mon, 28 Oct 2024 00:09:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A25641C14;
+	Mon, 28 Oct 2024 00:11:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730074167; cv=none; b=tyuWlWM6O8nImVGUdCGK7GrVrW2GVpIjBJF8x9u569C0Zk8znluBFimW2uDgHJIreIynHN9wc2VWi855LFBlQKHXMWartBr+yBFvpdhxitRzmh6jhfgSBEHFRGo9Tf9gNfXH2pAkFi0UqOYssVuS0kajMZJL0/QKr3sNaji18yQ=
+	t=1730074265; cv=none; b=t6cRVUCj/jSWx2SoMAOH3pngndmZDDmBTCGQjt9QycViqMyRPWcbROZA3bSEe9KGyqGCCKR3JgCaq8YF0C1IB2Nl2OSXm6A5wGMdF396/2ggqu1OFEu318nG8l7he9CmooAL4J9Fu3EusKJQSVbbozq26fDHD/nllLgcw0i53t8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730074167; c=relaxed/simple;
-	bh=ANF5axTXMVVS3gzJ3zqs59bDfLQorgMkuXmKY5BvbIg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=C7ONZpxd7LsWAW9B7F8snHDdhuCRBDWKVXbo/2a/IfW/J9onpEeLQi8ZrI0Rnc1juLbvKTzLpPSQiFtYj6MczAr1qxj7Z0DpjOfs9rh/bIQGgcX1C0Eg/jjCABYdFHLkV7EkNYWrrzBCOUIHlFCf8NgKT4N+/tph1ibaEv+AFwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P4OFT20C; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5c9388a00cfso4267689a12.3;
-        Sun, 27 Oct 2024 17:09:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730074163; x=1730678963; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=l4jVhDJUCPbZ0g26fsXUoO4mush0279W/qJ7q2uEVOs=;
-        b=P4OFT20CTQwqws3rvEN26dECZ74q5Opj2+llqORlVDZ2llQD48hqY/6hoQSLQW8aHU
-         4WqQO9FbcfNtzanqUuauNyehVSPWsL7/gGAmQWCtV3kRgmU05X+bmRWbVs+rExwN+gJT
-         gmojUM2s/r3hMcpi25so7QBxUKnDJOlTLnwaZPH/kh+FPWh9f6lsGNOrYiaAE8vZzDME
-         X8weOaYmPb6LQjlIet3ndGSzfs1bkluj6bGG2KTrHKGD5UDW8l8SrJ/4uJPBj0miDfOG
-         DPnSLYlQuQ5r0zoTnxcKXDwkYNRZsiaWfpSihuH+DIdzHaegMuhWOfs7E68YLVTnjMxj
-         xasg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730074163; x=1730678963;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=l4jVhDJUCPbZ0g26fsXUoO4mush0279W/qJ7q2uEVOs=;
-        b=rt541M8LLfNfh5ZCN+P1W7MfRSKrjuRhp3dumYto3u21j2icWe+WMbiHz1w2cdX/XQ
-         jYtEP1B0fpd4rqaDFZgcIOBYiA/ilbo9LVdGXlMnaIptmFzfmOich1okGikKKsJkzs9u
-         8UHBi8zu7r1gCo8EUyUeozVPGZy+clOVQPYMG4eQpbKgrbuVBSGu2qq18jtuiKYVFs//
-         5yCfmxqe326jML1lNStMvvF5Wxnx2F3XtJwWwnyaCF0W6tJPK6I9aPJ8K1qYRej04zJ6
-         d6cMwb/nB/ut+q3Q+dDcctMp0eSV+gfJPYATKHpiTHcaw64FTJmMN/nMYRifJY/oBF1g
-         aKsw==
-X-Forwarded-Encrypted: i=1; AJvYcCWrCTms0gO2ySh93YN5JfBRoYkr7GUs3nvhaNiz89UOnrUk/fOxfLhKXafw6+k05BtmculWsFRIMVB1@vger.kernel.org, AJvYcCX/Hwqa6FIs4M7qOKzXYTJKDImZ+3cCoBNdVR3tzRkmwJCWI0s9DZ0E0jUx0y6Wb5uTWsFv5L7Su4FBRcA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxmrUyDEuvaW9MM3UfheFUGH6DtpPZchmECHTUGMi1sA6HNwSB5
-	XJB1vhDhplURGBv3FT+n8bUupQik/2KBJ3qsEjRdnyDDyRXLakMtLGPfQCuqGA/edtDg8wg0bXn
-	mTItnSqNCIoGOdGkNhMTAZ4N9X9Q=
-X-Google-Smtp-Source: AGHT+IFOBVWLyNKQF9dOMrgGt05/88DCBl1fgz0RWe1gW1ND3s2UGMyTVN0kRDlppBNjAP48Othci5Ht78QsnGVn79s=
-X-Received: by 2002:a05:6402:2742:b0:5c9:ba84:d3a with SMTP id
- 4fb4d7f45d1cf-5cbbf8a41f6mr5473210a12.10.1730074163113; Sun, 27 Oct 2024
- 17:09:23 -0700 (PDT)
+	s=arc-20240116; t=1730074265; c=relaxed/simple;
+	bh=PC9bKQALiYZTqF0bok6kbzuPsfj/mgFgbQFZm68W64o=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=duXjvNDkdZIpl4lpU4yOE70ju5VVc16DhGIxpE4YdzVWKgbebTXbJ3hx33KCyUZiogaV42Kp/x6kGv6D0dZnv12GuQ8IBU9T9r2mKWXnv1YtCjl0gcdjeRzK6UaEd8wc8XlKTGV8Otf9izmhOB7PLUrVpzQtrLwJxisuewFS6zQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=iNuWMQLe; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1730074257;
+	bh=hbGF7aUiGqIVN2g21lq8oiyVZdqqDcJaXyUQHQXXHwQ=;
+	h=Date:From:To:Cc:Subject:From;
+	b=iNuWMQLe1CYX3lJB5aL+RJ54KvdwD/BFoQOWCzFh8j5kf5lRKB6v97zhscm+xjW6J
+	 LMRDYFdFXNY7YLxPpegocK0RKd8pnTYAcCUF9wgF3NCcx/fp09rE0i1oUazTqnGA2I
+	 VI6zxkk3Y/h2CMfyv6tKV+dqnVxRUIAfpxE7i2IDF5zfzX3Fmu2xMBA7/koQzxQCvu
+	 9CUhXNmiLLiVZHtJl2BMFjjWfoVGaJ6jdGOAFhrwzrHiQD98tsaSDv01ZpBEFeOmRR
+	 tbzb6hOaDc/XnRF2idmDF/2eTL+U33Cwtj9ysKRF5kKfFRyFkZijy8xx3BKKjlYq5L
+	 QF3K3zC1bat2A==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XcDLn47L5z4wc4;
+	Mon, 28 Oct 2024 11:10:57 +1100 (AEDT)
+Date: Mon, 28 Oct 2024 11:10:58 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon
+ <will@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>, Mark Brown <broonie@kernel.org>,
+ Suren Baghdasaryan <surenb@google.com>
+Subject: linux-next: manual merge of the arm64 tree with the mm tree
+Message-ID: <20241028111058.4419a9ed@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241025060017.1663697-1-benchuanggli@gmail.com> <CAPDyKFpb5ZePhXziLH3VbuKKywJZbo8UBF1NM1_dyOWq9oLDng@mail.gmail.com>
-In-Reply-To: <CAPDyKFpb5ZePhXziLH3VbuKKywJZbo8UBF1NM1_dyOWq9oLDng@mail.gmail.com>
-From: Ben Chuang <benchuanggli@gmail.com>
-Date: Mon, 28 Oct 2024 08:08:49 +0800
-Message-ID: <CACT4zj-JC4FAN1qVhROX+7+wV1d426boqkNUPM4TR88A7TjBqg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] mmc: sdhci-pci-gli: GL9767: Fix low power mode on the
- set clock function
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: adrian.hunter@intel.com, victor.shih@genesyslogic.com.tw, 
-	greg.tu@genesyslogic.com.tw, ben.chuang@genesyslogic.com.tw, 
-	HL.Liu@genesyslogic.com.tw, Lucas.Lai@genesyslogic.com.tw, 
-	victorshihgli@gmail.com, linux-mmc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Georg Gottleuber <ggo@tuxedocomputers.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/0mrtXIushRlvIHX=G.X+.AB";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/0mrtXIushRlvIHX=G.X+.AB
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 25, 2024 at 9:23=E2=80=AFPM Ulf Hansson <ulf.hansson@linaro.org=
-> wrote:
->
-> + Georg
->
-> On Fri, 25 Oct 2024 at 08:01, Ben Chuang <benchuanggli@gmail.com> wrote:
-> >
-> > From: Ben Chuang <ben.chuang@genesyslogic.com.tw>
-> >
-> > On sdhci_gl9767_set_clock(), the vendor header space(VHS) is read-only
-> > after calling gl9767_disable_ssc_pll() and gl9767_set_ssc_pll_205mhz().
-> > So the low power negotiation mode cannot be enabled again.
-> > Introduce gl9767_set_low_power_negotiation() function to fix it.
-> >
-> > The explanation process is as below.
-> >
-> > static void sdhci_gl9767_set_clock()
-> > {
-> >         ...
-> >         gl9767_vhs_write();
-> >         ...
-> >         value |=3D PCIE_GLI_9767_CFG_LOW_PWR_OFF;
-> >         pci_write_config_dword(pdev, PCIE_GLI_9767_CFG, value); <--- (a=
-)
-> >
-> >         gl9767_disable_ssc_pll(); <--- (b)
-> >         sdhci_writew(host, 0, SDHCI_CLOCK_CONTROL);
-> >
-> >         if (clock =3D=3D 0)
-> >                 return;  <-- (I)
-> >
-> >         ...
-> >         if (clock =3D=3D 200000000 && ios->timing =3D=3D MMC_TIMING_UHS=
-_SDR104) {
-> >                 ...
-> >                 gl9767_set_ssc_pll_205mhz(); <--- (c)
-> >         }
-> >         ...
-> >         value &=3D ~PCIE_GLI_9767_CFG_LOW_PWR_OFF;
-> >         pci_write_config_dword(pdev, PCIE_GLI_9767_CFG, value); <-- (II=
-)
-> >         gl9767_vhs_read();
-> > }
-> >
-> > (a) disable low power negotiation mode. When return on (I), the low pow=
-er
-> > mode is disabled.  After (b) and (c), VHS is read-only, the low power m=
-ode
-> > cannot be enabled on (II).
-> >
-> > Fixes: d2754355512e ("mmc: sdhci-pci-gli: Set SDR104's clock to 205MHz =
-and enable SSC for GL9767")
->
-> Is this the same problem as being reported in
-> https://lore.kernel.org/all/41c1c88a-b2c9-4c05-863a-467785027f49@tuxedoco=
-mputers.com/
->
-> ?
->
-> > Signed-off-by: Ben Chuang <benchuanggli@gmail.com>
->
-> Not sure the above SoB makes sense. The below is perfectly sufficient, ri=
-ght?
+Hi all,
 
-Yes, just keep the company's SOB. Thanks.
+Today's linux-next merge of the arm64 tree got a conflict in:
 
-Best regards,
-Ben Chuang
+  include/linux/mm.h
 
->
-> > Signed-off-by: Ben Chuang <ben.chuang@genesyslogic.com.tw>
->
-> Kind regards
-> Uffe
->
->
-> > ---
-> >  drivers/mmc/host/sdhci-pci-gli.c | 35 +++++++++++++++++++-------------
-> >  1 file changed, 21 insertions(+), 14 deletions(-)
-> >
-> > diff --git a/drivers/mmc/host/sdhci-pci-gli.c b/drivers/mmc/host/sdhci-=
-pci-gli.c
-> > index 0f81586a19df..22a927ce2c88 100644
-> > --- a/drivers/mmc/host/sdhci-pci-gli.c
-> > +++ b/drivers/mmc/host/sdhci-pci-gli.c
-> > @@ -892,28 +892,40 @@ static void gl9767_disable_ssc_pll(struct pci_dev=
- *pdev)
-> >         gl9767_vhs_read(pdev);
-> >  }
-> >
-> > +static void gl9767_set_low_power_negotiation(struct pci_dev *pdev, boo=
-l enable)
-> > +{
-> > +       u32 value;
-> > +
-> > +       gl9767_vhs_write(pdev);
-> > +
-> > +       pci_read_config_dword(pdev, PCIE_GLI_9767_CFG, &value);
-> > +       if (enable)
-> > +               value &=3D ~PCIE_GLI_9767_CFG_LOW_PWR_OFF;
-> > +       else
-> > +               value |=3D PCIE_GLI_9767_CFG_LOW_PWR_OFF;
-> > +       pci_write_config_dword(pdev, PCIE_GLI_9767_CFG, value);
-> > +
-> > +       gl9767_vhs_read(pdev);
-> > +}
-> > +
-> >  static void sdhci_gl9767_set_clock(struct sdhci_host *host, unsigned i=
-nt clock)
-> >  {
-> >         struct sdhci_pci_slot *slot =3D sdhci_priv(host);
-> >         struct mmc_ios *ios =3D &host->mmc->ios;
-> >         struct pci_dev *pdev;
-> > -       u32 value;
-> >         u16 clk;
-> >
-> >         pdev =3D slot->chip->pdev;
-> >         host->mmc->actual_clock =3D 0;
-> >
-> > -       gl9767_vhs_write(pdev);
-> > -
-> > -       pci_read_config_dword(pdev, PCIE_GLI_9767_CFG, &value);
-> > -       value |=3D PCIE_GLI_9767_CFG_LOW_PWR_OFF;
-> > -       pci_write_config_dword(pdev, PCIE_GLI_9767_CFG, value);
-> > -
-> > +       gl9767_set_low_power_negotiation(pdev, false);
-> >         gl9767_disable_ssc_pll(pdev);
-> >         sdhci_writew(host, 0, SDHCI_CLOCK_CONTROL);
-> >
-> > -       if (clock =3D=3D 0)
-> > +       if (clock =3D=3D 0) {
-> > +               gl9767_set_low_power_negotiation(pdev, true);
-> >                 return;
-> > +       }
-> >
-> >         clk =3D sdhci_calc_clk(host, clock, &host->mmc->actual_clock);
-> >         if (clock =3D=3D 200000000 && ios->timing =3D=3D MMC_TIMING_UHS=
-_SDR104) {
-> > @@ -922,12 +934,7 @@ static void sdhci_gl9767_set_clock(struct sdhci_ho=
-st *host, unsigned int clock)
-> >         }
-> >
-> >         sdhci_enable_clk(host, clk);
-> > -
-> > -       pci_read_config_dword(pdev, PCIE_GLI_9767_CFG, &value);
-> > -       value &=3D ~PCIE_GLI_9767_CFG_LOW_PWR_OFF;
-> > -       pci_write_config_dword(pdev, PCIE_GLI_9767_CFG, value);
-> > -
-> > -       gl9767_vhs_read(pdev);
-> > +       gl9767_set_low_power_negotiation(pdev, true);
-> >  }
-> >
-> >  static void gli_set_9767(struct sdhci_host *host)
-> > --
-> > 2.47.0
-> >
+between commit:
+
+  e87ec503cf2e ("mm/codetag: uninline and move pgalloc_tag_copy and pgalloc=
+_tag_split")
+
+from the mm-unstable branch of the mm tree and commit:
+
+  91e102e79740 ("prctl: arch-agnostic prctl for shadow stack")
+
+from the arm64 tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc include/linux/mm.h
+index 086ba524d3ba,8852c39c7695..000000000000
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@@ -4166,4 -4174,65 +4178,8 @@@ static inline int do_mseal(unsigned lon
+  }
+  #endif
+ =20
+ -#ifdef CONFIG_MEM_ALLOC_PROFILING
+ -static inline void pgalloc_tag_split(struct folio *folio, int old_order, =
+int new_order)
+ -{
+ -	int i;
+ -	struct alloc_tag *tag;
+ -	unsigned int nr_pages =3D 1 << new_order;
+ -
+ -	if (!mem_alloc_profiling_enabled())
+ -		return;
+ -
+ -	tag =3D pgalloc_tag_get(&folio->page);
+ -	if (!tag)
+ -		return;
+ -
+ -	for (i =3D nr_pages; i < (1 << old_order); i +=3D nr_pages) {
+ -		union codetag_ref *ref =3D get_page_tag_ref(folio_page(folio, i));
+ -
+ -		if (ref) {
+ -			/* Set new reference to point to the original tag */
+ -			alloc_tag_ref_set(ref, tag);
+ -			put_page_tag_ref(ref);
+ -		}
+ -	}
+ -}
+ -
+ -static inline void pgalloc_tag_copy(struct folio *new, struct folio *old)
+ -{
+ -	struct alloc_tag *tag;
+ -	union codetag_ref *ref;
+ -
+ -	tag =3D pgalloc_tag_get(&old->page);
+ -	if (!tag)
+ -		return;
+ -
+ -	ref =3D get_page_tag_ref(&new->page);
+ -	if (!ref)
+ -		return;
+ -
+ -	/* Clear the old ref to the original allocation tag. */
+ -	clear_page_tag_ref(&old->page);
+ -	/* Decrement the counters of the tag on get_new_folio. */
+ -	alloc_tag_sub(ref, folio_nr_pages(new));
+ -
+ -	__alloc_tag_ref_set(ref, tag);
+ -
+ -	put_page_tag_ref(ref);
+ -}
+ -#else /* !CONFIG_MEM_ALLOC_PROFILING */
+ -static inline void pgalloc_tag_split(struct folio *folio, int old_order, =
+int new_order)
+ -{
+ -}
+ -
+ -static inline void pgalloc_tag_copy(struct folio *new, struct folio *old)
+ -{
+ -}
+ -#endif /* CONFIG_MEM_ALLOC_PROFILING */
+ -
++ int arch_get_shadow_stack_status(struct task_struct *t, unsigned long __u=
+ser *status);
++ int arch_set_shadow_stack_status(struct task_struct *t, unsigned long sta=
+tus);
++ int arch_lock_shadow_stack_status(struct task_struct *t, unsigned long st=
+atus);
++=20
+  #endif /* _LINUX_MM_H */
+
+--Sig_/0mrtXIushRlvIHX=G.X+.AB
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmce1pIACgkQAVBC80lX
+0GyySwf7BrPsHhFOn5msLSZWyyZX3T3cJ+9BFSTKLmhvKjWWvIIDM/CTRIfEvq7u
+lsqOTQ92SncGpw2j1uMd31NFQCYoL92mvJLcFSSG79ymIGBrAUSvz9fqqddjL1ZI
+uKdhsNlA0LNQbUWgLCEddcujSJ9jDtdzoAFYb2y6lEWpU0LPPTlPDgx1E7FyQ349
+m1Er01Qgn2OFkfjzSgqEFpN9Bpw4hmm5zMLNUcM9vKzMJzncLePL/xujAXGeIUwV
+Am3Fomjy2Wnr1Ms/nLCKACXSIMxfAqELeYo84d2aSMgY/k7bFcZzlx+XgEIz1hbh
+GX4gBSDw1YPs4WbaTNno7wZe8t+Umg==
+=5HvN
+-----END PGP SIGNATURE-----
+
+--Sig_/0mrtXIushRlvIHX=G.X+.AB--
 
