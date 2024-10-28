@@ -1,58 +1,57 @@
-Return-Path: <linux-kernel+bounces-385737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 558479B3B00
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 21:03:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 686079B3B03
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 21:04:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11CBF2831C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 20:03:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1082A1F22AA9
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 20:04:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BE351E0493;
-	Mon, 28 Oct 2024 20:03:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A06B41DF98C;
+	Mon, 28 Oct 2024 20:04:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uV/+9XBI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L6f7iRpm"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75A253A1DB;
-	Mon, 28 Oct 2024 20:03:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 035F23A1DB;
+	Mon, 28 Oct 2024 20:04:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730145818; cv=none; b=ltz6ApjJn2V+OMtpWen/J+3mAMKaQJiucIIb22X+YJ8ZnGKt9a3+VhZ0QmK6zHhiDPZrTG+g3B39LFqvqzjqKAY0YNT1h2ZrgJCyi68rXBqEV7p+OKxdAOu83ZdPuW912lBA9xfHWGPLa9T0YMGCbXgpRjYylRCSBnUwlnNhubE=
+	t=1730145889; cv=none; b=Gc9hz5guR5Js5ICrKMyyIeV4WWm96b6OwKLt9jDRUjgAfYZyTvqHQFZaVz+kadBlwf5ZSOcZvhCxUcaTvXaB9hxemzrq74b7mfj95UAJmCmo3mESx9v5S+vA20on/l+Jeh0XTub+j6lFIiPu3z+Vxf0qwidVAvc5AP9yT2z4yGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730145818; c=relaxed/simple;
-	bh=j7X72UG3ezrmkiAW5Ngu+qE+hQUZJPFdiDJOVTTPJts=;
+	s=arc-20240116; t=1730145889; c=relaxed/simple;
+	bh=KZNN1JyeVLqKYXgdrhh23aQzImf17McDSEe0V0WxjgY=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=r/asbvEZlfROjhJmFMcBStBMqcBw/Q03bMP0qMq4DMvukujGloKA3Gkbez4q3nOhf9Mw5xsfim6sMLkeNa4EbHCm5rpmKsxzsLO1E7o8dL72sz2IgbowSyd3LuJNms0sMMvkbEpp5krD7uxlI3HZKdtC3sOfLWJ1IVYBYZyqFVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uV/+9XBI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C23D4C4CEC3;
-	Mon, 28 Oct 2024 20:03:37 +0000 (UTC)
+	 MIME-Version:Content-Type; b=ik1uHD8SUSF8W5udruhwn1rD7sJ/tzDxw8jtF6EhiZfDJdt7AULy0c9c1CVjiSg43+Lixe9o9vYoFIMVMMOPEehVFu2tM8mva8BIoXuRntFK/5zE2+W87CNnjIBec3DZMBk0xh9GrfDY/gAPxuS7xCNC5eIcXN3rRXv2/gz97q4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L6f7iRpm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3125FC4CEE3;
+	Mon, 28 Oct 2024 20:04:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730145818;
-	bh=j7X72UG3ezrmkiAW5Ngu+qE+hQUZJPFdiDJOVTTPJts=;
+	s=k20201202; t=1730145888;
+	bh=KZNN1JyeVLqKYXgdrhh23aQzImf17McDSEe0V0WxjgY=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=uV/+9XBIzKlP4Yvd7ktnNoQc7vy4X05BFIVM4VkxUi69TGuGmUNmXGgUZYkX3OYK1
-	 mcdiw3quHX2gbViZWhEcd0SPBo+ougJFq099waAk/kmowLMCzQuYI+xkPTLl9Y1rtW
-	 9hTGvV4yXTR5aDRvadz6Ph1BZWBY6wfb/R8PPC255vc/6xTcqIc4cI7ZPJTmNsb5KP
-	 R84pCvyVTl3I8cCbxhF8sLLpsw9bXCMuTmlrw0MpAKRDS4QHbrGjMGP8Em6rlwnHm4
-	 yzi5hS5qMCYhREAle2gdJgv20KqymjQrrsqDvyVg+hdQZaWJrcws7DrU6mXJX1g79S
-	 bfnWuYSY3tVfg==
-Date: Mon, 28 Oct 2024 13:03:36 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon Horman
- <horms@kernel.org>, Willem de Bruijn <willemb@google.com>, Gou Hao
- <gouhao@uniontech.com>, Mina Almasry <almasrymina@google.com>, Abhishek
- Chauhan <quic_abchauha@quicinc.com>, Kuniyuki Iwashima <kuniyu@amazon.com>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v2] net: Use str_yes_no() helper function
-Message-ID: <20241028130336.3611b8ab@kernel.org>
-In-Reply-To: <20241026152847.133885-3-thorsten.blum@linux.dev>
-References: <20241026152847.133885-3-thorsten.blum@linux.dev>
+	b=L6f7iRpmvXuJewoMM/3DVrdYThrYwmxAGmNjaJsg5iqvP6o9lROsvmuyclgDtHZPp
+	 Lpv6I8fiDzvWTxfDoDtb2655AcSG+BupNqFE7VzlyrAcpFIYH2Y3T8n1ZbN6l4cfd4
+	 0CuVfw7hbORqnwPCdyW1xOzqdvb47NheYB4SKb78SdCE3O9bvCXRr2GsncU5uH4D1x
+	 kfbqsDOHyQET45x+P8ANcYQslXuJrny9hp4x8lvlzaZHlQIAsvJjdirYsR0ddcKzkA
+	 dER+eYfS7XDpNag28SDxLni6B6t+wYOOWYhXbxiTDMmI4TqkD5lseLY9/f6e7niVr3
+	 tiG88dS1PZztA==
+Date: Mon, 28 Oct 2024 20:04:42 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Ramona Alexandra Nechita <ramona.nechita@analog.com>, Arnd Bergmann
+ <arnd@arndb.de>, Lars-Peter Clausen <lars@metafoo.de>, Nuno Sa
+ <nuno.sa@analog.com>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drivers: iio: adc: ad777x depends on CRC8
+Message-ID: <20241028200442.4169b6f3@jic23-huawei>
+In-Reply-To: <20241028162937.2171535-1-arnd@kernel.org>
+References: <20241028162937.2171535-1-arnd@kernel.org>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,13 +61,42 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Sat, 26 Oct 2024 17:28:46 +0200 Thorsten Blum wrote:
-> Remove hard-coded strings by using the str_yes_no() helper function.
+On Mon, 28 Oct 2024 16:29:15 +0000
+Arnd Bergmann <arnd@kernel.org> wrote:
 
-Same answer as for:
-  net: sched: etf: Use str_on_off() helper function in etf_init()
-Use of the common string helpers is subjective.
-Please try to avoid targeting networking with such cleanups.
--- 
-pw-bot: reject
+> From: Arnd Bergmann <arnd@arndb.de>
+> 
+> The newly added driver fails to link when CONFIG_CRC8 is not set:
+> 
+> ld.lld-20: error: undefined symbol: crc8_populate_msb
+> ld.lld-20: error: undefined symbol: crc8
+> >>>               vmlinux.o:(ad7779_spi_read)  
+> 
+> Select this from Kconfig as we do for other drivers like it.
+> 
+> Fixes: cc20fa9e9ad4 ("drivers: iio: adc: add support for ad777x family")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Squashed into original patch.
+
+Thanks!
+
+Jonathan
+
+> ---
+>  drivers/iio/adc/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
+> index d8abe28eec89..849c90203071 100644
+> --- a/drivers/iio/adc/Kconfig
+> +++ b/drivers/iio/adc/Kconfig
+> @@ -290,6 +290,7 @@ config AD7768_1
+>  config AD7779
+>  	tristate "Analog Devices AD7779 ADC driver"
+>  	depends on SPI
+> +	select CRC8
+>  	select IIO_BUFFER
+>  	help
+>  	  Say yes here to build support for Analog Devices AD777X family
+
 
