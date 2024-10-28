@@ -1,137 +1,138 @@
-Return-Path: <linux-kernel+bounces-385045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98FC99B31B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:30:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0B159B31B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:30:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B64D283365
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:30:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66BED1F21A9B
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:30:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B830C1DC07B;
-	Mon, 28 Oct 2024 13:29:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8217C1DD0DE;
+	Mon, 28 Oct 2024 13:30:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="LJ2vzMym"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="RPy4kWLO"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 843F41DBB31
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 13:29:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE3A11D5178;
+	Mon, 28 Oct 2024 13:30:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730122191; cv=none; b=pq+FsgwHcCLpMCqB8NtjvbmloFc/h8WfwVbC0GbBn0Hb/ST9zlUqftYknSrgi4QDUi0ADJ7cZ92qmQvzESvo1p0XEV6LI1qBaSAUELQ2VKhw3Tj7GjBxhfy5ofwyBncqcM+dnNLZXFrNXqlgfH2/I5ME55eimAdnnPsIluJ9j+g=
+	t=1730122209; cv=none; b=oas6WMMra+4p18INrKqOIm4VVah94f6bq8KL0DE5bpO7LfZvz/5DLVhG5er/CCpZY8E+MdAINtlaFVhU+Se3vZRT3OxovJm5sFDbB9KJKw/Ksqhwbt2nuA0b/Iquv3raTdpAJQlqyrXPtueJSTYYLoowSCUYVOT/w45TvYqAySI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730122191; c=relaxed/simple;
-	bh=5oyGvkREqDeHRidY85A/FS5BqBuSvvzmECWkFjPbNjw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IrSA2kCMaN1xW8H5yp0QbgTpR/V+mO6FkzHJE4vYmzD6dvkZzm/C4tdMhn/ApvuhYVpInY4MOdVlE2VZdvhJtALS0M5RxFYaKxtZalYIzE5NzVEW6V4tVpxtRrFgOlRqKdx9Q+62AHl5qtfK+mHam35db5ocOrayc7+f49h5WAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=LJ2vzMym; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-37d4c482844so2881587f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 06:29:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1730122186; x=1730726986; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=w6EadJB8V7Y8cpv+mItipPaoLP4/d3PNTxf1GVBJWGY=;
-        b=LJ2vzMymnOGEvza1h1Xs90HPi5qGhobtWJWYjsRe3r2pLdU/uxA1PbTZ15zA7uDcg0
-         0Xk/z4fGCSiy6oij+LcAYPBf8gGgFBg5/JiLT44FTK4BduglJd0ZqNnq8RIldZ6i96ek
-         XUVqRmg2ER/i20MM1bMBWVDG11vw3PjU6Ds4PiTt4RTrNljeXTAsm4Cjrdyp4WfnOzC0
-         7LsgFkDtM7DB/gs3Xk8BznKq2FgbXWeOlfDxzIKCSnI2ZQ9IpVnPzcDaEIBK8aU2a4QR
-         BDYAKpGqb39IhV+YbNbCHRqCdAmIApFTGYhsdHgt4sOUWZ56teoJ/aL24L6EYeD9BY3L
-         ILzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730122186; x=1730726986;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=w6EadJB8V7Y8cpv+mItipPaoLP4/d3PNTxf1GVBJWGY=;
-        b=jXc4/9IvXtgAoMZrVAOLtIx1vBLZnfsO4k4rIeQ+LZV0+4Y8DTrHoq5kv4pKywO5BK
-         YDtXJbIYnD4gGpRqYCwiR5RnGU0GOsS9LLJk+q3zUDG2FL8Sj60kexZxmtdS9dt5wLdV
-         tvpSsM6Sc6s3afcMNaXq91gcW740sc5qBPaHmKc2z2aPmH7+udAAmsdy4Bh4+tGVUDCB
-         qcar0aVM47I5sgFcExdcaleQlmYOsx7NsRhvYNDtsKmVVoWu/ogkLif2R62b8dKQRxYQ
-         ZMOWSDqtdQDci6ouPMgDwWkuhumVbC1da6VYvBxlzEi63UaEAYWjSJjISnvQ/tuQtQy5
-         SBdw==
-X-Forwarded-Encrypted: i=1; AJvYcCX3g0yf6tbNszlBnDp3MYJfiAHZwZlh6eFRP3Vq8eEjqIyzxhXj7GAqiZwzGxiJMdnYp38coAFIzj6n/Ks=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzN1sFQYUkU8gqzLfbutA3+Qcj+qTIExuC+3z69k+3wRwT2HnhX
-	1IqxNLg5+vao10/hbgEKjXdrbSLP1DKGbrlmWO4g+LlH31wNT0cyFuLdX1sFPiU=
-X-Google-Smtp-Source: AGHT+IEtvTZNKEmWWIFoMubPfm0ya5C1jtARvcC1GXFVdulw5wHQLnMw/8We5rF0Uedjydxv72ay8A==
-X-Received: by 2002:a5d:5f41:0:b0:37d:4f1b:35d with SMTP id ffacd0b85a97d-380611ff128mr6725541f8f.48.1730122185780;
-        Mon, 28 Oct 2024 06:29:45 -0700 (PDT)
-Received: from ?IPV6:2a10:bac0:b000:7465:7285:c2ff:fedd:7e3a? ([2a10:bac0:b000:7465:7285:c2ff:fedd:7e3a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058bb4724sm9463052f8f.115.2024.10.28.06.29.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Oct 2024 06:29:45 -0700 (PDT)
-Message-ID: <1fb9d072-67a3-4149-b5a3-0ea79f2b0733@suse.com>
-Date: Mon, 28 Oct 2024 15:29:43 +0200
+	s=arc-20240116; t=1730122209; c=relaxed/simple;
+	bh=CkORn1lYBNn1JnbUC+lqClf67cvct/hgyHT2fEUq2j8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kAWnkWBYXY78husZ9tvpZO1MJDBNHp85mdKmAYxJWU99TuJJFZEqtcIxUxxttsrEIibdvB2AiLROGWRRhCunWL4zLSGVw/9U3VSeoof1wcdAP5BJFSvJrA9e8A5BN4NiK6wiECrYTRZPkvqh8rTlmh+uc+yjBY8vxL2ZnSCk3Ew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=RPy4kWLO; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 45C5A1A7D;
+	Mon, 28 Oct 2024 14:30:04 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1730122204;
+	bh=CkORn1lYBNn1JnbUC+lqClf67cvct/hgyHT2fEUq2j8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RPy4kWLODjFqQ+VgrpiwTgtehGGCllR4OxEDOoKZWa7Nvo5ERTyCFQThekLGGG2Ho
+	 skf7KbE5yLqHFBSMtH/AL4IgC+sCPGR9LzEDFm5wlDD843fEZZCtF21tg/IIc1iGoJ
+	 vsW0AaeSfA/M/70WMlvWIl4SnVnJkM4ChZ2/btxo=
+Date: Mon, 28 Oct 2024 15:29:58 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Tarang Raval <tarang.raval@siliconsignals.io>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] media: mt9p031: Refactor format handling for
+ different sensor models
+Message-ID: <20241028132958.GF6081@pendragon.ideasonboard.com>
+References: <20241025221638.127457-1-tarang.raval@siliconsignals.io>
+ <Zx9c8gvmy_nY5l7e@kekkonen.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 04/10] x86/virt/tdx: Use dedicated struct members for
- PAMT entry sizes
-To: Kai Huang <kai.huang@intel.com>, dave.hansen@intel.com,
- kirill.shutemov@linux.intel.com, tglx@linutronix.de, bp@alien8.de,
- peterz@infradead.org, mingo@redhat.com, hpa@zytor.com,
- dan.j.williams@intel.com, seanjc@google.com, pbonzini@redhat.com
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
- rick.p.edgecombe@intel.com, isaku.yamahata@intel.com, adrian.hunter@intel.com
-References: <cover.1730118186.git.kai.huang@intel.com>
- <e1f311a32a1721cb138982d475515e24f18e4edb.1730118186.git.kai.huang@intel.com>
-From: Nikolay Borisov <nik.borisov@suse.com>
-Content-Language: en-US
-In-Reply-To: <e1f311a32a1721cb138982d475515e24f18e4edb.1730118186.git.kai.huang@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <Zx9c8gvmy_nY5l7e@kekkonen.localdomain>
 
+On Mon, Oct 28, 2024 at 09:44:18AM +0000, Sakari Ailus wrote:
+> Hi Tarang,
+> 
+> On Sat, Oct 26, 2024 at 03:45:40AM +0530, Tarang Raval wrote:
+> > Add new structure 'mt9p031_model_info' to encapsulate format codes for
+> > the mt9p031 camera sensor family. This approach enhances code clarity
+> > and maintainability.
+> > 
+> > Signed-off-by: Tarang Raval <tarang.raval@siliconsignals.io>
+> > ---
+> >  drivers/media/i2c/mt9p031.c | 31 ++++++++++++++++++++++++++++---
+> >  1 file changed, 28 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/drivers/media/i2c/mt9p031.c b/drivers/media/i2c/mt9p031.c
+> > index f2f52f484044..3576d3066738 100644
+> > --- a/drivers/media/i2c/mt9p031.c
+> > +++ b/drivers/media/i2c/mt9p031.c
+> > @@ -112,6 +112,24 @@
+> >  #define MT9P031_TEST_PATTERN_RED			0xa2
+> >  #define MT9P031_TEST_PATTERN_BLUE			0xa3
+> >  
+> > +struct mt9p031_model_info {
+> > +	u32 code;
+> > +};
+> > +
+> > +enum mt9p031_model {
+> > +	MT9P031_MODEL_BAYER,
+> > +	MT9P031_MODEL_MONO,
+> > +};
+> > +
+> > +static const struct mt9p031_model_info mt9p031_models[] = {
+> > +	[MT9P031_MODEL_BAYER] = {
+> > +		.code = MEDIA_BUS_FMT_SGRBG12_1X12,
+> > +	},
+> > +	[MT9P031_MODEL_MONO] = {
+> > +		.code = MEDIA_BUS_FMT_Y12_1X12,
+> > +	},
+> > +};
+> > +
+> >  struct mt9p031 {
+> >  	struct v4l2_subdev subdev;
+> >  	struct media_pad pad;
+> > @@ -1209,9 +1227,16 @@ static void mt9p031_remove(struct i2c_client *client)
+> >  }
+> >  
+> >  static const struct of_device_id mt9p031_of_match[] = {
+> > -	{ .compatible = "aptina,mt9p006", .data = (void *)MEDIA_BUS_FMT_SGRBG12_1X12 },
+> > -	{ .compatible = "aptina,mt9p031", .data = (void *)MEDIA_BUS_FMT_SGRBG12_1X12 },
+> > -	{ .compatible = "aptina,mt9p031m", .data = (void *)MEDIA_BUS_FMT_Y12_1X12 },
+> > +	{
+> > +		.compatible = "aptina,mt9p006",
+> > +		.data = &mt9p031_models[MT9P031_MODEL_BAYER]
+> > +	}, {
+> > +		.compatible = "aptina,mt9p031",
+> > +		.data = &mt9p031_models[MT9P031_MODEL_BAYER]
+> > +	}, {
+> > +		.compatible = "aptina,mt9p031m",
+> > +		.data = &mt9p031_models[MT9P031_MODEL_MONO]
+> 
+> Instead using an index into an array, could you add structs for describing
+> both separately? See e.g. drivers/media/i2c/ccs/ccs-core.c for an example.
 
+For what it's worth, I prefer the array and indices. I don't care too
+much though.
 
-On 28.10.24 г. 14:41 ч., Kai Huang wrote:
-> Currently, the 'struct tdmr_sys_info_tdmr' which includes TDMR related
-> fields defines the PAMT entry sizes for TDX supported page sizes (4KB,
-> 2MB and 1GB) as an array:
-> 
-> 	struct tdx_sys_info_tdmr {
-> 		...
-> 		u16 pamt_entry_sizes[TDX_PS_NR];
-> 	};
-> 
-> PAMT entry sizes are needed when allocating PAMTs for each TDMR.  Using
-> the array to contain PAMT entry sizes reduces the number of arguments
-> that need to be passed when calling tdmr_set_up_pamt().  It also makes
-> the code pattern like below clearer:
-> 
-> 	for (pgsz = TDX_PS_4K; pgsz < TDX_PS_NR; pgsz++) {
-> 		pamt_size[pgsz] = tdmr_get_pamt_sz(tdmr, pgsz,
-> 					pamt_entry_size[pgsz]);
-> 		tdmr_pamt_size += pamt_size[pgsz];
-> 	}
-> 
-> However, the auto-generated metadata reading code generates a structure
-> member for each field.  The 'global_metadata.json' has a dedicated field
-> for each PAMT entry size, and the new 'struct tdx_sys_info_tdmr' looks
-> like:
-> 
-> 	struct tdx_sys_info_tdmr {
-> 		...
-> 		u16 pamt_4k_entry_size;
-> 		u16 pamt_2m_entry_size;
-> 		u16 pamt_1g_entry_size;
-> 	};
-> 
-> To prepare to use the auto-generated code, make the existing 'struct
-> tdx_sys_info_tdmr' look like the generated one.  But when passing to
-> tdmrs_set_up_pamt_all(), build a local array of PAMT entry sizes from
-> the structure so the code to allocate PAMTs can stay the same.
-> 
-> Signed-off-by: Kai Huang <kai.huang@intel.com>
+> > +	},
+> >  	{ /* sentinel */ }
+> >  };
+> >  MODULE_DEVICE_TABLE(of, mt9p031_of_match);
 
-Reviewed-by: Nikolay Borisov <nik.borisov@suse.com>
+-- 
+Regards,
+
+Laurent Pinchart
 
