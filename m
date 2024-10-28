@@ -1,155 +1,98 @@
-Return-Path: <linux-kernel+bounces-385821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 874C29B3C29
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 21:46:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8EEE9B3C2E
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 21:47:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9A531C21D60
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 20:46:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A052B1F22BA4
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 20:47:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D8F21E0B89;
-	Mon, 28 Oct 2024 20:46:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABF5F1DFE29;
+	Mon, 28 Oct 2024 20:47:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BpPtMH1Y"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="Zf8Q3oMW"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9706718D649;
-	Mon, 28 Oct 2024 20:46:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D827618D649;
+	Mon, 28 Oct 2024 20:47:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730148364; cv=none; b=A/LVqJ745oOe/PVTqnQGy0OpsbhIPAQ3Ie3GZHxlHkuG2UWRsNMOV32M97pljZdrYXuTsWHu82CycTmVMRc0n+Z8CIOX7xrWJGytr8hIo3vqAkw68BK5+0FkzMJ9DTDKjx00+L8KWcqltvYHkXmWfaBV3DRPasJoV24vCdU7sTU=
+	t=1730148437; cv=none; b=ViwFYPFe7scm3CTiBV+WlL6/gUxOMnAgP4aM+gTGxHJDS1tNL2uNuNwJuFyKBsXMRBN53ccTDMf/ieMUo9ZTj9ckkOrZ56TmNC+xNnnuTCK9ADRiVRvV/G5Wlk0KxPihNtItds+qFcdO+KJv2g0fctjXetpv+OWFb7+rDqS7SGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730148364; c=relaxed/simple;
-	bh=itesG2RvWuf28etNXsbQmQFizk4AbMZdb9m4C5OrjG4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jsYflXytIG/wEYoRB8VZ6pjBaDU/ov8I3E16qCeDeTwYv8Xd1Xrods47gowkaz6JSHhDZKSX7+9+0mIJNpCajwtxQfeLmSC92Thh6uG5cbz83EmYsC2lT03t7rYXfmeFbsJLeLumuVS0RJHUCPBZDBieObzxhRHEh8k/TbBWxMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BpPtMH1Y; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a9a0cee600aso618204366b.1;
-        Mon, 28 Oct 2024 13:46:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730148361; x=1730753161; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CJWfDKwlLmshZFu5aw8CBvAgMnKUr0ALhBZ22yCGjZ4=;
-        b=BpPtMH1Y+6jiUnkpnZ5yDjETWag3BvXpWxkfkgrEbzQFa9eee15WLwSv3g8u25qhLi
-         dNc01+vYNzYYptwbL9aNyfRwNmE/GLnax4TwrwxCZZfCT44I5oXosED0IPV/EmVEbYm+
-         WzSnePPM6jkLwfyObNHZv3Y71mjMCoDPRR9EzfitLYeNF8GBAwb/RpyenWF/N+pDrDgG
-         ovAUtTiT5Md5DSFttB2Ulhp39IH9ZPd5CtWDPLx2SkWihP1HJ0TCWIsGB/Pgs6eM1QAh
-         AS2X6goxRZGpbS5VEI9H1TWUPBSi3Aenb7fqQkBiLshw23d+zmDacmlhVwxvm2AA3vc+
-         dVDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730148361; x=1730753161;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CJWfDKwlLmshZFu5aw8CBvAgMnKUr0ALhBZ22yCGjZ4=;
-        b=K1Tkla3DZ0CXq7kt4M8OnTSCEpQ6MtqjNpnMbP8wW//u8qkWdLBKP+17PjBhR1zpPD
-         6iR8uP9hRp5N1syHJAtLw2WgPhZPTbAabbDpKFWlCOZLkZZeQtpAv10NLpXNvhUE1BW3
-         ZMyRxazp5qqylSOBw/K2LOtzsEcvTnP9cD5qM4DuSngX0uHLcI+jAmoWGnwpI3ogv5es
-         k6YMqMGwkI9HOB+LPVPF7N4AALdpmi7kQmApIPfm7eWv1Qla2ODRyUOm1zDH+m4FrB0Y
-         QZYAQ0UsvuuDiyaCvfOMz7QkX1NlxFY1pdmSAVL6x2S84iNNm2yPmpcZS4D8SHC3ihCF
-         ZtRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWMvJNr4EtWHDGnYt5QZabXYTVQxJRvOiDTu0RF4VCguLUqja2YV2bwo8yBigV4yLcLosMYTuU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQQLue6L3e1WJi4BC5OOX/QO0jIGDzgVru/l5Fsp+kId+zjKGx
-	/CLpKpBGOInfLS/ebgafxY+omsQq99Y3VjI/oaijZAt3gi8eB1+0ZLJIFtYXuJHGVVTqqrEODJo
-	IuMfrcgoUkzrIWvZm75YUt+ga3Ww=
-X-Google-Smtp-Source: AGHT+IFu0/SIJ4+nMuHnai7SSpAJVfjT6SCBj2snSYIIgS3/PpybgZuBVB3RtoBV2tmSRortugcY/M8XDJ1prS7XgRU=
-X-Received: by 2002:a17:906:6a1c:b0:a9a:81a3:59bf with SMTP id
- a640c23a62f3a-a9de5f656e6mr1057978466b.35.1730148360606; Mon, 28 Oct 2024
- 13:46:00 -0700 (PDT)
+	s=arc-20240116; t=1730148437; c=relaxed/simple;
+	bh=9zhy4+xfsoY/yelPEXafdYgdMnBrE4lgFH5t3MkDVaM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ROxP7hAf1WQHn4PpZbeZEufbjULkI/yVJ982UrG1LMxbvgCBgJ6LBKdUMD7JCe9Pp/PmcQwttc4KuW4WLBHd0rCeVP28MOCvlFhVGrBzRa0sXTCCz+1A2BBFJw71IMvHQXany+zBQaRCH2v4lnH8bbgWXEAPMX9B3SNbkze80RY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=Zf8Q3oMW; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=9zhy4+xfsoY/yelPEXafdYgdMnBrE4lgFH5t3MkDVaM=;
+	t=1730148434; x=1731358034; b=Zf8Q3oMWL6SkyN8ILTcgGD0wN0mDy94Rl5Lq150WXAFDUTV
+	CS0+fZ+m/C024Wgmc6yYhk4avlXq7RFSTe8zpOsRtw5TygawUJd2GdCJzl7HuP2XUQzqN+Tjw26zK
+	lYuO5hbv1zbjMNCAtV8HcXNIQnHnbJreea3JQNovW030nSvEYomgaEV7GLt5buVbKsWHZNHHpRe5o
+	veZI8sWEBqqNSF+AP499lB4w2q1Cfol+7VaReczhkjuBVxwi5KrWzXoROjCQH1PVmQK0fL8MFy7u1
+	0R+gxBQMl/WbINVh0VZ9T49Jbgw4AlNO02MUYHzmdlaSm8gA37uu+M9iKFxL4EMA==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1t5Wdp-00000007PAV-1Uhr;
+	Mon, 28 Oct 2024 21:47:09 +0100
+Message-ID: <bc7d77fdbe97edc3481f9f73a438742651bd4b8b.camel@sipsolutions.net>
+Subject: Re: [PATCH v2 1/4][next] uapi: socket: Introduce struct
+ sockaddr_legacy
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Andrew Lunn <andrew@lunn.ch>, "Gustavo A. R. Silva"
+ <gustavoars@kernel.org>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, David Ahern <dsahern@kernel.org>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+ <pabeni@redhat.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-hardening@vger.kernel.org, Kees Cook <kees@kernel.org>, Simon Horman
+ <horms@kernel.org>
+Date: Mon, 28 Oct 2024 21:47:08 +0100
+In-Reply-To: <66641c32-a9fb-4cd6-b910-52d2872fad3d@lunn.ch>
+References: <cover.1729802213.git.gustavoars@kernel.org>
+	 <23bd38a4bf024d4a92a8a634ddf4d5689cd3a67e.1729802213.git.gustavoars@kernel.org>
+	 <66641c32-a9fb-4cd6-b910-52d2872fad3d@lunn.ch>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241025141724.17927-1-gourry@gourry.net>
-In-Reply-To: <20241025141724.17927-1-gourry@gourry.net>
-From: Yang Shi <shy828301@gmail.com>
-Date: Mon, 28 Oct 2024 13:45:48 -0700
-Message-ID: <CAHbLzkqYoHTQz6ifZHuVkWL449EVt9H1v2ukXhS+ExDC2JZMHA@mail.gmail.com>
-Subject: Re: [PATCH] vmscan,migrate: fix double-decrement on node stats when
- demoting pages
-To: Gregory Price <gourry@gourry.net>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, kernel-team@meta.com, 
-	akpm@linux-foundation.org, ying.huang@intel.com, weixugc@google.com, 
-	dave.hansen@linux.intel.com, osalvador@suse.de, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-malware-bazaar: not-scanned
 
-On Fri, Oct 25, 2024 at 7:17=E2=80=AFAM Gregory Price <gourry@gourry.net> w=
-rote:
->
-> When numa balancing is enabled with demotion, vmscan will call
-> migrate_pages when shrinking LRUs.  Successful demotions will
-> cause node vmstat numbers to double-decrement, leading to an
-> imbalanced page count.  The result is dmesg output like such:
->
-> $ cat /proc/sys/vm/stat_refresh
->
-> [77383.088417] vmstat_refresh: nr_isolated_anon -103212
-> [77383.088417] vmstat_refresh: nr_isolated_file -899642
->
-> This negative value may impact compaction and reclaim throttling.
->
-> The double-decrement occurs in the migrate_pages path:
->
-> caller to shrink_folio_list decrements the count
->   shrink_folio_list
->     demote_folio_list
->       migrate_pages
->         migrate_pages_batch
->           migrate_folio_move
->             migrate_folio_done
->               mod_node_page_state(-ve) <- second decrement
->
-> This path happens for SUCCESSFUL migrations, not failures. Typically
-> callers to migrate_pages are required to handle putback/accounting for
-> failures, but this is already handled in the shrink code.
+On Mon, 2024-10-28 at 21:38 +0100, Andrew Lunn wrote:
+> > As this new struct will live in UAPI, to avoid breaking user-space code
+> > that expects `struct sockaddr`, the `__kernel_sockaddr_legacy` macro is
+> > introduced. This macro allows us to use either `struct sockaddr` or
+> > `struct sockaddr_legacy` depending on the context in which the code is
+> > used: kernel-space or user-space.
+>=20
+> Are there cases of userspace API structures where the flexiable array
+> appears in the middle?
 
-AFAIK, MGLRU doesn't dec/inc this counter, so it is not
-double-decrement for MGLRU. Maybe "imbalance update" is better?
-Anyway, it is just a nit. I'd suggest capturing the MGLRU case in the
-commit log too.
+Clearly, it's the case for all the three other patches in this series.
 
->
-> When accounting for migrations, instead do not decrement the count
-> when the migration reason is MR_DEMOTION. As of v6.11, this demotion
-> logic is the only source of MR_DEMOTION.
->
-> Signed-off-by: Gregory Price <gourry@gourry.net>
-> Fixes: 26aa2d199d6f2 ("mm/migrate: demote pages during reclaim")
-> Cc: stable@vger.kernel.org
+> I assume this new compiler flag is not only for
+> use in the kernel? When it gets turned on in user space, will the
+> kernel headers will again produce warnings? Should we be considering
+> allowing user space to opt in to using sockaddr_legacy?
 
-Thanks for catching this. Reviewed-by: Yang Shi <shy828301@gmail.com>
+For the userspace covered by patch 2 this will almost certainly never
+happen, and I suspect that might also be true for the others (arp and
+rtnetlink ioctls)? But it probably wouldn't be difficult either.
 
-> ---
->  mm/migrate.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/mm/migrate.c b/mm/migrate.c
-> index 923ea80ba744..e3aac274cf16 100644
-> --- a/mm/migrate.c
-> +++ b/mm/migrate.c
-> @@ -1099,7 +1099,7 @@ static void migrate_folio_done(struct folio *src,
->          * not accounted to NR_ISOLATED_*. They can be recognized
->          * as __folio_test_movable
->          */
-> -       if (likely(!__folio_test_movable(src)))
-> +       if (likely(!__folio_test_movable(src)) && reason !=3D MR_DEMOTION=
-)
->                 mod_node_page_state(folio_pgdat(src), NR_ISOLATED_ANON +
->                                     folio_is_file_lru(src), -folio_nr_pag=
-es(src));
->
-> --
-> 2.43.0
->
+johannes=20
 
