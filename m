@@ -1,66 +1,68 @@
-Return-Path: <linux-kernel+bounces-385718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D45479B3AD4
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 20:53:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AB40D9B3AD5
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 20:53:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 040AF1C21B70
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 19:53:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC8A51C21B49
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 19:53:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C5A91DFD98;
-	Mon, 28 Oct 2024 19:53:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5477D1DFE10;
+	Mon, 28 Oct 2024 19:53:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="J8SUB4wI"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="c0br2KGz"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48C7118E05D
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 19:52:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4B3518EFEC
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 19:52:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730145179; cv=none; b=R7f5yQSxDFU+Aterq+Lm4h9m5DV+apqnzOOj54niXRfK43EzNNLson2uTOl62E2yF77FeBVg4Z3Cwkt6GqcDXhFWiv2sAGRnNkw2Pnqzpm4HEl1o740lFSlYn15GWfzxQ3soyNP8TN0Vs9BGx9D710iMGSWqJn+E/foRKlACHEs=
+	t=1730145180; cv=none; b=GkXEys4pFIxxuI5WOdesT0cVxz38Ebg5o4MJBCjN6fce5hYA3H7cMlE014YOPoNC2ah/zLmB19/yPawuFUTMMab+coBD92RqwEAUfLV6eQJic9SaTp0y3P13QCvXsB38fSWq4XeM+UwdsnndjjvDxEuRHXuLBFEG62JOn9minMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730145179; c=relaxed/simple;
-	bh=dehkDJB9WQDCgvah8osMPwjYFl7T5sv+Vt2PLRrgMZE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gdI+Ko70MZLqxjjQIj2IwCgIz2wCatHxGFekpv72ahbpMq+qRIm1+9LKfdDLYKryFoJ0MBFIyV/Fqz6Pr+rKkOX1MIuNgDAzsMkZOhQfgqKBuCOb1V/GHpjqnIzPLt/Wza4Bz4mOK8BTpyE+eS/yfWsAgmPfJnIFPRfdNOiuFkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=J8SUB4wI; arc=none smtp.client-ip=209.85.216.46
+	s=arc-20240116; t=1730145180; c=relaxed/simple;
+	bh=TkyMtBwnExphazd2Rw0O4yKWDDIIf2oIvYArO20I2nQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=g2xFJEY/FfTj5xhqraV247Slc38f4O9suWajK8AlCYV9OhkIOGxRxxG7w6ufrgJvKT1XkJcPAhBup+TaWkxcd9m5wxK/G5zcmVgwu5wguoNQnr42QuqWCiYWl01beUkdqqXFPnN4D9avnqSXrN/H+OJO6ct/uyrdUvLQ2dK9m5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=c0br2KGz; arc=none smtp.client-ip=209.85.216.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2e2d1858cdfso3302324a91.1
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 12:52:57 -0700 (PDT)
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2e2e87153a3so3358036a91.3
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 12:52:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1730145176; x=1730749976; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=dOgHVETNvwv0GrKYIJJt6UQ/Zkj1FG5o1aowTjEXfjQ=;
-        b=J8SUB4wIyDU1yMchKcAO4ZX1KzyWLHCh5fFmIqQBy/IcuWmYaTOXH9HuiuzPzmNfk7
-         JD2zw3wtRQUIpmnFlVXnIgcdQU2zB66X2qCSuXtn2rJ3mE5ZuRIoiJ/1Ewrjd8YtPa+t
-         stirQaB7nofG9MlMvdSQQIBE8y5HhaAoOJ7t0=
+        d=fastly.com; s=google; t=1730145178; x=1730749978; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jzv4tUYcTG10nCYawdfXAqsh2XlyQDuHmZvQ4r/SQEI=;
+        b=c0br2KGzV+GSlSlXKikB4L1E15l+/zJOii9DQ4y5+SQgT2Hm72pliSOi7T6IbOppa6
+         bTLsjQbulO1H+Kds4XpIPi3E3SMHshgpju6q6UFOIxUfoEi08+n727XDdt0IfnuVyyI8
+         8TsqtRkSlKb+n/X5/7BZXEJ65h/eyCNyjtjYU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730145176; x=1730749976;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=dOgHVETNvwv0GrKYIJJt6UQ/Zkj1FG5o1aowTjEXfjQ=;
-        b=Dw0kX1RtrSmurfpJLbtgJsEpxU23G7VtiFdLSXss6UWKW01XAovs76MKi9Pozw0PzE
-         HWLB+TV2Gc435x87kbmWiJhe6mfrUlN0UDzUEwlSiucPK00ksrHZ1fU8stST28EuG749
-         DCAqtpPz0XxolVAh2BCA4Oc5p8OiqPO1+k3row0lhf+DBoW1e0juZOFf45ySs2rpmqlT
-         5UzCY6cMc7crvcH+HzZ5vfPG9vzqX2bxaBj4QADAKCiXFnL4h63wPn5gVTECRzUv1q+W
-         esxnqCGvw3Sbev14LZJ/f5tGX0VxtDWbY8rYolG7EfJpBjOMona6ivcWTf6KaBwoH4ms
-         50dA==
-X-Forwarded-Encrypted: i=1; AJvYcCWSbL2AE+PjS2JpEaWiR1ggaEHolIBylgkA15ILyP/6ciPL7v8ZJZO5TTX3jeDcGEwk+hauBq4cs/cVK0A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzspR82oE0W8CZ6xwzPmJOhSr3dfIQD17a55XJSmc76bZ32G/C8
-	Ed/wQdHBSEv1Ld9JicJjIKzEfLyK7B6JUB1QoUqkrshAWohthGxGV9oaEvbiZ08=
-X-Google-Smtp-Source: AGHT+IExbYvofPHEquOHcWrySfi2hLqRWDZWOOEDh1nkJ7OI4InzrhdBk3weEUkkN59f4LvmjpwrkA==
-X-Received: by 2002:a17:90b:2d8c:b0:2e2:ca67:dade with SMTP id 98e67ed59e1d1-2e8f11b8b96mr11239428a91.32.1730145176542;
-        Mon, 28 Oct 2024 12:52:56 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1730145178; x=1730749978;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jzv4tUYcTG10nCYawdfXAqsh2XlyQDuHmZvQ4r/SQEI=;
+        b=hC3i3F1fxqM4a1tc1IiAGlXAJ5/e7HSTSJwMaRZluADqoYmfYpCwA7SBtP2FUOsjqV
+         wj0/D5yOoJE2DWs0YjrrZkdeH3ZwGk2hVbZVovtXp51e03+Q92iGkYe8Wb2ETWYQUCrV
+         ZIklLQfBjzbNXAu5YgR++s1rnCTBcZxMwktIpdY4zU/y9nEq+71vg20W6nc+a0I1cgLq
+         PR84HQykvxirDlqz6lu1iL/fL3qQk5NvcDMMoGiXxoRLcyd2uDUqaKNeINCI1NXG09zO
+         V//NiJNbfrsoVbQSEyG0S+vw8foUzs2zrcQgXbZfOZkKGro4yHLFZN0KJxR1u6kTJVWr
+         hmnA==
+X-Forwarded-Encrypted: i=1; AJvYcCXJ57HZHttQgNAGCJ3ufIRNX5U4x7+30y85ShHmkhUJrhf+eAnG1CNwt966pQDGccHQqUxQAhgIjfHwX0s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywz7kyDIqqdNg4i1qWN6H6GNjZU7qTIu0tBM7Wxk85ftnK4vyMp
+	2rb+YExgyAnGaqva9YtzyW4YeeWd7ot9quq1JTlaumVeGjgJJPpoZjlLGd9c7uU=
+X-Google-Smtp-Source: AGHT+IF3b8V4O/+wSZXl5oSD4rRWeHrmI8p3REOwFvhYeIEQrlFb40BEPTWGzSfzMi4dJRV69l6Qyg==
+X-Received: by 2002:a17:90b:1202:b0:2e2:d1c9:95c with SMTP id 98e67ed59e1d1-2e8f105f207mr11133265a91.16.1730145178235;
+        Mon, 28 Oct 2024 12:52:58 -0700 (PDT)
 Received: from localhost.localdomain ([2620:11a:c019:0:65e:3115:2f58:c5fd])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e8e3771e64sm7695247a91.50.2024.10.28.12.52.54
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e8e3771e64sm7695247a91.50.2024.10.28.12.52.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Oct 2024 12:52:55 -0700 (PDT)
+        Mon, 28 Oct 2024 12:52:57 -0700 (PDT)
 From: Joe Damato <jdamato@fastly.com>
 To: netdev@vger.kernel.org
 Cc: vitaly.lifshits@intel.com,
@@ -68,24 +70,21 @@ Cc: vitaly.lifshits@intel.com,
 	kurt@linutronix.de,
 	vinicius.gomes@intel.com,
 	Joe Damato <jdamato@fastly.com>,
-	Alexei Starovoitov <ast@kernel.org>,
+	Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
 	Andrew Lunn <andrew+netdev@lunn.ch>,
-	bpf@vger.kernel.org (open list:XDP (eXpress Data Path)),
-	Daniel Borkmann <daniel@iogearbox.net>,
 	"David S. Miller" <davem@davemloft.net>,
 	Eric Dumazet <edumazet@google.com>,
-	intel-wired-lan@lists.osuosl.org (moderated list:INTEL ETHERNET DRIVERS),
 	Jakub Kicinski <kuba@kernel.org>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	linux-kernel@vger.kernel.org (open list),
 	Paolo Abeni <pabeni@redhat.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Tony Nguyen <anthony.l.nguyen@intel.com>
-Subject: [PATCH iwl-next v5 0/2] igc: Link IRQs and queues to NAPIs
-Date: Mon, 28 Oct 2024 19:52:40 +0000
-Message-Id: <20241028195243.52488-1-jdamato@fastly.com>
+	intel-wired-lan@lists.osuosl.org (moderated list:INTEL ETHERNET DRIVERS),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH iwl-next v5 1/2] igc: Link IRQs to NAPI instances
+Date: Mon, 28 Oct 2024 19:52:41 +0000
+Message-Id: <20241028195243.52488-2-jdamato@fastly.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20241028195243.52488-1-jdamato@fastly.com>
+References: <20241028195243.52488-1-jdamato@fastly.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,86 +93,71 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Greetings:
+Link IRQs to NAPI instances via netdev-genl API so that users can query
+this information with netlink.
 
-Welcome to v5.
+Compare the output of /proc/interrupts (noting that IRQ 128 is the
+"other" IRQ which does not appear to have a NAPI instance):
 
-See changelog below and in each patch for changes from v4 [1].
+$ cat /proc/interrupts | grep enp86s0 | cut --delimiter=":" -f1
+ 128
+ 129
+ 130
+ 131
+ 132
 
-This revision was created due to a report from Vitaly [2], that my v4
-was re-introducing a potential deadlock in runtime_resume which was
-fixed in commit: 6f31d6b: "igc: Refactor runtime power management flow."
+The output from netlink shows the mapping of NAPI IDs to IRQs (again
+noting that 128 is absent as it is the "other" IRQ):
 
-As you'll see, I've modified patch 2 to include a small wrapper to
-either hold rtnl (or not) depending on whether runtime_resume or resume
-are being called.
+$ ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/netdev.yaml \
+                         --dump napi-get --json='{"ifindex": 2}'
 
-Overall, this series adds support for netdev-genl to igc so that
-userland apps can query IRQ, queue, and NAPI instance relationships.
-This is useful because developers who have igc NICs (for example, in
-their Intel NUCs) who are working on epoll-based busy polling apps and
-using SO_INCOMING_NAPI_ID, need access to this API to map NAPI IDs back
-to queues.
+[{'defer-hard-irqs': 0,
+  'gro-flush-timeout': 0,
+  'id': 8196,
+  'ifindex': 2,
+  'irq': 132},
+ {'defer-hard-irqs': 0,
+  'gro-flush-timeout': 0,
+  'id': 8195,
+  'ifindex': 2,
+  'irq': 131},
+ {'defer-hard-irqs': 0,
+  'gro-flush-timeout': 0,
+  'id': 8194,
+  'ifindex': 2,
+  'irq': 130},
+ {'defer-hard-irqs': 0,
+  'gro-flush-timeout': 0,
+  'id': 8193,
+  'ifindex': 2,
+  'irq': 129}]
 
-See the commit messages of each patch for example output I got on my igc
-hardware.
+Signed-off-by: Joe Damato <jdamato@fastly.com>
+---
+ v4:
+   - Fix typo in commit message (replacing 144 with 128)
 
-Thanks to reviewers and maintainers for their comments/feedback!
+ v2:
+   - Line wrap at 80 characters
 
-Thanks,
-Joe
+ drivers/net/ethernet/intel/igc/igc_main.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-[1]: https://lore.kernel.org/netdev/20241022215246.307821-1-jdamato@fastly.com/
-[2]: https://lore.kernel.org/netdev/d7799132-7e4a-0ac2-cbda-c919ce434fe2@intel.com/
-
-v5:
-  - Add a small wrapper to patch 2 to only hold rtnl when resume is
-    called, but avoid rtnl when runtime_resume is called which would
-    trigger a deadlock.
-
-v4: https://lore.kernel.org/netdev/20241022215246.307821-1-jdamato@fastly.com/
-  - Fixed a typo in Patch 1's commit message for the "other" IRQ number
-  - Based on a bug report for e1000, closer scrutiny of the code
-    revealed two paths where rtnl_lock / rtnl_unlock should be added in
-    Patch 2: igc_resume and igc_io_error_detected. The code added to
-    igc_io_error_detected is inspired by ixgbe's
-    ixgbe_io_error_detected
-
-v3: https://lore.kernel.org/netdev/20241018171343.314835-1-jdamato@fastly.com/
-  - No longer an RFC
-  - Patch 1: no changes
-  - Patch 2:
-      - Replace igc_unset_queue_napi with igc_set_queue_napi(..., NULL),
-        as suggested by Vinicius Costa Gomes
-      - Simplify implementation of igc_set_queue_napi as suggested by Kurt
-        Kanzenbach, with a minor change to use the ring->queue_index
-
-rfcv2: https://lore.kernel.org/netdev/20241014213012.187976-1-jdamato@fastly.com/
-  - Patch 1: update line wrapping to 80 chars
-  - Patch 2:
-    - Update commit message to include output for IGC_FLAG_QUEUE_PAIRS
-      enabled and disabled
-    - Significant refactor to move queue mapping code to helpers to be
-      called from multiple locations
-    - Adjusted code to handle IGC_FLAG_QUEUE_PAIRS disabled as suggested
-      by Kurt Kanzenbach
-    - Map / unmap queues in igc_xdp_disable_pool and
-      igc_xdp_enable_pool, respectively, as suggested by Vinicius Costa
-      Gomes to handle the XDP case
-
-rfcv1: https://lore.kernel.org/lkml/20241003233850.199495-1-jdamato@fastly.com/
-
-Joe Damato (2):
-  igc: Link IRQs to NAPI instances
-  igc: Link queues to NAPI instances
-
- drivers/net/ethernet/intel/igc/igc.h      |  2 +
- drivers/net/ethernet/intel/igc/igc_main.c | 55 ++++++++++++++++++++---
- drivers/net/ethernet/intel/igc/igc_xdp.c  |  2 +
- 3 files changed, 52 insertions(+), 7 deletions(-)
-
-
-base-commit: b8ee7a11c75436b85fa1641aa5f970de0f8a575c
+diff --git a/drivers/net/ethernet/intel/igc/igc_main.c b/drivers/net/ethernet/intel/igc/igc_main.c
+index 6e70bca15db1..7964bbedb16c 100644
+--- a/drivers/net/ethernet/intel/igc/igc_main.c
++++ b/drivers/net/ethernet/intel/igc/igc_main.c
+@@ -5576,6 +5576,9 @@ static int igc_request_msix(struct igc_adapter *adapter)
+ 				  q_vector);
+ 		if (err)
+ 			goto err_free;
++
++		netif_napi_set_irq(&q_vector->napi,
++				   adapter->msix_entries[vector].vector);
+ 	}
+ 
+ 	igc_configure_msix(adapter);
 -- 
 2.25.1
 
