@@ -1,137 +1,106 @@
-Return-Path: <linux-kernel+bounces-384873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05FF09B2FA4
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:05:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F18309B2FC5
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:09:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 92674B23B01
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 12:05:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DFCB1C2334D
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 12:09:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E417A1D79B3;
-	Mon, 28 Oct 2024 12:04:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 569291D90AD;
+	Mon, 28 Oct 2024 12:07:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dN6Kj9lN"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bL5N0jI0"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 180FA188733;
-	Mon, 28 Oct 2024 12:04:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72BC618E778
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 12:06:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730117058; cv=none; b=FU5JZJpgw0gU9qdMvsOOh8YXbZW3CH1wfMuHMT0hBh/UG4juxn6mN78+HMpwEDRszIgGT6O8AWSSQ9wa0bH99TbYpJkE60okd2k3nnFme1R6M0I/sS3kqfrzF+5out0FkxgJxFL2gQfz04CTZXKUmDHShP7PiJwzYFkRdd8R5FM=
+	t=1730117221; cv=none; b=JCc2Ujrl9NV1Tq2BIhVJyWzwi/l5CZECWVdIPdlgqyskRry8+lao1CdOy64z6bXQzVIAWuBLvwYD92GEbCWv7zMdIPwztBOey89L93r8xQbvR8NV/X6TljDkp9G8L59Ss3aSqEHVU2O507VC3L9rpJ7e18S58oge/N0v32WHhYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730117058; c=relaxed/simple;
-	bh=7u6SgI6NxTTvIwEzQ/ayBSn+wdGd/VITrwQY4rEja/E=;
-	h=From:Date:Message-ID:To:Cc:Subject; b=c17FSpDQkzpsOTem0zjKL2oHcMbIua1eLGVMhisvGv0xABeygJzOVxVAKN+BaFbzTw1bsx+2xiUYl3DecLwzsic6OXwnw5eJEeipnM8uPmjAX46LlGcwEmfhqYeUR8JWOefh4xO5XZ6w6P2LWQPyiwr1mfhyA1fI2WCkqFgVggE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dN6Kj9lN; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43193678216so29680405e9.0;
-        Mon, 28 Oct 2024 05:04:15 -0700 (PDT)
+	s=arc-20240116; t=1730117221; c=relaxed/simple;
+	bh=yb/nXf+A7vG51hl0MkoS2zYLUNSodJN9EvjoSGEKEqY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=izrtgmupO0J3Zf+JYiInbGAB+9fNKpXLQfxIfh7u73TW4kBkCyxsEqWo39qZCRzE7vQ0Yy3k3M0/Nt++UQIR0TOMbyR4B+5bLM3DfXC8dyVCzaTSXnDr77+his6393W2byxgpLy7AeDltmKeSCcvCtMNGjUUuKXGIH8rbJPgP14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bL5N0jI0; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-539f1292a9bso4874977e87.2
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 05:06:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730117054; x=1730721854; darn=vger.kernel.org;
-        h=subject:cc:to:message-id:date:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qKEeAXmbvPWUlnMl7Jy/ngdP6FBcL9ljUqpc/+uzW4g=;
-        b=dN6Kj9lNZbGpze9gwxoUFS0VYuErr0FFtSGufjgpQdiTcDg+EBvT5IEVPZMF1mygXh
-         sN99uenB99zEOH7WVcZab6Tu/AOAbwJiESLnH3O6gYovJX1gfPn216aZjw/iEeuJxDRF
-         hMIe1V8aD378EQ6vKhd9i4BUSAhmYSatUa22HuP9qCSwlUfbIUjj4VjlLWmIgr0QfJ2y
-         K1fRsUoajx5Ky7671jnW55haVGXyCMMD/F2XkrDnq8FvwPBMU/KxuuHGPOEOHw/bZxdx
-         l0HsRJko83fApqljH0AkPKDgRoOWtCdyBSdNqHkyHWjQFh78ZSsnzsdIihnYeXdLCwuX
-         I3FA==
+        d=linaro.org; s=google; t=1730117217; x=1730722017; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=yvV5hGWWeFN5rUkig7q3oRLHUxqWQ6MdiNZiUO2eDYw=;
+        b=bL5N0jI0dyo27hgP0J4b/g+GXMk5S0X/A8MkMnDunDteB6P5bRjG2n9ORi/zhCCGak
+         3VSjprtNTb9MSBtvCxpz9tLUPKACmLHDnpLs+RI2NMpFO0US9kCNZZnfT6Cri7zIbqfI
+         9QVMRwPDsyIakjRT6uQKSxFlAfVf3tJ3Jj4BsVVVLbwJRcH514GBh+kQ58kf9oqPZlvZ
+         l7J4ODDwfMk3mh01OPPlq6Zw4jNAYWIuvS76MZvgL41l0dA6FumILs3R8O7DD3jdYZSU
+         SPUw1UUmL8olm0BI7ANt3lnE/Ht71u5L55hgw/CLQc8atpLUgAXiGl41vZSDzYTnEa3Q
+         FIiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730117054; x=1730721854;
-        h=subject:cc:to:message-id:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qKEeAXmbvPWUlnMl7Jy/ngdP6FBcL9ljUqpc/+uzW4g=;
-        b=HvRWfW1/bViRLj/gBdVQiY3xPU3XFrWQ2eBBNOrgdKATcxgCfP8nXReXl4nD5t8rqC
-         e+XLamylE7U1EaJQd0y1FTSh8Js8vkuA88l4aNs+wYv05Z7tfwhQedIBiFi/8al/CMmf
-         rXXuF6myebxXEtIcQfeON7RngXcSZ11Wqpr8WGaxoSwmNfHRgnYxJmqIf5ls1xBe+/9j
-         iy9pt7Ne9xvtm2tvLSGxe2UN3COhwHR9xKLZzMCxy1gk0cBErAgIpjr/7FME/Rd9rrdM
-         rxfwze9YqTz9AqypL+gu2wUiB83NbutJRfirsdNt0RS2RwaIZzCsPkxADIDNjMuVENxI
-         z7xQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX67HsorgOebq5oYldSB0167ODKp8DBy1+JouaOPkAslFVX+KVI28/Ej52RkyPNUGkf3oDuaJmV2VY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwowWJYxYc8F9C7+xZNbpowzY1mdN0NDvEqznW9F+5+R1dipARu
-	wrDuEQIy2uUhJJmPqFH7J9CMjXpBfJdbThOIGuhI8kmlmP1IbNrMGH6tLPZF
-X-Google-Smtp-Source: AGHT+IE7ghO3ADasZCUpCsmafd+B9E/1GUct+XWmzCsCPrT13CmOpKpNMlrWuxfbS/2eRIUlTDMkVg==
-X-Received: by 2002:a05:600c:4a88:b0:431:9397:9ac9 with SMTP id 5b1f17b1804b1-431aa292eb4mr21813635e9.15.1730117054122;
-        Mon, 28 Oct 2024 05:04:14 -0700 (PDT)
-Received: from localhost (host-82-56-18-47.retail.telecomitalia.it. [82.56.18.47])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431935f74b6sm107279115e9.33.2024.10.28.05.04.12
+        d=1e100.net; s=20230601; t=1730117217; x=1730722017;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yvV5hGWWeFN5rUkig7q3oRLHUxqWQ6MdiNZiUO2eDYw=;
+        b=aNwNtGWNIpCQmp4R2G2rZn02bw433Woq0/ZzS3abXJuq4qDF42DAg+lJIcIGHr7bUN
+         PqSl+JJAwY/j9bs62sU9rMlYhybemGSy+3AzN78YVmPI8Xqxv8aP/WeEUadV/2aWzS2f
+         5ynumZzEHC/wavQh43OMnjDY7PPSKUTJ2pEl0OcFTj1CqsP7vBrXdXvp4p/Oxhq23cC5
+         zQ5qRTmrmV4ZsVYTW9vz2RylnLm5g7oHssH60hm8F4JEaOOZ2vlQ7RIVUIWHI48K3mfa
+         bJLRXaSvDPC9I2UBL8npDWEoCTwnwKK6+9j9Edhhu4dHLC3yRZdRuFU3F4Ah8dxUkE47
+         J2Jw==
+X-Forwarded-Encrypted: i=1; AJvYcCUDwcIki2u4DK2cvg43LGoUQTlkxWHEImlpA7eQsWRSVclb60TCu9FZ/a1RyO84sltf0bwMLuN+cBwFUj0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yznjjb6ZozR5BP8eiTAlN0mDtnCoDBEL8ph9t9bxAP7zV8fIFkQ
+	WmHz04ueVqbp67LdN+9zpmDEuPuG5KUlFx3NS76wgz8tkFZjm2+GmRnf/eHduWg=
+X-Google-Smtp-Source: AGHT+IE5ttRcl/11oqWt7LWA48nODyAc3M2AxGcKR636+4JvhticJ1WZicn2DdsAWLH/eET3V5bCbg==
+X-Received: by 2002:a05:6512:3e1d:b0:539:fde9:4bbe with SMTP id 2adb3069b0e04-53b348cb110mr3239205e87.20.1730117217512;
+        Mon, 28 Oct 2024 05:06:57 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53b2e1b0c79sm1057321e87.151.2024.10.28.05.06.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Oct 2024 05:04:13 -0700 (PDT)
-From: matteomartelli3@gmail.com
-Date: Mon, 28 Oct 2024 13:04:10 +0100
-Message-ID: <c486a1cf98a8b9ad093270543e8d2007@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: Peter Zijlstra <peterz@infradead.org>, Jonathan Cameron <jic23@kernel.org>, Marc Gonzalez <marc.w.gonzalez@free.fr>, Peter Rosin <peda@axentia.se>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Joe Perches <joe@perches.com>, Rafael J. Wysocki <rafael@kernel.org>, linux-iio@vger.kernel.org
-Subject: iio, syfs, devres: devm_kmalloc not aligned to pow2 size argument
+        Mon, 28 Oct 2024 05:06:57 -0700 (PDT)
+Date: Mon, 28 Oct 2024 14:06:54 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Yongbang Shi <shiyongbang@huawei.com>
+Cc: xinliang.liu@linaro.org, tiantao6@hisilicon.com, 
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, 
+	daniel@ffwll.ch, kong.kongxinwei@hisilicon.com, liangjian010@huawei.com, 
+	chenjianmin@huawei.com, lidongming5@huawei.com, libaihan@huawei.com, 
+	shenjian15@huawei.com, shaojijie@huawei.com, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V2 drm-dp 1/4] drm/hisilicon/hibmc: add dp aux in hibmc
+Message-ID: <uoanbi6fk7ozdjms2zlavhm6n5jdus6boosa2xlpqbffaxu4nj@7bxpobenzjcp>
+References: <20241022124148.1952761-1-shiyongbang@huawei.com>
+ <20241022124148.1952761-2-shiyongbang@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241022124148.1952761-2-shiyongbang@huawei.com>
 
-Hi everyone,
+On Tue, Oct 22, 2024 at 08:41:45PM +0800, Yongbang Shi wrote:
+> From: baihan li <libaihan@huawei.com>
+> 
+> Add dp aux read/write functions. They are basic functions
+> and will be used later.
+> 
+> Signed-off-by: baihan li <libaihan@huawei.com>
 
-I found an issue that might interest iio, sysfs and devres, about a
-particular usage of devm_kmalloc() for buffers that later pass through
-sysfs_emit() or sysfs_emit_at(). These sysfs helpers require the output
-buffer to be PAGE_SIZE aligned since commit 2efc459d06f1 ("sysfs: Add
-sysfs_emit and sysfs_emit_at to format sysfs output"). Such requirement
-is satisfied when kmalloc(PAGE_SIZE, ...) is used but not when
-devm_kmalloc(PAGE_SIZE,...) is used as it actually returns a pointer to
-a buffer located after the devres metadata and thus aligned to
-PAGE_SIZE+sizeof(struct devres).
+Generic comment: all patches miss your SoB. This is SoB of the author,
+so you as a submitted should add yours.
 
-Specifically, I came across this issue during some testing of the
-pac1921 iio driver together with the iio-mux iio consumer driver, which
-allocates a page sized buffer to copy the ext_info of the producer
-pac1921 iio producer driver. To fill the buffer, the latter calls
-iio_format_value(), and so sysfs_emit_at() which fails due to the buffer
-not being page aligned. This pattern seems common for many iio drivers
-which fill the ext_info attributes through sysfs_emit*() helpers, likely
-necessary as they are exposed on sysfs.
 
-I could reproduce the same error behavior with a minimal dummy char
-device driver completely unrelated to iio. I will share the entire dummy
-driver code if needed but essentially this is the only interesting part:
-
-	data->info_buf = devm_kzalloc(data->dev, PAGE_SIZE, GFP_KERNEL);
-	if (!data->info_buf)
-		return -ENOMEM;
-
-	if (offset_in_page(data->info_buf))
-		pr_err("dummy_test: buf not page algined\n");
-
-When running this, the error message is printed out for the reason above.
-
-I am not sure whether this should be addressed in the users of
-devm_kmalloc() or in the devres implementation itself. I would say that
-it would be more clear if devm_kmalloc() would return the pointer to the
-size aligned buffer, as it would also comply to the following kmalloc
-requirement (introduced in [1]):
-
-The address of a chunk allocated with `kmalloc` is aligned to at least
-ARCH_KMALLOC_MINALIGN bytes. For sizes of power of two bytes, the
-alignment is also guaranteed to be at least to the respective size.
-
-To do so I was thinking to try to move the devres metadata after the
-data buffer, so that the latter would directly correspond to pointer
-returned by kmalloc. I then found out that it had been already suggested
-previously to address a memory optimization [2]. Thus I am reporting the
-issue before submitting any patch as some discussions might be helpful
-first.
-
-I am sending this to who I think might be interested based on previous
-related activity. Feel free to extend the cc list if needed.
-
-[1]: https://lore.kernel.org/all/20190826111627.7505-3-vbabka@suse.cz/
-[2]: https://lore.kernel.org/all/20191220140655.GN2827@hirez.programming.kicks-ass.net/
-
-Best regard,
-Matteo Martelli
+-- 
+With best wishes
+Dmitry
 
