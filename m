@@ -1,70 +1,45 @@
-Return-Path: <linux-kernel+bounces-384041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7C4E9B2389
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 04:29:30 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10A129B238B
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 04:32:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DA472820C4
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 03:29:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 624B3B215FB
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 03:31:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6C64188CC6;
-	Mon, 28 Oct 2024 03:29:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F82913C8E2;
+	Mon, 28 Oct 2024 03:31:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="FVbn+X9w"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="aXBFcDIT"
+Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DCB8187FE0
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 03:29:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE11B161;
+	Mon, 28 Oct 2024 03:31:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730086164; cv=none; b=r3NuprSV8mieX57+Np3RhQk1FK8YLjMeRqUXO0LdT1TBm6uXxPSW+pxlZwJltRHoropX9GOQ+LN0KZdDGhtLX4yGKqdwBzsxy2c/DbdZJY21Zw2NwN59wrDj4Li7bHFDJPJ+dqKtUvZL9u3J/BNKLlhVF1wON3oATd5QRon2utQ=
+	t=1730086309; cv=none; b=Dc1Hzco68UDY5o1IE4x7l7cGmU9F+eiBVUlIkttlzAsNsVsYDJckNix5/fh4Ojt8drYzE8wED1uycnuVgYXgB8q/Etd9WCYyW+CMlKo+vlE8MxR00XGN99dKMFkxZ8y7w3AknHdxKlNYxwjKOrHrUHCvshdUuimeaCsezBk5YA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730086164; c=relaxed/simple;
-	bh=ZUgn5auMAqHVPGMBEicG+OSOIN+nAWJczwe8jhTNqCk=;
+	s=arc-20240116; t=1730086309; c=relaxed/simple;
+	bh=NRWHADk2xF6wE2yubfrgxewc1P2MuzHDQtcz/tRheTI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pfIGZCnxCSV1+82gelFbuOZf2wEz6MZChPOgwsxRfq2wPp/mm4lWqDwePam75qJIJbXw09g/nafefa3sai47mdIC/PhaYi3rc/KDmae+/Ftd9LxjnPWCU5gxfdt2//1Hp/UiRIzu/0FroRxAxfL/ES70Pos7jO0ogc7oc+fw3Ng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=FVbn+X9w; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-20c8b557f91so33879905ad.2
-        for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 20:29:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1730086162; x=1730690962; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2JNX2llXAHJCeRvWQ/Q2ie2XQ3BEH+ykwHa6OOhEWog=;
-        b=FVbn+X9wlamLIIxX11oPr60+jzDDFbTea/imgJMhqL1ypa386NiJ8LQxSOYcCnPR6G
-         bjoGzVqkK+4o7lre2YR5FtNZ6Yqyqe8UeqVWUHVhllfWVXpB7fpSYO4AzOFVWuMz/R3a
-         XWotbs5oB+EFQBfK0SOshziI9mMO2Ol0cghvw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730086162; x=1730690962;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2JNX2llXAHJCeRvWQ/Q2ie2XQ3BEH+ykwHa6OOhEWog=;
-        b=O+lH+jjU/KmdTyE5xxZ5qZIeAmNa8GX1BkMvkymD8JlQE8FgtRkWxMKkb/DZWtXVIU
-         mnDdgTXJHgB3ZxHWmtjSzaQPTy0K5wkElxlzL2TLctNAUXc/bRgFPQeqYsHxZ6pCKwmb
-         kaVduiyPMcePgSHByKHDHB6Ip/Mb5q7HxmAUREMLU99ddMRx5GSPS9yxh8OnYm+kwFBS
-         QRBHD7yIF/Mb1wT9BAC+SfPtbWrMTeoq2PsTEaOSYQCA8ofOiaCVhAxI7kyXtoDDT+8Z
-         yqeXRtp/g73haKJ90bLAOyiQ90zBxc75Z6vHfmuuPtTZEzOrEekhEHiM3+ypwvmNCmYq
-         kFgg==
-X-Forwarded-Encrypted: i=1; AJvYcCVi8REL4/hacOODbWO7PIK0+GI8telIojTOH0mJ4IZeoGmeVVCW9NfHjLHgoy6t6Kin+dkxXTah5PMwwe0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+Pg1yazZiKhjZxXLBdhvQ58Kvg7l6DmCCYz4UNBIHwwwulG14
-	bl1+FtdUWHRwSEAnekjiACjlSpD0BUEF38374D2IXm34Rac9zxGvBGjkcqlRwus=
-X-Google-Smtp-Source: AGHT+IHIYevKtlUJ14/kpJ+BcCcgfP6lKOhNeT5/W5EOcUEYMJiTWOpFdRq9nDEZG5FNDfJJSXun9w==
-X-Received: by 2002:a17:902:d50a:b0:20b:57f0:b38b with SMTP id d9443c01a7336-210c68d748amr92451575ad.19.1730086161664;
-        Sun, 27 Oct 2024 20:29:21 -0700 (PDT)
-Received: from [10.200.3.216] (fs96f9c361.tkyc007.ap.nuro.jp. [150.249.195.97])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bc016911sm41526035ad.155.2024.10.27.20.29.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 27 Oct 2024 20:29:21 -0700 (PDT)
-Message-ID: <e907e67d-9116-4dd2-9b61-f93191737de6@linuxfoundation.org>
-Date: Sun, 27 Oct 2024 21:29:18 -0600
+	 In-Reply-To:Content-Type; b=eTux4TcTypgS6zP3vftPzYuopNmJbUhrKjgFfr66tRncwGW2apZ538JX6zOwVExXrkWU5jP8U2hKvTENbcKRsi6Oj9Dm1vgJJRFXiLEuyxVTqpQwqXToxBH47MuOf8DjV1SqD66FVSXZrwj3JJsXk35c1q7p7zR83g+YEfOnZB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=aXBFcDIT; arc=none smtp.client-ip=115.124.30.110
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1730086297; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=n0Bx+2LFE8K+t9JD5+qdAGeY9p/tHz0yLBLver5D33k=;
+	b=aXBFcDITstC6TTNwzIAA4XOTQOKb5ASnFVph/R8YzTE5bZPliZN503L13DR7Vv6aeWp4GsgwMNrN6OCt9Stjrsbz/Z1qpQo5R9zBe3B3jyfaUSH52opdjKsMrDlTE7I05PdAbgW9UdyaEgvSUDBCx2J3+2waVAmZXtL2xrFdinI=
+Received: from 30.74.144.158(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WHzFjvQ_1730086294 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Mon, 28 Oct 2024 11:31:35 +0800
+Message-ID: <0d33f2c1-5433-486a-8faa-b85265ecc855@linux.alibaba.com>
+Date: Mon, 28 Oct 2024 11:31:33 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,81 +47,146 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH for-next 1/3] selftests/watchdog: add count parameter for
- watchdog-test
-To: "Zhijian Li (Fujitsu)" <lizhijian@fujitsu.com>,
- "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>
-Cc: "shuah@kernel.org" <shuah@kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20241025013933.6516-1-lizhijian@fujitsu.com>
- <c2cae7a7-1a0d-48ef-9b8f-8d2436532ea7@linuxfoundation.org>
- <0861d73d-4fd9-4118-91c8-5a619c7d7ca0@fujitsu.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <0861d73d-4fd9-4118-91c8-5a619c7d7ca0@fujitsu.com>
+Subject: Re: [PATCH 2/3] mm: shmem: control THP support through the kernel
+ command line
+To: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>,
+ Jonathan Corbet <corbet@lwn.net>, Andrew Morton <akpm@linux-foundation.org>,
+ Hugh Dickins <hughd@google.com>, Barry Song <baohua@kernel.org>,
+ David Hildenbrand <david@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+ Lance Yang <ioworker0@gmail.com>
+Cc: linux-mm@kvack.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel-dev@igalia.com
+References: <20241027175743.1056710-1-mcanal@igalia.com>
+ <20241027175743.1056710-3-mcanal@igalia.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <20241027175743.1056710-3-mcanal@igalia.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 10/27/24 18:50, Zhijian Li (Fujitsu) wrote:
-> 
-> 
-> On 27/10/2024 08:28, Shuah Khan wrote:
->> On 10/24/24 19:39, Li Zhijian wrote:
->>> Currently, watchdog-test keep running until it gets a SIGINT. However,
->>> when watchdog-test is executed from the kselftests framework, where it
->>> launches test via timeout which will send SIGTERM in time up. This could
->>> lead to
->>> 1. watchdog haven't stop, a watchdog reset is triggered to reboot the OS
->>>      in silent.
->>> 2. kselftests gets an timeout exit code, and judge watchdog-test as
->>>     'not ok'
->>>
->> This test isn't really supposed to be run from kselftest framework.
->> This is the reason why it isn't included in the default run.
-> 
-> May I know what's the default run, is it different from `make run_tests` ?
 
-No it isn't. "make kselftest" runs only the targets mentioned in the
-selftests Makefile. That is considered the kselftest default run.
 
-There is a reason why watchdog isn't included in the default run.
-It isn't intended to be run by users by default as this is test is
-just for testing watchdog api
+On 2024/10/28 01:36, Maíra Canal wrote:
+> Add a new kernel command line to control the hugepage allocation policy
+> for the internal shmem mount, ``transparent_hugepage_shmem``. The
+> parameter is similar to ``transparent_hugepage`` and has the following
+> format:
+> 
+> transparent_hugepage_shmem=<policy>
+> 
+> where ``<policy>`` is one of the seven valid policies available for
+> shmem.
+> 
+> By configuring the default hugepage allocation policy for the internal
+> shmem mount, applications that use shmem, such as the DRM GEM objects,
+> can take advantage of mTHP before it's been configured through sysfs.
+> 
+> Signed-off-by: Maíra Canal <mcanal@igalia.com>
+> ---
+>   .../admin-guide/kernel-parameters.txt         |  7 ++++
+>   Documentation/admin-guide/mm/transhuge.rst    |  6 +++
+>   mm/shmem.c                                    | 38 ++++++++++++++++++-
+>   3 files changed, 49 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index 1666576acc0e..acabb04d0dd4 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -6926,6 +6926,13 @@
+>   			See Documentation/admin-guide/mm/transhuge.rst
+>   			for more details.
+>   
+> +	transparent_hugepage_shmem= [KNL]
+> +			Format: [always|within_size|advise|never|deny|force]
+> +			Can be used to control the hugepage allocation policy for
+> +			the internal shmem mount.
+> +			See Documentation/admin-guide/mm/transhuge.rst
+> +			for more details.
+> +
+>   	trusted.source=	[KEYS]
+>   			Format: <string>
+>   			This parameter identifies the trust source as a backend
+> diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
+> index 745055c3dc09..9b5b02c4d1ab 100644
+> --- a/Documentation/admin-guide/mm/transhuge.rst
+> +++ b/Documentation/admin-guide/mm/transhuge.rst
+> @@ -326,6 +326,12 @@ PMD_ORDER THP policy will be overridden. If the policy for PMD_ORDER
+>   is not defined within a valid ``thp_anon``, its policy will default to
+>   ``never``.
+>   
+> +Similarly to ``transparent_hugepage``, you can control the hugepage
+> +allocation policy for the internal shmem mount by using the kernel parameter
+> +``transparent_hugepage_shmem=<policy>``, where ``<policy>`` is one of the
+> +seven valid policies for shmem (``always``, ``within_size``, ``advise``,
+> +``never``, ``deny``, and ``force``).
+> +
+>   Hugepages in tmpfs/shmem
+>   ========================
+>   
+> diff --git a/mm/shmem.c b/mm/shmem.c
+> index 44282a296c33..24cdeafd8260 100644
+> --- a/mm/shmem.c
+> +++ b/mm/shmem.c
+> @@ -582,7 +582,6 @@ static bool shmem_huge_global_enabled(struct inode *inode, pgoff_t index,
+>   	}
+>   }
+>   
+> -#if defined(CONFIG_SYSFS)
+>   static int shmem_parse_huge(const char *str)
+>   {
+>   	if (!strcmp(str, "never"))
+> @@ -599,7 +598,6 @@ static int shmem_parse_huge(const char *str)
+>   		return SHMEM_HUGE_FORCE;
+>   	return -EINVAL;
+>   }
+> -#endif
+>   
+>   #if defined(CONFIG_SYSFS) || defined(CONFIG_TMPFS)
+>   static const char *shmem_format_huge(int huge)
+> @@ -5174,6 +5172,42 @@ struct kobj_attribute thpsize_shmem_enabled_attr =
+>   	__ATTR(shmem_enabled, 0644, thpsize_shmem_enabled_show, thpsize_shmem_enabled_store);
+>   #endif /* CONFIG_TRANSPARENT_HUGEPAGE && CONFIG_SYSFS */
+>   
+> +#if defined(CONFIG_TRANSPARENT_HUGEPAGE)
+> +
+> +static int __init setup_transparent_hugepage_shmem(char *str)
+> +{
+> +	int huge, ret = 0;
+> +
+> +	if (!str)
+> +		goto out;
+> +
+> +	huge = shmem_parse_huge(str);
+> +	if (huge == -EINVAL)
+> +		goto out;
+> +
+> +	if (!has_transparent_hugepage() &&
+> +			huge != SHMEM_HUGE_NEVER && huge != SHMEM_HUGE_DENY) {
+> +		ret = -EINVAL;
+> +		goto out;
+> +	}
+> +
+> +	/* Do not override huge allocation policy with non-PMD sized mTHP */
+> +	if (huge == SHMEM_HUGE_FORCE &&
+> +	    huge_shmem_orders_inherit != BIT(HPAGE_PMD_ORDER)) {
+> +		ret = -EINVAL;
+> +		goto out;
+> +	}
+> +
+> +	shmem_huge = huge;
 
-> 
-> 
->>
->>> This patch is prepare to fix above 2 issues
->>
->> This series needs a separate cover letter explaining how this problem is
->> being fixed.
-> 
-> Cover letter is in this patch, see below:
-> In addition, we can get the 'How' by reading the simple change in each change.
+The code is similar to shmem_enabled_store(). Could you factor out the 
+common parts into a helper function and reuse them?
 
-That isn't enough to understand why this change is needed.
-Send patch series with a cover letter explaining what you are
-doing.
-
-> 
-> 
->>
->>>
->>> Signed-off-by: Li Zhijian <lizhijian@fujitsu.com>
->>> ---
->>> Hey,
->>> Cover letter is here.
->>>
->>> It's notice that a OS reboot was triggerred after ran the watchdog-test
->>> in kselftests framwork 'make run_tests', that's because watchdog-test
->>> didn't stop feeding the watchdog after enable it.
->>>
->>> In addition, current watchdog-test didn't adapt to the kselftests
->>> framework which launchs the test with /usr/bin/timeout and no timeout
->>> is expected.
->>> ---
-
-thanks,
--- Shuah
+> +	return 1;
+> +out:
+> +	pr_warn("transparent_hugepage_shmem= cannot parse, ignored\n");
+> +	return ret;
+> +}
+> +__setup("transparent_hugepage_shmem=", setup_transparent_hugepage_shmem);
+> +
+> +#endif /* CONFIG_TRANSPARENT_HUGEPAGE */
+> +
+>   #else /* !CONFIG_SHMEM */
+>   
+>   /*
 
