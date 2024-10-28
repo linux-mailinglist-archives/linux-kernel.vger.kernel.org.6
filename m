@@ -1,318 +1,134 @@
-Return-Path: <linux-kernel+bounces-384612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2514D9B2C60
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 11:10:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88D749B2C5E
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 11:10:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6542280E46
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 10:10:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4128D1F2234A
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 10:10:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 435091D3182;
-	Mon, 28 Oct 2024 10:10:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21D4D1D1724;
+	Mon, 28 Oct 2024 10:10:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="b1YvnNlU"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tKEaLMwE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0570A1CCEE6;
-	Mon, 28 Oct 2024 10:10:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 759181CF2AB;
+	Mon, 28 Oct 2024 10:10:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730110233; cv=none; b=CJRYJ0+0CzSMV8k+dLQwZG2nuG00dCQfv6Eb1JoX3C9sSA10QCbS6IBwK5CQKYtBPMxQ0Eq3xmkBvhsbNtldr3dMvgSpJsqql/t3REalpzzzLUqORQsh4RF5iT/LTBWLOj4Rm2X1wd/6N4dUuypv3opcrtIocghjHFyHOoelHjM=
+	t=1730110231; cv=none; b=YLZ1jwb3E0UIbOmD2yMgHF2J6QxoX5wMWaNvnyl6viQprbmPDwlUIQth4EqODSbDy8VfAIQ0Ru1gBN1NfE6r1ogy1VtqGOTP6/vPCt92LsDlRQuzHxLYP2F9v3LI408syVB479xd/7d1gp/mZIRvtCWkSxGol/4QfKfqDNa1KCY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730110233; c=relaxed/simple;
-	bh=gV/oZsrqDn2akko1b9Mj7FzqtILcpYffHj8rUv2A7i8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YPgrxBFfmoPmJxaTgn8A3FTYSX9rSSdEFcerDWqE6UOgrC9OVchkHSw/s59E0Ok1fvbfPvxCfURNB8/n7VeQ0X+qrUXn0qXiuX/3vun1gfu25iCjSgFQVnXFGvTIdC/w9obxc/AfRVkf7r8D35pqmnchTuYxVeOku+rGwPAxEaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=b1YvnNlU; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=l75o/teob3cpNFhgaRdf7D0Yc5eWCmQnljFJ8XqbWls=; b=b1YvnNlUCEXjlB/LRUya7G7kId
-	uqvmFhuhz88Adi3f1lV/OVpicaK4lCKMqxHqJ/wZuA2+wJPmiznHtuEY6XX2tffWEZhO0k7r5nSAC
-	ZnxhN6p4nBbF1TFeZavQY3KCc1an+Xn1Z0uHjUlVyUFpcJy+lBoLB8Xgv5bXWJpEEZc9AiPYdqMtW
-	I3NGXN7CeAwuRxGmn4VldmVshDqylcMyIPPIlyhLWrtcYlCLfM6ALsL9lcPCWaEKvCPYs12uUMJI8
-	Z94QtNWZVgDUc6PGs1Oc6wARqMJsHi2ih3eqkptoNCUekHMPbLRQBLhxs4N3ttsItT5ERr8EfhxJv
-	57HkOHCw==;
-Received: from [187.36.213.55] (helo=[192.168.1.103])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1t5MhI-00G29t-Sp; Mon, 28 Oct 2024 11:10:05 +0100
-Message-ID: <2505d52c-3454-4892-8c90-e3d9b2f0c84f@igalia.com>
-Date: Mon, 28 Oct 2024 07:09:56 -0300
+	s=arc-20240116; t=1730110231; c=relaxed/simple;
+	bh=D2OIUOHMjnw/6oBtePX97KgzryCvG2LA0jsLNZFqlBI=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=O8O1GHy1fEiGkOIEdtWTw3iL21R+LMOzc2v1h9apEInQrb0i2jmSnR3gajbcV3eazp62HdEntETFQDozZic69Ih0gFdP7SLPSwy+luBr58juTtmUcsPEmNaPuMxq78rDsEX4cpZ4pIGBbv8XEnmKRSG6N53iuOQFkSGE1XFEDpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tKEaLMwE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1362C4CEC3;
+	Mon, 28 Oct 2024 10:10:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730110231;
+	bh=D2OIUOHMjnw/6oBtePX97KgzryCvG2LA0jsLNZFqlBI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=tKEaLMwEmFBMu7eT72xwZZj+CisxX3RLZmC37iopZhGi9/kDK68HkQIH/FIlLVpcA
+	 WTfALVFTTRjWPPzTcZ6/mUiBj1nRVuzrR1i/JdRT1PUtvHEtFaUyKaIOFqwQri/Jj0
+	 LdxzSIBrT+8TaG5GvV+40xYmWJS1WUmxREO2Bvb4F/MqZe1Eu/23Q//pmRsY4k2OV0
+	 ptmzxTZdMMqdahPSzCm9Dn8pKpCyAOdkc8r1TbauDKuigqleQkKQJqMHvMCDHV8z4y
+	 IkYScpFDUynWSyEca3tqTcVpx8paDN1eFd2tba7f1rT7b8brWZxCQFfuWawWNYpFWm
+	 L/3szVw0crD4g==
+Received: by pali.im (Postfix)
+	id AB6DBA58; Mon, 28 Oct 2024 11:10:23 +0100 (CET)
+From: =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>
+To: Steve French <sfrench@samba.org>,
+	Paulo Alcantara <pc@manguebit.com>,
+	Ronnie Sahlberg <ronniesahlberg@gmail.com>
+Cc: linux-cifs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] cifs: Recognize SFU char/block devices created by Windows NFS server on Windows Server <<2012
+Date: Mon, 28 Oct 2024 11:10:07 +0100
+Message-Id: <20241028101007.29306-1-pali@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20241005145445.19850-1-pali@kernel.org>
+References: <20241005145445.19850-1-pali@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] mm: shmem: override mTHP shmem default with a kernel
- parameter
-To: Barry Song <21cnbao@gmail.com>
-Cc: Jonathan Corbet <corbet@lwn.net>,
- Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins <hughd@google.com>,
- David Hildenbrand <david@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>, Lance Yang
- <ioworker0@gmail.com>, linux-mm@kvack.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel-dev@igalia.com
-References: <20241027175743.1056710-1-mcanal@igalia.com>
- <20241027175743.1056710-4-mcanal@igalia.com>
- <CAGsJ_4xCw3OvkMo6cVr+U97C3SO+n+5c1j5XRodLDaLXW4ALjg@mail.gmail.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>
-In-Reply-To: <CAGsJ_4xCw3OvkMo6cVr+U97C3SO+n+5c1j5XRodLDaLXW4ALjg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Hi Barry,
+Windows NFS server versions on Windows Server older than 2012 release use
+for storing char and block devices modified SFU format, not compatible with
+the original SFU. Windows NFS server on Windows Server 2012 and new
+versions use different format (reparse points), not related to SFU-style.
 
-On 27/10/24 18:54, Barry Song wrote:
-> On Mon, Oct 28, 2024 at 6:58 AM Maíra Canal <mcanal@igalia.com> wrote:
->>
->> Add the ``thp_shmem=`` kernel command line to allow specifying the
->> default policy of each supported shmem hugepage size. The kernel parameter
->> accepts the following format:
->>
->> thp_shmem=<size>[KMG],<size>[KMG]:<policy>;<size>[KMG]-<size>[KMG]:<policy>
->>
->> For example,
->>
->> thp_shmem=16K-64K:always;128K,512K:inherit;256K:advise;1M-2M:never;4M-8M:within_size
->>
->> By configuring the default policy of several shmem huge pages, the user
->> can take advantage of mTHP before it's been configured through sysfs.
->>
->> Signed-off-by: Maíra Canal <mcanal@igalia.com>
->> ---
->>   .../admin-guide/kernel-parameters.txt         |  10 ++
->>   Documentation/admin-guide/mm/transhuge.rst    |  17 +++
->>   mm/shmem.c                                    | 109 +++++++++++++++++-
->>   3 files changed, 135 insertions(+), 1 deletion(-)
->>
-> 
-> Hi Maíra,
-> 
->> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
->> index acabb04d0dd4..595fa096e28b 100644
->> --- a/Documentation/admin-guide/kernel-parameters.txt
->> +++ b/Documentation/admin-guide/kernel-parameters.txt
->> @@ -6700,6 +6700,16 @@
->>                          Force threading of all interrupt handlers except those
->>                          marked explicitly IRQF_NO_THREAD.
->>
->> +       shmem_anon=     [KNL]
->> +                       Format: <size>[KMG],<size>[KMG]:<policy>;<size>[KMG]-<size>[KMG]:<policy>
->> +                       Control the default policy of each hugepage size for the
->> +                       internal shmem mount. <policy> is one of policies available
->> +                       for the shmem mount ("always", "inherit", "never", "within_size",
->> +                       and "advise").
->> +                       It can be used multiple times for multiple shmem THP sizes.
->> +                       See Documentation/admin-guide/mm/transhuge.rst for more
->> +                       details.
-> 
-> I'm not sure this is the right name. How about "thp_shmem"?
+SFU / SUA / Interix subsystem stores the major and major numbers as pair of
+64-bit integer, but Windows NFS server stores as pair of 32-bit integers.
 
-Oops, sorry about that.
+Which makes char and block devices between Windows NFS server <<2012 and
+Windows SFU/SUA/Interix subsytem incompatible.
 
-> 
->> +
->>          topology=       [S390,EARLY]
->>                          Format: {off | on}
->>                          Specify if the kernel should make use of the cpu
->> diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
->> index 9b5b02c4d1ab..47e7fc30e22d 100644
->> --- a/Documentation/admin-guide/mm/transhuge.rst
->> +++ b/Documentation/admin-guide/mm/transhuge.rst
->> @@ -332,6 +332,23 @@ allocation policy for the internal shmem mount by using the kernel parameter
->>   seven valid policies for shmem (``always``, ``within_size``, ``advise``,
->>   ``never``, ``deny``, and ``force``).
->>
->> +In the same manner as ``thp_anon`` controls each supported anonymous THP
->> +size, ``thp_shmem`` controls each supported shmem THP size. ``thp_shmem``
->> +has the same format as ``thp_anon``, but also supports the policy
->> +``within_size``.
->> +
->> +``thp_shmem=`` may be specified multiple times to configure all THP sizes
->> +as required. If ``thp_shmem=`` is specified at least once, any shmem THP
->> +sizes not explicitly configured on the command line are implicitly set to
->> +``never``.
->> +
->> +``transparent_hugepage_shmem`` setting only affects the global toggle. If
->> +``thp_shmem`` is not specified, PMD_ORDER hugepage will default to
->> +``inherit``. However, if a valid ``thp_shmem`` setting is provided by the
->> +user, the PMD_ORDER hugepage policy will be overridden. If the policy for
->> +PMD_ORDER is not defined within a valid ``thp_shmem``, its policy will
->> +default to ``never``.
->> +
->>   Hugepages in tmpfs/shmem
->>   ========================
->>
->> diff --git a/mm/shmem.c b/mm/shmem.c
->> index 24cdeafd8260..0a7a7d04f725 100644
->> --- a/mm/shmem.c
->> +++ b/mm/shmem.c
->> @@ -136,6 +136,7 @@ static unsigned long huge_shmem_orders_always __read_mostly;
->>   static unsigned long huge_shmem_orders_madvise __read_mostly;
->>   static unsigned long huge_shmem_orders_inherit __read_mostly;
->>   static unsigned long huge_shmem_orders_within_size __read_mostly;
->> +static bool shmem_orders_configured __initdata;
->>   #endif
->>
->>   #ifdef CONFIG_TMPFS
->> @@ -5013,7 +5014,8 @@ void __init shmem_init(void)
->>           * Default to setting PMD-sized THP to inherit the global setting and
->>           * disable all other multi-size THPs.
->>           */
->> -       huge_shmem_orders_inherit = BIT(HPAGE_PMD_ORDER);
->> +       if (!shmem_orders_configured)
->> +               huge_shmem_orders_inherit = BIT(HPAGE_PMD_ORDER);
->>   #endif
->>          return;
->>
->> @@ -5174,6 +5176,26 @@ struct kobj_attribute thpsize_shmem_enabled_attr =
->>
->>   #if defined(CONFIG_TRANSPARENT_HUGEPAGE)
->>
->> +static inline int get_order_from_str(const char *size_str)
->> +{
->> +       unsigned long size;
->> +       char *endptr;
->> +       int order;
->> +
->> +       size = memparse(size_str, &endptr);
->> +
->> +       if (!is_power_of_2(size))
->> +               goto err;
->> +       order = get_order(size);
->> +       if (BIT(order) & ~THP_ORDERS_ALL_FILE_DEFAULT)
->> +               goto err;
->> +
->> +       return order;
->> +err:
->> +       pr_err("invalid size %s in thp_shmem boot parameter\n", size_str);
->> +       return -EINVAL;
->> +}
->> +
->>   static int __init setup_transparent_hugepage_shmem(char *str)
->>   {
->>          int huge, ret = 0;
->> @@ -5206,6 +5228,91 @@ static int __init setup_transparent_hugepage_shmem(char *str)
->>   }
->>   __setup("transparent_hugepage_shmem=", setup_transparent_hugepage_shmem);
->>
->> +static char str_dup[PAGE_SIZE] __initdata;
->> +static int __init setup_thp_shmem(char *str)
->> +{
->> +       char *token, *range, *policy, *subtoken;
->> +       unsigned long always, inherit, madvise, within_size;
->> +       char *start_size, *end_size;
->> +       int start, end, nr;
->> +       char *p;
->> +
->> +       if (!str || strlen(str) + 1 > PAGE_SIZE)
->> +               goto err;
->> +       strcpy(str_dup, str);
->> +
->> +       always = huge_shmem_orders_always;
->> +       inherit = huge_shmem_orders_inherit;
->> +       madvise = huge_shmem_orders_madvise;
->> +       within_size = huge_shmem_orders_within_size;
->> +       p = str_dup;
->> +       while ((token = strsep(&p, ";")) != NULL) {
->> +               range = strsep(&token, ":");
->> +               policy = token;
->> +
->> +               if (!policy)
->> +                       goto err;
->> +
->> +               while ((subtoken = strsep(&range, ",")) != NULL) {
->> +                       if (strchr(subtoken, '-')) {
->> +                               start_size = strsep(&subtoken, "-");
->> +                               end_size = subtoken;
->> +
->> +                               start = get_order_from_str(start_size);
->> +                               end = get_order_from_str(end_size);
->> +                       } else {
->> +                               start = end = get_order_from_str(subtoken);
->> +                       }
->> +
->> +                       if (start < 0 || end < 0 || start > end)
->> +                               goto err;
->> +
->> +                       nr = end - start + 1;
->> +                       if (!strcmp(policy, "always")) {
->> +                               bitmap_set(&always, start, nr);
->> +                               bitmap_clear(&inherit, start, nr);
->> +                               bitmap_clear(&madvise, start, nr);
->> +                               bitmap_clear(&within_size, start, nr);
->> +                       } else if (!strcmp(policy, "advise")) {
->> +                               bitmap_set(&madvise, start, nr);
->> +                               bitmap_clear(&inherit, start, nr);
->> +                               bitmap_clear(&always, start, nr);
->> +                               bitmap_clear(&within_size, start, nr);
->> +                       } else if (!strcmp(policy, "inherit")) {
->> +                               bitmap_set(&inherit, start, nr);
->> +                               bitmap_clear(&madvise, start, nr);
->> +                               bitmap_clear(&always, start, nr);
->> +                               bitmap_clear(&within_size, start, nr);
->> +                       } else if (!strcmp(policy, "within_size")) {
->> +                               bitmap_set(&within_size, start, nr);
->> +                               bitmap_clear(&inherit, start, nr);
->> +                               bitmap_clear(&madvise, start, nr);
->> +                               bitmap_clear(&always, start, nr);
->> +                       } else if (!strcmp(policy, "never")) {
->> +                               bitmap_clear(&inherit, start, nr);
->> +                               bitmap_clear(&madvise, start, nr);
->> +                               bitmap_clear(&always, start, nr);
->> +                               bitmap_clear(&within_size, start, nr);
->> +                       } else {
->> +                               pr_err("invalid policy %s in thp_shmem boot parameter\n", policy);
->> +                               goto err;
->> +                       }
->> +               }
->> +       }
->> +
->> +       huge_shmem_orders_always = always;
->> +       huge_shmem_orders_madvise = madvise;
->> +       huge_shmem_orders_inherit = inherit;
->> +       huge_shmem_orders_within_size = within_size;
->> +       shmem_orders_configured = true;
->> +       return 1;
->> +
->> +err:
->> +       pr_warn("thp_shmem=%s: error parsing string, ignoring setting\n", str);
->> +       return 0;
->> +}
-> 
-> Can we share source code with thp_anon since there's a lot of duplication?
+So improve Linux SMB client.
 
-I'm not a regular mm contributor and I'm most usually around drivers, so
-I don't know exactly here I could add shared code. Should I add the
-headers to "internal.h"?
+When SFU mode is enabled (mount option -o sfu is specified) then recognize
+also these kind of char and block devices and its major and minor numbers,
+which are used by Windows Server versions older than 2012.
 
-Best Regards,
-- Maíra
+Signed-off-by: Pali Rohár <pali@kernel.org>
+---
+Changes in v2:
+* Rebased on top of v6.12-rc5
+---
+ fs/smb/client/inode.c | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-> 
->> +__setup("thp_shmem=", setup_thp_shmem);
->> +
->>   #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
->>
->>   #else /* !CONFIG_SHMEM */
->> --
->> 2.46.2
->>
-> 
-> Thanks
-> barry
+diff --git a/fs/smb/client/inode.c b/fs/smb/client/inode.c
+index eff3f57235ee..b6213d595e71 100644
+--- a/fs/smb/client/inode.c
++++ b/fs/smb/client/inode.c
+@@ -598,6 +598,17 @@ cifs_sfu_type(struct cifs_fattr *fattr, const char *path,
+ 				mjr = le64_to_cpu(*(__le64 *)(pbuf+8));
+ 				mnr = le64_to_cpu(*(__le64 *)(pbuf+16));
+ 				fattr->cf_rdev = MKDEV(mjr, mnr);
++			} else if (bytes_read == 16) {
++				/*
++				 * Windows NFS server before Windows Server 2012
++				 * stores major and minor number in SFU-modified
++				 * style, just as 32-bit numbers. Recognize it.
++				 */
++				__u32 mjr; /* major */
++				__u32 mnr; /* minor */
++				mjr = le32_to_cpu(*(__le32 *)(pbuf+8));
++				mnr = le32_to_cpu(*(__le32 *)(pbuf+12));
++				fattr->cf_rdev = MKDEV(mjr, mnr);
+ 			}
+ 		} else if (memcmp("IntxCHR\0", pbuf, 8) == 0) {
+ 			cifs_dbg(FYI, "Char device\n");
+@@ -610,6 +621,17 @@ cifs_sfu_type(struct cifs_fattr *fattr, const char *path,
+ 				mjr = le64_to_cpu(*(__le64 *)(pbuf+8));
+ 				mnr = le64_to_cpu(*(__le64 *)(pbuf+16));
+ 				fattr->cf_rdev = MKDEV(mjr, mnr);
++			} else if (bytes_read == 16) {
++				/*
++				 * Windows NFS server before Windows Server 2012
++				 * stores major and minor number in SFU-modified
++				 * style, just as 32-bit numbers. Recognize it.
++				 */
++				__u32 mjr; /* major */
++				__u32 mnr; /* minor */
++				mjr = le32_to_cpu(*(__le32 *)(pbuf+8));
++				mnr = le32_to_cpu(*(__le32 *)(pbuf+12));
++				fattr->cf_rdev = MKDEV(mjr, mnr);
+ 			}
+ 		} else if (memcmp("LnxSOCK", pbuf, 8) == 0) {
+ 			cifs_dbg(FYI, "Socket\n");
+-- 
+2.20.1
 
 
