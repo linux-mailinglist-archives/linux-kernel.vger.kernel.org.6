@@ -1,204 +1,121 @@
-Return-Path: <linux-kernel+bounces-385859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E04E79B3CA8
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 22:29:13 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 809EF9B3CAB
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 22:29:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A08AB28345C
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 21:29:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E9D0BB21E0C
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 21:29:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 891711E25F7;
-	Mon, 28 Oct 2024 21:28:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D79CA1E25F8;
+	Mon, 28 Oct 2024 21:29:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="gY4S+t2l";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="2Yx611nV";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="gY4S+t2l";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="2Yx611nV"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HRuY81L4"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA9481E2301
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 21:28:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21CC01E1325;
+	Mon, 28 Oct 2024 21:29:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730150931; cv=none; b=Eb/TkcC9Ka2FqH6Il5cHd4RmElEes6pk0POdV2qSEx51ajXcTVqPpbpNRkTQQ1OVFI/pvFbiTbQcAnxdhEC573YnnfDgEz78K5bFlGPmFJNg1DbRQ0TEBaCXAJm+D5tOfaisWwfu+F9vN20eaIvXhmnVtbKWGkvr4tQFkuhcRnE=
+	t=1730150963; cv=none; b=Q7UI2qFBf1hbE/4cDLCgY//qRNn9TVCte+hiop91SwwFpUXfjmhKibLih5OYGO5bjJTk06Xq2ceiqpL1e0obL75fcb+KBPvL0ElnUytbjYo13/BLNFsDdNN1gZ+BOcjVsJBVfDnYKh5mPU62LdTB2SLTwhO2wL+vtvSNmo/Nuhg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730150931; c=relaxed/simple;
-	bh=upqUVrq2p4xFHBgg3q6iiTX/KzpCGDC5lqcwJ7Sc75w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nGjnKnK97gOv08eAWvurpnWGffQj+3f/dt0Hio5zhak4/dKNT19a8K4G81X0g4EDnKPyGKTG0XfR+n+ndifgR2v1pVDrNc5scWW/x9onVhBTQnK5+bPiGh006m9HKX3N7ha6fwiEy9h1Hi8lYjuFQuv6gX5Z6oRTqrT8toivBJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=gY4S+t2l; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=2Yx611nV; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=gY4S+t2l; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=2Yx611nV; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id C04A81FB77;
-	Mon, 28 Oct 2024 21:28:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1730150927; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=3D2dtsJXjqQOtB0+meeTCf0vlHG3Ad378pPp6PP5FRU=;
-	b=gY4S+t2lqE1DJRPEygvR4Zo2PiJJpaMppdYeu1Ay0Ww1MuvRhx+eSKgpfidSUIWARm4UD9
-	xCZN++gvce6iGQxNQQvJDFMOjxQn91zcl8C/KQmnAvup05Mvgaprwj82a9CCgeWH7rx5TN
-	NxaDL8BJV8h53m1Q1koPrnJG1wPE/V4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1730150927;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=3D2dtsJXjqQOtB0+meeTCf0vlHG3Ad378pPp6PP5FRU=;
-	b=2Yx611nVglvbQbNLxDSerKFPar75CUHMN8NqfWiLT39z7P657rpybVsZTlpEv/SpYIUqjf
-	NPDQ9rUeBWR6o7DA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1730150927; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=3D2dtsJXjqQOtB0+meeTCf0vlHG3Ad378pPp6PP5FRU=;
-	b=gY4S+t2lqE1DJRPEygvR4Zo2PiJJpaMppdYeu1Ay0Ww1MuvRhx+eSKgpfidSUIWARm4UD9
-	xCZN++gvce6iGQxNQQvJDFMOjxQn91zcl8C/KQmnAvup05Mvgaprwj82a9CCgeWH7rx5TN
-	NxaDL8BJV8h53m1Q1koPrnJG1wPE/V4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1730150927;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=3D2dtsJXjqQOtB0+meeTCf0vlHG3Ad378pPp6PP5FRU=;
-	b=2Yx611nVglvbQbNLxDSerKFPar75CUHMN8NqfWiLT39z7P657rpybVsZTlpEv/SpYIUqjf
-	NPDQ9rUeBWR6o7DA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9FF64136DC;
-	Mon, 28 Oct 2024 21:28:47 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id ncpoJg8CIGeUcAAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Mon, 28 Oct 2024 21:28:47 +0000
-Message-ID: <1608957a-d138-4401-98ef-7fbe5fb7c387@suse.cz>
-Date: Mon, 28 Oct 2024 22:28:47 +0100
+	s=arc-20240116; t=1730150963; c=relaxed/simple;
+	bh=KezIDZ9i66O1meSze2SMz72nMUYzJDcX1903Z6S3nNE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pyZunsk7/aoHKkzQjbrMJYYxONCw0DndUT15OPqBYfhQ7YkkitBwbjfKJvp5JmzowagP+L4ZJLh88yUTXTlTHAypqk14m5FrEolm14+pEpUKFOZvz99/g0PUTMwRjsrE+vR//X0LQ5bUyDgv5ruvnvQ0jQPx0TykwYNQnOXH+mk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HRuY81L4; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-37d4b0943c7so3237562f8f.1;
+        Mon, 28 Oct 2024 14:29:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730150959; x=1730755759; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+22KUD/WDhl94ZsUNKpRglL2tk6jvU5AyElWfNP5+f8=;
+        b=HRuY81L4lw4Zi9ZZNmvzAEjpEQc6O8nZhz72NXK6ehZEgzsOuU9f3KAkPyB3mE53fz
+         1ftb7UFtXowDs23gTU/YODGYs44Y2yey5A/rtFNLSBm6SSUkv2cC3U6viQlwatziy+Mo
+         D5AA7Psmg53EgD6MRXKbPhNFuFu3WXZ1Zs+lLBCETQHcsmzs2I8FH5mWtneXt4uaWjf4
+         EmK+Buyd9ioNXBwbqOFqQJsdrBMvUbePI6ND8jlGxjsrC4mWKw4e5OgpHbj6CMpI7exo
+         lVw28I6zNTcINpU1lBtyZdNDgTFy0OPcMSV0bRHPgxCDwfJacIrDDbWP0qMOmtxu3sZF
+         ESOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730150959; x=1730755759;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+22KUD/WDhl94ZsUNKpRglL2tk6jvU5AyElWfNP5+f8=;
+        b=Ak+urfKtPDc23WMEWynf84pXjt3uW12myaWa1OPBLrN/Gt7ziBq6sdQzN+J/kAeYF0
+         OBO2flhLjHmEPPoTYBUedoJhvUhptJCwuUDW2rjz45y+XkgFsE4Vwr370+zHNoL3ctrz
+         QblgAdv6ilSm/jWefGTYlXuHYyW6xnUicK1/nOv859Uwnc6KYwrOm/KPCeN9+TLV8OVf
+         4QI+QTs1LV+VPOKO5escbTsEkXTe2yJK2KtbMjX5F4LOsQhrjGT53EccaqXZdmOM2hpS
+         aVvOoXwaBlob27MBxXRnO7TJYUwdz5NGmnrrFej35bw14qJcXXyMKOVYcLDyAlzIowPE
+         a5bA==
+X-Forwarded-Encrypted: i=1; AJvYcCUA+HYOpz0qqIwoKgmrdiENpT1I3iC4D4QOJz6OA6c3Hi2C3tsZdzi0Gh4hfr313tf0vVy3NEd5D8k=@vger.kernel.org, AJvYcCX4FjCKLs8Tg7TIRv7kitNMMzdDy0F6hwmu0gOXITnR8WSLiclTbJ7nWYukm4DRLI/3ddEZhoyUpy5J2zNT@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCgnqlsJW+db3uBHY9Ri6KBl8Xt/7mY8IqzhV5BxZr0YfoKJkO
+	XC3PWi31NjQh50iZjlhAJAGnPxwzmoHRh+ytFKU2CnHLe7QQ05eu
+X-Google-Smtp-Source: AGHT+IFp4WngF6IoigUjlDv+USPVsSl4O1Zt8HaMsq65XejiEmJpUgKxtw6k18mPFR+QNrJabzVxPw==
+X-Received: by 2002:a5d:52c1:0:b0:37d:529f:ac1e with SMTP id ffacd0b85a97d-3806120087bmr7289244f8f.53.1730150959143;
+        Mon, 28 Oct 2024 14:29:19 -0700 (PDT)
+Received: from prasmi.Home ([2a06:5906:61b:2d00:495c:4d71:e99d:a7d])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431935a3edasm124360725e9.22.2024.10.28.14.29.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Oct 2024 14:29:18 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 0/2] clk: renesas: rzv2h-cpg: Add CRU and CSI clocks
+Date: Mon, 28 Oct 2024 21:29:12 +0000
+Message-ID: <20241028212914.1057715-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH hotfix 6.12 v2 4/8] mm: resolve faulty mmap_region() error
- path behaviour
-Content-Language: en-US
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Mark Brown
- <broonie@kernel.org>, Andrew Morton <akpm@linux-foundation.org>,
- Jann Horn <jannh@google.com>, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, Peter Xu <peterx@redhat.com>,
- linux-arm-kernel@lists.infradead.org,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Aishwarya TCV <Aishwarya.TCV@arm.com>
-References: <cover.1729715266.git.lorenzo.stoakes@oracle.com>
- <6e8deda970b982e1e8ffd876e3cef342c292fbb5.1729715266.git.lorenzo.stoakes@oracle.com>
- <61461dcc-e455-450d-9c01-5465003fc31c@sirena.org.uk>
- <c24a174d-c8f3-4267-87ae-cf77fa587e82@lucifer.local>
- <CAHk-=whD9MrPwPMBgVG16T_u+my8xYtZg2tUGz932HeodVX7Bg@mail.gmail.com>
- <438f50c5-8b8c-444f-ae85-10e5151f3f24@lucifer.local>
- <57mgmdx7wgfwci3yo3ggkmcnm3ujamgkwcccm77ypvmer5tegn@opiq3ceh2uvy>
- <ykzmur56ms7fm4midi6tbncjvcvf7ue4lp7e4orblrmwnefw3e@oa3enlpdrcrr>
- <bea02efe-a695-49e0-b15c-2270a82cadbf@lucifer.local>
- <CAHk-=whpXVBNvd0NJpw9=FGcuTuThwtfcKeM3Ug=Uk6kpChCPA@mail.gmail.com>
- <0b64edb9-491e-4dcd-8dc1-d3c8a336a49b@suse.cz>
- <CAHk-=wgE8410gu3EabjNEHhOYh1dyYwt23J62S4a9SYcwZUFhw@mail.gmail.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <CAHk-=wgE8410gu3EabjNEHhOYh1dyYwt23J62S4a9SYcwZUFhw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Score: -4.29
-X-Spamd-Result: default: False [-4.29 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.19)[-0.928];
-	MIME_GOOD(-0.10)[text/plain];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[13];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,suse.cz:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Transfer-Encoding: 8bit
 
-On 10/28/24 22:19, Linus Torvalds wrote:
-> On Mon, 28 Oct 2024 at 11:00, Vlastimil Babka <vbabka@suse.cz> wrote:
->>
->> VM_MTE_ALLOWED is also set by arm64's arch_calc_vm_flag_bits():
->>
->>         if (system_supports_mte() && (flags & MAP_ANONYMOUS))
->>                 return VM_MTE_ALLOWED;
-> 
-> Yeah, but that should just move into arch_validate_flags() too.
-> There's no reason why that's done in a separate place.
-> 
->                      Linus
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Right, and VM_DATA_DEFAULT_FLAGS is only used in do_brk_flags() which is
-also an anonymous VMA, and it doesn't perform arch_validate_flags() anyway.
+Hi All,
+
+This patch series aims to add CRU/CSI clock and reset entries to the
+RZ/V2H(P) clock driver.
+
+1] patch#1:
+ Allows exclusion of specific RZ/V2H(P) clocks, such as those in the CRU
+ block, from Runtime PM using a new no_pm flag and helper function.
+2] patch#2
+  Extends the r9a09g057 driver to include PLLVDO, its related CRU clocks
+  (CRU0-CRU3), and corresponding reset entries.
+
+Cheers,
+Prabhakar
+
+Lad Prabhakar (2):
+  clk: renesas: rzv2h-cpg: Add support for clocks without PM
+  clk: renesas: r9a09g057-cpg: Add support for PLLVDO, CRU clocks, and
+    resets
+
+ drivers/clk/renesas/r9a09g057-cpg.c | 45 +++++++++++++++++++++++++++++
+ drivers/clk/renesas/rzv2h-cpg.c     | 37 ++++++++++++++++++++++++
+ drivers/clk/renesas/rzv2h-cpg.h     | 18 ++++++++++--
+ 3 files changed, 97 insertions(+), 3 deletions(-)
+
+-- 
+2.43.0
+
 
