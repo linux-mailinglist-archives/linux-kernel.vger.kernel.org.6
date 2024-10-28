@@ -1,139 +1,174 @@
-Return-Path: <linux-kernel+bounces-383897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 027859B2184
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 01:18:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D9259B2185
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 01:22:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAD351F2132A
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 00:18:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 530761C20D1F
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 00:22:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9545F321D;
-	Mon, 28 Oct 2024 00:17:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EBF14A11;
+	Mon, 28 Oct 2024 00:22:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="g2pnPtkt"
-Received: from omta36.uswest2.a.cloudfilter.net (omta36.uswest2.a.cloudfilter.net [35.89.44.35])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fBsHdQRu"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52E1CEADB
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 00:17:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C90B1C14;
+	Mon, 28 Oct 2024 00:22:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730074677; cv=none; b=BL4v+MZO0AZFDXDUmRkk32oeOncSsLJJuHo97HDNT72tKXSDnePhyLfbKwGNz5Nu7O4aPUcrvY7cBj6XqPKBiF1Btx/vJcL/Z7q5b++st8UDmEYBiDk8lFETmrrnjV2N03IAxILjaSsE+HHnS9al0ywO0kuQemYSW6XjILASkRc=
+	t=1730074952; cv=none; b=IUHTBA2/hqpuz/hCSR7b0sJkW2yaQLM7YBRzYRl2AHTXG+TXnCMkwoltaJZ+/CwDr2LTkboy1jBA3jnxOtLubXf8Cg/I6nj0cDNA2Sb0U8JpmYaWoQ8e/YATZucsUDDituETscyHmgRhBqujvaSvY5zwpWbh4NmYg/xK41D6lGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730074677; c=relaxed/simple;
-	bh=TO3XgbjTPNGOf09TT6fFo03Ha9ptp5O3ug5xR1pjpYw=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=WucvAKhxfOy5lUL5qxtu7uGYns9u5Jy17y7GKJM19ucqsld6TJI+KqZ98G6X/7rIrS9QH16TipzCHQc3S1+99z0GxgaFQyjPLLAWYUt8bVaydA2W8Kv4rSRvKftmq0qQF3iCC1wE8GVnOAL/u8XZWOqQD24XShCRZ/12hwYYXU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=g2pnPtkt; arc=none smtp.client-ip=35.89.44.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
-Received: from eig-obgw-5008a.ext.cloudfilter.net ([10.0.29.246])
-	by cmsmtp with ESMTPS
-	id 55zxtojR6qvuo5DS8twzh9; Mon, 28 Oct 2024 00:17:48 +0000
-Received: from box5620.bluehost.com ([162.241.219.59])
-	by cmsmtp with ESMTPS
-	id 5DS7tQMgwO7uS5DS7tHg2N; Mon, 28 Oct 2024 00:17:47 +0000
-X-Authority-Analysis: v=2.4 cv=Acy3HWXG c=1 sm=1 tr=0 ts=671ed82b
- a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
- a=IkcTkHD0fZMA:10 a=DAUX931o1VcA:10 a=7vwVE5O1G3EA:10
- a=uxgLTjTjiylkul1d-vUA:9 a=QEXdDO2ut3YA:10 a=hTR6fmoedSdf3N0JiVF8:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
-	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:
-	Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=ct8wg4kLyMMfEQg5mOMY7RKn2GG8vdZ2NnPY3zDs58Y=; b=g2pnPtktSDLV7w0LvEuyzXDOVa
-	Hk56yvw2tiUIcOwVf1i2Gg2/DertkMuZ9Hj+WBBB4Nu+ezmi65YX7i4Ji1vmdaI5Fwo1uLg0IpbbY
-	j5Iwk/ENesWiyHO3kCdjf6kNbIuDHbYtou/3CzzwvhT4DQkwkJA4+e3vw1EAXF9dTFKDK4S/YdSKq
-	PEgTs//zKwdL748SqmzOkuvYBoTOCq3bItaYke1E3SKdqiE4a0k2LKjxSHOpTR9iwAXJsysH6Zw+1
-	nx2m6PkOEfNip1R7pQivJ4VAphdM0ftW42M2VLaryR4ty1AkYujn22ku0yWMbhkHmHLauXeW+In7T
-	9F5JPkxQ==;
-Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:35924 helo=[10.0.1.47])
-	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <re@w6rz.net>)
-	id 1t5DS6-001d97-0a;
-	Sun, 27 Oct 2024 18:17:46 -0600
-Subject: Re: [PATCH] riscv/entry: get correct syscall number from
- syscall_get_nr()
-To: Thomas Gleixner <tglx@linutronix.de>,
- Celeste Liu <coelacanthushex@gmail.com>, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?=
- <bjorn@kernel.org>,
- Celeste Liu via B4 Relay <devnull+CoelacanthusHex.gmail.com@kernel.org>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Palmer Dabbelt <palmer@rivosinc.com>, Alexandre Ghiti <alex@ghiti.fr>,
- "Dmitry V. Levin" <ldv@strace.io>, Andrea Bolognani <abologna@redhat.com>,
- Felix Yan <felixonmars@archlinux.org>, Ruizhe Pan <c141028@gmail.com>,
- Shiqi Zhang <shiqi@isrc.iscas.ac.cn>, Guo Ren <guoren@kernel.org>,
- Yao Zi <ziyao@disroot.org>, Han Gao <gaohan@iscas.ac.cn>,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <87ldya4nv0.ffs@tglx>
- <3dc10d89-6c0c-4654-95ed-dd6f19efbad4@gmail.com> <87a5ep4k0n.ffs@tglx>
- <2b1a96b1-dbc5-40ed-b1b6-2c82d3df9eb2@gmail.com> <877c9t43jw.ffs@tglx>
-From: Ron Economos <re@w6rz.net>
-Message-ID: <81afb4bf-084b-e061-8ce4-90b76da16256@w6rz.net>
-Date: Sun, 27 Oct 2024 17:17:43 -0700
-User-Agent: Mozilla/5.0 (X11; Linux armv7l; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+	s=arc-20240116; t=1730074952; c=relaxed/simple;
+	bh=ABJmlfoe+larpd3iJnIWASF+ioX+5sUwbzmZuIofIGs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oyTYWcemkF/x1HgTXPxF+uf/4A1TxDEwhq+z8CW28EIKURmXSoe4wTIXJIh6v9xIydQue7Kflh5m7uxRb/0vWtqYkBDodIXtEbBE3eR/QOCRfmNuHLzM5CzcUAS7Myzf6QIieK/8HmRb5QgShip6N1b9dpY4M/Cb2B273H4D/jI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fBsHdQRu; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a9a156513a1so588437266b.0;
+        Sun, 27 Oct 2024 17:22:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730074948; x=1730679748; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AelgtA4FRfsZRhZRwyHy5l6oTFz3uwvWo7meMRtQtaY=;
+        b=fBsHdQRuIiskL6HmjIA6unVW6rQE88Fi6Px2VQPkQjT7a23TTrSEzOFSLnEKyuwGqW
+         nOY/1KAJBtSjU0JQ2jeD0XkE48whAbmYj7sNZBcZCY7eKYT19Y7qpC3tA9dsh5+XG4V/
+         g+aX5sct87GCRTHegk1mzdm8Vw3qKQCuMeSI09ZZ8G7vzR3CoDeNfxLo6qm45/S6/kQW
+         ZnAyWSAp9a1eqpQaPkROTsRHh/BgphyqT64fV9zxnZQwe5n9vyRT06S/z1Z606Nolq0o
+         wgU4yxTLxmRmSpbFjUH/JVbrwX7rM0zO0eksDliL1C4pSwBoBy2RoJhSYODeB2iSwP9s
+         1tvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730074948; x=1730679748;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AelgtA4FRfsZRhZRwyHy5l6oTFz3uwvWo7meMRtQtaY=;
+        b=ZUOyFoF3kdJjD5K9zZ3ZWo6NuwtE6f7gYSppFguwv1ETJHMtFm1mWfivhtz4bGFnud
+         +up752q1HRZS78Wjwfen7wBqFMRdpSEUFJMjQYCAmsCg4PfQTSA5OsnkTTpFE8PMNtGo
+         Fd9T5CiWBZjYOzMOAb6ptipexwrXzBrvn6Bm2JdD3TS/MPEVQvCcnQyavqGGC4Iy1I0O
+         Ntn3Y1L9isdAwaE01QnvP3ACAqwSvEBj6hQulVjiTwgH4f+5XNNfRoa7KHt78j45w6I0
+         lWVRxTJpqWVpMRN58LMTuGspSFRqyAKSc/iWNu9M9z87/vVL7QE20kgW/RiVJq6xMOMt
+         w78A==
+X-Forwarded-Encrypted: i=1; AJvYcCUCS0ZF5XQUjgCrrkXxOURtSHh/mNBkS1uiTlugvLTuFKNfng7YHxf0b62lmqmnDHU31yChEOp7qcle/aU=@vger.kernel.org, AJvYcCWmJs7G0kAcRsrQ8RdTdId1aaDFjcfp91vxVImAEu+eGlwO2tIlhE+Vp7RBdcLww62+k62J1v9UDEoL@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjmECF4PZkuGRWEqvrPE/VAU3y+/KHTDNypmTlIydazGXbaIFN
+	DSgR60lMcZRmRdMydHfypRCIdMalYxo5B6DYjda3flYgnLpW7UkhCQYrpLsSZUDEQoiVNP7nlxl
+	IZY+pGJu0K5Hu0OMRlQemdSJBiUo=
+X-Google-Smtp-Source: AGHT+IHpsKV6a7HbdmIL5YjSYrOgvKbnKi0GSjdAJX23Lqcw8oXXy0q6YXP4KrnVHEwvGNWyvXJHAaUvFUnRYEa2/F4=
+X-Received: by 2002:a17:906:794b:b0:a99:5601:7dc1 with SMTP id
+ a640c23a62f3a-a9de61d4377mr594166866b.49.1730074948382; Sun, 27 Oct 2024
+ 17:22:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <877c9t43jw.ffs@tglx>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - box5620.bluehost.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - w6rz.net
-X-BWhitelist: no
-X-Source-IP: 73.223.253.157
-X-Source-L: No
-X-Exim-ID: 1t5DS6-001d97-0a
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.47]) [73.223.253.157]:35924
-X-Source-Auth: re@w6rz.net
-X-Email-Count: 21
-X-Org: HG=bhshared;ORG=bluehost;
-X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfOkBZq4V+pQyMGc90fvdRjeZRsgITxt5AD/PPMG9RkkFwY4m2Xj7T+mxIxcJHlhfHPDjO1RIgzti9Hum+5UxoXbm6fQAAI4MBi0TXH365w/tzTu+O/q8
- BlD9T2OyKrBGpDdnO9FyFRJErGuLGs10bZ4JZhW3TPHUN2zRaCKhPvMxEg4rd9X6KsquvZ8yq0+1Yri8cg+SP/295B+dW7qblnk=
+References: <20241025060017.1663697-1-benchuanggli@gmail.com>
+ <CAPDyKFpb5ZePhXziLH3VbuKKywJZbo8UBF1NM1_dyOWq9oLDng@mail.gmail.com> <4dd25dca-f217-4abd-88e8-0a6b03760dd7@tuxedocomputers.com>
+In-Reply-To: <4dd25dca-f217-4abd-88e8-0a6b03760dd7@tuxedocomputers.com>
+From: Ben Chuang <benchuanggli@gmail.com>
+Date: Mon, 28 Oct 2024 08:21:54 +0800
+Message-ID: <CACT4zj9C0NhL02zv89qB2SgBpgit_Dj4-9i+JCq_XHiOu66tGA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] mmc: sdhci-pci-gli: GL9767: Fix low power mode on the
+ set clock function
+To: Georg Gottleuber <ggo@tuxedocomputers.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, adrian.hunter@intel.com, 
+	victor.shih@genesyslogic.com.tw, greg.tu@genesyslogic.com.tw, 
+	ben.chuang@genesyslogic.com.tw, HL.Liu@genesyslogic.com.tw, 
+	Lucas.Lai@genesyslogic.com.tw, victorshihgli@gmail.com, 
+	linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Werner Sembach <wse@tuxedocomputers.com>, cs@tuxedo.de
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/27/24 2:52 PM, Thomas Gleixner wrote:
-> On Mon, Oct 28 2024 at 01:01, Celeste Liu wrote:
->> On 2024-10-27 23:56, Thomas Gleixner wrote:
->>> Equivalently you need to be able to modify orig_a0 for changing arg0,
->>> no?
->> Ok.
->>
->> Greg, could you accept a backport a new API parameter for
->> PTRACE_GETREGSET/PTRACE_SETREGSET to 4.19 LTS branch?
-> Fix the problem properly and put a proper Fixes tag on it and worry
-> about the backport later.
->
-> Thanks,
->
->          tglx
->
-I wouldn't worry about backporting to the 4.19 kernel. It's essentially 
-prehistoric for RISC-V. There's no device tree support for any hardware. 
-Also, 4.19 will be going EOL very soon (December 2024).
+Hi Georg,
 
-Ron
+Thanks for your test.
+If there is no confidential information,
+Can you share some pci/acpi configuration or the s0ix self test log on
+AMD/Intel laptop?
 
+Best regards,
+Ben Chuang
+
+On Fri, Oct 25, 2024 at 11:40=E2=80=AFPM Georg Gottleuber
+<ggo@tuxedocomputers.com> wrote:
+>
+> Hello Ben, hello Uffe,
+>
+> thank you for this fix.
+>
+> Am 25.10.24 um 15:22 schrieb Ulf Hansson:
+> > + Georg
+> >
+> > On Fri, 25 Oct 2024 at 08:01, Ben Chuang <benchuanggli@gmail.com> wrote=
+:
+> >>
+> >> From: Ben Chuang <ben.chuang@genesyslogic.com.tw>
+> >>
+> >> On sdhci_gl9767_set_clock(), the vendor header space(VHS) is read-only
+> >> after calling gl9767_disable_ssc_pll() and gl9767_set_ssc_pll_205mhz()=
+.
+> >> So the low power negotiation mode cannot be enabled again.
+> >> Introduce gl9767_set_low_power_negotiation() function to fix it.
+> >>
+> >> The explanation process is as below.
+> >>
+> >> static void sdhci_gl9767_set_clock()
+> >> {
+> >>         ...
+> >>         gl9767_vhs_write();
+> >>         ...
+> >>         value |=3D PCIE_GLI_9767_CFG_LOW_PWR_OFF;
+> >>         pci_write_config_dword(pdev, PCIE_GLI_9767_CFG, value); <--- (=
+a)
+> >>
+> >>         gl9767_disable_ssc_pll(); <--- (b)
+> >>         sdhci_writew(host, 0, SDHCI_CLOCK_CONTROL);
+> >>
+> >>         if (clock =3D=3D 0)
+> >>                 return;  <-- (I)
+> >>
+> >>         ...
+> >>         if (clock =3D=3D 200000000 && ios->timing =3D=3D MMC_TIMING_UH=
+S_SDR104) {
+> >>                 ...
+> >>                 gl9767_set_ssc_pll_205mhz(); <--- (c)
+> >>         }
+> >>         ...
+> >>         value &=3D ~PCIE_GLI_9767_CFG_LOW_PWR_OFF;
+> >>         pci_write_config_dword(pdev, PCIE_GLI_9767_CFG, value); <-- (I=
+I)
+> >>         gl9767_vhs_read();
+> >> }
+> >>
+> >> (a) disable low power negotiation mode. When return on (I), the low po=
+wer
+> >> mode is disabled.  After (b) and (c), VHS is read-only, the low power =
+mode
+> >> cannot be enabled on (II).
+> >>
+> >> Fixes: d2754355512e ("mmc: sdhci-pci-gli: Set SDR104's clock to 205MHz=
+ and enable SSC for GL9767")
+> >
+> > Is this the same problem as being reported in
+> > https://lore.kernel.org/all/41c1c88a-b2c9-4c05-863a-467785027f49@tuxedo=
+computers.com/
+> >
+> > ?
+>
+> Yes, this patch fixes
+> https://bugzilla.kernel.org/show_bug.cgi?id=3D219284
+>
+> This makes my patch obsolete.
+>
+> Kind regards,
+> Georg
 
