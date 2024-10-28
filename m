@@ -1,192 +1,123 @@
-Return-Path: <linux-kernel+bounces-384042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10A129B238B
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 04:32:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FA249B2390
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 04:39:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 624B3B215FB
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 03:31:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D68AE28205B
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 03:39:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F82913C8E2;
-	Mon, 28 Oct 2024 03:31:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8BDD188938;
+	Mon, 28 Oct 2024 03:39:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="aXBFcDIT"
-Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="XCmbdrT3"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE11B161;
-	Mon, 28 Oct 2024 03:31:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D134161
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 03:39:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730086309; cv=none; b=Dc1Hzco68UDY5o1IE4x7l7cGmU9F+eiBVUlIkttlzAsNsVsYDJckNix5/fh4Ojt8drYzE8wED1uycnuVgYXgB8q/Etd9WCYyW+CMlKo+vlE8MxR00XGN99dKMFkxZ8y7w3AknHdxKlNYxwjKOrHrUHCvshdUuimeaCsezBk5YA0=
+	t=1730086778; cv=none; b=k1rA/rGicZjdrBp74jy84QG9n8P6D+KKWjf4ykDRujGvhGEbEcDJgytBXJq3qnU+CJXRCrOHh3unIxLvostYAlDDDdw2woXu1ZWdk39LnwsamgBif/wkgw7utavnuTJITuzP9lQhKSzk5IfG6wYEn81RUjPCXqG/Ehi9DwTMc/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730086309; c=relaxed/simple;
-	bh=NRWHADk2xF6wE2yubfrgxewc1P2MuzHDQtcz/tRheTI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eTux4TcTypgS6zP3vftPzYuopNmJbUhrKjgFfr66tRncwGW2apZ538JX6zOwVExXrkWU5jP8U2hKvTENbcKRsi6Oj9Dm1vgJJRFXiLEuyxVTqpQwqXToxBH47MuOf8DjV1SqD66FVSXZrwj3JJsXk35c1q7p7zR83g+YEfOnZB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=aXBFcDIT; arc=none smtp.client-ip=115.124.30.110
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1730086297; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=n0Bx+2LFE8K+t9JD5+qdAGeY9p/tHz0yLBLver5D33k=;
-	b=aXBFcDITstC6TTNwzIAA4XOTQOKb5ASnFVph/R8YzTE5bZPliZN503L13DR7Vv6aeWp4GsgwMNrN6OCt9Stjrsbz/Z1qpQo5R9zBe3B3jyfaUSH52opdjKsMrDlTE7I05PdAbgW9UdyaEgvSUDBCx2J3+2waVAmZXtL2xrFdinI=
-Received: from 30.74.144.158(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WHzFjvQ_1730086294 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Mon, 28 Oct 2024 11:31:35 +0800
-Message-ID: <0d33f2c1-5433-486a-8faa-b85265ecc855@linux.alibaba.com>
-Date: Mon, 28 Oct 2024 11:31:33 +0800
+	s=arc-20240116; t=1730086778; c=relaxed/simple;
+	bh=zf03nR63oUi9aIQcnTxeMplp8aLVBVNxqpkRqOwZrzs=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version; b=PLFfwYY9vTNfHx+I/9BgLKbeft/7ucadTfKtriFHBtmokwyt0BlJW0i61qC5GRDzmXmDqAK59wdcdFoX9ifbl1GpbHz0/zUCDx4T3Gqyft7H/oXOSSkjOYd7xwh2vyl3vu/kJR9tl7lZ5lfb87cDk0cy9dmlNGADyBwxxg+Fves=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=XCmbdrT3; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2e2b549799eso2826188a91.3
+        for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 20:39:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google; t=1730086776; x=1730691576; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=UBmgyqeKJRCn5Gf659C9Da/WJZdShhgowczCYBYs4bI=;
+        b=XCmbdrT3wLxU9xVyb75W5gsAJPMbX4BBAeyqhEwrUslLMEhyJwlkFaBvJqj9q0pmeV
+         am5A38dz082uzyfh0gv2Rpkc9rOXSSRJluk1eDhT6E6AdFldiiEqv9pBGzNarv0lkAzg
+         8bqiKi7/L+v4ABgq132gL40su/f4UiBnheJUHbg34HtTvHptUp9lUG55QKyNQDe6gv3I
+         ydnTJUc7QnMlHP2B3mALlO0wisbDJTDZxUJhUtlhoIhkEyNaGiXUmGH82In9E8Thc6HB
+         E9xvRkZlSdGiOf3LHFA9LQ9Y5KmyPrG7IVt69t8pTG0gZ5qD/duIAU+RELimOr25ceFO
+         Szgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730086776; x=1730691576;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UBmgyqeKJRCn5Gf659C9Da/WJZdShhgowczCYBYs4bI=;
+        b=nDZCc1GXABIpn6yqqVfMOieXOy2hHRw/Bmd6LWyJlVWV0mX0+B1nS9A1fZ46lbswd2
+         IGwHbzN9CuG/lap09F2s1ZHDyCo17Hc0axmV1gE3VyzblOiftvVvCsN6mNS7Jd26psmL
+         2OuJylKkWHr7jAHj+8w01DGGI+Fpba5qQlKZ3FzSbNibXuJl5zr7u8vw1bsjaTkxX6Ix
+         hzUKyFlicZeeoVTBne5xhWMi4ss7KCjFTl5GmCiC4vFMpOPnHOA3wkf655X2eURa0QRq
+         HCJAAJL4RF1N8JxN6Au9M42Y8P4BaaHCK626T+15FIowXl6A6mfZ3e3izCDDr1NI9w3L
+         piJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVcF96GmIuddcSHgFoIG/4j/J6bAv6nOUpydEo79Q9hFQzLpwjDkmcRYbWFyIkLII0Q0JfUsG/8i35ZKj0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEZ6GP+WduIhsen5FC1em1k71wLE8OqHwgOfY0gy4lxJKPo6oZ
+	OyDQMrJTIynn+tsMH7dk7ffEYLXWaLZhOf6OuS8cEYhk+poj7nryx2zvvyedmNQ=
+X-Google-Smtp-Source: AGHT+IH453sffjIwvItRxxv3mspXtf+xzFnYsZ51wevVQNfZjTNz0DmZquqPZegSnXNUg/j6R7elmQ==
+X-Received: by 2002:a17:90b:224b:b0:2e2:d7db:41fa with SMTP id 98e67ed59e1d1-2e8f11d1e8emr9087013a91.33.1730086775647;
+        Sun, 27 Oct 2024 20:39:35 -0700 (PDT)
+Received: from hsinchu35-syssw01.internal.sifive.com (59-124-168-89.hinet-ip.hinet.net. [59.124.168.89])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e8e340e544sm5961888a91.0.2024.10.27.20.39.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 27 Oct 2024 20:39:35 -0700 (PDT)
+From: Nick Hu <nick.hu@sifive.com>
+To: greentime.hu@sifive.com,
+	zong.li@sifive.com,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Pavel Machek <pavel@ucw.cz>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Andrew Jones <ajones@ventanamicro.com>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Sunil V L <sunilvl@ventanamicro.com>,
+	Nick Hu <nick.hu@sifive.com>,
+	linux-pm@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/2] Support SSTC while PM operations
+Date: Mon, 28 Oct 2024 11:39:24 +0800
+Message-Id: <20241028033928.223218-1-nick.hu@sifive.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] mm: shmem: control THP support through the kernel
- command line
-To: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>,
- Jonathan Corbet <corbet@lwn.net>, Andrew Morton <akpm@linux-foundation.org>,
- Hugh Dickins <hughd@google.com>, Barry Song <baohua@kernel.org>,
- David Hildenbrand <david@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
- Lance Yang <ioworker0@gmail.com>
-Cc: linux-mm@kvack.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel-dev@igalia.com
-References: <20241027175743.1056710-1-mcanal@igalia.com>
- <20241027175743.1056710-3-mcanal@igalia.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <20241027175743.1056710-3-mcanal@igalia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
+When the cpu is going to be hotplug, stop the stimecmp to prevent pending
+interrupt.
+When the cpu is going to be suspended, save the stimecmp before entering
+the suspend state and restore it in the resume path.
 
+changes in v3:
+1. Update the commit description
+2. Remove csr_read/write_hi_lo from the previous patch
+Link: https://lore.kernel.org/lkml/20240926065422.226518-1-nick.hu@sifive.com/T/
 
-On 2024/10/28 01:36, Maíra Canal wrote:
-> Add a new kernel command line to control the hugepage allocation policy
-> for the internal shmem mount, ``transparent_hugepage_shmem``. The
-> parameter is similar to ``transparent_hugepage`` and has the following
-> format:
-> 
-> transparent_hugepage_shmem=<policy>
-> 
-> where ``<policy>`` is one of the seven valid policies available for
-> shmem.
-> 
-> By configuring the default hugepage allocation policy for the internal
-> shmem mount, applications that use shmem, such as the DRM GEM objects,
-> can take advantage of mTHP before it's been configured through sysfs.
-> 
-> Signed-off-by: Maíra Canal <mcanal@igalia.com>
-> ---
->   .../admin-guide/kernel-parameters.txt         |  7 ++++
->   Documentation/admin-guide/mm/transhuge.rst    |  6 +++
->   mm/shmem.c                                    | 38 ++++++++++++++++++-
->   3 files changed, 49 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> index 1666576acc0e..acabb04d0dd4 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -6926,6 +6926,13 @@
->   			See Documentation/admin-guide/mm/transhuge.rst
->   			for more details.
->   
-> +	transparent_hugepage_shmem= [KNL]
-> +			Format: [always|within_size|advise|never|deny|force]
-> +			Can be used to control the hugepage allocation policy for
-> +			the internal shmem mount.
-> +			See Documentation/admin-guide/mm/transhuge.rst
-> +			for more details.
-> +
->   	trusted.source=	[KEYS]
->   			Format: <string>
->   			This parameter identifies the trust source as a backend
-> diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
-> index 745055c3dc09..9b5b02c4d1ab 100644
-> --- a/Documentation/admin-guide/mm/transhuge.rst
-> +++ b/Documentation/admin-guide/mm/transhuge.rst
-> @@ -326,6 +326,12 @@ PMD_ORDER THP policy will be overridden. If the policy for PMD_ORDER
->   is not defined within a valid ``thp_anon``, its policy will default to
->   ``never``.
->   
-> +Similarly to ``transparent_hugepage``, you can control the hugepage
-> +allocation policy for the internal shmem mount by using the kernel parameter
-> +``transparent_hugepage_shmem=<policy>``, where ``<policy>`` is one of the
-> +seven valid policies for shmem (``always``, ``within_size``, ``advise``,
-> +``never``, ``deny``, and ``force``).
-> +
->   Hugepages in tmpfs/shmem
->   ========================
->   
-> diff --git a/mm/shmem.c b/mm/shmem.c
-> index 44282a296c33..24cdeafd8260 100644
-> --- a/mm/shmem.c
-> +++ b/mm/shmem.c
-> @@ -582,7 +582,6 @@ static bool shmem_huge_global_enabled(struct inode *inode, pgoff_t index,
->   	}
->   }
->   
-> -#if defined(CONFIG_SYSFS)
->   static int shmem_parse_huge(const char *str)
->   {
->   	if (!strcmp(str, "never"))
-> @@ -599,7 +598,6 @@ static int shmem_parse_huge(const char *str)
->   		return SHMEM_HUGE_FORCE;
->   	return -EINVAL;
->   }
-> -#endif
->   
->   #if defined(CONFIG_SYSFS) || defined(CONFIG_TMPFS)
->   static const char *shmem_format_huge(int huge)
-> @@ -5174,6 +5172,42 @@ struct kobj_attribute thpsize_shmem_enabled_attr =
->   	__ATTR(shmem_enabled, 0644, thpsize_shmem_enabled_show, thpsize_shmem_enabled_store);
->   #endif /* CONFIG_TRANSPARENT_HUGEPAGE && CONFIG_SYSFS */
->   
-> +#if defined(CONFIG_TRANSPARENT_HUGEPAGE)
-> +
-> +static int __init setup_transparent_hugepage_shmem(char *str)
-> +{
-> +	int huge, ret = 0;
-> +
-> +	if (!str)
-> +		goto out;
-> +
-> +	huge = shmem_parse_huge(str);
-> +	if (huge == -EINVAL)
-> +		goto out;
-> +
-> +	if (!has_transparent_hugepage() &&
-> +			huge != SHMEM_HUGE_NEVER && huge != SHMEM_HUGE_DENY) {
-> +		ret = -EINVAL;
-> +		goto out;
-> +	}
-> +
-> +	/* Do not override huge allocation policy with non-PMD sized mTHP */
-> +	if (huge == SHMEM_HUGE_FORCE &&
-> +	    huge_shmem_orders_inherit != BIT(HPAGE_PMD_ORDER)) {
-> +		ret = -EINVAL;
-> +		goto out;
-> +	}
-> +
-> +	shmem_huge = huge;
+changes in v2:
+1. Add csr_read/write_hi_lo operations
+2. Apply the suggestion from Anup.
+Link: https://lore.kernel.org/lkml/20240829033904.477200-3-nick.hu@sifive.com/T/#u
 
-The code is similar to shmem_enabled_store(). Could you factor out the 
-common parts into a helper function and reuse them?
+Nick Hu (2):
+  riscv: Add stimecmp save and restore
+  clocksource/drivers/timer-riscv: Stop stimecmp when cpu hotplug
 
-> +	return 1;
-> +out:
-> +	pr_warn("transparent_hugepage_shmem= cannot parse, ignored\n");
-> +	return ret;
-> +}
-> +__setup("transparent_hugepage_shmem=", setup_transparent_hugepage_shmem);
-> +
-> +#endif /* CONFIG_TRANSPARENT_HUGEPAGE */
-> +
->   #else /* !CONFIG_SHMEM */
->   
->   /*
+ arch/riscv/include/asm/suspend.h  |  4 ++++
+ arch/riscv/kernel/suspend.c       | 14 ++++++++++++++
+ drivers/clocksource/timer-riscv.c |  6 ++++++
+ 3 files changed, 24 insertions(+)
+
+-- 
+2.34.1
+
 
