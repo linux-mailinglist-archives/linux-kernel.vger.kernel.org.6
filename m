@@ -1,131 +1,210 @@
-Return-Path: <linux-kernel+bounces-385057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2042C9B31D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:38:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D53A9B31CE
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:37:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 860D9B20D06
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:38:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 291212847E5
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:37:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 555CB1DCB2A;
-	Mon, 28 Oct 2024 13:38:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58AD41DBB2C;
+	Mon, 28 Oct 2024 13:37:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="KQNM9MEj"
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E244CvMN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 518E31DC730;
-	Mon, 28 Oct 2024 13:38:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D1E0191F82;
+	Mon, 28 Oct 2024 13:37:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730122706; cv=none; b=QtpfRi7kJ75EES7xX/1Diydmtkz6Cwnn/t3Ybzwu4NVYYf3UTzJMXoBOK990n3HGaZNJCmCu5eNfUmIwIkiKDS3QNRB2GQayj+xJ+/hj0s9cCduEchXk9tx01IihNqK0CkR24ZrKQWYr2GHK1hnsGJZ+8gZpNbvXaViYJ7kwVnM=
+	t=1730122631; cv=none; b=dnQsyk1UaX9wmVBhYiv7JZdJ+xHtg22v/M+H6+5w583S3wHJ6pygfOY6id/rNhIStdVaAE+ioEdL0kqFUM1MgKk2QUeaUqcObjOy+b8z03rdFfnfc564O5vUQJ0Dw+2/bANPdiB3qkjsVhA8uPbDVSL+rVMxe9Y7FYVX8Z06BsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730122706; c=relaxed/simple;
-	bh=PQsmwnRSoJgBKYMVwQrVMe6PPvEJe4g9uksm+f7pXQM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=A0QgoUoTSQlvchg0odUxsfmSWs8OEUtmH0aMC89hRDKouh5D3sffshKrqeLlYI+MtpYOHsFYkR+5spRjKPhHRmflOqmMJFZDjylxO2rZIJTnDdv3XxEPQEdCyP4hwEB82YZqSgWwPnifmVIt0uSAMrjNuzlASRMf+0e8lHPzMek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=KQNM9MEj; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1730122703;
-	bh=PQsmwnRSoJgBKYMVwQrVMe6PPvEJe4g9uksm+f7pXQM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=KQNM9MEjXDLUu0yqHqwIby5UG0G53zP7C2Bzr5Yl8aHYzhbmYPZ10w9P+E7zZNzlY
-	 w10/bMA491wRvTFKTUZjSKb4kkiHpDT2e5zlzJPgrDMoyiB1ZqOGvONkK26R50vHDf
-	 uciHd4u8G6sWPDAC7UJyAXzjz+iR9T2hiYE2LrMq0H9dNgyYlpdpMzVqlVOTbmXHJy
-	 2ZEqqdc2VqYZFgf+TFB64d3JKtak492tIs2u/qCNR+ItDY0vatVrz0X1i+emMe0siY
-	 W2KxAnLmqeJp90ijjrLTFdtIddopbOqDofW1MPth8ziddQglcGzNW+b0JuoIoaeq51
-	 ukxIJ5RIQyyhg==
-Received: from [172.16.0.134] (96-127-217-162.qc.cable.ebox.net [96.127.217.162])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XcZGQ6gp1zpxS;
-	Mon, 28 Oct 2024 09:38:22 -0400 (EDT)
-Message-ID: <459b9e7d-be9b-41d8-8ae3-4aa707def641@efficios.com>
-Date: Mon, 28 Oct 2024 09:36:43 -0400
+	s=arc-20240116; t=1730122631; c=relaxed/simple;
+	bh=aHES0ByIrFPPx+zTxjezPtrFGuM9d9BX9c2dVH0/IAA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mkFprT22v5KOJi68hr077yv270l/DeKaLodpJMEDxkJWK/Q/s38IchVeGUNno23n+465xYgH5QwqBAJHiuFUhgjC8/uzYwKvSifW5A97u1qUEU6Ifx88T5MxkTZc+GYAMQk07FMjcLeEvuFG7++HKP5dOd1bwzzYurG+pZVWyEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E244CvMN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83F06C4CEC3;
+	Mon, 28 Oct 2024 13:37:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730122631;
+	bh=aHES0ByIrFPPx+zTxjezPtrFGuM9d9BX9c2dVH0/IAA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=E244CvMNjpxFFkEcJHnV2nu520yuB6IKfxcs1t5UMYbzWYJrZMZkjmr6jI8QHM1yr
+	 zOc9JxV+lnaq+IDJM+m08Em0n4vqDtPZ0AhogP/2s8pHVWKk2xu5faBFiE+guOcW29
+	 EVInUdPHYaRIimP+ezj4GK84w0OqbdApIhwz49el4I8gxOQWCrKLySu00Aat2pTq2t
+	 IzCceeZuEI+c/8ze05c5bKrSJdczBwdSpF9HpfqPjp1mDI9D+/ndea7zMtojs484vb
+	 zMBZeoPgbSxY2A/1SyyiCePxMi9Fm0tMwBFNbzfX7+5bbtDpVMD2t77vwD6sms9hVS
+	 3lNO1EZcAERhg==
+Date: Mon, 28 Oct 2024 14:37:06 +0100
+From: Danilo Krummrich <dakr@kernel.org>
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: Abdiel Janulgue <abdiel.janulgue@gmail.com>,
+	rust-for-linux@vger.kernel.org, aliceryhl@google.com,
+	dakr@redhat.com, linux-kernel@vger.kernel.org, airlied@redhat.com,
+	miguel.ojeda.sandonis@gmail.com
+Subject: Re: [PATCH v2 5/5] rust: firmware: implement `Ownable` for Firmware
+Message-ID: <Zx-Tgm9CJO-Myrgv@pollux>
+References: <20241022224832.1505432-1-abdiel.janulgue@gmail.com>
+ <20241022224832.1505432-6-abdiel.janulgue@gmail.com>
+ <ZxjDUxUiKfE_7tvq@pollux>
+ <Zx68k94GrHb3Kz3-@Boquns-Mac-mini.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v3 2/3] tracing: Introduce tracepoint_is_syscall()
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>,
- Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
- Michael Jeanson <mjeanson@efficios.com>,
- Peter Zijlstra <peterz@infradead.org>, Alexei Starovoitov <ast@kernel.org>,
- Yonghong Song <yhs@fb.com>, "Paul E . McKenney" <paulmck@kernel.org>,
- Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Namhyung Kim <namhyung@kernel.org>, bpf@vger.kernel.org,
- Joel Fernandes <joel@joelfernandes.org>, Jordan Rife <jrife@google.com>
-References: <20241026154629.593041-1-mathieu.desnoyers@efficios.com>
- <20241026154629.593041-2-mathieu.desnoyers@efficios.com>
- <20241026200840.17171eb2@rorschach.local.home>
- <20241027231930.941d6c1f21e2b4668af44df8@kernel.org>
- <CAEf4BzbeE6n7E6K8_dhZ26ZHoVsz8V9mUSxm3CYzz2npmdpbiQ@mail.gmail.com>
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Content-Language: en-US
-In-Reply-To: <CAEf4BzbeE6n7E6K8_dhZ26ZHoVsz8V9mUSxm3CYzz2npmdpbiQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zx68k94GrHb3Kz3-@Boquns-Mac-mini.local>
 
-On 2024-10-27 21:23, Andrii Nakryiko wrote:
-> On Sun, Oct 27, 2024 at 7:19 AM Masami Hiramatsu <mhiramat@kernel.org> wrote:
-
-[...]
-
->>>>   include/linux/tracepoint-defs.h |  2 ++
->>>>   include/linux/tracepoint.h      | 24 ++++++++++++++++++++++++
->>>>   include/trace/define_trace.h    |  2 +-
->>>>   3 files changed, 27 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/include/linux/tracepoint-defs.h b/include/linux/tracepoint-defs.h
->>>> index 967c08d9da84..53119e074c87 100644
->>>> --- a/include/linux/tracepoint-defs.h
->>>> +++ b/include/linux/tracepoint-defs.h
->>>> @@ -32,6 +32,8 @@ struct tracepoint_func {
->>>>   struct tracepoint_ext {
->>>>      int (*regfunc)(void);
->>>>      void (*unregfunc)(void);
->>>> +   /* Flags. */
->>>> +   unsigned int syscall:1;
->>>
->>> I wonder if we should call it "sleepable" instead? For this patch set
->>> do we really care if it's a system call or not? It's really if the
->>> tracepoint is sleepable or not that's the issue. System calls are just
->>> one user of it, there may be more in the future, and the changes to BPF
->>> will still be needed.
->>
->> I agree with this. Even if currently we restrict only syscall events
->> can be sleep, "tracepoint_is_syscall()" requires to add comment to
->> explain why on all call sites e.g.
->>
+On Sun, Oct 27, 2024 at 03:20:03PM -0700, Boqun Feng wrote:
+> On Wed, Oct 23, 2024 at 11:35:15AM +0200, Danilo Krummrich wrote:
+> > On Wed, Oct 23, 2024 at 01:44:49AM +0300, Abdiel Janulgue wrote:
+> > > For consistency, wrap the firmware as an `Owned` smart pointer in the
+> > > constructor.
+> > > 
+> > > Cc: Danilo Krummrich <dakr@redhat.com>
+> > > Suggested-by: Boqun Feng <boqun.feng@gmail.com>
+> > > Signed-off-by: Abdiel Janulgue <abdiel.janulgue@gmail.com>
+> > > ---
+> > >  rust/kernel/firmware.rs | 31 ++++++++++++++++++-------------
+> > >  1 file changed, 18 insertions(+), 13 deletions(-)
+> > > 
+> > > diff --git a/rust/kernel/firmware.rs b/rust/kernel/firmware.rs
+> > > index dee5b4b18aec..6da834b37455 100644
+> > > --- a/rust/kernel/firmware.rs
+> > > +++ b/rust/kernel/firmware.rs
+> > > @@ -4,8 +4,8 @@
+> > >  //!
+> > >  //! C header: [`include/linux/firmware.h`](srctree/include/linux/firmware.h)
+> > >  
+> > > -use crate::{bindings, device::Device, error::Error, error::Result, str::CStr};
+> > > -use core::ptr::NonNull;
+> > > +use crate::{bindings, device::Device, error::Error, error::Result, str::CStr,
+> > > +            types::{Opaque, Owned, Ownable}};
+> > >  
+> > >  /// # Invariants
+> > >  ///
+> > > @@ -52,10 +52,11 @@ fn request_nowarn() -> Self {
+> > >  /// # Ok(())
+> > >  /// # }
+> > >  /// ```
+> > > -pub struct Firmware(NonNull<bindings::firmware>);
+> > > + #[repr(transparent)]
+> > > +pub struct Firmware(Opaque<bindings::firmware>);
+> > >  
+> > >  impl Firmware {
+> > > -    fn request_internal(name: &CStr, dev: &Device, func: FwFunc) -> Result<Self> {
+> > > +    fn request_internal(name: &CStr, dev: &Device, func: FwFunc) -> Result<Owned<Self>> {
+> > 
+> > I think it's fine to implement this for consistency, but I'm not sure I like
+> > that drivers have to refer to it as `Owned<Firmware>`.
+> > 
 > 
-> +1 to naming this "sleepable" (or at least "faultable"). BPF world
-> uses "sleepable BPF" terminology for BPF programs and attachment hooks
-> that can take page fault (and wait/sleep waiting for those to be
-> handled), so this would be consistent with that. Also, from BPF
-> standpoint this will be advertised as attaching to sleepable
-> tracepoints regardless, so "syscall" terminology is too specific and
-> misleading, because while current set of tracepoints are
-> syscall-specific, the important part is taking page fault, no tracing
-> syscalls.
+> May I ask why not? ;-)
 
-+1 for "faultable".
+I think it's because with this an instance of `Firmware` is never a valid thing
+to have, which is a bit weird at a first glance.
 
-Thanks,
+But I fully agree with the existance of the `Owned` type and the rationale
+below.
 
-Mathieu
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
-
+> 
+> Ideally, we should not wrap a pointer to particular type, instead we
+> should wrap the type and then combine it with a meaningful pointer type,
+> e.g. Box<>, ARef<>, Owned<> ... in this way, we de-couple how the
+> lifetime of object is maintained (described by the pointer type) and
+> what operations are available on the object (described by the wrapper
+> type).
+> 
+> If later on, a firmware object creation is doable in pure Rust code for
+> some condition, we can then have a function that returns a
+> `KBox<Firmware>` (assume using kmalloc for the object), and it will just
+> work (tm).
+> 
+> Regards,
+> Boqun
+> 
+> > Anyway, if we keep it this way the patch also needs the following change.
+> > 
+> > diff --git a/rust/kernel/firmware.rs b/rust/kernel/firmware.rs
+> > index 6da834b37455..1db854eb2422 100644
+> > --- a/rust/kernel/firmware.rs
+> > +++ b/rust/kernel/firmware.rs
+> > @@ -115,8 +115,8 @@ unsafe fn ptr_drop(ptr: *mut Self) {
+> > 
+> >  // SAFETY: `Firmware` only holds a pointer to a C `struct firmware`, which is safe to be used from
+> >  // any thread.
+> > -unsafe impl Send for Firmware {}
+> > +unsafe impl Send for Owned<Firmware> {}
+> > 
+> >  // SAFETY: `Firmware` only holds a pointer to a C `struct firmware`, references to which are safe to
+> >  // be used from any thread.
+> > -unsafe impl Sync for Firmware {}
+> > +unsafe impl Sync for Owned<Firmware> {}
+> > 
+> > >          let mut fw: *mut bindings::firmware = core::ptr::null_mut();
+> > >          let pfw: *mut *mut bindings::firmware = &mut fw;
+> > >  
+> > > @@ -65,25 +66,26 @@ fn request_internal(name: &CStr, dev: &Device, func: FwFunc) -> Result<Self> {
+> > >          if ret != 0 {
+> > >              return Err(Error::from_errno(ret));
+> > >          }
+> > > -
+> > > +        // CAST: Self` is a `repr(transparent)` wrapper around `bindings::firmware`.
+> > > +        let ptr = fw.cast::<Self>();
+> > >          // SAFETY: `func` not bailing out with a non-zero error code, guarantees that `fw` is a
+> > >          // valid pointer to `bindings::firmware`.
+> > > -        Ok(Firmware(unsafe { NonNull::new_unchecked(fw) }))
+> > > +        Ok(unsafe { Owned::to_owned(ptr) })
+> > >      }
+> > >  
+> > >      /// Send a firmware request and wait for it. See also `bindings::request_firmware`.
+> > > -    pub fn request(name: &CStr, dev: &Device) -> Result<Self> {
+> > > +    pub fn request(name: &CStr, dev: &Device) -> Result<Owned<Self>> {
+> > >          Self::request_internal(name, dev, FwFunc::request())
+> > >      }
+> > >  
+> > >      /// Send a request for an optional firmware module. See also
+> > >      /// `bindings::firmware_request_nowarn`.
+> > > -    pub fn request_nowarn(name: &CStr, dev: &Device) -> Result<Self> {
+> > > +    pub fn request_nowarn(name: &CStr, dev: &Device) -> Result<Owned<Self>> {
+> > >          Self::request_internal(name, dev, FwFunc::request_nowarn())
+> > >      }
+> > >  
+> > >      fn as_raw(&self) -> *mut bindings::firmware {
+> > > -        self.0.as_ptr()
+> > > +        self.0.get()
+> > >      }
+> > >  
+> > >      /// Returns the size of the requested firmware in bytes.
+> > > @@ -101,10 +103,13 @@ pub fn data(&self) -> &[u8] {
+> > >      }
+> > >  }
+> > >  
+> > > -impl Drop for Firmware {
+> > > -    fn drop(&mut self) {
+> > > -        // SAFETY: `self.as_raw()` is valid by the type invariant.
+> > > -        unsafe { bindings::release_firmware(self.as_raw()) };
+> > > +unsafe impl Ownable for Firmware {
+> > > +    unsafe fn ptr_drop(ptr: *mut Self) {
+> > > +        // SAFETY:
+> > > +        // - By the type invariants, we have ownership of the ptr and can free it.
+> > > +        // - Per function safety, this is called in Owned::drop(), so `ptr` is a
+> > > +        //   unique pointer to object, it's safe to release the firmware.
+> > > +        unsafe { bindings::release_firmware(ptr.cast()) };
+> > >      }
+> > >  }
+> > >  
+> > > -- 
+> > > 2.43.0
+> > > 
+> > 
+> 
 
