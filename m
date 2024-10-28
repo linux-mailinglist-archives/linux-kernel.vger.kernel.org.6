@@ -1,49 +1,73 @@
-Return-Path: <linux-kernel+bounces-385047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E39B9B31BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:30:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D05789B31DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:39:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D10501F218F0
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:30:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8836B1F2153D
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:39:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEE1A1DC06D;
-	Mon, 28 Oct 2024 13:30:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEF961DBB13;
+	Mon, 28 Oct 2024 13:39:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QmB9J0wa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=steffen.cc header.i=@steffen.cc header.b="luo7zlF9"
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42BC41D9341;
-	Mon, 28 Oct 2024 13:30:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15C391D5178;
+	Mon, 28 Oct 2024 13:39:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730122229; cv=none; b=hAv7k1bUg0T/saa+1C3PQUpr82VsuCgtUYvQp9pPHd/yP7WH7vDF3/yYH1MTuO4wAB21vKHv+4OF+hOJx+2ct9ns5kT3R0/OWeuZBJ43Tk+t1AfbXy00//iMPzdmAIN0hUdxmkGojP3Quak33kCX6jF2xVEV4bjkwPjXIs2cwpg=
+	t=1730122764; cv=none; b=PzU5MDzxoEydlzZFfPPcDZ4IMgZeREuwOksqAHXOP+4eyyq01+QNXKUBGj0VDgc/S+lM9ivdSepEQ5s45D/hI6mjvwnlPwDVPuUhyog3jsu3mIJ+8VD2UyZBXU/ItCNSO2LEAmmoe/4xzpUgj8oMAuO+zXeKlFuXsQoQlEkKhCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730122229; c=relaxed/simple;
-	bh=8Eb60TtfjMAOXqjYLNlGTme3lFmjIkbTXHuDxEBrYv4=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=d02zBFIxOBqUKK4GtbmwPOdXfl9GG4iSVs6gthe1O4O/Eqck02vXIuHaE92GnL1oEv7Yc1F9tHrn1Z3MpY95Zwgi8E3/i6oE0fCXMRlPDcwGOTtcM5DnODpAl4tiNNSv7jqvZ3PHS9lxGUzIDIErTjUsrP07DVwuGVaLc1+Odis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QmB9J0wa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2F3EC4CEC3;
-	Mon, 28 Oct 2024 13:30:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730122227;
-	bh=8Eb60TtfjMAOXqjYLNlGTme3lFmjIkbTXHuDxEBrYv4=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=QmB9J0waT/JXN1azG+woHMsK714VxQ2vTwK5QnLLlrk1oBlHASa3d/G37Vc8mWXUR
-	 z+MEdy3vc/vAtL0SuW5rHw9Yw3q0CMgeZImvEjXTbalIA6vXRXZWj/NjSCNlT/cKmf
-	 AjdRGUcIXxlK3Tz8vXmHImV6KKTRJh0zWLR0nlSjg1ayfu6xMsFvof1Yqshf6Zyw5P
-	 4jO20pe9e/uBiGjmOv63yucFhEskLKjO5jIqUhwNtBD6UHe6CUDuXNPHRgrtSDyRnj
-	 2HQPwr7rmB+hHjQnmYYQD01QM2EJX8bD3IEzoYgOtaXVEeTmgg5tgs23keU+20Bjs2
-	 yO3fo4jcN4GUg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33F51380AC1C;
-	Mon, 28 Oct 2024 13:30:36 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1730122764; c=relaxed/simple;
+	bh=BTxU7lbd3Ilnfi+bCP6to01QzZ/e1q2VcY1rzjmMIxg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=J1VFKHqtMBWkA6wL/3k8dBsmApoLatdbdsoty4RIHkib7LRBkE6Ll6i5TpHTChnYbSq/ips1guHubS81hj8vgU94krx+z+1wAnZ/xVqSIQvH2Hs3dRjSQxFzfkiGPgUFCHJHxW21IhKCJqEye+iWVq5g8xpBuAYd3LZuuSmITvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=steffen.cc; spf=pass smtp.mailfrom=steffen.cc; dkim=pass (2048-bit key) header.d=steffen.cc header.i=@steffen.cc header.b=luo7zlF9; arc=none smtp.client-ip=80.241.56.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=steffen.cc
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=steffen.cc
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4XcZ6y4czPz9slB;
+	Mon, 28 Oct 2024 14:31:54 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=steffen.cc; s=MBO0001;
+	t=1730122314;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UaiWgQ1AXzTNomMAaUXn9Y1bpdRE43DfhiGZpik/Y10=;
+	b=luo7zlF9FBoaEfUANDbeaf2YgSmiEd/LXMh1DINtKPbqtLaxF2NaE8YdkrulyYLpKF6tbh
+	OlZLLuLVC4MOJVnjscSHavPP5sOkhRnWcSaWo93+IJevkS1B5y1pbqPL9QLfyhkYt56y81
+	ik/u3jyHoV3qix7fAqahHeFiuQUBmEJR8ZOgjuMu/n3rWOFgozcfXxdK0/Ff/SfbMgMC3Z
+	2aiJ4phODmpoebf4K+0IJpwVCslmGKaQtty5t9q9HkGEBAxiPSC0bw41GzkG/t2JxnWLMw
+	MPw8tLVkIv+B9NBm91wEkJ3an53Hz8oZrxqdRnQjGD8Bnihn4Lei61QZJal9uQ==
+From: Steffen Dirkwinkel <lists@steffen.cc>
+To: dri-devel@lists.freedesktop.org,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	stable@vger.kernel.org,
+	Steffen Dirkwinkel <s.dirkwinkel@beckhoff.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Michal Simek <michal.simek@amd.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] drm: xlnx: zynqmp_dpsub: fix hotplug detection
+Date: Mon, 28 Oct 2024 14:31:38 +0100
+Message-ID: <20241028133138.52973-1-lists@steffen.cc>
+In-Reply-To: <f7fbd696-d739-457b-bebb-571b32ecc1d6@ideasonboard.com>
+References: <f7fbd696-d739-457b-bebb-571b32ecc1d6@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,43 +75,40 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] net: dsa: mv88e6xxx: fix unreleased fwnode_handle
- in setup_port()
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <173012223502.52850.4413295844363790152.git-patchwork-notify@kernel.org>
-Date: Mon, 28 Oct 2024 13:30:35 +0000
-References: <20241019-mv88e6xxx_chip-fwnode_handle_put-v1-1-fc92c4f16831@gmail.com>
-In-Reply-To: <20241019-mv88e6xxx_chip-fwnode_handle_put-v1-1-fc92c4f16831@gmail.com>
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: andrew@lunn.ch, f.fainelli@gmail.com, olteanv@gmail.com,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- linus.walleij@linaro.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
+X-Rspamd-Queue-Id: 4XcZ6y4czPz9slB
 
-Hello:
+From: Steffen Dirkwinkel <s.dirkwinkel@beckhoff.com>
 
-This patch was applied to netdev/net-next.git (main)
-by David S. Miller <davem@davemloft.net>:
+drm_kms_helper_poll_init needs to be called after zynqmp_dpsub_kms_init.
+zynqmp_dpsub_kms_init creates the connector and without it we don't
+enable hotplug detection.
 
-On Sat, 19 Oct 2024 22:16:49 +0200 you wrote:
-> 'ports_fwnode' is initialized via device_get_named_child_node(), which
-> requires a call to fwnode_handle_put() when the variable is no longer
-> required to avoid leaking memory.
-> 
-> Add the missing fwnode_handle_put() after 'ports_fwnode' has been used
-> and is no longer required.
-> 
-> [...]
+Fixes: eb2d64bfcc17 ("drm: xlnx: zynqmp_dpsub: Report HPD through the bridge")
+Signed-off-by: Steffen Dirkwinkel <s.dirkwinkel@beckhoff.com>
+---
+ drivers/gpu/drm/xlnx/zynqmp_kms.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Here is the summary with links:
-  - [net-next] net: dsa: mv88e6xxx: fix unreleased fwnode_handle in setup_port()
-    https://git.kernel.org/netdev/net-next/c/b8ee7a11c754
-
-You are awesome, thank you!
+diff --git a/drivers/gpu/drm/xlnx/zynqmp_kms.c b/drivers/gpu/drm/xlnx/zynqmp_kms.c
+index bd1368df7870..311397cee5ca 100644
+--- a/drivers/gpu/drm/xlnx/zynqmp_kms.c
++++ b/drivers/gpu/drm/xlnx/zynqmp_kms.c
+@@ -509,12 +509,12 @@ int zynqmp_dpsub_drm_init(struct zynqmp_dpsub *dpsub)
+ 	if (ret)
+ 		return ret;
+ 
+-	drm_kms_helper_poll_init(drm);
+-
+ 	ret = zynqmp_dpsub_kms_init(dpsub);
+ 	if (ret < 0)
+ 		goto err_poll_fini;
+ 
++	drm_kms_helper_poll_init(drm);
++
+ 	/* Reset all components and register the DRM device. */
+ 	drm_mode_config_reset(drm);
+ 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.47.0
 
 
