@@ -1,143 +1,94 @@
-Return-Path: <linux-kernel+bounces-385272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D1709B34E3
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 16:29:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A67489B34EA
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 16:30:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6908281CF9
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 15:29:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D82951C225AD
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 15:30:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EB961DE89A;
-	Mon, 28 Oct 2024 15:29:12 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 327691DE4DD;
+	Mon, 28 Oct 2024 15:29:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=peacevolution.org header.i=@peacevolution.org header.b="jVywxTyH"
+Received: from a.peacevolution.org (a.peacevolution.org [206.189.193.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D97E1DE4FF
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 15:29:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA6A71DE4C5;
+	Mon, 28 Oct 2024 15:29:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=206.189.193.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730129352; cv=none; b=ksPxmPs4qvLD6uvokNEgCE8d9CqulQ3G5V0nMuoyxA3nZrIQ863he0yMOk0dbw9S5pOCJHxEV2ogh7jx8NInB/lVqnhVGd79rwJJbJcnpZksgRJwK0MGcGGRn0p/tJBaIAelxkUjfkLxKCBE4A/W3y9wgPLHTdfC2/UkNNxsQcU=
+	t=1730129387; cv=none; b=ambMu5vQeAsbmoz7qIckmztQHDuDX/eiah9XYUwo98sAKpatl4RZQ6qeDRi4GM1KO7r09qezLIa6KCa83Dx/QtWArcrCaaxWV8xPL4r3Lp/7GxXy28Tr24u80urDVBaaQjThR1ysHhfYj8rfsUrX4GtDvuP5TMt3LmA96oq7lOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730129352; c=relaxed/simple;
-	bh=SKtyNgIFZEZ0qXXkIJhRGSixVdUEa0UAdc/hwiPYEOM=;
+	s=arc-20240116; t=1730129387; c=relaxed/simple;
+	bh=wifIcVMtJD+gpqhF+iFfePB5DyfuLONbv5qlebYjHGw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UnakI3L0QaU8snHSUcdDPmrMKVbpRh+s3MW1f/1pYpeiDAhONdmmAcUdz7/FQvzMA68/cDBiOSFO9XrgYV2LAe+WLBS6dGC38CvO2lxDhikyMAk+THnKihnfahZVATfBtBmy6r3HjJdC33bm+2AswV+JjC/aEIq+WiGjiO/4+jc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1t5Rfj-0001p6-UH; Mon, 28 Oct 2024 16:28:47 +0100
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1t5Rfg-000sdb-1p;
-	Mon, 28 Oct 2024 16:28:44 +0100
-Received: from pengutronix.de (pd9e595f8.dip0.t-ipconnect.de [217.229.149.248])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 2C35A360A41;
-	Mon, 28 Oct 2024 15:28:44 +0000 (UTC)
-Date: Mon, 28 Oct 2024 16:28:43 +0100
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Hal Feng <hal.feng@starfivetech.com>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>, "David S . Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Emil Renner Berthing <emil.renner.berthing@canonical.com>, 
-	William Qiu <william.qiu@starfivetech.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"linux-can@vger.kernel.org" <linux-can@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, 
-	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: RE: [PATCH v2 3/4] can: Add driver for CAST CAN Bus Controller
-Message-ID: <20241028-delectable-fantastic-swine-3ab4dd-mkl@pengutronix.de>
-References: <20240922-inquisitive-stingray-of-philosophy-b725d3-mkl@pengutronix.de>
- <ZQ2PR01MB1307D96BB8AC0B6BB78C97C9E64F2@ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xt6lssRLREkp6nn+CaVK6vy+Rj87zf511gBRTJDL0vAwPXtDhuiR8Vigi/r/wqIwCCFELsINMlBZo+6/e45T23thdUJ7GZfqAoY9FneU4ZWft0+JlhS3QLkZrbEYA5ln/J64qgH+ptudcVrsPOOLPx8hX+CGqJbQieCyqMBGc/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=peacevolution.org; spf=pass smtp.mailfrom=peacevolution.org; dkim=pass (1024-bit key) header.d=peacevolution.org header.i=@peacevolution.org header.b=jVywxTyH; arc=none smtp.client-ip=206.189.193.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=peacevolution.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=peacevolution.org
+Received: from authenticated-user (PRIMARY_HOSTNAME [PUBLIC_IP])
+	by a.peacevolution.org (Postfix) with ESMTPA id 3538F4C76F;
+	Mon, 28 Oct 2024 15:29:43 +0000 (UTC)
+Date: Mon, 28 Oct 2024 11:29:35 -0400
+From: Aren <aren@peacevolution.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, 
+	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	Kaustabh Chakraborty <kauschluss@disroot.org>, =?utf-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <trabarni@gmail.com>, 
+	Ondrej Jirman <megi@xff.cz>, 
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-sunxi@lists.linux.dev, Dragan Simic <dsimic@manjaro.org>, phone-devel@vger.kernel.org
+Subject: Re: [PATCH v3 5/6] iio: light: stk3310: log error if reading the
+ chip id fails
+Message-ID: <xcavh66uxpl2orehtlzsy4g4udr3p2yqsq5pyhmxdqdmnegsvq@jpomr2uuwspz>
+References: <20241028142000.1058149-1-aren@peacevolution.org>
+ <20241028142000.1058149-6-aren@peacevolution.org>
+ <Zx-jj8FEldW6sG55@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="bayufuaqihhp4puc"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZQ2PR01MB1307D96BB8AC0B6BB78C97C9E64F2@ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <Zx-jj8FEldW6sG55@smile.fi.intel.com>
+X-Spamd-Bar: /
+Authentication-Results: auth=pass smtp.auth=aren@peacevolution.org smtp.mailfrom=aren@peacevolution.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=peacevolution.org;
+	s=dkim; t=1730129384;
+	h=from:subject:date:message-id:to:cc:mime-version:content-type:in-reply-to:references;
+	bh=waIkFoDc9o8tfquUd+Jq31IwxgRT/dvr5qXaHNOIhWo=;
+	b=jVywxTyHeY6lKYwG8i5PTfRP/7qZwmdlQe7GjZlWL0oBVH5yipYwH0z6jwVEfzm6YjPqk8
+	gD+QZ9a2OSgNOTu0Ydxk0hym7qiQlZM7vBDKXI2RHM2VSizmYwd/IrLHHRl+jsFlfB392V
+	/MbvO8kGCGYKOPs6UdalfnYcS8tHJYM=
 
+On Mon, Oct 28, 2024 at 04:45:35PM +0200, Andy Shevchenko wrote:
+> On Mon, Oct 28, 2024 at 10:19:59AM -0400, Aren Moynihan wrote:
+> > If the chip isn't powered, this call is likely to return an error.
+> > Without a log here the driver will silently fail to probe. Common errors
+> > are ENXIO (when the chip isn't powered) and ETIMEDOUT (when the i2c bus
+> > isn't powered).
+> 
+> The commit message does not explain why dev_err_probe() has been chosen
+> and not simple dev_err().
 
---bayufuaqihhp4puc
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: RE: [PATCH v2 3/4] can: Add driver for CAST CAN Bus Controller
-MIME-Version: 1.0
+This function is only called from stk3310_probe, and this condition
+should propagate it's error, so it fits what dev_err_probe is designed
+for. dev_err would be pretty much equivalent just longer, like this:
 
-On 25.10.2024 01:45:30, Hal Feng wrote:
-> On 9/23/2024 5:14 AM, Marc Kleine-Budde wrote:=20
-> > On 22.09.2024 22:51:49, Hal Feng wrote:
-> > > From: William Qiu <william.qiu@starfivetech.com>
-> > >
-> > > Add driver for CAST CAN Bus Controller used on StarFive JH7110 SoC.
-> >=20
-> > Have you read me review of the v1 of this series?
-> >=20
-> > https://lore.kernel.org/all/20240129-zone-defame-c5580e596f72-
-> > mkl@pengutronix.de/
->=20
-> Yes, I modify accordingly except using FIELD_GET() / FIELD_PREP(), using
-> rx_offload helper and the shared interrupt flag. I found FIELD_GET() / FI=
-ELD_PREP()
-> can only be used when the mask is a constant,
+if (ret < 0) {
+	dev_err(&client->dev, "failed to read chip it: %d\n", ret);
+	return ret;
+}
 
-Do you have a non constant mask?
-
-> and the CAN module won't
-> work normally if I change the interrupt flag to 0.
-
-What do you mean by "won't work normally"?
-It makes no sense to claim that you support shared interrupts, but
-print an error message, if your IP core had no active interrupt.
-
-> I will try to using rx_offload helper
-> in the next version.
-
-regards,
-Marc
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---bayufuaqihhp4puc
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmcfragACgkQKDiiPnot
-vG85Ygf9GrLJf5wV7bdgz9vs/sx2rKcJlxRbC5pFv5ebTX6WbvM9DlF2hVFYLukY
-OVR12GIkefiKCKDW1cEYxZhba1VifqSaayUs8heOrhUjm8W4gq7/258tWSMuwDVS
-OcRyTkEP/1UrCB78AHAFtUML+doEqstQArznjSIuzPbytCVQfbNAkrIwagtqLeiR
-Xsj4tXKjJQcoIDNBwtMRGJAgNMLSWwt2y7JRj98ygicPFhcPSZVB+CwvXPA2XxqM
-ipRmtWdT+pBJtZ3jdD4uhSKP46ROV9ggtZksy8v00ElJG/lu48rQHvKU4pKGkEK1
-FwAZIHUmjawWlux4wTT8gRgosM4fcA==
-=vCRm
------END PGP SIGNATURE-----
-
---bayufuaqihhp4puc--
+Regards
+ - Aren
 
