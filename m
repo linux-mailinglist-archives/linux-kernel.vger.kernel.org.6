@@ -1,334 +1,402 @@
-Return-Path: <linux-kernel+bounces-384622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDA9A9B2C7E
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 11:13:51 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35AC39B2C87
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 11:14:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 113F6B21CD8
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 10:13:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8CA99B23ED5
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 10:14:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9D0A1D3639;
-	Mon, 28 Oct 2024 10:13:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC1B51D270B;
+	Mon, 28 Oct 2024 10:14:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b="b5QHTaPd"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=riseup.net header.i=@riseup.net header.b="ATZmbN9y"
+Received: from mx0.riseup.net (mx0.riseup.net [198.252.153.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F9551D2704
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 10:13:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98E401CCEE6;
+	Mon, 28 Oct 2024 10:14:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.252.153.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730110389; cv=none; b=fKoYllXs7w1NBozC981G+GVEtZJ+T05Ylk4Y8qkbDsOvgZDLu9QUTyEDkHA8jojah5Wo++oC/uNFAoPGLefAx1MsjTCmIhaW43TQpMIwBb7EaX5i/TDTuTTaSw6k52iQZEP+5A4EJp1sL+AsKhPLbYMYnH1XwD/XMvBfzTWffrA=
+	t=1730110444; cv=none; b=T+iuVH3DeccWjbet6hGbRf2vvDmPyWatSoKv+NMcpaQ4CNLQIx+YHXxYBwZGBMua5qSNMeairQ6R+EBjVvP8EwNJkEhGZpsfdi8ogjyWqmVSlcuJsDuR/I++Zoad1YWsTESondDFDKmhn13ozVXduCwsq4NXpQjtQu+lBEribrs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730110389; c=relaxed/simple;
-	bh=AV3H95WuR7HgF4Hklt8Oa1y3SpNFAqrinNBZJEI3sJM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ooHPJvzwemVzdCSv+TaVmWMuGnKmTKObwspOJi/PvzAt75eQOt5UQpoQsuNKmhJaSLn2v99N42sBhtzUa2lf6tmhFSbmEyPYnyVURsijomunngHXVCzOd8XgSs7W2c8ygwJq7rpfLfTJyFQxETXS0uacR7wIw4f9Q6/ttgsLgT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net; spf=pass smtp.mailfrom=openvpn.com; dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b=b5QHTaPd; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openvpn.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-539e13375d3so4571896e87.3
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 03:13:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=openvpn.net; s=google; t=1730110385; x=1730715185; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=kTse+UIA/55vueNOi33xp+1Nvpf6FMXtF/RFvE7Aux4=;
-        b=b5QHTaPdKSKA/dDsnth1Xr5n7leH6WQBCer3hmfL5/kSJUp/3LFHpPne0203mKYfPy
-         dsks+82zeK89FdjdKjvD4hfL7lj+WHxFU1YYQIU7viVBuWJ1mVnrokFhPgQTM5rqX2Z0
-         rO+10z2K+4t6DDcTKjBVBPvPG2Fm6EXn7iWDkiA51b/KfkdGWFIVO8FflGgWe0TkjcWy
-         6i3rQd8pfjAtDqUeXnNb9E3JcdXX210Vv4dl5HNx///6FM72g+2uk94loBKG8svNPHaJ
-         F+sLAUUYYMDN+8u1YleiLVn3G5MU4MewJzesCJnPLpzdnachuy/ka3D6K2rRU6Z+lAhG
-         n42A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730110385; x=1730715185;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kTse+UIA/55vueNOi33xp+1Nvpf6FMXtF/RFvE7Aux4=;
-        b=kSburutbwM4mm3WDKQc88D5ZhhGpNtcmeABumyj1mXguQPr2IY6BkWPkUQ2OqOd6lJ
-         Ljv77w7QKxSsfXbHkgT2Kw1wWGTISorJqmOJlnUEZGSiLuG+wTXjU4uEg9H3AoeuG6PM
-         WexloPYNc2khisJ/orMpSSZQB57RXCJKnjG6QBGCYV2mGW2Xlu7O67vHhHAbHlZt71JG
-         xFdOuuJU8XKEAd5ldcjY0jkREmD/hjAOXgH7/3XbJTChsKzZJCS86uTzgrwfTC83Jtsu
-         d1Xr7KefRxXXKYqWI3x94IjNB/gF5M4/ayhoE+Ck7/P+hUSAFGNjOjeCnFOeEMz6Urlv
-         d9jg==
-X-Forwarded-Encrypted: i=1; AJvYcCWOrTGb8FGYCN+KmcyFrIIw69ECk7aexot00nPgp5t5EXhC1S6DkjUfUjzUhLFK1qb3jOaw4qHUyMuDMBE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2JnSy3u3xGSfFtrXuFnOSh2KN5dHfRp+UnK5iY4SvATeZrceY
-	OW0ZuPzRccIKDV1p6NPOIzxAH6pWSvEUEpisUNWQpEldvgKDRxrxMzJ7HsuonOo=
-X-Google-Smtp-Source: AGHT+IF1okyvZaKXse++KL2wEvd3Z6/OhR++/wqVVcCM7ZvtJyoTyPLnGArGk0C4r0iTm+16yUgihQ==
-X-Received: by 2002:a05:6512:12d1:b0:539:fcba:cc6d with SMTP id 2adb3069b0e04-53b34a19019mr2673820e87.42.1730110384195;
-        Mon, 28 Oct 2024 03:13:04 -0700 (PDT)
-Received: from ?IPV6:2001:67c:2fbc:1:e302:b53c:29e9:63b6? ([2001:67c:2fbc:1:e302:b53c:29e9:63b6])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43193573d47sm106146525e9.3.2024.10.28.03.13.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Oct 2024 03:13:03 -0700 (PDT)
-Message-ID: <feef6601-0e68-4913-b305-3be3face4a9e@openvpn.net>
-Date: Mon, 28 Oct 2024 11:13:18 +0100
+	s=arc-20240116; t=1730110444; c=relaxed/simple;
+	bh=YtL7XBpxJk6ROHIqvUfHeTpLoBni23YAgmaSPnpnFrM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=ju4Zhd7ikCamKWj8XajNwU2L0Zrod2tZ3DdvtCAmscFcGImtZYQKvQiu5UuvqU6AABWLTeBwevYGRYOMYJ/Tdl2WqfSAbaNHCeh00/jUNgH/RcL2TY8qbTgrBe6qSR5XJJY1QjktNsPdEBdZJHbdq130Woc0Sz3+sFDTF3vVRxs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riseup.net; spf=pass smtp.mailfrom=riseup.net; dkim=pass (1024-bit key) header.d=riseup.net header.i=@riseup.net header.b=ATZmbN9y; arc=none smtp.client-ip=198.252.153.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riseup.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riseup.net
+Received: from fews02-sea.riseup.net (fews02-sea-pn.riseup.net [10.0.1.112])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx0.riseup.net (Postfix) with ESMTPS id 4XcTkV3cyBz9vB8;
+	Mon, 28 Oct 2024 10:13:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=riseup.net; s=squak;
+	t=1730110434; bh=YtL7XBpxJk6ROHIqvUfHeTpLoBni23YAgmaSPnpnFrM=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=ATZmbN9yJgeJoNwb5uFNFJBJGiXahaiJ+vLZ78IB9dBFBq/1KGN4hJ7JZ5v2bWcKJ
+	 wkDj0FAHAEYD1/ZbPO5iVJCBEqNqnQ0Jl6JozjTUOQVJHNfFpWqGySJi1B4s/TCaL2
+	 yPJYlnkKUUwbF9w2A4ygAFWJXhOYDq3CEOq87sFM=
+X-Riseup-User-ID: 34E57D653E943C86F088611FC6F853262CC686371EA5F3C86E0378228CA93968
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+	 by fews02-sea.riseup.net (Postfix) with ESMTPSA id 4XcTk62JbLzFv8y;
+	Mon, 28 Oct 2024 10:13:34 +0000 (UTC)
+Message-ID: <c3f35eb2-2197-46f6-838d-c1e832d1750c@riseup.net>
+Date: Mon, 28 Oct 2024 07:13:31 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v10 23/23] testing/selftests: add test tool and
- scripts for ovpn module
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- Donald Hunter <donald.hunter@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
- Paolo Abeni <pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
- sd@queasysnail.net, Shuah Khan <shuah@kernel.org>, ryazanov.s.a@gmail.com,
- Eric Dumazet <edumazet@google.com>, linux-kselftest@vger.kernel.org
-References: <20241025-b4-ovpn-v10-0-b87530777be7@openvpn.net>
- <20241025-b4-ovpn-v10-23-b87530777be7@openvpn.net>
- <fe2b641f-a8aa-428c-9f04-f099015e0eb9@linuxfoundation.org>
+Subject: Re: [PATCH v12 08/15] drm/vkms: Re-introduce line-per-line
+ composition algorithm
+To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
+ Melissa Wen <melissa.srw@gmail.com>,
+ Haneen Mohammed <hamohammed.sa@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
+ Simona Vetter <simona@ffwll.ch>, rdunlap@infradead.org,
+ arthurgrillo@riseup.net, pekka.paalanen@haloniitty.fi,
+ Simona Vetter <simona.vetter@ffwll.ch>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ thomas.petazzoni@bootlin.com, jeremie.dautheribes@bootlin.com,
+ miquel.raynal@bootlin.com, seanpaul@google.com, marcheu@google.com,
+ nicolejadeyee@google.com, Pekka Paalanen <pekka.paalanen@collabora.com>
+References: <20241007-yuv-v12-0-01c1ada6fec8@bootlin.com>
+ <20241007-yuv-v12-8-01c1ada6fec8@bootlin.com>
+ <be1a9147-efbd-4c98-a0a4-7cf5a730fc70@riseup.net> <Zx9eblYbZsFqn-hX@fedora>
 Content-Language: en-US
-From: Antonio Quartulli <antonio@openvpn.net>
-Autocrypt: addr=antonio@openvpn.net; keydata=
- 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
-Organization: OpenVPN Inc.
-In-Reply-To: <fe2b641f-a8aa-428c-9f04-f099015e0eb9@linuxfoundation.org>
+From: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mairacanal@riseup.net>
+In-Reply-To: <Zx9eblYbZsFqn-hX@fedora>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 27/10/2024 01:40, Shuah Khan wrote:
-> On 10/25/24 03:14, Antonio Quartulli wrote:
->> The ovpn-cli tool can be compiled and used as selftest for the ovpn
->> kernel module.
+Hi Louis,
+
+On 28/10/24 06:50, Louis Chauvet wrote:
+> On 26/10/24 - 11:26, Maíra Canal wrote:
+>> Hi Louis,
 >>
->> It implements the netlink API and can thus be integrated in any
->> script for more automated testing.
->>
->> Along with the tool, 4 scripts are added that perform basic
->> functionality tests by means of network namespaces.
->>
->> Cc: shuah@kernel.org
->> Cc: linux-kselftest@vger.kernel.org
->> Signed-off-by: Antonio Quartulli <antonio@openvpn.net>
->> ---
->>   MAINTAINERS                                        |    1 +
->>   tools/testing/selftests/Makefile                   |    1 +
->>   tools/testing/selftests/net/ovpn/.gitignore        |    2 +
->>   tools/testing/selftests/net/ovpn/Makefile          |   17 +
->>   tools/testing/selftests/net/ovpn/config            |   10 +
->>   tools/testing/selftests/net/ovpn/data64.key        |    5 +
->>   tools/testing/selftests/net/ovpn/ovpn-cli.c        | 2370 ++++++++++ 
->> ++++++++++
->>   tools/testing/selftests/net/ovpn/tcp_peers.txt     |    5 +
->>   .../testing/selftests/net/ovpn/test-chachapoly.sh  |    9 +
->>   tools/testing/selftests/net/ovpn/test-float.sh     |    9 +
->>   tools/testing/selftests/net/ovpn/test-tcp.sh       |    9 +
->>   tools/testing/selftests/net/ovpn/test.sh           |  183 ++
->>   tools/testing/selftests/net/ovpn/udp_peers.txt     |    5 +
->>   13 files changed, 2626 insertions(+)
->>
+>> On 07/10/24 13:10, Louis Chauvet wrote:
+>>> Re-introduce a line-by-line composition algorithm for each pixel format.
+>>> This allows more performance by not requiring an indirection per pixel
+>>> read. This patch is focused on readability of the code.
+>>>
+>>> Line-by-line composition was introduced by [1] but rewritten back to
+>>> pixel-by-pixel algorithm in [2]. At this time, nobody noticed the impact
+>>> on performance, and it was merged.
+>>>
+>>> This patch is almost a revert of [2], but in addition efforts have been
+>>> made to increase readability and maintainability of the rotation handling.
+>>> The blend function is now divided in two parts:
+>>> - Transformation of coordinates from the output referential to the source
+>>> referential
+>>> - Line conversion and blending
+>>>
+>>> Most of the complexity of the rotation management is avoided by using
+>>> drm_rect_* helpers. The remaining complexity is around the clipping, to
+>>> avoid reading/writing outside source/destination buffers.
+>>>
+>>> The pixel conversion is now done line-by-line, so the read_pixel_t was
+>>> replaced with read_pixel_line_t callback. This way the indirection is only
+>>> required once per line and per plane, instead of once per pixel and per
+>>> plane.
+>>>
+>>> The read_line_t callbacks are very similar for most pixel format, but it
+>>> is required to avoid performance impact. Some helpers for color
+>>> conversion were introduced to avoid code repetition:
+>>> - *_to_argb_u16: perform colors conversion. They should be inlined by the
+>>>     compiler, and they are used to avoid repetition between multiple variants
+>>>     of the same format (argb/xrgb and maybe in the future for formats like
+>>>     bgr formats).
+>>>
+>>> This new algorithm was tested with:
+>>> - kms_plane (for color conversions)
+>>> - kms_rotation_crc (for rotations of planes)
+>>> - kms_cursor_crc (for translations of planes)
+>>> - kms_rotation (for all rotations and formats combinations) [3]
+>>> The performance gain was mesured with kms_fb_stress [4] with some
+>>> modification to fix the writeback format.
+>>>
+>>> The performance improvement is around 5 to 10%.
+>>>
+>>> [1]: commit 8ba1648567e2 ("drm: vkms: Refactor the plane composer to accept
+>>>        new formats")
+>>>        https://lore.kernel.org/all/20220905190811.25024-7-igormtorrente@gmail.com/
+>>> [2]: commit 322d716a3e8a ("drm/vkms: isolate pixel conversion
+>>>        functionality")
+>>>        https://lore.kernel.org/all/20230418130525.128733-2-mcanal@igalia.com/
+>>> [3]: https://lore.kernel.org/igt-dev/20240313-new_rotation-v2-0-6230fd5cae59@bootlin.com/
+>>> [4]: https://lore.kernel.org/all/20240422-kms_fb_stress-dev-v5-0-0c577163dc88@riseup.net/
+>>>
+>>> Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+>>> Acked-by: Pekka Paalanen <pekka.paalanen@collabora.com>
+>>>
+>>> # Conflicts:
+>>> #	drivers/gpu/drm/vkms/vkms_composer.c
 > 
-> What does the test output look like? Add that to the change log.
-
-Hi Shuan,
-
-is there any expected output for kselftest scripts?
-Right now it just prints a bunch of messages about what is being tested, 
-plus the output from `ping` and `iperf`.
-
-My assumption is that the output would be useful in case of failures, to 
-understand where and what went wrong.
-
-I can document that, but I am not sure it is truly helpful (?).
-What do you think?
-
-Is there any specific output format I should obey to?
-
-
-[...]
-
-
->> +
->> +static void usage(const char *cmd)
->> +{
->> +    fprintf(stderr,
->> +        "Usage %s <command> <iface> [arguments..]\n",
->> +        cmd);
->> +    fprintf(stderr, "where <command> can be one of the following\n\n");
->> +
->> +    fprintf(stderr, "* new_iface <iface> [mode]: create new ovpn 
->> interface\n");
->> +    fprintf(stderr, "\tiface: ovpn interface name\n");
->> +    fprintf(stderr, "\tmode:\n");
->> +    fprintf(stderr, "\t\t- P2P for peer-to-peer mode (i.e. client)\n");
->> +    fprintf(stderr, "\t\t- MP for multi-peer mode (i.e. server)\n");
->> +
->> +    fprintf(stderr, "* del_iface <iface>: delete ovpn interface\n");
->> +    fprintf(stderr, "\tiface: ovpn interface name\n");
->> +
->> +    fprintf(stderr,
->> +        "* listen <iface> <lport> <peers_file> [ipv6]: listen for 
->> incoming peer TCP connections\n");
->> +    fprintf(stderr, "\tiface: ovpn interface name\n");
->> +    fprintf(stderr, "\tlport: TCP port to listen to\n");
->> +    fprintf(stderr,
->> +        "\tpeers_file: file containing one peer per line: Line 
->> format:\n");
->> +    fprintf(stderr, "\t\t<peer_id> <vpnaddr>\n");
->> +    fprintf(stderr,
->> +        "\tipv6: whether the socket should listen to the IPv6 
->> wildcard address\n");
->> +
->> +    fprintf(stderr,
->> +        "* connect <iface> <peer_id> <raddr> <rport> [key_file]: 
->> start connecting peer of TCP-based VPN session\n");
->> +    fprintf(stderr, "\tiface: ovpn interface name\n");
->> +    fprintf(stderr, "\tpeer_id: peer ID of the connecting peer\n");
->> +    fprintf(stderr, "\traddr: peer IP address to connect to\n");
->> +    fprintf(stderr, "\trport: peer TCP port to connect to\n");
->> +    fprintf(stderr,
->> +        "\tkey_file: file containing the symmetric key for 
->> encryption\n");
->> +
->> +    fprintf(stderr,
->> +        "* new_peer <iface> <peer_id> <lport> <raddr> <rport> 
->> [vpnaddr]: add new peer\n");
->> +    fprintf(stderr, "\tiface: ovpn interface name\n");
->> +    fprintf(stderr, "\tlport: local UDP port to bind to\n");
->> +    fprintf(stderr,
->> +        "\tpeer_id: peer ID to be used in data packets to/from this 
->> peer\n");
->> +    fprintf(stderr, "\traddr: peer IP address\n");
->> +    fprintf(stderr, "\trport: peer UDP port\n");
->> +    fprintf(stderr, "\tvpnaddr: peer VPN IP\n");
->> +
->> +    fprintf(stderr,
->> +        "* new_multi_peer <iface> <lport> <peers_file>: add multiple 
->> peers as listed in the file\n");
->> +    fprintf(stderr, "\tiface: ovpn interface name\n");
->> +    fprintf(stderr, "\tlport: local UDP port to bind to\n");
->> +    fprintf(stderr,
->> +        "\tpeers_file: text file containing one peer per line. Line 
->> format:\n");
->> +    fprintf(stderr, "\t\t<peer_id> <raddr> <rport> <vpnaddr>\n");
->> +
->> +    fprintf(stderr,
->> +        "* set_peer <iface> <peer_id> <keepalive_interval> 
->> <keepalive_timeout>: set peer attributes\n");
->> +    fprintf(stderr, "\tiface: ovpn interface name\n");
->> +    fprintf(stderr, "\tpeer_id: peer ID of the peer to modify\n");
->> +    fprintf(stderr,
->> +        "\tkeepalive_interval: interval for sending ping messages\n");
->> +    fprintf(stderr,
->> +        "\tkeepalive_timeout: time after which a peer is timed out\n");
->> +
->> +    fprintf(stderr, "* del_peer <iface> <peer_id>: delete peer\n");
->> +    fprintf(stderr, "\tiface: ovpn interface name\n");
->> +    fprintf(stderr, "\tpeer_id: peer ID of the peer to delete\n");
->> +
->> +    fprintf(stderr, "* get_peer <iface> [peer_id]: retrieve peer(s) 
->> status\n");
->> +    fprintf(stderr, "\tiface: ovpn interface name\n");
->> +    fprintf(stderr,
->> +        "\tpeer_id: peer ID of the peer to query. All peers are 
->> returned if omitted\n");
->> +
->> +    fprintf(stderr,
->> +        "* new_key <iface> <peer_id> <slot> <key_id> <cipher> 
->> <key_dir> <key_file>: set data channel key\n");
->> +    fprintf(stderr, "\tiface: ovpn interface name\n");
->> +    fprintf(stderr,
->> +        "\tpeer_id: peer ID of the peer to configure the key for\n");
->> +    fprintf(stderr, "\tslot: either 1 (primary) or 2 (secondary)\n");
->> +    fprintf(stderr, "\tkey_id: an ID from 0 to 7\n");
->> +    fprintf(stderr,
->> +        "\tcipher: cipher to use, supported: aes (AES-GCM), 
->> chachapoly (CHACHA20POLY1305)\n");
->> +    fprintf(stderr,
->> +        "\tkey_dir: key direction, must 0 on one host and 1 on the 
->> other\n");
->> +    fprintf(stderr, "\tkey_file: file containing the pre-shared key\n");
->> +
->> +    fprintf(stderr,
->> +        "* del_key <iface> <peer_id> [slot]: erase existing data 
->> channel key\n");
->> +    fprintf(stderr, "\tiface: ovpn interface name\n");
->> +    fprintf(stderr, "\tpeer_id: peer ID of the peer to modify\n");
->> +    fprintf(stderr, "\tslot: slot to erase. PRIMARY if omitted\n");
->> +
->> +    fprintf(stderr,
->> +        "* get_key <iface> <peer_id> <slot>: retrieve non sensible 
->> key data\n");
->> +    fprintf(stderr, "\tiface: ovpn interface name\n");
->> +    fprintf(stderr, "\tpeer_id: peer ID of the peer to query\n");
->> +    fprintf(stderr, "\tslot: either 1 (primary) or 2 (secondary)\n");
->> +
->> +    fprintf(stderr,
->> +        "* swap_keys <iface> <peer_id>: swap content of primary and 
->> secondary key slots\n");
->> +    fprintf(stderr, "\tiface: ovpn interface name\n");
->> +    fprintf(stderr, "\tpeer_id: peer ID of the peer to modify\n");
->> +
->> +    fprintf(stderr,
->> +        "* listen_mcast: listen to ovpn netlink multicast messages\n");
->> +}
+> I jut noticed this, I will remove it...
 > 
-> If this test is run from "make kselftest" as default run does this usage
-> output show up in the report?
+>>> ---
+>>>    drivers/gpu/drm/vkms/vkms_composer.c | 234 ++++++++++++++++++++++++++++-------
+>>>    drivers/gpu/drm/vkms/vkms_drv.h      |  28 +++--
+>>>    drivers/gpu/drm/vkms/vkms_formats.c  | 224 ++++++++++++++++++++-------------
+>>>    drivers/gpu/drm/vkms/vkms_formats.h  |   2 +-
+>>>    drivers/gpu/drm/vkms/vkms_plane.c    |   5 +-
+>>>    5 files changed, 344 insertions(+), 149 deletions(-)
+>>>
+>>
+>> [...]
+>>
+>>> -static void RGB565_to_argb_u16(const u8 *in_pixel, struct pixel_argb_u16 *out_pixel)
+>>> +static struct pixel_argb_u16 argb_u16_from_RGB565(const __le16 *pixel)
+>>>    {
+>>> -	__le16 *pixel = (__le16 *)in_pixel;
+>>> +	struct pixel_argb_u16 out_pixel;
+>>>    	s64 fp_rb_ratio = drm_fixp_div(drm_int2fixp(65535), drm_int2fixp(31));
+>>>    	s64 fp_g_ratio = drm_fixp_div(drm_int2fixp(65535), drm_int2fixp(63));
+>>> @@ -226,40 +194,120 @@ static void RGB565_to_argb_u16(const u8 *in_pixel, struct pixel_argb_u16 *out_pi
+>>>    	s64 fp_g = drm_int2fixp((rgb_565 >> 5) & 0x3f);
+>>>    	s64 fp_b = drm_int2fixp(rgb_565 & 0x1f);
+>>> -	out_pixel->a = (u16)0xffff;
+>>> -	out_pixel->r = drm_fixp2int_round(drm_fixp_mul(fp_r, fp_rb_ratio));
+>>> -	out_pixel->g = drm_fixp2int_round(drm_fixp_mul(fp_g, fp_g_ratio));
+>>> -	out_pixel->b = drm_fixp2int_round(drm_fixp_mul(fp_b, fp_rb_ratio));
+>>> +	out_pixel.a = (u16)0xffff;
+>>> +	out_pixel.r = drm_fixp2int_round(drm_fixp_mul(fp_r, fp_rb_ratio));
+>>> +	out_pixel.g = drm_fixp2int_round(drm_fixp_mul(fp_g, fp_g_ratio));
+>>> +	out_pixel.b = drm_fixp2int_round(drm_fixp_mul(fp_b, fp_rb_ratio));
+>>> +
+>>> +	return out_pixel;
+>>>    }
+>>> -/**
+>>> - * vkms_compose_row - compose a single row of a plane
+>>> - * @stage_buffer: output line with the composed pixels
+>>> - * @plane: state of the plane that is being composed
+>>> - * @y: y coordinate of the row
+>>> +/*
+>>> + * The following functions are read_line function for each pixel format supported by VKMS.
+>>> + *
+>>> + * They read a line starting at the point @x_start,@y_start following the @direction. The result
+>>> + * is stored in @out_pixel and in the format ARGB16161616.
+>>> + *
+>>> + * These functions are very repetitive, but the innermost pixel loops must be kept inside these
+>>> + * functions for performance reasons. Some benchmarking was done in [1] where having the innermost
+>>> + * loop factored out of these functions showed a slowdown by a factor of three.
+>>>     *
+>>> - * This function composes a single row of a plane. It gets the source pixels
+>>> - * through the y coordinate (see get_packed_src_addr()) and goes linearly
+>>> - * through the source pixel, reading the pixels and converting it to
+>>> - * ARGB16161616 (see the pixel_read() callback). For rotate-90 and rotate-270,
+>>> - * the source pixels are not traversed linearly. The source pixels are queried
+>>> - * on each iteration in order to traverse the pixels vertically.
+>>> + * [1]: https://lore.kernel.org/dri-devel/d258c8dc-78e9-4509-9037-a98f7f33b3a3@riseup.net/
+>>>     */
+>>> -void vkms_compose_row(struct line_buffer *stage_buffer, struct vkms_plane_state *plane, int y)
+>>> +
+>>> +static void ARGB8888_read_line(const struct vkms_plane_state *plane, int x_start, int y_start,
+>>> +			       enum pixel_read_direction direction, int count,
+>>> +			       struct pixel_argb_u16 out_pixel[])
+>>>    {
+>>> -	struct pixel_argb_u16 *out_pixels = stage_buffer->pixels;
+>>> -	struct vkms_frame_info *frame_info = plane->frame_info;
+>>> -	u8 *src_pixels = get_packed_src_addr(frame_info, y, 0);
+>>> -	int limit = min_t(size_t, drm_rect_width(&frame_info->dst), stage_buffer->n_pixels);
+>>> +	struct pixel_argb_u16 *end = out_pixel + count;
+>>> +	u8 *src_pixels;
+>>> +
+>>> +	packed_pixels_addr_1x1(plane->frame_info, x_start, y_start, 0, &src_pixels);
+>>> +
+>>> +	int step = get_block_step_bytes(plane->frame_info->fb, direction, 0);
+>>> +
+>>> +	while (out_pixel < end) {
+>>> +		u8 *px = (u8 *)src_pixels;
+>>
+>> Why are you converting u8* to u8*? There are repetitions of this pattern
+>> in this patch.
+> 
+> I think it was to be consistent between all the conversion functions. They
+> are exactly the same, so having the casting (even useless one) at the same
+> place may help to understand the code.
+> 
+> I will remove this cast if you prefer.
 
-No.
-This usage is only printed when invoking ovpn-cli with wrong arguments 
-and this can't be the case in the kselftest.
+I only suggested to remove as we are going to delete this function when
+we push [1]. So, I believe it's better to add as little code as
+possible.
 
+[1] 
+https://lore.kernel.org/all/20241007-b4-new-color-formats-v2-0-d47da50d4674@bootlin.com/
 
-Other than documenting the output, do you think there is any other 
-critical part to be adjusted in this patch?
+Best Regards,
+- Maíra
 
-Thanks a lot for your time and patience.
-
-Regards,
-
-
-
--- 
-Antonio Quartulli
-OpenVPN Inc.
+> 
+>>> +		*out_pixel = argb_u16_from_u8888(px[3], px[2], px[1], px[0]);
+>>> +		out_pixel += 1;
+>>> +		src_pixels += step;
+>>> +	}
+>>> +}
+>>> +
+>>> +static void XRGB8888_read_line(const struct vkms_plane_state *plane, int x_start, int y_start,
+>>> +			       enum pixel_read_direction direction, int count,
+>>> +			       struct pixel_argb_u16 out_pixel[])
+>>> +{
+>>> +	struct pixel_argb_u16 *end = out_pixel + count;
+>>> +	u8 *src_pixels;
+>>> +
+>>> +	packed_pixels_addr_1x1(plane->frame_info, x_start, y_start, 0, &src_pixels);
+>>> +
+>>> +	int step = get_block_step_bytes(plane->frame_info->fb, direction, 0);
+>>> +
+>>> +	while (out_pixel < end) {
+>>> +		u8 *px = (u8 *)src_pixels;
+>>> +		*out_pixel = argb_u16_from_u8888(255, px[2], px[1], px[0]);
+>>> +		out_pixel += 1;
+>>> +		src_pixels += step;
+>>> +	}
+>>> +}
+>>> +
+>>> +static void ARGB16161616_read_line(const struct vkms_plane_state *plane, int x_start,
+>>> +				   int y_start, enum pixel_read_direction direction, int count,
+>>> +				   struct pixel_argb_u16 out_pixel[])
+>>> +{
+>>> +	struct pixel_argb_u16 *end = out_pixel + count;
+>>> +	u8 *src_pixels;
+>>> +
+>>> +	packed_pixels_addr_1x1(plane->frame_info, x_start, y_start, 0, &src_pixels);
+>>> +
+>>> +	int step = get_block_step_bytes(plane->frame_info->fb, direction, 0);
+>>> +
+>>> +	while (out_pixel < end) {
+>>> +		u16 *px = (u16 *)src_pixels;
+>>> +		*out_pixel = argb_u16_from_u16161616(px[3], px[2], px[1], px[0]);
+>>> +		out_pixel += 1;
+>>> +		src_pixels += step;
+>>> +	}
+>>> +}
+>>> +
+>>> +static void XRGB16161616_read_line(const struct vkms_plane_state *plane, int x_start,
+>>> +				   int y_start, enum pixel_read_direction direction, int count,
+>>> +				   struct pixel_argb_u16 out_pixel[])
+>>> +{
+>>> +	struct pixel_argb_u16 *end = out_pixel + count;
+>>> +	u8 *src_pixels;
+>>> +
+>>> +	packed_pixels_addr_1x1(plane->frame_info, x_start, y_start, 0, &src_pixels);
+>>> +
+>>> +	int step = get_block_step_bytes(plane->frame_info->fb, direction, 0);
+>>> +
+>>> +	while (out_pixel < end) {
+>>> +		__le16 *px = (__le16 *)src_pixels;
+>>> +		*out_pixel = argb_u16_from_le16161616(cpu_to_le16(0xFFFF), px[2], px[1], px[0]);
+>>> +		out_pixel += 1;
+>>> +		src_pixels += step;
+>>> +	}
+>>> +}
+>>> +
+>>> +static void RGB565_read_line(const struct vkms_plane_state *plane, int x_start,
+>>> +			     int y_start, enum pixel_read_direction direction, int count,
+>>> +			     struct pixel_argb_u16 out_pixel[])
+>>> +{
+>>> +	struct pixel_argb_u16 *end = out_pixel + count;
+>>> +	u8 *src_pixels;
+>>> +
+>>> +	packed_pixels_addr_1x1(plane->frame_info, x_start, y_start, 0, &src_pixels);
+>>> -	for (size_t x = 0; x < limit; x++, src_pixels += frame_info->fb->format->cpp[0]) {
+>>> -		int x_pos = get_x_position(frame_info, limit, x);
+>>> +	int step = get_block_step_bytes(plane->frame_info->fb, direction, 0);
+>>> -		if (drm_rotation_90_or_270(frame_info->rotation))
+>>> -			src_pixels = get_packed_src_addr(frame_info, x + frame_info->rotated.y1, 0)
+>>> -				+ frame_info->fb->format->cpp[0] * y;
+>>> +	while (out_pixel < end) {
+>>> +		__le16 *px = (__le16 *)src_pixels;
+>>> -		plane->pixel_read(src_pixels, &out_pixels[x_pos]);
+>>> +		*out_pixel = argb_u16_from_RGB565(px);
+>>> +		out_pixel += 1;
+>>> +		src_pixels += step;
+>>>    	}
+>>>    }
+>>> @@ -359,25 +407,25 @@ void vkms_writeback_row(struct vkms_writeback_job *wb,
+>>>    }
+>>>    /**
+>>> - * get_pixel_read_function() - Retrieve the correct read_pixel function for a specific
+>>> + * get_pixel_read_line_function() - Retrieve the correct read_line function for a specific
+>>>     * format. The returned pointer is NULL for unsupported pixel formats. The caller must ensure that
+>>>     * the pointer is valid before using it in a vkms_plane_state.
+>>>     *
+>>>     * @format: DRM_FORMAT_* value for which to obtain a conversion function (see [drm_fourcc.h])
+>>>     */
+>>> -pixel_read_t get_pixel_read_function(u32 format)
+>>> +pixel_read_line_t get_pixel_read_line_function(u32 format)
+>>>    {
+>>>    	switch (format) {
+>>>    	case DRM_FORMAT_ARGB8888:
+>>> -		return &ARGB8888_to_argb_u16;
+>>> +		return &ARGB8888_read_line;
+>>>    	case DRM_FORMAT_XRGB8888:
+>>> -		return &XRGB8888_to_argb_u16;
+>>> +		return &XRGB8888_read_line;
+>>>    	case DRM_FORMAT_ARGB16161616:
+>>> -		return &ARGB16161616_to_argb_u16;
+>>> +		return &ARGB16161616_read_line;
+>>>    	case DRM_FORMAT_XRGB16161616:
+>>> -		return &XRGB16161616_to_argb_u16;
+>>> +		return &XRGB16161616_read_line;
+>>>    	case DRM_FORMAT_RGB565:
+>>> -		return &RGB565_to_argb_u16;
+>>> +		return &RGB565_read_line;
+>>>    	default:
+>>>    		/*
+>>>    		 * This is a bug in vkms_plane_atomic_check(). All the supported
+>>> diff --git a/drivers/gpu/drm/vkms/vkms_formats.h b/drivers/gpu/drm/vkms/vkms_formats.h
+>>> index 3ecea4563254..8d2bef95ff79 100644
+>>> --- a/drivers/gpu/drm/vkms/vkms_formats.h
+>>> +++ b/drivers/gpu/drm/vkms/vkms_formats.h
+>>> @@ -5,7 +5,7 @@
+>>>    #include "vkms_drv.h"
+>>> -pixel_read_t get_pixel_read_function(u32 format);
+>>> +pixel_read_line_t get_pixel_read_line_function(u32 format);
+>>>    pixel_write_t get_pixel_write_function(u32 format);
+>>> diff --git a/drivers/gpu/drm/vkms/vkms_plane.c b/drivers/gpu/drm/vkms/vkms_plane.c
+>>> index 10e9b23dab28..8875bed76410 100644
+>>> --- a/drivers/gpu/drm/vkms/vkms_plane.c
+>>> +++ b/drivers/gpu/drm/vkms/vkms_plane.c
+>>> @@ -112,7 +112,6 @@ static void vkms_plane_atomic_update(struct drm_plane *plane,
+>>>    	frame_info = vkms_plane_state->frame_info;
+>>>    	memcpy(&frame_info->src, &new_state->src, sizeof(struct drm_rect));
+>>>    	memcpy(&frame_info->dst, &new_state->dst, sizeof(struct drm_rect));
+>>> -	memcpy(&frame_info->rotated, &new_state->dst, sizeof(struct drm_rect));
+>>
+>> If you won't use rotated anymore, delete it from the struct.
+> 
+> It is already done in this patch.
+> 
+> Thanks for your reviews,
+> Louis Chauvet
+> 
+>> Best Regards,
+>> - Maíra
+>>
+>>>    	frame_info->fb = fb;
+>>>    	memcpy(&frame_info->map, &shadow_plane_state->data, sizeof(frame_info->map));
+>>>    	drm_framebuffer_get(frame_info->fb);
+>>> @@ -122,10 +121,8 @@ static void vkms_plane_atomic_update(struct drm_plane *plane,
+>>>    									  DRM_MODE_REFLECT_X |
+>>>    									  DRM_MODE_REFLECT_Y);
+>>> -	drm_rect_rotate(&frame_info->rotated, drm_rect_width(&frame_info->rotated),
+>>> -			drm_rect_height(&frame_info->rotated), frame_info->rotation);
+>>> -	vkms_plane_state->pixel_read = get_pixel_read_function(fmt);
+>>> +	vkms_plane_state->pixel_read_line = get_pixel_read_line_function(fmt);
+>>>    }
+>>>    static int vkms_plane_atomic_check(struct drm_plane *plane,
+>>>
 
 
