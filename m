@@ -1,529 +1,99 @@
-Return-Path: <linux-kernel+bounces-385281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA5D89B3504
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 16:34:48 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9C109B3506
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 16:36:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D8D11F22A3F
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 15:34:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 791D8B21A3A
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 15:36:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A3041DE4C6;
-	Mon, 28 Oct 2024 15:34:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 069891DE3B5;
+	Mon, 28 Oct 2024 15:36:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B5p0otVp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YzWM7W5D"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38F7A12F585;
-	Mon, 28 Oct 2024 15:34:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A62112F585
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 15:36:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730129679; cv=none; b=qBQ8EPd+Mw6FyuDDuAc8INwFHsEzE+4vqk2GxYAKp7klIxRWs/WPeJ7vCWJRiCdF5rtGG5NP2tALS8AHGJ2+rlHBcztcYqSxd8AO5tgPdaEE5sZ2dRZbLT/n6+akQW4Jam4j3EOaHyBPYFwA6EDcmrviRFU6H0GZ7qeuve8VXyE=
+	t=1730129797; cv=none; b=T9+AiKQD4MTCiCov3iTBd8hhQ1pGXrAQNPKGZ1v4b8uebMtuWJ8usgPrsuec4okBN0umIVTWnhIC5mv87n7ot47EhxZjPu2cQNtadCWT7tdQQ48T2lyhWu068LO6Wf0KH4DxsU1cNXzin16faP2mp5e93lRD8spM4nKSRAQY/sM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730129679; c=relaxed/simple;
-	bh=/89yC2Iu3fktm/BJsaPrs5gU7sA22nLCmVLbjxgGTfk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CfLqCwPczkbvHBP10hD/F47BofLupmOIU+vjwgCjilhXXtnNdA0N9km3czUVaGyJ6o7F28rKB1b6vGbGn1Ou0uxXdYfguJUJR6iOOlvvM9odh2iO0uLUFjkA5Tj+8b1Umwb+ej/bR8ZjehxWksRCKnh809HVPLglh8VZ4Z4xytI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B5p0otVp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6774C4CEC3;
-	Mon, 28 Oct 2024 15:34:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730129678;
-	bh=/89yC2Iu3fktm/BJsaPrs5gU7sA22nLCmVLbjxgGTfk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=B5p0otVpR90xwm4rpftwflqf+4ntz2Wkntnikh6ai7qQE/voUADyYDfGdb7UOBisJ
-	 57MGUACcSpm89rK3g5bmvlybz5aUQNWsuThEz5wTzblD4IV+/eSTqjHJRrKMhcDCB8
-	 5tKJWZ2C/kZErkxWwtFVs01wnThqjWtdIIgFOlTxI9zYH2BdJaG5q6wSX8YTDb8rC6
-	 WEnVGwhDxGXi0hIkfLxV3PmjW72ZXqqhy5nkgQ68lNzrbxTmRRYLZBM6KPAyR44BDO
-	 Ti0gim9F4SLg0Qr5oNIilktAcpvZ/ddQAkS3wfNSZWmDEfIOVYdRFjMn2VYn9g32JL
-	 gaUI1XqzhxUbA==
-Date: Mon, 28 Oct 2024 16:34:33 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	Oleg Nesterov <oleg@redhat.com>
-Cc: Christian Brauner <christian@brauner.io>, 
-	Shuah Khan <shuah@kernel.org>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
-	Suren Baghdasaryan <surenb@google.com>, Vlastimil Babka <vbabka@suse.cz>, pedro.falcato@gmail.com, 
-	linux-kselftest@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
-	linux-api@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Oliver Sang <oliver.sang@intel.com>, John Hubbard <jhubbard@nvidia.com>
-Subject: Re: [PATCH v6 2/5] pidfd: add PIDFD_SELF_* sentinels to refer to own
- thread/process
-Message-ID: <20241028-gesoffen-drehmoment-5314faba9731@brauner>
-References: <cover.1729926229.git.lorenzo.stoakes@oracle.com>
- <8eceec08eb64b744b24bf2aa09d4535e77e1ba47.1729926229.git.lorenzo.stoakes@oracle.com>
+	s=arc-20240116; t=1730129797; c=relaxed/simple;
+	bh=j5Uo4fPx8PEHKjthtCPpv0qJhhzjgRMPRhbxvwt+ZvE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=coYdWvmUOGi/7rJ453OC3lGrWfBf42dXcRbTtnz0YthzOctzDtVEWaOlhiLI7sKPcSev+BQ7JKrUfnC46fjbAAPJrc1X6YDM66SiRbHt/NQ5lsGygsOx0oJVQKK3R8ZmfvNWGYnMpLtxn6pwgYELP8DBNr3J3nd6m/HsuusqEEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=YzWM7W5D; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-20c803787abso35037415ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 08:36:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1730129795; x=1730734595; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=EEf/COfTFGyP+xKqeIQFY/C7vxGTzZ4wSn2NFe/j+IM=;
+        b=YzWM7W5DejySyf3Srx0w9LtWYqOsUcOVSAKZ7pawQpb1ZA4g0yyDLqIwegectSUfsy
+         qhIV3tkZVZuuG2u3HTAqQ3LTYuvwN9jlPtWv2URoSvqWWYNy53Bmuiiml1TgAkBeBUmf
+         ZYI/B5o/ss0iKA818CJ8CWK0Kdcb0Dpw6gci0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730129795; x=1730734595;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EEf/COfTFGyP+xKqeIQFY/C7vxGTzZ4wSn2NFe/j+IM=;
+        b=IQHQQ9+QMKGljBHHUNmEJtvatJXVusLH10nRBbGFCGbzkTzmq+0qoYugD4O+sxtbtY
+         VbeN9I8WKz4OBGmWBzfMLO+/FAmSO+pMkQ+qFx+XVg/ZUDw85p4oCmYs1wp57Sc/Q654
+         ZtEjO6dVwGAHlL2rCWzr0wkdePWQO92Mw0GlLhORZKLWd160zV1g5SZU762xu2MBroGo
+         hmgFpH3FAuW055gigd059FuONjBbficnotKPs6uuVTcQJ622XpRpHe1OwBCm2/8cU/qZ
+         yRha2wp9r1+rtp50OCUvrhM74Oi1MZOhzZtSgH596mXaPMW8jfIjG91fCaFaYr9qRuaJ
+         F1TQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVwbvqXzUvFLukjt+8q4UwxUZvSo4X34A/h5fbBZ0DD5G/RLTCOewuANN9kcq7FvWKf9qF0dwZNf/sxB6U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yze4R8hEIVbXTWGPXh5AU+XeYc824cw10UZsNL0TZ+k7/biQFsT
+	VsYOrPXMIWUe8FNUr5UV6fRpg81GRAfK4GbqNnPkbey1mlZhk8oH93/Mejclrg==
+X-Google-Smtp-Source: AGHT+IFP006d1m5l/vO9+b3JvcahduuvR/e3NWwLX7zuw1Wcv7iCYDzfpokbHON1Y42zJ7TmtnaEyQ==
+X-Received: by 2002:a17:903:2447:b0:20c:5ffe:3ef1 with SMTP id d9443c01a7336-210e862104bmr3983655ad.17.1730129794783;
+        Mon, 28 Oct 2024 08:36:34 -0700 (PDT)
+Received: from tigerii.tok.corp.google.com ([2401:fa00:8f:203:f1f8:97e1:9c5b:d66f])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bbf4a230sm52148315ad.31.2024.10.28.08.36.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Oct 2024 08:36:34 -0700 (PDT)
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Minchan Kim <minchan@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	Sergey Senozhatsky <senozhatsky@chromium.org>
+Subject: [PATCHv2 0/2] zram: IDLE flag handling fixes
+Date: Tue, 29 Oct 2024 00:36:13 +0900
+Message-ID: <20241028153629.1479791-1-senozhatsky@chromium.org>
+X-Mailer: git-send-email 2.47.0.163.g1226f6d8fa-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="ft377c7j3f5pvc3c"
-Content-Disposition: inline
-In-Reply-To: <8eceec08eb64b744b24bf2aa09d4535e77e1ba47.1729926229.git.lorenzo.stoakes@oracle.com>
+Content-Transfer-Encoding: 8bit
 
+zram can wrongly preserve ZRAM_IDLE flag on its entries
+which can result in premature post-processing (writeback
+and recompression) of such entries.
 
---ft377c7j3f5pvc3c
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+v1->v2:
+-- fixed typos and comments styles
+-- added Fixes tags
 
-On Sat, Oct 26, 2024 at 08:24:58AM +0100, Lorenzo Stoakes wrote:
-> It is useful to be able to utilise the pidfd mechanism to reference the
-> current thread or process (from a userland point of view - thread group
-> leader from the kernel's point of view).
-> 
-> Therefore introduce PIDFD_SELF_THREAD to refer to the current thread, and
-> PIDFD_SELF_THREAD_GROUP to refer to the current thread group leader.
-> 
-> For convenience and to avoid confusion from userland's perspective we alias
-> these:
-> 
-> * PIDFD_SELF is an alias for PIDFD_SELF_THREAD - This is nearly always what
->   the user will want to use, as they would find it surprising if for
->   instance fd's were unshared()'d and they wanted to invoke pidfd_getfd()
->   and that failed.
-> 
-> * PIDFD_SELF_PROCESS is an alias for PIDFD_SELF_THREAD_GROUP - Most users
->   have no concept of thread groups or what a thread group leader is, and
->   from userland's perspective and nomenclature this is what userland
->   considers to be a process.
-> 
-> Due to the refactoring of the central __pidfd_get_pid() function we can
-> implement this functionality centrally, providing the use of this sentinel
-> in most functionality which utilises pidfd's.
-> 
-> We need to explicitly adjust kernel_waitid_prepare() to permit this (though
-> it wouldn't really make sense to use this there, we provide the ability for
-> consistency).
-> 
-> We explicitly disallow use of this in setns(), which would otherwise have
-> required explicit custom handling, as it doesn't make sense to set the
-> current calling thread to join the namespace of itself.
-> 
-> As the callers of pidfd_get_pid() expect an increased reference count on
-> the pid we do so in the self case, reducing churn and avoiding any breakage
-> from existing logic which decrements this reference count.
-> 
-> This change implicitly provides PIDFD_SELF_* support in the waitid(P_PIDFS,
-> ...), process_madvise(), process_mrelease(), pidfd_send_signal(), and
-> pidfd_getfd() system calls.
-> 
-> Things such as polling a pidfs and general fd operations are not supported,
-> this strictly provides the sentinel for APIs which explicitly accept a
-> pidfd.
-> 
-> Suggested-by: Pedro Falcato <pedro.falcato@gmail.com>
-> Reviewed-by: Shakeel Butt <shakeel.butt@linux.dev>
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> ---
+Sergey Senozhatsky (2):
+  zram: clear IDLE flag after recompression
+  zram: clear IDLE flag in mark_idle()
 
-Currently, a pidfd based system call like pidfd_send_signal() would
-simply do:
+ drivers/block/zram/zram_drv.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-fdget(pidfd);
-// use struct pid
-fdput(pidfd);
+--
+2.47.0.163.g1226f6d8fa-goog
 
-Where the lifetime of @pid is guaranteed by @file. And in the regular
-case where there's only a single thread the file code will avoid taking
-a reference. Thus, there's no reference count bump on fdget(), nor a
-drop on fdput(), nor a get_pid() or put_pid().
-
-With your patch series you will always cause reference counts on @pid to
-be taken for everyone. And I wouldn't be surprised if we get performance
-regressions for this.
-
-In one of my earlier mails I had mused about a fdput() like primitive.
-What I roughly, hastily, and under the influence of the flu, sketched in
-the _completey untested_ patch I appended illustrates roughly what I had
-been thinking about.
-
->  include/linux/pid.h        |  8 ++++--
->  include/uapi/linux/pidfd.h | 10 ++++++++
->  kernel/exit.c              |  4 ++-
->  kernel/nsproxy.c           |  1 +
->  kernel/pid.c               | 51 ++++++++++++++++++++++++--------------
->  5 files changed, 53 insertions(+), 21 deletions(-)
-> 
-> diff --git a/include/linux/pid.h b/include/linux/pid.h
-> index d466890e1b35..3b2ac7567a88 100644
-> --- a/include/linux/pid.h
-> +++ b/include/linux/pid.h
-> @@ -78,11 +78,15 @@ struct file;
->   * __pidfd_get_pid() - Retrieve a pid associated with the specified pidfd.
->   *
->   * @pidfd:      The pidfd whose pid we want, or the fd of a /proc/<pid> file if
-> - *              @alloc_proc is also set.
-> + *              @alloc_proc is also set, or PIDFD_SELF_* to refer to the current
-> + *              thread or thread group leader.
->   * @allow_proc: If set, then an fd of a /proc/<pid> file can be passed instead
->   *              of a pidfd, and this will be used to determine the pid.
-> +
->   * @flags:      Output variable, if non-NULL, then the file->f_flags of the
-> - *              pidfd will be set here.
-> + *              pidfd will be set here or If PIDFD_SELF_THREAD is set, this is
-> + *              set to PIDFD_THREAD, otherwise if PIDFD_SELF_THREAD_GROUP then
-> + *              this is set to zero.
->   *
->   * Returns: If successful, the pid associated with the pidfd, otherwise an
->   *          error.
-> diff --git a/include/uapi/linux/pidfd.h b/include/uapi/linux/pidfd.h
-> index 565fc0629fff..6fe1d63b2086 100644
-> --- a/include/uapi/linux/pidfd.h
-> +++ b/include/uapi/linux/pidfd.h
-> @@ -29,4 +29,14 @@
->  #define PIDFD_GET_USER_NAMESPACE              _IO(PIDFS_IOCTL_MAGIC, 9)
->  #define PIDFD_GET_UTS_NAMESPACE               _IO(PIDFS_IOCTL_MAGIC, 10)
-> 
-> +/*
-> + * Special sentinel values which can be used to refer to the current thread or
-> + * thread group leader (which from a userland perspective is the process).
-> + */
-> +#define PIDFD_SELF		PIDFD_SELF_THREAD
-> +#define PIDFD_SELF_PROCESS	PIDFD_SELF_THREAD_GROUP
-> +
-> +#define PIDFD_SELF_THREAD	-10000 /* Current thread. */
-> +#define PIDFD_SELF_THREAD_GROUP	-20000 /* Current thread group leader. */
-> +
->  #endif /* _UAPI_LINUX_PIDFD_H */
-> diff --git a/kernel/exit.c b/kernel/exit.c
-> index 619f0014c33b..e4f85ec4ba78 100644
-> --- a/kernel/exit.c
-> +++ b/kernel/exit.c
-> @@ -71,6 +71,7 @@
->  #include <linux/user_events.h>
->  #include <linux/uaccess.h>
-> 
-> +#include <uapi/linux/pidfd.h>
->  #include <uapi/linux/wait.h>
-> 
->  #include <asm/unistd.h>
-> @@ -1739,7 +1740,8 @@ int kernel_waitid_prepare(struct wait_opts *wo, int which, pid_t upid,
->  		break;
->  	case P_PIDFD:
->  		type = PIDTYPE_PID;
-> -		if (upid < 0)
-> +		if (upid < 0 && upid != PIDFD_SELF_THREAD &&
-> +		    upid != PIDFD_SELF_THREAD_GROUP)
->  			return -EINVAL;
-> 
->  		pid = pidfd_get_pid(upid, &f_flags);
-> diff --git a/kernel/nsproxy.c b/kernel/nsproxy.c
-> index dc952c3b05af..d239f7eeaa1f 100644
-> --- a/kernel/nsproxy.c
-> +++ b/kernel/nsproxy.c
-> @@ -550,6 +550,7 @@ SYSCALL_DEFINE2(setns, int, fd, int, flags)
->  	struct nsset nsset = {};
->  	int err = 0;
-> 
-> +	/* If fd is PIDFD_SELF_*, implicitly fail here, as invalid. */
->  	if (!fd_file(f))
->  		return -EBADF;
-> 
-> diff --git a/kernel/pid.c b/kernel/pid.c
-> index 94c97559e5c5..0a1861b4422c 100644
-> --- a/kernel/pid.c
-> +++ b/kernel/pid.c
-> @@ -535,33 +535,48 @@ struct pid *find_ge_pid(int nr, struct pid_namespace *ns)
->  }
->  EXPORT_SYMBOL_GPL(find_ge_pid);
-> 
-> +static struct pid *pidfd_get_pid_self(unsigned int pidfd, unsigned int *flags)
-
-The @flags argument is unused afaict.
-
-> +{
-> +	bool is_thread = pidfd == PIDFD_SELF_THREAD;
-> +	enum pid_type type = is_thread ? PIDTYPE_PID : PIDTYPE_TGID;
-> +	struct pid *pid = *task_pid_ptr(current, type);
-> +
-> +	/* The caller expects an elevated reference count. */
-> +	get_pid(pid);
-> +	return pid;
-> +}
-
-Fwiw, what you've done here is essentially reimplement the already
-existing get_task_pid() helper that you could simply use.
-
-> +
->  struct pid *__pidfd_get_pid(unsigned int pidfd, bool allow_proc,
->  			    unsigned int *flags)
->  {
-> -	struct pid *pid;
-> -	struct fd f = fdget(pidfd);
-> -	struct file *file = fd_file(f);
-> +	if (pidfd == PIDFD_SELF_THREAD || pidfd == PIDFD_SELF_THREAD_GROUP) {
-> +		return pidfd_get_pid_self(pidfd, flags);
-> +	} else {
-
-I think the else can just go and we can save an indentation level.
-
-> +		struct pid *pid;
-> +		struct fd f = fdget(pidfd);
-> +		struct file *file = fd_file(f);
-> 
-> -	if (!file)
-> -		return ERR_PTR(-EBADF);
-> +		if (!file)
-> +			return ERR_PTR(-EBADF);
-> 
-> -	pid = pidfd_pid(file);
-> -	/* If we allow opening a pidfd via /proc/<pid>, do so. */
-> -	if (IS_ERR(pid) && allow_proc)
-> -		pid = tgid_pidfd_to_pid(file);
-> +		pid = pidfd_pid(file);
-> +		/* If we allow opening a pidfd via /proc/<pid>, do so. */
-> +		if (IS_ERR(pid) && allow_proc)
-> +			pid = tgid_pidfd_to_pid(file);
-> 
-> -	if (IS_ERR(pid)) {
-> +		if (IS_ERR(pid)) {
-> +			fdput(f);
-> +			return pid;
-> +		}
-> +
-> +		/* Pin pid before we release fd. */
-> +		get_pid(pid);
-> +		if (flags)
-> +			*flags = file->f_flags;
->  		fdput(f);
-> +
->  		return pid;
->  	}
-> -
-> -	/* Pin pid before we release fd. */
-> -	get_pid(pid);
-> -	if (flags)
-> -		*flags = file->f_flags;
-> -	fdput(f);
-> -
-> -	return pid;
->  }
-> 
->  /**
-> --
-> 2.47.0
-
---ft377c7j3f5pvc3c
-Content-Type: text/x-diff; charset=utf-8
-Content-Disposition: attachment; filename="0001-UNTESTED-SKETCH-DRAFT.patch"
-
-From 120b45b3900d28880b65b776f7a188cab4b38250 Mon Sep 17 00:00:00 2001
-From: Christian Brauner <brauner@kernel.org>
-Date: Mon, 28 Oct 2024 15:34:59 +0100
-Subject: [PATCH] UNTESTED, SKETCH, DRAFT
-
-Signed-off-by: Christian Brauner <brauner@kernel.org>
----
- fs/pidfs.c            | 42 +++++++++++++++++++++++++++++++++++++
- include/linux/pidfs.h | 29 +++++++++++++++++++++++++
- kernel/signal.c       | 49 ++++++++++++-------------------------------
- 3 files changed, 84 insertions(+), 36 deletions(-)
-
-diff --git a/fs/pidfs.c b/fs/pidfs.c
-index 80675b6bf884..de7e9e6bbd22 100644
---- a/fs/pidfs.c
-+++ b/fs/pidfs.c
-@@ -22,6 +22,48 @@
- #include "internal.h"
- #include "mount.h"
- 
-+struct pid_fd pidfd_get(int fd)
-+{
-+	struct fd f;
-+	struct pid *pid;
-+
-+	/* handle PIDFD_SELF_* cases */
-+	if (fd < 0) {
-+		if (fd == PIDFD_SELF_THREAD)
-+			return (struct pid_fd){ .fd = EMPTY_FD, .pid = get_task_pid(current, PIDTYPE_PID) };
-+		if (fd == PIDFD_SELF_THREAD_GROUP)
-+			return (struct pid_fd){ .fd = EMPTY_FD, .pid = get_task_pid(current, PIDTYPE_TGID) };
-+		return (struct pid_fd){ .fd = EMPTY_FD, .pid = ERR_PTR(-EBADF) };
-+	}
-+
-+	/* handle the regular case */
-+	f = fdget(fd);
-+	if (!fd_file(f))
-+		return (struct pid_fd){ .fd = EMPTY_FD, .pid = ERR_PTR(-EBADF) };
-+
-+	pid = pidfd_pid(fd_file(f));
-+	if (IS_ERR(pid)) {
-+		fdput(f);
-+		return (struct pid_fd) { .fd = EMPTY_FD, .pid = pid };
-+	}
-+
-+	return (struct pid_fd) { .fd = f, pid = pid } ;
-+}
-+
-+void pidfd_put(struct pid_fd fd)
-+{
-+	/*
-+	 * Handle PIDFD_SELF_* where the struct pid hasn't been attached
-+	 * to a file.
-+	 */
-+	if (fd_empty(fd.fd) && pidfd_valid(fd))
-+		put_pid(fd.pid);
-+
-+	/* Can call unconditionally safely. */
-+	fdput(fd.fd);
-+
-+}
-+
- #ifdef CONFIG_PROC_FS
- /**
-  * pidfd_show_fdinfo - print information about a pidfd
-diff --git a/include/linux/pidfs.h b/include/linux/pidfs.h
-index 75bdf9807802..ad86b69ee1ea 100644
---- a/include/linux/pidfs.h
-+++ b/include/linux/pidfs.h
-@@ -2,6 +2,35 @@
- #ifndef _LINUX_PID_FS_H
- #define _LINUX_PID_FS_H
- 
-+#include <linux/file.h>
-+#include <linux/cleanup.h>
-+
-+#define PIDFD_SELF           PIDFD_SELF_THREAD
-+#define PIDFD_SELF_PROCESS   PIDFD_SELF_THREAD_GROUP
-+
-+#define PIDFD_SELF_THREAD		-10000 /* Current thread. */
-+#define PIDFD_SELF_THREAD_GROUP		-20000 /* Current thread group leader. */
-+
-+struct pid_fd {
-+	struct fd fd;
-+	struct pid *pid;
-+};
-+
-+static inline struct pid *pid_fd_pid(struct pid_fd pfd)
-+{
-+	return pfd.pid;
-+}
-+
-+static inline bool pidfd_valid(struct pid_fd pfd)
-+{
-+	return !IS_ERR(pid_fd_pid(pfd));
-+}
-+
-+struct pid_fd pidfd_get(int fd);
-+void pidfd_put(struct pid_fd fd);
-+
-+DEFINE_CLASS(pid_fd, struct pid_fd, pidfd_put(_T), pidfd_get(fd), int fd)
-+
- struct file *pidfs_alloc_file(struct pid *pid, unsigned int flags);
- void __init pidfs_init(void);
- 
-diff --git a/kernel/signal.c b/kernel/signal.c
-index 4344860ffcac..16b10e726038 100644
---- a/kernel/signal.c
-+++ b/kernel/signal.c
-@@ -47,6 +47,7 @@
- #include <linux/cgroup.h>
- #include <linux/audit.h>
- #include <linux/sysctl.h>
-+#include <linux/pidfs.h>
- #include <uapi/linux/pidfd.h>
- 
- #define CREATE_TRACE_POINTS
-@@ -3875,17 +3876,6 @@ static int copy_siginfo_from_user_any(kernel_siginfo_t *kinfo,
- 	return copy_siginfo_from_user(kinfo, info);
- }
- 
--static struct pid *pidfd_to_pid(const struct file *file)
--{
--	struct pid *pid;
--
--	pid = pidfd_pid(file);
--	if (!IS_ERR(pid))
--		return pid;
--
--	return tgid_pidfd_to_pid(file);
--}
--
- #define PIDFD_SEND_SIGNAL_FLAGS                            \
- 	(PIDFD_SIGNAL_THREAD | PIDFD_SIGNAL_THREAD_GROUP | \
- 	 PIDFD_SIGNAL_PROCESS_GROUP)
-@@ -3908,7 +3898,6 @@ SYSCALL_DEFINE4(pidfd_send_signal, int, pidfd, int, sig,
- 		siginfo_t __user *, info, unsigned int, flags)
- {
- 	int ret;
--	struct fd f;
- 	struct pid *pid;
- 	kernel_siginfo_t kinfo;
- 	enum pid_type type;
-@@ -3921,25 +3910,18 @@ SYSCALL_DEFINE4(pidfd_send_signal, int, pidfd, int, sig,
- 	if (hweight32(flags & PIDFD_SEND_SIGNAL_FLAGS) > 1)
- 		return -EINVAL;
- 
--	f = fdget(pidfd);
--	if (!fd_file(f))
--		return -EBADF;
--
--	/* Is this a pidfd? */
--	pid = pidfd_to_pid(fd_file(f));
--	if (IS_ERR(pid)) {
--		ret = PTR_ERR(pid);
--		goto err;
--	}
-+	CLASS(pid_fd, pid_fd)(pidfd);
-+	if (!pidfd_valid(pid_fd))
-+		return PTR_ERR(pid_fd_pid(pid_fd));
- 
--	ret = -EINVAL;
-+	pid = pid_fd_pid(pid_fd);
- 	if (!access_pidfd_pidns(pid))
--		goto err;
-+		return -EINVAL;
- 
- 	switch (flags) {
- 	case 0:
- 		/* Infer scope from the type of pidfd. */
--		if (fd_file(f)->f_flags & PIDFD_THREAD)
-+		if (pidfd > 0 && fd_file(pid_fd.fd)->f_flags & PIDFD_THREAD)
- 			type = PIDTYPE_PID;
- 		else
- 			type = PIDTYPE_TGID;
-@@ -3958,28 +3940,23 @@ SYSCALL_DEFINE4(pidfd_send_signal, int, pidfd, int, sig,
- 	if (info) {
- 		ret = copy_siginfo_from_user_any(&kinfo, info);
- 		if (unlikely(ret))
--			goto err;
-+			return ret;
- 
--		ret = -EINVAL;
- 		if (unlikely(sig != kinfo.si_signo))
--			goto err;
-+			return -EINVAL;
- 
- 		/* Only allow sending arbitrary signals to yourself. */
--		ret = -EPERM;
- 		if ((task_pid(current) != pid || type > PIDTYPE_TGID) &&
- 		    (kinfo.si_code >= 0 || kinfo.si_code == SI_TKILL))
--			goto err;
-+			return -EPERM;
- 	} else {
- 		prepare_kill_siginfo(sig, &kinfo, type);
- 	}
- 
- 	if (type == PIDTYPE_PGID)
--		ret = kill_pgrp_info(sig, &kinfo, pid);
--	else
--		ret = kill_pid_info_type(sig, &kinfo, pid, type);
--err:
--	fdput(f);
--	return ret;
-+		return kill_pgrp_info(sig, &kinfo, pid);
-+
-+	return kill_pid_info_type(sig, &kinfo, pid, type);
- }
- 
- static int
--- 
-2.45.2
-
-
---ft377c7j3f5pvc3c--
 
