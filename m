@@ -1,187 +1,157 @@
-Return-Path: <linux-kernel+bounces-384799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 258E59B2E95
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 12:20:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5374D9B2E9D
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 12:20:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FD421C215BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 11:20:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0970F1F2111A
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 11:20:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0EE81D416E;
-	Mon, 28 Oct 2024 11:11:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A6EA1D5AC7;
+	Mon, 28 Oct 2024 11:13:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jVNNxM6+"
-Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="qG25LAP5"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E15D1D5171
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 11:11:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 028891D2B37;
+	Mon, 28 Oct 2024 11:13:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730113872; cv=none; b=Dking/orCqw1UCYhuyer8Ktvcv2m0UCCJr4MRmnKrXbxBi8imtNSlXHhLIMigSejD5POCIZwXtLeYUwC70wuw8Fubcil0q4ZcPBYyshoqWum2m8KOKyPd5mL2ce9si1eCVt0I/Ibhuv96kBNPSJ1A2qxS/ubNkIz3TNeztJCwdg=
+	t=1730113992; cv=none; b=Qze1//NzlROMCeKEkM2dImesVZWwiZHwN0UeYwWFBoEu3+/N4iR1jcRrr85grOIjdpx17voFcpntr66QAXTRsVa2s7Q8W9CTaXilOzB9Or3F3peJe0uYjaMtY6Nf+K/WSIxzIY1YzZAXuITutMGYidOcmGNn10cLsYmrdxZbun8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730113872; c=relaxed/simple;
-	bh=ZgTV9zpZbKQQXLQ5wQfQWN0K4yKV8OzqkCwsGVG8/BA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IbIksoO0moWd4ogWYx/Tk0FPR0d6334K9Zb4v989iP4soLoH0BG7KkAlwcSaRkEot+Tw0+OZZtO+3r7jtkgZl9sof93hMhtYVqbhFhCeEJK2pwcmvth9t/oavBxnd5RF4i74UdZNc9pQFTl2rzN8oZ94AsnNXcbaJf4WWEqE1A4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=jVNNxM6+; arc=none smtp.client-ip=209.85.221.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-50d32d82bd8so996685e0c.1
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 04:11:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1730113867; x=1730718667; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wVZy5IrMKfr30Sb+HXmGpWXo6EuG4COK1gDvgq9aZn8=;
-        b=jVNNxM6+gyx8R8uUeXABZTmRx1Nr1e+EbD4QAVL6vo65ks5SGf2YRGl83/HIi3e9qk
-         nhBkcPYRKvb121HeFy8c2JQG0ToZVEU6Hsx+YAcy+4KIb/oWxHr2TP6YWu3b+AZpfS6A
-         kA0afJs7eesfYIlmXiZi/Hd+JHXu+UVDCUEqc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730113867; x=1730718667;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wVZy5IrMKfr30Sb+HXmGpWXo6EuG4COK1gDvgq9aZn8=;
-        b=LruRz/oerEYpuQAhdWAmdQBxlsXxMDTL9BLwoW9YHdfG1tpiSsGC63igNDOo6QFG62
-         w6ILhsmU0muYS2X0/4TE4/511KZvsKO+stnkFFcH1tdXWOAfy7dMuuGrVL+Zgi+JIxhK
-         cITzdkbtRqE8kt+TVxyEdRcZJocy7ecg/9H9G7bbKwHe5YUqr9sG53FnKKIs/NfHw1Jg
-         PfVLvB7sXnqdGoNTjEgHH2k2WlenJCTeXOJKWYUP6JIU2Zt5tmdtrG3zYx6HSwFduYMr
-         eZZ8fpgBzv89vG9dwjpZqmwU7p7b5aM4HtE3VsibgNMpdi0/QibP9pfCwRLnu7I7bBfu
-         Yp6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV9CBdY5jgZoiIbMLoOY1ZiKwny0V9br721lr/iZZOjRnIycOF3Ckh2kCP00EjDnacirpekhHrTtm/9zUg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YynbGI4DzPCLUwnjlP96VEMgpYbByqWD4RZUZqdy357hLaFvXtI
-	VXIF3ja+erXd7drClkntw7+byQ1KnYqKeqKglZBBXQu98GDm0zSO2PlBfKGNurYscrzx2y08dk8
-	=
-X-Google-Smtp-Source: AGHT+IF8BpwhdgOXsSdeZxb6yrYhxgK8xl5qcu2lXMcJyFZrNL/vtP/+p2yJoKHv0PicZgGvxesoYA==
-X-Received: by 2002:a05:6122:3196:b0:50d:3ec1:154b with SMTP id 71dfb90a1353d-51014ff8598mr4082217e0c.3.1730113866707;
-        Mon, 28 Oct 2024 04:11:06 -0700 (PDT)
-Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com. [209.85.222.43])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-510048c4ed2sm827768e0c.54.2024.10.28.04.11.04
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Oct 2024 04:11:04 -0700 (PDT)
-Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-84fc0209e87so1059665241.1
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 04:11:04 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXCMRw2cuVSLU1bWNYBSpVYFrEs6+eFUURdnPr3R6yWBYUm8UlLGm7ttYQn7IcEa6hnv++8XdPZwDad/ZE=@vger.kernel.org
-X-Received: by 2002:a05:6122:3d01:b0:50d:99e4:dea6 with SMTP id
- 71dfb90a1353d-51015055166mr3900796e0c.7.1730113863969; Mon, 28 Oct 2024
- 04:11:03 -0700 (PDT)
+	s=arc-20240116; t=1730113992; c=relaxed/simple;
+	bh=4eVSmPw77MiybtV92bX+EBjPWWE81quUsOMS2GIbdlA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=biaN2/08SgQfXcGe0w4aZANuBuvsmDzAmRCb//6VF+9beflLYUpBPg8fwlnkAOyCJyzdbWKPQpR3aZUAVgyjEFHKLULq2SPToceNbp6l+mxl/9KWdqtNWq4vH8gfeadb3a9fWwwYBQ2vqB7FqAbn7e4MQJW/kZmno4YGEQsH78s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=qG25LAP5; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49SBCOtR024786;
+	Mon, 28 Oct 2024 06:12:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1730113944;
+	bh=J3ddcrfgye+/HdaRhg7pJh3MNd6nUm1/2A/gEQxQhVE=;
+	h=From:To:CC:Subject:Date;
+	b=qG25LAP5UZoe4PSg0njZavSRFDQoHMSgbkJTC/nuuSrr0mCLxS03k3VVxOq/1Uoa4
+	 teo2mtWnoMiL+XoFghxa9PRzb2I98ZJe3F2VWSUZbOPJJeWAp9cShEdnE9OVy4g0gr
+	 HnBpHxRCLEQirdtXFnCuRKFuxEC269TEjiK42N+4=
+Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 49SBCODp039166
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 28 Oct 2024 06:12:24 -0500
+Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 28
+ Oct 2024 06:12:23 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 28 Oct 2024 06:12:24 -0500
+Received: from fllv0122.itg.ti.com (fllv0122.itg.ti.com [10.247.120.72])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49SBCNbL107215;
+	Mon, 28 Oct 2024 06:12:23 -0500
+Received: from localhost (meghana-pc.dhcp.ti.com [10.24.69.13] (may be forged))
+	by fllv0122.itg.ti.com (8.14.7/8.14.7) with ESMTP id 49SBCMUk028004;
+	Mon, 28 Oct 2024 06:12:23 -0500
+From: Meghana Malladi <m-malladi@ti.com>
+To: <vigneshr@ti.com>, <grygorii.strashko@ti.com>, <horms@kernel.org>,
+        <jan.kiszka@siemens.com>, <diogo.ivo@siemens.com>, <pabeni@redhat.com>,
+        <kuba@kernel.org>, <edumazet@google.com>, <davem@davemloft.net>,
+        <andrew+netdev@lunn.ch>
+CC: <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
+        Roger Quadros
+	<rogerq@kernel.org>, <danishanwar@ti.com>,
+        <m-malladi@ti.com>, "Vadim
+ Fedorenko" <vadim.fedorenko@linux.dev>
+Subject: [PATCH net v3] net: ti: icssg-prueth: Fix 1 PPS sync
+Date: Mon, 28 Oct 2024 16:40:52 +0530
+Message-ID: <20241028111051.1546143-1-m-malladi@ti.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241025104548.1220076-1-fshao@chromium.org> <20241025104548.1220076-2-fshao@chromium.org>
- <5vmfh2nkxtpzt2vk4j6ghro7z5stoyvry3enzoqepg6hjxqrho@fofs5cwa2iqq>
-In-Reply-To: <5vmfh2nkxtpzt2vk4j6ghro7z5stoyvry3enzoqepg6hjxqrho@fofs5cwa2iqq>
-From: Fei Shao <fshao@chromium.org>
-Date: Mon, 28 Oct 2024 19:10:27 +0800
-X-Gmail-Original-Message-ID: <CAC=S1njPjtvhsc+voNK447wbQmRiN0xVDi-jgOmba4NLRiNi0Q@mail.gmail.com>
-Message-ID: <CAC=S1njPjtvhsc+voNK447wbQmRiN0xVDi-jgOmba4NLRiNi0Q@mail.gmail.com>
-Subject: Re: [PATCH 1/4] ASoC: dt-bindings: mediatek,mt8188-mt6359: Add adsp
- and dai-link properties
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Mark Brown <broonie@kernel.org>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	Rob Herring <robh@kernel.org>, Trevor Wu <trevor.wu@mediatek.com>, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-mediatek@lists.infradead.org, linux-sound@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Mon, Oct 28, 2024 at 4:54=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.or=
-g> wrote:
->
-> On Fri, Oct 25, 2024 at 06:44:41PM +0800, Fei Shao wrote:
-> > Add "mediatek,adsp" property for the ADSP handle if ADSP is enabled on
-> > the platform.
->
-> We see this from the diff.
->
-> > Add "mediatek,dai-link" property for the required DAI links to configur=
-e
-> > sound card.
->
-> We see this from the diff.
->
-> >
-> > Both properties are commonly used in the MediaTek sound card driver.
->
-> If they are used, why suddenly they are needed? What changed?
+The first PPS latch time needs to be calculated by the driver
+(in rounded off seconds) and configured as the start time
+offset for the cycle. After synchronizing two PTP clocks
+running as master/slave, missing this would cause master
+and slave to start immediately with some milliseconds
+drift which causes the PPS signal to never synchronize with
+the PTP master.
 
-Nothing has changed. These should have been added altogether when the
-binding was first introduced. This patch is to fill the gaps and fix
-dtbs_check warnings, like I mentioned in the cover letter.
-I can add a line in the commit message saying it's to fix the warning
-in addition to the cover letter, if that's preferred.
+Fixes: 186734c15886 ("net: ti: icssg-prueth: add packet timestamping and ptp support")
+Signed-off-by: Meghana Malladi <m-malladi@ti.com>
+Reviewed-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+Reviewed-by: MD Danish Anwar <danishanwar@ti.com>
+---
 
->
-> >
-> > Signed-off-by: Fei Shao <fshao@chromium.org>
-> > ---
-> >
-> >  .../bindings/sound/mediatek,mt8188-mt6359.yaml         | 10 ++++++++++
-> >  1 file changed, 10 insertions(+)
-> >
-> > diff --git a/Documentation/devicetree/bindings/sound/mediatek,mt8188-mt=
-6359.yaml b/Documentation/devicetree/bindings/sound/mediatek,mt8188-mt6359.=
-yaml
-> > index f94ad0715e32..701cedfa38d2 100644
-> > --- a/Documentation/devicetree/bindings/sound/mediatek,mt8188-mt6359.ya=
-ml
-> > +++ b/Documentation/devicetree/bindings/sound/mediatek,mt8188-mt6359.ya=
-ml
-> > @@ -29,6 +29,16 @@ properties:
-> >      $ref: /schemas/types.yaml#/definitions/phandle
-> >      description: The phandle of MT8188 ASoC platform.
-> >
-> > +  mediatek,adsp:
-> > +    $ref: /schemas/types.yaml#/definitions/phandle
-> > +    description: The phandle of MT8188 ADSP platform.
->
-> And what is the difference between ASoC and ADSP platforms? What are
-> they used for?
+Hello,
 
-I'm not a MediaTek or audio folks, and I'm afraid that I'm not the
-best person to explain the details accurately in front of experts on
-the list... I know it's an audio DSP but that explains nothing.
-MediaTek didn't provide a meaningful explanation in the tree or
-commits, and I want to avoid adding additional but likely misleading
-descriptions from someone who doesn't have enough knowledge,
-potentially causing even more confusing situations in the future.
-Plus, the same changes were accepted as-is in the past, so I assumed
-they might be self-explanatory to people who are familiar with the
-matter.
-
->
-> > +
-> > +  mediatek,dai-link:
-> > +    $ref: /schemas/types.yaml#/definitions/string-array
-> > +    description:
-> > +      A list of the desired dai-links in the sound card. Each entry is=
- a
-> > +      name defined in the machine driver.
->
-> The list is provided below. I don't understand why do you need it. Your
-> msg is pretty useless - you describe what you do, instead of why.
-
-I think this is used to explicitly list the intermediate but hidden
-DAIs, but again, there's not much info about them unless MediaTek can
-explain more details and why they need a vendor property for this.
+This patch is based on net-next tagged next-2024102.
+v2:https://lore.kernel.org/all/20241024113140.973928-1-m-malladi@ti.com/
+Changes since v2 (v3-v2):
+- Use hi_lo_writeq() and hi_lo_readq() instead of own helpers
+(icssg_readq() & iccsg_writeq()) as asked by Andrew Lunn <andrew@lunn.ch>
+- Collected Reviewed-by tags from Vadim and Danish
 
 Regards,
-Fei
+Meghana.
 
->
-> Best regards,
-> Krzysztof
->
+ drivers/net/ethernet/ti/icssg/icssg_prueth.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.c b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
+index 0556910938fa..678a99882627 100644
+--- a/drivers/net/ethernet/ti/icssg/icssg_prueth.c
++++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
+@@ -16,6 +16,7 @@
+ #include <linux/if_hsr.h>
+ #include <linux/if_vlan.h>
+ #include <linux/interrupt.h>
++#include <linux/io-64-nonatomic-hi-lo.h>
+ #include <linux/kernel.h>
+ #include <linux/mfd/syscon.h>
+ #include <linux/module.h>
+@@ -411,6 +412,8 @@ static int prueth_perout_enable(void *clockops_data,
+ 	struct prueth_emac *emac = clockops_data;
+ 	u32 reduction_factor = 0, offset = 0;
+ 	struct timespec64 ts;
++	u64 current_cycle;
++	u64 start_offset;
+ 	u64 ns_period;
+ 
+ 	if (!on)
+@@ -449,8 +452,14 @@ static int prueth_perout_enable(void *clockops_data,
+ 	writel(reduction_factor, emac->prueth->shram.va +
+ 		TIMESYNC_FW_WC_SYNCOUT_REDUCTION_FACTOR_OFFSET);
+ 
+-	writel(0, emac->prueth->shram.va +
+-		TIMESYNC_FW_WC_SYNCOUT_START_TIME_CYCLECOUNT_OFFSET);
++	current_cycle = hi_lo_readq(emac->prueth->shram.va +
++				    TIMESYNC_FW_WC_CYCLECOUNT_OFFSET);
++
++	/* Rounding of current_cycle count to next second */
++	start_offset = roundup(current_cycle, MSEC_PER_SEC);
++
++	hi_lo_writeq(start_offset, emac->prueth->shram.va +
++		     TIMESYNC_FW_WC_SYNCOUT_START_TIME_CYCLECOUNT_OFFSET);
+ 
+ 	return 0;
+ }
+
+base-commit: 73840ca5ef361f143b89edd5368a1aa8c2979241
+-- 
+2.25.1
+
 
