@@ -1,333 +1,529 @@
-Return-Path: <linux-kernel+bounces-385278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A44529B34F8
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 16:32:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA5D89B3504
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 16:34:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 096B01F22C36
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 15:32:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D8D11F22A3F
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 15:34:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B93761DE3CD;
-	Mon, 28 Oct 2024 15:32:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A3041DE4C6;
+	Mon, 28 Oct 2024 15:34:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="RxO3W2KA"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B5p0otVp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2312D12F585;
-	Mon, 28 Oct 2024 15:32:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38F7A12F585;
+	Mon, 28 Oct 2024 15:34:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730129559; cv=none; b=UVALI221IRVTOJKISCdIkHZ6A4SM5uF8hr0r4gsF9SY/K7fxYpGtn5nHwPR/WaL3qKitTw4hdBCIlVq34aVsLiV68QID+hjbNx6bCthR+DNKy3usclYlop432+VhRvJBvxrcIEo1pxBAJRuJuj055Yhd9+tOLVvHsz5rQN0vWEo=
+	t=1730129679; cv=none; b=qBQ8EPd+Mw6FyuDDuAc8INwFHsEzE+4vqk2GxYAKp7klIxRWs/WPeJ7vCWJRiCdF5rtGG5NP2tALS8AHGJ2+rlHBcztcYqSxd8AO5tgPdaEE5sZ2dRZbLT/n6+akQW4Jam4j3EOaHyBPYFwA6EDcmrviRFU6H0GZ7qeuve8VXyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730129559; c=relaxed/simple;
-	bh=NbMZisdFcz4ACvPI0iTxOfwwOk6Hcpnxy+CAtnZn0OY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=i5u1uW/H20pjfifFh2gN2HbZpGwv3m9s0x4PofymO1JWLGqwpXNMPTWdq1vesJLtuFDY/PtOKEVLIOLyUVl9UJ+PHpCAyIuYnmtWuuZPn9JFpkk8UjypEisQW5p7vBLhXISJIuPIqwUCOkCWRDr3mGJa6vr/J8uXI25w4ab3R6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=RxO3W2KA; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [192.168.88.20] (91-157-155-49.elisa-laajakaista.fi [91.157.155.49])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 7D4F3743;
-	Mon, 28 Oct 2024 16:32:28 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1730129549;
-	bh=NbMZisdFcz4ACvPI0iTxOfwwOk6Hcpnxy+CAtnZn0OY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=RxO3W2KA54SlswsiY2OQCeQjf6fBZMEJSWNxwva8dwbRXH63VhRxVMIrpVXMiSp3B
-	 sWxphgQaeietass/SrKrc1pgaLx25MhfbCQ48FEPim8FQ1/BjL3QxS3LaErDWGXZpI
-	 sS/RlPxUG3zxaYdNVPNyigDBpbo/FdpLJEbVP/p8=
-Message-ID: <62073d7a-0a4b-4440-90e5-dcce0dec72d7@ideasonboard.com>
-Date: Mon, 28 Oct 2024 17:32:27 +0200
+	s=arc-20240116; t=1730129679; c=relaxed/simple;
+	bh=/89yC2Iu3fktm/BJsaPrs5gU7sA22nLCmVLbjxgGTfk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CfLqCwPczkbvHBP10hD/F47BofLupmOIU+vjwgCjilhXXtnNdA0N9km3czUVaGyJ6o7F28rKB1b6vGbGn1Ou0uxXdYfguJUJR6iOOlvvM9odh2iO0uLUFjkA5Tj+8b1Umwb+ej/bR8ZjehxWksRCKnh809HVPLglh8VZ4Z4xytI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B5p0otVp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6774C4CEC3;
+	Mon, 28 Oct 2024 15:34:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730129678;
+	bh=/89yC2Iu3fktm/BJsaPrs5gU7sA22nLCmVLbjxgGTfk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=B5p0otVpR90xwm4rpftwflqf+4ntz2Wkntnikh6ai7qQE/voUADyYDfGdb7UOBisJ
+	 57MGUACcSpm89rK3g5bmvlybz5aUQNWsuThEz5wTzblD4IV+/eSTqjHJRrKMhcDCB8
+	 5tKJWZ2C/kZErkxWwtFVs01wnThqjWtdIIgFOlTxI9zYH2BdJaG5q6wSX8YTDb8rC6
+	 WEnVGwhDxGXi0hIkfLxV3PmjW72ZXqqhy5nkgQ68lNzrbxTmRRYLZBM6KPAyR44BDO
+	 Ti0gim9F4SLg0Qr5oNIilktAcpvZ/ddQAkS3wfNSZWmDEfIOVYdRFjMn2VYn9g32JL
+	 gaUI1XqzhxUbA==
+Date: Mon, 28 Oct 2024 16:34:33 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Oleg Nesterov <oleg@redhat.com>
+Cc: Christian Brauner <christian@brauner.io>, 
+	Shuah Khan <shuah@kernel.org>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
+	Suren Baghdasaryan <surenb@google.com>, Vlastimil Babka <vbabka@suse.cz>, pedro.falcato@gmail.com, 
+	linux-kselftest@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
+	linux-api@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Oliver Sang <oliver.sang@intel.com>, John Hubbard <jhubbard@nvidia.com>
+Subject: Re: [PATCH v6 2/5] pidfd: add PIDFD_SELF_* sentinels to refer to own
+ thread/process
+Message-ID: <20241028-gesoffen-drehmoment-5314faba9731@brauner>
+References: <cover.1729926229.git.lorenzo.stoakes@oracle.com>
+ <8eceec08eb64b744b24bf2aa09d4535e77e1ba47.1729926229.git.lorenzo.stoakes@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 3/4] media: raspberrypi: Add support for RP1-CFE
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, Naushir Patuck
- <naush@raspberrypi.com>, Sakari Ailus <sakari.ailus@linux.intel.com>,
- Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
- Kieran Bingham <kieran.bingham@ideasonboard.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
- Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>
-References: <20241003-rp1-cfe-v6-0-d6762edd98a8@ideasonboard.com>
- <20241003-rp1-cfe-v6-3-d6762edd98a8@ideasonboard.com>
- <4d9e340e-2ae7-495b-8623-0d10398e1c3d@xs4all.nl>
- <02f05b61-08e7-45f8-8d59-f79bc20d076f@ideasonboard.com>
- <74286a86-51b9-4742-bb0c-583d70b1b0a7@xs4all.nl>
- <505c502e-b67a-4dca-8420-eb87eae4e170@ideasonboard.com>
- <59cf95be-fb53-4a94-bc6e-f9dca322749d@xs4all.nl>
- <5832a2f9-c908-4f5a-a3ee-9cb7d23ddab4@ideasonboard.com>
- <563347aa-4155-47e1-b71a-0107aed83eb6@xs4all.nl>
- <20241028151713.GI24052@pendragon.ideasonboard.com>
-Content-Language: en-US
-From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
- 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
-In-Reply-To: <20241028151713.GI24052@pendragon.ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/mixed; boundary="ft377c7j3f5pvc3c"
+Content-Disposition: inline
+In-Reply-To: <8eceec08eb64b744b24bf2aa09d4535e77e1ba47.1729926229.git.lorenzo.stoakes@oracle.com>
 
-Hi Laurent,
 
-On 28/10/2024 17:17, Laurent Pinchart wrote:
-> On Mon, Oct 28, 2024 at 12:30:45PM +0100, Hans Verkuil wrote:
->> On 28/10/2024 12:25, Tomi Valkeinen wrote:
->>> On 28/10/2024 13:13, Hans Verkuil wrote:
->>>> On 28/10/2024 12:05, Tomi Valkeinen wrote:
->>>>> On 28/10/2024 12:11, Hans Verkuil wrote:
->>>>>> On 28/10/2024 10:21, Tomi Valkeinen wrote:
->>>>>>> On 24/10/2024 11:20, Hans Verkuil wrote:
->>>>>>>> Hi Tomi,
->>>>>>>>
->>>>>>>> I know this driver is already merged, but while checking for drivers that use
->>>>>>>> q->max_num_buffers I stumbled on this cfe code:
->>>>>>>>
->>>>>>>> <snip>
->>>>>>>>
->>>>>>>>> +/*
->>>>>>>>> + * vb2 ops
->>>>>>>>> + */
->>>>>>>>> +
->>>>>>>>> +static int cfe_queue_setup(struct vb2_queue *vq, unsigned int *nbuffers,
->>>>>>>>> +               unsigned int *nplanes, unsigned int sizes[],
->>>>>>>>> +               struct device *alloc_devs[])
->>>>>>>>> +{
->>>>>>>>> +    struct cfe_node *node = vb2_get_drv_priv(vq);
->>>>>>>>> +    struct cfe_device *cfe = node->cfe;
->>>>>>>>> +    unsigned int size = is_image_node(node) ?
->>>>>>>>> +                    node->vid_fmt.fmt.pix.sizeimage :
->>>>>>>>> +                    node->meta_fmt.fmt.meta.buffersize;
->>>>>>>>> +
->>>>>>>>> +    cfe_dbg(cfe, "%s: [%s] type:%u\n", __func__, node_desc[node->id].name,
->>>>>>>>> +        node->buffer_queue.type);
->>>>>>>>> +
->>>>>>>>> +    if (vq->max_num_buffers + *nbuffers < 3)
->>>>>>>>> +        *nbuffers = 3 - vq->max_num_buffers;
->>>>>>>>
->>>>>>>> This makes no sense: max_num_buffers is 32, unless explicitly set when vb2_queue_init
->>>>>>>> is called. So 32 + *nbuffers is never < 3.
->>>>>>>>
->>>>>>>> If the idea is that at least 3 buffers should be allocated by REQBUFS, then set
->>>>>>>> q->min_reqbufs_allocation = 3; before calling vb2_queue_init and vb2 will handle this
->>>>>>>> for you.
->>>>>>>>
->>>>>>>> Drivers shouldn't modify *nbuffers, except in very rare circumstances, especially
->>>>>>>> since the code is almost always wrong.
->>>>>>>
->>>>>>> Looking at this, the original code in the old BSP tree was, which somehow, along the long way, got turned into the above:
->>>>>>>
->>>>>>> if (vq->num_buffers + *nbuffers < 3)
->>>>>>>            *nbuffers = 3 - vq->num_buffers;
->>>>>>>
->>>>>>> So... I think that is the same as "q->min_reqbufs_allocation = 3"?
->>>>>>>
->>>>>>> The distinction between min_queued_buffers and
->>>>>>> min_reqbufs_allocation, or rather the need for the latter, still
->>>>>>> escapes me. If the HW/SW requires N buffers to be queued, why
->>>>>>> would we require allocating more than N buffers?
->>>>>>
->>>>>> min_queued_buffers is easiest to explain: that represents the requirements of the DMA
->>>>>> engine, i.e. how many buffers much be queued before the DMA engine can be started.
->>>>>> Typically it is 0, 1 or 2.
-> 
-> That's partly true only. Even if the hardware requires 2 buffers, a
-> driver can allocate scratch buffers to lower the requirement for
-> userspace. Setting min_queued_buffers to 1 is usually fine, as there are
-> few use cases for userspace to start the hardware before a buffer is
-> available to capture a frame to. A value of 2 is much more problematic,
-> as it prevents operating with a single buffer. I know using a single
-> buffer results in frame drops, but there are resource-constrained
-> systems where application don't always need all the frames (such as the
-> Raspberry Pi Zero for instance). I very strongly encourage drivers to
-> never set a min_queued_buffers value higher than 1.
-> 
->>>>>>
->>>>>> min_reqbufs_allocation is the minimum number of buffers that will be allocated when
->>>>>> calling VIDIOC_REQBUFS in order for userspace to be able to stream without blocking
->>>>>> or dropping frames.
->>>>>>
->>>>>> Typically this is 3 for video capture: one buffer is being DMAed, another is queued up
->>>>>> and the third is being processed by userspace. But sometimes drivers have other
->>>>>> requirements.
-> 
-> This is exactly why I dislike min_reqbufs_allocation when set based on
-> this logic, it encodes assumption on userspace use cases that a capture
-> driver really shouldn't make.
-> 
->>>>>>
->>>>>> The reason is that some applications will just call VIDIOC_REQBUFS with count=1 and
->>>>>> expect it to be rounded up to whatever makes sense. See the VIDIOC_REQBUFS doc in
->>>>>> https://hverkuil.home.xs4all.nl/spec/userspace-api/v4l/vidioc-reqbufs.html
->>>>>>
->>>>>> "It can be smaller than the number requested, even zero, when the driver runs out of
->>>>>>     free memory. A larger number is also possible when the driver requires more buffers
->>>>>>     to function correctly."
->>>>>>
->>>>>> How drivers implement this is a mess, and usually the code in the driver is wrong as
->>>>>> well. In particular they often did not take VIDIOC_CREATE_BUFS into account, i.e.
->>>>>> instead of 'if (vq->num_buffers + *nbuffers < 3)' they would do 'if (*nbuffers < 3)'.
->>>>>
->>>>> Thanks, this was educational!
->>>>>
->>>>> So. If I have a driver that has min_queued_buffers = 1, I can use
->>>>> VIDIOC_CREATE_BUFS to allocate a single buffer, and then capture
->>>>> just one buffer, right? Whereas VIDIOC_REQBUFS would give me
->>>>> (probably) three (or two, if the driver does not set
->>>>> min_reqbufs_allocation). Three buffers makes sense for full
->>>>> streaming, of course.
->>>>>
->>>>>> When we worked on the support for more than 32 buffers we added min_reqbufs_allocation
->>>>>> to let the core take care of this. In addition, this only applies to VIDIOC_REQBUFS,
-> 
-> I agree it's better to handle it in the core than in drivers, even if I
-> dislike the feature in the first place.
-> 
->>>>>> if you want full control over the number of allocated buffers, then use VIDIOC_CREATE_BUFS,
->>>>>> with this ioctl the number of buffers will never be more than requested, although it
->>>>>> may be less if you run out of memory.
-> 
-> On a side note, we should transition libcamera to use VIDIOC_CREATE_BUFS
-> unconditionally.
-> 
->>>>>>
->>>>>> I really should go through all existing drivers and fix them up if they try to
->>>>>> handle this in the queue_setup function, I suspect a lot of them are quite messy.
->>>>>>
->>>>>> One thing that is missing in the V4L2 uAPI is a way to report the minimum number of
->>>>>> buffers that need to be allocated, i.e. min_queued_buffers + 1. Since if you want
->>>>>
->>>>> Hmm, so what I wrote above is not correct? One needs min_queued_buffers + 1? Why is that?
->>>>
->>>> The DMA engine always uses min_queued_buffers, so if there are only that many buffers,
->>>> then it can never return a buffer to userspace! So you need one more. That's the absolute
->>>> minimum. For smooth capture you need two more to allow time for userspace to process the
->>>> buffer.
->>>
->>> Hmm, ok, I see. Well, I guess my "I want to capture just a single frame" is not a very common case.
-> 
-> It's not that uncommon, see above.
-> 
->>>
->>> Can I queue one buffer, start streaming, stop streaming, and get the
->>> filled buffer? But then I guess I don't when the buffer has been
->>> filled, i.e. when to call stop streaming.
->>
->> Exactly. If you really want that, then the driver has to be adapted in the way that Laurent
->> suggested, i.e. with one or more scratch buffers. But that is not always possible, esp. with
->> older hardware without an IOMMU.
-> 
-> Drivers can always allocate a full-frame scratch buffer in the worst
-> case. That can waste memory though, which is less than ideal.
-> 
->>> So, never mind, I don't actually have any use case for this, just wondering.
->>>
->>>>>
->>>>>> to use CREATE_BUFS you need that information so you know that you have to create
->>>>>> at least that number of buffers. We have the V4L2_CID_MIN_BUFFERS_FOR_CAPTURE control,
->>>>>> but it is effectively codec specific. This probably should be clarified.
->>>>>>
->>>>>> I wonder if it wouldn't be better to add a min_num_buffers field to
->>>>>> struct v4l2_create_buffers and set it to min_queued_buffers + 1.
-> 
-> Don't add the +1. We should give userspace the information it needs to
-> make informed decisions, not make decisions on its behalf.
-> 
->>>>>
->>>>> I think this makes sense (although I still don't get the +1).
->>>>>
->>>>> However, based on the experiences from adding the streams features
->>>>> to various ioctls, let's be very careful =). The new
->>>>> 'min_num_buffers' can be filled with garbage by the userspace. If
->>>>> we define the 'min_num_buffers' field to be always filled by the
->>>>> kernel, and any value provided from the userspace to be ignored, I
->>>>> think it should work.
->>>>
->>>> I've posted an RFC for this.
->>>
->>> Thanks, I'll check it out.
->>>
->>> For the original issue in this thread, I think the correct fix is to
->>> remove the lines from cfe_queue_setup(), and add
->>> "q->min_reqbufs_allocation = 3".
-> 
-> Or just don't set min_reqbufs_allocation ? This is a new driver, and it
-> requires a device-specific userspace to operate the ISP. I don't think
-> we need to care about applications blindly calling VIDIOC_REQBUFS(1) and
-> expecting to get more buffers.
+--ft377c7j3f5pvc3c
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-It doesn't require a device-specific userspace for plain CSI-2 capture.
+On Sat, Oct 26, 2024 at 08:24:58AM +0100, Lorenzo Stoakes wrote:
+> It is useful to be able to utilise the pidfd mechanism to reference the
+> current thread or process (from a userland point of view - thread group
+> leader from the kernel's point of view).
+> 
+> Therefore introduce PIDFD_SELF_THREAD to refer to the current thread, and
+> PIDFD_SELF_THREAD_GROUP to refer to the current thread group leader.
+> 
+> For convenience and to avoid confusion from userland's perspective we alias
+> these:
+> 
+> * PIDFD_SELF is an alias for PIDFD_SELF_THREAD - This is nearly always what
+>   the user will want to use, as they would find it surprising if for
+>   instance fd's were unshared()'d and they wanted to invoke pidfd_getfd()
+>   and that failed.
+> 
+> * PIDFD_SELF_PROCESS is an alias for PIDFD_SELF_THREAD_GROUP - Most users
+>   have no concept of thread groups or what a thread group leader is, and
+>   from userland's perspective and nomenclature this is what userland
+>   considers to be a process.
+> 
+> Due to the refactoring of the central __pidfd_get_pid() function we can
+> implement this functionality centrally, providing the use of this sentinel
+> in most functionality which utilises pidfd's.
+> 
+> We need to explicitly adjust kernel_waitid_prepare() to permit this (though
+> it wouldn't really make sense to use this there, we provide the ability for
+> consistency).
+> 
+> We explicitly disallow use of this in setns(), which would otherwise have
+> required explicit custom handling, as it doesn't make sense to set the
+> current calling thread to join the namespace of itself.
+> 
+> As the callers of pidfd_get_pid() expect an increased reference count on
+> the pid we do so in the self case, reducing churn and avoiding any breakage
+> from existing logic which decrements this reference count.
+> 
+> This change implicitly provides PIDFD_SELF_* support in the waitid(P_PIDFS,
+> ...), process_madvise(), process_mrelease(), pidfd_send_signal(), and
+> pidfd_getfd() system calls.
+> 
+> Things such as polling a pidfs and general fd operations are not supported,
+> this strictly provides the sentinel for APIs which explicitly accept a
+> pidfd.
+> 
+> Suggested-by: Pedro Falcato <pedro.falcato@gmail.com>
+> Reviewed-by: Shakeel Butt <shakeel.butt@linux.dev>
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> ---
 
-If I understood right, the expected behavior for VIDIOC_REQBUFS is to 
-return enough buffers for "smooth streaming". So even if device-specific 
-userspace would be required, doesn't it still make sense to have 
-min_reqbufs_allocation = 3?
+Currently, a pidfd based system call like pidfd_send_signal() would
+simply do:
 
-Or is your point that even a device-specific userspace, which knows 
-exactly what it's doing, would use VIDIOC_REQBUFS, instead of 
-VIDIOC_CREATE_BUFS?
+fdget(pidfd);
+// use struct pid
+fdput(pidfd);
 
-Also, if I don't set min_reqbufs_allocation, VIDIOC_REQBUFS(1) would 
-still allocate two buffers, not one.
+Where the lifetime of @pid is guaranteed by @file. And in the regular
+case where there's only a single thread the file code will avoid taking
+a reference. Thus, there's no reference count bump on fdget(), nor a
+drop on fdput(), nor a get_pid() or put_pid().
 
-  Tomi
+With your patch series you will always cause reference counts on @pid to
+be taken for everyone. And I wouldn't be surprised if we get performance
+regressions for this.
 
+In one of my earlier mails I had mused about a fdput() like primitive.
+What I roughly, hastily, and under the influence of the flu, sketched in
+the _completey untested_ patch I appended illustrates roughly what I had
+been thinking about.
+
+>  include/linux/pid.h        |  8 ++++--
+>  include/uapi/linux/pidfd.h | 10 ++++++++
+>  kernel/exit.c              |  4 ++-
+>  kernel/nsproxy.c           |  1 +
+>  kernel/pid.c               | 51 ++++++++++++++++++++++++--------------
+>  5 files changed, 53 insertions(+), 21 deletions(-)
+> 
+> diff --git a/include/linux/pid.h b/include/linux/pid.h
+> index d466890e1b35..3b2ac7567a88 100644
+> --- a/include/linux/pid.h
+> +++ b/include/linux/pid.h
+> @@ -78,11 +78,15 @@ struct file;
+>   * __pidfd_get_pid() - Retrieve a pid associated with the specified pidfd.
+>   *
+>   * @pidfd:      The pidfd whose pid we want, or the fd of a /proc/<pid> file if
+> - *              @alloc_proc is also set.
+> + *              @alloc_proc is also set, or PIDFD_SELF_* to refer to the current
+> + *              thread or thread group leader.
+>   * @allow_proc: If set, then an fd of a /proc/<pid> file can be passed instead
+>   *              of a pidfd, and this will be used to determine the pid.
+> +
+>   * @flags:      Output variable, if non-NULL, then the file->f_flags of the
+> - *              pidfd will be set here.
+> + *              pidfd will be set here or If PIDFD_SELF_THREAD is set, this is
+> + *              set to PIDFD_THREAD, otherwise if PIDFD_SELF_THREAD_GROUP then
+> + *              this is set to zero.
+>   *
+>   * Returns: If successful, the pid associated with the pidfd, otherwise an
+>   *          error.
+> diff --git a/include/uapi/linux/pidfd.h b/include/uapi/linux/pidfd.h
+> index 565fc0629fff..6fe1d63b2086 100644
+> --- a/include/uapi/linux/pidfd.h
+> +++ b/include/uapi/linux/pidfd.h
+> @@ -29,4 +29,14 @@
+>  #define PIDFD_GET_USER_NAMESPACE              _IO(PIDFS_IOCTL_MAGIC, 9)
+>  #define PIDFD_GET_UTS_NAMESPACE               _IO(PIDFS_IOCTL_MAGIC, 10)
+> 
+> +/*
+> + * Special sentinel values which can be used to refer to the current thread or
+> + * thread group leader (which from a userland perspective is the process).
+> + */
+> +#define PIDFD_SELF		PIDFD_SELF_THREAD
+> +#define PIDFD_SELF_PROCESS	PIDFD_SELF_THREAD_GROUP
+> +
+> +#define PIDFD_SELF_THREAD	-10000 /* Current thread. */
+> +#define PIDFD_SELF_THREAD_GROUP	-20000 /* Current thread group leader. */
+> +
+>  #endif /* _UAPI_LINUX_PIDFD_H */
+> diff --git a/kernel/exit.c b/kernel/exit.c
+> index 619f0014c33b..e4f85ec4ba78 100644
+> --- a/kernel/exit.c
+> +++ b/kernel/exit.c
+> @@ -71,6 +71,7 @@
+>  #include <linux/user_events.h>
+>  #include <linux/uaccess.h>
+> 
+> +#include <uapi/linux/pidfd.h>
+>  #include <uapi/linux/wait.h>
+> 
+>  #include <asm/unistd.h>
+> @@ -1739,7 +1740,8 @@ int kernel_waitid_prepare(struct wait_opts *wo, int which, pid_t upid,
+>  		break;
+>  	case P_PIDFD:
+>  		type = PIDTYPE_PID;
+> -		if (upid < 0)
+> +		if (upid < 0 && upid != PIDFD_SELF_THREAD &&
+> +		    upid != PIDFD_SELF_THREAD_GROUP)
+>  			return -EINVAL;
+> 
+>  		pid = pidfd_get_pid(upid, &f_flags);
+> diff --git a/kernel/nsproxy.c b/kernel/nsproxy.c
+> index dc952c3b05af..d239f7eeaa1f 100644
+> --- a/kernel/nsproxy.c
+> +++ b/kernel/nsproxy.c
+> @@ -550,6 +550,7 @@ SYSCALL_DEFINE2(setns, int, fd, int, flags)
+>  	struct nsset nsset = {};
+>  	int err = 0;
+> 
+> +	/* If fd is PIDFD_SELF_*, implicitly fail here, as invalid. */
+>  	if (!fd_file(f))
+>  		return -EBADF;
+> 
+> diff --git a/kernel/pid.c b/kernel/pid.c
+> index 94c97559e5c5..0a1861b4422c 100644
+> --- a/kernel/pid.c
+> +++ b/kernel/pid.c
+> @@ -535,33 +535,48 @@ struct pid *find_ge_pid(int nr, struct pid_namespace *ns)
+>  }
+>  EXPORT_SYMBOL_GPL(find_ge_pid);
+> 
+> +static struct pid *pidfd_get_pid_self(unsigned int pidfd, unsigned int *flags)
+
+The @flags argument is unused afaict.
+
+> +{
+> +	bool is_thread = pidfd == PIDFD_SELF_THREAD;
+> +	enum pid_type type = is_thread ? PIDTYPE_PID : PIDTYPE_TGID;
+> +	struct pid *pid = *task_pid_ptr(current, type);
+> +
+> +	/* The caller expects an elevated reference count. */
+> +	get_pid(pid);
+> +	return pid;
+> +}
+
+Fwiw, what you've done here is essentially reimplement the already
+existing get_task_pid() helper that you could simply use.
+
+> +
+>  struct pid *__pidfd_get_pid(unsigned int pidfd, bool allow_proc,
+>  			    unsigned int *flags)
+>  {
+> -	struct pid *pid;
+> -	struct fd f = fdget(pidfd);
+> -	struct file *file = fd_file(f);
+> +	if (pidfd == PIDFD_SELF_THREAD || pidfd == PIDFD_SELF_THREAD_GROUP) {
+> +		return pidfd_get_pid_self(pidfd, flags);
+> +	} else {
+
+I think the else can just go and we can save an indentation level.
+
+> +		struct pid *pid;
+> +		struct fd f = fdget(pidfd);
+> +		struct file *file = fd_file(f);
+> 
+> -	if (!file)
+> -		return ERR_PTR(-EBADF);
+> +		if (!file)
+> +			return ERR_PTR(-EBADF);
+> 
+> -	pid = pidfd_pid(file);
+> -	/* If we allow opening a pidfd via /proc/<pid>, do so. */
+> -	if (IS_ERR(pid) && allow_proc)
+> -		pid = tgid_pidfd_to_pid(file);
+> +		pid = pidfd_pid(file);
+> +		/* If we allow opening a pidfd via /proc/<pid>, do so. */
+> +		if (IS_ERR(pid) && allow_proc)
+> +			pid = tgid_pidfd_to_pid(file);
+> 
+> -	if (IS_ERR(pid)) {
+> +		if (IS_ERR(pid)) {
+> +			fdput(f);
+> +			return pid;
+> +		}
+> +
+> +		/* Pin pid before we release fd. */
+> +		get_pid(pid);
+> +		if (flags)
+> +			*flags = file->f_flags;
+>  		fdput(f);
+> +
+>  		return pid;
+>  	}
+> -
+> -	/* Pin pid before we release fd. */
+> -	get_pid(pid);
+> -	if (flags)
+> -		*flags = file->f_flags;
+> -	fdput(f);
+> -
+> -	return pid;
+>  }
+> 
+>  /**
+> --
+> 2.47.0
+
+--ft377c7j3f5pvc3c
+Content-Type: text/x-diff; charset=utf-8
+Content-Disposition: attachment; filename="0001-UNTESTED-SKETCH-DRAFT.patch"
+
+From 120b45b3900d28880b65b776f7a188cab4b38250 Mon Sep 17 00:00:00 2001
+From: Christian Brauner <brauner@kernel.org>
+Date: Mon, 28 Oct 2024 15:34:59 +0100
+Subject: [PATCH] UNTESTED, SKETCH, DRAFT
+
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+---
+ fs/pidfs.c            | 42 +++++++++++++++++++++++++++++++++++++
+ include/linux/pidfs.h | 29 +++++++++++++++++++++++++
+ kernel/signal.c       | 49 ++++++++++++-------------------------------
+ 3 files changed, 84 insertions(+), 36 deletions(-)
+
+diff --git a/fs/pidfs.c b/fs/pidfs.c
+index 80675b6bf884..de7e9e6bbd22 100644
+--- a/fs/pidfs.c
++++ b/fs/pidfs.c
+@@ -22,6 +22,48 @@
+ #include "internal.h"
+ #include "mount.h"
+ 
++struct pid_fd pidfd_get(int fd)
++{
++	struct fd f;
++	struct pid *pid;
++
++	/* handle PIDFD_SELF_* cases */
++	if (fd < 0) {
++		if (fd == PIDFD_SELF_THREAD)
++			return (struct pid_fd){ .fd = EMPTY_FD, .pid = get_task_pid(current, PIDTYPE_PID) };
++		if (fd == PIDFD_SELF_THREAD_GROUP)
++			return (struct pid_fd){ .fd = EMPTY_FD, .pid = get_task_pid(current, PIDTYPE_TGID) };
++		return (struct pid_fd){ .fd = EMPTY_FD, .pid = ERR_PTR(-EBADF) };
++	}
++
++	/* handle the regular case */
++	f = fdget(fd);
++	if (!fd_file(f))
++		return (struct pid_fd){ .fd = EMPTY_FD, .pid = ERR_PTR(-EBADF) };
++
++	pid = pidfd_pid(fd_file(f));
++	if (IS_ERR(pid)) {
++		fdput(f);
++		return (struct pid_fd) { .fd = EMPTY_FD, .pid = pid };
++	}
++
++	return (struct pid_fd) { .fd = f, pid = pid } ;
++}
++
++void pidfd_put(struct pid_fd fd)
++{
++	/*
++	 * Handle PIDFD_SELF_* where the struct pid hasn't been attached
++	 * to a file.
++	 */
++	if (fd_empty(fd.fd) && pidfd_valid(fd))
++		put_pid(fd.pid);
++
++	/* Can call unconditionally safely. */
++	fdput(fd.fd);
++
++}
++
+ #ifdef CONFIG_PROC_FS
+ /**
+  * pidfd_show_fdinfo - print information about a pidfd
+diff --git a/include/linux/pidfs.h b/include/linux/pidfs.h
+index 75bdf9807802..ad86b69ee1ea 100644
+--- a/include/linux/pidfs.h
++++ b/include/linux/pidfs.h
+@@ -2,6 +2,35 @@
+ #ifndef _LINUX_PID_FS_H
+ #define _LINUX_PID_FS_H
+ 
++#include <linux/file.h>
++#include <linux/cleanup.h>
++
++#define PIDFD_SELF           PIDFD_SELF_THREAD
++#define PIDFD_SELF_PROCESS   PIDFD_SELF_THREAD_GROUP
++
++#define PIDFD_SELF_THREAD		-10000 /* Current thread. */
++#define PIDFD_SELF_THREAD_GROUP		-20000 /* Current thread group leader. */
++
++struct pid_fd {
++	struct fd fd;
++	struct pid *pid;
++};
++
++static inline struct pid *pid_fd_pid(struct pid_fd pfd)
++{
++	return pfd.pid;
++}
++
++static inline bool pidfd_valid(struct pid_fd pfd)
++{
++	return !IS_ERR(pid_fd_pid(pfd));
++}
++
++struct pid_fd pidfd_get(int fd);
++void pidfd_put(struct pid_fd fd);
++
++DEFINE_CLASS(pid_fd, struct pid_fd, pidfd_put(_T), pidfd_get(fd), int fd)
++
+ struct file *pidfs_alloc_file(struct pid *pid, unsigned int flags);
+ void __init pidfs_init(void);
+ 
+diff --git a/kernel/signal.c b/kernel/signal.c
+index 4344860ffcac..16b10e726038 100644
+--- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -47,6 +47,7 @@
+ #include <linux/cgroup.h>
+ #include <linux/audit.h>
+ #include <linux/sysctl.h>
++#include <linux/pidfs.h>
+ #include <uapi/linux/pidfd.h>
+ 
+ #define CREATE_TRACE_POINTS
+@@ -3875,17 +3876,6 @@ static int copy_siginfo_from_user_any(kernel_siginfo_t *kinfo,
+ 	return copy_siginfo_from_user(kinfo, info);
+ }
+ 
+-static struct pid *pidfd_to_pid(const struct file *file)
+-{
+-	struct pid *pid;
+-
+-	pid = pidfd_pid(file);
+-	if (!IS_ERR(pid))
+-		return pid;
+-
+-	return tgid_pidfd_to_pid(file);
+-}
+-
+ #define PIDFD_SEND_SIGNAL_FLAGS                            \
+ 	(PIDFD_SIGNAL_THREAD | PIDFD_SIGNAL_THREAD_GROUP | \
+ 	 PIDFD_SIGNAL_PROCESS_GROUP)
+@@ -3908,7 +3898,6 @@ SYSCALL_DEFINE4(pidfd_send_signal, int, pidfd, int, sig,
+ 		siginfo_t __user *, info, unsigned int, flags)
+ {
+ 	int ret;
+-	struct fd f;
+ 	struct pid *pid;
+ 	kernel_siginfo_t kinfo;
+ 	enum pid_type type;
+@@ -3921,25 +3910,18 @@ SYSCALL_DEFINE4(pidfd_send_signal, int, pidfd, int, sig,
+ 	if (hweight32(flags & PIDFD_SEND_SIGNAL_FLAGS) > 1)
+ 		return -EINVAL;
+ 
+-	f = fdget(pidfd);
+-	if (!fd_file(f))
+-		return -EBADF;
+-
+-	/* Is this a pidfd? */
+-	pid = pidfd_to_pid(fd_file(f));
+-	if (IS_ERR(pid)) {
+-		ret = PTR_ERR(pid);
+-		goto err;
+-	}
++	CLASS(pid_fd, pid_fd)(pidfd);
++	if (!pidfd_valid(pid_fd))
++		return PTR_ERR(pid_fd_pid(pid_fd));
+ 
+-	ret = -EINVAL;
++	pid = pid_fd_pid(pid_fd);
+ 	if (!access_pidfd_pidns(pid))
+-		goto err;
++		return -EINVAL;
+ 
+ 	switch (flags) {
+ 	case 0:
+ 		/* Infer scope from the type of pidfd. */
+-		if (fd_file(f)->f_flags & PIDFD_THREAD)
++		if (pidfd > 0 && fd_file(pid_fd.fd)->f_flags & PIDFD_THREAD)
+ 			type = PIDTYPE_PID;
+ 		else
+ 			type = PIDTYPE_TGID;
+@@ -3958,28 +3940,23 @@ SYSCALL_DEFINE4(pidfd_send_signal, int, pidfd, int, sig,
+ 	if (info) {
+ 		ret = copy_siginfo_from_user_any(&kinfo, info);
+ 		if (unlikely(ret))
+-			goto err;
++			return ret;
+ 
+-		ret = -EINVAL;
+ 		if (unlikely(sig != kinfo.si_signo))
+-			goto err;
++			return -EINVAL;
+ 
+ 		/* Only allow sending arbitrary signals to yourself. */
+-		ret = -EPERM;
+ 		if ((task_pid(current) != pid || type > PIDTYPE_TGID) &&
+ 		    (kinfo.si_code >= 0 || kinfo.si_code == SI_TKILL))
+-			goto err;
++			return -EPERM;
+ 	} else {
+ 		prepare_kill_siginfo(sig, &kinfo, type);
+ 	}
+ 
+ 	if (type == PIDTYPE_PGID)
+-		ret = kill_pgrp_info(sig, &kinfo, pid);
+-	else
+-		ret = kill_pid_info_type(sig, &kinfo, pid, type);
+-err:
+-	fdput(f);
+-	return ret;
++		return kill_pgrp_info(sig, &kinfo, pid);
++
++	return kill_pid_info_type(sig, &kinfo, pid, type);
+ }
+ 
+ static int
+-- 
+2.45.2
+
+
+--ft377c7j3f5pvc3c--
 
