@@ -1,134 +1,108 @@
-Return-Path: <linux-kernel+bounces-384775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3987D9B2E3D
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 12:12:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D47DF9B2E3E
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 12:12:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AC417B24EB2
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 11:11:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 119211C21A64
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 11:12:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46C371D61AA;
-	Mon, 28 Oct 2024 10:56:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J0qs4ExS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5F8E1D935F;
+	Mon, 28 Oct 2024 10:56:57 +0000 (UTC)
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A787B194080
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 10:56:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75D881862B8
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 10:56:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730112974; cv=none; b=sPwzo51Nk1U9HkBzpPrTDueaUj8DeN5U3zrBuUENKiwv5rK4NNdh6VS26+leGNPoa28/5sEKqBUxQGJxdjoLs+S1Aal385tJR/At4fmEgZJjJ92jHlgxbstk+Z2NUIySfgyRKdxd+YlKjc7wbyzz6aysLYcbGuER7bpoMrPsqD4=
+	t=1730113017; cv=none; b=od6dUP3jqYywnp1mNmBWMYSJFozejHtcGxLe8TiSJqwaARygX7Wy+Ha138BEFWXpZsdOVmR444mZ6b/oAsZGVuAoAJO3V0YYCDWyyk5yXDPwJYpUub9cDxXuvGI7fp/u2xSR14GV693/S/LZmCNSPyk+AsJ7QfXSpWIuT8RgYuQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730112974; c=relaxed/simple;
-	bh=sFua8ZLNFGe+/SF7R0sPYM6WD6XyU3+RBtva+zHRhZg=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FAqexHiVSxQpXG9H5Li5hNjgEgUHuqzwGefuISND5J9MravdGPCKCwe4E1pFQ1SAlT5k+VwWp67BwvwzjBcgly/JHdNxcTTZcO9POos0kY+Qn/rV7OtqGJX6ZDift49umxRU0Rt61itGgAAprspdbxpoek5pRmSPuf/4eC3equ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J0qs4ExS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24FE0C4CEC3;
-	Mon, 28 Oct 2024 10:56:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730112974;
-	bh=sFua8ZLNFGe+/SF7R0sPYM6WD6XyU3+RBtva+zHRhZg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=J0qs4ExSZ+09TQUumkr3JIVnSZ4LNp6gNsnyqrpd0BumW3aEy7K4Inzyl4sWfWyAZ
-	 C+7y1LcCiGkJW9xcGXvK2VdZHOc3bPp3cHOUtyKDBAen13hnPM2p+vhyQp22oL/6Qn
-	 nY7LH21sgWlCDNumkp1t+RDCevYtjRUzNTJWSh396NoUhMmuML1c+ABJ1uIzRjBHgH
-	 IKIz1XbTCXw6sxCreu9yjmMNzyoZMmT4QeEs1tGWUVhISfnuGBJwVSIUEjuhfvO48I
-	 HlADIsmcV3Z+79VLAa6pslui/8K/XO+57di374XlJEetl1psYiaaocpU+ykFNb2zUx
-	 cYE2gbim1wdwg==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=wait-a-minute.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1t5NPw-007X98-AM;
-	Mon, 28 Oct 2024 10:56:12 +0000
-Date: Mon, 28 Oct 2024 10:56:11 +0000
-Message-ID: <87msiots1g.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Nam Cao <namcao@linutronix.de>
-Cc: Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Kees Cook <kees@kernel.org>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 05/31] KVM: arm64: Switch to use hrtimer_setup()
-In-Reply-To: <c8a1987ae32ee2596c90fc4403fa767cf5a3f2f4.1729864823.git.namcao@linutronix.de>
-References: <cover.1729864823.git.namcao@linutronix.de>
-	<c8a1987ae32ee2596c90fc4403fa767cf5a3f2f4.1729864823.git.namcao@linutronix.de>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1730113017; c=relaxed/simple;
+	bh=/Qwr1pB2SeM8Epvx/jOrwL6hE/RVoOH1whZM56KgSOw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qttC3Qbypa6GyO2IUx5BS1zzHrZDEB5xChgQezaZqkYPlMZhj/gGTK1MhWKdhmPyBPCb5sqNuzuds7VZeg53qjN/wf+Jnnw343vWm864kbhE75CIv09+UP7wnfEP1+MFi3rYEEIzPZ/1i/VoaCgnqSKAJgHJamBcgrfzUadixbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a9932aa108cso623532966b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 03:56:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730113013; x=1730717813;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WPxB9+Y6Dhx5f6Jz5TtPrWIreAq0S2BvQ8Yv7G3dcZw=;
+        b=ly4fUeBPDYTJ73v9E99AJEQJCGVpbhFmeKQixAofxFUK65rwiRCTcUWKTCGXgNJDvi
+         eHtAxirx2tkDapU0jIcchHUzeMnpKRqW9QpGSzWBCHHDhVyxCO4YIukKmue5qV7CiIPC
+         58tpjjx/SKPVP908f9Q+sjx156KD81cQlRSlyP76m8zykBAOfTBpyVsIV8ssvkhW/7hz
+         mTX3qm616BMos8NNN1FsivLDcC+/M7wfktxLRqpuoBsI4cfqgEFuih7kl+Vz17CC+chz
+         MTqcIynAIx6iUnkrj1SW9eSzW9yHDp6BFz4Whu/fmnM5j69vJvy9Yma/7RfexG1Be3hl
+         dLfw==
+X-Forwarded-Encrypted: i=1; AJvYcCWTSmbd9iZEKM56p3Kzx4NCMqyQ5yRhMCzy21c9ouZiPkF4M+bVslnC/bFEavPASeoi8tUSbNV4NDHLr7k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZIQazvOxCJuSrl4e+SYvB63pM8SLC6LtRTRJ0KcOf+cOGLMwN
+	N42BBIvcpVHF6MFsiwjuEUL8n3v7dZ/CHjgANzLfiy1ArbMAcFtW
+X-Google-Smtp-Source: AGHT+IE6RuG3kBekrSkc3prrrW2VAIHSBMekPMPs4hCjBgnbG4uLZaBmaUvJsgxnw7vjH/8GA6BPCw==
+X-Received: by 2002:a17:907:9724:b0:a9a:5e3a:641d with SMTP id a640c23a62f3a-a9de61e0cd2mr631691166b.59.1730113013229;
+        Mon, 28 Oct 2024 03:56:53 -0700 (PDT)
+Received: from gmail.com (fwdproxy-lla-009.fbsv.net. [2a03:2880:30ff:9::face:b00c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b1f02954esm366893466b.68.2024.10.28.03.56.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Oct 2024 03:56:52 -0700 (PDT)
+Date: Mon, 28 Oct 2024 03:56:50 -0700
+From: Breno Leitao <leitao@debian.org>
+To: kernel test robot <lkp@intel.com>,
+	Madalin Bucur <madalin.bucur@nxp.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Jakub Kicinski <kuba@kernel.org>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>
+Subject: Re: drivers/net/ethernet/freescale/dpaa/dpaa_eth.c:2745:24: sparse:
+ sparse: cast to restricted __be32
+Message-ID: <20241028-sticky-refined-lionfish-b06c0c@leitao>
+References: <202410271721.jiVrriXD-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: namcao@linutronix.de, anna-maria@linutronix.de, frederic@kernel.org, tglx@linutronix.de, a.hindborg@kernel.org, aliceryhl@google.com, ojeda@kernel.org, kees@kernel.org, suzuki.poulose@arm.com, joey.gouly@arm.com, oliver.upton@linux.dev, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202410271721.jiVrriXD-lkp@intel.com>
 
-[+ the rest of the KVM/arm64 maintainers/reviewers]
-
-On Mon, 28 Oct 2024 07:31:38 +0000,
-Nam Cao <namcao@linutronix.de> wrote:
+On Sun, Oct 27, 2024 at 05:36:56PM +0800, kernel test robot wrote:
+> Hi Breno,
 > 
-> There is a newly introduced hrtimer_setup() which will replace
-> hrtimer_init(). This new function is similar to the old one, except that it
-> also sanity-checks and initializes the timer's callback function.
+> First bad commit (maybe != root cause):
 > 
-> Switch to use this new function.
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+> head:   850925a8133c73c4a2453c360b2c3beb3bab67c9
+> commit: 782fe08e9861d00ce8aca370453dd9ceb9a23d50 soc: fsl: qbman: FSL_DPAA depends on COMPILE_TEST
+> date:   3 months ago
+> config: arm-randconfig-r123-20241027 (https://download.01.org/0day-ci/archive/20241027/202410271721.jiVrriXD-lkp@intel.com/config)
+> compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 5886454669c3c9026f7f27eab13509dd0241f2d6)
+> reproduce: (https://download.01.org/0day-ci/archive/20241027/202410271721.jiVrriXD-lkp@intel.com/reproduce)
 > 
-> Signed-off-by: Nam Cao <namcao@linutronix.de>
-> ---
-> Cc: Marc Zyngier <maz@kernel.org>
-> ---
->  arch/arm64/kvm/arch_timer.c | 7 +++----
->  1 file changed, 3 insertions(+), 4 deletions(-)
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202410271721.jiVrriXD-lkp@intel.com/
 > 
-> diff --git a/arch/arm64/kvm/arch_timer.c b/arch/arm64/kvm/arch_timer.c
-> index 879982b1cc73..92e4fb5dcf52 100644
-> --- a/arch/arm64/kvm/arch_timer.c
-> +++ b/arch/arm64/kvm/arch_timer.c
-> @@ -993,8 +993,7 @@ static void timer_context_init(struct kvm_vcpu *vcpu, int timerid)
->  	else
->  		ctxt->offset.vm_offset = &kvm->arch.timer_data.poffset;
->  
-> -	hrtimer_init(&ctxt->hrtimer, CLOCK_MONOTONIC, HRTIMER_MODE_ABS_HARD);
-> -	ctxt->hrtimer.function = kvm_hrtimer_expire;
-> +	hrtimer_setup(&ctxt->hrtimer, kvm_hrtimer_expire, CLOCK_MONOTONIC, HRTIMER_MODE_ABS_HARD);
->  
->  	switch (timerid) {
->  	case TIMER_PTIMER:
-> @@ -1021,8 +1020,8 @@ void kvm_timer_vcpu_init(struct kvm_vcpu *vcpu)
->  		timer_set_offset(vcpu_ptimer(vcpu), 0);
->  	}
->  
-> -	hrtimer_init(&timer->bg_timer, CLOCK_MONOTONIC, HRTIMER_MODE_ABS_HARD);
-> -	timer->bg_timer.function = kvm_bg_timer_expire;
-> +	hrtimer_setup(&timer->bg_timer, kvm_bg_timer_expire, CLOCK_MONOTONIC,
-> +		      HRTIMER_MODE_ABS_HARD);
->  }
->  
->  void kvm_timer_init_vm(struct kvm *kvm)
+> sparse warnings: (new ones prefixed by >>)
+> >> drivers/net/ethernet/freescale/dpaa/dpaa_eth.c:2745:24: sparse: sparse: cast to restricted __be32
+>    drivers/net/ethernet/freescale/dpaa/dpaa_eth.c: note: in included file (through include/linux/module.h):
+>    include/linux/list.h:83:21: sparse: sparse: self-comparison always evaluates to true
+>    drivers/net/ethernet/freescale/dpaa/dpaa_eth.c: note: in included file:
+> >> include/soc/fsl/qman.h:245:16: sparse: sparse: cast to restricted __be32
+> >> include/soc/fsl/qman.h:245:16: sparse: sparse: cast from restricted __be16
 
+Thanks. The commit above "782fe08e98 ("soc: fsl: qbman: FSL_DPAA depends
+on COMPILE_TEST") was created to detect problems like this, since it is
+not possible to compile-test dpaa driver. 
 
-Acked-by: Marc Zyngier <maz@kernel.org>
-
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
+Copying Madalin Bucur <madalin.bucur@nxp.com>, who currently maintains
+this driver.
 
