@@ -1,34 +1,34 @@
-Return-Path: <linux-kernel+bounces-384341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AEA49B293A
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 08:51:12 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 074F29B293B
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 08:52:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EF3A2817E9
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 07:51:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38C281C21795
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 07:51:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB15B1FF5FC;
-	Mon, 28 Oct 2024 07:35:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CC2F1FF61B;
+	Mon, 28 Oct 2024 07:35:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="StYj46Fi";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pznUBsi7"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="oToFpIYG";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="RmhyG4kt"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97C461D9329
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 07:35:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27BFD1F4263
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 07:35:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730100943; cv=none; b=rVmLva4c319zASRLixTfl17HcgyBvIjOlr9ZM1wjnLfPEFe5vDoYDj0bCUN/4xQA+QS0b5hMA89BJ2YO9enKFFiuAD3TF45FIuyHcj316Rbtrxg0oa4T6ey7SZBnZLUQiJffJ5oOEa3mOZj0U4gyLtojALMfIQSjiPDABI3ScbQ=
+	t=1730100943; cv=none; b=dDSxFnqRalexfqP/1ujrYsiBaZKgGiGVi+uk0OAPLFaRC41o3ejte22S9v3T0TASOrvlXh5RUR1wmnqTyvAb/+DGeGqJHtEEYHbVoAVEX/9l3Jip1M6DL9mk9CEs+nEojg2t9vsxYFgcLwWNhuq+PclxJvScnZh8LUOZkh8+lNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1730100943; c=relaxed/simple;
-	bh=hSmVDB9s3opYUP0w5UY+8MvpT15czToBUrWu5deqcY4=;
+	bh=uVoa015HYe5btTzsgcGmX8XI598wivKdFZ21JQQzg0A=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=FMRYZ2lv9ZgsMr+dXLvTlMWEa2d9aGT1ik84xVNKxkg3byL4h1DNFSUS2szPoknwRC8P93GVAti3U4F18qcr/Hq2kKJL9Vuq5OZI+kNAcb+EImi7T3a0Mj9TxfBh6lHSnbMZv1kyhimOSn6hpwRLwYuM7OAXQptyObakvyJD/JI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=StYj46Fi; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pznUBsi7; arc=none smtp.client-ip=193.142.43.55
+	 MIME-Version; b=E3yuVoFBj8ECyCjJ89SxNBXcL4vCvUTHvf3QvHSeqZnlILHKXRk6OwPrM5vaXRj1auaidLgSjCSDiCyJrYXX335yYYeSzqADM1OM8EBzA9QjZEfV2lMs1AhXA0UTkkM1fn3iboFBlfeHbCbePVo54ge3dPoVi2jW3151pRJKRuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=oToFpIYG; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=RmhyG4kt; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: Nam Cao <namcao@linutronix.de>
@@ -38,21 +38,21 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=d/BI0j8RPfznxjeHNdSm9jjPqIqDQjfttM8HSUkmB+M=;
-	b=StYj46FinBqlAgQ+A1/ns0QJFX99k/K8y0SMMFbwgcsuo4fL2w2/q6euiJiEmXQgNMG7AD
-	+DYUC38D+IYQqVyO+X2+dRIjIaOnBiYpUXULMID5fH+N9IJdpyvY/56FKc4ao1AgMJir8h
-	PAQX4BtP6CiGlFWXSrLZmKKgTZCF8jI3/BeZh5bncII/JKbwTRDsWjxUPE10yWVmtbzNbZ
-	bY1910FrkHnE9utFzWY2JfwT2brpifUWSW9mPWdGm9tiKPvuvwZRUdKO7+xClXlPNERwU9
-	wOfqq2DSCT6CKWVfD4tf8DFvAjJRlLPhsvXhZYfPK/dk4pRqzDDDK1ILeuKylg==
+	bh=/gDKN/lQVomGUAoZsZW6IwuYx+nvxNLfs4vpRCbgKAo=;
+	b=oToFpIYGbP6T7Gl+GtHC9Vg9I5O1a/LBetiwe0UJGw3/2GJyVFLMLnUrOGYSOozrQokXR3
+	Wkhmj2cLt/pclIPgPNMpLGerI9x5CCyeu55lxheswo9aKUZWYatV0VJLzsnz3KATtSFLtd
+	o9hCsvNkv7cVfLxtDgScr70cyomX7tIcjGCph7P1l2KUv2YqIavz93CkZkr/KKOvUFDW1m
+	C26eg3NIPICrpmIJfWisKZQHmHdCoZkov8j1OrzJOu/4C7NCasCbPcTMLqnEerK81XnQiL
+	GVWLrispITyfhlb14tAmFxnZPTaujuHQK/dQkV6QVYPfcCkqGeiofbVUjxy2ig==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020e; t=1730100939;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=d/BI0j8RPfznxjeHNdSm9jjPqIqDQjfttM8HSUkmB+M=;
-	b=pznUBsi7aQ/8Vp4jefHOp8iSPGxW3fG4fjg2Ng3895iuQbzIqY0BP8fqA6eE3PCsgftHrM
-	88nsalIZbVfKtVCQ==
+	bh=/gDKN/lQVomGUAoZsZW6IwuYx+nvxNLfs4vpRCbgKAo=;
+	b=RmhyG4kth9+v5gcMvHlgiXzpI+T/JVD/g5h2wPPSNk6HwzZZjzibP7PVwu3ccINg60PSzf
+	hxpyjEDTSVQt6JAg==
 To: Anna-Maria Behnsen <anna-maria@linutronix.de>,
 	Frederic Weisbecker <frederic@kernel.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
@@ -62,10 +62,10 @@ To: Anna-Maria Behnsen <anna-maria@linutronix.de>,
 	Kees Cook <kees@kernel.org>,
 	linux-kernel@vger.kernel.org
 Cc: Nam Cao <namcao@linutronix.de>,
-	Will Deacon <will@kernel.org>
-Subject: [PATCH 18/44] drivers: perf: Switch to use hrtimer_setup()
-Date: Mon, 28 Oct 2024 08:34:54 +0100
-Message-Id: <663c8175de33876af637e2934241967557ac2cdd.1729865485.git.namcao@linutronix.de>
+	Jon Mason <jdmason@kudzu.us>
+Subject: [PATCH 19/44] ntb: ntb_pingpong: Switch to use hrtimer_setup()
+Date: Mon, 28 Oct 2024 08:34:55 +0100
+Message-Id: <57598af834c409f2f81ae162aa544ef503725374.1729865485.git.namcao@linutronix.de>
 In-Reply-To: <cover.1729865485.git.namcao@linutronix.de>
 References: <cover.1729865485.git.namcao@linutronix.de>
 Precedence: bulk
@@ -86,66 +86,28 @@ Patch was created by using Coccinelle.
 
 Signed-off-by: Nam Cao <namcao@linutronix.de>
 ---
-Cc: Will Deacon <will@kernel.org>
+Cc: Jon Mason <jdmason@kudzu.us>
 ---
- drivers/perf/arm-ccn.c               | 5 ++---
- drivers/perf/marvell_cn10k_ddr_pmu.c | 4 ++--
- drivers/perf/thunderx2_pmu.c         | 5 ++---
- 3 files changed, 6 insertions(+), 8 deletions(-)
+ drivers/ntb/test/ntb_pingpong.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/perf/arm-ccn.c b/drivers/perf/arm-ccn.c
-index 5c66b9278862..716c14da5564 100644
---- a/drivers/perf/arm-ccn.c
-+++ b/drivers/perf/arm-ccn.c
-@@ -1273,9 +1273,8 @@ static int arm_ccn_pmu_init(struct arm_ccn *ccn)
- 	/* No overflow interrupt? Have to use a timer instead. */
- 	if (!ccn->irq) {
- 		dev_info(ccn->dev, "No access to interrupts, using timer.\n");
--		hrtimer_init(&ccn->dt.hrtimer, CLOCK_MONOTONIC,
--				HRTIMER_MODE_REL);
--		ccn->dt.hrtimer.function =3D arm_ccn_pmu_timer_handler;
-+		hrtimer_setup(&ccn->dt.hrtimer, arm_ccn_pmu_timer_handler, CLOCK_MONOTON=
-IC,
-+			      HRTIMER_MODE_REL);
- 	}
+diff --git a/drivers/ntb/test/ntb_pingpong.c b/drivers/ntb/test/ntb_pingpon=
+g.c
+index 8aeca7914050..1c1c74f4ff2d 100644
+--- a/drivers/ntb/test/ntb_pingpong.c
++++ b/drivers/ntb/test/ntb_pingpong.c
+@@ -284,8 +284,7 @@ static struct pp_ctx *pp_create_data(struct ntb_dev *nt=
+b)
+ 	pp->ntb =3D ntb;
+ 	atomic_set(&pp->count, 0);
+ 	spin_lock_init(&pp->lock);
+-	hrtimer_init(&pp->timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
+-	pp->timer.function =3D pp_timer_func;
++	hrtimer_setup(&pp->timer, pp_timer_func, CLOCK_MONOTONIC, HRTIMER_MODE_RE=
+L);
 =20
- 	/* Pick one CPU which we will use to collect data from CCN... */
-diff --git a/drivers/perf/marvell_cn10k_ddr_pmu.c b/drivers/perf/marvell_cn=
-10k_ddr_pmu.c
-index 94f1ebcd2a27..12ee0971b6ee 100644
---- a/drivers/perf/marvell_cn10k_ddr_pmu.c
-+++ b/drivers/perf/marvell_cn10k_ddr_pmu.c
-@@ -677,8 +677,8 @@ static int cn10k_ddr_perf_probe(struct platform_device =
-*pdev)
- 	if (!name)
- 		return -ENOMEM;
-=20
--	hrtimer_init(&ddr_pmu->hrtimer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
--	ddr_pmu->hrtimer.function =3D cn10k_ddr_pmu_timer_handler;
-+	hrtimer_setup(&ddr_pmu->hrtimer, cn10k_ddr_pmu_timer_handler, CLOCK_MONOT=
-ONIC,
-+		      HRTIMER_MODE_REL);
-=20
- 	cpuhp_state_add_instance_nocalls(
- 				CPUHP_AP_PERF_ARM_MARVELL_CN10K_DDR_ONLINE,
-diff --git a/drivers/perf/thunderx2_pmu.c b/drivers/perf/thunderx2_pmu.c
-index faf763d2c95c..769a088c8747 100644
---- a/drivers/perf/thunderx2_pmu.c
-+++ b/drivers/perf/thunderx2_pmu.c
-@@ -752,9 +752,8 @@ static int tx2_uncore_pmu_add_dev(struct tx2_uncore_pmu=
- *tx2_pmu)
- 	tx2_pmu->cpu =3D cpu;
-=20
- 	if (tx2_pmu->hrtimer_callback) {
--		hrtimer_init(&tx2_pmu->hrtimer,
--				CLOCK_MONOTONIC, HRTIMER_MODE_REL);
--		tx2_pmu->hrtimer.function =3D tx2_pmu->hrtimer_callback;
-+		hrtimer_setup(&tx2_pmu->hrtimer, tx2_pmu->hrtimer_callback, CLOCK_MONOTO=
-NIC,
-+			      HRTIMER_MODE_REL);
- 	}
-=20
- 	ret =3D tx2_uncore_pmu_register(tx2_pmu);
+ 	return pp;
+ }
 --=20
 2.39.5
 
