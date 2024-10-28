@@ -1,87 +1,88 @@
-Return-Path: <linux-kernel+bounces-384650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 571569B2CD7
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 11:27:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2970D9B2CD9
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 11:27:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE5BE1F22645
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 10:27:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A266A1F22155
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 10:27:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A7791D7E4F;
-	Mon, 28 Oct 2024 10:26:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B33261D88BE;
+	Mon, 28 Oct 2024 10:26:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="MLBc/CUD"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="Jcze/9VI"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B30C61D61A2
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 10:26:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F5CD1D6DDA
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 10:26:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730111179; cv=none; b=LJEtF9l1umpQthH0eMMj7SjA8Sv7pds7O8bZyn7e4GWRNRAM/k5Dgpj9tHCiCLU2wSdVIF+is/xVaaUlkTa8026gcKEf3dv561i+jEoUTJv0aDuF0FZ3JfMvHXCxlQ0Vi5XZTPEZjM15t+mpHjyYodUC86ujrahjL+ib8bJ2sgU=
+	t=1730111181; cv=none; b=XUOvC3QcezZRqBFyFsEM+r5FyC20Iq0S/U2rigKcov50OBh6vfaAUNEK514ESCih5gb/YAhScayrP0GTkGNzUWad21AWQtvOJg4bh1aR0WrrbVsRwrLCD3ueW0sUeW1siUr/cKwnbwbiBygn+jX+TdW5NXIgxzUqYQsEfqBwhEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730111179; c=relaxed/simple;
-	bh=js8gtoeOZlGeLq8295+lq+IHMiMRiPiXT/e6W18eRR8=;
+	s=arc-20240116; t=1730111181; c=relaxed/simple;
+	bh=3psXIgjRnV7ZKnrPL1AM2s1fm8oNKskaRog0kOCOv3g=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bByyOl1Fubhn4WKEcO3wkJUBT2ubkdWka9Y0sVVIHptin4PVhIIfyaHgkbT/DOQzWAdxqdm1uIqcNZ71lo1TDxOZdgj1TeK3pMPmwqVgPi9znffu/23G3Rl3hGPicjMZmkm0LDmqLd+vUNqPyHN32gfvow3EqVPEh8mLyl3VdLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=MLBc/CUD; arc=none smtp.client-ip=209.85.208.54
+	 MIME-Version; b=RWLtHAnKlLPZt4EM5w0HhfyILX9e6Up8tWGluJ/WL4znUjr4iZa8iwkfnoAUuJcrJnTVtfMnmNs5uFPeYzCJNfPLvN/ooEpNrWtlm1q3n/k5A16OJaFY1zwwZ9FyIxdbZhVJX+lkz2RMhwkPJTNEPOLdJDpnxfhpMCT83EMU8mo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=Jcze/9VI; arc=none smtp.client-ip=209.85.218.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5c9428152c0so4756397a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 03:26:17 -0700 (PDT)
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a7aa086b077so511685166b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 03:26:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google; t=1730111176; x=1730715976; darn=vger.kernel.org;
+        d=amarulasolutions.com; s=google; t=1730111177; x=1730715977; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3tF2Wj+vRMtC983z9w7XL42BV51oFEPPNHEhybEVd+Q=;
-        b=MLBc/CUDiBMDtEFFQEvkxQ9roetxU0lYbF+fhzmM1/3c4mloJVXF+W4LngTXlzul8u
-         ef18aKSB5BSTLcbMAJrYmn/In9gLl6RzN5e2h5RvamGR9CNaZ5EDI9J6okOfW06ktOSb
-         Fn/TEX68ZavztV6AD/r8LFu9fWhjBbRHJUgIM=
+        bh=pgo/k+HOa5AvPj9A+1CCmgMfc+PmvaON+Q6yQ1cAi7o=;
+        b=Jcze/9VIjsysLKdcTvUcudd8yly1ZVSzLHJhka4apu/+gMJCh2UE0MTOb9ktA26Ak8
+         07su8D6Vasdax0TORKywYvsBSw7eSGccvgagmjVkdKNSFjZNDTc5QkxV5FZFs8R+gIsf
+         hxImFQJ5Dm6oL9ccg7x4Dz0X0NbAn0b1Rugkk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730111176; x=1730715976;
+        d=1e100.net; s=20230601; t=1730111177; x=1730715977;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=3tF2Wj+vRMtC983z9w7XL42BV51oFEPPNHEhybEVd+Q=;
-        b=GJ0CcdGyM92w/oddtSCtO0lfoIYkwgguijX8ZyS+RL/+rJGcp/IMX0EbXCRxwfDW4L
-         vPxpwyfsp3csW2RuVzn85JOeS2dEBlRNU42i2HoD+0YPUUm7ABelXVVWWOaX/OXB5dI/
-         oBFlNvMNDZkPeFe2pRMeJrTndIXY3UPN1eOo2D8n9AEXbmA2RisRZJczVYiUT7Y2U+e6
-         LrBPSecJ/untPUcJgBpaeVac6kKZm74sr0PTNCKwEYPc27DezLiwPxP48Ux+exLlTZ4H
-         agGL3mW/ucm/8RKC+sjIzEi0JsaOf8+ok/Ggn5zX2P1ymK2wpaK4nWuO8xQf5maskUYZ
-         CiFA==
-X-Gm-Message-State: AOJu0Ywu8gWo+DQkYxFxQ+6I4BGfIBPRjexJFXdUQHyyCza5uXIEPExg
-	0vfBIsV9ho0xttLaxalw3WdJ4dyR7HpKjTI6m92BNPQEPIYBpM875tg+FmlkIHo0gXfRnt3KT1b
-	eEoY=
-X-Google-Smtp-Source: AGHT+IFdXb6XtLDCZdRMrvkyA0aKsne7r7Yx41P1F2c1jET9YdgAPGWx1KeM7QlZRwkreW9voNIysQ==
-X-Received: by 2002:a17:907:1c22:b0:a99:f1aa:a71f with SMTP id a640c23a62f3a-a9de5c90d49mr793546866b.11.1730111175841;
-        Mon, 28 Oct 2024 03:26:15 -0700 (PDT)
+        bh=pgo/k+HOa5AvPj9A+1CCmgMfc+PmvaON+Q6yQ1cAi7o=;
+        b=pmMIo0gkDTg7jY5g2z0JbZqOyww+HxoGmpkt4nhlzKKaatCPrx1TSCpIWXsDeWFLxD
+         TDJqy5ZYgieW2A9dZFmAIL14557pFL1AFXTtvUcHjpjHQbG5B3LsJYxEqd7l1AZ6QLUy
+         /YZ+bgvLTaqXbhi3cIgOHfnRRf1Jqf9rDj8adLwxEhYGOjVkdsInTBM5b1o3ob9opCsa
+         lfU2gPYJDVH8O7hhemhf9YGUxSlJym0CdtorI4o/Hs5bDwcT5Au2N33AgLyEalm/tHfu
+         IYd1D4srde6kQTtv3eZbcAP/mMsl0NMwYYCWw3Y3cVB3ghZA4PsGZHzXizFUIDW9Vhsh
+         Y+Zg==
+X-Gm-Message-State: AOJu0Yxlm6gMhss9eNqVkRIuuwWGVf/YpocqzdURoOPa4wv8VuvLxgZC
+	3ijt2mLdImHzuJtHhi2Y3ArT0lnWpUqKp3PBJXbVuthg6nIIFTW4M3iMxgIDl8HwZ5vj4K5aeFO
+	Grbg=
+X-Google-Smtp-Source: AGHT+IE1qExZyTeDCcsOPLbzeTHr0FDTO0+eG+29GGN1U5BkMPni1pRPTaIjSGyhvowARpdu2dlhRg==
+X-Received: by 2002:a17:907:7292:b0:a9a:d23:f8ca with SMTP id a640c23a62f3a-a9de5c92bfcmr611522566b.13.1730111177428;
+        Mon, 28 Oct 2024 03:26:17 -0700 (PDT)
 Received: from dario-ThinkPad-T14s-Gen-2i.amarulasolutions.com ([2.196.41.121])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b1f297b04sm363613966b.134.2024.10.28.03.26.14
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b1f297b04sm363613966b.134.2024.10.28.03.26.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Oct 2024 03:26:15 -0700 (PDT)
+        Mon, 28 Oct 2024 03:26:17 -0700 (PDT)
 From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 To: linux-kernel@vger.kernel.org
 Cc: linux-amarula@amarulasolutions.com,
 	Dario Binacchi <dario.binacchi@amarulasolutions.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	David Airlie <airlied@gmail.com>,
+	Jessica Zhang <quic_jesszhan@quicinc.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
 	Michael Trimarchi <michael@amarulasolutions.com>,
-	Fabio Estevam <festevam@gmail.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Shengjiu Wang <shengjiu.wang@nxp.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-pm@vger.kernel.org
-Subject: [RFC PATCH 04/10] pmdomain: imx: gpcv2: don't turn on a power domain already on
-Date: Mon, 28 Oct 2024 11:25:27 +0100
-Message-ID: <20241028102559.1451383-5-dario.binacchi@amarulasolutions.com>
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Simona Vetter <simona@ffwll.ch>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	devicetree@vger.kernel.org,
+	dri-devel@lists.freedesktop.org
+Subject: [RFC PATCH 05/10] dt-bindings: display: panel: add 'syna,boot-on' property
+Date: Mon, 28 Oct 2024 11:25:28 +0100
+Message-ID: <20241028102559.1451383-6-dario.binacchi@amarulasolutions.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241028102559.1451383-1-dario.binacchi@amarulasolutions.com>
 References: <20241028102559.1451383-1-dario.binacchi@amarulasolutions.com>
@@ -93,86 +94,32 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The patch, by informing pm_genpd_init() with the "is_off" parameter that
-the power domain is already on, prevents the power_on() callback from being
-called, thus avoiding the unnecessary repetition of the hardware power-on
-procedure. This feature is crucial when supporting the simple framebuffer,
-as the power domains have already been initialized by the bootloader.
+The property states that the panel display has been initialized and left
+on by the bootloader. This information becomes relevant in the case of
+supporting the simple framebuffer.
 
-Co-developed-by: Michael Trimarchi <michael@amarulasolutions.com>
-Signed-off-by: Michael Trimarchi <michael@amarulasolutions.com>
 Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 ---
 
- drivers/pmdomain/imx/gpcv2.c | 32 ++++++++++++++++++++++++++++++--
- 1 file changed, 30 insertions(+), 2 deletions(-)
+ .../devicetree/bindings/display/panel/synaptics,r63353.yaml  | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/pmdomain/imx/gpcv2.c b/drivers/pmdomain/imx/gpcv2.c
-index 963d61c5af6d..bf9fe4af03c5 100644
---- a/drivers/pmdomain/imx/gpcv2.c
-+++ b/drivers/pmdomain/imx/gpcv2.c
-@@ -1324,6 +1324,7 @@ static const struct imx_pgc_domain_data imx8mn_pgc_domain_data = {
- static int imx_pgc_domain_probe(struct platform_device *pdev)
- {
- 	struct imx_pgc_domain *domain = pdev->dev.platform_data;
-+	bool init_off;
- 	int ret;
+diff --git a/Documentation/devicetree/bindings/display/panel/synaptics,r63353.yaml b/Documentation/devicetree/bindings/display/panel/synaptics,r63353.yaml
+index 2fd6e0ec3682..987fd6f8b866 100644
+--- a/Documentation/devicetree/bindings/display/panel/synaptics,r63353.yaml
++++ b/Documentation/devicetree/bindings/display/panel/synaptics,r63353.yaml
+@@ -25,6 +25,11 @@ properties:
+   avdd-supply: true
+   dvdd-supply: true
  
- 	domain->dev = &pdev->dev;
-@@ -1354,12 +1355,33 @@ static int imx_pgc_domain_probe(struct platform_device *pdev)
- 		regmap_update_bits(domain->regmap, domain->regs->map,
- 				   domain->bits.map, domain->bits.map);
- 
--	ret = pm_genpd_init(&domain->genpd, NULL, true);
-+	init_off = !of_property_read_bool(domain->dev->of_node,
-+					  "fsl,boot-on");
-+	ret = pm_genpd_init(&domain->genpd, NULL, init_off);
- 	if (ret) {
- 		dev_err(domain->dev, "Failed to init power domain\n");
- 		goto out_domain_unmap;
- 	}
- 
-+	if (!init_off) {
-+		ret = pm_runtime_get_sync(domain->dev);
-+		if (ret < 0) {
-+			pm_runtime_put_noidle(domain->dev);
-+			dev_err_probe(domain->dev, ret, "failed to power up bus domain\n");
-+			goto out_genpd_remove;
-+		}
++  syna,boot-on:
++    description: |
++      The display has been initialized and left on by the bootloader/firmware.
++    type: boolean
 +
-+		if (domain->keep_clocks) {
-+			ret = clk_bulk_prepare_enable(domain->num_clks, domain->clks);
-+			if (ret) {
-+				dev_err_probe(domain->dev, ret,
-+					      "failed to enable clocks for domain: %s\n",
-+					      domain->genpd.name);
-+				goto out_pm_put;
-+			}
-+		}
-+	}
-+
- 	if (IS_ENABLED(CONFIG_LOCKDEP) &&
- 	    of_property_read_bool(domain->dev->of_node, "power-domains"))
- 		lockdep_set_subclass(&domain->genpd.mlock, 1);
-@@ -1368,11 +1390,17 @@ static int imx_pgc_domain_probe(struct platform_device *pdev)
- 					   &domain->genpd);
- 	if (ret) {
- 		dev_err(domain->dev, "Failed to add genpd provider\n");
--		goto out_genpd_remove;
-+		goto out_clk_unprepare;
- 	}
- 
- 	return 0;
- 
-+out_clk_unprepare:
-+	if (!init_off && domain->keep_clocks)
-+		clk_bulk_disable_unprepare(domain->num_clks, domain->clks);
-+out_pm_put:
-+	if (!init_off)
-+		pm_runtime_put(domain->dev);
- out_genpd_remove:
- 	pm_genpd_remove(&domain->genpd);
- out_domain_unmap:
+ required:
+   - compatible
+   - reg
 -- 
 2.43.0
 
