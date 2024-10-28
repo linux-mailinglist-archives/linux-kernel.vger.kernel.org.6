@@ -1,228 +1,139 @@
-Return-Path: <linux-kernel+bounces-385924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBFE99B3D2D
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 22:57:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B809D9B3D0A
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 22:49:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B45F1C20E46
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 21:57:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB5EB1C22471
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 21:49:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2070206E73;
-	Mon, 28 Oct 2024 21:48:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C51F1FC7E9;
+	Mon, 28 Oct 2024 21:48:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oS/p3ecb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f7IjF1A9"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB9D820696D;
-	Mon, 28 Oct 2024 21:48:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4AB91F4264;
+	Mon, 28 Oct 2024 21:48:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730152129; cv=none; b=fGoutQNgwHSJdSY/q6vXE3G1DnebwsJdl+QoBwjOCQct2qTj3OAXuw0359nZUgKs5YC+PCrcg/46jTsrrdl1gQ6gJokjsUkk1So1octYvrAFIwzxY25TTxgPeCzFTPoSRdVka1S07ryvxZvWbG1P8fJ6TqNesJQYYra7XPRIszY=
+	t=1730152094; cv=none; b=hXBQvHlCzb3Otm8/6MpquPNCSxVER/e0S+EMjwybr5uvJGxTGNheDTkucZxrxwlsOcp3+PpNeJwo6vjVwRqIbV08QlpCPWUAakKAeWwNMqP/Z1/HPsTRmXp3pqORrsth7uazn46RxWv36g6ximXSoJNZYlKBwlCsALc5tnFO1/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730152129; c=relaxed/simple;
-	bh=ypsDBvSscFTP4kYetsVF+YmFMPEp+IMuIsyncuhHNwU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YLWGj4BTuUQN14Oui/lMLtdjMlWwXWDlYUq1pfyy7xIyray0PTcR6WNqzJFy26+OPoPoviAIg0jwTWhxC6dGgugrmEnumMsTBISbbrE0d2S7U/xvj4SaOTmtMN0Vw5sERmxII9uz2EgW/6yNiwAU7nA0a20DdLbcXstAg2F5aIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oS/p3ecb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2F6CC4CEE7;
-	Mon, 28 Oct 2024 21:48:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730152128;
-	bh=ypsDBvSscFTP4kYetsVF+YmFMPEp+IMuIsyncuhHNwU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=oS/p3ecbY8bkbTkk72fAOKRXh0icpyiesDzlgJy3UyUeDsU8kxP81hSLpNoMnDuZb
-	 2a12LJ97JVbiWJj9oEXj7rkhb3i9YpXnFe8dBe5QSI93jBbEvbMzClx2Ysg8F32WH5
-	 ZFZFixyQ7vbFeZOexl9wiG3ZiifkDA/YzsfikB4GSPVW+danbHKIKJBWyEZIrkLpIO
-	 WoSz/sj1bpKq5NjykP3OBw7M1lj+57nGHAUbaS35Ktn/tOc9qkMv389FFgvW7/iPr0
-	 MG3DG4Tdsq6Npr3gbVRnr0V7yFizTgOqKd0E5bKhp/R86LLEQmbhjCwAScDHtHTxZC
-	 ebX3b0vwHkviw==
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: x86@kernel.org
-Cc: Peter Zijlstra <peterz@infradead.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Indu Bhagat <indu.bhagat@oracle.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	linux-perf-users@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>,
-	linux-toolchains@vger.kernel.org,
-	Jordan Rome <jordalgo@meta.com>,
-	Sam James <sam@gentoo.org>,
-	linux-trace-kernel@vger.kerne.org,
-	Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-	Jens Remus <jremus@linux.ibm.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Florian Weimer <fweimer@redhat.com>,
-	Andy Lutomirski <luto@kernel.org>
-Subject: [PATCH v3 18/19] perf script: Display PERF_RECORD_CALLCHAIN_DEFERRED
-Date: Mon, 28 Oct 2024 14:48:05 -0700
-Message-ID: <f78f657c8343d1c7286fda9dd4aa7c684592c7c9.1730150953.git.jpoimboe@kernel.org>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <cover.1730150953.git.jpoimboe@kernel.org>
-References: <cover.1730150953.git.jpoimboe@kernel.org>
+	s=arc-20240116; t=1730152094; c=relaxed/simple;
+	bh=8bUb1gsfUs6HYEXeSCtfQNzeRCtN2MDHAUHu6MpTaaw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Yn/wMXG+kqeIpI1XbDVqnptiXA+AGxb/B+tIG056jxiLoJnAKmrcCLFFzspvg2epn0szEZ8mkU2rZHjhUjaM/iW7PQxRLvv/BoDX6J2OC3uSdkZPVvLFlVx/mopQskGjMV6yYwakmmcgalZUeNrsRbtnVgT48aBXmr0J2fok9AY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f7IjF1A9; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2fb5638dd57so43728921fa.0;
+        Mon, 28 Oct 2024 14:48:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730152091; x=1730756891; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Vm7LQYDlni2urQkZBc5m5nUvilb5Q/Z0+Z8KtPs5hhI=;
+        b=f7IjF1A9AGu4Q5LwTAhdbfTRqlRoGkd5lx4zp3pJtClQ7nM+vBNSJljx6TkaqKNSS6
+         eBq4Bx7UVOjMtdn+zA6TBSfEx41pVZz3tfgzKV+mBXFxNJuIz0UD4dis3IjO4rxDucwx
+         7uADcLr3E4q70lXRZLaBLhS31ta1qsNvpRFjm1Jd3IV0Dw5uYuLZ7jwCGp3J15AH70Nv
+         Sj8wxcFbuQZbgTIEaMJaxXhmC0yrp0xFlm3ZvgrBLpLJYm9HiL79UnrkrrBN3YK97h0j
+         SUatBuzanHarYlSZWeFc76/9gVhKvbHRYbxmHOYJSR56pZnCFLvxHbZXn6JYKYePr1W4
+         g+/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730152091; x=1730756891;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Vm7LQYDlni2urQkZBc5m5nUvilb5Q/Z0+Z8KtPs5hhI=;
+        b=PrDD0bM0ZqAc3iFfyvLwfWdkYnzV02wM7Qtt5We72n5YphpzA+vWAcJmQ3ch4hpOCS
+         NpI6a7oNqnC0bwaKupcYZnlbZAx+vwA+Egf6RZyBo4VHysRU8DppMAbeMu6Y5zHLWXrM
+         xkPu9CKPTHKwjT6YI+7wYC/y9Sg6tcGs37tqk+c7OkpTVSGK2UlA0w30B9iiaoo9V7bJ
+         N/EBMaYK0omFO9sUk/v0DMfX41+J3fZUt84/5z364g0XNg4uDKQoiItnpSyfkS96qz09
+         FkQ7lK+soxOeegzA7zv4v6CxnwBdC+N+wJr2BmnL+2REG2ivw/GLy6MmrrY8y8TFwA5B
+         beQg==
+X-Forwarded-Encrypted: i=1; AJvYcCUGrraoMf9PfI8PbmPT1F4/qmNaC2y0yYedJIxZKRDjjLZAhc6ZHJW3kfHxlvf+5kpN/KF0PWg5NB4=@vger.kernel.org, AJvYcCWmg/mlnsqYOwKx4xg5IoZlzYCfjoM6lchwLvgCLB53DkAG+GphgdjOpTGRRaGSaWPaiLN+wJ0X9J64cco=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwV4I4qq1jUCP2BH8bhdJq/UdQD3Ho0kIov6Cs+1XX9GHhty081
+	zbrbIGzDkVulewRyJ4POxwtnWaFiPkIA5soi8jlFBWd6dxhg8vmS
+X-Google-Smtp-Source: AGHT+IEKbFNaCuvTqBxgZc8XB5+hJWDhTcNj9FbAmJmzlusH2FK5buZVeTtbcw1XRNdPKO2ibo4uOw==
+X-Received: by 2002:a05:651c:b12:b0:2fb:441a:90d with SMTP id 38308e7fff4ca-2fcbdfdb153mr39514281fa.21.1730152090548;
+        Mon, 28 Oct 2024 14:48:10 -0700 (PDT)
+Received: from ?IPV6:2001:678:a5c:1202:4fb5:f16a:579c:6dcb? (soda.int.kasm.eu. [2001:678:a5c:1202:4fb5:f16a:579c:6dcb])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fcb45d1b5asm12719301fa.85.2024.10.28.14.48.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 28 Oct 2024 14:48:08 -0700 (PDT)
+Message-ID: <e0fa24bd-95c4-429f-baa0-537653f8f6e9@gmail.com>
+Date: Mon, 28 Oct 2024 22:48:06 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] cpufreq/amd-pstate: Push adjust_perf vfunc init
+ into cpu_init
+To: Mario Limonciello <superm1@kernel.org>,
+ "Gautham R . Shenoy" <gautham.shenoy@amd.com>,
+ Perry Yuan <perry.yuan@amd.com>
+Cc: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>,
+ "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)"
+ <linux-kernel@vger.kernel.org>,
+ "open list:CPU FREQUENCY SCALING FRAMEWORK" <linux-pm@vger.kernel.org>,
+ Mario Limonciello <mario.limonciello@amd.com>
+References: <20241028145542.1739160-1-superm1@kernel.org>
+Content-Language: en-US, sv-SE
+From: Klara Modin <klarasmodin@gmail.com>
+In-Reply-To: <20241028145542.1739160-1-superm1@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Namhyung Kim <namhyung@kernel.org>
+On 2024-10-28 15:55, Mario Limonciello wrote:
+> From: Mario Limonciello <mario.limonciello@amd.com>
+> 
+> As the driver can be changed in and out of different modes it's possible
+> that adjust_perf is assigned when it shouldn't be.
+> 
+> This could happen if an MSR design is started up in passive mode and then
+> switches to active mode.
+> 
+> To solve this explicitly clear `adjust_perf` in amd_pstate_epp_cpu_init().
+> 
+> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+> ---
+> Cc: Klara Modin <klarasmodin@gmail.com>
+>   drivers/cpufreq/amd-pstate.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
+> index 206725219d8c9..e480da818d6f5 100644
+> --- a/drivers/cpufreq/amd-pstate.c
+> +++ b/drivers/cpufreq/amd-pstate.c
+> @@ -1504,6 +1504,8 @@ static int amd_pstate_epp_cpu_init(struct cpufreq_policy *policy)
+>   		WRITE_ONCE(cpudata->cppc_cap1_cached, value);
+>   	}
+>   
+> +	current_pstate_driver->adjust_perf = NULL;
+> +
+>   	return 0;
+>   
+>   free_cpudata1:
+> @@ -1866,8 +1868,6 @@ static int __init amd_pstate_init(void)
+>   	/* capability check */
+>   	if (cpu_feature_enabled(X86_FEATURE_CPPC)) {
+>   		pr_debug("AMD CPPC MSR based functionality is supported\n");
+> -		if (cppc_state != AMD_PSTATE_ACTIVE)
+> -			current_pstate_driver->adjust_perf = amd_pstate_adjust_perf;
+>   	} else {
+>   		pr_debug("AMD CPPC shared memory based functionality is supported\n");
+>   		static_call_update(amd_pstate_cppc_enable, shmem_cppc_enable);
 
-Handle the deferred callchains in the script output.
+Both of these patches together also fix the problem I had.
 
-  $ perf script
-  perf     801 [000]    18.031793:          1 cycles:P:
-          ffffffff91a14c36 __intel_pmu_enable_all.isra.0+0x56 ([kernel.kallsyms])
-          ffffffff91d373e9 perf_ctx_enable+0x39 ([kernel.kallsyms])
-          ffffffff91d36af7 event_function+0xd7 ([kernel.kallsyms])
-          ffffffff91d34222 remote_function+0x42 ([kernel.kallsyms])
-          ffffffff91c1ebe1 generic_exec_single+0x61 ([kernel.kallsyms])
-          ffffffff91c1edac smp_call_function_single+0xec ([kernel.kallsyms])
-          ffffffff91d37a9d event_function_call+0x10d ([kernel.kallsyms])
-          ffffffff91d33557 perf_event_for_each_child+0x37 ([kernel.kallsyms])
-          ffffffff91d47324 _perf_ioctl+0x204 ([kernel.kallsyms])
-          ffffffff91d47c43 perf_ioctl+0x33 ([kernel.kallsyms])
-          ffffffff91e2f216 __x64_sys_ioctl+0x96 ([kernel.kallsyms])
-          ffffffff9265f1ae do_syscall_64+0x9e ([kernel.kallsyms])
-          ffffffff92800130 entry_SYSCALL_64+0xb0 ([kernel.kallsyms])
-
-  perf     801 [000]    18.031814: DEFERRED CALLCHAIN
-              7fb5fc22034b __GI___ioctl+0x3b (/usr/lib/x86_64-linux-gnu/libc.so.6)
-
-Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
----
- tools/perf/builtin-script.c | 89 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 89 insertions(+)
-
-diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
-index a644787fa9e1..311580e25f5b 100644
---- a/tools/perf/builtin-script.c
-+++ b/tools/perf/builtin-script.c
-@@ -2540,6 +2540,93 @@ static int process_sample_event(const struct perf_tool *tool,
- 	return ret;
- }
- 
-+static int process_deferred_sample_event(const struct perf_tool *tool,
-+					 union perf_event *event,
-+					 struct perf_sample *sample,
-+					 struct evsel *evsel,
-+					 struct machine *machine)
-+{
-+	struct perf_script *scr = container_of(tool, struct perf_script, tool);
-+	struct perf_event_attr *attr = &evsel->core.attr;
-+	struct evsel_script *es = evsel->priv;
-+	unsigned int type = output_type(attr->type);
-+	struct addr_location al;
-+	FILE *fp = es->fp;
-+	int ret = 0;
-+
-+	if (output[type].fields == 0)
-+		return 0;
-+
-+	/* Set thread to NULL to indicate addr_al and al are not initialized */
-+	addr_location__init(&al);
-+
-+	if (perf_time__ranges_skip_sample(scr->ptime_range, scr->range_num,
-+					  sample->time)) {
-+		goto out_put;
-+	}
-+
-+	if (debug_mode) {
-+		if (sample->time < last_timestamp) {
-+			pr_err("Samples misordered, previous: %" PRIu64
-+				" this: %" PRIu64 "\n", last_timestamp,
-+				sample->time);
-+			nr_unordered++;
-+		}
-+		last_timestamp = sample->time;
-+		goto out_put;
-+	}
-+
-+	if (filter_cpu(sample))
-+		goto out_put;
-+
-+	if (machine__resolve(machine, &al, sample) < 0) {
-+		pr_err("problem processing %d event, skipping it.\n",
-+		       event->header.type);
-+		ret = -1;
-+		goto out_put;
-+	}
-+
-+	if (al.filtered)
-+		goto out_put;
-+
-+	if (!show_event(sample, evsel, al.thread, &al, NULL))
-+		goto out_put;
-+
-+	if (evswitch__discard(&scr->evswitch, evsel))
-+		goto out_put;
-+
-+	perf_sample__fprintf_start(scr, sample, al.thread, evsel,
-+				   PERF_RECORD_CALLCHAIN_DEFERRED, fp);
-+	fprintf(fp, "DEFERRED CALLCHAIN");
-+
-+	if (PRINT_FIELD(IP)) {
-+		struct callchain_cursor *cursor = NULL;
-+
-+		if (symbol_conf.use_callchain && sample->callchain) {
-+			cursor = get_tls_callchain_cursor();
-+			if (thread__resolve_callchain(al.thread, cursor, evsel,
-+						      sample, NULL, NULL,
-+						      scripting_max_stack)) {
-+				pr_info("cannot resolve deferred callchains\n");
-+				cursor = NULL;
-+			}
-+		}
-+
-+		fputc(cursor ? '\n' : ' ', fp);
-+		sample__fprintf_sym(sample, &al, 0, output[type].print_ip_opts,
-+				    cursor, symbol_conf.bt_stop_list, fp);
-+	}
-+
-+	fprintf(fp, "\n");
-+
-+	if (verbose > 0)
-+		fflush(fp);
-+
-+out_put:
-+	addr_location__exit(&al);
-+	return ret;
-+}
-+
- // Used when scr->per_event_dump is not set
- static struct evsel_script es_stdout;
- 
-@@ -4325,6 +4412,7 @@ int cmd_script(int argc, const char **argv)
- 
- 	perf_tool__init(&script.tool, !unsorted_dump);
- 	script.tool.sample		 = process_sample_event;
-+	script.tool.callchain_deferred	 = process_deferred_sample_event;
- 	script.tool.mmap		 = perf_event__process_mmap;
- 	script.tool.mmap2		 = perf_event__process_mmap2;
- 	script.tool.comm		 = perf_event__process_comm;
-@@ -4351,6 +4439,7 @@ int cmd_script(int argc, const char **argv)
- 	script.tool.throttle		 = process_throttle_event;
- 	script.tool.unthrottle		 = process_throttle_event;
- 	script.tool.ordering_requires_timestamps = true;
-+	script.tool.merge_deferred_callchains = false;
- 	session = perf_session__new(&data, &script.tool);
- 	if (IS_ERR(session))
- 		return PTR_ERR(session);
--- 
-2.47.0
-
+Thanks,
+Tested-by: Klara Modin <klarasmodin@gmail.com>
 
