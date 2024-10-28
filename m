@@ -1,163 +1,143 @@
-Return-Path: <linux-kernel+bounces-385372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 962B79B365F
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 17:23:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 034FA9B3663
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 17:25:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5588E2811FE
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 16:23:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BF861F23136
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 16:25:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EF221DE2D7;
-	Mon, 28 Oct 2024 16:23:27 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41C4F1DE8B3;
+	Mon, 28 Oct 2024 16:25:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vPf4Ioyo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 153CC55E73
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 16:23:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BAAC55E73;
+	Mon, 28 Oct 2024 16:25:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730132607; cv=none; b=Ox+CUXcsyXeXgu0WsDHaACXONH+jCK+blVj953rwzqbTKUvzPUO1s8pYqsXmT6eXxAVFPCX0q8kbyI6IaXluez8ud/cwlSN4TF9sOF4FaJcFcB2J9NAFaKiziIc7Uu5ad6b2boSpwicbGlzrSSr2G28F+irVsEEQYiK4bRnpkuU=
+	t=1730132721; cv=none; b=Ke/ReL+U0I1CieghtEiuz91bziTeaAZWNrXMIIh5H6INiCsMBH+41raXxieNJ3dQHJlTzEA8xSGhsG4petM/+ACtpj7pyUM4MNokCm3BKPiFZEFDHoLkcLOGKCBepjVg67HDxbkwHJrMsvMCYANYdjbF46NZKh9pCst9BzAaDJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730132607; c=relaxed/simple;
-	bh=KWWSUgavmZeYBvzGGdcQ4JK+soB8sssdz3uvY5BTVTU=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=bZzA42sFf7kCKcp88lpwnYj4Lr52ZzAc4Kv9+Vc6kVfvAkFvihNstAHOevAWYdjB28q2Y6z3GLJB/2Ivvw6PR/fKfhP6SCOIxHZUned6f9xlJnYpHu1+gUkBFmvbZY/JPke2ruPrfFDsFGlsVB4YxYgP/KgOZxn+cB4/2VzxC7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-83aac7e7fd7so458930039f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 09:23:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730132604; x=1730737404;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=kG9B6e846ZPDBlAb5BPpyJk5ZSk3i1+AlWQpqphc6Sw=;
-        b=tz/AbDgcEbl4l2jcxx79gZrIed5NmHakJ9WCw4M6JSOv3J7wQ3zUfkQwn4hWkkqv4d
-         kQTdmGUzLvMiXrn4AAuQIydJ9EijwcwJibxDUTj2w7TcIXERlgCBota3RKV7ZuP55HwD
-         9graWrx9yAQSrzquvMiI2ype5CELOGiq4NE5YoyIFRPy3ZBsdCQ1SaI0I6ZOIRmFldyL
-         T1GwPdRwnrGBFO3sK7EZISocs2W2QDXEgGqfJ6AxHCU5fIbpy+aM1fQYZAAxNCOHTS2K
-         rf3pMYrFNcV/IjwKdQLAw7z0mCtRCsa7JzFgp/CpH3tLKrbkp1rncXQcv6wE1J3TSGTg
-         X5Qg==
-X-Forwarded-Encrypted: i=1; AJvYcCUVnkPGXd7vu2os7UkXTzP0CLZ69PULY+s6rQzi9gFWIPWy8izud/7rIneb+sa0XdpkmAJTC9g5ryf6n4g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwheKsJmaRLdVUEqU7YNl+RpXIaBgUy1tXW56uPoZabNs9T+l4t
-	HRVBnNG2odyWewPubgU3HR8q8mLs1YfofNJOtmFI4IfrglCldnNNaiI7sA01510TUaX3/VopSSV
-	FOAJm6e1suDtw9sGewYRI7+TY73kuRnhTlHYY9BQfQBhqgZJXdx/bpxM=
-X-Google-Smtp-Source: AGHT+IHFx2SQFhyYV9myLsFoNcIZAbjaRkp/I8ZSavR75n+lVFW/tQ29LYTriL6xamM2YBNbrdY4UAQQmKJnIs8gwPNm89IVs8qm
+	s=arc-20240116; t=1730132721; c=relaxed/simple;
+	bh=+3DwLMWgTV7KQrD4OZVcBB/q7H6IGSRHKbS/THz4Mpo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j/GAUGQwHjGQteOtiWU7E3st9WZc2/tndjJmaoe9G7wMLJAe9GzmT9LiMC6WfNwkLY2cK7vIU2tJBhcqijN37r//K8xkq4Y8B/fjLgHEN3ydmZBpstc8UZLrDTPEjZC2o4WNB93MEse8L/tTLyPhga7eS1CPvoOr5zgfTMeg9Gs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vPf4Ioyo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E2E8C4CEC3;
+	Mon, 28 Oct 2024 16:25:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730132721;
+	bh=+3DwLMWgTV7KQrD4OZVcBB/q7H6IGSRHKbS/THz4Mpo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vPf4Ioyo2XmGoorJFdpvq/TPayIxdalhSEgvBWNsTZ4w09ucnnTW/Z7b9Zsnf2gQE
+	 jepTow5jNtoTTezTXPINX6t4kvTm4NY+TIlzYlexEe5LyCog8vtbKCiUDQTYeFrD5U
+	 fl9VWx7nKv+4yX8Dks1jlhuLt7c4Cu6Bef3FkLGTC3O+Z8qrTcTM86Eh0SGNAf04RO
+	 Gh7LyY56qO/20wRPNl/gj0jRowUkPDxcJy/md68nzB5Nj9XvcZ8TuCNmW7cQaN24xd
+	 GscvoE3ieutGLAsMv9gvGxJbmDlG65B4EThy3/sxbIgUo9OVnAswC2u7LKqK8gJSbS
+	 mzUMj/9ji+reQ==
+Date: Mon, 28 Oct 2024 16:25:15 +0000
+From: Will Deacon <will@kernel.org>
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Michal Hocko <mhocko@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>,
+	Uladzislau Rezki <urezki@gmail.com>, rcu@vger.kernel.org,
+	Michal Hocko <mhocko@suse.com>
+Subject: Re: [PATCH 11/20] sched: Handle CPU isolation on last resort
+ fallback rq selection
+Message-ID: <20241028162514.GA2709@willie-the-truck>
+References: <20240926224910.11106-1-frederic@kernel.org>
+ <20240926224910.11106-12-frederic@kernel.org>
+ <20241008105434.GA9243@willie-the-truck>
+ <Zw5yx6huZvQ5r71_@localhost.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2183:b0:3a3:4391:24e9 with SMTP id
- e9e14a558f8ab-3a4ed2dfafdmr82600365ab.20.1730132604186; Mon, 28 Oct 2024
- 09:23:24 -0700 (PDT)
-Date: Mon, 28 Oct 2024 09:23:24 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <671fba7c.050a0220.21b2f.0006.GAE@google.com>
-Subject: [syzbot] [ocfs2?] kernel BUG in ocfs2_group_extend
-From: syzbot <syzbot+ce0c7bd35d4b7c7300cd@syzkaller.appspotmail.com>
-To: jlbec@evilplan.org, joseph.qi@linux.alibaba.com, 
-	linux-kernel@vger.kernel.org, mark@fasheh.com, ocfs2-devel@lists.linux.dev, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Zw5yx6huZvQ5r71_@localhost.localdomain>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-Hello,
+Hi Frederic,
 
-syzbot found the following issue on:
+Thanks for having a crack at this, but I'm pretty confused now so please
+prepare for a bunch of silly questions!
 
-HEAD commit:    c2ee9f594da8 KVM: selftests: Fix build on on non-x86 archi..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=17baf640580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=fc6f8ce8c5369043
-dashboard link: https://syzkaller.appspot.com/bug?extid=ce0c7bd35d4b7c7300cd
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+On Tue, Oct 15, 2024 at 03:48:55PM +0200, Frederic Weisbecker wrote:
+> Le Tue, Oct 08, 2024 at 11:54:35AM +0100, Will Deacon a écrit :
+> > On Fri, Sep 27, 2024 at 12:48:59AM +0200, Frederic Weisbecker wrote:
+> > > When a kthread or any other task has an affinity mask that is fully
+> > > offline or unallowed, the scheduler reaffines the task to all possible
+> > > CPUs as a last resort.
+> > > 
+> > > This default decision doesn't mix up very well with nohz_full CPUs that
+> > > are part of the possible cpumask but don't want to be disturbed by
+> > > unbound kthreads or even detached pinned user tasks.
+> > > 
+> > > Make the fallback affinity setting aware of nohz_full. This applies to
+> > > all architectures supporting nohz_full except arm32. However this
+> > > architecture that overrides the task possible mask is unlikely to be
+> > > willing to integrate new development.
+> > 
+> > I'm not sure I understand this last sentence. The possible mask is
+> > overridden for 32-bit tasks on an *arm64* kernel when running on an SoC
+> > featuring some CPUs that can execute only 64-bit tasks. Who is unwilling
+> > to integrate what?
 
-Unfortunately, I don't have any reproducer for this issue yet.
+I should've been clearer in my reply, but I think the most important thing
+here for the arm64 heterogeneous SoCs is that we document whatever the
+behaviour is in Documentation/arch/arm64/asymmetric-32bit.rst. There are
+a few other kernel features that don't play well (e.g. SCHED_DEADLINE),
+so it might be sufficient just to call out the limitations relating to
+CPU isolation there.
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-c2ee9f59.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/8a3541902b13/vmlinux-c2ee9f59.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/a00efacc2604/bzImage-c2ee9f59.xz
+However:
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+ce0c7bd35d4b7c7300cd@syzkaller.appspotmail.com
+> Will, how does the (untested) following look like? The rationale is that
+> we must deal with the fact that CPU supporting 32-bits el0 may appear at
+> any time and those may not intersect housekeeping CPUs (housekeeping CPUs
+> are CPUs that are not part of nohz_full=.
 
-loop0: detected capacity change from 32768 to 32767
-------------[ cut here ]------------
-kernel BUG at fs/ocfs2/resize.c:308!
-Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
-CPU: 0 UID: 0 PID: 5104 Comm: syz.0.0 Not tainted 6.12.0-rc4-syzkaller-00047-gc2ee9f594da8 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:ocfs2_group_extend+0xb28/0xb30 fs/ocfs2/resize.c:308
-Code: ff ff 44 89 f9 80 e1 07 fe c1 38 c1 0f 8c 30 f9 ff ff 4c 89 ff e8 68 c8 69 fe e9 23 f9 ff ff e8 4e 92 31 08 e8 49 03 00 fe 90 <0f> 0b 66 0f 1f 44 00 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90
-RSP: 0018:ffffc9000b2a7b20 EFLAGS: 00010283
-RAX: ffffffff8394d497 RBX: 00000000ffffffff RCX: 0000000000040000
-RDX: ffffc9000ba49000 RSI: 000000000000055d RDI: 000000000000055e
-RBP: ffffc9000b2a7cf0 R08: ffffffff8394cc23 R09: 1ffffffff2039fdd
-R10: dffffc0000000000 R11: fffffbfff2039fde R12: ffff888041644fb8
-R13: dffffc0000000000 R14: 1ffff92001654f74 R15: ffff88804c4d6e00
-FS:  00007fd5c99936c0(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000562c6b6f9b08 CR3: 000000003a86c000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- ocfs2_ioctl+0x771/0x7d0 fs/ocfs2/ioctl.c:873
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:907 [inline]
- __se_sys_ioctl+0xf9/0x170 fs/ioctl.c:893
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fd5c8b7dff9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fd5c9993038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007fd5c8d36058 RCX: 00007fd5c8b7dff9
-RDX: 0000000020000100 RSI: 0000000040046f01 RDI: 0000000000000004
-RBP: 00007fd5c8bf0296 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007fd5c8d36058 R15: 00007ffd7b458dc8
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:ocfs2_group_extend+0xb28/0xb30 fs/ocfs2/resize.c:308
-Code: ff ff 44 89 f9 80 e1 07 fe c1 38 c1 0f 8c 30 f9 ff ff 4c 89 ff e8 68 c8 69 fe e9 23 f9 ff ff e8 4e 92 31 08 e8 49 03 00 fe 90 <0f> 0b 66 0f 1f 44 00 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90
-RSP: 0018:ffffc9000b2a7b20 EFLAGS: 00010283
-RAX: ffffffff8394d497 RBX: 00000000ffffffff RCX: 0000000000040000
-RDX: ffffc9000ba49000 RSI: 000000000000055d RDI: 000000000000055e
-RBP: ffffc9000b2a7cf0 R08: ffffffff8394cc23 R09: 1ffffffff2039fdd
-R10: dffffc0000000000 R11: fffffbfff2039fde R12: ffff888041644fb8
-R13: dffffc0000000000 R14: 1ffff92001654f74 R15: ffff88804c4d6e00
-FS:  00007fd5c99936c0(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fd5c9971f98 CR3: 000000003a86c000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+In the funky SoCs, all CPUs support 64-bit and we have a 64-bit kernel.
+Some CPUs additionally support 32-bit but that should only be a concern
+for the scheduling of user tasks.
 
+> If nohz_full= isn't used then
+> it's cpu_possible_mask). If there is a housekeeping CPU supporting el0 32bits
+> then it will be disallowed to be ever offlined. But if the first mismatching
+> CPU supporting el0 that pops up is not housekeeping then we may end up
+> with that CPU disallowed to be offlined + later if a housekeeping CPU appears
+> that also supports 32bits el0 will also be disallowed to be offlined. Ideally
+> it should turn back the previous CPU to be offlinable but there may be
+> other things that have forbidden that CPU to be offline so...
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+I'd have thought the bigger problem would be if the set of nohz_full=
+CPUs was defined as the set of CPUs that support 32-bit. In that case,
+executing a 32-bit task will give the scheduler no choice but to run
+the task on a !housekeeping core.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+So perhaps we could turn this on its head and explicitly mark the first
+32-bit capable CPU as a housekeeping core when the mismatched mode is
+enabled? We're already preventing CPU hotplug for the thing, so it's
+"special" already. If that conflicts with the nohz_full_option, we can
+emit a warning message that we're overriding it. I think that's ok, as
+the user will have had to specify 'allow_mismatched_32bit_el0' as well.
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Will
 
