@@ -1,159 +1,113 @@
-Return-Path: <linux-kernel+bounces-385010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5479B9B315B
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:09:59 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A5F99B315F
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:10:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 867941C215FB
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:09:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4115B21F8B
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:10:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 162D61DB37A;
-	Mon, 28 Oct 2024 13:09:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B7F21DACBF;
+	Mon, 28 Oct 2024 13:10:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ZsmyfgYB"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="bXKI0SnL"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A6071DB534
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 13:09:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 884E6EDE
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 13:10:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730120991; cv=none; b=mJpIWdnHvO94EtFhpjvTZpWa0diRNtewS9slh8eN1cGeGLX2FszfPjF2oCsD74+qSS78FmsyvfZEFnejSjJO/K7AReEeCJQpT5xDHhX4uzmMr4UeJ6FcM4BEDlZ1TWh0SH+v6hd+voENZWmafIkzucMILQG8b6zRFwwTIQAWkDY=
+	t=1730121049; cv=none; b=oe/JS44jYPv/JaBEopKn0R0lYkUPaKtzObo/st8vijCpIyi29c0pJgaG7qbeEcktlNGPrQ9wWkSUAighH9EMxIYJaJwdxuzsi8vo5lEqKbogSrdM8VQq8RiKXtF4D3AwxaCJsOAeG3crEr3g9Jb8IAXsZprXwwFHjZO1Knkzq2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730120991; c=relaxed/simple;
-	bh=vzi2Ro5Jaf3pF3Rv3AuVKCP0qgxEAOSmHXRkW495ph8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=n4v3W/FKWSst3sQ5cK8m6pGjyEbJafKMvRzYO1Djtcgvyzw7/Nd4lIT5KjsnlOPtmzjQDmu29FSnQVjQ6l+i90oy7QXlnBCTs8Ieq8cfJC59dqEDMzP6ts4suzFLST8xTp7SLtS3Ij01TzMhQTeffXrlpz95tTOiLog1lrKYtIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ZsmyfgYB; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49SBO4mJ026368
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 13:09:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	a8Aorj2sqV1pPtNTQ06SRHwviYl+wkWrzaAiIej+K3w=; b=ZsmyfgYB2qxibtoo
-	Pb0mAJvPEwnorUj3+1E0577OajXqlC74+z/M0v4uZebsU15zZIMaeKRbyVAGSYrZ
-	1xVvsAmrfHO3b0L3UplKU78L++WdREquUJ2NhF9We3iLXl6XRLW/FDv9+jtg96ac
-	fyVRNZnGf8borgb3WFEx8C0N6Cnum23STTpit32HpCPMV0DySVhgCdCiazi5I6jx
-	2hHx+hvpQFN+zRMtfLad6+NsDLjJl68eVZp0COdWbvQy5wHN6bF+oHWi6Epzt1jM
-	QKFa6rp/h/HyEsTZobTKGz9zcPXbYDOGePkt9d0RcKfFPRcikC9DuyODCtD+nMto
-	ZozgPQ==
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42grgud0q7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 13:09:48 +0000 (GMT)
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6cbe6e6bcf2so14685446d6.2
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 06:09:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730120988; x=1730725788;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=a8Aorj2sqV1pPtNTQ06SRHwviYl+wkWrzaAiIej+K3w=;
-        b=K+MiDYaX/9uxguoZtovep/Xq6RYXdhOIXBTFnDxR44NXEZhOgaufDJL9IrC9bP22IV
-         qPrX5wqPFP1TKvc0H2aEW9oST0xgUScb+s8aUO+GUq7mDpEoLk7856awKXdgYrcY/tvK
-         V0LhTG7qIYA5tWlC/FxDNJIpN7mrs+58ZTNC3pSUHJAgVbE0x5mBtx2OXMnbpZiyPl1n
-         JvuvyZlAxy3wCFHMLNR7Zap4VuTPmzd8l8V6OSaTczzKAGEiwsqvD3681JRWrCoBBeyp
-         LSH/bznX4mInPpQ8uEJQMpBzgyLgVGkgdZndM2dHwyKoB+j2BAQGspQ502HNsfcnkaag
-         cCsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVPBTXvJWzZSSnLU0L9JieLoXvsBucH7Tsgf+XMuGZ576Qql0h9HNAVf1aA7Qau7olWfXRtxZBKFDOZ2Bg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzyfqKzctzMHVUJNYbQOkdz/C+tgPG3GmfBxq0P6uI8ns44ZH9+
-	h1oEMsMtSfTAhWwhGz+J/l39ctsS/3MIvLS7dp/6rWYTzUvC7RjSJh1Jt1yChayuvF9+ZwQ6ENW
-	EpRUhN8J5niHuVx+P3qdHR4pq5wYbn1IcTMRK6pCCWcpibiy3b5YGQ230RWgF3sw=
-X-Received: by 2002:ad4:5c8a:0:b0:6c3:662f:8e09 with SMTP id 6a1803df08f44-6d185817c9cmr60647596d6.9.1730120987599;
-        Mon, 28 Oct 2024 06:09:47 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGVATv5v/JAhSmOdaFp8hymdUsIiSUu55HwXXNP8Yxts1Yr2m1zYJy/HdWBKZZqM/GSzi1iKA==
-X-Received: by 2002:ad4:5c8a:0:b0:6c3:662f:8e09 with SMTP id 6a1803df08f44-6d185817c9cmr60647386d6.9.1730120987227;
-        Mon, 28 Oct 2024 06:09:47 -0700 (PDT)
-Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b1f029890sm377563266b.56.2024.10.28.06.09.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Oct 2024 06:09:46 -0700 (PDT)
-Message-ID: <ad9c7e47-8a7b-4aee-8d88-cabf42ec3298@oss.qualcomm.com>
-Date: Mon, 28 Oct 2024 14:09:45 +0100
+	s=arc-20240116; t=1730121049; c=relaxed/simple;
+	bh=dL1SJrGZQ3D6lWB7/Wyjb/bBXGMBAdqEk7Evxm5pNAY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z17uiTdOTzWT1Qckqrr/TZLCeooZ06hWHJvGl9RZ9Xr6jNIDLqnACIza5sQ6o8SO2R8iGTdklljXBCOvurr2DTBRW79zi2bCRE1Uf5mZlhpdM8XCFmIzkk7TpRb6JkvgtpC5PTA/tE6kUy2rzAneEVwl7Bc45XLIBNtEqOhf4YM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=bXKI0SnL; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=R8Dd+hjRXMeDXiIrfyLDS2ZFM1n3uCxyFjkAA3L4QU4=; b=bXKI0SnLh0Qe+ZLp56MxjgknWE
+	YkSij99o5z/F/Ojudl6uXGazbkQfOf6ayvfGpe0Ew6toZs3E34rPmrxvJDhlPolAGAK5Ns6VgZXnK
+	U6keLUwtMX0CWkMC3WoPFsd+KPAAbJ2SOJX7dET0YGC4i3Sgns+miQZL+hcPIKeRJh4md22kV++x3
+	Zufysd/7MuYWnF6pWm9r0rAXh8tKutLoXuTsd+q1dNENx1Bc2mn8FdXUaPNSEUuSpvKT/eg0vgLfE
+	MfG+Zulm5BWiHg21c0PYROemYMYLuEAe6CKbRu4SxzsKaG0ik9+ho8BLAfMuTMgKMSQSuFTQ+15KY
+	DGJxytyg==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t5PW6-00000008WfT-0NU9;
+	Mon, 28 Oct 2024 13:10:43 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id D35E030083E; Mon, 28 Oct 2024 14:10:41 +0100 (CET)
+Date: Mon, 28 Oct 2024 14:10:41 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: linux-kernel@vger.kernel.org,
+	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
+	Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Waiman Long <longman@redhat.com>
+Subject: Re: [RFC PATCH 2/3] futex: Add basic infrastructure for local task
+ local hash.
+Message-ID: <20241028131041.GT33184@noisy.programming.kicks-ass.net>
+References: <20241026224306.982896-1-bigeasy@linutronix.de>
+ <20241026224306.982896-3-bigeasy@linutronix.de>
+ <20241028101633.GM9767@noisy.programming.kicks-ass.net>
+ <20241028102408.GbFgnLMF@linutronix.de>
+ <20241028104639.GO9767@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] arm64: dts: qcom: qcs615-ride: Enable PMIC
- peripherals
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Tingguo Cheng <quic_tingguoc@quicinc.com>
-Cc: quic_fenglinw@quicinc.com, quic_tingweiz@quicinc.com, kernel@quicinc.com,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241028-adds-spmi-pmic-peripherals-for-qcs615-v3-0-f0778572ee41@quicinc.com>
- <20241028-adds-spmi-pmic-peripherals-for-qcs615-v3-2-f0778572ee41@quicinc.com>
- <j4ggfrynyoriseef5r5x6uwgo6cespll2np7uitc64yagoa6pz@r3ro2cpqrrry>
- <38cceae8-5203-4057-bd8b-f20fe3656474@quicinc.com>
- <CAA8EJprYHjYVM58e7i7Sxj64DSth4hhW_cUZ3hGqX7u0ecZFQg@mail.gmail.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <CAA8EJprYHjYVM58e7i7Sxj64DSth4hhW_cUZ3hGqX7u0ecZFQg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: 3qLat56D2VZeTG_HpmdT3pFqcXsDmNHM
-X-Proofpoint-GUID: 3qLat56D2VZeTG_HpmdT3pFqcXsDmNHM
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 clxscore=1015
- lowpriorityscore=0 adultscore=0 mlxscore=0 bulkscore=0 suspectscore=0
- phishscore=0 spamscore=0 malwarescore=0 mlxlogscore=999 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2410280106
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241028104639.GO9767@noisy.programming.kicks-ass.net>
 
-On 28.10.2024 10:41 AM, Dmitry Baryshkov wrote:
-> On Mon, 28 Oct 2024 at 10:40, Tingguo Cheng <quic_tingguoc@quicinc.com> wrote:
->>
->>
->>
->> On 10/28/2024 4:23 PM, Dmitry Baryshkov wrote:
->>> On Mon, Oct 28, 2024 at 04:03:25PM +0800, Tingguo Cheng wrote:
->>>> Enable PMIC and PMIC peripherals for qcs615-ride board.
->>>>
->>>> Signed-off-by: Tingguo Cheng <quic_tingguoc@quicinc.com>
->>>> ---
->>>>   arch/arm64/boot/dts/qcom/qcs615-ride.dts | 15 +++++++++++++++
->>>>   1 file changed, 15 insertions(+)
->>>>
->>>> diff --git a/arch/arm64/boot/dts/qcom/qcs615-ride.dts b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
->>>> index ee6cab3924a6d71f29934a8debba3a832882abdd..37358f080827bbe4484c14c5f159e813810c2119 100644
->>>> --- a/arch/arm64/boot/dts/qcom/qcs615-ride.dts
->>>> +++ b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
->>>> @@ -6,6 +6,7 @@
->>>>
->>>>   #include <dt-bindings/regulator/qcom,rpmh-regulator.h>
->>>>   #include "qcs615.dtsi"
->>>> +#include "pm8150.dtsi"
->>>>   / {
->>>>      model = "Qualcomm Technologies, Inc. QCS615 Ride";
->>>>      compatible = "qcom,qcs615-ride", "qcom,qcs615";
->>>> @@ -210,6 +211,20 @@ &rpmhcc {
->>>>      clocks = <&xo_board_clk>;
->>>>   };
->>>>
->>>> +&pon {
->>>> +    /delete-property/ mode-bootloader;
->>>> +    /delete-property/ mode-recovery;
->>>
->>> Why?
->> Because boot modes will be supported on PSCI module from another patch,
->> reboot-modes are required to remove from PMIC side.
+On Mon, Oct 28, 2024 at 11:46:39AM +0100, Peter Zijlstra wrote:
+> On Mon, Oct 28, 2024 at 11:24:08AM +0100, Sebastian Andrzej Siewior wrote:
+> > On 2024-10-28 11:16:33 [+0100], Peter Zijlstra wrote:
+> > > On Sun, Oct 27, 2024 at 12:34:51AM +0200, Sebastian Andrzej Siewior wrote:
+> > > 
+> > > > Introduce a task local hash map. The hashmap can be allocated via
+> > > > 	prctl(PR_FUTEX_HASH, PR_FUTEX_HASH_ALLOCATE, 0)
+> > > 
+> > > Per process, per task is useless and will make things malfunction.
+> > > 
+> > > Things missing in this patch are CLONE_THREAD / CLONE_VM, and create
+> > > must be absolutely forbidden once mm_users != 1.
+> > 
+> > I moved this to struct signal_struct and limited it for now to the
+> > group leader.
+> 
+> That works I suppose.
+> 
+> 'process' is a really dodgy thing in Linux anyway :/
+> 
+> So CLONE_THREAD implies CLONE_SIGHAND, and CLONE_SIGHAND in turn implies
+> CLONE_VM -- however, you can do CLONE_VM without either SIGHAND or
+> THREAD, (or SIGHAND|VM without THREAD).
+> 
+> And it all quickly becomes a real mess.
+> 
+> 'Sane' userspace doesn't play such games, and insane userspace gets to
+> keep the pieces I suppose.
 
-Do we know whether the PSCI call does the same thing under the hood?
+Bah, I now remember there used to be (or maybe there still are, who
+knows) a JVM that used a 'naked' CLONE_VM. And JVMs are also known to
+use futex.
 
-Konrad
+That would suggest putting the hash in mm_struct *or* make sure to
+disallow / warn about these private hash when !CLONE_THREAD.
+
 
