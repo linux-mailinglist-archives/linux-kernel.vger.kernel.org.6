@@ -1,213 +1,126 @@
-Return-Path: <linux-kernel+bounces-384614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BDEE9B2C66
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 11:11:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44C8D9B2C6C
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 11:12:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A941280D21
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 10:11:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E41E21F21E9B
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 10:12:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E944C1D2785;
-	Mon, 28 Oct 2024 10:11:23 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92DC21D27BA;
+	Mon, 28 Oct 2024 10:12:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Edzkb2N5"
+Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EDB018B46E;
-	Mon, 28 Oct 2024 10:11:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28AC31CF2AB
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 10:12:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730110283; cv=none; b=RT+y4wWLZ6jJG/uvvscfbS9YVssTdJ4ycAeC8q/t9WJuaUDKh5jN8XWEKOJWhAKe/2B6dxQGYooDPbMhNSRLxxJhrOAt+HGavucSJOCnJCL4EhGMTA69n6VYHwkmbn+fKT3AN2O4XjTrdbmEpnUHgTeoV8hqiYQgpyE6I58Qe/M=
+	t=1730110348; cv=none; b=lrdjv4VCfK7VSn3nky4HumKaUCPUrBiTJU6t8cxFzuH1Bh6vvhtfkOpEdDllKq/K38bnUmRbTG1bSGwZ0Doh7C7gagMp/7Gxm7b9GJVLt8n0Pcz03XA3ADLaKXT/Dw/2YzvGAyUEwzbY0wV718p8w+6KG3dhgcKicyJydeAV8oE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730110283; c=relaxed/simple;
-	bh=nzaM905Zku2L1M7nrY8HwDpXuPpzA2I6DeNK/YQ9IGA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Fgp6WbVQZpb/LFbHVSOWTezFfqOLzUpAB4Yn29LFyE3MlEgotVdeZOBQ/JdmPu4siK7FR6jjd4Oq93XbBYnn+pwfip50Vf89NP3AhEv9TKteX2rVf+YN4rnNzwUd/LWS6u63b8+piTTLkBBXd61C5M3A02QVbNF8qJGBHqXuEKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF0C2C4CEC3;
-	Mon, 28 Oct 2024 10:11:18 +0000 (UTC)
-Message-ID: <74286a86-51b9-4742-bb0c-583d70b1b0a7@xs4all.nl>
-Date: Mon, 28 Oct 2024 11:11:17 +0100
+	s=arc-20240116; t=1730110348; c=relaxed/simple;
+	bh=G3w2AWS1sO2hIf0BXswma2XjfTe1ek5as8WEGaPafrM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=T3S3IJcjPgzu0XbOtUvQeBfTy4vQIzbUAay7ruKjKS0dZY8/8fjow6Oo2tgKpTn0Rv3RlT8xz9VXFRusBw+EOWc+rkwxxZvpMl8N55yMxE087pgcv26GH0opkV2X26KU5MuBAJZ/QhCtN5zLcuOZAG4zv5NwPUDnQvnNs5Rone4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Edzkb2N5; arc=none smtp.client-ip=209.85.222.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-7b161fa1c7bso314277885a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 03:12:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1730110344; x=1730715144; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=oiZZP8a/VVPUMg6rqixs38rRyTMltTho6huxqslh1r8=;
+        b=Edzkb2N5UqemYRwYhSI2QxA7bKLVuNNY5IYOG3PG5JKeHARcNJPi8hnGhqSkAA9c/i
+         u1ACfhDglbH/QmqP3Lnsq2FemVJ4oaQX/nSqLZlhBJxFRqmEQVzF/ogbSj8RsYa+Owsv
+         Kas49vGIZLAteqo+qi57E/H53vQSNxrJgVy/Q=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730110344; x=1730715144;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oiZZP8a/VVPUMg6rqixs38rRyTMltTho6huxqslh1r8=;
+        b=VNv3KFm2cyCSwosmMYpUj3fYzeJAxNQSUvTNKAA98zRGNdTdiCMoySE1L9sOwdbhX1
+         QGL7RAQufpjxqomo9sDDZ/GVQEDcQmBDqltEyxWsFLt7PcZlDA8BG9h1OTwhD6mNEG92
+         17RKTG4AIgI8BWJ4/AYkGhpmU92oJQuuVN27b1cn5RXx59m0X6X0DehMHPOG72D5Mvc2
+         kkhCnjKWZirWY2Y1hVmpOkBDul/QVE9Px4xCcbA1B+gI8VqY3BznX/dulGX6sc04rZp2
+         AAEJ2Wi+/XV7ghLM15RqLRJBkOj+uz7vvnoQBDMsqvPwkkOcOMHTaRSjxLxuLxFQh4IH
+         rqbA==
+X-Forwarded-Encrypted: i=1; AJvYcCX3IgVlpcnkDty47j3JurTbWyA0nCpSEtFm5MtCuCAoI29FDfw303/juMLxV6+4X1WpP4BdCSaEl0YMyNE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxdy0bpbObzx9s/75azYuTGeGJeQNVehjNIJlpY9WIPlQzIArKL
+	RI5f2tcMEFxp6bGCCCvQL9EYZxgLWmimFEql6pZC8A+rKhVsAtKcUUuUKoA29VbZBJj5/aOKS0w
+	=
+X-Google-Smtp-Source: AGHT+IHCZNylv6nLjfkO/ktra4n6JfoH26XKs2q4uwaI7CD5MA4OdYifu82wP1TO9Q9/suHNb6Q5ag==
+X-Received: by 2002:a05:620a:468f:b0:7ac:9b5e:baf3 with SMTP id af79cd13be357-7b193ef2c9amr1311016885a.26.1730110344518;
+        Mon, 28 Oct 2024 03:12:24 -0700 (PDT)
+Received: from denia.c.googlers.com (189.216.85.34.bc.googleusercontent.com. [34.85.216.189])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b18d279126sm305483385a.9.2024.10.28.03.12.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Oct 2024 03:12:23 -0700 (PDT)
+From: Ricardo Ribalda <ribalda@chromium.org>
+Subject: [PATCH v2 0/5] iio: hid-sensors-prox: Add support for more
+ channels
+Date: Mon, 28 Oct 2024 10:12:20 +0000
+Message-Id: <20241028-hpd-v2-0-18f6e79154d7@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 3/4] media: raspberrypi: Add support for RP1-CFE
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, Naushir Patuck
- <naush@raspberrypi.com>, Laurent Pinchart
- <laurent.pinchart@ideasonboard.com>,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
- Kieran Bingham <kieran.bingham@ideasonboard.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
- Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>
-References: <20241003-rp1-cfe-v6-0-d6762edd98a8@ideasonboard.com>
- <20241003-rp1-cfe-v6-3-d6762edd98a8@ideasonboard.com>
- <4d9e340e-2ae7-495b-8623-0d10398e1c3d@xs4all.nl>
- <02f05b61-08e7-45f8-8d59-f79bc20d076f@ideasonboard.com>
-Content-Language: en-US, nl
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Autocrypt: addr=hverkuil@xs4all.nl; keydata=
- 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
-In-Reply-To: <02f05b61-08e7-45f8-8d59-f79bc20d076f@ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAIVjH2cC/zWMQQ7CIBBFr9LMWgxMMRJX3sN0UWEos2hpoDaah
+ ruLJC7fz3/vgEyJKcOtOyDRzpnjUgFPHdgwLhMJdpUBJWolsRdhdYIcPfurV95bDfW5JvL8bpX
+ HUDlw3mL6tOiufuvf183flZACR4UXY7BmzN2GFGd+zeeYJhhKKV9MDvwVmQAAAA==
+To: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>, 
+ Jonathan Cameron <jic23@kernel.org>, 
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, 
+ Lars-Peter Clausen <lars@metafoo.de>
+Cc: Harvey Yang <chenghaoyang@google.com>, linux-input@vger.kernel.org, 
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Ricardo Ribalda <ribalda@chromium.org>
+X-Mailer: b4 0.13.0
 
-On 28/10/2024 10:21, Tomi Valkeinen wrote:
-> Hi,
-> 
-> On 24/10/2024 11:20, Hans Verkuil wrote:
->> Hi Tomi,
->>
->> I know this driver is already merged, but while checking for drivers that use
->> q->max_num_buffers I stumbled on this cfe code:
->>
->> <snip>
->>
->>> +/*
->>> + * vb2 ops
->>> + */
->>> +
->>> +static int cfe_queue_setup(struct vb2_queue *vq, unsigned int *nbuffers,
->>> +               unsigned int *nplanes, unsigned int sizes[],
->>> +               struct device *alloc_devs[])
->>> +{
->>> +    struct cfe_node *node = vb2_get_drv_priv(vq);
->>> +    struct cfe_device *cfe = node->cfe;
->>> +    unsigned int size = is_image_node(node) ?
->>> +                    node->vid_fmt.fmt.pix.sizeimage :
->>> +                    node->meta_fmt.fmt.meta.buffersize;
->>> +
->>> +    cfe_dbg(cfe, "%s: [%s] type:%u\n", __func__, node_desc[node->id].name,
->>> +        node->buffer_queue.type);
->>> +
->>> +    if (vq->max_num_buffers + *nbuffers < 3)
->>> +        *nbuffers = 3 - vq->max_num_buffers;
->>
->> This makes no sense: max_num_buffers is 32, unless explicitly set when vb2_queue_init
->> is called. So 32 + *nbuffers is never < 3.
->>
->> If the idea is that at least 3 buffers should be allocated by REQBUFS, then set
->> q->min_reqbufs_allocation = 3; before calling vb2_queue_init and vb2 will handle this
->> for you.
->>
->> Drivers shouldn't modify *nbuffers, except in very rare circumstances, especially
->> since the code is almost always wrong.
-> 
-> Looking at this, the original code in the old BSP tree was, which somehow, along the long way, got turned into the above:
-> 
-> if (vq->num_buffers + *nbuffers < 3)
->         *nbuffers = 3 - vq->num_buffers;
-> 
-> So... I think that is the same as "q->min_reqbufs_allocation = 3"?
-> 
-> The distinction between min_queued_buffers and min_reqbufs_allocation, or rather the need for the latter, still escapes me. If the HW/SW requires N buffers to be queued, why would we require
-> allocating more than N buffers?
+EgisVision 620 provides two additional channels:
+- proximity
+- attention
 
-min_queued_buffers is easiest to explain: that represents the requirements of the DMA
-engine, i.e. how many buffers much be queued before the DMA engine can be started.
-Typically it is 0, 1 or 2.
+Add support for them.
 
-min_reqbufs_allocation is the minimum number of buffers that will be allocated when
-calling VIDIOC_REQBUFS in order for userspace to be able to stream without blocking
-or dropping frames.
+Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+---
+Changes in v2 (Thanks Jonathan):
+- Create new attention channel type.
+- Improve documentation for HID usages.
+- Link to v1: https://lore.kernel.org/r/20241024-hpd-v1-0-2a125882f1f8@chromium.org
 
-Typically this is 3 for video capture: one buffer is being DMAed, another is queued up
-and the third is being processed by userspace. But sometimes drivers have other
-requirements.
+---
+Ricardo Ribalda (5):
+      iio: hid-sensors: Add proximity and attention IDs
+      iio: hid-sensors-prox: Factor-in hid_sensor_push_data
+      iio: Add channel type for attention
+      iio: hid-sensors-prox: Make proximity channel indexed
+      iio: hid-sensor-prox: Add support for more channels
 
-The reason is that some applications will just call VIDIOC_REQBUFS with count=1 and
-expect it to be rounded up to whatever makes sense. See the VIDIOC_REQBUFS doc in
-https://hverkuil.home.xs4all.nl/spec/userspace-api/v4l/vidioc-reqbufs.html
+ Documentation/ABI/testing/sysfs-bus-iio |   7 ++
+ drivers/iio/industrialio-core.c         |   1 +
+ drivers/iio/light/hid-sensor-prox.c     | 186 +++++++++++++++++---------------
+ include/linux/hid-sensor-ids.h          |   2 +
+ include/uapi/linux/iio/types.h          |   1 +
+ tools/iio/iio_event_monitor.c           |   2 +
+ 6 files changed, 112 insertions(+), 87 deletions(-)
+---
+base-commit: c2ee9f594da826bea183ed14f2cc029c719bf4da
+change-id: 20241023-hpd-edeb37f1ffc4
 
-"It can be smaller than the number requested, even zero, when the driver runs out of
- free memory. A larger number is also possible when the driver requires more buffers
- to function correctly."
-
-How drivers implement this is a mess, and usually the code in the driver is wrong as
-well. In particular they often did not take VIDIOC_CREATE_BUFS into account, i.e.
-instead of 'if (vq->num_buffers + *nbuffers < 3)' they would do 'if (*nbuffers < 3)'.
-
-When we worked on the support for more than 32 buffers we added min_reqbufs_allocation
-to let the core take care of this. In addition, this only applies to VIDIOC_REQBUFS,
-if you want full control over the number of allocated buffers, then use VIDIOC_CREATE_BUFS,
-with this ioctl the number of buffers will never be more than requested, although it
-may be less if you run out of memory.
-
-I really should go through all existing drivers and fix them up if they try to
-handle this in the queue_setup function, I suspect a lot of them are quite messy.
-
-One thing that is missing in the V4L2 uAPI is a way to report the minimum number of
-buffers that need to be allocated, i.e. min_queued_buffers + 1. Since if you want
-to use CREATE_BUFS you need that information so you know that you have to create
-at least that number of buffers. We have the V4L2_CID_MIN_BUFFERS_FOR_CAPTURE control,
-but it is effectively codec specific. This probably should be clarified.
-
-I wonder if it wouldn't be better to add a min_num_buffers field to
-struct v4l2_create_buffers and set it to min_queued_buffers + 1.
-
-Regards,
-
-	Hans
-
-> 
->  Tomi
-> 
+Best regards,
+-- 
+Ricardo Ribalda <ribalda@chromium.org>
 
 
