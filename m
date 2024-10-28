@@ -1,150 +1,143 @@
-Return-Path: <linux-kernel+bounces-385566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 008029B38BD
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 19:07:15 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA3E19B38BE
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 19:09:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA4C6287253
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 18:07:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52F82B2138F
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 18:09:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C6781DF75E;
-	Mon, 28 Oct 2024 18:07:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F25A1DF728;
+	Mon, 28 Oct 2024 18:09:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CLxE4szh"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aAlxneXY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01928189B98
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 18:07:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD0C51534E9;
+	Mon, 28 Oct 2024 18:09:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730138824; cv=none; b=ltrpYkT2V08vlA9QOqtleLIFmVTTcEx0gCc+EIh40b/JJVvcdEk7aEgBiicB2ky0lKJ1hLOpt286fdaJBPHLS8TzunhNa+/YoApJNKkXOL8ANKd7Qc9NTGHuRXhlyue8UcB0CscaJGBnOCpw4QUFB5q5z3OvGjl8ALCjbYWIdYQ=
+	t=1730138949; cv=none; b=Q9fEQF8fHoi7PgCnxgEJKKl2TB0fivHwXqBtCQ4ObkLgGvf2ChOVRFKueqbCaHCsJNhhSvBKhbnz5djY2Ts2WDBasv1SaR7LtcOwT7a5zRCVphV2TETXHa7QiwxpAcPLObfKzN3OqPxjq3I5xFlIbCuiHUjOgw3jxH+2PFyViB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730138824; c=relaxed/simple;
-	bh=906Xwqc5BLZHTLhmXAaRwWo5+JImUIzliYYeDlqxCT4=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=SWvJo1ZrCNur8oRMCjiiqmfa+ym4pYgwxXRKiHcrGdaE9xEToeFTWiN6NWfdwC3Scd8TDkqYmrlNWsvJopE1kOrIjtRxr0BVTiWXFLNnKDkkNQnCnUiRMk0F96BUDvMQsEG+qwsg0fzTzhryYZoiXcPGQpMRYaBjPZy3h5YE3FU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CLxE4szh; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-71e55c9d23cso3522984b3a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 11:07:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730138821; x=1730743621; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=OSPXfhYXFqsav+wNvpf5kcVIJjv343m6ZpWPKhJ4i1M=;
-        b=CLxE4szhYoLXxWaMp45xVw572QDxCD3LdBzXZEaYmRbyRhCoQVoYHKtZuqGrAAFIbH
-         TUEFfVzXvcyCVemN8oiIgFpc0/6tQiRopSwYnyFpbj01KH90i08OzRCiQXljzVkL0tPY
-         Nf+FUgPy5clE9q/vKmBMgNl5HPzfLKZRKQz8eWrqG9YZQe7hiqVmqZ+h/U5s2iLTPuLD
-         fXQcicHb6GUqYrMWP+tKzHUtBWPtC7n51api8eKkzheu+IGOwSh/YOUMAgr/tkXB5/hb
-         LL12ijvhpgliJ+5vPL3KGoLtWpyjrbpa79steucsYpA0M9+AK1OcMyIlTl4IDcQzAxt+
-         7vWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730138821; x=1730743621;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OSPXfhYXFqsav+wNvpf5kcVIJjv343m6ZpWPKhJ4i1M=;
-        b=nVixeiZE8QtUGDmEE8DCN5c1tKOioSkiM1OEC0y28PMDWVnjeopxtDFW6qXRKBBPap
-         9ax/O3L8C86TLqi+E9nFd1/Ds3nAJSVtJ5yCG2t2Dd7TJoz8Awgd+OPKt1pbcTuLcQkK
-         zIz9cQdo5Q+9ccDCuo0yzPgMU852GDJmx9oGGG8xaRYFqiloe0cfpj/Jju1DUGsX5JXA
-         dk+gy4tCGuvAVkUYAZUpDxc18OHDWTJPeynwYwhcCbG8OQ0TsKaFsFIjS3N59S3owSlY
-         KJlufn3Ia7okYXlIUCKx3uw9M8iSGnPCSNe0nheFIgM4IHkSgQ1xlCQCSVjgYoI5nNKU
-         6oUA==
-X-Forwarded-Encrypted: i=1; AJvYcCVhiG2PICgGhe7GDygEayi/ZP33ktHCF2xoaX0hQMdGke+T4LKZUY5jJ73I74478c4L95oelRCx3UYamfE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMguAxjY+fpb3zVyCztjzfloI+2GAtMFXGD50uA9ZGtPLW/tM/
-	kam7F/+g/wBo+NDtlQJGiUInSN47OfmXsJ8fQc5+u1obeuF8thQxmN+IVp3DZ3mSTLN5142rZ7B
-	nbA==
-X-Google-Smtp-Source: AGHT+IGEphgAMJPO1RrBvORQ8s/TYfMNYCHByxWeAm23fw9VpJx73ZRrDNmOoAg0zAywWzMIM+hx0G5Vf7Y=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
- (user=seanjc job=sendgmr) by 2002:a05:6a00:6f64:b0:720:3b92:da02 with SMTP id
- d2e1a72fcca58-7209257ee6dmr6558b3a.1.1730138821179; Mon, 28 Oct 2024 11:07:01
- -0700 (PDT)
-Date: Mon, 28 Oct 2024 11:06:59 -0700
-In-Reply-To: <Zx_NgJnjsGIrW4uF@arm.com>
+	s=arc-20240116; t=1730138949; c=relaxed/simple;
+	bh=CeJEGSCNf1EsllIQYit4ccvKZkgbLPbEtbyLPC5vn2k=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tNqWVIKvu5ib+DH81OoAn5W/mZICcCbwgneu8z+gdaL0Oz/+3rGjUE0WTMdo77rNUBCwrVClA9PIZH6Kb0s+qjwG1hfEVhRKIIcmud4gjCh7lteRzxds+L/y3cz/Q7jKITbJGyvqMJLCi2VKdGS51TVWm71rPS4D+Ceq/UViQQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aAlxneXY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F046C4CEC3;
+	Mon, 28 Oct 2024 18:09:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730138949;
+	bh=CeJEGSCNf1EsllIQYit4ccvKZkgbLPbEtbyLPC5vn2k=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=aAlxneXYuqZQ7bd+tCz2C3V2pCghZNw8UEOSmUD61Sy3RccoFVjz7gTbNHeA6Pb22
+	 hTsZ4eLxayQy2lmBtQHNnvZgzLF+ktY7YmdT+UbbsVqfEyJ1mWkMbk2CPxgE38SDld
+	 ikUZ7HTCRvLCTWuZXdrwXMw+F4kA9mfoeBSo4121/cq6QuqsOZMirQlpLTpt0nmKDN
+	 ekS2Pi+NkwN+w/ZfHkK80me54SfWsYgSdw1tme8WTd9pa0wa3dR5qEp0mR70wl1T35
+	 iLjuyuOTR/EaaKH0KDSSdf4NMU6pjBTK98p47i2lvvcnRwtvG6VpWSnzpf1dk9H6Gc
+	 xqmhOleLZL9sQ==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=wait-a-minute.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1t5UAs-007fYC-Qq;
+	Mon, 28 Oct 2024 18:09:07 +0000
+Date: Mon, 28 Oct 2024 18:09:05 +0000
+Message-ID: <87ldy8t7zy.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Aneesh Kumar K.V <aneesh.kumar@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	Suzuki K Poulose <Suzuki.Poulose@arm.com>,
+	Steven Price <steven.price@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>
+Subject: Re: [PATCH 3/4] arm64: mte: update code comments
+In-Reply-To: <yq5attcwcs2l.fsf@kernel.org>
+References: <20241028094014.2596619-1-aneesh.kumar@kernel.org>
+	<20241028094014.2596619-4-aneesh.kumar@kernel.org>
+	<87plnktt2q.wl-maz@kernel.org>
+	<yq5attcwcs2l.fsf@kernel.org>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241028170310.3051da53@canb.auug.org.au> <Zx_NgJnjsGIrW4uF@arm.com>
-Message-ID: <Zx_Sw8XVHeaD4ya6@google.com>
-Subject: Re: linux-next: manual merge of the kvm tree with the arm64 tree
-From: Sean Christopherson <seanjc@google.com>
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, Will Deacon <will@kernel.org>, 
-	KVM <kvm@vger.kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>, Yang Shi <yang@os.amperecomputing.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: aneesh.kumar@kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, Suzuki.Poulose@arm.com, steven.price@arm.com, will@kernel.org, catalin.marinas@arm.com, mark.rutland@arm.com, oliver.upton@linux.dev, joey.gouly@arm.com, yuzenghui@huawei.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Mon, Oct 28, 2024, Catalin Marinas wrote:
-> On Mon, Oct 28, 2024 at 05:03:10PM +1100, Stephen Rothwell wrote:
-> > Today's linux-next merge of the kvm tree got a conflict in:
-> > 
-> >   arch/arm64/kvm/guest.c
-> > 
-> > between commit:
-> > 
-> >   25c17c4b55de ("hugetlb: arm64: add mte support")
-> > 
-> > from the arm64 tree and commit:
-> > 
-> >   570d666c11af ("KVM: arm64: Use __gfn_to_page() when copying MTE tags to/from userspace")
-> > 
-> > from the kvm tree.
-> [...]
-> > diff --cc arch/arm64/kvm/guest.c
-> > index e738a353b20e,4cd7ffa76794..000000000000
-> > --- a/arch/arm64/kvm/guest.c
-> > +++ b/arch/arm64/kvm/guest.c
-> > @@@ -1051,13 -1051,11 +1051,12 @@@ int kvm_vm_ioctl_mte_copy_tags(struct k
-> >   	}
-> >   
-> >   	while (length > 0) {
-> > - 		kvm_pfn_t pfn = gfn_to_pfn_prot(kvm, gfn, write, NULL);
-> > + 		struct page *page = __gfn_to_page(kvm, gfn, write);
-> >   		void *maddr;
-> >   		unsigned long num_tags;
-> > - 		struct page *page;
-> >  +		struct folio *folio;
-> >   
-> > - 		if (is_error_noslot_pfn(pfn)) {
-> > + 		if (!page) {
-> >   			ret = -EFAULT;
-> >   			goto out;
-> >   		}
-> > @@@ -1099,12 -1090,8 +1097,12 @@@
-> >   			/* uaccess failed, don't leave stale tags */
-> >   			if (num_tags != MTE_GRANULES_PER_PAGE)
-> >   				mte_clear_page_tags(maddr);
-> >  -			set_page_mte_tagged(page);
-> >  +			if (folio_test_hugetlb(folio))
-> >  +				folio_set_hugetlb_mte_tagged(folio);
-> >  +			else
-> >  +				set_page_mte_tagged(page);
-> >  +
-> > - 			kvm_release_pfn_dirty(pfn);
-> > + 			kvm_release_page_dirty(page);
-> >   		}
-> >   
-> >   		if (num_tags != MTE_GRANULES_PER_PAGE) {
+On Mon, 28 Oct 2024 12:47:30 +0000,
+Aneesh Kumar K.V <aneesh.kumar@kernel.org> wrote:
 > 
-> Thanks Stephen. The resolution looks fine
-
-Looks correct to my eyes, too.  Thanks Stephen!
-
-> and I'm happy to leave to Linus to fix it up during the merging window.
+> >> diff --git a/arch/arm64/kvm/mmu.c b/arch/arm64/kvm/mmu.c
+> >> index a509b63bd4dd..b5824e93cee0 100644
+> >> --- a/arch/arm64/kvm/mmu.c
+> >> +++ b/arch/arm64/kvm/mmu.c
+> >> @@ -1390,11 +1390,8 @@ static int get_vma_page_shift(struct vm_area_struct *vma, unsigned long hva)
+> >>   * able to see the page's tags and therefore they must be initialised first. If
+> >>   * PG_mte_tagged is set, tags have already been initialised.
+> >>   *
+> >> - * The race in the test/set of the PG_mte_tagged flag is handled by:
+> >> - * - preventing VM_SHARED mappings in a memslot with MTE preventing two VMs
+> >> - *   racing to santise the same page
+> >> - * - mmap_lock protects between a VM faulting a page in and the VMM performing
+> >> - *   an mprotect() to add VM_MTE
+> >> + * The race in the test/set of the PG_mte_tagged flag is handled by
+> >> + * using PG_mte_lock and PG_mte_tagged together.
+> >
+> > How? This comment is pretty content-free. TO be useful, you should
+> > elaborate on *how* these two are used together.
+> >
 > 
-> To the KVM maintainers, if you prefer a conflict-free linux-next, feel
-> free to pull the arm64 for-next/mte branch with the above commit (and a
-> kselftest). The other way around is not something I'd suggest we do,
-> there are over 80 patches in that kvm series.
+> I will add more details described in commit d77e59a8fccde7fb5dd8c57594ed147b4291c970
+> Should i quote the commit there in the comment?
 
-Not feeling lucky today? ;-)
+The commit is not relevant. What is important is an indication of how
+the race is resolved if that's important. A reference to
+try_page_mte_tagging() would probably be the right thing to do.
+
+> 
+> >
+> >>   */
+> >>  static void sanitise_mte_tags(struct kvm *kvm, kvm_pfn_t pfn,
+> >>  			      unsigned long size)
+> >> @@ -1646,7 +1643,10 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+> >>  	}
+> >>  
+> >>  	if (!fault_is_perm && !device && kvm_has_mte(kvm)) {
+> >> -		/* Check the VMM hasn't introduced a new disallowed VMA */
+> >> +		/*
+> >> +		 *  not a permission fault implies a translation fault which
+> >> +		 *  means mapping the page for the first time
+> >
+> > How about an Access fault due to page ageing?
+> >
+> 
+> IIUC access fault is already handled by the caller kvm_handle_guest_abort?
+> I can add that as part of the updated comments?
+
+Maybe. The thing is, you are removing a pretty essential comment for
+no good reason, and now there is no rational left behind the -EFAULT
+that is returned.
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
