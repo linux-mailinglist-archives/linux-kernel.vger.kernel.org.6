@@ -1,212 +1,287 @@
-Return-Path: <linux-kernel+bounces-385071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A4519B3207
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:45:38 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C99DC9B320A
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:46:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1279B1F21FF4
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:45:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34EB8B22F8C
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:46:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25F8C1DC19D;
-	Mon, 28 Oct 2024 13:44:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 119D61DD0EA;
+	Mon, 28 Oct 2024 13:44:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rKQ2XQka"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=de.bosch.com header.i=@de.bosch.com header.b="Xx5spDXy"
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2048.outbound.protection.outlook.com [40.107.22.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8F471DDC2A
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 13:43:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730123041; cv=none; b=W5kJQwFnhESGqvYlot7vnPq4YdC8MJJt/hCdHld+At4LwbzOcYrP0EdwFLhqHXvCIaJfZRCveUl0r2S9MQouFZ+TLhtESgsINb1XJdG6ZDaKERoAUBvPbftpEI7CToOzV2v/bY2YWED83lFN9WExhxuaVl+2DwS9GIb1PagYzsw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730123041; c=relaxed/simple;
-	bh=WIGSURUd4vPgd0LwhCySLb2u9jRTOO7tEiMoOSxAIFA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HhkqReYS6LSqm1ZzbjHl0MtyNjayROhovhN+8uoeZ3NwdmGKerkdk6sSesQC6II/bjht2Do8F1Iw35SIlHS2rSaS5az8fwfe+K66Cc+VlLnyYLmnXHa7wgvhTL7O4sF6ooltj4v9Ohia27Z0dsw2IUWJqJHdraSrOliN97o8rrA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rKQ2XQka; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2fb4fa17044so42860981fa.3
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 06:43:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730123037; x=1730727837; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=/fMezR/kOH2DQBT9AoD8Am6CVmqlmYght41fc7YQIn4=;
-        b=rKQ2XQkaDJ4un3MOQMspsHzYNDzhpc4a74ydUj6O0tU1k7wUNe5tBoPpAS6gzwWVPE
-         lhROiWP72QSqKWMW6jbgRkiiqFH5KomU8+OK9ttE7ZRltlJjExpLw/6lSwAlOp26kJBI
-         u/fQ08jt7U4w/FueUY9kW11QPUdbBQOQRJDU2j2KHPiBSBEe9t39nU4YAqAqdbcIIBF6
-         UjVoBLkcd0QUnFW7hLsLf0cBKKgYtlEvYwtS64aJEsr/7Kg1Ul4DTVenDsGU0mneC8GS
-         iXGbNqFhNt4qTaPIaKKWkBJ1k4GDIa+jxjDJiWwp7z+6Lei8Y+nlk4aTsvmcvbW9dv7i
-         3y+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730123037; x=1730727837;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/fMezR/kOH2DQBT9AoD8Am6CVmqlmYght41fc7YQIn4=;
-        b=oKxYs0aDV6zonUsSG4JBFsX+ke0VtadIENS8aP91aH7Xg3DJMYX8jq9d6pO8ZvhmtF
-         QmfaF4KfZlIhBEpgyBZ9RtB9FdiAHAHkUzhz27PngoZOMY2iYO9tt7FTpmu/H42t1be1
-         2AC+L2frw5TJL7EaH+hXHdNDeABjPfRFy3djGGg2Zk9V0pO8ubaW/kwgoehPGURzD1JD
-         Lzfd0SG6DgodnurIvbWZH75I4m8d4WDoOkjjldncoBguNgDHqP8IT5wNgHdwEWjbYTEC
-         3FB1e4tVDbqNfyJgH9J1O2URM0+jtIJkjShvmGexYWtNlxFKiVdOKFd759KRbFbKWa1D
-         e3VA==
-X-Forwarded-Encrypted: i=1; AJvYcCVqmcyBjpjSusf89aNHY7adKAQxm8MTqGRMef0VIZ79Imp1Ycv/wVwlf4K+5qx30LsIbGEBs0X2wG8KSvc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzpTSHRinRIEAP49gQ2QSlfyIt3XtqIWgytXsqPDQHzelcLHfZq
-	8fQcRHGwuw7riNLbOc345j3QEoCn/aY7CgoHaO7dcCpm7Tj5J7paHiFH0SvTffFOG4rEZsv2FK3
-	w
-X-Google-Smtp-Source: AGHT+IFDCzKfy9vb0H+t7XlbkzhNd21X/z+Uek3eGFqV/jEyV6gcWxJNF6Q+5QcV2YXLsDKfxar/4Q==
-X-Received: by 2002:a2e:a590:0:b0:2f6:5921:f35b with SMTP id 38308e7fff4ca-2fcbe0055ffmr39731081fa.27.1730123036398;
-        Mon, 28 Oct 2024 06:43:56 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fcb4612a5asm11513551fa.122.2024.10.28.06.43.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Oct 2024 06:43:55 -0700 (PDT)
-Date: Mon, 28 Oct 2024 15:43:52 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: linux@treblig.org, nouveau@lists.freedesktop.org, 
-	Ben Skeggs <bskeggs@redhat.com>
-Cc: maarten.lankhorst@linux.intel.com, mripard@kernel.org, 
-	tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm: encoder_slave: Remove unused encoder functions
-Message-ID: <im7gtswtfo6c24waourrtaoeazxuk5paeqblzig73knks735b2@dsj2svieqmur>
-References: <20241025203920.244116-1-linux@treblig.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD6C01D5CDB;
+	Mon, 28 Oct 2024 13:44:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.48
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730123082; cv=fail; b=oICzdOIIY4pWTeAi7q4uZMJZgxS/VbsiyyF5DAnrMxSVKT+6zeUquAJ57CgOAAzMtDZ/ytkQ+/sL4MeVcMLm5ngTMSduUY+PYjrgddSrfSmn+92/FU1tQF7Ay4MA4AqixKnyiz6zcJGNoyLajTEZQYgygYi6wpqSYxAcmcy9HRk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730123082; c=relaxed/simple;
+	bh=pV2buAt8uT/anPPqcVpXVGOKiJ/SVmEZ9AaO7uGhBdY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=aq0p2H/mRFKNSQJk0E6SneuzFSid76Y8vvDVU+Jt3Wq8xrfQASOKy5q5LMRQ71qJsMDCK9BXz/2a1VuWReztRUhMSMiBViNcxYdmxUCv2HwMFf/VA3+Grg4Tci0CP9wWAqZfDOlJZZNLNjR2NBEgCVZlk1wW6v6vgUbpr2SLGkw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=de.bosch.com; spf=pass smtp.mailfrom=de.bosch.com; dkim=pass (2048-bit key) header.d=de.bosch.com header.i=@de.bosch.com header.b=Xx5spDXy; arc=fail smtp.client-ip=40.107.22.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=de.bosch.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=de.bosch.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=DbVj9iL2VVWtpbhLepBJlh//zBtydLbId6tlSf5/PJxTBDRHcNqtk2la3wjCpZrjeY5oUzSuHQfmiutNp35Ea6LIKRVKpz4KsgRxr72aYV/NSfN68M2LpNPdjicf3b6NTvzaNG/jLQnWCLm3X8KBHcHv+AMnDPiUyA3cMMJNe4vBA8BcecOfTFYxbx8eCC/2y884Pw060QYS9Rq+QWPR5DNre/EOjj4pm3S4xbXj2YPM0qk2h3QW7N2+VjBsTxevtB+/MdI6DvpUOa1CPCv2STXAxbHZJWjk2QtcrY5Zp2OuuWiyTWERcZtf/BgIyBC40SOWQ+o6/8awTE0kFjuRGA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=SJA86ey4kGizoNgHPqHvz7KSYHmIX+Z5gkOFQxwN9MA=;
+ b=h0jbrj+BGwFANKFHk2S8poTIoawxHUC/4pR9F+fHe54NtMD28Js5t06o98qZW4ZuIesSbw5eqreAZvNIvAzxTFXHDlodJeIO9/fJ7SWxw8ayjexfb5ExnACYFXry48IanSZLrPBDFtTw2o1fm+b2tZ6jNUVCCX2mE5ShzpYa+BRqCbNRcsWMpA7Quj+sxXraKNRDqXtjv3g5JOvRLo1Y33zzqlGbmo8a2fuKa/CjT/KHECxS9GcgYwEfQlLplQnh4AugANfZgNTahtjwIEVUCkhcd52QSI1KCmaMDxRcNWR0/XDEg9kCzp/Hj6xYdua/pNbMsvC22t4pNGgk/ZEWdg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 139.15.153.206) smtp.rcpttodomain=kernel.org smtp.mailfrom=de.bosch.com;
+ dmarc=pass (p=reject sp=none pct=100) action=none header.from=de.bosch.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=de.bosch.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SJA86ey4kGizoNgHPqHvz7KSYHmIX+Z5gkOFQxwN9MA=;
+ b=Xx5spDXyYVS6XExnx4RFQaHnS/BgMb15GYIfgPjmF/fgRePULTgQwmmtgbzvLX20+LjCBdDpIg2FYrHU2rR28xS281zQsO74Q0LIEmhAumpKjD/fUoivO8V0nvAD5zJGrBcgXM9akqr/82MGxNfsj7A1hYtjLnUAPkxwiZjCflTUvTXXx1CLQ3i8DYvoHG3X8iWf94YtwVXJZDNRFDnp6uiUs0EwTRaKCqClOdOqyczUedJSLw7fSyq061dpJhS2Ib+7wC7svj1Ur/GzEienz/kHpCZmnlP+Eg+AQz+jA5LGofbGjzsj5HutkAhN0BntBAeKEARh6bcDEsJ8O4gkgg==
+Received: from DU2P251CA0027.EURP251.PROD.OUTLOOK.COM (2603:10a6:10:230::33)
+ by AM9PR10MB4086.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:1f5::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.11; Mon, 28 Oct
+ 2024 13:44:36 +0000
+Received: from DB1PEPF000509FD.eurprd03.prod.outlook.com
+ (2603:10a6:10:230:cafe::ba) by DU2P251CA0027.outlook.office365.com
+ (2603:10a6:10:230::33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.26 via Frontend
+ Transport; Mon, 28 Oct 2024 13:44:36 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 139.15.153.206)
+ smtp.mailfrom=de.bosch.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=de.bosch.com;
+Received-SPF: Pass (protection.outlook.com: domain of de.bosch.com designates
+ 139.15.153.206 as permitted sender) receiver=protection.outlook.com;
+ client-ip=139.15.153.206; helo=eop.bosch-org.com; pr=C
+Received: from eop.bosch-org.com (139.15.153.206) by
+ DB1PEPF000509FD.mail.protection.outlook.com (10.167.242.39) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8114.16 via Frontend Transport; Mon, 28 Oct 2024 13:44:33 +0000
+Received: from SI-EXCAS2000.de.bosch.com (10.139.217.201) by eop.bosch-org.com
+ (139.15.153.206) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 28 Oct
+ 2024 14:44:11 +0100
+Received: from [10.34.219.93] (10.139.217.196) by SI-EXCAS2000.de.bosch.com
+ (10.139.217.201) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 28 Oct
+ 2024 14:44:10 +0100
+Message-ID: <ab0252ff-b2a1-4e59-96f7-134e4e38be5c@de.bosch.com>
+Date: Mon, 28 Oct 2024 14:44:01 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241025203920.244116-1-linux@treblig.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 15/16] rust: platform: add basic platform device /
+ driver abstractions
+To: Danilo Krummrich <dakr@kernel.org>, <gregkh@linuxfoundation.org>,
+	<rafael@kernel.org>, <bhelgaas@google.com>, <ojeda@kernel.org>,
+	<alex.gaynor@gmail.com>, <boqun.feng@gmail.com>, <gary@garyguo.net>,
+	<bjorn3_gh@protonmail.com>, <benno.lossin@proton.me>, <tmgross@umich.edu>,
+	<a.hindborg@samsung.com>, <aliceryhl@google.com>, <airlied@gmail.com>,
+	<fujita.tomonori@gmail.com>, <lina@asahilina.net>, <pstanner@redhat.com>,
+	<ajanulgu@redhat.com>, <lyude@redhat.com>, <robh@kernel.org>,
+	<daniel.almeida@collabora.com>, <saravanak@google.com>
+CC: <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>
+References: <20241022213221.2383-1-dakr@kernel.org>
+ <20241022213221.2383-16-dakr@kernel.org>
+Content-Language: en-US
+From: Dirk Behme <dirk.behme@de.bosch.com>
+In-Reply-To: <20241022213221.2383-16-dakr@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DB1PEPF000509FD:EE_|AM9PR10MB4086:EE_
+X-MS-Office365-Filtering-Correlation-Id: b8a33a15-0204-4a01-6e77-08dcf756a825
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|82310400026|36860700013|376014|7416014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?aEhtRTFxNUhLOGFIM3RYODJwbUYyZTJaSWNjbTFIZWpYQmRjTUJ6Y0tGTVJB?=
+ =?utf-8?B?RkNGYk5zSDNsQjV1V3Z3VnZMMHdVam44NnRXZkxXbUIyWW1mS2tIWnBWTHVN?=
+ =?utf-8?B?UTQrakNENGxydkJsaVdueVR6aklhTXk2eVB5eHBBeEpuU1AybjRvMlBia0Zl?=
+ =?utf-8?B?WllwL1RNT3I3Y1o4WjlWdzVUN0NsMlBKRThqNHdkZk5tTG1pTGE5dmdzNzFs?=
+ =?utf-8?B?Z1MvWExFNDhSZnlUZWd5MVJ5dmRZd2hveURwWnBqSjJYcUpjSExNQlc4OEVL?=
+ =?utf-8?B?cUJ3eWhTZ0k1b0xHMDlnQkJ5a0s5NWF3MldkaE9GS3paWC9xV3NVQmhSL2V5?=
+ =?utf-8?B?bEROQVROcnZ2c0FJRG5vQVdmV3hQQ0pVaThOa2h5N044OFp0QnppL2R1OG1G?=
+ =?utf-8?B?TXFudTFrSEpocjZsbGFucVFwZlhyaDhLOFVadXN2aTFjbnIyc0N1ZkNEQ1dX?=
+ =?utf-8?B?d0R4OFlvY203TENnVElHbURtZTlqU09GMTZ1ZzFISXUxdW45VkgyWTR3RzVw?=
+ =?utf-8?B?STVCRml4aW9IOGo2MkkzUGRkL3Z6VVluNDIwOXUyZm5zemhDVjRyM0N1THY4?=
+ =?utf-8?B?UHh3MmJCMXBPRUZYNjVLLzlCNzVkT0tic3plbGcyRm5YeVJsc0pvbkNGQUdw?=
+ =?utf-8?B?Vmcva1VZNEV0b0hmeXRrT3VBNXNINFVaTFpZRmVTZzJyZERrYytvbHN0N1Jr?=
+ =?utf-8?B?OXRPSmlwZ0tOeEk2dEIyK1ZQZ2JWcTB3MkxSdXVCUURpemF5SFhwK3liMTlL?=
+ =?utf-8?B?MzRkeUNvYzZobWM3eEwvSk13MlVxdVBkZXRxYmU2QXNJOG5pT2N2cGdsRnpa?=
+ =?utf-8?B?SEtaY25Kc0JEOTh0ckpSSkJXWERLb3lMUkUzY2NuVm1TTU1jMjNpTkI3SWVI?=
+ =?utf-8?B?cFBnV0FPdDBBQmJiVlh3OFkwZ0tVRWkxOE96bi9YZ1dLNjUxY2tZY2FHSGc3?=
+ =?utf-8?B?SzNqOGZxZC9sQnlhVnZ4Uk8vZUtqZTAyNC9oMkg0YlliUFNaWlpqdExnSUIw?=
+ =?utf-8?B?MU1uSFdIb1ZnVHBHQVd5a1VrZ0tXRzRmMnFneG14KzIwdnp0aitlbUJ6OUIv?=
+ =?utf-8?B?VW5URXRwM3ZYRFlZaXpST2cwUnMwZVNyemFybGdwV0tVOU5YWFFSQWdqWFBr?=
+ =?utf-8?B?eEVQL2FKekFVRkRlZnpMU1BxdkdqdDJWTEtJbU1uY0pGWUxKRFVIQVN5TENW?=
+ =?utf-8?B?T0dzWHRxak1ydGpuWEQ1bDZ3RUxmRUxFQm41MTVFOHhQNGxNbGxiRzdMOXVF?=
+ =?utf-8?B?QnFHOU1tYURxVm00aE5CZ2E5TGp0cGVmdGhMNlBva2RIL3VaZUo5bytXNm1U?=
+ =?utf-8?B?dVdpRzNXajZMU05GK21JODdLRzBzNTRGVmNxWVZpckw1a0J2SklSaFlTS0Rp?=
+ =?utf-8?B?MGwzdmJNNFBXb3BHSkNjQUxCdWFPd3hCUFVhV1F0MGNNMlk5b25DUEFjNXRD?=
+ =?utf-8?B?RW9nV0NUdTRldXo5M1BoNUpCb0pSblRsU1ZqaitqR3d6TTlSWVFYcUhwNjVY?=
+ =?utf-8?B?UksvdWNyMlJ4bUxjeTlRWG0zNEZuYVNpb0VmMmhtVGM4cG9RN0lKUy95ejVi?=
+ =?utf-8?B?a3FWSThUTXBFWFlPNFBDQ2kzelJYYjVSeFdUa0ZGT2pYMGlkVEV4aUs5Zkpy?=
+ =?utf-8?B?MkcyZ3NJOC9qOUxUbUFIaStaTXFBWE1YNGtpRDh5STZlSXEvM1Bhdk8rUDhY?=
+ =?utf-8?B?dmZrS3p5TG5QbXViUWVLRGFzZEJ0SXpmOW9seEErQVR5ZkU3VVNlL21WY0tU?=
+ =?utf-8?B?SkkyRlIxdDhGQmczc0ZYVzZ0ZFlqbTVWeE9JOGdCK2h0K210VkFTT3pUZGhm?=
+ =?utf-8?B?dE9FRVNpR0lORFFOTzE2N2xMajA4ZzRqZ2tqcTVwSDk4NjlSVGRUOGFKb1Y4?=
+ =?utf-8?B?SmFTL2tLSkRoSUp6Szl2ZTlEeGRHekFrdFNMUmpNVDJockl3YjMwcjU5N0d1?=
+ =?utf-8?Q?oldAn7PFp8o=3D?=
+X-Forefront-Antispam-Report:
+	CIP:139.15.153.206;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:eop.bosch-org.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(36860700013)(376014)(7416014)(921020);DIR:OUT;SFP:1101;
+X-OriginatorOrg: de.bosch.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2024 13:44:33.9103
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b8a33a15-0204-4a01-6e77-08dcf756a825
+X-MS-Exchange-CrossTenant-Id: 0ae51e19-07c8-4e4b-bb6d-648ee58410f4
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0ae51e19-07c8-4e4b-bb6d-648ee58410f4;Ip=[139.15.153.206];Helo=[eop.bosch-org.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DB1PEPF000509FD.eurprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR10MB4086
 
-On Fri, Oct 25, 2024 at 09:39:20PM +0100, linux@treblig.org wrote:
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
+On 22.10.2024 23:31, Danilo Krummrich wrote:
+> Implement the basic platform bus abstractions required to write a basic
+> platform driver. This includes the following data structures:
 > 
-> drm_i2c_encoder_commit(), drm_i2c_encoder_mode_set() and
-> drm_i2c_encoder_prepare() have been unused since 2016's
-> commit 7bc61cc5df80 ("drm/arcpgu: Accommodate adv7511 switch to DRM
-> bridge").
+> The `platform::Driver` trait represents the interface to the driver and
+> provides `pci::Driver::probe` for the driver to implement.
 > 
-> Remove them.
-> That change makes drm_i2c_encoder_dpms() unused.
-> Remove it.
+> The `platform::Device` abstraction represents a `struct platform_device`.
 > 
-> Remove the comments about those functions wrapping a couple of
-> pointers in drm_encoder_slave_funcs.  I can see sil164, ch7006, and nv17
-> set those fields, and I can see some nouveau code that calls them
-> directly; so i don't think we can remove the fields.
-> (Although it's not clear to me if the sil164 or ch7006 code
-> can ever get called).
+> In order to provide the platform bus specific parts to a generic
+> `driver::Registration` the `driver::RegistrationOps` trait is implemented
+> by `platform::Adapter`.
 > 
-> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
 > ---
->  drivers/gpu/drm/drm_encoder_slave.c | 26 --------------------------
->  include/drm/drm_encoder_slave.h     | 11 ++---------
->  2 files changed, 2 insertions(+), 35 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/drm_encoder_slave.c b/drivers/gpu/drm/drm_encoder_slave.c
-> index e464429d32df..0c994a4ef9ae 100644
-> --- a/drivers/gpu/drm/drm_encoder_slave.c
-> +++ b/drivers/gpu/drm/drm_encoder_slave.c
-> @@ -125,12 +125,6 @@ get_slave_funcs(struct drm_encoder *enc)
->  	return to_encoder_slave(enc)->slave_funcs;
->  }
->  
-> -void drm_i2c_encoder_dpms(struct drm_encoder *encoder, int mode)
-> -{
-> -	get_slave_funcs(encoder)->dpms(encoder, mode);
-> -}
-> -EXPORT_SYMBOL(drm_i2c_encoder_dpms);
+...
+> diff --git a/rust/kernel/platform.rs b/rust/kernel/platform.rs
+> new file mode 100644
+> index 000000000000..addf5356f44f
+> --- /dev/null
+> +++ b/rust/kernel/platform.rs
+...
+> +/// IdTable type for platform drivers.
+> +pub type IdTable<T> = &'static dyn kernel::device_id::IdTable<of::DeviceId, T>;
+> +
+> +/// The platform driver trait.
+> +///
+> +/// # Example
+> +///
+> +///```
+> +/// # use kernel::{bindings, c_str, of, platform};
+> +///
+> +/// struct MyDriver;
+> +///
+> +/// kernel::of_device_table!(
+> +///     OF_TABLE,
+> +///     MODULE_OF_TABLE,
+> +///     <MyDriver as platform::Driver>::IdInfo,
+> +///     [
+> +///         (of::DeviceId::new(c_str!("redhat,my-device")), ())
+> +///     ]
+> +/// );
+> +///
+> +/// impl platform::Driver for MyDriver {
+> +///     type IdInfo = ();
+> +///     const ID_TABLE: platform::IdTable<Self::IdInfo> = &OF_TABLE;
+> +///
+> +///     fn probe(
+> +///         _pdev: &mut platform::Device,
+> +///         _id_info: Option<&Self::IdInfo>,
+> +///     ) -> Result<Pin<KBox<Self>>> {
+> +///         Err(ENODEV)
+> +///     }
+> +/// }
+> +///```
 
-I think it might be better to convert nouveau to use these functions
-instead of open-coding them. Another option might be to make nouveau use
-normal drm_bridge interface to talk to i2c encoders and drop the custom
-interface.
 
-Ben, WDYT?
+Just in case it helps, having CONFIG_OF_UNITTEST with Rob's device tree 
+add ons enabled adding something like [1] makes this example not compile 
+only, but being executed as well:
 
-> -
->  bool drm_i2c_encoder_mode_fixup(struct drm_encoder *encoder,
->  		const struct drm_display_mode *mode,
->  		struct drm_display_mode *adjusted_mode)
-> @@ -142,26 +136,6 @@ bool drm_i2c_encoder_mode_fixup(struct drm_encoder *encoder,
->  }
->  EXPORT_SYMBOL(drm_i2c_encoder_mode_fixup);
->  
-> -void drm_i2c_encoder_prepare(struct drm_encoder *encoder)
-> -{
-> -	drm_i2c_encoder_dpms(encoder, DRM_MODE_DPMS_OFF);
-> -}
-> -EXPORT_SYMBOL(drm_i2c_encoder_prepare);
-> -
-> -void drm_i2c_encoder_commit(struct drm_encoder *encoder)
-> -{
-> -	drm_i2c_encoder_dpms(encoder, DRM_MODE_DPMS_ON);
-> -}
-> -EXPORT_SYMBOL(drm_i2c_encoder_commit);
-> -
-> -void drm_i2c_encoder_mode_set(struct drm_encoder *encoder,
-> -		struct drm_display_mode *mode,
-> -		struct drm_display_mode *adjusted_mode)
-> -{
-> -	get_slave_funcs(encoder)->mode_set(encoder, mode, adjusted_mode);
-> -}
-> -EXPORT_SYMBOL(drm_i2c_encoder_mode_set);
-> -
->  enum drm_connector_status drm_i2c_encoder_detect(struct drm_encoder *encoder,
->  	    struct drm_connector *connector)
->  {
-> diff --git a/include/drm/drm_encoder_slave.h b/include/drm/drm_encoder_slave.h
-> index 49172166a164..3089db10b6fd 100644
-> --- a/include/drm/drm_encoder_slave.h
-> +++ b/include/drm/drm_encoder_slave.h
-> @@ -58,8 +58,7 @@ struct drm_encoder_slave_funcs {
->  	void (*destroy)(struct drm_encoder *encoder);
->  
->  	/**
-> -	 * @dpms: Analogous to &drm_encoder_helper_funcs @dpms callback. Wrapped
-> -	 * by drm_i2c_encoder_dpms().
-> +	 * @dpms: Analogous to &drm_encoder_helper_funcs @dpms callback.
->  	 */
->  	void (*dpms)(struct drm_encoder *encoder, int mode);
->  
-> @@ -88,7 +87,7 @@ struct drm_encoder_slave_funcs {
->  			  struct drm_display_mode *mode);
->  	/**
->  	 * @mode_set: Analogous to &drm_encoder_helper_funcs @mode_set
-> -	 * callback. Wrapped by drm_i2c_encoder_mode_set().
-> +	 * callback.
->  	 */
->  	void (*mode_set)(struct drm_encoder *encoder,
->  			 struct drm_display_mode *mode,
-> @@ -223,15 +222,9 @@ void drm_i2c_encoder_destroy(struct drm_encoder *encoder);
->   * Wrapper fxns which can be plugged in to drm_encoder_helper_funcs:
->   */
->  
-> -void drm_i2c_encoder_dpms(struct drm_encoder *encoder, int mode);
->  bool drm_i2c_encoder_mode_fixup(struct drm_encoder *encoder,
->  		const struct drm_display_mode *mode,
->  		struct drm_display_mode *adjusted_mode);
-> -void drm_i2c_encoder_prepare(struct drm_encoder *encoder);
-> -void drm_i2c_encoder_commit(struct drm_encoder *encoder);
-> -void drm_i2c_encoder_mode_set(struct drm_encoder *encoder,
-> -		struct drm_display_mode *mode,
-> -		struct drm_display_mode *adjusted_mode);
->  enum drm_connector_status drm_i2c_encoder_detect(struct drm_encoder *encoder,
->  	    struct drm_connector *connector);
->  void drm_i2c_encoder_save(struct drm_encoder *encoder);
-> -- 
-> 2.47.0
-> 
+...
+rust_example_platform_driver testcase-data:platform-tests:test-device@2: 
+Rust example platform driver probe() called.
+...
+# rust_doctest_kernel_platform_rs_0.location: rust/kernel/platform.rs:114
+ok 63 rust_doctest_kernel_platform_rs_0
+...
 
--- 
-With best wishes
-Dmitry
+Best regards
+
+Dirk
+
+[1]
+
+diff --git a/rust/kernel/platform.rs b/rust/kernel/platform.rs
+index addf5356f44f..a926233a789f 100644
+--- a/rust/kernel/platform.rs
++++ b/rust/kernel/platform.rs
+@@ -112,7 +112,8 @@ macro_rules! module_platform_driver {
+  /// # Example
+  ///
+  ///```
+-/// # use kernel::{bindings, c_str, of, platform};
++/// # mod module_example_platform_driver {
++/// # use kernel::{bindings, c_str, of, platform, prelude::*};
+  ///
+  /// struct MyDriver;
+  ///
+@@ -121,7 +122,7 @@ macro_rules! module_platform_driver {
+  ///     MODULE_OF_TABLE,
+  ///     <MyDriver as platform::Driver>::IdInfo,
+  ///     [
+-///         (of::DeviceId::new(c_str!("redhat,my-device")), ())
++///         (of::DeviceId::new(c_str!("test,rust-device")), ())
+  ///     ]
+  /// );
+  ///
+@@ -130,12 +131,22 @@ macro_rules! module_platform_driver {
+  ///     const ID_TABLE: platform::IdTable<Self::IdInfo> = &OF_TABLE;
+  ///
+  ///     fn probe(
+-///         _pdev: &mut platform::Device,
++///         pdev: &mut platform::Device,
+  ///         _id_info: Option<&Self::IdInfo>,
+  ///     ) -> Result<Pin<KBox<Self>>> {
++///         dev_info!(pdev.as_ref(), "Rust example platform driver 
+probe() called.\n");
+  ///         Err(ENODEV)
+  ///     }
+  /// }
++///
++/// kernel::module_platform_driver! {
++///     type: MyDriver,
++///     name: "rust_example_platform_driver",
++///     author: "Danilo Krummrich",
++///     description: "Rust example platform driver",
++///     license: "GPL v2",
++/// }
++/// # }
+  ///```
+  /// Drivers must implement this trait in order to get a platform 
+driver registered. Please refer to
+  /// the `Adapter` documentation for an example.
+
+
 
