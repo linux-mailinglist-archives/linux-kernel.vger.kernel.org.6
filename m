@@ -1,129 +1,146 @@
-Return-Path: <linux-kernel+bounces-384540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 884619B2B88
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 10:27:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAD389B2B8B
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 10:28:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4036B1F22233
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 09:27:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07FB11C21D16
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 09:28:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 090CA1D416E;
-	Mon, 28 Oct 2024 09:25:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 781AF1B373B;
+	Mon, 28 Oct 2024 09:28:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="L2iiNKoX"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="lPgGGgsL"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E504199247;
-	Mon, 28 Oct 2024 09:25:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0031542A82;
+	Mon, 28 Oct 2024 09:28:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730107514; cv=none; b=BMBGaz+EwzG8bO29pphyVd3OkGaISzk27qgazPwFMWPuY9pqVoOZHVn68fcavxDqbUai4ULzT1ulVDePL+5v8AiZwgOqqoNAqScACklBiflCA5uWXLqsGdBzW0pxBG1lx9pDCeM4jMPIYoPOPB+7iP+P3UQXzk5h0OUXA9hme6c=
+	t=1730107703; cv=none; b=okIELvgfMrHXMRqsyCDOWzlCrAq3tIgPwtGAE/HaOdCe3hxy/JhO6G7MInTMdJDWpGHzFIeZSj8gDYr9ooCIU9hTNgdqTNqfnkgbQtL4ADlKUweS8lc2BLPXnbphm61vXwPlH5xbrCkDRCPGpoHgYj77khBDmzE7QMISINcO1y8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730107514; c=relaxed/simple;
-	bh=gx2yYIkWM9jtAvPqskr0+UVLgMAwVE0IFBV/L1j3rqc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZEPJ+WnABcSTRI2r+5zQ3Z11dsITZF76D0O0uMmHL0JBzatEWt1kQGoEipAsJj/vqKCN3/2cywMXpqBe/hZaFXRJqxMRivIIfGoxWbikSk5kEfe9Vom1byx/gggCK8ZWKyzO0JrpNLjykl9ugUOzEfcfWPJIuSFu+hpVnAXyziQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=L2iiNKoX; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730107513; x=1761643513;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=gx2yYIkWM9jtAvPqskr0+UVLgMAwVE0IFBV/L1j3rqc=;
-  b=L2iiNKoXlPTJ2Ajubu//+ADrA7Kl7LAqGV34UXMGmJrUZAxssYc/+twd
-   EUZ4WP+18rTanhH7p8bN4201+ESmZ0BNAYDTCZSYTOQPJfRs2pATG+UoN
-   8pG2J6FRN+3Ci6B7jRrFSNr7T0QnnHp1KCUm9WspLE8fX4cZy+a+FekDv
-   XVK4PWGEy7/PoffAyYpDNmRzWmfGJKpTxIab3TLNFjsV3K6gyZ3aG8eNB
-   EyRhtoBNlg6dLJAUfA06/8e+ruVEAcNfyzl8pkZrSIxTZ3APX/L1NZkPN
-   wLFi/P6x4+kwejoOfR34FOD0Sjo5o0Y7Bm3r6Zzjh9TUzVYfz0fI3acZO
-   w==;
-X-CSE-ConnectionGUID: VMjBm2+VQ++Hwc4ar7z+Lg==
-X-CSE-MsgGUID: SeQ7V0gEQSiCPNxA8vt/Wg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="47155742"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="47155742"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2024 02:25:13 -0700
-X-CSE-ConnectionGUID: feGTaYEgRlGEDMqJtZw6sw==
-X-CSE-MsgGUID: TOv+Z8rrRhSc5w0Ro7A9dw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,238,1725346800"; 
-   d="scan'208";a="86171955"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2024 02:25:09 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1t5Lzm-00000007tLO-2twS;
-	Mon, 28 Oct 2024 11:25:06 +0200
-Date: Mon, 28 Oct 2024 11:25:06 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Justin Weiss <justin@justinweiss.com>
-Cc: Alex Lanzano <lanzano.alex@gmail.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	"Derek J . Clark" <derekjohn.clark@gmail.com>,
-	Philip =?iso-8859-1?Q?M=FCller?= <philm@manjaro.org>
-Subject: Re: [PATCH v4 1/4] iio: imu: bmi270: Add triggered buffer for Bosch
- BMI270 IMU
-Message-ID: <Zx9Ycjnlef1RJfGf@smile.fi.intel.com>
-References: <20241027172029.160134-1-justin@justinweiss.com>
- <20241027172029.160134-2-justin@justinweiss.com>
+	s=arc-20240116; t=1730107703; c=relaxed/simple;
+	bh=4BL2DejjDELiLEhAB40ADpi5+EGK99TWoHcY01BTeKk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sg6rO5PCOEjps4LKUIvY9GBDzO9K43dq9RU8RR+c3xibkG3MNv29qc9aQ2qHrqC8jmWVwsrWQOMPOlKlI+G+mJV8CBluExRQdZ9fjC6L62Zz4A45fBipKfr7j6SA4S+/Uu4GFaZo1o/x9Yc00gTENuI+wo2m/o1TdYN5xpBu+bw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=lPgGGgsL; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [192.168.88.20] (91-157-155-49.elisa-laajakaista.fi [91.157.155.49])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 3B086641;
+	Mon, 28 Oct 2024 10:28:17 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1730107697;
+	bh=4BL2DejjDELiLEhAB40ADpi5+EGK99TWoHcY01BTeKk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=lPgGGgsL3dJ3ISFWjjmRU2wQa/M+6pqqmlqU4B3cGA0aGxQDP/sHKmXGXQI/Uwi5o
+	 +LX82Xp5DDQaUizwPOwyTB0f7uXo5inaO1pqfMDlLLYfzUefGCYFWupWIx34uyitLg
+	 LSmET1L6R2LCTCyLd88rQPyKp/UJduBTUAVT+hdQ=
+Message-ID: <d8622666-cb4e-4f40-a64c-1b430994e84f@ideasonboard.com>
+Date: Mon, 28 Oct 2024 11:28:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241027172029.160134-2-justin@justinweiss.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] media: raspberrypi: Remove redundant "no IRQ" message
+To: Ricardo Ribalda <ribalda@chromium.org>,
+ Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Florian Fainelli <florian.fainelli@broadcom.com>,
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
+Cc: linux-media@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20241018-rpi-irq-cocci-v1-1-b597595e98e4@chromium.org>
+Content-Language: en-US
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
+ 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
+In-Reply-To: <20241018-rpi-irq-cocci-v1-1-b597595e98e4@chromium.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sun, Oct 27, 2024 at 10:20:22AM -0700, Justin Weiss wrote:
-> Set up a triggered buffer for the accel and angl_vel values.
+Hi,
 
-...
+On 18/10/2024 17:24, Ricardo Ribalda wrote:
+> platform_get_irq() already provides a error message.
+> 
+> This fixes the following cocci error:
+> drivers/media/platform/raspberrypi/rp1-cfe/cfe.c:2326:2-9: line 2326 is redundant because platform_get_irq() already prints an error
+> 
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> ---
+>   drivers/media/platform/raspberrypi/rp1-cfe/cfe.c | 1 -
+>   1 file changed, 1 deletion(-)
+> 
+> diff --git a/drivers/media/platform/raspberrypi/rp1-cfe/cfe.c b/drivers/media/platform/raspberrypi/rp1-cfe/cfe.c
+> index 045910de6c57..4e99cccd9a20 100644
+> --- a/drivers/media/platform/raspberrypi/rp1-cfe/cfe.c
+> +++ b/drivers/media/platform/raspberrypi/rp1-cfe/cfe.c
+> @@ -2323,7 +2323,6 @@ static int cfe_probe(struct platform_device *pdev)
+>   
+>   	ret = platform_get_irq(pdev, 0);
+>   	if (ret <= 0) {
+> -		dev_err(&pdev->dev, "No IRQ resource\n");
+>   		ret = -EINVAL;
+>   		goto err_cfe_put;
+>   	}
+> 
+> ---
+> base-commit: 698b6e3163bafd61e1b7d13572e2c42974ac85ec
+> change-id: 20241018-rpi-irq-cocci-878e4a82ea2c
+> 
+> Best regards,
 
->  	.channel2 = IIO_MOD_##_axis,				\
->  	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),		\
-> +	.scan_index = BMI270_SCAN_ACCEL_##_axis,		\
-> +	.scan_type = {						\
-> +		.sign = 's',					\
-> +		.realbits = 16,					\
-> +		.storagebits = 16,				\
-> +		.endianness = IIO_LE				\
+Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
 
-Leave trailing comma here.
-
-> +	},	                                                \
-
-...
-
->  	.channel2 = IIO_MOD_##_axis,				\
->  	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),		\
-> +	.scan_index = BMI270_SCAN_GYRO_##_axis,			\
-> +	.scan_type = {						\
-> +		.sign = 's',					\
-> +		.realbits = 16,					\
-> +		.storagebits = 16,				\
-> +		.endianness = IIO_LE				\
-
-Ditto.
-
-> +	},	                                                \
-
--- 
-With Best Regards,
-Andy Shevchenko
-
+  Tomi
 
 
