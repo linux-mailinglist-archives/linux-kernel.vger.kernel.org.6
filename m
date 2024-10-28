@@ -1,183 +1,159 @@
-Return-Path: <linux-kernel+bounces-385389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 519F89B3695
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 17:34:37 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02DDA9B3698
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 17:35:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 101A1285420
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 16:34:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 61C23B25FFC
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 16:35:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C7721DEFC8;
-	Mon, 28 Oct 2024 16:34:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D923F1DED77;
+	Mon, 28 Oct 2024 16:35:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ELaI4UXe"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="BFlP1loa"
+Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8DBE1DED59
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 16:34:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 981E01DE4D5
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 16:35:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730133271; cv=none; b=WfDowBNdG3wVoYKpz/hGegvl4Gb/9xDYburHpDpYtzs+mOqLg/WlSf03k//3K0gGxI1PSc4bT0puA1/F7bJjOiMdkGvibfp1kkRSxOZ2nzc7n5gpt9rtye+aM9m4A8esKpmYH14zoZFsqt+EmtYqDOB9ivnloxnZ/OhtM1Mke5Y=
+	t=1730133306; cv=none; b=i2rqZrUjyGiC+O9rs3cStsV5LfurIhTIyUXk3J/B28BB3d95AaEuaLzI9dw5QXSvCOkzsR3s020ZMHmnvXXzGANpj0HboRJB5fJ0QLTuxAsuDdJZ7FvT1+rn2tmJWt3q5SOd2U7/rktv/wFzE7Gc7+Yf4FTmFYtHGpg9sbsHJ9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730133271; c=relaxed/simple;
-	bh=RoDbH8hhDR7FVvuNh9vHX1jh1XZGfsb2QPHmuvLlXZU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KPIi2zIMn+8nrGDm4OWI2Uy78nU7YjKjj+Q4cktMBxrerIWXwh1yuvS+vng3h40G44rvlrKszIoRnCdJgsUHWMR0I7muU4hBmakM1yxCZsZ2nVCjuJWzgssqbYuU5jUfSx5hiztFxdDxJC8dqapEbJjYNw4md4NDfWqiZIrxnjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ELaI4UXe; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-37d8901cb98so3792564f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 09:34:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730133264; x=1730738064; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=js81SeQpn9xUgzINLi31wUaurNTSsIvVF8Ge8x3mQNo=;
-        b=ELaI4UXePNplr+7iBtL4zncHmuhkzIPn3/BFkOSdrc5fgTYIdCPveBgDA3zEjzKC23
-         6qZzeIDXOio68pfFE2ixhsHl2IPmtnmlvVIaSn2fTANkUFO9d1MReBIgdznuEDrLs6Hm
-         fvkIuV/h+jNMwqTQ0yvZXjtUEYkL8W1NslsXIR2oKkCmW71bp0aPDlsO0gHQFemiHPua
-         yhNY/N2MevmEikY9rfZgEtYbjG4+QOYwQZiPf4JIh6DzAX6stz+Vl0huL2SZE9diYlZ5
-         HjW3Sq3AMtF7LXAFOv8CWLfCTSXTrqStYrf3j1oTI1VJNRbOPz6ZqSnHvCYfWftprXv3
-         5CSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730133264; x=1730738064;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=js81SeQpn9xUgzINLi31wUaurNTSsIvVF8Ge8x3mQNo=;
-        b=l1F9hcOy08VYan/Z4ilcUvVBzt+QiiAkqxQVQ02aGuX28QzCw11ZlULvYTvyCxUwJk
-         2WBCj6dFlSiRNOwGJEfQUP5TNWVQreXv9evXcflTvPpT77RBDbv/VJIlGYr3aMrGxxV+
-         OP230jBk96foFHRB+bAQQhhIMmj6ObGsTcakoRFnY9ZSz3z/breGr6DEzRNgCHYe8vEU
-         ril0qOmG+AOTUtJVxWVNhxdIkqNFdGyxXsithWXwIVxS2n+3mkp5F9sfJ1OIJcw7655r
-         z5rVDL+hYI8pvB7kb3vjAP3kT+PCKryi84SRiYQZDgaNiZC9kdeH1rvVUxRKFRPnflh9
-         ah3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU9tJsAOyelRtdHeMfeMR3LPjQX4I9YALubUH3SMJhenBBnuM7Gtw0xpvSbmRZwTkzRJJOvNxydX6YPWGY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8Ex1o7LGJc76DEgLUsqwPKlwh51YN+DXPyHeB7XE+dxl4CBPJ
-	jKi7T4jtOu8Gjo3pnid9hAoNNvBfmxp0M/BJyYyxEj0gUHwTAgRC9cM6YJtM7IRBwq1IY29tR2P
-	X3oFg8g==
-X-Google-Smtp-Source: AGHT+IHGS7TezSWXTQnx/EjfY1u1lEUaZd6nAutN8M7vFaejhP8Nake+9DeRhSOrd8BaunXKDH5yrw==
-X-Received: by 2002:adf:ec8a:0:b0:37d:3baa:9f34 with SMTP id ffacd0b85a97d-380813bc996mr199477f8f.1.1730133264161;
-        Mon, 28 Oct 2024 09:34:24 -0700 (PDT)
-Received: from eugen-station.. ([82.76.24.202])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b47f6fsm9944608f8f.50.2024.10.28.09.34.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Oct 2024 09:34:23 -0700 (PDT)
-From: Eugen Hristev <eugen.hristev@linaro.org>
-To: linux-arm-msm@vger.kernel.org
-Cc: andersson@kernel.org,
-	konradybcio@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	djakov@kernel.org,
-	sboyd@kernel.org,
-	mturquette@baylibre.com,
-	Eugen Hristev <eugen.hristev@linaro.org>
-Subject: [PATCH v2] soc: qcom: Rework BCM_TCS_CMD macro
-Date: Mon, 28 Oct 2024 18:34:03 +0200
-Message-ID: <20241028163403.522001-1-eugen.hristev@linaro.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1730133306; c=relaxed/simple;
+	bh=nx/Qlf7fXBom0A897gOR7kSOAnHCSsUBqqcM9748RAE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gswFf1gXjveVgxeoVdNsMZ9WJmdHSTt1pdGeiWCegvlnP7Ed/cdQQBgd3TE28zq/pV54zZTKLy/dcUNDjpoTkGP55oLC4JmrFGOs1oSMyPOZYJAdgUJ2bw/HBLGi9/LlGX93uMrJQOyyNrXG5nYn+knWvRhkxV8iHQ7pHp5VlzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=BFlP1loa; arc=none smtp.client-ip=91.218.175.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <05117bb4-bf3b-477e-b21e-2160af64ab6a@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1730133301;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=znXkDjY1xS3DilYPhkg5uzcU1hSWEQ2y8y3HfKsuMXg=;
+	b=BFlP1loa0NpZW7BiEqx0ledkPQ83h8Vq73costvrarxHC3ojj4rHto382UbZOTyWdy81KD
+	zTay6x58D5lpfgxLLYEI3IJ5N2k2TPd8xvT9u69q9wFTL/JPkA5btwHL+f7EwzocIS5QJ0
+	4uMdalQpCATnO/khn3Hov/nEzVGuq2U=
+Date: Tue, 29 Oct 2024 00:34:51 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH 1/2] drm/etnaviv: Fix misunderstanding about the
+ scatterlist structure
+To: Lucas Stach <l.stach@pengutronix.de>,
+ Russell King <linux+etnaviv@armlinux.org.uk>,
+ Christian Gmeiner <christian.gmeiner@gmail.com>
+Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+References: <20241028160555.1006559-1-sui.jingfeng@linux.dev>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Sui Jingfeng <sui.jingfeng@linux.dev>
+In-Reply-To: <20241028160555.1006559-1-sui.jingfeng@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-Reworked BCM_TCS_CMD macro in order to fix warnings from sparse:
+Hi, Dear reviewers
 
-drivers/clk/qcom/clk-rpmh.c:270:28: warning: restricted __le32 degrades to integer
-drivers/clk/qcom/clk-rpmh.c:270:28: warning: restricted __le32 degrades to integer
+On 2024/10/29 00:05, Sui Jingfeng wrote:
+> The 'offset' data member of the 'struct scatterlist' denotes the offset
+> into a SG entry in bytes. The sg_dma_len() macro could be used to get
+> lengths of SG entries, those lengths are expected to be CPU page size
+> aligned. Since, at least for now, we call drm_prime_pages_to_sg() to
+> convert our various page array into an SG list. We pass the number of
+> CPU page as the third argoument, to tell the size of the backing memory
+> of GEM buffer object.
+>
+> drm_prime_pages_to_sg() call sg_alloc_table_from_pages_segment() do the
+> work, sg_alloc_table_from_pages_segment() always hardcode the Offset to
+> ZERO. The sizes of *all* SG enties will be a multiple of CPU page size,
+> that is multiple of PAGE_SIZE.
+>
+> If the GPU want to map/unmap a bigger page partially, we should use
+> 'sg_dma_address(sg) + sg->offset' to calculate the destination DMA
+> address, and the size to be map/unmap is 'sg_dma_len(sg) - sg->offset'.
+>
+> While the current implement is wrong, but since the 'sg->offset' is
+> alway equal to 0, drm/etnaviv works in practice by good luck. Fix this,
+> to make it looks right at least from the perspective of concept.
+>
+> while at it, always fix the absue types:
 
-While at it, used le32_encode_bits which made the code easier to
-follow and removed unnecessary shift definitions.
 
-Signed-off-by: Eugen Hristev <eugen.hristev@linaro.org>
----
- drivers/clk/qcom/clk-rpmh.c           |  2 +-
- drivers/interconnect/qcom/bcm-voter.c |  2 +-
- include/soc/qcom/tcs.h                | 28 +++++++++++++--------------
- 3 files changed, 16 insertions(+), 16 deletions(-)
+'absue' -> 'abuse'
 
-diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
-index 4acde937114a..4929893b09c2 100644
---- a/drivers/clk/qcom/clk-rpmh.c
-+++ b/drivers/clk/qcom/clk-rpmh.c
-@@ -267,7 +267,7 @@ static int clk_rpmh_bcm_send_cmd(struct clk_rpmh *c, bool enable)
- 
- 	if (c->last_sent_aggr_state != cmd_state) {
- 		cmd.addr = c->res_addr;
--		cmd.data = BCM_TCS_CMD(1, enable, 0, cmd_state);
-+		cmd.data = (__force u32)BCM_TCS_CMD(1, enable, 0, cmd_state);
- 
- 		/*
- 		 * Send only an active only state request. RPMh continues to
-diff --git a/drivers/interconnect/qcom/bcm-voter.c b/drivers/interconnect/qcom/bcm-voter.c
-index a2d437a05a11..ce9091cf122b 100644
---- a/drivers/interconnect/qcom/bcm-voter.c
-+++ b/drivers/interconnect/qcom/bcm-voter.c
-@@ -144,7 +144,7 @@ static inline void tcs_cmd_gen(struct tcs_cmd *cmd, u64 vote_x, u64 vote_y,
- 		vote_y = BCM_TCS_CMD_VOTE_MASK;
- 
- 	cmd->addr = addr;
--	cmd->data = BCM_TCS_CMD(commit, valid, vote_x, vote_y);
-+	cmd->data = (__force u32)BCM_TCS_CMD(commit, valid, vote_x, vote_y);
- 
- 	/*
- 	 * Set the wait for completion flag on command that need to be completed
-diff --git a/include/soc/qcom/tcs.h b/include/soc/qcom/tcs.h
-index 3acca067c72b..152947a922c0 100644
---- a/include/soc/qcom/tcs.h
-+++ b/include/soc/qcom/tcs.h
-@@ -6,6 +6,9 @@
- #ifndef __SOC_QCOM_TCS_H__
- #define __SOC_QCOM_TCS_H__
- 
-+#include <linux/bitfield.h>
-+#include <linux/bits.h>
-+
- #define MAX_RPMH_PAYLOAD	16
- 
- /**
-@@ -60,22 +63,19 @@ struct tcs_request {
- 	struct tcs_cmd *cmds;
- };
- 
--#define BCM_TCS_CMD_COMMIT_SHFT		30
--#define BCM_TCS_CMD_COMMIT_MASK		0x40000000
--#define BCM_TCS_CMD_VALID_SHFT		29
--#define BCM_TCS_CMD_VALID_MASK		0x20000000
--#define BCM_TCS_CMD_VOTE_X_SHFT		14
--#define BCM_TCS_CMD_VOTE_MASK		0x3fff
--#define BCM_TCS_CMD_VOTE_Y_SHFT		0
--#define BCM_TCS_CMD_VOTE_Y_MASK		0xfffc000
-+#define BCM_TCS_CMD_COMMIT_MASK		BIT(30)
-+#define BCM_TCS_CMD_VALID_MASK		BIT(29)
-+#define BCM_TCS_CMD_VOTE_MASK		GENMASK(13, 0)
-+#define BCM_TCS_CMD_VOTE_Y_MASK		GENMASK(13, 0)
-+#define BCM_TCS_CMD_VOTE_X_MASK		GENMASK(27, 14)
- 
- /* Construct a Bus Clock Manager (BCM) specific TCS command */
- #define BCM_TCS_CMD(commit, valid, vote_x, vote_y)		\
--	(((commit) << BCM_TCS_CMD_COMMIT_SHFT) |		\
--	((valid) << BCM_TCS_CMD_VALID_SHFT) |			\
--	((cpu_to_le32(vote_x) &					\
--	BCM_TCS_CMD_VOTE_MASK) << BCM_TCS_CMD_VOTE_X_SHFT) |	\
--	((cpu_to_le32(vote_y) &					\
--	BCM_TCS_CMD_VOTE_MASK) << BCM_TCS_CMD_VOTE_Y_SHFT))
-+	(le32_encode_bits(commit, BCM_TCS_CMD_COMMIT_MASK) |	\
-+	le32_encode_bits(valid, BCM_TCS_CMD_VALID_MASK) |	\
-+	le32_encode_bits(vote_x,	\
-+			BCM_TCS_CMD_VOTE_X_MASK) |		\
-+	le32_encode_bits(vote_y,	\
-+			BCM_TCS_CMD_VOTE_Y_MASK))
- 
- #endif /* __SOC_QCOM_TCS_H__ */
+
+By the way, sorry I'm just receive your message from my Thunderbird client.
+
+
+I sent those two patch first, then I run my Thunderbird client.
+
+Not seeing that you have already merged part of my patch, then there will be
+merge conflict I guess.
+
+I think I could wait the next round and respin my patch.
+
+
+> - sg_dma_address returns DMA address, the type is dma_addr_t, not
+>    the phys_addr_t, for VRAM there may have another translation between
+>    the bus address and the final physical address of VRAM or carved out
+>    RAM.
+>
+> - The type of sg_dma_len(sg) return is unsigned int, not the size_t.
+>    Avoid hint the compiler to do unnecessary integer promotion.
+>
+> Signed-off-by: Sui Jingfeng <sui.jingfeng@linux.dev>
+> ---
+>   drivers/gpu/drm/etnaviv/etnaviv_mmu.c | 10 +++++-----
+>   1 file changed, 5 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_mmu.c b/drivers/gpu/drm/etnaviv/etnaviv_mmu.c
+> index 1661d589bf3e..4ee9ed96b1d8 100644
+> --- a/drivers/gpu/drm/etnaviv/etnaviv_mmu.c
+> +++ b/drivers/gpu/drm/etnaviv/etnaviv_mmu.c
+> @@ -80,10 +80,10 @@ static int etnaviv_iommu_map(struct etnaviv_iommu_context *context, u32 iova,
+>   		return -EINVAL;
+>   
+>   	for_each_sgtable_dma_sg(sgt, sg, i) {
+> -		phys_addr_t pa = sg_dma_address(sg) - sg->offset;
+> -		size_t bytes = sg_dma_len(sg) + sg->offset;
+> +		dma_addr_t pa = sg_dma_address(sg) + sg->offset;
+> +		unsigned int bytes = sg_dma_len(sg) - sg->offset;
+>   
+> -		VERB("map[%d]: %08x %pap(%zx)", i, iova, &pa, bytes);
+> +		VERB("map[%d]: %08x %pap(%x)", i, iova, &pa, bytes);
+>   
+>   		ret = etnaviv_context_map(context, da, pa, bytes, prot);
+>   		if (ret)
+> @@ -109,11 +109,11 @@ static void etnaviv_iommu_unmap(struct etnaviv_iommu_context *context, u32 iova,
+>   	int i;
+>   
+>   	for_each_sgtable_dma_sg(sgt, sg, i) {
+> -		size_t bytes = sg_dma_len(sg) + sg->offset;
+> +		unsigned int bytes = sg_dma_len(sg) - sg->offset;
+>   
+>   		etnaviv_context_unmap(context, da, bytes);
+>   
+> -		VERB("unmap[%d]: %08x(%zx)", i, iova, bytes);
+> +		VERB("unmap[%d]: %08x(%x)", i, iova, bytes);
+>   
+>   		BUG_ON(!PAGE_ALIGNED(bytes));
+>   
+
 -- 
-2.43.0
+Best regards,
+Sui
 
 
