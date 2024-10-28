@@ -1,104 +1,95 @@
-Return-Path: <linux-kernel+bounces-385092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 000D49B324B
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:57:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E3239B324F
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:58:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 303A51C220DB
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:57:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 450CC1F222CA
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:58:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A33E1DC18F;
-	Mon, 28 Oct 2024 13:56:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A3181DC739;
+	Mon, 28 Oct 2024 13:58:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PfqAiIly"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="lqcalzNo"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63363191F91;
-	Mon, 28 Oct 2024 13:56:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D18B5191F91;
+	Mon, 28 Oct 2024 13:58:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730123816; cv=none; b=QG3Kbh10ax10pAG607GvoT8wIsNZb1SbiRR13BpucSlD+51HcNRW9WCCtX63GKxxpJPK+OWwXSVBkWdpTEYm00iheiOE3+UBjjwNCBh8s3C0x7c+jokV/pI4adQv6wul1GjKIpnaw2ON1IoNWz/Bs2CvtzP5dRT5rSOQjsWeYds=
+	t=1730123926; cv=none; b=d5CaeNoZuvF28TLqw819vZEJK7ynY02zl1XZ0d1VxXwWtCGaFNaFzkh2sdsy76brKTr/BdF90L0z35z7qgYs7UJ92Dx2gnWSfJjdHUiBd5/2/ZyNwgox5FQ2SXL7QV+7u8Hk1cNey9cPJmCiF7eoub2mrGZVJlGxNedBunJPyak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730123816; c=relaxed/simple;
-	bh=w2zEV9R6B3qSHnWHq7ai+qKl7JxuJaWiiHxpRdEWAJU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=R9m+nOkqtFsTad5cH2ISvp0cHSGYk85y5fR/m6uVNYrmNctB7217BCwVljKfqjnyT0ijakuJogk85gbpyC8YduuZFHnCxxHVf7CBX8rVlPtg1ZF2gCcE4YYUSbrT1DzneppVksZBC+zt5f7MCZml4OUt+BrCeJVgAW5bme4162E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PfqAiIly; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3AD37C4AF09;
-	Mon, 28 Oct 2024 13:56:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730123816;
-	bh=w2zEV9R6B3qSHnWHq7ai+qKl7JxuJaWiiHxpRdEWAJU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=PfqAiIly+pNSBOHvB2doCwSnDO6E/tN0W95plZM6B95FSCOYMGin4CQXdJYSguc6I
-	 3/KbshXJCOjUrtYtHao4Q7B0CQWDG3sBUoHkAM7bPaLjndcXHxWh8UFj4IjLt+TxbA
-	 TTev6jIt0TCC9yjlvWkqgiQHDpzByHRvU7kbvmywEVZm+GEThyiefXanJZAG9Rkc3h
-	 eXxJw1zSLFdjAVpt0yAjD1T/001frZGTyZdN7WWYHHUSjsiWnj3y+DV4PYjfdM/e56
-	 mwyVNwUrmmEPCzf2RVEPvLyYw7tYhh1gcL9BI8g3Yh1jd9soTmIM4FEunv3YKTGr1R
-	 xhhd7/BuQCDHw==
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-539e59dadebso5092214e87.0;
-        Mon, 28 Oct 2024 06:56:56 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWrwzCIChUX15yqfcURzEOzk2gCo/14/aH59wiUv1nMjCV8VwBi9orBRDvxCnshlfn1ubW1Ex6tryr6R0I=@vger.kernel.org, AJvYcCWxOMzzFme1OqdFcquvwB/JwuL7gYe8jQ3Z19aTwQSLGORPqGdUD1ey5iyFZUTJHRSFPqcjFTD6PSsufQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3JLFEPWKkDxmBDkepf3B4+WrhW1caX6p7SWlVzUBBv3SPMaNF
-	7MgTWSBxZZaB7qDyzFegKQCBozEI0dD1rCGJa03Qppl7VpboT/6ZkngCdxqKqJ+JmrDRvHaao85
-	lYkXBrzI0tIcUiO29ZoyC5+c5sQ==
-X-Google-Smtp-Source: AGHT+IFY0TufIGKFsh37080fzf3R9npLr8DTAgwH7Vp8VPARsO8sw1jEVwigFk5K5MfTti8T0RQu/Ztylb41+pL38jU=
-X-Received: by 2002:a05:6512:3b27:b0:539:de9c:c890 with SMTP id
- 2adb3069b0e04-53b34c5f9b5mr3091871e87.42.1730123814631; Mon, 28 Oct 2024
- 06:56:54 -0700 (PDT)
+	s=arc-20240116; t=1730123926; c=relaxed/simple;
+	bh=jKlpDLntwOx/bEciULTrygGZaitePsUyKUBtvYE24xk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=newe90kr6q1aAWnF9doc3UrQopJeUy2g40L89oRM//Wea34pFrucKx84r59x2wRfsfSURMZz0uAEIP7qjOAHruWB3E1sqdCpPOB8W/ML4+Gj8bV28E5IRzRYxHv/b1bpr1OjhsawrpujQUbKS0HuORhj5LMB3mo/BvCOdVIXsqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=lqcalzNo; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=vv21Me7Pum0pDrJGfjUfkgjIwMKzfFeJ1meozzE/c8U=; b=lqcalzNoLvMxzvuobOhq89N7Ig
+	0M/4OReNTuTRlWMABDaJY8sp24E3pSg+MUf1zZoUUb0tIGLN2+2ndEMBiTCAmNF9UqSTnsobSOcfG
+	nDFS6sRG5yY1OGcUEqwIxKFAJqx2azmg9QwVexJCc6g1o9SJzpkdKg1JmJHwBF8JHDuB3blDy8mLk
+	hROKUJb1BqkAU2R0GW1c9DSQdkgAxeNJxYHLRlQdUJU27yBicRlROXF9/O3ASlW3hifLG7AHG1DnI
+	9Zw3YVqQ2gYC22V0cOSacjdrFlXsDqHMCjphXljEA7ust7DCYt4LmazwYQPp3LgBvyg+J1Wx/h8d5
+	HV16zuPg==;
+Received: from [189.78.222.89] (helo=[192.168.15.100])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1t5QGR-00G6Rl-6O; Mon, 28 Oct 2024 14:58:35 +0100
+Message-ID: <6a12e4a2-89ec-404f-ab96-e3cb7731e7e4@igalia.com>
+Date: Mon, 28 Oct 2024 10:58:28 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241028122405.27090-1-herve.codina@bootlin.com> <20241028122405.27090-3-herve.codina@bootlin.com>
-In-Reply-To: <20241028122405.27090-3-herve.codina@bootlin.com>
-From: Rob Herring <robh@kernel.org>
-Date: Mon, 28 Oct 2024 08:56:42 -0500
-X-Gmail-Original-Message-ID: <CAL_Jsq+doHunzxKroG7m+Ex4Cz-YSwQ7zW2B3tAPi_LFSBfJ_A@mail.gmail.com>
-Message-ID: <CAL_Jsq+doHunzxKroG7m+Ex4Cz-YSwQ7zW2B3tAPi_LFSBfJ_A@mail.gmail.com>
-Subject: Re: [PATCH 2/2] misc: lan966x_pci: Fix dtc warn 'Missing interrupt-parent'
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>, Stephen Rothwell <sfr@canb.auug.org.au>, 
-	linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, 
-	Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Allan Nielsen <allan.nielsen@microchip.com>, Horatiu Vultur <horatiu.vultur@microchip.com>, 
-	Steen Hegelund <steen.hegelund@microchip.com>, 
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 0/9] tmpfs: Add case-insensitive support for tmpfs
+To: Christian Brauner <brauner@kernel.org>
+Cc: kernel-dev@igalia.com, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org,
+ linux-mm@kvack.org, linux-doc@vger.kernel.org,
+ Gabriel Krisman Bertazi <krisman@suse.de>,
+ Gabriel Krisman Bertazi <gabriel@krisman.be>,
+ Randy Dunlap <rdunlap@infradead.org>,
+ Gabriel Krisman Bertazi <krisman@kernel.org>,
+ Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+ Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>,
+ Hugh Dickins <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>,
+ Jonathan Corbet <corbet@lwn.net>, smcv@collabora.com
+References: <20241021-tonyk-tmpfs-v8-0-f443d5814194@igalia.com>
+ <20241028-weinkarte-weshalb-1495cc5086ab@brauner>
+Content-Language: en-US
+From: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+In-Reply-To: <20241028-weinkarte-weshalb-1495cc5086ab@brauner>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 28, 2024 at 7:24=E2=80=AFAM Herve Codina <herve.codina@bootlin.=
-com> wrote:
->
-> dtc generates the following warning when building the LAN966x devicetree
-> overlay (lan966x_pci.dtso):
->   Warning (interrupts_property): /fragment@0/__overlay__/pci-ep-bus@0/oic=
-@e00c0120: Missing interrupt-parent
->
-> The oic interrupt parent is the PCI device itself. The PCI device node
-> is the node on which the dtbo will be applied and this node already has
-> properties needed.
->
-> In order to remove the warning, add the missing properties in the
-> overlay fragment node. Properties in this node will not be added when
-> the overlay is applied (which is what we expect) but makes dtc happy.
->
-> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Closes: https://lore.kernel.org/all/20241025110919.64b1cffb@canb.auug.org=
-.au/
-> Fixes: 185686beb464 ("misc: Add support for LAN966x PCI device")
-> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
-> ---
-> The referenced commit is in the reset tree
-> ---
->  drivers/misc/lan966x_pci.dtso | 10 ++++++++++
->  1 file changed, 10 insertions(+)
+Em 28/10/2024 09:37, Christian Brauner escreveu:
+> On Mon, 21 Oct 2024 13:37:16 -0300, André Almeida wrote:
+>> This patchset adds support for case-insensitive file names lookups in
+>> tmpfs. The main difference from other casefold filesystems is that tmpfs
+>> has no information on disk, just on RAM, so we can't use mkfs to create a
+>> case-insensitive tmpfs.  For this implementation, I opted to have a mount
+>> option for casefolding. The rest of the patchset follows a similar approach
+>> as ext4 and f2fs.
+>>
+>> [...]
+> 
+> Applied to the vfs.tmpfs branch of the vfs/vfs.git tree.
+> Patches in the vfs.tmpfs branch should appear in linux-next soon.
+> 
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Thanks!
 
