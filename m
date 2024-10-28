@@ -1,91 +1,97 @@
-Return-Path: <linux-kernel+bounces-384995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5B399B312D
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:59:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44CBF9B3130
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:59:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02EE01C20D3C
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 12:59:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09424281CB0
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 12:59:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF3F81DC734;
-	Mon, 28 Oct 2024 12:59:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 232331DB34E;
+	Mon, 28 Oct 2024 12:59:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="rPgJyp59";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="wRQCp11g"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SnCfI7vX"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05AAC1DC06D
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 12:59:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70A4A1DAC9B
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 12:59:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730120344; cv=none; b=mpJuS1uoslSEg5xZPkjyEw9mP0/LZlzmnNgdZScbAh/Og71NQrfmkAOlfEwSGiOCJUqrgQlSri+oPDu84Q1WdwInD5L9NYzEQ0pV+3TX/uuD3iMgEezBf58mmgn9oWhJ+AyRR1Ohuulls4uTycNXF5Z5224bW1vakd8FRSw3GAY=
+	t=1730120361; cv=none; b=PrOA2vVhCuPAmgb3dgFZemQpEVAEY09Gqu439Z88EIXc1+oJlveJdT2bNKjzV7xM6VRVPTait7ad69QBb3VUu8nLKKee8A8KGeeJKo7ffZaJxV+KzfA/EgNsBFohD+bH2jpu3GDE3/9nPXPxgrjTFFa2aoC3xqe9TRIgJNvpv48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730120344; c=relaxed/simple;
-	bh=GBwzUa80hKFdlYc9gRAuSwET+9i6RcIOKAJSCnhxQ6U=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=BnksR2KoDVnjJzRfsoUJ7xPnGuPWwr2MIWHEjtVREz/iuAaiipszrWkBszxTYlkzMSJTZ7ugsaqGTBmqE6JEZNb/2aFiOXG+/tWL5a86t0y8MWV/7pqyZ6RbhX22joiqnS8ItZNZnG8VUY6LFTSypiznYu77jr5kpyPgB5IqPQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=rPgJyp59; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=wRQCp11g; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1730120340;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=64T6fFDD8Zzyl79UA472G3KLLbXRapBRFe/GCMvgq0c=;
-	b=rPgJyp59zl8BKPXPoz1vLhm6crhHRteERSiKw27+6bkvqBm2gfRHe0YnvelLiVUr/Bpwid
-	BX6CIgh7BWCdnZH7df4HD4gPViyHxcYrvrioC8jyDVJ9i0eJBVAs49SCwOhpKUL1nnaxtO
-	tULgzrqKFGFAWq5wJH3ZjZqjxcmjw4TsYb473fhczZfejV285h6TCiWa77XDLr/6mzvohZ
-	fOfvifdqfrp38oJ0Ou+jbJ0Zu84naZr5wmrKaYOTXSqH+u4g/uAkmpZxB8LrKG6e8mAsOb
-	2zLfmzHQdhWWwrX6qLWD4vYY6NOJ/S9NYkdwcpu5HsEnIQkBAwTU0y0eCTMcrw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1730120340;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=64T6fFDD8Zzyl79UA472G3KLLbXRapBRFe/GCMvgq0c=;
-	b=wRQCp11geHD5MURGDShfeV0BRxMhXCDnoo1ISCfNeXgUsOAvdHr5Tvx++M9wUSHucLb/4R
-	Sq2CS/dRLDyaISAQ==
-To: Rasmus Villemoes <ravi@prevas.dk>
-Cc: LKML <linux-kernel@vger.kernel.org>, Peter Zijlstra
- <peterz@infradead.org>, Tejun Heo <tj@kernel.org>, David Vernet
- <void@manifault.com>, Ingo Molnar <mingo@kernel.org.com>, Juri Lelli
- <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt
- <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman
- <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>, Ingo Molnar
- <mingo@kernel.org>
-Subject: Re: [patch 2/2] sched/ext: Remove sched_fork() hack
-In-Reply-To: <87zfmojtpk.fsf@prevas.dk>
-References: <20241028103006.008053168@linutronix.de>
- <20241028103142.423153706@linutronix.de> <87zfmojtpk.fsf@prevas.dk>
-Date: Mon, 28 Oct 2024 13:58:59 +0100
-Message-ID: <87o7342xkc.ffs@tglx>
+	s=arc-20240116; t=1730120361; c=relaxed/simple;
+	bh=8FPOv073XmotRWP+rOXc9l76Bgjr4K2jU62eaHorWlA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=smD+HiQhzrG6VbFrSWMjXao0VKPS2PDFY+M3q0Kbpp+ZQctimr0osWpOnJN1xYq+x6gSCdJtOdTnh3ZG4invjmlEfrhFedGPDRi6eLTv+UIUc58V0BaD/LvESR1Of9Lq2nYNfybyM+sqsmpacseTDDuUxl8LNfW8ko6hEiU16Aw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SnCfI7vX; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-53a0c160b94so4693791e87.2
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 05:59:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730120357; x=1730725157; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8FPOv073XmotRWP+rOXc9l76Bgjr4K2jU62eaHorWlA=;
+        b=SnCfI7vXHl6HHE7GwLtS7AXDj2CHgM0IAmvoPLalA66p8Na07OBG7mmbD9xBVYfAqs
+         iRzJdHy/hbUFeGXSD/x1iy+GZZj0Xu4vmjCPYWHtH9uYIU6H+JggvMFG84oOBzKXdxz1
+         PDIZBJTGJ3pt4vnRo5taMz6RV5CLooDi9P7PO5Sl9wT1wZBTv4BYw6ZmeiBBTVJyp3Bd
+         N9OpLSDh2ulq3z3Ocp4sLuZerqXW5+NYhqOP3UUxlzCvKYHHSc7nvi8ay+4Vo0NjcAYM
+         8SgLJyfYAOHurMJXqZGGEcLeqoy59/EhN1knvTLScDi/2+RW/Ohv+KXPssUCd0eRR8Fd
+         9qWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730120357; x=1730725157;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8FPOv073XmotRWP+rOXc9l76Bgjr4K2jU62eaHorWlA=;
+        b=kCS0pcKaCTqnMiZO4U/J0Kp35dScuhK2peipIFkXi8ogORPoiGO29J0H3g0d8QxYld
+         yN9GnBszn3JSpXMi2I54xy153rOnIw6rUydQfw6+Das3UQjOKWC0Dm03dJx7F52Ufq6f
+         GIirgwPNCDHd3Ysv/lKb2Q51hKORzh7oBIn1ScL8MJddQCigg8lNq89tJn7AcACf8i/+
+         3ulz6CHfyGws2XbIt+kzEVMOTqX726VUheWA/os34fMoEtS9sLBsi9f7QFuiyzlIatZQ
+         Xc9V20U0P+DVFOo3SoQo0JFVtL5TxxfB56aHavHbTyrG9PuWX4CH7jxk5biBRN/708sl
+         4exw==
+X-Forwarded-Encrypted: i=1; AJvYcCVdPqNK6wWE1HhQbScX7ieMvxBqYifv6xaPj6GcKIJzFXQjKsk9HLXuhPPmvMLxwqhwpyRvZq+MyghAhoI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YynCm6GQhIqFgHf3b/KGHnCsX3AYQY3xaigEJU5Hgt6Q/ytZTwV
+	tAoR080ABfSf62XkfG5OxIsGls/IUzmtePP1SkGcYHD7giDBAk1y2pKrb9y+UkFfk37AFwyEEzj
+	R0JYgy1hyp9OlbDudZ0GvIKVoJBgh/X8h/jvHbw==
+X-Google-Smtp-Source: AGHT+IGx7tfNH0mZRuKTFpu/Lt1lVaJ5wzth2GIk/zrU6MEJ3/k+kc+DMdfavO6Q5ppLTlt1sP5ACchOTuFdcWBszp8=
+X-Received: by 2002:a05:6512:3e11:b0:535:66ff:c681 with SMTP id
+ 2adb3069b0e04-53b34a1b681mr3290500e87.48.1730120356663; Mon, 28 Oct 2024
+ 05:59:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20241023104406.4083460-1-billy_tsai@aspeedtech.com>
+In-Reply-To: <20241023104406.4083460-1-billy_tsai@aspeedtech.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 28 Oct 2024 13:59:05 +0100
+Message-ID: <CACRpkdYEbczXUFD-CFpE6SYiqhwTdxS+w5+dDtLF=2BmeiJeVg@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: aspeed-g6: Support drive-strength for GPIOF/G
+To: Billy Tsai <billy_tsai@aspeedtech.com>
+Cc: andrew@codeconstruct.com.au, joel@jms.id.au, linux-aspeed@lists.ozlabs.org, 
+	openbmc@lists.ozlabs.org, linux-gpio@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 28 2024 at 13:30, Rasmus Villemoes wrote:
->> +	memset(scx, 0, sizeof(*scx));
->>  	INIT_LIST_HEAD(&scx->dsq_list.node);
->>  	RB_CLEAR_NODE(&scx->dsq_priq);
->>  	scx->sticky_cpu = -1;
+On Wed, Oct 23, 2024 at 12:44=E2=80=AFPM Billy Tsai <billy_tsai@aspeedtech.=
+com> wrote:
+
+> Add drive strength configuration support for GPIO F and G groups.
 >
-> Should the "must be the last" comment in include/linux/sched/ext.h also
-> be removed?
+> Signed-off-by: Billy Tsai <billy_tsai@aspeedtech.com>
 
-Oh. Indeed. I missed that one.
+Patch applied.
 
-Thanks for pointing it out.
-
-       tglx
+Yours,
+Linus Walleij
 
