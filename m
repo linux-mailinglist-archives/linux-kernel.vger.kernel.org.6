@@ -1,185 +1,356 @@
-Return-Path: <linux-kernel+bounces-385304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F4649B354D
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 16:49:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E1829B3561
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 16:50:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FB25283178
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 15:49:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 972571C21704
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 15:50:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0149B1DD9A6;
-	Mon, 28 Oct 2024 15:49:33 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22C7B1DE885;
+	Mon, 28 Oct 2024 15:50:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="u45R9Cpk"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FC1D1D79A6
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 15:49:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C87411D86CB
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 15:50:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730130572; cv=none; b=ocUqxdp16hrcrYz3TRN0G0FTKNeWN41FrRuFLr6Zsjugx8EC37lWNVIj75oMdELzc4adLKan+NppZgaaqA+TbS0unAuTjduA17F6SDKgePvHm1UIhGRogHNIFuu9ylMeB0eb5p+ciAoou8gqL8CjUpfF6ZjyL3naq0dZJRg7mcc=
+	t=1730130645; cv=none; b=W3lbiM7s5Llg3oscilDAbEiBQXilXlZHVbfFQiIwJjah2x3vkeVEo7B4qhnrJssimSZpNgP5tDrYqxGzOjhLHyiKQLhnRzv7lqRyQoRsEunUazyTbd6UW3erYD6iAVr7dqFO2UKCA/py1tjE48VDpYf7K2XpW4Pl0TQMqdWQ5ps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730130572; c=relaxed/simple;
-	bh=LJoDKM8wjkvoLyCQBNn/d7JQttEMEDg9y5eEhYKUR5Q=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=KWJEwK8stiiLPnhqHAW8FuaEC/ngHxDIKBmcLy5A160VZbrwThFXc1guxx66iW3dqNiXrgrvSw+r5xwtZlNs253ScKR505uo+fIfERYoqO3nA8uepnKoLpyUpk9WOpldEdHKDGGNpInpd5tVjRHXQEhydtwXzBxAEDUZjev49fA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a4f01d43c0so15871985ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 08:49:30 -0700 (PDT)
+	s=arc-20240116; t=1730130645; c=relaxed/simple;
+	bh=mk0XVkj/BVeuaE7ONQhpIVnvMikQeIB9CLCoaNBrvIY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W6UhN63leAglQMN3ibrN0ttGNWUfP210ars3yV0h4K592FXecCzk4thN7144+k+wkLZd85k8l87CSRjorhZCoqH1xTWsIkeWFwypb0uuOQkjygEGIY5THgouUmpUUr8NvolLVTKvRX2UyMU4pI264u3Z4hhk7zFc6IEWhPnXetA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=u45R9Cpk; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2e2fb304e7dso3650591a91.1
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 08:50:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fastly.com; s=google; t=1730130642; x=1730735442; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FnWrBI/Ng0ohLOMbR5pqja8Ic94slwd/ycmRHXmbqDY=;
+        b=u45R9Cpkaszf1NASjAFoPZdOhk50LBK81yIGsf1cTQtpRXfjngpVBeOXgnIk6CcxpA
+         fSBy+mRg4YpflczHQREPWtqvSmnwh58eD+s8KJuy5u1gfxbRc+nuigmTzk91KO8DsZOb
+         pUDfvP6M8P8N/AB2EpyGisp9Xtgnq67Msu3xo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730130569; x=1730735369;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/I2AMnc2H7mVtlHflwpGDiImhQbiuif+aPXizJLpQ8g=;
-        b=d4Mml6a2yPRazY1Bi8QAXJqYaXXkxpWtwscp33hx/4Ja6k5MNDkLuCWt1ripX85dXe
-         46T4ssPSfnbZPYhPMY8LnG7v17WaJUHeC0etXAxGGz5xWE7Qqg9sG3jjQ6cWxQE7Jczn
-         g0cBMAsX2O1vnYxm+IXtF887YIislSoed3J36nWa2xfnK4IJ6bvm0G1S2+SrdlahWyiD
-         z+Mz7seqKkrNKb09v83ss3GUpvH3kVZcDq7IBqfuTyxshsXwYHFe0sMKcphiw+92o52H
-         prw8aMVRBzBrPdtVVRmZoeJ2md88Cx9AUE5wubLm9Ei6AWjkYcdH29mxvFKF2BGmbPcE
-         ZW+w==
-X-Forwarded-Encrypted: i=1; AJvYcCXuDFHMf2G8sMLviWYJmwHiYQ8vjekbm6vmkWxvPdfXFwfjaGppOCy9YbvzVwTgGYxqULgOboN929tOi+4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMpAl4QnDbPmyRZICfciI9JmECOz8ZmbfbOnzVLrbu/kS+VoV2
-	WOZL/Za9sDlUmBvNNgRefcr1lzUhs4PLeryqKo/32+hNogYyN0q+zVhcsssmNJ0QCCI8b8fIP7z
-	zHkZbogjo+g546dIWRVDZUIrXOIKlIK/jl7YXQoci69nGXnECkMGxigU=
-X-Google-Smtp-Source: AGHT+IH3/o0TupI98nogU7j/qQZ/nLvHyNkngezb9QE8qdaVud1eef0+C9APE1vWK8oaP4T4fks2+y4XuloxjEqCKG1lDkhafEIT
+        d=1e100.net; s=20230601; t=1730130642; x=1730735442;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FnWrBI/Ng0ohLOMbR5pqja8Ic94slwd/ycmRHXmbqDY=;
+        b=YPRCG9Q11rVZ/O6CbncucaUZFAgJRvsQMqsq7d/ahrzxt6IDke3RDte2rrnRA7AipO
+         CJ1VBryNobEmWeuUneN5QSaZEmNv3p+3ngq+lryNWVghUqXq/ZLmRfQOEDn4cMUPzp/a
+         6VobjOlK+KTs5tN55B6bsVmMl+imumj+WJUcnTbdORjf90+1DSIxmTexHBKaXvfO0+i+
+         TVC7mUJnLUVquGJnQQAPaf1btMhk2r8rab2sTA9zdJrzBqR5Co7qWW/QMkXKC1HP3qhy
+         QpiZQub16dhpr2rBgF0KUl1EUSFq2jsB81qMf7+91K40+S4ufl2JeJsaoaJ+C8lY4JzX
+         GR0g==
+X-Forwarded-Encrypted: i=1; AJvYcCUcPcxJuhvYYpZvkJGBixQvLrxqQeeIJyLtN48j8EEyqJ2c0espa6aM/rkL+hY/tFKy/A3l3Yzv5EF3KJ0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwimilEsj3rczq7AgBG6Jp0eyaaoh/WBkmyN2SmnY5yE15TAPa+
+	n1MdfpDwNKe6JDHG68h4jDyBV64pjgaFfGeA2IeYXFHZoHeqqrJax6UDzpmg+nk=
+X-Google-Smtp-Source: AGHT+IF3/TCUpiKd84EFsAhToNlikdsicPBU+qdfa1uLxwqiByy2S0dHIBV5Oh8nWhYJGeniWTavIQ==
+X-Received: by 2002:a17:90b:3654:b0:2e0:7b2b:f76 with SMTP id 98e67ed59e1d1-2e8f1072f43mr10157236a91.19.1730130641962;
+        Mon, 28 Oct 2024 08:50:41 -0700 (PDT)
+Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e8e3555c1dsm7314523a91.4.2024.10.28.08.50.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Oct 2024 08:50:41 -0700 (PDT)
+Date: Mon, 28 Oct 2024 08:50:38 -0700
+From: Joe Damato <jdamato@fastly.com>
+To: "Lifshits, Vitaly" <vitaly.lifshits@intel.com>
+Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"Keller, Jacob E" <jacob.e.keller@intel.com>,
+	"kurt@linutronix.de" <kurt@linutronix.de>,
+	"Gomes, Vinicius" <vinicius.gomes@intel.com>,
+	"Nguyen, Anthony L" <anthony.l.nguyen@intel.com>,
+	"Kitszel, Przemyslaw" <przemyslaw.kitszel@intel.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	"moderated list:INTEL ETHERNET DRIVERS" <intel-wired-lan@lists.osuosl.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:XDP (eXpress Data Path)" <bpf@vger.kernel.org>,
+	stanislaw.gruszka@linux.intel.com
+Subject: Re: [Intel-wired-lan] [iwl-next v4 2/2] igc: Link queues to NAPI
+ instances
+Message-ID: <Zx-yzhq4unv0gsVX@LQ3V64L9R2>
+Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
+	"Lifshits, Vitaly" <vitaly.lifshits@intel.com>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"Keller, Jacob E" <jacob.e.keller@intel.com>,
+	"kurt@linutronix.de" <kurt@linutronix.de>,
+	"Gomes, Vinicius" <vinicius.gomes@intel.com>,
+	"Nguyen, Anthony L" <anthony.l.nguyen@intel.com>,
+	"Kitszel, Przemyslaw" <przemyslaw.kitszel@intel.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	"moderated list:INTEL ETHERNET DRIVERS" <intel-wired-lan@lists.osuosl.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:XDP (eXpress Data Path)" <bpf@vger.kernel.org>,
+	stanislaw.gruszka@linux.intel.com
+References: <20241022215246.307821-1-jdamato@fastly.com>
+ <20241022215246.307821-3-jdamato@fastly.com>
+ <d7799132-7e4a-0ac2-cbda-c919ce434fe2@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1607:b0:3a3:67b1:3080 with SMTP id
- e9e14a558f8ab-3a4ed2d0bbbmr64137145ab.7.1730130569372; Mon, 28 Oct 2024
- 08:49:29 -0700 (PDT)
-Date: Mon, 28 Oct 2024 08:49:29 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <671fb289.050a0220.21b2f.0005.GAE@google.com>
-Subject: [syzbot] [bcachefs?] kernel BUG in bch2_btree_write_buffer_flush_locked
-From: syzbot <syzbot+4aff7bdaa254c1d9f008@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d7799132-7e4a-0ac2-cbda-c919ce434fe2@intel.com>
 
-Hello,
+On Sun, Oct 27, 2024 at 11:49:33AM +0200, Lifshits, Vitaly wrote:
+> 
+> On 10/23/2024 12:52 AM, Joe Damato wrote:
+> > Link queues to NAPI instances via netdev-genl API so that users can
+> > query this information with netlink. Handle a few cases in the driver:
+> >    1. Link/unlink the NAPIs when XDP is enabled/disabled
+> >    2. Handle IGC_FLAG_QUEUE_PAIRS enabled and disabled
+> > 
+> > Example output when IGC_FLAG_QUEUE_PAIRS is enabled:
+> > 
+> > $ ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/netdev.yaml \
+> >                           --dump queue-get --json='{"ifindex": 2}'
+> > 
+> > [{'id': 0, 'ifindex': 2, 'napi-id': 8193, 'type': 'rx'},
+> >   {'id': 1, 'ifindex': 2, 'napi-id': 8194, 'type': 'rx'},
+> >   {'id': 2, 'ifindex': 2, 'napi-id': 8195, 'type': 'rx'},
+> >   {'id': 3, 'ifindex': 2, 'napi-id': 8196, 'type': 'rx'},
+> >   {'id': 0, 'ifindex': 2, 'napi-id': 8193, 'type': 'tx'},
+> >   {'id': 1, 'ifindex': 2, 'napi-id': 8194, 'type': 'tx'},
+> >   {'id': 2, 'ifindex': 2, 'napi-id': 8195, 'type': 'tx'},
+> >   {'id': 3, 'ifindex': 2, 'napi-id': 8196, 'type': 'tx'}]
+> > 
+> > Since IGC_FLAG_QUEUE_PAIRS is enabled, you'll note that the same NAPI ID
+> > is present for both rx and tx queues at the same index, for example
+> > index 0:
+> > 
+> > {'id': 0, 'ifindex': 2, 'napi-id': 8193, 'type': 'rx'},
+> > {'id': 0, 'ifindex': 2, 'napi-id': 8193, 'type': 'tx'},
+> > 
+> > To test IGC_FLAG_QUEUE_PAIRS disabled, a test system was booted using
+> > the grub command line option "maxcpus=2" to force
+> > igc_set_interrupt_capability to disable IGC_FLAG_QUEUE_PAIRS.
+> > 
+> > Example output when IGC_FLAG_QUEUE_PAIRS is disabled:
+> > 
+> > $ lscpu | grep "On-line CPU"
+> > On-line CPU(s) list:      0,2
+> > 
+> > $ ethtool -l enp86s0  | tail -5
+> > Current hardware settings:
+> > RX:		n/a
+> > TX:		n/a
+> > Other:		1
+> > Combined:	2
+> > 
+> > $ cat /proc/interrupts  | grep enp
+> >   144: [...] enp86s0
+> >   145: [...] enp86s0-rx-0
+> >   146: [...] enp86s0-rx-1
+> >   147: [...] enp86s0-tx-0
+> >   148: [...] enp86s0-tx-1
+> > 
+> > 1 "other" IRQ, and 2 IRQs for each of RX and Tx, so we expect netlink to
+> > report 4 IRQs with unique NAPI IDs:
+> > 
+> > $ ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/netdev.yaml \
+> >                           --dump napi-get --json='{"ifindex": 2}'
+> > [{'id': 8196, 'ifindex': 2, 'irq': 148},
+> >   {'id': 8195, 'ifindex': 2, 'irq': 147},
+> >   {'id': 8194, 'ifindex': 2, 'irq': 146},
+> >   {'id': 8193, 'ifindex': 2, 'irq': 145}]
+> > 
+> > Now we examine which queues these NAPIs are associated with, expecting
+> > that since IGC_FLAG_QUEUE_PAIRS is disabled each RX and TX queue will
+> > have its own NAPI instance:
+> > 
+> > $ ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/netdev.yaml \
+> >                           --dump queue-get --json='{"ifindex": 2}'
+> > [{'id': 0, 'ifindex': 2, 'napi-id': 8193, 'type': 'rx'},
+> >   {'id': 1, 'ifindex': 2, 'napi-id': 8194, 'type': 'rx'},
+> >   {'id': 0, 'ifindex': 2, 'napi-id': 8195, 'type': 'tx'},
+> >   {'id': 1, 'ifindex': 2, 'napi-id': 8196, 'type': 'tx'}]
+> > 
+> > Signed-off-by: Joe Damato <jdamato@fastly.com>
+> > Acked-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+> > ---
+> >   v4:
+> >     - Add rtnl_lock/rtnl_unlock in two paths: igc_resume and
+> >       igc_io_error_detected. The code added to the latter is inspired by
+> >       a similar implementation in ixgbe's ixgbe_io_error_detected.
+> > 
+> >   v3:
+> >     - Replace igc_unset_queue_napi with igc_set_queue_napi(adapater, i,
+> >       NULL), as suggested by Vinicius Costa Gomes
+> >     - Simplify implemention of igc_set_queue_napi as suggested by Kurt
+> >       Kanzenbach, with a tweak to use ring->queue_index
+> > 
+> >   v2:
+> >     - Update commit message to include tests for IGC_FLAG_QUEUE_PAIRS
+> >       disabled
+> >     - Refactored code to move napi queue mapping and unmapping to helper
+> >       functions igc_set_queue_napi and igc_unset_queue_napi
+> >     - Adjust the code to handle IGC_FLAG_QUEUE_PAIRS disabled
+> >     - Call helpers to map/unmap queues to NAPIs in igc_up, __igc_open,
+> >       igc_xdp_enable_pool, and igc_xdp_disable_pool
+> > 
+> >   drivers/net/ethernet/intel/igc/igc.h      |  2 ++
+> >   drivers/net/ethernet/intel/igc/igc_main.c | 41 ++++++++++++++++++++---
+> >   drivers/net/ethernet/intel/igc/igc_xdp.c  |  2 ++
+> >   3 files changed, 40 insertions(+), 5 deletions(-)
+> > 
+> > diff --git a/drivers/net/ethernet/intel/igc/igc.h b/drivers/net/ethernet/intel/igc/igc.h
+> > index eac0f966e0e4..b8111ad9a9a8 100644
+> > --- a/drivers/net/ethernet/intel/igc/igc.h
+> > +++ b/drivers/net/ethernet/intel/igc/igc.h
+> > @@ -337,6 +337,8 @@ struct igc_adapter {
+> >   	struct igc_led_classdev *leds;
+> >   };
+> > +void igc_set_queue_napi(struct igc_adapter *adapter, int q_idx,
+> > +			struct napi_struct *napi);
+> >   void igc_up(struct igc_adapter *adapter);
+> >   void igc_down(struct igc_adapter *adapter);
+> >   int igc_open(struct net_device *netdev);
+> > diff --git a/drivers/net/ethernet/intel/igc/igc_main.c b/drivers/net/ethernet/intel/igc/igc_main.c
+> > index 7964bbedb16c..04aa216ef612 100644
+> > --- a/drivers/net/ethernet/intel/igc/igc_main.c
+> > +++ b/drivers/net/ethernet/intel/igc/igc_main.c
+> > @@ -4948,6 +4948,22 @@ static int igc_sw_init(struct igc_adapter *adapter)
+> >   	return 0;
+> >   }
+> > +void igc_set_queue_napi(struct igc_adapter *adapter, int vector,
+> > +			struct napi_struct *napi)
+> > +{
+> > +	struct igc_q_vector *q_vector = adapter->q_vector[vector];
+> > +
+> > +	if (q_vector->rx.ring)
+> > +		netif_queue_set_napi(adapter->netdev,
+> > +				     q_vector->rx.ring->queue_index,
+> > +				     NETDEV_QUEUE_TYPE_RX, napi);
+> > +
+> > +	if (q_vector->tx.ring)
+> > +		netif_queue_set_napi(adapter->netdev,
+> > +				     q_vector->tx.ring->queue_index,
+> > +				     NETDEV_QUEUE_TYPE_TX, napi);
+> > +}
+> > +
+> >   /**
+> >    * igc_up - Open the interface and prepare it to handle traffic
+> >    * @adapter: board private structure
+> > @@ -4955,6 +4971,7 @@ static int igc_sw_init(struct igc_adapter *adapter)
+> >   void igc_up(struct igc_adapter *adapter)
+> >   {
+> >   	struct igc_hw *hw = &adapter->hw;
+> > +	struct napi_struct *napi;
+> >   	int i = 0;
+> >   	/* hardware has been reset, we need to reload some things */
+> > @@ -4962,8 +4979,11 @@ void igc_up(struct igc_adapter *adapter)
+> >   	clear_bit(__IGC_DOWN, &adapter->state);
+> > -	for (i = 0; i < adapter->num_q_vectors; i++)
+> > -		napi_enable(&adapter->q_vector[i]->napi);
+> > +	for (i = 0; i < adapter->num_q_vectors; i++) {
+> > +		napi = &adapter->q_vector[i]->napi;
+> > +		napi_enable(napi);
+> > +		igc_set_queue_napi(adapter, i, napi);
+> > +	}
+> >   	if (adapter->msix_entries)
+> >   		igc_configure_msix(adapter);
+> > @@ -5192,6 +5212,7 @@ void igc_down(struct igc_adapter *adapter)
+> >   	for (i = 0; i < adapter->num_q_vectors; i++) {
+> >   		if (adapter->q_vector[i]) {
+> >   			napi_synchronize(&adapter->q_vector[i]->napi);
+> > +			igc_set_queue_napi(adapter, i, NULL);
+> >   			napi_disable(&adapter->q_vector[i]->napi);
+> >   		}
+> >   	}
+> > @@ -6021,6 +6042,7 @@ static int __igc_open(struct net_device *netdev, bool resuming)
+> >   	struct igc_adapter *adapter = netdev_priv(netdev);
+> >   	struct pci_dev *pdev = adapter->pdev;
+> >   	struct igc_hw *hw = &adapter->hw;
+> > +	struct napi_struct *napi;
+> >   	int err = 0;
+> >   	int i = 0;
+> > @@ -6056,8 +6078,11 @@ static int __igc_open(struct net_device *netdev, bool resuming)
+> >   	clear_bit(__IGC_DOWN, &adapter->state);
+> > -	for (i = 0; i < adapter->num_q_vectors; i++)
+> > -		napi_enable(&adapter->q_vector[i]->napi);
+> > +	for (i = 0; i < adapter->num_q_vectors; i++) {
+> > +		napi = &adapter->q_vector[i]->napi;
+> > +		napi_enable(napi);
+> > +		igc_set_queue_napi(adapter, i, napi);
+> > +	}
+> >   	/* Clear any pending interrupts. */
+> >   	rd32(IGC_ICR);
+> > @@ -7385,7 +7410,9 @@ static int igc_resume(struct device *dev)
+> >   	wr32(IGC_WUS, ~0);
+> >   	if (netif_running(netdev)) {
+> > +		rtnl_lock();
+> 
+> This change will bring back the deadlock issue that was fixed in commit:
+> 6f31d6b: "igc: Refactor runtime power management flow".
 
-syzbot found the following issue on:
+OK, thanks for letting me know.
 
-HEAD commit:    850925a8133c Merge tag '9p-for-6.12-rc5' of https://github..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=126f1230580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=309bb816d40abc28
-dashboard link: https://syzkaller.appspot.com/bug?extid=4aff7bdaa254c1d9f008
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13ddaa87980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=166f1230580000
+I think I better understand what the issue is. It seems that:
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-850925a8.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/c831c931f29c/vmlinux-850925a8.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/85f584e52a7f/bzImage-850925a8.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/c55dd771077b/mount_0.gz
+- igc_resume can be called with rtnl held via ethtool (which I
+  didn't know), which calls __igc_open
+- __igc_open re-enables NAPIs and re-links queues to NAPI IDs (which
+  requires rtnl)
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+4aff7bdaa254c1d9f008@syzkaller.appspotmail.com
+so, it seems like the rtnl_lock() I've added to igc_resume is
+unnecessary.
 
-bucket 0:127 gen 0 data type sb has wrong dirty_sectors: got 0, should be 256, fixing
- done
-bcachefs (loop0): going read-write
-bcachefs (loop0): journal_replay...
-------------[ cut here ]------------
-kernel BUG at fs/bcachefs/btree_write_buffer.c:147!
-Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
-CPU: 0 UID: 0 PID: 5308 Comm: syz-executor416 Not tainted 6.12.0-rc4-syzkaller-00261-g850925a8133c #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:wb_flush_one fs/bcachefs/btree_write_buffer.c:147 [inline]
-RIP: 0010:bch2_btree_write_buffer_flush_locked+0x5695/0x59f0 fs/bcachefs/btree_write_buffer.c:375
-Code: 31 05 f5 ff e8 8c b8 70 fd 90 0f 0b e8 84 b8 70 fd 90 0f 0b e8 7c b8 70 fd 90 0f 0b e8 74 b8 70 fd 90 0f 0b e8 6c b8 70 fd 90 <0f> 0b e8 64 b8 70 fd 90 0f 0b e8 5c b8 70 fd 90 0f 0b e8 54 b8 70
-RSP: 0018:ffffc9000d0de820 EFLAGS: 00010293
-RAX: ffffffff84243204 RBX: 010000000000000b RCX: ffff88801f6ca440
-RDX: 0000000000000000 RSI: 000000000000000b RDI: 010000000000000b
-RBP: ffffc9000d0dec70 R08: ffffffff8423f47f R09: 0000000000000000
-R10: ffffc9000d0de300 R11: fffff52001a1bc61 R12: 0000000000000000
-R13: ffff888044468000 R14: 000000000000000b R15: ffffc9000e600000
-FS:  0000555592722380(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ffe145a6dd8 CR3: 0000000042f12000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- btree_write_buffer_flush_seq+0x1a43/0x1bc0 fs/bcachefs/btree_write_buffer.c:510
- bch2_btree_write_buffer_journal_flush+0x4e/0x80 fs/bcachefs/btree_write_buffer.c:525
- journal_flush_pins+0x5f7/0xb20 fs/bcachefs/journal_reclaim.c:565
- journal_flush_done+0x8e/0x260 fs/bcachefs/journal_reclaim.c:819
- bch2_journal_flush_pins+0x18a/0x3a0 fs/bcachefs/journal_reclaim.c:852
- bch2_journal_flush_all_pins fs/bcachefs/journal_reclaim.h:76 [inline]
- bch2_journal_replay+0x270f/0x2a40 fs/bcachefs/recovery.c:384
- bch2_run_recovery_pass+0xf0/0x1e0 fs/bcachefs/recovery_passes.c:185
- bch2_run_recovery_passes+0x387/0x870 fs/bcachefs/recovery_passes.c:232
- bch2_fs_recovery+0x25cc/0x39c0 fs/bcachefs/recovery.c:862
- bch2_fs_start+0x356/0x5b0 fs/bcachefs/super.c:1036
- bch2_fs_get_tree+0xd68/0x1710 fs/bcachefs/fs.c:2170
- vfs_get_tree+0x90/0x2b0 fs/super.c:1800
- do_new_mount+0x2be/0xb40 fs/namespace.c:3507
- do_mount fs/namespace.c:3847 [inline]
- __do_sys_mount fs/namespace.c:4057 [inline]
- __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4034
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fe1770828fa
-Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 5e 04 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffdda0a8558 EFLAGS: 00000282 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007ffdda0a8570 RCX: 00007fe1770828fa
-RDX: 0000000020000340 RSI: 0000000020000000 RDI: 00007ffdda0a8570
-RBP: 0000000000000004 R08: 00007ffdda0a85b0 R09: 0000000000005927
-R10: 0000000000800000 R11: 0000000000000282 R12: 0000000000800000
-R13: 00007ffdda0a85b0 R14: 0000000000000003 R15: 0000000001000000
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:wb_flush_one fs/bcachefs/btree_write_buffer.c:147 [inline]
-RIP: 0010:bch2_btree_write_buffer_flush_locked+0x5695/0x59f0 fs/bcachefs/btree_write_buffer.c:375
-Code: 31 05 f5 ff e8 8c b8 70 fd 90 0f 0b e8 84 b8 70 fd 90 0f 0b e8 7c b8 70 fd 90 0f 0b e8 74 b8 70 fd 90 0f 0b e8 6c b8 70 fd 90 <0f> 0b e8 64 b8 70 fd 90 0f 0b e8 5c b8 70 fd 90 0f 0b e8 54 b8 70
-RSP: 0018:ffffc9000d0de820 EFLAGS: 00010293
-RAX: ffffffff84243204 RBX: 010000000000000b RCX: ffff88801f6ca440
-RDX: 0000000000000000 RSI: 000000000000000b RDI: 010000000000000b
-RBP: ffffc9000d0dec70 R08: ffffffff8423f47f R09: 0000000000000000
-R10: ffffc9000d0de300 R11: fffff52001a1bc61 R12: 0000000000000000
-R13: ffff888044468000 R14: 000000000000000b R15: ffffc9000e600000
-FS:  0000555592722380(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055a002f01098 CR3: 0000000042f12000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+I suppose I don't know all of the paths where the pm functions can
+be called -- are there others where RTNL is _not_ already held?
 
+I looked at e1000e and it seems that driver does not re-enable NAPIs
+in its resume path and thus does not suffer from the same issue as
+igc.
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+So my questions are:
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+  1. Are there are other contexts where igc_resume is called where
+     RTNL is not held?
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+  2. If the answer is that RTNL is always held when igc_resume is
+     called, then I can send a v5 that removes the
+     rtnl_lock/rtnl_unlock. What do you think?
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+[...]
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+> 
+> Hi Joe,
+> 
+> 
+> The current version will cause a regression, a possible deadlock, due to the
+> addition of the rtnl_lock in igc_resume that was fixed previously.
+> 
+> You can refer to the following link:
+> 
+> https://github.com/torvalds/linux/commit/6f31d6b643a32cc126cf86093fca1ea575948bf0#diff-d5b32b873e9902b496280a5f42c246043c8f0691d8b3a6bbd56df99ce8ceb394L7190
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Thanks for the link.
 
