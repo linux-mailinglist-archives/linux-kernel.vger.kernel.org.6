@@ -1,409 +1,214 @@
-Return-Path: <linux-kernel+bounces-384200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F23D9B2828
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 07:54:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF80C9B2848
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 07:58:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2C8D1F21BAF
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 06:54:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D23371C21336
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 06:58:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 030EE18EFCD;
-	Mon, 28 Oct 2024 06:54:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8E2918FC91;
+	Mon, 28 Oct 2024 06:58:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hOrQ17N0"
-Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com [209.85.221.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fWjopX/E"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DB222AF07
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 06:54:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E897518FC74
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 06:58:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730098468; cv=none; b=VMTxAUjVR8+SfoHDzXzewrR+evlGEgbSPnh4yP9eITwcNfPw/EidMmS6LSsa0SmaXoL28fAESKGMxMWY6YmsXL+1/fv5HAz65pN1lxLg1NQMTBfMi/T6+UC+W7JrapHB0TzPmjjDdGBRsQHyNWgor49GJ69AWch2ZS5D9KPenB0=
+	t=1730098718; cv=none; b=L/U5/qtIO7t/DJvhywlsF7LhT0I6/yTaxPuufvGqf8Qln7Wq+SmI+hpG0Wy2SaRafEfQbXpoJE14Zgp72m3yrkbNUgGKz6DU+Gim2UZa39K5vRMQIz9AD9nbndExZA+GXpNGdA2izqCsQUNspubW64LDMxy7KYZTKVbnmVdeIhM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730098468; c=relaxed/simple;
-	bh=9ZAtQpPTNEsfRMrTbh4NAVEafpuE4guYI6u94sp1u6U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NoQq3W04yHiFR87QOEApjH7yZI2lPR9gOXZBkSz73q1/c/Q/0mBuaIRfve7FqalpMHwHi7UIZjn0X/hl+9oRN65qXEdudr/ejUPZmcbMZdyuF+Cdn+XeX0f3cwXqihywgohHFFQ9qHA39y/0UfDW22s8Xcik46TV9aVLHJ/bQOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hOrQ17N0; arc=none smtp.client-ip=209.85.221.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-50fcc0cdcefso1070502e0c.0
-        for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 23:54:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730098464; x=1730703264; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pMsdIVoasv1kR4dj1gBoXXP7qOYeQGF6tWAwpzEzOmk=;
-        b=hOrQ17N0cjgmCSFLa6OsysjVAT0yJXGKkBnZrVokSxRh78NCY9+MWMBjR1brV7MaPX
-         aVydvO2oOgwI3m8yoB7GjUA5YED/L5x8T/NWzVAG/Hjb8QLT/6O8QbHaGLL9sZE2tsbw
-         QiL3invtsYFZeO9dYK2nouVIFY4exhmx8MYFFkivatOzlg0aeZs/trDd8dHUd71BW/sK
-         Y2atWgXNZdfiE+Rk/wlZm+VaDwhG1UVNcGcHbWzIMUKmQr3C2jT+9J/JEdVxupHZ5M08
-         9EnZEAt5i3/muV2a8grgQcDtmmUoqd7f2Rft3AAA1PZ/VSdXFlDrl3bjGIltBHWt2pFp
-         lUBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730098464; x=1730703264;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pMsdIVoasv1kR4dj1gBoXXP7qOYeQGF6tWAwpzEzOmk=;
-        b=bJPmevs4/lwvFqnyJaeGPRoW8lXaLH3kZe7LWSkHWkwsgwIHhiFRYz6n0lYxa5AxgR
-         fd8fq8i7h8fc/4wyk/kAdC13FvHTHB1rNV7b47iK0pz+h0P7SxzsjJEo6fD4zSGEjIbs
-         RWzhGNuMn9zWkBrYNt7M8mgmHmsW9SyMBU2/IOKLGlaU92n7jGLyv95qkY1ronJecFt7
-         mz2lwROKGXMPMPs7MB0FV12Q7B/PVgDjqAtRrijfHECAb05Pm6y0be2lLlS7PuMtY0o/
-         hmoRzjObaKNMPSS0ZTvV2KwC/gDvQLPeaf2SIplQXkUgHLUGs/tFglNbzsWSxb/Y9i3d
-         PXKg==
-X-Forwarded-Encrypted: i=1; AJvYcCWxxycfN2jUXeUiYg3rolrm9jKPmEFSQwjPHnpbcqttWHFl5MOmz9K7peyhcd63HmY9NaNa0St1/KPdfOM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIHpdcCLgzJzllBiMuNatOiinrFW/Ub2sOvDLXIm7/6lWjgCzn
-	+EkCaBc0MPT6ZkUXC31CWR+0X8nF1kDD09snYhTsHg8jYA4DFq/qcor0Q2oLbKBS8AwCm9GRdhv
-	IJfukaKBBYNWI1DhrLXR0/SjRYBw=
-X-Google-Smtp-Source: AGHT+IFX02DE2OcoQSuToTTrljwmOev7tpJVDwSLFLCYWdHXiVy+zL0v0vZ5l+48cePRR8+LIRWYJFfquffz76d6j0A=
-X-Received: by 2002:a05:6122:3c8d:b0:510:3a9:bb87 with SMTP id
- 71dfb90a1353d-5101501368cmr3208243e0c.1.1730098463764; Sun, 27 Oct 2024
- 23:54:23 -0700 (PDT)
+	s=arc-20240116; t=1730098718; c=relaxed/simple;
+	bh=iBtFal+VbXMv3skYB4e56SQ3UqidkU1gErX+/J1ZiLQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Gbttyr//TnwAepFi1qIAv3ICOfMzGxGl+3w6NT0k43Uf7FXWN5Rkr5iJJoMXSmnOjHuVOGhyz42w+AuepdJAEICdxcD4VWLe5ZqHMjIx9cdyCYgFjhYfEcYRdtEohzc8Qq25raZP1IwE2onwWcfoL22bRJobERG8UOtFcJojiEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fWjopX/E; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730098715; x=1761634715;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=iBtFal+VbXMv3skYB4e56SQ3UqidkU1gErX+/J1ZiLQ=;
+  b=fWjopX/EE+7D9Tu6Im6xM2LNeZk1D0IyEbcBI+Pur6URAgnpcYcuR/fq
+   Fb7tXA5IQva7ps22Cqn35bxbez2P4Q6Re2MPZ6NDDPXhPSeLH+6Z6Uvo5
+   kGBDBS+iVBZYrJJb2tOgHfnqy1YzPHa2JUK2PCfsZfUbuKBc1X9Hqu4HU
+   25PDMRzn3lP8p/kG1eWmwR4p8JxildpsKMAWsO9fUe9qFbghM9lDmuZjw
+   w8Xay/BY3EPWNpLbus5kJqa4P08GTJBC+P4Zm9xMFUu/yQtxvksDavuyl
+   C+fWJbbz5E+yD08iseMzRFhWDchZsjX/I+6URnFwcdVcdFMJdBVDgTBkR
+   Q==;
+X-CSE-ConnectionGUID: jMEZuR+6QCik/fGaJ0Z6bg==
+X-CSE-MsgGUID: CkXZNHBAQXe8zZD4Bf/jrQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11238"; a="55092655"
+X-IronPort-AV: E=Sophos;i="6.11,238,1725346800"; 
+   d="scan'208";a="55092655"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2024 23:58:34 -0700
+X-CSE-ConnectionGUID: bIHabTgwSOeWF4JSKoZpDw==
+X-CSE-MsgGUID: YjY/wKSIRsi8aN+mS9XCCA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,238,1725346800"; 
+   d="scan'208";a="118988087"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa001.jf.intel.com with ESMTP; 27 Oct 2024 23:58:33 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t5Jhu-000bzg-1r;
+	Mon, 28 Oct 2024 06:58:30 +0000
+Date: Mon, 28 Oct 2024 14:58:16 +0800
+From: kernel test robot <lkp@intel.com>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Kent Overstreet <kent.overstreet@linux.dev>
+Subject: fs/bcachefs/btree_cache.c:502:13-14: Unneeded semicolon
+Message-ID: <202410281421.V62F8rHI-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241016033030.36990-1-21cnbao@gmail.com> <20241016155835.8fadc58d913d9df14099514b@linux-foundation.org>
- <CAGsJ_4xYqSSUE_zq+2UWLT7UsF_ovH=+QE_va+_dcMq4fnz0rg@mail.gmail.com>
- <ZxFQTlPfR6y25cng@google.com> <CAGsJ_4zYRCotNTL2kKO202Rk2o78w5pZs25Y_iq=7OfS-KoX9w@mail.gmail.com>
- <ZxgHzUHcWvSNqXo2@google.com>
-In-Reply-To: <ZxgHzUHcWvSNqXo2@google.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Mon, 28 Oct 2024 19:54:12 +1300
-Message-ID: <CAGsJ_4zg5efUdLVh8k_BqRvtEXvKJncqP-j2=MuQvQMypm+acg@mail.gmail.com>
-Subject: Re: [PATCH v2] mm: mglru: provide a separate list for lazyfree anon folios
-To: Minchan Kim <minchan.kim@gmail.com>
-Cc: Minchan Kim <minchan@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, yuzhao@google.com, 
-	linux-mm@kvack.org, david@redhat.com, fengbaopeng@honor.com, gaoxu2@honor.com, 
-	hailong.liu@oppo.com, kaleshsingh@google.com, linux-kernel@vger.kernel.org, 
-	lokeshgidra@google.com, mhocko@suse.com, ngeoffray@google.com, shli@fb.com, 
-	surenb@google.com, v-songbaohua@oppo.com, yipengxiang@honor.com, 
-	Gao Xu <gaoxu2@hihonor.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Wed, Oct 23, 2024 at 9:15=E2=80=AFAM Minchan Kim <minchan.kim@gmail.com>=
- wrote:
->
-> Hi Barry,
->
-> Sorry for slow response.
->
-> On Fri, Oct 18, 2024 at 06:12:01PM +1300, Barry Song wrote:
-> > On Fri, Oct 18, 2024 at 6:58=E2=80=AFAM Minchan Kim <minchan@kernel.org=
-> wrote:
-> > >
-> > > On Thu, Oct 17, 2024 at 06:59:09PM +1300, Barry Song wrote:
-> > > > On Thu, Oct 17, 2024 at 11:58=E2=80=AFAM Andrew Morton
-> > > > <akpm@linux-foundation.org> wrote:
-> > > > >
-> > > > > On Wed, 16 Oct 2024 16:30:30 +1300 Barry Song <21cnbao@gmail.com>=
- wrote:
-> > > > >
-> > > > > > To address this, this patch proposes maintaining a separate lis=
-t
-> > > > > > for lazyfree anon folios while keeping them classified under th=
-e
-> > > > > > "file" LRU type to minimize code changes.
-> > > > >
-> > > > > Thanks.  I'll await input from other MGLRU developers before addi=
-ng
-> > > > > this for testing.
-> > > >
-> > > > Thanks!
-> > > >
-> > > > Hi Minchan, Yu,
-> > > >
-> > > > Any comments? I understand that Minchan may have a broader plan
-> > > > to "enable the system to maintain a quickly reclaimable memory
-> > > > pool and provide a knob for admins to control its size." While I
-> > > > have no objection to that plan, I believe improving MADV_FREE
-> > > > performance is a more urgent priority and a low-hanging fruit at th=
-is
-> > > > stage.
-> > >
-> > > Hi Barry,
-> > >
-> > > I have no idea why my email didn't send well before. I sent following
-> > > reply on Sep 24. Hope it works this time.
-> >
-> > Hi Minchan,
-> >
-> > I guess not. Your *this* email ended up in my spam folder of gmail, and
-> > my oppo.com account still hasn=E2=80=99t received it. Any idea why?
->
-> In the end, that's my problem and don't know when it can be fixed.
-> Anyway, hope again this time works.
->
-> >
-> > >
-> > > =3D=3D=3D=3D=3D=3D &< =3D=3D=3D=3D=3D=3D
-> > >
-> > > My proposal involves the following:
-> > >
-> > > 1. Introduce an "easily reclaimable" LRU list. This list would hold p=
-ages
-> > >    that can be quickly freed without significant overhead.
-> >
-> > I assume you plan to keep both lazyfree anon pages and 'reclaimed'
-> > file folios (reclaimed in the normal LRU lists but still in the easily-
-> > reclaimable list) in this 'easily reclaimable' LRU list. However, I'm
-> > not sure this will work, as this patch aims to help reclaim lazyfree
-> > anon pages before file folios to reduce both file and anon refaults.
-> > If we place 'reclaimed' file folios and lazyfree anon folios in the
-> > same list, we may need to revisit how to reclaim lazyfree anon folios
-> > before reclaiming the 'reclaimed' file folios.
->
+Hi Guenter,
 
-Hi Minchan,
+First bad commit (maybe != root cause):
 
-> Those reclaimed folio was already *decision-made* but just couldn't due t=
-o
-> the *impelementation issue*. So, that's strong candidate to be reclaimed
-> as long as there is no access since then rather other candidates.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   81983758430957d9a5cb3333fe324fd70cf63e7e
+commit: 2007d28ec0095c6db0a24fd8bb8fe280c65446cd bcachefs: rename version -> bversion for big endian builds
+date:   4 weeks ago
+config: m68k-randconfig-r051-20241027 (https://download.01.org/0day-ci/archive/20241028/202410281421.V62F8rHI-lkp@intel.com/config)
+compiler: m68k-linux-gcc (GCC) 14.1.0
 
-I'm not entirely clear that placing an LRU after inactive or min_gen
-will provide meaningful benefits in typical scenarios. Let me give a
-concrete example(to be simple, using active/inactive):
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410281421.V62F8rHI-lkp@intel.com/
 
-We used to have for example 1.5G active + 0.5 G inactive file, so the
-length of active+inactive =3D 2G.
+cocci warnings: (new ones prefixed by >>)
+>> fs/bcachefs/btree_cache.c:502:13-14: Unneeded semicolon
 
-now we have 3 lists, for example:
-1G active + 0.5G inactive + 0.5G ez_reclaimable
+vim +502 fs/bcachefs/btree_cache.c
 
-The total length remains 2G, which is still the size needed to keep files i=
-n
-the page cache for hits, so the overall size of the LRU hasn=E2=80=99t chan=
-ged. The
-only difference is that 0.5G has been separated from the original active +
-inactive lists. By moving this 0.5G out of the normal LRU, it seems that
-the CPU overhead for kswapd might increase, as the reduced size of the
-normal LRU could lead to more frequent scanning operations(pretty
-much like more aggressive reclamation in normal LRUs)?
+1c6fdbd8f2465d Kent Overstreet 2017-03-16  441  
+1c6fdbd8f2465d Kent Overstreet 2017-03-16  442  static unsigned long bch2_btree_cache_scan(struct shrinker *shrink,
+1c6fdbd8f2465d Kent Overstreet 2017-03-16  443  					   struct shrink_control *sc)
+1c6fdbd8f2465d Kent Overstreet 2017-03-16  444  {
+7a51608d012546 Kent Overstreet 2024-09-04  445  	struct btree_cache_list *list = shrink->private_data;
+7a51608d012546 Kent Overstreet 2024-09-04  446  	struct btree_cache *bc = container_of(list, struct btree_cache, live[list->idx]);
+7a51608d012546 Kent Overstreet 2024-09-04  447  	struct bch_fs *c = container_of(bc, struct bch_fs, btree_cache);
+1c6fdbd8f2465d Kent Overstreet 2017-03-16  448  	struct btree *b, *t;
+1c6fdbd8f2465d Kent Overstreet 2017-03-16  449  	unsigned long nr = sc->nr_to_scan;
+7c7e071d90ac27 Kent Overstreet 2022-04-03  450  	unsigned long can_free = 0;
+1c6fdbd8f2465d Kent Overstreet 2017-03-16  451  	unsigned long freed = 0;
+c36ff038fd3af6 Kent Overstreet 2022-09-25  452  	unsigned long touched = 0;
+97c0e19502549c Kent Overstreet 2020-10-15  453  	unsigned i, flags;
+c7ce813fe49a58 Kent Overstreet 2021-12-27  454  	unsigned long ret = SHRINK_STOP;
+7a51608d012546 Kent Overstreet 2024-09-04  455  	bool trigger_writes = atomic_long_read(&bc->nr_dirty) + nr >= list->nr * 3 / 4;
+1c6fdbd8f2465d Kent Overstreet 2017-03-16  456  
+29364f34530d30 Kent Overstreet 2020-11-02  457  	if (bch2_btree_shrinker_disabled)
+1c6fdbd8f2465d Kent Overstreet 2017-03-16  458  		return SHRINK_STOP;
+1c6fdbd8f2465d Kent Overstreet 2017-03-16  459  
+1c6fdbd8f2465d Kent Overstreet 2017-03-16  460  	mutex_lock(&bc->lock);
+97c0e19502549c Kent Overstreet 2020-10-15  461  	flags = memalloc_nofs_save();
+97c0e19502549c Kent Overstreet 2020-10-15  462  
+1c6fdbd8f2465d Kent Overstreet 2017-03-16  463  	/*
+1c6fdbd8f2465d Kent Overstreet 2017-03-16  464  	 * It's _really_ critical that we don't free too many btree nodes - we
+1c6fdbd8f2465d Kent Overstreet 2017-03-16  465  	 * have to always leave ourselves a reserve. The reserve is how we
+1c6fdbd8f2465d Kent Overstreet 2017-03-16  466  	 * guarantee that allocating memory for a new btree node can always
+1c6fdbd8f2465d Kent Overstreet 2017-03-16  467  	 * succeed, so that inserting keys into the btree can always succeed and
+1c6fdbd8f2465d Kent Overstreet 2017-03-16  468  	 * IO can always make forward progress:
+1c6fdbd8f2465d Kent Overstreet 2017-03-16  469  	 */
+7a51608d012546 Kent Overstreet 2024-09-04  470  	can_free = btree_cache_can_free(list);
+1c6fdbd8f2465d Kent Overstreet 2017-03-16  471  	nr = min_t(unsigned long, nr, can_free);
+1c6fdbd8f2465d Kent Overstreet 2017-03-16  472  
+1c6fdbd8f2465d Kent Overstreet 2017-03-16  473  	i = 0;
+1c6fdbd8f2465d Kent Overstreet 2017-03-16  474  	list_for_each_entry_safe(b, t, &bc->freeable, list) {
+c043a3303c11cd Kent Overstreet 2021-12-27  475  		/*
+c043a3303c11cd Kent Overstreet 2021-12-27  476  		 * Leave a few nodes on the freeable list, so that a btree split
+c043a3303c11cd Kent Overstreet 2021-12-27  477  		 * won't have to hit the system allocator:
+c043a3303c11cd Kent Overstreet 2021-12-27  478  		 */
+c043a3303c11cd Kent Overstreet 2021-12-27  479  		if (++i <= 3)
+c043a3303c11cd Kent Overstreet 2021-12-27  480  			continue;
+c043a3303c11cd Kent Overstreet 2021-12-27  481  
+1c6fdbd8f2465d Kent Overstreet 2017-03-16  482  		touched++;
+1c6fdbd8f2465d Kent Overstreet 2017-03-16  483  
+54b2db3d58eadb Kent Overstreet 2021-11-11  484  		if (touched >= nr)
+c36ff038fd3af6 Kent Overstreet 2022-09-25  485  			goto out;
+1c6fdbd8f2465d Kent Overstreet 2017-03-16  486  
+bceacfa97ec8b6 Daniel Hill     2022-09-30  487  		if (!btree_node_reclaim(c, b, true)) {
+1c6fdbd8f2465d Kent Overstreet 2017-03-16  488  			btree_node_data_free(c, b);
+c43a6ef9a0747e Kent Overstreet 2020-06-06  489  			six_unlock_write(&b->c.lock);
+c43a6ef9a0747e Kent Overstreet 2020-06-06  490  			six_unlock_intent(&b->c.lock);
+1c6fdbd8f2465d Kent Overstreet 2017-03-16  491  			freed++;
+691f2cba229189 Kent Overstreet 2024-09-05  492  			bc->nr_freed++;
+1c6fdbd8f2465d Kent Overstreet 2017-03-16  493  		}
+1c6fdbd8f2465d Kent Overstreet 2017-03-16  494  	}
+1c6fdbd8f2465d Kent Overstreet 2017-03-16  495  restart:
+7a51608d012546 Kent Overstreet 2024-09-04  496  	list_for_each_entry_safe(b, t, &list->list, list) {
+c36ff038fd3af6 Kent Overstreet 2022-09-25  497  		touched++;
+c36ff038fd3af6 Kent Overstreet 2022-09-25  498  
+05a49d22750ec4 Kent Overstreet 2022-03-03  499  		if (btree_node_accessed(b)) {
+05a49d22750ec4 Kent Overstreet 2022-03-03  500  			clear_btree_node_accessed(b);
+3340dee2350954 Kent Overstreet 2024-09-01  501  			bc->not_freed[BCH_BTREE_CACHE_NOT_FREED_access_bit]++;
+ad5dbe3ce533ec Kent Overstreet 2024-09-04 @502  			--touched;;
+bceacfa97ec8b6 Daniel Hill     2022-09-30  503  		} else if (!btree_node_reclaim(c, b, true)) {
+91ddd7151000c0 Kent Overstreet 2024-09-05  504  			bch2_btree_node_hash_remove(bc, b);
+91ddd7151000c0 Kent Overstreet 2024-09-05  505  
+1c6fdbd8f2465d Kent Overstreet 2017-03-16  506  			freed++;
+1c6fdbd8f2465d Kent Overstreet 2017-03-16  507  			btree_node_data_free(c, b);
+691f2cba229189 Kent Overstreet 2024-09-05  508  			bc->nr_freed++;
+1c6fdbd8f2465d Kent Overstreet 2017-03-16  509  
+c43a6ef9a0747e Kent Overstreet 2020-06-06  510  			six_unlock_write(&b->c.lock);
+c43a6ef9a0747e Kent Overstreet 2020-06-06  511  			six_unlock_intent(&b->c.lock);
+1c6fdbd8f2465d Kent Overstreet 2017-03-16  512  
+c36ff038fd3af6 Kent Overstreet 2022-09-25  513  			if (freed == nr)
+c36ff038fd3af6 Kent Overstreet 2022-09-25  514  				goto out_rotate;
+c36ff038fd3af6 Kent Overstreet 2022-09-25  515  		} else if (trigger_writes &&
+c36ff038fd3af6 Kent Overstreet 2022-09-25  516  			   btree_node_dirty(b) &&
+c36ff038fd3af6 Kent Overstreet 2022-09-25  517  			   !btree_node_will_make_reachable(b) &&
+c36ff038fd3af6 Kent Overstreet 2022-09-25  518  			   !btree_node_write_blocked(b) &&
+c36ff038fd3af6 Kent Overstreet 2022-09-25  519  			   six_trylock_read(&b->c.lock)) {
+7a51608d012546 Kent Overstreet 2024-09-04  520  			list_move(&list->list, &b->list);
+c36ff038fd3af6 Kent Overstreet 2022-09-25  521  			mutex_unlock(&bc->lock);
+46fee692eebb85 Kent Overstreet 2022-10-28  522  			__bch2_btree_node_write(c, b, BTREE_WRITE_cache_reclaim);
+c36ff038fd3af6 Kent Overstreet 2022-09-25  523  			six_unlock_read(&b->c.lock);
+c36ff038fd3af6 Kent Overstreet 2022-09-25  524  			if (touched >= nr)
+c36ff038fd3af6 Kent Overstreet 2022-09-25  525  				goto out_nounlock;
+1c6fdbd8f2465d Kent Overstreet 2017-03-16  526  			mutex_lock(&bc->lock);
+1c6fdbd8f2465d Kent Overstreet 2017-03-16  527  			goto restart;
+05a49d22750ec4 Kent Overstreet 2022-03-03  528  		}
+05a49d22750ec4 Kent Overstreet 2022-03-03  529  
+c36ff038fd3af6 Kent Overstreet 2022-09-25  530  		if (touched >= nr)
+05a49d22750ec4 Kent Overstreet 2022-03-03  531  			break;
+05a49d22750ec4 Kent Overstreet 2022-03-03  532  	}
+c36ff038fd3af6 Kent Overstreet 2022-09-25  533  out_rotate:
+7a51608d012546 Kent Overstreet 2024-09-04  534  	if (&t->list != &list->list)
+7a51608d012546 Kent Overstreet 2024-09-04  535  		list_move_tail(&list->list, &t->list);
+1c6fdbd8f2465d Kent Overstreet 2017-03-16  536  out:
+c36ff038fd3af6 Kent Overstreet 2022-09-25  537  	mutex_unlock(&bc->lock);
+c36ff038fd3af6 Kent Overstreet 2022-09-25  538  out_nounlock:
+7c7e071d90ac27 Kent Overstreet 2022-04-03  539  	ret = freed;
+e648448ca562af Kent Overstreet 2020-11-11  540  	memalloc_nofs_restore(flags);
+674cfc26240b78 Kent Overstreet 2022-08-27  541  	trace_and_count(c, btree_cache_scan, sc->nr_to_scan, can_free, ret);
+c7ce813fe49a58 Kent Overstreet 2021-12-27  542  	return ret;
+1c6fdbd8f2465d Kent Overstreet 2017-03-16  543  }
+1c6fdbd8f2465d Kent Overstreet 2017-03-16  544  
 
-On the other hand, mglru typically places items like syscall-related files
-into a relatively reclaimable generation, which in a way already acts
-like an ez_reclaimable generation=E2=80=94though not as "easily reclaimable=
-"
-compared to the dedicated ez_reclaimable list.  mglru can also compare
-the relative hotness of syscall folios against mmap-ed file folios and
-re-order those folios accordingly in lru.
+:::::: The code at line 502 was first introduced by commit
+:::::: ad5dbe3ce533ec13abacad78076050672e3d39eb bcachefs: Don't count "skipped access bit" as touched in btree cache scan
 
-Given that, has the value of the ez_reclaimable list diminished compared
-to when we only had active and inactive lists?
+:::::: TO: Kent Overstreet <kent.overstreet@linux.dev>
+:::::: CC: Kent Overstreet <kent.overstreet@linux.dev>
 
->
-> >
-> > >
-> > > 2. Implement a parameter to control the size of this list. This allow=
-s for
-> > >    system tuning based on available memory and performance requiremen=
-ts.
-> >
-> > If we include only 'reclaimed' file folios in this 'easily
-> > reclaimable' LRU list, the
-> > parameter makes sense. However, if we also add lazyfree folios to the l=
-ist, the
-> > parameter becomes less meaningful since we can't predict how many
-> > lazyfree anon folios user space might have. I still feel lazyfree anon =
-folios
-> > are different with "reclaimed" file folios (I mean reclaimed from norma=
-l
-> > lists but still in 'easily-reclaimable' list).
->
-> I thought the ez-reclamable LRU doesn't need to be accurate since we can
-> put other folios later(e.g., fadvise_dontneed but couldn't at that time)
-
-My point is that if we set a parameter=E2=80=94say, ez_reclaimable to 500MB=
-=E2=80=94
-and then perform a 1GB MADV_FREE, we will still need to store the
-excess MADV_FREE folios in the normal LRU unless we allow the
-ez_reclaimable list to grow indefinitely.
-
-If we permit unlimited length, then once it exceeds 500MB (for example,
-due to MADV_FREE), would we stop reclaiming files from the normal LRUs
-into the ez_reclaimable list since it already holds enough?
-
-However, if we stop this process, the sorting mechanism=E2=80=94differentia=
-ting
-between easily reclaimable and less reclaimable folios=E2=80=94would essent=
-ially
-break down.
-
-Currently, Guoxu's reported issue is that if MADV_FREE folios are positione=
-d in
-a relatively difficult-to-reclaim spot, like at the head of the LRU,
-they may not be
-reclaimed in time, while files are being aggressively reclaimed. Merging bo=
-th
-types of folios into a single ez_reclaimable list could still lead to
-this issue.
-We still need to decide whether we want to place MADV_FREE folios at the
-head of the ez_reclaimable list or at the tail, even if that means ignoring
-LRU inversion?
-
->
-> >
-> > >
-> > > 3. Modify kswapd behavior to utilize this list. When kswapd is awaken=
-ed due
-> > >    to memory pressure, it should attempt to drop those pages first to=
- refill
-> > >    free pages up to the high watermark by first reclaiming.
-> > >
-> > > 4. Before kswapd goes to sleep, it should scan the tail of the LRU li=
-st and
-> > >    move cold pages to the easily reclaimable list, unmapping them fro=
-m the
-> > >    page table.
-> > >
-> > > 5. Whenever page cache hit, move the page into evictable LRU.
-> > >
-> > > This approach allows the system to maintain a pool of readily availab=
-le
-> > > memory, mitigating the "aging" problem. The trade-off is the potentia=
-l for
-> > > minor page faults and LRU movement ovehreads if these pages in ez_rec=
-laimable
-> > > LRU are accessed again.
-> >
-> > I believe you're aware of an implementation from Samsung that uses
-> > cleancache. Although it was dropped from the mainline kernel, it still
-> > exists in the Android kernel. Samsung's rbincache, based on cleancache,
-> > maintains a reserved memory region for holding reclaimed file folios.
-> > Instead of LRU movement, rbincache uses memcpy to transfer data between
-> > the pool and the page cache.
-> >
-> > >
-> > > Furthermore, we could put some asynchrnous writeback pages(e.g., swap
-> > > out or writeback the fs pages) into the list, too.
-> > > Currently, what we are doing is rotate those pages back to head of LR=
-U
-> > > and once writeback is done, move the page to the tail of LRU again.
-> > > We can simply put the page into ez_reclaimable LRU without rotating
-> > > back and forth.
-> >
-> > If this is about establishing a pool of easily reclaimable file folios,=
- I
-> > fully support the idea and am eager to try it, especially for Android,
-> > where there are certainly strong use cases. However, I suspect it may
-> > be controversial and could take months to gain acceptance. Therefore,
-> > I=E2=80=99d prefer we first focus on landing a smaller change to addres=
-s the
-> > madv_free performance issue and treat that idea as a separate
-> > incremental patch set.
->
-> I don't want to block the improvement, Barry.
->
-> The reason I suggested another LRU was actullay to prevent divergent
-> between MGLRU and split-LRU and show the same behavior introducing
-> additional logic in the central place.
-> I don't think that's desire that a usespace hint showed different
-> priority depending on admin config.
-
-I understand your perspective. My interest in the ez_reclaimable LRU
-is primarily about providing a quick method for freeing up memory
-without tying it up in reservations for specific use cases.
-
-For instance, in Samsung's implementation, there's a reserved memory
-area intended for ION and DMA-BUF operations. Certain applications
-can rapidly allocate these resources, and if this process is delayed,
-it can adversely affect the user interface experience. To mitigate
-this issue, they have established a shared reserved memory section
-known as a clean cache pool, where reclaimed folios can be copied
-into.
-
-When files are read, the read path can also check this clean cache
-pool; if there's a match, folios can be copied into the page
-cache. Because this clean cache can be swiftly reclaimed, its
-performance closely resembles that of being fully reserved.
-
-If this type of reserved memory can help reduce I/O operations, it would
-be beneficial, especially since this memory was originally set aside. In
-scenarios involving ION and DMA-BUF, this memory could otherwise
-go to waste.
-
-This raises a concern: if the ez_reclaimable memory is mainly consumed
-by various user scenarios (meaning all alloc_pages can access it
-indiscriminately),
-ION and DMA-BUF operations may find it difficult to acquire this memory in =
-a
-timely manner. This situation undermines the potential benefits we aim to
-achieve for user experience in these scenarios.
-
->
-> Personally, I belive that would be better to introudce a knob to
-> change MADV_FREE's behavior for both LRU algorithms at the same time
-> instead of only one even though we will see the LRU inversion issue.
->
-> >
-> > My current patch specifically targets the issue of reclaiming lazyfree
-> > anon folios before reclaiming file folios. It appears your proposal is
-> > independent (though related) work, and I don't believe it should delay
-> > resolving the madv_free issue. Additionally, that pool doesn=E2=80=99t =
-effectively
-> > address the reclamation priority between files and lazyfree anon folios=
-.
-> >
-> > In conclusion:
-> >
-> > 1. I agree that the pool is valuable, and I=E2=80=99d like to develop i=
-t as an
-> > incremental patch set. However, this is a significant step that will
-> > require considerable time.
-> > 2. It could be quite tricky to include both lazyfree anon folios and
-> > reclaimed file folios (which are reclaimed in normal lists but not in
-> > the 'easily-reclaimable' list) in the same LRU list. I=E2=80=99d prefer=
- to
-> > start by replacing Samsung's rbincache to reduce file folio I/O if we
-> > decide to implement the pool.
-> > 3. I believe we should first focus on landing this fix patch for the
-> > madv_free performance issue.
-> >
-> > What are your thoughts? I spoke with Yu, and he would like to hear
-> > your opinion.
->
-> Sure, I don't want to block any improvement but please think one more
-> one more about my concern and just go with your ideas if everyone
-> except me don't concern it.
-
-I'm still grappling with these questions: Are we seeking ez_reclaimable
-memory that can be equally utilized by all alloc_pages(), or is it primaril=
-y
-intended for specific high-priority users who previously depended on
-reserved memory?
-
-If the goal is the former, I=E2=80=99m still not completely clear on all th=
-e
-pros and cons.
-There seem to be many issues that need careful consideration. For instance,
-should we view moving from the ez_reclaimable list to the normal lists as
-a refault? Or should we only consider reading from disk as a refault?
-
-For each kswapd wake-up or direct reclamation, how much memory should
-we reclaim from the ez_reclaimable list versus how much should we reclaim
-from anonymous memory?
-
-On the other hand, I definitely see the value in the latter approach, thoug=
-h
-it may not be suitable for all scenarios. It could be particularly benefici=
-al
-for users who have reserved memory for specific purposes. This reserved
-memory can be repurposed as page caches when those specific applications
-are not running. Once those applications are launched, the page caches can
-be reclaimed at zero cost.
-
->
-> Thank you.
-
-Thanks
-barry
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
