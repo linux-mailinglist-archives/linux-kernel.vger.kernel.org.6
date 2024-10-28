@@ -1,101 +1,111 @@
-Return-Path: <linux-kernel+bounces-384385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F33F89B2967
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 09:00:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E50639B296A
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 09:00:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2EA441C219B3
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 08:00:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 228931C219C8
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 08:00:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 185111925B9;
-	Mon, 28 Oct 2024 07:36:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61E5018FC91;
+	Mon, 28 Oct 2024 07:37:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LtcYpO0a"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="khpG7v+0"
+Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70C321922CD;
-	Mon, 28 Oct 2024 07:36:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E78E191489;
+	Mon, 28 Oct 2024 07:37:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730101017; cv=none; b=ACIJSikRMg5qFbShOR0TZz4AONX/g3Ota/Besj2bMLZy/UvjWByFrULSIxhhOCeN8tVGG/tX4xeeFLOthNaAee74aqjPnE/S8zA6/114wgJpIYd6uYnnf2Cx6IKYWMLF70pFjVB8rZLJMp9o5P15/x/dZ1GOsdPDiU91kT58VBo=
+	t=1730101046; cv=none; b=ao4Fxw3/lZz9ydcLmi2p/lVCu58CdDzJfjdMUytpsF3hxUFlNbZp8DMId9t2q7ck0xazjgoi+c+i4vJEMZ5IHfxEk+FvLHh6yDXG3eAHiyzWiVzgd5YrM24x3cz+ifnNUY0bTY8ZIXEUCgZSUtXwtS/g8fOb5k1y+W2cp+O+ayc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730101017; c=relaxed/simple;
-	bh=C8jzd03PT7TBnleSW2b3mkmpjRFkk1JQWJOGmJ6JBHU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P55nBMVcQ0RCtB0HeuWG4EI8F8552atLicPomCPsrMXanYGronum+XeNUTBRuElDkDe4Bh113xmKpJ47tBsDtK1Unl2H+nVK7KrLgW61OCamF198Dn5EIJ0YA69sZajPT27qH719zBZuS4maxVL/Vsttu8eTmp6w39aR+hq3S+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LtcYpO0a; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 809DAC4CEC3;
-	Mon, 28 Oct 2024 07:36:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730101017;
-	bh=C8jzd03PT7TBnleSW2b3mkmpjRFkk1JQWJOGmJ6JBHU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LtcYpO0aHbfPPpU6JOxrB0QOqE7WkvgEvHsDBvWGuIQWZb74ZXs2m7PXcvWcW/pCQ
-	 SOtK++YJLVOs28akn0bliE2QXHR2lUBwJ7x0bT8eeUwKufL+X5utlWVsPakegAMhOd
-	 cizfcDzQjgxSJ45YlNAa9K33QgQF7tDbCDuAd23uqjBhg1OgrrrYRb6U9UgaxNGeo9
-	 YPXRwMfvnEC/RmWgga+sSV//YS4j9TG9onTGDeZGZl97PP/86f21alkTnt2noXde0D
-	 15CLRsHEG0rzvZi30a+Plsp5GhNEceBHSOtaA+mSBBTJ/kWt3fm6ibPP/w3QZ8aqyI
-	 CGoMNbNDOI4mQ==
-Date: Mon, 28 Oct 2024 08:36:53 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Himanshu Bhavani <himanshu.bhavani@siliconsignals.io>
-Cc: linus.walleij@linaro.org, robh@kernel.org, krzk+dt@kernel.org, 
-	tarang.raval@siliconsignals.io, Conor Dooley <conor+dt@kernel.org>, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] dt-bindings: pinctrl: convert pinctrl-mcp23s08.txt to
- yaml format
-Message-ID: <h2trxxyutkkbubjz572e57widjfce7y3n2dixnkciavbtw3isx@cmuc5y6yqrrt>
-References: <20241028063939.6276-1-himanshu.bhavani@siliconsignals.io>
+	s=arc-20240116; t=1730101046; c=relaxed/simple;
+	bh=NkwvqH4Xf+9+y0Ay+cUcFtSSHuR92AA+JZuj8Z6LZXE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=FEpfgFpM1eEXX9XspYdmTdtSnLPdBioKPLve4SR09NDS6cE8/IyM+jRaVJQ/eX6mswZsGW7uLYCmDCxlQFrUNMjVJlG+nwTal7ViXW2vQ4LOSqHqHCA4qWKWO1o8VHj4FJQ+q7b6qR4b8yNLn2aSKi1/OjoxGkrqJ3YaR/ihvvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=khpG7v+0; arc=none smtp.client-ip=193.68.50.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
+Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
+	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id CFC6EA0767;
+	Mon, 28 Oct 2024 08:37:22 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:from:from:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=mail; bh=8qIqfkzVktUqGL4TZCqG
+	/TtE6T+nDkJffSarBT3k/9Y=; b=khpG7v+0iIyiW18Bod+0hVtkZ/dm8REBF7OQ
+	+2mnCyibYzfdDRLIkPajNd7AysCLbBVjwatGc30KDxZR7fRgX2Acg0anP5P2vj6t
+	QgGYO7adaVb0mrDVM+2o7tMEaD8g2llZMXNDTvoUTG/l/2xs507g0kgRP773cLD8
+	lzHMY6xmOG3hm4l1SsA7gNtIPIfJ+xp23jm2NyNwhjIi5pI9fZU1a9j3ygJmiui6
+	Oqgb71KTX5ftpELGpvXM2ptUZft7Hteu7YhLX6h0vLZvVzDmLzWbk8dGdJIJRKud
+	c4eQoyYinGD0HNal5Elo7lC7rhyTa53hFNgZpUgntoICWmkda6qsvcOdwr6FgmI+
+	TPzA9vgn5sZPF7mWQVUnN8WigmjochcWrGvWZ+IDp6IrF4m28pOMac48AJZbAe22
+	Ow33c4lfr8Pa5msQ8928EKifDDBeetGWZ4iHnTOsRbjWIKzapehXrwpXMTrXLhnf
+	oPF5F8dS11aUcTFHiH0ktmoa52RX689jyIbkLAHQWzxonAWR1Wwy+qdyCQ0pan2V
+	ynqWbSoGl/vUYxdn+pFByMNTiPh5BSebicb3QNJL1uyjpoe48KulEiFnUEnm5Y1P
+	2AD8SBkrnwqmdZCm4N5G060wf9htlJgOqPLnS1lXMj9V1xlctwN61qnoT2qdmrzc
+	Ch5qujk=
+Message-ID: <b74dafed-197a-4644-a546-54c7a1639484@prolan.hu>
+Date: Mon, 28 Oct 2024 08:37:21 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241028063939.6276-1-himanshu.bhavani@siliconsignals.io>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 02/10] dma-engine: sun4i: Add has_reset option to quirk
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: <dmaengine@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-sunxi@lists.linux.dev>, <linux-kernel@vger.kernel.org>, Mesih Kilinc
+	<mesihkilinc@gmail.com>, Vinod Koul <vkoul@kernel.org>, Chen-Yu Tsai
+	<wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland
+	<samuel@sholland.org>, Philipp Zabel <p.zabel@pengutronix.de>
+References: <20241027091440.1913863-1-csokas.bence@prolan.hu>
+ <20241027091440.1913863-2-csokas.bence@prolan.hu>
+ <nlhsxigg3rbfvua76ekmub4p6df2asps2ihueouuk6zkbn56zl@xdj6jzzt4gfb>
+Content-Language: en-US
+From: =?UTF-8?B?Q3PDs2vDoXMgQmVuY2U=?= <csokas.bence@prolan.hu>
+In-Reply-To: <nlhsxigg3rbfvua76ekmub4p6df2asps2ihueouuk6zkbn56zl@xdj6jzzt4gfb>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: ATLAS.intranet.prolan.hu (10.254.0.229) To
+ ATLAS.intranet.prolan.hu (10.254.0.229)
+X-EsetResult: clean, is OK
+X-EsetId: 37303A2980D94855677C65
 
-On Mon, Oct 28, 2024 at 12:09:11PM +0530, Himanshu Bhavani wrote:
-> YAML binding file provides the conversion of the original text-based
-> binding for the pinctrl-mcp23s08 to microchip,mcp23s08.yaml.
+Hi,
+
+On 2024. 10. 27. 21:42, Krzysztof Kozlowski wrote:
+> On Sun, Oct 27, 2024 at 10:14:32AM +0100, Csókás, Bence wrote:
+>> From: Mesih Kilinc <mesihkilinc@gmail.com>
+>>
+>> Allwinner suniv F1C100s has a reset bit for DMA in CCU. Sun4i do not
+>> has this bit but in order to support suniv we need to add it. So add
+>> support for reset bit.
+>>   
+>>   static struct sun4i_dma_dev *to_sun4i_dma_dev(struct dma_device *dev)
+>> @@ -1215,6 +1218,15 @@ static int sun4i_dma_probe(struct platform_device *pdev)
+>>   		return PTR_ERR(priv->clk);
+>>   	}
+>>   
+>> +	if (priv->cfg->has_reset) {
+>> +		priv->rst = devm_reset_control_get_exclusive(&pdev->dev,
+>> +							     NULL);
+>> +		if (IS_ERR(priv->rst)) {
+>> +			dev_err_probe(&pdev->dev, "Failed to get reset control\n");
 > 
-> following compatible strings using the deprecated mcp prefix have been
-> removed from this binding:
+> syntax is: return dev_err_probe()
 > 
-> - mcp,mcp23s08
-> - mcp,mcp23s17
-> - mcp,mcp23008
-> - mcp,mcp23017
-> 
-> Signed-off-by: Himanshu Bhavani <himanshu.bhavani@siliconsignals.io>
-> ---
+> Best regards,
+> Krzysztof
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
----
-
-<form letter>
-This is an automated instruction, just in case, because many review tags
-are being ignored. If you know the process, you can skip it (please do
-not feel offended by me posting it here - no bad intentions intended).
-If you do not know the process, here is a short explanation:
-
-Please add Acked-by/Reviewed-by/Tested-by tags when posting new
-versions, under or above your Signed-off-by tag. Tag is "received", when
-provided in a message replied to you on the mailing list. Tools like b4
-can help here. However, there's no need to repost patches *only* to add
-the tags. The upstream maintainer will do that for tags received on the
-version they apply.
-
-https://elixir.bootlin.com/linux/v6.5-rc3/source/Documentation/process/submitting-patches.rst#L577
-</form letter>
-
-Best regards,
-Krzysztof
+Thanks! And regarding v3 of this patch, I have `clk_disable_unprepare()` 
+after `dev_err_probe()`, I assume I have to let that be i.e. not return 
+immediately?
 
 
