@@ -1,160 +1,144 @@
-Return-Path: <linux-kernel+bounces-383981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DF569B22C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 03:32:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C54F9B22C3
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 03:32:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 992A61C214D0
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 02:32:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88A73282031
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 02:32:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35D601632CE;
-	Mon, 28 Oct 2024 02:32:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5027415B54C;
+	Mon, 28 Oct 2024 02:32:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="TdF522ug"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nb0IHodh"
+Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E0B28837;
-	Mon, 28 Oct 2024 02:32:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6F8E14EC7E
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 02:32:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730082723; cv=none; b=BV1Oo90ZT3N3mF6FpzD/0ofrA5+KW1vWy5LoOe8bcLMyyWwhZqRAjPyLkKNfCP+3pEE5XGR/iZQwipveVOLaZzz8T03E/63YrTx9kWVDwvBZpVaqF9R3r5ZHnBM6mVUhjk1r8fYn6/sOwN0T3hQ0WJNGQRrfNjamkR/dSTjCyzE=
+	t=1730082750; cv=none; b=gR6pD2q/7YLfPJ3XyYLHV2WqPaJUYQseCfF2JiuI9Q+2Y748zY5YyME4C0c5f9556zmCKAnZ0FyZuJGoIyUv3iMjVgoCrZeqkw1r0U55Ivil+d/Yz/tAxC++2uc+wfOIRHg+L1sLnTsk8ruXqD1XBw9/ykQtdCTH7+gpVrqG0q4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730082723; c=relaxed/simple;
-	bh=IbccNuStDk2QzA/azvvqRXzui79cx3VGOeLgXEfgBQ8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=mi0Io2V9cnEHe6cgt41TgsEd11qrByZlcCa3J9EQUH/AW0imXmKJYLQewWbPzqg4AHvpcZizyCYzlGvfwgHSk0Bq8AJyev+knuqCbUCTSOk1chQkRzHyLrxWNwFf5Kh5XPblcwknmRIF+YP1Wfc4Bkp91JXSrM/6lKUlODF4hC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=TdF522ug; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
-	s=201909; t=1730082717;
-	bh=akZfa4aGK9EQ5cduCJCgwynTCyBliCAq7gIFjV4NH30=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=TdF522ug+3gW8cmYOk+/ZAjjjG+WOfWMV2jSQEF+A+/zEys1VXWINkJNcK8FUKeoj
-	 wdv58PU3zWDJlTkU0suSUsiKBxSH9U5l1l3olFE1t6V2JaXUEfsUEhZGAM/5wf47WR
-	 vxqX8Wgr3/RT85Lcl23VXMv3s63+/AWiZOHNUcAuNs9Emhql6TE17s2PyT04smlHil
-	 aeY4HUOXJImGhdkqumhfukTggocpXV3bhgXKCTfMgdPkngqvc5U/okQQrqVW0LgRPO
-	 jqjld6cZFIeLaYsh79Wq5h0gPNCZ01zKqhtIi8h3sPLUFINBBJYFe0z7F2UpGCVrby
-	 jYF3tCSg8YznQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XcHTS49Plz4x6k;
-	Mon, 28 Oct 2024 13:31:56 +1100 (AEDT)
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Rosen Penev <rosenp@gmail.com>, Simon Horman <horms@kernel.org>
-Cc: netdev@vger.kernel.org, Madalin Bucur <madalin.bucur@nxp.com>, Andrew
- Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Ioana Ciornei <ioana.ciornei@nxp.com>,
- Claudiu Manoil <claudiu.manoil@nxp.com>, Vladimir Oltean
- <vladimir.oltean@nxp.com>, open list <linux-kernel@vger.kernel.org>, "open
- list:FREESCALE QUICC ENGINE UCC ETHERNET DRIVER"
- <linuxppc-dev@lists.ozlabs.org>
-Subject: Re: [PATCH net-next] net: freescale: use ethtool string helpers
-In-Reply-To: <CAKxU2N98hnVAE9WF72HhxzVEfhnRAgMykVgBErL9b3gupqqrxQ@mail.gmail.com>
-References: <20241024205257.574836-1-rosenp@gmail.com>
- <20241025125704.GT1202098@kernel.org>
- <CAKxU2N98hnVAE9WF72HhxzVEfhnRAgMykVgBErL9b3gupqqrxQ@mail.gmail.com>
-Date: Mon, 28 Oct 2024 13:31:57 +1100
-Message-ID: <87ttcxrm8y.fsf@mpe.ellerman.id.au>
+	s=arc-20240116; t=1730082750; c=relaxed/simple;
+	bh=kRU46fFJSWTvTE9azsOVFdvCcZhQWHNPT5RuN/5wiCc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JlUNTuEJH0F1Bx570WnpMlbUu347vuJJik+dSwGVN6+eRz8Fr9n26WDtSqj165cBZEH8NaM4srCPOtHWVL3WiJuVeZsid5I3xLzXBtVefPOJ/FVaKjW/MVgyaRIlD2tyg+rufsBNzdKVCPYQ74iFqL0ycdEZiAI53q5zkO5FEAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Nb0IHodh; arc=none smtp.client-ip=209.85.221.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-50d32d82bd8so891792e0c.1
+        for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 19:32:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730082747; x=1730687547; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kRU46fFJSWTvTE9azsOVFdvCcZhQWHNPT5RuN/5wiCc=;
+        b=Nb0IHodhqs1oqcN8cwXxNd2G0V4Su7Izs8S0fChF7Zui882wx4azzo2bkdk0ncII30
+         iAqjJCHTBnF3IwTOalu0FA/lJ5WOsIb6wuFLmKfrKBCrDUckiB4cSTbeKnEluww1PxDh
+         T75OKJaLZzbGcPmfju/cwD2i3WyVC7nXXBY7cMdvBn8UF4MEtEOrS0MPNFtHMDbBYo0V
+         pTlanNIenC2YuYm1w2a+oKQdiNv3BgFjk5GBi7NfRQs197IrNF3c/gZRMSusFiiPsXGA
+         1NdLvQYc+VgalkNH3D5C9r6GM2PMlxIdGQJ96wwKxF1dpEtyBLd8Zg6bt9/akwk6ujFX
+         F8KQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730082747; x=1730687547;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kRU46fFJSWTvTE9azsOVFdvCcZhQWHNPT5RuN/5wiCc=;
+        b=G9y2GRq8yKqNM+Bvx/j90nopvWyDlQvl9OFpJce+YYlcAFymvqWbmco0yKGSl3tTm8
+         eSss6TUaB56Zlfz78iF4/C373KG+o1oG/hIeC1WGr+FgrB9zxDTMeFThGjFex58vByOE
+         qiuoMjKb3XWGq9sMnU6rDM3TtVm4SDzxn91O8So94JDe6o5DS0sONU8uaBZQ3dlBTV4o
+         8DJsTHsivCsT2Po1wkWVRkGFuRzvkh4tm8aGSgrFKR4vKjEn3At+//AFvnyNSHgkP1Tp
+         0iqhZ3lsHz73Rv2jS1T5Me5gHsWuV0x77roxJAAqXLT5B4o4YsZifRYGgkaBRycgHxMS
+         +B+w==
+X-Forwarded-Encrypted: i=1; AJvYcCUNZ9zARM9n59B7WeVC7PIz/tKQziNWO6vthnLCcbi3lWlr6Lu1RAx+qwRvTlXm0EudyD98DkJWHbsrNlk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwptlUO8idhOC5o4AlZ1s/WAbBavlZ7W1ycdOyGrkAqqJfy7Ht4
+	BmJ9YuRT3zjXERgbRCYmgVljO/yYVWKGPYD18d0rtrtiQXIbJVsKKzQ6lqEhAlZkyaHsY2ekCXO
+	g0YWDeTVTp1080klTpQf94tWnKl0=
+X-Google-Smtp-Source: AGHT+IGAKGiQtxNNjWP/suVkwlm9F3CfEs6lSxe8RO2adHAovmGXLEAuKHiz6aysVLjsKqnboadCYmweD4cQxJUO5WY=
+X-Received: by 2002:a05:6122:1d8a:b0:50d:4b8d:673c with SMTP id
+ 71dfb90a1353d-51014e9d0b8mr3266190e0c.0.1730082747482; Sun, 27 Oct 2024
+ 19:32:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <20241027011959.9226-1-21cnbao@gmail.com> <CAKEwX=NFtcoiqiLa2ov-AR1coYnJE-gXVf32DihJcTYTOJcQdQ@mail.gmail.com>
+In-Reply-To: <CAKEwX=NFtcoiqiLa2ov-AR1coYnJE-gXVf32DihJcTYTOJcQdQ@mail.gmail.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Mon, 28 Oct 2024 15:32:16 +1300
+Message-ID: <CAGsJ_4yfcfFWpy3hYan6ggntVJmR0i-hH-0TUK_1-7sL9zBgDQ@mail.gmail.com>
+Subject: Re: [PATCH RFC] mm: count zeromap read and set for swapout and swapin
+To: Nhat Pham <nphamcs@gmail.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Barry Song <v-songbaohua@oppo.com>, 
+	Usama Arif <usamaarif642@gmail.com>, Chengming Zhou <chengming.zhou@linux.dev>, 
+	Yosry Ahmed <yosryahmed@google.com>, Johannes Weiner <hannes@cmpxchg.org>, 
+	David Hildenbrand <david@redhat.com>, Hugh Dickins <hughd@google.com>, 
+	Matthew Wilcox <willy@infradead.org>, Shakeel Butt <shakeel.butt@linux.dev>, 
+	Andi Kleen <ak@linux.intel.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Chris Li <chrisl@kernel.org>, "Huang, Ying" <ying.huang@intel.com>, 
+	Kairui Song <kasong@tencent.com>, Ryan Roberts <ryan.roberts@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Rosen Penev <rosenp@gmail.com> writes:
-> On Fri, Oct 25, 2024 at 5:57=E2=80=AFAM Simon Horman <horms@kernel.org> w=
-rote:
->>
->> On Thu, Oct 24, 2024 at 01:52:57PM -0700, Rosen Penev wrote:
->> > The latter is the preferred way to copy ethtool strings.
->> >
->> > Avoids manually incrementing the pointer. Cleans up the code quite wel=
-l.
->> >
->> > Signed-off-by: Rosen Penev <rosenp@gmail.com>
->>
->> ...
->>
->> > diff --git a/drivers/net/ethernet/freescale/dpaa/dpaa_ethtool.c b/driv=
-ers/net/ethernet/freescale/dpaa/dpaa_ethtool.c
->> > index b0060cf96090..10c5fa4d23d2 100644
->> > --- a/drivers/net/ethernet/freescale/dpaa/dpaa_ethtool.c
->> > +++ b/drivers/net/ethernet/freescale/dpaa/dpaa_ethtool.c
->> > @@ -243,38 +243,24 @@ static void dpaa_get_ethtool_stats(struct net_de=
-vice *net_dev,
->> >  static void dpaa_get_strings(struct net_device *net_dev, u32 stringse=
-t,
->> >                            u8 *data)
->> >  {
->> > -     unsigned int i, j, num_cpus, size;
->> > -     char string_cpu[ETH_GSTRING_LEN];
->> > -     u8 *strings;
->> > +     unsigned int i, j, num_cpus;
->> >
->> > -     memset(string_cpu, 0, sizeof(string_cpu));
->> > -     strings   =3D data;
->> > -     num_cpus  =3D num_online_cpus();
->> > -     size      =3D DPAA_STATS_GLOBAL_LEN * ETH_GSTRING_LEN;
->> > +     num_cpus =3D num_online_cpus();
->> >
->> >       for (i =3D 0; i < DPAA_STATS_PERCPU_LEN; i++) {
->> > -             for (j =3D 0; j < num_cpus; j++) {
->> > -                     snprintf(string_cpu, ETH_GSTRING_LEN, "%s [CPU %=
-d]",
->> > -                              dpaa_stats_percpu[i], j);
->> > -                     memcpy(strings, string_cpu, ETH_GSTRING_LEN);
->> > -                     strings +=3D ETH_GSTRING_LEN;
->> > -             }
->> > -             snprintf(string_cpu, ETH_GSTRING_LEN, "%s [TOTAL]",
->> > -                      dpaa_stats_percpu[i]);
->> > -             memcpy(strings, string_cpu, ETH_GSTRING_LEN);
->> > -             strings +=3D ETH_GSTRING_LEN;
->> > -     }
->> > -     for (j =3D 0; j < num_cpus; j++) {
->> > -             snprintf(string_cpu, ETH_GSTRING_LEN,
->> > -                      "bpool [CPU %d]", j);
->> > -             memcpy(strings, string_cpu, ETH_GSTRING_LEN);
->> > -             strings +=3D ETH_GSTRING_LEN;
->> > +             for (j =3D 0; j < num_cpus; j++)
->> > +                     ethtool_sprintf(&data, "%s [CPU %d]",
->> > +                                     dpaa_stats_percpu[i], j);
->> > +
->> > +             ethtool_sprintf(&data, "%s [TOTAL]", dpaa_stats_percpu[i=
-]);
->> >       }
->> > -     snprintf(string_cpu, ETH_GSTRING_LEN, "bpool [TOTAL]");
->> > -     memcpy(strings, string_cpu, ETH_GSTRING_LEN);
->> > -     strings +=3D ETH_GSTRING_LEN;
->> > +     for (i =3D 0; j < num_cpus; i++)
->>
->> Perhaps this should consistently use i, rather than i and j:
->>
->>         for (i =3D 0; i < num_cpus; i++)
->>
->> Flagged by W=3D1 builds with clang-18.
+On Sun, Oct 27, 2024 at 3:45=E2=80=AFPM Nhat Pham <nphamcs@gmail.com> wrote=
+:
+>
+> On Sat, Oct 26, 2024 at 6:20=E2=80=AFPM Barry Song <21cnbao@gmail.com> wr=
+ote:
+> >
+> > From: Barry Song <v-songbaohua@oppo.com>
+> >
+> > When the proportion of folios from the zero map is small, missing their
+> > accounting may not significantly impact profiling. However, it=E2=80=99=
+s easy
+> > to construct a scenario where this becomes an issue=E2=80=94for example=
+,
+> > allocating 1 GB of memory, writing zeros from userspace, followed by
+> > MADV_PAGEOUT, and then swapping it back in. In this case, the swap-out
+> > and swap-in counts seem to vanish into a black hole, potentially
+> > causing semantic ambiguity.
+>
+> I agree. It also makes developing around this area more challenging.
+> I'm working on the swap abstraction, and sometimes I can't tell if I
+> screwed up somewhere, or if a proportion of these allocated entries go
+> towards this optimization...
+>
+> Thanks for taking a stab at fixing this, Barry!
+>
+> >
+> > We have two ways to address this:
+> >
+> > 1. Add a separate counter specifically for the zero map.
+> > 2. Continue using the current accounting, treating the zero map like
+> > a normal backend. (This aligns with the current behavior of zRAM
+> > when supporting same-page fills at the device level.)
+>
+> Hmm, my understanding of the pswpout/pswpin counters is that they only
+> apply to IO done directly to the backend device, no? That's why we
+> have a separate set of counters for zswap, and do not count them
+> towards pswp(in|out).
+>
+> For users who have swap files on physical disks, the performance
+> difference between reading directly from the swapfile and going
+> through these optimizations could be really large. I think it makes
+> sense to have a separate set of counters for zero-mapped pages
+> (ideally, both at the host level and at the cgroup level?)
 
-> I really need to compile test this on a PPC system.
+agree it is better to have a separate counter for zeromap.
+then it raises a question: what is the proper name for it :-)
 
-Cross compiling should be sufficient.
+zeromap_swpin, zeromap_swpout seems too long? and zswpin
+and zswpout have been used by zswap
 
-There's some pointers here:
-  https://github.com/linuxppc/wiki/wiki/Building-powerpc-kernels
-
-Or there's also libc-less cross compilers on kernel.org, eg:
-  https://mirrors.edge.kernel.org/pub/tools/crosstool/files/bin/x86_64/14.2=
-.0/x86_64-gcc-14.2.0-nolibc-powerpc64-linux.tar.xz
-
-
-cheers
+Thanks
+barry
 
