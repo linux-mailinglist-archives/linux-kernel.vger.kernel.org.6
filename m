@@ -1,141 +1,99 @@
-Return-Path: <linux-kernel+bounces-384408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D7689B29C6
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 09:06:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 16EBA9B29CB
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 09:06:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BEC861C21AA0
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 08:06:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48E5F1C21B43
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 08:06:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 921191917ED;
-	Mon, 28 Oct 2024 08:00:54 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6CDE193067;
+	Mon, 28 Oct 2024 08:02:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="NId5SLoO"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37527130A54
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 08:00:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FAD419005F;
+	Mon, 28 Oct 2024 08:02:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730102454; cv=none; b=kvtaUqPqIMFir6dS+xUNAC71CKM/bSxTbgZ7zEWfLMzEWBDKAapOon4N98UOfyjgrtRi4kEIIbYsIF1ebF1PjI+9kf+DpH2Yvv8tjm58Z1eIDNrWehQuDX+ZkQbJY9ngo3ZAfm7fGZatkFSMSuPMfOdbCJ97vrJk17QBbQKBTUE=
+	t=1730102553; cv=none; b=W30jl9+IgKIWRWD/Wi8+kyUllk941rCfeu6nYlbFtbjoiJYwUdE+yP7YHRnQxgs99dYmxItHmUO++mz8ZbId6YTEM14Xzcq3+YQGHWs2P/xqlTMk3OO3Ur9KLShCF+/irLsY5ZwkuwnpkQgW4mmu10eDR7ltIpd3svX0TxDzXfo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730102454; c=relaxed/simple;
-	bh=x8Bfu5vWFv3Fc/QMiuL5iCTvie6UywJd6xUpt++IT3A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=sFSb6l7uBLk/1SllgfEv5SL2j06eer9ovZpmiuLETfQSww7MeC2ZZnWufOX8fhIy1UdzCxdtaMKr+XSvXyKifbDMbUMsPfSuSOk/TDmJLuNrBP2ar+kb8RyP8NScLBGDfOE4WvncZ9u0W/MR1KfhOUOYIsBCWxvi2IfIQ5Pn01Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06890C4CEC3;
-	Mon, 28 Oct 2024 08:00:51 +0000 (UTC)
-Message-ID: <d036ebf5-2596-4d76-8b5c-df6b508bb3f6@xs4all.nl>
-Date: Mon, 28 Oct 2024 09:00:49 +0100
+	s=arc-20240116; t=1730102553; c=relaxed/simple;
+	bh=VFyDsvMJP6XxTZGDsHO7Fk7q/AiTFp3vQW+cD/emrW4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Mck4XDU3Dmkl5GWKeF1W70tgsSrJhxm4f4Dd7NTiGx8g//euuVLvm+qqXkcqRC2yOFQgf9Ip6VshIOgnASKRDZUaOq+TBVAV2Kf85HcAO7I4CanhEpg4OCXZmd1rECOHt08HlNIkR0A8OEoYsf+VBfEPxX0zbAYoXsEvSFAiGkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=NId5SLoO; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id CF9131BF209;
+	Mon, 28 Oct 2024 08:02:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1730102543;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sMdiMphrDVa/6WG8AanOiRAHLQzTBE/3PK643L9hPJ4=;
+	b=NId5SLoO5WQXKd5a1otqq2vpVAAhxGahPioxT21lCSi3VIM/jsNDRCtcGVVojv2prUmPCf
+	o67wuBKsTOTBaUdCjAZPkK+av73f0yVoNWkMfx7tV0DJkXw3aBPavgULEROsZ5d8BDyLv1
+	n39yty4ucmTC8D4BKYjODoil2Y5Q59Gch63hHuuzAHlBiaINn2207epgExQrk0e27zwrb+
+	PPQAthe51DupxtM1TSBnNnOH+RkZcYAzQsl37n7pbkCrDWk2nsRJCdw/PTH9eOT1pQ+rer
+	qdZ3KRsDw6cw2XsS1DfTP8C3bzkX24C6QmwNspwU64S7dnLOfo/5hrgWBwK1AA==
+Date: Mon, 28 Oct 2024 09:02:20 +0100
+From: Herve Codina <herve.codina@bootlin.com>
+To: Marek Vasut <marex@denx.de>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong
+ <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, Laurent
+ Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
+ <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Michael Walle <mwalle@kernel.org>,
+ dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH 2/2] drm: bridge: ti-sn65dsi83: Add error recovery
+ mechanism
+Message-ID: <20241028090220.1fd803ff@bootlin.com>
+In-Reply-To: <78a09625-6bad-4fda-8ee5-92b8dd0de381@denx.de>
+References: <20241024095539.1637280-1-herve.codina@bootlin.com>
+	<20241024095539.1637280-3-herve.codina@bootlin.com>
+	<78a09625-6bad-4fda-8ee5-92b8dd0de381@denx.de>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 22/44] media: Switch to use hrtimer_setup()
-To: Nam Cao <namcao@linutronix.de>,
- Anna-Maria Behnsen <anna-maria@linutronix.de>,
- Frederic Weisbecker <frederic@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>,
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Miguel Ojeda <ojeda@kernel.org>, Kees Cook <kees@kernel.org>,
- linux-kernel@vger.kernel.org
-References: <cover.1729865485.git.namcao@linutronix.de>
- <2290f8a566605247d9842575dc3e6a630a1c1a72.1729865485.git.namcao@linutronix.de>
-Content-Language: en-US, nl
-From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-In-Reply-To: <2290f8a566605247d9842575dc3e6a630a1c1a72.1729865485.git.namcao@linutronix.de>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: herve.codina@bootlin.com
 
-On 28/10/2024 08:34, Nam Cao wrote:
-> There is a newly introduced hrtimer_setup() which will replace
-> hrtimer_init(). This new function is similar to the old one, except that it
-> also sanity-checks and initializes the timer's callback function.
+Hi Marek,
+
+On Sat, 26 Oct 2024 00:53:51 +0200
+Marek Vasut <marex@denx.de> wrote:
+
+> On 10/24/24 11:55 AM, Herve Codina wrote:
+> > In some cases observed during ESD tests, the TI SN65DSI83 cannot recover
+> > from errors by itself. A full restart of the bridge is needed in those
+> > cases to have the bridge output LVDS signals again.  
 > 
-> Switch to use this new function.
-> 
-> Patch was created by using Coccinelle.
-> 
-> Signed-off-by: Nam Cao <namcao@linutronix.de>
+> I have seen the bridge being flaky sometimes, do you have any more 
+> details of what is going on when this irrecoverable error occurs ?
 
-Acked-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+The panel attached to the bridge goes and stays black. That's the behavior.
+A full reset brings the panel back displaying frames.
 
-Regards,
-
-	Hans
-
-> ---
-> Cc: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-> ---
->  drivers/media/cec/core/cec-pin.c                     | 3 +--
->  drivers/media/pci/cx88/cx88-input.c                  | 3 +--
->  drivers/media/platform/chips-media/wave5/wave5-vpu.c | 4 ++--
->  drivers/media/rc/pwm-ir-tx.c                         | 3 +--
->  4 files changed, 5 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/media/cec/core/cec-pin.c b/drivers/media/cec/core/cec-pin.c
-> index 330d5d5d86ab..fe1cf365a25c 100644
-> --- a/drivers/media/cec/core/cec-pin.c
-> +++ b/drivers/media/cec/core/cec-pin.c
-> @@ -1345,9 +1345,8 @@ struct cec_adapter *cec_pin_allocate_adapter(const struct cec_pin_ops *pin_ops,
->  	if (pin == NULL)
->  		return ERR_PTR(-ENOMEM);
->  	pin->ops = pin_ops;
-> -	hrtimer_init(&pin->timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
->  	atomic_set(&pin->work_pin_num_events, 0);
-> -	pin->timer.function = cec_pin_timer;
-> +	hrtimer_setup(&pin->timer, cec_pin_timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
->  	init_waitqueue_head(&pin->kthread_waitq);
->  	pin->tx_custom_low_usecs = CEC_TIM_CUSTOM_DEFAULT;
->  	pin->tx_custom_high_usecs = CEC_TIM_CUSTOM_DEFAULT;
-> diff --git a/drivers/media/pci/cx88/cx88-input.c b/drivers/media/pci/cx88/cx88-input.c
-> index a04a1d33fadb..b9f2c14d62b4 100644
-> --- a/drivers/media/pci/cx88/cx88-input.c
-> +++ b/drivers/media/pci/cx88/cx88-input.c
-> @@ -190,8 +190,7 @@ static int __cx88_ir_start(void *priv)
->  	ir = core->ir;
->  
->  	if (ir->polling) {
-> -		hrtimer_init(&ir->timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
-> -		ir->timer.function = cx88_ir_work;
-> +		hrtimer_setup(&ir->timer, cx88_ir_work, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
->  		hrtimer_start(&ir->timer,
->  			      ktime_set(0, ir->polling * 1000000),
->  			      HRTIMER_MODE_REL);
-> diff --git a/drivers/media/platform/chips-media/wave5/wave5-vpu.c b/drivers/media/platform/chips-media/wave5/wave5-vpu.c
-> index 7273254ecb03..d7795d7f8a35 100644
-> --- a/drivers/media/platform/chips-media/wave5/wave5-vpu.c
-> +++ b/drivers/media/platform/chips-media/wave5/wave5-vpu.c
-> @@ -229,8 +229,8 @@ static int wave5_vpu_probe(struct platform_device *pdev)
->  	dev->irq = platform_get_irq(pdev, 0);
->  	if (dev->irq < 0) {
->  		dev_err(&pdev->dev, "failed to get irq resource, falling back to polling\n");
-> -		hrtimer_init(&dev->hrtimer, CLOCK_MONOTONIC, HRTIMER_MODE_REL_PINNED);
-> -		dev->hrtimer.function = &wave5_vpu_timer_callback;
-> +		hrtimer_setup(&dev->hrtimer, &wave5_vpu_timer_callback, CLOCK_MONOTONIC,
-> +			      HRTIMER_MODE_REL_PINNED);
->  		dev->worker = kthread_create_worker(0, "vpu_irq_thread");
->  		if (IS_ERR(dev->worker)) {
->  			dev_err(&pdev->dev, "failed to create vpu irq worker\n");
-> diff --git a/drivers/media/rc/pwm-ir-tx.c b/drivers/media/rc/pwm-ir-tx.c
-> index fe368aebbc13..84533fdd61aa 100644
-> --- a/drivers/media/rc/pwm-ir-tx.c
-> +++ b/drivers/media/rc/pwm-ir-tx.c
-> @@ -172,8 +172,7 @@ static int pwm_ir_probe(struct platform_device *pdev)
->  		rcdev->tx_ir = pwm_ir_tx_sleep;
->  	} else {
->  		init_completion(&pwm_ir->tx_done);
-> -		hrtimer_init(&pwm_ir->timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
-> -		pwm_ir->timer.function = pwm_ir_timer;
-> +		hrtimer_setup(&pwm_ir->timer, pwm_ir_timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
->  		rcdev->tx_ir = pwm_ir_tx_atomic;
->  	}
->  
-
+Best regards,
+Hervé
 
